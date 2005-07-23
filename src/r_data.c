@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/07/23 19:42:56  fraggle
+// Startup messages as in the DOS exes
+//
 // Revision 1.3  2005/07/23 19:17:11  fraggle
 // Use ANSI-standard limit constants.  Remove LINUX define.
 //
@@ -668,13 +671,9 @@ void R_InitColormaps (void)
 void R_InitData (void)
 {
     R_InitTextures ();
-    printf ("\nInitTextures");
     R_InitFlats ();
-    printf ("\nInitFlats");
     R_InitSpriteLumps ();
-    printf ("\nInitSprites");
     R_InitColormaps ();
-    printf ("\nInitColormaps");
 }
 
 
