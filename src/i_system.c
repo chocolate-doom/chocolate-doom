@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_system.c 18 2005-07-23 18:56:07Z fraggle $
+// $Id: i_system.c 22 2005-07-23 19:42:56Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/07/23 19:42:56  fraggle
+// Startup messages as in the DOS exes
+//
 // Revision 1.3  2005/07/23 18:56:07  fraggle
 // Remove unneccessary pragmas
 //
@@ -37,7 +40,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_system.c 18 2005-07-23 18:56:07Z fraggle $";
+rcsid[] = "$Id: i_system.c 22 2005-07-23 19:42:56Z fraggle $";
 
 
 #include <stdlib.h>
@@ -88,8 +91,12 @@ int  I_GetHeapSize (void)
 
 byte* I_ZoneBase (int*	size)
 {
+    byte *zonemem;
     *size = mb_used*1024*1024;
-    return (byte *) malloc (*size);
+    zonemem = malloc (*size);
+    printf("zone memory: %x, %x allocated for zone\n", 
+	   (long) zonemem, *size);
+    return zonemem;
 }
 
 
