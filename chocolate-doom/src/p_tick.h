@@ -31,9 +31,6 @@
 #define __P_TICK__
 
 
-#ifdef __GNUG__
-#pragma interface
-#endif
 
 
 // Called by C_Ticker,
@@ -47,6 +44,9 @@ void P_Ticker (void);
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.3  2005/07/23 18:56:07  fraggle
+// Remove unneccessary pragmas
+//
 // Revision 1.2  2005/07/23 16:44:56  fraggle
 // Update copyright to GNU GPL
 //

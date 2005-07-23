@@ -32,9 +32,6 @@
 
 #include "doomtype.h"
 
-#ifdef __GNUG__
-#pragma interface
-#endif
 
 // The data sampled per tick (single player)
 // and transmitted to other peers (multiplayer).
@@ -56,6 +53,9 @@ typedef struct
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.3  2005/07/23 18:56:07  fraggle
+// Remove unneccessary pragmas
+//
 // Revision 1.2  2005/07/23 16:44:55  fraggle
 // Update copyright to GNU GPL
 //

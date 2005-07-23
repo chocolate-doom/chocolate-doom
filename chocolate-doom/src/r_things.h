@@ -31,9 +31,6 @@
 #define __R_THINGS__
 
 
-#ifdef __GNUG__
-#pragma interface
-#endif
 
 #define MAXVISSPRITES  	128
 
@@ -79,6 +76,9 @@ R_ClipVisSprite
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.3  2005/07/23 18:56:07  fraggle
+// Remove unneccessary pragmas
+//
 // Revision 1.2  2005/07/23 16:44:57  fraggle
 // Update copyright to GNU GPL
 //

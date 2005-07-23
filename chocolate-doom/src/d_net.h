@@ -33,9 +33,6 @@
 #include "d_player.h"
 
 
-#ifdef __GNUG__
-#pragma interface
-#endif
 
 
 //
@@ -151,6 +148,9 @@ void TryRunTics (void);
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.3  2005/07/23 18:56:07  fraggle
+// Remove unneccessary pragmas
+//
 // Revision 1.2  2005/07/23 16:44:55  fraggle
 // Update copyright to GNU GPL
 //
