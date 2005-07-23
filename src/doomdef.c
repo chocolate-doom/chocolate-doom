@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: doomdef.c 8 2005-07-23 16:44:57Z fraggle $
+// $Id: doomdef.c 18 2005-07-23 18:56:07Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/07/23 18:56:07  fraggle
+// Remove unneccessary pragmas
+//
 // Revision 1.2  2005/07/23 16:44:55  fraggle
 // Update copyright to GNU GPL
 //
@@ -36,12 +39,9 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: doomdef.c 8 2005-07-23 16:44:57Z fraggle $";
+rcsid[] = "$Id: doomdef.c 18 2005-07-23 18:56:07Z fraggle $";
 
 
-#ifdef __GNUG__
-#pragma implementation "doomdef.h"
-#endif
 #include "doomdef.h"
 
 // Location for any defines turned variables.

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: dstrings.c 8 2005-07-23 16:44:57Z fraggle $
+// $Id: dstrings.c 18 2005-07-23 18:56:07Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/07/23 18:56:07  fraggle
+// Remove unneccessary pragmas
+//
 // Revision 1.2  2005/07/23 16:44:55  fraggle
 // Update copyright to GNU GPL
 //
@@ -35,36 +38,33 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: dstrings.c 8 2005-07-23 16:44:57Z fraggle $";
+rcsid[] = "$Id: dstrings.c 18 2005-07-23 18:56:07Z fraggle $";
 
 
-#ifdef __GNUG__
-#pragma implementation "dstrings.h"
-#endif
 #include "dstrings.h"
 
 
 
-char* endmsg[NUM_QUITMESSAGES+1]=
+char* endmsg[] =
 {
   // DOOM1
   QUITMSG,
   "please don't leave, there's more\ndemons to toast!",
   "let's beat it -- this is turning\ninto a bloodbath!",
-  "i wouldn't leave if i were you.\ndos is much worse.",
+  "i wouldn't leave if i were you. \ndos is much worse.",
   "you're trying to say you like dos\nbetter than me, right?",
   "don't leave yet -- there's a\ndemon around that corner!",
   "ya know, next time you come in here\ni'm gonna toast ya.",
-  "go ahead and leave. see if i care."
+  "go ahead and leave. see if i care.",
 
   // QuitDOOM II messages
   "you want to quit?\nthen, thou hast lost an eighth!",
-  "don't go now, there's a \ndimensional shambler waiting\nat the dos prompt!",
+  "don't go now, there's a \ndimensional shambler waiting \nat the dos prompt!",
   "get outta here and go back\nto your boring programs.",
   "if i were your boss, i'd \n deathmatch ya in a minute!",
   "look, bud. you leave now\nand you forfeit your body count!",
   "just leave. when you come\nback, i'll be waiting with a bat.",
-  "you're lucky i don't smack\nyou for thinking about leaving."
+  "you're lucky i don't smack\nyou for thinking about leaving.",
 
   // FinalDOOM?
   "fuck you, pussy!\nget the fuck out!",

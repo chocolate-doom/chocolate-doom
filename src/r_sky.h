@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: r_sky.h 8 2005-07-23 16:44:57Z fraggle $
+// $Id: r_sky.h 18 2005-07-23 18:56:07Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -31,9 +31,6 @@
 #define __R_SKY__
 
 
-#ifdef __GNUG__
-#pragma interface
-#endif
 
 // SKY, store the number for name.
 #define			SKYFLATNAME  "F_SKY1"
@@ -51,6 +48,9 @@ void R_InitSkyMap (void);
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.3  2005/07/23 18:56:07  fraggle
+// Remove unneccessary pragmas
+//
 // Revision 1.2  2005/07/23 16:44:56  fraggle
 // Update copyright to GNU GPL
 //

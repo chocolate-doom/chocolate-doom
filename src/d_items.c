@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_items.c 8 2005-07-23 16:44:57Z fraggle $
+// $Id: d_items.c 18 2005-07-23 18:56:07Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/07/23 18:56:07  fraggle
+// Remove unneccessary pragmas
+//
 // Revision 1.2  2005/07/23 16:44:55  fraggle
 // Update copyright to GNU GPL
 //
@@ -34,14 +37,11 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: d_items.c 8 2005-07-23 16:44:57Z fraggle $";
+rcsid[] = "$Id: d_items.c 18 2005-07-23 18:56:07Z fraggle $";
 
 // We are referring to sprite numbers.
 #include "info.h"
 
-#ifdef __GNUG__
-#pragma implementation "d_items.h"
-#endif
 #include "d_items.h"
 
 
