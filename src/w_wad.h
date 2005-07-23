@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: w_wad.h 8 2005-07-23 16:44:57Z fraggle $
+// $Id: w_wad.h 16 2005-07-23 18:54:06Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -30,10 +30,8 @@
 #ifndef __W_WAD__
 #define __W_WAD__
 
+#include <stdio.h>
 
-#ifdef __GNUG__
-#pragma interface
-#endif
 
 
 //
@@ -63,7 +61,7 @@ typedef struct
 typedef struct
 {
     char	name[8];
-    int		handle;
+    FILE       *handle;
     int		position;
     int		size;
 } lumpinfo_t;
@@ -92,6 +90,9 @@ void*	W_CacheLumpName (char* name, int tag);
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.3  2005/07/23 18:54:06  fraggle
+// Use standard C functions for WAD code
+//
 // Revision 1.2  2005/07/23 16:44:57  fraggle
 // Update copyright to GNU GPL
 //
