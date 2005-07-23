@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 8 2005-07-23 16:44:57Z fraggle $
+// $Id: i_video.c 13 2005-07-23 17:27:04Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/07/23 17:27:04  fraggle
+// Stop crash on shutdown
+//
 // Revision 1.2  2005/07/23 16:44:55  fraggle
 // Update copyright to GNU GPL
 //
@@ -35,7 +38,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 8 2005-07-23 16:44:57Z fraggle $";
+rcsid[] = "$Id: i_video.c 13 2005-07-23 17:27:04Z fraggle $";
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -59,7 +62,6 @@ int XShmGetEventBase( Display* dpy ); // problems with g++?
 #include <sys/socket.h>
 
 #include <netinet/in.h>
-#include <errnos.h>
 #include <signal.h>
 
 #include "doomstat.h"
@@ -185,7 +187,9 @@ void I_ShutdownGraphics(void)
   shmctl(X_shminfo.shmid, IPC_RMID, 0);
 
   // Paranoia.
-  image->data = NULL;
+  if (image) {
+    image->data = NULL;
+  }
 }
 
 
