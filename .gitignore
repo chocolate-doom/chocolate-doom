@@ -1,0 +1,17 @@
+
+# These are the default patterns globally ignored by Subversion:
+*.o
+*.lo
+*.la
+*.al
+.libs
+*.so
+*.so.[0-9]*
+*.a
+*.pyc
+*.pyo
+*.rej
+*~
+.#*
+.*.swp
+.DS_store
