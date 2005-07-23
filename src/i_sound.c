@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_sound.c 8 2005-07-23 16:44:57Z fraggle $
+// $Id: i_sound.c 12 2005-07-23 17:21:35Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/07/23 17:21:35  fraggle
+// Remove step table (unused, adds dependency on pow function)
+//
 // Revision 1.2  2005/07/23 16:44:55  fraggle
 // Update copyright to GNU GPL
 //
@@ -35,7 +38,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_sound.c 8 2005-07-23 16:44:57Z fraggle $";
+rcsid[] = "$Id: i_sound.c 12 2005-07-23 17:21:35Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -152,9 +155,6 @@ int 		channelhandles[NUM_CHANNELS];
 // SFX id of the playing sound effect.
 // Used to catch duplicates (like chainsaw).
 int		channelids[NUM_CHANNELS];			
-
-// Pitch to stepping lookup, unused.
-int		steptable[256];
 
 // Volume lookups.
 int		vol_lookup[128*256];
@@ -414,20 +414,12 @@ void I_SetChannels()
   int		i;
   int		j;
     
-  int*	steptablemid = steptable + 128;
-  
   // Okay, reset internal mixing channels to zero.
   /*for (i=0; i<NUM_CHANNELS; i++)
   {
     channels[i] = 0;
   }*/
 
-  // This table provides step widths for pitch parameters.
-  // I fail to see that this is currently used.
-  for (i=-128 ; i<128 ; i++)
-    steptablemid[i] = (int)(pow(2.0, (i/64.0))*65536.0);
-  
-  
   // Generates volume lookup tables
   //  which also turn the unsigned samples
   //  into signed samples.
@@ -504,8 +496,6 @@ I_StartSound
     // Debug.
     //fprintf( stderr, "starting sound %d", id );
     
-    // Returns a handle (not used).
-    id = addsfx( id, vol, steptable[pitch], sep );
 
     // fprintf( stderr, "/handle is %d\n", id );
     
