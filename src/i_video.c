@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 19 2005-07-23 19:17:11Z fraggle $
+// $Id: i_video.c 23 2005-07-23 21:32:47Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/07/23 21:32:47  fraggle
+// Add missing errno.h, fix crash on startup when no IWAD present
+//
 // Revision 1.4  2005/07/23 19:17:11  fraggle
 // Use ANSI-standard limit constants.  Remove LINUX define.
 //
@@ -41,10 +44,11 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 19 2005-07-23 19:17:11Z fraggle $";
+rcsid[] = "$Id: i_video.c 23 2005-07-23 21:32:47Z fraggle $";
 
 #include <stdlib.h>
 #include <unistd.h>
+#include <errno.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
 
@@ -177,7 +181,7 @@ int xlatekey(void)
 void I_ShutdownGraphics(void)
 {
   // Detach from X server
-  if (!XShmDetach(X_display, &X_shminfo))
+  if (X_display && !XShmDetach(X_display, &X_shminfo))
 	    I_Error("XShmDetach() failed in I_ShutdownGraphics()");
 
   // Release shared memory.
