@@ -30,7 +30,7 @@
 #ifndef __M_BBOX__
 #define __M_BBOX__
 
-#include <values.h>
+#include <limits.h>
 
 #include "m_fixed.h"
 
@@ -58,6 +58,9 @@ M_AddToBox
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.3  2005/07/23 19:17:11  fraggle
+// Use ANSI-standard limit constants.  Remove LINUX define.
+//
 // Revision 1.2  2005/07/23 16:44:55  fraggle
 // Update copyright to GNU GPL
 //

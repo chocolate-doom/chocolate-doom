@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/07/23 19:17:11  fraggle
+// Use ANSI-standard limit constants.  Remove LINUX define.
+//
 // Revision 1.2  2005/07/23 16:44:56  fraggle
 // Update copyright to GNU GPL
 //
@@ -53,10 +56,6 @@ rcsid[] = "$Id$";
 
 #include "doomstat.h"
 #include "r_sky.h"
-
-#ifdef LINUX
-#include  <alloca.h>
-#endif
 
 
 #include "r_data.h"
@@ -332,7 +331,7 @@ void R_GenerateLookup (int texnum)
     //  that are covered by more than one patch.
     // Fill in the lump / offset, so columns
     //  with only a single patch are all done.
-    patchcount = (byte *)alloca (texture->width);
+    patchcount = (byte *) malloc(texture->width);
     memset (patchcount, 0, texture->width);
     patch = texture->patches;
 		
@@ -383,7 +382,9 @@ void R_GenerateLookup (int texnum)
 	    
 	    texturecompositesize[texnum] += texture->height;
 	}
-    }	
+    }
+
+    free(patchcount);
 }
 
 
