@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/07/23 23:07:04  fraggle
+// Add back previously removed printfs as '.'s for startup progress bar
+//
 // Revision 1.4  2005/07/23 19:42:56  fraggle
 // Startup messages as in the DOS exes
 //
@@ -671,8 +674,11 @@ void R_InitColormaps (void)
 void R_InitData (void)
 {
     R_InitTextures ();
+    printf (".");
     R_InitFlats ();
+    printf (".");
     R_InitSpriteLumps ();
+    printf (".");
     R_InitColormaps ();
 }
 

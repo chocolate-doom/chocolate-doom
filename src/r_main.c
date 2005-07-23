@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/07/23 23:07:04  fraggle
+// Add back previously removed printfs as '.'s for startup progress bar
+//
 // Revision 1.4  2005/07/23 19:42:56  fraggle
 // Startup messages as in the DOS exes
 //
@@ -792,15 +795,21 @@ extern int	screenblocks;
 void R_Init (void)
 {
     R_InitData ();
+    printf (".");
     R_InitPointToAngle ();
+    printf (".");
     R_InitTables ();
     // viewwidth / viewheight / detailLevel are set by the defaults
+    printf (".");
 
     R_SetViewSize (screenblocks, detailLevel);
     R_InitPlanes ();
+    printf (".");
     R_InitLightTables ();
+    printf (".");
     R_InitSkyMap ();
     R_InitTranslationTables ();
+    printf (".");
 	
     framecount = 0;
 }
