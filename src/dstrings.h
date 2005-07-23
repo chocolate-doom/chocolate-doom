@@ -23,6 +23,9 @@
 //
 //
 // $Log$
+// Revision 1.3  2005/07/23 18:56:07  fraggle
+// Remove unneccessary pragmas
+//
 // Revision 1.2  2005/07/23 16:44:55  fraggle
 // Update copyright to GNU GPL
 //
@@ -66,7 +69,7 @@
 // Not done in french?
 
 // QuitDOOM messages
-#define NUM_QUITMESSAGES   22
+#define NUM_QUITMESSAGES   15
 
 extern char* endmsg[];
 
@@ -75,6 +78,9 @@ extern char* endmsg[];
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.3  2005/07/23 18:56:07  fraggle
+// Remove unneccessary pragmas
+//
 // Revision 1.2  2005/07/23 16:44:55  fraggle
 // Update copyright to GNU GPL
 //

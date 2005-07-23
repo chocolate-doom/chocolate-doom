@@ -31,9 +31,6 @@
 #define __P_SETUP__
 
 
-#ifdef __GNUG__
-#pragma interface
-#endif
 
 
 // NOT called by W_Ticker. Fixme.
@@ -51,6 +48,9 @@ void P_Init (void);
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.3  2005/07/23 18:56:07  fraggle
+// Remove unneccessary pragmas
+//
 // Revision 1.2  2005/07/23 16:44:56  fraggle
 // Update copyright to GNU GPL
 //
