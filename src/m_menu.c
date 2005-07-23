@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/07/23 18:54:30  fraggle
+// Fix quit prompt not displayed properly
+//
 // Revision 1.2  2005/07/23 16:44:55  fraggle
 // Update copyright to GNU GPL
 //
@@ -1769,21 +1772,24 @@ void M_Drawer (void)
 	y = 100 - M_StringHeight(messageString)/2;
 	while(*(messageString+start))
 	{
+	    int foundnewline = 0;
+
 	    for (i = 0;i < strlen(messageString+start);i++)
 		if (*(messageString+start+i) == '\n')
 		{
 		    memset(string,0,40);
 		    strncpy(string,messageString+start,i);
+		    foundnewline = 1;
 		    start += i+1;
 		    break;
 		}
 				
-	    if (i == strlen(messageString+start))
+	    if (!foundnewline)
 	    {
 		strcpy(string,messageString+start);
-		start += i;
+		start += strlen(string);
 	    }
-				
+
 	    x = 160 - M_StringWidth(string)/2;
 	    M_WriteText(x,y,string);
 	    y += SHORT(hu_font[0]->height);
