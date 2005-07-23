@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/07/23 21:32:47  fraggle
+// Add missing errno.h, fix crash on startup when no IWAD present
+//
 // Revision 1.4  2005/07/23 19:17:11  fraggle
 // Use ANSI-standard limit constants.  Remove LINUX define.
 //
@@ -46,6 +49,7 @@ rcsid[] = "$Id$";
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <errno.h>
 
 #include <math.h>
 
