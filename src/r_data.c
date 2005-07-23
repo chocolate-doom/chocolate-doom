@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: r_data.c 22 2005-07-23 19:42:56Z fraggle $
+// $Id: r_data.c 25 2005-07-23 23:07:04Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/07/23 23:07:04  fraggle
+// Add back previously removed printfs as '.'s for startup progress bar
+//
 // Revision 1.4  2005/07/23 19:42:56  fraggle
 // Startup messages as in the DOS exes
 //
@@ -44,7 +47,7 @@
 
 
 static const char
-rcsid[] = "$Id: r_data.c 22 2005-07-23 19:42:56Z fraggle $";
+rcsid[] = "$Id: r_data.c 25 2005-07-23 23:07:04Z fraggle $";
 
 #include "i_system.h"
 #include "z_zone.h"
@@ -671,8 +674,11 @@ void R_InitColormaps (void)
 void R_InitData (void)
 {
     R_InitTextures ();
+    printf (".");
     R_InitFlats ();
+    printf (".");
     R_InitSpriteLumps ();
+    printf (".");
     R_InitColormaps ();
 }
 

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: r_main.c 22 2005-07-23 19:42:56Z fraggle $
+// $Id: r_main.c 25 2005-07-23 23:07:04Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/07/23 23:07:04  fraggle
+// Add back previously removed printfs as '.'s for startup progress bar
+//
 // Revision 1.4  2005/07/23 19:42:56  fraggle
 // Startup messages as in the DOS exes
 //
@@ -43,7 +46,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: r_main.c 22 2005-07-23 19:42:56Z fraggle $";
+static const char rcsid[] = "$Id: r_main.c 25 2005-07-23 23:07:04Z fraggle $";
 
 
 
@@ -792,15 +795,21 @@ extern int	screenblocks;
 void R_Init (void)
 {
     R_InitData ();
+    printf (".");
     R_InitPointToAngle ();
+    printf (".");
     R_InitTables ();
     // viewwidth / viewheight / detailLevel are set by the defaults
+    printf (".");
 
     R_SetViewSize (screenblocks, detailLevel);
     R_InitPlanes ();
+    printf (".");
     R_InitLightTables ();
+    printf (".");
     R_InitSkyMap ();
     R_InitTranslationTables ();
+    printf (".");
 	
     framecount = 0;
 }
