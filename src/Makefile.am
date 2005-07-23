@@ -1,7 +1,7 @@
 
 bindir = $(prefix)/bin
 
-CFLAGS = @CFLAGS@ @X_CFLAGS@ -DNORMALUNIX -DLINUX
+CFLAGS = @CFLAGS@ @X_CFLAGS@ -DNORMALUNIX 
 LDFLAGS = @LDFLAGS@ @X_LDFLAGS@ -lX11 -lXext
 
 chocolate_doom_SOURCES=\

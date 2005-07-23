@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_sound.c 12 2005-07-23 17:21:35Z fraggle $
+// $Id: i_sound.c 19 2005-07-23 19:17:11Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/07/23 19:17:11  fraggle
+// Use ANSI-standard limit constants.  Remove LINUX define.
+//
 // Revision 1.3  2005/07/23 17:21:35  fraggle
 // Remove step table (unused, adds dependency on pow function)
 //
@@ -38,7 +41,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_sound.c 12 2005-07-23 17:21:35Z fraggle $";
+rcsid[] = "$Id: i_sound.c 19 2005-07-23 19:17:11Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -48,10 +51,6 @@ rcsid[] = "$Id: i_sound.c 12 2005-07-23 17:21:35Z fraggle $";
 
 #include <sys/time.h>
 #include <sys/types.h>
-
-#ifndef LINUX
-#include <sys/filio.h>
-#endif
 
 #include <fcntl.h>
 #include <unistd.h>

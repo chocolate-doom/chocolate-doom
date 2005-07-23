@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 13 2005-07-23 17:27:04Z fraggle $
+// $Id: i_video.c 19 2005-07-23 19:17:11Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/07/23 19:17:11  fraggle
+// Use ANSI-standard limit constants.  Remove LINUX define.
+//
 // Revision 1.3  2005/07/23 17:27:04  fraggle
 // Stop crash on shutdown
 //
@@ -38,7 +41,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 13 2005-07-23 17:27:04Z fraggle $";
+rcsid[] = "$Id: i_video.c 19 2005-07-23 19:17:11Z fraggle $";
 
 #include <stdlib.h>
 #include <unistd.h>
@@ -50,11 +53,6 @@ rcsid[] = "$Id: i_video.c 13 2005-07-23 17:27:04Z fraggle $";
 #include <X11/keysym.h>
 
 #include <X11/extensions/XShm.h>
-// Had to dig up XShm.c for this one.
-// It is in the libXext, but not in the XFree86 headers.
-#ifdef LINUX
-int XShmGetEventBase( Display* dpy ); // problems with g++?
-#endif
 
 #include <stdarg.h>
 #include <sys/time.h>

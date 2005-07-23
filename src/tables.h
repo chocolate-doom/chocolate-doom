@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: tables.h 8 2005-07-23 16:44:57Z fraggle $
+// $Id: tables.h 19 2005-07-23 19:17:11Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -43,13 +43,6 @@
 #ifndef __TABLES__
 #define __TABLES__
 
-
-
-#ifdef LINUX
-#include <math.h>
-#else
-#define PI				3.141592657
-#endif
 
 
 #include "m_fixed.h"
@@ -103,6 +96,9 @@ SlopeDiv
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.3  2005/07/23 19:17:11  fraggle
+// Use ANSI-standard limit constants.  Remove LINUX define.
+//
 // Revision 1.2  2005/07/23 16:44:57  fraggle
 // Update copyright to GNU GPL
 //

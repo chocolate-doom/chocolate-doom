@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: r_things.c 8 2005-07-23 16:44:57Z fraggle $
+// $Id: r_things.c 19 2005-07-23 19:17:11Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/07/23 19:17:11  fraggle
+// Use ANSI-standard limit constants.  Remove LINUX define.
+//
 // Revision 1.2  2005/07/23 16:44:57  fraggle
 // Update copyright to GNU GPL
 //
@@ -36,7 +39,7 @@
 
 
 static const char
-rcsid[] = "$Id: r_things.c 8 2005-07-23 16:44:57Z fraggle $";
+rcsid[] = "$Id: r_things.c 19 2005-07-23 19:17:11Z fraggle $";
 
 
 #include <stdio.h>
@@ -829,7 +832,7 @@ void R_SortVisSprites (void)
     vsprsortedhead.next = vsprsortedhead.prev = &vsprsortedhead;
     for (i=0 ; i<count ; i++)
     {
-	bestscale = MAXINT;
+	bestscale = INT_MAX;
 	for (ds=unsorted.next ; ds!= &unsorted ; ds=ds->next)
 	{
 	    if (ds->scale < bestscale)

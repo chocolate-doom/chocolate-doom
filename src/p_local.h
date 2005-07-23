@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_local.h 8 2005-07-23 16:44:57Z fraggle $
+// $Id: p_local.h 19 2005-07-23 19:17:11Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -99,8 +99,8 @@ void	P_PlayerThink (player_t* player);
 //
 // P_MOBJ
 //
-#define ONFLOORZ		MININT
-#define ONCEILINGZ		MAXINT
+#define ONFLOORZ		INT_MIN
+#define ONCEILINGZ		INT_MAX
 
 // Time interval for item respawning.
 #define ITEMQUESIZE		128
@@ -158,9 +158,9 @@ typedef struct
     }			d;
 } intercept_t;
 
-#define MAXINTERCEPTS	128
+#define INT_MAXERCEPTS	128
 
-extern intercept_t	intercepts[MAXINTERCEPTS];
+extern intercept_t	intercepts[INT_MAXERCEPTS];
 extern intercept_t*	intercept_p;
 
 typedef boolean (*traverser_t) (intercept_t *in);
@@ -290,6 +290,9 @@ P_DamageMobj
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.3  2005/07/23 19:17:11  fraggle
+// Use ANSI-standard limit constants.  Remove LINUX define.
+//
 // Revision 1.2  2005/07/23 16:44:56  fraggle
 // Update copyright to GNU GPL
 //

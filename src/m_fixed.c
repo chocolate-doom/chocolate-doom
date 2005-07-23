@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_fixed.c 18 2005-07-23 18:56:07Z fraggle $
+// $Id: m_fixed.c 19 2005-07-23 19:17:11Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/07/23 19:17:11  fraggle
+// Use ANSI-standard limit constants.  Remove LINUX define.
+//
 // Revision 1.3  2005/07/23 18:56:07  fraggle
 // Remove unneccessary pragmas
 //
@@ -39,7 +42,7 @@
 
 
 static const char
-rcsid[] = "$Id: m_fixed.c 18 2005-07-23 18:56:07Z fraggle $";
+rcsid[] = "$Id: m_fixed.c 19 2005-07-23 19:17:11Z fraggle $";
 
 #include "stdlib.h"
 
@@ -73,7 +76,7 @@ FixedDiv
   fixed_t	b )
 {
     if ( (abs(a)>>14) >= abs(b))
-	return (a^b)<0 ? MININT : MAXINT;
+	return (a^b)<0 ? INT_MIN : INT_MAX;
     return FixedDiv2 (a,b);
 }
 
