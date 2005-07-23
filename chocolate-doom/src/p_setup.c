@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/07/23 19:17:11  fraggle
+// Use ANSI-standard limit constants.  Remove LINUX define.
+//
 // Revision 1.2  2005/07/23 16:44:56  fraggle
 // Update copyright to GNU GPL
 //
@@ -623,7 +626,7 @@ P_SetupLevel
 #if 0 // UNUSED
     if (debugfile)
     {
-	Z_FreeTags (PU_LEVEL, MAXINT);
+	Z_FreeTags (PU_LEVEL, INT_MAX);
 	Z_FileDumpHeap (debugfile);
     }
     else

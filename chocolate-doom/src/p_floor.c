@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/07/23 19:17:11  fraggle
+// Use ANSI-standard limit constants.  Remove LINUX define.
+//
 // Revision 1.2  2005/07/23 16:44:56  fraggle
 // Update copyright to GNU GPL
 //
@@ -384,7 +387,7 @@ EV_DoFloor
 
 	  case raiseToTexture:
 	  {
-	      int	minsize = MAXINT;
+	      int	minsize = INT_MAX;
 	      side_t*	side;
 				
 	      floor->direction = 1;

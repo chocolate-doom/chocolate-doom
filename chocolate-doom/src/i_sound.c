@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/07/23 19:17:11  fraggle
+// Use ANSI-standard limit constants.  Remove LINUX define.
+//
 // Revision 1.3  2005/07/23 17:21:35  fraggle
 // Remove step table (unused, adds dependency on pow function)
 //
@@ -48,10 +51,6 @@ rcsid[] = "$Id$";
 
 #include <sys/time.h>
 #include <sys/types.h>
-
-#ifndef LINUX
-#include <sys/filio.h>
-#endif
 
 #include <fcntl.h>
 #include <unistd.h>

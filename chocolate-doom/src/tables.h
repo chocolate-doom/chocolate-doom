@@ -45,13 +45,6 @@
 
 
 
-#ifdef LINUX
-#include <math.h>
-#else
-#define PI				3.141592657
-#endif
-
-
 #include "m_fixed.h"
 	
 #define FINEANGLES		8192
@@ -103,6 +96,9 @@ SlopeDiv
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.3  2005/07/23 19:17:11  fraggle
+// Use ANSI-standard limit constants.  Remove LINUX define.
+//
 // Revision 1.2  2005/07/23 16:44:57  fraggle
 // Update copyright to GNU GPL
 //
