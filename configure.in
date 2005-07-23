@@ -1,0 +1,24 @@
+AC_INIT(Chocolate Doom, 0.1, fraggle@alkali.org, chocolate-doom)
+AC_CONFIG_AUX_DIR(autotools)
+
+AC_PROG_CC
+
+AC_PATH_X
+
+AM_INIT_AUTOMAKE(AC_PACKAGE_TARNAME,AC_PACKAGE_VERSION)
+
+X_CFLAGS="-I$x_includes"
+X_LDFLAGS="-L$x_libraries -lX11"
+
+echo $X_CFLAGS
+
+AC_SUBST(X_CFLAGS)
+AC_SUBST(X_LDFLAGS)
+
+AM_CONFIG_HEADER(config.h:config.hin)
+
+AC_OUTPUT([
+Makefile
+src/Makefile
+])
+
