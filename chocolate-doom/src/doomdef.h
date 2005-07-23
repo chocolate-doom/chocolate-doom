@@ -37,7 +37,7 @@
 // Global parameters/defines.
 //
 // DOOM version
-enum { VERSION =  110 };
+enum { VERSION =  109 };
 
 
 // Game mode handling - identify IWAD version
@@ -341,6 +341,9 @@ typedef enum
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.3  2005/07/23 19:29:45  fraggle
+// Put version number back to 1.9
+//
 // Revision 1.2  2005/07/23 16:44:55  fraggle
 // Update copyright to GNU GPL
 //
