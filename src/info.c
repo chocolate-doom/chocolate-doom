@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: info.c 18 2005-07-23 18:56:07Z fraggle $
+// $Id: info.c 24 2005-07-23 21:42:52Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/07/23 21:42:52  fraggle
+// Add missing null to end of sprite names list
+//
 // Revision 1.3  2005/07/23 18:56:07  fraggle
 // Remove unneccessary pragmas
 //
@@ -40,7 +43,9 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: info.c 18 2005-07-23 18:56:07Z fraggle $";
+rcsid[] = "$Id: info.c 24 2005-07-23 21:42:52Z fraggle $";
+
+#include <stdlib.h>
 
 // Data.
 #include "sounds.h"
@@ -50,7 +55,7 @@ rcsid[] = "$Id: info.c 18 2005-07-23 18:56:07Z fraggle $";
 
 #include "p_mobj.h"
 
-char *sprnames[NUMSPRITES] = {
+char *sprnames[] = {
     "TROO","SHTG","PUNG","PISG","PISF","SHTF","SHT2","CHGG","CHGF","MISG",
     "MISF","SAWG","PLSG","PLSF","BFGG","BFGF","BLUD","PUFF","BAL1","BAL2",
     "PLSS","PLSE","MISL","BFS1","BFE1","BFE2","TFOG","IFOG","PLAY","POSS",
@@ -64,7 +69,7 @@ char *sprnames[NUMSPRITES] = {
     "POL3","POL1","POL6","GOR2","GOR3","GOR4","GOR5","SMIT","COL1","COL2",
     "COL3","COL4","CAND","CBRA","COL6","TRE1","TRE2","ELEC","CEYE","FSKU",
     "COL5","TBLU","TGRN","TRED","SMBT","SMGT","SMRT","HDB1","HDB2","HDB3",
-    "HDB4","HDB5","HDB6","POB1","POB2","BRS1","TLMP","TLP2"
+    "HDB4","HDB5","HDB6","POB1","POB2","BRS1","TLMP","TLP2", NULL
 };
 
 

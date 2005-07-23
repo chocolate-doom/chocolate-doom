@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: info.h 8 2005-07-23 16:44:57Z fraggle $
+// $Id: info.h 24 2005-07-23 21:42:52Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -1163,7 +1163,7 @@ typedef struct
 } state_t;
 
 extern state_t	states[NUMSTATES];
-extern char *sprnames[NUMSPRITES];
+extern char *sprnames[];
 
 
 
@@ -1343,6 +1343,9 @@ extern mobjinfo_t mobjinfo[NUMMOBJTYPES];
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.3  2005/07/23 21:42:52  fraggle
+// Add missing null to end of sprite names list
+//
 // Revision 1.2  2005/07/23 16:44:55  fraggle
 // Update copyright to GNU GPL
 //
