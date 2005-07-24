@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_misc.c 19 2005-07-23 19:17:11Z fraggle $
+// $Id: m_misc.c 26 2005-07-24 02:14:04Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -23,6 +23,12 @@
 //
 //
 // $Log$
+// Revision 1.4  2005/07/24 02:14:04  fraggle
+// Move to SDL for graphics.
+// Translate key scancodes to correct internal format when reading
+// settings from config file - backwards compatible with config files
+// for original exes
+//
 // Revision 1.3  2005/07/23 19:17:11  fraggle
 // Use ANSI-standard limit constants.  Remove LINUX define.
 //
@@ -41,7 +47,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_misc.c 19 2005-07-23 19:17:11Z fraggle $";
+rcsid[] = "$Id: m_misc.c 26 2005-07-24 02:14:04Z fraggle $";
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -232,14 +238,13 @@ extern int	mb_used;
 extern char*	chat_macros[];
 
 
-
 typedef struct
 {
     char*	name;
     int*	location;
     int		defaultvalue;
-    int		scantranslate;		// PC scan code hack
-    int		untranslated;		// lousy hack
+    int		scantranslate; // translate this value to a scancode
+    int         untranslated;
 } default_t;
 
 default_t	defaults[] =
@@ -250,17 +255,17 @@ default_t	defaults[] =
     {"show_messages",&showMessages, 1},
     
 
-    {"key_right",&key_right, KEY_RIGHTARROW},
-    {"key_left",&key_left, KEY_LEFTARROW},
-    {"key_up",&key_up, KEY_UPARROW},
-    {"key_down",&key_down, KEY_DOWNARROW},
-    {"key_strafeleft",&key_strafeleft, ','},
-    {"key_straferight",&key_straferight, '.'},
+    {"key_right",&key_right, KEY_RIGHTARROW, 1},
+    {"key_left",&key_left, KEY_LEFTARROW, 1},
+    {"key_up",&key_up, KEY_UPARROW, 1},
+    {"key_down",&key_down, KEY_DOWNARROW, 1},
+    {"key_strafeleft",&key_strafeleft, ',', 1},
+    {"key_straferight",&key_straferight, '.', 1},
 
-    {"key_fire",&key_fire, KEY_RCTRL},
-    {"key_use",&key_use, ' '},
-    {"key_strafe",&key_strafe, KEY_RALT},
-    {"key_speed",&key_speed, KEY_RSHIFT},
+    {"key_fire",&key_fire, KEY_RCTRL, 1},
+    {"key_use",&key_use, ' ', 1},
+    {"key_strafe",&key_strafe, KEY_RALT, 1},
+    {"key_speed",&key_speed, KEY_RSHIFT, 1},
 
     {"use_mouse",&usemouse, 1},
     {"mouseb_fire",&mousebfire,0},
@@ -298,10 +303,32 @@ default_t	defaults[] =
 int	numdefaults;
 char*	defaultfile;
 
+static int scantokey[128] =
+{
+    0  ,    27,     '1',    '2',    '3',    '4',    '5',    '6',
+    '7',    '8',    '9',    '0',    '-',    '=',    KEY_BACKSPACE, 9,
+    'q',    'w',    'e',    'r',    't',    'y',    'u',    'i',
+    'o',    'p',    '[',    ']',    13,		KEY_RCTRL, 'a',    's',
+    'd',    'f',    'g',    'h',    'j',    'k',    'l',    ';',
+    '\'',   '`',    KEY_RSHIFT,'\\',   'z',    'x',    'c',    'v',
+    'b',    'n',    'm',    ',',    '.',    '/',    KEY_RSHIFT,KEYP_MULTIPLY,
+    KEY_RALT,  ' ',  KEY_CAPSLOCK,KEY_F1,  KEY_F2,   KEY_F3,   KEY_F4,   KEY_F5,
+    KEY_F6,   KEY_F7,   KEY_F8,   KEY_F9,   KEY_F10,  KEY_PAUSE,KEY_SCRLCK,KEY_HOME,
+    KEYP_UPARROW,KEY_PGUP,KEYP_MINUS,KEYP_LEFTARROW,KEYP_5,KEYP_RIGHTARROW,KEYP_PLUS,KEY_END,
+    KEYP_DOWNARROW,KEY_PGDN,KEY_INS,KEY_DEL,0,   0,      0,      KEY_F11,
+    KEY_F12,  0,      0,      0,      0,      0,      0,      0,
+    0,      0,      0,      0,      0,      0,      0,      0,
+    0,      0,      0,      0,      0,      0,      0,      0,
+    0,      0,      0,      0,      0,      0,      0,      0,
+    0,      0,      0,      0,      0,      0,      0,      0
+};
+
+
 
 //
 // M_SaveDefaults
 //
+
 void M_SaveDefaults (void)
 {
     int		i;
@@ -318,13 +345,43 @@ void M_SaveDefaults (void)
 	    && defaults[i].defaultvalue < 0xfff)
 	{
 	    v = *defaults[i].location;
+
+            // translate keys back to scancodes
+
+            if (defaults[i].scantranslate)
+            {
+                // use the untranslated version if we can, to reduce
+                // the possibility of screwing up the user's config
+                // file
+
+                if (defaults[i].untranslated)
+                {
+                    v = defaults[i].untranslated;
+                }
+                else
+                {
+                    // search for a reverse mapping back to a scancode
+                    // in the scantokey table
+
+                    int s;
+                    for (s=0; s<128; ++s)
+                    {
+                        if (scantokey[s] == v)
+                        {
+                            v = s;
+                            break;
+                        }
+                    }
+                }
+            }
+            
 	    fprintf (f,"%s\t\t%i\n",defaults[i].name,v);
 	} else {
 	    fprintf (f,"%s\t\t\"%s\"\n",defaults[i].name,
 		     * (char **) (defaults[i].location));
 	}
     }
-	
+
     fclose (f);
 }
 
@@ -332,7 +389,6 @@ void M_SaveDefaults (void)
 //
 // M_LoadDefaults
 //
-extern byte	scantokey[128];
 
 void M_LoadDefaults (void)
 {
@@ -348,8 +404,10 @@ void M_LoadDefaults (void)
     // set everything to base values
     numdefaults = sizeof(defaults)/sizeof(defaults[0]);
     for (i=0 ; i<numdefaults ; i++)
+    {
 	*defaults[i].location = defaults[i].defaultvalue;
-    
+        defaults[i].untranslated = 0;
+    }
     // check for a custom default file
     i = M_CheckParm ("-config");
     if (i && i<myargc-1)
@@ -385,6 +443,15 @@ void M_LoadDefaults (void)
 		for (i=0 ; i<numdefaults ; i++)
 		    if (!strcmp(def, defaults[i].name))
 		    {
+                        if (defaults[i].scantranslate)
+                        {
+                            // translate scancodes read from config
+                            // file (save the old value in untranslated)
+
+                            defaults[i].untranslated = parm;
+                            parm = scantokey[parm];
+                        }
+                        
 			if (!isstring)
 			    *defaults[i].location = parm;
 			else

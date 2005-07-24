@@ -1,8 +1,8 @@
 
 bindir = $(prefix)/bin
 
-CFLAGS = @CFLAGS@ @X_CFLAGS@ -DNORMALUNIX 
-LDFLAGS = @LDFLAGS@ @X_LDFLAGS@ -lX11 -lXext
+CFLAGS = @CFLAGS@ @SDL_CFLAGS@ -DNORMALUNIX 
+LDFLAGS = @LDFLAGS@ @SDL_LIBS@ 
 
 chocolate_doom_SOURCES=\
 am_map.c    d_think.h   i_video.c   p_floor.c   p_tick.c    r_things.h	\
