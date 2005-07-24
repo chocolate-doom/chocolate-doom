@@ -1,6 +1,9 @@
 To do:
 
-* SDL port
+* Port sound+timer code to SDL
 * Startup messages
+* Fix Final Doom, Ultimate Doom, IWAD selection in general
+* Check quit messages selected correctly
 * Setup utility
+* Short-circuit Zone memory
 
