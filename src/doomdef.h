@@ -286,6 +286,37 @@ typedef enum
 
 #define KEY_LALT	KEY_RALT
 
+// new keys:
+
+#define KEY_CAPSLOCK    (0x80+0x3a)
+#define KEY_SCRLCK      (0x80+0x46)
+
+#define KEYP_0          (0x80+0x52)
+#define KEYP_1          (0x80+0x4F)
+#define KEYP_2          (0x80+0x50)
+#define KEYP_3          (0x80+0x41)
+#define KEYP_4          (0x80+0x4B)
+#define KEYP_5          (0x80+0x4C)
+#define KEYP_6          (0x80+0x4D)
+#define KEYP_7          (0x80+0x47)
+#define KEYP_8          (0x80+0x48)
+#define KEYP_9          (0x80+0x49)
+
+#define KEY_HOME        (0x80+0x47)
+#define KEY_END         (0x80+0x4f)
+#define KEY_PGUP        (0x80+0x49)
+#define KEY_PGDN        (0x80+0x51)
+#define KEY_INS         (0x80+0x52)
+#define KEY_DEL         (0x80+0x53)
+#define KEYP_UPARROW      KEY_UPARROW
+#define KEYP_DOWNARROW    KEY_DOWNARROW
+#define KEYP_LEFTARROW    KEY_LEFTARROW
+#define KEYP_RIGHTARROW   KEY_RIGHTARROW
+#define KEYP_MULTIPLY     '*'
+#define KEYP_PLUS         '+'
+#define KEYP_MINUS        '-'
+#define KEYP_DIVIDE       '/'
+
 
 
 // DOOM basic types (boolean),
@@ -341,6 +372,12 @@ typedef enum
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.4  2005/07/24 02:14:04  fraggle
+// Move to SDL for graphics.
+// Translate key scancodes to correct internal format when reading
+// settings from config file - backwards compatible with config files
+// for original exes
+//
 // Revision 1.3  2005/07/23 19:29:45  fraggle
 // Put version number back to 1.9
 //
