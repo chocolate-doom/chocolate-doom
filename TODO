@@ -1,6 +1,6 @@
 To do:
 
-* Port sound+timer code to SDL
+* Port sound code to SDL
 * Startup messages
 * Fix Final Doom, Ultimate Doom, IWAD selection in general
 * Check quit messages selected correctly
