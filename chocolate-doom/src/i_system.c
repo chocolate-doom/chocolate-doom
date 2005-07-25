@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/07/25 20:41:59  fraggle
+// Port timer code to SDL
+//
 // Revision 1.4  2005/07/23 19:42:56  fraggle
 // Startup messages as in the DOS exes
 //
@@ -48,8 +51,7 @@ rcsid[] = "$Id$";
 #include <string.h>
 
 #include <stdarg.h>
-#include <sys/time.h>
-#include <unistd.h>
+#include <SDL.h>
 
 #include "doomdef.h"
 #include "m_misc.h"
@@ -107,16 +109,17 @@ byte* I_ZoneBase (int*	size)
 //
 int  I_GetTime (void)
 {
-    struct timeval	tp;
-    struct timezone	tzp;
-    int			newtics;
-    static int		basetime=0;
-  
-    gettimeofday(&tp, &tzp);
-    if (!basetime)
-	basetime = tp.tv_sec;
-    newtics = (tp.tv_sec-basetime)*TICRATE + tp.tv_usec*TICRATE/1000000;
-    return newtics;
+    static Uint32 basetime = 0;
+    Uint32 ticks;
+
+    ticks = SDL_GetTicks();
+
+    if (basetime == 0)
+        basetime = ticks;
+
+    ticks -= basetime;
+
+    return (ticks * 35) / 1000;    
 }
 
 
@@ -127,7 +130,10 @@ int  I_GetTime (void)
 void I_Init (void)
 {
     I_InitSound();
-    //  I_InitGraphics();
+
+    // initialise timer
+
+    SDL_Init(SDL_INIT_TIMER);
 }
 
 //
@@ -145,23 +151,17 @@ void I_Quit (void)
 
 void I_WaitVBL(int count)
 {
-#ifdef SGI
-    sginap(1);                                           
-#else
-#ifdef SUN
-    sleep(0);
-#else
-    usleep (count * (1000000/70) );                                
-#endif
-#endif
+    SDL_Delay((count * 1000) / 70);
 }
 
 void I_BeginRead(void)
 {
+    // display "reading" disk
 }
 
 void I_EndRead(void)
 {
+    // remove "reading" disk
 }
 
 byte*	I_AllocLow(int length)
