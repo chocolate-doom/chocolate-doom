@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.7  2005/07/25 20:50:55  fraggle
+// mouse
+//
 // Revision 1.6  2005/07/24 02:14:04  fraggle
 // Move to SDL for graphics.
 // Translate key scancodes to correct internal format when reading
@@ -63,7 +66,7 @@ rcsid[] = "$Id$";
 
 #include "doomdef.h"
 
-SDL_Surface *screen;
+static SDL_Surface *screen;
 
 #define POINTER_WARP_COUNTDOWN	1
 
@@ -71,7 +74,6 @@ SDL_Surface *screen;
 // This cannot work properly w/o DGA.
 // Needs an invisible mouse cursor at least.
 boolean		grabMouse;
-int		doPointerWarp = POINTER_WARP_COUNTDOWN;
 
 // Blocky mode,
 // replace each 320x200 pixel with multiply*multiply pixels.
@@ -178,6 +180,21 @@ void I_StartFrame (void)
 
 }
 
+static int mousebuttonstate(void)
+{
+    Uint8 state = SDL_GetMouseState(NULL, NULL);
+    int result = 0;
+
+    if (state & SDL_BUTTON(1))
+        result |= 1;
+    if (state & SDL_BUTTON(2))
+        result |= 2;
+    if (state & SDL_BUTTON(3))
+        result |= 4;
+
+    return result;
+}
+
 static int	lastmousex = 0;
 static int	lastmousey = 0;
 boolean		mousemoved = false;
@@ -203,6 +220,26 @@ void I_GetEvent(void)
                 event.data1 = xlatekey(&sdlevent.key.keysym);
                 D_PostEvent(&event);
                 break;
+            case SDL_MOUSEMOTION:
+                event.type = ev_mouse;
+                event.data1 = mousebuttonstate();
+                event.data2 = sdlevent.motion.xrel * 8;
+                event.data3 = -sdlevent.motion.yrel * 8;
+                D_PostEvent(&event);
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+                event.type = ev_mouse;
+                event.data1 = mousebuttonstate();
+                event.data2 = event.data3 = 0;
+                D_PostEvent(&event);
+                break;
+            case SDL_MOUSEBUTTONUP:
+                event.type = ev_mouse;
+                event.data1 = mousebuttonstate();
+                event.data2 = event.data3 = 0;
+                D_PostEvent(&event);
+                break;
+
 #if 0
           case ButtonPress:
             event.type = ev_mouse;
@@ -487,9 +524,18 @@ void I_SetPalette (byte* palette)
 
 void I_InitGraphics(void)
 {
+    int flags = 0;
+
     SDL_Init(SDL_INIT_VIDEO);
 
-    screen = SDL_SetVideoMode(SCREENWIDTH, SCREENHEIGHT, 8, 0);
+//    flags |= SDL_FULLSCREEN;
+
+    screen = SDL_SetVideoMode(SCREENWIDTH, SCREENHEIGHT, 8, flags);
+
+    if (screen == NULL)
+    {
+        I_Error("Error setting video mode: %s\n", SDL_GetError());
+    }
 
     if (multiply == 1)
 	screens[0] = (unsigned char *) (screen->pixels);
@@ -497,6 +543,8 @@ void I_InitGraphics(void)
 	screens[0] = (unsigned char *) malloc (SCREENWIDTH * SCREENHEIGHT);
 
     SDL_EnableUNICODE(1);
+    SDL_ShowCursor(0);
+    SDL_WM_GrabInput(SDL_GRAB_ON);
 }
 
 
