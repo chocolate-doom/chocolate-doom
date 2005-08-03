@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.9  2005/08/03 22:19:52  fraggle
+// Set some flags to fix palette and improve performance
+//
 // Revision 1.8  2005/08/03 21:58:02  fraggle
 // Working scale*2
 //
@@ -536,6 +539,7 @@ void I_InitGraphics(void)
 
     SDL_Init(SDL_INIT_VIDEO);
 
+    flags |= SDL_SWSURFACE | SDL_HWPALETTE;
     flags |= SDL_FULLSCREEN;
 
     screen = SDL_SetVideoMode(SCREENWIDTH*multiply, SCREENHEIGHT*multiply, 8, flags);
