@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: g_game.c 8 2005-07-23 16:44:57Z fraggle $
+// $Id: g_game.c 32 2005-08-03 22:20:09Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/08/03 22:20:09  fraggle
+// Display FPS on quit
+//
 // Revision 1.2  2005/07/23 16:44:55  fraggle
 // Update copyright to GNU GPL
 //
@@ -35,7 +38,7 @@
 
 
 static const char
-rcsid[] = "$Id: g_game.c 8 2005-07-23 16:44:57Z fraggle $";
+rcsid[] = "$Id: g_game.c 32 2005-08-03 22:20:09Z fraggle $";
 
 #include <string.h>
 #include <stdlib.h>
@@ -1663,9 +1666,15 @@ boolean G_CheckDemoStatus (void)
 	 
     if (timingdemo) 
     { 
+        float fps;
+        int realtics;
+
 	endtime = I_GetTime (); 
-	I_Error ("timed %i gametics in %i realtics",gametic 
-		 , endtime-starttime); 
+        realtics = endtime - starttime;
+        fps = ((float) gametic * 35) / realtics;
+
+	I_Error ("timed %i gametics in %i realtics (%f fps)",
+                 gametic, realtics, fps);
     } 
 	 
     if (demoplayback) 
