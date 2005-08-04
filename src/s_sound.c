@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: s_sound.c 8 2005-07-23 16:44:57Z fraggle $
+// $Id: s_sound.c 37 2005-08-04 18:42:15Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/08/04 18:42:15  fraggle
+// Silence compiler warnings
+//
 // Revision 1.2  2005/07/23 16:44:57  fraggle
 // Update copyright to GNU GPL
 //
@@ -35,7 +38,7 @@
 
 
 static const char
-rcsid[] = "$Id: s_sound.c 8 2005-07-23 16:44:57Z fraggle $";
+rcsid[] = "$Id: s_sound.c 37 2005-08-04 18:42:15Z fraggle $";
 
 
 
@@ -664,7 +667,7 @@ S_ChangeMusic
 ( int			musicnum,
   int			looping )
 {
-    musicinfo_t*	music;
+    musicinfo_t*	music = NULL;
     char		namebuf[9];
 
     if ( (musicnum <= mus_None)

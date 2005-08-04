@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: r_segs.c 19 2005-07-23 19:17:11Z fraggle $
+// $Id: r_segs.c 37 2005-08-04 18:42:15Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/08/04 18:42:15  fraggle
+// Silence compiler warnings
+//
 // Revision 1.3  2005/07/23 19:17:11  fraggle
 // Use ANSI-standard limit constants.  Remove LINUX define.
 //
@@ -39,7 +42,7 @@
 
 
 static const char
-rcsid[] = "$Id: r_segs.c 19 2005-07-23 19:17:11Z fraggle $";
+rcsid[] = "$Id: r_segs.c 37 2005-08-04 18:42:15Z fraggle $";
 
 
 
@@ -230,8 +233,6 @@ void R_RenderSegLoop (void)
     int			top;
     int			bottom;
 
-    //texturecolumn = 0;				// shut up compiler warning
-	
     for ( ; rw_x < rw_stopx ; rw_x++)
     {
 	// mark floor / ceiling areas
@@ -291,6 +292,12 @@ void R_RenderSegLoop (void)
 	    dc_x = rw_x;
 	    dc_iscale = 0xffffffffu / (unsigned)rw_scale;
 	}
+        else
+        {
+            // purely to shut up the compiler
+
+            texturecolumn = 0;
+        }
 	
 	// draw the wall tiers
 	if (midtexture)

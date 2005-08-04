@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_floor.c 19 2005-07-23 19:17:11Z fraggle $
+// $Id: p_floor.c 37 2005-08-04 18:42:15Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/08/04 18:42:15  fraggle
+// Silence compiler warnings
+//
 // Revision 1.3  2005/07/23 19:17:11  fraggle
 // Use ANSI-standard limit constants.  Remove LINUX define.
 //
@@ -38,7 +41,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_floor.c 19 2005-07-23 19:17:11Z fraggle $";
+rcsid[] = "$Id: p_floor.c 37 2005-08-04 18:42:15Z fraggle $";
 
 
 #include "z_zone.h"
@@ -483,8 +486,8 @@ EV_BuildStairs
 
     floormove_t*	floor;
     
-    fixed_t		stairsize;
-    fixed_t		speed;
+    fixed_t		stairsize = 0;
+    fixed_t		speed = 0;
 
     secnum = -1;
     rtn = 0;

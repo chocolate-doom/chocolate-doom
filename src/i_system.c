@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_system.c 34 2005-08-04 01:14:37Z fraggle $
+// $Id: i_system.c 37 2005-08-04 18:42:15Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.7  2005/08/04 18:42:15  fraggle
+// Silence compiler warnings
+//
 // Revision 1.6  2005/08/04 01:14:37  fraggle
 // Begin/EndRead now in i_video.c
 //
@@ -46,7 +49,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_system.c 34 2005-08-04 01:14:37Z fraggle $";
+rcsid[] = "$Id: i_system.c 37 2005-08-04 18:42:15Z fraggle $";
 
 
 #include <stdlib.h>
@@ -100,7 +103,7 @@ byte* I_ZoneBase (int*	size)
     *size = mb_used*1024*1024;
     zonemem = malloc (*size);
     printf("zone memory: %x, %x allocated for zone\n", 
-	   (long) zonemem, *size);
+	   (int) zonemem, *size);
     return zonemem;
 }
 

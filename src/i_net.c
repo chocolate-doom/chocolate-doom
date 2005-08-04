@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_net.c 18 2005-07-23 18:56:07Z fraggle $
+// $Id: i_net.c 37 2005-08-04 18:42:15Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/08/04 18:42:15  fraggle
+// Silence compiler warnings
+//
 // Revision 1.3  2005/07/23 18:56:07  fraggle
 // Remove unneccessary pragmas
 //
@@ -37,7 +40,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_net.c 18 2005-07-23 18:56:07Z fraggle $";
+rcsid[] = "$Id: i_net.c 37 2005-08-04 18:42:15Z fraggle $";
 
 #include <stdlib.h>
 #include <string.h>
@@ -63,20 +66,6 @@ rcsid[] = "$Id: i_net.c 18 2005-07-23 18:56:07Z fraggle $";
 
 
 
-
-// For some odd reason...
-#define ntohl(x) \
-        ((unsigned long int)((((unsigned long int)(x) & 0x000000ffU) << 24) | \
-                             (((unsigned long int)(x) & 0x0000ff00U) <<  8) | \
-                             (((unsigned long int)(x) & 0x00ff0000U) >>  8) | \
-                             (((unsigned long int)(x) & 0xff000000U) >> 24)))
-
-#define ntohs(x) \
-        ((unsigned short int)((((unsigned short int)(x) & 0x00ff) << 8) | \
-                              (((unsigned short int)(x) & 0xff00) >> 8))) \
-	  
-#define htonl(x) ntohl(x)
-#define htons(x) ntohs(x)
 
 void	NetSend (void);
 boolean NetListen (void);

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: w_wad.c 33 2005-08-04 01:13:46Z fraggle $
+// $Id: w_wad.c 37 2005-08-04 18:42:15Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/08/04 18:42:15  fraggle
+// Silence compiler warnings
+//
 // Revision 1.4  2005/08/04 01:13:46  fraggle
 // Loading disk
 //
@@ -42,15 +45,18 @@
 
 
 static const char
-rcsid[] = "$Id: w_wad.c 33 2005-08-04 01:13:46Z fraggle $";
+rcsid[] = "$Id: w_wad.c 37 2005-08-04 18:42:15Z fraggle $";
 
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "doomtype.h"
 #include "m_swap.h"
 #include "i_system.h"
+#include "i_video.h"
 #include "z_zone.h"
 
 #include "w_wad.h"
