@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/08/04 18:42:15  fraggle
+// Silence compiler warnings
+//
 // Revision 1.3  2005/07/23 19:17:11  fraggle
 // Use ANSI-standard limit constants.  Remove LINUX define.
 //
@@ -828,11 +831,12 @@ void R_SortVisSprites (void)
     unsorted.prev = vissprite_p-1;
     
     // pull the vissprites out by scale
-    //best = 0;		// shut up the compiler warning
+
     vsprsortedhead.next = vsprsortedhead.prev = &vsprsortedhead;
     for (i=0 ; i<count ; i++)
     {
 	bestscale = INT_MAX;
+        best = unsorted.next;
 	for (ds=unsorted.next ; ds!= &unsorted ; ds=ds->next)
 	{
 	    if (ds->scale < bestscale)

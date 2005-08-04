@@ -23,6 +23,9 @@
 //
 //
 // $Log$
+// Revision 1.5  2005/08/04 18:42:15  fraggle
+// Silence compiler warnings
+//
 // Revision 1.4  2005/07/24 02:14:04  fraggle
 // Move to SDL for graphics.
 // Translate key scancodes to correct internal format when reading
@@ -240,8 +243,8 @@ extern char*	chat_macros[];
 
 typedef struct
 {
-    char*	name;
-    int*	location;
+    char *	name;
+    void *	location;
     int		defaultvalue;
     int		scantranslate; // translate this value to a scancode
     int         untranslated;
@@ -287,16 +290,16 @@ default_t	defaults[] =
 
     {"usegamma",&usegamma, 0},
 
-    {"chatmacro0", (int *) &chat_macros[0], (int) HUSTR_CHATMACRO0 },
-    {"chatmacro1", (int *) &chat_macros[1], (int) HUSTR_CHATMACRO1 },
-    {"chatmacro2", (int *) &chat_macros[2], (int) HUSTR_CHATMACRO2 },
-    {"chatmacro3", (int *) &chat_macros[3], (int) HUSTR_CHATMACRO3 },
-    {"chatmacro4", (int *) &chat_macros[4], (int) HUSTR_CHATMACRO4 },
-    {"chatmacro5", (int *) &chat_macros[5], (int) HUSTR_CHATMACRO5 },
-    {"chatmacro6", (int *) &chat_macros[6], (int) HUSTR_CHATMACRO6 },
-    {"chatmacro7", (int *) &chat_macros[7], (int) HUSTR_CHATMACRO7 },
-    {"chatmacro8", (int *) &chat_macros[8], (int) HUSTR_CHATMACRO8 },
-    {"chatmacro9", (int *) &chat_macros[9], (int) HUSTR_CHATMACRO9 }
+    {"chatmacro0", &chat_macros[0], (int) HUSTR_CHATMACRO0 },
+    {"chatmacro1", &chat_macros[1], (int) HUSTR_CHATMACRO1 },
+    {"chatmacro2", &chat_macros[2], (int) HUSTR_CHATMACRO2 },
+    {"chatmacro3", &chat_macros[3], (int) HUSTR_CHATMACRO3 },
+    {"chatmacro4", &chat_macros[4], (int) HUSTR_CHATMACRO4 },
+    {"chatmacro5", &chat_macros[5], (int) HUSTR_CHATMACRO5 },
+    {"chatmacro6", &chat_macros[6], (int) HUSTR_CHATMACRO6 },
+    {"chatmacro7", &chat_macros[7], (int) HUSTR_CHATMACRO7 },
+    {"chatmacro8", &chat_macros[8], (int) HUSTR_CHATMACRO8 },
+    {"chatmacro9", &chat_macros[9], (int) HUSTR_CHATMACRO9 }
 
 };
 
@@ -344,7 +347,7 @@ void M_SaveDefaults (void)
 	if (defaults[i].defaultvalue > -0xfff
 	    && defaults[i].defaultvalue < 0xfff)
 	{
-	    v = *defaults[i].location;
+	    v = *((int *)defaults[i].location);
 
             // translate keys back to scancodes
 
@@ -397,7 +400,7 @@ void M_LoadDefaults (void)
     FILE*	f;
     char	def[80];
     char	strparm[100];
-    char*	newstring;
+    char*	newstring = "";
     int		parm;
     boolean	isstring;
     
@@ -405,7 +408,7 @@ void M_LoadDefaults (void)
     numdefaults = sizeof(defaults)/sizeof(defaults[0]);
     for (i=0 ; i<numdefaults ; i++)
     {
-	*defaults[i].location = defaults[i].defaultvalue;
+	*((int *) defaults[i].location) = defaults[i].defaultvalue;
         defaults[i].untranslated = 0;
     }
     // check for a custom default file
@@ -453,10 +456,9 @@ void M_LoadDefaults (void)
                         }
                         
 			if (!isstring)
-			    *defaults[i].location = parm;
+			    *((int *) defaults[i].location) = parm;
 			else
-			    *defaults[i].location =
-				(int) newstring;
+			    *((char **) defaults[i].location) = newstring;
 			break;
 		    }
 	    }

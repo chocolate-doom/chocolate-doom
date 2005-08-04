@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.11  2005/08/04 18:42:15  fraggle
+// Silence compiler warnings
+//
 // Revision 1.10  2005/08/04 01:13:46  fraggle
 // Loading disk
 //
@@ -67,6 +70,7 @@ rcsid[] = "$Id$";
 #include <ctype.h>
 #include <SDL.h>
 
+#include "w_wad.h"
 #include "z_zone.h"
 #include "doomstat.h"
 #include "i_system.h"
@@ -181,8 +185,6 @@ static void LoadDiskImage(void)
 
 int xlatekey(SDL_keysym *sym)
 {
-    int rc;
-
     switch(sym->sym)
     {
       case SDLK_LEFT:	return KEY_LEFTARROW;
@@ -289,8 +291,6 @@ static int mousebuttonstate(void)
     return result;
 }
 
-static int	lastmousex = 0;
-static int	lastmousey = 0;
 boolean		mousemoved = false;
 
 void I_GetEvent(void)
