@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.7  2005/08/04 18:42:15  fraggle
+// Silence compiler warnings
+//
 // Revision 1.6  2005/08/04 01:14:37  fraggle
 // Begin/EndRead now in i_video.c
 //
@@ -100,7 +103,7 @@ byte* I_ZoneBase (int*	size)
     *size = mb_used*1024*1024;
     zonemem = malloc (*size);
     printf("zone memory: %x, %x allocated for zone\n", 
-	   (long) zonemem, *size);
+	   (int) zonemem, *size);
     return zonemem;
 }
 
