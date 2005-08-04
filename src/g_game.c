@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: g_game.c 32 2005-08-03 22:20:09Z fraggle $
+// $Id: g_game.c 41 2005-08-04 22:55:08Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/08/04 22:55:08  fraggle
+// Use DOOM_VERSION to define the Doom version (don't conflict with
+// automake's config.h).  Display GPL message instead of anti-piracy
+// messages.
+//
 // Revision 1.3  2005/08/03 22:20:09  fraggle
 // Display FPS on quit
 //
@@ -38,7 +43,7 @@
 
 
 static const char
-rcsid[] = "$Id: g_game.c 32 2005-08-03 22:20:09Z fraggle $";
+rcsid[] = "$Id: g_game.c 41 2005-08-04 22:55:08Z fraggle $";
 
 #include <string.h>
 #include <stdlib.h>
@@ -1228,7 +1233,7 @@ void G_DoLoadGame (void)
     
     // skip the description field 
     memset (vcheck,0,sizeof(vcheck)); 
-    sprintf (vcheck,"version %i",VERSION); 
+    sprintf (vcheck,"version %i",DOOM_VERSION); 
     if (strcmp (save_p, vcheck)) 
 	return;				// bad version 
     save_p += VERSIONSIZE; 
@@ -1302,7 +1307,7 @@ void G_DoSaveGame (void)
     memcpy (save_p, description, SAVESTRINGSIZE); 
     save_p += SAVESTRINGSIZE; 
     memset (name2,0,sizeof(name2)); 
-    sprintf (name2,"version %i",VERSION); 
+    sprintf (name2,"version %i",DOOM_VERSION); 
     memcpy (save_p, name2, VERSIONSIZE); 
     save_p += VERSIONSIZE; 
 	 
@@ -1568,7 +1573,7 @@ void G_BeginRecording (void)
 		
     demo_p = demobuffer;
 	
-    *demo_p++ = VERSION;
+    *demo_p++ = DOOM_VERSION;
     *demo_p++ = gameskill; 
     *demo_p++ = gameepisode; 
     *demo_p++ = gamemap; 
@@ -1602,7 +1607,7 @@ void G_DoPlayDemo (void)
 	 
     gameaction = ga_nothing; 
     demobuffer = demo_p = W_CacheLumpName (defdemoname, PU_STATIC); 
-    if ( *demo_p++ != VERSION)
+    if ( *demo_p++ != DOOM_VERSION)
     {
       fprintf( stderr, "Demo is from a different game version!\n");
       gameaction = ga_nothing;

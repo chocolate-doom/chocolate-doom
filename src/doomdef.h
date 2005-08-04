@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: doomdef.h 39 2005-08-04 21:48:32Z fraggle $
+// $Id: doomdef.h 41 2005-08-04 22:55:08Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -37,7 +37,7 @@
 // Global parameters/defines.
 //
 // DOOM version
-enum { VERSION =  109 };
+enum { DOOM_VERSION =  109 };
 
 
 // Game mode handling - identify IWAD version
@@ -362,6 +362,11 @@ typedef enum
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.6  2005/08/04 22:55:08  fraggle
+// Use DOOM_VERSION to define the Doom version (don't conflict with
+// automake's config.h).  Display GPL message instead of anti-piracy
+// messages.
+//
 // Revision 1.5  2005/08/04 21:48:32  fraggle
 // Turn on compiler optimisation and warning options
 // Add SDL_mixer sound code

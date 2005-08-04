@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 39 2005-08-04 21:48:32Z fraggle $
+// $Id: d_main.c 41 2005-08-04 22:55:08Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/08/04 22:55:07  fraggle
+// Use DOOM_VERSION to define the Doom version (don't conflict with
+// automake's config.h).  Display GPL message instead of anti-piracy
+// messages.
+//
 // Revision 1.4  2005/08/04 21:48:32  fraggle
 // Turn on compiler optimisation and warning options
 // Add SDL_mixer sound code
@@ -45,7 +50,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 39 2005-08-04 21:48:32Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 41 2005-08-04 22:55:08Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -61,6 +66,7 @@ static const char rcsid[] = "$Id: d_main.c 39 2005-08-04 21:48:32Z fraggle $";
 #endif
 
 
+#include "config.h"
 #include "doomdef.h"
 #include "doomstat.h"
 
@@ -831,28 +837,28 @@ void D_DoomMain (void)
 		 "                         "
 		 "The Ultimate DOOM Startup v%i.%i"
 		 "                           ",
-		 VERSION/100,VERSION%100);
+		 DOOM_VERSION/100,DOOM_VERSION%100);
 	break;
       case shareware:
 	sprintf (title,
 		 "                            "
 		 "DOOM Shareware Startup v%i.%i"
 		 "                           ",
-		 VERSION/100,VERSION%100);
+		 DOOM_VERSION/100,DOOM_VERSION%100);
 	break;
       case registered:
 	sprintf (title,
 		 "                            "
 		 "DOOM Registered Startup v%i.%i"
 		 "                           ",
-		 VERSION/100,VERSION%100);
+		 DOOM_VERSION/100,DOOM_VERSION%100);
 	break;
       case commercial:
 	sprintf (title,
 		 "                         "
 		 "DOOM 2: Hell on Earth v%i.%i"
 		 "                           ",
-		 VERSION/100,VERSION%100);
+		 DOOM_VERSION/100,DOOM_VERSION%100);
 	break;
 /*FIXME
        case pack_plut:
@@ -860,14 +866,14 @@ void D_DoomMain (void)
 		 "                   "
 		 "DOOM 2: Plutonia Experiment v%i.%i"
 		 "                           ",
-		 VERSION/100,VERSION%100);
+		 DOOM_VERSION/100,DOOM_VERSION%100);
 	break;
       case pack_tnt:
 	sprintf (title,
 		 "                     "
 		 "DOOM 2: TNT - Evilution v%i.%i"
 		 "                           ",
-		 VERSION/100,VERSION%100);
+		 DOOM_VERSION/100,DOOM_VERSION%100);
 	break;
 */
       default:
@@ -875,7 +881,7 @@ void D_DoomMain (void)
 		 "                     "
 		 "Public DOOM - v%i.%i"
 		 "                           ",
-		 VERSION/100,VERSION%100);
+		 DOOM_VERSION/100,DOOM_VERSION%100);
 	break;
     }
     
@@ -1056,6 +1062,7 @@ void D_DoomMain (void)
 		    I_Error("\nThis is not the registered version.");
     }
     
+#if 0
     // Iff additonal PWAD files are used, print modified banner
     if (modifiedgame)
     {
@@ -1069,7 +1076,6 @@ void D_DoomMain (void)
 	    );
 	getchar ();
     }
-	
 
     // Check and print which version is executed.
     switch ( gamemode )
@@ -1097,6 +1103,16 @@ void D_DoomMain (void)
 	// Ouch.
 	break;
     }
+#endif	
+    printf (
+	    "===========================================================================\n"
+	    " " PACKAGE_NAME " is free software, covered by the GNU General Public\n"
+            " License.  There is NO warranty; not even for MERCHANTABILITY or FITNESS\n"
+            " FOR A PARTICULAR PURPOSE. You are welcome to change and distribute\n"
+            " copies under certain conditions. See the source for more information.\n"
+
+	    "===========================================================================\n"
+	);
 
     printf ("M_Init: Init miscellaneous info.\n");
     M_Init ();
