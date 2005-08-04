@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 31 2005-08-03 22:19:52Z fraggle $
+// $Id: i_video.c 33 2005-08-04 01:13:46Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.10  2005/08/04 01:13:46  fraggle
+// Loading disk
+//
 // Revision 1.9  2005/08/03 22:19:52  fraggle
 // Set some flags to fix palette and improve performance
 //
@@ -59,15 +62,17 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 31 2005-08-03 22:19:52Z fraggle $";
+rcsid[] = "$Id: i_video.c 33 2005-08-04 01:13:46Z fraggle $";
 
 #include <ctype.h>
 #include <SDL.h>
 
+#include "z_zone.h"
 #include "doomstat.h"
 #include "i_system.h"
 #include "v_video.h"
 #include "m_argv.h"
+#include "m_swap.h"
 #include "d_main.h"
 
 #include "doomdef.h"
@@ -85,7 +90,90 @@ boolean		grabMouse;
 // replace each 320x200 pixel with multiply*multiply pixels.
 // According to Dave Taylor, it still is a bonehead thing
 // to use ....
-static int	multiply=2;
+static int	multiply=1;
+
+// disk image data and background overwritten by the disk to be
+// restored by EndRead
+
+static byte *disk_image = NULL;
+static int disk_image_w, disk_image_h;
+static byte *saved_background;
+
+void I_BeginRead(void)
+{
+    int y;
+
+    if (disk_image == NULL)
+        return;
+
+    // save background and copy the disk image in
+
+    for (y=0; y<disk_image_h; ++y)
+    {
+        byte *screenloc = 
+               screens[0] 
+                 + (SCREENHEIGHT - 1 - disk_image_h + y) * SCREENWIDTH
+                 + (SCREENWIDTH - 1 - disk_image_w);
+
+        memcpy(saved_background + y * disk_image_w,
+               screenloc,
+               disk_image_w);
+        memcpy(screenloc, disk_image + y * disk_image_w, disk_image_w);
+    }
+
+    SDL_UpdateRect(screen, 
+                   screen->w - disk_image_w, screen->h - disk_image_h, 
+                   disk_image_w, disk_image_h);
+}
+
+void I_EndRead(void)
+{
+    int y;
+
+    if (disk_image == NULL)
+        return;
+
+    // save background and copy the disk image in
+
+    for (y=0; y<disk_image_h; ++y)
+    {
+        byte *screenloc = 
+               screens[0] 
+                 + (SCREENHEIGHT - 1 - disk_image_h + y) * SCREENWIDTH
+                 + (SCREENWIDTH - 1 - disk_image_w);
+
+        memcpy(screenloc, saved_background + y * disk_image_w, disk_image_w);
+    }
+
+    SDL_UpdateRect(screen, 
+                   screen->w - disk_image_w, screen->h - disk_image_h, 
+                   disk_image_w, disk_image_h);
+}
+
+static void LoadDiskImage(void)
+{
+    patch_t *disk;
+    int y;
+
+    disk = (patch_t *) W_CacheLumpName("STDISK", PU_STATIC);
+
+    V_DrawPatch(0, 0, 0, disk);
+    disk_image_w = SHORT(disk->width);
+    disk_image_h = SHORT(disk->height);
+    printf("%i, %i\n", disk_image_w, disk_image_h);
+
+    disk_image = Z_Malloc(disk_image_w * disk_image_h, PU_STATIC, NULL);
+    saved_background = Z_Malloc(disk_image_w * disk_image_h, PU_STATIC, NULL);
+
+    for (y=0; y<disk_image_h; ++y) 
+    {
+        memcpy(disk_image + disk_image_w * y,
+               screens[0] + SCREENWIDTH * y,
+               disk_image_w);
+    }
+
+    Z_Free(disk);
+}
 
 //
 // Translates the SDL key
@@ -500,7 +588,7 @@ void I_FinishUpdate (void)
 
     // draw to screen
     
-    SDL_UpdateRect(screen, 0, 0, screen->w, screen->h);
+    SDL_Flip(screen);
 }
 
 
@@ -532,14 +620,13 @@ void I_SetPalette (byte* palette)
 }
 
 
-
 void I_InitGraphics(void)
 {
     int flags = 0;
 
     SDL_Init(SDL_INIT_VIDEO);
 
-    flags |= SDL_SWSURFACE | SDL_HWPALETTE;
+    flags |= SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF;
     flags |= SDL_FULLSCREEN;
 
     screen = SDL_SetVideoMode(SCREENWIDTH*multiply, SCREENHEIGHT*multiply, 8, flags);
@@ -557,8 +644,9 @@ void I_InitGraphics(void)
     SDL_EnableUNICODE(1);
     SDL_ShowCursor(0);
     SDL_WM_GrabInput(SDL_GRAB_ON);
-}
 
+    LoadDiskImage();
+}
 
 unsigned	exptable[256];
 

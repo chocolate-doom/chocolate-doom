@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: w_wad.c 15 2005-07-23 18:50:34Z fraggle $
+// $Id: w_wad.c 33 2005-08-04 01:13:46Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/08/04 01:13:46  fraggle
+// Loading disk
+//
 // Revision 1.3  2005/07/23 18:50:34  fraggle
 // Use standard C file functions for WAD code
 //
@@ -39,7 +42,7 @@
 
 
 static const char
-rcsid[] = "$Id: w_wad.c 15 2005-07-23 18:50:34Z fraggle $";
+rcsid[] = "$Id: w_wad.c 33 2005-08-04 01:13:46Z fraggle $";
 
 
 #include <stdio.h>
@@ -453,7 +456,7 @@ W_ReadLump
 
     l = lumpinfo+lump;
 	
-    // ??? I_BeginRead ();
+    I_BeginRead ();
 	
     if (l->handle == NULL)
     {
@@ -474,7 +477,7 @@ W_ReadLump
     if (l->handle == NULL)
 	fclose (handle);
 		
-    // ??? I_EndRead ();
+    I_EndRead ();
 }
 
 
