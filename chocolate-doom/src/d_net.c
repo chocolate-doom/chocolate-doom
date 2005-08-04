@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/08/04 22:55:07  fraggle
+// Use DOOM_VERSION to define the Doom version (don't conflict with
+// automake's config.h).  Display GPL message instead of anti-piracy
+// messages.
+//
 // Revision 1.3  2005/07/23 19:17:11  fraggle
 // Use ANSI-standard limit constants.  Remove LINUX define.
 //
@@ -508,7 +513,7 @@ void D_ArbitrateNetStart (void)
 		continue;
 	    if (netbuffer->checksum & NCMD_SETUP)
 	    {
-		if (netbuffer->player != VERSION)
+		if (netbuffer->player != DOOM_VERSION)
 		    I_Error ("Different DOOM versions cannot play a net game!");
 		startskill = netbuffer->retransmitfrom & 15;
 		deathmatch = (netbuffer->retransmitfrom & 0xc0) >> 6;
@@ -537,7 +542,7 @@ void D_ArbitrateNetStart (void)
 		if (respawnparm)
 		    netbuffer->retransmitfrom |= 0x10;
 		netbuffer->starttic = startepisode * 64 + startmap;
-		netbuffer->player = VERSION;
+		netbuffer->player = DOOM_VERSION;
 		netbuffer->numtics = 0;
 		HSendPacket (i, NCMD_SETUP);
 	    }
