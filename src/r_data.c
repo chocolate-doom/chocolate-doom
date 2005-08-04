@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: r_data.c 25 2005-07-23 23:07:04Z fraggle $
+// $Id: r_data.c 36 2005-08-04 18:40:22Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2005/08/04 18:40:22  fraggle
+// Use zone memory functions instead of alloca/malloc/free
+//
 // Revision 1.5  2005/07/23 23:07:04  fraggle
 // Add back previously removed printfs as '.'s for startup progress bar
 //
@@ -47,7 +50,7 @@
 
 
 static const char
-rcsid[] = "$Id: r_data.c 25 2005-07-23 23:07:04Z fraggle $";
+rcsid[] = "$Id: r_data.c 36 2005-08-04 18:40:22Z fraggle $";
 
 #include "i_system.h"
 #include "z_zone.h"
@@ -337,7 +340,7 @@ void R_GenerateLookup (int texnum)
     //  that are covered by more than one patch.
     // Fill in the lump / offset, so columns
     //  with only a single patch are all done.
-    patchcount = (byte *) malloc(texture->width);
+    patchcount = (byte *) Z_Malloc(texture->width, PU_STATIC, NULL);
     memset (patchcount, 0, texture->width);
     patch = texture->patches;
 		
@@ -390,7 +393,7 @@ void R_GenerateLookup (int texnum)
 	}
     }
 
-    free(patchcount);
+    Z_Free(patchcount);
 }
 
 
@@ -468,7 +471,7 @@ void R_InitTextures (void)
     names = W_CacheLumpName ("PNAMES", PU_STATIC);
     nummappatches = LONG ( *((int *)names) );
     name_p = names+4;
-    patchlookup = alloca (nummappatches*sizeof(*patchlookup));
+    patchlookup = Z_Malloc(nummappatches*sizeof(*patchlookup), PU_STATIC, NULL);
     
     for (i=0 ; i<nummappatches ; i++)
     {
@@ -577,6 +580,8 @@ void R_InitTextures (void)
 		
 	totalwidth += texture->width;
     }
+
+    Z_Free(patchlookup);
 
     Z_Free (maptex1);
     if (maptex2)
@@ -778,7 +783,7 @@ void R_PrecacheLevel (void)
 	return;
     
     // Precache flats.
-    flatpresent = alloca(numflats);
+    flatpresent = Z_Malloc(numflats, PU_STATIC, NULL);
     memset (flatpresent,0,numflats);	
 
     for (i=0 ; i<numsectors ; i++)
@@ -798,9 +803,11 @@ void R_PrecacheLevel (void)
 	    W_CacheLumpNum(lump, PU_CACHE);
 	}
     }
+
+    Z_Free(flatpresent);
     
     // Precache textures.
-    texturepresent = alloca(numtextures);
+    texturepresent = Z_Malloc(numtextures, PU_STATIC, NULL);
     memset (texturepresent,0, numtextures);
 	
     for (i=0 ; i<numsides ; i++)
@@ -833,9 +840,11 @@ void R_PrecacheLevel (void)
 	    W_CacheLumpNum(lump , PU_CACHE);
 	}
     }
+
+    Z_Free(texturepresent);
     
     // Precache sprites.
-    spritepresent = alloca(numsprites);
+    spritepresent = Z_Malloc(numsprites, PU_STATIC, NULL);
     memset (spritepresent,0, numsprites);
 	
     for (th = thinkercap.next ; th != &thinkercap ; th=th->next)
@@ -861,6 +870,8 @@ void R_PrecacheLevel (void)
 	    }
 	}
     }
+
+    Z_Free(spritepresent);
 }
 
 
