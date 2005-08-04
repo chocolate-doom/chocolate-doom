@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.12  2005/08/04 19:54:56  fraggle
+// Use keysym value rather than unicode value (fixes problems with shift
+// key)
+//
 // Revision 1.11  2005/08/04 18:42:15  fraggle
 // Silence compiler warnings
 //
@@ -256,7 +260,7 @@ int xlatekey(SDL_keysym *sym)
       case SDLK_KP_DIVIDE: return KEYP_DIVIDE;
 
       default:
-        return tolower(sym->unicode);
+        return tolower(sym->sym);
     }
 }
 
@@ -641,7 +645,6 @@ void I_InitGraphics(void)
     else
 	screens[0] = (unsigned char *) malloc (SCREENWIDTH * SCREENHEIGHT);
 
-    SDL_EnableUNICODE(1);
     SDL_ShowCursor(0);
     SDL_WM_GrabInput(SDL_GRAB_ON);
 
