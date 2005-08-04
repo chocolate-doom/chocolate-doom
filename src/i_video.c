@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 38 2005-08-04 19:54:56Z fraggle $
+// $Id: i_video.c 40 2005-08-04 22:23:07Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.13  2005/08/04 22:23:07  fraggle
+// Use zone memory function.  Add command line options
+//
 // Revision 1.12  2005/08/04 19:54:56  fraggle
 // Use keysym value rather than unicode value (fixes problems with shift
 // key)
@@ -69,7 +72,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 38 2005-08-04 19:54:56Z fraggle $";
+rcsid[] = "$Id: i_video.c 40 2005-08-04 22:23:07Z fraggle $";
 
 #include <ctype.h>
 #include <SDL.h>
@@ -168,7 +171,6 @@ static void LoadDiskImage(void)
     V_DrawPatch(0, 0, 0, disk);
     disk_image_w = SHORT(disk->width);
     disk_image_h = SHORT(disk->height);
-    printf("%i, %i\n", disk_image_w, disk_image_h);
 
     disk_image = Z_Malloc(disk_image_w * disk_image_h, PU_STATIC, NULL);
     saved_background = Z_Malloc(disk_image_w * disk_image_h, PU_STATIC, NULL);
@@ -631,7 +633,21 @@ void I_InitGraphics(void)
     SDL_Init(SDL_INIT_VIDEO);
 
     flags |= SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF;
-    flags |= SDL_FULLSCREEN;
+
+    // default to fullscreen mode, allow override with command line
+    // nofullscreen because we love prboom
+
+    if (!M_CheckParm("-window") && !M_CheckParm("-nofullscreen"))
+    {
+        flags |= SDL_FULLSCREEN;
+    }
+
+    // scale-by-2 mode
+ 
+    if (M_CheckParm("-2"))
+    {
+        multiply = 2;
+    }
 
     screen = SDL_SetVideoMode(SCREENWIDTH*multiply, SCREENHEIGHT*multiply, 8, flags);
 
@@ -643,7 +659,7 @@ void I_InitGraphics(void)
     if (multiply == 1)
 	screens[0] = (unsigned char *) (screen->pixels);
     else
-	screens[0] = (unsigned char *) malloc (SCREENWIDTH * SCREENHEIGHT);
+	screens[0] = (unsigned char *) Z_Malloc (SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
 
     SDL_ShowCursor(0);
     SDL_WM_GrabInput(SDL_GRAB_ON);
