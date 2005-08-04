@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/08/04 01:13:46  fraggle
+// Loading disk
+//
 // Revision 1.3  2005/07/23 18:50:34  fraggle
 // Use standard C file functions for WAD code
 //
@@ -453,7 +456,7 @@ W_ReadLump
 
     l = lumpinfo+lump;
 	
-    // ??? I_BeginRead ();
+    I_BeginRead ();
 	
     if (l->handle == NULL)
     {
@@ -474,7 +477,7 @@ W_ReadLump
     if (l->handle == NULL)
 	fclose (handle);
 		
-    // ??? I_EndRead ();
+    I_EndRead ();
 }
 
 
