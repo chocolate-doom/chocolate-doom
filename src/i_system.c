@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_system.c 28 2005-07-25 20:41:59Z fraggle $
+// $Id: i_system.c 34 2005-08-04 01:14:37Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2005/08/04 01:14:37  fraggle
+// Begin/EndRead now in i_video.c
+//
 // Revision 1.5  2005/07/25 20:41:59  fraggle
 // Port timer code to SDL
 //
@@ -43,7 +46,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_system.c 28 2005-07-25 20:41:59Z fraggle $";
+rcsid[] = "$Id: i_system.c 34 2005-08-04 01:14:37Z fraggle $";
 
 
 #include <stdlib.h>
@@ -152,16 +155,6 @@ void I_Quit (void)
 void I_WaitVBL(int count)
 {
     SDL_Delay((count * 1000) / 70);
-}
-
-void I_BeginRead(void)
-{
-    // display "reading" disk
-}
-
-void I_EndRead(void)
-{
-    // remove "reading" disk
 }
 
 byte*	I_AllocLow(int length)
