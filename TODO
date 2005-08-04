@@ -1,8 +1,8 @@
 To do:
 
-* Port sound code to SDL
-* Startup messages
 * Fix Final Doom, Ultimate Doom, IWAD selection in general
+* Music
+* Startup messages
 * Check quit messages selected correctly
 * Setup utility
 * Short-circuit Zone memory

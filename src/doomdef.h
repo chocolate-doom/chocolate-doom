@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: doomdef.h 26 2005-07-24 02:14:04Z fraggle $
+// $Id: doomdef.h 39 2005-08-04 21:48:32Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -80,16 +80,6 @@ typedef enum
 // If rangecheck is undefined,
 // most parameter validation debugging code will not be compiled
 #define RANGECHECK
-
-// Do or do not use external soundserver.
-// The sndserver binary to be run separately
-//  has been introduced by Dave Taylor.
-// The integrated sound support is experimental,
-//  and unfinished. Default is synchronous.
-// Experimental asynchronous timer based is
-//  handled by SNDINTR. 
-#define SNDSERV  1
-//#define SNDINTR  1
 
 
 // This one switches between MIT SHM (no proper mouse)
@@ -372,6 +362,10 @@ typedef enum
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.5  2005/08/04 21:48:32  fraggle
+// Turn on compiler optimisation and warning options
+// Add SDL_mixer sound code
+//
 // Revision 1.4  2005/07/24 02:14:04  fraggle
 // Move to SDL for graphics.
 // Translate key scancodes to correct internal format when reading

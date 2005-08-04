@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_misc.c 37 2005-08-04 18:42:15Z fraggle $
+// $Id: m_misc.c 39 2005-08-04 21:48:32Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -23,6 +23,10 @@
 //
 //
 // $Log$
+// Revision 1.6  2005/08/04 21:48:32  fraggle
+// Turn on compiler optimisation and warning options
+// Add SDL_mixer sound code
+//
 // Revision 1.5  2005/08/04 18:42:15  fraggle
 // Silence compiler warnings
 //
@@ -50,7 +54,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_misc.c 37 2005-08-04 18:42:15Z fraggle $";
+rcsid[] = "$Id: m_misc.c 39 2005-08-04 21:48:32Z fraggle $";
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -231,12 +235,6 @@ extern int	showMessages;
 // machine-independent sound params
 extern	int	numChannels;
 
-
-// UNIX hack, to be removed.
-#ifdef SNDSERV
-extern char*	sndserver_filename;
-extern int	mb_used;
-#endif
 
 extern char*	chat_macros[];
 

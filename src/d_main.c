@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 37 2005-08-04 18:42:15Z fraggle $
+// $Id: d_main.c 39 2005-08-04 21:48:32Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/08/04 21:48:32  fraggle
+// Turn on compiler optimisation and warning options
+// Add SDL_mixer sound code
+//
 // Revision 1.3  2005/08/04 18:42:15  fraggle
 // Silence compiler warnings
 //
@@ -41,7 +45,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 37 2005-08-04 18:42:15Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 39 2005-08-04 21:48:32Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -409,16 +413,6 @@ void D_DoomLoop (void)
 
 	// Update display, next frame, with current state.
 	D_Display ();
-
-#ifndef SNDSERV
-	// Sound mixing for the buffer is snychronous.
-	I_UpdateSound();
-#endif	
-	// Synchronous sound output is explicitly called.
-#ifndef SNDINTR
-	// Update sound output.
-	I_SubmitSound();
-#endif
     }
 }
 
