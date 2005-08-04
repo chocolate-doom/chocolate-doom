@@ -23,6 +23,10 @@
 //
 //
 // $Log$
+// Revision 1.6  2005/08/04 21:48:32  fraggle
+// Turn on compiler optimisation and warning options
+// Add SDL_mixer sound code
+//
 // Revision 1.5  2005/08/04 18:42:15  fraggle
 // Silence compiler warnings
 //
@@ -231,12 +235,6 @@ extern int	showMessages;
 // machine-independent sound params
 extern	int	numChannels;
 
-
-// UNIX hack, to be removed.
-#ifdef SNDSERV
-extern char*	sndserver_filename;
-extern int	mb_used;
-#endif
 
 extern char*	chat_macros[];
 

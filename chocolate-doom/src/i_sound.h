@@ -32,13 +32,6 @@
 
 #include "doomdef.h"
 
-// UNIX hack, to be removed.
-#ifdef SNDSERV
-#include <stdio.h>
-extern FILE* sndserver;
-extern char* sndserver_filename;
-#endif
-
 #include "doomstat.h"
 #include "sounds.h"
 
@@ -125,6 +118,10 @@ void I_UnRegisterSong(int handle);
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.3  2005/08/04 21:48:32  fraggle
+// Turn on compiler optimisation and warning options
+// Add SDL_mixer sound code
+//
 // Revision 1.2  2005/07/23 16:44:55  fraggle
 // Update copyright to GNU GPL
 //

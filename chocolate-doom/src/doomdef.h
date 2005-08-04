@@ -81,16 +81,6 @@ typedef enum
 // most parameter validation debugging code will not be compiled
 #define RANGECHECK
 
-// Do or do not use external soundserver.
-// The sndserver binary to be run separately
-//  has been introduced by Dave Taylor.
-// The integrated sound support is experimental,
-//  and unfinished. Default is synchronous.
-// Experimental asynchronous timer based is
-//  handled by SNDINTR. 
-#define SNDSERV  1
-//#define SNDINTR  1
-
 
 // This one switches between MIT SHM (no proper mouse)
 // and XFree86 DGA (mickey sampling). The original
@@ -372,6 +362,10 @@ typedef enum
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.5  2005/08/04 21:48:32  fraggle
+// Turn on compiler optimisation and warning options
+// Add SDL_mixer sound code
+//
 // Revision 1.4  2005/07/24 02:14:04  fraggle
 // Move to SDL for graphics.
 // Translate key scancodes to correct internal format when reading
