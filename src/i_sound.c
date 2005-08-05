@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.7  2005/08/05 17:53:07  fraggle
+// More sensible defaults
+//
 // Revision 1.6  2005/08/04 21:48:32  fraggle
 // Turn on compiler optimisation and warning options
 // Add SDL_mixer sound code
@@ -78,7 +81,7 @@ static byte *expand_sound_data(byte *data, int samplerate, int length)
 
     if (samplerate == 11025)
     {
-        // need to expand to 2 channels, and expand 8 bit samples to 16 bits
+        // need to expand to 2 channels, and expand 11025->22050
 
         result = Z_Malloc(length * 4, PU_STATIC, NULL);
 
@@ -94,10 +97,9 @@ static byte *expand_sound_data(byte *data, int samplerate, int length)
 
         result = Z_Malloc(length * 2, PU_STATIC, NULL);
 
-        for (i=0; i<length / 2; ++i)
+        for (i=0; i<length; ++i)
         {
-            result[i * 4] = result[i * 4 + 2] = data[i * 2];
-            result[i * 4 + 1] = result[i * 4 + 3] = data[i * 2 + 1];
+            result[i * 2] = result[i * 2 + 1] = data[i];
         }
     }
     else
@@ -128,7 +130,7 @@ static Mix_Chunk *getsfx(int sound)
         sound_chunks[sound].allocated = 1;
         sound_chunks[sound].abuf = expand_sound_data(data + 8, samplerate, length);
         sound_chunks[sound].alen = (length * 2 * 22050) / samplerate;
-        sound_chunks[sound].volume = 128;
+        sound_chunks[sound].volume = 32;
     }
 
     return &sound_chunks[sound];
@@ -300,6 +302,8 @@ I_InitSound()
     {
         printf("Error initialising SDL_mixer: %s\n", SDL_GetError());
     }
+
+    Mix_AllocateChannels(16);
     
     sound_initialised = 1;
 
