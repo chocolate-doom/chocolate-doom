@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.14  2005/08/06 17:30:30  fraggle
+// Only change palette on screen updates
+//
 // Revision 1.13  2005/08/04 22:23:07  fraggle
 // Use zone memory function.  Add command line options
 //
@@ -91,6 +94,10 @@ rcsid[] = "$Id$";
 static SDL_Surface *screen;
 
 #define POINTER_WARP_COUNTDOWN	1
+
+// palette
+static SDL_Color palette[256];
+static boolean palette_to_set;
 
 // Fake mouse handling.
 // This cannot work properly w/o DGA.
@@ -594,7 +601,15 @@ void I_FinishUpdate (void)
 
     // draw to screen
     
-    SDL_Flip(screen);
+    if (palette_to_set)
+    {
+        SDL_SetColors(screen, palette, 0, 256);
+        palette_to_set = 0;
+    }
+    else
+    {
+        SDL_Flip(screen);
+    }
 }
 
 
@@ -610,19 +625,18 @@ void I_ReadScreen (byte* scr)
 //
 // I_SetPalette
 //
-void I_SetPalette (byte* palette)
+void I_SetPalette (byte *doompalette)
 {
-    SDL_Color sdl_palette[256];
     int i;
 
     for (i=0; i<256; ++i) 
     {
-        sdl_palette[i].r = *palette++;
-        sdl_palette[i].g = *palette++;
-        sdl_palette[i].b = *palette++;
+        palette[i].r = *doompalette++;
+        palette[i].g = *doompalette++;
+        palette[i].b = *doompalette++;
     }
 
-    SDL_SetColors(screen, sdl_palette, 0, 256);
+    palette_to_set = 1;
 }
 
 
@@ -665,6 +679,11 @@ void I_InitGraphics(void)
     SDL_WM_GrabInput(SDL_GRAB_ON);
 
     LoadDiskImage();
+
+    {
+        SDL_Event dummy;
+        while (SDL_PollEvent(&dummy));
+    }
 }
 
 unsigned	exptable[256];
