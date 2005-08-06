@@ -102,6 +102,7 @@ extern	int		detailshift;
 // Used to select shadow mode etc.
 //
 extern void		(*colfunc) (void);
+extern void		(*transcolfunc) (void);
 extern void		(*basecolfunc) (void);
 extern void		(*fuzzcolfunc) (void);
 // No shadow effects on floors.
@@ -172,6 +173,9 @@ void R_SetViewSize (int blocks, int detail);
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.4  2005/08/06 18:37:47  fraggle
+// Fix low resolution mode
+//
 // Revision 1.3  2005/07/23 18:56:07  fraggle
 // Remove unneccessary pragmas
 //
