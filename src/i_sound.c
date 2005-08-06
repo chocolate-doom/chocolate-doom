@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.8  2005/08/06 17:05:51  fraggle
+// Remove debug messages, send error messages to stderr
+// Fix overflow when playing large sound files
+//
 // Revision 1.7  2005/08/05 17:53:07  fraggle
 // More sensible defaults
 //
@@ -129,7 +133,7 @@ static Mix_Chunk *getsfx(int sound)
 
         sound_chunks[sound].allocated = 1;
         sound_chunks[sound].abuf = expand_sound_data(data + 8, samplerate, length);
-        sound_chunks[sound].alen = (length * 2 * 22050) / samplerate;
+        sound_chunks[sound].alen = (length * 2)  * (22050 / samplerate);
         sound_chunks[sound].volume = 32;
     }
 
@@ -294,13 +298,13 @@ I_InitSound()
 { 
     if (SDL_Init(SDL_INIT_AUDIO) < 0)
     {
-        printf("Unable to set up sound.\n");
+        fprintf(stderr, "Unable to set up sound.\n");
         return;
     }
 
     if (Mix_OpenAudio(22050, AUDIO_U8, 2, 1024) < 0)
     {
-        printf("Error initialising SDL_mixer: %s\n", SDL_GetError());
+        fprintf(stderr, "Error initialising SDL_mixer: %s\n", SDL_GetError());
     }
 
     Mix_AllocateChannels(16);
@@ -308,8 +312,6 @@ I_InitSound()
     sound_initialised = 1;
 
     SDL_PauseAudio(0);
-
-    printf("sound started.\n");
 }
 
 
