@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: r_things.c 37 2005-08-04 18:42:15Z fraggle $
+// $Id: r_things.c 45 2005-08-06 18:37:47Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/08/06 18:37:47  fraggle
+// Fix low resolution mode
+//
 // Revision 1.4  2005/08/04 18:42:15  fraggle
 // Silence compiler warnings
 //
@@ -42,7 +45,7 @@
 
 
 static const char
-rcsid[] = "$Id: r_things.c 37 2005-08-04 18:42:15Z fraggle $";
+rcsid[] = "$Id: r_things.c 45 2005-08-06 18:37:47Z fraggle $";
 
 
 #include <stdio.h>
@@ -435,7 +438,7 @@ R_DrawVisSprite
     }
     else if (vis->mobjflags & MF_TRANSLATION)
     {
-	colfunc = R_DrawTranslatedColumn;
+	colfunc = transcolfunc;
 	dc_translation = translationtables - 256 +
 	    ( (vis->mobjflags & MF_TRANSLATION) >> (MF_TRANSSHIFT-8) );
     }

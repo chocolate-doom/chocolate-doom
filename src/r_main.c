@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: r_main.c 25 2005-07-23 23:07:04Z fraggle $
+// $Id: r_main.c 45 2005-08-06 18:37:47Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2005/08/06 18:37:47  fraggle
+// Fix low resolution mode
+//
 // Revision 1.5  2005/07/23 23:07:04  fraggle
 // Add back previously removed printfs as '.'s for startup progress bar
 //
@@ -46,7 +49,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: r_main.c 25 2005-07-23 23:07:04Z fraggle $";
+static const char rcsid[] = "$Id: r_main.c 45 2005-08-06 18:37:47Z fraggle $";
 
 
 
@@ -731,8 +734,8 @@ void R_ExecuteSetViewSize (void)
     else
     {
 	colfunc = basecolfunc = R_DrawColumnLow;
-	fuzzcolfunc = R_DrawFuzzColumn;
-	transcolfunc = R_DrawTranslatedColumn;
+	fuzzcolfunc = R_DrawFuzzColumnLow;
+	transcolfunc = R_DrawTranslatedColumnLow;
 	spanfunc = R_DrawSpanLow;
     }
 

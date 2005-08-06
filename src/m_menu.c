@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_menu.c 17 2005-07-23 18:54:30Z fraggle $
+// $Id: m_menu.c 45 2005-08-06 18:37:47Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/08/06 18:37:46  fraggle
+// Fix low resolution mode
+//
 // Revision 1.3  2005/07/23 18:54:30  fraggle
 // Fix quit prompt not displayed properly
 //
@@ -39,7 +42,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_menu.c 17 2005-07-23 18:54:30Z fraggle $";
+rcsid[] = "$Id: m_menu.c 45 2005-08-06 18:37:47Z fraggle $";
 
 #include <unistd.h>
 #include <sys/types.h>
@@ -1149,17 +1152,12 @@ void M_ChangeDetail(int choice)
     choice = 0;
     detailLevel = 1 - detailLevel;
 
-    // FIXME - does not work. Remove anyway?
-    fprintf( stderr, "M_ChangeDetail: low detail mode n.a.\n");
-
-    return;
-    
-    /*R_SetViewSize (screenblocks, detailLevel);
+    R_SetViewSize (screenblocks, detailLevel);
 
     if (!detailLevel)
 	players[consoleplayer].message = DETAILHI;
     else
-	players[consoleplayer].message = DETAILLO;*/
+	players[consoleplayer].message = DETAILLO;
 }
 
 
