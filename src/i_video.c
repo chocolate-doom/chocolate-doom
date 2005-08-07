@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 44 2005-08-06 17:30:30Z fraggle $
+// $Id: i_video.c 46 2005-08-07 02:59:23Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.15  2005/08/07 02:59:23  fraggle
+// Clear disk image when loading at startup
+//
 // Revision 1.14  2005/08/06 17:30:30  fraggle
 // Only change palette on screen updates
 //
@@ -75,7 +78,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 44 2005-08-06 17:30:30Z fraggle $";
+rcsid[] = "$Id: i_video.c 46 2005-08-07 02:59:23Z fraggle $";
 
 #include <ctype.h>
 #include <SDL.h>
@@ -187,6 +190,7 @@ static void LoadDiskImage(void)
         memcpy(disk_image + disk_image_w * y,
                screens[0] + SCREENWIDTH * y,
                disk_image_w);
+        memset(screens[0] + SCREENWIDTH * y, 0, disk_image_w);
     }
 
     Z_Free(disk);
