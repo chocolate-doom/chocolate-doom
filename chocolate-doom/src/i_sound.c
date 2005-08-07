@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.9  2005/08/07 19:21:01  fraggle
+// Cycle round sound channels to stop reuse and conflicts of channel
+// numbers.  Add debug to detect when incorrect sound handles are used.
+//
 // Revision 1.8  2005/08/06 17:05:51  fraggle
 // Remove debug messages, send error messages to stderr
 // Fix overflow when playing large sound files
@@ -73,10 +77,13 @@ rcsid[] = "$Id$";
 
 #include "doomdef.h"
 
-#define NUM_CHANNELS		8
+#define NUM_CHANNELS		16
 
 static int sound_initialised = 0;
 static Mix_Chunk sound_chunks[NUMSFX];
+
+static int sounds_in_use[256];
+static int nextchannel = 0;
 
 static byte *expand_sound_data(byte *data, int samplerate, int length)
 {
@@ -185,6 +192,8 @@ int I_GetSfxLumpNum(sfxinfo_t* sfx)
     return W_GetNumForName(namebuf);
 }
 
+static int soundtag = 0;
+
 //
 // Starting a sound means adding it
 //  to the current list of active sounds
@@ -208,8 +217,34 @@ I_StartSound
     Mix_Chunk *chunk = getsfx(id);
     int channel;
 
-    channel = Mix_PlayChannelTimed(-1, chunk, 0, -1);
+    // find a free channel, starting from the first after
+    // the last channel we used
+ 
+    channel = nextchannel;
 
+    do
+    {
+        channel = (channel + 1) % NUM_CHANNELS;
+
+        if (channel == nextchannel)
+        {
+            fprintf(stderr, "No free sound channels left.\n");
+            return -1;
+        }
+    } while (Mix_Playing(channel));
+
+    nextchannel = channel;
+
+    // play sound
+
+    Mix_PlayChannelTimed(channel, chunk, 0, -1);
+
+    sounds_in_use[channel] = soundtag;
+    channel |= soundtag << 8;
+    soundtag++;
+
+    // set separation, etc.
+ 
     I_UpdateSoundParams(channel, vol, sep, pitch);
 
     return channel;
@@ -219,12 +254,27 @@ I_StartSound
 
 void I_StopSound (int handle)
 {
+    int tag = handle >> 8;
+
+    handle &= 0xff;
+    
+    if (sounds_in_use[handle] != tag)
+    {
+        fprintf(stderr,
+                "stopping wrong sound: %i != %i (%i)\n",
+                sounds_in_use[handle], tag,
+                handle);
+    }
+
+    sounds_in_use[handle] = -1;
+
     Mix_HaltChannel(handle);
 }
 
 
 int I_SoundIsPlaying(int handle)
 {
+    handle &= 0xff;
     return Mix_Playing(handle);
 }
 
@@ -271,6 +321,16 @@ I_UpdateSoundParams
   int	sep,
   int	pitch)
 {
+    int tag = handle >> 8;
+
+    handle &= 0xff;
+    
+    if (sounds_in_use[handle] != tag)
+    {
+        fprintf(stderr,
+                "tag is wrong for playing sound: %i, %i\n", tag, handle);
+    }
+    
     Mix_SetPanning(handle, 
                    ((254 - sep) * vol) / 8, 
                    ((sep) * vol) / 8);
@@ -307,7 +367,7 @@ I_InitSound()
         fprintf(stderr, "Error initialising SDL_mixer: %s\n", SDL_GetError());
     }
 
-    Mix_AllocateChannels(16);
+    Mix_AllocateChannels(NUM_CHANNELS);
     
     sound_initialised = 1;
 
