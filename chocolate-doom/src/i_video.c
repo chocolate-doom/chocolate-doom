@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.15  2005/08/07 02:59:23  fraggle
+// Clear disk image when loading at startup
+//
 // Revision 1.14  2005/08/06 17:30:30  fraggle
 // Only change palette on screen updates
 //
@@ -187,6 +190,7 @@ static void LoadDiskImage(void)
         memcpy(disk_image + disk_image_w * y,
                screens[0] + SCREENWIDTH * y,
                disk_image_w);
+        memset(screens[0] + SCREENWIDTH * y, 0, disk_image_w);
     }
 
     Z_Free(disk);
