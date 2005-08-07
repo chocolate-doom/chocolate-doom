@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.17  2005/08/07 20:01:00  fraggle
+// Clear the screen on startup
+//
 // Revision 1.16  2005/08/07 03:09:33  fraggle
 // Fix gamma correction
 //
@@ -649,6 +652,7 @@ void I_SetPalette (byte *doompalette)
 
 void I_InitGraphics(void)
 {
+    SDL_Event dummy;
     int flags = 0;
 
     SDL_Init(SDL_INIT_VIDEO);
@@ -687,10 +691,13 @@ void I_InitGraphics(void)
 
     LoadDiskImage();
 
-    {
-        SDL_Event dummy;
-        while (SDL_PollEvent(&dummy));
-    }
+    // start with a clear black screen
+
+    memset(screens[0], 0, SCREENWIDTH * SCREENHEIGHT);
+
+    // clear out any events waiting at the start
+  
+    while (SDL_PollEvent(&dummy));
 }
 
 unsigned	exptable[256];
