@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 46 2005-08-07 02:59:23Z fraggle $
+// $Id: i_video.c 47 2005-08-07 03:09:33Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.16  2005/08/07 03:09:33  fraggle
+// Fix gamma correction
+//
 // Revision 1.15  2005/08/07 02:59:23  fraggle
 // Clear disk image when loading at startup
 //
@@ -78,7 +81,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 46 2005-08-07 02:59:23Z fraggle $";
+rcsid[] = "$Id: i_video.c 47 2005-08-07 03:09:33Z fraggle $";
 
 #include <ctype.h>
 #include <SDL.h>
@@ -635,9 +638,9 @@ void I_SetPalette (byte *doompalette)
 
     for (i=0; i<256; ++i) 
     {
-        palette[i].r = *doompalette++;
-        palette[i].g = *doompalette++;
-        palette[i].b = *doompalette++;
+        palette[i].r = gammatable[usegamma][*doompalette++];
+        palette[i].g = gammatable[usegamma][*doompalette++];
+        palette[i].b = gammatable[usegamma][*doompalette++];
     }
 
     palette_to_set = 1;
