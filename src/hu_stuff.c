@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: hu_stuff.c 8 2005-07-23 16:44:57Z fraggle $
+// $Id: hu_stuff.c 51 2005-08-10 08:45:35Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/08/10 08:45:35  fraggle
+// Remove "if (french)" stuff, FRENCH define, detect french wad automatically
+//
 // Revision 1.2  2005/07/23 16:44:55  fraggle
 // Update copyright to GNU GPL
 //
@@ -34,7 +37,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: hu_stuff.c 8 2005-07-23 16:44:57Z fraggle $";
+rcsid[] = "$Id: hu_stuff.c 51 2005-08-10 08:45:35Z fraggle $";
 
 #include <ctype.h>
 
@@ -296,123 +299,12 @@ char *mapnamest[] =	// TNT WAD map names.
 };
 
 
-const char*	shiftxform;
-
-const char french_shiftxform[] =
-{
-    0,
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-    11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-    21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-    31,
-    ' ', '!', '"', '#', '$', '%', '&',
-    '"', // shift-'
-    '(', ')', '*', '+',
-    '?', // shift-,
-    '_', // shift--
-    '>', // shift-.
-    '?', // shift-/
-    '0', // shift-0
-    '1', // shift-1
-    '2', // shift-2
-    '3', // shift-3
-    '4', // shift-4
-    '5', // shift-5
-    '6', // shift-6
-    '7', // shift-7
-    '8', // shift-8
-    '9', // shift-9
-    '/',
-    '.', // shift-;
-    '<',
-    '+', // shift-=
-    '>', '?', '@',
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
-    'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-    '[', // shift-[
-    '!', // shift-backslash - OH MY GOD DOES WATCOM SUCK
-    ']', // shift-]
-    '"', '_',
-    '\'', // shift-`
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
-    'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-    '{', '|', '}', '~', 127
-
-};
-
-const char english_shiftxform[] =
-{
-
-    0,
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-    11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-    21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-    31,
-    ' ', '!', '"', '#', '$', '%', '&',
-    '"', // shift-'
-    '(', ')', '*', '+',
-    '<', // shift-,
-    '_', // shift--
-    '>', // shift-.
-    '?', // shift-/
-    ')', // shift-0
-    '!', // shift-1
-    '@', // shift-2
-    '#', // shift-3
-    '$', // shift-4
-    '%', // shift-5
-    '^', // shift-6
-    '&', // shift-7
-    '*', // shift-8
-    '(', // shift-9
-    ':',
-    ':', // shift-;
-    '<',
-    '+', // shift-=
-    '>', '?', '@',
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
-    'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-    '[', // shift-[
-    '!', // shift-backslash - OH MY GOD DOES WATCOM SUCK
-    ']', // shift-]
-    '"', '_',
-    '\'', // shift-`
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
-    'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
-    '{', '|', '}', '~', 127
-};
-
-char frenchKeyMap[128]=
-{
-    0,
-    1,2,3,4,5,6,7,8,9,10,
-    11,12,13,14,15,16,17,18,19,20,
-    21,22,23,24,25,26,27,28,29,30,
-    31,
-    ' ','!','"','#','$','%','&','%','(',')','*','+',';','-',':','!',
-    '0','1','2','3','4','5','6','7','8','9',':','M','<','=','>','?',
-    '@','Q','B','C','D','E','F','G','H','I','J','K','L',',','N','O',
-    'P','A','R','S','T','U','V','Z','X','Y','W','^','\\','$','^','_',
-    '@','Q','B','C','D','E','F','G','H','I','J','K','L',',','N','O',
-    'P','A','R','S','T','U','V','Z','X','Y','W','^','\\','$','^',127
-};
-
-char ForeignTranslation(unsigned char ch)
-{
-    return ch < 128 ? frenchKeyMap[ch] : ch;
-}
-
 void HU_Init(void)
 {
 
     int		i;
     int		j;
     char	buffer[9];
-
-    if (french)
-	shiftxform = french_shiftxform;
-    else
-	shiftxform = english_shiftxform;
 
     // load the heads-up font
     j = HU_FONTSTART;
@@ -559,8 +451,6 @@ void HU_Ticker(void)
 		    chat_dest[i] = c;
 		else
 		{
-		    if (c >= 'a' && c <= 'z')
-			c = (char) shiftxform[(unsigned char) c];
 		    rc = HUlib_keyInIText(&w_inputbuffer[i], c);
 		    if (rc && c == KEY_ENTER)
 		    {
@@ -714,7 +604,7 @@ boolean HU_Responder(event_t *ev)
     }
     else
     {
-	c = ev->data1;
+	c = ev->data2;
 	// send a macro
 	if (altdown)
 	{
@@ -740,10 +630,6 @@ boolean HU_Responder(event_t *ev)
 	}
 	else
 	{
-	    if (french)
-		c = ForeignTranslation(c);
-	    if (shiftdown || (c >= 'a' && c <= 'z'))
-		c = shiftxform[c];
 	    eatkey = HUlib_keyInIText(&w_chat, c);
 	    if (eatkey)
 	    {

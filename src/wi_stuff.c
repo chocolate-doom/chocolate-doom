@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: wi_stuff.c 8 2005-07-23 16:44:57Z fraggle $
+// $Id: wi_stuff.c 51 2005-08-10 08:45:35Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/08/10 08:45:35  fraggle
+// Remove "if (french)" stuff, FRENCH define, detect french wad automatically
+//
 // Revision 1.2  2005/07/23 16:44:57  fraggle
 // Update copyright to GNU GPL
 //
@@ -35,7 +38,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: wi_stuff.c 8 2005-07-23 16:44:57Z fraggle $";
+rcsid[] = "$Id: wi_stuff.c 51 2005-08-10 08:45:35Z fraggle $";
 
 #include <stdio.h>
 
@@ -1664,16 +1667,17 @@ void WI_loadData(void)
      // "secret"
     sp_secret = W_CacheLumpName("WISCRT2", PU_STATIC);
 
-    // Yuck. 
-    if (french)
+    // french wad uses WIOBJ (?)
+    if (W_CheckNumForName("WIOBJ") >= 0)
     {
-	// "items"
-	if (netgame && !deathmatch)
-	    items = W_CacheLumpName("WIOBJ", PU_STATIC);    
-  	else
-	    items = W_CacheLumpName("WIOSTI", PU_STATIC);
-    } else
+    	// "items"
+    	if (netgame && !deathmatch)
+            items = W_CacheLumpName("WIOBJ", PU_STATIC);    
+    	else
+            items = W_CacheLumpName("WIOSTI", PU_STATIC);
+    } else {
 	items = W_CacheLumpName("WIOSTI", PU_STATIC);
+    }
 
     // "frgs"
     frags = W_CacheLumpName("WIFRGS", PU_STATIC);    
