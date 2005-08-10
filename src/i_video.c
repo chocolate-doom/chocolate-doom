@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.18  2005/08/10 08:45:35  fraggle
+// Remove "if (french)" stuff, FRENCH define, detect french wad automatically
+//
 // Revision 1.17  2005/08/07 20:01:00  fraggle
 // Clear the screen on startup
 //
@@ -330,6 +333,7 @@ void I_GetEvent(void)
             case SDL_KEYDOWN:
                 event.type = ev_keydown;
                 event.data1 = xlatekey(&sdlevent.key.keysym);
+		event.data2 = sdlevent.key.keysym.unicode;
                 D_PostEvent(&event);
                 break;
             case SDL_KEYUP:
@@ -681,15 +685,17 @@ void I_InitGraphics(void)
         I_Error("Error setting video mode: %s\n", SDL_GetError());
     }
 
+    SDL_ShowCursor(0);
+    SDL_WM_GrabInput(SDL_GRAB_ON);
+
     if (multiply == 1)
 	screens[0] = (unsigned char *) (screen->pixels);
     else
 	screens[0] = (unsigned char *) Z_Malloc (SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
 
-    SDL_ShowCursor(0);
-    SDL_WM_GrabInput(SDL_GRAB_ON);
-
     LoadDiskImage();
+
+    SDL_EnableUNICODE(1);
 
     // start with a clear black screen
 
