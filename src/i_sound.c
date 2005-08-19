@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.10  2005/08/19 21:55:51  fraggle
+// Make sounds louder.  Use the correct maximum of 15 when doing sound
+// calculations.
+//
 // Revision 1.9  2005/08/07 19:21:01  fraggle
 // Cycle round sound channels to stop reuse and conflicts of channel
 // numbers.  Add debug to detect when incorrect sound handles are used.
@@ -141,7 +145,7 @@ static Mix_Chunk *getsfx(int sound)
         sound_chunks[sound].allocated = 1;
         sound_chunks[sound].abuf = expand_sound_data(data + 8, samplerate, length);
         sound_chunks[sound].alen = (length * 2)  * (22050 / samplerate);
-        sound_chunks[sound].volume = 32;
+        sound_chunks[sound].volume = 64;
     }
 
     return &sound_chunks[sound];
@@ -322,6 +326,7 @@ I_UpdateSoundParams
   int	pitch)
 {
     int tag = handle >> 8;
+    int left, right;
 
     handle &= 0xff;
     
@@ -330,10 +335,11 @@ I_UpdateSoundParams
         fprintf(stderr,
                 "tag is wrong for playing sound: %i, %i\n", tag, handle);
     }
-    
-    Mix_SetPanning(handle, 
-                   ((254 - sep) * vol) / 8, 
-                   ((sep) * vol) / 8);
+
+    left = ((254 - sep) * vol) / 15;
+    right = ((sep) * vol) / 15;
+
+    Mix_SetPanning(handle, left, right);
 }
 
 
