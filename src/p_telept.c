@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/08/23 09:54:23  fraggle
+// Demo sync problem with teleports and final doom
+//
 // Revision 1.2  2005/07/23 16:44:56  fraggle
 // Update copyright to GNU GPL
 //
@@ -116,7 +119,12 @@ EV_Teleport
 		if (!P_TeleportMove (thing, m->x, m->y))
 		    return 0;
 		
-		thing->z = thing->floorz;  //fixme: not needed?
+                // fraggle: this was changed in final doom, 
+                // problem between normal doom2 1.9 and final doom
+
+                if (gamemission == pack_tnt || gamemission == pack_plutonia)
+		    thing->z = thing->floorz;
+                
 		if (thing->player)
 		    thing->player->viewz = thing->z+thing->player->viewheight;
 				
