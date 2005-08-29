@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/08/29 22:00:04  fraggle
+// Add missing header to fix build
+//
 // Revision 1.3  2005/08/23 09:54:23  fraggle
 // Demo sync problem with teleports and final doom
 //
@@ -43,6 +46,7 @@ rcsid[] = "$Id$";
 
 
 #include "doomdef.h"
+#include "doomstat.h"
 
 #include "s_sound.h"
 
@@ -122,7 +126,7 @@ EV_Teleport
                 // fraggle: this was changed in final doom, 
                 // problem between normal doom2 1.9 and final doom
 
-                if (gamemission == pack_tnt || gamemission == pack_plutonia)
+                if (gamemission == pack_tnt || gamemission == pack_plut)
 		    thing->z = thing->floorz;
                 
 		if (thing->player)
