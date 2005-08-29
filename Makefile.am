@@ -6,6 +6,7 @@ AUX_DIST_GEN =                          \
         $(ac_aux_dir)/mkinstalldirs
 
 
+EXTRA_DIST=$(AUX_DIST_GEN) config.h
 MAINTAINERCLEANFILES =  $(AUX_DIST_GEN)
 
 docdir=$(prefix)/share/doc/@PACKAGE@
