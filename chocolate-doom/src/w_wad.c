@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.7  2005/08/30 22:15:11  fraggle
+// More Windows fixes
+//
 // Revision 1.6  2005/08/30 22:11:10  fraggle
 // Windows fixes
 //
@@ -170,6 +173,7 @@ void W_AddFile (char *filename)
     int			length;
     int			startlump;
     filelump_t*		fileinfo;
+    filelump_t*         filerover;
     FILE               *storehandle;
     
     // open the file and add to directory
@@ -235,12 +239,12 @@ void W_AddFile (char *filename)
 	
     storehandle = reloadname ? NULL : handle;
 	
-    for (i=startlump ; i<numlumps ; i++,lump_p++, fileinfo++)
+    for (i=startlump,filerover=fileinfo ; i<numlumps ; i++,lump_p++, filerover++)
     {
 	lump_p->handle = storehandle;
-	lump_p->position = LONG(fileinfo->filepos);
-	lump_p->size = LONG(fileinfo->size);
-	strncpy (lump_p->name, fileinfo->name, 8);
+	lump_p->position = LONG(filerover->filepos);
+	lump_p->size = LONG(filerover->size);
+	strncpy (lump_p->name, filerover->name, 8);
     }
 	
     if (reloadname)
