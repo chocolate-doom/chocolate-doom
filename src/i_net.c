@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_net.c 57 2005-08-30 22:11:10Z fraggle $
+// $Id: i_net.c 58 2005-08-30 22:15:11Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.7  2005/08/30 22:15:11  fraggle
+// More Windows fixes
+//
 // Revision 1.6  2005/08/30 22:11:10  fraggle
 // Windows fixes
 //
@@ -46,7 +49,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_net.c 57 2005-08-30 22:11:10Z fraggle $";
+rcsid[] = "$Id: i_net.c 58 2005-08-30 22:15:11Z fraggle $";
 
 #include <stdlib.h>
 #include <string.h>
@@ -341,6 +344,10 @@ void I_InitNetwork (void)
 {
     doomcom = malloc (sizeof (*doomcom) );
     memset (doomcom, 0, sizeof(*doomcom) );
+
+    doomcom->ticdup = 1;
+    doomcom->extratics = 0;
+
     
     // single player game
     netgame = false;
