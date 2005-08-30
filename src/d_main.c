@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2005/08/30 22:11:10  fraggle
+// Windows fixes
+//
 // Revision 1.5  2005/08/04 22:55:07  fraggle
 // Use DOOM_VERSION to define the Doom version (don't conflict with
 // automake's config.h).  Display GPL message instead of anti-piracy
@@ -893,7 +896,11 @@ void D_DoomMain (void)
     if (M_CheckParm("-cdrom"))
     {
 	printf(D_CDROM);
+#ifdef _WIN32
+        mkdir("c:\\doomdata");
+#else
 	mkdir("c:\\doomdata",0);
+#endif
 	strcpy (basedefault,"c:/doomdata/default.cfg");
     }	
     
