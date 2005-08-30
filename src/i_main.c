@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_main.c 8 2005-07-23 16:44:57Z fraggle $
+// $Id: i_main.c 57 2005-08-30 22:11:10Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/08/30 22:11:10  fraggle
+// Windows fixes
+//
 // Revision 1.2  2005/07/23 16:44:55  fraggle
 // Update copyright to GNU GPL
 //
@@ -35,7 +38,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_main.c 8 2005-07-23 16:44:57Z fraggle $";
+rcsid[] = "$Id: i_main.c 57 2005-08-30 22:11:10Z fraggle $";
 
 
 
@@ -49,8 +52,20 @@ main
 ( int		argc,
   char**	argv ) 
 { 
+
+    // save arguments
+
     myargc = argc; 
     myargv = argv; 
+
+#ifdef _WIN32
+    // restore stdout/stderr
+
+    freopen("CON", "w", stdout);
+    freopen("CON", "w", stderr);
+
+#endif
+    // start doom
  
     D_DoomMain (); 
 

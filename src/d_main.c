@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 41 2005-08-04 22:55:08Z fraggle $
+// $Id: d_main.c 57 2005-08-30 22:11:10Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2005/08/30 22:11:10  fraggle
+// Windows fixes
+//
 // Revision 1.5  2005/08/04 22:55:07  fraggle
 // Use DOOM_VERSION to define the Doom version (don't conflict with
 // automake's config.h).  Display GPL message instead of anti-piracy
@@ -50,7 +53,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 41 2005-08-04 22:55:08Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 57 2005-08-30 22:11:10Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -893,7 +896,11 @@ void D_DoomMain (void)
     if (M_CheckParm("-cdrom"))
     {
 	printf(D_CDROM);
+#ifdef _WIN32
+        mkdir("c:\\doomdata");
+#else
 	mkdir("c:\\doomdata",0);
+#endif
 	strcpy (basedefault,"c:/doomdata/default.cfg");
     }	
     

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: w_wad.c 37 2005-08-04 18:42:15Z fraggle $
+// $Id: w_wad.c 57 2005-08-30 22:11:10Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2005/08/30 22:11:10  fraggle
+// Windows fixes
+//
 // Revision 1.5  2005/08/04 18:42:15  fraggle
 // Silence compiler warnings
 //
@@ -45,7 +48,7 @@
 
 
 static const char
-rcsid[] = "$Id: w_wad.c 37 2005-08-04 18:42:15Z fraggle $";
+rcsid[] = "$Id: w_wad.c 57 2005-08-30 22:11:10Z fraggle $";
 
 
 #include <ctype.h>
@@ -79,7 +82,7 @@ void**			lumpcache;
 
 #define strcmpi	strcasecmp
 
-void strupr (char* s)
+void string_to_upper (char* s)
 {
     while (*s) { *s = toupper(*s); s++; }
 }
@@ -167,7 +170,6 @@ void W_AddFile (char *filename)
     int			length;
     int			startlump;
     filelump_t*		fileinfo;
-    filelump_t		singleinfo;
     FILE               *storehandle;
     
     // open the file and add to directory
@@ -192,10 +194,10 @@ void W_AddFile (char *filename)
     if (strcmpi (filename+strlen(filename)-3 , "wad" ) )
     {
 	// single lump file
-	fileinfo = &singleinfo;
-	singleinfo.filepos = 0;
-	singleinfo.size = LONG(filelength(handle));
-	ExtractFileBase (filename, singleinfo.name);
+	fileinfo = Z_Malloc(sizeof(filelump_t), PU_STATIC, 0);
+	fileinfo->filepos = 0;
+	fileinfo->size = LONG(filelength(handle));
+	ExtractFileBase (filename, fileinfo->name);
 	numlumps++;
     }
     else 
@@ -216,7 +218,7 @@ void W_AddFile (char *filename)
 	header.numlumps = LONG(header.numlumps);
 	header.infotableofs = LONG(header.infotableofs);
 	length = header.numlumps*sizeof(filelump_t);
-	fileinfo = alloca (length);
+	fileinfo = Z_Malloc(length, PU_STATIC, 0);
 	fseek(handle, header.infotableofs, SEEK_SET);
 	fread(fileinfo, length, 1, handle);
 	numlumps += header.numlumps;
@@ -243,6 +245,8 @@ void W_AddFile (char *filename)
 	
     if (reloadname)
 	fclose (handle);
+
+    Z_Free(fileinfo);
 }
 
 
@@ -273,7 +277,7 @@ void W_Reload (void)
     lumpcount = LONG(header.numlumps);
     header.infotableofs = LONG(header.infotableofs);
     length = lumpcount*sizeof(filelump_t);
-    fileinfo = alloca (length);
+    fileinfo = Z_Malloc(length, PU_STATIC, 0);
     fseek(handle, header.infotableofs, SEEK_SET);
     fread(fileinfo, length, 1, handle);
     
@@ -292,6 +296,8 @@ void W_Reload (void)
     }
 	
     fclose(handle);
+
+    Z_Free(fileinfo);
 }
 
 
@@ -387,7 +393,7 @@ int W_CheckNumForName (char* name)
     name8.s[8] = 0;
 
     // case insensitive
-    strupr (name8.s);		
+    string_to_upper (name8.s);		
 
     v1 = name8.x[0];
     v2 = name8.x[1];
