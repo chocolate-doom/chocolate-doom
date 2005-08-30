@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2005/08/30 22:11:10  fraggle
+// Windows fixes
+//
 // Revision 1.5  2005/08/12 16:54:15  fraggle
 // Port network code to use SDL_net
 //
@@ -73,6 +76,8 @@ boolean NetListen (void);
 //
 
 int	DOOMPORT = 8626;
+
+#ifndef NO_SDL_NET
 
 static UDPsocket udpsocket;
 static UDPpacket *packet;
@@ -324,4 +329,29 @@ void I_NetCmd (void)
     else
 	I_Error ("Bad net cmd: %i\n",doomcom->command);
 }
+
+#else 
+
+void I_NetCmd(void)
+{
+}
+
+
+void I_InitNetwork (void)
+{
+    doomcom = malloc (sizeof (*doomcom) );
+    memset (doomcom, 0, sizeof(*doomcom) );
+    
+    // single player game
+    netgame = false;
+    doomcom->id = DOOMCOM_ID;
+    doomcom->numplayers = doomcom->numnodes = 1;
+    doomcom->deathmatch = false;
+    doomcom->consoleplayer = 0;
+    return;
+}
+
+
+#endif /* #ifndef NO_SDL_NET */
+
 

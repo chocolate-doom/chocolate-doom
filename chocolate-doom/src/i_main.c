@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/08/30 22:11:10  fraggle
+// Windows fixes
+//
 // Revision 1.2  2005/07/23 16:44:55  fraggle
 // Update copyright to GNU GPL
 //
@@ -49,8 +52,20 @@ main
 ( int		argc,
   char**	argv ) 
 { 
+
+    // save arguments
+
     myargc = argc; 
     myargv = argv; 
+
+#ifdef _WIN32
+    // restore stdout/stderr
+
+    freopen("CON", "w", stdout);
+    freopen("CON", "w", stderr);
+
+#endif
+    // start doom
  
     D_DoomMain (); 
 

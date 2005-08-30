@@ -2,7 +2,7 @@
 bindir = $(prefix)/bin
 
 CFLAGS = @CFLAGS@ @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@ -DNORMALUNIX -Wall
-LDFLAGS = @LDFLAGS@ @SDL_LIBS@ @SDLMIXER_LIBS@ @SDLNET_LIBS@
+chocolate_doom_LDADD = @LDFLAGS@ @SDL_LIBS@ @SDLMIXER_LIBS@ @SDLNET_LIBS@
 
 chocolate_doom_SOURCES=\
 am_map.c    d_think.h   i_video.c   p_floor.c   p_tick.c    r_things.h	\
