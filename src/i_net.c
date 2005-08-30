@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.7  2005/08/30 22:15:11  fraggle
+// More Windows fixes
+//
 // Revision 1.6  2005/08/30 22:11:10  fraggle
 // Windows fixes
 //
@@ -341,6 +344,10 @@ void I_InitNetwork (void)
 {
     doomcom = malloc (sizeof (*doomcom) );
     memset (doomcom, 0, sizeof(*doomcom) );
+
+    doomcom->ticdup = 1;
+    doomcom->extratics = 0;
+
     
     // single player game
     netgame = false;
