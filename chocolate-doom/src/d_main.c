@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.8  2005/08/31 21:24:24  fraggle
+// Remove the last traces of NORMALUNIX
+//
 // Revision 1.7  2005/08/31 21:21:18  fraggle
 // Better IWAD detection and identification. Support '-iwad' to specify
 // the IWAD to use.
@@ -66,6 +69,10 @@ static const char rcsid[] = "$Id$";
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef _WIN32
+#include <io.h>
+#endif
 
 
 #include "config.h"
