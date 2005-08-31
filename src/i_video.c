@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.20  2005/08/31 23:58:28  fraggle
+// smarter mouse grabbing for windowed mode
+//
 // Revision 1.19  2005/08/31 21:35:42  fraggle
 // Display the game name in the title bar.  Move game start code to later
 // in initialisation because of the IWAD detection changes.
@@ -116,10 +119,8 @@ static SDL_Surface *screen;
 static SDL_Color palette[256];
 static boolean palette_to_set;
 
-// Fake mouse handling.
-// This cannot work properly w/o DGA.
-// Needs an invisible mouse cursor at least.
-boolean		grabMouse;
+boolean fullscreen = 1;
+boolean grabmouse = 1;
 
 // Blocky mode,
 // replace each 320x200 pixel with multiply*multiply pixels.
@@ -133,6 +134,29 @@ static int	multiply=1;
 static byte *disk_image = NULL;
 static int disk_image_w, disk_image_h;
 static byte *saved_background;
+
+static boolean mouse_should_be_grabbed()
+{
+    // always grab the mouse when full screen (dont want to 
+    // see the mouse pointer)
+
+    if (fullscreen)
+        return true;
+
+    // if we specify not to grab the mouse, never grab
+ 
+    if (!grabmouse)
+        return false;
+
+    // when menu is active or game is paused, release the mouse 
+ 
+    if (menuactive || paused)
+        return false;
+
+    // only grab mouse when playing levels (but not demos)
+
+    return (gamestate == GS_LEVEL) && !demoplayback;
+}
 
 void I_BeginRead(void)
 {
@@ -293,6 +317,9 @@ int xlatekey(SDL_keysym *sym)
 
 void I_ShutdownGraphics(void)
 {
+    SDL_ShowCursor(1);
+    SDL_WM_GrabInput(SDL_GRAB_OFF);
+
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
@@ -478,16 +505,40 @@ void I_UpdateNoBlit (void)
     // what is this?
 }
 
+void UpdateGrab(void)
+{
+    static boolean currently_grabbed = false;
+    boolean grab;
+
+    grab = mouse_should_be_grabbed();
+
+    if (grab && !currently_grabbed)
+    {
+        SDL_ShowCursor(0);
+        SDL_WM_GrabInput(SDL_GRAB_ON);
+    }
+
+    if (!grab && currently_grabbed)
+    {
+        SDL_ShowCursor(1);
+        SDL_WM_GrabInput(SDL_GRAB_OFF);
+    }
+
+    currently_grabbed = grab;
+
+}
+
 //
 // I_FinishUpdate
 //
 void I_FinishUpdate (void)
 {
-
     static int	lasttic;
     int		tics;
     int		i;
     // UNUSED static unsigned char *bigscreen=0;
+
+    UpdateGrab();
 
     // draws little dots on the bottom of the screen
     if (devparm)
@@ -688,7 +739,9 @@ void I_InitGraphics(void)
     // default to fullscreen mode, allow override with command line
     // nofullscreen because we love prboom
 
-    if (!M_CheckParm("-window") && !M_CheckParm("-nofullscreen"))
+    fullscreen = !M_CheckParm("-window") && !M_CheckParm("-nofullscreen");
+
+    if (fullscreen)
     {
         flags |= SDL_FULLSCREEN;
     }
@@ -708,9 +761,6 @@ void I_InitGraphics(void)
     }
 
     SetCaption();
-
-    SDL_ShowCursor(0);
-    SDL_WM_GrabInput(SDL_GRAB_ON);
 
     if (multiply == 1)
 	screens[0] = (unsigned char *) (screen->pixels);
