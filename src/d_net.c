@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/08/31 21:24:24  fraggle
+// Remove the last traces of NORMALUNIX
+//
 // Revision 1.4  2005/08/04 22:55:07  fraggle
 // Use DOOM_VERSION to define the Doom version (don't conflict with
 // automake's config.h).  Display GPL message instead of anti-piracy
@@ -124,9 +127,7 @@ unsigned NetbufferChecksum (void)
     c = 0x1234567;
 
     // FIXME -endianess?
-#ifdef NORMALUNIX
     return 0;			// byte order problems
-#endif
 
     l = (NetbufferSize () - (int)&(((doomdata_t *)0)->retransmitfrom))/4;
     for (i=0 ; i<l ; i++)
