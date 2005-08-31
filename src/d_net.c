@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.c 41 2005-08-04 22:55:08Z fraggle $
+// $Id: d_net.c 60 2005-08-31 21:24:24Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/08/31 21:24:24  fraggle
+// Remove the last traces of NORMALUNIX
+//
 // Revision 1.4  2005/08/04 22:55:07  fraggle
 // Use DOOM_VERSION to define the Doom version (don't conflict with
 // automake's config.h).  Display GPL message instead of anti-piracy
@@ -44,7 +47,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_net.c 41 2005-08-04 22:55:08Z fraggle $";
+static const char rcsid[] = "$Id: d_net.c 60 2005-08-31 21:24:24Z fraggle $";
 
 
 #include "m_menu.h"
@@ -124,9 +127,7 @@ unsigned NetbufferChecksum (void)
     c = 0x1234567;
 
     // FIXME -endianess?
-#ifdef NORMALUNIX
     return 0;			// byte order problems
-#endif
 
     l = (NetbufferSize () - (int)&(((doomdata_t *)0)->retransmitfrom))/4;
     for (i=0 ; i<l ; i++)
