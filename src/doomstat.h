@@ -63,6 +63,7 @@ extern  boolean	devparm;	// DEBUG: launched with -devparm
 //
 extern GameMode_t	gamemode;
 extern GameMission_t	gamemission;
+extern char            *gamedescription;
 
 // Set if homebrew PWAD stuff has been added.
 extern  boolean	modifiedgame;
@@ -296,6 +297,10 @@ extern	int		ticdup;
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.4  2005/08/31 21:21:18  fraggle
+// Better IWAD detection and identification. Support '-iwad' to specify
+// the IWAD to use.
+//
 // Revision 1.3  2005/07/23 18:56:07  fraggle
 // Remove unneccessary pragmas
 //
