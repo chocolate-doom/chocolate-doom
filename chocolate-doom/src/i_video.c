@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.19  2005/08/31 21:35:42  fraggle
+// Display the game name in the title bar.  Move game start code to later
+// in initialisation because of the IWAD detection changes.
+//
 // Revision 1.18  2005/08/10 08:45:35  fraggle
 // Remove "if (french)" stuff, FRENCH define, detect french wad automatically
 //
@@ -92,6 +96,7 @@ rcsid[] = "$Id$";
 #include <ctype.h>
 #include <SDL.h>
 
+#include "config.h"
 #include "w_wad.h"
 #include "z_zone.h"
 #include "doomstat.h"
@@ -653,6 +658,23 @@ void I_SetPalette (byte *doompalette)
     palette_to_set = 1;
 }
 
+// 
+// Set the window caption
+//
+
+static void SetCaption(void)
+{
+    char *buf;
+
+    buf = Z_Malloc(strlen(gamedescription) + strlen(PACKAGE_STRING) + 10, 
+                   PU_STATIC, NULL);
+    sprintf(buf, "%s - %s", gamedescription, PACKAGE_STRING);
+
+    SDL_WM_SetCaption(buf, NULL);
+
+    Z_Free(buf);
+}
+
 
 void I_InitGraphics(void)
 {
@@ -684,6 +706,8 @@ void I_InitGraphics(void)
     {
         I_Error("Error setting video mode: %s\n", SDL_GetError());
     }
+
+    SetCaption();
 
     SDL_ShowCursor(0);
     SDL_WM_GrabInput(SDL_GRAB_ON);
