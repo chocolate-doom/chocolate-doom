@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: doomstat.h 18 2005-07-23 18:56:07Z fraggle $
+// $Id: doomstat.h 59 2005-08-31 21:21:18Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -63,6 +63,7 @@ extern  boolean	devparm;	// DEBUG: launched with -devparm
 //
 extern GameMode_t	gamemode;
 extern GameMission_t	gamemission;
+extern char            *gamedescription;
 
 // Set if homebrew PWAD stuff has been added.
 extern  boolean	modifiedgame;
@@ -296,6 +297,10 @@ extern	int		ticdup;
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.4  2005/08/31 21:21:18  fraggle
+// Better IWAD detection and identification. Support '-iwad' to specify
+// the IWAD to use.
+//
 // Revision 1.3  2005/07/23 18:56:07  fraggle
 // Remove unneccessary pragmas
 //

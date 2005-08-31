@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: doomstat.c 18 2005-07-23 18:56:07Z fraggle $
+// $Id: doomstat.c 59 2005-08-31 21:21:18Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/08/31 21:21:18  fraggle
+// Better IWAD detection and identification. Support '-iwad' to specify
+// the IWAD to use.
+//
 // Revision 1.3  2005/07/23 18:56:07  fraggle
 // Remove unneccessary pragmas
 //
@@ -38,7 +42,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: doomstat.c 18 2005-07-23 18:56:07Z fraggle $";
+rcsid[] = "$Id: doomstat.c 59 2005-08-31 21:21:18Z fraggle $";
 
 
 #include "doomstat.h"
@@ -47,6 +51,7 @@ rcsid[] = "$Id: doomstat.c 18 2005-07-23 18:56:07Z fraggle $";
 // Game Mode - identify IWAD as shareware, retail etc.
 GameMode_t gamemode = indetermined;
 GameMission_t	gamemission = doom;
+char *gamedescription;
 
 // Language.
 Language_t   language = english;

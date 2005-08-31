@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 57 2005-08-30 22:11:10Z fraggle $
+// $Id: d_main.c 59 2005-08-31 21:21:18Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.7  2005/08/31 21:21:18  fraggle
+// Better IWAD detection and identification. Support '-iwad' to specify
+// the IWAD to use.
+//
 // Revision 1.6  2005/08/30 22:11:10  fraggle
 // Windows fixes
 //
@@ -53,20 +57,15 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 57 2005-08-30 22:11:10Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 59 2005-08-31 21:21:18Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
 
 
-#ifdef NORMALUNIX
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#endif
+#include <string.h>
 
 
 #include "config.h"
@@ -118,6 +117,7 @@ static const char rcsid[] = "$Id: d_main.c 57 2005-08-30 22:11:10Z fraggle $";
 void D_DoomLoop (void);
 
 
+char*           iwadfile;
 char*		wadfiles[MAXWADFILES];
 
 
@@ -573,166 +573,214 @@ void D_AddFile (char *file)
     wadfiles[numwadfiles] = newfile;
 }
 
+// Check if a file exists
+
+static int FileExists(char *filename)
+{
+    FILE *fstream;
+
+    fstream = fopen(filename, "r");
+
+    if (fstream != NULL)
+    {
+        fclose(fstream);
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+struct 
+{
+    char *name;
+    GameMission_t mission;
+} iwads[] = {
+    {"doom.wad",     doom},
+    {"doom2.wad",    doom2},
+    {"tnt.wad",      pack_tnt},
+    {"plutonia.wad", pack_plut},
+    {"doom1.wad",    doom},
+};
+
+// Search a directory to try to find an IWAD
+// Returns non-zero if successful
+
+static int SearchDirectoryForIWAD(char *dir)
+{
+    int i;
+    int result;
+ 
+    result = 0;
+
+    for (i=0; i<sizeof(iwads) / sizeof(*iwads); ++i) 
+    {
+        char *filename = malloc(strlen(dir) + strlen(iwads[i].name) + 3);
+
+        sprintf(filename, "%s/%s", dir, iwads[i].name);
+
+        if (FileExists(filename))
+        {
+            iwadfile = filename;
+            gamemission = iwads[i].mission;
+            D_AddFile(filename);
+            result = 1;
+            break;
+        }
+        else
+        {
+            free(filename);
+        }
+    }
+
+    return result;
+}
+
+// When given an IWAD with the '-iwad' parameter,
+// attempt to identify it by its name.
+
+static void IdentifyIWADByName(char *name)
+{
+    int i;
+
+    for (i=0; i<sizeof(iwads) / sizeof(*iwads); ++i)
+    {
+        if (strlen(name) < strlen(iwads[i].name))
+            continue;
+
+        // Check if it ends in this IWAD name.
+
+        if (!strcasecmp(name + strlen(name) - strlen(iwads[i].name), 
+                        iwads[i].name))
+        {
+            gamemission = iwads[i].mission;
+            break;
+        }
+    }
+
+    gamemission = none;
+}
+
 //
-// IdentifyVersion
+// FindIWAD
 // Checks availability of IWAD files by name,
 // to determine whether registered/commercial features
 // should be executed (notably loading PWAD's).
 //
-void IdentifyVersion (void)
+static void FindIWAD (void)
 {
-
-    char*	doom1wad;
-    char*	doomwad;
-    char*	doomuwad;
-    char*	doom2wad;
-
-    char*	doom2fwad;
-    char*	plutoniawad;
-    char*	tntwad;
-
-#ifdef NORMALUNIX
-    char *home;
     char *doomwaddir;
+    int result;
+    int iwadparm;
+
+    result = 0;
     doomwaddir = getenv("DOOMWADDIR");
-    if (!doomwaddir)
-	doomwaddir = ".";
+    iwadparm = M_CheckParm("-iwad");
 
-    // Commercial.
-    doom2wad = malloc(strlen(doomwaddir)+1+9+1);
-    sprintf(doom2wad, "%s/doom2.wad", doomwaddir);
-
-    // Retail.
-    doomuwad = malloc(strlen(doomwaddir)+1+8+1);
-    sprintf(doomuwad, "%s/doomu.wad", doomwaddir);
-    
-    // Registered.
-    doomwad = malloc(strlen(doomwaddir)+1+8+1);
-    sprintf(doomwad, "%s/doom.wad", doomwaddir);
-    
-    // Shareware.
-    doom1wad = malloc(strlen(doomwaddir)+1+9+1);
-    sprintf(doom1wad, "%s/doom1.wad", doomwaddir);
-
-     // Bug, dear Shawn.
-    // Insufficient malloc, caused spurious realloc errors.
-    plutoniawad = malloc(strlen(doomwaddir)+1+/*9*/12+1);
-    sprintf(plutoniawad, "%s/plutonia.wad", doomwaddir);
-
-    tntwad = malloc(strlen(doomwaddir)+1+9+1);
-    sprintf(tntwad, "%s/tnt.wad", doomwaddir);
-
-
-    // French stuff.
-    doom2fwad = malloc(strlen(doomwaddir)+1+10+1);
-    sprintf(doom2fwad, "%s/doom2f.wad", doomwaddir);
-
-    home = getenv("HOME");
-    if (!home)
-      I_Error("Please set $HOME to your home directory");
-    sprintf(basedefault, "%s/.doomrc", home);
-#endif
-
-    if (M_CheckParm ("-shdev"))
+    if (iwadparm)
     {
-	gamemode = shareware;
-	devparm = true;
-	D_AddFile (DEVDATA"doom1.wad");
-	D_AddFile (DEVMAPS"data_se/texture1.lmp");
-	D_AddFile (DEVMAPS"data_se/pnames.lmp");
-	strcpy (basedefault,DEVDATA"default.cfg");
-	return;
+        iwadfile = myargv[iwadparm + 1];
+        D_AddFile(iwadfile);
+        IdentifyIWADByName(iwadfile);
+        result = 1;
+    }
+    else if (doomwaddir != NULL)
+    {
+        result = SearchDirectoryForIWAD(doomwaddir);
     }
 
-    if (M_CheckParm ("-regdev"))
+    if (result == 0)
     {
-	gamemode = registered;
-	devparm = true;
-	D_AddFile (DEVDATA"doom.wad");
-	D_AddFile (DEVMAPS"data_se/texture1.lmp");
-	D_AddFile (DEVMAPS"data_se/texture2.lmp");
-	D_AddFile (DEVMAPS"data_se/pnames.lmp");
-	strcpy (basedefault,DEVDATA"default.cfg");
-	return;
+        result = SearchDirectoryForIWAD(".")
+              || SearchDirectoryForIWAD("/usr/share/games/doom")
+              || SearchDirectoryForIWAD("/usr/local/share/games/doom");
     }
 
-    if (M_CheckParm ("-comdev"))
+    if (result == 0)
     {
-	gamemode = commercial;
-	devparm = true;
-	/* I don't bother
-	if(plutonia)
-	    D_AddFile (DEVDATA"plutonia.wad");
-	else if(tnt)
-	    D_AddFile (DEVDATA"tnt.wad");
-	else*/
-	    D_AddFile (DEVDATA"doom2.wad");
-	    
-	D_AddFile (DEVMAPS"cdata/texture1.lmp");
-	D_AddFile (DEVMAPS"cdata/pnames.lmp");
-	strcpy (basedefault,DEVDATA"default.cfg");
-	return;
+        I_Error("Game mode indeterminate.  No IWAD file was found.  Try\n"
+                "specifying one with the '-iwad' command line parameter.\n");
+    }
+}
+
+//
+// Find out what version of Doom is playing.
+//
+
+static void IdentifyVersion(void)
+{
+    // gamemission is set up by the FindIWAD function.  But if 
+    // we specify '-iwad', we have to identify using 
+    // IdentifyIWADByName.  However, if the iwad does not match
+    // any known IWAD name, we may have a dilemma.  Try to 
+    // identify by its contents.
+
+    if (gamemission == none)
+    {
+        int i;
+
+        for (i=0; i<numlumps; ++i)
+        {
+            if (!strncasecmp(lumpinfo[i].name, "MAP01", 8))
+            {
+                gamemission = doom2;
+                break;
+            } 
+            else if (!strncasecmp(lumpinfo[i].name, "E1M1", 8))
+            {
+                gamemission = doom;
+                break;
+            }
+        }
+
+        if (gamemission == none)
+        {
+            // Still no idea.  I don't think this is going to work.
+
+            I_Error("Unknown or invalid IWAD file.");
+        }
     }
 
-    if ( !access (doom2fwad,R_OK) )
+    // Make sure gamemode is set up correctly
+
+    if (gamemission == doom)
     {
-	gamemode = commercial;
-	// C'est ridicule!
-	// Let's handle languages in config files, okay?
-	language = french;
-	printf("French version\n");
-	D_AddFile (doom2fwad);
-	return;
+        // Doom 1.  But which version?
+
+        if (W_CheckNumForName("E4M1") > 0)
+        {
+            // Ultimate Doom
+
+            gamedescription = "The Ultimate DOOM";
+            gamemode = retail;
+        } 
+        else if (W_CheckNumForName("E3M1") > 0)
+        {
+            gamedescription = "DOOM Registered";
+            gamemode = registered;
+        }
+        else
+        {
+            gamedescription = "DOOM Shareware";
+            gamemode = shareware;
+        }
+    }
+    else
+    {
+        // Doom 2 of some kind.  But which mission?
+
+        gamemode = commercial;
+
+        if (gamemission == doom2)
+            gamedescription = "DOOM 2: Hell on Earth";
+        else if (gamemission == pack_plut)
+            gamedescription = "DOOM 2: Plutonia Experiment";
+        else if (gamemission == pack_tnt)
+            gamedescription = "DOOM 2: TNT - Evilution";
     }
 
-    if ( !access (doom2wad,R_OK) )
-    {
-	gamemode = commercial;
-	D_AddFile (doom2wad);
-	return;
-    }
-
-    if ( !access (plutoniawad, R_OK ) )
-    {
-      gamemode = commercial;
-      D_AddFile (plutoniawad);
-      return;
-    }
-
-    if ( !access ( tntwad, R_OK ) )
-    {
-      gamemode = commercial;
-      D_AddFile (tntwad);
-      return;
-    }
-
-    if ( !access (doomuwad,R_OK) )
-    {
-      gamemode = retail;
-      D_AddFile (doomuwad);
-      return;
-    }
-
-    if ( !access (doomwad,R_OK) )
-    {
-      gamemode = registered;
-      D_AddFile (doomwad);
-      return;
-    }
-
-    if ( !access (doom1wad,R_OK) )
-    {
-      gamemode = shareware;
-      D_AddFile (doom1wad);
-      return;
-    }
-
-    printf("Game mode indeterminate.\n");
-    gamemode = indetermined;
-
-    // We don't abort. Let's see what the PWAD contains.
-    //exit(1);
-    //I_Error ("Game mode indeterminate\n");
+    printf("%s\n", gamedescription);
 }
 
 //
@@ -808,6 +856,18 @@ void FindResponseFile (void)
 	}
 }
 
+// Startup banner
+
+void PrintBanner(void)
+{
+    int i;
+
+    for (i=0; i<39-(strlen(PACKAGE_STRING) / 2); ++i)
+        putchar(' ');
+
+    puts(PACKAGE_STRING);
+}
+
 
 //
 // D_DoomMain
@@ -819,7 +879,7 @@ void D_DoomMain (void)
 
     FindResponseFile ();
 	
-    IdentifyVersion ();
+    FindIWAD ();
 	
     setbuf (stdout, NULL);
     modifiedgame = false;
@@ -833,6 +893,11 @@ void D_DoomMain (void)
     else if (M_CheckParm ("-deathmatch"))
 	deathmatch = 1;
 
+    // print banner
+
+    PrintBanner();
+
+#if 0
     switch ( gamemode )
     {
       case retail:
@@ -887,8 +952,9 @@ void D_DoomMain (void)
 		 DOOM_VERSION/100,DOOM_VERSION%100);
 	break;
     }
-    
     printf ("%s\n",title);
+#endif
+    
 
     if (devparm)
 	printf(D_DEVSTR);
@@ -1043,6 +1109,7 @@ void D_DoomMain (void)
     printf ("W_Init: Init WADfiles.\n");
     W_InitMultipleFiles (wadfiles);
     
+    IdentifyVersion();
 
     // Check for -file in shareware
     if (modifiedgame)
