@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/08/31 21:21:18  fraggle
+// Better IWAD detection and identification. Support '-iwad' to specify
+// the IWAD to use.
+//
 // Revision 1.3  2005/07/23 18:56:07  fraggle
 // Remove unneccessary pragmas
 //
@@ -47,6 +51,7 @@ rcsid[] = "$Id$";
 // Game Mode - identify IWAD as shareware, retail etc.
 GameMode_t gamemode = indetermined;
 GameMission_t	gamemission = doom;
+char *gamedescription;
 
 // Language.
 Language_t   language = english;
