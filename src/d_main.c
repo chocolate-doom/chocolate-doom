@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 61 2005-08-31 21:35:42Z fraggle $
+// $Id: d_main.c 62 2005-08-31 21:50:57Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.10  2005/08/31 21:50:57  fraggle
+// Nicer banner showing the game type (once we know).  Remove dead code.
+// Find the config file properly.
+//
 // Revision 1.9  2005/08/31 21:35:42  fraggle
 // Display the game name in the title bar.  Move game start code to later
 // in initialisation because of the IWAD detection changes.
@@ -64,7 +68,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 61 2005-08-31 21:35:42Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 62 2005-08-31 21:50:57Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -792,8 +796,6 @@ static void IdentifyVersion(void)
         else
             gamedescription = "DOOM 2: ?????????????";
     }
-
-    printf("%s\n", gamedescription);
 }
 
 //
@@ -871,16 +873,33 @@ void FindResponseFile (void)
 
 // Startup banner
 
-void PrintBanner(void)
+void PrintBanner(char *msg)
 {
     int i;
 
-    for (i=0; i<39-(strlen(PACKAGE_STRING) / 2); ++i)
+    for (i=0; i<35-(strlen(msg) / 2); ++i)
         putchar(' ');
 
-    puts(PACKAGE_STRING);
+    puts(msg);
 }
 
+// Set the default location for the configuration file
+
+void SetBaseDefault(void)
+{
+    char *homedir;
+
+    homedir = getenv("HOME");
+
+    if (homedir != NULL)
+    {
+        sprintf(basedefault, "%s/.doomrc", homedir);
+    }
+    else
+    {
+        strcpy(basedefault, "default.cfg");
+    }
+}
 
 //
 // D_DoomMain
@@ -906,68 +925,13 @@ void D_DoomMain (void)
     else if (M_CheckParm ("-deathmatch"))
 	deathmatch = 1;
 
+    // set the location for default.cfg
+
+    SetBaseDefault();
+
     // print banner
 
-    PrintBanner();
-
-#if 0
-    switch ( gamemode )
-    {
-      case retail:
-	sprintf (title,
-		 "                         "
-		 "The Ultimate DOOM Startup v%i.%i"
-		 "                           ",
-		 DOOM_VERSION/100,DOOM_VERSION%100);
-	break;
-      case shareware:
-	sprintf (title,
-		 "                            "
-		 "DOOM Shareware Startup v%i.%i"
-		 "                           ",
-		 DOOM_VERSION/100,DOOM_VERSION%100);
-	break;
-      case registered:
-	sprintf (title,
-		 "                            "
-		 "DOOM Registered Startup v%i.%i"
-		 "                           ",
-		 DOOM_VERSION/100,DOOM_VERSION%100);
-	break;
-      case commercial:
-	sprintf (title,
-		 "                         "
-		 "DOOM 2: Hell on Earth v%i.%i"
-		 "                           ",
-		 DOOM_VERSION/100,DOOM_VERSION%100);
-	break;
-/*FIXME
-       case pack_plut:
-	sprintf (title,
-		 "                   "
-		 "DOOM 2: Plutonia Experiment v%i.%i"
-		 "                           ",
-		 DOOM_VERSION/100,DOOM_VERSION%100);
-	break;
-      case pack_tnt:
-	sprintf (title,
-		 "                     "
-		 "DOOM 2: TNT - Evilution v%i.%i"
-		 "                           ",
-		 DOOM_VERSION/100,DOOM_VERSION%100);
-	break;
-*/
-      default:
-	sprintf (title,
-		 "                     "
-		 "Public DOOM - v%i.%i"
-		 "                           ",
-		 DOOM_VERSION/100,DOOM_VERSION%100);
-	break;
-    }
-    printf ("%s\n",title);
-#endif
-    
+    PrintBanner(PACKAGE_STRING);
 
     if (devparm)
 	printf(D_DEVSTR);
@@ -1148,6 +1112,11 @@ void D_DoomMain (void)
 	}
 	autostart = true;
     }
+
+    printf ("===========================================================================\n");
+
+    PrintBanner(gamedescription);
+
     
     printf (
 	    "===========================================================================\n"
