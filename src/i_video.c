@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 63 2005-08-31 23:58:28Z fraggle $
+// $Id: i_video.c 64 2005-09-01 00:01:36Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.21  2005/09/01 00:01:36  fraggle
+// -nograbmouse option
+//
 // Revision 1.20  2005/08/31 23:58:28  fraggle
 // smarter mouse grabbing for windowed mode
 //
@@ -94,7 +97,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 63 2005-08-31 23:58:28Z fraggle $";
+rcsid[] = "$Id: i_video.c 64 2005-09-01 00:01:36Z fraggle $";
 
 #include <ctype.h>
 #include <SDL.h>
@@ -735,6 +738,10 @@ void I_InitGraphics(void)
     SDL_Init(SDL_INIT_VIDEO);
 
     flags |= SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF;
+
+    // mouse grabbing, defaults to on
+
+    grabmouse = !M_CheckParm("-nograbmouse");
 
     // default to fullscreen mode, allow override with command line
     // nofullscreen because we love prboom
