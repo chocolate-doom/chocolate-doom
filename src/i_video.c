@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.21  2005/09/01 00:01:36  fraggle
+// -nograbmouse option
+//
 // Revision 1.20  2005/08/31 23:58:28  fraggle
 // smarter mouse grabbing for windowed mode
 //
@@ -735,6 +738,10 @@ void I_InitGraphics(void)
     SDL_Init(SDL_INIT_VIDEO);
 
     flags |= SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF;
+
+    // mouse grabbing, defaults to on
+
+    grabmouse = !M_CheckParm("-nograbmouse");
 
     // default to fullscreen mode, allow override with command line
     // nofullscreen because we love prboom
