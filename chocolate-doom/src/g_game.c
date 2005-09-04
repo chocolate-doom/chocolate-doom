@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.8  2005/09/04 18:44:23  fraggle
+// shut up compiler warnings
+//
 // Revision 1.7  2005/09/04 17:33:43  fraggle
 // Support demos recorded with cph's modified "v1.91" doom exe - which
 // contain higher resolution angleturn
@@ -1258,7 +1261,7 @@ void G_DoLoadGame (void)
     int		length; 
     int		i; 
     int		a,b,c; 
-    char	vcheck[VERSIONSIZE]; 
+    char        vcheck[VERSIONSIZE]; 
 	 
     gameaction = ga_nothing; 
 	 
@@ -1268,7 +1271,7 @@ void G_DoLoadGame (void)
     // skip the description field 
     memset (vcheck,0,sizeof(vcheck)); 
     sprintf (vcheck,"version %i",DOOM_VERSION); 
-    if (strcmp (save_p, vcheck)) 
+    if (strcmp ((char *) save_p, vcheck)) 
 	return;				// bad version 
     save_p += VERSIONSIZE; 
 			 
