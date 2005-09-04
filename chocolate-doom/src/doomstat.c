@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/09/04 14:51:19  fraggle
+// Display the correct quit messages according to which game is being played.
+// Remove "language" variable (do this through gettext, if ever)
+//
 // Revision 1.4  2005/08/31 21:21:18  fraggle
 // Better IWAD detection and identification. Support '-iwad' to specify
 // the IWAD to use.
@@ -52,9 +56,6 @@ rcsid[] = "$Id$";
 GameMode_t gamemode = indetermined;
 GameMission_t	gamemission = doom;
 char *gamedescription;
-
-// Language.
-Language_t   language = english;
 
 // Set if homebrew PWAD stuff has been added.
 boolean	modifiedgame;
