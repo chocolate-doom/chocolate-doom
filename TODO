@@ -1,9 +1,6 @@
 To do:
 
-* Fix Final Doom, Ultimate Doom, IWAD selection in general
-* Port network code to SDL_net
 * Address any remaining problems with audio(?)
-* Windows port
 * Music
 * Startup messages
 * Dehacked support
