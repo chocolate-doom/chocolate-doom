@@ -23,6 +23,9 @@
 //
 //
 // $Log$
+// Revision 1.5  2005/09/04 18:44:22  fraggle
+// shut up compiler warnings
+//
 // Revision 1.4  2005/08/04 18:42:15  fraggle
 // Silence compiler warnings
 //
@@ -969,6 +972,11 @@ AM_clipMline
 	    tmp.y = fl->a.y + (dy*(-fl->a.x))/dx;
 	    tmp.x = 0;
 	}
+        else
+        {
+            tmp.x = 0;
+            tmp.y = 0;
+        }
 
 	if (outside == outcode1)
 	{

@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2005/09/04 18:44:22  fraggle
+// shut up compiler warnings
+//
 // Revision 1.5  2005/08/31 21:24:24  fraggle
 // Remove the last traces of NORMALUNIX
 //
@@ -483,7 +486,7 @@ void CheckAbort (void)
 	
     I_StartTic ();
     for ( ; eventtail != eventhead 
-	      ; eventtail = (++eventtail)&(MAXEVENTS-1) ) 
+	  ; eventtail = (eventtail + 1) & (MAXEVENTS-1) ) 
     { 
 	ev = &events[eventtail]; 
 	if (ev->type == ev_keydown && ev->data1 == KEY_ESCAPE)
