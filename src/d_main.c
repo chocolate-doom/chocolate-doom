@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.11  2005/09/04 15:59:45  fraggle
+// 'novert' command line option to disable vertical mouse movement
+//
 // Revision 1.10  2005/08/31 21:50:57  fraggle
 // Nicer banner showing the game type (once we know).  Remove dead code.
 // Find the config file properly.
@@ -924,6 +927,9 @@ void D_DoomMain (void)
 	deathmatch = 2;
     else if (M_CheckParm ("-deathmatch"))
 	deathmatch = 1;
+
+    if (M_CheckParm("-novert"))
+        novert = 1;
 
     // set the location for default.cfg
 
