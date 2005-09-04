@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: st_stuff.c 35 2005-08-04 01:15:10Z fraggle $
+// $Id: st_stuff.c 67 2005-09-04 14:55:53Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/09/04 14:55:53  fraggle
+// Doom v1.9 doesnt allow cheats in nightmare mode!
+//
 // Revision 1.3  2005/08/04 01:15:10  fraggle
 // Fix clev cheat
 //
@@ -40,7 +43,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: st_stuff.c 35 2005-08-04 01:15:10Z fraggle $";
+rcsid[] = "$Id: st_stuff.c 67 2005-09-04 14:55:53Z fraggle $";
 
 
 #include <stdio.h>
@@ -556,11 +559,8 @@ ST_Responder (event_t* ev)
   // if a user keypress...
   else if (ev->type == ev_keydown)
   {
-    if (!netgame)
+    if (!netgame && gameskill != sk_nightmare)
     {
-      // b. - enabled for more debug fun.
-      // if (gameskill != sk_nightmare) {
-      
       // 'dqd' cheat for toggleable god mode
       if (cht_CheckCheat(&cheat_god, ev->data1))
       {
