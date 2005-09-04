@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 69 2005-09-04 15:59:45Z fraggle $
+// $Id: d_main.c 71 2005-09-04 18:44:23Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.12  2005/09/04 18:44:22  fraggle
+// shut up compiler warnings
+//
 // Revision 1.11  2005/09/04 15:59:45  fraggle
 // 'novert' command line option to disable vertical mouse movement
 //
@@ -71,7 +74,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 69 2005-09-04 15:59:45Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 71 2005-09-04 18:44:23Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -83,6 +86,9 @@ static const char rcsid[] = "$Id: d_main.c 69 2005-09-04 15:59:45Z fraggle $";
 
 #ifdef _WIN32
 #include <io.h>
+#else
+#include <sys/stat.h>
+#include <sys/types.h>
 #endif
 
 
@@ -214,7 +220,8 @@ void D_ProcessEvents (void)
 	 && (W_CheckNumForName("map01")<0) )
       return;
 	
-    for ( ; eventtail != eventhead ; eventtail = (++eventtail)&(MAXEVENTS-1) )
+    for ( ; eventtail != eventhead ; 
+            eventtail = (eventtail + 1) & (MAXEVENTS-1) )
     {
 	ev = &events[eventtail];
 	if (M_Responder (ev))

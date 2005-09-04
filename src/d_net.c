@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.c 60 2005-08-31 21:24:24Z fraggle $
+// $Id: d_net.c 71 2005-09-04 18:44:23Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2005/09/04 18:44:22  fraggle
+// shut up compiler warnings
+//
 // Revision 1.5  2005/08/31 21:24:24  fraggle
 // Remove the last traces of NORMALUNIX
 //
@@ -47,7 +50,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_net.c 60 2005-08-31 21:24:24Z fraggle $";
+static const char rcsid[] = "$Id: d_net.c 71 2005-09-04 18:44:23Z fraggle $";
 
 
 #include "m_menu.h"
@@ -483,7 +486,7 @@ void CheckAbort (void)
 	
     I_StartTic ();
     for ( ; eventtail != eventhead 
-	      ; eventtail = (++eventtail)&(MAXEVENTS-1) ) 
+	  ; eventtail = (eventtail + 1) & (MAXEVENTS-1) ) 
     { 
 	ev = &events[eventtail]; 
 	if (ev->type == ev_keydown && ev->data1 == KEY_ESCAPE)

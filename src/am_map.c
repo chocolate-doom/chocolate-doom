@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: am_map.c 37 2005-08-04 18:42:15Z fraggle $
+// $Id: am_map.c 71 2005-09-04 18:44:23Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -23,6 +23,9 @@
 //
 //
 // $Log$
+// Revision 1.5  2005/09/04 18:44:22  fraggle
+// shut up compiler warnings
+//
 // Revision 1.4  2005/08/04 18:42:15  fraggle
 // Silence compiler warnings
 //
@@ -40,7 +43,7 @@
 //
 //-----------------------------------------------------------------------------
 
-static const char rcsid[] = "$Id: am_map.c 37 2005-08-04 18:42:15Z fraggle $";
+static const char rcsid[] = "$Id: am_map.c 71 2005-09-04 18:44:23Z fraggle $";
 
 #include <stdio.h>
 
@@ -969,6 +972,11 @@ AM_clipMline
 	    tmp.y = fl->a.y + (dy*(-fl->a.x))/dx;
 	    tmp.x = 0;
 	}
+        else
+        {
+            tmp.x = 0;
+            tmp.y = 0;
+        }
 
 	if (outside == outcode1)
 	{
