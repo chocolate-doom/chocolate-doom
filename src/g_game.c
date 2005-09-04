@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: g_game.c 41 2005-08-04 22:55:08Z fraggle $
+// $Id: g_game.c 68 2005-09-04 15:23:29Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/09/04 15:23:29  fraggle
+// Support the old "joyb_speed 31" hack to allow autorun
+//
 // Revision 1.4  2005/08/04 22:55:08  fraggle
 // Use DOOM_VERSION to define the Doom version (don't conflict with
 // automake's config.h).  Display GPL message instead of anti-piracy
@@ -43,7 +46,7 @@
 
 
 static const char
-rcsid[] = "$Id: g_game.c 41 2005-08-04 22:55:08Z fraggle $";
+rcsid[] = "$Id: g_game.c 68 2005-09-04 15:23:29Z fraggle $";
 
 #include <string.h>
 #include <stdlib.h>
@@ -276,7 +279,13 @@ void G_BuildTiccmd (ticcmd_t* cmd)
  
     strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe] 
 	|| joybuttons[joybstrafe]; 
-    speed = gamekeydown[key_speed] || joybuttons[joybspeed];
+
+    // fraggle: support the old "joyb_speed = 31" hack which
+    // allowed an autorun effect
+    speed = key_speed >= NUMKEYS
+         || joybspeed >= 4
+         || gamekeydown[key_speed] 
+         || joybuttons[joybspeed];
  
     forward = side = 0;
     
@@ -1604,12 +1613,17 @@ void G_DoPlayDemo (void)
 { 
     skill_t skill; 
     int             i, episode, map; 
+    int demoversion;
 	 
     gameaction = ga_nothing; 
     demobuffer = demo_p = W_CacheLumpName (defdemoname, PU_STATIC); 
-    if ( *demo_p++ != DOOM_VERSION)
+
+    demoversion = *demo_p++;
+
+    if ( demoversion != DOOM_VERSION)
     {
       fprintf( stderr, "Demo is from a different game version!\n");
+    //  fprintf(stderr, "%i, %i\n", demoversion, DOOM_VERSION);
       gameaction = ga_nothing;
       return;
     }
