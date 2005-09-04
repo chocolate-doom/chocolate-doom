@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 62 2005-08-31 21:50:57Z fraggle $
+// $Id: d_main.c 69 2005-09-04 15:59:45Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.11  2005/09/04 15:59:45  fraggle
+// 'novert' command line option to disable vertical mouse movement
+//
 // Revision 1.10  2005/08/31 21:50:57  fraggle
 // Nicer banner showing the game type (once we know).  Remove dead code.
 // Find the config file properly.
@@ -68,7 +71,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 62 2005-08-31 21:50:57Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 69 2005-09-04 15:59:45Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -924,6 +927,9 @@ void D_DoomMain (void)
 	deathmatch = 2;
     else if (M_CheckParm ("-deathmatch"))
 	deathmatch = 1;
+
+    if (M_CheckParm("-novert"))
+        novert = 1;
 
     // set the location for default.cfg
 

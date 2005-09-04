@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: g_game.c 68 2005-09-04 15:23:29Z fraggle $
+// $Id: g_game.c 69 2005-09-04 15:59:45Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2005/09/04 15:59:45  fraggle
+// 'novert' command line option to disable vertical mouse movement
+//
 // Revision 1.5  2005/09/04 15:23:29  fraggle
 // Support the old "joyb_speed 31" hack to allow autorun
 //
@@ -46,7 +49,7 @@
 
 
 static const char
-rcsid[] = "$Id: g_game.c 68 2005-09-04 15:23:29Z fraggle $";
+rcsid[] = "$Id: g_game.c 69 2005-09-04 15:59:45Z fraggle $";
 
 #include <string.h>
 #include <stdlib.h>
@@ -189,6 +192,11 @@ int             joybfire;
 int             joybstrafe; 
 int             joybuse; 
 int             joybspeed; 
+
+// fraggle: Disallow mouse and joystick movement to cause forward/backward
+// motion.  Specified with the '-novert' command line parameter.
+
+boolean         novert;
  
  
  
@@ -282,6 +290,7 @@ void G_BuildTiccmd (ticcmd_t* cmd)
 
     // fraggle: support the old "joyb_speed = 31" hack which
     // allowed an autorun effect
+
     speed = key_speed >= NUMKEYS
          || joybspeed >= 4
          || gamekeydown[key_speed] 
@@ -345,10 +354,15 @@ void G_BuildTiccmd (ticcmd_t* cmd)
 	// fprintf(stderr, "down\n");
 	forward -= forwardmove[speed]; 
     }
-    if (joyymove < 0) 
-	forward += forwardmove[speed]; 
-    if (joyymove > 0) 
-	forward -= forwardmove[speed]; 
+
+    // fraggle: allow disabling joystick y movement
+    if (!novert)
+    {
+        if (joyymove < 0) 
+            forward += forwardmove[speed]; 
+        if (joyymove > 0) 
+            forward -= forwardmove[speed]; 
+    }
     if (gamekeydown[key_straferight]) 
 	side += sidemove[speed]; 
     if (gamekeydown[key_strafeleft]) 
@@ -432,7 +446,13 @@ void G_BuildTiccmd (ticcmd_t* cmd)
 	} 
     } 
  
-    forward += mousey; 
+    // fraggle: allow disabling mouse y movement
+ 
+    if (!novert) 
+    {
+        forward += mousey; 
+    }
+
     if (strafe) 
 	side += mousex*2; 
     else 

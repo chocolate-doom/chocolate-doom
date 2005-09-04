@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: doomstat.h 66 2005-09-04 14:51:19Z fraggle $
+// $Id: doomstat.h 69 2005-09-04 15:59:45Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -84,6 +84,9 @@ extern  boolean		autostart;
 extern  skill_t         gameskill;
 extern  int		gameepisode;
 extern  int		gamemap;
+
+// vertical movement from mouse/joystick disabled
+extern  boolean         novert;
 
 // Nightmare mode flag, single player.
 extern  boolean         respawnmonsters;
@@ -292,6 +295,9 @@ extern	int		ticdup;
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.6  2005/09/04 15:59:45  fraggle
+// 'novert' command line option to disable vertical mouse movement
+//
 // Revision 1.5  2005/09/04 14:51:19  fraggle
 // Display the correct quit messages according to which game is being played.
 // Remove "language" variable (do this through gettext, if ever)
