@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: doomstat.c 59 2005-08-31 21:21:18Z fraggle $
+// $Id: doomstat.c 66 2005-09-04 14:51:19Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/09/04 14:51:19  fraggle
+// Display the correct quit messages according to which game is being played.
+// Remove "language" variable (do this through gettext, if ever)
+//
 // Revision 1.4  2005/08/31 21:21:18  fraggle
 // Better IWAD detection and identification. Support '-iwad' to specify
 // the IWAD to use.
@@ -42,7 +46,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: doomstat.c 59 2005-08-31 21:21:18Z fraggle $";
+rcsid[] = "$Id: doomstat.c 66 2005-09-04 14:51:19Z fraggle $";
 
 
 #include "doomstat.h"
@@ -52,9 +56,6 @@ rcsid[] = "$Id: doomstat.c 59 2005-08-31 21:21:18Z fraggle $";
 GameMode_t gamemode = indetermined;
 GameMission_t	gamemission = doom;
 char *gamedescription;
-
-// Language.
-Language_t   language = english;
 
 // Set if homebrew PWAD stuff has been added.
 boolean	modifiedgame;

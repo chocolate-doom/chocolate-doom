@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: doomstat.h 59 2005-08-31 21:21:18Z fraggle $
+// $Id: doomstat.h 66 2005-09-04 14:51:19Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -67,11 +67,6 @@ extern char            *gamedescription;
 
 // Set if homebrew PWAD stuff has been added.
 extern  boolean	modifiedgame;
-
-
-// -------------------------------------------
-// Language.
-extern  Language_t   language;
 
 
 // -------------------------------------------
@@ -297,6 +292,10 @@ extern	int		ticdup;
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.5  2005/09/04 14:51:19  fraggle
+// Display the correct quit messages according to which game is being played.
+// Remove "language" variable (do this through gettext, if ever)
+//
 // Revision 1.4  2005/08/31 21:21:18  fraggle
 // Better IWAD detection and identification. Support '-iwad' to specify
 // the IWAD to use.

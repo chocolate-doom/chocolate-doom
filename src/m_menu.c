@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_menu.c 45 2005-08-06 18:37:47Z fraggle $
+// $Id: m_menu.c 66 2005-09-04 14:51:19Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/09/04 14:51:19  fraggle
+// Display the correct quit messages according to which game is being played.
+// Remove "language" variable (do this through gettext, if ever)
+//
 // Revision 1.4  2005/08/06 18:37:46  fraggle
 // Fix low resolution mode
 //
@@ -42,7 +46,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_menu.c 45 2005-08-06 18:37:47Z fraggle $";
+rcsid[] = "$Id: m_menu.c 66 2005-09-04 14:51:19Z fraggle $";
 
 #include <unistd.h>
 #include <sys/types.h>
@@ -1112,18 +1116,32 @@ void M_QuitResponse(int ch)
 }
 
 
+static char *M_SelectEndMessage(void)
+{
+    char **endmsg;
+
+    if (gamemission == doom)
+    {
+        // Doom 1
+
+        endmsg = doom1_endmsg;
+    }
+    else
+    {
+        // Doom 2
+        
+        endmsg = doom2_endmsg;
+    }
+
+    return endmsg[gametic % NUM_QUITMESSAGES];
+}
 
 
 void M_QuitDOOM(int choice)
 {
-  // We pick index 0 which is language sensitive,
-  //  or one at random, between 1 and maximum number.
-  if (language != english )
-    sprintf(endstring,"%s\n\n"DOSY, endmsg[0] );
-  else
-    sprintf(endstring,"%s\n\n"DOSY, endmsg[ (gametic%(NUM_QUITMESSAGES-2))+1 ]);
+    sprintf(endstring, "%s\n\n" DOSY, M_SelectEndMessage());
   
-  M_StartMessage(endstring,M_QuitResponse,true);
+    M_StartMessage(endstring,M_QuitResponse,true);
 }
 
 
