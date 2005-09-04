@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.7  2005/09/04 17:33:43  fraggle
+// Support demos recorded with cph's modified "v1.91" doom exe - which
+// contain higher resolution angleturn
+//
 // Revision 1.6  2005/09/04 15:59:45  fraggle
 // 'novert' command line option to disable vertical mouse movement
 //
@@ -153,6 +157,7 @@ int             totalkills, totalitems, totalsecret;    // for intermission
  
 char            demoname[32]; 
 boolean         demorecording; 
+boolean         longtics;               // cph's doom 1.91 longtics hack
 boolean         demoplayback; 
 boolean		netdemo; 
 byte*		demobuffer;
@@ -1548,20 +1553,52 @@ void G_ReadDemoTiccmd (ticcmd_t* cmd)
     } 
     cmd->forwardmove = ((signed char)*demo_p++); 
     cmd->sidemove = ((signed char)*demo_p++); 
-    cmd->angleturn = ((unsigned char)*demo_p++)<<8; 
+
+    // If this is a longtics demo, read back in higher resolution
+
+    if (longtics)
+    {
+        cmd->angleturn = *demo_p++;
+        cmd->angleturn |= (*demo_p++) << 8;
+    }
+    else
+    {
+        cmd->angleturn = ((unsigned char)*demo_p++)<<8; 
+    }
+
     cmd->buttons = (unsigned char)*demo_p++; 
 } 
 
 
 void G_WriteDemoTiccmd (ticcmd_t* cmd) 
 { 
+    byte *demo_start;
+
     if (gamekeydown['q'])           // press q to end demo recording 
 	G_CheckDemoStatus (); 
+
+    demo_start = demo_p;
+
     *demo_p++ = cmd->forwardmove; 
     *demo_p++ = cmd->sidemove; 
-    *demo_p++ = (cmd->angleturn+128)>>8; 
+
+    // If this is a longtics demo, record in higher resolution
+ 
+    if (longtics)
+    {
+        *demo_p++ = (cmd->angleturn & 0xff);
+        *demo_p++ = (cmd->angleturn >> 8) & 0xff;
+    }
+    else
+    {
+        *demo_p++ = (cmd->angleturn+128)>>8; 
+    }
+
     *demo_p++ = cmd->buttons; 
-    demo_p -= 4; 
+
+    // reset demo pointer back
+    demo_p = demo_start;
+
     if (demo_p > demoend - 16)
     {
 	// no more space 
@@ -1599,10 +1636,24 @@ void G_RecordDemo (char* name)
 void G_BeginRecording (void) 
 { 
     int             i; 
+
+    // Check for the longtics parameter, to record hires angle
+    // turns in demos
+    longtics = M_CheckParm("-longtics") != 0;
 		
     demo_p = demobuffer;
 	
-    *demo_p++ = DOOM_VERSION;
+    // Save the right version code for this demo
+ 
+    if (longtics)
+    {
+        *demo_p++ = DOOM_191_VERSION;
+    }
+    else
+    {
+        *demo_p++ = DOOM_VERSION;
+    }
+
     *demo_p++ = gameskill; 
     *demo_p++ = gameepisode; 
     *demo_p++ = gamemap; 
@@ -1640,10 +1691,19 @@ void G_DoPlayDemo (void)
 
     demoversion = *demo_p++;
 
-    if ( demoversion != DOOM_VERSION)
+    if (demoversion == DOOM_VERSION)
+    {
+        longtics = false;
+    }
+    else if (demoversion == DOOM_191_VERSION)
+    {
+        // demo recorded with cph's modified "v1.91" doom exe
+        longtics = true;
+    }
+    else
     {
       fprintf( stderr, "Demo is from a different game version!\n");
-    //  fprintf(stderr, "%i, %i\n", demoversion, DOOM_VERSION);
+      fprintf(stderr, "%i, %i\n", demoversion, DOOM_VERSION);
       gameaction = ga_nothing;
       return;
     }

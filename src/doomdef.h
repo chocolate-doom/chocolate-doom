@@ -37,7 +37,10 @@
 // Global parameters/defines.
 //
 // DOOM version
-enum { DOOM_VERSION =  109 };
+#define DOOM_VERSION 109
+
+// Version code for cph's longtics hack ("v1.91")
+#define DOOM_191_VERSION 111
 
 
 // Game mode handling - identify IWAD version
@@ -362,6 +365,10 @@ typedef enum
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.7  2005/09/04 17:33:43  fraggle
+// Support demos recorded with cph's modified "v1.91" doom exe - which
+// contain higher resolution angleturn
+//
 // Revision 1.6  2005/08/04 22:55:08  fraggle
 // Use DOOM_VERSION to define the Doom version (don't conflict with
 // automake's config.h).  Display GPL message instead of anti-piracy
