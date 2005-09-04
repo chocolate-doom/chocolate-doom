@@ -23,6 +23,10 @@
 //
 //
 // $Log$
+// Revision 1.4  2005/09/04 14:51:19  fraggle
+// Display the correct quit messages according to which game is being played.
+// Remove "language" variable (do this through gettext, if ever)
+//
 // Revision 1.3  2005/07/23 18:56:07  fraggle
 // Remove unneccessary pragmas
 //
@@ -69,15 +73,21 @@
 // Not done in french?
 
 // QuitDOOM messages
-#define NUM_QUITMESSAGES   15
+// 7 per each game type
+#define NUM_QUITMESSAGES   7
 
-extern char* endmsg[];
+extern char *doom1_endmsg[];
+extern char *doom2_endmsg[];
 
 
 #endif
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.4  2005/09/04 14:51:19  fraggle
+// Display the correct quit messages according to which game is being played.
+// Remove "language" variable (do this through gettext, if ever)
+//
 // Revision 1.3  2005/07/23 18:56:07  fraggle
 // Remove unneccessary pragmas
 //

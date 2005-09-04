@@ -70,11 +70,6 @@ extern  boolean	modifiedgame;
 
 
 // -------------------------------------------
-// Language.
-extern  Language_t   language;
-
-
-// -------------------------------------------
 // Selected skill type, map etc.
 //
 
@@ -297,6 +292,10 @@ extern	int		ticdup;
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.5  2005/09/04 14:51:19  fraggle
+// Display the correct quit messages according to which game is being played.
+// Remove "language" variable (do this through gettext, if ever)
+//
 // Revision 1.4  2005/08/31 21:21:18  fraggle
 // Better IWAD detection and identification. Support '-iwad' to specify
 // the IWAD to use.
