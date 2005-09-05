@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_sound.h 39 2005-08-04 21:48:32Z fraggle $
+// $Id: i_sound.h 73 2005-09-05 20:32:18Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -63,6 +63,7 @@ int I_GetSfxLumpNum (sfxinfo_t* sfxinfo );
 int
 I_StartSound
 ( int		id,
+  int           channel,
   int		vol,
   int		sep,
   int		pitch,
@@ -118,6 +119,10 @@ void I_UnRegisterSong(int handle);
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.4  2005/09/05 20:32:18  fraggle
+// Use the system-nonspecific sound code to assign the channel number used
+// by SDL.  Remove handle tagging stuff.
+//
 // Revision 1.3  2005/08/04 21:48:32  fraggle
 // Turn on compiler optimisation and warning options
 // Add SDL_mixer sound code
