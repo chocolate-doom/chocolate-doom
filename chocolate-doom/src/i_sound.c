@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.13  2005/09/05 22:50:56  fraggle
+// Add mmus2mid code from prboom.  Use 'void *' for music handles.  Pass
+// length of data when registering music.
+//
 // Revision 1.12  2005/09/05 21:03:43  fraggle
 // 16-bit sound
 //
@@ -363,26 +367,26 @@ void I_ShutdownMusic(void)	{ }
 static int	looping=0;
 static int	musicdies=-1;
 
-void I_PlaySong(int handle, int looping)
+void I_PlaySong(void *handle, int looping)
 {
   // UNUSED.
-  handle = looping = 0;
+  looping = 0;
   musicdies = gametic + TICRATE*30;
 }
 
-void I_PauseSong (int handle)
+void I_PauseSong (void *handle)
 {
   // UNUSED.
   handle = 0;
 }
 
-void I_ResumeSong (int handle)
+void I_ResumeSong (void *handle)
 {
   // UNUSED.
   handle = 0;
 }
 
-void I_StopSong(int handle)
+void I_StopSong(void *handle)
 {
   // UNUSED.
   handle = 0;
@@ -391,22 +395,21 @@ void I_StopSong(int handle)
   musicdies = 0;
 }
 
-void I_UnRegisterSong(int handle)
+void I_UnRegisterSong(void *handle)
 {
   // UNUSED.
   handle = 0;
 }
 
-int I_RegisterSong(void* data)
+void *I_RegisterSong(void *data, int len)
 {
-  // UNUSED.
-  data = NULL;
+  // write the
   
   return 1;
 }
 
 // Is the song playing?
-int I_QrySongPlaying(int handle)
+int I_QrySongPlaying(void *handle)
 {
   // UNUSED.
   handle = 0;
