@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/09/05 20:32:18  fraggle
+// Use the system-nonspecific sound code to assign the channel number used
+// by SDL.  Remove handle tagging stuff.
+//
 // Revision 1.4  2005/08/04 21:48:32  fraggle
 // Turn on compiler optimisation and warning options
 // Add SDL_mixer sound code
@@ -387,11 +391,11 @@ S_StartSoundAtVolume
   // increase the usefulness
   if (sfx->usefulness++ < 0)
     sfx->usefulness = 1;
-  
+
   // Assigns the handle to one of the channels in the
   //  mix/output buffer.
   channels[cnum].handle = I_StartSound(sfx_id,
-				       /*sfx->data,*/
+                                       cnum,
 				       volume,
 				       sep,
 				       pitch,
