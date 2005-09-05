@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_sound.c 73 2005-09-05 20:32:18Z fraggle $
+// $Id: i_sound.c 74 2005-09-05 21:03:43Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.12  2005/09/05 21:03:43  fraggle
+// 16-bit sound
+//
 // Revision 1.11  2005/09/05 20:32:18  fraggle
 // Use the system-nonspecific sound code to assign the channel number used
 // by SDL.  Remove handle tagging stuff.
@@ -67,7 +70,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_sound.c 73 2005-09-05 20:32:18Z fraggle $";
+rcsid[] = "$Id: i_sound.c 74 2005-09-05 21:03:43Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -97,25 +100,38 @@ static byte *expand_sound_data(byte *data, int samplerate, int length)
 
     if (samplerate == 11025)
     {
-        // need to expand to 2 channels, and expand 11025->22050
+        // need to expand to 2 channels, 11025->22050 and 8->16 bit
 
-        result = Z_Malloc(length * 4, PU_STATIC, NULL);
+        result = Z_Malloc(length * 8, PU_STATIC, NULL);
 
         for (i=0; i<length; ++i)
         {
-            result[i * 4] = result[i * 4 + 1] 
-              = result[i * 4 + 2] = result[i * 4 + 3] = data[i];
+            Uint16 sample;
+
+            sample = data[i] | (data[i] << 8);
+            sample -= 32768;
+
+            result[i * 8] = result[i * 8 + 2]
+              = result[i * 8 + 4] = result[i * 8 + 6] = sample & 0xff;
+            result[i * 8 + 1] = result[i * 8 + 3]
+              = result[i * 8 + 5] = result[i * 8 + 7] = (sample >> 8) & 0xff;
         }
     }
     else if (samplerate == 22050)
     {
         // need to expand to 2 channels (sample rate is already correct)
 
-        result = Z_Malloc(length * 2, PU_STATIC, NULL);
+        result = Z_Malloc(length * 4, PU_STATIC, NULL);
 
         for (i=0; i<length; ++i)
         {
-            result[i * 2] = result[i * 2 + 1] = data[i];
+            Uint16 sample;
+
+            sample = data[i] | (data[i] << 8);
+            sample -= 32768;
+
+            result[i * 4] = result[i * 4 + 2] = sample & 0xff;
+            result[i * 4 + 1] = result[i * 4 + 3] = (sample >> 8) & 0xff;
         }
     }
     else
@@ -145,7 +161,7 @@ static Mix_Chunk *getsfx(int sound)
 
         sound_chunks[sound].allocated = 1;
         sound_chunks[sound].abuf = expand_sound_data(data + 8, samplerate, length);
-        sound_chunks[sound].alen = (length * 2)  * (22050 / samplerate);
+        sound_chunks[sound].alen = (length * 4)  * (22050 / samplerate);
         sound_chunks[sound].volume = 64;
     }
 
@@ -321,7 +337,7 @@ I_InitSound()
         return;
     }
 
-    if (Mix_OpenAudio(22050, AUDIO_U8, 2, 1024) < 0)
+    if (Mix_OpenAudio(22050, AUDIO_S16LSB, 2, 1024) < 0)
     {
         fprintf(stderr, "Error initialising SDL_mixer: %s\n", SDL_GetError());
     }
