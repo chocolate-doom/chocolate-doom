@@ -86,7 +86,7 @@ typedef struct
     void*	data;
 
     // music handle once registered
-    int handle;
+    void *handle;
     
 } musicinfo_t;
 
@@ -299,6 +299,10 @@ typedef enum
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.3  2005/09/05 22:50:56  fraggle
+// Add mmus2mid code from prboom.  Use 'void *' for music handles.  Pass
+// length of data when registering music.
+//
 // Revision 1.2  2005/07/23 16:44:57  fraggle
 // Update copyright to GNU GPL
 //

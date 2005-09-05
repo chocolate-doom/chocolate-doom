@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2005/09/05 22:50:56  fraggle
+// Add mmus2mid code from prboom.  Use 'void *' for music handles.  Pass
+// length of data when registering music.
+//
 // Revision 1.5  2005/09/05 20:32:18  fraggle
 // Use the system-nonspecific sound code to assign the channel number used
 // by SDL.  Remove handle tagging stuff.
@@ -685,7 +689,7 @@ S_ChangeMusic
 
     // load & register it
     music->data = (void *) W_CacheLumpNum(music->lumpnum, PU_MUSIC);
-    music->handle = I_RegisterSong(music->data);
+    music->handle = I_RegisterSong(music->data, W_LumpLength(music->lumpnum));
 
     // play it
     I_PlaySong(music->handle, looping);

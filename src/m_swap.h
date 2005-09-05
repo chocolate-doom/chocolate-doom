@@ -43,6 +43,10 @@ long	SwapLONG(long);
 #else
 #define SHORT(x)	(x)
 #define LONG(x)         (x)
+#define doom_wtohs(x)   ((short int) (x))
+#define doom_htows(x)   ((short int) (x))
+#define doom_wtohl(x)   ((long int) (x))
+#define doom_htowl(x)   ((long int) (x))
 #endif
 
 
@@ -52,6 +56,10 @@ long	SwapLONG(long);
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.4  2005/09/05 22:50:56  fraggle
+// Add mmus2mid code from prboom.  Use 'void *' for music handles.  Pass
+// length of data when registering music.
+//
 // Revision 1.3  2005/07/23 18:56:07  fraggle
 // Remove unneccessary pragmas
 //
