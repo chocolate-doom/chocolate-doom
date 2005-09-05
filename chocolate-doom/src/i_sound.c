@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.11  2005/09/05 20:32:18  fraggle
+// Use the system-nonspecific sound code to assign the channel number used
+// by SDL.  Remove handle tagging stuff.
+//
 // Revision 1.10  2005/08/19 21:55:51  fraggle
 // Make sounds louder.  Use the correct maximum of 15 when doing sound
 // calculations.
@@ -85,9 +89,6 @@ rcsid[] = "$Id$";
 
 static int sound_initialised = 0;
 static Mix_Chunk sound_chunks[NUMSFX];
-
-static int sounds_in_use[256];
-static int nextchannel = 0;
 
 static byte *expand_sound_data(byte *data, int samplerate, int length)
 {
@@ -196,8 +197,6 @@ int I_GetSfxLumpNum(sfxinfo_t* sfx)
     return W_GetNumForName(namebuf);
 }
 
-static int soundtag = 0;
-
 //
 // Starting a sound means adding it
 //  to the current list of active sounds
@@ -213,39 +212,17 @@ static int soundtag = 0;
 int
 I_StartSound
 ( int		id,
+  int           channel,
   int		vol,
   int		sep,
   int		pitch,
   int		priority )
 {
     Mix_Chunk *chunk = getsfx(id);
-    int channel;
-
-    // find a free channel, starting from the first after
-    // the last channel we used
- 
-    channel = nextchannel;
-
-    do
-    {
-        channel = (channel + 1) % NUM_CHANNELS;
-
-        if (channel == nextchannel)
-        {
-            fprintf(stderr, "No free sound channels left.\n");
-            return -1;
-        }
-    } while (Mix_Playing(channel));
-
-    nextchannel = channel;
 
     // play sound
 
     Mix_PlayChannelTimed(channel, chunk, 0, -1);
-
-    sounds_in_use[channel] = soundtag;
-    channel |= soundtag << 8;
-    soundtag++;
 
     // set separation, etc.
  
@@ -258,27 +235,12 @@ I_StartSound
 
 void I_StopSound (int handle)
 {
-    int tag = handle >> 8;
-
-    handle &= 0xff;
-    
-    if (sounds_in_use[handle] != tag)
-    {
-        fprintf(stderr,
-                "stopping wrong sound: %i != %i (%i)\n",
-                sounds_in_use[handle], tag,
-                handle);
-    }
-
-    sounds_in_use[handle] = -1;
-
     Mix_HaltChannel(handle);
 }
 
 
 int I_SoundIsPlaying(int handle)
 {
-    handle &= 0xff;
     return Mix_Playing(handle);
 }
 
@@ -325,16 +287,7 @@ I_UpdateSoundParams
   int	sep,
   int	pitch)
 {
-    int tag = handle >> 8;
     int left, right;
-
-    handle &= 0xff;
-    
-    if (sounds_in_use[handle] != tag)
-    {
-        fprintf(stderr,
-                "tag is wrong for playing sound: %i, %i\n", tag, handle);
-    }
 
     left = ((254 - sep) * vol) / 15;
     right = ((sep) * vol) / 15;
