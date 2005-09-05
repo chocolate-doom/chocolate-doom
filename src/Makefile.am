@@ -24,8 +24,8 @@ doomstat.h  info.c      m_random.h  p_setup.h   r_segs.c    w_wad.c	\
 doomtype.h  info.h      m_swap.c    p_sight.c   r_segs.h    w_wad.h	\
 d_player.h  i_sound.c   m_swap.h    p_spec.c    r_sky.c     z_zone.c	\
 dstrings.c  i_sound.h   p_ceilng.c  p_spec.h    r_sky.h     z_zone.h	\
-dstrings.h  i_system.c  p_doors.c   p_switch.c  r_state.h	\
-d_textur.h  i_system.h  p_enemy.c   p_telept.c  r_things.c
+dstrings.h  i_system.c  p_doors.c   p_switch.c  r_state.h   mmus2mid.c  \
+d_textur.h  i_system.h  p_enemy.c   p_telept.c  r_things.c  mmus2mid.h
 
 bin_PROGRAMS = chocolate-doom
 
