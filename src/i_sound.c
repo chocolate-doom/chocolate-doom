@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.15  2005/09/06 21:40:28  fraggle
+// Setting music volume
+//
 // Revision 1.14  2005/09/06 21:11:23  fraggle
 // Working music!
 //
@@ -196,21 +199,21 @@ void I_SetChannels()
  
 void I_SetSfxVolume(int volume)
 {
-  // Identical to DOS.
-  // Basically, this should propagate
-  //  the menu/config file setting
-  //  to the state variable used in
-  //  the mixing.
-  snd_SfxVolume = volume;
+    // Identical to DOS.
+    // Basically, this should propagate
+    //  the menu/config file setting
+    //  to the state variable used in
+    //  the mixing.
+    snd_SfxVolume = volume;
 }
 
 // MUSIC API - dummy. Some code from DOS version.
 void I_SetMusicVolume(int volume)
 {
-  // Internal state variable.
-  snd_MusicVolume = volume;
-  // Now set volume on output device.
-  // Whatever( snd_MusciVolume );
+    // Internal state variable.
+    snd_MusicVolume = volume;
+
+    Mix_VolumeMusic((volume * MIX_MAX_VOLUME) / 15);
 }
 
 
