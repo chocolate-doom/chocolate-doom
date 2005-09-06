@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.16  2005/09/06 22:39:43  fraggle
+// Restore -nosound, -nosfx, -nomusic
+//
 // Revision 1.15  2005/09/06 21:40:28  fraggle
 // Setting music volume
 //
@@ -105,8 +108,9 @@ rcsid[] = "$Id$";
 
 #define NUM_CHANNELS		16
 
-static int sound_initialised = 0;
+static boolean sound_initialised = false;
 static Mix_Chunk sound_chunks[NUMSFX];
+
 
 static byte *expand_sound_data(byte *data, int samplerate, int length)
 {
@@ -249,7 +253,12 @@ I_StartSound
   int		pitch,
   int		priority )
 {
-    Mix_Chunk *chunk = getsfx(id);
+    Mix_Chunk *chunk;
+
+    if (!sound_initialised)
+        return 0;
+
+    chunk = getsfx(id);
 
     // play sound
 
@@ -266,12 +275,17 @@ I_StartSound
 
 void I_StopSound (int handle)
 {
+    if (!sound_initialised)
+        return;
     Mix_HaltChannel(handle);
 }
 
 
 int I_SoundIsPlaying(int handle)
 {
+    if (!sound_initialised) 
+        return false;
+
     return Mix_Playing(handle);
 }
 
@@ -320,6 +334,9 @@ I_UpdateSoundParams
 {
     int left, right;
 
+    if (!sound_initialised)
+        return;
+
     left = ((254 - sep) * vol) / 15;
     right = ((sep) * vol) / 15;
 
@@ -340,12 +357,16 @@ void I_ShutdownSound(void)
 
 
 
-
-
-
 void
 I_InitSound()
 { 
+    // If music or sound is going to play, we need to at least
+    // initialise SDL
+
+    if (M_CheckParm("-nosound") 
+     || (M_CheckParm("-nosfx") && M_CheckParm("-nomusic")))
+        return;
+
     if (SDL_Init(SDL_INIT_AUDIO) < 0)
     {
         fprintf(stderr, "Unable to set up sound.\n");
@@ -359,9 +380,14 @@ I_InitSound()
 
     Mix_AllocateChannels(NUM_CHANNELS);
     
-    sound_initialised = 1;
-
     SDL_PauseAudio(0);
+
+    if (M_CheckParm("-nosound") || M_CheckParm("-nosfx"))
+        return;
+
+    sound_initialised = true;
+
+
 }
 
 
@@ -372,8 +398,21 @@ I_InitSound()
 // Still no music done.
 // Remains. Dummies.
 //
-void I_InitMusic(void)		{ }
-void I_ShutdownMusic(void)	{ }
+
+static int music_initialised;
+
+void I_InitMusic(void)		
+{ 
+    if (M_CheckParm("-nomusic") || M_CheckParm("-nosound"))
+        return;
+
+    music_initialised = true;
+}
+
+void I_ShutdownMusic(void)	
+{ 
+    music_initialised = false;
+}
 
 static int	looping=0;
 static int	musicdies=-1;
@@ -382,6 +421,9 @@ void I_PlaySong(void *handle, int looping)
 {
     Mix_Music *music = (Mix_Music *) handle;
     int loops;
+
+    if (!music_initialised)
+        return;
 
     if (handle == NULL)
         return;
@@ -396,22 +438,34 @@ void I_PlaySong(void *handle, int looping)
 
 void I_PauseSong (void *handle)
 {
+    if (!music_initialised)
+        return;
+
     Mix_PauseMusic();
 }
 
 void I_ResumeSong (void *handle)
 {
+    if (!music_initialised)
+        return;
+
     Mix_ResumeMusic();
 }
 
 void I_StopSong(void *handle)
 {
+    if (!music_initialised)
+        return;
+
     Mix_HaltMusic();
 }
 
 void I_UnRegisterSong(void *handle)
 {
     Mix_Music *music = (Mix_Music *) handle;
+
+    if (!music_initialised)
+        return;
 
     if (handle == NULL)
         return;
@@ -426,6 +480,9 @@ void *I_RegisterSong(void *data, int len)
     MIDI *mididata;
     UBYTE *mid;
     int midlen;
+
+    if (!music_initialised)
+        return NULL;
     
 #ifdef _WIN32
     sprintf(filename, "doom.mid");
@@ -475,6 +532,9 @@ void *I_RegisterSong(void *data, int len)
 // Is the song playing?
 int I_QrySongPlaying(void *handle)
 {
+    if (!music_initialised)
+        return false;
+
     return Mix_PlayingMusic();
 }
 
