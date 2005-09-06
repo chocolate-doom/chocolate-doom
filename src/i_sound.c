@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_sound.c 75 2005-09-05 22:50:56Z fraggle $
+// $Id: i_sound.c 77 2005-09-06 21:11:23Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.14  2005/09/06 21:11:23  fraggle
+// Working music!
+//
 // Revision 1.13  2005/09/05 22:50:56  fraggle
 // Add mmus2mid code from prboom.  Use 'void *' for music handles.  Pass
 // length of data when registering music.
@@ -74,13 +77,18 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_sound.c 75 2005-09-05 22:50:56Z fraggle $";
+rcsid[] = "$Id: i_sound.c 77 2005-09-06 21:11:23Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <SDL.h>
 #include <SDL_mixer.h>
 
+#ifndef _WIN32
+#include <unistd.h>
+#endif
+
+#include "mmus2mid.h"
 #include "z_zone.h"
 
 #include "i_system.h"
@@ -369,51 +377,102 @@ static int	musicdies=-1;
 
 void I_PlaySong(void *handle, int looping)
 {
-  // UNUSED.
-  looping = 0;
-  musicdies = gametic + TICRATE*30;
+    Mix_Music *music = (Mix_Music *) handle;
+    int loops;
+
+    if (handle == NULL)
+        return;
+
+    if (looping)
+        loops = -1;
+    else
+        loops = 1;
+
+    Mix_PlayMusic(music, loops);
 }
 
 void I_PauseSong (void *handle)
 {
-  // UNUSED.
-  handle = 0;
+    Mix_PauseMusic();
 }
 
 void I_ResumeSong (void *handle)
 {
-  // UNUSED.
-  handle = 0;
+    Mix_ResumeMusic();
 }
 
 void I_StopSong(void *handle)
 {
-  // UNUSED.
-  handle = 0;
-  
-  looping = 0;
-  musicdies = 0;
+    Mix_HaltMusic();
 }
 
 void I_UnRegisterSong(void *handle)
 {
-  // UNUSED.
-  handle = 0;
+    Mix_Music *music = (Mix_Music *) handle;
+
+    if (handle == NULL)
+        return;
+
+    Mix_FreeMusic(music);
 }
 
 void *I_RegisterSong(void *data, int len)
 {
-  // write the
+    char filename[64];
+    Mix_Music *music;
+    MIDI *mididata;
+    UBYTE *mid;
+    int midlen;
+    
+#ifdef _WIN32
+    sprintf(filename, "doom.mid");
+#else
+    sprintf(filename, "/tmp/doom-%i.mid", getpid());
+#endif
+
+    // Convert from mus to midi
+    // Bits here came from PrBoom
   
-  return 1;
+    mididata = Z_Malloc(sizeof(MIDI), PU_STATIC, 0);
+    mmus2mid(data, mididata, 89, 0);
+
+    if (MIDIToMidi(mididata, &mid, &midlen))
+    {
+        // Error occurred
+
+        fprintf(stderr, "Error converting MUS lump.\n");
+
+        music = NULL;
+    }
+    else
+    {
+        // Write midi data to disk
+       
+        M_WriteFile(filename, mid, midlen);
+
+        // Clean up
+       
+        free(mid);
+        free_mididata(mididata);
+        music = Mix_LoadMUS(filename);
+        
+        if (music == NULL)
+        {
+            // Failed to load
+
+            fprintf(stderr, "Error loading midi\n");
+        }
+    }
+
+    Z_Free(mididata);
+    
+    return music;
 }
 
 // Is the song playing?
 int I_QrySongPlaying(void *handle)
 {
-  // UNUSED.
-  handle = 0;
-  return looping || musicdies > gametic;
+    return Mix_PlayingMusic();
 }
 
 
