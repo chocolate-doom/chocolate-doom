@@ -1,11 +1,9 @@
 To do:
 
-* Address any remaining problems with audio(?)
-* Music
-* Startup messages
+* Separate config file for chocolate-doom specific settings.  eg. 
+  fullscreen, vertical disable, etc.
 * Dehacked support
 * ENDOOM
-* Check quit messages selected correctly
 * Setup utility
 * Short-circuit Zone memory
 
