@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_system.c 37 2005-08-04 18:42:15Z fraggle $
+// $Id: i_system.c 80 2005-09-06 22:39:43Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.8  2005/09/06 22:39:43  fraggle
+// Restore -nosound, -nosfx, -nomusic
+//
 // Revision 1.7  2005/08/04 18:42:15  fraggle
 // Silence compiler warnings
 //
@@ -49,7 +52,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_system.c 37 2005-08-04 18:42:15Z fraggle $";
+rcsid[] = "$Id: i_system.c 80 2005-09-06 22:39:43Z fraggle $";
 
 
 #include <stdlib.h>
@@ -136,6 +139,7 @@ int  I_GetTime (void)
 void I_Init (void)
 {
     I_InitSound();
+    I_InitMusic();
 
     // initialise timer
 
