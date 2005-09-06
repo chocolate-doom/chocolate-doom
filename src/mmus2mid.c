@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: mmus2mid.c 75 2005-09-05 22:50:56Z fraggle $
+// $Id: mmus2mid.c 76 2005-09-06 21:06:45Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 //  Copyright (C) 1999 by
@@ -27,6 +27,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2005/09/06 21:06:45  fraggle
+// Newer versions of mmus2mid.c,h from prboom
+//
 // Revision 1.1  2005/09/05 22:50:56  fraggle
 // Add mmus2mid code from prboom.  Use 'void *' for music handles.  Pass
 // length of data when registering music.
@@ -61,6 +64,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdlib.h>
+#ifdef MSDOS /* proff: I don't use allegro in windows */
+#include <allegro.h>
+#endif /* !MSDOS */
 #include "mmus2mid.h"
 
 //#define STANDALONE  /* uncomment this to make MMUS2MID.EXE */
@@ -118,27 +124,27 @@ static TrackInfo track[MIDI_TRACKS];
 // initial track size allocation
 #define TRACKBUFFERSIZE 1024
 
-// lookup table MUS -> MID controls 
-static UBYTE MUS2MIDcontrol[15] = 
+// lookup table MUS -> MID controls
+static UBYTE MUS2MIDcontrol[15] =
 {
   0,         // Program change - not a MIDI control change
-  0x00,      // Bank select               
-  0x01,      // Modulation pot              
-  0x07,      // Volume                  
-  0x0A,      // Pan pot                 
-  0x0B,      // Expression pot              
-  0x5B,      // Reverb depth                
-  0x5D,      // Chorus depth                
-  0x40,      // Sustain pedal               
-  0x43,      // Soft pedal                
-  0x78,      // All sounds off              
-  0x7B,      // All notes off               
-  0x7E,      // Mono                    
-  0x7F,      // Poly                    
-  0x79       // Reset all controllers           
+  0x00,      // Bank select
+  0x01,      // Modulation pot
+  0x07,      // Volume
+  0x0A,      // Pan pot
+  0x0B,      // Expression pot
+  0x5B,      // Reverb depth
+  0x5D,      // Chorus depth
+  0x40,      // Sustain pedal
+  0x43,      // Soft pedal
+  0x78,      // All sounds off
+  0x7B,      // All notes off
+  0x7E,      // Mono
+  0x7F,      // Poly
+  0x79       // Reset all controllers
 };
 
-// some strings of bytes used in the midi format 
+// some strings of bytes used in the midi format
 
 static UBYTE midikey[]   =
 {0x00,0xff,0x59,0x02,0x00,0x00};        // C major
@@ -356,7 +362,7 @@ int mmus2mid(const UBYTE *mus, MIDI *mididata, UWORD division, int nocomp)
     track[i].velocity = 64;
     track[i].deltaT = 0;
     track[i].lastEvt = 0;
-    free(mididata->track[i].data);//jff 3/5/98 remove old allocations
+    //free(mididata->track[i].data);//jff 3/5/98 remove old allocations
     mididata->track[i].data=NULL;
     track[i].alloced = 0;
     mididata->track[i].len = 0;
@@ -373,20 +379,20 @@ int mmus2mid(const UBYTE *mus, MIDI *mididata, UWORD division, int nocomp)
 
   // allocate for midi tempo/key track, allow for end of track
   if (!(mididata->track[0].data =
-      realloc(mididata->track[0].data,sizeof(midikey)+sizeof(miditempo)+4)))  
+      realloc(mididata->track[0].data,sizeof(midikey)+sizeof(miditempo)+4)))
     return MEMALLOC;
 
   // key C major
   memcpy(mididata->track[0].data,midikey,sizeof(midikey));
-  // tempo uS/qnote 
+  // tempo uS/qnote
   memcpy(mididata->track[0].data+sizeof(midikey),miditempo,sizeof(miditempo));
-  mididata->track[0].len = sizeof(midikey)+sizeof(miditempo); 
+  mididata->track[0].len = sizeof(midikey)+sizeof(miditempo);
 
   TrackCnt++;   // music tracks start at 1
 
   // process the MUS events in the MUS buffer
 
-  do 
+  do
   {
     // get a mus event, decode its type and channel fields
 
@@ -401,7 +407,7 @@ int mmus2mid(const UBYTE *mus, MIDI *mididata, UWORD division, int nocomp)
     {
       // set MIDIchannel and MIDItrack
 
-      MIDIchannel = MUS2MIDchannel[MUSchannel] = 
+      MIDIchannel = MUS2MIDchannel[MUSchannel] =
         (MUSchannel == 15 ? 9 : FirstChannelAvailable(MUS2MIDchannel));
       MIDItrack = MIDIchan2track[MIDIchannel] = (UBYTE)TrackCnt++;
     }
@@ -418,7 +424,7 @@ int mmus2mid(const UBYTE *mus, MIDI *mididata, UWORD division, int nocomp)
     switch(evt)
     {
       case RELEASE_NOTE:
-  	  // killough 10/7/98: Fix noise problems by not allowing compression
+      // killough 10/7/98: Fix noise problems by not allowing compression
       if (!(NewEvent=MidiEvent(mididata,0x90,MIDIchannel,MIDItrack,1)))
         return MEMALLOC;
 
@@ -468,9 +474,9 @@ int mmus2mid(const UBYTE *mus, MIDI *mididata, UWORD division, int nocomp)
               if (TWriteByte(mididata, MIDItrack, (UBYTE)(MUSh.channels+1)))
                 return MEMALLOC;
       }
-          else 
-	    if (TWriteByte(mididata, MIDItrack, 0))
-	      return MEMALLOC;
+          else
+      if (TWriteByte(mididata, MIDItrack, 0))
+        return MEMALLOC;
           break;
 
       case CNTL_CHANGE:
@@ -509,11 +515,11 @@ int mmus2mid(const UBYTE *mus, MIDI *mididata, UWORD division, int nocomp)
     if (last(event))
     {
           ULONG DeltaTime = ReadTime(&musptr); // killough 10/7/98: make local
-	  for (i = 0;i < MIDI_TRACKS; i++) //jff 3/13/98 update all tracks
-	    track[i].deltaT += DeltaTime;  //whether allocated yet or not
+    for (i = 0;i < MIDI_TRACKS; i++) //jff 3/13/98 update all tracks
+      track[i].deltaT += DeltaTime;  //whether allocated yet or not
     }
 
-    } 
+    }
   while ((evt != SCORE_END) && ((size_t)(musptr-mus) < muslen));
 
   if (evt!=SCORE_END)
@@ -524,11 +530,11 @@ int mmus2mid(const UBYTE *mus, MIDI *mididata, UWORD division, int nocomp)
   for (i = 0; i < MIDI_TRACKS; i++)
     if (mididata->track[i].len)
     {       // killough 10/7/98: simplify code
-    	if (TWriteByte(mididata, i, 0x00) || // midi end of track code
-	      TWriteByte(mididata, i, 0xFF) ||
-	      TWriteByte(mididata, i, 0x2F) ||
-	      TWriteByte(mididata, i, 0x00))
-	     return MEMALLOC;
+      if (TWriteByte(mididata, i, 0x00) || // midi end of track code
+        TWriteByte(mididata, i, 0xFF) ||
+        TWriteByte(mididata, i, 0x2F) ||
+        TWriteByte(mididata, i, 0x00))
+       return MEMALLOC;
 
       // jff 1/23/98 fix failure to set data NULL, len 0 for unused tracks
       // shorten allocation to proper length (important for Allegro)
@@ -543,6 +549,15 @@ int mmus2mid(const UBYTE *mus, MIDI *mididata, UWORD division, int nocomp)
     }
 
   return 0;
+}
+
+void free_mididata(MIDI *mid)
+{
+  int i;
+
+  for (i = 0; i < MIDI_TRACKS; i++)
+    if (mid->track[i].data)
+      free(mid->track[i].data);
 }
 
 //
@@ -569,11 +584,11 @@ size_t ReadLength(UBYTE **mid)
 //
 // MidiToMIDI()
 //
-// Convert an in-memory copy of a MIDI format 0 or 1 file to 
+// Convert an in-memory copy of a MIDI format 0 or 1 file to
 // an Allegro MIDI structure, that is valid or has been zeroed
 //
 // Passed a pointer to a memory buffer with MIDI format music in it and a
-// pointer to an Allegro MIDI structure. 
+// pointer to an Allegro MIDI structure.
 //
 // Returns 0 if successful, BADMIDHDR if the buffer is not MIDI format
 //
@@ -606,10 +621,10 @@ int MidiToMIDI(UBYTE *mid,MIDI *mididata)
     while (memcmp(mid,trackhdr,4))    // simply skip non-track data
     {
       mid += 4;
-  	  {
-	      size_t t = ReadLength(&mid);            // seek past header
-	      mid += t;  // killough 10/7/98: prevent mid undefined behavior
-	    }
+      {
+        size_t t = ReadLength(&mid);            // seek past header
+        mid += t;  // killough 10/7/98: prevent mid undefined behavior
+      }
     }
     mid += 4;
     mididata->track[i].len = ReadLength(&mid);  // get length, move mid past it
@@ -643,7 +658,7 @@ static void TWriteLength(UBYTE **midiptr,ULONG length);
 //
 // Passed a pointer to an Allegro MIDI structure
 // Returns nothing
-// 
+//
 static void FreeTracks(MIDI *mididata)
 {
   int i;
@@ -727,7 +742,7 @@ int MIDIToMidi(MIDI *mididata,UBYTE **mid,int *midlen)
       midiptr += sizeof(trackhdr);
       TWriteLength(&midiptr,mididata->track[i].len);  // track length
       // data
-      memcpy(midiptr,mididata->track[i].data,mididata->track[i].len); 
+      memcpy(midiptr,mididata->track[i].data,mididata->track[i].len);
       midiptr += mididata->track[i].len;
     }
   }
