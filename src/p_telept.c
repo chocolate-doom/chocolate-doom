@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_telept.c 56 2005-08-29 22:00:04Z fraggle $
+// $Id: p_telept.c 78 2005-09-06 21:15:08Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/09/06 21:15:08  fraggle
+// Silly me - i misread cph's patch and got the logic backwards
+//
 // Revision 1.4  2005/08/29 22:00:04  fraggle
 // Add missing header to fix build
 //
@@ -41,7 +44,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_telept.c 56 2005-08-29 22:00:04Z fraggle $";
+rcsid[] = "$Id: p_telept.c 78 2005-09-06 21:15:08Z fraggle $";
 
 
 
@@ -126,7 +129,7 @@ EV_Teleport
                 // fraggle: this was changed in final doom, 
                 // problem between normal doom2 1.9 and final doom
 
-                if (gamemission == pack_tnt || gamemission == pack_plut)
+                if (gamemission != pack_tnt && gamemission != pack_plut)
 		    thing->z = thing->floorz;
                 
 		if (thing->player)
