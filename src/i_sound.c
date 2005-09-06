@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_sound.c 77 2005-09-06 21:11:23Z fraggle $
+// $Id: i_sound.c 79 2005-09-06 21:40:28Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.15  2005/09/06 21:40:28  fraggle
+// Setting music volume
+//
 // Revision 1.14  2005/09/06 21:11:23  fraggle
 // Working music!
 //
@@ -77,7 +80,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_sound.c 77 2005-09-06 21:11:23Z fraggle $";
+rcsid[] = "$Id: i_sound.c 79 2005-09-06 21:40:28Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -196,21 +199,21 @@ void I_SetChannels()
  
 void I_SetSfxVolume(int volume)
 {
-  // Identical to DOS.
-  // Basically, this should propagate
-  //  the menu/config file setting
-  //  to the state variable used in
-  //  the mixing.
-  snd_SfxVolume = volume;
+    // Identical to DOS.
+    // Basically, this should propagate
+    //  the menu/config file setting
+    //  to the state variable used in
+    //  the mixing.
+    snd_SfxVolume = volume;
 }
 
 // MUSIC API - dummy. Some code from DOS version.
 void I_SetMusicVolume(int volume)
 {
-  // Internal state variable.
-  snd_MusicVolume = volume;
-  // Now set volume on output device.
-  // Whatever( snd_MusciVolume );
+    // Internal state variable.
+    snd_MusicVolume = volume;
+
+    Mix_VolumeMusic((volume * MIX_MAX_VOLUME) / 15);
 }
 
 
