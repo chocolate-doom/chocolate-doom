@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.8  2005/09/06 22:39:43  fraggle
+// Restore -nosound, -nosfx, -nomusic
+//
 // Revision 1.7  2005/08/04 18:42:15  fraggle
 // Silence compiler warnings
 //
@@ -136,6 +139,7 @@ int  I_GetTime (void)
 void I_Init (void)
 {
     I_InitSound();
+    I_InitMusic();
 
     // initialise timer
 
