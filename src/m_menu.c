@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2005/09/07 21:30:42  fraggle
+// Remove non-ANSI C headers.  Use standard C file I/O functions.
+//
 // Revision 1.5  2005/09/04 14:51:19  fraggle
 // Display the correct quit messages according to which game is being played.
 // Remove "language" variable (do this through gettext, if ever)
@@ -48,10 +51,6 @@
 static const char
 rcsid[] = "$Id$";
 
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 #include <stdlib.h>
 #include <ctype.h>
 
@@ -87,6 +86,7 @@ rcsid[] = "$Id$";
 #include "m_menu.h"
 
 
+extern void M_QuitDOOM(int);
 
 extern patch_t*		hu_font[HU_FONTSIZE];
 extern boolean		message_dontfuckwithme;
@@ -533,9 +533,9 @@ menu_t  SaveDef =
 //
 void M_ReadSaveStrings(void)
 {
-    int             handle;
-    int             count;
-    int             i;
+    FILE   *handle;
+    int     count;
+    int     i;
     char    name[256];
 	
     for (i = 0;i < load_end;i++)
@@ -545,15 +545,15 @@ void M_ReadSaveStrings(void)
 	else
 	    sprintf(name,SAVEGAMENAME"%d.dsg",i);
 
-	handle = open (name, O_RDONLY | 0, 0666);
-	if (handle == -1)
+	handle = fopen(name, "rb");
+	if (handle == NULL)
 	{
-	    strcpy(&savegamestrings[i][0],EMPTYSTRING);
+	    strcpy(&savegamestrings[i][0], EMPTYSTRING);
 	    LoadMenu[i].status = 0;
 	    continue;
 	}
-	count = read (handle, &savegamestrings[i], SAVESTRINGSIZE);
-	close (handle);
+	count = fread(&savegamestrings[i], 1, SAVESTRINGSIZE, handle);
+	fclose(handle);
 	LoadMenu[i].status = 1;
     }
 }
