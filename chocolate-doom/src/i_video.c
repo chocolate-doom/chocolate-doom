@@ -22,6 +22,12 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.23  2005/09/07 20:44:23  fraggle
+// Fix up names of functions
+// Make the quit button work (pops up the "quit doom?" prompt).
+// Fix focus detection to release the mouse and ignore mouse events
+// when window is not focused.
+//
 // Revision 1.22  2005/09/04 23:18:30  fraggle
 // Remove dead code.  Cope with the screen not having width == pitch.  Lock
 // the SDL screen surface properly. Rewrite 2x scaling code.
@@ -115,8 +121,12 @@ rcsid[] = "$Id$";
 #include "m_argv.h"
 #include "m_swap.h"
 #include "d_main.h"
+#include "s_sound.h"
+#include "sounds.h"
 
 #include "doomdef.h"
+
+extern void M_QuitDOOM();
 
 static SDL_Surface *screen;
 
@@ -147,9 +157,15 @@ static int	multiply=1;
 static byte *disk_image = NULL;
 static int disk_image_w, disk_image_h;
 static byte *saved_background;
+static boolean window_focused;
 
-static boolean mouse_should_be_grabbed()
+static boolean MouseShouldBeGrabbed()
 {
+    // if the window doesnt have focus, never grab it
+
+    if (!window_focused)
+        return false;
+
     // always grab the mouse when full screen (dont want to 
     // see the mouse pointer)
 
@@ -169,6 +185,24 @@ static boolean mouse_should_be_grabbed()
     // only grab mouse when playing levels (but not demos)
 
     return (gamestate == GS_LEVEL) && !demoplayback;
+}
+
+// Update the value of window_focused when we get a focus event
+//
+// We try to make ourselves be well-behaved: the grab on the mouse
+// is removed if we lose focus (such as a popup window appearing),
+// and we dont move the mouse around if we aren't focused either.
+
+static void UpdateFocus(void)
+{
+    Uint8 state;
+
+    state = SDL_GetAppState();
+
+    // We should have input (keyboard) focus and be visible 
+    // (not minimised)
+
+    window_focused = (state & SDL_APPINPUTFOCUS) && (state & SDL_APPACTIVE);
 }
 
 void I_BeginRead(void)
@@ -251,7 +285,7 @@ static void LoadDiskImage(void)
 // Translates the SDL key
 //
 
-int xlatekey(SDL_keysym *sym)
+int TranslateKey(SDL_keysym *sym)
 {
     switch(sym->sym)
     {
@@ -347,7 +381,7 @@ void I_StartFrame (void)
 
 }
 
-static int mousebuttonstate(void)
+static int MouseButtonState(void)
 {
     Uint8 state = SDL_GetMouseState(NULL, NULL);
     int result = 0;
@@ -373,37 +407,60 @@ void I_GetEvent(void)
     
     while (SDL_PollEvent(&sdlevent))
     {
+        // ignore mouse events when the window is not focused
+
+        if (!window_focused 
+         && (sdlevent.type == SDL_MOUSEMOTION
+          || sdlevent.type == SDL_MOUSEBUTTONDOWN
+          || sdlevent.type == SDL_MOUSEBUTTONUP))
+        {
+            continue;
+        }
+
+        // process event
+        
         switch (sdlevent.type)
         {
             case SDL_KEYDOWN:
                 event.type = ev_keydown;
-                event.data1 = xlatekey(&sdlevent.key.keysym);
+                event.data1 = TranslateKey(&sdlevent.key.keysym);
 		event.data2 = sdlevent.key.keysym.unicode;
                 D_PostEvent(&event);
                 break;
             case SDL_KEYUP:
                 event.type = ev_keyup;
-                event.data1 = xlatekey(&sdlevent.key.keysym);
+                event.data1 = TranslateKey(&sdlevent.key.keysym);
                 D_PostEvent(&event);
                 break;
             case SDL_MOUSEMOTION:
                 event.type = ev_mouse;
-                event.data1 = mousebuttonstate();
+                event.data1 = MouseButtonState();
                 event.data2 = sdlevent.motion.xrel * 8;
                 event.data3 = -sdlevent.motion.yrel * 8;
                 D_PostEvent(&event);
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 event.type = ev_mouse;
-                event.data1 = mousebuttonstate();
+                event.data1 = MouseButtonState();
                 event.data2 = event.data3 = 0;
                 D_PostEvent(&event);
                 break;
             case SDL_MOUSEBUTTONUP:
                 event.type = ev_mouse;
-                event.data1 = mousebuttonstate();
+                event.data1 = MouseButtonState();
                 event.data2 = event.data3 = 0;
                 D_PostEvent(&event);
+                break;
+            case SDL_QUIT:
+                // bring up the "quit doom?" prompt
+                S_StartSound(NULL,sfx_swtchn);
+                M_QuitDOOM(0);
+                break;
+            case SDL_ACTIVEEVENT:
+                // need to update our focus state
+                UpdateFocus();
+                break;
+            default:
                 break;
         }
     }
@@ -430,7 +487,7 @@ void UpdateGrab(void)
     static boolean currently_grabbed = false;
     boolean grab;
 
-    grab = mouse_should_be_grabbed();
+    grab = MouseShouldBeGrabbed();
 
     if (grab && !currently_grabbed)
     {
@@ -640,6 +697,9 @@ void I_InitGraphics(void)
     }
 
     SetCaption();
+
+    UpdateFocus();
+    UpdateGrab();
 
     // Check if we have a native surface we can use
 
