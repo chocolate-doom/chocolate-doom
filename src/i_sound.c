@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.17  2005/09/07 22:24:26  fraggle
+// Modify the sound effect caching behaviour: sounds which are not playing
+// are now marked as PU_CACHE; it is otherwise possible to run out of memory.
+//
 // Revision 1.16  2005/09/06 22:39:43  fraggle
 // Restore -nosound, -nosfx, -nomusic
 //
@@ -110,19 +114,49 @@ rcsid[] = "$Id$";
 
 static boolean sound_initialised = false;
 static Mix_Chunk sound_chunks[NUMSFX];
+static int channels_playing[NUM_CHANNELS];
 
 
-static byte *expand_sound_data(byte *data, int samplerate, int length)
+// When a sound stops, check if it is still playing.  If it is not, 
+// we can mark the sound data as CACHE to be freed back for other
+// means.
+
+void ReleaseSoundOnChannel(int channel)
 {
-    byte *result = data;
+    int i;
+    int id = channels_playing[channel];
+
+    if (!id)
+        return;
+
+    channels_playing[channel] = sfx_None;
+    
+    for (i=0; i<NUM_CHANNELS; ++i)
+    {
+        // Playing on this channel? if so, don't release.
+
+        if (channels_playing[i] == id)
+            return;
+    }
+
+    // Not used on any channel, and can be safely released
+    
+    Z_ChangeTag(sound_chunks[id].abuf, PU_CACHE);
+}
+
+// Expands the 11025Hz, 8bit, mono sound effects in Doom to
+// 22050Hz, 16bit stereo
+
+static void ExpandSoundData(byte *data, int samplerate, int length,
+                            Mix_Chunk *destination)
+{
+    byte *expanded = (byte *) destination->abuf;
     int i;
 
     if (samplerate == 11025)
     {
         // need to expand to 2 channels, 11025->22050 and 8->16 bit
 
-        result = Z_Malloc(length * 8, PU_STATIC, NULL);
-
         for (i=0; i<length; ++i)
         {
             Uint16 sample;
@@ -130,18 +164,14 @@ static byte *expand_sound_data(byte *data, int samplerate, int length)
             sample = data[i] | (data[i] << 8);
             sample -= 32768;
 
-            result[i * 8] = result[i * 8 + 2]
-              = result[i * 8 + 4] = result[i * 8 + 6] = sample & 0xff;
-            result[i * 8 + 1] = result[i * 8 + 3]
-              = result[i * 8 + 5] = result[i * 8 + 7] = (sample >> 8) & 0xff;
+            expanded[i * 8] = expanded[i * 8 + 2]
+              = expanded[i * 8 + 4] = expanded[i * 8 + 6] = sample & 0xff;
+            expanded[i * 8 + 1] = expanded[i * 8 + 3]
+              = expanded[i * 8 + 5] = expanded[i * 8 + 7] = (sample >> 8) & 0xff;
         }
     }
     else if (samplerate == 22050)
     {
-        // need to expand to 2 channels (sample rate is already correct)
-
-        result = Z_Malloc(length * 4, PU_STATIC, NULL);
-
         for (i=0; i<length; ++i)
         {
             Uint16 sample;
@@ -149,39 +179,59 @@ static byte *expand_sound_data(byte *data, int samplerate, int length)
             sample = data[i] | (data[i] << 8);
             sample -= 32768;
 
-            result[i * 4] = result[i * 4 + 2] = sample & 0xff;
-            result[i * 4 + 1] = result[i * 4 + 3] = (sample >> 8) & 0xff;
+            expanded[i * 4] = expanded[i * 4 + 2] = sample & 0xff;
+            expanded[i * 4 + 1] = expanded[i * 4 + 3] = (sample >> 8) & 0xff;
         }
     }
     else
     {
         I_Error("Unsupported sample rate %i", samplerate);
     }
+}
 
-    return result;
+// Load and convert a sound effect
+
+static void CacheSFX(int sound)
+{
+    int lumpnum;
+    int samplerate;
+    int length;
+    int expanded_length;
+    byte *data;
+
+    // need to load the sound
+
+    lumpnum = I_GetSfxLumpNum(&S_sfx[sound]);
+    data = W_CacheLumpNum(lumpnum, PU_STATIC);
+
+    samplerate = (data[3] << 8) | data[2];
+    length = (data[5] << 8) | data[4];
+    expanded_length = (length * 4)  * (22050 / samplerate);
+
+    sound_chunks[sound].allocated = 1;
+    sound_chunks[sound].alen = expanded_length;
+    sound_chunks[sound].abuf 
+        = Z_Malloc(expanded_length, PU_STATIC, &sound_chunks[sound].abuf);
+    sound_chunks[sound].volume = 64;
+
+    ExpandSoundData(data + 8, samplerate, length, &sound_chunks[sound]);
+
+    // don't need the original lump any more
+  
+    Z_ChangeTag(data, PU_CACHE);
 }
 
 static Mix_Chunk *getsfx(int sound)
 {
     if (sound_chunks[sound].abuf == NULL)
     {
-        int lumpnum;
-        int samplerate;
-        int length;
-        byte *data;
-
-        // need to load the sound
-
-        lumpnum = I_GetSfxLumpNum(&S_sfx[sound]);
-        data = W_CacheLumpNum(lumpnum, PU_STATIC);
-
-        samplerate = (data[3] << 8) | data[2];
-        length = (data[5] << 8) | data[4];
-
-        sound_chunks[sound].allocated = 1;
-        sound_chunks[sound].abuf = expand_sound_data(data + 8, samplerate, length);
-        sound_chunks[sound].alen = (length * 4)  * (22050 / samplerate);
-        sound_chunks[sound].volume = 64;
+        CacheSFX(sound);
+    }
+    else
+    {
+        // don't free the sound while it is playing!
+   
+        Z_ChangeTag(sound_chunks[sound].abuf, PU_STATIC);
     }
 
     return &sound_chunks[sound];
@@ -231,7 +281,6 @@ int I_GetSfxLumpNum(sfxinfo_t* sfx)
     sprintf(namebuf, "ds%s", sfx->name);
     return W_GetNumForName(namebuf);
 }
-
 //
 // Starting a sound means adding it
 //  to the current list of active sounds
@@ -258,11 +307,20 @@ I_StartSound
     if (!sound_initialised)
         return 0;
 
+    // Release a sound effect if there is already one playing
+    // on this channel
+
+    ReleaseSoundOnChannel(channel);
+
+    // Get the sound data
+
     chunk = getsfx(id);
 
     // play sound
 
     Mix_PlayChannelTimed(channel, chunk, 0, -1);
+
+    channels_playing[channel] = id;
 
     // set separation, etc.
  
@@ -271,13 +329,17 @@ I_StartSound
     return channel;
 }
 
-
-
 void I_StopSound (int handle)
 {
     if (!sound_initialised)
         return;
+
     Mix_HaltChannel(handle);
+
+    // Sound data is no longer needed; release the
+    // sound data being used for this channel
+
+    ReleaseSoundOnChannel(handle);
 }
 
 
@@ -292,21 +354,29 @@ int I_SoundIsPlaying(int handle)
 
 
 
+// 
+// Periodically called to update the sound system
 //
-// This function loops all active (internal) sound
-//  channels, retrieves a given number of samples
-//  from the raw sound data, modifies it according
-//  to the current (internal) channel parameters,
-//  mixes the per channel samples into the global
-//  mixbuffer, clamping it to the allowed range,
-//  and sets up everything for transferring the
-//  contents of the mixbuffer to the (two)
-//  hardware channels (left and right, that is).
-//
-// This function currently supports only 16bit.
-//
+
 void I_UpdateSound( void )
 {
+    int i;
+
+    if (!sound_initialised)
+        return;
+
+    // Check all channels to see if a sound has finished
+
+    for (i=0; i<NUM_CHANNELS; ++i)
+    {
+        if (channels_playing[i] && !I_SoundIsPlaying(i))
+        {
+            // Sound has finished playing on this channel,
+            // but sound data has not been released to cache
+            
+            ReleaseSoundOnChannel(i);
+        }
+    }
 }
 
 
@@ -360,6 +430,20 @@ void I_ShutdownSound(void)
 void
 I_InitSound()
 { 
+    int i;
+    
+    // No sounds yet
+
+    for (i=0; i<NUMSFX; ++i)
+    {
+        sound_chunks[i].abuf = NULL;
+    }
+
+    for (i=0; i<NUM_CHANNELS; ++i)
+    {
+        channels_playing[i] = sfx_None;
+    }
+    
     // If music or sound is going to play, we need to at least
     // initialise SDL
 
@@ -386,8 +470,6 @@ I_InitSound()
         return;
 
     sound_initialised = true;
-
-
 }
 
 
@@ -395,8 +477,6 @@ I_InitSound()
 
 //
 // MUSIC API.
-// Still no music done.
-// Remains. Dummies.
 //
 
 static int music_initialised;
