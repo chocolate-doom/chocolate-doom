@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_misc.c 82 2005-09-07 12:34:47Z fraggle $
+// $Id: m_misc.c 85 2005-09-07 21:40:11Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -23,6 +23,9 @@
 //
 //
 // $Log$
+// Revision 1.8  2005/09/07 21:40:11  fraggle
+// Remove non-ANSI C headers and functions
+//
 // Revision 1.7  2005/09/07 12:34:47  fraggle
 // Maintain dos-specific options in config file
 //
@@ -57,14 +60,10 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_misc.c 82 2005-09-07 12:34:47Z fraggle $";
+rcsid[] = "$Id: m_misc.c 85 2005-09-07 21:40:11Z fraggle $";
 
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <fcntl.h>
+#include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-
 #include <ctype.h>
 
 
@@ -141,22 +140,18 @@ M_DrawText
 #define O_BINARY 0
 #endif
 
-boolean
-M_WriteFile
-( char const*	name,
-  void*		source,
-  int		length )
+boolean M_WriteFile(char const *name, void *source, int	length)
 {
-    int		handle;
-    int		count;
+    FILE *handle;
+    int	count;
 	
-    handle = open ( name, O_WRONLY | O_CREAT | O_TRUNC | O_BINARY, 0666);
+    handle = fopen(name, "wb");
 
-    if (handle == -1)
+    if (handle == NULL)
 	return false;
 
-    count = write (handle, source, length);
-    close (handle);
+    count = fwrite(source, 1, length, handle);
+    fclose(handle);
 	
     if (count < length)
 	return false;
@@ -168,24 +163,26 @@ M_WriteFile
 //
 // M_ReadFile
 //
-int
-M_ReadFile
-( char const*	name,
-  byte**	buffer )
+int M_ReadFile(char const *name, byte **buffer)
 {
-    int	handle, count, length;
-    struct stat	fileinfo;
-    byte		*buf;
+    FILE *handle;
+    int	count, length;
+    byte *buf;
 	
-    handle = open (name, O_RDONLY | O_BINARY, 0666);
-    if (handle == -1)
+    handle = fopen(name, "rb");
+    if (handle == NULL)
 	I_Error ("Couldn't read file %s", name);
-    if (fstat (handle,&fileinfo) == -1)
-	I_Error ("Couldn't read file %s", name);
-    length = fileinfo.st_size;
+
+    // find the size of the file by seeking to the end and
+    // reading the current position
+
+    fseek(handle, 0, SEEK_END);
+    length = ftell(handle);
+    fseek(handle, 0, SEEK_SET);
+    
     buf = Z_Malloc (length, PU_STATIC, NULL);
-    count = read (handle, buf, length);
-    close (handle);
+    count = fread(buf, 1, length, handle);
+    fclose (handle);
 	
     if (count < length)
 	I_Error ("Couldn't read file %s", name);
@@ -578,6 +575,22 @@ WritePCXfile
     Z_Free (pcx);
 }
 
+static boolean FileExists(char *filename)
+{
+    FILE *handle;
+
+    handle = fopen(filename, "rb");
+
+    if (handle != NULL)
+    {
+        fclose(handle);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
 
 //
 // M_ScreenShot
@@ -599,7 +612,7 @@ void M_ScreenShot (void)
     {
 	lbmname[4] = i/10 + '0';
 	lbmname[5] = i%10 + '0';
-	if (access(lbmname,0) == -1)
+	if (!FileExists(lbmname))
 	    break;	// file doesn't exist
     }
     if (i==100)
