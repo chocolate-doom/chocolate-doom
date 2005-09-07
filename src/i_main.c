@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/09/07 22:58:34  fraggle
+// No SIGHUP on Windows
+//
 // Revision 1.4  2005/09/07 21:40:28  fraggle
 // Catch signals and exit cleanly
 //
@@ -70,7 +73,9 @@ int main(int argc, char **argv)
     signal(SIGINT, SignalHandler);
     signal(SIGFPE, SignalHandler);
     signal(SIGABRT, SignalHandler);
+#ifdef SIGHUP
     signal(SIGHUP, SignalHandler);
+#endif
 #ifdef SIGPIPE
     signal(SIGHUP, SignalHandler);
 #endif
