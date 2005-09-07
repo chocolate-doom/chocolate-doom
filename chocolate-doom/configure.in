@@ -1,4 +1,4 @@
-AC_INIT(Chocolate Doom, 0.1, fraggle@alkali.org, chocolate-doom)
+AC_INIT(Chocolate Doom, 0.0.1, fraggle@alkali.org, chocolate-doom)
 AC_CONFIG_AUX_DIR(autotools)
 
 orig_CFLAGS="$CFLAGS"
@@ -34,6 +34,8 @@ AC_SUBST(SDLMIXER_LIBS)
 
 AC_SUBST(SDLNET_CFLAGS)
 AC_SUBST(SDLNET_LIBS)
+
+AC_SUBST(ac_aux_dir)
 
 AC_OUTPUT([
 Makefile
