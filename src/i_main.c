@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/09/07 21:40:28  fraggle
+// Catch signals and exit cleanly
+//
 // Revision 1.3  2005/08/30 22:11:10  fraggle
 // Windows fixes
 //
@@ -41,22 +44,36 @@ static const char
 rcsid[] = "$Id$";
 
 
+#include <signal.h>
 
 #include "doomdef.h"
-
+#include "i_system.h"
 #include "m_argv.h"
 #include "d_main.h"
 
-int
-main
-( int		argc,
-  char**	argv ) 
+void SignalHandler(int signum)
+{
+    I_Error("Aborting due to signal %i\n", signum);   
+}
+
+int main(int argc, char **argv) 
 { 
 
     // save arguments
 
     myargc = argc; 
     myargv = argv; 
+
+    signal(SIGSEGV, SignalHandler);
+    signal(SIGTERM, SignalHandler);
+    signal(SIGILL, SignalHandler);
+    signal(SIGINT, SignalHandler);
+    signal(SIGFPE, SignalHandler);
+    signal(SIGABRT, SignalHandler);
+    signal(SIGHUP, SignalHandler);
+#ifdef SIGPIPE
+    signal(SIGHUP, SignalHandler);
+#endif
 
 #ifdef _WIN32
     // restore stdout/stderr
@@ -65,6 +82,7 @@ main
     freopen("CON", "w", stderr);
 
 #endif
+    
     // start doom
  
     D_DoomMain (); 
