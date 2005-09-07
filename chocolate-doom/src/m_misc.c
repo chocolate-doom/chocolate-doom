@@ -23,6 +23,9 @@
 //
 //
 // $Log$
+// Revision 1.7  2005/09/07 12:34:47  fraggle
+// Maintain dos-specific options in config file
+//
 // Revision 1.6  2005/08/04 21:48:32  fraggle
 // Turn on compiler optimisation and warning options
 // Add SDL_mixer sound code
@@ -238,6 +241,16 @@ extern	int	numChannels;
 
 extern char*	chat_macros[];
 
+// dos specific options: these are unused but should be maintained
+// so that the config file can be shared between chocolate
+// doom and doom.exe
+
+static int snd_musicdevice;
+static int snd_sfxdevice;
+static int snd_sbport;
+static int snd_sbirq;
+static int snd_sbdma;
+static int snd_mport;
 
 typedef struct
 {
@@ -284,7 +297,12 @@ default_t	defaults[] =
 
     {"snd_channels",&numChannels, 3},
 
-
+    {"snd_musicdevice", &snd_musicdevice, 0},
+    {"snd_sfxdevice", &snd_sfxdevice, 0},
+    {"snd_sbport", &snd_sbport, 0},
+    {"snd_sbirq", &snd_sbirq, 0},
+    {"snd_sbdma", &snd_sbdma, 0},
+    {"snd_mport", &snd_mport, 0},
 
     {"usegamma",&usegamma, 0},
 
