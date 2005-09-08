@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_switch.c 8 2005-07-23 16:44:57Z fraggle $
+// $Id: p_switch.c 91 2005-09-08 00:01:51Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -23,6 +23,9 @@
 //
 //
 // $Log$
+// Revision 1.3  2005/09/08 00:01:51  fraggle
+// Fix switches not changing in Episode 4
+//
 // Revision 1.2  2005/07/23 16:44:56  fraggle
 // Update copyright to GNU GPL
 //
@@ -36,7 +39,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_switch.c 8 2005-07-23 16:44:57Z fraggle $";
+rcsid[] = "$Id: p_switch.c 91 2005-09-08 00:01:51Z fraggle $";
 
 
 #include "i_system.h"
@@ -125,7 +128,7 @@ void P_InitSwitchList(void)
 	
     episode = 1;
 
-    if (gamemode == registered)
+    if (gamemode == registered || gamemode == retail)
 	episode = 2;
     else
 	if ( gamemode == commercial )
