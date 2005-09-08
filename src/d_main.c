@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.13  2005/09/08 22:05:17  fraggle
+// Allow alt-tab away while running fullscreen
+//
 // Revision 1.12  2005/09/04 18:44:22  fraggle
 // shut up compiler warnings
 //
@@ -446,7 +449,8 @@ void D_DoomLoop (void)
 	S_UpdateSounds (players[consoleplayer].mo);// move positional sounds
 
 	// Update display, next frame, with current state.
-	D_Display ();
+        if (screenvisible)
+            D_Display ();
     }
 }
 
