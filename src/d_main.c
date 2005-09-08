@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 71 2005-09-04 18:44:23Z fraggle $
+// $Id: d_main.c 94 2005-09-08 22:05:17Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.13  2005/09/08 22:05:17  fraggle
+// Allow alt-tab away while running fullscreen
+//
 // Revision 1.12  2005/09/04 18:44:22  fraggle
 // shut up compiler warnings
 //
@@ -74,7 +77,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 71 2005-09-04 18:44:23Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 94 2005-09-08 22:05:17Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -446,7 +449,8 @@ void D_DoomLoop (void)
 	S_UpdateSounds (players[consoleplayer].mo);// move positional sounds
 
 	// Update display, next frame, with current state.
-	D_Display ();
+        if (screenvisible)
+            D_Display ();
     }
 }
 

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 83 2005-09-07 20:44:23Z fraggle $
+// $Id: i_video.c 94 2005-09-08 22:05:17Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.24  2005/09/08 22:05:17  fraggle
+// Allow alt-tab away while running fullscreen
+//
 // Revision 1.23  2005/09/07 20:44:23  fraggle
 // Fix up names of functions
 // Make the quit button work (pops up the "quit doom?" prompt).
@@ -107,7 +110,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 83 2005-09-07 20:44:23Z fraggle $";
+rcsid[] = "$Id: i_video.c 94 2005-09-08 22:05:17Z fraggle $";
 
 #include <ctype.h>
 #include <SDL.h>
@@ -142,8 +145,9 @@ static int windowwidth, windowheight;
 
 static boolean native_surface;
 
-boolean fullscreen = 1;
-boolean grabmouse = 1;
+boolean fullscreen = true;
+boolean grabmouse = true;
+boolean screenvisible;
 
 // Blocky mode,
 // replace each 320x200 pixel with multiply*multiply pixels.
@@ -203,6 +207,10 @@ static void UpdateFocus(void)
     // (not minimised)
 
     window_focused = (state & SDL_APPINPUTFOCUS) && (state & SDL_APPACTIVE);
+
+    // Should the screen be grabbed?
+
+    screenvisible = (state & SDL_APPACTIVE) != 0;
 }
 
 void I_BeginRead(void)
@@ -516,6 +524,13 @@ void I_FinishUpdate (void)
     // UNUSED static unsigned char *bigscreen=0;
 
     UpdateGrab();
+
+    // Don't update the screen if the window isn't visible.
+    // Not doing this breaks under Windows when we alt-tab away 
+    // while fullscreen.
+
+    if (!(SDL_GetAppState() & SDL_APPACTIVE))
+        return;
 
     // draws little dots on the bottom of the screen
     if (devparm)
