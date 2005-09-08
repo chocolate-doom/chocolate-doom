@@ -23,6 +23,9 @@
 //
 //
 // $Log$
+// Revision 1.3  2005/09/08 00:01:51  fraggle
+// Fix switches not changing in Episode 4
+//
 // Revision 1.2  2005/07/23 16:44:56  fraggle
 // Update copyright to GNU GPL
 //
@@ -125,7 +128,7 @@ void P_InitSwitchList(void)
 	
     episode = 1;
 
-    if (gamemode == registered)
+    if (gamemode == registered || gamemode == retail)
 	episode = 2;
     else
 	if ( gamemode == commercial )
