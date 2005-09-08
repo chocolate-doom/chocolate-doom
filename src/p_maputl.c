@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/09/08 09:58:00  fraggle
+// MAXINTERCEPTS got converted to INT_MAXERCEPTS accidentally when switching
+// to the ANSI standard limit constants
+//
 // Revision 1.4  2005/08/04 18:42:15  fraggle
 // Silence compiler warnings
 //
@@ -560,7 +564,7 @@ P_BlockThingsIterator
 //
 // INTERCEPT ROUTINES
 //
-intercept_t	intercepts[INT_MAXERCEPTS];
+intercept_t	intercepts[MAXINTERCEPTS];
 intercept_t*	intercept_p;
 
 divline_t 	trace;
