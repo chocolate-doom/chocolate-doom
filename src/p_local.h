@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_local.h 19 2005-07-23 19:17:11Z fraggle $
+// $Id: p_local.h 93 2005-09-08 09:58:00Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -158,9 +158,9 @@ typedef struct
     }			d;
 } intercept_t;
 
-#define INT_MAXERCEPTS	128
+#define MAXINTERCEPTS	128
 
-extern intercept_t	intercepts[INT_MAXERCEPTS];
+extern intercept_t	intercepts[MAXINTERCEPTS];
 extern intercept_t*	intercept_p;
 
 typedef boolean (*traverser_t) (intercept_t *in);
@@ -290,6 +290,10 @@ P_DamageMobj
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.4  2005/09/08 09:58:00  fraggle
+// MAXINTERCEPTS got converted to INT_MAXERCEPTS accidentally when switching
+// to the ANSI standard limit constants
+//
 // Revision 1.3  2005/07/23 19:17:11  fraggle
 // Use ANSI-standard limit constants.  Remove LINUX define.
 //

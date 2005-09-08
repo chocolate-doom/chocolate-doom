@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_maputl.c 37 2005-08-04 18:42:15Z fraggle $
+// $Id: p_maputl.c 93 2005-09-08 09:58:00Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/09/08 09:58:00  fraggle
+// MAXINTERCEPTS got converted to INT_MAXERCEPTS accidentally when switching
+// to the ANSI standard limit constants
+//
 // Revision 1.4  2005/08/04 18:42:15  fraggle
 // Silence compiler warnings
 //
@@ -44,7 +48,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_maputl.c 37 2005-08-04 18:42:15Z fraggle $";
+rcsid[] = "$Id: p_maputl.c 93 2005-09-08 09:58:00Z fraggle $";
 
 
 #include <stdlib.h>
@@ -560,7 +564,7 @@ P_BlockThingsIterator
 //
 // INTERCEPT ROUTINES
 //
-intercept_t	intercepts[INT_MAXERCEPTS];
+intercept_t	intercepts[MAXINTERCEPTS];
 intercept_t*	intercept_p;
 
 divline_t 	trace;
