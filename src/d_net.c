@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.7  2005/09/08 22:10:40  fraggle
+// Delay calls so we don't use the entire CPU
+//
 // Revision 1.6  2005/09/04 18:44:22  fraggle
 // shut up compiler warnings
 //
@@ -755,6 +758,8 @@ void TryRunTics (void)
 	    M_Ticker ();
 	    return;
 	} 
+
+        I_Sleep(1);
     }
     
     // run the count * ticdup dics
