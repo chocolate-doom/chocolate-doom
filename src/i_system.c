@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_system.c 80 2005-09-06 22:39:43Z fraggle $
+// $Id: i_system.c 95 2005-09-08 22:10:40Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.9  2005/09/08 22:10:40  fraggle
+// Delay calls so we don't use the entire CPU
+//
 // Revision 1.8  2005/09/06 22:39:43  fraggle
 // Restore -nosound, -nosfx, -nomusic
 //
@@ -52,7 +55,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_system.c 80 2005-09-06 22:39:43Z fraggle $";
+rcsid[] = "$Id: i_system.c 95 2005-09-08 22:10:40Z fraggle $";
 
 
 #include <stdlib.h>
@@ -162,6 +165,13 @@ void I_Quit (void)
 void I_WaitVBL(int count)
 {
     SDL_Delay((count * 1000) / 70);
+}
+
+// Sleep for a specified number of ms
+
+void I_Sleep(int ms)
+{
+    SDL_Delay(ms);
 }
 
 byte*	I_AllocLow(int length)
