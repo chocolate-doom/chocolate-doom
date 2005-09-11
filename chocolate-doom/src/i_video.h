@@ -58,6 +58,7 @@ void I_BeginRead (void);
 void I_EndRead (void);
 
 extern boolean screenvisible;
+extern int screenmultiply;
 extern boolean fullscreen;
 extern boolean grabmouse;
 
@@ -66,6 +67,11 @@ extern boolean grabmouse;
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.6  2005/09/11 20:25:56  fraggle
+// Second configuration file to allow chocolate doom-specific settings.
+// Adjust some existing command line logic (for graphics settings and
+// novert) to adjust for this.
+//
 // Revision 1.5  2005/09/11 16:39:29  fraggle
 // Fix declaration of I_Sleep (not I_Delay) and move to right header
 //

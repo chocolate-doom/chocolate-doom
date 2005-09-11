@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.9  2005/09/11 20:25:56  fraggle
+// Second configuration file to allow chocolate doom-specific settings.
+// Adjust some existing command line logic (for graphics settings and
+// novert) to adjust for this.
+//
 // Revision 1.8  2005/09/04 18:44:23  fraggle
 // shut up compiler warnings
 //
@@ -203,8 +208,9 @@ int             joybspeed;
 
 // fraggle: Disallow mouse and joystick movement to cause forward/backward
 // motion.  Specified with the '-novert' command line parameter.
+// This is an int to allow saving to config file
 
-boolean         novert;
+int             novert;
  
  
  

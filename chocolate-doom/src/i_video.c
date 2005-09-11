@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.25  2005/09/11 20:25:56  fraggle
+// Second configuration file to allow chocolate doom-specific settings.
+// Adjust some existing command line logic (for graphics settings and
+// novert) to adjust for this.
+//
 // Revision 1.24  2005/09/08 22:05:17  fraggle
 // Allow alt-tab away while running fullscreen
 //
@@ -145,15 +150,21 @@ static int windowwidth, windowheight;
 
 static boolean native_surface;
 
-boolean fullscreen = true;
-boolean grabmouse = true;
+// Run in full screen mode?  (int type for config code)
+int fullscreen = true;
+
+// Grab the mouse? (int type for config code)
+int grabmouse = true;
+
+// Flag indicating whether the screen is currently visible:
+// when the screen isnt visible, don't render the screen
 boolean screenvisible;
 
 // Blocky mode,
-// replace each 320x200 pixel with multiply*multiply pixels.
+// replace each 320x200 pixel with screenmultiply*screenmultiply pixels.
 // According to Dave Taylor, it still is a bonehead thing
 // to use ....
-static int	multiply=1;
+int screenmultiply = 1;
 
 // disk image data and background overwritten by the disk to be
 // restored by EndRead
@@ -548,7 +559,7 @@ void I_FinishUpdate (void)
     
     }
 
-    if (multiply == 1 && !native_surface)
+    if (screenmultiply == 1 && !native_surface)
     {
         byte *bufp, *screenp;
         int y;
@@ -572,7 +583,7 @@ void I_FinishUpdate (void)
 
     // scales the screen size before blitting it
 
-    if (multiply == 2)
+    if (screenmultiply == 2)
     {
         byte *bufp, *screenp, *screenp2;
         int x, y;
@@ -680,14 +691,28 @@ void I_InitGraphics(void)
 
     flags |= SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF;
 
-    // mouse grabbing, defaults to on
+    // mouse grabbing
 
-    grabmouse = !M_CheckParm("-nograbmouse");
+    if (M_CheckParm("-grabmouse"))
+    {
+        grabmouse = true;
+    }
+    else if (M_CheckParm("-nograbmouse"))
+    {
+        grabmouse = false;
+    }
 
     // default to fullscreen mode, allow override with command line
     // nofullscreen because we love prboom
 
-    fullscreen = !M_CheckParm("-window") && !M_CheckParm("-nofullscreen");
+    if (M_CheckParm("-window") || M_CheckParm("-nofullscreen"))
+    {
+        fullscreen = false;
+    }
+    else if (M_CheckParm("-fullscreen"))
+    {
+        fullscreen = true;
+    }
 
     if (fullscreen)
     {
@@ -696,13 +721,17 @@ void I_InitGraphics(void)
 
     // scale-by-2 mode
  
-    if (M_CheckParm("-2"))
+    if (M_CheckParm("-1"))
     {
-        multiply = 2;
+        screenmultiply = 1;
+    }
+    else if (M_CheckParm("-2"))
+    {
+        screenmultiply = 2;
     }
 
-    windowwidth = SCREENWIDTH * multiply;
-    windowheight = SCREENHEIGHT * multiply;
+    windowwidth = SCREENWIDTH * screenmultiply;
+    windowheight = SCREENHEIGHT * screenmultiply;
 
     screen = SDL_SetVideoMode(windowwidth, windowheight, 8, flags);
 
@@ -718,7 +747,7 @@ void I_InitGraphics(void)
 
     // Check if we have a native surface we can use
 
-    native_surface = multiply == 1 && screen->pitch == SCREENWIDTH;
+    native_surface = screenmultiply == 1 && screen->pitch == SCREENWIDTH;
 
     // If not, allocate a buffer and copy from that buffer to the 
     // screen when we do an update

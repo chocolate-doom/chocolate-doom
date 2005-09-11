@@ -86,7 +86,7 @@ extern  int		gameepisode;
 extern  int		gamemap;
 
 // vertical movement from mouse/joystick disabled
-extern  boolean         novert;
+extern  int             novert;
 
 // Nightmare mode flag, single player.
 extern  boolean         respawnmonsters;
@@ -295,6 +295,11 @@ extern	int		ticdup;
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.7  2005/09/11 20:25:56  fraggle
+// Second configuration file to allow chocolate doom-specific settings.
+// Adjust some existing command line logic (for graphics settings and
+// novert) to adjust for this.
+//
 // Revision 1.6  2005/09/04 15:59:45  fraggle
 // 'novert' command line option to disable vertical mouse movement
 //
