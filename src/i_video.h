@@ -51,18 +51,25 @@ void I_FinishUpdate (void);
 
 // Wait for vertical retrace or pause a bit.
 void I_WaitVBL(int count);
+void I_Delay(int ms);
 
 void I_ReadScreen (byte* scr);
 
 void I_BeginRead (void);
 void I_EndRead (void);
 
+extern boolean screenvisible;
+extern boolean fullscreen;
+extern boolean grabmouse;
 
 
 #endif
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.4  2005/09/11 16:35:04  fraggle
+// Missing declarations
+//
 // Revision 1.3  2005/07/23 18:56:07  fraggle
 // Remove unneccessary pragmas
 //
