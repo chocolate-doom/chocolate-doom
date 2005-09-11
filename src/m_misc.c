@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_misc.c 85 2005-09-07 21:40:11Z fraggle $
+// $Id: m_misc.c 98 2005-09-11 20:25:56Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -23,6 +23,11 @@
 //
 //
 // $Log$
+// Revision 1.9  2005/09/11 20:25:56  fraggle
+// Second configuration file to allow chocolate doom-specific settings.
+// Adjust some existing command line logic (for graphics settings and
+// novert) to adjust for this.
+//
 // Revision 1.8  2005/09/07 21:40:11  fraggle
 // Remove non-ANSI C headers and functions
 //
@@ -60,13 +65,24 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_misc.c 85 2005-09-07 21:40:11Z fraggle $";
+rcsid[] = "$Id: m_misc.c 98 2005-09-11 20:25:56Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 
+// for mkdir:
 
+#ifdef _WIN32
+#include <io.h>
+#else
+#include <sys/stat.h>
+#include <sys/types.h>
+#endif
+
+
+
+#include "config.h"
 #include "doomdef.h"
 
 #include "z_zone.h"
@@ -136,10 +152,6 @@ M_DrawText
 //
 // M_WriteFile
 //
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif
-
 boolean M_WriteFile(char const *name, void *source, int	length)
 {
     FILE *handle;
@@ -195,6 +207,9 @@ int M_ReadFile(char const *name, byte **buffer)
 //
 // DEFAULTS
 //
+
+// locations of config files
+
 int		usemouse;
 int		usejoystick;
 
@@ -258,7 +273,14 @@ typedef struct
     int         untranslated;
 } default_t;
 
-default_t	defaults[] =
+typedef struct
+{
+    default_t *defaults;
+    int        numdefaults;
+    char      *filename;
+} default_collection_t;
+
+static default_t	doom_defaults_list[] =
 {
     {"mouse_sensitivity",&mouseSensitivity, 5},
     {"sfx_volume",&snd_SfxVolume, 8},
@@ -316,8 +338,25 @@ default_t	defaults[] =
 
 };
 
-int	numdefaults;
-char*	defaultfile;
+static default_collection_t doom_defaults = 
+{
+    doom_defaults_list,
+    sizeof(doom_defaults_list) / sizeof(*doom_defaults_list),
+};
+
+static default_t extra_defaults_list[] = 
+{
+    {"grabmouse",   &grabmouse,      true},
+    {"fullscreen",  &fullscreen,     true},
+    {"screenmultiply", &screenmultiply, 1},
+    {"novert",      &novert,         false},
+};
+
+static default_collection_t extra_defaults =
+{
+    extra_defaults_list,
+    sizeof(extra_defaults_list) / sizeof(*extra_defaults_list),
+};
 
 static int scantokey[128] =
 {
@@ -340,22 +379,20 @@ static int scantokey[128] =
 };
 
 
-
-//
-// M_SaveDefaults
-//
-
-void M_SaveDefaults (void)
+static void SaveDefaultCollection(default_collection_t *collection)
 {
-    int		i;
-    int		v;
-    FILE*	f;
+    default_t *defaults;
+    int i;
+    int v;
+    FILE *f;
 	
-    f = fopen (defaultfile, "w");
+    f = fopen (collection->filename, "w");
     if (!f)
 	return; // can't write the file, but don't complain
+
+    defaults = collection->defaults;
 		
-    for (i=0 ; i<numdefaults ; i++)
+    for (i=0 ; i<collection->numdefaults ; i++)
     {
 	if (defaults[i].defaultvalue > -0xfff
 	    && defaults[i].defaultvalue < 0xfff)
@@ -401,13 +438,9 @@ void M_SaveDefaults (void)
     fclose (f);
 }
 
-
-//
-// M_LoadDefaults
-//
-
-void M_LoadDefaults (void)
+static void LoadDefaultCollection(default_collection_t *collection)
 {
+    default_t  *defaults = collection->defaults;
     int		i;
     int		len;
     FILE*	f;
@@ -416,26 +449,18 @@ void M_LoadDefaults (void)
     char*	newstring = "";
     int		parm;
     boolean	isstring;
-    
+
     // set everything to base values
-    numdefaults = sizeof(defaults)/sizeof(defaults[0]);
-    for (i=0 ; i<numdefaults ; i++)
+ 
+    for (i=0 ; i<collection->numdefaults ; i++)
     {
 	*((int *) defaults[i].location) = defaults[i].defaultvalue;
         defaults[i].untranslated = 0;
     }
-    // check for a custom default file
-    i = M_CheckParm ("-config");
-    if (i && i<myargc-1)
-    {
-	defaultfile = myargv[i+1];
-	printf ("	default file: %s\n",defaultfile);
-    }
-    else
-	defaultfile = basedefault;
-    
+
     // read the file in, overriding any set defaults
-    f = fopen (defaultfile, "r");
+    f = fopen(collection->filename, "r");
+
     if (f)
     {
 	while (!feof(f))
@@ -456,7 +481,7 @@ void M_LoadDefaults (void)
 		    sscanf(strparm+2, "%x", &parm);
 		else
 		    sscanf(strparm, "%i", &parm);
-		for (i=0 ; i<numdefaults ; i++)
+		for (i=0 ; i<collection->numdefaults ; i++)
 		    if (!strcmp(def, defaults[i].name))
 		    {
                         if (defaults[i].scantranslate)
@@ -479,6 +504,88 @@ void M_LoadDefaults (void)
 		
 	fclose (f);
     }
+}
+
+//
+// M_SaveDefaults
+//
+
+void M_SaveDefaults (void)
+{
+    SaveDefaultCollection(&doom_defaults);
+    SaveDefaultCollection(&extra_defaults);
+}
+
+
+//
+// M_LoadDefaults
+//
+
+void M_LoadDefaults (void)
+{
+    char *config_dir;
+    char *homedir;
+    int i;
+
+    homedir = getenv("HOME");
+
+    if (homedir != NULL)
+    {
+        // put all configuration in a config directory off the
+        // homedir
+
+        config_dir = malloc(strlen(homedir) + strlen(PACKAGE_TARNAME) + 5);
+
+        sprintf(config_dir, "%s/.%s/", homedir, PACKAGE_TARNAME);
+
+        // make the directory if it doesnt already exist
+#ifdef _WIN32
+        mkdir(config_dir);
+#else
+        mkdir(config_dir, 0755);
+#endif
+    }
+    else
+    {
+        config_dir = strdup("");
+    }
+
+    // check for a custom default file
+    i = M_CheckParm ("-config");
+
+    if (i && i<myargc-1)
+    {
+	doom_defaults.filename = myargv[i+1];
+	printf ("	default file: %s\n",doom_defaults.filename);
+    }
+    else
+    {
+        doom_defaults.filename = malloc(strlen(config_dir) + 10);
+        sprintf(doom_defaults.filename, "%sdefault.cfg", config_dir);
+    }
+
+    printf("saving config in %s\n", doom_defaults.filename);
+
+    i = M_CheckParm("-extraconfig");
+
+    if (i && i<myargc-1)
+    {
+        extra_defaults.filename = myargv[i+1];
+        printf("        extra configuration file: %s\n", 
+               extra_defaults.filename);
+    }
+    else
+    {
+        extra_defaults.filename 
+            = malloc(strlen(config_dir) + strlen(PACKAGE_TARNAME) + 10);
+        sprintf(extra_defaults.filename, "%s%s.cfg", 
+                config_dir, PACKAGE_TARNAME);
+    }
+
+    LoadDefaultCollection(&doom_defaults);
+    LoadDefaultCollection(&extra_defaults);
+
+    free(config_dir);
 }
 
 

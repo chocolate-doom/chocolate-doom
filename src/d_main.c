@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 94 2005-09-08 22:05:17Z fraggle $
+// $Id: d_main.c 98 2005-09-11 20:25:56Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.14  2005/09/11 20:25:56  fraggle
+// Second configuration file to allow chocolate doom-specific settings.
+// Adjust some existing command line logic (for graphics settings and
+// novert) to adjust for this.
+//
 // Revision 1.13  2005/09/08 22:05:17  fraggle
 // Allow alt-tab away while running fullscreen
 //
@@ -77,7 +82,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 94 2005-09-08 22:05:17Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 98 2005-09-11 20:25:56Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -179,7 +184,6 @@ boolean		advancedemo;
 
 char		wadfile[1024];		// primary wad file
 char		mapdir[1024];           // directory of development maps
-char		basedefault[1024];      // default file
 
 
 void D_CheckNetGame (void);
@@ -897,24 +901,6 @@ void PrintBanner(char *msg)
     puts(msg);
 }
 
-// Set the default location for the configuration file
-
-void SetBaseDefault(void)
-{
-    char *homedir;
-
-    homedir = getenv("HOME");
-
-    if (homedir != NULL)
-    {
-        sprintf(basedefault, "%s/.doomrc", homedir);
-    }
-    else
-    {
-        strcpy(basedefault, "default.cfg");
-    }
-}
-
 //
 // D_DoomMain
 //
@@ -939,13 +925,6 @@ void D_DoomMain (void)
     else if (M_CheckParm ("-deathmatch"))
 	deathmatch = 1;
 
-    if (M_CheckParm("-novert"))
-        novert = 1;
-
-    // set the location for default.cfg
-
-    SetBaseDefault();
-
     // print banner
 
     PrintBanner(PACKAGE_STRING);
@@ -953,6 +932,8 @@ void D_DoomMain (void)
     if (devparm)
 	printf(D_DEVSTR);
     
+#if 0
+    // BROKEN: -cdrom option
     if (M_CheckParm("-cdrom"))
     {
 	printf(D_CDROM);
@@ -962,7 +943,8 @@ void D_DoomMain (void)
 	mkdir("c:\\doomdata",0);
 #endif
 	strcpy (basedefault,"c:/doomdata/default.cfg");
-    }	
+    }
+#endif     
     
     // turbo option
     if ( (p=M_CheckParm ("-turbo")) )
@@ -1129,6 +1111,11 @@ void D_DoomMain (void)
 	}
 	autostart = true;
     }
+
+    if (M_CheckParm("-novert"))
+        novert = true;
+    else if (M_CheckParm("-nonovert"))
+        novert = false;
 
     printf ("===========================================================================\n");
 

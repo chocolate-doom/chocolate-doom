@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: g_game.c 71 2005-09-04 18:44:23Z fraggle $
+// $Id: g_game.c 98 2005-09-11 20:25:56Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.9  2005/09/11 20:25:56  fraggle
+// Second configuration file to allow chocolate doom-specific settings.
+// Adjust some existing command line logic (for graphics settings and
+// novert) to adjust for this.
+//
 // Revision 1.8  2005/09/04 18:44:23  fraggle
 // shut up compiler warnings
 //
@@ -56,7 +61,7 @@
 
 
 static const char
-rcsid[] = "$Id: g_game.c 71 2005-09-04 18:44:23Z fraggle $";
+rcsid[] = "$Id: g_game.c 98 2005-09-11 20:25:56Z fraggle $";
 
 #include <string.h>
 #include <stdlib.h>
@@ -203,8 +208,9 @@ int             joybspeed;
 
 // fraggle: Disallow mouse and joystick movement to cause forward/backward
 // motion.  Specified with the '-novert' command line parameter.
+// This is an int to allow saving to config file
 
-boolean         novert;
+int             novert;
  
  
  
