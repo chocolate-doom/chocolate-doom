@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_sound.c 87 2005-09-07 22:24:26Z fraggle $
+// $Id: i_sound.c 101 2005-09-11 20:53:17Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.18  2005/09/11 20:53:17  fraggle
+// Fix sounds playing at the wrong volume (too quiet)
+//
 // Revision 1.17  2005/09/07 22:24:26  fraggle
 // Modify the sound effect caching behaviour: sounds which are not playing
 // are now marked as PU_CACHE; it is otherwise possible to run out of memory.
@@ -87,7 +90,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_sound.c 87 2005-09-07 22:24:26Z fraggle $";
+rcsid[] = "$Id: i_sound.c 101 2005-09-11 20:53:17Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -212,7 +215,7 @@ static void CacheSFX(int sound)
     sound_chunks[sound].alen = expanded_length;
     sound_chunks[sound].abuf 
         = Z_Malloc(expanded_length, PU_STATIC, &sound_chunks[sound].abuf);
-    sound_chunks[sound].volume = 64;
+    sound_chunks[sound].volume = MIX_MAX_VOLUME;
 
     ExpandSoundData(data + 8, samplerate, length, &sound_chunks[sound]);
 
@@ -395,7 +398,7 @@ I_SubmitSound(void)
 
 
 
-void
+void 
 I_UpdateSoundParams
 ( int	handle,
   int	vol,
