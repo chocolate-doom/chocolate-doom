@@ -1,4 +1,6 @@
 
+    Add second configuration file (chocolate-doom.cfg) to allow 
+        chocolate-doom specific settings.
     Fix switches not changing in Ultimate Doom
 
 0.0.1 (2005-09-07):
