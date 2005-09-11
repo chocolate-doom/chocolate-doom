@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.h 96 2005-09-11 16:35:04Z fraggle $
+// $Id: i_video.h 97 2005-09-11 16:39:29Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -51,7 +51,6 @@ void I_FinishUpdate (void);
 
 // Wait for vertical retrace or pause a bit.
 void I_WaitVBL(int count);
-void I_Delay(int ms);
 
 void I_ReadScreen (byte* scr);
 
@@ -67,6 +66,9 @@ extern boolean grabmouse;
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.5  2005/09/11 16:39:29  fraggle
+// Fix declaration of I_Sleep (not I_Delay) and move to right header
+//
 // Revision 1.4  2005/09/11 16:35:04  fraggle
 // Missing declarations
 //

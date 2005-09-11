@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_system.h 18 2005-07-23 18:56:07Z fraggle $
+// $Id: i_system.h 97 2005-09-11 16:39:29Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -48,6 +48,8 @@ byte*	I_ZoneBase (int *size);
 // returns current time in tics.
 int I_GetTime (void);
 
+// Pause for a specified number of ms
+void I_Sleep(int ms);
 
 //
 // Called by D_DoomLoop,
@@ -97,6 +99,9 @@ void I_Error (char *error, ...);
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.4  2005/09/11 16:39:29  fraggle
+// Fix declaration of I_Sleep (not I_Delay) and move to right header
+//
 // Revision 1.3  2005/07/23 18:56:07  fraggle
 // Remove unneccessary pragmas
 //
