@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_main.c 89 2005-09-07 22:58:34Z fraggle $
+// $Id: i_main.c 106 2005-09-14 22:08:29Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2005/09/14 22:08:28  fraggle
+// Fix startup messages displayed (build a console binary; remove CON
+// redirection code)
+//
 // Revision 1.5  2005/09/07 22:58:34  fraggle
 // No SIGHUP on Windows
 //
@@ -44,7 +48,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_main.c 89 2005-09-07 22:58:34Z fraggle $";
+rcsid[] = "$Id: i_main.c 106 2005-09-14 22:08:29Z fraggle $";
 
 
 #include <signal.h>
@@ -80,14 +84,6 @@ int main(int argc, char **argv)
     signal(SIGHUP, SignalHandler);
 #endif
 
-#ifdef _WIN32
-    // restore stdout/stderr
-
-    freopen("CON", "w", stdout);
-    freopen("CON", "w", stderr);
-
-#endif
-    
     // start doom
  
     D_DoomMain (); 
