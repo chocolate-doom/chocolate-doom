@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 98 2005-09-11 20:25:56Z fraggle $
+// $Id: i_video.c 105 2005-09-14 21:55:47Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.26  2005/09/14 21:55:47  fraggle
+// Lock surfaces properly when we have to (fixes crash under Windows 98)
+//
 // Revision 1.25  2005/09/11 20:25:56  fraggle
 // Second configuration file to allow chocolate doom-specific settings.
 // Adjust some existing command line logic (for graphics settings and
@@ -115,7 +118,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 98 2005-09-11 20:25:56Z fraggle $";
+rcsid[] = "$Id: i_video.c 105 2005-09-14 21:55:47Z fraggle $";
 
 #include <ctype.h>
 #include <SDL.h>
@@ -618,9 +621,6 @@ void I_FinishUpdate (void)
         SDL_UnlockSurface(screen);
     }
 
-    if (native_surface)
-        SDL_UnlockSurface(screen);
-
     // draw to screen
     
     if (palette_to_set)
@@ -632,9 +632,6 @@ void I_FinishUpdate (void)
     {
         SDL_Flip(screen);
     }
-
-    if (native_surface)
-        SDL_LockSurface(screen);
 }
 
 
@@ -746,8 +743,13 @@ void I_InitGraphics(void)
     UpdateGrab();
 
     // Check if we have a native surface we can use
+    // If we have to lock the screen, draw to a buffer and copy
+    // Likewise if the screen pitch is not the same as the width
+    // If we have to multiply, drawing is done to a separate 320x200 buf
 
-    native_surface = screenmultiply == 1 && screen->pitch == SCREENWIDTH;
+    native_surface = !SDL_MUSTLOCK(screen) 
+                  && screenmultiply == 1 
+                  && screen->pitch == SCREENWIDTH;
 
     // If not, allocate a buffer and copy from that buffer to the 
     // screen when we do an update
@@ -756,9 +758,6 @@ void I_InitGraphics(void)
 	screens[0] = (unsigned char *) (screen->pixels);
     else
 	screens[0] = (unsigned char *) Z_Malloc (SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
-
-    if (native_surface)
-        SDL_LockSurface(screen);
 
     LoadDiskImage();
 
