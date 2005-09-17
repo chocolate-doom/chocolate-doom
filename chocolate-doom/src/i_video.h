@@ -61,12 +61,17 @@ extern boolean screenvisible;
 extern int screenmultiply;
 extern boolean fullscreen;
 extern boolean grabmouse;
-
+extern float mouse_acceleration;
 
 #endif
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.7  2005/09/17 20:25:56  fraggle
+// Set the default values for variables in their initialisers.  Remove the
+// "defaultvalue" parameter and associated code from the configuration
+// file parsing code.
+//
 // Revision 1.6  2005/09/11 20:25:56  fraggle
 // Second configuration file to allow chocolate doom-specific settings.
 // Adjust some existing command line logic (for graphics settings and
