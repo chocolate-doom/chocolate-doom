@@ -1,3 +1,6 @@
+    Mouse acceleration code to emulate the behaviour of old
+    DOS mouse drivers (thanks to Toke for information about 
+    this and suggestions)
     Lock surfaces properly when we have to (fixes crash under
     Windows 98)
 
