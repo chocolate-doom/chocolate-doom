@@ -23,6 +23,9 @@
 //
 //
 // $Log$
+// Revision 1.12  2005/09/17 20:50:46  fraggle
+// Mouse acceleration code to emulate old DOS drivers
+//
 // Revision 1.11  2005/09/17 20:25:56  fraggle
 // Set the default values for variables in their initialisers.  Remove the
 // "defaultvalue" parameter and associated code from the configuration
@@ -363,6 +366,7 @@ static default_t extra_defaults_list[] =
     {"fullscreen",         &fullscreen},
     {"screenmultiply",     &screenmultiply},
     {"novert",             &novert},
+    {"mouse_acceleration", &mouse_acceleration,   DEFAULT_FLOAT},
 };
 
 static default_collection_t extra_defaults =

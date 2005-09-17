@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.27  2005/09/17 20:50:46  fraggle
+// Mouse acceleration code to emulate old DOS drivers
+//
 // Revision 1.26  2005/09/14 21:55:47  fraggle
 // Lock surfaces properly when we have to (fixes crash under Windows 98)
 //
@@ -120,28 +123,26 @@
 static const char
 rcsid[] = "$Id$";
 
-#include <ctype.h>
 #include <SDL.h>
+#include <ctype.h>
+#include <math.h>
 
 #include "config.h"
-#include "w_wad.h"
-#include "z_zone.h"
+#include "doomdef.h"
 #include "doomstat.h"
+#include "d_main.h"
 #include "i_system.h"
-#include "v_video.h"
 #include "m_argv.h"
 #include "m_swap.h"
-#include "d_main.h"
 #include "s_sound.h"
 #include "sounds.h"
-
-#include "doomdef.h"
+#include "v_video.h"
+#include "w_wad.h"
+#include "z_zone.h"
 
 extern void M_QuitDOOM();
 
 static SDL_Surface *screen;
-
-#define POINTER_WARP_COUNTDOWN	1
 
 // palette
 static SDL_Color palette[256];
@@ -176,6 +177,15 @@ static byte *disk_image = NULL;
 static int disk_image_w, disk_image_h;
 static byte *saved_background;
 static boolean window_focused;
+
+// mouse acceleration
+// We accelerate the mouse by raising the mouse movement values to
+// the power of this value, to simulate the acceleration in DOS
+// mouse drivers
+//
+// TODO: See what is a sensible default value for this
+
+float mouse_acceleration = 1.5;
 
 static boolean MouseShouldBeGrabbed()
 {
@@ -418,7 +428,13 @@ static int MouseButtonState(void)
     return result;
 }
 
-boolean		mousemoved = false;
+static int AccelerateMouse(int val)
+{
+    if (val < 0)
+        return -AccelerateMouse(-val);
+
+    return (int) pow(val, mouse_acceleration);
+}
 
 void I_GetEvent(void)
 {
@@ -457,8 +473,8 @@ void I_GetEvent(void)
             case SDL_MOUSEMOTION:
                 event.type = ev_mouse;
                 event.data1 = MouseButtonState();
-                event.data2 = sdlevent.motion.xrel * 8;
-                event.data3 = -sdlevent.motion.yrel * 8;
+                event.data2 = AccelerateMouse(sdlevent.motion.xrel);
+                event.data3 = -AccelerateMouse(sdlevent.motion.yrel);
                 D_PostEvent(&event);
                 break;
             case SDL_MOUSEBUTTONDOWN:
