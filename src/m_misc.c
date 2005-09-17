@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_misc.c 109 2005-09-17 20:06:45Z fraggle $
+// $Id: m_misc.c 110 2005-09-17 20:25:56Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -23,6 +23,11 @@
 //
 //
 // $Log$
+// Revision 1.11  2005/09/17 20:25:56  fraggle
+// Set the default values for variables in their initialisers.  Remove the
+// "defaultvalue" parameter and associated code from the configuration
+// file parsing code.
+//
 // Revision 1.10  2005/09/17 20:06:45  fraggle
 // Rewrite configuration loading code; assign a type to each configuration
 // parameter.  Allow float parameters, align all values in the configuration
@@ -70,7 +75,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_misc.c 109 2005-09-17 20:06:45Z fraggle $";
+rcsid[] = "$Id: m_misc.c 110 2005-09-17 20:25:56Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -213,8 +218,8 @@ int M_ReadFile(char const *name, byte **buffer)
 
 // locations of config files
 
-int		usemouse;
-int		usejoystick;
+int		usemouse = 1;
+int		usejoystick = 0;
 
 extern int	key_right;
 extern int	key_left;
@@ -260,12 +265,12 @@ extern char*	chat_macros[];
 // so that the config file can be shared between chocolate
 // doom and doom.exe
 
-static int snd_musicdevice;
-static int snd_sfxdevice;
-static int snd_sbport;
-static int snd_sbirq;
-static int snd_sbdma;
-static int snd_mport;
+static int snd_musicdevice = 0;
+static int snd_sfxdevice = 0;
+static int snd_sbport = 0;
+static int snd_sbirq = 0;
+static int snd_sbdma = 0;
+static int snd_mport = 0;
 
 typedef enum 
 {
@@ -279,7 +284,6 @@ typedef struct
 {
     char *         name;
     void *         location;
-    int            defaultvalue;
     default_type_t type;
     int            untranslated;
 } default_t;
@@ -293,58 +297,58 @@ typedef struct
 
 static default_t	doom_defaults_list[] =
 {
-    {"mouse_sensitivity",&mouseSensitivity, 5},
-    {"sfx_volume",&snd_SfxVolume, 8},
-    {"music_volume",&snd_MusicVolume, 8},
-    {"show_messages",&showMessages, 1},
+    {"mouse_sensitivity", &mouseSensitivity},
+    {"sfx_volume",&snd_SfxVolume},
+    {"music_volume",&snd_MusicVolume},
+    {"show_messages",&showMessages},
 
-    {"key_right",&key_right, KEY_RIGHTARROW, DEFAULT_KEY},
-    {"key_left",&key_left, KEY_LEFTARROW, DEFAULT_KEY},
-    {"key_up",&key_up, KEY_UPARROW, DEFAULT_KEY},
-    {"key_down",&key_down, KEY_DOWNARROW, DEFAULT_KEY},
-    {"key_strafeleft",&key_strafeleft, ',', DEFAULT_KEY},
-    {"key_straferight",&key_straferight, '.', DEFAULT_KEY},
+    {"key_right",&key_right, DEFAULT_KEY},
+    {"key_left",&key_left, DEFAULT_KEY},
+    {"key_up",&key_up, DEFAULT_KEY},
+    {"key_down",&key_down, DEFAULT_KEY},
+    {"key_strafeleft",&key_strafeleft, DEFAULT_KEY},
+    {"key_straferight",&key_straferight, DEFAULT_KEY},
 
-    {"key_fire",&key_fire, KEY_RCTRL, DEFAULT_KEY},
-    {"key_use",&key_use, ' ', DEFAULT_KEY},
-    {"key_strafe",&key_strafe, KEY_RALT, DEFAULT_KEY},
-    {"key_speed",&key_speed, KEY_RSHIFT, DEFAULT_KEY},
+    {"key_fire",&key_fire, DEFAULT_KEY},
+    {"key_use",&key_use, DEFAULT_KEY},
+    {"key_strafe",&key_strafe, DEFAULT_KEY},
+    {"key_speed",&key_speed, DEFAULT_KEY},
 
-    {"use_mouse",&usemouse, 1},
-    {"mouseb_fire",&mousebfire,0},
-    {"mouseb_strafe",&mousebstrafe,1},
-    {"mouseb_forward",&mousebforward,2},
+    {"use_mouse",&usemouse},
+    {"mouseb_fire",&mousebfire},
+    {"mouseb_strafe",&mousebstrafe},
+    {"mouseb_forward",&mousebforward},
 
-    {"use_joystick",&usejoystick, 0},
-    {"joyb_fire",&joybfire,0},
-    {"joyb_strafe",&joybstrafe,1},
-    {"joyb_use",&joybuse,3},
-    {"joyb_speed",&joybspeed,2},
+    {"use_joystick",&usejoystick},
+    {"joyb_fire",&joybfire},
+    {"joyb_strafe",&joybstrafe},
+    {"joyb_use",&joybuse},
+    {"joyb_speed",&joybspeed},
 
-    {"screenblocks",&screenblocks, 9},
-    {"detaillevel",&detailLevel, 0},
+    {"screenblocks",&screenblocks},
+    {"detaillevel",&detailLevel},
 
-    {"snd_channels",&numChannels, 3},
+    {"snd_channels",&numChannels},
 
-    {"snd_musicdevice", &snd_musicdevice, 0},
-    {"snd_sfxdevice", &snd_sfxdevice, 0},
-    {"snd_sbport", &snd_sbport, 0},
-    {"snd_sbirq", &snd_sbirq, 0},
-    {"snd_sbdma", &snd_sbdma, 0},
-    {"snd_mport", &snd_mport, 0},
+    {"snd_musicdevice", &snd_musicdevice},
+    {"snd_sfxdevice", &snd_sfxdevice},
+    {"snd_sbport", &snd_sbport},
+    {"snd_sbirq", &snd_sbirq},
+    {"snd_sbdma", &snd_sbdma},
+    {"snd_mport", &snd_mport},
 
-    {"usegamma",&usegamma, 0},
+    {"usegamma",&usegamma},
 
-    {"chatmacro0", &chat_macros[0], (int) HUSTR_CHATMACRO0, DEFAULT_STRING },
-    {"chatmacro1", &chat_macros[1], (int) HUSTR_CHATMACRO1, DEFAULT_STRING },
-    {"chatmacro2", &chat_macros[2], (int) HUSTR_CHATMACRO2, DEFAULT_STRING },
-    {"chatmacro3", &chat_macros[3], (int) HUSTR_CHATMACRO3, DEFAULT_STRING },
-    {"chatmacro4", &chat_macros[4], (int) HUSTR_CHATMACRO4, DEFAULT_STRING },
-    {"chatmacro5", &chat_macros[5], (int) HUSTR_CHATMACRO5, DEFAULT_STRING },
-    {"chatmacro6", &chat_macros[6], (int) HUSTR_CHATMACRO6, DEFAULT_STRING },
-    {"chatmacro7", &chat_macros[7], (int) HUSTR_CHATMACRO7, DEFAULT_STRING },
-    {"chatmacro8", &chat_macros[8], (int) HUSTR_CHATMACRO8, DEFAULT_STRING },
-    {"chatmacro9", &chat_macros[9], (int) HUSTR_CHATMACRO9, DEFAULT_STRING },
+    {"chatmacro0", &chat_macros[0], DEFAULT_STRING },
+    {"chatmacro1", &chat_macros[1], DEFAULT_STRING },
+    {"chatmacro2", &chat_macros[2], DEFAULT_STRING },
+    {"chatmacro3", &chat_macros[3], DEFAULT_STRING },
+    {"chatmacro4", &chat_macros[4], DEFAULT_STRING },
+    {"chatmacro5", &chat_macros[5], DEFAULT_STRING },
+    {"chatmacro6", &chat_macros[6], DEFAULT_STRING },
+    {"chatmacro7", &chat_macros[7], DEFAULT_STRING },
+    {"chatmacro8", &chat_macros[8], DEFAULT_STRING },
+    {"chatmacro9", &chat_macros[9], DEFAULT_STRING },
 };
 
 static default_collection_t doom_defaults = 
@@ -355,10 +359,10 @@ static default_collection_t doom_defaults =
 
 static default_t extra_defaults_list[] = 
 {
-    {"grabmouse",          &grabmouse,          true},
-    {"fullscreen",         &fullscreen,         true},
-    {"screenmultiply",     &screenmultiply,     1},
-    {"novert",             &novert,             false},
+    {"grabmouse",          &grabmouse},
+    {"fullscreen",         &fullscreen},
+    {"screenmultiply",     &screenmultiply},
+    {"novert",             &novert},
 };
 
 static default_collection_t extra_defaults =
@@ -487,14 +491,6 @@ static void LoadDefaultCollection(default_collection_t *collection)
     FILE*	f;
     char	defname[80];
     char	strparm[100];
-
-    // set everything to base values
- 
-    for (i=0 ; i<collection->numdefaults ; i++)
-    {
-	*((int *) defaults[i].location) = defaults[i].defaultvalue;
-        defaults[i].untranslated = 0;
-    }
 
     // read the file in, overriding any set defaults
     f = fopen(collection->filename, "r");

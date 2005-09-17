@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: s_sound.c 75 2005-09-05 22:50:56Z fraggle $
+// $Id: s_sound.c 110 2005-09-17 20:25:56Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.7  2005/09/17 20:25:56  fraggle
+// Set the default values for variables in their initialisers.  Remove the
+// "defaultvalue" parameter and associated code from the configuration
+// file parsing code.
+//
 // Revision 1.6  2005/09/05 22:50:56  fraggle
 // Add mmus2mid code from prboom.  Use 'void *' for music handles.  Pass
 // length of data when registering music.
@@ -50,7 +55,7 @@
 
 
 static const char
-rcsid[] = "$Id: s_sound.c 75 2005-09-05 22:50:56Z fraggle $";
+rcsid[] = "$Id: s_sound.c 110 2005-09-17 20:25:56Z fraggle $";
 
 
 
@@ -138,10 +143,10 @@ static channel_t*	channels;
 // These are not used, but should be (menu).
 // Maximum volume of a sound effect.
 // Internal default is max out of 0-15.
-int 		snd_SfxVolume = 15;
+int 		snd_SfxVolume = 8;
 
 // Maximum volume of music. Useless so far.
-int 		snd_MusicVolume = 15; 
+int 		snd_MusicVolume = 8; 
 
 
 
@@ -154,7 +159,8 @@ static musicinfo_t*	mus_playing=0;
 // following is set
 //  by the defaults code in M_misc:
 // number of channels available
-int			numChannels;	
+
+int			numChannels = 3;
 
 static int		nextcleanup;
 

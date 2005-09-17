@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_menu.c 84 2005-09-07 21:30:42Z fraggle $
+// $Id: m_menu.c 110 2005-09-17 20:25:56Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.7  2005/09/17 20:25:56  fraggle
+// Set the default values for variables in their initialisers.  Remove the
+// "defaultvalue" parameter and associated code from the configuration
+// file parsing code.
+//
 // Revision 1.6  2005/09/07 21:30:42  fraggle
 // Remove non-ANSI C headers.  Use standard C file I/O functions.
 //
@@ -49,7 +54,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_menu.c 84 2005-09-07 21:30:42Z fraggle $";
+rcsid[] = "$Id: m_menu.c 110 2005-09-17 20:25:56Z fraggle $";
 
 #include <stdlib.h>
 #include <ctype.h>
@@ -96,34 +101,34 @@ extern boolean		chat_on;		// in heads-up code
 //
 // defaulted values
 //
-int			mouseSensitivity;       // has default
+int			mouseSensitivity = 5;
 
 // Show messages has default, 0 = off, 1 = on
-int			showMessages;
+int			showMessages = 1;
 	
 
 // Blocky mode, has default, 0 = high, 1 = normal
-int			detailLevel;		
-int			screenblocks;		// has default
+int			detailLevel = 0;
+int			screenblocks = 9;
 
 // temp for screenblocks (0-9)
-int			screenSize;		
+int			screenSize;
 
 // -1 = no quicksave slot picked!
-int			quickSaveSlot;          
+int			quickSaveSlot;
 
  // 1 = message to be printed
 int			messageToPrint;
 // ...and here is the message string!
-char*			messageString;		
+char*			messageString;
 
 // message x & y
-int			messx;			
+int			messx;
 int			messy;
 int			messageLastMenuActive;
 
 // timed message = no input from user
-boolean			messageNeedsInput;     
+boolean			messageNeedsInput;
 
 void    (*messageRoutine)(int response);
 
