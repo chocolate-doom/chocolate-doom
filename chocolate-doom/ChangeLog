@@ -1,3 +1,23 @@
+Sat Sep 17 21:17:45 2005 fraggle
+	
+	0.0.3
+
+Sat Sep 17 20:50:46 2005 fraggle
+	
+	Mouse acceleration code to emulate old DOS drivers
+
+Sat Sep 17 20:25:56 2005 fraggle
+	
+	Set the default values for variables in their initialisers.  Remove the
+	"defaultvalue" parameter and associated code from the configuration
+	file parsing code.
+
+Sat Sep 17 20:06:45 2005 fraggle
+	
+	Rewrite configuration loading code; assign a type to each configuration
+	parameter.  Allow float parameters, align all values in the configuration
+	files
+
 Wed Sep 14 22:13:45 2005 fraggle
 	
 	Remove mkinstalldirs (redundant now); include BUGS and TODO in distribution
