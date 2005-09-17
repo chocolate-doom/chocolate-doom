@@ -23,6 +23,11 @@
 //
 //
 // $Log$
+// Revision 1.10  2005/09/17 20:06:45  fraggle
+// Rewrite configuration loading code; assign a type to each configuration
+// parameter.  Allow float parameters, align all values in the configuration
+// files
+//
 // Revision 1.9  2005/09/11 20:25:56  fraggle
 // Second configuration file to allow chocolate doom-specific settings.
 // Adjust some existing command line logic (for graphics settings and
@@ -79,8 +84,6 @@ rcsid[] = "$Id$";
 #include <sys/stat.h>
 #include <sys/types.h>
 #endif
-
-
 
 #include "config.h"
 #include "doomdef.h"
@@ -264,13 +267,21 @@ static int snd_sbirq;
 static int snd_sbdma;
 static int snd_mport;
 
+typedef enum 
+{
+    DEFAULT_INT,
+    DEFAULT_STRING,
+    DEFAULT_FLOAT,
+    DEFAULT_KEY,
+} default_type_t;
+
 typedef struct
 {
-    char *	name;
-    void *	location;
-    int		defaultvalue;
-    int		scantranslate; // translate this value to a scancode
-    int         untranslated;
+    char *         name;
+    void *         location;
+    int            defaultvalue;
+    default_type_t type;
+    int            untranslated;
 } default_t;
 
 typedef struct
@@ -286,19 +297,18 @@ static default_t	doom_defaults_list[] =
     {"sfx_volume",&snd_SfxVolume, 8},
     {"music_volume",&snd_MusicVolume, 8},
     {"show_messages",&showMessages, 1},
-    
 
-    {"key_right",&key_right, KEY_RIGHTARROW, 1},
-    {"key_left",&key_left, KEY_LEFTARROW, 1},
-    {"key_up",&key_up, KEY_UPARROW, 1},
-    {"key_down",&key_down, KEY_DOWNARROW, 1},
-    {"key_strafeleft",&key_strafeleft, ',', 1},
-    {"key_straferight",&key_straferight, '.', 1},
+    {"key_right",&key_right, KEY_RIGHTARROW, DEFAULT_KEY},
+    {"key_left",&key_left, KEY_LEFTARROW, DEFAULT_KEY},
+    {"key_up",&key_up, KEY_UPARROW, DEFAULT_KEY},
+    {"key_down",&key_down, KEY_DOWNARROW, DEFAULT_KEY},
+    {"key_strafeleft",&key_strafeleft, ',', DEFAULT_KEY},
+    {"key_straferight",&key_straferight, '.', DEFAULT_KEY},
 
-    {"key_fire",&key_fire, KEY_RCTRL, 1},
-    {"key_use",&key_use, ' ', 1},
-    {"key_strafe",&key_strafe, KEY_RALT, 1},
-    {"key_speed",&key_speed, KEY_RSHIFT, 1},
+    {"key_fire",&key_fire, KEY_RCTRL, DEFAULT_KEY},
+    {"key_use",&key_use, ' ', DEFAULT_KEY},
+    {"key_strafe",&key_strafe, KEY_RALT, DEFAULT_KEY},
+    {"key_speed",&key_speed, KEY_RSHIFT, DEFAULT_KEY},
 
     {"use_mouse",&usemouse, 1},
     {"mouseb_fire",&mousebfire,0},
@@ -325,17 +335,16 @@ static default_t	doom_defaults_list[] =
 
     {"usegamma",&usegamma, 0},
 
-    {"chatmacro0", &chat_macros[0], (int) HUSTR_CHATMACRO0 },
-    {"chatmacro1", &chat_macros[1], (int) HUSTR_CHATMACRO1 },
-    {"chatmacro2", &chat_macros[2], (int) HUSTR_CHATMACRO2 },
-    {"chatmacro3", &chat_macros[3], (int) HUSTR_CHATMACRO3 },
-    {"chatmacro4", &chat_macros[4], (int) HUSTR_CHATMACRO4 },
-    {"chatmacro5", &chat_macros[5], (int) HUSTR_CHATMACRO5 },
-    {"chatmacro6", &chat_macros[6], (int) HUSTR_CHATMACRO6 },
-    {"chatmacro7", &chat_macros[7], (int) HUSTR_CHATMACRO7 },
-    {"chatmacro8", &chat_macros[8], (int) HUSTR_CHATMACRO8 },
-    {"chatmacro9", &chat_macros[9], (int) HUSTR_CHATMACRO9 }
-
+    {"chatmacro0", &chat_macros[0], (int) HUSTR_CHATMACRO0, DEFAULT_STRING },
+    {"chatmacro1", &chat_macros[1], (int) HUSTR_CHATMACRO1, DEFAULT_STRING },
+    {"chatmacro2", &chat_macros[2], (int) HUSTR_CHATMACRO2, DEFAULT_STRING },
+    {"chatmacro3", &chat_macros[3], (int) HUSTR_CHATMACRO3, DEFAULT_STRING },
+    {"chatmacro4", &chat_macros[4], (int) HUSTR_CHATMACRO4, DEFAULT_STRING },
+    {"chatmacro5", &chat_macros[5], (int) HUSTR_CHATMACRO5, DEFAULT_STRING },
+    {"chatmacro6", &chat_macros[6], (int) HUSTR_CHATMACRO6, DEFAULT_STRING },
+    {"chatmacro7", &chat_macros[7], (int) HUSTR_CHATMACRO7, DEFAULT_STRING },
+    {"chatmacro8", &chat_macros[8], (int) HUSTR_CHATMACRO8, DEFAULT_STRING },
+    {"chatmacro9", &chat_macros[9], (int) HUSTR_CHATMACRO9, DEFAULT_STRING },
 };
 
 static default_collection_t doom_defaults = 
@@ -346,10 +355,10 @@ static default_collection_t doom_defaults =
 
 static default_t extra_defaults_list[] = 
 {
-    {"grabmouse",   &grabmouse,      true},
-    {"fullscreen",  &fullscreen,     true},
-    {"screenmultiply", &screenmultiply, 1},
-    {"novert",      &novert,         false},
+    {"grabmouse",          &grabmouse,          true},
+    {"fullscreen",         &fullscreen,         true},
+    {"screenmultiply",     &screenmultiply,     1},
+    {"novert",             &novert,             false},
 };
 
 static default_collection_t extra_defaults =
@@ -382,8 +391,7 @@ static int scantokey[128] =
 static void SaveDefaultCollection(default_collection_t *collection)
 {
     default_t *defaults;
-    int i;
-    int v;
+    int i, v;
     FILE *f;
 	
     f = fopen (collection->filename, "w");
@@ -394,18 +402,26 @@ static void SaveDefaultCollection(default_collection_t *collection)
 		
     for (i=0 ; i<collection->numdefaults ; i++)
     {
-	if (defaults[i].defaultvalue > -0xfff
-	    && defaults[i].defaultvalue < 0xfff)
-	{
-	    v = *((int *)defaults[i].location);
+        int chars_written;
 
-            // translate keys back to scancodes
+        // Print the name and line up all values at 30 characters
 
-            if (defaults[i].scantranslate)
-            {
+        chars_written = fprintf(f, "%s ", defaults[i].name);
+
+        for (; chars_written < 30; ++chars_written)
+            fprintf(f, " ");
+
+        // Print the value
+
+        switch (defaults[i].type) 
+        {
+            case DEFAULT_KEY:
+
                 // use the untranslated version if we can, to reduce
                 // the possibility of screwing up the user's config
                 // file
+                
+                v = * (int *) defaults[i].location;
 
                 if (defaults[i].untranslated)
                 {
@@ -417,6 +433,7 @@ static void SaveDefaultCollection(default_collection_t *collection)
                     // in the scantokey table
 
                     int s;
+
                     for (s=0; s<128; ++s)
                     {
                         if (scantokey[s] == v)
@@ -426,29 +443,50 @@ static void SaveDefaultCollection(default_collection_t *collection)
                         }
                     }
                 }
-            }
-            
-	    fprintf (f,"%s\t\t%i\n",defaults[i].name,v);
-	} else {
-	    fprintf (f,"%s\t\t\"%s\"\n",defaults[i].name,
-		     * (char **) (defaults[i].location));
-	}
+
+	        fprintf(f, "%i", v);
+                break;
+
+            case DEFAULT_INT:
+	        fprintf(f, "%i", * (int *) defaults[i].location);
+                break;
+
+            case DEFAULT_FLOAT:
+                fprintf(f, "%f", * (float *) defaults[i].location);
+                break;
+
+            case DEFAULT_STRING:
+	        fprintf(f,"\"%s\"", * (char **) (defaults[i].location));
+                break;
+        }
+
+        fprintf(f, "\n");
     }
 
     fclose (f);
+}
+
+// Parses integer values in the configuration file
+
+static int ParseIntParameter(char *strparm)
+{
+    int parm;
+
+    if (strparm[0] == '0' && strparm[1] == 'x')
+        sscanf(strparm+2, "%x", &parm);
+    else
+        sscanf(strparm, "%i", &parm);
+
+    return parm;
 }
 
 static void LoadDefaultCollection(default_collection_t *collection)
 {
     default_t  *defaults = collection->defaults;
     int		i;
-    int		len;
     FILE*	f;
-    char	def[80];
+    char	defname[80];
     char	strparm[100];
-    char*	newstring = "";
-    int		parm;
-    boolean	isstring;
 
     // set everything to base values
  
@@ -461,49 +499,74 @@ static void LoadDefaultCollection(default_collection_t *collection)
     // read the file in, overriding any set defaults
     f = fopen(collection->filename, "r");
 
-    if (f)
+    if (!f)
     {
-	while (!feof(f))
-	{
-	    isstring = false;
-	    if (fscanf (f, "%79s %[^\n]\n", def, strparm) == 2)
-	    {
-		if (strparm[0] == '"')
-		{
-		    // get a string default
-		    isstring = true;
-		    len = strlen(strparm);
-		    newstring = (char *) malloc(len);
-		    strparm[len-1] = 0;
-		    strcpy(newstring, strparm+1);
-		}
-		else if (strparm[0] == '0' && strparm[1] == 'x')
-		    sscanf(strparm+2, "%x", &parm);
-		else
-		    sscanf(strparm, "%i", &parm);
-		for (i=0 ; i<collection->numdefaults ; i++)
-		    if (!strcmp(def, defaults[i].name))
-		    {
-                        if (defaults[i].scantranslate)
-                        {
-                            // translate scancodes read from config
-                            // file (save the old value in untranslated)
+        // File not opened, but don't complain
 
-                            defaults[i].untranslated = parm;
-                            parm = scantokey[parm];
-                        }
-                        
-			if (!isstring)
-			    *((int *) defaults[i].location) = parm;
-			else
-			    *((char **) defaults[i].location) = newstring;
-			break;
-		    }
-	    }
-	}
-		
-	fclose (f);
+        return;
     }
+    
+    while (!feof(f))
+    {
+        if (fscanf (f, "%79s %[^\n]\n", defname, strparm) != 2)
+        {
+            // This line doesn't match
+          
+            continue;
+        }
+        
+        // Find the setting in the list
+       
+        for (i=0; i<collection->numdefaults; ++i)
+        {
+            default_t *def = &collection->defaults[i];
+            char *s;
+            int intparm;
+
+            if (strcmp(defname, def->name) != 0)
+            {
+                // not this one
+                continue;
+            }
+
+            // parameter found
+
+            switch (def->type)
+            {
+                case DEFAULT_STRING:
+                    s = strdup(strparm + 1);
+                    s[strlen(s) - 1] = '\0';
+                    * (char **) def->location = s;
+                    break;
+
+                case DEFAULT_INT:
+                    * (int *) def->location = ParseIntParameter(strparm);
+                    break;
+
+                case DEFAULT_KEY:
+
+                    // translate scancodes read from config
+                    // file (save the old value in untranslated)
+
+                    intparm = ParseIntParameter(strparm);
+                    defaults[i].untranslated = intparm;
+                    intparm = scantokey[intparm];
+
+                    * (int *) def->location = intparm;
+                    break;
+
+                case DEFAULT_FLOAT:
+                    * (float *) def->location = atof(strparm);
+                    break;
+            }
+
+            // finish
+
+            break; 
+        }
+    }
+            
+    fclose (f);
 }
 
 //
