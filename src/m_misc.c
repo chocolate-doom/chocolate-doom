@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_misc.c 110 2005-09-17 20:25:56Z fraggle $
+// $Id: m_misc.c 111 2005-09-17 20:50:46Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -23,6 +23,9 @@
 //
 //
 // $Log$
+// Revision 1.12  2005/09/17 20:50:46  fraggle
+// Mouse acceleration code to emulate old DOS drivers
+//
 // Revision 1.11  2005/09/17 20:25:56  fraggle
 // Set the default values for variables in their initialisers.  Remove the
 // "defaultvalue" parameter and associated code from the configuration
@@ -75,7 +78,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_misc.c 110 2005-09-17 20:25:56Z fraggle $";
+rcsid[] = "$Id: m_misc.c 111 2005-09-17 20:50:46Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -363,6 +366,7 @@ static default_t extra_defaults_list[] =
     {"fullscreen",         &fullscreen},
     {"screenmultiply",     &screenmultiply},
     {"novert",             &novert},
+    {"mouse_acceleration", &mouse_acceleration,   DEFAULT_FLOAT},
 };
 
 static default_collection_t extra_defaults =
