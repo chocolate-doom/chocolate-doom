@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.10  2005/09/17 20:25:56  fraggle
+// Set the default values for variables in their initialisers.  Remove the
+// "defaultvalue" parameter and associated code from the configuration
+// file parsing code.
+//
 // Revision 1.9  2005/09/11 20:25:56  fraggle
 // Second configuration file to allow chocolate doom-specific settings.
 // Adjust some existing command line logic (for graphics settings and
@@ -183,34 +188,34 @@ byte*		savebuffer;
  
  
 // 
-// controls (have defaults) 
+// Controls 
 // 
-int             key_right;
-int		key_left;
+int             key_right = KEY_RIGHTARROW;
+int		key_left = KEY_LEFTARROW;
 
-int		key_up;
-int		key_down; 
-int             key_strafeleft;
-int		key_straferight; 
-int             key_fire;
-int		key_use;
-int		key_strafe;
-int		key_speed; 
+int		key_up = KEY_UPARROW;
+int		key_down = KEY_DOWNARROW; 
+int             key_strafeleft = ',';
+int		key_straferight = '.';
+int             key_fire = KEY_RCTRL;
+int		key_use = ' ';
+int		key_strafe = KEY_RALT;
+int		key_speed = KEY_RSHIFT; 
  
-int             mousebfire; 
-int             mousebstrafe; 
-int             mousebforward; 
+int             mousebfire = 0;
+int             mousebstrafe = 1;
+int             mousebforward = 2;
  
-int             joybfire; 
-int             joybstrafe; 
-int             joybuse; 
-int             joybspeed; 
+int             joybfire = 0; 
+int             joybstrafe = 1; 
+int             joybuse = 3; 
+int             joybspeed = 2; 
 
 // fraggle: Disallow mouse and joystick movement to cause forward/backward
 // motion.  Specified with the '-novert' command line parameter.
 // This is an int to allow saving to config file
 
-int             novert;
+int             novert = 0;
  
  
  
