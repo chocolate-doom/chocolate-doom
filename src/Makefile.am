@@ -25,8 +25,12 @@ doomtype.h  info.h      m_swap.c    p_sight.c   r_segs.h    w_wad.h	\
 d_player.h  i_sound.c   m_swap.h    p_spec.c    r_sky.c     z_zone.c	\
 dstrings.c  i_sound.h   p_ceilng.c  p_spec.h    r_sky.h     z_zone.h	\
 dstrings.h  i_system.c  p_doors.c   p_switch.c  r_state.h   mmus2mid.c  \
-d_textur.h  i_system.h  p_enemy.c   p_telept.c  r_things.c  mmus2mid.h
+d_textur.h  i_system.h  p_enemy.c   p_telept.c  r_things.c  mmus2mid.h  \
+chocolate-doom-res.rc
 
 bin_PROGRAMS = chocolate-doom
 
+
+.rc.o:
+	windres $^ -o $@
 
