@@ -2,9 +2,12 @@
 bindir = $(prefix)/bin
 
 CFLAGS = @CFLAGS@ @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@ -Wall
-chocolate_doom_LDADD = @LDFLAGS@ @SDL_LIBS@ @SDLMIXER_LIBS@ @SDLNET_LIBS@
+chocolate_doom_LDADD = @LDFLAGS@                \
+                       @SDL_LIBS@               \
+                       @SDLMIXER_LIBS@          \
+                       @SDLNET_LIBS@ 
 
-chocolate_doom_SOURCES=\
+SOURCE_FILES=\
 am_map.c    d_think.h   i_video.c   p_floor.c   p_tick.c    r_things.h	\
 am_map.h    d_ticcmd.h  i_video.h   p_inter.c   p_tick.h    sounds.c	\
 d_englsh.h  f_finale.c  m_argv.c    p_inter.h   p_user.c    sounds.h	\
@@ -25,11 +28,15 @@ doomtype.h  info.h      m_swap.c    p_sight.c   r_segs.h    w_wad.h	\
 d_player.h  i_sound.c   m_swap.h    p_spec.c    r_sky.c     z_zone.c	\
 dstrings.c  i_sound.h   p_ceilng.c  p_spec.h    r_sky.h     z_zone.h	\
 dstrings.h  i_system.c  p_doors.c   p_switch.c  r_state.h   mmus2mid.c  \
-d_textur.h  i_system.h  p_enemy.c   p_telept.c  r_things.c  mmus2mid.h  \
-chocolate-doom-res.rc
+d_textur.h  i_system.h  p_enemy.c   p_telept.c  r_things.c  mmus2mid.h  
+
+if HAVE_WINDRES
+chocolate_doom_SOURCES=$(SOURCE_FILES) chocolate-doom-res.rc
+else
+chocolate_doom_SOURCES=$(SOURCE_FILES)
+endif
 
 bin_PROGRAMS = chocolate-doom
-
 
 .rc.o:
 	windres $^ -o $@
