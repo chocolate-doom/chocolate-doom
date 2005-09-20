@@ -10,7 +10,6 @@ then
         CFLAGS="-O3 $orig_CFLAGS"
 fi
 
-
 AM_PATH_SDL(1.1.3)
 
 # Always build a console mode app
@@ -32,8 +31,11 @@ AM_CONDITIONAL(HAVE_WINDRES, which windres > /dev/null)
 
 AM_INIT_AUTOMAKE(AC_PACKAGE_TARNAME,AC_PACKAGE_VERSION)
 
+WINDOWS_RC_VERSION=`echo $PACKAGE_VERSION.0 | sed 's/\./, /g' `
+
 AM_CONFIG_HEADER(config.h:config.hin)
 
+AC_SUBST(WINDOWS_RC_VERSION)
 AC_SUBST(SDLMIXER_CFLAGS)
 AC_SUBST(SDLMIXER_LIBS)
 
@@ -45,5 +47,6 @@ AC_SUBST(ac_aux_dir)
 AC_OUTPUT([
 Makefile
 src/Makefile
+src/chocolate-doom-res.rc
 ])
 
