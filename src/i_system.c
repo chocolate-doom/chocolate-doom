@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.10  2005/09/22 13:13:47  fraggle
+// Remove external statistics driver support (-statcopy):
+// nonfunctional on modern systems and never used.
+// Fix for systems where sizeof(int) != sizeof(void *)
+//
 // Revision 1.9  2005/09/08 22:10:40  fraggle
 // Delay calls so we don't use the entire CPU
 //
@@ -108,8 +113,8 @@ byte* I_ZoneBase (int*	size)
     byte *zonemem;
     *size = mb_used*1024*1024;
     zonemem = malloc (*size);
-    printf("zone memory: %x, %x allocated for zone\n", 
-	   (int) zonemem, *size);
+    printf("zone memory: %p, %x allocated for zone\n", 
+           zonemem, *size);
     return zonemem;
 }
 
