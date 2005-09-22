@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.7  2005/09/22 13:13:47  fraggle
+// Remove external statistics driver support (-statcopy):
+// nonfunctional on modern systems and never used.
+// Fix for systems where sizeof(int) != sizeof(void *)
+//
 // Revision 1.6  2005/08/04 18:40:22  fraggle
 // Use zone memory functions instead of alloca/malloc/free
 //
@@ -662,10 +667,8 @@ void R_InitColormaps (void)
     // Load in the light tables, 
     //  256 byte align tables.
     lump = W_GetNumForName("COLORMAP"); 
-    length = W_LumpLength (lump) + 255; 
-    colormaps = Z_Malloc (length, PU_STATIC, 0); 
-    colormaps = (byte *)( ((int)colormaps + 255)&~0xff); 
-    W_ReadLump (lump,colormaps); 
+    length = W_LumpLength (lump);
+    colormaps = W_CacheLumpNum(lump, PU_STATIC);
 }
 
 
