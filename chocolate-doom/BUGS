@@ -1,17 +1,10 @@
 
-* Mouse does not move properly. 
-
-  Under MSDOS, the mouse moved according to the acceleration settings
-  in the mouse driver.  Under SDL, the mouse is measured more directly,
-  and acceleration effects are not included.  As a result, the mouse
-  moves slower under chocolate doom (it may be harder to quickly "whip"
-  the player round for example). This needs some investigation to see
-  how mouse acceleration was typically performed under DOS.
-
 * Sound may not set volumes correctly.
 
   It is possible that volume of sound effects does not scale properly 
-  with distance from the sound source.  This needs further investigation.
+  with distance from the sound source.  It is also possible that sound 
+  effects are cut off at the wrong distance. This needs further 
+  investigation.
 
 * Music plays back differently.
 
@@ -20,4 +13,10 @@
   works well but some patches are different.  By closer examination 
   of which MIDI instruments are used by doom.exe, it may be possible
   to get a closer conversion.
+
+* Savegames may be incompatible on some architectures.
+
+  Savegames may not be compatible with DOS doom.exe on 64-bit or 
+  big-endian systems.  On 64-bit systems savegames may be entirely
+  nonfunctional.
 
