@@ -1,4 +1,91 @@
 
-Chocolate Doom is a Doom source port which is designed to behave as closely
+Chocolate Doom
+
+Chocolate Doom is a Doom source port which aims to behave as closely
 as possible to the original DOS Doom executables.
+
+Chocolate Doom aims to:
+
+ * Be compatible with DOS Doom demos
+ * Be compatible with DOS Doom configuration files
+ * Be compatible with DOS Doom savegames
+ * Be compatible with DOS Doom bugs
+ * Provide the same "feel" as DOS Doom (display and input should behave
+   the same)
+ * As far as possible, provde all the same features that are available
+   using the DOS version.
+
+== Configuration File ==
+
+Chocolate Doom is compatible with the DOS Doom configuration file
+(normally named 'default.cfg').  Existing configuration files for
+DOS Doom should therefore simply work out of the box.  However,
+Chocolate Doom also provides some extra settings.  These are stored
+in a separate file named 'chocolate-doom.cfg'.
+
+Options:
+
+  fullscreen           If 1, the game runs fullscreen.
+
+  grabmouse            If 1, the mouse pointer is "grabbed" during play.  
+                       This is only applicable if playing in windowed mode 
+                       (not fullscreen)
+
+  mouse_acceleration   Controls the acceleration applied to the mouse.  
+                       Acceleration has the effect of turning a greater 
+                       amount when the mouse is moved quickly. When this has 
+                       a value of 1.0, there is no acceleration. Larger values 
+                       apply a greater acceleration.
+
+  novert               Emulates the behavior of the DOS program "novert".  
+                       If this is 1, vertical mouse movement is ignored, 
+                       and the player will not move forward and backward 
+                       when the mouse is moved.
+
+  screenmultiply       If this has the value 1, the game runs in a 320x200 
+                       window.  If this has the value 2, this is doubled up 
+                       to a 640x400 window.
+
+== Command-line options ==
+
+In addition to the normal Doom command-line options, a number of extra
+options are supported.
+
+  -1                   Sets screenmultiply to 1 (see above)
+
+  -2                   Sets screenmultiply to 2 (see above), doubling up
+                       the screen by 2x.
+
+  -extraconfig <file>  Specifies a configuration file to use for 
+                       Chocolate Doom-specific settings (the default
+                       is 'chocolate-doom.cfg')
+
+  -fullscreen          Runs the game fullscreen. 
+
+  -nofullscreen        Runs the game in a window,
+  -window
+
+  -grabmouse           Grabs the mouse during play (see above)
+
+  -nograbmouse         Does not grab the mouse during play (see above)
+
+  -iwad <file>         Specifies an IWAD file to use.
+
+  -longtics            When recording demos, records in the the modified
+                       "Doom v1.91" format to avoid losing turning
+                       resolution.
+
+  -novert              Turns on novert (see above)
+
+  -nonovert            Turns off novert (see above)
+
+== Other information ==
+
+ * Chocolate Doom is not perfect.  See the BUGS file for a list of 
+   known issues,
+ * Chocolate Doom is under the GNU GPL.  See the COPYING file for more 
+   information.
+ * Chocolate Doom is currently a beta version.  Not all planned features 
+   have been implemented yet.  Please send feedback and bug reports to 
+   fraggle@alkali.org.  Thanks!
 
