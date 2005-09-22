@@ -1,3 +1,39 @@
+Thu Sep 22 13:22:49 2005 fraggle
+	
+	Update NEWS
+
+Thu Sep 22 13:20:49 2005 fraggle
+	
+	Update bugs/todo lists
+
+Thu Sep 22 13:13:47 2005 fraggle
+	
+	Remove external statistics driver support (-statcopy):
+	nonfunctional on modern systems and never used.
+	Fix for systems where sizeof(int) != sizeof(void *)
+
+Thu Sep 22 12:58:46 2005 fraggle
+	
+	Use a new PU_FREE tag to mark free blocks, rather than the 'user' field
+	(avoids using magic numbers to mark allocated blocks with no user)
+
+Tue Sep 20 21:20:16 2005 fraggle
+	
+	Generate chocolate-doom-res.rc with version and product info
+
+Tue Sep 20 20:55:31 2005 fraggle
+	
+	Conditionally build the resource file, dependent on whether windres exists
+
+Tue Sep 20 20:13:55 2005 fraggle
+	
+	Update to do list
+
+Tue Sep 20 20:13:14 2005 fraggle
+	
+	Include icon in exe, rather than the default icon.  Thanks to Joe Kennedy
+	for drawing this icon.
+
 Sat Sep 17 21:17:45 2005 fraggle
 	
 	0.0.3
