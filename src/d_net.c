@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.c 95 2005-09-08 22:10:40Z fraggle $
+// $Id: d_net.c 120 2005-09-22 13:13:47Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.8  2005/09/22 13:13:47  fraggle
+// Remove external statistics driver support (-statcopy):
+// nonfunctional on modern systems and never used.
+// Fix for systems where sizeof(int) != sizeof(void *)
+//
 // Revision 1.7  2005/09/08 22:10:40  fraggle
 // Delay calls so we don't use the entire CPU
 //
@@ -53,7 +58,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_net.c 95 2005-09-08 22:10:40Z fraggle $";
+static const char rcsid[] = "$Id: d_net.c 120 2005-09-22 13:13:47Z fraggle $";
 
 
 #include "m_menu.h"
@@ -119,7 +124,9 @@ doomdata_t	reboundstore;
 //
 int NetbufferSize (void)
 {
-    return (int)&(((doomdata_t *)0)->cmds[netbuffer->numtics]); 
+    doomdata_t *dummy = NULL;
+
+    return ((byte *) &dummy->cmds[netbuffer->numtics]) - ((byte *) dummy);
 }
 
 //

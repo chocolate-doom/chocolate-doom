@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: g_game.c 110 2005-09-17 20:25:56Z fraggle $
+// $Id: g_game.c 120 2005-09-22 13:13:47Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.11  2005/09/22 13:13:47  fraggle
+// Remove external statistics driver support (-statcopy):
+// nonfunctional on modern systems and never used.
+// Fix for systems where sizeof(int) != sizeof(void *)
+//
 // Revision 1.10  2005/09/17 20:25:56  fraggle
 // Set the default values for variables in their initialisers.  Remove the
 // "defaultvalue" parameter and associated code from the configuration
@@ -66,7 +71,7 @@
 
 
 static const char
-rcsid[] = "$Id: g_game.c 110 2005-09-17 20:25:56Z fraggle $";
+rcsid[] = "$Id: g_game.c 120 2005-09-22 13:13:47Z fraggle $";
 
 #include <string.h>
 #include <stdlib.h>
@@ -262,8 +267,6 @@ char		savedescription[32];
 
 mobj_t*		bodyque[BODYQUESIZE]; 
 int		bodyqueslot; 
- 
-void*		statcopy;				// for statistics driver
  
  
  
@@ -1203,9 +1206,6 @@ void G_DoCompleted (void)
     viewactive = false; 
     automapactive = false; 
  
-    if (statcopy)
-	memcpy (statcopy, &wminfo, sizeof(wminfo));
-	
     WI_Start (&wminfo); 
 } 
 

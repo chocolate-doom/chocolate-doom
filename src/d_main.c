@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 98 2005-09-11 20:25:56Z fraggle $
+// $Id: d_main.c 120 2005-09-22 13:13:47Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.15  2005/09/22 13:13:47  fraggle
+// Remove external statistics driver support (-statcopy):
+// nonfunctional on modern systems and never used.
+// Fix for systems where sizeof(int) != sizeof(void *)
+//
 // Revision 1.14  2005/09/11 20:25:56  fraggle
 // Second configuration file to allow chocolate doom-specific settings.
 // Adjust some existing command line logic (for graphics settings and
@@ -82,7 +87,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 98 2005-09-11 20:25:56Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 120 2005-09-22 13:13:47Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -1156,17 +1161,6 @@ void D_DoomMain (void)
     printf ("ST_Init: Init status bar.\n");
     ST_Init ();
 
-    // check for a driver that wants intermission stats
-    p = M_CheckParm ("-statcopy");
-    if (p && p<myargc-1)
-    {
-	// for statistics driver
-	extern  void*	statcopy;                            
-
-	statcopy = (void*)atoi(myargv[p+1]);
-	printf ("External statistics registered.\n");
-    }
-    
     // start the apropriate game based on parms
     p = M_CheckParm ("-record");
 

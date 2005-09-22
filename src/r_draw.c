@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: r_draw.c 45 2005-08-06 18:37:47Z fraggle $
+// $Id: r_draw.c 120 2005-09-22 13:13:47Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/09/22 13:13:47  fraggle
+// Remove external statistics driver support (-statcopy):
+// nonfunctional on modern systems and never used.
+// Fix for systems where sizeof(int) != sizeof(void *)
+//
 // Revision 1.3  2005/08/06 18:37:47  fraggle
 // Fix low resolution mode
 //
@@ -41,7 +46,7 @@
 
 
 static const char
-rcsid[] = "$Id: r_draw.c 45 2005-08-06 18:37:47Z fraggle $";
+rcsid[] = "$Id: r_draw.c 120 2005-09-22 13:13:47Z fraggle $";
 
 
 #include "doomdef.h"
@@ -550,8 +555,7 @@ void R_InitTranslationTables (void)
 {
     int		i;
 	
-    translationtables = Z_Malloc (256*3+255, PU_STATIC, 0);
-    translationtables = (byte *)(( (int)translationtables + 255 )& ~255);
+    translationtables = Z_Malloc (256*3, PU_STATIC, 0);
     
     // translate just the 16 green colors
     for (i=0 ; i<256 ; i++)
