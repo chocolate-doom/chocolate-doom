@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: z_zone.h 8 2005-07-23 16:44:57Z fraggle $
+// $Id: z_zone.h 119 2005-09-22 12:58:46Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -40,12 +40,14 @@
 // ZONE MEMORY
 // PU - purge tags.
 // Tags < 100 are not overwritten until freed.
-#define PU_STATIC		1	// static entire execution time
-#define PU_SOUND		2	// static while playing
-#define PU_MUSIC		3	// static while playing
-#define PU_DAVE		4	// anything else Dave wants static
-#define PU_LEVEL		50	// static until level exited
-#define PU_LEVSPEC		51      // a special thinker in a level
+#define PU_STATIC		1	/* static entire execution time */
+#define PU_SOUND		2	/* static while playing */
+#define PU_MUSIC		3	/* static while playing */
+#define PU_DAVE		4	/* anything else Dave wants static */
+#define PU_FREE         5   /* a free block */
+#define PU_LEVEL		50	/* static until level exited */
+#define PU_LEVSPEC		51      /* a special thinker in a level */
+
 // Tags >= 100 are purgable whenever needed.
 #define PU_PURGELEVEL	100
 #define PU_CACHE		101
@@ -65,8 +67,8 @@ int     Z_FreeMemory (void);
 typedef struct memblock_s
 {
     int			size;	// including the header and possibly tiny fragments
-    void**		user;	// NULL if a free block
-    int			tag;	// purgelevel
+    void**		user;
+    int			tag;	// PU_FREE if this is free
     int			id;	// should be ZONEID
     struct memblock_s*	next;
     struct memblock_s*	prev;
@@ -89,6 +91,10 @@ typedef struct memblock_s
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.3  2005/09/22 12:58:46  fraggle
+// Use a new PU_FREE tag to mark free blocks, rather than the 'user' field
+// (avoids using magic numbers to mark allocated blocks with no user)
+//
 // Revision 1.2  2005/07/23 16:44:57  fraggle
 // Update copyright to GNU GPL
 //
