@@ -1,3 +1,7 @@
+
+    Application icon and version info included in Windows .exe files
+    Fixes for non-x86 architectures
+
 0.0.3 (2005-09-17):
     Mouse acceleration code to emulate the behaviour of old
         DOS mouse drivers (thanks to Toke for information about 
