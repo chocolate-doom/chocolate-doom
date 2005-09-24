@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: z_zone.c 119 2005-09-22 12:58:46Z fraggle $
+// $Id: z_zone.c 131 2005-09-24 23:45:18Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/09/24 23:45:18  fraggle
+// Remove leftover debug code
+//
 // Revision 1.3  2005/09/22 12:58:46  fraggle
 // Use a new PU_FREE tag to mark free blocks, rather than the 'user' field
 // (avoids using magic numbers to mark allocated blocks with no user)
@@ -39,7 +42,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: z_zone.c 119 2005-09-22 12:58:46Z fraggle $";
+rcsid[] = "$Id: z_zone.c 131 2005-09-24 23:45:18Z fraggle $";
 
 #include "z_zone.h"
 #include "i_system.h"
@@ -232,7 +235,6 @@ Z_Malloc
         if (rover == start)
         {
             // scanned all the way around the list
-            Z_FileDumpHeap(stdout);
             I_Error ("Z_Malloc: failed on allocation of %i bytes", size);
         }
 	
