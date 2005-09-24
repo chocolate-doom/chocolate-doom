@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.28  2005/09/24 22:04:03  fraggle
+// Add application icon to running program
+//
 // Revision 1.27  2005/09/17 20:50:46  fraggle
 // Mouse acceleration code to emulate old DOS drivers
 //
@@ -126,6 +129,8 @@ rcsid[] = "$Id$";
 #include <SDL.h>
 #include <ctype.h>
 #include <math.h>
+
+#include "chocolate_doom_icon.c"
 
 #include "config.h"
 #include "doomdef.h"
@@ -694,6 +699,25 @@ static void SetCaption(void)
     Z_Free(buf);
 }
 
+// Set the application icon
+
+static void SetIcon(void)
+{
+    SDL_Surface *surface;
+
+    surface = SDL_CreateRGBSurfaceFrom(chocolate_doom_data,
+                                       chocolate_doom_w,
+                                       chocolate_doom_h,
+                                       24,
+                                       chocolate_doom_w * 3,
+                                       0xff << 0,
+                                       0xff << 8,
+                                       0xff << 16,
+                                       0);
+
+    SDL_WM_SetIcon(surface, NULL);
+    SDL_FreeSurface(surface);
+}
 
 void I_InitGraphics(void)
 {
@@ -754,6 +778,7 @@ void I_InitGraphics(void)
     }
 
     SetCaption();
+    SetIcon();
 
     UpdateFocus();
     UpdateGrab();
