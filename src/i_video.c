@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 129 2005-09-24 23:41:07Z fraggle $
+// $Id: i_video.c 130 2005-09-24 23:44:49Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.30  2005/09/24 23:44:49  fraggle
+// Enforce sane screenmultiply values
+//
 // Revision 1.29  2005/09/24 23:41:07  fraggle
 // Fix "loading" icon for all video modes
 //
@@ -127,7 +130,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 129 2005-09-24 23:41:07Z fraggle $";
+rcsid[] = "$Id: i_video.c 130 2005-09-24 23:44:49Z fraggle $";
 
 #include <SDL.h>
 #include <ctype.h>
@@ -793,6 +796,11 @@ void I_InitGraphics(void)
     {
         screenmultiply = 2;
     }
+
+    if (screenmultiply < 1)
+        screenmultiply = 1;
+    if (screenmultiply > 2)
+        screenmultiply = 2;
 
     windowwidth = SCREENWIDTH * screenmultiply;
     windowheight = SCREENHEIGHT * screenmultiply;
