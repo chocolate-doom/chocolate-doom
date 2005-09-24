@@ -1,6 +1,8 @@
 
     Application icon and version info included in Windows .exe files
     Fixes for non-x86 architectures
+    Fix uac_dead.wad (platform drop on e1m8 should occur when all
+        bosses die, not just barons)
 
 0.0.3 (2005-09-17):
     Mouse acceleration code to emulate the behaviour of old
