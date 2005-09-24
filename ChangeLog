@@ -1,3 +1,35 @@
+Sat Sep 24 23:45:18 2005 fraggle
+	
+	Remove leftover debug code
+
+Sat Sep 24 23:44:49 2005 fraggle
+	
+	Enforce sane screenmultiply values
+
+Sat Sep 24 23:41:07 2005 fraggle
+	
+	Fix "loading" icon for all video modes
+
+Sat Sep 24 23:16:43 2005 fraggle
+	
+	Remove icon border
+
+Sat Sep 24 22:57:58 2005 fraggle
+	
+	Commit uac_dead fix
+
+Sat Sep 24 22:04:03 2005 fraggle
+	
+	Add application icon to running program
+
+Thu Sep 22 21:42:24 2005 fraggle
+	
+	64-bit fixes
+
+Thu Sep 22 13:57:32 2005 fraggle
+	
+	Add some more useful information to the README
+
 Thu Sep 22 13:22:49 2005 fraggle
 	
 	Update NEWS
