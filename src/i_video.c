@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 126 2005-09-24 22:04:03Z fraggle $
+// $Id: i_video.c 129 2005-09-24 23:41:07Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.29  2005/09/24 23:41:07  fraggle
+// Fix "loading" icon for all video modes
+//
 // Revision 1.28  2005/09/24 22:04:03  fraggle
 // Add application icon to running program
 //
@@ -124,7 +127,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 126 2005-09-24 22:04:03Z fraggle $";
+rcsid[] = "$Id: i_video.c 129 2005-09-24 23:41:07Z fraggle $";
 
 #include <SDL.h>
 #include <ctype.h>
@@ -240,57 +243,6 @@ static void UpdateFocus(void)
     // Should the screen be grabbed?
 
     screenvisible = (state & SDL_APPACTIVE) != 0;
-}
-
-void I_BeginRead(void)
-{
-    int y;
-
-    if (disk_image == NULL)
-        return;
-
-    // save background and copy the disk image in
-
-    for (y=0; y<disk_image_h; ++y)
-    {
-        byte *screenloc = 
-               screens[0] 
-                 + (SCREENHEIGHT - 1 - disk_image_h + y) * SCREENWIDTH
-                 + (SCREENWIDTH - 1 - disk_image_w);
-
-        memcpy(saved_background + y * disk_image_w,
-               screenloc,
-               disk_image_w);
-        memcpy(screenloc, disk_image + y * disk_image_w, disk_image_w);
-    }
-
-    SDL_UpdateRect(screen, 
-                   screen->w - disk_image_w, screen->h - disk_image_h, 
-                   disk_image_w, disk_image_h);
-}
-
-void I_EndRead(void)
-{
-    int y;
-
-    if (disk_image == NULL)
-        return;
-
-    // save background and copy the disk image in
-
-    for (y=0; y<disk_image_h; ++y)
-    {
-        byte *screenloc = 
-               screens[0] 
-                 + (SCREENHEIGHT - 1 - disk_image_h + y) * SCREENWIDTH
-                 + (SCREENWIDTH - 1 - disk_image_w);
-
-        memcpy(screenloc, saved_background + y * disk_image_w, disk_image_w);
-    }
-
-    SDL_UpdateRect(screen, 
-                   screen->w - disk_image_w, screen->h - disk_image_h, 
-                   disk_image_w, disk_image_h);
 }
 
 static void LoadDiskImage(void)
@@ -548,6 +500,150 @@ void UpdateGrab(void)
 
 }
 
+// Update a small portion of the screen
+
+static void UpdateArea(int x1, int y1, int x2, int y2, boolean always_update)
+{
+    int w = x2 - x1;
+    int h = y2 - y1;
+
+    if (palette_to_set && !always_update)
+    {
+        // If we have a palette to set, the only way to update is to
+        // update the entire screen
+        // If we are only updating part of the screen (disk icon), we 
+        // cannot update the screen
+
+        return;
+    }
+
+    if (screenmultiply == 1 && !native_surface)
+    {
+        byte *bufp, *screenp;
+        int y;
+        int pitch;
+
+        SDL_LockSurface(screen);
+
+        pitch = screen->pitch;
+        bufp = screens[0] + y1 * SCREENWIDTH + x1;
+        screenp = (byte *) screen->pixels + y1 * pitch + x1;
+
+        for (y=y1; y<y2; ++y)
+        {
+            memcpy(screenp, bufp, w);
+            screenp += pitch;
+            bufp += SCREENWIDTH;
+        }
+
+        SDL_UnlockSurface(screen);
+    }
+
+    // scales the screen size before blitting it
+
+    if (screenmultiply == 2)
+    {
+        byte *bufp, *screenp, *screenp2;
+        int x, y;
+        int pitch;
+
+        SDL_LockSurface(screen);
+
+        pitch = screen->pitch * 2;
+        bufp = screens[0] + y1 * SCREENWIDTH + x1;
+        screenp = (byte *) screen->pixels + (y1 * pitch) +  (x1 * 2);
+        screenp2 = screenp + screen->pitch;
+
+        for (y=y1; y<y2; ++y)
+        {
+            byte *sp, *sp2, *bp;
+            sp = screenp;
+            sp2 = screenp2;
+            bp = bufp;
+
+            for (x=x1; x<x2; ++x)
+            {
+                *sp2++ = *bp;
+                *sp2++ = *bp;
+                *sp++ = *bp;
+                *sp++ = *bp++;
+            }
+            screenp += pitch;
+            screenp2 += pitch;
+            bufp += SCREENWIDTH;
+        }
+
+        SDL_UnlockSurface(screen);
+    }
+
+    // draw to screen
+    
+    if (palette_to_set)
+    {
+        SDL_SetColors(screen, palette, 0, 256);
+        palette_to_set = 0;
+    }
+    else
+    {
+        SDL_UpdateRect(screen, 
+                       x1 * screenmultiply, 
+                       y1 * screenmultiply, 
+                       (x2-x1) * screenmultiply, 
+                       (y2-y1) * screenmultiply);
+    }
+}
+
+void I_BeginRead(void)
+{
+    int y;
+
+    if (disk_image == NULL)
+        return;
+
+    // save background and copy the disk image in
+
+    for (y=0; y<disk_image_h; ++y)
+    {
+        byte *screenloc = 
+               screens[0] 
+                 + (SCREENHEIGHT - 1 - disk_image_h + y) * SCREENWIDTH
+                 + (SCREENWIDTH - 1 - disk_image_w);
+
+        memcpy(saved_background + y * disk_image_w,
+               screenloc,
+               disk_image_w);
+        memcpy(screenloc, disk_image + y * disk_image_w, disk_image_w);
+    }
+
+    UpdateArea(SCREENWIDTH - disk_image_w, SCREENHEIGHT - disk_image_h,
+               SCREENWIDTH, SCREENHEIGHT, 
+               false);
+}
+
+void I_EndRead(void)
+{
+    int y;
+
+    if (disk_image == NULL)
+        return;
+
+    // save background and copy the disk image in
+
+    for (y=0; y<disk_image_h; ++y)
+    {
+        byte *screenloc = 
+               screens[0] 
+                 + (SCREENHEIGHT - 1 - disk_image_h + y) * SCREENWIDTH
+                 + (SCREENWIDTH - 1 - disk_image_w);
+
+        memcpy(screenloc, saved_background + y * disk_image_w, disk_image_w);
+    }
+
+    UpdateArea(SCREENWIDTH - disk_image_w, SCREENHEIGHT - disk_image_h,
+               SCREENWIDTH, SCREENHEIGHT, 
+               false);
+}
+
 //
 // I_FinishUpdate
 //
@@ -583,76 +679,7 @@ void I_FinishUpdate (void)
     
     }
 
-    if (screenmultiply == 1 && !native_surface)
-    {
-        byte *bufp, *screenp;
-        int y;
-        int pitch;
-
-        SDL_LockSurface(screen);
-
-        bufp = screens[0];
-        screenp = (byte *) screen->pixels;
-        pitch = screen->pitch;
-
-        for (y=0; y<SCREENHEIGHT; ++y)
-        {
-            memcpy(screenp, bufp, SCREENWIDTH);
-            screenp += pitch;
-            bufp += SCREENWIDTH;
-        }
-
-        SDL_UnlockSurface(screen);
-    }
-
-    // scales the screen size before blitting it
-
-    if (screenmultiply == 2)
-    {
-        byte *bufp, *screenp, *screenp2;
-        int x, y;
-        int pitch;
-
-        SDL_LockSurface(screen);
-
-        bufp = screens[0];
-        screenp = (byte *) screen->pixels;
-        screenp2 = ((byte *) screen->pixels) + screen->pitch;
-        pitch = screen->pitch * 2;
-
-        for (y=0; y<SCREENHEIGHT; ++y)
-        {
-            byte *sp, *sp2, *bp;
-            sp = screenp;
-            sp2 = screenp2;
-            bp = bufp;
-
-            for (x=0; x<SCREENWIDTH; ++x)
-            {
-                *sp2++ = *bp;
-                *sp2++ = *bp;
-                *sp++ = *bp;
-                *sp++ = *bp++;
-            }
-            screenp += pitch;
-            screenp2 += pitch;
-            bufp += SCREENWIDTH;
-        }
-
-        SDL_UnlockSurface(screen);
-    }
-
-    // draw to screen
-    
-    if (palette_to_set)
-    {
-        SDL_SetColors(screen, palette, 0, 256);
-        palette_to_set = 0;
-    }
-    else
-    {
-        SDL_Flip(screen);
-    }
+    UpdateArea(0, 0, SCREENWIDTH, SCREENHEIGHT, true);
 }
 
 
