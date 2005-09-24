@@ -3,6 +3,7 @@
     Fixes for non-x86 architectures
     Fix uac_dead.wad (platform drop on e1m8 should occur when all
         bosses die, not just barons)
+    Fix "loading" icon to work for all graphics modes
 
 0.0.3 (2005-09-17):
     Mouse acceleration code to emulate the behaviour of old
