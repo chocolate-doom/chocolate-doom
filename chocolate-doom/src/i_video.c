@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.30  2005/09/24 23:44:49  fraggle
+// Enforce sane screenmultiply values
+//
 // Revision 1.29  2005/09/24 23:41:07  fraggle
 // Fix "loading" icon for all video modes
 //
@@ -793,6 +796,11 @@ void I_InitGraphics(void)
     {
         screenmultiply = 2;
     }
+
+    if (screenmultiply < 1)
+        screenmultiply = 1;
+    if (screenmultiply > 2)
+        screenmultiply = 2;
 
     windowwidth = SCREENWIDTH * screenmultiply;
     windowheight = SCREENHEIGHT * screenmultiply;
