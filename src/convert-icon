@@ -1,0 +1,71 @@
+#!/usr/bin/python
+#
+# $Id: convert-icon 126 2005-09-24 22:04:03Z fraggle $
+#
+# Copyright(C) 2005 Simon Howard
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+# 02111-1307, USA.
+#
+# Converts images into C structures to be inserted in programs
+#
+# $Log$
+# Revision 1.1  2005/09/24 22:04:03  fraggle
+# Add application icon to running program
+#
+
+import Image
+import sys
+import os
+import re
+
+def convert_image(filename):
+
+    im = Image.open(filename).convert("RGB")
+
+    size = im.size
+
+    struct_name = os.path.basename(filename)
+    struct_name = re.sub(re.compile("\\..*$"), "", struct_name)
+    struct_name = re.sub(re.compile("\W"), "_", struct_name)
+
+    print "static int %s_w = %i;" % (struct_name, size[0])
+    print "static int %s_h = %i;" % (struct_name, size[1])
+
+    print
+    print "static unsigned char %s_data[] = {" % (struct_name)
+
+    elements_on_line = 0
+
+    print "    ",
+
+    for y in range(size[1]):
+        for x in range(size[0]):
+            val = im.getpixel((x, y))
+            print "%i,%i,%i,  " % val,
+            elements_on_line += 1
+
+            if elements_on_line > 4:
+                elements_on_line = 0
+                print 
+                print "    ",
+
+    print 
+    print "};\n"
+
+for filename in sys.argv[1:len(sys.argv)]:
+    convert_image(filename)
+
+

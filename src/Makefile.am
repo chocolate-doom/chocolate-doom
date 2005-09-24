@@ -1,11 +1,10 @@
 
 bindir = $(prefix)/bin
 
+bin_PROGRAMS = chocolate-doom
+
 CFLAGS = @CFLAGS@ @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@ -Wall
-chocolate_doom_LDADD = @LDFLAGS@                \
-                       @SDL_LIBS@               \
-                       @SDLMIXER_LIBS@          \
-                       @SDLNET_LIBS@ 
+chocolate_doom_LDADD = @LDFLAGS@ @SDL_LIBS@ @SDLMIXER_LIBS@ @SDLNET_LIBS@ 
 
 SOURCE_FILES=\
 am_map.c    d_think.h   i_video.c   p_floor.c   p_tick.c    r_things.h	\
@@ -36,8 +35,11 @@ else
 chocolate_doom_SOURCES=$(SOURCE_FILES)
 endif
 
-bin_PROGRAMS = chocolate-doom
+EXTRA_DIST = convert-icon chocolate_doom_icon.c
 
 .rc.o:
 	windres $^ -o $@
+
+chocolate_doom_icon.c : ../data/chocolate-doom.png
+	./convert-icon $^ > $@
 
