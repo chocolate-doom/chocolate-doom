@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/09/24 23:45:18  fraggle
+// Remove leftover debug code
+//
 // Revision 1.3  2005/09/22 12:58:46  fraggle
 // Use a new PU_FREE tag to mark free blocks, rather than the 'user' field
 // (avoids using magic numbers to mark allocated blocks with no user)
@@ -232,7 +235,6 @@ Z_Malloc
         if (rover == start)
         {
             // scanned all the way around the list
-            Z_FileDumpHeap(stdout);
             I_Error ("Z_Malloc: failed on allocation of %i bytes", size);
         }
 	
