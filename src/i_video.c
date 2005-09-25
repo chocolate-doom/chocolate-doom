@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.31  2005/09/25 00:31:32  fraggle
+// Fix disk icon appearing before palette is set (pink disk!)
+// Cleanup and commenting
+//
 // Revision 1.30  2005/09/24 23:44:49  fraggle
 // Enforce sane screenmultiply values
 //
@@ -591,8 +595,8 @@ static void UpdateArea(int x1, int y1, int x2, int y2, boolean always_update)
         SDL_UpdateRect(screen, 
                        x1 * screenmultiply, 
                        y1 * screenmultiply, 
-                       (x2-x1) * screenmultiply, 
-                       (y2-y1) * screenmultiply);
+                       w * screenmultiply, 
+                       h * screenmultiply);
     }
 }
 
@@ -812,6 +816,14 @@ void I_InitGraphics(void)
         I_Error("Error setting video mode: %s\n", SDL_GetError());
     }
 
+    // start with a clear black screen
+
+    memset(screens[0], 0, SCREENWIDTH * SCREENHEIGHT);
+    I_SetPalette (W_CacheLumpName ("PLAYPAL",PU_CACHE));
+    SDL_Flip(screen);
+
+    // Setup title and icon
+
     SetCaption();
     SetIcon();
 
@@ -835,13 +847,13 @@ void I_InitGraphics(void)
     else
 	screens[0] = (unsigned char *) Z_Malloc (SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
 
+    // Loading from disk icon
+
     LoadDiskImage();
 
+    // We need SDL to give us translated versions of keys as well
+
     SDL_EnableUNICODE(1);
-
-    // start with a clear black screen
-
-    memset(screens[0], 0, SCREENWIDTH * SCREENHEIGHT);
 
     // clear out any events waiting at the start
   
