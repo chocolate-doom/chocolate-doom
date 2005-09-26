@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 133 2005-09-25 00:31:32Z fraggle $
+// $Id: i_video.c 134 2005-09-26 21:44:30Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.32  2005/09/26 21:44:30  fraggle
+// Fix melting crap on startup - oops
+//
 // Revision 1.31  2005/09/25 00:31:32  fraggle
 // Fix disk icon appearing before palette is set (pink disk!)
 // Cleanup and commenting
@@ -134,7 +137,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 133 2005-09-25 00:31:32Z fraggle $";
+rcsid[] = "$Id: i_video.c 134 2005-09-26 21:44:30Z fraggle $";
 
 #include <SDL.h>
 #include <ctype.h>
@@ -818,7 +821,6 @@ void I_InitGraphics(void)
 
     // start with a clear black screen
 
-    memset(screens[0], 0, SCREENWIDTH * SCREENHEIGHT);
     I_SetPalette (W_CacheLumpName ("PLAYPAL",PU_CACHE));
     SDL_Flip(screen);
 
@@ -846,6 +848,8 @@ void I_InitGraphics(void)
 	screens[0] = (unsigned char *) (screen->pixels);
     else
 	screens[0] = (unsigned char *) Z_Malloc (SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
+
+    memset(screens[0], 0, SCREENWIDTH * SCREENHEIGHT);
 
     // Loading from disk icon
 
