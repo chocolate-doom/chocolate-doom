@@ -41,5 +41,5 @@ EXTRA_DIST = convert-icon chocolate_doom_icon.c
 	windres $^ -o $@
 
 chocolate_doom_icon.c : ../data/chocolate-doom.png
-	./convert-icon $^ > $@
+	./convert-icon $^ $@
 
