@@ -37,7 +37,7 @@ endif
 
 EXTRA_DIST = convert-icon chocolate_doom_icon.c
 
-.rc.o:
+%.o : %.rc
 	windres $^ -o $@
 
 chocolate_doom_icon.c : ../data/chocolate-doom.png
