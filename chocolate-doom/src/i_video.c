@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.33  2005/09/27 22:33:42  fraggle
+// Always use SDL_Flip to update the screen.  Fixes problems in Windows when
+// running fullscreen, introduced by fixes to the disk icon code.
+//
 // Revision 1.32  2005/09/26 21:44:30  fraggle
 // Fix melting crap on startup - oops
 //
@@ -511,21 +515,13 @@ void UpdateGrab(void)
 }
 
 // Update a small portion of the screen
+//
+// Does 2x stretching and buffer blitting if neccessary
 
-static void UpdateArea(int x1, int y1, int x2, int y2, boolean always_update)
+static void BlitArea(int x1, int y1, int x2, int y2)
 {
     int w = x2 - x1;
     int h = y2 - y1;
-
-    if (palette_to_set && !always_update)
-    {
-        // If we have a palette to set, the only way to update is to
-        // update the entire screen
-        // If we are only updating part of the screen (disk icon), we 
-        // cannot update the screen
-
-        return;
-    }
 
     if (screenmultiply == 1 && !native_surface)
     {
@@ -585,22 +581,21 @@ static void UpdateArea(int x1, int y1, int x2, int y2, boolean always_update)
 
         SDL_UnlockSurface(screen);
     }
+}
 
-    // draw to screen
-    
-    if (palette_to_set)
-    {
-        SDL_SetColors(screen, palette, 0, 256);
-        palette_to_set = 0;
-    }
-    else
-    {
-        SDL_UpdateRect(screen, 
-                       x1 * screenmultiply, 
-                       y1 * screenmultiply, 
-                       w * screenmultiply, 
-                       h * screenmultiply);
-    }
+void UpdateRect(int x1, int y1, int x2, int y2)
+{
+    // Do stretching and blitting
+
+    BlitArea(x1, y1, x2, y2);
+
+    // Update the area
+
+    SDL_UpdateRect(screen, 
+                   x1 * screenmultiply, 
+                   y1 * screenmultiply, 
+                   (x2-x1) * screenmultiply, 
+                   (y2-y1) * screenmultiply);
 }
 
 void I_BeginRead(void)
@@ -625,9 +620,8 @@ void I_BeginRead(void)
         memcpy(screenloc, disk_image + y * disk_image_w, disk_image_w);
     }
 
-    UpdateArea(SCREENWIDTH - disk_image_w, SCREENHEIGHT - disk_image_h,
-               SCREENWIDTH, SCREENHEIGHT, 
-               false);
+    UpdateRect(SCREENWIDTH - disk_image_w, SCREENHEIGHT - disk_image_h,
+               SCREENWIDTH, SCREENHEIGHT);
 }
 
 void I_EndRead(void)
@@ -649,9 +643,8 @@ void I_EndRead(void)
         memcpy(screenloc, saved_background + y * disk_image_w, disk_image_w);
     }
 
-    UpdateArea(SCREENWIDTH - disk_image_w, SCREENHEIGHT - disk_image_h,
-               SCREENWIDTH, SCREENHEIGHT, 
-               false);
+    UpdateRect(SCREENWIDTH - disk_image_w, SCREENHEIGHT - disk_image_h,
+               SCREENWIDTH, SCREENHEIGHT);
 }
 
 //
@@ -689,7 +682,22 @@ void I_FinishUpdate (void)
     
     }
 
-    UpdateArea(0, 0, SCREENWIDTH, SCREENHEIGHT, true);
+    // draw to screen
+
+    BlitArea(0, 0, SCREENWIDTH, SCREENHEIGHT);
+    
+    // If we have a palette to set, the act of setting the palette
+    // updates the screen
+
+    if (palette_to_set)
+    {
+        SDL_SetColors(screen, palette, 0, 256);
+        palette_to_set = 0;
+    }
+    else
+    {
+        SDL_Flip(screen);
+    }
 }
 
 
