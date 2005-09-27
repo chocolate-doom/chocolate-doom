@@ -22,6 +22,10 @@
 # Converts images into C structures to be inserted in programs
 #
 # $Log$
+# Revision 1.2  2005/09/27 22:23:32  fraggle
+# Don't write converted output file unless everything went through
+# okay.
+#
 # Revision 1.1  2005/09/24 22:04:03  fraggle
 # Add application icon to running program
 #
@@ -31,9 +35,11 @@ import sys
 import os
 import re
 
-def convert_image(filename):
+def convert_image(filename, output_filename):
 
     im = Image.open(filename).convert("RGB")
+
+    outfile = open(output_filename, "w")
 
     size = im.size
 
@@ -41,31 +47,30 @@ def convert_image(filename):
     struct_name = re.sub(re.compile("\\..*$"), "", struct_name)
     struct_name = re.sub(re.compile("\W"), "_", struct_name)
 
-    print "static int %s_w = %i;" % (struct_name, size[0])
-    print "static int %s_h = %i;" % (struct_name, size[1])
+    outfile.write("static int %s_w = %i;\n" % (struct_name, size[0]))
+    outfile.write("static int %s_h = %i;\n" % (struct_name, size[1]))
 
-    print
-    print "static unsigned char %s_data[] = {" % (struct_name)
+    outfile.write("\n")
+    outfile.write("static unsigned char %s_data[] = {\n" % (struct_name))
 
     elements_on_line = 0
 
-    print "    ",
+    outfile.write("    ")
 
     for y in range(size[1]):
         for x in range(size[0]):
             val = im.getpixel((x, y))
-            print "%i,%i,%i,  " % val,
+            outfile.write("%i,%i,%i,  " % val)
             elements_on_line += 1
 
             if elements_on_line > 4:
                 elements_on_line = 0
-                print 
-                print "    ",
+                outfile.write("\n")
+                outfile.write("    ")
 
-    print 
-    print "};\n"
+    outfile.write("\n")
+    outfile.write("};\n")
 
-for filename in sys.argv[1:len(sys.argv)]:
-    convert_image(filename)
+convert_image(sys.argv[1], sys.argv[2])
 
 
