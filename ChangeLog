@@ -1,3 +1,12 @@
+Mon Sep 26 21:44:30 2005 fraggle
+	
+	Fix melting crap on startup - oops
+
+Sun Sep 25 00:31:32 2005 fraggle
+	
+	Fix disk icon appearing before palette is set (pink disk!)
+	Cleanup and commenting
+
 Sat Sep 24 23:45:18 2005 fraggle
 	
 	Remove leftover debug code
