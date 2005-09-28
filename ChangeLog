@@ -1,3 +1,21 @@
+Tue Sep 27 22:33:42 2005 fraggle
+	
+	Always use SDL_Flip to update the screen.  Fixes problems in Windows when
+	running fullscreen, introduced by fixes to the disk icon code.
+
+Tue Sep 27 22:25:10 2005 fraggle
+	
+	Fix .rc -> .o rule
+
+Tue Sep 27 22:23:32 2005 fraggle
+	
+	Don't write converted output file unless everything went through
+	okay.
+
+Tue Sep 27 21:46:53 2005 fraggle
+	
+	0.0.4
+
 Mon Sep 26 21:44:30 2005 fraggle
 	
 	Fix melting crap on startup - oops
