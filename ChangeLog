@@ -1,3 +1,8 @@
+Sat Oct  1 15:49:32 2005 fraggle
+	
+	automake doesn't recognise .rc files unless there is a rule like this in
+	here.  Store the rule in both forms.
+
 Tue Sep 27 22:33:42 2005 fraggle
 	
 	Always use SDL_Flip to update the screen.  Fixes problems in Windows when
