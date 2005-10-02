@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.17  2005/10/02 23:49:01  fraggle
+// The beginnings of dehacked support
+//
 // Revision 1.16  2005/10/02 04:16:47  fraggle
 // Fixes for Final Doom
 //
@@ -109,6 +112,7 @@ static const char rcsid[] = "$Id$";
 
 
 #include "config.h"
+#include "deh_main.h"
 #include "doomdef.h"
 #include "doomstat.h"
 
@@ -1207,6 +1211,8 @@ void D_DoomMain (void)
 	    D_StartTitle ();                // start up intro loop
 
     }
+
+    DEH_CheckCommandLine();
 
     D_DoomLoop ();  // never returns
 }
