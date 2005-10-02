@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.16  2005/10/02 04:16:47  fraggle
+// Fixes for Final Doom
+//
 // Revision 1.15  2005/09/22 13:13:47  fraggle
 // Remove external statistics driver support (-statcopy):
 // nonfunctional on modern systems and never used.
@@ -682,6 +685,8 @@ static void IdentifyIWADByName(char *name)
 {
     int i;
 
+    gamemission = none;
+    
     for (i=0; i<sizeof(iwads) / sizeof(*iwads); ++i)
     {
         if (strlen(name) < strlen(iwads[i].name))
@@ -696,8 +701,6 @@ static void IdentifyIWADByName(char *name)
             break;
         }
     }
-
-    gamemission = none;
 }
 
 //
