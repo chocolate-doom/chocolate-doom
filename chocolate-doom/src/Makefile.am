@@ -3,8 +3,8 @@ bindir = $(prefix)/bin
 
 bin_PROGRAMS = chocolate-doom
 
-CFLAGS = @CFLAGS@ @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@ -Wall
-chocolate_doom_LDADD = @LDFLAGS@ @SDL_LIBS@ @SDLMIXER_LIBS@ @SDLNET_LIBS@ 
+AM_CFLAGS = -I../textscreen @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@ -Wall
+chocolate_doom_LDADD = @LDFLAGS@ @SDL_LIBS@ @SDLMIXER_LIBS@ @SDLNET_LIBS@ ../textscreen/libtextscreen.a
 
 SOURCE_FILES=\
 am_map.c    d_think.h   i_video.c   p_floor.c   p_tick.c    r_things.h	\

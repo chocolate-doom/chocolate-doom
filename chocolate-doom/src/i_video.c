@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.35  2005/10/02 03:16:29  fraggle
+// ENDOOM support using text mode emulation
+//
 // Revision 1.34  2005/10/02 03:03:40  fraggle
 // Make sure loading disk is only shown if the display is initialised
 //
@@ -743,7 +746,7 @@ void I_SetPalette (byte *doompalette)
 // Set the window caption
 //
 
-static void SetCaption(void)
+void I_SetWindowCaption(void)
 {
     char *buf;
 
@@ -758,7 +761,7 @@ static void SetCaption(void)
 
 // Set the application icon
 
-static void SetIcon(void)
+void I_SetWindowIcon(void)
 {
     SDL_Surface *surface;
 
@@ -846,8 +849,8 @@ void I_InitGraphics(void)
 
     // Setup title and icon
 
-    SetCaption();
-    SetIcon();
+    I_SetWindowCaption();
+    I_SetWindowIcon();
 
     UpdateFocus();
     UpdateGrab();

@@ -57,6 +57,9 @@ void I_ReadScreen (byte* scr);
 void I_BeginRead (void);
 void I_EndRead (void);
 
+void I_SetWindowCaption(void);
+void I_SetWindowIcon(void);
+
 extern boolean screenvisible;
 extern int screenmultiply;
 extern boolean fullscreen;
@@ -67,6 +70,9 @@ extern float mouse_acceleration;
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.8  2005/10/02 03:16:29  fraggle
+// ENDOOM support using text mode emulation
+//
 // Revision 1.7  2005/09/17 20:25:56  fraggle
 // Set the default values for variables in their initialisers.  Remove the
 // "defaultvalue" parameter and associated code from the configuration
