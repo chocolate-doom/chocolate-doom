@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: hu_stuff.c 51 2005-08-10 08:45:35Z fraggle $
+// $Id: hu_stuff.c 150 2005-10-02 04:22:06Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/10/02 04:22:06  fraggle
+// Fix Final Doom automap level name display
+//
 // Revision 1.3  2005/08/10 08:45:35  fraggle
 // Remove "if (french)" stuff, FRENCH define, detect french wad automatically
 //
@@ -37,7 +40,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: hu_stuff.c 51 2005-08-10 08:45:35Z fraggle $";
+rcsid[] = "$Id: hu_stuff.c 150 2005-10-02 04:22:06Z fraggle $";
 
 #include <ctype.h>
 
@@ -348,27 +351,23 @@ void HU_Start(void)
 		       hu_font,
 		       HU_FONTSTART);
     
-    switch ( gamemode )
+    switch ( gamemission )
     {
-      case shareware:
-      case registered:
-      case retail:
+      case doom:
 	s = HU_TITLE;
 	break;
-
-/* FIXME
+      case doom2:
+	 s = HU_TITLE2;
+	 break;
       case pack_plut:
 	s = HU_TITLEP;
 	break;
       case pack_tnt:
 	s = HU_TITLET;
 	break;
-*/
-	
-      case commercial:
       default:
-	 s = HU_TITLE2;
-	 break;
+         s = "Unknown level";
+         break;
     }
     
     while (*s)
