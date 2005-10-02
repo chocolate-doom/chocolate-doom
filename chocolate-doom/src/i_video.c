@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.34  2005/10/02 03:03:40  fraggle
+// Make sure loading disk is only shown if the display is initialised
+//
 // Revision 1.33  2005/09/27 22:33:42  fraggle
 // Always use SDL_Flip to update the screen.  Fixes problems in Windows when
 // running fullscreen, introduced by fixes to the disk icon code.
@@ -171,6 +174,10 @@ static SDL_Color palette[256];
 static boolean palette_to_set;
 
 static int windowwidth, windowheight;
+
+// display has been set up?
+
+static boolean initialised = false;
 
 // if true, screens[0] is screen->pixel
 
@@ -371,6 +378,8 @@ void I_ShutdownGraphics(void)
     SDL_WM_GrabInput(SDL_GRAB_OFF);
 
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
+    
+    initialised = false;
 }
 
 
@@ -602,7 +611,7 @@ void I_BeginRead(void)
 {
     int y;
 
-    if (disk_image == NULL)
+    if (!initialised || disk_image == NULL)
         return;
 
     // save background and copy the disk image in
@@ -628,7 +637,7 @@ void I_EndRead(void)
 {
     int y;
 
-    if (disk_image == NULL)
+    if (!initialised || disk_image == NULL)
         return;
 
     // save background and copy the disk image in
@@ -657,6 +666,9 @@ void I_FinishUpdate (void)
     int		i;
     // UNUSED static unsigned char *bigscreen=0;
 
+    if (!initialised)
+        return;
+    
     UpdateGrab();
 
     // Don't update the screen if the window isn't visible.
@@ -870,5 +882,7 @@ void I_InitGraphics(void)
     // clear out any events waiting at the start
   
     while (SDL_PollEvent(&dummy));
+
+    initialised = true;
 }
 
