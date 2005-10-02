@@ -4,6 +4,7 @@ AC_CONFIG_AUX_DIR(autotools)
 orig_CFLAGS="$CFLAGS"
 
 AC_PROG_CC
+AC_PROG_RANLIB
 
 if test "$GCC" = "yes"
 then
@@ -46,6 +47,7 @@ AC_SUBST(ac_aux_dir)
 
 AC_OUTPUT([
 Makefile
+textscreen/Makefile
 src/Makefile
 src/chocolate-doom-res.rc
 ])
