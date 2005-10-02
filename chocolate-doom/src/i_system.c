@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.12  2005/10/02 03:23:54  fraggle
+// Fix the length of time that ENDOOM is displayed for
+//
 // Revision 1.11  2005/10/02 03:16:29  fraggle
 // ENDOOM support using text mode emulation
 //
@@ -195,7 +198,7 @@ void I_Endoom(void)
     waiting = true;
     start_ms = I_GetTime();
 
-    while (waiting && I_GetTime() < start_ms + 10000)
+    while (waiting && I_GetTime() < start_ms + 350)
     {
         if (!SDL_PollEvent(&ev))
         {
