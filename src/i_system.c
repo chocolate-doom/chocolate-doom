@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_system.c 120 2005-09-22 13:13:47Z fraggle $
+// $Id: i_system.c 147 2005-10-02 03:16:29Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.11  2005/10/02 03:16:29  fraggle
+// ENDOOM support using text mode emulation
+//
 // Revision 1.10  2005/09/22 13:13:47  fraggle
 // Remove external statistics driver support (-statcopy):
 // nonfunctional on modern systems and never used.
@@ -60,7 +63,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_system.c 120 2005-09-22 13:13:47Z fraggle $";
+rcsid[] = "$Id: i_system.c 147 2005-10-02 03:16:29Z fraggle $";
 
 
 #include <stdlib.h>
@@ -79,8 +82,11 @@ rcsid[] = "$Id: i_system.c 120 2005-09-22 13:13:47Z fraggle $";
 #include "g_game.h"
 
 #include "i_system.h"
+#include "txt_main.h"
 
 
+#include "w_wad.h"
+#include "z_zone.h"
 
 
 int	mb_used = 6;
@@ -154,6 +160,66 @@ void I_Init (void)
     SDL_Init(SDL_INIT_TIMER);
 }
 
+// 
+// Displays the text mode ending screen after the game quits
+//
+
+void I_Endoom(void)
+{
+    unsigned char *endoom_data;
+    unsigned char *screendata;
+    unsigned int start_ms;
+    boolean waiting;
+    SDL_Event ev;
+
+    endoom_data = W_CacheLumpName("ENDOOM", PU_STATIC);
+    
+    // Set up text mode screen
+
+    TXT_Init();
+
+    // Make sure the new window has the right title and icon
+ 
+    I_SetWindowCaption();
+    I_SetWindowIcon();
+    
+    // Write the data to the screen memory
+  
+    screendata = TXT_GetScreenData();
+    memcpy(screendata, endoom_data, 4000);
+
+    TXT_UpdateScreen();
+    
+    // Wait for 10 seconds, or until a keypress or mouse click
+
+    waiting = true;
+    start_ms = I_GetTime();
+
+    while (waiting && I_GetTime() < start_ms + 10000)
+    {
+        if (!SDL_PollEvent(&ev))
+        {
+            I_Sleep(100);
+            continue;
+        }
+
+        switch (ev.type)
+        {
+            case SDL_MOUSEBUTTONDOWN:
+            case SDL_KEYDOWN:
+                waiting = false;
+                break;
+
+            default:
+                break;
+        }
+    }
+    
+    // Shut down text mode screen
+
+    TXT_Shutdown();
+}
+
 //
 // I_Quit
 //
@@ -164,6 +230,7 @@ void I_Quit (void)
     I_ShutdownMusic();
     M_SaveDefaults ();
     I_ShutdownGraphics();
+    I_Endoom();
     exit(0);
 }
 
@@ -216,3 +283,4 @@ void I_Error (char *error, ...)
     
     exit(-1);
 }
+
