@@ -20,3 +20,10 @@
   big-endian systems.  On 64-bit systems savegames may be entirely
   nonfunctional.
 
+* Some music which works in Vanilla Doom does not work in Chocolate Doom
+
+  An example is the music on the title screen of deca.wad.  The music here
+  does not seem to be in the .mus format, yet somehow plays in Vanilla
+  Doom nonetheless.  Attempting to convert it using the mmus2mid code 
+  used in Chocolate Doom results in a crash.
+
