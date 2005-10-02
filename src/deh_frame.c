@@ -1,0 +1,137 @@
+// Emacs style mode select   -*- C++ -*- 
+//-----------------------------------------------------------------------------
+//
+// $Id: deh_frame.c 153 2005-10-02 23:49:01Z fraggle $
+//
+// Copyright(C) 2005 Simon Howard
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+// 02111-1307, USA.
+//
+// $Log$
+// Revision 1.1  2005/10/02 23:49:01  fraggle
+// The beginnings of dehacked support
+//
+//
+//-----------------------------------------------------------------------------
+//
+// Parses "Frame" sections in dehacked files
+//
+//-----------------------------------------------------------------------------
+
+#include <stdlib.h>
+
+#include "doomdef.h"
+#include "doomtype.h"
+#include "info.h"
+
+#include "deh_defs.h"
+#include "deh_main.h"
+
+static void *DEH_FrameStart(deh_context_t *context, char *line)
+{
+    int frame_number = 0;
+    state_t *state;
+    
+    sscanf(line, "Frame %i", &frame_number);
+    
+    // dehacked files are indexed from 1, not 0
+
+    --frame_number;
+
+    if (frame_number < 0 || frame_number >= NUMSTATES)
+        return NULL;
+
+    state = &states[frame_number];
+
+    return state;
+}
+
+static void DEH_FrameEnd(deh_context_t *context, void *tag)
+{
+}
+
+static void DEH_FrameParseLine(deh_context_t *context, char *line, void *tag)
+{
+    state_t *state;
+    char *variable_name, *value;
+    int ivalue;
+    
+    if (tag == NULL)
+       return;
+
+    state = (state_t *) tag;
+
+    // Parse the assignment
+
+    if (!DEH_ParseAssignment(line, &variable_name, &value))
+    {
+        // Failed to parse
+
+        return;
+    }
+    
+//    printf("Set %s to %s for state\n", variable_name, value);
+
+    // all values are integers
+
+    ivalue = atoi(value);
+    
+    // set the appropriate field
+
+    if (!strcasecmp(variable_name, "Sprite number"))
+    {
+        state->sprite = ivalue;
+    }
+    else if (!strcasecmp(variable_name, "Sprite subnumber"))
+    {
+        state->frame = ivalue;
+    }
+    else if (!strcasecmp(variable_name, "Duration"))
+    {
+        state->tics = ivalue;
+    }
+    else if (!strcasecmp(variable_name, "Next frame"))
+    {
+        state->nextstate = ivalue;
+    }
+    else if (!strcasecmp(variable_name, "Codep Frame"))
+    {
+        // FIXME: code pointer
+    }
+    else if (!strcasecmp(variable_name, "Unknown 1"))
+    {
+        state->misc1 = ivalue;
+    }
+    else if (!strcasecmp(variable_name, "Unknown 2"))
+    {
+        state->misc2 = ivalue;
+    }
+    else
+    {
+        printf("Unknown variable name %s\n", variable_name);
+    }
+
+}
+
+deh_section_t deh_section_frame =
+{
+    "Frame",
+    NULL,
+    DEH_FrameStart,
+    DEH_FrameParseLine,
+    DEH_FrameEnd,
+};
+

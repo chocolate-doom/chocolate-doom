@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 149 2005-10-02 04:16:47Z fraggle $
+// $Id: d_main.c 153 2005-10-02 23:49:01Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.17  2005/10/02 23:49:01  fraggle
+// The beginnings of dehacked support
+//
 // Revision 1.16  2005/10/02 04:16:47  fraggle
 // Fixes for Final Doom
 //
@@ -90,7 +93,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 149 2005-10-02 04:16:47Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 153 2005-10-02 23:49:01Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -109,6 +112,7 @@ static const char rcsid[] = "$Id: d_main.c 149 2005-10-02 04:16:47Z fraggle $";
 
 
 #include "config.h"
+#include "deh_main.h"
 #include "doomdef.h"
 #include "doomstat.h"
 
@@ -1207,6 +1211,8 @@ void D_DoomMain (void)
 	    D_StartTitle ();                // start up intro loop
 
     }
+
+    DEH_CheckCommandLine();
 
     D_DoomLoop ();  // never returns
 }
