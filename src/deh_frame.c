@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2005/10/03 00:42:45  fraggle
+// Frame numbers are indexed from 0
+//
 // Revision 1.1  2005/10/02 23:49:01  fraggle
 // The beginnings of dehacked support
 //
@@ -47,10 +50,6 @@ static void *DEH_FrameStart(deh_context_t *context, char *line)
     
     sscanf(line, "Frame %i", &frame_number);
     
-    // dehacked files are indexed from 1, not 0
-
-    --frame_number;
-
     if (frame_number < 0 || frame_number >= NUMSTATES)
         return NULL;
 
