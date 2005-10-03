@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_ptr.c 153 2005-10-02 23:49:01Z fraggle $
+// $Id: deh_ptr.c 154 2005-10-03 00:42:45Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2005/10/03 00:42:45  fraggle
+// Frame numbers are indexed from 0
+//
 // Revision 1.1  2005/10/02 23:49:01  fraggle
 // The beginnings of dehacked support
 //
@@ -62,10 +65,6 @@ static void *DEH_PointerStart(deh_context_t *context, char *line)
 
     sscanf(line, "%*s %*i (%*s %i)", &frame_number);
 
-    // states are indexed from 1 in dehacked files
-
-    --frame_number;
-    
     if (frame_number < 0 || frame_number >= NUMSTATES)
         return NULL;
 
