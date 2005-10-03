@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2005/10/03 11:08:16  fraggle
+// Replace end of section functions with NULLs as they arent currently being
+// used for anything.
+//
 // Revision 1.1  2005/10/02 23:49:01  fraggle
 // The beginnings of dehacked support
 //
@@ -40,10 +44,6 @@ static void *DEH_AmmoStart(deh_context_t *context, char *line)
     return NULL;
 }
 
-static void DEH_AmmoEnd(deh_context_t *context, void *tag)
-{
-}
-
 static void DEH_AmmoParseLine(deh_context_t *context, char *line, void *tag)
 {
 }
@@ -54,6 +54,6 @@ deh_section_t deh_section_ammo =
     NULL,
     DEH_AmmoStart,
     DEH_AmmoParseLine,
-    DEH_AmmoEnd,
+    NULL,
 };
 

@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2005/10/03 11:08:16  fraggle
+// Replace end of section functions with NULLs as they arent currently being
+// used for anything.
+//
 // Revision 1.1  2005/10/02 23:49:01  fraggle
 // The beginnings of dehacked support
 //
@@ -201,7 +205,11 @@ static void DEH_ParseContext(deh_context_t *context)
             {
                 // end of section
 
-                current_section->end(context, tag);
+                if (current_section->end != NULL)
+                {
+                    current_section->end(context, tag);
+                }
+
                 //printf("end %s tag\n", current_section->name);
                 current_section = NULL;
             }
