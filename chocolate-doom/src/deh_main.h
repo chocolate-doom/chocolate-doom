@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2005/10/03 21:39:39  fraggle
+// Dehacked text substitutions
+//
 // Revision 1.1  2005/10/02 23:49:01  fraggle
 // The beginnings of dehacked support
 //
@@ -39,6 +42,12 @@
 void DEH_CheckCommandLine(void);
 
 boolean DEH_ParseAssignment(char *line, char **variable_name, char **value);
+
+// deh_text.c:
+//
+// Used to do dehacked text substitutions throughout the program
+
+char *DEH_String(char *s);
 
 #endif /* #ifndef DEH_MAIN_H */
 

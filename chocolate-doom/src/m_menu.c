@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.8  2005/10/03 21:39:39  fraggle
+// Dehacked text substitutions
+//
 // Revision 1.7  2005/09/17 20:25:56  fraggle
 // Set the default values for variables in their initialisers.  Remove the
 // "defaultvalue" parameter and associated code from the configuration
@@ -64,6 +67,7 @@ rcsid[] = "$Id$";
 #include "dstrings.h"
 
 #include "d_main.h"
+#include "deh_main.h"
 
 #include "i_system.h"
 #include "i_video.h"
@@ -623,7 +627,7 @@ void M_LoadGame (int choice)
 {
     if (netgame)
     {
-	M_StartMessage(LOADNET,NULL,false);
+	M_StartMessage(DEH_String(LOADNET),NULL,false);
 	return;
     }
 	
@@ -688,7 +692,7 @@ void M_SaveGame (int choice)
 {
     if (!usergame)
     {
-	M_StartMessage(SAVEDEAD,NULL,false);
+	M_StartMessage(DEH_String(SAVEDEAD),NULL,false);
 	return;
     }
 	
@@ -734,7 +738,7 @@ void M_QuickSave(void)
 	quickSaveSlot = -2;	// means to pick a slot now
 	return;
     }
-    sprintf(tempstring,QSPROMPT,savegamestrings[quickSaveSlot]);
+    sprintf(tempstring,DEH_String(QSPROMPT),savegamestrings[quickSaveSlot]);
     M_StartMessage(tempstring,M_QuickSaveResponse,true);
 }
 
@@ -757,16 +761,16 @@ void M_QuickLoad(void)
 {
     if (netgame)
     {
-	M_StartMessage(QLOADNET,NULL,false);
+	M_StartMessage(DEH_String(QLOADNET),NULL,false);
 	return;
     }
 	
     if (quickSaveSlot < 0)
     {
-	M_StartMessage(QSAVESPOT,NULL,false);
+	M_StartMessage(DEH_String(QSAVESPOT),NULL,false);
 	return;
     }
-    sprintf(tempstring,QLPROMPT,savegamestrings[quickSaveSlot]);
+    sprintf(tempstring,DEH_String(QLPROMPT),savegamestrings[quickSaveSlot]);
     M_StartMessage(tempstring,M_QuickLoadResponse,true);
 }
 
@@ -902,7 +906,7 @@ void M_NewGame(int choice)
 {
     if (netgame && !demoplayback)
     {
-	M_StartMessage(NEWGAME,NULL,false);
+	M_StartMessage(DEH_String(NEWGAME),NULL,false);
 	return;
     }
 	
@@ -936,7 +940,7 @@ void M_ChooseSkill(int choice)
 {
     if (choice == nightmare)
     {
-	M_StartMessage(NIGHTMARE,M_VerifyNightmare,true);
+	M_StartMessage(DEH_String(NIGHTMARE),M_VerifyNightmare,true);
 	return;
     }
 	
@@ -949,7 +953,7 @@ void M_Episode(int choice)
     if ( (gamemode == shareware)
 	 && choice)
     {
-	M_StartMessage(SWSTRING,NULL,false);
+	M_StartMessage(DEH_String(SWSTRING),NULL,false);
 	M_SetupNextMenu(&ReadDef1);
 	return;
     }
@@ -1010,9 +1014,9 @@ void M_ChangeMessages(int choice)
     showMessages = 1 - showMessages;
 	
     if (!showMessages)
-	players[consoleplayer].message = MSGOFF;
+	players[consoleplayer].message = DEH_String(MSGOFF);
     else
-	players[consoleplayer].message = MSGON ;
+	players[consoleplayer].message = DEH_String(MSGON);
 
     message_dontfuckwithme = true;
 }
@@ -1042,11 +1046,11 @@ void M_EndGame(int choice)
 	
     if (netgame)
     {
-	M_StartMessage(NETEND,NULL,false);
+	M_StartMessage(DEH_String(NETEND),NULL,false);
 	return;
     }
 	
-    M_StartMessage(ENDGAME,M_EndGameResponse,true);
+    M_StartMessage(DEH_String(ENDGAME),M_EndGameResponse,true);
 }
 
 
@@ -1144,7 +1148,9 @@ static char *M_SelectEndMessage(void)
 
 void M_QuitDOOM(int choice)
 {
-    sprintf(endstring, "%s\n\n" DOSY, M_SelectEndMessage());
+    sprintf(endstring, "%s\n\n%s",
+            DEH_String(M_SelectEndMessage()),
+            DEH_String(DOSY));
   
     M_StartMessage(endstring,M_QuitResponse,true);
 }
@@ -1178,9 +1184,9 @@ void M_ChangeDetail(int choice)
     R_SetViewSize (screenblocks, detailLevel);
 
     if (!detailLevel)
-	players[consoleplayer].message = DETAILHI;
+	players[consoleplayer].message = DEH_String(DETAILHI);
     else
-	players[consoleplayer].message = DETAILLO;
+	players[consoleplayer].message = DEH_String(DETAILLO);
 }
 
 
@@ -1635,8 +1641,8 @@ boolean M_Responder (event_t* ev)
 	    usegamma++;
 	    if (usegamma > 4)
 		usegamma = 0;
-	    players[consoleplayer].message = gammamsg[usegamma];
-	    I_SetPalette (W_CacheLumpName ("PLAYPAL",PU_CACHE));
+	    players[consoleplayer].message = DEH_String(gammamsg[usegamma]);
+            I_SetPalette (W_CacheLumpName ("PLAYPAL",PU_CACHE));
 	    return true;
 				
 	}
