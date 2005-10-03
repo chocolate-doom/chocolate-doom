@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/10/03 11:08:16  fraggle
+// Replace end of section functions with NULLs as they arent currently being
+// used for anything.
+//
 // Revision 1.3  2005/10/03 10:25:37  fraggle
 // Add mapping code to map out structures and switch thing/frame code to use
 // this.
@@ -72,10 +76,6 @@ static void *DEH_FrameStart(deh_context_t *context, char *line)
     return state;
 }
 
-static void DEH_FrameEnd(deh_context_t *context, void *tag)
-{
-}
-
 static void DEH_FrameParseLine(deh_context_t *context, char *line, void *tag)
 {
     state_t *state;
@@ -113,6 +113,6 @@ deh_section_t deh_section_frame =
     NULL,
     DEH_FrameStart,
     DEH_FrameParseLine,
-    DEH_FrameEnd,
+    NULL,
 };
 
