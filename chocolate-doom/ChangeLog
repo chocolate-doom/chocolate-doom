@@ -1,3 +1,57 @@
+Mon Oct  3 13:21:11 2005 fraggle
+	
+	Weapons mapping code
+
+Mon Oct  3 11:08:16 2005 fraggle
+	
+	Replace end of section functions with NULLs as they arent currently being
+	used for anything.
+
+Mon Oct  3 11:02:08 2005 fraggle
+	
+	Add a weaponinfo_t mapping
+
+Mon Oct  3 10:25:37 2005 fraggle
+	
+	Add mapping code to map out structures and switch thing/frame code to use
+	this.
+
+Mon Oct  3 00:42:45 2005 fraggle
+	
+	Frame numbers are indexed from 0
+
+Sun Oct  2 23:49:01 2005 fraggle
+	
+	The beginnings of dehacked support
+
+Sun Oct  2 20:23:04 2005 fraggle
+	
+	Guard against music lumps containing non-MUS data, document in bugs list
+
+Sun Oct  2 04:23:42 2005 fraggle
+	
+	Update NEWS
+
+Sun Oct  2 04:22:06 2005 fraggle
+	
+	Fix Final Doom automap level name display
+
+Sun Oct  2 04:16:47 2005 fraggle
+	
+	Fixes for Final Doom
+
+Sun Oct  2 03:23:54 2005 fraggle
+	
+	Fix the length of time that ENDOOM is displayed for
+
+Sun Oct  2 03:16:29 2005 fraggle
+	
+	ENDOOM support using text mode emulation
+
+Sun Oct  2 03:03:40 2005 fraggle
+	
+	Make sure loading disk is only shown if the display is initialised
+
 Sat Oct  1 15:49:32 2005 fraggle
 	
 	automake doesn't recognise .rc files unless there is a rule like this in
