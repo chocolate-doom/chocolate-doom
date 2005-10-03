@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/10/03 13:21:11  fraggle
+// Weapons mapping code
+//
 // Revision 1.3  2005/10/03 11:08:16  fraggle
 // Replace end of section functions with NULLs as they arent currently being
 // used for anything.
@@ -38,12 +41,16 @@
 //
 //-----------------------------------------------------------------------------
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "doomdef.h"
 #include "doomtype.h"
 
 #include "d_items.h"
 
 #include "deh_defs.h"
+#include "deh_main.h"
 #include "deh_mapping.h"
 
 DEH_BEGIN_MAPPING(weapon_mapping, weaponinfo_t)
@@ -57,11 +64,37 @@ DEH_END_MAPPING
 
 static void *DEH_WeaponStart(deh_context_t *context, char *line)
 {
-    return NULL;
+    int weapon_number = 0;
+
+    sscanf(line, "Weapon %i", &weapon_number);
+
+    if (weapon_number < 0 || weapon_number >= NUMWEAPONS)
+        return NULL;
+
+    return &weaponinfo[weapon_number];
 }
 
 static void DEH_WeaponParseLine(deh_context_t *context, char *line, void *tag)
 {
+    char *variable_name, *value;
+    weaponinfo_t *weapon;
+    int ivalue;
+    
+    if (tag == NULL)
+        return;
+
+    weapon = (weaponinfo_t *) tag;
+
+    if (!DEH_ParseAssignment(line, &variable_name, &value))
+    {
+        // Failed to parse
+       
+        return;
+    }
+
+    ivalue = atoi(value);
+
+    DEH_SetMapping(&weapon_mapping, weapon, variable_name, ivalue);
 }
 
 deh_section_t deh_section_weapon =
