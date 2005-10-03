@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_frame.c 154 2005-10-03 00:42:45Z fraggle $
+// $Id: deh_frame.c 155 2005-10-03 10:25:37Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/10/03 10:25:37  fraggle
+// Add mapping code to map out structures and switch thing/frame code to use
+// this.
+//
 // Revision 1.2  2005/10/03 00:42:45  fraggle
 // Frame numbers are indexed from 0
 //
@@ -42,6 +46,16 @@
 
 #include "deh_defs.h"
 #include "deh_main.h"
+#include "deh_mapping.h"
+
+DEH_BEGIN_MAPPING(state_mapping, state_t)
+  DEH_MAPPING("Sprite number",    sprite)
+  DEH_MAPPING("Sprite subnumber", frame)
+  DEH_MAPPING("Duration",         tics)
+  DEH_MAPPING("Next frame",       nextstate)
+  DEH_MAPPING("Unknown 1",        misc1)
+  DEH_MAPPING("Unknown 2",        misc2)
+DEH_END_MAPPING
 
 static void *DEH_FrameStart(deh_context_t *context, char *line)
 {
@@ -90,39 +104,7 @@ static void DEH_FrameParseLine(deh_context_t *context, char *line, void *tag)
     
     // set the appropriate field
 
-    if (!strcasecmp(variable_name, "Sprite number"))
-    {
-        state->sprite = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Sprite subnumber"))
-    {
-        state->frame = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Duration"))
-    {
-        state->tics = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Next frame"))
-    {
-        state->nextstate = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Codep Frame"))
-    {
-        // FIXME: code pointer
-    }
-    else if (!strcasecmp(variable_name, "Unknown 1"))
-    {
-        state->misc1 = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Unknown 2"))
-    {
-        state->misc2 = ivalue;
-    }
-    else
-    {
-        printf("Unknown variable name %s\n", variable_name);
-    }
-
+    DEH_SetMapping(&state_mapping, state, variable_name, ivalue);
 }
 
 deh_section_t deh_section_frame =

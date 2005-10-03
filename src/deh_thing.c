@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_thing.c 153 2005-10-02 23:49:01Z fraggle $
+// $Id: deh_thing.c 155 2005-10-03 10:25:37Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2005/10/03 10:25:37  fraggle
+// Add mapping code to map out structures and switch thing/frame code to use
+// this.
+//
 // Revision 1.1  2005/10/02 23:49:01  fraggle
 // The beginnings of dehacked support
 //
@@ -38,8 +42,35 @@
 
 #include "deh_defs.h"
 #include "deh_main.h"
+#include "deh_mapping.h"
 
 #include "info.h"
+
+DEH_BEGIN_MAPPING(thing_mapping, mobjinfo_t)
+  DEH_MAPPING("ID #",                doomednum)
+  DEH_MAPPING("Initial frame",       spawnstate)
+  DEH_MAPPING("Hit points",          spawnhealth)
+  DEH_MAPPING("First moving frame",  seestate)
+  DEH_MAPPING("Alert sound",         seesound)
+  DEH_MAPPING("Reaction time",       reactiontime)
+  DEH_MAPPING("Attack sound",        attacksound)
+  DEH_MAPPING("Injury frame",        painstate)
+  DEH_MAPPING("Pain chance",         painchance)
+  DEH_MAPPING("Pain sound",          painsound)
+  DEH_MAPPING("Close attack frame",  meleestate)
+  DEH_MAPPING("Far attack frame",    missilestate)
+  DEH_MAPPING("Death frame",         deathstate)
+  DEH_MAPPING("Exploding frame",     xdeathstate)
+  DEH_MAPPING("Death sound",         deathsound)
+  DEH_MAPPING("Speed",               speed)
+  DEH_MAPPING("Width",               radius)
+  DEH_MAPPING("Height",              height)
+  DEH_MAPPING("Mass",                mass)
+  DEH_MAPPING("Missile damage",      damage)
+  DEH_MAPPING("Action sound",        activesound)
+  DEH_MAPPING("Bits",                flags)
+  DEH_MAPPING("Respawn frame",       raisestate)
+DEH_END_MAPPING
 
 static void *DEH_ThingStart(deh_context_t *context, char *line)
 {
@@ -89,104 +120,9 @@ static void DEH_ThingParseLine(deh_context_t *context, char *line, void *tag)
 
     ivalue = atoi(value);
     
-    // set the appropriate field
+    // Set the field value
 
-    if (!strcasecmp(variable_name, "ID #"))
-    {
-        mobj->doomednum = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Initial frame"))
-    {
-        mobj->spawnstate = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Hit points"))
-    {
-        mobj->spawnhealth = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "First moving frame"))
-    {
-        mobj->seestate = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Alert sound"))
-    {
-        mobj->seesound = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Reaction time"))
-    {
-        mobj->reactiontime = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Attack sound"))
-    {
-        mobj->attacksound = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Injury frame"))
-    {
-        mobj->painstate = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Pain chance"))
-    {
-        mobj->painchance = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Pain sound"))
-    {
-        mobj->painsound = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Close attack frame"))
-    {
-        mobj->meleestate = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Far attack frame"))
-    {
-        mobj->missilestate = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Death frame"))
-    {
-        mobj->deathstate = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Exploding frame"))
-    {
-        mobj->xdeathstate = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Death sound"))
-    {
-        mobj->deathsound = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Speed"))
-    {
-        mobj->speed = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Width"))
-    {
-        mobj->radius = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Height"))
-    {
-        mobj->height = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Mass"))
-    {
-        mobj->mass = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Missile damage"))
-    {
-        mobj->damage = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Action sound"))
-    {
-        mobj->activesound = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Bits"))
-    {
-        mobj->flags = ivalue;
-    }
-    else if (!strcasecmp(variable_name, "Respawn frame"))
-    {
-        mobj->raisestate = ivalue;
-    }
-    else
-    {
-        printf("Unknown variable name %s\n", variable_name);
-    }
+    DEH_SetMapping(&thing_mapping, mobj, variable_name, ivalue);
 }
 
 deh_section_t deh_section_thing =
