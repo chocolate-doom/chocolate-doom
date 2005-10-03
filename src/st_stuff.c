@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: st_stuff.c 67 2005-09-04 14:55:53Z fraggle $
+// $Id: st_stuff.c 160 2005-10-03 21:39:39Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/10/03 21:39:39  fraggle
+// Dehacked text substitutions
+//
 // Revision 1.4  2005/09/04 14:55:53  fraggle
 // Doom v1.9 doesnt allow cheats in nightmare mode!
 //
@@ -43,7 +46,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: st_stuff.c 67 2005-09-04 14:55:53Z fraggle $";
+rcsid[] = "$Id: st_stuff.c 160 2005-10-03 21:39:39Z fraggle $";
 
 
 #include <stdio.h>
@@ -54,6 +57,7 @@ rcsid[] = "$Id: st_stuff.c 67 2005-09-04 14:55:53Z fraggle $";
 #include "m_random.h"
 #include "w_wad.h"
 
+#include "deh_main.h"
 #include "doomdef.h"
 
 #include "g_game.h"
@@ -571,10 +575,10 @@ ST_Responder (event_t* ev)
 	    plyr->mo->health = 100;
 	  
 	  plyr->health = 100;
-	  plyr->message = STSTR_DQDON;
+	  plyr->message = DEH_String(STSTR_DQDON);
 	}
 	else 
-	  plyr->message = STSTR_DQDOFF;
+	  plyr->message = DEH_String(STSTR_DQDOFF);
       }
       // 'fa' cheat for killer fucking arsenal
       else if (cht_CheckCheat(&cheat_ammonokey, ev->data1))
@@ -588,7 +592,7 @@ ST_Responder (event_t* ev)
 	for (i=0;i<NUMAMMO;i++)
 	  plyr->ammo[i] = plyr->maxammo[i];
 	
-	plyr->message = STSTR_FAADDED;
+	plyr->message = DEH_String(STSTR_FAADDED);
       }
       // 'kfa' cheat for key full ammo
       else if (cht_CheckCheat(&cheat_ammo, ev->data1))
@@ -605,7 +609,7 @@ ST_Responder (event_t* ev)
 	for (i=0;i<NUMCARDS;i++)
 	  plyr->cards[i] = true;
 	
-	plyr->message = STSTR_KFAADDED;
+	plyr->message = DEH_String(STSTR_KFAADDED);
       }
       // 'mus' cheat for changing music
       else if (cht_CheckCheat(&cheat_mus, ev->data1))
@@ -614,7 +618,7 @@ ST_Responder (event_t* ev)
 	char	buf[3];
 	int		musnum;
 	
-	plyr->message = STSTR_MUS;
+	plyr->message = DEH_String(STSTR_MUS);
 	cht_GetParam(&cheat_mus, buf);
 	
 	if (gamemode == commercial)
@@ -622,7 +626,7 @@ ST_Responder (event_t* ev)
 	  musnum = mus_runnin + (buf[0]-'0')*10 + buf[1]-'0' - 1;
 	  
 	  if (((buf[0]-'0')*10 + buf[1]-'0') > 35)
-	    plyr->message = STSTR_NOMUS;
+	    plyr->message = DEH_String(STSTR_NOMUS);
 	  else
 	    S_ChangeMusic(musnum, 1);
 	}
@@ -631,7 +635,7 @@ ST_Responder (event_t* ev)
 	  musnum = mus_e1m1 + (buf[0]-'1')*9 + (buf[1]-'1');
 	  
 	  if (((buf[0]-'1')*9 + buf[1]-'1') > 31)
-	    plyr->message = STSTR_NOMUS;
+	    plyr->message = DEH_String(STSTR_NOMUS);
 	  else
 	    S_ChangeMusic(musnum, 1);
 	}
@@ -644,9 +648,9 @@ ST_Responder (event_t* ev)
 	plyr->cheats ^= CF_NOCLIP;
 	
 	if (plyr->cheats & CF_NOCLIP)
-	  plyr->message = STSTR_NCON;
+	  plyr->message = DEH_String(STSTR_NCON);
 	else
-	  plyr->message = STSTR_NCOFF;
+	  plyr->message = DEH_String(STSTR_NCOFF);
       }
       // 'behold?' power-up cheats
       for (i=0;i<6;i++)
@@ -660,21 +664,21 @@ ST_Responder (event_t* ev)
 	  else
 	    plyr->powers[i] = 0;
 	  
-	  plyr->message = STSTR_BEHOLDX;
+	  plyr->message = DEH_String(STSTR_BEHOLDX);
 	}
       }
       
       // 'behold' power-up menu
       if (cht_CheckCheat(&cheat_powerup[6], ev->data1))
       {
-	plyr->message = STSTR_BEHOLD;
+	plyr->message = DEH_String(STSTR_BEHOLD);
       }
       // 'choppers' invulnerability & chainsaw
       else if (cht_CheckCheat(&cheat_choppers, ev->data1))
       {
 	plyr->weaponowned[wp_chainsaw] = true;
 	plyr->powers[pw_invulnerability] = true;
-	plyr->message = STSTR_CHOPPERS;
+	plyr->message = DEH_String(STSTR_CHOPPERS);
       }
       // 'mypos' for player position
       else if (cht_CheckCheat(&cheat_mypos, ev->data1))
@@ -733,7 +737,7 @@ ST_Responder (event_t* ev)
 	return false;
 
       // So be it.
-      plyr->message = STSTR_CLEV;
+      plyr->message = DEH_String(STSTR_CLEV);
       G_DeferedInitNew(gameskill, epsd, map);
     }    
   }

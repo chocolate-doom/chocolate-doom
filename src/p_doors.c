@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_doors.c 8 2005-07-23 16:44:57Z fraggle $
+// $Id: p_doors.c 160 2005-10-03 21:39:39Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/10/03 21:39:39  fraggle
+// Dehacked text substitutions
+//
 // Revision 1.2  2005/07/23 16:44:56  fraggle
 // Update copyright to GNU GPL
 //
@@ -34,11 +37,12 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_doors.c 8 2005-07-23 16:44:57Z fraggle $";
+rcsid[] = "$Id: p_doors.c 160 2005-10-03 21:39:39Z fraggle $";
 
 
 #include "z_zone.h"
 #include "doomdef.h"
+#include "deh_main.h"
 #include "p_local.h"
 
 #include "s_sound.h"
@@ -237,7 +241,7 @@ EV_DoLockedDoor
 	    return 0;
 	if (!p->cards[it_bluecard] && !p->cards[it_blueskull])
 	{
-	    p->message = PD_BLUEO;
+	    p->message = DEH_String(PD_BLUEO);
 	    S_StartSound(NULL,sfx_oof);
 	    return 0;
 	}
@@ -249,7 +253,7 @@ EV_DoLockedDoor
 	    return 0;
 	if (!p->cards[it_redcard] && !p->cards[it_redskull])
 	{
-	    p->message = PD_REDO;
+	    p->message = DEH_String(PD_REDO);
 	    S_StartSound(NULL,sfx_oof);
 	    return 0;
 	}
@@ -262,7 +266,7 @@ EV_DoLockedDoor
 	if (!p->cards[it_yellowcard] &&
 	    !p->cards[it_yellowskull])
 	{
-	    p->message = PD_YELLOWO;
+	    p->message = DEH_String(PD_YELLOWO);
 	    S_StartSound(NULL,sfx_oof);
 	    return 0;
 	}
@@ -388,7 +392,7 @@ EV_VerticalDoor
 	
 	if (!player->cards[it_bluecard] && !player->cards[it_blueskull])
 	{
-	    player->message = PD_BLUEK;
+	    player->message = DEH_String(PD_BLUEK);
 	    S_StartSound(NULL,sfx_oof);
 	    return;
 	}
@@ -402,7 +406,7 @@ EV_VerticalDoor
 	if (!player->cards[it_yellowcard] &&
 	    !player->cards[it_yellowskull])
 	{
-	    player->message = PD_YELLOWK;
+	    player->message = DEH_String(PD_YELLOWK);
 	    S_StartSound(NULL,sfx_oof);
 	    return;
 	}
@@ -415,7 +419,7 @@ EV_VerticalDoor
 	
 	if (!player->cards[it_redcard] && !player->cards[it_redskull])
 	{
-	    player->message = PD_REDK;
+	    player->message = DEH_String(PD_REDK);
 	    S_StartSound(NULL,sfx_oof);
 	    return;
 	}
