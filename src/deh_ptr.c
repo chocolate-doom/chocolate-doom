@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_ptr.c 154 2005-10-03 00:42:45Z fraggle $
+// $Id: deh_ptr.c 157 2005-10-03 11:08:16Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/10/03 11:08:16  fraggle
+// Replace end of section functions with NULLs as they arent currently being
+// used for anything.
+//
 // Revision 1.2  2005/10/03 00:42:45  fraggle
 // Frame numbers are indexed from 0
 //
@@ -69,10 +73,6 @@ static void *DEH_PointerStart(deh_context_t *context, char *line)
         return NULL;
 
     return &states[frame_number];
-}
-
-static void DEH_PointerEnd(deh_context_t *context, void *tag)
-{
 }
 
 static void DEH_PointerParseLine(deh_context_t *context, char *line, void *tag)
@@ -128,6 +128,6 @@ deh_section_t deh_section_pointer =
     DEH_PointerInit,
     DEH_PointerStart,
     DEH_PointerParseLine,
-    DEH_PointerEnd,
+    NULL,
 };
 

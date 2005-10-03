@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_text.c 153 2005-10-02 23:49:01Z fraggle $
+// $Id: deh_text.c 157 2005-10-03 11:08:16Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2005/10/03 11:08:16  fraggle
+// Replace end of section functions with NULLs as they arent currently being
+// used for anything.
+//
 // Revision 1.1  2005/10/02 23:49:01  fraggle
 // The beginnings of dehacked support
 //
@@ -40,10 +44,6 @@ static void *DEH_TextStart(deh_context_t *context, char *line)
     return NULL;
 }
 
-static void DEH_TextEnd(deh_context_t *context, void *tag)
-{
-}
-
 static void DEH_TextParseLine(deh_context_t *context, char *line, void *tag)
 {
 }
@@ -54,6 +54,6 @@ deh_section_t deh_section_text =
     NULL,
     DEH_TextStart,
     DEH_TextParseLine,
-    DEH_TextEnd,
+    NULL,
 };
 

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_thing.c 155 2005-10-03 10:25:37Z fraggle $
+// $Id: deh_thing.c 157 2005-10-03 11:08:16Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/10/03 11:08:16  fraggle
+// Replace end of section functions with NULLs as they arent currently being
+// used for anything.
+//
 // Revision 1.2  2005/10/03 10:25:37  fraggle
 // Add mapping code to map out structures and switch thing/frame code to use
 // this.
@@ -90,10 +94,6 @@ static void *DEH_ThingStart(deh_context_t *context, char *line)
     return mobj;
 }
 
-static void DEH_ThingEnd(deh_context_t *context, void *tag)
-{
-}
-
 static void DEH_ThingParseLine(deh_context_t *context, char *line, void *tag)
 {
     mobjinfo_t *mobj;
@@ -131,6 +131,6 @@ deh_section_t deh_section_thing =
     NULL,
     DEH_ThingStart,
     DEH_ThingParseLine,
-    DEH_ThingEnd,
+    NULL,
 };
 
