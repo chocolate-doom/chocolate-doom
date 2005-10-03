@@ -23,6 +23,9 @@
 //
 //
 // $Log$
+// Revision 1.6  2005/10/03 21:39:39  fraggle
+// Dehacked text substitutions
+//
 // Revision 1.5  2005/09/04 18:44:22  fraggle
 // shut up compiler warnings
 //
@@ -47,6 +50,7 @@ static const char rcsid[] = "$Id$";
 
 #include <stdio.h>
 
+#include "deh_main.h"
 
 #include "z_zone.h"
 #include "doomdef.h"
@@ -701,20 +705,26 @@ AM_Responder
 	  case AM_FOLLOWKEY:
 	    followplayer = !followplayer;
 	    f_oldloc.x = INT_MAX;
-	    plr->message = followplayer ? AMSTR_FOLLOWON : AMSTR_FOLLOWOFF;
+            if (followplayer)
+                plr->message = DEH_String(AMSTR_FOLLOWON);
+            else
+                plr->message = DEH_String(AMSTR_FOLLOWOFF);
 	    break;
 	  case AM_GRIDKEY:
 	    grid = !grid;
-	    plr->message = grid ? AMSTR_GRIDON : AMSTR_GRIDOFF;
+            if (grid)
+                plr->message = DEH_String(AMSTR_GRIDON);
+            else
+                plr->message = DEH_String(AMSTR_GRIDOFF);
 	    break;
 	  case AM_MARKKEY:
-	    sprintf(buffer, "%s %d", AMSTR_MARKEDSPOT, markpointnum);
+	    sprintf(buffer, "%s %d", DEH_String(AMSTR_MARKEDSPOT), markpointnum);
 	    plr->message = buffer;
 	    AM_addMark();
 	    break;
 	  case AM_CLEARMARKKEY:
 	    AM_clearMarks();
-	    plr->message = AMSTR_MARKSCLEARED;
+	    plr->message = DEH_String(AMSTR_MARKSCLEARED);
 	    break;
 	  default:
 	    cheatstate=0;

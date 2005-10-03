@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/10/03 21:39:39  fraggle
+// Dehacked text substitutions
+//
 // Revision 1.3  2005/10/02 04:16:47  fraggle
 // Fixes for Final Doom
 //
@@ -44,6 +47,7 @@ rcsid[] = "$Id$";
 #include <ctype.h>
 
 // Functions.
+#include "deh_main.h"
 #include "i_system.h"
 #include "m_swap.h"
 #include "z_zone.h"
@@ -152,6 +156,10 @@ void F_StartFinale (void)
             finaleflat = screen->background;
         }
     }
+
+    // Do dehacked substitutions of strings
+  
+    finaletext = DEH_String(finaletext);
     
     finalestage = 0;
     finalecount = 0;
@@ -555,7 +563,7 @@ void F_CastDrawer (void)
     // erase the entire screen to a background
     V_DrawPatch (0,0,0, W_CacheLumpName ("BOSSBACK", PU_CACHE));
 
-    F_CastPrint (castorder[castnum].name);
+    F_CastPrint (DEH_String(castorder[castnum].name));
     
     // draw the current frame in the middle of the screen
     sprdef = &sprites[caststate->sprite];

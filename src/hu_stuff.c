@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/10/03 21:39:39  fraggle
+// Dehacked text substitutions
+//
 // Revision 1.4  2005/10/02 04:22:06  fraggle
 // Fix Final Doom automap level name display
 //
@@ -48,6 +51,7 @@ rcsid[] = "$Id$";
 
 #include "z_zone.h"
 
+#include "deh_main.h"
 #include "m_swap.h"
 
 #include "hu_stuff.h"
@@ -370,6 +374,10 @@ void HU_Start(void)
          break;
     }
     
+    // dehacked substitution to get modified level name
+
+    s = DEH_String(s);
+    
     while (*s)
 	HUlib_addCharToTextLine(&w_title, *(s++));
 
@@ -458,7 +466,7 @@ void HU_Ticker(void)
 				|| chat_dest[i] == HU_BROADCAST))
 			{
 			    HUlib_addMessageToSText(&w_message,
-						    player_names[i],
+						    DEH_String(player_names[i]),
 						    w_inputbuffer[i].l.l);
 			    
 			    message_nottobefuckedwith = true;
@@ -490,7 +498,7 @@ void HU_queueChatChar(char c)
 {
     if (((head + 1) & (QUEUESIZE-1)) == tail)
     {
-	plr->message = HUSTR_MSGU;
+	plr->message = DEH_String(HUSTR_MSGU);
     }
     else
     {
@@ -587,15 +595,15 @@ boolean HU_Responder(event_t *ev)
 		    {
 			num_nobrainers++;
 			if (num_nobrainers < 3)
-			    plr->message = HUSTR_TALKTOSELF1;
+			    plr->message = DEH_String(HUSTR_TALKTOSELF1);
 			else if (num_nobrainers < 6)
-			    plr->message = HUSTR_TALKTOSELF2;
+			    plr->message = DEH_String(HUSTR_TALKTOSELF2);
 			else if (num_nobrainers < 9)
-			    plr->message = HUSTR_TALKTOSELF3;
+			    plr->message = DEH_String(HUSTR_TALKTOSELF3);
 			else if (num_nobrainers < 32)
-			    plr->message = HUSTR_TALKTOSELF4;
+			    plr->message = DEH_String(HUSTR_TALKTOSELF4);
 			else
-			    plr->message = HUSTR_TALKTOSELF5;
+			    plr->message = DEH_String(HUSTR_TALKTOSELF5);
 		    }
 		}
 	    }

@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.12  2005/10/03 21:39:39  fraggle
+// Dehacked text substitutions
+//
 // Revision 1.11  2005/09/22 13:13:47  fraggle
 // Remove external statistics driver support (-statcopy):
 // nonfunctional on modern systems and never used.
@@ -78,6 +81,8 @@ rcsid[] = "$Id$";
 
 #include "doomdef.h" 
 #include "doomstat.h"
+
+#include "deh_main.h"
 
 #include "z_zone.h"
 #include "f_finale.h"
@@ -1382,7 +1387,7 @@ void G_DoSaveGame (void)
     gameaction = ga_nothing; 
     savedescription[0] = 0;		 
 	 
-    players[consoleplayer].message = GGSAVED; 
+    players[consoleplayer].message = DEH_String(GGSAVED);
 
     // draw the pattern into the back screen
     R_FillBackScreen ();	
