@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: st_stuff.c 160 2005-10-03 21:39:39Z fraggle $
+// $Id: st_stuff.c 162 2005-10-04 21:41:42Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2005/10/04 21:41:42  fraggle
+// Rewrite cheats code.  Add dehacked cheat replacement.
+//
 // Revision 1.5  2005/10/03 21:39:39  fraggle
 // Dehacked text substitutions
 //
@@ -46,7 +49,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: st_stuff.c 160 2005-10-03 21:39:39Z fraggle $";
+rcsid[] = "$Id: st_stuff.c 162 2005-10-04 21:41:42Z fraggle $";
 
 
 #include <stdio.h>
@@ -415,99 +418,27 @@ static int	keyboxes[3];
 // a random number per tick
 static int	st_randomnumber;  
 
-
-
-// Massive bunches of cheat shit
-//  to keep it from being easy to figure them out.
-// Yeah, right...
-unsigned char	cheat_mus_seq[] =
-{
-    0xb2, 0x26, 0xb6, 0xae, 0xea, 1, 0, 0, 0xff
-};
-
-unsigned char	cheat_choppers_seq[] =
-{
-    0xb2, 0x26, 0xe2, 0x32, 0xf6, 0x2a, 0x2a, 0xa6, 0x6a, 0xea, 0xff // id...
-};
-
-unsigned char	cheat_god_seq[] =
-{
-    0xb2, 0x26, 0x26, 0xaa, 0x26, 0xff  // iddqd
-};
-
-unsigned char	cheat_ammo_seq[] =
-{
-    0xb2, 0x26, 0xf2, 0x66, 0xa2, 0xff	// idkfa
-};
-
-unsigned char	cheat_ammonokey_seq[] =
-{
-    0xb2, 0x26, 0x66, 0xa2, 0xff	// idfa
-};
-
-
-// Smashing Pumpkins Into Samml Piles Of Putried Debris. 
-unsigned char	cheat_noclip_seq[] =
-{
-    0xb2, 0x26, 0xea, 0x2a, 0xb2,	// idspispopd
-    0xea, 0x2a, 0xf6, 0x2a, 0x26, 0xff
-};
-
-//
-unsigned char	cheat_commercial_noclip_seq[] =
-{
-    0xb2, 0x26, 0xe2, 0x36, 0xb2, 0x2a, 0xff	// idclip
-}; 
-
-
-
-unsigned char	cheat_powerup_seq[7][10] =
-{
-    { 0xb2, 0x26, 0x62, 0xa6, 0x32, 0xf6, 0x36, 0x26, 0x6e, 0xff }, 	// beholdv
-    { 0xb2, 0x26, 0x62, 0xa6, 0x32, 0xf6, 0x36, 0x26, 0xea, 0xff }, 	// beholds
-    { 0xb2, 0x26, 0x62, 0xa6, 0x32, 0xf6, 0x36, 0x26, 0xb2, 0xff }, 	// beholdi
-    { 0xb2, 0x26, 0x62, 0xa6, 0x32, 0xf6, 0x36, 0x26, 0x6a, 0xff }, 	// beholdr
-    { 0xb2, 0x26, 0x62, 0xa6, 0x32, 0xf6, 0x36, 0x26, 0xa2, 0xff }, 	// beholda
-    { 0xb2, 0x26, 0x62, 0xa6, 0x32, 0xf6, 0x36, 0x26, 0x36, 0xff }, 	// beholdl
-    { 0xb2, 0x26, 0x62, 0xa6, 0x32, 0xf6, 0x36, 0x26, 0xff }		// behold
-};
-
-
-unsigned char	cheat_clev_seq[] =
-{
-    0xb2, 0x26,  0xe2, 0x36, 0xa6, 0x6e, 1, 0, 0, 0xff	// idclev
-};
-
-
-// my position cheat
-unsigned char	cheat_mypos_seq[] =
-{
-    0xb2, 0x26, 0xb6, 0xba, 0x2a, 0xf6, 0xea, 0xff	// idmypos
-}; 
-
-
-// Now what?
-cheatseq_t	cheat_mus = { cheat_mus_seq, 0 };
-cheatseq_t	cheat_god = { cheat_god_seq, 0 };
-cheatseq_t	cheat_ammo = { cheat_ammo_seq, 0 };
-cheatseq_t	cheat_ammonokey = { cheat_ammonokey_seq, 0 };
-cheatseq_t	cheat_noclip = { cheat_noclip_seq, 0 };
-cheatseq_t	cheat_commercial_noclip = { cheat_commercial_noclip_seq, 0 };
+cheatseq_t cheat_mus = CHEAT("idmus", 2);
+cheatseq_t cheat_god = CHEAT("iddqd", 0);
+cheatseq_t cheat_ammo = CHEAT("idkfa", 0);
+cheatseq_t cheat_ammonokey = CHEAT("idfa", 0);
+cheatseq_t cheat_noclip = CHEAT("idspispopd", 0);
+cheatseq_t cheat_commercial_noclip = CHEAT("idclip", 0);
 
 cheatseq_t	cheat_powerup[7] =
 {
-    { cheat_powerup_seq[0], 0 },
-    { cheat_powerup_seq[1], 0 },
-    { cheat_powerup_seq[2], 0 },
-    { cheat_powerup_seq[3], 0 },
-    { cheat_powerup_seq[4], 0 },
-    { cheat_powerup_seq[5], 0 },
-    { cheat_powerup_seq[6], 0 }
+    CHEAT("idbeholdv", 0),
+    CHEAT("idbeholds", 0),
+    CHEAT("idbeholdi", 0),
+    CHEAT("idbeholdr", 0),
+    CHEAT("idbeholda", 0),
+    CHEAT("idbeholdl", 0),
+    CHEAT("idbehold", 0),
 };
 
-cheatseq_t	cheat_choppers = { cheat_choppers_seq, 0 };
-cheatseq_t	cheat_clev = { cheat_clev_seq, 0 };
-cheatseq_t	cheat_mypos = { cheat_mypos_seq, 0 };
+cheatseq_t cheat_choppers = CHEAT("idchoppers", 0);
+cheatseq_t cheat_clev = CHEAT("idclev", 2);
+cheatseq_t cheat_mypos = CHEAT("idmypos", 0);
 
 
 // 

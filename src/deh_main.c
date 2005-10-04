@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_main.c 157 2005-10-03 11:08:16Z fraggle $
+// $Id: deh_main.c 162 2005-10-04 21:41:42Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/10/04 21:41:42  fraggle
+// Rewrite cheats code.  Add dehacked cheat replacement.
+//
 // Revision 1.2  2005/10/03 11:08:16  fraggle
 // Replace end of section functions with NULLs as they arent currently being
 // used for anything.
@@ -47,6 +50,8 @@
 
 // deh_ammo.c:
 extern deh_section_t deh_section_ammo;
+// deh_cheat.c:
+extern deh_section_t deh_section_cheat;
 // deh_frame.c:
 extern deh_section_t deh_section_frame;
 // deh_pointer.c:
@@ -65,6 +70,7 @@ extern deh_section_t deh_section_weapon;
 static deh_section_t *section_types[] =
 {
     &deh_section_ammo,
+    &deh_section_cheat,
     &deh_section_frame,
     &deh_section_pointer,
     &deh_section_text,

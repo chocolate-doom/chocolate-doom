@@ -29,7 +29,8 @@ dstrings.c  i_sound.h   p_ceilng.c  p_spec.h    r_sky.h     z_zone.h	\
 dstrings.h  i_system.c  p_doors.c   p_switch.c  r_state.h   mmus2mid.c  \
 d_textur.h  i_system.h  p_enemy.c   p_telept.c  r_things.c  mmus2mid.h  \
 deh_defs.h  deh_frame.c deh_main.c  deh_ptr.c   deh_text.c  deh_thing.c \
-deh_io.c    deh_io.h    deh_ammo.c  deh_weapon.c deh_mapping.c deh_mapping.h
+deh_io.c    deh_io.h    deh_ammo.c  deh_cheat.c deh_weapon.c            \
+deh_mapping.c deh_mapping.h
 
 
 if HAVE_WINDRES

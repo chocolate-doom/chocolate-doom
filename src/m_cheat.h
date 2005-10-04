@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_cheat.h 8 2005-07-23 16:44:57Z fraggle $
+// $Id: m_cheat.h 162 2005-10-04 21:41:42Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -34,15 +34,27 @@
 // CHEAT SEQUENCE PACKAGE
 //
 
-#define SCRAMBLE(a) \
-((((a)&1)<<7) + (((a)&2)<<5) + ((a)&4) + (((a)&8)<<1) \
- + (((a)&16)>>1) + ((a)&32) + (((a)&64)>>5) + (((a)&128)>>7))
+// declaring a cheat
+
+#define CHEAT(value, parameters) \
+    { value, sizeof(value) - 1, parameters, 0, 0 }
+
+#define MAX_CHEAT_LEN 15
+#define MAX_CHEAT_PARAMS 5
 
 typedef struct
 {
-    unsigned char*	sequence;
-    unsigned char*	p;
-    
+    // settings for this cheat
+
+    char sequence[MAX_CHEAT_LEN];
+    int sequence_len;
+    int parameter_chars;
+
+    // state used during the game
+
+    int chars_read;
+    int param_chars_read;
+    char parameter_buf[MAX_CHEAT_PARAMS];
 } cheatseq_t;
 
 int
@@ -61,6 +73,9 @@ cht_GetParam
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.3  2005/10/04 21:41:42  fraggle
+// Rewrite cheats code.  Add dehacked cheat replacement.
+//
 // Revision 1.2  2005/07/23 16:44:55  fraggle
 // Update copyright to GNU GPL
 //

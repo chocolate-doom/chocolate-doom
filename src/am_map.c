@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: am_map.c 160 2005-10-03 21:39:39Z fraggle $
+// $Id: am_map.c 162 2005-10-04 21:41:42Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -23,6 +23,9 @@
 //
 //
 // $Log$
+// Revision 1.7  2005/10/04 21:41:42  fraggle
+// Rewrite cheats code.  Add dehacked cheat replacement.
+//
 // Revision 1.6  2005/10/03 21:39:39  fraggle
 // Dehacked text substitutions
 //
@@ -46,7 +49,7 @@
 //
 //-----------------------------------------------------------------------------
 
-static const char rcsid[] = "$Id: am_map.c 160 2005-10-03 21:39:39Z fraggle $";
+static const char rcsid[] = "$Id: am_map.c 162 2005-10-04 21:41:42Z fraggle $";
 
 #include <stdio.h>
 
@@ -310,8 +313,7 @@ static int markpointnum = 0; // next point to be assigned
 
 static int followplayer = 1; // specifies whether to follow the player around
 
-static unsigned char cheat_amap_seq[] = { 0xb2, 0x26, 0x26, 0x2e, 0xff };
-static cheatseq_t cheat_amap = { cheat_amap_seq, 0 };
+cheatseq_t cheat_amap = CHEAT("iddt", 0);
 
 static boolean stopped = true;
 
