@@ -29,6 +29,9 @@
 #ifndef __AMMAP_H__
 #define __AMMAP_H__
 
+#include "d_event.h"
+#include "m_cheat.h"
+
 // Used by ST StatusBar stuff.
 #define AM_MSGHEADER (('a'<<24)+('m'<<16))
 #define AM_MSGENTERED (AM_MSGHEADER | ('e'<<8))
@@ -50,11 +53,16 @@ void AM_Drawer (void);
 void AM_Stop (void);
 
 
+extern cheatseq_t cheat_amap;
+
 
 #endif
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.3  2005/10/04 21:41:42  fraggle
+// Rewrite cheats code.  Add dehacked cheat replacement.
+//
 // Revision 1.2  2005/07/23 16:44:55  fraggle
 // Update copyright to GNU GPL
 //
