@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 153 2005-10-02 23:49:01Z fraggle $
+// $Id: d_main.c 161 2005-10-04 00:41:49Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.18  2005/10/04 00:41:49  fraggle
+// Move call to dehacked entrypoint to stop crashes
+//
 // Revision 1.17  2005/10/02 23:49:01  fraggle
 // The beginnings of dehacked support
 //
@@ -93,7 +96,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 153 2005-10-02 23:49:01Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 161 2005-10-04 00:41:49Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -1168,6 +1171,8 @@ void D_DoomMain (void)
     printf ("ST_Init: Init status bar.\n");
     ST_Init ();
 
+    DEH_CheckCommandLine();
+
     // start the apropriate game based on parms
     p = M_CheckParm ("-record");
 
@@ -1211,8 +1216,6 @@ void D_DoomMain (void)
 	    D_StartTitle ();                // start up intro loop
 
     }
-
-    DEH_CheckCommandLine();
 
     D_DoomLoop ();  // never returns
 }
