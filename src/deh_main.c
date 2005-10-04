@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/10/04 22:10:32  fraggle
+// Dehacked "Misc" section parser (currently a dummy)
+//
 // Revision 1.3  2005/10/04 21:41:42  fraggle
 // Rewrite cheats code.  Add dehacked cheat replacement.
 //
@@ -54,7 +57,9 @@ extern deh_section_t deh_section_ammo;
 extern deh_section_t deh_section_cheat;
 // deh_frame.c:
 extern deh_section_t deh_section_frame;
-// deh_pointer.c:
+// deh_misc.c:
+extern deh_section_t deh_section_misc;
+// deh_ptr.c:
 extern deh_section_t deh_section_pointer;
 // deh_text.c:
 extern deh_section_t deh_section_text;
@@ -72,6 +77,7 @@ static deh_section_t *section_types[] =
     &deh_section_ammo,
     &deh_section_cheat,
     &deh_section_frame,
+    &deh_section_misc,
     &deh_section_pointer,
     &deh_section_text,
     &deh_section_thing,
