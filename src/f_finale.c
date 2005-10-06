@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/10/06 19:32:38  fraggle
+// Allow changing the background flats in finale text screens via dehacked
+//
 // Revision 1.4  2005/10/03 21:39:39  fraggle
 // Dehacked text substitutions
 //
@@ -160,6 +163,7 @@ void F_StartFinale (void)
     // Do dehacked substitutions of strings
   
     finaletext = DEH_String(finaletext);
+    finaleflat = DEH_String(finaleflat);
     
     finalestage = 0;
     finalecount = 0;
