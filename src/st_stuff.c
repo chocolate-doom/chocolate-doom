@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.7  2005/10/06 19:36:41  fraggle
+// Must use the right no clipping cheat for the right game.
+//
 // Revision 1.6  2005/10/04 21:41:42  fraggle
 // Rewrite cheats code.  Add dehacked cheat replacement.
 //
@@ -571,11 +574,15 @@ ST_Responder (event_t* ev)
 	    S_ChangeMusic(musnum, 1);
 	}
       }
-      // Simplified, accepting both "noclip" and "idspispopd".
-      // no clipping mode cheat
-      else if ( cht_CheckCheat(&cheat_noclip, ev->data1) 
-		|| cht_CheckCheat(&cheat_commercial_noclip,ev->data1) )
+      else if ( (gamemission == doom 
+                 && cht_CheckCheat(&cheat_noclip, ev->data1))
+             || (gamemission != doom 
+                 && cht_CheckCheat(&cheat_commercial_noclip,ev->data1)))
       {	
+        // Noclip cheat.
+        // For Doom 1, use the idspipsopd cheat; for all others, use
+        // idclip
+
 	plyr->cheats ^= CF_NOCLIP;
 	
 	if (plyr->cheats & CF_NOCLIP)
