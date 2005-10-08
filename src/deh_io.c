@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2005/10/08 20:54:16  fraggle
+// Proper dehacked error/warning framework.  Catch a load more errors.
+//
 // Revision 1.1  2005/10/02 23:49:01  fraggle
 // The beginnings of dehacked support
 //
@@ -31,10 +34,12 @@
 //
 //-----------------------------------------------------------------------------
 
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+#include "i_system.h"
 #include "z_zone.h"
 
 #include "deh_defs.h"
@@ -43,6 +48,9 @@
 struct deh_context_s
 {
     FILE *stream;
+    char *filename;
+    int linenum;
+    boolean last_was_newline;
     char *readbuffer;
     int readbuffer_size;
 };
@@ -67,6 +75,9 @@ deh_context_t *DEH_OpenFile(char *filename)
 
     context->readbuffer_size = 128;
     context->readbuffer = Z_Malloc(context->readbuffer_size, PU_STATIC, NULL);
+    context->filename = filename;
+    context->linenum = 0;
+    context->last_was_newline = true;
 
     return context;
 }
@@ -104,6 +115,15 @@ int DEH_GetChar(deh_context_t *context)
 
     } while (result == '\r');
 
+    // Track the current line number
+
+    if (context->last_was_newline)
+    {
+        ++context->linenum;
+    }
+    
+    context->last_was_newline = result == '\n';
+    
     return result;
 }
 
@@ -129,7 +149,6 @@ static void IncreaseReadBuffer(deh_context_t *context)
 
 char *DEH_ReadLine(deh_context_t *context)
 {
-    char *p;
     int c;
     int pos;
 
@@ -166,4 +185,33 @@ char *DEH_ReadLine(deh_context_t *context)
     
     return context->readbuffer;
 }
+
+void DEH_Warning(deh_context_t *context, char *msg, ...)
+{
+    va_list args;
+
+    va_start(args, msg);
+    
+    fprintf(stderr, "%s:%i: warning: ", context->filename, context->linenum);
+    vfprintf(stderr, msg, args);
+    fprintf(stderr, "\n");
+
+    va_end(args);
+}
+
+void DEH_Error(deh_context_t *context, char *msg, ...)
+{
+    va_list args;
+
+    va_start(args, msg);
+    
+    fprintf(stderr, "%s:%i: ", context->filename, context->linenum);
+    vfprintf(stderr, msg, args);
+    fprintf(stderr, "\n");
+
+    va_end(args);
+
+    I_Error("Error parsing dehacked file");
+}
+
 

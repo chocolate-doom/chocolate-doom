@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2005/10/08 20:54:16  fraggle
+// Proper dehacked error/warning framework.  Catch a load more errors.
+//
 // Revision 1.1  2005/10/04 22:10:32  fraggle
 // Dehacked "Misc" section parser (currently a dummy)
 //
@@ -34,11 +37,11 @@
 #include "doomdef.h"
 #include "doomtype.h"
 #include "deh_defs.h"
+#include "deh_io.h"
 
 static void *DEH_MiscStart(deh_context_t *context, char *line)
 {
-    fprintf(stderr, "DEH_MiscStart: Warning: dehacked 'Misc' sections are "
-                    "not yet supported.\n");
+    DEH_Warning(context, "Dehacked 'Misc' sections are not supported yet.");
     return NULL;
 }
 

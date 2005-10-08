@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/10/08 20:54:16  fraggle
+// Proper dehacked error/warning framework.  Catch a load more errors.
+//
 // Revision 1.2  2005/10/08 20:14:24  fraggle
 // Add the ability to specify unsupported fields
 //
@@ -41,6 +44,7 @@
 #define DEH_MAPPING_H
 
 #include "doomtype.h"
+#include "deh_io.h"
 
 #define DEH_BEGIN_MAPPING(mapping_name, structname)           \
     static structname deh_mapping_base;                       \
@@ -90,7 +94,8 @@ struct deh_mapping_s
     deh_mapping_entry_t entries[MAX_MAPPING_ENTRIES];
 };
 
-boolean DEH_SetMapping(deh_mapping_t *mapping, void *structptr, char *name, int value);
+boolean DEH_SetMapping(deh_context_t *context, deh_mapping_t *mapping, 
+                       void *structptr, char *name, int value);
 
 #endif /* #ifndef DEH_MAPPING_H */
 
