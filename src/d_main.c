@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 172 2005-10-08 20:10:51Z fraggle $
+// $Id: d_main.c 176 2005-10-08 21:01:55Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.22  2005/10/08 21:01:55  fraggle
+// Change dehacked startup message
+//
 // Revision 1.21  2005/10/08 20:10:51  fraggle
 // Shut up compiler warning
 //
@@ -106,7 +109,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 172 2005-10-08 20:10:51Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 176 2005-10-08 21:01:55Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -1130,7 +1133,7 @@ void D_DoomMain (void)
     printf ("Z_Init: Init zone memory allocation daemon. \n");
     Z_Init ();
 
-    printf("DEH_CheckCommandLine: initialise Dehacked support.\n");
+    printf("DEH_CheckCommandLine: Init Dehacked support.\n");
     DEH_CheckCommandLine();
 
     printf ("W_Init: Init WADfiles.\n");
