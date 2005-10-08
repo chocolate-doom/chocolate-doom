@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.21  2005/10/08 20:10:51  fraggle
+// Shut up compiler warning
+//
 // Revision 1.20  2005/10/08 19:33:48  fraggle
 // Allow dehacked patches to override the name of the game via the
 // startup banner.
@@ -109,6 +112,7 @@ static const char rcsid[] = "$Id$";
 #define	FGCOLOR		8
 
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
