@@ -1,5 +1,8 @@
 
+    Dehacked support
+    WAD merging for TCs
     ENDOOM display
+    Fix bug with invalid MUS files causing crashes
     Final Doom fixes
 
 0.0.4 (2005-09-27):
