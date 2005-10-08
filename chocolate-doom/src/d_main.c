@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.20  2005/10/08 19:33:48  fraggle
+// Allow dehacked patches to override the name of the game via the
+// startup banner.
+//
 // Revision 1.19  2005/10/08 18:23:18  fraggle
 // WAD merging code
 //
@@ -756,6 +760,76 @@ static void FindIWAD (void)
     }
 }
 
+// Strings for dehacked replacements of the startup banner
+
+static char *banners[] = 
+{
+    // doom1.wad
+    "                            "
+    "DOOM Shareware Startup v%i.%i"
+    "                           ",
+    // doom.wad
+    "                            "
+    "DOOM Registered Startup v%i.%i"
+    "                           ",
+    // doom.wad (Ultimate DOOM)
+    "                         "
+    "The Ultimate DOOM Startup v%i.%i"
+    "                           ",
+    // doom2.wad
+    "                         "
+    "DOOM 2: Hell on Earth v%i.%i"
+    "                           ",
+    // tnt.wad
+    "                     "
+    "DOOM 2: TNT - Evilution v%i.%i"
+    "                           ",
+    // plutonia.wad
+    "                   "
+    "DOOM 2: Plutonia Experiment v%i.%i"
+    "                           ",
+};
+
+//
+// Get game name: if the startup banner has been replaced, use that.
+// Otherwise, use the name given
+// 
+
+static char *GetGameName(char *gamename)
+{
+    int i;
+    char *deh_sub;
+    
+    for (i=0; i<sizeof(banners) / sizeof(*banners); ++i)
+    {
+        // Has the banner been replaced?
+
+        deh_sub = DEH_String(banners[i]);
+        
+        if (deh_sub != banners[i])
+        {
+            // Has been replaced
+            // We need to expand via printf to include the Doom version 
+            // number
+            // We also need to cut off spaces to get the basic name
+
+            gamename = Z_Malloc(strlen(deh_sub) + 10, PU_STATIC, 0);
+            sprintf(gamename, deh_sub, DOOM_VERSION / 100, DOOM_VERSION % 100);
+
+            while (gamename[0] != '\0' && isspace(gamename[0]))
+                strcpy(gamename, gamename+1);
+
+            while (gamename[0] != '\0' && isspace(gamename[strlen(gamename)-1]))
+                gamename[strlen(gamename) - 1] = '\0';
+            
+            return gamename;
+        }
+    }
+
+    return gamename;
+}
+
+
 //
 // Find out what version of Doom is playing.
 //
@@ -804,17 +878,17 @@ static void IdentifyVersion(void)
         {
             // Ultimate Doom
 
-            gamedescription = "The Ultimate DOOM";
+            gamedescription = GetGameName("The Ultimate DOOM");
             gamemode = retail;
         } 
         else if (W_CheckNumForName("E3M1") > 0)
         {
-            gamedescription = "DOOM Registered";
+            gamedescription = GetGameName("DOOM Registered");
             gamemode = registered;
         }
         else
         {
-            gamedescription = "DOOM Shareware";
+            gamedescription = GetGameName("DOOM Shareware");
             gamemode = shareware;
         }
     }
@@ -825,11 +899,11 @@ static void IdentifyVersion(void)
         gamemode = commercial;
 
         if (gamemission == doom2)
-            gamedescription = "DOOM 2: Hell on Earth";
+            gamedescription = GetGameName("DOOM 2: Hell on Earth");
         else if (gamemission == pack_plut)
-            gamedescription = "DOOM 2: Plutonia Experiment";
+            gamedescription = GetGameName("DOOM 2: Plutonia Experiment"); 
         else if (gamemission == pack_tnt)
-            gamedescription = "DOOM 2: TNT - Evilution";
+            gamedescription = GetGameName("DOOM 2: TNT - Evilution");
         else
             gamedescription = "DOOM 2: ?????????????";
     }
@@ -913,8 +987,9 @@ void FindResponseFile (void)
 void PrintBanner(char *msg)
 {
     int i;
+    int spaces = 35 - (strlen(msg) / 2);
 
-    for (i=0; i<35-(strlen(msg) / 2); ++i)
+    for (i=0; i<spaces; ++i)
         putchar(' ');
 
     puts(msg);
@@ -1051,6 +1126,9 @@ void D_DoomMain (void)
     printf ("Z_Init: Init zone memory allocation daemon. \n");
     Z_Init ();
 
+    printf("DEH_CheckCommandLine: initialise Dehacked support.\n");
+    DEH_CheckCommandLine();
+
     printf ("W_Init: Init WADfiles.\n");
     W_InitMultipleFiles (wadfiles);
 
@@ -1184,8 +1262,6 @@ void D_DoomMain (void)
 
     printf ("ST_Init: Init status bar.\n");
     ST_Init ();
-
-    DEH_CheckCommandLine();
 
     // start the apropriate game based on parms
     p = M_CheckParm ("-record");
