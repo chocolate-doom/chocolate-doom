@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_frame.c 157 2005-10-03 11:08:16Z fraggle $
+// $Id: deh_frame.c 175 2005-10-08 20:54:16Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/10/08 20:54:16  fraggle
+// Proper dehacked error/warning framework.  Catch a load more errors.
+//
 // Revision 1.4  2005/10/03 11:08:16  fraggle
 // Replace end of section functions with NULLs as they arent currently being
 // used for anything.
@@ -49,6 +52,7 @@
 #include "info.h"
 
 #include "deh_defs.h"
+#include "deh_io.h"
 #include "deh_main.h"
 #include "deh_mapping.h"
 
@@ -66,10 +70,17 @@ static void *DEH_FrameStart(deh_context_t *context, char *line)
     int frame_number = 0;
     state_t *state;
     
-    sscanf(line, "Frame %i", &frame_number);
+    if (sscanf(line, "Frame %i", &frame_number) != 1)
+    {
+        DEH_Warning(context, "Parse error on section start");
+        return NULL;
+    }
     
     if (frame_number < 0 || frame_number >= NUMSTATES)
+    {
+        DEH_Warning(context, "Invalid frame number: %i", frame_number);
         return NULL;
+    }
 
     state = &states[frame_number];
 
@@ -93,18 +104,17 @@ static void DEH_FrameParseLine(deh_context_t *context, char *line, void *tag)
     {
         // Failed to parse
 
+        DEH_Warning(context, "Failed to parse assignment");
         return;
     }
     
-//    printf("Set %s to %s for state\n", variable_name, value);
-
     // all values are integers
 
     ivalue = atoi(value);
     
     // set the appropriate field
 
-    DEH_SetMapping(&state_mapping, state, variable_name, ivalue);
+    DEH_SetMapping(context, &state_mapping, state, variable_name, ivalue);
 }
 
 deh_section_t deh_section_frame =

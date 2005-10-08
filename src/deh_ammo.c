@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_ammo.c 163 2005-10-04 22:04:06Z fraggle $
+// $Id: deh_ammo.c 175 2005-10-08 20:54:16Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/10/08 20:54:15  fraggle
+// Proper dehacked error/warning framework.  Catch a load more errors.
+//
 // Revision 1.3  2005/10/04 22:04:06  fraggle
 // Parse dehacked "Ammo" sections properly
 //
@@ -45,6 +48,7 @@
 #include "doomdef.h"
 #include "doomtype.h"
 #include "deh_defs.h"
+#include "deh_io.h"
 #include "deh_main.h"
 #include "p_local.h"
 
@@ -52,11 +56,18 @@ static void *DEH_AmmoStart(deh_context_t *context, char *line)
 {
     int ammo_number = 0;
 
-    sscanf(line, "Ammo %i", &ammo_number);
+    if (sscanf(line, "Ammo %i", &ammo_number) != 1)
+    {
+        DEH_Warning(context, "Parse error on section start");
+        return NULL;
+    }
 
     if (ammo_number < 0 || ammo_number >= NUMAMMO)
+    {
+        DEH_Warning(context, "Invalid ammo number: %i", ammo_number);
         return NULL;
-
+    }
+    
     return &maxammo[ammo_number];
 }
 
@@ -77,6 +88,7 @@ static void DEH_AmmoParseLine(deh_context_t *context, char *line, void *tag)
     {
         // Failed to parse
 
+        DEH_Warning(context, "Failed to parse assignment");
         return;
     }
 
@@ -90,8 +102,7 @@ static void DEH_AmmoParseLine(deh_context_t *context, char *line, void *tag)
         maxammo[ammo_number] = ivalue;
     else
     {
-        fprintf(stderr, "DEH_AmmoParseLine: field named '%s' not found\n",
-                variable_name);
+        DEH_Warning(context, "Field named '%s' not found", variable_name);
     }
 }
 

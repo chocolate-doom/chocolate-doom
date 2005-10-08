@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_thing.c 157 2005-10-03 11:08:16Z fraggle $
+// $Id: deh_thing.c 175 2005-10-08 20:54:16Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/10/08 20:54:16  fraggle
+// Proper dehacked error/warning framework.  Catch a load more errors.
+//
 // Revision 1.3  2005/10/03 11:08:16  fraggle
 // Replace end of section functions with NULLs as they arent currently being
 // used for anything.
@@ -81,13 +84,20 @@ static void *DEH_ThingStart(deh_context_t *context, char *line)
     int thing_number = 0;
     mobjinfo_t *mobj;
     
-    sscanf(line, "Thing %i", &thing_number);
+    if (sscanf(line, "Thing %i", &thing_number) != 1)
+    {
+        DEH_Warning(context, "Parse error on section start");
+        return NULL;
+    }
 
     // dehacked files are indexed from 1
     --thing_number;
 
     if (thing_number < 0 || thing_number >= NUMMOBJTYPES)
+    {
+        DEH_Warning("Invalid thing number: %i", thing_number);
         return NULL;
+    }
     
     mobj = &mobjinfo[thing_number];
     
@@ -111,6 +121,7 @@ static void DEH_ThingParseLine(deh_context_t *context, char *line, void *tag)
     {
         // Failed to parse
 
+        DEH_Warning(context, "Failed to parse assignment");
         return;
     }
     
@@ -122,7 +133,7 @@ static void DEH_ThingParseLine(deh_context_t *context, char *line, void *tag)
     
     // Set the field value
 
-    DEH_SetMapping(&thing_mapping, mobj, variable_name, ivalue);
+    DEH_SetMapping(context, &thing_mapping, mobj, variable_name, ivalue);
 }
 
 deh_section_t deh_section_thing =

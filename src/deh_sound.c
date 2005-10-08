@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_sound.c 174 2005-10-08 20:14:38Z fraggle $
+// $Id: deh_sound.c 175 2005-10-08 20:54:16Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2005/10/08 20:54:16  fraggle
+// Proper dehacked error/warning framework.  Catch a load more errors.
+//
 // Revision 1.1  2005/10/08 20:14:38  fraggle
 // Dehacked "Sound" section support
 //
@@ -60,10 +63,17 @@ static void *DEH_SoundStart(deh_context_t *context, char *line)
     int sound_number = 0;
     sfxinfo_t *sfx;
     
-    sscanf(line, "Sound %i", &sound_number);
+    if (sscanf(line, "Sound %i", &sound_number) != 1)
+    {
+        DEH_Warning(context, "Parse error on section start");
+        return NULL;
+    }
 
     if (sound_number < 0 || sound_number >= NUMSFX)
+    {
+        DEH_Warning(context, "Invalid sound number: %i", sound_number);
         return NULL;
+    }
     
     sfx = &S_sfx[sound_number];
     
@@ -86,7 +96,7 @@ static void DEH_SoundParseLine(deh_context_t *context, char *line, void *tag)
     if (!DEH_ParseAssignment(line, &variable_name, &value))
     {
         // Failed to parse
-
+        DEH_Warning(context, "Failed to parse assignment");
         return;
     }
     
@@ -96,7 +106,7 @@ static void DEH_SoundParseLine(deh_context_t *context, char *line, void *tag)
     
     // Set the field value
 
-    DEH_SetMapping(&sound_mapping, sfx, variable_name, ivalue);
+    DEH_SetMapping(context, &sound_mapping, sfx, variable_name, ivalue);
 
 }
 

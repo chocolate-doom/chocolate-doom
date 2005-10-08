@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_mapping.c 173 2005-10-08 20:14:24Z fraggle $
+// $Id: deh_mapping.c 175 2005-10-08 20:54:16Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/10/08 20:54:16  fraggle
+// Proper dehacked error/warning framework.  Catch a load more errors.
+//
 // Revision 1.2  2005/10/08 20:14:24  fraggle
 // Add the ability to specify unsupported fields
 //
@@ -47,7 +50,7 @@
 // Set the value of a particular field in a structure by name
 //
 
-boolean DEH_SetMapping(deh_mapping_t *mapping, 
+boolean DEH_SetMapping(deh_context_t *context, deh_mapping_t *mapping, 
                        void *structptr, char *name, int value)
 {
     int i;
@@ -62,8 +65,7 @@ boolean DEH_SetMapping(deh_mapping_t *mapping,
 
             if (entry->location == NULL)
             {
-                fprintf(stderr, "DEH_SetMapping: Field '%s' is unsupported.\n",
-                        name);
+                DEH_Warning(context, "Field '%s' is unsupported", name);
                 return false;
             }
 
@@ -87,7 +89,7 @@ boolean DEH_SetMapping(deh_mapping_t *mapping,
                     * ((unsigned long long *) location) = value;
                     break;
                 default:
-                    fprintf(stderr, "DEH_SetMapping: Unknown field type for %s\n", name);
+                    DEH_Error(context, "Unknown field type for '%s' (BUG)", name);
                     return false;
             }
 
@@ -97,8 +99,7 @@ boolean DEH_SetMapping(deh_mapping_t *mapping,
 
     // field with this name not found
 
-    fprintf(stderr, "DEH_SetMapping: field named '%s' not found\n",
-            name);
+    DEH_Warning(context, "Field named '%s' not found", name);
 
     return false;
 }
