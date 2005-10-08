@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 170 2005-10-08 19:33:48Z fraggle $
+// $Id: d_main.c 172 2005-10-08 20:10:51Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.21  2005/10/08 20:10:51  fraggle
+// Shut up compiler warning
+//
 // Revision 1.20  2005/10/08 19:33:48  fraggle
 // Allow dehacked patches to override the name of the game via the
 // startup banner.
@@ -103,12 +106,13 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 170 2005-10-08 19:33:48Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 172 2005-10-08 20:10:51Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
 
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
