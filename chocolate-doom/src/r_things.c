@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2005/10/08 21:02:55  fraggle
+// Allow dehacked substitutions on sprite names
+//
 // Revision 1.5  2005/08/06 18:37:47  fraggle
 // Fix low resolution mode
 //
@@ -52,6 +55,7 @@ rcsid[] = "$Id$";
 #include <stdlib.h>
 
 
+#include "deh_main.h"
 #include "doomdef.h"
 #include "m_swap.h"
 
@@ -201,7 +205,6 @@ void R_InitSpriteDefs (char** namelist)
     char**	check;
     int		i;
     int		l;
-    int		intname;
     int		frame;
     int		rotation;
     int		start;
@@ -228,17 +231,16 @@ void R_InitSpriteDefs (char** namelist)
     // Just compare 4 characters as ints
     for (i=0 ; i<numsprites ; i++)
     {
-	spritename = namelist[i];
+	spritename = DEH_String(namelist[i]);
 	memset (sprtemp,-1, sizeof(sprtemp));
 		
 	maxframe = -1;
-	intname = *(int *)namelist[i];
 	
 	// scan the lumps,
 	//  filling in the frames for whatever is found
 	for (l=start+1 ; l<end ; l++)
 	{
-	    if (*(int *)lumpinfo[l].name == intname)
+	    if (!strncasecmp(lumpinfo[l].name, spritename, 4))
 	    {
 		frame = lumpinfo[l].name[4] - 'A';
 		rotation = lumpinfo[l].name[5] - '0';
@@ -275,7 +277,7 @@ void R_InitSpriteDefs (char** namelist)
 	      case -1:
 		// no rotations were found for that frame at all
 		I_Error ("R_InitSprites: No patches found "
-			 "for %s frame %c", namelist[i], frame+'A');
+			 "for %s frame %c", spritename, frame+'A');
 		break;
 		
 	      case 0:
@@ -288,7 +290,7 @@ void R_InitSpriteDefs (char** namelist)
 		    if (sprtemp[frame].lump[rotation] == -1)
 			I_Error ("R_InitSprites: Sprite %s frame %c "
 				 "is missing rotations",
-				 namelist[i], frame+'A');
+				 spritename, frame+'A');
 		break;
 	    }
 	}
