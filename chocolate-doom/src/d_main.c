@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.22  2005/10/08 21:01:55  fraggle
+// Change dehacked startup message
+//
 // Revision 1.21  2005/10/08 20:10:51  fraggle
 // Shut up compiler warning
 //
@@ -1130,7 +1133,7 @@ void D_DoomMain (void)
     printf ("Z_Init: Init zone memory allocation daemon. \n");
     Z_Init ();
 
-    printf("DEH_CheckCommandLine: initialise Dehacked support.\n");
+    printf("DEH_CheckCommandLine: Init Dehacked support.\n");
     DEH_CheckCommandLine();
 
     printf ("W_Init: Init WADfiles.\n");
