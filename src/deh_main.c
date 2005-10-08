@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_main.c 164 2005-10-04 22:10:32Z fraggle $
+// $Id: deh_main.c 174 2005-10-08 20:14:38Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/10/08 20:14:38  fraggle
+// Dehacked "Sound" section support
+//
 // Revision 1.4  2005/10/04 22:10:32  fraggle
 // Dehacked "Misc" section parser (currently a dummy)
 //
@@ -61,6 +64,8 @@ extern deh_section_t deh_section_frame;
 extern deh_section_t deh_section_misc;
 // deh_ptr.c:
 extern deh_section_t deh_section_pointer;
+// deh_sound.c
+extern deh_section_t deh_section_sound;
 // deh_text.c:
 extern deh_section_t deh_section_text;
 // deh_thing.c: 
