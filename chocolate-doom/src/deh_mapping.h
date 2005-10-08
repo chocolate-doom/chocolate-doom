@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2005/10/08 20:14:24  fraggle
+// Add the ability to specify unsupported fields
+//
 // Revision 1.1  2005/10/03 10:25:37  fraggle
 // Add mapping code to map out structures and switch thing/frame code to use
 // this.
@@ -49,6 +52,9 @@
 #define DEH_MAPPING(deh_name, fieldname)                      \
              {deh_name, &deh_mapping_base.fieldname,          \
                  sizeof(deh_mapping_base.fieldname)},
+
+#define DEH_UNSUPPORTED_MAPPING(deh_name)                     \
+             {deh_name, NULL, -1}
             
 #define DEH_END_MAPPING                                       \
              {NULL}                                           \
@@ -69,6 +75,7 @@ struct deh_mapping_entry_s
     char *name;
 
     // location relative to the base in the deh_mapping_t struct
+    // If this is NULL, it is an unsupported mapping
 
     void *location;
 
