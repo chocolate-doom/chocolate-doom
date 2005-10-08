@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: w_wad.c 58 2005-08-30 22:15:11Z fraggle $
+// $Id: w_wad.c 167 2005-10-08 18:22:46Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.8  2005/10/08 18:22:46  fraggle
+// Store the cache as part of the lumpinfo_t struct.  Add W_AddFile prototype
+// to header.
+//
 // Revision 1.7  2005/08/30 22:15:11  fraggle
 // More Windows fixes
 //
@@ -51,7 +55,7 @@
 
 
 static const char
-rcsid[] = "$Id: w_wad.c 58 2005-08-30 22:15:11Z fraggle $";
+rcsid[] = "$Id: w_wad.c 167 2005-10-08 18:22:46Z fraggle $";
 
 
 #include <ctype.h>
@@ -79,9 +83,6 @@ rcsid[] = "$Id: w_wad.c 58 2005-08-30 22:15:11Z fraggle $";
 // Location of each lump on disk.
 lumpinfo_t*		lumpinfo;		
 int			numlumps;
-
-void**			lumpcache;
-
 
 #define strcmpi	strcasecmp
 
@@ -244,6 +245,7 @@ void W_AddFile (char *filename)
 	lump_p->handle = storehandle;
 	lump_p->position = LONG(filerover->filepos);
 	lump_p->size = LONG(filerover->size);
+        lump_p->cache = NULL;
 	strncpy (lump_p->name, filerover->name, 8);
     }
 	
@@ -292,8 +294,8 @@ void W_Reload (void)
 	 i<reloadlump+lumpcount ;
 	 i++,lump_p++, fileinfo++)
     {
-	if (lumpcache[i])
-	    Z_Free (lumpcache[i]);
+	if (lumpinfo[i].cache)
+	    Z_Free (lumpinfo[i].cache);
 
 	lump_p->position = LONG(fileinfo->filepos);
 	lump_p->size = LONG(fileinfo->size);
@@ -334,15 +336,6 @@ void W_InitMultipleFiles (char** filenames)
 
     if (!numlumps)
 	I_Error ("W_InitFiles: no files found");
-    
-    // set up caching
-    size = numlumps * sizeof(*lumpcache);
-    lumpcache = malloc (size);
-    
-    if (!lumpcache)
-	I_Error ("Couldn't allocate lumpcache");
-
-    memset (lumpcache,0, size);
 }
 
 
@@ -512,21 +505,21 @@ W_CacheLumpNum
     if ((unsigned)lump >= numlumps)
 	I_Error ("W_CacheLumpNum: %i >= numlumps",lump);
 		
-    if (!lumpcache[lump])
+    if (!lumpinfo[lump].cache)
     {
 	// read the lump in
 	
 	//printf ("cache miss on lump %i\n",lump);
-	ptr = Z_Malloc (W_LumpLength (lump), tag, &lumpcache[lump]);
-	W_ReadLump (lump, lumpcache[lump]);
+	ptr = Z_Malloc (W_LumpLength (lump), tag, &lumpinfo[lump].cache);
+	W_ReadLump (lump, lumpinfo[lump].cache);
     }
     else
     {
 	//printf ("cache hit on lump %i\n",lump);
-	Z_ChangeTag (lumpcache[lump],tag);
+	Z_ChangeTag (lumpinfo[lump].cache,tag);
     }
 	
-    return lumpcache[lump];
+    return lumpinfo[lump].cache;
 }
 
 
@@ -562,7 +555,7 @@ void W_Profile (void)
 	
     for (i=0 ; i<numlumps ; i++)
     {	
-	ptr = lumpcache[i];
+	ptr = lumpinfo[i].cache;
 	if (!ptr)
 	{
 	    ch = ' ';

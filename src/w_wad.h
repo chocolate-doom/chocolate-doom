@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: w_wad.h 16 2005-07-23 18:54:06Z fraggle $
+// $Id: w_wad.h 167 2005-10-08 18:22:46Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -64,6 +64,7 @@ typedef struct
     FILE       *handle;
     int		position;
     int		size;
+    void       *cache;
 } lumpinfo_t;
 
 
@@ -71,6 +72,7 @@ extern	void**		lumpcache;
 extern	lumpinfo_t*	lumpinfo;
 extern	int		numlumps;
 
+void    W_AddFile (char *filename);
 void    W_InitMultipleFiles (char** filenames);
 void    W_Reload (void);
 
@@ -90,6 +92,10 @@ void*	W_CacheLumpName (char* name, int tag);
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.4  2005/10/08 18:22:46  fraggle
+// Store the cache as part of the lumpinfo_t struct.  Add W_AddFile prototype
+// to header.
+//
 // Revision 1.3  2005/07/23 18:54:06  fraggle
 // Use standard C functions for WAD code
 //
