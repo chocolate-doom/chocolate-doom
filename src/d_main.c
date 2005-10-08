@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 161 2005-10-04 00:41:49Z fraggle $
+// $Id: d_main.c 168 2005-10-08 18:23:18Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.19  2005/10/08 18:23:18  fraggle
+// WAD merging code
+//
 // Revision 1.18  2005/10/04 00:41:49  fraggle
 // Move call to dehacked entrypoint to stop crashes
 //
@@ -96,7 +99,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 161 2005-10-04 00:41:49Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 168 2005-10-08 18:23:18Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -125,6 +128,7 @@ static const char rcsid[] = "$Id: d_main.c 161 2005-10-04 00:41:49Z fraggle $";
 
 #include "z_zone.h"
 #include "w_wad.h"
+#include "w_merge.h"
 #include "s_sound.h"
 #include "v_video.h"
 
@@ -1049,6 +1053,16 @@ void D_DoomMain (void)
 
     printf ("W_Init: Init WADfiles.\n");
     W_InitMultipleFiles (wadfiles);
+
+    p = M_CheckParm("-merge");
+
+    if (p > 0)
+    {
+        for (p = p + 1; p<myargc && myargv[p][0] != '-'; ++p)
+        {
+            W_MergeFile(myargv[p]);
+        }
+    }
     
     IdentifyVersion();
 

@@ -75,9 +75,35 @@ options are supported.
                        "Doom v1.91" format to avoid losing turning
                        resolution.
 
+  -merge <file>        Loads a PWAD but simulates merging it into the main
+                       IWAD (see below)
+
   -novert              Turns on novert (see above)
 
   -nonovert            Turns off novert (see above)
+
+== Playing TCs ==
+
+With Vanilla Doom there is no way to include sprites in PWAD files.  
+Chocolate Doom's '-file' command line option behaves exactly the
+same as Vanilla Doom, and trying to play TCs by adding the WAD files
+using '-file' will not work.
+
+Many Total Conversions (TCs) are distributed as a PWAD file which must
+be merged into the main IWAD.  Typically a copy of DEUSF.EXE is
+included which performs this merge.  Chocolate Doom includes a new
+option, '-merge', which will simulate this merge.  Essentially, the 
+WAD directory is merged in memory, removing the need to modify the 
+IWAD on disk.
+
+To play TCs using Chocolate Doom, run like this:
+
+  chocolate-doom -merge thetc.wad
+
+Here are some examples:
+
+  chocolate-doom -merge batman.wad -deh batman.deh      (Batman Doom)
+  chocolate-doom -merge aoddoom1.wad -deh aoddoom1.deh  (Army of Darkness Doom)
 
 == Other information ==
 
