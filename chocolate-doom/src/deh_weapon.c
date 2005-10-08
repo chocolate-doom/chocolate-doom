@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/10/08 20:54:16  fraggle
+// Proper dehacked error/warning framework.  Catch a load more errors.
+//
 // Revision 1.4  2005/10/03 13:21:11  fraggle
 // Weapons mapping code
 //
@@ -66,11 +69,18 @@ static void *DEH_WeaponStart(deh_context_t *context, char *line)
 {
     int weapon_number = 0;
 
-    sscanf(line, "Weapon %i", &weapon_number);
+    if (sscanf(line, "Weapon %i", &weapon_number) != 1)
+    {
+        DEH_Warning(context, "Parse error on section start");
+        return NULL;
+    }
 
     if (weapon_number < 0 || weapon_number >= NUMWEAPONS)
+    {
+        DEH_Warning(context, "Invalid weapon number: %i", weapon_number);
         return NULL;
-
+    }
+    
     return &weaponinfo[weapon_number];
 }
 
@@ -88,13 +98,14 @@ static void DEH_WeaponParseLine(deh_context_t *context, char *line, void *tag)
     if (!DEH_ParseAssignment(line, &variable_name, &value))
     {
         // Failed to parse
-       
+
+        DEH_Warning(context, "Failed to parse assignment");
         return;
     }
 
     ivalue = atoi(value);
 
-    DEH_SetMapping(&weapon_mapping, weapon, variable_name, ivalue);
+    DEH_SetMapping(context, &weapon_mapping, weapon, variable_name, ivalue);
 }
 
 deh_section_t deh_section_weapon =

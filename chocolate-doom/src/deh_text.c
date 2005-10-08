@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/10/08 20:54:16  fraggle
+// Proper dehacked error/warning framework.  Catch a load more errors.
+//
 // Revision 1.3  2005/10/03 21:39:39  fraggle
 // Dehacked text substitutions
 //
@@ -174,7 +177,11 @@ static void *DEH_TextStart(deh_context_t *context, char *line)
     int fromlen, tolen;
     int i;
     
-    sscanf(line, "Text %i %i", &fromlen, &tolen);
+    if (sscanf(line, "Text %i %i", &fromlen, &tolen) != 2)
+    {
+        DEH_Warning(context, "Parse error on section start");
+        return NULL;
+    }
 
     sub = Z_Malloc(sizeof(deh_substitution_t), PU_STATIC, NULL);
     sub->from_text = Z_Malloc(fromlen + 1, PU_STATIC, NULL);

@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2005/10/08 20:54:16  fraggle
+// Proper dehacked error/warning framework.  Catch a load more errors.
+//
 // Revision 1.1  2005/10/04 21:41:42  fraggle
 // Rewrite cheats code.  Add dehacked cheat replacement.
 //
@@ -40,7 +43,9 @@
 
 #include "doomdef.h"
 #include "doomtype.h"
+
 #include "deh_defs.h"
+#include "deh_io.h"
 #include "deh_main.h"
 #include "am_map.h"
 #include "st_stuff.h"
@@ -97,10 +102,11 @@ static void DEH_CheatParseLine(deh_context_t *context, char *line, void *tag)
     unsigned char *value;
     int i;
 
-    if (!DEH_ParseAssignment(line, &variable_name, (char *) &value))
+    if (!DEH_ParseAssignment(line, &variable_name, (char **) &value))
     {
         // Failed to parse
-        
+
+        DEH_Warning(context, "Failed to parse assignment");
         return;
     }
 
@@ -108,8 +114,7 @@ static void DEH_CheatParseLine(deh_context_t *context, char *line, void *tag)
 
     if (cheat == NULL)
     {
-        fprintf(stderr, "DEH_ParseCheatLine: Unknown cheat '%s'\n", 
-                variable_name);
+        DEH_Warning(context, "Unknown cheat '%s'", variable_name);
         return;
     }
 
