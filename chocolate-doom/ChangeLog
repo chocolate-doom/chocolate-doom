@@ -1,3 +1,49 @@
+Sat Oct  8 19:33:48 2005 fraggle
+	
+	Allow dehacked patches to override the name of the game via the
+	startup banner.
+
+Sat Oct  8 18:34:12 2005 fraggle
+	
+	Print startup message to stdout, not stderr
+
+Sat Oct  8 18:23:17 2005 fraggle
+	
+	WAD merging code
+
+Sat Oct  8 18:22:46 2005 fraggle
+	
+	Store the cache as part of the lumpinfo_t struct.  Add W_AddFile prototype
+	to header.
+
+Thu Oct  6 19:36:41 2005 fraggle
+	
+	Must use the right no clipping cheat for the right game.
+
+Thu Oct  6 19:32:38 2005 fraggle
+	
+	Allow changing the background flats in finale text screens via dehacked
+
+Tue Oct  4 22:10:32 2005 fraggle
+	
+	Dehacked "Misc" section parser (currently a dummy)
+
+Tue Oct  4 22:04:06 2005 fraggle
+	
+	Parse dehacked "Ammo" sections properly
+
+Tue Oct  4 21:41:42 2005 fraggle
+	
+	Rewrite cheats code.  Add dehacked cheat replacement.
+
+Tue Oct  4 00:41:49 2005 fraggle
+	
+	Move call to dehacked entrypoint to stop crashes
+
+Mon Oct  3 21:39:39 2005 fraggle
+	
+	Dehacked text substitutions
+
 Mon Oct  3 13:21:11 2005 fraggle
 	
 	Weapons mapping code
