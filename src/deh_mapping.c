@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2005/10/08 20:14:24  fraggle
+// Add the ability to specify unsupported fields
+//
 // Revision 1.1  2005/10/03 10:25:37  fraggle
 // Add mapping code to map out structures and switch thing/frame code to use
 // this.
@@ -56,6 +59,13 @@ boolean DEH_SetMapping(deh_mapping_t *mapping,
         if (!strcasecmp(entry->name, name))
         {
             void *location;
+
+            if (entry->location == NULL)
+            {
+                fprintf(stderr, "DEH_SetMapping: Field '%s' is unsupported.\n",
+                        name);
+                return false;
+            }
 
             location = structptr + (entry->location - mapping->base);
 
