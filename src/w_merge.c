@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: w_merge.c 168 2005-10-08 18:23:18Z fraggle $
+// $Id: w_merge.c 179 2005-10-09 00:25:49Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2005/10/09 00:25:49  fraggle
+// Improved sprite merging
+//
 // Revision 1.1  2005/10/08 18:23:18  fraggle
 // WAD merging code
 //
@@ -53,12 +56,24 @@ typedef struct
     int numlumps;
 } searchlist_t;
 
+typedef struct
+{
+    char sprname[4];
+    char frame;
+    int angles;
+} replace_frame_t;
+
 static searchlist_t iwad;
 static searchlist_t pwad;
 
 static searchlist_t iwad_flats;
 static searchlist_t pwad_sprites;
 static searchlist_t pwad_flats;
+
+// lumps with these sprites must be replaced in the IWAD
+static replace_frame_t *replace_frames;
+static int num_replace_frames;
+static int replace_frames_alloced;
 
 // Search in a list to find a lump with a particular name
 // Linear search (slow!)
@@ -152,6 +167,135 @@ static void SetupLists(void)
     }
 }
 
+// Initialise the replace list
+
+static void InitReplaceList(void)
+{
+    if (replace_frames == NULL)
+    {
+        replace_frames_alloced = 128;
+        replace_frames = Z_Malloc(sizeof(*replace_frames) * replace_frames_alloced,
+                                 PU_STATIC, NULL);
+    }
+
+    num_replace_frames = 0;
+}
+
+// Add new sprite to the replace list
+
+static void AddReplaceFrame(replace_frame_t *frame)
+{
+    int i;
+
+    // Find if this is already in the list
+
+    for (i=0; i<num_replace_frames; ++i)
+    {
+        if (!strncasecmp(replace_frames[i].sprname, frame->sprname, 4)
+         && replace_frames[i].frame == frame->frame)
+        {
+            replace_frames[i].angles |= frame->angles;
+            return;
+        }
+    }
+    
+    // Need to add to the list
+
+    if (num_replace_frames >= replace_frames_alloced)
+    {
+        replace_frame_t *newframes;
+
+        newframes = Z_Malloc(replace_frames_alloced * 2 * sizeof(*replace_frames),
+                             PU_STATIC, NULL);
+        memcpy(newframes, replace_frames,
+               replace_frames_alloced * sizeof(*replace_frames));
+        Z_Free(replace_frames);
+        replace_frames_alloced *= 2;
+        replace_frames = newframes;
+    }
+
+    // Add to end of list
+    
+    replace_frames[num_replace_frames++] = *frame;
+}
+
+// Converts a sprite name into an replace_frame_t
+
+static void ParseSpriteName(char *name, replace_frame_t *result)
+{
+    int angle_num;
+
+    strncpy(result->sprname, name, 4);
+    result->frame = name[4];
+
+    angle_num = name[5] - '0';
+    
+    if (angle_num == 0)
+    {
+        // '0' sprites are used for all angles
+
+        result->angles = 0xffff;
+    }
+    else
+    {
+       result->angles = 1 << angle_num;
+    }
+
+    if (name[6] != '\0')
+    {
+        // second angle
+
+        angle_num = name[7] - '0';
+
+        if (angle_num == 0)
+        {
+            result->angles = 0xffff;
+        }
+        else
+        {
+            result->angles |= 1 << angle_num;
+        }
+    }
+}
+
+// Check if a sprite is in the replace list
+
+static boolean InReplaceList(char *name)
+{
+    replace_frame_t igsprite;
+    int i;
+    
+    ParseSpriteName(name, &igsprite);
+
+    for (i=0; i<num_replace_frames; ++i)
+    {
+        if (!strncasecmp(replace_frames[i].sprname, igsprite.sprname, 4)
+         && replace_frames[i].frame == igsprite.frame
+         && (replace_frames[i].angles & igsprite.angles) != 0)
+        {
+            return true;
+        }
+    }
+    
+    return false;
+}
+
+// Generate the list.  Run at the start, before merging
+
+static void GenerateReplaceList(void)
+{
+    replace_frame_t igsprite;
+    int i;
+
+    InitReplaceList();
+
+    for (i=0; i<pwad_sprites.numlumps; ++i)
+    {
+        ParseSpriteName(pwad_sprites.lumps[i].name, &igsprite);
+        AddReplaceFrame(&igsprite);
+    }
+}
+
 // Perform the merge.
 //
 // The merge code creates a new lumpinfo list, adding entries from the
@@ -159,10 +303,13 @@ static void SetupLists(void)
 //
 // For the IWAD:
 //  * Flats are added.  If a flat with the same name is in the PWAD, 
-//    it is ignored.  At the end of the section, all flats in the PWAD 
-//    are inserted.  This is consistent with the behavior of deutex/deusf.
-//  * Sprites are added.  If a sprite with the same name exists in the PWAD,
-//    it is used to replace the sprite.
+//    it is ignored(deleted).  At the end of the section, all flats in the 
+//    PWAD are inserted.  This is consistent with the behavior of 
+//    deutex/deusf.
+//  * Sprites are added.  The "replace list" is generated before the merge
+//    from the list of sprites in the PWAD.  Any sprites in the IWAD found
+//    to match the replace list are removed.  At the end of the section,
+//    the sprites from the PWAD are inserted.
 // 
 // For the PWAD:
 //  * All Sprites and Flats are ignored, with the assumption they have 
@@ -245,6 +392,14 @@ static void DoMerge(void)
 
                 if (!strncasecmp(lump->name, "S_END", 8))
                 {
+                    // add all the pwad sprites
+
+                    for (n=0; n<pwad_sprites.numlumps; ++n)
+                    {
+                        newlumps[num_newlumps++] = pwad_sprites.lumps[n];
+                    }
+
+                    // copy the ending
                     newlumps[num_newlumps++] = *lump;
 
                     // back to normal reading
@@ -252,21 +407,10 @@ static void DoMerge(void)
                 }
                 else
                 {
-                    // If there is a sprite in the PWAD with the same name,
-                    // replace this sprite
+                    // Is this lump holding a sprite to be replaced in the
+                    // PWAD? If so, wait until the end to add it.
 
-                    // Note: This is rather limited.  A PWAD sprite has to
-                    // have EXACTLY the same name as that in the IWAD.  It
-                    // does not allow the number of sides per frame to be
-                    // changed in the PWAD. FIXME?
-
-                    lumpindex = FindInList(&pwad_sprites, lump->name);
-
-                    if (lumpindex >= 0)
-                    {
-                        newlumps[num_newlumps++] = pwad_sprites.lumps[lumpindex];
-                    }
-                    else
+                    if (!InReplaceList(lump->name))
                     {
                         newlumps[num_newlumps++] = *lump;
                     }
@@ -365,6 +509,10 @@ void W_MergeFile(char *filename)
     // Setup sprite/flat lists
 
     SetupLists();
+
+    // Generate list of sprites to be replaced by the PWAD
+
+    GenerateReplaceList();
 
     // Perform the merge
 
