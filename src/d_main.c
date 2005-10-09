@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 178 2005-10-09 00:20:24Z fraggle $
+// $Id: d_main.c 180 2005-10-09 14:34:19Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.24  2005/10/09 14:34:19  fraggle
+// Fix banner string for ultimate doom
+//
 // Revision 1.23  2005/10/09 00:20:24  fraggle
 // Detect registered DOOM banner in dehacked patches
 //
@@ -112,7 +115,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 178 2005-10-09 00:20:24Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 180 2005-10-09 14:34:19Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -792,7 +795,7 @@ static char *banners[] =
     // doom.wad (Ultimate DOOM)
     "                         "
     "The Ultimate DOOM Startup v%i.%i"
-    "                           ",
+    "                        ",
     // doom2.wad
     "                         "
     "DOOM 2: Hell on Earth v%i.%i"
