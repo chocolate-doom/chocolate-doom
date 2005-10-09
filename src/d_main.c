@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.24  2005/10/09 14:34:19  fraggle
+// Fix banner string for ultimate doom
+//
 // Revision 1.23  2005/10/09 00:20:24  fraggle
 // Detect registered DOOM banner in dehacked patches
 //
@@ -792,7 +795,7 @@ static char *banners[] =
     // doom.wad (Ultimate DOOM)
     "                         "
     "The Ultimate DOOM Startup v%i.%i"
-    "                           ",
+    "                        ",
     // doom2.wad
     "                         "
     "DOOM 2: Hell on Earth v%i.%i"
