@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.23  2005/10/09 00:20:24  fraggle
+// Detect registered DOOM banner in dehacked patches
+//
 // Revision 1.22  2005/10/08 21:01:55  fraggle
 // Change dehacked startup message
 //
@@ -768,6 +771,9 @@ static void FindIWAD (void)
 }
 
 // Strings for dehacked replacements of the startup banner
+//
+// These are from the original source: some of them are perhaps
+// not used in any dehacked patches
 
 static char *banners[] = 
 {
@@ -779,6 +785,10 @@ static char *banners[] =
     "                            "
     "DOOM Registered Startup v%i.%i"
     "                           ",
+    // Registered DOOM uses this
+    "                          "
+    "DOOM System Startup v%i.%i"
+    "                          ",
     // doom.wad (Ultimate DOOM)
     "                         "
     "The Ultimate DOOM Startup v%i.%i"
