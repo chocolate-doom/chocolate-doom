@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: txt_main.c 146 2005-10-02 03:16:03Z fraggle $
+// $Id: txt_main.c 181 2005-10-09 16:42:46Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2005/10/09 16:42:46  fraggle
+// Cannot do arithmetic on void pointers in standard C
+//
 // Revision 1.1  2005/10/02 03:16:03  fraggle
 // Text mode emulation code
 //
@@ -117,7 +120,8 @@ static inline void UpdateCharacter(int x, int y)
 
     p = &int10_font_16[character * CHAR_H];
 
-    s = screen->pixels + (y * CHAR_H * screen->pitch) + (x * CHAR_W);
+    s = ((unsigned char *) screen->pixels) 
+          + (y * CHAR_H * screen->pitch) + (x * CHAR_W);
 
     for (y1=0; y1<CHAR_H; ++y1)
     {
