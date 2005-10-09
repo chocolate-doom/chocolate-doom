@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_main.c 174 2005-10-08 20:14:38Z fraggle $
+// $Id: deh_main.c 182 2005-10-09 20:06:50Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2005/10/09 20:06:50  fraggle
+// Check the header of dehacked files and make sure we only load valid
+// dehacked files.
+//
 // Revision 1.5  2005/10/08 20:14:38  fraggle
 // Dehacked "Sound" section support
 //
@@ -53,6 +57,8 @@
 
 #include "deh_defs.h"
 #include "deh_io.h"
+
+static char deh_signature[] = "Patch File for DeHackEd v3.0\n";
 
 // deh_ammo.c:
 extern deh_section_t deh_section_ammo;
@@ -196,6 +202,21 @@ boolean DEH_ParseAssignment(char *line, char **variable_name, char **value)
     return true;
 }
 
+static boolean CheckSignature(deh_context_t *context)
+{
+    int i;
+
+    for (i=0; i<strlen(deh_signature); ++i)
+    {
+        int c = DEH_GetChar(context);
+
+        if (c != deh_signature[i])
+            return false;
+    }
+
+    return true;
+}
+
 // Parses a dehacked file by reading from the context
 
 static void DEH_ParseContext(deh_context_t *context)
@@ -204,6 +225,15 @@ static void DEH_ParseContext(deh_context_t *context)
     char section_name[20];
     void *tag = NULL;
     char *line;
+    
+    // Read the header and check it matches the signature
+
+    if (!CheckSignature(context))
+    {
+        DEH_Error(context, "This is not a dehacked v3.0 patch file!");
+    }
+    
+    // Read the file
     
     for (;;) 
     {
