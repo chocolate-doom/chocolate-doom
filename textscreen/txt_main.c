@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: txt_main.c 181 2005-10-09 16:42:46Z fraggle $
+// $Id: txt_main.c 183 2005-10-09 20:19:21Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/10/09 20:19:21  fraggle
+// Handle blinking text in ENDOOM lumps properly.
+//
 // Revision 1.2  2005/10/09 16:42:46  fraggle
 // Cannot do arithmetic on void pointers in standard C
 //
@@ -117,6 +120,16 @@ static inline void UpdateCharacter(int x, int y)
 
     fg = p[1] & 0xf;
     bg = (p[1] >> 4) & 0xf;
+
+    if (bg & 0x8)
+    {
+        // blinking
+
+        bg &= ~0x8;
+
+        if (SDL_GetTicks() % 500 < 250)
+            fg = bg;
+    }
 
     p = &int10_font_16[character * CHAR_H];
 

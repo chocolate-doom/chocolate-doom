@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_system.c 148 2005-10-02 03:23:54Z fraggle $
+// $Id: i_system.c 183 2005-10-09 20:19:21Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.13  2005/10/09 20:19:21  fraggle
+// Handle blinking text in ENDOOM lumps properly.
+//
 // Revision 1.12  2005/10/02 03:23:54  fraggle
 // Fix the length of time that ENDOOM is displayed for
 //
@@ -66,7 +69,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_system.c 148 2005-10-02 03:23:54Z fraggle $";
+rcsid[] = "$Id: i_system.c 183 2005-10-09 20:19:21Z fraggle $";
 
 
 #include <stdlib.h>
@@ -191,8 +194,6 @@ void I_Endoom(void)
     screendata = TXT_GetScreenData();
     memcpy(screendata, endoom_data, 4000);
 
-    TXT_UpdateScreen();
-    
     // Wait for 10 seconds, or until a keypress or mouse click
 
     waiting = true;
@@ -200,9 +201,11 @@ void I_Endoom(void)
 
     while (waiting && I_GetTime() < start_ms + 350)
     {
+        TXT_UpdateScreen();
+
         if (!SDL_PollEvent(&ev))
         {
-            I_Sleep(100);
+            I_Sleep(50);
             continue;
         }
 
