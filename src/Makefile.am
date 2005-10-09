@@ -4,7 +4,7 @@ bindir = $(prefix)/bin
 bin_PROGRAMS = chocolate-doom
 
 AM_CFLAGS = -I../textscreen @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@ -Wall
-chocolate_doom_LDADD = @LDFLAGS@ @SDL_LIBS@ @SDLMIXER_LIBS@ @SDLNET_LIBS@ ../textscreen/libtextscreen.a
+chocolate_doom_LDADD = ../textscreen/libtextscreen.a @LDFLAGS@ @SDL_LIBS@ @SDLMIXER_LIBS@ @SDLNET_LIBS@ 
 
 SOURCE_FILES=\
 am_map.c    d_think.h   i_video.c   p_floor.c   p_tick.c    r_things.h	\
@@ -30,7 +30,7 @@ dstrings.h  i_system.c  p_doors.c   p_switch.c  r_state.h   mmus2mid.c  \
 d_textur.h  i_system.h  p_enemy.c   p_telept.c  r_things.c  mmus2mid.h  \
 deh_defs.h  deh_frame.c deh_main.c  deh_ptr.c   deh_text.c  deh_thing.c \
 deh_io.c    deh_io.h    deh_ammo.c  deh_cheat.c deh_weapon.c            \
-deh_misc.c  deh_mapping.c deh_mapping.h         deh_sound.c             \
+deh_misc.c  deh_mapping.c deh_mapping.h         deh_sound.c deh_main.h  \
 w_merge.c   w_merge.h
 
 
