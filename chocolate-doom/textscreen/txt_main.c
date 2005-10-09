@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2005/10/09 16:42:46  fraggle
+// Cannot do arithmetic on void pointers in standard C
+//
 // Revision 1.1  2005/10/02 03:16:03  fraggle
 // Text mode emulation code
 //
@@ -117,7 +120,8 @@ static inline void UpdateCharacter(int x, int y)
 
     p = &int10_font_16[character * CHAR_H];
 
-    s = screen->pixels + (y * CHAR_H * screen->pitch) + (x * CHAR_W);
+    s = ((unsigned char *) screen->pixels) 
+          + (y * CHAR_H * screen->pitch) + (x * CHAR_W);
 
     for (y1=0; y1<CHAR_H; ++y1)
     {
