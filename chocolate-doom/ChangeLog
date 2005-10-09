@@ -1,3 +1,65 @@
+Sun Oct  9 21:20:14 2005 fraggle
+	
+	v0.1.0
+
+Sun Oct  9 21:19:41 2005 fraggle
+	
+	Include libtextscreen include in the right place, include deh_main.h
+	in the dist.
+
+Sun Oct  9 20:19:21 2005 fraggle
+	
+	Handle blinking text in ENDOOM lumps properly.
+
+Sun Oct  9 20:06:50 2005 fraggle
+	
+	Check the header of dehacked files and make sure we only load valid
+	dehacked files.
+
+Sun Oct  9 16:42:46 2005 fraggle
+	
+	Cannot do arithmetic on void pointers in standard C
+
+Sun Oct  9 14:34:19 2005 fraggle
+	
+	Fix banner string for ultimate doom
+
+Sun Oct  9 00:25:49 2005 fraggle
+	
+	Improved sprite merging
+
+Sun Oct  9 00:20:24 2005 fraggle
+	
+	Detect registered DOOM banner in dehacked patches
+
+Sat Oct  8 21:02:55 2005 fraggle
+	
+	Allow dehacked substitutions on sprite names
+
+Sat Oct  8 21:01:55 2005 fraggle
+	
+	Change dehacked startup message
+
+Sat Oct  8 20:54:15 2005 fraggle
+	
+	Proper dehacked error/warning framework.  Catch a load more errors.
+
+Sat Oct  8 20:14:38 2005 fraggle
+	
+	Dehacked "Sound" section support
+
+Sat Oct  8 20:14:24 2005 fraggle
+	
+	Add the ability to specify unsupported fields
+
+Sat Oct  8 20:10:51 2005 fraggle
+	
+	Shut up compiler warning
+
+Sat Oct  8 19:52:03 2005 fraggle
+	
+	Update NEWS, ChangeLog
+
 Sat Oct  8 19:33:48 2005 fraggle
 	
 	Allow dehacked patches to override the name of the game via the
