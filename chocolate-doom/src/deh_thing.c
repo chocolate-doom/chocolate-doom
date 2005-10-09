@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/10/09 23:52:28  fraggle
+// Fix DEH_Warning call
+//
 // Revision 1.4  2005/10/08 20:54:16  fraggle
 // Proper dehacked error/warning framework.  Catch a load more errors.
 //
@@ -95,7 +98,7 @@ static void *DEH_ThingStart(deh_context_t *context, char *line)
 
     if (thing_number < 0 || thing_number >= NUMMOBJTYPES)
     {
-        DEH_Warning("Invalid thing number: %i", thing_number);
+        DEH_Warning(context, "Invalid thing number: %i", thing_number);
         return NULL;
     }
     
