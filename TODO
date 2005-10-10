@@ -1,8 +1,8 @@
 To do:
 
-* Dehacked support
-* ENDOOM
+* Network code
 * Setup utility
 * Short-circuit Zone memory
-* Savegame fixes for 64-bit machines
+* Fix 64-bit version
+  * Savegame fixes for 64-bit machines
 
