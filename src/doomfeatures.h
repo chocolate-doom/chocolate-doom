@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_main.h 190 2005-10-12 21:52:01Z fraggle $
+// $Id: doomfeatures.h 190 2005-10-12 21:52:01Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,45 +21,27 @@
 // 02111-1307, USA.
 //
 // $Log$
-// Revision 1.3  2005/10/12 21:52:01  fraggle
+// Revision 1.1  2005/10/12 21:52:01  fraggle
 // doomfeatures.h to allow certain features to be disabled in the build
 //
-// Revision 1.2  2005/10/03 21:39:39  fraggle
-// Dehacked text substitutions
 //
-// Revision 1.1  2005/10/02 23:49:01  fraggle
-// The beginnings of dehacked support
-//
-//
-//-----------------------------------------------------------------------------
-//
-// Dehacked entrypoint and common code
+// DESCRIPTION:
+//     List of features which can be enabled/disabled to slim down the
+//     program.
 //
 //-----------------------------------------------------------------------------
 
-#ifndef DEH_MAIN_H
-#define DEH_MAIN_H
+#ifndef DOOM_FEATURES_H
+#define DOOM_FEATURES_H
 
-#include "doomtype.h"
-#include "doomfeatures.h"
+// Enables wad merging (the '-merge' command line parameter)
 
-void DEH_CheckCommandLine(void);
+#define FEATURE_WAD_MERGE 1
 
-boolean DEH_ParseAssignment(char *line, char **variable_name, char **value);
+// Enables dehacked support ('-deh')
 
-// deh_text.c:
-//
-// Used to do dehacked text substitutions throughout the program
+#define FEATURE_DEHACKED 1
 
-#ifdef FEATURE_DEHACKED
+#endif /* #ifndef DOOM_FEATURES_H */
 
-char *DEH_String(char *s);
-
-#else
-
-#define DEH_String(x) (x)
-
-#endif
-
-#endif /* #ifndef DEH_MAIN_H */
 
