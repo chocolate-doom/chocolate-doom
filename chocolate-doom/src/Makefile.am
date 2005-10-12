@@ -31,7 +31,7 @@ d_textur.h  i_system.h  p_enemy.c   p_telept.c  r_things.c  mmus2mid.h  \
 deh_defs.h  deh_frame.c deh_main.c  deh_ptr.c   deh_text.c  deh_thing.c \
 deh_io.c    deh_io.h    deh_ammo.c  deh_cheat.c deh_weapon.c            \
 deh_misc.c  deh_mapping.c deh_mapping.h         deh_sound.c deh_main.h  \
-w_merge.c   w_merge.h
+w_merge.c   w_merge.h   doomfeatures.h
 
 
 if HAVE_WINDRES
