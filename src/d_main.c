@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.25  2005/10/12 21:52:01  fraggle
+// doomfeatures.h to allow certain features to be disabled in the build
+//
 // Revision 1.24  2005/10/09 14:34:19  fraggle
 // Fix banner string for ultimate doom
 //
@@ -140,6 +143,7 @@ static const char rcsid[] = "$Id$";
 #include "doomstat.h"
 
 #include "dstrings.h"
+#include "doomfeatures.h"
 #include "sounds.h"
 
 
@@ -1146,12 +1150,15 @@ void D_DoomMain (void)
     printf ("Z_Init: Init zone memory allocation daemon. \n");
     Z_Init ();
 
+#ifdef FEATURE_DEHACKED
     printf("DEH_CheckCommandLine: Init Dehacked support.\n");
     DEH_CheckCommandLine();
+#endif
 
     printf ("W_Init: Init WADfiles.\n");
     W_InitMultipleFiles (wadfiles);
 
+#ifdef FEATURE_WAD_MERGE
     p = M_CheckParm("-merge");
 
     if (p > 0)
@@ -1161,6 +1168,7 @@ void D_DoomMain (void)
             W_MergeFile(myargv[p]);
         }
     }
+#endif
     
     IdentifyVersion();
 
