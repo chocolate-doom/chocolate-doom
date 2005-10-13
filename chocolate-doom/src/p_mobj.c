@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/10/13 22:23:55  fraggle
+// Fix logic for lost soul bounce
+//
 // Revision 1.3  2005/07/23 17:46:19  fraggle
 // Import bouncing lost soul fix from prboom
 //
@@ -313,8 +316,20 @@ void P_ZMovement (mobj_t* mo)
 	//  Final Doom and Ultimate Doom.  So we test demo_compatibility *and*
 	//  gamemission. (Note we assume that Doom1 is always Ult Doom, which
 	//  seems to hold for most published demos.)
+        //  
+        //  fraggle - cph got the logic here slightly wrong.  There are three
+        //  versions of Doom 1.9:
+        //
+        //  * The version used in registered doom 1.9 + doom2 - no bounce
+        //  * The version used in ultimate doom - has bounce
+        //  * The version used in final doom - has bounce
+        //
+        // So we need to check that this is either retail or commercial
+        // (but not doom2)
 	
-	int correct_lost_soul_bounce = gamemission != doom2;
+	int correct_lost_soul_bounce 
+            = (gamemode == retail || gamemode == commercial)
+              && gamemission != doom2;
 
 	if (correct_lost_soul_bounce && mo->flags & MF_SKULLFLY)
 	{
