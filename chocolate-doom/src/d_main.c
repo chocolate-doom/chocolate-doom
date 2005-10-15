@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.27  2005/10/15 17:57:47  fraggle
+// Add warning message for WADs with FF_START or SS_START in, suggesting
+// the -merge option.
+//
 // Revision 1.26  2005/10/15 17:38:49  fraggle
 // Print startup banners which have been modified by dehacked.
 //
@@ -1214,7 +1218,7 @@ void D_DoomMain (void)
         }
     }
 #endif
-    
+
     IdentifyVersion();
 
     // Check for -file in shareware
@@ -1297,6 +1301,15 @@ void D_DoomMain (void)
     else if (M_CheckParm("-nonovert"))
         novert = false;
 
+    if (W_CheckNumForName("SS_START") >= 0
+     || W_CheckNumForName("FF_START") >= 0)
+    {
+        printf ("===========================================================================\n");
+        printf(" WARNING: The loaded WAD file contains modified sprites or\n"
+               " floor textures.  You may want to use the '-merge' command\n"
+               " line option instead of '-file'.\n");
+    }
+    
     printf ("===========================================================================\n");
 
     PrintBanner(gamedescription);
