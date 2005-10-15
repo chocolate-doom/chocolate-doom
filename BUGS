@@ -27,3 +27,8 @@
   Doom nonetheless.  Attempting to convert it using the mmus2mid code 
   used in Chocolate Doom results in a crash.
 
+* A small number of Doom bugs are almost impossible to emulate.
+
+  An example of this can be seen in Ledmeister's "Blackbug" demo which 
+  shows a bug that relies on the memory layout of the Doom executable.  
+
