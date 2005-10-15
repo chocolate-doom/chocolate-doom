@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 147 2005-10-02 03:16:29Z fraggle $
+// $Id: i_video.c 193 2005-10-15 15:45:03Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.36  2005/10/15 15:45:03  fraggle
+// Check the return code from SDL_LockSurface to ensure a surface has been
+// properly locked.  Fixes crash when switching applications while running
+// fullscreen.
+//
 // Revision 1.35  2005/10/02 03:16:29  fraggle
 // ENDOOM support using text mode emulation
 //
@@ -147,7 +152,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 147 2005-10-02 03:16:29Z fraggle $";
+rcsid[] = "$Id: i_video.c 193 2005-10-15 15:45:03Z fraggle $";
 
 #include <SDL.h>
 #include <ctype.h>
@@ -541,20 +546,21 @@ static void BlitArea(int x1, int y1, int x2, int y2)
         int y;
         int pitch;
 
-        SDL_LockSurface(screen);
-
-        pitch = screen->pitch;
-        bufp = screens[0] + y1 * SCREENWIDTH + x1;
-        screenp = (byte *) screen->pixels + y1 * pitch + x1;
-
-        for (y=y1; y<y2; ++y)
+        if (SDL_LockSurface(screen) >= 0)
         {
-            memcpy(screenp, bufp, w);
-            screenp += pitch;
-            bufp += SCREENWIDTH;
+            pitch = screen->pitch;
+            bufp = screens[0] + y1 * SCREENWIDTH + x1;
+            screenp = (byte *) screen->pixels + y1 * pitch + x1;
+    
+            for (y=y1; y<y2; ++y)
+            {
+                memcpy(screenp, bufp, w);
+                screenp += pitch;
+                bufp += SCREENWIDTH;
+            }
+    
+            SDL_UnlockSurface(screen);
         }
-
-        SDL_UnlockSurface(screen);
     }
 
     // scales the screen size before blitting it
@@ -565,33 +571,34 @@ static void BlitArea(int x1, int y1, int x2, int y2)
         int x, y;
         int pitch;
 
-        SDL_LockSurface(screen);
-
-        pitch = screen->pitch * 2;
-        bufp = screens[0] + y1 * SCREENWIDTH + x1;
-        screenp = (byte *) screen->pixels + (y1 * pitch) +  (x1 * 2);
-        screenp2 = screenp + screen->pitch;
-
-        for (y=y1; y<y2; ++y)
+        if (SDL_LockSurface(screen) >= 0)
         {
-            byte *sp, *sp2, *bp;
-            sp = screenp;
-            sp2 = screenp2;
-            bp = bufp;
-
-            for (x=x1; x<x2; ++x)
+            pitch = screen->pitch * 2;
+            bufp = screens[0] + y1 * SCREENWIDTH + x1;
+            screenp = (byte *) screen->pixels + (y1 * pitch) +  (x1 * 2);
+            screenp2 = screenp + screen->pitch;
+    
+            for (y=y1; y<y2; ++y)
             {
-                *sp2++ = *bp;
-                *sp2++ = *bp;
-                *sp++ = *bp;
-                *sp++ = *bp++;
+                byte *sp, *sp2, *bp;
+                sp = screenp;
+                sp2 = screenp2;
+                bp = bufp;
+    
+                for (x=x1; x<x2; ++x)
+                {
+                    *sp2++ = *bp;
+                    *sp2++ = *bp;
+                    *sp++ = *bp;
+                    *sp++ = *bp++;
+                }
+                screenp += pitch;
+                screenp2 += pitch;
+                bufp += SCREENWIDTH;
             }
-            screenp += pitch;
-            screenp2 += pitch;
-            bufp += SCREENWIDTH;
+    
+            SDL_UnlockSurface(screen);
         }
-
-        SDL_UnlockSurface(screen);
     }
 }
 
