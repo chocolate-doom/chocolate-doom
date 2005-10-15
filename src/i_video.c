@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 195 2005-10-15 15:59:14Z fraggle $
+// $Id: i_video.c 201 2005-10-15 22:50:57Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.38  2005/10/15 22:50:57  fraggle
+// Fix pink icon on startup
+//
 // Revision 1.37  2005/10/15 15:59:14  fraggle
 // Map mouse buttons correctly.
 //
@@ -155,7 +158,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 195 2005-10-15 15:59:14Z fraggle $";
+rcsid[] = "$Id: i_video.c 201 2005-10-15 22:50:57Z fraggle $";
 
 #include <SDL.h>
 #include <ctype.h>
@@ -856,10 +859,19 @@ void I_InitGraphics(void)
         I_Error("Error setting video mode: %s\n", SDL_GetError());
     }
 
-    // start with a clear black screen
+    // Start with a clear black screen
+    // (screen will be flipped after we set the palette)
+
+    if (SDL_LockSurface(screen) >= 0)
+    {
+        memset(screen->pixels, 0, screen->w * screen->pitch);
+        SDL_UnlockSurface(screen);
+    }
+    
+    // Set the palette
 
     I_SetPalette (W_CacheLumpName ("PLAYPAL",PU_CACHE));
-    SDL_Flip(screen);
+    SDL_SetColors(screen, palette, 0, 256);
 
     // Setup title and icon
 
