@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 190 2005-10-12 21:52:01Z fraggle $
+// $Id: d_main.c 198 2005-10-15 17:38:49Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.26  2005/10/15 17:38:49  fraggle
+// Print startup banners which have been modified by dehacked.
+//
 // Revision 1.25  2005/10/12 21:52:01  fraggle
 // doomfeatures.h to allow certain features to be disabled in the build
 //
@@ -118,7 +121,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 190 2005-10-12 21:52:01Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 198 2005-10-15 17:38:49Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -814,6 +817,29 @@ static char *banners[] =
     "                           ",
 };
 
+// Copyright message banners
+// Some dehacked mods replace these.  These are only displayed if they are 
+// replaced by dehacked.
+
+static char *copyright_banners[] =
+{
+    "===========================================================================\n"
+    "ATTENTION:  This version of DOOM has been modified.  If you would like to\n"
+    "get a copy of the original game, call 1-800-IDGAMES or see the readme file.\n"
+    "        You will not receive technical support for modified games.\n"
+    "                      press enter to continue\n"
+    "===========================================================================\n",
+
+    "===========================================================================\n"
+    "                 Commercial product - do not distribute!\n"
+    "         Please report software piracy to the SPA: 1-800-388-PIR8\n"
+    "===========================================================================\n",
+
+    "===========================================================================\n"
+    "                                Shareware!\n"
+    "===========================================================================\n"
+};
+
 //
 // Get game name: if the startup banner has been replaced, use that.
 // Otherwise, use the name given
@@ -1017,6 +1043,25 @@ void PrintBanner(char *msg)
         putchar(' ');
 
     puts(msg);
+}
+
+// Prints a message only if it has been modified by dehacked.
+
+void PrintDehackedBanners(void)
+{
+    int i;
+
+    for (i=0; i<sizeof(copyright_banners) / sizeof(char *); ++i)
+    {
+        char *deh_s;
+
+        deh_s = DEH_String(copyright_banners[i]);
+
+        if (deh_s != copyright_banners[i])
+        {
+            printf("%s", deh_s);
+        }
+    }
 }
 
 //
@@ -1266,6 +1311,8 @@ void D_DoomMain (void)
 
 	    "===========================================================================\n"
 	);
+
+    PrintDehackedBanners();
 
     printf ("M_Init: Init miscellaneous info.\n");
     M_Init ();
