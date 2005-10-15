@@ -4,6 +4,8 @@
      * Crash when switching applications while running fullscreen
      * Lost soul bounce logic (do not bounce in Registered/Shareware)
      * Mouse buttons mapped incorrectly (button 1 is right, 2 is middle)
+     * Music not pausing when game is paused, when using SDL_mixer's 
+       native MIDI playback.
 
 0.1.0 (2005-10-09):
     Dehacked support

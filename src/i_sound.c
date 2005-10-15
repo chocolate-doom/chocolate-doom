@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.21  2005/10/15 16:58:31  fraggle
+// Fix MIDI music not pausing when using SDL_mixer's native MIDI playback.
+// The SDL_mixer native MIDI code does not pause music properly - use
+// a workaround of setting the volume to 0.
+//
 // Revision 1.20  2005/10/02 20:23:04  fraggle
 // Guard against music lumps containing non-MUS data, document in bugs list
 //
@@ -270,15 +275,6 @@ void I_SetSfxVolume(int volume)
     snd_SfxVolume = volume;
 }
 
-// MUSIC API - dummy. Some code from DOS version.
-void I_SetMusicVolume(int volume)
-{
-    // Internal state variable.
-    snd_MusicVolume = volume;
-
-    Mix_VolumeMusic((volume * MIX_MAX_VOLUME) / 15);
-}
-
 
 //
 // Retrieve the raw data lump index
@@ -505,6 +501,33 @@ void I_ShutdownMusic(void)
 
 static int	looping=0;
 static int	musicdies=-1;
+static boolean  musicpaused = false;
+
+//
+// SDL_mixer's native MIDI music playing does not pause properly.
+// As a workaround, set the volume to 0 when paused.
+//
+
+static void UpdateMusicVolume(void)
+{
+    int vol;
+
+    if (musicpaused)
+        vol = 0;
+    else
+        vol = (snd_MusicVolume * MIX_MAX_VOLUME) / 15;
+
+    Mix_VolumeMusic(vol);
+}
+
+// MUSIC API - dummy. Some code from DOS version.
+void I_SetMusicVolume(int volume)
+{
+    // Internal state variable.
+    snd_MusicVolume = volume;
+
+    UpdateMusicVolume();
+}
 
 void I_PlaySong(void *handle, int looping)
 {
@@ -530,7 +553,9 @@ void I_PauseSong (void *handle)
     if (!music_initialised)
         return;
 
-    Mix_PauseMusic();
+    musicpaused = true;
+
+    UpdateMusicVolume();
 }
 
 void I_ResumeSong (void *handle)
@@ -538,7 +563,9 @@ void I_ResumeSong (void *handle)
     if (!music_initialised)
         return;
 
-    Mix_ResumeMusic();
+    musicpaused = false;
+
+    UpdateMusicVolume();
 }
 
 void I_StopSong(void *handle)
