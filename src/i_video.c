@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 193 2005-10-15 15:45:03Z fraggle $
+// $Id: i_video.c 195 2005-10-15 15:59:14Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.37  2005/10/15 15:59:14  fraggle
+// Map mouse buttons correctly.
+//
 // Revision 1.36  2005/10/15 15:45:03  fraggle
 // Check the return code from SDL_LockSurface to ensure a surface has been
 // properly locked.  Fixes crash when switching applications while running
@@ -152,7 +155,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 193 2005-10-15 15:45:03Z fraggle $";
+rcsid[] = "$Id: i_video.c 195 2005-10-15 15:59:14Z fraggle $";
 
 #include <SDL.h>
 #include <ctype.h>
@@ -406,11 +409,15 @@ static int MouseButtonState(void)
     Uint8 state = SDL_GetMouseState(NULL, NULL);
     int result = 0;
 
+    // Note: button "0" is left, button "1" is right,
+    // button "2" is middle for Doom.  This is different
+    // to how SDL sees things.
+
     if (state & SDL_BUTTON(1))
         result |= 1;
-    if (state & SDL_BUTTON(2))
-        result |= 2;
     if (state & SDL_BUTTON(3))
+        result |= 2;
+    if (state & SDL_BUTTON(2))
         result |= 4;
 
     return result;
