@@ -1,4 +1,9 @@
 
+    Bugs fixed:
+     * Doom 1 skies always using Episode 1 sky
+     * Crash when switching applications while running fullscreen
+     * Lost soul bounce logic (do not bounce in Registered/Shareware)
+
 0.1.0 (2005-10-09):
     Dehacked support
     WAD merging for TCs
