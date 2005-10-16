@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_saveg.h 18 2005-07-23 18:56:07Z fraggle $
+// $Id: p_saveg.h 202 2005-10-16 01:18:10Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -30,7 +30,9 @@
 #ifndef __P_SAVEG__
 #define __P_SAVEG__
 
+// filename to use for a savegame slot
 
+char *P_SaveGameFile(int slot);
 
 
 // Persistent storage/archiving.
@@ -51,6 +53,11 @@ extern byte*		save_p;
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.4  2005/10/16 01:18:10  fraggle
+// Global "configdir" variable with directory to store config files in.
+// Create a function to find the filename for a savegame slot.  Store
+// savegames in the config dir.
+//
 // Revision 1.3  2005/07/23 18:56:07  fraggle
 // Remove unneccessary pragmas
 //

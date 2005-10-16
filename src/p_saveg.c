@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_saveg.c 8 2005-07-23 16:44:57Z fraggle $
+// $Id: p_saveg.c 202 2005-10-16 01:18:10Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/10/16 01:18:10  fraggle
+// Global "configdir" variable with directory to store config files in.
+// Create a function to find the filename for a savegame slot.  Store
+// savegames in the config dir.
+//
 // Revision 1.2  2005/07/23 16:44:56  fraggle
 // Update copyright to GNU GPL
 //
@@ -35,8 +40,10 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_saveg.c 8 2005-07-23 16:44:57Z fraggle $";
+rcsid[] = "$Id: p_saveg.c 202 2005-10-16 01:18:10Z fraggle $";
 
+#include "dstrings.h"
+#include "deh_main.h"
 #include "i_system.h"
 #include "z_zone.h"
 #include "p_local.h"
@@ -52,6 +59,18 @@ byte*		save_p;
 //  so that the load/save works on SGI&Gecko.
 #define PADSAVEP()	save_p += (4 - ((int) save_p & 3)) & 3
 
+
+char *P_SaveGameFile(int slot)
+{
+    static char filename[256];
+    char basename[32];
+
+    sprintf(basename, DEH_String(SAVEGAMENAME "%d.dsg"), slot);
+
+    sprintf(filename, "%s%s", configdir, basename);
+
+    return filename;
+}
 
 
 //

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: doomstat.h 98 2005-09-11 20:25:56Z fraggle $
+// $Id: doomstat.h 202 2005-10-16 01:18:10Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -244,6 +244,7 @@ extern  int		maxammo[NUMAMMO];
 //
 
 // File handling stuff.
+extern  char *          configdir;
 extern	char		basedefault[1024];
 extern  FILE*		debugfile;
 
@@ -295,6 +296,11 @@ extern	int		ticdup;
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.8  2005/10/16 01:18:10  fraggle
+// Global "configdir" variable with directory to store config files in.
+// Create a function to find the filename for a savegame slot.  Store
+// savegames in the config dir.
+//
 // Revision 1.7  2005/09/11 20:25:56  fraggle
 // Second configuration file to allow chocolate doom-specific settings.
 // Adjust some existing command line logic (for graphics settings and
