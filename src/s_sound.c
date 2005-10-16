@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: s_sound.c 169 2005-10-08 18:34:12Z fraggle $
+// $Id: s_sound.c 203 2005-10-16 16:16:03Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.9  2005/10/16 16:16:03  fraggle
+// Set the default number of channels to a more sensible 8
+//
 // Revision 1.8  2005/10/08 18:34:12  fraggle
 // Print startup message to stdout, not stderr
 //
@@ -58,7 +61,7 @@
 
 
 static const char
-rcsid[] = "$Id: s_sound.c 169 2005-10-08 18:34:12Z fraggle $";
+rcsid[] = "$Id: s_sound.c 203 2005-10-16 16:16:03Z fraggle $";
 
 
 
@@ -163,7 +166,7 @@ static musicinfo_t*	mus_playing=0;
 //  by the defaults code in M_misc:
 // number of channels available
 
-int			numChannels = 3;
+int			numChannels = 8;
 
 static int		nextcleanup;
 
