@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.28  2005/10/16 01:18:10  fraggle
+// Global "configdir" variable with directory to store config files in.
+// Create a function to find the filename for a savegame slot.  Store
+// savegames in the config dir.
+//
 // Revision 1.27  2005/10/15 17:57:47  fraggle
 // Add warning message for WADs with FF_START or SS_START in, suggesting
 // the -merge option.
@@ -166,6 +171,7 @@ static const char rcsid[] = "$Id$";
 #include "m_argv.h"
 #include "m_misc.h"
 #include "m_menu.h"
+#include "p_saveg.h"
 
 #include "i_system.h"
 #include "i_sound.h"
@@ -195,9 +201,15 @@ static const char rcsid[] = "$Id$";
 //
 void D_DoomLoop (void);
 
+// Location where all configuration data is stored - 
+// default.cfg, savegames, etc.
 
-char*           iwadfile;
-char*		wadfiles[MAXWADFILES];
+char *          configdir;
+
+// location of IWAD and WAD files
+
+char *          iwadfile;
+char *          wadfiles[MAXWADFILES];
 
 
 boolean		devparm;	// started game with -devparm
@@ -550,7 +562,7 @@ void D_AdvanceDemo (void)
 // This cycles through the demo sequences.
 // FIXME - version dependend demo numbers?
 //
- void D_DoAdvanceDemo (void)
+void D_DoAdvanceDemo (void)
 {
     players[consoleplayer].playerstate = PST_LIVE;  // not reborn
     advancedemo = false;
@@ -1068,6 +1080,42 @@ void PrintDehackedBanners(void)
     }
 }
 
+// 
+// SetConfigDir:
+//
+// Sets the location of the configuration directory, where configuration
+// files are stored - default.cfg, chocolate-doom.cfg, savegames, etc.
+//
+
+static void SetConfigDir(void)
+{
+    char *homedir;
+    int i;
+
+    homedir = getenv("HOME");
+
+    if (homedir != NULL)
+    {
+        // put all configuration in a config directory off the
+        // homedir
+
+        configdir = malloc(strlen(homedir) + strlen(PACKAGE_TARNAME) + 5);
+
+        sprintf(configdir, "%s/.%s/", homedir, PACKAGE_TARNAME);
+
+        // make the directory if it doesnt already exist
+#ifdef _WIN32
+        mkdir(configdir);
+#else
+        mkdir(configdir, 0755);
+#endif
+    }
+    else
+    {
+        configdir = strdup("");
+    }
+}
+
 //
 // D_DoomMain
 //
@@ -1112,6 +1160,10 @@ void D_DoomMain (void)
 	strcpy (basedefault,"c:/doomdata/default.cfg");
     }
 #endif     
+
+    // find which dir to use for config files
+
+    SetConfigDir();
     
     // turbo option
     if ( (p=M_CheckParm ("-turbo")) )
@@ -1378,10 +1430,14 @@ void D_DoomMain (void)
     p = M_CheckParm ("-loadgame");
     if (p && p < myargc-1)
     {
+#if 0
+        // -cdrom currently broken
 	if (M_CheckParm("-cdrom"))
 	    sprintf(file, "c:\\doomdata\\"SAVEGAMENAME"%c.dsg",myargv[p+1][0]);
 	else
-	    sprintf(file, SAVEGAMENAME"%c.dsg",myargv[p+1][0]);
+#endif
+
+        strcpy(file, P_SaveGameFile(atoi(myargv[p+1])));
 	G_LoadGame (file);
     }
 	

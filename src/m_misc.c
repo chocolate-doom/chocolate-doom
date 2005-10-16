@@ -23,6 +23,11 @@
 //
 //
 // $Log$
+// Revision 1.13  2005/10/16 01:18:10  fraggle
+// Global "configdir" variable with directory to store config files in.
+// Create a function to find the filename for a savegame slot.  Store
+// savegames in the config dir.
+//
 // Revision 1.12  2005/09/17 20:50:46  fraggle
 // Mouse acceleration code to emulate old DOS drivers
 //
@@ -586,33 +591,9 @@ void M_SaveDefaults (void)
 
 void M_LoadDefaults (void)
 {
-    char *config_dir;
     char *homedir;
     int i;
-
-    homedir = getenv("HOME");
-
-    if (homedir != NULL)
-    {
-        // put all configuration in a config directory off the
-        // homedir
-
-        config_dir = malloc(strlen(homedir) + strlen(PACKAGE_TARNAME) + 5);
-
-        sprintf(config_dir, "%s/.%s/", homedir, PACKAGE_TARNAME);
-
-        // make the directory if it doesnt already exist
-#ifdef _WIN32
-        mkdir(config_dir);
-#else
-        mkdir(config_dir, 0755);
-#endif
-    }
-    else
-    {
-        config_dir = strdup("");
-    }
-
+ 
     // check for a custom default file
     i = M_CheckParm ("-config");
 
@@ -623,8 +604,8 @@ void M_LoadDefaults (void)
     }
     else
     {
-        doom_defaults.filename = malloc(strlen(config_dir) + 10);
-        sprintf(doom_defaults.filename, "%sdefault.cfg", config_dir);
+        doom_defaults.filename = malloc(strlen(configdir) + 10);
+        sprintf(doom_defaults.filename, "%sdefault.cfg", configdir);
     }
 
     printf("saving config in %s\n", doom_defaults.filename);
@@ -640,15 +621,13 @@ void M_LoadDefaults (void)
     else
     {
         extra_defaults.filename 
-            = malloc(strlen(config_dir) + strlen(PACKAGE_TARNAME) + 10);
+            = malloc(strlen(configdir) + strlen(PACKAGE_TARNAME) + 10);
         sprintf(extra_defaults.filename, "%s%s.cfg", 
-                config_dir, PACKAGE_TARNAME);
+                configdir, PACKAGE_TARNAME);
     }
 
     LoadDefaultCollection(&doom_defaults);
     LoadDefaultCollection(&extra_defaults);
-
-    free(config_dir);
 }
 
 
