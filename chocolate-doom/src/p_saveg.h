@@ -30,7 +30,9 @@
 #ifndef __P_SAVEG__
 #define __P_SAVEG__
 
+// filename to use for a savegame slot
 
+char *P_SaveGameFile(int slot);
 
 
 // Persistent storage/archiving.
@@ -51,6 +53,11 @@ extern byte*		save_p;
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.4  2005/10/16 01:18:10  fraggle
+// Global "configdir" variable with directory to store config files in.
+// Create a function to find the filename for a savegame slot.  Store
+// savegames in the config dir.
+//
 // Revision 1.3  2005/07/23 18:56:07  fraggle
 // Remove unneccessary pragmas
 //
