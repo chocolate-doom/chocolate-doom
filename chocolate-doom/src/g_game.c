@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.15  2005/10/16 20:55:50  fraggle
+// Fix the '-cdrom' command-line option.
+//
 // Revision 1.14  2005/10/16 01:18:10  fraggle
 // Global "configdir" variable with directory to store config files in.
 // Create a function to find the filename for a savegame slot.  Store
@@ -1372,13 +1375,6 @@ void G_DoSaveGame (void)
     int		length; 
     int		i; 
 	
-#if 0
-    // -cdrom currently broken
-    if (M_CheckParm("-cdrom"))
-	sprintf(name,"c:\\doomdata\\"SAVEGAMENAME"%d.dsg",savegameslot);
-    else
-#endif
-
     strcpy(name, P_SaveGameFile(savegameslot));
 
     description = savedescription; 

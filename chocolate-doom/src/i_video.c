@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.39  2005/10/16 20:55:50  fraggle
+// Fix the '-cdrom' command-line option.
+//
 // Revision 1.38  2005/10/15 22:50:57  fraggle
 // Fix pink icon on startup
 //
@@ -285,7 +288,10 @@ static void LoadDiskImage(void)
     patch_t *disk;
     int y;
 
-    disk = (patch_t *) W_CacheLumpName("STDISK", PU_STATIC);
+    if (M_CheckParm("-cdrom") > 0)
+        disk = (patch_t *) W_CacheLumpName("STCDROM", PU_STATIC);
+    else
+        disk = (patch_t *) W_CacheLumpName("STDISK", PU_STATIC);
 
     V_DrawPatch(0, 0, 0, disk);
     disk_image_w = SHORT(disk->width);
