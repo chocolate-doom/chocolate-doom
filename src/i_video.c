@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 201 2005-10-15 22:50:57Z fraggle $
+// $Id: i_video.c 204 2005-10-16 20:55:50Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.39  2005/10/16 20:55:50  fraggle
+// Fix the '-cdrom' command-line option.
+//
 // Revision 1.38  2005/10/15 22:50:57  fraggle
 // Fix pink icon on startup
 //
@@ -158,7 +161,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 201 2005-10-15 22:50:57Z fraggle $";
+rcsid[] = "$Id: i_video.c 204 2005-10-16 20:55:50Z fraggle $";
 
 #include <SDL.h>
 #include <ctype.h>
@@ -285,7 +288,10 @@ static void LoadDiskImage(void)
     patch_t *disk;
     int y;
 
-    disk = (patch_t *) W_CacheLumpName("STDISK", PU_STATIC);
+    if (M_CheckParm("-cdrom") > 0)
+        disk = (patch_t *) W_CacheLumpName("STCDROM", PU_STATIC);
+    else
+        disk = (patch_t *) W_CacheLumpName("STDISK", PU_STATIC);
 
     V_DrawPatch(0, 0, 0, disk);
     disk_image_w = SHORT(disk->width);

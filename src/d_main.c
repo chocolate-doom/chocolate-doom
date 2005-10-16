@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 202 2005-10-16 01:18:10Z fraggle $
+// $Id: d_main.c 204 2005-10-16 20:55:50Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.29  2005/10/16 20:55:50  fraggle
+// Fix the '-cdrom' command-line option.
+//
 // Revision 1.28  2005/10/16 01:18:10  fraggle
 // Global "configdir" variable with directory to store config files in.
 // Create a function to find the filename for a savegame slot.  Store
@@ -130,7 +133,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 202 2005-10-16 01:18:10Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 204 2005-10-16 20:55:50Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -1112,7 +1115,20 @@ static void SetConfigDir(void)
     }
     else
     {
-        configdir = strdup("");
+#ifdef _WIN32
+        // when given the -cdrom option, save config+savegames in 
+        // c:\doomdata.  This only applies under Windows.
+
+        if (M_CheckParm("-cdrom") > 0)
+        {
+            printf(D_CDROM);
+            configdir = strdup("c:\\doomdata\\");
+        }
+        else
+#endif
+        {
+            configdir = strdup("");
+        }
     }
 }
 
@@ -1147,20 +1163,6 @@ void D_DoomMain (void)
     if (devparm)
 	printf(D_DEVSTR);
     
-#if 0
-    // BROKEN: -cdrom option
-    if (M_CheckParm("-cdrom"))
-    {
-	printf(D_CDROM);
-#ifdef _WIN32
-        mkdir("c:\\doomdata");
-#else
-	mkdir("c:\\doomdata",0);
-#endif
-	strcpy (basedefault,"c:/doomdata/default.cfg");
-    }
-#endif     
-
     // find which dir to use for config files
 
     SetConfigDir();
@@ -1430,13 +1432,6 @@ void D_DoomMain (void)
     p = M_CheckParm ("-loadgame");
     if (p && p < myargc-1)
     {
-#if 0
-        // -cdrom currently broken
-	if (M_CheckParm("-cdrom"))
-	    sprintf(file, "c:\\doomdata\\"SAVEGAMENAME"%c.dsg",myargv[p+1][0]);
-	else
-#endif
-
         strcpy(file, P_SaveGameFile(atoi(myargv[p+1])));
 	G_LoadGame (file);
     }

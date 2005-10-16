@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_menu.c 202 2005-10-16 01:18:10Z fraggle $
+// $Id: m_menu.c 204 2005-10-16 20:55:50Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.10  2005/10/16 20:55:50  fraggle
+// Fix the '-cdrom' command-line option.
+//
 // Revision 1.9  2005/10/16 01:18:10  fraggle
 // Global "configdir" variable with directory to store config files in.
 // Create a function to find the filename for a savegame slot.  Store
@@ -62,7 +65,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_menu.c 202 2005-10-16 01:18:10Z fraggle $";
+rcsid[] = "$Id: m_menu.c 204 2005-10-16 20:55:50Z fraggle $";
 
 #include <stdlib.h>
 #include <ctype.h>
@@ -555,12 +558,6 @@ void M_ReadSaveStrings(void)
 	
     for (i = 0;i < load_end;i++)
     {
-#if 0
-        // -cdrom currently broken
-	if (M_CheckParm("-cdrom"))
-	    sprintf(name,"c:\\doomdata\\"SAVEGAMENAME"%d.dsg",i);
-	else
-#endif
         strcpy(name, P_SaveGameFile(i));
 
 	handle = fopen(name, "rb");
@@ -621,11 +618,6 @@ void M_LoadSelect(int choice)
 {
     char    name[256];
 	
-#if 0
-    if (M_CheckParm("-cdrom"))
-	sprintf(name,"c:\\doomdata\\"SAVEGAMENAME"%d.dsg",choice);
-    else
-#endif
     strcpy(name, P_SaveGameFile(choice));
 
     G_LoadGame (name);
