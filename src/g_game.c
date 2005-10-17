@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.16  2005/10/17 20:27:05  fraggle
+// Start of Dehacked 'Misc' section support.  Initial Health+Bullets,
+// and bfg cells/shot are supported.
+//
 // Revision 1.15  2005/10/16 20:55:50  fraggle
 // Fix the '-cdrom' command-line option.
 //
@@ -94,6 +98,7 @@ rcsid[] = "$Id$";
 #include "doomstat.h"
 
 #include "deh_main.h"
+#include "deh_misc.h"
 
 #include "z_zone.h"
 #include "f_finale.h"
@@ -924,11 +929,11 @@ void G_PlayerReborn (int player)
  
     p->usedown = p->attackdown = true;	// don't do anything immediately 
     p->playerstate = PST_LIVE;       
-    p->health = MAXHEALTH; 
+    p->health = deh_initial_health;     // Use dehacked value
     p->readyweapon = p->pendingweapon = wp_pistol; 
     p->weaponowned[wp_fist] = true; 
     p->weaponowned[wp_pistol] = true; 
-    p->ammo[am_clip] = 50; 
+    p->ammo[am_clip] = deh_initial_bullets; 
 	 
     for (i=0 ; i<NUMAMMO ; i++) 
 	p->maxammo[i] = maxammo[i]; 
