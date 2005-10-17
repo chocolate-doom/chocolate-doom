@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2005/10/17 22:07:26  fraggle
+// Fix "Monsters Infight"
+//
 // Revision 1.1  2005/10/17 20:27:05  fraggle
 // Start of Dehacked 'Misc' section support.  Initial Health+Bullets,
 // and bfg cells/shot are supported.
@@ -56,7 +59,7 @@ extern int deh_idfa_armor_class;
 extern int deh_idkfa_armor;                
 extern int deh_idkfa_armor_class;          
 extern int deh_bfg_cells_per_shot;         
-extern int deh_monsters_infight;           
+extern int deh_species_infighting;           
 
 #endif /* #ifndef DEH_MISC_H */
 
