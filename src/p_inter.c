@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/10/17 20:49:42  fraggle
+// Add dehacked "Misc" implementations for max armor+health, blue+green
+// armor classes
+//
 // Revision 1.4  2005/10/03 21:39:39  fraggle
 // Dehacked text substitutions
 //
@@ -51,6 +55,7 @@ rcsid[] = "$Id$";
 #include "sounds.h"
 
 #include "deh_main.h"
+#include "deh_misc.h"
 #include "doomstat.h"
 
 #include "m_random.h"
@@ -247,12 +252,12 @@ P_GiveBody
 ( player_t*	player,
   int		num )
 {
-    if (player->health >= MAXHEALTH)
+    if (player->health >= deh_max_health)
 	return false;
 		
     player->health += num;
-    if (player->health > MAXHEALTH)
-	player->health = MAXHEALTH;
+    if (player->health > deh_max_health)
+	player->health = deh_max_health;
     player->mo->health = player->health;
 	
     return true;
@@ -385,13 +390,13 @@ P_TouchSpecialThing
     {
 	// armor
       case SPR_ARM1:
-	if (!P_GiveArmor (player, 1))
+	if (!P_GiveArmor (player, deh_green_armor_class))
 	    return;
 	player->message = DEH_String(GOTARMOR);
 	break;
 		
       case SPR_ARM2:
-	if (!P_GiveArmor (player, 2))
+	if (!P_GiveArmor (player, deh_blue_armor_class))
 	    return;
 	player->message = DEH_String(GOTMEGA);
 	break;
@@ -407,10 +412,10 @@ P_TouchSpecialThing
 	
       case SPR_BON2:
 	player->armorpoints++;		// can go over 100%
-	if (player->armorpoints > 200)
-	    player->armorpoints = 200;
+	if (player->armorpoints > deh_max_armor)
+	    player->armorpoints = deh_max_armor;
 	if (!player->armortype)
-	    player->armortype = 1;
+	    player->armortype = deh_green_armor_class;
 	player->message = DEH_String(GOTARMBONUS);
 	break;
 	
@@ -428,7 +433,7 @@ P_TouchSpecialThing
 	    return;
 	player->health = 200;
 	player->mo->health = player->health;
-	P_GiveArmor (player,2);
+	P_GiveArmor (player, deh_blue_armor_class);
 	player->message = DEH_String(GOTMSPHERE);
 	sound = sfx_getpow;
 	break;
