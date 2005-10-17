@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_misc.c 206 2005-10-17 20:27:05Z fraggle $
+// $Id: deh_misc.c 207 2005-10-17 20:49:42Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/10/17 20:49:42  fraggle
+// Add dehacked "Misc" implementations for max armor+health, blue+green
+// armor classes
+//
 // Revision 1.3  2005/10/17 20:27:05  fraggle
 // Start of Dehacked 'Misc' section support.  Initial Health+Bullets,
 // and bfg cells/shot are supported.
@@ -47,12 +51,50 @@
 #include "deh_io.h"
 #include "deh_main.h"
 
+// Dehacked: "Initial Health" 
+// This is the initial health a player has when starting anew.
+// See G_PlayerReborn in g_game.c
+
 int deh_initial_health = 100;
+
+// Dehacked: "Initial bullets"
+// This is the number of bullets the player has when starting anew.
+// See G_PlayerReborn in g_game.c
+
 int deh_initial_bullets = 50;
-int deh_max_health;                 // TODO
-int deh_max_armor;                  // TODO
-int deh_green_armor_class;          // TODO
-int deh_blue_armor_class;           // TODO
+
+// Dehacked: "Max Health"
+// This is the maximum health that can be reached using medikits 
+// alone.  See P_GiveBody in p_inter.c
+
+int deh_max_health = 100;
+
+// Dehacked: "Max Armor"
+// This is the maximum armor which can be reached by picking up
+// armor helmets. See P_TouchSpecialThing in p_inter.c
+
+int deh_max_armor = 200;
+
+// Dehacked: "Green Armor Class"
+// This is the armor class that is given when picking up the green 
+// armor or an armor helmet. See P_TouchSpecialThing in p_inter.c
+//
+// Question: Does DOS dehacked modify the armor helmet behavior 
+// as well as the green armor behavior?  I am currently following
+// the Boom behavior, which is "yes".
+
+int deh_green_armor_class = 1;
+
+// Dehacked: "Blue Armor Class"
+// This is the armor class that is given when picking up the blue 
+// armor or a megasphere. See P_TouchSpecialThing in p_inter.c
+//
+// Question: Does DOS dehacked modify the megasphere behavior 
+// as well as the blue armor behavior?  I am currently following
+// the Boom behavior, which is "yes".
+
+int deh_blue_armor_class = 2;
+
 int deh_max_soulsphere;             // TODO
 int deh_soulsphere_health;          // TODO
 int deh_megasphere_health;          // TODO
@@ -61,7 +103,13 @@ int deh_idfa_armor;                 // TODO
 int deh_idfa_armor_class;           // TODO
 int deh_idkfa_armor;                // TODO
 int deh_idkfa_armor_class;          // TODO
+
+// Dehacked: "BFG Cells/Shot"
+// This is the number of CELLs firing the BFG uses up.
+// See P_CheckAmmo and A_FireBFG in p_pspr.c
+
 int deh_bfg_cells_per_shot = 40;
+
 int deh_monsters_infight;           // TODO
 
 static struct
@@ -72,10 +120,10 @@ static struct
 } misc_settings[] = {
     {"Initial Health",      &deh_initial_health,        true},
     {"Initial Bullets",     &deh_initial_bullets,       true},
-    {"Max Health",          &deh_max_health},
-    {"Max Armor",           &deh_max_armor},
-    {"Green Armor Class",   &deh_green_armor_class},
-    {"Blue Armor Class",    &deh_blue_armor_class},
+    {"Max Health",          &deh_max_health,            true},
+    {"Max Armor",           &deh_max_armor,             true},
+    {"Green Armor Class",   &deh_green_armor_class,     true},
+    {"Blue Armor Class",    &deh_blue_armor_class,      true},
     {"Max Soulsphere",      &deh_max_soulsphere},
     {"Soulsphere Health",   &deh_soulsphere_health},
     {"Megasphere Health",   &deh_megasphere_health},
