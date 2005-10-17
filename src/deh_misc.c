@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2005/10/17 21:09:01  fraggle
+// Dehacked Misc support: Controls for the armor and armor class set when
+// using the ammo cheats.
+//
 // Revision 1.5  2005/10/17 21:02:57  fraggle
 // Dehacked Misc support: Max soulsphere, Soulsphere+Megasphere health bonus
 // values, God mode health value
@@ -119,14 +123,33 @@ int deh_megasphere_health = 200;
 
 // Dehacked: "God mode health"
 // This is what the health value is set to when cheating using
-// the IDDQD god mode cheat.
+// the IDDQD god mode cheat.  See ST_Responder in st_stuff.c
 
 int deh_god_mode_health = 100;
 
-int deh_idfa_armor;                 // TODO
-int deh_idfa_armor_class;           // TODO
-int deh_idkfa_armor;                // TODO
-int deh_idkfa_armor_class;          // TODO
+// Dehacked: "IDFA Armor"
+// This is what the armor is set to when using the IDFA cheat.
+// See ST_Responder in st_stuff.c
+
+int deh_idfa_armor = 200;
+
+// Dehacked: "IDFA Armor Class"
+// This is what the armor class is set to when using the IDFA cheat.
+// See ST_Responder in st_stuff.c
+
+int deh_idfa_armor_class = 2;
+
+// Dehacked: "IDKFA Armor"
+// This is what the armor is set to when using the IDKFA cheat.
+// See ST_Responder in st_stuff.c
+
+int deh_idkfa_armor = 200;
+
+// Dehacked: "IDKFA Armor Class"
+// This is what the armor class is set to when using the IDKFA cheat.
+// See ST_Responder in st_stuff.c
+
+int deh_idkfa_armor_class = 2;
 
 // Dehacked: "BFG Cells/Shot"
 // This is the number of CELLs firing the BFG uses up.
@@ -152,10 +175,10 @@ static struct
     {"Soulsphere Health",   &deh_soulsphere_health,     true},
     {"Megasphere Health",   &deh_megasphere_health,     true},
     {"God Mode Health",     &deh_god_mode_health,       true},
-    {"IDFA Armor",          &deh_idfa_armor},
-    {"IDFA Armor Class",    &deh_idfa_armor_class},
-    {"IDKFA Armor",         &deh_idkfa_armor},
-    {"IDKFA Armor Class",   &deh_idkfa_armor_class},
+    {"IDFA Armor",          &deh_idfa_armor,            true},
+    {"IDFA Armor Class",    &deh_idfa_armor_class,      true},
+    {"IDKFA Armor",         &deh_idkfa_armor,           true},
+    {"IDKFA Armor Class",   &deh_idkfa_armor_class,     true},
     {"BFG Cells/Shot",      &deh_bfg_cells_per_shot,    true},
     {"Monsters Infight",    &deh_monsters_infight},
 };

@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.9  2005/10/17 21:09:01  fraggle
+// Dehacked Misc support: Controls for the armor and armor class set when
+// using the ammo cheats.
+//
 // Revision 1.8  2005/10/17 21:02:57  fraggle
 // Dehacked Misc support: Max soulsphere, Soulsphere+Megasphere health bonus
 // values, God mode health value
@@ -522,8 +526,8 @@ ST_Responder (event_t* ev)
       // 'fa' cheat for killer fucking arsenal
       else if (cht_CheckCheat(&cheat_ammonokey, ev->data1))
       {
-	plyr->armorpoints = 200;
-	plyr->armortype = 2;
+	plyr->armorpoints = deh_idfa_armor;
+	plyr->armortype = deh_idfa_armor_class;
 	
 	for (i=0;i<NUMWEAPONS;i++)
 	  plyr->weaponowned[i] = true;
@@ -536,8 +540,8 @@ ST_Responder (event_t* ev)
       // 'kfa' cheat for key full ammo
       else if (cht_CheckCheat(&cheat_ammo, ev->data1))
       {
-	plyr->armorpoints = 200;
-	plyr->armortype = 2;
+	plyr->armorpoints = deh_idkfa_armor;
+	plyr->armortype = deh_idkfa_armor_class;
 	
 	for (i=0;i<NUMWEAPONS;i++)
 	  plyr->weaponowned[i] = true;
