@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.8  2005/10/17 23:16:09  fraggle
+// Add a "loading" message for each dehacked patch we load, to be orthogonal
+// to the WAD loading code
+//
 // Revision 1.7  2005/10/17 21:14:31  fraggle
 // Ignore comments in dehacked files.
 //
@@ -335,6 +339,7 @@ void DEH_CheckCommandLine(void)
 
     if (argc > 0)
     {
+        printf(" loading %s\n", myargv[argc+1]);
         DEH_ParseFile(myargv[argc+1]);
     }
 }
