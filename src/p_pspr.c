@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_pspr.c 8 2005-07-23 16:44:57Z fraggle $
+// $Id: p_pspr.c 206 2005-10-17 20:27:05Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/10/17 20:27:05  fraggle
+// Start of Dehacked 'Misc' section support.  Initial Health+Bullets,
+// and bfg cells/shot are supported.
+//
 // Revision 1.2  2005/07/23 16:44:56  fraggle
 // Update copyright to GNU GPL
 //
@@ -36,11 +40,12 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_pspr.c 8 2005-07-23 16:44:57Z fraggle $";
+rcsid[] = "$Id: p_pspr.c 206 2005-10-17 20:27:05Z fraggle $";
 
 #include "doomdef.h"
 #include "d_event.h"
 
+#include "deh_misc.h"
 
 #include "m_random.h"
 #include "p_local.h"
@@ -60,9 +65,6 @@ rcsid[] = "$Id: p_pspr.c 8 2005-07-23 16:44:57Z fraggle $";
 #define WEAPONBOTTOM	128*FRACUNIT
 #define WEAPONTOP		32*FRACUNIT
 
-
-// plasma cells for a bfg attack
-#define BFGCELLS		40		
 
 
 //
@@ -180,7 +182,7 @@ boolean P_CheckAmmo (player_t* player)
 
     // Minimal amount for one shot varies.
     if (player->readyweapon == wp_bfg)
-	count = BFGCELLS;
+	count = deh_bfg_cells_per_shot;
     else if (player->readyweapon == wp_supershotgun)
 	count = 2;	// Double barrel.
     else
@@ -578,7 +580,7 @@ A_FireBFG
 ( player_t*	player,
   pspdef_t*	psp ) 
 {
-    player->ammo[weaponinfo[player->readyweapon].ammo] -= BFGCELLS;
+    player->ammo[weaponinfo[player->readyweapon].ammo] -= deh_bfg_cells_per_shot;
     P_SpawnPlayerMissile (player->mo, MT_BFG);
 }
 
