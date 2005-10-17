@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_misc.c 209 2005-10-17 21:09:01Z fraggle $
+// $Id: deh_misc.c 211 2005-10-17 21:20:27Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.7  2005/10/17 21:20:27  fraggle
+// Add note that the "Monsters Infight" setting is not supported.
+//
 // Revision 1.6  2005/10/17 21:09:01  fraggle
 // Dehacked Misc support: Controls for the armor and armor class set when
 // using the ammo cheats.
@@ -58,6 +61,7 @@
 #include "deh_defs.h"
 #include "deh_io.h"
 #include "deh_main.h"
+#include "deh_misc.h"
 
 // Dehacked: "Initial Health" 
 // This is the initial health a player has when starting anew.
@@ -157,30 +161,34 @@ int deh_idkfa_armor_class = 2;
 
 int deh_bfg_cells_per_shot = 40;
 
-int deh_monsters_infight;           // TODO
+// BROKEN:
+// Dehacked: "Monsters infight"
+// This presumably controls monster infighting.  However, it is not clear
+// what the values here are supposed to be.  In dehacked, this appears 
+// off by default, and turning it on sets the value of this to "221".
+
+//int deh_monsters_infight;
 
 static struct
 {
     char *deh_name;
     int *value;
-    boolean functional;
 } misc_settings[] = {
-    {"Initial Health",      &deh_initial_health,        true},
-    {"Initial Bullets",     &deh_initial_bullets,       true},
-    {"Max Health",          &deh_max_health,            true},
-    {"Max Armor",           &deh_max_armor,             true},
-    {"Green Armor Class",   &deh_green_armor_class,     true},
-    {"Blue Armor Class",    &deh_blue_armor_class,      true},
-    {"Max Soulsphere",      &deh_max_soulsphere,        true},
-    {"Soulsphere Health",   &deh_soulsphere_health,     true},
-    {"Megasphere Health",   &deh_megasphere_health,     true},
-    {"God Mode Health",     &deh_god_mode_health,       true},
-    {"IDFA Armor",          &deh_idfa_armor,            true},
-    {"IDFA Armor Class",    &deh_idfa_armor_class,      true},
-    {"IDKFA Armor",         &deh_idkfa_armor,           true},
-    {"IDKFA Armor Class",   &deh_idkfa_armor_class,     true},
-    {"BFG Cells/Shot",      &deh_bfg_cells_per_shot,    true},
-    {"Monsters Infight",    &deh_monsters_infight},
+    {"Initial Health",      &deh_initial_health},
+    {"Initial Bullets",     &deh_initial_bullets},
+    {"Max Health",          &deh_max_health},
+    {"Max Armor",           &deh_max_armor},
+    {"Green Armor Class",   &deh_green_armor_class},
+    {"Blue Armor Class",    &deh_blue_armor_class},
+    {"Max Soulsphere",      &deh_max_soulsphere},
+    {"Soulsphere Health",   &deh_soulsphere_health},
+    {"Megasphere Health",   &deh_megasphere_health},
+    {"God Mode Health",     &deh_god_mode_health},
+    {"IDFA Armor",          &deh_idfa_armor},
+    {"IDFA Armor Class",    &deh_idfa_armor_class},
+    {"IDKFA Armor",         &deh_idkfa_armor},
+    {"IDKFA Armor Class",   &deh_idkfa_armor_class},
+    {"BFG Cells/Shot",      &deh_bfg_cells_per_shot},
 };
 
 static void *DEH_MiscStart(deh_context_t *context, char *line)
@@ -202,18 +210,22 @@ static void DEH_MiscParseLine(deh_context_t *context, char *line, void *tag)
         return;
     }
 
+    // Monsters infighting does not work
+
+    if (!strcasecmp(variable_name, "Monsters Infight"))
+    {
+        // See notes above.
+ 
+        DEH_Warning(context, "The Misc setting 'Monsters Infight' is not supported.");
+        return;
+    }
+
     ivalue = atoi(value);
 
     for (i=0; i<sizeof(misc_settings) / sizeof(*misc_settings); ++i)
     {
         if (!strcasecmp(variable_name, misc_settings[i].deh_name))
         {
-            if (!misc_settings[i].functional)
-            {
-                DEH_Warning(context, "Misc variable '%s' is not yet functional",
-                            variable_name);
-            }
-            
             *misc_settings[i].value = ivalue;
             return;
         }
