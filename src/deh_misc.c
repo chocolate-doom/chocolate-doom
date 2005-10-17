@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_misc.c 211 2005-10-17 21:20:27Z fraggle $
+// $Id: deh_misc.c 212 2005-10-17 22:07:26Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.8  2005/10/17 22:07:25  fraggle
+// Fix "Monsters Infight"
+//
 // Revision 1.7  2005/10/17 21:20:27  fraggle
 // Add note that the "Monsters Infight" setting is not supported.
 //
@@ -161,13 +164,15 @@ int deh_idkfa_armor_class = 2;
 
 int deh_bfg_cells_per_shot = 40;
 
-// BROKEN:
 // Dehacked: "Monsters infight"
-// This presumably controls monster infighting.  However, it is not clear
-// what the values here are supposed to be.  In dehacked, this appears 
-// off by default, and turning it on sets the value of this to "221".
+// This controls whether monsters can harm other monsters of the same 
+// species.  For example, whether an imp fireball will damage other
+// imps.  The value of this in dehacked patches is weird - '202' means
+// off, while '221' means on.
+//
+// See PIT_CheckThing in p_map.c
 
-//int deh_monsters_infight;
+int deh_species_infighting = 0;
 
 static struct
 {
@@ -210,17 +215,28 @@ static void DEH_MiscParseLine(deh_context_t *context, char *line, void *tag)
         return;
     }
 
-    // Monsters infighting does not work
+    ivalue = atoi(value);
 
     if (!strcasecmp(variable_name, "Monsters Infight"))
     {
         // See notes above.
  
-        DEH_Warning(context, "The Misc setting 'Monsters Infight' is not supported.");
+        if (ivalue == 202)
+        {
+            deh_species_infighting = 0;
+        }
+        else if (ivalue == 221)
+        {
+            deh_species_infighting = 1;
+        }
+        else
+        {
+            DEH_Warning(context, 
+                        "Invalid value for 'Monsters Infight': %i", ivalue);
+        }
+        
         return;
     }
-
-    ivalue = atoi(value);
 
     for (i=0; i<sizeof(misc_settings) / sizeof(*misc_settings); ++i)
     {

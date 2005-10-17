@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_map.c 8 2005-07-23 16:44:57Z fraggle $
+// $Id: p_map.c 212 2005-10-17 22:07:26Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/10/17 22:07:26  fraggle
+// Fix "Monsters Infight"
+//
 // Revision 1.2  2005/07/23 16:44:56  fraggle
 // Update copyright to GNU GPL
 //
@@ -36,9 +39,11 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_map.c 8 2005-07-23 16:44:57Z fraggle $";
+rcsid[] = "$Id: p_map.c 212 2005-10-17 22:07:26Z fraggle $";
 
 #include <stdlib.h>
+
+#include "deh_misc.h"
 
 #include "m_bbox.h"
 #include "m_random.h"
@@ -309,8 +314,8 @@ boolean PIT_CheckThing (mobj_t* thing)
 	if (tmthing->z+tmthing->height < thing->z)
 	    return true;		// underneath
 		
-	if (tmthing->target && (
-	    tmthing->target->type == thing->type || 
+	if (tmthing->target 
+         && (tmthing->target->type == thing->type || 
 	    (tmthing->target->type == MT_KNIGHT && thing->type == MT_BRUISER)||
 	    (tmthing->target->type == MT_BRUISER && thing->type == MT_KNIGHT) ) )
 	{
@@ -318,7 +323,11 @@ boolean PIT_CheckThing (mobj_t* thing)
 	    if (thing == tmthing->target)
 		return true;
 
-	    if (thing->type != MT_PLAYER)
+            // sdh: Add deh_species_infighting here.  We can override the
+            // "monsters of the same species cant hurt each other" behavior
+            // through dehacked patches
+
+	    if (thing->type != MT_PLAYER && !deh_species_infighting)
 	    {
 		// Explode, but do no damage.
 		// Let players missile other players.
