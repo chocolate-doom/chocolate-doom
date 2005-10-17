@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_inter.c 207 2005-10-17 20:49:42Z fraggle $
+// $Id: p_inter.c 208 2005-10-17 21:02:57Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2005/10/17 21:02:57  fraggle
+// Dehacked Misc support: Max soulsphere, Soulsphere+Megasphere health bonus
+// values, God mode health value
+//
 // Revision 1.5  2005/10/17 20:49:42  fraggle
 // Add dehacked "Misc" implementations for max armor+health, blue+green
 // armor classes
@@ -46,7 +50,7 @@
 
 
 static const char
-rcsid[] = "$Id: p_inter.c 207 2005-10-17 20:49:42Z fraggle $";
+rcsid[] = "$Id: p_inter.c 208 2005-10-17 21:02:57Z fraggle $";
 
 
 // Data.
@@ -420,9 +424,9 @@ P_TouchSpecialThing
 	break;
 	
       case SPR_SOUL:
-	player->health += 100;
-	if (player->health > 200)
-	    player->health = 200;
+	player->health += deh_soulsphere_health;
+	if (player->health > deh_max_soulsphere)
+	    player->health = deh_max_soulsphere;
 	player->mo->health = player->health;
 	player->message = DEH_String(GOTSUPER);
 	sound = sfx_getpow;
@@ -431,7 +435,7 @@ P_TouchSpecialThing
       case SPR_MEGA:
 	if (gamemode != commercial)
 	    return;
-	player->health = 200;
+	player->health = deh_megasphere_health;
 	player->mo->health = player->health;
 	P_GiveArmor (player, deh_blue_armor_class);
 	player->message = DEH_String(GOTMSPHERE);

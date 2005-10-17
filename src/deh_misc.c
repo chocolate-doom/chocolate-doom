@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_misc.c 207 2005-10-17 20:49:42Z fraggle $
+// $Id: deh_misc.c 208 2005-10-17 21:02:57Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/10/17 21:02:57  fraggle
+// Dehacked Misc support: Max soulsphere, Soulsphere+Megasphere health bonus
+// values, God mode health value
+//
 // Revision 1.4  2005/10/17 20:49:42  fraggle
 // Add dehacked "Misc" implementations for max armor+health, blue+green
 // armor classes
@@ -95,10 +99,30 @@ int deh_green_armor_class = 1;
 
 int deh_blue_armor_class = 2;
 
-int deh_max_soulsphere;             // TODO
-int deh_soulsphere_health;          // TODO
-int deh_megasphere_health;          // TODO
-int deh_god_mode_health;            // TODO
+// Dehacked: "Max soulsphere"
+// The maximum health which can be reached by picking up the
+// soulsphere.  See P_TouchSpecialThing in p_inter.c
+
+int deh_max_soulsphere = 200;
+
+// Dehacked: "Soulsphere health"
+// The amount of health bonus that picking up a soulsphere
+// gives.  See P_TouchSpecialThing in p_inter.c
+
+int deh_soulsphere_health = 100;
+
+// Dehacked: "Megasphere health"
+// This is what the health is set to after picking up a 
+// megasphere.  See P_TouchSpecialThing in p_inter.c
+
+int deh_megasphere_health = 200;
+
+// Dehacked: "God mode health"
+// This is what the health value is set to when cheating using
+// the IDDQD god mode cheat.
+
+int deh_god_mode_health = 100;
+
 int deh_idfa_armor;                 // TODO
 int deh_idfa_armor_class;           // TODO
 int deh_idkfa_armor;                // TODO
@@ -124,10 +148,10 @@ static struct
     {"Max Armor",           &deh_max_armor,             true},
     {"Green Armor Class",   &deh_green_armor_class,     true},
     {"Blue Armor Class",    &deh_blue_armor_class,      true},
-    {"Max Soulsphere",      &deh_max_soulsphere},
-    {"Soulsphere Health",   &deh_soulsphere_health},
-    {"Megasphere Health",   &deh_megasphere_health},
-    {"God Mode Health",     &deh_god_mode_health},
+    {"Max Soulsphere",      &deh_max_soulsphere,        true},
+    {"Soulsphere Health",   &deh_soulsphere_health,     true},
+    {"Megasphere Health",   &deh_megasphere_health,     true},
+    {"God Mode Health",     &deh_god_mode_health,       true},
     {"IDFA Armor",          &deh_idfa_armor},
     {"IDFA Armor Class",    &deh_idfa_armor_class},
     {"IDKFA Armor",         &deh_idkfa_armor},

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: st_stuff.c 166 2005-10-06 19:36:41Z fraggle $
+// $Id: st_stuff.c 208 2005-10-17 21:02:57Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.8  2005/10/17 21:02:57  fraggle
+// Dehacked Misc support: Max soulsphere, Soulsphere+Megasphere health bonus
+// values, God mode health value
+//
 // Revision 1.7  2005/10/06 19:36:41  fraggle
 // Must use the right no clipping cheat for the right game.
 //
@@ -52,7 +56,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: st_stuff.c 166 2005-10-06 19:36:41Z fraggle $";
+rcsid[] = "$Id: st_stuff.c 208 2005-10-17 21:02:57Z fraggle $";
 
 
 #include <stdio.h>
@@ -64,6 +68,7 @@ rcsid[] = "$Id: st_stuff.c 166 2005-10-06 19:36:41Z fraggle $";
 #include "w_wad.h"
 
 #include "deh_main.h"
+#include "deh_misc.h"
 #include "doomdef.h"
 
 #include "g_game.h"
@@ -508,7 +513,7 @@ ST_Responder (event_t* ev)
 	  if (plyr->mo)
 	    plyr->mo->health = 100;
 	  
-	  plyr->health = 100;
+	  plyr->health = deh_god_mode_health;
 	  plyr->message = DEH_String(STSTR_DQDON);
 	}
 	else 
