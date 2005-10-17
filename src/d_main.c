@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.30  2005/10/17 23:48:05  fraggle
+// DEH_CheckCommandLine -> DEH_Init, for consistency with other Init
+// functions
+//
 // Revision 1.29  2005/10/16 20:55:50  fraggle
 // Fix the '-cdrom' command-line option.
 //
@@ -1254,8 +1258,8 @@ void D_DoomMain (void)
     Z_Init ();
 
 #ifdef FEATURE_DEHACKED
-    printf("DEH_CheckCommandLine: Init Dehacked support.\n");
-    DEH_CheckCommandLine();
+    printf("DEH_Init: Init Dehacked support.\n");
+    DEH_Init();
 #endif
 
     printf ("W_Init: Init WADfiles.\n");
