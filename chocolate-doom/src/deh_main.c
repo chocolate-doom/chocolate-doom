@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.9  2005/10/17 23:48:05  fraggle
+// DEH_CheckCommandLine -> DEH_Init, for consistency with other Init
+// functions
+//
 // Revision 1.8  2005/10/17 23:16:09  fraggle
 // Add a "loading" message for each dehacked patch we load, to be orthogonal
 // to the WAD loading code
@@ -329,7 +333,7 @@ static void DEH_ParseFile(char *filename)
 
 // Checks the command line for -deh argument
 
-void DEH_CheckCommandLine(void)
+void DEH_Init(void)
 {
     int argc;
 
