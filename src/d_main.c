@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 204 2005-10-16 20:55:50Z fraggle $
+// $Id: d_main.c 214 2005-10-17 23:48:05Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.30  2005/10/17 23:48:05  fraggle
+// DEH_CheckCommandLine -> DEH_Init, for consistency with other Init
+// functions
+//
 // Revision 1.29  2005/10/16 20:55:50  fraggle
 // Fix the '-cdrom' command-line option.
 //
@@ -133,7 +137,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 204 2005-10-16 20:55:50Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 214 2005-10-17 23:48:05Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -1254,8 +1258,8 @@ void D_DoomMain (void)
     Z_Init ();
 
 #ifdef FEATURE_DEHACKED
-    printf("DEH_CheckCommandLine: Init Dehacked support.\n");
-    DEH_CheckCommandLine();
+    printf("DEH_Init: Init Dehacked support.\n");
+    DEH_Init();
 #endif
 
     printf ("W_Init: Init WADfiles.\n");

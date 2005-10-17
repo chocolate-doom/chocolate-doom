@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_main.h 190 2005-10-12 21:52:01Z fraggle $
+// $Id: deh_main.h 214 2005-10-17 23:48:05Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/10/17 23:48:05  fraggle
+// DEH_CheckCommandLine -> DEH_Init, for consistency with other Init
+// functions
+//
 // Revision 1.3  2005/10/12 21:52:01  fraggle
 // doomfeatures.h to allow certain features to be disabled in the build
 //
@@ -43,7 +47,7 @@
 #include "doomtype.h"
 #include "doomfeatures.h"
 
-void DEH_CheckCommandLine(void);
+void DEH_Init(void);
 
 boolean DEH_ParseAssignment(char *line, char **variable_name, char **value);
 
