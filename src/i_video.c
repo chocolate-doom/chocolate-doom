@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 204 2005-10-16 20:55:50Z fraggle $
+// $Id: i_video.c 205 2005-10-17 19:46:22Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.40  2005/10/17 19:46:22  fraggle
+// Guard against multiple video shutdowns better.  Fix crash due to improper
+// screen clear at startup.
+//
 // Revision 1.39  2005/10/16 20:55:50  fraggle
 // Fix the '-cdrom' command-line option.
 //
@@ -161,7 +165,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 204 2005-10-16 20:55:50Z fraggle $";
+rcsid[] = "$Id: i_video.c 205 2005-10-17 19:46:22Z fraggle $";
 
 #include <SDL.h>
 #include <ctype.h>
@@ -394,12 +398,15 @@ int TranslateKey(SDL_keysym *sym)
 
 void I_ShutdownGraphics(void)
 {
-    SDL_ShowCursor(1);
-    SDL_WM_GrabInput(SDL_GRAB_OFF);
+    if (initialised)
+    {
+        SDL_ShowCursor(1);
+        SDL_WM_GrabInput(SDL_GRAB_OFF);
 
-    SDL_QuitSubSystem(SDL_INIT_VIDEO);
+        SDL_QuitSubSystem(SDL_INIT_VIDEO);
     
-    initialised = false;
+        initialised = false;
+    }
 }
 
 
@@ -870,7 +877,14 @@ void I_InitGraphics(void)
 
     if (SDL_LockSurface(screen) >= 0)
     {
-        memset(screen->pixels, 0, screen->w * screen->pitch);
+        byte *screenpixels;
+        int y;
+
+        screenpixels = (byte *) screen->pixels;
+
+        for (y=0; y<screen->h; ++y)
+            memset(screenpixels + screen->pitch * y, 0, screen->w);
+
         SDL_UnlockSurface(screen);
     }
     
