@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_main.c 182 2005-10-09 20:06:50Z fraggle $
+// $Id: deh_main.c 210 2005-10-17 21:14:31Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.7  2005/10/17 21:14:31  fraggle
+// Ignore comments in dehacked files.
+//
 // Revision 1.6  2005/10/09 20:06:50  fraggle
 // Check the header of dehacked files and make sure we only load valid
 // dehacked files.
@@ -245,6 +248,16 @@ static void DEH_ParseContext(deh_context_t *context)
 
         if (line == NULL)
             return;
+
+        while (line[0] != '\0' && isspace(line[0]))
+            ++line;
+
+        if (line[0] == '#')
+        {
+            // comment
+
+            continue;
+        }
 
         if (IsWhitespace(line))
         {
