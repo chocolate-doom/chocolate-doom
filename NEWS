@@ -1,4 +1,5 @@
 
+0.1.1 (2005-10-18):
     Display startup "banners" if they have been modified through 
         dehacked.
     Dehacked "Misc" section support.
