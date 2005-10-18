@@ -1,3 +1,129 @@
+Tue Oct 18 09:13:07 2005 fraggle
+	
+	Update NEWS
+
+Mon Oct 17 23:48:05 2005 fraggle
+	
+	DEH_CheckCommandLine -> DEH_Init, for consistency with other Init
+	functions
+
+Mon Oct 17 23:16:09 2005 fraggle
+	
+	Add a "loading" message for each dehacked patch we load, to be orthogonal
+	to the WAD loading code
+
+Mon Oct 17 22:07:25 2005 fraggle
+	
+	Fix "Monsters Infight"
+
+Mon Oct 17 21:20:27 2005 fraggle
+	
+	Add note that the "Monsters Infight" setting is not supported.
+
+Mon Oct 17 21:14:31 2005 fraggle
+	
+	Ignore comments in dehacked files.
+
+Mon Oct 17 21:09:01 2005 fraggle
+	
+	Dehacked Misc support: Controls for the armor and armor class set when
+	using the ammo cheats.
+
+Mon Oct 17 21:02:57 2005 fraggle
+	
+	Dehacked Misc support: Max soulsphere, Soulsphere+Megasphere health bonus
+	values, God mode health value
+
+Mon Oct 17 20:49:42 2005 fraggle
+	
+	Add dehacked "Misc" implementations for max armor+health, blue+green
+	armor classes
+
+Mon Oct 17 20:27:05 2005 fraggle
+	
+	Start of Dehacked 'Misc' section support.  Initial Health+Bullets,
+	and bfg cells/shot are supported.
+
+Mon Oct 17 19:46:22 2005 fraggle
+	
+	Guard against multiple video shutdowns better.  Fix crash due to improper
+	screen clear at startup.
+
+Sun Oct 16 20:55:50 2005 fraggle
+	
+	Fix the '-cdrom' command-line option.
+
+Sun Oct 16 16:16:03 2005 fraggle
+	
+	Set the default number of channels to a more sensible 8
+
+Sun Oct 16 01:18:10 2005 fraggle
+	
+	Global "configdir" variable with directory to store config files in.
+	Create a function to find the filename for a savegame slot.  Store
+	savegames in the config dir.
+
+Sat Oct 15 22:50:56 2005 fraggle
+	
+	Fix pink icon on startup
+
+Sat Oct 15 17:57:47 2005 fraggle
+	
+	Add warning message for WADs with FF_START or SS_START in, suggesting
+	the -merge option.
+
+Sat Oct 15 17:42:07 2005 fraggle
+	
+	Mention dehacked banners
+
+Sat Oct 15 17:38:49 2005 fraggle
+	
+	Print startup banners which have been modified by dehacked.
+
+Sat Oct 15 17:09:11 2005 fraggle
+	
+	Add blackbug note
+
+Sat Oct 15 16:58:31 2005 fraggle
+	
+	Fix MIDI music not pausing when using SDL_mixer's native MIDI playback.
+	The SDL_mixer native MIDI code does not pause music properly - use
+	a workaround of setting the volume to 0.
+
+Sat Oct 15 15:59:14 2005 fraggle
+	
+	Map mouse buttons correctly.
+
+Sat Oct 15 15:47:50 2005 fraggle
+	
+	Update NEWS with info about bugs fixed.
+
+Sat Oct 15 15:45:03 2005 fraggle
+	
+	Check the return code from SDL_LockSurface to ensure a surface has been
+	properly locked.  Fixes crash when switching applications while running
+	fullscreen.
+
+Thu Oct 13 23:12:30 2005 fraggle
+	
+	Fix Doom 1 skies
+
+Thu Oct 13 22:23:55 2005 fraggle
+	
+	Fix logic for lost soul bounce
+
+Wed Oct 12 21:52:01 2005 fraggle
+	
+	doomfeatures.h to allow certain features to be disabled in the build
+
+Mon Oct 10 17:02:24 2005 fraggle
+	
+	Update to do list
+
+Sun Oct  9 23:52:28 2005 fraggle
+	
+	Fix DEH_Warning call
+
 Sun Oct  9 21:20:14 2005 fraggle
 	
 	v0.1.0
