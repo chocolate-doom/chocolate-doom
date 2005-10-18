@@ -1,6 +1,7 @@
 
     Display startup "banners" if they have been modified through 
         dehacked.
+    Dehacked "Misc" section support.
 
     Bugs fixed:
      * Doom 1 skies always using Episode 1 sky
