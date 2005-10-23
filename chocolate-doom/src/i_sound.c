@@ -22,6 +22,15 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.22  2005/10/23 18:39:45  fraggle
+// Reproduce the behavior when playing a sound at a sample rate which
+// is not 11025 or 22050Hz.  This is to "fix" a bug in Scientist 2:
+// however, it does not fix the playing of sounds, only silence
+// them.  I tested Vanilla Doom and this is how it behaves when it
+// receives sound effects with odd sample rates.  The bug here is
+// actually in the Scientist 2 WAD, which has sound effects that
+// have the wrong sample rate.
+//
 // Revision 1.21  2005/10/15 16:58:31  fraggle
 // Fix MIDI music not pausing when using SDL_mixer's native MIDI playback.
 // The SDL_mixer native MIDI code does not pause music properly - use
@@ -197,15 +206,12 @@ static void ExpandSoundData(byte *data, int samplerate, int length,
             expanded[i * 4 + 1] = expanded[i * 4 + 3] = (sample >> 8) & 0xff;
         }
     }
-    else
-    {
-        I_Error("Unsupported sample rate %i", samplerate);
-    }
 }
 
 // Load and convert a sound effect
+// Returns true if successful
 
-static void CacheSFX(int sound)
+static boolean CacheSFX(int sound)
 {
     int lumpnum;
     int samplerate;
@@ -220,6 +226,17 @@ static void CacheSFX(int sound)
 
     samplerate = (data[3] << 8) | data[2];
     length = (data[5] << 8) | data[4];
+
+    if (samplerate != 11025 && samplerate != 22050)
+    {
+        // Sounds with unsupported sound rates are not played
+        // in Vanilla Doom.  As far as I know there are no other
+        // supported sound sample rates apart from these two, but
+        // it is possible there are others.
+
+        return false;
+    }
+
     expanded_length = (length * 4)  * (22050 / samplerate);
 
     sound_chunks[sound].allocated = 1;
@@ -233,13 +250,16 @@ static void CacheSFX(int sound)
     // don't need the original lump any more
   
     Z_ChangeTag(data, PU_CACHE);
+
+    return true;
 }
 
 static Mix_Chunk *getsfx(int sound)
 {
     if (sound_chunks[sound].abuf == NULL)
     {
-        CacheSFX(sound);
+        if (!CacheSFX(sound))
+            return NULL;
     }
     else
     {
@@ -321,6 +341,11 @@ I_StartSound
 
     chunk = getsfx(id);
 
+    if (chunk == NULL)
+    {
+        return -1;
+    }
+
     // play sound
 
     Mix_PlayChannelTimed(channel, chunk, 0, -1);
@@ -351,6 +376,9 @@ void I_StopSound (int handle)
 int I_SoundIsPlaying(int handle)
 {
     if (!sound_initialised) 
+        return false;
+
+    if (handle < 0)
         return false;
 
     return Mix_Playing(handle);

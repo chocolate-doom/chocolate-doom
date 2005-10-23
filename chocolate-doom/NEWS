@@ -1,4 +1,7 @@
 
+    Silence sounds at odd sample rates (rather than bombing out); this
+        is the way Vanilla Doom behaves.
+
 0.1.1 (2005-10-18):
     Display startup "banners" if they have been modified through 
         dehacked.
