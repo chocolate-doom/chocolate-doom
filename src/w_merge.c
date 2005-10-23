@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/10/23 20:22:35  fraggle
+// Drastically refactor the WAD merging code.  Allow multiple replacements
+// of the same sprite in a PWAD (fixes Scientist 2)
+//
 // Revision 1.2  2005/10/09 00:25:49  fraggle
 // Improved sprite merging
 //
@@ -60,10 +64,11 @@ typedef struct
 {
     char sprname[4];
     char frame;
-    int angles;
-} replace_frame_t;
+    lumpinfo_t *angle_lumps[8];
+} sprite_frame_t;
 
 static searchlist_t iwad;
+static searchlist_t iwad_sprites;
 static searchlist_t pwad;
 
 static searchlist_t iwad_flats;
@@ -71,9 +76,9 @@ static searchlist_t pwad_sprites;
 static searchlist_t pwad_flats;
 
 // lumps with these sprites must be replaced in the IWAD
-static replace_frame_t *replace_frames;
-static int num_replace_frames;
-static int replace_frames_alloced;
+static sprite_frame_t *sprite_frames;
+static int num_sprite_frames;
+static int sprite_frames_alloced;
 
 // Search in a list to find a lump with a particular name
 // Linear search (slow!)
@@ -93,206 +98,251 @@ static int FindInList(searchlist_t *list, char *name)
     return -1;
 }
 
+static boolean SetupList(searchlist_t *list, searchlist_t *src_list,
+                         char *startname, char *endname,
+                         char *startname2, char *endname2)
+{
+    int startlump, endlump;
+
+    list->numlumps = 0;
+    startlump = FindInList(src_list, startname);
+
+    if (startname2 != NULL && startlump < 0)
+    {
+        startlump = FindInList(src_list, startname2);
+    }
+
+    if (startlump >= 0)
+    {
+        endlump = FindInList(src_list, endname);
+
+        if (endname2 != NULL && endlump < 0)
+        {
+            endlump = FindInList(src_list, endname2);
+        }
+
+        if (endlump > startlump)
+        {
+            list->lumps = src_list->lumps + startlump + 1;
+            list->numlumps = endlump - startlump - 1;
+            return true;
+        }
+    }
+
+    return false;
+}
+
 // Sets up the sprite/flat search lists
 
 static void SetupLists(void)
 {
-    int startlump, endlump;
-    
     // IWAD
-    // look for the flats section
 
-    startlump = FindInList(&iwad, "F_START");
-    endlump = FindInList(&iwad, "F_END");
-
-    if (startlump < 0 || endlump < 0)
+    if (!SetupList(&iwad_flats, &iwad, "F_START", "F_END", NULL, NULL))
     {
         I_Error("Flats section not found in IWAD");
     }
 
-    iwad_flats.lumps = iwad.lumps + startlump + 1;
-    iwad_flats.numlumps = endlump - startlump - 1;
+    if (!SetupList(&iwad_sprites, &iwad, "S_START", "S_END", NULL, NULL))
 
+    {
+        I_Error("Sprites section not found in IWAD");
+    }
+    
     // PWAD
-    // look for a flats section
 
-    pwad_flats.numlumps = 0;
-    startlump = FindInList(&pwad, "FF_START");
-
-    if (startlump < 0)
-    {
-        startlump = FindInList(&pwad, "F_START");
-    }
-
-    if (startlump >= 0)
-    {
-        endlump = FindInList(&pwad, "FF_END");
-
-        if (endlump < 0)
-        {
-            endlump = FindInList(&pwad, "F_END");
-        }
-
-        if (endlump > startlump)
-        {
-            pwad_flats.lumps = pwad.lumps + startlump + 1;
-            pwad_flats.numlumps = endlump - startlump - 1;
-        }
-    }
-
-    // look for a sprites section
-
-    pwad_sprites.numlumps = 0;
-    startlump = FindInList(&pwad, "SS_START");
-
-    if (startlump < 0)
-    {
-        startlump = FindInList(&pwad, "S_START");
-    }
-
-    if (startlump >= 0)
-    {
-        endlump = FindInList(&pwad, "SS_END");
-
-        if (endlump < startlump)
-        {
-            endlump = FindInList(&pwad, "S_END");
-        }
-
-        if (endlump > startlump)
-        {
-            pwad_sprites.lumps = pwad.lumps + startlump + 1;
-            pwad_sprites.numlumps = endlump - startlump - 1;
-        }
-    }
+    SetupList(&pwad_flats, &pwad, "F_START", "F_END", "FF_START", "FF_END");
+    SetupList(&pwad_sprites, &pwad, "S_START", "S_END", "SS_START", "SS_END");
 }
 
 // Initialise the replace list
 
-static void InitReplaceList(void)
+static void InitSpriteList(void)
 {
-    if (replace_frames == NULL)
+    if (sprite_frames == NULL)
     {
-        replace_frames_alloced = 128;
-        replace_frames = Z_Malloc(sizeof(*replace_frames) * replace_frames_alloced,
+        sprite_frames_alloced = 128;
+        sprite_frames = Z_Malloc(sizeof(*sprite_frames) * sprite_frames_alloced,
                                  PU_STATIC, NULL);
     }
 
-    num_replace_frames = 0;
+    num_sprite_frames = 0;
 }
 
-// Add new sprite to the replace list
+// Find a sprite frame
 
-static void AddReplaceFrame(replace_frame_t *frame)
+static sprite_frame_t *FindSpriteFrame(char *name, int frame)
 {
+    sprite_frame_t *result;
     int i;
 
-    // Find if this is already in the list
+    // Search the list and try to find the frame
 
-    for (i=0; i<num_replace_frames; ++i)
+    for (i=0; i<num_sprite_frames; ++i)
     {
-        if (!strncasecmp(replace_frames[i].sprname, frame->sprname, 4)
-         && replace_frames[i].frame == frame->frame)
+        sprite_frame_t *cur = &sprite_frames[i];
+
+        if (!strncasecmp(cur->sprname, name, 4) && cur->frame == frame)
         {
-            replace_frames[i].angles |= frame->angles;
-            return;
+            return cur;
         }
     }
-    
-    // Need to add to the list
 
-    if (num_replace_frames >= replace_frames_alloced)
+    // Not found in list; Need to add to the list
+
+    // Grow list?
+
+    if (num_sprite_frames >= sprite_frames_alloced)
     {
-        replace_frame_t *newframes;
+        sprite_frame_t *newframes;
 
-        newframes = Z_Malloc(replace_frames_alloced * 2 * sizeof(*replace_frames),
+        newframes = Z_Malloc(sprite_frames_alloced * 2 * sizeof(*sprite_frames),
                              PU_STATIC, NULL);
-        memcpy(newframes, replace_frames,
-               replace_frames_alloced * sizeof(*replace_frames));
-        Z_Free(replace_frames);
-        replace_frames_alloced *= 2;
-        replace_frames = newframes;
+        memcpy(newframes, sprite_frames,
+               sprite_frames_alloced * sizeof(*sprite_frames));
+        Z_Free(sprite_frames);
+        sprite_frames_alloced *= 2;
+        sprite_frames = newframes;
     }
 
     // Add to end of list
     
-    replace_frames[num_replace_frames++] = *frame;
+    result = &sprite_frames[num_sprite_frames];
+    strncpy(result->sprname, name, 4);
+    result->frame = frame;
+
+    for (i=0; i<8; ++i)
+        result->angle_lumps[i] = NULL;
+
+    ++num_sprite_frames;
+
+    return result;
 }
 
-// Converts a sprite name into an replace_frame_t
+// Check if sprite lump is needed in the new wad
 
-static void ParseSpriteName(char *name, replace_frame_t *result)
+static boolean SpriteLumpNeeded(lumpinfo_t *lump)
 {
+    sprite_frame_t *sprite;
     int angle_num;
+    int i;
 
-    strncpy(result->sprname, name, 4);
-    result->frame = name[4];
+    // check the first frame
 
-    angle_num = name[5] - '0';
-    
+    sprite = FindSpriteFrame(lump->name, lump->name[4]);
+    angle_num = lump->name[5] - '0';
+
     if (angle_num == 0)
     {
-        // '0' sprites are used for all angles
+        // must check all frames
 
-        result->angles = 0xffff;
+        for (i=0; i<8; ++i)
+        {
+            if (sprite->angle_lumps[i] == lump)
+                return true;
+        }
+    }
+    else 
+    {
+        // check if this lump is being used for this frame
+
+        if (sprite->angle_lumps[angle_num - 1] == lump)
+            return true;
+    }
+            
+    // second frame if any
+    
+    // no second frame?
+    if (lump->name[6] == '\0')
+        return false;
+
+    sprite = FindSpriteFrame(lump->name, lump->name[6]);
+    angle_num = lump->name[7] - '0';
+
+    if (angle_num == 0)
+    {
+        // must check all frames
+
+        for (i=0; i<8; ++i)
+        {
+            if (sprite->angle_lumps[i] == lump)
+                return true;
+        }
+    }
+    else 
+    {
+        // check if this lump is being used for this frame
+
+        if (sprite->angle_lumps[angle_num - 1] == lump)
+            return true;
+    }
+
+    return false;
+}
+
+static void AddSpriteLump(lumpinfo_t *lump)
+{
+    sprite_frame_t *sprite;
+    int angle_num;
+    int i;
+    
+    // first angle
+
+    sprite = FindSpriteFrame(lump->name, lump->name[4]);
+    angle_num = lump->name[5] - '0';
+    
+    if (angle_num == 0) 
+    {
+        for (i=0; i<8; ++i)
+            sprite->angle_lumps[i] = lump;
     }
     else
     {
-       result->angles = 1 << angle_num;
-    }
-
-    if (name[6] != '\0')
-    {
-        // second angle
-
-        angle_num = name[7] - '0';
-
-        if (angle_num == 0)
-        {
-            result->angles = 0xffff;
-        }
-        else
-        {
-            result->angles |= 1 << angle_num;
-        }
-    }
-}
-
-// Check if a sprite is in the replace list
-
-static boolean InReplaceList(char *name)
-{
-    replace_frame_t igsprite;
-    int i;
-    
-    ParseSpriteName(name, &igsprite);
-
-    for (i=0; i<num_replace_frames; ++i)
-    {
-        if (!strncasecmp(replace_frames[i].sprname, igsprite.sprname, 4)
-         && replace_frames[i].frame == igsprite.frame
-         && (replace_frames[i].angles & igsprite.angles) != 0)
-        {
-            return true;
-        }
+        sprite->angle_lumps[angle_num - 1] = lump;
     }
     
-    return false;
+    // second angle
+
+    // no second angle?
+  
+    if (lump->name[6] == '\0')
+        return;
+    
+    sprite = FindSpriteFrame(lump->name, lump->name[6]);
+    angle_num = lump->name[7] - '0';
+    
+    if (angle_num == 0) 
+    {
+        for (i=0; i<8; ++i)
+            sprite->angle_lumps[i] = lump;
+    }
+    else
+    {
+        sprite->angle_lumps[angle_num - 1] = lump;
+    }
 }
 
 // Generate the list.  Run at the start, before merging
 
-static void GenerateReplaceList(void)
+static void GenerateSpriteList(void)
 {
-    replace_frame_t igsprite;
     int i;
 
-    InitReplaceList();
+    InitSpriteList();
+    
+    // Add all sprites from the IWAD
+    
+    for (i=0; i<iwad_sprites.numlumps; ++i)
+    {
+        AddSpriteLump(&iwad_sprites.lumps[i]);
+    }
+    
+    // Add all sprites from the PWAD
+    // (replaces IWAD sprites)
 
     for (i=0; i<pwad_sprites.numlumps; ++i)
     {
-        ParseSpriteName(pwad_sprites.lumps[i].name, &igsprite);
-        AddReplaceFrame(&igsprite);
+        AddSpriteLump(&pwad_sprites.lumps[i]);
     }
 }
 
@@ -396,7 +446,10 @@ static void DoMerge(void)
 
                     for (n=0; n<pwad_sprites.numlumps; ++n)
                     {
-                        newlumps[num_newlumps++] = pwad_sprites.lumps[n];
+                        if (SpriteLumpNeeded(&pwad_sprites.lumps[n]))
+                        {
+                            newlumps[num_newlumps++] = pwad_sprites.lumps[n];
+                        }
                     }
 
                     // copy the ending
@@ -410,7 +463,7 @@ static void DoMerge(void)
                     // Is this lump holding a sprite to be replaced in the
                     // PWAD? If so, wait until the end to add it.
 
-                    if (!InReplaceList(lump->name))
+                    if (SpriteLumpNeeded(lump))
                     {
                         newlumps[num_newlumps++] = *lump;
                     }
@@ -479,6 +532,16 @@ static void DoMerge(void)
     free(lumpinfo);
     lumpinfo = newlumps;
     numlumps = num_newlumps;
+
+#if 0
+    // debug
+    for (i=0; i<numlumps; ++i)
+    {
+        for (n=0; n<8 && lumpinfo[i].name[n] != '\0'; ++n)
+            putchar(lumpinfo[i].name[n]);
+        putchar('\n');
+    }
+#endif
 }
 
 // Merge in a file by name
@@ -512,7 +575,7 @@ void W_MergeFile(char *filename)
 
     // Generate list of sprites to be replaced by the PWAD
 
-    GenerateReplaceList();
+    GenerateSpriteList();
 
     // Perform the merge
 
