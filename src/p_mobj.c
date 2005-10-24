@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_mobj.c 191 2005-10-13 22:23:55Z fraggle $
+// $Id: p_mobj.c 223 2005-10-24 18:50:39Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/10/24 18:50:39  fraggle
+// Allow the game version to emulate to be specified from the command line
+// and set compatibility options accordingly.
+//
 // Revision 1.4  2005/10/13 22:23:55  fraggle
 // Fix logic for lost soul bounce
 //
@@ -41,7 +45,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_mobj.c 191 2005-10-13 22:23:55Z fraggle $";
+rcsid[] = "$Id: p_mobj.c 223 2005-10-24 18:50:39Z fraggle $";
 
 #include "i_system.h"
 #include "z_zone.h"
@@ -327,9 +331,7 @@ void P_ZMovement (mobj_t* mo)
         // So we need to check that this is either retail or commercial
         // (but not doom2)
 	
-	int correct_lost_soul_bounce 
-            = (gamemode == retail || gamemode == commercial)
-              && gamemission != doom2;
+	int correct_lost_soul_bounce = gameversion >= exe_ultimate;
 
 	if (correct_lost_soul_bounce && mo->flags & MF_SKULLFLY)
 	{
