@@ -63,6 +63,7 @@ extern  boolean	devparm;	// DEBUG: launched with -devparm
 //
 extern GameMode_t	gamemode;
 extern GameMission_t	gamemission;
+extern GameVersion_t    gameversion;
 extern char            *gamedescription;
 
 // Set if homebrew PWAD stuff has been added.
@@ -296,6 +297,10 @@ extern	int		ticdup;
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.9  2005/10/24 18:50:39  fraggle
+// Allow the game version to emulate to be specified from the command line
+// and set compatibility options accordingly.
+//
 // Revision 1.8  2005/10/16 01:18:10  fraggle
 // Global "configdir" variable with directory to store config files in.
 // Create a function to find the filename for a savegame slot.  Store

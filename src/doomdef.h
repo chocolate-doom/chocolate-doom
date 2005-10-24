@@ -68,6 +68,14 @@ typedef enum
 
 } GameMission_t;
 
+// What version are we emulating?
+
+typedef enum
+{
+    exe_doom_1_9,   // Doom 1.9: used for shareware, registered and commercial
+    exe_ultimate,   // Ultimate Doom (retail)
+    exe_final,      // Final Doom
+} GameVersion_t;
 
 // Identify language to use, software localization.
 typedef enum
@@ -365,6 +373,10 @@ typedef enum
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.8  2005/10/24 18:50:39  fraggle
+// Allow the game version to emulate to be specified from the command line
+// and set compatibility options accordingly.
+//
 // Revision 1.7  2005/09/04 17:33:43  fraggle
 // Support demos recorded with cph's modified "v1.91" doom exe - which
 // contain higher resolution angleturn

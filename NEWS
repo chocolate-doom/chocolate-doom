@@ -2,6 +2,8 @@
     Silence sounds at odd sample rates (rather than bombing out); this
         is the way Vanilla Doom behaves.
     Handle multiple replacements of the same sprite in a PWAD.
+    Support specifying a specific version to emulate via the command line
+        (-gameversion)
 
 0.1.1 (2005-10-18):
     Display startup "banners" if they have been modified through 

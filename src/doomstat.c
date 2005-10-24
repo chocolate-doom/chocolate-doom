@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2005/10/24 18:50:39  fraggle
+// Allow the game version to emulate to be specified from the command line
+// and set compatibility options accordingly.
+//
 // Revision 1.5  2005/09/04 14:51:19  fraggle
 // Display the correct quit messages according to which game is being played.
 // Remove "language" variable (do this through gettext, if ever)
@@ -55,6 +59,7 @@ rcsid[] = "$Id$";
 // Game Mode - identify IWAD as shareware, retail etc.
 GameMode_t gamemode = indetermined;
 GameMission_t	gamemission = doom;
+GameVersion_t   gameversion = exe_final;
 char *gamedescription;
 
 // Set if homebrew PWAD stuff has been added.
