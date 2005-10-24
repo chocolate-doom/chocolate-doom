@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2005/10/24 18:50:39  fraggle
+// Allow the game version to emulate to be specified from the command line
+// and set compatibility options accordingly.
+//
 // Revision 1.4  2005/10/13 22:23:55  fraggle
 // Fix logic for lost soul bounce
 //
@@ -327,9 +331,7 @@ void P_ZMovement (mobj_t* mo)
         // So we need to check that this is either retail or commercial
         // (but not doom2)
 	
-	int correct_lost_soul_bounce 
-            = (gamemode == retail || gamemode == commercial)
-              && gamemission != doom2;
+	int correct_lost_soul_bounce = gameversion >= exe_ultimate;
 
 	if (correct_lost_soul_bounce && mo->flags & MF_SKULLFLY)
 	{

@@ -65,6 +65,9 @@ options are supported.
   -nofullscreen        Runs the game in a window,
   -window
 
+  -gameversion <ver>   Emulates a specific release of Doom 1.9.  Valid
+                       values are "1.9", "ultimate" and "final".
+
   -grabmouse           Grabs the mouse during play (see above)
 
   -nograbmouse         Does not grab the mouse during play (see above)

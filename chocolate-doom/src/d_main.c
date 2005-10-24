@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.31  2005/10/24 18:50:39  fraggle
+// Allow the game version to emulate to be specified from the command line
+// and set compatibility options accordingly.
+//
 // Revision 1.30  2005/10/17 23:48:05  fraggle
 // DEH_CheckCommandLine -> DEH_Init, for consistency with other Init
 // functions
@@ -951,25 +955,53 @@ static void IdentifyVersion(void)
         {
             // Ultimate Doom
 
-            gamedescription = GetGameName("The Ultimate DOOM");
             gamemode = retail;
         } 
         else if (W_CheckNumForName("E3M1") > 0)
         {
-            gamedescription = GetGameName("DOOM Registered");
             gamemode = registered;
         }
         else
         {
-            gamedescription = GetGameName("DOOM Shareware");
             gamemode = shareware;
         }
     }
     else
     {
-        // Doom 2 of some kind.  But which mission?
+        // Doom 2 of some kind.
 
         gamemode = commercial;
+    }
+}
+
+// Set the gamedescription string
+
+static void SetGameDescription(void)
+{
+    gamedescription = "Unknown";
+
+    if (gamemission == doom)
+    {
+        // Doom 1.  But which version?
+
+        if (gamemode == retail)
+        {
+            // Ultimate Doom
+
+            gamedescription = GetGameName("The Ultimate DOOM");
+        } 
+        else if (gamemode == registered)
+        {
+            gamedescription = GetGameName("DOOM Registered");
+        }
+        else if (gamemode == shareware)
+        {
+            gamedescription = GetGameName("DOOM Shareware");
+        }
+    }
+    else
+    {
+        // Doom 2 of some kind.  But which mission?
 
         if (gamemission == doom2)
             gamedescription = GetGameName("DOOM 2: Hell on Earth");
@@ -977,8 +1009,6 @@ static void IdentifyVersion(void)
             gamedescription = GetGameName("DOOM 2: Plutonia Experiment"); 
         else if (gamemission == pack_tnt)
             gamedescription = GetGameName("DOOM 2: TNT - Evilution");
-        else
-            gamedescription = "DOOM 2: ?????????????";
     }
 }
 
@@ -1136,6 +1166,105 @@ static void SetConfigDir(void)
     }
 }
 
+static struct 
+{
+    char *description;
+    char *cmdline;
+    GameVersion_t version;
+} gameversions[] = {
+    {"Doom 1.9",             "1.9",        exe_doom_1_9},
+    {"Ultimate Doom",        "ultimate",   exe_ultimate},
+    {"Final Doom",           "final",      exe_final},
+    {NULL},
+};
+
+// Initialise the game version
+
+static void InitGameVersion(void)
+{
+    int p;
+    int i;
+
+    p = M_CheckParm("-gameversion");
+
+    if (p > 0)
+    {
+        for (i=0; gameversions[i].description != NULL; ++i)
+        {
+            if (!strcmp(myargv[p+1], gameversions[i].cmdline))
+            {
+                gameversion = gameversions[i].version;
+                break;
+            }
+        }
+        
+        if (gameversions[i].description == NULL) 
+        {
+            printf("Supported game versions:\n");
+
+            for (i=0; gameversions[i].description != NULL; ++i)
+            {
+                printf("\t%s (%s)\n", gameversions[i].cmdline,
+                        gameversions[i].description);
+            }
+            
+            I_Error("Unknown game version '%s'", myargv[p+1]);
+        }
+    }
+    else
+    {
+        // Determine automatically
+
+        if (gamemode == shareware || gamemode == registered)
+        {
+            // original
+
+            gameversion = exe_doom_1_9;
+        }
+        else if (gamemode == retail)
+        {
+            gameversion = exe_ultimate;
+        }
+        else if (gamemode == commercial)
+        {
+            if (gamemission == doom2)
+            {
+                gameversion = exe_doom_1_9;
+            }
+            else
+            {
+                // Final Doom: tnt or plutonia
+
+                gameversion = exe_final;
+            }
+        }
+    }
+    
+    for (i=0; gameversions[i].description != NULL; ++i)
+    {
+        if (gameversions[i].version == gameversion)
+        {
+            printf("InitGameVersion: Emulating the behaviour of the "
+                   "'%s' executable.\n", gameversions[i].description);
+            break;
+        }
+    }
+
+    // The original exe does not support retail - 4th episode not supported
+
+    if (gameversion < exe_ultimate && gamemode == retail)
+    {
+        gamemode = registered;
+    }
+
+    // EXEs prior to the Final Doom exes do not support Final Doom.
+
+    if (gameversion < exe_final && gamemode == commercial)
+    {
+        gamemission = doom2;
+    }
+}
+
 //
 // D_DoomMain
 //
@@ -1278,6 +1407,8 @@ void D_DoomMain (void)
 #endif
 
     IdentifyVersion();
+    InitGameVersion();
+    SetGameDescription();
 
     // Check for -file in shareware
     if (modifiedgame)

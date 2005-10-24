@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2005/10/24 18:50:39  fraggle
+// Allow the game version to emulate to be specified from the command line
+// and set compatibility options accordingly.
+//
 // Revision 1.3  2005/09/24 22:58:01  fraggle
 // Commit uac_dead fix
 //
@@ -1657,9 +1661,11 @@ void A_BossDeath (mobj_t* mo)
             //
             // For the time being, I'm making the assumption that 
             // doing this is not going to break anything else.
+            //
+            // 2005/10/24: Modify this to test the gameversion setting
 
-            // if (mo->type != MT_BRUISER)
-            //     return;
+            if (gameversion >= exe_ultimate && mo->type != MT_BRUISER)
+                return;
 	    break;
 	    
 	  case 2:
