@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.7  2005/10/26 00:56:40  fraggle
+// Final Doom teleport logic was backwards
+//
 // Revision 1.6  2005/10/24 18:50:39  fraggle
 // Allow the game version to emulate to be specified from the command line
 // and set compatibility options accordingly.
@@ -133,7 +136,7 @@ EV_Teleport
                 // fraggle: this was changed in final doom, 
                 // problem between normal doom2 1.9 and final doom
 
-                if (gameversion >= exe_final)
+                if (gameversion < exe_final)
 		    thing->z = thing->floorz;
                 
 		if (thing->player)
