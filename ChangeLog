@@ -1,3 +1,36 @@
+Sat Oct 29 21:48:55 2005 fraggle
+	
+	0.1.2
+
+Sat Oct 29 21:38:55 2005 fraggle
+	
+	Fix help screen orderings and skull positions to make Chocolate Doom
+	behave exactly like the original executables.
+
+Wed Oct 26 00:56:40 2005 fraggle
+	
+	Final Doom teleport logic was backwards
+
+Mon Oct 24 18:50:39 2005 fraggle
+	
+	Allow the game version to emulate to be specified from the command line
+	and set compatibility options accordingly.
+
+Sun Oct 23 20:22:34 2005 fraggle
+	
+	Drastically refactor the WAD merging code.  Allow multiple replacements
+	of the same sprite in a PWAD (fixes Scientist 2)
+
+Sun Oct 23 18:39:44 2005 fraggle
+	
+	Reproduce the behavior when playing a sound at a sample rate which
+	is not 11025 or 22050Hz.  This is to "fix" a bug in Scientist 2:
+	however, it does not fix the playing of sounds, only silence
+	them.  I tested Vanilla Doom and this is how it behaves when it
+	receives sound effects with odd sample rates.  The bug here is
+	actually in the Scientist 2 WAD, which has sound effects that
+	have the wrong sample rate.
+
 Tue Oct 18 19:05:18 2005 fraggle
 	
 	0.1.1
