@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_menu.c 204 2005-10-16 20:55:50Z fraggle $
+// $Id: m_menu.c 225 2005-10-29 21:38:55Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.11  2005/10/29 21:38:55  fraggle
+// Fix help screen orderings and skull positions to make Chocolate Doom
+// behave exactly like the original executables.
+//
 // Revision 1.10  2005/10/16 20:55:50  fraggle
 // Fix the '-cdrom' command-line option.
 //
@@ -65,7 +69,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_menu.c 204 2005-10-16 20:55:50Z fraggle $";
+rcsid[] = "$Id: m_menu.c 225 2005-10-29 21:38:55Z fraggle $";
 
 #include <stdlib.h>
 #include <ctype.h>
@@ -787,21 +791,58 @@ void M_QuickLoad(void)
 //
 void M_DrawReadThis1(void)
 {
+    char *lumpname = "CREDIT";
+    int skullx = 330, skully = 175;
+
     inhelpscreens = true;
-    switch ( gamemode )
+    
+    // Different versions of Doom 1.9 work differently
+
+    switch (gameversion)
     {
-      case commercial:
-	V_DrawPatchDirect (0,0,0,W_CacheLumpName("HELP",PU_CACHE));
-	break;
-      case shareware:
-      case registered:
-      case retail:
-	V_DrawPatchDirect (0,0,0,W_CacheLumpName("HELP1",PU_CACHE));
-	break;
-      default:
-	break;
+        case exe_doom_1_9:
+            if (gamemode == commercial)
+            {
+                // Doom 2
+
+                lumpname = "HELP";
+
+                skullx = 330;
+                skully = 165;
+            }
+            else
+            {
+                // Doom 1
+                // HELP2 is the first screen shown in Doom 1
+                
+                lumpname = "HELP2";
+
+                skullx = 280;
+                skully = 185;
+            }
+            break;
+
+        case exe_ultimate:
+
+            // Ultimate Doom always displays "HELP1".
+
+            lumpname = "HELP1";
+
+            break;
+
+        case exe_final:
+
+            // Final Doom always displays "HELP".
+
+            lumpname = "HELP";
+
+            break;
     }
-    return;
+    
+    V_DrawPatchDirect (0, 0, 0, W_CacheLumpName(lumpname, PU_CACHE));
+
+    ReadDef1.x = skullx;
+    ReadDef1.y = skully;
 }
 
 
@@ -812,21 +853,11 @@ void M_DrawReadThis1(void)
 void M_DrawReadThis2(void)
 {
     inhelpscreens = true;
-    switch ( gamemode )
-    {
-      case retail:
-      case commercial:
-	// This hack keeps us from having to change menus.
-	V_DrawPatchDirect (0,0,0,W_CacheLumpName("CREDIT",PU_CACHE));
-	break;
-      case shareware:
-      case registered:
-	V_DrawPatchDirect (0,0,0,W_CacheLumpName("HELP2",PU_CACHE));
-	break;
-      default:
-	break;
-    }
-    return;
+
+    // We only ever draw the second page if this is 
+    // gameversion == exe_doom_1_9 and gamemode == registered
+
+    V_DrawPatchDirect(0, 0, 0, W_CacheLumpName("HELP1", PU_CACHE));
 }
 
 
@@ -1071,8 +1102,20 @@ void M_ReadThis(int choice)
 
 void M_ReadThis2(int choice)
 {
-    choice = 0;
-    M_SetupNextMenu(&ReadDef2);
+    // Doom 1.9 had two menus when playing Doom 1
+    // All others had only one
+
+    if (gameversion == exe_doom_1_9 && gamemode != commercial)
+    {
+        choice = 0;
+        M_SetupNextMenu(&ReadDef2);
+    }
+    else
+    {
+        // Close the menu
+
+        M_FinishReadThis(0);
+    }
 }
 
 void M_FinishReadThis(int choice)
@@ -1914,17 +1957,11 @@ void M_Init (void)
     switch ( gamemode )
     {
       case commercial:
-	// This is used because DOOM 2 had only one HELP
-        //  page. I use CREDIT as second page now, but
-	//  kept this hack for educational purposes.
+        // Commercial has no "read this" entry.
 	MainMenu[readthis] = MainMenu[quitdoom];
 	MainDef.numitems--;
 	MainDef.y += 8;
 	NewDef.prevMenu = &MainDef;
-	ReadDef1.routine = M_DrawReadThis1;
-	ReadDef1.x = 330;
-	ReadDef1.y = 165;
-	ReadMenu1[0].routine = M_FinishReadThis;
 	break;
       case shareware:
 	// Episode 2 and 3 are handled,
