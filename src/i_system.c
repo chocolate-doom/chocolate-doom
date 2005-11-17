@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_system.c 183 2005-10-09 20:19:21Z fraggle $
+// $Id: i_system.c 230 2005-11-17 09:41:24Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.14  2005/11/17 09:41:24  fraggle
+// Catch SDL_QUIT event on ENDOOM display
+//
 // Revision 1.13  2005/10/09 20:19:21  fraggle
 // Handle blinking text in ENDOOM lumps properly.
 //
@@ -69,7 +72,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_system.c 183 2005-10-09 20:19:21Z fraggle $";
+rcsid[] = "$Id: i_system.c 230 2005-11-17 09:41:24Z fraggle $";
 
 
 #include <stdlib.h>
@@ -211,6 +214,7 @@ void I_Endoom(void)
 
         switch (ev.type)
         {
+            case SDL_QUIT:
             case SDL_MOUSEBUTTONDOWN:
             case SDL_KEYDOWN:
                 waiting = false;
