@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_sdl.c 229 2005-10-30 19:56:15Z fraggle $
+// $Id: net_sdl.c 231 2005-12-29 17:47:47Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2005/12/29 17:47:47  fraggle
+// Automatically initialise the address table
+//
 // Revision 1.1  2005/10/30 19:56:15  fraggle
 // Add foundation code for the new networking system
 //
@@ -59,7 +62,7 @@ typedef struct
 } addrpair_t;
 
 static addrpair_t **addr_table;
-static int addr_table_size;
+static int addr_table_size = -1;
 
 // Initialises the address table
 
@@ -86,6 +89,11 @@ static net_addr_t *NET_SDL_FindAddress(IPaddress *addr)
     addrpair_t *new_entry;
     int empty_entry = -1;
     int i;
+
+    if (addr_table_size < 0)
+    {
+        NET_SDL_InitAddrTable();
+    }
 
     for (i=0; i<addr_table_size; ++i)
     {
@@ -168,7 +176,6 @@ static boolean NET_SDL_InitClient(void)
         I_Error("NET_SDL_InitClient: Unable to open a socket!");
     }
     
-    NET_SDL_InitAddrTable();
     recvpacket = SDLNet_AllocPacket(1500);
 
     return true;
@@ -191,7 +198,6 @@ static boolean NET_SDL_InitServer(void)
         I_Error("NET_SDL_InitServer: Unable to bind to port %i", port);
     }
 
-    NET_SDL_InitAddrTable();
     recvpacket = SDLNet_AllocPacket(1500);
 
     return true;
