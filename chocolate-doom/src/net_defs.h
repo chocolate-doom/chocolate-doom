@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2005/12/29 17:48:25  fraggle
+// Add initial client/server connect code.  Reorganise sources list in
+// Makefile.am.
+//
 // Revision 1.1  2005/10/30 19:56:15  fraggle
 // Add foundation code for the new networking system
 //
@@ -88,6 +92,20 @@ struct _net_addr_s
     net_module_t *module;
     void *handle;
 };
+
+// magic number sent when connecting to check this is a valid client
+
+#define NET_MAGIC_NUMBER 3436803284U
+
+// packet types
+
+typedef enum 
+{
+        NET_PACKET_TYPE_SYN,
+        NET_PACKET_TYPE_ACK,
+        NET_PACKET_TYPE_GAMESTART,
+        NET_PACKET_TYPE_GAMEDATA,
+} net_packet_type_t;
 
 #endif /* #ifndef NET_DEFS_H */
 
