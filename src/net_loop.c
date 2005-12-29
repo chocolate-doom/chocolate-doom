@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2005/12/29 21:29:55  fraggle
+// Working client connect code
+//
 // Revision 1.1  2005/10/30 19:56:15  fraggle
 // Add foundation code for the new networking system
 //
@@ -99,7 +102,6 @@ static net_packet_t *QueuePop(packet_queue_t *queue)
 static boolean NET_CL_InitClient(void)
 {
     QueueInit(&client_queue);
-    client_addr.module = &net_loop_client_module;
 
     return true;
 }
@@ -125,6 +127,7 @@ static boolean NET_CL_RecvPacket(net_addr_t **addr, net_packet_t **packet)
     {
         *packet = popped;
         *addr = &client_addr;
+        client_addr.module = &net_loop_client_module;
         
         return true;
     }
@@ -143,6 +146,8 @@ static void NET_CL_FreeAddress(net_addr_t *addr)
 
 static net_addr_t *NET_CL_ResolveAddress(char *address)
 {
+    client_addr.module = &net_loop_client_module;
+
     return &client_addr;
 }
 
@@ -172,7 +177,6 @@ static boolean NET_SV_InitClient(void)
 static boolean NET_SV_InitServer(void)
 {
     QueueInit(&server_queue);
-    server_addr.module = &net_loop_server_module;
 
     return true;
 }
@@ -192,6 +196,7 @@ static boolean NET_SV_RecvPacket(net_addr_t **addr, net_packet_t **packet)
     {
         *packet = popped;
         *addr = &server_addr;
+        server_addr.module = &net_loop_server_module;
         
         return true;
     }
@@ -210,6 +215,7 @@ static void NET_SV_FreeAddress(net_addr_t *addr)
 
 static net_addr_t *NET_SV_ResolveAddress(char *address)
 {
+    server_addr.module = &net_loop_server_module;
     return &server_addr;
 }
 

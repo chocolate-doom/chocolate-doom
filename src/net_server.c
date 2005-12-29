@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2005/12/29 21:29:55  fraggle
+// Working client connect code
+//
 // Revision 1.1  2005/12/29 17:48:25  fraggle
 // Add initial client/server connect code.  Reorganise sources list in
 // Makefile.am.
@@ -80,7 +83,7 @@ static void NET_ServerParseSYN(net_packet_t *packet,
 
     // read the magic number
 
-    if (!NET_ReadInt16(packet, &magic))
+    if (!NET_ReadInt32(packet, &magic))
     {
         return;
     }
