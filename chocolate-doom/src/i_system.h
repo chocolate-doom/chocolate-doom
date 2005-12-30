@@ -48,6 +48,9 @@ byte*	I_ZoneBase (int *size);
 // returns current time in tics.
 int I_GetTime (void);
 
+// returns current time in ms
+int I_GetTimeMS (void);
+
 // Pause for a specified number of ms
 void I_Sleep(int ms);
 
@@ -99,6 +102,9 @@ void I_Error (char *error, ...);
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.5  2005/12/30 18:50:53  fraggle
+// Millisecond clock function
+//
 // Revision 1.4  2005/09/11 16:39:29  fraggle
 // Fix declaration of I_Sleep (not I_Delay) and move to right header
 //
