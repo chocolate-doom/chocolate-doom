@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_system.c 230 2005-11-17 09:41:24Z fraggle $
+// $Id: i_system.c 234 2005-12-30 18:50:53Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.15  2005/12/30 18:50:53  fraggle
+// Millisecond clock function
+//
 // Revision 1.14  2005/11/17 09:41:24  fraggle
 // Catch SDL_QUIT event on ENDOOM display
 //
@@ -72,7 +75,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_system.c 230 2005-11-17 09:41:24Z fraggle $";
+rcsid[] = "$Id: i_system.c 234 2005-12-30 18:50:53Z fraggle $";
 
 
 #include <stdlib.h>
@@ -137,11 +140,13 @@ byte* I_ZoneBase (int*	size)
 
 //
 // I_GetTime
-// returns time in 1/70th second tics
+// returns time in 1/35th second tics
 //
+
+static Uint32 basetime = 0;
+
 int  I_GetTime (void)
 {
-    static Uint32 basetime = 0;
     Uint32 ticks;
 
     ticks = SDL_GetTicks();
@@ -152,6 +157,22 @@ int  I_GetTime (void)
     ticks -= basetime;
 
     return (ticks * 35) / 1000;    
+}
+
+//
+// Same as I_GetTime, but returns time in milliseconds
+//
+
+int I_GetTimeMS(void)
+{
+    Uint32 ticks;
+
+    ticks = SDL_GetTicks();
+
+    if (basetime == 0)
+        basetime = ticks;
+
+    return ticks - basetime;
 }
 
 
