@@ -21,6 +21,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/12/30 18:58:22  fraggle
+// Fix client code to correctly send reply to server on connection.
+// Add "waiting screen" while waiting for the game to start.
+// Hook in the new networking code into the main game code.
+//
 // Revision 1.2  2005/12/29 21:29:55  fraggle
 // Working client connect code
 //
@@ -37,6 +42,7 @@
 #include "i_system.h"
 #include "net_client.h"
 #include "net_defs.h"
+#include "net_gui.h"
 #include "net_io.h"
 #include "net_packet.h"
 #include "net_server.h"
@@ -56,10 +62,52 @@ typedef enum
     CLIENT_STATE_IN_GAME,
 } net_clientstate_t;
 
+static boolean client_initialised = false;
+
 static net_clientstate_t client_state;
 static net_addr_t *server_addr;
 static net_context_t *client_context;
 static int last_send_time;
+
+// data received while we are waiting for the game to start
+
+static void ClientParseWaitingData(net_packet_t *packet)
+{
+    unsigned int num_players;
+    unsigned int is_controller;
+
+    if (!NET_ReadInt8(packet, &num_players)
+     || !NET_ReadInt8(packet, &is_controller))
+    {
+        // invalid packet
+
+        return;
+    }
+
+    net_clients_in_game = num_players;
+    net_client_controller = is_controller != 0;
+}
+
+// Received an ACK
+
+static void ClientParseACK(net_packet_t *packet)
+{
+    net_packet_t *reply;
+
+    // send an ACK back
+
+    reply = NET_NewPacket(10);
+    NET_WriteInt16(reply, NET_PACKET_TYPE_ACK);
+    NET_SendPacket(server_addr, reply);
+    NET_FreePacket(reply);
+
+    // set the client state if we havent already
+ 
+    if (client_state == CLIENT_STATE_CONNECTING)
+    {
+        client_state = CLIENT_STATE_WAITING_START;
+    }
+}
 
 // parse a received packet
 
@@ -78,10 +126,12 @@ static void ClientParsePacket(net_packet_t *packet)
 
             // received an acknowledgement to the SYN we sent
 
-            if (client_state == CLIENT_STATE_CONNECTING)
-            {
-                client_state = CLIENT_STATE_WAITING_START;
-            }
+            ClientParseACK(packet);
+            break;
+
+        case NET_PACKET_TYPE_WAITING_DATA:
+
+            ClientParseWaitingData(packet);
             break;
 
         case NET_PACKET_TYPE_GAMESTART:
@@ -134,6 +184,11 @@ void NET_ClientRun(void)
     net_addr_t *addr;
     net_packet_t *packet;
     
+    if (!client_initialised)
+    {
+        return;
+    }
+    
     while (NET_RecvPacket(client_context, &addr, &packet))
     {
         // only accept packets from the server
@@ -181,6 +236,8 @@ boolean NET_ClientConnect(net_addr_t *addr)
     }
 
     NET_AddModule(client_context, addr->module);
+
+    client_initialised = true;
 
     // try to connect
  

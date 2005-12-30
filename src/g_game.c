@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.17  2005/12/30 18:58:22  fraggle
+// Fix client code to correctly send reply to server on connection.
+// Add "waiting screen" while waiting for the game to start.
+// Hook in the new networking code into the main game code.
+//
 // Revision 1.16  2005/10/17 20:27:05  fraggle
 // Start of Dehacked 'Misc' section support.  Initial Health+Bullets,
 // and bfg cells/shot are supported.
@@ -99,6 +104,8 @@ rcsid[] = "$Id$";
 
 #include "deh_main.h"
 #include "deh_misc.h"
+
+#include "net_gui.h"
 
 #include "z_zone.h"
 #include "f_finale.h"
@@ -639,6 +646,13 @@ boolean G_Responder (event_t* ev)
 	} 
 	return false; 
     } 
+
+    // waiting for a network game to start
+
+    if (gamestate == GS_WAITINGSTART)
+    {
+        return NET_Responder(ev);
+    }
  
     if (gamestate == GS_LEVEL) 
     { 
@@ -851,7 +865,10 @@ void G_Ticker (void)
  
       case GS_DEMOSCREEN: 
 	D_PageTicker (); 
-	break; 
+	break;
+
+      case GS_WAITINGSTART:
+        break;
     }        
 } 
  
