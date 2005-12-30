@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_defs.h 232 2005-12-29 17:48:25Z fraggle $
+// $Id: net_defs.h 235 2005-12-30 18:58:22Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/12/30 18:58:22  fraggle
+// Fix client code to correctly send reply to server on connection.
+// Add "waiting screen" while waiting for the game to start.
+// Hook in the new networking code into the main game code.
+//
 // Revision 1.2  2005/12/29 17:48:25  fraggle
 // Add initial client/server connect code.  Reorganise sources list in
 // Makefile.am.
@@ -101,11 +106,22 @@ struct _net_addr_s
 
 typedef enum 
 {
-        NET_PACKET_TYPE_SYN,
-        NET_PACKET_TYPE_ACK,
-        NET_PACKET_TYPE_GAMESTART,
-        NET_PACKET_TYPE_GAMEDATA,
+    NET_PACKET_TYPE_SYN,
+    NET_PACKET_TYPE_ACK,
+    NET_PACKET_TYPE_WAITING_DATA,
+    NET_PACKET_TYPE_GAMESTART,
+    NET_PACKET_TYPE_GAMEDATA,
 } net_packet_type_t;
+
+typedef struct 
+{
+    int ticdup;
+    int extratics;
+    int deathmatch;
+    int episode;
+    int map;
+    int skill;
+} net_gamesettings_t;
 
 #endif /* #ifndef NET_DEFS_H */
 

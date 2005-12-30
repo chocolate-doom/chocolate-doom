@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.c 120 2005-09-22 13:13:47Z fraggle $
+// $Id: d_net.c 235 2005-12-30 18:58:22Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.9  2005/12/30 18:58:22  fraggle
+// Fix client code to correctly send reply to server on connection.
+// Add "waiting screen" while waiting for the game to start.
+// Hook in the new networking code into the main game code.
+//
 // Revision 1.8  2005/09/22 13:13:47  fraggle
 // Remove external statistics driver support (-statcopy):
 // nonfunctional on modern systems and never used.
@@ -58,7 +63,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_net.c 120 2005-09-22 13:13:47Z fraggle $";
+static const char rcsid[] = "$Id: d_net.c 235 2005-12-30 18:58:22Z fraggle $";
 
 
 #include "m_menu.h"
@@ -68,6 +73,9 @@ static const char rcsid[] = "$Id: d_net.c 120 2005-09-22 13:13:47Z fraggle $";
 #include "g_game.h"
 #include "doomdef.h"
 #include "doomstat.h"
+
+#include "net_client.h"
+#include "net_server.h"
 
 #define	NCMD_EXIT		0x80000000
 #define	NCMD_RETRANSMIT		0x40000000
@@ -408,6 +416,11 @@ void NetUpdate (void)
     int				realstart;
     int				gameticdiv;
     
+    // Temporary hack - hook new client/server code into Doom
+
+    NET_ClientRun();
+    NET_ServerRun();
+    
     // check time
     nowtime = I_GetTime ()/ticdup;
     newtics = nowtime - gametime;
@@ -581,6 +594,11 @@ void D_ArbitrateNetStart (void)
     }
 }
 
+#include "m_argv.h"
+#include "net_loop.h"
+#include "net_client.h"
+#include "net_server.h"
+
 //
 // D_CheckNetGame
 // Works out player numbers among the net participants
@@ -590,6 +608,29 @@ extern	int			viewangleoffset;
 void D_CheckNetGame (void)
 {
     int             i;
+
+    // temporary hack 
+
+    if (M_CheckParm("-server") > 0)
+    {
+        net_addr_t *addr;
+        NET_ServerInit();
+
+        addr = net_loop_client_module.ResolveAddress("");
+
+        printf("address resolved: %p\n", addr);
+
+        if (NET_ClientConnect(addr))
+        {
+            printf("connected to local server\n");
+            
+            gamestate = GS_WAITINGSTART;
+        }
+        else
+        {
+            printf("failed to connect\n");
+        }
+    }
 	
     for (i=0 ; i<MAXNETNODES ; i++)
     {

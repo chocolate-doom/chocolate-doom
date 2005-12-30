@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 233 2005-12-29 21:29:55Z fraggle $
+// $Id: net_server.c 235 2005-12-30 18:58:22Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2005/12/30 18:58:22  fraggle
+// Fix client code to correctly send reply to server on connection.
+// Add "waiting screen" while waiting for the game to start.
+// Hook in the new networking code into the main game code.
+//
 // Revision 1.2  2005/12/29 21:29:55  fraggle
 // Working client connect code
 //
@@ -72,11 +77,50 @@ static boolean server_initialised = false;
 static net_client_t clients[MAXNETNODES];
 static net_context_t *server_context;
 
+// returns the number of clients connected
+
+static int ServerNumClients(void)
+{
+    int count;
+    int i;
+
+    count = 0;
+
+    for (i=0; i<MAXNETNODES; ++i)
+    {
+        if (clients[i].active)
+        {
+            ++count;
+        }
+    }
+
+    return count;
+}
+
+// returns a pointer to the client which controls the server
+
+static net_client_t *ServerController(void)
+{
+    int i;
+
+    // first client in the list is the controller
+
+    for (i=0; i<MAXNETNODES; ++i)
+    {
+        if (clients[i].active)
+        {
+            return &clients[i];
+        }
+    }
+
+    return NULL;
+}
+
 // parse a SYN from a client(initiating a connection)
 
-static void NET_ServerParseSYN(net_packet_t *packet, 
-                               net_client_t *client,
-                               net_addr_t *addr)
+static void ServerParseSYN(net_packet_t *packet, 
+                           net_client_t *client,
+                           net_addr_t *addr)
 {
     unsigned int magic;
     int i;
@@ -132,7 +176,7 @@ static void NET_ServerParseSYN(net_packet_t *packet,
 
 // parse an ACK packet from a client
 
-static void NET_ServerParseACK(net_packet_t *packet, net_client_t *client)
+static void ServerParseACK(net_packet_t *packet, net_client_t *client)
 {
     if (client == NULL)
     {
@@ -144,12 +188,16 @@ static void NET_ServerParseACK(net_packet_t *packet, net_client_t *client)
         // now waiting for the game to start
 
         client->state = CLIENT_STATE_WAITING_START;
+
+        // force a waiting data packet to be sent immediately
+
+        client->last_send_time = -1;
     }
 }
 
 // Process a packet received by the server
 
-static void NET_ServerPacket(net_packet_t *packet, net_addr_t *addr)
+static void ServerPacket(net_packet_t *packet, net_addr_t *addr)
 {
     net_client_t *client;
     unsigned int packet_type;
@@ -161,7 +209,7 @@ static void NET_ServerPacket(net_packet_t *packet, net_addr_t *addr)
 
     for (i=0; i<MAXNETNODES; ++i) 
     {
-        if (clients[i].active && client[i].addr == addr)
+        if (clients[i].active && clients[i].addr == addr)
         {
             // found the client
 
@@ -180,10 +228,10 @@ static void NET_ServerPacket(net_packet_t *packet, net_addr_t *addr)
     switch (packet_type)
     {
         case NET_PACKET_TYPE_SYN:
-            NET_ServerParseSYN(packet, client, addr);
+            ServerParseSYN(packet, client, addr);
             break;
         case NET_PACKET_TYPE_ACK:
-            NET_ServerParseACK(packet, client);
+            ServerParseACK(packet, client);
             break;
         case NET_PACKET_TYPE_GAMESTART:
             break;
@@ -196,9 +244,37 @@ static void NET_ServerPacket(net_packet_t *packet, net_addr_t *addr)
     }
 }
 
+
+static void ServerSendWaitingData(net_client_t *client)
+{
+    net_packet_t *packet;
+
+    // time to send the client another status packet
+
+    packet = NET_NewPacket(10);
+    NET_WriteInt16(packet, NET_PACKET_TYPE_WAITING_DATA);
+
+    // include the number of clients waiting
+
+    NET_WriteInt8(packet, ServerNumClients());
+
+    // indicate whether the client is the controller
+
+    NET_WriteInt8(packet, ServerController() == client);
+    
+    // send packet to client and free
+
+    NET_SendPacket(client->addr, packet);
+    NET_FreePacket(packet);
+    
+    // update time
+
+    client->last_send_time = I_GetTimeMS();
+}
+
 // Perform any needed action on a client
 
-void NET_ServerRunClient(net_client_t *client)
+static void ServerRunClient(net_client_t *client)
 {
     net_packet_t *packet;
 
@@ -230,6 +306,17 @@ void NET_ServerRunClient(net_client_t *client)
 
                 client->active = false;
             }
+        }
+    }
+
+    // waiting for the game to start
+
+    if (client->state == CLIENT_STATE_WAITING_START)
+    {
+        if (client->last_send_time < 0 
+         || I_GetTimeMS() - client->last_send_time > 1000)
+        {
+            ServerSendWaitingData(client);
         }
     }
 }
@@ -272,7 +359,7 @@ void NET_ServerRun(void)
 
     while (NET_RecvPacket(server_context, &addr, &packet)) 
     {
-        NET_ServerPacket(packet, addr);
+        ServerPacket(packet, addr);
     }
 
     // "Run" any clients that may have things to do, independent of responses
@@ -282,7 +369,7 @@ void NET_ServerRun(void)
     {
         if (clients[i].active)
         {
-            NET_ServerRunClient(&clients[i]);
+            ServerRunClient(&clients[i]);
         }
     }
 }

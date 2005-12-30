@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.h 235 2005-12-30 18:58:22Z fraggle $
+// $Id: net_structrw.c 235 2005-12-30 18:58:22Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,29 +21,34 @@
 // 02111-1307, USA.
 //
 // $Log$
-// Revision 1.3  2005/12/30 18:58:22  fraggle
+// Revision 1.1  2005/12/30 18:58:22  fraggle
 // Fix client code to correctly send reply to server on connection.
 // Add "waiting screen" while waiting for the game to start.
 // Hook in the new networking code into the main game code.
 //
-// Revision 1.2  2005/12/29 21:29:55  fraggle
-// Working client connect code
 //
-// Revision 1.1  2005/12/29 17:48:25  fraggle
-// Add initial client/server connect code.  Reorganise sources list in
-// Makefile.am.
-//
-//
-// Network client code
+// Reading and writing various structures into packets
 //
 
-#ifndef NET_CLIENT_H
-#define NET_CLIENT_H
+#include "net_packet.h"
 
-#include "net_defs.h"
+void NET_WriteSettings(net_packet_t *packet, net_gamesettings_t *settings)
+{
+    NET_WriteInt8(packet, settings->ticdup);
+    NET_WriteInt8(packet, settings->extratics);
+    NET_WriteInt8(packet, settings->deathmatch);
+    NET_WriteInt8(packet, settings->episode);
+    NET_WriteInt8(packet, settings->map);
+    NET_WriteInt8(packet, settings->skill);
+}
 
-boolean NET_ClientConnect(net_addr_t *addr);
-void NET_ClientRun(void);
-
-#endif /* #ifndef NET_CLIENT_H */
+boolean NET_ReadSettings(net_packet_t *packet, net_gamesettings_t *settings)
+{
+    return NET_ReadInt8(packet, (unsigned int *) &settings->ticdup)
+        && NET_ReadInt8(packet, (unsigned int *) &settings->extratics)
+        && NET_ReadInt8(packet, (unsigned int *) &settings->deathmatch)
+        && NET_ReadInt8(packet, (unsigned int *) &settings->episode)
+        && NET_ReadInt8(packet, (unsigned int *) &settings->map)
+        && NET_ReadInt8(packet, (unsigned int *) &settings->skill);
+}
 
