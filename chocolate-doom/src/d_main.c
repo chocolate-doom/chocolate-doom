@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.32  2005/12/30 18:58:22  fraggle
+// Fix client code to correctly send reply to server on connection.
+// Add "waiting screen" while waiting for the game to start.
+// Hook in the new networking code into the main game code.
+//
 // Revision 1.31  2005/10/24 18:50:39  fraggle
 // Allow the game version to emulate to be specified from the command line
 // and set compatibility options accordingly.
@@ -194,6 +199,7 @@ static const char rcsid[] = "$Id$";
 #include "wi_stuff.h"
 #include "st_stuff.h"
 #include "am_map.h"
+#include "net_gui.h"
 
 #include "p_setup.h"
 #include "r_local.h"
@@ -389,6 +395,10 @@ void D_Display (void)
       case GS_DEMOSCREEN:
 	D_PageDrawer ();
 	break;
+
+      case GS_WAITINGSTART:
+        NET_Drawer();
+        break;
     }
     
     // draw buffered stuff to screen
@@ -1571,8 +1581,10 @@ void D_DoomMain (void)
 	G_LoadGame (file);
     }
 	
+    // TODO: Remove this test here for GS_WAITINGSTART.  Temporary hack
+    // for new network code.
 
-    if ( gameaction != ga_loadgame )
+    if (gamestate != GS_WAITINGSTART && gameaction != ga_loadgame )
     {
 	if (autostart || netgame)
 	    G_InitNew (startskill, startepisode, startmap);
@@ -1580,6 +1592,6 @@ void D_DoomMain (void)
 	    D_StartTitle ();                // start up intro loop
 
     }
-
+    
     D_DoomLoop ();  // never returns
 }

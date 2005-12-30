@@ -21,29 +21,30 @@
 // 02111-1307, USA.
 //
 // $Log$
-// Revision 1.3  2005/12/30 18:58:22  fraggle
+// Revision 1.1  2005/12/30 18:58:22  fraggle
 // Fix client code to correctly send reply to server on connection.
 // Add "waiting screen" while waiting for the game to start.
 // Hook in the new networking code into the main game code.
 //
-// Revision 1.2  2005/12/29 21:29:55  fraggle
-// Working client connect code
 //
-// Revision 1.1  2005/12/29 17:48:25  fraggle
-// Add initial client/server connect code.  Reorganise sources list in
-// Makefile.am.
+// Graphical stuff related to the networking code:
 //
-//
-// Network client code
-//
+//  * The client waiting screen when we are waiting for the server to
+//    start the game.
+//   
 
-#ifndef NET_CLIENT_H
-#define NET_CLIENT_H
 
-#include "net_defs.h"
+#ifndef NET_GUI_H 
+#define NET_GUI_H
 
-boolean NET_ClientConnect(net_addr_t *addr);
-void NET_ClientRun(void);
+#include "doomtype.h"
+#include "d_event.h"
 
-#endif /* #ifndef NET_CLIENT_H */
+extern void NET_Drawer(void);
+extern boolean NET_Responder(event_t *event);
+
+extern boolean net_client_controller;
+extern int net_clients_in_game;
+
+#endif /* #ifndef NET_GUI_H */
 

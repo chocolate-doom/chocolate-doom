@@ -21,29 +21,21 @@
 // 02111-1307, USA.
 //
 // $Log$
-// Revision 1.3  2005/12/30 18:58:22  fraggle
+// Revision 1.1  2005/12/30 18:58:22  fraggle
 // Fix client code to correctly send reply to server on connection.
 // Add "waiting screen" while waiting for the game to start.
 // Hook in the new networking code into the main game code.
 //
-// Revision 1.2  2005/12/29 21:29:55  fraggle
-// Working client connect code
-//
-// Revision 1.1  2005/12/29 17:48:25  fraggle
-// Add initial client/server connect code.  Reorganise sources list in
-// Makefile.am.
-//
-//
-// Network client code
-//
 
-#ifndef NET_CLIENT_H
-#define NET_CLIENT_H
+#ifndef NET_STRUCTRW_H
+#define NET_STRUCTRW_H
 
 #include "net_defs.h"
+#include "net_packet.h"
 
-boolean NET_ClientConnect(net_addr_t *addr);
-void NET_ClientRun(void);
+extern void NET_WriteSettings(net_packet_t *packet, net_gamesettings_t *settings);
+extern boolean NET_ReadSettings(net_packet_t *packet, net_gamesettings_t *settings);
 
-#endif /* #ifndef NET_CLIENT_H */
+
+#endif /* #ifndef NET_STRUCTRW_H */
 
