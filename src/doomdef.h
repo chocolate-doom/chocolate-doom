@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: doomdef.h 235 2005-12-30 18:58:22Z fraggle $
+// $Id: doomdef.h 237 2006-01-01 23:53:15Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -132,16 +132,12 @@ typedef enum
 // The current state of the game: whether we are
 // playing, gazing at the intermission screen,
 // the game final animation, or a demo. 
-//
-// fraggle: GS_WAITINGSTART indicates that we are in a netgame, waiting
-// for a signal from the server to start the game.
 typedef enum
 {
     GS_LEVEL,
     GS_INTERMISSION,
     GS_FINALE,
     GS_DEMOSCREEN,
-    GS_WAITINGSTART,
 } gamestate_t;
 
 //
@@ -377,6 +373,10 @@ typedef enum
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.10  2006/01/01 23:53:15  fraggle
+// Remove GS_WAITINGSTART gamestate.  This will be independent of the main
+// loop to avoid interfering with the main game code too much.
+//
 // Revision 1.9  2005/12/30 18:58:22  fraggle
 // Fix client code to correctly send reply to server on connection.
 // Add "waiting screen" while waiting for the game to start.

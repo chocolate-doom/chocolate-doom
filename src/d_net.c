@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.c 235 2005-12-30 18:58:22Z fraggle $
+// $Id: d_net.c 237 2006-01-01 23:53:15Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.10  2006/01/01 23:53:15  fraggle
+// Remove GS_WAITINGSTART gamestate.  This will be independent of the main
+// loop to avoid interfering with the main game code too much.
+//
 // Revision 1.9  2005/12/30 18:58:22  fraggle
 // Fix client code to correctly send reply to server on connection.
 // Add "waiting screen" while waiting for the game to start.
@@ -63,7 +67,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_net.c 235 2005-12-30 18:58:22Z fraggle $";
+static const char rcsid[] = "$Id: d_net.c 237 2006-01-01 23:53:15Z fraggle $";
 
 
 #include "m_menu.h"
@@ -623,8 +627,6 @@ void D_CheckNetGame (void)
         if (NET_ClientConnect(addr))
         {
             printf("connected to local server\n");
-            
-            gamestate = GS_WAITINGSTART;
         }
         else
         {
@@ -681,7 +683,7 @@ void D_QuitNetGame (void)
 	
     if (debugfile)
 	fclose (debugfile);
-		
+
     if (!netgame || !usergame || consoleplayer == -1 || demoplayback)
 	return;
 	
