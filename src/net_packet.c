@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_packet.c 229 2005-10-30 19:56:15Z fraggle $
+// $Id: net_packet.c 236 2006-01-01 23:51:41Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2006/01/01 23:51:41  fraggle
+// String read/write functions
+//
 // Revision 1.1  2005/10/30 19:56:15  fraggle
 // Add foundation code for the new networking system
 //
@@ -121,6 +124,38 @@ boolean NET_ReadInt32(net_packet_t *packet, unsigned int *data)
     return true;
 }
 
+// Read a string from the packet.  Returns NULL if a terminating 
+// NUL character was not found before the end of the packet.
+
+char *NET_ReadString(net_packet_t *packet)
+{
+    char *start;
+
+    start = (char *) packet->data + packet->pos;
+
+    // Search forward for a NUL character
+
+    while (packet->pos < packet->len && packet->data[packet->pos] != '\0')
+    {
+        ++packet->pos;
+    }
+
+    if (packet->pos >= packet->len)
+    {
+        // Reached the end of the packet
+
+        return NULL;
+    }
+
+    // packet->data[packet->pos] == '\0': We have reached a terminating
+    // NULL.  Skip past this NULL and continue reading immediately 
+    // after it.
+
+    ++packet->pos;
+    
+    return start;
+}
+
 // Dynamically increases the size of a packet
 
 static void NET_IncreasePacket(net_packet_t *packet)
@@ -183,6 +218,24 @@ void NET_WriteInt32(net_packet_t *packet, unsigned int i)
     p[3] = i & 0xff;
 
     packet->len += 4;
+}
+
+void NET_WriteString(net_packet_t *packet, char *string)
+{
+    byte *p;
+
+    // Increase the packet size until large enough to hold the string
+
+    while (packet->len + strlen(string) + 1 > packet->alloced)
+    {
+        NET_IncreasePacket(packet);
+    }
+
+    p = packet->data + packet->len;
+
+    strcpy((char *) p, string);
+
+    packet->len += strlen(string) + 1;
 }
 
 

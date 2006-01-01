@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_packet.h 229 2005-10-30 19:56:15Z fraggle $
+// $Id: net_packet.h 236 2006-01-01 23:51:41Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2006/01/01 23:51:41  fraggle
+// String read/write functions
+//
 // Revision 1.1  2005/10/30 19:56:15  fraggle
 // Add foundation code for the new networking system
 //
@@ -41,9 +44,11 @@ void NET_FreePacket(net_packet_t *packet);
 boolean NET_ReadInt8(net_packet_t *packet, unsigned int *data);
 boolean NET_ReadInt16(net_packet_t *packet, unsigned int *data);
 boolean NET_ReadInt32(net_packet_t *packet, unsigned int *data);
+char *NET_ReadString(net_packet_t *packet);
 void NET_WriteInt8(net_packet_t *packet, unsigned int i);
 void NET_WriteInt16(net_packet_t *packet, unsigned int i);
 void NET_WriteInt32(net_packet_t *packet, unsigned int i);
+void NET_WriteString(net_packet_t *packet, char *string);
 
 #endif /* #ifndef NET_PACKET_H */
 
