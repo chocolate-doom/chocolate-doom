@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2006/01/01 23:54:31  fraggle
+// Client disconnect code
+//
 // Revision 1.3  2005/12/30 18:58:22  fraggle
 // Fix client code to correctly send reply to server on connection.
 // Add "waiting screen" while waiting for the game to start.
@@ -60,6 +63,13 @@ typedef enum
 
     CLIENT_STATE_IN_GAME,
 
+    // sent a DISCONNECT packet, waiting for a DISCONNECT_ACK reply
+
+    CLIENT_STATE_DISCONNECTING,
+
+    // client successfully disconnected
+
+    CLIENT_STATE_DISCONNECTED,
 } net_clientstate_t;
 
 #define MAX_RETRIES 5
@@ -77,6 +87,17 @@ static boolean server_initialised = false;
 static net_client_t clients[MAXNETNODES];
 static net_context_t *server_context;
 
+static boolean ClientConnected(net_client_t *client)
+{
+    // Check that the client is properly connected: ie. not in the 
+    // process of connecting or disconnecting
+
+    return clients->active
+        && clients->state != CLIENT_STATE_DISCONNECTING
+        && clients->state != CLIENT_STATE_DISCONNECTED
+        && clients->state != CLIENT_STATE_WAITING_ACK;
+}
+
 // returns the number of clients connected
 
 static int ServerNumClients(void)
@@ -88,7 +109,7 @@ static int ServerNumClients(void)
 
     for (i=0; i<MAXNETNODES; ++i)
     {
-        if (clients[i].active)
+        if (ClientConnected(&clients[i]))
         {
             ++count;
         }
@@ -107,8 +128,27 @@ static net_client_t *ServerController(void)
 
     for (i=0; i<MAXNETNODES; ++i)
     {
-        if (clients[i].active)
+        if (ClientConnected(&clients[i]))
         {
+            return &clients[i];
+        }
+    }
+
+    return NULL;
+}
+
+// Given an address, find the corresponding client
+
+static net_client_t *ServerFindClient(net_addr_t *addr)
+{
+    int i;
+
+    for (i=0; i<MAXNETNODES; ++i) 
+    {
+        if (clients[i].active && clients[i].addr == addr)
+        {
+            // found the client
+
             return &clients[i];
         }
     }
@@ -195,28 +235,51 @@ static void ServerParseACK(net_packet_t *packet, net_client_t *client)
     }
 }
 
+static void ServerParseDisconnect(net_packet_t *packet, net_client_t *client)
+{
+    net_packet_t *reply;
+
+    // sanity check
+
+    if (client == NULL)
+    {
+        return;
+    }
+
+    // This client wants to disconnect from the server.
+    // Send a DISCONNECT_ACK reply.
+    
+    reply = NET_NewPacket(10);
+    NET_WriteInt16(reply, NET_PACKET_TYPE_DISCONNECT_ACK);
+    NET_SendPacket(client->addr, reply);
+    NET_FreePacket(reply);
+
+    client->last_send_time = I_GetTimeMS();
+    
+    // Do not set to inactive immediately.  Instead, set to the 
+    // DISCONNECTED state.  This is in case our acknowledgement is
+    // not received and another must be sent.
+    //
+    // After a few seconds, the client will get properly removed
+    // and cleaned up from the clients list.
+
+    client->state = CLIENT_STATE_DISCONNECTED;
+
+    printf("client %i disconnected\n", client-clients);
+}
+
 // Process a packet received by the server
 
 static void ServerPacket(net_packet_t *packet, net_addr_t *addr)
 {
     net_client_t *client;
     unsigned int packet_type;
-    int i;
 
-    // find which client this packet came from
+    // Find which client this packet came from
 
-    client = NULL;
+    client = ServerFindClient(addr);
 
-    for (i=0; i<MAXNETNODES; ++i) 
-    {
-        if (clients[i].active && clients[i].addr == addr)
-        {
-            // found the client
-
-            client = &clients[i];
-            break;
-        }
-    }
+    // Read the packet type
 
     if (!NET_ReadInt16(packet, &packet_type))
     {
@@ -237,10 +300,21 @@ static void ServerPacket(net_packet_t *packet, net_addr_t *addr)
             break;
         case NET_PACKET_TYPE_GAMEDATA:
             break;
+        case NET_PACKET_TYPE_DISCONNECT:
+            ServerParseDisconnect(packet, client);
+            break;
         default:
             // unknown packet type
 
             break;
+    }
+
+    // If this address is not in the list of clients, be sure to
+    // free it back.
+
+    if (ServerFindClient(addr) == NULL)
+    {
+        NET_FreeAddress(addr);
     }
 }
 
@@ -302,9 +376,8 @@ static void ServerRunClient(net_client_t *client)
             {
                 // no more retries allowed.
 
-                NET_FreeAddress(client->addr);
-
                 client->active = false;
+                NET_FreeAddress(client->addr);
             }
         }
     }
@@ -313,10 +386,27 @@ static void ServerRunClient(net_client_t *client)
 
     if (client->state == CLIENT_STATE_WAITING_START)
     {
+        // Send information once every second
+
         if (client->last_send_time < 0 
          || I_GetTimeMS() - client->last_send_time > 1000)
         {
             ServerSendWaitingData(client);
+        }
+    }
+
+    // Client has disconnected.  
+    //
+    // See ServerParseDisconnect() above.
+
+    if (client->state == CLIENT_STATE_DISCONNECTED)
+    {
+        // Remove from the list after five seconds
+
+        if (I_GetTimeMS() - client->last_send_time > 5000)
+        {
+            client->active = false;
+            NET_FreeAddress(client->addr);
         }
     }
 }

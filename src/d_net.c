@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.11  2006/01/01 23:54:31  fraggle
+// Client disconnect code
+//
 // Revision 1.10  2006/01/01 23:53:15  fraggle
 // Remove GS_WAITINGSTART gamestate.  This will be independent of the main
 // loop to avoid interfering with the main game code too much.
@@ -683,6 +686,8 @@ void D_QuitNetGame (void)
 	
     if (debugfile)
 	fclose (debugfile);
+
+    NET_ClientDisconnect();
 
     if (!netgame || !usergame || consoleplayer == -1 || demoplayback)
 	return;

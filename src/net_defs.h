@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2006/01/01 23:54:31  fraggle
+// Client disconnect code
+//
 // Revision 1.3  2005/12/30 18:58:22  fraggle
 // Fix client code to correctly send reply to server on connection.
 // Add "waiting screen" while waiting for the game to start.
@@ -111,6 +114,8 @@ typedef enum
     NET_PACKET_TYPE_WAITING_DATA,
     NET_PACKET_TYPE_GAMESTART,
     NET_PACKET_TYPE_GAMEDATA,
+    NET_PACKET_TYPE_DISCONNECT,
+    NET_PACKET_TYPE_DISCONNECT_ACK,
 } net_packet_type_t;
 
 typedef struct 
