@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2006/01/01 23:54:31  fraggle
+// Client disconnect code
+//
 // Revision 1.3  2005/12/30 18:58:22  fraggle
 // Fix client code to correctly send reply to server on connection.
 // Add "waiting screen" while waiting for the game to start.
@@ -43,6 +46,7 @@
 #include "net_defs.h"
 
 boolean NET_ClientConnect(net_addr_t *addr);
+void NET_ClientDisconnect(void);
 void NET_ClientRun(void);
 
 #endif /* #ifndef NET_CLIENT_H */
