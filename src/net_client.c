@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 235 2005-12-30 18:58:22Z fraggle $
+// $Id: net_client.c 238 2006-01-01 23:54:31Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2006/01/01 23:54:31  fraggle
+// Client disconnect code
+//
 // Revision 1.3  2005/12/30 18:58:22  fraggle
 // Fix client code to correctly send reply to server on connection.
 // Add "waiting screen" while waiting for the game to start.
@@ -60,6 +63,14 @@ typedef enum
     // in game
 
     CLIENT_STATE_IN_GAME,
+
+    // in disconnect state: sent DISCONNECT, waiting for DISCONNECT_ACK reply
+    
+    CLIENT_STATE_DISCONNECTING,
+
+    // successfully disconnected
+
+    CLIENT_STATE_DISCONNECTED,
 } net_clientstate_t;
 
 static boolean client_initialised = false;
@@ -109,6 +120,42 @@ static void ClientParseACK(net_packet_t *packet)
     }
 }
 
+// parse a DISCONNECT packet
+
+static void ClientParseDisconnect(net_packet_t *packet)
+{
+    net_packet_t *reply;
+
+    // construct a DISCONNECT_ACK reply packet
+
+    reply = NET_NewPacket(10);
+    NET_WriteInt16(reply, NET_PACKET_TYPE_DISCONNECT_ACK);
+
+    // send the reply several times, in case of packet loss
+
+    NET_SendPacket(server_addr, reply);
+    NET_SendPacket(server_addr, reply);
+    NET_SendPacket(server_addr, reply);
+
+    client_state = CLIENT_STATE_DISCONNECTED;
+
+    I_Error("Disconnected from server.\n");
+}
+
+// parse a DISCONNECT_ACK packet
+
+static void ClientParseDisconnectACK(net_packet_t *packet)
+{
+    if (client_state == CLIENT_STATE_DISCONNECTING)
+    {
+        // successfully disconnected from the server.
+
+        client_state = CLIENT_STATE_DISCONNECTED;
+
+        // now what?
+    }
+}
+
 // parse a received packet
 
 static void ClientParsePacket(net_packet_t *packet)
@@ -139,6 +186,15 @@ static void ClientParsePacket(net_packet_t *packet)
 
         case NET_PACKET_TYPE_GAMEDATA:
             break;
+
+        case NET_PACKET_TYPE_DISCONNECT:
+            ClientParseDisconnect(packet);
+            break;
+
+        case NET_PACKET_TYPE_DISCONNECT_ACK:
+            ClientParseDisconnectACK(packet);
+            break;
+
         default:
             break;
     }
@@ -165,6 +221,35 @@ static void ClientConnecting(void)
         // magic number
 
         NET_WriteInt32(packet, NET_MAGIC_NUMBER);
+
+        // send to the server
+
+        NET_SendPacket(server_addr, packet);
+
+        NET_FreePacket(packet);
+
+        last_send_time = I_GetTimeMS();
+    }
+}
+
+// Called when we are in the "disconnecting" state, disconnecting from
+// the server.
+
+static void ClientDisconnecting(void)
+{
+    net_packet_t *packet;
+
+    // send a DISCONNECT packet every second
+
+    if (last_send_time < 0 || I_GetTimeMS() - last_send_time > 1000)
+    {
+        // construct packet
+
+        packet = NET_NewPacket(10);
+
+        // packet type
+     
+        NET_WriteInt16(packet, NET_PACKET_TYPE_DISCONNECT);
 
         // send to the server
 
@@ -208,9 +293,10 @@ void NET_ClientRun(void)
         case CLIENT_STATE_CONNECTING:
             ClientConnecting();
             break;
-        case CLIENT_STATE_WAITING_START:
+        case CLIENT_STATE_DISCONNECTING:
+            ClientDisconnecting();
             break;
-        case CLIENT_STATE_IN_GAME:
+        default:
             break;
     }
 }
@@ -263,6 +349,10 @@ boolean NET_ClientConnect(net_addr_t *addr)
         // connect
 
         NET_ServerRun();
+
+        // Don't hog the CPU
+
+        I_Sleep(10);
     }
 
     if (client_state != CLIENT_STATE_CONNECTING)
@@ -279,4 +369,51 @@ boolean NET_ClientConnect(net_addr_t *addr)
     }
 }
 
+// disconnect from the server
+
+void NET_ClientDisconnect(void)
+{
+    int start_time;
+
+    if (!client_initialised)
+    {
+        return;
+    }
+    
+    // set the client into the DISCONNECTING state
+
+    if (client_state != CLIENT_STATE_DISCONNECTED)
+    {
+        client_state = CLIENT_STATE_DISCONNECTING;
+        last_send_time = -1;
+    }
+
+    start_time = I_GetTimeMS();
+
+    while (client_state != CLIENT_STATE_DISCONNECTED)
+    {
+        if (I_GetTimeMS() - start_time > 5000)
+        {
+            // time out after 5 seconds
+            
+            client_state = CLIENT_STATE_DISCONNECTED;
+
+            fprintf(stderr, "NET_ClientDisconnect: Timeout while disconnecting from server\n");
+            break;
+        }
+
+        NET_ClientRun();
+        NET_ServerRun();
+
+        I_Sleep(10);
+    }
+
+    // Finished sending disconnect packets, etc.
+
+    // Shut down network module, etc.  To do.
+
+    NET_FreeAddress(server_addr);
+
+    client_initialised = false;
+}
 
