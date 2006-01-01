@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.33  2006/01/01 23:53:14  fraggle
+// Remove GS_WAITINGSTART gamestate.  This will be independent of the main
+// loop to avoid interfering with the main game code too much.
+//
 // Revision 1.32  2005/12/30 18:58:22  fraggle
 // Fix client code to correctly send reply to server on connection.
 // Add "waiting screen" while waiting for the game to start.
@@ -395,10 +399,6 @@ void D_Display (void)
       case GS_DEMOSCREEN:
 	D_PageDrawer ();
 	break;
-
-      case GS_WAITINGSTART:
-        NET_Drawer();
-        break;
     }
     
     // draw buffered stuff to screen
@@ -1581,10 +1581,7 @@ void D_DoomMain (void)
 	G_LoadGame (file);
     }
 	
-    // TODO: Remove this test here for GS_WAITINGSTART.  Temporary hack
-    // for new network code.
-
-    if (gamestate != GS_WAITINGSTART && gameaction != ga_loadgame )
+    if (gameaction != ga_loadgame )
     {
 	if (autostart || netgame)
 	    G_InitNew (startskill, startepisode, startmap);

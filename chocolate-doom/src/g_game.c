@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.18  2006/01/01 23:53:15  fraggle
+// Remove GS_WAITINGSTART gamestate.  This will be independent of the main
+// loop to avoid interfering with the main game code too much.
+//
 // Revision 1.17  2005/12/30 18:58:22  fraggle
 // Fix client code to correctly send reply to server on connection.
 // Add "waiting screen" while waiting for the game to start.
@@ -647,13 +651,6 @@ boolean G_Responder (event_t* ev)
 	return false; 
     } 
 
-    // waiting for a network game to start
-
-    if (gamestate == GS_WAITINGSTART)
-    {
-        return NET_Responder(ev);
-    }
- 
     if (gamestate == GS_LEVEL) 
     { 
 #if 0 
@@ -866,9 +863,6 @@ void G_Ticker (void)
       case GS_DEMOSCREEN: 
 	D_PageTicker (); 
 	break;
-
-      case GS_WAITINGSTART:
-        break;
     }        
 } 
  
