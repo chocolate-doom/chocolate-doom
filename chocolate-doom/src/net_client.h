@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2006/01/02 00:00:08  fraggle
+// Neater prefixes: NET_Client -> NET_CL_.  NET_Server -> NET_SV_.
+//
 // Revision 1.4  2006/01/01 23:54:31  fraggle
 // Client disconnect code
 //
@@ -45,9 +48,9 @@
 
 #include "net_defs.h"
 
-boolean NET_ClientConnect(net_addr_t *addr);
-void NET_ClientDisconnect(void);
-void NET_ClientRun(void);
+boolean NET_CL_Connect(net_addr_t *addr);
+void NET_CL_Disconnect(void);
+void NET_CL_Run(void);
 
 #endif /* #ifndef NET_CLIENT_H */
 
