@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2006/01/02 20:11:49  fraggle
+// Rename i_net_module -> net_sdl_module.  Fix the AddrToString method.
+//
 // Revision 1.2  2005/12/29 17:47:47  fraggle
 // Automatically initialise the address table
 //
@@ -37,7 +40,6 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "i_net.h"
 #include "i_system.h"
 #include "m_argv.h"
 #include "net_defs.h"
@@ -141,7 +143,7 @@ static net_addr_t *NET_SDL_FindAddress(IPaddress *addr)
 
     new_entry->sdl_addr = *addr;
     new_entry->net_addr.handle = &new_entry->sdl_addr;
-    new_entry->net_addr.module = &i_net_module;
+    new_entry->net_addr.module = &net_sdl_module;
 
     addr_table[empty_entry] = new_entry;
 
@@ -258,10 +260,10 @@ void NET_SDL_AddrToString(net_addr_t *addr, char *buffer, int buffer_len)
     
     snprintf(buffer, buffer_len, 
              "%i.%i.%i.%i",
-             (ip->host >> 24) & 0xff,
-             (ip->host >> 16) & 0xff,
+             ip->host & 0xff,
              (ip->host >> 8) & 0xff,
-             ip->host & 0xff);
+             (ip->host >> 16) & 0xff,
+             (ip->host >> 24) & 0xff);
 }
 
 net_addr_t *NET_SDL_ResolveAddress(char *address)
@@ -280,7 +282,7 @@ net_addr_t *NET_SDL_ResolveAddress(char *address)
 
 // Complete module
 
-net_module_t i_net_module =
+net_module_t net_sdl_module =
 {
     NET_SDL_InitClient,
     NET_SDL_InitServer,
