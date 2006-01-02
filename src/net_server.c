@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 250 2006-01-02 21:04:10Z fraggle $
+// $Id: net_server.c 251 2006-01-02 21:48:37Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.10  2006/01/02 21:48:37  fraggle
+// fix client connected function
+//
 // Revision 1.9  2006/01/02 21:04:10  fraggle
 // Create NET_SV_Shutdown function to shut down the server.  Call it
 // when quitting the game.  Print the IP of the server correctly when
@@ -126,10 +129,10 @@ static boolean ClientConnected(net_client_t *client)
     // Check that the client is properly connected: ie. not in the 
     // process of connecting or disconnecting
 
-    return clients->active
-        && clients->state != CLIENT_STATE_DISCONNECTING
-        && clients->state != CLIENT_STATE_DISCONNECTED
-        && clients->state != CLIENT_STATE_WAITING_ACK;
+    return client->active
+        && client->state != CLIENT_STATE_DISCONNECTING
+        && client->state != CLIENT_STATE_DISCONNECTED
+        && client->state != CLIENT_STATE_WAITING_ACK;
 }
 
 // returns the number of clients connected
