@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 246 2006-01-02 20:14:07Z fraggle $
+// $Id: net_client.c 252 2006-01-02 21:50:26Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.8  2006/01/02 21:50:26  fraggle
+// Restructure the waiting screen code.  Establish our own separate event
+// loop while waiting for the game to start, to avoid affecting the original
+// code too much.  Move some _gui variables to net_client.c.
+//
 // Revision 1.7  2006/01/02 20:14:07  fraggle
 // Fix connect timeout and shutdown client properly if we fail to connect.
 //
@@ -83,12 +88,37 @@ typedef enum
     CLIENT_STATE_DISCONNECTED,
 } net_clientstate_t;
 
-static boolean client_initialised = false;
-
 static net_clientstate_t client_state;
 static net_addr_t *server_addr;
 static net_context_t *client_context;
 static int last_send_time;
+
+// if TRUE, we are connected to a server
+
+boolean net_client_connected = false;
+
+// if TRUE, this client is the controller of the game
+
+boolean net_client_controller = false;
+
+// Number of clients currently connected to the server
+
+int net_clients_in_game;
+
+// Waiting for the game to start?
+
+boolean net_waiting_for_start = false;
+
+// Shut down the client code, etc.  Invoked after a disconnect.
+
+static void NET_CL_Shutdown(void)
+{
+    net_client_connected = false;
+
+    NET_FreeAddress(server_addr);
+
+    // Shut down network module, etc.  To do.
+}
 
 // data received while we are waiting for the game to start
 
@@ -154,6 +184,8 @@ static void NET_CL_ParseDisconnect(net_packet_t *packet)
     fprintf(stderr, "Disconnected from server.\n");
 
     // Now what?
+
+    NET_CL_Disconnect();
 }
 
 // parse a DISCONNECT_ACK packet
@@ -283,7 +315,7 @@ void NET_CL_Run(void)
     net_addr_t *addr;
     net_packet_t *packet;
     
-    if (!client_initialised)
+    if (!net_client_connected)
     {
         return;
     }
@@ -315,15 +347,6 @@ void NET_CL_Run(void)
     }
 }
 
-static void NET_CL_Shutdown(void)
-{
-    client_initialised = false;
-
-    NET_FreeAddress(server_addr);
-
-    // Shut down network module, etc.  To do.
-}
-
 // connect to a server
 
 boolean NET_CL_Connect(net_addr_t *addr)
@@ -346,7 +369,8 @@ boolean NET_CL_Connect(net_addr_t *addr)
 
     NET_AddModule(client_context, addr->module);
 
-    client_initialised = true;
+    net_client_connected = true;
+    net_waiting_for_start = true;
 
     // try to connect
  
@@ -400,7 +424,7 @@ void NET_CL_Disconnect(void)
 {
     int start_time;
 
-    if (!client_initialised)
+    if (!net_client_connected)
     {
         return;
     }

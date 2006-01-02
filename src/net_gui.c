@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_gui.c 235 2005-12-30 18:58:22Z fraggle $
+// $Id: net_gui.c 252 2006-01-02 21:50:26Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2006/01/02 21:50:26  fraggle
+// Restructure the waiting screen code.  Establish our own separate event
+// loop while waiting for the game to start, to avoid affecting the original
+// code too much.  Move some _gui variables to net_client.c.
+//
 // Revision 1.1  2005/12/30 18:58:22  fraggle
 // Fix client code to correctly send reply to server on connection.
 // Add "waiting screen" while waiting for the game to start.
@@ -33,8 +38,15 @@
 //    start the game.
 //   
 
+#include "net_client.h"
 #include "net_gui.h"
+#include "net_server.h"
+
 #include "d_event.h"
+#include "d_main.h"
+#include "i_system.h"
+#include "i_video.h"
+#include "m_menu.h"
 #include "r_defs.h"
 #include "v_video.h"
 #include "w_wad.h"
@@ -42,15 +54,7 @@
 
 extern void M_WriteText(int x, int y, char *string);
 
-// if TRUE, this client is the controller of the game
-
-boolean net_client_controller = false;
-
-// Number of clients currently connected to the server
-
-int net_clients_in_game;
-
-void NET_Drawer(void)
+static void Drawer(void)
 {
     patch_t *backdrop;
     int backdrop_lumpnum;
@@ -85,8 +89,78 @@ void NET_Drawer(void)
     }
 }
 
-boolean NET_Responder(event_t *event)
+static void ProcessEvents(void)
 {
-    return true;
+    event_t *ev;
+
+    while ((ev = D_PopEvent()) != NULL)
+    {
+        if (M_Responder(ev))
+        {
+            continue;
+        }
+
+        // process event ...
+    }
+}
+
+// Displays a graphical screen while waiting for the game to start.
+
+void NET_WaitForStart(void)
+{
+    int last_tic_time;
+    int nowtime;
+    int runtics;
+    int i;
+
+    if (!net_client_connected || !net_waiting_for_start)
+    {
+        return;
+    }
+
+    last_tic_time = I_GetTime();
+
+    while (net_waiting_for_start)
+    {
+        // Keyboard/mouse events, etc.
+ 
+        I_StartTic();
+        ProcessEvents();
+
+        // Run the menu, etc.
+
+        nowtime = I_GetTime();
+        runtics = nowtime - last_tic_time;
+
+        if (runtics > 0) 
+        {
+            for (i=0; i<runtics; ++i)
+            {
+                M_Ticker();
+            }
+
+            last_tic_time = nowtime;
+
+            // Draw the screen
+          
+            Drawer();
+            M_Drawer();
+            I_FinishUpdate();
+        }
+
+        // Network stuff
+
+        NET_CL_Run();
+        NET_SV_Run();
+
+        if (!net_client_connected)
+        {
+            I_Error("Disconnected from server");
+        }
+
+        // Don't hog the CPU
+
+        I_Sleep(10);
+    }
 }
 

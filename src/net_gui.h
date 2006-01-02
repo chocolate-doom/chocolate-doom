@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_gui.h 235 2005-12-30 18:58:22Z fraggle $
+// $Id: net_gui.h 252 2006-01-02 21:50:26Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2006/01/02 21:50:26  fraggle
+// Restructure the waiting screen code.  Establish our own separate event
+// loop while waiting for the game to start, to avoid affecting the original
+// code too much.  Move some _gui variables to net_client.c.
+//
 // Revision 1.1  2005/12/30 18:58:22  fraggle
 // Fix client code to correctly send reply to server on connection.
 // Add "waiting screen" while waiting for the game to start.
@@ -38,13 +43,8 @@
 #define NET_GUI_H
 
 #include "doomtype.h"
-#include "d_event.h"
 
-extern void NET_Drawer(void);
-extern boolean NET_Responder(event_t *event);
-
-extern boolean net_client_controller;
-extern int net_clients_in_game;
+extern void NET_WaitForStart();
 
 #endif /* #ifndef NET_GUI_H */
 
