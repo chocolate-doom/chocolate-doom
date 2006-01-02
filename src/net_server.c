@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 242 2006-01-02 00:54:17Z fraggle $
+// $Id: net_server.c 243 2006-01-02 17:24:40Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.7  2006/01/02 17:24:40  fraggle
+// Remove test code
+//
 // Revision 1.6  2006/01/02 00:54:17  fraggle
 // Fix packet not freed back after being sent.
 // Code to disconnect clients from the server side.
@@ -253,10 +256,6 @@ static void NET_SV_ParseACK(net_packet_t *packet, net_client_t *client)
         // force a waiting data packet to be sent immediately
 
         client->last_send_time = -1;
-
-        // test: disconnect straight away
-
-        NET_SV_DisconnectClient(client);
     }
 }
 
