@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 239 2006-01-02 00:00:08Z fraggle $
+// $Id: net_client.c 242 2006-01-02 00:54:17Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2006/01/02 00:54:17  fraggle
+// Fix packet not freed back after being sent.
+// Code to disconnect clients from the server side.
+//
 // Revision 1.5  2006/01/02 00:00:08  fraggle
 // Neater prefixes: NET_Client -> NET_CL_.  NET_Server -> NET_SV_.
 //
@@ -139,10 +143,14 @@ static void NET_CL_ParseDisconnect(net_packet_t *packet)
     NET_SendPacket(server_addr, reply);
     NET_SendPacket(server_addr, reply);
     NET_SendPacket(server_addr, reply);
+    NET_FreePacket(reply);
 
     client_state = CLIENT_STATE_DISCONNECTED;
 
-    I_Error("Disconnected from server.\n");
+    //I_Error("Disconnected from server.\n");
+    fprintf(stderr, "Disconnected from server.\n");
+
+    // Now what?
 }
 
 // parse a DISCONNECT_ACK packet
