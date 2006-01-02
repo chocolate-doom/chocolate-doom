@@ -21,6 +21,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.9  2006/01/02 21:04:10  fraggle
+// Create NET_SV_Shutdown function to shut down the server.  Call it
+// when quitting the game.  Print the IP of the server correctly when
+// connecting.
+//
 // Revision 1.8  2006/01/02 20:13:06  fraggle
 // Refer to connected clients by their AddrToString() output rather than just
 // the pointer to their struct.  Listen for IP connections as well as
@@ -58,6 +63,7 @@
 #include "doomdef.h"
 #include "doomstat.h"
 #include "i_system.h"
+#include "net_client.h"
 #include "net_defs.h"
 #include "net_io.h"
 #include "net_loop.h"
@@ -103,19 +109,16 @@ static boolean server_initialised = false;
 static net_client_t clients[MAXNETNODES];
 static net_context_t *server_context;
 
-static char *NET_SV_ClientAddress(net_client_t *client)
-{
-    static char addrbuf[128];
-
-    client->addr->module->AddrToString(client->addr, addrbuf, sizeof(addrbuf)-1);
-    
-    return addrbuf;
-}
-
 static void NET_SV_DisconnectClient(net_client_t *client)
 {
-    client->state = CLIENT_STATE_DISCONNECTING;
-    client->last_send_time = -1;
+    if (client->active 
+     && client->state != CLIENT_STATE_DISCONNECTING
+     && client->state != CLIENT_STATE_DISCONNECTED)
+    {
+        client->state = CLIENT_STATE_DISCONNECTING;
+        client->num_retries = 0;
+        client->last_send_time = -1;
+    }
 }
 
 static boolean ClientConnected(net_client_t *client)
@@ -304,7 +307,7 @@ static void NET_SV_ParseDisconnect(net_packet_t *packet, net_client_t *client)
 
     client->state = CLIENT_STATE_DISCONNECTED;
 
-    //printf("SV: %s: client disconnected\n", NET_SV_ClientAddress(client));
+    //printf("SV: %s: client disconnected\n", NET_AddrToString(client->addr));
 }
 
 // Parse a DISCONNECT_ACK packet
@@ -327,7 +330,7 @@ static void NET_SV_ParseDisconnectACK(net_packet_t *packet,
         // Place into the DISCONNECTED state to allow for cleanup.
 
         client->state = CLIENT_STATE_DISCONNECTED;
-        client->last_send_time = I_GetTimeMS();
+        client->last_send_time = -1;
     }
 }
 
@@ -351,7 +354,7 @@ static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
         return;
     }
 
-    //printf("SV: %s: %i\n", NET_SV_ClientAddress(client), packet_type);
+    //printf("SV: %s: %i\n", NET_AddrToString(addr), packet_type);
 
     switch (packet_type)
     {
@@ -502,9 +505,10 @@ static void NET_SV_RunClient(net_client_t *client)
 
         // Remove from the list after five seconds
 
-        if (I_GetTimeMS() - client->last_send_time > 5000)
+        if (client->last_send_time < 0
+         || I_GetTimeMS() - client->last_send_time > 5000)
         {
-            //printf("SV: %s: deactivated\n", NET_SV_ClientAddress(client));
+            //printf("SV: %s: deactivated\n", NET_AddrToString(client->addr));
             client->active = false;
             NET_FreeAddress(client->addr);
         }
@@ -563,6 +567,67 @@ void NET_SV_Run(void)
         {
             NET_SV_RunClient(&clients[i]);
         }
+    }
+}
+
+void NET_SV_Shutdown(void)
+{
+    int i;
+    boolean running;
+    int start_time;
+
+    if (!server_initialised)
+    {
+        return;
+    }
+    
+    fprintf(stderr, "SV: Shutting down server...\n");
+
+    // Disconnect all clients
+    
+    for (i=0; i<MAXNETNODES; ++i)
+    {
+        if (clients[i].active)
+        {
+            NET_SV_DisconnectClient(&clients[i]);
+        }
+    }
+
+    // Wait for all clients to finish disconnecting
+
+    start_time = I_GetTimeMS();
+    running = true;
+
+    while (running)
+    {
+        // Check if any clients are still not finished
+
+        running = false;
+
+        for (i=0; i<MAXNETNODES; ++i)
+        {
+            if (clients[i].active)
+            {
+                running = true;
+            }
+        }
+
+        // Timed out?
+
+        if (I_GetTimeMS() - start_time > 5000)
+        {
+            running = false;
+            fprintf(stderr, "SV: Timed out waiting for clients to disconnect.\n");
+        }
+
+        // Run the client code in case this is a loopback client.
+
+        NET_CL_Run();
+        NET_SV_Run();
+
+        // Don't hog the CPU
+
+        I_Sleep(10);
     }
 }
 

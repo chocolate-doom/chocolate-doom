@@ -21,6 +21,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2006/01/02 21:04:10  fraggle
+// Create NET_SV_Shutdown function to shut down the server.  Call it
+// when quitting the game.  Print the IP of the server correctly when
+// connecting.
+//
 // Revision 1.2  2006/01/02 00:00:08  fraggle
 // Neater prefixes: NET_Client -> NET_CL_.  NET_Server -> NET_SV_.
 //
@@ -42,6 +47,11 @@ void NET_SV_Init(void);
 // run server: check for new packets received etc.
 
 void NET_SV_Run(void);
+
+// Shut down the server
+// Blocks until all clients disconnect, or until a 5 second timeout
+
+void NET_SV_Shutdown(void);
 
 #endif /* #ifndef NET_SERVER_H */
 
