@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.c 241 2006-01-02 00:17:42Z fraggle $
+// $Id: d_net.c 247 2006-01-02 20:14:29Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.14  2006/01/02 20:14:29  fraggle
+// Add a "-client" option to test connecting to a local server.
+//
 // Revision 1.13  2006/01/02 00:17:42  fraggle
 // Encapsulate the event queue code properly.  Add a D_PopEvent function
 // to read a new event from the event queue.
@@ -77,10 +80,11 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_net.c 241 2006-01-02 00:17:42Z fraggle $";
+static const char rcsid[] = "$Id: d_net.c 247 2006-01-02 20:14:29Z fraggle $";
 
 
 #include "d_main.h"
+#include "m_argv.h"
 #include "m_menu.h"
 #include "i_system.h"
 #include "i_video.h"
@@ -91,6 +95,8 @@ static const char rcsid[] = "$Id: d_net.c 241 2006-01-02 00:17:42Z fraggle $";
 
 #include "net_client.h"
 #include "net_server.h"
+#include "net_sdl.h"
+#include "net_loop.h"
 
 #define	NCMD_EXIT		0x80000000
 #define	NCMD_RETRANSMIT		0x40000000
@@ -608,11 +614,6 @@ void D_ArbitrateNetStart (void)
     }
 }
 
-#include "m_argv.h"
-#include "net_loop.h"
-#include "net_client.h"
-#include "net_server.h"
-
 //
 // D_CheckNetGame
 // Works out player numbers among the net participants
@@ -621,19 +622,26 @@ extern	int			viewangleoffset;
 
 void D_CheckNetGame (void)
 {
+    net_addr_t *addr = NULL;
     int             i;
 
     // temporary hack 
 
     if (M_CheckParm("-server") > 0)
     {
-        net_addr_t *addr;
         NET_SV_Init();
 
         addr = net_loop_client_module.ResolveAddress("");
 
-        printf("address resolved: %p\n", addr);
+    }
 
+    if (M_CheckParm("-client") > 0)
+    {
+        addr = net_sdl_module.ResolveAddress("127.0.0.1");
+    }
+   
+    if (addr != NULL)
+    {
         if (NET_CL_Connect(addr))
         {
             printf("connected to local server\n");
@@ -643,7 +651,7 @@ void D_CheckNetGame (void)
             printf("failed to connect\n");
         }
     }
-	
+
     for (i=0 ; i<MAXNETNODES ; i++)
     {
 	nodeingame[i] = false;
