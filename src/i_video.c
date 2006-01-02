@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 205 2005-10-17 19:46:22Z fraggle $
+// $Id: i_video.c 240 2006-01-02 00:06:30Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.41  2006/01/02 00:06:30  fraggle
+// Make functions static.  Remove unused variable.
+//
 // Revision 1.40  2005/10/17 19:46:22  fraggle
 // Guard against multiple video shutdowns better.  Fix crash due to improper
 // screen clear at startup.
@@ -165,7 +168,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 205 2005-10-17 19:46:22Z fraggle $";
+rcsid[] = "$Id: i_video.c 240 2006-01-02 00:06:30Z fraggle $";
 
 #include <SDL.h>
 #include <ctype.h>
@@ -531,7 +534,7 @@ void I_UpdateNoBlit (void)
     // what is this?
 }
 
-void UpdateGrab(void)
+static void UpdateGrab(void)
 {
     static boolean currently_grabbed = false;
     boolean grab;
@@ -561,7 +564,6 @@ void UpdateGrab(void)
 static void BlitArea(int x1, int y1, int x2, int y2)
 {
     int w = x2 - x1;
-    int h = y2 - y1;
 
     if (screenmultiply == 1 && !native_surface)
     {
@@ -625,7 +627,7 @@ static void BlitArea(int x1, int y1, int x2, int y2)
     }
 }
 
-void UpdateRect(int x1, int y1, int x2, int y2)
+static void UpdateRect(int x1, int y1, int x2, int y2)
 {
     // Do stretching and blitting
 
