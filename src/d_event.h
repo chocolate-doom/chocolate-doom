@@ -112,11 +112,6 @@ typedef enum
 //
 // GLOBAL VARIABLES
 //
-#define MAXEVENTS		64
-
-extern  event_t		events[MAXEVENTS];
-extern  int             eventhead;
-extern	int		eventtail;
 
 extern  gameaction_t    gameaction;
 
@@ -125,6 +120,10 @@ extern  gameaction_t    gameaction;
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.3  2006/01/02 00:17:41  fraggle
+// Encapsulate the event queue code properly.  Add a D_PopEvent function
+// to read a new event from the event queue.
+//
 // Revision 1.2  2005/07/23 16:44:55  fraggle
 // Update copyright to GNU GPL
 //

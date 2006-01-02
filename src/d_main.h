@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2006/01/02 00:17:42  fraggle
+// Encapsulate the event queue code properly.  Add a D_PopEvent function
+// to read a new event from the event queue.
+//
 // Revision 1.3  2005/07/23 18:56:07  fraggle
 // Remove unneccessary pragmas
 //
@@ -62,7 +66,11 @@ void D_AddFile (char *file);
 void D_DoomMain (void);
 
 // Called by IO functions when input is detected.
-void D_PostEvent (event_t* ev);
+void D_PostEvent (event_t *ev);
+
+// Read an event from the event queue
+
+event_t *D_PopEvent(void);
 
 	
 
