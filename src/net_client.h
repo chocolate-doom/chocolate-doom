@@ -21,6 +21,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2006/01/02 21:50:26  fraggle
+// Restructure the waiting screen code.  Establish our own separate event
+// loop while waiting for the game to start, to avoid affecting the original
+// code too much.  Move some _gui variables to net_client.c.
+//
 // Revision 1.5  2006/01/02 00:00:08  fraggle
 // Neater prefixes: NET_Client -> NET_CL_.  NET_Server -> NET_SV_.
 //
@@ -46,11 +51,17 @@
 #ifndef NET_CLIENT_H
 #define NET_CLIENT_H
 
+#include "doomtype.h"
 #include "net_defs.h"
 
 boolean NET_CL_Connect(net_addr_t *addr);
 void NET_CL_Disconnect(void);
 void NET_CL_Run(void);
+
+extern boolean net_client_connected;
+extern boolean net_client_controller;
+extern int net_clients_in_game;
+extern boolean net_waiting_for_start;
 
 #endif /* #ifndef NET_CLIENT_H */
 
