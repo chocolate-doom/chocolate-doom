@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 243 2006-01-02 17:24:40Z fraggle $
+// $Id: net_server.c 245 2006-01-02 20:13:06Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.8  2006/01/02 20:13:06  fraggle
+// Refer to connected clients by their AddrToString() output rather than just
+// the pointer to their struct.  Listen for IP connections as well as
+// loopback connections.
+//
 // Revision 1.7  2006/01/02 17:24:40  fraggle
 // Remove test code
 //
@@ -58,6 +63,7 @@
 #include "net_loop.h"
 #include "net_packet.h"
 #include "net_server.h"
+#include "net_sdl.h"
 
 typedef enum 
 {
@@ -96,6 +102,15 @@ typedef struct
 static boolean server_initialised = false;
 static net_client_t clients[MAXNETNODES];
 static net_context_t *server_context;
+
+static char *NET_SV_ClientAddress(net_client_t *client)
+{
+    static char addrbuf[128];
+
+    client->addr->module->AddrToString(client->addr, addrbuf, sizeof(addrbuf)-1);
+    
+    return addrbuf;
+}
 
 static void NET_SV_DisconnectClient(net_client_t *client)
 {
@@ -288,6 +303,8 @@ static void NET_SV_ParseDisconnect(net_packet_t *packet, net_client_t *client)
     // and cleaned up from the clients list.
 
     client->state = CLIENT_STATE_DISCONNECTED;
+
+    //printf("SV: %s: client disconnected\n", NET_SV_ClientAddress(client));
 }
 
 // Parse a DISCONNECT_ACK packet
@@ -334,7 +351,7 @@ static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
         return;
     }
 
-    //printf("SV: %p: %i\n", client, packet_type);
+    //printf("SV: %s: %i\n", NET_SV_ClientAddress(client), packet_type);
 
     switch (packet_type)
     {
@@ -487,7 +504,7 @@ static void NET_SV_RunClient(net_client_t *client)
 
         if (I_GetTimeMS() - client->last_send_time > 5000)
         {
-            //printf("SV: %p: deactivated\n", client);
+            //printf("SV: %s: deactivated\n", NET_SV_ClientAddress(client));
             client->active = false;
             NET_FreeAddress(client->addr);
         }
@@ -505,6 +522,8 @@ void NET_SV_Init(void)
     server_context = NET_NewContext();
     NET_AddModule(server_context, &net_loop_server_module);
     net_loop_server_module.InitServer();
+    NET_AddModule(server_context, &net_sdl_module);
+    net_sdl_module.InitServer();
 
     // no clients yet
    
