@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2006/01/02 20:11:49  fraggle
+// Rename i_net_module -> net_sdl_module.  Fix the AddrToString method.
+//
 // Revision 1.1  2005/10/30 19:56:15  fraggle
 // Add foundation code for the new networking system
 //
@@ -35,7 +38,7 @@
 
 #include "net_defs.h"
 
-extern net_module_t i_net_module;
+extern net_module_t net_sdl_module;
 
 #endif /* #ifndef NET_SDL_H */
 
