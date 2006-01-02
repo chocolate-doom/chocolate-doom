@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.13  2006/01/02 00:17:42  fraggle
+// Encapsulate the event queue code properly.  Add a D_PopEvent function
+// to read a new event from the event queue.
+//
 // Revision 1.12  2006/01/02 00:00:08  fraggle
 // Neater prefixes: NET_Client -> NET_CL_.  NET_Server -> NET_SV_.
 //
@@ -76,6 +80,7 @@
 static const char rcsid[] = "$Id$";
 
 
+#include "d_main.h"
 #include "m_menu.h"
 #include "i_system.h"
 #include "i_video.h"
@@ -518,10 +523,9 @@ void CheckAbort (void)
 	I_StartTic (); 
 	
     I_StartTic ();
-    for ( ; eventtail != eventhead 
-	  ; eventtail = (eventtail + 1) & (MAXEVENTS-1) ) 
+
+    while ((ev = D_PopEvent()) != NULL)
     { 
-	ev = &events[eventtail]; 
 	if (ev->type == ev_keydown && ev->data1 == KEY_ESCAPE)
 	    I_Error ("Network game synchronization aborted.");
     } 
