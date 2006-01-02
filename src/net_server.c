@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2006/01/02 00:00:08  fraggle
+// Neater prefixes: NET_Client -> NET_CL_.  NET_Server -> NET_SV_.
+//
 // Revision 1.4  2006/01/01 23:54:31  fraggle
 // Client disconnect code
 //
@@ -100,7 +103,7 @@ static boolean ClientConnected(net_client_t *client)
 
 // returns the number of clients connected
 
-static int ServerNumClients(void)
+static int NET_SV_NumClients(void)
 {
     int count;
     int i;
@@ -120,7 +123,7 @@ static int ServerNumClients(void)
 
 // returns a pointer to the client which controls the server
 
-static net_client_t *ServerController(void)
+static net_client_t *NET_SV_Controller(void)
 {
     int i;
 
@@ -139,7 +142,7 @@ static net_client_t *ServerController(void)
 
 // Given an address, find the corresponding client
 
-static net_client_t *ServerFindClient(net_addr_t *addr)
+static net_client_t *NET_SV_FindClient(net_addr_t *addr)
 {
     int i;
 
@@ -158,7 +161,7 @@ static net_client_t *ServerFindClient(net_addr_t *addr)
 
 // parse a SYN from a client(initiating a connection)
 
-static void ServerParseSYN(net_packet_t *packet, 
+static void NET_SV_ParseSYN(net_packet_t *packet, 
                            net_client_t *client,
                            net_addr_t *addr)
 {
@@ -216,7 +219,7 @@ static void ServerParseSYN(net_packet_t *packet,
 
 // parse an ACK packet from a client
 
-static void ServerParseACK(net_packet_t *packet, net_client_t *client)
+static void NET_SV_ParseACK(net_packet_t *packet, net_client_t *client)
 {
     if (client == NULL)
     {
@@ -235,7 +238,7 @@ static void ServerParseACK(net_packet_t *packet, net_client_t *client)
     }
 }
 
-static void ServerParseDisconnect(net_packet_t *packet, net_client_t *client)
+static void NET_SV_ParseDisconnect(net_packet_t *packet, net_client_t *client)
 {
     net_packet_t *reply;
 
@@ -270,14 +273,14 @@ static void ServerParseDisconnect(net_packet_t *packet, net_client_t *client)
 
 // Process a packet received by the server
 
-static void ServerPacket(net_packet_t *packet, net_addr_t *addr)
+static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
 {
     net_client_t *client;
     unsigned int packet_type;
 
     // Find which client this packet came from
 
-    client = ServerFindClient(addr);
+    client = NET_SV_FindClient(addr);
 
     // Read the packet type
 
@@ -291,17 +294,17 @@ static void ServerPacket(net_packet_t *packet, net_addr_t *addr)
     switch (packet_type)
     {
         case NET_PACKET_TYPE_SYN:
-            ServerParseSYN(packet, client, addr);
+            NET_SV_ParseSYN(packet, client, addr);
             break;
         case NET_PACKET_TYPE_ACK:
-            ServerParseACK(packet, client);
+            NET_SV_ParseACK(packet, client);
             break;
         case NET_PACKET_TYPE_GAMESTART:
             break;
         case NET_PACKET_TYPE_GAMEDATA:
             break;
         case NET_PACKET_TYPE_DISCONNECT:
-            ServerParseDisconnect(packet, client);
+            NET_SV_ParseDisconnect(packet, client);
             break;
         default:
             // unknown packet type
@@ -312,14 +315,14 @@ static void ServerPacket(net_packet_t *packet, net_addr_t *addr)
     // If this address is not in the list of clients, be sure to
     // free it back.
 
-    if (ServerFindClient(addr) == NULL)
+    if (NET_SV_FindClient(addr) == NULL)
     {
         NET_FreeAddress(addr);
     }
 }
 
 
-static void ServerSendWaitingData(net_client_t *client)
+static void NET_SV_SendWaitingData(net_client_t *client)
 {
     net_packet_t *packet;
 
@@ -330,11 +333,11 @@ static void ServerSendWaitingData(net_client_t *client)
 
     // include the number of clients waiting
 
-    NET_WriteInt8(packet, ServerNumClients());
+    NET_WriteInt8(packet, NET_SV_NumClients());
 
     // indicate whether the client is the controller
 
-    NET_WriteInt8(packet, ServerController() == client);
+    NET_WriteInt8(packet, NET_SV_Controller() == client);
     
     // send packet to client and free
 
@@ -348,7 +351,7 @@ static void ServerSendWaitingData(net_client_t *client)
 
 // Perform any needed action on a client
 
-static void ServerRunClient(net_client_t *client)
+static void NET_SV_RunClient(net_client_t *client)
 {
     net_packet_t *packet;
 
@@ -391,13 +394,13 @@ static void ServerRunClient(net_client_t *client)
         if (client->last_send_time < 0 
          || I_GetTimeMS() - client->last_send_time > 1000)
         {
-            ServerSendWaitingData(client);
+            NET_SV_SendWaitingData(client);
         }
     }
 
     // Client has disconnected.  
     //
-    // See ServerParseDisconnect() above.
+    // See NET_SV_ParseDisconnect() above.
 
     if (client->state == CLIENT_STATE_DISCONNECTED)
     {
@@ -413,7 +416,7 @@ static void ServerRunClient(net_client_t *client)
 
 // Initialise server and wait for connections
 
-void NET_ServerInit(void)
+void NET_SV_Init(void)
 {
     int i;
 
@@ -436,7 +439,7 @@ void NET_ServerInit(void)
 // Run server code to check for new packets/send packets as the server
 // requires
 
-void NET_ServerRun(void)
+void NET_SV_Run(void)
 {
     net_addr_t *addr;
     net_packet_t *packet;
@@ -449,7 +452,7 @@ void NET_ServerRun(void)
 
     while (NET_RecvPacket(server_context, &addr, &packet)) 
     {
-        ServerPacket(packet, addr);
+        NET_SV_Packet(packet, addr);
     }
 
     // "Run" any clients that may have things to do, independent of responses
@@ -459,7 +462,7 @@ void NET_ServerRun(void)
     {
         if (clients[i].active)
         {
-            ServerRunClient(&clients[i]);
+            NET_SV_RunClient(&clients[i]);
         }
     }
 }

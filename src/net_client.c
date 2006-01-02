@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2006/01/02 00:00:08  fraggle
+// Neater prefixes: NET_Client -> NET_CL_.  NET_Server -> NET_SV_.
+//
 // Revision 1.4  2006/01/01 23:54:31  fraggle
 // Client disconnect code
 //
@@ -82,7 +85,7 @@ static int last_send_time;
 
 // data received while we are waiting for the game to start
 
-static void ClientParseWaitingData(net_packet_t *packet)
+static void NET_CL_ParseWaitingData(net_packet_t *packet)
 {
     unsigned int num_players;
     unsigned int is_controller;
@@ -101,7 +104,7 @@ static void ClientParseWaitingData(net_packet_t *packet)
 
 // Received an ACK
 
-static void ClientParseACK(net_packet_t *packet)
+static void NET_CL_ParseACK(net_packet_t *packet)
 {
     net_packet_t *reply;
 
@@ -122,7 +125,7 @@ static void ClientParseACK(net_packet_t *packet)
 
 // parse a DISCONNECT packet
 
-static void ClientParseDisconnect(net_packet_t *packet)
+static void NET_CL_ParseDisconnect(net_packet_t *packet)
 {
     net_packet_t *reply;
 
@@ -144,7 +147,7 @@ static void ClientParseDisconnect(net_packet_t *packet)
 
 // parse a DISCONNECT_ACK packet
 
-static void ClientParseDisconnectACK(net_packet_t *packet)
+static void NET_CL_ParseDisconnectACK(net_packet_t *packet)
 {
     if (client_state == CLIENT_STATE_DISCONNECTING)
     {
@@ -158,7 +161,7 @@ static void ClientParseDisconnectACK(net_packet_t *packet)
 
 // parse a received packet
 
-static void ClientParsePacket(net_packet_t *packet)
+static void NET_CL_ParsePacket(net_packet_t *packet)
 {
     unsigned int packet_type;
 
@@ -173,12 +176,12 @@ static void ClientParsePacket(net_packet_t *packet)
 
             // received an acknowledgement to the SYN we sent
 
-            ClientParseACK(packet);
+            NET_CL_ParseACK(packet);
             break;
 
         case NET_PACKET_TYPE_WAITING_DATA:
 
-            ClientParseWaitingData(packet);
+            NET_CL_ParseWaitingData(packet);
             break;
 
         case NET_PACKET_TYPE_GAMESTART:
@@ -188,11 +191,11 @@ static void ClientParsePacket(net_packet_t *packet)
             break;
 
         case NET_PACKET_TYPE_DISCONNECT:
-            ClientParseDisconnect(packet);
+            NET_CL_ParseDisconnect(packet);
             break;
 
         case NET_PACKET_TYPE_DISCONNECT_ACK:
-            ClientParseDisconnectACK(packet);
+            NET_CL_ParseDisconnectACK(packet);
             break;
 
         default:
@@ -202,7 +205,7 @@ static void ClientParsePacket(net_packet_t *packet)
 
 // called when we are in the "connecting" state
 
-static void ClientConnecting(void)
+static void NET_CL_Connecting(void)
 {
     net_packet_t *packet;
 
@@ -235,7 +238,7 @@ static void ClientConnecting(void)
 // Called when we are in the "disconnecting" state, disconnecting from
 // the server.
 
-static void ClientDisconnecting(void)
+static void NET_CL_Disconnecting(void)
 {
     net_packet_t *packet;
 
@@ -264,7 +267,7 @@ static void ClientDisconnecting(void)
 // "Run" the client code: check for new packets, send packets as
 // needed
 
-void NET_ClientRun(void)
+void NET_CL_Run(void)
 {
     net_addr_t *addr;
     net_packet_t *packet;
@@ -280,7 +283,7 @@ void NET_ClientRun(void)
 
         if (addr == server_addr)
         {
-            ClientParsePacket(packet);
+            NET_CL_ParsePacket(packet);
         }
 
         NET_FreePacket(packet);
@@ -291,10 +294,10 @@ void NET_ClientRun(void)
     switch (client_state)
     {
         case CLIENT_STATE_CONNECTING:
-            ClientConnecting();
+            NET_CL_Connecting();
             break;
         case CLIENT_STATE_DISCONNECTING:
-            ClientDisconnecting();
+            NET_CL_Disconnecting();
             break;
         default:
             break;
@@ -303,7 +306,7 @@ void NET_ClientRun(void)
 
 // connect to a server
 
-boolean NET_ClientConnect(net_addr_t *addr)
+boolean NET_CL_Connect(net_addr_t *addr)
 {
     int start_time;
 
@@ -343,12 +346,12 @@ boolean NET_ClientConnect(net_addr_t *addr)
 
         // run client code
 
-        NET_ClientRun();
+        NET_CL_Run();
         
         // run the server, just incase we are doing a loopback
         // connect
 
-        NET_ServerRun();
+        NET_SV_Run();
 
         // Don't hog the CPU
 
@@ -371,7 +374,7 @@ boolean NET_ClientConnect(net_addr_t *addr)
 
 // disconnect from the server
 
-void NET_ClientDisconnect(void)
+void NET_CL_Disconnect(void)
 {
     int start_time;
 
@@ -398,12 +401,12 @@ void NET_ClientDisconnect(void)
             
             client_state = CLIENT_STATE_DISCONNECTED;
 
-            fprintf(stderr, "NET_ClientDisconnect: Timeout while disconnecting from server\n");
+            fprintf(stderr, "NET_CL_Disconnect: Timeout while disconnecting from server\n");
             break;
         }
 
-        NET_ClientRun();
-        NET_ServerRun();
+        NET_CL_Run();
+        NET_SV_Run();
 
         I_Sleep(10);
     }

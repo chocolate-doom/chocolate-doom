@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.12  2006/01/02 00:00:08  fraggle
+// Neater prefixes: NET_Client -> NET_CL_.  NET_Server -> NET_SV_.
+//
 // Revision 1.11  2006/01/01 23:54:31  fraggle
 // Client disconnect code
 //
@@ -425,8 +428,8 @@ void NetUpdate (void)
     
     // Temporary hack - hook new client/server code into Doom
 
-    NET_ClientRun();
-    NET_ServerRun();
+    NET_CL_Run();
+    NET_SV_Run();
     
     // check time
     nowtime = I_GetTime ()/ticdup;
@@ -621,13 +624,13 @@ void D_CheckNetGame (void)
     if (M_CheckParm("-server") > 0)
     {
         net_addr_t *addr;
-        NET_ServerInit();
+        NET_SV_Init();
 
         addr = net_loop_client_module.ResolveAddress("");
 
         printf("address resolved: %p\n", addr);
 
-        if (NET_ClientConnect(addr))
+        if (NET_CL_Connect(addr))
         {
             printf("connected to local server\n");
         }
@@ -687,7 +690,7 @@ void D_QuitNetGame (void)
     if (debugfile)
 	fclose (debugfile);
 
-    NET_ClientDisconnect();
+    NET_CL_Disconnect();
 
     if (!netgame || !usergame || consoleplayer == -1 || demoplayback)
 	return;
