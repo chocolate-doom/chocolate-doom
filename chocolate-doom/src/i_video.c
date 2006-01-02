@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.42  2006/01/02 20:27:45  fraggle
+// Clear the screen AFTER initialising the loading disk buffer, so that
+// bits of loading disk are not visible on the initial screen melt.
+//
 // Revision 1.41  2006/01/02 00:06:30  fraggle
 // Make functions static.  Remove unused variable.
 //
@@ -920,11 +924,11 @@ void I_InitGraphics(void)
     else
 	screens[0] = (unsigned char *) Z_Malloc (SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
 
-    memset(screens[0], 0, SCREENWIDTH * SCREENHEIGHT);
-
     // Loading from disk icon
 
     LoadDiskImage();
+
+    memset(screens[0], 0, SCREENWIDTH * SCREENHEIGHT);
 
     // We need SDL to give us translated versions of keys as well
 
