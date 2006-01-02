@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.h 232 2005-12-29 17:48:25Z fraggle $
+// $Id: net_server.h 239 2006-01-02 00:00:08Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2006/01/02 00:00:08  fraggle
+// Neater prefixes: NET_Client -> NET_CL_.  NET_Server -> NET_SV_.
+//
 // Revision 1.1  2005/12/29 17:48:25  fraggle
 // Add initial client/server connect code.  Reorganise sources list in
 // Makefile.am.
@@ -34,11 +37,11 @@
 
 // initialise server and wait for connections
 
-void NET_ServerInit(void);
+void NET_SV_Init(void);
 
 // run server: check for new packets received etc.
 
-void NET_ServerRun(void);
+void NET_SV_Run(void);
 
 #endif /* #ifndef NET_SERVER_H */
 
