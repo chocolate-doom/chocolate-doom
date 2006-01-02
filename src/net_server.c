@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2006/01/02 00:54:17  fraggle
+// Fix packet not freed back after being sent.
+// Code to disconnect clients from the server side.
+//
 // Revision 1.5  2006/01/02 00:00:08  fraggle
 // Neater prefixes: NET_Client -> NET_CL_.  NET_Server -> NET_SV_.
 //
@@ -89,6 +93,12 @@ typedef struct
 static boolean server_initialised = false;
 static net_client_t clients[MAXNETNODES];
 static net_context_t *server_context;
+
+static void NET_SV_DisconnectClient(net_client_t *client)
+{
+    client->state = CLIENT_STATE_DISCONNECTING;
+    client->last_send_time = -1;
+}
 
 static boolean ClientConnected(net_client_t *client)
 {
@@ -162,8 +172,8 @@ static net_client_t *NET_SV_FindClient(net_addr_t *addr)
 // parse a SYN from a client(initiating a connection)
 
 static void NET_SV_ParseSYN(net_packet_t *packet, 
-                           net_client_t *client,
-                           net_addr_t *addr)
+                            net_client_t *client,
+                            net_addr_t *addr)
 {
     unsigned int magic;
     int i;
@@ -194,11 +204,10 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         {
             if (!clients[i].active)
             {
-                clients[i].active = true;
-                clients[i].addr = addr;
-                clients[i].state = CLIENT_STATE_WAITING_ACK;
-                clients[i].num_retries = 0;
                 client = &clients[i];
+                client->active = true;
+                client->addr = addr;
+                client->state = CLIENT_STATE_DISCONNECTED;
                 break;
             }
         }
@@ -207,6 +216,15 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         {
             return;
         }
+    }
+
+    // Set into the correct state if necessary
+    // Allow immediate reconnects from clients which just disconnected.
+
+    if (client->state == CLIENT_STATE_DISCONNECTED)
+    {
+        client->state = CLIENT_STATE_WAITING_ACK;
+        client->num_retries = 0;
     }
 
     if (client->state == CLIENT_STATE_WAITING_ACK)
@@ -235,6 +253,10 @@ static void NET_SV_ParseACK(net_packet_t *packet, net_client_t *client)
         // force a waiting data packet to be sent immediately
 
         client->last_send_time = -1;
+
+        // test: disconnect straight away
+
+        NET_SV_DisconnectClient(client);
     }
 }
 
@@ -267,8 +289,30 @@ static void NET_SV_ParseDisconnect(net_packet_t *packet, net_client_t *client)
     // and cleaned up from the clients list.
 
     client->state = CLIENT_STATE_DISCONNECTED;
+}
 
-    printf("client %i disconnected\n", client-clients);
+// Parse a DISCONNECT_ACK packet
+
+static void NET_SV_ParseDisconnectACK(net_packet_t *packet, 
+                                      net_client_t *client)
+{
+    // Sanity check
+  
+    if (client == NULL)
+    {
+        return;
+    }
+
+    if (client->state == CLIENT_STATE_DISCONNECTING)
+    {
+        // We have received an acknowledgement to our disconnect
+        // request. Client has been disconnected successfully.
+        
+        // Place into the DISCONNECTED state to allow for cleanup.
+
+        client->state = CLIENT_STATE_DISCONNECTED;
+        client->last_send_time = I_GetTimeMS();
+    }
 }
 
 // Process a packet received by the server
@@ -291,6 +335,8 @@ static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
         return;
     }
 
+    //printf("SV: %p: %i\n", client, packet_type);
+
     switch (packet_type)
     {
         case NET_PACKET_TYPE_SYN:
@@ -305,6 +351,9 @@ static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
             break;
         case NET_PACKET_TYPE_DISCONNECT:
             NET_SV_ParseDisconnect(packet, client);
+            break;
+        case NET_PACKET_TYPE_DISCONNECT_ACK:
+            NET_SV_ParseDisconnectACK(packet, client);
             break;
         default:
             // unknown packet type
@@ -358,7 +407,7 @@ static void NET_SV_RunClient(net_client_t *client)
     if (client->state == CLIENT_STATE_WAITING_ACK)
     {
         if (client->last_send_time < 0
-         || I_GetTime() - client->last_send_time > 35)
+         || I_GetTimeMS() - client->last_send_time > 1000)
         {
             // it has been a second since the last ACK was sent, and 
             // still no reply.
@@ -371,7 +420,7 @@ static void NET_SV_RunClient(net_client_t *client)
                 NET_WriteInt16(packet, NET_PACKET_TYPE_ACK);
                 NET_SendPacket(client->addr, packet);
                 NET_FreePacket(packet);
-                client->last_send_time = I_GetTime();
+                client->last_send_time = I_GetTimeMS();
 
                 ++client->num_retries;
             }
@@ -384,11 +433,10 @@ static void NET_SV_RunClient(net_client_t *client)
             }
         }
     }
-
-    // waiting for the game to start
-
-    if (client->state == CLIENT_STATE_WAITING_START)
+    else if (client->state == CLIENT_STATE_WAITING_START)
     {
+        // Waiting for the game to start
+
         // Send information once every second
 
         if (client->last_send_time < 0 
@@ -397,17 +445,50 @@ static void NET_SV_RunClient(net_client_t *client)
             NET_SV_SendWaitingData(client);
         }
     }
-
-    // Client has disconnected.  
-    //
-    // See NET_SV_ParseDisconnect() above.
-
-    if (client->state == CLIENT_STATE_DISCONNECTED)
+    else if (client->state == CLIENT_STATE_DISCONNECTING)
     {
+        // Waiting for a reply to our DISCONNECT request.
+
+        if (client->last_send_time < 0
+         || I_GetTimeMS() - client->last_send_time > 1000)
+        {
+            // it has been a second since the last disconnect packet 
+            // was sent, and still no reply.
+
+            if (client->num_retries < MAX_RETRIES)
+            {
+                // send another disconnect
+
+                packet = NET_NewPacket(10);
+                NET_WriteInt16(packet, NET_PACKET_TYPE_DISCONNECT);
+                NET_SendPacket(client->addr, packet);
+                NET_FreePacket(packet);
+                client->last_send_time = I_GetTimeMS();
+
+                ++client->num_retries;
+            }
+            else 
+            {
+                // No more retries allowed.
+                // Force disconnect.
+
+                client->active = false;
+                NET_FreeAddress(client->addr);
+            }
+        }
+
+    }
+    else if (client->state == CLIENT_STATE_DISCONNECTED)
+    {
+        // Client has disconnected.  
+        //
+        // See NET_SV_ParseDisconnect() above.
+
         // Remove from the list after five seconds
 
         if (I_GetTimeMS() - client->last_send_time > 5000)
         {
+            //printf("SV: %p: deactivated\n", client);
             client->active = false;
             NET_FreeAddress(client->addr);
         }
