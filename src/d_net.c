@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.15  2006/01/02 21:04:10  fraggle
+// Create NET_SV_Shutdown function to shut down the server.  Call it
+// when quitting the game.  Print the IP of the server correctly when
+// connecting.
+//
 // Revision 1.14  2006/01/02 20:14:29  fraggle
 // Add a "-client" option to test connecting to a local server.
 //
@@ -94,6 +99,7 @@ static const char rcsid[] = "$Id$";
 #include "doomstat.h"
 
 #include "net_client.h"
+#include "net_io.h"
 #include "net_server.h"
 #include "net_sdl.h"
 #include "net_loop.h"
@@ -632,7 +638,6 @@ void D_CheckNetGame (void)
         NET_SV_Init();
 
         addr = net_loop_client_module.ResolveAddress("");
-
     }
 
     if (M_CheckParm("-client") > 0)
@@ -644,7 +649,7 @@ void D_CheckNetGame (void)
     {
         if (NET_CL_Connect(addr))
         {
-            printf("connected to local server\n");
+            printf("connected to %s\n", NET_AddrToString(addr));
         }
         else
         {
@@ -702,6 +707,7 @@ void D_QuitNetGame (void)
     if (debugfile)
 	fclose (debugfile);
 
+    NET_SV_Shutdown();
     NET_CL_Disconnect();
 
     if (!netgame || !usergame || consoleplayer == -1 || demoplayback)
