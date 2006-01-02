@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 241 2006-01-02 00:17:42Z fraggle $
+// $Id: d_main.c 253 2006-01-02 21:52:06Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.35  2006/01/02 21:52:06  fraggle
+// Move I_InitGraphics call to be invoked earlier in D_DoomMain.  Call the
+// NET_WaitForStart function to wait for a start signal in network games.
+//
 // Revision 1.34  2006/01/02 00:17:42  fraggle
 // Encapsulate the event queue code properly.  Add a D_PopEvent function
 // to read a new event from the event queue.
@@ -154,7 +158,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 241 2006-01-02 00:17:42Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 253 2006-01-02 21:52:06Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -532,8 +536,6 @@ void D_DoomLoop (void)
 	debugfile = fopen (filename,"w");
     }
 	
-    I_InitGraphics ();
-
     while (1)
     {
 	// frame syncronous IO operations
@@ -1576,6 +1578,10 @@ void D_DoomMain (void)
 
     printf ("ST_Init: Init status bar.\n");
     ST_Init ();
+
+    I_InitGraphics ();
+
+    NET_WaitForStart();
 
     // start the apropriate game based on parms
     p = M_CheckParm ("-record");
