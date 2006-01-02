@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_io.c 229 2005-10-30 19:56:15Z fraggle $
+// $Id: net_io.c 249 2006-01-02 21:02:16Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2006/01/02 21:02:16  fraggle
+// Change AddrToString function to use an internal static buffer, for
+// ease of use.
+//
 // Revision 1.1  2005/10/30 19:56:15  fraggle
 // Add foundation code for the new networking system
 //
@@ -109,9 +113,16 @@ boolean NET_RecvPacket(net_context_t *context,
     return false;
 }
 
-void NET_AddrToString(net_addr_t *addr, char *buffer, int buffer_len)
+// Note: this prints into a static buffer, calling again overwrites
+// the first result
+
+char *NET_AddrToString(net_addr_t *addr)
 {
-    addr->module->AddrToString(addr, buffer, buffer_len);
+    static char buf[128];
+
+    addr->module->AddrToString(addr, buf, sizeof(buf) - 1);
+
+    return buf;
 }
 
 void NET_FreeAddress(net_addr_t *addr)
