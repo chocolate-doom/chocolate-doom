@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 242 2006-01-02 00:54:17Z fraggle $
+// $Id: net_client.c 246 2006-01-02 20:14:07Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.7  2006/01/02 20:14:07  fraggle
+// Fix connect timeout and shutdown client properly if we fail to connect.
+//
 // Revision 1.6  2006/01/02 00:54:17  fraggle
 // Fix packet not freed back after being sent.
 // Code to disconnect clients from the server side.
@@ -312,6 +315,15 @@ void NET_CL_Run(void)
     }
 }
 
+static void NET_CL_Shutdown(void)
+{
+    client_initialised = false;
+
+    NET_FreeAddress(server_addr);
+
+    // Shut down network module, etc.  To do.
+}
+
 // connect to a server
 
 boolean NET_CL_Connect(net_addr_t *addr)
@@ -347,7 +359,7 @@ boolean NET_CL_Connect(net_addr_t *addr)
     {
         // time out after 5 seconds 
 
-        if (I_GetTime() - start_time > 5000)
+        if (I_GetTimeMS() - start_time > 5000)
         {
             break;
         }
@@ -375,6 +387,8 @@ boolean NET_CL_Connect(net_addr_t *addr)
     else
     {
         // failed to connect
+
+        NET_CL_Shutdown();
         
         return false;
     }
@@ -421,10 +435,6 @@ void NET_CL_Disconnect(void)
 
     // Finished sending disconnect packets, etc.
 
-    // Shut down network module, etc.  To do.
-
-    NET_FreeAddress(server_addr);
-
-    client_initialised = false;
+    NET_CL_Shutdown();
 }
 
