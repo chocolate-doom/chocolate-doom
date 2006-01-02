@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2006/01/02 21:02:16  fraggle
+// Change AddrToString function to use an internal static buffer, for
+// ease of use.
+//
 // Revision 1.1  2005/10/30 19:56:15  fraggle
 // Add foundation code for the new networking system
 //
@@ -40,7 +44,7 @@ void NET_AddModule(net_context_t *context, net_module_t *module);
 void NET_SendPacket(net_addr_t *addr, net_packet_t *packet);
 boolean NET_RecvPacket(net_context_t *context, net_addr_t **addr, 
                        net_packet_t **packet);
-void NET_AddrToString(net_addr_t *addr, char *buffer, int buffer_len);
+char *NET_AddrToString(net_addr_t *addr);
 void NET_FreeAddress(net_addr_t *addr);
 net_addr_t *NET_ResolveAddress(net_context_t *context, char *address);
 
