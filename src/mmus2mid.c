@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: mmus2mid.c 76 2005-09-06 21:06:45Z fraggle $
+// $Id: mmus2mid.c 255 2006-01-05 02:48:03Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 //  Copyright (C) 1999 by
@@ -27,6 +27,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2006/01/05 02:48:03  fraggle
+// Fixes for big endian machines (thanks locust)
+//
 // Revision 1.2  2005/09/06 21:06:45  fraggle
 // Newer versions of mmus2mid.c,h from prboom
 //
@@ -340,11 +343,11 @@ int mmus2mid(const UBYTE *mus, MIDI *mididata, UWORD division, int nocomp)
   // copy the MUS header from the MUS buffer to the MUSh header structure
 
   memcpy(&MUSh,mus,sizeof(MUSheader));
-  MUSh.ScoreLength = doom_wtohs(MUSh.ScoreLength);
-  MUSh.ScoreStart  = doom_wtohs(MUSh.ScoreStart);
-  MUSh.channels    = doom_wtohs(MUSh.channels);
-  MUSh.SecChannels = doom_wtohs(MUSh.SecChannels);
-  MUSh.InstrCnt    = doom_wtohs(MUSh.InstrCnt);
+  MUSh.ScoreLength = SHORT(MUSh.ScoreLength);
+  MUSh.ScoreStart  = SHORT(MUSh.ScoreStart);
+  MUSh.channels    = SHORT(MUSh.channels);
+  MUSh.SecChannels = SHORT(MUSh.SecChannels);
+  MUSh.InstrCnt    = SHORT(MUSh.InstrCnt);
 
   // check some things and set length of MUS buffer from internal data
 

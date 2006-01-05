@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_swap.h 75 2005-09-05 22:50:56Z fraggle $
+// $Id: m_swap.h 255 2006-01-05 02:48:03Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -35,7 +35,7 @@
 
 // Endianess handling.
 // WAD files are stored little endian.
-#ifdef __BIG_ENDIAN__
+#ifdef WORDS_BIGENDIAN
 short	SwapSHORT(short);
 long	SwapLONG(long);
 #define SHORT(x)	((short)SwapSHORT((unsigned short) (x)))
@@ -43,10 +43,6 @@ long	SwapLONG(long);
 #else
 #define SHORT(x)	(x)
 #define LONG(x)         (x)
-#define doom_wtohs(x)   ((short int) (x))
-#define doom_htows(x)   ((short int) (x))
-#define doom_wtohl(x)   ((long int) (x))
-#define doom_htowl(x)   ((long int) (x))
 #endif
 
 
@@ -56,6 +52,9 @@ long	SwapLONG(long);
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.5  2006/01/05 02:48:03  fraggle
+// Fixes for big endian machines (thanks locust)
+//
 // Revision 1.4  2005/09/05 22:50:56  fraggle
 // Add mmus2mid code from prboom.  Use 'void *' for music handles.  Pass
 // length of data when registering music.
