@@ -1,4 +1,6 @@
 
+    Fixes for big endian machines (thanks locust)
+
 0.1.2 (2005-10-29):
 
     Silence sounds at odd sample rates (rather than bombing out); this

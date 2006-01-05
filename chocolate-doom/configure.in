@@ -45,6 +45,8 @@ AC_SUBST(SDLNET_LIBS)
 
 AC_SUBST(ac_aux_dir)
 
+AC_C_BIGENDIAN
+
 AC_OUTPUT([
 Makefile
 textscreen/Makefile
