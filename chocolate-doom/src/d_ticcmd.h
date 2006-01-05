@@ -39,8 +39,8 @@
 // plus a checksum for internal state consistency.
 typedef struct
 {
-    char	forwardmove;	// *2048 for move
-    char	sidemove;	// *2048 for move
+    signed char	forwardmove;	// *2048 for move
+    signed char	sidemove;	// *2048 for move
     short	angleturn;	// <<16 for angle delta
     short	consistancy;	// checks for net game
     byte	chatchar;
@@ -53,6 +53,9 @@ typedef struct
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.4  2006/01/05 02:42:58  fraggle
+// Specify signed char explicitly for ticcmd_t fields.
+//
 // Revision 1.3  2005/07/23 18:56:07  fraggle
 // Remove unneccessary pragmas
 //
