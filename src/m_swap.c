@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2006/01/05 02:48:03  fraggle
+// Fixes for big endian machines (thanks locust)
+//
 // Revision 1.3  2005/07/23 18:56:07  fraggle
 // Remove unneccessary pragmas
 //
@@ -45,7 +48,7 @@ rcsid[] = "$Id$";
 
 
 // Not needed with big endian.
-#ifndef __BIG_ENDIAN__
+#ifndef WORDS_BIGENDIAN
 
 // Swap 16bit, that is, MSB and LSB byte.
 unsigned short SwapSHORT(unsigned short x)
