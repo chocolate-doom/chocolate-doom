@@ -154,7 +154,8 @@ typedef enum
 
 typedef enum
 {
-    sk_baby,
+    sk_noitems = -1,        // the "-skill 0" hack
+    sk_baby = 0,
     sk_easy,
     sk_medium,
     sk_hard,
@@ -373,6 +374,9 @@ typedef enum
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.11  2006/01/06 19:26:02  fraggle
+// Fix the "-skill 0" hack commonly used under DOS
+//
 // Revision 1.10  2006/01/01 23:53:15  fraggle
 // Remove GS_WAITINGSTART gamestate.  This will be independent of the main
 // loop to avoid interfering with the main game code too much.
