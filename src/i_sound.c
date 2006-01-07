@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_sound.c 221 2005-10-23 18:39:45Z fraggle $
+// $Id: i_sound.c 257 2006-01-07 16:26:50Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,12 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.23  2006/01/07 16:26:50  fraggle
+// Fix the behavior when expanding sound effects (again).  Doom actually
+// does play sounds of any sample rate, but the sound effects in
+// Scientist 2 are corrupted.  Add some tests to check that the sound
+// effect header is correct, and generic sound rate conversion code.
+//
 // Revision 1.22  2005/10/23 18:39:45  fraggle
 // Reproduce the behavior when playing a sound at a sample rate which
 // is not 11025 or 22050Hz.  This is to "fix" a bug in Scientist 2:
@@ -110,7 +116,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_sound.c 221 2005-10-23 18:39:45Z fraggle $";
+rcsid[] = "$Id: i_sound.c 257 2006-01-07 16:26:50Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -174,10 +180,13 @@ static void ExpandSoundData(byte *data, int samplerate, int length,
                             Mix_Chunk *destination)
 {
     byte *expanded = (byte *) destination->abuf;
+    int expanded_length;
     int i;
 
     if (samplerate == 11025)
     {
+        // Most of Doom's sound effects are 11025Hz
+
         // need to expand to 2 channels, 11025->22050 and 8->16 bit
 
         for (i=0; i<length; ++i)
@@ -206,6 +215,30 @@ static void ExpandSoundData(byte *data, int samplerate, int length,
             expanded[i * 4 + 1] = expanded[i * 4 + 3] = (sample >> 8) & 0xff;
         }
     }
+    else
+    {
+        // Generic expansion function for all other sample rates
+
+        // number of samples in the converted sound
+
+        expanded_length = (length * 22050) / samplerate;
+
+        for (i=0; i<expanded_length; ++i)
+        {
+            Uint16 sample;
+            int src;
+
+            src = (i * length) / expanded_length;
+
+            sample = data[src] | (data[src] << 8);
+            sample -= 32768;
+
+            // expand 8->16 bits, mono->stereo
+
+            expanded[i * 4] = expanded[i * 4 + 2] = sample & 0xff;
+            expanded[i * 4 + 1] = expanded[i * 4 + 3] = (sample >> 8) & 0xff;
+        }
+    }
 }
 
 // Load and convert a sound effect
@@ -214,6 +247,7 @@ static void ExpandSoundData(byte *data, int samplerate, int length,
 static boolean CacheSFX(int sound)
 {
     int lumpnum;
+    int lumplen;
     int samplerate;
     int length;
     int expanded_length;
@@ -223,21 +257,31 @@ static boolean CacheSFX(int sound)
 
     lumpnum = I_GetSfxLumpNum(&S_sfx[sound]);
     data = W_CacheLumpNum(lumpnum, PU_STATIC);
+    lumplen = W_LumpLength(lumpnum);
 
-    samplerate = (data[3] << 8) | data[2];
-    length = (data[5] << 8) | data[4];
+    // Check the header, and ensure this is a valid sound
 
-    if (samplerate != 11025 && samplerate != 22050)
+    if (lumplen < 8
+     || data[0] != 0x03 || data[1] != 0x00
+     || data[6] != 0x00 || data[7] != 0x00)
     {
-        // Sounds with unsupported sound rates are not played
-        // in Vanilla Doom.  As far as I know there are no other
-        // supported sound sample rates apart from these two, but
-        // it is possible there are others.
+        // Invalid sound
 
         return false;
     }
+    
+    samplerate = (data[3] << 8) | data[2];
+    length = (data[5] << 8) | data[4];
 
-    expanded_length = (length * 4)  * (22050 / samplerate);
+    // If the header specifies that the length of the sound is greater than
+    // the length of the lump itself, this is an invalid sound lump
+
+    if (length - 8 > lumplen)
+    {
+        return false;
+    }
+
+    expanded_length = (length * 22050) / (samplerate / 4);
 
     sound_chunks[sound].allocated = 1;
     sound_chunks[sound].alen = expanded_length;
