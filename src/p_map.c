@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_map.c 260 2006-01-07 19:11:54Z fraggle $
+// $Id: p_map.c 261 2006-01-07 19:16:39Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard, Andrey Budko
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2006/01/07 19:16:39  fraggle
+// Only display a warning when unable to emulate a spechit overrun
+//
 // Revision 1.4  2006/01/07 19:11:54  fraggle
 // Import the spechit overrun code from prboom-plus.  Thanks to Andrey Budko
 // for his investigation into this behavior.
@@ -43,7 +46,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_map.c 260 2006-01-07 19:11:54Z fraggle $";
+rcsid[] = "$Id: p_map.c 261 2006-01-07 19:16:39Z fraggle $";
 
 #include <stdlib.h>
 
@@ -1389,8 +1392,6 @@ static void SpechitOverrun(line_t *ld)
 {
     int addr = 0x01C09C98 + (ld - lines) * 0x3E;
 
-    printf("Emulating spechit overrun, numspechit=%i\n", numspechit);
-    
     switch(numspechit)
     {
         case 9: 
