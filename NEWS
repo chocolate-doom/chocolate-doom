@@ -6,6 +6,8 @@
         any sample rate now play, but only sounds with valid headers.
         This is the *real* way Vanilla Doom behaves.  Thanks to myk for
         pointing out the incorrect behavior.
+    Imported the spechit overrun emulation code from prboom-plus.  Thanks to
+         Andrey Budko for this.
 
 0.1.2 (2005-10-29):
 

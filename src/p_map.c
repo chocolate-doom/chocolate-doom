@@ -1,10 +1,10 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_map.c 212 2005-10-17 22:07:26Z fraggle $
+// $Id: p_map.c 260 2006-01-07 19:11:54Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005 Simon Howard, Andrey Budko
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2006/01/07 19:11:54  fraggle
+// Import the spechit overrun code from prboom-plus.  Thanks to Andrey Budko
+// for his investigation into this behavior.
+//
 // Revision 1.3  2005/10/17 22:07:26  fraggle
 // Fix "Monsters Infight"
 //
@@ -39,7 +43,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_map.c 212 2005-10-17 22:07:26Z fraggle $";
+rcsid[] = "$Id: p_map.c 260 2006-01-07 19:11:54Z fraggle $";
 
 #include <stdlib.h>
 
@@ -82,7 +86,17 @@ line_t*		ceilingline;
 
 // keep track of special lines as they are hit,
 // but don't process them until the move is proven valid
-#define MAXSPECIALCROSS		8
+
+// fraggle: I have increased the size of this buffer.  In the original Doom,
+// overrunning past this limit caused other bits of memory to be overwritten,
+// affecting demo playback.  However, in doing so, the limit was still 
+// exceeded.  So we have to support more than 8 specials.
+//
+// We keep the original limit, to detect what variables in memory were 
+// overwritten (see SpechitOverrun())
+
+#define MAXSPECIALCROSS 		20
+#define MAXSPECIALCROSS_ORIGINAL	8
 
 line_t*		spechit[MAXSPECIALCROSS];
 int		numspechit;
@@ -199,6 +213,7 @@ P_TeleportMove
 // MOVEMENT ITERATOR FUNCTIONS
 //
 
+static void SpechitOverrun(line_t *ld);
 
 //
 // PIT_CheckLine
@@ -257,7 +272,14 @@ boolean PIT_CheckLine (line_t* ld)
     // if contacted a special line, add it to the list
     if (ld->special)
     {
-	spechit[numspechit] = ld;
+        // fraggle: spechits overrun emulation code from prboom-plus
+        if (numspechit >= MAXSPECIALCROSS_ORIGINAL)
+        {
+            SpechitOverrun(ld);
+        }
+
+        spechit[numspechit] = ld;
+        
 	numspechit++;
     }
 
@@ -1357,5 +1379,55 @@ P_ChangeSector
 	
 	
     return nofit;
+}
+
+// Code to emulate the behavior of Vanilla Doom when encountering an overrun
+// of the spechit array.  This is by Andrey Budko (e6y) and comes from his
+// PrBoom plus port.  A big thanks to Andrey for this.
+
+static void SpechitOverrun(line_t *ld)
+{
+    int addr = 0x01C09C98 + (ld - lines) * 0x3E;
+
+    printf("Emulating spechit overrun, numspechit=%i\n", numspechit);
+    
+    switch(numspechit)
+    {
+        case 9: 
+        case 10:
+        case 11:
+        case 12:
+            tmbbox[numspechit-9] = addr;
+            break;
+        case 13: 
+            crushchange = addr; 
+            break;
+        case 14: 
+            nofit = addr; 
+            break;
+        case 15: 
+            bombsource = (mobj_t*)addr; 
+            break;
+        case 16: 
+            bombdamage = addr; 
+            break;
+        case 17: 
+            bombspot = (mobj_t*)addr; 
+            break;
+        case 18: 
+            usething = (mobj_t*)addr; 
+            break;
+        case 19: 
+            attackrange = addr; 
+            break;
+        case 20: 
+            la_damage = addr; 
+            break;
+        default:
+            fprintf(stderr, "SpechitOverrun: Warning: unable to emulate"
+                            "an overrun where numspechit=%i\n",
+                            numspechit);
+            break;
+    }
 }
 
