@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2006/01/07 19:16:39  fraggle
+// Only display a warning when unable to emulate a spechit overrun
+//
 // Revision 1.4  2006/01/07 19:11:54  fraggle
 // Import the spechit overrun code from prboom-plus.  Thanks to Andrey Budko
 // for his investigation into this behavior.
@@ -1389,8 +1392,6 @@ static void SpechitOverrun(line_t *ld)
 {
     int addr = 0x01C09C98 + (ld - lines) * 0x3E;
 
-    printf("Emulating spechit overrun, numspechit=%i\n", numspechit);
-    
     switch(numspechit)
     {
         case 9: 
