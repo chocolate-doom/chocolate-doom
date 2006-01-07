@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2006/01/07 20:08:11  fraggle
+// Send player name and address in the waiting data packets.  Display these
+// on the waiting screen, and improve the waiting screen appearance.
+//
 // Revision 1.2  2006/01/02 21:50:26  fraggle
 // Restructure the waiting screen code.  Establish our own separate event
 // loop while waiting for the game to start, to avoid affecting the original
@@ -52,6 +56,9 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+static patch_t *player_face;
+static patch_t *player_backdrops[4];
+
 extern void M_WriteText(int x, int y, char *string);
 
 static void Drawer(void)
@@ -59,6 +66,7 @@ static void Drawer(void)
     patch_t *backdrop;
     int backdrop_lumpnum;
     char buf[128];
+    int i, y;
 
     // Use INTERPIC or TITLEPIC if we don't have it
 
@@ -75,17 +83,32 @@ static void Drawer(void)
     
     V_DrawPatch(0, 0, 0, backdrop);
 
-    sprintf(buf, "%i clients connected to server.", net_clients_in_game);
+    // draw players
 
-    M_WriteText(32, 100, buf);
+    y = 100 - 16 * net_clients_in_game - 24;
+    
+    M_WriteText(32, y, "Players currently waiting:");
+
+    y += 24;
+
+    for (i=0; i<net_clients_in_game; ++i)
+    {
+        V_DrawPatch(32, y, 0, player_backdrops[i]);
+        V_DrawPatch(32, y, 0, player_face);
+        M_WriteText(80, y+12, net_player_names[i]);
+        M_WriteText(200, y+12, net_player_addresses[i]);
+        y += 32;
+    }
+
+    y += 16;
 
     if (net_client_controller)
     {
-        M_WriteText(32, 150, "Press space to start the game...");
+        M_WriteText(32, y, "Press space to start the game...");
     }
     else
     {
-        M_WriteText(32, 150, "Waiting for the game to start...");
+        M_WriteText(32, y, "Waiting for the game to start...");
     }
 }
 
@@ -104,6 +127,20 @@ static void ProcessEvents(void)
     }
 }
 
+static void NET_InitGUI(void)
+{
+    char buf[8];
+    int i;
+
+    player_face = W_CacheLumpName("STFST01", PU_STATIC);
+
+    for (i=0 ; i<MAXPLAYERS ; i++)
+    {
+        sprintf(buf, "STPB%d", i);
+        player_backdrops[i] = W_CacheLumpName(buf, PU_STATIC);
+    }
+}
+
 // Displays a graphical screen while waiting for the game to start.
 
 void NET_WaitForStart(void)
@@ -117,6 +154,8 @@ void NET_WaitForStart(void)
     {
         return;
     }
+
+    NET_InitGUI();
 
     last_tic_time = I_GetTime();
 

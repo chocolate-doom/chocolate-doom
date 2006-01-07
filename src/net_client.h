@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.7  2006/01/07 20:08:11  fraggle
+// Send player name and address in the waiting data packets.  Display these
+// on the waiting screen, and improve the waiting screen appearance.
+//
 // Revision 1.6  2006/01/02 21:50:26  fraggle
 // Restructure the waiting screen code.  Establish our own separate event
 // loop while waiting for the game to start, to avoid affecting the original
@@ -51,8 +55,11 @@
 #ifndef NET_CLIENT_H
 #define NET_CLIENT_H
 
+#include "doomdef.h"
 #include "doomtype.h"
 #include "net_defs.h"
+
+#define MAXPLAYERNAME 30
 
 boolean NET_CL_Connect(net_addr_t *addr);
 void NET_CL_Disconnect(void);
@@ -62,6 +69,8 @@ extern boolean net_client_connected;
 extern boolean net_client_controller;
 extern int net_clients_in_game;
 extern boolean net_waiting_for_start;
+extern char net_player_names[MAXPLAYERS][MAXPLAYERNAME];
+extern char net_player_addresses[MAXPLAYERS][MAXPLAYERNAME];
 
 #endif /* #ifndef NET_CLIENT_H */
 
