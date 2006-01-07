@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 252 2006-01-02 21:50:26Z fraggle $
+// $Id: net_client.c 262 2006-01-07 20:08:11Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.9  2006/01/07 20:08:11  fraggle
+// Send player name and address in the waiting data packets.  Display these
+// on the waiting screen, and improve the waiting screen appearance.
+//
 // Revision 1.8  2006/01/02 21:50:26  fraggle
 // Restructure the waiting screen code.  Establish our own separate event
 // loop while waiting for the game to start, to avoid affecting the original
@@ -105,6 +109,11 @@ boolean net_client_controller = false;
 
 int net_clients_in_game;
 
+// Nmaes of all players
+
+char net_player_addresses[MAXPLAYERS][MAXPLAYERNAME];
+char net_player_names[MAXPLAYERS][MAXPLAYERNAME];
+
 // Waiting for the game to start?
 
 boolean net_waiting_for_start = false;
@@ -126,6 +135,9 @@ static void NET_CL_ParseWaitingData(net_packet_t *packet)
 {
     unsigned int num_players;
     unsigned int is_controller;
+    char *player_names[MAXPLAYERS];
+    char *player_addr[MAXPLAYERS];
+    int i;
 
     if (!NET_ReadInt8(packet, &num_players)
      || !NET_ReadInt8(packet, &is_controller))
@@ -135,8 +147,36 @@ static void NET_CL_ParseWaitingData(net_packet_t *packet)
         return;
     }
 
+    if (num_players > MAXPLAYERS)
+    {
+        // Invalid number of players
+
+        return;
+    }
+ 
+    // Read the player names
+
+    for (i=0; i<num_players; ++i)
+    {
+        player_names[i] = NET_ReadString(packet);
+        player_addr[i] = NET_ReadString(packet);
+
+        if (player_names[i] == NULL || player_addr[i] == NULL)
+        {
+            return;
+        }
+    }
+
     net_clients_in_game = num_players;
     net_client_controller = is_controller != 0;
+
+    for (i=0; i<num_players; ++i)
+    {
+        strncpy(net_player_names[i], player_names[i], MAXPLAYERNAME);
+        net_player_names[i][MAXPLAYERNAME-1] = '\0';
+        strncpy(net_player_addresses[i], player_addr[i], MAXPLAYERNAME);
+        net_player_addresses[i][MAXPLAYERNAME-1] = '\0';
+    }
 }
 
 // Received an ACK

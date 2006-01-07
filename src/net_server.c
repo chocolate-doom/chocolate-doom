@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 251 2006-01-02 21:48:37Z fraggle $
+// $Id: net_server.c 262 2006-01-07 20:08:11Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.11  2006/01/07 20:08:11  fraggle
+// Send player name and address in the waiting data packets.  Display these
+// on the waiting screen, and improve the waiting screen appearance.
+//
 // Revision 1.10  2006/01/02 21:48:37  fraggle
 // fix client connected function
 //
@@ -396,6 +400,10 @@ static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
 static void NET_SV_SendWaitingData(net_client_t *client)
 {
     net_packet_t *packet;
+    int num_clients;
+    int i;
+
+    num_clients = NET_SV_NumClients();
 
     // time to send the client another status packet
 
@@ -404,11 +412,28 @@ static void NET_SV_SendWaitingData(net_client_t *client)
 
     // include the number of clients waiting
 
-    NET_WriteInt8(packet, NET_SV_NumClients());
+    NET_WriteInt8(packet, num_clients);
 
     // indicate whether the client is the controller
 
     NET_WriteInt8(packet, NET_SV_Controller() == client);
+
+    // send the address of all players
+
+    for (i=0; i<num_clients; ++i)
+    {
+        char *addr;
+
+        // name
+
+        NET_WriteString(packet, "Player");
+
+        // address
+
+        addr = NET_AddrToString(clients[i].addr);
+
+        NET_WriteString(packet, addr);
+    }
     
     // send packet to client and free
 
