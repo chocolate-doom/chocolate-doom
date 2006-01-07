@@ -1,6 +1,4 @@
 
-Chocolate Doom
-
 Chocolate Doom is a Doom source port which aims to behave as closely
 as possible to the original DOS Doom executables.
 
@@ -12,7 +10,7 @@ Chocolate Doom aims to:
  * Be compatible with DOS Doom bugs
  * Provide the same "feel" as DOS Doom (display and input should behave
    the same)
- * As far as possible, provde all the same features that are available
+ * As far as possible, provide all the same features that are available
    using the DOS version.
 
 == Configuration File ==
@@ -110,10 +108,20 @@ Here are some examples:
 
 == Other information ==
 
+ * More information, including information about how to play various classic
+   TCs, is available on the Chocolate Doom website: 
+
+   http://www.chocolate-doom.org/
+
+   You are encouraged to sign up and contribute any useful information you may
+   have regarding the port!
+
  * Chocolate Doom is not perfect.  See the BUGS file for a list of 
    known issues,
+
  * Chocolate Doom is under the GNU GPL.  See the COPYING file for more 
    information.
+
  * Chocolate Doom is currently a beta version.  Not all planned features 
    have been implemented yet.  Please send feedback and bug reports to 
    fraggle@alkali.org.  Thanks!
