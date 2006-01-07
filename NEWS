@@ -1,5 +1,11 @@
 
     Fixes for big endian machines (thanks locust)
+    Fix the "-skill 0" hack to play without any items (thanks to Janizdreg
+        for pointing out that this was nonfunctional)
+    Fix playing of sounds at odd sample rates (again).  Sound effects at
+        any sample rate now play, but only sounds with valid headers.
+        This is the *real* way Vanilla Doom behaves.  Thanks to myk for
+        pointing out the incorrect behavior.
 
 0.1.2 (2005-10-29):
 
