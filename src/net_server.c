@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 263 2006-01-08 00:10:48Z fraggle $
+// $Id: net_server.c 264 2006-01-08 02:53:05Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.13  2006/01/08 02:53:05  fraggle
+// Send keepalives if the connection is not doing anything else.
+// Send all packets using a new NET_Conn_SendPacket to support this.
+//
 // Revision 1.12  2006/01/08 00:10:48  fraggle
 // Move common connection code into net_common.c, shared by server
 // and client code.
@@ -353,7 +357,7 @@ static void NET_SV_SendWaitingData(net_client_t *client)
     
     // send packet to client and free
 
-    NET_SendPacket(client->addr, packet);
+    NET_Conn_SendPacket(client, packet);
     NET_FreePacket(packet);
 }
 

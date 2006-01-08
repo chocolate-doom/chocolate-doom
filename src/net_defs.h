@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_defs.h 238 2006-01-01 23:54:31Z fraggle $
+// $Id: net_defs.h 264 2006-01-08 02:53:05Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2006/01/08 02:53:05  fraggle
+// Send keepalives if the connection is not doing anything else.
+// Send all packets using a new NET_Conn_SendPacket to support this.
+//
 // Revision 1.4  2006/01/01 23:54:31  fraggle
 // Client disconnect code
 //
@@ -111,6 +115,7 @@ typedef enum
 {
     NET_PACKET_TYPE_SYN,
     NET_PACKET_TYPE_ACK,
+    NET_PACKET_TYPE_KEEPALIVE,
     NET_PACKET_TYPE_WAITING_DATA,
     NET_PACKET_TYPE_GAMESTART,
     NET_PACKET_TYPE_GAMEDATA,

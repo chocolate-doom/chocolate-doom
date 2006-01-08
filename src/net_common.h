@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_common.h 263 2006-01-08 00:10:48Z fraggle $
+// $Id: net_common.h 264 2006-01-08 02:53:05Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2006/01/08 02:53:05  fraggle
+// Send keepalives if the connection is not doing anything else.
+// Send all packets using a new NET_Conn_SendPacket to support this.
+//
 // Revision 1.1  2006/01/08 00:10:48  fraggle
 // Move common connection code into net_common.c, shared by server
 // and client code.
@@ -76,9 +80,12 @@ typedef struct
     net_addr_t *addr;
     int last_send_time;
     int num_retries;
+    int keepalive_send_time;
+    int keepalive_recv_time;
 } net_connection_t;
 
 
+void NET_Conn_SendPacket(net_connection_t *conn, net_packet_t *packet);
 void NET_Conn_InitClient(net_connection_t *conn, net_addr_t *addr);
 void NET_Conn_InitServer(net_connection_t *conn, net_addr_t *addr);
 boolean NET_Conn_Packet(net_connection_t *conn, net_packet_t *packet,
