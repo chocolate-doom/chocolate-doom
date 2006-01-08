@@ -57,7 +57,8 @@ m_misc.c             m_misc.h              \
 mmus2mid.c           mmus2mid.h            \
 m_random.c           m_random.h            \
 m_swap.c             m_swap.h              \
-net_client.c                               \
+net_client.c         net_client.h          \
+net_common.c         net_common.h          \
 net_defs.h                                 \
 net_gui.c            net_gui.h             \
 net_io.c             net_io.h              \

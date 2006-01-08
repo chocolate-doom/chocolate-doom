@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 262 2006-01-07 20:08:11Z fraggle $
+// $Id: net_server.c 263 2006-01-08 00:10:48Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.12  2006/01/08 00:10:48  fraggle
+// Move common connection code into net_common.c, shared by server
+// and client code.
+//
 // Revision 1.11  2006/01/07 20:08:11  fraggle
 // Send player name and address in the waiting data packets.  Display these
 // on the waiting screen, and improve the waiting screen appearance.
@@ -71,6 +75,7 @@
 #include "doomstat.h"
 #include "i_system.h"
 #include "net_client.h"
+#include "net_common.h"
 #include "net_defs.h"
 #include "net_io.h"
 #include "net_loop.h"
@@ -78,53 +83,35 @@
 #include "net_server.h"
 #include "net_sdl.h"
 
-typedef enum 
+typedef enum
 {
-    // received a syn, sent an ack, waiting for an ack reply
+    // waiting for the game to start
 
-    CLIENT_STATE_WAITING_ACK,
-    
-    // waiting for a game to start
+    SERVER_WAITING_START,
 
-    CLIENT_STATE_WAITING_START,
+    // in a game
 
-    // in game
-
-    CLIENT_STATE_IN_GAME,
-
-    // sent a DISCONNECT packet, waiting for a DISCONNECT_ACK reply
-
-    CLIENT_STATE_DISCONNECTING,
-
-    // client successfully disconnected
-
-    CLIENT_STATE_DISCONNECTED,
-} net_clientstate_t;
-
-#define MAX_RETRIES 5
+    SERVER_IN_GAME,
+} net_server_state_t;
 
 typedef struct 
 {
     boolean active;
-    net_clientstate_t state;
     net_addr_t *addr;
+    net_connection_t connection;
     int last_send_time;
-    int num_retries;
 } net_client_t;
 
+static net_server_state_t server_state;
 static boolean server_initialised = false;
 static net_client_t clients[MAXNETNODES];
 static net_context_t *server_context;
 
 static void NET_SV_DisconnectClient(net_client_t *client)
 {
-    if (client->active 
-     && client->state != CLIENT_STATE_DISCONNECTING
-     && client->state != CLIENT_STATE_DISCONNECTED)
+    if (client->active)
     {
-        client->state = CLIENT_STATE_DISCONNECTING;
-        client->num_retries = 0;
-        client->last_send_time = -1;
+        NET_Conn_Disconnect(&client->connection);
     }
 }
 
@@ -133,10 +120,8 @@ static boolean ClientConnected(net_client_t *client)
     // Check that the client is properly connected: ie. not in the 
     // process of connecting or disconnecting
 
-    return client->active
-        && client->state != CLIENT_STATE_DISCONNECTING
-        && client->state != CLIENT_STATE_DISCONNECTED
-        && client->state != CLIENT_STATE_WAITING_ACK;
+    return client->active 
+        && client->connection.state == NET_CONN_STATE_CONNECTED;
 }
 
 // returns the number of clients connected
@@ -233,9 +218,6 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
             if (!clients[i].active)
             {
                 client = &clients[i];
-                client->active = true;
-                client->addr = addr;
-                client->state = CLIENT_STATE_DISCONNECTED;
                 break;
             }
         }
@@ -245,99 +227,32 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
             return;
         }
     }
-
-    // Set into the correct state if necessary
-    // Allow immediate reconnects from clients which just disconnected.
-
-    if (client->state == CLIENT_STATE_DISCONNECTED)
+    else
     {
-        client->state = CLIENT_STATE_WAITING_ACK;
-        client->num_retries = 0;
+        // If this is a recently-disconnected client, deactivate
+        // to allow immediate reconnection
+
+        if (client->connection.state == NET_CONN_STATE_DISCONNECTED)
+        {
+            client->active = false;
+        }
     }
 
-    if (client->state == CLIENT_STATE_WAITING_ACK)
+    // New client?
+
+    if (!client->active)
+    {
+        // Activate, initialise connection
+        client->active = true;
+        NET_Conn_InitServer(&client->connection, addr);
+        client->addr = addr;
+        client->last_send_time = -1;
+    }
+
+    if (client->connection.state == NET_CONN_STATE_WAITING_ACK)
     {
         // force an acknowledgement
-
-        client->last_send_time = -1;
-    }
-}
-
-// parse an ACK packet from a client
-
-static void NET_SV_ParseACK(net_packet_t *packet, net_client_t *client)
-{
-    if (client == NULL)
-    {
-        return;
-    }
-
-    if (client->state == CLIENT_STATE_WAITING_ACK)
-    {
-        // now waiting for the game to start
-
-        client->state = CLIENT_STATE_WAITING_START;
-
-        // force a waiting data packet to be sent immediately
-
-        client->last_send_time = -1;
-    }
-}
-
-static void NET_SV_ParseDisconnect(net_packet_t *packet, net_client_t *client)
-{
-    net_packet_t *reply;
-
-    // sanity check
-
-    if (client == NULL)
-    {
-        return;
-    }
-
-    // This client wants to disconnect from the server.
-    // Send a DISCONNECT_ACK reply.
-    
-    reply = NET_NewPacket(10);
-    NET_WriteInt16(reply, NET_PACKET_TYPE_DISCONNECT_ACK);
-    NET_SendPacket(client->addr, reply);
-    NET_FreePacket(reply);
-
-    client->last_send_time = I_GetTimeMS();
-    
-    // Do not set to inactive immediately.  Instead, set to the 
-    // DISCONNECTED state.  This is in case our acknowledgement is
-    // not received and another must be sent.
-    //
-    // After a few seconds, the client will get properly removed
-    // and cleaned up from the clients list.
-
-    client->state = CLIENT_STATE_DISCONNECTED;
-
-    //printf("SV: %s: client disconnected\n", NET_AddrToString(client->addr));
-}
-
-// Parse a DISCONNECT_ACK packet
-
-static void NET_SV_ParseDisconnectACK(net_packet_t *packet, 
-                                      net_client_t *client)
-{
-    // Sanity check
-  
-    if (client == NULL)
-    {
-        return;
-    }
-
-    if (client->state == CLIENT_STATE_DISCONNECTING)
-    {
-        // We have received an acknowledgement to our disconnect
-        // request. Client has been disconnected successfully.
-        
-        // Place into the DISCONNECTED state to allow for cleanup.
-
-        client->state = CLIENT_STATE_DISCONNECTED;
-        client->last_send_time = -1;
+        client->connection.last_send_time = -1;
     }
 }
 
@@ -361,30 +276,31 @@ static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
         return;
     }
 
-    //printf("SV: %s: %i\n", NET_AddrToString(addr), packet_type);
-
-    switch (packet_type)
+    if (packet_type == NET_PACKET_TYPE_SYN)
     {
-        case NET_PACKET_TYPE_SYN:
-            NET_SV_ParseSYN(packet, client, addr);
-            break;
-        case NET_PACKET_TYPE_ACK:
-            NET_SV_ParseACK(packet, client);
-            break;
-        case NET_PACKET_TYPE_GAMESTART:
-            break;
-        case NET_PACKET_TYPE_GAMEDATA:
-            break;
-        case NET_PACKET_TYPE_DISCONNECT:
-            NET_SV_ParseDisconnect(packet, client);
-            break;
-        case NET_PACKET_TYPE_DISCONNECT_ACK:
-            NET_SV_ParseDisconnectACK(packet, client);
-            break;
-        default:
-            // unknown packet type
+        NET_SV_ParseSYN(packet, client, addr);
+    }
+    else if (client == NULL)
+    {
+        // Must come from a valid client; ignore otherwise
+    }
+    else if (NET_Conn_Packet(&client->connection, packet, packet_type))
+    {
+        // Packet was eaten by the common connection code
+    }
+    else
+    { 
+        //printf("SV: %s: %i\n", NET_AddrToString(addr), packet_type);
 
-            break;
+        switch (packet_type)
+        {
+            case NET_PACKET_TYPE_GAMESTART:
+                break;
+            default:
+                // unknown packet type
+
+                break;
+        }
     }
 
     // If this address is not in the list of clients, be sure to
@@ -439,48 +355,34 @@ static void NET_SV_SendWaitingData(net_client_t *client)
 
     NET_SendPacket(client->addr, packet);
     NET_FreePacket(packet);
-    
-    // update time
-
-    client->last_send_time = I_GetTimeMS();
 }
 
 // Perform any needed action on a client
 
 static void NET_SV_RunClient(net_client_t *client)
 {
-    net_packet_t *packet;
+    // Run common code
 
-    if (client->state == CLIENT_STATE_WAITING_ACK)
+    NET_Conn_Run(&client->connection);
+    
+    // Is this client disconnected?
+
+    if (client->connection.state == NET_CONN_STATE_DISCONNECTED)
     {
-        if (client->last_send_time < 0
-         || I_GetTimeMS() - client->last_send_time > 1000)
-        {
-            // it has been a second since the last ACK was sent, and 
-            // still no reply.
+        // deactivate and free back 
 
-            if (client->num_retries < MAX_RETRIES)
-            {
-                // send another ACK
-
-                packet = NET_NewPacket(10);
-                NET_WriteInt16(packet, NET_PACKET_TYPE_ACK);
-                NET_SendPacket(client->addr, packet);
-                NET_FreePacket(packet);
-                client->last_send_time = I_GetTimeMS();
-
-                ++client->num_retries;
-            }
-            else 
-            {
-                // no more retries allowed.
-
-                client->active = false;
-                NET_FreeAddress(client->addr);
-            }
-        }
+        client->active = false;
+        NET_FreeAddress(client->addr);
     }
-    else if (client->state == CLIENT_STATE_WAITING_START)
+    
+    if (!ClientConnected(client))
+    {
+        // client has not yet finished connecting
+
+        return;
+    }
+
+    if (server_state == SERVER_WAITING_START)
     {
         // Waiting for the game to start
 
@@ -490,55 +392,7 @@ static void NET_SV_RunClient(net_client_t *client)
          || I_GetTimeMS() - client->last_send_time > 1000)
         {
             NET_SV_SendWaitingData(client);
-        }
-    }
-    else if (client->state == CLIENT_STATE_DISCONNECTING)
-    {
-        // Waiting for a reply to our DISCONNECT request.
-
-        if (client->last_send_time < 0
-         || I_GetTimeMS() - client->last_send_time > 1000)
-        {
-            // it has been a second since the last disconnect packet 
-            // was sent, and still no reply.
-
-            if (client->num_retries < MAX_RETRIES)
-            {
-                // send another disconnect
-
-                packet = NET_NewPacket(10);
-                NET_WriteInt16(packet, NET_PACKET_TYPE_DISCONNECT);
-                NET_SendPacket(client->addr, packet);
-                NET_FreePacket(packet);
-                client->last_send_time = I_GetTimeMS();
-
-                ++client->num_retries;
-            }
-            else 
-            {
-                // No more retries allowed.
-                // Force disconnect.
-
-                client->active = false;
-                NET_FreeAddress(client->addr);
-            }
-        }
-
-    }
-    else if (client->state == CLIENT_STATE_DISCONNECTED)
-    {
-        // Client has disconnected.  
-        //
-        // See NET_SV_ParseDisconnect() above.
-
-        // Remove from the list after five seconds
-
-        if (client->last_send_time < 0
-         || I_GetTimeMS() - client->last_send_time > 5000)
-        {
-            //printf("SV: %s: deactivated\n", NET_AddrToString(client->addr));
-            client->active = false;
-            NET_FreeAddress(client->addr);
+            client->last_send_time = I_GetTimeMS();
         }
     }
 }
@@ -564,6 +418,7 @@ void NET_SV_Init(void)
         clients[i].active = false;
     }
 
+    server_state = SERVER_WAITING_START;
     server_initialised = true;
 }
 
