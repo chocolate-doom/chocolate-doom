@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2006/01/08 17:52:45  fraggle
+// Play some random music for the players while waiting for the game to
+// start.
+//
 // Revision 1.4  2006/01/08 05:04:50  fraggle
 // Don't grab the mouse on the net waiting screen
 //
@@ -56,13 +60,17 @@
 #include "i_system.h"
 #include "i_video.h"
 #include "m_menu.h"
+#include "m_random.h"
 #include "r_defs.h"
+#include "s_sound.h"
+#include "sounds.h"
 #include "v_video.h"
 #include "w_wad.h"
 #include "z_zone.h"
 
 static patch_t *player_face;
 static patch_t *player_backdrops[4];
+static boolean have_music;
 
 extern void M_WriteText(int x, int y, char *string);
 
@@ -117,6 +125,33 @@ static void Drawer(void)
     }
 }
 
+// play some random music
+
+static void RandomMusic(void)
+{
+    musicenum_t mus;
+
+    if (gamemode == commercial)
+    {
+        mus = mus_runnin + M_Random() % 32;
+    }
+    else if (gamemode == shareware)
+    {
+        mus = mus_e1m1 + M_Random() % 9;
+    } 
+    else 
+    {
+        mus = mus_e1m1 + M_Random() % 27;
+    }
+    
+    S_ChangeMusic(mus, 0);
+
+    // If music is not playing straight away, it is turned off.  Don't
+    // try to play any more music.
+
+    have_music = S_MusicPlaying();
+}
+
 static void ProcessEvents(void)
 {
     event_t *ev;
@@ -129,6 +164,13 @@ static void ProcessEvents(void)
         }
 
         // process event ...
+        
+        if (ev->type == ev_keydown && ev->data1 == 'm')
+        {
+            // Music change
+
+            RandomMusic();
+        }
     }
 }
 
@@ -161,6 +203,12 @@ void NET_WaitForStart(void)
     }
 
     NET_InitGUI();
+
+    M_ClearRandom();
+
+    // play some soothing music while we wait
+
+    RandomMusic();
 
     // cheap hack: pretend to be on a demo screen so the mouse wont 
     // be grabbed
@@ -195,6 +243,13 @@ void NET_WaitForStart(void)
             Drawer();
             M_Drawer();
             I_FinishUpdate();
+
+            // check if the music has finished - start another track!
+
+            if (have_music && !S_MusicPlaying())
+            {
+                RandomMusic();
+            }
         }
 
         // Network stuff
