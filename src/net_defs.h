@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2006/01/08 04:52:26  fraggle
+// Allow the server to reject clients
+//
 // Revision 1.5  2006/01/08 02:53:05  fraggle
 // Send keepalives if the connection is not doing anything else.
 // Send all packets using a new NET_Conn_SendPacket to support this.
@@ -115,6 +118,7 @@ typedef enum
 {
     NET_PACKET_TYPE_SYN,
     NET_PACKET_TYPE_ACK,
+    NET_PACKET_TYPE_REJECTED,
     NET_PACKET_TYPE_KEEPALIVE,
     NET_PACKET_TYPE_WAITING_DATA,
     NET_PACKET_TYPE_GAMESTART,

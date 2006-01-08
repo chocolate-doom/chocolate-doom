@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.13  2006/01/08 04:52:26  fraggle
+// Allow the server to reject clients
+//
 // Revision 1.12  2006/01/08 03:36:40  fraggle
 // Fix double free of addresses
 //
@@ -262,11 +265,25 @@ void NET_CL_Run(void)
                          && client_state == CLIENT_STATE_WAITING_START;
 }
 
+static void NET_CL_SendSYN(void)
+{
+    net_packet_t *packet;
+
+    packet = NET_NewPacket(10);
+    NET_WriteInt16(packet, NET_PACKET_TYPE_SYN);
+    NET_WriteInt32(packet, NET_MAGIC_NUMBER);
+    NET_WriteInt16(packet, gamemode);
+    NET_WriteInt16(packet, gamemission);
+    NET_Conn_SendPacket(&client_connection, packet);
+    NET_FreePacket(packet);
+}
+
 // connect to a server
 
 boolean NET_CL_Connect(net_addr_t *addr)
 {
     int start_time;
+    int last_send_time;
 
     server_addr = addr;
 
@@ -293,12 +310,23 @@ boolean NET_CL_Connect(net_addr_t *addr)
     // try to connect
  
     start_time = I_GetTimeMS();
+    last_send_time = -1;
 
     while (client_connection.state == NET_CONN_STATE_CONNECTING)
     {
+        int nowtime = I_GetTimeMS();
+
+        // Send a SYN packet every second.
+
+        if (nowtime - last_send_time > 1000 || last_send_time < 0)
+        {
+            NET_CL_SendSYN();
+            last_send_time = nowtime;
+        }
+ 
         // time out after 5 seconds 
 
-        if (I_GetTimeMS() - start_time > 5000)
+        if (nowtime - start_time > 5000)
         {
             break;
         }
