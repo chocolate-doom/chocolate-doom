@@ -123,12 +123,16 @@ void I_StopSong(void *handle);
 
 void I_UnRegisterSong(void *handle);
 
+boolean I_QrySongPlaying(void *handle);
 
 
 #endif
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.6  2006/01/08 17:51:53  fraggle
+// Add S_MusicPlaying function to query if music is still playing.
+//
 // Revision 1.5  2005/09/05 22:50:56  fraggle
 // Add mmus2mid code from prboom.  Use 'void *' for music handles.  Pass
 // length of data when registering music.
