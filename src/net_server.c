@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 268 2006-01-08 04:52:26Z fraggle $
+// $Id: net_server.c 270 2006-01-08 05:06:06Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.16  2006/01/08 05:06:06  fraggle
+// Reject new connections if the server is not in the waiting state.
+//
 // Revision 1.15  2006/01/08 04:52:26  fraggle
 // Allow the server to reject clients
 //
@@ -241,6 +244,13 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
 
     // received a valid SYN
 
+    // not accepting new connections?
+    
+    if (server_state != SERVER_WAITING_START)
+    {
+        NET_SV_SendReject(addr, "Server is not currently accepting connections");
+    }
+    
     // allocate a client slot if there isn't one already
 
     if (client == NULL)
