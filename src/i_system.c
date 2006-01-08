@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_system.c 234 2005-12-30 18:50:53Z fraggle $
+// $Id: i_system.c 274 2006-01-08 18:13:33Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.16  2006/01/08 18:13:32  fraggle
+// show_endoom config file option to disable the endoom screen
+//
 // Revision 1.15  2005/12/30 18:50:53  fraggle
 // Millisecond clock function
 //
@@ -75,7 +78,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_system.c 234 2005-12-30 18:50:53Z fraggle $";
+rcsid[] = "$Id: i_system.c 274 2006-01-08 18:13:33Z fraggle $";
 
 
 #include <stdlib.h>
@@ -102,7 +105,7 @@ rcsid[] = "$Id: i_system.c 234 2005-12-30 18:50:53Z fraggle $";
 
 
 int	mb_used = 6;
-
+int     show_endoom = 1;
 
 void
 I_Tactile
@@ -261,7 +264,12 @@ void I_Quit (void)
     I_ShutdownMusic();
     M_SaveDefaults ();
     I_ShutdownGraphics();
-    I_Endoom();
+
+    if (show_endoom)
+    {
+        I_Endoom();
+    }
+
     exit(0);
 }
 

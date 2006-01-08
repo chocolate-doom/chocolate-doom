@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_misc.c 202 2005-10-16 01:18:10Z fraggle $
+// $Id: m_misc.c 274 2006-01-08 18:13:33Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -23,6 +23,9 @@
 //
 //
 // $Log$
+// Revision 1.14  2006/01/08 18:13:33  fraggle
+// show_endoom config file option to disable the endoom screen
+//
 // Revision 1.13  2005/10/16 01:18:10  fraggle
 // Global "configdir" variable with directory to store config files in.
 // Create a function to find the filename for a savegame slot.  Store
@@ -83,7 +86,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_misc.c 202 2005-10-16 01:18:10Z fraggle $";
+rcsid[] = "$Id: m_misc.c 274 2006-01-08 18:13:33Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -269,6 +272,8 @@ extern	int	numChannels;
 
 extern char*	chat_macros[];
 
+extern int      show_endoom;
+
 // dos specific options: these are unused but should be maintained
 // so that the config file can be shared between chocolate
 // doom and doom.exe
@@ -372,6 +377,7 @@ static default_t extra_defaults_list[] =
     {"screenmultiply",     &screenmultiply},
     {"novert",             &novert},
     {"mouse_acceleration", &mouse_acceleration,   DEFAULT_FLOAT},
+    {"show_endoom",        &show_endoom},
 };
 
 static default_collection_t extra_defaults =
