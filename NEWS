@@ -8,6 +8,8 @@
         pointing out the incorrect behavior.
     Imported the spechit overrun emulation code from prboom-plus.  Thanks to
          Andrey Budko for this.
+    New show_endoom option in the chocolate-doom.cfg config file allows
+         the ENDOOM screen to be disabled.
 
 0.1.2 (2005-10-29):
 
