@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_common.c 264 2006-01-08 02:53:05Z fraggle $
+// $Id: net_common.c 268 2006-01-08 04:52:26Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2006/01/08 04:52:26  fraggle
+// Allow the server to reject clients
+//
 // Revision 1.2  2006/01/08 02:53:05  fraggle
 // Send keepalives if the connection is not doing anything else.
 // Send all packets using a new NET_Conn_SendPacket to support this.
@@ -143,6 +146,18 @@ static void NET_Conn_ParseDisconnectACK(net_connection_t *conn,
     }
 }
 
+static void NET_Conn_ParseReject(net_connection_t *conn, net_packet_t *packet)
+{
+    if (conn->state == NET_CONN_STATE_CONNECTING)
+    {
+        // rejected by server
+
+        conn->state = NET_CONN_STATE_DISCONNECTED;
+
+        // there is a rejection message here, but it is unused at the moment.
+    }
+}
+
 // Process a packet received by the server
 //
 // Returns true if eaten by common code
@@ -165,6 +180,9 @@ boolean NET_Conn_Packet(net_connection_t *conn, net_packet_t *packet,
             break;
         case NET_PACKET_TYPE_KEEPALIVE:
             // No special action needed.
+            break;
+        case NET_PACKET_TYPE_REJECTED:
+            NET_Conn_ParseReject(conn, packet);
             break;
         default:
             // Not a common packet
@@ -217,33 +235,6 @@ void NET_Conn_Run(net_connection_t *conn)
             NET_WriteInt16(packet, NET_PACKET_TYPE_KEEPALIVE);
             NET_Conn_SendPacket(conn, packet);
             NET_FreePacket(packet);
-        }
-    }
-    else if (conn->state == NET_CONN_STATE_CONNECTING)
-    {
-        if (conn->last_send_time < 0
-         || nowtime - conn->last_send_time > 1000)
-        {
-            // It has been a second since the last SYN was sent, and no
-            // reply.
-            
-            if (conn->num_retries < MAX_RETRIES)
-            {
-                // send another SYN
-                    
-                packet = NET_NewPacket(10);
-                NET_WriteInt16(packet, NET_PACKET_TYPE_SYN);
-                NET_WriteInt32(packet, NET_MAGIC_NUMBER);
-                NET_Conn_SendPacket(conn, packet);
-                NET_FreePacket(packet);
-                conn->last_send_time = nowtime;
-
-                ++conn->num_retries;
-            }
-            else
-            {
-                conn->state = NET_CONN_STATE_DISCONNECTED;
-            }
         }
     }
     else if (conn->state == NET_CONN_STATE_WAITING_ACK)

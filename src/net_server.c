@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 266 2006-01-08 03:36:17Z fraggle $
+// $Id: net_server.c 268 2006-01-08 04:52:26Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.15  2006/01/08 04:52:26  fraggle
+// Allow the server to reject clients
+//
 // Revision 1.14  2006/01/08 03:36:17  fraggle
 // Fix packet send
 //
@@ -113,6 +116,8 @@ static net_server_state_t server_state;
 static boolean server_initialised = false;
 static net_client_t clients[MAXNETNODES];
 static net_context_t *server_context;
+static int sv_gamemode;
+static int sv_gamemission;
 
 static void NET_SV_DisconnectClient(net_client_t *client)
 {
@@ -189,6 +194,19 @@ static net_client_t *NET_SV_FindClient(net_addr_t *addr)
     return NULL;
 }
 
+// send a rejection packet to a client
+
+static void NET_SV_SendReject(net_addr_t *addr, char *msg)
+{
+    net_packet_t *packet;
+
+    packet = NET_NewPacket(10);
+    NET_WriteInt16(packet, NET_PACKET_TYPE_REJECTED);
+    NET_WriteString(packet, msg);
+    NET_SendPacket(addr, packet);
+    NET_FreePacket(packet);
+}
+
 // parse a SYN from a client(initiating a connection)
 
 static void NET_SV_ParseSYN(net_packet_t *packet, 
@@ -196,6 +214,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
                             net_addr_t *addr)
 {
     unsigned int magic;
+    unsigned int cl_gamemode, cl_gamemission;
     int i;
 
     // read the magic number
@@ -209,6 +228,14 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
     {
         // invalid magic number
 
+        return;
+    }
+
+    // read the game mode and mission
+
+    if (!NET_ReadInt16(packet, &cl_gamemode) 
+     || !NET_ReadInt16(packet, &cl_gamemission))
+    {
         return;
     }
 
@@ -249,7 +276,38 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
 
     if (!client->active)
     {
+        int num_clients;
+
+        // Before accepting a new client, check that there is a slot
+        // free
+
+        num_clients = NET_SV_NumClients();
+
+        if (num_clients >= MAXPLAYERS)
+        {
+            NET_SV_SendReject(addr, "Server is full!");
+            return;
+        }
+
+        // Adopt the game mode and mission of the first connecting client
+
+        if (num_clients == 0)
+        {
+            sv_gamemode = cl_gamemode;
+            sv_gamemission = cl_gamemission;
+        }
+
+        // Check the connecting client is playing the same game as all
+        // the other clients
+
+        if (cl_gamemode != sv_gamemode || cl_gamemission != sv_gamemission)
+        {
+            NET_SV_SendReject(addr, "You are playing the wrong game!");
+            return;
+        }
+        
         // Activate, initialise connection
+
         client->active = true;
         NET_Conn_InitServer(&client->connection, addr);
         client->addr = addr;
