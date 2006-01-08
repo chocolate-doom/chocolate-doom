@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.10  2006/01/08 00:10:47  fraggle
+// Move common connection code into net_common.c, shared by server
+// and client code.
+//
 // Revision 1.9  2006/01/07 20:08:11  fraggle
 // Send player name and address in the waiting data packets.  Display these
 // on the waiting screen, and improve the waiting screen appearance.
@@ -63,6 +67,7 @@
 #include "doomstat.h"
 #include "i_system.h"
 #include "net_client.h"
+#include "net_common.h"
 #include "net_defs.h"
 #include "net_gui.h"
 #include "net_io.h"
@@ -71,10 +76,6 @@
 
 typedef enum
 {
-    // sent a syn, not received an ack yet
-
-    CLIENT_STATE_CONNECTING,
-
     // waiting for the game to start
 
     CLIENT_STATE_WAITING_START,
@@ -83,23 +84,17 @@ typedef enum
 
     CLIENT_STATE_IN_GAME,
 
-    // in disconnect state: sent DISCONNECT, waiting for DISCONNECT_ACK reply
-    
-    CLIENT_STATE_DISCONNECTING,
-
-    // successfully disconnected
-
-    CLIENT_STATE_DISCONNECTED,
 } net_clientstate_t;
 
+static net_connection_t client_connection;
 static net_clientstate_t client_state;
 static net_addr_t *server_addr;
 static net_context_t *client_context;
 static int last_send_time;
 
-// if TRUE, we are connected to a server
+// TRUE if the client code is in use
 
-boolean net_client_connected = false;
+boolean net_client_connected;
 
 // if TRUE, this client is the controller of the game
 
@@ -179,69 +174,6 @@ static void NET_CL_ParseWaitingData(net_packet_t *packet)
     }
 }
 
-// Received an ACK
-
-static void NET_CL_ParseACK(net_packet_t *packet)
-{
-    net_packet_t *reply;
-
-    // send an ACK back
-
-    reply = NET_NewPacket(10);
-    NET_WriteInt16(reply, NET_PACKET_TYPE_ACK);
-    NET_SendPacket(server_addr, reply);
-    NET_FreePacket(reply);
-
-    // set the client state if we havent already
- 
-    if (client_state == CLIENT_STATE_CONNECTING)
-    {
-        client_state = CLIENT_STATE_WAITING_START;
-    }
-}
-
-// parse a DISCONNECT packet
-
-static void NET_CL_ParseDisconnect(net_packet_t *packet)
-{
-    net_packet_t *reply;
-
-    // construct a DISCONNECT_ACK reply packet
-
-    reply = NET_NewPacket(10);
-    NET_WriteInt16(reply, NET_PACKET_TYPE_DISCONNECT_ACK);
-
-    // send the reply several times, in case of packet loss
-
-    NET_SendPacket(server_addr, reply);
-    NET_SendPacket(server_addr, reply);
-    NET_SendPacket(server_addr, reply);
-    NET_FreePacket(reply);
-
-    client_state = CLIENT_STATE_DISCONNECTED;
-
-    //I_Error("Disconnected from server.\n");
-    fprintf(stderr, "Disconnected from server.\n");
-
-    // Now what?
-
-    NET_CL_Disconnect();
-}
-
-// parse a DISCONNECT_ACK packet
-
-static void NET_CL_ParseDisconnectACK(net_packet_t *packet)
-{
-    if (client_state == CLIENT_STATE_DISCONNECTING)
-    {
-        // successfully disconnected from the server.
-
-        client_state = CLIENT_STATE_DISCONNECTED;
-
-        // now what?
-    }
-}
-
 // parse a received packet
 
 static void NET_CL_ParsePacket(net_packet_t *packet)
@@ -253,97 +185,27 @@ static void NET_CL_ParsePacket(net_packet_t *packet)
         return;
     }
 
-    switch (packet_type)
+    if (NET_Conn_Packet(&client_connection, packet, packet_type))
     {
-        case NET_PACKET_TYPE_ACK:
-
-            // received an acknowledgement to the SYN we sent
-
-            NET_CL_ParseACK(packet);
-            break;
-
-        case NET_PACKET_TYPE_WAITING_DATA:
-
-            NET_CL_ParseWaitingData(packet);
-            break;
-
-        case NET_PACKET_TYPE_GAMESTART:
-            break;
-
-        case NET_PACKET_TYPE_GAMEDATA:
-            break;
-
-        case NET_PACKET_TYPE_DISCONNECT:
-            NET_CL_ParseDisconnect(packet);
-            break;
-
-        case NET_PACKET_TYPE_DISCONNECT_ACK:
-            NET_CL_ParseDisconnectACK(packet);
-            break;
-
-        default:
-            break;
+        // Packet eaten by the common connection code
     }
-}
-
-// called when we are in the "connecting" state
-
-static void NET_CL_Connecting(void)
-{
-    net_packet_t *packet;
-
-    // send a SYN packet every second
-
-    if (last_send_time < 0 || I_GetTimeMS() - last_send_time > 1000)
+    else
     {
-        // construct a SYN packet
+        switch (packet_type)
+        {
+            case NET_PACKET_TYPE_WAITING_DATA:
+                NET_CL_ParseWaitingData(packet);
+                break;
 
-        packet = NET_NewPacket(10);
+            case NET_PACKET_TYPE_GAMESTART:
+                break;
 
-        // packet type
-     
-        NET_WriteInt16(packet, NET_PACKET_TYPE_SYN);
+            case NET_PACKET_TYPE_GAMEDATA:
+                break;
 
-        // magic number
-
-        NET_WriteInt32(packet, NET_MAGIC_NUMBER);
-
-        // send to the server
-
-        NET_SendPacket(server_addr, packet);
-
-        NET_FreePacket(packet);
-
-        last_send_time = I_GetTimeMS();
-    }
-}
-
-// Called when we are in the "disconnecting" state, disconnecting from
-// the server.
-
-static void NET_CL_Disconnecting(void)
-{
-    net_packet_t *packet;
-
-    // send a DISCONNECT packet every second
-
-    if (last_send_time < 0 || I_GetTimeMS() - last_send_time > 1000)
-    {
-        // construct packet
-
-        packet = NET_NewPacket(10);
-
-        // packet type
-     
-        NET_WriteInt16(packet, NET_PACKET_TYPE_DISCONNECT);
-
-        // send to the server
-
-        NET_SendPacket(server_addr, packet);
-
-        NET_FreePacket(packet);
-
-        last_send_time = I_GetTimeMS();
+            default:
+                break;
+        }
     }
 }
 
@@ -372,19 +234,12 @@ void NET_CL_Run(void)
         NET_FreePacket(packet);
     }
 
-    // send packets as needed
+    // Run the common connection code to send any packets as needed
 
-    switch (client_state)
-    {
-        case CLIENT_STATE_CONNECTING:
-            NET_CL_Connecting();
-            break;
-        case CLIENT_STATE_DISCONNECTING:
-            NET_CL_Disconnecting();
-            break;
-        default:
-            break;
-    }
+    NET_Conn_Run(&client_connection);
+
+    net_waiting_for_start = client_connection.state == NET_CONN_STATE_CONNECTED
+                         && client_state == CLIENT_STATE_WAITING_START;
 }
 
 // connect to a server
@@ -410,16 +265,18 @@ boolean NET_CL_Connect(net_addr_t *addr)
     NET_AddModule(client_context, addr->module);
 
     net_client_connected = true;
-    net_waiting_for_start = true;
+
+    // Initialise connection
+
+    NET_Conn_InitClient(&client_connection, addr);
 
     // try to connect
  
-    client_state = CLIENT_STATE_CONNECTING;
     last_send_time = -1;
 
     start_time = I_GetTimeMS();
 
-    while (client_state == CLIENT_STATE_CONNECTING)
+    while (client_connection.state == NET_CONN_STATE_CONNECTING)
     {
         // time out after 5 seconds 
 
@@ -442,9 +299,11 @@ boolean NET_CL_Connect(net_addr_t *addr)
         I_Sleep(10);
     }
 
-    if (client_state != CLIENT_STATE_CONNECTING)
+    if (client_connection.state == NET_CONN_STATE_CONNECTED)
     {
         // connected ok!
+
+        client_state = CLIENT_STATE_WAITING_START;
 
         return true;
     }
@@ -469,23 +328,18 @@ void NET_CL_Disconnect(void)
         return;
     }
     
-    // set the client into the DISCONNECTING state
-
-    if (client_state != CLIENT_STATE_DISCONNECTED)
-    {
-        client_state = CLIENT_STATE_DISCONNECTING;
-        last_send_time = -1;
-    }
+    NET_Conn_Disconnect(&client_connection);
 
     start_time = I_GetTimeMS();
 
-    while (client_state != CLIENT_STATE_DISCONNECTED)
+    while (client_connection.state != NET_CONN_STATE_DISCONNECTED
+        && client_connection.state != NET_CONN_STATE_DISCONNECTED_SLEEP)
     {
         if (I_GetTimeMS() - start_time > 5000)
         {
             // time out after 5 seconds
             
-            client_state = CLIENT_STATE_DISCONNECTED;
+            client_state = NET_CONN_STATE_DISCONNECTED;
 
             fprintf(stderr, "NET_CL_Disconnect: Timeout while disconnecting from server\n");
             break;
