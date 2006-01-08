@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: s_sound.c 203 2005-10-16 16:16:03Z fraggle $
+// $Id: s_sound.c 271 2006-01-08 17:51:53Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.10  2006/01/08 17:51:53  fraggle
+// Add S_MusicPlaying function to query if music is still playing.
+//
 // Revision 1.9  2005/10/16 16:16:03  fraggle
 // Set the default number of channels to a more sensible 8
 //
@@ -61,7 +64,7 @@
 
 
 static const char
-rcsid[] = "$Id: s_sound.c 203 2005-10-16 16:16:03Z fraggle $";
+rcsid[] = "$Id: s_sound.c 271 2006-01-08 17:51:53Z fraggle $";
 
 
 
@@ -709,6 +712,11 @@ S_ChangeMusic
     mus_playing = music;
 }
 
+boolean S_MusicPlaying(void)
+{
+    return I_QrySongPlaying(NULL);
+}
+
 
 void S_StopMusic(void)
 {
@@ -725,9 +733,6 @@ void S_StopMusic(void)
 	mus_playing = 0;
     }
 }
-
-
-
 
 void S_StopChannel(int cnum)
 {

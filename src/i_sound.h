@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_sound.h 75 2005-09-05 22:50:56Z fraggle $
+// $Id: i_sound.h 271 2006-01-08 17:51:53Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -123,12 +123,16 @@ void I_StopSong(void *handle);
 
 void I_UnRegisterSong(void *handle);
 
+boolean I_QrySongPlaying(void *handle);
 
 
 #endif
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.6  2006/01/08 17:51:53  fraggle
+// Add S_MusicPlaying function to query if music is still playing.
+//
 // Revision 1.5  2005/09/05 22:50:56  fraggle
 // Add mmus2mid code from prboom.  Use 'void *' for music handles.  Pass
 // length of data when registering music.

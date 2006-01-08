@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: s_sound.h 18 2005-07-23 18:56:07Z fraggle $
+// $Id: s_sound.h 271 2006-01-08 17:51:53Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -88,6 +88,9 @@ S_ChangeMusic
 ( int		music_id,
   int		looping );
 
+// query if music is playing
+boolean S_MusicPlaying(void);
+
 // Stops the music fer sure.
 void S_StopMusic(void);
 
@@ -109,6 +112,9 @@ void S_SetSfxVolume(int volume);
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.4  2006/01/08 17:51:53  fraggle
+// Add S_MusicPlaying function to query if music is still playing.
+//
 // Revision 1.3  2005/07/23 18:56:07  fraggle
 // Remove unneccessary pragmas
 //

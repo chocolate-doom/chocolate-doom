@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_sound.c 257 2006-01-07 16:26:50Z fraggle $
+// $Id: i_sound.c 271 2006-01-08 17:51:53Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.24  2006/01/08 17:51:53  fraggle
+// Add S_MusicPlaying function to query if music is still playing.
+//
 // Revision 1.23  2006/01/07 16:26:50  fraggle
 // Fix the behavior when expanding sound effects (again).  Doom actually
 // does play sounds of any sample rate, but the sound effects in
@@ -116,7 +119,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_sound.c 257 2006-01-07 16:26:50Z fraggle $";
+rcsid[] = "$Id: i_sound.c 271 2006-01-08 17:51:53Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -728,7 +731,7 @@ void *I_RegisterSong(void *data, int len)
 }
 
 // Is the song playing?
-int I_QrySongPlaying(void *handle)
+boolean I_QrySongPlaying(void *handle)
 {
     if (!music_initialised)
         return false;
