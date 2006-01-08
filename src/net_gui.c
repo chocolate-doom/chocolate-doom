@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_gui.c 262 2006-01-07 20:08:11Z fraggle $
+// $Id: net_gui.c 269 2006-01-08 05:04:50Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2006/01/08 05:04:50  fraggle
+// Don't grab the mouse on the net waiting screen
+//
 // Revision 1.3  2006/01/07 20:08:11  fraggle
 // Send player name and address in the waiting data packets.  Display these
 // on the waiting screen, and improve the waiting screen appearance.
@@ -41,6 +44,8 @@
 //  * The client waiting screen when we are waiting for the server to
 //    start the game.
 //   
+
+#include "doomstat.h"
 
 #include "net_client.h"
 #include "net_gui.h"
@@ -157,6 +162,11 @@ void NET_WaitForStart(void)
 
     NET_InitGUI();
 
+    // cheap hack: pretend to be on a demo screen so the mouse wont 
+    // be grabbed
+
+    gamestate = GS_DEMOSCREEN;
+    
     last_tic_time = I_GetTime();
 
     while (net_waiting_for_start)
