@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.12  2006/01/08 03:36:40  fraggle
+// Fix double free of addresses
+//
 // Revision 1.11  2006/01/08 02:53:31  fraggle
 // Detect when client connection is disconnected.
 //
@@ -119,11 +122,14 @@ boolean net_waiting_for_start = false;
 
 static void NET_CL_Shutdown(void)
 {
-    net_client_connected = false;
+    if (net_client_connected)
+    {
+        net_client_connected = false;
 
-    NET_FreeAddress(server_addr);
+        NET_FreeAddress(server_addr);
 
-    // Shut down network module, etc.  To do.
+        // Shut down network module, etc.  To do.
+    }
 }
 
 // data received while we are waiting for the game to start
@@ -231,6 +237,10 @@ void NET_CL_Run(void)
         if (addr == server_addr)
         {
             NET_CL_ParsePacket(packet);
+        }
+        else
+        {
+            NET_FreeAddress(addr);
         }
 
         NET_FreePacket(packet);
