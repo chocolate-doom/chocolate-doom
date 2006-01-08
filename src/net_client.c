@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 263 2006-01-08 00:10:48Z fraggle $
+// $Id: net_client.c 265 2006-01-08 02:53:31Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.11  2006/01/08 02:53:31  fraggle
+// Detect when client connection is disconnected.
+//
 // Revision 1.10  2006/01/08 00:10:47  fraggle
 // Move common connection code into net_common.c, shared by server
 // and client code.
@@ -90,7 +93,6 @@ static net_connection_t client_connection;
 static net_clientstate_t client_state;
 static net_addr_t *server_addr;
 static net_context_t *client_context;
-static int last_send_time;
 
 // TRUE if the client code is in use
 
@@ -238,6 +240,14 @@ void NET_CL_Run(void)
 
     NET_Conn_Run(&client_connection);
 
+    if (client_connection.state == NET_CONN_STATE_DISCONNECTED
+     || client_connection.state == NET_CONN_STATE_DISCONNECTED_SLEEP)
+    {
+        // disconnected from server
+
+        NET_CL_Shutdown();
+    }
+    
     net_waiting_for_start = client_connection.state == NET_CONN_STATE_CONNECTED
                          && client_state == CLIENT_STATE_WAITING_START;
 }
@@ -272,8 +282,6 @@ boolean NET_CL_Connect(net_addr_t *addr)
 
     // try to connect
  
-    last_send_time = -1;
-
     start_time = I_GetTimeMS();
 
     while (client_connection.state == NET_CONN_STATE_CONNECTING)
