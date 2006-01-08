@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_misc.c 274 2006-01-08 18:13:33Z fraggle $
+// $Id: m_misc.c 276 2006-01-08 18:22:39Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -23,6 +23,10 @@
 //
 //
 // $Log$
+// Revision 1.15  2006/01/08 18:22:39  fraggle
+// Strip carriage returns from the end of lines when reading configuration
+// files.
+//
 // Revision 1.14  2006/01/08 18:13:33  fraggle
 // show_endoom config file option to disable the endoom screen
 //
@@ -86,7 +90,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_misc.c 274 2006-01-08 18:13:33Z fraggle $";
+rcsid[] = "$Id: m_misc.c 276 2006-01-08 18:22:39Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -524,6 +528,14 @@ static void LoadDefaultCollection(default_collection_t *collection)
             // This line doesn't match
           
             continue;
+        }
+
+        // Strip off trailing non-printable characters (\r characters
+        // from DOS text files)
+
+        while (strlen(strparm) > 0 && !isprint(strparm[strlen(strparm)-1]))
+        {
+            strparm[strlen(strparm)-1] = '\0';
         }
         
         // Find the setting in the list
