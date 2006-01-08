@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_random.c 8 2005-07-23 16:44:57Z fraggle $
+// $Id: m_random.c 272 2006-01-08 17:52:16Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2006/01/08 17:52:16  fraggle
+// Seed the M_Random random number generator from the system time to give
+// it some more randomness.
+//
 // Revision 1.2  2005/07/23 16:44:56  fraggle
 // Update copyright to GNU GPL
 //
@@ -34,8 +38,11 @@
 //
 //-----------------------------------------------------------------------------
 
-static const char rcsid[] = "$Id: m_random.c 8 2005-07-23 16:44:57Z fraggle $";
+static const char rcsid[] = "$Id: m_random.c 272 2006-01-08 17:52:16Z fraggle $";
 
+#include <time.h>
+
+#include "m_random.h"
 
 //
 // M_Random
@@ -81,7 +88,11 @@ int M_Random (void)
 
 void M_ClearRandom (void)
 {
-    rndindex = prndindex = 0;
+    prndindex = 0;
+
+    // Seed the M_Random counter from the system time
+
+    rndindex = time(NULL) & 0xff;
 }
 
 
