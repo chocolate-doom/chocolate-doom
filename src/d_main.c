@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 253 2006-01-02 21:52:06Z fraggle $
+// $Id: d_main.c 277 2006-01-09 01:50:51Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.36  2006/01/09 01:50:51  fraggle
+// Deduce a sane player name by examining environment variables.  Add
+// a "player_name" setting to chocolate-doom.cfg.  Transmit the name
+// to the server and use the names players send in the waiting data list.
+//
 // Revision 1.35  2006/01/02 21:52:06  fraggle
 // Move I_InitGraphics call to be invoked earlier in D_DoomMain.  Call the
 // NET_WaitForStart function to wait for a start signal in network games.
@@ -158,7 +163,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 253 2006-01-02 21:52:06Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 277 2006-01-09 01:50:51Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -211,6 +216,7 @@ static const char rcsid[] = "$Id: d_main.c 253 2006-01-02 21:52:06Z fraggle $";
 #include "wi_stuff.h"
 #include "st_stuff.h"
 #include "am_map.h"
+#include "net_client.h"
 #include "net_gui.h"
 
 #include "p_setup.h"
@@ -1566,6 +1572,9 @@ void D_DoomMain (void)
 
     printf ("I_Init: Setting up machine state.\n");
     I_Init ();
+
+    printf ("NET_Init: Initialise network subsystem.\n");
+    NET_Init ();
 
     printf ("D_CheckNetGame: Checking network game status.\n");
     D_CheckNetGame ();

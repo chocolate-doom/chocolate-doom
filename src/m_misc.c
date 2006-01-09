@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_misc.c 276 2006-01-08 18:22:39Z fraggle $
+// $Id: m_misc.c 277 2006-01-09 01:50:51Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -23,6 +23,11 @@
 //
 //
 // $Log$
+// Revision 1.16  2006/01/09 01:50:51  fraggle
+// Deduce a sane player name by examining environment variables.  Add
+// a "player_name" setting to chocolate-doom.cfg.  Transmit the name
+// to the server and use the names players send in the waiting data list.
+//
 // Revision 1.15  2006/01/08 18:22:39  fraggle
 // Strip carriage returns from the end of lines when reading configuration
 // files.
@@ -90,7 +95,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_misc.c 276 2006-01-08 18:22:39Z fraggle $";
+rcsid[] = "$Id: m_misc.c 277 2006-01-09 01:50:51Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -112,6 +117,7 @@ rcsid[] = "$Id: m_misc.c 276 2006-01-08 18:22:39Z fraggle $";
 
 #include "m_swap.h"
 #include "m_argv.h"
+#include "net_client.h"
 
 #include "w_wad.h"
 
@@ -382,6 +388,7 @@ static default_t extra_defaults_list[] =
     {"novert",             &novert},
     {"mouse_acceleration", &mouse_acceleration,   DEFAULT_FLOAT},
     {"show_endoom",        &show_endoom},
+    {"player_name",        &net_player_name,      DEFAULT_STRING},
 };
 
 static default_collection_t extra_defaults =

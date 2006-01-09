@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 268 2006-01-08 04:52:26Z fraggle $
+// $Id: net_client.c 277 2006-01-09 01:50:51Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.14  2006/01/09 01:50:51  fraggle
+// Deduce a sane player name by examining environment variables.  Add
+// a "player_name" setting to chocolate-doom.cfg.  Transmit the name
+// to the server and use the names players send in the waiting data list.
+//
 // Revision 1.13  2006/01/08 04:52:26  fraggle
 // Allow the server to reject clients
 //
@@ -72,6 +77,8 @@
 // Network client code
 //
 
+#include <stdlib.h>
+
 #include "doomdef.h"
 #include "doomstat.h"
 #include "i_system.h"
@@ -112,7 +119,7 @@ boolean net_client_controller = false;
 
 int net_clients_in_game;
 
-// Nmaes of all players
+// Names of all players
 
 char net_player_addresses[MAXPLAYERS][MAXPLAYERNAME];
 char net_player_names[MAXPLAYERS][MAXPLAYERNAME];
@@ -120,6 +127,10 @@ char net_player_names[MAXPLAYERS][MAXPLAYERNAME];
 // Waiting for the game to start?
 
 boolean net_waiting_for_start = false;
+
+// Name that we send to the server
+
+char *net_player_name = NULL;
 
 // Shut down the client code, etc.  Invoked after a disconnect.
 
@@ -274,6 +285,7 @@ static void NET_CL_SendSYN(void)
     NET_WriteInt32(packet, NET_MAGIC_NUMBER);
     NET_WriteInt16(packet, gamemode);
     NET_WriteInt16(packet, gamemission);
+    NET_WriteString(packet, net_player_name);
     NET_Conn_SendPacket(&client_connection, packet);
     NET_FreePacket(packet);
 }
@@ -400,5 +412,23 @@ void NET_CL_Disconnect(void)
     // Finished sending disconnect packets, etc.
 
     NET_CL_Shutdown();
+}
+
+void NET_CL_Init(void)
+{
+    // Try to set from the USER and USERNAME environment variables
+    // Otherwise, fallback to "Player"
+
+    if (net_player_name == NULL) 
+        net_player_name = getenv("USER");
+    if (net_player_name == NULL)
+        net_player_name = getenv("USERNAME");
+    if (net_player_name == NULL)
+        net_player_name = "Player";
+}
+
+void NET_Init(void)
+{
+    NET_CL_Init();
 }
 
