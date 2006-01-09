@@ -21,6 +21,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.17  2006/01/09 01:50:51  fraggle
+// Deduce a sane player name by examining environment variables.  Add
+// a "player_name" setting to chocolate-doom.cfg.  Transmit the name
+// to the server and use the names players send in the waiting data list.
+//
 // Revision 1.16  2006/01/08 05:06:06  fraggle
 // Reject new connections if the server is not in the waiting state.
 //
@@ -84,6 +89,9 @@
 // Network server code
 //
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "doomdef.h"
 #include "doomstat.h"
 #include "i_system.h"
@@ -113,6 +121,7 @@ typedef struct
     net_addr_t *addr;
     net_connection_t connection;
     int last_send_time;
+    char *name;
 } net_client_t;
 
 static net_server_state_t server_state;
@@ -218,6 +227,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
 {
     unsigned int magic;
     unsigned int cl_gamemode, cl_gamemission;
+    char *player_name;
     int i;
 
     // read the magic number
@@ -242,6 +252,15 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         return;
     }
 
+    // read the player's name
+
+    player_name = NET_ReadString(packet);
+
+    if (player_name == NULL)
+    {
+        return;
+    }
+    
     // received a valid SYN
 
     // not accepting new connections?
@@ -322,6 +341,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         NET_Conn_InitServer(&client->connection, addr);
         client->addr = addr;
         client->last_send_time = -1;
+        client->name = strdup(player_name);
     }
 
     if (client->connection.state == NET_CONN_STATE_WAITING_ACK)
@@ -417,7 +437,7 @@ static void NET_SV_SendWaitingData(net_client_t *client)
 
         // name
 
-        NET_WriteString(packet, "Player");
+        NET_WriteString(packet, clients[i].name);
 
         // address
 
@@ -447,6 +467,7 @@ static void NET_SV_RunClient(net_client_t *client)
         // deactivate and free back 
 
         client->active = false;
+        free(client->name);
         NET_FreeAddress(client->addr);
     }
     
