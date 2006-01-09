@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.h 277 2006-01-09 01:50:51Z fraggle $
+// $Id: net_client.h 278 2006-01-09 02:03:39Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.9  2006/01/09 02:03:39  fraggle
+// Send clients their player number, and indicate on the waiting screen
+// which client we are.
+//
 // Revision 1.8  2006/01/09 01:50:51  fraggle
 // Deduce a sane player name by examining environment variables.  Add
 // a "player_name" setting to chocolate-doom.cfg.  Transmit the name
@@ -78,6 +82,7 @@ extern int net_clients_in_game;
 extern boolean net_waiting_for_start;
 extern char net_player_names[MAXPLAYERS][MAXPLAYERNAME];
 extern char net_player_addresses[MAXPLAYERS][MAXPLAYERNAME];
+extern int net_player_number;
 extern char *net_player_name;
 
 #endif /* #ifndef NET_CLIENT_H */

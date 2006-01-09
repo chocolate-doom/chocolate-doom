@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_gui.c 273 2006-01-08 17:52:45Z fraggle $
+// $Id: net_gui.c 278 2006-01-09 02:03:39Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2006/01/09 02:03:39  fraggle
+// Send clients their player number, and indicate on the waiting screen
+// which client we are.
+//
 // Revision 1.5  2006/01/08 17:52:45  fraggle
 // Play some random music for the players while waiting for the game to
 // start.
@@ -107,7 +111,13 @@ static void Drawer(void)
     for (i=0; i<net_clients_in_game; ++i)
     {
         V_DrawPatch(32, y, 0, player_backdrops[i]);
-        V_DrawPatch(32, y, 0, player_face);
+
+        // draw the face to indicate which one we are
+
+        if (i == net_player_number)
+        {
+            V_DrawPatch(32, y, 0, player_face);
+        }
         M_WriteText(80, y+12, net_player_names[i]);
         M_WriteText(200, y+12, net_player_addresses[i]);
         y += 32;

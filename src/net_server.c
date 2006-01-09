@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 277 2006-01-09 01:50:51Z fraggle $
+// $Id: net_server.c 278 2006-01-09 02:03:39Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.18  2006/01/09 02:03:39  fraggle
+// Send clients their player number, and indicate on the waiting screen
+// which client we are.
+//
 // Revision 1.17  2006/01/09 01:50:51  fraggle
 // Deduce a sane player name by examining environment variables.  Add
 // a "player_name" setting to chocolate-doom.cfg.  Transmit the name
@@ -166,6 +170,31 @@ static int NET_SV_NumClients(void)
     }
 
     return count;
+}
+
+// Returns the index of a particular client in the list of connected
+// clients.
+
+static int NET_SV_ClientIndex(net_client_t *client)
+{
+    int count;
+    int i;
+
+    count = 0;
+
+    for (i=0; i<MAXNETNODES; ++i)
+    {
+        if (ClientConnected(&clients[i]))
+        {
+            if (client == &clients[i])
+            {
+                return count;
+            }
+            ++count;
+        }
+    }
+
+    return -1;
 }
 
 // returns a pointer to the client which controls the server
@@ -428,6 +457,10 @@ static void NET_SV_SendWaitingData(net_client_t *client)
     // indicate whether the client is the controller
 
     NET_WriteInt8(packet, NET_SV_Controller() == client);
+
+    // send the index of the client
+
+    NET_WriteInt8(packet, NET_SV_ClientIndex(client));
 
     // send the address of all players
 
