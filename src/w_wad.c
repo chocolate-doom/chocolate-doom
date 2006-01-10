@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.9  2006/01/10 22:14:13  fraggle
+// Shut up compiler warnings
+//
 // Revision 1.8  2005/10/08 18:22:46  fraggle
 // Store the cache as part of the lumpinfo_t struct.  Add W_AddFile prototype
 // to header.
@@ -323,8 +326,6 @@ void W_Reload (void)
 //
 void W_InitMultipleFiles (char** filenames)
 {	
-    int		size;
-    
     // open all the files, load headers, and count lumps
     numlumps = 0;
 

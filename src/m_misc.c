@@ -23,6 +23,9 @@
 //
 //
 // $Log$
+// Revision 1.17  2006/01/10 22:14:13  fraggle
+// Shut up compiler warnings
+//
 // Revision 1.16  2006/01/09 01:50:51  fraggle
 // Deduce a sane player name by examining environment variables.  Add
 // a "player_name" setting to chocolate-doom.cfg.  Transmit the name
@@ -616,7 +619,6 @@ void M_SaveDefaults (void)
 
 void M_LoadDefaults (void)
 {
-    char *homedir;
     int i;
  
     // check for a custom default file
