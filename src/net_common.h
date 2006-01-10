@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2006/01/10 19:59:26  fraggle
+// Reliable packet transport mechanism
+//
 // Revision 1.2  2006/01/08 02:53:05  fraggle
 // Send keepalives if the connection is not doing anything else.
 // Send all packets using a new NET_Conn_SendPacket to support this.
@@ -37,6 +40,7 @@
 #define NET_COMMON_H
 
 #include "net_defs.h"
+#include "net_packet.h"
 
 typedef enum 
 {
@@ -74,6 +78,8 @@ typedef enum
 
 #define MAX_RETRIES 5
 
+typedef struct net_reliable_packet_s net_reliable_packet_t;
+
 typedef struct 
 {
     net_connstate_t state;
@@ -82,6 +88,9 @@ typedef struct
     int num_retries;
     int keepalive_send_time;
     int keepalive_recv_time;
+    net_reliable_packet_t *reliable_packets;
+    int reliable_send_seq;
+    int reliable_recv_seq;
 } net_connection_t;
 
 
@@ -89,9 +98,10 @@ void NET_Conn_SendPacket(net_connection_t *conn, net_packet_t *packet);
 void NET_Conn_InitClient(net_connection_t *conn, net_addr_t *addr);
 void NET_Conn_InitServer(net_connection_t *conn, net_addr_t *addr);
 boolean NET_Conn_Packet(net_connection_t *conn, net_packet_t *packet,
-                        int packet_type);
+                        unsigned int *packet_type);
 void NET_Conn_Disconnect(net_connection_t *conn);
 void NET_Conn_Run(net_connection_t *conn);
+net_packet_t *NET_Conn_NewReliable(net_connection_t *conn, int packet_type);
 
 #endif /* #ifndef NET_COMMON_H */
 
