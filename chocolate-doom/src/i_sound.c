@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.25  2006/01/10 22:14:13  fraggle
+// Shut up compiler warnings
+//
 // Revision 1.24  2006/01/08 17:51:53  fraggle
 // Add S_MusicPlaying function to query if music is still playing.
 //
@@ -574,8 +577,6 @@ void I_ShutdownMusic(void)
     music_initialised = false;
 }
 
-static int	looping=0;
-static int	musicdies=-1;
 static boolean  musicpaused = false;
 
 //

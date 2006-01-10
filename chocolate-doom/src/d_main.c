@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.37  2006/01/10 22:14:13  fraggle
+// Shut up compiler warnings
+//
 // Revision 1.36  2006/01/09 01:50:51  fraggle
 // Deduce a sane player name by examining environment variables.  Add
 // a "player_name" setting to chocolate-doom.cfg.  Transmit the name
@@ -1172,7 +1175,6 @@ void PrintDehackedBanners(void)
 static void SetConfigDir(void)
 {
     char *homedir;
-    int i;
 
     homedir = getenv("HOME");
 
