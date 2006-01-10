@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.19  2006/01/10 19:59:26  fraggle
+// Reliable packet transport mechanism
+//
 // Revision 1.18  2006/01/09 02:03:39  fraggle
 // Send clients their player number, and indicate on the waiting screen
 // which client we are.
@@ -408,7 +411,7 @@ static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
     {
         // Must come from a valid client; ignore otherwise
     }
-    else if (NET_Conn_Packet(&client->connection, packet, packet_type))
+    else if (NET_Conn_Packet(&client->connection, packet, &packet_type))
     {
         // Packet was eaten by the common connection code
     }

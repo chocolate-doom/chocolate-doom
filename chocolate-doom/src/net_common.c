@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2006/01/10 19:59:26  fraggle
+// Reliable packet transport mechanism
+//
 // Revision 1.3  2006/01/08 04:52:26  fraggle
 // Allow the server to reject clients
 //
@@ -35,6 +38,8 @@
 //
 // Common code shared between the client and server
 //
+
+#include <stdlib.h>
 
 #include "doomdef.h"
 #include "i_system.h"
@@ -51,24 +56,40 @@
 
 #define KEEPALIVE_PERIOD 1
 
+// reliable packet that is guaranteed to reach its destination
+
+struct net_reliable_packet_s 
+{
+    net_packet_t *packet;
+    int last_send_time;
+    int seq;
+    net_reliable_packet_t *next;
+};
+
+static void NET_Conn_Init(net_connection_t *conn, net_addr_t *addr)
+{
+    conn->last_send_time = -1;
+    conn->num_retries = 0;
+    conn->addr = addr;
+    conn->reliable_packets = NULL;
+    conn->reliable_send_seq = 0;
+    conn->reliable_recv_seq = 0;
+}
+
 // Initialise as a client connection
 
 void NET_Conn_InitClient(net_connection_t *conn, net_addr_t *addr)
 {
+    NET_Conn_Init(conn, addr);
     conn->state = NET_CONN_STATE_CONNECTING;
-    conn->last_send_time = -1;
-    conn->num_retries = 0;
-    conn->addr = addr;
 }
 
 // Initialise as a server connection
 
 void NET_Conn_InitServer(net_connection_t *conn, net_addr_t *addr)
 {
+    NET_Conn_Init(conn, addr);
     conn->state = NET_CONN_STATE_WAITING_ACK;
-    conn->last_send_time = -1;
-    conn->num_retries = 0;
-    conn->addr = addr;
 }
 
 // Send a packet to a connection
@@ -158,16 +179,117 @@ static void NET_Conn_ParseReject(net_connection_t *conn, net_packet_t *packet)
     }
 }
 
+static void NET_Conn_ParseReliableACK(net_connection_t *conn, net_packet_t *packet)
+{
+    unsigned int seq;
+
+    if (!NET_ReadInt8(packet, &seq))
+    {
+        return;
+    }
+
+    if (conn->reliable_packets == NULL)
+    {
+        return;
+    }
+            
+    // Is this an acknowledgement for the first packet in the list?
+
+    if (seq == ((conn->reliable_packets->seq + 1) & 0xff))
+    {
+        net_reliable_packet_t *rp;
+
+        // Discard it, then.
+        // Unlink from the list.
+
+        rp = conn->reliable_packets;
+        conn->reliable_packets = rp->next;
+        
+        NET_FreePacket(rp->packet);
+        free(rp);
+    }
+}
+
+// Process the header of a reliable packet
+//
+// Returns true if the packet should be discarded (incorrect sequence)
+
+static boolean NET_Conn_ReliablePacket(net_connection_t *conn, 
+                                       net_packet_t *packet)
+{
+    unsigned int seq;
+    net_packet_t *reply;
+    boolean result;
+
+    // Read the sequence number
+
+    if (!NET_ReadInt8(packet, &seq))
+    {
+        return true;
+    }
+
+    if (seq != (conn->reliable_recv_seq & 0xff))
+    {
+        // This is not the next expected packet in the sequence!
+        //
+        // Discard the packet.  If we were smart, we would use a proper
+        // sliding window protocol to do this, but I'm lazy.
+
+        result = true;
+    }
+    else
+    {
+        // Now we can receive the next packet in the sequence.
+
+        conn->reliable_recv_seq = (conn->reliable_recv_seq + 1) & 0xff;
+    
+        result = false;
+    }
+
+    // Send an acknowledgement
+
+    // Note: this is braindead.  It would be much more sensible to 
+    // include this in the next packet, rather than the overhead of
+    // sending a complete packet just for one byte of information.
+
+    reply = NET_NewPacket(10);
+
+    NET_WriteInt16(reply, NET_PACKET_TYPE_RELIABLE_ACK);
+    NET_WriteInt8(reply, conn->reliable_recv_seq & 0xff);
+
+    NET_Conn_SendPacket(conn, reply);
+
+    NET_FreePacket(reply);
+
+    return result;
+}
+
 // Process a packet received by the server
 //
 // Returns true if eaten by common code
 
 boolean NET_Conn_Packet(net_connection_t *conn, net_packet_t *packet, 
-                        int packet_type)
+                        unsigned int *packet_type)
 {
     conn->keepalive_recv_time = I_GetTimeMS();
+
+    // Is this a reliable packet?
+
+    if (*packet_type & NET_RELIABLE_PACKET)
+    {
+        if (NET_Conn_ReliablePacket(conn, packet)) 
+        {
+            // Invalid packet: eat it.
+
+            return true;
+        }
+
+        // Remove the reliable bit
+
+        *packet_type &= ~NET_RELIABLE_PACKET;
+    }
     
-    switch (packet_type)
+    switch (*packet_type)
     {
         case NET_PACKET_TYPE_ACK:
             NET_Conn_ParseACK(conn, packet);
@@ -183,6 +305,9 @@ boolean NET_Conn_Packet(net_connection_t *conn, net_packet_t *packet,
             break;
         case NET_PACKET_TYPE_REJECTED:
             NET_Conn_ParseReject(conn, packet);
+            break;
+        case NET_PACKET_TYPE_RELIABLE_ACK:
+            NET_Conn_ParseReliableACK(conn, packet);
             break;
         default:
             // Not a common packet
@@ -235,6 +360,21 @@ void NET_Conn_Run(net_connection_t *conn)
             NET_WriteInt16(packet, NET_PACKET_TYPE_KEEPALIVE);
             NET_Conn_SendPacket(conn, packet);
             NET_FreePacket(packet);
+        }
+
+        // Check the reliable packet list. Has the first packet in the
+        // list timed out?
+        //
+        // NB.  This is braindead, we have a fixed time of one second.
+
+        if (conn->reliable_packets != NULL
+         && (conn->reliable_packets->last_send_time < 0
+          || nowtime - conn->reliable_packets->last_send_time > 1000))
+        {
+            // Packet timed out, time to resend
+
+            NET_Conn_SendPacket(conn, conn->reliable_packets->packet);
+            conn->reliable_packets->last_send_time = nowtime;
         }
     }
     else if (conn->state == NET_CONN_STATE_WAITING_ACK)
@@ -310,5 +450,42 @@ void NET_Conn_Run(net_connection_t *conn)
     }
 }
 
+net_packet_t *NET_Conn_NewReliable(net_connection_t *conn, int packet_type)
+{
+    net_packet_t *packet;
+    net_reliable_packet_t *rp;
+    net_reliable_packet_t **listend;
 
+    // Generate a packet with the right header
+
+    packet = NET_NewPacket(100);
+
+    NET_WriteInt16(packet, packet_type | NET_RELIABLE_PACKET);
+
+    // write the low byte of the send sequence number
+    
+    NET_WriteInt8(packet, conn->reliable_send_seq & 0xff);
+
+    // Add to the list of reliable packets
+
+    rp = malloc(sizeof(net_reliable_packet_t));
+    rp->packet = packet;
+    rp->next = NULL;
+    rp->seq = conn->reliable_send_seq;
+    rp->last_send_time = -1;
+
+    for (listend = &conn->reliable_packets; 
+         *listend != NULL; 
+         listend = &((*listend)->next));
+
+    *listend = rp;
+
+    // Count along the sequence
+
+    conn->reliable_send_seq = (conn->reliable_send_seq + 1) & 0xff;
+
+    // Finished
+    
+    return packet;
+}
 
