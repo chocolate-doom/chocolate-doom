@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 278 2006-01-09 02:03:39Z fraggle $
+// $Id: net_client.c 279 2006-01-10 19:59:26Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.16  2006/01/10 19:59:25  fraggle
+// Reliable packet transport mechanism
+//
 // Revision 1.15  2006/01/09 02:03:39  fraggle
 // Send clients their player number, and indicate on the waiting screen
 // which client we are.
@@ -219,7 +222,7 @@ static void NET_CL_ParsePacket(net_packet_t *packet)
         return;
     }
 
-    if (NET_Conn_Packet(&client_connection, packet, packet_type))
+    if (NET_Conn_Packet(&client_connection, packet, &packet_type))
     {
         // Packet eaten by the common connection code
     }

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_defs.h 268 2006-01-08 04:52:26Z fraggle $
+// $Id: net_defs.h 279 2006-01-10 19:59:26Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.7  2006/01/10 19:59:26  fraggle
+// Reliable packet transport mechanism
+//
 // Revision 1.6  2006/01/08 04:52:26  fraggle
 // Allow the server to reject clients
 //
@@ -112,6 +115,10 @@ struct _net_addr_s
 
 #define NET_MAGIC_NUMBER 3436803284U
 
+// header field value indicating that the packet is a reliable packet
+
+#define NET_RELIABLE_PACKET (1 << 15)
+
 // packet types
 
 typedef enum 
@@ -125,6 +132,7 @@ typedef enum
     NET_PACKET_TYPE_GAMEDATA,
     NET_PACKET_TYPE_DISCONNECT,
     NET_PACKET_TYPE_DISCONNECT_ACK,
+    NET_PACKET_TYPE_RELIABLE_ACK,
 } net_packet_type_t;
 
 typedef struct 
