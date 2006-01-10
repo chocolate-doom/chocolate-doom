@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 277 2006-01-09 01:50:51Z fraggle $
+// $Id: d_main.c 280 2006-01-10 22:14:13Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.37  2006/01/10 22:14:13  fraggle
+// Shut up compiler warnings
+//
 // Revision 1.36  2006/01/09 01:50:51  fraggle
 // Deduce a sane player name by examining environment variables.  Add
 // a "player_name" setting to chocolate-doom.cfg.  Transmit the name
@@ -163,7 +166,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 277 2006-01-09 01:50:51Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 280 2006-01-10 22:14:13Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -1172,7 +1175,6 @@ void PrintDehackedBanners(void)
 static void SetConfigDir(void)
 {
     char *homedir;
-    int i;
 
     homedir = getenv("HOME");
 

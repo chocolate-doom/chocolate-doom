@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_sound.c 271 2006-01-08 17:51:53Z fraggle $
+// $Id: i_sound.c 280 2006-01-10 22:14:13Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.25  2006/01/10 22:14:13  fraggle
+// Shut up compiler warnings
+//
 // Revision 1.24  2006/01/08 17:51:53  fraggle
 // Add S_MusicPlaying function to query if music is still playing.
 //
@@ -119,7 +122,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_sound.c 271 2006-01-08 17:51:53Z fraggle $";
+rcsid[] = "$Id: i_sound.c 280 2006-01-10 22:14:13Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -574,8 +577,6 @@ void I_ShutdownMusic(void)
     music_initialised = false;
 }
 
-static int	looping=0;
-static int	musicdies=-1;
 static boolean  musicpaused = false;
 
 //

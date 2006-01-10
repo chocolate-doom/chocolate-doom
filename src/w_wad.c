@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: w_wad.c 167 2005-10-08 18:22:46Z fraggle $
+// $Id: w_wad.c 280 2006-01-10 22:14:13Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.9  2006/01/10 22:14:13  fraggle
+// Shut up compiler warnings
+//
 // Revision 1.8  2005/10/08 18:22:46  fraggle
 // Store the cache as part of the lumpinfo_t struct.  Add W_AddFile prototype
 // to header.
@@ -55,7 +58,7 @@
 
 
 static const char
-rcsid[] = "$Id: w_wad.c 167 2005-10-08 18:22:46Z fraggle $";
+rcsid[] = "$Id: w_wad.c 280 2006-01-10 22:14:13Z fraggle $";
 
 
 #include <ctype.h>
@@ -323,8 +326,6 @@ void W_Reload (void)
 //
 void W_InitMultipleFiles (char** filenames)
 {	
-    int		size;
-    
     // open all the files, load headers, and count lumps
     numlumps = 0;
 

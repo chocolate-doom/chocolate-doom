@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: mmus2mid.c 255 2006-01-05 02:48:03Z fraggle $
+// $Id: mmus2mid.c 280 2006-01-10 22:14:13Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 //  Copyright (C) 1999 by
@@ -27,6 +27,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2006/01/10 22:14:13  fraggle
+// Shut up compiler warnings
+//
 // Revision 1.3  2006/01/05 02:48:03  fraggle
 // Fixes for big endian machines (thanks locust)
 //
@@ -651,28 +654,7 @@ int MidiToMIDI(UBYTE *mid,MIDI *mididata)
 //                  /* it also provides a MUS to MID file converter*/
 // proff: I moved this down, because I need MIDItoMidi
 
-static void FreeTracks(MIDI *mididata);
 static void TWriteLength(UBYTE **midiptr,ULONG length);
-
-//
-// FreeTracks()
-//
-// Free all track allocations in the MIDI structure
-//
-// Passed a pointer to an Allegro MIDI structure
-// Returns nothing
-//
-static void FreeTracks(MIDI *mididata)
-{
-  int i;
-
-  for (i=0; i<MIDI_TRACKS; i++)
-  {
-    free(mididata->track[i].data);
-    mididata->track[i].data = NULL;
-    mididata->track[i].len = 0;
-  }
-}
 
 //
 // TWriteLength()
@@ -760,6 +742,26 @@ int MIDIToMidi(MIDI *mididata,UBYTE **mid,int *midlen)
 #ifdef STANDALONE /* this code unused by BOOM provided for future portability */
                   /* it also provides a MUS to MID file converter*/
 // proff: I moved this down, because I need MIDItoMidi
+
+//
+// FreeTracks()
+//
+// Free all track allocations in the MIDI structure
+//
+// Passed a pointer to an Allegro MIDI structure
+// Returns nothing
+//
+static void FreeTracks(MIDI *mididata)
+{
+  int i;
+
+  for (i=0; i<MIDI_TRACKS; i++)
+  {
+    free(mididata->track[i].data);
+    mididata->track[i].data = NULL;
+    mididata->track[i].len = 0;
+  }
+}
 
 //
 // main()

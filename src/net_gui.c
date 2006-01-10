@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_gui.c 278 2006-01-09 02:03:39Z fraggle $
+// $Id: net_gui.c 280 2006-01-10 22:14:13Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.7  2006/01/10 22:14:13  fraggle
+// Shut up compiler warnings
+//
 // Revision 1.6  2006/01/09 02:03:39  fraggle
 // Send clients their player number, and indicate on the waiting screen
 // which client we are.
@@ -82,7 +85,6 @@ static void Drawer(void)
 {
     patch_t *backdrop;
     int backdrop_lumpnum;
-    char buf[128];
     int i, y;
 
     // Use INTERPIC or TITLEPIC if we don't have it
