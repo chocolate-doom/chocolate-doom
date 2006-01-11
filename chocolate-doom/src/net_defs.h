@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.8  2006/01/11 01:37:53  fraggle
+// ticcmd diffs: allow compare and patching ticcmds, and reading/writing
+// ticdiffs to packets.
+//
 // Revision 1.7  2006/01/10 19:59:26  fraggle
 // Reliable packet transport mechanism
 //
@@ -56,6 +60,7 @@
 #define NET_DEFS_H 
 
 #include "doomtype.h"
+#include "d_ticcmd.h"
 
 typedef struct _net_module_s net_module_t;
 typedef struct _net_packet_s net_packet_t;
@@ -144,6 +149,19 @@ typedef struct
     int map;
     int skill;
 } net_gamesettings_t;
+
+#define NET_TICDIFF_FORWARD      (1 << 0)
+#define NET_TICDIFF_SIDE         (1 << 1)
+#define NET_TICDIFF_TURN         (1 << 2)
+#define NET_TICDIFF_BUTTONS      (1 << 3)
+#define NET_TICDIFF_CONSISTANCY  (1 << 4)
+#define NET_TICDIFF_CHATCHAR     (1 << 5)
+
+typedef struct
+{
+    unsigned int diff;
+    ticcmd_t cmd;
+} net_ticdiff_t;
 
 #endif /* #ifndef NET_DEFS_H */
 

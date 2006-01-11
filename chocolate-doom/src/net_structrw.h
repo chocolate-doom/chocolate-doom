@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2006/01/11 01:37:53  fraggle
+// ticcmd diffs: allow compare and patching ticcmds, and reading/writing
+// ticdiffs to packets.
+//
 // Revision 1.1  2005/12/30 18:58:22  fraggle
 // Fix client code to correctly send reply to server on connection.
 // Add "waiting screen" while waiting for the game to start.
@@ -36,6 +40,10 @@
 extern void NET_WriteSettings(net_packet_t *packet, net_gamesettings_t *settings);
 extern boolean NET_ReadSettings(net_packet_t *packet, net_gamesettings_t *settings);
 
+extern void NET_WriteTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff);
+extern boolean NET_ReadTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff);
+extern void NET_TiccmdDiff(ticcmd_t *tic1, ticcmd_t *tic2, net_ticdiff_t *diff);
+extern void NET_TiccmdPatch(ticcmd_t *src, net_ticdiff_t *diff, ticcmd_t *dest);
 
 #endif /* #ifndef NET_STRUCTRW_H */
 
