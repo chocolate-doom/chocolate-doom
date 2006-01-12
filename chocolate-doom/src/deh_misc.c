@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.9  2006/01/12 00:21:29  fraggle
+// Interpret the dehacked "max health" setting properly.
+//
 // Revision 1.8  2005/10/17 22:07:25  fraggle
 // Fix "Monsters Infight"
 //
@@ -80,9 +83,9 @@ int deh_initial_bullets = 50;
 
 // Dehacked: "Max Health"
 // This is the maximum health that can be reached using medikits 
-// alone.  See P_GiveBody in p_inter.c
+// alone.  See P_TouchSpecialThing in p_inter.c
 
-int deh_max_health = 100;
+int deh_max_health = 200;
 
 // Dehacked: "Max Armor"
 // This is the maximum armor which can be reached by picking up
