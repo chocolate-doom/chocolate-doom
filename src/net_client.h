@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.h 278 2006-01-09 02:03:39Z fraggle $
+// $Id: net_client.h 284 2006-01-12 02:11:52Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.10  2006/01/12 02:11:52  fraggle
+// Game start packets
+//
 // Revision 1.9  2006/01/09 02:03:39  fraggle
 // Send clients their player number, and indicate on the waiting screen
 // which client we are.
@@ -74,6 +77,7 @@ boolean NET_CL_Connect(net_addr_t *addr);
 void NET_CL_Disconnect(void);
 void NET_CL_Run(void);
 void NET_CL_Init(void);
+void NET_CL_StartGame();
 void NET_Init(void);
 
 extern boolean net_client_connected;

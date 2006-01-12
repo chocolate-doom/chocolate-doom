@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 279 2006-01-10 19:59:26Z fraggle $
+// $Id: net_server.c 284 2006-01-12 02:11:52Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.20  2006/01/12 02:11:52  fraggle
+// Game start packets
+//
 // Revision 1.19  2006/01/10 19:59:26  fraggle
 // Reliable packet transport mechanism
 //
@@ -110,6 +113,7 @@
 #include "net_packet.h"
 #include "net_server.h"
 #include "net_sdl.h"
+#include "net_structrw.h"
 
 typedef enum
 {
@@ -137,6 +141,7 @@ static net_client_t clients[MAXNETNODES];
 static net_context_t *server_context;
 static int sv_gamemode;
 static int sv_gamemission;
+static net_gamesettings_t sv_settings;
 
 static void NET_SV_DisconnectClient(net_client_t *client)
 {
@@ -383,6 +388,49 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
     }
 }
 
+// Parse a game start packet
+
+static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
+{
+    net_gamesettings_t settings;
+    net_packet_t *startpacket;
+    int i;
+    
+    if (client != NET_SV_Controller())
+    {
+        // Only the controller can start a new game
+
+        return;
+    }
+
+    if (!NET_ReadSettings(packet, &settings))
+    {
+        // Malformed packet
+
+        return;
+    }
+
+    // Change server state
+
+    server_state = SERVER_IN_GAME;
+    sv_settings = settings;
+
+    // Send start packets to each connected node
+
+    for (i=0; i<MAXNETNODES; ++i) 
+    {
+        if (ClientConnected(&clients[i]))
+        {
+            startpacket = NET_Conn_NewReliable(&clients[i].connection,
+                                               NET_PACKET_TYPE_GAMESTART);
+
+            NET_WriteInt8(startpacket, NET_SV_NumClients());
+            NET_WriteInt8(startpacket, NET_SV_ClientIndex(&clients[i]));
+            NET_WriteSettings(startpacket, &settings);
+        }
+    }
+}
+
 // Process a packet received by the server
 
 static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
@@ -422,6 +470,7 @@ static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
         switch (packet_type)
         {
             case NET_PACKET_TYPE_GAMESTART:
+                NET_SV_ParseGameStart(packet, client);
                 break;
             default:
                 // unknown packet type
