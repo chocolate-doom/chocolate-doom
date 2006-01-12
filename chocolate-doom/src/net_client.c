@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.17  2006/01/12 02:11:52  fraggle
+// Game start packets
+//
 // Revision 1.16  2006/01/10 19:59:25  fraggle
 // Reliable packet transport mechanism
 //
@@ -96,6 +99,7 @@
 #include "net_io.h"
 #include "net_packet.h"
 #include "net_server.h"
+#include "net_structrw.h"
 
 typedef enum
 {
@@ -157,6 +161,29 @@ static void NET_CL_Shutdown(void)
     }
 }
 
+void NET_CL_StartGame(void)
+{
+    net_packet_t *packet;
+    net_gamesettings_t settings;
+
+    // Fill in game settings structure with appropriate parameters
+    // for the new game
+
+    settings.ticdup = 1;
+    settings.extratics = 0;
+    settings.deathmatch = deathmatch;
+    settings.episode = startepisode;
+    settings.map = startmap;
+    settings.skill = startskill;
+
+    // Send packet
+
+    packet = NET_Conn_NewReliable(&client_connection, 
+                                  NET_PACKET_TYPE_GAMESTART);
+
+    NET_WriteSettings(packet, &settings);
+}
+
 // data received while we are waiting for the game to start
 
 static void NET_CL_ParseWaitingData(net_packet_t *packet)
@@ -211,6 +238,36 @@ static void NET_CL_ParseWaitingData(net_packet_t *packet)
     }
 }
 
+static void NET_CL_ParseGameStart(net_packet_t *packet)
+{
+    net_gamesettings_t settings;
+    unsigned int player_number, num_players;
+    int i;
+
+    if (!NET_ReadInt8(packet, &player_number)
+     || !NET_ReadInt8(packet, &num_players)
+     || !NET_ReadSettings(packet, &settings))
+    {
+        return;
+    }
+
+    consoleplayer = player_number;
+    
+    for (i=0; i<MAXPLAYERS; ++i) 
+    {
+        playeringame[i] = i < num_players;
+    }
+
+    client_state = CLIENT_STATE_IN_GAME;
+
+    deathmatch = settings.deathmatch;
+    ticdup = settings.ticdup;
+//    extratic = settings.extratics;
+    startepisode = settings.episode;
+    startmap = settings.map;
+    startskill = settings.skill;
+}
+
 // parse a received packet
 
 static void NET_CL_ParsePacket(net_packet_t *packet)
@@ -235,6 +292,7 @@ static void NET_CL_ParsePacket(net_packet_t *packet)
                 break;
 
             case NET_PACKET_TYPE_GAMESTART:
+                NET_CL_ParseGameStart(packet);
                 break;
 
             case NET_PACKET_TYPE_GAMEDATA:
