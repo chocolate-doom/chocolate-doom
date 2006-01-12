@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 284 2006-01-12 02:11:52Z fraggle $
+// $Id: net_server.c 285 2006-01-12 02:18:59Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.21  2006/01/12 02:18:59  fraggle
+// Only start new games when in the waiting-for-start state.
+//
 // Revision 1.20  2006/01/12 02:11:52  fraggle
 // Game start packets
 //
@@ -406,6 +409,13 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
     if (!NET_ReadSettings(packet, &settings))
     {
         // Malformed packet
+
+        return;
+    }
+
+    if (server_state != SERVER_WAITING_START)
+    {
+        // Can only start a game if we are in the waiting start state.
 
         return;
     }

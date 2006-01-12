@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 284 2006-01-12 02:11:52Z fraggle $
+// $Id: net_client.c 285 2006-01-12 02:18:59Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.18  2006/01/12 02:18:59  fraggle
+// Only start new games when in the waiting-for-start state.
+//
 // Revision 1.17  2006/01/12 02:11:52  fraggle
 // Game start packets
 //
@@ -250,6 +253,13 @@ static void NET_CL_ParseGameStart(net_packet_t *packet)
     {
         return;
     }
+
+    if (client_state != CLIENT_STATE_WAITING_START)
+    {
+        return;
+    }
+
+    // Start the game
 
     consoleplayer = player_number;
     
