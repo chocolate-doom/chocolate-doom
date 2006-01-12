@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.7  2006/01/12 00:21:29  fraggle
+// Interpret the dehacked "max health" setting properly.
+//
 // Revision 1.6  2005/10/17 21:02:57  fraggle
 // Dehacked Misc support: Max soulsphere, Soulsphere+Megasphere health bonus
 // values, God mode health value
@@ -256,12 +259,12 @@ P_GiveBody
 ( player_t*	player,
   int		num )
 {
-    if (player->health >= deh_max_health)
+    if (player->health >= MAXHEALTH)
 	return false;
 		
     player->health += num;
-    if (player->health > deh_max_health)
-	player->health = deh_max_health;
+    if (player->health > MAXHEALTH)
+	player->health = MAXHEALTH;
     player->mo->health = player->health;
 	
     return true;
@@ -408,8 +411,8 @@ P_TouchSpecialThing
 	// bonus items
       case SPR_BON1:
 	player->health++;		// can go over 100%
-	if (player->health > 200)
-	    player->health = 200;
+	if (player->health > deh_max_health)
+	    player->health = deh_max_health;
 	player->mo->health = player->health;
 	player->message = DEH_String(GOTHTHBONUS);
 	break;
