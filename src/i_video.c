@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 248 2006-01-02 20:27:45Z fraggle $
+// $Id: i_video.c 283 2006-01-12 01:34:48Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.43  2006/01/12 01:34:48  fraggle
+// Combine mouse motion for tics into single events.
+//
 // Revision 1.42  2006/01/02 20:27:45  fraggle
 // Clear the screen AFTER initialising the loading disk buffer, so that
 // bits of loading disk are not visible on the initial screen melt.
@@ -172,7 +175,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 248 2006-01-02 20:27:45Z fraggle $";
+rcsid[] = "$Id: i_video.c 283 2006-01-12 01:34:48Z fraggle $";
 
 #include <SDL.h>
 #include <ctype.h>
@@ -451,7 +454,7 @@ static int AccelerateMouse(int val)
     if (val < 0)
         return -AccelerateMouse(-val);
 
-    return (int) pow(val, mouse_acceleration);
+    return (int) pow(val, mouse_acceleration) / 5;
 }
 
 void I_GetEvent(void)
@@ -488,6 +491,7 @@ void I_GetEvent(void)
                 event.data1 = TranslateKey(&sdlevent.key.keysym);
                 D_PostEvent(&event);
                 break;
+                /*
             case SDL_MOUSEMOTION:
                 event.type = ev_mouse;
                 event.data1 = MouseButtonState();
@@ -495,6 +499,7 @@ void I_GetEvent(void)
                 event.data3 = -AccelerateMouse(sdlevent.motion.yrel);
                 D_PostEvent(&event);
                 break;
+                */
             case SDL_MOUSEBUTTONDOWN:
                 event.type = ev_mouse;
                 event.data1 = MouseButtonState();
@@ -521,12 +526,38 @@ void I_GetEvent(void)
         }
     }
 }
+
+//
+// Read the change in mouse state to generate mouse motion events
+//
+// This is to combine all mouse movement for a tic into one mouse
+// motion event.
+
+static void I_ReadMouse(void)
+{
+    int x, y;
+    event_t ev;
+
+    SDL_GetRelativeMouseState(&x, &y);
+
+    if (x != 0 || y != 0) 
+    {
+        ev.type = ev_mouse;
+        ev.data1 = MouseButtonState();
+        ev.data2 = AccelerateMouse(x);
+        ev.data3 = -AccelerateMouse(y);
+        
+        D_PostEvent(&ev);
+    }
+}
+
 //
 // I_StartTic
 //
 void I_StartTic (void)
 {
     I_GetEvent();
+    I_ReadMouse();
 }
 
 
