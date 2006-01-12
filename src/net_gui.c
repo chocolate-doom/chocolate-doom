@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.8  2006/01/12 02:11:52  fraggle
+// Game start packets
+//
 // Revision 1.7  2006/01/10 22:14:13  fraggle
 // Shut up compiler warnings
 //
@@ -182,6 +185,12 @@ static void ProcessEvents(void)
             // Music change
 
             RandomMusic();
+        }
+        else if (ev->type == ev_keydown && ev->data1 == ' ')
+        {
+            // Start game
+
+            NET_CL_StartGame();
         }
     }
 }
