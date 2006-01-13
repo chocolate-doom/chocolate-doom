@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 286 2006-01-13 02:19:18Z fraggle $
+// $Id: net_client.c 290 2006-01-13 23:52:12Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.20  2006/01/13 23:52:12  fraggle
+// Fix game start packet parsing logic.
+//
 // Revision 1.19  2006/01/13 02:19:18  fraggle
 // Only accept sane player values when starting a new game.
 //
@@ -250,8 +253,8 @@ static void NET_CL_ParseGameStart(net_packet_t *packet)
     unsigned int player_number, num_players;
     int i;
 
-    if (!NET_ReadInt8(packet, &player_number)
-     || !NET_ReadInt8(packet, &num_players)
+    if (!NET_ReadInt8(packet, &num_players)
+     || !NET_ReadInt8(packet, &player_number)
      || !NET_ReadSettings(packet, &settings))
     {
         return;
@@ -285,6 +288,9 @@ static void NET_CL_ParseGameStart(net_packet_t *packet)
     startepisode = settings.episode;
     startmap = settings.map;
     startskill = settings.skill;
+
+    netgame = true;
+    autostart = true;
 }
 
 // parse a received packet
