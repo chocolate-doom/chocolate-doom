@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_packet.c 236 2006-01-01 23:51:41Z fraggle $
+// $Id: net_packet.c 287 2006-01-13 02:20:12Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2006/01/13 02:20:12  fraggle
+// Signed integer read functions.  Use these when reading ticcmd diffs.
+//
 // Revision 1.2  2006/01/01 23:51:41  fraggle
 // String read/write functions
 //
@@ -122,6 +125,59 @@ boolean NET_ReadInt32(net_packet_t *packet, unsigned int *data)
     packet->pos += 4;
     
     return true;
+}
+
+// Signed read functions
+
+boolean NET_ReadSInt8(net_packet_t *packet, signed int *data)
+{
+    if (NET_ReadInt8(packet,(unsigned int *) data))
+    {
+        if (*data & (1 << 7))
+        {
+            *data &= ~(1 << 7);
+            *data -= (1 << 7);
+        }
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+boolean NET_ReadSInt16(net_packet_t *packet, signed int *data)
+{
+    if (NET_ReadInt16(packet, (unsigned int *) data))
+    {
+        if (*data & (1 << 15))
+        {
+            *data &= ~(1 << 15);
+            *data -= (1 << 15);
+        }
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+boolean NET_ReadSInt32(net_packet_t *packet, signed int *data)
+{
+    if (NET_ReadInt32(packet, (unsigned int *) data))
+    {
+        if (*data & (1 << 31))
+        {
+            *data &= ~(1 << 31);
+            *data -= (1 << 31);
+        }
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 // Read a string from the packet.  Returns NULL if a terminating 
