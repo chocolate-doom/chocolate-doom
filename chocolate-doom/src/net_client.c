@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.19  2006/01/13 02:19:18  fraggle
+// Only accept sane player values when starting a new game.
+//
 // Revision 1.18  2006/01/12 02:18:59  fraggle
 // Only start new games when in the waiting-for-start state.
 //
@@ -256,6 +259,12 @@ static void NET_CL_ParseGameStart(net_packet_t *packet)
 
     if (client_state != CLIENT_STATE_WAITING_START)
     {
+        return;
+    }
+
+    if (num_players >= MAXPLAYERS || player_number >= num_players)
+    {
+        // insane values
         return;
     }
 
