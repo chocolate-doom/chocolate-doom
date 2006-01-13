@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: txt_main.c 289 2006-01-13 18:23:28Z fraggle $
+// $Id: txt_main.c 291 2006-01-13 23:56:00Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2006/01/13 23:56:00  fraggle
+// Add text-mode I/O functions.
+// Use text-mode screen for the waiting screen.
+//
 // Revision 1.4  2006/01/13 18:23:28  fraggle
 // Textscreen getchar() function; remove SDL code from I_Endoom.
 //
@@ -90,6 +94,7 @@ int TXT_Init(void)
         return 0;
 
     SDL_SetColors(screen, ega_colors, 0, 16);
+    SDL_EnableUNICODE(1);
 
     screendata = malloc(TXT_SCREEN_W * TXT_SCREEN_H * 2);
     memset(screendata, 0, TXT_SCREEN_W * TXT_SCREEN_H * 2);

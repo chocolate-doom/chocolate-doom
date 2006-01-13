@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: g_game.c 237 2006-01-01 23:53:15Z fraggle $
+// $Id: g_game.c 291 2006-01-13 23:56:00Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.19  2006/01/13 23:56:00  fraggle
+// Add text-mode I/O functions.
+// Use text-mode screen for the waiting screen.
+//
 // Revision 1.18  2006/01/01 23:53:15  fraggle
 // Remove GS_WAITINGSTART gamestate.  This will be independent of the main
 // loop to avoid interfering with the main game code too much.
@@ -98,7 +102,7 @@
 
 
 static const char
-rcsid[] = "$Id: g_game.c 237 2006-01-01 23:53:15Z fraggle $";
+rcsid[] = "$Id: g_game.c 291 2006-01-13 23:56:00Z fraggle $";
 
 #include <string.h>
 #include <stdlib.h>
@@ -108,8 +112,6 @@ rcsid[] = "$Id: g_game.c 237 2006-01-01 23:53:15Z fraggle $";
 
 #include "deh_main.h"
 #include "deh_misc.h"
-
-#include "net_gui.h"
 
 #include "z_zone.h"
 #include "f_finale.h"

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_gui.c 284 2006-01-12 02:11:52Z fraggle $
+// $Id: net_gui.c 291 2006-01-13 23:56:00Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.9  2006/01/13 23:56:00  fraggle
+// Add text-mode I/O functions.
+// Use text-mode screen for the waiting screen.
+//
 // Revision 1.8  2006/01/12 02:11:52  fraggle
 // Game start packets
 //
@@ -59,233 +63,103 @@
 //    start the game.
 //   
 
+#include <ctype.h>
+
+#include "config.h"
 #include "doomstat.h"
+
+#include "i_system.h"
 
 #include "net_client.h"
 #include "net_gui.h"
 #include "net_server.h"
 
-#include "d_event.h"
-#include "d_main.h"
-#include "i_system.h"
-#include "i_video.h"
-#include "m_menu.h"
-#include "m_random.h"
-#include "r_defs.h"
-#include "s_sound.h"
-#include "sounds.h"
-#include "v_video.h"
-#include "w_wad.h"
-#include "z_zone.h"
-
-static patch_t *player_face;
-static patch_t *player_backdrops[4];
-static boolean have_music;
-
-extern void M_WriteText(int x, int y, char *string);
-
-static void Drawer(void)
-{
-    patch_t *backdrop;
-    int backdrop_lumpnum;
-    int i, y;
-
-    // Use INTERPIC or TITLEPIC if we don't have it
-
-    backdrop_lumpnum = W_CheckNumForName("INTERPIC");
-
-    if (backdrop_lumpnum < 0)
-    {
-        backdrop_lumpnum = W_CheckNumForName("TITLEPIC");
-    }
-
-    backdrop = (patch_t *) W_CacheLumpNum(backdrop_lumpnum, PU_CACHE);
-
-    // draw the backdrop
-    
-    V_DrawPatch(0, 0, 0, backdrop);
-
-    // draw players
-
-    y = 100 - 16 * net_clients_in_game - 24;
-    
-    M_WriteText(32, y, "Players currently waiting:");
-
-    y += 24;
-
-    for (i=0; i<net_clients_in_game; ++i)
-    {
-        V_DrawPatch(32, y, 0, player_backdrops[i]);
-
-        // draw the face to indicate which one we are
-
-        if (i == net_player_number)
-        {
-            V_DrawPatch(32, y, 0, player_face);
-        }
-        M_WriteText(80, y+12, net_player_names[i]);
-        M_WriteText(200, y+12, net_player_addresses[i]);
-        y += 32;
-    }
-
-    y += 16;
-
-    if (net_client_controller)
-    {
-        M_WriteText(32, y, "Press space to start the game...");
-    }
-    else
-    {
-        M_WriteText(32, y, "Waiting for the game to start...");
-    }
-}
-
-// play some random music
-
-static void RandomMusic(void)
-{
-    musicenum_t mus;
-
-    if (gamemode == commercial)
-    {
-        mus = mus_runnin + M_Random() % 32;
-    }
-    else if (gamemode == shareware)
-    {
-        mus = mus_e1m1 + M_Random() % 9;
-    } 
-    else 
-    {
-        mus = mus_e1m1 + M_Random() % 27;
-    }
-    
-    S_ChangeMusic(mus, 0);
-
-    // If music is not playing straight away, it is turned off.  Don't
-    // try to play any more music.
-
-    have_music = S_MusicPlaying();
-}
+#include "txt_main.h"
+#include "txt_gui.h"
+#include "txt_io.h"
 
 static void ProcessEvents(void)
 {
-    event_t *ev;
-
-    while ((ev = D_PopEvent()) != NULL)
+    int c;
+    
+    while ((c = TXT_GetChar()) > 0)
     {
-        if (M_Responder(ev))
+        switch (tolower(c))
         {
-            continue;
-        }
+            case 27:
+            case 'q':
+                I_Quit();
+                break;
 
-        // process event ...
-        
-        if (ev->type == ev_keydown && ev->data1 == 'm')
-        {
-            // Music change
-
-            RandomMusic();
-        }
-        else if (ev->type == ev_keydown && ev->data1 == ' ')
-        {
-            // Start game
-
-            NET_CL_StartGame();
+            case ' ':
+                NET_CL_StartGame();
+                break;
         }
     }
 }
 
-static void NET_InitGUI(void)
+#define WINDOW_X 15
+#define WINDOW_Y 5
+#define WINDOW_W 50
+#define WINDOW_H 12
+
+static void DrawScreen(void)
 {
-    char buf[8];
+    char buf[40];
     int i;
 
-    player_face = W_CacheLumpName("STFST01", PU_STATIC);
+    TXT_DrawDesktop(PACKAGE_STRING);
+    TXT_DrawWindow("Waiting for game start...", 
+                    WINDOW_X, WINDOW_Y, 
+                    WINDOW_W, WINDOW_H);
 
-    for (i=0 ; i<MAXPLAYERS ; i++)
+    TXT_BGColor(TXT_COLOR_BLUE, 0);
+    TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
+
+    for (i=0; i<MAXPLAYERS; ++i)
     {
-        sprintf(buf, "STPB%d", i);
-        player_backdrops[i] = W_CacheLumpName(buf, PU_STATIC);
-    }
-}
+        snprintf(buf, 39, "%i. ", i + 1);
+        TXT_GotoXY(WINDOW_X + 2, WINDOW_Y + 4 + i);
+        TXT_Puts(buf);
 
-// Displays a graphical screen while waiting for the game to start.
+        if (i < net_clients_in_game)
+        {
+            snprintf(buf, 15, "%s", net_player_names[i]);
+            TXT_GotoXY(WINDOW_X + 5, WINDOW_Y + 4 + i);
+            TXT_Puts(buf);
+
+            snprintf(buf, 16, "%s", net_player_addresses[i]);
+            TXT_GotoXY(WINDOW_X + 33, WINDOW_Y + 4 + i);
+            TXT_Puts(buf);
+        }
+    }
+
+    TXT_GotoXY(WINDOW_X + 2, WINDOW_Y + WINDOW_H - 2);
+    TXT_Puts("%brightgreen%SPACE%/%%brightcyan%=%/%Start game");
+
+    TXT_GotoXY(WINDOW_X + WINDOW_W - 11, WINDOW_Y + WINDOW_H - 2);
+    TXT_Puts("%brightgreen%ESC%/%%brightcyan%=%/%Abort");
+    
+    TXT_DrawSeparator(WINDOW_X, WINDOW_Y + WINDOW_H - 3, WINDOW_W);
+
+    TXT_UpdateScreen();
+}
 
 void NET_WaitForStart(void)
 {
-    int last_tic_time;
-    int nowtime;
-    int runtics;
-    int i;
-
-    if (!net_client_connected || !net_waiting_for_start)
-    {
-        return;
-    }
-
-    NET_InitGUI();
-
-    M_ClearRandom();
-
-    // play some soothing music while we wait
-
-    RandomMusic();
-
-    // cheap hack: pretend to be on a demo screen so the mouse wont 
-    // be grabbed
-
-    gamestate = GS_DEMOSCREEN;
-    
-    last_tic_time = I_GetTime();
+    TXT_Init();
 
     while (net_waiting_for_start)
     {
-        // Keyboard/mouse events, etc.
- 
-        I_StartTic();
         ProcessEvents();
-
-        // Run the menu, etc.
-
-        nowtime = I_GetTime();
-        runtics = nowtime - last_tic_time;
-
-        if (runtics > 0) 
-        {
-            for (i=0; i<runtics; ++i)
-            {
-                M_Ticker();
-            }
-
-            last_tic_time = nowtime;
-
-            // Draw the screen
-          
-            Drawer();
-            M_Drawer();
-            I_FinishUpdate();
-
-            // check if the music has finished - start another track!
-
-            if (have_music && !S_MusicPlaying())
-            {
-                RandomMusic();
-            }
-        }
-
-        // Network stuff
+        DrawScreen();
 
         NET_CL_Run();
         NET_SV_Run();
 
-        if (!net_client_connected)
-        {
-            I_Error("Disconnected from server");
-        }
-
-        // Don't hog the CPU
-
-        I_Sleep(10);
+        I_Sleep(50);
     }
+    
+    TXT_Shutdown();
 }
 
