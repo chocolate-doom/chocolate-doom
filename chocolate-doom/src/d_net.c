@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.16  2006/01/13 23:56:00  fraggle
+// Add text-mode I/O functions.
+// Use text-mode screen for the waiting screen.
+//
 // Revision 1.15  2006/01/02 21:04:10  fraggle
 // Create NET_SV_Shutdown function to shut down the server.  Call it
 // when quitting the game.  Print the IP of the server correctly when
@@ -99,6 +103,7 @@ static const char rcsid[] = "$Id$";
 #include "doomstat.h"
 
 #include "net_client.h"
+#include "net_gui.h"
 #include "net_io.h"
 #include "net_server.h"
 #include "net_sdl.h"
@@ -650,6 +655,8 @@ void D_CheckNetGame (void)
         if (NET_CL_Connect(addr))
         {
             printf("connected to %s\n", NET_AddrToString(addr));
+
+            NET_WaitForStart();
         }
         else
         {

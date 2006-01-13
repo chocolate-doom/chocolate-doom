@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.38  2006/01/13 23:56:00  fraggle
+// Add text-mode I/O functions.
+// Use text-mode screen for the waiting screen.
+//
 // Revision 1.37  2006/01/10 22:14:13  fraggle
 // Shut up compiler warnings
 //
@@ -220,7 +224,6 @@ static const char rcsid[] = "$Id$";
 #include "st_stuff.h"
 #include "am_map.h"
 #include "net_client.h"
-#include "net_gui.h"
 
 #include "p_setup.h"
 #include "r_local.h"
@@ -544,7 +547,9 @@ void D_DoomLoop (void)
 	printf ("debug output to: %s\n",filename);
 	debugfile = fopen (filename,"w");
     }
-	
+
+    I_InitGraphics ();
+
     while (1)
     {
 	// frame syncronous IO operations
@@ -1589,10 +1594,6 @@ void D_DoomMain (void)
 
     printf ("ST_Init: Init status bar.\n");
     ST_Init ();
-
-    I_InitGraphics ();
-
-    NET_WaitForStart();
 
     // start the apropriate game based on parms
     p = M_CheckParm ("-record");
