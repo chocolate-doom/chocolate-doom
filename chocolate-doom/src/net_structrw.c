@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2006/01/13 02:22:47  fraggle
+// Update prototypes to match header.  Make sure we include the header in the
+// source file.
+//
 // Revision 1.3  2006/01/13 02:20:12  fraggle
 // Signed integer read functions.  Use these when reading ticcmd diffs.
 //
@@ -41,6 +45,7 @@
 #include <string.h>
 
 #include "net_packet.h"
+#include "net_structrw.h"
 
 void NET_WriteSettings(net_packet_t *packet, net_gamesettings_t *settings)
 {
