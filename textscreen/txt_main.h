@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2006/01/13 18:23:28  fraggle
+// Textscreen getchar() function; remove SDL code from I_Endoom.
+//
 // Revision 1.1  2005/10/02 03:16:03  fraggle
 // Text mode emulation code
 //
@@ -34,6 +37,39 @@
 
 #ifndef TXT_MAIN_H
 #define TXT_MAIN_H
+
+// Special keypress values that correspond to mouse button clicks
+//
+#define TXT_MOUSE_LEFT   1
+#define TXT_MOUSE_RIGHT  2
+#define TXT_MOUSE_MIDDLE 3
+
+// Screen size
+
+#define TXT_SCREEN_W 80
+#define TXT_SCREEN_H 25
+
+#define TXT_COLOR_BLINKING (1 << 3)
+
+typedef enum
+{
+    TXT_COLOR_BLACK,
+    TXT_COLOR_BLUE,
+    TXT_COLOR_GREEN,
+    TXT_COLOR_CYAN,
+    TXT_COLOR_RED,
+    TXT_COLOR_MAGENTA,
+    TXT_COLOR_BROWN,
+    TXT_COLOR_GREY,
+    TXT_COLOR_DARK_GREY,
+    TXT_COLOR_BRIGHT_BLUE,
+    TXT_COLOR_BRIGHT_GREEN,
+    TXT_COLOR_BRIGHT_CYAN,
+    TXT_COLOR_BRIGHT_RED,
+    TXT_COLOR_BRIGHT_MAGENTA,
+    TXT_COLOR_YELLOW,
+    TXT_COLOR_BRIGHT_WHITE,
+} txt_color_t;
 
 // Initialise the screen
 // Returns 1 if successful, 0 if failed.
@@ -55,6 +91,10 @@ void TXT_UpdateScreenArea(int x, int y, int w, int h);
 // Update the whole screen
 
 void TXT_UpdateScreen(void);
+
+// Read a character from the keyboard
+
+int TXT_GetChar(void);
 
 #endif /* #ifndef TXT_MAIN_H */
 
