@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2006/01/13 18:23:28  fraggle
+// Textscreen getchar() function; remove SDL code from I_Endoom.
+//
 // Revision 1.3  2005/10/09 20:19:21  fraggle
 // Handle blinking text in ENDOOM lumps properly.
 //
@@ -45,8 +48,6 @@
 #include "txt_main.h"
 #include "txt_font.h"
 
-#define SCREEN_W 80
-#define SCREEN_H 25
 #define CHAR_W 8
 #define CHAR_H 16
 
@@ -83,15 +84,15 @@ int TXT_Init(void)
 {
     SDL_InitSubSystem(SDL_INIT_VIDEO);
     
-    screen = SDL_SetVideoMode(SCREEN_W * CHAR_W, SCREEN_H * CHAR_H, 8, 0);
+    screen = SDL_SetVideoMode(TXT_SCREEN_W * CHAR_W, TXT_SCREEN_H * CHAR_H, 8, 0);
 
     if (screen == NULL)
         return 0;
 
     SDL_SetColors(screen, ega_colors, 0, 16);
 
-    screendata = malloc(SCREEN_W * SCREEN_H * 2);
-    memset(screendata, 0, SCREEN_W * SCREEN_H * 2);
+    screendata = malloc(TXT_SCREEN_W * TXT_SCREEN_H * 2);
+    memset(screendata, 0, TXT_SCREEN_W * TXT_SCREEN_H * 2);
 
     return 1;
 }
@@ -115,7 +116,7 @@ static inline void UpdateCharacter(int x, int y)
     int bg, fg;
     int x1, y1;
 
-    p = &screendata[(y * SCREEN_W + x) * 2];
+    p = &screendata[(y * TXT_SCREEN_W + x) * 2];
     character = p[0];
 
     fg = p[1] & 0xf;
@@ -174,6 +175,38 @@ void TXT_UpdateScreenArea(int x, int y, int w, int h)
 
 void TXT_UpdateScreen(void)
 {
-    TXT_UpdateScreenArea(0, 0, SCREEN_W, SCREEN_H);
+    TXT_UpdateScreenArea(0, 0, TXT_SCREEN_W, TXT_SCREEN_H);
+}
+
+signed int TXT_GetChar(void)
+{
+    SDL_Event ev;
+
+    while (SDL_PollEvent(&ev))
+    {
+        switch (ev.type)
+        {
+            case SDL_MOUSEBUTTONDOWN:
+                if (ev.button.button == SDL_BUTTON_LEFT)
+                    return TXT_MOUSE_LEFT;
+                else if (ev.button.button == SDL_BUTTON_RIGHT)
+                    return TXT_MOUSE_RIGHT;
+                else if (ev.button.button == SDL_BUTTON_MIDDLE)
+                    return TXT_MOUSE_MIDDLE;
+                break;
+
+            case SDL_KEYDOWN:
+                return ev.key.keysym.unicode;
+
+            case SDL_QUIT:
+                // Quit = escape
+                return 27;
+
+            default:
+                break;
+        }
+    }
+
+    return -1;
 }
 

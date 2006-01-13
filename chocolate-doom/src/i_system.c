@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.17  2006/01/13 18:23:27  fraggle
+// Textscreen getchar() function; remove SDL code from I_Endoom.
+//
 // Revision 1.16  2006/01/08 18:13:32  fraggle
 // show_endoom config file option to disable the endoom screen
 //
@@ -203,10 +206,9 @@ void I_Endoom(void)
     unsigned char *screendata;
     unsigned int start_ms;
     boolean waiting;
-    SDL_Event ev;
 
     endoom_data = W_CacheLumpName("ENDOOM", PU_STATIC);
-    
+
     // Set up text mode screen
 
     TXT_Init();
@@ -230,23 +232,12 @@ void I_Endoom(void)
     {
         TXT_UpdateScreen();
 
-        if (!SDL_PollEvent(&ev))
+        if (TXT_GetChar() >= 0)
         {
-            I_Sleep(50);
-            continue;
+            break;
         }
-
-        switch (ev.type)
-        {
-            case SDL_QUIT:
-            case SDL_MOUSEBUTTONDOWN:
-            case SDL_KEYDOWN:
-                waiting = false;
-                break;
-
-            default:
-                break;
-        }
+        
+        I_Sleep(50);
     }
     
     // Shut down text mode screen
