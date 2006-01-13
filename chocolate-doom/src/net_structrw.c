@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3  2006/01/13 02:20:12  fraggle
+// Signed integer read functions.  Use these when reading ticcmd diffs.
+//
 // Revision 1.2  2006/01/11 01:37:53  fraggle
 // ticcmd diffs: allow compare and patching ticcmds, and reading/writing
 // ticdiffs to packets.
@@ -59,7 +62,8 @@ boolean NET_ReadSettings(net_packet_t *packet, net_gamesettings_t *settings)
         && NET_ReadInt8(packet, (unsigned int *) &settings->skill);
 }
 
-void NET_WriteTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff)
+void NET_WriteTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff, 
+                         boolean lowres_turn)
 {
     // Header
 
@@ -72,7 +76,16 @@ void NET_WriteTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff)
     if (diff->diff & NET_TICDIFF_SIDE)
         NET_WriteInt8(packet, diff->cmd.sidemove);
     if (diff->diff & NET_TICDIFF_TURN)
-        NET_WriteInt16(packet, diff->cmd.angleturn);
+    {
+        if (lowres_turn)
+        {
+            NET_WriteInt8(packet, diff->cmd.angleturn / 256);
+        }
+        else
+        {
+            NET_WriteInt16(packet, diff->cmd.angleturn);
+        }
+    }
     if (diff->diff & NET_TICDIFF_BUTTONS)
         NET_WriteInt8(packet, diff->cmd.buttons);
     if (diff->diff & NET_TICDIFF_CONSISTANCY)
@@ -81,9 +94,11 @@ void NET_WriteTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff)
         NET_WriteInt8(packet, diff->cmd.chatchar);
 }
 
-boolean NET_ReadTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff)
+boolean NET_ReadTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff,
+                           boolean lowres_turn)
 {
     unsigned int val;
+    signed int sval;
 
     // Read header
 
@@ -94,23 +109,32 @@ boolean NET_ReadTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff)
 
     if (diff->diff & NET_TICDIFF_FORWARD)
     {
-        if (!NET_ReadInt8(packet, &val))
+        if (!NET_ReadSInt8(packet, &sval))
             return false;
-        diff->cmd.forwardmove = val;
+        diff->cmd.forwardmove = sval;
     }
 
     if (diff->diff & NET_TICDIFF_SIDE)
     {
-        if (!NET_ReadInt8(packet, &val))
+        if (!NET_ReadSInt8(packet, &sval))
             return false;
-        diff->cmd.sidemove = val;
+        diff->cmd.sidemove = sval;
     }
 
     if (diff->diff & NET_TICDIFF_TURN)
     {
-        if (!NET_ReadInt16(packet, &val))
-            return false;
-        diff->cmd.angleturn = val;
+        if (lowres_turn)
+        {
+            if (!NET_ReadSInt8(packet, &sval))
+                return false;
+            diff->cmd.angleturn = sval * 256;
+        }
+        else
+        {
+            if (!NET_ReadSInt16(packet, &sval))
+                return false;
+            diff->cmd.angleturn = sval;
+        }
     }
 
     if (diff->diff & NET_TICDIFF_BUTTONS)
