@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_structrw.c 288 2006-01-13 02:22:47Z fraggle $
+// $Id: net_structrw.c 295 2006-01-14 02:06:48Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2006/01/14 02:06:48  fraggle
+// Include the game version in the settings structure.
+//
 // Revision 1.4  2006/01/13 02:22:47  fraggle
 // Update prototypes to match header.  Make sure we include the header in the
 // source file.
@@ -55,6 +58,7 @@ void NET_WriteSettings(net_packet_t *packet, net_gamesettings_t *settings)
     NET_WriteInt8(packet, settings->episode);
     NET_WriteInt8(packet, settings->map);
     NET_WriteInt8(packet, settings->skill);
+    NET_WriteInt8(packet, settings->gameversion);
 }
 
 boolean NET_ReadSettings(net_packet_t *packet, net_gamesettings_t *settings)
@@ -64,7 +68,8 @@ boolean NET_ReadSettings(net_packet_t *packet, net_gamesettings_t *settings)
         && NET_ReadInt8(packet, (unsigned int *) &settings->deathmatch)
         && NET_ReadInt8(packet, (unsigned int *) &settings->episode)
         && NET_ReadInt8(packet, (unsigned int *) &settings->map)
-        && NET_ReadInt8(packet, (unsigned int *) &settings->skill);
+        && NET_ReadInt8(packet, (unsigned int *) &settings->skill)
+        && NET_ReadInt8(packet, (unsigned int *) &settings->gameversion);
 }
 
 void NET_WriteTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff, 

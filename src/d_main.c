@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 291 2006-01-13 23:56:00Z fraggle $
+// $Id: d_main.c 295 2006-01-14 02:06:48Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.39  2006/01/14 02:06:48  fraggle
+// Include the game version in the settings structure.
+//
 // Revision 1.38  2006/01/13 23:56:00  fraggle
 // Add text-mode I/O functions.
 // Use text-mode screen for the waiting screen.
@@ -170,7 +173,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 291 2006-01-13 23:56:00Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 295 2006-01-14 02:06:48Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -1292,16 +1295,6 @@ static void InitGameVersion(void)
         }
     }
     
-    for (i=0; gameversions[i].description != NULL; ++i)
-    {
-        if (gameversions[i].version == gameversion)
-        {
-            printf("InitGameVersion: Emulating the behaviour of the "
-                   "'%s' executable.\n", gameversions[i].description);
-            break;
-        }
-    }
-
     // The original exe does not support retail - 4th episode not supported
 
     if (gameversion < exe_ultimate && gamemode == retail)
@@ -1316,6 +1309,22 @@ static void InitGameVersion(void)
         gamemission = doom2;
     }
 }
+
+void PrintGameVersion(void)
+{
+    int i;
+
+    for (i=0; gameversions[i].description != NULL; ++i)
+    {
+        if (gameversions[i].version == gameversion)
+        {
+            printf("Emulating the behaviour of the "
+                   "'%s' executable.\n", gameversions[i].description);
+            break;
+        }
+    }
+}
+
 
 //
 // D_DoomMain
@@ -1585,6 +1594,8 @@ void D_DoomMain (void)
 
     printf ("D_CheckNetGame: Checking network game status.\n");
     D_CheckNetGame ();
+
+    PrintGameVersion();
 
     printf ("S_Init: Setting up sound.\n");
     S_Init (snd_SfxVolume /* *8 */, snd_MusicVolume /* *8*/ );

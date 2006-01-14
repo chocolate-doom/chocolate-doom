@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_defs.h 281 2006-01-11 01:37:53Z fraggle $
+// $Id: net_defs.h 295 2006-01-14 02:06:48Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.9  2006/01/14 02:06:48  fraggle
+// Include the game version in the settings structure.
+//
 // Revision 1.8  2006/01/11 01:37:53  fraggle
 // ticcmd diffs: allow compare and patching ticcmds, and reading/writing
 // ticdiffs to packets.
@@ -148,6 +151,7 @@ typedef struct
     int episode;
     int map;
     int skill;
+    int gameversion;
 } net_gamesettings_t;
 
 #define NET_TICDIFF_FORWARD      (1 << 0)

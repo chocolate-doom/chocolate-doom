@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 290 2006-01-13 23:52:12Z fraggle $
+// $Id: net_client.c 295 2006-01-14 02:06:48Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.21  2006/01/14 02:06:48  fraggle
+// Include the game version in the settings structure.
+//
 // Revision 1.20  2006/01/13 23:52:12  fraggle
 // Fix game start packet parsing logic.
 //
@@ -184,6 +187,7 @@ void NET_CL_StartGame(void)
     settings.episode = startepisode;
     settings.map = startmap;
     settings.skill = startskill;
+    settings.gameversion = gameversion;
 
     // Send packet
 
