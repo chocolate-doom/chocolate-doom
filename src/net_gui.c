@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_gui.c 293 2006-01-14 00:13:04Z fraggle $
+// $Id: net_gui.c 294 2006-01-14 00:27:16Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.12  2006/01/14 00:27:16  fraggle
+// Set the window caption and title
+//
 // Revision 1.11  2006/01/14 00:13:04  fraggle
 // Detect if disconnected from the server while waiting for the game start.
 //
@@ -75,6 +78,7 @@
 #include "doomstat.h"
 
 #include "i_system.h"
+#include "i_video.h"
 
 #include "net_client.h"
 #include "net_gui.h"
@@ -165,6 +169,8 @@ static void DrawScreen(void)
 void NET_WaitForStart(void)
 {
     TXT_Init();
+    I_SetWindowCaption();
+    I_SetWindowIcon();
 
     while (net_waiting_for_start)
     {
