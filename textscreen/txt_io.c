@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: txt_io.c 291 2006-01-13 23:56:00Z fraggle $
+// $Id: txt_io.c 292 2006-01-14 00:10:54Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2006/01/14 00:10:53  fraggle
+// Change the format of color commands.  Reorganise the waiting dialog.
+//
 // Revision 1.1  2006/01/13 23:56:00  fraggle
 // Add text-mode I/O functions.
 // Use text-mode screen for the waiting screen.
@@ -169,17 +172,17 @@ void TXT_Puts(char *s)
 
     for (p=s; *p != '\0'; ++p)
     {
-        if (*p == '%')
+        if (*p == '<')
         {
             ++p;
 
-            if (*p == '%')
+            if (*p == '<')
             {
-                PutChar(screen, '%');
+                PutChar(screen, '<');
             }
             else
             {
-                ending = strchr(p, '%');
+                ending = strchr(p, '>');
 
                 if (ending == NULL)
                 {
