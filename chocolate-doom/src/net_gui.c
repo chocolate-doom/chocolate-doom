@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.10  2006/01/14 00:10:54  fraggle
+// Change the format of color commands.  Reorganise the waiting dialog.
+//
 // Revision 1.9  2006/01/13 23:56:00  fraggle
 // Add text-mode I/O functions.
 // Use text-mode screen for the waiting screen.
@@ -88,6 +91,7 @@ static void ProcessEvents(void)
         {
             case 27:
             case 'q':
+                TXT_Shutdown();
                 I_Quit();
                 break;
 
@@ -114,10 +118,16 @@ static void DrawScreen(void)
                     WINDOW_W, WINDOW_H);
 
     TXT_BGColor(TXT_COLOR_BLUE, 0);
-    TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
 
     for (i=0; i<MAXPLAYERS; ++i)
     {
+        if (i == net_player_number)
+            TXT_FGColor(TXT_COLOR_YELLOW);
+        else if (i < net_clients_in_game)
+            TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
+        else
+            TXT_FGColor(TXT_COLOR_GREY);
+
         snprintf(buf, 39, "%i. ", i + 1);
         TXT_GotoXY(WINDOW_X + 2, WINDOW_Y + 4 + i);
         TXT_Puts(buf);
@@ -134,11 +144,15 @@ static void DrawScreen(void)
         }
     }
 
+    TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
     TXT_GotoXY(WINDOW_X + 2, WINDOW_Y + WINDOW_H - 2);
-    TXT_Puts("%brightgreen%SPACE%/%%brightcyan%=%/%Start game");
+    TXT_Puts("<brightgreen>ESC</><brightcyan>=</>Abort");
 
-    TXT_GotoXY(WINDOW_X + WINDOW_W - 11, WINDOW_Y + WINDOW_H - 2);
-    TXT_Puts("%brightgreen%ESC%/%%brightcyan%=%/%Abort");
+    if (net_client_controller)
+    {
+        TXT_GotoXY(WINDOW_X + WINDOW_W - 18, WINDOW_Y + WINDOW_H - 2);
+        TXT_Puts("<brightgreen>SPACE</><brightcyan>=</>Start game");
+    }
     
     TXT_DrawSeparator(WINDOW_X, WINDOW_Y + WINDOW_H - 3, WINDOW_W);
 
