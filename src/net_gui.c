@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_gui.c 292 2006-01-14 00:10:54Z fraggle $
+// $Id: net_gui.c 293 2006-01-14 00:13:04Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.11  2006/01/14 00:13:04  fraggle
+// Detect if disconnected from the server while waiting for the game start.
+//
 // Revision 1.10  2006/01/14 00:10:54  fraggle
 // Change the format of color commands.  Reorganise the waiting dialog.
 //
@@ -170,6 +173,11 @@ void NET_WaitForStart(void)
 
         NET_CL_Run();
         NET_SV_Run();
+
+        if (!net_client_connected)
+        {
+            I_Error("Disconnected from server");
+        }
 
         I_Sleep(50);
     }
