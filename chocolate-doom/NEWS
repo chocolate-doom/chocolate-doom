@@ -5,6 +5,8 @@
          the ENDOOM screen to be disabled.
 
     Fixes for big endian machines (thanks locust)
+    Savegame fixes: we now load and save to the Vanilla Doom savegame
+        format.
     Fixed the behavior of the dehacked maximum health setting.
     Fix the "-skill 0" hack to play without any items (thanks to Janizdreg
         for pointing out that this was nonfunctional)

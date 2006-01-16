@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2006/01/16 21:40:38  fraggle
+// Vanilla savegame load/save
+//
 // Revision 1.3  2005/10/16 01:18:10  fraggle
 // Global "configdir" variable with directory to store config files in.
 // Create a function to find the filename for a savegame slot.  Store
@@ -257,6 +260,19 @@ typedef enum
 } thinkerclass_t;
 
 
+// There is a small issue with the packing of mobjs.  The 'mapthing'
+// field in mobj_t is 10 bytes long.  Watcom packed this without any
+// alignment issues; gcc aligns the fields to 4-byte boundaries.  This
+// means that the size of the mobj_t structure is 2 bytes extra than
+// in Vanilla Doom.  
+//
+// These functions have a temporary fix for this.  We copy the tracer
+// field back two bytes to manually pack the data.  This is obviously
+// horrible, non compiler-portable, not endian safe, etc. etc.
+//
+// This will be properly fixed once I rework the savegame code.
+// The correct size of the mobj_t structure is 154 bytes.
+
 
 //
 // P_ArchiveThinkers
@@ -265,7 +281,7 @@ void P_ArchiveThinkers (void)
 {
     thinker_t*		th;
     mobj_t*		mobj;
-	
+
     // save off the current thinkers
     for (th = thinkercap.next ; th != &thinkercap ; th=th->next)
     {
@@ -276,6 +292,15 @@ void P_ArchiveThinkers (void)
 	    mobj = (mobj_t *)save_p;
 	    memcpy (mobj, th, sizeof(*mobj));
 	    save_p += sizeof(*mobj);
+
+            // Hack fix for structure packing bug, see above.
+
+            if (sizeof(mobj_t) == 156)
+            {
+                memmove(save_p - 6, save_p - 4, 4);
+                save_p -= 2;
+            }
+
 	    mobj->state = (state_t *)(mobj->state - states);
 	    
 	    if (mobj->player)
@@ -316,7 +341,7 @@ void P_UnArchiveThinkers (void)
 	currentthinker = next;
     }
     P_InitThinkers ();
-	
+    
     // read in saved thinkers
     while (1)
     {
@@ -331,6 +356,15 @@ void P_UnArchiveThinkers (void)
 	    mobj = Z_Malloc (sizeof(*mobj), PU_LEVEL, NULL);
 	    memcpy (mobj, save_p, sizeof(*mobj));
 	    save_p += sizeof(*mobj);
+
+            // Hack fix for structure packing bug, see above.
+
+            if (sizeof(mobj_t) == 156)
+            {
+                save_p -= 2;
+                memmove(&mobj->tracer, save_p - 4, 4);
+            }
+
 	    mobj->state = &states[(int)mobj->state];
 	    mobj->target = NULL;
 	    if (mobj->player)
