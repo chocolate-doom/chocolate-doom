@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_saveg.c 298 2006-01-19 00:09:20Z fraggle $
+// $Id: p_saveg.c 299 2006-01-19 00:17:01Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2006/01/19 00:17:01  fraggle
+// Remove now-redundant note about structure packing.
+//
 // Revision 1.5  2006/01/19 00:09:20  fraggle
 // Add functions to r/w structures to the savegame buffer, rather than
 // copying the raw structures.  This way, we read and write to the DOS
@@ -49,7 +52,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_saveg.c 298 2006-01-19 00:09:20Z fraggle $";
+rcsid[] = "$Id: p_saveg.c 299 2006-01-19 00:17:01Z fraggle $";
 
 #include "dstrings.h"
 #include "deh_main.h"
@@ -1453,20 +1456,6 @@ typedef enum
     tc_mobj
 
 } thinkerclass_t;
-
-
-// There is a small issue with the packing of mobjs.  The 'mapthing'
-// field in mobj_t is 10 bytes long.  Watcom packed this without any
-// alignment issues; gcc aligns the fields to 4-byte boundaries.  This
-// means that the size of the mobj_t structure is 2 bytes extra than
-// in Vanilla Doom.  
-//
-// These functions have a temporary fix for this.  We copy the tracer
-// field back two bytes to manually pack the data.  This is obviously
-// horrible, non compiler-portable, not endian safe, etc. etc.
-//
-// This will be properly fixed once I rework the savegame code.
-// The correct size of the mobj_t structure is 154 bytes.
 
 
 //
