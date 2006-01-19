@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: g_game.c 291 2006-01-13 23:56:00Z fraggle $
+// $Id: g_game.c 300 2006-01-19 18:46:24Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.20  2006/01/19 18:46:24  fraggle
+// Move savegame header read/write code into p_saveg.c
+//
 // Revision 1.19  2006/01/13 23:56:00  fraggle
 // Add text-mode I/O functions.
 // Use text-mode screen for the waiting screen.
@@ -102,7 +105,7 @@
 
 
 static const char
-rcsid[] = "$Id: g_game.c 291 2006-01-13 23:56:00Z fraggle $";
+rcsid[] = "$Id: g_game.c 300 2006-01-19 18:46:24Z fraggle $";
 
 #include <string.h>
 #include <stdlib.h>
@@ -155,7 +158,6 @@ rcsid[] = "$Id: g_game.c 291 2006-01-13 23:56:00Z fraggle $";
 
 
 #define SAVEGAMESIZE	0x2c000
-#define SAVESTRINGSIZE	24
 
 
 
@@ -1318,45 +1320,34 @@ void G_LoadGame (char* name)
 
 void G_DoLoadGame (void) 
 { 
-    int		length; 
-    int		i; 
-    int		a,b,c; 
-    char        vcheck[VERSIONSIZE]; 
+    int	length; 
+    int savedleveltime;
 	 
     gameaction = ga_nothing; 
 	 
     length = M_ReadFile (savename, &savebuffer); 
-    save_p = savebuffer + SAVESTRINGSIZE;
-    
-    // skip the description field 
-    memset (vcheck,0,sizeof(vcheck)); 
-    sprintf (vcheck,"version %i",DOOM_VERSION); 
-    if (strcmp ((char *) save_p, vcheck)) 
-	return;				// bad version 
-    save_p += VERSIONSIZE; 
-			 
-    gameskill = *save_p++; 
-    gameepisode = *save_p++; 
-    gamemap = *save_p++; 
-    for (i=0 ; i<MAXPLAYERS ; i++) 
-	playeringame[i] = *save_p++; 
+    save_p = savebuffer;
 
+    if (!P_ReadSaveGameHeader())
+    {
+        Z_Free(savebuffer);
+        return;
+    }
+
+    savedleveltime = leveltime;
+    
     // load a base level 
     G_InitNew (gameskill, gameepisode, gamemap); 
  
-    // get the times 
-    a = *save_p++; 
-    b = *save_p++; 
-    c = *save_p++; 
-    leveltime = (a<<16) + (b<<8) + c; 
-	 
+    leveltime = savedleveltime;
+
     // dearchive all the modifications
     P_UnArchivePlayers (); 
     P_UnArchiveWorld (); 
     P_UnArchiveThinkers (); 
     P_UnArchiveSpecials (); 
  
-    if (*save_p != 0x1d) 
+    if (!P_ReadSaveGameEOF())
 	I_Error ("Bad savegame");
     
     // done 
@@ -1388,10 +1379,8 @@ G_SaveGame
 void G_DoSaveGame (void) 
 { 
     char	name[100]; 
-    char	name2[VERSIONSIZE]; 
     char*	description; 
     int		length; 
-    int		i; 
 	
     strcpy(name, P_SaveGameFile(savegameslot));
 
@@ -1399,35 +1388,21 @@ void G_DoSaveGame (void)
 	 
     save_p = savebuffer = screens[1]+0x4000; 
 	 
-    memcpy (save_p, description, SAVESTRINGSIZE); 
-    save_p += SAVESTRINGSIZE; 
-    memset (name2,0,sizeof(name2)); 
-    sprintf (name2,"version %i",DOOM_VERSION); 
-    memcpy (save_p, name2, VERSIONSIZE); 
-    save_p += VERSIONSIZE; 
-	 
-    *save_p++ = gameskill; 
-    *save_p++ = gameepisode; 
-    *save_p++ = gamemap; 
-    for (i=0 ; i<MAXPLAYERS ; i++) 
-	*save_p++ = playeringame[i]; 
-    *save_p++ = leveltime>>16; 
-    *save_p++ = leveltime>>8; 
-    *save_p++ = leveltime; 
+    P_WriteSaveGameHeader(description);
  
     P_ArchivePlayers (); 
     P_ArchiveWorld (); 
     P_ArchiveThinkers (); 
     P_ArchiveSpecials (); 
 	 
-    *save_p++ = 0x1d;		// consistancy marker 
+    P_WriteSaveGameEOF();
 	 
     length = save_p - savebuffer; 
     if (length > SAVEGAMESIZE) 
 	I_Error ("Savegame buffer overrun"); 
     M_WriteFile (name, savebuffer, length); 
     gameaction = ga_nothing; 
-    savedescription[0] = 0;		 
+    strcpy(savedescription, "");
 	 
     players[consoleplayer].message = DEH_String(GGSAVED);
 

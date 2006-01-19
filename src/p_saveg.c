@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_saveg.c 299 2006-01-19 00:17:01Z fraggle $
+// $Id: p_saveg.c 300 2006-01-19 18:46:24Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.7  2006/01/19 18:46:24  fraggle
+// Move savegame header read/write code into p_saveg.c
+//
 // Revision 1.6  2006/01/19 00:17:01  fraggle
 // Remove now-redundant note about structure packing.
 //
@@ -52,17 +55,21 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_saveg.c 299 2006-01-19 00:17:01Z fraggle $";
+rcsid[] = "$Id: p_saveg.c 300 2006-01-19 18:46:24Z fraggle $";
 
 #include "dstrings.h"
 #include "deh_main.h"
 #include "i_system.h"
 #include "z_zone.h"
 #include "p_local.h"
+#include "p_saveg.h"
 
 // State.
 #include "doomstat.h"
 #include "r_state.h"
+
+#define SAVEGAME_EOF 0x1d
+#define VERSIONSIZE 16 
 
 byte*		save_p;
 
@@ -1305,6 +1312,91 @@ static void saveg_write_glow_t(glow_t *str)
     saveg_write32(str->direction);
 }
 
+//
+// Write the header for a savegame
+//
+
+void P_WriteSaveGameHeader(char *description)
+{
+    char name[VERSIONSIZE]; 
+    int i; 
+	
+    memcpy (save_p, description, SAVESTRINGSIZE); 
+    save_p += SAVESTRINGSIZE; 
+
+    memset (name,0,sizeof(name)); 
+    sprintf (name,"version %i",DOOM_VERSION); 
+    memcpy (save_p, name, VERSIONSIZE); 
+    save_p += VERSIONSIZE; 
+	 
+    saveg_write8(gameskill);
+    saveg_write8(gameepisode);
+    saveg_write8(gamemap);
+
+    for (i=0 ; i<MAXPLAYERS ; i++) 
+        saveg_write8(playeringame[i]);
+
+    saveg_write8((leveltime >> 16) & 0xff);
+    saveg_write8((leveltime >> 8) & 0xff);
+    saveg_write8(leveltime & 0xff);
+}
+
+// 
+// Read the header for a savegame
+//
+
+boolean P_ReadSaveGameHeader(void)
+{
+    int	 i; 
+    byte a, b, c; 
+    char vcheck[VERSIONSIZE]; 
+	 
+    save_p += SAVESTRINGSIZE;
+    
+    // skip the description field 
+    memset (vcheck,0,sizeof(vcheck)); 
+    sprintf (vcheck,"version %i",DOOM_VERSION); 
+    if (strcmp ((char *) save_p, vcheck)) 
+	return false;				// bad version 
+    save_p += VERSIONSIZE; 
+			 
+    gameskill = saveg_read8();
+    gameepisode = saveg_read8();
+    gamemap = saveg_read8();
+
+    for (i=0 ; i<MAXPLAYERS ; i++) 
+	playeringame[i] = saveg_read8();
+
+    // get the times 
+    a = saveg_read8();
+    b = saveg_read8();
+    c = saveg_read8();
+    leveltime = (a<<16) + (b<<8) + c; 
+
+    return true;
+}
+
+//
+// Read the end of file marker.  Returns true if read successfully.
+// 
+
+boolean P_ReadSaveGameEOF(void)
+{
+    int value;
+
+    value = saveg_read8();
+
+    return value == SAVEGAME_EOF;
+}
+
+//
+// Write the end of file marker
+//
+
+void P_WriteSaveGameEOF(void)
+{
+    saveg_write8(SAVEGAME_EOF);
+}
 
 //
 // P_ArchivePlayers
