@@ -30,10 +30,23 @@
 #ifndef __P_SAVEG__
 #define __P_SAVEG__
 
+// maximum size of a savegame description
+
+#define SAVESTRINGSIZE 24
+
 // filename to use for a savegame slot
 
 char *P_SaveGameFile(int slot);
 
+// Savegame file header read/write functions
+
+boolean P_ReadSaveGameHeader(void);
+void P_WriteSaveGameHeader(char *description);
+
+// Savegame end-of-file read/write functions
+
+boolean P_ReadSaveGameEOF(void);
+void P_WriteSaveGameEOF(void);
 
 // Persistent storage/archiving.
 // These are the load / save game routines.
@@ -53,6 +66,9 @@ extern byte*		save_p;
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.5  2006/01/19 18:46:24  fraggle
+// Move savegame header read/write code into p_saveg.c
+//
 // Revision 1.4  2005/10/16 01:18:10  fraggle
 // Global "configdir" variable with directory to store config files in.
 // Create a function to find the filename for a savegame slot.  Store
