@@ -1,27 +1,365 @@
-Sat Oct 29 21:48:55 2005 fraggle
+Fri Jan 20 17:53:56 2006 fraggle
+	
+	v0.1.3
+
+Fri Jan 20 17:48:39 2006 fraggle
+	
+	Remove new networking code from stable version
+
+Fri Jan 20 17:46:46 2006 fraggle
+	
+	Remove unneeded text GUI code from stable branch.
+
+Fri Jan 20 00:57:41 2006 fraggle
+	
+	Remove new networking code from stable version
+
+Thu Jan 19 18:46:24 2006 fraggle
+	
+	Move savegame header read/write code into p_saveg.c
+
+Thu Jan 19 00:17:01 2006 fraggle
+	
+	Remove now-redundant note about structure packing.
+
+Thu Jan 19 00:09:20 2006 fraggle
+	
+	Add functions to r/w structures to the savegame buffer, rather than
+	copying the raw structures.  This way, we read and write to the DOS
+	savegame format always, regardless of the compiler and processor
+	architecture, to ensure Vanilla compatibility.
+
+Mon Jan 16 23:35:55 2006 fraggle
+	
+	Write icon data as hex numbers, rather than decimal
+
+Mon Jan 16 21:40:38 2006 fraggle
+	
+	Vanilla savegame load/save
+
+Sat Jan 14 02:06:48 2006 fraggle
+	
+	Include the game version in the settings structure.
+
+Sat Jan 14 00:27:16 2006 fraggle
+	
+	Set the window caption and title
+
+Sat Jan 14 00:13:04 2006 fraggle
+	
+	Detect if disconnected from the server while waiting for the game start.
+
+Sat Jan 14 00:10:54 2006 fraggle
+	
+	Change the format of color commands.  Reorganise the waiting dialog.
+
+Fri Jan 13 23:56:00 2006 fraggle
+	
+	Add text-mode I/O functions.
+	Use text-mode screen for the waiting screen.
+
+Fri Jan 13 23:52:12 2006 fraggle
+	
+	Fix game start packet parsing logic.
+
+Fri Jan 13 18:23:27 2006 fraggle
+	
+	Textscreen getchar() function; remove SDL code from I_Endoom.
+
+Fri Jan 13 02:22:47 2006 fraggle
+	
+	Update prototypes to match header.  Make sure we include the header in the
+	source file.
+
+Fri Jan 13 02:20:12 2006 fraggle
+	
+	Signed integer read functions.  Use these when reading ticcmd diffs.
+
+Fri Jan 13 02:19:18 2006 fraggle
+	
+	Only accept sane player values when starting a new game.
+
+Thu Jan 12 02:18:59 2006 fraggle
+	
+	Only start new games when in the waiting-for-start state.
+
+Thu Jan 12 02:11:52 2006 fraggle
+	
+	Game start packets
+
+Thu Jan 12 01:34:48 2006 fraggle
+	
+	Combine mouse motion for tics into single events.
+
+Thu Jan 12 00:21:29 2006 fraggle
+	
+	Interpret the dehacked "max health" setting properly.
+
+Wed Jan 11 01:37:53 2006 fraggle
+	
+	ticcmd diffs: allow compare and patching ticcmds, and reading/writing
+	ticdiffs to packets.
+
+Tue Jan 10 22:14:13 2006 fraggle
+	
+	Shut up compiler warnings
+
+Tue Jan 10 19:59:25 2006 fraggle
+	
+	Reliable packet transport mechanism
+
+Mon Jan  9 02:03:39 2006 fraggle
+	
+	Send clients their player number, and indicate on the waiting screen
+	which client we are.
+
+Mon Jan  9 01:50:51 2006 fraggle
+	
+	Deduce a sane player name by examining environment variables.  Add
+	a "player_name" setting to chocolate-doom.cfg.  Transmit the name
+	to the server and use the names players send in the waiting data list.
+
+Sun Jan  8 18:22:39 2006 fraggle
+	
+	Strip carriage returns from the end of lines when reading configuration
+	files.
+
+Sun Jan  8 18:14:19 2006 fraggle
+	
+	Update NEWS
+
+Sun Jan  8 18:13:32 2006 fraggle
+	
+	show_endoom config file option to disable the endoom screen
+
+Sun Jan  8 17:52:45 2006 fraggle
+	
+	Play some random music for the players while waiting for the game to
+	start.
+
+Sun Jan  8 17:52:16 2006 fraggle
+	
+	Seed the M_Random random number generator from the system time to give
+	it some more randomness.
+
+Sun Jan  8 17:51:53 2006 fraggle
+	
+	Add S_MusicPlaying function to query if music is still playing.
+
+Sun Jan  8 05:06:06 2006 fraggle
+	
+	Reject new connections if the server is not in the waiting state.
+
+Sun Jan  8 05:04:50 2006 fraggle
+	
+	Don't grab the mouse on the net waiting screen
+
+Sun Jan  8 04:52:26 2006 fraggle
+	
+	Allow the server to reject clients
+
+Sun Jan  8 03:36:40 2006 fraggle
+	
+	Fix double free of addresses
+
+Sun Jan  8 03:36:17 2006 fraggle
+	
+	Fix packet send
+
+Sun Jan  8 02:53:31 2006 fraggle
+	
+	Detect when client connection is disconnected.
+
+Sun Jan  8 02:53:05 2006 fraggle
+	
+	Send keepalives if the connection is not doing anything else.
+	Send all packets using a new NET_Conn_SendPacket to support this.
+
+Sun Jan  8 00:10:46 2006 fraggle
+	
+	Move common connection code into net_common.c, shared by server
+	and client code.
+
+Sat Jan  7 20:08:11 2006 fraggle
+	
+	Send player name and address in the waiting data packets.  Display these
+	on the waiting screen, and improve the waiting screen appearance.
+
+Sat Jan  7 19:16:39 2006 fraggle
+	
+	Only display a warning when unable to emulate a spechit overrun
+
+Sat Jan  7 19:11:54 2006 fraggle
+	
+	Import the spechit overrun code from prboom-plus.  Thanks to Andrey Budko
+	for his investigation into this behavior.
+
+Sat Jan  7 17:00:33 2006 fraggle
+	
+	Mention the Chocolate Doom wiki, fix a spelling error.
+
+Sat Jan  7 16:59:52 2006 fraggle
+	
+	Update NEWS
+
+Sat Jan  7 16:26:50 2006 fraggle
+	
+	Fix the behavior when expanding sound effects (again).  Doom actually
+	does play sounds of any sample rate, but the sound effects in
+	Scientist 2 are corrupted.  Add some tests to check that the sound
+	effect header is correct, and generic sound rate conversion code.
+
+Fri Jan  6 19:26:02 2006 fraggle
+	
+	Fix the "-skill 0" hack commonly used under DOS
+
+Thu Jan  5 02:48:02 2006 fraggle
+	
+	Fixes for big endian machines (thanks locust)
+
+Thu Jan  5 02:42:58 2006 fraggle
+	
+	Specify signed char explicitly for ticcmd_t fields.
+
+Mon Jan  2 21:52:06 2006 fraggle
+	
+	Move I_InitGraphics call to be invoked earlier in D_DoomMain.  Call the
+	NET_WaitForStart function to wait for a start signal in network games.
+
+Mon Jan  2 21:50:26 2006 fraggle
+	
+	Restructure the waiting screen code.  Establish our own separate event
+	loop while waiting for the game to start, to avoid affecting the original
+	code too much.  Move some _gui variables to net_client.c.
+
+Mon Jan  2 21:48:37 2006 fraggle
+	
+	fix client connected function
+
+Mon Jan  2 21:04:10 2006 fraggle
+	
+	Create NET_SV_Shutdown function to shut down the server.  Call it
+	when quitting the game.  Print the IP of the server correctly when
+	connecting.
+
+Mon Jan  2 21:02:16 2006 fraggle
+	
+	Change AddrToString function to use an internal static buffer, for
+	ease of use.
+
+Mon Jan  2 20:27:45 2006 fraggle
+	
+	Clear the screen AFTER initialising the loading disk buffer, so that
+	bits of loading disk are not visible on the initial screen melt.
+
+Mon Jan  2 20:14:29 2006 fraggle
+	
+	Add a "-client" option to test connecting to a local server.
+
+Mon Jan  2 20:14:07 2006 fraggle
+	
+	Fix connect timeout and shutdown client properly if we fail to connect.
+
+Mon Jan  2 20:13:06 2006 fraggle
+	
+	Refer to connected clients by their AddrToString() output rather than just
+	the pointer to their struct.  Listen for IP connections as well as
+	loopback connections.
+
+Mon Jan  2 20:11:49 2006 fraggle
+	
+	Rename i_net_module -> net_sdl_module.  Fix the AddrToString method.
+
+Mon Jan  2 17:24:40 2006 fraggle
+	
+	Remove test code
+
+Mon Jan  2 00:54:17 2006 fraggle
+	
+	Fix packet not freed back after being sent.
+	Code to disconnect clients from the server side.
+
+Mon Jan  2 00:17:41 2006 fraggle
+	
+	Encapsulate the event queue code properly.  Add a D_PopEvent function
+	to read a new event from the event queue.
+
+Mon Jan  2 00:06:30 2006 fraggle
+	
+	Make functions static.  Remove unused variable.
+
+Mon Jan  2 00:00:08 2006 fraggle
+	
+	Neater prefixes: NET_Client -> NET_CL_.  NET_Server -> NET_SV_.
+
+Sun Jan  1 23:54:31 2006 fraggle
+	
+	Client disconnect code
+
+Sun Jan  1 23:53:14 2006 fraggle
+	
+	Remove GS_WAITINGSTART gamestate.  This will be independent of the main
+	loop to avoid interfering with the main game code too much.
+
+Sun Jan  1 23:51:41 2006 fraggle
+	
+	String read/write functions
+
+Fri Dec 30 18:58:22 2005 fraggle
+	
+	Fix client code to correctly send reply to server on connection.
+	Add "waiting screen" while waiting for the game to start.
+	Hook in the new networking code into the main game code.
+
+Fri Dec 30 18:50:53 2005 fraggle
+	
+	Millisecond clock function
+
+Thu Dec 29 21:29:55 2005 fraggle
+	
+	Working client connect code
+
+Thu Dec 29 17:48:25 2005 fraggle
+	
+	Add initial client/server connect code.  Reorganise sources list in
+	Makefile.am.
+
+Thu Dec 29 17:47:47 2005 fraggle
+	
+	Automatically initialise the address table
+
+Thu Nov 17 09:41:24 2005 fraggle
+	
+	Catch SDL_QUIT event on ENDOOM display
+
+Sun Oct 30 19:56:15 2005 fraggle
+	
+	Add foundation code for the new networking system
+
+Sat Oct 29 22:48:55 2005 fraggle
 	
 	0.1.2
 
-Sat Oct 29 21:38:55 2005 fraggle
+Sat Oct 29 22:38:55 2005 fraggle
 	
 	Fix help screen orderings and skull positions to make Chocolate Doom
 	behave exactly like the original executables.
 
-Wed Oct 26 00:56:40 2005 fraggle
+Wed Oct 26 01:56:40 2005 fraggle
 	
 	Final Doom teleport logic was backwards
 
-Mon Oct 24 18:50:39 2005 fraggle
+Mon Oct 24 19:50:39 2005 fraggle
 	
 	Allow the game version to emulate to be specified from the command line
 	and set compatibility options accordingly.
 
-Sun Oct 23 20:22:34 2005 fraggle
+Sun Oct 23 21:22:34 2005 fraggle
 	
 	Drastically refactor the WAD merging code.  Allow multiple replacements
 	of the same sprite in a PWAD (fixes Scientist 2)
 
-Sun Oct 23 18:39:44 2005 fraggle
+Sun Oct 23 19:39:44 2005 fraggle
 	
 	Reproduce the behavior when playing a sound at a sample rate which
 	is not 11025 or 22050Hz.  This is to "fix" a bug in Scientist 2:
@@ -31,829 +369,850 @@ Sun Oct 23 18:39:44 2005 fraggle
 	actually in the Scientist 2 WAD, which has sound effects that
 	have the wrong sample rate.
 
-Tue Oct 18 19:05:18 2005 fraggle
+Tue Oct 18 20:05:18 2005 fraggle
 	
 	0.1.1
 
-Tue Oct 18 09:13:07 2005 fraggle
+Tue Oct 18 10:13:07 2005 fraggle
 	
 	Update NEWS
 
-Mon Oct 17 23:48:05 2005 fraggle
+Tue Oct 18 00:48:05 2005 fraggle
 	
 	DEH_CheckCommandLine -> DEH_Init, for consistency with other Init
 	functions
 
-Mon Oct 17 23:16:09 2005 fraggle
+Tue Oct 18 00:16:09 2005 fraggle
 	
 	Add a "loading" message for each dehacked patch we load, to be orthogonal
 	to the WAD loading code
 
-Mon Oct 17 22:07:25 2005 fraggle
+Mon Oct 17 23:07:25 2005 fraggle
 	
 	Fix "Monsters Infight"
 
-Mon Oct 17 21:20:27 2005 fraggle
+Mon Oct 17 22:20:27 2005 fraggle
 	
 	Add note that the "Monsters Infight" setting is not supported.
 
-Mon Oct 17 21:14:31 2005 fraggle
+Mon Oct 17 22:14:31 2005 fraggle
 	
 	Ignore comments in dehacked files.
 
-Mon Oct 17 21:09:01 2005 fraggle
+Mon Oct 17 22:09:01 2005 fraggle
 	
 	Dehacked Misc support: Controls for the armor and armor class set when
 	using the ammo cheats.
 
-Mon Oct 17 21:02:57 2005 fraggle
+Mon Oct 17 22:02:57 2005 fraggle
 	
 	Dehacked Misc support: Max soulsphere, Soulsphere+Megasphere health bonus
 	values, God mode health value
 
-Mon Oct 17 20:49:42 2005 fraggle
+Mon Oct 17 21:49:42 2005 fraggle
 	
 	Add dehacked "Misc" implementations for max armor+health, blue+green
 	armor classes
 
-Mon Oct 17 20:27:05 2005 fraggle
+Mon Oct 17 21:27:05 2005 fraggle
 	
 	Start of Dehacked 'Misc' section support.  Initial Health+Bullets,
 	and bfg cells/shot are supported.
 
-Mon Oct 17 19:46:22 2005 fraggle
+Mon Oct 17 20:46:22 2005 fraggle
 	
 	Guard against multiple video shutdowns better.  Fix crash due to improper
 	screen clear at startup.
 
-Sun Oct 16 20:55:50 2005 fraggle
+Sun Oct 16 21:55:50 2005 fraggle
 	
 	Fix the '-cdrom' command-line option.
 
-Sun Oct 16 16:16:03 2005 fraggle
+Sun Oct 16 17:16:03 2005 fraggle
 	
 	Set the default number of channels to a more sensible 8
 
-Sun Oct 16 01:18:10 2005 fraggle
+Sun Oct 16 02:18:10 2005 fraggle
 	
 	Global "configdir" variable with directory to store config files in.
 	Create a function to find the filename for a savegame slot.  Store
 	savegames in the config dir.
 
-Sat Oct 15 22:50:56 2005 fraggle
+Sat Oct 15 23:50:56 2005 fraggle
 	
 	Fix pink icon on startup
 
-Sat Oct 15 17:57:47 2005 fraggle
+Sat Oct 15 18:57:47 2005 fraggle
 	
 	Add warning message for WADs with FF_START or SS_START in, suggesting
 	the -merge option.
 
-Sat Oct 15 17:42:07 2005 fraggle
+Sat Oct 15 18:42:07 2005 fraggle
 	
 	Mention dehacked banners
 
-Sat Oct 15 17:38:49 2005 fraggle
+Sat Oct 15 18:38:49 2005 fraggle
 	
 	Print startup banners which have been modified by dehacked.
 
-Sat Oct 15 17:09:11 2005 fraggle
+Sat Oct 15 18:09:11 2005 fraggle
 	
 	Add blackbug note
 
-Sat Oct 15 16:58:31 2005 fraggle
+Sat Oct 15 17:58:31 2005 fraggle
 	
 	Fix MIDI music not pausing when using SDL_mixer's native MIDI playback.
 	The SDL_mixer native MIDI code does not pause music properly - use
 	a workaround of setting the volume to 0.
 
-Sat Oct 15 15:59:14 2005 fraggle
+Sat Oct 15 16:59:14 2005 fraggle
 	
 	Map mouse buttons correctly.
 
-Sat Oct 15 15:47:50 2005 fraggle
+Sat Oct 15 16:47:50 2005 fraggle
 	
 	Update NEWS with info about bugs fixed.
 
-Sat Oct 15 15:45:03 2005 fraggle
+Sat Oct 15 16:45:03 2005 fraggle
 	
 	Check the return code from SDL_LockSurface to ensure a surface has been
 	properly locked.  Fixes crash when switching applications while running
 	fullscreen.
 
-Thu Oct 13 23:12:30 2005 fraggle
+Fri Oct 14 00:12:30 2005 fraggle
 	
 	Fix Doom 1 skies
 
-Thu Oct 13 22:23:55 2005 fraggle
+Thu Oct 13 23:23:55 2005 fraggle
 	
 	Fix logic for lost soul bounce
 
-Wed Oct 12 21:52:01 2005 fraggle
+Wed Oct 12 22:52:01 2005 fraggle
 	
 	doomfeatures.h to allow certain features to be disabled in the build
 
-Mon Oct 10 17:02:24 2005 fraggle
+Mon Oct 10 18:02:24 2005 fraggle
 	
 	Update to do list
 
-Sun Oct  9 23:52:28 2005 fraggle
+Mon Oct 10 00:52:28 2005 fraggle
 	
 	Fix DEH_Warning call
 
-Sun Oct  9 21:20:14 2005 fraggle
+Sun Oct  9 22:20:14 2005 fraggle
 	
 	v0.1.0
 
-Sun Oct  9 21:19:41 2005 fraggle
+Sun Oct  9 22:19:41 2005 fraggle
 	
 	Include libtextscreen include in the right place, include deh_main.h
 	in the dist.
 
-Sun Oct  9 20:19:21 2005 fraggle
+Sun Oct  9 21:19:21 2005 fraggle
 	
 	Handle blinking text in ENDOOM lumps properly.
 
-Sun Oct  9 20:06:50 2005 fraggle
+Sun Oct  9 21:06:50 2005 fraggle
 	
 	Check the header of dehacked files and make sure we only load valid
 	dehacked files.
 
-Sun Oct  9 16:42:46 2005 fraggle
+Sun Oct  9 17:42:46 2005 fraggle
 	
 	Cannot do arithmetic on void pointers in standard C
 
-Sun Oct  9 14:34:19 2005 fraggle
+Sun Oct  9 15:34:19 2005 fraggle
 	
 	Fix banner string for ultimate doom
 
-Sun Oct  9 00:25:49 2005 fraggle
+Sun Oct  9 01:25:49 2005 fraggle
 	
 	Improved sprite merging
 
-Sun Oct  9 00:20:24 2005 fraggle
+Sun Oct  9 01:20:24 2005 fraggle
 	
 	Detect registered DOOM banner in dehacked patches
 
-Sat Oct  8 21:02:55 2005 fraggle
+Sat Oct  8 22:02:55 2005 fraggle
 	
 	Allow dehacked substitutions on sprite names
 
-Sat Oct  8 21:01:55 2005 fraggle
+Sat Oct  8 22:01:55 2005 fraggle
 	
 	Change dehacked startup message
 
-Sat Oct  8 20:54:15 2005 fraggle
+Sat Oct  8 21:54:15 2005 fraggle
 	
 	Proper dehacked error/warning framework.  Catch a load more errors.
 
-Sat Oct  8 20:14:38 2005 fraggle
+Sat Oct  8 21:14:38 2005 fraggle
 	
 	Dehacked "Sound" section support
 
-Sat Oct  8 20:14:24 2005 fraggle
+Sat Oct  8 21:14:24 2005 fraggle
 	
 	Add the ability to specify unsupported fields
 
-Sat Oct  8 20:10:51 2005 fraggle
+Sat Oct  8 21:10:51 2005 fraggle
 	
 	Shut up compiler warning
 
-Sat Oct  8 19:52:03 2005 fraggle
+Sat Oct  8 20:52:03 2005 fraggle
 	
 	Update NEWS, ChangeLog
 
-Sat Oct  8 19:33:48 2005 fraggle
+Sat Oct  8 20:33:48 2005 fraggle
 	
 	Allow dehacked patches to override the name of the game via the
 	startup banner.
 
-Sat Oct  8 18:34:12 2005 fraggle
+Sat Oct  8 19:34:12 2005 fraggle
 	
 	Print startup message to stdout, not stderr
 
-Sat Oct  8 18:23:17 2005 fraggle
+Sat Oct  8 19:23:17 2005 fraggle
 	
 	WAD merging code
 
-Sat Oct  8 18:22:46 2005 fraggle
+Sat Oct  8 19:22:46 2005 fraggle
 	
 	Store the cache as part of the lumpinfo_t struct.  Add W_AddFile prototype
 	to header.
 
-Thu Oct  6 19:36:41 2005 fraggle
+Thu Oct  6 20:36:41 2005 fraggle
 	
 	Must use the right no clipping cheat for the right game.
 
-Thu Oct  6 19:32:38 2005 fraggle
+Thu Oct  6 20:32:38 2005 fraggle
 	
 	Allow changing the background flats in finale text screens via dehacked
 
-Tue Oct  4 22:10:32 2005 fraggle
+Tue Oct  4 23:10:32 2005 fraggle
 	
 	Dehacked "Misc" section parser (currently a dummy)
 
-Tue Oct  4 22:04:06 2005 fraggle
+Tue Oct  4 23:04:06 2005 fraggle
 	
 	Parse dehacked "Ammo" sections properly
 
-Tue Oct  4 21:41:42 2005 fraggle
+Tue Oct  4 22:41:42 2005 fraggle
 	
 	Rewrite cheats code.  Add dehacked cheat replacement.
 
-Tue Oct  4 00:41:49 2005 fraggle
+Tue Oct  4 01:41:49 2005 fraggle
 	
 	Move call to dehacked entrypoint to stop crashes
 
-Mon Oct  3 21:39:39 2005 fraggle
+Mon Oct  3 22:39:39 2005 fraggle
 	
 	Dehacked text substitutions
 
-Mon Oct  3 13:21:11 2005 fraggle
+Mon Oct  3 14:21:11 2005 fraggle
 	
 	Weapons mapping code
 
-Mon Oct  3 11:08:16 2005 fraggle
+Mon Oct  3 12:08:16 2005 fraggle
 	
 	Replace end of section functions with NULLs as they arent currently being
 	used for anything.
 
-Mon Oct  3 11:02:08 2005 fraggle
+Mon Oct  3 12:02:08 2005 fraggle
 	
 	Add a weaponinfo_t mapping
 
-Mon Oct  3 10:25:37 2005 fraggle
+Mon Oct  3 11:25:37 2005 fraggle
 	
 	Add mapping code to map out structures and switch thing/frame code to use
 	this.
 
-Mon Oct  3 00:42:45 2005 fraggle
+Mon Oct  3 01:42:45 2005 fraggle
 	
 	Frame numbers are indexed from 0
 
-Sun Oct  2 23:49:01 2005 fraggle
+Mon Oct  3 00:49:01 2005 fraggle
 	
 	The beginnings of dehacked support
 
-Sun Oct  2 20:23:04 2005 fraggle
+Sun Oct  2 21:23:04 2005 fraggle
 	
 	Guard against music lumps containing non-MUS data, document in bugs list
 
-Sun Oct  2 04:23:42 2005 fraggle
+Sun Oct  2 05:23:42 2005 fraggle
 	
 	Update NEWS
 
-Sun Oct  2 04:22:06 2005 fraggle
+Sun Oct  2 05:22:06 2005 fraggle
 	
 	Fix Final Doom automap level name display
 
-Sun Oct  2 04:16:47 2005 fraggle
+Sun Oct  2 05:16:47 2005 fraggle
 	
 	Fixes for Final Doom
 
-Sun Oct  2 03:23:54 2005 fraggle
+Sun Oct  2 04:23:54 2005 fraggle
 	
 	Fix the length of time that ENDOOM is displayed for
 
-Sun Oct  2 03:16:29 2005 fraggle
+Sun Oct  2 04:16:29 2005 fraggle
 	
 	ENDOOM support using text mode emulation
 
-Sun Oct  2 03:03:40 2005 fraggle
+Sun Oct  2 04:16:03 2005 fraggle
+	
+	Text mode emulation code
+
+Sun Oct  2 04:03:40 2005 fraggle
 	
 	Make sure loading disk is only shown if the display is initialised
 
-Sat Oct  1 15:49:32 2005 fraggle
+Sat Oct  1 16:49:32 2005 fraggle
 	
 	automake doesn't recognise .rc files unless there is a rule like this in
 	here.  Store the rule in both forms.
 
-Tue Sep 27 22:33:42 2005 fraggle
+Tue Sep 27 23:33:42 2005 fraggle
 	
 	Always use SDL_Flip to update the screen.  Fixes problems in Windows when
 	running fullscreen, introduced by fixes to the disk icon code.
 
-Tue Sep 27 22:25:10 2005 fraggle
+Tue Sep 27 23:25:10 2005 fraggle
 	
 	Fix .rc -> .o rule
 
-Tue Sep 27 22:23:32 2005 fraggle
+Tue Sep 27 23:24:24 2005 fraggle
+	
+	Add chocolate_doom_icon.c to CVS.  This is kind of bad but saves having
+	to have Python installed
+
+Tue Sep 27 23:23:32 2005 fraggle
 	
 	Don't write converted output file unless everything went through
 	okay.
 
-Tue Sep 27 21:46:53 2005 fraggle
+Tue Sep 27 22:46:53 2005 fraggle
 	
 	0.0.4
 
-Mon Sep 26 21:44:30 2005 fraggle
+Mon Sep 26 22:44:30 2005 fraggle
 	
 	Fix melting crap on startup - oops
 
-Sun Sep 25 00:31:32 2005 fraggle
+Sun Sep 25 01:31:32 2005 fraggle
 	
 	Fix disk icon appearing before palette is set (pink disk!)
 	Cleanup and commenting
 
-Sat Sep 24 23:45:18 2005 fraggle
+Sun Sep 25 00:45:18 2005 fraggle
 	
 	Remove leftover debug code
 
-Sat Sep 24 23:44:49 2005 fraggle
+Sun Sep 25 00:44:49 2005 fraggle
 	
 	Enforce sane screenmultiply values
 
-Sat Sep 24 23:41:07 2005 fraggle
+Sun Sep 25 00:41:07 2005 fraggle
 	
 	Fix "loading" icon for all video modes
 
-Sat Sep 24 23:16:43 2005 fraggle
+Sun Sep 25 00:16:43 2005 fraggle
 	
 	Remove icon border
 
-Sat Sep 24 22:57:58 2005 fraggle
+Sat Sep 24 23:57:58 2005 fraggle
 	
 	Commit uac_dead fix
 
-Sat Sep 24 22:04:03 2005 fraggle
+Sat Sep 24 23:04:03 2005 fraggle
 	
 	Add application icon to running program
 
-Thu Sep 22 21:42:24 2005 fraggle
+Thu Sep 22 22:42:24 2005 fraggle
 	
 	64-bit fixes
 
-Thu Sep 22 13:57:32 2005 fraggle
+Thu Sep 22 14:57:32 2005 fraggle
 	
 	Add some more useful information to the README
 
-Thu Sep 22 13:22:49 2005 fraggle
+Thu Sep 22 14:22:49 2005 fraggle
 	
 	Update NEWS
 
-Thu Sep 22 13:20:49 2005 fraggle
+Thu Sep 22 14:20:49 2005 fraggle
 	
 	Update bugs/todo lists
 
-Thu Sep 22 13:13:47 2005 fraggle
+Thu Sep 22 14:13:47 2005 fraggle
 	
 	Remove external statistics driver support (-statcopy):
 	nonfunctional on modern systems and never used.
 	Fix for systems where sizeof(int) != sizeof(void *)
 
-Thu Sep 22 12:58:46 2005 fraggle
+Thu Sep 22 13:58:46 2005 fraggle
 	
 	Use a new PU_FREE tag to mark free blocks, rather than the 'user' field
 	(avoids using magic numbers to mark allocated blocks with no user)
 
-Tue Sep 20 21:20:16 2005 fraggle
+Tue Sep 20 22:20:16 2005 fraggle
 	
 	Generate chocolate-doom-res.rc with version and product info
 
-Tue Sep 20 20:55:31 2005 fraggle
+Tue Sep 20 21:55:31 2005 fraggle
 	
 	Conditionally build the resource file, dependent on whether windres exists
 
-Tue Sep 20 20:13:55 2005 fraggle
+Tue Sep 20 21:13:55 2005 fraggle
 	
 	Update to do list
 
-Tue Sep 20 20:13:14 2005 fraggle
+Tue Sep 20 21:13:14 2005 fraggle
 	
 	Include icon in exe, rather than the default icon.  Thanks to Joe Kennedy
 	for drawing this icon.
 
-Sat Sep 17 21:17:45 2005 fraggle
+Sat Sep 17 22:17:45 2005 fraggle
 	
 	0.0.3
 
-Sat Sep 17 20:50:46 2005 fraggle
+Sat Sep 17 21:50:46 2005 fraggle
 	
 	Mouse acceleration code to emulate old DOS drivers
 
-Sat Sep 17 20:25:56 2005 fraggle
+Sat Sep 17 21:25:56 2005 fraggle
 	
 	Set the default values for variables in their initialisers.  Remove the
 	"defaultvalue" parameter and associated code from the configuration
 	file parsing code.
 
-Sat Sep 17 20:06:45 2005 fraggle
+Sat Sep 17 21:06:45 2005 fraggle
 	
 	Rewrite configuration loading code; assign a type to each configuration
 	parameter.  Allow float parameters, align all values in the configuration
 	files
 
-Wed Sep 14 22:13:45 2005 fraggle
+Wed Sep 14 23:13:45 2005 fraggle
 	
 	Remove mkinstalldirs (redundant now); include BUGS and TODO in distribution
 
-Wed Sep 14 22:08:29 2005 fraggle
+Wed Sep 14 23:08:29 2005 fraggle
 	
 	Fix startup messages displayed (build a console binary; remove CON
 	redirection code)
 
-Wed Sep 14 21:55:45 2005 fraggle
+Wed Sep 14 22:55:45 2005 fraggle
 	
 	Lock surfaces properly when we have to (fixes crash under Windows 98)
 
-Tue Sep 13 20:18:51 2005 fraggle
+Tue Sep 13 21:18:51 2005 fraggle
 	
 	0.0.2
 
-Sun Sep 11 23:57:07 2005 fraggle
+Mon Sep 12 00:57:07 2005 fraggle
 	
 	Remove temporary MIDI files generated by sound code.
 
-Sun Sep 11 20:53:17 2005 fraggle
+Sun Sep 11 21:53:17 2005 fraggle
 	
 	Fix sounds playing at the wrong volume (too quiet)
 
-Sun Sep 11 20:42:26 2005 fraggle
+Sun Sep 11 21:42:26 2005 fraggle
 	
 	Update NEWS with information about alt-tab bug
 
-Sun Sep 11 20:35:18 2005 fraggle
+Sun Sep 11 21:35:18 2005 fraggle
 	
 	chocolate-doom.cfg
 
-Sun Sep 11 20:25:56 2005 fraggle
+Sun Sep 11 21:25:56 2005 fraggle
 	
 	Second configuration file to allow chocolate doom-specific settings.
 	Adjust some existing command line logic (for graphics settings and
 	novert) to adjust for this.
 
-Sun Sep 11 16:39:29 2005 fraggle
+Sun Sep 11 17:39:29 2005 fraggle
 	
 	Fix declaration of I_Sleep (not I_Delay) and move to right header
 
-Sun Sep 11 16:35:04 2005 fraggle
+Sun Sep 11 17:35:04 2005 fraggle
 	
 	Missing declarations
 
-Thu Sep  8 22:10:40 2005 fraggle
+Thu Sep  8 23:10:40 2005 fraggle
 	
 	Delay calls so we don't use the entire CPU
 
-Thu Sep  8 22:05:17 2005 fraggle
+Thu Sep  8 23:05:17 2005 fraggle
 	
 	Allow alt-tab away while running fullscreen
 
-Thu Sep  8 09:58:00 2005 fraggle
+Thu Sep  8 10:58:00 2005 fraggle
 	
 	MAXINTERCEPTS got converted to INT_MAXERCEPTS accidentally when switching
 	to the ANSI standard limit constants
 
-Thu Sep  8 00:02:12 2005 fraggle
+Thu Sep  8 01:02:12 2005 fraggle
 	
 	Fix description
 
-Thu Sep  8 00:01:50 2005 fraggle
+Thu Sep  8 01:01:50 2005 fraggle
 	
 	Fix switches not changing in Episode 4
 
-Wed Sep  7 22:58:34 2005 fraggle
+Wed Sep  7 23:58:34 2005 fraggle
 	
 	No SIGHUP on Windows
 
-Wed Sep  7 22:55:28 2005 fraggle
+Wed Sep  7 23:55:28 2005 fraggle
 	
 	v0.0.1
 
-Wed Sep  7 22:24:26 2005 fraggle
+Wed Sep  7 23:24:26 2005 fraggle
 	
 	Modify the sound effect caching behaviour: sounds which are not playing
 	are now marked as PU_CACHE; it is otherwise possible to run out of memory.
 
-Wed Sep  7 21:40:28 2005 fraggle
+Wed Sep  7 22:40:28 2005 fraggle
 	
 	Catch signals and exit cleanly
 
-Wed Sep  7 21:40:11 2005 fraggle
+Wed Sep  7 22:40:11 2005 fraggle
 	
 	Remove non-ANSI C headers and functions
 
-Wed Sep  7 21:30:42 2005 fraggle
+Wed Sep  7 22:30:42 2005 fraggle
 	
 	Remove non-ANSI C headers.  Use standard C file I/O functions.
 
-Wed Sep  7 20:44:23 2005 fraggle
+Wed Sep  7 21:44:23 2005 fraggle
 	
 	Fix up names of functions
 	Make the quit button work (pops up the "quit doom?" prompt).
 	Fix focus detection to release the mouse and ignore mouse events
 	when window is not focused.
 
-Wed Sep  7 12:34:47 2005 fraggle
+Wed Sep  7 13:34:47 2005 fraggle
 	
 	Maintain dos-specific options in config file
 
-Tue Sep  6 22:50:09 2005 fraggle
+Tue Sep  6 23:50:09 2005 fraggle
 	
 	Bugs list; update TODO
 
-Tue Sep  6 22:39:43 2005 fraggle
+Tue Sep  6 23:39:43 2005 fraggle
 	
 	Restore -nosound, -nosfx, -nomusic
 
-Tue Sep  6 21:40:28 2005 fraggle
+Tue Sep  6 22:40:28 2005 fraggle
 	
 	Setting music volume
 
-Tue Sep  6 21:15:08 2005 fraggle
+Tue Sep  6 22:15:08 2005 fraggle
 	
 	Silly me - i misread cph's patch and got the logic backwards
 
-Tue Sep  6 21:11:23 2005 fraggle
+Tue Sep  6 22:11:23 2005 fraggle
 	
 	Working music!
 
-Tue Sep  6 21:06:45 2005 fraggle
+Tue Sep  6 22:06:45 2005 fraggle
 	
 	Newer versions of mmus2mid.c,h from prboom
 
-Mon Sep  5 22:50:55 2005 fraggle
+Mon Sep  5 23:50:55 2005 fraggle
 	
 	Add mmus2mid code from prboom.  Use 'void *' for music handles.  Pass
 	length of data when registering music.
 
-Mon Sep  5 21:03:43 2005 fraggle
+Mon Sep  5 22:03:43 2005 fraggle
 	
 	16-bit sound
 
-Mon Sep  5 20:32:18 2005 fraggle
+Mon Sep  5 21:32:18 2005 fraggle
 	
 	Use the system-nonspecific sound code to assign the channel number used
 	by SDL.  Remove handle tagging stuff.
 
-Sun Sep  4 23:18:30 2005 fraggle
+Mon Sep  5 00:18:30 2005 fraggle
 	
 	Remove dead code.  Cope with the screen not having width == pitch.  Lock
 	the SDL screen surface properly. Rewrite 2x scaling code.
 
-Sun Sep  4 18:44:22 2005 fraggle
+Sun Sep  4 19:44:22 2005 fraggle
 	
 	shut up compiler warnings
 
-Sun Sep  4 17:33:43 2005 fraggle
+Sun Sep  4 18:33:43 2005 fraggle
 	
 	Support demos recorded with cph's modified "v1.91" doom exe - which
 	contain higher resolution angleturn
 
-Sun Sep  4 15:59:45 2005 fraggle
+Sun Sep  4 16:59:45 2005 fraggle
 	
 	'novert' command line option to disable vertical mouse movement
 
-Sun Sep  4 15:23:29 2005 fraggle
+Sun Sep  4 16:23:29 2005 fraggle
 	
 	Support the old "joyb_speed 31" hack to allow autorun
 
-Sun Sep  4 14:55:53 2005 fraggle
+Sun Sep  4 15:55:53 2005 fraggle
 	
 	Doom v1.9 doesnt allow cheats in nightmare mode!
 
-Sun Sep  4 14:51:19 2005 fraggle
+Sun Sep  4 15:51:19 2005 fraggle
 	
 	Display the correct quit messages according to which game is being played.
 	Remove "language" variable (do this through gettext, if ever)
 
-Sun Sep  4 14:34:20 2005 fraggle
+Sun Sep  4 15:34:20 2005 fraggle
 	
 	These things have been done
 
-Thu Sep  1 00:01:36 2005 fraggle
+Thu Sep  1 01:01:36 2005 fraggle
 	
 	-nograbmouse option
 
-Wed Aug 31 23:58:28 2005 fraggle
+Thu Sep  1 00:58:28 2005 fraggle
 	
 	smarter mouse grabbing for windowed mode
 
-Wed Aug 31 21:50:57 2005 fraggle
+Wed Aug 31 22:50:57 2005 fraggle
 	
 	Nicer banner showing the game type (once we know).  Remove dead code.
 	Find the config file properly.
 
-Wed Aug 31 21:35:42 2005 fraggle
+Wed Aug 31 22:35:42 2005 fraggle
 	
 	Display the game name in the title bar.  Move game start code to later
 	in initialisation because of the IWAD detection changes.
 
-Wed Aug 31 21:24:24 2005 fraggle
+Wed Aug 31 22:24:24 2005 fraggle
 	
 	Remove the last traces of NORMALUNIX
 
-Wed Aug 31 21:21:18 2005 fraggle
+Wed Aug 31 22:21:18 2005 fraggle
 	
 	Better IWAD detection and identification. Support '-iwad' to specify
 	the IWAD to use.
 
-Tue Aug 30 22:15:11 2005 fraggle
+Tue Aug 30 23:15:11 2005 fraggle
 	
 	More Windows fixes
 
-Tue Aug 30 22:11:10 2005 fraggle
+Tue Aug 30 23:11:10 2005 fraggle
 	
 	Windows fixes
 
-Mon Aug 29 22:00:04 2005 fraggle
+Mon Aug 29 23:00:04 2005 fraggle
 	
 	Add missing header to fix build
 
-Mon Aug 29 21:57:40 2005 fraggle
+Mon Aug 29 22:57:40 2005 fraggle
 	
 	Include autotools directory in dist
 
-Tue Aug 23 09:54:23 2005 fraggle
+Tue Aug 23 10:54:23 2005 fraggle
 	
 	Demo sync problem with teleports and final doom
 
-Fri Aug 19 21:55:51 2005 fraggle
+Fri Aug 19 22:55:51 2005 fraggle
 	
 	Make sounds louder.  Use the correct maximum of 15 when doing sound
 	calculations.
 
-Fri Aug 12 16:54:15 2005 fraggle
+Fri Aug 12 17:54:15 2005 fraggle
 	
 	Port network code to use SDL_net
 
-Wed Aug 10 08:45:35 2005 fraggle
+Wed Aug 10 09:45:35 2005 fraggle
 	
 	Remove "if (french)" stuff, FRENCH define, detect french wad automatically
 
-Mon Aug  8 15:19:47 2005 fraggle
+Mon Aug  8 16:19:47 2005 fraggle
 	
 	More TODOs/update
 
-Sun Aug  7 20:01:00 2005 fraggle
+Sun Aug  7 21:01:00 2005 fraggle
 	
 	Clear the screen on startup
 
-Sun Aug  7 19:21:01 2005 fraggle
+Sun Aug  7 20:21:01 2005 fraggle
 	
 	Cycle round sound channels to stop reuse and conflicts of channel
 	numbers.  Add debug to detect when incorrect sound handles are used.
 
-Sun Aug  7 03:09:33 2005 fraggle
+Sun Aug  7 04:09:33 2005 fraggle
 	
 	Fix gamma correction
 
-Sun Aug  7 02:59:23 2005 fraggle
+Sun Aug  7 03:59:23 2005 fraggle
 	
 	Clear disk image when loading at startup
 
-Sat Aug  6 18:37:46 2005 fraggle
+Sat Aug  6 19:37:46 2005 fraggle
 	
 	Fix low resolution mode
 
-Sat Aug  6 17:30:30 2005 fraggle
+Sat Aug  6 18:30:30 2005 fraggle
 	
 	Only change palette on screen updates
 
-Sat Aug  6 17:05:51 2005 fraggle
+Sat Aug  6 18:05:51 2005 fraggle
 	
 	Remove debug messages, send error messages to stderr
 	Fix overflow when playing large sound files
 
-Fri Aug  5 17:53:07 2005 fraggle
+Fri Aug  5 18:53:07 2005 fraggle
 	
 	More sensible defaults
 
-Thu Aug  4 22:55:07 2005 fraggle
+Thu Aug  4 23:55:07 2005 fraggle
 	
 	Use DOOM_VERSION to define the Doom version (don't conflict with
 	automake's config.h).  Display GPL message instead of anti-piracy
 	messages.
 
-Thu Aug  4 22:23:07 2005 fraggle
+Thu Aug  4 23:23:07 2005 fraggle
 	
 	Use zone memory function.  Add command line options
 
-Thu Aug  4 21:48:32 2005 fraggle
+Thu Aug  4 22:48:32 2005 fraggle
 	
 	Turn on compiler optimisation and warning options
 	Add SDL_mixer sound code
 
-Thu Aug  4 19:54:56 2005 fraggle
+Thu Aug  4 20:54:56 2005 fraggle
 	
 	Use keysym value rather than unicode value (fixes problems with shift
 	key)
 
-Thu Aug  4 18:42:15 2005 fraggle
+Thu Aug  4 19:42:15 2005 fraggle
 	
 	Silence compiler warnings
 
-Thu Aug  4 18:40:22 2005 fraggle
+Thu Aug  4 19:40:22 2005 fraggle
 	
 	Use zone memory functions instead of alloca/malloc/free
 
-Thu Aug  4 01:15:10 2005 fraggle
+Thu Aug  4 02:15:10 2005 fraggle
 	
 	Fix clev cheat
 
-Thu Aug  4 01:14:37 2005 fraggle
+Thu Aug  4 02:14:37 2005 fraggle
 	
 	Begin/EndRead now in i_video.c
 
-Thu Aug  4 01:13:46 2005 fraggle
+Thu Aug  4 02:13:46 2005 fraggle
 	
 	Loading disk
 
-Wed Aug  3 22:20:09 2005 fraggle
+Wed Aug  3 23:20:09 2005 fraggle
 	
 	Display FPS on quit
 
-Wed Aug  3 22:19:52 2005 fraggle
+Wed Aug  3 23:19:52 2005 fraggle
 	
 	Set some flags to fix palette and improve performance
 
-Wed Aug  3 21:58:02 2005 fraggle
+Wed Aug  3 22:58:02 2005 fraggle
 	
 	Working scale*2
 
-Mon Jul 25 20:50:55 2005 fraggle
+Mon Jul 25 21:50:55 2005 fraggle
 	
 	mouse
 
-Mon Jul 25 20:41:58 2005 fraggle
+Mon Jul 25 21:41:58 2005 fraggle
 	
 	Port timer code to SDL
 
-Sun Jul 24 03:07:24 2005 fraggle
+Sun Jul 24 04:07:24 2005 fraggle
 	
 	Update to do list
 
-Sun Jul 24 02:14:03 2005 fraggle
+Sun Jul 24 03:14:03 2005 fraggle
 	
 	Move to SDL for graphics.
 	Translate key scancodes to correct internal format when reading
 	settings from config file - backwards compatible with config files
 	for original exes
 
-Sat Jul 23 23:07:04 2005 fraggle
+Sun Jul 24 00:07:04 2005 fraggle
 	
 	Add back previously removed printfs as '.'s for startup progress bar
 
-Sat Jul 23 21:42:52 2005 fraggle
+Sat Jul 23 22:42:52 2005 fraggle
 	
 	Add missing null to end of sprite names list
 
-Sat Jul 23 21:32:47 2005 fraggle
+Sat Jul 23 22:32:47 2005 fraggle
 	
 	Add missing errno.h, fix crash on startup when no IWAD present
 
-Sat Jul 23 19:42:56 2005 fraggle
+Sat Jul 23 20:42:56 2005 fraggle
 	
 	Startup messages as in the DOS exes
 
-Sat Jul 23 19:31:49 2005 fraggle
+Sat Jul 23 20:31:49 2005 fraggle
 	
 	Update TODO list
 
-Sat Jul 23 19:29:45 2005 fraggle
+Sat Jul 23 20:29:45 2005 fraggle
 	
 	Put version number back to 1.9
 
-Sat Jul 23 19:17:11 2005 fraggle
+Sat Jul 23 20:17:11 2005 fraggle
 	
 	Use ANSI-standard limit constants.  Remove LINUX define.
 
-Sat Jul 23 18:56:07 2005 fraggle
+Sat Jul 23 19:56:07 2005 fraggle
 	
 	Remove unneccessary pragmas
 
-Sat Jul 23 18:54:30 2005 fraggle
+Sat Jul 23 19:54:30 2005 fraggle
 	
 	Fix quit prompt not displayed properly
 
-Sat Jul 23 18:54:06 2005 fraggle
+Sat Jul 23 19:54:06 2005 fraggle
 	
 	Use standard C functions for WAD code
 
-Sat Jul 23 18:50:34 2005 fraggle
+Sat Jul 23 19:50:34 2005 fraggle
 	
 	Use standard C file functions for WAD code
 
-Sat Jul 23 17:46:19 2005 fraggle
+Sat Jul 23 18:46:19 2005 fraggle
 	
 	Import bouncing lost soul fix from prboom
 
-Sat Jul 23 17:27:04 2005 fraggle
+Sat Jul 23 18:27:04 2005 fraggle
 	
 	Stop crash on shutdown
 
-Sat Jul 23 17:21:35 2005 fraggle
+Sat Jul 23 18:21:35 2005 fraggle
 	
 	Remove step table (unused, adds dependency on pow function)
 
-Sat Jul 23 16:44:55 2005 fraggle
+Sat Jul 23 18:20:33 2005 fraggle
+	
+	Autotools build system
+
+Sat Jul 23 17:54:24 2005 fraggle
+	
+	Standard distribution files
+
+Sat Jul 23 17:46:05 2005 fraggle
+	
+	To do list
+
+Sat Jul 23 17:44:55 2005 fraggle
 	
 	Update copyright to GNU GPL
 
-Sat Jul 23 16:20:44 2005 fraggle
+Sat Jul 23 17:20:44 2005 fraggle
 	
 	Initial revision
 
-Sat Jul 23 16:19:44 2005 fraggle
+Sat Jul 23 17:19:44 2005 fraggle
 	
 	Initial revision
 
