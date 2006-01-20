@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 295 2006-01-14 02:06:48Z fraggle $
+// $Id: d_main.c 302 2006-01-20 00:58:17Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.39.2.1  2006/01/20 00:58:17  fraggle
+// Remove new networking code from stable version
+//
 // Revision 1.39  2006/01/14 02:06:48  fraggle
 // Include the game version in the settings structure.
 //
@@ -173,7 +176,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 295 2006-01-14 02:06:48Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 302 2006-01-20 00:58:17Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -226,7 +229,6 @@ static const char rcsid[] = "$Id: d_main.c 295 2006-01-14 02:06:48Z fraggle $";
 #include "wi_stuff.h"
 #include "st_stuff.h"
 #include "am_map.h"
-#include "net_client.h"
 
 #include "p_setup.h"
 #include "r_local.h"
@@ -1588,9 +1590,6 @@ void D_DoomMain (void)
 
     printf ("I_Init: Setting up machine state.\n");
     I_Init ();
-
-    printf ("NET_Init: Initialise network subsystem.\n");
-    NET_Init ();
 
     printf ("D_CheckNetGame: Checking network game status.\n");
     D_CheckNetGame ();

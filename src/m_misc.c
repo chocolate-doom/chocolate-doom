@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_misc.c 280 2006-01-10 22:14:13Z fraggle $
+// $Id: m_misc.c 302 2006-01-20 00:58:17Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -23,6 +23,9 @@
 //
 //
 // $Log$
+// Revision 1.17.2.1  2006/01/20 00:58:17  fraggle
+// Remove new networking code from stable version
+//
 // Revision 1.17  2006/01/10 22:14:13  fraggle
 // Shut up compiler warnings
 //
@@ -98,7 +101,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_misc.c 280 2006-01-10 22:14:13Z fraggle $";
+rcsid[] = "$Id: m_misc.c 302 2006-01-20 00:58:17Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -120,7 +123,6 @@ rcsid[] = "$Id: m_misc.c 280 2006-01-10 22:14:13Z fraggle $";
 
 #include "m_swap.h"
 #include "m_argv.h"
-#include "net_client.h"
 
 #include "w_wad.h"
 
@@ -391,7 +393,6 @@ static default_t extra_defaults_list[] =
     {"novert",             &novert},
     {"mouse_acceleration", &mouse_acceleration,   DEFAULT_FLOAT},
     {"show_endoom",        &show_endoom},
-    {"player_name",        &net_player_name,      DEFAULT_STRING},
 };
 
 static default_collection_t extra_defaults =
