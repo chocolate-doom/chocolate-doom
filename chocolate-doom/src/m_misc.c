@@ -23,6 +23,9 @@
 //
 //
 // $Log$
+// Revision 1.17.2.2  2006/01/20 19:46:14  fraggle
+// Fix crash due to buffer not allocated large enough
+//
 // Revision 1.17.2.1  2006/01/20 00:58:17  fraggle
 // Remove new networking code from stable version
 //
@@ -632,7 +635,7 @@ void M_LoadDefaults (void)
     }
     else
     {
-        doom_defaults.filename = malloc(strlen(configdir) + 10);
+        doom_defaults.filename = malloc(strlen(configdir) + 20);
         sprintf(doom_defaults.filename, "%sdefault.cfg", configdir);
     }
 
