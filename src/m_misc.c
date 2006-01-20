@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_misc.c 280 2006-01-10 22:14:13Z fraggle $
+// $Id: m_misc.c 309 2006-01-20 21:04:59Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -23,6 +23,9 @@
 //
 //
 // $Log$
+// Revision 1.18  2006/01/20 21:04:59  fraggle
+// Import differences from stable branch.
+//
 // Revision 1.17  2006/01/10 22:14:13  fraggle
 // Shut up compiler warnings
 //
@@ -98,7 +101,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_misc.c 280 2006-01-10 22:14:13Z fraggle $";
+rcsid[] = "$Id: m_misc.c 309 2006-01-20 21:04:59Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -631,7 +634,7 @@ void M_LoadDefaults (void)
     }
     else
     {
-        doom_defaults.filename = malloc(strlen(configdir) + 10);
+        doom_defaults.filename = malloc(strlen(configdir) + 20);
         sprintf(doom_defaults.filename, "%sdefault.cfg", configdir);
     }
 
