@@ -1,12 +1,13 @@
 
+0.1.3 (2006-01-20):
+
     Imported the spechit overrun emulation code from prboom-plus.  Thanks to
          Andrey Budko for this.
     New show_endoom option in the chocolate-doom.cfg config file allows
          the ENDOOM screen to be disabled.
+    Chocolate Doom is now savegame-compatible with Vanilla Doom.
 
     Fixes for big endian machines (thanks locust)
-    Savegame fixes: we now load and save to the Vanilla Doom savegame
-        format.
     Fixed the behavior of the dehacked maximum health setting.
     Fix the "-skill 0" hack to play without any items (thanks to Janizdreg
         for pointing out that this was nonfunctional)

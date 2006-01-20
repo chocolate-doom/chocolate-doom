@@ -23,6 +23,9 @@
 //
 //
 // $Log$
+// Revision 1.18  2006/01/20 21:04:59  fraggle
+// Import differences from stable branch.
+//
 // Revision 1.17  2006/01/10 22:14:13  fraggle
 // Shut up compiler warnings
 //
@@ -631,7 +634,7 @@ void M_LoadDefaults (void)
     }
     else
     {
-        doom_defaults.filename = malloc(strlen(configdir) + 10);
+        doom_defaults.filename = malloc(strlen(configdir) + 20);
         sprintf(doom_defaults.filename, "%sdefault.cfg", configdir);
     }
 
