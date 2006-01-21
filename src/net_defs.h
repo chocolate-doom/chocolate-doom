@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_defs.h 295 2006-01-14 02:06:48Z fraggle $
+// $Id: net_defs.h 312 2006-01-21 14:16:49Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.10  2006/01/21 14:16:49  fraggle
+// Add first game data sending code. Check the client version when connecting.
+//
 // Revision 1.9  2006/01/14 02:06:48  fraggle
 // Include the game version in the settings structure.
 //
@@ -118,6 +121,10 @@ struct _net_addr_s
     net_module_t *module;
     void *handle;
 };
+
+// number of ticcmds to store in send queues
+
+#define NET_TICCMD_QUEUE_SIZE 64
 
 // magic number sent when connecting to check this is a valid client
 

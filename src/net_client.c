@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 295 2006-01-14 02:06:48Z fraggle $
+// $Id: net_client.c 312 2006-01-21 14:16:49Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.22  2006/01/21 14:16:49  fraggle
+// Add first game data sending code. Check the client version when connecting.
+//
 // Revision 1.21  2006/01/14 02:06:48  fraggle
 // Include the game version in the settings structure.
 //
@@ -101,6 +104,7 @@
 
 #include <stdlib.h>
 
+#include "config.h"
 #include "doomdef.h"
 #include "doomstat.h"
 #include "i_system.h"
@@ -159,6 +163,14 @@ boolean net_waiting_for_start = false;
 
 char *net_player_name = NULL;
 
+// The last ticcmd constructed
+
+static ticcmd_t last_ticcmd;
+
+// Buffer of ticcmd diffs being sent to the server
+
+static net_ticdiff_t ticcmd_send_queue[NET_TICCMD_QUEUE_SIZE];
+
 // Shut down the client code, etc.  Invoked after a disconnect.
 
 static void NET_CL_Shutdown(void)
@@ -189,12 +201,76 @@ void NET_CL_StartGame(void)
     settings.skill = startskill;
     settings.gameversion = gameversion;
 
+    // Start from a ticcmd of all zeros
+
+    memset(&last_ticcmd, 0, sizeof(ticcmd_t));
+    
     // Send packet
 
     packet = NET_Conn_NewReliable(&client_connection, 
                                   NET_PACKET_TYPE_GAMESTART);
 
     NET_WriteSettings(packet, &settings);
+}
+
+// Add a new ticcmd to the send queue
+
+void NET_CL_SendTiccmd(ticcmd_t *ticcmd, int maketic)
+{
+    net_ticdiff_t diff;
+    net_packet_t *packet;
+    int start, end;
+    int i;
+    
+    // Calculate the difference to the last ticcmd
+
+    NET_TiccmdDiff(&last_ticcmd, ticcmd, &diff);
+    
+    // Store in the send queue
+
+    ticcmd_send_queue[maketic % NET_TICCMD_QUEUE_SIZE] = diff;
+
+    last_ticcmd = *ticcmd;
+
+    // We need to generate a new packet containing the new ticcmd to send
+    // to the server.  Work out which ticcmds we are sending.
+
+//    start = maketic - extratics;
+
+    if (start < 0)
+        start = 0;
+
+    end = maketic;
+    
+    // Build a new packet to send to the server
+
+    packet = NET_NewPacket(512);
+    NET_WriteInt16(packet, NET_PACKET_TYPE_GAMEDATA);
+
+    // Write the start tic and number of tics.  Send only the low byte
+    // of start - it can be inferred by the server.
+
+    NET_WriteInt8(packet, start & 0xff);
+    NET_WriteInt8(packet, end - start + 1);
+
+    // TODO: Include ticcmd construction time for sync.
+
+    // Add the tics.
+
+    for (i=start; i<=end; ++i)
+    {
+        NET_WriteTiccmdDiff(packet, 
+                            &ticcmd_send_queue[i % NET_TICCMD_QUEUE_SIZE],
+                            false);
+    }
+    
+    // Send the packet
+
+    NET_Conn_SendPacket(&client_connection, packet);
+    
+    // All done!
+
+    NET_FreePacket(packet);
 }
 
 // data received while we are waiting for the game to start
@@ -388,6 +464,7 @@ static void NET_CL_SendSYN(void)
     NET_WriteInt16(packet, gamemode);
     NET_WriteInt16(packet, gamemission);
     NET_WriteString(packet, net_player_name);
+    NET_WriteString(packet, PACKAGE_STRING);
     NET_Conn_SendPacket(&client_connection, packet);
     NET_FreePacket(packet);
 }
