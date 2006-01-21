@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.12  2006/01/21 14:15:29  fraggle
+// Remove SAVESTRINGSIZE (now defined in p_saveg.h)
+//
 // Revision 1.11  2005/10/29 21:38:55  fraggle
 // Fix help screen orderings and skull positions to make Chocolate Doom
 // behave exactly like the original executables.
@@ -148,8 +151,6 @@ int			messageLastMenuActive;
 boolean			messageNeedsInput;
 
 void    (*messageRoutine)(int response);
-
-#define SAVESTRINGSIZE 	24
 
 char gammamsg[5][26] =
 {
