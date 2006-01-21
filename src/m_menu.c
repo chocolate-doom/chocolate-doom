@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_menu.c 225 2005-10-29 21:38:55Z fraggle $
+// $Id: m_menu.c 311 2006-01-21 14:15:29Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.12  2006/01/21 14:15:29  fraggle
+// Remove SAVESTRINGSIZE (now defined in p_saveg.h)
+//
 // Revision 1.11  2005/10/29 21:38:55  fraggle
 // Fix help screen orderings and skull positions to make Chocolate Doom
 // behave exactly like the original executables.
@@ -69,7 +72,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_menu.c 225 2005-10-29 21:38:55Z fraggle $";
+rcsid[] = "$Id: m_menu.c 311 2006-01-21 14:15:29Z fraggle $";
 
 #include <stdlib.h>
 #include <ctype.h>
@@ -148,8 +151,6 @@ int			messageLastMenuActive;
 boolean			messageNeedsInput;
 
 void    (*messageRoutine)(int response);
-
-#define SAVESTRINGSIZE 	24
 
 char gammamsg[5][26] =
 {
