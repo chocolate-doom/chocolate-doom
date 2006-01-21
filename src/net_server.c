@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.22  2006/01/21 14:16:49  fraggle
+// Add first game data sending code. Check the client version when connecting.
+//
 // Revision 1.21  2006/01/12 02:18:59  fraggle
 // Only start new games when in the waiting-for-start state.
 //
@@ -104,6 +107,8 @@
 
 #include <stdlib.h>
 #include <string.h>
+
+#include "config.h"
 
 #include "doomdef.h"
 #include "doomstat.h"
@@ -268,6 +273,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
     unsigned int magic;
     unsigned int cl_gamemode, cl_gamemission;
     char *player_name;
+    char *client_version;
     int i;
 
     // read the magic number
@@ -297,6 +303,13 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
     player_name = NET_ReadString(packet);
 
     if (player_name == NULL)
+    {
+        return;
+    }
+
+    client_version = NET_ReadString(packet);
+
+    if (client_version == NULL)
     {
         return;
     }
@@ -355,6 +368,12 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         if (num_clients >= MAXPLAYERS)
         {
             NET_SV_SendReject(addr, "Server is full!");
+            return;
+        }
+
+        if (strcmp(client_version, PACKAGE_STRING) != 0)
+        {
+            NET_SV_SendReject(addr, "Different versions cannot play a network game!");
             return;
         }
 
