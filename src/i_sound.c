@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_sound.c 280 2006-01-10 22:14:13Z fraggle $
+// $Id: i_sound.c 317 2006-01-22 21:20:13Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.25.2.1  2006/01/22 21:20:13  fraggle
+// Dehacked string replacements for sound and music lump names
+//
 // Revision 1.25  2006/01/10 22:14:13  fraggle
 // Shut up compiler warnings
 //
@@ -122,7 +125,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_sound.c 280 2006-01-10 22:14:13Z fraggle $";
+rcsid[] = "$Id: i_sound.c 317 2006-01-22 21:20:13Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -138,6 +141,7 @@ rcsid[] = "$Id: i_sound.c 280 2006-01-10 22:14:13Z fraggle $";
 
 #include "i_system.h"
 #include "i_sound.h"
+#include "deh_main.h"
 #include "m_argv.h"
 #include "m_misc.h"
 #include "m_swap.h"
@@ -353,7 +357,7 @@ void I_SetSfxVolume(int volume)
 int I_GetSfxLumpNum(sfxinfo_t* sfx)
 {
     char namebuf[9];
-    sprintf(namebuf, "ds%s", sfx->name);
+    sprintf(namebuf, "ds%s", DEH_String(sfx->name));
     return W_GetNumForName(namebuf);
 }
 //
