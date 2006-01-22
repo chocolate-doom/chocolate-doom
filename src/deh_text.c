@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2006/01/22 21:17:56  fraggle
+// Catch calls to DEH_String before DEH_Init is called
+//
 // Revision 1.4  2005/10/08 20:54:16  fraggle
 // Proper dehacked error/warning framework.  Catch a load more errors.
 //
@@ -57,7 +60,7 @@ typedef struct
 
 static deh_substitution_t **hash_table;
 static int hash_table_entries;
-static int hash_table_length;
+static int hash_table_length = -1;
 
 // This is the algorithm used by glib
 
@@ -81,6 +84,11 @@ static unsigned int strhash(char *s)
 char *DEH_String(char *s)
 {
     int entry;
+
+    // Fallback if we have not initialised the hash table yet
+
+    if (hash_table_length < 0)
+	return s;
 
     entry = strhash(s) % hash_table_length;
 
