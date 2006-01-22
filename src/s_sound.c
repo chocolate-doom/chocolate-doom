@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: s_sound.c 271 2006-01-08 17:51:53Z fraggle $
+// $Id: s_sound.c 318 2006-01-22 21:20:20Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.11  2006/01/22 21:20:20  fraggle
+// Dehacked string replacements for sound and music lump names
+//
 // Revision 1.10  2006/01/08 17:51:53  fraggle
 // Add S_MusicPlaying function to query if music is still playing.
 //
@@ -64,7 +67,7 @@
 
 
 static const char
-rcsid[] = "$Id: s_sound.c 271 2006-01-08 17:51:53Z fraggle $";
+rcsid[] = "$Id: s_sound.c 318 2006-01-22 21:20:20Z fraggle $";
 
 
 
@@ -76,6 +79,7 @@ rcsid[] = "$Id: s_sound.c 271 2006-01-08 17:51:53Z fraggle $";
 #include "sounds.h"
 #include "s_sound.h"
 
+#include "deh_main.h"
 #include "z_zone.h"
 #include "m_random.h"
 #include "w_wad.h"
@@ -698,7 +702,7 @@ S_ChangeMusic
     // get lumpnum if neccessary
     if (!music->lumpnum)
     {
-	sprintf(namebuf, "d_%s", music->name);
+	sprintf(namebuf, "d_%s", DEH_String(music->name));
 	music->lumpnum = W_GetNumForName(namebuf);
     }
 
