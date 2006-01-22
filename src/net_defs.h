@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.11  2006/01/22 22:29:42  fraggle
+// Periodically request the time from clients to estimate their offset to
+// the server time.
+//
 // Revision 1.10  2006/01/21 14:16:49  fraggle
 // Add first game data sending code. Check the client version when connecting.
 //
@@ -148,6 +152,8 @@ typedef enum
     NET_PACKET_TYPE_DISCONNECT,
     NET_PACKET_TYPE_DISCONNECT_ACK,
     NET_PACKET_TYPE_RELIABLE_ACK,
+    NET_PACKET_TYPE_TIME_REQ,
+    NET_PACKET_TYPE_TIME_RESP,
 } net_packet_type_t;
 
 typedef struct 

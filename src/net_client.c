@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.23  2006/01/22 22:29:42  fraggle
+// Periodically request the time from clients to estimate their offset to
+// the server time.
+//
 // Revision 1.22  2006/01/21 14:16:49  fraggle
 // Add first game data sending code. Check the client version when connecting.
 //
@@ -373,6 +377,28 @@ static void NET_CL_ParseGameStart(net_packet_t *packet)
     autostart = true;
 }
 
+static void NET_CL_ParseTimeRequest(net_packet_t *packet)
+{
+    net_packet_t *reply;
+    unsigned int seq;
+    
+    // Received a request from the server for our current time.
+
+    if (!NET_ReadInt32(packet, &seq))
+    {
+	return;
+    }
+    
+    // Send a response with our current time.
+
+    reply = NET_NewPacket(10);
+    NET_WriteInt16(reply, NET_PACKET_TYPE_TIME_RESP);
+    NET_WriteInt32(reply, seq);
+    NET_WriteInt32(reply, I_GetTimeMS());
+    NET_Conn_SendPacket(&client_connection, reply);
+    NET_FreePacket(reply);
+}
+
 // parse a received packet
 
 static void NET_CL_ParsePacket(net_packet_t *packet)
@@ -402,6 +428,10 @@ static void NET_CL_ParsePacket(net_packet_t *packet)
 
             case NET_PACKET_TYPE_GAMEDATA:
                 break;
+
+	    case NET_PACKET_TYPE_TIME_REQ:
+		NET_CL_ParseTimeRequest(packet);
+		break;
 
             default:
                 break;
