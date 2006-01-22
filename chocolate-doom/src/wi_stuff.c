@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2006/01/22 21:21:02  fraggle
+// Dehacked string replacements for intermission screen graphic lumps
+//
 // Revision 1.3  2005/08/10 08:45:35  fraggle
 // Remove "if (french)" stuff, FRENCH define, detect french wad automatically
 //
@@ -47,6 +50,7 @@ rcsid[] = "$Id$";
 #include "m_random.h"
 #include "m_swap.h"
 
+#include "deh_main.h"
 #include "i_system.h"
 
 #include "w_wad.h"
@@ -1559,14 +1563,14 @@ void WI_loadData(void)
     anim_t*	a;
 
     if (gamemode == commercial)
-	strcpy(name, "INTERPIC");
+	strcpy(name, DEH_String("INTERPIC"));
     else 
-	sprintf(name, "WIMAP%d", wbs->epsd);
+	sprintf(name, DEH_String("WIMAP%d"), wbs->epsd);
     
     if ( gamemode == retail )
     {
       if (wbs->epsd == 3)
-	strcpy(name,"INTERPIC");
+	strcpy(name, DEH_String("INTERPIC"));
     }
 
     // background
@@ -1592,7 +1596,7 @@ void WI_loadData(void)
 				       PU_STATIC, 0);
 	for (i=0 ; i<NUMCMAPS ; i++)
 	{								
-	    sprintf(name, "CWILV%2.2d", i);
+	    sprintf(name, DEH_String("CWILV%2.2d"), i);
 	    lnames[i] = W_CacheLumpName(name, PU_STATIC);
 	}					
     }
@@ -1602,18 +1606,18 @@ void WI_loadData(void)
 				       PU_STATIC, 0);
 	for (i=0 ; i<NUMMAPS ; i++)
 	{
-	    sprintf(name, "WILV%d%d", wbs->epsd, i);
+	    sprintf(name, DEH_String("WILV%d%d"), wbs->epsd, i);
 	    lnames[i] = W_CacheLumpName(name, PU_STATIC);
 	}
 
 	// you are here
-	yah[0] = W_CacheLumpName("WIURH0", PU_STATIC);
+	yah[0] = W_CacheLumpName(DEH_String("WIURH0"), PU_STATIC);
 
 	// you are here (alt.)
-	yah[1] = W_CacheLumpName("WIURH1", PU_STATIC);
+	yah[1] = W_CacheLumpName(DEH_String("WIURH1"), PU_STATIC);
 
 	// splat
-	splat = W_CacheLumpName("WISPLAT", PU_STATIC); 
+	splat = W_CacheLumpName(DEH_String("WISPLAT"), PU_STATIC); 
 	
 	if (wbs->epsd < 3)
 	{
@@ -1626,7 +1630,8 @@ void WI_loadData(void)
 		    if (wbs->epsd != 1 || j != 8) 
 		    {
 			// animations
-			sprintf(name, "WIA%d%.2d%.2d", wbs->epsd, j, i);  
+			sprintf(name, DEH_String("WIA%d%.2d%.2d"), 
+				      wbs->epsd, j, i);  
 			a->p[i] = W_CacheLumpName(name, PU_STATIC);
 		    }
 		    else
@@ -1640,83 +1645,83 @@ void WI_loadData(void)
     }
 
     // More hacks on minus sign.
-    wiminus = W_CacheLumpName("WIMINUS", PU_STATIC); 
+    wiminus = W_CacheLumpName(DEH_String("WIMINUS"), PU_STATIC); 
 
     for (i=0;i<10;i++)
     {
 	 // numbers 0-9
-	sprintf(name, "WINUM%d", i);     
+	sprintf(name, DEH_String("WINUM%d"), i);     
 	num[i] = W_CacheLumpName(name, PU_STATIC);
     }
 
     // percent sign
-    percent = W_CacheLumpName("WIPCNT", PU_STATIC);
+    percent = W_CacheLumpName(DEH_String("WIPCNT"), PU_STATIC);
 
     // "finished"
-    finished = W_CacheLumpName("WIF", PU_STATIC);
+    finished = W_CacheLumpName(DEH_String("WIF"), PU_STATIC);
 
     // "entering"
-    entering = W_CacheLumpName("WIENTER", PU_STATIC);
+    entering = W_CacheLumpName(DEH_String("WIENTER"), PU_STATIC);
 
     // "kills"
-    kills = W_CacheLumpName("WIOSTK", PU_STATIC);   
+    kills = W_CacheLumpName(DEH_String("WIOSTK"), PU_STATIC);   
 
     // "scrt"
-    secret = W_CacheLumpName("WIOSTS", PU_STATIC);
+    secret = W_CacheLumpName(DEH_String("WIOSTS"), PU_STATIC);
 
      // "secret"
-    sp_secret = W_CacheLumpName("WISCRT2", PU_STATIC);
+    sp_secret = W_CacheLumpName(DEH_String("WISCRT2"), PU_STATIC);
 
     // french wad uses WIOBJ (?)
-    if (W_CheckNumForName("WIOBJ") >= 0)
+    if (W_CheckNumForName(DEH_String("WIOBJ")) >= 0)
     {
     	// "items"
     	if (netgame && !deathmatch)
-            items = W_CacheLumpName("WIOBJ", PU_STATIC);    
+            items = W_CacheLumpName(DEH_String("WIOBJ"), PU_STATIC);    
     	else
-            items = W_CacheLumpName("WIOSTI", PU_STATIC);
+            items = W_CacheLumpName(DEH_String("WIOSTI"), PU_STATIC);
     } else {
-	items = W_CacheLumpName("WIOSTI", PU_STATIC);
+	items = W_CacheLumpName(DEH_String("WIOSTI"), PU_STATIC);
     }
 
     // "frgs"
-    frags = W_CacheLumpName("WIFRGS", PU_STATIC);    
+    frags = W_CacheLumpName(DEH_String("WIFRGS"), PU_STATIC);    
 
     // ":"
-    colon = W_CacheLumpName("WICOLON", PU_STATIC); 
+    colon = W_CacheLumpName(DEH_String("WICOLON"), PU_STATIC); 
 
     // "time"
-    time = W_CacheLumpName("WITIME", PU_STATIC);   
+    time = W_CacheLumpName(DEH_String("WITIME"), PU_STATIC);   
 
     // "sucks"
-    sucks = W_CacheLumpName("WISUCKS", PU_STATIC);  
+    sucks = W_CacheLumpName(DEH_String("WISUCKS"), PU_STATIC);  
 
     // "par"
-    par = W_CacheLumpName("WIPAR", PU_STATIC);   
+    par = W_CacheLumpName(DEH_String("WIPAR"), PU_STATIC);   
 
     // "killers" (vertical)
-    killers = W_CacheLumpName("WIKILRS", PU_STATIC);
+    killers = W_CacheLumpName(DEH_String("WIKILRS"), PU_STATIC);
 
     // "victims" (horiz)
-    victims = W_CacheLumpName("WIVCTMS", PU_STATIC);
+    victims = W_CacheLumpName(DEH_String("WIVCTMS"), PU_STATIC);
 
     // "total"
-    total = W_CacheLumpName("WIMSTT", PU_STATIC);   
+    total = W_CacheLumpName(DEH_String("WIMSTT"), PU_STATIC);   
 
     // your face
-    star = W_CacheLumpName("STFST01", PU_STATIC);
+    star = W_CacheLumpName(DEH_String("STFST01"), PU_STATIC);
 
     // dead face
-    bstar = W_CacheLumpName("STFDEAD0", PU_STATIC);    
+    bstar = W_CacheLumpName(DEH_String("STFDEAD0"), PU_STATIC);    
 
     for (i=0 ; i<MAXPLAYERS ; i++)
     {
 	// "1,2,3,4"
-	sprintf(name, "STPB%d", i);      
+	sprintf(name, DEH_String("STPB%d"), i);      
 	p[i] = W_CacheLumpName(name, PU_STATIC);
 
 	// "1,2,3,4"
-	sprintf(name, "WIBP%d", i+1);     
+	sprintf(name, DEH_String("WIBP%d"), i+1);     
 	bp[i] = W_CacheLumpName(name, PU_STATIC);
     }
 
