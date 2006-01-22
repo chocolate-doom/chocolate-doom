@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.13  2006/01/22 21:22:35  fraggle
+// Dehacked string replacements for menu graphic lump names
+//
 // Revision 1.12  2006/01/21 14:15:29  fraggle
 // Remove SAVESTRINGSIZE (now defined in p_saveg.h)
 //
@@ -839,6 +842,8 @@ void M_DrawReadThis1(void)
 
             break;
     }
+
+    lumpname = DEH_String(lumpname);
     
     V_DrawPatchDirect (0, 0, 0, W_CacheLumpName(lumpname, PU_CACHE));
 
@@ -1886,8 +1891,13 @@ void M_Drawer (void)
     for (i=0;i<max;i++)
     {
 	if (currentMenu->menuitems[i].name[0])
-	    V_DrawPatchDirect (x,y,0,
-			       W_CacheLumpName(currentMenu->menuitems[i].name ,PU_CACHE));
+	{
+	    char *lumpname;
+
+	    lumpname = DEH_String(currentMenu->menuitems[i].name);
+
+	    V_DrawPatchDirect (x,y,0, W_CacheLumpName(lumpname, PU_CACHE));
+	}
 	y += LINEHEIGHT;
     }
 
