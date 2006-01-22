@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.39.2.2  2006/01/22 21:19:00  fraggle
+// Dehacked string replacements for startup messages, IWAD names, demo names and backgrounds
+//
 // Revision 1.39.2.1  2006/01/20 00:58:17  fraggle
 // Remove new networking code from stable version
 //
@@ -652,29 +655,29 @@ void D_DoAdvanceDemo (void)
 	else
 	    pagetic = 170;
 	gamestate = GS_DEMOSCREEN;
-	pagename = "TITLEPIC";
+	pagename = DEH_String("TITLEPIC");
 	if ( gamemode == commercial )
 	  S_StartMusic(mus_dm2ttl);
 	else
 	  S_StartMusic (mus_intro);
 	break;
       case 1:
-	G_DeferedPlayDemo ("demo1");
+	G_DeferedPlayDemo(DEH_String("demo1"));
 	break;
       case 2:
 	pagetic = 200;
 	gamestate = GS_DEMOSCREEN;
-	pagename = "CREDIT";
+	pagename = DEH_String("CREDIT");
 	break;
       case 3:
-	G_DeferedPlayDemo ("demo2");
+	G_DeferedPlayDemo(DEH_String("demo2"));
 	break;
       case 4:
 	gamestate = GS_DEMOSCREEN;
 	if ( gamemode == commercial)
 	{
 	    pagetic = 35 * 11;
-	    pagename = "TITLEPIC";
+	    pagename = DEH_String("TITLEPIC");
 	    S_StartMusic(mus_dm2ttl);
 	}
 	else
@@ -682,17 +685,17 @@ void D_DoAdvanceDemo (void)
 	    pagetic = 200;
 
 	    if ( gamemode == retail )
-	      pagename = "CREDIT";
+	      pagename = DEH_String("CREDIT");
 	    else
-	      pagename = "HELP2";
+	      pagename = DEH_String("HELP2");
 	}
 	break;
       case 5:
-	G_DeferedPlayDemo ("demo3");
+	G_DeferedPlayDemo(DEH_String("demo3"));
 	break;
         // THE DEFINITIVE DOOM Special Edition demo
       case 6:
-	G_DeferedPlayDemo ("demo4");
+	G_DeferedPlayDemo(DEH_String("demo4"));
 	break;
     }
 }
@@ -777,9 +780,14 @@ static int SearchDirectoryForIWAD(char *dir)
 
     for (i=0; i<sizeof(iwads) / sizeof(*iwads); ++i) 
     {
-        char *filename = malloc(strlen(dir) + strlen(iwads[i].name) + 3);
+        char *filename; 
+	char *iwadname;
 
-        sprintf(filename, "%s/%s", dir, iwads[i].name);
+	iwadname = DEH_String(iwads[i].name);
+	
+	filename = malloc(strlen(dir) + strlen(iwadname) + 3);
+
+        sprintf(filename, "%s/%s", dir, iwadname);
 
         if (FileExists(filename))
         {
@@ -809,13 +817,17 @@ static void IdentifyIWADByName(char *name)
     
     for (i=0; i<sizeof(iwads) / sizeof(*iwads); ++i)
     {
-        if (strlen(name) < strlen(iwads[i].name))
+	char *iwadname;
+
+	iwadname = DEH_String(iwads[i].name);
+
+        if (strlen(name) < strlen(iwadname))
             continue;
 
         // Check if it ends in this IWAD name.
 
-        if (!strcasecmp(name + strlen(name) - strlen(iwads[i].name), 
-                        iwads[i].name))
+        if (!strcasecmp(name + strlen(name) - strlen(iwadname), 
+                        iwadname))
         {
             gamemission = iwads[i].mission;
             break;
@@ -1357,7 +1369,7 @@ void D_DoomMain (void)
     PrintBanner(PACKAGE_STRING);
 
     if (devparm)
-	printf(D_DEVSTR);
+	printf(DEH_String(D_DEVSTR));
     
     // find which dir to use for config files
 
@@ -1376,7 +1388,7 @@ void D_DoomMain (void)
 	    scale = 10;
 	if (scale > 400)
 	    scale = 400;
-	printf ("turbo scale: %i%%\n",scale);
+	printf (DEH_String("turbo scale: %i%%\n"),scale);
 	forwardmove[0] = forwardmove[0]*scale/100;
 	forwardmove[1] = forwardmove[1]*scale/100;
 	sidemove[0] = sidemove[0]*scale/100;
@@ -1436,17 +1448,17 @@ void D_DoomMain (void)
     {
 	sprintf (file,"%s.lmp", myargv[p+1]);
 	D_AddFile (file);
-	printf("Playing demo %s.lmp.\n",myargv[p+1]);
+	printf(DEH_String("Playing demo %s.lmp.\n"),myargv[p+1]);
     }
     
     // init subsystems
-    printf ("V_Init: allocate screens.\n");
+    printf (DEH_String("V_Init: allocate screens.\n"));
     V_Init ();
 
-    printf ("M_LoadDefaults: Load system defaults.\n");
+    printf (DEH_String("M_LoadDefaults: Load system defaults.\n"));
     M_LoadDefaults ();              // load before initing other systems
 
-    printf ("Z_Init: Init zone memory allocation daemon. \n");
+    printf (DEH_String("Z_Init: Init zone memory allocation daemon. \n"));
     Z_Init ();
 
 #ifdef FEATURE_DEHACKED
@@ -1454,7 +1466,7 @@ void D_DoomMain (void)
     DEH_Init();
 #endif
 
-    printf ("W_Init: Init WADfiles.\n");
+    printf (DEH_String("W_Init: Init WADfiles.\n"));
     W_InitMultipleFiles (wadfiles);
 
 #ifdef FEATURE_WAD_MERGE
@@ -1487,15 +1499,15 @@ void D_DoomMain (void)
 	int i;
 	
 	if ( gamemode == shareware)
-	    I_Error("\nYou cannot -file with the shareware "
-		    "version. Register!");
+	    I_Error(DEH_String("\nYou cannot -file with the shareware "
+			       "version. Register!"));
 
 	// Check for fake IWAD with right name,
 	// but w/o all the lumps of the registered version. 
 	if (gamemode == registered)
 	    for (i = 0;i < 23; i++)
 		if (W_CheckNumForName(name[i])<0)
-		    I_Error("\nThis is not the registered version.");
+		    I_Error(DEH_String("\nThis is not the registered version."));
     }
     
     // get skill / episode / map from parms
@@ -1525,7 +1537,7 @@ void D_DoomMain (void)
     {
 	int     time;
 	time = atoi(myargv[p+1]);
-	printf("Levels will end after %d minute",time);
+	printf(DEH_String("Levels will end after %d minute"),time);
 	if (time>1)
 	    printf("s");
 	printf(".\n");
@@ -1533,7 +1545,8 @@ void D_DoomMain (void)
 
     p = M_CheckParm ("-avg");
     if (p && p < myargc-1 && deathmatch)
-	printf("Austin Virtual Gaming: Levels will end after 20 minutes\n");
+	printf(DEH_String("Austin Virtual Gaming: Levels will end "
+			  "after 20 minutes\n"));
 
     p = M_CheckParm ("-warp");
     if (p && p < myargc-1)
@@ -1579,30 +1592,30 @@ void D_DoomMain (void)
 
     PrintDehackedBanners();
 
-    printf ("M_Init: Init miscellaneous info.\n");
+    printf (DEH_String("M_Init: Init miscellaneous info.\n"));
     M_Init ();
 
-    printf ("R_Init: Init DOOM refresh daemon - ");
+    printf (DEH_String("R_Init: Init DOOM refresh daemon - "));
     R_Init ();
 
-    printf ("\nP_Init: Init Playloop state.\n");
+    printf (DEH_String("\nP_Init: Init Playloop state.\n"));
     P_Init ();
 
-    printf ("I_Init: Setting up machine state.\n");
+    printf (DEH_String("I_Init: Setting up machine state.\n"));
     I_Init ();
 
-    printf ("D_CheckNetGame: Checking network game status.\n");
+    printf (DEH_String("D_CheckNetGame: Checking network game status.\n"));
     D_CheckNetGame ();
 
     PrintGameVersion();
 
-    printf ("S_Init: Setting up sound.\n");
+    printf (DEH_String("S_Init: Setting up sound.\n"));
     S_Init (snd_SfxVolume /* *8 */, snd_MusicVolume /* *8*/ );
 
-    printf ("HU_Init: Setting up heads up display.\n");
+    printf (DEH_String("HU_Init: Setting up heads up display.\n"));
     HU_Init ();
 
-    printf ("ST_Init: Init status bar.\n");
+    printf (DEH_String("ST_Init: Init status bar.\n"));
     ST_Init ();
 
     // start the apropriate game based on parms
