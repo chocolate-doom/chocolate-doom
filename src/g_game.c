@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: g_game.c 300 2006-01-19 18:46:24Z fraggle $
+// $Id: g_game.c 325 2006-01-22 23:36:21Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.20.2.1  2006/01/22 23:36:21  fraggle
+// Allow changing the sky texture names via dehacked patches
+//
 // Revision 1.20  2006/01/19 18:46:24  fraggle
 // Move savegame header read/write code into p_saveg.c
 //
@@ -105,7 +108,7 @@
 
 
 static const char
-rcsid[] = "$Id: g_game.c 300 2006-01-19 18:46:24Z fraggle $";
+rcsid[] = "$Id: g_game.c 325 2006-01-22 23:36:21Z fraggle $";
 
 #include <string.h>
 #include <stdlib.h>
@@ -552,6 +555,7 @@ extern  gamestate_t     wipegamestate;
  
 void G_DoLoadLevel (void) 
 { 
+    char *skytexturename;
     int             i; 
 
     // Set the sky map.
@@ -559,37 +563,42 @@ void G_DoLoadLevel (void)
     //  a flat. The data is in the WAD only because
     //  we look for an actual index, instead of simply
     //  setting one.
-    skyflatnum = R_FlatNumForName ( SKYFLATNAME );
+    skyflatnum = R_FlatNumForName(DEH_String(SKYFLATNAME));
 
     // DOOM determines the sky texture to be used
     // depending on the current episode, and the game version.
 
-    if ( gamemode == commercial)
+    if (gamemode == commercial)
     {
-	skytexture = R_TextureNumForName ("SKY3");
+	skytexturename = "SKY3";
 	if (gamemap < 12)
-	    skytexture = R_TextureNumForName ("SKY1");
+	    skytexturename = "SKY1";
 	else
 	    if (gamemap < 21)
-		skytexture = R_TextureNumForName ("SKY2");
+		skytexturename = "SKY2";
     }
     else
+    {
 	switch (gameepisode) 
 	{ 
+	  default:
 	  case 1: 
-	    skytexture = R_TextureNumForName ("SKY1"); 
+	    skytexturename = "SKY1"; 
 	    break; 
 	  case 2: 
-	    skytexture = R_TextureNumForName ("SKY2"); 
+	    skytexturename = "SKY2"; 
 	    break; 
 	  case 3: 
-	    skytexture = R_TextureNumForName ("SKY3"); 
+	    skytexturename = "SKY3"; 
 	    break; 
 	  case 4:	// Special Edition sky
-	    skytexture = R_TextureNumForName ("SKY4");
+	    skytexturename = "SKY4";
 	    break;
 	} 
- 
+    }
+
+    skytexture = R_TextureNumForName(skytexturename);
+
     levelstarttic = gametic;        // for time calculation
     
     if (wipegamestate == GS_LEVEL) 
