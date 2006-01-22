@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.h 18 2005-07-23 18:56:07Z fraggle $
+// $Id: d_net.h 323 2006-01-22 22:29:42Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -131,6 +131,7 @@ typedef struct
 } doomcom_t;
 
 
+extern int extratics;
 
 // Create any new ticcmds and broadcast to other players.
 void NetUpdate (void);
@@ -148,6 +149,10 @@ void TryRunTics (void);
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.4  2006/01/22 22:29:42  fraggle
+// Periodically request the time from clients to estimate their offset to
+// the server time.
+//
 // Revision 1.3  2005/07/23 18:56:07  fraggle
 // Remove unneccessary pragmas
 //

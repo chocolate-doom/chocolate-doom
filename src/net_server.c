@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 312 2006-01-21 14:16:49Z fraggle $
+// $Id: net_server.c 323 2006-01-22 22:29:42Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.23  2006/01/22 22:29:42  fraggle
+// Periodically request the time from clients to estimate their offset to
+// the server time.
+//
 // Revision 1.22  2006/01/21 14:16:49  fraggle
 // Add first game data sending code. Check the client version when connecting.
 //
@@ -141,6 +145,12 @@ typedef struct
     net_connection_t connection;
     int last_send_time;
     char *name;
+
+    // time query variables
+
+    int last_time_req_time;
+    int time_req_seq;
+    signed int time_offset;
 } net_client_t;
 
 static net_server_state_t server_state;
@@ -401,6 +411,9 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         client->addr = addr;
         client->last_send_time = -1;
         client->name = strdup(player_name);
+	client->last_time_req_time = -1;
+	client->time_req_seq = 0;
+	client->time_offset = 0;
     }
 
     if (client->connection.state == NET_CONN_STATE_WAITING_ACK)
@@ -460,6 +473,60 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
     }
 }
 
+static void NET_SV_ParseTimeResponse(net_packet_t *packet, net_client_t *client)
+{
+    unsigned int seq;
+    unsigned int remote_time;
+    unsigned int rtt;
+    unsigned int nowtime;
+    signed int time_offset;
+
+    if (!NET_ReadInt32(packet, &seq)
+     || !NET_ReadInt32(packet, &remote_time))
+    {
+	return;
+    }
+
+    if (seq != client->time_req_seq)
+    {
+	// Not the time response we are expecting
+
+	return;
+    }
+
+    // Calculate the round trip time
+
+    nowtime = I_GetTimeMS();
+    rtt = nowtime - client->last_time_req_time;
+
+    // Adjust the remote time based on the round trip time
+
+    remote_time += rtt / 2;
+
+    // Calculate the offset to our own time
+
+    time_offset = remote_time - nowtime;
+
+    // Update the time offset
+
+    if (client->time_req_seq == 1)
+    {
+	// This is the first reply, so this is the only sample we have
+	// so far
+	
+	client->time_offset = time_offset;
+    }
+    else
+    {
+	// Apply a low level filter to the time offset adjustments
+	
+	client->time_offset = ((client->time_offset * 3) / 4)
+	                    + (time_offset / 4);
+    }
+
+    printf("client %p time offset: %i(%i)->%i\n", client, time_offset, rtt, client->time_offset);
+}
+
 // Process a packet received by the server
 
 static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
@@ -501,6 +568,9 @@ static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
             case NET_PACKET_TYPE_GAMESTART:
                 NET_SV_ParseGameStart(packet, client);
                 break;
+	    case NET_PACKET_TYPE_TIME_RESP:
+		NET_SV_ParseTimeResponse(packet, client);
+		break;
             default:
                 // unknown packet type
 
@@ -566,6 +636,25 @@ static void NET_SV_SendWaitingData(net_client_t *client)
     NET_FreePacket(packet);
 }
 
+static void NET_SV_SendTimeRequest(net_client_t *client)
+{
+    net_packet_t *packet;
+
+    ++client->time_req_seq;
+    
+    // Transmit the request packet
+
+    packet = NET_NewPacket(10);
+    NET_WriteInt16(packet, NET_PACKET_TYPE_TIME_REQ);
+    NET_WriteInt32(packet, client->time_req_seq);
+    NET_Conn_SendPacket(&client->connection, packet);
+    NET_FreePacket(packet);
+
+    // Save the time we send the request
+
+    client->last_time_req_time = I_GetTimeMS();
+}
+
 // Perform any needed action on a client
 
 static void NET_SV_RunClient(net_client_t *client)
@@ -604,6 +693,18 @@ static void NET_SV_RunClient(net_client_t *client)
             NET_SV_SendWaitingData(client);
             client->last_send_time = I_GetTimeMS();
         }
+    }
+
+    if (client->last_time_req_time < 0)
+    {
+	client->last_time_req_time = I_GetTimeMS() - 5000;
+    }
+
+    if (I_GetTimeMS() - client->last_time_req_time > 10000)
+    {
+	// Query the clients' times once every ten seconds.
+	
+	NET_SV_SendTimeRequest(client);
     }
 }
 
