@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2006/01/23 00:07:56  fraggle
+// More dehacked text substitutions for finale text names
+//
 // Revision 1.5  2005/10/06 19:32:38  fraggle
 // Allow changing the background flats in finale text screens via dehacked
 //
@@ -565,7 +568,7 @@ void F_CastDrawer (void)
     patch_t*		patch;
     
     // erase the entire screen to a background
-    V_DrawPatch (0,0,0, W_CacheLumpName ("BOSSBACK", PU_CACHE));
+    V_DrawPatch (0,0,0, W_CacheLumpName (DEH_String("BOSSBACK"), PU_CACHE));
 
     F_CastPrint (DEH_String(castorder[castnum].name));
     
@@ -631,8 +634,8 @@ void F_BunnyScroll (void)
     int		stage;
     static int	laststage;
 		
-    p1 = W_CacheLumpName ("PFUB2", PU_LEVEL);
-    p2 = W_CacheLumpName ("PFUB1", PU_LEVEL);
+    p1 = W_CacheLumpName (DEH_String("PFUB2"), PU_LEVEL);
+    p2 = W_CacheLumpName (DEH_String("PFUB1"), PU_LEVEL);
 
     V_MarkRect (0, 0, SCREENWIDTH, SCREENHEIGHT);
 	
@@ -655,7 +658,8 @@ void F_BunnyScroll (void)
     if (finalecount < 1180)
     {
 	V_DrawPatch ((SCREENWIDTH-13*8)/2,
-		     (SCREENHEIGHT-8*8)/2,0, W_CacheLumpName ("END0",PU_CACHE));
+		     (SCREENHEIGHT-8*8)/2,0, 
+		     W_CacheLumpName (DEH_String("END0"),PU_CACHE));
 	laststage = 0;
 	return;
     }
@@ -669,8 +673,9 @@ void F_BunnyScroll (void)
 	laststage = stage;
     }
 	
-    sprintf (name,"END%i",stage);
-    V_DrawPatch ((SCREENWIDTH-13*8)/2, (SCREENHEIGHT-8*8)/2,0, W_CacheLumpName (name,PU_CACHE));
+    sprintf (name, DEH_String("END%i"), stage);
+    V_DrawPatch ((SCREENWIDTH-13*8)/2, (SCREENHEIGHT-8*8)/2,0, 
+	         W_CacheLumpName (name,PU_CACHE));
 }
 
 
@@ -694,21 +699,21 @@ void F_Drawer (void)
 	  case 1:
 	    if ( gamemode == retail )
 	      V_DrawPatch (0,0,0,
-			 W_CacheLumpName("CREDIT",PU_CACHE));
+			 W_CacheLumpName(DEH_String("CREDIT"),PU_CACHE));
 	    else
 	      V_DrawPatch (0,0,0,
-			 W_CacheLumpName("HELP2",PU_CACHE));
+			 W_CacheLumpName(DEH_String("HELP2"),PU_CACHE));
 	    break;
 	  case 2:
 	    V_DrawPatch(0,0,0,
-			W_CacheLumpName("VICTORY2",PU_CACHE));
+			W_CacheLumpName(DEH_String("VICTORY2"),PU_CACHE));
 	    break;
 	  case 3:
 	    F_BunnyScroll ();
 	    break;
 	  case 4:
 	    V_DrawPatch (0,0,0,
-			 W_CacheLumpName("ENDPIC",PU_CACHE));
+			 W_CacheLumpName(DEH_String("ENDPIC"),PU_CACHE));
 	    break;
 	}
     }
