@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_swap.h 255 2006-01-05 02:48:03Z fraggle $
+// $Id: m_swap.h 340 2006-01-23 21:56:18Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -31,6 +31,7 @@
 #define __M_SWAP__
 
 
+#include "config.h"
 
 
 // Endianess handling.
@@ -52,6 +53,9 @@ long	SwapLONG(long);
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.6  2006/01/23 21:56:18  fraggle
+// Include the config header so that endianness is dealt with correctly
+//
 // Revision 1.5  2006/01/05 02:48:03  fraggle
 // Fixes for big endian machines (thanks locust)
 //
