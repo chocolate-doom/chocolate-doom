@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.22  2006/01/23 00:12:25  fraggle
+// Fix dehacked sky replacement
+//
 // Revision 1.21  2006/01/22 23:33:32  fraggle
 // Allow changing the sky texture names via dehacked patches
 //
@@ -596,6 +599,8 @@ void G_DoLoadLevel (void)
 	    break;
 	} 
     }
+
+    skytexturename = DEH_String(skytexturename);
 
     skytexture = R_TextureNumForName(skytexturename);
 
