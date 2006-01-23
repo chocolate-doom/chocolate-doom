@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_sound.c 317 2006-01-22 21:20:13Z fraggle $
+// $Id: i_sound.c 339 2006-01-23 01:40:37Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.25.2.2  2006/01/23 01:40:37  fraggle
+// Fix bug when expanding large sound effects with odd sample rates
+//
 // Revision 1.25.2.1  2006/01/22 21:20:13  fraggle
 // Dehacked string replacements for sound and music lump names
 //
@@ -125,7 +128,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_sound.c 317 2006-01-22 21:20:13Z fraggle $";
+rcsid[] = "$Id: i_sound.c 339 2006-01-23 01:40:37Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -191,6 +194,7 @@ static void ExpandSoundData(byte *data, int samplerate, int length,
 {
     byte *expanded = (byte *) destination->abuf;
     int expanded_length;
+    int expand_ratio;
     int i;
 
     if (samplerate == 11025)
@@ -232,13 +236,14 @@ static void ExpandSoundData(byte *data, int samplerate, int length,
         // number of samples in the converted sound
 
         expanded_length = (length * 22050) / samplerate;
+        expand_ratio = (length << 8) / expanded_length;
 
         for (i=0; i<expanded_length; ++i)
         {
             Uint16 sample;
             int src;
 
-            src = (i * length) / expanded_length;
+            src = (i * expand_ratio) >> 8;
 
             sample = data[src] | (data[src] << 8);
             sample -= 32768;
