@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.13  2006/01/23 00:37:14  fraggle
+// Make the network waiting screen not thrash the CPU so much.
+//
 // Revision 1.12  2006/01/14 00:27:16  fraggle
 // Set the window caption and title
 //
@@ -168,14 +171,22 @@ static void DrawScreen(void)
 
 void NET_WaitForStart(void)
 {
+    int last_draw_time;
+    
     TXT_Init();
     I_SetWindowCaption();
     I_SetWindowIcon();
 
+    last_draw_time = -1;
+
     while (net_waiting_for_start)
     {
-        ProcessEvents();
-        DrawScreen();
+	if (I_GetTimeMS() > last_draw_time + 50)
+	{
+	    ProcessEvents();
+            DrawScreen();
+	    last_draw_time = I_GetTimeMS();
+	}
 
         NET_CL_Run();
         NET_SV_Run();
@@ -185,7 +196,7 @@ void NET_WaitForStart(void)
             I_Error("Disconnected from server");
         }
 
-        I_Sleep(50);
+        I_Sleep(1);
     }
     
     TXT_Shutdown();
