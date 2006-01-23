@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.39.2.3  2006/01/23 00:47:22  fraggle
+// Rearrange the order of startup code to allow replacing the IWAD filename via dehacked
+//
 // Revision 1.39.2.2  2006/01/22 21:19:00  fraggle
 // Dehacked string replacements for startup messages, IWAD names, demo names and backgrounds
 //
@@ -1350,6 +1353,18 @@ void D_DoomMain (void)
 
     FindResponseFile ();
 	
+    // print banner
+
+    PrintBanner(PACKAGE_STRING);
+
+    printf (DEH_String("Z_Init: Init zone memory allocation daemon. \n"));
+    Z_Init ();
+
+#ifdef FEATURE_DEHACKED
+    printf("DEH_Init: Init Dehacked support.\n");
+    DEH_Init();
+#endif
+
     FindIWAD ();
 	
     setbuf (stdout, NULL);
@@ -1363,10 +1378,6 @@ void D_DoomMain (void)
 	deathmatch = 2;
     else if (M_CheckParm ("-deathmatch"))
 	deathmatch = 1;
-
-    // print banner
-
-    PrintBanner(PACKAGE_STRING);
 
     if (devparm)
 	printf(DEH_String(D_DEVSTR));
@@ -1457,14 +1468,6 @@ void D_DoomMain (void)
 
     printf (DEH_String("M_LoadDefaults: Load system defaults.\n"));
     M_LoadDefaults ();              // load before initing other systems
-
-    printf (DEH_String("Z_Init: Init zone memory allocation daemon. \n"));
-    Z_Init ();
-
-#ifdef FEATURE_DEHACKED
-    printf("DEH_Init: Init Dehacked support.\n");
-    DEH_Init();
-#endif
 
     printf (DEH_String("W_Init: Init WADfiles.\n"));
     W_InitMultipleFiles (wadfiles);
