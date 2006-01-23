@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: g_game.c 325 2006-01-22 23:36:21Z fraggle $
+// $Id: g_game.c 333 2006-01-23 00:12:36Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.20.2.2  2006/01/23 00:12:36  fraggle
+// Fix dehacked sky replacement
+//
 // Revision 1.20.2.1  2006/01/22 23:36:21  fraggle
 // Allow changing the sky texture names via dehacked patches
 //
@@ -108,7 +111,7 @@
 
 
 static const char
-rcsid[] = "$Id: g_game.c 325 2006-01-22 23:36:21Z fraggle $";
+rcsid[] = "$Id: g_game.c 333 2006-01-23 00:12:36Z fraggle $";
 
 #include <string.h>
 #include <stdlib.h>
@@ -596,6 +599,8 @@ void G_DoLoadLevel (void)
 	    break;
 	} 
     }
+
+    skytexturename = DEH_String(skytexturename);
 
     skytexture = R_TextureNumForName(skytexturename);
 
