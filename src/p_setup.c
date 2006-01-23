@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_setup.c 19 2005-07-23 19:17:11Z fraggle $
+// $Id: p_setup.c 334 2006-01-23 00:17:43Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2006/01/23 00:17:43  fraggle
+// Allow changing the names of level lump names via dehacked.
+//
 // Revision 1.3  2005/07/23 19:17:11  fraggle
 // Use ANSI-standard limit constants.  Remove LINUX define.
 //
@@ -39,7 +42,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_setup.c 19 2005-07-23 19:17:11Z fraggle $";
+rcsid[] = "$Id: p_setup.c 334 2006-01-23 00:17:43Z fraggle $";
 
 
 #include <math.h>
@@ -644,9 +647,9 @@ P_SetupLevel
     if ( gamemode == commercial)
     {
 	if (map<10)
-	    sprintf (lumpname,"map0%i", map);
+	    sprintf (lumpname, DEH_String("map0%i"), map);
 	else
-	    sprintf (lumpname,"map%i", map);
+	    sprintf (lumpname, DEH_String("map%i"), map);
     }
     else
     {
