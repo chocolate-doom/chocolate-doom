@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2006/01/24 01:46:08  fraggle
+// More endianness fixes
+//
 // Revision 1.4  2006/01/05 02:48:03  fraggle
 // Fixes for big endian machines (thanks locust)
 //
@@ -47,8 +50,7 @@ rcsid[] = "$Id$";
 #include "m_swap.h"
 
 
-// Not needed with big endian.
-#ifndef WORDS_BIGENDIAN
+#ifdef WORDS_BIGENDIAN
 
 // Swap 16bit, that is, MSB and LSB byte.
 unsigned short SwapSHORT(unsigned short x)
@@ -58,7 +60,7 @@ unsigned short SwapSHORT(unsigned short x)
 }
 
 // Swapping 32bit.
-unsigned long SwapLONG( unsigned long x)
+unsigned int SwapLONG( unsigned int x)
 {
     return
 	(x>>24)
