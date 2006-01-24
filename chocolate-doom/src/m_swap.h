@@ -37,9 +37,9 @@
 // WAD files are stored little endian.
 #ifdef WORDS_BIGENDIAN
 short	SwapSHORT(short);
-long	SwapLONG(long);
+int	SwapLONG(int);
 #define SHORT(x)	((short)SwapSHORT((unsigned short) (x)))
-#define LONG(x)         ((long)SwapLONG((unsigned long) (x)))
+#define LONG(x)         ((int)SwapLONG((unsigned int) (x)))
 #else
 #define SHORT(x)	(x)
 #define LONG(x)         (x)
@@ -52,6 +52,9 @@ long	SwapLONG(long);
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.5.2.2  2006/01/24 01:47:30  fraggle
+// More endianness fixes
+//
 // Revision 1.5.2.1  2006/01/23 21:56:19  fraggle
 // Include the config header so that endianness is dealt with correctly
 //

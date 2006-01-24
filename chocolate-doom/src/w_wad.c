@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.9.2.1  2006/01/24 01:47:30  fraggle
+// More endianness fixes
+//
 // Revision 1.9  2006/01/10 22:14:13  fraggle
 // Shut up compiler warnings
 //
@@ -204,7 +207,7 @@ void W_AddFile (char *filename)
 	// single lump file
 	fileinfo = Z_Malloc(sizeof(filelump_t), PU_STATIC, 0);
 	fileinfo->filepos = 0;
-	fileinfo->size = LONG(filelength(handle));
+	fileinfo->size = filelength(handle);
 	ExtractFileBase (filename, fileinfo->name);
 	numlumps++;
     }
