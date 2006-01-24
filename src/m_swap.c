@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_swap.c 255 2006-01-05 02:48:03Z fraggle $
+// $Id: m_swap.c 343 2006-01-24 01:47:30Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4.2.1  2006/01/24 01:47:30  fraggle
+// More endianness fixes
+//
 // Revision 1.4  2006/01/05 02:48:03  fraggle
 // Fixes for big endian machines (thanks locust)
 //
@@ -41,14 +44,13 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_swap.c 255 2006-01-05 02:48:03Z fraggle $";
+rcsid[] = "$Id: m_swap.c 343 2006-01-24 01:47:30Z fraggle $";
 
 
 #include "m_swap.h"
 
 
-// Not needed with big endian.
-#ifndef WORDS_BIGENDIAN
+#ifdef WORDS_BIGENDIAN
 
 // Swap 16bit, that is, MSB and LSB byte.
 unsigned short SwapSHORT(unsigned short x)
@@ -58,7 +60,7 @@ unsigned short SwapSHORT(unsigned short x)
 }
 
 // Swapping 32bit.
-unsigned long SwapLONG( unsigned long x)
+unsigned int SwapLONG( unsigned int x)
 {
     return
 	(x>>24)

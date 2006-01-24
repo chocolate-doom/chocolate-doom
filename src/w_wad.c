@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: w_wad.c 280 2006-01-10 22:14:13Z fraggle $
+// $Id: w_wad.c 343 2006-01-24 01:47:30Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.9.2.1  2006/01/24 01:47:30  fraggle
+// More endianness fixes
+//
 // Revision 1.9  2006/01/10 22:14:13  fraggle
 // Shut up compiler warnings
 //
@@ -58,7 +61,7 @@
 
 
 static const char
-rcsid[] = "$Id: w_wad.c 280 2006-01-10 22:14:13Z fraggle $";
+rcsid[] = "$Id: w_wad.c 343 2006-01-24 01:47:30Z fraggle $";
 
 
 #include <ctype.h>
@@ -204,7 +207,7 @@ void W_AddFile (char *filename)
 	// single lump file
 	fileinfo = Z_Malloc(sizeof(filelump_t), PU_STATIC, 0);
 	fileinfo->filepos = 0;
-	fileinfo->size = LONG(filelength(handle));
+	fileinfo->size = filelength(handle);
 	ExtractFileBase (filename, fileinfo->name);
 	numlumps++;
     }
