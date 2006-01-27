@@ -23,6 +23,9 @@
 //
 //
 // $Log$
+// Revision 1.3.2.2  2006/01/27 18:21:39  fraggle
+// Fix compiler warning due to missing include
+//
 // Revision 1.3.2.1  2006/01/27 18:18:46  fraggle
 // dehacked replacements for switch texture names
 //
@@ -46,6 +49,7 @@ rcsid[] = "$Id$";
 
 
 #include "i_system.h"
+#include "deh_main.h"
 #include "doomdef.h"
 #include "p_local.h"
 
