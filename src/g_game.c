@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: g_game.c 332 2006-01-23 00:12:25Z fraggle $
+// $Id: g_game.c 351 2006-01-27 18:23:08Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.23  2006/01/27 18:23:08  fraggle
+// Exit with an error when playing a demo with the wrong version, like Vanilla Doom
+//
 // Revision 1.22  2006/01/23 00:12:25  fraggle
 // Fix dehacked sky replacement
 //
@@ -111,7 +114,7 @@
 
 
 static const char
-rcsid[] = "$Id: g_game.c 332 2006-01-23 00:12:25Z fraggle $";
+rcsid[] = "$Id: g_game.c 351 2006-01-27 18:23:08Z fraggle $";
 
 #include <string.h>
 #include <stdlib.h>
@@ -1725,10 +1728,12 @@ void G_DoPlayDemo (void)
     }
     else
     {
-      fprintf( stderr, "Demo is from a different game version!\n");
-      fprintf(stderr, "%i, %i\n", demoversion, DOOM_VERSION);
-      gameaction = ga_nothing;
-      return;
+        char errorbuf[80];
+
+        sprintf(errorbuf, "Demo is from a different game version! (read %i, should be %i)\n",
+                demoversion, DOOM_VERSION);
+
+        I_Error(errorbuf);
     }
     
     skill = *demo_p++; 
