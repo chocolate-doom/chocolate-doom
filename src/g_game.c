@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.20.2.3  2006/01/27 18:23:00  fraggle
+// Exit with an error when playing a demo with the wrong version, like Vanilla Doom
+//
 // Revision 1.20.2.2  2006/01/23 00:12:36  fraggle
 // Fix dehacked sky replacement
 //
@@ -1725,10 +1728,12 @@ void G_DoPlayDemo (void)
     }
     else
     {
-      fprintf( stderr, "Demo is from a different game version!\n");
-      fprintf(stderr, "%i, %i\n", demoversion, DOOM_VERSION);
-      gameaction = ga_nothing;
-      return;
+        char errorbuf[80];
+
+        sprintf(errorbuf, "Demo is from a different game version! (read %i, should be %i)\n",
+                demoversion, DOOM_VERSION);
+
+        I_Error(errorbuf);
     }
     
     skill = *demo_p++; 
