@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_switch.c 346 2006-01-27 18:18:41Z fraggle $
+// $Id: p_switch.c 348 2006-01-27 18:21:35Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -23,6 +23,9 @@
 //
 //
 // $Log$
+// Revision 1.5  2006/01/27 18:21:35  fraggle
+// Fix compiler warning due to missing include
+//
 // Revision 1.4  2006/01/27 18:18:41  fraggle
 // dehacked replacements for switch texture names
 //
@@ -42,10 +45,11 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_switch.c 346 2006-01-27 18:18:41Z fraggle $";
+rcsid[] = "$Id: p_switch.c 348 2006-01-27 18:21:35Z fraggle $";
 
 
 #include "i_system.h"
+#include "deh_main.h"
 #include "doomdef.h"
 #include "p_local.h"
 
