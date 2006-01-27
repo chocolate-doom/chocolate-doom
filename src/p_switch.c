@@ -23,6 +23,9 @@
 //
 //
 // $Log$
+// Revision 1.4  2006/01/27 18:18:41  fraggle
+// dehacked replacements for switch texture names
+//
 // Revision 1.3  2005/09/08 00:01:51  fraggle
 // Fix switches not changing in Episode 4
 //
@@ -157,8 +160,8 @@ void P_InitSwitchList(void)
 	    
 	    value = R_TextureNumForName(alphSwitchList[i].name1);
 #endif
-	    switchlist[index++] = R_TextureNumForName(alphSwitchList[i].name1);
-	    switchlist[index++] = R_TextureNumForName(alphSwitchList[i].name2);
+	    switchlist[index++] = R_TextureNumForName(DEH_String(alphSwitchList[i].name1));
+	    switchlist[index++] = R_TextureNumForName(DEH_String(alphSwitchList[i].name2));
 	}
     }
 }
