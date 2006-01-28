@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: wi_stuff.c 319 2006-01-22 21:20:54Z fraggle $
+// $Id: wi_stuff.c 353 2006-01-28 20:03:14Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3.2.2  2006/01/28 20:03:14  fraggle
+// Avoid conflict with stdc time function
+//
 // Revision 1.3.2.1  2006/01/22 21:20:54  fraggle
 // Dehacked string replacements for intermission screen graphic lumps
 //
@@ -41,7 +44,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: wi_stuff.c 319 2006-01-22 21:20:54Z fraggle $";
+rcsid[] = "$Id: wi_stuff.c 353 2006-01-28 20:03:14Z fraggle $";
 
 #include <stdio.h>
 
@@ -393,7 +396,7 @@ static patch_t*		items;
 static patch_t*		frags;
 
 // Time sucks.
-static patch_t*		time;
+static patch_t*		timepatch;
 static patch_t*		par;
 static patch_t*		sucks;
 
@@ -1476,7 +1479,7 @@ void WI_drawStats(void)
     V_DrawPatch(SP_STATSX, SP_STATSY+2*lh, FB, sp_secret);
     WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY+2*lh, cnt_secret[0]);
 
-    V_DrawPatch(SP_TIMEX, SP_TIMEY, FB, time);
+    V_DrawPatch(SP_TIMEX, SP_TIMEY, FB, timepatch);
     WI_drawTime(SCREENWIDTH/2 - SP_TIMEX, SP_TIMEY, cnt_time);
 
     if (wbs->epsd < 3)
@@ -1691,7 +1694,7 @@ void WI_loadData(void)
     colon = W_CacheLumpName(DEH_String("WICOLON"), PU_STATIC); 
 
     // "time"
-    time = W_CacheLumpName(DEH_String("WITIME"), PU_STATIC);   
+    timepatch = W_CacheLumpName(DEH_String("WITIME"), PU_STATIC);   
 
     // "sucks"
     sucks = W_CacheLumpName(DEH_String("WISUCKS"), PU_STATIC);  
@@ -1774,7 +1777,7 @@ void WI_unloadData(void)
     Z_ChangeTag(sp_secret, PU_CACHE);
     Z_ChangeTag(items, PU_CACHE);
     Z_ChangeTag(frags, PU_CACHE);
-    Z_ChangeTag(time, PU_CACHE);
+    Z_ChangeTag(timepatch, PU_CACHE);
     Z_ChangeTag(sucks, PU_CACHE);
     Z_ChangeTag(par, PU_CACHE);
 
