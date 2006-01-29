@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2006/01/29 15:05:05  fraggle
+// Allow map things of type <= 0 - these are ignored by Vanilla Doom.  Provides compatibility with plutonia.wad map12.
+//
 // Revision 1.5  2005/10/24 18:50:39  fraggle
 // Allow the game version to emulate to be specified from the command line
 // and set compatibility options accordingly.
@@ -778,6 +781,14 @@ void P_SpawnMapThing (mapthing_t* mthing)
 	    deathmatch_p++;
 	}
 	return;
+    }
+
+    if (mthing->type <= 0)
+    {
+        // Thing type 0 is actually "player -1 start".  
+        // For some reason, Vanilla Doom accepts/ignores this.
+
+        return;
     }
 	
     // check for players specially
