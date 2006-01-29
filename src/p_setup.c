@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_setup.c 334 2006-01-23 00:17:43Z fraggle $
+// $Id: p_setup.c 356 2006-01-29 15:07:12Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2006/01/29 15:07:12  fraggle
+// Shut up compiler warnings
+//
 // Revision 1.4  2006/01/23 00:17:43  fraggle
 // Allow changing the names of level lump names via dehacked.
 //
@@ -42,13 +45,14 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_setup.c 334 2006-01-23 00:17:43Z fraggle $";
+rcsid[] = "$Id: p_setup.c 356 2006-01-29 15:07:12Z fraggle $";
 
 
 #include <math.h>
 
 #include "z_zone.h"
 
+#include "deh_main.h"
 #include "m_swap.h"
 #include "m_bbox.h"
 
