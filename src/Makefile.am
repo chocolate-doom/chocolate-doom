@@ -1,7 +1,7 @@
 
-bindir = $(prefix)/bin
+gamesdir = $(prefix)/games
 
-bin_PROGRAMS = chocolate-doom
+games_PROGRAMS = chocolate-doom
 
 AM_CFLAGS = -I../textscreen @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@ -Wall
 chocolate_doom_LDADD = ../textscreen/libtextscreen.a @LDFLAGS@ @SDL_LIBS@ @SDLMIXER_LIBS@ @SDLNET_LIBS@ 
