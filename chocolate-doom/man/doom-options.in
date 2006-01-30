@@ -1,0 +1,30 @@
+-deathmatch	start a deathmatch game
+-altdeath	start a deathmatch game (alternative mode)
+-timer x	exit a deathmatch level after x minutes
+-avg	austin virtual gaming (same as -timer 20)
+-cdrom	use C:\DOOMDATA for configuration data
+-config x	use x as the configuration file
+-devparm	developer mode: F1 saves a PCX screenshot in the current working directory
+-dup	put two network commands in each network packet
+-episode e	start playing on episode e (from 1-4)
+-extratic	send two packets per tic for network redundancy
+-fast	monsters move faster
+-file f...	add the PWADs f...
+-loadgame s	load the save in slot s
+-maxdemo x	set the maximum byte size of the recorded demo
+-nodes	define the number of players in a network game
+# <not implemented yet> -nodraw	no drawing of the screen is performed
+-nomonsters	disable all monsters
+-respawn	monsters respawn after being killed
+-nomusic	disable music
+-nosfx	disable sound effects
+-nosound	equivalent to -nomusic -nosfx
+-playdemo x	play demo from file x.lmp
+-record	record a demo to file x.lmp
+-recordfrom x y	start recording y.lmp from save slot x
+-skill x 	set the game skill (0-5; 5 being hardest)
+-statcopy x	register a stats driver at memory location x
+-timedemo x	play x.lmp at double speed and display the redraw count
+-warp [x y|zz]	start the game at level ExMy or MAPyy
+-wart x y	load PWAD ExMy.WAD and warp to level ExMy
+-turbo x	multiple player speed by x%. If unspecified, x defaults to 200. Values are rounded up to 10 and down to 400.
