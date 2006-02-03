@@ -21,6 +21,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.2  2006/02/03 18:41:26  fraggle
+// Support NWT-style WAD merging (-af and -as command line parameters).
+// Restructure WAD loading so that merged WADs are always loaded before
+// normal PWADs.  Remove W_InitMultipleFiles().
+//
 // Revision 1.1  2005/10/08 18:23:18  fraggle
 // WAD merging code
 //
@@ -36,9 +41,16 @@
 #ifndef W_MERGE_H
 #define W_MERGE_H
 
+#define W_NWT_MERGE_SPRITES   0x1
+#define W_NWT_MERGE_FLATS     0x2
+
 // Add a new WAD and merge it into the main directory
 
 void W_MergeFile(char *filename);
+
+// NWT-style merging
+
+void W_NWTMergeFile(char *filename, int flags);
 
 #endif /* #ifndef W_MERGE_H */
 
