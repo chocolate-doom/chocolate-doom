@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.h 241 2006-01-02 00:17:42Z fraggle $
+// $Id: d_main.h 362 2006-02-03 18:41:26Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2006/02/03 18:41:26  fraggle
+// Support NWT-style WAD merging (-af and -as command line parameters).
+// Restructure WAD loading so that merged WADs are always loaded before
+// normal PWADs.  Remove W_InitMultipleFiles().
+//
 // Revision 1.4  2006/01/02 00:17:42  fraggle
 // Encapsulate the event queue code properly.  Add a D_PopEvent function
 // to read a new event from the event queue.
@@ -47,13 +52,6 @@
 
 #include "d_event.h"
 
-
-
-
-#define MAXWADFILES             20
-extern char*		wadfiles[MAXWADFILES];
-
-void D_AddFile (char *file);
 
 
 

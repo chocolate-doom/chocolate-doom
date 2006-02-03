@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: w_wad.h 167 2005-10-08 18:22:46Z fraggle $
+// $Id: w_wad.h 362 2006-02-03 18:41:26Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -32,6 +32,7 @@
 
 #include <stdio.h>
 
+#include "doomtype.h"
 
 
 //
@@ -72,8 +73,7 @@ extern	void**		lumpcache;
 extern	lumpinfo_t*	lumpinfo;
 extern	int		numlumps;
 
-void    W_AddFile (char *filename);
-void    W_InitMultipleFiles (char** filenames);
+boolean W_AddFile (char *filename);
 void    W_Reload (void);
 
 int	W_CheckNumForName (char* name);
@@ -92,6 +92,11 @@ void*	W_CacheLumpName (char* name, int tag);
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.5  2006/02/03 18:41:26  fraggle
+// Support NWT-style WAD merging (-af and -as command line parameters).
+// Restructure WAD loading so that merged WADs are always loaded before
+// normal PWADs.  Remove W_InitMultipleFiles().
+//
 // Revision 1.4  2005/10/08 18:22:46  fraggle
 // Store the cache as part of the lumpinfo_t struct.  Add W_AddFile prototype
 // to header.

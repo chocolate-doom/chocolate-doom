@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: w_wad.c 342 2006-01-24 01:46:08Z fraggle $
+// $Id: w_wad.c 362 2006-02-03 18:41:26Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.11  2006/02/03 18:41:26  fraggle
+// Support NWT-style WAD merging (-af and -as command line parameters).
+// Restructure WAD loading so that merged WADs are always loaded before
+// normal PWADs.  Remove W_InitMultipleFiles().
+//
 // Revision 1.10  2006/01/24 01:46:08  fraggle
 // More endianness fixes
 //
@@ -61,7 +66,7 @@
 
 
 static const char
-rcsid[] = "$Id: w_wad.c 342 2006-01-24 01:46:08Z fraggle $";
+rcsid[] = "$Id: w_wad.c 362 2006-02-03 18:41:26Z fraggle $";
 
 
 #include <ctype.h>
@@ -88,7 +93,7 @@ rcsid[] = "$Id: w_wad.c 342 2006-01-24 01:46:08Z fraggle $";
 
 // Location of each lump on disk.
 lumpinfo_t*		lumpinfo;		
-int			numlumps;
+int			numlumps = 0;
 
 #define strcmpi	strcasecmp
 
@@ -171,7 +176,7 @@ int			reloadlump;
 char*			reloadname;
 
 
-void W_AddFile (char *filename)
+boolean W_AddFile (char *filename)
 {
     wadinfo_t		header;
     lumpinfo_t*		lump_p;
@@ -196,10 +201,9 @@ void W_AddFile (char *filename)
     if ( (handle = fopen(filename,"rb")) == NULL)
     {
 	printf (" couldn't open %s\n",filename);
-	return;
+	return false;
     }
 
-    printf (" adding %s\n",filename);
     startlump = numlumps;
 	
     if (strcmpi (filename+strlen(filename)-3 , "wad" ) )
@@ -259,6 +263,8 @@ void W_AddFile (char *filename)
 	fclose (handle);
 
     Z_Free(fileinfo);
+
+    return true;
 }
 
 
@@ -310,52 +316,6 @@ void W_Reload (void)
     fclose(handle);
 
     Z_Free(fileinfo);
-}
-
-
-
-//
-// W_InitMultipleFiles
-// Pass a null terminated list of files to use.
-// All files are optional, but at least one file
-//  must be found.
-// Files with a .wad extension are idlink files
-//  with multiple lumps.
-// Other files are single lumps with the base filename
-//  for the lump name.
-// Lump names can appear multiple times.
-// The name searcher looks backwards, so a later file
-//  does override all earlier ones.
-//
-void W_InitMultipleFiles (char** filenames)
-{	
-    // open all the files, load headers, and count lumps
-    numlumps = 0;
-
-    // will be realloced as lumps are added
-    lumpinfo = malloc(1);	
-
-    for ( ; *filenames ; filenames++)
-	W_AddFile (*filenames);
-
-    if (!numlumps)
-	I_Error ("W_InitFiles: no files found");
-}
-
-
-
-
-//
-// W_InitFile
-// Just initialize from a single file.
-//
-void W_InitFile (char* filename)
-{
-    char*	names[2];
-
-    names[0] = filename;
-    names[1] = NULL;
-    W_InitMultipleFiles (names);
 }
 
 
