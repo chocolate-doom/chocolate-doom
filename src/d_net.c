@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.16.2.1  2006/01/20 00:58:17  fraggle
+// Remove new networking code from stable version
+//
 // Revision 1.16  2006/01/13 23:56:00  fraggle
 // Add text-mode I/O functions.
 // Use text-mode screen for the waiting screen.
@@ -101,13 +104,6 @@ static const char rcsid[] = "$Id$";
 #include "g_game.h"
 #include "doomdef.h"
 #include "doomstat.h"
-
-#include "net_client.h"
-#include "net_gui.h"
-#include "net_io.h"
-#include "net_server.h"
-#include "net_sdl.h"
-#include "net_loop.h"
 
 #define	NCMD_EXIT		0x80000000
 #define	NCMD_RETRANSMIT		0x40000000
@@ -448,11 +444,6 @@ void NetUpdate (void)
     int				realstart;
     int				gameticdiv;
     
-    // Temporary hack - hook new client/server code into Doom
-
-    NET_CL_Run();
-    NET_SV_Run();
-    
     // check time
     nowtime = I_GetTime ()/ticdup;
     newtics = nowtime - gametime;
@@ -633,36 +624,7 @@ extern	int			viewangleoffset;
 
 void D_CheckNetGame (void)
 {
-    net_addr_t *addr = NULL;
     int             i;
-
-    // temporary hack 
-
-    if (M_CheckParm("-server") > 0)
-    {
-        NET_SV_Init();
-
-        addr = net_loop_client_module.ResolveAddress("");
-    }
-
-    if (M_CheckParm("-client") > 0)
-    {
-        addr = net_sdl_module.ResolveAddress("127.0.0.1");
-    }
-   
-    if (addr != NULL)
-    {
-        if (NET_CL_Connect(addr))
-        {
-            printf("connected to %s\n", NET_AddrToString(addr));
-
-            NET_WaitForStart();
-        }
-        else
-        {
-            printf("failed to connect\n");
-        }
-    }
 
     for (i=0 ; i<MAXNETNODES ; i++)
     {
@@ -713,9 +675,6 @@ void D_QuitNetGame (void)
 	
     if (debugfile)
 	fclose (debugfile);
-
-    NET_SV_Shutdown();
-    NET_CL_Disconnect();
 
     if (!netgame || !usergame || consoleplayer == -1 || demoplayback)
 	return;

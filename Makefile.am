@@ -10,7 +10,12 @@ EXTRA_DIST=                             \
         TODO                            \
         BUGS                            \
         data/chocolate-doom.png         \
-        data/chocolate-doom.ico
+        data/chocolate-doom.ico         \
+        man/chocolate-doom-options.in   \
+        man/doom-options.in             \
+        man/foot                        \
+        man/head                        \
+        man/Makefile
 
 MAINTAINERCLEANFILES =  $(AUX_DIST_GEN)
 

@@ -22,6 +22,15 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.20.2.3  2006/01/27 18:23:00  fraggle
+// Exit with an error when playing a demo with the wrong version, like Vanilla Doom
+//
+// Revision 1.20.2.2  2006/01/23 00:12:36  fraggle
+// Fix dehacked sky replacement
+//
+// Revision 1.20.2.1  2006/01/22 23:36:21  fraggle
+// Allow changing the sky texture names via dehacked patches
+//
 // Revision 1.20  2006/01/19 18:46:24  fraggle
 // Move savegame header read/write code into p_saveg.c
 //
@@ -552,6 +561,7 @@ extern  gamestate_t     wipegamestate;
  
 void G_DoLoadLevel (void) 
 { 
+    char *skytexturename;
     int             i; 
 
     // Set the sky map.
@@ -559,37 +569,44 @@ void G_DoLoadLevel (void)
     //  a flat. The data is in the WAD only because
     //  we look for an actual index, instead of simply
     //  setting one.
-    skyflatnum = R_FlatNumForName ( SKYFLATNAME );
+    skyflatnum = R_FlatNumForName(DEH_String(SKYFLATNAME));
 
     // DOOM determines the sky texture to be used
     // depending on the current episode, and the game version.
 
-    if ( gamemode == commercial)
+    if (gamemode == commercial)
     {
-	skytexture = R_TextureNumForName ("SKY3");
+	skytexturename = "SKY3";
 	if (gamemap < 12)
-	    skytexture = R_TextureNumForName ("SKY1");
+	    skytexturename = "SKY1";
 	else
 	    if (gamemap < 21)
-		skytexture = R_TextureNumForName ("SKY2");
+		skytexturename = "SKY2";
     }
     else
+    {
 	switch (gameepisode) 
 	{ 
+	  default:
 	  case 1: 
-	    skytexture = R_TextureNumForName ("SKY1"); 
+	    skytexturename = "SKY1"; 
 	    break; 
 	  case 2: 
-	    skytexture = R_TextureNumForName ("SKY2"); 
+	    skytexturename = "SKY2"; 
 	    break; 
 	  case 3: 
-	    skytexture = R_TextureNumForName ("SKY3"); 
+	    skytexturename = "SKY3"; 
 	    break; 
 	  case 4:	// Special Edition sky
-	    skytexture = R_TextureNumForName ("SKY4");
+	    skytexturename = "SKY4";
 	    break;
 	} 
- 
+    }
+
+    skytexturename = DEH_String(skytexturename);
+
+    skytexture = R_TextureNumForName(skytexturename);
+
     levelstarttic = gametic;        // for time calculation
     
     if (wipegamestate == GS_LEVEL) 
@@ -1711,10 +1728,12 @@ void G_DoPlayDemo (void)
     }
     else
     {
-      fprintf( stderr, "Demo is from a different game version!\n");
-      fprintf(stderr, "%i, %i\n", demoversion, DOOM_VERSION);
-      gameaction = ga_nothing;
-      return;
+        char errorbuf[80];
+
+        sprintf(errorbuf, "Demo is from a different game version! (read %i, should be %i)\n",
+                demoversion, DOOM_VERSION);
+
+        I_Error(errorbuf);
     }
     
     skill = *demo_p++; 

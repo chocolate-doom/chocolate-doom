@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.9.2.1  2006/01/22 23:47:18  fraggle
+// Allow changing the status bar graphic lumps via dehacked
+//
 // Revision 1.9  2005/10/17 21:09:01  fraggle
 // Dehacked Misc support: Controls for the armor and armor class set when
 // using the ammo cheats.
@@ -1100,31 +1103,31 @@ void ST_loadGraphics(void)
     // Load the numbers, tall and short
     for (i=0;i<10;i++)
     {
-	sprintf(namebuf, "STTNUM%d", i);
+	sprintf(namebuf, DEH_String("STTNUM%d"), i);
 	tallnum[i] = (patch_t *) W_CacheLumpName(namebuf, PU_STATIC);
 
-	sprintf(namebuf, "STYSNUM%d", i);
+	sprintf(namebuf, DEH_String("STYSNUM%d"), i);
 	shortnum[i] = (patch_t *) W_CacheLumpName(namebuf, PU_STATIC);
     }
 
     // Load percent key.
     //Note: why not load STMINUS here, too?
-    tallpercent = (patch_t *) W_CacheLumpName("STTPRCNT", PU_STATIC);
+    tallpercent = (patch_t *) W_CacheLumpName(DEH_String("STTPRCNT"), PU_STATIC);
 
     // key cards
     for (i=0;i<NUMCARDS;i++)
     {
-	sprintf(namebuf, "STKEYS%d", i);
+	sprintf(namebuf, DEH_String("STKEYS%d"), i);
 	keys[i] = (patch_t *) W_CacheLumpName(namebuf, PU_STATIC);
     }
 
     // arms background
-    armsbg = (patch_t *) W_CacheLumpName("STARMS", PU_STATIC);
+    armsbg = (patch_t *) W_CacheLumpName(DEH_String("STARMS"), PU_STATIC);
 
     // arms ownership widgets
     for (i=0;i<6;i++)
     {
-	sprintf(namebuf, "STGNUM%d", i+2);
+	sprintf(namebuf, DEH_String("STGNUM%d"), i+2);
 
 	// gray #
 	arms[i][0] = (patch_t *) W_CacheLumpName(namebuf, PU_STATIC);
@@ -1134,11 +1137,11 @@ void ST_loadGraphics(void)
     }
 
     // face backgrounds for different color players
-    sprintf(namebuf, "STFB%d", consoleplayer);
+    sprintf(namebuf, DEH_String("STFB%d"), consoleplayer);
     faceback = (patch_t *) W_CacheLumpName(namebuf, PU_STATIC);
 
     // status bar background bits
-    sbar = (patch_t *) W_CacheLumpName("STBAR", PU_STATIC);
+    sbar = (patch_t *) W_CacheLumpName(DEH_String("STBAR"), PU_STATIC);
 
     // face states
     facenum = 0;
@@ -1146,22 +1149,22 @@ void ST_loadGraphics(void)
     {
 	for (j=0;j<ST_NUMSTRAIGHTFACES;j++)
 	{
-	    sprintf(namebuf, "STFST%d%d", i, j);
+	    sprintf(namebuf, DEH_String("STFST%d%d"), i, j);
 	    faces[facenum++] = W_CacheLumpName(namebuf, PU_STATIC);
 	}
-	sprintf(namebuf, "STFTR%d0", i);	// turn right
+	sprintf(namebuf, DEH_String("STFTR%d0"), i);	// turn right
 	faces[facenum++] = W_CacheLumpName(namebuf, PU_STATIC);
-	sprintf(namebuf, "STFTL%d0", i);	// turn left
+	sprintf(namebuf, DEH_String("STFTL%d0"), i);	// turn left
 	faces[facenum++] = W_CacheLumpName(namebuf, PU_STATIC);
-	sprintf(namebuf, "STFOUCH%d", i);	// ouch!
+	sprintf(namebuf, DEH_String("STFOUCH%d"), i);	// ouch!
 	faces[facenum++] = W_CacheLumpName(namebuf, PU_STATIC);
-	sprintf(namebuf, "STFEVL%d", i);	// evil grin ;)
+	sprintf(namebuf, DEH_String("STFEVL%d"), i);	// evil grin ;)
 	faces[facenum++] = W_CacheLumpName(namebuf, PU_STATIC);
-	sprintf(namebuf, "STFKILL%d", i);	// pissed off
+	sprintf(namebuf, DEH_String("STFKILL%d"), i);	// pissed off
 	faces[facenum++] = W_CacheLumpName(namebuf, PU_STATIC);
     }
-    faces[facenum++] = W_CacheLumpName("STFGOD0", PU_STATIC);
-    faces[facenum++] = W_CacheLumpName("STFDEAD0", PU_STATIC);
+    faces[facenum++] = W_CacheLumpName(DEH_String("STFGOD0"), PU_STATIC);
+    faces[facenum++] = W_CacheLumpName(DEH_String("STFDEAD0"), PU_STATIC);
 
 }
 

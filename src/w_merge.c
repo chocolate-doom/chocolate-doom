@@ -21,6 +21,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.3.2.1  2006/02/03 18:39:59  fraggle
+// Support NWT-style WAD merging (-af and -as command line parameters).
+// Restructure WAD loading so that merged WADs are always loaded before
+// normal PWADs.  Remove W_InitMultipleFiles().
+//
 // Revision 1.3  2005/10/23 20:22:35  fraggle
 // Drastically refactor the WAD merging code.  Allow multiple replacements
 // of the same sprite in a PWAD (fixes Scientist 2)
@@ -44,6 +49,7 @@
 #include <string.h>
 
 #include "i_system.h"
+#include "w_merge.h"
 #include "w_wad.h"
 #include "z_zone.h"
 
@@ -552,14 +558,10 @@ void W_MergeFile(char *filename)
 
     old_numlumps = numlumps;
 
-    W_AddFile(filename);
+    // Load PWAD
 
-    // failed to load?
-
-    if (numlumps == old_numlumps)
+    if (!W_AddFile(filename))
         return;
-
-    printf(" merging %s\n", filename);
 
     // iwad is at the start, pwad was appended to the end
 
@@ -582,4 +584,72 @@ void W_MergeFile(char *filename)
     DoMerge();
 }
 
+// Replace lumps in the given list with lumps from the PWAD
+
+static void W_NWTAddLumps(searchlist_t *list)
+{
+    int i;
+
+    // Go through the IWAD list given, replacing lumps with lumps of 
+    // the same name from the PWAD
+
+    for (i=0; i<list->numlumps; ++i)
+    {
+        int index;
+
+        index = FindInList(&pwad, list->lumps[i].name);
+
+        if (index > 0)
+        {
+            memcpy(&list->lumps[i], &pwad.lumps[index], 
+                   sizeof(lumpinfo_t));
+        }
+    }
+    
+}
+
+// Merge sprites and flats in the way NWT does with its -af and -as 
+// command-line options.
+
+void W_NWTMergeFile(char *filename, int flags)
+{
+    int old_numlumps;
+
+    old_numlumps = numlumps;
+
+    // Load PWAD
+
+    if (!W_AddFile(filename))
+        return;
+
+    // iwad is at the start, pwad was appended to the end
+
+    iwad.lumps = lumpinfo;
+    iwad.numlumps = old_numlumps;
+
+    pwad.lumps = lumpinfo + old_numlumps;
+    pwad.numlumps = numlumps - old_numlumps;
+    
+    // Setup sprite/flat lists
+
+    SetupLists();
+
+    // Merge in flats?
+    
+    if (flags & W_NWT_MERGE_FLATS)
+    {
+        W_NWTAddLumps(&iwad_flats);
+    }
+
+    // Sprites?
+
+    if (flags & W_NWT_MERGE_SPRITES)
+    {
+        W_NWTAddLumps(&iwad_sprites);
+    }
+    
+    // Discard the PWAD
+
+    numlumps = old_numlumps;
+}
 

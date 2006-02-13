@@ -22,6 +22,20 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.39.2.4  2006/02/03 18:39:59  fraggle
+// Support NWT-style WAD merging (-af and -as command line parameters).
+// Restructure WAD loading so that merged WADs are always loaded before
+// normal PWADs.  Remove W_InitMultipleFiles().
+//
+// Revision 1.39.2.3  2006/01/23 00:47:22  fraggle
+// Rearrange the order of startup code to allow replacing the IWAD filename via dehacked
+//
+// Revision 1.39.2.2  2006/01/22 21:19:00  fraggle
+// Dehacked string replacements for startup messages, IWAD names, demo names and backgrounds
+//
+// Revision 1.39.2.1  2006/01/20 00:58:17  fraggle
+// Remove new networking code from stable version
+//
 // Revision 1.39  2006/01/14 02:06:48  fraggle
 // Include the game version in the settings structure.
 //
@@ -226,7 +240,6 @@ static const char rcsid[] = "$Id$";
 #include "wi_stuff.h"
 #include "st_stuff.h"
 #include "am_map.h"
-#include "net_client.h"
 
 #include "p_setup.h"
 #include "r_local.h"
@@ -253,7 +266,6 @@ char *          configdir;
 // location of IWAD and WAD files
 
 char *          iwadfile;
-char *          wadfiles[MAXWADFILES];
 
 
 boolean		devparm;	// started game with -devparm
@@ -650,29 +662,29 @@ void D_DoAdvanceDemo (void)
 	else
 	    pagetic = 170;
 	gamestate = GS_DEMOSCREEN;
-	pagename = "TITLEPIC";
+	pagename = DEH_String("TITLEPIC");
 	if ( gamemode == commercial )
 	  S_StartMusic(mus_dm2ttl);
 	else
 	  S_StartMusic (mus_intro);
 	break;
       case 1:
-	G_DeferedPlayDemo ("demo1");
+	G_DeferedPlayDemo(DEH_String("demo1"));
 	break;
       case 2:
 	pagetic = 200;
 	gamestate = GS_DEMOSCREEN;
-	pagename = "CREDIT";
+	pagename = DEH_String("CREDIT");
 	break;
       case 3:
-	G_DeferedPlayDemo ("demo2");
+	G_DeferedPlayDemo(DEH_String("demo2"));
 	break;
       case 4:
 	gamestate = GS_DEMOSCREEN;
 	if ( gamemode == commercial)
 	{
 	    pagetic = 35 * 11;
-	    pagename = "TITLEPIC";
+	    pagename = DEH_String("TITLEPIC");
 	    S_StartMusic(mus_dm2ttl);
 	}
 	else
@@ -680,17 +692,17 @@ void D_DoAdvanceDemo (void)
 	    pagetic = 200;
 
 	    if ( gamemode == retail )
-	      pagename = "CREDIT";
+	      pagename = DEH_String("CREDIT");
 	    else
-	      pagename = "HELP2";
+	      pagename = DEH_String("HELP2");
 	}
 	break;
       case 5:
-	G_DeferedPlayDemo ("demo3");
+	G_DeferedPlayDemo(DEH_String("demo3"));
 	break;
         // THE DEFINITIVE DOOM Special Edition demo
       case 6:
-	G_DeferedPlayDemo ("demo4");
+	G_DeferedPlayDemo(DEH_String("demo4"));
 	break;
     }
 }
@@ -714,23 +726,12 @@ void D_StartTitle (void)
 char            title[128];
 
 
-
-//
-// D_AddFile
-//
-void D_AddFile (char *file)
+static void D_AddFile(char *filename)
 {
-    int     numwadfiles;
-    char    *newfile;
-	
-    for (numwadfiles = 0 ; wadfiles[numwadfiles] ; numwadfiles++)
-	;
-
-    newfile = malloc (strlen(file)+1);
-    strcpy (newfile, file);
-	
-    wadfiles[numwadfiles] = newfile;
+    printf(" adding %s\n", filename);
+    W_AddFile(filename);
 }
+
 
 // Check if a file exists
 
@@ -764,36 +765,34 @@ struct
 };
 
 // Search a directory to try to find an IWAD
-// Returns non-zero if successful
+// Returns the location of the IWAD if found, otherwise NULL.
 
-static int SearchDirectoryForIWAD(char *dir)
+static char *SearchDirectoryForIWAD(char *dir)
 {
     int i;
-    int result;
- 
-    result = 0;
 
     for (i=0; i<sizeof(iwads) / sizeof(*iwads); ++i) 
     {
-        char *filename = malloc(strlen(dir) + strlen(iwads[i].name) + 3);
+        char *filename; 
+	char *iwadname;
 
-        sprintf(filename, "%s/%s", dir, iwads[i].name);
+	iwadname = DEH_String(iwads[i].name);
+	
+	filename = malloc(strlen(dir) + strlen(iwadname) + 3);
+
+        sprintf(filename, "%s/%s", dir, iwadname);
 
         if (FileExists(filename))
         {
             iwadfile = filename;
             gamemission = iwads[i].mission;
-            D_AddFile(filename);
-            result = 1;
-            break;
+            return filename;
         }
-        else
-        {
-            free(filename);
-        }
+
+        free(filename);
     }
 
-    return result;
+    return NULL;
 }
 
 // When given an IWAD with the '-iwad' parameter,
@@ -807,13 +806,17 @@ static void IdentifyIWADByName(char *name)
     
     for (i=0; i<sizeof(iwads) / sizeof(*iwads); ++i)
     {
-        if (strlen(name) < strlen(iwads[i].name))
+	char *iwadname;
+
+	iwadname = DEH_String(iwads[i].name);
+
+        if (strlen(name) < strlen(iwadname))
             continue;
 
         // Check if it ends in this IWAD name.
 
-        if (!strcasecmp(name + strlen(name) - strlen(iwads[i].name), 
-                        iwads[i].name))
+        if (!strcasecmp(name + strlen(name) - strlen(iwadname), 
+                        iwadname))
         {
             gamemission = iwads[i].mission;
             break;
@@ -825,12 +828,13 @@ static void IdentifyIWADByName(char *name)
 // FindIWAD
 // Checks availability of IWAD files by name,
 // to determine whether registered/commercial features
-// should be executed (notably loading PWAD's).
+// should be executed (notably loading PWADs).
 //
+
 static void FindIWAD (void)
 {
     char *doomwaddir;
-    int result;
+    char *result;
     int iwadparm;
 
     result = 0;
@@ -840,23 +844,22 @@ static void FindIWAD (void)
     if (iwadparm)
     {
         iwadfile = myargv[iwadparm + 1];
-        D_AddFile(iwadfile);
+        result = iwadfile;
         IdentifyIWADByName(iwadfile);
-        result = 1;
     }
     else if (doomwaddir != NULL)
     {
         result = SearchDirectoryForIWAD(doomwaddir);
     }
 
-    if (result == 0)
-    {
-        result = SearchDirectoryForIWAD(".")
-              || SearchDirectoryForIWAD("/usr/share/games/doom")
-              || SearchDirectoryForIWAD("/usr/local/share/games/doom");
-    }
+    if (result == NULL)
+        result = SearchDirectoryForIWAD(".");
+    if (result == NULL)
+        result = SearchDirectoryForIWAD("/usr/share/games/doom");
+    if (result == NULL)
+        result = SearchDirectoryForIWAD("/usr/local/share/games/doom");
 
-    if (result == 0)
+    if (result == NULL)
     {
         I_Error("Game mode indeterminate.  No IWAD file was found.  Try\n"
                 "specifying one with the '-iwad' command line parameter.\n");
@@ -1325,7 +1328,6 @@ void PrintGameVersion(void)
     }
 }
 
-
 //
 // D_DoomMain
 //
@@ -1336,6 +1338,18 @@ void D_DoomMain (void)
 
     FindResponseFile ();
 	
+    // print banner
+
+    PrintBanner(PACKAGE_STRING);
+
+    printf (DEH_String("Z_Init: Init zone memory allocation daemon. \n"));
+    Z_Init ();
+
+#ifdef FEATURE_DEHACKED
+    printf("DEH_Init: Init Dehacked support.\n");
+    DEH_Init();
+#endif
+
     FindIWAD ();
 	
     setbuf (stdout, NULL);
@@ -1350,12 +1364,8 @@ void D_DoomMain (void)
     else if (M_CheckParm ("-deathmatch"))
 	deathmatch = 1;
 
-    // print banner
-
-    PrintBanner(PACKAGE_STRING);
-
     if (devparm)
-	printf(D_DEVSTR);
+	printf(DEH_String(D_DEVSTR));
     
     // find which dir to use for config files
 
@@ -1374,13 +1384,93 @@ void D_DoomMain (void)
 	    scale = 10;
 	if (scale > 400)
 	    scale = 400;
-	printf ("turbo scale: %i%%\n",scale);
+	printf (DEH_String("turbo scale: %i%%\n"),scale);
 	forwardmove[0] = forwardmove[0]*scale/100;
 	forwardmove[1] = forwardmove[1]*scale/100;
 	sidemove[0] = sidemove[0]*scale/100;
 	sidemove[1] = sidemove[1]*scale/100;
     }
     
+    // init subsystems
+    printf (DEH_String("V_Init: allocate screens.\n"));
+    V_Init ();
+
+    printf (DEH_String("M_LoadDefaults: Load system defaults.\n"));
+    M_LoadDefaults ();              // load before initing other systems
+
+    printf (DEH_String("W_Init: Init WADfiles.\n"));
+    D_AddFile(iwadfile);
+
+#ifdef FEATURE_WAD_MERGE
+    // Merged PWADs are loaded first, because they are supposed to be 
+    // modified IWADs.
+
+    p = M_CheckParm("-merge");
+
+    if (p > 0)
+    {
+        for (p = p + 1; p<myargc && myargv[p][0] != '-'; ++p)
+        {
+            printf(" merging %s\n", myargv[p]);
+            W_MergeFile(myargv[p]);
+        }
+    }
+
+    // NWT-style merging:
+
+    // Add flats
+
+    p = M_CheckParm("-af");
+
+    if (p > 0)
+    {
+        for (p = p + 1; p<myargc && myargv[p][0] != '-'; ++p)
+        {
+            printf(" merging flats from %s\n", myargv[p]);
+            W_NWTMergeFile(myargv[p], W_NWT_MERGE_FLATS);
+        }
+    }
+
+    // Add sprites
+
+    p = M_CheckParm("-as");
+
+    if (p > 0)
+    {
+        for (p = p + 1; p<myargc && myargv[p][0] != '-'; ++p)
+        {
+            printf(" merging sprites from %s\n", myargv[p]);
+            W_NWTMergeFile(myargv[p], W_NWT_MERGE_SPRITES);
+        }
+    }
+
+    // Add sprites AND flats
+
+    p = M_CheckParm("-aa");
+
+    if (p > 0)
+    {
+        for (p = p + 1; p<myargc && myargv[p][0] != '-'; ++p)
+        {
+            printf(" merging sprites and flats from %s\n", myargv[p]);
+            W_NWTMergeFile(myargv[p], W_NWT_MERGE_SPRITES | W_NWT_MERGE_FLATS);
+        }
+    }
+
+#endif
+
+    // Load normal PWADs
+
+    p = M_CheckParm ("-file");
+    if (p)
+    {
+	// the parms after p are wadfile/lump names,
+	// until end of parms or another - preceded parm
+	modifiedgame = true;            // homebrew levels
+	while (++p != myargc && myargv[p][0] != '-')
+	    D_AddFile (myargv[p]);
+    }
+
     // add any files specified on the command line with -file wadfile
     // to the wad list
     //
@@ -1415,16 +1505,6 @@ void D_DoomMain (void)
 	D_AddFile (file);
     }
 	
-    p = M_CheckParm ("-file");
-    if (p)
-    {
-	// the parms after p are wadfile/lump names,
-	// until end of parms or another - preceded parm
-	modifiedgame = true;            // homebrew levels
-	while (++p != myargc && myargv[p][0] != '-')
-	    D_AddFile (myargv[p]);
-    }
-
     p = M_CheckParm ("-playdemo");
 
     if (!p)
@@ -1434,39 +1514,9 @@ void D_DoomMain (void)
     {
 	sprintf (file,"%s.lmp", myargv[p+1]);
 	D_AddFile (file);
-	printf("Playing demo %s.lmp.\n",myargv[p+1]);
+	printf(DEH_String("Playing demo %s.lmp.\n"),myargv[p+1]);
     }
     
-    // init subsystems
-    printf ("V_Init: allocate screens.\n");
-    V_Init ();
-
-    printf ("M_LoadDefaults: Load system defaults.\n");
-    M_LoadDefaults ();              // load before initing other systems
-
-    printf ("Z_Init: Init zone memory allocation daemon. \n");
-    Z_Init ();
-
-#ifdef FEATURE_DEHACKED
-    printf("DEH_Init: Init Dehacked support.\n");
-    DEH_Init();
-#endif
-
-    printf ("W_Init: Init WADfiles.\n");
-    W_InitMultipleFiles (wadfiles);
-
-#ifdef FEATURE_WAD_MERGE
-    p = M_CheckParm("-merge");
-
-    if (p > 0)
-    {
-        for (p = p + 1; p<myargc && myargv[p][0] != '-'; ++p)
-        {
-            W_MergeFile(myargv[p]);
-        }
-    }
-#endif
-
     IdentifyVersion();
     InitGameVersion();
     SetGameDescription();
@@ -1485,15 +1535,15 @@ void D_DoomMain (void)
 	int i;
 	
 	if ( gamemode == shareware)
-	    I_Error("\nYou cannot -file with the shareware "
-		    "version. Register!");
+	    I_Error(DEH_String("\nYou cannot -file with the shareware "
+			       "version. Register!"));
 
 	// Check for fake IWAD with right name,
 	// but w/o all the lumps of the registered version. 
 	if (gamemode == registered)
 	    for (i = 0;i < 23; i++)
 		if (W_CheckNumForName(name[i])<0)
-		    I_Error("\nThis is not the registered version.");
+		    I_Error(DEH_String("\nThis is not the registered version."));
     }
     
     // get skill / episode / map from parms
@@ -1523,7 +1573,7 @@ void D_DoomMain (void)
     {
 	int     time;
 	time = atoi(myargv[p+1]);
-	printf("Levels will end after %d minute",time);
+	printf(DEH_String("Levels will end after %d minute"),time);
 	if (time>1)
 	    printf("s");
 	printf(".\n");
@@ -1531,7 +1581,8 @@ void D_DoomMain (void)
 
     p = M_CheckParm ("-avg");
     if (p && p < myargc-1 && deathmatch)
-	printf("Austin Virtual Gaming: Levels will end after 20 minutes\n");
+	printf(DEH_String("Austin Virtual Gaming: Levels will end "
+			  "after 20 minutes\n"));
 
     p = M_CheckParm ("-warp");
     if (p && p < myargc-1)
@@ -1577,33 +1628,30 @@ void D_DoomMain (void)
 
     PrintDehackedBanners();
 
-    printf ("M_Init: Init miscellaneous info.\n");
+    printf (DEH_String("M_Init: Init miscellaneous info.\n"));
     M_Init ();
 
-    printf ("R_Init: Init DOOM refresh daemon - ");
+    printf (DEH_String("R_Init: Init DOOM refresh daemon - "));
     R_Init ();
 
-    printf ("\nP_Init: Init Playloop state.\n");
+    printf (DEH_String("\nP_Init: Init Playloop state.\n"));
     P_Init ();
 
-    printf ("I_Init: Setting up machine state.\n");
+    printf (DEH_String("I_Init: Setting up machine state.\n"));
     I_Init ();
 
-    printf ("NET_Init: Initialise network subsystem.\n");
-    NET_Init ();
-
-    printf ("D_CheckNetGame: Checking network game status.\n");
+    printf (DEH_String("D_CheckNetGame: Checking network game status.\n"));
     D_CheckNetGame ();
 
     PrintGameVersion();
 
-    printf ("S_Init: Setting up sound.\n");
+    printf (DEH_String("S_Init: Setting up sound.\n"));
     S_Init (snd_SfxVolume /* *8 */, snd_MusicVolume /* *8*/ );
 
-    printf ("HU_Init: Setting up heads up display.\n");
+    printf (DEH_String("HU_Init: Setting up heads up display.\n"));
     HU_Init ();
 
-    printf ("ST_Init: Init status bar.\n");
+    printf (DEH_String("ST_Init: Init status bar.\n"));
     ST_Init ();
 
     // start the apropriate game based on parms
