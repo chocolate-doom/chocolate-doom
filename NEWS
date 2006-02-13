@@ -1,4 +1,20 @@
 
+0.1.4 (2006-02-13):
+
+    NWT-style merging command line options (allows Mordeth to be played)
+    Unix manpage (thanks Jon Dowland)
+    Dehacked improvements/fixes:
+     * Allow changing the names of graphic lumps used in menu, status bar
+       intermission screen, etc.
+     * Allow changing skies, animated flats + textures
+     * Allow changing more startup strings.
+     * Allow text replacements on music + sfx lump names
+    Fix for plutonia map12 crash.
+    Fix bug with playing long sfx at odd sample rates.
+    Big Endian fixes (for MacOS X).  Thanks to athanatos for helping
+        find some of these.
+    Install into /usr/games, rather than /usr/bin (thanks Jon Dowland)
+
 0.1.3 (2006-01-20):
 
     Imported the spechit overrun emulation code from prboom-plus.  Thanks to
