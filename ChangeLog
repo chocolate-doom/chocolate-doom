@@ -1,3 +1,180 @@
+Mon Feb 13 20:06:54 2006 fraggle
+	
+	v0.1.4
+
+Mon Feb 13 20:05:46 2006 fraggle
+	
+	Include man/ directory in dist.
+
+Fri Feb  3 18:41:26 2006 fraggle
+	
+	Support NWT-style WAD merging (-af and -as command line parameters).
+	Restructure WAD loading so that merged WADs are always loaded before
+	normal PWADs.  Remove W_InitMultipleFiles().
+
+Fri Feb  3 18:39:59 2006 fraggle
+	
+	Support NWT-style WAD merging (-af and -as command line parameters).
+	Restructure WAD loading so that merged WADs are always loaded before
+	normal PWADs.  Remove W_InitMultipleFiles().
+
+Mon Jan 30 08:12:49 2006 fraggle
+	
+	Add manpage
+
+Mon Jan 30 08:09:54 2006 fraggle
+	
+	file Makefile was initially added on branch CHOCOLATE_DOOM_0_1.
+
+Mon Jan 30 08:09:54 2006 fraggle
+	
+	Add manpage (Thanks to Jon Dowland)
+
+Mon Jan 30 08:09:54 2006 fraggle
+	
+	file doom-options.in was initially added on branch CHOCOLATE_DOOM_0_1.
+
+Mon Jan 30 08:09:54 2006 fraggle
+	
+	file foot was initially added on branch CHOCOLATE_DOOM_0_1.
+
+Mon Jan 30 08:09:54 2006 fraggle
+	
+	file chocolate-doom-options.in was initially added on branch CHOCOLATE_DOOM_0_1.
+
+Mon Jan 30 08:09:54 2006 fraggle
+	
+	file head was initially added on branch CHOCOLATE_DOOM_0_1.
+
+Mon Jan 30 08:06:29 2006 fraggle
+	
+	Install into the games directory, not bin (Thanks to Jon Dowland)
+
+Sun Jan 29 15:07:12 2006 fraggle
+	
+	Shut up compiler warnings
+
+Sun Jan 29 15:05:05 2006 fraggle
+	
+	Allow map things of type <= 0 - these are ignored by Vanilla Doom.  Provides compatibility with plutonia.wad map12.
+
+Sat Jan 28 20:03:09 2006 fraggle
+	
+	Avoid conflict with stdc time function
+
+Fri Jan 27 18:23:08 2006 fraggle
+	
+	Exit with an error when playing a demo with the wrong version, like Vanilla Doom
+
+Fri Jan 27 18:21:35 2006 fraggle
+	
+	Fix compiler warning due to missing include
+
+Fri Jan 27 18:18:41 2006 fraggle
+	
+	dehacked replacements for switch texture names
+
+Wed Jan 25 17:40:03 2006 fraggle
+	
+	Allow overriding the animation texture/flat names via dehacked
+
+Wed Jan 25 17:38:40 2006 fraggle
+	
+	Allow overriding the animation texture/flat names via dehacked
+
+Tue Jan 24 01:46:08 2006 fraggle
+	
+	More endianness fixes
+
+Mon Jan 23 21:56:18 2006 fraggle
+	
+	Include the config header so that endianness is dealt with correctly
+
+Mon Jan 23 01:40:24 2006 fraggle
+	
+	Fix bug when expanding large sound effects with odd sample rates
+
+Mon Jan 23 00:47:16 2006 fraggle
+	
+	Rearrange the order of startup code to allow replacing the IWAD filename via dehacked
+
+Mon Jan 23 00:37:14 2006 fraggle
+	
+	Make the network waiting screen not thrash the CPU so much.
+
+Mon Jan 23 00:17:43 2006 fraggle
+	
+	Allow changing the names of level lump names via dehacked.
+
+Mon Jan 23 00:12:25 2006 fraggle
+	
+	Fix dehacked sky replacement
+
+Mon Jan 23 00:07:56 2006 fraggle
+	
+	More dehacked text substitutions for finale text names
+
+Sun Jan 22 23:48:00 2006 fraggle
+	
+	Allow changing of all menu graphic lumps via dehacked
+
+Sun Jan 22 23:47:18 2006 fraggle
+	
+	Allow changing the status bar graphic lumps via dehacked
+
+Sun Jan 22 23:38:05 2006 fraggle
+	
+	Allow changing the status bar graphic lumps via dehacked
+
+Sun Jan 22 23:33:32 2006 fraggle
+	
+	Allow changing the sky texture names via dehacked patches
+
+Sun Jan 22 22:29:42 2006 fraggle
+	
+	Periodically request the time from clients to estimate their offset to
+	the server time.
+
+Sun Jan 22 21:22:35 2006 fraggle
+	
+	Dehacked string replacements for menu graphic lump names
+
+Sun Jan 22 21:21:02 2006 fraggle
+	
+	Dehacked string replacements for intermission screen graphic lumps
+
+Sun Jan 22 21:20:20 2006 fraggle
+	
+	Dehacked string replacements for sound and music lump names
+
+Sun Jan 22 21:19:14 2006 fraggle
+	
+	Dehacked string replacements for startup messages, IWAD names, demo names and backgrounds
+
+Sun Jan 22 21:17:56 2006 fraggle
+	
+	Catch calls to DEH_String before DEH_Init is called
+
+Sat Jan 21 14:16:49 2006 fraggle
+	
+	Add first game data sending code. Check the client version when connecting.
+
+Sat Jan 21 14:15:29 2006 fraggle
+	
+	Remove SAVESTRINGSIZE (now defined in p_saveg.h)
+
+Fri Jan 20 21:05:16 2006 fraggle
+	
+	Bump version to 0.2.0
+
+Fri Jan 20 21:04:59 2006 fraggle
+	
+	Import differences from stable branch.
+
+Fri Jan 20 19:46:14 2006 fraggle
+	
+	Fix crash due to buffer not allocated large enough
+
 Fri Jan 20 17:53:56 2006 fraggle
 	
 	v0.1.3
