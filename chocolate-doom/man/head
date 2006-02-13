@@ -1,0 +1,18 @@
+.\" this section from head
+.TH chocolate\-doom 6
+.SH NAME
+chocolate\-doom \- historically compatible doom engine
+.SH SYNOPSIS
+.B chocolate\-doom
+[\fIDOOM OPTIONS\fR]
+[\fICHOCOLATE\-DOOM OPTIONS\fR]
+.SH DESCRIPTION
+.PP
+chocolate\-doom is a modern doom engine designed to behave
+as similar to the original doom game as is possible.
+.br
+Command-line arguments are divided up into \fBDOOM
+OPTIONS\fR, a subset of the original doom's command line
+arguments, and \fBCHOCOLATE\-DOOM OPTIONS\fR which are
+specific to this engine.
+.\" this section generated from vanilla-doom-options.in

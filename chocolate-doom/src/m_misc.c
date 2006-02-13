@@ -23,6 +23,12 @@
 //
 //
 // $Log$
+// Revision 1.17.2.2  2006/01/20 19:46:14  fraggle
+// Fix crash due to buffer not allocated large enough
+//
+// Revision 1.17.2.1  2006/01/20 00:58:17  fraggle
+// Remove new networking code from stable version
+//
 // Revision 1.17  2006/01/10 22:14:13  fraggle
 // Shut up compiler warnings
 //
@@ -120,7 +126,6 @@ rcsid[] = "$Id$";
 
 #include "m_swap.h"
 #include "m_argv.h"
-#include "net_client.h"
 
 #include "w_wad.h"
 
@@ -391,7 +396,6 @@ static default_t extra_defaults_list[] =
     {"novert",             &novert},
     {"mouse_acceleration", &mouse_acceleration,   DEFAULT_FLOAT},
     {"show_endoom",        &show_endoom},
-    {"player_name",        &net_player_name,      DEFAULT_STRING},
 };
 
 static default_collection_t extra_defaults =
@@ -631,7 +635,7 @@ void M_LoadDefaults (void)
     }
     else
     {
-        doom_defaults.filename = malloc(strlen(configdir) + 10);
+        doom_defaults.filename = malloc(strlen(configdir) + 20);
         sprintf(doom_defaults.filename, "%sdefault.cfg", configdir);
     }
 

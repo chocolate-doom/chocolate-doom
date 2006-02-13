@@ -23,6 +23,12 @@
 //
 //
 // $Log$
+// Revision 1.3.2.2  2006/01/27 18:21:39  fraggle
+// Fix compiler warning due to missing include
+//
+// Revision 1.3.2.1  2006/01/27 18:18:46  fraggle
+// dehacked replacements for switch texture names
+//
 // Revision 1.3  2005/09/08 00:01:51  fraggle
 // Fix switches not changing in Episode 4
 //
@@ -43,6 +49,7 @@ rcsid[] = "$Id$";
 
 
 #include "i_system.h"
+#include "deh_main.h"
 #include "doomdef.h"
 #include "p_local.h"
 
@@ -157,8 +164,8 @@ void P_InitSwitchList(void)
 	    
 	    value = R_TextureNumForName(alphSwitchList[i].name1);
 #endif
-	    switchlist[index++] = R_TextureNumForName(alphSwitchList[i].name1);
-	    switchlist[index++] = R_TextureNumForName(alphSwitchList[i].name2);
+	    switchlist[index++] = R_TextureNumForName(DEH_String(alphSwitchList[i].name1));
+	    switchlist[index++] = R_TextureNumForName(DEH_String(alphSwitchList[i].name2));
 	}
     }
 }

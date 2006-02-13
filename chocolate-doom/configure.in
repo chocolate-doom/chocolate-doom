@@ -1,4 +1,4 @@
-AC_INIT(Chocolate Doom, 0.1.2, fraggle@alkali.org, chocolate-doom)
+AC_INIT(Chocolate Doom, 0.1.4, fraggle@alkali.org, chocolate-doom)
 AC_CONFIG_AUX_DIR(autotools)
 
 orig_CFLAGS="$CFLAGS"
