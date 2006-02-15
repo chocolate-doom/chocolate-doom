@@ -30,6 +30,8 @@
 #ifndef __P_SAVEG__
 #define __P_SAVEG__
 
+#include <stdio.h>
+
 // maximum size of a savegame description
 
 #define SAVESTRINGSIZE 24
@@ -59,13 +61,18 @@ void P_UnArchiveThinkers (void);
 void P_ArchiveSpecials (void);
 void P_UnArchiveSpecials (void);
 
-extern byte*		save_p; 
+extern FILE *save_stream;
 
 
 #endif
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.6  2006/02/15 12:57:58  fraggle
+// Remove the savegame buffer entirely.  Keep the old savegame size limit
+// bug add a "vanilla_savegame_limit" config file option which allows
+// the limit to be disabled if necessary.
+//
 // Revision 1.5  2006/01/19 18:46:24  fraggle
 // Move savegame header read/write code into p_saveg.c
 //
