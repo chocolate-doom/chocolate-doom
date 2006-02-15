@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.24  2006/02/15 12:57:58  fraggle
+// Remove the savegame buffer entirely.  Keep the old savegame size limit
+// bug add a "vanilla_savegame_limit" config file option which allows
+// the limit to be disabled if necessary.
+//
 // Revision 1.23  2006/01/27 18:23:08  fraggle
 // Exit with an error when playing a demo with the wrong version, like Vanilla Doom
 //
@@ -234,8 +239,6 @@ wbstartstruct_t wminfo;               	// parms for world map / intermission
  
 short		consistancy[MAXPLAYERS][BACKUPTICS]; 
  
-byte*		savebuffer;
- 
  
 // 
 // Controls 
@@ -313,6 +316,7 @@ char		savedescription[32];
 mobj_t*		bodyque[BODYQUESIZE]; 
 int		bodyqueslot; 
  
+int             vanilla_savegame_limit = 1;
  
  
 int G_CmdChecksum (ticcmd_t* cmd) 
@@ -1337,17 +1341,20 @@ void G_LoadGame (char* name)
 
 void G_DoLoadGame (void) 
 { 
-    int	length; 
     int savedleveltime;
 	 
     gameaction = ga_nothing; 
 	 
-    length = M_ReadFile (savename, &savebuffer); 
-    save_p = savebuffer;
+    save_stream = fopen(savename, "rb");
+
+    if (save_stream == NULL)
+    {
+        return;
+    }
 
     if (!P_ReadSaveGameHeader())
     {
-        Z_Free(savebuffer);
+        fclose(save_stream);
         return;
     }
 
@@ -1366,10 +1373,9 @@ void G_DoLoadGame (void)
  
     if (!P_ReadSaveGameEOF())
 	I_Error ("Bad savegame");
+
+    fclose(save_stream);
     
-    // done 
-    Z_Free (savebuffer); 
- 
     if (setsizeneeded)
 	R_ExecuteSetViewSize ();
     
@@ -1397,14 +1403,19 @@ void G_DoSaveGame (void)
 { 
     char	name[100]; 
     char*	description; 
-    int		length; 
+    unsigned long length;
 	
     strcpy(name, P_SaveGameFile(savegameslot));
 
     description = savedescription; 
 	 
-    save_p = savebuffer = screens[1]+0x4000; 
-	 
+    save_stream = fopen(name, "wb");
+
+    if (save_stream == NULL)
+    {
+        return;
+    }
+
     P_WriteSaveGameHeader(description);
  
     P_ArchivePlayers (); 
@@ -1414,10 +1425,16 @@ void G_DoSaveGame (void)
 	 
     P_WriteSaveGameEOF();
 	 
-    length = save_p - savebuffer; 
-    if (length > SAVEGAMESIZE) 
-	I_Error ("Savegame buffer overrun"); 
-    M_WriteFile (name, savebuffer, length); 
+    // Enforce the same savegame size limit as in Vanilla Doom, 
+    // except if the vanilla_savegame_limit setting is turned off.
+
+    if (vanilla_savegame_limit && ftell(save_stream) > SAVEGAMESIZE)
+    {
+        I_Error ("Savegame buffer overrun");
+    }
+    
+    fclose(save_stream);
+
     gameaction = ga_nothing; 
     strcpy(savedescription, "");
 	 
