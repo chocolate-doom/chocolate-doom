@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_misc.c 309 2006-01-20 21:04:59Z fraggle $
+// $Id: m_misc.c 367 2006-02-15 12:57:58Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -23,6 +23,11 @@
 //
 //
 // $Log$
+// Revision 1.19  2006/02/15 12:57:58  fraggle
+// Remove the savegame buffer entirely.  Keep the old savegame size limit
+// bug add a "vanilla_savegame_limit" config file option which allows
+// the limit to be disabled if necessary.
+//
 // Revision 1.18  2006/01/20 21:04:59  fraggle
 // Import differences from stable branch.
 //
@@ -101,7 +106,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_misc.c 309 2006-01-20 21:04:59Z fraggle $";
+rcsid[] = "$Id: m_misc.c 367 2006-02-15 12:57:58Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -289,6 +294,7 @@ extern	int	numChannels;
 extern char*	chat_macros[];
 
 extern int      show_endoom;
+extern int      vanilla_savegame_limit;
 
 // dos specific options: these are unused but should be maintained
 // so that the config file can be shared between chocolate
@@ -388,13 +394,14 @@ static default_collection_t doom_defaults =
 
 static default_t extra_defaults_list[] = 
 {
-    {"grabmouse",          &grabmouse},
-    {"fullscreen",         &fullscreen},
-    {"screenmultiply",     &screenmultiply},
-    {"novert",             &novert},
-    {"mouse_acceleration", &mouse_acceleration,   DEFAULT_FLOAT},
-    {"show_endoom",        &show_endoom},
-    {"player_name",        &net_player_name,      DEFAULT_STRING},
+    {"grabmouse",              &grabmouse},
+    {"fullscreen",             &fullscreen},
+    {"screenmultiply",         &screenmultiply},
+    {"novert",                 &novert},
+    {"mouse_acceleration",     &mouse_acceleration,   DEFAULT_FLOAT},
+    {"show_endoom",            &show_endoom},
+    {"vanilla_savegame_limit", &vanilla_savegame_limit},
+    {"player_name",            &net_player_name,      DEFAULT_STRING},
 };
 
 static default_collection_t extra_defaults =

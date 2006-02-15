@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_saveg.c 300 2006-01-19 18:46:24Z fraggle $
+// $Id: p_saveg.c 367 2006-02-15 12:57:58Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,11 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.8  2006/02/15 12:57:58  fraggle
+// Remove the savegame buffer entirely.  Keep the old savegame size limit
+// bug add a "vanilla_savegame_limit" config file option which allows
+// the limit to be disabled if necessary.
+//
 // Revision 1.7  2006/01/19 18:46:24  fraggle
 // Move savegame header read/write code into p_saveg.c
 //
@@ -55,7 +60,9 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_saveg.c 300 2006-01-19 18:46:24Z fraggle $";
+rcsid[] = "$Id: p_saveg.c 367 2006-02-15 12:57:58Z fraggle $";
+
+#include <stdio.h>
 
 #include "dstrings.h"
 #include "deh_main.h"
@@ -71,13 +78,8 @@ rcsid[] = "$Id: p_saveg.c 300 2006-01-19 18:46:24Z fraggle $";
 #define SAVEGAME_EOF 0x1d
 #define VERSIONSIZE 16 
 
-byte*		save_p;
-
-
-// Pads save_p to a 4-byte boundary
-//  so that the load/save works on SGI&Gecko.
-#define PADSAVEP()	save_p += (4 - ((int) save_p & 3)) & 3
-
+FILE *save_stream;
+int savegamelength;
 
 char *P_SaveGameFile(int slot)
 {
@@ -95,62 +97,88 @@ char *P_SaveGameFile(int slot)
 
 static byte saveg_read8(void)
 {
-    int result;
+    byte result;
 
-    result = *save_p;
-
-    save_p += 1;
+    fread(&result, 1, 1, save_stream);
 
     return result;
 }
 
 static void saveg_write8(byte value)
 {
-    *save_p = value;
-
-    save_p += 1;
+    fwrite(&value, 1, 1, save_stream);
 }
 
 static short saveg_read16(void)
 {
     int result;
 
-    result = save_p[0] | (save_p[1] << 8);
-
-    save_p += 2;
+    result = saveg_read8();
+    result |= saveg_read8() << 8;
 
     return result;
 }
 
 static void saveg_write16(short value)
 {
-    save_p[0] = value & 0xff;
-    save_p[1] = (value >> 8) & 0xff;
-
-    save_p += 2;
+    saveg_write8(value & 0xff);
+    saveg_write8((value >> 8) & 0xff);
 }
 
 static int saveg_read32(void)
 {
     int result;
 
-    result = save_p[0] | (save_p[1] << 8)
-           | (save_p[2] << 16) | (save_p[3] << 24);
-
-    save_p += 4;
+    result = saveg_read8();
+    result |= saveg_read8() << 8;
+    result |= saveg_read8() << 16;
+    result |= saveg_read8() << 24;
 
     return result;
 }
 
 static void saveg_write32(int value)
 {
-    save_p[0] = value & 0xff;
-    save_p[1] = (value >> 8) & 0xff;
-    save_p[2] = (value >> 16) & 0xff;
-    save_p[3] = (value >> 24) & 0xff;
-
-    save_p += 4;
+    saveg_write8(value & 0xff);
+    saveg_write8((value >> 8) & 0xff);
+    saveg_write8((value >> 16) & 0xff);
+    saveg_write8((value >> 24) & 0xff);
 }
+
+// Pad to 4-byte boundaries
+
+static void saveg_read_pad(void)
+{
+    unsigned long pos;
+    int padding;
+    int i;
+
+    pos = ftell(save_stream);
+
+    padding = (4 - (pos & 3)) & 3;
+
+    for (i=0; i<padding; ++i)
+    {
+        saveg_read8();
+    }
+}
+
+static void saveg_write_pad(void)
+{
+    unsigned long pos;
+    int padding;
+    int i;
+
+    pos = ftell(save_stream);
+
+    padding = (4 - (pos & 3)) & 3;
+
+    for (i=0; i<padding; ++i)
+    {
+        saveg_write8(0);
+    }
+}
+
 
 // Pointers
 
@@ -1321,13 +1349,16 @@ void P_WriteSaveGameHeader(char *description)
     char name[VERSIONSIZE]; 
     int i; 
 	
-    memcpy (save_p, description, SAVESTRINGSIZE); 
-    save_p += SAVESTRINGSIZE; 
+    for (i=0; description[i] != '\0'; ++i)
+        saveg_write8(description[i]);
+    for (; i<SAVESTRINGSIZE; ++i)
+        saveg_write8(0);
 
     memset (name,0,sizeof(name)); 
     sprintf (name,"version %i",DOOM_VERSION); 
-    memcpy (save_p, name, VERSIONSIZE); 
-    save_p += VERSIONSIZE; 
+
+    for (i=0; i<VERSIONSIZE; ++i)
+        saveg_write8(name[i]);
 	 
     saveg_write8(gameskill);
     saveg_write8(gameepisode);
@@ -1350,15 +1381,20 @@ boolean P_ReadSaveGameHeader(void)
     int	 i; 
     byte a, b, c; 
     char vcheck[VERSIONSIZE]; 
+    char read_vcheck[VERSIONSIZE];
 	 
-    save_p += SAVESTRINGSIZE;
-    
     // skip the description field 
+
+    for (i=0; i<SAVESTRINGSIZE; ++i)
+        saveg_read8();
+    
+    for (i=0; i<VERSIONSIZE; ++i)
+        read_vcheck[i] = saveg_read8();
+
     memset (vcheck,0,sizeof(vcheck)); 
     sprintf (vcheck,"version %i",DOOM_VERSION); 
-    if (strcmp ((char *) save_p, vcheck)) 
+    if (strcmp(read_vcheck, vcheck) != 0)
 	return false;				// bad version 
-    save_p += VERSIONSIZE; 
 			 
     gameskill = saveg_read8();
     gameepisode = saveg_read8();
@@ -1410,7 +1446,7 @@ void P_ArchivePlayers (void)
 	if (!playeringame[i])
 	    continue;
 	
-	PADSAVEP();
+	saveg_write_pad();
 
         saveg_write_player_t(&players[i]);
     }
@@ -1430,7 +1466,7 @@ void P_UnArchivePlayers (void)
 	if (!playeringame[i])
 	    continue;
 	
-	PADSAVEP();
+	saveg_read_pad();
 
         saveg_read_player_t(&players[i]);
 	
@@ -1563,7 +1599,7 @@ void P_ArchiveThinkers (void)
 	if (th->function.acp1 == (actionf_p1)P_MobjThinker)
 	{
             saveg_write8(tc_mobj);
-	    PADSAVEP();
+	    saveg_write_pad();
             saveg_write_mobj_t((mobj_t *) th);
 
 	    continue;
@@ -1613,7 +1649,7 @@ void P_UnArchiveThinkers (void)
 	    return; 	// end of list
 			
 	  case tc_mobj:
-	    PADSAVEP();
+	    saveg_read_pad();
 	    mobj = Z_Malloc (sizeof(*mobj), PU_LEVEL, NULL);
             saveg_read_mobj_t(mobj);
 
@@ -1681,7 +1717,7 @@ void P_ArchiveSpecials (void)
 	    if (i<MAXCEILINGS)
 	    {
                 saveg_write8(tc_ceiling);
-		PADSAVEP();
+		saveg_write_pad();
                 saveg_write_ceiling_t((ceiling_t *) th);
 	    }
 	    continue;
@@ -1690,7 +1726,7 @@ void P_ArchiveSpecials (void)
 	if (th->function.acp1 == (actionf_p1)T_MoveCeiling)
 	{
             saveg_write8(tc_ceiling);
-	    PADSAVEP();
+	    saveg_write_pad();
             saveg_write_ceiling_t((ceiling_t *) th);
 	    continue;
 	}
@@ -1698,7 +1734,7 @@ void P_ArchiveSpecials (void)
 	if (th->function.acp1 == (actionf_p1)T_VerticalDoor)
 	{
             saveg_write8(tc_door);
-	    PADSAVEP();
+	    saveg_write_pad();
             saveg_write_vldoor_t((vldoor_t *) th);
 	    continue;
 	}
@@ -1706,7 +1742,7 @@ void P_ArchiveSpecials (void)
 	if (th->function.acp1 == (actionf_p1)T_MoveFloor)
 	{
             saveg_write8(tc_floor);
-	    PADSAVEP();
+	    saveg_write_pad();
             saveg_write_floormove_t((floormove_t *) th);
 	    continue;
 	}
@@ -1714,7 +1750,7 @@ void P_ArchiveSpecials (void)
 	if (th->function.acp1 == (actionf_p1)T_PlatRaise)
 	{
             saveg_write8(tc_plat);
-	    PADSAVEP();
+	    saveg_write_pad();
             saveg_write_plat_t((plat_t *) th);
 	    continue;
 	}
@@ -1722,7 +1758,7 @@ void P_ArchiveSpecials (void)
 	if (th->function.acp1 == (actionf_p1)T_LightFlash)
 	{
             saveg_write8(tc_flash);
-	    PADSAVEP();
+	    saveg_write_pad();
             saveg_write_lightflash_t((lightflash_t *) th);
 	    continue;
 	}
@@ -1730,7 +1766,7 @@ void P_ArchiveSpecials (void)
 	if (th->function.acp1 == (actionf_p1)T_StrobeFlash)
 	{
             saveg_write8(tc_strobe);
-	    PADSAVEP();
+	    saveg_write_pad();
             saveg_write_strobe_t((strobe_t *) th);
 	    continue;
 	}
@@ -1738,7 +1774,7 @@ void P_ArchiveSpecials (void)
 	if (th->function.acp1 == (actionf_p1)T_Glow)
 	{
             saveg_write8(tc_glow);
-	    PADSAVEP();
+	    saveg_write_pad();
             saveg_write_glow_t((glow_t *) th);
 	    continue;
 	}
@@ -1776,7 +1812,7 @@ void P_UnArchiveSpecials (void)
 	    return;	// end of list
 			
 	  case tc_ceiling:
-	    PADSAVEP();
+	    saveg_read_pad();
 	    ceiling = Z_Malloc (sizeof(*ceiling), PU_LEVEL, NULL);
             saveg_read_ceiling_t(ceiling);
 	    ceiling->sector->specialdata = ceiling;
@@ -1789,7 +1825,7 @@ void P_UnArchiveSpecials (void)
 	    break;
 				
 	  case tc_door:
-	    PADSAVEP();
+	    saveg_read_pad();
 	    door = Z_Malloc (sizeof(*door), PU_LEVEL, NULL);
             saveg_read_vldoor_t(door);
 	    door->sector->specialdata = door;
@@ -1798,7 +1834,7 @@ void P_UnArchiveSpecials (void)
 	    break;
 				
 	  case tc_floor:
-	    PADSAVEP();
+	    saveg_read_pad();
 	    floor = Z_Malloc (sizeof(*floor), PU_LEVEL, NULL);
             saveg_read_floormove_t(floor);
 	    floor->sector->specialdata = floor;
@@ -1807,7 +1843,7 @@ void P_UnArchiveSpecials (void)
 	    break;
 				
 	  case tc_plat:
-	    PADSAVEP();
+	    saveg_read_pad();
 	    plat = Z_Malloc (sizeof(*plat), PU_LEVEL, NULL);
             saveg_read_plat_t(plat);
 	    plat->sector->specialdata = plat;
@@ -1820,7 +1856,7 @@ void P_UnArchiveSpecials (void)
 	    break;
 				
 	  case tc_flash:
-	    PADSAVEP();
+	    saveg_read_pad();
 	    flash = Z_Malloc (sizeof(*flash), PU_LEVEL, NULL);
             saveg_read_lightflash_t(flash);
 	    flash->thinker.function.acp1 = (actionf_p1)T_LightFlash;
@@ -1828,7 +1864,7 @@ void P_UnArchiveSpecials (void)
 	    break;
 				
 	  case tc_strobe:
-	    PADSAVEP();
+	    saveg_read_pad();
 	    strobe = Z_Malloc (sizeof(*strobe), PU_LEVEL, NULL);
             saveg_read_strobe_t(strobe);
 	    strobe->thinker.function.acp1 = (actionf_p1)T_StrobeFlash;
@@ -1836,7 +1872,7 @@ void P_UnArchiveSpecials (void)
 	    break;
 				
 	  case tc_glow:
-	    PADSAVEP();
+	    saveg_read_pad();
 	    glow = Z_Malloc (sizeof(*glow), PU_LEVEL, NULL);
             saveg_read_glow_t(glow);
 	    glow->thinker.function.acp1 = (actionf_p1)T_Glow;
