@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_misc.c 307 2006-01-20 19:46:14Z fraggle $
+// $Id: m_misc.c 368 2006-02-15 12:58:27Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -23,6 +23,10 @@
 //
 //
 // $Log$
+// Revision 1.17.2.3  2006/02/15 12:58:27  fraggle
+// Remove the savegame buffer entirely.  Keep the old savegame size limit bug add a "vanilla_savegame_limit" config file option which allows
+// the limit to be disabled if necessary.
+//
 // Revision 1.17.2.2  2006/01/20 19:46:14  fraggle
 // Fix crash due to buffer not allocated large enough
 //
@@ -104,7 +108,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_misc.c 307 2006-01-20 19:46:14Z fraggle $";
+rcsid[] = "$Id: m_misc.c 368 2006-02-15 12:58:27Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -291,6 +295,7 @@ extern	int	numChannels;
 extern char*	chat_macros[];
 
 extern int      show_endoom;
+extern int      vanilla_savegame_limit;
 
 // dos specific options: these are unused but should be maintained
 // so that the config file can be shared between chocolate
@@ -390,12 +395,13 @@ static default_collection_t doom_defaults =
 
 static default_t extra_defaults_list[] = 
 {
-    {"grabmouse",          &grabmouse},
-    {"fullscreen",         &fullscreen},
-    {"screenmultiply",     &screenmultiply},
-    {"novert",             &novert},
-    {"mouse_acceleration", &mouse_acceleration,   DEFAULT_FLOAT},
-    {"show_endoom",        &show_endoom},
+    {"grabmouse",              &grabmouse},
+    {"fullscreen",             &fullscreen},
+    {"screenmultiply",         &screenmultiply},
+    {"novert",                 &novert},
+    {"mouse_acceleration",     &mouse_acceleration,   DEFAULT_FLOAT},
+    {"show_endoom",            &show_endoom},
+    {"vanilla_savegame_limit", &vanilla_savegame_limit},
 };
 
 static default_collection_t extra_defaults =

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_saveg.h 300 2006-01-19 18:46:24Z fraggle $
+// $Id: p_saveg.h 368 2006-02-15 12:58:27Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -29,6 +29,8 @@
 
 #ifndef __P_SAVEG__
 #define __P_SAVEG__
+
+#include <stdio.h>
 
 // maximum size of a savegame description
 
@@ -59,13 +61,17 @@ void P_UnArchiveThinkers (void);
 void P_ArchiveSpecials (void);
 void P_UnArchiveSpecials (void);
 
-extern byte*		save_p; 
+extern FILE *save_stream;
 
 
 #endif
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.5.2.1  2006/02/15 12:58:27  fraggle
+// Remove the savegame buffer entirely.  Keep the old savegame size limit bug add a "vanilla_savegame_limit" config file option which allows
+// the limit to be disabled if necessary.
+//
 // Revision 1.5  2006/01/19 18:46:24  fraggle
 // Move savegame header read/write code into p_saveg.c
 //
