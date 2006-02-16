@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 323 2006-01-22 22:29:42Z fraggle $
+// $Id: net_server.c 369 2006-02-16 01:12:28Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,12 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.24  2006/02/16 01:12:28  fraggle
+// Define a new type net_full_ticcmd_t, a structure containing all ticcmds
+// for a given tic.  Store received game data in a receive window.  Add
+// send queues for clients and add data from the receive window to
+// generate complete sets of ticcmds.
+//
 // Revision 1.23  2006/01/22 22:29:42  fraggle
 // Periodically request the time from clients to estimate their offset to
 // the server time.
@@ -141,6 +147,7 @@ typedef enum
 typedef struct 
 {
     boolean active;
+    int player_number;
     net_addr_t *addr;
     net_connection_t connection;
     int last_send_time;
@@ -151,15 +158,55 @@ typedef struct
     int last_time_req_time;
     int time_req_seq;
     signed int time_offset;
+
+    // send queue: items to send to the client
+    // this is a circular buffer
+
+    int sendseq;
+    net_full_ticcmd_t sendqueue[BACKUPTICS];
+
 } net_client_t;
+
+// structure used for the recv window
+
+typedef struct 
+{
+    boolean active;
+    unsigned int time;
+    net_ticdiff_t diff;
+} net_client_recv_t;
 
 static net_server_state_t server_state;
 static boolean server_initialised = false;
 static net_client_t clients[MAXNETNODES];
+static net_client_t *sv_players[MAXPLAYERS];
 static net_context_t *server_context;
 static int sv_gamemode;
 static int sv_gamemission;
 static net_gamesettings_t sv_settings;
+
+// receive window
+
+static unsigned int recvwindow_start;
+static net_client_recv_t recvwindow[BACKUPTICS][MAXPLAYERS];
+
+static unsigned int NET_SV_ExpandTicNum(int i)
+{
+    int l, h;
+    unsigned int result;
+
+    h = recvwindow_start & ~0xff;
+    l = recvwindow_start & 0xff;
+    
+    result = h | i;
+
+    if (i - l > 0x80)
+        result -= 0x100;
+    else if (l - i > 0x80)
+        result += 0x100;
+
+    return result;
+}
 
 static void NET_SV_DisconnectClient(net_client_t *client)
 {
@@ -176,6 +223,29 @@ static boolean ClientConnected(net_client_t *client)
 
     return client->active 
         && client->connection.state == NET_CONN_STATE_CONNECTED;
+}
+
+static void NET_SV_AssignPlayers(void)
+{
+    int i;
+    int pl;
+
+    pl = 0;
+
+    for (i=0; i<MAXNETNODES; ++i)
+    {
+        if (ClientConnected(&clients[i]))
+        {
+            sv_players[pl] = &clients[i];
+            sv_players[pl]->player_number = pl;
+            ++pl;
+        }
+    }
+
+    for (; pl<MAXPLAYERS; ++pl)
+    {
+        sv_players[pl] = NULL;
+    }
 }
 
 // returns the number of clients connected
@@ -221,6 +291,45 @@ static int NET_SV_ClientIndex(net_client_t *client)
     }
 
     return -1;
+}
+
+// Possibly advance the recv window if all connected clients have
+// used the data in the window
+
+static void NET_SV_AdvanceWindow(void)
+{
+    int i;
+    int lowtic = -1;
+
+    // Find the smallest value of player->sendseq for all connected
+    // players
+
+    for (i=0; i<MAXPLAYERS; ++i) 
+    {
+        if (sv_players[i] == NULL || !ClientConnected(sv_players[i]))
+        {
+            continue;
+        }
+
+        if (lowtic < 0 || sv_players[i]->sendseq < lowtic)
+        {
+            lowtic = sv_players[i]->sendseq;
+        }
+    }
+
+    if (lowtic < 0)
+    {
+        return;
+    }
+
+    // Advance the recv window until it catches up with lowtic
+
+    while (recvwindow_start < lowtic)
+    {    
+        memcpy(recvwindow, recvwindow + 1, sizeof(*recvwindow) * (BACKUPTICS - 1));
+        memset(&recvwindow[BACKUPTICS-1], 0, sizeof(*recvwindow));
+        ++recvwindow_start;
+    }
 }
 
 // returns a pointer to the client which controls the server
@@ -272,6 +381,25 @@ static void NET_SV_SendReject(net_addr_t *addr, char *msg)
     NET_WriteString(packet, msg);
     NET_SendPacket(addr, packet);
     NET_FreePacket(packet);
+}
+
+static void NET_SV_InitNewClient(net_client_t *client, 
+                                 net_addr_t *addr,
+                                 char *player_name)
+{
+    client->active = true;
+    NET_Conn_InitServer(&client->connection, addr);
+    client->addr = addr;
+    client->last_send_time = -1;
+    client->name = strdup(player_name);
+    client->last_time_req_time = -1;
+    client->time_req_seq = 0;
+    client->time_offset = 0;
+
+    // init the ticcmd send queue
+
+    client->sendseq = 0;
+    memset(client->sendqueue, 0xff, sizeof(client->sendqueue));
 }
 
 // parse a SYN from a client(initiating a connection)
@@ -406,14 +534,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         
         // Activate, initialise connection
 
-        client->active = true;
-        NET_Conn_InitServer(&client->connection, addr);
-        client->addr = addr;
-        client->last_send_time = -1;
-        client->name = strdup(player_name);
-	client->last_time_req_time = -1;
-	client->time_req_seq = 0;
-	client->time_offset = 0;
+        NET_SV_InitNewClient(client, addr, player_name);
     }
 
     if (client->connection.state == NET_CONN_STATE_WAITING_ACK)
@@ -459,18 +580,23 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
 
     // Send start packets to each connected node
 
-    for (i=0; i<MAXNETNODES; ++i) 
-    {
-        if (ClientConnected(&clients[i]))
-        {
-            startpacket = NET_Conn_NewReliable(&clients[i].connection,
-                                               NET_PACKET_TYPE_GAMESTART);
+    NET_SV_AssignPlayers();
 
-            NET_WriteInt8(startpacket, NET_SV_NumClients());
-            NET_WriteInt8(startpacket, NET_SV_ClientIndex(&clients[i]));
-            NET_WriteSettings(startpacket, &settings);
-        }
+    for (i=0; i<MAXPLAYERS; ++i) 
+    {
+        if (sv_players[i] == NULL)
+            break;
+
+        startpacket = NET_Conn_NewReliable(&sv_players[i]->connection,
+                                           NET_PACKET_TYPE_GAMESTART);
+
+        NET_WriteInt8(startpacket, NET_SV_NumClients());
+        NET_WriteInt8(startpacket, sv_players[i]->player_number);
+        NET_WriteSettings(startpacket, &settings);
     }
+
+    memset(recvwindow, 0, sizeof(recvwindow));
+    recvwindow_start = 0;
 }
 
 static void NET_SV_ParseTimeResponse(net_packet_t *packet, net_client_t *client)
@@ -527,6 +653,62 @@ static void NET_SV_ParseTimeResponse(net_packet_t *packet, net_client_t *client)
     printf("client %p time offset: %i(%i)->%i\n", client, time_offset, rtt, client->time_offset);
 }
 
+// Process game data from a client
+
+static void NET_SV_ParseGameData(net_packet_t *packet, net_client_t *client)
+{
+    net_client_recv_t *recvobj;
+    unsigned int seq;
+    unsigned int num_tics;
+    int i;
+    int player;
+
+    if (server_state != SERVER_IN_GAME)
+    {
+        return;
+    }
+    
+    player = client->player_number;
+
+    // Read header
+
+    if (!NET_ReadInt8(packet, &seq)
+     || !NET_ReadInt8(packet, &num_tics))
+    {
+        return;
+    }
+
+    // Expand 8-bit value to the full sequence number
+
+    seq = NET_SV_ExpandTicNum(seq);
+
+    // Sanity checks
+
+    for (i=0; i<num_tics; ++i)
+    {
+        net_ticdiff_t diff;
+        int index;
+
+        if (!NET_ReadTiccmdDiff(packet, &diff, false))
+        {
+            return;
+        }
+
+        index = seq + i - recvwindow_start;
+
+        if (index < 0 || index >= BACKUPTICS)
+        {
+            // Not in range of the recv window
+
+            continue;
+        }
+
+        recvobj = &recvwindow[index][player];
+        recvobj->active = true;
+        recvobj->diff = diff;
+    }
+}
+
 // Process a packet received by the server
 
 static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
@@ -567,6 +749,9 @@ static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
         {
             case NET_PACKET_TYPE_GAMESTART:
                 NET_SV_ParseGameStart(packet, client);
+                break;
+            case NET_PACKET_TYPE_GAMEDATA:
+                NET_SV_ParseGameData(packet, client);
                 break;
 	    case NET_PACKET_TYPE_TIME_RESP:
 		NET_SV_ParseTimeResponse(packet, client);
@@ -655,6 +840,72 @@ static void NET_SV_SendTimeRequest(net_client_t *client)
     client->last_time_req_time = I_GetTimeMS();
 }
 
+static void NET_SV_PumpSendQueue(net_client_t *client)
+{
+    net_full_ticcmd_t cmd;
+    int recv_index;
+    int i;
+
+    recv_index = client->sendseq - recvwindow_start;
+
+    if (recv_index < 0 || recv_index >= BACKUPTICS)
+    {
+        return;
+    }
+
+    // Check if we can generate a new entry for the send queue
+    // using the data in recvwindow.
+
+    for (i=0; i<MAXPLAYERS; ++i)
+    {
+        if (sv_players[i] == client)
+        {
+            // Client does not rely on itself for data
+
+            continue;
+        }
+
+        if (sv_players[i] == NULL || !ClientConnected(sv_players[i]))
+        {
+            continue;
+        }
+
+        if (!recvwindow[recv_index][i].active)
+        {
+            // We do not have this player's ticcmd, so we cannot
+            // generate a complete command yet.
+
+            return;
+        }
+    }
+
+    //printf("have complete ticcmd for %i\n", client->sendseq);
+
+    // We have all data we need to generate a command for this tic.
+    
+    cmd.seq = client->sendseq;
+
+    // Add ticcmds from all players
+
+    for (i=0; i<MAXPLAYERS; ++i)
+    {
+        if (sv_players[i] == NULL || !recvwindow[recv_index][i].active)
+        {
+            cmd.playeringame[i] = false;
+            continue;
+        }
+
+        cmd.playeringame[i] = true;
+        cmd.cmds[i] = recvwindow[recv_index][i].diff;
+    }
+
+    // Add into the queue
+
+    client->sendqueue[client->sendseq % BACKUPTICS] = cmd;
+
+    ++client->sendseq;
+}
+
 // Perform any needed action on a client
 
 static void NET_SV_RunClient(net_client_t *client)
@@ -705,6 +956,11 @@ static void NET_SV_RunClient(net_client_t *client)
 	// Query the clients' times once every ten seconds.
 	
 	NET_SV_SendTimeRequest(client);
+    }
+
+    if (server_state == SERVER_IN_GAME)
+    {
+        NET_SV_PumpSendQueue(client);
     }
 }
 
@@ -761,6 +1017,11 @@ void NET_SV_Run(void)
         {
             NET_SV_RunClient(&clients[i]);
         }
+    }
+
+    if (server_state == SERVER_IN_GAME)
+    {
+        NET_SV_AdvanceWindow();
     }
 }
 
