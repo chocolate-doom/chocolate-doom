@@ -21,6 +21,12 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.6  2006/02/16 01:12:28  fraggle
+// Define a new type net_full_ticcmd_t, a structure containing all ticcmds
+// for a given tic.  Store received game data in a receive window.  Add
+// send queues for clients and add data from the receive window to
+// generate complete sets of ticcmds.
+//
 // Revision 1.5  2006/01/14 02:06:48  fraggle
 // Include the game version in the settings structure.
 //
@@ -46,6 +52,8 @@
 
 #include <stdlib.h>
 #include <string.h>
+
+#include "doomdef.h"
 
 #include "net_packet.h"
 #include "net_structrw.h"
@@ -211,5 +219,73 @@ void NET_TiccmdPatch(ticcmd_t *src, net_ticdiff_t *diff, ticcmd_t *dest)
         dest->chatchar = diff->cmd.chatchar;
     else
         dest->chatchar = 0;
+}
+
+// 
+// net_full_ticcmd_t
+// 
+
+boolean NET_ReadFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd)
+{
+    unsigned int bitfield;
+    int i;
+
+    // Regenerate playeringame from the "header" bitfield
+
+    if (!NET_ReadInt8(packet, &bitfield))
+    {
+        return false;
+    }
+          
+    for (i=0; i<MAXPLAYERS; ++i)
+    {
+        cmd->playeringame[i] = (bitfield & (1 << i)) != 0;
+    }
+        
+    // Read cmds
+
+    for (i=0; i<MAXPLAYERS; ++i)
+    {
+        if (cmd->playeringame[i])
+        {
+            if (!NET_ReadTiccmdDiff(packet, &cmd->cmds[i], false))
+            {
+                return false;
+            }
+        }
+    }
+
+    return true;
+}
+
+void NET_WriteFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd)
+{
+    unsigned int bitfield;
+    int i;
+
+    // Write "header" byte indicating which players are active
+    // in this ticcmd
+
+    bitfield = 0;
+    
+    for (i=0; i<MAXPLAYERS; ++i)
+    {
+        if (cmd->playeringame[i])
+        {
+            bitfield |= 1 << i;
+        }
+    }
+    
+    NET_WriteInt8(packet, bitfield);
+
+    // Write player ticcmds
+
+    for (i=0; i<MAXPLAYERS; ++i)
+    {
+        if (cmd->playeringame[i])
+        {
+            NET_WriteTiccmdDiff(packet, &cmd->cmds[i], false);
+        }
+    }
 }
 

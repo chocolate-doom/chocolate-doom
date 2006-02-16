@@ -21,6 +21,12 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.4  2006/02/16 01:12:28  fraggle
+// Define a new type net_full_ticcmd_t, a structure containing all ticcmds
+// for a given tic.  Store received game data in a receive window.  Add
+// send queues for clients and add data from the receive window to
+// generate complete sets of ticcmds.
+//
 // Revision 1.3  2006/01/13 02:22:47  fraggle
 // Update prototypes to match header.  Make sure we include the header in the
 // source file.
@@ -48,6 +54,10 @@ extern void NET_WriteTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff, boole
 extern boolean NET_ReadTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff, boolean lowres_turn);
 extern void NET_TiccmdDiff(ticcmd_t *tic1, ticcmd_t *tic2, net_ticdiff_t *diff);
 extern void NET_TiccmdPatch(ticcmd_t *src, net_ticdiff_t *diff, ticcmd_t *dest);
+
+boolean NET_ReadFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd);
+void NET_WriteFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd);
+
 
 #endif /* #ifndef NET_STRUCTRW_H */
 
