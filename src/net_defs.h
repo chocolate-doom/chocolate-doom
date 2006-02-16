@@ -21,6 +21,12 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.12  2006/02/16 01:12:28  fraggle
+// Define a new type net_full_ticcmd_t, a structure containing all ticcmds
+// for a given tic.  Store received game data in a receive window.  Add
+// send queues for clients and add data from the receive window to
+// generate complete sets of ticcmds.
+//
 // Revision 1.11  2006/01/22 22:29:42  fraggle
 // Periodically request the time from clients to estimate their offset to
 // the server time.
@@ -69,6 +75,7 @@
 #ifndef NET_DEFS_H
 #define NET_DEFS_H 
 
+#include "doomdef.h"
 #include "doomtype.h"
 #include "d_ticcmd.h"
 
@@ -179,6 +186,15 @@ typedef struct
     unsigned int diff;
     ticcmd_t cmd;
 } net_ticdiff_t;
+
+// Complete set of ticcmds from all players
+
+typedef struct 
+{
+    unsigned int seq;
+    boolean playeringame[MAXPLAYERS];
+    net_ticdiff_t cmds[MAXPLAYERS];
+} net_full_ticcmd_t;
 
 #endif /* #ifndef NET_DEFS_H */
 
