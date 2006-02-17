@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 371 2006-02-17 21:40:52Z fraggle $
+// $Id: net_server.c 372 2006-02-17 21:42:13Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.27  2006/02/17 21:42:13  fraggle
+// Remove debug code
+//
 // Revision 1.26  2006/02/17 21:40:52  fraggle
 // Full working resends for client->server comms
 //
@@ -797,9 +800,6 @@ static void NET_SV_ParseGameData(net_packet_t *packet, net_client_t *client)
         return;
     }
 
-    if ((rand() % 8) == 0)
-        return;
-    
     player = client->player_number;
 
     // Read header
