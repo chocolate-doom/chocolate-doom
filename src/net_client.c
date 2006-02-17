@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 370 2006-02-17 20:15:16Z fraggle $
+// $Id: net_client.c 371 2006-02-17 21:40:52Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.25  2006/02/17 21:40:52  fraggle
+// Full working resends for client->server comms
+//
 // Revision 1.24  2006/02/17 20:15:16  fraggle
 // Request resends for missed packets
 //
@@ -417,7 +420,7 @@ static void NET_CL_ParseResendRequest(net_packet_t *packet)
 
     // Resend those tics
 
-    printf("CL: resend %i-%i\n", start, start+num_tics-1);
+    //printf("CL: resend %i-%i\n", start, start+num_tics-1);
 
     NET_CL_SendTics(start, start + num_tics - 1);
 }

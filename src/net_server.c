@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 370 2006-02-17 20:15:16Z fraggle $
+// $Id: net_server.c 371 2006-02-17 21:40:52Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.26  2006/02/17 21:40:52  fraggle
+// Full working resends for client->server comms
+//
 // Revision 1.25  2006/02/17 20:15:16  fraggle
 // Request resends for missed packets
 //
@@ -206,9 +209,9 @@ static net_gamesettings_t sv_settings;
 static unsigned int recvwindow_start;
 static net_client_recv_t recvwindow[BACKUPTICS][MAXPLAYERS];
 
-static unsigned int NET_SV_ExpandTicNum(int i)
+static unsigned int NET_SV_ExpandTicNum(unsigned int i)
 {
-    int l, h;
+    unsigned int l, h;
     unsigned int result;
 
     h = recvwindow_start & ~0xff;
@@ -216,9 +219,9 @@ static unsigned int NET_SV_ExpandTicNum(int i)
     
     result = h | i;
 
-    if (i - l > 0x80)
+    if (l < 0x40 && i > 0xb0)
         result -= 0x100;
-    else if (l - i > 0x80)
+    if (l > 0xb0 && i < 0x40)
         result += 0x100;
 
     return result;
@@ -345,6 +348,8 @@ static void NET_SV_AdvanceWindow(void)
         memcpy(recvwindow, recvwindow + 1, sizeof(*recvwindow) * (BACKUPTICS - 1));
         memset(&recvwindow[BACKUPTICS-1], 0, sizeof(*recvwindow));
         ++recvwindow_start;
+
+        //printf("SV: advanced to %i\n", recvwindow_start);
     }
 }
 
@@ -666,7 +671,7 @@ static void NET_SV_ParseTimeResponse(net_packet_t *packet, net_client_t *client)
 	                    + (time_offset / 4);
     }
 
-    printf("client %p time offset: %i(%i)->%i\n", client, time_offset, rtt, client->time_offset);
+    //printf("SV: client %p time offset: %i(%i)->%i\n", client, time_offset, rtt, client->time_offset);
 }
 
 // Send a resend request to a client
@@ -679,7 +684,7 @@ static void NET_SV_SendResendRequest(net_client_t *client, int start, int end)
     unsigned int nowtime;
     int index;
 
-    printf("SV: send resend for %i-%i\n", start, end);
+    //printf("SV: send resend for %i-%i\n", start, end);
 
     packet = NET_NewPacket(20);
 
@@ -711,6 +716,69 @@ static void NET_SV_SendResendRequest(net_client_t *client, int start, int end)
     }
 }
 
+// Check for expired resend requests
+
+static void NET_SV_CheckResends(net_client_t *client)
+{
+    int i;
+    int player;
+    int resend_start, resend_end;
+    unsigned int nowtime;
+
+    nowtime = I_GetTimeMS();
+
+    player = client->player_number;
+    resend_start = -1;
+
+    for (i=0; i<BACKUPTICS; ++i)
+    {
+        net_client_recv_t *recvobj;
+        boolean need_resend;
+
+        recvobj = &recvwindow[i][player];
+
+        // if need_resend is true, this tic needs another retransmit
+        // request (300ms timeout)
+
+        need_resend = !recvobj->active
+                   && recvobj->resend_time != 0
+                   && nowtime > recvobj->resend_time + 300;
+
+        if (need_resend)
+        {
+            // Start a new run of resend tics?
+ 
+            if (resend_start < 0)
+            {
+                resend_start = i;
+            }
+            
+            resend_end = i;
+        }
+        else
+        {
+            if (resend_start >= 0)
+            {
+                // End of a run of resend tics
+
+                //printf("SV: resend request timed out: %i-%i\n", resend_start, resend_end);
+                NET_SV_SendResendRequest(client, 
+                                         recvwindow_start + resend_start,
+                                         recvwindow_start + resend_end);
+
+                resend_start = -1;
+            }
+        }
+    }
+
+    if (resend_start >= 0)
+    {
+        NET_SV_SendResendRequest(client, 
+                                 recvwindow_start + resend_start,
+                                 recvwindow_start + resend_end);
+    }
+}
+
 // Process game data from a client
 
 static void NET_SV_ParseGameData(net_packet_t *packet, net_client_t *client)
@@ -721,13 +789,16 @@ static void NET_SV_ParseGameData(net_packet_t *packet, net_client_t *client)
     unsigned int nowtime;
     int i;
     int player;
-    int resend_start;
+    int resend_start, resend_end;
     int index;
 
     if (server_state != SERVER_IN_GAME)
     {
         return;
     }
+
+    if ((rand() % 8) == 0)
+        return;
     
     player = client->player_number;
 
@@ -741,15 +812,9 @@ static void NET_SV_ParseGameData(net_packet_t *packet, net_client_t *client)
 
     // Expand 8-bit value to the full sequence number
 
-    printf("SV: expanding %i ", seq);
-    
     seq = NET_SV_ExpandTicNum(seq);
 
-    printf("to %i(%i)\n", seq, recvwindow_start);
-
     // Sanity checks
-
-    printf("SV: data %i-%i\n", seq, seq+num_tics-1);
 
     for (i=0; i<num_tics; ++i)
     {
@@ -778,20 +843,23 @@ static void NET_SV_ParseGameData(net_packet_t *packet, net_client_t *client)
     // all tics before the first tic in this packet?  If so, send a 
     // resend request.
 
+    //printf("SV: %p: %i\n", client, seq);
+
+    resend_end = seq - recvwindow_start;
+
+    if (resend_end <= 0)
+        return;
+
+    if (resend_end >= BACKUPTICS)
+        resend_end = BACKUPTICS - 1;
+
     nowtime = I_GetTimeMS();
-    resend_start = seq;
 
-    for (i = seq - 1; i >= recvwindow_start; --i)
+    index = resend_end - 1;
+    resend_start = resend_end;
+    
+    while (index >= 0)
     {
-        index = i - recvwindow_start;
-
-        if (index >= recvwindow_start + BACKUPTICS)
-        {
-            // Outside of the range of the recv window
- 
-            continue;
-        }
-
         recvobj = &recvwindow[index][player];
 
         if (recvobj->active)
@@ -808,14 +876,17 @@ static void NET_SV_ParseGameData(net_packet_t *packet, net_client_t *client)
             break;
         }
 
-        resend_start = i;
+        resend_start = index;
+        --index;
     }
 
     // Possibly send a resend request
 
-    if (resend_start < seq)
+    if (resend_start < resend_end)
     {
-        NET_SV_SendResendRequest(client, resend_start, seq - 1);
+        NET_SV_SendResendRequest(client, 
+                                 recvwindow_start + resend_start, 
+                                 recvwindow_start + resend_end - 1);
     }
 }
 
@@ -1176,6 +1247,14 @@ void NET_SV_Run(void)
     if (server_state == SERVER_IN_GAME)
     {
         NET_SV_AdvanceWindow();
+
+        for (i=0; i<MAXPLAYERS; ++i)
+        {
+            if (sv_players[i] != NULL)
+            {
+                NET_SV_CheckResends(sv_players[i]);
+            }
+        }
     }
 }
 
