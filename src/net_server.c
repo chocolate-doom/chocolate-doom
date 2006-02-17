@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.25  2006/02/17 20:15:16  fraggle
+// Request resends for missed packets
+//
 // Revision 1.24  2006/02/16 01:12:28  fraggle
 // Define a new type net_full_ticcmd_t, a structure containing all ticcmds
 // for a given tic.  Store received game data in a receive window.  Add
@@ -171,8 +174,21 @@ typedef struct
 
 typedef struct 
 {
+    // Whether this tic has been received yet
+
     boolean active;
+
+    // Time this tic was generated (adjusted for time offset between
+    // client and server
+ 
     unsigned int time;
+
+    // Last time we sent a resend request for this tic
+
+    unsigned int resend_time;
+
+    // Tic data itself
+
     net_ticdiff_t diff;
 } net_client_recv_t;
 
@@ -653,6 +669,48 @@ static void NET_SV_ParseTimeResponse(net_packet_t *packet, net_client_t *client)
     printf("client %p time offset: %i(%i)->%i\n", client, time_offset, rtt, client->time_offset);
 }
 
+// Send a resend request to a client
+
+static void NET_SV_SendResendRequest(net_client_t *client, int start, int end)
+{
+    net_packet_t *packet;
+    net_client_recv_t *recvobj;
+    int i;
+    unsigned int nowtime;
+    int index;
+
+    printf("SV: send resend for %i-%i\n", start, end);
+
+    packet = NET_NewPacket(20);
+
+    NET_WriteInt16(packet, NET_PACKET_TYPE_GAMEDATA_RESEND);
+    NET_WriteInt32(packet, start);
+    NET_WriteInt8(packet, end - start + 1);
+
+    NET_Conn_SendPacket(&client->connection, packet);
+    NET_FreePacket(packet);
+
+    // Store the time we send the resend request
+
+    nowtime = I_GetTimeMS();
+
+    for (i=start; i<=end; ++i)
+    {
+        index = i - recvwindow_start;
+
+        if (index >= BACKUPTICS)
+        {
+            // Outside the range
+
+            continue;
+        }
+        
+        recvobj = &recvwindow[index][client->player_number];
+
+        recvobj->resend_time = nowtime;
+    }
+}
+
 // Process game data from a client
 
 static void NET_SV_ParseGameData(net_packet_t *packet, net_client_t *client)
@@ -660,8 +718,11 @@ static void NET_SV_ParseGameData(net_packet_t *packet, net_client_t *client)
     net_client_recv_t *recvobj;
     unsigned int seq;
     unsigned int num_tics;
+    unsigned int nowtime;
     int i;
     int player;
+    int resend_start;
+    int index;
 
     if (server_state != SERVER_IN_GAME)
     {
@@ -680,14 +741,19 @@ static void NET_SV_ParseGameData(net_packet_t *packet, net_client_t *client)
 
     // Expand 8-bit value to the full sequence number
 
+    printf("SV: expanding %i ", seq);
+    
     seq = NET_SV_ExpandTicNum(seq);
 
+    printf("to %i(%i)\n", seq, recvwindow_start);
+
     // Sanity checks
+
+    printf("SV: data %i-%i\n", seq, seq+num_tics-1);
 
     for (i=0; i<num_tics; ++i)
     {
         net_ticdiff_t diff;
-        int index;
 
         if (!NET_ReadTiccmdDiff(packet, &diff, false))
         {
@@ -706,6 +772,50 @@ static void NET_SV_ParseGameData(net_packet_t *packet, net_client_t *client)
         recvobj = &recvwindow[index][player];
         recvobj->active = true;
         recvobj->diff = diff;
+    }
+
+    // Has this been received out of sequence, ie. have we not received
+    // all tics before the first tic in this packet?  If so, send a 
+    // resend request.
+
+    nowtime = I_GetTimeMS();
+    resend_start = seq;
+
+    for (i = seq - 1; i >= recvwindow_start; --i)
+    {
+        index = i - recvwindow_start;
+
+        if (index >= recvwindow_start + BACKUPTICS)
+        {
+            // Outside of the range of the recv window
+ 
+            continue;
+        }
+
+        recvobj = &recvwindow[index][player];
+
+        if (recvobj->active)
+        {
+            // ended our run of unreceived tics
+
+            break;
+        }
+
+        if (recvobj->resend_time != 0)
+        {
+            // Already sent a resend request for this tic
+
+            break;
+        }
+
+        resend_start = i;
+    }
+
+    // Possibly send a resend request
+
+    if (resend_start < seq)
+    {
+        NET_SV_SendResendRequest(client, resend_start, seq - 1);
     }
 }
 
@@ -840,6 +950,45 @@ static void NET_SV_SendTimeRequest(net_client_t *client)
     client->last_time_req_time = I_GetTimeMS();
 }
 
+static void NET_SV_SendTics(net_client_t *client, int start, int end)
+{
+    net_packet_t *packet;
+    int i;
+
+    packet = NET_NewPacket(500);
+
+    NET_WriteInt16(packet, NET_PACKET_TYPE_GAMEDATA);
+
+    // Send the start tic and number of tics
+
+    NET_WriteInt8(packet, start & 0xff);
+    NET_WriteInt8(packet, end-start + 1);
+
+    // Write the tics
+
+    for (i=start; i<=end; ++i)
+    {
+        net_full_ticcmd_t *cmd;
+
+        cmd = &client->sendqueue[i % BACKUPTICS];
+
+        if (i != cmd->seq)
+        {
+            I_Error("Wanted to send %i, but %i is in its place", i, cmd->seq);
+        }
+
+        // Add command
+       
+        NET_WriteFullTiccmd(packet, cmd);
+    }
+    
+    // Send packet
+
+    NET_Conn_SendPacket(&client->connection, packet);
+    
+    NET_FreePacket(packet);
+}
+
 static void NET_SV_PumpSendQueue(net_client_t *client)
 {
     net_full_ticcmd_t cmd;
@@ -902,6 +1051,11 @@ static void NET_SV_PumpSendQueue(net_client_t *client)
     // Add into the queue
 
     client->sendqueue[client->sendseq % BACKUPTICS] = cmd;
+
+    // Transmit the new tic to the client
+    // TODO: extratics
+
+    NET_SV_SendTics(client, client->sendseq, client->sendseq);
 
     ++client->sendseq;
 }
