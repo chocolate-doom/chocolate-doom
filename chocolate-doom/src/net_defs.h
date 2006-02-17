@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.13  2006/02/17 20:15:16  fraggle
+// Request resends for missed packets
+//
 // Revision 1.12  2006/02/16 01:12:28  fraggle
 // Define a new type net_full_ticcmd_t, a structure containing all ticcmds
 // for a given tic.  Store received game data in a receive window.  Add
@@ -161,6 +164,7 @@ typedef enum
     NET_PACKET_TYPE_RELIABLE_ACK,
     NET_PACKET_TYPE_TIME_REQ,
     NET_PACKET_TYPE_TIME_RESP,
+    NET_PACKET_TYPE_GAMEDATA_RESEND,
 } net_packet_type_t;
 
 typedef struct 

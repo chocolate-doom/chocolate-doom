@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.24  2006/02/17 20:15:16  fraggle
+// Request resends for missed packets
+//
 // Revision 1.23  2006/01/22 22:29:42  fraggle
 // Periodically request the time from clients to estimate their offset to
 // the server time.
@@ -217,34 +220,13 @@ void NET_CL_StartGame(void)
     NET_WriteSettings(packet, &settings);
 }
 
-// Add a new ticcmd to the send queue
-
-void NET_CL_SendTiccmd(ticcmd_t *ticcmd, int maketic)
+static void NET_CL_SendTics(int start, int end)
 {
-    net_ticdiff_t diff;
     net_packet_t *packet;
-    int start, end;
     int i;
-    
-    // Calculate the difference to the last ticcmd
-
-    NET_TiccmdDiff(&last_ticcmd, ticcmd, &diff);
-    
-    // Store in the send queue
-
-    ticcmd_send_queue[maketic % NET_TICCMD_QUEUE_SIZE] = diff;
-
-    last_ticcmd = *ticcmd;
-
-    // We need to generate a new packet containing the new ticcmd to send
-    // to the server.  Work out which ticcmds we are sending.
-
-//    start = maketic - extratics;
 
     if (start < 0)
         start = 0;
-
-    end = maketic;
     
     // Build a new packet to send to the server
 
@@ -275,6 +257,27 @@ void NET_CL_SendTiccmd(ticcmd_t *ticcmd, int maketic)
     // All done!
 
     NET_FreePacket(packet);
+}
+
+// Add a new ticcmd to the send queue
+
+void NET_CL_SendTiccmd(ticcmd_t *ticcmd, int maketic)
+{
+    net_ticdiff_t diff;
+    
+    // Calculate the difference to the last ticcmd
+
+    NET_TiccmdDiff(&last_ticcmd, ticcmd, &diff);
+    
+    // Store in the send queue
+
+    ticcmd_send_queue[maketic % NET_TICCMD_QUEUE_SIZE] = diff;
+
+    last_ticcmd = *ticcmd;
+
+    // Send to server.
+
+    NET_CL_SendTics(maketic, maketic);
 }
 
 // data received while we are waiting for the game to start
@@ -399,6 +402,26 @@ static void NET_CL_ParseTimeRequest(net_packet_t *packet)
     NET_FreePacket(reply);
 }
 
+// Parse a resend request from the server due to a dropped packet
+
+static void NET_CL_ParseResendRequest(net_packet_t *packet)
+{
+    static unsigned int start;
+    static unsigned int num_tics;
+
+    if (!NET_ReadInt32(packet, &start)
+     || !NET_ReadInt8(packet, &num_tics))
+    {
+        return;
+    }
+
+    // Resend those tics
+
+    printf("CL: resend %i-%i\n", start, start+num_tics-1);
+
+    NET_CL_SendTics(start, start + num_tics - 1);
+}
+
 // parse a received packet
 
 static void NET_CL_ParsePacket(net_packet_t *packet)
@@ -432,6 +455,9 @@ static void NET_CL_ParsePacket(net_packet_t *packet)
 	    case NET_PACKET_TYPE_TIME_REQ:
 		NET_CL_ParseTimeRequest(packet);
 		break;
+
+            case NET_PACKET_TYPE_GAMEDATA_RESEND:
+                NET_CL_ParseResendRequest(packet);
 
             default:
                 break;
