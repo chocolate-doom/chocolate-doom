@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: doomstat.h 223 2005-10-24 18:50:39Z fraggle $
+// $Id: doomstat.h 374 2006-02-19 13:42:27Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -282,11 +282,10 @@ extern  doomcom_t*	doomcom;
 extern  doomdata_t*	netbuffer;	
 
 
-extern  ticcmd_t	localcmds[BACKUPTICS];
 extern	int		rndindex;
 
 extern	int		maketic;
-extern  int             nettics[MAXNETNODES];
+extern  int             nettics[MAXPLAYERS];
 
 extern  ticcmd_t        netcmds[MAXPLAYERS][BACKUPTICS];
 extern	int		ticdup;
@@ -297,6 +296,14 @@ extern	int		ticdup;
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.10  2006/02/19 13:42:27  fraggle
+// Move tic number expansion code to common code.  Parse game data packets
+// received from the server.
+// Strip down d_net.[ch] to work through the new networking code.  Remove
+// game sync code.
+// Remove i_net.[ch] as it is no longer needed.
+// Working networking!
+//
 // Revision 1.9  2005/10/24 18:50:39  fraggle
 // Allow the game version to emulate to be specified from the command line
 // and set compatibility options accordingly.

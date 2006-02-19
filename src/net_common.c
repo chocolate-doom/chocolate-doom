@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_common.c 279 2006-01-10 19:59:26Z fraggle $
+// $Id: net_common.c 374 2006-02-19 13:42:27Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,14 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2006/02/19 13:42:27  fraggle
+// Move tic number expansion code to common code.  Parse game data packets
+// received from the server.
+// Strip down d_net.[ch] to work through the new networking code.  Remove
+// game sync code.
+// Remove i_net.[ch] as it is no longer needed.
+// Working networking!
+//
 // Revision 1.4  2006/01/10 19:59:26  fraggle
 // Reliable packet transport mechanism
 //
@@ -488,4 +496,26 @@ net_packet_t *NET_Conn_NewReliable(net_connection_t *conn, int packet_type)
     
     return packet;
 }
+
+// Used to expand the least significant byte of a tic number into 
+// the full tic number, from the current tic number
+
+unsigned int NET_ExpandTicNum(unsigned int relative, unsigned int b)
+{
+    unsigned int l, h;
+    unsigned int result;
+
+    h = relative & ~0xff;
+    l = relative & 0xff;
+
+    result = h | b;
+
+    if (l < 0x40 && b > 0xb0)
+        result -= 0x100;
+    if (l > 0xb0 && b < 0x40)
+        result += 0x100;
+
+    return result;
+}
+
 
