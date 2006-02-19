@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.h 323 2006-01-22 22:29:42Z fraggle $
+// $Id: d_net.h 373 2006-02-19 13:38:59Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -50,7 +50,7 @@
 
 
 // Networking and tick handling related.
-#define BACKUPTICS		12
+#define BACKUPTICS		128
 
 typedef enum
 {
@@ -149,6 +149,9 @@ void TryRunTics (void);
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.5  2006/02/19 13:38:59  fraggle
+// Increase the size of BACKUPTICS to deal with heavy lag
+//
 // Revision 1.4  2006/01/22 22:29:42  fraggle
 // Periodically request the time from clients to estimate their offset to
 // the server time.
