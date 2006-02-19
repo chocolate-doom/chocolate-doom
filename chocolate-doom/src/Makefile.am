@@ -43,7 +43,6 @@ g_game.c             g_game.h              \
 hu_lib.c             hu_lib.h              \
 hu_stuff.c           hu_stuff.h            \
 i_main.c                                   \
-i_net.c              i_net.h               \
 info.c               info.h                \
 i_sound.c            i_sound.h             \
 i_system.c           i_system.h            \
