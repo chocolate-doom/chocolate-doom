@@ -21,6 +21,14 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.26  2006/02/19 13:42:27  fraggle
+// Move tic number expansion code to common code.  Parse game data packets
+// received from the server.
+// Strip down d_net.[ch] to work through the new networking code.  Remove
+// game sync code.
+// Remove i_net.[ch] as it is no longer needed.
+// Working networking!
+//
 // Revision 1.25  2006/02/17 21:40:52  fraggle
 // Full working resends for client->server comms
 //
@@ -139,6 +147,24 @@ typedef enum
 
 } net_clientstate_t;
 
+// Type of structure used in the receive window
+
+typedef struct
+{
+    // Whether this tic has been received yet
+
+    boolean active;
+
+    // Last time we sent a resend request for this tic
+
+    unsigned int resend_time;
+
+    // Tic data from server 
+
+    net_full_ticcmd_t cmd;
+    
+} net_server_recv_t;
+
 static net_connection_t client_connection;
 static net_clientstate_t client_state;
 static net_addr_t *server_addr;
@@ -180,6 +206,73 @@ static ticcmd_t last_ticcmd;
 // Buffer of ticcmd diffs being sent to the server
 
 static net_ticdiff_t ticcmd_send_queue[NET_TICCMD_QUEUE_SIZE];
+
+// Receive window
+
+static ticcmd_t recvwindow_cmd_base[MAXPLAYERS];
+static int recvwindow_start;
+static net_server_recv_t recvwindow[BACKUPTICS];
+
+#define NET_CL_ExpandTicNum(b) NET_ExpandTicNum(recvwindow_start, (b))
+
+static void NET_CL_ExpandTiccmds(net_full_ticcmd_t *cmd)
+{
+    int i;
+
+    for (i=0; i<MAXPLAYERS; ++i)
+    {
+        if (i == consoleplayer)
+        {
+            continue;
+        }
+        
+        playeringame[i] = cmd->playeringame[i];
+
+        if (playeringame[i])
+        {
+            net_ticdiff_t *diff;
+            ticcmd_t ticcmd;
+
+            diff = &cmd->cmds[i];
+
+            // Use the ticcmd diff to patch the previous ticcmd to
+            // the new ticcmd
+
+            NET_TiccmdPatch(&recvwindow_cmd_base[i], diff, &ticcmd);
+
+            // Save in d_net.c structures
+
+            netcmds[i][nettics[i] % BACKUPTICS] = ticcmd;
+            ++nettics[i];
+
+            // Store a copy for next time
+
+            recvwindow_cmd_base[i] = ticcmd;
+        }
+    }
+}
+
+// Advance the receive window
+
+static void NET_CL_AdvanceWindow(void)
+{
+    while (recvwindow[0].active)
+    {
+        // Expand tic diff data into d_net.c structures
+
+        NET_CL_ExpandTiccmds(&recvwindow[0].cmd);
+
+        // Advance the window
+
+        memcpy(recvwindow, recvwindow + 1, 
+               sizeof(net_server_recv_t) * (BACKUPTICS - 1));
+        memset(&recvwindow[BACKUPTICS-1], 0, sizeof(net_server_recv_t));
+
+        ++recvwindow_start;
+
+        //printf("CL: advanced to %i\n", recvwindow_start);
+    }
+}
 
 // Shut down the client code, etc.  Invoked after a disconnect.
 
@@ -379,8 +472,58 @@ static void NET_CL_ParseGameStart(net_packet_t *packet)
     startmap = settings.map;
     startskill = settings.skill;
 
+    memset(recvwindow, 0, sizeof(recvwindow));
+    recvwindow_start = 0;
+    memset(&recvwindow_cmd_base, 0, sizeof(recvwindow_cmd_base));
+
     netgame = true;
     autostart = true;
+}
+
+static void NET_CL_ParseGameData(net_packet_t *packet)
+{
+    unsigned int seq, num_tics;
+    int i;
+    
+    // Read header
+    
+    if (!NET_ReadInt8(packet, &seq)
+     || !NET_ReadInt8(packet, &num_tics))
+    {
+        return;
+    }
+
+    // Expand byte value into the full tic number
+
+    seq = NET_CL_ExpandTicNum(seq);
+
+    for (i=0; i<num_tics; ++i)
+    {
+        net_server_recv_t *recvobj;
+        net_full_ticcmd_t cmd;
+        int index;
+
+        index = seq - recvwindow_start + i;
+
+        if (!NET_ReadFullTiccmd(packet, &cmd))
+        {
+            return;
+        }
+
+        if (index < 0 || index >= BACKUPTICS)
+        {
+            // Out of range of the recv window
+
+            continue;
+        }
+
+        // Store in the receive window
+        
+        recvobj = &recvwindow[index];
+
+        recvobj->active = true;
+        recvobj->cmd = cmd;
+    }
 }
 
 static void NET_CL_ParseTimeRequest(net_packet_t *packet)
@@ -453,6 +596,7 @@ static void NET_CL_ParsePacket(net_packet_t *packet)
                 break;
 
             case NET_PACKET_TYPE_GAMEDATA:
+                NET_CL_ParseGameData(packet);
                 break;
 
 	    case NET_PACKET_TYPE_TIME_REQ:
@@ -511,6 +655,13 @@ void NET_CL_Run(void)
     
     net_waiting_for_start = client_connection.state == NET_CONN_STATE_CONNECTED
                          && client_state == CLIENT_STATE_WAITING_START;
+
+    if (client_state == CLIENT_STATE_IN_GAME)
+    {
+        // Possibly advance the receive window
+
+        NET_CL_AdvanceWindow();
+    }
 }
 
 static void NET_CL_SendSYN(void)

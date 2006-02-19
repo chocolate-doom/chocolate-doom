@@ -22,6 +22,14 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.25  2006/02/19 13:42:27  fraggle
+// Move tic number expansion code to common code.  Parse game data packets
+// received from the server.
+// Strip down d_net.[ch] to work through the new networking code.  Remove
+// game sync code.
+// Remove i_net.[ch] as it is no longer needed.
+// Working networking!
+//
 // Revision 1.24  2006/02/15 12:57:58  fraggle
 // Remove the savegame buffer entirely.  Keep the old savegame size limit
 // bug add a "vanilla_savegame_limit" config file option which allows
@@ -824,12 +832,14 @@ void G_Ticker (void)
 			
 	    if (netgame && !netdemo && !(gametic%ticdup) ) 
 	    { 
+                /*
 		if (gametic > BACKUPTICS 
 		    && consistancy[i][buf] != cmd->consistancy) 
 		{ 
 		    I_Error ("consistency failure (%i should be %i)",
 			     cmd->consistancy, consistancy[i][buf]); 
 		} 
+                */
 		if (players[i].mo) 
 		    consistancy[i][buf] = players[i].mo->x; 
 		else 

@@ -21,6 +21,14 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.28  2006/02/19 13:42:27  fraggle
+// Move tic number expansion code to common code.  Parse game data packets
+// received from the server.
+// Strip down d_net.[ch] to work through the new networking code.  Remove
+// game sync code.
+// Remove i_net.[ch] as it is no longer needed.
+// Working networking!
+//
 // Revision 1.27  2006/02/17 21:42:13  fraggle
 // Remove debug code
 //
@@ -212,23 +220,7 @@ static net_gamesettings_t sv_settings;
 static unsigned int recvwindow_start;
 static net_client_recv_t recvwindow[BACKUPTICS][MAXPLAYERS];
 
-static unsigned int NET_SV_ExpandTicNum(unsigned int i)
-{
-    unsigned int l, h;
-    unsigned int result;
-
-    h = recvwindow_start & ~0xff;
-    l = recvwindow_start & 0xff;
-    
-    result = h | i;
-
-    if (l < 0x40 && i > 0xb0)
-        result -= 0x100;
-    if (l > 0xb0 && i < 0x40)
-        result += 0x100;
-
-    return result;
-}
+#define NET_SV_ExpandTicNum(b) NET_ExpandTicNum(recvwindow_start, (b))
 
 static void NET_SV_DisconnectClient(net_client_t *client)
 {
@@ -800,6 +792,9 @@ static void NET_SV_ParseGameData(net_packet_t *packet, net_client_t *client)
         return;
     }
 
+    //if (rand() % 8 == 0)
+    //    return;
+
     player = client->player_number;
 
     // Read header
@@ -1109,6 +1104,14 @@ static void NET_SV_PumpSendQueue(net_client_t *client)
 
     for (i=0; i<MAXPLAYERS; ++i)
     {
+        if (sv_players[i] == client)
+        {
+            // Not the player we are sending to
+
+            cmd.playeringame[i] = false;
+            continue;
+        }
+        
         if (sv_players[i] == NULL || !recvwindow[recv_index][i].active)
         {
             cmd.playeringame[i] = false;
