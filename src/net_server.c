@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 374 2006-02-19 13:42:27Z fraggle $
+// $Id: net_server.c 375 2006-02-22 18:35:55Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.29  2006/02/22 18:35:55  fraggle
+// Packet resends for server->client gamedata
+//
 // Revision 1.28  2006/02/19 13:42:27  fraggle
 // Move tic number expansion code to common code.  Parse game data packets
 // received from the server.
@@ -724,6 +727,7 @@ static void NET_SV_CheckResends(net_client_t *client)
 
     player = client->player_number;
     resend_start = -1;
+    resend_end = -1;
 
     for (i=0; i<BACKUPTICS; ++i)
     {
@@ -814,8 +818,10 @@ static void NET_SV_ParseGameData(net_packet_t *packet, net_client_t *client)
     for (i=0; i<num_tics; ++i)
     {
         net_ticdiff_t diff;
+        unsigned int time;
 
-        if (!NET_ReadTiccmdDiff(packet, &diff, false))
+        if (!NET_ReadInt16(packet, &time)
+         || !NET_ReadTiccmdDiff(packet, &diff, false))
         {
             return;
         }
@@ -885,6 +891,66 @@ static void NET_SV_ParseGameData(net_packet_t *packet, net_client_t *client)
     }
 }
 
+static void NET_SV_SendTics(net_client_t *client, int start, int end)
+{
+    net_packet_t *packet;
+    int i;
+
+    packet = NET_NewPacket(500);
+
+    NET_WriteInt16(packet, NET_PACKET_TYPE_GAMEDATA);
+
+    // Send the start tic and number of tics
+
+    NET_WriteInt8(packet, start & 0xff);
+    NET_WriteInt8(packet, end-start + 1);
+
+    // Write the tics
+
+    for (i=start; i<=end; ++i)
+    {
+        net_full_ticcmd_t *cmd;
+
+        cmd = &client->sendqueue[i % BACKUPTICS];
+
+        if (i != cmd->seq)
+        {
+            I_Error("Wanted to send %i, but %i is in its place", i, cmd->seq);
+        }
+
+        // Add command
+       
+        NET_WriteFullTiccmd(packet, cmd);
+    }
+    
+    // Send packet
+
+    NET_Conn_SendPacket(&client->connection, packet);
+    
+    NET_FreePacket(packet);
+}
+
+// Parse a retransmission request from a client
+
+static void NET_SV_ParseResendRequest(net_packet_t *packet, net_client_t *client)
+{
+    static unsigned int start;
+    static unsigned int num_tics;
+
+    // Read the starting tic and number of tics
+
+    if (!NET_ReadInt32(packet, &start)
+     || !NET_ReadInt8(packet, &num_tics))
+    {
+        return;
+    }
+
+    // Resend those tics
+
+    NET_SV_SendTics(client, start, start + num_tics - 1);
+}
+
+
 // Process a packet received by the server
 
 static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
@@ -928,6 +994,9 @@ static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
                 break;
             case NET_PACKET_TYPE_GAMEDATA:
                 NET_SV_ParseGameData(packet, client);
+                break;
+            case NET_PACKET_TYPE_GAMEDATA_RESEND:
+                NET_SV_ParseResendRequest(packet, client);
                 break;
 	    case NET_PACKET_TYPE_TIME_RESP:
 		NET_SV_ParseTimeResponse(packet, client);
@@ -1014,45 +1083,6 @@ static void NET_SV_SendTimeRequest(net_client_t *client)
     // Save the time we send the request
 
     client->last_time_req_time = I_GetTimeMS();
-}
-
-static void NET_SV_SendTics(net_client_t *client, int start, int end)
-{
-    net_packet_t *packet;
-    int i;
-
-    packet = NET_NewPacket(500);
-
-    NET_WriteInt16(packet, NET_PACKET_TYPE_GAMEDATA);
-
-    // Send the start tic and number of tics
-
-    NET_WriteInt8(packet, start & 0xff);
-    NET_WriteInt8(packet, end-start + 1);
-
-    // Write the tics
-
-    for (i=start; i<=end; ++i)
-    {
-        net_full_ticcmd_t *cmd;
-
-        cmd = &client->sendqueue[i % BACKUPTICS];
-
-        if (i != cmd->seq)
-        {
-            I_Error("Wanted to send %i, but %i is in its place", i, cmd->seq);
-        }
-
-        // Add command
-       
-        NET_WriteFullTiccmd(packet, cmd);
-    }
-    
-    // Send packet
-
-    NET_Conn_SendPacket(&client->connection, packet);
-    
-    NET_FreePacket(packet);
 }
 
 static void NET_SV_PumpSendQueue(net_client_t *client)

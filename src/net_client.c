@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 374 2006-02-19 13:42:27Z fraggle $
+// $Id: net_client.c 375 2006-02-22 18:35:55Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.27  2006/02/22 18:35:55  fraggle
+// Packet resends for server->client gamedata
+//
 // Revision 1.26  2006/02/19 13:42:27  fraggle
 // Move tic number expansion code to common code.  Parse game data packets
 // received from the server.
@@ -121,10 +124,13 @@
 //
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "config.h"
 #include "doomdef.h"
 #include "doomstat.h"
+#include "deh_main.h"
+#include "g_game.h"
 #include "i_system.h"
 #include "net_client.h"
 #include "net_common.h"
@@ -164,6 +170,27 @@ typedef struct
     net_full_ticcmd_t cmd;
     
 } net_server_recv_t;
+
+// Type of structure used in the send window
+
+typedef struct
+{
+    // Whether this slot is active yet
+
+    boolean active;
+
+    // The tic number
+
+    unsigned int seq;
+
+    // Time the command was generated
+
+    unsigned int time;
+
+    // Ticcmd diff
+
+    net_ticdiff_t cmd;
+} net_server_send_t;
 
 static net_connection_t client_connection;
 static net_clientstate_t client_state;
@@ -205,7 +232,7 @@ static ticcmd_t last_ticcmd;
 
 // Buffer of ticcmd diffs being sent to the server
 
-static net_ticdiff_t ticcmd_send_queue[NET_TICCMD_QUEUE_SIZE];
+static net_server_send_t send_queue[NET_TICCMD_QUEUE_SIZE];
 
 // Receive window
 
@@ -215,7 +242,35 @@ static net_server_recv_t recvwindow[BACKUPTICS];
 
 #define NET_CL_ExpandTicNum(b) NET_ExpandTicNum(recvwindow_start, (b))
 
-static void NET_CL_ExpandTiccmds(net_full_ticcmd_t *cmd)
+// Called when a player leaves the game
+
+static void NET_CL_PlayerQuitGame(player_t *player)
+{
+    static char exitmsg[80];
+
+    // Do this the same way as Vanilla Doom does, to allow dehacked
+    // replacements of this message
+
+    strcpy(exitmsg, DEH_String("Player 1 left the game"));
+
+    exitmsg[7] += player - players;
+
+    players[consoleplayer].message = exitmsg;
+
+    // TODO: check if it is sensible to do this:
+
+    if (demorecording) 
+    {
+        G_CheckDemoStatus ();
+    }
+}
+
+// Expand a net_full_ticcmd_t, applying the diffs in cmd->cmds as
+// patches against recvwindow_cmd_base.  Place the results into
+// the d_net.c structures (netcmds/nettics) and save the new ticcmd
+// back into recvwindow_cmd_base.
+
+static void NET_CL_ExpandFullTiccmd(net_full_ticcmd_t *cmd)
 {
     int i;
 
@@ -224,6 +279,11 @@ static void NET_CL_ExpandTiccmds(net_full_ticcmd_t *cmd)
         if (i == consoleplayer)
         {
             continue;
+        }
+        
+        if (playeringame[i] && !cmd->playeringame[i])
+        {
+            NET_CL_PlayerQuitGame(&players[i]);
         }
         
         playeringame[i] = cmd->playeringame[i];
@@ -260,7 +320,7 @@ static void NET_CL_AdvanceWindow(void)
     {
         // Expand tic diff data into d_net.c structures
 
-        NET_CL_ExpandTiccmds(&recvwindow[0].cmd);
+        NET_CL_ExpandFullTiccmd(&recvwindow[0].cmd);
 
         // Advance the window
 
@@ -335,15 +395,17 @@ static void NET_CL_SendTics(int start, int end)
     NET_WriteInt8(packet, start & 0xff);
     NET_WriteInt8(packet, end - start + 1);
 
-    // TODO: Include ticcmd construction time for sync.
-
     // Add the tics.
 
     for (i=start; i<=end; ++i)
     {
-        NET_WriteTiccmdDiff(packet, 
-                            &ticcmd_send_queue[i % NET_TICCMD_QUEUE_SIZE],
-                            false);
+        net_server_send_t *sendobj;
+
+        sendobj = &send_queue[i % NET_TICCMD_QUEUE_SIZE];
+
+        NET_WriteInt16(packet, sendobj->time);
+
+        NET_WriteTiccmdDiff(packet, &sendobj->cmd, false);
     }
     
     // Send the packet
@@ -360,6 +422,7 @@ static void NET_CL_SendTics(int start, int end)
 void NET_CL_SendTiccmd(ticcmd_t *ticcmd, int maketic)
 {
     net_ticdiff_t diff;
+    net_server_send_t *sendobj;
     
     // Calculate the difference to the last ticcmd
 
@@ -367,7 +430,11 @@ void NET_CL_SendTiccmd(ticcmd_t *ticcmd, int maketic)
     
     // Store in the send queue
 
-    ticcmd_send_queue[maketic % NET_TICCMD_QUEUE_SIZE] = diff;
+    sendobj = &send_queue[maketic % NET_TICCMD_QUEUE_SIZE];
+    sendobj->active = true;
+    sendobj->seq = maketic;
+    sendobj->time = I_GetTimeMS();
+    sendobj->cmd = diff;
 
     last_ticcmd = *ticcmd;
 
@@ -480,10 +547,107 @@ static void NET_CL_ParseGameStart(net_packet_t *packet)
     autostart = true;
 }
 
+static void NET_CL_SendResendRequest(int start, int end)
+{
+    net_packet_t *packet;
+    unsigned int nowtime;
+    int i;
+    
+    packet = NET_NewPacket(64);
+    NET_WriteInt16(packet, NET_PACKET_TYPE_GAMEDATA_RESEND);
+    NET_WriteInt32(packet, start);
+    NET_WriteInt8(packet, end - start - 1);
+    NET_Conn_SendPacket(&client_connection, packet);
+
+    nowtime = I_GetTimeMS();
+
+    // Save the time we sent the resend request
+
+    for (i=start; i<=end; ++i)
+    {
+        int index;
+
+        index = start - recvwindow_start;
+
+        if (index < 0 || index >= BACKUPTICS)
+            continue;
+
+        recvwindow[index].resend_time = nowtime;
+    }
+}
+
+// Check for expired resend requests
+
+static void NET_CL_CheckResends(void)
+{
+    int i;
+    int resend_start, resend_end;
+    unsigned int nowtime;
+
+    nowtime = I_GetTimeMS();
+
+    resend_start = -1;
+    resend_end = -1;
+
+    for (i=0; i<BACKUPTICS; ++i)
+    {
+        net_server_recv_t *recvobj;
+        boolean need_resend;
+
+        recvobj = &recvwindow[i];
+
+        // if need_resend is true, this tic needs another retransmit
+        // request (300ms timeout)
+
+        need_resend = !recvobj->active
+                   && recvobj->resend_time != 0
+                   && nowtime > recvobj->resend_time + 300;
+
+        if (need_resend)
+        {
+            // Start a new run of resend tics?
+ 
+            if (resend_start < 0)
+            {
+                resend_start = i;
+            }
+            
+            resend_end = i;
+        }
+        else
+        {
+            if (resend_start >= 0)
+            {
+                // End of a run of resend tics
+
+                //printf("CL: resend request timed out: %i-%i\n", resend_start, resend_end);
+                NET_CL_SendResendRequest(recvwindow_start + resend_start,
+                                         recvwindow_start + resend_end);
+
+                resend_start = -1;
+            }
+        }
+    }
+
+    if (resend_start >= 0)
+    {
+        NET_CL_SendResendRequest(recvwindow_start + resend_start,
+                                 recvwindow_start + resend_end);
+    }
+}
+
+
+// Parsing of NET_PACKET_TYPE_GAMEDATA packets
+// (packets containing the actual ticcmd data)
+
 static void NET_CL_ParseGameData(net_packet_t *packet)
 {
+    net_server_recv_t *recvobj;
     unsigned int seq, num_tics;
+    unsigned int nowtime;
+    int resend_start, resend_end;
     int i;
+    int index;
     
     // Read header
     
@@ -493,15 +657,15 @@ static void NET_CL_ParseGameData(net_packet_t *packet)
         return;
     }
 
+    nowtime = I_GetTimeMS();
+
     // Expand byte value into the full tic number
 
     seq = NET_CL_ExpandTicNum(seq);
 
     for (i=0; i<num_tics; ++i)
     {
-        net_server_recv_t *recvobj;
         net_full_ticcmd_t cmd;
-        int index;
 
         index = seq - recvwindow_start + i;
 
@@ -523,6 +687,53 @@ static void NET_CL_ParseGameData(net_packet_t *packet)
 
         recvobj->active = true;
         recvobj->cmd = cmd;
+    }
+
+    // Has this been received out of sequence, ie. have we not received
+    // all tics before the first tic in this packet?  If so, send a 
+    // resend request.
+
+    //printf("CL: %p: %i\n", client, seq);
+
+    resend_end = seq - recvwindow_start;
+
+    if (resend_end <= 0)
+        return;
+
+    if (resend_end >= BACKUPTICS)
+        resend_end = BACKUPTICS - 1;
+
+    index = resend_end - 1;
+    resend_start = resend_end;
+    
+    while (index >= 0)
+    {
+        recvobj = &recvwindow[index];
+
+        if (recvobj->active)
+        {
+            // ended our run of unreceived tics
+
+            break;
+        }
+
+        if (recvobj->resend_time != 0)
+        {
+            // Already sent a resend request for this tic
+
+            break;
+        }
+
+        resend_start = index;
+        --index;
+    }
+
+    // Possibly send a resend request
+
+    if (resend_start < resend_end)
+    {
+        NET_CL_SendResendRequest(recvwindow_start + resend_start, 
+                                 recvwindow_start + resend_end - 1);
     }
 }
 
@@ -605,6 +816,7 @@ static void NET_CL_ParsePacket(net_packet_t *packet)
 
             case NET_PACKET_TYPE_GAMEDATA_RESEND:
                 NET_CL_ParseResendRequest(packet);
+                break;
 
             default:
                 break;
@@ -661,6 +873,10 @@ void NET_CL_Run(void)
         // Possibly advance the receive window
 
         NET_CL_AdvanceWindow();
+
+        // Check if our resend requests have timed out
+
+        NET_CL_CheckResends();
     }
 }
 
