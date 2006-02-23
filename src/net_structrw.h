@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_structrw.h 369 2006-02-16 01:12:28Z fraggle $
+// $Id: net_structrw.h 376 2006-02-23 18:19:05Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.5  2006/02/23 18:19:05  fraggle
+// Add lowres_turn parameter to net_full_ticcmd_t structure r/w functions
+//
 // Revision 1.4  2006/02/16 01:12:28  fraggle
 // Define a new type net_full_ticcmd_t, a structure containing all ticcmds
 // for a given tic.  Store received game data in a receive window.  Add
@@ -55,8 +58,8 @@ extern boolean NET_ReadTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff, boo
 extern void NET_TiccmdDiff(ticcmd_t *tic1, ticcmd_t *tic2, net_ticdiff_t *diff);
 extern void NET_TiccmdPatch(ticcmd_t *src, net_ticdiff_t *diff, ticcmd_t *dest);
 
-boolean NET_ReadFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd);
-void NET_WriteFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd);
+boolean NET_ReadFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd, boolean lowres_turn);
+void NET_WriteFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd, boolean lowres_turn);
 
 
 #endif /* #ifndef NET_STRUCTRW_H */

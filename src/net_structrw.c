@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_structrw.c 369 2006-02-16 01:12:28Z fraggle $
+// $Id: net_structrw.c 376 2006-02-23 18:19:05Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.7  2006/02/23 18:19:05  fraggle
+// Add lowres_turn parameter to net_full_ticcmd_t structure r/w functions
+//
 // Revision 1.6  2006/02/16 01:12:28  fraggle
 // Define a new type net_full_ticcmd_t, a structure containing all ticcmds
 // for a given tic.  Store received game data in a receive window.  Add
@@ -225,7 +228,7 @@ void NET_TiccmdPatch(ticcmd_t *src, net_ticdiff_t *diff, ticcmd_t *dest)
 // net_full_ticcmd_t
 // 
 
-boolean NET_ReadFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd)
+boolean NET_ReadFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd, boolean lowres_turn)
 {
     unsigned int bitfield;
     int i;
@@ -248,7 +251,7 @@ boolean NET_ReadFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd)
     {
         if (cmd->playeringame[i])
         {
-            if (!NET_ReadTiccmdDiff(packet, &cmd->cmds[i], false))
+            if (!NET_ReadTiccmdDiff(packet, &cmd->cmds[i], lowres_turn))
             {
                 return false;
             }
@@ -258,7 +261,7 @@ boolean NET_ReadFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd)
     return true;
 }
 
-void NET_WriteFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd)
+void NET_WriteFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd, boolean lowres_turn)
 {
     unsigned int bitfield;
     int i;
@@ -284,7 +287,7 @@ void NET_WriteFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd)
     {
         if (cmd->playeringame[i])
         {
-            NET_WriteTiccmdDiff(packet, &cmd->cmds[i], false);
+            NET_WriteTiccmdDiff(packet, &cmd->cmds[i], lowres_turn);
         }
     }
 }
