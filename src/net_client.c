@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.31  2006/02/23 20:53:03  fraggle
+// Detect when clients are disconnected from the server, recover cleanly
+// and display a message.
+//
 // Revision 1.30  2006/02/23 20:31:09  fraggle
 // Set ticdup from the command line with the -dup parameter.
 //
@@ -279,6 +283,23 @@ static void NET_CL_PlayerQuitGame(player_t *player)
     }
 }
 
+// Called when we become disconnected from the server
+
+static void NET_CL_Disconnected(void)
+{
+    int i;
+
+    // disconnected from server
+
+    players[consoleplayer].message = "Disconnected from server";
+
+    for (i=0; i<MAXPLAYERS; ++i)
+    {
+        if (i != consoleplayer)
+            playeringame[i] = false;
+    }
+}
+
 // Expand a net_full_ticcmd_t, applying the diffs in cmd->cmds as
 // patches against recvwindow_cmd_base.  Place the results into
 // the d_net.c structures (netcmds/nettics) and save the new ticcmd
@@ -385,8 +406,6 @@ void NET_CL_StartGame(void)
     else
         settings.ticdup = 1;
 
-    
-    
     // Start from a ticcmd of all zeros
 
     memset(&last_ticcmd, 0, sizeof(ticcmd_t));
@@ -888,8 +907,8 @@ void NET_CL_Run(void)
     if (client_connection.state == NET_CONN_STATE_DISCONNECTED
      || client_connection.state == NET_CONN_STATE_DISCONNECTED_SLEEP)
     {
-        // disconnected from server
-
+        NET_CL_Disconnected();
+    
         NET_CL_Shutdown();
     }
     
