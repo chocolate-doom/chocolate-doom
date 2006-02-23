@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.c 381 2006-02-23 20:22:57Z fraggle $
+// $Id: d_net.c 386 2006-02-23 23:42:00Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.21  2006/02/23 23:42:00  fraggle
+// Replace -client with -connect which takes a hostname/ip to connect to.
+//
 // Revision 1.20  2006/02/23 20:22:57  fraggle
 // Do not allow tics to buffer up in single player (stops the gun instantly
 // appearing on level start)
@@ -111,7 +114,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_net.c 381 2006-02-23 20:22:57Z fraggle $";
+static const char rcsid[] = "$Id: d_net.c 386 2006-02-23 23:42:00Z fraggle $";
 
 
 #include "d_main.h"
@@ -268,23 +271,27 @@ void D_CheckNetGame (void)
 
         addr = net_loop_client_module.ResolveAddress("");
     }
-
-    if (M_CheckParm("-client") > 0)
+    else
     {
-        addr = net_sdl_module.ResolveAddress("localhost");
+        i = M_CheckParm("-connect");
+
+        if (i > 0)
+        {
+            addr = net_sdl_module.ResolveAddress(myargv[i+1]);
+        }
     }
    
     if (addr != NULL)
     {
         if (NET_CL_Connect(addr))
         {
-            printf("connected to %s\n", NET_AddrToString(addr));
+            printf("D_CheckNetGame: Connected to %s\n", NET_AddrToString(addr));
 
             NET_WaitForStart();
         }
         else
         {
-            printf("failed to connect\n");
+            I_Error("D_CheckNetGame: Failed to connect to %s\n", NET_AddrToString(addr));
         }
     }
 
