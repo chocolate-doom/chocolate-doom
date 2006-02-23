@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 375 2006-02-22 18:35:55Z fraggle $
+// $Id: net_client.c 377 2006-02-23 18:20:29Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.28  2006/02/23 18:20:29  fraggle
+// Fix bugs in resend code for server->client data
+//
 // Revision 1.27  2006/02/22 18:35:55  fraggle
 // Packet resends for server->client gamedata
 //
@@ -552,12 +555,15 @@ static void NET_CL_SendResendRequest(int start, int end)
     net_packet_t *packet;
     unsigned int nowtime;
     int i;
+
+    //printf("CL: Send resend %i-%i\n", start, end);
     
     packet = NET_NewPacket(64);
     NET_WriteInt16(packet, NET_PACKET_TYPE_GAMEDATA_RESEND);
     NET_WriteInt32(packet, start);
-    NET_WriteInt8(packet, end - start - 1);
+    NET_WriteInt8(packet, end - start + 1);
     NET_Conn_SendPacket(&client_connection, packet);
+    NET_FreePacket(packet);
 
     nowtime = I_GetTimeMS();
 
@@ -567,7 +573,7 @@ static void NET_CL_SendResendRequest(int start, int end)
     {
         int index;
 
-        index = start - recvwindow_start;
+        index = i - recvwindow_start;
 
         if (index < 0 || index >= BACKUPTICS)
             continue;
@@ -631,6 +637,7 @@ static void NET_CL_CheckResends(void)
 
     if (resend_start >= 0)
     {
+        //printf("CL: resend request timed out: %i-%i\n", resend_start, resend_end);
         NET_CL_SendResendRequest(recvwindow_start + resend_start,
                                  recvwindow_start + resend_end);
     }
@@ -669,7 +676,7 @@ static void NET_CL_ParseGameData(net_packet_t *packet)
 
         index = seq - recvwindow_start + i;
 
-        if (!NET_ReadFullTiccmd(packet, &cmd))
+        if (!NET_ReadFullTiccmd(packet, &cmd, false))
         {
             return;
         }
