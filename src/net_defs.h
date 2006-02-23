@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.14  2006/02/23 18:19:05  fraggle
+// Add lowres_turn parameter to net_full_ticcmd_t structure r/w functions
+//
 // Revision 1.13  2006/02/17 20:15:16  fraggle
 // Request resends for missed packets
 //
@@ -176,6 +179,7 @@ typedef struct
     int map;
     int skill;
     int gameversion;
+    int lowres_turn;
 } net_gamesettings_t;
 
 #define NET_TICDIFF_FORWARD      (1 << 0)
