@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 378 2006-02-23 19:12:02Z fraggle $
+// $Id: net_client.c 382 2006-02-23 20:31:09Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.30  2006/02/23 20:31:09  fraggle
+// Set ticdup from the command line with the -dup parameter.
+//
 // Revision 1.29  2006/02/23 19:12:01  fraggle
 // Add lowres_turn to indicate whether we generate angleturns which are
 // 8-bit as opposed to 16-bit.  This is used when recording demos without
@@ -363,11 +366,11 @@ void NET_CL_StartGame(void)
 {
     net_packet_t *packet;
     net_gamesettings_t settings;
+    int i;
 
     // Fill in game settings structure with appropriate parameters
     // for the new game
 
-    settings.ticdup = 1;
     settings.extratics = 0;
     settings.deathmatch = deathmatch;
     settings.episode = startepisode;
@@ -375,6 +378,15 @@ void NET_CL_StartGame(void)
     settings.skill = startskill;
     settings.gameversion = gameversion;
 
+    i = M_CheckParm("-dup");
+
+    if (i > 0)
+        settings.ticdup = atoi(myargv[i+1]);
+    else
+        settings.ticdup = 1;
+
+    
+    
     // Start from a ticcmd of all zeros
 
     memset(&last_ticcmd, 0, sizeof(ticcmd_t));
