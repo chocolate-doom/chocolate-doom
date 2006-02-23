@@ -22,6 +22,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.20  2006/02/23 20:22:57  fraggle
+// Do not allow tics to buffer up in single player (stops the gun instantly
+// appearing on level start)
+//
 // Revision 1.19  2006/02/23 19:12:43  fraggle
 // Set maketic-gametic lag back to 1 second.
 //
@@ -198,6 +202,12 @@ void NetUpdate (void)
     {
         ticcmd_t cmd;
         
+        // If playing single player, do not allow tics to buffer
+        // up very far
+
+        if ((!netgame || demoplayback) && maketic - gameticdiv > 2)
+            break;
+
         // Never go more than a second ahead
 
         if (maketic - gameticdiv > 35)
