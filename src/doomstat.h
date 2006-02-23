@@ -187,6 +187,11 @@ extern  boolean	usergame;
 extern  boolean	demoplayback;
 extern  boolean	demorecording;
 
+// Round angleturn in ticcmds to the nearest 256.  This is used when
+// recording Vanilla demos in netgames.
+
+extern boolean lowres_turn;
+
 // Quit after playing a demo from cmdline.
 extern  boolean		singledemo;	
 
@@ -296,6 +301,13 @@ extern	int		ticdup;
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.11  2006/02/23 19:12:01  fraggle
+// Add lowres_turn to indicate whether we generate angleturns which are
+// 8-bit as opposed to 16-bit.  This is used when recording demos without
+// -longtics enabled.  Sync this option between clients in a netgame, so
+// that if one player is recording a Vanilla demo, all clients record
+// in lowres.
+//
 // Revision 1.10  2006/02/19 13:42:27  fraggle
 // Move tic number expansion code to common code.  Parse game data packets
 // received from the server.
