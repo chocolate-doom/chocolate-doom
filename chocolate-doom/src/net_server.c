@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.32  2006/02/23 19:15:18  fraggle
+// Fix crash when NOT recording lowres
+//
 // Revision 1.31  2006/02/23 19:12:02  fraggle
 // Add lowres_turn to indicate whether we generate angleturns which are
 // 8-bit as opposed to 16-bit.  This is used when recording demos without
@@ -624,7 +627,7 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
 
     for (i=0; i<MAXPLAYERS; ++i)
     {
-        if (sv_players[i]->recording_lowres)
+        if (sv_players[i] != NULL && sv_players[i]->recording_lowres)
         {
             settings.lowres_turn = true;
             break;
