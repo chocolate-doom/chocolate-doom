@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.c 378 2006-02-23 19:12:02Z fraggle $
+// $Id: d_net.c 379 2006-02-23 19:12:43Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.19  2006/02/23 19:12:43  fraggle
+// Set maketic-gametic lag back to 1 second.
+//
 // Revision 1.18  2006/02/23 19:12:01  fraggle
 // Add lowres_turn to indicate whether we generate angleturns which are
 // 8-bit as opposed to 16-bit.  This is used when recording demos without
@@ -104,7 +107,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_net.c 378 2006-02-23 19:12:02Z fraggle $";
+static const char rcsid[] = "$Id: d_net.c 379 2006-02-23 19:12:43Z fraggle $";
 
 
 #include "d_main.h"
@@ -197,7 +200,7 @@ void NetUpdate (void)
         
         // Never go more than a second ahead
 
-        if (maketic - gameticdiv > 3)
+        if (maketic - gameticdiv > 35)
             break;
 
 	I_StartTic ();
