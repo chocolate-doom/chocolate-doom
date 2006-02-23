@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.30  2006/02/23 18:20:29  fraggle
+// Fix bugs in resend code for server->client data
+//
 // Revision 1.29  2006/02/22 18:35:55  fraggle
 // Packet resends for server->client gamedata
 //
@@ -920,7 +923,7 @@ static void NET_SV_SendTics(net_client_t *client, int start, int end)
 
         // Add command
        
-        NET_WriteFullTiccmd(packet, cmd);
+        NET_WriteFullTiccmd(packet, cmd, false);
     }
     
     // Send packet
@@ -944,6 +947,8 @@ static void NET_SV_ParseResendRequest(net_packet_t *packet, net_client_t *client
     {
         return;
     }
+
+    //printf("SV: %p: resend %i-%i\n", client, start, start+num_tics-1);
 
     // Resend those tics
 
@@ -1124,7 +1129,7 @@ static void NET_SV_PumpSendQueue(net_client_t *client)
         }
     }
 
-    //printf("have complete ticcmd for %i\n", client->sendseq);
+    //printf("SV: have complete ticcmd for %i\n", client->sendseq);
 
     // We have all data we need to generate a command for this tic.
     
