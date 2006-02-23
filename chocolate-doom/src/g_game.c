@@ -22,6 +22,13 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.26  2006/02/23 19:12:01  fraggle
+// Add lowres_turn to indicate whether we generate angleturns which are
+// 8-bit as opposed to 16-bit.  This is used when recording demos without
+// -longtics enabled.  Sync this option between clients in a netgame, so
+// that if one player is recording a Vanilla demo, all clients record
+// in lowres.
+//
 // Revision 1.25  2006/02/19 13:42:27  fraggle
 // Move tic number expansion code to common code.  Parse game data packets
 // received from the server.
@@ -234,6 +241,7 @@ int             totalkills, totalitems, totalsecret;    // for intermission
 char            demoname[32]; 
 boolean         demorecording; 
 boolean         longtics;               // cph's doom 1.91 longtics hack
+boolean         lowres_turn;            // low resolution turning for longtics
 boolean         demoplayback; 
 boolean		netdemo; 
 byte*		demobuffer;
@@ -563,6 +571,16 @@ void G_BuildTiccmd (ticcmd_t* cmd)
 	sendsave = false; 
 	cmd->buttons = BT_SPECIAL | BTS_SAVEGAME | (savegameslot<<BTS_SAVESHIFT); 
     } 
+
+    // low-res turning
+
+    if (lowres_turn)
+    {
+        // round angleturn to the nearest 256 boundary
+        // for recording demos with single byte values for turn
+
+        cmd->angleturn = (cmd->angleturn + 128) & 0xff00;
+    }
 } 
  
 
@@ -1616,7 +1634,7 @@ void G_ReadDemoTiccmd (ticcmd_t* cmd)
     }
     else
     {
-        cmd->angleturn = ((unsigned char)*demo_p++)<<8; 
+        cmd->angleturn = ((unsigned char) *demo_p++)<<8; 
     }
 
     cmd->buttons = (unsigned char)*demo_p++; 
@@ -1644,7 +1662,7 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
     }
     else
     {
-        *demo_p++ = (cmd->angleturn+128)>>8; 
+        *demo_p++ = cmd->angleturn >> 8; 
     }
 
     *demo_p++ = cmd->buttons; 
@@ -1693,7 +1711,11 @@ void G_BeginRecording (void)
     // Check for the longtics parameter, to record hires angle
     // turns in demos
     longtics = M_CheckParm("-longtics") != 0;
-		
+
+    // If not recording a longtics demo, record in low res
+
+    lowres_turn = !longtics;
+    
     demo_p = demobuffer;
 	
     // Save the right version code for this demo

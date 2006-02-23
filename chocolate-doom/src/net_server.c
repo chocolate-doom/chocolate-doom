@@ -21,6 +21,13 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.31  2006/02/23 19:12:02  fraggle
+// Add lowres_turn to indicate whether we generate angleturns which are
+// 8-bit as opposed to 16-bit.  This is used when recording demos without
+// -longtics enabled.  Sync this option between clients in a netgame, so
+// that if one player is recording a Vanilla demo, all clients record
+// in lowres.
+//
 // Revision 1.30  2006/02/23 18:20:29  fraggle
 // Fix bugs in resend code for server->client data
 //
@@ -175,6 +182,10 @@ typedef struct
     net_connection_t connection;
     int last_send_time;
     char *name;
+
+    // recording a demo without -longtics
+
+    boolean recording_lowres;
 
     // time query variables
 
@@ -432,6 +443,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
 {
     unsigned int magic;
     unsigned int cl_gamemode, cl_gamemission;
+    unsigned int cl_recording_lowres;
     char *player_name;
     char *client_version;
     int i;
@@ -453,7 +465,8 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
     // read the game mode and mission
 
     if (!NET_ReadInt16(packet, &cl_gamemode) 
-     || !NET_ReadInt16(packet, &cl_gamemission))
+     || !NET_ReadInt16(packet, &cl_gamemission)
+     || !NET_ReadInt8(packet, &cl_recording_lowres))
     {
         return;
     }
@@ -537,6 +550,10 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
             return;
         }
 
+        // TODO: Add server option to allow rejecting clients which
+        // set lowres_turn.  This is potentially desirable as the 
+        // presence of such clients affects turning resolution.
+
         // Adopt the game mode and mission of the first connecting client
 
         if (num_clients == 0)
@@ -557,6 +574,8 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         // Activate, initialise connection
 
         NET_SV_InitNewClient(client, addr, player_name);
+
+        client->recording_lowres = cl_recording_lowres;
     }
 
     if (client->connection.state == NET_CONN_STATE_WAITING_ACK)
@@ -595,14 +614,24 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
         return;
     }
 
-    // Change server state
-
-    server_state = SERVER_IN_GAME;
-    sv_settings = settings;
-
-    // Send start packets to each connected node
+    // Assign player numbers
 
     NET_SV_AssignPlayers();
+
+    // Check if anyone is recording a demo and set lowres_turn if so.
+
+    settings.lowres_turn = false;
+
+    for (i=0; i<MAXPLAYERS; ++i)
+    {
+        if (sv_players[i]->recording_lowres)
+        {
+            settings.lowres_turn = true;
+            break;
+        }
+    }
+
+    // Send start packets to each connected node
 
     for (i=0; i<MAXPLAYERS; ++i) 
     {
@@ -616,6 +645,11 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
         NET_WriteInt8(startpacket, sv_players[i]->player_number);
         NET_WriteSettings(startpacket, &settings);
     }
+
+    // Change server state
+
+    server_state = SERVER_IN_GAME;
+    sv_settings = settings;
 
     memset(recvwindow, 0, sizeof(recvwindow));
     recvwindow_start = 0;
@@ -824,7 +858,7 @@ static void NET_SV_ParseGameData(net_packet_t *packet, net_client_t *client)
         unsigned int time;
 
         if (!NET_ReadInt16(packet, &time)
-         || !NET_ReadTiccmdDiff(packet, &diff, false))
+         || !NET_ReadTiccmdDiff(packet, &diff, sv_settings.lowres_turn))
         {
             return;
         }
@@ -923,7 +957,7 @@ static void NET_SV_SendTics(net_client_t *client, int start, int end)
 
         // Add command
        
-        NET_WriteFullTiccmd(packet, cmd, false);
+        NET_WriteFullTiccmd(packet, cmd, sv_settings.lowres_turn);
     }
     
     // Send packet
