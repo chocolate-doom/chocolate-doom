@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.33  2006/02/23 23:40:30  fraggle
+// Free back packets sent to the server after parsing them
+//
 // Revision 1.32  2006/02/23 19:15:18  fraggle
 // Fix crash when NOT recording lowres
 //
@@ -1306,6 +1309,7 @@ void NET_SV_Run(void)
     while (NET_RecvPacket(server_context, &addr, &packet)) 
     {
         NET_SV_Packet(packet, addr);
+        NET_FreePacket(packet);
     }
 
     // "Run" any clients that may have things to do, independent of responses
