@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 377 2006-02-23 18:20:29Z fraggle $
+// $Id: net_client.c 378 2006-02-23 19:12:02Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,13 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.29  2006/02/23 19:12:01  fraggle
+// Add lowres_turn to indicate whether we generate angleturns which are
+// 8-bit as opposed to 16-bit.  This is used when recording demos without
+// -longtics enabled.  Sync this option between clients in a netgame, so
+// that if one player is recording a Vanilla demo, all clients record
+// in lowres.
+//
 // Revision 1.28  2006/02/23 18:20:29  fraggle
 // Fix bugs in resend code for server->client data
 //
@@ -135,6 +142,7 @@
 #include "deh_main.h"
 #include "g_game.h"
 #include "i_system.h"
+#include "m_argv.h"
 #include "net_client.h"
 #include "net_common.h"
 #include "net_defs.h"
@@ -408,7 +416,7 @@ static void NET_CL_SendTics(int start, int end)
 
         NET_WriteInt16(packet, sendobj->time);
 
-        NET_WriteTiccmdDiff(packet, &sendobj->cmd, false);
+        NET_WriteTiccmdDiff(packet, &sendobj->cmd, lowres_turn);
     }
     
     // Send the packet
@@ -541,6 +549,7 @@ static void NET_CL_ParseGameStart(net_packet_t *packet)
     startepisode = settings.episode;
     startmap = settings.map;
     startskill = settings.skill;
+    lowres_turn = settings.lowres_turn;
 
     memset(recvwindow, 0, sizeof(recvwindow));
     recvwindow_start = 0;
@@ -676,7 +685,7 @@ static void NET_CL_ParseGameData(net_packet_t *packet)
 
         index = seq - recvwindow_start + i;
 
-        if (!NET_ReadFullTiccmd(packet, &cmd, false))
+        if (!NET_ReadFullTiccmd(packet, &cmd, lowres_turn))
         {
             return;
         }
@@ -896,6 +905,7 @@ static void NET_CL_SendSYN(void)
     NET_WriteInt32(packet, NET_MAGIC_NUMBER);
     NET_WriteInt16(packet, gamemode);
     NET_WriteInt16(packet, gamemission);
+    NET_WriteInt8(packet, lowres_turn);
     NET_WriteString(packet, net_player_name);
     NET_WriteString(packet, PACKAGE_STRING);
     NET_Conn_SendPacket(&client_connection, packet);
@@ -910,6 +920,13 @@ boolean NET_CL_Connect(net_addr_t *addr)
     int last_send_time;
 
     server_addr = addr;
+
+    // Are we recording a demo? Possibly set lowres turn mode
+
+    if (M_CheckParm("-record") > 0 && M_CheckParm("-longtics") == 0)
+    {
+        lowres_turn = true;
+    }
 
     // create a new network I/O context and add just the
     // necessary module

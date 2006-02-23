@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_structrw.c 376 2006-02-23 18:19:05Z fraggle $
+// $Id: net_structrw.c 378 2006-02-23 19:12:02Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,13 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.8  2006/02/23 19:12:02  fraggle
+// Add lowres_turn to indicate whether we generate angleturns which are
+// 8-bit as opposed to 16-bit.  This is used when recording demos without
+// -longtics enabled.  Sync this option between clients in a netgame, so
+// that if one player is recording a Vanilla demo, all clients record
+// in lowres.
+//
 // Revision 1.7  2006/02/23 18:19:05  fraggle
 // Add lowres_turn parameter to net_full_ticcmd_t structure r/w functions
 //
@@ -70,6 +77,7 @@ void NET_WriteSettings(net_packet_t *packet, net_gamesettings_t *settings)
     NET_WriteInt8(packet, settings->map);
     NET_WriteInt8(packet, settings->skill);
     NET_WriteInt8(packet, settings->gameversion);
+    NET_WriteInt8(packet, settings->lowres_turn);
 }
 
 boolean NET_ReadSettings(net_packet_t *packet, net_gamesettings_t *settings)
@@ -80,7 +88,8 @@ boolean NET_ReadSettings(net_packet_t *packet, net_gamesettings_t *settings)
         && NET_ReadInt8(packet, (unsigned int *) &settings->episode)
         && NET_ReadInt8(packet, (unsigned int *) &settings->map)
         && NET_ReadInt8(packet, (unsigned int *) &settings->skill)
-        && NET_ReadInt8(packet, (unsigned int *) &settings->gameversion);
+        && NET_ReadInt8(packet, (unsigned int *) &settings->gameversion)
+        && NET_ReadInt8(packet, (unsigned int *) &settings->lowres_turn);
 }
 
 void NET_WriteTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff, 

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.c 374 2006-02-19 13:42:27Z fraggle $
+// $Id: d_net.c 378 2006-02-23 19:12:02Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -22,6 +22,13 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.18  2006/02/23 19:12:01  fraggle
+// Add lowres_turn to indicate whether we generate angleturns which are
+// 8-bit as opposed to 16-bit.  This is used when recording demos without
+// -longtics enabled.  Sync this option between clients in a netgame, so
+// that if one player is recording a Vanilla demo, all clients record
+// in lowres.
+//
 // Revision 1.17  2006/02/19 13:42:27  fraggle
 // Move tic number expansion code to common code.  Parse game data packets
 // received from the server.
@@ -97,7 +104,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_net.c 374 2006-02-19 13:42:27Z fraggle $";
+static const char rcsid[] = "$Id: d_net.c 378 2006-02-23 19:12:02Z fraggle $";
 
 
 #include "d_main.h"
@@ -190,7 +197,7 @@ void NetUpdate (void)
         
         // Never go more than a second ahead
 
-        if (maketic - gameticdiv > 35)
+        if (maketic - gameticdiv > 3)
             break;
 
 	I_StartTic ();
@@ -199,7 +206,7 @@ void NetUpdate (void)
 	//printf ("mk:%i ",maketic);
 	G_BuildTiccmd(&cmd);
 
-        if (netgame)
+        if (netgame && !demoplayback)
         {
             NET_CL_SendTiccmd(&cmd, maketic);
         }
@@ -230,6 +237,7 @@ void D_CheckNetGame (void)
     consoleplayer = 0;
     netgame = false;
     ticdup = 1;
+    lowres_turn = false;
     
     for (i=0; i<MAXPLAYERS; i++)
     {
@@ -300,7 +308,31 @@ void D_QuitNetGame (void)
     NET_CL_Disconnect();
 }
 
+static int GetLowTic(void)
+{
+    int i;
+    int lowtic;
 
+    if (demoplayback)
+    {
+        lowtic = maketic;
+    }
+    else
+    {
+        lowtic = INT_MAX;
+    
+        for (i=0; i<MAXPLAYERS; ++i)
+        {
+            if (playeringame[i])
+            {
+                if (nettics[i] < lowtic)
+                    lowtic = nettics[i];
+            }
+        }
+    }
+
+    return lowtic;
+}
 
 //
 // TryRunTics
@@ -318,7 +350,6 @@ void TryRunTics (void)
     int		realtics;
     int		availabletics;
     int		counts;
-    int		numplaying;
     
     // get real tics		
     entertic = I_GetTime ()/ticdup;
@@ -328,18 +359,8 @@ void TryRunTics (void)
     // get available tics
     NetUpdate ();
 	
-    lowtic = INT_MAX;
-    numplaying = 0;
+    lowtic = GetLowTic();
 
-    for (i=0; i<MAXPLAYERS; ++i)
-    {
-        if (playeringame[i])
-        {
-            ++numplaying;
-            if (nettics[i] < lowtic)
-                lowtic = nettics[i];
-        }
-    }
     availabletics = lowtic - gametic/ticdup;
     
     // decide how many tics to run
@@ -362,15 +383,12 @@ void TryRunTics (void)
     while (lowtic < gametic/ticdup + counts)	
     {
 	NetUpdate ();   
-	lowtic = INT_MAX;
-	
-	for (i=0; i<MAXPLAYERS; ++i)
-            if (playeringame[i] && nettics[i] < lowtic)
-		lowtic = nettics[i];
+
+        lowtic = GetLowTic();
 	
 	if (lowtic < gametic/ticdup)
 	    I_Error ("TryRunTics: lowtic < gametic");
-				
+    
 	// don't stay in here forever -- give the menu a chance to work
 	if (I_GetTime ()/ticdup - entertic >= 20)
 	{
