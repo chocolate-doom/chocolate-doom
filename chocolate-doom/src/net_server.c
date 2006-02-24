@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.35  2006/02/24 19:14:59  fraggle
+// Fix -extratics
+//
 // Revision 1.34  2006/02/24 08:19:45  fraggle
 // Only advance the receive window if we have received ticcmds from all
 // connected players.
@@ -1171,6 +1174,7 @@ static void NET_SV_PumpSendQueue(net_client_t *client)
     net_full_ticcmd_t cmd;
     int recv_index;
     int i;
+    int starttic, endtic;
 
     recv_index = client->sendseq - recvwindow_start;
 
@@ -1238,9 +1242,14 @@ static void NET_SV_PumpSendQueue(net_client_t *client)
     client->sendqueue[client->sendseq % BACKUPTICS] = cmd;
 
     // Transmit the new tic to the client
-    // TODO: extratics
 
-    NET_SV_SendTics(client, client->sendseq, client->sendseq);
+    starttic = client->sendseq - sv_settings.extratics;
+    endtic = client->sendseq;
+
+    if (starttic < 0)
+        starttic = 0;
+
+    NET_SV_SendTics(client, starttic, endtic);
 
     ++client->sendseq;
 }
