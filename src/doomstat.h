@@ -280,12 +280,6 @@ extern int		skyflatnum;
 
 // Netgame stuff (buffers and pointers, i.e. indices).
 
-// This is ???
-extern  doomcom_t*	doomcom;
-
-// This points inside doomcom.
-extern  doomdata_t*	netbuffer;	
-
 
 extern	int		rndindex;
 
@@ -301,6 +295,9 @@ extern	int		ticdup;
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.12  2006/02/24 19:14:22  fraggle
+// Remove redundant stuff relating to the old network code
+//
 // Revision 1.11  2006/02/23 19:12:01  fraggle
 // Add lowres_turn to indicate whether we generate angleturns which are
 // 8-bit as opposed to 16-bit.  This is used when recording demos without
