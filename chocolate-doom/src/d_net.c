@@ -22,6 +22,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.22  2006/02/24 19:14:22  fraggle
+// Remove redundant stuff relating to the old network code
+//
 // Revision 1.21  2006/02/23 23:42:00  fraggle
 // Replace -client with -connect which takes a hostname/ip to connect to.
 //
@@ -133,15 +136,6 @@ static const char rcsid[] = "$Id$";
 #include "net_sdl.h"
 #include "net_loop.h"
 
-#define	NCMD_EXIT		0x80000000
-#define	NCMD_RETRANSMIT		0x40000000
-#define	NCMD_SETUP		0x20000000
-#define	NCMD_KILL		0x10000000	// kill game
-#define	NCMD_CHECKSUM	 	0x0fffffff
-
- 
-doomcom_t*	doomcom;	
-
 
 //
 // NETWORKING
@@ -152,8 +146,6 @@ doomcom_t*	doomcom;
 //
 // a gametic cannot be run until nettics[] > gametic for all players
 //
-#define	RESENDCOUNT	10
-#define	PL_DRONE	0x80	// bit flag in doomdata->player
 
 ticcmd_t        netcmds[MAXPLAYERS][BACKUPTICS];
 int         	nettics[MAXPLAYERS];
@@ -162,7 +154,7 @@ int             maketic;
 
 int		lastnettic;
 int		ticdup;		
-int		maxsend;	// BACKUPTICS/(2*ticdup)-1
+int             extratics;
 
 
 void D_ProcessEvents (void); 
@@ -253,6 +245,7 @@ void D_CheckNetGame (void)
     consoleplayer = 0;
     netgame = false;
     ticdup = 1;
+    extratics = 1;
     lowres_turn = false;
     
     for (i=0; i<MAXPLAYERS; i++)
