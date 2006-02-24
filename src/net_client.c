@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 383 2006-02-23 20:53:03Z fraggle $
+// $Id: net_client.c 389 2006-02-24 19:14:59Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,6 +21,9 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.32  2006/02/24 19:14:59  fraggle
+// Fix -extratics
+//
 // Revision 1.31  2006/02/23 20:53:03  fraggle
 // Detect when clients are disconnected from the server, recover cleanly
 // and display a message.
@@ -392,12 +395,18 @@ void NET_CL_StartGame(void)
     // Fill in game settings structure with appropriate parameters
     // for the new game
 
-    settings.extratics = 0;
     settings.deathmatch = deathmatch;
     settings.episode = startepisode;
     settings.map = startmap;
     settings.skill = startskill;
     settings.gameversion = gameversion;
+
+    i = M_CheckParm("-extratics");
+
+    if (i > 0)
+        settings.extratics = atoi(myargv[i+1]);
+    else
+        settings.extratics = 1;
 
     i = M_CheckParm("-dup");
 
@@ -465,6 +474,7 @@ void NET_CL_SendTiccmd(ticcmd_t *ticcmd, int maketic)
 {
     net_ticdiff_t diff;
     net_server_send_t *sendobj;
+    int starttic, endtic;
     
     // Calculate the difference to the last ticcmd
 
@@ -482,7 +492,13 @@ void NET_CL_SendTiccmd(ticcmd_t *ticcmd, int maketic)
 
     // Send to server.
 
-    NET_CL_SendTics(maketic, maketic);
+    starttic = maketic - extratics;
+    endtic = maketic;
+
+    if (starttic < 0)
+        starttic = 0;
+    
+    NET_CL_SendTics(starttic, endtic);
 }
 
 // data received while we are waiting for the game to start
@@ -576,7 +592,7 @@ static void NET_CL_ParseGameStart(net_packet_t *packet)
 
     deathmatch = settings.deathmatch;
     ticdup = settings.ticdup;
-//    extratic = settings.extratics;
+    extratics = settings.extratics;
     startepisode = settings.episode;
     startmap = settings.map;
     startskill = settings.skill;
