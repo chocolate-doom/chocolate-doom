@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: doomstat.h 378 2006-02-23 19:12:02Z fraggle $
+// $Id: doomstat.h 388 2006-02-24 19:14:22Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -280,12 +280,6 @@ extern int		skyflatnum;
 
 // Netgame stuff (buffers and pointers, i.e. indices).
 
-// This is ???
-extern  doomcom_t*	doomcom;
-
-// This points inside doomcom.
-extern  doomdata_t*	netbuffer;	
-
 
 extern	int		rndindex;
 
@@ -301,6 +295,9 @@ extern	int		ticdup;
 //-----------------------------------------------------------------------------
 //
 // $Log$
+// Revision 1.12  2006/02/24 19:14:22  fraggle
+// Remove redundant stuff relating to the old network code
+//
 // Revision 1.11  2006/02/23 19:12:01  fraggle
 // Add lowres_turn to indicate whether we generate angleturns which are
 // 8-bit as opposed to 16-bit.  This is used when recording demos without
