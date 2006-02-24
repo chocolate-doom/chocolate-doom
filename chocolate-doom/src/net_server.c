@@ -21,6 +21,10 @@
 // 02111-1307, USA.
 //
 // $Log$
+// Revision 1.34  2006/02/24 08:19:45  fraggle
+// Only advance the receive window if we have received ticcmds from all
+// connected players.
+//
 // Revision 1.33  2006/02/23 23:40:30  fraggle
 // Free back packets sent to the server after parsing them
 //
@@ -363,6 +367,38 @@ static void NET_SV_AdvanceWindow(void)
 
     while (recvwindow_start < lowtic)
     {    
+        boolean should_advance;
+
+        // Check we have tics from all players for first tic in
+        // the recv window
+        
+        should_advance = true;
+
+        for (i=0; i<MAXPLAYERS; ++i)
+        {
+            if (sv_players[i] == NULL || !ClientConnected(sv_players[i]))
+            {
+                continue;
+            }
+
+            if (!recvwindow[0][i].active)
+            {
+                should_advance = false;
+                break;
+            }
+        }
+
+        if (!should_advance)
+        {
+            // The first tic is not complete: ie. we have not 
+            // received tics from all connected players.  This can
+            // happen if only one player is in the game.
+
+            break;
+        }
+        
+        // Advance the window
+
         memcpy(recvwindow, recvwindow + 1, sizeof(*recvwindow) * (BACKUPTICS - 1));
         memset(&recvwindow[BACKUPTICS-1], 0, sizeof(*recvwindow));
         ++recvwindow_start;
