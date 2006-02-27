@@ -242,6 +242,13 @@ boolean NET_ReadFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd, boolean
     unsigned int bitfield;
     int i;
 
+    // Latency
+
+    if (!NET_ReadSInt16(packet, &cmd->latency))
+    {
+        return false;
+    }
+
     // Regenerate playeringame from the "header" bitfield
 
     if (!NET_ReadInt8(packet, &bitfield))
@@ -274,6 +281,10 @@ void NET_WriteFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd, boolean l
 {
     unsigned int bitfield;
     int i;
+
+    // Write the latency
+
+    NET_WriteInt16(packet, cmd->latency);
 
     // Write "header" byte indicating which players are active
     // in this ticcmd

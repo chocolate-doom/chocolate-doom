@@ -200,12 +200,6 @@ typedef struct
 
     boolean recording_lowres;
 
-    // time query variables
-
-    int last_time_req_time;
-    int time_req_seq;
-    signed int time_offset;
-
     // send queue: items to send to the client
     // this is a circular buffer
 
@@ -222,10 +216,9 @@ typedef struct
 
     boolean active;
 
-    // Time this tic was generated (adjusted for time offset between
-    // client and server
- 
-    unsigned int time;
+    // Latency value received from the client
+
+    signed int latency;
 
     // Last time we sent a resend request for this tic
 
@@ -470,9 +463,6 @@ static void NET_SV_InitNewClient(net_client_t *client,
     client->addr = addr;
     client->last_send_time = -1;
     client->name = strdup(player_name);
-    client->last_time_req_time = -1;
-    client->time_req_seq = 0;
-    client->time_offset = 0;
 
     // init the ticcmd send queue
 
@@ -700,60 +690,6 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
     recvwindow_start = 0;
 }
 
-static void NET_SV_ParseTimeResponse(net_packet_t *packet, net_client_t *client)
-{
-    unsigned int seq;
-    unsigned int remote_time;
-    unsigned int rtt;
-    unsigned int nowtime;
-    signed int time_offset;
-
-    if (!NET_ReadInt32(packet, &seq)
-     || !NET_ReadInt32(packet, &remote_time))
-    {
-	return;
-    }
-
-    if (seq != client->time_req_seq)
-    {
-	// Not the time response we are expecting
-
-	return;
-    }
-
-    // Calculate the round trip time
-
-    nowtime = I_GetTimeMS();
-    rtt = nowtime - client->last_time_req_time;
-
-    // Adjust the remote time based on the round trip time
-
-    remote_time += rtt / 2;
-
-    // Calculate the offset to our own time
-
-    time_offset = remote_time - nowtime;
-
-    // Update the time offset
-
-    if (client->time_req_seq == 1)
-    {
-	// This is the first reply, so this is the only sample we have
-	// so far
-	
-	client->time_offset = time_offset;
-    }
-    else
-    {
-	// Apply a low level filter to the time offset adjustments
-	
-	client->time_offset = ((client->time_offset * 3) / 4)
-	                    + (time_offset / 4);
-    }
-
-    //printf("SV: client %p time offset: %i(%i)->%i\n", client, time_offset, rtt, client->time_offset);
-}
-
 // Send a resend request to a client
 
 static void NET_SV_SendResendRequest(net_client_t *client, int start, int end)
@@ -900,9 +836,9 @@ static void NET_SV_ParseGameData(net_packet_t *packet, net_client_t *client)
     for (i=0; i<num_tics; ++i)
     {
         net_ticdiff_t diff;
-        unsigned int time;
+        signed int latency;
 
-        if (!NET_ReadInt16(packet, &time)
+        if (!NET_ReadSInt16(packet, &latency)
          || !NET_ReadTiccmdDiff(packet, &diff, sv_settings.lowres_turn))
         {
             return;
@@ -920,6 +856,7 @@ static void NET_SV_ParseGameData(net_packet_t *packet, net_client_t *client)
         recvobj = &recvwindow[index][player];
         recvobj->active = true;
         recvobj->diff = diff;
+        recvobj->latency = latency;
     }
 
     // Has this been received out of sequence, ie. have we not received
@@ -1082,9 +1019,6 @@ static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
             case NET_PACKET_TYPE_GAMEDATA_RESEND:
                 NET_SV_ParseResendRequest(packet, client);
                 break;
-	    case NET_PACKET_TYPE_TIME_RESP:
-		NET_SV_ParseTimeResponse(packet, client);
-		break;
             default:
                 // unknown packet type
 
@@ -1150,25 +1084,6 @@ static void NET_SV_SendWaitingData(net_client_t *client)
     NET_FreePacket(packet);
 }
 
-static void NET_SV_SendTimeRequest(net_client_t *client)
-{
-    net_packet_t *packet;
-
-    ++client->time_req_seq;
-    
-    // Transmit the request packet
-
-    packet = NET_NewPacket(10);
-    NET_WriteInt16(packet, NET_PACKET_TYPE_TIME_REQ);
-    NET_WriteInt32(packet, client->time_req_seq);
-    NET_Conn_SendPacket(&client->connection, packet);
-    NET_FreePacket(packet);
-
-    // Save the time we send the request
-
-    client->last_time_req_time = I_GetTimeMS();
-}
-
 static void NET_SV_PumpSendQueue(net_client_t *client)
 {
     net_full_ticcmd_t cmd;
@@ -1217,8 +1132,12 @@ static void NET_SV_PumpSendQueue(net_client_t *client)
 
     // Add ticcmds from all players
 
+    cmd.latency = 0;
+
     for (i=0; i<MAXPLAYERS; ++i)
     {
+        net_client_recv_t *recvobj;
+
         if (sv_players[i] == client)
         {
             // Not the player we are sending to
@@ -1234,8 +1153,16 @@ static void NET_SV_PumpSendQueue(net_client_t *client)
         }
 
         cmd.playeringame[i] = true;
-        cmd.cmds[i] = recvwindow[recv_index][i].diff;
+
+        recvobj = &recvwindow[recv_index][i];
+
+        cmd.cmds[i] = recvobj->diff;
+
+        if (recvobj->latency > cmd.latency)
+            cmd.latency = recvobj->latency;
     }
+
+    //printf("SV: %i: latency %i\n", client->player_number, cmd.latency);
 
     // Add into the queue
 
@@ -1292,18 +1219,6 @@ static void NET_SV_RunClient(net_client_t *client)
             NET_SV_SendWaitingData(client);
             client->last_send_time = I_GetTimeMS();
         }
-    }
-
-    if (client->last_time_req_time < 0)
-    {
-	client->last_time_req_time = I_GetTimeMS() - 5000;
-    }
-
-    if (I_GetTimeMS() - client->last_time_req_time > 10000)
-    {
-	// Query the clients' times once every ten seconds.
-	
-	NET_SV_SendTimeRequest(client);
     }
 
     if (server_state == SERVER_IN_GAME)

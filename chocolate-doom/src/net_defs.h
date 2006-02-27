@@ -165,8 +165,6 @@ typedef enum
     NET_PACKET_TYPE_DISCONNECT,
     NET_PACKET_TYPE_DISCONNECT_ACK,
     NET_PACKET_TYPE_RELIABLE_ACK,
-    NET_PACKET_TYPE_TIME_REQ,
-    NET_PACKET_TYPE_TIME_RESP,
     NET_PACKET_TYPE_GAMEDATA_RESEND,
 } net_packet_type_t;
 
@@ -199,6 +197,7 @@ typedef struct
 
 typedef struct 
 {
+    signed int latency;
     unsigned int seq;
     boolean playeringame[MAXPLAYERS];
     net_ticdiff_t cmds[MAXPLAYERS];
