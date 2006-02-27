@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: doomdef.h 256 2006-01-06 19:26:02Z fraggle $
+// $Id: doomdef.h 396 2006-02-27 17:57:55Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -276,7 +276,7 @@ typedef enum
 #define KEY_F11		(0x80+0x57)
 #define KEY_F12		(0x80+0x58)
 
-#define KEY_BACKSPACE	127
+#define KEY_BACKSPACE	'\b'
 #define KEY_PAUSE	0xff
 
 #define KEY_EQUALS	0x3d

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: hu_lib.c 8 2005-07-23 16:44:57Z fraggle $
+// $Id: hu_lib.c 396 2006-02-27 17:57:55Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -34,7 +34,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: hu_lib.c 8 2005-07-23 16:44:57Z fraggle $";
+rcsid[] = "$Id: hu_lib.c 396 2006-02-27 17:57:55Z fraggle $";
 
 #include <ctype.h>
 
@@ -332,6 +332,7 @@ HUlib_keyInIText
 ( hu_itext_t*	it,
   unsigned char ch )
 {
+    ch = toupper(ch);
 
     if (ch >= ' ' && ch <= '_') 
   	HUlib_addCharToTextLine(&it->l, (char) ch);
