@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.c 394 2006-02-27 16:31:08Z fraggle $
+// $Id: d_net.c 395 2006-02-27 17:57:39Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -117,7 +117,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_net.c 394 2006-02-27 16:31:08Z fraggle $";
+static const char rcsid[] = "$Id: d_net.c 395 2006-02-27 17:57:39Z fraggle $";
 
 
 #include "d_main.h"
@@ -224,9 +224,9 @@ void NetUpdate (void)
         if ((!netgame || demoplayback) && maketic - gameticdiv > 2)
             break;
 
-        // Never go more than a second ahead
+        // Never go more than ~200ms ahead
 
-        if (maketic - gameticdiv > 35)
+        if (maketic - gameticdiv > 8)
             break;
 
 	//printf ("mk:%i ",maketic);
