@@ -224,9 +224,9 @@ void NetUpdate (void)
         if ((!netgame || demoplayback) && maketic - gameticdiv > 2)
             break;
 
-        // Never go more than a second ahead
+        // Never go more than ~200ms ahead
 
-        if (maketic - gameticdiv > 35)
+        if (maketic - gameticdiv > 8)
             break;
 
 	//printf ("mk:%i ",maketic);
