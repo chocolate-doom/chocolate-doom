@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 389 2006-02-24 19:14:59Z fraggle $
+// $Id: net_client.c 394 2006-02-27 16:31:08Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -213,6 +213,8 @@ typedef struct
     net_ticdiff_t cmd;
 } net_server_send_t;
 
+extern fixed_t offsetms;
+
 static net_connection_t client_connection;
 static net_clientstate_t client_state;
 static net_addr_t *server_addr;
@@ -261,6 +263,10 @@ static ticcmd_t recvwindow_cmd_base[MAXPLAYERS];
 static int recvwindow_start;
 static net_server_recv_t recvwindow[BACKUPTICS];
 
+// Average time between sending our ticcmd and receiving from the server
+
+static fixed_t average_latency;
+
 #define NET_CL_ExpandTicNum(b) NET_ExpandTicNum(recvwindow_start, (b))
 
 // Called when a player leaves the game
@@ -308,10 +314,66 @@ static void NET_CL_Disconnected(void)
 // the d_net.c structures (netcmds/nettics) and save the new ticcmd
 // back into recvwindow_cmd_base.
 
-static void NET_CL_ExpandFullTiccmd(net_full_ticcmd_t *cmd)
+static void NET_CL_ExpandFullTiccmd(net_full_ticcmd_t *cmd, int seq)
 {
+    int latency;
+    fixed_t adjustment;
     int i;
 
+    // Update average_latency
+
+    if (seq == send_queue[seq % NET_TICCMD_QUEUE_SIZE].seq)
+    {
+        latency = I_GetTimeMS() - send_queue[seq % NET_TICCMD_QUEUE_SIZE].time;
+    }
+    else if (seq > send_queue[seq % NET_TICCMD_QUEUE_SIZE].seq)
+    {
+        // We have received the ticcmd from the server before we have
+        // even sent ours
+
+        latency = 0;
+    }
+    else
+    {
+        latency = -1;
+    }
+
+    if (latency >= 0)
+    {
+        if (seq <= 20)
+        {
+            average_latency = latency * FRACUNIT;
+        }
+        else
+        {
+            // Low level filter
+
+            average_latency = (average_latency * 0.9)
+                            + (latency * FRACUNIT * 0.1);
+        }
+    }
+
+    //printf("latency: %i\tremote:%i\n", average_latency / FRACUNIT, 
+    //                                   cmd->latency);
+
+    // Possibly adjust offsetms in d_net.c, try to make players all have
+    // the same lag.  Don't adjust in the first few tics of play, as 
+    // we don't have an accurate value for average_latency yet.
+
+    if (seq > 35)
+    {
+        adjustment = (cmd->latency * FRACUNIT) - average_latency;
+
+        // Only adjust very slightly; the cumulative effect over 
+        // multiple tics will sort it out.
+
+        adjustment = adjustment / 100;
+
+        offsetms += adjustment;
+    }
+
+    // Expand tic diffs for all players
+    
     for (i=0; i<MAXPLAYERS; ++i)
     {
         if (i == consoleplayer)
@@ -358,7 +420,7 @@ static void NET_CL_AdvanceWindow(void)
     {
         // Expand tic diff data into d_net.c structures
 
-        NET_CL_ExpandFullTiccmd(&recvwindow[0].cmd);
+        NET_CL_ExpandFullTiccmd(&recvwindow[0].cmd, recvwindow_start);
 
         // Advance the window
 
@@ -454,7 +516,7 @@ static void NET_CL_SendTics(int start, int end)
 
         sendobj = &send_queue[i % NET_TICCMD_QUEUE_SIZE];
 
-        NET_WriteInt16(packet, sendobj->time);
+        NET_WriteInt16(packet, average_latency / FRACUNIT);
 
         NET_WriteTiccmdDiff(packet, &sendobj->cmd, lowres_turn);
     }
@@ -800,28 +862,6 @@ static void NET_CL_ParseGameData(net_packet_t *packet)
     }
 }
 
-static void NET_CL_ParseTimeRequest(net_packet_t *packet)
-{
-    net_packet_t *reply;
-    unsigned int seq;
-    
-    // Received a request from the server for our current time.
-
-    if (!NET_ReadInt32(packet, &seq))
-    {
-	return;
-    }
-    
-    // Send a response with our current time.
-
-    reply = NET_NewPacket(10);
-    NET_WriteInt16(reply, NET_PACKET_TYPE_TIME_RESP);
-    NET_WriteInt32(reply, seq);
-    NET_WriteInt32(reply, I_GetTimeMS());
-    NET_Conn_SendPacket(&client_connection, reply);
-    NET_FreePacket(reply);
-}
-
 // Parse a resend request from the server due to a dropped packet
 
 static void NET_CL_ParseResendRequest(net_packet_t *packet)
@@ -872,10 +912,6 @@ static void NET_CL_ParsePacket(net_packet_t *packet)
             case NET_PACKET_TYPE_GAMEDATA:
                 NET_CL_ParseGameData(packet);
                 break;
-
-	    case NET_PACKET_TYPE_TIME_REQ:
-		NET_CL_ParseTimeRequest(packet);
-		break;
 
             case NET_PACKET_TYPE_GAMEDATA_RESEND:
                 NET_CL_ParseResendRequest(packet);

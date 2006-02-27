@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.c 388 2006-02-24 19:14:22Z fraggle $
+// $Id: d_net.c 394 2006-02-27 16:31:08Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -117,7 +117,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_net.c 388 2006-02-24 19:14:22Z fraggle $";
+static const char rcsid[] = "$Id: d_net.c 394 2006-02-27 16:31:08Z fraggle $";
 
 
 #include "d_main.h"
@@ -137,6 +137,8 @@ static const char rcsid[] = "$Id: d_net.c 388 2006-02-24 19:14:22Z fraggle $";
 #include "net_loop.h"
 
 
+#define FPS 35
+
 //
 // NETWORKING
 //
@@ -155,6 +157,7 @@ int             maketic;
 int		lastnettic;
 int		ticdup;		
 int             extratics;
+fixed_t         offsetms;
 
 
 void D_ProcessEvents (void); 
@@ -162,12 +165,23 @@ void G_BuildTiccmd (ticcmd_t *cmd);
 void D_DoAdvanceDemo (void);
  
 
+// 35 fps clock adjusted by offsetms milliseconds
+
+static int GetAdjustedTime(void)
+{
+    int time_ms;
+
+    time_ms = I_GetTimeMS() + (offsetms / FRACUNIT);
+
+    return (time_ms * FPS) / 1000;
+}
+
 //
 // NetUpdate
 // Builds ticcmds for console player,
 // sends out a packet
 //
-int      gametime;
+int      lasttime;
 
 void NetUpdate (void)
 {
@@ -183,9 +197,9 @@ void NetUpdate (void)
     NET_SV_Run();
 
     // check time
-    nowtime = I_GetTime ()/ticdup;
-    newtics = nowtime - gametime;
-    gametime = nowtime;
+    nowtime = GetAdjustedTime()/ticdup;
+    newtics = nowtime - lasttime;
+    lasttime = nowtime;
 
     if (newtics <= 0) 	// nothing new to update
         return;
@@ -196,7 +210,14 @@ void NetUpdate (void)
     for (i=0 ; i<newtics ; i++)
     {
         ticcmd_t cmd;
-        
+
+	I_StartTic ();
+	D_ProcessEvents ();
+
+        // Always run the menu
+
+        M_Ticker ();
+	
         // If playing single player, do not allow tics to buffer
         // up very far
 
@@ -208,9 +229,6 @@ void NetUpdate (void)
         if (maketic - gameticdiv > 35)
             break;
 
-	I_StartTic ();
-	D_ProcessEvents ();
-	
 	//printf ("mk:%i ",maketic);
 	G_BuildTiccmd(&cmd);
 
@@ -247,6 +265,7 @@ void D_CheckNetGame (void)
     ticdup = 1;
     extratics = 1;
     lowres_turn = false;
+    offsetms = 0;
     
     for (i=0; i<MAXPLAYERS; i++)
     {
@@ -384,6 +403,8 @@ void TryRunTics (void)
     else
 	counts = availabletics;
     
+    counts = availabletics;
+
     if (counts < 1)
 	counts = 1;
 		
@@ -402,10 +423,11 @@ void TryRunTics (void)
 	if (lowtic < gametic/ticdup)
 	    I_Error ("TryRunTics: lowtic < gametic");
     
-	// don't stay in here forever -- give the menu a chance to work
-	if (I_GetTime ()/ticdup - entertic >= 20)
+        // Don't stay in this loop forever.  The menu is still running,
+        // so return to update the screen
+
+	if (I_GetTime ()/ticdup - entertic > 0)
 	{
-	    M_Ticker ();
 	    return;
 	} 
 

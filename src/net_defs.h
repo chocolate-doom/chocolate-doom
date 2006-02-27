@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_defs.h 376 2006-02-23 18:19:05Z fraggle $
+// $Id: net_defs.h 394 2006-02-27 16:31:08Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -165,8 +165,6 @@ typedef enum
     NET_PACKET_TYPE_DISCONNECT,
     NET_PACKET_TYPE_DISCONNECT_ACK,
     NET_PACKET_TYPE_RELIABLE_ACK,
-    NET_PACKET_TYPE_TIME_REQ,
-    NET_PACKET_TYPE_TIME_RESP,
     NET_PACKET_TYPE_GAMEDATA_RESEND,
 } net_packet_type_t;
 
@@ -199,6 +197,7 @@ typedef struct
 
 typedef struct 
 {
+    signed int latency;
     unsigned int seq;
     boolean playeringame[MAXPLAYERS];
     net_ticdiff_t cmds[MAXPLAYERS];
