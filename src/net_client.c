@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 394 2006-02-27 16:31:08Z fraggle $
+// $Id: net_client.c 398 2006-02-27 20:11:14Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -635,7 +635,7 @@ static void NET_CL_ParseGameStart(net_packet_t *packet)
         return;
     }
 
-    if (num_players >= MAXPLAYERS || player_number >= num_players)
+    if (num_players > MAXPLAYERS || player_number >= num_players)
     {
         // insane values
         return;
