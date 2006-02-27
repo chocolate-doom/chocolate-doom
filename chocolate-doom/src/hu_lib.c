@@ -332,6 +332,7 @@ HUlib_keyInIText
 ( hu_itext_t*	it,
   unsigned char ch )
 {
+    ch = toupper(ch);
 
     if (ch >= ' ' && ch <= '_') 
   	HUlib_addCharToTextLine(&it->l, (char) ch);
