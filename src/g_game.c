@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: g_game.c 378 2006-02-23 19:12:02Z fraggle $
+// $Id: g_game.c 399 2006-02-27 21:46:35Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -134,7 +134,7 @@
 
 
 static const char
-rcsid[] = "$Id: g_game.c 378 2006-02-23 19:12:02Z fraggle $";
+rcsid[] = "$Id: g_game.c 399 2006-02-27 21:46:35Z fraggle $";
 
 #include <string.h>
 #include <stdlib.h>
@@ -253,7 +253,7 @@ boolean         precache = true;        // if true, load all graphics at start
  
 wbstartstruct_t wminfo;               	// parms for world map / intermission 
  
-short		consistancy[MAXPLAYERS][BACKUPTICS]; 
+byte		consistancy[MAXPLAYERS][BACKUPTICS]; 
  
  
 // 
@@ -850,14 +850,12 @@ void G_Ticker (void)
 			
 	    if (netgame && !netdemo && !(gametic%ticdup) ) 
 	    { 
-                /*
 		if (gametic > BACKUPTICS 
 		    && consistancy[i][buf] != cmd->consistancy) 
 		{ 
 		    I_Error ("consistency failure (%i should be %i)",
 			     cmd->consistancy, consistancy[i][buf]); 
 		} 
-                */
 		if (players[i].mo) 
 		    consistancy[i][buf] = players[i].mo->x; 
 		else 

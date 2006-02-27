@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_ticcmd.h 254 2006-01-05 02:42:58Z fraggle $
+// $Id: d_ticcmd.h 399 2006-02-27 21:46:35Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -42,9 +42,9 @@ typedef struct
     signed char	forwardmove;	// *2048 for move
     signed char	sidemove;	// *2048 for move
     short	angleturn;	// <<16 for angle delta
-    short	consistancy;	// checks for net game
     byte	chatchar;
     byte	buttons;
+    byte        consistancy;	// checks for net game
 } ticcmd_t;
 
 
