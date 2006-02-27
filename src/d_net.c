@@ -290,6 +290,11 @@ void D_CheckNetGame (void)
         if (i > 0)
         {
             addr = net_sdl_module.ResolveAddress(myargv[i+1]);
+
+            if (addr == NULL)
+            {
+                I_Error("Unable to resolve \"%s\"", myargv[i+1]);
+            }
         }
     }
    
