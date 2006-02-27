@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.c 395 2006-02-27 17:57:39Z fraggle $
+// $Id: d_net.c 397 2006-02-27 19:39:26Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -117,7 +117,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_net.c 395 2006-02-27 17:57:39Z fraggle $";
+static const char rcsid[] = "$Id: d_net.c 397 2006-02-27 19:39:26Z fraggle $";
 
 
 #include "d_main.h"
@@ -290,6 +290,11 @@ void D_CheckNetGame (void)
         if (i > 0)
         {
             addr = net_sdl_module.ResolveAddress(myargv[i+1]);
+
+            if (addr == NULL)
+            {
+                I_Error("Unable to resolve \"%s\"", myargv[i+1]);
+            }
         }
     }
    
