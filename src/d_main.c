@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 362 2006-02-03 18:41:26Z fraggle $
+// $Id: d_main.c 400 2006-03-01 17:07:39Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -184,7 +184,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 362 2006-02-03 18:41:26Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 400 2006-03-01 17:07:39Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -1694,6 +1694,8 @@ void D_DoomMain (void)
 	    D_StartTitle ();                // start up intro loop
 
     }
+
+    TryRunTics();
     
     D_DoomLoop ();  // never returns
 }
