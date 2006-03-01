@@ -1694,6 +1694,8 @@ void D_DoomMain (void)
 	    D_StartTitle ();                // start up intro loop
 
     }
+
+    TryRunTics();
     
     D_DoomLoop ();  // never returns
 }
