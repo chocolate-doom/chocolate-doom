@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_defs.h 394 2006-02-27 16:31:08Z fraggle $
+// $Id: net_defs.h 401 2006-03-01 20:02:53Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -174,6 +174,7 @@ typedef struct
     int extratics;
     int deathmatch;
     int episode;
+    int nomonsters;
     int map;
     int skill;
     int gameversion;
