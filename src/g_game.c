@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: g_game.c 399 2006-02-27 21:46:35Z fraggle $
+// $Id: g_game.c 402 2006-03-01 23:36:44Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -134,7 +134,7 @@
 
 
 static const char
-rcsid[] = "$Id: g_game.c 399 2006-02-27 21:46:35Z fraggle $";
+rcsid[] = "$Id: g_game.c 402 2006-03-01 23:36:44Z fraggle $";
 
 #include <string.h>
 #include <stdlib.h>
@@ -231,6 +231,8 @@ boolean         deathmatch;           	// only if started as net death
 boolean         netgame;                // only true if packets are broadcast 
 boolean         playeringame[MAXPLAYERS]; 
 player_t        players[MAXPLAYERS]; 
+
+boolean         turbodetected[MAXPLAYERS];
  
 int             consoleplayer;          // player taking events and displaying 
 int             displayplayer;          // view being displayed 
@@ -646,6 +648,7 @@ void G_DoLoadLevel (void)
 
     for (i=0 ; i<MAXPLAYERS ; i++) 
     { 
+	turbodetected[i] = false;
 	if (playeringame[i] && players[i].playerstate == PST_DEAD) 
 	    players[i].playerstate = PST_REBORN; 
 	memset (players[i].frags,0,sizeof(players[i].frags)); 
@@ -839,13 +842,27 @@ void G_Ticker (void)
 		G_WriteDemoTiccmd (cmd);
 	    
 	    // check for turbo cheats
-	    if (cmd->forwardmove > TURBOTHRESHOLD 
-		&& !(gametic&31) && ((gametic>>5)&3) == i )
+
+            // check ~ 4 seconds whether to display the turbo message. 
+            // store if the turbo threshold was exceeded in any tics
+            // over the past 4 seconds.  offset the checking period
+            // for each player so messages are not displayed at the
+            // same time.
+
+            if (cmd->forwardmove > TURBOTHRESHOLD)
+            {
+                turbodetected[i] = true;
+            }
+
+	    if ((gametic & 31) == 0 
+             && ((gametic >> 5) % MAXPLAYERS) == i
+             && turbodetected[i])
 	    {
 		static char turbomessage[80];
 		extern char *player_names[4];
 		sprintf (turbomessage, "%s is turbo!",player_names[i]);
 		players[consoleplayer].message = turbomessage;
+                turbodetected[i] = false;
 	    }
 			
 	    if (netgame && !netdemo && !(gametic%ticdup) ) 
