@@ -174,6 +174,7 @@ typedef struct
     int extratics;
     int deathmatch;
     int episode;
+    int nomonsters;
     int map;
     int skill;
     int gameversion;

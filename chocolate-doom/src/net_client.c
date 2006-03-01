@@ -462,6 +462,7 @@ void NET_CL_StartGame(void)
     settings.map = startmap;
     settings.skill = startskill;
     settings.gameversion = gameversion;
+    settings.nomonsters = nomonsters;
 
     i = M_CheckParm("-extratics");
 
@@ -659,6 +660,7 @@ static void NET_CL_ParseGameStart(net_packet_t *packet)
     startmap = settings.map;
     startskill = settings.skill;
     lowres_turn = settings.lowres_turn;
+    nomonsters = settings.nomonsters;
 
     memset(recvwindow, 0, sizeof(recvwindow));
     recvwindow_start = 0;
