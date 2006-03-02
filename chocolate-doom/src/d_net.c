@@ -187,8 +187,7 @@ void NetUpdate (void)
 {
     int             nowtime;
     int             newtics;
-    int				i,j;
-    int				realstart;
+    int				i;
     int				gameticdiv;
     
     // Temporary hack - hook new client/server code into Doom
@@ -344,8 +343,6 @@ void D_CheckNetGame (void)
 //
 void D_QuitNetGame (void)
 {
-    int             i, j;
-	
     if (debugfile)
 	fclose (debugfile);
 
@@ -391,15 +388,11 @@ void TryRunTics (void)
     int		i;
     int		lowtic;
     int		entertic;
-    static int	oldentertics;
-    int		realtics;
     int		availabletics;
     int		counts;
     
     // get real tics		
     entertic = I_GetTime ()/ticdup;
-    realtics = entertic - oldentertics;
-    oldentertics = entertic;
     
     // get available tics
     NetUpdate ();
@@ -409,23 +402,12 @@ void TryRunTics (void)
     availabletics = lowtic - gametic/ticdup;
     
     // decide how many tics to run
-    if (realtics < availabletics-1)
-	counts = realtics+1;
-    else if (realtics < availabletics)
-	counts = realtics;
-    else
-	counts = availabletics;
     
     counts = availabletics;
 
     if (counts < 1)
 	counts = 1;
 		
-    if (debugfile)
-	fprintf (debugfile,
-		 "=======real: %i  avail: %i  game: %i\n",
-		 realtics, availabletics,counts);
-	
     // wait for new tics if needed
     while (lowtic < gametic/ticdup + counts)	
     {
