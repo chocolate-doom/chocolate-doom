@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.c 397 2006-02-27 19:39:26Z fraggle $
+// $Id: d_net.c 403 2006-03-02 00:03:48Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -117,7 +117,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_net.c 397 2006-02-27 19:39:26Z fraggle $";
+static const char rcsid[] = "$Id: d_net.c 403 2006-03-02 00:03:48Z fraggle $";
 
 
 #include "d_main.h"
@@ -254,7 +254,8 @@ extern	int			viewangleoffset;
 
 void D_CheckNetGame (void)
 {
-    net_addr_t *addr = NULL;
+    net_module_t *connect_module = NULL;
+    char *connect_addr;
     int i;
     int num_players;
 
@@ -281,7 +282,8 @@ void D_CheckNetGame (void)
     {
         NET_SV_Init();
 
-        addr = net_loop_client_module.ResolveAddress("");
+        connect_module = &net_loop_client_module;
+        connect_addr = "";
     }
     else
     {
@@ -289,27 +291,33 @@ void D_CheckNetGame (void)
 
         if (i > 0)
         {
-            addr = net_sdl_module.ResolveAddress(myargv[i+1]);
-
-            if (addr == NULL)
-            {
-                I_Error("Unable to resolve \"%s\"", myargv[i+1]);
-            }
+            connect_module = &net_sdl_module;
+            connect_addr = myargv[i+1];
         }
     }
-   
-    if (addr != NULL)
-    {
-        if (NET_CL_Connect(addr))
-        {
-            printf("D_CheckNetGame: Connected to %s\n", NET_AddrToString(addr));
 
-            NET_WaitForStart();
-        }
-        else
+    if (connect_module != NULL)
+    {
+        net_addr_t *addr;
+
+        connect_module->InitClient();
+
+        addr = connect_module->ResolveAddress(connect_addr);
+
+        if (addr == NULL)
         {
-            I_Error("D_CheckNetGame: Failed to connect to %s\n", NET_AddrToString(addr));
+            I_Error("Unable to resolve \"%s\"", connect_addr);
         }
+
+        if (!NET_CL_Connect(addr))
+        {
+            I_Error("D_CheckNetGame: Failed to connect to %s\n", 
+                    NET_AddrToString(addr));
+        }
+
+        printf("D_CheckNetGame: Connected to %s\n", NET_AddrToString(addr));
+
+        NET_WaitForStart();
     }
 
     num_players = 0;
