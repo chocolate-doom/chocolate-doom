@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_structrw.c 394 2006-02-27 16:31:08Z fraggle $
+// $Id: net_structrw.c 404 2006-03-02 00:10:23Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -73,6 +73,7 @@ void NET_WriteSettings(net_packet_t *packet, net_gamesettings_t *settings)
     NET_WriteInt8(packet, settings->ticdup);
     NET_WriteInt8(packet, settings->extratics);
     NET_WriteInt8(packet, settings->deathmatch);
+    NET_WriteInt8(packet, settings->nomonsters);
     NET_WriteInt8(packet, settings->episode);
     NET_WriteInt8(packet, settings->map);
     NET_WriteInt8(packet, settings->skill);
@@ -85,6 +86,7 @@ boolean NET_ReadSettings(net_packet_t *packet, net_gamesettings_t *settings)
     return NET_ReadInt8(packet, (unsigned int *) &settings->ticdup)
         && NET_ReadInt8(packet, (unsigned int *) &settings->extratics)
         && NET_ReadInt8(packet, (unsigned int *) &settings->deathmatch)
+        && NET_ReadInt8(packet, (unsigned int *) &settings->nomonsters)
         && NET_ReadInt8(packet, (unsigned int *) &settings->episode)
         && NET_ReadInt8(packet, (unsigned int *) &settings->map)
         && NET_ReadInt8(packet, (unsigned int *) &settings->skill)
