@@ -69,6 +69,7 @@
 
 #include "doomdef.h"
 #include "doomtype.h"
+#include "d_ticcmd.h"
 #include "net_defs.h"
 
 #define MAXPLAYERNAME 30
@@ -78,6 +79,7 @@ void NET_CL_Disconnect(void);
 void NET_CL_Run(void);
 void NET_CL_Init(void);
 void NET_CL_StartGame();
+void NET_CL_SendTiccmd(ticcmd_t *ticcmd, int maketic);
 void NET_Init(void);
 
 extern boolean net_client_connected;

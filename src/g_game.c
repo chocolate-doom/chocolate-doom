@@ -1446,7 +1446,6 @@ void G_DoSaveGame (void)
 { 
     char	name[100]; 
     char*	description; 
-    unsigned long length;
 	
     strcpy(name, P_SaveGameFile(savegameslot));
 
