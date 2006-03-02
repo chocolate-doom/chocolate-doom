@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_swap.h 342 2006-01-24 01:46:08Z fraggle $
+// $Id: m_swap.h 406 2006-03-02 01:01:05Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -37,8 +37,8 @@
 // Endianess handling.
 // WAD files are stored little endian.
 #ifdef WORDS_BIGENDIAN
-short	SwapSHORT(short);
-int	SwapLONG(int);
+extern unsigned short	SwapSHORT(unsigned short);
+extern unsigned int	SwapLONG(unsigned int);
 #define SHORT(x)	((short)SwapSHORT((unsigned short) (x)))
 #define LONG(x)         ((int)SwapLONG((unsigned int) (x)))
 #else
