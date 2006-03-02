@@ -37,8 +37,8 @@
 // Endianess handling.
 // WAD files are stored little endian.
 #ifdef WORDS_BIGENDIAN
-short	SwapSHORT(short);
-int	SwapLONG(int);
+extern unsigned short	SwapSHORT(unsigned short);
+extern unsigned int	SwapLONG(unsigned int);
 #define SHORT(x)	((short)SwapSHORT((unsigned short) (x)))
 #define LONG(x)         ((int)SwapLONG((unsigned int) (x)))
 #else
