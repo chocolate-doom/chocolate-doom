@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: g_game.c 402 2006-03-01 23:36:44Z fraggle $
+// $Id: g_game.c 405 2006-03-02 00:57:25Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -134,7 +134,7 @@
 
 
 static const char
-rcsid[] = "$Id: g_game.c 402 2006-03-01 23:36:44Z fraggle $";
+rcsid[] = "$Id: g_game.c 405 2006-03-02 00:57:25Z fraggle $";
 
 #include <string.h>
 #include <stdlib.h>
@@ -1446,7 +1446,6 @@ void G_DoSaveGame (void)
 { 
     char	name[100]; 
     char*	description; 
-    unsigned long length;
 	
     strcpy(name, P_SaveGameFile(savegameslot));
 
