@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 283 2006-01-12 01:34:48Z fraggle $
+// $Id: i_video.c 407 2006-03-03 19:18:48Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -175,7 +175,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 283 2006-01-12 01:34:48Z fraggle $";
+rcsid[] = "$Id: i_video.c 407 2006-03-03 19:18:48Z fraggle $";
 
 #include <SDL.h>
 #include <ctype.h>
@@ -454,7 +454,7 @@ static int AccelerateMouse(int val)
     if (val < 0)
         return -AccelerateMouse(-val);
 
-    return (int) pow(val, mouse_acceleration) / 5;
+    return (int) pow(((float) val) / mouse_acceleration, mouse_acceleration);
 }
 
 void I_GetEvent(void)
