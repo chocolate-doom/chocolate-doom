@@ -454,7 +454,7 @@ static int AccelerateMouse(int val)
     if (val < 0)
         return -AccelerateMouse(-val);
 
-    return (int) pow(val, mouse_acceleration) / 5;
+    return (int) pow(((float) val) / mouse_acceleration, mouse_acceleration);
 }
 
 void I_GetEvent(void)
