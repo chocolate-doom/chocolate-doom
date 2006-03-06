@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 400 2006-03-01 17:07:39Z fraggle $
+// $Id: d_main.c 408 2006-03-06 20:44:43Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -184,7 +184,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 400 2006-03-01 17:07:39Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 408 2006-03-06 20:44:43Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -560,6 +560,8 @@ void D_DoomLoop (void)
 	printf ("debug output to: %s\n",filename);
 	debugfile = fopen (filename,"w");
     }
+
+    TryRunTics();
 
     I_InitGraphics ();
 
@@ -1695,7 +1697,5 @@ void D_DoomMain (void)
 
     }
 
-    TryRunTics();
-    
     D_DoomLoop ();  // never returns
 }
