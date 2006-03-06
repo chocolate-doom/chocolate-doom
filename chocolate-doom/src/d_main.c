@@ -561,6 +561,8 @@ void D_DoomLoop (void)
 	debugfile = fopen (filename,"w");
     }
 
+    TryRunTics();
+
     I_InitGraphics ();
 
     while (1)
@@ -1695,7 +1697,5 @@ void D_DoomMain (void)
 
     }
 
-    TryRunTics();
-    
     D_DoomLoop ();  // never returns
 }
