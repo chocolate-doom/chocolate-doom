@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 394 2006-02-27 16:31:08Z fraggle $
+// $Id: net_server.c 409 2006-03-06 20:48:07Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -661,8 +661,11 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
     {
         if (sv_players[i] != NULL && sv_players[i]->recording_lowres)
         {
+            printf("SV: Playing in low resolution turning mode, "
+                   "because player %i is recording a Vanilla demo.\n",
+                   i + 1);
+                   
             settings.lowres_turn = true;
-            break;
         }
     }
 
