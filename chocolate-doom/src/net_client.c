@@ -143,6 +143,7 @@
 // Network client code
 //
 
+#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -884,6 +885,33 @@ static void NET_CL_ParseResendRequest(net_packet_t *packet)
     NET_CL_SendTics(start, start + num_tics - 1);
 }
 
+// Console message that the server wants the client to print
+
+static void NET_CL_ParseConsoleMessage(net_packet_t *packet)
+{
+    char *msg;
+    char *p;
+
+    msg = NET_ReadString(packet);
+
+    if (msg == NULL)
+    {
+        return;
+    }
+
+    // Do not do a straight "puts" of the string, as this could be
+    // dangerous (sending control codes to terminals can do all
+    // kinds of things)
+
+    for (p=msg; *p; ++p)
+    {
+        if (isprint(*p))
+            putchar(*p);
+    }
+
+    putchar('\n');
+}
+
 // parse a received packet
 
 static void NET_CL_ParsePacket(net_packet_t *packet)
@@ -917,6 +945,10 @@ static void NET_CL_ParsePacket(net_packet_t *packet)
 
             case NET_PACKET_TYPE_GAMEDATA_RESEND:
                 NET_CL_ParseResendRequest(packet);
+                break;
+
+            case NET_PACKET_TYPE_CONSOLE_MESSAGE:
+                NET_CL_ParseConsoleMessage(packet);
                 break;
 
             default:
