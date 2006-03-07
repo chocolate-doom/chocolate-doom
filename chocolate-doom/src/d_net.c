@@ -189,8 +189,14 @@ void NetUpdate (void)
     int             newtics;
     int				i;
     int				gameticdiv;
+
+    // If we are running with singletics (timing a demo), this
+    // is all done separately.
+
+    if (singletics)
+        return;
     
-    // Temporary hack - hook new client/server code into Doom
+    // Run network subsystems
 
     NET_CL_Run();
     NET_SV_Run();
