@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_common.h 411 2006-03-07 12:57:52Z fraggle $
+// $Id: net_common.h 412 2006-03-07 18:24:12Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -84,6 +84,24 @@ typedef enum
 
 } net_connstate_t;
 
+// Reason a connection was terminated
+
+typedef enum
+{
+    // As the result of a local disconnect request
+
+    NET_DISCONNECT_LOCAL,
+
+    // As the result of a remote disconnect request
+
+    NET_DISCONNECT_REMOTE,
+
+    // Timeout (no data received in a long time)
+
+    NET_DISCONNECT_TIMEOUT,
+
+} net_disconnect_reason_t;
+
 #define MAX_RETRIES 5
 
 typedef struct net_reliable_packet_s net_reliable_packet_t;
@@ -91,6 +109,7 @@ typedef struct net_reliable_packet_s net_reliable_packet_t;
 typedef struct 
 {
     net_connstate_t state;
+    net_disconnect_reason_t disconnect_reason;
     net_addr_t *addr;
     int last_send_time;
     int num_retries;

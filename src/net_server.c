@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 410 2006-03-07 12:46:52Z fraggle $
+// $Id: net_server.c 412 2006-03-07 18:24:12Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -300,6 +300,8 @@ static void NET_SV_BroadcastMessage(char *s, ...)
             NET_SV_SendConsoleMessage(&clients[i], buf);
         }
     }
+
+    NET_SafePuts(buf);
 }
 
 
@@ -1234,6 +1236,13 @@ static void NET_SV_RunClient(net_client_t *client)
     // Run common code
 
     NET_Conn_Run(&client->connection);
+    
+    if (client->connection.state == NET_CONN_STATE_DISCONNECTED
+     && client->connection.disconnect_reason == NET_DISCONNECT_TIMEOUT)
+    {
+        NET_SV_BroadcastMessage("Client '%s' timed out and disconnected",
+                                client->name);
+    }
     
     // Is this client disconnected?
 
