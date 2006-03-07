@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 411 2006-03-07 12:57:52Z fraggle $
+// $Id: net_client.c 413 2006-03-07 18:25:32Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -897,6 +897,8 @@ static void NET_CL_ParseConsoleMessage(net_packet_t *packet)
     {
         return;
     }
+
+    printf("Message from server: ");
 
     NET_SafePuts(msg);
 }
