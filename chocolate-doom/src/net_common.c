@@ -158,6 +158,7 @@ static void NET_Conn_ParseDisconnect(net_connection_t *conn, net_packet_t *packe
     conn->last_send_time = I_GetTimeMS();
     
     conn->state = NET_CONN_STATE_DISCONNECTED_SLEEP;
+    conn->disconnect_reason = NET_DISCONNECT_REMOTE;
 }
 
 // Parse a DISCONNECT_ACK packet
@@ -172,6 +173,7 @@ static void NET_Conn_ParseDisconnectACK(net_connection_t *conn,
         // request. We have been disconnected successfully.
         
         conn->state = NET_CONN_STATE_DISCONNECTED;
+        conn->disconnect_reason = NET_DISCONNECT_LOCAL;
         conn->last_send_time = -1;
     }
 }
@@ -192,6 +194,7 @@ static void NET_Conn_ParseReject(net_connection_t *conn, net_packet_t *packet)
         // rejected by server
 
         conn->state = NET_CONN_STATE_DISCONNECTED;
+        conn->disconnect_reason = NET_DISCONNECT_REMOTE;
 
         printf("Rejected by server: ");
         NET_SafePuts(msg);
@@ -346,6 +349,7 @@ void NET_Conn_Disconnect(net_connection_t *conn)
      && conn->state != NET_CONN_STATE_DISCONNECTED_SLEEP)
     {
         conn->state = NET_CONN_STATE_DISCONNECTING;
+        conn->disconnect_reason = NET_DISCONNECT_LOCAL;
         conn->last_send_time = -1;
         conn->num_retries = 0;
     }
@@ -368,6 +372,7 @@ void NET_Conn_Run(net_connection_t *conn)
             // time.  Assume disconnected.
 
             conn->state = NET_CONN_STATE_DISCONNECTED;
+            conn->disconnect_reason = NET_DISCONNECT_TIMEOUT;
         }
         
         if (nowtime - conn->keepalive_send_time > KEEPALIVE_PERIOD * 1000)
@@ -421,6 +426,7 @@ void NET_Conn_Run(net_connection_t *conn)
                 // no more retries allowed.
 
                 conn->state = NET_CONN_STATE_DISCONNECTED;
+                conn->disconnect_reason = NET_DISCONNECT_TIMEOUT;
             }
         }
     }
@@ -452,6 +458,7 @@ void NET_Conn_Run(net_connection_t *conn)
                 // Force disconnect.
 
                 conn->state = NET_CONN_STATE_DISCONNECTED;
+                conn->disconnect_reason = NET_DISCONNECT_LOCAL;
             }
         }
     }
@@ -465,6 +472,7 @@ void NET_Conn_Run(net_connection_t *conn)
             // Idle for 5 seconds, switch state
 
             conn->state = NET_CONN_STATE_DISCONNECTED;
+            conn->disconnect_reason = NET_DISCONNECT_REMOTE;
         }
     }
 }
