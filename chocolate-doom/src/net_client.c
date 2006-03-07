@@ -898,6 +898,8 @@ static void NET_CL_ParseConsoleMessage(net_packet_t *packet)
         return;
     }
 
+    printf("Message from server: ");
+
     NET_SafePuts(msg);
 }
 
