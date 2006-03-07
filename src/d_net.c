@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.c 405 2006-03-02 00:57:25Z fraggle $
+// $Id: d_net.c 414 2006-03-07 19:02:08Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -117,7 +117,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_net.c 405 2006-03-02 00:57:25Z fraggle $";
+static const char rcsid[] = "$Id: d_net.c 414 2006-03-07 19:02:08Z fraggle $";
 
 
 #include "d_main.h"
@@ -189,8 +189,14 @@ void NetUpdate (void)
     int             newtics;
     int				i;
     int				gameticdiv;
+
+    // If we are running with singletics (timing a demo), this
+    // is all done separately.
+
+    if (singletics)
+        return;
     
-    // Temporary hack - hook new client/server code into Doom
+    // Run network subsystems
 
     NET_CL_Run();
     NET_SV_Run();
