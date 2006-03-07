@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_defs.h 401 2006-03-01 20:02:53Z fraggle $
+// $Id: net_defs.h 410 2006-03-07 12:46:52Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -166,6 +166,7 @@ typedef enum
     NET_PACKET_TYPE_DISCONNECT_ACK,
     NET_PACKET_TYPE_RELIABLE_ACK,
     NET_PACKET_TYPE_GAMEDATA_RESEND,
+    NET_PACKET_TYPE_CONSOLE_MESSAGE,
 } net_packet_type_t;
 
 typedef struct 

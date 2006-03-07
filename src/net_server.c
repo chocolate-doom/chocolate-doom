@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 409 2006-03-06 20:48:07Z fraggle $
+// $Id: net_server.c 410 2006-03-07 12:46:52Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -158,6 +158,7 @@
 // Network server code
 //
 
+#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -261,6 +262,48 @@ static boolean ClientConnected(net_client_t *client)
     return client->active 
         && client->connection.state == NET_CONN_STATE_CONNECTED;
 }
+
+// Send a message to be displayed on a client's console
+
+static void NET_SV_SendConsoleMessage(net_client_t *client, char *s, ...)
+{
+    char buf[1024];
+    va_list args;
+    net_packet_t *packet;
+
+    va_start(args, s);
+    vsnprintf(buf, sizeof(buf), s, args);
+    va_end(args);
+    
+    packet = NET_Conn_NewReliable(&client->connection, 
+                                  NET_PACKET_TYPE_CONSOLE_MESSAGE);
+
+    NET_WriteString(packet, buf);
+}
+
+// Send a message to all clients
+
+static void NET_SV_BroadcastMessage(char *s, ...)
+{
+    char buf[1024];
+    va_list args;
+    int i;
+
+    va_start(args, s);
+    vsnprintf(buf, sizeof(buf), s, args);
+    va_end(args);
+    
+    for (i=0; i<MAXNETNODES; ++i)
+    {
+        if (ClientConnected(&clients[i]))
+        {
+            NET_SV_SendConsoleMessage(&clients[i], buf);
+        }
+    }
+}
+
+
+// Assign player numbers to connected clients
 
 static void NET_SV_AssignPlayers(void)
 {
@@ -661,9 +704,9 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
     {
         if (sv_players[i] != NULL && sv_players[i]->recording_lowres)
         {
-            printf("SV: Playing in low resolution turning mode, "
-                   "because player %i is recording a Vanilla demo.\n",
-                   i + 1);
+            NET_SV_BroadcastMessage("Playing in low resolution turning mode, "
+                                    "because player %i is recording a Vanilla demo.\n",
+                                    i + 1);
                    
             settings.lowres_turn = true;
         }
