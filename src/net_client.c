@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 410 2006-03-07 12:46:52Z fraggle $
+// $Id: net_client.c 411 2006-03-07 12:57:52Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -890,7 +890,6 @@ static void NET_CL_ParseResendRequest(net_packet_t *packet)
 static void NET_CL_ParseConsoleMessage(net_packet_t *packet)
 {
     char *msg;
-    char *p;
 
     msg = NET_ReadString(packet);
 
@@ -899,17 +898,7 @@ static void NET_CL_ParseConsoleMessage(net_packet_t *packet)
         return;
     }
 
-    // Do not do a straight "puts" of the string, as this could be
-    // dangerous (sending control codes to terminals can do all
-    // kinds of things)
-
-    for (p=msg; *p; ++p)
-    {
-        if (isprint(*p))
-            putchar(*p);
-    }
-
-    putchar('\n');
+    NET_SafePuts(msg);
 }
 
 // parse a received packet

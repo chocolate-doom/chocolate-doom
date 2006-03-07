@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_common.h 374 2006-02-19 13:42:27Z fraggle $
+// $Id: net_common.h 411 2006-03-07 12:57:52Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -111,6 +111,9 @@ void NET_Conn_Disconnect(net_connection_t *conn);
 void NET_Conn_Run(net_connection_t *conn);
 net_packet_t *NET_Conn_NewReliable(net_connection_t *conn, int packet_type);
 
+// Other miscellaneous common functions
+
+void NET_SafePuts(char *msg);
 unsigned int NET_ExpandTicNum(unsigned int relative, unsigned int b);
 
 #endif /* #ifndef NET_COMMON_H */
