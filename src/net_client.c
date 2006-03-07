@@ -890,7 +890,6 @@ static void NET_CL_ParseResendRequest(net_packet_t *packet)
 static void NET_CL_ParseConsoleMessage(net_packet_t *packet)
 {
     char *msg;
-    char *p;
 
     msg = NET_ReadString(packet);
 
@@ -899,17 +898,7 @@ static void NET_CL_ParseConsoleMessage(net_packet_t *packet)
         return;
     }
 
-    // Do not do a straight "puts" of the string, as this could be
-    // dangerous (sending control codes to terminals can do all
-    // kinds of things)
-
-    for (p=msg; *p; ++p)
-    {
-        if (isprint(*p))
-            putchar(*p);
-    }
-
-    putchar('\n');
+    NET_SafePuts(msg);
 }
 
 // parse a received packet

@@ -111,6 +111,9 @@ void NET_Conn_Disconnect(net_connection_t *conn);
 void NET_Conn_Run(net_connection_t *conn);
 net_packet_t *NET_Conn_NewReliable(net_connection_t *conn, int packet_type);
 
+// Other miscellaneous common functions
+
+void NET_SafePuts(char *msg);
 unsigned int NET_ExpandTicNum(unsigned int relative, unsigned int b);
 
 #endif /* #ifndef NET_COMMON_H */

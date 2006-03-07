@@ -47,6 +47,7 @@
 // Common code shared between the client and server
 //
 
+#include <ctype.h>
 #include <stdlib.h>
 
 #include "doomdef.h"
@@ -177,13 +178,23 @@ static void NET_Conn_ParseDisconnectACK(net_connection_t *conn,
 
 static void NET_Conn_ParseReject(net_connection_t *conn, net_packet_t *packet)
 {
+    char *msg;
+
+    msg = NET_ReadString(packet);
+
+    if (msg == NULL)
+    {
+        return;
+    }
+    
     if (conn->state == NET_CONN_STATE_CONNECTING)
     {
         // rejected by server
 
         conn->state = NET_CONN_STATE_DISCONNECTED;
 
-        // there is a rejection message here, but it is unused at the moment.
+        printf("Rejected by server: ");
+        NET_SafePuts(msg);
     }
 }
 
@@ -514,8 +525,28 @@ unsigned int NET_ExpandTicNum(unsigned int relative, unsigned int b)
         result -= 0x100;
     if (l > 0xb0 && b < 0x40)
         result += 0x100;
-
+    
     return result;
+}
+
+// "Safe" version of puts, for displaying messages received from the
+// network.
+
+void NET_SafePuts(char *s)
+{
+    char *p;
+
+    // Do not do a straight "puts" of the string, as this could be
+    // dangerous (sending control codes to terminals can do all
+    // kinds of things)
+
+    for (p=s; *p; ++p)
+    {
+        if (isprint(*p))
+            putchar(*p);
+    }
+
+    putchar('\n');
 }
 
 
