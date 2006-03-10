@@ -196,6 +196,17 @@ rcsid[] = "$Id$";
 #include "w_wad.h"
 #include "z_zone.h"
 
+// Alternate screenheight for letterbox mode
+
+#define LETTERBOX_SCREENHEIGHT 240
+
+enum
+{
+    FULLSCREEN_OFF,
+    FULLSCREEN_ON,
+    FULLSCREEN_LETTERBOX,
+};
+
 extern void M_QuitDOOM();
 
 static SDL_Surface *screen;
@@ -215,7 +226,7 @@ static boolean initialised = false;
 static boolean native_surface;
 
 // Run in full screen mode?  (int type for config code)
-int fullscreen = true;
+int fullscreen = FULLSCREEN_ON;
 
 // Grab the mouse? (int type for config code)
 int grabmouse = true;
@@ -257,7 +268,7 @@ static boolean MouseShouldBeGrabbed()
     // always grab the mouse when full screen (dont want to 
     // see the mouse pointer)
 
-    if (fullscreen)
+    if (fullscreen != FULLSCREEN_OFF)
         return true;
 
     // if we specify not to grab the mouse, never grab
@@ -462,6 +473,10 @@ void I_GetEvent(void)
     SDL_Event sdlevent;
     event_t event;
 
+    // possibly not needed
+    
+    SDL_PumpEvents();
+
     // put event-grabbing stuff in here
     
     while (SDL_PollEvent(&sdlevent))
@@ -599,6 +614,20 @@ static void UpdateGrab(void)
 static void BlitArea(int x1, int y1, int x2, int y2)
 {
     int w = x2 - x1;
+    int y_offset;
+
+    // Y offset when running in letterbox mode
+
+    if (fullscreen == FULLSCREEN_LETTERBOX)
+    {
+        y_offset = (LETTERBOX_SCREENHEIGHT - SCREENHEIGHT) / 2;
+    }
+    else
+    {
+        y_offset = 0;
+    }
+    
+    // Need to byte-copy from buffer into the screen buffer
 
     if (screenmultiply == 1 && !native_surface)
     {
@@ -610,7 +639,7 @@ static void BlitArea(int x1, int y1, int x2, int y2)
         {
             pitch = screen->pitch;
             bufp = screens[0] + y1 * SCREENWIDTH + x1;
-            screenp = (byte *) screen->pixels + y1 * pitch + x1;
+            screenp = (byte *) screen->pixels + (y1 + y_offset) * pitch + x1;
     
             for (y=y1; y<y2; ++y)
             {
@@ -635,7 +664,9 @@ static void BlitArea(int x1, int y1, int x2, int y2)
         {
             pitch = screen->pitch * 2;
             bufp = screens[0] + y1 * SCREENWIDTH + x1;
-            screenp = (byte *) screen->pixels + (y1 * pitch) +  (x1 * 2);
+            screenp = (byte *) screen->pixels 
+                    + (y1 + y_offset) * pitch 
+                    + x1 * 2;
             screenp2 = screenp + screen->pitch;
     
             for (y=y1; y<y2; ++y)
@@ -737,6 +768,9 @@ void I_FinishUpdate (void)
     // UNUSED static unsigned char *bigscreen=0;
 
     if (!initialised)
+        return;
+
+    if (noblit)
         return;
     
     UpdateGrab();
@@ -871,14 +905,14 @@ void I_InitGraphics(void)
 
     if (M_CheckParm("-window") || M_CheckParm("-nofullscreen"))
     {
-        fullscreen = false;
+        fullscreen = FULLSCREEN_OFF;
     }
     else if (M_CheckParm("-fullscreen"))
     {
-        fullscreen = true;
+        fullscreen = FULLSCREEN_ON;
     }
 
-    if (fullscreen)
+    if (fullscreen != FULLSCREEN_OFF)
     {
         flags |= SDL_FULLSCREEN;
     }
@@ -900,7 +934,11 @@ void I_InitGraphics(void)
         screenmultiply = 2;
 
     windowwidth = SCREENWIDTH * screenmultiply;
-    windowheight = SCREENHEIGHT * screenmultiply;
+
+    if (fullscreen == FULLSCREEN_LETTERBOX)
+        windowheight = LETTERBOX_SCREENHEIGHT * screenmultiply;
+    else
+        windowheight = SCREENHEIGHT * screenmultiply;
 
     screen = SDL_SetVideoMode(windowwidth, windowheight, 8, flags);
 
@@ -951,9 +989,18 @@ void I_InitGraphics(void)
     // screen when we do an update
 
     if (native_surface)
+    {
 	screens[0] = (unsigned char *) (screen->pixels);
+
+        if (fullscreen == FULLSCREEN_LETTERBOX)
+        {
+            screens[0] += ((LETTERBOX_SCREENHEIGHT - SCREENHEIGHT) * screen->pitch) / 2;
+        }
+    }
     else
+    {
 	screens[0] = (unsigned char *) Z_Malloc (SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
+    }
 
     // Loading from disk icon
 
