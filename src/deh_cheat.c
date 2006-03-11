@@ -99,16 +99,19 @@ static void DEH_CheatParseLine(deh_context_t *context, char *line, void *tag)
 {
     deh_cheat_t *cheat;
     char *variable_name;
-    unsigned char *value;
+    char *value;
+    unsigned char *unsvalue;
     int i;
 
-    if (!DEH_ParseAssignment(line, &variable_name, (char **) &value))
+    if (!DEH_ParseAssignment(line, &variable_name, &value))
     {
         // Failed to parse
 
         DEH_Warning(context, "Failed to parse assignment");
         return;
     }
+
+    unsvalue = (unsigned char *) value;
 
     cheat = FindCheatByName(variable_name);
 
@@ -121,9 +124,9 @@ static void DEH_CheatParseLine(deh_context_t *context, char *line, void *tag)
     // write the value into the cheat sequence
 
     for (i=0; 
-         i<cheat->seq->sequence_len && value[i] != 0 && value[i] != 0xff; 
+         i<cheat->seq->sequence_len && unsvalue[i] != 0 && unsvalue[i] != 0xff; 
          ++i)
-        cheat->seq->sequence[i] = value[i];
+        cheat->seq->sequence[i] = unsvalue[i];
 
     cheat->seq->sequence[i] = '\0';
 }
