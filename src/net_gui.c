@@ -144,11 +144,13 @@ static void DrawScreen(void)
 
         if (i < net_clients_in_game)
         {
-            snprintf(buf, 15, "%s", net_player_names[i]);
+            snprintf(buf, 25, "%s", net_player_names[i]);
+            buf[25] = '\0';
             TXT_GotoXY(WINDOW_X + 5, WINDOW_Y + 4 + i);
             TXT_Puts(buf);
 
             snprintf(buf, 16, "%s", net_player_addresses[i]);
+            buf[16] = '\0';
             TXT_GotoXY(WINDOW_X + 33, WINDOW_Y + 4 + i);
             TXT_Puts(buf);
         }
@@ -181,12 +183,12 @@ void NET_WaitForStart(void)
 
     while (net_waiting_for_start)
     {
-	if (I_GetTimeMS() > last_draw_time + 50)
-	{
-	    ProcessEvents();
+        if (I_GetTimeMS() > last_draw_time + 50)
+        {
+            ProcessEvents();
             DrawScreen();
-	    last_draw_time = I_GetTimeMS();
-	}
+            last_draw_time = I_GetTimeMS();
+        }
 
         NET_CL_Run();
         NET_SV_Run();
