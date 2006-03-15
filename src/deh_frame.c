@@ -63,6 +63,7 @@ DEH_BEGIN_MAPPING(state_mapping, state_t)
   DEH_MAPPING("Next frame",       nextstate)
   DEH_MAPPING("Unknown 1",        misc1)
   DEH_MAPPING("Unknown 2",        misc2)
+  DEH_UNSUPPORTED_MAPPING("Codep frame")
 DEH_END_MAPPING
 
 static void *DEH_FrameStart(deh_context_t *context, char *line)

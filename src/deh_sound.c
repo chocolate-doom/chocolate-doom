@@ -47,7 +47,7 @@
 #include "sounds.h"
 
 DEH_BEGIN_MAPPING(sound_mapping, sfxinfo_t)
-    DEH_UNSUPPORTED_MAPPING("Offset"),
+    DEH_UNSUPPORTED_MAPPING("Offset")
     DEH_MAPPING("Zero/One", singularity)
     DEH_MAPPING("Value", priority)
     DEH_MAPPING("Zero 1", link)

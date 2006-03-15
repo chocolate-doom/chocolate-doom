@@ -58,7 +58,7 @@
                  sizeof(deh_mapping_base.fieldname)},
 
 #define DEH_UNSUPPORTED_MAPPING(deh_name)                     \
-             {deh_name, NULL, -1}
+             {deh_name, NULL, -1},
             
 #define DEH_END_MAPPING                                       \
              {NULL}                                           \
