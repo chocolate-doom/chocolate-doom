@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 408 2006-03-06 20:44:43Z fraggle $
+// $Id: d_main.c 419 2006-03-15 18:52:31Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -184,7 +184,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 408 2006-03-06 20:44:43Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 419 2006-03-15 18:52:31Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -757,10 +757,10 @@ struct
     char *name;
     GameMission_t mission;
 } iwads[] = {
-    {"doom.wad",     doom},
     {"doom2.wad",    doom2},
-    {"tnt.wad",      pack_tnt},
     {"plutonia.wad", pack_plut},
+    {"tnt.wad",      pack_tnt},
+    {"doom.wad",     doom},
     {"doom1.wad",    doom},
 };
 
