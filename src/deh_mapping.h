@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_mapping.h 175 2005-10-08 20:54:16Z fraggle $
+// $Id: deh_mapping.h 420 2006-03-15 18:53:06Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -58,7 +58,7 @@
                  sizeof(deh_mapping_base.fieldname)},
 
 #define DEH_UNSUPPORTED_MAPPING(deh_name)                     \
-             {deh_name, NULL, -1}
+             {deh_name, NULL, -1},
             
 #define DEH_END_MAPPING                                       \
              {NULL}                                           \

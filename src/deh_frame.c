@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_frame.c 175 2005-10-08 20:54:16Z fraggle $
+// $Id: deh_frame.c 420 2006-03-15 18:53:06Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -63,6 +63,7 @@ DEH_BEGIN_MAPPING(state_mapping, state_t)
   DEH_MAPPING("Next frame",       nextstate)
   DEH_MAPPING("Unknown 1",        misc1)
   DEH_MAPPING("Unknown 2",        misc2)
+  DEH_UNSUPPORTED_MAPPING("Codep frame")
 DEH_END_MAPPING
 
 static void *DEH_FrameStart(deh_context_t *context, char *line)

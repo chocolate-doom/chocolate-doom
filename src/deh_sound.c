@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_sound.c 175 2005-10-08 20:54:16Z fraggle $
+// $Id: deh_sound.c 420 2006-03-15 18:53:06Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -47,7 +47,7 @@
 #include "sounds.h"
 
 DEH_BEGIN_MAPPING(sound_mapping, sfxinfo_t)
-    DEH_UNSUPPORTED_MAPPING("Offset"),
+    DEH_UNSUPPORTED_MAPPING("Offset")
     DEH_MAPPING("Zero/One", singularity)
     DEH_MAPPING("Value", priority)
     DEH_MAPPING("Zero 1", link)
