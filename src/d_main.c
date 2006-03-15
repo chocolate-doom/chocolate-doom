@@ -757,10 +757,10 @@ struct
     char *name;
     GameMission_t mission;
 } iwads[] = {
-    {"doom.wad",     doom},
     {"doom2.wad",    doom2},
-    {"tnt.wad",      pack_tnt},
     {"plutonia.wad", pack_plut},
+    {"tnt.wad",      pack_tnt},
+    {"doom.wad",     doom},
     {"doom1.wad",    doom},
 };
 
