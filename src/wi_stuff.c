@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: wi_stuff.c 421 2006-03-16 21:46:59Z fraggle $
+// $Id: wi_stuff.c 422 2006-03-16 22:17:45Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -44,7 +44,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: wi_stuff.c 421 2006-03-16 21:46:59Z fraggle $";
+rcsid[] = "$Id: wi_stuff.c 422 2006-03-16 22:17:45Z fraggle $";
 
 #include <stdio.h>
 
@@ -748,11 +748,6 @@ void WI_End(void)
 {
     void WI_unloadData(void);
     WI_unloadData();
-
-    // Set state to finished.  This prevents trying to draw the screen
-    // again using any of the patches we have now unloaded.
-
-    state = FinishedIntermission;
 }
 
 void WI_initNoState(void)
@@ -768,7 +763,11 @@ void WI_updateNoState(void) {
 
     if (!--cnt)
     {
-	WI_End();
+        // Don't call WI_End yet.  G_WorldDone doesnt immediately 
+        // change gamestate, so WI_Drawer is still going to get
+        // run until that happens.  If we do that after WI_End
+        // (which unloads all the graphics), we're in trouble.
+	//WI_End();
 	G_WorldDone();
     }
 
@@ -1559,9 +1558,6 @@ void WI_Ticker(void)
       case NoState:
 	WI_updateNoState();
 	break;
-
-      case FinishedIntermission:
-        break;
     }
 
 }
@@ -1822,9 +1818,6 @@ void WI_Drawer (void)
       case NoState:
 	WI_drawNoState();
 	break;
-
-      case FinishedIntermission:
-        break;
     }
 }
 
@@ -1873,7 +1866,6 @@ void WI_initVariables(wbstartstruct_t* wbstartstruct)
 
 void WI_Start(wbstartstruct_t* wbstartstruct)
 {
-
     WI_initVariables(wbstartstruct);
     WI_loadData();
 

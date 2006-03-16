@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: g_game.c 405 2006-03-02 00:57:25Z fraggle $
+// $Id: g_game.c 422 2006-03-16 22:17:45Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -134,7 +134,7 @@
 
 
 static const char
-rcsid[] = "$Id: g_game.c 405 2006-03-02 00:57:25Z fraggle $";
+rcsid[] = "$Id: g_game.c 422 2006-03-16 22:17:45Z fraggle $";
 
 #include <string.h>
 #include <stdlib.h>
@@ -207,6 +207,9 @@ void	G_DoVictory (void);
 void	G_DoWorldDone (void); 
 void	G_DoSaveGame (void); 
  
+// Gamestate the last time G_Ticker was called.
+
+gamestate_t     oldgamestate; 
  
 gameaction_t    gameaction; 
 gamestate_t     gamestate; 
@@ -909,6 +912,15 @@ void G_Ticker (void)
 	    } 
 	}
     }
+
+    // Have we just finished displaying an intermission screen?
+
+    if (oldgamestate == GS_INTERMISSION && gamestate != GS_INTERMISSION)
+    {
+        WI_End();
+    }
+
+    oldgamestate = gamestate;
     
     // do main actions
     switch (gamestate) 

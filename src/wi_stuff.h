@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: wi_stuff.h 421 2006-03-16 21:46:59Z fraggle $
+// $Id: wi_stuff.h 422 2006-03-16 22:17:45Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -40,7 +40,6 @@ typedef enum
     NoState = -1,
     StatCount,
     ShowNextLoc,
-    FinishedIntermission,
 } stateenum_t;
 
 // Called by main loop, animate the intermission.
@@ -52,6 +51,9 @@ void WI_Drawer (void);
 
 // Setup for an intermission screen.
 void WI_Start(wbstartstruct_t*	 wbstartstruct);
+
+// Shut down the intermission screen
+void WI_End(void);
 
 #endif
 //-----------------------------------------------------------------------------
