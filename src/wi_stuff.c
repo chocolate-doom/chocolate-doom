@@ -748,6 +748,11 @@ void WI_End(void)
 {
     void WI_unloadData(void);
     WI_unloadData();
+
+    // Set state to finished.  This prevents trying to draw the screen
+    // again using any of the patches we have now unloaded.
+
+    state = FinishedIntermission;
 }
 
 void WI_initNoState(void)
@@ -1554,6 +1559,9 @@ void WI_Ticker(void)
       case NoState:
 	WI_updateNoState();
 	break;
+
+      case FinishedIntermission:
+        break;
     }
 
 }
@@ -1814,6 +1822,9 @@ void WI_Drawer (void)
       case NoState:
 	WI_drawNoState();
 	break;
+
+      case FinishedIntermission:
+        break;
     }
 }
 

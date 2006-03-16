@@ -39,8 +39,8 @@ typedef enum
 {
     NoState = -1,
     StatCount,
-    ShowNextLoc
-
+    ShowNextLoc,
+    FinishedIntermission,
 } stateenum_t;
 
 // Called by main loop, animate the intermission.
