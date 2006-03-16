@@ -40,7 +40,6 @@ typedef enum
     NoState = -1,
     StatCount,
     ShowNextLoc,
-    FinishedIntermission,
 } stateenum_t;
 
 // Called by main loop, animate the intermission.
@@ -52,6 +51,9 @@ void WI_Drawer (void);
 
 // Setup for an intermission screen.
 void WI_Start(wbstartstruct_t*	 wbstartstruct);
+
+// Shut down the intermission screen
+void WI_End(void);
 
 #endif
 //-----------------------------------------------------------------------------

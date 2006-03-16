@@ -207,6 +207,9 @@ void	G_DoVictory (void);
 void	G_DoWorldDone (void); 
 void	G_DoSaveGame (void); 
  
+// Gamestate the last time G_Ticker was called.
+
+gamestate_t     oldgamestate; 
  
 gameaction_t    gameaction; 
 gamestate_t     gamestate; 
@@ -909,6 +912,15 @@ void G_Ticker (void)
 	    } 
 	}
     }
+
+    // Have we just finished displaying an intermission screen?
+
+    if (oldgamestate == GS_INTERMISSION && gamestate != GS_INTERMISSION)
+    {
+        WI_End();
+    }
+
+    oldgamestate = gamestate;
     
     // do main actions
     switch (gamestate) 
