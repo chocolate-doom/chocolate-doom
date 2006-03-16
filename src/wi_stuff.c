@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: wi_stuff.c 352 2006-01-28 20:03:09Z fraggle $
+// $Id: wi_stuff.c 421 2006-03-16 21:46:59Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -44,7 +44,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: wi_stuff.c 352 2006-01-28 20:03:09Z fraggle $";
+rcsid[] = "$Id: wi_stuff.c 421 2006-03-16 21:46:59Z fraggle $";
 
 #include <stdio.h>
 
@@ -748,6 +748,11 @@ void WI_End(void)
 {
     void WI_unloadData(void);
     WI_unloadData();
+
+    // Set state to finished.  This prevents trying to draw the screen
+    // again using any of the patches we have now unloaded.
+
+    state = FinishedIntermission;
 }
 
 void WI_initNoState(void)
@@ -1554,6 +1559,9 @@ void WI_Ticker(void)
       case NoState:
 	WI_updateNoState();
 	break;
+
+      case FinishedIntermission:
+        break;
     }
 
 }
@@ -1814,6 +1822,9 @@ void WI_Drawer (void)
       case NoState:
 	WI_drawNoState();
 	break;
+
+      case FinishedIntermission:
+        break;
     }
 }
 

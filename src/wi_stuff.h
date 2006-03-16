@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: wi_stuff.h 8 2005-07-23 16:44:57Z fraggle $
+// $Id: wi_stuff.h 421 2006-03-16 21:46:59Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -39,8 +39,8 @@ typedef enum
 {
     NoState = -1,
     StatCount,
-    ShowNextLoc
-
+    ShowNextLoc,
+    FinishedIntermission,
 } stateenum_t;
 
 // Called by main loop, animate the intermission.
