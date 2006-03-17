@@ -28,7 +28,9 @@ AC_CHECK_LIB(SDL_net,SDLNet_UDP_Send,[
 ],echo "*** Compiling without SDL_net installed probably won't work"
 ,$SDL_LIBS $SDLNET_LIBS)
 
-AM_CONDITIONAL(HAVE_WINDRES, windres > /dev/null)
+AC_CHECK_TOOL(WINDRES, windres, )
+
+AM_CONDITIONAL(HAVE_WINDRES, test "$WINDRES" != "")
 
 AM_INIT_AUTOMAKE(AC_PACKAGE_TARNAME,AC_PACKAGE_VERSION)
 
