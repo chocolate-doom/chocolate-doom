@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_sound.c 338 2006-01-23 01:40:24Z fraggle $
+// $Id: i_sound.c 425 2006-03-18 23:19:14Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -128,7 +128,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_sound.c 338 2006-01-23 01:40:24Z fraggle $";
+rcsid[] = "$Id: i_sound.c 425 2006-03-18 23:19:14Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -552,6 +552,7 @@ I_InitSound()
     if (Mix_OpenAudio(22050, AUDIO_S16LSB, 2, 1024) < 0)
     {
         fprintf(stderr, "Error initialising SDL_mixer: %s\n", SDL_GetError());
+        return;
     }
 
     Mix_AllocateChannels(NUM_CHANNELS);
