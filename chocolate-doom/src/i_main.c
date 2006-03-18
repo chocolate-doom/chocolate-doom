@@ -50,6 +50,7 @@
 static const char
 rcsid[] = "$Id$";
 
+#include <SDL.h>
 
 #include <signal.h>
 
