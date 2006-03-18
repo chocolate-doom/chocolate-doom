@@ -552,6 +552,7 @@ I_InitSound()
     if (Mix_OpenAudio(22050, AUDIO_S16LSB, 2, 1024) < 0)
     {
         fprintf(stderr, "Error initialising SDL_mixer: %s\n", SDL_GetError());
+        return;
     }
 
     Mix_AllocateChannels(NUM_CHANNELS);
