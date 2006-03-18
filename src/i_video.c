@@ -880,6 +880,40 @@ void I_SetWindowIcon(void)
     SDL_FreeSurface(surface);
 }
 
+// Check if a screen mode is in the list available
+// Not all machines support running in 320x200/640x400 (only support 4:3)
+// Some don't even support modes below 640x480.
+
+static boolean CheckValidFSMode(int w, int h)
+{
+    SDL_Rect **modes;
+    int i;
+
+    modes = SDL_ListModes(NULL, SDL_FULLSCREEN);
+
+    for (i=0; modes[i]; ++i)
+    {
+        if (w == modes[i]->w && h == modes[i]->h)
+            return true;
+    }
+
+    // not found
+
+    return false;
+}
+
+// Get window dimensions for the current settings
+
+static void GetWindowDimensions(int *windowwidth, int *windowheight)
+{
+    *windowwidth = SCREENWIDTH * screenmultiply;
+
+    if (fullscreen == FULLSCREEN_LETTERBOX)
+        *windowheight = LETTERBOX_SCREENHEIGHT * screenmultiply;
+    else
+        *windowheight = SCREENHEIGHT * screenmultiply;
+}
+
 void I_InitGraphics(void)
 {
     SDL_Event dummy;
@@ -933,12 +967,44 @@ void I_InitGraphics(void)
     if (screenmultiply > 2)
         screenmultiply = 2;
 
-    windowwidth = SCREENWIDTH * screenmultiply;
+    GetWindowDimensions(&windowwidth, &windowheight);
 
-    if (fullscreen == FULLSCREEN_LETTERBOX)
-        windowheight = LETTERBOX_SCREENHEIGHT * screenmultiply;
-    else
-        windowheight = SCREENHEIGHT * screenmultiply;
+    if (fullscreen)
+    {
+        if (!CheckValidFSMode(windowwidth, windowheight) && screenmultiply == 1)
+        {
+            // This is not a valid video mode.  Try doubling up the screen
+            // if we are running at 320x200.
+
+            printf("I_InitGraphics: Invalid mode %ix%i: turning on "
+                   "scale x2 mode (screenmultiply=2)\n",
+                   windowwidth, windowheight);
+
+            screenmultiply = 2;
+
+            GetWindowDimensions(&windowwidth, &windowheight);
+        }
+
+        if (!CheckValidFSMode(windowwidth, windowheight) && fullscreen == 1)
+        {
+            // This is not a valid mode.  Try turning on letterbox mode
+            // (640x400 -> 640x480)
+ 
+            printf("I_InitGraphics: Invalid mode %ix%i: turning on "
+                   "letterbox mode (fullscreen=2)\n",
+                   windowwidth, windowheight);
+
+            fullscreen = 2;
+
+            GetWindowDimensions(&windowwidth, &windowheight);
+        }
+
+        if (!CheckValidFSMode(windowwidth, windowheight))
+        {
+            printf("I_InitGraphics: WARNING: Unable to find a valid "
+                   "fullscreen video mode to run in.\n");
+        }
+    }
 
     screen = SDL_SetVideoMode(windowwidth, windowheight, 8, flags);
 
