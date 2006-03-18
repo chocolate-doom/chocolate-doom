@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_main.c 106 2005-09-14 22:08:29Z fraggle $
+// $Id: i_main.c 424 2006-03-18 21:22:09Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -48,8 +48,9 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_main.c 106 2005-09-14 22:08:29Z fraggle $";
+rcsid[] = "$Id: i_main.c 424 2006-03-18 21:22:09Z fraggle $";
 
+#include <SDL.h>
 
 #include <signal.h>
 
