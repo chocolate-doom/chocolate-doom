@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_sound.c 425 2006-03-18 23:19:14Z fraggle $
+// $Id: i_sound.c 426 2006-03-18 23:24:04Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -128,7 +128,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_sound.c 425 2006-03-18 23:19:14Z fraggle $";
+rcsid[] = "$Id: i_sound.c 426 2006-03-18 23:24:04Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -155,6 +155,8 @@ rcsid[] = "$Id: i_sound.c 425 2006-03-18 23:19:14Z fraggle $";
 #define NUM_CHANNELS		16
 
 static boolean sound_initialised = false;
+static boolean music_initialised = false;
+
 static Mix_Chunk sound_chunks[NUMSFX];
 static int channels_playing[NUM_CHANNELS];
 
@@ -510,7 +512,7 @@ I_UpdateSoundParams
 
 void I_ShutdownSound(void)
 {    
-    if (!sound_initialised)
+    if (!sound_initialised && !music_initialised)
         return;
 
     Mix_CloseAudio();
@@ -559,6 +561,8 @@ I_InitSound()
     
     SDL_PauseAudio(0);
 
+    music_initialised = true;
+
     if (M_CheckParm("-nosound") || M_CheckParm("-nosfx"))
         return;
 
@@ -572,14 +576,8 @@ I_InitSound()
 // MUSIC API.
 //
 
-static int music_initialised;
-
 void I_InitMusic(void)		
 { 
-    if (M_CheckParm("-nomusic") || M_CheckParm("-nosound"))
-        return;
-
-    music_initialised = true;
 }
 
 void I_ShutdownMusic(void)	
