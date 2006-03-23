@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: s_sound.c 429 2006-03-23 17:43:15Z fraggle $
+// $Id: s_sound.c 430 2006-03-23 18:25:56Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -67,7 +67,7 @@
 
 
 static const char
-rcsid[] = "$Id: s_sound.c 429 2006-03-23 17:43:15Z fraggle $";
+rcsid[] = "$Id: s_sound.c 430 2006-03-23 18:25:56Z fraggle $";
 
 
 
@@ -103,8 +103,9 @@ const char snd_prefixen[]
 // Distance tp origin when sounds should be maxed out.
 // This should relate to movement clipping resolution
 // (see BLOCKMAP handling).
-// Originally: (200*0x10000).
-#define S_CLOSE_DIST		(160*0x10000)
+// In the source code release: (160*0x10000).  Changed back to the 
+// Vanilla value of 200 (why was this changed?)
+#define S_CLOSE_DIST		(200*0x10000)
 
 
 #define S_ATTENUATOR		((S_CLIPPING_DIST-S_CLOSE_DIST)>>FRACBITS)
