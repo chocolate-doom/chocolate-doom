@@ -105,13 +105,12 @@ extern  boolean	deathmatch;
 //  but are not (yet) supported with Linux
 //  (e.g. no sound volume adjustment with menu.
 
-// These are not used, but should be (menu).
 // From m_menu.c:
 //  Sound FX volume has default, 0 - 15
 //  Music volume has default, 0 - 15
 // These are multiplied by 8.
-extern int snd_SfxVolume;      // maximum volume for sound
-extern int snd_MusicVolume;    // maximum volume for music
+extern int sfxVolume;
+extern int musicVolume;
 
 // Current music/sfx card - index useless
 //  w/o a reference LUT in a sound module.

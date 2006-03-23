@@ -153,14 +153,15 @@ typedef struct
 // the set of channels available
 static channel_t*	channels;
 
-// These are not used, but should be (menu).
 // Maximum volume of a sound effect.
 // Internal default is max out of 0-15.
-int 		snd_SfxVolume = 8;
+int sfxVolume = 8;
 
-// Maximum volume of music. Useless so far.
-int 		snd_MusicVolume = 8; 
+// Maximum volume of music. 
+int musicVolume = 8;
 
+// Internal volume level, ranging from 0-127
+static int 		snd_SfxVolume;
 
 
 // whether songs are mus_paused
@@ -654,7 +655,6 @@ void S_SetMusicVolume(int volume)
 
     I_SetMusicVolume(127);
     I_SetMusicVolume(volume);
-    snd_MusicVolume = volume;
 }
 
 

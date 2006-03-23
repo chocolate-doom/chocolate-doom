@@ -878,10 +878,10 @@ void M_DrawSound(void)
     V_DrawPatchDirect (60,38,0,W_CacheLumpName(DEH_String("M_SVOL"),PU_CACHE));
 
     M_DrawThermo(SoundDef.x,SoundDef.y+LINEHEIGHT*(sfx_vol+1),
-		 16,snd_SfxVolume);
+		 16,sfxVolume);
 
     M_DrawThermo(SoundDef.x,SoundDef.y+LINEHEIGHT*(music_vol+1),
-		 16,snd_MusicVolume);
+		 16,musicVolume);
 }
 
 void M_Sound(int choice)
@@ -894,16 +894,16 @@ void M_SfxVol(int choice)
     switch(choice)
     {
       case 0:
-	if (snd_SfxVolume)
-	    snd_SfxVolume--;
+	if (sfxVolume)
+	    sfxVolume--;
 	break;
       case 1:
-	if (snd_SfxVolume < 15)
-	    snd_SfxVolume++;
+	if (sfxVolume < 15)
+	    sfxVolume++;
 	break;
     }
 	
-    S_SetSfxVolume(snd_SfxVolume /* *8 */);
+    S_SetSfxVolume(sfxVolume * 8);
 }
 
 void M_MusicVol(int choice)
@@ -911,16 +911,16 @@ void M_MusicVol(int choice)
     switch(choice)
     {
       case 0:
-	if (snd_MusicVolume)
-	    snd_MusicVolume--;
+	if (musicVolume)
+	    musicVolume--;
 	break;
       case 1:
-	if (snd_MusicVolume < 15)
-	    snd_MusicVolume++;
+	if (musicVolume < 15)
+	    musicVolume++;
 	break;
     }
 	
-    S_SetMusicVolume(snd_MusicVolume /* *8 */);
+    S_SetMusicVolume(musicVolume * 8);
 }
 
 

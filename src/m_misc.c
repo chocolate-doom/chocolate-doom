@@ -333,8 +333,8 @@ typedef struct
 static default_t	doom_defaults_list[] =
 {
     {"mouse_sensitivity", &mouseSensitivity},
-    {"sfx_volume",&snd_SfxVolume},
-    {"music_volume",&snd_MusicVolume},
+    {"sfx_volume",&sfxVolume},
+    {"music_volume",&musicVolume},
     {"show_messages",&showMessages},
 
     {"key_right",&key_right, DEFAULT_KEY},
