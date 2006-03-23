@@ -1649,7 +1649,7 @@ void D_DoomMain (void)
     PrintGameVersion();
 
     printf (DEH_String("S_Init: Setting up sound.\n"));
-    S_Init (snd_SfxVolume /* *8 */, snd_MusicVolume /* *8*/ );
+    S_Init (sfxVolume * 8, musicVolume * 8);
 
     printf (DEH_String("HU_Init: Setting up heads up display.\n"));
     HU_Init ();
