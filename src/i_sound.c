@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_sound.c 426 2006-03-18 23:24:04Z fraggle $
+// $Id: i_sound.c 429 2006-03-23 17:43:15Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -128,7 +128,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_sound.c 426 2006-03-18 23:24:04Z fraggle $";
+rcsid[] = "$Id: i_sound.c 429 2006-03-23 17:43:15Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -348,12 +348,7 @@ void I_SetChannels()
  
 void I_SetSfxVolume(int volume)
 {
-    // Identical to DOS.
-    // Basically, this should propagate
-    //  the menu/config file setting
-    //  to the state variable used in
-    //  the mixing.
-    snd_SfxVolume = volume;
+    // Unused
 }
 
 
@@ -501,8 +496,8 @@ I_UpdateSoundParams
     if (!sound_initialised)
         return;
 
-    left = ((254 - sep) * vol) / 15;
-    right = ((sep) * vol) / 15;
+    left = ((254 - sep) * vol) / 127;
+    right = ((sep) * vol) / 127;
 
     Mix_SetPanning(handle, left, right);
 }
@@ -586,6 +581,7 @@ void I_ShutdownMusic(void)
 }
 
 static boolean  musicpaused = false;
+static int currentMusicVolume;
 
 //
 // SDL_mixer's native MIDI music playing does not pause properly.
@@ -599,7 +595,7 @@ static void UpdateMusicVolume(void)
     if (musicpaused)
         vol = 0;
     else
-        vol = (snd_MusicVolume * MIX_MAX_VOLUME) / 15;
+        vol = (currentMusicVolume * MIX_MAX_VOLUME) / 127;
 
     Mix_VolumeMusic(vol);
 }
@@ -608,7 +604,7 @@ static void UpdateMusicVolume(void)
 void I_SetMusicVolume(int volume)
 {
     // Internal state variable.
-    snd_MusicVolume = volume;
+    currentMusicVolume = volume;
 
     UpdateMusicVolume();
 }

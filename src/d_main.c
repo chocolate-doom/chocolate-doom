@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 419 2006-03-15 18:52:31Z fraggle $
+// $Id: d_main.c 429 2006-03-23 17:43:15Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -184,7 +184,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 419 2006-03-15 18:52:31Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 429 2006-03-23 17:43:15Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -1649,7 +1649,7 @@ void D_DoomMain (void)
     PrintGameVersion();
 
     printf (DEH_String("S_Init: Setting up sound.\n"));
-    S_Init (snd_SfxVolume /* *8 */, snd_MusicVolume /* *8*/ );
+    S_Init (sfxVolume * 8, musicVolume * 8);
 
     printf (DEH_String("HU_Init: Setting up heads up display.\n"));
     HU_Init ();

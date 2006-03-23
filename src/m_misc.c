@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_misc.c 367 2006-02-15 12:57:58Z fraggle $
+// $Id: m_misc.c 429 2006-03-23 17:43:15Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -106,7 +106,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_misc.c 367 2006-02-15 12:57:58Z fraggle $";
+rcsid[] = "$Id: m_misc.c 429 2006-03-23 17:43:15Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -333,8 +333,8 @@ typedef struct
 static default_t	doom_defaults_list[] =
 {
     {"mouse_sensitivity", &mouseSensitivity},
-    {"sfx_volume",&snd_SfxVolume},
-    {"music_volume",&snd_MusicVolume},
+    {"sfx_volume",&sfxVolume},
+    {"music_volume",&musicVolume},
     {"show_messages",&showMessages},
 
     {"key_right",&key_right, DEFAULT_KEY},

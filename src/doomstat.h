@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: doomstat.h 388 2006-02-24 19:14:22Z fraggle $
+// $Id: doomstat.h 429 2006-03-23 17:43:15Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -105,13 +105,12 @@ extern  boolean	deathmatch;
 //  but are not (yet) supported with Linux
 //  (e.g. no sound volume adjustment with menu.
 
-// These are not used, but should be (menu).
 // From m_menu.c:
 //  Sound FX volume has default, 0 - 15
 //  Music volume has default, 0 - 15
 // These are multiplied by 8.
-extern int snd_SfxVolume;      // maximum volume for sound
-extern int snd_MusicVolume;    // maximum volume for music
+extern int sfxVolume;
+extern int musicVolume;
 
 // Current music/sfx card - index useless
 //  w/o a reference LUT in a sound module.

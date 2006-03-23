@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: s_sound.c 318 2006-01-22 21:20:20Z fraggle $
+// $Id: s_sound.c 429 2006-03-23 17:43:15Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -67,7 +67,7 @@
 
 
 static const char
-rcsid[] = "$Id: s_sound.c 318 2006-01-22 21:20:20Z fraggle $";
+rcsid[] = "$Id: s_sound.c 429 2006-03-23 17:43:15Z fraggle $";
 
 
 
@@ -153,14 +153,15 @@ typedef struct
 // the set of channels available
 static channel_t*	channels;
 
-// These are not used, but should be (menu).
 // Maximum volume of a sound effect.
 // Internal default is max out of 0-15.
-int 		snd_SfxVolume = 8;
+int sfxVolume = 8;
 
-// Maximum volume of music. Useless so far.
-int 		snd_MusicVolume = 8; 
+// Maximum volume of music. 
+int musicVolume = 8;
 
+// Internal volume level, ranging from 0-127
+static int 		snd_SfxVolume;
 
 
 // whether songs are mus_paused
@@ -654,7 +655,6 @@ void S_SetMusicVolume(int volume)
 
     I_SetMusicVolume(127);
     I_SetMusicVolume(volume);
-    snd_MusicVolume = volume;
 }
 
 
