@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: s_sound.c 430 2006-03-23 18:25:56Z fraggle $
+// $Id: s_sound.c 431 2006-03-23 18:29:28Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -67,7 +67,7 @@
 
 
 static const char
-rcsid[] = "$Id: s_sound.c 430 2006-03-23 18:25:56Z fraggle $";
+rcsid[] = "$Id: s_sound.c 431 2006-03-23 18:29:28Z fraggle $";
 
 
 
@@ -212,8 +212,6 @@ void S_Init
   int		musicVolume )
 {  
   int		i;
-
-  printf("S_Init: default sfx volume %d\n", sfxVolume);
 
   // Whatever these did with DMX, these are rather dummies now.
   I_SetChannels();
