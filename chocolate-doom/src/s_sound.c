@@ -103,8 +103,9 @@ const char snd_prefixen[]
 // Distance tp origin when sounds should be maxed out.
 // This should relate to movement clipping resolution
 // (see BLOCKMAP handling).
-// Originally: (200*0x10000).
-#define S_CLOSE_DIST		(160*0x10000)
+// In the source code release: (160*0x10000).  Changed back to the 
+// Vanilla value of 200 (why was this changed?)
+#define S_CLOSE_DIST		(200*0x10000)
 
 
 #define S_ATTENUATOR		((S_CLIPPING_DIST-S_CLOSE_DIST)>>FRACBITS)
