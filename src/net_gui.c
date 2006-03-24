@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_gui.c 416 2006-03-11 21:28:21Z fraggle $
+// $Id: net_gui.c 440 2006-03-24 21:43:43Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -173,22 +173,14 @@ static void DrawScreen(void)
 
 void NET_WaitForStart(void)
 {
-    int last_draw_time;
-    
     TXT_Init();
     I_SetWindowCaption();
     I_SetWindowIcon();
 
-    last_draw_time = -1;
-
     while (net_waiting_for_start)
     {
-        if (I_GetTimeMS() > last_draw_time + 50)
-        {
-            ProcessEvents();
-            DrawScreen();
-            last_draw_time = I_GetTimeMS();
-        }
+        ProcessEvents();
+        DrawScreen();
 
         NET_CL_Run();
         NET_SV_Run();
@@ -198,7 +190,7 @@ void NET_WaitForStart(void)
             I_Error("Disconnected from server");
         }
 
-        I_Sleep(1);
+        I_Sleep(50);
     }
     
     TXT_Shutdown();

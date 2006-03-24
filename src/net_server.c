@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 412 2006-03-07 18:24:12Z fraggle $
+// $Id: net_server.c 440 2006-03-24 21:43:43Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -1409,7 +1409,7 @@ void NET_SV_Shutdown(void)
 
         // Don't hog the CPU
 
-        I_Sleep(10);
+        I_Sleep(1);
     }
 }
 

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 438 2006-03-24 20:40:08Z fraggle $
+// $Id: d_main.c 440 2006-03-24 21:43:43Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -184,7 +184,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 438 2006-03-24 20:40:08Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 440 2006-03-24 21:43:43Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -532,7 +532,9 @@ void D_Display (void)
 	{
 	    nowtime = I_GetTime ();
 	    tics = nowtime - wipestart;
-	} while (!tics);
+            I_Sleep(1);
+	} while (tics <= 0);
+        
 	wipestart = nowtime;
 	done = wipe_ScreenWipe(wipe_Melt
 			       , 0, 0, SCREENWIDTH, SCREENHEIGHT, tics);
