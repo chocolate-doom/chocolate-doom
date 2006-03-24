@@ -360,8 +360,6 @@ int W_CheckNumForName (char* name)
     {
         int hash;
         
-        printf("looking up %s\n", name);
-
         // We do! Excellent.
 
         hash = W_LumpNameHash(name) % numlumps;
