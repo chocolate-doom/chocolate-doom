@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: z_zone.c 131 2005-09-24 23:45:18Z fraggle $
+// $Id: z_zone.c 434 2006-03-24 19:55:04Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -42,7 +42,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: z_zone.c 131 2005-09-24 23:45:18Z fraggle $";
+rcsid[] = "$Id: z_zone.c 434 2006-03-24 19:55:04Z fraggle $";
 
 #include "z_zone.h"
 #include "i_system.h"
@@ -61,6 +61,16 @@ rcsid[] = "$Id: z_zone.c 131 2005-09-24 23:45:18Z fraggle $";
 // 
  
 #define ZONEID	0x1d4a11
+
+typedef struct memblock_s
+{
+    int			size;	// including the header and possibly tiny fragments
+    void**		user;
+    int			tag;	// PU_FREE if this is free
+    int			id;	// should be ZONEID
+    struct memblock_s*	next;
+    struct memblock_s*	prev;
+} memblock_t;
 
 
 typedef struct
@@ -442,20 +452,19 @@ void Z_CheckHeap (void)
 //
 // Z_ChangeTag
 //
-void
-Z_ChangeTag2
-( void*		ptr,
-  int		tag )
+void Z_ChangeTag2(void *ptr, int tag, char *file, int line)
 {
     memblock_t*	block;
 	
-    block = (memblock_t *) ( (byte *)ptr - sizeof(memblock_t));
+    block = (memblock_t *) ((byte *)ptr - sizeof(memblock_t));
 
     if (block->id != ZONEID)
-        I_Error ("Z_ChangeTag: freed a pointer without ZONEID");
+        I_Error("%s:%i: Z_ChangeTag: block without a ZONEID!",
+                file, line);
 
     if (tag >= PU_PURGELEVEL && block->user == NULL)
-        I_Error ("Z_ChangeTag: an owner is required for purgable blocks");
+        I_Error("%s:%i: Z_ChangeTag: an owner is required "
+                "for purgable blocks", file, line);
 
     block->tag = tag;
 }

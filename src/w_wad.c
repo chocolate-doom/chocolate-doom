@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: w_wad.c 362 2006-02-03 18:41:26Z fraggle $
+// $Id: w_wad.c 434 2006-03-24 19:55:04Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -66,7 +66,7 @@
 
 
 static const char
-rcsid[] = "$Id: w_wad.c 362 2006-02-03 18:41:26Z fraggle $";
+rcsid[] = "$Id: w_wad.c 434 2006-03-24 19:55:04Z fraggle $";
 
 
 #include <ctype.h>
@@ -499,6 +499,7 @@ W_CacheLumpName
     return W_CacheLumpNum (W_GetNumForName(name), tag);
 }
 
+#if 0
 
 //
 // W_Profile
@@ -561,4 +562,6 @@ void W_Profile (void)
     fclose (f);
 }
 
+
+#endif
 
