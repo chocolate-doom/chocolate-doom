@@ -499,6 +499,7 @@ W_CacheLumpName
     return W_CacheLumpNum (W_GetNumForName(name), tag);
 }
 
+#if 0
 
 //
 // W_Profile
@@ -561,4 +562,6 @@ void W_Profile (void)
     fclose (f);
 }
 
+
+#endif
 
