@@ -82,27 +82,20 @@ rcsid[] = "$Id$";
 
 #include "w_wad.h"
 
-
-
-
-
-
 //
 // GLOBALS
 //
 
 // Location of each lump on disk.
-lumpinfo_t*		lumpinfo;		
-int			numlumps = 0;
 
-#define strcmpi	strcasecmp
+lumpinfo_t *lumpinfo;		
+int numlumps = 0;
 
-void string_to_upper (char* s)
-{
-    while (*s) { *s = toupper(*s); s++; }
-}
+// Hash table for fast lookups
 
-int filelength (FILE *handle)
+static lumpinfo_t **lumphash;
+
+static int FileLength (FILE *handle)
 { 
     long savedpos;
     long length;
@@ -120,10 +113,7 @@ int filelength (FILE *handle)
 }
 
 
-void
-ExtractFileBase
-( char*		path,
-  char*		dest )
+static void ExtractFileBase(char *path, char *dest)
 {
     char*	src;
     int		length;
@@ -151,9 +141,27 @@ ExtractFileBase
     }
 }
 
+// Hash function used for lump names.
+// Must be mod'ed with table size.
+// Can be used for any 8-character names.
+// by Lee Killough
 
+static unsigned int W_LumpNameHash(const char *s)
+{
+  unsigned int hash;
 
+  ((hash =        toupper(s[0]), s[1]) &&
+   (hash = hash*3+toupper(s[1]), s[2]) &&
+   (hash = hash*2+toupper(s[2]), s[3]) &&
+   (hash = hash*2+toupper(s[3]), s[4]) &&
+   (hash = hash*2+toupper(s[4]), s[5]) &&
+   (hash = hash*2+toupper(s[5]), s[6]) &&
+   (hash = hash*2+toupper(s[6]),
+    hash = hash*2+toupper(s[7]))
+  );
 
+  return hash;
+}
 
 //
 // LUMP BASED ROUTINES.
@@ -206,12 +214,12 @@ boolean W_AddFile (char *filename)
 
     startlump = numlumps;
 	
-    if (strcmpi (filename+strlen(filename)-3 , "wad" ) )
+    if (strcasecmp(filename+strlen(filename)-3 , "wad" ) )
     {
 	// single lump file
 	fileinfo = Z_Malloc(sizeof(filelump_t), PU_STATIC, 0);
 	fileinfo->filepos = 0;
-	fileinfo->size = filelength(handle);
+	fileinfo->size = FileLength(handle);
 	ExtractFileBase (filename, fileinfo->name);
 	numlumps++;
     }
@@ -263,6 +271,12 @@ boolean W_AddFile (char *filename)
 	fclose (handle);
 
     Z_Free(fileinfo);
+
+    if (lumphash != NULL)
+    {
+        Z_Free(lumphash);
+        lumphash = NULL;
+    }
 
     return true;
 }
@@ -337,42 +351,46 @@ int W_NumLumps (void)
 
 int W_CheckNumForName (char* name)
 {
-    union {
-	char	s[9];
-	int	x[2];
-	
-    } name8;
-    
-    int		v1;
-    int		v2;
-    lumpinfo_t*	lump_p;
+    lumpinfo_t *lump_p;
+    int i;
 
-    // make the name into two integers for easy compares
-    strncpy (name8.s,name,8);
+    // Do we have a hash table yet?
 
-    // in case the name was a fill 8 chars
-    name8.s[8] = 0;
-
-    // case insensitive
-    string_to_upper (name8.s);		
-
-    v1 = name8.x[0];
-    v2 = name8.x[1];
-
-
-    // scan backwards so patch lump files take precedence
-    lump_p = lumpinfo + numlumps;
-
-    while (lump_p-- != lumpinfo)
+    if (lumphash != NULL)
     {
-	if ( *(int *)lump_p->name == v1
-	     && *(int *)&lump_p->name[4] == v2)
-	{
-	    return lump_p - lumpinfo;
-	}
+        int hash;
+        
+        printf("looking up %s\n", name);
+
+        // We do! Excellent.
+
+        hash = W_LumpNameHash(name) % numlumps;
+        
+        for (lump_p = lumphash[hash]; lump_p != NULL; lump_p = lump_p->next)
+        {
+            if (!strncasecmp(lump_p->name, name, 8))
+            {
+                return lump_p - lumpinfo;
+            }
+        }
+    } 
+    else
+    {
+        // We don't have a hash table generate yet. Linear search :-(
+        // 
+        // scan backwards so patch lump files take precedence
+
+        for (i=numlumps-1; i >= 0; --i)
+        {
+            if (!strncasecmp(lumpinfo[i].name, name, 8))
+            {
+                return i;
+            }
+        }
     }
 
     // TFB. Not found.
+
     return -1;
 }
 
@@ -564,4 +582,37 @@ void W_Profile (void)
 
 
 #endif
+
+// Generate a hash table for fast lookups
+
+void W_GenerateHashTable(void)
+{
+    int i;
+
+    // Free the old hash table, if there is one
+
+    if (lumphash != NULL)
+    {
+        Z_Free(lumphash);
+    }
+
+    // Generate hash table
+
+    lumphash = Z_Malloc(sizeof(lumpinfo_t *) * numlumps, PU_STATIC, NULL);
+    memset(lumphash, 0, sizeof(lumpinfo_t *) * numlumps);
+
+    for (i=0; i<numlumps; ++i)
+    {
+        unsigned int hash;
+
+        hash = W_LumpNameHash(lumpinfo[i].name) % numlumps;
+
+        // Hook into the hash table
+
+        lumpinfo[i].next = lumphash[hash];
+        lumphash[hash] = &lumpinfo[i];
+    }
+
+    // All done!
+}
 
