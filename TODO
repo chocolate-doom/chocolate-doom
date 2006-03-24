@@ -1,8 +1,18 @@
 To do:
 
-* Network code
 * Setup utility
-* Short-circuit Zone memory
-* Fix 64-bit version
-  * Savegame fixes for 64-bit machines
+* Netcode:
+  - Dedicated/standalone server mode
+  - Drone mode (for -left/-right and observers)
+  - LAN search (broadcast to find servers on local LAN)
+* Demo hashes for regression testing of this and other ports.
+* Improve multiplayer startup: 
+  - Select an IWAD automatically from the server's game type rather than
+    all players having to specify -iwad.
+  - Send list of WADs to load instead of all clients having to specify -file.
+  - Same applies to dehacked patches and wad merging parameters.
+* Video capture mode?
+* Portability improvements:
+  - Use size-specific types (eg. int32_t instead of int)
+  - Don't make structure packing assumptions when loading levels.
 
