@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: z_native.c 435 2006-03-24 19:59:03Z fraggle $
+// $Id: z_native.c 439 2006-03-24 21:20:36Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2006 Simon Howard
@@ -30,7 +30,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: z_native.c 435 2006-03-24 19:59:03Z fraggle $";
+rcsid[] = "$Id: z_native.c 439 2006-03-24 21:20:36Z fraggle $";
 
 #include <stdlib.h>
 
@@ -98,6 +98,7 @@ static void Z_RemoveBlock(memblock_t *block)
 void Z_Init (void)
 {
     memset(allocated_blocks, 0, sizeof(allocated_blocks));
+    printf("zone memory: Using native C allocator.\n");
 }
 
 
