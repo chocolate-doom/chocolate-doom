@@ -39,19 +39,26 @@
 //
 // ZONE MEMORY
 // PU - purge tags.
-// Tags < 100 are not overwritten until freed.
-#define PU_STATIC		1	/* static entire execution time */
-#define PU_SOUND		2	/* static while playing */
-#define PU_MUSIC		3	/* static while playing */
-#define PU_DAVE		4	/* anything else Dave wants static */
-#define PU_FREE         5   /* a free block */
-#define PU_LEVEL		50	/* static until level exited */
-#define PU_LEVSPEC		51      /* a special thinker in a level */
 
-// Tags >= 100 are purgable whenever needed.
-#define PU_PURGELEVEL	100
-#define PU_CACHE		101
+enum
+{
+    PU_STATIC = 1,                  // static entire execution time
+    PU_SOUND,                       // static while playing
+    PU_MUSIC,                       // static while playing
+    PU_FREE,                        // a free block
+    PU_LEVEL,                       // static until level exited
+    PU_LEVSPEC,                     // a special thinker in a level
+    
+    // Tags >= PU_PURGELEVEL are purgable whenever needed.
 
+    PU_PURGELEVEL,
+    PU_CACHE,
+
+    // Total number of different tag types
+
+    PU_NUM_TAGS
+};
+        
 
 void	Z_Init (void);
 void*	Z_Malloc (int size, int tag, void *ptr);
@@ -60,31 +67,16 @@ void    Z_FreeTags (int lowtag, int hightag);
 void    Z_DumpHeap (int lowtag, int hightag);
 void    Z_FileDumpHeap (FILE *f);
 void    Z_CheckHeap (void);
-void    Z_ChangeTag2 (void *ptr, int tag);
+void    Z_ChangeTag2 (void *ptr, int tag, char *file, int line);
 int     Z_FreeMemory (void);
 
-
-typedef struct memblock_s
-{
-    int			size;	// including the header and possibly tiny fragments
-    void**		user;
-    int			tag;	// PU_FREE if this is free
-    int			id;	// should be ZONEID
-    struct memblock_s*	next;
-    struct memblock_s*	prev;
-} memblock_t;
 
 //
 // This is used to get the local FILE:LINE info from CPP
 // prior to really call the function in question.
 //
-#define Z_ChangeTag(p,t) \
-{ \
-      if (( (memblock_t *)( (byte *)(p) - sizeof(memblock_t)))->id!=0x1d4a11) \
-	  I_Error("Z_CT at "__FILE__":%i",__LINE__); \
-	  Z_ChangeTag2(p,t); \
-};
-
+#define Z_ChangeTag(p,t)                                       \
+    Z_ChangeTag2((p), (t), __FILE__, __LINE__)
 
 
 #endif
