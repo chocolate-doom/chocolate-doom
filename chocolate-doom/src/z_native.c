@@ -98,6 +98,7 @@ static void Z_RemoveBlock(memblock_t *block)
 void Z_Init (void)
 {
     memset(allocated_blocks, 0, sizeof(allocated_blocks));
+    printf("zone memory: Using native C allocator.\n");
 }
 
 
