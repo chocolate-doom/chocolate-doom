@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 429 2006-03-23 17:43:15Z fraggle $
+// $Id: d_main.c 438 2006-03-24 20:40:08Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -184,7 +184,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 429 2006-03-23 17:43:15Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 438 2006-03-24 20:40:08Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -292,7 +292,9 @@ FILE*		debugfile;
 
 boolean		advancedemo;
 
+// Store demo, do not accept any inputs
 
+boolean         storedemo;
 
 
 char		wadfile[1024];		// primary wad file
@@ -361,9 +363,8 @@ void D_ProcessEvents (void)
     event_t*	ev;
 	
     // IF STORE DEMO, DO NOT ACCEPT INPUT
-    if ( ( gamemode == commercial )
-	 && (W_CheckNumForName("map01")<0) )
-      return;
+    if (storedemo)
+        return;
 	
     while ((ev = D_PopEvent()) != NULL)
     {
@@ -1516,6 +1517,10 @@ void D_DoomMain (void)
 	D_AddFile (file);
 	printf(DEH_String("Playing demo %s.lmp.\n"),myargv[p+1]);
     }
+
+    // Generate the WAD hash table.  Speed things up a bit.
+
+    W_GenerateHashTable();
     
     IdentifyVersion();
     InitGameVersion();
@@ -1656,6 +1661,13 @@ void D_DoomMain (void)
 
     printf (DEH_String("ST_Init: Init status bar.\n"));
     ST_Init ();
+
+    // If Doom II without a MAP01 lump, this is a store demo.  
+    // Moved this here so that MAP01 isn't constantly looked up
+    // in the main loop.
+
+    if (gamemode == commercial && W_CheckNumForName("map01") < 0)
+        storedemo = true;
 
     // start the apropriate game based on parms
     p = M_CheckParm ("-record");
