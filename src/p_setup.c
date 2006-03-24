@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_setup.c 356 2006-01-29 15:07:12Z fraggle $
+// $Id: p_setup.c 432 2006-03-24 16:51:28Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -45,7 +45,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_setup.c 356 2006-01-29 15:07:12Z fraggle $";
+rcsid[] = "$Id: p_setup.c 432 2006-03-24 16:51:28Z fraggle $";
 
 
 #include <math.h>
@@ -556,7 +556,7 @@ void P_GroupLines (void)
     }
 	
     // build line tables for each sector	
-    linebuffer = Z_Malloc (total*4, PU_LEVEL, 0);
+    linebuffer = Z_Malloc (total*sizeof(line_t *), PU_LEVEL, 0);
     sector = sectors;
     for (i=0 ; i<numsectors ; i++, sector++)
     {
