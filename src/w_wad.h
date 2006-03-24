@@ -44,7 +44,6 @@ typedef struct
     char		identification[4];		
     int			numlumps;
     int			infotableofs;
-    
 } wadinfo_t;
 
 
@@ -53,20 +52,26 @@ typedef struct
     int			filepos;
     int			size;
     char		name[8];
-    
 } filelump_t;
 
 //
 // WADFILE I/O related stuff.
 //
-typedef struct
+
+typedef struct lumpinfo_s lumpinfo_t;
+
+struct lumpinfo_s
 {
     char	name[8];
     FILE       *handle;
     int		position;
     int		size;
     void       *cache;
-} lumpinfo_t;
+
+    // Used for hash table lookups
+
+    lumpinfo_t *next;
+};
 
 
 extern	void**		lumpcache;
@@ -85,7 +90,7 @@ void    W_ReadLump (int lump, void *dest);
 void*	W_CacheLumpNum (int lump, int tag);
 void*	W_CacheLumpName (char* name, int tag);
 
-
+void    W_GenerateHashTable(void);
 
 
 #endif
