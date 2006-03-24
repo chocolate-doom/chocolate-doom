@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: w_wad.c 436 2006-03-24 20:39:08Z fraggle $
+// $Id: w_wad.c 437 2006-03-24 20:39:28Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -66,7 +66,7 @@
 
 
 static const char
-rcsid[] = "$Id: w_wad.c 436 2006-03-24 20:39:08Z fraggle $";
+rcsid[] = "$Id: w_wad.c 437 2006-03-24 20:39:28Z fraggle $";
 
 
 #include <ctype.h>
@@ -360,8 +360,6 @@ int W_CheckNumForName (char* name)
     {
         int hash;
         
-        printf("looking up %s\n", name);
-
         // We do! Excellent.
 
         hash = W_LumpNameHash(name) % numlumps;
