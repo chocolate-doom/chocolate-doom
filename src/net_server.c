@@ -1409,7 +1409,7 @@ void NET_SV_Shutdown(void)
 
         // Don't hog the CPU
 
-        I_Sleep(10);
+        I_Sleep(1);
     }
 }
 

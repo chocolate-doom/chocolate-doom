@@ -532,7 +532,9 @@ void D_Display (void)
 	{
 	    nowtime = I_GetTime ();
 	    tics = nowtime - wipestart;
-	} while (!tics);
+            I_Sleep(1);
+	} while (tics <= 0);
+        
 	wipestart = nowtime;
 	done = wipe_ScreenWipe(wipe_Melt
 			       , 0, 0, SCREENWIDTH, SCREENHEIGHT, tics);

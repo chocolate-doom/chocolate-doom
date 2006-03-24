@@ -1091,7 +1091,7 @@ boolean NET_CL_Connect(net_addr_t *addr)
 
         // Don't hog the CPU
 
-        I_Sleep(10);
+        I_Sleep(1);
     }
 
     if (client_connection.state == NET_CONN_STATE_CONNECTED)
@@ -1143,7 +1143,7 @@ void NET_CL_Disconnect(void)
         NET_CL_Run();
         NET_SV_Run();
 
-        I_Sleep(10);
+        I_Sleep(1);
     }
 
     // Finished sending disconnect packets, etc.
