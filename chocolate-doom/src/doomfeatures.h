@@ -42,6 +42,10 @@
 
 #define FEATURE_DEHACKED 1
 
+// Enables multiplayer support (network games)
+
+#define FEATURE_MULTIPLAYER 1
+
 #endif /* #ifndef DOOM_FEATURES_H */
 
 
