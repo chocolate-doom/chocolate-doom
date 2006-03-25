@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 440 2006-03-24 21:43:43Z fraggle $
+// $Id: d_main.c 444 2006-03-25 21:50:32Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -184,7 +184,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 440 2006-03-24 21:43:43Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 444 2006-03-25 21:50:32Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -1647,8 +1647,10 @@ void D_DoomMain (void)
     printf (DEH_String("I_Init: Setting up machine state.\n"));
     I_Init ();
 
+#ifdef FEATURE_MULTIPLAYER
     printf ("NET_Init: Initialise network subsystem.\n");
     NET_Init ();
+#endif
 
     printf (DEH_String("D_CheckNetGame: Checking network game status.\n"));
     D_CheckNetGame ();

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_misc.c 429 2006-03-23 17:43:15Z fraggle $
+// $Id: m_misc.c 444 2006-03-25 21:50:32Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -106,7 +106,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_misc.c 429 2006-03-23 17:43:15Z fraggle $";
+rcsid[] = "$Id: m_misc.c 444 2006-03-25 21:50:32Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -123,6 +123,7 @@ rcsid[] = "$Id: m_misc.c 429 2006-03-23 17:43:15Z fraggle $";
 
 #include "config.h"
 #include "doomdef.h"
+#include "doomfeatures.h"
 
 #include "z_zone.h"
 
@@ -401,7 +402,9 @@ static default_t extra_defaults_list[] =
     {"mouse_acceleration",     &mouse_acceleration,   DEFAULT_FLOAT},
     {"show_endoom",            &show_endoom},
     {"vanilla_savegame_limit", &vanilla_savegame_limit},
+#ifdef FEATURE_MULTIPLAYER
     {"player_name",            &net_player_name,      DEFAULT_STRING},
+#endif
 };
 
 static default_collection_t extra_defaults =

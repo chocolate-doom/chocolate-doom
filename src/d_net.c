@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.c 441 2006-03-25 18:28:48Z fraggle $
+// $Id: d_net.c 444 2006-03-25 21:50:32Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -117,8 +117,9 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_net.c 441 2006-03-25 18:28:48Z fraggle $";
+static const char rcsid[] = "$Id: d_net.c 444 2006-03-25 21:50:32Z fraggle $";
 
+#include "doomfeatures.h"
 
 #include "d_main.h"
 #include "m_argv.h"
@@ -196,10 +197,14 @@ void NetUpdate (void)
     if (singletics)
         return;
     
+#ifdef FEATURE_MULTIPLAYER
+
     // Run network subsystems
 
     NET_CL_Run();
     NET_SV_Run();
+
+#endif
 
     // check time
     nowtime = GetAdjustedTime()/ticdup;
@@ -237,10 +242,14 @@ void NetUpdate (void)
 	//printf ("mk:%i ",maketic);
 	G_BuildTiccmd(&cmd);
 
+#ifdef FEATURE_MULTIPLAYER
+        
         if (netgame && !demoplayback)
         {
             NET_CL_SendTiccmd(&cmd, maketic);
         }
+
+#endif
 
         netcmds[consoleplayer][maketic % BACKUPTICS] = cmd;
 
@@ -259,8 +268,6 @@ extern	int			viewangleoffset;
 
 void D_CheckNetGame (void)
 {
-    net_module_t *connect_module = NULL;
-    char *connect_addr;
     int i;
     int num_players;
 
@@ -281,49 +288,56 @@ void D_CheckNetGame (void)
 
     playeringame[0] = true;
 
-    // temporary hack 
+#ifdef FEATURE_MULTIPLAYER
 
-    if (M_CheckParm("-server") > 0)
     {
-        NET_SV_Init();
+        net_module_t *connect_module = NULL;
+        char *connect_addr;
 
-        connect_module = &net_loop_client_module;
-        connect_addr = "";
-    }
-    else
-    {
-        i = M_CheckParm("-connect");
-
-        if (i > 0)
+        if (M_CheckParm("-server") > 0)
         {
-            connect_module = &net_sdl_module;
-            connect_addr = myargv[i+1];
+            NET_SV_Init();
+
+            connect_module = &net_loop_client_module;
+            connect_addr = "";
+        }
+        else
+        {
+            i = M_CheckParm("-connect");
+
+            if (i > 0)
+            {
+                connect_module = &net_sdl_module;
+                connect_addr = myargv[i+1];
+            }
+        }
+
+        if (connect_module != NULL)
+        {
+            net_addr_t *addr;
+
+            connect_module->InitClient();
+
+            addr = connect_module->ResolveAddress(connect_addr);
+
+            if (addr == NULL)
+            {
+                I_Error("Unable to resolve \"%s\"", connect_addr);
+            }
+
+            if (!NET_CL_Connect(addr))
+            {
+                I_Error("D_CheckNetGame: Failed to connect to %s\n", 
+                        NET_AddrToString(addr));
+            }
+
+            printf("D_CheckNetGame: Connected to %s\n", NET_AddrToString(addr));
+
+            NET_WaitForStart();
         }
     }
 
-    if (connect_module != NULL)
-    {
-        net_addr_t *addr;
-
-        connect_module->InitClient();
-
-        addr = connect_module->ResolveAddress(connect_addr);
-
-        if (addr == NULL)
-        {
-            I_Error("Unable to resolve \"%s\"", connect_addr);
-        }
-
-        if (!NET_CL_Connect(addr))
-        {
-            I_Error("D_CheckNetGame: Failed to connect to %s\n", 
-                    NET_AddrToString(addr));
-        }
-
-        printf("D_CheckNetGame: Connected to %s\n", NET_AddrToString(addr));
-
-        NET_WaitForStart();
-    }
+#endif
 
     num_players = 0;
 
@@ -352,8 +366,13 @@ void D_QuitNetGame (void)
     if (debugfile)
 	fclose (debugfile);
 
+#ifdef FEATURE_MULTIPLAYER
+
     NET_SV_Shutdown();
     NET_CL_Disconnect();
+
+#endif
+
 }
 
 static int GetLowTic(void)

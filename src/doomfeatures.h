@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: doomfeatures.h 190 2005-10-12 21:52:01Z fraggle $
+// $Id: doomfeatures.h 444 2006-03-25 21:50:32Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -41,6 +41,10 @@
 // Enables dehacked support ('-deh')
 
 #define FEATURE_DEHACKED 1
+
+// Enables multiplayer support (network games)
+
+#define FEATURE_MULTIPLAYER 1
 
 #endif /* #ifndef DOOM_FEATURES_H */
 
