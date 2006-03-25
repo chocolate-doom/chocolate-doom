@@ -1647,8 +1647,10 @@ void D_DoomMain (void)
     printf (DEH_String("I_Init: Setting up machine state.\n"));
     I_Init ();
 
+#ifdef FEATURE_MULTIPLAYER
     printf ("NET_Init: Initialise network subsystem.\n");
     NET_Init ();
+#endif
 
     printf (DEH_String("D_CheckNetGame: Checking network game status.\n"));
     D_CheckNetGame ();

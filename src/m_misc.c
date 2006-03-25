@@ -123,6 +123,7 @@ rcsid[] = "$Id$";
 
 #include "config.h"
 #include "doomdef.h"
+#include "doomfeatures.h"
 
 #include "z_zone.h"
 
@@ -401,7 +402,9 @@ static default_t extra_defaults_list[] =
     {"mouse_acceleration",     &mouse_acceleration,   DEFAULT_FLOAT},
     {"show_endoom",            &show_endoom},
     {"vanilla_savegame_limit", &vanilla_savegame_limit},
+#ifdef FEATURE_MULTIPLAYER
     {"player_name",            &net_player_name,      DEFAULT_STRING},
+#endif
 };
 
 static default_collection_t extra_defaults =
