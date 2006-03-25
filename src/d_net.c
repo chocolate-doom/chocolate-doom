@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.c 414 2006-03-07 19:02:08Z fraggle $
+// $Id: d_net.c 441 2006-03-25 18:28:48Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -117,7 +117,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_net.c 414 2006-03-07 19:02:08Z fraggle $";
+static const char rcsid[] = "$Id: d_net.c 441 2006-03-25 18:28:48Z fraggle $";
 
 
 #include "d_main.h"
@@ -444,7 +444,6 @@ void TryRunTics (void)
 		I_Error ("gametic>lowtic");
 	    if (advancedemo)
 		D_DoAdvanceDemo ();
-	    M_Ticker ();
 	    G_Ticker ();
 	    gametic++;
 	    
