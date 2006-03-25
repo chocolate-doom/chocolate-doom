@@ -304,14 +304,14 @@ void Z_CheckHeap (void)
 
         for (block=allocated_blocks[i]; block != NULL; block = block->next)
         {
-            if (block->prev != prev)
-            {
-                I_Error("Z_CheckHeap: Doubly-linked list corrupted!");
-            }
-            
             if (block->id != ZONEID)
             {
                 I_Error("Z_CheckHeap: Block without a ZONEID!");
+            }
+            
+            if (block->prev != prev)
+            {
+                I_Error("Z_CheckHeap: Doubly-linked list corrupted!");
             }
             
             prev = block;
