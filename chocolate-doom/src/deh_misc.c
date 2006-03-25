@@ -73,25 +73,25 @@
 // This is the initial health a player has when starting anew.
 // See G_PlayerReborn in g_game.c
 
-int deh_initial_health = 100;
+int deh_initial_health = DEH_DEFAULT_INITIAL_HEALTH;
 
 // Dehacked: "Initial bullets"
 // This is the number of bullets the player has when starting anew.
 // See G_PlayerReborn in g_game.c
 
-int deh_initial_bullets = 50;
+int deh_initial_bullets = DEH_DEFAULT_INITIAL_BULLETS;
 
 // Dehacked: "Max Health"
 // This is the maximum health that can be reached using medikits 
 // alone.  See P_TouchSpecialThing in p_inter.c
 
-int deh_max_health = 200;
+int deh_max_health = DEH_DEFAULT_MAX_HEALTH;
 
 // Dehacked: "Max Armor"
 // This is the maximum armor which can be reached by picking up
 // armor helmets. See P_TouchSpecialThing in p_inter.c
 
-int deh_max_armor = 200;
+int deh_max_armor = DEH_DEFAULT_MAX_ARMOR;
 
 // Dehacked: "Green Armor Class"
 // This is the armor class that is given when picking up the green 
@@ -101,7 +101,7 @@ int deh_max_armor = 200;
 // as well as the green armor behavior?  I am currently following
 // the Boom behavior, which is "yes".
 
-int deh_green_armor_class = 1;
+int deh_green_armor_class = DEH_DEFAULT_GREEN_ARMOR_CLASS;
 
 // Dehacked: "Blue Armor Class"
 // This is the armor class that is given when picking up the blue 
@@ -111,61 +111,61 @@ int deh_green_armor_class = 1;
 // as well as the blue armor behavior?  I am currently following
 // the Boom behavior, which is "yes".
 
-int deh_blue_armor_class = 2;
+int deh_blue_armor_class = DEH_DEFAULT_BLUE_ARMOR_CLASS;
 
 // Dehacked: "Max soulsphere"
 // The maximum health which can be reached by picking up the
 // soulsphere.  See P_TouchSpecialThing in p_inter.c
 
-int deh_max_soulsphere = 200;
+int deh_max_soulsphere = DEH_DEFAULT_MAX_SOULSPHERE;
 
 // Dehacked: "Soulsphere health"
 // The amount of health bonus that picking up a soulsphere
 // gives.  See P_TouchSpecialThing in p_inter.c
 
-int deh_soulsphere_health = 100;
+int deh_soulsphere_health = DEH_DEFAULT_SOULSPHERE_HEALTH;
 
 // Dehacked: "Megasphere health"
 // This is what the health is set to after picking up a 
 // megasphere.  See P_TouchSpecialThing in p_inter.c
 
-int deh_megasphere_health = 200;
+int deh_megasphere_health = DEH_DEFAULT_MEGASPHERE_HEALTH;
 
 // Dehacked: "God mode health"
 // This is what the health value is set to when cheating using
 // the IDDQD god mode cheat.  See ST_Responder in st_stuff.c
 
-int deh_god_mode_health = 100;
+int deh_god_mode_health = DEH_DEFAULT_GOD_MODE_HEALTH;
 
 // Dehacked: "IDFA Armor"
 // This is what the armor is set to when using the IDFA cheat.
 // See ST_Responder in st_stuff.c
 
-int deh_idfa_armor = 200;
+int deh_idfa_armor = DEH_DEFAULT_IDFA_ARMOR;
 
 // Dehacked: "IDFA Armor Class"
 // This is what the armor class is set to when using the IDFA cheat.
 // See ST_Responder in st_stuff.c
 
-int deh_idfa_armor_class = 2;
+int deh_idfa_armor_class = DEH_DEFAULT_IDFA_ARMOR_CLASS;
 
 // Dehacked: "IDKFA Armor"
 // This is what the armor is set to when using the IDKFA cheat.
 // See ST_Responder in st_stuff.c
 
-int deh_idkfa_armor = 200;
+int deh_idkfa_armor = DEH_DEFAULT_IDKFA_ARMOR;
 
 // Dehacked: "IDKFA Armor Class"
 // This is what the armor class is set to when using the IDKFA cheat.
 // See ST_Responder in st_stuff.c
 
-int deh_idkfa_armor_class = 2;
+int deh_idkfa_armor_class = DEH_DEFAULT_IDKFA_ARMOR_CLASS;
 
 // Dehacked: "BFG Cells/Shot"
 // This is the number of CELLs firing the BFG uses up.
 // See P_CheckAmmo and A_FireBFG in p_pspr.c
 
-int deh_bfg_cells_per_shot = 40;
+int deh_bfg_cells_per_shot = DEH_DEFAULT_BFG_CELLS_PER_SHOT;
 
 // Dehacked: "Monsters infight"
 // This controls whether monsters can harm other monsters of the same 
@@ -175,7 +175,7 @@ int deh_bfg_cells_per_shot = 40;
 //
 // See PIT_CheckThing in p_map.c
 
-int deh_species_infighting = 0;
+int deh_species_infighting = DEH_DEFAULT_SPECIES_INFIGHTING;
 
 static struct
 {
