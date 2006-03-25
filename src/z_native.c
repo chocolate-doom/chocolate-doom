@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: z_native.c 439 2006-03-24 21:20:36Z fraggle $
+// $Id: z_native.c 443 2006-03-25 21:47:13Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2006 Simon Howard
@@ -30,7 +30,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: z_native.c 439 2006-03-24 21:20:36Z fraggle $";
+rcsid[] = "$Id: z_native.c 443 2006-03-25 21:47:13Z fraggle $";
 
 #include <stdlib.h>
 
@@ -304,14 +304,14 @@ void Z_CheckHeap (void)
 
         for (block=allocated_blocks[i]; block != NULL; block = block->next)
         {
-            if (block->prev != prev)
-            {
-                I_Error("Z_CheckHeap: Doubly-linked list corrupted!");
-            }
-            
             if (block->id != ZONEID)
             {
                 I_Error("Z_CheckHeap: Block without a ZONEID!");
+            }
+            
+            if (block->prev != prev)
+            {
+                I_Error("Z_CheckHeap: Doubly-linked list corrupted!");
             }
             
             prev = block;
