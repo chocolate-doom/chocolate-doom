@@ -444,7 +444,6 @@ void TryRunTics (void)
 		I_Error ("gametic>lowtic");
 	    if (advancedemo)
 		D_DoAdvanceDemo ();
-	    M_Ticker ();
 	    G_Ticker ();
 	    gametic++;
 	    
