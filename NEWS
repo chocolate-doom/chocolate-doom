@@ -1,4 +1,52 @@
 
+0.2.0 (???):
+    Multiplayer!  This version includes an entirely new multiplayer
+    engine, based on a packet server architecture.  I'd like to thank
+    joe, pritch, Meph and myk for their support, feedback and help in 
+    testing this.  The new code still needs more testing, and I'm eager
+    to hear any feedback on this.
+
+    Fullscreen "letterbox" mode allows Chocolate Doom to run on machines
+    where 1.6:1 aspect ratio modes are unavailable (320x200/640x400).
+    The game runs in 320x240/640x480 instead, with black borders.
+    The system automatically adjusts to this if closer modes are 
+    unavailable.
+
+    Portability improvements: 
+     * Chocolate Doom now compiles and runs cleanly on MacOS X.  Huge
+       thanks go to Insomniak who kindly gave me an account on his machine
+       so that I could debug this remotely.  Big thanks also go to 
+       athanatos on the Doomworld forums for his patience in testing 
+       various ideas as I tried to get Chocolate Doom up and running
+       on MacOS.
+     * Chocolate Doom now compiles and runs natively on AMD64.
+
+    Bugs fixed:
+     * Check for IWADs in the same order as Vanilla Doom
+     * Fix crash when starting new levels due to the intermission screen
+       being drawn after the WI_ subsystem is shut down (thanks 
+       pritch and joe)
+     * Catch failures to initialise sound properly, and fail gracefully.
+     * Fix sound effects playing too loud on level 8 (thanks to myk
+       for his continued persistence in getting me to fix this)
+     * Fix crasher in 1427uv01.lmp (thanks ultdoomer)
+
+0.1.4 (2006-02-13):
+
+    NWT-style merging command line options (allows Mordeth to be played)
+    Unix manpage (thanks Jon Dowland)
+    Dehacked improvements/fixes:
+     * Allow changing the names of graphic lumps used in menu, status bar
+       intermission screen, etc.
+     * Allow changing skies, animated flats + textures
+     * Allow changing more startup strings.
+     * Allow text replacements on music + sfx lump names
+    Fix for plutonia map12 crash.
+    Fix bug with playing long sfx at odd sample rates.
+    Big Endian fixes (for MacOS X).  Thanks to athanatos for helping
+        find some of these.
+    Install into /usr/games, rather than /usr/bin (thanks Jon Dowland)
+
 0.1.3 (2006-01-20):
 
     Imported the spechit overrun emulation code from prboom-plus.  Thanks to
