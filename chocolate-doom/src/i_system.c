@@ -92,6 +92,7 @@ rcsid[] = "$Id$";
 #include <SDL.h>
 
 #include "doomdef.h"
+#include "m_argv.h"
 #include "m_misc.h"
 #include "i_sound.h"
 #include "i_timer.h"
@@ -108,7 +109,7 @@ rcsid[] = "$Id$";
 #include "z_zone.h"
 
 
-int	mb_used = 6;
+int	mb_used = 16;
 int     show_endoom = 1;
 
 void
@@ -130,16 +131,29 @@ ticcmd_t*	I_BaseTiccmd(void)
 
 int  I_GetHeapSize (void)
 {
+    int p;
+
+    p = M_CheckParm("-mb");
+    
+    if (p > 0)
+    {
+        mb_used = atoi(myargv[p+1]);
+    }
+    
     return mb_used*1024*1024;
 }
 
-byte* I_ZoneBase (int*	size)
+byte *I_ZoneBase (int *size)
 {
     byte *zonemem;
-    *size = mb_used*1024*1024;
-    zonemem = malloc (*size);
+
+    *size = I_GetHeapSize();
+
+    zonemem = malloc(*size);
+    
     printf("zone memory: %p, %x allocated for zone\n", 
            zonemem, *size);
+
     return zonemem;
 }
 
