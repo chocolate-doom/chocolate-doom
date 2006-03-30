@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 444 2006-03-25 21:50:32Z fraggle $
+// $Id: d_main.c 454 2006-03-30 18:17:58Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -184,7 +184,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 444 2006-03-25 21:50:32Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 454 2006-03-30 18:17:58Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -238,6 +238,7 @@ static const char rcsid[] = "$Id: d_main.c 444 2006-03-25 21:50:32Z fraggle $";
 #include "st_stuff.h"
 #include "am_map.h"
 #include "net_client.h"
+#include "net_dedicated.h"
 
 #include "p_setup.h"
 #include "r_local.h"
@@ -1347,6 +1348,14 @@ void D_DoomMain (void)
 
     printf (DEH_String("Z_Init: Init zone memory allocation daemon. \n"));
     Z_Init ();
+
+    if (M_CheckParm("-dedicated") > 0)
+    {
+        printf("Dedicated server mode.\n");
+        NET_DedicatedServer();
+
+        // Never returns
+    }
 
 #ifdef FEATURE_DEHACKED
     printf("DEH_Init: Init Dehacked support.\n");
