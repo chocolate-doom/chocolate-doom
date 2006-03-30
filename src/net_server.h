@@ -53,5 +53,9 @@ void NET_SV_Run(void);
 
 void NET_SV_Shutdown(void);
 
+// Add a network module to the context used by the server
+
+void NET_SV_AddModule(net_module_t *module);
+
 #endif /* #ifndef NET_SERVER_H */
 
