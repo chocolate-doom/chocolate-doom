@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_system.c 455 2006-03-30 19:08:37Z fraggle $
+// $Id: i_system.c 458 2006-03-30 19:25:12Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -81,7 +81,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_system.c 455 2006-03-30 19:08:37Z fraggle $";
+rcsid[] = "$Id: i_system.c 458 2006-03-30 19:25:12Z fraggle $";
 
 
 #include <stdlib.h>
@@ -92,6 +92,7 @@ rcsid[] = "$Id: i_system.c 455 2006-03-30 19:08:37Z fraggle $";
 #include <SDL.h>
 
 #include "doomdef.h"
+#include "m_argv.h"
 #include "m_misc.h"
 #include "i_sound.h"
 #include "i_timer.h"
@@ -108,7 +109,7 @@ rcsid[] = "$Id: i_system.c 455 2006-03-30 19:08:37Z fraggle $";
 #include "z_zone.h"
 
 
-int	mb_used = 6;
+int	mb_used = 16;
 int     show_endoom = 1;
 
 void
@@ -130,16 +131,29 @@ ticcmd_t*	I_BaseTiccmd(void)
 
 int  I_GetHeapSize (void)
 {
+    int p;
+
+    p = M_CheckParm("-mb");
+    
+    if (p > 0)
+    {
+        mb_used = atoi(myargv[p+1]);
+    }
+    
     return mb_used*1024*1024;
 }
 
-byte* I_ZoneBase (int*	size)
+byte *I_ZoneBase (int *size)
 {
     byte *zonemem;
-    *size = mb_used*1024*1024;
-    zonemem = malloc (*size);
+
+    *size = I_GetHeapSize();
+
+    zonemem = malloc(*size);
+    
     printf("zone memory: %p, %x allocated for zone\n", 
            zonemem, *size);
+
     return zonemem;
 }
 
