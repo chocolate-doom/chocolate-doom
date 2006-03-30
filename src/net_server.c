@@ -1255,6 +1255,14 @@ static void NET_SV_RunClient(net_client_t *client)
         client->active = false;
         free(client->name);
         NET_FreeAddress(client->addr);
+
+        // Are there any clients left connected?  If not, return the
+        // server to the waiting-for-players state.
+
+        if (NET_SV_NumClients() <= 0)
+        {
+            server_state = SERVER_WAITING_START;
+        }
     }
     
     if (!ClientConnected(client))
