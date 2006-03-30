@@ -297,6 +297,8 @@ void D_CheckNetGame (void)
         if (M_CheckParm("-server") > 0)
         {
             NET_SV_Init();
+            NET_SV_AddModule(&net_loop_server_module);
+            NET_SV_AddModule(&net_sdl_module);
 
             connect_module = &net_loop_client_module;
             connect_addr = "";
