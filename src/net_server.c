@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 440 2006-03-24 21:43:43Z fraggle $
+// $Id: net_server.c 453 2006-03-30 00:23:20Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -1282,19 +1282,23 @@ static void NET_SV_RunClient(net_client_t *client)
     }
 }
 
+// Add a network module to the server context
+
+void NET_SV_AddModule(net_module_t *module)
+{
+    NET_AddModule(server_context, module);
+    module->InitServer();
+}
+
 // Initialise server and wait for connections
 
 void NET_SV_Init(void)
 {
     int i;
 
-    // initialise send/receive context, with loopback send/recv
+    // initialise send/receive context
 
     server_context = NET_NewContext();
-    NET_AddModule(server_context, &net_loop_server_module);
-    net_loop_server_module.InitServer();
-    NET_AddModule(server_context, &net_sdl_module);
-    net_sdl_module.InitServer();
 
     // no clients yet
    

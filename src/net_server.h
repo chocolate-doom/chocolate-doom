@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.h 250 2006-01-02 21:04:10Z fraggle $
+// $Id: net_server.h 453 2006-03-30 00:23:20Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -52,6 +52,10 @@ void NET_SV_Run(void);
 // Blocks until all clients disconnect, or until a 5 second timeout
 
 void NET_SV_Shutdown(void);
+
+// Add a network module to the context used by the server
+
+void NET_SV_AddModule(net_module_t *module);
 
 #endif /* #ifndef NET_SERVER_H */
 

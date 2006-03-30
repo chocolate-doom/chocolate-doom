@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.c 444 2006-03-25 21:50:32Z fraggle $
+// $Id: d_net.c 453 2006-03-30 00:23:20Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -117,7 +117,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_net.c 444 2006-03-25 21:50:32Z fraggle $";
+static const char rcsid[] = "$Id: d_net.c 453 2006-03-30 00:23:20Z fraggle $";
 
 #include "doomfeatures.h"
 
@@ -297,6 +297,8 @@ void D_CheckNetGame (void)
         if (M_CheckParm("-server") > 0)
         {
             NET_SV_Init();
+            NET_SV_AddModule(&net_loop_server_module);
+            NET_SV_AddModule(&net_sdl_module);
 
             connect_module = &net_loop_client_module;
             connect_addr = "";
