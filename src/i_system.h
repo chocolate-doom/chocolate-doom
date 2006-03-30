@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_system.h 234 2005-12-30 18:50:53Z fraggle $
+// $Id: i_system.h 455 2006-03-30 19:08:37Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -44,17 +44,6 @@ void I_Init (void);
 byte*	I_ZoneBase (int *size);
 
 
-// Called by D_DoomLoop,
-// returns current time in tics.
-int I_GetTime (void);
-
-// returns current time in ms
-int I_GetTimeMS (void);
-
-// Pause for a specified number of ms
-void I_Sleep(int ms);
-
-//
 // Called by D_DoomLoop,
 // called before processing any tics in a frame
 // (just after displaying a frame).

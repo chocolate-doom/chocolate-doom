@@ -1,8 +1,9 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: $
+// $Id: i_timer.h 455 2006-03-30 19:08:37Z fraggle $
 //
+// Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
@@ -20,30 +21,32 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
+// DESCRIPTION:
+//      System-specific timer interface
+//
+//-----------------------------------------------------------------------------
+
+
+#ifndef __I_TIMER__
+#define __I_TIMER__
+
+// Called by D_DoomLoop,
+// returns current time in tics.
+int I_GetTime (void);
+
+// returns current time in ms
+int I_GetTimeMS (void);
+
+// Pause for a specified number of ms
+void I_Sleep(int ms);
+
+// Initialise timer
+void I_InitTimer(void);
+
+#endif
+
 //-----------------------------------------------------------------------------
 //
-// Dedicated server code.
-// 
-
-#include "doomtype.h"
-
-#include "i_system.h"
-#include "i_timer.h"
-
-#include "net_defs.h"
-#include "net_sdl.h"
-#include "net_server.h"
-
-void NET_DedicatedServer(void)
-{
-    NET_SV_Init();
-
-    NET_SV_AddModule(&net_sdl_module);
-
-    while (true)
-    {
-        NET_SV_Run();
-        I_Sleep(10);
-    }
-}
-
+// $Log$
+//
+//-----------------------------------------------------------------------------

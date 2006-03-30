@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 440 2006-03-24 21:43:43Z fraggle $
+// $Id: net_client.c 455 2006-03-30 19:08:37Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -153,6 +153,7 @@
 #include "deh_main.h"
 #include "g_game.h"
 #include "i_system.h"
+#include "i_timer.h"
 #include "m_argv.h"
 #include "net_client.h"
 #include "net_common.h"

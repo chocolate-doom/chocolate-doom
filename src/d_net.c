@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.c 453 2006-03-30 00:23:20Z fraggle $
+// $Id: d_net.c 455 2006-03-30 19:08:37Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -117,7 +117,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_net.c 453 2006-03-30 00:23:20Z fraggle $";
+static const char rcsid[] = "$Id: d_net.c 455 2006-03-30 19:08:37Z fraggle $";
 
 #include "doomfeatures.h"
 
@@ -125,6 +125,7 @@ static const char rcsid[] = "$Id: d_net.c 453 2006-03-30 00:23:20Z fraggle $";
 #include "m_argv.h"
 #include "m_menu.h"
 #include "i_system.h"
+#include "i_timer.h"
 #include "i_video.h"
 #include "g_game.h"
 #include "doomdef.h"

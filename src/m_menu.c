@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_menu.c 429 2006-03-23 17:43:15Z fraggle $
+// $Id: m_menu.c 455 2006-03-30 19:08:37Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -78,7 +78,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_menu.c 429 2006-03-23 17:43:15Z fraggle $";
+rcsid[] = "$Id: m_menu.c 455 2006-03-30 19:08:37Z fraggle $";
 
 #include <stdlib.h>
 #include <ctype.h>
@@ -91,6 +91,7 @@ rcsid[] = "$Id: m_menu.c 429 2006-03-23 17:43:15Z fraggle $";
 #include "deh_main.h"
 
 #include "i_system.h"
+#include "i_timer.h"
 #include "i_video.h"
 #include "z_zone.h"
 #include "v_video.h"

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 453 2006-03-30 00:23:20Z fraggle $
+// $Id: net_server.c 455 2006-03-30 19:08:37Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -167,6 +167,8 @@
 #include "doomdef.h"
 #include "doomstat.h"
 #include "i_system.h"
+#include "i_timer.h"
+
 #include "net_client.h"
 #include "net_common.h"
 #include "net_defs.h"

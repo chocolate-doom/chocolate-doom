@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_system.c 289 2006-01-13 18:23:28Z fraggle $
+// $Id: i_system.c 455 2006-03-30 19:08:37Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -81,7 +81,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_system.c 289 2006-01-13 18:23:28Z fraggle $";
+rcsid[] = "$Id: i_system.c 455 2006-03-30 19:08:37Z fraggle $";
 
 
 #include <stdlib.h>
@@ -93,8 +93,9 @@ rcsid[] = "$Id: i_system.c 289 2006-01-13 18:23:28Z fraggle $";
 
 #include "doomdef.h"
 #include "m_misc.h"
-#include "i_video.h"
 #include "i_sound.h"
+#include "i_timer.h"
+#include "i_video.h"
 
 #include "d_net.h"
 #include "g_game.h"
@@ -145,55 +146,13 @@ byte* I_ZoneBase (int*	size)
 
 
 //
-// I_GetTime
-// returns time in 1/35th second tics
-//
-
-static Uint32 basetime = 0;
-
-int  I_GetTime (void)
-{
-    Uint32 ticks;
-
-    ticks = SDL_GetTicks();
-
-    if (basetime == 0)
-        basetime = ticks;
-
-    ticks -= basetime;
-
-    return (ticks * 35) / 1000;    
-}
-
-//
-// Same as I_GetTime, but returns time in milliseconds
-//
-
-int I_GetTimeMS(void)
-{
-    Uint32 ticks;
-
-    ticks = SDL_GetTicks();
-
-    if (basetime == 0)
-        basetime = ticks;
-
-    return ticks - basetime;
-}
-
-
-
-//
 // I_Init
 //
 void I_Init (void)
 {
     I_InitSound();
     I_InitMusic();
-
-    // initialise timer
-
-    SDL_Init(SDL_INIT_TIMER);
+    I_InitTimer();
 }
 
 // 
@@ -267,13 +226,6 @@ void I_Quit (void)
 void I_WaitVBL(int count)
 {
     SDL_Delay((count * 1000) / 70);
-}
-
-// Sleep for a specified number of ms
-
-void I_Sleep(int ms)
-{
-    SDL_Delay(ms);
 }
 
 byte*	I_AllocLow(int length)

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 454 2006-03-30 18:17:58Z fraggle $
+// $Id: d_main.c 455 2006-03-30 19:08:37Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -184,7 +184,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 454 2006-03-30 18:17:58Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 455 2006-03-30 19:08:37Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -229,6 +229,7 @@ static const char rcsid[] = "$Id: d_main.c 454 2006-03-30 18:17:58Z fraggle $";
 
 #include "i_system.h"
 #include "i_sound.h"
+#include "i_timer.h"
 #include "i_video.h"
 
 #include "g_game.h"

@@ -1,8 +1,9 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: $
+// $Id: i_timer.c 455 2006-03-30 19:08:37Z fraggle $
 //
+// Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
@@ -20,30 +21,66 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-//-----------------------------------------------------------------------------
+// $Log$
 //
-// Dedicated server code.
-// 
+// DESCRIPTION:
+//      Timer functionssss.
+//
+//-----------------------------------------------------------------------------
 
-#include "doomtype.h"
+#include <SDL.h>
 
-#include "i_system.h"
 #include "i_timer.h"
 
-#include "net_defs.h"
-#include "net_sdl.h"
-#include "net_server.h"
+//
+// I_GetTime
+// returns time in 1/35th second tics
+//
 
-void NET_DedicatedServer(void)
+static Uint32 basetime = 0;
+
+int  I_GetTime (void)
 {
-    NET_SV_Init();
+    Uint32 ticks;
 
-    NET_SV_AddModule(&net_sdl_module);
+    ticks = SDL_GetTicks();
 
-    while (true)
-    {
-        NET_SV_Run();
-        I_Sleep(10);
-    }
+    if (basetime == 0)
+        basetime = ticks;
+
+    ticks -= basetime;
+
+    return (ticks * 35) / 1000;    
+}
+
+//
+// Same as I_GetTime, but returns time in milliseconds
+//
+
+int I_GetTimeMS(void)
+{
+    Uint32 ticks;
+
+    ticks = SDL_GetTicks();
+
+    if (basetime == 0)
+        basetime = ticks;
+
+    return ticks - basetime;
+}
+
+// Sleep for a specified number of ms
+
+void I_Sleep(int ms)
+{
+    SDL_Delay(ms);
+}
+
+
+void I_InitTimer(void)
+{
+    // initialise timer
+
+    SDL_Init(SDL_INIT_TIMER);
 }
 

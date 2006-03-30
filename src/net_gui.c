@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_gui.c 440 2006-03-24 21:43:43Z fraggle $
+// $Id: net_gui.c 455 2006-03-30 19:08:37Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -81,6 +81,7 @@
 #include "doomstat.h"
 
 #include "i_system.h"
+#include "i_timer.h"
 #include "i_video.h"
 
 #include "net_client.h"
