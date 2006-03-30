@@ -153,6 +153,7 @@
 #include "deh_main.h"
 #include "g_game.h"
 #include "i_system.h"
+#include "i_timer.h"
 #include "m_argv.h"
 #include "net_client.h"
 #include "net_common.h"

@@ -1,9 +1,26 @@
 
 gamesdir = $(prefix)/games
 
-games_PROGRAMS = chocolate-doom
+games_PROGRAMS = chocolate-doom chocolate-server
 
 AM_CFLAGS = -I../textscreen @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@ -Wall
+
+DEDSERV_FILES=\
+d_dedicated.c                              \
+i_main.c             i_main.h              \
+i_timer.c            i_timer.h             \
+m_argv.c             m_argv.h              \
+net_common.c         net_common.h          \
+net_dedicated.c      net_dedicated.h       \
+net_io.c             net_io.h              \
+net_packet.c         net_packet.h          \
+net_sdl.c            net_sdl.h             \
+net_server.c         net_server.h          \
+net_structrw.c       net_structrw.h        \
+z_native.c           z_zone.h
+
+chocolate_server_SOURCES=$(DEDSERV_FILES)
+chocolate_server_LDADD = @LDFLAGS@ @SDL_LIBS@ @SDLNET_LIBS@ 
 
 SOURCE_FILES=\
 am_map.c             am_map.h              \
@@ -45,6 +62,7 @@ i_main.c                                   \
 info.c               info.h                \
 i_sound.c            i_sound.h             \
 i_system.c           i_system.h            \
+i_timer.c            i_timer.h             \
 i_video.c            i_video.h             \
 m_argv.c             m_argv.h              \
 m_bbox.c             m_bbox.h              \

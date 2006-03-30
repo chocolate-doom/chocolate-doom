@@ -188,6 +188,7 @@ rcsid[] = "$Id$";
 #include "doomstat.h"
 #include "d_main.h"
 #include "i_system.h"
+#include "i_timer.h"
 #include "m_argv.h"
 #include "m_swap.h"
 #include "s_sound.h"

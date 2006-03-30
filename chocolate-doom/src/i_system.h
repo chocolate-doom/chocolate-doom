@@ -45,17 +45,6 @@ byte*	I_ZoneBase (int *size);
 
 
 // Called by D_DoomLoop,
-// returns current time in tics.
-int I_GetTime (void);
-
-// returns current time in ms
-int I_GetTimeMS (void);
-
-// Pause for a specified number of ms
-void I_Sleep(int ms);
-
-//
-// Called by D_DoomLoop,
 // called before processing any tics in a frame
 // (just after displaying a frame).
 // Time consuming syncronous operations
