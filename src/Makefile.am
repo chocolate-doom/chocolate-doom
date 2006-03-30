@@ -4,7 +4,6 @@ gamesdir = $(prefix)/games
 games_PROGRAMS = chocolate-doom
 
 AM_CFLAGS = -I../textscreen @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@ -Wall
-chocolate_doom_LDADD = ../textscreen/libtextscreen.a @LDFLAGS@ @SDL_LIBS@ @SDLMIXER_LIBS@ @SDLNET_LIBS@ 
 
 SOURCE_FILES=\
 am_map.c             am_map.h              \
@@ -58,6 +57,7 @@ m_random.c           m_random.h            \
 m_swap.c             m_swap.h              \
 net_client.c         net_client.h          \
 net_common.c         net_common.h          \
+net_dedicated.c      net_dedicated.h       \
 net_defs.h                                 \
 net_gui.c            net_gui.h             \
 net_io.c             net_io.h              \
@@ -113,6 +113,8 @@ chocolate_doom_SOURCES=$(SOURCE_FILES) chocolate-doom-res.rc
 else
 chocolate_doom_SOURCES=$(SOURCE_FILES)
 endif
+
+chocolate_doom_LDADD = ../textscreen/libtextscreen.a @LDFLAGS@ @SDL_LIBS@ @SDLMIXER_LIBS@ @SDLNET_LIBS@ 
 
 EXTRA_DIST = convert-icon chocolate_doom_icon.c
 

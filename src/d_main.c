@@ -238,6 +238,7 @@ static const char rcsid[] = "$Id$";
 #include "st_stuff.h"
 #include "am_map.h"
 #include "net_client.h"
+#include "net_dedicated.h"
 
 #include "p_setup.h"
 #include "r_local.h"
@@ -1347,6 +1348,14 @@ void D_DoomMain (void)
 
     printf (DEH_String("Z_Init: Init zone memory allocation daemon. \n"));
     Z_Init ();
+
+    if (M_CheckParm("-dedicated") > 0)
+    {
+        printf("Dedicated server mode.\n");
+        NET_DedicatedServer();
+
+        // Never returns
+    }
 
 #ifdef FEATURE_DEHACKED
     printf("DEH_Init: Init Dehacked support.\n");
