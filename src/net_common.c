@@ -51,7 +51,7 @@
 #include <stdlib.h>
 
 #include "doomdef.h"
-#include "i_system.h"
+#include "i_timer.h"
 
 #include "net_common.h"
 #include "net_io.h"
