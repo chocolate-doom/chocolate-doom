@@ -125,6 +125,7 @@ static const char rcsid[] = "$Id$";
 #include "m_argv.h"
 #include "m_menu.h"
 #include "i_system.h"
+#include "i_timer.h"
 #include "i_video.h"
 #include "g_game.h"
 #include "doomdef.h"

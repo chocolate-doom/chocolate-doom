@@ -91,6 +91,7 @@ rcsid[] = "$Id$";
 #include "deh_main.h"
 
 #include "i_system.h"
+#include "i_timer.h"
 #include "i_video.h"
 #include "z_zone.h"
 #include "v_video.h"

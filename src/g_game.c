@@ -152,6 +152,7 @@ rcsid[] = "$Id$";
 #include "m_menu.h"
 #include "m_random.h"
 #include "i_system.h"
+#include "i_timer.h"
 
 #include "p_setup.h"
 #include "p_saveg.h"
