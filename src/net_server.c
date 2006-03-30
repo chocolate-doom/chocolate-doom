@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 455 2006-03-30 19:08:37Z fraggle $
+// $Id: net_server.c 457 2006-03-30 19:16:06Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -1255,6 +1255,14 @@ static void NET_SV_RunClient(net_client_t *client)
         client->active = false;
         free(client->name);
         NET_FreeAddress(client->addr);
+
+        // Are there any clients left connected?  If not, return the
+        // server to the waiting-for-players state.
+
+        if (NET_SV_NumClients() <= 0)
+        {
+            server_state = SERVER_WAITING_START;
+        }
     }
     
     if (!ClientConnected(client))
