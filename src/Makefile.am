@@ -7,7 +7,7 @@ AM_CFLAGS = -I../textscreen @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@ -Wall
 
 DEDSERV_FILES=\
 d_dedicated.c                              \
-i_main.c             i_main.h              \
+i_main.c                                   \
 i_timer.c            i_timer.h             \
 m_argv.c             m_argv.h              \
 net_common.c         net_common.h          \
