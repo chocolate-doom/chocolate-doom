@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 457 2006-03-30 19:16:06Z fraggle $
+// $Id: net_server.c 460 2006-04-01 20:16:43Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -1296,8 +1296,8 @@ static void NET_SV_RunClient(net_client_t *client)
 
 void NET_SV_AddModule(net_module_t *module)
 {
-    NET_AddModule(server_context, module);
     module->InitServer();
+    NET_AddModule(server_context, module);
 }
 
 // Initialise server and wait for connections
