@@ -1296,8 +1296,8 @@ static void NET_SV_RunClient(net_client_t *client)
 
 void NET_SV_AddModule(net_module_t *module)
 {
-    NET_AddModule(server_context, module);
     module->InitServer();
+    NET_AddModule(server_context, module);
 }
 
 // Initialise server and wait for connections
