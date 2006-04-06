@@ -224,6 +224,7 @@ void I_Endoom(void)
 void I_Quit (void)
 {
     D_QuitNetGame ();
+    G_CheckDemoStatus();
     I_ShutdownSound();
     I_ShutdownMusic();
     M_SaveDefaults ();
