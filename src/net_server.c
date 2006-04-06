@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 460 2006-04-01 20:16:43Z fraggle $
+// $Id: net_server.c 461 2006-04-06 17:53:43Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -544,11 +544,31 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         return;
     }
 
+    // Check the client version is the same as the server
+    //
+    client_version = NET_ReadString(packet);
+
+    if (client_version == NULL)
+    {
+        return;
+    }
+
+    if (strcmp(client_version, PACKAGE_STRING) != 0)
+    {
+        NET_SV_SendReject(addr, "Different versions cannot play a network game!");
+        return;
+    }
+
     // read the game mode and mission
 
     if (!NET_ReadInt16(packet, &cl_gamemode) 
      || !NET_ReadInt16(packet, &cl_gamemission)
      || !NET_ReadInt8(packet, &cl_recording_lowres))
+    {
+        return;
+    }
+
+    if (!NET_ValidGameMode(cl_gamemode, cl_gamemission))
     {
         return;
     }
@@ -561,13 +581,6 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
     {
         return;
     }
-
-    client_version = NET_ReadString(packet);
-
-    if (client_version == NULL)
-    {
-        return;
-    }
     
     // received a valid SYN
 
@@ -576,6 +589,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
     if (server_state != SERVER_WAITING_START)
     {
         NET_SV_SendReject(addr, "Server is not currently accepting connections");
+        return;
     }
     
     // allocate a client slot if there isn't one already
@@ -623,12 +637,6 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         if (num_clients >= MAXPLAYERS)
         {
             NET_SV_SendReject(addr, "Server is full!");
-            return;
-        }
-
-        if (strcmp(client_version, PACKAGE_STRING) != 0)
-        {
-            NET_SV_SendReject(addr, "Different versions cannot play a network game!");
             return;
         }
 
@@ -686,6 +694,13 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
     {
         // Malformed packet
 
+        return;
+    }
+
+    // Check the game settings are valid
+
+    if (!NET_ValidGameSettings(sv_gamemode, sv_gamemission, &settings))
+    {
         return;
     }
 
@@ -1003,8 +1018,9 @@ static void NET_SV_SendTics(net_client_t *client, int start, int end)
 
 static void NET_SV_ParseResendRequest(net_packet_t *packet, net_client_t *client)
 {
-    static unsigned int start;
-    static unsigned int num_tics;
+    unsigned int start, last;
+    unsigned int num_tics;
+    int i;
 
     // Read the starting tic and number of tics
 
@@ -1016,9 +1032,30 @@ static void NET_SV_ParseResendRequest(net_packet_t *packet, net_client_t *client
 
     //printf("SV: %p: resend %i-%i\n", client, start, start+num_tics-1);
 
+    // Check we have all the requested tics
+
+    last = start + num_tics - 1;
+
+    for (i=start; i<=last; ++i)
+    {
+        net_full_ticcmd_t *cmd;
+
+        cmd = &client->sendqueue[i % BACKUPTICS];
+
+        if (i != cmd->seq)
+        {
+            // We do not have the requested tic (any more)
+            // This is pretty fatal.  We could disconnect the client, 
+            // but then again this could be a spoofed packet.  Just 
+            // ignore it.
+
+            return;
+        }
+    }
+
     // Resend those tics
 
-    NET_SV_SendTics(client, start, start + num_tics - 1);
+    NET_SV_SendTics(client, start, last);
 }
 
 

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_common.h 412 2006-03-07 18:24:12Z fraggle $
+// $Id: net_common.h 461 2006-04-06 17:53:43Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -134,6 +134,10 @@ net_packet_t *NET_Conn_NewReliable(net_connection_t *conn, int packet_type);
 
 void NET_SafePuts(char *msg);
 unsigned int NET_ExpandTicNum(unsigned int relative, unsigned int b);
+
+boolean NET_ValidGameMode(GameMode_t mode, GameMission_t mission);
+boolean NET_ValidGameSettings(GameMode_t mode, GameMission_t mission, 
+                              net_gamesettings_t *settings);
 
 #endif /* #ifndef NET_COMMON_H */
 
