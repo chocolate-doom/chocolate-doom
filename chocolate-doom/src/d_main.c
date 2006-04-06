@@ -240,6 +240,7 @@ static const char rcsid[] = "$Id$";
 #include "am_map.h"
 #include "net_client.h"
 #include "net_dedicated.h"
+#include "net_query.h"
 
 #include "p_setup.h"
 #include "r_local.h"
@@ -1357,6 +1358,16 @@ void D_DoomMain (void)
 
         // Never returns
     }
+
+    // Query network servers?
+
+    p = M_CheckParm("-query");
+
+    if (p > 0)
+    {
+        NET_QueryAddress(myargv[p+1]);
+    }
+
 
 #ifdef FEATURE_DEHACKED
     printf("DEH_Init: Init Dehacked support.\n");
