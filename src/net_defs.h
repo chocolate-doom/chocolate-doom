@@ -139,10 +139,6 @@ struct _net_addr_s
     void *handle;
 };
 
-// number of ticcmds to store in send queues
-
-#define NET_TICCMD_QUEUE_SIZE 64
-
 // magic number sent when connecting to check this is a valid client
 
 #define NET_MAGIC_NUMBER 3436803284U
