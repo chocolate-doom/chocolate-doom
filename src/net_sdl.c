@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_sdl.c 244 2006-01-02 20:11:49Z fraggle $
+// $Id: net_sdl.c 465 2006-04-06 20:49:16Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -209,6 +209,22 @@ static void NET_SDL_SendPacket(net_addr_t *addr, net_packet_t *packet)
 {
     UDPpacket sdl_packet;
     IPaddress *ip = (IPaddress *) addr->handle;
+
+#if 0
+    {
+        static int this_second_sent = 0;
+        static int lasttime;
+
+        this_second_sent += packet->len + 64;
+
+        if (I_GetTime() - lasttime > 35)
+        {
+            printf("%i bytes sent in the last second\n", this_second_sent);
+            lasttime = I_GetTime();
+            this_second_sent = 0;
+        }
+    }
+#endif
 
     sdl_packet.channel = 0;
     sdl_packet.data = packet->data;
