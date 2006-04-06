@@ -557,4 +557,71 @@ void NET_SafePuts(char *s)
     putchar('\n');
 }
 
+// Check that a gamemode+gamemission received over the network is valid.
+
+boolean NET_ValidGameMode(GameMode_t mode, GameMission_t mission)
+{
+    if (mode == shareware || mode == registered || mode == retail)
+    {
+        return true;
+    }
+    else if (mode == commercial)
+    {
+        return mission == doom2 || mission == pack_tnt || mission == pack_plut;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+// Check that game settings are valid
+
+boolean NET_ValidGameSettings(GameMode_t mode, GameMission_t mission,
+                              net_gamesettings_t *settings)
+{
+    if (settings->ticdup <= 0)
+        return false;
+
+    if (settings->extratics < 0)
+        return false;
+
+    if (settings->deathmatch < 0 || settings->deathmatch > 2)
+        return false;
+
+    if (settings->skill < sk_noitems || settings->skill > sk_nightmare)
+        return false;
+
+    if (settings->gameversion < exe_doom_1_9 || settings->gameversion > exe_final)
+        return false;
+
+    if (mode == shareware || mode == retail || mode == registered)
+    {
+        if (settings->map < 1 || settings->map > 9)
+            return false;
+    }
+    else
+    {
+        if (settings->map < 1 || settings->map > 32)
+            return false;
+    }
+    
+    if (mode == shareware)
+    {
+        if (settings->episode != 1)
+            return false;
+    }
+    else if (mode == registered)
+    {
+        if (settings->episode < 1 || settings->episode > 3)
+            return false;
+    }
+    else if (mode == retail)
+    {
+        if (settings->episode < 1 || settings->episode > 4)
+            return false;
+    }
+    
+    return true;
+}
 

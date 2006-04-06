@@ -1012,11 +1012,11 @@ static void NET_CL_SendSYN(void)
     packet = NET_NewPacket(10);
     NET_WriteInt16(packet, NET_PACKET_TYPE_SYN);
     NET_WriteInt32(packet, NET_MAGIC_NUMBER);
+    NET_WriteString(packet, PACKAGE_STRING);
     NET_WriteInt16(packet, gamemode);
     NET_WriteInt16(packet, gamemission);
     NET_WriteInt8(packet, lowres_turn);
     NET_WriteString(packet, net_player_name);
-    NET_WriteString(packet, PACKAGE_STRING);
     NET_Conn_SendPacket(&client_connection, packet);
     NET_FreePacket(packet);
 }
