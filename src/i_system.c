@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_system.c 458 2006-03-30 19:25:12Z fraggle $
+// $Id: i_system.c 463 2006-04-06 19:44:06Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -81,7 +81,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_system.c 458 2006-03-30 19:25:12Z fraggle $";
+rcsid[] = "$Id: i_system.c 463 2006-04-06 19:44:06Z fraggle $";
 
 
 #include <stdlib.h>
@@ -224,6 +224,7 @@ void I_Endoom(void)
 void I_Quit (void)
 {
     D_QuitNetGame ();
+    G_CheckDemoStatus();
     I_ShutdownSound();
     I_ShutdownMusic();
     M_SaveDefaults ();
