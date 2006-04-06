@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 461 2006-04-06 17:53:43Z fraggle $
+// $Id: net_client.c 462 2006-04-06 19:31:45Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -257,7 +257,7 @@ static ticcmd_t last_ticcmd;
 
 // Buffer of ticcmd diffs being sent to the server
 
-static net_server_send_t send_queue[NET_TICCMD_QUEUE_SIZE];
+static net_server_send_t send_queue[BACKUPTICS];
 
 // Receive window
 
@@ -324,11 +324,11 @@ static void NET_CL_ExpandFullTiccmd(net_full_ticcmd_t *cmd, int seq)
 
     // Update average_latency
 
-    if (seq == send_queue[seq % NET_TICCMD_QUEUE_SIZE].seq)
+    if (seq == send_queue[seq % BACKUPTICS].seq)
     {
-        latency = I_GetTimeMS() - send_queue[seq % NET_TICCMD_QUEUE_SIZE].time;
+        latency = I_GetTimeMS() - send_queue[seq % BACKUPTICS].time;
     }
-    else if (seq > send_queue[seq % NET_TICCMD_QUEUE_SIZE].seq)
+    else if (seq > send_queue[seq % BACKUPTICS].seq)
     {
         // We have received the ticcmd from the server before we have
         // even sent ours
@@ -517,7 +517,7 @@ static void NET_CL_SendTics(int start, int end)
     {
         net_server_send_t *sendobj;
 
-        sendobj = &send_queue[i % NET_TICCMD_QUEUE_SIZE];
+        sendobj = &send_queue[i % BACKUPTICS];
 
         NET_WriteInt16(packet, average_latency / FRACUNIT);
 
@@ -547,7 +547,7 @@ void NET_CL_SendTiccmd(ticcmd_t *ticcmd, int maketic)
     
     // Store in the send queue
 
-    sendobj = &send_queue[maketic % NET_TICCMD_QUEUE_SIZE];
+    sendobj = &send_queue[maketic % BACKUPTICS];
     sendobj->active = true;
     sendobj->seq = maketic;
     sendobj->time = I_GetTimeMS();

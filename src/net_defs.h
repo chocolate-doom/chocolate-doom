@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_defs.h 410 2006-03-07 12:46:52Z fraggle $
+// $Id: net_defs.h 462 2006-04-06 19:31:45Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -138,10 +138,6 @@ struct _net_addr_s
     net_module_t *module;
     void *handle;
 };
-
-// number of ticcmds to store in send queues
-
-#define NET_TICCMD_QUEUE_SIZE 64
 
 // magic number sent when connecting to check this is a valid client
 
