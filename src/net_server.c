@@ -1058,6 +1058,42 @@ static void NET_SV_ParseResendRequest(net_packet_t *packet, net_client_t *client
     NET_SV_SendTics(client, start, last);
 }
 
+// Send a response back to the client
+
+void NET_SV_SendQueryResponse(net_addr_t *addr)
+{
+    net_packet_t *reply;
+
+    reply = NET_NewPacket(64);
+    NET_WriteInt16(reply, NET_PACKET_TYPE_QUERY_RESPONSE);
+
+    // Version
+
+    NET_WriteString(reply, PACKAGE_STRING);
+
+    // Server state
+
+    NET_WriteInt8(reply, server_state);
+
+    // Number of players/maximum players
+
+    NET_WriteInt8(reply, NET_SV_NumClients());
+    NET_WriteInt8(reply, MAXPLAYERS);
+
+    // Game mode/mission
+
+    NET_WriteInt8(reply, sv_gamemode);
+    NET_WriteInt8(reply, sv_gamemission);
+
+    // Server description.  This is currently hard-coded.
+
+    NET_WriteString(reply, "Chocolate Doom server");
+
+    // Send it and we're done.
+
+    NET_SendPacket(addr, reply);
+    NET_FreePacket(reply);
+}
 
 // Process a packet received by the server
 
@@ -1082,6 +1118,10 @@ static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
     if (packet_type == NET_PACKET_TYPE_SYN)
     {
         NET_SV_ParseSYN(packet, client, addr);
+    }
+    else if (packet_type == NET_PACKET_TYPE_QUERY)
+    {
+        NET_SV_SendQueryResponse(addr);
     }
     else if (client == NULL)
     {
@@ -1299,6 +1339,7 @@ static void NET_SV_RunClient(net_client_t *client)
         if (NET_SV_NumClients() <= 0)
         {
             server_state = SERVER_WAITING_START;
+            sv_gamemode = indetermined;
         }
     }
     
@@ -1355,6 +1396,7 @@ void NET_SV_Init(void)
     }
 
     server_state = SERVER_WAITING_START;
+    sv_gamemode = indetermined;
     server_initialised = true;
 }
 
