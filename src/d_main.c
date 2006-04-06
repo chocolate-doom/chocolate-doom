@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 455 2006-03-30 19:08:37Z fraggle $
+// $Id: d_main.c 464 2006-04-06 20:48:35Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -184,7 +184,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 455 2006-03-30 19:08:37Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 464 2006-04-06 20:48:35Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -240,6 +240,7 @@ static const char rcsid[] = "$Id: d_main.c 455 2006-03-30 19:08:37Z fraggle $";
 #include "am_map.h"
 #include "net_client.h"
 #include "net_dedicated.h"
+#include "net_query.h"
 
 #include "p_setup.h"
 #include "r_local.h"
@@ -1357,6 +1358,16 @@ void D_DoomMain (void)
 
         // Never returns
     }
+
+    // Query network servers?
+
+    p = M_CheckParm("-query");
+
+    if (p > 0)
+    {
+        NET_QueryAddress(myargv[p+1]);
+    }
+
 
 #ifdef FEATURE_DEHACKED
     printf("DEH_Init: Init Dehacked support.\n");
