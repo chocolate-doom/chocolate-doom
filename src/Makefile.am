@@ -81,6 +81,7 @@ net_gui.c            net_gui.h             \
 net_io.c             net_io.h              \
 net_loop.c           net_loop.h            \
 net_packet.c         net_packet.h          \
+net_query.c          net_query.h           \
 net_sdl.c            net_sdl.h             \
 net_server.c         net_server.h          \
 net_structrw.c       net_structrw.h        \
