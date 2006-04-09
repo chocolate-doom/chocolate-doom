@@ -1368,6 +1368,10 @@ void D_DoomMain (void)
         NET_QueryAddress(myargv[p+1]);
     }
 
+    if (M_CheckParm("-search"))
+        NET_LANQuery();
+            
+
 
 #ifdef FEATURE_DEHACKED
     printf("DEH_Init: Init Dehacked support.\n");

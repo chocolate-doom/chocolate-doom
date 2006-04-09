@@ -43,6 +43,7 @@
 #include "i_system.h"
 #include "m_argv.h"
 #include "net_defs.h"
+#include "net_io.h"
 #include "net_packet.h"
 #include "net_sdl.h"
 #include "z_zone.h"
@@ -53,7 +54,9 @@
 
 #include <SDL_net.h>
 
-static int port = 2342;
+#define DEFAULT_PORT 2342
+
+static int port = DEFAULT_PORT;
 static UDPsocket udpsocket;
 static UDPpacket *recvpacket;
 
@@ -208,7 +211,17 @@ static boolean NET_SDL_InitServer(void)
 static void NET_SDL_SendPacket(net_addr_t *addr, net_packet_t *packet)
 {
     UDPpacket sdl_packet;
-    IPaddress *ip = (IPaddress *) addr->handle;
+    IPaddress ip;
+   
+    if (addr == &net_broadcast_addr)
+    {
+        ip.host = INADDR_BROADCAST;
+        ip.port = DEFAULT_PORT;
+    }
+    else
+    {
+        ip = *((IPaddress *) addr->handle);
+    }
 
 #if 0
     {
@@ -229,7 +242,7 @@ static void NET_SDL_SendPacket(net_addr_t *addr, net_packet_t *packet)
     sdl_packet.channel = 0;
     sdl_packet.data = packet->data;
     sdl_packet.len = packet->len;
-    sdl_packet.address = *ip;
+    sdl_packet.address = ip;
 
     if (!SDLNet_UDP_Send(udpsocket, -1, &sdl_packet))
     {

@@ -46,7 +46,16 @@ static void NET_Query_SendQuery(net_addr_t *addr)
 
     request = NET_NewPacket(10);
     NET_WriteInt16(request, NET_PACKET_TYPE_QUERY);
-    NET_SendPacket(addr, request);
+
+    if (addr == NULL)
+    {
+        NET_SendBroadcast(query_context, request);
+    }
+    else
+    {
+        NET_SendPacket(addr, request);
+    }
+
     NET_FreePacket(request);
 }
 
@@ -164,6 +173,7 @@ void NET_Query_Init(void)
 void NET_QueryAddress(char *addr)
 {
     int start_time;
+    int last_send_time;
     net_addr_t *net_addr;
     
     NET_Query_Init();
@@ -177,12 +187,21 @@ void NET_QueryAddress(char *addr)
 
     printf("\nQuerying '%s'...\n\n", addr);
 
-    NET_Query_SendQuery(net_addr);
-
+    last_send_time = -1;
     start_time = I_GetTimeMS();
 
     while (num_responses <= 0 && I_GetTimeMS() < start_time + 5000)
     {
+        // Send a query once every second
+
+        if (last_send_time < 0 || I_GetTimeMS() > last_send_time + 1000)
+        {
+            NET_Query_SendQuery(net_addr);
+            last_send_time = I_GetTimeMS();
+        }
+
+        // Check for a response
+
         NET_Query_GetResponse();
         I_Sleep(100);
     }
@@ -190,6 +209,40 @@ void NET_QueryAddress(char *addr)
     if (num_responses <= 0)
     {
         I_Error("No response from '%s'", addr);
+    }
+
+    exit(0);
+}
+
+void NET_LANQuery(void)
+{
+    int start_time;
+    int last_send_time;
+    
+    NET_Query_Init();
+
+    printf("\nPerforming broadcast scan for servers ...\n\n");
+
+    start_time = I_GetTimeMS();
+    last_send_time = -1;
+
+    while (num_responses <= 0 && I_GetTimeMS() < start_time + 5000)
+    {
+        // Send a query once every second
+
+        if (last_send_time < 0 || I_GetTimeMS() > last_send_time + 1000)
+        {
+            NET_Query_SendQuery(NULL);
+            last_send_time = I_GetTimeMS();
+        }
+
+        NET_Query_GetResponse();
+        I_Sleep(100);
+    }
+
+    if (num_responses <= 0)
+    {
+        I_Error("No servers found");
     }
 
     exit(0);
