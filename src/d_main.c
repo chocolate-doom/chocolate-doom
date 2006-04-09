@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 464 2006-04-06 20:48:35Z fraggle $
+// $Id: d_main.c 467 2006-04-09 02:50:34Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -184,7 +184,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 464 2006-04-06 20:48:35Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 467 2006-04-09 02:50:34Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -1367,6 +1367,10 @@ void D_DoomMain (void)
     {
         NET_QueryAddress(myargv[p+1]);
     }
+
+    if (M_CheckParm("-search"))
+        NET_LANQuery();
+            
 
 
 #ifdef FEATURE_DEHACKED
