@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_io.h 249 2006-01-02 21:02:16Z fraggle $
+// $Id: net_io.h 468 2006-04-09 02:54:21Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -39,9 +39,12 @@
 
 #include "net_defs.h"
 
+extern net_addr_t net_broadcast_addr;
+
 net_context_t *NET_NewContext(void);
 void NET_AddModule(net_context_t *context, net_module_t *module);
 void NET_SendPacket(net_addr_t *addr, net_packet_t *packet);
+void NET_SendBroadcast(net_context_t *context, net_packet_t *packet);
 boolean NET_RecvPacket(net_context_t *context, net_addr_t **addr, 
                        net_packet_t **packet);
 char *NET_AddrToString(net_addr_t *addr);
