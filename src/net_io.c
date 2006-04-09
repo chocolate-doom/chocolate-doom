@@ -48,6 +48,8 @@ struct _net_context_s
     int num_modules;
 };
 
+net_addr_t net_broadcast_addr;
+
 net_context_t *NET_NewContext(void)
 {
     net_context_t *context;
@@ -92,6 +94,16 @@ net_addr_t *NET_ResolveAddress(net_context_t *context, char *addr)
 void NET_SendPacket(net_addr_t *addr, net_packet_t *packet)
 {
     addr->module->SendPacket(addr, packet);
+}
+
+void NET_SendBroadcast(net_context_t *context, net_packet_t *packet)
+{
+    int i;
+
+    for (i=0; i<context->num_modules; ++i)
+    {
+        context->modules[i]->SendPacket(&net_broadcast_addr, packet);
+    }
 }
 
 boolean NET_RecvPacket(net_context_t *context, 
