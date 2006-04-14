@@ -269,6 +269,11 @@ static net_server_recv_t recvwindow[BACKUPTICS];
 
 static fixed_t average_latency;
 
+// Use new-style ticcmd sync (fixes indigo lag)
+
+boolean net_cl_new_sync = true;
+
+
 #define NET_CL_ExpandTicNum(b) NET_ExpandTicNum(recvwindow_start, (b))
 
 // Called when a player leaves the game
@@ -466,6 +471,11 @@ void NET_CL_StartGame(void)
     settings.gameversion = gameversion;
     settings.nomonsters = nomonsters;
 
+    if (M_CheckParm("-oldsync") > 0)
+	settings.new_sync = 0;
+    else
+	settings.new_sync = 1;
+    
     i = M_CheckParm("-extratics");
 
     if (i > 0)
@@ -663,6 +673,12 @@ static void NET_CL_ParseGameStart(net_packet_t *packet)
     startskill = settings.skill;
     lowres_turn = settings.lowres_turn;
     nomonsters = settings.nomonsters;
+    net_cl_new_sync = settings.new_sync != 0;
+
+    if (net_cl_new_sync == false)
+    {
+	printf("Syncing netgames like Vanilla Doom.\n");
+    }
 
     memset(recvwindow, 0, sizeof(recvwindow));
     recvwindow_start = 0;

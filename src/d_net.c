@@ -157,6 +157,7 @@ int         	nettics[MAXPLAYERS];
 int             maketic;
 
 int		lastnettic;
+int             skiptics;
 int		ticdup;		
 int             extratics;
 fixed_t         offsetms;
@@ -173,7 +174,15 @@ static int GetAdjustedTime(void)
 {
     int time_ms;
 
-    time_ms = I_GetTimeMS() + (offsetms / FRACUNIT);
+    time_ms = I_GetTimeMS();
+
+    if (net_cl_new_sync)
+    {
+	// Use the adjustments from net_client.c only if we are
+	// using the new sync mode.
+
+        time_ms += (offsetms / FRACUNIT);
+    }
 
     return (time_ms * FPS) / 1000;
 }
@@ -187,10 +196,10 @@ int      lasttime;
 
 void NetUpdate (void)
 {
-    int             nowtime;
-    int             newtics;
-    int				i;
-    int				gameticdiv;
+    int nowtime;
+    int newtics;
+    int	i;
+    int	gameticdiv;
 
     // If we are running with singletics (timing a demo), this
     // is all done separately.
@@ -208,12 +217,20 @@ void NetUpdate (void)
 #endif
 
     // check time
-    nowtime = GetAdjustedTime()/ticdup;
+    nowtime = GetAdjustedTime() / ticdup;
     newtics = nowtime - lasttime;
     lasttime = nowtime;
 
-    if (newtics <= 0) 	// nothing new to update
-        return;
+    if (skiptics <= newtics)
+    {
+        newtics -= skiptics;
+        skiptics = 0;
+    }
+    else
+    {
+        skiptics -= newtics;
+        newtics = 0;
+    }
 
     // build new ticcmds for console player
     gameticdiv = gametic/ticdup;
@@ -229,16 +246,24 @@ void NetUpdate (void)
 
         M_Ticker ();
 	
-        // If playing single player, do not allow tics to buffer
-        // up very far
+        if (net_cl_new_sync)
+        { 
+           // If playing single player, do not allow tics to buffer
+           // up very far
 
-        if ((!netgame || demoplayback) && maketic - gameticdiv > 2)
-            break;
+           if ((!netgame || demoplayback) && maketic - gameticdiv > 2)
+               break;
 
-        // Never go more than ~200ms ahead
+           // Never go more than ~200ms ahead
 
-        if (maketic - gameticdiv > 8)
-            break;
+           if (maketic - gameticdiv > 8)
+               break;
+        }
+	else
+	{
+           if (maketic - gameticdiv >= 5)
+               break;
+	}
 
 	//printf ("mk:%i ",maketic);
 	G_BuildTiccmd(&cmd);
@@ -408,19 +433,27 @@ static int GetLowTic(void)
 // TryRunTics
 //
 int	oldnettics;
+int	frametics[4];
+int	frameon;
+int	frameskip[4];
+int	oldnettics;
 
 extern	boolean	advancedemo;
 
 void TryRunTics (void)
 {
-    int		i;
-    int		lowtic;
-    int		entertic;
-    int		availabletics;
-    int		counts;
+    int	i;
+    int	lowtic;
+    int	entertic;
+    static int oldentertics;
+    int realtics;
+    int	availabletics;
+    int	counts;
     
     // get real tics		
-    entertic = I_GetTime ()/ticdup;
+    entertic = I_GetTime() / ticdup;
+    realtics = entertic - oldentertics;
+    oldentertics = entertic;
     
     // get available tics
     NetUpdate ();
@@ -431,7 +464,71 @@ void TryRunTics (void)
     
     // decide how many tics to run
     
-    counts = availabletics;
+    if (net_cl_new_sync)
+    {
+	counts = availabletics;
+    }
+    else
+    {
+        // decide how many tics to run
+        if (realtics < availabletics-1)
+            counts = realtics+1;
+        else if (realtics < availabletics)
+            counts = realtics;
+        else
+            counts = availabletics;
+        
+        if (counts < 1)
+            counts = 1;
+                    
+        frameon++;
+
+        if (!demoplayback)
+        {
+	    int keyplayer = -1;
+
+            // ideally maketic should be 1 - 3 tics above lowtic
+            // if we are consistantly slower, speed up time
+
+            for (i=0 ; i<MAXPLAYERS ; i++)
+	    {
+                if (playeringame[i])
+		{
+		    keyplayer = i;
+                    break;
+		}
+	    }
+
+	    if (keyplayer < 0)
+	    {
+		// If there are no players, we can never advance anyway
+
+		return;
+	    }
+
+            if (consoleplayer == keyplayer)
+            {
+                // the key player does not adapt
+            }
+            else
+            {
+                if (maketic <= nettics[keyplayer])
+                {
+                    lasttime--;
+                    // printf ("-");
+                }
+
+                frameskip[frameon & 3] = (oldnettics > nettics[keyplayer]);
+                oldnettics = maketic;
+
+                if (frameskip[0] && frameskip[1] && frameskip[2] && frameskip[3])
+                {
+                    skiptics = 1;
+                    // printf ("+");
+                }
+            }
+        }
+    }
 
     if (counts < 1)
 	counts = 1;
@@ -449,7 +546,7 @@ void TryRunTics (void)
         // Don't stay in this loop forever.  The menu is still running,
         // so return to update the screen
 
-	if (I_GetTime ()/ticdup - entertic > 0)
+	if (I_GetTime() / ticdup - entertic > 0)
 	{
 	    return;
 	} 
