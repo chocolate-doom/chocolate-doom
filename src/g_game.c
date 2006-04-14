@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: g_game.c 455 2006-03-30 19:08:37Z fraggle $
+// $Id: g_game.c 469 2006-04-14 15:24:32Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -134,7 +134,7 @@
 
 
 static const char
-rcsid[] = "$Id: g_game.c 455 2006-03-30 19:08:37Z fraggle $";
+rcsid[] = "$Id: g_game.c 469 2006-04-14 15:24:32Z fraggle $";
 
 #include <string.h>
 #include <stdlib.h>
@@ -1076,7 +1076,7 @@ G_CheckSpot
 	
     // spawn a teleport fog 
     ss = R_PointInSubsector (x,y); 
-    an = ( ANG45 * (mthing->angle/45) ) >> ANGLETOFINESHIFT; 
+    an = ( ANG45 * (((unsigned int) mthing->angle)/45) ) >> ANGLETOFINESHIFT; 
  
     mo = P_SpawnMobj (x+20*finecosine[an], y+20*finesine[an] 
 		      , ss->sector->floorheight 
