@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: g_game.c 469 2006-04-14 15:24:32Z fraggle $
+// $Id: g_game.c 472 2006-04-28 17:31:21Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -134,7 +134,7 @@
 
 
 static const char
-rcsid[] = "$Id: g_game.c 469 2006-04-14 15:24:32Z fraggle $";
+rcsid[] = "$Id: g_game.c 472 2006-04-28 17:31:21Z fraggle $";
 
 #include <string.h>
 #include <stdlib.h>
@@ -597,7 +597,6 @@ extern  gamestate_t     wipegamestate;
  
 void G_DoLoadLevel (void) 
 { 
-    char *skytexturename;
     int             i; 
 
     // Set the sky map.
@@ -605,43 +604,8 @@ void G_DoLoadLevel (void)
     //  a flat. The data is in the WAD only because
     //  we look for an actual index, instead of simply
     //  setting one.
+
     skyflatnum = R_FlatNumForName(DEH_String(SKYFLATNAME));
-
-    // DOOM determines the sky texture to be used
-    // depending on the current episode, and the game version.
-
-    if (gamemode == commercial)
-    {
-	skytexturename = "SKY3";
-	if (gamemap < 12)
-	    skytexturename = "SKY1";
-	else
-	    if (gamemap < 21)
-		skytexturename = "SKY2";
-    }
-    else
-    {
-	switch (gameepisode) 
-	{ 
-	  default:
-	  case 1: 
-	    skytexturename = "SKY1"; 
-	    break; 
-	  case 2: 
-	    skytexturename = "SKY2"; 
-	    break; 
-	  case 3: 
-	    skytexturename = "SKY3"; 
-	    break; 
-	  case 4:	// Special Edition sky
-	    skytexturename = "SKY4";
-	    break;
-	} 
-    }
-
-    skytexturename = DEH_String(skytexturename);
-
-    skytexture = R_TextureNumForName(skytexturename);
 
     levelstarttic = gametic;        // for time calculation
     
@@ -1547,6 +1511,7 @@ G_InitNew
   int		episode,
   int		map ) 
 { 
+    char *skytexturename;
     int             i; 
 	 
     if (paused) 
@@ -1630,6 +1595,50 @@ G_InitNew
     gameskill = skill; 
  
     viewactive = true;
+
+    // Set the sky to use.
+    //
+    // Note: This IS broken, but it is how Vanilla Doom behaves.  
+    // See http://doom.wikia.com/wiki/Sky_never_changes_in_Doom_II.
+    //
+    // Because we set the sky here at the start of a game, not at the
+    // start of a level, the sky texture never changes unless we
+    // restore from a saved game.  This was fixed before the Doom
+    // source release, but this IS the way Vanilla DOS Doom behaves.
+
+    if (gamemode == commercial)
+    {
+        if (gamemap < 12)
+            skytexturename = "SKY1";
+        else if (gamemap < 21)
+            skytexturename = "SKY2";
+        else
+            skytexturename = "SKY3";
+    }
+    else
+    {
+        switch (gameepisode) 
+        { 
+          default:
+          case 1: 
+            skytexturename = "SKY1"; 
+            break; 
+          case 2: 
+            skytexturename = "SKY2"; 
+            break; 
+          case 3: 
+            skytexturename = "SKY3"; 
+            break; 
+          case 4:        // Special Edition sky
+            skytexturename = "SKY4";
+            break;
+        } 
+    }
+
+    skytexturename = DEH_String(skytexturename);
+
+    skytexture = R_TextureNumForName(skytexturename);
+
     
     G_DoLoadLevel (); 
 } 
