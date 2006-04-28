@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 455 2006-03-30 19:08:37Z fraggle $
+// $Id: i_video.c 471 2006-04-28 17:20:05Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -175,7 +175,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 455 2006-03-30 19:08:37Z fraggle $";
+rcsid[] = "$Id: i_video.c 471 2006-04-28 17:20:05Z fraggle $";
 
 #include <SDL.h>
 #include <ctype.h>
@@ -792,9 +792,9 @@ void I_FinishUpdate (void)
 	lasttic = i;
 	if (tics > 20) tics = 20;
 
-	for (i=0 ; i<tics*2 ; i+=2)
+	for (i=0 ; i<tics*2 ; i+=4)
 	    screens[0][ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0xff;
-	for ( ; i<20*2 ; i+=2)
+	for ( ; i<20*4 ; i+=4)
 	    screens[0][ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
     
     }
