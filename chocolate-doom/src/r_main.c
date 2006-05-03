@@ -423,6 +423,7 @@ R_PointToDist
     fixed_t	dy;
     fixed_t	temp;
     fixed_t	dist;
+    fixed_t     frac;
 	
     dx = abs(x - viewx);
     dy = abs(y - viewy);
@@ -433,8 +434,19 @@ R_PointToDist
 	dx = dy;
 	dy = temp;
     }
+
+    // Fix crashes in udm1.wad
+
+    if (dx != 0)
+    {
+        frac = FixedDiv(dy, dx);
+    }
+    else
+    {
+	frac = 0;
+    }
 	
-    angle = (tantoangle[ FixedDiv(dy,dx)>>DBITS ]+ANG90) >> ANGLETOFINESHIFT;
+    angle = (tantoangle[frac>>DBITS]+ANG90) >> ANGLETOFINESHIFT;
 
     // use as cosine
     dist = FixedDiv (dx, finesine[angle] );	
