@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: r_main.c 445 2006-03-27 22:56:14Z fraggle $
+// $Id: r_main.c 474 2006-05-03 19:23:54Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -49,7 +49,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: r_main.c 445 2006-03-27 22:56:14Z fraggle $";
+static const char rcsid[] = "$Id: r_main.c 474 2006-05-03 19:23:54Z fraggle $";
 
 
 
@@ -423,6 +423,7 @@ R_PointToDist
     fixed_t	dy;
     fixed_t	temp;
     fixed_t	dist;
+    fixed_t     frac;
 	
     dx = abs(x - viewx);
     dy = abs(y - viewy);
@@ -433,8 +434,19 @@ R_PointToDist
 	dx = dy;
 	dy = temp;
     }
+
+    // Fix crashes in udm1.wad
+
+    if (dx != 0)
+    {
+        frac = FixedDiv(dy, dx);
+    }
+    else
+    {
+	frac = 0;
+    }
 	
-    angle = (tantoangle[ FixedDiv(dy,dx)>>DBITS ]+ANG90) >> ANGLETOFINESHIFT;
+    angle = (tantoangle[frac>>DBITS]+ANG90) >> ANGLETOFINESHIFT;
 
     // use as cosine
     dist = FixedDiv (dx, finesine[angle] );	
