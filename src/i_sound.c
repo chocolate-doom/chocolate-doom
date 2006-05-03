@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_sound.c 429 2006-03-23 17:43:15Z fraggle $
+// $Id: i_sound.c 473 2006-05-03 18:54:08Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -128,7 +128,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_sound.c 429 2006-03-23 17:43:15Z fraggle $";
+rcsid[] = "$Id: i_sound.c 473 2006-05-03 18:54:08Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -153,6 +153,8 @@ rcsid[] = "$Id: i_sound.c 429 2006-03-23 17:43:15Z fraggle $";
 #include "doomdef.h"
 
 #define NUM_CHANNELS		16
+
+#define MAXMIDLENGTH        (96 * 1024)
 
 static boolean sound_initialised = false;
 static boolean music_initialised = false;
@@ -669,34 +671,32 @@ void I_UnRegisterSong(void *handle)
     Mix_FreeMusic(music);
 }
 
-void *I_RegisterSong(void *data, int len)
+// Determine whether memory block is a .mid file 
+
+static boolean IsMid(byte *mem, int len)
 {
-    char filename[64];
-    Mix_Music *music;
+    return len > 4 && !memcmp(mem, "MThd", 4);
+}
+
+// Determine whether memory block is a .mus file
+
+static boolean IsMus(byte *mem, int len)
+{
+    return len > 3 && !memcmp(mem, "MUS", 3);
+}
+
+static boolean ConvertMus(byte *musdata, int len, char *filename)
+{
     MIDI *mididata;
     UBYTE *mid;
     int midlen;
-
-    if (!music_initialised)
-        return NULL;
-    
-    // MUS files begin with "MUS"
-    // Reject anything which doesnt have this signature
-
-    if (len < 3 || memcmp(data, "MUS", 3) != 0)
-        return NULL;
-    
-#ifdef _WIN32
-    sprintf(filename, "doom.mid");
-#else
-    sprintf(filename, "/tmp/doom-%i.mid", getpid());
-#endif
+    boolean result;
 
     // Convert from mus to midi
     // Bits here came from PrBoom
   
     mididata = Z_Malloc(sizeof(MIDI), PU_STATIC, 0);
-    mmus2mid(data, mididata, 89, 0);
+    mmus2mid(musdata, mididata, 89, 0);
 
     if (MIDIToMidi(mididata, &mid, &midlen))
     {
@@ -704,7 +704,7 @@ void *I_RegisterSong(void *data, int len)
 
         fprintf(stderr, "Error converting MUS lump.\n");
 
-        music = NULL;
+        result = false;
     }
     else
     {
@@ -716,22 +716,62 @@ void *I_RegisterSong(void *data, int len)
        
         free(mid);
         free_mididata(mididata);
-        music = Mix_LoadMUS(filename);
-        
-        if (music == NULL)
-        {
-            // Failed to load
 
-            fprintf(stderr, "Error loading midi\n");
-        }
-
-        // remove file now
-
-        remove(filename);
+        result = true;
     }
 
     Z_Free(mididata);
+
+    return result;
+}
+
+void *I_RegisterSong(void *data, int len)
+{
+    char filename[64];
+    Mix_Music *music;
+
+    if (!music_initialised)
+        return NULL;
     
+    // MUS files begin with "MUS"
+    // Reject anything which doesnt have this signature
+    
+#ifdef _WIN32
+    sprintf(filename, "doom.mid");
+#else
+    sprintf(filename, "/tmp/doom-%i.mid", getpid());
+#endif
+
+    if (IsMus(data, len))
+    {
+        ConvertMus(data, len, filename);
+    }
+    else if (IsMid(data, len) && len < MAXMIDLENGTH)
+    {
+        M_WriteFile(filename, data, len);
+    }
+    else
+    {
+        // Unrecognised: unable to load
+
+        return NULL;
+    }
+
+    // Load the MIDI
+
+    music = Mix_LoadMUS(filename);
+    
+    if (music == NULL)
+    {
+        // Failed to load
+
+        fprintf(stderr, "Error loading midi\n");
+    }
+
+    // remove file now
+
+    remove(filename);
+
     return music;
 }
 
