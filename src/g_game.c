@@ -218,7 +218,11 @@ skill_t         gameskill;
 boolean		respawnmonsters;
 int             gameepisode; 
 int             gamemap; 
- 
+
+// If non-zero, exit the level after this number of minutes.
+
+int             timelimit;
+
 boolean         paused; 
 boolean         sendpause;             	// send a pause event next tic 
 boolean         sendsave;             	// send a save event next tic 

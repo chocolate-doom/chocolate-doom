@@ -80,6 +80,7 @@ void NET_WriteSettings(net_packet_t *packet, net_gamesettings_t *settings)
     NET_WriteInt8(packet, settings->gameversion);
     NET_WriteInt8(packet, settings->lowres_turn);
     NET_WriteInt8(packet, settings->new_sync);
+    NET_WriteInt32(packet, settings->timelimit);
 }
 
 boolean NET_ReadSettings(net_packet_t *packet, net_gamesettings_t *settings)
@@ -93,7 +94,8 @@ boolean NET_ReadSettings(net_packet_t *packet, net_gamesettings_t *settings)
         && NET_ReadInt8(packet, (unsigned int *) &settings->skill)
         && NET_ReadInt8(packet, (unsigned int *) &settings->gameversion)
         && NET_ReadInt8(packet, (unsigned int *) &settings->lowres_turn)
-	&& NET_ReadInt8(packet, (unsigned int *) &settings->new_sync);
+	&& NET_ReadInt8(packet, (unsigned int *) &settings->new_sync)
+	&& NET_ReadInt32(packet, (unsigned int *) &settings->timelimit);
 }
 
 void NET_WriteTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff, 

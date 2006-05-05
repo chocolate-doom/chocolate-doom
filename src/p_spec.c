@@ -1271,23 +1271,16 @@ void P_SpawnSpecials (void)
 	episode = 2;
 
     
-    // See if -TIMER needs to be used.
-    levelTimer = false;
-	
-    i = M_CheckParm("-avg");
-    if (i && deathmatch)
+    // See if -TIMER was specified.
+
+    if (timelimit > 0)
     {
-	levelTimer = true;
-	levelTimeCount = 20 * 60 * 35;
+        levelTimer = true;
+        levelTimeCount = timelimit * 60 * 35;
     }
-	
-    i = M_CheckParm("-timer");
-    if (i && deathmatch)
+    else
     {
-	int	time;
-	time = atoi(myargv[i+1]) * 60 * 35;
-	levelTimer = true;
-	levelTimeCount = time;
+	levelTimer = false;
     }
     
     //	Init special SECTORs.
