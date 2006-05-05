@@ -470,6 +470,7 @@ void NET_CL_StartGame(void)
     settings.skill = startskill;
     settings.gameversion = gameversion;
     settings.nomonsters = nomonsters;
+    settings.timelimit = timelimit;
 
     if (M_CheckParm("-oldsync") > 0)
 	settings.new_sync = 0;
@@ -674,6 +675,7 @@ static void NET_CL_ParseGameStart(net_packet_t *packet)
     lowres_turn = settings.lowres_turn;
     nomonsters = settings.nomonsters;
     net_cl_new_sync = settings.new_sync != 0;
+    timelimit = settings.timelimit;
 
     if (net_cl_new_sync == false)
     {

@@ -131,6 +131,8 @@ static const char rcsid[] = "$Id$";
 #include "doomdef.h"
 #include "doomstat.h"
 
+#include "deh_main.h"
+
 #include "net_client.h"
 #include "net_gui.h"
 #include "net_io.h"
@@ -375,12 +377,21 @@ void D_CheckNetGame (void)
             ++num_players;
     }
 
-    printf ("startskill %i  deathmatch: %i  startmap: %i  startepisode: %i\n",
+    printf (DEH_String("startskill %i  deathmatch: %i  startmap: %i  startepisode: %i\n"),
 	    startskill, deathmatch, startmap, startepisode);
 	
-    printf ("player %i of %i (%i nodes)\n",
+    printf(DEH_String("player %i of %i (%i nodes)\n"),
 	    consoleplayer+1, num_players, num_players);
 
+    // Show players here; the server might have specified a time limit
+
+    if (timelimit > 0)
+    {
+	printf(DEH_String("Levels will end after %d minute"),timelimit);
+	if (timelimit > 1)
+	    printf("s");
+	printf(".\n");
+    }
 }
 
 
