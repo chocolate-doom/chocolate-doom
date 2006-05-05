@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: g_game.c 472 2006-04-28 17:31:21Z fraggle $
+// $Id: g_game.c 475 2006-05-05 19:49:34Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -134,7 +134,7 @@
 
 
 static const char
-rcsid[] = "$Id: g_game.c 472 2006-04-28 17:31:21Z fraggle $";
+rcsid[] = "$Id: g_game.c 475 2006-05-05 19:49:34Z fraggle $";
 
 #include <string.h>
 #include <stdlib.h>
@@ -218,7 +218,11 @@ skill_t         gameskill;
 boolean		respawnmonsters;
 int             gameepisode; 
 int             gamemap; 
- 
+
+// If non-zero, exit the level after this number of minutes.
+
+int             timelimit;
+
 boolean         paused; 
 boolean         sendpause;             	// send a pause event next tic 
 boolean         sendsave;             	// send a save event next tic 

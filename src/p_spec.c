@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_spec.c 344 2006-01-25 17:38:40Z fraggle $
+// $Id: p_spec.c 475 2006-05-05 19:49:34Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -45,7 +45,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_spec.c 344 2006-01-25 17:38:40Z fraggle $";
+rcsid[] = "$Id: p_spec.c 475 2006-05-05 19:49:34Z fraggle $";
 
 #include <stdlib.h>
 
@@ -1271,23 +1271,16 @@ void P_SpawnSpecials (void)
 	episode = 2;
 
     
-    // See if -TIMER needs to be used.
-    levelTimer = false;
-	
-    i = M_CheckParm("-avg");
-    if (i && deathmatch)
+    // See if -TIMER was specified.
+
+    if (timelimit > 0)
     {
-	levelTimer = true;
-	levelTimeCount = 20 * 60 * 35;
+        levelTimer = true;
+        levelTimeCount = timelimit * 60 * 35;
     }
-	
-    i = M_CheckParm("-timer");
-    if (i && deathmatch)
+    else
     {
-	int	time;
-	time = atoi(myargv[i+1]) * 60 * 35;
-	levelTimer = true;
-	levelTimeCount = time;
+	levelTimer = false;
     }
     
     //	Init special SECTORs.

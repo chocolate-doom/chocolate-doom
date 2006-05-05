@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 467 2006-04-09 02:50:34Z fraggle $
+// $Id: d_main.c 475 2006-05-05 19:49:34Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -184,7 +184,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 467 2006-04-09 02:50:34Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 475 2006-05-05 19:49:34Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -1600,21 +1600,22 @@ void D_DoomMain (void)
 	autostart = true;
     }
 	
+    timelimit = 0;
+
     p = M_CheckParm ("-timer");
     if (p && p < myargc-1 && deathmatch)
     {
-	int     time;
-	time = atoi(myargv[p+1]);
-	printf(DEH_String("Levels will end after %d minute"),time);
-	if (time>1)
-	    printf("s");
-	printf(".\n");
+	timelimit = atoi(myargv[p+1]);
+	printf("timer: %i\n", timelimit);
     }
 
     p = M_CheckParm ("-avg");
     if (p && p < myargc-1 && deathmatch)
+    {
 	printf(DEH_String("Austin Virtual Gaming: Levels will end "
 			  "after 20 minutes\n"));
+	timelimit = 20;
+    }
 
     p = M_CheckParm ("-warp");
     if (p && p < myargc-1)

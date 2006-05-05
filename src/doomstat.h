@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: doomstat.h 429 2006-03-23 17:43:15Z fraggle $
+// $Id: doomstat.h 475 2006-05-05 19:49:34Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -85,6 +85,9 @@ extern  boolean		autostart;
 extern  skill_t         gameskill;
 extern  int		gameepisode;
 extern  int		gamemap;
+
+// If non-zero, exit the level after this number of minutes
+extern  int             timelimit;
 
 // vertical movement from mouse/joystick disabled
 extern  int             novert;

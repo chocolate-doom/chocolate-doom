@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.c 470 2006-04-14 15:25:42Z fraggle $
+// $Id: d_net.c 475 2006-05-05 19:49:34Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -117,7 +117,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_net.c 470 2006-04-14 15:25:42Z fraggle $";
+static const char rcsid[] = "$Id: d_net.c 475 2006-05-05 19:49:34Z fraggle $";
 
 #include "doomfeatures.h"
 
@@ -130,6 +130,8 @@ static const char rcsid[] = "$Id: d_net.c 470 2006-04-14 15:25:42Z fraggle $";
 #include "g_game.h"
 #include "doomdef.h"
 #include "doomstat.h"
+
+#include "deh_main.h"
 
 #include "net_client.h"
 #include "net_gui.h"
@@ -375,12 +377,21 @@ void D_CheckNetGame (void)
             ++num_players;
     }
 
-    printf ("startskill %i  deathmatch: %i  startmap: %i  startepisode: %i\n",
+    printf (DEH_String("startskill %i  deathmatch: %i  startmap: %i  startepisode: %i\n"),
 	    startskill, deathmatch, startmap, startepisode);
 	
-    printf ("player %i of %i (%i nodes)\n",
+    printf(DEH_String("player %i of %i (%i nodes)\n"),
 	    consoleplayer+1, num_players, num_players);
 
+    // Show players here; the server might have specified a time limit
+
+    if (timelimit > 0)
+    {
+	printf(DEH_String("Levels will end after %d minute"),timelimit);
+	if (timelimit > 1)
+	    printf("s");
+	printf(".\n");
+    }
 }
 
 
