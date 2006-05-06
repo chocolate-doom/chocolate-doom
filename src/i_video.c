@@ -225,6 +225,7 @@ static boolean initialised = false;
 // disable mouse?
 
 static boolean nomouse = false;
+extern int usemouse;
 
 // if true, screens[0] is screen->pixel
 
@@ -521,7 +522,7 @@ void I_GetEvent(void)
                 break;
                 */
             case SDL_MOUSEBUTTONDOWN:
-		if (!nomouse)
+		if (usemouse && !nomouse)
 		{
                     event.type = ev_mouse;
                     event.data1 = MouseButtonState();
@@ -530,7 +531,7 @@ void I_GetEvent(void)
 		}
                 break;
             case SDL_MOUSEBUTTONUP:
-		if (!nomouse)
+		if (usemouse && !nomouse)
 		{
                     event.type = ev_mouse;
                     event.data1 = MouseButtonState();
@@ -584,7 +585,7 @@ void I_StartTic (void)
 {
     I_GetEvent();
 
-    if (!nomouse)
+    if (usemouse && !nomouse)
     {
         I_ReadMouse();
     }
