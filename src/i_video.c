@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 476 2006-05-06 19:14:08Z fraggle $
+// $Id: i_video.c 477 2006-05-06 19:22:31Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -175,7 +175,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 476 2006-05-06 19:14:08Z fraggle $";
+rcsid[] = "$Id: i_video.c 477 2006-05-06 19:22:31Z fraggle $";
 
 #include <SDL.h>
 #include <ctype.h>
@@ -225,6 +225,7 @@ static boolean initialised = false;
 // disable mouse?
 
 static boolean nomouse = false;
+extern int usemouse;
 
 // if true, screens[0] is screen->pixel
 
@@ -521,7 +522,7 @@ void I_GetEvent(void)
                 break;
                 */
             case SDL_MOUSEBUTTONDOWN:
-		if (!nomouse)
+		if (usemouse && !nomouse)
 		{
                     event.type = ev_mouse;
                     event.data1 = MouseButtonState();
@@ -530,7 +531,7 @@ void I_GetEvent(void)
 		}
                 break;
             case SDL_MOUSEBUTTONUP:
-		if (!nomouse)
+		if (usemouse && !nomouse)
 		{
                     event.type = ev_mouse;
                     event.data1 = MouseButtonState();
@@ -584,7 +585,7 @@ void I_StartTic (void)
 {
     I_GetEvent();
 
-    if (!nomouse)
+    if (usemouse && !nomouse)
     {
         I_ReadMouse();
     }
