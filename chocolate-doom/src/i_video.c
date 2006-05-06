@@ -222,6 +222,10 @@ static int windowwidth, windowheight;
 
 static boolean initialised = false;
 
+// disable mouse?
+
+static boolean nomouse = false;
+
 // if true, screens[0] is screen->pixel
 
 static boolean native_surface;
@@ -517,16 +521,22 @@ void I_GetEvent(void)
                 break;
                 */
             case SDL_MOUSEBUTTONDOWN:
-                event.type = ev_mouse;
-                event.data1 = MouseButtonState();
-                event.data2 = event.data3 = 0;
-                D_PostEvent(&event);
+		if (!nomouse)
+		{
+                    event.type = ev_mouse;
+                    event.data1 = MouseButtonState();
+                    event.data2 = event.data3 = 0;
+                    D_PostEvent(&event);
+		}
                 break;
             case SDL_MOUSEBUTTONUP:
-                event.type = ev_mouse;
-                event.data1 = MouseButtonState();
-                event.data2 = event.data3 = 0;
-                D_PostEvent(&event);
+		if (!nomouse)
+		{
+                    event.type = ev_mouse;
+                    event.data1 = MouseButtonState();
+                    event.data2 = event.data3 = 0;
+                    D_PostEvent(&event);
+		}
                 break;
             case SDL_QUIT:
                 // bring up the "quit doom?" prompt
@@ -573,7 +583,11 @@ static void I_ReadMouse(void)
 void I_StartTic (void)
 {
     I_GetEvent();
-    I_ReadMouse();
+
+    if (!nomouse)
+    {
+        I_ReadMouse();
+    }
 }
 
 
@@ -954,6 +968,8 @@ void I_InitGraphics(void)
     {
         flags |= SDL_FULLSCREEN;
     }
+
+    nomouse = M_CheckParm("-nomouse") > 0;
 
     // scale-by-2 mode
  
