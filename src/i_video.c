@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 471 2006-04-28 17:20:05Z fraggle $
+// $Id: i_video.c 476 2006-05-06 19:14:08Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -175,7 +175,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 471 2006-04-28 17:20:05Z fraggle $";
+rcsid[] = "$Id: i_video.c 476 2006-05-06 19:14:08Z fraggle $";
 
 #include <SDL.h>
 #include <ctype.h>
@@ -221,6 +221,10 @@ static int windowwidth, windowheight;
 // display has been set up?
 
 static boolean initialised = false;
+
+// disable mouse?
+
+static boolean nomouse = false;
 
 // if true, screens[0] is screen->pixel
 
@@ -517,16 +521,22 @@ void I_GetEvent(void)
                 break;
                 */
             case SDL_MOUSEBUTTONDOWN:
-                event.type = ev_mouse;
-                event.data1 = MouseButtonState();
-                event.data2 = event.data3 = 0;
-                D_PostEvent(&event);
+		if (!nomouse)
+		{
+                    event.type = ev_mouse;
+                    event.data1 = MouseButtonState();
+                    event.data2 = event.data3 = 0;
+                    D_PostEvent(&event);
+		}
                 break;
             case SDL_MOUSEBUTTONUP:
-                event.type = ev_mouse;
-                event.data1 = MouseButtonState();
-                event.data2 = event.data3 = 0;
-                D_PostEvent(&event);
+		if (!nomouse)
+		{
+                    event.type = ev_mouse;
+                    event.data1 = MouseButtonState();
+                    event.data2 = event.data3 = 0;
+                    D_PostEvent(&event);
+		}
                 break;
             case SDL_QUIT:
                 // bring up the "quit doom?" prompt
@@ -573,7 +583,11 @@ static void I_ReadMouse(void)
 void I_StartTic (void)
 {
     I_GetEvent();
-    I_ReadMouse();
+
+    if (!nomouse)
+    {
+        I_ReadMouse();
+    }
 }
 
 
@@ -954,6 +968,8 @@ void I_InitGraphics(void)
     {
         flags |= SDL_FULLSCREEN;
     }
+
+    nomouse = M_CheckParm("-nomouse") > 0;
 
     // scale-by-2 mode
  
