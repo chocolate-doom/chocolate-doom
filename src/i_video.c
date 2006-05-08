@@ -707,6 +707,53 @@ static void BlitArea(int x1, int y1, int x2, int y2)
             SDL_UnlockSurface(screen);
         }
     }
+
+    if (screenmultiply == 3)
+    {
+        byte *bufp, *screenp, *screenp2, *screenp3;
+        int x, y;
+        int pitch;
+
+        if (SDL_LockSurface(screen) >= 0)
+        {
+            pitch = screen->pitch * 3;
+            bufp = screens[0] + y1 * SCREENWIDTH + x1;
+            screenp = (byte *) screen->pixels 
+                    + (y1 + y_offset) * pitch 
+                    + x1 * 3;
+            screenp2 = screenp + screen->pitch;
+            screenp3 = screenp + screen->pitch * 2;
+    
+            for (y=y1; y<y2; ++y)
+            {
+                byte *sp, *sp2, *sp3, *bp;
+                sp = screenp;
+                sp2 = screenp2;
+                sp3 = screenp3;
+                bp = bufp;
+    
+                for (x=x1; x<x2; ++x)
+                {
+                    *sp++ = *bp;
+                    *sp++ = *bp;
+                    *sp++ = *bp;
+                    *sp2++ = *bp;
+                    *sp2++ = *bp;
+                    *sp2++ = *bp;
+                    *sp3++ = *bp;
+                    *sp3++ = *bp;
+                    *sp3++ = *bp;
+                    ++bp;
+                }
+                screenp += pitch;
+                screenp2 += pitch;
+                screenp3 += pitch;
+                bufp += SCREENWIDTH;
+            }
+    
+            SDL_UnlockSurface(screen);
+        }
+    }
 }
 
 static void UpdateRect(int x1, int y1, int x2, int y2)
@@ -982,11 +1029,15 @@ void I_InitGraphics(void)
     {
         screenmultiply = 2;
     }
+    else if (M_CheckParm("-3"))
+    {
+        screenmultiply = 3;
+    }
 
     if (screenmultiply < 1)
         screenmultiply = 1;
-    if (screenmultiply > 2)
-        screenmultiply = 2;
+    if (screenmultiply > 3)
+        screenmultiply = 3;
 
     if (fullscreen)
     {
