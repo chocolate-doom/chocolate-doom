@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_sdl.c 467 2006-04-09 02:50:34Z fraggle $
+// $Id: net_sdl.c 479 2006-05-11 12:03:02Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -172,6 +172,12 @@ static void NET_SDL_FreeAddress(net_addr_t *addr)
 
 static boolean NET_SDL_InitClient(void)
 {
+    int p;
+
+    p = M_CheckParm("-port");
+    if (p > 0)
+        port = atoi(myargv[p+1]);
+
     SDLNet_Init();
 
     udpsocket = SDLNet_UDP_Open(0);
@@ -298,15 +304,42 @@ void NET_SDL_AddrToString(net_addr_t *addr, char *buffer, int buffer_len)
 net_addr_t *NET_SDL_ResolveAddress(char *address)
 {
     IPaddress ip;
+    char *addr_hostname;
+    int addr_port;
+    int result;
+    char *colon;
+
+    colon = strchr(address, ':');
+
+    if (colon != NULL)
+    {
+	addr_hostname = strdup(address);
+	addr_hostname[colon - address] = '\0';
+	addr_port = atoi(colon + 1);
+    }
+    else
+    {
+	addr_hostname = address;
+	addr_port = port;
+    }
     
-    if (SDLNet_ResolveHost(&ip, address, port))
+    result = SDLNet_ResolveHost(&ip, addr_hostname, addr_port);
+
+    if (addr_hostname != address)
+    {
+	free(addr_hostname);
+    }
+    
+    if (result)
     {
         // unable to resolve
 
         return NULL;
     }
-
-    return NET_SDL_FindAddress(&ip);
+    else
+    {
+        return NET_SDL_FindAddress(&ip);
+    }
 }
 
 // Complete module
