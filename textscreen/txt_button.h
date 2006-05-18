@@ -4,7 +4,7 @@
 // $Id$
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2006 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -21,36 +21,22 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.1  2006/01/13 23:56:00  fraggle
-// Add text-mode I/O functions.
-// Use text-mode screen for the waiting screen.
-//
-// Revision 1.2  2006/01/13 18:23:28  fraggle
-// Textscreen getchar() function; remove SDL code from I_Endoom.
-//
-// Revision 1.1  2005/10/02 03:16:03  fraggle
-// Text mode emulation code
-//
-//
-//-----------------------------------------------------------------------------
-//
-// Text mode emulation in SDL
-//
-//-----------------------------------------------------------------------------
 
-#ifndef TXT_IO_H
-#define TXT_IO_H
+#ifndef TXT_BUTTON_H
+#define TXT_BUTTON_H
 
-#include "txt_main.h"
+typedef struct txt_button_s txt_button_t;
 
-void TXT_PutChar(int c);
-void TXT_Puts(char *s);
-void TXT_GotoXY(int x, int y);
-void TXT_GetXY(int *x, int *y);
-void TXT_FGColor(txt_color_t color);
-void TXT_BGColor(int color, int blinking);
-void TXT_ClearScreen(void);
+#include "txt_widget.h"
 
-#endif /* #ifndef TXT_IO_H */
+struct txt_button_s
+{
+    txt_widget_t widget;
+    char *label;
+};
+
+txt_button_t *TXT_NewButton(char *label);
+
+#endif /* #ifndef TXT_BUTTON_H */
+
 
