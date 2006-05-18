@@ -56,6 +56,7 @@ void Window2(void)
 int main()
 {
     TXT_Init();
+    TXT_SetDesktopTitle("Not Chocolate Doom Setup");
 
     Window2();
     SetupWindow();
@@ -64,7 +65,7 @@ int main()
     {
         firstwin->selected = (firstwin->selected + 1) % firstwin->num_widgets;
 
-    TXT_DrawAllWindows();
+        TXT_DrawAllWindows();
 
     }
 }
