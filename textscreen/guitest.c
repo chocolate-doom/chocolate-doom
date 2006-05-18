@@ -1,5 +1,5 @@
 #include <stdlib.h>
-
+#include <string.h>
 
 #include "txt_main.h"
 
@@ -19,34 +19,21 @@ void SetupWindow(void)
 
     strcpy(buf, "This is a button label: ");
 
-    {
-        txt_separator_t *sep;
-        sep = TXT_NewSeparator("Main Section");
-        TXT_AddWidget(window, &sep->widget);
-    }
+    TXT_AddWidget(window, TXT_NewSeparator("Main Section"));
 
     for (i=0; i<8; ++i)
     {
-        txt_button_t *button;
-
-        button = TXT_NewButton(buf);
         strcat(buf, "a");
-        TXT_AddWidget(window, &button->widget);
+        TXT_AddWidget(window, TXT_NewButton(buf));
 
         if (i == 4)
         {
-            txt_separator_t *sep;
-
-            sep = TXT_NewSeparator("Section");
-            TXT_AddWidget(window, &sep->widget);
+            TXT_AddWidget(window, TXT_NewSeparator("Section"));
         }
 
         if (i == 6)
         {
-            txt_separator_t *sep;
-
-            sep = TXT_NewSeparator(NULL);
-            TXT_AddWidget(window, &sep->widget);
+            TXT_AddWidget(window, TXT_NewSeparator(NULL));
         }
     }
 
@@ -62,10 +49,7 @@ void Window2(void)
 
     for (i=0; i<5; ++i)
     {
-        txt_button_t *button;
-
-        button = TXT_NewButton("hello there blah blah blah blah");
-        TXT_AddWidget(window, &button->widget);
+        TXT_AddWidget(window, TXT_NewButton("hello there blah blah blah blah"));
     }
 }
 
