@@ -232,6 +232,12 @@ void TXT_GotoXY(int x, int y)
     cur_y = y;
 }
 
+void TXT_GetXY(int *x, int *y)
+{
+    *x = cur_x;
+    *y = cur_y;
+}
+
 void TXT_FGColor(txt_color_t color)
 {
     fgcolor = color;

@@ -4,7 +4,7 @@
 // $Id$
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2006 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -21,36 +21,35 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.1  2006/01/13 23:56:00  fraggle
-// Add text-mode I/O functions.
-// Use text-mode screen for the waiting screen.
-//
-// Revision 1.2  2006/01/13 18:23:28  fraggle
-// Textscreen getchar() function; remove SDL code from I_Endoom.
-//
-// Revision 1.1  2005/10/02 03:16:03  fraggle
-// Text mode emulation code
-//
-//
-//-----------------------------------------------------------------------------
-//
-// Text mode emulation in SDL
-//
-//-----------------------------------------------------------------------------
 
-#ifndef TXT_IO_H
-#define TXT_IO_H
+// Base GUI "widget" class that all widgets inherit from.
 
-#include "txt_main.h"
+#ifndef TXT_WIDGET_H
+#define TXT_WIDGET_H
 
-void TXT_PutChar(int c);
-void TXT_Puts(char *s);
-void TXT_GotoXY(int x, int y);
-void TXT_GetXY(int *x, int *y);
-void TXT_FGColor(txt_color_t color);
-void TXT_BGColor(int color, int blinking);
-void TXT_ClearScreen(void);
+typedef struct txt_widget_class_s txt_widget_class_t;
+typedef struct txt_widget_s txt_widget_t;
 
-#endif /* #ifndef TXT_IO_H */
+typedef int (*TxtWidgetSizeCalc)(txt_widget_t *widget);
+typedef void (*TxtWidgetDrawer)(txt_widget_t *widget, int w, int selected);
+typedef void (*TxtWidgetDestroy)(txt_widget_t *widget);
+
+struct txt_widget_class_s
+{
+    TxtWidgetSizeCalc size_calc;
+    TxtWidgetDrawer drawer;
+    TxtWidgetDestroy destructor;
+};
+
+struct txt_widget_s
+{
+    txt_widget_class_t *widget_class;
+};
+
+int TXT_WidgetWidth(txt_widget_t *widget);
+void TXT_DrawWidget(txt_widget_t *widget, int w, int selected);
+void TXT_DestroyWidget(txt_widget_t *widget);
+
+#endif /* #ifndef TXT_WIDGET_H */
+
 
