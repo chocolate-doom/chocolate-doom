@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: txt_io.h 291 2006-01-13 23:56:00Z fraggle $
+// $Id: txt_io.h 480 2006-05-18 18:48:24Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -47,6 +47,7 @@
 void TXT_PutChar(int c);
 void TXT_Puts(char *s);
 void TXT_GotoXY(int x, int y);
+void TXT_GetXY(int *x, int *y);
 void TXT_FGColor(txt_color_t color);
 void TXT_BGColor(int color, int blinking);
 void TXT_ClearScreen(void);

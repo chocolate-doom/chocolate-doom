@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: txt_io.c 292 2006-01-14 00:10:54Z fraggle $
+// $Id: txt_io.c 480 2006-05-18 18:48:24Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -230,6 +230,12 @@ void TXT_GotoXY(int x, int y)
 {
     cur_x = x;
     cur_y = y;
+}
+
+void TXT_GetXY(int *x, int *y)
+{
+    *x = cur_x;
+    *y = cur_y;
 }
 
 void TXT_FGColor(txt_color_t color)
