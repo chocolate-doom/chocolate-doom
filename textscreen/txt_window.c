@@ -31,6 +31,7 @@
 
 #define MAXWINDOWS 128
 
+static char *desktop_title;
 static txt_window_t *all_windows[MAXWINDOWS];
 static int num_windows = 0;
 
@@ -152,11 +153,23 @@ static void DrawWindow(txt_window_t *window)
     TXT_DrawSeparator(window_x, window_y + 2 + window->num_widgets, window_w);
 }
 
+void TXT_SetDesktopTitle(char *title)
+{
+    free(desktop_title);
+    desktop_title = strdup(title);
+}
+
 void TXT_DrawAllWindows(void)
 {
     int i;
+    char *title;
 
-    TXT_DrawDesktop("Not Chocolate Doom setup");
+    if (desktop_title == NULL)
+        title = "";
+    else
+        title = desktop_title;
+
+    TXT_DrawDesktop(title);
 
     for (i=0; i<num_windows; ++i)
     {

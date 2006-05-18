@@ -52,7 +52,7 @@ struct txt_window_s
 txt_window_t *TXT_NewWindow(char *title, int x, int y);
 void TXT_CloseWindow(txt_window_t *window);
 void TXT_AddWidget(txt_window_t *window, void *widget);
-
+void TXT_SetDesktopTitle(char *title);
 void TXT_DrawAllWindows(void);
 
 #endif /* #ifndef TXT_WINDOW_T */
