@@ -51,7 +51,7 @@ struct txt_window_s
 
 txt_window_t *TXT_NewWindow(char *title, int x, int y);
 void TXT_CloseWindow(txt_window_t *window);
-void TXT_AddWidget(txt_window_t *window, txt_widget_t *widget);
+void TXT_AddWidget(txt_window_t *window, void *widget);
 
 void TXT_DrawAllWindows(void);
 

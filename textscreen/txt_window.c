@@ -166,8 +166,12 @@ void TXT_DrawAllWindows(void)
     TXT_UpdateScreen();
 }
 
-void TXT_AddWidget(txt_window_t *window, txt_widget_t *widget)
+void TXT_AddWidget(txt_window_t *window, void *uncast_widget)
 {
+    txt_widget_t *widget;
+
+    widget = (txt_widget_t *) uncast_widget;
+
     if (window->num_widgets == 0)
     {
         // This is the first widget added.
