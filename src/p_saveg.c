@@ -1654,6 +1654,7 @@ void P_UnArchiveThinkers (void)
             saveg_read_mobj_t(mobj);
 
 	    mobj->target = NULL;
+            mobj->tracer = NULL;
 	    P_SetThingPosition (mobj);
 	    mobj->info = &mobjinfo[mobj->type];
 	    mobj->floorz = mobj->subsector->sector->floorheight;
