@@ -4,6 +4,7 @@
 #include "txt_main.h"
 
 #include "txt_button.h"
+#include "txt_desktop.h"
 #include "txt_separator.h"
 #include "txt_window.h"
 
@@ -45,7 +46,7 @@ void Window2(void)
     txt_window_t *window;
     int i;
     
-    window = TXT_NewWindow("Another test", 30, 7);
+    window = TXT_NewWindow("Another test", 50, 7);
 
     for (i=0; i<5; ++i)
     {
@@ -65,8 +66,7 @@ int main()
     {
         firstwin->selected = (firstwin->selected + 1) % firstwin->num_widgets;
 
-        TXT_DrawAllWindows();
-
+        TXT_DrawDesktop();
     }
 }
 

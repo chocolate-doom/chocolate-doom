@@ -123,10 +123,10 @@ static void DrawScreen(void)
     char buf[40];
     int i;
 
-    TXT_DrawDesktop(PACKAGE_STRING);
-    TXT_DrawWindow("Waiting for game start...", 
-                    WINDOW_X, WINDOW_Y, 
-                    WINDOW_W, WINDOW_H);
+    TXT_DrawDesktopBackground(PACKAGE_STRING);
+    TXT_DrawWindowFrame("Waiting for game start...", 
+                        WINDOW_X, WINDOW_Y, 
+                        WINDOW_W, WINDOW_H);
 
     TXT_BGColor(TXT_COLOR_BLUE, 0);
 

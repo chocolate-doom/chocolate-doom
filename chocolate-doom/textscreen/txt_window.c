@@ -25,37 +25,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "txt_desktop.h"
 #include "txt_gui.h"
+#include "txt_main.h"
 #include "txt_separator.h"
 #include "txt_window.h"
-
-#define MAXWINDOWS 128
-
-static char *desktop_title;
-static txt_window_t *all_windows[MAXWINDOWS];
-static int num_windows = 0;
-
-static void AddWindow(txt_window_t *win)
-{
-    all_windows[num_windows] = win;
-    ++num_windows;
-}
-
-static void RemoveWindow(txt_window_t *win)
-{
-    int from, to;
-
-    for (from=0, to=0; from<num_windows; ++from)
-    {
-        if (all_windows[from] != win)
-        {
-            all_windows[to] = all_windows[from];
-            ++to;
-        }
-    }
-    
-    num_windows = to;
-}
 
 txt_window_t *TXT_NewWindow(char *title, int x, int y)
 {
@@ -70,7 +44,7 @@ txt_window_t *TXT_NewWindow(char *title, int x, int y)
     win->num_widgets = 0;
     win->selected = 0;
 
-    AddWindow(win);
+    TXT_AddDesktopWindow(win);
 
     return win;
 }
@@ -92,7 +66,7 @@ void TXT_CloseWindow(txt_window_t *window)
     free(window->title);
     free(window);
 
-    RemoveWindow(window);
+    TXT_RemoveDesktopWindow(window);
 }
 
 static void TXT_WindowSize(txt_window_t *window, int *w, int *h)
@@ -115,7 +89,7 @@ static void TXT_WindowSize(txt_window_t *window, int *w, int *h)
     *h = window->num_widgets;
 }
 
-static void DrawWindow(txt_window_t *window)
+void TXT_DrawWindow(txt_window_t *window)
 {
     int widgets_w, widgets_h;
     int window_w, window_h;
@@ -138,7 +112,7 @@ static void DrawWindow(txt_window_t *window)
 
     // Draw the window
 
-    TXT_DrawWindow(window->title, window_x, window_y, window_w, window_h);
+    TXT_DrawWindowFrame(window->title, window_x, window_y, window_w, window_h);
 
     // Draw all widgets
 
@@ -151,32 +125,6 @@ static void DrawWindow(txt_window_t *window)
     // Separator for action area
 
     TXT_DrawSeparator(window_x, window_y + 2 + window->num_widgets, window_w);
-}
-
-void TXT_SetDesktopTitle(char *title)
-{
-    free(desktop_title);
-    desktop_title = strdup(title);
-}
-
-void TXT_DrawAllWindows(void)
-{
-    int i;
-    char *title;
-
-    if (desktop_title == NULL)
-        title = "";
-    else
-        title = desktop_title;
-
-    TXT_DrawDesktop(title);
-
-    for (i=0; i<num_windows; ++i)
-    {
-        DrawWindow(all_windows[i]);
-    }
-
-    TXT_UpdateScreen();
 }
 
 void TXT_AddWidget(txt_window_t *window, void *uncast_widget)
