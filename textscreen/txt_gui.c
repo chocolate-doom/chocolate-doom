@@ -48,7 +48,7 @@ static int borders[4][4] =
     {0xc0, 0xc4, 0xc1, 0xd9},
 };
 
-void TXT_DrawDesktop(char *title)
+void TXT_DrawDesktopBackground(char *title)
 {
     int i;
     unsigned char *screendata;
@@ -114,7 +114,7 @@ void TXT_DrawShadow(int x, int y, int w, int h)
     }
 }
 
-void TXT_DrawWindow(char *title, int x, int y, int w, int h)
+void TXT_DrawWindowFrame(char *title, int x, int y, int w, int h)
 {
     int x1, y1;
     int bx, by;
