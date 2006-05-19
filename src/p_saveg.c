@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_saveg.c 367 2006-02-15 12:57:58Z fraggle $
+// $Id: p_saveg.c 485 2006-05-19 20:03:49Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -60,7 +60,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_saveg.c 367 2006-02-15 12:57:58Z fraggle $";
+rcsid[] = "$Id: p_saveg.c 485 2006-05-19 20:03:49Z fraggle $";
 
 #include <stdio.h>
 
@@ -1654,6 +1654,7 @@ void P_UnArchiveThinkers (void)
             saveg_read_mobj_t(mobj);
 
 	    mobj->target = NULL;
+            mobj->tracer = NULL;
 	    P_SetThingPosition (mobj);
 	    mobj->info = &mobjinfo[mobj->type];
 	    mobj->floorz = mobj->subsector->sector->floorheight;
