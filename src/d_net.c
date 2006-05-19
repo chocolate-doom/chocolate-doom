@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.c 475 2006-05-05 19:49:34Z fraggle $
+// $Id: d_net.c 484 2006-05-19 20:01:59Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -117,7 +117,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_net.c 475 2006-05-05 19:49:34Z fraggle $";
+static const char rcsid[] = "$Id: d_net.c 484 2006-05-19 20:01:59Z fraggle $";
 
 #include "doomfeatures.h"
 
@@ -221,6 +221,7 @@ void NetUpdate (void)
     // check time
     nowtime = GetAdjustedTime() / ticdup;
     newtics = nowtime - lasttime;
+
     lasttime = nowtime;
 
     if (skiptics <= newtics)
@@ -286,6 +287,16 @@ void NetUpdate (void)
     }
 }
 
+//
+// Start game loop
+//
+// Called after the screen is set but before the game starts running.
+//  
+
+void D_StartGameLoop(void)
+{
+    lasttime = GetAdjustedTime() / ticdup;
+}
 
 
 //
@@ -574,6 +585,7 @@ void TryRunTics (void)
 		I_Error ("gametic>lowtic");
 	    if (advancedemo)
 		D_DoAdvanceDemo ();
+
 	    G_Ticker ();
 	    gametic++;
 	    

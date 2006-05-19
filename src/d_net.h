@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.h 388 2006-02-24 19:14:22Z fraggle $
+// $Id: d_net.h 484 2006-05-19 20:01:59Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -49,6 +49,8 @@ void D_QuitNetGame (void);
 //? how many ticks to run?
 void TryRunTics (void);
 
+// Called at start of game loop to initialise timers
+void D_StartGameLoop(void);
 
 #endif
 

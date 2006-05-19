@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.h 147 2005-10-02 03:16:29Z fraggle $
+// $Id: i_video.h 484 2006-05-19 20:01:59Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -65,6 +65,7 @@ extern int screenmultiply;
 extern boolean fullscreen;
 extern boolean grabmouse;
 extern float mouse_acceleration;
+extern int startup_delay;
 
 #endif
 //-----------------------------------------------------------------------------

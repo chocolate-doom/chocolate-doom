@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_misc.c 444 2006-03-25 21:50:32Z fraggle $
+// $Id: m_misc.c 484 2006-05-19 20:01:59Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -106,7 +106,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_misc.c 444 2006-03-25 21:50:32Z fraggle $";
+rcsid[] = "$Id: m_misc.c 484 2006-05-19 20:01:59Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -402,6 +402,7 @@ static default_t extra_defaults_list[] =
     {"mouse_acceleration",     &mouse_acceleration,   DEFAULT_FLOAT},
     {"show_endoom",            &show_endoom},
     {"vanilla_savegame_limit", &vanilla_savegame_limit},
+    {"startup_delay",          &startup_delay},
 #ifdef FEATURE_MULTIPLAYER
     {"player_name",            &net_player_name,      DEFAULT_STRING},
 #endif
