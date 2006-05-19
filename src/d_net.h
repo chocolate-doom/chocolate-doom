@@ -49,6 +49,8 @@ void D_QuitNetGame (void);
 //? how many ticks to run?
 void TryRunTics (void);
 
+// Called at start of game loop to initialise timers
+void D_StartGameLoop(void);
 
 #endif
 

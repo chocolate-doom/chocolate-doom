@@ -571,6 +571,8 @@ void D_DoomLoop (void)
 
     I_InitGraphics ();
 
+    D_StartGameLoop();
+
     while (1)
     {
 	// frame syncronous IO operations

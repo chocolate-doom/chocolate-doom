@@ -65,6 +65,7 @@ extern int screenmultiply;
 extern boolean fullscreen;
 extern boolean grabmouse;
 extern float mouse_acceleration;
+extern int startup_delay;
 
 #endif
 //-----------------------------------------------------------------------------

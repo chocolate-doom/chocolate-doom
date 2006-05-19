@@ -402,6 +402,7 @@ static default_t extra_defaults_list[] =
     {"mouse_acceleration",     &mouse_acceleration,   DEFAULT_FLOAT},
     {"show_endoom",            &show_endoom},
     {"vanilla_savegame_limit", &vanilla_savegame_limit},
+    {"startup_delay",          &startup_delay},
 #ifdef FEATURE_MULTIPLAYER
     {"player_name",            &net_player_name,      DEFAULT_STRING},
 #endif
