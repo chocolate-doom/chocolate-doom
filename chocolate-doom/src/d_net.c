@@ -221,6 +221,7 @@ void NetUpdate (void)
     // check time
     nowtime = GetAdjustedTime() / ticdup;
     newtics = nowtime - lasttime;
+
     lasttime = nowtime;
 
     if (skiptics <= newtics)
@@ -286,6 +287,16 @@ void NetUpdate (void)
     }
 }
 
+//
+// Start game loop
+//
+// Called after the screen is set but before the game starts running.
+//  
+
+void D_StartGameLoop(void)
+{
+    lasttime = GetAdjustedTime() / ticdup;
+}
 
 
 //
@@ -574,6 +585,7 @@ void TryRunTics (void)
 		I_Error ("gametic>lowtic");
 	    if (advancedemo)
 		D_DoAdvanceDemo ();
+
 	    G_Ticker ();
 	    gametic++;
 	    

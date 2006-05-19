@@ -234,6 +234,10 @@ static boolean native_surface;
 // Run in full screen mode?  (int type for config code)
 int fullscreen = FULLSCREEN_ON;
 
+// Time to wait for the screen to settle on startup before starting the
+// game (ms)
+int startup_delay = 0;
+
 // Grab the mouse? (int type for config code)
 int grabmouse = true;
 
@@ -868,7 +872,7 @@ void I_FinishUpdate (void)
     // If we have a palette to set, the act of setting the palette
     // updates the screen
 
-    if (palette_to_set)
+    if (palette_to_set ||true)
     {
         SDL_SetColors(screen, palette, 0, 256);
         palette_to_set = 0;
@@ -1138,6 +1142,16 @@ void I_InitGraphics(void)
 
     UpdateFocus();
     UpdateGrab();
+
+    // On some systems, it takes a second or so for the screen to settle
+    // after changing modes.  We include the option to add a delay when
+    // setting the screen mode, so that the game doesn't start immediately
+    // with the player unable to see anything.
+
+    if (fullscreen || true)
+    {
+        SDL_Delay(startup_delay);
+    }
 
     // Check if we have a native surface we can use
     // If we have to lock the screen, draw to a buffer and copy
