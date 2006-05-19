@@ -22,37 +22,16 @@
 // 02111-1307, USA.
 //
 
-#ifndef TXT_WINDOW_H
-#define TXT_WINDOW_H
+#ifndef TXT_DESKTOP_H
+#define TXT_DESKTOP_H
 
-typedef struct txt_window_s txt_window_t;
+#include "txt_window.h"
 
-#include "txt_widget.h" 
+void TXT_AddDesktopWindow(txt_window_t *win);
+void TXT_RemoveDesktopWindow(txt_window_t *win);
+void TXT_SetDesktopTitle(char *title);
+void TXT_DrawDesktop(void);
 
-struct txt_window_s
-{
-    // Window title
-
-    char *title;
-
-    // Screen coordinates of the centerpoint of the window
-
-    int x, y;
-
-    // Widgets in this window
-
-    txt_widget_t **widgets;
-    int num_widgets;
-
-    // Index of the current selected widget.
-
-    int selected;
-};
-
-txt_window_t *TXT_NewWindow(char *title, int x, int y);
-void TXT_CloseWindow(txt_window_t *window);
-void TXT_AddWidget(txt_window_t *window, void *widget);
-
-#endif /* #ifndef TXT_WINDOW_T */
+#endif /* #ifndef TXT_DESKTOP_T */
 
 

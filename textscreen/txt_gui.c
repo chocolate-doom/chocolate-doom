@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: txt_gui.c 291 2006-01-13 23:56:00Z fraggle $
+// $Id: txt_gui.c 483 2006-05-19 19:57:59Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -48,7 +48,7 @@ static int borders[4][4] =
     {0xc0, 0xc4, 0xc1, 0xd9},
 };
 
-void TXT_DrawDesktop(char *title)
+void TXT_DrawDesktopBackground(char *title)
 {
     int i;
     unsigned char *screendata;
@@ -114,7 +114,7 @@ void TXT_DrawShadow(int x, int y, int w, int h)
     }
 }
 
-void TXT_DrawWindow(char *title, int x, int y, int w, int h)
+void TXT_DrawWindowFrame(char *title, int x, int y, int w, int h)
 {
     int x1, y1;
     int bx, by;

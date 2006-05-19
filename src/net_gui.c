@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_gui.c 455 2006-03-30 19:08:37Z fraggle $
+// $Id: net_gui.c 483 2006-05-19 19:57:59Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -123,10 +123,10 @@ static void DrawScreen(void)
     char buf[40];
     int i;
 
-    TXT_DrawDesktop(PACKAGE_STRING);
-    TXT_DrawWindow("Waiting for game start...", 
-                    WINDOW_X, WINDOW_Y, 
-                    WINDOW_W, WINDOW_H);
+    TXT_DrawDesktopBackground(PACKAGE_STRING);
+    TXT_DrawWindowFrame("Waiting for game start...", 
+                        WINDOW_X, WINDOW_Y, 
+                        WINDOW_W, WINDOW_H);
 
     TXT_BGColor(TXT_COLOR_BLUE, 0);
 
