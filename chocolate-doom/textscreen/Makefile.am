@@ -5,6 +5,7 @@ noinst_LIBRARIES=libtextscreen.a
 bin_PROGRAMS=guitest
 
 libtextscreen_a_SOURCES =              \
+	txt_checkbox.c txt_checkbox.h    \
 	txt_desktop.c txt_desktop.h    \
 	txt_gui.c     txt_gui.h        \
 	txt_io.c      txt_io.h         \
