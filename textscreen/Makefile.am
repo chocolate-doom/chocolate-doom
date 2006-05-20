@@ -1,5 +1,5 @@
 
-AM_CFLAGS = @SDL_CFLAGS@
+AM_CFLAGS = @SDL_CFLAGS@ -I../src
 
 noinst_LIBRARIES=libtextscreen.a
 bin_PROGRAMS=guitest

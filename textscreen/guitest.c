@@ -66,12 +66,7 @@ int main()
     Window2();
     SetupWindow();
 
-    for (;;)
-    {
-        firstwin->selected = (firstwin->selected + 1) % firstwin->num_widgets;
-
-        TXT_DrawDesktop();
-    }
+    TXT_GUIMainLoop();
 }
 
 
