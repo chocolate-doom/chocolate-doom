@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 484 2006-05-19 20:01:59Z fraggle $
+// $Id: i_video.c 489 2006-05-20 16:24:58Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -175,7 +175,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 484 2006-05-19 20:01:59Z fraggle $";
+rcsid[] = "$Id: i_video.c 489 2006-05-20 16:24:58Z fraggle $";
 
 #include <SDL.h>
 #include <ctype.h>
@@ -350,7 +350,7 @@ static void LoadDiskImage(void)
 // Translates the SDL key
 //
 
-int TranslateKey(SDL_keysym *sym)
+static int TranslateKey(SDL_keysym *sym)
 {
     switch(sym->sym)
     {
