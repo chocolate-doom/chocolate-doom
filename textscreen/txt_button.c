@@ -48,10 +48,15 @@ static void TXT_ButtonDestructor(txt_widget_t *widget)
     free(button->label);
 }
 
+static int TXT_ButtonKeyPress(txt_widget_t *widget, int key)
+{
+}
+
 txt_widget_class_t txt_button_class =
 {
     TXT_ButtonSizeCalc,
     TXT_ButtonDrawer,
+    TXT_ButtonKeyPress,
     TXT_ButtonDestructor,
 };
 
@@ -62,6 +67,8 @@ txt_button_t *TXT_NewButton(char *label)
     button = malloc(sizeof(txt_button_t));
 
     button->widget.widget_class = &txt_button_class;
+    button->widget.selectable = 1;
+    button->widget.visible = 1;
     button->label = strdup(label);
 
     return button;
