@@ -3,40 +3,45 @@
 
 #include "txt_main.h"
 
+#include "txt_checkbox.h"
 #include "txt_button.h"
 #include "txt_desktop.h"
 #include "txt_separator.h"
+#include "txt_table.h"
 #include "txt_window.h"
 
 txt_window_t *firstwin;
+int checkbox_value;
 
 void SetupWindow(void)
 {
     txt_window_t *window;
+    txt_table_t *table;
     char buf[100];
     int i;
     
     window = TXT_NewWindow("Window test");
 
-    strcpy(buf, "This is a button label: ");
+    table = TXT_NewTable(3);
 
-    TXT_AddWidget(window, TXT_NewSeparator("Main Section"));
+    TXT_AddWidget(window, TXT_NewLabel(" This is a multiline label.\n"
+                                       " A single label object contains \n"
+                                       " all three of these lines.\n"));
 
-    for (i=0; i<8; ++i)
+    TXT_AddWidget(window, table);
+
+    for (i=0; i<5; ++i)
     {
-        strcat(buf, "a");
-        TXT_AddWidget(window, TXT_NewButton(buf));
-
-        if (i == 4)
-        {
-            TXT_AddWidget(window, TXT_NewSeparator("Section"));
-        }
-
-        if (i == 6)
-        {
-            TXT_AddWidget(window, TXT_NewSeparator(NULL));
-        }
+        sprintf(buf, " Option %i in a table:", i + 1);
+        TXT_AddWidget(table, TXT_NewLabel(buf));
+        sprintf(buf, "Button %i-1", i + 1);
+        TXT_AddWidget(table, TXT_NewButton(buf));
+        sprintf(buf, "Button %i-2", i + 1);
+        TXT_AddWidget(table, TXT_NewButton(buf));
     }
+
+    TXT_AddWidget(window, TXT_NewLabel(""));
+    TXT_AddWidget(window, TXT_NewCheckBox("Checkbox", &checkbox_value));
 
     firstwin = window;
 }
@@ -58,9 +63,29 @@ void Window2(void)
     }
 }
 
+void DrawASCIIChart()
+{
+    int x, y;
+
+    TXT_ClearScreen();
+
+    for (y=0; y<16; ++y)
+    {
+        for (x=0; x<16; ++x)
+        {
+            TXT_PutChar(' ');
+            TXT_PutChar(' ');
+            TXT_PutChar(' ');
+            TXT_PutChar(y * 16 + x);
+        }
+        TXT_PutChar('\n');
+    }
+}
+
 int main()
 {
     TXT_Init();
+
     TXT_SetDesktopTitle("Not Chocolate Doom Setup");
 
     Window2();
