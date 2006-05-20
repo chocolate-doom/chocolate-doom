@@ -2,9 +2,9 @@
 
 #include "txt_widget.h"
 
-int TXT_WidgetWidth(txt_widget_t *widget)
+void TXT_CalcWidgetSize(txt_widget_t *widget, int *w, int *h)
 {
-    return widget->widget_class->size_calc(widget);
+    return widget->widget_class->size_calc(widget, w, h);
 }
 
 void TXT_DrawWidget(txt_widget_t *widget, int w, int selected)
