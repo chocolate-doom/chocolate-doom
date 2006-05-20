@@ -27,6 +27,20 @@
 
 typedef struct txt_window_s txt_window_t;
 
+typedef enum
+{
+    TXT_VERT_TOP,
+    TXT_VERT_CENTER,
+    TXT_VERT_BOTTOM,
+} txt_vert_align_t;
+
+typedef enum
+{
+    TXT_HORIZ_LEFT,
+    TXT_HORIZ_CENTER,
+    TXT_HORIZ_RIGHT,
+} txt_horiz_align_t;
+
 #include "txt_widget.h" 
 
 struct txt_window_s
@@ -35,8 +49,10 @@ struct txt_window_s
 
     char *title;
 
-    // Screen coordinates of the centerpoint of the window
+    // Screen coordinates of the window
 
+    txt_vert_align_t vert_align;
+    txt_horiz_align_t horiz_align;
     int x, y;
 
     // Widgets in this window
@@ -49,9 +65,13 @@ struct txt_window_s
     int selected;
 };
 
-txt_window_t *TXT_NewWindow(char *title, int x, int y);
+txt_window_t *TXT_NewWindow(char *title);
 void TXT_CloseWindow(txt_window_t *window);
 void TXT_AddWidget(txt_window_t *window, void *widget);
+void TXT_SetWindowPosition(txt_window_t *window, 
+                           txt_horiz_align_t horiz_align,
+                           txt_vert_align_t vert_align,
+                           int x, int y);
 
 #endif /* #ifndef TXT_WINDOW_T */
 

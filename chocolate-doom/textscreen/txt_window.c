@@ -31,15 +31,17 @@
 #include "txt_separator.h"
 #include "txt_window.h"
 
-txt_window_t *TXT_NewWindow(char *title, int x, int y)
+txt_window_t *TXT_NewWindow(char *title)
 {
     txt_window_t *win;
 
     win = malloc(sizeof(txt_window_t));
 
     win->title = strdup(title);
-    win->x = x;
-    win->y = y;
+    win->x = TXT_SCREEN_W / 2;
+    win->y = TXT_SCREEN_H / 2;
+    win->horiz_align = TXT_HORIZ_CENTER;
+    win->vert_align = TXT_VERT_CENTER;
     win->widgets = NULL;
     win->num_widgets = 0;
     win->selected = 0;
@@ -69,13 +71,16 @@ void TXT_CloseWindow(txt_window_t *window)
     TXT_RemoveDesktopWindow(window);
 }
 
-static void TXT_WindowSize(txt_window_t *window, int *w, int *h)
+static void CalcWindowSize(txt_window_t *window, int *w, int *h)
 {
+    txt_widget_t *widget;
     int max_width;
+    int height;
     int i;
     int ww;
 
     max_width = 10;
+    height = 0;
 
     for (i=0; i<window->num_widgets; ++i)
     {
@@ -83,10 +88,46 @@ static void TXT_WindowSize(txt_window_t *window, int *w, int *h)
 
         if (ww > max_width)
             max_width = ww;
+
+        if (window->widgets[i]->visible)
+        {
+            height += 1;
+        }
     }
 
     *w = max_width;
-    *h = window->num_widgets;
+    *h = height;
+}
+
+static void CalcWindowPosition(txt_window_t *window,
+                               int *x, int *y,
+                               int w, int h)
+{
+    switch (window->horiz_align)
+    {
+        case TXT_HORIZ_LEFT:
+            *x = window->x;
+            break;
+        case TXT_HORIZ_CENTER:
+            *x = window->x - (w / 2);
+            break;
+        case TXT_HORIZ_RIGHT:
+            *x = window->x - (w - 1);
+            break;
+    }
+
+    switch (window->vert_align)
+    {
+        case TXT_VERT_TOP:
+            *y = window->y;
+            break;
+        case TXT_VERT_CENTER:
+            *y = window->y - (h / 2);
+            break;
+        case TXT_VERT_BOTTOM:
+            *y = window->y - (h - 1);
+            break;
+    }
 }
 
 void TXT_DrawWindow(txt_window_t *window)
@@ -97,7 +138,7 @@ void TXT_DrawWindow(txt_window_t *window)
     int window_x, window_y;
     int i;
     
-    TXT_WindowSize(window, &widgets_w, &widgets_h);
+    CalcWindowSize(window, &widgets_w, &widgets_h);
 
     // Actual window size after padding
 
@@ -107,8 +148,7 @@ void TXT_DrawWindow(txt_window_t *window)
     // Use the x,y position as the centerpoint and find the location to 
     // draw the window.
 
-    window_x = window->x - (window_w / 2);
-    window_y = window->y - (window_h / 2);
+    CalcWindowPosition(window, &window_x, &window_y, window_w, window_h);
 
     // Draw the window
 
@@ -116,15 +156,23 @@ void TXT_DrawWindow(txt_window_t *window)
 
     // Draw all widgets
 
+    x = window_x + 1;
+    y = window_y + 2;
+
     for (i=0; i<window->num_widgets; ++i)
     {
-        TXT_GotoXY(window_x + 1, window_y + 2 + i);
+        TXT_GotoXY(x, y);
         TXT_DrawWidget(window->widgets[i], widgets_w, i == window->selected);
+
+        if (window->widgets[i]->visible)
+        {
+            y += 1;
+        }
     }
 
     // Separator for action area
 
-    TXT_DrawSeparator(window_x, window_y + 2 + window->num_widgets, window_w);
+    TXT_DrawSeparator(window_x, y, window_w);
 }
 
 void TXT_AddWidget(txt_window_t *window, void *uncast_widget)
@@ -156,5 +204,16 @@ void TXT_AddWidget(txt_window_t *window, void *uncast_widget)
                               sizeof(txt_widget_t *) * (window->num_widgets + 1));
     window->widgets[window->num_widgets] = widget;
     ++window->num_widgets;
+}
+
+void TXT_SetWindowPosition(txt_window_t *window,
+                           txt_horiz_align_t horiz_align,
+                           txt_vert_align_t vert_align,
+                           int x, int y)
+{
+    window->vert_align = vert_align;
+    window->horiz_align = horiz_align;
+    window->x = x;
+    window->y = y;
 }
 
