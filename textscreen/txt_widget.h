@@ -30,7 +30,7 @@
 typedef struct txt_widget_class_s txt_widget_class_t;
 typedef struct txt_widget_s txt_widget_t;
 
-typedef int (*TxtWidgetSizeCalc)(txt_widget_t *widget);
+typedef void (*TxtWidgetSizeCalc)(txt_widget_t *widget, int *w, int *h);
 typedef void (*TxtWidgetDrawer)(txt_widget_t *widget, int w, int selected);
 typedef void (*TxtWidgetDestroy)(txt_widget_t *widget);
 typedef int (*TxtWidgetKeyPress)(txt_widget_t *widget, int key);
@@ -50,7 +50,7 @@ struct txt_widget_s
     int visible;
 };
 
-int TXT_WidgetWidth(txt_widget_t *widget);
+void TXT_CalcWidgetSize(txt_widget_t *widget, int *w, int *h);
 void TXT_DrawWidget(txt_widget_t *widget, int w, int selected);
 int TXT_WidgetKeyPress(txt_widget_t *widget, int key);
 void TXT_DestroyWidget(txt_widget_t *widget);

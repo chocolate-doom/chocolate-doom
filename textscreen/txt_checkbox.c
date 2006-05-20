@@ -8,13 +8,14 @@
 #include "txt_main.h"
 #include "txt_window.h"
 
-static int TXT_CheckBoxSizeCalc(txt_widget_t *widget)
+static void TXT_CheckBoxSizeCalc(txt_widget_t *widget, int *w, int *h)
 {
     txt_checkbox_t *checkbox = (txt_checkbox_t *) widget;
 
     // Minimum width is the string length + two spaces for padding
 
-    return strlen(checkbox->label) + 6;
+    *w = strlen(checkbox->label) + 6;
+    *h = 1;
 }
 
 static void TXT_CheckBoxDrawer(txt_widget_t *widget, int w, int selected)

@@ -7,13 +7,14 @@
 #include "txt_widget.h"
 #include "txt_window.h"
 
-static int TXT_ButtonSizeCalc(txt_widget_t *widget)
+static void TXT_ButtonSizeCalc(txt_widget_t *widget, int *w, int *h)
 {
     txt_button_t *button = (txt_button_t *) widget;
 
     // Minimum width is the string length + two spaces for padding
 
-    return strlen(button->label) + 2;
+    *w = strlen(button->label) + 2;
+    *h = 1;
 }
 
 static void TXT_ButtonDrawer(txt_widget_t *widget, int w, int selected)
