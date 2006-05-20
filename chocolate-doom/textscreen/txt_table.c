@@ -174,7 +174,7 @@ static void TXT_TableDrawer(txt_widget_t *widget, int w, int selected)
     free(column_widths);
 }
 
-void TXT_AddTableWidget(void *uncast_table, void *uncast_widget)
+void TXT_AddWidget(void *uncast_table, void *uncast_widget)
 {
     txt_widget_t *widget;
     txt_table_t *table;
