@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: txt_gui.c 486 2006-05-20 15:15:17Z fraggle $
+// $Id: txt_gui.c 487 2006-05-20 15:45:36Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -30,6 +30,7 @@
 
 #include <string.h>
 
+#include "txt_gui.h"
 #include "txt_io.h"
 #include "txt_main.h"
 
@@ -47,6 +48,9 @@ static int borders[4][4] =
     {0xc3, 0xc4, 0xc5, 0xb4},
     {0xc0, 0xc4, 0xc1, 0xd9},
 };
+
+#define VALID_X(y) ((y) >= 0 && (y) < TXT_SCREEN_W)
+#define VALID_Y(y) ((y) >= 1 && (y) < TXT_SCREEN_H - 1)
 
 void TXT_DrawDesktopBackground(char *title)
 {
@@ -90,8 +94,8 @@ void TXT_DrawDesktopBackground(char *title)
     TXT_FGColor(TXT_COLOR_BLACK);
     TXT_BGColor(TXT_COLOR_GREY, 0);
 
-    TXT_PutChar(' ');
-    TXT_Puts(title);
+    TXT_DrawString(" ");
+    TXT_DrawString(title);
 }
 
 void TXT_DrawShadow(int x, int y, int w, int h)
@@ -108,8 +112,7 @@ void TXT_DrawShadow(int x, int y, int w, int h)
 
         for (x1=x; x1<x+w; ++x1)
         {
-            if (x1 >= 0 && x1 < TXT_SCREEN_W
-             && y1 >= 0 && y1 < TXT_SCREEN_H)
+            if (VALID_X(x1) && VALID_Y(y1))
             {
                 p[1] = TXT_COLOR_DARK_GREY;
             }
@@ -129,8 +132,6 @@ void TXT_DrawWindowFrame(char *title, int x, int y, int w, int h)
 
     for (y1=y; y1<y+h; ++y1)
     {
-        TXT_GotoXY(x, y1);
-
         // Select the appropriate row and column in the borders
         // array to pick the appropriate character to draw at
         // this location.
@@ -147,7 +148,11 @@ void TXT_DrawWindowFrame(char *title, int x, int y, int w, int h)
             bx = x1 == x ? 0 :
                  x1 == x + w - 1 ? 3 : 1;
                  
-            TXT_PutChar(borders[by][bx]);
+            if (VALID_X(x1) && VALID_Y(y1))
+            {
+                TXT_GotoXY(x1, y1);
+                TXT_PutChar(borders[by][bx]);
+            }
         }
     }
 
@@ -159,11 +164,11 @@ void TXT_DrawWindowFrame(char *title, int x, int y, int w, int h)
 
     for (x1=0; x1<w-2; ++x1)
     {
-        TXT_PutChar(' ');
+        TXT_DrawString(" ");
     }
 
     TXT_GotoXY(x + (w - strlen(title)) / 2, y + 1);
-    TXT_Puts(title);
+    TXT_DrawString(title);
 
     // Draw the window's shadow.
 
@@ -179,6 +184,11 @@ void TXT_DrawSeparator(int x, int y, int w)
     TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);
     TXT_BGColor(TXT_COLOR_BLUE, 0);
 
+    if (!VALID_Y(y))
+    {
+        return;
+    }
+
     for (x1=x; x1<x+w; ++x1)
     {
         TXT_GotoXY(x1, y);
@@ -187,7 +197,38 @@ void TXT_DrawSeparator(int x, int y, int w)
             x1 == x + w - 1 ? borders[2][3] :
             borders[2][1];
 
-        TXT_PutChar(c);
+        if (VALID_X(x1))
+        {
+            TXT_PutChar(c);
+        }
     }
+}
+
+void TXT_DrawString(char *s)
+{
+    int x, y;
+    int x1;
+    char *p;
+
+    TXT_GetXY(&x, &y);
+
+    if (VALID_Y(y))
+    {
+        p = s;
+        x1 = x;
+
+        for (p = s; *p != '\0'; ++p)
+        {
+            if (VALID_X(x1))
+            {
+                TXT_GotoXY(x1, y);
+                TXT_PutChar(*p);
+            }
+
+            x1 += 1;
+        }
+    }
+
+    TXT_GotoXY(x + strlen(s), y);
 }
 

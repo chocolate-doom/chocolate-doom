@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: txt_gui.h 483 2006-05-19 19:57:59Z fraggle $
+// $Id: txt_gui.h 487 2006-05-20 15:45:36Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -45,6 +45,7 @@
 void TXT_DrawDesktopBackground(char *title);
 void TXT_DrawWindowFrame(char *title, int x, int y, int w, int h);
 void TXT_DrawSeparator(int x, int y, int w);
+void TXT_DrawString(char *s);
 
 #endif /* #ifndef TXT_GUI_H */
 
