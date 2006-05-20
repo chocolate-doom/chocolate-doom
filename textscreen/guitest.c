@@ -16,7 +16,7 @@ void SetupWindow(void)
     char buf[100];
     int i;
     
-    window = TXT_NewWindow("Window test", 40, 12);
+    window = TXT_NewWindow("Window test");
 
     strcpy(buf, "This is a button label: ");
 
@@ -46,7 +46,11 @@ void Window2(void)
     txt_window_t *window;
     int i;
     
-    window = TXT_NewWindow("Another test", 50, 7);
+    window = TXT_NewWindow("Another test");
+    TXT_SetWindowPosition(window, 
+                          TXT_HORIZ_RIGHT, 
+                          TXT_VERT_TOP, 
+                          TXT_SCREEN_W - 1, 1);
 
     for (i=0; i<5; ++i)
     {

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: txt_gui.c 483 2006-05-19 19:57:59Z fraggle $
+// $Id: txt_gui.c 486 2006-05-20 15:15:17Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -104,11 +104,16 @@ void TXT_DrawShadow(int x, int y, int w, int h)
 
     for (y1=y; y1<y+h; ++y1)
     {
-        p = screendata + y1 * TXT_SCREEN_W * 2 + x * 2;
+        p = screendata + (y1 * TXT_SCREEN_W + x) * 2;
 
-        for (x1=0; x1<w; ++x1)
+        for (x1=x; x1<x+w; ++x1)
         {
-            p[1] = TXT_COLOR_DARK_GREY;
+            if (x1 >= 0 && x1 < TXT_SCREEN_W
+             && y1 >= 0 && y1 < TXT_SCREEN_H)
+            {
+                p[1] = TXT_COLOR_DARK_GREY;
+            }
+
             p += 2;
         }
     }

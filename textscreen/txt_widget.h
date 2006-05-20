@@ -33,21 +33,26 @@ typedef struct txt_widget_s txt_widget_t;
 typedef int (*TxtWidgetSizeCalc)(txt_widget_t *widget);
 typedef void (*TxtWidgetDrawer)(txt_widget_t *widget, int w, int selected);
 typedef void (*TxtWidgetDestroy)(txt_widget_t *widget);
+typedef int (*TxtWidgetKeyPress)(txt_widget_t *widget, int key);
 
 struct txt_widget_class_s
 {
     TxtWidgetSizeCalc size_calc;
     TxtWidgetDrawer drawer;
+    TxtWidgetKeyPress key_press;
     TxtWidgetDestroy destructor;
 };
 
 struct txt_widget_s
 {
     txt_widget_class_t *widget_class;
+    int selectable;
+    int visible;
 };
 
 int TXT_WidgetWidth(txt_widget_t *widget);
 void TXT_DrawWidget(txt_widget_t *widget, int w, int selected);
+void TXT_WidgetKeyPress(txt_widget_t *widget, int key);
 void TXT_DestroyWidget(txt_widget_t *widget);
 
 #endif /* #ifndef TXT_WIDGET_H */

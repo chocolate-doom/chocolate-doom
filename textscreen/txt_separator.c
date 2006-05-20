@@ -64,6 +64,7 @@ txt_widget_class_t txt_separator_class =
 {
     TXT_SeparatorSizeCalc,
     TXT_SeparatorDrawer,
+    NULL,
     TXT_SeparatorDestructor,
 };
 
@@ -74,6 +75,8 @@ txt_separator_t *TXT_NewSeparator(char *label)
     separator = malloc(sizeof(txt_separator_t));
 
     separator->widget.widget_class = &txt_separator_class;
+    separator->widget.selectable = 0;
+    separator->widget.visible = 1;
 
     if (label != NULL)
     {
