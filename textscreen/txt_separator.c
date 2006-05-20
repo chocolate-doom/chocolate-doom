@@ -42,14 +42,9 @@ static void TXT_SeparatorDrawer(txt_widget_t *widget, int w, int selected)
 
         TXT_BGColor(TXT_COLOR_BLUE, 0);
         TXT_FGColor(TXT_COLOR_BRIGHT_GREEN);
-        TXT_PutChar(' ');
-
-        for (i=0; i<strlen(separator->label); ++i)
-        {
-            TXT_PutChar(separator->label[i]);
-        }
-    
-        TXT_PutChar(' ');
+        TXT_DrawString(" ");
+        TXT_DrawString(separator->label);
+        TXT_DrawString(" ");
     }
 }
 

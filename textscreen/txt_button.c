@@ -23,21 +23,18 @@ static void TXT_ButtonDrawer(txt_widget_t *widget, int w, int selected)
 
     TXT_BGColor(TXT_COLOR_BLUE, 0);
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
-    TXT_PutChar(' ');
+    TXT_DrawString(" ");
 
     if (selected)
     {
         TXT_BGColor(TXT_COLOR_GREY, 0);
     }
 
-    for (i=0; i<strlen(button->label); ++i)
-    {
-        TXT_PutChar(button->label[i]);
-    }
+    TXT_DrawString(button->label);
     
     for (i=strlen(button->label); i < w-2; ++i)
     {
-        TXT_PutChar(' ');
+        TXT_DrawString(" ");
     }
 }
 

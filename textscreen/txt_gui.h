@@ -45,6 +45,7 @@
 void TXT_DrawDesktopBackground(char *title);
 void TXT_DrawWindowFrame(char *title, int x, int y, int w, int h);
 void TXT_DrawSeparator(int x, int y, int w);
+void TXT_DrawString(char *s);
 
 #endif /* #ifndef TXT_GUI_H */
 
