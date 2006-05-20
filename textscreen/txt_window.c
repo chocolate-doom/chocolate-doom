@@ -39,15 +39,15 @@ txt_window_t *TXT_NewWindow(char *title)
 
     win = malloc(sizeof(txt_window_t));
 
+    TXT_InitTable(&win->table, 1);
+
     win->title = strdup(title);
     win->x = TXT_SCREEN_W / 2;
     win->y = TXT_SCREEN_H / 2;
     win->horiz_align = TXT_HORIZ_CENTER;
     win->vert_align = TXT_VERT_CENTER;
-    win->widgets = NULL;
-    win->num_widgets = 0;
-    win->selected = 0;
 
+    TXT_AddWidget(win, TXT_NewSeparator(NULL));
     TXT_AddDesktopWindow(win);
 
     return win;
@@ -55,50 +55,13 @@ txt_window_t *TXT_NewWindow(char *title)
 
 void TXT_CloseWindow(txt_window_t *window)
 {
-    int i;
-
-    // Free all widgets
-
-    for (i=0; i<window->num_widgets; ++i)
-    {
-        TXT_DestroyWidget(window->widgets[i]);
-    }
-    
-    // Free window resources
-
-    free(window->widgets);
     free(window->title);
-    free(window);
 
+    // Destroy table and window
+
+    TXT_DestroyWidget((txt_widget_t *) window);
+    
     TXT_RemoveDesktopWindow(window);
-}
-
-static void CalcWindowSize(txt_window_t *window, int *w, int *h)
-{
-    txt_widget_t *widget;
-    int max_width;
-    int height;
-    int i;
-    int ww, wh;
-
-    max_width = 10;
-    height = 0;
-
-    for (i=0; i<window->num_widgets; ++i)
-    {
-        TXT_CalcWidgetSize(window->widgets[i], &ww, &wh);
-
-        if (ww > max_width)
-            max_width = ww;
-
-        if (window->widgets[i]->visible)
-        {
-            height += wh;
-        }
-    }
-
-    *w = max_width;
-    *h = height;
 }
 
 static void CalcWindowPosition(txt_window_t *window,
@@ -141,7 +104,7 @@ void TXT_DrawWindow(txt_window_t *window)
     int i;
     int ww, wh;
     
-    CalcWindowSize(window, &widgets_w, &widgets_h);
+    TXT_CalcWidgetSize((txt_widget_t *) window, &widgets_w, &widgets_h);
 
     // Actual window size after padding
 
@@ -159,56 +122,12 @@ void TXT_DrawWindow(txt_window_t *window)
 
     // Draw all widgets
 
-    x = window_x + 1;
-    y = window_y + 2;
-
-    for (i=0; i<window->num_widgets; ++i)
-    {
-        if (window->widgets[i]->visible)
-        {
-            TXT_GotoXY(x, y);
-            TXT_DrawWidget(window->widgets[i], 
-                           widgets_w, 
-                           i == window->selected);
-            TXT_CalcWidgetSize(window->widgets[i], &ww, &wh);
-            y += wh;
-        }
-    }
+    TXT_GotoXY(window_x + 1, window_y + 2);
+    TXT_DrawWidget((txt_widget_t *) window, widgets_w, 1);
 
     // Separator for action area
 
-    TXT_DrawSeparator(window_x, y, window_w);
-}
-
-void TXT_AddWidget(txt_window_t *window, void *uncast_widget)
-{
-    txt_widget_t *widget;
-
-    widget = (txt_widget_t *) uncast_widget;
-
-    if (window->num_widgets == 0)
-    {
-        // This is the first widget added.
-        //
-        // The first widget in a window should always be a separator.
-        // If we are not adding a separator now, add one in first.
-
-        if (widget->widget_class != &txt_separator_class)
-        {
-            txt_separator_t *separator;
-
-            separator = TXT_NewSeparator(NULL);
-
-            window->widgets = malloc(sizeof(txt_widget_t *));
-            window->widgets[0] = &separator->widget;
-            window->num_widgets = 1;
-        }
-    }
-    
-    window->widgets = realloc(window->widgets,
-                              sizeof(txt_widget_t *) * (window->num_widgets + 1));
-    window->widgets[window->num_widgets] = widget;
-    ++window->num_widgets;
+    TXT_DrawSeparator(window_x, window_y + 2 + widgets_h, window_w);
 }
 
 void TXT_SetWindowPosition(txt_window_t *window,
@@ -226,50 +145,6 @@ void TXT_WindowKeyPress(txt_window_t *window, int c)
 {
     // Send to the currently selected widget first
 
-    if (window->selected > 0 && window->selected <= window->num_widgets)
-    {
-        if (TXT_WidgetKeyPress(window->widgets[window->selected], c))
-        {
-            return;
-        }
-    }
-
-    if (c == KEY_DOWNARROW)
-    {
-        int newsel;
-
-        // Move cursor down to the next selectable widget
-
-        for (newsel = window->selected + 1;
-             newsel < window->num_widgets;
-             ++newsel)
-        {
-            if (window->widgets[newsel]->visible
-             && window->widgets[newsel]->selectable)
-            {
-                window->selected = newsel;
-                break;
-            }
-        } 
-    }
-
-    if (c == KEY_UPARROW)
-    {
-        int newsel;
-
-        // Move cursor down to the next selectable widget
-
-        for (newsel = window->selected - 1;
-             newsel >= 0;
-             --newsel)
-        {
-            if (window->widgets[newsel]->visible
-             && window->widgets[newsel]->selectable)
-            {
-                window->selected = newsel;
-                break;
-            }
-        } 
-    }
+    TXT_WidgetKeyPress((txt_widget_t *) window, c);
 }
 
