@@ -44,6 +44,7 @@ static void TXT_ButtonDestructor(txt_widget_t *widget)
     txt_button_t *button = (txt_button_t *) widget;
 
     free(button->label);
+    free(button);
 }
 
 static int TXT_ButtonKeyPress(txt_widget_t *widget, int key)
