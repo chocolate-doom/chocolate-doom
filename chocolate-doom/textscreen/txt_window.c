@@ -79,21 +79,21 @@ static void CalcWindowSize(txt_window_t *window, int *w, int *h)
     int max_width;
     int height;
     int i;
-    int ww;
+    int ww, wh;
 
     max_width = 10;
     height = 0;
 
     for (i=0; i<window->num_widgets; ++i)
     {
-        ww = TXT_WidgetWidth(window->widgets[i]);
+        TXT_CalcWidgetSize(window->widgets[i], &ww, &wh);
 
         if (ww > max_width)
             max_width = ww;
 
         if (window->widgets[i]->visible)
         {
-            height += 1;
+            height += wh;
         }
     }
 
@@ -139,6 +139,7 @@ void TXT_DrawWindow(txt_window_t *window)
     int x, y;
     int window_x, window_y;
     int i;
+    int ww, wh;
     
     CalcWindowSize(window, &widgets_w, &widgets_h);
 
@@ -163,12 +164,14 @@ void TXT_DrawWindow(txt_window_t *window)
 
     for (i=0; i<window->num_widgets; ++i)
     {
-        TXT_GotoXY(x, y);
-        TXT_DrawWidget(window->widgets[i], widgets_w, i == window->selected);
-
         if (window->widgets[i]->visible)
         {
-            y += 1;
+            TXT_GotoXY(x, y);
+            TXT_DrawWidget(window->widgets[i], 
+                           widgets_w, 
+                           i == window->selected);
+            TXT_CalcWidgetSize(window->widgets[i], &ww, &wh);
+            y += wh;
         }
     }
 
