@@ -350,7 +350,7 @@ static void LoadDiskImage(void)
 // Translates the SDL key
 //
 
-int TranslateKey(SDL_keysym *sym)
+static int TranslateKey(SDL_keysym *sym)
 {
     switch(sym->sym)
     {
