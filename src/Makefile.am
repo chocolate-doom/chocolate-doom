@@ -45,6 +45,7 @@ d_main.c             d_main.h              \
 d_net.c              d_net.h               \
 doomdata.h                                 \
 doomdef.c            doomdef.h             \
+doomkeys.h                                 \
 doomfeatures.h                             \
 doomstat.c           doomstat.h            \
 doomtype.h                                 \
