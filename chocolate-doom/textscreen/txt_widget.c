@@ -17,12 +17,14 @@ void TXT_DestroyWidget(txt_widget_t *widget)
     widget->widget_class->destructor(widget);
 }
 
-void TXT_WidgetKeyPress(txt_widget_t *widget, int key)
+int TXT_WidgetKeyPress(txt_widget_t *widget, int key)
 {
     if (widget->widget_class->key_press != NULL)
     {
-        widget->widget_class->key_press(widget, key);
+        return widget->widget_class->key_press(widget, key);
     }
+
+    return 0;
 }
 
 

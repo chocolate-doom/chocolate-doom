@@ -25,6 +25,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "doomkeys.h"
+
 #include "txt_desktop.h"
 #include "txt_gui.h"
 #include "txt_main.h"
@@ -215,5 +217,56 @@ void TXT_SetWindowPosition(txt_window_t *window,
     window->horiz_align = horiz_align;
     window->x = x;
     window->y = y;
+}
+
+void TXT_WindowKeyPress(txt_window_t *window, int c)
+{
+    // Send to the currently selected widget first
+
+    if (window->selected > 0 && window->selected <= window->num_widgets)
+    {
+        if (TXT_WidgetKeyPress(window->widgets[window->selected], c))
+        {
+            return;
+        }
+    }
+
+    if (c == KEY_DOWNARROW)
+    {
+        int newsel;
+
+        // Move cursor down to the next selectable widget
+
+        for (newsel = window->selected + 1;
+             newsel < window->num_widgets;
+             ++newsel)
+        {
+            if (window->widgets[newsel]->visible
+             && window->widgets[newsel]->selectable)
+            {
+                window->selected = newsel;
+                break;
+            }
+        } 
+    }
+
+    if (c == KEY_UPARROW)
+    {
+        int newsel;
+
+        // Move cursor down to the next selectable widget
+
+        for (newsel = window->selected - 1;
+             newsel >= 0;
+             --newsel)
+        {
+            if (window->widgets[newsel]->visible
+             && window->widgets[newsel]->selectable)
+            {
+                window->selected = newsel;
+                break;
+            }
+        } 
+    }
 }
 
