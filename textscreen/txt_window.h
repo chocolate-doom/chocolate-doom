@@ -42,9 +42,14 @@ typedef enum
 } txt_horiz_align_t;
 
 #include "txt_widget.h" 
+#include "txt_table.h"
 
 struct txt_window_s
 {
+    // Base class: all windows are tables with one column.
+
+    txt_table_t table;
+    
     // Window title
 
     char *title;
@@ -54,20 +59,10 @@ struct txt_window_s
     txt_vert_align_t vert_align;
     txt_horiz_align_t horiz_align;
     int x, y;
-
-    // Widgets in this window
-
-    txt_widget_t **widgets;
-    int num_widgets;
-
-    // Index of the current selected widget.
-
-    int selected;
 };
 
 txt_window_t *TXT_NewWindow(char *title);
 void TXT_CloseWindow(txt_window_t *window);
-void TXT_AddWidget(txt_window_t *window, void *widget);
 void TXT_SetWindowPosition(txt_window_t *window, 
                            txt_horiz_align_t horiz_align,
                            txt_vert_align_t vert_align,
