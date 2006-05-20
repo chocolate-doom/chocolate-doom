@@ -131,3 +131,30 @@ void TXT_DrawDesktop(void)
     TXT_UpdateScreen();
 }
 
+void TXT_DispatchEvents(void)
+{
+    int c;
+
+    while ((c = TXT_GetChar()) > 0)
+    {
+        if (c == 27)
+            exit(0);
+
+        if (num_windows > 0)
+        {
+            // Send the keypress to the top window
+
+            TXT_WindowKeyPress(all_windows[num_windows - 1], c);
+        }
+    }
+}
+
+void TXT_GUIMainLoop(void)
+{
+    for (;;) 
+    {
+        TXT_DispatchEvents();
+        TXT_DrawDesktop();
+    }
+}
+

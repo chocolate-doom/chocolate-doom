@@ -47,6 +47,7 @@ static void TXT_ButtonDestructor(txt_widget_t *widget)
 
 static int TXT_ButtonKeyPress(txt_widget_t *widget, int key)
 {
+    return 0;
 }
 
 txt_widget_class_t txt_button_class =

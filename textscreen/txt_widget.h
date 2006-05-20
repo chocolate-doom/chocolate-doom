@@ -52,7 +52,7 @@ struct txt_widget_s
 
 int TXT_WidgetWidth(txt_widget_t *widget);
 void TXT_DrawWidget(txt_widget_t *widget, int w, int selected);
-void TXT_WidgetKeyPress(txt_widget_t *widget, int key);
+int TXT_WidgetKeyPress(txt_widget_t *widget, int key);
 void TXT_DestroyWidget(txt_widget_t *widget);
 
 #endif /* #ifndef TXT_WIDGET_H */
