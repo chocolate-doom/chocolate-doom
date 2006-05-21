@@ -123,57 +123,6 @@ static void TXT_CalcTableSize(txt_widget_t *widget, int *w, int *h)
     free(column_widths);
 }
 
-static void TXT_TableDrawer(txt_widget_t *widget, int w, int selected)
-{
-    txt_table_t *table = (txt_table_t *) widget;
-    int *column_widths;
-    int *row_heights;
-    int origin_x, origin_y;
-    int draw_x, draw_y;
-    int x, y;
-    int rows;
-
-    TXT_GetXY(&origin_x, &origin_y);
-
-    // Work out the column widths and row heights
-
-    rows = TableRows(table);
-
-    column_widths = malloc(sizeof(int) * table->columns);
-    row_heights = malloc(sizeof(int) * rows);
-
-    CalcRowColSizes(table, row_heights, column_widths);
-
-    // Draw all cells
-    
-    draw_y = origin_y;
-    
-    for (y=0; y<rows; ++y)
-    {
-        draw_x = origin_x;
-
-        for (x=0; x<table->columns; ++x)
-        {
-            if (y * table->columns + x >= table->num_widgets)
-                break;
-
-            TXT_GotoXY(draw_x, draw_y);
-
-            TXT_DrawWidget(table->widgets[y * table->columns + x],
-                           column_widths[x],
-                           selected && x == table->selected_x
-                                    && y == table->selected_y);
-
-            draw_x += column_widths[x];
-        }
-
-        draw_y += row_heights[y];
-    }
-
-    free(row_heights);
-    free(column_widths);
-}
-
 void TXT_AddWidget(void *uncast_table, void *uncast_widget)
 {
     txt_widget_t *widget;
@@ -212,7 +161,21 @@ void TXT_AddWidget(void *uncast_table, void *uncast_widget)
     ++table->num_widgets;
 }
 
-#define SELECTABLE_WIDGET(w) ((w)->selectable && (w)->visible)
+static int SelectableWidget(txt_table_t *table, int x, int y)
+{
+    txt_widget_t *widget;
+    int i;
+
+    i = y * table->columns + x;
+
+    if (i >= 0 && i < table->num_widgets)
+    {
+        widget = table->widgets[i];
+        return widget->selectable && widget->visible;
+    }
+
+    return 0;
+}
 
 // Tries to locate a selectable widget in the given row, returning
 // the column number of the first column available or -1 if none are 
@@ -229,20 +192,14 @@ static int FindSelectableColumn(txt_table_t *table, int row, int start_col)
     {
         // Search to the right
 
-        i = table->columns * row + start_col + x;
-
-        if (i >= 0 && i < table->num_widgets
-         && SELECTABLE_WIDGET(table->widgets[i]))
+        if (SelectableWidget(table, start_col + x, row))
         {
             return start_col + x;
         }
 
         // Search to the left
 
-        i = table->columns * row + start_col - x;
-
-        if (i >= 0 && i < table->num_widgets
-         && SELECTABLE_WIDGET(table->widgets[i]))
+        if (SelectableWidget(table, start_col - x, row))
         {
             return start_col - x;
         }
@@ -326,10 +283,7 @@ static int TXT_TableKeyPress(txt_widget_t *widget, int key)
 
         for (new_x = table->selected_x - 1; new_x >= 0; --new_x)
         {
-            i = table->selected_y * table->columns + new_x;
-            
-            if (i >= 0 && i < table->num_widgets
-             && SELECTABLE_WIDGET(table->widgets[i]))
+            if (SelectableWidget(table, new_x, table->selected_y))
             {
                 // Found a selectable widget!
 
@@ -349,10 +303,7 @@ static int TXT_TableKeyPress(txt_widget_t *widget, int key)
 
         for (new_x = table->selected_x + 1; new_x < table->columns; ++new_x)
         {
-            i = table->selected_y * table->columns + new_x;
-            
-            if (i >= 0 && i < table->num_widgets
-             && SELECTABLE_WIDGET(table->widgets[i]))
+            if (SelectableWidget(table, new_x, table->selected_y))
             {
                 // Found a selectable widget!
 
@@ -364,6 +315,87 @@ static int TXT_TableKeyPress(txt_widget_t *widget, int key)
     }
 
     return 0;
+}
+
+// Check the currently selected widget in the table is valid.
+
+static void CheckValidSelection(txt_table_t *table)
+{
+    int rows;
+    int new_x, new_y;
+
+    rows = TableRows(table);
+
+    for (new_y = table->selected_y; new_y < rows; ++new_y)
+    {
+        new_x = FindSelectableColumn(table, new_y, table->selected_x);
+
+        if (new_x >= 0)
+        {
+            // Found a selectable column.
+
+            table->selected_x = new_x;
+            table->selected_y = new_y;
+
+            break;
+        }
+    }
+}
+
+static void TXT_TableDrawer(txt_widget_t *widget, int w, int selected)
+{
+    txt_table_t *table = (txt_table_t *) widget;
+    int *column_widths;
+    int *row_heights;
+    int origin_x, origin_y;
+    int draw_x, draw_y;
+    int x, y;
+    int rows;
+
+    // Check the table's current selection points at something valid before
+    // drawing.
+
+    CheckValidSelection(table);
+
+    TXT_GetXY(&origin_x, &origin_y);
+
+    // Work out the column widths and row heights
+
+    rows = TableRows(table);
+
+    column_widths = malloc(sizeof(int) * table->columns);
+    row_heights = malloc(sizeof(int) * rows);
+
+    CalcRowColSizes(table, row_heights, column_widths);
+
+    // Draw all cells
+    
+    draw_y = origin_y;
+    
+    for (y=0; y<rows; ++y)
+    {
+        draw_x = origin_x;
+
+        for (x=0; x<table->columns; ++x)
+        {
+            if (y * table->columns + x >= table->num_widgets)
+                break;
+
+            TXT_GotoXY(draw_x, draw_y);
+
+            TXT_DrawWidget(table->widgets[y * table->columns + x],
+                           column_widths[x],
+                           selected && x == table->selected_x
+                                    && y == table->selected_y);
+
+            draw_x += column_widths[x];
+        }
+
+        draw_y += row_heights[y];
+    }
+
+    free(row_heights);
+    free(column_widths);
 }
 
 txt_widget_class_t txt_table_class =
