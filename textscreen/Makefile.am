@@ -12,6 +12,7 @@ libtextscreen_a_SOURCES =              \
 	txt_main.c    txt_main.h       \
 	txt_button.c  txt_button.h     \
 	txt_label.c   txt_label.h      \
+	txt_radiobutton.c txt_radiobutton.h \
 	txt_separator.c txt_separator.h\
         txt_table.c   txt_table.h      \
 	txt_widget.c  txt_widget.h     \
