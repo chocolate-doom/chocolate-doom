@@ -414,6 +414,8 @@ void TXT_InitTable(txt_table_t *table, int columns)
     table->widget.widget_class = &txt_table_class;
     table->widget.visible = 1;
     table->widget.selectable = 1;
+    table->selected_x = 0;
+    table->selected_y = 0;
 }
 
 txt_table_t *TXT_NewTable(int columns)
