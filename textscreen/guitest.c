@@ -6,10 +6,19 @@
 #include "txt_checkbox.h"
 #include "txt_button.h"
 #include "txt_desktop.h"
+#include "txt_label.h"
+#include "txt_radiobutton.h"
 #include "txt_separator.h"
 #include "txt_table.h"
 #include "txt_window.h"
 
+enum 
+{
+    RADIO_VALUE_BADGER,
+    RADIO_VALUE_MUSHROOM,
+    RADIO_VALUE_SNAKE,
+};
+int radiobutton_value;
 txt_window_t *firstwin;
 int checkbox_value;
 
@@ -17,6 +26,7 @@ void SetupWindow(void)
 {
     txt_window_t *window;
     txt_table_t *table;
+    txt_table_t *leftpane, *rightpane;
     char buf[100];
     int i;
     
@@ -41,8 +51,21 @@ void SetupWindow(void)
     }
 
     TXT_AddWidget(window, TXT_NewLabel(""));
-    TXT_AddWidget(window, TXT_NewCheckBox("Checkbox", &checkbox_value));
 
+    table = TXT_NewTable(2);
+    TXT_AddWidget(window, table);
+
+    TXT_AddWidget(table, TXT_NewCheckBox("Checkbox", &checkbox_value));
+
+    rightpane = TXT_NewTable(1);
+    TXT_AddWidget(table, rightpane);
+    TXT_AddWidget(rightpane, TXT_NewRadioButton("Badger", &radiobutton_value,
+                                                RADIO_VALUE_BADGER));
+    TXT_AddWidget(rightpane, TXT_NewRadioButton("Mushroom", &radiobutton_value,
+                                                RADIO_VALUE_MUSHROOM));
+    TXT_AddWidget(rightpane, TXT_NewRadioButton("Snake", &radiobutton_value,
+                                                RADIO_VALUE_SNAKE));
+                                     
     firstwin = window;
 }
 
