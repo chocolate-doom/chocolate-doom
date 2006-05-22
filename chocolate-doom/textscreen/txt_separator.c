@@ -6,9 +6,9 @@
 #include "txt_main.h"
 #include "txt_window.h"
 
-static void TXT_SeparatorSizeCalc(UNCAST(separator), int *w, int *h)
+static void TXT_SeparatorSizeCalc(TXT_UNCAST_ARG(separator), int *w, int *h)
 {
-    CAST(txt_separator_t, separator);
+    TXT_CAST_ARG(txt_separator_t, separator);
 
     if (separator->label != NULL)
     {
@@ -24,9 +24,9 @@ static void TXT_SeparatorSizeCalc(UNCAST(separator), int *w, int *h)
     *h = 1;
 }
 
-static void TXT_SeparatorDrawer(UNCAST(separator), int w, int selected)
+static void TXT_SeparatorDrawer(TXT_UNCAST_ARG(separator), int w, int selected)
 {
-    CAST(txt_separator_t, separator);
+    TXT_CAST_ARG(txt_separator_t, separator);
     int i;
     int x, y;
 
@@ -49,9 +49,9 @@ static void TXT_SeparatorDrawer(UNCAST(separator), int w, int selected)
     }
 }
 
-static void TXT_SeparatorDestructor(UNCAST(separator))
+static void TXT_SeparatorDestructor(TXT_UNCAST_ARG(separator))
 {
-    CAST(txt_separator_t, separator);
+    TXT_CAST_ARG(txt_separator_t, separator);
 
     free(separator->label);
 }

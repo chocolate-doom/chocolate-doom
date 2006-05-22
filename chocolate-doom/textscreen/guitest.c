@@ -23,7 +23,7 @@ int radiobutton_value;
 txt_window_t *firstwin;
 int checkbox_value;
 
-void CloseWindow(UNCAST(button), void *user_data)
+void CloseWindow(TXT_UNCAST_ARG(button), void *user_data)
 {
     TXT_CloseWindow(firstwin);
 }
