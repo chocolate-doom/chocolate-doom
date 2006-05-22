@@ -91,9 +91,7 @@ txt_radiobutton_t *TXT_NewRadioButton(char *label, int *variable, int value)
 
     radiobutton = malloc(sizeof(txt_radiobutton_t));
 
-    radiobutton->widget.widget_class = &txt_radiobutton_class;
-    radiobutton->widget.selectable = 1;
-    radiobutton->widget.visible = 1;
+    TXT_InitWidget(radiobutton, &txt_radiobutton_class);
     radiobutton->label = strdup(label);
     radiobutton->variable = variable;
     radiobutton->value = value;

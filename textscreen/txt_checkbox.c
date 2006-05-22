@@ -91,9 +91,7 @@ txt_checkbox_t *TXT_NewCheckBox(char *label, int *variable)
 
     checkbox = malloc(sizeof(txt_checkbox_t));
 
-    checkbox->widget.widget_class = &txt_checkbox_class;
-    checkbox->widget.selectable = 1;
-    checkbox->widget.visible = 1;
+    TXT_InitWidget(checkbox, &txt_checkbox_class);
     checkbox->label = strdup(label);
     checkbox->variable = variable;
 

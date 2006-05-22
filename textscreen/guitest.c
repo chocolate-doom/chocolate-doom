@@ -22,16 +22,23 @@ int radiobutton_value;
 txt_window_t *firstwin;
 int checkbox_value;
 
+void CloseWindow(txt_widget_t *widget, void *user_data)
+{
+    TXT_CloseWindow(firstwin);
+}
+
 void SetupWindow(void)
 {
     txt_window_t *window;
     txt_table_t *table;
     txt_table_t *leftpane, *rightpane;
+    txt_button_t *button;
     char buf[100];
     int i;
     
     window = TXT_NewWindow("Window test");
 
+    TXT_AddWidget(window, TXT_NewSeparator("Main section"));
     table = TXT_NewTable(3);
 
     TXT_AddWidget(window, TXT_NewLabel(" This is a multiline label.\n"
@@ -66,6 +73,11 @@ void SetupWindow(void)
     TXT_AddWidget(rightpane, TXT_NewRadioButton("Snake", &radiobutton_value,
                                                 RADIO_VALUE_SNAKE));
                                      
+    button = TXT_NewButton("Close Window");
+    TXT_AddWidget(window, button);
+
+    TXT_SignalConnect(button, "pressed", CloseWindow, NULL);
+
     firstwin = window;
 }
 

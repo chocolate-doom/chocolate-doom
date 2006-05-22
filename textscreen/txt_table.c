@@ -408,12 +408,10 @@ txt_widget_class_t txt_table_class =
 
 void TXT_InitTable(txt_table_t *table, int columns)
 {
+    TXT_InitWidget(table, &txt_table_class);
     table->columns = columns;
     table->widgets = NULL;
     table->num_widgets = 0;
-    table->widget.widget_class = &txt_table_class;
-    table->widget.visible = 1;
-    table->widget.selectable = 1;
     table->selected_x = 0;
     table->selected_y = 0;
 }

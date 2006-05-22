@@ -39,7 +39,6 @@ static void TXT_LabelDestructor(txt_widget_t *widget)
 
     free(label->label);
     free(label->lines);
-    free(label);
 }
 
 txt_widget_class_t txt_label_class =
@@ -98,9 +97,8 @@ txt_label_t *TXT_NewLabel(char *text)
 
     label = malloc(sizeof(txt_label_t));
 
-    label->widget.widget_class = &txt_label_class;
+    TXT_InitWidget(label, &txt_label_class);
     label->widget.selectable = 0;
-    label->widget.visible = 1;
     label->label = strdup(text);
 
     TXT_SplitLabel(label);
