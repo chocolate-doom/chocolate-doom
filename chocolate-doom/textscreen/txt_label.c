@@ -48,16 +48,25 @@ txt_widget_class_t txt_label_class =
     TXT_LabelDestructor,
 };
 
-static void TXT_SplitLabel(txt_label_t *label)
+void TXT_SetLabel(txt_label_t *label, char *value)
 {
     char *p;
     int y;
+
+    // Free back the old label
+
+    free(label->label);
+    free(label->lines);
+
+    // Set the new value 
+
+    label->label = strdup(value);
 
     // Work out how many lines in this label
 
     label->h = 1;
 
-    for (p = label->label; *p != '\0'; ++p)
+    for (p = value; *p != '\0'; ++p)
     {
         if (*p == '\n')
         {
@@ -98,9 +107,10 @@ txt_label_t *TXT_NewLabel(char *text)
 
     TXT_InitWidget(label, &txt_label_class);
     label->widget.selectable = 0;
-    label->label = strdup(text);
+    label->label = NULL;
+    label->lines = NULL;
 
-    TXT_SplitLabel(label);
+    TXT_SetLabel(label, text);
 
     return label;
 }

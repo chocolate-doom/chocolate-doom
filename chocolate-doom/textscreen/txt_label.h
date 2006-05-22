@@ -38,6 +38,7 @@ struct txt_label_s
 };
 
 txt_label_t *TXT_NewLabel(char *label);
+void TXT_SetLabel(txt_label_t *label, char *value);
 
 #endif /* #ifndef TXT_LABEL_H */
 
