@@ -51,7 +51,7 @@ struct txt_table_s
 
 txt_table_t *TXT_NewTable(int columns);
 void TXT_InitTable(txt_table_t *table, int columns);
-void TXT_AddWidget(void *table, void *widget);
+void TXT_AddWidget(UNCAST(table), UNCAST(widget));
 
 #endif /* #ifndef TXT_TABLE_T */
 

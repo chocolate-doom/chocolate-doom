@@ -8,9 +8,9 @@
 #include "txt_main.h"
 #include "txt_window.h"
 
-static void TXT_CheckBoxSizeCalc(txt_widget_t *widget, int *w, int *h)
+static void TXT_CheckBoxSizeCalc(UNCAST(checkbox), int *w, int *h)
 {
-    txt_checkbox_t *checkbox = (txt_checkbox_t *) widget;
+    CAST(txt_checkbox_t, checkbox);
 
     // Minimum width is the string length + two spaces for padding
 
@@ -18,9 +18,9 @@ static void TXT_CheckBoxSizeCalc(txt_widget_t *widget, int *w, int *h)
     *h = 1;
 }
 
-static void TXT_CheckBoxDrawer(txt_widget_t *widget, int w, int selected)
+static void TXT_CheckBoxDrawer(UNCAST(checkbox), int w, int selected)
 {
-    txt_checkbox_t *checkbox = (txt_checkbox_t *) widget;
+    CAST(txt_checkbox_t, checkbox);
     int i;
 
     TXT_BGColor(TXT_COLOR_BLUE, 0);
@@ -57,21 +57,21 @@ static void TXT_CheckBoxDrawer(txt_widget_t *widget, int w, int selected)
     }
 }
 
-static void TXT_CheckBoxDestructor(txt_widget_t *widget)
+static void TXT_CheckBoxDestructor(UNCAST(checkbox))
 {
-    txt_checkbox_t *checkbox = (txt_checkbox_t *) widget;
+    CAST(txt_checkbox_t, checkbox);
 
     free(checkbox->label);
 }
 
-static int TXT_CheckBoxKeyPress(txt_widget_t *widget, int key)
+static int TXT_CheckBoxKeyPress(UNCAST(checkbox), int key)
 {
-    txt_checkbox_t *checkbox = (txt_checkbox_t *) widget;
+    CAST(txt_checkbox_t, checkbox);
 
     if (key == KEY_ENTER || key == ' ')
     {
         *checkbox->variable = !*checkbox->variable;
-        TXT_EmitSignal(widget, "changed");
+        TXT_EmitSignal(checkbox, "changed");
         return 1;
     }
     

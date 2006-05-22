@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -22,7 +23,7 @@ int radiobutton_value;
 txt_window_t *firstwin;
 int checkbox_value;
 
-void CloseWindow(txt_widget_t *widget, void *user_data)
+void CloseWindow(UNCAST(button), void *user_data)
 {
     TXT_CloseWindow(firstwin);
 }
