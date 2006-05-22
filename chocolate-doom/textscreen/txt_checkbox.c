@@ -71,6 +71,7 @@ static int TXT_CheckBoxKeyPress(txt_widget_t *widget, int key)
     if (key == KEY_ENTER || key == ' ')
     {
         *checkbox->variable = !*checkbox->variable;
+        TXT_EmitSignal(widget, "changed");
         return 1;
     }
     

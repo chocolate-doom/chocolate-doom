@@ -70,7 +70,11 @@ static int TXT_RadioButtonKeyPress(txt_widget_t *widget, int key)
 
     if (key == KEY_ENTER || key == ' ')
     {
-        *radiobutton->variable = radiobutton->value;
+        if (*radiobutton->variable != radiobutton->value)
+        {
+            *radiobutton->variable = radiobutton->value;
+            TXT_EmitSignal(widget, "selected");
+        }
         return 1;
     }
     
