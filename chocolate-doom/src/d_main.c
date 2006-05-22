@@ -734,10 +734,10 @@ void D_StartTitle (void)
 char            title[128];
 
 
-static void D_AddFile(char *filename)
+static boolean D_AddFile(char *filename)
 {
     printf(" adding %s\n", filename);
-    W_AddFile(filename);
+    return W_AddFile(filename);
 }
 
 
@@ -1342,7 +1342,8 @@ void PrintGameVersion(void)
 void D_DoomMain (void)
 {
     int             p;
-    char                    file[256];
+    char            file[256];
+    char            demolumpname[9];
 
     FindResponseFile ();
 	
@@ -1542,9 +1543,32 @@ void D_DoomMain (void)
 
     if (p && p < myargc-1)
     {
-	sprintf (file,"%s.lmp", myargv[p+1]);
-	D_AddFile (file);
-	printf(DEH_String("Playing demo %s.lmp.\n"),myargv[p+1]);
+        if (!strcasecmp(myargv[p+1] + strlen(myargv[p+1]) - 4, ".lmp"))
+        {
+            strcpy(file, myargv[p + 1]);
+        }
+        else
+        {
+	    sprintf (file,"%s.lmp", myargv[p+1]);
+        }
+
+	if (D_AddFile (file))
+        {
+            strncpy(demolumpname, lumpinfo[numlumps - 1].name, 8);
+            demolumpname[8] = '\0';
+
+            printf("Playing demo %s.\n", file);
+        }
+        else
+        {
+            // If file failed to load, still continue trying to play
+            // the demo in the same way as Vanilla Doom.  This makes
+            // tricks like "-playdemo demo1" possible.
+
+            strncpy(demolumpname, myargv[p + 1], 8);
+            demolumpname[8] = '\0';
+        }
+
     }
 
     // Generate the WAD hash table.  Speed things up a bit.
@@ -1714,14 +1738,14 @@ void D_DoomMain (void)
     if (p && p < myargc-1)
     {
 	singledemo = true;              // quit after one demo
-	G_DeferedPlayDemo (myargv[p+1]);
+	G_DeferedPlayDemo (demolumpname);
 	D_DoomLoop ();  // never returns
     }
 	
     p = M_CheckParm ("-timedemo");
     if (p && p < myargc-1)
     {
-	G_TimeDemo (myargv[p+1]);
+	G_TimeDemo (demolumpname);
 	D_DoomLoop ();  // never returns
     }
 	
@@ -1738,7 +1762,6 @@ void D_DoomMain (void)
 	    G_InitNew (startskill, startepisode, startmap);
 	else
 	    D_StartTitle ();                // start up intro loop
-
     }
 
     D_DoomLoop ();  // never returns
