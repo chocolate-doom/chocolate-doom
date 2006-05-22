@@ -33,9 +33,9 @@
 #include "txt_separator.h"
 #include "txt_table.h"
 
-static void TXT_TableDestructor(txt_widget_t *widget)
+static void TXT_TableDestructor(UNCAST(table))
 {
-    txt_table_t *table = (txt_table_t *) widget;
+    CAST(txt_table_t, table);
     int i;
 
     // Free all widgets
@@ -90,9 +90,9 @@ static void CalcRowColSizes(txt_table_t *table,
     }
 }
 
-static void TXT_CalcTableSize(txt_widget_t *widget, int *w, int *h)
+static void TXT_CalcTableSize(UNCAST(table), int *w, int *h)
 {
-    txt_table_t *table = (txt_table_t *) widget;
+    CAST(txt_table_t, table);
     int *column_widths;
     int *row_heights;
     int x, y;
@@ -123,13 +123,10 @@ static void TXT_CalcTableSize(txt_widget_t *widget, int *w, int *h)
     free(column_widths);
 }
 
-void TXT_AddWidget(void *uncast_table, void *uncast_widget)
+void TXT_AddWidget(UNCAST(table), UNCAST(widget))
 {
-    txt_widget_t *widget;
-    txt_table_t *table;
-
-    table = (txt_table_t *) uncast_table;
-    widget = (txt_widget_t *) uncast_widget;
+    CAST(txt_table_t, table);
+    CAST(txt_widget_t, widget);
 
     if (table->num_widgets > 0)
     {
@@ -210,9 +207,9 @@ static int FindSelectableColumn(txt_table_t *table, int row, int start_col)
     return -1;
 }
 
-static int TXT_TableKeyPress(txt_widget_t *widget, int key)
+static int TXT_TableKeyPress(UNCAST(table), int key)
 {
-    txt_table_t *table = (txt_table_t *) widget;
+    CAST(txt_table_t, table);
     int selected;
     int rows;
 
@@ -342,9 +339,9 @@ static void CheckValidSelection(txt_table_t *table)
     }
 }
 
-static void TXT_TableDrawer(txt_widget_t *widget, int w, int selected)
+static void TXT_TableDrawer(UNCAST(table), int w, int selected)
 {
-    txt_table_t *table = (txt_table_t *) widget;
+    CAST(txt_table_t, table);
     int *column_widths;
     int *row_heights;
     int origin_x, origin_y;

@@ -4,20 +4,19 @@
 #include "txt_label.h"
 #include "txt_io.h"
 #include "txt_main.h"
-#include "txt_widget.h"
 #include "txt_window.h"
 
-static void TXT_LabelSizeCalc(txt_widget_t *widget, int *w, int *h)
+static void TXT_LabelSizeCalc(UNCAST(label), int *w, int *h)
 {
-    txt_label_t *label = (txt_label_t *) widget;
+    CAST(txt_label_t, label);
 
     *w = label->w;
     *h = label->h;
 }
 
-static void TXT_LabelDrawer(txt_widget_t *widget, int w, int selected)
+static void TXT_LabelDrawer(UNCAST(label), int w, int selected)
 {
-    txt_label_t *label = (txt_label_t *) widget;
+    CAST(txt_label_t, label);
     int i;
     int origin_x, origin_y;
 
@@ -33,9 +32,9 @@ static void TXT_LabelDrawer(txt_widget_t *widget, int w, int selected)
     }
 }
 
-static void TXT_LabelDestructor(txt_widget_t *widget)
+static void TXT_LabelDestructor(UNCAST(label))
 {
-    txt_label_t *label = (txt_label_t *) widget;
+    CAST(txt_label_t, label);
 
     free(label->label);
     free(label->lines);

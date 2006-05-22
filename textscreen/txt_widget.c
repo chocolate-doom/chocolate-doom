@@ -40,9 +40,9 @@ void TXT_DestroyCallbackTable(txt_callback_table_t *table)
     free(table);
 }
 
-void TXT_InitWidget(void *uncast_widget, txt_widget_class_t *widget_class)
+void TXT_InitWidget(UNCAST(widget), txt_widget_class_t *widget_class)
 {
-    txt_widget_t *widget = (txt_widget_t *) uncast_widget;
+    CAST(txt_widget_t, widget);
 
     widget->widget_class = widget_class;
     widget->callback_table = TXT_NewCallbackTable();
@@ -53,11 +53,12 @@ void TXT_InitWidget(void *uncast_widget, txt_widget_class_t *widget_class)
     widget->visible = 1;
 }
 
-void TXT_SignalConnect(txt_widget_t *widget, 
+void TXT_SignalConnect(UNCAST(widget),
                        char *signal_name,
                        TxtWidgetSignalFunc func, 
                        void *user_data)
 {
+    CAST(txt_widget_t, widget);
     txt_callback_table_t *table;
     txt_callback_t *callback;
     int i;
@@ -89,8 +90,9 @@ void TXT_SignalConnect(txt_widget_t *widget,
     callback->user_data = user_data;
 }
 
-void TXT_EmitSignal(txt_widget_t *widget, char *signal_name)
+void TXT_EmitSignal(UNCAST(widget), char *signal_name)
 {
+    CAST(txt_widget_t, widget);
     txt_callback_table_t *table;
     int i;
 
@@ -106,25 +108,33 @@ void TXT_EmitSignal(txt_widget_t *widget, char *signal_name)
     }
 }
 
-void TXT_CalcWidgetSize(txt_widget_t *widget, int *w, int *h)
+void TXT_CalcWidgetSize(UNCAST(widget), int *w, int *h)
 {
+    CAST(txt_widget_t, widget);
+
     return widget->widget_class->size_calc(widget, w, h);
 }
 
-void TXT_DrawWidget(txt_widget_t *widget, int w, int selected)
+void TXT_DrawWidget(UNCAST(widget), int w, int selected)
 {
+    CAST(txt_widget_t, widget);
+
     widget->widget_class->drawer(widget, w, selected);
 }
 
-void TXT_DestroyWidget(txt_widget_t *widget)
+void TXT_DestroyWidget(UNCAST(widget))
 {
+    CAST(txt_widget_t, widget);
+
     widget->widget_class->destructor(widget);
     TXT_DestroyCallbackTable(widget->callback_table);
     free(widget);
 }
 
-int TXT_WidgetKeyPress(txt_widget_t *widget, int key)
+int TXT_WidgetKeyPress(UNCAST(widget), int key)
 {
+    CAST(txt_widget_t, widget);
+
     if (widget->widget_class->key_press != NULL)
     {
         return widget->widget_class->key_press(widget, key);

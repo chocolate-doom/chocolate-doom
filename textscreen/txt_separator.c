@@ -4,12 +4,11 @@
 #include "txt_separator.h"
 #include "txt_io.h"
 #include "txt_main.h"
-#include "txt_widget.h"
 #include "txt_window.h"
 
-static void TXT_SeparatorSizeCalc(txt_widget_t *widget, int *w, int *h)
+static void TXT_SeparatorSizeCalc(UNCAST(separator), int *w, int *h)
 {
-    txt_separator_t *separator = (txt_separator_t *) widget;
+    CAST(txt_separator_t, separator);
 
     if (separator->label != NULL)
     {
@@ -25,9 +24,9 @@ static void TXT_SeparatorSizeCalc(txt_widget_t *widget, int *w, int *h)
     *h = 1;
 }
 
-static void TXT_SeparatorDrawer(txt_widget_t *widget, int w, int selected)
+static void TXT_SeparatorDrawer(UNCAST(separator), int w, int selected)
 {
-    txt_separator_t *separator = (txt_separator_t *) widget;
+    CAST(txt_separator_t, separator);
     int i;
     int x, y;
 
@@ -50,9 +49,9 @@ static void TXT_SeparatorDrawer(txt_widget_t *widget, int w, int selected)
     }
 }
 
-static void TXT_SeparatorDestructor(txt_widget_t *widget)
+static void TXT_SeparatorDestructor(UNCAST(separator))
 {
-    txt_separator_t *separator = (txt_separator_t *) widget;
+    CAST(txt_separator_t, separator);
 
     free(separator->label);
 }
