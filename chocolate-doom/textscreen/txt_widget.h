@@ -29,11 +29,13 @@
 
 typedef struct txt_widget_class_s txt_widget_class_t;
 typedef struct txt_widget_s txt_widget_t;
+typedef struct txt_callback_table_s txt_callback_table_t;
 
 typedef void (*TxtWidgetSizeCalc)(txt_widget_t *widget, int *w, int *h);
 typedef void (*TxtWidgetDrawer)(txt_widget_t *widget, int w, int selected);
 typedef void (*TxtWidgetDestroy)(txt_widget_t *widget);
 typedef int (*TxtWidgetKeyPress)(txt_widget_t *widget, int key);
+typedef void (*TxtWidgetSignalFunc)(txt_widget_t *widget, void *user_data);
 
 struct txt_widget_class_s
 {
@@ -46,12 +48,17 @@ struct txt_widget_class_s
 struct txt_widget_s
 {
     txt_widget_class_t *widget_class;
+    txt_callback_table_t *callback_table;
     int selectable;
     int visible;
 };
 
+void TXT_InitWidget(void *widget, txt_widget_class_t *widget_class);
 void TXT_CalcWidgetSize(txt_widget_t *widget, int *w, int *h);
 void TXT_DrawWidget(txt_widget_t *widget, int w, int selected);
+void TXT_SignalConnect(txt_widget_t *widget, char *signal_name,
+                       TxtWidgetSignalFunc func, void *user_data);
+void TXT_EmitSignal(txt_widget_t *widget, char *signal_name);
 int TXT_WidgetKeyPress(txt_widget_t *widget, int key);
 void TXT_DestroyWidget(txt_widget_t *widget);
 
