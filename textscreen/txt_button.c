@@ -1,6 +1,8 @@
 
 #include <string.h>
 
+#include "doomkeys.h"
+
 #include "txt_button.h"
 #include "txt_io.h"
 #include "txt_main.h"
@@ -44,11 +46,15 @@ static void TXT_ButtonDestructor(txt_widget_t *widget)
     txt_button_t *button = (txt_button_t *) widget;
 
     free(button->label);
-    free(button);
 }
 
 static int TXT_ButtonKeyPress(txt_widget_t *widget, int key)
 {
+    if (key == KEY_ENTER)
+    {
+        TXT_EmitSignal(widget, "pressed");
+    }
+    
     return 0;
 }
 
@@ -66,9 +72,7 @@ txt_button_t *TXT_NewButton(char *label)
 
     button = malloc(sizeof(txt_button_t));
 
-    button->widget.widget_class = &txt_button_class;
-    button->widget.selectable = 1;
-    button->widget.visible = 1;
+    TXT_InitWidget(button, &txt_button_class);
     button->label = strdup(label);
 
     return button;
