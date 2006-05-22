@@ -40,9 +40,9 @@ void TXT_DestroyCallbackTable(txt_callback_table_t *table)
     free(table);
 }
 
-void TXT_InitWidget(UNCAST(widget), txt_widget_class_t *widget_class)
+void TXT_InitWidget(TXT_UNCAST_ARG(widget), txt_widget_class_t *widget_class)
 {
-    CAST(txt_widget_t, widget);
+    TXT_CAST_ARG(txt_widget_t, widget);
 
     widget->widget_class = widget_class;
     widget->callback_table = TXT_NewCallbackTable();
@@ -53,12 +53,12 @@ void TXT_InitWidget(UNCAST(widget), txt_widget_class_t *widget_class)
     widget->visible = 1;
 }
 
-void TXT_SignalConnect(UNCAST(widget),
+void TXT_SignalConnect(TXT_UNCAST_ARG(widget),
                        char *signal_name,
                        TxtWidgetSignalFunc func, 
                        void *user_data)
 {
-    CAST(txt_widget_t, widget);
+    TXT_CAST_ARG(txt_widget_t, widget);
     txt_callback_table_t *table;
     txt_callback_t *callback;
     int i;
@@ -90,9 +90,9 @@ void TXT_SignalConnect(UNCAST(widget),
     callback->user_data = user_data;
 }
 
-void TXT_EmitSignal(UNCAST(widget), char *signal_name)
+void TXT_EmitSignal(TXT_UNCAST_ARG(widget), char *signal_name)
 {
-    CAST(txt_widget_t, widget);
+    TXT_CAST_ARG(txt_widget_t, widget);
     txt_callback_table_t *table;
     int i;
 
@@ -108,32 +108,32 @@ void TXT_EmitSignal(UNCAST(widget), char *signal_name)
     }
 }
 
-void TXT_CalcWidgetSize(UNCAST(widget), int *w, int *h)
+void TXT_CalcWidgetSize(TXT_UNCAST_ARG(widget), int *w, int *h)
 {
-    CAST(txt_widget_t, widget);
+    TXT_CAST_ARG(txt_widget_t, widget);
 
     return widget->widget_class->size_calc(widget, w, h);
 }
 
-void TXT_DrawWidget(UNCAST(widget), int w, int selected)
+void TXT_DrawWidget(TXT_UNCAST_ARG(widget), int w, int selected)
 {
-    CAST(txt_widget_t, widget);
+    TXT_CAST_ARG(txt_widget_t, widget);
 
     widget->widget_class->drawer(widget, w, selected);
 }
 
-void TXT_DestroyWidget(UNCAST(widget))
+void TXT_DestroyWidget(TXT_UNCAST_ARG(widget))
 {
-    CAST(txt_widget_t, widget);
+    TXT_CAST_ARG(txt_widget_t, widget);
 
     widget->widget_class->destructor(widget);
     TXT_DestroyCallbackTable(widget->callback_table);
     free(widget);
 }
 
-int TXT_WidgetKeyPress(UNCAST(widget), int key)
+int TXT_WidgetKeyPress(TXT_UNCAST_ARG(widget), int key)
 {
-    CAST(txt_widget_t, widget);
+    TXT_CAST_ARG(txt_widget_t, widget);
 
     if (widget->widget_class->key_press != NULL)
     {

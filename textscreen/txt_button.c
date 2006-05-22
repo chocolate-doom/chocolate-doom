@@ -8,9 +8,9 @@
 #include "txt_main.h"
 #include "txt_window.h"
 
-static void TXT_ButtonSizeCalc(UNCAST(button), int *w, int *h)
+static void TXT_ButtonSizeCalc(TXT_UNCAST_ARG(button), int *w, int *h)
 {
-    CAST(txt_button_t, button);
+    TXT_CAST_ARG(txt_button_t, button);
 
     // Minimum width is the string length + two spaces for padding
 
@@ -18,9 +18,9 @@ static void TXT_ButtonSizeCalc(UNCAST(button), int *w, int *h)
     *h = 1;
 }
 
-static void TXT_ButtonDrawer(UNCAST(button), int w, int selected)
+static void TXT_ButtonDrawer(TXT_UNCAST_ARG(button), int w, int selected)
 {
-    CAST(txt_button_t, button);
+    TXT_CAST_ARG(txt_button_t, button);
     int i;
 
     TXT_BGColor(TXT_COLOR_BLUE, 0);
@@ -40,16 +40,16 @@ static void TXT_ButtonDrawer(UNCAST(button), int w, int selected)
     }
 }
 
-static void TXT_ButtonDestructor(UNCAST(button))
+static void TXT_ButtonDestructor(TXT_UNCAST_ARG(button))
 {
-    CAST(txt_button_t, button);
+    TXT_CAST_ARG(txt_button_t, button);
 
     free(button->label);
 }
 
-static int TXT_ButtonKeyPress(UNCAST(button), int key)
+static int TXT_ButtonKeyPress(TXT_UNCAST_ARG(button), int key)
 {
-    CAST(txt_button_t, button);
+    TXT_CAST_ARG(txt_button_t, button);
 
     if (key == KEY_ENTER)
     {
