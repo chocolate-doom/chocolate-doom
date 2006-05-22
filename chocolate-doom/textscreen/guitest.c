@@ -19,9 +19,26 @@ enum
     RADIO_VALUE_MUSHROOM,
     RADIO_VALUE_SNAKE,
 };
+char *radio_values[] = { "Badger", "Mushroom", "Snake" };
 int radiobutton_value;
+txt_label_t *value_label;
 txt_window_t *firstwin;
-int checkbox_value;
+int cheesy;
+
+void UpdateLabel(TXT_UNCAST_ARG(widget), void *user_data)
+{
+    char buf[40];
+    
+    strcpy(buf, " Current value: ");
+    if (cheesy)
+    {
+        strcat(buf, "Cheesy ");
+    }
+    strcat(buf, radio_values[radiobutton_value]);
+    strcat(buf, "\n");
+
+    TXT_SetLabel(value_label, buf);
+}
 
 void CloseWindow(TXT_UNCAST_ARG(button), void *user_data)
 {
@@ -34,6 +51,7 @@ void SetupWindow(void)
     txt_table_t *table;
     txt_table_t *leftpane, *rightpane;
     txt_button_t *button;
+    txt_checkbox_t *cheesy_checkbox;
     char buf[100];
     int i;
     
@@ -59,20 +77,29 @@ void SetupWindow(void)
     }
 
     TXT_AddWidget(window, TXT_NewLabel(""));
+    value_label = TXT_NewLabel("");
+    TXT_AddWidget(window, value_label);
 
     table = TXT_NewTable(2);
     TXT_AddWidget(window, table);
 
-    TXT_AddWidget(table, TXT_NewCheckBox("Checkbox", &checkbox_value));
+    cheesy_checkbox = TXT_NewCheckBox("Cheesy", &cheesy);
+    TXT_AddWidget(table, cheesy_checkbox);
+    TXT_SignalConnect(cheesy_checkbox, "changed", UpdateLabel, NULL);
 
     rightpane = TXT_NewTable(1);
     TXT_AddWidget(table, rightpane);
-    TXT_AddWidget(rightpane, TXT_NewRadioButton("Badger", &radiobutton_value,
-                                                RADIO_VALUE_BADGER));
-    TXT_AddWidget(rightpane, TXT_NewRadioButton("Mushroom", &radiobutton_value,
-                                                RADIO_VALUE_MUSHROOM));
-    TXT_AddWidget(rightpane, TXT_NewRadioButton("Snake", &radiobutton_value,
-                                                RADIO_VALUE_SNAKE));
+
+    for (i=0; i<3; ++i)
+    {
+        txt_radiobutton_t *rbut;
+
+        rbut = TXT_NewRadioButton(radio_values[i], &radiobutton_value, i);
+        TXT_AddWidget(rightpane, rbut);
+        TXT_SignalConnect(rbut, "selected", UpdateLabel, NULL);
+    }
+
+    UpdateLabel(NULL, NULL);
                                      
     button = TXT_NewButton("Close Window");
     TXT_AddWidget(window, button);
