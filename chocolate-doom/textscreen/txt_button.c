@@ -54,6 +54,7 @@ static int TXT_ButtonKeyPress(TXT_UNCAST_ARG(button), int key)
     if (key == KEY_ENTER)
     {
         TXT_EmitSignal(button, "pressed");
+        return 1;
     }
     
     return 0;
