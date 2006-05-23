@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_mobj.c 354 2006-01-29 15:05:05Z fraggle $
+// $Id: p_mobj.c 521 2006-05-23 22:56:28Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -48,7 +48,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_mobj.c 354 2006-01-29 15:05:05Z fraggle $";
+rcsid[] = "$Id: p_mobj.c 521 2006-05-23 22:56:28Z fraggle $";
 
 #include "i_system.h"
 #include "z_zone.h"
@@ -960,6 +960,31 @@ P_SpawnMissile
     mobj_t*	th;
     angle_t	an;
     int		dist;
+    fixed_t     dest_x, dest_y, dest_z, dest_flags;
+
+    // fraggle: This prevents against *crashes* when dest == NULL.
+    // For example, when loading a game saved when a mancubus was 
+    // in the middle of firing, mancubus->target == NULL.  SpawnMissile
+    // then gets called with dest == NULL.
+    //
+    // However, this is not the *correct* behavior.  At the moment,
+    // the missile is aimed at 0,0,0.  In reality, monsters seem to aim
+    // somewhere else.
+
+    if (dest)
+    {
+        dest_x = dest->x;
+        dest_y = dest->y;
+        dest_z = dest->z;
+        dest_flags = dest->flags;
+    }
+    else
+    {
+        dest_x = 0;
+        dest_y = 0;
+        dest_z = 0;
+        dest_flags = 0;
+    }
 
     th = P_SpawnMobj (source->x,
 		      source->y,
@@ -969,10 +994,10 @@ P_SpawnMissile
 	S_StartSound (th, th->info->seesound);
 
     th->target = source;	// where it came from
-    an = R_PointToAngle2 (source->x, source->y, dest->x, dest->y);	
+    an = R_PointToAngle2 (source->x, source->y, dest_x, dest_y);	
 
     // fuzzy player
-    if (dest->flags & MF_SHADOW)
+    if (dest_flags & MF_SHADOW)
 	an += (P_Random()-P_Random())<<20;	
 
     th->angle = an;
@@ -980,13 +1005,13 @@ P_SpawnMissile
     th->momx = FixedMul (th->info->speed, finecosine[an]);
     th->momy = FixedMul (th->info->speed, finesine[an]);
 	
-    dist = P_AproxDistance (dest->x - source->x, dest->y - source->y);
+    dist = P_AproxDistance (dest_x - source->x, dest_y - source->y);
     dist = dist / th->info->speed;
 
     if (dist < 1)
 	dist = 1;
 
-    th->momz = (dest->z - source->z) / dist;
+    th->momz = (dest_z - source->z) / dist;
     P_CheckMissileSpawn (th);
 	
     return th;
