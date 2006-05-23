@@ -43,6 +43,7 @@ typedef enum
 
 #include "txt_widget.h" 
 #include "txt_table.h"
+#include "txt_window_action.h"
 
 struct txt_window_s
 {
@@ -59,6 +60,10 @@ struct txt_window_s
     txt_vert_align_t vert_align;
     txt_horiz_align_t horiz_align;
     int x, y;
+
+    // Actions that appear in the box at the bottom of the window
+
+    txt_window_action_t *actions[3];
 };
 
 txt_window_t *TXT_NewWindow(char *title);
@@ -67,6 +72,8 @@ void TXT_SetWindowPosition(txt_window_t *window,
                            txt_horiz_align_t horiz_align,
                            txt_vert_align_t vert_align,
                            int x, int y);
+void TXT_SetWindowAction(txt_window_t *window, txt_horiz_align_t position, 
+                         txt_window_action_t *action);
 
 #endif /* #ifndef TXT_WINDOW_T */
 

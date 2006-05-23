@@ -365,6 +365,15 @@ static void TXT_TableDrawer(TXT_UNCAST_ARG(table), int w, int selected)
 
     CalcRowColSizes(table, row_heights, column_widths);
 
+    // If this table only has one column, expand column size to fit
+    // the display width.  Ensures that separators reach the window edges 
+    // when drawing windows.
+
+    if (table->columns == 1)
+    {
+        column_widths[0] = w;
+    }
+
     // Draw all cells
     
     draw_y = origin_y;
