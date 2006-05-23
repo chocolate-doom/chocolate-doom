@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "doomkeys.h"
+
 #include "txt_main.h"
 
 #include "txt_checkbox.h"
@@ -24,6 +26,28 @@ int radiobutton_value;
 txt_label_t *value_label;
 txt_window_t *firstwin;
 int cheesy;
+
+void ClosePwnBox(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(window))
+{
+    TXT_CAST_ARG(txt_window_t, window);
+
+    TXT_CloseWindow(window);
+}
+
+void PwnBox(TXT_UNCAST_ARG(widget), void *user_data)
+{
+    txt_window_t *window;
+    txt_window_action_t *close_button;
+    
+    window = TXT_NewWindow("Pwned!");
+    TXT_AddWidget(window, TXT_NewLabel(" BOOM! HEADSHOT! "));
+
+    close_button = TXT_NewWindowAction(KEY_ENTER, "Close");
+    TXT_SignalConnect(close_button, "pressed", ClosePwnBox, window);
+
+    TXT_SetWindowAction(window, TXT_HORIZ_LEFT, NULL);
+    TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, close_button);
+}
 
 void UpdateLabel(TXT_UNCAST_ARG(widget), void *user_data)
 {
@@ -52,6 +76,7 @@ void SetupWindow(void)
     txt_table_t *leftpane, *rightpane;
     txt_button_t *button;
     txt_checkbox_t *cheesy_checkbox;
+    txt_window_action_t *pwn;
     char buf[100];
     int i;
     
@@ -105,6 +130,10 @@ void SetupWindow(void)
     TXT_AddWidget(window, button);
 
     TXT_SignalConnect(button, "pressed", CloseWindow, NULL);
+
+    pwn = TXT_NewWindowAction(KEY_F1, "PWN!");
+    TXT_SetWindowAction(window, TXT_HORIZ_CENTER, pwn);
+    TXT_SignalConnect(pwn, "pressed", PwnBox, NULL);
 
     firstwin = window;
 }
