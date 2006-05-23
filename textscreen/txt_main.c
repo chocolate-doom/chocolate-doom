@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: txt_main.c 513 2006-05-23 00:04:27Z fraggle $
+// $Id: txt_main.c 519 2006-05-23 22:51:09Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -261,7 +261,7 @@ static int TranslateKey(SDL_keysym *sym)
       case SDLK_KP_MINUS:    return KEYP_MINUS;
       case SDLK_KP_DIVIDE:   return KEYP_DIVIDE;
 
-      default:               return tolower(sym->sym);
+      default:               return sym->unicode;
     }
 }
 
