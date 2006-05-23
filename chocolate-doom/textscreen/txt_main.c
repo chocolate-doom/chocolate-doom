@@ -261,7 +261,7 @@ static int TranslateKey(SDL_keysym *sym)
       case SDLK_KP_MINUS:    return KEYP_MINUS;
       case SDLK_KP_DIVIDE:   return KEYP_DIVIDE;
 
-      default:               return tolower(sym->sym);
+      default:               return sym->unicode;
     }
 }
 
