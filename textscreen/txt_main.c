@@ -298,3 +298,85 @@ signed int TXT_GetChar(void)
     return -1;
 }
 
+static char *SpecialKeyName(int key)
+{
+    switch (key)
+    {
+        case KEY_RIGHTARROW:  return "RIGHT";
+        case KEY_LEFTARROW:   return "LEFT";
+        case KEY_UPARROW:     return "UP";
+        case KEY_DOWNARROW:   return "DOWN";
+        case KEY_ESCAPE:      return "ESC";
+        case KEY_ENTER:       return "ENTER";
+        case KEY_TAB:         return "TAB";
+        case KEY_F1:          return "F1";
+        case KEY_F2:          return "F2";
+        case KEY_F3:          return "F3";
+        case KEY_F4:          return "F4";
+        case KEY_F5:          return "F5";
+        case KEY_F6:          return "F6";
+        case KEY_F7:          return "F7";
+        case KEY_F8:          return "F8";
+        case KEY_F9:          return "F9";
+        case KEY_F10:         return "F10";
+        case KEY_F11:         return "F11";
+        case KEY_F12:         return "F12";
+        case KEY_BACKSPACE:   return "BKSP";
+        case KEY_PAUSE:       return "PAUSE";
+        case KEY_EQUALS:      return "EQUALS";
+        case KEY_MINUS:       return "MINUS";
+        case KEY_RSHIFT:      return "SHIFT";
+        case KEY_RCTRL:       return "CTRL";
+        case KEY_RALT:        return "ALT";
+        case KEY_CAPSLOCK:    return "CAPS";
+        case KEY_SCRLCK:      return "SCRLCK";
+        case KEY_HOME:        return "HOME";
+        case KEY_END:         return "END";
+        case KEY_PGUP:        return "PGUP";
+        case KEY_PGDN:        return "PGDN";
+        case KEY_INS:         return "INS";
+        case KEY_DEL:         return "DEL";
+                 /*
+        case KEYP_0:          return "PAD0";
+        case KEYP_1:          return "PAD1";
+        case KEYP_2:          return "PAD2";
+        case KEYP_3:          return "PAD3";
+        case KEYP_4:          return "PAD4";
+        case KEYP_5:          return "PAD5";
+        case KEYP_6:          return "PAD6";
+        case KEYP_7:          return "PAD7";
+        case KEYP_8:          return "PAD8";
+        case KEYP_9:          return "PAD9";
+        case KEYP_UPARROW:    return "PAD_U";
+        case KEYP_DOWNARROW:  return "PAD_D";
+        case KEYP_LEFTARROW:  return "PAD_L";
+        case KEYP_RIGHTARROW: return "PAD_R";
+        case KEYP_MULTIPLY:   return "PAD*";
+        case KEYP_PLUS:       return "PAD+";
+        case KEYP_MINUS:      return "PAD-";
+        case KEYP_DIVIDE:     return "PAD/";
+                   */
+        default:              return NULL;
+    }
+}
+
+void TXT_GetKeyDescription(int key, char *buf)
+{
+    char *keyname;
+
+    keyname = SpecialKeyName(key);
+
+    if (keyname != NULL)
+    {
+        strcpy(buf, keyname);
+    }
+    else if (isprint(key))
+    {
+        sprintf(buf, "%c", toupper(key));
+    }
+    else
+    {
+        sprintf(buf, "??%i", key);
+    }
+}
+

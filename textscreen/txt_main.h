@@ -96,5 +96,10 @@ void TXT_UpdateScreen(void);
 
 int TXT_GetChar(void);
 
+// Provides a short description of a key code, placing into the 
+// provided buffer.
+
+void TXT_GetKeyDescription(int key, char *buf);
+
 #endif /* #ifndef TXT_MAIN_H */
 
