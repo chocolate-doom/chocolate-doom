@@ -8,6 +8,7 @@ libtextscreen_a_SOURCES =                                 \
 	txt_checkbox.c           txt_checkbox.h           \
 	txt_desktop.c            txt_desktop.h            \
 	txt_gui.c                txt_gui.h                \
+	txt_inputbox.c           txt_inputbox.h           \
 	txt_io.c                 txt_io.h                 \
 	txt_main.c               txt_main.h               \
 	txt_button.c             txt_button.h             \
