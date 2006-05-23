@@ -25,6 +25,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "doomkeys.h"
+
 #include "txt_desktop.h"
 #include "txt_gui.h"
 #include "txt_main.h"
@@ -36,6 +38,7 @@
 static char *desktop_title;
 static txt_window_t *all_windows[MAXWINDOWS];
 static int num_windows = 0;
+static int main_loop_running = 0;
 
 void TXT_AddDesktopWindow(txt_window_t *win)
 {
@@ -137,21 +140,34 @@ void TXT_DispatchEvents(void)
 
     while ((c = TXT_GetChar()) > 0)
     {
-        if (c == 27)
-            exit(0);
-
         if (num_windows > 0)
         {
             // Send the keypress to the top window
 
             TXT_WindowKeyPress(all_windows[num_windows - 1], c);
         }
+        else
+        {
+            // No windows
+
+            if (c == KEY_ESCAPE)
+            {
+                TXT_ExitMainLoop();
+            }
+        }
     }
+}
+
+void TXT_ExitMainLoop(void)
+{
+    main_loop_running = 0;
 }
 
 void TXT_GUIMainLoop(void)
 {
-    for (;;) 
+    main_loop_running = 1;
+
+    while (main_loop_running)
     {
         TXT_DispatchEvents();
         TXT_DrawDesktop();
