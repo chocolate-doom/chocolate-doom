@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: txt_main.h 289 2006-01-13 18:23:28Z fraggle $
+// $Id: txt_main.h 513 2006-05-23 00:04:27Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -95,6 +95,11 @@ void TXT_UpdateScreen(void);
 // Read a character from the keyboard
 
 int TXT_GetChar(void);
+
+// Provides a short description of a key code, placing into the 
+// provided buffer.
+
+void TXT_GetKeyDescription(int key, char *buf);
 
 #endif /* #ifndef TXT_MAIN_H */
 
