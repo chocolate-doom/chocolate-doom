@@ -9,6 +9,7 @@
 #include "txt_checkbox.h"
 #include "txt_button.h"
 #include "txt_desktop.h"
+#include "txt_inputbox.h"
 #include "txt_label.h"
 #include "txt_radiobutton.h"
 #include "txt_separator.h"
@@ -22,6 +23,8 @@ enum
     RADIO_VALUE_SNAKE,
 };
 char *radio_values[] = { "Badger", "Mushroom", "Snake" };
+char *textbox_value = NULL;
+int numbox_value = 0;
 int radiobutton_value;
 txt_label_t *value_label;
 txt_window_t *firstwin;
@@ -141,6 +144,7 @@ void SetupWindow(void)
 void Window2(void)
 {
     txt_window_t *window;
+    txt_table_t *table;
     int i;
     
     window = TXT_NewWindow("Another test");
@@ -153,6 +157,14 @@ void Window2(void)
     {
         TXT_AddWidget(window, TXT_NewButton("hello there blah blah blah blah"));
     }
+
+    TXT_AddWidget(window, TXT_NewSeparator("Input boxes"));
+    table = TXT_NewTable(2);
+    TXT_AddWidget(window, table);
+    TXT_AddWidget(table, TXT_NewLabel(" String: "));
+    TXT_AddWidget(table, TXT_NewInputBox(&textbox_value, 30));
+    TXT_AddWidget(table, TXT_NewLabel(" Int: "));
+    TXT_AddWidget(table, TXT_NewIntInputBox(&numbox_value, 10));
 }
 
 void DrawASCIIChart()
