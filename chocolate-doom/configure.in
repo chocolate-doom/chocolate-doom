@@ -52,6 +52,7 @@ AC_C_BIGENDIAN
 AC_OUTPUT([
 Makefile
 textscreen/Makefile
+textscreen/examples/Makefile
 src/Makefile
 src/chocolate-doom-res.rc
 ])
