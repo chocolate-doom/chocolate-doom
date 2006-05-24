@@ -1148,7 +1148,7 @@ void I_InitGraphics(void)
     // setting the screen mode, so that the game doesn't start immediately
     // with the player unable to see anything.
 
-    if (fullscreen || true)
+    if (fullscreen)
     {
         SDL_Delay(startup_delay);
     }
