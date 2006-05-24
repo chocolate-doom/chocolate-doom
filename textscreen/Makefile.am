@@ -1,9 +1,10 @@
 
 AM_CFLAGS = @SDL_CFLAGS@ -I../src
+SUBDIRS=examples
 
 noinst_LIBRARIES=libtextscreen.a
-bin_PROGRAMS=guitest calculator
 
+libtextscreen_a_LIBADD = @SDL_LIBS@
 libtextscreen_a_SOURCES =                                 \
 	txt_checkbox.c           txt_checkbox.h           \
 	txt_desktop.c            txt_desktop.h            \
@@ -20,10 +21,4 @@ libtextscreen_a_SOURCES =                                 \
 	txt_window.c             txt_window.h             \
 	txt_window_action.c      txt_window_action.h      \
 	txt_font.h
-
-guitest_LDADD = @SDL_LIBS@ libtextscreen.a
-guitest_SOURCES = guitest.c
-
-calculator_LDADD = @SDL_LIBS@ libtextscreen.a
-calculator_SOURCES = calculator.c
 
