@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 489 2006-05-20 16:24:58Z fraggle $
+// $Id: i_video.c 525 2006-05-24 22:51:36Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -175,7 +175,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 489 2006-05-20 16:24:58Z fraggle $";
+rcsid[] = "$Id: i_video.c 525 2006-05-24 22:51:36Z fraggle $";
 
 #include <SDL.h>
 #include <ctype.h>
@@ -1148,7 +1148,7 @@ void I_InitGraphics(void)
     // setting the screen mode, so that the game doesn't start immediately
     // with the player unable to see anything.
 
-    if (fullscreen || true)
+    if (fullscreen)
     {
         SDL_Delay(startup_delay);
     }
