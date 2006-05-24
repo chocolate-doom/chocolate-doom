@@ -170,7 +170,7 @@ static int TXT_IntInputBoxKeyPress(TXT_UNCAST_ARG(inputbox), int key)
         inputbox->editing = 0;
     }
 
-    if (isprint(key))
+    if (isdigit(key))
     {
         // Add character to the buffer
 
