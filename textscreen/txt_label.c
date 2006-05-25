@@ -18,18 +18,23 @@ static void TXT_LabelSizeCalc(TXT_UNCAST_ARG(label), int *w, int *h)
 static void TXT_LabelDrawer(TXT_UNCAST_ARG(label), int w, int selected)
 {
     TXT_CAST_ARG(txt_label_t, label);
-    int i;
+    int x, y;
     int origin_x, origin_y;
 
-    TXT_BGColor(TXT_COLOR_BLUE, 0);
-    TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
+    TXT_BGColor(label->bgcolor, 0);
+    TXT_FGColor(label->fgcolor);
 
     TXT_GetXY(&origin_x, &origin_y);
 
-    for (i=0; i<label->h; ++i)
+    for (y=0; y<label->h; ++y)
     {
-        TXT_GotoXY(origin_x, origin_y + i);
-        TXT_DrawString(label->lines[i]);
+        TXT_GotoXY(origin_x, origin_y + y);
+        TXT_DrawString(label->lines[y]);
+
+        for (x=strlen(label->lines[y]); x<w; ++x)
+        {
+            TXT_DrawString(" ");
+        }
     }
 }
 
@@ -111,8 +116,23 @@ txt_label_t *TXT_NewLabel(char *text)
     label->label = NULL;
     label->lines = NULL;
 
+    // Default colors
+
+    label->bgcolor = TXT_COLOR_BLUE;
+    label->fgcolor = TXT_COLOR_BRIGHT_WHITE;
+
     TXT_SetLabel(label, text);
 
     return label;
+}
+
+void TXT_SetFGColor(txt_label_t *label, txt_color_t color)
+{
+    label->fgcolor = color;
+}
+
+void TXT_SetBGColor(txt_label_t *label, txt_color_t color)
+{
+    label->bgcolor = color;
 }
 
