@@ -264,6 +264,10 @@ void D_DoomLoop (void);
 
 char *          configdir;
 
+// Location where savegames are stored
+
+char *          savegamedir;
+
 // location of IWAD and WAD files
 
 char *          iwadfile;
@@ -1184,6 +1188,16 @@ void PrintDehackedBanners(void)
     }
 }
 
+static void MakeDirectory(char *path)
+{
+#ifdef _WIN32
+    mkdir(path);
+#else
+    mkdir(path, 0755);
+#endif
+}
+
+
 // 
 // SetConfigDir:
 //
@@ -1207,11 +1221,10 @@ static void SetConfigDir(void)
         sprintf(configdir, "%s/.%s/", homedir, PACKAGE_TARNAME);
 
         // make the directory if it doesnt already exist
-#ifdef _WIN32
-        mkdir(configdir);
-#else
-        mkdir(configdir, 0755);
-#endif
+
+        MakeDirectory(configdir);
+        
+
     }
     else
     {
@@ -1228,6 +1241,57 @@ static void SetConfigDir(void)
 #endif
         {
             configdir = strdup("");
+        }
+    }
+}
+
+// 
+// SetSaveGameDir
+//
+// Chooses the directory used to store saved games.
+//
+
+static void SetSaveGameDir(void)
+{
+    int i;
+
+    if (!strcmp(configdir, ""))
+    {
+        // Use the current directory, just like configdir.
+
+        savegamedir = strdup("");
+    }
+    else
+    {
+        // Directory for savegames
+
+        savegamedir = malloc(strlen(configdir) + 30);
+        sprintf(savegamedir, "%ssavegames", configdir);
+
+        MakeDirectory(savegamedir);
+
+        // Find what subdirectory to use for savegames
+        //
+        // They should be stored in something like
+        //    ~/.chocolate-doom/savegames/doom.wad/
+        //
+        // The directory depends on the IWAD, so that savegames for
+        // different IWADs are kept separate.
+        //
+        // Note that we match on gamemission rather than on IWAD name.
+        // This ensures that doom1.wad and doom.wad saves are stored
+        // in the same place.
+
+        for (i=0; i<sizeof(iwads) / sizeof(*iwads); ++i)
+        {
+            if (gamemission == iwads[i].mission)
+            {
+                strcat(savegamedir, "/");
+                strcat(savegamedir, iwads[i].name);
+                strcat(savegamedir, "/");
+                MakeDirectory(savegamedir);
+                break;
+            }
         }
     }
 }
@@ -1578,6 +1642,7 @@ void D_DoomMain (void)
     IdentifyVersion();
     InitGameVersion();
     SetGameDescription();
+    SetSaveGameDir();
 
     // Check for -file in shareware
     if (modifiedgame)
