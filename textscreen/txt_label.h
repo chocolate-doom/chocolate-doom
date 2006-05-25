@@ -27,6 +27,7 @@
 
 typedef struct txt_label_s txt_label_t;
 
+#include "txt_main.h"
 #include "txt_widget.h"
 
 struct txt_label_s
@@ -35,10 +36,14 @@ struct txt_label_s
     char *label;
     char **lines;
     int w, h;
+    txt_color_t fgcolor;
+    txt_color_t bgcolor;
 };
 
 txt_label_t *TXT_NewLabel(char *label);
 void TXT_SetLabel(txt_label_t *label, char *value);
+void TXT_SetBGColor(txt_label_t *label, txt_color_t color);
+void TXT_SetFGColor(txt_label_t *label, txt_color_t color);
 
 #endif /* #ifndef TXT_LABEL_H */
 
