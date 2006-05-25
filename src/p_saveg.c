@@ -88,7 +88,7 @@ char *P_SaveGameFile(int slot)
 
     sprintf(basename, DEH_String(SAVEGAMENAME "%d.dsg"), slot);
 
-    sprintf(filename, "%s%s", configdir, basename);
+    sprintf(filename, "%s%s", savegamedir, basename);
 
     return filename;
 }
