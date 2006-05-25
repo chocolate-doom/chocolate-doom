@@ -42,15 +42,16 @@ static void TXT_TableDestructor(TXT_UNCAST_ARG(table))
 
     for (i=0; i<table->num_widgets; ++i)
     {
-        TXT_DestroyWidget(table->widgets[i]);
+        if (table->widgets[i] != NULL)
+        {
+            TXT_DestroyWidget(table->widgets[i]);
+        }
     }
     
     // Free table resources
 
     free(table->widgets);
 }
-
-// -------------
 
 static int TableRows(txt_table_t *table)
 {
@@ -65,6 +66,7 @@ static void CalcRowColSizes(txt_table_t *table,
     int x, y;
     int rows;
     int ww, wh;
+    txt_widget_t *widget;
 
     rows = TableRows(table);
 
@@ -79,8 +81,19 @@ static void CalcRowColSizes(txt_table_t *table,
             if (y * table->columns + x >= table->num_widgets)
                 break;
 
-            TXT_CalcWidgetSize(table->widgets[y * table->columns + x],
-                               &ww, &wh);
+            widget = table->widgets[y * table->columns + x];
+
+            if (widget != NULL)
+            {
+                TXT_CalcWidgetSize(widget, &ww, &wh);
+            }
+            else
+            {
+                // Empty spacer if widget is NULL
+
+                ww = 0;
+                wh = 1;
+            }
 
             if (wh > row_heights[y])
                 row_heights[y] = wh;
@@ -134,7 +147,8 @@ void TXT_AddWidget(TXT_UNCAST_ARG(table), TXT_UNCAST_ARG(widget))
 
         last_widget = table->widgets[table->num_widgets - 1];
 
-        if (widget->widget_class == &txt_separator_class
+        if (widget != NULL && last_widget != NULL
+         && widget->widget_class == &txt_separator_class
          && last_widget->widget_class == &txt_separator_class)
         {
             // The previous widget added was a separator; replace 
@@ -168,7 +182,7 @@ static int SelectableWidget(txt_table_t *table, int x, int y)
     if (i >= 0 && i < table->num_widgets)
     {
         widget = table->widgets[i];
-        return widget->selectable && widget->visible;
+        return widget != NULL && widget->selectable && widget->visible;
     }
 
     return 0;
@@ -221,7 +235,8 @@ static int TXT_TableKeyPress(TXT_UNCAST_ARG(table), int key)
 
     if (selected >= 0 && selected < table->num_widgets)
     {
-        if (TXT_WidgetKeyPress(table->widgets[selected], key))
+        if (table->widgets[selected] != NULL
+         && TXT_WidgetKeyPress(table->widgets[selected], key))
         {
             return 1;
         }
@@ -342,6 +357,7 @@ static void CheckValidSelection(txt_table_t *table)
 static void TXT_TableDrawer(TXT_UNCAST_ARG(table), int w, int selected)
 {
     TXT_CAST_ARG(txt_table_t, table);
+    txt_widget_t *widget;
     int *column_widths;
     int *row_heights;
     int origin_x, origin_y;
@@ -389,10 +405,14 @@ static void TXT_TableDrawer(TXT_UNCAST_ARG(table), int w, int selected)
 
             TXT_GotoXY(draw_x, draw_y);
 
-            TXT_DrawWidget(table->widgets[y * table->columns + x],
-                           column_widths[x],
-                           selected && x == table->selected_x
-                                    && y == table->selected_y);
+            widget = table->widgets[y * table->columns + x];
+
+            if (widget != NULL)
+            {
+                TXT_DrawWidget(widget, column_widths[x],
+                               selected && x == table->selected_x
+                                        && y == table->selected_y);
+            }
 
             draw_x += column_widths[x];
         }
