@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 525 2006-05-24 22:51:36Z fraggle $
+// $Id: i_video.c 526 2006-05-25 20:18:19Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -175,7 +175,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 525 2006-05-24 22:51:36Z fraggle $";
+rcsid[] = "$Id: i_video.c 526 2006-05-25 20:18:19Z fraggle $";
 
 #include <SDL.h>
 #include <ctype.h>
@@ -698,10 +698,9 @@ static void BlitArea(int x1, int y1, int x2, int y2)
     
                 for (x=x1; x<x2; ++x)
                 {
-                    *sp2++ = *bp;
-                    *sp2++ = *bp;
-                    *sp++ = *bp;
-                    *sp++ = *bp++;
+                    *sp++ = *bp;  *sp++ = *bp;
+                    *sp2++ = *bp; *sp2++ = *bp;
+                    ++bp;
                 }
                 screenp += pitch;
                 screenp2 += pitch;
@@ -726,7 +725,7 @@ static void BlitArea(int x1, int y1, int x2, int y2)
                     + (y1 + y_offset) * pitch 
                     + x1 * 3;
             screenp2 = screenp + screen->pitch;
-            screenp3 = screenp + screen->pitch * 2;
+            screenp3 = screenp2 + screen->pitch;
     
             for (y=y1; y<y2; ++y)
             {
@@ -738,20 +737,59 @@ static void BlitArea(int x1, int y1, int x2, int y2)
     
                 for (x=x1; x<x2; ++x)
                 {
-                    *sp++ = *bp;
-                    *sp++ = *bp;
-                    *sp++ = *bp;
-                    *sp2++ = *bp;
-                    *sp2++ = *bp;
-                    *sp2++ = *bp;
-                    *sp3++ = *bp;
-                    *sp3++ = *bp;
-                    *sp3++ = *bp;
+                    *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;
+                    *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp;
+                    *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp;
                     ++bp;
                 }
                 screenp += pitch;
                 screenp2 += pitch;
                 screenp3 += pitch;
+                bufp += SCREENWIDTH;
+            }
+    
+            SDL_UnlockSurface(screen);
+        }
+    }
+
+    if (screenmultiply == 4)
+    {
+        byte *bufp, *screenp, *screenp2, *screenp3, *screenp4;
+        int x, y;
+        int pitch;
+
+        if (SDL_LockSurface(screen) >= 0)
+        {
+            pitch = screen->pitch * 4;
+            bufp = screens[0] + y1 * SCREENWIDTH + x1;
+            screenp = (byte *) screen->pixels 
+                    + (y1 + y_offset) * pitch 
+                    + x1 * 4;
+            screenp2 = screenp + screen->pitch;
+            screenp3 = screenp2 + screen->pitch;
+            screenp4 = screenp3 + screen->pitch;
+    
+            for (y=y1; y<y2; ++y)
+            {
+                byte *sp, *sp2, *sp3, *sp4, *bp;
+                sp = screenp;
+                sp2 = screenp2;
+                sp3 = screenp3;
+                sp4 = screenp4;
+                bp = bufp;
+    
+                for (x=x1; x<x2; ++x)
+                {
+                    *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;
+                    *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp;
+                    *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp;
+                    *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp;
+                    ++bp;
+                }
+                screenp += pitch;
+                screenp2 += pitch;
+                screenp3 += pitch;
+                screenp4 += pitch;
                 bufp += SCREENWIDTH;
             }
     
@@ -1037,11 +1075,15 @@ void I_InitGraphics(void)
     {
         screenmultiply = 3;
     }
+    else if (M_CheckParm("-4"))
+    {
+        screenmultiply = 4;
+    }
 
     if (screenmultiply < 1)
         screenmultiply = 1;
-    if (screenmultiply > 3)
-        screenmultiply = 3;
+    if (screenmultiply > 4)
+        screenmultiply = 4;
 
     if (fullscreen)
     {
