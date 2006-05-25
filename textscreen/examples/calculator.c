@@ -24,7 +24,7 @@ void UpdateInputBox(void)
 {
     char buf[20];
 
-    sprintf(buf, " %i", input_value);
+    sprintf(buf, "  %i", input_value);
     TXT_SetLabel(input_box, buf);
 }
 
@@ -116,12 +116,11 @@ void BuildGUI()
     
     window = TXT_NewWindow("Calculator");
 
-    TXT_AddWidget(window, TXT_NewSeparator(NULL));
     input_box = TXT_NewLabel("asdf");
     TXT_SetBGColor(input_box, TXT_COLOR_BLACK);
     TXT_AddWidget(window, input_box);
     TXT_AddWidget(window, TXT_NewSeparator(NULL));
-    TXT_AddWidget(window, TXT_NewLabel(""));
+    TXT_AddWidget(window, NULL);
 
     table = TXT_NewTable(4);
     TXT_AddWidget(window, table);
@@ -139,13 +138,13 @@ void BuildGUI()
     AddNumberButton(table, 3);
     AddOperatorButton(table, "+", OP_PLUS);
     AddNumberButton(table, 0);
-    TXT_AddWidget(table, TXT_NewLabel(""));
+    TXT_AddWidget(table, NULL);
     equals_button = TXT_NewButton("  =  ");
     TXT_SignalConnect(equals_button, "pressed", Calculate, NULL);
     TXT_AddWidget(table, equals_button);
     AddOperatorButton(table, "/", OP_DIV);
     
-    TXT_AddWidget(window, TXT_NewLabel(""));
+    TXT_AddWidget(window, NULL);
     UpdateInputBox();
 }
 
