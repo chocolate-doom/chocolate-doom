@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_saveg.c 485 2006-05-19 20:03:49Z fraggle $
+// $Id: p_saveg.c 531 2006-05-25 22:39:57Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -60,7 +60,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_saveg.c 485 2006-05-19 20:03:49Z fraggle $";
+rcsid[] = "$Id: p_saveg.c 531 2006-05-25 22:39:57Z fraggle $";
 
 #include <stdio.h>
 
@@ -88,7 +88,7 @@ char *P_SaveGameFile(int slot)
 
     sprintf(basename, DEH_String(SAVEGAMENAME "%d.dsg"), slot);
 
-    sprintf(filename, "%s%s", configdir, basename);
+    sprintf(filename, "%s%s", savegamedir, basename);
 
     return filename;
 }

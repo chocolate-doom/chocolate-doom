@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: doomstat.h 475 2006-05-05 19:49:34Z fraggle $
+// $Id: doomstat.h 531 2006-05-25 22:39:57Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -253,6 +253,7 @@ extern  int		maxammo[NUMAMMO];
 
 // File handling stuff.
 extern  char *          configdir;
+extern  char *          savegamedir;
 extern	char		basedefault[1024];
 extern  FILE*		debugfile;
 
