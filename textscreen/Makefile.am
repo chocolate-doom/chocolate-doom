@@ -1,10 +1,12 @@
 
 AM_CFLAGS = @SDL_CFLAGS@ -I../src
-SUBDIRS=examples
+
+# build this directory before the examples directory.
+
+SUBDIRS= . examples
 
 noinst_LIBRARIES=libtextscreen.a
 
-libtextscreen_a_LIBADD = @SDL_LIBS@
 libtextscreen_a_SOURCES =                                 \
 	txt_checkbox.c           txt_checkbox.h           \
 	txt_desktop.c            txt_desktop.h            \
