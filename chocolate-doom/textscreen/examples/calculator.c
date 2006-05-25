@@ -118,6 +118,7 @@ void BuildGUI()
 
     TXT_AddWidget(window, TXT_NewSeparator(NULL));
     input_box = TXT_NewLabel("asdf");
+    TXT_SetBGColor(input_box, TXT_COLOR_BLACK);
     TXT_AddWidget(window, input_box);
     TXT_AddWidget(window, TXT_NewSeparator(NULL));
     TXT_AddWidget(window, TXT_NewLabel(""));
