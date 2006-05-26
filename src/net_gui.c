@@ -92,84 +92,96 @@
 #include "txt_gui.h"
 #include "txt_io.h"
 
-static void ProcessEvents(void)
-{
-    int c;
-    
-    while ((c = TXT_GetChar()) > 0)
-    {
-        switch (tolower(c))
-        {
-            case 27:
-            case 'q':
-                TXT_Shutdown();
-                I_Quit();
-                break;
+#include "txt_desktop.h"
+#include "txt_label.h"
+#include "txt_table.h"
+#include "txt_window.h"
 
-            case ' ':
-                NET_CL_StartGame();
-                break;
-        }
-    }
+static txt_label_t *player_labels[MAXPLAYERS];
+static txt_label_t *ip_labels[MAXPLAYERS];
+
+static void EscapePressed(TXT_UNCAST_ARG(widget), void *unused)
+{
+    TXT_Shutdown();
+    I_Quit();
 }
 
-#define WINDOW_X 15
-#define WINDOW_Y 5
-#define WINDOW_W 50
-#define WINDOW_H 12
-
-static void DrawScreen(void)
+static void StartGame(TXT_UNCAST_ARG(widget), void *unused)
 {
-    char buf[40];
+    NET_CL_StartGame();
+}
+
+static void BuildGUI(void)
+{
+    char buf[50];
+    txt_window_t *window;
+    txt_table_t *table;
+    txt_window_action_t *cancel;
+    txt_window_action_t *startgame;
     int i;
+    
+    TXT_SetDesktopTitle(PACKAGE_STRING);
+    
+    window = TXT_NewWindow("Waiting for game start...");
+    table = TXT_NewTable(3);
+    TXT_AddWidget(window, table);
+    TXT_AddWidget(window, NULL);
 
-    TXT_DrawDesktopBackground(PACKAGE_STRING);
-    TXT_DrawWindowFrame("Waiting for game start...", 
-                        WINDOW_X, WINDOW_Y, 
-                        WINDOW_W, WINDOW_H);
+    // Add spacers
 
-    TXT_BGColor(TXT_COLOR_BLUE, 0);
+    TXT_AddWidget(table, NULL);
+    TXT_AddWidget(table, TXT_NewLabel("                         "));
+    TXT_AddWidget(table, TXT_NewLabel("                 "));
+
+    // Player labels
+    
+    for (i=0; i<MAXPLAYERS; ++i)
+    {
+        sprintf(buf, " %i. ", i + 1);
+        TXT_AddWidget(table, TXT_NewLabel(buf));
+        player_labels[i] = TXT_NewLabel("");
+        ip_labels[i] = TXT_NewLabel("");
+        TXT_AddWidget(table, player_labels[i]);
+        TXT_AddWidget(table, ip_labels[i]);
+    }
+
+    cancel = TXT_NewWindowAction(KEY_ESCAPE, "Cancel");
+    TXT_SignalConnect(cancel, "pressed", EscapePressed, NULL);
+    startgame = TXT_NewWindowAction(' ', "Start game");
+    TXT_SignalConnect(startgame, "pressed", StartGame, NULL);
+
+    TXT_SetWindowAction(window, TXT_HORIZ_LEFT, cancel);
+    TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, startgame);
+}
+
+static void UpdateGUI(void)
+{
+    char buf[50];
+    int i;
 
     for (i=0; i<MAXPLAYERS; ++i)
     {
-        if (i == net_player_number)
-            TXT_FGColor(TXT_COLOR_YELLOW);
-        else if (i < net_clients_in_game)
-            TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
-        else
-            TXT_FGColor(TXT_COLOR_GREY);
+        txt_color_t color = TXT_COLOR_BRIGHT_WHITE;
 
-        snprintf(buf, 39, "%i. ", i + 1);
-        TXT_GotoXY(WINDOW_X + 2, WINDOW_Y + 4 + i);
-        TXT_Puts(buf);
+        if (i == net_player_number)
+        {
+            color = TXT_COLOR_YELLOW;
+        }
+
+        TXT_SetFGColor(player_labels[i], color);
+        TXT_SetFGColor(ip_labels[i], color);
 
         if (i < net_clients_in_game)
         {
-            snprintf(buf, 25, "%s", net_player_names[i]);
-            buf[25] = '\0';
-            TXT_GotoXY(WINDOW_X + 5, WINDOW_Y + 4 + i);
-            TXT_Puts(buf);
-
-            snprintf(buf, 16, "%s", net_player_addresses[i]);
-            buf[16] = '\0';
-            TXT_GotoXY(WINDOW_X + 33, WINDOW_Y + 4 + i);
-            TXT_Puts(buf);
+            TXT_SetLabel(player_labels[i], net_player_names[i]);
+            TXT_SetLabel(ip_labels[i], net_player_addresses[i]);
+        }
+        else
+        {
+            TXT_SetLabel(player_labels[i], "");
+            TXT_SetLabel(ip_labels[i], "");
         }
     }
-
-    TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
-    TXT_GotoXY(WINDOW_X + 2, WINDOW_Y + WINDOW_H - 2);
-    TXT_Puts("<brightgreen>ESC</><brightcyan>=</>Abort");
-
-    if (net_client_controller)
-    {
-        TXT_GotoXY(WINDOW_X + WINDOW_W - 18, WINDOW_Y + WINDOW_H - 2);
-        TXT_Puts("<brightgreen>SPACE</><brightcyan>=</>Start game");
-    }
-    
-    TXT_DrawSeparator(WINDOW_X, WINDOW_Y + WINDOW_H - 3, WINDOW_W);
-
-    TXT_UpdateScreen();
 }
 
 void NET_WaitForStart(void)
@@ -178,10 +190,14 @@ void NET_WaitForStart(void)
     I_SetWindowCaption();
     I_SetWindowIcon();
 
+    BuildGUI();
+
     while (net_waiting_for_start)
     {
-        ProcessEvents();
-        DrawScreen();
+        UpdateGUI();
+
+        TXT_DispatchEvents();
+        TXT_DrawDesktop();
 
         NET_CL_Run();
         NET_SV_Run();
