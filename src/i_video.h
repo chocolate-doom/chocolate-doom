@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.h 484 2006-05-19 20:01:59Z fraggle $
+// $Id: i_video.h 532 2006-05-26 15:37:09Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -60,9 +60,10 @@ void I_EndRead (void);
 void I_SetWindowCaption(void);
 void I_SetWindowIcon(void);
 
+extern int autoadjust_video_settings;
 extern boolean screenvisible;
 extern int screenmultiply;
-extern boolean fullscreen;
+extern int fullscreen;
 extern boolean grabmouse;
 extern float mouse_acceleration;
 extern int startup_delay;
