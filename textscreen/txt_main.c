@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: txt_main.c 519 2006-05-23 22:51:09Z fraggle $
+// $Id: txt_main.c 533 2006-05-26 19:15:05Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -302,6 +302,7 @@ static char *SpecialKeyName(int key)
 {
     switch (key)
     {
+        case ' ':             return "SPACE";
         case KEY_RIGHTARROW:  return "RIGHT";
         case KEY_LEFTARROW:   return "LEFT";
         case KEY_UPARROW:     return "UP";
