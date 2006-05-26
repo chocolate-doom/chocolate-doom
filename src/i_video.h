@@ -60,9 +60,10 @@ void I_EndRead (void);
 void I_SetWindowCaption(void);
 void I_SetWindowIcon(void);
 
+extern int autoadjust_video_settings;
 extern boolean screenvisible;
 extern int screenmultiply;
-extern boolean fullscreen;
+extern int fullscreen;
 extern boolean grabmouse;
 extern float mouse_acceleration;
 extern int startup_delay;

@@ -395,16 +395,17 @@ static default_collection_t doom_defaults =
 
 static default_t extra_defaults_list[] = 
 {
-    {"grabmouse",              &grabmouse},
-    {"fullscreen",             &fullscreen},
-    {"screenmultiply",         &screenmultiply},
-    {"novert",                 &novert},
-    {"mouse_acceleration",     &mouse_acceleration,   DEFAULT_FLOAT},
-    {"show_endoom",            &show_endoom},
-    {"vanilla_savegame_limit", &vanilla_savegame_limit},
-    {"startup_delay",          &startup_delay},
+    {"autoadjust_video_settings",   &autoadjust_video_settings},
+    {"fullscreen",                  &fullscreen},
+    {"startup_delay",               &startup_delay},
+    {"screenmultiply",              &screenmultiply},
+    {"grabmouse",                   &grabmouse},
+    {"novert",                      &novert},
+    {"mouse_acceleration",          &mouse_acceleration,       DEFAULT_FLOAT},
+    {"show_endoom",                 &show_endoom},
+    {"vanilla_savegame_limit",      &vanilla_savegame_limit},
 #ifdef FEATURE_MULTIPLAYER
-    {"player_name",            &net_player_name,      DEFAULT_STRING},
+    {"player_name",                 &net_player_name,          DEFAULT_STRING},
 #endif
 };
 
