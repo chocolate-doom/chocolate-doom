@@ -231,24 +231,34 @@ extern int usemouse;
 
 static boolean native_surface;
 
+// Automatically adjust video settings if the selected mode is 
+// not a valid video mode.
+
+int autoadjust_video_settings = 1;
+
 // Run in full screen mode?  (int type for config code)
+
 int fullscreen = FULLSCREEN_ON;
 
 // Time to wait for the screen to settle on startup before starting the
 // game (ms)
+
 int startup_delay = 0;
 
 // Grab the mouse? (int type for config code)
+
 int grabmouse = true;
 
 // Flag indicating whether the screen is currently visible:
 // when the screen isnt visible, don't render the screen
+
 boolean screenvisible;
 
 // Blocky mode,
 // replace each 320x200 pixel with screenmultiply*screenmultiply pixels.
 // According to Dave Taylor, it still is a bonehead thing
 // to use ....
+
 int screenmultiply = 1;
 
 // disk image data and background overwritten by the disk to be
@@ -1085,7 +1095,7 @@ void I_InitGraphics(void)
     if (screenmultiply > 4)
         screenmultiply = 4;
 
-    if (fullscreen)
+    if (fullscreen && autoadjust_video_settings)
     {
         int oldw, oldh;
         int old_fullscreen, old_screenmultiply;
@@ -1138,6 +1148,11 @@ void I_InitGraphics(void)
                 printf("\tletterbox mode on (fullscreen=2)\n");
             if (screenmultiply != old_screenmultiply)
                 printf("\tscreenmultiply=%i\n", screenmultiply);
+            
+            printf("NOTE: Your video settings have been adjusted.  "
+                   "To disable this behavior,\n"
+                   "set autoadjust_video_settings to 0 in your "
+                   "configuration file.");
         }
         
         if (!CheckValidFSMode())
