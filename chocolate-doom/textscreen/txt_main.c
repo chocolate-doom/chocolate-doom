@@ -302,6 +302,7 @@ static char *SpecialKeyName(int key)
 {
     switch (key)
     {
+        case ' ':             return "SPACE";
         case KEY_RIGHTARROW:  return "RIGHT";
         case KEY_LEFTARROW:   return "LEFT";
         case KEY_UPARROW:     return "UP";
