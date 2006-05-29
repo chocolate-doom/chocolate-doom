@@ -27,20 +27,6 @@
 
 typedef struct txt_window_s txt_window_t;
 
-typedef enum
-{
-    TXT_VERT_TOP,
-    TXT_VERT_CENTER,
-    TXT_VERT_BOTTOM,
-} txt_vert_align_t;
-
-typedef enum
-{
-    TXT_HORIZ_LEFT,
-    TXT_HORIZ_CENTER,
-    TXT_HORIZ_RIGHT,
-} txt_horiz_align_t;
-
 #include "txt_widget.h" 
 #include "txt_table.h"
 #include "txt_window_action.h"

@@ -51,6 +51,10 @@ void TXT_InitWidget(TXT_UNCAST_ARG(widget), txt_widget_class_t *widget_class)
 
     widget->selectable = 1;
     widget->visible = 1;
+
+    // Align left by default
+
+    widget->align = TXT_HORIZ_LEFT;
 }
 
 void TXT_SignalConnect(TXT_UNCAST_ARG(widget),
@@ -141,6 +145,13 @@ int TXT_WidgetKeyPress(TXT_UNCAST_ARG(widget), int key)
     }
 
     return 0;
+}
+
+void TXT_SetWidgetAlign(TXT_UNCAST_ARG(widget), txt_horiz_align_t horiz_align)
+{
+    TXT_CAST_ARG(txt_widget_t, widget);
+
+    widget->align = horiz_align;
 }
 
 

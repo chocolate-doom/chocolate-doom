@@ -20,6 +20,7 @@ static void TXT_LabelDrawer(TXT_UNCAST_ARG(label), int w, int selected)
     TXT_CAST_ARG(txt_label_t, label);
     int x, y;
     int origin_x, origin_y;
+    int align_indent;
 
     TXT_BGColor(label->bgcolor, 0);
     TXT_FGColor(label->fgcolor);
@@ -28,10 +29,41 @@ static void TXT_LabelDrawer(TXT_UNCAST_ARG(label), int w, int selected)
 
     for (y=0; y<label->h; ++y)
     {
-        TXT_GotoXY(origin_x, origin_y + y);
-        TXT_DrawString(label->lines[y]);
+        // Calculate the amount to indent this line due to the align 
+        // setting
 
-        for (x=strlen(label->lines[y]); x<w; ++x)
+        switch (label->widget.align)
+        {
+            case TXT_HORIZ_LEFT:
+                align_indent = 0;
+                break;
+            case TXT_HORIZ_CENTER:
+                align_indent = (label->w - strlen(label->lines[y])) / 2;
+                break;
+            case TXT_HORIZ_RIGHT:
+                align_indent = label->w - strlen(label->lines[y]);
+                break;
+        }
+        
+        // Draw this line
+
+        TXT_GotoXY(origin_x, origin_y + y);
+
+        // Gap at the start
+
+        for (x=0; x<align_indent; ++x)
+        {
+            TXT_DrawString(" ");
+        }
+
+        // The string itself
+
+        TXT_DrawString(label->lines[y]);
+        x += strlen(label->lines[y]);
+
+        // Gap at the end
+
+        for (; x<w; ++x)
         {
             TXT_DrawString(" ");
         }
