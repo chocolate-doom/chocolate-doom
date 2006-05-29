@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_sdl.c 479 2006-05-11 12:03:02Z fraggle $
+// $Id: net_sdl.c 543 2006-05-29 20:04:08Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -221,8 +221,7 @@ static void NET_SDL_SendPacket(net_addr_t *addr, net_packet_t *packet)
    
     if (addr == &net_broadcast_addr)
     {
-        ip.host = INADDR_BROADCAST;
-        ip.port = DEFAULT_PORT;
+        SDLNet_ResolveHost(&ip, NULL, DEFAULT_PORT);
     }
     else
     {
