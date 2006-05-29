@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: wi_stuff.c 422 2006-03-16 22:17:45Z fraggle $
+// $Id: wi_stuff.c 537 2006-05-29 11:19:53Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -44,7 +44,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: wi_stuff.c 422 2006-03-16 22:17:45Z fraggle $";
+rcsid[] = "$Id: wi_stuff.c 537 2006-05-29 11:19:53Z fraggle $";
 
 #include <stdio.h>
 
@@ -608,7 +608,7 @@ void WI_drawAnimatedBack(void)
     int			i;
     anim_t*		a;
 
-    if (commercial)
+    if (gamemode == commercial)
 	return;
 
     if (wbs->epsd > 2)
