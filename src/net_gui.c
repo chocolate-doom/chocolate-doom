@@ -88,15 +88,7 @@
 #include "net_gui.h"
 #include "net_server.h"
 
-#include "txt_main.h"
-#include "txt_gui.h"
-#include "txt_io.h"
-
-#include "txt_desktop.h"
-#include "txt_label.h"
-#include "txt_strut.h"
-#include "txt_table.h"
-#include "txt_window.h"
+#include "textscreen.h"
 
 static txt_window_t *window;
 static txt_label_t *player_labels[MAXPLAYERS];
