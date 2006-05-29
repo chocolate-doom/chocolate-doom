@@ -136,6 +136,7 @@ static const char rcsid[] = "$Id$";
 #include "net_client.h"
 #include "net_gui.h"
 #include "net_io.h"
+#include "net_query.h"
 #include "net_server.h"
 #include "net_sdl.h"
 #include "net_loop.h"
@@ -330,8 +331,7 @@ void D_CheckNetGame (void)
 #ifdef FEATURE_MULTIPLAYER
 
     {
-        net_module_t *connect_module = NULL;
-        char *connect_addr;
+        net_addr_t *addr = NULL;
 
         if (M_CheckParm("-server") > 0)
         {
@@ -339,33 +339,39 @@ void D_CheckNetGame (void)
             NET_SV_AddModule(&net_loop_server_module);
             NET_SV_AddModule(&net_sdl_module);
 
-            connect_module = &net_loop_client_module;
-            connect_addr = "";
+            net_loop_client_module.InitClient();
+            addr = net_loop_client_module.ResolveAddress(NULL);
         }
         else
         {
+            i = M_CheckParm("-autojoin");
+
+            if (i > 0)
+            {
+                addr = NET_FindLANServer();
+
+                if (addr == NULL)
+                {
+                    I_Error("No server found on local LAN");
+                }
+            }
+            
             i = M_CheckParm("-connect");
 
             if (i > 0)
             {
-                connect_module = &net_sdl_module;
-                connect_addr = myargv[i+1];
+                net_sdl_module.InitClient();
+                addr = net_sdl_module.ResolveAddress(myargv[i+1]);
+
+                if (addr == NULL)
+                {
+                    I_Error("Unable to resolve '%s'\n", myargv[i+1]);
+                }
             }
         }
 
-        if (connect_module != NULL)
+        if (addr != NULL)
         {
-            net_addr_t *addr;
-
-            connect_module->InitClient();
-
-            addr = connect_module->ResolveAddress(connect_addr);
-
-            if (addr == NULL)
-            {
-                I_Error("Unable to resolve \"%s\"", connect_addr);
-            }
-
             if (!NET_CL_Connect(addr))
             {
                 I_Error("D_CheckNetGame: Failed to connect to %s\n", 

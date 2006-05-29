@@ -37,6 +37,7 @@
 #include "net_query.h"
 #include "net_sdl.h"
 
+static net_addr_t *first_response_addr;
 static net_context_t *query_context;
 static int num_responses;
 
@@ -130,6 +131,8 @@ static void NET_Query_ParsePacket(net_addr_t *addr, net_packet_t *packet)
         for (i=0; i<70; ++i)
             putchar('=');
         putchar('\n');
+
+        first_response_addr = addr;
     }
 
     formatted_printf(18, "%s: ", NET_AddrToString(addr));
@@ -158,7 +161,44 @@ static void NET_Query_GetResponse(void)
     if (NET_RecvPacket(query_context, &addr, &packet))
     {
         NET_Query_ParsePacket(addr, packet);
+        NET_FreePacket(packet);
     }
+}
+
+static net_addr_t *NET_Query_QueryLoop(net_addr_t *addr, 
+                                       boolean find_one)
+{
+    int start_time;
+    int last_send_time;
+
+    last_send_time = -1;
+    start_time = I_GetTimeMS();
+
+    while (I_GetTimeMS() < start_time + 5000)
+    {
+        // Send a query once every second
+
+        if (last_send_time < 0 || I_GetTimeMS() > last_send_time + 1000)
+        {
+            NET_Query_SendQuery(addr);
+            last_send_time = I_GetTimeMS();
+        }
+
+        // Check for a response
+
+        NET_Query_GetResponse();
+
+        // Found a response?
+
+        if (find_one && num_responses > 0)
+            break;
+        
+        // Don't thrash the CPU
+        
+        I_Sleep(100);
+    }
+
+    return first_response_addr;
 }
 
 void NET_Query_Init(void)
@@ -167,13 +207,12 @@ void NET_Query_Init(void)
     NET_AddModule(query_context, &net_sdl_module);
     net_sdl_module.InitClient();
 
+    first_response_addr = NULL;
     num_responses = 0;
 }
 
 void NET_QueryAddress(char *addr)
 {
-    int start_time;
-    int last_send_time;
     net_addr_t *net_addr;
     
     NET_Query_Init();
@@ -187,26 +226,7 @@ void NET_QueryAddress(char *addr)
 
     printf("\nQuerying '%s'...\n\n", addr);
 
-    last_send_time = -1;
-    start_time = I_GetTimeMS();
-
-    while (num_responses <= 0 && I_GetTimeMS() < start_time + 5000)
-    {
-        // Send a query once every second
-
-        if (last_send_time < 0 || I_GetTimeMS() > last_send_time + 1000)
-        {
-            NET_Query_SendQuery(net_addr);
-            last_send_time = I_GetTimeMS();
-        }
-
-        // Check for a response
-
-        NET_Query_GetResponse();
-        I_Sleep(100);
-    }
-
-    if (num_responses <= 0)
+    if (!NET_Query_QueryLoop(net_addr, true))
     {
         I_Error("No response from '%s'", addr);
     }
@@ -214,33 +234,20 @@ void NET_QueryAddress(char *addr)
     exit(0);
 }
 
-void NET_LANQuery(void)
+net_addr_t *NET_FindLANServer(void)
 {
-    int start_time;
-    int last_send_time;
-    
     NET_Query_Init();
 
-    printf("\nPerforming broadcast scan for servers ...\n\n");
+    return NET_Query_QueryLoop(NULL, true);
+}
 
-    start_time = I_GetTimeMS();
-    last_send_time = -1;
+void NET_LANQuery(void)
+{
+    NET_Query_Init();
 
-    while (num_responses <= 0 && I_GetTimeMS() < start_time + 5000)
-    {
-        // Send a query once every second
+    printf("\nSearching for servers on local LAN ...\n\n");
 
-        if (last_send_time < 0 || I_GetTimeMS() > last_send_time + 1000)
-        {
-            NET_Query_SendQuery(NULL);
-            last_send_time = I_GetTimeMS();
-        }
-
-        NET_Query_GetResponse();
-        I_Sleep(100);
-    }
-
-    if (num_responses <= 0)
+    if (!NET_Query_QueryLoop(NULL, false))
     {
         I_Error("No servers found");
     }
