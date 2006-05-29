@@ -600,6 +600,13 @@ static void I_ReadMouse(void)
         
         D_PostEvent(&ev);
     }
+
+    if (MouseShouldBeGrabbed())
+    {
+        SDL_WarpMouse(screen->w / 2, screen->h / 2);
+        SDL_PumpEvents();
+        SDL_GetRelativeMouseState(NULL, NULL);
+    }
 }
 
 //
