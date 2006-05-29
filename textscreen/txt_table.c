@@ -354,15 +354,59 @@ static void CheckValidSelection(txt_table_t *table)
     }
 }
 
+static void DrawCell(txt_table_t *table, int x, int y,
+                     int draw_x, int draw_y, int w, int selected)
+{
+    txt_widget_t *widget;
+    int cw, ch;
+
+    widget = table->widgets[y * table->columns + x];
+
+    switch (widget->align)
+    {
+        case TXT_HORIZ_LEFT:
+            break;
+
+        case TXT_HORIZ_CENTER:
+            TXT_CalcWidgetSize(widget, &cw, &ch);
+            
+            // Separators are always drawn left-aligned.
+
+            if (widget->widget_class != &txt_separator_class)
+            {
+                draw_x += (w - cw) / 2;
+                w = cw;
+            }
+            
+            break;
+
+        case TXT_HORIZ_RIGHT:
+            TXT_CalcWidgetSize(widget, &cw, &ch);
+            
+            if (widget->widget_class != &txt_separator_class)
+            {
+                draw_x += w - cw;
+                w = cw;
+            }
+            
+            break;
+    }
+
+    TXT_GotoXY(draw_x, draw_y);
+
+    TXT_DrawWidget(widget, w, selected && x == table->selected_x
+                                       && y == table->selected_y);
+}
+
 static void TXT_TableDrawer(TXT_UNCAST_ARG(table), int w, int selected)
 {
     TXT_CAST_ARG(txt_table_t, table);
-    txt_widget_t *widget;
     int *column_widths;
     int *row_heights;
     int origin_x, origin_y;
     int draw_x, draw_y;
     int x, y;
+    int i;
     int rows;
 
     // Check the table's current selection points at something valid before
@@ -400,18 +444,15 @@ static void TXT_TableDrawer(TXT_UNCAST_ARG(table), int w, int selected)
 
         for (x=0; x<table->columns; ++x)
         {
-            if (y * table->columns + x >= table->num_widgets)
+            i = y * table->columns + x;
+
+            if (i >= table->num_widgets)
                 break;
 
-            TXT_GotoXY(draw_x, draw_y);
-
-            widget = table->widgets[y * table->columns + x];
-
-            if (widget != NULL)
+            if (table->widgets[i] != NULL)
             {
-                TXT_DrawWidget(widget, column_widths[x],
-                               selected && x == table->selected_x
-                                        && y == table->selected_y);
+                DrawCell(table, x, y, draw_x, draw_y, 
+                         column_widths[x], selected);
             }
 
             draw_x += column_widths[x];

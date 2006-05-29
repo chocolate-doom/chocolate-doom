@@ -30,6 +30,20 @@
 #define TXT_UNCAST_ARG(name)   void *uncast_ ## name
 #define TXT_CAST_ARG(type, name)  type *name = (type *) uncast_ ## name
 
+typedef enum
+{
+    TXT_VERT_TOP,
+    TXT_VERT_CENTER,
+    TXT_VERT_BOTTOM,
+} txt_vert_align_t;
+
+typedef enum
+{
+    TXT_HORIZ_LEFT,
+    TXT_HORIZ_CENTER,
+    TXT_HORIZ_RIGHT,
+} txt_horiz_align_t;
+
 typedef struct txt_widget_class_s txt_widget_class_t;
 typedef struct txt_widget_s txt_widget_t;
 typedef struct txt_callback_table_s txt_callback_table_t;
@@ -54,6 +68,7 @@ struct txt_widget_s
     txt_callback_table_t *callback_table;
     int selectable;
     int visible;
+    txt_horiz_align_t align;
 };
 
 void TXT_InitWidget(TXT_UNCAST_ARG(widget), txt_widget_class_t *widget_class);
@@ -64,6 +79,7 @@ void TXT_SignalConnect(TXT_UNCAST_ARG(widget), char *signal_name,
 void TXT_EmitSignal(TXT_UNCAST_ARG(widget), char *signal_name);
 int TXT_WidgetKeyPress(TXT_UNCAST_ARG(widget), int key);
 void TXT_DestroyWidget(TXT_UNCAST_ARG(widget));
+void TXT_SetWidgetAlign(TXT_UNCAST_ARG(widget), txt_horiz_align_t horiz_align);
 
 #endif /* #ifndef TXT_WIDGET_H */
 

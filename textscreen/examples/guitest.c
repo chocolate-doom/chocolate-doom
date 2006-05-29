@@ -68,6 +68,7 @@ void SetupWindow(void)
     txt_button_t *button;
     txt_checkbox_t *cheesy_checkbox;
     txt_window_action_t *pwn;
+    txt_label_t *toplabel;
     char buf[100];
     int i;
     
@@ -76,9 +77,11 @@ void SetupWindow(void)
     TXT_AddWidget(window, TXT_NewSeparator("Main section"));
     table = TXT_NewTable(3);
 
-    TXT_AddWidget(window, TXT_NewLabel(" This is a multiline label.\n"
-                                       " A single label object contains \n"
-                                       " all three of these lines.\n"));
+    toplabel = TXT_NewLabel(" This is a multiline label.\n"
+                            " A single label object contains \n"
+                            " all three of these lines.\n");
+    TXT_AddWidget(window, toplabel);
+    TXT_SetWidgetAlign(toplabel, TXT_HORIZ_CENTER);
 
     TXT_AddWidget(window, table);
 
@@ -98,6 +101,7 @@ void SetupWindow(void)
 
     table = TXT_NewTable(2);
     TXT_AddWidget(window, table);
+    TXT_SetWidgetAlign(table, TXT_HORIZ_CENTER);
 
     cheesy_checkbox = TXT_NewCheckBox("Cheesy", &cheesy);
     TXT_AddWidget(table, cheesy_checkbox);
