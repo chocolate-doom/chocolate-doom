@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_gui.c 539 2006-05-29 19:22:51Z fraggle $
+// $Id: net_gui.c 541 2006-05-29 19:54:11Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -98,6 +98,7 @@
 #include "txt_table.h"
 #include "txt_window.h"
 
+static txt_window_t *window;
 static txt_label_t *player_labels[MAXPLAYERS];
 static txt_label_t *ip_labels[MAXPLAYERS];
 
@@ -115,10 +116,8 @@ static void StartGame(TXT_UNCAST_ARG(widget), void *unused)
 static void BuildGUI(void)
 {
     char buf[50];
-    txt_window_t *window;
     txt_table_t *table;
     txt_window_action_t *cancel;
-    txt_window_action_t *startgame;
     int i;
     
     TXT_SetDesktopTitle(PACKAGE_STRING);
@@ -126,13 +125,12 @@ static void BuildGUI(void)
     window = TXT_NewWindow("Waiting for game start...");
     table = TXT_NewTable(3);
     TXT_AddWidget(window, table);
-    TXT_AddWidget(window, NULL);
 
     // Add spacers
 
     TXT_AddWidget(table, NULL);
-    TXT_AddWidget(table, TXT_NewStrut(25));
-    TXT_AddWidget(table, TXT_NewStrut(17));
+    TXT_AddWidget(table, TXT_NewStrut(25, 1));
+    TXT_AddWidget(table, TXT_NewStrut(17, 1));
 
     // Player labels
     
@@ -146,18 +144,17 @@ static void BuildGUI(void)
         TXT_AddWidget(table, ip_labels[i]);
     }
 
+    TXT_AddWidget(window, TXT_NewStrut(0, 1));
+
     cancel = TXT_NewWindowAction(KEY_ESCAPE, "Cancel");
     TXT_SignalConnect(cancel, "pressed", EscapePressed, NULL);
-    startgame = TXT_NewWindowAction(' ', "Start game");
-    TXT_SignalConnect(startgame, "pressed", StartGame, NULL);
 
     TXT_SetWindowAction(window, TXT_HORIZ_LEFT, cancel);
-    TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, startgame);
 }
 
 static void UpdateGUI(void)
 {
-    char buf[50];
+    txt_window_action_t *startgame;
     int i;
 
     for (i=0; i<MAXPLAYERS; ++i)
@@ -183,6 +180,18 @@ static void UpdateGUI(void)
             TXT_SetLabel(ip_labels[i], "");
         }
     }
+
+    if (net_client_controller)
+    {
+        startgame = TXT_NewWindowAction(' ', "Start game");
+        TXT_SignalConnect(startgame, "pressed", StartGame, NULL);
+    }
+    else
+    {
+        startgame = NULL;
+    }
+
+    TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, startgame);
 }
 
 void NET_WaitForStart(void)

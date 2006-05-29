@@ -92,7 +92,7 @@ static void CalcRowColSizes(txt_table_t *table,
                 // Empty spacer if widget is NULL
 
                 ww = 0;
-                wh = 1;
+                wh = 0;
             }
 
             if (wh > row_heights[y])

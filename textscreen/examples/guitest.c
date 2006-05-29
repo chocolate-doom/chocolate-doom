@@ -13,6 +13,7 @@
 #include "txt_label.h"
 #include "txt_radiobutton.h"
 #include "txt_separator.h"
+#include "txt_strut.h"
 #include "txt_table.h"
 #include "txt_window.h"
 
@@ -104,7 +105,7 @@ void SetupWindow(void)
         TXT_AddWidget(table, TXT_NewButton(buf));
     }
 
-    TXT_AddWidget(window, TXT_NewLabel(""));
+    TXT_AddWidget(window, TXT_NewStrut(0, 1));
     value_label = TXT_NewLabel("");
     TXT_AddWidget(window, value_label);
 

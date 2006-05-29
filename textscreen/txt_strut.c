@@ -16,7 +16,7 @@ static void TXT_StrutSizeCalc(TXT_UNCAST_ARG(strut), int *w, int *h)
     // Minimum width is the string length + two spaces for padding
 
     *w = strut->width;
-    *h = 0;
+    *h = strut->height;
 }
 
 static void TXT_StrutDrawer(TXT_UNCAST_ARG(strut), int w, int selected)
@@ -40,7 +40,7 @@ txt_widget_class_t txt_strut_class =
     TXT_StrutDestructor,
 };
 
-txt_strut_t *TXT_NewStrut(int width)
+txt_strut_t *TXT_NewStrut(int width, int height)
 {
     txt_strut_t *strut;
 
@@ -49,6 +49,7 @@ txt_strut_t *TXT_NewStrut(int width)
     TXT_InitWidget(strut, &txt_strut_class);
     strut->widget.selectable = 0;
     strut->width = width;
+    strut->height = height;
 
     return strut;
 }
