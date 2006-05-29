@@ -2,20 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "doomkeys.h"
-
-#include "txt_main.h"
-
-#include "txt_checkbox.h"
-#include "txt_button.h"
-#include "txt_desktop.h"
-#include "txt_inputbox.h"
-#include "txt_label.h"
-#include "txt_radiobutton.h"
-#include "txt_separator.h"
-#include "txt_strut.h"
-#include "txt_table.h"
-#include "txt_window.h"
+#include "textscreen.h"
 
 enum 
 {

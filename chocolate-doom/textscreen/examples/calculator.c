@@ -1,10 +1,8 @@
 
 #include <stdio.h>
 #include <string.h>
-#include "txt_button.h"
-#include "txt_desktop.h"
-#include "txt_label.h"
-#include "txt_separator.h"
+
+#include "textscreen.h"
 
 typedef enum
 {
