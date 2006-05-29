@@ -30,7 +30,7 @@ typedef struct txt_strut_s txt_strut_t;
 #include "txt_widget.h"
 
 //
-// A strut is used to force a table to a minimum width.  It is not
+// A strut is used to force a table to a minimum width/height.  It is not
 // visible but it takes up space.
 // 
 
@@ -38,9 +38,10 @@ struct txt_strut_s
 {
     txt_widget_t widget;
     int width;
+    int height;
 };
 
-txt_strut_t *TXT_NewStrut(int width);
+txt_strut_t *TXT_NewStrut(int width, int height);
 
 #endif /* #ifndef TXT_STRUT_H */
 
