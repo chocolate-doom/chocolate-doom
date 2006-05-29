@@ -94,6 +94,7 @@
 
 #include "txt_desktop.h"
 #include "txt_label.h"
+#include "txt_strut.h"
 #include "txt_table.h"
 #include "txt_window.h"
 
@@ -130,8 +131,8 @@ static void BuildGUI(void)
     // Add spacers
 
     TXT_AddWidget(table, NULL);
-    TXT_AddWidget(table, TXT_NewLabel("                         "));
-    TXT_AddWidget(table, TXT_NewLabel("                 "));
+    TXT_AddWidget(table, TXT_NewStrut(25));
+    TXT_AddWidget(table, TXT_NewStrut(17));
 
     // Player labels
     
