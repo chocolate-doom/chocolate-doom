@@ -402,6 +402,7 @@ static default_t extra_defaults_list[] =
     {"grabmouse",                   &grabmouse},
     {"novert",                      &novert},
     {"mouse_acceleration",          &mouse_acceleration,       DEFAULT_FLOAT},
+    {"mouse_threshold",             &mouse_threshold},
     {"show_endoom",                 &show_endoom},
     {"vanilla_savegame_limit",      &vanilla_savegame_limit},
 #ifdef FEATURE_MULTIPLAYER

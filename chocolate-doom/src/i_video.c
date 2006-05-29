@@ -269,14 +269,17 @@ static int disk_image_w, disk_image_h;
 static byte *saved_background;
 static boolean window_focused;
 
-// mouse acceleration
-// We accelerate the mouse by raising the mouse movement values to
-// the power of this value, to simulate the acceleration in DOS
-// mouse drivers
+// Mouse acceleration
 //
-// TODO: See what is a sensible default value for this
+// This emulates some of the behavior of DOS mouse drivers by increasing
+// the speed when the mouse is moved fast.
+//
+// The mouse input values are input directly to the game, but when
+// the values exceed the value of mouse_threshold, they are multiplied
+// by mouse_acceleration to increase the speed.
 
-float mouse_acceleration = 1.5;
+float mouse_acceleration = 2.0;
+int mouse_threshold = 10;
 
 static boolean MouseShouldBeGrabbed()
 {
@@ -485,7 +488,14 @@ static int AccelerateMouse(int val)
     if (val < 0)
         return -AccelerateMouse(-val);
 
-    return (int) pow(((float) val) / mouse_acceleration, mouse_acceleration);
+    if (val > mouse_threshold)
+    {
+        return (val - mouse_threshold) * mouse_acceleration + mouse_threshold;
+    }
+    else
+    {
+        return val;
+    }
 }
 
 void I_GetEvent(void)
