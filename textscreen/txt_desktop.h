@@ -32,6 +32,7 @@ void TXT_RemoveDesktopWindow(txt_window_t *win);
 void TXT_SetDesktopTitle(char *title);
 void TXT_DrawDesktop(void);
 void TXT_GUIMainLoop(void);
+void TXT_DispatchEvents(void);
 void TXT_ExitMainLoop(void);
 
 #endif /* #ifndef TXT_DESKTOP_T */
