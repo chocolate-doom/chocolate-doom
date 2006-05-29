@@ -221,8 +221,7 @@ static void NET_SDL_SendPacket(net_addr_t *addr, net_packet_t *packet)
    
     if (addr == &net_broadcast_addr)
     {
-        ip.host = INADDR_BROADCAST;
-        ip.port = DEFAULT_PORT;
+        SDLNet_ResolveHost(&ip, NULL, DEFAULT_PORT);
     }
     else
     {
