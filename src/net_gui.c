@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_gui.c 534 2006-05-26 19:15:33Z fraggle $
+// $Id: net_gui.c 539 2006-05-29 19:22:51Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -94,6 +94,7 @@
 
 #include "txt_desktop.h"
 #include "txt_label.h"
+#include "txt_strut.h"
 #include "txt_table.h"
 #include "txt_window.h"
 
@@ -130,8 +131,8 @@ static void BuildGUI(void)
     // Add spacers
 
     TXT_AddWidget(table, NULL);
-    TXT_AddWidget(table, TXT_NewLabel("                         "));
-    TXT_AddWidget(table, TXT_NewLabel("                 "));
+    TXT_AddWidget(table, TXT_NewStrut(25));
+    TXT_AddWidget(table, TXT_NewStrut(17));
 
     // Player labels
     
