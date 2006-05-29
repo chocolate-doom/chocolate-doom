@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 536 2006-05-29 10:38:27Z fraggle $
+// $Id: i_video.c 538 2006-05-29 13:25:38Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -175,7 +175,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 536 2006-05-29 10:38:27Z fraggle $";
+rcsid[] = "$Id: i_video.c 538 2006-05-29 13:25:38Z fraggle $";
 
 #include <SDL.h>
 #include <ctype.h>
@@ -599,6 +599,13 @@ static void I_ReadMouse(void)
         ev.data3 = -AccelerateMouse(y);
         
         D_PostEvent(&ev);
+    }
+
+    if (MouseShouldBeGrabbed())
+    {
+        SDL_WarpMouse(screen->w / 2, screen->h / 2);
+        SDL_PumpEvents();
+        SDL_GetRelativeMouseState(NULL, NULL);
     }
 }
 
