@@ -119,7 +119,7 @@ void BuildGUI()
     TXT_SetBGColor(input_box, TXT_COLOR_BLACK);
     TXT_AddWidget(window, input_box);
     TXT_AddWidget(window, TXT_NewSeparator(NULL));
-    TXT_AddWidget(window, NULL);
+    TXT_AddWidget(window, TXT_NewStrut(0, 1));
 
     table = TXT_NewTable(4);
     TXT_AddWidget(window, table);
@@ -143,7 +143,7 @@ void BuildGUI()
     TXT_AddWidget(table, equals_button);
     AddOperatorButton(table, "/", OP_DIV);
     
-    TXT_AddWidget(window, NULL);
+    TXT_AddWidget(window, TXT_NewStrut(0, 1));
     UpdateInputBox();
 }
 
