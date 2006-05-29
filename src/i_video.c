@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 535 2006-05-29 00:17:24Z fraggle $
+// $Id: i_video.c 536 2006-05-29 10:38:27Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -175,7 +175,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 535 2006-05-29 00:17:24Z fraggle $";
+rcsid[] = "$Id: i_video.c 536 2006-05-29 10:38:27Z fraggle $";
 
 #include <SDL.h>
 #include <ctype.h>
@@ -1162,7 +1162,7 @@ void I_InitGraphics(void)
             printf("NOTE: Your video settings have been adjusted.  "
                    "To disable this behavior,\n"
                    "set autoadjust_video_settings to 0 in your "
-                   "configuration file.");
+                   "configuration file.\n");
         }
         
         if (!CheckValidFSMode())
