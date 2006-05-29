@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_misc.c 532 2006-05-26 15:37:09Z fraggle $
+// $Id: m_misc.c 535 2006-05-29 00:17:24Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -106,7 +106,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_misc.c 532 2006-05-26 15:37:09Z fraggle $";
+rcsid[] = "$Id: m_misc.c 535 2006-05-29 00:17:24Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -402,6 +402,7 @@ static default_t extra_defaults_list[] =
     {"grabmouse",                   &grabmouse},
     {"novert",                      &novert},
     {"mouse_acceleration",          &mouse_acceleration,       DEFAULT_FLOAT},
+    {"mouse_threshold",             &mouse_threshold},
     {"show_endoom",                 &show_endoom},
     {"vanilla_savegame_limit",      &vanilla_savegame_limit},
 #ifdef FEATURE_MULTIPLAYER
