@@ -1162,7 +1162,7 @@ void I_InitGraphics(void)
             printf("NOTE: Your video settings have been adjusted.  "
                    "To disable this behavior,\n"
                    "set autoadjust_video_settings to 0 in your "
-                   "configuration file.");
+                   "configuration file.\n");
         }
         
         if (!CheckValidFSMode())
