@@ -4,6 +4,7 @@
 #include "txt_button.h"
 #include "txt_desktop.h"
 #include "txt_label.h"
+#include "txt_separator.h"
 
 typedef enum
 {
