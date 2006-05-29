@@ -8,6 +8,7 @@ SUBDIRS= . examples
 noinst_LIBRARIES=libtextscreen.a
 
 libtextscreen_a_SOURCES =                                 \
+	textscreen.h                                      \
 	txt_checkbox.c           txt_checkbox.h           \
 	txt_desktop.c            txt_desktop.h            \
 	txt_gui.c                txt_gui.h                \

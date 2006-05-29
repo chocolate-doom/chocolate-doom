@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_gui.c 541 2006-05-29 19:54:11Z fraggle $
+// $Id: net_gui.c 542 2006-05-29 20:00:41Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -88,15 +88,7 @@
 #include "net_gui.h"
 #include "net_server.h"
 
-#include "txt_main.h"
-#include "txt_gui.h"
-#include "txt_io.h"
-
-#include "txt_desktop.h"
-#include "txt_label.h"
-#include "txt_strut.h"
-#include "txt_table.h"
-#include "txt_window.h"
+#include "textscreen.h"
 
 static txt_window_t *window;
 static txt_label_t *player_labels[MAXPLAYERS];
