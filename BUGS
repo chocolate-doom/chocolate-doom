@@ -14,12 +14,6 @@
   of which MIDI instruments are used by doom.exe, it may be possible
   to get a closer conversion.
 
-* Savegames may be incompatible on some architectures.
-
-  Savegames may not be compatible with DOS doom.exe on 64-bit or 
-  big-endian systems.  On 64-bit systems savegames may be entirely
-  nonfunctional.
-
 * Some music which works in Vanilla Doom does not work in Chocolate Doom
 
   An example is the music on the title screen of deca.wad.  The music here
