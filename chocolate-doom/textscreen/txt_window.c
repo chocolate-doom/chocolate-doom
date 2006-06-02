@@ -307,7 +307,9 @@ void TXT_SetWindowPosition(txt_window_t *window,
 static void MouseButtonPress(txt_window_t *window, int b)
 {
     int x, y;
+    int i;
     txt_widget_t *widgets;
+    txt_widget_t *widget;
 
     // Lay out the window, set positions and sizes of all widgets
 
@@ -325,6 +327,21 @@ static void MouseButtonPress(txt_window_t *window, int b)
      && y >= widgets->y && y < widgets->y + widgets->h)
     {
         TXT_WidgetMousePress(window, x, y, b);
+    }
+
+    // Was one of the action area buttons pressed?
+
+    for (i=0; i<3; ++i)
+    {
+        widget = (txt_widget_t *) window->actions[i];
+
+        if (widget != NULL
+         && x >= widget->x && x < widget->x + widget->w
+         && y >= widget->y && y < widget->y + widget->h)
+        {
+            TXT_WidgetMousePress(widget, x, y, b);
+            break;
+        }
     }
 }
 

@@ -82,12 +82,25 @@ static int TXT_CheckBoxKeyPress(TXT_UNCAST_ARG(checkbox), int key)
     return 0;
 }
 
+static void TXT_CheckBoxMousePress(TXT_UNCAST_ARG(checkbox), int x, int y, int b)
+{
+    TXT_CAST_ARG(txt_checkbox_t, checkbox);
+
+    if (b == TXT_MOUSE_LEFT)
+    {
+        // Equivalent to pressing enter
+
+        TXT_CheckBoxKeyPress(checkbox, KEY_ENTER);
+    }
+}
+
 txt_widget_class_t txt_checkbox_class =
 {
     TXT_CheckBoxSizeCalc,
     TXT_CheckBoxDrawer,
     TXT_CheckBoxKeyPress,
     TXT_CheckBoxDestructor,
+    TXT_CheckBoxMousePress,
 };
 
 txt_checkbox_t *TXT_NewCheckBox(char *label, int *variable)
