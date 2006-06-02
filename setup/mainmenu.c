@@ -24,6 +24,7 @@ void QuitConfirm(void *unused1, void *unused2)
     label = TXT_NewLabel("Save settings and\n"
                          "quit setup?");
     TXT_AddWidget(window, label);
+    TXT_AddWidget(window, TXT_NewStrut(24, 0));
     TXT_SetWidgetAlign(label, TXT_HORIZ_CENTER);
 
     button = TXT_NewButton("  Yes  ");
@@ -32,6 +33,13 @@ void QuitConfirm(void *unused1, void *unused2)
     TXT_SignalConnect(button, "pressed", DoQuit, DoQuit);
 
     button = TXT_NewButton("  No   ");
+
+    // Only an "escape" button in the middle.
+    TXT_SetWindowAction(window, TXT_HORIZ_LEFT, NULL);
+    TXT_SetWindowAction(window, TXT_HORIZ_CENTER, 
+                        TXT_NewWindowEscapeAction(window));
+    TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, NULL);
+
     TXT_SetWidgetAlign(button, TXT_HORIZ_CENTER);
     TXT_AddWidget(window, button);
     TXT_SignalConnect(button, "pressed", DoQuit, NULL);
