@@ -37,13 +37,6 @@ void TXT_SetWindowAction(txt_window_t *window,
     window->actions[position] = action;
 }
 
-static void DefaultCancelAction(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(window))
-{
-    TXT_CAST_ARG(txt_window_t, window);
-
-    TXT_CloseWindow(window);
-}
-
 txt_window_t *TXT_NewWindow(char *title)
 {
     int i;
@@ -79,11 +72,8 @@ txt_window_t *TXT_NewWindow(char *title)
 
     // Default actions
 
-    cancel_action = TXT_NewWindowAction(KEY_ESCAPE, "Abort");
-    TXT_SetWindowAction(win, TXT_HORIZ_LEFT, cancel_action);
-    TXT_SignalConnect(cancel_action, "pressed", DefaultCancelAction, win);
-    accept_action = TXT_NewWindowAction(KEY_ENTER, "Accept");
-    TXT_SetWindowAction(win, TXT_HORIZ_RIGHT, accept_action);
+    TXT_SetWindowAction(win, TXT_HORIZ_LEFT, TXT_NewWindowEscapeAction(win));
+    TXT_SetWindowAction(win, TXT_HORIZ_RIGHT, TXT_NewWindowAcceptAction());
 
     return win;
 }
