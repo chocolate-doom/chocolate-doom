@@ -185,6 +185,14 @@ void TXT_UpdateScreen(void)
     TXT_UpdateScreenArea(0, 0, TXT_SCREEN_W, TXT_SCREEN_H);
 }
 
+void TXT_GetMousePosition(int *x, int *y)
+{
+    SDL_GetMouseState(x, y);
+
+    *x /= CHAR_W;
+    *y /= CHAR_H;
+}
+
 //
 // Translates the SDL key
 //

@@ -50,6 +50,11 @@ struct txt_window_s
     // Actions that appear in the box at the bottom of the window
 
     txt_window_action_t *actions[3];
+
+    // These are set automatically when the window is drawn
+
+    int window_x, window_y;
+    int window_w, window_h;
 };
 
 txt_window_t *TXT_NewWindow(char *title);

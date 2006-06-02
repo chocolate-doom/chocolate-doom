@@ -112,18 +112,24 @@ void TXT_EmitSignal(TXT_UNCAST_ARG(widget), char *signal_name)
     }
 }
 
-void TXT_CalcWidgetSize(TXT_UNCAST_ARG(widget), int *w, int *h)
+void TXT_CalcWidgetSize(TXT_UNCAST_ARG(widget))
 {
     TXT_CAST_ARG(txt_widget_t, widget);
 
-    return widget->widget_class->size_calc(widget, w, h);
+    widget->widget_class->size_calc(widget);
 }
 
-void TXT_DrawWidget(TXT_UNCAST_ARG(widget), int w, int selected)
+void TXT_DrawWidget(TXT_UNCAST_ARG(widget), int selected)
 {
     TXT_CAST_ARG(txt_widget_t, widget);
 
-    widget->widget_class->drawer(widget, w, selected);
+    // For convenience...
+
+    TXT_GotoXY(widget->x, widget->y);
+
+    // Call drawer method
+ 
+    widget->widget_class->drawer(widget, selected);
 }
 
 void TXT_DestroyWidget(TXT_UNCAST_ARG(widget))
@@ -154,4 +160,23 @@ void TXT_SetWidgetAlign(TXT_UNCAST_ARG(widget), txt_horiz_align_t horiz_align)
     widget->align = horiz_align;
 }
 
+void TXT_WidgetMousePress(TXT_UNCAST_ARG(widget), int x, int y, int b)
+{
+    TXT_CAST_ARG(txt_widget_t, widget);
+
+    if (widget->widget_class->mouse_press != NULL)
+    {
+        widget->widget_class->mouse_press(widget, x, y, b);
+    }
+}
+
+void TXT_LayoutWidget(TXT_UNCAST_ARG(widget))
+{
+    TXT_CAST_ARG(txt_widget_t, widget);
+
+    if (widget->widget_class->layout != NULL)
+    {
+        widget->widget_class->layout(widget);
+    }
+}
 
