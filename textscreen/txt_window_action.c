@@ -79,3 +79,25 @@ txt_window_action_t *TXT_NewWindowAction(int key, char *label)
     return action;
 }
 
+static void WindowCloseCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(window))
+{
+    TXT_CAST_ARG(txt_window_t, window);
+
+    TXT_CloseWindow(window);
+}
+
+txt_window_action_t *TXT_NewWindowEscapeAction(txt_window_t *window)
+{
+    txt_window_action_t *action;
+
+    action = TXT_NewWindowAction(KEY_ESCAPE, "Abort");
+    TXT_SignalConnect(action, "pressed", WindowCloseCallback, window);
+
+    return action;
+}
+
+txt_window_action_t *TXT_NewWindowAcceptAction(void)
+{
+    return TXT_NewWindowAction(KEY_ENTER, "Accept");
+}
+

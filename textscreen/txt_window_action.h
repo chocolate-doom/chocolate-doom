@@ -28,6 +28,7 @@
 typedef struct txt_window_action_s txt_window_action_t;
 
 #include "txt_widget.h"
+#include "txt_window.h"
 
 struct txt_window_action_s
 {
@@ -37,6 +38,14 @@ struct txt_window_action_s
 };
 
 txt_window_action_t *TXT_NewWindowAction(int key, char *label);
+
+// Creates an "escape" button that closes the window
+
+txt_window_action_t *TXT_NewWindowEscapeAction(txt_window_t *window);
+
+// Accept button that does nothing
+
+txt_window_action_t *TXT_NewWindowAcceptAction(void);
 
 #endif /* #ifndef TXT_WINDOW_ACTION_H */
 
