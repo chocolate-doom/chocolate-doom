@@ -53,6 +53,7 @@ AC_OUTPUT([
 Makefile
 textscreen/Makefile
 textscreen/examples/Makefile
+setup/Makefile
 src/Makefile
 src/chocolate-doom-res.rc
 ])
