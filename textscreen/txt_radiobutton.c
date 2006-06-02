@@ -85,12 +85,26 @@ static int TXT_RadioButtonKeyPress(TXT_UNCAST_ARG(radiobutton), int key)
     return 0;
 }
 
+static void TXT_RadioButtonMousePress(TXT_UNCAST_ARG(radiobutton), 
+                                      int x, int y, int b)
+{
+    TXT_CAST_ARG(txt_radiobutton_t, radiobutton);
+
+    if (b == TXT_MOUSE_LEFT)
+    {
+        // Equivalent to pressing enter
+
+        TXT_RadioButtonKeyPress(radiobutton, KEY_ENTER);
+    }
+}
+
 txt_widget_class_t txt_radiobutton_class =
 {
     TXT_RadioButtonSizeCalc,
     TXT_RadioButtonDrawer,
     TXT_RadioButtonKeyPress,
     TXT_RadioButtonDestructor,
+    TXT_RadioButtonMousePress,
 };
 
 txt_radiobutton_t *TXT_NewRadioButton(char *label, int *variable, int value)

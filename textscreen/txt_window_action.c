@@ -58,12 +58,26 @@ static int TXT_WindowActionKeyPress(TXT_UNCAST_ARG(action), int key)
     return 0;
 }
 
+static void TXT_WindowActionMousePress(TXT_UNCAST_ARG(action), 
+                                       int x, int y, int b)
+{
+    TXT_CAST_ARG(txt_window_action_t, action);
+
+    // Simulate a press of the key
+
+    if (b == TXT_MOUSE_LEFT)
+    {
+        TXT_WindowActionKeyPress(action, action->key);
+    }
+}
+
 txt_widget_class_t txt_window_action_class =
 {
     TXT_WindowActionSizeCalc,
     TXT_WindowActionDrawer,
     TXT_WindowActionKeyPress,
     TXT_WindowActionDestructor,
+    TXT_WindowActionMousePress,
 };
 
 txt_window_action_t *TXT_NewWindowAction(int key, char *label)
