@@ -100,6 +100,13 @@ static void WindowCloseCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(window))
     TXT_CloseWindow(window);
 }
 
+static void WindowAcceptCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(window))
+{
+    TXT_CAST_ARG(txt_window_t, window);
+
+    TXT_WidgetKeyPress(window, KEY_ENTER);
+}
+
 txt_window_action_t *TXT_NewWindowEscapeAction(txt_window_t *window)
 {
     txt_window_action_t *action;
@@ -110,8 +117,13 @@ txt_window_action_t *TXT_NewWindowEscapeAction(txt_window_t *window)
     return action;
 }
 
-txt_window_action_t *TXT_NewWindowAcceptAction(void)
+txt_window_action_t *TXT_NewWindowAcceptAction(txt_window_t *window)
 {
-    return TXT_NewWindowAction(KEY_ENTER, "Accept");
+    txt_window_action_t *action;
+
+    action = TXT_NewWindowAction(KEY_ENTER, "Accept");
+    TXT_SignalConnect(action, "pressed", WindowAcceptCallback, window);
+
+    return action;
 }
 

@@ -45,7 +45,7 @@ txt_window_action_t *TXT_NewWindowEscapeAction(txt_window_t *window);
 
 // Accept button that does nothing
 
-txt_window_action_t *TXT_NewWindowAcceptAction(void);
+txt_window_action_t *TXT_NewWindowAcceptAction(txt_window_t *window);
 
 #endif /* #ifndef TXT_WINDOW_ACTION_H */
 
