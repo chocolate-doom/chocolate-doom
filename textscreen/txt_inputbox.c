@@ -188,12 +188,31 @@ static int TXT_IntInputBoxKeyPress(TXT_UNCAST_ARG(inputbox), int key)
     return 1;
 }
 
+static void TXT_InputBoxMousePress(TXT_UNCAST_ARG(inputbox),
+                                   int x, int y, int b)
+{
+    TXT_CAST_ARG(txt_inputbox_t, inputbox);
+
+    if (b == TXT_MOUSE_LEFT)
+    {
+        // Make mouse clicks start editing the box
+
+        if (!inputbox->editing)
+        {
+            // Send a simulated keypress to start editing
+
+            TXT_WidgetKeyPress(inputbox, KEY_ENTER);
+        }
+    }
+}
+
 txt_widget_class_t txt_inputbox_class =
 {
     TXT_InputBoxSizeCalc,
     TXT_InputBoxDrawer,
     TXT_InputBoxKeyPress,
     TXT_InputBoxDestructor,
+    TXT_InputBoxMousePress,
 };
 
 txt_widget_class_t txt_int_inputbox_class =
@@ -202,6 +221,7 @@ txt_widget_class_t txt_int_inputbox_class =
     TXT_InputBoxDrawer,
     TXT_IntInputBoxKeyPress,
     TXT_InputBoxDestructor,
+    TXT_InputBoxMousePress,
 };
 
 static void SetBufferFromValue(txt_inputbox_t *inputbox)

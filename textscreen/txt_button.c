@@ -64,12 +64,25 @@ static int TXT_ButtonKeyPress(TXT_UNCAST_ARG(button), int key)
     return 0;
 }
 
+static void TXT_ButtonMousePress(TXT_UNCAST_ARG(button), int x, int y, int b)
+{
+    TXT_CAST_ARG(txt_button_t, button);
+
+    if (b == TXT_MOUSE_LEFT)
+    {
+        // Equivalent to pressing enter
+
+        TXT_ButtonKeyPress(button, KEY_ENTER);
+    }
+}
+
 txt_widget_class_t txt_button_class =
 {
     TXT_ButtonSizeCalc,
     TXT_ButtonDrawer,
     TXT_ButtonKeyPress,
     TXT_ButtonDestructor,
+    TXT_ButtonMousePress,
 };
 
 txt_button_t *TXT_NewButton(char *label)
