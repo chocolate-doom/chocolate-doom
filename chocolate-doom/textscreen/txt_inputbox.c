@@ -12,21 +12,24 @@
 
 static void SetBufferFromValue(txt_inputbox_t *inputbox);
 
-static void TXT_InputBoxSizeCalc(TXT_UNCAST_ARG(inputbox), int *w, int *h)
+static void TXT_InputBoxSizeCalc(TXT_UNCAST_ARG(inputbox))
 {
     TXT_CAST_ARG(txt_inputbox_t, inputbox);
 
     // Enough space for the box + cursor
 
-    *w = inputbox->size + 1;
-    *h = 1;
+    inputbox->widget.w = inputbox->size + 1;
+    inputbox->widget.h = 1;
 }
 
-static void TXT_InputBoxDrawer(TXT_UNCAST_ARG(inputbox), int w, int selected)
+static void TXT_InputBoxDrawer(TXT_UNCAST_ARG(inputbox), int selected)
 {
     TXT_CAST_ARG(txt_inputbox_t, inputbox);
     int i;
     int chars;
+    int w;
+
+    w = inputbox->widget.w;
 
     // Select the background colour based on whether we are currently
     // editing, and if not, whether the widget is selected.

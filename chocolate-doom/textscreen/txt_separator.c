@@ -7,7 +7,7 @@
 #include "txt_main.h"
 #include "txt_window.h"
 
-static void TXT_SeparatorSizeCalc(TXT_UNCAST_ARG(separator), int *w, int *h)
+static void TXT_SeparatorSizeCalc(TXT_UNCAST_ARG(separator))
 {
     TXT_CAST_ARG(txt_separator_t, separator);
 
@@ -15,21 +15,24 @@ static void TXT_SeparatorSizeCalc(TXT_UNCAST_ARG(separator), int *w, int *h)
     {
         // Minimum width is the string length + two spaces for padding
 
-        *w = strlen(separator->label) + 2;
+        separator->widget.w = strlen(separator->label) + 2;
     }
     else
     {
-        *w = 0;
+        separator->widget.w = 0;
     }
 
-    *h = 1;
+    separator->widget.h = 1;
 }
 
-static void TXT_SeparatorDrawer(TXT_UNCAST_ARG(separator), int w, int selected)
+static void TXT_SeparatorDrawer(TXT_UNCAST_ARG(separator), int selected)
 {
     TXT_CAST_ARG(txt_separator_t, separator);
     int i;
     int x, y;
+    int w;
+
+    w = separator->widget.w;
 
     TXT_GetXY(&x, &y);
 

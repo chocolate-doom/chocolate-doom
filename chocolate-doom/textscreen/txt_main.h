@@ -101,5 +101,9 @@ int TXT_GetChar(void);
 
 void TXT_GetKeyDescription(int key, char *buf);
 
+// Retrieve the current position of the mouse
+
+void TXT_GetMouseState(int *x, int *y);
+
 #endif /* #ifndef TXT_MAIN_H */
 

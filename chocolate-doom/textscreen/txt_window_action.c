@@ -9,8 +9,7 @@
 #include "txt_main.h"
 #include "txt_window.h"
 
-static void TXT_WindowActionSizeCalc(TXT_UNCAST_ARG(action), 
-                                     int *w, int *h)
+static void TXT_WindowActionSizeCalc(TXT_UNCAST_ARG(action))
 {
     TXT_CAST_ARG(txt_window_action_t, action);
     char buf[10];
@@ -19,11 +18,11 @@ static void TXT_WindowActionSizeCalc(TXT_UNCAST_ARG(action),
 
     // Minimum width is the string length + two spaces for padding
 
-    *w = strlen(action->label) + strlen(buf) + 1;
-    *h = 1;
+    action->widget.w = strlen(action->label) + strlen(buf) + 1;
+    action->widget.h = 1;
 }
 
-static void TXT_WindowActionDrawer(TXT_UNCAST_ARG(action), int w, int selected)
+static void TXT_WindowActionDrawer(TXT_UNCAST_ARG(action), int selected)
 {
     TXT_CAST_ARG(txt_window_action_t, action);
     int i;

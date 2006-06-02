@@ -9,20 +9,23 @@
 #include "txt_main.h"
 #include "txt_window.h"
 
-static void TXT_ButtonSizeCalc(TXT_UNCAST_ARG(button), int *w, int *h)
+static void TXT_ButtonSizeCalc(TXT_UNCAST_ARG(button))
 {
     TXT_CAST_ARG(txt_button_t, button);
 
     // Minimum width is the string length + two spaces for padding
 
-    *w = strlen(button->label) + 2;
-    *h = 1;
+    button->widget.w = strlen(button->label) + 2;
+    button->widget.h = 1;
 }
 
-static void TXT_ButtonDrawer(TXT_UNCAST_ARG(button), int w, int selected)
+static void TXT_ButtonDrawer(TXT_UNCAST_ARG(button), int selected)
 {
     TXT_CAST_ARG(txt_button_t, button);
     int i;
+    int w;
+
+    w = button->widget.w;
 
     TXT_BGColor(TXT_COLOR_BLUE, 0);
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);

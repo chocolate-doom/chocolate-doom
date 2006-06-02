@@ -7,20 +7,23 @@
 #include "txt_main.h"
 #include "txt_window.h"
 
-static void TXT_LabelSizeCalc(TXT_UNCAST_ARG(label), int *w, int *h)
+static void TXT_LabelSizeCalc(TXT_UNCAST_ARG(label))
 {
     TXT_CAST_ARG(txt_label_t, label);
 
-    *w = label->w;
-    *h = label->h;
+    label->widget.w = label->w;
+    label->widget.h = label->h;
 }
 
-static void TXT_LabelDrawer(TXT_UNCAST_ARG(label), int w, int selected)
+static void TXT_LabelDrawer(TXT_UNCAST_ARG(label), int selected)
 {
     TXT_CAST_ARG(txt_label_t, label);
     int x, y;
     int origin_x, origin_y;
     int align_indent;
+    int w;
+
+    w = label->widget.w;
 
     TXT_BGColor(label->bgcolor, 0);
     TXT_FGColor(label->fgcolor);

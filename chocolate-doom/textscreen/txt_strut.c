@@ -9,17 +9,17 @@
 #include "txt_main.h"
 #include "txt_window.h"
 
-static void TXT_StrutSizeCalc(TXT_UNCAST_ARG(strut), int *w, int *h)
+static void TXT_StrutSizeCalc(TXT_UNCAST_ARG(strut))
 {
     TXT_CAST_ARG(txt_strut_t, strut);
 
     // Minimum width is the string length + two spaces for padding
 
-    *w = strut->width;
-    *h = strut->height;
+    strut->widget.w = strut->width;
+    strut->widget.h = strut->height;
 }
 
-static void TXT_StrutDrawer(TXT_UNCAST_ARG(strut), int w, int selected)
+static void TXT_StrutDrawer(TXT_UNCAST_ARG(strut), int selected)
 {
     // Nothing is drawn for a strut.
 }
