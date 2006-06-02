@@ -295,7 +295,8 @@ void TXT_DrawWindow(txt_window_t *window)
 
     widgets = (txt_widget_t *) window;
 
-    TXT_DrawSeparator(window->window_x, widgets->y + widgets->h, widgets->w);
+    TXT_DrawSeparator(window->window_x, widgets->y + widgets->h, 
+                      window->window_w);
 
     // Action area at the window bottom
 
