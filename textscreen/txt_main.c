@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: txt_main.c 533 2006-05-26 19:15:05Z fraggle $
+// $Id: txt_main.c 547 2006-06-02 19:29:24Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -183,6 +183,14 @@ void TXT_UpdateScreenArea(int x, int y, int w, int h)
 void TXT_UpdateScreen(void)
 {
     TXT_UpdateScreenArea(0, 0, TXT_SCREEN_W, TXT_SCREEN_H);
+}
+
+void TXT_GetMousePosition(int *x, int *y)
+{
+    SDL_GetMouseState(x, y);
+
+    *x /= CHAR_W;
+    *y /= CHAR_H;
 }
 
 //

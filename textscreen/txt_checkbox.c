@@ -9,20 +9,23 @@
 #include "txt_main.h"
 #include "txt_window.h"
 
-static void TXT_CheckBoxSizeCalc(TXT_UNCAST_ARG(checkbox), int *w, int *h)
+static void TXT_CheckBoxSizeCalc(TXT_UNCAST_ARG(checkbox))
 {
     TXT_CAST_ARG(txt_checkbox_t, checkbox);
 
     // Minimum width is the string length + two spaces for padding
 
-    *w = strlen(checkbox->label) + 6;
-    *h = 1;
+    checkbox->widget.w = strlen(checkbox->label) + 6;
+    checkbox->widget.h = 1;
 }
 
-static void TXT_CheckBoxDrawer(TXT_UNCAST_ARG(checkbox), int w, int selected)
+static void TXT_CheckBoxDrawer(TXT_UNCAST_ARG(checkbox), int selected)
 {
     TXT_CAST_ARG(txt_checkbox_t, checkbox);
     int i;
+    int w;
+
+    w = checkbox->widget.w;
 
     TXT_BGColor(TXT_COLOR_BLUE, 0);
     TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);

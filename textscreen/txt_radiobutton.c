@@ -9,20 +9,23 @@
 #include "txt_main.h"
 #include "txt_window.h"
 
-static void TXT_RadioButtonSizeCalc(TXT_UNCAST_ARG(radiobutton), int *w, int *h)
+static void TXT_RadioButtonSizeCalc(TXT_UNCAST_ARG(radiobutton))
 {
     TXT_CAST_ARG(txt_radiobutton_t, radiobutton);
 
     // Minimum width is the string length + two spaces for padding
 
-    *w = strlen(radiobutton->label) + 6;
-    *h = 1;
+    radiobutton->widget.w = strlen(radiobutton->label) + 6;
+    radiobutton->widget.h = 1;
 }
 
-static void TXT_RadioButtonDrawer(TXT_UNCAST_ARG(radiobutton), int w, int selected)
+static void TXT_RadioButtonDrawer(TXT_UNCAST_ARG(radiobutton), int selected)
 {
     TXT_CAST_ARG(txt_radiobutton_t, radiobutton);
     int i;
+    int w;
+
+    w = radiobutton->widget.w;
 
     TXT_BGColor(TXT_COLOR_BLUE, 0);
     TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: txt_main.h 513 2006-05-23 00:04:27Z fraggle $
+// $Id: txt_main.h 547 2006-06-02 19:29:24Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -100,6 +100,10 @@ int TXT_GetChar(void);
 // provided buffer.
 
 void TXT_GetKeyDescription(int key, char *buf);
+
+// Retrieve the current position of the mouse
+
+void TXT_GetMouseState(int *x, int *y);
 
 #endif /* #ifndef TXT_MAIN_H */
 

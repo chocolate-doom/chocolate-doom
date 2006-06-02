@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: txt_gui.c 487 2006-05-20 15:45:36Z fraggle $
+// $Id: txt_gui.c 547 2006-06-02 19:29:24Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -140,7 +140,7 @@ void TXT_DrawWindowFrame(char *title, int x, int y, int w, int h)
         // draw a box around the title.
 
         by = y1 == y ? 0 :
-             y1 == y + 2 ? 2 :
+             y1 == y + 2 && title != NULL ? 2 :
              y1 == y + h - 1 ? 3 : 1;
 
         for (x1=x; x1<x+w; ++x1)
@@ -158,17 +158,20 @@ void TXT_DrawWindowFrame(char *title, int x, int y, int w, int h)
 
     // Draw the title
 
-    TXT_GotoXY(x + 1, y + 1);
-    TXT_BGColor(TXT_COLOR_GREY, 0);
-    TXT_FGColor(TXT_COLOR_BLUE);
-
-    for (x1=0; x1<w-2; ++x1)
+    if (title != NULL)
     {
-        TXT_DrawString(" ");
-    }
+        TXT_GotoXY(x + 1, y + 1);
+        TXT_BGColor(TXT_COLOR_GREY, 0);
+        TXT_FGColor(TXT_COLOR_BLUE);
 
-    TXT_GotoXY(x + (w - strlen(title)) / 2, y + 1);
-    TXT_DrawString(title);
+        for (x1=0; x1<w-2; ++x1)
+        {
+            TXT_DrawString(" ");
+        }
+    
+        TXT_GotoXY(x + (w - strlen(title)) / 2, y + 1);
+        TXT_DrawString(title);
+    }
 
     // Draw the window's shadow.
 
@@ -178,8 +181,11 @@ void TXT_DrawWindowFrame(char *title, int x, int y, int w, int h)
 
 void TXT_DrawSeparator(int x, int y, int w)
 {
+    unsigned char *data;
     int x1;
-    int c;
+    int b;
+
+    data = TXT_GetScreenData();
 
     TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);
     TXT_BGColor(TXT_COLOR_BLUE, 0);
@@ -189,18 +195,29 @@ void TXT_DrawSeparator(int x, int y, int w)
         return;
     }
 
+    data += (y * TXT_SCREEN_W + x) * 2;
+
     for (x1=x; x1<x+w; ++x1)
     {
         TXT_GotoXY(x1, y);
 
-        c = x1 == x ? borders[2][0] :
-            x1 == x + w - 1 ? borders[2][3] :
-            borders[2][1];
+        b = x1 == x ? 0 :
+            x1 == x + w - 1 ? 3 :
+            1;
 
         if (VALID_X(x1))
         {
-            TXT_PutChar(c);
+            // Read the current value from the screen
+            // Check that it matches what the window should look like if
+            // there is no separator, then apply the separator
+
+            if (*data == borders[1][b])
+            {
+                TXT_PutChar(borders[2][b]);
+            }
         }
+
+        data += 2;
     }
 }
 
