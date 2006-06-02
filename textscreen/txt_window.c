@@ -73,7 +73,7 @@ txt_window_t *TXT_NewWindow(char *title)
     // Default actions
 
     TXT_SetWindowAction(win, TXT_HORIZ_LEFT, TXT_NewWindowEscapeAction(win));
-    TXT_SetWindowAction(win, TXT_HORIZ_RIGHT, TXT_NewWindowAcceptAction());
+    TXT_SetWindowAction(win, TXT_HORIZ_RIGHT, TXT_NewWindowAcceptAction(win));
 
     return win;
 }
