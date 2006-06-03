@@ -258,10 +258,22 @@ byte*	I_AllocLow(int length)
 //
 extern boolean demorecording;
 
+static boolean already_quitting = false;
+
 void I_Error (char *error, ...)
 {
     va_list	argptr;
 
+    if (already_quitting)
+    {
+        fprintf(stderr, "Warning: recursive call to I_Error detected.\n");
+        exit(-1);
+    }
+    else
+    {
+        already_quitting = true;
+    }
+    
     // Message first.
     va_start (argptr,error);
     fprintf (stderr, "Error: ");
