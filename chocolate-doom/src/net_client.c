@@ -308,6 +308,7 @@ static void NET_CL_Disconnected(void)
     // disconnected from server
 
     players[consoleplayer].message = "Disconnected from server";
+    printf("Disconnected from server.\n");
 
     for (i=0; i<MAXPLAYERS; ++i)
     {
@@ -507,6 +508,14 @@ static void NET_CL_SendTics(int start, int end)
 {
     net_packet_t *packet;
     int i;
+
+    if (!net_client_connected)
+    {
+        // Disconnected from server
+
+        return;
+    }
+
 
     if (start < 0)
         start = 0;
