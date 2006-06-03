@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_system.c 463 2006-04-06 19:44:06Z fraggle $
+// $Id: i_system.c 556 2006-06-03 16:12:08Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -81,7 +81,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_system.c 463 2006-04-06 19:44:06Z fraggle $";
+rcsid[] = "$Id: i_system.c 556 2006-06-03 16:12:08Z fraggle $";
 
 
 #include <stdlib.h>
@@ -258,10 +258,22 @@ byte*	I_AllocLow(int length)
 //
 extern boolean demorecording;
 
+static boolean already_quitting = false;
+
 void I_Error (char *error, ...)
 {
     va_list	argptr;
 
+    if (already_quitting)
+    {
+        fprintf(stderr, "Warning: recursive call to I_Error detected.\n");
+        exit(-1);
+    }
+    else
+    {
+        already_quitting = true;
+    }
+    
     // Message first.
     va_start (argptr,error);
     fprintf (stderr, "Error: ");
