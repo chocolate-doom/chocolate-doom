@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 475 2006-05-05 19:49:34Z fraggle $
+// $Id: net_client.c 557 2006-06-03 18:23:09Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -308,6 +308,7 @@ static void NET_CL_Disconnected(void)
     // disconnected from server
 
     players[consoleplayer].message = "Disconnected from server";
+    printf("Disconnected from server.\n");
 
     for (i=0; i<MAXPLAYERS; ++i)
     {
@@ -507,6 +508,14 @@ static void NET_CL_SendTics(int start, int end)
 {
     net_packet_t *packet;
     int i;
+
+    if (!net_client_connected)
+    {
+        // Disconnected from server
+
+        return;
+    }
+
 
     if (start < 0)
         start = 0;
