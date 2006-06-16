@@ -92,6 +92,8 @@ void*	W_CacheLumpName (char* name, int tag);
 
 void    W_GenerateHashTable(void);
 
+extern unsigned int W_LumpNameHash(const char *s);
+
 
 #endif
 //-----------------------------------------------------------------------------

@@ -146,7 +146,7 @@ static void ExtractFileBase(char *path, char *dest)
 // Can be used for any 8-character names.
 // by Lee Killough
 
-static unsigned int W_LumpNameHash(const char *s)
+unsigned int W_LumpNameHash(const char *s)
 {
   unsigned int hash;
 
