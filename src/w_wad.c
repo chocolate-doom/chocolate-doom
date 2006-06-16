@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: w_wad.c 437 2006-03-24 20:39:28Z fraggle $
+// $Id: w_wad.c 558 2006-06-16 17:06:05Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -66,7 +66,7 @@
 
 
 static const char
-rcsid[] = "$Id: w_wad.c 437 2006-03-24 20:39:28Z fraggle $";
+rcsid[] = "$Id: w_wad.c 558 2006-06-16 17:06:05Z fraggle $";
 
 
 #include <ctype.h>
@@ -146,7 +146,7 @@ static void ExtractFileBase(char *path, char *dest)
 // Can be used for any 8-character names.
 // by Lee Killough
 
-static unsigned int W_LumpNameHash(const char *s)
+unsigned int W_LumpNameHash(const char *s)
 {
   unsigned int hash;
 

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: r_data.c 125 2005-09-22 21:42:24Z fraggle $
+// $Id: r_data.c 558 2006-06-16 17:06:05Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -58,7 +58,7 @@
 
 
 static const char
-rcsid[] = "$Id: r_data.c 125 2005-09-22 21:42:24Z fraggle $";
+rcsid[] = "$Id: r_data.c 558 2006-06-16 17:06:05Z fraggle $";
 
 #include "i_system.h"
 #include "z_zone.h"
@@ -139,19 +139,29 @@ typedef struct
 // A maptexturedef_t describes a rectangular texture,
 //  which is composed of one or more mappatch_t structures
 //  that arrange graphic patches.
-typedef struct
+
+typedef struct texture_s texture_t;
+
+struct texture_s
 {
     // Keep name for switch changing, etc.
     char	name[8];		
     short	width;
     short	height;
+
+    // Index in textures list
+
+    int         index;
+
+    // Next in hash table chain
+
+    texture_t  *next;
     
     // All the patches[patchcount]
     //  are drawn back to front into the cached texture.
     short	patchcount;
     texpatch_t	patches[1];		
-    
-} texture_t;
+};
 
 
 
@@ -169,6 +179,7 @@ int		numspritelumps;
 
 int		numtextures;
 texture_t**	textures;
+texture_t**     textures_hashtable;
 
 
 int*			texturewidthmask;
@@ -432,6 +443,32 @@ R_GetColumn
 }
 
 
+static void GenerateTextureHashTable(void)
+{
+    int i;
+    int key;
+
+    textures_hashtable 
+            = Z_Malloc(sizeof(texture_t *) * numtextures, PU_STATIC, 0);
+
+    memset(textures_hashtable, 0, sizeof(texture_t *) * numtextures);
+
+    // Add all textures to hash table
+
+    for (i=0; i<numtextures; ++i)
+    {
+        // Store index
+
+        textures[i]->index = i;
+
+        // Hook into hash table
+
+        key = W_LumpNameHash(textures[i]->name) % numtextures;
+
+        textures[i]->next = textures_hashtable[key];
+        textures_hashtable[key] = textures[i];
+    }
+}
 
 
 //
@@ -605,6 +642,8 @@ void R_InitTextures (void)
     
     for (i=0 ; i<numtextures ; i++)
 	texturetranslation[i] = i;
+
+    GenerateTextureHashTable();
 }
 
 
@@ -726,16 +765,25 @@ int R_FlatNumForName (char* name)
 //
 int	R_CheckTextureNumForName (char *name)
 {
-    int		i;
+    texture_t *texture;
+    int key;
 
     // "NoTexture" marker.
     if (name[0] == '-')		
 	return 0;
 		
-    for (i=0 ; i<numtextures ; i++)
-	if (!strncasecmp (textures[i]->name, name, 8) )
-	    return i;
-		
+    key = W_LumpNameHash(name) % numtextures;
+
+    texture=textures_hashtable[key]; 
+    
+    while (texture != NULL)
+    {
+	if (!strncasecmp (texture->name, name, 8) )
+	    return texture->index;
+
+        texture = texture->next;
+    }
+    
     return -1;
 }
 

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: w_wad.h 438 2006-03-24 20:40:08Z fraggle $
+// $Id: w_wad.h 558 2006-06-16 17:06:05Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -91,6 +91,8 @@ void*	W_CacheLumpNum (int lump, int tag);
 void*	W_CacheLumpName (char* name, int tag);
 
 void    W_GenerateHashTable(void);
+
+extern unsigned int W_LumpNameHash(const char *s);
 
 
 #endif

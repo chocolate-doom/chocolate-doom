@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_setup.c 432 2006-03-24 16:51:28Z fraggle $
+// $Id: p_setup.c 558 2006-06-16 17:06:05Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -45,7 +45,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_setup.c 432 2006-03-24 16:51:28Z fraggle $";
+rcsid[] = "$Id: p_setup.c 558 2006-06-16 17:06:05Z fraggle $";
 
 
 #include <math.h>
@@ -554,27 +554,61 @@ void P_GroupLines (void)
 	    total++;
 	}
     }
-	
+
     // build line tables for each sector	
     linebuffer = Z_Malloc (total*sizeof(line_t *), PU_LEVEL, 0);
+
+    for (i=0; i<numsectors; ++i)
+    {
+        // Assign the line buffer for this sector
+
+        sectors[i].lines = linebuffer;
+        linebuffer += sectors[i].linecount;
+
+        // Reset linecount to zero so in the next stage we can count
+        // lines into the list.
+
+        sectors[i].linecount = 0;
+    }
+
+    // Assign lines to sectors
+
+    for (i=0; i<numlines; ++i)
+    { 
+        li = &lines[i];
+
+        if (li->frontsector != NULL)
+        {
+            sector = li->frontsector;
+
+            sector->lines[sector->linecount] = li;
+            ++sector->linecount;
+        }
+
+        if (li->backsector != NULL && li->frontsector != li->backsector)
+        {
+            sector = li->backsector;
+
+            sector->lines[sector->linecount] = li;
+            ++sector->linecount;
+        }
+    }
+    
+    // Generate bounding boxes for sectors
+	
     sector = sectors;
     for (i=0 ; i<numsectors ; i++, sector++)
     {
 	M_ClearBox (bbox);
-	sector->lines = linebuffer;
-	li = lines;
-	for (j=0 ; j<numlines ; j++, li++)
+
+	for (j=0 ; j<sector->linecount; j++)
 	{
-	    if (li->frontsector == sector || li->backsector == sector)
-	    {
-		*linebuffer++ = li;
-		M_AddToBox (bbox, li->v1->x, li->v1->y);
-		M_AddToBox (bbox, li->v2->x, li->v2->y);
-	    }
+            li = sector->lines[j];
+
+            M_AddToBox (bbox, li->v1->x, li->v1->y);
+            M_AddToBox (bbox, li->v2->x, li->v2->y);
 	}
-	if (linebuffer - sector->lines != sector->linecount)
-	    I_Error ("P_GroupLines: miscounted");
-			
+
 	// set the degenmobj_t to the middle of the bounding box
 	sector->soundorg.x = (bbox[BOXRIGHT]+bbox[BOXLEFT])/2;
 	sector->soundorg.y = (bbox[BOXTOP]+bbox[BOXBOTTOM])/2;
