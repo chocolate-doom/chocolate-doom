@@ -101,6 +101,7 @@ static deh_section_t *section_types[] =
     &deh_section_frame,
     &deh_section_misc,
     &deh_section_pointer,
+    &deh_section_sound,
     &deh_section_text,
     &deh_section_thing,
     &deh_section_weapon,
