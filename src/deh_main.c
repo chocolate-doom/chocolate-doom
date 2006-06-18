@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_main.c 214 2005-10-17 23:48:05Z fraggle $
+// $Id: deh_main.c 559 2006-06-18 22:54:48Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -101,6 +101,7 @@ static deh_section_t *section_types[] =
     &deh_section_frame,
     &deh_section_misc,
     &deh_section_pointer,
+    &deh_section_sound,
     &deh_section_text,
     &deh_section_thing,
     &deh_section_weapon,
