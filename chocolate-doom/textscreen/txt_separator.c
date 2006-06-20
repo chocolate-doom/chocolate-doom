@@ -39,7 +39,7 @@ static void TXT_SeparatorDrawer(TXT_UNCAST_ARG(separator), int selected)
     // Draw separator.  Go back one character and draw two extra
     // to overlap the window borders.
 
-    TXT_DrawSeparator(x-1, y, w + 2);
+    TXT_DrawSeparator(x-2, y, w + 4);
     
     if (separator->label != NULL)
     {

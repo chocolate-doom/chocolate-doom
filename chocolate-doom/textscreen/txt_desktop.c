@@ -112,6 +112,7 @@ void TXT_SetDesktopTitle(char *title)
 {
     free(desktop_title);
     desktop_title = strdup(title);
+    SDL_WM_SetCaption(title, NULL);
 }
 
 void TXT_DrawDesktop(void)
@@ -128,7 +129,7 @@ void TXT_DrawDesktop(void)
 
     for (i=0; i<num_windows; ++i)
     {
-        TXT_DrawWindow(all_windows[i]);
+        TXT_DrawWindow(all_windows[i], i == num_windows - 1);
     }
 
     TXT_UpdateScreen();
