@@ -45,6 +45,7 @@ void QuitConfirm(void *unused1, void *unused2)
     TXT_SignalConnect(button, "pressed", DoQuit, NULL);
 }
 
+extern void ConfigDisplay();
 extern void ConfigKeyboard();
 
 void MainMenu(void)
@@ -54,10 +55,15 @@ void MainMenu(void)
     txt_button_t *button;
 
     window = TXT_NewWindow("Main Menu");
-    TXT_AddWidget(window, TXT_NewButton("Configure display"));
+
+    button = TXT_NewButton("Configure display");
+    TXT_AddWidget(window, button);
+    TXT_SignalConnect(button, "pressed", ConfigDisplay, NULL);
+
     button = TXT_NewButton("Configure keyboard");
     TXT_AddWidget(window, button);
     TXT_SignalConnect(button, "pressed", ConfigKeyboard, NULL);
+
     TXT_AddWidget(window, TXT_NewButton("Configure mouse"));
     TXT_AddWidget(window, TXT_NewButton("Save parameters and launch DOOM"));
     TXT_AddWidget(window, TXT_NewStrut(0, 1));
