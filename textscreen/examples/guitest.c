@@ -77,9 +77,9 @@ void SetupWindow(void)
     TXT_AddWidget(window, TXT_NewSeparator("Main section"));
     table = TXT_NewTable(3);
 
-    toplabel = TXT_NewLabel(" This is a multiline label.\n"
-                            " A single label object contains \n"
-                            " all three of these lines.\n");
+    toplabel = TXT_NewLabel("This is a multiline label.\n"
+                            "A single label object contains \n"
+                            "all three of these lines.\n");
     TXT_AddWidget(window, toplabel);
     TXT_SetWidgetAlign(toplabel, TXT_HORIZ_CENTER);
 
@@ -87,11 +87,11 @@ void SetupWindow(void)
 
     for (i=0; i<5; ++i)
     {
-        sprintf(buf, " Option %i in a table:", i + 1);
+        sprintf(buf, "Option %i in a table:", i + 1);
         TXT_AddWidget(table, TXT_NewLabel(buf));
-        sprintf(buf, "Button %i-1", i + 1);
+        sprintf(buf, " Button %i-1 ", i + 1);
         TXT_AddWidget(table, TXT_NewButton(buf));
-        sprintf(buf, "Button %i-2", i + 1);
+        sprintf(buf, " Button %i-2 ", i + 1);
         TXT_AddWidget(table, TXT_NewButton(buf));
     }
 
@@ -153,9 +153,9 @@ void Window2(void)
     TXT_AddWidget(window, TXT_NewSeparator("Input boxes"));
     table = TXT_NewTable(2);
     TXT_AddWidget(window, table);
-    TXT_AddWidget(table, TXT_NewLabel(" String: "));
+    TXT_AddWidget(table, TXT_NewLabel("String: "));
     TXT_AddWidget(table, TXT_NewInputBox(&textbox_value, 30));
-    TXT_AddWidget(table, TXT_NewLabel(" Int: "));
+    TXT_AddWidget(table, TXT_NewLabel("Int: "));
     TXT_AddWidget(table, TXT_NewIntInputBox(&numbox_value, 10));
 }
 
