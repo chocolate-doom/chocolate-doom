@@ -221,14 +221,14 @@ void TXT_LayoutWindow(txt_window_t *window)
     
     TXT_CalcWidgetSize(window);
 
+    // Widgets area: add one character of padding on each side
+    widgets_w = widgets->w + 2;
+
     // Calculate the size of the action area
+    // Make window wide enough to action area
   
     actionarea_w = ActionAreaWidth(window);
     
-    // Which one is larger?
-
-    widgets_w = widgets->w;
-
     if (actionarea_w > widgets_w)
         widgets_w = actionarea_w;
 
@@ -251,9 +251,9 @@ void TXT_LayoutWindow(txt_window_t *window)
 
     // Set the table size and position
 
-    widgets->w = widgets_w;
+    widgets->w = widgets_w - 2;
     // widgets->h        (already set)
-    widgets->x = window->window_x + 1;
+    widgets->x = window->window_x + 2;
     widgets->y = window->window_y + window->window_h - widgets->h - 3;
 
     // Layout the table and action area
@@ -262,7 +262,7 @@ void TXT_LayoutWindow(txt_window_t *window)
     TXT_LayoutWidget(widgets);
 }
 
-void TXT_DrawWindow(txt_window_t *window)
+void TXT_DrawWindow(txt_window_t *window, int selected)
 {
     txt_widget_t *widgets;
     int x, y;
@@ -279,7 +279,7 @@ void TXT_DrawWindow(txt_window_t *window)
 
     // Draw all widgets
 
-    TXT_DrawWidget(window, 1);
+    TXT_DrawWidget(window, selected);
 
     // Separator for action area
 

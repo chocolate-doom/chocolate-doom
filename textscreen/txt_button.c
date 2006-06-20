@@ -13,9 +13,7 @@ static void TXT_ButtonSizeCalc(TXT_UNCAST_ARG(button))
 {
     TXT_CAST_ARG(txt_button_t, button);
 
-    // Minimum width is the string length + two spaces for padding
-
-    button->widget.w = strlen(button->label) + 2;
+    button->widget.w = strlen(button->label);
     button->widget.h = 1;
 }
 
@@ -29,7 +27,6 @@ static void TXT_ButtonDrawer(TXT_UNCAST_ARG(button), int selected)
 
     TXT_BGColor(TXT_COLOR_BLUE, 0);
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
-    TXT_DrawString(" ");
 
     if (selected)
     {
@@ -38,7 +35,7 @@ static void TXT_ButtonDrawer(TXT_UNCAST_ARG(button), int selected)
 
     TXT_DrawString(button->label);
     
-    for (i=strlen(button->label); i < w-2; ++i)
+    for (i=strlen(button->label); i < w; ++i)
     {
         TXT_DrawString(" ");
     }
