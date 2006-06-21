@@ -1889,15 +1889,16 @@ boolean G_CheckDemoStatus (void)
         realtics = endtime - starttime;
         fps = ((float) gametic * 35) / realtics;
 
+        // Prevent recursive calls
+        timingdemo = false;
+        demoplayback = false;
+
 	I_Error ("timed %i gametics in %i realtics (%f fps)",
                  gametic, realtics, fps);
     } 
 	 
     if (demoplayback) 
     { 
-	if (singledemo) 
-	    I_Quit (); 
-			 
 	Z_ChangeTag (demobuffer, PU_CACHE); 
 	demoplayback = false; 
 	netdemo = false;
@@ -1908,7 +1909,12 @@ boolean G_CheckDemoStatus (void)
 	fastparm = false;
 	nomonsters = false;
 	consoleplayer = 0;
-	D_AdvanceDemo (); 
+        
+        if (singledemo) 
+            I_Quit (); 
+        else 
+            D_AdvanceDemo (); 
+
 	return true; 
     } 
  

@@ -59,11 +59,6 @@ rcsid[] = "$Id$";
 #include "m_argv.h"
 #include "d_main.h"
 
-void SignalHandler(int signum)
-{
-    I_Error("Aborting due to signal %i\n", signum);   
-}
-
 int main(int argc, char **argv) 
 { 
 
@@ -71,19 +66,6 @@ int main(int argc, char **argv)
 
     myargc = argc; 
     myargv = argv; 
-
-    signal(SIGSEGV, SignalHandler);
-    signal(SIGTERM, SignalHandler);
-    signal(SIGILL, SignalHandler);
-    signal(SIGINT, SignalHandler);
-    signal(SIGFPE, SignalHandler);
-    signal(SIGABRT, SignalHandler);
-#ifdef SIGHUP
-    signal(SIGHUP, SignalHandler);
-#endif
-#ifdef SIGPIPE
-    signal(SIGHUP, SignalHandler);
-#endif
 
     // start doom
  
