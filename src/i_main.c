@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_main.c 424 2006-03-18 21:22:09Z fraggle $
+// $Id: i_main.c 562 2006-06-21 19:08:20Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -48,7 +48,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_main.c 424 2006-03-18 21:22:09Z fraggle $";
+rcsid[] = "$Id: i_main.c 562 2006-06-21 19:08:20Z fraggle $";
 
 #include <SDL.h>
 
@@ -59,11 +59,6 @@ rcsid[] = "$Id: i_main.c 424 2006-03-18 21:22:09Z fraggle $";
 #include "m_argv.h"
 #include "d_main.h"
 
-void SignalHandler(int signum)
-{
-    I_Error("Aborting due to signal %i\n", signum);   
-}
-
 int main(int argc, char **argv) 
 { 
 
@@ -71,19 +66,6 @@ int main(int argc, char **argv)
 
     myargc = argc; 
     myargv = argv; 
-
-    signal(SIGSEGV, SignalHandler);
-    signal(SIGTERM, SignalHandler);
-    signal(SIGILL, SignalHandler);
-    signal(SIGINT, SignalHandler);
-    signal(SIGFPE, SignalHandler);
-    signal(SIGABRT, SignalHandler);
-#ifdef SIGHUP
-    signal(SIGHUP, SignalHandler);
-#endif
-#ifdef SIGPIPE
-    signal(SIGHUP, SignalHandler);
-#endif
 
     // start doom
  
