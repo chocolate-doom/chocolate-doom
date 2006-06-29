@@ -1083,77 +1083,163 @@ static void SetGameDescription(void)
     }
 }
 
+#define MAXARGVS        100
+	
+static void LoadResponseFile(int argv_index)
+{
+    FILE *handle;
+    int size;
+    char *infile;
+    char *file;
+    char *response_filename;
+    char **newargv;
+    int newargc;
+    int i, k;
+
+    response_filename = myargv[argv_index] + 1;
+		
+    // READ THE RESPONSE FILE INTO MEMORY
+    handle = fopen(response_filename, "r");
+
+    if (handle == NULL)
+    {
+        printf ("\nNo such response file!");
+        exit(1);
+    }
+
+    printf("Found response file %s!\n", response_filename);
+
+    // Find size of file
+
+    fseek(handle, 0, SEEK_END);
+    size = ftell(handle);
+    fseek(handle, 0, SEEK_SET);
+
+    // Read in the entire file
+    // Allocate one byte extra - this is incase there is an argument
+    // at the end of the response file, in which case a '\0' will be 
+    // needed.
+
+    file = malloc(size + 1);
+    fread(file, size, 1, handle);
+    fclose(handle);
+
+    // Create new arguments list array
+
+    newargv = malloc(sizeof(char *) * MAXARGVS);
+    newargc = 0;
+    memset(newargv, 0, sizeof(char *) * MAXARGVS);
+
+    // Copy all the arguments in the list up to the response file
+
+    for (i=0; i<argv_index; ++i)
+    {
+        newargv[i] = myargv[i];
+        ++newargc;
+    }
+    
+    infile = file;
+    k = 0;
+
+    while(k < size)
+    {
+        // Skip past space characters to the next argument
+
+        while(k < size && isspace(infile[k]))
+        {
+            ++k;
+        } 
+
+        if (k >= size)
+        {
+            break;
+        }
+
+        // If the next argument is enclosed in quote marks, treat
+        // the contents as a single argument.  This allows long filenames
+        // to be specified.
+
+        if (infile[k] == '\"') 
+        {
+            // Skip the first character(")
+            ++k;
+
+            newargv[newargc++] = &infile[k];
+
+            // Read all characters between quotes
+
+            while (k < size && infile[k] != '\"' && infile[k] != '\n')
+            {
+                ++k;
+            }
+
+            if (k >= size || infile[k] == '\n') 
+            {
+                I_Error("Quotes unclosed in response file '%s'", 
+                        response_filename);
+            }
+
+            // Cut off the string at the closing quote
+
+            infile[k] = '\0';
+            ++k;
+        }
+        else
+        {
+            // Read in the next argument until a space is reached
+
+            newargv[newargc++] = &infile[k];
+
+            while(k < size && !isspace(infile[k]))
+            {
+                ++k;
+            }
+
+            // Cut off the end of the argument at the first space
+
+            infile[k] = '\0';
+
+            printf("added arg: '%s'\n", newargv[newargc - 1]);
+
+            ++k;
+        }
+    } 
+
+    // Add arguments following the response file argument
+
+    for (i=argv_index + 1; i<myargc; ++i)
+    {
+        newargv[newargc] = myargv[i];
+        ++newargc;
+    }
+
+    myargv = newargv;
+    myargc = newargc;
+
+    // Display arguments
+
+    printf("%d command-line args:\n", myargc);
+
+    for (k=1; k<myargc; k++)
+    {
+        printf("'%s'\n", myargv[k]);
+    }
+}
+
 //
 // Find a Response File
 //
 void FindResponseFile (void)
 {
     int             i;
-#define MAXARGVS        100
-	
-    for (i = 1;i < myargc;i++)
-	if (myargv[i][0] == '@')
-	{
-	    FILE *          handle;
-	    int             size;
-	    int             k;
-	    int             index;
-	    int             indexinfile;
-	    char    *infile;
-	    char    *file;
-	    char    *moreargs[20];
-	    char    *firstargv;
-			
-	    // READ THE RESPONSE FILE INTO MEMORY
-	    handle = fopen (&myargv[i][1],"rb");
-	    if (!handle)
-	    {
-		printf ("\nNo such response file!");
-		exit(1);
-	    }
-	    printf("Found response file %s!\n",&myargv[i][1]);
-	    fseek (handle,0,SEEK_END);
-	    size = ftell(handle);
-	    fseek (handle,0,SEEK_SET);
-	    file = malloc (size);
-	    fread (file,size,1,handle);
-	    fclose (handle);
-			
-	    // KEEP ALL CMDLINE ARGS FOLLOWING @RESPONSEFILE ARG
-	    for (index = 0,k = i+1; k < myargc; k++)
-		moreargs[index++] = myargv[k];
-			
-	    firstargv = myargv[0];
-	    myargv = malloc(sizeof(char *)*MAXARGVS);
-	    memset(myargv,0,sizeof(char *)*MAXARGVS);
-	    myargv[0] = firstargv;
-			
-	    infile = file;
-	    indexinfile = k = 0;
-	    indexinfile++;  // SKIP PAST ARGV[0] (KEEP IT)
-	    do
-	    {
-		myargv[indexinfile++] = infile+k;
-		while(k < size &&
-		      ((*(infile+k)>= ' '+1) && (*(infile+k)<='z')))
-		    k++;
-		*(infile+k) = 0;
-		while(k < size &&
-		      ((*(infile+k)<= ' ') || (*(infile+k)>'z')))
-		    k++;
-	    } while(k < size);
-			
-	    for (k = 0;k < index;k++)
-		myargv[indexinfile++] = moreargs[k];
-	    myargc = indexinfile;
-	
-	    // DISPLAY ARGS
-	    printf("%d command-line args:\n",myargc);
-	    for (k=1;k<myargc;k++)
-		printf("%s\n",myargv[k]);
 
-	    break;
-	}
+    for (i = 1; i < myargc; i++)
+    {
+        if (myargv[i][0] == '@')
+        {
+            LoadResponseFile(i);
+        }
+    }
 }
 
 // Startup banner
