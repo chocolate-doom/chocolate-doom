@@ -33,7 +33,7 @@ static void TXT_CheckBoxDrawer(TXT_UNCAST_ARG(checkbox), int selected)
 
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
 
-    if (*checkbox->variable)
+    if ((*checkbox->variable != 0) ^ checkbox->inverted)
     {
         TXT_DrawString("\x07");
     }
@@ -112,7 +112,18 @@ txt_checkbox_t *TXT_NewCheckBox(char *label, int *variable)
     TXT_InitWidget(checkbox, &txt_checkbox_class);
     checkbox->label = strdup(label);
     checkbox->variable = variable;
+    checkbox->inverted = 0;
 
     return checkbox;
+}
+
+txt_checkbox_t *TXT_NewInvertedCheckBox(char *label, int *variable)
+{
+    txt_checkbox_t *result;
+
+    result = TXT_NewCheckBox(label, variable);
+    result->inverted = 1;
+
+    return result;
 }
 

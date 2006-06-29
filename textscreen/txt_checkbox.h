@@ -34,9 +34,11 @@ struct txt_checkbox_s
     txt_widget_t widget;
     char *label;
     int *variable;
+    int inverted;
 };
 
 txt_checkbox_t *TXT_NewCheckBox(char *label, int *variable);
+txt_checkbox_t *TXT_NewInvertedCheckBox(char *label, int *variable);
 
 #endif /* #ifndef TXT_CHECKBOX_H */
 
