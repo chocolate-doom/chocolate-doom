@@ -139,7 +139,8 @@ rcsid[] = "$Id$";
 #include <unistd.h>
 #endif
 
-#include "mmus2mid.h"
+#include "memio.h"
+#include "mus2mid.h"
 #include "z_zone.h"
 
 #include "i_system.h"
@@ -687,40 +688,26 @@ static boolean IsMus(byte *mem, int len)
 
 static boolean ConvertMus(byte *musdata, int len, char *filename)
 {
-    MIDI *mididata;
-    UBYTE *mid;
-    int midlen;
-    boolean result;
+    MEMFILE *instream;
+    MEMFILE *outstream;
+    void *outbuf;
+    size_t outbuf_len;
+    int result;
 
-    // Convert from mus to midi
-    // Bits here came from PrBoom
-  
-    mididata = Z_Malloc(sizeof(MIDI), PU_STATIC, 0);
-    mmus2mid(musdata, mididata, 89, 0);
+    instream = mem_fopen_read(musdata, len);
+    outstream = mem_fopen_write();
 
-    if (MIDIToMidi(mididata, &mid, &midlen))
+    result = mus2mid(instream, outstream);
+
+    if (result == 0)
     {
-        // Error occurred
+        mem_get_buf(outstream, &outbuf, &outbuf_len);
 
-        fprintf(stderr, "Error converting MUS lump.\n");
-
-        result = false;
-    }
-    else
-    {
-        // Write midi data to disk
-       
-        M_WriteFile(filename, mid, midlen);
-
-        // Clean up
-       
-        free(mid);
-        free_mididata(mididata);
-
-        result = true;
+        M_WriteFile(filename, outbuf, outbuf_len);
     }
 
-    Z_Free(mididata);
+    mem_fclose(instream);
+    mem_fclose(outstream);
 
     return result;
 }
