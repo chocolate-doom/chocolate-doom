@@ -23,6 +23,7 @@ chocolate_server_SOURCES=$(DEDSERV_FILES)
 chocolate_server_LDADD = @LDFLAGS@ @SDL_LIBS@ @SDLNET_LIBS@ 
 
 SOURCE_FILES=\
+sdlserver.c\
 am_map.c             am_map.h              \
 deh_ammo.c                                 \
 deh_cheat.c                                \
@@ -71,7 +72,8 @@ m_cheat.c            m_cheat.h             \
 m_fixed.c            m_fixed.h             \
 m_menu.c             m_menu.h              \
 m_misc.c             m_misc.h              \
-mmus2mid.c           mmus2mid.h            \
+memio.c              memio.h               \
+mus2mid.c            mus2mid.h             \
 m_random.c           m_random.h            \
 m_swap.c             m_swap.h              \
 net_client.c         net_client.h          \
