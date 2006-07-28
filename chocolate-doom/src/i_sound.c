@@ -679,13 +679,6 @@ static boolean IsMid(byte *mem, int len)
     return len > 4 && !memcmp(mem, "MThd", 4);
 }
 
-// Determine whether memory block is a .mus file
-
-static boolean IsMus(byte *mem, int len)
-{
-    return len > 3 && !memcmp(mem, "MUS", 3);
-}
-
 static boolean ConvertMus(byte *musdata, int len, char *filename)
 {
     MEMFILE *instream;
@@ -729,19 +722,15 @@ void *I_RegisterSong(void *data, int len)
     sprintf(filename, "/tmp/doom-%i.mid", getpid());
 #endif
 
-    if (IsMus(data, len))
-    {
-        ConvertMus(data, len, filename);
-    }
-    else if (IsMid(data, len) && len < MAXMIDLENGTH)
+    if (IsMid(data, len) && len < MAXMIDLENGTH)
     {
         M_WriteFile(filename, data, len);
     }
-    else
+    else 
     {
-        // Unrecognised: unable to load
+	// Assume a MUS file and try to convert
 
-        return NULL;
+        ConvertMus(data, len, filename);
     }
 
     // Load the MIDI
