@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_sound.c 566 2006-07-22 16:43:12Z fraggle $
+// $Id: i_sound.c 568 2006-07-28 19:13:13Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -128,7 +128,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_sound.c 566 2006-07-22 16:43:12Z fraggle $";
+rcsid[] = "$Id: i_sound.c 568 2006-07-28 19:13:13Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -679,13 +679,6 @@ static boolean IsMid(byte *mem, int len)
     return len > 4 && !memcmp(mem, "MThd", 4);
 }
 
-// Determine whether memory block is a .mus file
-
-static boolean IsMus(byte *mem, int len)
-{
-    return len > 3 && !memcmp(mem, "MUS", 3);
-}
-
 static boolean ConvertMus(byte *musdata, int len, char *filename)
 {
     MEMFILE *instream;
@@ -729,19 +722,15 @@ void *I_RegisterSong(void *data, int len)
     sprintf(filename, "/tmp/doom-%i.mid", getpid());
 #endif
 
-    if (IsMus(data, len))
-    {
-        ConvertMus(data, len, filename);
-    }
-    else if (IsMid(data, len) && len < MAXMIDLENGTH)
+    if (IsMid(data, len) && len < MAXMIDLENGTH)
     {
         M_WriteFile(filename, data, len);
     }
-    else
+    else 
     {
-        // Unrecognised: unable to load
+	// Assume a MUS file and try to convert
 
-        return NULL;
+        ConvertMus(data, len, filename);
     }
 
     // Load the MIDI
