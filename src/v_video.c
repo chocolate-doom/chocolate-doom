@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: v_video.c 110 2005-09-17 20:25:56Z fraggle $
+// $Id: v_video.c 569 2006-08-06 22:51:29Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -43,7 +43,7 @@
 
 
 static const char
-rcsid[] = "$Id: v_video.c 110 2005-09-17 20:25:56Z fraggle $";
+rcsid[] = "$Id: v_video.c 569 2006-08-06 22:51:29Z fraggle $";
 
 
 #include "i_system.h"
@@ -244,10 +244,7 @@ V_DrawPatch
 	|| y+SHORT(patch->height)>SCREENHEIGHT 
 	|| (unsigned)scrn>4)
     {
-      fprintf( stderr, "Patch at %d,%d exceeds LFB\n", x,y );
-      // No I_Error abort - what is up with TNT.WAD?
-      fprintf( stderr, "V_DrawPatch: bad patch (ignored)\n");
-      return;
+        I_Error("Bad V_DrawPatch");
     }
 #endif 
  
@@ -311,8 +308,7 @@ V_DrawPatchFlipped
 	|| y+SHORT(patch->height)>SCREENHEIGHT 
 	|| (unsigned)scrn>4)
     {
-      fprintf( stderr, "Patch origin %d,%d exceeds LFB\n", x,y );
-      I_Error ("Bad V_DrawPatch in V_DrawPatchFlipped");
+        I_Error("Bad V_DrawPatchFlipped");
     }
 #endif 
  
