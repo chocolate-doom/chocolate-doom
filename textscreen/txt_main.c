@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: txt_main.c 547 2006-06-02 19:29:24Z fraggle $
+// $Id: txt_main.c 570 2006-08-31 18:08:43Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -57,6 +57,10 @@
 #define CHAR_W 8
 #define CHAR_H 16
 
+// Time between character blinks in ms
+
+#define BLINK_PERIOD 250
+
 static SDL_Surface *screen;
 static unsigned char *screendata;
 
@@ -101,6 +105,10 @@ int TXT_Init(void)
     screendata = malloc(TXT_SCREEN_W * TXT_SCREEN_H * 2);
     memset(screendata, 0, TXT_SCREEN_W * TXT_SCREEN_H * 2);
 
+    // Ignore all mouse motion events
+
+    SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
+
     return 1;
 }
 
@@ -135,8 +143,10 @@ static inline void UpdateCharacter(int x, int y)
 
         bg &= ~0x8;
 
-        if (SDL_GetTicks() % 500 < 250)
+        if (((SDL_GetTicks() / BLINK_PERIOD) % 2) == 0)
+        {
             fg = bg;
+        }
     }
 
     p = &int10_font_16[character * CHAR_H];
@@ -386,6 +396,89 @@ void TXT_GetKeyDescription(int key, char *buf)
     else
     {
         sprintf(buf, "??%i", key);
+    }
+}
+
+// Searches the desktop screen buffer to determine whether there are any
+// blinking characters.
+
+int TXT_ScreenHasBlinkingChars(void)
+{
+    int x, y;
+    unsigned char *p;
+
+    // Check all characters in screen buffer
+
+    for (y=0; y<TXT_SCREEN_H; ++y)
+    {
+        for (x=0; x<TXT_SCREEN_W; ++x) 
+        {
+            p = &screendata[(y * TXT_SCREEN_W + x) * 2];
+
+            if (p[1] & 0x80)
+            {
+                // This character is blinking
+
+                return 1;
+            }
+        }
+    }
+
+    // None found
+
+    return 0;
+}
+
+// Sleeps until an event is received, the screen needs to be redrawn, 
+// or until timeout expires (if timeout != 0)
+
+void TXT_Sleep(int timeout)
+{
+    int start_time;
+
+    if (TXT_ScreenHasBlinkingChars())
+    {
+        int time_to_next_blink;
+
+        time_to_next_blink = BLINK_PERIOD - (SDL_GetTicks() % BLINK_PERIOD);
+
+        // There are blinking characters on the screen, so we 
+        // must time out after a while
+       
+        if (timeout == 0 || timeout > time_to_next_blink)
+        {
+            // Add one so it is always positive
+
+            timeout = time_to_next_blink + 1;
+        }
+    }
+
+    if (timeout == 0)
+    {
+        // We can just wait forever until an event occurs
+
+        SDL_WaitEvent(NULL);
+    }
+    else
+    {
+        // Sit in a busy loop until the timeout expires or we have to
+        // redraw the blinking screen
+
+        start_time = SDL_GetTicks();
+
+        while (SDL_GetTicks() < start_time + timeout)
+        {
+            if (SDL_PollEvent(NULL) != 0)
+            {
+                // Received an event, so stop waiting
+
+                break;
+            }
+
+            // Don't hog the CPU
+
+            SDL_Delay(1);
+        }
     }
 }
 

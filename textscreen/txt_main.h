@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: txt_main.h 547 2006-06-02 19:29:24Z fraggle $
+// $Id: txt_main.h 570 2006-08-31 18:08:43Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -104,6 +104,11 @@ void TXT_GetKeyDescription(int key, char *buf);
 // Retrieve the current position of the mouse
 
 void TXT_GetMouseState(int *x, int *y);
+
+// Sleep until an event is received or the screen needs updating
+// Optional timeout in ms (timeout == 0 : sleep forever)
+
+void TXT_Sleep(int timeout);
 
 #endif /* #ifndef TXT_MAIN_H */
 
