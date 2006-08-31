@@ -69,18 +69,6 @@ void TXT_SignalConnect(TXT_UNCAST_ARG(widget),
 
     table = widget->callback_table;
 
-    for (i=0; i<table->num_callbacks; ++i)
-    {
-        if (!strcmp(signal_name, table->callbacks[i].signal_name))
-        {
-            // Replace existing signal
-
-            table->callbacks[i].func = func;
-            table->callbacks[i].user_data = user_data;
-            break;
-        }
-    }
-
     // Add a new callback to the table
 
     table->callbacks 
@@ -102,12 +90,14 @@ void TXT_EmitSignal(TXT_UNCAST_ARG(widget), char *signal_name)
 
     table = widget->callback_table;
 
+    // Search the table for all callbacks with this name and invoke
+    // the functions.
+
     for (i=0; i<table->num_callbacks; ++i)
     {
         if (!strcmp(table->callbacks[i].signal_name, signal_name))
         {
             table->callbacks[i].func(widget, table->callbacks[i].user_data);
-            break;
         }
     }
 }
