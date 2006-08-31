@@ -257,6 +257,7 @@ txt_inputbox_t *TXT_NewInputBox(char **value, int size)
     inputbox->value = value;
     inputbox->size = size;
     inputbox->buffer = malloc(size + 1);
+    inputbox->editing = 0;
 
     return inputbox;
 }
