@@ -43,6 +43,10 @@ txt_window_action_t *TXT_NewWindowAction(int key, char *label);
 
 txt_window_action_t *TXT_NewWindowEscapeAction(txt_window_t *window);
 
+// Same as above, but the button is named "abort"
+
+txt_window_action_t *TXT_NewWindowAbortAction(txt_window_t *window);
+
 // Accept button that does nothing
 
 txt_window_action_t *TXT_NewWindowAcceptAction(txt_window_t *window);
