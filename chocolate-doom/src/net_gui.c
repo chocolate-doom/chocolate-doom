@@ -209,7 +209,7 @@ void NET_WaitForStart(void)
             I_Error("Disconnected from server");
         }
 
-        I_Sleep(50);
+        TXT_Sleep(100);
     }
     
     TXT_Shutdown();

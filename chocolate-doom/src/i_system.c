@@ -210,7 +210,7 @@ void I_Endoom(void)
             break;
         }
         
-        I_Sleep(50);
+        TXT_Sleep(0);
     }
     
     // Shut down text mode screen
