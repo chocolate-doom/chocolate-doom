@@ -343,6 +343,7 @@ mobj_t*		bodyque[BODYQUESIZE];
 int		bodyqueslot; 
  
 int             vanilla_savegame_limit = 1;
+int             vanilla_demo_limit = 1;
  
  
 int G_CmdChecksum (ticcmd_t* cmd) 
@@ -1680,6 +1681,37 @@ void G_ReadDemoTiccmd (ticcmd_t* cmd)
     cmd->buttons = (unsigned char)*demo_p++; 
 } 
 
+// Increase the size of the demo buffer to allow unlimited demos
+
+static void IncreaseDemoBuffer(void)
+{
+    int current_length;
+    byte *new_demobuffer;
+    byte *new_demop;
+    int new_length;
+
+    // Find the current size
+
+    current_length = demoend - demobuffer;
+    
+    // Generate a new buffer twice the size
+    new_length = current_length * 2;
+    
+    new_demobuffer = Z_Malloc(new_length, PU_STATIC, 0);
+    new_demop = new_demobuffer + (demo_p - demobuffer);
+
+    // Copy over the old data
+
+    memcpy(new_demobuffer, demobuffer, current_length);
+
+    // Free the old buffer and point the demo pointers at the new buffer.
+
+    Z_Free(demobuffer);
+
+    demobuffer = new_demobuffer;
+    demo_p = new_demop;
+    demoend = demobuffer + new_length;
+}
 
 void G_WriteDemoTiccmd (ticcmd_t* cmd) 
 { 
@@ -1712,9 +1744,19 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
 
     if (demo_p > demoend - 16)
     {
-	// no more space 
-	G_CheckDemoStatus (); 
-	return; 
+        if (vanilla_demo_limit)
+        {
+            // no more space 
+            G_CheckDemoStatus (); 
+            return; 
+        }
+        else
+        {
+            // Vanilla demo limit disabled: unlimited
+            // demo lengths!
+
+            IncreaseDemoBuffer();
+        }
     } 
 	
     G_ReadDemoTiccmd (cmd);         // make SURE it is exactly the same 
