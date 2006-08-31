@@ -147,15 +147,6 @@ void TXT_DispatchEvents(void)
 
             TXT_WindowKeyPress(all_windows[num_windows - 1], c);
         }
-        else
-        {
-            // No windows
-
-            if (c == KEY_ESCAPE)
-            {
-                TXT_ExitMainLoop();
-            }
-        }
     }
 }
 
@@ -171,7 +162,16 @@ void TXT_GUIMainLoop(void)
     while (main_loop_running)
     {
         TXT_DispatchEvents();
+
+        // After the last window is closed, exit the loop
+
+        if (num_windows <= 0)
+        {
+            TXT_ExitMainLoop();
+        }
+        
         TXT_DrawDesktop();
+        TXT_Sleep(0);
     }
 }
 
