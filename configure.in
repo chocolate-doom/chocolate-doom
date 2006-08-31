@@ -54,6 +54,7 @@ Makefile
 textscreen/Makefile
 textscreen/examples/Makefile
 setup/Makefile
+man/Makefile
 src/Makefile
 src/chocolate-doom-res.rc
 ])
