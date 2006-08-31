@@ -123,6 +123,7 @@ void BuildGUI()
 
     table = TXT_NewTable(4);
     TXT_AddWidget(window, table);
+    TXT_SetWidgetAlign(table, TXT_HORIZ_CENTER);
 
     AddNumberButton(table, 7);
     AddNumberButton(table, 8);
