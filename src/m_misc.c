@@ -127,6 +127,7 @@ rcsid[] = "$Id$";
 
 #include "z_zone.h"
 
+#include "m_menu.h"
 #include "m_swap.h"
 #include "m_argv.h"
 #include "net_client.h"
@@ -280,12 +281,6 @@ extern int	viewwidth;
 extern int	viewheight;
 
 extern int	mouseSensitivity;
-extern int	showMessages;
-
-extern int	detailLevel;
-
-extern int	screenblocks;
-
 extern int	showMessages;
 
 // machine-independent sound params
