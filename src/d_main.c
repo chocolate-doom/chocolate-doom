@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 563 2006-06-29 09:05:54Z fraggle $
+// $Id: d_main.c 582 2006-08-31 18:13:23Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -184,7 +184,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 563 2006-06-29 09:05:54Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 582 2006-08-31 18:13:23Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -1479,7 +1479,7 @@ void PrintGameVersion(void)
     {
         if (gameversions[i].version == gameversion)
         {
-            printf("Emulating the behaviour of the "
+            printf("Emulating the behavior of the "
                    "'%s' executable.\n", gameversions[i].description);
             break;
         }
@@ -1813,7 +1813,7 @@ void D_DoomMain (void)
         novert = false;
 
     if (W_CheckNumForName("SS_START") >= 0
-     || W_CheckNumForName("FF_START") >= 0)
+     || W_CheckNumForName("FF_END") >= 0)
     {
         printf ("===========================================================================\n");
         printf(" WARNING: The loaded WAD file contains modified sprites or\n"
