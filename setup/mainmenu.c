@@ -34,10 +34,10 @@ void QuitConfirm(void *unused1, void *unused2)
 
     button = TXT_NewButton("  No   ");
 
-    // Only an "escape" button in the middle.
+    // Only an "abort" button in the middle.
     TXT_SetWindowAction(window, TXT_HORIZ_LEFT, NULL);
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, 
-                        TXT_NewWindowEscapeAction(window));
+                        TXT_NewWindowAbortAction(window));
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, NULL);
 
     TXT_SetWidgetAlign(button, TXT_HORIZ_CENTER);
@@ -48,6 +48,7 @@ void QuitConfirm(void *unused1, void *unused2)
 extern void ConfigDisplay();
 extern void ConfigKeyboard();
 extern void ConfigMouse();
+extern void StartMultiGame();
 
 void MainMenu(void)
 {
@@ -71,10 +72,14 @@ void MainMenu(void)
 
     TXT_AddWidget(window, TXT_NewButton("Save parameters and launch DOOM"));
     TXT_AddWidget(window, TXT_NewStrut(0, 1));
-    TXT_AddWidget(window, TXT_NewButton("Start a Network game"));
+    
+    button = TXT_NewButton("Start a Network game");
+    TXT_SignalConnect(button, "pressed", StartMultiGame, NULL);
+    TXT_AddWidget(window, button);
+
     TXT_AddWidget(window, TXT_NewButton("Join a Network game"));
 
-    quit_action = TXT_NewWindowAction(KEY_ESCAPE, "Abort");
+    quit_action = TXT_NewWindowAction(KEY_ESCAPE, "Quit");
     TXT_SignalConnect(quit_action, "pressed", QuitConfirm, NULL);
     TXT_SetWindowAction(window, TXT_HORIZ_LEFT, quit_action);
 }
