@@ -105,5 +105,10 @@ void TXT_GetKeyDescription(int key, char *buf);
 
 void TXT_GetMouseState(int *x, int *y);
 
+// Sleep until an event is received or the screen needs updating
+// Optional timeout in ms (timeout == 0 : sleep forever)
+
+void TXT_Sleep(int timeout);
+
 #endif /* #ifndef TXT_MAIN_H */
 
