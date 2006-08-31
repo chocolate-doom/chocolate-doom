@@ -1,6 +1,51 @@
 #include "textscreen.h"
 
-int dummy;
+#include "txt_keyinput.h"
+
+int key_left = KEY_LEFTARROW;
+int key_right = KEY_RIGHTARROW;
+int key_up = KEY_UPARROW;
+int key_down = KEY_DOWNARROW;
+int key_strafeleft = ',';
+int key_straferight = '.';
+int key_fire = KEY_RCTRL;
+int key_use = ' ';
+int key_strafe = KEY_RALT;
+int key_speed = KEY_RSHIFT;
+
+static int *allkeys[] = {&key_left, &key_right, &key_up, &key_down, 
+                         &key_strafeleft, &key_straferight, &key_fire, 
+                         &key_use, &key_strafe, &key_speed};
+
+// Callback invoked when a key control is set
+
+static void KeySetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))
+{
+    TXT_CAST_ARG(int, variable);
+    int i;
+
+    for (i=0; i<sizeof(allkeys) / sizeof(*allkeys); ++i)
+    {
+        if (*variable == *allkeys[i] && allkeys[i] != variable)
+        {
+            // A different key has the same value.  Clear the existing
+            // value. This ensures that no two keys can have the same
+            // value.
+
+            *allkeys[i] = 0;
+        }
+    }
+}
+
+static void AddKeyControl(txt_table_t *table, char *name, int *var)
+{
+    txt_key_input_t *key_input;
+
+    TXT_AddWidget(table, TXT_NewLabel(name));
+    key_input = TXT_NewKeyInput(var);
+    TXT_AddWidget(table, key_input);
+    TXT_SignalConnect(key_input, "set", KeySetCallback, var);
+}
 
 void ConfigKeyboard(void)
 {
@@ -12,38 +57,26 @@ void ConfigKeyboard(void)
     TXT_AddWidget(window, TXT_NewSeparator("Movement"));
 
     table = TXT_NewTable(2);
-    TXT_AddWidget(table, TXT_NewStrut(20, 0));
-    TXT_AddWidget(table, TXT_NewStrut(8, 0));
+    TXT_SetColumnWidths(table, 20, 8);
 
-    TXT_AddWidget(table, TXT_NewLabel("Move Forward"));
-    TXT_AddWidget(table, TXT_NewIntInputBox(&dummy, 7));
-    TXT_AddWidget(table, TXT_NewLabel("Move Backward"));
-    TXT_AddWidget(table, TXT_NewIntInputBox(&dummy, 7));
-    TXT_AddWidget(table, TXT_NewLabel("Turn Left"));
-    TXT_AddWidget(table, TXT_NewIntInputBox(&dummy, 7));
-    TXT_AddWidget(table, TXT_NewLabel("Turn Right"));
-    TXT_AddWidget(table, TXT_NewIntInputBox(&dummy, 7));
-    TXT_AddWidget(table, TXT_NewLabel("Strafe Left"));
-    TXT_AddWidget(table, TXT_NewIntInputBox(&dummy, 7));
-    TXT_AddWidget(table, TXT_NewLabel("Strafe Right"));
-    TXT_AddWidget(table, TXT_NewIntInputBox(&dummy, 7));
-    TXT_AddWidget(table, TXT_NewLabel("Speed On"));
-    TXT_AddWidget(table, TXT_NewIntInputBox(&dummy, 7));
-    TXT_AddWidget(table, TXT_NewLabel("Strafe On"));
-    TXT_AddWidget(table, TXT_NewIntInputBox(&dummy, 7));
+    AddKeyControl(table, "Move Forward", &key_up);
+    AddKeyControl(table, "Move Backward", &key_down);
+    AddKeyControl(table, "Turn Left", &key_left);
+    AddKeyControl(table, "Turn Right", &key_right);
+    AddKeyControl(table, "Strafe Left", &key_strafeleft);
+    AddKeyControl(table, "Strafe Right", &key_straferight);
+    AddKeyControl(table, "Speed On", &key_speed);
+    AddKeyControl(table, "Strafe On", &key_strafe);
 
     TXT_AddWidget(window, table);
 
     TXT_AddWidget(window, TXT_NewSeparator("Action"));
 
     table = TXT_NewTable(2);
-    TXT_AddWidget(table, TXT_NewStrut(20, 0));
-    TXT_AddWidget(table, TXT_NewStrut(8, 0));
+    TXT_SetColumnWidths(table, 20, 8);
 
-    TXT_AddWidget(table, TXT_NewLabel("Use"));
-    TXT_AddWidget(table, TXT_NewIntInputBox(&dummy, 7));
-    TXT_AddWidget(table, TXT_NewLabel("Fire"));
-    TXT_AddWidget(table, TXT_NewIntInputBox(&dummy, 7));
+    AddKeyControl(table, "Use", &key_use);
+    AddKeyControl(table, "Fire", &key_fire);
 
     TXT_AddWidget(window, table);
 }
