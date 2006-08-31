@@ -15,5 +15,5 @@ EXTRA_DIST=                             \
 MAINTAINERCLEANFILES =  $(AUX_DIST_GEN)
 
 docdir=$(prefix)/share/doc/@PACKAGE@
-SUBDIRS=textscreen src 
+SUBDIRS=textscreen src man setup
 
