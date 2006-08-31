@@ -575,6 +575,8 @@ void D_DoomLoop (void)
 
     I_InitGraphics ();
 
+    R_ExecuteSetViewSize();
+
     D_StartGameLoop();
 
     while (1)

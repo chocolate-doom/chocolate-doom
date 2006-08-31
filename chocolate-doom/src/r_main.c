@@ -61,6 +61,7 @@ static const char rcsid[] = "$Id$";
 #include "d_net.h"
 
 #include "m_bbox.h"
+#include "m_menu.h"
 
 #include "r_local.h"
 #include "r_sky.h"
@@ -802,8 +803,6 @@ void R_ExecuteSetViewSize (void)
 //
 // R_Init
 //
-extern int	detailLevel;
-extern int	screenblocks;
 
 
 
