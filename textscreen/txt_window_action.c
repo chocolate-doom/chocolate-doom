@@ -107,7 +107,21 @@ static void WindowAcceptCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(window))
     TXT_WidgetKeyPress(window, KEY_ENTER);
 }
 
+// An action with the name "close" the closes the window
+
 txt_window_action_t *TXT_NewWindowEscapeAction(txt_window_t *window)
+{
+    txt_window_action_t *action;
+
+    action = TXT_NewWindowAction(KEY_ESCAPE, "Close");
+    TXT_SignalConnect(action, "pressed", WindowCloseCallback, window);
+
+    return action;
+}
+
+// Exactly the same as the above, but the button is named "abort"
+
+txt_window_action_t *TXT_NewWindowAbortAction(txt_window_t *window)
 {
     txt_window_action_t *action;
 
