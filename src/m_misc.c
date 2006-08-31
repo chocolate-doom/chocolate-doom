@@ -296,6 +296,7 @@ extern char*	chat_macros[];
 
 extern int      show_endoom;
 extern int      vanilla_savegame_limit;
+extern int      vanilla_demo_limit;
 
 // dos specific options: these are unused but should be maintained
 // so that the config file can be shared between chocolate
@@ -405,6 +406,7 @@ static default_t extra_defaults_list[] =
     {"mouse_threshold",             &mouse_threshold},
     {"show_endoom",                 &show_endoom},
     {"vanilla_savegame_limit",      &vanilla_savegame_limit},
+    {"vanilla_demo_limit",          &vanilla_demo_limit},
 #ifdef FEATURE_MULTIPLAYER
     {"player_name",                 &net_player_name,          DEFAULT_STRING},
 #endif
