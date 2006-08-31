@@ -22,6 +22,7 @@
 // 02111-1307, USA.
 //
 
+#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -31,6 +32,7 @@
 #include "txt_gui.h"
 #include "txt_main.h"
 #include "txt_separator.h"
+#include "txt_strut.h"
 #include "txt_table.h"
 
 static void TXT_TableDestructor(TXT_UNCAST_ARG(table))
@@ -229,6 +231,7 @@ static int TXT_TableKeyPress(TXT_UNCAST_ARG(table), int key)
     if (selected >= 0 && selected < table->num_widgets)
     {
         if (table->widgets[selected] != NULL
+         && table->widgets[selected]->selectable
          && TXT_WidgetKeyPress(table->widgets[selected], key))
         {
             return 1;
@@ -535,12 +538,24 @@ txt_widget_class_t txt_table_class =
 
 void TXT_InitTable(txt_table_t *table, int columns)
 {
+    int i;
+
     TXT_InitWidget(table, &txt_table_class);
     table->columns = columns;
     table->widgets = NULL;
     table->num_widgets = 0;
     table->selected_x = 0;
     table->selected_y = 0;
+
+    // Add a strut for each column at the start of the table. 
+    // These are used by the TXT_SetColumnWidths function below:
+    // the struts are created with widths of 0 each, but this
+    // function changes them.
+
+    for (i=0; i<columns; ++i)
+    {
+        TXT_AddWidget(table, TXT_NewStrut(0, 0));
+    }
 }
 
 txt_table_t *TXT_NewTable(int columns)
@@ -552,5 +567,68 @@ txt_table_t *TXT_NewTable(int columns)
     TXT_InitTable(table, columns);
 
     return table;
+}
+
+// Selects a given widget in a table, recursively searching any tables
+// within this table.  Returns 1 if successful, 0 if unsuccessful.
+
+int TXT_SelectWidget(TXT_UNCAST_ARG(table), TXT_UNCAST_ARG(widget))
+{
+    TXT_CAST_ARG(txt_table_t, table);
+    TXT_CAST_ARG(txt_widget_t, widget);
+    int i;
+
+    for (i=0; i<table->num_widgets; ++i)
+    {
+        if (table->widgets[i] == widget)
+        {
+            // Found the item!  Select it and return.
+            
+            table->selected_x = i % table->columns;
+            table->selected_y = i / table->columns;
+
+            return 1;
+        }
+        
+        if (table->widgets[i]->widget_class == &txt_table_class)
+        {
+            // This item is a subtable.  Recursively search this table.
+
+            if (TXT_SelectWidget(table->widgets[i], widget))
+            {
+                // Found it in the subtable.  Select this subtable and return.
+
+                table->selected_x = i % table->columns;
+                table->selected_y = i / table->columns;
+
+                return 1;
+            }
+        }
+    }
+
+    // Not found.
+
+    return 0;
+}
+
+// Sets the widths of columns in a table.
+
+void TXT_SetColumnWidths(TXT_UNCAST_ARG(table), ...)
+{
+    TXT_CAST_ARG(txt_table_t, table);
+    va_list args;
+    txt_strut_t *strut;
+    int i;
+    int width;
+
+    va_start(args, TXT_UNCAST_ARG_NAME(table));
+
+    for (i=0; i<table->columns; ++i)
+    {
+        width = va_arg(args, int);
+
+        strut = (txt_strut_t *) table->widgets[i];
+        strut->width = width;
+    }
 }
 

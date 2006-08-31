@@ -52,6 +52,8 @@ struct txt_table_s
 txt_table_t *TXT_NewTable(int columns);
 void TXT_InitTable(txt_table_t *table, int columns);
 void TXT_AddWidget(TXT_UNCAST_ARG(table), TXT_UNCAST_ARG(widget));
+int TXT_SelectWidget(TXT_UNCAST_ARG(table), TXT_UNCAST_ARG(widget));
+void TXT_SetColumnWidths(TXT_UNCAST_ARG(table), ...);
 
 #endif /* #ifndef TXT_TABLE_T */
 

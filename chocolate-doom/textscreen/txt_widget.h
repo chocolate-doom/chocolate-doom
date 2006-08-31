@@ -27,7 +27,8 @@
 #ifndef TXT_WIDGET_H
 #define TXT_WIDGET_H
 
-#define TXT_UNCAST_ARG(name)   void *uncast_ ## name
+#define TXT_UNCAST_ARG_NAME(name) uncast_ ## name
+#define TXT_UNCAST_ARG(name)   void * TXT_UNCAST_ARG_NAME(name)
 #define TXT_CAST_ARG(type, name)  type *name = (type *) uncast_ ## name
 
 typedef enum
