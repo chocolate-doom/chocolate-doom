@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_menu.h 8 2005-07-23 16:44:57Z fraggle $
+// $Id: m_menu.h 591 2006-08-31 22:11:08Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -63,6 +63,8 @@ void M_StartControlPanel (void);
 
 
 
+extern int detailLevel;
+extern int screenblocks;
 
 
 

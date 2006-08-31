@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: r_main.c 474 2006-05-03 19:23:54Z fraggle $
+// $Id: r_main.c 591 2006-08-31 22:11:08Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -49,7 +49,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: r_main.c 474 2006-05-03 19:23:54Z fraggle $";
+static const char rcsid[] = "$Id: r_main.c 591 2006-08-31 22:11:08Z fraggle $";
 
 
 
@@ -61,6 +61,7 @@ static const char rcsid[] = "$Id: r_main.c 474 2006-05-03 19:23:54Z fraggle $";
 #include "d_net.h"
 
 #include "m_bbox.h"
+#include "m_menu.h"
 
 #include "r_local.h"
 #include "r_sky.h"
@@ -802,8 +803,6 @@ void R_ExecuteSetViewSize (void)
 //
 // R_Init
 //
-extern int	detailLevel;
-extern int	screenblocks;
 
 
 

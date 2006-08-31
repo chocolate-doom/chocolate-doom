@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_misc.c 581 2006-08-31 18:13:04Z fraggle $
+// $Id: m_misc.c 591 2006-08-31 22:11:08Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -106,7 +106,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_misc.c 581 2006-08-31 18:13:04Z fraggle $";
+rcsid[] = "$Id: m_misc.c 591 2006-08-31 22:11:08Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -127,6 +127,7 @@ rcsid[] = "$Id: m_misc.c 581 2006-08-31 18:13:04Z fraggle $";
 
 #include "z_zone.h"
 
+#include "m_menu.h"
 #include "m_swap.h"
 #include "m_argv.h"
 #include "net_client.h"
@@ -280,12 +281,6 @@ extern int	viewwidth;
 extern int	viewheight;
 
 extern int	mouseSensitivity;
-extern int	showMessages;
-
-extern int	detailLevel;
-
-extern int	screenblocks;
-
 extern int	showMessages;
 
 // machine-independent sound params
