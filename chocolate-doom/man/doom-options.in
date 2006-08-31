@@ -2,7 +2,7 @@
 -altdeath	start a deathmatch game (alternative mode)
 -timer x	exit a deathmatch level after x minutes
 -avg	austin virtual gaming (same as -timer 20)
--cdrom	use C:\DOOMDATA for configuration data
+-cdrom	use C:\\DOOMDATA for configuration data
 -config x	use x as the configuration file
 -devparm	developer mode: F1 saves a PCX screenshot in the current working directory
 -dup	put two network commands in each network packet
