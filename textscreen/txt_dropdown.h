@@ -22,25 +22,28 @@
 // 02111-1307, USA.
 //
 
-#ifndef TEXTSCREEN_H
-#define TEXTSCREEN_H
+#ifndef TXT_DROPDOWN_H
+#define TXT_DROPDOWN_H
 
-#include "../src/doomkeys.h"
-#include "txt_main.h"
+typedef struct txt_dropdown_list_s txt_dropdown_list_t;
 
-#include "txt_button.h"
-#include "txt_checkbox.h"
-#include "txt_desktop.h"
-#include "txt_dropdown.h"
-#include "txt_inputbox.h"
-#include "txt_label.h"
-#include "txt_radiobutton.h"
-#include "txt_separator.h"
-#include "txt_strut.h"
-#include "txt_table.h"
 #include "txt_widget.h"
-#include "txt_window_action.h"
-#include "txt_window.h"
 
-#endif /* #ifndef TEXTSCREEN_H */
+//
+// Drop-down list box.
+// 
+
+struct txt_dropdown_list_s
+{
+    txt_widget_t widget;
+    int *variable;
+    char **values;
+    int num_values;
+};
+
+txt_dropdown_list_t *TXT_NewDropdownList(int *variable, 
+                                         char **values, int num_values);
+
+#endif /* #ifndef TXT_DROPDOWN_H */
+
 
