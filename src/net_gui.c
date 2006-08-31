@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_gui.c 542 2006-05-29 20:00:41Z fraggle $
+// $Id: net_gui.c 579 2006-08-31 18:12:25Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -209,7 +209,7 @@ void NET_WaitForStart(void)
             I_Error("Disconnected from server");
         }
 
-        I_Sleep(50);
+        TXT_Sleep(100);
     }
     
     TXT_Shutdown();

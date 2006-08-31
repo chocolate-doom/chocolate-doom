@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_system.c 556 2006-06-03 16:12:08Z fraggle $
+// $Id: i_system.c 579 2006-08-31 18:12:25Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -81,7 +81,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_system.c 556 2006-06-03 16:12:08Z fraggle $";
+rcsid[] = "$Id: i_system.c 579 2006-08-31 18:12:25Z fraggle $";
 
 
 #include <stdlib.h>
@@ -210,7 +210,7 @@ void I_Endoom(void)
             break;
         }
         
-        I_Sleep(50);
+        TXT_Sleep(0);
     }
     
     // Shut down text mode screen
