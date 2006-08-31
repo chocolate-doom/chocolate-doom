@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_text.c 314 2006-01-22 21:17:56Z fraggle $
+// $Id: deh_text.c 580 2006-08-31 18:12:43Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -168,6 +168,26 @@ static void DEH_AddToHashtable(deh_substitution_t *sub)
     ++hash_table_entries;
 }
 
+// Given a string length, find the maximum length of a 
+// string that can replace it.
+
+static int TXT_MaxStringLength(int len)
+{
+    // Enough bytes for the string and the NUL terminator
+
+    len += 1;
+
+    // All strings in doom.exe are on 4-byte boundaries, so we may be able
+    // to support a slightly longer string.
+    // Extend up to the next 4-byte boundary
+
+    len += (4 - (len % 4)) % 4;
+            
+    // Less one for the NUL terminator.
+
+    return len - 1;
+}
+
 static void DEH_TextInit(void)
 {
     // init hash table
@@ -191,6 +211,16 @@ static void *DEH_TextStart(deh_context_t *context, char *line)
         return NULL;
     }
 
+    // Only allow string replacements that are possible in Vanilla Doom.  
+    // Chocolate Doom is unforgiving!
+
+    if (tolen > TXT_MaxStringLength(fromlen))
+    {
+        DEH_Error(context, "Replacement string is longer than the maximum "
+                           "possible in doom.exe");
+        return NULL;
+    }
+
     sub = Z_Malloc(sizeof(deh_substitution_t), PU_STATIC, NULL);
     sub->from_text = Z_Malloc(fromlen + 1, PU_STATIC, NULL);
     sub->to_text = Z_Malloc(tolen + 1, PU_STATIC, NULL);
@@ -205,6 +235,7 @@ static void *DEH_TextStart(deh_context_t *context, char *line)
             
         sub->from_text[i] = c;
     }
+
     sub->from_text[fromlen] = '\0';
 
     // read in the "to" text
