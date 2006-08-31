@@ -5,5 +5,12 @@ gamesdir = $(prefix)/games
 games_PROGRAMS = chocolate-setup
 
 chocolate_setup_LDADD = @LDFLAGS@ @SDL_LIBS@ ../textscreen/libtextscreen.a
-chocolate_setup_SOURCES = mainmenu.c keyboard.c display.c mouse.c
+chocolate_setup_SOURCES =                       \
+    mainmenu.c                                  \
+    keyboard.c                                  \
+    display.c                                   \
+    mouse.c                                     \
+    multiplayer.c                               \
+    txt_keyinput.c    txt_keyinput.h            \
+    txt_mouseinput.c  txt_mouseinput.h
 
