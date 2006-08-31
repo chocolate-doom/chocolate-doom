@@ -1479,7 +1479,7 @@ void PrintGameVersion(void)
     {
         if (gameversions[i].version == gameversion)
         {
-            printf("Emulating the behaviour of the "
+            printf("Emulating the behavior of the "
                    "'%s' executable.\n", gameversions[i].description);
             break;
         }
@@ -1813,7 +1813,7 @@ void D_DoomMain (void)
         novert = false;
 
     if (W_CheckNumForName("SS_START") >= 0
-     || W_CheckNumForName("FF_START") >= 0)
+     || W_CheckNumForName("FF_END") >= 0)
     {
         printf ("===========================================================================\n");
         printf(" WARNING: The loaded WAD file contains modified sprites or\n"
