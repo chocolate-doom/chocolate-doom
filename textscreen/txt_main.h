@@ -1,10 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: txt_main.h 570 2006-08-31 18:08:43Z fraggle $
-//
-// Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005,2006 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -20,14 +17,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
-//
-// $Log$
-// Revision 1.2  2006/01/13 18:23:28  fraggle
-// Textscreen getchar() function; remove SDL code from I_Endoom.
-//
-// Revision 1.1  2005/10/02 03:16:03  fraggle
-// Text mode emulation code
-//
 //
 //-----------------------------------------------------------------------------
 //
