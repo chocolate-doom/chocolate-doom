@@ -79,6 +79,11 @@ extern  skill_t		startskill;
 extern  int             startepisode;
 extern	int		startmap;
 
+// Savegame slot to load on startup.  This is the value provided to
+// the -loadgame option.  If this has not been provided, this is -1.
+
+extern  int             startloadgame;
+
 extern  boolean		autostart;
 
 // Selected by user. 
