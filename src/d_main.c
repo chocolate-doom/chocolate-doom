@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 591 2006-08-31 22:11:08Z fraggle $
+// $Id: d_main.c 593 2006-09-01 20:45:45Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -184,7 +184,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 591 2006-08-31 22:11:08Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 593 2006-09-01 20:45:45Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -294,6 +294,7 @@ skill_t		startskill;
 int             startepisode;
 int		startmap;
 boolean		autostart;
+int             startloadgame;
 
 FILE*		debugfile;
 
@@ -1809,6 +1810,22 @@ void D_DoomMain (void)
 	autostart = true;
     }
 
+    // Check for load game parameter
+    // We do this here and save the slot number, so that the network code
+    // can override it or send the load slot to other players.
+
+    p = M_CheckParm ("-loadgame");
+    
+    if (p && p < myargc-1)
+    {
+        startloadgame = atoi(myargv[p+1]);
+    }
+    else
+    {
+        // Not loading a game
+        startloadgame = -1;
+    }
+
     if (M_CheckParm("-novert"))
         novert = true;
     else if (M_CheckParm("-nonovert"))
@@ -1902,10 +1919,9 @@ void D_DoomMain (void)
 	D_DoomLoop ();  // never returns
     }
 	
-    p = M_CheckParm ("-loadgame");
-    if (p && p < myargc-1)
+    if (startloadgame >= 0)
     {
-        strcpy(file, P_SaveGameFile(atoi(myargv[p+1])));
+        strcpy(file, P_SaveGameFile(startloadgame));
 	G_LoadGame (file);
     }
 	
@@ -1919,3 +1935,4 @@ void D_DoomMain (void)
 
     D_DoomLoop ();  // never returns
 }
+

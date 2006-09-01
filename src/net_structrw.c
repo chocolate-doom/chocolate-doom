@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_structrw.c 475 2006-05-05 19:49:34Z fraggle $
+// $Id: net_structrw.c 593 2006-09-01 20:45:45Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -81,6 +81,7 @@ void NET_WriteSettings(net_packet_t *packet, net_gamesettings_t *settings)
     NET_WriteInt8(packet, settings->lowres_turn);
     NET_WriteInt8(packet, settings->new_sync);
     NET_WriteInt32(packet, settings->timelimit);
+    NET_WriteInt8(packet, settings->loadgame);
 }
 
 boolean NET_ReadSettings(net_packet_t *packet, net_gamesettings_t *settings)
@@ -94,8 +95,9 @@ boolean NET_ReadSettings(net_packet_t *packet, net_gamesettings_t *settings)
         && NET_ReadInt8(packet, (unsigned int *) &settings->skill)
         && NET_ReadInt8(packet, (unsigned int *) &settings->gameversion)
         && NET_ReadInt8(packet, (unsigned int *) &settings->lowres_turn)
-	&& NET_ReadInt8(packet, (unsigned int *) &settings->new_sync)
-	&& NET_ReadInt32(packet, (unsigned int *) &settings->timelimit);
+        && NET_ReadInt8(packet, (unsigned int *) &settings->new_sync)
+        && NET_ReadInt32(packet, (unsigned int *) &settings->timelimit)
+        && NET_ReadSInt8(packet, (signed int *) &settings->loadgame);
 }
 
 void NET_WriteTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff, 

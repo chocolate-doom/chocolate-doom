@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_defs.h 475 2006-05-05 19:49:34Z fraggle $
+// $Id: net_defs.h 593 2006-09-01 20:45:45Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -180,6 +180,7 @@ typedef struct
     int lowres_turn;
     int new_sync;
     int timelimit;
+    int loadgame;
 } net_gamesettings_t;
 
 #define NET_TICDIFF_FORWARD      (1 << 0)

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: doomstat.h 531 2006-05-25 22:39:57Z fraggle $
+// $Id: doomstat.h 593 2006-09-01 20:45:45Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -78,6 +78,11 @@ extern  boolean	modifiedgame;
 extern  skill_t		startskill;
 extern  int             startepisode;
 extern	int		startmap;
+
+// Savegame slot to load on startup.  This is the value provided to
+// the -loadgame option.  If this has not been provided, this is -1.
+
+extern  int             startloadgame;
 
 extern  boolean		autostart;
 

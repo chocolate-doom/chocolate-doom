@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 557 2006-06-03 18:23:09Z fraggle $
+// $Id: net_client.c 593 2006-09-01 20:45:45Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -469,6 +469,7 @@ void NET_CL_StartGame(void)
     settings.episode = startepisode;
     settings.map = startmap;
     settings.skill = startskill;
+    settings.loadgame = startloadgame;
     settings.gameversion = gameversion;
     settings.nomonsters = nomonsters;
     settings.timelimit = timelimit;
@@ -681,6 +682,7 @@ static void NET_CL_ParseGameStart(net_packet_t *packet)
     startepisode = settings.episode;
     startmap = settings.map;
     startskill = settings.skill;
+    startloadgame = settings.loadgame;
     lowres_turn = settings.lowres_turn;
     nomonsters = settings.nomonsters;
     net_cl_new_sync = settings.new_sync != 0;
