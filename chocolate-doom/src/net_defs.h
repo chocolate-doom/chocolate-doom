@@ -180,6 +180,7 @@ typedef struct
     int lowres_turn;
     int new_sync;
     int timelimit;
+    int loadgame;
 } net_gamesettings_t;
 
 #define NET_TICDIFF_FORWARD      (1 << 0)
