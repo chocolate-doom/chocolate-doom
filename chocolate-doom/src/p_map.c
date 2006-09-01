@@ -57,6 +57,7 @@ rcsid[] = "$Id$";
 #include "i_system.h"
 
 #include "doomdef.h"
+#include "m_argv.h"
 #include "p_local.h"
 
 #include "s_sound.h"
@@ -276,7 +277,7 @@ boolean PIT_CheckLine (line_t* ld)
     if (ld->special)
     {
         // fraggle: spechits overrun emulation code from prboom-plus
-        if (numspechit >= MAXSPECIALCROSS_ORIGINAL)
+        if (numspechit > MAXSPECIALCROSS_ORIGINAL)
         {
             SpechitOverrun(ld);
         }
@@ -1390,7 +1391,40 @@ P_ChangeSector
 
 static void SpechitOverrun(line_t *ld)
 {
-    int addr = 0x01C09C98 + (ld - lines) * 0x3E;
+    static unsigned int baseaddr = 0;
+    unsigned int addr;
+   
+    if (baseaddr == 0)
+    {
+        int p;
+
+        // This is the first time we have had an overrun.  Work out
+        // what base address we are going to use.
+        // Allow a spechit value to be specified on the command line.
+
+        p = M_CheckParm("-spechit");
+        
+        if (p > 0)
+        {
+            baseaddr = atoi(myargv[p+1]);
+        }
+        else
+        {
+            // This is from a post by myk on the Doomworld forums, 
+            // outputted from entryway's spechit_magic generator for
+            // s205n546.lmp.  The _exact_ value of this isn't too
+            // important; as long as it is in the right general
+            // range, it will usually work.  Otherwise, we can use
+            // the generator (hacked doom2.exe) and provide it 
+            // with -spechit.
+
+            baseaddr = 0x84f968e8;
+        }
+    }
+    
+    // Calculate address used in doom2.exe
+
+    addr = baseaddr + (ld - lines) * 0x3E;
 
     switch(numspechit)
     {
@@ -1405,24 +1439,6 @@ static void SpechitOverrun(line_t *ld)
             break;
         case 14: 
             nofit = addr; 
-            break;
-        case 15: 
-            bombsource = (mobj_t*)addr; 
-            break;
-        case 16: 
-            bombdamage = addr; 
-            break;
-        case 17: 
-            bombspot = (mobj_t*)addr; 
-            break;
-        case 18: 
-            usething = (mobj_t*)addr; 
-            break;
-        case 19: 
-            attackrange = addr; 
-            break;
-        case 20: 
-            la_damage = addr; 
             break;
         default:
             fprintf(stderr, "SpechitOverrun: Warning: unable to emulate"
