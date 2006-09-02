@@ -163,6 +163,11 @@ char *DEH_ReadLine(deh_context_t *context)
             return NULL;
         }
 
+        if (c == '\0')
+        {
+            return NULL;
+        }
+
         // cope with lines of any length: increase the buffer size
 
         if (pos >= context->readbuffer_size)
