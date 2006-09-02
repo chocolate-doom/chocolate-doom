@@ -539,7 +539,12 @@ static void DoMerge(void)
     lumpinfo = newlumps;
     numlumps = num_newlumps;
 
-#if 0
+}
+
+void W_PrintDirectory(void)
+{
+    int i, n;
+
     // debug
     for (i=0; i<numlumps; ++i)
     {
@@ -547,7 +552,6 @@ static void DoMerge(void)
             putchar(lumpinfo[i].name[n]);
         putchar('\n');
     }
-#endif
 }
 
 // Merge in a file by name
@@ -560,7 +564,7 @@ void W_MergeFile(char *filename)
 
     // Load PWAD
 
-    if (!W_AddFile(filename))
+    if (W_AddFile(filename) == NULL)
         return;
 
     // iwad is at the start, pwad was appended to the end
@@ -619,7 +623,7 @@ void W_NWTMergeFile(char *filename, int flags)
 
     // Load PWAD
 
-    if (!W_AddFile(filename))
+    if (W_AddFile(filename) == NULL)
         return;
 
     // iwad is at the start, pwad was appended to the end
@@ -651,5 +655,56 @@ void W_NWTMergeFile(char *filename, int flags)
     // Discard the PWAD
 
     numlumps = old_numlumps;
+}
+
+// Simulates the NWT -merge command line parameter.  What this does is load
+// a PWAD, then search the IWAD sprites, removing any sprite lumps that also
+// exist in the PWAD.
+
+void W_NWTDashMerge(char *filename)
+{
+    FILE *handle;
+    int old_numlumps;
+    int i;
+
+    old_numlumps = numlumps;
+
+    // Load PWAD
+
+    handle = W_AddFile(filename);
+
+    if (handle == NULL)
+        return;
+
+    // iwad is at the start, pwad was appended to the end
+
+    iwad.lumps = lumpinfo;
+    iwad.numlumps = old_numlumps;
+
+    pwad.lumps = lumpinfo + old_numlumps;
+    pwad.numlumps = numlumps - old_numlumps;
+    
+    // Setup sprite/flat lists
+
+    SetupLists();
+
+    // Search through the IWAD sprites list.
+
+    for (i=0; i<iwad_sprites.numlumps; ++i)
+    {
+        if (FindInList(&pwad, iwad_sprites.lumps[i].name) >= 0)
+        {
+            // Replace this entry with an empty string.  This is what
+            // nwt -merge does.
+
+            strcpy(iwad_sprites.lumps[i].name, "");
+        }
+    }
+
+    // Discard PWAD
+    // The PWAD must now be added in again with -file.
+
+    numlumps = old_numlumps;
+    fclose(handle);
 }
 

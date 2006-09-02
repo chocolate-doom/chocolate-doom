@@ -78,7 +78,7 @@ extern	void**		lumpcache;
 extern	lumpinfo_t*	lumpinfo;
 extern	int		numlumps;
 
-boolean W_AddFile (char *filename);
+FILE   *W_AddFile (char *filename);
 void    W_Reload (void);
 
 int	W_CheckNumForName (char* name);
