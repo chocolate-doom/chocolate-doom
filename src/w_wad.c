@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: w_wad.c 558 2006-06-16 17:06:05Z fraggle $
+// $Id: w_wad.c 596 2006-09-02 19:10:07Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -66,7 +66,7 @@
 
 
 static const char
-rcsid[] = "$Id: w_wad.c 558 2006-06-16 17:06:05Z fraggle $";
+rcsid[] = "$Id: w_wad.c 596 2006-09-02 19:10:07Z fraggle $";
 
 
 #include <ctype.h>
@@ -184,7 +184,7 @@ int			reloadlump;
 char*			reloadname;
 
 
-boolean W_AddFile (char *filename)
+FILE *W_AddFile (char *filename)
 {
     wadinfo_t		header;
     lumpinfo_t*		lump_p;
@@ -209,7 +209,7 @@ boolean W_AddFile (char *filename)
     if ( (handle = fopen(filename,"rb")) == NULL)
     {
 	printf (" couldn't open %s\n",filename);
-	return false;
+	return NULL;
     }
 
     startlump = numlumps;
@@ -278,7 +278,7 @@ boolean W_AddFile (char *filename)
         lumphash = NULL;
     }
 
-    return true;
+    return handle;
 }
 
 

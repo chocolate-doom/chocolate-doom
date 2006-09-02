@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 593 2006-09-01 20:45:45Z fraggle $
+// $Id: d_main.c 596 2006-09-02 19:10:07Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -184,7 +184,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 593 2006-09-01 20:45:45Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 596 2006-09-02 19:10:07Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -743,8 +743,12 @@ char            title[128];
 
 static boolean D_AddFile(char *filename)
 {
+    FILE *handle;
+
     printf(" adding %s\n", filename);
-    return W_AddFile(filename);
+    handle = W_AddFile(filename);
+
+    return handle != NULL;
 }
 
 
@@ -1586,6 +1590,7 @@ void D_DoomMain (void)
     D_AddFile(iwadfile);
 
 #ifdef FEATURE_WAD_MERGE
+
     // Merged PWADs are loaded first, because they are supposed to be 
     // modified IWADs.
 
@@ -1602,6 +1607,19 @@ void D_DoomMain (void)
 
     // NWT-style merging:
 
+    // NWT's -merge option:
+
+    p = M_CheckParm("-nwtmerge");
+
+    if (p > 0)
+    {
+        for (p = p + 1; p<myargc && myargv[p][0] != '-'; ++p)
+        {
+            printf(" performing NWT-style merge of %s\n", myargv[p]);
+            W_NWTDashMerge(myargv[p]);
+        }
+    }
+    
     // Add flats
 
     p = M_CheckParm("-af");
@@ -1654,6 +1672,9 @@ void D_DoomMain (void)
 	while (++p != myargc && myargv[p][0] != '-')
 	    D_AddFile (myargv[p]);
     }
+
+    // Debug:
+//    W_PrintDirectory();
 
     // add any files specified on the command line with -file wadfile
     // to the wad list

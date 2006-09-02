@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: w_merge.h 362 2006-02-03 18:41:26Z fraggle $
+// $Id: w_merge.h 596 2006-09-02 19:10:07Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -51,6 +51,14 @@ void W_MergeFile(char *filename);
 // NWT-style merging
 
 void W_NWTMergeFile(char *filename, int flags);
+
+// Acts the same as NWT's "-merge" option.
+
+void W_NWTDashMerge(char *filename);
+
+// Debug function that prints the WAD directory.
+
+void W_PrintDirectory(void);
 
 #endif /* #ifndef W_MERGE_H */
 

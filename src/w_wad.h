@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: w_wad.h 558 2006-06-16 17:06:05Z fraggle $
+// $Id: w_wad.h 596 2006-09-02 19:10:07Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -78,7 +78,7 @@ extern	void**		lumpcache;
 extern	lumpinfo_t*	lumpinfo;
 extern	int		numlumps;
 
-boolean W_AddFile (char *filename);
+FILE   *W_AddFile (char *filename);
 void    W_Reload (void);
 
 int	W_CheckNumForName (char* name);
