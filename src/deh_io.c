@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_io.c 175 2005-10-08 20:54:16Z fraggle $
+// $Id: deh_io.c 594 2006-09-02 19:01:35Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -160,6 +160,11 @@ char *DEH_ReadLine(deh_context_t *context)
         {
             // end of file
 
+            return NULL;
+        }
+
+        if (c == '\0')
+        {
             return NULL;
         }
 
