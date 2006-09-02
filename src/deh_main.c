@@ -69,7 +69,11 @@
 #include "deh_defs.h"
 #include "deh_io.h"
 
-static char deh_signature[] = "Patch File for DeHackEd v3.0\n";
+static char *deh_signatures[] = 
+{
+    "Patch File for DeHackEd v2.3",
+    "Patch File for DeHackEd v3.0",
+};
 
 // deh_ammo.c:
 extern deh_section_t deh_section_ammo;
@@ -214,19 +218,31 @@ boolean DEH_ParseAssignment(char *line, char **variable_name, char **value)
     return true;
 }
 
-static boolean CheckSignature(deh_context_t *context)
+static boolean CheckSignatures(deh_context_t *context)
 {
     int i;
+    char *line;
+    
+    // Read the first line
 
-    for (i=0; i<strlen(deh_signature); ++i)
+    line = DEH_ReadLine(context);
+
+    if (line == NULL)
     {
-        int c = DEH_GetChar(context);
-
-        if (c != deh_signature[i])
-            return false;
+        return false;
     }
 
-    return true;
+    // Check all signatures to see if one matches
+
+    for (i=0; i<sizeof(deh_signatures) / sizeof(*deh_signatures); ++i)
+    {
+        if (!strcmp(deh_signatures[i], line))
+        {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 // Parses a dehacked file by reading from the context
@@ -240,9 +256,9 @@ static void DEH_ParseContext(deh_context_t *context)
     
     // Read the header and check it matches the signature
 
-    if (!CheckSignature(context))
+    if (!CheckSignatures(context))
     {
-        DEH_Error(context, "This is not a dehacked v3.0 patch file!");
+        DEH_Error(context, "This is not a valid dehacked patch file!");
     }
     
     // Read the file
