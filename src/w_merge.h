@@ -52,5 +52,13 @@ void W_MergeFile(char *filename);
 
 void W_NWTMergeFile(char *filename, int flags);
 
+// Acts the same as NWT's "-merge" option.
+
+void W_NWTDashMerge(char *filename);
+
+// Debug function that prints the WAD directory.
+
+void W_PrintDirectory(void);
+
 #endif /* #ifndef W_MERGE_H */
 

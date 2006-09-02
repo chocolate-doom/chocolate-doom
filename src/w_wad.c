@@ -184,7 +184,7 @@ int			reloadlump;
 char*			reloadname;
 
 
-boolean W_AddFile (char *filename)
+FILE *W_AddFile (char *filename)
 {
     wadinfo_t		header;
     lumpinfo_t*		lump_p;
@@ -209,7 +209,7 @@ boolean W_AddFile (char *filename)
     if ( (handle = fopen(filename,"rb")) == NULL)
     {
 	printf (" couldn't open %s\n",filename);
-	return false;
+	return NULL;
     }
 
     startlump = numlumps;
@@ -278,7 +278,7 @@ boolean W_AddFile (char *filename)
         lumphash = NULL;
     }
 
-    return true;
+    return handle;
 }
 
 
