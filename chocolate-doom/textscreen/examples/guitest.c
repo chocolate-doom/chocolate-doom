@@ -178,7 +178,7 @@ void DrawASCIIChart()
     }
 }
 
-int main()
+int main(int argc, char *argv[])
 {
     TXT_Init();
 

@@ -148,7 +148,7 @@ void BuildGUI()
     UpdateInputBox();
 }
 
-int main()
+int main(int argc, char *argv[])
 {
     TXT_Init();
     TXT_SetDesktopTitle("Calculator demo");
