@@ -937,7 +937,7 @@ void I_FinishUpdate (void)
     // If we have a palette to set, the act of setting the palette
     // updates the screen
 
-    if (palette_to_set ||true)
+    if (palette_to_set)
     {
         SDL_SetColors(screen, palette, 0, 256);
         palette_to_set = 0;
