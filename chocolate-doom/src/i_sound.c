@@ -559,12 +559,11 @@ I_InitSound()
     
     SDL_PauseAudio(0);
 
-    music_initialised = true;
+    if (M_CheckParm("-nomusic") == 0)
+        music_initialised = true;
 
-    if (M_CheckParm("-nosound") || M_CheckParm("-nosfx"))
-        return;
-
-    sound_initialised = true;
+    if (M_CheckParm("-nosfx") == 0)
+        sound_initialised = true;
 }
 
 
