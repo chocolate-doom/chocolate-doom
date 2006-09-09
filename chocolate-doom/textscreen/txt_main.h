@@ -27,6 +27,11 @@
 #ifndef TXT_MAIN_H
 #define TXT_MAIN_H
 
+// The textscreen API itself doesn't need SDL; however, SDL needs its
+// headers included where main() is defined.
+
+#include <SDL.h>
+
 // Special keypress values that correspond to mouse button clicks
 //
 #define TXT_MOUSE_LEFT   1
