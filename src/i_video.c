@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 538 2006-05-29 13:25:38Z fraggle $
+// $Id: i_video.c 598 2006-09-09 15:49:39Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -175,7 +175,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 538 2006-05-29 13:25:38Z fraggle $";
+rcsid[] = "$Id: i_video.c 598 2006-09-09 15:49:39Z fraggle $";
 
 #include <SDL.h>
 #include <ctype.h>
@@ -937,7 +937,7 @@ void I_FinishUpdate (void)
     // If we have a palette to set, the act of setting the palette
     // updates the screen
 
-    if (palette_to_set ||true)
+    if (palette_to_set)
     {
         SDL_SetColors(screen, palette, 0, 256);
         palette_to_set = 0;
