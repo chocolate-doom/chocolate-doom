@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_sound.c 568 2006-07-28 19:13:13Z fraggle $
+// $Id: i_sound.c 603 2006-09-09 21:44:51Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -128,7 +128,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_sound.c 568 2006-07-28 19:13:13Z fraggle $";
+rcsid[] = "$Id: i_sound.c 603 2006-09-09 21:44:51Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -559,12 +559,11 @@ I_InitSound()
     
     SDL_PauseAudio(0);
 
-    music_initialised = true;
+    if (M_CheckParm("-nomusic") == 0)
+        music_initialised = true;
 
-    if (M_CheckParm("-nosound") || M_CheckParm("-nosfx"))
-        return;
-
-    sound_initialised = true;
+    if (M_CheckParm("-nosfx") == 0)
+        sound_initialised = true;
 }
 
 
