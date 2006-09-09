@@ -33,6 +33,7 @@ typedef struct
 
 struct txt_callback_table_s
 {
+    int refcount;
     txt_callback_t *callbacks;
     int num_callbacks;
 };
@@ -44,21 +45,34 @@ txt_callback_table_t *TXT_NewCallbackTable(void)
     table = malloc(sizeof(txt_callback_table_t));
     table->callbacks = NULL;
     table->num_callbacks = 0;
+    table->refcount = 1;
 
     return table;
 }
 
-void TXT_DestroyCallbackTable(txt_callback_table_t *table)
+void TXT_RefCallbackTable(txt_callback_table_t *table)
+{
+    ++table->refcount;
+}
+
+void TXT_UnrefCallbackTable(txt_callback_table_t *table)
 {
     int i;
 
-    for (i=0; i<table->num_callbacks; ++i)
+    --table->refcount;
+
+    if (table->refcount == 0)
     {
-        free(table->callbacks[i].signal_name);
-    }
+        // No more references to this table
+
+        for (i=0; i<table->num_callbacks; ++i)
+        {
+            free(table->callbacks[i].signal_name);
+        }
     
-    free(table->callbacks);
-    free(table);
+        free(table->callbacks);
+        free(table);
+    }
 }
 
 void TXT_InitWidget(TXT_UNCAST_ARG(widget), txt_widget_class_t *widget_class)
@@ -111,6 +125,11 @@ void TXT_EmitSignal(TXT_UNCAST_ARG(widget), char *signal_name)
 
     table = widget->callback_table;
 
+    // Don't destroy the table while we're searching through it
+    // (one of the callbacks may destroy this window)
+
+    TXT_RefCallbackTable(table);
+
     // Search the table for all callbacks with this name and invoke
     // the functions.
 
@@ -121,6 +140,10 @@ void TXT_EmitSignal(TXT_UNCAST_ARG(widget), char *signal_name)
             table->callbacks[i].func(widget, table->callbacks[i].user_data);
         }
     }
+
+    // Finished using the table
+
+    TXT_UnrefCallbackTable(table);
 }
 
 void TXT_CalcWidgetSize(TXT_UNCAST_ARG(widget))
@@ -148,7 +171,7 @@ void TXT_DestroyWidget(TXT_UNCAST_ARG(widget))
     TXT_CAST_ARG(txt_widget_t, widget);
 
     widget->widget_class->destructor(widget);
-    TXT_DestroyCallbackTable(widget->callback_table);
+    TXT_UnrefCallbackTable(widget->callback_table);
     free(widget);
 }
 
