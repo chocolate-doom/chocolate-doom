@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: z_native.c 443 2006-03-25 21:47:13Z fraggle $
+// $Id: z_native.c 605 2006-09-12 10:03:57Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2006 Simon Howard
@@ -30,7 +30,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: z_native.c 443 2006-03-25 21:47:13Z fraggle $";
+rcsid[] = "$Id: z_native.c 605 2006-09-12 10:03:57Z fraggle $";
 
 #include <stdlib.h>
 
@@ -205,6 +205,10 @@ void Z_FreeTags(int lowtag, int hightag)
 
             block = next;
         }
+
+	// This chain is empty now
+
+	allocated_blocks[i] = NULL;
     }
 }
 
