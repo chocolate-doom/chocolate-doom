@@ -205,6 +205,10 @@ void Z_FreeTags(int lowtag, int hightag)
 
             block = next;
         }
+
+	// This chain is empty now
+
+	allocated_blocks[i] = NULL;
     }
 }
 
