@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_misc.c 591 2006-08-31 22:11:08Z fraggle $
+// $Id: m_misc.c 606 2006-09-15 23:47:12Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -106,7 +106,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_misc.c 591 2006-08-31 22:11:08Z fraggle $";
+rcsid[] = "$Id: m_misc.c 606 2006-09-15 23:47:12Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -297,8 +297,8 @@ extern int      vanilla_demo_limit;
 // so that the config file can be shared between chocolate
 // doom and doom.exe
 
-static int snd_musicdevice = 0;
-static int snd_sfxdevice = 0;
+int snd_musicdevice = 0;
+int snd_sfxdevice = 0;
 static int snd_sbport = 0;
 static int snd_sbirq = 0;
 static int snd_sbdma = 0;
