@@ -157,6 +157,26 @@ rcsid[] = "$Id$";
 
 #define MAXMIDLENGTH        (96 * 1024)
 
+enum 
+{
+    SNDDEVICE_NONE = 0,
+    SNDDEVICE_PCSPEAKER = 1,
+    SNDDEVICE_ADLIB = 2,
+    SNDDEVICE_SB = 3,
+    SNDDEVICE_PAS = 4,
+    SNDDEVICE_GUS = 5,
+    SNDDEVICE_WAVEBLASTER = 6,
+    SNDDEVICE_SOUNDCANVAS = 7,
+    SNDDEVICE_GENMIDI = 8,
+    SNDDEVICE_AWE32 = 9,
+};
+
+extern int snd_sfxdevice;
+extern int snd_musicdevice;
+
+static boolean nosfxparm;
+static boolean nomusicparm;
+
 static boolean sound_initialised = false;
 static boolean music_initialised = false;
 
@@ -535,12 +555,18 @@ I_InitSound()
     {
         channels_playing[i] = sfx_None;
     }
-    
+
+    nomusicparm = M_CheckParm("-nomusic") > 0
+               || M_CheckParm("-nosound") > 0
+               || snd_musicdevice < SNDDEVICE_ADLIB;
+    nosfxparm = M_CheckParm("-nosfx") > 0
+             || M_CheckParm("-nosound") > 0
+             || snd_sfxdevice < SNDDEVICE_SB;
+
     // If music or sound is going to play, we need to at least
     // initialise SDL
 
-    if (M_CheckParm("-nosound") 
-     || (M_CheckParm("-nosfx") && M_CheckParm("-nomusic")))
+    if (nomusicparm && nosfxparm)
         return;
 
     if (SDL_Init(SDL_INIT_AUDIO) < 0)
@@ -559,10 +585,10 @@ I_InitSound()
     
     SDL_PauseAudio(0);
 
-    if (M_CheckParm("-nomusic") == 0)
+    if (!nomusicparm)
         music_initialised = true;
 
-    if (M_CheckParm("-nosfx") == 0)
+    if (!nosfxparm)
         sound_initialised = true;
 }
 
