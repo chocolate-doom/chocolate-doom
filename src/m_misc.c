@@ -297,8 +297,8 @@ extern int      vanilla_demo_limit;
 // so that the config file can be shared between chocolate
 // doom and doom.exe
 
-static int snd_musicdevice = 0;
-static int snd_sfxdevice = 0;
+int snd_musicdevice = 0;
+int snd_sfxdevice = 0;
 static int snd_sbport = 0;
 static int snd_sbirq = 0;
 static int snd_sbdma = 0;
