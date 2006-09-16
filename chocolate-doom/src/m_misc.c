@@ -300,7 +300,6 @@ int snd_sfxdevice = 0;
 // so that the config file can be shared between chocolate
 // doom and doom.exe
 
-static int comport = 1;
 static int snd_sbport = 0;
 static int snd_sbirq = 0;
 static int snd_sbdma = 0;
@@ -361,12 +360,6 @@ static default_t	doom_defaults_list[] =
 
     {"screenblocks",&screenblocks},
     {"detaillevel",&detailLevel},
-
-    // 'showmessages' is a duplicate of 'show_messages' but this is 
-    // what Vanilla Doom does!
-
-    {"showmessages", &showMessages},
-    {"comport", &comport},
 
     {"snd_channels",&numChannels},
 
