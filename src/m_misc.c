@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_misc.c 607 2006-09-16 00:04:59Z fraggle $
+// $Id: m_misc.c 608 2006-09-16 00:20:09Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -106,7 +106,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_misc.c 607 2006-09-16 00:04:59Z fraggle $";
+rcsid[] = "$Id: m_misc.c 608 2006-09-16 00:20:09Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -300,7 +300,6 @@ int snd_sfxdevice = 0;
 // so that the config file can be shared between chocolate
 // doom and doom.exe
 
-static int comport = 1;
 static int snd_sbport = 0;
 static int snd_sbirq = 0;
 static int snd_sbdma = 0;
@@ -361,12 +360,6 @@ static default_t	doom_defaults_list[] =
 
     {"screenblocks",&screenblocks},
     {"detaillevel",&detailLevel},
-
-    // 'showmessages' is a duplicate of 'show_messages' but this is 
-    // what Vanilla Doom does!
-
-    {"showmessages", &showMessages},
-    {"comport", &comport},
 
     {"snd_channels",&numChannels},
 
