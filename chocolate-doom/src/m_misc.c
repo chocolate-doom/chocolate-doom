@@ -293,12 +293,14 @@ extern int      show_endoom;
 extern int      vanilla_savegame_limit;
 extern int      vanilla_demo_limit;
 
+int snd_musicdevice = 0;
+int snd_sfxdevice = 0;
+
 // dos specific options: these are unused but should be maintained
 // so that the config file can be shared between chocolate
 // doom and doom.exe
 
-int snd_musicdevice = 0;
-int snd_sfxdevice = 0;
+static int comport = 1;
 static int snd_sbport = 0;
 static int snd_sbirq = 0;
 static int snd_sbdma = 0;
@@ -359,6 +361,12 @@ static default_t	doom_defaults_list[] =
 
     {"screenblocks",&screenblocks},
     {"detaillevel",&detailLevel},
+
+    // 'showmessages' is a duplicate of 'show_messages' but this is 
+    // what Vanilla Doom does!
+
+    {"showmessages", &showMessages},
+    {"comport", &comport},
 
     {"snd_channels",&numChannels},
 
