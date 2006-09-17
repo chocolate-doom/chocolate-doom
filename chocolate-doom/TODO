@@ -2,9 +2,7 @@ To do:
 
 * Setup utility
 * Netcode:
-  - Dedicated/standalone server mode
   - Drone mode (for -left/-right and observers)
-  - LAN search (broadcast to find servers on local LAN)
 * Demo hashes for regression testing of this and other ports.
 * Improve multiplayer startup: 
   - Select an IWAD automatically from the server's game type rather than
