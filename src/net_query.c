@@ -37,9 +37,39 @@
 #include "net_query.h"
 #include "net_sdl.h"
 
-static net_addr_t *first_response_addr;
 static net_context_t *query_context;
+static net_addr_t **responders;
 static int num_responses;
+
+// Add a new address to the list of hosts that has responded
+
+static void NET_Query_AddResponder(net_addr_t *addr)
+{
+    responders = realloc(responders, 
+                         sizeof(net_addr_t *) * (num_responses + 1));
+    responders[num_responses] = addr;
+    ++num_responses;
+}
+
+// Returns true if the reply is from a host that has not previously
+// responded.
+
+static boolean NET_Query_CheckResponder(net_addr_t *addr)
+{
+    int i;
+
+    for (i=0; i<num_responses; ++i)
+    {
+        if (responders[i] == addr)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+// Transmit a query packet
 
 static void NET_Query_SendQuery(net_addr_t *addr)
 {
@@ -108,6 +138,13 @@ static void NET_Query_ParsePacket(net_addr_t *addr, net_packet_t *packet)
     char *server_description;
     int i;
 
+    // Have we already received a packet from this host?
+
+    if (!NET_Query_CheckResponder(addr))
+    {
+        return;
+    }
+
     if (!NET_ReadInt16(packet, &packet_type)
      || !(server_version = NET_ReadString(packet))
      || !NET_ReadInt8(packet, &in_game)
@@ -131,8 +168,6 @@ static void NET_Query_ParsePacket(net_addr_t *addr, net_packet_t *packet)
         for (i=0; i<70; ++i)
             putchar('=');
         putchar('\n');
-
-        first_response_addr = addr;
     }
 
     formatted_printf(18, "%s: ", NET_AddrToString(addr));
@@ -150,7 +185,7 @@ static void NET_Query_ParsePacket(net_addr_t *addr, net_packet_t *packet)
 
     NET_SafePuts(server_description);
 
-    ++num_responses;
+    NET_Query_AddResponder(addr);
 }
 
 static void NET_Query_GetResponse(void)
@@ -198,7 +233,10 @@ static net_addr_t *NET_Query_QueryLoop(net_addr_t *addr,
         I_Sleep(100);
     }
 
-    return first_response_addr;
+    if (num_responses > 0)
+        return responders[0];
+    else
+        return NULL;
 }
 
 void NET_Query_Init(void)
@@ -207,7 +245,7 @@ void NET_Query_Init(void)
     NET_AddModule(query_context, &net_sdl_module);
     net_sdl_module.InitClient();
 
-    first_response_addr = NULL;
+    responders = NULL;
     num_responses = 0;
 }
 
