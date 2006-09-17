@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_structrw.h 376 2006-02-23 18:19:05Z fraggle $
+// $Id: net_structrw.h 612 2006-09-17 20:37:26Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -52,6 +52,9 @@
 
 extern void NET_WriteSettings(net_packet_t *packet, net_gamesettings_t *settings);
 extern boolean NET_ReadSettings(net_packet_t *packet, net_gamesettings_t *settings);
+
+extern void NET_WriteQueryData(net_packet_t *packet, net_querydata_t *querydata);
+extern boolean NET_ReadQueryData(net_packet_t *packet, net_querydata_t *querydata);
 
 extern void NET_WriteTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff, boolean lowres_turn);
 extern boolean NET_ReadTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff, boolean lowres_turn);

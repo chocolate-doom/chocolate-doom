@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_defs.h 593 2006-09-01 20:45:45Z fraggle $
+// $Id: net_defs.h 612 2006-09-17 20:37:26Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -205,6 +205,19 @@ typedef struct
     boolean playeringame[MAXPLAYERS];
     net_ticdiff_t cmds[MAXPLAYERS];
 } net_full_ticcmd_t;
+
+// Data sent in response to server queries
+
+typedef struct
+{
+    char *version;
+    int server_state;
+    int num_players;
+    int max_players;
+    int gamemode;
+    int gamemission;
+    char *description;
+} net_querydata_t;
 
 #endif /* #ifndef NET_DEFS_H */
 

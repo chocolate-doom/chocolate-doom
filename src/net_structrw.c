@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_structrw.c 593 2006-09-01 20:45:45Z fraggle $
+// $Id: net_structrw.c 612 2006-09-17 20:37:26Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -98,6 +98,42 @@ boolean NET_ReadSettings(net_packet_t *packet, net_gamesettings_t *settings)
         && NET_ReadInt8(packet, (unsigned int *) &settings->new_sync)
         && NET_ReadInt32(packet, (unsigned int *) &settings->timelimit)
         && NET_ReadSInt8(packet, (signed int *) &settings->loadgame);
+}
+
+boolean NET_ReadQueryData(net_packet_t *packet, net_querydata_t *query)
+{
+    boolean result;
+
+    query->version = NET_ReadString(packet);
+
+    result = query->version != NULL
+          && NET_ReadInt8(packet, (unsigned int *) &query->server_state)
+          && NET_ReadInt8(packet, (unsigned int *) &query->num_players)
+          && NET_ReadInt8(packet, (unsigned int *) &query->max_players)
+          && NET_ReadInt8(packet, (unsigned int *) &query->gamemode)
+          && NET_ReadInt8(packet, (unsigned int *) &query->gamemission);
+    
+    if (result)
+    {
+        query->description = NET_ReadString(packet);
+
+        return query->description != NULL;
+    }   
+    else
+    {
+        return false;
+    } 
+}
+
+void NET_WriteQueryData(net_packet_t *packet, net_querydata_t *query)
+{
+    NET_WriteString(packet, query->version);
+    NET_WriteInt8(packet, query->server_state);
+    NET_WriteInt8(packet, query->num_players);
+    NET_WriteInt8(packet, query->max_players);
+    NET_WriteInt8(packet, query->gamemode);
+    NET_WriteInt8(packet, query->gamemission);
+    NET_WriteString(packet, query->description);
 }
 
 void NET_WriteTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff, 
