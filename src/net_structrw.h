@@ -53,6 +53,9 @@
 extern void NET_WriteSettings(net_packet_t *packet, net_gamesettings_t *settings);
 extern boolean NET_ReadSettings(net_packet_t *packet, net_gamesettings_t *settings);
 
+extern void NET_WriteQueryData(net_packet_t *packet, net_querydata_t *querydata);
+extern boolean NET_ReadQueryData(net_packet_t *packet, net_querydata_t *querydata);
+
 extern void NET_WriteTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff, boolean lowres_turn);
 extern boolean NET_ReadTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff, boolean lowres_turn);
 extern void NET_TiccmdDiff(ticcmd_t *tic1, ticcmd_t *tic2, net_ticdiff_t *diff);

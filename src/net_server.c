@@ -1063,34 +1063,35 @@ static void NET_SV_ParseResendRequest(net_packet_t *packet, net_client_t *client
 void NET_SV_SendQueryResponse(net_addr_t *addr)
 {
     net_packet_t *reply;
-
-    reply = NET_NewPacket(64);
-    NET_WriteInt16(reply, NET_PACKET_TYPE_QUERY_RESPONSE);
+    net_querydata_t querydata;
 
     // Version
 
-    NET_WriteString(reply, PACKAGE_STRING);
+    querydata.version = PACKAGE_STRING;
 
     // Server state
 
-    NET_WriteInt8(reply, server_state);
+    querydata.server_state = server_state;
 
     // Number of players/maximum players
 
-    NET_WriteInt8(reply, NET_SV_NumClients());
-    NET_WriteInt8(reply, MAXPLAYERS);
+    querydata.num_players = NET_SV_NumClients();
+    querydata.max_players = MAXPLAYERS;
 
     // Game mode/mission
 
-    NET_WriteInt8(reply, sv_gamemode);
-    NET_WriteInt8(reply, sv_gamemission);
+    querydata.gamemode = sv_gamemode;
+    querydata.gamemission = sv_gamemission;
 
     // Server description.  This is currently hard-coded.
 
-    NET_WriteString(reply, "Chocolate Doom server");
+    querydata.description = "Chocolate Doom server";
 
     // Send it and we're done.
 
+    reply = NET_NewPacket(64);
+    NET_WriteInt16(reply, NET_PACKET_TYPE_QUERY_RESPONSE);
+    NET_WriteQueryData(reply, &querydata);
     NET_SendPacket(addr, reply);
     NET_FreePacket(reply);
 }

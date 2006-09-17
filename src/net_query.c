@@ -35,32 +35,47 @@
 #include "net_io.h"
 #include "net_packet.h"
 #include "net_query.h"
+#include "net_structrw.h"
 #include "net_sdl.h"
 
+typedef struct 
+{
+    net_addr_t *addr;
+    net_querydata_t data;
+} queryresponse_t;
+
 static net_context_t *query_context;
-static net_addr_t **responders;
+static queryresponse_t *responders;
 static int num_responses;
 
 // Add a new address to the list of hosts that has responded
 
-static void NET_Query_AddResponder(net_addr_t *addr)
+static queryresponse_t *AddResponder(net_addr_t *addr, 
+                                     net_querydata_t *data)
 {
+    queryresponse_t *response;
+
     responders = realloc(responders, 
-                         sizeof(net_addr_t *) * (num_responses + 1));
-    responders[num_responses] = addr;
+                         sizeof(queryresponse_t) * (num_responses + 1));
+
+    response = &responders[num_responses];
+    response->addr = addr;
+    response->data = *data;
     ++num_responses;
+
+    return response;
 }
 
 // Returns true if the reply is from a host that has not previously
 // responded.
 
-static boolean NET_Query_CheckResponder(net_addr_t *addr)
+static boolean CheckResponder(net_addr_t *addr)
 {
     int i;
 
     for (i=0; i<num_responses; ++i)
     {
-        if (responders[i] == addr)
+        if (responders[i].addr == addr)
         {
             return false;
         }
@@ -128,31 +143,63 @@ static char *GameDescription(GameMode_t mode, GameMission_t mission)
     }
 }
 
+static void PrintHeader(void)
+{
+    int i;
+
+    formatted_printf(18, "Address");
+    formatted_printf(8, "Players");
+    puts("Description");
+
+    for (i=0; i<70; ++i)
+        putchar('=');
+    putchar('\n');
+}
+
+static void PrintResponse(queryresponse_t *response)
+{
+    formatted_printf(18, "%s: ", NET_AddrToString(response->addr));
+    formatted_printf(8, "%i/%i", response->data.num_players, 
+                                 response->data.max_players);
+
+    if (response->data.gamemode != indetermined)
+    {
+        printf("(%s) ", GameDescription(response->data.gamemode, 
+                                        response->data.gamemission));
+    }
+
+    if (response->data.server_state)
+    {
+        printf("(game running) ");
+    }
+
+    NET_SafePuts(response->data.description);
+}
+
 static void NET_Query_ParsePacket(net_addr_t *addr, net_packet_t *packet)
 {
     unsigned int packet_type;
-    char *server_version;
-    unsigned int in_game;
-    unsigned int num_players, max_players;
-    unsigned int servermode, servermission;
-    char *server_description;
-    int i;
+    net_querydata_t querydata;
+    queryresponse_t *response;
 
     // Have we already received a packet from this host?
 
-    if (!NET_Query_CheckResponder(addr))
+    if (!CheckResponder(addr))
     {
         return;
     }
 
+    // Read the header
+
     if (!NET_ReadInt16(packet, &packet_type)
-     || !(server_version = NET_ReadString(packet))
-     || !NET_ReadInt8(packet, &in_game)
-     || !NET_ReadInt8(packet, &num_players)
-     || !NET_ReadInt8(packet, &max_players)
-     || !NET_ReadInt8(packet, &servermode)
-     || !NET_ReadInt8(packet, &servermission)
-     || !(server_description = NET_ReadString(packet)))
+     || packet_type != NET_PACKET_TYPE_QUERY_RESPONSE)
+    {
+        return;
+    }
+
+    // Read query data
+
+    if (!NET_ReadQueryData(packet, &querydata))
     {
         return;
     }
@@ -161,31 +208,12 @@ static void NET_Query_ParsePacket(net_addr_t *addr, net_packet_t *packet)
     {
         // If this is the first response, print the table header
 
-        formatted_printf(18, "Address");
-        formatted_printf(8, "Players");
-        puts("Description");
-
-        for (i=0; i<70; ++i)
-            putchar('=');
-        putchar('\n');
+        PrintHeader();
     }
 
-    formatted_printf(18, "%s: ", NET_AddrToString(addr));
-    formatted_printf(8, "%i/%i", num_players, max_players);
+    response = AddResponder(addr, &querydata);
 
-    if (servermode != indetermined)
-    {
-        printf("(%s) ", GameDescription(servermode, servermission));
-    }
-
-    if (in_game)
-    {
-        printf("(game running) ");
-    }
-
-    NET_SafePuts(server_description);
-
-    NET_Query_AddResponder(addr);
+    PrintResponse(response);
 }
 
 static void NET_Query_GetResponse(void)
@@ -234,7 +262,7 @@ static net_addr_t *NET_Query_QueryLoop(net_addr_t *addr,
     }
 
     if (num_responses > 0)
-        return responders[0];
+        return responders[0].addr;
     else
         return NULL;
 }
