@@ -177,8 +177,6 @@ void I_Endoom(void)
 {
     unsigned char *endoom_data;
     unsigned char *screendata;
-    unsigned int start_ms;
-    boolean waiting;
 
     endoom_data = W_CacheLumpName("ENDOOM", PU_STATIC);
 
@@ -196,12 +194,9 @@ void I_Endoom(void)
     screendata = TXT_GetScreenData();
     memcpy(screendata, endoom_data, 4000);
 
-    // Wait for 10 seconds, or until a keypress or mouse click
+    // Wait for a keypress
 
-    waiting = true;
-    start_ms = I_GetTime();
-
-    while (waiting && I_GetTime() < start_ms + 350)
+    while (true)
     {
         TXT_UpdateScreen();
 
