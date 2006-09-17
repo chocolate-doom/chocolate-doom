@@ -206,5 +206,18 @@ typedef struct
     net_ticdiff_t cmds[MAXPLAYERS];
 } net_full_ticcmd_t;
 
+// Data sent in response to server queries
+
+typedef struct
+{
+    char *version;
+    int server_state;
+    int num_players;
+    int max_players;
+    int gamemode;
+    int gamemission;
+    char *description;
+} net_querydata_t;
+
 #endif /* #ifndef NET_DEFS_H */
 
