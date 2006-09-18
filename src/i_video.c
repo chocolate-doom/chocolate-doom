@@ -1263,6 +1263,12 @@ void I_InitGraphics(void)
 
     SDL_EnableUNICODE(1);
 
+    // Repeat key presses - this is what Vanilla Doom does
+    // Not sure about repeat rate - probably dependent on which DOS
+    // driver is used.  This is good enough though.
+
+    SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+
     // clear out any events waiting at the start
   
     while (SDL_PollEvent(&dummy));
