@@ -577,6 +577,11 @@ int TXT_SelectWidget(TXT_UNCAST_ARG(table), TXT_UNCAST_ARG(widget))
 
     for (i=0; i<table->num_widgets; ++i)
     {
+        if (table->widgets[i] == NULL)
+        {
+            continue;
+        }
+        
         if (table->widgets[i] == widget)
         {
             // Found the item!  Select it and return.
