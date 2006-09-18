@@ -102,6 +102,12 @@ txt_widget_class_t txt_button_class =
     TXT_ButtonMousePress,
 };
 
+void TXT_SetButtonLabel(txt_button_t *button, char *label)
+{
+    free(button->label);
+    button->label = strdup(label);
+}
+
 txt_button_t *TXT_NewButton(char *label)
 {
     txt_button_t *button;
