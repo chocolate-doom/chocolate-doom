@@ -88,6 +88,11 @@ int TXT_Init(void)
 
     SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
 
+    // Repeat key presses so we can hold down arrows to scroll down the
+    // menu, for example. This is what setup.exe does.
+
+    SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+
     return 1;
 }
 
