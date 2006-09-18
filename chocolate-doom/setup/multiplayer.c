@@ -25,6 +25,12 @@
 
 #define NUM_WADS 10
 
+typedef enum
+{
+    WARP_DOOM1,
+    WARP_DOOM2,
+} warptype_t;
+
 static char *skills[] = 
 {
     "I'm too young to die!",
@@ -49,10 +55,136 @@ int fast = 0;
 int respawn = 0;
 int udpport = 4815;
 
+txt_button_t *warpbutton;
+warptype_t warptype = WARP_DOOM2;
+int warpepisode = 1;
+int warpmap = 1;
+
 static void StartGame(void)
 {
     printf("Now we start the game.\n");
     exit(0);
+}
+
+static void UpdateWarpButton(void)
+{
+    char buf[10];
+
+    if (warptype == WARP_DOOM1)
+    {
+        sprintf(buf, "E%iM%i", warpepisode, warpmap);
+    }
+    else if (warptype == WARP_DOOM2)
+    {
+        sprintf(buf, "MAP%02i", warpmap);
+    }
+
+    TXT_SetButtonLabel(warpbutton, buf);
+}
+
+static void SetDoom1Warp(TXT_UNCAST_ARG(widget), void *val)
+{
+    int l;
+
+    l = (int) val;
+
+    warptype = WARP_DOOM1;
+    warpepisode = l / 10;
+    warpmap = l % 10;
+
+    UpdateWarpButton();
+}
+
+static void SetDoom2Warp(TXT_UNCAST_ARG(widget), void *val)
+{
+    int l;
+
+    l = (int) val;
+
+    warptype = WARP_DOOM2;
+    warpmap = l;
+
+    UpdateWarpButton();
+}
+
+static void CloseLevelSelectDialog(TXT_UNCAST_ARG(button), TXT_UNCAST_ARG(window))
+{
+    TXT_CAST_ARG(txt_window_t, window);
+
+    TXT_CloseWindow(window);            
+}
+
+static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
+{
+    txt_window_t *window;
+    txt_table_t *table;
+    txt_button_t *button;
+    char buf[10];
+    int x, y;
+    int l;
+
+    window = TXT_NewWindow("Select level");
+
+    table = TXT_NewTable(8);
+
+    TXT_AddWidget(window, table);
+
+    for (y=1; y<=9; ++y)
+    {
+        // MAP?? levels
+
+        for (x=0; x<4; ++x) 
+        {
+            l = x * 9 + y;
+            
+            if (l > 32)
+            {
+                TXT_AddWidget(table, NULL);
+            }
+            else
+            {
+                sprintf(buf, " MAP%02i ", l);
+                button = TXT_NewButton(buf);
+                TXT_SignalConnect(button, "pressed", 
+                                  SetDoom2Warp, (void *) l);
+                TXT_SignalConnect(button, "pressed",
+                                  CloseLevelSelectDialog, window);
+                TXT_AddWidget(table, button);
+
+                if (warptype == WARP_DOOM2
+                 && warpmap == l)
+                {
+                    TXT_SelectWidget(table, button);
+                }
+            }
+        }
+
+        // ExMy levels
+        
+        for (x=1; x<=4; ++x)
+        {
+            if (y > 9)
+            {
+                TXT_AddWidget(table, NULL);
+            }
+            else
+            {
+                sprintf(buf, " E%iM%i ", x, y);
+                button = TXT_NewButton(buf);
+                TXT_SignalConnect(button, "pressed",
+                                  SetDoom1Warp, (void *) (x * 10 + y));
+                TXT_SignalConnect(button, "pressed",
+                                  CloseLevelSelectDialog, window);
+                TXT_AddWidget(table, button);
+
+                if (warptype == WARP_DOOM1
+                 && warpepisode == x && warpmap == y)
+                {
+                    TXT_SelectWidget(table, button);
+                }
+            }
+        }
+    }
 }
 
 static txt_window_action_t *StartGameAction(void)
@@ -108,17 +240,12 @@ void StartMultiGame(void)
     TXT_AddWidget(table, TXT_NewLabel("UDP port"));
     TXT_AddWidget(table, TXT_NewIntInputBox(&udpport, 5));
 
-    TXT_AddWidget(window, table);
+    TXT_AddWidget(table, TXT_NewLabel("Level warp"));
 
-    TXT_AddWidget(window, TXT_NewSeparator("Level warp"));
-
-    table = TXT_NewTable(2);
-    TXT_AddWidget(table, TXT_NewStrut(12, 0));
-    TXT_AddWidget(table, TXT_NewStrut(12, 0));
-    TXT_AddWidget(table, TXT_NewLabel("Doom 1"));
-    TXT_AddWidget(table, TXT_NewButton("E1M1"));
-    TXT_AddWidget(table, TXT_NewLabel("Doom 2"));
-    TXT_AddWidget(table, TXT_NewButton("MAP01"));
+    warpbutton = TXT_NewButton("????");
+    TXT_AddWidget(table, warpbutton);
+    TXT_SignalConnect(warpbutton, "pressed", LevelSelectDialog, NULL);
+    UpdateWarpButton();
     TXT_AddWidget(window, table);
 
     TXT_AddWidget(window, TXT_NewSeparator("Monsters"));
