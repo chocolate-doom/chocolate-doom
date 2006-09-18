@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 598 2006-09-09 15:49:39Z fraggle $
+// $Id: i_video.c 613 2006-09-18 12:13:40Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -175,7 +175,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 598 2006-09-09 15:49:39Z fraggle $";
+rcsid[] = "$Id: i_video.c 613 2006-09-18 12:13:40Z fraggle $";
 
 #include <SDL.h>
 #include <ctype.h>
@@ -1262,6 +1262,12 @@ void I_InitGraphics(void)
     // We need SDL to give us translated versions of keys as well
 
     SDL_EnableUNICODE(1);
+
+    // Repeat key presses - this is what Vanilla Doom does
+    // Not sure about repeat rate - probably dependent on which DOS
+    // driver is used.  This is good enough though.
+
+    SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 
     // clear out any events waiting at the start
   
