@@ -307,11 +307,11 @@ void TXT_DrawWindow(txt_window_t *window, int selected)
 
     // Draw an action area, if we have one
 
+    widgets = (txt_widget_t *) window;
+
     if (widgets->y + widgets->h < window->window_y + window->window_h - 1)
     {
         // Separator for action area
-
-        widgets = (txt_widget_t *) window;
 
         TXT_DrawSeparator(window->window_x, widgets->y + widgets->h, 
                           window->window_w);
