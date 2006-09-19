@@ -28,6 +28,7 @@ int novert;
 int speed;
 int accel;
 int threshold;
+int grabmouse = 1;
 
 int mouseb_fire = 0;
 int mouseb_forward = 1;
@@ -97,12 +98,15 @@ void ConfigMouse(void)
     AddMouseControl(table, "Strafe on", &mouseb_strafe);
     
     TXT_AddWidget(window, table);
-    
-    TXT_AddWidget(window, TXT_NewSeparator(NULL));
+
+    TXT_AddWidget(window, TXT_NewSeparator("Misc."));
 
     TXT_AddWidget(window, 
                   TXT_NewInvertedCheckBox("Allow vertical mouse movement", 
                                           &novert));
+    TXT_AddWidget(window, TXT_NewCheckBox("Grab mouse in windowed mode", 
+                                          &grabmouse));
 
+    
 }
 
