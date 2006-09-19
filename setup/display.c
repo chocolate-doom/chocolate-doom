@@ -20,25 +20,105 @@
 //
 #include "textscreen.h"
 
-static int vidmode = 1;
+typedef struct 
+{
+        char *description;
+        int fullscreen;
+        int screenmult;
+} vidmode_t;
+
+static vidmode_t modes[] = 
+{
+        { "320x200",  0, 1 },
+        { "640x400",  0, 2 },
+        { "960x600",  0, 3 },
+        { "1280x800", 0, 4 },
+        { "320x200",  1, 1 },
+        { "320x240",  2, 1 },
+        { "640x400",  1, 2 },
+        { "640x480",  2, 2 },
+        { "960x600",  1, 3 },
+        { "960x720",  2, 3 },
+        { "1280x800", 1, 4 },
+        { "1280x960", 2, 4 },
+        { NULL },
+};
+
+static int vidmode = 0;
 static int fullscreen = 0;
+static int screenmult = 1;
 static int grabmouse = 1;
 
-static char *modes[] = { "320x200", "640x400" };
+// Given the video settings (fullscreen, screenmult, etc), find the
+// current video mode
+
+static void SetCurrentMode(void)
+{
+        int i;
+
+        vidmode = 0;
+
+        for (i=0; modes[i].description != NULL; ++i)
+        {
+                if (fullscreen == modes[i].fullscreen
+                 && screenmult == modes[i].screenmult)
+                {
+                        vidmode = i;
+                        break;
+                }
+        }
+}
+
+static void ModeSelected(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(mode))
+{
+        TXT_CAST_ARG(vidmode_t, mode);
+
+        fullscreen = mode->fullscreen;
+        screenmult = mode->screenmult;
+}
 
 void ConfigDisplay(void)
 {
     txt_window_t *window;
-    txt_table_t *box;
+    txt_table_t *table;
+    txt_radiobutton_t *rbutton;
+    int i;
+
+    // Find the current mode
+
+    SetCurrentMode();
+
+    // Open the window
     
     window = TXT_NewWindow("Display Configuration");
 
-    box = TXT_NewTable(2);
-    TXT_AddWidget(box, TXT_NewLabel("Screen mode: "));
-    TXT_AddWidget(box, TXT_NewDropdownList(&vidmode, modes, 2));
-    TXT_AddWidget(window, box);
+    TXT_AddWidget(window, TXT_NewSeparator("Windowed modes"));
 
-    TXT_AddWidget(window, TXT_NewCheckBox("Fullscreen", &fullscreen));
+    table = TXT_NewTable(2);
+    
+    for (i=0; modes[i].fullscreen == 0; ++i)
+    {
+        rbutton = TXT_NewRadioButton(modes[i].description, &vidmode, i);
+        TXT_AddWidget(table, rbutton);
+        TXT_SignalConnect(rbutton, "selected", ModeSelected, &modes[i]);
+    }
+
+    TXT_AddWidget(window, table);
+
+    TXT_AddWidget(window, TXT_NewSeparator("Fullscreen modes"));
+
+    table = TXT_NewTable(2);
+
+    for (; modes[i].description != NULL; ++i)
+    {
+        rbutton = TXT_NewRadioButton(modes[i].description, &vidmode, i);
+        TXT_AddWidget(table, rbutton);
+        TXT_SignalConnect(rbutton, "selected", ModeSelected, &modes[i]);
+    }
+
+    TXT_AddWidget(window, table);
+
+    TXT_AddWidget(window, TXT_NewSeparator(NULL));
     TXT_AddWidget(window, TXT_NewCheckBox("Grab mouse", &grabmouse));
 }
 
