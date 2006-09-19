@@ -8,7 +8,7 @@ AC_PROG_RANLIB
 
 if test "$GCC" = "yes"
 then
-        CFLAGS="-O3 $orig_CFLAGS -g"
+        CFLAGS="-O3 -g -Wall $orig_CFLAGS"
 fi
 
 AM_PATH_SDL(1.1.3)
