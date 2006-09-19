@@ -47,7 +47,13 @@
 		<Linker>
 			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_mixer -lSDL_net -mwindows" />
 		</Linker>
-		<Unit filename="msvc\config.h">
+		<Unit filename="chocolate-doom-res.rc">
+			<Option compilerVar="WINDRES" />
+			<Option objectName="codeblocks\chocolate-doom-res.res" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="..\msvc\config.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />
