@@ -27,6 +27,7 @@
 
 #include "txt_desktop.h"
 #include "txt_gui.h"
+#include "txt_io.h"
 #include "txt_main.h"
 #include "txt_separator.h"
 #include "txt_strut.h"
@@ -61,7 +62,6 @@ static void CalcRowColSizes(txt_table_t *table,
                             int *row_heights, 
                             int *col_widths)
 {
-    int table_height;
     int x, y;
     int rows;
     txt_widget_t *widget;
@@ -194,7 +194,6 @@ static int SelectableWidget(txt_table_t *table, int x, int y)
 static int FindSelectableColumn(txt_table_t *table, int row, int start_col)
 {
     int x;
-    int i;
 
     for (x=0; x<table->columns; ++x)
     {
@@ -287,7 +286,6 @@ static int TXT_TableKeyPress(TXT_UNCAST_ARG(table), int key)
     if (key == KEY_LEFTARROW)
     {
         int new_x;
-        int i;
 
         // Move cursor left
 
@@ -307,7 +305,6 @@ static int TXT_TableKeyPress(TXT_UNCAST_ARG(table), int key)
     if (key == KEY_RIGHTARROW)
     {
         int new_x;
-        int i;
 
         // Move cursor left
 

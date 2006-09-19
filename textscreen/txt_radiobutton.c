@@ -25,6 +25,7 @@
 #include "doomkeys.h"
 
 #include "txt_radiobutton.h"
+#include "txt_gui.h"
 #include "txt_io.h"
 #include "txt_main.h"
 #include "txt_window.h"

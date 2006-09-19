@@ -23,6 +23,7 @@
 #include <string.h>
 
 #include "txt_label.h"
+#include "txt_gui.h"
 #include "txt_io.h"
 #include "txt_main.h"
 #include "txt_window.h"
@@ -40,7 +41,7 @@ static void TXT_LabelDrawer(TXT_UNCAST_ARG(label), int selected)
     TXT_CAST_ARG(txt_label_t, label);
     int x, y;
     int origin_x, origin_y;
-    int align_indent;
+    int align_indent = 0;
     int w;
 
     w = label->widget.w;

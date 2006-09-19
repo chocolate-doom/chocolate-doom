@@ -22,6 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "txt_io.h"
 #include "txt_widget.h"
 
 typedef struct
@@ -100,7 +101,6 @@ void TXT_SignalConnect(TXT_UNCAST_ARG(widget),
     TXT_CAST_ARG(txt_widget_t, widget);
     txt_callback_table_t *table;
     txt_callback_t *callback;
-    int i;
 
     table = widget->callback_table;
 

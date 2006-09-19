@@ -23,6 +23,7 @@
 #include <string.h>
 
 #include "txt_separator.h"
+#include "txt_gui.h"
 #include "txt_io.h"
 #include "txt_main.h"
 #include "txt_window.h"
@@ -48,7 +49,6 @@ static void TXT_SeparatorSizeCalc(TXT_UNCAST_ARG(separator))
 static void TXT_SeparatorDrawer(TXT_UNCAST_ARG(separator), int selected)
 {
     TXT_CAST_ARG(txt_separator_t, separator);
-    int i;
     int x, y;
     int w;
 
