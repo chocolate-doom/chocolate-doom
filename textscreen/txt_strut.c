@@ -50,6 +50,7 @@ static void TXT_StrutDestructor(TXT_UNCAST_ARG(strut))
 
 static int TXT_StrutKeyPress(TXT_UNCAST_ARG(strut), int key)
 {
+    return 0;
 }
 
 txt_widget_class_t txt_strut_class =

@@ -31,6 +31,8 @@ void TXT_DrawDesktop(void);
 void TXT_GUIMainLoop(void);
 void TXT_DispatchEvents(void);
 void TXT_ExitMainLoop(void);
+void TXT_DrawWindow(txt_window_t *window, int selected);
+void TXT_WindowKeyPress(txt_window_t *window, int c);
 
 #endif /* #ifndef TXT_DESKTOP_T */
 

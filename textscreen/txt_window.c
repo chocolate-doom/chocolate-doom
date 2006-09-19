@@ -45,8 +45,6 @@ void TXT_SetWindowAction(txt_window_t *window,
 txt_window_t *TXT_NewWindow(char *title)
 {
     int i;
-    txt_window_action_t *cancel_action;
-    txt_window_action_t *accept_action;
 
     txt_window_t *win;
 
@@ -289,9 +287,6 @@ void TXT_LayoutWindow(txt_window_t *window)
 void TXT_DrawWindow(txt_window_t *window, int selected)
 {
     txt_widget_t *widgets;
-    int x, y;
-    int i;
-    int ww, wh;
 
     TXT_LayoutWindow(window);
     

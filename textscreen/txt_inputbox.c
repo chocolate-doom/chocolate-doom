@@ -19,6 +19,7 @@
 // 02111-1307, USA.
 //
 
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -26,6 +27,7 @@
 #include "doomkeys.h"
 
 #include "txt_inputbox.h"
+#include "txt_gui.h"
 #include "txt_io.h"
 #include "txt_main.h"
 #include "txt_window.h"
