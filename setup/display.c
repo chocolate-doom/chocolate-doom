@@ -47,7 +47,6 @@ static vidmode_t modes[] =
 static int vidmode = 0;
 static int fullscreen = 0;
 static int screenmult = 1;
-static int grabmouse = 1;
 
 // Given the video settings (fullscreen, screenmult, etc), find the
 // current video mode
@@ -117,8 +116,5 @@ void ConfigDisplay(void)
     }
 
     TXT_AddWidget(window, table);
-
-    TXT_AddWidget(window, TXT_NewSeparator(NULL));
-    TXT_AddWidget(window, TXT_NewCheckBox("Grab mouse", &grabmouse));
 }
 
