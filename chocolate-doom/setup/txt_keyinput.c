@@ -25,6 +25,7 @@
 #include "doomkeys.h"
 
 #include "txt_keyinput.h"
+#include "txt_gui.h"
 #include "txt_io.h"
 #include "txt_label.h"
 #include "txt_window.h"
@@ -117,7 +118,6 @@ static void TXT_KeyInputDrawer(TXT_UNCAST_ARG(key_input), int selected)
 
 static void TXT_KeyInputDestructor(TXT_UNCAST_ARG(key_input))
 {
-    TXT_CAST_ARG(txt_key_input_t, key_input);
 }
 
 static int TXT_KeyInputKeyPress(TXT_UNCAST_ARG(key_input), int key)
