@@ -29,9 +29,9 @@ int speed;
 int accel;
 int threshold;
 
-int mouseb_fire;
-int mouseb_strafe;
-int mouseb_forward;
+int mouseb_fire = 0;
+int mouseb_forward = 1;
+int mouseb_strafe = 2;
 
 static int *all_mouse_buttons[] = {&mouseb_fire, &mouseb_strafe, 
                                    &mouseb_forward};
