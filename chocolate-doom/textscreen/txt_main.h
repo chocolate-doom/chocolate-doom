@@ -97,7 +97,7 @@ void TXT_GetKeyDescription(int key, char *buf);
 
 // Retrieve the current position of the mouse
 
-void TXT_GetMouseState(int *x, int *y);
+void TXT_GetMousePosition(int *x, int *y);
 
 // Sleep until an event is received or the screen needs updating
 // Optional timeout in ms (timeout == 0 : sleep forever)

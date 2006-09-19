@@ -25,6 +25,7 @@
 #include "doomkeys.h"
 
 #include "txt_window_action.h"
+#include "txt_gui.h"
 #include "txt_io.h"
 #include "txt_main.h"
 #include "txt_window.h"
@@ -45,7 +46,6 @@ static void TXT_WindowActionSizeCalc(TXT_UNCAST_ARG(action))
 static void TXT_WindowActionDrawer(TXT_UNCAST_ARG(action), int selected)
 {
     TXT_CAST_ARG(txt_window_action_t, action);
-    int i;
     char buf[10];
 
     TXT_GetKeyDescription(action->key, buf);

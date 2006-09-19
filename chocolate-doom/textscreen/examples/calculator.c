@@ -99,6 +99,8 @@ void Calculate(TXT_UNCAST_ARG(button), void *unused)
         case OP_DIV:
             input_value = first_operand / input_value;
             break;
+        case OP_NONE:
+            break;
     }
 
     UpdateInputBox();
@@ -156,5 +158,7 @@ int main(int argc, char *argv[])
     BuildGUI();
 
     TXT_GUIMainLoop();
+
+    return 0;
 }
 

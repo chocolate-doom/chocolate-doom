@@ -64,7 +64,7 @@ void SetupWindow(void)
 {
     txt_window_t *window;
     txt_table_t *table;
-    txt_table_t *leftpane, *rightpane;
+    txt_table_t *rightpane;
     txt_button_t *button;
     txt_checkbox_t *cheesy_checkbox;
     txt_window_action_t *pwn;
@@ -159,25 +159,6 @@ void Window2(void)
     TXT_AddWidget(table, TXT_NewIntInputBox(&numbox_value, 10));
 }
 
-void DrawASCIIChart()
-{
-    int x, y;
-
-    TXT_ClearScreen();
-
-    for (y=0; y<16; ++y)
-    {
-        for (x=0; x<16; ++x)
-        {
-            TXT_PutChar(' ');
-            TXT_PutChar(' ');
-            TXT_PutChar(' ');
-            TXT_PutChar(y * 16 + x);
-        }
-        TXT_PutChar('\n');
-    }
-}
-
 int main(int argc, char *argv[])
 {
     TXT_Init();
@@ -188,6 +169,8 @@ int main(int argc, char *argv[])
     SetupWindow();
 
     TXT_GUIMainLoop();
+
+    return 0;
 }
 
 
