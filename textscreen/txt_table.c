@@ -169,6 +169,11 @@ static int SelectableWidget(txt_table_t *table, int x, int y)
     txt_widget_t *widget;
     int i;
 
+    if (x < 0 || x >= table->columns)
+    {
+        return 0;
+    }
+
     i = y * table->columns + x;
 
     if (i >= 0 && i < table->num_widgets)
