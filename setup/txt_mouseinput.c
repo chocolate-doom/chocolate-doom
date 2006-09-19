@@ -26,6 +26,7 @@
 #include "doomkeys.h"
 
 #include "txt_mouseinput.h"
+#include "txt_gui.h"
 #include "txt_io.h"
 #include "txt_label.h"
 #include "txt_window.h"
@@ -146,7 +147,6 @@ static void TXT_MouseInputDrawer(TXT_UNCAST_ARG(mouse_input), int selected)
 
 static void TXT_MouseInputDestructor(TXT_UNCAST_ARG(mouse_input))
 {
-    TXT_CAST_ARG(txt_mouse_input_t, mouse_input);
 }
 
 static int TXT_MouseInputKeyPress(TXT_UNCAST_ARG(mouse_input), int mouse)

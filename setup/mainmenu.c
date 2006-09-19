@@ -112,5 +112,7 @@ int main(int argc, char *argv[])
     MainMenu();
 
     TXT_GUIMainLoop();
+
+    return 0;
 }
 

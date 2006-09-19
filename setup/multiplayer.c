@@ -60,7 +60,7 @@ warptype_t warptype = WARP_DOOM2;
 int warpepisode = 1;
 int warpmap = 1;
 
-static void StartGame(void)
+static void StartGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
 {
     printf("Now we start the game.\n");
     exit(0);
@@ -197,7 +197,7 @@ static txt_window_action_t *StartGameAction(void)
     return action;
 }
 
-static void OpenWadsWindow(void)
+static void OpenWadsWindow(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
 {
     txt_window_t *window;
     int i;
