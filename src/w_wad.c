@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: w_wad.c 596 2006-09-02 19:10:07Z fraggle $
+// $Id: w_wad.c 629 2006-09-20 06:08:37Z rtc_marine $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -66,7 +66,7 @@
 
 
 static const char
-rcsid[] = "$Id: w_wad.c 596 2006-09-02 19:10:07Z fraggle $";
+rcsid[] = "$Id: w_wad.c 629 2006-09-20 06:08:37Z rtc_marine $";
 
 
 #include <ctype.h>
@@ -595,21 +595,23 @@ void W_GenerateHashTable(void)
     }
 
     // Generate hash table
+    if (numlumps > 0)
+        {
+            lumphash = Z_Malloc(sizeof(lumpinfo_t *) * numlumps, PU_STATIC, NULL);
+            memset(lumphash, 0, sizeof(lumpinfo_t *) * numlumps);
 
-    lumphash = Z_Malloc(sizeof(lumpinfo_t *) * numlumps, PU_STATIC, NULL);
-    memset(lumphash, 0, sizeof(lumpinfo_t *) * numlumps);
+            for (i=0; i<numlumps; ++i)
+            {
+                unsigned int hash;
 
-    for (i=0; i<numlumps; ++i)
-    {
-        unsigned int hash;
+                hash = W_LumpNameHash(lumpinfo[i].name) % numlumps;
 
-        hash = W_LumpNameHash(lumpinfo[i].name) % numlumps;
+                // Hook into the hash table
 
-        // Hook into the hash table
-
-        lumpinfo[i].next = lumphash[hash];
-        lumphash[hash] = &lumpinfo[i];
-    }
+                lumpinfo[i].next = lumphash[hash];
+                lumphash[hash] = &lumpinfo[i];
+            }
+        }
 
     // All done!
 }
