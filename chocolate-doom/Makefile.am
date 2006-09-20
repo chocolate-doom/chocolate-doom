@@ -21,6 +21,7 @@ EXTRA_DIST=                             \
         $(MSVC_FILES)                   \
         $(CODEBLOCKS_FILES)             \
         config.h                        \
+        HACKING                         \
         TODO                            \
         BUGS                            \
         data/chocolate-doom.png         \
