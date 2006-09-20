@@ -1277,6 +1277,14 @@ void PrintDehackedBanners(void)
         if (deh_s != copyright_banners[i])
         {
             printf("%s", deh_s);
+
+            // Make sure the modified banner always ends in a newline character.
+            // If it doesn't, add a newline.  This fixes av.wad.
+
+            if (deh_s[strlen(deh_s) - 1] != '\n')
+            {
+                printf("\n");
+            }
         }
     }
 }
