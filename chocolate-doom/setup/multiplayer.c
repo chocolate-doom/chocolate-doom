@@ -47,6 +47,9 @@ static char *gamemodes[] =
     "Deathmatch 2.0",
 };
 
+char *player_name;
+char *chatmacros[10];
+
 char *wads[NUM_WADS] = {};
 int skill = 0;
 int nomonsters = 0;
@@ -253,5 +256,41 @@ void StartMultiGame(void)
     TXT_AddWidget(window, TXT_NewCheckBox("Fast monsters", &fast));
     TXT_AddWidget(window, TXT_NewCheckBox("Respawning monsters", &respawn));
 
+}
+
+void MultiplayerConfig(void)
+{
+    txt_window_t *window;
+    txt_label_t *label;
+    txt_table_t *table;
+    char buf[10];
+    int i;
+
+    window = TXT_NewWindow("Multiplayer Configuration");
+
+    TXT_AddWidget(window, TXT_NewStrut(0, 1));
+
+    table = TXT_NewTable(2);
+
+    TXT_AddWidget(table, TXT_NewLabel("Player name:  "));
+    TXT_AddWidget(table, TXT_NewInputBox(&player_name, 25));
+
+    TXT_AddWidget(window, table);
+    TXT_AddWidget(window, TXT_NewStrut(0, 1));
+    TXT_AddWidget(window, TXT_NewSeparator("Chat macros"));
+
+    table = TXT_NewTable(2);
+
+    for (i=0; i<10; ++i)
+    {
+        sprintf(buf, "#%i ", i + 1);
+
+        label = TXT_NewLabel(buf);
+        TXT_SetFGColor(label, TXT_COLOR_BRIGHT_CYAN);
+        TXT_AddWidget(table, label);
+        TXT_AddWidget(table, TXT_NewInputBox(&chatmacros[i], 40));
+    }
+    
+    TXT_AddWidget(window, table);
 }
 
