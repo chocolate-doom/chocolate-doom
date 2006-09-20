@@ -69,6 +69,7 @@ extern void ConfigDisplay();
 extern void ConfigKeyboard();
 extern void ConfigMouse();
 extern void StartMultiGame();
+extern void MultiplayerConfig();
 
 void MainMenu(void)
 {
@@ -98,6 +99,10 @@ void MainMenu(void)
     TXT_AddWidget(window, button);
 
     TXT_AddWidget(window, TXT_NewButton("Join a Network game"));
+
+    button = TXT_NewButton("Multiplayer configuration");
+    TXT_SignalConnect(button, "pressed", MultiplayerConfig, NULL);
+    TXT_AddWidget(window, button);
 
     quit_action = TXT_NewWindowAction(KEY_ESCAPE, "Quit");
     TXT_SignalConnect(quit_action, "pressed", QuitConfirm, NULL);
