@@ -90,11 +90,11 @@ void ConfigMouse(void)
 
     TXT_SetColumnWidths(table, 25, 10);
     TXT_AddWidget(table, TXT_NewLabel("Speed"));
-    TXT_AddWidget(table, TXT_NewIntInputBox(&speed, 8));
+    TXT_AddWidget(table, TXT_NewSpinControl(&speed, 1, 256));
     TXT_AddWidget(table, TXT_NewLabel("Acceleration"));
-    TXT_AddWidget(table, TXT_NewIntInputBox(&accel, 8));
+    TXT_AddWidget(table, TXT_NewSpinControl(&accel, 1, 5));
     TXT_AddWidget(table, TXT_NewLabel("Acceleration threshold"));
-    TXT_AddWidget(table, TXT_NewIntInputBox(&threshold, 8));
+    TXT_AddWidget(table, TXT_NewSpinControl(&threshold, 0, 32));
 
     TXT_AddWidget(window, table);
     
