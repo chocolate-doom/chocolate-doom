@@ -20,7 +20,9 @@
 //
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
+#include "src/d_englsh.h"
 #include "textscreen.h"
 
 #define NUM_WADS 10
@@ -255,7 +257,52 @@ void StartMultiGame(void)
     TXT_AddWidget(window, TXT_NewInvertedCheckBox("Monsters", &nomonsters));
     TXT_AddWidget(window, TXT_NewCheckBox("Fast monsters", &fast));
     TXT_AddWidget(window, TXT_NewCheckBox("Respawning monsters", &respawn));
+}
 
+static void SetChatMacroDefaults(void)
+{
+    int i;
+    char *defaults[] = 
+    {
+        HUSTR_CHATMACRO1,
+        HUSTR_CHATMACRO2,
+        HUSTR_CHATMACRO3,
+        HUSTR_CHATMACRO4,
+        HUSTR_CHATMACRO5,
+        HUSTR_CHATMACRO6,
+        HUSTR_CHATMACRO7,
+        HUSTR_CHATMACRO8,
+        HUSTR_CHATMACRO9,
+        HUSTR_CHATMACRO0,
+    };
+    
+    // If the chat macros have not been set, initialise with defaults.
+
+    for (i=0; i<10; ++i)
+    {
+        if (chatmacros[i] == NULL)
+        {
+            chatmacros[i] = strdup(defaults[i]);
+        }
+    }
+}
+
+static void SetPlayerNameDefault(void)
+{
+    if (player_name == NULL)
+    {
+        player_name = getenv("USER");
+    }
+
+    if (player_name == NULL)
+    {
+        player_name = getenv("USERNAME");
+    }
+
+    if (player_name == NULL)
+    {
+        player_name = "player";
+    }
 }
 
 void MultiplayerConfig(void)
@@ -265,6 +312,9 @@ void MultiplayerConfig(void)
     txt_table_t *table;
     char buf[10];
     int i;
+
+    SetChatMacroDefaults();
+    SetPlayerNameDefault();
 
     window = TXT_NewWindow("Multiplayer Configuration");
 
