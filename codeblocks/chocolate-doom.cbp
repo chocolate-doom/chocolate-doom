@@ -15,6 +15,7 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option use_console_runner="0" />
+				<Option parameters="-iwad d:\russell\games\doom2\iwad\doom2.wad" />
 				<Compiler>
 					<Add option="-W" />
 					<Add option="-g" />
@@ -40,6 +41,8 @@
 		</VirtualTargets>
 		<Compiler>
 			<Add option="-DFEATURE_MULTIPLAYER" />
+			<Add option="-DFEATURE_DEHACKED" />
+			<Add option="-DFEATURE_WAD_MERGE" />
 			<Add directory="..\textscreen" />
 			<Add directory="..\msvc" />
 			<Add directory="..\src" />
