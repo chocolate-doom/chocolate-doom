@@ -157,6 +157,8 @@ void Window2(void)
     TXT_AddWidget(table, TXT_NewInputBox(&textbox_value, 30));
     TXT_AddWidget(table, TXT_NewLabel("Int: "));
     TXT_AddWidget(table, TXT_NewIntInputBox(&numbox_value, 10));
+    TXT_AddWidget(table, TXT_NewLabel("Spin control:"));
+    TXT_AddWidget(table, TXT_NewSpinControl(&numbox_value, 0, 15));
 }
 
 int main(int argc, char *argv[])
