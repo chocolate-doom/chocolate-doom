@@ -76,15 +76,15 @@ void FunctionName(int argument, int arg2, int arg3, int arg4, int arg5,
     switch (argument)
     {
         case FIRST:
-	    code;
-	    break;
-	    
-	case SECOND:
-	    code;
-	    break;
-	    
-	default:
-	    break;
+            code;
+            break;
+            
+        case SECOND:
+            code;
+            break;
+            
+        default:
+            break;
     }
 
     for (a=0; a<10; ++a)
