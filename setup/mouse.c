@@ -24,6 +24,8 @@
 
 #include "txt_mouseinput.h"
 
+int use_mouse = 1;
+
 int novert;
 int speed;
 int accel;
@@ -74,6 +76,14 @@ void ConfigMouse(void)
 
     window = TXT_NewWindow("Mouse configuration");
 
+    TXT_AddWidget(window, TXT_NewCheckBox("Enable mouse", &use_mouse));
+
+    TXT_AddWidget(window, 
+                  TXT_NewInvertedCheckBox("Allow vertical mouse movement", 
+                                          &novert));
+    TXT_AddWidget(window, TXT_NewCheckBox("Grab mouse in windowed mode", 
+                                          &grabmouse));
+
     TXT_AddWidget(window, TXT_NewSeparator("Mouse motion"));
 
     table = TXT_NewTable(2);
@@ -98,15 +108,5 @@ void ConfigMouse(void)
     AddMouseControl(table, "Strafe on", &mouseb_strafe);
     
     TXT_AddWidget(window, table);
-
-    TXT_AddWidget(window, TXT_NewSeparator("Misc."));
-
-    TXT_AddWidget(window, 
-                  TXT_NewInvertedCheckBox("Allow vertical mouse movement", 
-                                          &novert));
-    TXT_AddWidget(window, TXT_NewCheckBox("Grab mouse in windowed mode", 
-                                          &grabmouse));
-
-    
 }
 
