@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 596 2006-09-02 19:10:07Z fraggle $
+// $Id: d_main.c 638 2006-09-20 19:04:02Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -184,7 +184,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 596 2006-09-02 19:10:07Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 638 2006-09-20 19:04:02Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -1277,6 +1277,14 @@ void PrintDehackedBanners(void)
         if (deh_s != copyright_banners[i])
         {
             printf("%s", deh_s);
+
+            // Make sure the modified banner always ends in a newline character.
+            // If it doesn't, add a newline.  This fixes av.wad.
+
+            if (deh_s[strlen(deh_s) - 1] != '\n')
+            {
+                printf("\n");
+            }
         }
     }
 }
