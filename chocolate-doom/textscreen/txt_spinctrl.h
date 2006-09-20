@@ -19,26 +19,22 @@
 // 02111-1307, USA.
 //
 
-#ifndef TEXTSCREEN_H
-#define TEXTSCREEN_H
+#ifndef TXT_SPINCONTROL_H
+#define TXT_SPINCONTROL_H
 
-#include "../src/doomkeys.h"
-#include "txt_main.h"
+typedef struct txt_spincontrol_s txt_spincontrol_t;
 
-#include "txt_button.h"
-#include "txt_checkbox.h"
-#include "txt_desktop.h"
-#include "txt_dropdown.h"
-#include "txt_inputbox.h"
-#include "txt_label.h"
-#include "txt_radiobutton.h"
-#include "txt_separator.h"
-#include "txt_spinctrl.h"
-#include "txt_strut.h"
-#include "txt_table.h"
 #include "txt_widget.h"
-#include "txt_window_action.h"
-#include "txt_window.h"
 
-#endif /* #ifndef TEXTSCREEN_H */
+struct txt_spincontrol_s
+{
+    txt_widget_t widget;
+    int min, max;
+    int *value;
+};
+
+txt_spincontrol_t *TXT_NewSpinControl(int *value, int min, int max);
+
+#endif /* #ifndef TXT_SPINCONTROL_H */
+
 
