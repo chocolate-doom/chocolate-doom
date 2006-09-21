@@ -6,9 +6,10 @@ games_PROGRAMS = chocolate-setup
 
 chocolate_setup_LDADD = @LDFLAGS@ @SDL_LIBS@ ../textscreen/libtextscreen.a
 chocolate_setup_SOURCES =                       \
-    mainmenu.c                                  \
-    keyboard.c                                  \
+    compatibility.c                             \
     display.c                                   \
+    keyboard.c                                  \
+    mainmenu.c                                  \
     mouse.c                                     \
     multiplayer.c                               \
     sound.c                                     \
