@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_misc.c 643 2006-09-21 11:48:38Z fraggle $
+// $Id: m_misc.c 649 2006-09-21 21:49:26Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -106,7 +106,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_misc.c 643 2006-09-21 11:48:38Z fraggle $";
+rcsid[] = "$Id: m_misc.c 649 2006-09-21 21:49:26Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -293,8 +293,8 @@ extern int      show_endoom;
 extern int      vanilla_savegame_limit;
 extern int      vanilla_demo_limit;
 
-int snd_musicdevice = 0;
-int snd_sfxdevice = 0;
+extern int snd_musicdevice;
+extern int snd_sfxdevice;
 
 // dos specific options: these are unused but should be maintained
 // so that the config file can be shared between chocolate

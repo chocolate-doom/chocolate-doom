@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_sound.c 606 2006-09-15 23:47:12Z fraggle $
+// $Id: i_sound.c 649 2006-09-21 21:49:26Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -128,7 +128,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_sound.c 606 2006-09-15 23:47:12Z fraggle $";
+rcsid[] = "$Id: i_sound.c 649 2006-09-21 21:49:26Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -183,6 +183,8 @@ static boolean music_initialised = false;
 static Mix_Chunk sound_chunks[NUMSFX];
 static int channels_playing[NUM_CHANNELS];
 
+int snd_musicdevice = SNDDEVICE_SB;
+int snd_sfxdevice = SNDDEVICE_SB;
 
 // When a sound stops, check if it is still playing.  If it is not, 
 // we can mark the sound data as CACHE to be freed back for other
