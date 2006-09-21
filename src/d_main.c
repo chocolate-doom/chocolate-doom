@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 641 2006-09-21 11:13:28Z rtc_marine $
+// $Id: d_main.c 642 2006-09-21 11:47:56Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -184,7 +184,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 641 2006-09-21 11:13:28Z rtc_marine $";
+static const char rcsid[] = "$Id: d_main.c 642 2006-09-21 11:47:56Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -1406,7 +1406,7 @@ static struct
     {"Doom 1.9",             "1.9",        exe_doom_1_9},
     {"Ultimate Doom",        "ultimate",   exe_ultimate},
     {"Final Doom",           "final",      exe_final},
-    {        "\0",              "\0",              0},
+    { NULL,                  NULL,         0},
 };
 
 // Initialise the game version
