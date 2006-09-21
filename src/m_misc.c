@@ -293,8 +293,8 @@ extern int      show_endoom;
 extern int      vanilla_savegame_limit;
 extern int      vanilla_demo_limit;
 
-int snd_musicdevice = 0;
-int snd_sfxdevice = 0;
+extern int snd_musicdevice;
+extern int snd_sfxdevice;
 
 // dos specific options: these are unused but should be maintained
 // so that the config file can be shared between chocolate

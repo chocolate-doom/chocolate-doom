@@ -183,6 +183,8 @@ static boolean music_initialised = false;
 static Mix_Chunk sound_chunks[NUMSFX];
 static int channels_playing[NUM_CHANNELS];
 
+int snd_musicdevice = SNDDEVICE_SB;
+int snd_sfxdevice = SNDDEVICE_SB;
 
 // When a sound stops, check if it is still playing.  If it is not, 
 // we can mark the sound data as CACHE to be freed back for other
