@@ -108,7 +108,7 @@ txt_widget_class_t txt_label_class =
     TXT_LabelDrawer,
     NULL,
     TXT_LabelDestructor,
-    0,
+    NULL,
 };
 
 void TXT_SetLabel(txt_label_t *label, char *value)

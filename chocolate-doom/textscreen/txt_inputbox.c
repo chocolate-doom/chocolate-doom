@@ -235,7 +235,7 @@ txt_widget_class_t txt_inputbox_class =
     TXT_InputBoxKeyPress,
     TXT_InputBoxDestructor,
     TXT_InputBoxMousePress,
-    0,
+    NULL,
 };
 
 txt_widget_class_t txt_int_inputbox_class =
@@ -245,7 +245,7 @@ txt_widget_class_t txt_int_inputbox_class =
     TXT_IntInputBoxKeyPress,
     TXT_InputBoxDestructor,
     TXT_InputBoxMousePress,
-    0,
+    NULL,
 };
 
 static void SetBufferFromValue(txt_inputbox_t *inputbox)
