@@ -22,7 +22,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "src/d_englsh.h"
+#include "d_englsh.h"
 #include "textscreen.h"
 
 #define NUM_WADS 10

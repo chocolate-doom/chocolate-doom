@@ -65,6 +65,8 @@
 		</Build>
 		<VirtualTargets>
 			<Add alias="All" targets="Debug-dyn;Release-dyn;Debug-stc;Release-stc;" />
+			<Add alias="Debug" targets="Debug-dyn;Debug-stc;" />
+			<Add alias="Release" targets="Release-dyn;Release-stc;" />
 		</VirtualTargets>
 		<Compiler>
 			<Add directory="..\src" />
@@ -265,6 +267,22 @@
 			<Option target="Release-dyn" />
 			<Option target="Release-stc" />
 			<Option target="Debug-stc" />
+		</Unit>
+		<Unit filename="..\textscreen\txt_spinctrl.c">
+			<Option compilerVar="CC" />
+			<Option target="Debug-dyn" />
+			<Option target="Release-dyn" />
+			<Option target="Debug-stc" />
+			<Option target="Release-stc" />
+		</Unit>
+		<Unit filename="..\textscreen\txt_spinctrl.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
+			<Option target="Debug-dyn" />
+			<Option target="Release-dyn" />
+			<Option target="Debug-stc" />
+			<Option target="Release-stc" />
 		</Unit>
 		<Unit filename="..\textscreen\txt_strut.c">
 			<Option compilerVar="CC" />
