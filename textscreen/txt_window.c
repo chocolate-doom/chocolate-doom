@@ -191,7 +191,8 @@ static void DrawActionArea(txt_window_t *window)
     }
 }
 
-static void CalcActionAreaSize(txt_window_t *window, int *w, int *h)
+static void CalcActionAreaSize(txt_window_t *window, 
+                               unsigned int *w, unsigned int *h)
 {
     txt_widget_t *widget;
     int i;
@@ -224,8 +225,8 @@ static void CalcActionAreaSize(txt_window_t *window, int *w, int *h)
 void TXT_LayoutWindow(txt_window_t *window)
 {
     txt_widget_t *widgets = (txt_widget_t *) window;
-    int widgets_w;
-    int actionarea_w, actionarea_h;
+    unsigned int widgets_w;
+    unsigned int actionarea_w, actionarea_h;
 
     // Calculate size of table
     

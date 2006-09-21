@@ -59,8 +59,8 @@ static int TableRows(txt_table_t *table)
 }
 
 static void CalcRowColSizes(txt_table_t *table, 
-                            int *row_heights, 
-                            int *col_widths)
+                            unsigned int *row_heights, 
+                            unsigned int *col_widths)
 {
     int x, y;
     int rows;
@@ -98,8 +98,8 @@ static void CalcRowColSizes(txt_table_t *table,
 static void TXT_CalcTableSize(TXT_UNCAST_ARG(table))
 {
     TXT_CAST_ARG(txt_table_t, table);
-    int *column_widths;
-    int *row_heights;
+    unsigned int *column_widths;
+    unsigned int *row_heights;
     int x, y;
     int rows;
 
@@ -400,8 +400,8 @@ static void LayoutCell(txt_table_t *table, int x, int y, int col_width,
 static void TXT_TableLayout(TXT_UNCAST_ARG(table))
 {
     TXT_CAST_ARG(txt_table_t, table);
-    int *column_widths;
-    int *row_heights;
+    unsigned int *column_widths;
+    unsigned int *row_heights;
     int draw_x, draw_y;
     int x, y;
     int i;

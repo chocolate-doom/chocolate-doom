@@ -30,7 +30,7 @@ struct txt_inputbox_s
 {
     txt_widget_t widget;
     char *buffer;
-    int size;
+    unsigned int size;
     int editing;
     void *value;
 };

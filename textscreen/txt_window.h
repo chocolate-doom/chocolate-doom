@@ -65,7 +65,7 @@ struct txt_window_s
     // These are set automatically when the window is drawn
 
     int window_x, window_y;
-    int window_w, window_h;
+    unsigned int window_w, window_h;
 };
 
 txt_window_t *TXT_NewWindow(char *title);
