@@ -47,6 +47,8 @@ static vidmode_t modes[] =
 static int vidmode = 0;
 static int fullscreen = 0;
 static int screenmult = 1;
+static int startup_delay = 0;
+static int show_endoom = 1;
 
 // Given the video settings (fullscreen, screenmult, etc), find the
 // current video mode
@@ -94,6 +96,7 @@ void ConfigDisplay(void)
     TXT_AddWidget(window, TXT_NewSeparator("Windowed modes"));
 
     table = TXT_NewTable(2);
+    TXT_SetColumnWidths(table, 14, 14);
     
     for (i=0; modes[i].fullscreen == 0; ++i)
     {
@@ -107,6 +110,7 @@ void ConfigDisplay(void)
     TXT_AddWidget(window, TXT_NewSeparator("Fullscreen modes"));
 
     table = TXT_NewTable(2);
+    TXT_SetColumnWidths(table, 14, 14);
 
     for (; modes[i].description != NULL; ++i)
     {
@@ -114,6 +118,17 @@ void ConfigDisplay(void)
         TXT_AddWidget(table, rbutton);
         TXT_SignalConnect(rbutton, "selected", ModeSelected, &modes[i]);
     }
+
+    TXT_AddWidget(window, table);
+
+    TXT_AddWidget(window, TXT_NewSeparator("Misc."));
+    TXT_AddWidget(window, TXT_NewCheckBox("Show ENDOOM screen", &show_endoom));
+
+    table = TXT_NewTable(2);
+
+    TXT_SetColumnWidths(table, 22, 5);
+    TXT_AddWidget(table, TXT_NewLabel("Startup delay (ms)"));
+    TXT_AddWidget(table, TXT_NewIntInputBox(&startup_delay, 5));
 
     TXT_AddWidget(window, table);
 }
