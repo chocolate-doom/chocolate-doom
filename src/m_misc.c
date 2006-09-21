@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_misc.c 641 2006-09-21 11:13:28Z rtc_marine $
+// $Id: m_misc.c 643 2006-09-21 11:48:38Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -106,7 +106,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_misc.c 641 2006-09-21 11:13:28Z rtc_marine $";
+rcsid[] = "$Id: m_misc.c 643 2006-09-21 11:48:38Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -330,10 +330,10 @@ typedef struct
 
 static default_t	doom_defaults_list[] =
 {
-    {"mouse_sensitivity", &mouseSensitivity, 0, 0},
-    {"sfx_volume",&sfxVolume, 0, 0},
-    {"music_volume",&musicVolume, 0, 0},
-    {"show_messages",&showMessages, 0, 0},
+    {"mouse_sensitivity", &mouseSensitivity, DEFAULT_INT, 0},
+    {"sfx_volume",&sfxVolume, DEFAULT_INT, 0},
+    {"music_volume",&musicVolume, DEFAULT_INT, 0},
+    {"show_messages",&showMessages, DEFAULT_INT, 0},
 
     {"key_right",&key_right, DEFAULT_KEY, 0},
     {"key_left",&key_left, DEFAULT_KEY, 0},
@@ -347,30 +347,30 @@ static default_t	doom_defaults_list[] =
     {"key_strafe",&key_strafe, DEFAULT_KEY, 0},
     {"key_speed",&key_speed, DEFAULT_KEY, 0},
 
-    {"use_mouse",&usemouse, 0, 0},
-    {"mouseb_fire",&mousebfire, 0, 0},
-    {"mouseb_strafe",&mousebstrafe, 0, 0},
-    {"mouseb_forward",&mousebforward, 0, 0},
+    {"use_mouse",&usemouse, DEFAULT_INT, 0},
+    {"mouseb_fire",&mousebfire, DEFAULT_INT, 0},
+    {"mouseb_strafe",&mousebstrafe, DEFAULT_INT, 0},
+    {"mouseb_forward",&mousebforward, DEFAULT_INT, 0},
 
-    {"use_joystick",&usejoystick, 0, 0},
-    {"joyb_fire",&joybfire, 0, 0},
-    {"joyb_strafe",&joybstrafe, 0, 0},
-    {"joyb_use",&joybuse, 0, 0},
-    {"joyb_speed",&joybspeed, 0, 0},
+    {"use_joystick",&usejoystick, DEFAULT_INT, 0},
+    {"joyb_fire",&joybfire, DEFAULT_INT, 0},
+    {"joyb_strafe",&joybstrafe, DEFAULT_INT, 0},
+    {"joyb_use",&joybuse, DEFAULT_INT, 0},
+    {"joyb_speed",&joybspeed, DEFAULT_INT, 0},
 
-    {"screenblocks",&screenblocks, 0, 0},
-    {"detaillevel",&detailLevel, 0, 0},
+    {"screenblocks",&screenblocks, DEFAULT_INT, 0},
+    {"detaillevel",&detailLevel, DEFAULT_INT, 0},
 
-    {"snd_channels",&numChannels, 0, 0},
+    {"snd_channels",&numChannels, DEFAULT_INT, 0},
 
-    {"snd_musicdevice", &snd_musicdevice, 0, 0},
-    {"snd_sfxdevice", &snd_sfxdevice, 0, 0},
-    {"snd_sbport", &snd_sbport, 0, 0},
-    {"snd_sbirq", &snd_sbirq, 0, 0},
-    {"snd_sbdma", &snd_sbdma, 0, 0},
-    {"snd_mport", &snd_mport, 0, 0},
+    {"snd_musicdevice", &snd_musicdevice, DEFAULT_INT, 0},
+    {"snd_sfxdevice", &snd_sfxdevice, DEFAULT_INT, 0},
+    {"snd_sbport", &snd_sbport, DEFAULT_INT, 0},
+    {"snd_sbirq", &snd_sbirq, DEFAULT_INT, 0},
+    {"snd_sbdma", &snd_sbdma, DEFAULT_INT, 0},
+    {"snd_mport", &snd_mport, DEFAULT_INT, 0},
 
-    {"usegamma",&usegamma, 0, 0},
+    {"usegamma", &usegamma, DEFAULT_INT, 0},
 
     {"chatmacro0", &chat_macros[0], DEFAULT_STRING, 0 },
     {"chatmacro1", &chat_macros[1], DEFAULT_STRING, 0 },
@@ -388,7 +388,7 @@ static default_collection_t doom_defaults =
 {
     doom_defaults_list,
     sizeof(doom_defaults_list) / sizeof(*doom_defaults_list),
-    "\0",
+    NULL,
 };
 
 static default_t extra_defaults_list[] = 
@@ -413,7 +413,7 @@ static default_collection_t extra_defaults =
 {
     extra_defaults_list,
     sizeof(extra_defaults_list) / sizeof(*extra_defaults_list),
-    "\0",
+    NULL,
 };
 
 static int scantokey[128] =
