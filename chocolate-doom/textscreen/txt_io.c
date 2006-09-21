@@ -59,7 +59,7 @@ static txt_color_t bgcolor = TXT_COLOR_BLACK;
 
 static int GetColorForName(char *s)
 {
-    int i;
+    size_t i;
 
     for (i=0; i<sizeof(colors) / sizeof(*colors); ++i)
     {

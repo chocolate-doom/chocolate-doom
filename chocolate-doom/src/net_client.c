@@ -596,7 +596,7 @@ static void NET_CL_ParseWaitingData(net_packet_t *packet)
     unsigned int player_number;
     char *player_names[MAXPLAYERS];
     char *player_addr[MAXPLAYERS];
-    int i;
+    size_t i;
 
     if (!NET_ReadInt8(packet, &num_players)
      || !NET_ReadInt8(packet, &is_controller)
@@ -804,7 +804,7 @@ static void NET_CL_ParseGameData(net_packet_t *packet)
     unsigned int seq, num_tics;
     unsigned int nowtime;
     int resend_start, resend_end;
-    int i;
+    size_t i;
     int index;
     
     // Read header

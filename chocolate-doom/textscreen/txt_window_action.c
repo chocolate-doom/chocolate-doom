@@ -98,6 +98,7 @@ txt_widget_class_t txt_window_action_class =
     TXT_WindowActionKeyPress,
     TXT_WindowActionDestructor,
     TXT_WindowActionMousePress,
+    0,
 };
 
 txt_window_action_t *TXT_NewWindowAction(int key, char *label)

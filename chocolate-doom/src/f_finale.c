@@ -132,7 +132,7 @@ void	F_CastDrawer (void);
 //
 void F_StartFinale (void)
 {
-    int i;
+    size_t i;
 
     gameaction = ga_nothing;
     gamestate = GS_FINALE;
@@ -189,7 +189,7 @@ boolean F_Responder (event_t *event)
 //
 void F_Ticker (void)
 {
-    int		i;
+    size_t		i;
     
     // check for skipping
     if ( (gamemode == commercial)

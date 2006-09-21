@@ -122,6 +122,7 @@ txt_widget_class_t txt_checkbox_class =
     TXT_CheckBoxKeyPress,
     TXT_CheckBoxDestructor,
     TXT_CheckBoxMousePress,
+    0,
 };
 
 txt_checkbox_t *TXT_NewCheckBox(char *label, int *variable)

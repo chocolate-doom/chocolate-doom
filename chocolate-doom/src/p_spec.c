@@ -148,7 +148,7 @@ animdef_t		animdefs[] =
     {true,	"WFALL4",	"WFALL1",	8},
     {true,	"DBRAIN4",	"DBRAIN1",	8},
 	
-    {-1}
+    {  -1,       "\0",       "\0",  0}
 };
 
 anim_t		anims[MAXANIMS];

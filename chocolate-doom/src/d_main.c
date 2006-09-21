@@ -788,7 +788,7 @@ struct
 
 static char *SearchDirectoryForIWAD(char *dir)
 {
-    int i;
+    size_t i;
 
     for (i=0; i<sizeof(iwads) / sizeof(*iwads); ++i) 
     {
@@ -819,7 +819,7 @@ static char *SearchDirectoryForIWAD(char *dir)
 
 static void IdentifyIWADByName(char *name)
 {
-    int i;
+    size_t i;
 
     gamemission = none;
     
@@ -952,7 +952,7 @@ static char *copyright_banners[] =
 
 static char *GetGameName(char *gamename)
 {
-    int i;
+    size_t i;
     char *deh_sub;
     
     for (i=0; i<sizeof(banners) / sizeof(*banners); ++i)
@@ -1266,7 +1266,7 @@ void PrintBanner(char *msg)
 
 void PrintDehackedBanners(void)
 {
-    int i;
+    size_t i;
 
     for (i=0; i<sizeof(copyright_banners) / sizeof(char *); ++i)
     {
@@ -1354,7 +1354,7 @@ static void SetConfigDir(void)
 
 static void SetSaveGameDir(void)
 {
-    int i;
+    size_t i;
 
     if (!strcmp(configdir, ""))
     {
@@ -1406,7 +1406,7 @@ static struct
     {"Doom 1.9",             "1.9",        exe_doom_1_9},
     {"Ultimate Doom",        "ultimate",   exe_ultimate},
     {"Final Doom",           "final",      exe_final},
-    {NULL},
+    {        "\0",              "\0",              0},
 };
 
 // Initialise the game version
