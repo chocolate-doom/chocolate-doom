@@ -420,7 +420,7 @@ int TXT_ScreenHasBlinkingChars(void)
 
 void TXT_Sleep(int timeout)
 {
-    int start_time;
+    unsigned int start_time;
 
     if (TXT_ScreenHasBlinkingChars())
     {

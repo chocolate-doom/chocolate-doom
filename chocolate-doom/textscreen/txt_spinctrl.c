@@ -73,7 +73,7 @@ static void TXT_SpinControlDrawer(TXT_UNCAST_ARG(spincontrol), int selected)
 {
     TXT_CAST_ARG(txt_spincontrol_t, spincontrol);
     char buf[20];
-    int i;
+    unsigned int i;
 
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
     TXT_BGColor(TXT_COLOR_BLUE, 0);
@@ -143,7 +143,7 @@ static void TXT_SpinControlMousePress(TXT_UNCAST_ARG(spincontrol),
                                    int x, int y, int b)
 {
     TXT_CAST_ARG(txt_spincontrol_t, spincontrol);
-    int rel_x;
+    unsigned int rel_x;
 
     rel_x = x - spincontrol->widget.x;
 

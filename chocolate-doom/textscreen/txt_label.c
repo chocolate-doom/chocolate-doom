@@ -39,10 +39,10 @@ static void TXT_LabelSizeCalc(TXT_UNCAST_ARG(label))
 static void TXT_LabelDrawer(TXT_UNCAST_ARG(label), int selected)
 {
     TXT_CAST_ARG(txt_label_t, label);
-    int x, y;
+    unsigned int x, y;
     int origin_x, origin_y;
-    int align_indent = 0;
-    int w;
+    unsigned int align_indent = 0;
+    unsigned int w;
 
     w = label->widget.w;
 
@@ -109,12 +109,13 @@ txt_widget_class_t txt_label_class =
     NULL,
     TXT_LabelDestructor,
     NULL,
+    NULL,
 };
 
 void TXT_SetLabel(txt_label_t *label, char *value)
 {
     char *p;
-    int y;
+    unsigned int y;
 
     // Free back the old label
 

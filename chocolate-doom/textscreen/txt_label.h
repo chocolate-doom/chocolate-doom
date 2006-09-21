@@ -32,7 +32,7 @@ struct txt_label_s
     txt_widget_t widget;
     char *label;
     char **lines;
-    int w, h;
+    unsigned int w, h;
     txt_color_t fgcolor;
     txt_color_t bgcolor;
 };
