@@ -164,7 +164,7 @@ txt_widget_class_t txt_spincontrol_class =
     TXT_SpinControlKeyPress,
     TXT_SpinControlDestructor,
     TXT_SpinControlMousePress,
-    0,
+    NULL,
 };
 
 txt_spincontrol_t *TXT_NewSpinControl(int *value, int min, int max)
