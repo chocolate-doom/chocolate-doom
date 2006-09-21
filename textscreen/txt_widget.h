@@ -76,7 +76,7 @@ struct txt_widget_s
     // not be set manually.
 
     int x, y;
-    int w, h;
+    unsigned int w, h;
 };
 
 void TXT_InitWidget(TXT_UNCAST_ARG(widget), txt_widget_class_t *widget_class);

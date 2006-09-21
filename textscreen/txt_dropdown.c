@@ -190,7 +190,7 @@ static void TXT_DropdownListSizeCalc(TXT_UNCAST_ARG(list))
 static void TXT_DropdownListDrawer(TXT_UNCAST_ARG(list), int selected)
 {
     TXT_CAST_ARG(txt_dropdown_list_t, list);
-    int i;
+    unsigned int i;
     char *str;
 
     // Set bg/fg text colors.
