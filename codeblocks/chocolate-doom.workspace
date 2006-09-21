@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_workspace_file>
-	<Workspace title="Workspace">
+	<Workspace title="chocolate-doom">
 		<Project filename="chocolate-doom.cbp" />
 		<Project filename="chocolate-server.cbp" />
-		<Project filename="textscreen.cbp" active="1" />
-		<Project filename="chocolate-setup.cbp" />
+		<Project filename="textscreen.cbp" />
+		<Project filename="chocolate-setup.cbp" active="1" />
 	</Workspace>
 </CodeBlocks_workspace_file>
