@@ -265,6 +265,7 @@ txt_widget_class_t txt_dropdown_list_class =
     TXT_DropdownListKeyPress,
     TXT_DropdownListDestructor,
     TXT_DropdownListMousePress,
+    0,
 };
 
 txt_dropdown_list_t *TXT_NewDropdownList(int *variable, char **values, 

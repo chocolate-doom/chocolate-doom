@@ -79,7 +79,7 @@ static deh_cheat_t allcheats[] =
 
 static deh_cheat_t *FindCheatByName(char *name)
 {
-    int i;
+    size_t i;
     
     for (i=0; i<sizeof(allcheats) / sizeof(*allcheats); ++i)
     {

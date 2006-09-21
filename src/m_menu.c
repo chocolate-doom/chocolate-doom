@@ -408,9 +408,9 @@ menuitem_t OptionsMenu[]=
     {1,"M_MESSG",	M_ChangeMessages,'m'},
     {1,"M_DETAIL",	M_ChangeDetail,'g'},
     {2,"M_SCRNSZ",	M_SizeDisplay,'s'},
-    {-1,"",0},
+    {-1,"",0,'\0'},
     {2,"M_MSENS",	M_ChangeSensitivity,'m'},
-    {-1,"",0},
+    {-1,"",0,'\0'},
     {1,"M_SVOL",	M_Sound,'s'}
 };
 
@@ -484,9 +484,9 @@ enum
 menuitem_t SoundMenu[]=
 {
     {2,"M_SFXVOL",M_SfxVol,'s'},
-    {-1,"",0},
+    {-1,"",0,'\0'},
     {2,"M_MUSVOL",M_MusicVol,'m'},
-    {-1,"",0}
+    {-1,"",0,'\0'}
 };
 
 menu_t  SoundDef =
@@ -1356,7 +1356,7 @@ void M_StopMessage(void)
 //
 int M_StringWidth(char* string)
 {
-    int             i;
+    size_t             i;
     int             w = 0;
     int             c;
 	
@@ -1379,7 +1379,7 @@ int M_StringWidth(char* string)
 //
 int M_StringHeight(char* string)
 {
-    int             i;
+    size_t             i;
     int             h;
     int             height = SHORT(hu_font[0]->height);
 	
