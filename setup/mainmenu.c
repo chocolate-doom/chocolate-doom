@@ -69,6 +69,7 @@ extern void ConfigDisplay();
 extern void ConfigKeyboard();
 extern void ConfigMouse();
 extern void ConfigSound();
+extern void CompatibilitySettings();
 extern void StartMultiGame();
 extern void MultiplayerConfig();
 
@@ -95,6 +96,10 @@ void MainMenu(void)
     button = TXT_NewButton("Configure sound");
     TXT_AddWidget(window, button);
     TXT_SignalConnect(button, "pressed", ConfigSound, NULL);
+
+    button = TXT_NewButton("Compatibility");
+    TXT_AddWidget(window, button);
+    TXT_SignalConnect(button, "pressed", CompatibilitySettings, NULL);
 
     TXT_AddWidget(window, TXT_NewButton("Save parameters and launch DOOM"));
     TXT_AddWidget(window, TXT_NewStrut(0, 1));
