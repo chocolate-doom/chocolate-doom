@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_spec.c 475 2006-05-05 19:49:34Z fraggle $
+// $Id: p_spec.c 641 2006-09-21 11:13:28Z rtc_marine $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -45,7 +45,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_spec.c 475 2006-05-05 19:49:34Z fraggle $";
+rcsid[] = "$Id: p_spec.c 641 2006-09-21 11:13:28Z rtc_marine $";
 
 #include <stdlib.h>
 
@@ -148,7 +148,7 @@ animdef_t		animdefs[] =
     {true,	"WFALL4",	"WFALL1",	8},
     {true,	"DBRAIN4",	"DBRAIN1",	8},
 	
-    {-1}
+    {  -1,       "\0",       "\0",  0}
 };
 
 anim_t		anims[MAXANIMS];

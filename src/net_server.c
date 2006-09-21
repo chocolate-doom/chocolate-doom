@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 612 2006-09-17 20:37:26Z fraggle $
+// $Id: net_server.c 641 2006-09-21 11:13:28Z rtc_marine $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -869,7 +869,7 @@ static void NET_SV_ParseGameData(net_packet_t *packet, net_client_t *client)
     unsigned int seq;
     unsigned int num_tics;
     unsigned int nowtime;
-    int i;
+    size_t i;
     int player;
     int resend_start, resend_end;
     int index;
@@ -1020,7 +1020,7 @@ static void NET_SV_ParseResendRequest(net_packet_t *packet, net_client_t *client
 {
     unsigned int start, last;
     unsigned int num_tics;
-    int i;
+    unsigned int i;
 
     // Read the starting tic and number of tics
 

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_main.c 595 2006-09-02 19:02:11Z fraggle $
+// $Id: deh_main.c 641 2006-09-21 11:13:28Z rtc_marine $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -220,7 +220,7 @@ boolean DEH_ParseAssignment(char *line, char **variable_name, char **value)
 
 static boolean CheckSignatures(deh_context_t *context)
 {
-    int i;
+    size_t i;
     char *line;
     
     // Read the first line

@@ -86,6 +86,7 @@ txt_widget_class_t txt_separator_class =
     TXT_SeparatorDrawer,
     NULL,
     TXT_SeparatorDestructor,
+    0,
 };
 
 txt_separator_t *TXT_NewSeparator(char *label)

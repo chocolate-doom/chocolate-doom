@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_misc.c 608 2006-09-16 00:20:09Z fraggle $
+// $Id: m_misc.c 641 2006-09-21 11:13:28Z rtc_marine $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -106,7 +106,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_misc.c 608 2006-09-16 00:20:09Z fraggle $";
+rcsid[] = "$Id: m_misc.c 641 2006-09-21 11:13:28Z rtc_marine $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -330,81 +330,82 @@ typedef struct
 
 static default_t	doom_defaults_list[] =
 {
-    {"mouse_sensitivity", &mouseSensitivity},
-    {"sfx_volume",&sfxVolume},
-    {"music_volume",&musicVolume},
-    {"show_messages",&showMessages},
+    {"mouse_sensitivity", &mouseSensitivity, 0, 0},
+    {"sfx_volume",&sfxVolume, 0, 0},
+    {"music_volume",&musicVolume, 0, 0},
+    {"show_messages",&showMessages, 0, 0},
 
-    {"key_right",&key_right, DEFAULT_KEY},
-    {"key_left",&key_left, DEFAULT_KEY},
-    {"key_up",&key_up, DEFAULT_KEY},
-    {"key_down",&key_down, DEFAULT_KEY},
-    {"key_strafeleft",&key_strafeleft, DEFAULT_KEY},
-    {"key_straferight",&key_straferight, DEFAULT_KEY},
+    {"key_right",&key_right, DEFAULT_KEY, 0},
+    {"key_left",&key_left, DEFAULT_KEY, 0},
+    {"key_up",&key_up, DEFAULT_KEY, 0},
+    {"key_down",&key_down, DEFAULT_KEY, 0},
+    {"key_strafeleft",&key_strafeleft, DEFAULT_KEY, 0},
+    {"key_straferight",&key_straferight, DEFAULT_KEY, 0},
 
-    {"key_fire",&key_fire, DEFAULT_KEY},
-    {"key_use",&key_use, DEFAULT_KEY},
-    {"key_strafe",&key_strafe, DEFAULT_KEY},
-    {"key_speed",&key_speed, DEFAULT_KEY},
+    {"key_fire",&key_fire, DEFAULT_KEY, 0},
+    {"key_use",&key_use, DEFAULT_KEY, 0},
+    {"key_strafe",&key_strafe, DEFAULT_KEY, 0},
+    {"key_speed",&key_speed, DEFAULT_KEY, 0},
 
-    {"use_mouse",&usemouse},
-    {"mouseb_fire",&mousebfire},
-    {"mouseb_strafe",&mousebstrafe},
-    {"mouseb_forward",&mousebforward},
+    {"use_mouse",&usemouse, 0, 0},
+    {"mouseb_fire",&mousebfire, 0, 0},
+    {"mouseb_strafe",&mousebstrafe, 0, 0},
+    {"mouseb_forward",&mousebforward, 0, 0},
 
-    {"use_joystick",&usejoystick},
-    {"joyb_fire",&joybfire},
-    {"joyb_strafe",&joybstrafe},
-    {"joyb_use",&joybuse},
-    {"joyb_speed",&joybspeed},
+    {"use_joystick",&usejoystick, 0, 0},
+    {"joyb_fire",&joybfire, 0, 0},
+    {"joyb_strafe",&joybstrafe, 0, 0},
+    {"joyb_use",&joybuse, 0, 0},
+    {"joyb_speed",&joybspeed, 0, 0},
 
-    {"screenblocks",&screenblocks},
-    {"detaillevel",&detailLevel},
+    {"screenblocks",&screenblocks, 0, 0},
+    {"detaillevel",&detailLevel, 0, 0},
 
-    {"snd_channels",&numChannels},
+    {"snd_channels",&numChannels, 0, 0},
 
-    {"snd_musicdevice", &snd_musicdevice},
-    {"snd_sfxdevice", &snd_sfxdevice},
-    {"snd_sbport", &snd_sbport},
-    {"snd_sbirq", &snd_sbirq},
-    {"snd_sbdma", &snd_sbdma},
-    {"snd_mport", &snd_mport},
+    {"snd_musicdevice", &snd_musicdevice, 0, 0},
+    {"snd_sfxdevice", &snd_sfxdevice, 0, 0},
+    {"snd_sbport", &snd_sbport, 0, 0},
+    {"snd_sbirq", &snd_sbirq, 0, 0},
+    {"snd_sbdma", &snd_sbdma, 0, 0},
+    {"snd_mport", &snd_mport, 0, 0},
 
-    {"usegamma",&usegamma},
+    {"usegamma",&usegamma, 0, 0},
 
-    {"chatmacro0", &chat_macros[0], DEFAULT_STRING },
-    {"chatmacro1", &chat_macros[1], DEFAULT_STRING },
-    {"chatmacro2", &chat_macros[2], DEFAULT_STRING },
-    {"chatmacro3", &chat_macros[3], DEFAULT_STRING },
-    {"chatmacro4", &chat_macros[4], DEFAULT_STRING },
-    {"chatmacro5", &chat_macros[5], DEFAULT_STRING },
-    {"chatmacro6", &chat_macros[6], DEFAULT_STRING },
-    {"chatmacro7", &chat_macros[7], DEFAULT_STRING },
-    {"chatmacro8", &chat_macros[8], DEFAULT_STRING },
-    {"chatmacro9", &chat_macros[9], DEFAULT_STRING },
+    {"chatmacro0", &chat_macros[0], DEFAULT_STRING, 0 },
+    {"chatmacro1", &chat_macros[1], DEFAULT_STRING, 0 },
+    {"chatmacro2", &chat_macros[2], DEFAULT_STRING, 0 },
+    {"chatmacro3", &chat_macros[3], DEFAULT_STRING, 0 },
+    {"chatmacro4", &chat_macros[4], DEFAULT_STRING, 0 },
+    {"chatmacro5", &chat_macros[5], DEFAULT_STRING, 0 },
+    {"chatmacro6", &chat_macros[6], DEFAULT_STRING, 0 },
+    {"chatmacro7", &chat_macros[7], DEFAULT_STRING, 0 },
+    {"chatmacro8", &chat_macros[8], DEFAULT_STRING, 0 },
+    {"chatmacro9", &chat_macros[9], DEFAULT_STRING, 0 },
 };
 
 static default_collection_t doom_defaults = 
 {
     doom_defaults_list,
     sizeof(doom_defaults_list) / sizeof(*doom_defaults_list),
+    "\0",
 };
 
 static default_t extra_defaults_list[] = 
 {
-    {"autoadjust_video_settings",   &autoadjust_video_settings},
-    {"fullscreen",                  &fullscreen},
-    {"startup_delay",               &startup_delay},
-    {"screenmultiply",              &screenmultiply},
-    {"grabmouse",                   &grabmouse},
-    {"novert",                      &novert},
-    {"mouse_acceleration",          &mouse_acceleration,       DEFAULT_FLOAT},
-    {"mouse_threshold",             &mouse_threshold},
-    {"show_endoom",                 &show_endoom},
-    {"vanilla_savegame_limit",      &vanilla_savegame_limit},
-    {"vanilla_demo_limit",          &vanilla_demo_limit},
+    {"autoadjust_video_settings",   &autoadjust_video_settings, 0, 0},
+    {"fullscreen",                  &fullscreen, 0, 0},
+    {"startup_delay",               &startup_delay, 0, 0},
+    {"screenmultiply",              &screenmultiply, 0, 0},
+    {"grabmouse",                   &grabmouse, 0, 0},
+    {"novert",                      &novert, 0, 0},
+    {"mouse_acceleration",          &mouse_acceleration,       DEFAULT_FLOAT, 0},
+    {"mouse_threshold",             &mouse_threshold, 0, 0},
+    {"show_endoom",                 &show_endoom, 0, 0},
+    {"vanilla_savegame_limit",      &vanilla_savegame_limit, 0, 0},
+    {"vanilla_demo_limit",          &vanilla_demo_limit, 0, 0},
 #ifdef FEATURE_MULTIPLAYER
-    {"player_name",                 &net_player_name,          DEFAULT_STRING},
+    {"player_name",                 &net_player_name,          DEFAULT_STRING, 0},
 #endif
 };
 
@@ -412,6 +413,7 @@ static default_collection_t extra_defaults =
 {
     extra_defaults_list,
     sizeof(extra_defaults_list) / sizeof(*extra_defaults_list),
+    "\0",
 };
 
 static int scantokey[128] =

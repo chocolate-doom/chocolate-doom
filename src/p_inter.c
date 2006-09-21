@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_inter.c 282 2006-01-12 00:21:29Z fraggle $
+// $Id: p_inter.c 641 2006-09-21 11:13:28Z rtc_marine $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -53,7 +53,7 @@
 
 
 static const char
-rcsid[] = "$Id: p_inter.c 282 2006-01-12 00:21:29Z fraggle $";
+rcsid[] = "$Id: p_inter.c 641 2006-09-21 11:13:28Z rtc_marine $";
 
 
 // Data.
@@ -110,7 +110,7 @@ P_GiveAmmo
     if (ammo == am_noammo)
 	return false;
 		
-    if (ammo < 0 || ammo > NUMAMMO)
+    if (ammo > NUMAMMO)
 	I_Error ("P_GiveAmmo: bad type %i", ammo);
 		
     if ( player->ammo[ammo] == player->maxammo[ammo]  )

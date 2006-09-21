@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_cheat.c 417 2006-03-11 21:34:19Z fraggle $
+// $Id: deh_cheat.c 641 2006-09-21 11:13:28Z rtc_marine $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -79,7 +79,7 @@ static deh_cheat_t allcheats[] =
 
 static deh_cheat_t *FindCheatByName(char *name)
 {
-    int i;
+    size_t i;
     
     for (i=0; i<sizeof(allcheats) / sizeof(*allcheats); ++i)
     {

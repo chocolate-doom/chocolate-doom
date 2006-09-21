@@ -101,6 +101,7 @@ txt_widget_class_t txt_button_class =
     TXT_ButtonKeyPress,
     TXT_ButtonDestructor,
     TXT_ButtonMousePress,
+    0,
 };
 
 void TXT_SetButtonLabel(txt_button_t *button, char *label)

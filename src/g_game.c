@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: g_game.c 581 2006-08-31 18:13:04Z fraggle $
+// $Id: g_game.c 641 2006-09-21 11:13:28Z rtc_marine $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -134,7 +134,7 @@
 
 
 static const char
-rcsid[] = "$Id: g_game.c 581 2006-08-31 18:13:04Z fraggle $";
+rcsid[] = "$Id: g_game.c 641 2006-09-21 11:13:28Z rtc_marine $";
 
 #include <string.h>
 #include <stdlib.h>
@@ -348,7 +348,7 @@ int             vanilla_demo_limit = 1;
  
 int G_CmdChecksum (ticcmd_t* cmd) 
 { 
-    int		i;
+    size_t		i;
     int		sum = 0; 
 	 
     for (i=0 ; i< sizeof(*cmd)/4 - 1 ; i++) 

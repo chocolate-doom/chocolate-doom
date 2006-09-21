@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 638 2006-09-20 19:04:02Z fraggle $
+// $Id: d_main.c 641 2006-09-21 11:13:28Z rtc_marine $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -184,7 +184,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 638 2006-09-20 19:04:02Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 641 2006-09-21 11:13:28Z rtc_marine $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -788,7 +788,7 @@ struct
 
 static char *SearchDirectoryForIWAD(char *dir)
 {
-    int i;
+    size_t i;
 
     for (i=0; i<sizeof(iwads) / sizeof(*iwads); ++i) 
     {
@@ -819,7 +819,7 @@ static char *SearchDirectoryForIWAD(char *dir)
 
 static void IdentifyIWADByName(char *name)
 {
-    int i;
+    size_t i;
 
     gamemission = none;
     
@@ -952,7 +952,7 @@ static char *copyright_banners[] =
 
 static char *GetGameName(char *gamename)
 {
-    int i;
+    size_t i;
     char *deh_sub;
     
     for (i=0; i<sizeof(banners) / sizeof(*banners); ++i)
@@ -1266,7 +1266,7 @@ void PrintBanner(char *msg)
 
 void PrintDehackedBanners(void)
 {
-    int i;
+    size_t i;
 
     for (i=0; i<sizeof(copyright_banners) / sizeof(char *); ++i)
     {
@@ -1354,7 +1354,7 @@ static void SetConfigDir(void)
 
 static void SetSaveGameDir(void)
 {
-    int i;
+    size_t i;
 
     if (!strcmp(configdir, ""))
     {
@@ -1406,7 +1406,7 @@ static struct
     {"Doom 1.9",             "1.9",        exe_doom_1_9},
     {"Ultimate Doom",        "ultimate",   exe_ultimate},
     {"Final Doom",           "final",      exe_final},
-    {NULL},
+    {        "\0",              "\0",              0},
 };
 
 // Initialise the game version

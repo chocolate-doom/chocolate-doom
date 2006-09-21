@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_misc.c 442 2006-03-25 20:08:58Z fraggle $
+// $Id: deh_misc.c 641 2006-09-21 11:13:28Z rtc_marine $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -208,7 +208,7 @@ static void DEH_MiscParseLine(deh_context_t *context, char *line, void *tag)
 {
     char *variable_name, *value;
     int ivalue;
-    int i;
+    size_t i;
 
     if (!DEH_ParseAssignment(line, &variable_name, &value))
     {

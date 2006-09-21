@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: f_finale.c 330 2006-01-23 00:07:56Z fraggle $
+// $Id: f_finale.c 641 2006-09-21 11:13:28Z rtc_marine $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -48,7 +48,7 @@
 
 
 static const char
-rcsid[] = "$Id: f_finale.c 330 2006-01-23 00:07:56Z fraggle $";
+rcsid[] = "$Id: f_finale.c 641 2006-09-21 11:13:28Z rtc_marine $";
 
 #include <ctype.h>
 
@@ -132,7 +132,7 @@ void	F_CastDrawer (void);
 //
 void F_StartFinale (void)
 {
-    int i;
+    size_t i;
 
     gameaction = ga_nothing;
     gamestate = GS_FINALE;
@@ -189,7 +189,7 @@ boolean F_Responder (event_t *event)
 //
 void F_Ticker (void)
 {
-    int		i;
+    size_t		i;
     
     // check for skipping
     if ( (gamemode == commercial)

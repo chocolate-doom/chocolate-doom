@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: am_map.c 162 2005-10-04 21:41:42Z fraggle $
+// $Id: am_map.c 641 2006-09-21 11:13:28Z rtc_marine $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -49,7 +49,7 @@
 //
 //-----------------------------------------------------------------------------
 
-static const char rcsid[] = "$Id: am_map.c 162 2005-10-04 21:41:42Z fraggle $";
+static const char rcsid[] = "$Id: am_map.c 641 2006-09-21 11:13:28Z rtc_marine $";
 
 #include <stdio.h>
 
@@ -486,7 +486,7 @@ void AM_changeWindowLoc(void)
 void AM_initVariables(void)
 {
     int pnum;
-    static event_t st_notify = { ev_keyup, AM_MSGENTERED };
+    static event_t st_notify = { ev_keyup, AM_MSGENTERED, 0, 0 };
 
     automapactive = true;
     fb = screens[0];
@@ -587,7 +587,7 @@ void AM_LevelInit(void)
 //
 void AM_Stop (void)
 {
-    static event_t st_notify = { 0, ev_keyup, AM_MSGEXITED };
+    static event_t st_notify = { 0, ev_keyup, AM_MSGEXITED, 0 };
 
     AM_unloadPics();
     automapactive = false;
