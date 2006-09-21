@@ -1406,7 +1406,7 @@ static struct
     {"Doom 1.9",             "1.9",        exe_doom_1_9},
     {"Ultimate Doom",        "ultimate",   exe_ultimate},
     {"Final Doom",           "final",      exe_final},
-    {        "\0",              "\0",              0},
+    { NULL,                  NULL,         0},
 };
 
 // Initialise the game version
