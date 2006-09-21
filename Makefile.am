@@ -14,6 +14,8 @@ CODEBLOCKS_FILES=                              \
         codeblocks/chocolate-doom.cbp          \
         codeblocks/chocolate-doom.workspace    \
         codeblocks/chocolate-server.cbp        \
+        codeblocks/chocolate-setup.cbp        \
+        codeblocks/chocolate-doom-res.rc       \
         codeblocks/textscreen.cbp
 
 EXTRA_DIST=                             \
