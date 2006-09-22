@@ -867,7 +867,7 @@ void M_DrawReadThis2(void)
     // We only ever draw the second page if this is 
     // gameversion == exe_doom_1_9 and gamemode == registered
 
-    V_DrawPatchDirect(0, 0, 0, W_CacheLumpName("HELP1", PU_CACHE));
+    V_DrawPatchDirect(0, 0, 0, W_CacheLumpName(DEH_String("HELP1"), PU_CACHE));
 }
 
 
@@ -1701,7 +1701,7 @@ boolean M_Responder (event_t* ev)
 	    if (usegamma > 4)
 		usegamma = 0;
 	    players[consoleplayer].message = DEH_String(gammamsg[usegamma]);
-            I_SetPalette (W_CacheLumpName ("PLAYPAL",PU_CACHE));
+            I_SetPalette (W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE));
 	    return true;
 				
 	}
@@ -1846,6 +1846,7 @@ void M_Drawer (void)
     short		i;
     short		max;
     char		string[40];
+    char               *name;
     int			start;
 
     inhelpscreens = false;
@@ -1896,13 +1897,11 @@ void M_Drawer (void)
 
     for (i=0;i<max;i++)
     {
-	if (currentMenu->menuitems[i].name[0])
+        name = DEH_String(currentMenu->menuitems[i].name);
+
+	if (name[0])
 	{
-	    char *lumpname;
-
-	    lumpname = DEH_String(currentMenu->menuitems[i].name);
-
-	    V_DrawPatchDirect (x,y,0, W_CacheLumpName(lumpname, PU_CACHE));
+	    V_DrawPatchDirect (x,y,0, W_CacheLumpName(name, PU_CACHE));
 	}
 	y += LINEHEIGHT;
     }

@@ -148,7 +148,7 @@ animdef_t		animdefs[] =
     {true,	"WFALL4",	"WFALL1",	8},
     {true,	"DBRAIN4",	"DBRAIN1",	8},
 	
-    {  -1,       NULL,          NULL,           0},
+    {-1,        "",             "",             0},
 };
 
 anim_t		anims[MAXANIMS];
@@ -190,7 +190,7 @@ void P_InitPicAnims (void)
 	}
 	else
 	{
-	    if (W_CheckNumForName(animdefs[i].startname) == -1)
+	    if (W_CheckNumForName(startname) == -1)
 		continue;
 
 	    lastanim->picnum = R_FlatNumForName(endname);
@@ -1267,7 +1267,7 @@ void P_SpawnSpecials (void)
     int		episode;
 
     episode = 1;
-    if (W_CheckNumForName("texture2") >= 0)
+    if (W_CheckNumForName(DEH_String("texture2")) >= 0)
 	episode = 2;
 
     

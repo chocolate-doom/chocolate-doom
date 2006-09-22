@@ -40,6 +40,7 @@ rcsid[] = "$Id$";
 
 #include <ctype.h>
 
+#include "deh_main.h"
 #include "doomdef.h"
 
 #include "z_zone.h"
@@ -70,7 +71,7 @@ patch_t*		sttminus;
 
 void STlib_init(void)
 {
-    sttminus = (patch_t *) W_CacheLumpName("STTMINUS", PU_STATIC);
+    sttminus = (patch_t *) W_CacheLumpName(DEH_String("STTMINUS"), PU_STATIC);
 }
 
 
