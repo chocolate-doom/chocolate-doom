@@ -37,43 +37,49 @@
 
 static int IntWidth(int val)
 {
-    if (val < 0)
+    char buf[15];
+
+    sprintf(buf, "%i", val);
+
+    return strlen(buf);
+}
+
+// Returns the minimum width of the input box
+
+static int SpinControlWidth(txt_spincontrol_t *spincontrol)
+{
+    int minw, maxw;
+
+    minw = IntWidth(spincontrol->min);
+    maxw = IntWidth(spincontrol->max);
+    
+    // Choose the wider of the two values.  Add one so that there is always
+    // space for the cursor when editing.
+
+    if (minw > maxw)
     {
-        return ((int) log(-val)) + 2;
+        return minw;
     }
     else
     {
-        return ((int) log(val)) + 1;
+        return maxw;
     }
 }
 
 static void TXT_SpinControlSizeCalc(TXT_UNCAST_ARG(spincontrol))
 {
     TXT_CAST_ARG(txt_spincontrol_t, spincontrol);
-    int minw, maxw;
-    int w;
 
-    minw = IntWidth(spincontrol->min);
-    maxw = IntWidth(spincontrol->max);
-    
-    if (minw > maxw)
-    {
-        w = minw;
-    }
-    else
-    {
-        w = maxw;
-    }
-
-    spincontrol->widget.w = w + 4;
+    spincontrol->widget.w = SpinControlWidth(spincontrol) + 5;
     spincontrol->widget.h = 1;
 }
 
 static void TXT_SpinControlDrawer(TXT_UNCAST_ARG(spincontrol), int selected)
 {
     TXT_CAST_ARG(txt_spincontrol_t, spincontrol);
-    char buf[20];
+    char buf[15];
     unsigned int i;
+    unsigned int padding;
 
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
     TXT_BGColor(TXT_COLOR_BLUE, 0);
@@ -82,7 +88,11 @@ static void TXT_SpinControlDrawer(TXT_UNCAST_ARG(spincontrol), int selected)
     
     // Choose background color
 
-    if (selected)
+    if (selected && spincontrol->editing)
+    {
+        TXT_BGColor(TXT_COLOR_BLACK, 0);
+    }
+    else if (selected)
     {
         TXT_BGColor(TXT_COLOR_GREY, 0);
     }
@@ -91,14 +101,33 @@ static void TXT_SpinControlDrawer(TXT_UNCAST_ARG(spincontrol), int selected)
         TXT_BGColor(TXT_COLOR_BLUE, 0);
     }
 
-    sprintf(buf, "%i", *spincontrol->value);
+    if (spincontrol->editing)
+    {
+        strcpy(buf, spincontrol->buffer);
+    }
+    else
+    {
+        sprintf(buf, "%i", *spincontrol->value);
+    }
 
-    for (i=strlen(buf); i<spincontrol->widget.w - 4; ++i)
+    i = 0;
+
+    padding = spincontrol->widget.w - strlen(buf) - 4;
+
+    while (i < padding)
     {
         TXT_DrawString(" ");
+        ++i;
     }
 
     TXT_DrawString(buf);
+    i += strlen(buf);
+
+    while (i < spincontrol->widget.w - 4)
+    {
+        TXT_DrawString(" ");
+        ++i;
+    }
 
     TXT_BGColor(TXT_COLOR_BLUE, 0);
     TXT_DrawString(" >");
@@ -106,36 +135,100 @@ static void TXT_SpinControlDrawer(TXT_UNCAST_ARG(spincontrol), int selected)
 
 static void TXT_SpinControlDestructor(TXT_UNCAST_ARG(spincontrol))
 {
+    TXT_CAST_ARG(txt_spincontrol_t, spincontrol);
+
+    free(spincontrol->buffer);
+}
+
+static void AddCharacter(txt_spincontrol_t *spincontrol, int key)
+{
+    if (strlen(spincontrol->buffer) < SpinControlWidth(spincontrol))
+    {
+        spincontrol->buffer[strlen(spincontrol->buffer) + 1] = '\0';
+        spincontrol->buffer[strlen(spincontrol->buffer)] = key;
+    }
+}
+
+static void Backspace(txt_spincontrol_t *spincontrol)
+{
+    if (strlen(spincontrol->buffer) > 0)
+    {
+        spincontrol->buffer[strlen(spincontrol->buffer) - 1] = '\0';
+    }
+}
+
+static void EnforceLimits(txt_spincontrol_t *spincontrol)
+{
+    if (*spincontrol->value > spincontrol->max)
+        *spincontrol->value = spincontrol->max;
+    else if (*spincontrol->value < spincontrol->min)
+        *spincontrol->value = spincontrol->min;
 }
 
 static int TXT_SpinControlKeyPress(TXT_UNCAST_ARG(spincontrol), int key)
 {
     TXT_CAST_ARG(txt_spincontrol_t, spincontrol);
 
-    if (key == KEY_LEFTARROW)
-    {
-        --*spincontrol->value;
+    // Enter to enter edit mode
 
-        if (*spincontrol->value < spincontrol->min)
+    if (spincontrol->editing)
+    {
+        if (key == KEY_ENTER)
         {
-            *spincontrol->value = spincontrol->min;
+            *spincontrol->value = atoi(spincontrol->buffer);
+            spincontrol->editing = 0;
+            EnforceLimits(spincontrol);
+            return 1;
         }
 
-        return 1;
-    }
-    
-    if (key == KEY_RIGHTARROW)
-    {
-        ++*spincontrol->value;
-
-        if (*spincontrol->value > spincontrol->max)
+        if (key == KEY_ESCAPE)
         {
-            *spincontrol->value = spincontrol->max;
+            // Abort without saving value
+            spincontrol->editing = 0;
+            return 1;
         }
 
-        return 1;
+        if (isdigit(key) || key == '-')
+        {
+            AddCharacter(spincontrol, key);
+            return 1;
+        }
+
+        if (key == KEY_BACKSPACE)
+        {
+            Backspace(spincontrol);
+            return 1;
+        }
     }
-    
+    else
+    {
+        // Non-editing mode
+
+        if (key == KEY_ENTER)
+        {
+            sprintf(spincontrol->buffer, "%i", *spincontrol->value);
+            spincontrol->editing = 1;
+            return 1;
+        }
+        if (key == KEY_LEFTARROW)
+        {
+            --*spincontrol->value;
+
+            EnforceLimits(spincontrol);
+
+            return 1;
+        }
+        
+        if (key == KEY_RIGHTARROW)
+        {
+            ++*spincontrol->value;
+
+            EnforceLimits(spincontrol);
+
+            return 1;
+        }
+    }
+
     return 0;
 }
 
@@ -177,6 +270,9 @@ txt_spincontrol_t *TXT_NewSpinControl(int *value, int min, int max)
     spincontrol->value = value;
     spincontrol->min = min;
     spincontrol->max = max;
+    spincontrol->buffer = malloc(15);
+    strcpy(spincontrol->buffer, "");
+    spincontrol->editing = 0;
 
     return spincontrol;
 }
