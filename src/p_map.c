@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_map.c 592 2006-09-01 20:07:25Z fraggle $
+// $Id: p_map.c 655 2006-09-22 22:43:28Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard, Andrey Budko
@@ -46,7 +46,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_map.c 592 2006-09-01 20:07:25Z fraggle $";
+rcsid[] = "$Id: p_map.c 655 2006-09-22 22:43:28Z fraggle $";
 
 #include <stdlib.h>
 
@@ -276,15 +276,14 @@ boolean PIT_CheckLine (line_t* ld)
     // if contacted a special line, add it to the list
     if (ld->special)
     {
+        spechit[numspechit] = ld;
+	numspechit++;
+
         // fraggle: spechits overrun emulation code from prboom-plus
         if (numspechit > MAXSPECIALCROSS_ORIGINAL)
         {
             SpechitOverrun(ld);
         }
-
-        spechit[numspechit] = ld;
-        
-	numspechit++;
     }
 
     return true;
