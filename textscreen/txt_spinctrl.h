@@ -31,6 +31,8 @@ struct txt_spincontrol_s
     txt_widget_t widget;
     int min, max;
     int *value;
+    int editing;
+    char *buffer;
 };
 
 txt_spincontrol_t *TXT_NewSpinControl(int *value, int min, int max);
