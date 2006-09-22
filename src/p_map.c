@@ -276,15 +276,14 @@ boolean PIT_CheckLine (line_t* ld)
     // if contacted a special line, add it to the list
     if (ld->special)
     {
+        spechit[numspechit] = ld;
+	numspechit++;
+
         // fraggle: spechits overrun emulation code from prboom-plus
         if (numspechit > MAXSPECIALCROSS_ORIGINAL)
         {
             SpechitOverrun(ld);
         }
-
-        spechit[numspechit] = ld;
-        
-	numspechit++;
     }
 
     return true;
