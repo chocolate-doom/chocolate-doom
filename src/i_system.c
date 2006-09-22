@@ -91,6 +91,7 @@ rcsid[] = "$Id$";
 #include <stdarg.h>
 #include <SDL.h>
 
+#include "deh_main.h"
 #include "doomdef.h"
 #include "m_argv.h"
 #include "m_misc.h"
@@ -178,7 +179,7 @@ void I_Endoom(void)
     unsigned char *endoom_data;
     unsigned char *screendata;
 
-    endoom_data = W_CacheLumpName("ENDOOM", PU_STATIC);
+    endoom_data = W_CacheLumpName(DEH_String("ENDOOM"), PU_STATIC);
 
     // Set up text mode screen
 

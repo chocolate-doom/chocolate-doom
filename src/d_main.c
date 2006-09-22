@@ -478,7 +478,7 @@ void D_Display (void)
     
     // clean up border stuff
     if (gamestate != oldgamestate && gamestate != GS_LEVEL)
-	I_SetPalette (W_CacheLumpName ("PLAYPAL",PU_CACHE));
+	I_SetPalette (W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE));
 
     // see if the border needs to be initially drawn
     if (gamestate == GS_LEVEL && oldgamestate != GS_LEVEL)
@@ -513,7 +513,7 @@ void D_Display (void)
 	else
 	    y = viewwindowy+4;
 	V_DrawPatchDirect(viewwindowx+(scaledviewwidth-68)/2,
-			  y,0,W_CacheLumpName ("M_PAUSE", PU_CACHE));
+			  y,0,W_CacheLumpName (DEH_String("M_PAUSE"), PU_CACHE));
     }
 
 
