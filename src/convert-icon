@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-# $Id: convert-icon 297 2006-01-16 23:35:55Z fraggle $
+# $Id: convert-icon 654 2006-09-22 22:12:50Z fraggle $
 #
 # Copyright(C) 2005 Simon Howard
 #
@@ -33,10 +33,16 @@
 # Add application icon to running program
 #
 
-import Image
 import sys
 import os
 import re
+
+try:
+        import Image
+except ImportError:
+        print "WARNING: Could not update %s.  Please install the Python Image library." % sys.argv[2]
+        sys.exit(0)
+
 
 def convert_image(filename, output_filename):
 
