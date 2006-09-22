@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: r_draw.c 120 2005-09-22 13:13:47Z fraggle $
+// $Id: r_draw.c 653 2006-09-22 20:32:00Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -46,10 +46,11 @@
 
 
 static const char
-rcsid[] = "$Id: r_draw.c 120 2005-09-22 13:13:47Z fraggle $";
+rcsid[] = "$Id: r_draw.c 653 2006-09-22 20:32:00Z fraggle $";
 
 
 #include "doomdef.h"
+#include "deh_main.h"
 
 #include "i_system.h"
 #include "z_zone.h"
@@ -831,10 +832,10 @@ void R_FillBackScreen (void)
     patch_t*	patch;
 
     // DOOM border patch.
-    char	name1[] = "FLOOR7_2";
+    char       *name1 = DEH_String("FLOOR7_2");
 
     // DOOM II border patch.
-    char	name2[] = "GRNROCK";	
+    char       *name2 = DEH_String("GRNROCK");
 
     char*	name;
 	
@@ -864,19 +865,19 @@ void R_FillBackScreen (void)
 	} 
     } 
 	
-    patch = W_CacheLumpName ("brdr_t",PU_CACHE);
+    patch = W_CacheLumpName (DEH_String("brdr_t"),PU_CACHE);
 
     for (x=0 ; x<scaledviewwidth ; x+=8)
 	V_DrawPatch (viewwindowx+x,viewwindowy-8,1,patch);
-    patch = W_CacheLumpName ("brdr_b",PU_CACHE);
+    patch = W_CacheLumpName (DEH_String("brdr_b"),PU_CACHE);
 
     for (x=0 ; x<scaledviewwidth ; x+=8)
 	V_DrawPatch (viewwindowx+x,viewwindowy+viewheight,1,patch);
-    patch = W_CacheLumpName ("brdr_l",PU_CACHE);
+    patch = W_CacheLumpName (DEH_String("brdr_l"),PU_CACHE);
 
     for (y=0 ; y<viewheight ; y+=8)
 	V_DrawPatch (viewwindowx-8,viewwindowy+y,1,patch);
-    patch = W_CacheLumpName ("brdr_r",PU_CACHE);
+    patch = W_CacheLumpName (DEH_String("brdr_r"),PU_CACHE);
 
     for (y=0 ; y<viewheight ; y+=8)
 	V_DrawPatch (viewwindowx+scaledviewwidth,viewwindowy+y,1,patch);
@@ -886,22 +887,22 @@ void R_FillBackScreen (void)
     V_DrawPatch (viewwindowx-8,
 		 viewwindowy-8,
 		 1,
-		 W_CacheLumpName ("brdr_tl",PU_CACHE));
+		 W_CacheLumpName (DEH_String("brdr_tl"),PU_CACHE));
     
     V_DrawPatch (viewwindowx+scaledviewwidth,
 		 viewwindowy-8,
 		 1,
-		 W_CacheLumpName ("brdr_tr",PU_CACHE));
+		 W_CacheLumpName (DEH_String("brdr_tr"),PU_CACHE));
     
     V_DrawPatch (viewwindowx-8,
 		 viewwindowy+viewheight,
 		 1,
-		 W_CacheLumpName ("brdr_bl",PU_CACHE));
+		 W_CacheLumpName (DEH_String("brdr_bl"),PU_CACHE));
     
     V_DrawPatch (viewwindowx+scaledviewwidth,
 		 viewwindowy+viewheight,
 		 1,
-		 W_CacheLumpName ("brdr_br",PU_CACHE));
+		 W_CacheLumpName (DEH_String("brdr_br"),PU_CACHE));
 } 
  
 

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_misc.c 649 2006-09-21 21:49:26Z fraggle $
+// $Id: m_misc.c 653 2006-09-22 20:32:00Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -106,7 +106,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_misc.c 649 2006-09-21 21:49:26Z fraggle $";
+rcsid[] = "$Id: m_misc.c 653 2006-09-22 20:32:00Z fraggle $";
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -122,6 +122,7 @@ rcsid[] = "$Id: m_misc.c 649 2006-09-21 21:49:26Z fraggle $";
 #endif
 
 #include "config.h"
+#include "deh_main.h"
 #include "doomdef.h"
 #include "doomfeatures.h"
 
@@ -813,9 +814,9 @@ void M_ScreenShot (void)
     // save the pcx file
     WritePCXfile (lbmname, linear,
 		  SCREENWIDTH, SCREENHEIGHT,
-		  W_CacheLumpName ("PLAYPAL",PU_CACHE));
+		  W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE));
 	
-    players[consoleplayer].message = "screen shot";
+    players[consoleplayer].message = DEH_String("screen shot");
 }
 
 

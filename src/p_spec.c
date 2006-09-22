@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_spec.c 642 2006-09-21 11:47:56Z fraggle $
+// $Id: p_spec.c 653 2006-09-22 20:32:00Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -45,7 +45,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_spec.c 642 2006-09-21 11:47:56Z fraggle $";
+rcsid[] = "$Id: p_spec.c 653 2006-09-22 20:32:00Z fraggle $";
 
 #include <stdlib.h>
 
@@ -148,7 +148,7 @@ animdef_t		animdefs[] =
     {true,	"WFALL4",	"WFALL1",	8},
     {true,	"DBRAIN4",	"DBRAIN1",	8},
 	
-    {  -1,       NULL,          NULL,           0},
+    {-1,        "",             "",             0},
 };
 
 anim_t		anims[MAXANIMS];
@@ -190,7 +190,7 @@ void P_InitPicAnims (void)
 	}
 	else
 	{
-	    if (W_CheckNumForName(animdefs[i].startname) == -1)
+	    if (W_CheckNumForName(startname) == -1)
 		continue;
 
 	    lastanim->picnum = R_FlatNumForName(endname);
@@ -1267,7 +1267,7 @@ void P_SpawnSpecials (void)
     int		episode;
 
     episode = 1;
-    if (W_CheckNumForName("texture2") >= 0)
+    if (W_CheckNumForName(DEH_String("texture2")) >= 0)
 	episode = 2;
 
     

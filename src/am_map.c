@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: am_map.c 641 2006-09-21 11:13:28Z rtc_marine $
+// $Id: am_map.c 653 2006-09-22 20:32:00Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -49,7 +49,7 @@
 //
 //-----------------------------------------------------------------------------
 
-static const char rcsid[] = "$Id: am_map.c 641 2006-09-21 11:13:28Z rtc_marine $";
+static const char rcsid[] = "$Id: am_map.c 653 2006-09-22 20:32:00Z fraggle $";
 
 #include <stdio.h>
 
@@ -534,7 +534,7 @@ void AM_loadPics(void)
   
     for (i=0;i<10;i++)
     {
-	sprintf(namebuf, "AMMNUM%d", i);
+	sprintf(namebuf, DEH_String("AMMNUM%d"), i);
 	marknums[i] = W_CacheLumpName(namebuf, PU_STATIC);
     }
 
@@ -1036,7 +1036,7 @@ AM_drawFline
 	   || fl->b.x < 0 || fl->b.x >= f_w
 	   || fl->b.y < 0 || fl->b.y >= f_h)
     {
-	fprintf(stderr, "fuck %d \r", fuck++);
+	fprintf(stderr, DEH_String("fuck %d \r"), fuck++);
 	return;
     }
 

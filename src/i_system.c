@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_system.c 610 2006-09-17 17:01:33Z fraggle $
+// $Id: i_system.c 653 2006-09-22 20:32:00Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -81,7 +81,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_system.c 610 2006-09-17 17:01:33Z fraggle $";
+rcsid[] = "$Id: i_system.c 653 2006-09-22 20:32:00Z fraggle $";
 
 
 #include <stdlib.h>
@@ -91,6 +91,7 @@ rcsid[] = "$Id: i_system.c 610 2006-09-17 17:01:33Z fraggle $";
 #include <stdarg.h>
 #include <SDL.h>
 
+#include "deh_main.h"
 #include "doomdef.h"
 #include "m_argv.h"
 #include "m_misc.h"
@@ -178,7 +179,7 @@ void I_Endoom(void)
     unsigned char *endoom_data;
     unsigned char *screendata;
 
-    endoom_data = W_CacheLumpName("ENDOOM", PU_STATIC);
+    endoom_data = W_CacheLumpName(DEH_String("ENDOOM"), PU_STATIC);
 
     // Set up text mode screen
 

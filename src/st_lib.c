@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: st_lib.c 8 2005-07-23 16:44:57Z fraggle $
+// $Id: st_lib.c 653 2006-09-22 20:32:00Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -36,10 +36,11 @@
 
 
 static const char
-rcsid[] = "$Id: st_lib.c 8 2005-07-23 16:44:57Z fraggle $";
+rcsid[] = "$Id: st_lib.c 653 2006-09-22 20:32:00Z fraggle $";
 
 #include <ctype.h>
 
+#include "deh_main.h"
 #include "doomdef.h"
 
 #include "z_zone.h"
@@ -70,7 +71,7 @@ patch_t*		sttminus;
 
 void STlib_init(void)
 {
-    sttminus = (patch_t *) W_CacheLumpName("STTMINUS", PU_STATIC);
+    sttminus = (patch_t *) W_CacheLumpName(DEH_String("STTMINUS"), PU_STATIC);
 }
 
 

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: hu_stuff.c 160 2005-10-03 21:39:39Z fraggle $
+// $Id: hu_stuff.c 653 2006-09-22 20:32:00Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -43,7 +43,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: hu_stuff.c 160 2005-10-03 21:39:39Z fraggle $";
+rcsid[] = "$Id: hu_stuff.c 653 2006-09-22 20:32:00Z fraggle $";
 
 #include <ctype.h>
 
@@ -317,7 +317,7 @@ void HU_Init(void)
     j = HU_FONTSTART;
     for (i=0;i<HU_FONTSIZE;i++)
     {
-	sprintf(buffer, "STCFN%.3d", j++);
+	sprintf(buffer, DEH_String("STCFN%.3d"), j++);
 	hu_font[i] = (patch_t *) W_CacheLumpName(buffer, PU_STATIC);
     }
 

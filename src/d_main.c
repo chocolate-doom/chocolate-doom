@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 642 2006-09-21 11:47:56Z fraggle $
+// $Id: d_main.c 653 2006-09-22 20:32:00Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -184,7 +184,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 642 2006-09-21 11:47:56Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 653 2006-09-22 20:32:00Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -478,7 +478,7 @@ void D_Display (void)
     
     // clean up border stuff
     if (gamestate != oldgamestate && gamestate != GS_LEVEL)
-	I_SetPalette (W_CacheLumpName ("PLAYPAL",PU_CACHE));
+	I_SetPalette (W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE));
 
     // see if the border needs to be initially drawn
     if (gamestate == GS_LEVEL && oldgamestate != GS_LEVEL)
@@ -513,7 +513,7 @@ void D_Display (void)
 	else
 	    y = viewwindowy+4;
 	V_DrawPatchDirect(viewwindowx+(scaledviewwidth-68)/2,
-			  y,0,W_CacheLumpName ("M_PAUSE", PU_CACHE));
+			  y,0,W_CacheLumpName (DEH_String("M_PAUSE"), PU_CACHE));
     }
 
 

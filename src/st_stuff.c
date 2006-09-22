@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: st_stuff.c 326 2006-01-22 23:38:05Z fraggle $
+// $Id: st_stuff.c 653 2006-09-22 20:32:00Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -63,7 +63,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: st_stuff.c 326 2006-01-22 23:38:05Z fraggle $";
+rcsid[] = "$Id: st_stuff.c 653 2006-09-22 20:32:00Z fraggle $";
 
 
 #include <stdio.h>
@@ -1170,7 +1170,7 @@ void ST_loadGraphics(void)
 
 void ST_loadData(void)
 {
-    lu_palette = W_GetNumForName ("PLAYPAL");
+    lu_palette = W_GetNumForName (DEH_String("PLAYPAL"));
     ST_loadGraphics();
 }
 

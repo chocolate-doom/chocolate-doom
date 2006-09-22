@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.c 613 2006-09-18 12:13:40Z fraggle $
+// $Id: i_video.c 653 2006-09-22 20:32:00Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -175,7 +175,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: i_video.c 613 2006-09-18 12:13:40Z fraggle $";
+rcsid[] = "$Id: i_video.c 653 2006-09-22 20:32:00Z fraggle $";
 
 #include <SDL.h>
 #include <ctype.h>
@@ -184,6 +184,7 @@ rcsid[] = "$Id: i_video.c 613 2006-09-18 12:13:40Z fraggle $";
 #include "chocolate_doom_icon.c"
 
 #include "config.h"
+#include "deh_main.h"
 #include "doomdef.h"
 #include "doomstat.h"
 #include "d_main.h"
@@ -337,9 +338,9 @@ static void LoadDiskImage(void)
     int y;
 
     if (M_CheckParm("-cdrom") > 0)
-        disk = (patch_t *) W_CacheLumpName("STCDROM", PU_STATIC);
+        disk = (patch_t *) W_CacheLumpName(DEH_String("STCDROM"), PU_STATIC);
     else
-        disk = (patch_t *) W_CacheLumpName("STDISK", PU_STATIC);
+        disk = (patch_t *) W_CacheLumpName(DEH_String("STDISK"), PU_STATIC);
 
     V_DrawPatch(0, 0, 0, disk);
     disk_image_w = SHORT(disk->width);
@@ -1206,7 +1207,7 @@ void I_InitGraphics(void)
     
     // Set the palette
 
-    I_SetPalette (W_CacheLumpName ("PLAYPAL",PU_CACHE));
+    I_SetPalette (W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE));
     SDL_SetColors(screen, palette, 0, 256);
 
     // Setup title and icon
