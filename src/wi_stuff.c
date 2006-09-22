@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: wi_stuff.c 641 2006-09-21 11:13:28Z rtc_marine $
+// $Id: wi_stuff.c 652 2006-09-22 20:30:48Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -44,7 +44,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: wi_stuff.c 641 2006-09-21 11:13:28Z rtc_marine $";
+rcsid[] = "$Id: wi_stuff.c 652 2006-09-22 20:30:48Z fraggle $";
 
 #include <stdio.h>
 
@@ -246,41 +246,47 @@ static point_t lnodes[NUMEPISODES][NUMMAPS] =
 // Using patches saves a lot of space,
 //  as they replace 320x200 full screen frames.
 //
+
+#define ANIM(type, period, nanims, x, y, nexttic)            \
+   { (type), (period), (nanims), { (x), (y) }, (nexttic),    \
+     0, { NULL, NULL, NULL }, 0, 0, 0, 0 }
+
+
 static anim_t epsd0animinfo[] =
 {
-    { ANIM_ALWAYS, TICRATE/3, 3, { 224, 104 }, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { ANIM_ALWAYS, TICRATE/3, 3, { 184, 160 }, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { ANIM_ALWAYS, TICRATE/3, 3, { 112, 136 }, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { ANIM_ALWAYS, TICRATE/3, 3, { 72, 112 }, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { ANIM_ALWAYS, TICRATE/3, 3, { 88, 96 }, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { ANIM_ALWAYS, TICRATE/3, 3, { 64, 48 }, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { ANIM_ALWAYS, TICRATE/3, 3, { 192, 40 }, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { ANIM_ALWAYS, TICRATE/3, 3, { 136, 16 }, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { ANIM_ALWAYS, TICRATE/3, 3, { 80, 16 }, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { ANIM_ALWAYS, TICRATE/3, 3, { 64, 24 }, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+    ANIM(ANIM_ALWAYS, TICRATE/3, 3, 224, 104, 0),
+    ANIM(ANIM_ALWAYS, TICRATE/3, 3, 184, 160, 0),
+    ANIM(ANIM_ALWAYS, TICRATE/3, 3, 112, 136, 0),
+    ANIM(ANIM_ALWAYS, TICRATE/3, 3, 72, 112, 0),
+    ANIM(ANIM_ALWAYS, TICRATE/3, 3, 88, 96, 0),
+    ANIM(ANIM_ALWAYS, TICRATE/3, 3, 64, 48, 0),
+    ANIM(ANIM_ALWAYS, TICRATE/3, 3, 192, 40, 0),
+    ANIM(ANIM_ALWAYS, TICRATE/3, 3, 136, 16, 0),
+    ANIM(ANIM_ALWAYS, TICRATE/3, 3, 80, 16, 0),
+    ANIM(ANIM_ALWAYS, TICRATE/3, 3, 64, 24, 0),
 };
 
 static anim_t epsd1animinfo[] =
 {
-    { ANIM_LEVEL, TICRATE/3, 1, { 128, 136 }, 1, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { ANIM_LEVEL, TICRATE/3, 1, { 128, 136 }, 2, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { ANIM_LEVEL, TICRATE/3, 1, { 128, 136 }, 3, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { ANIM_LEVEL, TICRATE/3, 1, { 128, 136 }, 4, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { ANIM_LEVEL, TICRATE/3, 1, { 128, 136 }, 5, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { ANIM_LEVEL, TICRATE/3, 1, { 128, 136 }, 6, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { ANIM_LEVEL, TICRATE/3, 1, { 128, 136 }, 7, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { ANIM_LEVEL, TICRATE/3, 3, { 192, 144 }, 8, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { ANIM_LEVEL, TICRATE/3, 1, { 128, 136 }, 8, 0, 0, 0, 0, 0, 0, 0, 0 }
+    ANIM(ANIM_LEVEL, TICRATE/3, 1, 128, 136, 1),
+    ANIM(ANIM_LEVEL, TICRATE/3, 1, 128, 136, 2),
+    ANIM(ANIM_LEVEL, TICRATE/3, 1, 128, 136, 3),
+    ANIM(ANIM_LEVEL, TICRATE/3, 1, 128, 136, 4),
+    ANIM(ANIM_LEVEL, TICRATE/3, 1, 128, 136, 5),
+    ANIM(ANIM_LEVEL, TICRATE/3, 1, 128, 136, 6),
+    ANIM(ANIM_LEVEL, TICRATE/3, 1, 128, 136, 7),
+    ANIM(ANIM_LEVEL, TICRATE/3, 3, 192, 144, 8),
+    ANIM(ANIM_LEVEL, TICRATE/3, 1, 128, 136, 8),
 };
 
 static anim_t epsd2animinfo[] =
 {
-    { ANIM_ALWAYS, TICRATE/3, 3, { 104, 168 }, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { ANIM_ALWAYS, TICRATE/3, 3, { 40, 136 }, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { ANIM_ALWAYS, TICRATE/3, 3, { 160, 96 }, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { ANIM_ALWAYS, TICRATE/3, 3, { 104, 80 }, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { ANIM_ALWAYS, TICRATE/3, 3, { 120, 32 }, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-    { ANIM_ALWAYS, TICRATE/4, 3, { 40, 0 }, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+    ANIM(ANIM_ALWAYS, TICRATE/3, 3, 104, 168, 0),
+    ANIM(ANIM_ALWAYS, TICRATE/3, 3, 40, 136, 0),
+    ANIM(ANIM_ALWAYS, TICRATE/3, 3, 160, 96, 0),
+    ANIM(ANIM_ALWAYS, TICRATE/3, 3, 104, 80, 0),
+    ANIM(ANIM_ALWAYS, TICRATE/3, 3, 120, 32, 0),
+    ANIM(ANIM_ALWAYS, TICRATE/4, 3, 40, 0, 0),
 };
 
 static int NUMANIMS[NUMEPISODES] =
