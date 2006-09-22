@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_cheat.h 641 2006-09-21 11:13:28Z rtc_marine $
+// $Id: m_cheat.h 650 2006-09-22 12:16:00Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -37,7 +37,7 @@
 // declaring a cheat
 
 #define CHEAT(value, parameters) \
-    { value, sizeof(value) - 1, parameters, 0, 0, 0 }
+    { value, sizeof(value) - 1, parameters, 0, 0, "" }
 
 #define MAX_CHEAT_LEN 15
 #define MAX_CHEAT_PARAMS 5
