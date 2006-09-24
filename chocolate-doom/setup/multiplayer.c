@@ -26,6 +26,7 @@
 #include "textscreen.h"
 
 #define NUM_WADS 10
+#define NUM_EXTRA_PARAMS 10
 
 typedef enum
 {
@@ -53,6 +54,7 @@ char *player_name;
 char *chatmacros[10];
 
 char *wads[NUM_WADS] = {};
+char *extra_params[NUM_EXTRA_PARAMS] = {};
 int skill = 0;
 int nomonsters = 0;
 int deathmatch = 0;
@@ -216,6 +218,20 @@ static void OpenWadsWindow(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
     }
 }
 
+static void OpenExtraParamsWindow(TXT_UNCAST_ARG(widget), 
+                                  TXT_UNCAST_ARG(user_data))
+{
+    txt_window_t *window;
+    int i;
+
+    window = TXT_NewWindow("Extra command line parameters");
+    
+    for (i=0; i<NUM_EXTRA_PARAMS; ++i)
+    {
+        TXT_AddWidget(window, TXT_NewInputBox(&extra_params[i], 70));
+    }
+}
+
 static txt_window_action_t *WadWindowAction(void)
 {
     txt_window_action_t *action;
@@ -230,6 +246,7 @@ void StartMultiGame(void)
 {
     txt_window_t *window;
     txt_table_t *table;
+    txt_button_t *button;
 
     window = TXT_NewWindow("Start multiplayer game");
 
@@ -237,14 +254,11 @@ void StartMultiGame(void)
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, StartGameAction());
     
     table = TXT_NewTable(2);
-    TXT_AddWidget(table, TXT_NewStrut(12, 0));
-    TXT_AddWidget(table, TXT_NewStrut(12, 0));
+    TXT_SetColumnWidths(table, 12, 12);
     TXT_AddWidget(table, TXT_NewLabel("Skill"));
     TXT_AddWidget(table, TXT_NewDropdownList(&skill, skills, 5));
     TXT_AddWidget(table, TXT_NewLabel("Game type"));
     TXT_AddWidget(table, TXT_NewDropdownList(&deathmatch, gamemodes, 3));
-    TXT_AddWidget(table, TXT_NewLabel("UDP port"));
-    TXT_AddWidget(table, TXT_NewIntInputBox(&udpport, 5));
 
     TXT_AddWidget(table, TXT_NewLabel("Level warp"));
 
@@ -264,6 +278,19 @@ void StartMultiGame(void)
     TXT_AddWidget(window, TXT_NewInvertedCheckBox("Monsters", &nomonsters));
     TXT_AddWidget(window, TXT_NewCheckBox("Fast monsters", &fast));
     TXT_AddWidget(window, TXT_NewCheckBox("Respawning monsters", &respawn));
+
+    TXT_AddWidget(window, TXT_NewSeparator("Advanced"));
+    table = TXT_NewTable(2);
+    TXT_SetColumnWidths(table, 12, 12);
+
+    TXT_AddWidget(table, TXT_NewLabel("UDP port"));
+    TXT_AddWidget(table, TXT_NewIntInputBox(&udpport, 5));
+    TXT_AddWidget(window, table);
+
+    button = TXT_NewButton("Add extra parameters...");
+    TXT_SignalConnect(button, "pressed", OpenExtraParamsWindow, NULL);
+    TXT_AddWidget(window, button);
+    
 }
 
 static void SetChatMacroDefaults(void)
