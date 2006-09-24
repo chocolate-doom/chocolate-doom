@@ -59,6 +59,7 @@ int deathmatch = 0;
 int fast = 0;
 int respawn = 0;
 int udpport = 4815;
+int timer = 0;
 
 txt_button_t *warpbutton;
 warptype_t warptype = WARP_DOOM2;
@@ -251,6 +252,12 @@ void StartMultiGame(void)
     TXT_AddWidget(table, warpbutton);
     TXT_SignalConnect(warpbutton, "pressed", LevelSelectDialog, NULL);
     UpdateWarpButton();
+
+    TXT_AddWidget(table, TXT_NewLabel("Time limit"));
+    TXT_AddWidget(table, TXT_NewHorizBox(TXT_NewIntInputBox(&timer, 2),
+                                         TXT_NewLabel("minutes"),
+                                         NULL));
+
     TXT_AddWidget(window, table);
 
     TXT_AddWidget(window, TXT_NewSeparator("Monsters"));
