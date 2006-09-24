@@ -46,7 +46,7 @@ txt_window_action_t *TXT_NewWindowAbortAction(txt_window_t *window);
 
 // Accept button that does nothing
 
-txt_window_action_t *TXT_NewWindowAcceptAction(txt_window_t *window);
+txt_window_action_t *TXT_NewWindowSelectAction(txt_window_t *window);
 
 #endif /* #ifndef TXT_WINDOW_ACTION_H */
 
