@@ -568,6 +568,74 @@ txt_table_t *TXT_NewTable(int columns)
     return table;
 }
 
+// Create a horizontal table from a list of widgets.
+
+txt_table_t *TXT_NewHorizBox(TXT_UNCAST_ARG(first_widget), ...)
+{
+    TXT_CAST_ARG(txt_widget_t, first_widget);
+    txt_table_t *result;
+    va_list args;
+    int num_args;
+
+    // First, find the number of arguments to determine the width of
+    // the box.
+
+    va_start(args, TXT_UNCAST_ARG_NAME(first_widget));
+
+    num_args = 1;
+
+    for (;;)
+    {
+        txt_widget_t *widget;
+
+        widget = va_arg(args, txt_widget_t *);
+
+        if (widget == NULL)
+        {
+            // End of list
+
+            break;
+        }
+        else
+        {
+            ++num_args;
+        }
+    }
+    
+    va_end(args);
+
+    // Create the table.
+
+    result = TXT_NewTable(num_args);
+    TXT_AddWidget(result, first_widget);
+
+    // Go through the list again and add each widget.
+
+    va_start(args, TXT_UNCAST_ARG_NAME(first_widget));
+
+    for (;;)
+    {
+        txt_widget_t *widget;
+
+        widget = va_arg(args, txt_widget_t *);
+
+        if (widget == NULL)
+        {
+            // End of list
+
+            break;
+        }
+        else
+        {
+            TXT_AddWidget(result, widget);
+        }
+    }
+    
+    va_end(args);
+
+    return result;
+}
+
 // Selects a given widget in a table, recursively searching any tables
 // within this table.  Returns 1 if successful, 0 if unsuccessful.
 
@@ -634,5 +702,7 @@ void TXT_SetColumnWidths(TXT_UNCAST_ARG(table), ...)
         strut = (txt_strut_t *) table->widgets[i];
         strut->width = width;
     }
+
+    va_end(args);
 }
 
