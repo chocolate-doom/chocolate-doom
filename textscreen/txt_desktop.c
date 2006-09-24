@@ -153,6 +153,30 @@ void TXT_ExitMainLoop(void)
     main_loop_running = 0;
 }
 
+void TXT_DrawASCIITable(void)
+{
+    char buf[10];
+    int x, y;
+    int n;
+
+    TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
+    TXT_BGColor(TXT_COLOR_BLACK, 0);
+
+    for (y=0; y<16; ++y)
+    {
+        for (x=0; x<16; ++x)
+        {
+            n = y * 16 + x;
+
+            TXT_GotoXY(x * 5, y);
+            sprintf(buf, "%02x %c ", n, n);
+            TXT_Puts(buf);
+        }
+    }
+    
+    TXT_UpdateScreen();
+}
+
 void TXT_GUIMainLoop(void)
 {
     main_loop_running = 1;
@@ -169,6 +193,7 @@ void TXT_GUIMainLoop(void)
         }
         
         TXT_DrawDesktop();
+//        TXT_DrawASCIITable();
         TXT_Sleep(0);
     }
 }
