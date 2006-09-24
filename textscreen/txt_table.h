@@ -47,6 +47,7 @@ struct txt_table_s
 };
 
 txt_table_t *TXT_NewTable(int columns);
+txt_table_t *TXT_NewHorizBox(TXT_UNCAST_ARG(first_widget), ...);
 void TXT_InitTable(txt_table_t *table, int columns);
 void TXT_AddWidget(TXT_UNCAST_ARG(table), TXT_UNCAST_ARG(widget));
 int TXT_SelectWidget(TXT_UNCAST_ARG(table), TXT_UNCAST_ARG(widget));
