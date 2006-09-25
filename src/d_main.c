@@ -530,7 +530,7 @@ void D_Display (void)
 
 
     // normal update
-    if (!wipe || testcontrols)
+    if (!wipe)
     {
 	I_FinishUpdate ();              // page flip or blit buffer
 	return;
@@ -586,6 +586,11 @@ void D_DoomLoop (void)
     R_ExecuteSetViewSize();
 
     D_StartGameLoop();
+
+    if (testcontrols)
+    {
+        wipegamestate = gamestate;
+    }
 
     while (1)
     {
