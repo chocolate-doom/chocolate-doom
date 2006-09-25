@@ -33,6 +33,7 @@ int key_fire = KEY_RCTRL;
 int key_use = ' ';
 int key_strafe = KEY_RALT;
 int key_speed = KEY_RSHIFT;
+int always_run = 0;
 
 static int *allkeys[] = {&key_left, &key_right, &key_up, &key_down, 
                          &key_strafeleft, &key_straferight, &key_fire, 
@@ -100,6 +101,9 @@ void ConfigKeyboard(void)
     AddKeyControl(table, "Fire", &key_fire);
 
     TXT_AddWidget(window, table);
+
+    TXT_AddWidget(window, TXT_NewSeparator(NULL));
+    TXT_AddWidget(window, TXT_NewCheckBox("Always run", &always_run));
 
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
 }
