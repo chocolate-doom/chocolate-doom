@@ -226,7 +226,7 @@ void I_Quit (void)
     M_SaveDefaults ();
     I_ShutdownGraphics();
 
-    if (show_endoom)
+    if (show_endoom && !testcontrols)
     {
         I_Endoom();
     }

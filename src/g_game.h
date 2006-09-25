@@ -77,6 +77,7 @@ boolean G_Responder (event_t*	ev);
 
 void G_ScreenShot (void);
 
+void G_DrawMouseSpeedBox(void);
 
 #endif
 //-----------------------------------------------------------------------------
