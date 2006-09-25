@@ -1550,6 +1550,10 @@ boolean M_Responder (event_t* ev)
     if (ch == -1)
 	return false;
 
+    if (testcontrols && ch == KEY_ESCAPE)
+    {
+        I_Quit();
+    }
     
     // Save Game string input
     if (saveStringEnter)

@@ -138,6 +138,7 @@ rcsid[] = "$Id$";
 
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "doomdef.h" 
 #include "doomstat.h"
@@ -153,6 +154,7 @@ rcsid[] = "$Id$";
 #include "m_random.h"
 #include "i_system.h"
 #include "i_timer.h"
+#include "i_video.h"
 
 #include "p_setup.h"
 #include "p_saveg.h"
@@ -260,6 +262,8 @@ byte*		demoend;
 boolean         singledemo;            	// quit after playing a demo from cmdline 
  
 boolean         precache = true;        // if true, load all graphics at start 
+
+boolean         testcontrols = false;    // Invoked by setup to test controls
  
 wbstartstruct_t wminfo;               	// parms for world map / intermission 
  
@@ -336,6 +340,7 @@ boolean*	joybuttons = &joyarray[1];		// allow [-1]
 int		savegameslot; 
 char		savedescription[32]; 
  
+int             testcontrols_mousespeed;
  
 #define	BODYQUESIZE	32
 
@@ -345,6 +350,106 @@ int		bodyqueslot;
 int             vanilla_savegame_limit = 1;
 int             vanilla_demo_limit = 1;
  
+
+#define MOUSE_SPEED_BOX_WIDTH 16
+#define COLOR_RED   0xb0
+#define COLOR_BLACK 0x00
+#define COLOR_WHITE 0xff
+
+void G_DrawMouseSpeedBox(void)
+{
+    extern int usemouse;
+    int i;
+    int box_x, box_y;
+    int original_speed;
+    int x, y;
+    int redline_x;
+    int linelen;
+    char *lumpname;
+    int color;
+
+    // If the mouse is turned off or acceleration is turned off, don't
+    // draw the box at all.
+
+    if (!usemouse || fabs(mouse_acceleration - 1) < 0.01)
+    {
+        return;
+    }
+
+    // Calculate box position
+
+    box_x = SCREENWIDTH - MOUSE_SPEED_BOX_WIDTH * 8;
+    box_y = SCREENHEIGHT - 9;
+
+    // Draw the box.
+
+    x = box_x;
+    
+    for (i=0; i<MOUSE_SPEED_BOX_WIDTH; ++i)
+    {
+        if (i == 0)
+        {
+            lumpname = "M_LSLEFT";
+        }
+        else if (i == MOUSE_SPEED_BOX_WIDTH - 1)
+        {
+            lumpname = "M_LSRGHT";
+        }
+        else
+        {
+            lumpname = "M_LSCNTR";
+        }
+
+        V_DrawPatchDirect(x, box_y, 0, W_CacheLumpName(DEH_String(lumpname), 
+                                                       PU_CACHE));
+        x += 8;
+    }
+
+    // Calculate the position of the red line.  This is 1/3 of the way
+    // along the box.
+
+    redline_x = (MOUSE_SPEED_BOX_WIDTH / 3) * 8;
+
+    // Undo acceleration and get back the original mouse speed
+
+    if (testcontrols_mousespeed < mouse_threshold)
+    {
+        original_speed = testcontrols_mousespeed;
+    }
+    else
+    {
+        original_speed = testcontrols_mousespeed - mouse_threshold;
+        original_speed = (int) (original_speed / mouse_acceleration);
+        original_speed += mouse_threshold;
+    }
+
+    // Calculate line length
+
+    linelen = (original_speed * redline_x) / mouse_threshold;
+
+    // Draw horizontal "thermometer" 
+
+    for (x=0; x<(MOUSE_SPEED_BOX_WIDTH - 1) * 8; ++x)
+    {
+        if (x < linelen)
+        {
+            color = COLOR_WHITE;
+        }
+        else
+        {
+            color = COLOR_BLACK;
+        }
+
+        screens[0][(box_y - 4) * SCREENWIDTH + box_x + x + 1] = color;
+    }
+
+    // Draw red line
+
+    for (y=box_y - 8; y<box_y; ++y)
+    {
+        screens[0][y * SCREENWIDTH + box_x + redline_x] = COLOR_RED;
+    }
+}
  
 int G_CmdChecksum (ticcmd_t* cmd) 
 { 
@@ -556,6 +661,13 @@ void G_BuildTiccmd (ticcmd_t* cmd)
     else 
 	cmd->angleturn -= mousex*0x8; 
 
+    if (mousex == 0)
+    {
+        // No movement in the previous frame
+
+        testcontrols_mousespeed = 0;
+    }
+    
     mousex = mousey = 0; 
 	 
     if (forward > MAXPLMOVE) 
@@ -640,6 +752,11 @@ void G_DoLoadLevel (void)
     sendpause = sendsave = paused = false; 
     memset (mousebuttons, 0, sizeof(mousebuttons)); 
     memset (joybuttons, 0, sizeof(joybuttons)); 
+
+    if (testcontrols)
+    {
+        players[consoleplayer].message = "Press escape to quit.";
+    }
 } 
  
  
@@ -700,7 +817,18 @@ boolean G_Responder (event_t* ev)
 	if (F_Responder (ev)) 
 	    return true;	// finale ate the event 
     } 
-	 
+
+    if (testcontrols && ev->type == ev_mouse)
+    {
+        // If we are invoked by setup to test the controls, save the 
+        // mouse speed so that we can display it on-screen.
+        // Perform a low pass filter on this so that the thermometer 
+        // appears to move smoothly.
+
+        testcontrols_mousespeed = ((testcontrols_mousespeed * 2) 
+                                   + abs(ev->data2)) / 3;
+    }
+
     switch (ev->type) 
     { 
       case ev_keydown: 
