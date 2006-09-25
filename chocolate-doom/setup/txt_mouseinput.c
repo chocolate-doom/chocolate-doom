@@ -31,7 +31,7 @@
 #include "txt_label.h"
 #include "txt_window.h"
 
-#define MOUSE_INPUT_WIDTH 10
+#define MOUSE_INPUT_WIDTH 8
 
 static int MouseButtonToSetting(int b)
 {
