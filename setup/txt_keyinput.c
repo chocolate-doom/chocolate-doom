@@ -30,7 +30,7 @@
 #include "txt_label.h"
 #include "txt_window.h"
 
-#define KEY_INPUT_WIDTH 10
+#define KEY_INPUT_WIDTH 8
 
 static int KeyPressCallback(txt_window_t *window, int key, 
                             TXT_UNCAST_ARG(key_input))
