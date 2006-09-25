@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: doomstat.h 593 2006-09-01 20:45:45Z fraggle $
+// $Id: doomstat.h 662 2006-09-25 18:04:29Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -156,7 +156,7 @@ extern	int		viewheight;
 extern	int		viewwidth;
 extern	int		scaledviewwidth;
 
-
+extern  boolean         testcontrols;
 
 
 

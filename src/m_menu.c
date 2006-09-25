@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_menu.c 653 2006-09-22 20:32:00Z fraggle $
+// $Id: m_menu.c 662 2006-09-25 18:04:29Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -78,7 +78,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_menu.c 653 2006-09-22 20:32:00Z fraggle $";
+rcsid[] = "$Id: m_menu.c 662 2006-09-25 18:04:29Z fraggle $";
 
 #include <stdlib.h>
 #include <ctype.h>
@@ -1550,6 +1550,10 @@ boolean M_Responder (event_t* ev)
     if (ch == -1)
 	return false;
 
+    if (testcontrols && ch == KEY_ESCAPE)
+    {
+        I_Quit();
+    }
     
     // Save Game string input
     if (saveStringEnter)

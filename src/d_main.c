@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 653 2006-09-22 20:32:00Z fraggle $
+// $Id: d_main.c 662 2006-09-25 18:04:29Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -184,7 +184,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 653 2006-09-22 20:32:00Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 662 2006-09-25 18:04:29Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -500,6 +500,13 @@ void D_Display (void)
 
     }
 
+    if (testcontrols)
+    {
+        // Box showing current mouse speed
+
+        G_DrawMouseSpeedBox();
+    }
+
     menuactivestate = menuactive;
     viewactivestate = viewactive;
     inhelpscreensstate = inhelpscreens;
@@ -523,7 +530,7 @@ void D_Display (void)
 
 
     // normal update
-    if (!wipe)
+    if (!wipe || testcontrols)
     {
 	I_FinishUpdate ();              // page flip or blit buffer
 	return;
@@ -1837,6 +1844,18 @@ void D_DoomMain (void)
 	    startmap = myargv[p+2][0]-'0';
 	}
 	autostart = true;
+    }
+
+    // Invoked by setup to test the controls.
+
+    p = M_CheckParm("-testcontrols");
+
+    if (p > 0)
+    {
+        startepisode = 1;
+        startmap = 1;
+        autostart = true;
+        testcontrols = true;
     }
 
     // Check for load game parameter

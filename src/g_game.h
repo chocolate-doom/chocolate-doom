@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: g_game.h 8 2005-07-23 16:44:57Z fraggle $
+// $Id: g_game.h 662 2006-09-25 18:04:29Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -77,6 +77,7 @@ boolean G_Responder (event_t*	ev);
 
 void G_ScreenShot (void);
 
+void G_DrawMouseSpeedBox(void);
 
 #endif
 //-----------------------------------------------------------------------------
