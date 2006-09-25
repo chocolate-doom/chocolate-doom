@@ -9,7 +9,7 @@
 		<Option virtualFolders="" />
 		<Build>
 			<Target title="Debug">
-				<Option output="..\bin\chocolate-setup-dbg.exe" />
+				<Option output="..\bin\chocolate-setup-dbg.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="..\bin" />
 				<Option object_output="..\obj\dbg\" />
 				<Option type="1" />
@@ -21,7 +21,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="..\bin\chocolate-setup.exe" />
+				<Option output="..\bin\chocolate-setup.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="..\bin" />
 				<Option object_output="..\obj\rel\" />
 				<Option type="1" />
@@ -48,6 +48,11 @@
 			<Add option="-lmingw32 -lSDLmain -lSDL -mwindows" />
 			<Add directory="..\bin" />
 		</Linker>
+		<Unit filename="..\setup\compatibility.c">
+			<Option compilerVar="CC" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="..\setup\display.c">
 			<Option compilerVar="CC" />
 			<Option target="Debug" />
@@ -75,6 +80,18 @@
 		</Unit>
 		<Unit filename="..\setup\sound.c">
 			<Option compilerVar="CC" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="..\setup\testconfig.c">
+			<Option compilerVar="CC" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="..\setup\testconfig.h">
+			<Option compilerVar="CPP" />
+			<Option compile="0" />
+			<Option link="0" />
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
