@@ -1550,9 +1550,18 @@ boolean M_Responder (event_t* ev)
     if (ch == -1)
 	return false;
 
-    if (testcontrols && ch == KEY_ESCAPE)
+    // In testcontrols mode, none of the function keys should do anything
+    // - the only key is escape to quit.
+
+    if (testcontrols)
     {
-        I_Quit();
+        if (ch == KEY_ESCAPE)
+        {
+            I_Quit();
+            return true;
+        }
+
+        return false;
     }
     
     // Save Game string input
