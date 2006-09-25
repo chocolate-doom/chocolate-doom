@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: g_game.c 664 2006-09-25 20:41:59Z fraggle $
+// $Id: g_game.c 667 2006-09-25 21:45:30Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -134,7 +134,7 @@
 
 
 static const char
-rcsid[] = "$Id: g_game.c 664 2006-09-25 20:41:59Z fraggle $";
+rcsid[] = "$Id: g_game.c 667 2006-09-25 21:45:30Z fraggle $";
 
 #include <string.h>
 #include <stdlib.h>
@@ -352,9 +352,10 @@ int             vanilla_demo_limit = 1;
  
 
 #define MOUSE_SPEED_BOX_WIDTH 16
-#define COLOR_RED   0xb0
-#define COLOR_BLACK 0x00
-#define COLOR_WHITE 0xff
+#define COLOR_RED    0xb0
+#define COLOR_BLACK  0x00
+#define COLOR_WHITE  0x04
+#define COLOR_YELLOW 0xe7
 
 void G_DrawMouseSpeedBox(void)
 {
@@ -433,7 +434,14 @@ void G_DrawMouseSpeedBox(void)
     {
         if (x < linelen)
         {
-            color = COLOR_WHITE;
+            if (x < redline_x)
+            {
+                color = COLOR_WHITE;
+            }
+            else
+            {
+                color = COLOR_YELLOW;
+            }
         }
         else
         {
