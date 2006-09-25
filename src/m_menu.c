@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_menu.c 662 2006-09-25 18:04:29Z fraggle $
+// $Id: m_menu.c 665 2006-09-25 20:42:37Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -78,7 +78,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_menu.c 662 2006-09-25 18:04:29Z fraggle $";
+rcsid[] = "$Id: m_menu.c 665 2006-09-25 20:42:37Z fraggle $";
 
 #include <stdlib.h>
 #include <ctype.h>
@@ -1550,9 +1550,18 @@ boolean M_Responder (event_t* ev)
     if (ch == -1)
 	return false;
 
-    if (testcontrols && ch == KEY_ESCAPE)
+    // In testcontrols mode, none of the function keys should do anything
+    // - the only key is escape to quit.
+
+    if (testcontrols)
     {
-        I_Quit();
+        if (ch == KEY_ESCAPE)
+        {
+            I_Quit();
+            return true;
+        }
+
+        return false;
     }
     
     // Save Game string input
