@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: g_game.c 662 2006-09-25 18:04:29Z fraggle $
+// $Id: g_game.c 664 2006-09-25 20:41:59Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -134,7 +134,7 @@
 
 
 static const char
-rcsid[] = "$Id: g_game.c 662 2006-09-25 18:04:29Z fraggle $";
+rcsid[] = "$Id: g_game.c 664 2006-09-25 20:41:59Z fraggle $";
 
 #include <string.h>
 #include <stdlib.h>
@@ -825,8 +825,7 @@ boolean G_Responder (event_t* ev)
         // Perform a low pass filter on this so that the thermometer 
         // appears to move smoothly.
 
-        testcontrols_mousespeed = ((testcontrols_mousespeed * 2) 
-                                   + abs(ev->data2)) / 3;
+        testcontrols_mousespeed = abs(ev->data2);
     }
 
     switch (ev->type) 
