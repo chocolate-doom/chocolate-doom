@@ -825,8 +825,7 @@ boolean G_Responder (event_t* ev)
         // Perform a low pass filter on this so that the thermometer 
         // appears to move smoothly.
 
-        testcontrols_mousespeed = ((testcontrols_mousespeed * 2) 
-                                   + abs(ev->data2)) / 3;
+        testcontrols_mousespeed = abs(ev->data2);
     }
 
     switch (ev->type) 
