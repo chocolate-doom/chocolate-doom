@@ -90,7 +90,7 @@ void ConfigMouse(void)
 
     table = TXT_NewTable(2);
 
-    TXT_SetColumnWidths(table, 25, 10);
+    TXT_SetColumnWidths(table, 27, 5);
     TXT_AddWidget(table, TXT_NewLabel("Speed"));
     TXT_AddWidget(table, TXT_NewSpinControl(&speed, 1, 256));
     TXT_AddWidget(table, TXT_NewLabel("Acceleration"));
@@ -104,7 +104,7 @@ void ConfigMouse(void)
 
     table = TXT_NewTable(2);
 
-    TXT_SetColumnWidths(table, 25, 10);
+    TXT_SetColumnWidths(table, 27, 5);
     AddMouseControl(table, "Fire weapon", &mouseb_fire);
     AddMouseControl(table, "Move forward", &mouseb_forward);
     AddMouseControl(table, "Strafe on", &mouseb_strafe);
