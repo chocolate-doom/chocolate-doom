@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 662 2006-09-25 18:04:29Z fraggle $
+// $Id: d_main.c 666 2006-09-25 20:47:11Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -184,7 +184,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 662 2006-09-25 18:04:29Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 666 2006-09-25 20:47:11Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -530,7 +530,7 @@ void D_Display (void)
 
 
     // normal update
-    if (!wipe || testcontrols)
+    if (!wipe)
     {
 	I_FinishUpdate ();              // page flip or blit buffer
 	return;
@@ -586,6 +586,11 @@ void D_DoomLoop (void)
     R_ExecuteSetViewSize();
 
     D_StartGameLoop();
+
+    if (testcontrols)
+    {
+        wipegamestate = gamestate;
+    }
 
     while (1)
     {
