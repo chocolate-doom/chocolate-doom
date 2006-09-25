@@ -352,9 +352,10 @@ int             vanilla_demo_limit = 1;
  
 
 #define MOUSE_SPEED_BOX_WIDTH 16
-#define COLOR_RED   0xb0
-#define COLOR_BLACK 0x00
-#define COLOR_WHITE 0xff
+#define COLOR_RED    0xb0
+#define COLOR_BLACK  0x00
+#define COLOR_WHITE  0x04
+#define COLOR_YELLOW 0xe7
 
 void G_DrawMouseSpeedBox(void)
 {
@@ -433,7 +434,14 @@ void G_DrawMouseSpeedBox(void)
     {
         if (x < linelen)
         {
-            color = COLOR_WHITE;
+            if (x < redline_x)
+            {
+                color = COLOR_WHITE;
+            }
+            else
+            {
+                color = COLOR_YELLOW;
+            }
         }
         else
         {
