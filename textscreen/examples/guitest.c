@@ -172,6 +172,8 @@ int main(int argc, char *argv[])
 
     TXT_GUIMainLoop();
 
+    TXT_Shutdown();
+
     return 0;
 }
 
