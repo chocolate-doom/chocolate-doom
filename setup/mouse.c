@@ -20,8 +20,10 @@
 //
 
 #include <stdlib.h>
+
 #include "textscreen.h"
 
+#include "testconfig.h"
 #include "txt_mouseinput.h"
 
 int use_mouse = 1;
@@ -108,5 +110,7 @@ void ConfigMouse(void)
     AddMouseControl(table, "Strafe on", &mouseb_strafe);
     
     TXT_AddWidget(window, table);
+
+    TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
 }
 
