@@ -20,6 +20,7 @@
 //
 #include "textscreen.h"
 
+#include "testconfig.h"
 #include "txt_keyinput.h"
 
 int key_left = KEY_LEFTARROW;
@@ -99,5 +100,7 @@ void ConfigKeyboard(void)
     AddKeyControl(table, "Fire", &key_fire);
 
     TXT_AddWidget(window, table);
+
+    TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
 }
 
