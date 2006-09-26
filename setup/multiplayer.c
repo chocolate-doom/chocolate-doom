@@ -300,7 +300,6 @@ void StartMultiGame(void)
 void JoinMultiGame(void)
 {
     txt_window_t *window;
-    txt_button_t *button;
 
     window = TXT_NewWindow("Join multiplayer game");
 
@@ -308,13 +307,9 @@ void JoinMultiGame(void)
     TXT_AddWidget(window, TXT_NewInputBox(&connect_address, 40));
     TXT_AddWidget(window, TXT_NewStrut(0, 1));
 
-    button = TXT_NewButton("Add extra parameters...");
-    TXT_SignalConnect(button, "pressed", OpenExtraParamsWindow, NULL);
-    TXT_AddWidget(window, button);
-
-    button = TXT_NewButton("Add WADs...");
-    TXT_SignalConnect(button, "pressed", OpenWadsWindow, NULL);
-    TXT_AddWidget(window, button);
+    TXT_AddWidget(window, TXT_NewButton2("Add extra parameters...",
+                                         OpenExtraParamsWindow, NULL));
+    TXT_AddWidget(window, TXT_NewButton2("Add WADs", OpenWadsWindow, NULL));
 
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, StartGameAction());
 }

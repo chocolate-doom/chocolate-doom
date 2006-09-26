@@ -47,22 +47,19 @@ void QuitConfirm(void *unused1, void *unused2)
     TXT_AddWidget(window, TXT_NewStrut(24, 0));
     TXT_SetWidgetAlign(label, TXT_HORIZ_CENTER);
 
-    button = TXT_NewButton("  Yes  ");
+    button = TXT_NewButton2("  Yes  ", DoQuit, DoQuit);
     TXT_SetWidgetAlign(button, TXT_HORIZ_CENTER);
     TXT_AddWidget(window, button);
-    TXT_SignalConnect(button, "pressed", DoQuit, DoQuit);
 
-    button = TXT_NewButton("  No   ");
+    button = TXT_NewButton2("  No   ", DoQuit, NULL);
+    TXT_SetWidgetAlign(button, TXT_HORIZ_CENTER);
+    TXT_AddWidget(window, button);
 
     // Only an "abort" button in the middle.
     TXT_SetWindowAction(window, TXT_HORIZ_LEFT, NULL);
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, 
                         TXT_NewWindowAbortAction(window));
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, NULL);
-
-    TXT_SetWidgetAlign(button, TXT_HORIZ_CENTER);
-    TXT_AddWidget(window, button);
-    TXT_SignalConnect(button, "pressed", DoQuit, NULL);
 }
 
 extern void ConfigDisplay();
@@ -78,44 +75,38 @@ void MainMenu(void)
 {
     txt_window_t *window;
     txt_window_action_t *quit_action;
-    txt_button_t *button;
 
     window = TXT_NewWindow("Main Menu");
 
-    button = TXT_NewButton("Configure display");
-    TXT_AddWidget(window, button);
-    TXT_SignalConnect(button, "pressed", ConfigDisplay, NULL);
+    TXT_AddWidget(window,
+                  TXT_NewButton2("Configure display", ConfigDisplay, NULL));
 
-    button = TXT_NewButton("Configure keyboard");
-    TXT_AddWidget(window, button);
-    TXT_SignalConnect(button, "pressed", ConfigKeyboard, NULL);
+    TXT_AddWidget(window,
+                  TXT_NewButton2("Configure keyboard", ConfigKeyboard, NULL));
 
-    button = TXT_NewButton("Configure mouse");
-    TXT_AddWidget(window, button);
-    TXT_SignalConnect(button, "pressed", ConfigMouse, NULL);
+    TXT_AddWidget(window,
+                  TXT_NewButton2("Configure mouse", ConfigMouse, NULL));
 
-    button = TXT_NewButton("Configure sound");
-    TXT_AddWidget(window, button);
-    TXT_SignalConnect(button, "pressed", ConfigSound, NULL);
+    TXT_AddWidget(window,
+                  TXT_NewButton2("Configure sound", ConfigSound, NULL));
 
-    button = TXT_NewButton("Compatibility");
-    TXT_AddWidget(window, button);
-    TXT_SignalConnect(button, "pressed", CompatibilitySettings, NULL);
+    TXT_AddWidget(window,
+                  TXT_NewButton2("Compatibility", CompatibilitySettings, NULL));
 
-    TXT_AddWidget(window, TXT_NewButton("Save parameters and launch DOOM"));
+    TXT_AddWidget(window,
+                  TXT_NewButton("Save parameters and launch DOOM"));
+
     TXT_AddWidget(window, TXT_NewStrut(0, 1));
     
-    button = TXT_NewButton("Start a Network game");
-    TXT_SignalConnect(button, "pressed", StartMultiGame, NULL);
-    TXT_AddWidget(window, button);
+    TXT_AddWidget(window,
+                  TXT_NewButton2("Start a Network game", StartMultiGame, NULL));
 
-    button = TXT_NewButton("Join a Network game");
-    TXT_SignalConnect(button, "pressed", JoinMultiGame, NULL);
-    TXT_AddWidget(window, button);
+    TXT_AddWidget(window,
+                  TXT_NewButton2("Join a Network game", JoinMultiGame, NULL));
 
-    button = TXT_NewButton("Multiplayer configuration");
-    TXT_SignalConnect(button, "pressed", MultiplayerConfig, NULL);
-    TXT_AddWidget(window, button);
+    TXT_AddWidget(window, 
+                  TXT_NewButton2("Multiplayer configuration", 
+                                 MultiplayerConfig, NULL));
 
     quit_action = TXT_NewWindowAction(KEY_ESCAPE, "Quit");
     TXT_SignalConnect(quit_action, "pressed", QuitConfirm, NULL);
