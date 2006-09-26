@@ -68,6 +68,10 @@ warptype_t warptype = WARP_DOOM2;
 int warpepisode = 1;
 int warpmap = 1;
 
+// Address to connect to when joining a game
+
+char *connect_address = NULL;
+
 static void StartGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
 {
     printf("Now we start the game.\n");
@@ -291,6 +295,28 @@ void StartMultiGame(void)
     TXT_SignalConnect(button, "pressed", OpenExtraParamsWindow, NULL);
     TXT_AddWidget(window, button);
     
+}
+
+void JoinMultiGame(void)
+{
+    txt_window_t *window;
+    txt_button_t *button;
+
+    window = TXT_NewWindow("Join multiplayer game");
+
+    TXT_AddWidget(window, TXT_NewLabel("Connect to address: "));
+    TXT_AddWidget(window, TXT_NewInputBox(&connect_address, 40));
+    TXT_AddWidget(window, TXT_NewStrut(0, 1));
+
+    button = TXT_NewButton("Add extra parameters...");
+    TXT_SignalConnect(button, "pressed", OpenExtraParamsWindow, NULL);
+    TXT_AddWidget(window, button);
+
+    button = TXT_NewButton("Add WADs...");
+    TXT_SignalConnect(button, "pressed", OpenWadsWindow, NULL);
+    TXT_AddWidget(window, button);
+
+    TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, StartGameAction());
 }
 
 static void SetChatMacroDefaults(void)
