@@ -65,7 +65,6 @@ void SetupWindow(void)
     txt_window_t *window;
     txt_table_t *table;
     txt_table_t *rightpane;
-    txt_button_t *button;
     txt_checkbox_t *cheesy_checkbox;
     txt_window_action_t *pwn;
     txt_label_t *toplabel;
@@ -121,10 +120,7 @@ void SetupWindow(void)
 
     UpdateLabel(NULL, NULL);
                                      
-    button = TXT_NewButton("Close Window");
-    TXT_AddWidget(window, button);
-
-    TXT_SignalConnect(button, "pressed", CloseWindow, NULL);
+    TXT_AddWidget(window, TXT_NewButton2("Close Window", CloseWindow, NULL));
 
     pwn = TXT_NewWindowAction(KEY_F1, "PWN!");
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, pwn);
