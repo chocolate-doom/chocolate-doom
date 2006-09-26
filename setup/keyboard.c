@@ -91,6 +91,7 @@ void ConfigKeyboard(void)
     AddKeyControl(table, "Strafe On", &key_strafe);
 
     TXT_AddWidget(window, table);
+    TXT_AddWidget(window, TXT_NewCheckBox("Always run", &always_run));
 
     TXT_AddWidget(window, TXT_NewSeparator("Action"));
 
@@ -101,9 +102,6 @@ void ConfigKeyboard(void)
     AddKeyControl(table, "Fire", &key_fire);
 
     TXT_AddWidget(window, table);
-
-    TXT_AddWidget(window, TXT_NewSeparator(NULL));
-    TXT_AddWidget(window, TXT_NewCheckBox("Always run", &always_run));
 
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
 }
