@@ -1,6 +1,7 @@
-AM_CFLAGS = @SDL_CFLAGS@ -I../textscreen -I../src
 
 gamesdir = $(prefix)/games
+
+AM_CFLAGS = @SDL_CFLAGS@ -I../textscreen -I../src -DINSTALL_DIR="\"$(gamesdir)\""
 
 games_PROGRAMS = chocolate-setup
 

@@ -37,7 +37,15 @@ static void TestCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
     TXT_SetWidgetAlign(label, TXT_HORIZ_CENTER);
     TXT_AddWidget(testwindow, label);
     TXT_DrawDesktop();
+    
+#ifdef _WIN32
+    // On windows, just run the command - we aren't installed anywhere
+    // special.
     system("chocolate-doom -testcontrols");
+#else
+    // Use the location where we are installed
+    system(INSTALL_DIR "/chocolate-doom -testcontrols");
+#endif
 
     TXT_CloseWindow(testwindow);
 }
