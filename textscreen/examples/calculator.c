@@ -44,7 +44,6 @@ void InsertNumber(TXT_UNCAST_ARG(button), TXT_UNCAST_ARG(value))
 
 void AddNumberButton(txt_table_t *table, int value)
 {
-    txt_button_t *button;
     char buf[10];
     int *val_copy;
 
@@ -53,9 +52,7 @@ void AddNumberButton(txt_table_t *table, int value)
 
     sprintf(buf, "  %i  ", value);
 
-    button = TXT_NewButton(buf);
-    TXT_AddWidget(table, button);
-    TXT_SignalConnect(button, "pressed", InsertNumber, val_copy);
+    TXT_AddWidget(table, TXT_NewButton2(buf, InsertNumber, val_copy));
 }
 
 void Operator(TXT_UNCAST_ARG(button), TXT_UNCAST_ARG(op))
@@ -69,7 +66,6 @@ void Operator(TXT_UNCAST_ARG(button), TXT_UNCAST_ARG(op))
 
 void AddOperatorButton(txt_table_t *table, char *label, operator_t op)
 {
-    txt_button_t *button;
     char buf[10];
     operator_t *op_copy;
 
@@ -77,10 +73,8 @@ void AddOperatorButton(txt_table_t *table, char *label, operator_t op)
     *op_copy = op;
 
     sprintf(buf, "  %s  ", label);
-    button = TXT_NewButton(buf);
 
-    TXT_AddWidget(table, button);
-    TXT_SignalConnect(button, "pressed", Operator, op_copy);
+    TXT_AddWidget(table, TXT_NewButton2(buf, Operator, op_copy));
 }
 
 void Calculate(TXT_UNCAST_ARG(button), void *unused)
@@ -113,7 +107,6 @@ void BuildGUI()
 {
     txt_window_t *window;
     txt_table_t *table;
-    txt_button_t *equals_button;
     
     window = TXT_NewWindow("Calculator");
 
@@ -141,9 +134,8 @@ void BuildGUI()
     AddOperatorButton(table, "+", OP_PLUS);
     AddNumberButton(table, 0);
     TXT_AddWidget(table, NULL);
-    equals_button = TXT_NewButton("  =  ");
-    TXT_SignalConnect(equals_button, "pressed", Calculate, NULL);
-    TXT_AddWidget(table, equals_button);
+
+    TXT_AddWidget(table, TXT_NewButton2("  =  ", Calculate, NULL));
     AddOperatorButton(table, "/", OP_DIV);
     
     TXT_AddWidget(window, TXT_NewStrut(0, 1));

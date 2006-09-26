@@ -33,6 +33,8 @@ struct txt_button_s
 };
 
 txt_button_t *TXT_NewButton(char *label);
+txt_button_t *TXT_NewButton2(char *label, TxtWidgetSignalFunc func, 
+                             void *user_data);
 void TXT_SetButtonLabel(txt_button_t *button, char *label);
 
 #endif /* #ifndef TXT_BUTTON_H */
