@@ -164,6 +164,33 @@ void TXT_AddWidget(TXT_UNCAST_ARG(table), TXT_UNCAST_ARG(widget))
     ++table->num_widgets;
 }
 
+// Add multiple widgets to a table.
+
+void TXT_AddWidgets(TXT_UNCAST_ARG(table), ...)
+{
+    TXT_CAST_ARG(txt_table_t, table);
+    va_list args;
+    txt_widget_t *widget;
+
+    va_start(args, TXT_UNCAST_ARG_NAME(table));
+
+    // Keep adding widgets until a NULL is reached.
+   
+    for (;;) 
+    {
+        widget = va_arg(args, txt_widget_t *);
+
+        if (widget == NULL)
+        {
+            break;
+        }
+
+        TXT_AddWidget(table, widget);
+    }
+
+    va_end(args);
+}
+
 static int SelectableWidget(txt_table_t *table, int x, int y)
 {
     txt_widget_t *widget;
