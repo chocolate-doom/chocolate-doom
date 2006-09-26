@@ -71,6 +71,7 @@ extern void ConfigMouse();
 extern void ConfigSound();
 extern void CompatibilitySettings();
 extern void StartMultiGame();
+extern void JoinMultiGame();
 extern void MultiplayerConfig();
 
 void MainMenu(void)
@@ -108,7 +109,9 @@ void MainMenu(void)
     TXT_SignalConnect(button, "pressed", StartMultiGame, NULL);
     TXT_AddWidget(window, button);
 
-    TXT_AddWidget(window, TXT_NewButton("Join a Network game"));
+    button = TXT_NewButton("Join a Network game");
+    TXT_SignalConnect(button, "pressed", JoinMultiGame, NULL);
+    TXT_AddWidget(window, button);
 
     button = TXT_NewButton("Multiplayer configuration");
     TXT_SignalConnect(button, "pressed", MultiplayerConfig, NULL);
