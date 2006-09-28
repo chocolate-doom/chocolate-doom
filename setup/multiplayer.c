@@ -309,7 +309,7 @@ void JoinMultiGame(void)
 
     TXT_AddWidget(window, TXT_NewButton2("Add extra parameters...",
                                          OpenExtraParamsWindow, NULL));
-    TXT_AddWidget(window, TXT_NewButton2("Add WADs", OpenWadsWindow, NULL));
+    TXT_AddWidget(window, TXT_NewButton2("Add WADs...", OpenWadsWindow, NULL));
 
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, StartGameAction());
 }
