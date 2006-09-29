@@ -35,45 +35,34 @@ int music_volume = 15;
 void ConfigSound(void)
 {
         txt_window_t *window;
-        txt_table_t *table;
-        txt_checkbox_t *checkbox;
-        txt_spincontrol_t *spincontrol;
+        txt_table_t *sfx_table;
+        txt_table_t *music_table;
 
         window = TXT_NewWindow("Sound configuration");
 
-        TXT_AddWidget(window, TXT_NewSeparator("Sound effects"));
+        TXT_AddWidgets(window,
+                   TXT_NewSeparator("Sound effects"),
+                   TXT_NewCheckBox("Sound effects enabled", &snd_sfxenabled),
+                   sfx_table = TXT_NewTable(2),
+                   TXT_NewSeparator("Music"),
+                   TXT_NewCheckBox("Music enabled", &snd_musicenabled),
+                   music_table = TXT_NewTable(2),
+                   NULL);
 
-        checkbox = TXT_NewCheckBox("Sound effects enabled", &snd_sfxenabled);
-        TXT_AddWidget(window, checkbox);
-        
-        table = TXT_NewTable(2);
-        TXT_SetColumnWidths(table, 20, 5);
+        TXT_SetColumnWidths(sfx_table, 20, 5);
 
-        TXT_AddWidget(table, TXT_NewLabel("Sound channels"));
+        TXT_AddWidgets(sfx_table, 
+                       TXT_NewLabel("Sound channels"),
+                       TXT_NewSpinControl(&snd_channels, 1, 8),
+                       TXT_NewLabel("SFX volume"),
+                       TXT_NewSpinControl(&sfx_volume, 0, 15),
+                       NULL);
 
-        spincontrol = TXT_NewSpinControl(&snd_channels, 1, 8);
-        TXT_AddWidget(table, spincontrol);
+        TXT_SetColumnWidths(music_table, 20, 5);
 
-        TXT_AddWidget(table, TXT_NewLabel("SFX volume"));
-
-        spincontrol = TXT_NewSpinControl(&sfx_volume, 0, 15);
-        TXT_AddWidget(table, spincontrol);
-
-        TXT_AddWidget(window, table);
-
-        TXT_AddWidget(window, TXT_NewSeparator("Music"));
-
-        checkbox = TXT_NewCheckBox("Music enabled", &snd_musicenabled);
-        TXT_AddWidget(window, checkbox);
-
-        table = TXT_NewTable(2);
-        TXT_SetColumnWidths(table, 20, 5);
-
-        TXT_AddWidget(table, TXT_NewLabel("Music volume"));
-        
-        spincontrol = TXT_NewSpinControl(&music_volume, 0, 15);
-        TXT_AddWidget(table, spincontrol);
-
-        TXT_AddWidget(window, table);
+        TXT_AddWidgets(music_table,
+                       TXT_NewLabel("Music volume"),
+                       TXT_NewSpinControl(&music_volume, 0, 15),
+                       NULL);
 }
 

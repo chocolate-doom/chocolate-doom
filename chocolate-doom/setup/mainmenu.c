@@ -37,23 +37,22 @@ void QuitConfirm(void *unused1, void *unused2)
 {
     txt_window_t *window;
     txt_label_t *label;
-    txt_button_t *button;
+    txt_button_t *yes_button;
+    txt_button_t *no_button;
 
     window = TXT_NewWindow(NULL);
 
-    label = TXT_NewLabel("Save settings and\n"
-                         "quit setup?");
-    TXT_AddWidget(window, label);
-    TXT_AddWidget(window, TXT_NewStrut(24, 0));
+    TXT_AddWidgets(window, 
+                   label = TXT_NewLabel("Save settings and\n"
+                                        "quit setup?"),
+                   TXT_NewStrut(24, 0),
+                   yes_button = TXT_NewButton2("  Yes  ", DoQuit, DoQuit),
+                   no_button = TXT_NewButton2("  No   ", DoQuit, NULL),
+                   NULL);
+
     TXT_SetWidgetAlign(label, TXT_HORIZ_CENTER);
-
-    button = TXT_NewButton2("  Yes  ", DoQuit, DoQuit);
-    TXT_SetWidgetAlign(button, TXT_HORIZ_CENTER);
-    TXT_AddWidget(window, button);
-
-    button = TXT_NewButton2("  No   ", DoQuit, NULL);
-    TXT_SetWidgetAlign(button, TXT_HORIZ_CENTER);
-    TXT_AddWidget(window, button);
+    TXT_SetWidgetAlign(yes_button, TXT_HORIZ_CENTER);
+    TXT_SetWidgetAlign(no_button, TXT_HORIZ_CENTER);
 
     // Only an "abort" button in the middle.
     TXT_SetWindowAction(window, TXT_HORIZ_LEFT, NULL);
@@ -78,35 +77,18 @@ void MainMenu(void)
 
     window = TXT_NewWindow("Main Menu");
 
-    TXT_AddWidget(window,
-                  TXT_NewButton2("Configure display", ConfigDisplay, NULL));
-
-    TXT_AddWidget(window,
-                  TXT_NewButton2("Configure keyboard", ConfigKeyboard, NULL));
-
-    TXT_AddWidget(window,
-                  TXT_NewButton2("Configure mouse", ConfigMouse, NULL));
-
-    TXT_AddWidget(window,
-                  TXT_NewButton2("Configure sound", ConfigSound, NULL));
-
-    TXT_AddWidget(window,
-                  TXT_NewButton2("Compatibility", CompatibilitySettings, NULL));
-
-    TXT_AddWidget(window,
-                  TXT_NewButton("Save parameters and launch DOOM"));
-
-    TXT_AddWidget(window, TXT_NewStrut(0, 1));
-    
-    TXT_AddWidget(window,
-                  TXT_NewButton2("Start a Network game", StartMultiGame, NULL));
-
-    TXT_AddWidget(window,
-                  TXT_NewButton2("Join a Network game", JoinMultiGame, NULL));
-
-    TXT_AddWidget(window, 
-                  TXT_NewButton2("Multiplayer configuration", 
-                                 MultiplayerConfig, NULL));
+    TXT_AddWidgets(window,
+          TXT_NewButton2("Configure display", ConfigDisplay, NULL),
+          TXT_NewButton2("Configure keyboard", ConfigKeyboard, NULL),
+          TXT_NewButton2("Configure mouse", ConfigMouse, NULL),
+          TXT_NewButton2("Configure sound", ConfigSound, NULL),
+          TXT_NewButton2("Compatibility", CompatibilitySettings, NULL),
+          TXT_NewButton("Save parameters and launch DOOM"),
+          TXT_NewStrut(0, 1),
+          TXT_NewButton2("Start a Network game", StartMultiGame, NULL),
+          TXT_NewButton2("Join a Network game", JoinMultiGame, NULL),
+          TXT_NewButton2("Multiplayer configuration", MultiplayerConfig, NULL),
+          NULL);
 
     quit_action = TXT_NewWindowAction(KEY_ESCAPE, "Quit");
     TXT_SignalConnect(quit_action, "pressed", QuitConfirm, NULL);
