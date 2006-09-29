@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.c 680 2006-09-29 21:25:13Z fraggle $
+// $Id: d_net.c 681 2006-09-29 21:38:21Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -117,7 +117,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_net.c 680 2006-09-29 21:25:13Z fraggle $";
+static const char rcsid[] = "$Id: d_net.c 681 2006-09-29 21:38:21Z fraggle $";
 
 #include "doomfeatures.h"
 
@@ -335,6 +335,18 @@ void D_CheckNetGame (void)
 
     if (M_CheckParm("-drone") > 0)
     {
+        drone = true;
+    }
+
+    if (M_CheckParm("-left") > 0)
+    {
+        viewangleoffset = ANG90;
+        drone = true;
+    }
+
+    if (M_CheckParm("-right") > 0)
+    {
+        viewangleoffset = ANG270;
         drone = true;
     }
 
