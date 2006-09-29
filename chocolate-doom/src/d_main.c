@@ -278,8 +278,6 @@ boolean         nomonsters;	// checkparm of -nomonsters
 boolean         respawnparm;	// checkparm of -respawn
 boolean         fastparm;	// checkparm of -fast
 
-boolean         drone;
-
 boolean		singletics = false; // debug flag to cancel adaptiveness
 
 

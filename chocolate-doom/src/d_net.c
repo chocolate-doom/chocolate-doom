@@ -249,6 +249,13 @@ void NetUpdate (void)
         // Always run the menu
 
         M_Ticker ();
+
+        if (drone)
+        {
+            // In drone mode, do not generate any ticcmds.
+
+            continue;
+        }
 	
         if (net_cl_new_sync)
         { 
@@ -324,6 +331,11 @@ void D_CheckNetGame (void)
     {
         playeringame[i] = false;
        	nettics[i] = 0;
+    }
+
+    if (M_CheckParm("-drone") > 0)
+    {
+        drone = true;
     }
 
     playeringame[0] = true;
