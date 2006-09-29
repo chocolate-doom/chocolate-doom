@@ -81,7 +81,9 @@ static void ModeSelected(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(mode))
 void ConfigDisplay(void)
 {
     txt_window_t *window;
-    txt_table_t *table;
+    txt_table_t *windowed_table;
+    txt_table_t *fullscreen_table;
+    txt_table_t *misc_table;
     txt_radiobutton_t *rbutton;
     int i;
 
@@ -93,43 +95,39 @@ void ConfigDisplay(void)
     
     window = TXT_NewWindow("Display Configuration");
 
-    TXT_AddWidget(window, TXT_NewSeparator("Windowed modes"));
+    TXT_AddWidgets(window, 
+                   TXT_NewSeparator("Fullscreen modes"),
+                   fullscreen_table = TXT_NewTable(2),
+                   TXT_NewSeparator("Windowed modes"),
+                   windowed_table = TXT_NewTable(2),
+                   TXT_NewSeparator("Misc."),
+                   TXT_NewCheckBox("Show ENDOOM screen", &show_endoom),
+                   misc_table = TXT_NewTable(2),
+                   NULL);
 
-    table = TXT_NewTable(2);
-    TXT_SetColumnWidths(table, 14, 14);
+    TXT_SetColumnWidths(windowed_table, 14, 14);
     
     for (i=0; modes[i].fullscreen == 0; ++i)
     {
         rbutton = TXT_NewRadioButton(modes[i].description, &vidmode, i);
-        TXT_AddWidget(table, rbutton);
+        TXT_AddWidget(windowed_table, rbutton);
         TXT_SignalConnect(rbutton, "selected", ModeSelected, &modes[i]);
     }
 
-    TXT_AddWidget(window, table);
-
-    TXT_AddWidget(window, TXT_NewSeparator("Fullscreen modes"));
-
-    table = TXT_NewTable(2);
-    TXT_SetColumnWidths(table, 14, 14);
+    TXT_SetColumnWidths(fullscreen_table, 14, 14);
 
     for (; modes[i].description != NULL; ++i)
     {
         rbutton = TXT_NewRadioButton(modes[i].description, &vidmode, i);
-        TXT_AddWidget(table, rbutton);
+        TXT_AddWidget(fullscreen_table, rbutton);
         TXT_SignalConnect(rbutton, "selected", ModeSelected, &modes[i]);
     }
 
-    TXT_AddWidget(window, table);
+    TXT_SetColumnWidths(misc_table, 22, 5);
 
-    TXT_AddWidget(window, TXT_NewSeparator("Misc."));
-    TXT_AddWidget(window, TXT_NewCheckBox("Show ENDOOM screen", &show_endoom));
-
-    table = TXT_NewTable(2);
-
-    TXT_SetColumnWidths(table, 22, 5);
-    TXT_AddWidget(table, TXT_NewLabel("Startup delay (ms)"));
-    TXT_AddWidget(table, TXT_NewIntInputBox(&startup_delay, 5));
-
-    TXT_AddWidget(window, table);
+    TXT_AddWidgets(misc_table,
+                   TXT_NewLabel("Startup delay (ms)"),
+                   TXT_NewIntInputBox(&startup_delay, 5),
+                   NULL);
 }
 

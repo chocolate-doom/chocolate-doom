@@ -34,9 +34,11 @@ void CompatibilitySettings(void)
 
         window = TXT_NewWindow("Compatibility");
 
-        TXT_AddWidget(window, TXT_NewCheckBox("Vanilla savegame limit",
-                                              &vanilla_savegame_limit));
-        TXT_AddWidget(window, TXT_NewCheckBox("Vanilla demo limit",
-                                              &vanilla_demo_limit));
+        TXT_AddWidgets(window, 
+                       TXT_NewCheckBox("Vanilla savegame limit",
+                                       &vanilla_savegame_limit),
+                       TXT_NewCheckBox("Vanilla demo limit",
+                                       &vanilla_demo_limit),
+                       NULL);
 }
 
