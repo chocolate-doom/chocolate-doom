@@ -338,6 +338,18 @@ void D_CheckNetGame (void)
         drone = true;
     }
 
+    if (M_CheckParm("-left") > 0)
+    {
+        viewangleoffset = ANG90;
+        drone = true;
+    }
+
+    if (M_CheckParm("-right") > 0)
+    {
+        viewangleoffset = ANG270;
+        drone = true;
+    }
+
     playeringame[0] = true;
 
 #ifdef FEATURE_MULTIPLAYER
