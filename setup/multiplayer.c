@@ -249,52 +249,49 @@ static txt_window_action_t *WadWindowAction(void)
 void StartMultiGame(void)
 {
     txt_window_t *window;
-    txt_table_t *table;
-    txt_button_t *button;
+    txt_table_t *gameopt_table;
+    txt_table_t *advanced_table;
 
     window = TXT_NewWindow("Start multiplayer game");
+
+    TXT_AddWidgets(window, 
+                   gameopt_table = TXT_NewTable(2),
+                   TXT_NewSeparator("Monsters"),
+                   TXT_NewInvertedCheckBox("Monsters", &nomonsters),
+                   TXT_NewCheckBox("Fast monsters", &fast),
+                   TXT_NewCheckBox("Respawning monsters", &respawn),
+                   TXT_NewSeparator("Advanced"),
+                   advanced_table = TXT_NewTable(2),
+                   TXT_NewButton2("Add extra parameters...", 
+                                  OpenExtraParamsWindow, NULL),
+                   NULL);
 
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, WadWindowAction());
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, StartGameAction());
     
-    table = TXT_NewTable(2);
-    TXT_SetColumnWidths(table, 12, 12);
-    TXT_AddWidget(table, TXT_NewLabel("Skill"));
-    TXT_AddWidget(table, TXT_NewDropdownList(&skill, skills, 5));
-    TXT_AddWidget(table, TXT_NewLabel("Game type"));
-    TXT_AddWidget(table, TXT_NewDropdownList(&deathmatch, gamemodes, 3));
+    TXT_SetColumnWidths(gameopt_table, 12, 12);
 
-    TXT_AddWidget(table, TXT_NewLabel("Level warp"));
+    TXT_AddWidgets(gameopt_table,
+           TXT_NewLabel("Skill"),
+           TXT_NewDropdownList(&skill, skills, 5),
+           TXT_NewLabel("Game type"),
+           TXT_NewDropdownList(&deathmatch, gamemodes, 3),
+           TXT_NewLabel("Level warp"),
+           warpbutton = TXT_NewButton2("????", LevelSelectDialog, NULL),
+           TXT_NewLabel("Time limit"),
+           TXT_NewHorizBox(TXT_NewIntInputBox(&timer, 2),
+                           TXT_NewLabel("minutes"),
+                           NULL),
+           NULL);
 
-    warpbutton = TXT_NewButton("????");
-    TXT_AddWidget(table, warpbutton);
-    TXT_SignalConnect(warpbutton, "pressed", LevelSelectDialog, NULL);
+    TXT_SetColumnWidths(advanced_table, 12, 12);
+
+    TXT_AddWidgets(advanced_table, 
+                   TXT_NewLabel("UDP port"),
+                   TXT_NewIntInputBox(&udpport, 5),
+                   NULL);
+
     UpdateWarpButton();
-
-    TXT_AddWidget(table, TXT_NewLabel("Time limit"));
-    TXT_AddWidget(table, TXT_NewHorizBox(TXT_NewIntInputBox(&timer, 2),
-                                         TXT_NewLabel("minutes"),
-                                         NULL));
-
-    TXT_AddWidget(window, table);
-
-    TXT_AddWidget(window, TXT_NewSeparator("Monsters"));
-    TXT_AddWidget(window, TXT_NewInvertedCheckBox("Monsters", &nomonsters));
-    TXT_AddWidget(window, TXT_NewCheckBox("Fast monsters", &fast));
-    TXT_AddWidget(window, TXT_NewCheckBox("Respawning monsters", &respawn));
-
-    TXT_AddWidget(window, TXT_NewSeparator("Advanced"));
-    table = TXT_NewTable(2);
-    TXT_SetColumnWidths(table, 12, 12);
-
-    TXT_AddWidget(table, TXT_NewLabel("UDP port"));
-    TXT_AddWidget(table, TXT_NewIntInputBox(&udpport, 5));
-    TXT_AddWidget(window, table);
-
-    button = TXT_NewButton("Add extra parameters...");
-    TXT_SignalConnect(button, "pressed", OpenExtraParamsWindow, NULL);
-    TXT_AddWidget(window, button);
-    
 }
 
 void JoinMultiGame(void)
@@ -303,13 +300,13 @@ void JoinMultiGame(void)
 
     window = TXT_NewWindow("Join multiplayer game");
 
-    TXT_AddWidget(window, TXT_NewLabel("Connect to address: "));
-    TXT_AddWidget(window, TXT_NewInputBox(&connect_address, 40));
-    TXT_AddWidget(window, TXT_NewStrut(0, 1));
-
-    TXT_AddWidget(window, TXT_NewButton2("Add extra parameters...",
-                                         OpenExtraParamsWindow, NULL));
-    TXT_AddWidget(window, TXT_NewButton2("Add WADs...", OpenWadsWindow, NULL));
+    TXT_AddWidgets(window, 
+        TXT_NewLabel("Connect to address: "),
+        TXT_NewInputBox(&connect_address, 40),
+        TXT_NewStrut(0, 1),
+        TXT_NewButton2("Add extra parameters...", OpenExtraParamsWindow, NULL),
+        TXT_NewButton2("Add WADs...", OpenWadsWindow, NULL),
+        NULL);
 
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, StartGameAction());
 }
@@ -373,16 +370,14 @@ void MultiplayerConfig(void)
 
     window = TXT_NewWindow("Multiplayer Configuration");
 
-    TXT_AddWidget(window, TXT_NewStrut(0, 1));
-
-    table = TXT_NewTable(2);
-
-    TXT_AddWidget(table, TXT_NewLabel("Player name:  "));
-    TXT_AddWidget(table, TXT_NewInputBox(&player_name, 25));
-
-    TXT_AddWidget(window, table);
-    TXT_AddWidget(window, TXT_NewStrut(0, 1));
-    TXT_AddWidget(window, TXT_NewSeparator("Chat macros"));
+    TXT_AddWidgets(window, 
+                   TXT_NewStrut(0, 1),
+                   TXT_NewHorizBox(TXT_NewLabel("Player name:  "),
+                                   TXT_NewInputBox(&player_name, 25),
+                                   NULL),
+                   TXT_NewStrut(0, 1),
+                   TXT_NewSeparator("Chat macros"),
+                   NULL);
 
     table = TXT_NewTable(2);
 
@@ -392,8 +387,11 @@ void MultiplayerConfig(void)
 
         label = TXT_NewLabel(buf);
         TXT_SetFGColor(label, TXT_COLOR_BRIGHT_CYAN);
-        TXT_AddWidget(table, label);
-        TXT_AddWidget(table, TXT_NewInputBox(&chatmacros[i], 40));
+
+        TXT_AddWidgets(table,
+                       label,
+                       TXT_NewInputBox(&chatmacros[i], 40),
+                       NULL);
     }
     
     TXT_AddWidget(window, table);

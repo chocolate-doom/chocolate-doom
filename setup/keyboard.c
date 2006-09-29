@@ -72,36 +72,35 @@ static void AddKeyControl(txt_table_t *table, char *name, int *var)
 void ConfigKeyboard(void)
 {
     txt_window_t *window;
-    txt_table_t *table;
+    txt_table_t *movement_table;
+    txt_table_t *action_table;
 
     window = TXT_NewWindow("Keyboard configuration");
 
-    TXT_AddWidget(window, TXT_NewSeparator("Movement"));
+    TXT_AddWidgets(window, 
+                   TXT_NewSeparator("Movement"),
+                   movement_table = TXT_NewTable(2),
+                   TXT_NewCheckBox("Always run", &always_run),
 
-    table = TXT_NewTable(2);
-    TXT_SetColumnWidths(table, 20, 8);
+                   TXT_NewSeparator("Action"),
+                   action_table = TXT_NewTable(2),
+                   NULL);
 
-    AddKeyControl(table, "Move Forward", &key_up);
-    AddKeyControl(table, "Move Backward", &key_down);
-    AddKeyControl(table, "Turn Left", &key_left);
-    AddKeyControl(table, "Turn Right", &key_right);
-    AddKeyControl(table, "Strafe Left", &key_strafeleft);
-    AddKeyControl(table, "Strafe Right", &key_straferight);
-    AddKeyControl(table, "Speed On", &key_speed);
-    AddKeyControl(table, "Strafe On", &key_strafe);
+    TXT_SetColumnWidths(movement_table, 20, 8);
 
-    TXT_AddWidget(window, table);
-    TXT_AddWidget(window, TXT_NewCheckBox("Always run", &always_run));
+    AddKeyControl(movement_table, "Move Forward", &key_up);
+    AddKeyControl(movement_table, "Move Backward", &key_down);
+    AddKeyControl(movement_table, "Turn Left", &key_left);
+    AddKeyControl(movement_table, "Turn Right", &key_right);
+    AddKeyControl(movement_table, "Strafe Left", &key_strafeleft);
+    AddKeyControl(movement_table, "Strafe Right", &key_straferight);
+    AddKeyControl(movement_table, "Speed On", &key_speed);
+    AddKeyControl(movement_table, "Strafe On", &key_strafe);
 
-    TXT_AddWidget(window, TXT_NewSeparator("Action"));
+    TXT_SetColumnWidths(action_table, 20, 8);
 
-    table = TXT_NewTable(2);
-    TXT_SetColumnWidths(table, 20, 8);
-
-    AddKeyControl(table, "Use", &key_use);
-    AddKeyControl(table, "Fire", &key_fire);
-
-    TXT_AddWidget(window, table);
+    AddKeyControl(action_table, "Use", &key_use);
+    AddKeyControl(action_table, "Fire", &key_fire);
 
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
 }

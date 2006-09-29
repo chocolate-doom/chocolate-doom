@@ -74,43 +74,43 @@ static void AddMouseControl(txt_table_t *table, char *label, int *var)
 void ConfigMouse(void)
 {
     txt_window_t *window;
-    txt_table_t *table;
+    txt_table_t *motion_table;
+    txt_table_t *button_table;
 
     window = TXT_NewWindow("Mouse configuration");
 
-    TXT_AddWidget(window, TXT_NewCheckBox("Enable mouse", &use_mouse));
+    TXT_AddWidgets(window,
+                   TXT_NewCheckBox("Enable mouse", &use_mouse),
+                   TXT_NewInvertedCheckBox("Allow vertical mouse movement", 
+                                           &novert),
+                   TXT_NewCheckBox("Grab mouse in windowed mode", 
+                                          &grabmouse),
 
-    TXT_AddWidget(window, 
-                  TXT_NewInvertedCheckBox("Allow vertical mouse movement", 
-                                          &novert));
-    TXT_AddWidget(window, TXT_NewCheckBox("Grab mouse in windowed mode", 
-                                          &grabmouse));
-
-    TXT_AddWidget(window, TXT_NewSeparator("Mouse motion"));
-
-    table = TXT_NewTable(2);
-
-    TXT_SetColumnWidths(table, 27, 5);
-    TXT_AddWidget(table, TXT_NewLabel("Speed"));
-    TXT_AddWidget(table, TXT_NewSpinControl(&speed, 1, 256));
-    TXT_AddWidget(table, TXT_NewLabel("Acceleration"));
-    TXT_AddWidget(table, TXT_NewSpinControl(&accel, 1, 5));
-    TXT_AddWidget(table, TXT_NewLabel("Acceleration threshold"));
-    TXT_AddWidget(table, TXT_NewSpinControl(&threshold, 0, 32));
-
-    TXT_AddWidget(window, table);
+                   TXT_NewSeparator("Mouse motion"),
+                   motion_table = TXT_NewTable(2),
     
-    TXT_AddWidget(window, TXT_NewSeparator("Mouse buttons"));
+                   TXT_NewSeparator("Mouse buttons"),
 
-    table = TXT_NewTable(2);
+                   button_table = TXT_NewTable(2),
+                   NULL);
 
-    TXT_SetColumnWidths(table, 27, 5);
-    AddMouseControl(table, "Fire weapon", &mouseb_fire);
-    AddMouseControl(table, "Move forward", &mouseb_forward);
-    AddMouseControl(table, "Strafe on", &mouseb_strafe);
+    TXT_SetColumnWidths(motion_table, 27, 5);
+
+    TXT_AddWidgets(motion_table,
+                   TXT_NewLabel("Speed"),
+                   TXT_NewSpinControl(&speed, 1, 256),
+                   TXT_NewLabel("Acceleration"),
+                   TXT_NewSpinControl(&accel, 1, 5),
+                   TXT_NewLabel("Acceleration threshold"),
+                   TXT_NewSpinControl(&threshold, 0, 32),
+                   NULL);
+
+    TXT_SetColumnWidths(button_table, 27, 5);
+
+    AddMouseControl(button_table, "Fire weapon", &mouseb_fire);
+    AddMouseControl(button_table, "Move forward", &mouseb_forward);
+    AddMouseControl(button_table, "Strafe on", &mouseb_strafe);
     
-    TXT_AddWidget(window, table);
-
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
 }
 
