@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_defs.h 612 2006-09-17 20:37:26Z fraggle $
+// $Id: net_defs.h 680 2006-09-29 21:25:13Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -158,6 +158,7 @@ typedef enum
     NET_PACKET_TYPE_WAITING_DATA,
     NET_PACKET_TYPE_GAMESTART,
     NET_PACKET_TYPE_GAMEDATA,
+    NET_PACKET_TYPE_GAMEDATA_ACK,
     NET_PACKET_TYPE_DISCONNECT,
     NET_PACKET_TYPE_DISCONNECT_ACK,
     NET_PACKET_TYPE_RELIABLE_ACK,

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 641 2006-09-21 11:13:28Z rtc_marine $
+// $Id: net_client.c 680 2006-09-29 21:25:13Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -265,6 +265,12 @@ static ticcmd_t recvwindow_cmd_base[MAXPLAYERS];
 static int recvwindow_start;
 static net_server_recv_t recvwindow[BACKUPTICS];
 
+// Whether we need to send an acknowledgement and
+// when gamedata was last received.
+
+static boolean need_to_acknowledge;
+static unsigned int gamedata_recv_time;
+
 // Average time between sending our ticcmd and receiving from the server
 
 static fixed_t average_latency;
@@ -273,6 +279,9 @@ static fixed_t average_latency;
 
 boolean net_cl_new_sync = true;
 
+// Connected but not participating in the game (observer)
+
+boolean drone = false;
 
 #define NET_CL_ExpandTicNum(b) NET_ExpandTicNum(recvwindow_start, (b))
 
@@ -384,7 +393,7 @@ static void NET_CL_ExpandFullTiccmd(net_full_ticcmd_t *cmd, int seq)
     
     for (i=0; i<MAXPLAYERS; ++i)
     {
-        if (i == consoleplayer)
+        if (i == consoleplayer && !drone)
         {
             continue;
         }
@@ -505,6 +514,22 @@ void NET_CL_StartGame(void)
     NET_WriteSettings(packet, &settings);
 }
 
+static void NET_CL_SendGameDataACK(void)
+{
+    net_packet_t *packet;
+
+    packet = NET_NewPacket(10);
+
+    NET_WriteInt16(packet, NET_PACKET_TYPE_GAMEDATA_ACK);
+    NET_WriteInt8(packet, gametic & 0xff);
+
+    NET_Conn_SendPacket(&client_connection, packet);
+
+    NET_FreePacket(packet);
+
+    need_to_acknowledge = false;
+}
+
 static void NET_CL_SendTics(int start, int end)
 {
     net_packet_t *packet;
@@ -529,6 +554,7 @@ static void NET_CL_SendTics(int start, int end)
     // Write the start tic and number of tics.  Send only the low byte
     // of start - it can be inferred by the server.
 
+    NET_WriteInt8(packet, gametic & 0xff);
     NET_WriteInt8(packet, start & 0xff);
     NET_WriteInt8(packet, end - start + 1);
 
@@ -552,6 +578,10 @@ static void NET_CL_SendTics(int start, int end)
     // All done!
 
     NET_FreePacket(packet);
+
+    // Acknowledgement has been sent as part of the packet
+
+    need_to_acknowledge = false;
 }
 
 // Add a new ticcmd to the send queue
@@ -593,24 +623,32 @@ static void NET_CL_ParseWaitingData(net_packet_t *packet)
 {
     unsigned int num_players;
     unsigned int is_controller;
-    unsigned int player_number;
+    signed int player_number;
     char *player_names[MAXPLAYERS];
     char *player_addr[MAXPLAYERS];
     size_t i;
 
     if (!NET_ReadInt8(packet, &num_players)
      || !NET_ReadInt8(packet, &is_controller)
-     || !NET_ReadInt8(packet, &player_number))
+     || !NET_ReadSInt8(packet, &player_number))
     {
         // invalid packet
 
         return;
     }
 
-    if (num_players > MAXPLAYERS 
-     || player_number >= num_players)
+    if (num_players > MAXPLAYERS)
     {
         // insane data
+
+        return;
+    }
+
+    if ((player_number >= 0 && drone)
+     || (player_number < 0 && !drone)
+     || (player_number >= (signed int) num_players))
+    {
+        // Invalid player number
 
         return;
     }
@@ -644,11 +682,12 @@ static void NET_CL_ParseWaitingData(net_packet_t *packet)
 static void NET_CL_ParseGameStart(net_packet_t *packet)
 {
     net_gamesettings_t settings;
-    unsigned int player_number, num_players;
+    unsigned int num_players;
+    signed int player_number;
     int i;
 
     if (!NET_ReadInt8(packet, &num_players)
-     || !NET_ReadInt8(packet, &player_number)
+     || !NET_ReadSInt8(packet, &player_number)
      || !NET_ReadSettings(packet, &settings))
     {
         return;
@@ -659,15 +698,31 @@ static void NET_CL_ParseGameStart(net_packet_t *packet)
         return;
     }
 
-    if (num_players > MAXPLAYERS || player_number >= num_players)
+    if (num_players > MAXPLAYERS || player_number >= (signed int) num_players)
     {
         // insane values
         return;
     }
 
+    if ((drone && player_number >= 0)
+     || (!drone && player_number < 0))
+    {
+        // Invalid player number: must be positive for real players,
+        // negative for drones
+
+        return;
+    }
+
     // Start the game
 
-    consoleplayer = player_number;
+    if (!drone)
+    {
+        consoleplayer = player_number;
+    }
+    else
+    {
+        consoleplayer = 0;
+    }
     
     for (i=0; i<MAXPLAYERS; ++i) 
     {
@@ -792,6 +847,15 @@ static void NET_CL_CheckResends(void)
         NET_CL_SendResendRequest(recvwindow_start + resend_start,
                                  recvwindow_start + resend_end);
     }
+
+    // We have received some data from the server and not acknowledged
+    // it yet.  Normally this gets acknowledged when we send our game
+    // data, but if the client is a drone we need to do this.
+
+    if (need_to_acknowledge && nowtime - gamedata_recv_time > 200)
+    {
+        NET_CL_SendGameDataACK();
+    }
 }
 
 
@@ -816,6 +880,15 @@ static void NET_CL_ParseGameData(net_packet_t *packet)
     }
 
     nowtime = I_GetTimeMS();
+
+    // Whatever happens, we now need to send an acknowledgement of our
+    // current receive point.
+
+    if (!need_to_acknowledge)
+    {
+        need_to_acknowledge = true;
+        gamedata_recv_time = nowtime;
+    }
 
     // Expand byte value into the full tic number
 
@@ -1045,6 +1118,7 @@ static void NET_CL_SendSYN(void)
     NET_WriteInt16(packet, gamemode);
     NET_WriteInt16(packet, gamemission);
     NET_WriteInt8(packet, lowres_turn);
+    NET_WriteInt8(packet, drone);
     NET_WriteString(packet, net_player_name);
     NET_Conn_SendPacket(&client_connection, packet);
     NET_FreePacket(packet);

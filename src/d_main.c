@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_main.c 666 2006-09-25 20:47:11Z fraggle $
+// $Id: d_main.c 680 2006-09-29 21:25:13Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -184,7 +184,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_main.c 666 2006-09-25 20:47:11Z fraggle $";
+static const char rcsid[] = "$Id: d_main.c 680 2006-09-29 21:25:13Z fraggle $";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8
@@ -277,8 +277,6 @@ boolean		devparm;	// started game with -devparm
 boolean         nomonsters;	// checkparm of -nomonsters
 boolean         respawnparm;	// checkparm of -respawn
 boolean         fastparm;	// checkparm of -fast
-
-boolean         drone;
 
 boolean		singletics = false; // debug flag to cancel adaptiveness
 

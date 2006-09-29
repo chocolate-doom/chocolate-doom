@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.c 544 2006-05-29 20:55:20Z fraggle $
+// $Id: d_net.c 680 2006-09-29 21:25:13Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -117,7 +117,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_net.c 544 2006-05-29 20:55:20Z fraggle $";
+static const char rcsid[] = "$Id: d_net.c 680 2006-09-29 21:25:13Z fraggle $";
 
 #include "doomfeatures.h"
 
@@ -249,6 +249,13 @@ void NetUpdate (void)
         // Always run the menu
 
         M_Ticker ();
+
+        if (drone)
+        {
+            // In drone mode, do not generate any ticcmds.
+
+            continue;
+        }
 	
         if (net_cl_new_sync)
         { 
@@ -324,6 +331,11 @@ void D_CheckNetGame (void)
     {
         playeringame[i] = false;
        	nettics[i] = 0;
+    }
+
+    if (M_CheckParm("-drone") > 0)
+    {
+        drone = true;
     }
 
     playeringame[0] = true;

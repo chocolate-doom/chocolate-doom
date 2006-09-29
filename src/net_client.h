@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.h 470 2006-04-14 15:25:42Z fraggle $
+// $Id: net_client.h 680 2006-09-29 21:25:13Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -91,6 +91,7 @@ extern char net_player_addresses[MAXPLAYERS][MAXPLAYERNAME];
 extern int net_player_number;
 extern char *net_player_name;
 extern boolean net_cl_new_sync;
+extern boolean drone;
 
 #endif /* #ifndef NET_CLIENT_H */
 
