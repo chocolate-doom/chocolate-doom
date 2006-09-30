@@ -387,17 +387,13 @@ static int NET_SV_NumClients(void)
     return count;
 }
 
+// Find the latest tic which has been acknowledged as received by
+// all clients.
 
-// Possibly advance the recv window if all connected clients have
-// used the data in the window
-
-static void NET_SV_AdvanceWindow(void)
+static int NET_SV_LatestAcknowledged(void)
 {
-    int i;
     int lowtic = -1;
-
-    // Find the smallest value of client->acknowledged for all connected
-    // clients
+    int i;
 
     for (i=0; i<MAXNETNODES; ++i) 
     {
@@ -409,6 +405,20 @@ static void NET_SV_AdvanceWindow(void)
             }
         }
     }
+
+    return lowtic;
+}
+
+
+// Possibly advance the recv window if all connected clients have
+// used the data in the window
+
+static void NET_SV_AdvanceWindow(void)
+{
+    int lowtic;
+    int i;
+
+    lowtic = NET_SV_LatestAcknowledged();
 
     if (lowtic < 0)
     {
@@ -648,7 +658,8 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         NET_SV_AssignPlayers();
         num_players = NET_SV_NumPlayers();
 
-        if (num_players >= MAXPLAYERS)
+        if ((!cl_drone && num_players >= MAXPLAYERS)
+         || NET_SV_NumClients() >= MAXNETNODES)
         {
             NET_SV_SendReject(addr, "Server is full!");
             return;
@@ -1280,6 +1291,16 @@ static void NET_SV_PumpSendQueue(net_client_t *client)
     int i;
     int starttic, endtic;
 
+    // If a client has not sent any acknowledgments for a while,
+    // wait until they catch up.
+
+    if (client->sendseq - NET_SV_LatestAcknowledged() > 40)
+    {
+        return;
+    }
+    
+    // Work out the index into the receive window
+   
     recv_index = client->sendseq - recvwindow_start;
 
     if (recv_index < 0 || recv_index >= BACKUPTICS)
