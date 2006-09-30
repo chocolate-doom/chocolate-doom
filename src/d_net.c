@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.c 681 2006-09-29 21:38:21Z fraggle $
+// $Id: d_net.c 683 2006-09-30 10:52:25Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -117,7 +117,7 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: d_net.c 681 2006-09-29 21:38:21Z fraggle $";
+static const char rcsid[] = "$Id: d_net.c 683 2006-09-30 10:52:25Z fraggle $";
 
 #include "doomfeatures.h"
 
@@ -333,23 +333,6 @@ void D_CheckNetGame (void)
        	nettics[i] = 0;
     }
 
-    if (M_CheckParm("-drone") > 0)
-    {
-        drone = true;
-    }
-
-    if (M_CheckParm("-left") > 0)
-    {
-        viewangleoffset = ANG90;
-        drone = true;
-    }
-
-    if (M_CheckParm("-right") > 0)
-    {
-        viewangleoffset = ANG270;
-        drone = true;
-    }
-
     playeringame[0] = true;
 
 #ifdef FEATURE_MULTIPLAYER
@@ -396,6 +379,23 @@ void D_CheckNetGame (void)
 
         if (addr != NULL)
         {
+            if (M_CheckParm("-drone") > 0)
+            {
+                drone = true;
+            }
+
+            if (M_CheckParm("-left") > 0)
+            {
+                viewangleoffset = ANG90;
+                drone = true;
+            }
+
+            if (M_CheckParm("-right") > 0)
+            {
+                viewangleoffset = ANG270;
+                drone = true;
+            }
+
             if (!NET_CL_Connect(addr))
             {
                 I_Error("D_CheckNetGame: Failed to connect to %s\n", 
