@@ -333,23 +333,6 @@ void D_CheckNetGame (void)
        	nettics[i] = 0;
     }
 
-    if (M_CheckParm("-drone") > 0)
-    {
-        drone = true;
-    }
-
-    if (M_CheckParm("-left") > 0)
-    {
-        viewangleoffset = ANG90;
-        drone = true;
-    }
-
-    if (M_CheckParm("-right") > 0)
-    {
-        viewangleoffset = ANG270;
-        drone = true;
-    }
-
     playeringame[0] = true;
 
 #ifdef FEATURE_MULTIPLAYER
@@ -396,6 +379,23 @@ void D_CheckNetGame (void)
 
         if (addr != NULL)
         {
+            if (M_CheckParm("-drone") > 0)
+            {
+                drone = true;
+            }
+
+            if (M_CheckParm("-left") > 0)
+            {
+                viewangleoffset = ANG90;
+                drone = true;
+            }
+
+            if (M_CheckParm("-right") > 0)
+            {
+                viewangleoffset = ANG270;
+                drone = true;
+            }
+
             if (!NET_CL_Connect(addr))
             {
                 I_Error("D_CheckNetGame: Failed to connect to %s\n", 
