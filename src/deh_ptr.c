@@ -54,6 +54,21 @@
 
 static actionf_t codeptrs[NUMSTATES];
 
+static int CodePointerIndex(actionf_t *ptr)
+{
+    int i;
+
+    for (i=0; i<NUMSTATES; ++i)
+    {
+        if (!memcmp(&codeptrs[i], ptr, sizeof(actionf_t)))
+        {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
 static void DEH_PointerInit(void)
 {
     int i;
@@ -131,6 +146,16 @@ static void DEH_PointerParseLine(deh_context_t *context, char *line, void *tag)
     }
 }
 
+static void DEH_PointerMD5Sum(md5_context_t *context)
+{
+    int i;
+
+    for (i=0; i<NUMSTATES; ++i)
+    {
+        MD5_UpdateInt32(context, CodePointerIndex(&states[i].action));
+    }
+}
+
 deh_section_t deh_section_pointer =
 {
     "Pointer",
@@ -138,5 +163,6 @@ deh_section_t deh_section_pointer =
     DEH_PointerStart,
     DEH_PointerParseLine,
     NULL,
+    DEH_PointerMD5Sum,
 };
 
