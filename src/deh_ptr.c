@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_ptr.c 175 2005-10-08 20:54:16Z fraggle $
+// $Id: deh_ptr.c 687 2006-10-05 22:12:22Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -53,6 +53,21 @@
 #include "deh_main.h"
 
 static actionf_t codeptrs[NUMSTATES];
+
+static int CodePointerIndex(actionf_t *ptr)
+{
+    int i;
+
+    for (i=0; i<NUMSTATES; ++i)
+    {
+        if (!memcmp(&codeptrs[i], ptr, sizeof(actionf_t)))
+        {
+            return i;
+        }
+    }
+
+    return -1;
+}
 
 static void DEH_PointerInit(void)
 {
@@ -131,6 +146,16 @@ static void DEH_PointerParseLine(deh_context_t *context, char *line, void *tag)
     }
 }
 
+static void DEH_PointerMD5Sum(md5_context_t *context)
+{
+    int i;
+
+    for (i=0; i<NUMSTATES; ++i)
+    {
+        MD5_UpdateInt32(context, CodePointerIndex(&states[i].action));
+    }
+}
+
 deh_section_t deh_section_pointer =
 {
     "Pointer",
@@ -138,5 +163,6 @@ deh_section_t deh_section_pointer =
     DEH_PointerStart,
     DEH_PointerParseLine,
     NULL,
+    DEH_PointerMD5Sum,
 };
 

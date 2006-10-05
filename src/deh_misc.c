@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_misc.c 641 2006-09-21 11:13:28Z rtc_marine $
+// $Id: deh_misc.c 687 2006-10-05 22:12:22Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -253,6 +253,16 @@ static void DEH_MiscParseLine(deh_context_t *context, char *line, void *tag)
     DEH_Warning(context, "Unknown Misc variable '%s'", variable_name);
 }
 
+static void DEH_MiscMD5Sum(md5_context_t *context)
+{
+    int i;
+
+    for (i=0; i<sizeof(misc_settings) / sizeof(*misc_settings); ++i)
+    {
+        MD5_UpdateInt32(context, *misc_settings[i].value);
+    }
+}
+
 deh_section_t deh_section_misc =
 {
     "Misc",
@@ -260,5 +270,6 @@ deh_section_t deh_section_misc =
     DEH_MiscStart,
     DEH_MiscParseLine,
     NULL,
+    DEH_MiscMD5Sum,
 };
 

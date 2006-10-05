@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_text.c 580 2006-08-31 18:12:43Z fraggle $
+// $Id: deh_text.c 687 2006-10-05 22:12:22Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -266,6 +266,7 @@ deh_section_t deh_section_text =
     DEH_TextInit,
     DEH_TextStart,
     DEH_TextParseLine,
+    NULL,
     NULL,
 };
 

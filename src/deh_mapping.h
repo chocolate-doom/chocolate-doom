@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_mapping.h 420 2006-03-15 18:53:06Z fraggle $
+// $Id: deh_mapping.h 687 2006-10-05 22:12:22Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -45,6 +45,7 @@
 
 #include "doomtype.h"
 #include "deh_io.h"
+#include "md5.h"
 
 #define DEH_BEGIN_MAPPING(mapping_name, structname)           \
     static structname deh_mapping_base;                       \
@@ -96,6 +97,8 @@ struct deh_mapping_s
 
 boolean DEH_SetMapping(deh_context_t *context, deh_mapping_t *mapping, 
                        void *structptr, char *name, int value);
+void DEH_StructMD5Sum(md5_context_t *context, deh_mapping_t *mapping,
+                      void *structptr);
 
 #endif /* #ifndef DEH_MAPPING_H */
 

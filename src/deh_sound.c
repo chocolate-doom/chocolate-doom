@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_sound.c 420 2006-03-15 18:53:06Z fraggle $
+// $Id: deh_sound.c 687 2006-10-05 22:12:22Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -116,6 +116,7 @@ deh_section_t deh_section_sound =
     NULL,
     DEH_SoundStart,
     DEH_SoundParseLine,
+    NULL,
     NULL,
 };
 

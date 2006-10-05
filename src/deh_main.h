@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_main.h 214 2005-10-17 23:48:05Z fraggle $
+// $Id: deh_main.h 687 2006-10-05 22:12:22Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -50,6 +50,8 @@
 void DEH_Init(void);
 
 boolean DEH_ParseAssignment(char *line, char **variable_name, char **value);
+
+void DEH_Checksum(byte digest[16]);
 
 // deh_text.c:
 //

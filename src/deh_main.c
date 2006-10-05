@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_main.c 641 2006-09-21 11:13:28Z rtc_marine $
+// $Id: deh_main.c 687 2006-10-05 22:12:22Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -112,6 +112,24 @@ static deh_section_t *section_types[] =
 };
 
 static int num_section_types = sizeof(section_types) / sizeof(*section_types);
+
+void DEH_Checksum(byte digest[16])
+{
+    md5_context_t md5_context;
+    int i;
+
+    MD5_Init(&md5_context);
+
+    for (i=0; i<num_section_types; ++i)
+    {
+        if (section_types[i]->md5_hash != NULL)
+        {
+            section_types[i]->md5_hash(&md5_context);
+        }
+    }
+
+    MD5_Final(digest, &md5_context);
+}
 
 // Called on startup to call the Init functions
 

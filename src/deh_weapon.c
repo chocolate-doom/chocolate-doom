@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_weapon.c 175 2005-10-08 20:54:16Z fraggle $
+// $Id: deh_weapon.c 687 2006-10-05 22:12:22Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -108,6 +108,16 @@ static void DEH_WeaponParseLine(deh_context_t *context, char *line, void *tag)
     DEH_SetMapping(context, &weapon_mapping, weapon, variable_name, ivalue);
 }
 
+static void DEH_WeaponMD5Sum(md5_context_t *context)
+{
+    int i;
+
+    for (i=0; i<NUMWEAPONS ;++i)
+    {
+        DEH_StructMD5Sum(context, &weapon_mapping, &weaponinfo[i]);
+    }
+}
+
 deh_section_t deh_section_weapon =
 {
     "Weapon",
@@ -115,5 +125,6 @@ deh_section_t deh_section_weapon =
     DEH_WeaponStart,
     DEH_WeaponParseLine,
     NULL,
+    DEH_WeaponMD5Sum,
 };
 

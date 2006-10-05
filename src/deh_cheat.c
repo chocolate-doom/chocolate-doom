@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_cheat.c 641 2006-09-21 11:13:28Z rtc_marine $
+// $Id: deh_cheat.c 687 2006-10-05 22:12:22Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -137,6 +137,7 @@ deh_section_t deh_section_cheat =
     NULL,
     DEH_CheatStart,
     DEH_CheatParseLine,
+    NULL,
     NULL,
 };
 

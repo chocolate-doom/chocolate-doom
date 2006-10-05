@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_thing.c 188 2005-10-09 23:52:28Z fraggle $
+// $Id: deh_thing.c 687 2006-10-05 22:12:22Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -139,6 +139,16 @@ static void DEH_ThingParseLine(deh_context_t *context, char *line, void *tag)
     DEH_SetMapping(context, &thing_mapping, mobj, variable_name, ivalue);
 }
 
+static void DEH_ThingMD5Sum(md5_context_t *context)
+{
+    int i;
+
+    for (i=0; i<NUMMOBJTYPES; ++i)
+    {
+        DEH_StructMD5Sum(context, &thing_mapping, &mobjinfo[i]);
+    }
+}
+
 deh_section_t deh_section_thing =
 {
     "Thing",
@@ -146,5 +156,6 @@ deh_section_t deh_section_thing =
     DEH_ThingStart,
     DEH_ThingParseLine,
     NULL,
+    DEH_ThingMD5Sum,
 };
 

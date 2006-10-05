@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_ammo.c 175 2005-10-08 20:54:16Z fraggle $
+// $Id: deh_ammo.c 687 2006-10-05 22:12:22Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -106,6 +106,17 @@ static void DEH_AmmoParseLine(deh_context_t *context, char *line, void *tag)
     }
 }
 
+static void DEH_AmmoMD5Hash(md5_context_t *context)
+{
+    int i;
+
+    for (i=0; i<NUMAMMO; ++i)
+    {
+        MD5_UpdateInt32(context, clipammo[i]);
+        MD5_UpdateInt32(context, maxammo[i]);
+    }
+}
+
 deh_section_t deh_section_ammo =
 {
     "Ammo",
@@ -113,5 +124,6 @@ deh_section_t deh_section_ammo =
     DEH_AmmoStart,
     DEH_AmmoParseLine,
     NULL,
+    DEH_AmmoMD5Hash,
 };
 
