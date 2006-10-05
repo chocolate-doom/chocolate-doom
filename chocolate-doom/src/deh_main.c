@@ -113,6 +113,24 @@ static deh_section_t *section_types[] =
 
 static int num_section_types = sizeof(section_types) / sizeof(*section_types);
 
+void DEH_Checksum(byte digest[16])
+{
+    md5_context_t md5_context;
+    int i;
+
+    MD5_Init(&md5_context);
+
+    for (i=0; i<num_section_types; ++i)
+    {
+        if (section_types[i]->md5_hash != NULL)
+        {
+            section_types[i]->md5_hash(&md5_context);
+        }
+    }
+
+    MD5_Final(digest, &md5_context);
+}
+
 // Called on startup to call the Init functions
 
 static void InitialiseSections(void)

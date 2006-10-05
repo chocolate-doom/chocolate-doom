@@ -44,6 +44,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "i_system.h"
 #include "deh_mapping.h"
 
 //
@@ -85,9 +86,6 @@ boolean DEH_SetMapping(deh_context_t *context, deh_mapping_t *mapping,
                 case 4:
                     * ((unsigned int *) location) = value;
                     break;
-                case 8:
-                    * ((unsigned long long *) location) = value;
-                    break;
                 default:
                     DEH_Error(context, "Unknown field type for '%s' (BUG)", name);
                     return false;
@@ -102,5 +100,47 @@ boolean DEH_SetMapping(deh_context_t *context, deh_mapping_t *mapping,
     DEH_Warning(context, "Field named '%s' not found", name);
 
     return false;
+}
+
+void DEH_StructMD5Sum(md5_context_t *context, deh_mapping_t *mapping,
+                      void *structptr)
+{
+    int i;
+
+    // Go through each mapping
+
+    for (i=0; mapping->entries[i].name != NULL; ++i)
+    {
+        deh_mapping_entry_t *entry = &mapping->entries[i];
+        void *location;
+
+        if (entry->location == NULL)
+        {
+            // Unsupported field
+
+            continue;
+        }
+
+        // Add in data for this field
+
+        location = structptr + (entry->location - mapping->base);
+
+        switch (entry->size)
+        {
+            case 1:
+                MD5_UpdateInt32(context, *((unsigned char *) location));
+                break;
+            case 2:
+                MD5_UpdateInt32(context, *((unsigned short *) location));
+                break;
+            case 4:
+                MD5_UpdateInt32(context, *((unsigned int *) location));
+                break;
+            default:
+                I_Error("Unknown dehacked mapping field type for '%s' (BUG)", 
+                        entry->name);
+                break;
+        }
+    }
 }
 

@@ -51,6 +51,8 @@ void DEH_Init(void);
 
 boolean DEH_ParseAssignment(char *line, char **variable_name, char **value);
 
+void DEH_Checksum(byte digest[16]);
+
 // deh_text.c:
 //
 // Used to do dehacked text substitutions throughout the program

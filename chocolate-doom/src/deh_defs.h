@@ -34,12 +34,15 @@
 #ifndef DEH_DEFS_H
 #define DEH_DEFS_H
 
+#include "md5.h"
+
 typedef struct deh_context_s deh_context_t;
 typedef struct deh_section_s deh_section_t;
 typedef void (*deh_section_init_t)(void);
 typedef void *(*deh_section_start_t)(deh_context_t *context, char *line);
 typedef void (*deh_section_end_t)(deh_context_t *context, void *tag);
 typedef void (*deh_line_parser_t)(deh_context_t *context, char *line, void *tag);
+typedef void (*deh_md5_hash_t)(md5_context_t *context);
 
 struct deh_section_s
 {
@@ -61,6 +64,10 @@ struct deh_section_s
     // This is called at the end of the section for any cleanup
 
     deh_section_end_t end;
+
+    // Called when generating an MD5 sum of the dehacked state
+
+    deh_md5_hash_t md5_hash;
 };
 
 #endif /* #ifndef DEH_DEFS_H */

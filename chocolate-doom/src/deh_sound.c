@@ -117,5 +117,6 @@ deh_section_t deh_section_sound =
     DEH_SoundStart,
     DEH_SoundParseLine,
     NULL,
+    NULL,
 };
 

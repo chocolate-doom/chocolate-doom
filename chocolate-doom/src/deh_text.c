@@ -267,5 +267,6 @@ deh_section_t deh_section_text =
     DEH_TextStart,
     DEH_TextParseLine,
     NULL,
+    NULL,
 };
 

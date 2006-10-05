@@ -118,6 +118,16 @@ static void DEH_FrameParseLine(deh_context_t *context, char *line, void *tag)
     DEH_SetMapping(context, &state_mapping, state, variable_name, ivalue);
 }
 
+static void DEH_FrameMD5Sum(md5_context_t *context)
+{
+    int i;
+
+    for (i=0; i<NUMSTATES; ++i)
+    {
+        DEH_StructMD5Sum(context, &state_mapping, &states[i]);
+    }
+}
+
 deh_section_t deh_section_frame =
 {
     "Frame",
@@ -125,5 +135,6 @@ deh_section_t deh_section_frame =
     DEH_FrameStart,
     DEH_FrameParseLine,
     NULL,
+    DEH_FrameMD5Sum,
 };
 
