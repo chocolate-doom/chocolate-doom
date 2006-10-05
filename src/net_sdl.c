@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_sdl.c 611 2006-09-17 18:01:16Z fraggle $
+// $Id: net_sdl.c 684 2006-10-05 17:18:14Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -189,6 +189,10 @@ static boolean NET_SDL_InitClient(void)
     
     recvpacket = SDLNet_AllocPacket(1500);
 
+#ifdef DROP_PACKETS
+    srand(time(NULL));
+#endif
+
     return true;
 }
 
@@ -210,6 +214,9 @@ static boolean NET_SDL_InitServer(void)
     }
 
     recvpacket = SDLNet_AllocPacket(1500);
+#ifdef DROP_PACKETS
+    srand(time(NULL));
+#endif
 
     return true;
 }
@@ -243,6 +250,11 @@ static void NET_SDL_SendPacket(net_addr_t *addr, net_packet_t *packet)
             this_second_sent = 0;
         }
     }
+#endif
+
+#ifdef DROP_PACKETS
+    if ((rand() % 4) == 0)
+        return;
 #endif
 
     sdl_packet.channel = 0;
