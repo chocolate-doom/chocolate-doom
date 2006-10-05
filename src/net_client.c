@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 680 2006-09-29 21:25:13Z fraggle $
+// $Id: net_client.c 685 2006-10-05 17:19:43Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -542,7 +542,6 @@ static void NET_CL_SendTics(int start, int end)
         return;
     }
 
-
     if (start < 0)
         start = 0;
     
@@ -748,9 +747,15 @@ static void NET_CL_ParseGameStart(net_packet_t *packet)
 	printf("Syncing netgames like Vanilla Doom.\n");
     }
 
+    // Clear the receive window
+
     memset(recvwindow, 0, sizeof(recvwindow));
     recvwindow_start = 0;
     memset(&recvwindow_cmd_base, 0, sizeof(recvwindow_cmd_base));
+
+    // Clear the send queue
+
+    memset(&send_queue, 0x00, sizeof(send_queue));
 
     netgame = true;
     autostart = true;
@@ -973,7 +978,15 @@ static void NET_CL_ParseGameData(net_packet_t *packet)
 static void NET_CL_ParseResendRequest(net_packet_t *packet)
 {
     static unsigned int start;
+    static unsigned int end;
     static unsigned int num_tics;
+
+    if (drone)
+    {
+        // Drones don't send gamedata.
+
+        return;
+    }
 
     if (!NET_ReadInt32(packet, &start)
      || !NET_ReadInt8(packet, &num_tics))
@@ -981,11 +994,37 @@ static void NET_CL_ParseResendRequest(net_packet_t *packet)
         return;
     }
 
+    end = start + num_tics - 1;
+
+    //printf("requested resend %i-%i .. ", start, end);
+
+    // Check we have the tics being requested.  If not, reduce the 
+    // window of tics to only what we have.
+
+    while (start <= end
+        && (!send_queue[start % BACKUPTICS].active
+         || send_queue[start % BACKUPTICS].seq != start))
+    {
+        ++start;
+    }
+     
+    while (start <= end
+        && (!send_queue[end % BACKUPTICS].active
+         || send_queue[end % BACKUPTICS].seq != end))
+    {
+        --end;
+    }
+
+    //printf("%i-%i\n", start, end);
+
     // Resend those tics
 
-    //printf("CL: resend %i-%i\n", start, start+num_tics-1);
+    if (start <= end)
+    {
+        //printf("CL: resend %i-%i\n", start, start+num_tics-1);
 
-    NET_CL_SendTics(start, start + num_tics - 1);
+        NET_CL_SendTics(start, end);
+    }
 }
 
 // Console message that the server wants the client to print

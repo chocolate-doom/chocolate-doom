@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 682 2006-09-30 10:22:48Z fraggle $
+// $Id: net_server.c 685 2006-10-05 17:19:43Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -198,6 +198,10 @@ typedef struct
     net_connection_t connection;
     int last_send_time;
     char *name;
+
+    // Last time new gamedata was received from this client
+    
+    int last_gamedata_time;
 
     // recording a demo without -longtics
 
@@ -535,6 +539,9 @@ static void NET_SV_InitNewClient(net_client_t *client,
     client->sendseq = 0;
     client->acknowledged = 0;
     client->drone = false;
+
+    client->last_gamedata_time = 0;
+
     memset(client->sendqueue, 0xff, sizeof(client->sendqueue));
 }
 
@@ -707,6 +714,7 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
 {
     net_gamesettings_t settings;
     net_packet_t *startpacket;
+    int nowtime;
     int i;
     
     if (client != NET_SV_Controller())
@@ -757,12 +765,16 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
         }
     }
 
+    nowtime = I_GetTimeMS();
+
     // Send start packets to each connected node
 
     for (i=0; i<MAXNETNODES; ++i) 
     {
         if (!ClientConnected(&clients[i]))
             continue;
+
+        clients[i].last_gamedata_time = nowtime;
 
         startpacket = NET_Conn_NewReliable(&clients[i].connection,
                                            NET_PACKET_TYPE_GAMESTART);
@@ -923,6 +935,10 @@ static void NET_SV_ParseGameData(net_packet_t *packet, net_client_t *client)
         return;
     }
 
+    // Get the current time
+
+    nowtime = I_GetTimeMS();
+
     // Expand 8-bit values to the full sequence number
 
     ackseq = NET_SV_ExpandTicNum(ackseq);
@@ -954,6 +970,8 @@ static void NET_SV_ParseGameData(net_packet_t *packet, net_client_t *client)
         recvobj->active = true;
         recvobj->diff = diff;
         recvobj->latency = latency;
+
+        client->last_gamedata_time = nowtime;
     }
 
     // Higher acknowledgement point?
@@ -976,8 +994,6 @@ static void NET_SV_ParseGameData(net_packet_t *packet, net_client_t *client)
 
     if (resend_end >= BACKUPTICS)
         resend_end = BACKUPTICS - 1;
-
-    nowtime = I_GetTimeMS();
 
     index = resend_end - 1;
     resend_start = resend_end;
@@ -1008,6 +1024,12 @@ static void NET_SV_ParseGameData(net_packet_t *packet, net_client_t *client)
 
     if (resend_start < resend_end)
     {
+            /*
+        printf("missed %i-%i before %i, send resend\n",
+                        recvwindow_start + resend_start,
+                        recvwindow_start + resend_end - 1,
+                        seq);
+                        */
         NET_SV_SendResendRequest(client, 
                                  recvwindow_start + resend_start, 
                                  recvwindow_start + resend_end - 1);
@@ -1391,6 +1413,53 @@ static void NET_SV_PumpSendQueue(net_client_t *client)
     ++client->sendseq;
 }
 
+// Prevent against deadlock: resend requests are usually only
+// triggered if we miss a packet and receive the next one.
+// If we miss a whole load of packets, we can end up in a 
+// deadlock situation where the client will not send any more.
+// If we don't receive any game data in a while, trigger a resend
+// request for the next tic we're expecting.
+
+void NET_SV_CheckDeadlock(net_client_t *client)
+{
+    int nowtime;
+    int i;
+
+    // Don't expect game data from clients.
+
+    if (client->drone)
+    {
+        return;
+    }
+
+    nowtime = I_GetTimeMS();
+
+    // If we haven't received anything for a long time, it may be a deadlock.
+
+    if (nowtime - client->last_gamedata_time > 1000)
+    {
+        // Search the receive window for the first tic we are expecting
+        // from this player.
+
+        for (i=0; i<BACKUPTICS; ++i)
+        {
+            if (!recvwindow[client->player_number][i].active)
+            {
+                //printf("Possible deadlock: Sending resend request\n");
+
+                // Found a tic we haven't received.  Send a resend request.
+
+                NET_SV_SendResendRequest(client,
+                                         recvwindow_start + i,
+                                         recvwindow_start + i + 5);
+
+                client->last_gamedata_time = nowtime;
+                break;
+            }
+        }
+    }
+}
+
 // Perform any needed action on a client
 
 static void NET_SV_RunClient(net_client_t *client)
@@ -1450,6 +1519,7 @@ static void NET_SV_RunClient(net_client_t *client)
     if (server_state == SERVER_IN_GAME)
     {
         NET_SV_PumpSendQueue(client);
+        NET_SV_CheckDeadlock(client);
     }
 }
 
