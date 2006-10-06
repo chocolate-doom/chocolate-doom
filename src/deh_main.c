@@ -113,7 +113,7 @@ static deh_section_t *section_types[] =
 
 static int num_section_types = sizeof(section_types) / sizeof(*section_types);
 
-void DEH_Checksum(byte digest[16])
+void DEH_Checksum(md5_digest_t digest)
 {
     md5_context_t md5_context;
     int i;

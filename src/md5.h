@@ -34,6 +34,7 @@
 #define md5byte unsigned char
 
 typedef struct md5_context_s md5_context_t;
+typedef md5byte md5_digest_t[16];
 
 struct md5_context_s {
         UWORD32 buf[4];

@@ -47,6 +47,7 @@
 #ifndef NET_STRUCTRW_H
 #define NET_STRUCTRW_H
 
+#include "md5.h"
 #include "net_defs.h"
 #include "net_packet.h"
 
@@ -64,6 +65,8 @@ extern void NET_TiccmdPatch(ticcmd_t *src, net_ticdiff_t *diff, ticcmd_t *dest);
 boolean NET_ReadFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd, boolean lowres_turn);
 void NET_WriteFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd, boolean lowres_turn);
 
+boolean NET_ReadMD5Sum(net_packet_t *packet, md5_digest_t digest);
+void NET_WriteMD5Sum(net_packet_t *packet, md5_digest_t digest);
 
 #endif /* #ifndef NET_STRUCTRW_H */
 

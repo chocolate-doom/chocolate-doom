@@ -163,6 +163,7 @@
 #include "net_packet.h"
 #include "net_server.h"
 #include "net_structrw.h"
+#include "w_checksum.h"
 
 typedef enum
 {
@@ -270,6 +271,11 @@ static net_server_recv_t recvwindow[BACKUPTICS];
 
 static boolean need_to_acknowledge;
 static unsigned int gamedata_recv_time;
+
+// Hash checksums of our wad directory and dehacked data.
+
+static md5_digest_t wad_md5sum;
+static md5_digest_t deh_md5sum;
 
 // Average time between sending our ticcmd and receiving from the server
 
@@ -1158,6 +1164,8 @@ static void NET_CL_SendSYN(void)
     NET_WriteInt16(packet, gamemission);
     NET_WriteInt8(packet, lowres_turn);
     NET_WriteInt8(packet, drone);
+    NET_WriteMD5Sum(packet, wad_md5sum);
+    NET_WriteMD5Sum(packet, deh_md5sum);
     NET_WriteString(packet, net_player_name);
     NET_Conn_SendPacket(&client_connection, packet);
     NET_FreePacket(packet);
@@ -1178,6 +1186,11 @@ boolean NET_CL_Connect(net_addr_t *addr)
     {
         lowres_turn = true;
     }
+
+    // Read checksums of our WAD directory and dehacked information
+
+    W_Checksum(wad_md5sum);
+    DEH_Checksum(deh_md5sum);
 
     // create a new network I/O context and add just the
     // necessary module
