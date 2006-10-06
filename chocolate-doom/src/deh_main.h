@@ -46,12 +46,13 @@
 
 #include "doomtype.h"
 #include "doomfeatures.h"
+#include "md5.h"
 
 void DEH_Init(void);
 
 boolean DEH_ParseAssignment(char *line, char **variable_name, char **value);
 
-void DEH_Checksum(byte digest[16]);
+void DEH_Checksum(md5_digest_t digest);
 
 // deh_text.c:
 //

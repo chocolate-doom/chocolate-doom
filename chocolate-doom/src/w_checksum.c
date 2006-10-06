@@ -74,7 +74,7 @@ static void ChecksumAddLump(md5_context_t *md5_context, lumpinfo_t *lump)
     MD5_UpdateInt32(md5_context, lump->size);
 }
 
-void W_Checksum(byte digest[16])
+void W_Checksum(md5_digest_t digest)
 {
     md5_context_t md5_context;
     int i;
