@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_structrw.c 612 2006-09-17 20:37:26Z fraggle $
+// $Id: net_structrw.c 688 2006-10-06 07:02:42Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -353,6 +353,34 @@ void NET_WriteFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd, boolean l
         {
             NET_WriteTiccmdDiff(packet, &cmd->cmds[i], lowres_turn);
         }
+    }
+}
+
+boolean NET_ReadMD5Sum(net_packet_t *packet, md5_digest_t digest)
+{
+    unsigned int b;
+    int i;
+
+    for (i=0; i<16; ++i)
+    {
+        if (!NET_ReadInt8(packet, &b))
+        {
+            return false;
+        }
+
+        digest[i] = b;
+    }
+
+    return true;
+}
+
+void NET_WriteMD5Sum(net_packet_t *packet, md5_digest_t digest)
+{
+    int i;
+
+    for (i=0; i<16; ++i)
+    {
+        NET_WriteInt8(packet, digest[i]);
     }
 }
 

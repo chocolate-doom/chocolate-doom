@@ -30,7 +30,7 @@
 
 #include "doomtype.h"
 
-extern void W_Checksum(byte digest[16]);
+extern void W_Checksum(md5_digest_t digest);
 
 #endif /* #ifndef W_CHECKSUM_H */
 

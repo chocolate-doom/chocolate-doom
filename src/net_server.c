@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 685 2006-10-05 17:19:43Z fraggle $
+// $Id: net_server.c 688 2006-10-06 07:02:42Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -252,6 +252,7 @@ static net_context_t *server_context;
 static int sv_gamemode;
 static int sv_gamemission;
 static net_gamesettings_t sv_settings;
+static md5_digest_t sv_wad_md5sum, sv_deh_md5sum;
 
 // receive window
 
@@ -555,6 +556,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
     unsigned int cl_gamemode, cl_gamemission;
     unsigned int cl_recording_lowres;
     unsigned int cl_drone;
+    md5_digest_t deh_md5sum, wad_md5sum;
     char *player_name;
     char *client_version;
     int i;
@@ -593,7 +595,9 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
     if (!NET_ReadInt16(packet, &cl_gamemode) 
      || !NET_ReadInt16(packet, &cl_gamemission)
      || !NET_ReadInt8(packet, &cl_recording_lowres)
-     || !NET_ReadInt8(packet, &cl_drone))
+     || !NET_ReadInt8(packet, &cl_drone)
+     || !NET_ReadMD5Sum(packet, wad_md5sum)
+     || !NET_ReadMD5Sum(packet, deh_md5sum))
     {
         return;
     }
@@ -682,6 +686,8 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         {
             sv_gamemode = cl_gamemode;
             sv_gamemission = cl_gamemission;
+            memcpy(sv_wad_md5sum, wad_md5sum, sizeof(md5_digest_t));
+            memcpy(sv_deh_md5sum, deh_md5sum, sizeof(md5_digest_t));
         }
 
         // Check the connecting client is playing the same game as all

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_main.c 687 2006-10-05 22:12:22Z fraggle $
+// $Id: deh_main.c 688 2006-10-06 07:02:42Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -113,7 +113,7 @@ static deh_section_t *section_types[] =
 
 static int num_section_types = sizeof(section_types) / sizeof(*section_types);
 
-void DEH_Checksum(byte digest[16])
+void DEH_Checksum(md5_digest_t digest)
 {
     md5_context_t md5_context;
     int i;

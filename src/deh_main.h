@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_main.h 687 2006-10-05 22:12:22Z fraggle $
+// $Id: deh_main.h 688 2006-10-06 07:02:42Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -46,12 +46,13 @@
 
 #include "doomtype.h"
 #include "doomfeatures.h"
+#include "md5.h"
 
 void DEH_Init(void);
 
 boolean DEH_ParseAssignment(char *line, char **variable_name, char **value);
 
-void DEH_Checksum(byte digest[16]);
+void DEH_Checksum(md5_digest_t digest);
 
 // deh_text.c:
 //
