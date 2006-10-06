@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 688 2006-10-06 07:02:42Z fraggle $
+// $Id: net_server.c 689 2006-10-06 17:06:05Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -221,6 +221,11 @@ typedef struct
 
     boolean drone;
 
+    // MD5 hash sums of the client's WAD directory and dehacked data
+
+    md5_digest_t wad_md5sum;
+    md5_digest_t deh_md5sum;
+
 } net_client_t;
 
 // structure used for the recv window
@@ -252,7 +257,6 @@ static net_context_t *server_context;
 static int sv_gamemode;
 static int sv_gamemission;
 static net_gamesettings_t sv_settings;
-static md5_digest_t sv_wad_md5sum, sv_deh_md5sum;
 
 // receive window
 
@@ -686,9 +690,12 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         {
             sv_gamemode = cl_gamemode;
             sv_gamemission = cl_gamemission;
-            memcpy(sv_wad_md5sum, wad_md5sum, sizeof(md5_digest_t));
-            memcpy(sv_deh_md5sum, deh_md5sum, sizeof(md5_digest_t));
         }
+
+        // Save the MD5 checksums
+
+        memcpy(client->wad_md5sum, wad_md5sum, sizeof(md5_digest_t));
+        memcpy(client->deh_md5sum, deh_md5sum, sizeof(md5_digest_t));
 
         // Check the connecting client is playing the same game as all
         // the other clients
@@ -1265,10 +1272,13 @@ static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
 static void NET_SV_SendWaitingData(net_client_t *client)
 {
     net_packet_t *packet;
+    net_client_t *controller;
     int num_players;
     int i;
 
     NET_SV_AssignPlayers();
+
+    controller = NET_SV_Controller();
 
     num_players = NET_SV_NumPlayers();
 
@@ -1283,13 +1293,13 @@ static void NET_SV_SendWaitingData(net_client_t *client)
 
     // indicate whether the client is the controller
 
-    NET_WriteInt8(packet, NET_SV_Controller() == client);
+    NET_WriteInt8(packet, client == controller);
 
     // send the player number of this client
 
     NET_WriteInt8(packet, client->player_number);
 
-    // send the address of all players
+    // send the addresses of all players
 
     for (i=0; i<num_players; ++i)
     {
@@ -1305,7 +1315,20 @@ static void NET_SV_SendWaitingData(net_client_t *client)
 
         NET_WriteString(packet, addr);
     }
-    
+
+    // Send the WAD and dehacked checksums of the controlling client.
+
+    if (controller != NULL)
+    {
+        NET_WriteMD5Sum(packet, controller->wad_md5sum);
+        NET_WriteMD5Sum(packet, controller->deh_md5sum);
+    }
+    else
+    {
+        NET_WriteMD5Sum(packet, client->wad_md5sum);
+        NET_WriteMD5Sum(packet, client->deh_md5sum);
+    }
+
     // send packet to client and free
 
     NET_Conn_SendPacket(&client->connection, packet);

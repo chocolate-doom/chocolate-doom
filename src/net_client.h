@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.h 680 2006-09-29 21:25:13Z fraggle $
+// $Id: net_client.h 689 2006-10-06 17:06:05Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -70,6 +70,7 @@
 #include "doomdef.h"
 #include "doomtype.h"
 #include "d_ticcmd.h"
+#include "md5.h"
 #include "net_defs.h"
 
 #define MAXPLAYERNAME 30
@@ -83,6 +84,7 @@ void NET_CL_SendTiccmd(ticcmd_t *ticcmd, int maketic);
 void NET_Init(void);
 
 extern boolean net_client_connected;
+extern boolean net_client_received_wait_data;
 extern boolean net_client_controller;
 extern int net_clients_in_game;
 extern boolean net_waiting_for_start;
@@ -92,6 +94,12 @@ extern int net_player_number;
 extern char *net_player_name;
 extern boolean net_cl_new_sync;
 extern boolean drone;
+
+extern md5_digest_t net_server_wad_md5sum;
+extern md5_digest_t net_server_deh_md5sum;
+extern md5_digest_t net_local_wad_md5sum;
+extern md5_digest_t net_local_deh_md5sum;
+
 
 #endif /* #ifndef NET_CLIENT_H */
 

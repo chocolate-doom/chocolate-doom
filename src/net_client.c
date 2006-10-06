@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 688 2006-10-06 07:02:42Z fraggle $
+// $Id: net_client.c 689 2006-10-06 17:06:05Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -223,11 +223,15 @@ static net_clientstate_t client_state;
 static net_addr_t *server_addr;
 static net_context_t *client_context;
 
-// TRUE if the client code is in use
+// true if the client code is in use
 
 boolean net_client_connected;
 
-// if TRUE, this client is the controller of the game
+// true if we have received waiting data from the server
+
+boolean net_client_received_wait_data;
+
+// if true, this client is the controller of the game
 
 boolean net_client_controller = false;
 
@@ -239,6 +243,12 @@ int net_clients_in_game;
 
 char net_player_addresses[MAXPLAYERS][MAXPLAYERNAME];
 char net_player_names[MAXPLAYERS][MAXPLAYERNAME];
+
+// MD5 checksums of the wad directory and dehacked data that the server
+// has sent to us.
+
+md5_digest_t net_server_wad_md5sum;
+md5_digest_t net_server_deh_md5sum;
 
 // Player number
 
@@ -274,8 +284,8 @@ static unsigned int gamedata_recv_time;
 
 // Hash checksums of our wad directory and dehacked data.
 
-static md5_digest_t wad_md5sum;
-static md5_digest_t deh_md5sum;
+md5_digest_t net_local_wad_md5sum;
+md5_digest_t net_local_deh_md5sum;
 
 // Average time between sending our ticcmd and receiving from the server
 
@@ -631,6 +641,7 @@ static void NET_CL_ParseWaitingData(net_packet_t *packet)
     signed int player_number;
     char *player_names[MAXPLAYERS];
     char *player_addr[MAXPLAYERS];
+    md5_digest_t wad_md5sum, deh_md5sum;
     size_t i;
 
     if (!NET_ReadInt8(packet, &num_players)
@@ -671,6 +682,12 @@ static void NET_CL_ParseWaitingData(net_packet_t *packet)
         }
     }
 
+    if (!NET_ReadMD5Sum(packet, wad_md5sum)
+     || !NET_ReadMD5Sum(packet, deh_md5sum))
+    {
+        return;
+    }
+
     net_clients_in_game = num_players;
     net_client_controller = is_controller != 0;
     net_player_number = player_number;
@@ -682,6 +699,11 @@ static void NET_CL_ParseWaitingData(net_packet_t *packet)
         strncpy(net_player_addresses[i], player_addr[i], MAXPLAYERNAME);
         net_player_addresses[i][MAXPLAYERNAME-1] = '\0';
     }
+
+    memcpy(net_server_wad_md5sum, wad_md5sum, sizeof(md5_digest_t));
+    memcpy(net_server_deh_md5sum, deh_md5sum, sizeof(md5_digest_t));
+
+    net_client_received_wait_data = true;
 }
 
 static void NET_CL_ParseGameStart(net_packet_t *packet)
@@ -1164,8 +1186,8 @@ static void NET_CL_SendSYN(void)
     NET_WriteInt16(packet, gamemission);
     NET_WriteInt8(packet, lowres_turn);
     NET_WriteInt8(packet, drone);
-    NET_WriteMD5Sum(packet, wad_md5sum);
-    NET_WriteMD5Sum(packet, deh_md5sum);
+    NET_WriteMD5Sum(packet, net_local_wad_md5sum);
+    NET_WriteMD5Sum(packet, net_local_deh_md5sum);
     NET_WriteString(packet, net_player_name);
     NET_Conn_SendPacket(&client_connection, packet);
     NET_FreePacket(packet);
@@ -1189,8 +1211,8 @@ boolean NET_CL_Connect(net_addr_t *addr)
 
     // Read checksums of our WAD directory and dehacked information
 
-    W_Checksum(wad_md5sum);
-    DEH_Checksum(deh_md5sum);
+    W_Checksum(net_local_wad_md5sum);
+    DEH_Checksum(net_local_deh_md5sum);
 
     // create a new network I/O context and add just the
     // necessary module
@@ -1207,6 +1229,7 @@ boolean NET_CL_Connect(net_addr_t *addr)
     NET_AddModule(client_context, addr->module);
 
     net_client_connected = true;
+    net_client_received_wait_data = false;
 
     // Initialise connection
 

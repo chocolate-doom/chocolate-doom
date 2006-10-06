@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_gui.c 579 2006-08-31 18:12:25Z fraggle $
+// $Id: net_gui.c 689 2006-10-06 17:06:05Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -93,6 +93,7 @@
 static txt_window_t *window;
 static txt_label_t *player_labels[MAXPLAYERS];
 static txt_label_t *ip_labels[MAXPLAYERS];
+static boolean had_warning;
 
 static void EscapePressed(TXT_UNCAST_ARG(widget), void *unused)
 {
@@ -112,6 +113,8 @@ static void BuildGUI(void)
     txt_window_action_t *cancel;
     int i;
     
+    had_warning = false;
+
     TXT_SetDesktopTitle(PACKAGE_STRING);
     
     window = TXT_NewWindow("Waiting for game start...");
@@ -186,6 +189,51 @@ static void UpdateGUI(void)
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, startgame);
 }
 
+static void CheckMD5Sums(void)
+{
+    boolean correct_wad, correct_deh;
+    txt_window_t *window;
+
+    if (!net_client_received_wait_data || had_warning)
+    {
+        return;
+    }
+
+    correct_wad = memcmp(net_local_wad_md5sum, net_server_wad_md5sum, 
+                         sizeof(md5_digest_t)) == 0;
+    correct_deh = memcmp(net_local_deh_md5sum, net_server_deh_md5sum, 
+                         sizeof(md5_digest_t)) == 0;
+
+    if (correct_wad && correct_deh)
+    {
+        return;
+    }
+
+    window = TXT_NewWindow("WARNING");
+
+    TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, NULL);
+
+    if (!correct_wad)
+    {
+        TXT_AddWidget(window, TXT_NewLabel
+            ("Your WAD directory does not match other players in the game.\n"
+             "Check that you have loaded all the same WAD files as other\n"
+             "players.\n"));
+    }
+    if (!correct_deh)
+    {
+        TXT_AddWidget(window, TXT_NewLabel
+            ("Your dehacked signature does not match other players in the\n"
+             "game.  Check that you have loaded the same dehacked patches\n"
+             "as other players.\n"));
+    }
+
+    TXT_AddWidget(window, TXT_NewLabel
+            ("If you continue, this may cause your game to desync."));
+    
+    had_warning = true;
+}
+
 void NET_WaitForStart(void)
 {
     TXT_Init();
@@ -197,6 +245,7 @@ void NET_WaitForStart(void)
     while (net_waiting_for_start)
     {
         UpdateGUI();
+        CheckMD5Sums();
 
         TXT_DispatchEvents();
         TXT_DrawDesktop();
