@@ -23,19 +23,25 @@
 #define TXT_SPINCONTROL_H
 
 typedef struct txt_spincontrol_s txt_spincontrol_t;
+typedef enum
+{
+    TXT_SPINCONTROL_INT,
+    TXT_SPINCONTROL_FLOAT,
+} txt_spincontrol_type_t;
 
 #include "txt_widget.h"
 
 struct txt_spincontrol_s
 {
     txt_widget_t widget;
-    int min, max;
-    int *value;
+    txt_spincontrol_type_t type;
+    union { float f; int i; } min, max, *value, step; 
     int editing;
     char *buffer;
 };
 
 txt_spincontrol_t *TXT_NewSpinControl(int *value, int min, int max);
+txt_spincontrol_t *TXT_NewFloatSpinControl(float *value, float min, float max);
 
 #endif /* #ifndef TXT_SPINCONTROL_H */
 
