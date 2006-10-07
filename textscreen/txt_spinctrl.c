@@ -33,15 +33,54 @@
 #include "txt_main.h"
 #include "txt_window.h"
 
+// Generate the format string to be used for displaying floats
+
+static void FloatFormatString(float step, char *buf)
+{
+    int precision;
+
+    precision = (int) ceil(-log(step) / log(10));
+
+    if (precision > 0)
+    {
+        sprintf(buf, "%%.%if", precision);
+    }
+    else
+    {
+        strcpy(buf, "%.1f");
+    }
+}
+
 // Number of characters needed to represent a character 
 
 static int IntWidth(int val)
 {
-    char buf[15];
+    char buf[25];
 
     sprintf(buf, "%i", val);
 
     return strlen(buf);
+}
+
+static int FloatWidth(float val, float step)
+{
+    int precision;
+    int result;
+
+    // Calculate the width of the int value
+
+    result = IntWidth((int) val);
+
+    // Add a decimal part if the precision specifies it
+
+    precision = (int) ceil(-log(step) / log(10));
+
+    if (precision > 0)
+    {
+        result += precision + 1;
+    }    
+
+    return result;
 }
 
 // Returns the minimum width of the input box
@@ -50,8 +89,20 @@ static int SpinControlWidth(txt_spincontrol_t *spincontrol)
 {
     int minw, maxw;
 
-    minw = IntWidth(spincontrol->min);
-    maxw = IntWidth(spincontrol->max);
+    switch (spincontrol->type)
+    {
+        case TXT_SPINCONTROL_FLOAT:
+            minw = FloatWidth(spincontrol->min.f, spincontrol->step.f);
+            maxw = FloatWidth(spincontrol->max.f, spincontrol->step.f);
+            break;
+
+        default:
+        case TXT_SPINCONTROL_INT:
+            minw = IntWidth(spincontrol->min.i);
+            maxw = IntWidth(spincontrol->max.i);
+            break;
+
+    }
     
     // Choose the wider of the two values.  Add one so that there is always
     // space for the cursor when editing.
@@ -74,10 +125,26 @@ static void TXT_SpinControlSizeCalc(TXT_UNCAST_ARG(spincontrol))
     spincontrol->widget.h = 1;
 }
 
+static void SetBuffer(txt_spincontrol_t *spincontrol)
+{
+    char format[25];
+
+    switch (spincontrol->type)
+    {
+        case TXT_SPINCONTROL_INT:
+            sprintf(spincontrol->buffer, "%i", spincontrol->value->i);
+            break;
+
+        case TXT_SPINCONTROL_FLOAT:
+            FloatFormatString(spincontrol->step.f, format);
+            sprintf(spincontrol->buffer, format, spincontrol->value->f);
+            break;
+    }
+}
+
 static void TXT_SpinControlDrawer(TXT_UNCAST_ARG(spincontrol), int selected)
 {
     TXT_CAST_ARG(txt_spincontrol_t, spincontrol);
-    char buf[15];
     unsigned int i;
     unsigned int padding;
 
@@ -103,18 +170,14 @@ static void TXT_SpinControlDrawer(TXT_UNCAST_ARG(spincontrol), int selected)
         TXT_BGColor(TXT_COLOR_BLUE, 0);
     }
 
-    if (spincontrol->editing)
+    if (!spincontrol->editing)
     {
-        strcpy(buf, spincontrol->buffer);
+        SetBuffer(spincontrol);
     }
-    else
-    {
-        sprintf(buf, "%i", *spincontrol->value);
-    }
-
+    
     i = 0;
 
-    padding = spincontrol->widget.w - strlen(buf) - 4;
+    padding = spincontrol->widget.w - strlen(spincontrol->buffer) - 4;
 
     while (i < padding)
     {
@@ -122,8 +185,8 @@ static void TXT_SpinControlDrawer(TXT_UNCAST_ARG(spincontrol), int selected)
         ++i;
     }
 
-    TXT_DrawString(buf);
-    i += strlen(buf);
+    TXT_DrawString(spincontrol->buffer);
+    i += strlen(spincontrol->buffer);
 
     while (i < spincontrol->widget.w - 4)
     {
@@ -162,10 +225,22 @@ static void Backspace(txt_spincontrol_t *spincontrol)
 
 static void EnforceLimits(txt_spincontrol_t *spincontrol)
 {
-    if (*spincontrol->value > spincontrol->max)
-        *spincontrol->value = spincontrol->max;
-    else if (*spincontrol->value < spincontrol->min)
-        *spincontrol->value = spincontrol->min;
+    switch (spincontrol->type)
+    {
+        case TXT_SPINCONTROL_INT:
+            if (spincontrol->value->i > spincontrol->max.i)
+                spincontrol->value->i = spincontrol->max.i;
+            else if (spincontrol->value->i < spincontrol->min.i)
+                spincontrol->value->i = spincontrol->min.i;
+            break;
+
+        case TXT_SPINCONTROL_FLOAT:
+            if (spincontrol->value->f > spincontrol->max.f)
+                spincontrol->value->f = spincontrol->max.f;
+            else if (spincontrol->value->f < spincontrol->min.f)
+                spincontrol->value->f = spincontrol->min.f;
+            break;
+    }
 }
 
 static int TXT_SpinControlKeyPress(TXT_UNCAST_ARG(spincontrol), int key)
@@ -178,7 +253,17 @@ static int TXT_SpinControlKeyPress(TXT_UNCAST_ARG(spincontrol), int key)
     {
         if (key == KEY_ENTER)
         {
-            *spincontrol->value = atoi(spincontrol->buffer);
+            switch (spincontrol->type)
+            {
+                case TXT_SPINCONTROL_INT:
+                    spincontrol->value->i = atoi(spincontrol->buffer);
+                    break;
+
+                case TXT_SPINCONTROL_FLOAT:
+                    spincontrol->value->f = (float) atof(spincontrol->buffer);
+                    break;
+            }
+
             spincontrol->editing = 0;
             EnforceLimits(spincontrol);
             return 1;
@@ -191,7 +276,7 @@ static int TXT_SpinControlKeyPress(TXT_UNCAST_ARG(spincontrol), int key)
             return 1;
         }
 
-        if (isdigit(key) || key == '-')
+        if (isdigit(key) || key == '-' || key == '.')
         {
             AddCharacter(spincontrol, key);
             return 1;
@@ -209,13 +294,22 @@ static int TXT_SpinControlKeyPress(TXT_UNCAST_ARG(spincontrol), int key)
 
         if (key == KEY_ENTER)
         {
-            sprintf(spincontrol->buffer, "%i", *spincontrol->value);
             spincontrol->editing = 1;
+            SetBuffer(spincontrol);
             return 1;
         }
         if (key == KEY_LEFTARROW)
         {
-            --*spincontrol->value;
+            switch (spincontrol->type)
+            {
+                case TXT_SPINCONTROL_INT:
+                    spincontrol->value->i -= spincontrol->step.i;
+                    break;
+
+                case TXT_SPINCONTROL_FLOAT:
+                    spincontrol->value->f -= spincontrol->step.f;
+                    break;
+            }
 
             EnforceLimits(spincontrol);
 
@@ -224,7 +318,16 @@ static int TXT_SpinControlKeyPress(TXT_UNCAST_ARG(spincontrol), int key)
         
         if (key == KEY_RIGHTARROW)
         {
-            ++*spincontrol->value;
+            switch (spincontrol->type)
+            {
+                case TXT_SPINCONTROL_INT:
+                    spincontrol->value->i += spincontrol->step.i;
+                    break;
+
+                case TXT_SPINCONTROL_FLOAT:
+                    spincontrol->value->f += spincontrol->step.f;
+                    break;
+            }
 
             EnforceLimits(spincontrol);
 
@@ -263,21 +366,45 @@ txt_widget_class_t txt_spincontrol_class =
     NULL,
 };
 
-txt_spincontrol_t *TXT_NewSpinControl(int *value, int min, int max)
+static txt_spincontrol_t *TXT_BaseSpinControl(void)
 {
     txt_spincontrol_t *spincontrol;
 
     spincontrol = malloc(sizeof(txt_spincontrol_t));
 
     TXT_InitWidget(spincontrol, &txt_spincontrol_class);
-    spincontrol->value = value;
-    spincontrol->min = min;
-    spincontrol->max = max;
-    spincontrol->buffer = malloc(15);
+    spincontrol->buffer = malloc(25);
     strcpy(spincontrol->buffer, "");
     spincontrol->editing = 0;
 
     return spincontrol;
 }
 
+txt_spincontrol_t *TXT_NewSpinControl(int *value, int min, int max)
+{
+    txt_spincontrol_t *spincontrol;
+
+    spincontrol = TXT_BaseSpinControl();
+    spincontrol->type = TXT_SPINCONTROL_INT;
+    spincontrol->value = (void *) value;
+    spincontrol->min.i = min;
+    spincontrol->max.i = max;
+    spincontrol->step.i = 1;
+
+    return spincontrol;
+}
+
+txt_spincontrol_t *TXT_NewFloatSpinControl(float *value, float min, float max)
+{
+    txt_spincontrol_t *spincontrol;
+
+    spincontrol = TXT_BaseSpinControl();
+    spincontrol->type = TXT_SPINCONTROL_FLOAT;
+    spincontrol->value = (void *) value;
+    spincontrol->min.f = min;
+    spincontrol->max.f = max;
+    spincontrol->step.f = 0.1;
+
+    return spincontrol;
+}
 

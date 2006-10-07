@@ -30,7 +30,7 @@ int use_mouse = 1;
 
 int novert;
 int speed;
-int accel;
+float accel;
 int threshold;
 int grabmouse = 1;
 
@@ -100,7 +100,7 @@ void ConfigMouse(void)
                    TXT_NewLabel("Speed"),
                    TXT_NewSpinControl(&speed, 1, 256),
                    TXT_NewLabel("Acceleration"),
-                   TXT_NewSpinControl(&accel, 1, 5),
+                   TXT_NewFloatSpinControl(&accel, 1.0, 5.0),
                    TXT_NewLabel("Acceleration threshold"),
                    TXT_NewSpinControl(&threshold, 0, 32),
                    NULL);
