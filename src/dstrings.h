@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: dstrings.h 66 2005-09-04 14:51:19Z fraggle $
+// $Id: dstrings.h 693 2006-10-10 02:00:52Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -48,14 +48,8 @@
 
 
 // All important printed strings.
-// Language selection (message strings).
-// Use -DFRENCH etc.
 
-#ifdef FRENCH
-#include "d_french.h"
-#else
 #include "d_englsh.h"
-#endif
 
 // Misc. other strings.
 #define SAVEGAMENAME	"doomsav"
@@ -69,8 +63,6 @@
 #define DEVMAPS "devmaps"
 #define DEVDATA "devdata"
 
-
-// Not done in french?
 
 // QuitDOOM messages
 // 7 per each game type

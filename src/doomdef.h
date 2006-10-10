@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: doomdef.h 488 2006-05-20 16:16:35Z fraggle $
+// $Id: doomdef.h 693 2006-10-10 02:00:52Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -76,16 +76,6 @@ typedef enum
     exe_ultimate,   // Ultimate Doom (retail)
     exe_final,      // Final Doom
 } GameVersion_t;
-
-// Identify language to use, software localization.
-typedef enum
-{
-  english,
-  french,
-  german,
-  unknown
-
-} Language_t;
 
 
 // If rangecheck is undefined,
