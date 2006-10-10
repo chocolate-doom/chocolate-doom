@@ -77,16 +77,6 @@ typedef enum
     exe_final,      // Final Doom
 } GameVersion_t;
 
-// Identify language to use, software localization.
-typedef enum
-{
-  english,
-  french,
-  german,
-  unknown
-
-} Language_t;
-
 
 // If rangecheck is undefined,
 // most parameter validation debugging code will not be compiled
