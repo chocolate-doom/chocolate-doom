@@ -48,14 +48,8 @@
 
 
 // All important printed strings.
-// Language selection (message strings).
-// Use -DFRENCH etc.
 
-#ifdef FRENCH
-#include "d_french.h"
-#else
 #include "d_englsh.h"
-#endif
 
 // Misc. other strings.
 #define SAVEGAMENAME	"doomsav"
@@ -69,8 +63,6 @@
 #define DEVMAPS "devmaps"
 #define DEVDATA "devdata"
 
-
-// Not done in french?
 
 // QuitDOOM messages
 // 7 per each game type
