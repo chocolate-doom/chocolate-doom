@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 689 2006-10-06 17:06:05Z fraggle $
+// $Id: net_server.c 694 2006-10-11 22:55:06Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -215,7 +215,7 @@ typedef struct
 
     // Latest acknowledged by the client
 
-    int acknowledged;
+    unsigned int acknowledged;
 
     // Observer: receives data but does not participate in the game.
 
@@ -254,8 +254,8 @@ static boolean server_initialised = false;
 static net_client_t clients[MAXNETNODES];
 static net_client_t *sv_players[MAXPLAYERS];
 static net_context_t *server_context;
-static int sv_gamemode;
-static int sv_gamemission;
+static unsigned int sv_gamemode;
+static unsigned int sv_gamemission;
 static net_gamesettings_t sv_settings;
 
 // receive window
@@ -399,16 +399,16 @@ static int NET_SV_NumClients(void)
 // Find the latest tic which has been acknowledged as received by
 // all clients.
 
-static int NET_SV_LatestAcknowledged(void)
+static unsigned int NET_SV_LatestAcknowledged(void)
 {
-    int lowtic = -1;
+    unsigned int lowtic = UINT_MAX;
     int i;
 
     for (i=0; i<MAXNETNODES; ++i) 
     {
         if (ClientConnected(&clients[i]))
         {
-            if (lowtic < 0 || clients[i].acknowledged < lowtic)
+            if (clients[i].acknowledged < lowtic)
             {
                 lowtic = clients[i].acknowledged;
             }
@@ -424,15 +424,15 @@ static int NET_SV_LatestAcknowledged(void)
 
 static void NET_SV_AdvanceWindow(void)
 {
-    int lowtic;
+    unsigned int lowtic;
     int i;
 
-    lowtic = NET_SV_LatestAcknowledged();
-
-    if (lowtic < 0)
+    if (NET_SV_NumPlayers() <= 0)
     {
         return;
     }
+
+    lowtic = NET_SV_LatestAcknowledged();
 
     // Advance the recv window until it catches up with lowtic
 
@@ -1077,10 +1077,11 @@ static void NET_SV_ParseGameDataACK(net_packet_t *packet, net_client_t *client)
     }
 }
 
-static void NET_SV_SendTics(net_client_t *client, int start, int end)
+static void NET_SV_SendTics(net_client_t *client, 
+                            unsigned int start, unsigned int end)
 {
     net_packet_t *packet;
-    int i;
+    unsigned int i;
 
     packet = NET_NewPacket(500);
 

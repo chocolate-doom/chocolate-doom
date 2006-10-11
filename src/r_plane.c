@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: r_plane.c 8 2005-07-23 16:44:57Z fraggle $
+// $Id: r_plane.c 694 2006-10-11 22:55:06Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -38,7 +38,7 @@
 
 
 static const char
-rcsid[] = "$Id: r_plane.c 8 2005-07-23 16:44:57Z fraggle $";
+rcsid[] = "$Id: r_plane.c 694 2006-10-11 22:55:06Z fraggle $";
 
 #include <stdlib.h>
 
@@ -143,9 +143,9 @@ R_MapPlane
 	
 #ifdef RANGECHECK
     if (x2 < x1
-	|| x1<0
-	|| x2>=viewwidth
-	|| (unsigned)y>viewheight)
+     || x1 < 0
+     || x2 >= viewwidth
+     || y > viewheight)
     {
 	I_Error ("R_MapPlane: %i, %i at %i",x1,x2,y);
     }

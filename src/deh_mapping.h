@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_mapping.h 687 2006-10-05 22:12:22Z fraggle $
+// $Id: deh_mapping.h 694 2006-10-11 22:55:06Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -62,7 +62,7 @@
              {deh_name, NULL, -1},
             
 #define DEH_END_MAPPING                                       \
-             {NULL}                                           \
+             {NULL, NULL, -1}                                 \
         }                                                     \
     };
 

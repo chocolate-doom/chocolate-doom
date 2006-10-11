@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: st_lib.c 653 2006-09-22 20:32:00Z fraggle $
+// $Id: st_lib.c 694 2006-10-11 22:55:06Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -36,7 +36,7 @@
 
 
 static const char
-rcsid[] = "$Id: st_lib.c 653 2006-09-22 20:32:00Z fraggle $";
+rcsid[] = "$Id: st_lib.c 694 2006-10-11 22:55:06Z fraggle $";
 
 #include <ctype.h>
 
@@ -266,7 +266,7 @@ STlib_initBinIcon
 {
     b->x	= x;
     b->y	= y;
-    b->oldval	= 0;
+    b->oldval	= false;
     b->val	= val;
     b->on	= on;
     b->p	= i;
@@ -285,7 +285,7 @@ STlib_updateBinIcon
     int			h;
 
     if (*bi->on
-	&& (bi->oldval != *bi->val || refresh))
+     && (bi->oldval != *bi->val || refresh))
     {
 	x = bi->x - SHORT(bi->p->leftoffset);
 	y = bi->y - SHORT(bi->p->topoffset);

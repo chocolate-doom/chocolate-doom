@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: st_lib.h 8 2005-07-23 16:44:57Z fraggle $
+// $Id: st_lib.h 694 2006-10-11 22:55:06Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -129,7 +129,7 @@ typedef struct
     int			y;
 
     // last icon value
-    int			oldval;
+    boolean		oldval;
 
     // pointer to current icon status
     boolean*		val;

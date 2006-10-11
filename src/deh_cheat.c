@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_cheat.c 687 2006-10-05 22:12:22Z fraggle $
+// $Id: deh_cheat.c 694 2006-10-11 22:55:06Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -101,7 +101,7 @@ static void DEH_CheatParseLine(deh_context_t *context, char *line, void *tag)
     char *variable_name;
     char *value;
     unsigned char *unsvalue;
-    int i;
+    unsigned int i;
 
     if (!DEH_ParseAssignment(line, &variable_name, &value))
     {
@@ -123,10 +123,13 @@ static void DEH_CheatParseLine(deh_context_t *context, char *line, void *tag)
 
     // write the value into the cheat sequence
 
-    for (i=0; 
-         i<cheat->seq->sequence_len && unsvalue[i] != 0 && unsvalue[i] != 0xff; 
-         ++i)
+    i = 0;
+
+    while (i<cheat->seq->sequence_len && unsvalue[i] != 0 && unsvalue[i] != 0xff)
+    {
         cheat->seq->sequence[i] = unsvalue[i];
+        ++i;
+    }
 
     cheat->seq->sequence[i] = '\0';
 }

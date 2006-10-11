@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_cheat.h 650 2006-09-22 12:16:00Z fraggle $
+// $Id: m_cheat.h 694 2006-10-11 22:55:06Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -47,12 +47,12 @@ typedef struct
     // settings for this cheat
 
     char sequence[MAX_CHEAT_LEN];
-    int sequence_len;
+    size_t sequence_len;
     int parameter_chars;
 
     // state used during the game
 
-    int chars_read;
+    size_t chars_read;
     int param_chars_read;
     char parameter_buf[MAX_CHEAT_PARAMS];
 } cheatseq_t;

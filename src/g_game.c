@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: g_game.c 667 2006-09-25 21:45:30Z fraggle $
+// $Id: g_game.c 694 2006-10-11 22:55:06Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -134,7 +134,7 @@
 
 
 static const char
-rcsid[] = "$Id: g_game.c 667 2006-09-25 21:45:30Z fraggle $";
+rcsid[] = "$Id: g_game.c 694 2006-10-11 22:55:06Z fraggle $";
 
 #include <string.h>
 #include <stdlib.h>
@@ -325,10 +325,10 @@ int             mousex;
 int		mousey;         
 
 int             dclicktime;
-int		dclickstate;
+boolean	        dclickstate;
 int		dclicks; 
 int             dclicktime2;
-int		dclickstate2;
+boolean		dclickstate2;
 int		dclicks2;
 
 // joystick values are repeated 

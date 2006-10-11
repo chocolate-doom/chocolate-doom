@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_spec.c 653 2006-09-22 20:32:00Z fraggle $
+// $Id: p_spec.c 694 2006-10-11 22:55:06Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -45,7 +45,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_spec.c 653 2006-09-22 20:32:00Z fraggle $";
+rcsid[] = "$Id: p_spec.c 694 2006-10-11 22:55:06Z fraggle $";
 
 #include <stdlib.h>
 
@@ -92,7 +92,7 @@ typedef struct
 //
 typedef struct
 {
-    boolean	istexture;	// if false, it is a flat
+    int 	istexture;	// if false, it is a flat
     char	endname[9];
     char	startname[9];
     int		speed;

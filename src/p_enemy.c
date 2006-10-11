@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_enemy.c 223 2005-10-24 18:50:39Z fraggle $
+// $Id: p_enemy.c 694 2006-10-11 22:55:06Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -44,7 +44,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_enemy.c 223 2005-10-24 18:50:39Z fraggle $";
+rcsid[] = "$Id: p_enemy.c 694 2006-10-11 22:55:06Z fraggle $";
 
 #include <stdlib.h>
 
@@ -420,7 +420,7 @@ void P_NewChaseDir (mobj_t*	actor)
 	&& d[2] != DI_NODIR)
     {
 	actor->movedir = diags[((deltay<0)<<1)+(deltax>0)];
-	if (actor->movedir != turnaround && P_TryWalk(actor))
+	if (actor->movedir != (int) turnaround && P_TryWalk(actor))
 	    return;
     }
 
@@ -473,7 +473,7 @@ void P_NewChaseDir (mobj_t*	actor)
 	      tdir<=DI_SOUTHEAST;
 	      tdir++ )
 	{
-	    if (tdir!=turnaround)
+	    if (tdir != (int) turnaround)
 	    {
 		actor->movedir =tdir;
 		
@@ -488,9 +488,9 @@ void P_NewChaseDir (mobj_t*	actor)
 	      tdir != (DI_EAST-1);
 	      tdir-- )
 	{
-	    if (tdir!=turnaround)
+	    if (tdir != (int) turnaround)
 	    {
-		actor->movedir =tdir;
+		actor->movedir = tdir;
 		
 		if ( P_TryWalk(actor) )
 		    return;

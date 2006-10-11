@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: f_finale.c 641 2006-09-21 11:13:28Z rtc_marine $
+// $Id: f_finale.c 694 2006-10-11 22:55:06Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -48,7 +48,7 @@
 
 
 static const char
-rcsid[] = "$Id: f_finale.c 641 2006-09-21 11:13:28Z rtc_marine $";
+rcsid[] = "$Id: f_finale.c 694 2006-10-11 22:55:06Z fraggle $";
 
 #include <ctype.h>
 
@@ -68,16 +68,22 @@ rcsid[] = "$Id: f_finale.c 641 2006-09-21 11:13:28Z rtc_marine $";
 #include "doomstat.h"
 #include "r_state.h"
 
+typedef enum
+{
+    F_STAGE_TEXT,
+    F_STAGE_ARTSCREEN,
+    F_STAGE_CAST,
+} finalestage_t;
+
 // ?
 //#include "doomstat.h"
 //#include "r_local.h"
 //#include "f_finale.h"
 
 // Stage of animation:
-//  0 = text, 1 = art screen, 2 = character cast
-int		finalestage;
+finalestage_t finalestage;
 
-int		finalecount;
+unsigned int finalecount;
 
 #define	TEXTSPEED	3
 #define	TEXTWAIT	250
@@ -168,7 +174,7 @@ void F_StartFinale (void)
     finaletext = DEH_String(finaletext);
     finaleflat = DEH_String(finaleflat);
     
-    finalestage = 0;
+    finalestage = F_STAGE_TEXT;
     finalecount = 0;
 	
 }
@@ -177,7 +183,7 @@ void F_StartFinale (void)
 
 boolean F_Responder (event_t *event)
 {
-    if (finalestage == 2)
+    if (finalestage == F_STAGE_CAST)
 	return F_CastResponder (event);
 	
     return false;
@@ -212,7 +218,7 @@ void F_Ticker (void)
     // advance animation
     finalecount++;
 	
-    if (finalestage == 2)
+    if (finalestage == F_STAGE_CAST)
     {
 	F_CastTicker ();
 	return;
@@ -221,10 +227,11 @@ void F_Ticker (void)
     if ( gamemode == commercial)
 	return;
 		
-    if (!finalestage && finalecount>strlen (finaletext)*TEXTSPEED + TEXTWAIT)
+    if (finalestage == F_STAGE_TEXT
+     && finalecount>strlen (finaletext)*TEXTSPEED + TEXTWAIT)
     {
 	finalecount = 0;
-	finalestage = 1;
+	finalestage = F_STAGE_ARTSCREEN;
 	wipegamestate = -1;		// force a wipe
 	if (gameepisode == 3)
 	    S_StartMusic (mus_bunny);
@@ -247,7 +254,7 @@ void F_TextWrite (void)
     byte*	dest;
     
     int		x,y,w;
-    int		count;
+    signed int	count;
     char*	ch;
     int		c;
     int		cx;
@@ -278,7 +285,7 @@ void F_TextWrite (void)
     cy = 10;
     ch = finaletext;
 	
-    count = (finalecount - 10)/TEXTSPEED;
+    count = ((signed int) finalecount - 10) / TEXTSPEED;
     if (count < 0)
 	count = 0;
     for ( ; count ; count-- )
@@ -364,7 +371,7 @@ void F_StartCast (void)
     caststate = &states[mobjinfo[castorder[castnum].type].seestate];
     casttics = caststate->tics;
     castdeath = false;
-    finalestage = 2;	
+    finalestage = F_STAGE_CAST;
     castframes = 0;
     castonmelee = 0;
     castattacking = false;
@@ -626,7 +633,7 @@ F_DrawPatchCol
 //
 void F_BunnyScroll (void)
 {
-    int		scrolled;
+    signed int  scrolled;
     int		x;
     patch_t*	p1;
     patch_t*	p2;
@@ -639,7 +646,7 @@ void F_BunnyScroll (void)
 
     V_MarkRect (0, 0, SCREENWIDTH, SCREENHEIGHT);
 	
-    scrolled = 320 - (finalecount-230)/2;
+    scrolled = (signed int) (320 - (finalecount-230)/2);
     if (scrolled > 320)
 	scrolled = 320;
     if (scrolled < 0)
@@ -678,46 +685,61 @@ void F_BunnyScroll (void)
 	         W_CacheLumpName (name,PU_CACHE));
 }
 
+static void F_ArtScreenDrawer(void)
+{
+    char *lumpname;
+    
+    if (gameepisode == 3)
+    {
+        F_BunnyScroll();
+    }
+    else
+    {
+        switch (gameepisode)
+        {
+            case 1:
+                if (gamemode == retail)
+                {
+                    lumpname = "CREDIT";
+                }
+                else
+                {
+                    lumpname = "HELP2";
+                }
+                break;
+            case 2:
+                lumpname = "VICTORY2";
+                break;
+            case 4:
+                lumpname = "ENDPIC";
+                break;
+            default:
+                return;
+        }
+
+        lumpname = DEH_String(lumpname);
+
+        V_DrawPatch (0, 0, 0, W_CacheLumpName(lumpname, PU_CACHE));
+    }
+}
 
 //
 // F_Drawer
 //
 void F_Drawer (void)
 {
-    if (finalestage == 2)
+    switch (finalestage)
     {
-	F_CastDrawer ();
-	return;
+        case F_STAGE_CAST:
+            F_CastDrawer();
+            break;
+        case F_STAGE_TEXT:
+            F_TextWrite();
+            break;
+        case F_STAGE_ARTSCREEN:
+            F_ArtScreenDrawer();
+            break;
     }
-
-    if (!finalestage)
-	F_TextWrite ();
-    else
-    {
-	switch (gameepisode)
-	{
-	  case 1:
-	    if ( gamemode == retail )
-	      V_DrawPatch (0,0,0,
-			 W_CacheLumpName(DEH_String("CREDIT"),PU_CACHE));
-	    else
-	      V_DrawPatch (0,0,0,
-			 W_CacheLumpName(DEH_String("HELP2"),PU_CACHE));
-	    break;
-	  case 2:
-	    V_DrawPatch(0,0,0,
-			W_CacheLumpName(DEH_String("VICTORY2"),PU_CACHE));
-	    break;
-	  case 3:
-	    F_BunnyScroll ();
-	    break;
-	  case 4:
-	    V_DrawPatch (0,0,0,
-			 W_CacheLumpName(DEH_String("ENDPIC"),PU_CACHE));
-	    break;
-	}
-    }
-			
 }
 
 

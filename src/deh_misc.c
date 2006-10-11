@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_misc.c 687 2006-10-05 22:12:22Z fraggle $
+// $Id: deh_misc.c 694 2006-10-11 22:55:06Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -255,7 +255,7 @@ static void DEH_MiscParseLine(deh_context_t *context, char *line, void *tag)
 
 static void DEH_MiscMD5Sum(md5_context_t *context)
 {
-    int i;
+    unsigned int i;
 
     for (i=0; i<sizeof(misc_settings) / sizeof(*misc_settings); ++i)
     {

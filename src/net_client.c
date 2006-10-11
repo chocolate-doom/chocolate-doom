@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 689 2006-10-06 17:06:05Z fraggle $
+// $Id: net_client.c 694 2006-10-11 22:55:06Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -347,7 +347,7 @@ static void NET_CL_Disconnected(void)
 // the d_net.c structures (netcmds/nettics) and save the new ticcmd
 // back into recvwindow_cmd_base.
 
-static void NET_CL_ExpandFullTiccmd(net_full_ticcmd_t *cmd, int seq)
+static void NET_CL_ExpandFullTiccmd(net_full_ticcmd_t *cmd, unsigned int seq)
 {
     int latency;
     fixed_t adjustment;
@@ -711,7 +711,7 @@ static void NET_CL_ParseGameStart(net_packet_t *packet)
     net_gamesettings_t settings;
     unsigned int num_players;
     signed int player_number;
-    int i;
+    unsigned int i;
 
     if (!NET_ReadInt8(packet, &num_players)
      || !NET_ReadSInt8(packet, &player_number)

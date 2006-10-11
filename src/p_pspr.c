@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_pspr.c 206 2005-10-17 20:27:05Z fraggle $
+// $Id: p_pspr.c 694 2006-10-11 22:55:06Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -40,7 +40,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: p_pspr.c 206 2005-10-17 20:27:05Z fraggle $";
+rcsid[] = "$Id: p_pspr.c 694 2006-10-11 22:55:06Z fraggle $";
 
 #include "doomdef.h"
 #include "d_event.h"
@@ -542,7 +542,7 @@ A_Saw
 			     linetarget->x, linetarget->y);
     if (angle - player->mo->angle > ANG180)
     {
-	if (angle - player->mo->angle < -ANG90/20)
+	if ((signed int) (angle - player->mo->angle) < -ANG90/20)
 	    player->mo->angle = angle + ANG90/21;
 	else
 	    player->mo->angle -= ANG90/20;

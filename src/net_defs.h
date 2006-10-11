@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_defs.h 680 2006-09-29 21:25:13Z fraggle $
+// $Id: net_defs.h 694 2006-10-11 22:55:06Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -93,9 +93,9 @@ typedef struct _net_context_s net_context_t;
 struct _net_packet_s
 {
     byte *data;
-    int len;
-    int alloced;
-    int pos;
+    size_t len;
+    size_t alloced;
+    unsigned int pos;
 };
 
 struct _net_module_s

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_menu.c 665 2006-09-25 20:42:37Z fraggle $
+// $Id: m_menu.c 694 2006-10-11 22:55:06Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -78,7 +78,7 @@
 //-----------------------------------------------------------------------------
 
 static const char
-rcsid[] = "$Id: m_menu.c 665 2006-09-25 20:42:37Z fraggle $";
+rcsid[] = "$Id: m_menu.c 694 2006-10-11 22:55:06Z fraggle $";
 
 #include <stdlib.h>
 #include <ctype.h>
@@ -1856,8 +1856,8 @@ void M_Drawer (void)
 {
     static short	x;
     static short	y;
-    short		i;
-    short		max;
+    unsigned int	i;
+    unsigned int	max;
     char		string[40];
     char               *name;
     int			start;

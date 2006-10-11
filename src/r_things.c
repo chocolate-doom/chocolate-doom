@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: r_things.c 177 2005-10-08 21:02:55Z fraggle $
+// $Id: r_things.c 694 2006-10-11 22:55:06Z fraggle $
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
@@ -48,7 +48,7 @@
 
 
 static const char
-rcsid[] = "$Id: r_things.c 177 2005-10-08 21:02:55Z fraggle $";
+rcsid[] = "$Id: r_things.c 694 2006-10-11 22:55:06Z fraggle $";
 
 
 #include <stdio.h>
@@ -528,7 +528,7 @@ void R_ProjectSprite (mobj_t* thing)
     
     // decide which patch to use for sprite relative to player
 #ifdef RANGECHECK
-    if ((unsigned)thing->sprite >= numsprites)
+    if (thing->sprite >= (unsigned int) numsprites)
 	I_Error ("R_ProjectSprite: invalid sprite number %i ",
 		 thing->sprite);
 #endif
@@ -681,7 +681,7 @@ void R_DrawPSprite (pspdef_t* psp)
     
     // decide which patch to use
 #ifdef RANGECHECK
-    if ( (unsigned)psp->state->sprite >= numsprites)
+    if ( (unsigned)psp->state->sprite >= (unsigned int) numsprites)
 	I_Error ("R_ProjectSprite: invalid sprite number %i ",
 		 psp->state->sprite);
 #endif
