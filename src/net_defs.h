@@ -93,9 +93,9 @@ typedef struct _net_context_s net_context_t;
 struct _net_packet_s
 {
     byte *data;
-    int len;
-    int alloced;
-    int pos;
+    size_t len;
+    size_t alloced;
+    unsigned int pos;
 };
 
 struct _net_module_s

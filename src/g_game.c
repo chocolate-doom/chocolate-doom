@@ -325,10 +325,10 @@ int             mousex;
 int		mousey;         
 
 int             dclicktime;
-int		dclickstate;
+boolean	        dclickstate;
 int		dclicks; 
 int             dclicktime2;
-int		dclickstate2;
+boolean		dclickstate2;
 int		dclicks2;
 
 // joystick values are repeated 

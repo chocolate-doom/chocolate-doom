@@ -1856,8 +1856,8 @@ void M_Drawer (void)
 {
     static short	x;
     static short	y;
-    short		i;
-    short		max;
+    unsigned int	i;
+    unsigned int	max;
     char		string[40];
     char               *name;
     int			start;
