@@ -62,7 +62,7 @@
              {deh_name, NULL, -1},
             
 #define DEH_END_MAPPING                                       \
-             {NULL}                                           \
+             {NULL, NULL, -1}                                 \
         }                                                     \
     };
 

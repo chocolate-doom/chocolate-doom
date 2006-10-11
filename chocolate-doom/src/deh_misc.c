@@ -255,7 +255,7 @@ static void DEH_MiscParseLine(deh_context_t *context, char *line, void *tag)
 
 static void DEH_MiscMD5Sum(md5_context_t *context)
 {
-    int i;
+    unsigned int i;
 
     for (i=0; i<sizeof(misc_settings) / sizeof(*misc_settings); ++i)
     {

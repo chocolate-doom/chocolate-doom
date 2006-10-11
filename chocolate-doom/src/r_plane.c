@@ -143,9 +143,9 @@ R_MapPlane
 	
 #ifdef RANGECHECK
     if (x2 < x1
-	|| x1<0
-	|| x2>=viewwidth
-	|| (unsigned)y>viewheight)
+     || x1 < 0
+     || x2 >= viewwidth
+     || y > viewheight)
     {
 	I_Error ("R_MapPlane: %i, %i at %i",x1,x2,y);
     }

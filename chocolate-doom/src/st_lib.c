@@ -266,7 +266,7 @@ STlib_initBinIcon
 {
     b->x	= x;
     b->y	= y;
-    b->oldval	= 0;
+    b->oldval	= false;
     b->val	= val;
     b->on	= on;
     b->p	= i;
@@ -285,7 +285,7 @@ STlib_updateBinIcon
     int			h;
 
     if (*bi->on
-	&& (bi->oldval != *bi->val || refresh))
+     && (bi->oldval != *bi->val || refresh))
     {
 	x = bi->x - SHORT(bi->p->leftoffset);
 	y = bi->y - SHORT(bi->p->topoffset);
