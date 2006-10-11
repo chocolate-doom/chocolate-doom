@@ -362,8 +362,8 @@ static void MouseButtonPress(txt_window_t *window, int b)
 
     widgets = (txt_widget_t *) window;
 
-    if (x >= widgets->x && x < widgets->x + widgets->w
-     && y >= widgets->y && y < widgets->y + widgets->h)
+    if (x >= widgets->x && x < (signed) (widgets->x + widgets->w)
+     && y >= widgets->y && y < (signed) (widgets->y + widgets->h))
     {
         TXT_WidgetMousePress(window, x, y, b);
     }
@@ -375,8 +375,8 @@ static void MouseButtonPress(txt_window_t *window, int b)
         widget = (txt_widget_t *) window->actions[i];
 
         if (widget != NULL
-         && x >= widget->x && x < widget->x + widget->w
-         && y >= widget->y && y < widget->y + widget->h)
+         && x >= widget->x && x < (signed) (widget->x + widget->w)
+         && y >= widget->y && y < (signed) (widget->y + widget->h))
         {
             TXT_WidgetMousePress(widget, x, y, b);
             break;

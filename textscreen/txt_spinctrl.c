@@ -53,7 +53,7 @@ static void FloatFormatString(float step, char *buf)
 
 // Number of characters needed to represent a character 
 
-static int IntWidth(int val)
+static unsigned int IntWidth(int val)
 {
     char buf[25];
 
@@ -62,10 +62,10 @@ static int IntWidth(int val)
     return strlen(buf);
 }
 
-static int FloatWidth(float val, float step)
+static unsigned int FloatWidth(float val, float step)
 {
-    int precision;
-    int result;
+    unsigned int precision;
+    unsigned int result;
 
     // Calculate the width of the int value
 
@@ -73,7 +73,7 @@ static int FloatWidth(float val, float step)
 
     // Add a decimal part if the precision specifies it
 
-    precision = (int) ceil(-log(step) / log(10));
+    precision = (unsigned int) ceil(-log(step) / log(10));
 
     if (precision > 0)
     {
@@ -85,9 +85,9 @@ static int FloatWidth(float val, float step)
 
 // Returns the minimum width of the input box
 
-static int SpinControlWidth(txt_spincontrol_t *spincontrol)
+static unsigned int SpinControlWidth(txt_spincontrol_t *spincontrol)
 {
-    int minw, maxw;
+    unsigned int minw, maxw;
 
     switch (spincontrol->type)
     {

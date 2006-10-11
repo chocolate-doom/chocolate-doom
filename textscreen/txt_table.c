@@ -529,8 +529,8 @@ static void TXT_TableMousePress(TXT_UNCAST_ARG(table), int x, int y, int b)
 
         if (widget != NULL)
         {
-            if (x >= widget->x && x < widget->x + widget->w
-             && y >= widget->y && y < widget->y + widget->h)
+            if (x >= widget->x && x < (signed) (widget->x + widget->w)
+             && y >= widget->y && y < (signed) (widget->y + widget->h))
             {
                 // This is the widget that was clicked!
 
