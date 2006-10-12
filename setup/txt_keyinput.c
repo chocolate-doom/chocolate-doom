@@ -155,6 +155,7 @@ txt_widget_class_t txt_key_input_class =
     TXT_KeyInputKeyPress,
     TXT_KeyInputDestructor,
     TXT_KeyInputMousePress,
+    NULL,
 };
 
 txt_key_input_t *TXT_NewKeyInput(int *variable)

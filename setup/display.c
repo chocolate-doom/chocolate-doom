@@ -41,7 +41,7 @@ static vidmode_t modes[] =
         { "960x720",  2, 3 },
         { "1280x800", 1, 4 },
         { "1280x960", 2, 4 },
-        { NULL },
+        { NULL,       0, 0 },
 };
 
 static int vidmode = 0;
