@@ -44,7 +44,7 @@ static int *allkeys[] = {&key_left, &key_right, &key_up, &key_down,
 static void KeySetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))
 {
     TXT_CAST_ARG(int, variable);
-    int i;
+    unsigned int i;
 
     for (i=0; i<sizeof(allkeys) / sizeof(*allkeys); ++i)
     {

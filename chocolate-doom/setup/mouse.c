@@ -44,7 +44,7 @@ static int *all_mouse_buttons[] = {&mouseb_fire, &mouseb_strafe,
 static void MouseSetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))
 {
     TXT_CAST_ARG(int, variable);
-    int i;
+    unsigned int i;
 
     // Check if the same mouse button is used for a different action
     // If so, set the other action(s) to -1 (unset)
