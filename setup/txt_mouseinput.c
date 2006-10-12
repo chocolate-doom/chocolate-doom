@@ -184,6 +184,7 @@ txt_widget_class_t txt_mouse_input_class =
     TXT_MouseInputKeyPress,
     TXT_MouseInputDestructor,
     TXT_MouseInputMousePress,
+    NULL,
 };
 
 txt_mouse_input_t *TXT_NewMouseInput(int *variable)
