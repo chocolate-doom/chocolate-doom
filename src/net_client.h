@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.h 689 2006-10-06 17:06:05Z fraggle $
+// $Id: net_client.h 698 2006-10-14 12:55:02Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -97,8 +97,10 @@ extern boolean drone;
 
 extern md5_digest_t net_server_wad_md5sum;
 extern md5_digest_t net_server_deh_md5sum;
+extern unsigned int net_server_is_freedoom;
 extern md5_digest_t net_local_wad_md5sum;
 extern md5_digest_t net_local_deh_md5sum;
+extern unsigned int net_local_is_freedoom;
 
 
 #endif /* #ifndef NET_CLIENT_H */

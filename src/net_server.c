@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_server.c 694 2006-10-11 22:55:06Z fraggle $
+// $Id: net_server.c 698 2006-10-14 12:55:02Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -225,6 +225,10 @@ typedef struct
 
     md5_digest_t wad_md5sum;
     md5_digest_t deh_md5sum;
+
+    // Is this client is playing with the Freedoom IWAD?
+
+    unsigned int is_freedoom;
 
 } net_client_t;
 
@@ -560,6 +564,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
     unsigned int cl_gamemode, cl_gamemission;
     unsigned int cl_recording_lowres;
     unsigned int cl_drone;
+    unsigned int is_freedoom;
     md5_digest_t deh_md5sum, wad_md5sum;
     char *player_name;
     char *client_version;
@@ -601,7 +606,8 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
      || !NET_ReadInt8(packet, &cl_recording_lowres)
      || !NET_ReadInt8(packet, &cl_drone)
      || !NET_ReadMD5Sum(packet, wad_md5sum)
-     || !NET_ReadMD5Sum(packet, deh_md5sum))
+     || !NET_ReadMD5Sum(packet, deh_md5sum)
+     || !NET_ReadInt8(packet, &is_freedoom))
     {
         return;
     }
@@ -696,6 +702,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
 
         memcpy(client->wad_md5sum, wad_md5sum, sizeof(md5_digest_t));
         memcpy(client->deh_md5sum, deh_md5sum, sizeof(md5_digest_t));
+        client->is_freedoom = is_freedoom;
 
         // Check the connecting client is playing the same game as all
         // the other clients
@@ -1323,11 +1330,13 @@ static void NET_SV_SendWaitingData(net_client_t *client)
     {
         NET_WriteMD5Sum(packet, controller->wad_md5sum);
         NET_WriteMD5Sum(packet, controller->deh_md5sum);
+        NET_WriteInt8(packet, controller->is_freedoom);
     }
     else
     {
         NET_WriteMD5Sum(packet, client->wad_md5sum);
         NET_WriteMD5Sum(packet, client->deh_md5sum);
+        NET_WriteInt8(packet, client->is_freedoom);
     }
 
     // send packet to client and free
