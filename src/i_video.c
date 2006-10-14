@@ -265,6 +265,7 @@ int screenmultiply = 1;
 // disk image data and background overwritten by the disk to be
 // restored by EndRead
 
+static boolean use_loading_disk;
 static byte *disk_image = NULL;
 static int disk_image_w, disk_image_h;
 static byte *saved_background;
@@ -1053,11 +1054,10 @@ static boolean CheckValidFSMode(void)
 void I_InitGraphics(void)
 {
     SDL_Event dummy;
+    char buf[20];
     int flags = 0;
 
     SDL_Init(SDL_INIT_VIDEO);
-
-    flags |= SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF;
 
     // mouse grabbing
 
@@ -1080,11 +1080,6 @@ void I_InitGraphics(void)
     else if (M_CheckParm("-fullscreen"))
     {
         fullscreen = FULLSCREEN_ON;
-    }
-
-    if (fullscreen != FULLSCREEN_OFF)
-    {
-        flags |= SDL_FULLSCREEN;
     }
 
     nomouse = M_CheckParm("-nomouse") > 0;
@@ -1182,6 +1177,13 @@ void I_InitGraphics(void)
 
     GetWindowDimensions(&windowwidth, &windowheight);
 
+    flags |= SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF;
+
+    if (fullscreen != FULLSCREEN_OFF)
+    {
+        flags |= SDL_FULLSCREEN;
+    }
+
     screen = SDL_SetVideoMode(windowwidth, windowheight, 8, flags);
 
     if (screen == NULL)
@@ -1254,9 +1256,25 @@ void I_InitGraphics(void)
 	screens[0] = (unsigned char *) Z_Malloc (SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
     }
 
-    // Loading from disk icon
+    use_loading_disk = true;
 
-    LoadDiskImage();
+    SDL_VideoDriverName(buf, 15);
+
+    if (!strcmp(buf, "Quartz"))
+    {
+        // MacOS Quartz gives us pageflipped graphics that screw up the 
+        // display when we use the loading disk.  Disable it.
+        // This is a gross hack.
+
+        use_loading_disk = false;
+    }
+
+    // "Loading from disk" icon
+
+    if (use_loading_disk)
+    {
+        LoadDiskImage();
+    }
 
     memset(screens[0], 0, SCREENWIDTH * SCREENHEIGHT);
 
