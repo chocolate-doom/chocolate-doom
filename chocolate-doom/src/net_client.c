@@ -237,7 +237,11 @@ boolean net_client_controller = false;
 
 // Number of clients currently connected to the server
 
-int net_clients_in_game;
+unsigned int net_clients_in_game;
+
+// Number of drone players connected to the server
+
+unsigned int net_drones_in_game;
 
 // Names of all players
 
@@ -645,6 +649,7 @@ void NET_CL_SendTiccmd(ticcmd_t *ticcmd, int maketic)
 static void NET_CL_ParseWaitingData(net_packet_t *packet)
 {
     unsigned int num_players;
+    unsigned int num_drones;
     unsigned int is_controller;
     signed int player_number;
     char *player_names[MAXPLAYERS];
@@ -654,6 +659,7 @@ static void NET_CL_ParseWaitingData(net_packet_t *packet)
     size_t i;
 
     if (!NET_ReadInt8(packet, &num_players)
+     || !NET_ReadInt8(packet, &num_drones)
      || !NET_ReadInt8(packet, &is_controller)
      || !NET_ReadSInt8(packet, &player_number))
     {
@@ -699,6 +705,7 @@ static void NET_CL_ParseWaitingData(net_packet_t *packet)
     }
 
     net_clients_in_game = num_players;
+    net_drones_in_game = num_drones;
     net_client_controller = is_controller != 0;
     net_player_number = player_number;
 

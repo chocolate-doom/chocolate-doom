@@ -380,6 +380,26 @@ static int NET_SV_NumPlayers(void)
     return result;
 }
 
+// Returns the number of drones currently connected.
+
+static int NET_SV_NumDrones(void)
+{
+    int i;
+    int result;
+
+    result = 0;
+
+    for (i=0; i<MAXNETNODES; ++i)
+    {
+        if (ClientConnected(&clients[i]) && clients[i].drone)
+        {
+            result += 1;
+        }
+    }
+
+    return result;
+}
+
 // returns the number of clients connected
 
 static int NET_SV_NumClients(void)
@@ -1298,6 +1318,10 @@ static void NET_SV_SendWaitingData(net_client_t *client)
     // include the number of players waiting
 
     NET_WriteInt8(packet, num_players);
+
+    // send the number of drone clients
+
+    NET_WriteInt8(packet, NET_SV_NumDrones());
 
     // indicate whether the client is the controller
 
