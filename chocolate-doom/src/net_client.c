@@ -250,6 +250,10 @@ char net_player_names[MAXPLAYERS][MAXPLAYERNAME];
 md5_digest_t net_server_wad_md5sum;
 md5_digest_t net_server_deh_md5sum;
 
+// Is the server a freedoom game?
+
+unsigned int net_server_is_freedoom;
+
 // Player number
 
 int net_player_number;
@@ -286,6 +290,10 @@ static unsigned int gamedata_recv_time;
 
 md5_digest_t net_local_wad_md5sum;
 md5_digest_t net_local_deh_md5sum;
+
+// Are we playing with the freedoom IWAD?
+
+unsigned int net_local_is_freedoom;
 
 // Average time between sending our ticcmd and receiving from the server
 
@@ -642,6 +650,7 @@ static void NET_CL_ParseWaitingData(net_packet_t *packet)
     char *player_names[MAXPLAYERS];
     char *player_addr[MAXPLAYERS];
     md5_digest_t wad_md5sum, deh_md5sum;
+    unsigned int server_is_freedoom;
     size_t i;
 
     if (!NET_ReadInt8(packet, &num_players)
@@ -683,7 +692,8 @@ static void NET_CL_ParseWaitingData(net_packet_t *packet)
     }
 
     if (!NET_ReadMD5Sum(packet, wad_md5sum)
-     || !NET_ReadMD5Sum(packet, deh_md5sum))
+     || !NET_ReadMD5Sum(packet, deh_md5sum)
+     || !NET_ReadInt8(packet, &server_is_freedoom))
     {
         return;
     }
@@ -702,6 +712,7 @@ static void NET_CL_ParseWaitingData(net_packet_t *packet)
 
     memcpy(net_server_wad_md5sum, wad_md5sum, sizeof(md5_digest_t));
     memcpy(net_server_deh_md5sum, deh_md5sum, sizeof(md5_digest_t));
+    net_server_is_freedoom = server_is_freedoom;
 
     net_client_received_wait_data = true;
 }
@@ -1188,6 +1199,7 @@ static void NET_CL_SendSYN(void)
     NET_WriteInt8(packet, drone);
     NET_WriteMD5Sum(packet, net_local_wad_md5sum);
     NET_WriteMD5Sum(packet, net_local_deh_md5sum);
+    NET_WriteInt8(packet, net_local_is_freedoom);
     NET_WriteString(packet, net_player_name);
     NET_Conn_SendPacket(&client_connection, packet);
     NET_FreePacket(packet);
@@ -1213,6 +1225,10 @@ boolean NET_CL_Connect(net_addr_t *addr)
 
     W_Checksum(net_local_wad_md5sum);
     DEH_Checksum(net_local_deh_md5sum);
+
+    // Are we playing with the Freedoom IWAD?
+
+    net_local_is_freedoom = W_CheckNumForName("FREEDOOM") >= 0;
 
     // create a new network I/O context and add just the
     // necessary module

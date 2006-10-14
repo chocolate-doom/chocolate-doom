@@ -192,6 +192,7 @@ static void UpdateGUI(void)
 static void CheckMD5Sums(void)
 {
     boolean correct_wad, correct_deh;
+    boolean same_freedoom;
     txt_window_t *window;
 
     if (!net_client_received_wait_data || had_warning)
@@ -203,8 +204,9 @@ static void CheckMD5Sums(void)
                          sizeof(md5_digest_t)) == 0;
     correct_deh = memcmp(net_local_deh_md5sum, net_server_deh_md5sum, 
                          sizeof(md5_digest_t)) == 0;
+    same_freedoom = net_server_is_freedoom == net_local_is_freedoom;
 
-    if (correct_wad && correct_deh)
+    if (correct_wad && correct_deh && same_freedoom)
     {
         return;
     }
@@ -213,13 +215,35 @@ static void CheckMD5Sums(void)
 
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, NULL);
 
-    if (!correct_wad)
+    if (!same_freedoom)
+    {
+        // If Freedoom and Doom IWADs are mixed, the WAD directory
+        // will be wrong, but this is not neccessarily a problem.
+        // Display a different message to the WAD directory message.
+
+        if (net_local_is_freedoom)
+        {
+            TXT_AddWidget(window, TXT_NewLabel
+            ("You are using the Freedoom IWAD to play with players\n"
+             "using an official Doom IWAD.  Make sure that you are\n"
+             "playing the same levels as other players.\n"));
+        }
+        else
+        {
+            TXT_AddWidget(window, TXT_NewLabel
+            ("You are using an official IWAD to play with players\n"
+             "using the Freedoom IWAD.  Make sure that you are\n"
+             "playing the same levels as other players.\n"));
+        }
+    }
+    else if (!correct_wad)
     {
         TXT_AddWidget(window, TXT_NewLabel
             ("Your WAD directory does not match other players in the game.\n"
              "Check that you have loaded the exact same WAD files as other\n"
              "players.\n"));
     }
+
     if (!correct_deh)
     {
         TXT_AddWidget(window, TXT_NewLabel
