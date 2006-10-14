@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_gui.c 698 2006-10-14 12:55:02Z fraggle $
+// $Id: net_gui.c 699 2006-10-14 13:26:17Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -93,6 +93,7 @@
 static txt_window_t *window;
 static txt_label_t *player_labels[MAXPLAYERS];
 static txt_label_t *ip_labels[MAXPLAYERS];
+static txt_label_t *drone_label;
 static boolean had_warning;
 
 static void EscapePressed(TXT_UNCAST_ARG(widget), void *unused)
@@ -139,7 +140,9 @@ static void BuildGUI(void)
         TXT_AddWidget(table, ip_labels[i]);
     }
 
-    TXT_AddWidget(window, TXT_NewStrut(0, 1));
+    drone_label = TXT_NewLabel("");
+
+    TXT_AddWidget(window, drone_label);
 
     cancel = TXT_NewWindowAction(KEY_ESCAPE, "Cancel");
     TXT_SignalConnect(cancel, "pressed", EscapePressed, NULL);
@@ -150,13 +153,14 @@ static void BuildGUI(void)
 static void UpdateGUI(void)
 {
     txt_window_action_t *startgame;
-    int i;
+    char buf[20];
+    unsigned int i;
 
     for (i=0; i<MAXPLAYERS; ++i)
     {
         txt_color_t color = TXT_COLOR_BRIGHT_WHITE;
 
-        if (i == net_player_number)
+        if ((signed) i == net_player_number)
         {
             color = TXT_COLOR_YELLOW;
         }
@@ -174,6 +178,16 @@ static void UpdateGUI(void)
             TXT_SetLabel(player_labels[i], "");
             TXT_SetLabel(ip_labels[i], "");
         }
+    }
+
+    if (net_drones_in_game > 0)
+    {
+        sprintf(buf, " (+%i observer clients)", net_drones_in_game);
+        TXT_SetLabel(drone_label, buf);
+    }
+    else
+    {
+        TXT_SetLabel(drone_label, "");
     }
 
     if (net_client_controller)

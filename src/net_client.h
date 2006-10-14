@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.h 698 2006-10-14 12:55:02Z fraggle $
+// $Id: net_client.h 699 2006-10-14 13:26:17Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -86,7 +86,8 @@ void NET_Init(void);
 extern boolean net_client_connected;
 extern boolean net_client_received_wait_data;
 extern boolean net_client_controller;
-extern int net_clients_in_game;
+extern unsigned int net_clients_in_game;
+extern unsigned int net_drones_in_game;
 extern boolean net_waiting_for_start;
 extern char net_player_names[MAXPLAYERS][MAXPLAYERNAME];
 extern char net_player_addresses[MAXPLAYERS][MAXPLAYERNAME];
