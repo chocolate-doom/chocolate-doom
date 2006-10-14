@@ -217,7 +217,7 @@ static void CheckMD5Sums(void)
     {
         TXT_AddWidget(window, TXT_NewLabel
             ("Your WAD directory does not match other players in the game.\n"
-             "Check that you have loaded all the same WAD files as other\n"
+             "Check that you have loaded the exact same WAD files as other\n"
              "players.\n"));
     }
     if (!correct_deh)
