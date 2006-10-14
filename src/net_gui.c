@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_gui.c 689 2006-10-06 17:06:05Z fraggle $
+// $Id: net_gui.c 697 2006-10-14 11:53:08Z fraggle $
 //
 // Copyright(C) 2005 Simon Howard
 //
@@ -217,7 +217,7 @@ static void CheckMD5Sums(void)
     {
         TXT_AddWidget(window, TXT_NewLabel
             ("Your WAD directory does not match other players in the game.\n"
-             "Check that you have loaded all the same WAD files as other\n"
+             "Check that you have loaded the exact same WAD files as other\n"
              "players.\n"));
     }
     if (!correct_deh)
