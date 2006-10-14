@@ -265,7 +265,6 @@ int screenmultiply = 1;
 // disk image data and background overwritten by the disk to be
 // restored by EndRead
 
-static boolean use_loading_disk;
 static byte *disk_image = NULL;
 static int disk_image_w, disk_image_h;
 static byte *saved_background;
@@ -337,6 +336,18 @@ static void LoadDiskImage(void)
 {
     patch_t *disk;
     int y;
+    char buf[20];
+
+    SDL_VideoDriverName(buf, 15);
+
+    if (!strcmp(buf, "Quartz"))
+    {
+        // MacOS Quartz gives us pageflipped graphics that screw up the 
+        // display when we use the loading disk.  Disable it.
+        // This is a gross hack.
+
+        return;
+    }
 
     if (M_CheckParm("-cdrom") > 0)
         disk = (patch_t *) W_CacheLumpName(DEH_String("STCDROM"), PU_STATIC);
@@ -1051,14 +1062,8 @@ static boolean CheckValidFSMode(void)
     return false;
 }
 
-void I_InitGraphics(void)
+static void CheckCommandLine(void)
 {
-    SDL_Event dummy;
-    char buf[20];
-    int flags = 0;
-
-    SDL_Init(SDL_INIT_VIDEO);
-
     // mouse grabbing
 
     if (M_CheckParm("-grabmouse"))
@@ -1107,72 +1112,92 @@ void I_InitGraphics(void)
         screenmultiply = 1;
     if (screenmultiply > 4)
         screenmultiply = 4;
+}
+
+static void AutoAdjustSettings(void)
+{
+    int oldw, oldh;
+    int old_fullscreen, old_screenmultiply;
+
+    GetWindowDimensions(&oldw, &oldh);
+    old_screenmultiply = screenmultiply;
+    old_fullscreen = fullscreen;
+
+    if (!CheckValidFSMode() && screenmultiply == 1 
+     && fullscreen == FULLSCREEN_ON)
+    {
+        // 320x200 is not valid.
+
+        // Try turning on letterbox mode - avoid doubling up
+        // the screen if possible
+
+        fullscreen = FULLSCREEN_LETTERBOX;
+
+        if (!CheckValidFSMode())
+        {
+            // That doesn't work. Change it back.
+
+            fullscreen = FULLSCREEN_ON;
+        }
+    }
+
+    if (!CheckValidFSMode() && screenmultiply == 1)
+    {
+        // Try doubling up the screen to 640x400
+
+        screenmultiply = 2;
+    }
+
+    if (!CheckValidFSMode() && fullscreen == FULLSCREEN_ON)
+    {
+        // This is not a valid mode.  Try turning on letterbox mode
+
+        fullscreen = FULLSCREEN_LETTERBOX;
+    }
+
+    if (old_fullscreen != fullscreen 
+     || old_screenmultiply != screenmultiply)
+    {
+        printf("I_InitGraphics: %ix%i resolution is not supported "
+               "on this machine. \n", oldw, oldh);
+        printf("I_InitGraphics: Video settings adjusted to "
+               "compensate:\n");
+        
+        if (fullscreen != old_fullscreen)
+            printf("\tletterbox mode on (fullscreen=2)\n");
+        if (screenmultiply != old_screenmultiply)
+            printf("\tscreenmultiply=%i\n", screenmultiply);
+        
+        printf("NOTE: Your video settings have been adjusted.  "
+               "To disable this behavior,\n"
+               "set autoadjust_video_settings to 0 in your "
+               "configuration file.\n");
+    }
+    
+    if (!CheckValidFSMode())
+    {
+        printf("I_InitGraphics: WARNING: Unable to find a valid "
+               "fullscreen video mode to run in.\n");
+    }
+}
+
+void I_InitGraphics(void)
+{
+    SDL_Event dummy;
+    int flags = 0;
+
+    SDL_Init(SDL_INIT_VIDEO);
+
+    // Check for command-line video-related parameters.
+
+    CheckCommandLine();
 
     if (fullscreen && autoadjust_video_settings)
     {
-        int oldw, oldh;
-        int old_fullscreen, old_screenmultiply;
+        // Check that the fullscreen mode we are trying to use is valid;
+        // if not, try to automatically select a more appropriate one.
 
-        GetWindowDimensions(&oldw, &oldh);
-        old_screenmultiply = screenmultiply;
-        old_fullscreen = fullscreen;
-
-        if (!CheckValidFSMode() && screenmultiply == 1 
-         && fullscreen == FULLSCREEN_ON)
-        {
-            // 320x200 is not valid.
-
-            // Try turning on letterbox mode - avoid doubling up
-            // the screen if possible
-
-            fullscreen = FULLSCREEN_LETTERBOX;
-
-            if (!CheckValidFSMode())
-            {
-                // That doesn't work. Change it back.
-
-                fullscreen = FULLSCREEN_ON;
-            }
-        }
-
-        if (!CheckValidFSMode() && screenmultiply == 1)
-        {
-            // Try doubling up the screen to 640x400
-
-            screenmultiply = 2;
-        }
-
-        if (!CheckValidFSMode() && fullscreen == FULLSCREEN_ON)
-        {
-            // This is not a valid mode.  Try turning on letterbox mode
-
-            fullscreen = FULLSCREEN_LETTERBOX;
-        }
-
-        if (old_fullscreen != fullscreen 
-         || old_screenmultiply != screenmultiply)
-        {
-            printf("I_InitGraphics: %ix%i resolution is not supported "
-                   "on this machine. \n", oldw, oldh);
-            printf("I_InitGraphics: Video settings adjusted to "
-                   "compensate:\n");
-            
-            if (fullscreen != old_fullscreen)
-                printf("\tletterbox mode on (fullscreen=2)\n");
-            if (screenmultiply != old_screenmultiply)
-                printf("\tscreenmultiply=%i\n", screenmultiply);
-            
-            printf("NOTE: Your video settings have been adjusted.  "
-                   "To disable this behavior,\n"
-                   "set autoadjust_video_settings to 0 in your "
-                   "configuration file.\n");
-        }
-        
-        if (!CheckValidFSMode())
-        {
-            printf("I_InitGraphics: WARNING: Unable to find a valid "
-                   "fullscreen video mode to run in.\n");
-        }
+        AutoAdjustSettings();
     }
 
     GetWindowDimensions(&windowwidth, &windowheight);
@@ -1256,25 +1281,11 @@ void I_InitGraphics(void)
 	screens[0] = (unsigned char *) Z_Malloc (SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
     }
 
-    use_loading_disk = true;
-
-    SDL_VideoDriverName(buf, 15);
-
-    if (!strcmp(buf, "Quartz"))
-    {
-        // MacOS Quartz gives us pageflipped graphics that screw up the 
-        // display when we use the loading disk.  Disable it.
-        // This is a gross hack.
-
-        use_loading_disk = false;
-    }
-
     // "Loading from disk" icon
 
-    if (use_loading_disk)
-    {
-        LoadDiskImage();
-    }
+    LoadDiskImage();
+
+    // Clear the screen to black.
 
     memset(screens[0], 0, SCREENWIDTH * SCREENHEIGHT);
 
