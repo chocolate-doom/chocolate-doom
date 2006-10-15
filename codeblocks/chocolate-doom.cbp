@@ -94,13 +94,6 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\src\d_french.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
 		<Unit filename="..\src\d_items.c">
 			<Option compilerVar="CC" />
 			<Option target="Debug" />
