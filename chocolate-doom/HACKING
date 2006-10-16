@@ -2,36 +2,46 @@
 Coding style guidelines
 =======================
 
-You should set tabs to display as eight spaces, not four.  However, 
-_indentation_ should be four spaces.  If possible, do not use tab
-characters at all.  There is a utility called "expand" which will
-remove tab characters.
+The coding style guidelines for Chocolate Doom are designed to keep the
+style of the original source code.  This maintains consistency throughout
+the program, and does not require the original code to be changed. Some
+of these guidelines are stricter than what was done in the original
+source; follow these when writing new code only: there is no need to 
+change existing code to fit them.
 
-Please write code to an 80 column limit so that it fits within a 
-standard 80 column terminal.
+You should set tabs to _display_ as eight spaces, not four.  However, 
+_indentation_ should be four spaces.  If possible, do not use tab
+characters at all.  There is a utility called "expand" which will remove
+tab characters.  For the reasoning behind this, see:
+http://www.jwz.org/doc/tabs-vs-spaces.html
+
+Please write code to an 80 column limit so that it fits within a standard
+80 column terminal.
 
 Functions should be named like this: 'AB_FunctionName'.  The 'AB' prefix 
-denotes the subsystem (AM_ for automap, G_ for game, etc).  If a 
+denotes the subsystem (AM_ for automap, G_ for game, etc).  If a
 function is static, you can omit the prefix and just name it like
-'FunctionName'.  Functions and global variables should always be
-made static if possible.
+'FunctionName'.  Functions and global variables should always be made 
+static if possible.
 
 Put '_t' on the end of types created with typedef.  Type names like this
 should be all lowercase and have the subsystem name at the start. An
 example of this is 'txt_window_t'.  When creating structures, always
 typedef them.
 
+Do not use Hungarian notation.
+
 Do not use the goto statement.
 
 Use C++-style comments, ie. '//' comments, not '/* ... */' comments.
-I don't care that this isn't standard C.
+I don't care that this isn't standard ANSI C.
 
-Variables should be named like this: 'my_variable_name', not like
-this: 'MyVariableName'.  In pointer variable declarations, place
-the '*' next to the variable name, not the type.
+Variables should be named like this: 'my_variable_name', not like this:
+'MyVariableName'.  In pointer variable declarations, place the '*' next 
+to the variable name, not the type.
 
-When using an if, do, while, or for statement, always use the { }
-braces even when they are not necessary.  For example, do this:
+When using an if, do, while, or for statement, always use the { } braces
+even when they are not necessary.  For example, do this:
 
     if (condition)
     {
@@ -106,10 +116,10 @@ void FunctionName(int argument, int arg2, int arg3, int arg4, int arg5,
 GNU GPL and licensing
 =====================
 
-All code submitted to the project must be licensed under the GNU GPL or
-a compatible license.  If you use code that you haven't 100% written 
-yourself, say so. Add a copyright header to the start of every file.  
-Use this template:
+All code submitted to the project must be licensed under the GNU GPL or a
+compatible license.  If you use code that you haven't 100% written 
+yourself, say so. Add a copyright header to the start of every file.  Use
+this template:
 
 // Emacs style mode select   -*- C++ -*-
 //-----------------------------------------------------------------------------
@@ -130,5 +140,4 @@ Use this template:
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
-
 
