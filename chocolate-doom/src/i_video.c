@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,161 +19,11 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.43  2006/01/12 01:34:48  fraggle
-// Combine mouse motion for tics into single events.
-//
-// Revision 1.42  2006/01/02 20:27:45  fraggle
-// Clear the screen AFTER initialising the loading disk buffer, so that
-// bits of loading disk are not visible on the initial screen melt.
-//
-// Revision 1.41  2006/01/02 00:06:30  fraggle
-// Make functions static.  Remove unused variable.
-//
-// Revision 1.40  2005/10/17 19:46:22  fraggle
-// Guard against multiple video shutdowns better.  Fix crash due to improper
-// screen clear at startup.
-//
-// Revision 1.39  2005/10/16 20:55:50  fraggle
-// Fix the '-cdrom' command-line option.
-//
-// Revision 1.38  2005/10/15 22:50:57  fraggle
-// Fix pink icon on startup
-//
-// Revision 1.37  2005/10/15 15:59:14  fraggle
-// Map mouse buttons correctly.
-//
-// Revision 1.36  2005/10/15 15:45:03  fraggle
-// Check the return code from SDL_LockSurface to ensure a surface has been
-// properly locked.  Fixes crash when switching applications while running
-// fullscreen.
-//
-// Revision 1.35  2005/10/02 03:16:29  fraggle
-// ENDOOM support using text mode emulation
-//
-// Revision 1.34  2005/10/02 03:03:40  fraggle
-// Make sure loading disk is only shown if the display is initialised
-//
-// Revision 1.33  2005/09/27 22:33:42  fraggle
-// Always use SDL_Flip to update the screen.  Fixes problems in Windows when
-// running fullscreen, introduced by fixes to the disk icon code.
-//
-// Revision 1.32  2005/09/26 21:44:30  fraggle
-// Fix melting crap on startup - oops
-//
-// Revision 1.31  2005/09/25 00:31:32  fraggle
-// Fix disk icon appearing before palette is set (pink disk!)
-// Cleanup and commenting
-//
-// Revision 1.30  2005/09/24 23:44:49  fraggle
-// Enforce sane screenmultiply values
-//
-// Revision 1.29  2005/09/24 23:41:07  fraggle
-// Fix "loading" icon for all video modes
-//
-// Revision 1.28  2005/09/24 22:04:03  fraggle
-// Add application icon to running program
-//
-// Revision 1.27  2005/09/17 20:50:46  fraggle
-// Mouse acceleration code to emulate old DOS drivers
-//
-// Revision 1.26  2005/09/14 21:55:47  fraggle
-// Lock surfaces properly when we have to (fixes crash under Windows 98)
-//
-// Revision 1.25  2005/09/11 20:25:56  fraggle
-// Second configuration file to allow chocolate doom-specific settings.
-// Adjust some existing command line logic (for graphics settings and
-// novert) to adjust for this.
-//
-// Revision 1.24  2005/09/08 22:05:17  fraggle
-// Allow alt-tab away while running fullscreen
-//
-// Revision 1.23  2005/09/07 20:44:23  fraggle
-// Fix up names of functions
-// Make the quit button work (pops up the "quit doom?" prompt).
-// Fix focus detection to release the mouse and ignore mouse events
-// when window is not focused.
-//
-// Revision 1.22  2005/09/04 23:18:30  fraggle
-// Remove dead code.  Cope with the screen not having width == pitch.  Lock
-// the SDL screen surface properly. Rewrite 2x scaling code.
-//
-// Revision 1.21  2005/09/01 00:01:36  fraggle
-// -nograbmouse option
-//
-// Revision 1.20  2005/08/31 23:58:28  fraggle
-// smarter mouse grabbing for windowed mode
-//
-// Revision 1.19  2005/08/31 21:35:42  fraggle
-// Display the game name in the title bar.  Move game start code to later
-// in initialisation because of the IWAD detection changes.
-//
-// Revision 1.18  2005/08/10 08:45:35  fraggle
-// Remove "if (french)" stuff, FRENCH define, detect french wad automatically
-//
-// Revision 1.17  2005/08/07 20:01:00  fraggle
-// Clear the screen on startup
-//
-// Revision 1.16  2005/08/07 03:09:33  fraggle
-// Fix gamma correction
-//
-// Revision 1.15  2005/08/07 02:59:23  fraggle
-// Clear disk image when loading at startup
-//
-// Revision 1.14  2005/08/06 17:30:30  fraggle
-// Only change palette on screen updates
-//
-// Revision 1.13  2005/08/04 22:23:07  fraggle
-// Use zone memory function.  Add command line options
-//
-// Revision 1.12  2005/08/04 19:54:56  fraggle
-// Use keysym value rather than unicode value (fixes problems with shift
-// key)
-//
-// Revision 1.11  2005/08/04 18:42:15  fraggle
-// Silence compiler warnings
-//
-// Revision 1.10  2005/08/04 01:13:46  fraggle
-// Loading disk
-//
-// Revision 1.9  2005/08/03 22:19:52  fraggle
-// Set some flags to fix palette and improve performance
-//
-// Revision 1.8  2005/08/03 21:58:02  fraggle
-// Working scale*2
-//
-// Revision 1.7  2005/07/25 20:50:55  fraggle
-// mouse
-//
-// Revision 1.6  2005/07/24 02:14:04  fraggle
-// Move to SDL for graphics.
-// Translate key scancodes to correct internal format when reading
-// settings from config file - backwards compatible with config files
-// for original exes
-//
-// Revision 1.5  2005/07/23 21:32:47  fraggle
-// Add missing errno.h, fix crash on startup when no IWAD present
-//
-// Revision 1.4  2005/07/23 19:17:11  fraggle
-// Use ANSI-standard limit constants.  Remove LINUX define.
-//
-// Revision 1.3  2005/07/23 17:27:04  fraggle
-// Stop crash on shutdown
-//
-// Revision 1.2  2005/07/23 16:44:55  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:19:58  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:
 //	DOOM graphics stuff for X11, UNIX.
 //
 //-----------------------------------------------------------------------------
 
-static const char
-rcsid[] = "$Id$";
 
 #include <SDL.h>
 #include <ctype.h>

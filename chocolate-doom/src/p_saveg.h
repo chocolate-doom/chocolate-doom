@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -65,30 +63,3 @@ extern FILE *save_stream;
 
 
 #endif
-//-----------------------------------------------------------------------------
-//
-// $Log$
-// Revision 1.6  2006/02/15 12:57:58  fraggle
-// Remove the savegame buffer entirely.  Keep the old savegame size limit
-// bug add a "vanilla_savegame_limit" config file option which allows
-// the limit to be disabled if necessary.
-//
-// Revision 1.5  2006/01/19 18:46:24  fraggle
-// Move savegame header read/write code into p_saveg.c
-//
-// Revision 1.4  2005/10/16 01:18:10  fraggle
-// Global "configdir" variable with directory to store config files in.
-// Create a function to find the filename for a savegame slot.  Store
-// savegames in the config dir.
-//
-// Revision 1.3  2005/07/23 18:56:07  fraggle
-// Remove unneccessary pragmas
-//
-// Revision 1.2  2005/07/23 16:44:56  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:20:39  fraggle
-// Initial import
-//
-//
-//-----------------------------------------------------------------------------

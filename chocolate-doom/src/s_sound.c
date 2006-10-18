@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,53 +19,11 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.11  2006/01/22 21:20:20  fraggle
-// Dehacked string replacements for sound and music lump names
-//
-// Revision 1.10  2006/01/08 17:51:53  fraggle
-// Add S_MusicPlaying function to query if music is still playing.
-//
-// Revision 1.9  2005/10/16 16:16:03  fraggle
-// Set the default number of channels to a more sensible 8
-//
-// Revision 1.8  2005/10/08 18:34:12  fraggle
-// Print startup message to stdout, not stderr
-//
-// Revision 1.7  2005/09/17 20:25:56  fraggle
-// Set the default values for variables in their initialisers.  Remove the
-// "defaultvalue" parameter and associated code from the configuration
-// file parsing code.
-//
-// Revision 1.6  2005/09/05 22:50:56  fraggle
-// Add mmus2mid code from prboom.  Use 'void *' for music handles.  Pass
-// length of data when registering music.
-//
-// Revision 1.5  2005/09/05 20:32:18  fraggle
-// Use the system-nonspecific sound code to assign the channel number used
-// by SDL.  Remove handle tagging stuff.
-//
-// Revision 1.4  2005/08/04 21:48:32  fraggle
-// Turn on compiler optimisation and warning options
-// Add SDL_mixer sound code
-//
-// Revision 1.3  2005/08/04 18:42:15  fraggle
-// Silence compiler warnings
-//
-// Revision 1.2  2005/07/23 16:44:57  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:20:29  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:  none
 //
 //-----------------------------------------------------------------------------
 
 
-static const char
-rcsid[] = "$Id$";
 
 
 

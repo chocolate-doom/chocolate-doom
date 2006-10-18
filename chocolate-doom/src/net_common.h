@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 2005 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
@@ -19,27 +17,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
-//
-// $Log$
-// Revision 1.4  2006/02/19 13:42:27  fraggle
-// Move tic number expansion code to common code.  Parse game data packets
-// received from the server.
-// Strip down d_net.[ch] to work through the new networking code.  Remove
-// game sync code.
-// Remove i_net.[ch] as it is no longer needed.
-// Working networking!
-//
-// Revision 1.3  2006/01/10 19:59:26  fraggle
-// Reliable packet transport mechanism
-//
-// Revision 1.2  2006/01/08 02:53:05  fraggle
-// Send keepalives if the connection is not doing anything else.
-// Send all packets using a new NET_Conn_SendPacket to support this.
-//
-// Revision 1.1  2006/01/08 00:10:48  fraggle
-// Move common connection code into net_common.c, shared by server
-// and client code.
-//
 //
 // Common code shared between the client and server
 //

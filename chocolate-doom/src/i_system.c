@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,67 +19,10 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.17  2006/01/13 18:23:27  fraggle
-// Textscreen getchar() function; remove SDL code from I_Endoom.
-//
-// Revision 1.16  2006/01/08 18:13:32  fraggle
-// show_endoom config file option to disable the endoom screen
-//
-// Revision 1.15  2005/12/30 18:50:53  fraggle
-// Millisecond clock function
-//
-// Revision 1.14  2005/11/17 09:41:24  fraggle
-// Catch SDL_QUIT event on ENDOOM display
-//
-// Revision 1.13  2005/10/09 20:19:21  fraggle
-// Handle blinking text in ENDOOM lumps properly.
-//
-// Revision 1.12  2005/10/02 03:23:54  fraggle
-// Fix the length of time that ENDOOM is displayed for
-//
-// Revision 1.11  2005/10/02 03:16:29  fraggle
-// ENDOOM support using text mode emulation
-//
-// Revision 1.10  2005/09/22 13:13:47  fraggle
-// Remove external statistics driver support (-statcopy):
-// nonfunctional on modern systems and never used.
-// Fix for systems where sizeof(int) != sizeof(void *)
-//
-// Revision 1.9  2005/09/08 22:10:40  fraggle
-// Delay calls so we don't use the entire CPU
-//
-// Revision 1.8  2005/09/06 22:39:43  fraggle
-// Restore -nosound, -nosfx, -nomusic
-//
-// Revision 1.7  2005/08/04 18:42:15  fraggle
-// Silence compiler warnings
-//
-// Revision 1.6  2005/08/04 01:14:37  fraggle
-// Begin/EndRead now in i_video.c
-//
-// Revision 1.5  2005/07/25 20:41:59  fraggle
-// Port timer code to SDL
-//
-// Revision 1.4  2005/07/23 19:42:56  fraggle
-// Startup messages as in the DOS exes
-//
-// Revision 1.3  2005/07/23 18:56:07  fraggle
-// Remove unneccessary pragmas
-//
-// Revision 1.2  2005/07/23 16:44:55  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:20:39  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:
 //
 //-----------------------------------------------------------------------------
 
-static const char
-rcsid[] = "$Id$";
 
 
 #include <stdlib.h>

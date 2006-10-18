@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -20,26 +18,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
-//
-// $Log$
-// Revision 1.5  2006/02/03 18:41:26  fraggle
-// Support NWT-style WAD merging (-af and -as command line parameters).
-// Restructure WAD loading so that merged WADs are always loaded before
-// normal PWADs.  Remove W_InitMultipleFiles().
-//
-// Revision 1.4  2006/01/02 00:17:42  fraggle
-// Encapsulate the event queue code properly.  Add a D_PopEvent function
-// to read a new event from the event queue.
-//
-// Revision 1.3  2005/07/23 18:56:07  fraggle
-// Remove unneccessary pragmas
-//
-// Revision 1.2  2005/07/23 16:44:55  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:20:34  fraggle
-// Initial import
-//
 //
 // DESCRIPTION:
 //	System specific interface stuff.

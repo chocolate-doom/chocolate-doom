@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 2005 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
@@ -19,16 +17,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
-//
-// $Log$
-// Revision 1.2  2006/02/03 18:41:26  fraggle
-// Support NWT-style WAD merging (-af and -as command line parameters).
-// Restructure WAD loading so that merged WADs are always loaded before
-// normal PWADs.  Remove W_InitMultipleFiles().
-//
-// Revision 1.1  2005/10/08 18:23:18  fraggle
-// WAD merging code
-//
 //
 // DESCRIPTION:
 // Handles merging of PWADs, similar to deutex's -merge option

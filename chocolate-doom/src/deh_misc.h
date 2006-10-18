@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 2005 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
@@ -19,21 +17,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
-//
-// $Log$
-// Revision 1.2  2005/10/17 22:07:26  fraggle
-// Fix "Monsters Infight"
-//
-// Revision 1.1  2005/10/17 20:27:05  fraggle
-// Start of Dehacked 'Misc' section support.  Initial Health+Bullets,
-// and bfg cells/shot are supported.
-//
-// Revision 1.2  2005/10/08 20:54:16  fraggle
-// Proper dehacked error/warning framework.  Catch a load more errors.
-//
-// Revision 1.1  2005/10/04 22:10:32  fraggle
-// Dehacked "Misc" section parser (currently a dummy)
-//
 //
 //-----------------------------------------------------------------------------
 //

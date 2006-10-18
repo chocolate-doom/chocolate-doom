@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,95 +19,6 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.22  2006/02/24 19:14:22  fraggle
-// Remove redundant stuff relating to the old network code
-//
-// Revision 1.21  2006/02/23 23:42:00  fraggle
-// Replace -client with -connect which takes a hostname/ip to connect to.
-//
-// Revision 1.20  2006/02/23 20:22:57  fraggle
-// Do not allow tics to buffer up in single player (stops the gun instantly
-// appearing on level start)
-//
-// Revision 1.19  2006/02/23 19:12:43  fraggle
-// Set maketic-gametic lag back to 1 second.
-//
-// Revision 1.18  2006/02/23 19:12:01  fraggle
-// Add lowres_turn to indicate whether we generate angleturns which are
-// 8-bit as opposed to 16-bit.  This is used when recording demos without
-// -longtics enabled.  Sync this option between clients in a netgame, so
-// that if one player is recording a Vanilla demo, all clients record
-// in lowres.
-//
-// Revision 1.17  2006/02/19 13:42:27  fraggle
-// Move tic number expansion code to common code.  Parse game data packets
-// received from the server.
-// Strip down d_net.[ch] to work through the new networking code.  Remove
-// game sync code.
-// Remove i_net.[ch] as it is no longer needed.
-// Working networking!
-//
-// Revision 1.16  2006/01/13 23:56:00  fraggle
-// Add text-mode I/O functions.
-// Use text-mode screen for the waiting screen.
-//
-// Revision 1.15  2006/01/02 21:04:10  fraggle
-// Create NET_SV_Shutdown function to shut down the server.  Call it
-// when quitting the game.  Print the IP of the server correctly when
-// connecting.
-//
-// Revision 1.14  2006/01/02 20:14:29  fraggle
-// Add a "-client" option to test connecting to a local server.
-//
-// Revision 1.13  2006/01/02 00:17:42  fraggle
-// Encapsulate the event queue code properly.  Add a D_PopEvent function
-// to read a new event from the event queue.
-//
-// Revision 1.12  2006/01/02 00:00:08  fraggle
-// Neater prefixes: NET_Client -> NET_CL_.  NET_Server -> NET_SV_.
-//
-// Revision 1.11  2006/01/01 23:54:31  fraggle
-// Client disconnect code
-//
-// Revision 1.10  2006/01/01 23:53:15  fraggle
-// Remove GS_WAITINGSTART gamestate.  This will be independent of the main
-// loop to avoid interfering with the main game code too much.
-//
-// Revision 1.9  2005/12/30 18:58:22  fraggle
-// Fix client code to correctly send reply to server on connection.
-// Add "waiting screen" while waiting for the game to start.
-// Hook in the new networking code into the main game code.
-//
-// Revision 1.8  2005/09/22 13:13:47  fraggle
-// Remove external statistics driver support (-statcopy):
-// nonfunctional on modern systems and never used.
-// Fix for systems where sizeof(int) != sizeof(void *)
-//
-// Revision 1.7  2005/09/08 22:10:40  fraggle
-// Delay calls so we don't use the entire CPU
-//
-// Revision 1.6  2005/09/04 18:44:22  fraggle
-// shut up compiler warnings
-//
-// Revision 1.5  2005/08/31 21:24:24  fraggle
-// Remove the last traces of NORMALUNIX
-//
-// Revision 1.4  2005/08/04 22:55:07  fraggle
-// Use DOOM_VERSION to define the Doom version (don't conflict with
-// automake's config.h).  Display GPL message instead of anti-piracy
-// messages.
-//
-// Revision 1.3  2005/07/23 19:17:11  fraggle
-// Use ANSI-standard limit constants.  Remove LINUX define.
-//
-// Revision 1.2  2005/07/23 16:44:55  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:20:50  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:
 //	DOOM Network game communication and protocol,
 //	all OS independend parts.
@@ -117,7 +26,6 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id$";
 
 #include "doomfeatures.h"
 

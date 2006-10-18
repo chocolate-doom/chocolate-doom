@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,52 +19,12 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.11  2006/02/03 18:41:26  fraggle
-// Support NWT-style WAD merging (-af and -as command line parameters).
-// Restructure WAD loading so that merged WADs are always loaded before
-// normal PWADs.  Remove W_InitMultipleFiles().
-//
-// Revision 1.10  2006/01/24 01:46:08  fraggle
-// More endianness fixes
-//
-// Revision 1.9  2006/01/10 22:14:13  fraggle
-// Shut up compiler warnings
-//
-// Revision 1.8  2005/10/08 18:22:46  fraggle
-// Store the cache as part of the lumpinfo_t struct.  Add W_AddFile prototype
-// to header.
-//
-// Revision 1.7  2005/08/30 22:15:11  fraggle
-// More Windows fixes
-//
-// Revision 1.6  2005/08/30 22:11:10  fraggle
-// Windows fixes
-//
-// Revision 1.5  2005/08/04 18:42:15  fraggle
-// Silence compiler warnings
-//
-// Revision 1.4  2005/08/04 01:13:46  fraggle
-// Loading disk
-//
-// Revision 1.3  2005/07/23 18:50:34  fraggle
-// Use standard C file functions for WAD code
-//
-// Revision 1.2  2005/07/23 16:44:57  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:20:39  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:
 //	Handles WAD file header, directory, lump I/O.
 //
 //-----------------------------------------------------------------------------
 
 
-static const char
-rcsid[] = "$Id$";
 
 
 #include <ctype.h>

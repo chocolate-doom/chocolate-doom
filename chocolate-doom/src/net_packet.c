@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 2005 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
@@ -19,20 +17,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
-//
-// $Log$
-// Revision 1.4  2006/02/23 23:41:13  fraggle
-// Track memory used by packet data to help detect memory leaks
-//
-// Revision 1.3  2006/01/13 02:20:12  fraggle
-// Signed integer read functions.  Use these when reading ticcmd diffs.
-//
-// Revision 1.2  2006/01/01 23:51:41  fraggle
-// String read/write functions
-//
-// Revision 1.1  2005/10/30 19:56:15  fraggle
-// Add foundation code for the new networking system
-//
 //
 // DESCRIPTION:
 //      Network packet manipulation (net_packet_t)

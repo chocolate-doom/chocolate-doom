@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,21 +19,6 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.4  2005/10/24 18:50:39  fraggle
-// Allow the game version to emulate to be specified from the command line
-// and set compatibility options accordingly.
-//
-// Revision 1.3  2005/09/24 22:58:01  fraggle
-// Commit uac_dead fix
-//
-// Revision 1.2  2005/07/23 16:44:56  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:20:49  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:
 //	Enemy thinking, AI.
 //	Action Pointer Functions
@@ -43,8 +26,6 @@
 //
 //-----------------------------------------------------------------------------
 
-static const char
-rcsid[] = "$Id$";
 
 #include <stdlib.h>
 

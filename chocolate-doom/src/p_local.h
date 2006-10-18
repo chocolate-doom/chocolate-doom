@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -287,23 +285,3 @@ P_DamageMobj
 
 
 #endif	// __P_LOCAL__
-//-----------------------------------------------------------------------------
-//
-// $Log$
-// Revision 1.4  2005/09/08 09:58:00  fraggle
-// MAXINTERCEPTS got converted to INT_MAXERCEPTS accidentally when switching
-// to the ANSI standard limit constants
-//
-// Revision 1.3  2005/07/23 19:17:11  fraggle
-// Use ANSI-standard limit constants.  Remove LINUX define.
-//
-// Revision 1.2  2005/07/23 16:44:56  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:20:49  fraggle
-// Initial import
-//
-//
-//-----------------------------------------------------------------------------
-
-

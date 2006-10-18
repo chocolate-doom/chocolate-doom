@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 2005 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
@@ -19,55 +17,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
-//
-// $Log$
-// Revision 1.13  2006/01/23 00:37:14  fraggle
-// Make the network waiting screen not thrash the CPU so much.
-//
-// Revision 1.12  2006/01/14 00:27:16  fraggle
-// Set the window caption and title
-//
-// Revision 1.11  2006/01/14 00:13:04  fraggle
-// Detect if disconnected from the server while waiting for the game start.
-//
-// Revision 1.10  2006/01/14 00:10:54  fraggle
-// Change the format of color commands.  Reorganise the waiting dialog.
-//
-// Revision 1.9  2006/01/13 23:56:00  fraggle
-// Add text-mode I/O functions.
-// Use text-mode screen for the waiting screen.
-//
-// Revision 1.8  2006/01/12 02:11:52  fraggle
-// Game start packets
-//
-// Revision 1.7  2006/01/10 22:14:13  fraggle
-// Shut up compiler warnings
-//
-// Revision 1.6  2006/01/09 02:03:39  fraggle
-// Send clients their player number, and indicate on the waiting screen
-// which client we are.
-//
-// Revision 1.5  2006/01/08 17:52:45  fraggle
-// Play some random music for the players while waiting for the game to
-// start.
-//
-// Revision 1.4  2006/01/08 05:04:50  fraggle
-// Don't grab the mouse on the net waiting screen
-//
-// Revision 1.3  2006/01/07 20:08:11  fraggle
-// Send player name and address in the waiting data packets.  Display these
-// on the waiting screen, and improve the waiting screen appearance.
-//
-// Revision 1.2  2006/01/02 21:50:26  fraggle
-// Restructure the waiting screen code.  Establish our own separate event
-// loop while waiting for the game to start, to avoid affecting the original
-// code too much.  Move some _gui variables to net_client.c.
-//
-// Revision 1.1  2005/12/30 18:58:22  fraggle
-// Fix client code to correctly send reply to server on connection.
-// Add "waiting screen" while waiting for the game to start.
-// Hook in the new networking code into the main game code.
-//
 //
 // Graphical stuff related to the networking code:
 //

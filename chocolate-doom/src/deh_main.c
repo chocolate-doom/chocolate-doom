@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 2005 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
@@ -19,39 +17,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
-//
-// $Log$
-// Revision 1.9  2005/10/17 23:48:05  fraggle
-// DEH_CheckCommandLine -> DEH_Init, for consistency with other Init
-// functions
-//
-// Revision 1.8  2005/10/17 23:16:09  fraggle
-// Add a "loading" message for each dehacked patch we load, to be orthogonal
-// to the WAD loading code
-//
-// Revision 1.7  2005/10/17 21:14:31  fraggle
-// Ignore comments in dehacked files.
-//
-// Revision 1.6  2005/10/09 20:06:50  fraggle
-// Check the header of dehacked files and make sure we only load valid
-// dehacked files.
-//
-// Revision 1.5  2005/10/08 20:14:38  fraggle
-// Dehacked "Sound" section support
-//
-// Revision 1.4  2005/10/04 22:10:32  fraggle
-// Dehacked "Misc" section parser (currently a dummy)
-//
-// Revision 1.3  2005/10/04 21:41:42  fraggle
-// Rewrite cheats code.  Add dehacked cheat replacement.
-//
-// Revision 1.2  2005/10/03 11:08:16  fraggle
-// Replace end of section functions with NULLs as they arent currently being
-// used for anything.
-//
-// Revision 1.1  2005/10/02 23:49:01  fraggle
-// The beginnings of dehacked support
-//
 //
 //-----------------------------------------------------------------------------
 //

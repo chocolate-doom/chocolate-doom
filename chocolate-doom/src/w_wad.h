@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -96,26 +94,3 @@ extern unsigned int W_LumpNameHash(const char *s);
 
 
 #endif
-//-----------------------------------------------------------------------------
-//
-// $Log$
-// Revision 1.5  2006/02/03 18:41:26  fraggle
-// Support NWT-style WAD merging (-af and -as command line parameters).
-// Restructure WAD loading so that merged WADs are always loaded before
-// normal PWADs.  Remove W_InitMultipleFiles().
-//
-// Revision 1.4  2005/10/08 18:22:46  fraggle
-// Store the cache as part of the lumpinfo_t struct.  Add W_AddFile prototype
-// to header.
-//
-// Revision 1.3  2005/07/23 18:54:06  fraggle
-// Use standard C functions for WAD code
-//
-// Revision 1.2  2005/07/23 16:44:57  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:20:39  fraggle
-// Initial import
-//
-//
-//-----------------------------------------------------------------------------

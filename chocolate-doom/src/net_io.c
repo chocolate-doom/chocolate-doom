@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 2005 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
@@ -19,15 +17,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
-//
-// $Log$
-// Revision 1.2  2006/01/02 21:02:16  fraggle
-// Change AddrToString function to use an internal static buffer, for
-// ease of use.
-//
-// Revision 1.1  2005/10/30 19:56:15  fraggle
-// Add foundation code for the new networking system
-//
 //
 // DESCRIPTION:
 //     Network packet I/O.  Base layer for sending/receiving packets,

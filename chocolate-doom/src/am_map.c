@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -22,34 +20,10 @@
 // 02111-1307, USA.
 //
 //
-// $Log$
-// Revision 1.7  2005/10/04 21:41:42  fraggle
-// Rewrite cheats code.  Add dehacked cheat replacement.
-//
-// Revision 1.6  2005/10/03 21:39:39  fraggle
-// Dehacked text substitutions
-//
-// Revision 1.5  2005/09/04 18:44:22  fraggle
-// shut up compiler warnings
-//
-// Revision 1.4  2005/08/04 18:42:15  fraggle
-// Silence compiler warnings
-//
-// Revision 1.3  2005/07/23 19:17:11  fraggle
-// Use ANSI-standard limit constants.  Remove LINUX define.
-//
-// Revision 1.2  2005/07/23 16:44:55  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:20:44  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:  the automap code
 //
 //-----------------------------------------------------------------------------
 
-static const char rcsid[] = "$Id$";
 
 #include <stdio.h>
 

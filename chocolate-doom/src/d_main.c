@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,160 +19,6 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.42  2006/02/03 18:41:26  fraggle
-// Support NWT-style WAD merging (-af and -as command line parameters).
-// Restructure WAD loading so that merged WADs are always loaded before
-// normal PWADs.  Remove W_InitMultipleFiles().
-//
-// Revision 1.41  2006/01/23 00:47:16  fraggle
-// Rearrange the order of startup code to allow replacing the IWAD filename via dehacked
-//
-// Revision 1.40  2006/01/22 21:19:14  fraggle
-// Dehacked string replacements for startup messages, IWAD names, demo names and backgrounds
-//
-// Revision 1.39  2006/01/14 02:06:48  fraggle
-// Include the game version in the settings structure.
-//
-// Revision 1.38  2006/01/13 23:56:00  fraggle
-// Add text-mode I/O functions.
-// Use text-mode screen for the waiting screen.
-//
-// Revision 1.37  2006/01/10 22:14:13  fraggle
-// Shut up compiler warnings
-//
-// Revision 1.36  2006/01/09 01:50:51  fraggle
-// Deduce a sane player name by examining environment variables.  Add
-// a "player_name" setting to chocolate-doom.cfg.  Transmit the name
-// to the server and use the names players send in the waiting data list.
-//
-// Revision 1.35  2006/01/02 21:52:06  fraggle
-// Move I_InitGraphics call to be invoked earlier in D_DoomMain.  Call the
-// NET_WaitForStart function to wait for a start signal in network games.
-//
-// Revision 1.34  2006/01/02 00:17:42  fraggle
-// Encapsulate the event queue code properly.  Add a D_PopEvent function
-// to read a new event from the event queue.
-//
-// Revision 1.33  2006/01/01 23:53:14  fraggle
-// Remove GS_WAITINGSTART gamestate.  This will be independent of the main
-// loop to avoid interfering with the main game code too much.
-//
-// Revision 1.32  2005/12/30 18:58:22  fraggle
-// Fix client code to correctly send reply to server on connection.
-// Add "waiting screen" while waiting for the game to start.
-// Hook in the new networking code into the main game code.
-//
-// Revision 1.31  2005/10/24 18:50:39  fraggle
-// Allow the game version to emulate to be specified from the command line
-// and set compatibility options accordingly.
-//
-// Revision 1.30  2005/10/17 23:48:05  fraggle
-// DEH_CheckCommandLine -> DEH_Init, for consistency with other Init
-// functions
-//
-// Revision 1.29  2005/10/16 20:55:50  fraggle
-// Fix the '-cdrom' command-line option.
-//
-// Revision 1.28  2005/10/16 01:18:10  fraggle
-// Global "configdir" variable with directory to store config files in.
-// Create a function to find the filename for a savegame slot.  Store
-// savegames in the config dir.
-//
-// Revision 1.27  2005/10/15 17:57:47  fraggle
-// Add warning message for WADs with FF_START or SS_START in, suggesting
-// the -merge option.
-//
-// Revision 1.26  2005/10/15 17:38:49  fraggle
-// Print startup banners which have been modified by dehacked.
-//
-// Revision 1.25  2005/10/12 21:52:01  fraggle
-// doomfeatures.h to allow certain features to be disabled in the build
-//
-// Revision 1.24  2005/10/09 14:34:19  fraggle
-// Fix banner string for ultimate doom
-//
-// Revision 1.23  2005/10/09 00:20:24  fraggle
-// Detect registered DOOM banner in dehacked patches
-//
-// Revision 1.22  2005/10/08 21:01:55  fraggle
-// Change dehacked startup message
-//
-// Revision 1.21  2005/10/08 20:10:51  fraggle
-// Shut up compiler warning
-//
-// Revision 1.20  2005/10/08 19:33:48  fraggle
-// Allow dehacked patches to override the name of the game via the
-// startup banner.
-//
-// Revision 1.19  2005/10/08 18:23:18  fraggle
-// WAD merging code
-//
-// Revision 1.18  2005/10/04 00:41:49  fraggle
-// Move call to dehacked entrypoint to stop crashes
-//
-// Revision 1.17  2005/10/02 23:49:01  fraggle
-// The beginnings of dehacked support
-//
-// Revision 1.16  2005/10/02 04:16:47  fraggle
-// Fixes for Final Doom
-//
-// Revision 1.15  2005/09/22 13:13:47  fraggle
-// Remove external statistics driver support (-statcopy):
-// nonfunctional on modern systems and never used.
-// Fix for systems where sizeof(int) != sizeof(void *)
-//
-// Revision 1.14  2005/09/11 20:25:56  fraggle
-// Second configuration file to allow chocolate doom-specific settings.
-// Adjust some existing command line logic (for graphics settings and
-// novert) to adjust for this.
-//
-// Revision 1.13  2005/09/08 22:05:17  fraggle
-// Allow alt-tab away while running fullscreen
-//
-// Revision 1.12  2005/09/04 18:44:22  fraggle
-// shut up compiler warnings
-//
-// Revision 1.11  2005/09/04 15:59:45  fraggle
-// 'novert' command line option to disable vertical mouse movement
-//
-// Revision 1.10  2005/08/31 21:50:57  fraggle
-// Nicer banner showing the game type (once we know).  Remove dead code.
-// Find the config file properly.
-//
-// Revision 1.9  2005/08/31 21:35:42  fraggle
-// Display the game name in the title bar.  Move game start code to later
-// in initialisation because of the IWAD detection changes.
-//
-// Revision 1.8  2005/08/31 21:24:24  fraggle
-// Remove the last traces of NORMALUNIX
-//
-// Revision 1.7  2005/08/31 21:21:18  fraggle
-// Better IWAD detection and identification. Support '-iwad' to specify
-// the IWAD to use.
-//
-// Revision 1.6  2005/08/30 22:11:10  fraggle
-// Windows fixes
-//
-// Revision 1.5  2005/08/04 22:55:07  fraggle
-// Use DOOM_VERSION to define the Doom version (don't conflict with
-// automake's config.h).  Display GPL message instead of anti-piracy
-// messages.
-//
-// Revision 1.4  2005/08/04 21:48:32  fraggle
-// Turn on compiler optimisation and warning options
-// Add SDL_mixer sound code
-//
-// Revision 1.3  2005/08/04 18:42:15  fraggle
-// Silence compiler warnings
-//
-// Revision 1.2  2005/07/23 16:44:55  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:20:34  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:
 //	DOOM main program (D_DoomMain) and game loop (D_DoomLoop),
 //	plus functions to determine game mode (shareware, registered),
@@ -184,7 +28,6 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id$";
 
 #define	BGCOLOR		7
 #define	FGCOLOR		8

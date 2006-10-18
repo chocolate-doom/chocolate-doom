@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,46 +19,11 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.8  2006/02/15 12:57:58  fraggle
-// Remove the savegame buffer entirely.  Keep the old savegame size limit
-// bug add a "vanilla_savegame_limit" config file option which allows
-// the limit to be disabled if necessary.
-//
-// Revision 1.7  2006/01/19 18:46:24  fraggle
-// Move savegame header read/write code into p_saveg.c
-//
-// Revision 1.6  2006/01/19 00:17:01  fraggle
-// Remove now-redundant note about structure packing.
-//
-// Revision 1.5  2006/01/19 00:09:20  fraggle
-// Add functions to r/w structures to the savegame buffer, rather than
-// copying the raw structures.  This way, we read and write to the DOS
-// savegame format always, regardless of the compiler and processor
-// architecture, to ensure Vanilla compatibility.
-//
-// Revision 1.4  2006/01/16 21:40:38  fraggle
-// Vanilla savegame load/save
-//
-// Revision 1.3  2005/10/16 01:18:10  fraggle
-// Global "configdir" variable with directory to store config files in.
-// Create a function to find the filename for a savegame slot.  Store
-// savegames in the config dir.
-//
-// Revision 1.2  2005/07/23 16:44:56  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:20:39  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:
 //	Archiving: SaveGame I/O.
 //
 //-----------------------------------------------------------------------------
 
-static const char
-rcsid[] = "$Id$";
 
 #include <stdio.h>
 

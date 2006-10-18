@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -294,52 +292,3 @@ typedef enum
 
 
 #endif          // __DOOMDEF__
-//-----------------------------------------------------------------------------
-//
-// $Log$
-// Revision 1.11  2006/01/06 19:26:02  fraggle
-// Fix the "-skill 0" hack commonly used under DOS
-//
-// Revision 1.10  2006/01/01 23:53:15  fraggle
-// Remove GS_WAITINGSTART gamestate.  This will be independent of the main
-// loop to avoid interfering with the main game code too much.
-//
-// Revision 1.9  2005/12/30 18:58:22  fraggle
-// Fix client code to correctly send reply to server on connection.
-// Add "waiting screen" while waiting for the game to start.
-// Hook in the new networking code into the main game code.
-//
-// Revision 1.8  2005/10/24 18:50:39  fraggle
-// Allow the game version to emulate to be specified from the command line
-// and set compatibility options accordingly.
-//
-// Revision 1.7  2005/09/04 17:33:43  fraggle
-// Support demos recorded with cph's modified "v1.91" doom exe - which
-// contain higher resolution angleturn
-//
-// Revision 1.6  2005/08/04 22:55:08  fraggle
-// Use DOOM_VERSION to define the Doom version (don't conflict with
-// automake's config.h).  Display GPL message instead of anti-piracy
-// messages.
-//
-// Revision 1.5  2005/08/04 21:48:32  fraggle
-// Turn on compiler optimisation and warning options
-// Add SDL_mixer sound code
-//
-// Revision 1.4  2005/07/24 02:14:04  fraggle
-// Move to SDL for graphics.
-// Translate key scancodes to correct internal format when reading
-// settings from config file - backwards compatible with config files
-// for original exes
-//
-// Revision 1.3  2005/07/23 19:29:45  fraggle
-// Put version number back to 1.9
-//
-// Revision 1.2  2005/07/23 16:44:55  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:19:43  fraggle
-// Initial import
-//
-//
-//-----------------------------------------------------------------------------

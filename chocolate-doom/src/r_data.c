@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,35 +19,6 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.8  2005/09/22 21:42:24  fraggle
-// 64-bit fixes
-//
-// Revision 1.7  2005/09/22 13:13:47  fraggle
-// Remove external statistics driver support (-statcopy):
-// nonfunctional on modern systems and never used.
-// Fix for systems where sizeof(int) != sizeof(void *)
-//
-// Revision 1.6  2005/08/04 18:40:22  fraggle
-// Use zone memory functions instead of alloca/malloc/free
-//
-// Revision 1.5  2005/07/23 23:07:04  fraggle
-// Add back previously removed printfs as '.'s for startup progress bar
-//
-// Revision 1.4  2005/07/23 19:42:56  fraggle
-// Startup messages as in the DOS exes
-//
-// Revision 1.3  2005/07/23 19:17:11  fraggle
-// Use ANSI-standard limit constants.  Remove LINUX define.
-//
-// Revision 1.2  2005/07/23 16:44:56  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:19:46  fraggle
-// Initial import
-//
-//
-// Revision 1.3  1997/01/29 20:10
 // DESCRIPTION:
 //	Preparation of data for rendering,
 //	generation of lookups, caching, retrieval by name.
@@ -57,8 +26,6 @@
 //-----------------------------------------------------------------------------
 
 
-static const char
-rcsid[] = "$Id$";
 
 #include "deh_main.h"
 #include "i_system.h"

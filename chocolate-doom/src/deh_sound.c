@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 2005 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
@@ -19,17 +17,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
-//
-// $Log$
-// Revision 1.2  2005/10/08 20:54:16  fraggle
-// Proper dehacked error/warning framework.  Catch a load more errors.
-//
-// Revision 1.1  2005/10/08 20:14:38  fraggle
-// Dehacked "Sound" section support
-//
-// Revision 1.1  2005/10/04 22:10:32  fraggle
-// Dehacked "Sound" section parser (currently a dummy)
-//
 //
 //-----------------------------------------------------------------------------
 //
