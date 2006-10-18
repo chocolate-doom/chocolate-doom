@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -22,30 +20,11 @@
 // 02111-1307, USA.
 //
 //
-// $Log$
-// Revision 1.5  2006/01/27 18:21:35  fraggle
-// Fix compiler warning due to missing include
-//
-// Revision 1.4  2006/01/27 18:18:41  fraggle
-// dehacked replacements for switch texture names
-//
-// Revision 1.3  2005/09/08 00:01:51  fraggle
-// Fix switches not changing in Episode 4
-//
-// Revision 1.2  2005/07/23 16:44:56  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:19:54  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:
 //	Switches, buttons. Two-state animation. Exits.
 //
 //-----------------------------------------------------------------------------
 
-static const char
-rcsid[] = "$Id$";
 
 
 #include "i_system.h"

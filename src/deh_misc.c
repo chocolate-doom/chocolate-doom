@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 2005 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
@@ -19,39 +17,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
-//
-// $Log$
-// Revision 1.9  2006/01/12 00:21:29  fraggle
-// Interpret the dehacked "max health" setting properly.
-//
-// Revision 1.8  2005/10/17 22:07:25  fraggle
-// Fix "Monsters Infight"
-//
-// Revision 1.7  2005/10/17 21:20:27  fraggle
-// Add note that the "Monsters Infight" setting is not supported.
-//
-// Revision 1.6  2005/10/17 21:09:01  fraggle
-// Dehacked Misc support: Controls for the armor and armor class set when
-// using the ammo cheats.
-//
-// Revision 1.5  2005/10/17 21:02:57  fraggle
-// Dehacked Misc support: Max soulsphere, Soulsphere+Megasphere health bonus
-// values, God mode health value
-//
-// Revision 1.4  2005/10/17 20:49:42  fraggle
-// Add dehacked "Misc" implementations for max armor+health, blue+green
-// armor classes
-//
-// Revision 1.3  2005/10/17 20:27:05  fraggle
-// Start of Dehacked 'Misc' section support.  Initial Health+Bullets,
-// and bfg cells/shot are supported.
-//
-// Revision 1.2  2005/10/08 20:54:16  fraggle
-// Proper dehacked error/warning framework.  Catch a load more errors.
-//
-// Revision 1.1  2005/10/04 22:10:32  fraggle
-// Dehacked "Misc" section parser (currently a dummy)
-//
 //
 //-----------------------------------------------------------------------------
 //

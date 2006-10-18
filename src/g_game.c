@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,120 +19,11 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.26  2006/02/23 19:12:01  fraggle
-// Add lowres_turn to indicate whether we generate angleturns which are
-// 8-bit as opposed to 16-bit.  This is used when recording demos without
-// -longtics enabled.  Sync this option between clients in a netgame, so
-// that if one player is recording a Vanilla demo, all clients record
-// in lowres.
-//
-// Revision 1.25  2006/02/19 13:42:27  fraggle
-// Move tic number expansion code to common code.  Parse game data packets
-// received from the server.
-// Strip down d_net.[ch] to work through the new networking code.  Remove
-// game sync code.
-// Remove i_net.[ch] as it is no longer needed.
-// Working networking!
-//
-// Revision 1.24  2006/02/15 12:57:58  fraggle
-// Remove the savegame buffer entirely.  Keep the old savegame size limit
-// bug add a "vanilla_savegame_limit" config file option which allows
-// the limit to be disabled if necessary.
-//
-// Revision 1.23  2006/01/27 18:23:08  fraggle
-// Exit with an error when playing a demo with the wrong version, like Vanilla Doom
-//
-// Revision 1.22  2006/01/23 00:12:25  fraggle
-// Fix dehacked sky replacement
-//
-// Revision 1.21  2006/01/22 23:33:32  fraggle
-// Allow changing the sky texture names via dehacked patches
-//
-// Revision 1.20  2006/01/19 18:46:24  fraggle
-// Move savegame header read/write code into p_saveg.c
-//
-// Revision 1.19  2006/01/13 23:56:00  fraggle
-// Add text-mode I/O functions.
-// Use text-mode screen for the waiting screen.
-//
-// Revision 1.18  2006/01/01 23:53:15  fraggle
-// Remove GS_WAITINGSTART gamestate.  This will be independent of the main
-// loop to avoid interfering with the main game code too much.
-//
-// Revision 1.17  2005/12/30 18:58:22  fraggle
-// Fix client code to correctly send reply to server on connection.
-// Add "waiting screen" while waiting for the game to start.
-// Hook in the new networking code into the main game code.
-//
-// Revision 1.16  2005/10/17 20:27:05  fraggle
-// Start of Dehacked 'Misc' section support.  Initial Health+Bullets,
-// and bfg cells/shot are supported.
-//
-// Revision 1.15  2005/10/16 20:55:50  fraggle
-// Fix the '-cdrom' command-line option.
-//
-// Revision 1.14  2005/10/16 01:18:10  fraggle
-// Global "configdir" variable with directory to store config files in.
-// Create a function to find the filename for a savegame slot.  Store
-// savegames in the config dir.
-//
-// Revision 1.13  2005/10/13 23:12:30  fraggle
-// Fix Doom 1 skies
-//
-// Revision 1.12  2005/10/03 21:39:39  fraggle
-// Dehacked text substitutions
-//
-// Revision 1.11  2005/09/22 13:13:47  fraggle
-// Remove external statistics driver support (-statcopy):
-// nonfunctional on modern systems and never used.
-// Fix for systems where sizeof(int) != sizeof(void *)
-//
-// Revision 1.10  2005/09/17 20:25:56  fraggle
-// Set the default values for variables in their initialisers.  Remove the
-// "defaultvalue" parameter and associated code from the configuration
-// file parsing code.
-//
-// Revision 1.9  2005/09/11 20:25:56  fraggle
-// Second configuration file to allow chocolate doom-specific settings.
-// Adjust some existing command line logic (for graphics settings and
-// novert) to adjust for this.
-//
-// Revision 1.8  2005/09/04 18:44:23  fraggle
-// shut up compiler warnings
-//
-// Revision 1.7  2005/09/04 17:33:43  fraggle
-// Support demos recorded with cph's modified "v1.91" doom exe - which
-// contain higher resolution angleturn
-//
-// Revision 1.6  2005/09/04 15:59:45  fraggle
-// 'novert' command line option to disable vertical mouse movement
-//
-// Revision 1.5  2005/09/04 15:23:29  fraggle
-// Support the old "joyb_speed 31" hack to allow autorun
-//
-// Revision 1.4  2005/08/04 22:55:08  fraggle
-// Use DOOM_VERSION to define the Doom version (don't conflict with
-// automake's config.h).  Display GPL message instead of anti-piracy
-// messages.
-//
-// Revision 1.3  2005/08/03 22:20:09  fraggle
-// Display FPS on quit
-//
-// Revision 1.2  2005/07/23 16:44:55  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:20:11  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:  none
 //
 //-----------------------------------------------------------------------------
 
 
-static const char
-rcsid[] = "$Id$";
 
 #include <string.h>
 #include <stdlib.h>

@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -22,82 +20,6 @@
 // 02111-1307, USA.
 //
 //
-// $Log$
-// Revision 1.19  2006/02/15 12:57:58  fraggle
-// Remove the savegame buffer entirely.  Keep the old savegame size limit
-// bug add a "vanilla_savegame_limit" config file option which allows
-// the limit to be disabled if necessary.
-//
-// Revision 1.18  2006/01/20 21:04:59  fraggle
-// Import differences from stable branch.
-//
-// Revision 1.17  2006/01/10 22:14:13  fraggle
-// Shut up compiler warnings
-//
-// Revision 1.16  2006/01/09 01:50:51  fraggle
-// Deduce a sane player name by examining environment variables.  Add
-// a "player_name" setting to chocolate-doom.cfg.  Transmit the name
-// to the server and use the names players send in the waiting data list.
-//
-// Revision 1.15  2006/01/08 18:22:39  fraggle
-// Strip carriage returns from the end of lines when reading configuration
-// files.
-//
-// Revision 1.14  2006/01/08 18:13:33  fraggle
-// show_endoom config file option to disable the endoom screen
-//
-// Revision 1.13  2005/10/16 01:18:10  fraggle
-// Global "configdir" variable with directory to store config files in.
-// Create a function to find the filename for a savegame slot.  Store
-// savegames in the config dir.
-//
-// Revision 1.12  2005/09/17 20:50:46  fraggle
-// Mouse acceleration code to emulate old DOS drivers
-//
-// Revision 1.11  2005/09/17 20:25:56  fraggle
-// Set the default values for variables in their initialisers.  Remove the
-// "defaultvalue" parameter and associated code from the configuration
-// file parsing code.
-//
-// Revision 1.10  2005/09/17 20:06:45  fraggle
-// Rewrite configuration loading code; assign a type to each configuration
-// parameter.  Allow float parameters, align all values in the configuration
-// files
-//
-// Revision 1.9  2005/09/11 20:25:56  fraggle
-// Second configuration file to allow chocolate doom-specific settings.
-// Adjust some existing command line logic (for graphics settings and
-// novert) to adjust for this.
-//
-// Revision 1.8  2005/09/07 21:40:11  fraggle
-// Remove non-ANSI C headers and functions
-//
-// Revision 1.7  2005/09/07 12:34:47  fraggle
-// Maintain dos-specific options in config file
-//
-// Revision 1.6  2005/08/04 21:48:32  fraggle
-// Turn on compiler optimisation and warning options
-// Add SDL_mixer sound code
-//
-// Revision 1.5  2005/08/04 18:42:15  fraggle
-// Silence compiler warnings
-//
-// Revision 1.4  2005/07/24 02:14:04  fraggle
-// Move to SDL for graphics.
-// Translate key scancodes to correct internal format when reading
-// settings from config file - backwards compatible with config files
-// for original exes
-//
-// Revision 1.3  2005/07/23 19:17:11  fraggle
-// Use ANSI-standard limit constants.  Remove LINUX define.
-//
-// Revision 1.2  2005/07/23 16:44:55  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:19:53  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:
 //	Main loop menu stuff.
 //	Default Config File.
@@ -105,8 +27,6 @@
 //
 //-----------------------------------------------------------------------------
 
-static const char
-rcsid[] = "$Id$";
 
 #include <stdio.h>
 #include <stdlib.h>

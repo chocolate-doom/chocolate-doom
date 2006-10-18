@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,37 +19,11 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.7  2005/10/26 00:56:40  fraggle
-// Final Doom teleport logic was backwards
-//
-// Revision 1.6  2005/10/24 18:50:39  fraggle
-// Allow the game version to emulate to be specified from the command line
-// and set compatibility options accordingly.
-//
-// Revision 1.5  2005/09/06 21:15:08  fraggle
-// Silly me - i misread cph's patch and got the logic backwards
-//
-// Revision 1.4  2005/08/29 22:00:04  fraggle
-// Add missing header to fix build
-//
-// Revision 1.3  2005/08/23 09:54:23  fraggle
-// Demo sync problem with teleports and final doom
-//
-// Revision 1.2  2005/07/23 16:44:56  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:19:54  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:
 //	Teleportation.
 //
 //-----------------------------------------------------------------------------
 
-static const char
-rcsid[] = "$Id$";
 
 
 

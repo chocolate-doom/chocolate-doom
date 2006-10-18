@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 2005 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
@@ -19,20 +17,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
-//
-// $Log$
-// Revision 1.3  2006/01/02 21:04:10  fraggle
-// Create NET_SV_Shutdown function to shut down the server.  Call it
-// when quitting the game.  Print the IP of the server correctly when
-// connecting.
-//
-// Revision 1.2  2006/01/02 00:00:08  fraggle
-// Neater prefixes: NET_Client -> NET_CL_.  NET_Server -> NET_SV_.
-//
-// Revision 1.1  2005/12/29 17:48:25  fraggle
-// Add initial client/server connect code.  Reorganise sources list in
-// Makefile.am.
-//
 //
 // Network server code
 //

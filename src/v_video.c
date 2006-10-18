@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,19 +19,6 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.3  2005/09/17 20:25:56  fraggle
-// Set the default values for variables in their initialisers.  Remove the
-// "defaultvalue" parameter and associated code from the configuration
-// file parsing code.
-//
-// Revision 1.2  2005/07/23 16:44:57  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:20:30  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:
 //	Gamma correction LUT stuff.
 //	Functions to draw patches (by post) directly to screen.
@@ -42,8 +27,6 @@
 //-----------------------------------------------------------------------------
 
 
-static const char
-rcsid[] = "$Id$";
 
 
 #include "i_system.h"

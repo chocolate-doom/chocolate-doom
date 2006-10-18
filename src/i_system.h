@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -88,23 +86,3 @@ void I_Error (char *error, ...);
 
 
 #endif
-//-----------------------------------------------------------------------------
-//
-// $Log$
-// Revision 1.5  2005/12/30 18:50:53  fraggle
-// Millisecond clock function
-//
-// Revision 1.4  2005/09/11 16:39:29  fraggle
-// Fix declaration of I_Sleep (not I_Delay) and move to right header
-//
-// Revision 1.3  2005/07/23 18:56:07  fraggle
-// Remove unneccessary pragmas
-//
-// Revision 1.2  2005/07/23 16:44:55  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:20:39  fraggle
-// Initial import
-//
-//
-//-----------------------------------------------------------------------------

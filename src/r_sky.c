@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,17 +19,6 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.3  2005/07/23 18:56:07  fraggle
-// Remove unneccessary pragmas
-//
-// Revision 1.2  2005/07/23 16:44:56  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:19:43  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:
 //  Sky rendering. The DOOM sky is a texture map like any
 //  wall, wrapping around. A 1024 columns equal 360 degrees.
@@ -41,8 +28,6 @@
 //
 //-----------------------------------------------------------------------------
 
-static const char
-rcsid[] = "$Id$";
 
 
 // Needed for FRACUNIT.

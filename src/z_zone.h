@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id$
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -80,18 +78,3 @@ int     Z_FreeMemory (void);
 
 
 #endif
-//-----------------------------------------------------------------------------
-//
-// $Log$
-// Revision 1.3  2005/09/22 12:58:46  fraggle
-// Use a new PU_FREE tag to mark free blocks, rather than the 'user' field
-// (avoids using magic numbers to mark allocated blocks with no user)
-//
-// Revision 1.2  2005/07/23 16:44:57  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:19:55  fraggle
-// Initial import
-//
-//
-//-----------------------------------------------------------------------------
