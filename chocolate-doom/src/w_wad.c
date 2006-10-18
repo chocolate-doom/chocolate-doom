@@ -47,7 +47,7 @@
 // Location of each lump on disk.
 
 lumpinfo_t *lumpinfo;		
-int numlumps = 0;
+unsigned int numlumps = 0;
 
 // Hash table for fast lookups
 
@@ -138,7 +138,7 @@ unsigned int W_LumpNameHash(const char *s)
 //  specially to allow map reloads.
 // But: the reload feature is a fragile hack...
 
-int			reloadlump;
+unsigned int		reloadlump;
 char*			reloadname;
 
 
@@ -146,7 +146,7 @@ FILE *W_AddFile (char *filename)
 {
     wadinfo_t		header;
     lumpinfo_t*		lump_p;
-    unsigned		i;
+    unsigned int	i;
     FILE               *handle;
     int			length;
     int			startlump;
@@ -252,7 +252,7 @@ void W_Reload (void)
     wadinfo_t		header;
     int			lumpcount;
     lumpinfo_t*		lump_p;
-    unsigned		i;
+    unsigned int	i;
     FILE               *handle;
     int			length;
     filelump_t*		fileinfo;
@@ -374,7 +374,7 @@ int W_GetNumForName (char* name)
 // W_LumpLength
 // Returns the buffer size needed to load the given lump.
 //
-int W_LumpLength (int lump)
+int W_LumpLength (unsigned int lump)
 {
     if (lump >= numlumps)
 	I_Error ("W_LumpLength: %i >= numlumps",lump);
@@ -391,7 +391,7 @@ int W_LumpLength (int lump)
 //
 void
 W_ReadLump
-( int		lump,
+( unsigned int	lump,
   void*		dest )
 {
     int		c;
@@ -543,7 +543,7 @@ void W_Profile (void)
 
 void W_GenerateHashTable(void)
 {
-    int i;
+    unsigned int i;
 
     // Free the old hash table, if there is one
 

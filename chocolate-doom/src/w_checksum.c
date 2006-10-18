@@ -75,7 +75,7 @@ static void ChecksumAddLump(md5_context_t *md5_context, lumpinfo_t *lump)
 void W_Checksum(md5_digest_t digest)
 {
     md5_context_t md5_context;
-    int i;
+    unsigned int i;
 
     MD5_Init(&md5_context);
 
