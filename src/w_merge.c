@@ -524,7 +524,7 @@ static void DoMerge(void)
 
 void W_PrintDirectory(void)
 {
-    int i, n;
+    unsigned int i, n;
 
     // debug
     for (i=0; i<numlumps; ++i)

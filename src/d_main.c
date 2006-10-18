@@ -852,7 +852,7 @@ static void IdentifyVersion(void)
 
     if (gamemission == none)
     {
-        int i;
+        unsigned int i;
 
         for (i=0; i<numlumps; ++i)
         {
