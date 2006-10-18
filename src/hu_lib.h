@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: hu_lib.h 8 2005-07-23 16:44:57Z fraggle $
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -196,14 +194,3 @@ void HUlib_drawIText(hu_itext_t* it);
 void HUlib_eraseIText(hu_itext_t* it); 
 
 #endif
-//-----------------------------------------------------------------------------
-//
-// $Log$
-// Revision 1.2  2005/07/23 16:44:55  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:19:55  fraggle
-// Initial import
-//
-//
-//-----------------------------------------------------------------------------

@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_net.h 484 2006-05-19 20:01:59Z fraggle $
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -53,29 +51,4 @@ void TryRunTics (void);
 void D_StartGameLoop(void);
 
 #endif
-
-//-----------------------------------------------------------------------------
-//
-// $Log$
-// Revision 1.6  2006/02/24 19:14:22  fraggle
-// Remove redundant stuff relating to the old network code
-//
-// Revision 1.5  2006/02/19 13:38:59  fraggle
-// Increase the size of BACKUPTICS to deal with heavy lag
-//
-// Revision 1.4  2006/01/22 22:29:42  fraggle
-// Periodically request the time from clients to estimate their offset to
-// the server time.
-//
-// Revision 1.3  2005/07/23 18:56:07  fraggle
-// Remove unneccessary pragmas
-//
-// Revision 1.2  2005/07/23 16:44:55  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:20:50  fraggle
-// Initial import
-//
-//
-//-----------------------------------------------------------------------------
 

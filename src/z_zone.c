@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: z_zone.c 434 2006-03-24 19:55:04Z fraggle $
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,28 +19,11 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.4  2005/09/24 23:45:18  fraggle
-// Remove leftover debug code
-//
-// Revision 1.3  2005/09/22 12:58:46  fraggle
-// Use a new PU_FREE tag to mark free blocks, rather than the 'user' field
-// (avoids using magic numbers to mark allocated blocks with no user)
-//
-// Revision 1.2  2005/07/23 16:44:57  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:19:55  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:
 //	Zone Memory Allocation. Neat.
 //
 //-----------------------------------------------------------------------------
 
-static const char
-rcsid[] = "$Id: z_zone.c 434 2006-03-24 19:55:04Z fraggle $";
 
 #include "z_zone.h"
 #include "i_system.h"

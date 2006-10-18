@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_cheat.h 694 2006-10-11 22:55:06Z fraggle $
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -70,17 +68,3 @@ cht_GetParam
 
 
 #endif
-//-----------------------------------------------------------------------------
-//
-// $Log$
-// Revision 1.3  2005/10/04 21:41:42  fraggle
-// Rewrite cheats code.  Add dehacked cheat replacement.
-//
-// Revision 1.2  2005/07/23 16:44:55  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:20:31  fraggle
-// Initial import
-//
-//
-//-----------------------------------------------------------------------------

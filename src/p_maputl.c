@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_maputl.c 93 2005-09-08 09:58:00Z fraggle $
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,24 +19,6 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.5  2005/09/08 09:58:00  fraggle
-// MAXINTERCEPTS got converted to INT_MAXERCEPTS accidentally when switching
-// to the ANSI standard limit constants
-//
-// Revision 1.4  2005/08/04 18:42:15  fraggle
-// Silence compiler warnings
-//
-// Revision 1.3  2005/07/23 19:17:11  fraggle
-// Use ANSI-standard limit constants.  Remove LINUX define.
-//
-// Revision 1.2  2005/07/23 16:44:56  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:20:03  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:
 //	Movement/collision utility functions,
 //	as used by function in p_map.c. 
@@ -47,8 +27,6 @@
 //
 //-----------------------------------------------------------------------------
 
-static const char
-rcsid[] = "$Id: p_maputl.c 93 2005-09-08 09:58:00Z fraggle $";
 
 
 #include <stdlib.h>

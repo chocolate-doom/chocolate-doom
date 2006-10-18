@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: doomfeatures.h 444 2006-03-25 21:50:32Z fraggle $
-//
 // Copyright(C) 2005 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
@@ -19,11 +17,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
-//
-// $Log$
-// Revision 1.1  2005/10/12 21:52:01  fraggle
-// doomfeatures.h to allow certain features to be disabled in the build
-//
 //
 // DESCRIPTION:
 //     List of features which can be enabled/disabled to slim down the

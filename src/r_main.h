@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: r_main.h 45 2005-08-06 18:37:47Z fraggle $
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -170,20 +168,3 @@ void R_Init (void);
 void R_SetViewSize (int blocks, int detail);
 
 #endif
-//-----------------------------------------------------------------------------
-//
-// $Log$
-// Revision 1.4  2005/08/06 18:37:47  fraggle
-// Fix low resolution mode
-//
-// Revision 1.3  2005/07/23 18:56:07  fraggle
-// Remove unneccessary pragmas
-//
-// Revision 1.2  2005/07/23 16:44:56  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:19:58  fraggle
-// Initial import
-//
-//
-//-----------------------------------------------------------------------------

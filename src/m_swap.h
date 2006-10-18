@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_swap.h 406 2006-03-02 01:01:05Z fraggle $
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -50,30 +48,3 @@ extern unsigned int	SwapLONG(unsigned int);
 
 
 #endif
-//-----------------------------------------------------------------------------
-//
-// $Log$
-// Revision 1.7  2006/01/24 01:46:08  fraggle
-// More endianness fixes
-//
-// Revision 1.6  2006/01/23 21:56:18  fraggle
-// Include the config header so that endianness is dealt with correctly
-//
-// Revision 1.5  2006/01/05 02:48:03  fraggle
-// Fixes for big endian machines (thanks locust)
-//
-// Revision 1.4  2005/09/05 22:50:56  fraggle
-// Add mmus2mid code from prboom.  Use 'void *' for music handles.  Pass
-// length of data when registering music.
-//
-// Revision 1.3  2005/07/23 18:56:07  fraggle
-// Remove unneccessary pragmas
-//
-// Revision 1.2  2005/07/23 16:44:56  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:19:58  fraggle
-// Initial import
-//
-//
-//-----------------------------------------------------------------------------

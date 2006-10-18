@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_spec.c 694 2006-10-11 22:55:06Z fraggle $
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,20 +19,6 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.4  2006/01/25 17:38:40  fraggle
-// Allow overriding the animation texture/flat names via dehacked
-//
-// Revision 1.3  2005/07/23 19:17:11  fraggle
-// Use ANSI-standard limit constants.  Remove LINUX define.
-//
-// Revision 1.2  2005/07/23 16:44:56  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:19:50  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:
 //	Implements special effects:
 //	Texture animation, height or lighting changes
@@ -44,8 +28,6 @@
 //
 //-----------------------------------------------------------------------------
 
-static const char
-rcsid[] = "$Id: p_spec.c 694 2006-10-11 22:55:06Z fraggle $";
 
 #include <stdlib.h>
 

@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_mapping.c 687 2006-10-05 22:12:22Z fraggle $
-//
 // Copyright(C) 2005 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
@@ -19,18 +17,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
-//
-// $Log$
-// Revision 1.3  2005/10/08 20:54:16  fraggle
-// Proper dehacked error/warning framework.  Catch a load more errors.
-//
-// Revision 1.2  2005/10/08 20:14:24  fraggle
-// Add the ability to specify unsupported fields
-//
-// Revision 1.1  2005/10/03 10:25:37  fraggle
-// Add mapping code to map out structures and switch thing/frame code to use
-// this.
-//
 //
 //-----------------------------------------------------------------------------
 //

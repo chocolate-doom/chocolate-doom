@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_mobj.c 521 2006-05-23 22:56:28Z fraggle $
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,34 +19,11 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.6  2006/01/29 15:05:05  fraggle
-// Allow map things of type <= 0 - these are ignored by Vanilla Doom.  Provides compatibility with plutonia.wad map12.
-//
-// Revision 1.5  2005/10/24 18:50:39  fraggle
-// Allow the game version to emulate to be specified from the command line
-// and set compatibility options accordingly.
-//
-// Revision 1.4  2005/10/13 22:23:55  fraggle
-// Fix logic for lost soul bounce
-//
-// Revision 1.3  2005/07/23 17:46:19  fraggle
-// Import bouncing lost soul fix from prboom
-//
-// Revision 1.2  2005/07/23 16:44:56  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:19:41  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:
 //	Moving object handling. Spawn functions.
 //
 //-----------------------------------------------------------------------------
 
-static const char
-rcsid[] = "$Id: p_mobj.c 521 2006-05-23 22:56:28Z fraggle $";
 
 #include "i_system.h"
 #include "z_zone.h"

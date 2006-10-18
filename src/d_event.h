@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: d_event.h 241 2006-01-02 00:17:42Z fraggle $
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -117,18 +115,3 @@ extern  gameaction_t    gameaction;
 
 
 #endif
-//-----------------------------------------------------------------------------
-//
-// $Log$
-// Revision 1.3  2006/01/02 00:17:41  fraggle
-// Encapsulate the event queue code properly.  Add a D_PopEvent function
-// to read a new event from the event queue.
-//
-// Revision 1.2  2005/07/23 16:44:55  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:19:44  fraggle
-// Initial import
-//
-//
-//-----------------------------------------------------------------------------

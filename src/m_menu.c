@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: m_menu.c 694 2006-10-11 22:55:06Z fraggle $
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,64 +19,12 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.14  2006/01/22 23:48:00  fraggle
-// Allow changing of all menu graphic lumps via dehacked
-//
-// Revision 1.13  2006/01/22 21:22:35  fraggle
-// Dehacked string replacements for menu graphic lump names
-//
-// Revision 1.12  2006/01/21 14:15:29  fraggle
-// Remove SAVESTRINGSIZE (now defined in p_saveg.h)
-//
-// Revision 1.11  2005/10/29 21:38:55  fraggle
-// Fix help screen orderings and skull positions to make Chocolate Doom
-// behave exactly like the original executables.
-//
-// Revision 1.10  2005/10/16 20:55:50  fraggle
-// Fix the '-cdrom' command-line option.
-//
-// Revision 1.9  2005/10/16 01:18:10  fraggle
-// Global "configdir" variable with directory to store config files in.
-// Create a function to find the filename for a savegame slot.  Store
-// savegames in the config dir.
-//
-// Revision 1.8  2005/10/03 21:39:39  fraggle
-// Dehacked text substitutions
-//
-// Revision 1.7  2005/09/17 20:25:56  fraggle
-// Set the default values for variables in their initialisers.  Remove the
-// "defaultvalue" parameter and associated code from the configuration
-// file parsing code.
-//
-// Revision 1.6  2005/09/07 21:30:42  fraggle
-// Remove non-ANSI C headers.  Use standard C file I/O functions.
-//
-// Revision 1.5  2005/09/04 14:51:19  fraggle
-// Display the correct quit messages according to which game is being played.
-// Remove "language" variable (do this through gettext, if ever)
-//
-// Revision 1.4  2005/08/06 18:37:46  fraggle
-// Fix low resolution mode
-//
-// Revision 1.3  2005/07/23 18:54:30  fraggle
-// Fix quit prompt not displayed properly
-//
-// Revision 1.2  2005/07/23 16:44:55  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:19:52  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:
 //	DOOM selection menu, options, episode etc.
 //	Sliders and icons. Kinda widget stuff.
 //
 //-----------------------------------------------------------------------------
 
-static const char
-rcsid[] = "$Id: m_menu.c 694 2006-10-11 22:55:06Z fraggle $";
 
 #include <stdlib.h>
 #include <ctype.h>

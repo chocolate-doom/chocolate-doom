@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_structrw.h 688 2006-10-06 07:02:42Z fraggle $
-//
 // Copyright(C) 2005 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
@@ -19,29 +17,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
-//
-// $Log$
-// Revision 1.5  2006/02/23 18:19:05  fraggle
-// Add lowres_turn parameter to net_full_ticcmd_t structure r/w functions
-//
-// Revision 1.4  2006/02/16 01:12:28  fraggle
-// Define a new type net_full_ticcmd_t, a structure containing all ticcmds
-// for a given tic.  Store received game data in a receive window.  Add
-// send queues for clients and add data from the receive window to
-// generate complete sets of ticcmds.
-//
-// Revision 1.3  2006/01/13 02:22:47  fraggle
-// Update prototypes to match header.  Make sure we include the header in the
-// source file.
-//
-// Revision 1.2  2006/01/11 01:37:53  fraggle
-// ticcmd diffs: allow compare and patching ticcmds, and reading/writing
-// ticdiffs to packets.
-//
-// Revision 1.1  2005/12/30 18:58:22  fraggle
-// Fix client code to correctly send reply to server on connection.
-// Add "waiting screen" while waiting for the game to start.
-// Hook in the new networking code into the main game code.
 //
 
 #ifndef NET_STRUCTRW_H

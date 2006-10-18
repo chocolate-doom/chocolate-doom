@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: st_stuff.c 653 2006-09-22 20:32:00Z fraggle $
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,40 +19,6 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.10  2006/01/22 23:38:05  fraggle
-// Allow changing the status bar graphic lumps via dehacked
-//
-// Revision 1.9  2005/10/17 21:09:01  fraggle
-// Dehacked Misc support: Controls for the armor and armor class set when
-// using the ammo cheats.
-//
-// Revision 1.8  2005/10/17 21:02:57  fraggle
-// Dehacked Misc support: Max soulsphere, Soulsphere+Megasphere health bonus
-// values, God mode health value
-//
-// Revision 1.7  2005/10/06 19:36:41  fraggle
-// Must use the right no clipping cheat for the right game.
-//
-// Revision 1.6  2005/10/04 21:41:42  fraggle
-// Rewrite cheats code.  Add dehacked cheat replacement.
-//
-// Revision 1.5  2005/10/03 21:39:39  fraggle
-// Dehacked text substitutions
-//
-// Revision 1.4  2005/09/04 14:55:53  fraggle
-// Doom v1.9 doesnt allow cheats in nightmare mode!
-//
-// Revision 1.3  2005/08/04 01:15:10  fraggle
-// Fix clev cheat
-//
-// Revision 1.2  2005/07/23 16:44:57  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:20:07  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:
 //	Status bar code.
 //	Does the face/direction indicator animatin.
@@ -62,8 +26,6 @@
 //
 //-----------------------------------------------------------------------------
 
-static const char
-rcsid[] = "$Id: st_stuff.c 653 2006-09-22 20:32:00Z fraggle $";
 
 
 #include <stdio.h>

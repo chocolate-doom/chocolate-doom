@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: r_main.c 591 2006-08-31 22:11:08Z fraggle $
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,26 +19,6 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.6  2005/08/06 18:37:47  fraggle
-// Fix low resolution mode
-//
-// Revision 1.5  2005/07/23 23:07:04  fraggle
-// Add back previously removed printfs as '.'s for startup progress bar
-//
-// Revision 1.4  2005/07/23 19:42:56  fraggle
-// Startup messages as in the DOS exes
-//
-// Revision 1.3  2005/07/23 19:17:11  fraggle
-// Use ANSI-standard limit constants.  Remove LINUX define.
-//
-// Revision 1.2  2005/07/23 16:44:56  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:19:58  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:
 //	Rendering main loop and setup functions,
 //	 utility functions (BSP, geometry, trigonometry).
@@ -49,7 +27,6 @@
 //-----------------------------------------------------------------------------
 
 
-static const char rcsid[] = "$Id: r_main.c 591 2006-08-31 22:11:08Z fraggle $";
 
 
 

@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: f_finale.c 694 2006-10-11 22:55:06Z fraggle $
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,34 +19,12 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.6  2006/01/23 00:07:56  fraggle
-// More dehacked text substitutions for finale text names
-//
-// Revision 1.5  2005/10/06 19:32:38  fraggle
-// Allow changing the background flats in finale text screens via dehacked
-//
-// Revision 1.4  2005/10/03 21:39:39  fraggle
-// Dehacked text substitutions
-//
-// Revision 1.3  2005/10/02 04:16:47  fraggle
-// Fixes for Final Doom
-//
-// Revision 1.2  2005/07/23 16:44:55  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:20:31  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:
 //	Game completion, final screen animation.
 //
 //-----------------------------------------------------------------------------
 
 
-static const char
-rcsid[] = "$Id: f_finale.c 694 2006-10-11 22:55:06Z fraggle $";
 
 #include <ctype.h>
 

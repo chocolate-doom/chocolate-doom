@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_video.h 535 2006-05-29 00:17:24Z fraggle $
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -70,36 +68,3 @@ extern int mouse_threshold;
 extern int startup_delay;
 
 #endif
-//-----------------------------------------------------------------------------
-//
-// $Log$
-// Revision 1.8  2005/10/02 03:16:29  fraggle
-// ENDOOM support using text mode emulation
-//
-// Revision 1.7  2005/09/17 20:25:56  fraggle
-// Set the default values for variables in their initialisers.  Remove the
-// "defaultvalue" parameter and associated code from the configuration
-// file parsing code.
-//
-// Revision 1.6  2005/09/11 20:25:56  fraggle
-// Second configuration file to allow chocolate doom-specific settings.
-// Adjust some existing command line logic (for graphics settings and
-// novert) to adjust for this.
-//
-// Revision 1.5  2005/09/11 16:39:29  fraggle
-// Fix declaration of I_Sleep (not I_Delay) and move to right header
-//
-// Revision 1.4  2005/09/11 16:35:04  fraggle
-// Missing declarations
-//
-// Revision 1.3  2005/07/23 18:56:07  fraggle
-// Remove unneccessary pragmas
-//
-// Revision 1.2  2005/07/23 16:44:55  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:19:58  fraggle
-// Initial import
-//
-//
-//-----------------------------------------------------------------------------

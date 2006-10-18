@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: r_plane.c 694 2006-10-11 22:55:06Z fraggle $
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,14 +19,6 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.2  2005/07/23 16:44:56  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:20:28  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:
 //	Here is a core component: drawing the floors and ceilings,
 //	 while maintaining a per column clipping list only.
@@ -37,8 +27,6 @@
 //-----------------------------------------------------------------------------
 
 
-static const char
-rcsid[] = "$Id: r_plane.c 694 2006-10-11 22:55:06Z fraggle $";
 
 #include <stdlib.h>
 

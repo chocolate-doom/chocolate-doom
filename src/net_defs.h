@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_defs.h 694 2006-10-11 22:55:06Z fraggle $
-//
 // Copyright(C) 2005 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
@@ -19,59 +17,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
-//
-// $Log$
-// Revision 1.14  2006/02/23 18:19:05  fraggle
-// Add lowres_turn parameter to net_full_ticcmd_t structure r/w functions
-//
-// Revision 1.13  2006/02/17 20:15:16  fraggle
-// Request resends for missed packets
-//
-// Revision 1.12  2006/02/16 01:12:28  fraggle
-// Define a new type net_full_ticcmd_t, a structure containing all ticcmds
-// for a given tic.  Store received game data in a receive window.  Add
-// send queues for clients and add data from the receive window to
-// generate complete sets of ticcmds.
-//
-// Revision 1.11  2006/01/22 22:29:42  fraggle
-// Periodically request the time from clients to estimate their offset to
-// the server time.
-//
-// Revision 1.10  2006/01/21 14:16:49  fraggle
-// Add first game data sending code. Check the client version when connecting.
-//
-// Revision 1.9  2006/01/14 02:06:48  fraggle
-// Include the game version in the settings structure.
-//
-// Revision 1.8  2006/01/11 01:37:53  fraggle
-// ticcmd diffs: allow compare and patching ticcmds, and reading/writing
-// ticdiffs to packets.
-//
-// Revision 1.7  2006/01/10 19:59:26  fraggle
-// Reliable packet transport mechanism
-//
-// Revision 1.6  2006/01/08 04:52:26  fraggle
-// Allow the server to reject clients
-//
-// Revision 1.5  2006/01/08 02:53:05  fraggle
-// Send keepalives if the connection is not doing anything else.
-// Send all packets using a new NET_Conn_SendPacket to support this.
-//
-// Revision 1.4  2006/01/01 23:54:31  fraggle
-// Client disconnect code
-//
-// Revision 1.3  2005/12/30 18:58:22  fraggle
-// Fix client code to correctly send reply to server on connection.
-// Add "waiting screen" while waiting for the game to start.
-// Hook in the new networking code into the main game code.
-//
-// Revision 1.2  2005/12/29 17:48:25  fraggle
-// Add initial client/server connect code.  Reorganise sources list in
-// Makefile.am.
-//
-// Revision 1.1  2005/10/30 19:56:15  fraggle
-// Add foundation code for the new networking system
-//
 //
 // DESCRIPTION:
 //     Definitions for use in networking code.

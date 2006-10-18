@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: r_draw.c 653 2006-09-22 20:32:00Z fraggle $
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,22 +19,6 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.4  2005/09/22 13:13:47  fraggle
-// Remove external statistics driver support (-statcopy):
-// nonfunctional on modern systems and never used.
-// Fix for systems where sizeof(int) != sizeof(void *)
-//
-// Revision 1.3  2005/08/06 18:37:47  fraggle
-// Fix low resolution mode
-//
-// Revision 1.2  2005/07/23 16:44:56  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:19:49  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:
 //	The actual span/column drawing functions.
 //	Here find the main potential for optimization,
@@ -45,8 +27,6 @@
 //-----------------------------------------------------------------------------
 
 
-static const char
-rcsid[] = "$Id: r_draw.c 653 2006-09-22 20:32:00Z fraggle $";
 
 
 #include "doomdef.h"

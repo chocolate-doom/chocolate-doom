@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: i_sound.h 271 2006-01-08 17:51:53Z fraggle $
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -127,29 +125,3 @@ boolean I_QrySongPlaying(void *handle);
 
 
 #endif
-//-----------------------------------------------------------------------------
-//
-// $Log$
-// Revision 1.6  2006/01/08 17:51:53  fraggle
-// Add S_MusicPlaying function to query if music is still playing.
-//
-// Revision 1.5  2005/09/05 22:50:56  fraggle
-// Add mmus2mid code from prboom.  Use 'void *' for music handles.  Pass
-// length of data when registering music.
-//
-// Revision 1.4  2005/09/05 20:32:18  fraggle
-// Use the system-nonspecific sound code to assign the channel number used
-// by SDL.  Remove handle tagging stuff.
-//
-// Revision 1.3  2005/08/04 21:48:32  fraggle
-// Turn on compiler optimisation and warning options
-// Add SDL_mixer sound code
-//
-// Revision 1.2  2005/07/23 16:44:55  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:20:46  fraggle
-// Initial import
-//
-//
-//-----------------------------------------------------------------------------

@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: w_merge.c 596 2006-09-02 19:10:07Z fraggle $
-//
 // Copyright(C) 2005 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
@@ -19,23 +17,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
-//
-// $Log$
-// Revision 1.4  2006/02/03 18:41:26  fraggle
-// Support NWT-style WAD merging (-af and -as command line parameters).
-// Restructure WAD loading so that merged WADs are always loaded before
-// normal PWADs.  Remove W_InitMultipleFiles().
-//
-// Revision 1.3  2005/10/23 20:22:35  fraggle
-// Drastically refactor the WAD merging code.  Allow multiple replacements
-// of the same sprite in a PWAD (fixes Scientist 2)
-//
-// Revision 1.2  2005/10/09 00:25:49  fraggle
-// Improved sprite merging
-//
-// Revision 1.1  2005/10/08 18:23:18  fraggle
-// WAD merging code
-//
 //
 // DESCRIPTION:
 // Handles merging of PWADs, similar to deutex's -merge option

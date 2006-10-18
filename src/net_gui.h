@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_gui.h 252 2006-01-02 21:50:26Z fraggle $
-//
 // Copyright(C) 2005 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
@@ -19,18 +17,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
-//
-// $Log$
-// Revision 1.2  2006/01/02 21:50:26  fraggle
-// Restructure the waiting screen code.  Establish our own separate event
-// loop while waiting for the game to start, to avoid affecting the original
-// code too much.  Move some _gui variables to net_client.c.
-//
-// Revision 1.1  2005/12/30 18:58:22  fraggle
-// Fix client code to correctly send reply to server on connection.
-// Add "waiting screen" while waiting for the game to start.
-// Hook in the new networking code into the main game code.
-//
 //
 // Graphical stuff related to the networking code:
 //

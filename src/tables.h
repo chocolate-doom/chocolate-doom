@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: tables.h 19 2005-07-23 19:17:11Z fraggle $
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -93,17 +91,3 @@ SlopeDiv
 
 
 #endif
-//-----------------------------------------------------------------------------
-//
-// $Log$
-// Revision 1.3  2005/07/23 19:17:11  fraggle
-// Use ANSI-standard limit constants.  Remove LINUX define.
-//
-// Revision 1.2  2005/07/23 16:44:57  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:20:27  fraggle
-// Initial import
-//
-//
-//-----------------------------------------------------------------------------

@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: doomstat.h 662 2006-09-25 18:04:29Z fraggle $
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -300,60 +298,3 @@ extern	int		ticdup;
 
 
 #endif
-//-----------------------------------------------------------------------------
-//
-// $Log$
-// Revision 1.12  2006/02/24 19:14:22  fraggle
-// Remove redundant stuff relating to the old network code
-//
-// Revision 1.11  2006/02/23 19:12:01  fraggle
-// Add lowres_turn to indicate whether we generate angleturns which are
-// 8-bit as opposed to 16-bit.  This is used when recording demos without
-// -longtics enabled.  Sync this option between clients in a netgame, so
-// that if one player is recording a Vanilla demo, all clients record
-// in lowres.
-//
-// Revision 1.10  2006/02/19 13:42:27  fraggle
-// Move tic number expansion code to common code.  Parse game data packets
-// received from the server.
-// Strip down d_net.[ch] to work through the new networking code.  Remove
-// game sync code.
-// Remove i_net.[ch] as it is no longer needed.
-// Working networking!
-//
-// Revision 1.9  2005/10/24 18:50:39  fraggle
-// Allow the game version to emulate to be specified from the command line
-// and set compatibility options accordingly.
-//
-// Revision 1.8  2005/10/16 01:18:10  fraggle
-// Global "configdir" variable with directory to store config files in.
-// Create a function to find the filename for a savegame slot.  Store
-// savegames in the config dir.
-//
-// Revision 1.7  2005/09/11 20:25:56  fraggle
-// Second configuration file to allow chocolate doom-specific settings.
-// Adjust some existing command line logic (for graphics settings and
-// novert) to adjust for this.
-//
-// Revision 1.6  2005/09/04 15:59:45  fraggle
-// 'novert' command line option to disable vertical mouse movement
-//
-// Revision 1.5  2005/09/04 14:51:19  fraggle
-// Display the correct quit messages according to which game is being played.
-// Remove "language" variable (do this through gettext, if ever)
-//
-// Revision 1.4  2005/08/31 21:21:18  fraggle
-// Better IWAD detection and identification. Support '-iwad' to specify
-// the IWAD to use.
-//
-// Revision 1.3  2005/07/23 18:56:07  fraggle
-// Remove unneccessary pragmas
-//
-// Revision 1.2  2005/07/23 16:44:55  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:20:09  fraggle
-// Initial import
-//
-//
-//-----------------------------------------------------------------------------

@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_io.h 175 2005-10-08 20:54:16Z fraggle $
-//
 // Copyright(C) 2005 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
@@ -19,14 +17,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
-//
-// $Log$
-// Revision 1.2  2005/10/08 20:54:16  fraggle
-// Proper dehacked error/warning framework.  Catch a load more errors.
-//
-// Revision 1.1  2005/10/02 23:49:01  fraggle
-// The beginnings of dehacked support
-//
 //
 //-----------------------------------------------------------------------------
 //

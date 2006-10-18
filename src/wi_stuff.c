@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: wi_stuff.c 652 2006-09-22 20:30:48Z fraggle $
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,30 +19,11 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.5  2006/01/28 20:03:09  fraggle
-// Avoid conflict with stdc time function
-//
-// Revision 1.4  2006/01/22 21:21:02  fraggle
-// Dehacked string replacements for intermission screen graphic lumps
-//
-// Revision 1.3  2005/08/10 08:45:35  fraggle
-// Remove "if (french)" stuff, FRENCH define, detect french wad automatically
-//
-// Revision 1.2  2005/07/23 16:44:57  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:19:48  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:
 //	Intermission screens.
 //
 //-----------------------------------------------------------------------------
 
-static const char
-rcsid[] = "$Id: wi_stuff.c 652 2006-09-22 20:30:48Z fraggle $";
 
 #include <stdio.h>
 

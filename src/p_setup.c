@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: p_setup.c 558 2006-06-16 17:06:05Z fraggle $
-//
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
 //
@@ -21,31 +19,12 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// $Log$
-// Revision 1.5  2006/01/29 15:07:12  fraggle
-// Shut up compiler warnings
-//
-// Revision 1.4  2006/01/23 00:17:43  fraggle
-// Allow changing the names of level lump names via dehacked.
-//
-// Revision 1.3  2005/07/23 19:17:11  fraggle
-// Use ANSI-standard limit constants.  Remove LINUX define.
-//
-// Revision 1.2  2005/07/23 16:44:56  fraggle
-// Update copyright to GNU GPL
-//
-// Revision 1.1.1.1  2005/07/23 16:20:40  fraggle
-// Initial import
-//
-//
 // DESCRIPTION:
 //	Do all the WAD I/O, get map description,
 //	set up initial state and misc. LUTs.
 //
 //-----------------------------------------------------------------------------
 
-static const char
-rcsid[] = "$Id: p_setup.c 558 2006-06-16 17:06:05Z fraggle $";
 
 
 #include <math.h>

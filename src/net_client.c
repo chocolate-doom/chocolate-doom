@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: net_client.c 699 2006-10-14 13:26:17Z fraggle $
-//
 // Copyright(C) 2005 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
@@ -19,126 +17,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
-//
-// $Log$
-// Revision 1.32  2006/02/24 19:14:59  fraggle
-// Fix -extratics
-//
-// Revision 1.31  2006/02/23 20:53:03  fraggle
-// Detect when clients are disconnected from the server, recover cleanly
-// and display a message.
-//
-// Revision 1.30  2006/02/23 20:31:09  fraggle
-// Set ticdup from the command line with the -dup parameter.
-//
-// Revision 1.29  2006/02/23 19:12:01  fraggle
-// Add lowres_turn to indicate whether we generate angleturns which are
-// 8-bit as opposed to 16-bit.  This is used when recording demos without
-// -longtics enabled.  Sync this option between clients in a netgame, so
-// that if one player is recording a Vanilla demo, all clients record
-// in lowres.
-//
-// Revision 1.28  2006/02/23 18:20:29  fraggle
-// Fix bugs in resend code for server->client data
-//
-// Revision 1.27  2006/02/22 18:35:55  fraggle
-// Packet resends for server->client gamedata
-//
-// Revision 1.26  2006/02/19 13:42:27  fraggle
-// Move tic number expansion code to common code.  Parse game data packets
-// received from the server.
-// Strip down d_net.[ch] to work through the new networking code.  Remove
-// game sync code.
-// Remove i_net.[ch] as it is no longer needed.
-// Working networking!
-//
-// Revision 1.25  2006/02/17 21:40:52  fraggle
-// Full working resends for client->server comms
-//
-// Revision 1.24  2006/02/17 20:15:16  fraggle
-// Request resends for missed packets
-//
-// Revision 1.23  2006/01/22 22:29:42  fraggle
-// Periodically request the time from clients to estimate their offset to
-// the server time.
-//
-// Revision 1.22  2006/01/21 14:16:49  fraggle
-// Add first game data sending code. Check the client version when connecting.
-//
-// Revision 1.21  2006/01/14 02:06:48  fraggle
-// Include the game version in the settings structure.
-//
-// Revision 1.20  2006/01/13 23:52:12  fraggle
-// Fix game start packet parsing logic.
-//
-// Revision 1.19  2006/01/13 02:19:18  fraggle
-// Only accept sane player values when starting a new game.
-//
-// Revision 1.18  2006/01/12 02:18:59  fraggle
-// Only start new games when in the waiting-for-start state.
-//
-// Revision 1.17  2006/01/12 02:11:52  fraggle
-// Game start packets
-//
-// Revision 1.16  2006/01/10 19:59:25  fraggle
-// Reliable packet transport mechanism
-//
-// Revision 1.15  2006/01/09 02:03:39  fraggle
-// Send clients their player number, and indicate on the waiting screen
-// which client we are.
-//
-// Revision 1.14  2006/01/09 01:50:51  fraggle
-// Deduce a sane player name by examining environment variables.  Add
-// a "player_name" setting to chocolate-doom.cfg.  Transmit the name
-// to the server and use the names players send in the waiting data list.
-//
-// Revision 1.13  2006/01/08 04:52:26  fraggle
-// Allow the server to reject clients
-//
-// Revision 1.12  2006/01/08 03:36:40  fraggle
-// Fix double free of addresses
-//
-// Revision 1.11  2006/01/08 02:53:31  fraggle
-// Detect when client connection is disconnected.
-//
-// Revision 1.10  2006/01/08 00:10:47  fraggle
-// Move common connection code into net_common.c, shared by server
-// and client code.
-//
-// Revision 1.9  2006/01/07 20:08:11  fraggle
-// Send player name and address in the waiting data packets.  Display these
-// on the waiting screen, and improve the waiting screen appearance.
-//
-// Revision 1.8  2006/01/02 21:50:26  fraggle
-// Restructure the waiting screen code.  Establish our own separate event
-// loop while waiting for the game to start, to avoid affecting the original
-// code too much.  Move some _gui variables to net_client.c.
-//
-// Revision 1.7  2006/01/02 20:14:07  fraggle
-// Fix connect timeout and shutdown client properly if we fail to connect.
-//
-// Revision 1.6  2006/01/02 00:54:17  fraggle
-// Fix packet not freed back after being sent.
-// Code to disconnect clients from the server side.
-//
-// Revision 1.5  2006/01/02 00:00:08  fraggle
-// Neater prefixes: NET_Client -> NET_CL_.  NET_Server -> NET_SV_.
-//
-// Revision 1.4  2006/01/01 23:54:31  fraggle
-// Client disconnect code
-//
-// Revision 1.3  2005/12/30 18:58:22  fraggle
-// Fix client code to correctly send reply to server on connection.
-// Add "waiting screen" while waiting for the game to start.
-// Hook in the new networking code into the main game code.
-//
-// Revision 1.2  2005/12/29 21:29:55  fraggle
-// Working client connect code
-//
-// Revision 1.1  2005/12/29 17:48:25  fraggle
-// Add initial client/server connect code.  Reorganise sources list in
-// Makefile.am.
-//
 //
 // Network client code
 //

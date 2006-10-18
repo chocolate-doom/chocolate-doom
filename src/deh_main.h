@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// $Id: deh_main.h 688 2006-10-06 07:02:42Z fraggle $
-//
 // Copyright(C) 2005 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
@@ -19,21 +17,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
-//
-// $Log$
-// Revision 1.4  2005/10/17 23:48:05  fraggle
-// DEH_CheckCommandLine -> DEH_Init, for consistency with other Init
-// functions
-//
-// Revision 1.3  2005/10/12 21:52:01  fraggle
-// doomfeatures.h to allow certain features to be disabled in the build
-//
-// Revision 1.2  2005/10/03 21:39:39  fraggle
-// Dehacked text substitutions
-//
-// Revision 1.1  2005/10/02 23:49:01  fraggle
-// The beginnings of dehacked support
-//
 //
 //-----------------------------------------------------------------------------
 //
