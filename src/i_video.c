@@ -1034,7 +1034,10 @@ void I_InitGraphics(void)
     SDL_Event dummy;
     int flags = 0;
 
-    SDL_Init(SDL_INIT_VIDEO);
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) 
+    {
+        I_Error("Failed to initialise video: %s", SDL_GetError());
+    }
 
     // Check for command-line video-related parameters.
 
