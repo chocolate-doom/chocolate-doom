@@ -25,6 +25,8 @@
 #include "d_englsh.h"
 #include "textscreen.h"
 
+#include "multiplayer.h"
+
 #define NUM_WADS 10
 #define NUM_EXTRA_PARAMS 10
 
@@ -53,24 +55,24 @@ static char *gamemodes[] =
 char *player_name;
 char *chatmacros[10];
 
-char *wads[NUM_WADS] = {};
-char *extra_params[NUM_EXTRA_PARAMS] = {};
-int skill = 0;
-int nomonsters = 0;
-int deathmatch = 0;
-int fast = 0;
-int respawn = 0;
-int udpport = 4815;
-int timer = 0;
+static char *wads[NUM_WADS] = {};
+static char *extra_params[NUM_EXTRA_PARAMS] = {};
+static int skill = 0;
+static int nomonsters = 0;
+static int deathmatch = 0;
+static int fast = 0;
+static int respawn = 0;
+static int udpport = 4815;
+static int timer = 0;
 
-txt_button_t *warpbutton;
-warptype_t warptype = WARP_DOOM2;
-int warpepisode = 1;
-int warpmap = 1;
+static txt_button_t *warpbutton;
+static warptype_t warptype = WARP_DOOM2;
+static int warpepisode = 1;
+static int warpmap = 1;
 
 // Address to connect to when joining a game
 
-char *connect_address = NULL;
+static char *connect_address = NULL;
 
 static void StartGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
 {

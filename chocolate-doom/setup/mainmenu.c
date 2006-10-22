@@ -23,6 +23,13 @@
 #include "config.h"
 #include "textscreen.h"
 
+#include "compatibility.h"
+#include "display.h"
+#include "keyboard.h"
+#include "mouse.h"
+#include "multiplayer.h"
+#include "sound.h"
+
 void DoQuit(void *widget, void *dosave)
 {
     if (dosave != NULL)
@@ -60,15 +67,6 @@ void QuitConfirm(void *unused1, void *unused2)
                         TXT_NewWindowAbortAction(window));
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, NULL);
 }
-
-extern void ConfigDisplay();
-extern void ConfigKeyboard();
-extern void ConfigMouse();
-extern void ConfigSound();
-extern void CompatibilitySettings();
-extern void StartMultiGame();
-extern void JoinMultiGame();
-extern void MultiplayerConfig();
 
 void MainMenu(void)
 {
