@@ -25,44 +25,82 @@
 
 #include "textscreen.h"
 
-int snd_sfxenabled;
+#include "sound.h"
+
+int snd_sfxdevice = 3;
 int snd_channels = 8;
 int sfx_volume = 15;
 
-int snd_musicenabled;
+int snd_musicdevice = 3;
 int music_volume = 15;
+
+static int snd_sfxenabled;
+static int snd_musicenabled;
+
+static void UpdateSndDevices(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
+{
+    if (snd_sfxenabled)
+    {
+        snd_sfxdevice = 3;
+    }
+    else
+    {
+        snd_sfxdevice = 0;
+    }
+
+    if (snd_musicenabled)
+    {
+        snd_musicdevice = 3;
+    }
+    else
+    {
+        snd_musicdevice = 0;
+    }
+}
 
 void ConfigSound(void)
 {
-        txt_window_t *window;
-        txt_table_t *sfx_table;
-        txt_table_t *music_table;
+    txt_window_t *window;
+    txt_table_t *sfx_table;
+    txt_table_t *music_table;
+    txt_checkbox_t *sfx_enabled_control;
+    txt_checkbox_t *music_enabled_control;
 
-        window = TXT_NewWindow("Sound configuration");
+    snd_sfxenabled = snd_sfxdevice != 0;
+    snd_musicenabled = snd_musicdevice != 0;
 
-        TXT_AddWidgets(window,
-                   TXT_NewSeparator("Sound effects"),
-                   TXT_NewCheckBox("Sound effects enabled", &snd_sfxenabled),
-                   sfx_table = TXT_NewTable(2),
-                   TXT_NewSeparator("Music"),
-                   TXT_NewCheckBox("Music enabled", &snd_musicenabled),
-                   music_table = TXT_NewTable(2),
+    window = TXT_NewWindow("Sound configuration");
+
+    TXT_AddWidgets(window,
+               TXT_NewSeparator("Sound effects"),
+               sfx_enabled_control = TXT_NewCheckBox("Sound effects enabled", 
+                                                     &snd_sfxenabled),
+               sfx_table = TXT_NewTable(2),
+               TXT_NewSeparator("Music"),
+               music_enabled_control = TXT_NewCheckBox("Music enabled", 
+                                                       &snd_musicenabled),
+               music_table = TXT_NewTable(2),
+               NULL);
+
+    TXT_SetColumnWidths(sfx_table, 20, 5);
+
+    TXT_SignalConnect(sfx_enabled_control, "changed", 
+                      UpdateSndDevices, NULL);
+    TXT_SignalConnect(music_enabled_control, "changed", 
+                      UpdateSndDevices, NULL);
+
+    TXT_AddWidgets(sfx_table, 
+                   TXT_NewLabel("Sound channels"),
+                   TXT_NewSpinControl(&snd_channels, 1, 8),
+                   TXT_NewLabel("SFX volume"),
+                   TXT_NewSpinControl(&sfx_volume, 0, 15),
                    NULL);
 
-        TXT_SetColumnWidths(sfx_table, 20, 5);
+    TXT_SetColumnWidths(music_table, 20, 5);
 
-        TXT_AddWidgets(sfx_table, 
-                       TXT_NewLabel("Sound channels"),
-                       TXT_NewSpinControl(&snd_channels, 1, 8),
-                       TXT_NewLabel("SFX volume"),
-                       TXT_NewSpinControl(&sfx_volume, 0, 15),
-                       NULL);
-
-        TXT_SetColumnWidths(music_table, 20, 5);
-
-        TXT_AddWidgets(music_table,
-                       TXT_NewLabel("Music volume"),
-                       TXT_NewSpinControl(&music_volume, 0, 15),
-                       NULL);
+    TXT_AddWidgets(music_table,
+                   TXT_NewLabel("Music volume"),
+                   TXT_NewSpinControl(&music_volume, 0, 15),
+                   NULL);
 }
 

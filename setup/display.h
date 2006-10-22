@@ -19,28 +19,15 @@
 // 02111-1307, USA.
 //
 
-// Sound control menu
+#ifndef SETUP_DISPLAY_H 
+#define SETUP_DISPLAY_H
 
-#include <stdlib.h>
+extern int fullscreen;
+extern int screenmultiply;
+extern int startup_delay;
+extern int show_endoom;
 
-#include "textscreen.h"
+void ConfigDisplay(void);
 
-#include "compatibility.h"
-
-int vanilla_savegame_limit = 1;
-int vanilla_demo_limit = 1;
-
-void CompatibilitySettings(void)
-{
-    txt_window_t *window;
-
-    window = TXT_NewWindow("Compatibility");
-
-    TXT_AddWidgets(window, 
-                   TXT_NewCheckBox("Vanilla savegame limit",
-                                   &vanilla_savegame_limit),
-                   TXT_NewCheckBox("Vanilla demo limit",
-                                   &vanilla_demo_limit),
-                   NULL);
-}
+#endif /* #ifndef SETUP_DISPLAY_H */
 

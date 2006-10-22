@@ -26,20 +26,22 @@
 #include "testconfig.h"
 #include "txt_mouseinput.h"
 
+#include "mouse.h"
+
 int use_mouse = 1;
 
-int novert;
-int speed;
-float accel;
-int threshold;
+int novert = 0;
+int mouseSensitivity = 5;
+float mouse_acceleration = 1.0;
+int mouse_threshold = 10;
 int grabmouse = 1;
 
-int mouseb_fire = 0;
-int mouseb_forward = 1;
-int mouseb_strafe = 2;
+int mousebfire = 0;
+int mousebforward = 1;
+int mousebstrafe = 2;
 
-static int *all_mouse_buttons[] = {&mouseb_fire, &mouseb_strafe, 
-                                   &mouseb_forward};
+static int *all_mouse_buttons[] = {&mousebfire, &mousebstrafe, 
+                                   &mousebforward};
 
 static void MouseSetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))
 {
@@ -98,18 +100,18 @@ void ConfigMouse(void)
 
     TXT_AddWidgets(motion_table,
                    TXT_NewLabel("Speed"),
-                   TXT_NewSpinControl(&speed, 1, 256),
+                   TXT_NewSpinControl(&mouseSensitivity, 1, 256),
                    TXT_NewLabel("Acceleration"),
-                   TXT_NewFloatSpinControl(&accel, 1.0, 5.0),
+                   TXT_NewFloatSpinControl(&mouse_acceleration, 1.0, 5.0),
                    TXT_NewLabel("Acceleration threshold"),
-                   TXT_NewSpinControl(&threshold, 0, 32),
+                   TXT_NewSpinControl(&mouse_threshold, 0, 32),
                    NULL);
 
     TXT_SetColumnWidths(button_table, 27, 5);
 
-    AddMouseControl(button_table, "Fire weapon", &mouseb_fire);
-    AddMouseControl(button_table, "Move forward", &mouseb_forward);
-    AddMouseControl(button_table, "Strafe on", &mouseb_strafe);
+    AddMouseControl(button_table, "Fire weapon", &mousebfire);
+    AddMouseControl(button_table, "Move forward", &mousebforward);
+    AddMouseControl(button_table, "Strafe on", &mousebstrafe);
     
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
 }
