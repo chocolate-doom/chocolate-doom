@@ -19,28 +19,15 @@
 // 02111-1307, USA.
 //
 
-// Sound control menu
+#ifndef SETUP_MULTIPLAYER_H
+#define SETUP_MULTIPLAYER_H
 
-#include <stdlib.h>
+extern char *player_name;
+extern char *chatmacros[10];
 
-#include "textscreen.h"
+void StartMultiGame(void);
+void JoinMultiGame(void);
+void MultiplayerConfig(void);
 
-#include "compatibility.h"
-
-int vanilla_savegame_limit = 1;
-int vanilla_demo_limit = 1;
-
-void CompatibilitySettings(void)
-{
-    txt_window_t *window;
-
-    window = TXT_NewWindow("Compatibility");
-
-    TXT_AddWidgets(window, 
-                   TXT_NewCheckBox("Vanilla savegame limit",
-                                   &vanilla_savegame_limit),
-                   TXT_NewCheckBox("Vanilla demo limit",
-                                   &vanilla_demo_limit),
-                   NULL);
-}
+#endif /* #ifndef SETUP_MULTIPLAYER_H */
 

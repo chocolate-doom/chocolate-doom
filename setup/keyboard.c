@@ -23,6 +23,8 @@
 #include "testconfig.h"
 #include "txt_keyinput.h"
 
+#include "keyboard.h"
+
 int key_left = KEY_LEFTARROW;
 int key_right = KEY_RIGHTARROW;
 int key_up = KEY_UPARROW;
@@ -33,11 +35,25 @@ int key_fire = KEY_RCTRL;
 int key_use = ' ';
 int key_strafe = KEY_RALT;
 int key_speed = KEY_RSHIFT;
-int always_run = 0;
+int joybspeed = 3;
+
+static int always_run = 0;
 
 static int *allkeys[] = {&key_left, &key_right, &key_up, &key_down, 
                          &key_strafeleft, &key_straferight, &key_fire, 
                          &key_use, &key_strafe, &key_speed};
+
+static void UpdateJoybSpeed(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(var))
+{
+    if (always_run)
+    {
+       joybspeed = 31;
+    }
+    else
+    {
+       joybspeed = 0;
+    }
+}
 
 // Callback invoked when a key control is set
 
@@ -74,19 +90,24 @@ void ConfigKeyboard(void)
     txt_window_t *window;
     txt_table_t *movement_table;
     txt_table_t *action_table;
+    txt_checkbox_t *run_control;
+
+    always_run = joybspeed > 30;
 
     window = TXT_NewWindow("Keyboard configuration");
 
     TXT_AddWidgets(window, 
                    TXT_NewSeparator("Movement"),
                    movement_table = TXT_NewTable(2),
-                   TXT_NewCheckBox("Always run", &always_run),
+                   run_control = TXT_NewCheckBox("Always run", &always_run),
 
                    TXT_NewSeparator("Action"),
                    action_table = TXT_NewTable(2),
                    NULL);
 
     TXT_SetColumnWidths(movement_table, 20, 8);
+
+    TXT_SignalConnect(run_control, "changed", UpdateJoybSpeed, NULL);
 
     AddKeyControl(movement_table, "Move Forward", &key_up);
     AddKeyControl(movement_table, "Move Backward", &key_down);

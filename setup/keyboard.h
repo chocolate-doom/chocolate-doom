@@ -19,28 +19,22 @@
 // 02111-1307, USA.
 //
 
-// Sound control menu
+#ifndef SETUP_KEYBOARD_H 
+#define SETUP_KEYBOARD_H 
 
-#include <stdlib.h>
+extern int key_left;
+extern int key_right;
+extern int key_up;
+extern int key_down;
+extern int key_strafeleft;
+extern int key_straferight;
+extern int key_fire;
+extern int key_use;
+extern int key_strafe;
+extern int key_speed;
+extern int joybspeed;
 
-#include "textscreen.h"
+void ConfigKeyboard(void);
 
-#include "compatibility.h"
-
-int vanilla_savegame_limit = 1;
-int vanilla_demo_limit = 1;
-
-void CompatibilitySettings(void)
-{
-    txt_window_t *window;
-
-    window = TXT_NewWindow("Compatibility");
-
-    TXT_AddWidgets(window, 
-                   TXT_NewCheckBox("Vanilla savegame limit",
-                                   &vanilla_savegame_limit),
-                   TXT_NewCheckBox("Vanilla demo limit",
-                                   &vanilla_demo_limit),
-                   NULL);
-}
+#endif /* #ifndef SETUP_KEYBOARD_H */
 

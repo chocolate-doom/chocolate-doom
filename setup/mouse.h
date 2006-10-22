@@ -19,28 +19,22 @@
 // 02111-1307, USA.
 //
 
-// Sound control menu
+#ifndef SETUP_MOUSE_H
+#define SETUP_MOUSE_H
 
-#include <stdlib.h>
+extern int use_mouse;
 
-#include "textscreen.h"
+extern int novert;
+extern int mouseSensitivity;
+extern float mouse_acceleration;
+extern int mouse_threshold;
+extern int grabmouse;
+extern int mousebfire;
+extern int mousebforward;
+extern int mousebstrafe;
 
-#include "compatibility.h"
+void ConfigMouse(void);
 
-int vanilla_savegame_limit = 1;
-int vanilla_demo_limit = 1;
 
-void CompatibilitySettings(void)
-{
-    txt_window_t *window;
-
-    window = TXT_NewWindow("Compatibility");
-
-    TXT_AddWidgets(window, 
-                   TXT_NewCheckBox("Vanilla savegame limit",
-                                   &vanilla_savegame_limit),
-                   TXT_NewCheckBox("Vanilla demo limit",
-                                   &vanilla_demo_limit),
-                   NULL);
-}
+#endif /* #ifndef SETUP_MOUSE_H */
 

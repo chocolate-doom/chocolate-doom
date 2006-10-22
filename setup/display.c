@@ -20,62 +20,65 @@
 //
 #include "textscreen.h"
 
+#include "display.h"
+
 typedef struct 
 {
-        char *description;
-        int fullscreen;
-        int screenmult;
+    char *description;
+    int fullscreen;
+    int screenmultiply;
 } vidmode_t;
 
 static vidmode_t modes[] = 
 {
-        { "320x200",  0, 1 },
-        { "640x400",  0, 2 },
-        { "960x600",  0, 3 },
-        { "1280x800", 0, 4 },
-        { "320x200",  1, 1 },
-        { "320x240",  2, 1 },
-        { "640x400",  1, 2 },
-        { "640x480",  2, 2 },
-        { "960x600",  1, 3 },
-        { "960x720",  2, 3 },
-        { "1280x800", 1, 4 },
-        { "1280x960", 2, 4 },
-        { NULL,       0, 0 },
+    { "320x200",  0, 1 },
+    { "640x400",  0, 2 },
+    { "960x600",  0, 3 },
+    { "1280x800", 0, 4 },
+    { "320x200",  1, 1 },
+    { "320x240",  2, 1 },
+    { "640x400",  1, 2 },
+    { "640x480",  2, 2 },
+    { "960x600",  1, 3 },
+    { "960x720",  2, 3 },
+    { "1280x800", 1, 4 },
+    { "1280x960", 2, 4 },
+    { NULL,       0, 0 },
 };
 
 static int vidmode = 0;
-static int fullscreen = 0;
-static int screenmult = 1;
-static int startup_delay = 0;
-static int show_endoom = 1;
 
-// Given the video settings (fullscreen, screenmult, etc), find the
+int fullscreen = 0;
+int screenmultiply = 1;
+int startup_delay = 0;
+int show_endoom = 1;
+
+// Given the video settings (fullscreen, screenmultiply, etc), find the
 // current video mode
 
 static void SetCurrentMode(void)
 {
-        int i;
+    int i;
 
-        vidmode = 0;
+    vidmode = 0;
 
-        for (i=0; modes[i].description != NULL; ++i)
+    for (i=0; modes[i].description != NULL; ++i)
+    {
+        if (fullscreen == modes[i].fullscreen
+         && screenmultiply == modes[i].screenmultiply)
         {
-                if (fullscreen == modes[i].fullscreen
-                 && screenmult == modes[i].screenmult)
-                {
-                        vidmode = i;
-                        break;
-                }
+            vidmode = i;
+            break;
         }
+    }
 }
 
 static void ModeSelected(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(mode))
 {
-        TXT_CAST_ARG(vidmode_t, mode);
+    TXT_CAST_ARG(vidmode_t, mode);
 
-        fullscreen = mode->fullscreen;
-        screenmult = mode->screenmult;
+    fullscreen = mode->fullscreen;
+    screenmultiply = mode->screenmultiply;
 }
 
 void ConfigDisplay(void)
