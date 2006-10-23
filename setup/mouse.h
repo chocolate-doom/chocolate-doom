@@ -22,7 +22,7 @@
 #ifndef SETUP_MOUSE_H
 #define SETUP_MOUSE_H
 
-extern int use_mouse;
+extern int usemouse;
 
 extern int novert;
 extern int mouseSensitivity;
