@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
 
 // for mkdir:
 
@@ -41,6 +42,7 @@
 
 #include "config.h"
 #include "doomkeys.h"
+#include "m_argv.h"
 
 #include "compatibility.h"
 #include "display.h"
@@ -48,6 +50,71 @@
 #include "mouse.h"
 #include "multiplayer.h"
 #include "sound.h"
+
+char *configdir;
+
+//
+// Create a directory
+//
+
+void M_MakeDirectory(char *path)
+{
+#ifdef _WIN32
+    mkdir(path);
+#else
+    mkdir(path, 0755);
+#endif
+}
+
+
+// 
+// SetConfigDir:
+//
+// Sets the location of the configuration directory, where configuration
+// files are stored - default.cfg, chocolate-doom.cfg, savegames, etc.
+//
+
+void M_SetConfigDir(void)
+{
+    char *homedir;
+
+    homedir = getenv("HOME");
+
+    if (homedir != NULL)
+    {
+        // put all configuration in a config directory off the
+        // homedir
+
+        configdir = malloc(strlen(homedir) + strlen(PACKAGE_TARNAME) + 5);
+
+        sprintf(configdir, "%s/.%s/", homedir, PACKAGE_TARNAME);
+
+        // make the directory if it doesnt already exist
+
+        M_MakeDirectory(configdir);
+    }
+    else
+    {
+#ifdef _WIN32
+        // when given the -cdrom option, save config+savegames in 
+        // c:\doomdata.  This only applies under Windows.
+
+        if (M_CheckParm("-cdrom") > 0)
+        {
+            printf(D_CDROM);
+            configdir = strdup("c:\\doomdata\\");
+
+            M_MakeDirectory(configdir);
+        }
+        else
+#endif
+        {
+            configdir = strdup("");
+        }
+    }
+}
+
+
 
 //
 // DEFAULTS
@@ -57,9 +124,10 @@
 
 static int showMessages = 1;
 static int screenblocks = 9;
-static int detaillevel = 0;
+static int detailLevel = 0;
 static int usegamma = 0;
-static int use_joystick = 0;
+
+static int usejoystick = 0;
 static int joybfire = 0;
 static int joybstrafe = 1;
 static int joybuse = 2;
