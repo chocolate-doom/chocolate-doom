@@ -25,6 +25,15 @@
 #include "txt_io.h"
 #include "txt_main.h"
 
+typedef struct txt_cliparea_s txt_cliparea_t;
+
+struct txt_cliparea_s
+{
+    int x1, x2;
+    int y1, y2;
+    txt_cliparea_t *next;
+};
+
 // Array of border characters for drawing windows. The array looks like this:
 //
 // +-++
@@ -32,7 +41,7 @@
 // +-++
 // +-++
 
-static int borders[4][4] = 
+static const int borders[4][4] = 
 {
     {0xda, 0xc4, 0xc2, 0xbf},
     {0xb3, ' ',  0xb3, 0xb3},
@@ -40,8 +49,10 @@ static int borders[4][4] =
     {0xc0, 0xc4, 0xc1, 0xd9},
 };
 
-#define VALID_X(y) ((y) >= 0 && (y) < TXT_SCREEN_W)
-#define VALID_Y(y) ((y) >= 1 && (y) < TXT_SCREEN_H - 1)
+static txt_cliparea_t *cliparea = NULL;
+
+#define VALID_X(x) ((x) >= cliparea->x1 && (x) < cliparea->x2)
+#define VALID_Y(y) ((y) >= cliparea->y1 && (y) < cliparea->y2)
 
 void TXT_DrawDesktopBackground(char *title)
 {
@@ -238,5 +249,63 @@ void TXT_DrawString(char *s)
     }
 
     TXT_GotoXY(x + strlen(s), y);
+}
+
+void TXT_InitClipArea(void)
+{
+    if (cliparea == NULL)
+    {
+        cliparea = malloc(sizeof(txt_cliparea_t));
+        cliparea->x1 = 0;
+        cliparea->x2 = TXT_SCREEN_W;
+        cliparea->y1 = 1;
+        cliparea->y2 = TXT_SCREEN_H - 1;
+        cliparea->next = NULL;
+    }
+}
+
+void TXT_PushClipArea(int x1, int x2, int y1, int y2)
+{
+    txt_cliparea_t *newarea;
+
+    newarea = malloc(sizeof(txt_cliparea_t));
+
+    // Set the new clip area to the intersection of the old
+    // area and the new one.
+
+    newarea->x1 = cliparea->x1;
+    newarea->x2 = cliparea->x2;
+    newarea->y1 = cliparea->y1;
+    newarea->y2 = cliparea->y2;
+
+    if (x1 > newarea->x1)
+        newarea->x1 = x1;
+    if (x2 < newarea->x2)
+        newarea->x2 = x2;
+    if (y1 > newarea->x1)
+        newarea->y1 = y1;
+    if (y2 < newarea->y2)
+        newarea->y2 = y2;
+
+    // Hook into the list
+    
+    newarea->next = cliparea;
+    cliparea = newarea;
+}
+
+void TXT_PopClipArea(void)
+{
+    txt_cliparea_t *next_cliparea;
+
+    // Never pop the last entry
+
+    if (cliparea->next == NULL)
+        return;
+
+    // Unlink the last entry and delete
+   
+    next_cliparea = cliparea->next;
+    free(cliparea);
+    cliparea = next_cliparea;
 }
 

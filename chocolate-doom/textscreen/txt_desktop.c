@@ -118,6 +118,8 @@ void TXT_DrawDesktop(void)
     int i;
     char *title;
 
+    TXT_InitClipArea();
+
     if (desktop_title == NULL)
         title = "";
     else
