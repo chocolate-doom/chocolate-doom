@@ -20,7 +20,7 @@
 //
 #include "textscreen.h"
 
-#include "testconfig.h"
+#include "execute.h"
 #include "txt_keyinput.h"
 
 #include "keyboard.h"

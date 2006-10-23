@@ -16,7 +16,7 @@ chocolate_setup_SOURCES =                       \
     mouse.c           mouse.h                   \
     multiplayer.c     multiplayer.h             \
     sound.c           sound.h                   \
-    testconfig.c      testconfig.h              \
+    execute.c         execute.h                 \
     txt_keyinput.c    txt_keyinput.h            \
     txt_mouseinput.c  txt_mouseinput.h
 
