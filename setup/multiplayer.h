@@ -23,7 +23,7 @@
 #define SETUP_MULTIPLAYER_H
 
 extern char *player_name;
-extern char *chatmacros[10];
+extern char *chat_macros[10];
 
 void StartMultiGame(void);
 void JoinMultiGame(void);

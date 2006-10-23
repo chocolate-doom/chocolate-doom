@@ -23,11 +23,11 @@
 #define SETUP_SOUND_H
 
 extern int snd_sfxdevice;
-extern int snd_channels;
-extern int sfx_volume;
+extern int numChannels;
+extern int sfxVolume;
 
 extern int snd_musicdevice;
-extern int music_volume;
+extern int musicVolume;
 
 void ConfigSound(void);
 
