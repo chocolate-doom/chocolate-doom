@@ -313,7 +313,7 @@ void JoinMultiGame(void)
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, StartGameAction());
 }
 
-static void SetChatMacroDefaults(void)
+void SetChatMacroDefaults(void)
 {
     int i;
     char *defaults[] = 
@@ -341,7 +341,7 @@ static void SetChatMacroDefaults(void)
     }
 }
 
-static void SetPlayerNameDefault(void)
+void SetPlayerNameDefault(void)
 {
     if (player_name == NULL)
     {
@@ -366,9 +366,6 @@ void MultiplayerConfig(void)
     txt_table_t *table;
     char buf[10];
     int i;
-
-    SetChatMacroDefaults();
-    SetPlayerNameDefault();
 
     window = TXT_NewWindow("Multiplayer Configuration");
 
