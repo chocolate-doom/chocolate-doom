@@ -23,6 +23,9 @@
 #include "config.h"
 #include "textscreen.h"
 
+#include "configfile.h"
+#include "m_argv.h"
+
 #include "compatibility.h"
 #include "display.h"
 #include "keyboard.h"
@@ -34,7 +37,7 @@ void DoQuit(void *widget, void *dosave)
 {
     if (dosave != NULL)
     {
-        printf("Saving config\n");
+        M_SaveDefaults();
     }
 
     exit(0);
@@ -101,7 +104,24 @@ void MainMenu(void)
     TXT_SetWindowAction(window, TXT_HORIZ_LEFT, quit_action);
 }
 
-int main(int argc, char *argv[])
+//
+// Initialise all configuration variables, load config file, etc
+//
+
+static void InitConfig(void)
+{
+    SetChatMacroDefaults();
+    SetPlayerNameDefault();
+
+    M_SetConfigDir();
+    M_LoadDefaults();
+}
+
+// 
+// Initialise and run the textscreen GUI.
+//
+
+static void RunGUI(void)
 {
     TXT_Init();
     TXT_SetDesktopTitle(PACKAGE_NAME " Setup ver " PACKAGE_VERSION);
@@ -109,6 +129,15 @@ int main(int argc, char *argv[])
     MainMenu();
 
     TXT_GUIMainLoop();
+}
+
+int main(int argc, char *argv[])
+{
+    myargc = argc;
+    myargv = argv;
+
+    InitConfig();
+    RunGUI();
 
     return 0;
 }
