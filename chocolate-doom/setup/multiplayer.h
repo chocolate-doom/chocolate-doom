@@ -29,5 +29,8 @@ void StartMultiGame(void);
 void JoinMultiGame(void);
 void MultiplayerConfig(void);
 
+void SetChatMacroDefaults(void);
+void SetPlayerNameDefault(void);
+
 #endif /* #ifndef SETUP_MULTIPLAYER_H */
 
