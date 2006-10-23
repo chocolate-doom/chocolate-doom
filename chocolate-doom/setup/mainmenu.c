@@ -76,16 +76,24 @@ void MainMenu(void)
     window = TXT_NewWindow("Main Menu");
 
     TXT_AddWidgets(window,
-          TXT_NewButton2("Configure display", ConfigDisplay, NULL),
-          TXT_NewButton2("Configure keyboard", ConfigKeyboard, NULL),
-          TXT_NewButton2("Configure mouse", ConfigMouse, NULL),
-          TXT_NewButton2("Configure sound", ConfigSound, NULL),
-          TXT_NewButton2("Compatibility", CompatibilitySettings, NULL),
+          TXT_NewButton2("Configure display", 
+                         (TxtWidgetSignalFunc) ConfigDisplay, NULL),
+          TXT_NewButton2("Configure keyboard", 
+                         (TxtWidgetSignalFunc) ConfigKeyboard, NULL),
+          TXT_NewButton2("Configure mouse", 
+                         (TxtWidgetSignalFunc) ConfigMouse, NULL),
+          TXT_NewButton2("Configure sound", 
+                         (TxtWidgetSignalFunc) ConfigSound, NULL),
+          TXT_NewButton2("Compatibility", 
+                         (TxtWidgetSignalFunc) CompatibilitySettings, NULL),
           TXT_NewButton("Save parameters and launch DOOM"),
           TXT_NewStrut(0, 1),
-          TXT_NewButton2("Start a Network game", StartMultiGame, NULL),
-          TXT_NewButton2("Join a Network game", JoinMultiGame, NULL),
-          TXT_NewButton2("Multiplayer configuration", MultiplayerConfig, NULL),
+          TXT_NewButton2("Start a Network game", 
+                         (TxtWidgetSignalFunc) StartMultiGame, NULL),
+          TXT_NewButton2("Join a Network game", 
+                         (TxtWidgetSignalFunc) JoinMultiGame, NULL),
+          TXT_NewButton2("Multiplayer configuration", 
+                         (TxtWidgetSignalFunc) MultiplayerConfig, NULL),
           NULL);
 
     quit_action = TXT_NewWindowAction(KEY_ESCAPE, "Quit");
