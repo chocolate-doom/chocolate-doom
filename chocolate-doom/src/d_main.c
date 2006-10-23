@@ -38,14 +38,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#ifdef _WIN32
-#include <io.h>
-#else
-#include <sys/stat.h>
-#include <sys/types.h>
-#endif
-
-
 #include "config.h"
 #include "deh_main.h"
 #include "doomdef.h"
@@ -101,11 +93,6 @@
 //  calls I_GetTime, I_StartFrame, and I_StartTic
 //
 void D_DoomLoop (void);
-
-// Location where all configuration data is stored - 
-// default.cfg, savegames, etc.
-
-char *          configdir;
 
 // Location where savegames are stored
 
@@ -1142,63 +1129,6 @@ void PrintDehackedBanners(void)
     }
 }
 
-static void MakeDirectory(char *path)
-{
-#ifdef _WIN32
-    mkdir(path);
-#else
-    mkdir(path, 0755);
-#endif
-}
-
-
-// 
-// SetConfigDir:
-//
-// Sets the location of the configuration directory, where configuration
-// files are stored - default.cfg, chocolate-doom.cfg, savegames, etc.
-//
-
-static void SetConfigDir(void)
-{
-    char *homedir;
-
-    homedir = getenv("HOME");
-
-    if (homedir != NULL)
-    {
-        // put all configuration in a config directory off the
-        // homedir
-
-        configdir = malloc(strlen(homedir) + strlen(PACKAGE_TARNAME) + 5);
-
-        sprintf(configdir, "%s/.%s/", homedir, PACKAGE_TARNAME);
-
-        // make the directory if it doesnt already exist
-
-        MakeDirectory(configdir);
-        
-
-    }
-    else
-    {
-#ifdef _WIN32
-        // when given the -cdrom option, save config+savegames in 
-        // c:\doomdata.  This only applies under Windows.
-
-        if (M_CheckParm("-cdrom") > 0)
-        {
-            printf(D_CDROM);
-            configdir = strdup("c:\\doomdata\\");
-        }
-        else
-#endif
-        {
-            configdir = strdup("");
-        }
-    }
-}
-
 // 
 // SetSaveGameDir
 //
@@ -1222,7 +1152,7 @@ static void SetSaveGameDir(void)
         savegamedir = malloc(strlen(configdir) + 30);
         sprintf(savegamedir, "%ssavegames", configdir);
 
-        MakeDirectory(savegamedir);
+        M_MakeDirectory(savegamedir);
 
         // Find what subdirectory to use for savegames
         //
@@ -1243,7 +1173,7 @@ static void SetSaveGameDir(void)
                 strcat(savegamedir, "/");
                 strcat(savegamedir, iwads[i].name);
                 strcat(savegamedir, "/");
-                MakeDirectory(savegamedir);
+                M_MakeDirectory(savegamedir);
                 break;
             }
         }
@@ -1418,7 +1348,7 @@ void D_DoomMain (void)
     
     // find which dir to use for config files
 
-    SetConfigDir();
+    M_SetConfigDir();
     
     // turbo option
     if ( (p=M_CheckParm ("-turbo")) )
