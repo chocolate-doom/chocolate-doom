@@ -66,6 +66,7 @@ void AddCmdLineParameter(execute_context_t *context, char *s, ...)
     va_start(args, s);
 
     vfprintf(context->stream, s, args);
+    fprintf(context->stream, "\n");
 }
 
 void ExecuteDoom(execute_context_t *context)
