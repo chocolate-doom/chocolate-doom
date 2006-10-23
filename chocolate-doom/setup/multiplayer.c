@@ -53,7 +53,7 @@ static char *gamemodes[] =
 };
 
 char *player_name;
-char *chatmacros[10];
+char *chat_macros[10];
 
 static char *wads[NUM_WADS] = {};
 static char *extra_params[NUM_EXTRA_PARAMS] = {};
@@ -334,9 +334,9 @@ static void SetChatMacroDefaults(void)
 
     for (i=0; i<10; ++i)
     {
-        if (chatmacros[i] == NULL)
+        if (chat_macros[i] == NULL)
         {
-            chatmacros[i] = strdup(defaults[i]);
+            chat_macros[i] = strdup(defaults[i]);
         }
     }
 }
@@ -392,7 +392,7 @@ void MultiplayerConfig(void)
 
         TXT_AddWidgets(table,
                        label,
-                       TXT_NewInputBox(&chatmacros[i], 40),
+                       TXT_NewInputBox(&chat_macros[i], 40),
                        NULL);
     }
     
