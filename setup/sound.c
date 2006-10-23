@@ -28,11 +28,11 @@
 #include "sound.h"
 
 int snd_sfxdevice = 3;
-int snd_channels = 8;
-int sfx_volume = 15;
+int numChannels = 8;
+int sfxVolume = 15;
 
 int snd_musicdevice = 3;
-int music_volume = 15;
+int musicVolume = 15;
 
 static int snd_sfxenabled;
 static int snd_musicenabled;
@@ -91,16 +91,16 @@ void ConfigSound(void)
 
     TXT_AddWidgets(sfx_table, 
                    TXT_NewLabel("Sound channels"),
-                   TXT_NewSpinControl(&snd_channels, 1, 8),
+                   TXT_NewSpinControl(&numChannels, 1, 8),
                    TXT_NewLabel("SFX volume"),
-                   TXT_NewSpinControl(&sfx_volume, 0, 15),
+                   TXT_NewSpinControl(&sfxVolume, 0, 15),
                    NULL);
 
     TXT_SetColumnWidths(music_table, 20, 5);
 
     TXT_AddWidgets(music_table,
                    TXT_NewLabel("Music volume"),
-                   TXT_NewSpinControl(&music_volume, 0, 15),
+                   TXT_NewSpinControl(&musicVolume, 0, 15),
                    NULL);
 }
 

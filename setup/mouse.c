@@ -28,7 +28,7 @@
 
 #include "mouse.h"
 
-int use_mouse = 1;
+int usemouse = 1;
 
 int novert = 0;
 int mouseSensitivity = 5;
@@ -82,7 +82,7 @@ void ConfigMouse(void)
     window = TXT_NewWindow("Mouse configuration");
 
     TXT_AddWidgets(window,
-                   TXT_NewCheckBox("Enable mouse", &use_mouse),
+                   TXT_NewCheckBox("Enable mouse", &usemouse),
                    TXT_NewInvertedCheckBox("Allow vertical mouse movement", 
                                            &novert),
                    TXT_NewCheckBox("Grab mouse in windowed mode", 
