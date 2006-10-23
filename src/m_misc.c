@@ -253,10 +253,25 @@ typedef enum
 
 typedef struct
 {
+    // Name of the variable
     char *         name;
+
+    // Pointer to the location in memory of the variable
     void *         location;
+
+    // Type of the variable
     default_type_t type;
+
+    // If this is a key value, the original integer scancode we read from
+    // the config file before translating it to the internal key value.
+    // If zero, we didn't read this value from a config file.
     int            untranslated;
+
+    // The value we translated the scancode into when we read the 
+    // config file on startup.  If the variable value is different from
+    // this, it has been changed and needs to be converted; otherwise,
+    // use the 'untranslated' value.
+    int            original_translated;
 } default_t;
 
 typedef struct
@@ -268,47 +283,47 @@ typedef struct
 
 static default_t	doom_defaults_list[] =
 {
-    {"mouse_sensitivity", &mouseSensitivity, DEFAULT_INT, 0},
-    {"sfx_volume",&sfxVolume, DEFAULT_INT, 0},
-    {"music_volume",&musicVolume, DEFAULT_INT, 0},
-    {"show_messages",&showMessages, DEFAULT_INT, 0},
+    {"mouse_sensitivity", &mouseSensitivity, DEFAULT_INT, 0, 0},
+    {"sfx_volume",&sfxVolume, DEFAULT_INT, 0, 0},
+    {"music_volume",&musicVolume, DEFAULT_INT, 0, 0},
+    {"show_messages",&showMessages, DEFAULT_INT, 0, 0},
 
-    {"key_right",&key_right, DEFAULT_KEY, 0},
-    {"key_left",&key_left, DEFAULT_KEY, 0},
-    {"key_up",&key_up, DEFAULT_KEY, 0},
-    {"key_down",&key_down, DEFAULT_KEY, 0},
-    {"key_strafeleft",&key_strafeleft, DEFAULT_KEY, 0},
-    {"key_straferight",&key_straferight, DEFAULT_KEY, 0},
+    {"key_right",&key_right, DEFAULT_KEY, 0, 0},
+    {"key_left",&key_left, DEFAULT_KEY, 0, 0},
+    {"key_up",&key_up, DEFAULT_KEY, 0, 0},
+    {"key_down",&key_down, DEFAULT_KEY, 0, 0},
+    {"key_strafeleft",&key_strafeleft, DEFAULT_KEY, 0, 0},
+    {"key_straferight",&key_straferight, DEFAULT_KEY, 0, 0},
 
-    {"key_fire",&key_fire, DEFAULT_KEY, 0},
-    {"key_use",&key_use, DEFAULT_KEY, 0},
-    {"key_strafe",&key_strafe, DEFAULT_KEY, 0},
-    {"key_speed",&key_speed, DEFAULT_KEY, 0},
+    {"key_fire",&key_fire, DEFAULT_KEY, 0, 0},
+    {"key_use",&key_use, DEFAULT_KEY, 0, 0},
+    {"key_strafe",&key_strafe, DEFAULT_KEY, 0, 0},
+    {"key_speed",&key_speed, DEFAULT_KEY, 0, 0},
 
-    {"use_mouse",&usemouse, DEFAULT_INT, 0},
-    {"mouseb_fire",&mousebfire, DEFAULT_INT, 0},
-    {"mouseb_strafe",&mousebstrafe, DEFAULT_INT, 0},
-    {"mouseb_forward",&mousebforward, DEFAULT_INT, 0},
+    {"use_mouse",&usemouse, DEFAULT_INT, 0, 0},
+    {"mouseb_fire",&mousebfire, DEFAULT_INT, 0, 0},
+    {"mouseb_strafe",&mousebstrafe, DEFAULT_INT, 0, 0},
+    {"mouseb_forward",&mousebforward, DEFAULT_INT, 0, 0},
 
-    {"use_joystick",&usejoystick, DEFAULT_INT, 0},
-    {"joyb_fire",&joybfire, DEFAULT_INT, 0},
-    {"joyb_strafe",&joybstrafe, DEFAULT_INT, 0},
-    {"joyb_use",&joybuse, DEFAULT_INT, 0},
-    {"joyb_speed",&joybspeed, DEFAULT_INT, 0},
+    {"use_joystick",&usejoystick, DEFAULT_INT, 0, 0},
+    {"joyb_fire",&joybfire, DEFAULT_INT, 0, 0},
+    {"joyb_strafe",&joybstrafe, DEFAULT_INT, 0, 0},
+    {"joyb_use",&joybuse, DEFAULT_INT, 0, 0},
+    {"joyb_speed",&joybspeed, DEFAULT_INT, 0, 0},
 
-    {"screenblocks",&screenblocks, DEFAULT_INT, 0},
-    {"detaillevel",&detailLevel, DEFAULT_INT, 0},
+    {"screenblocks",&screenblocks, DEFAULT_INT, 0, 0},
+    {"detaillevel",&detailLevel, DEFAULT_INT, 0, 0},
 
-    {"snd_channels",&numChannels, DEFAULT_INT, 0},
+    {"snd_channels",&numChannels, DEFAULT_INT, 0, 0},
 
-    {"snd_musicdevice", &snd_musicdevice, DEFAULT_INT, 0},
-    {"snd_sfxdevice", &snd_sfxdevice, DEFAULT_INT, 0},
-    {"snd_sbport", &snd_sbport, DEFAULT_INT, 0},
-    {"snd_sbirq", &snd_sbirq, DEFAULT_INT, 0},
-    {"snd_sbdma", &snd_sbdma, DEFAULT_INT, 0},
-    {"snd_mport", &snd_mport, DEFAULT_INT, 0},
+    {"snd_musicdevice", &snd_musicdevice, DEFAULT_INT, 0, 0},
+    {"snd_sfxdevice", &snd_sfxdevice, DEFAULT_INT, 0, 0},
+    {"snd_sbport", &snd_sbport, DEFAULT_INT, 0, 0},
+    {"snd_sbirq", &snd_sbirq, DEFAULT_INT, 0, 0},
+    {"snd_sbdma", &snd_sbdma, DEFAULT_INT, 0, 0},
+    {"snd_mport", &snd_mport, DEFAULT_INT, 0, 0},
 
-    {"usegamma", &usegamma, DEFAULT_INT, 0},
+    {"usegamma", &usegamma, DEFAULT_INT, 0, 0},
 
     {"chatmacro0", &chat_macros[0], DEFAULT_STRING, 0 },
     {"chatmacro1", &chat_macros[1], DEFAULT_STRING, 0 },
@@ -331,19 +346,19 @@ static default_collection_t doom_defaults =
 
 static default_t extra_defaults_list[] = 
 {
-    {"autoadjust_video_settings",   &autoadjust_video_settings, 0, 0},
-    {"fullscreen",                  &fullscreen, 0, 0},
-    {"startup_delay",               &startup_delay, 0, 0},
-    {"screenmultiply",              &screenmultiply, 0, 0},
-    {"grabmouse",                   &grabmouse, 0, 0},
-    {"novert",                      &novert, 0, 0},
-    {"mouse_acceleration",          &mouse_acceleration,       DEFAULT_FLOAT, 0},
-    {"mouse_threshold",             &mouse_threshold, 0, 0},
-    {"show_endoom",                 &show_endoom, 0, 0},
-    {"vanilla_savegame_limit",      &vanilla_savegame_limit, 0, 0},
-    {"vanilla_demo_limit",          &vanilla_demo_limit, 0, 0},
+    {"autoadjust_video_settings",   &autoadjust_video_settings, DEFAULT_INT, 0, 0},
+    {"fullscreen",                  &fullscreen, DEFAULT_INT, 0, 0},
+    {"startup_delay",               &startup_delay, DEFAULT_INT, 0, 0},
+    {"screenmultiply",              &screenmultiply, DEFAULT_INT, 0, 0},
+    {"grabmouse",                   &grabmouse, DEFAULT_INT, 0, 0},
+    {"novert",                      &novert, DEFAULT_INT, 0, 0},
+    {"mouse_acceleration",          &mouse_acceleration, DEFAULT_FLOAT, 0, 0},
+    {"mouse_threshold",             &mouse_threshold, DEFAULT_INT, 0, 0},
+    {"show_endoom",                 &show_endoom, DEFAULT_INT, 0, 0},
+    {"vanilla_savegame_limit",      &vanilla_savegame_limit, DEFAULT_INT, 0, 0},
+    {"vanilla_demo_limit",          &vanilla_demo_limit, DEFAULT_INT, 0, 0},
 #ifdef FEATURE_MULTIPLAYER
-    {"player_name",                 &net_player_name,          DEFAULT_STRING, 0},
+    {"player_name",                 &net_player_name,          DEFAULT_STRING, 0, 0},
 #endif
 };
 
@@ -410,8 +425,12 @@ static void SaveDefaultCollection(default_collection_t *collection)
                 
                 v = * (int *) defaults[i].location;
 
-                if (defaults[i].untranslated)
+                if (defaults[i].untranslated
+                 && v == defaults[i].original_translated)
                 {
+                    // Has not been changed since the last time we
+                    // read the config file.
+
                     v = defaults[i].untranslated;
                 }
                 else
@@ -539,6 +558,7 @@ static void LoadDefaultCollection(default_collection_t *collection)
                     defaults[i].untranslated = intparm;
                     intparm = scantokey[intparm];
 
+                    defaults[i].original_translated = intparm;
                     * (int *) def->location = intparm;
                     break;
 
