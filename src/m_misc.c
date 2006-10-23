@@ -109,6 +109,19 @@ M_DrawText
     return x;
 }
 
+//
+// Create a directory
+//
+
+void M_MakeDirectory(char *path)
+{
+#ifdef _WIN32
+    mkdir(path);
+#else
+    mkdir(path, 0755);
+#endif
+}
+
 
 
 
@@ -171,7 +184,11 @@ int M_ReadFile(char const *name, byte **buffer)
 // DEFAULTS
 //
 
-// locations of config files
+// Location where all configuration data is stored - 
+// default.cfg, savegames, etc.
+
+char *          configdir;
+
 
 int		usemouse = 1;
 int		usejoystick = 0;
@@ -593,6 +610,54 @@ void M_LoadDefaults (void)
     LoadDefaultCollection(&doom_defaults);
     LoadDefaultCollection(&extra_defaults);
 }
+
+// 
+// SetConfigDir:
+//
+// Sets the location of the configuration directory, where configuration
+// files are stored - default.cfg, chocolate-doom.cfg, savegames, etc.
+//
+
+void M_SetConfigDir(void)
+{
+    char *homedir;
+
+    homedir = getenv("HOME");
+
+    if (homedir != NULL)
+    {
+        // put all configuration in a config directory off the
+        // homedir
+
+        configdir = malloc(strlen(homedir) + strlen(PACKAGE_TARNAME) + 5);
+
+        sprintf(configdir, "%s/.%s/", homedir, PACKAGE_TARNAME);
+
+        // make the directory if it doesnt already exist
+
+        M_MakeDirectory(configdir);
+    }
+    else
+    {
+#ifdef _WIN32
+        // when given the -cdrom option, save config+savegames in 
+        // c:\doomdata.  This only applies under Windows.
+
+        if (M_CheckParm("-cdrom") > 0)
+        {
+            printf(D_CDROM);
+            configdir = strdup("c:\\doomdata\\");
+
+            M_MakeDirectory(configdir);
+        }
+        else
+#endif
+        {
+            configdir = strdup("");
+        }
+    }
+}
+
 
 
 //

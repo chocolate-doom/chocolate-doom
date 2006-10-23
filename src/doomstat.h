@@ -255,7 +255,6 @@ extern  int		maxammo[NUMAMMO];
 //
 
 // File handling stuff.
-extern  char *          configdir;
 extern  char *          savegamedir;
 extern	char		basedefault[1024];
 extern  FILE*		debugfile;

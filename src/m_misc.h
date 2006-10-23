@@ -53,6 +53,10 @@ void M_LoadDefaults (void);
 
 void M_SaveDefaults (void);
 
+void M_SetConfigDir(void);
+
+void M_MakeDirectory(char *dir);
+
 
 int
 M_DrawText
@@ -61,5 +65,6 @@ M_DrawText
   boolean	direct,
   char*		string );
 
+extern char *configdir;
 
 #endif
