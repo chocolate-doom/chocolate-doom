@@ -24,6 +24,12 @@
 
 #include "textscreen.h"
 
+typedef struct execute_context_s execute_context_t;
+
+execute_context_t *NewExecuteContext(void);
+void AddCmdLineParameter(execute_context_t *context, char *s, ...);
+void ExecuteDoom(execute_context_t *context);
+
 txt_window_action_t *TestConfigAction(void);
 
 #endif /* #ifndef TESTCONFIG_H */
