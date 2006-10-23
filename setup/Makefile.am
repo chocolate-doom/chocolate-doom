@@ -8,8 +8,10 @@ games_PROGRAMS = chocolate-setup
 chocolate_setup_LDADD = @LDFLAGS@ @SDL_LIBS@ ../textscreen/libtextscreen.a
 chocolate_setup_SOURCES =                       \
     compatibility.c   compatibility.h           \
+    configfile.c      configfile.h              \
     display.c         display.h                 \
     keyboard.c        keyboard.h                \
+    m_argv.c          m_argv.h                  \
     mainmenu.c                                  \
     mouse.c           mouse.h                   \
     multiplayer.c     multiplayer.h             \
