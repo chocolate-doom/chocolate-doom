@@ -23,6 +23,8 @@
 #include "config.h"
 #include "textscreen.h"
 
+#include "execute.h"
+
 #include "configfile.h"
 #include "m_argv.h"
 
@@ -33,7 +35,7 @@
 #include "multiplayer.h"
 #include "sound.h"
 
-void DoQuit(void *widget, void *dosave)
+static void DoQuit(void *widget, void *dosave)
 {
     if (dosave != NULL)
     {
@@ -43,7 +45,7 @@ void DoQuit(void *widget, void *dosave)
     exit(0);
 }
 
-void QuitConfirm(void *unused1, void *unused2)
+static void QuitConfirm(void *unused1, void *unused2)
 {
     txt_window_t *window;
     txt_label_t *label;
@@ -71,6 +73,26 @@ void QuitConfirm(void *unused1, void *unused2)
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, NULL);
 }
 
+static void LaunchDoom(void *unused1, void *unused2)
+{
+    execute_context_t *exec;
+    
+    // Save configuration first
+
+    M_SaveDefaults();
+
+    // Shut down textscreen GUI
+
+    TXT_Shutdown();
+
+    // Launch Doom
+
+    exec = NewExecuteContext();
+    ExecuteDoom(exec);
+
+    exit(0);
+}
+
 void MainMenu(void)
 {
     txt_window_t *window;
@@ -89,7 +111,7 @@ void MainMenu(void)
                          (TxtWidgetSignalFunc) ConfigSound, NULL),
           TXT_NewButton2("Compatibility", 
                          (TxtWidgetSignalFunc) CompatibilitySettings, NULL),
-          TXT_NewButton("Save parameters and launch DOOM"),
+          TXT_NewButton2("Save parameters and launch DOOM", LaunchDoom, NULL),
           TXT_NewStrut(0, 1),
           TXT_NewButton2("Start a Network game", 
                          (TxtWidgetSignalFunc) StartMultiGame, NULL),

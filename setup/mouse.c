@@ -23,7 +23,7 @@
 
 #include "textscreen.h"
 
-#include "testconfig.h"
+#include "execute.h"
 #include "txt_mouseinput.h"
 
 #include "mouse.h"

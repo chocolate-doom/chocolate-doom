@@ -19,14 +19,85 @@
 // 02111-1307, USA.
 //
 
-// Code for invoking Doom to test the current configuration.
+// Code for invoking Doom
 
+#include <stdarg.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "textscreen.h"
 
+#include "execute.h"
+
+struct execute_context_s
+{
+    char *response_file;
+    FILE *stream;
+};
+
+execute_context_t *NewExecuteContext(void)
+{
+    execute_context_t *result;
+
+    result = malloc(sizeof(execute_context_t));
+    
+#ifdef _WIN32
+    result->response_file = "chocolat.rsp";
+#else
+    result->response_file = "/tmp/chocolate.rsp";
+#endif
+
+    result->stream = fopen(result->response_file, "w");
+
+    if (result->stream == NULL)
+    {
+        fprintf(stderr, "Error opening response file\n");
+        exit(-1);
+    }
+    
+    return result;
+}
+
+void AddCmdLineParameter(execute_context_t *context, char *s, ...)
+{
+    va_list args;
+
+    va_start(args, s);
+
+    vfprintf(context->stream, s, args);
+}
+
+void ExecuteDoom(execute_context_t *context)
+{
+    char *cmdline;
+    
+    fclose(context->stream);
+
+    // Build the command line
+
+    cmdline = malloc(strlen(INSTALL_DIR) 
+                     + strlen(context->response_file) + 20);
+
+#ifdef _WIN32
+    sprintf(cmdline, "chocolate-doom @%s", context->response_file);
+#else
+    sprintf(cmdline, INSTALL_DIR "/chocolate-doom @%s", context->response_file);
+#endif
+    
+    // Run the command
+    system(cmdline);
+
+    free(cmdline);
+    
+    // Destroy context 
+    remove(context->response_file);
+    free(context);
+}
+
 static void TestCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
 {
+    execute_context_t *exec;
     txt_window_t *testwindow;
     txt_label_t *label;
     
@@ -38,14 +109,11 @@ static void TestCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
     TXT_AddWidget(testwindow, label);
     TXT_DrawDesktop();
     
-#ifdef _WIN32
-    // On windows, just run the command - we aren't installed anywhere
-    // special.
-    system("chocolate-doom -testcontrols");
-#else
-    // Use the location where we are installed
-    system(INSTALL_DIR "/chocolate-doom -testcontrols");
-#endif
+    // Run with the -testcontrols parameter
+
+    exec = NewExecuteContext();
+    AddCmdLineParameter(exec, "-testcontrols");
+    ExecuteDoom(exec);
 
     TXT_CloseWindow(testwindow);
 }
