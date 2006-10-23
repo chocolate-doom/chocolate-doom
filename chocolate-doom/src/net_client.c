@@ -42,6 +42,7 @@
 #include "net_server.h"
 #include "net_structrw.h"
 #include "w_checksum.h"
+#include "w_wad.h"
 
 typedef enum
 {
