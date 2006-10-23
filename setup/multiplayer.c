@@ -25,6 +25,10 @@
 #include "d_englsh.h"
 #include "textscreen.h"
 
+#include "configfile.h"
+
+#include "execute.h"
+
 #include "multiplayer.h"
 
 #define NUM_WADS 10
@@ -74,9 +78,96 @@ static int warpmap = 1;
 
 static char *connect_address = NULL;
 
+static void AddWADs(execute_context_t *exec)
+{
+    int have_wads = 0;
+    int i;
+    
+    for (i=0; i<NUM_WADS; ++i)
+    {
+        if (wads[i] != NULL && strlen(wads[i]) > 0)
+        {
+            if (!have_wads)
+            {
+                AddCmdLineParameter(exec, "-file");
+            }
+
+            AddCmdLineParameter(exec, wads[i]);
+        }
+    }
+}
+
+static void AddExtraParameters(execute_context_t *exec)
+{
+    int i;
+    
+    for (i=0; i<NUM_EXTRA_PARAMS; ++i)
+    {
+        if (extra_params[i] != NULL && strlen(extra_params[i]) > 0)
+        {
+            AddCmdLineParameter(exec, extra_params[i]);
+        }
+    }
+}
+
 static void StartGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
 {
-    printf("Now we start the game.\n");
+    execute_context_t *exec;
+
+    exec = NewExecuteContext();
+    AddCmdLineParameter(exec, "-server");
+    AddCmdLineParameter(exec, "-skill %i", skill + 1);
+
+    if (nomonsters)
+    {
+        AddCmdLineParameter(exec, "-nomonsters");
+    }
+
+    if (fast)
+    {
+        AddCmdLineParameter(exec, "-fast");
+    }
+
+    if (respawn)
+    {
+        AddCmdLineParameter(exec, "-respawn");
+    }
+
+    if (deathmatch == 1)
+    {
+        AddCmdLineParameter(exec, "-deathmatch");
+    }
+    else if (deathmatch == 2)
+    {
+        AddCmdLineParameter(exec, "-altdeath");
+    }
+
+    if (timer > 0)
+    {
+        AddCmdLineParameter(exec, "-timer %i", timer);
+    }
+
+    if (warptype == WARP_DOOM1)
+    {
+        // TODO: select IWAD based on warp type
+        AddCmdLineParameter(exec, "-warp %i %i", warpepisode, warpmap);
+    }
+    else if (warptype == WARP_DOOM2)
+    {
+        AddCmdLineParameter(exec, "-warp %i", warpmap);
+    }
+
+    AddCmdLineParameter(exec, "-port %i", udpport);
+
+    AddWADs(exec);
+    AddExtraParameters(exec);
+
+    TXT_Shutdown();
+    
+    M_SaveDefaults();
+
+    ExecuteDoom(exec);
+
     exit(0);
 }
 
@@ -296,6 +387,36 @@ void StartMultiGame(void)
     UpdateWarpButton();
 }
 
+static void DoJoinGame(void *unused1, void *unused2)
+{
+    execute_context_t *exec;
+
+    exec = NewExecuteContext();
+
+    AddCmdLineParameter(exec, "-connect %s", connect_address);
+    AddExtraParameters(exec);
+    AddWADs(exec);
+
+    TXT_Shutdown();
+    
+    M_SaveDefaults();
+
+    ExecuteDoom(exec);
+
+    exit(0);
+}
+
+static txt_window_action_t *JoinGameAction(void)
+{
+    txt_window_action_t *action;
+
+    action = TXT_NewWindowAction(KEY_F10, "Connect");
+    TXT_SignalConnect(action, "pressed", DoJoinGame, NULL);
+
+    return action;
+}
+
+
 void JoinMultiGame(void)
 {
     txt_window_t *window;
@@ -310,7 +431,7 @@ void JoinMultiGame(void)
         TXT_NewButton2("Add WADs...", OpenWadsWindow, NULL),
         NULL);
 
-    TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, StartGameAction());
+    TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, JoinGameAction());
 }
 
 void SetChatMacroDefaults(void)
