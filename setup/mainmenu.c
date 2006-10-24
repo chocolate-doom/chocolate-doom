@@ -88,6 +88,7 @@ static void LaunchDoom(void *unused1, void *unused2)
     // Launch Doom
 
     exec = NewExecuteContext();
+    AddConfigParameters(exec);
     ExecuteDoom(exec);
 
     exit(0);

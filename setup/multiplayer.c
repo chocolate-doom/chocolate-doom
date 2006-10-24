@@ -165,6 +165,7 @@ static void StartGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
     TXT_Shutdown();
     
     M_SaveDefaults();
+    AddConfigParameters(exec);
 
     ExecuteDoom(exec);
 
@@ -400,6 +401,8 @@ static void DoJoinGame(void *unused1, void *unused2)
     TXT_Shutdown();
     
     M_SaveDefaults();
+
+    AddConfigParameters(exec);
 
     ExecuteDoom(exec);
 
