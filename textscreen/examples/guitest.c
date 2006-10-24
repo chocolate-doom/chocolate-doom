@@ -159,7 +159,11 @@ void Window2(void)
 
 int main(int argc, char *argv[])
 {
-    TXT_Init();
+    if (!TXT_Init())
+    {
+        fprintf(stderr, "Failed to initialise GUI\n");
+        exit(-1);
+    }
 
     TXT_SetDesktopTitle("Not Chocolate Doom Setup");
 
