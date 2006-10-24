@@ -145,7 +145,12 @@ static void InitConfig(void)
 
 static void RunGUI(void)
 {
-    TXT_Init();
+    if (!TXT_Init())
+    {
+        fprintf(stderr, "Failed to initialise GUI\n");
+        exit(-1);
+    }
+
     TXT_SetDesktopTitle(PACKAGE_NAME " Setup ver " PACKAGE_VERSION);
     
     MainMenu();

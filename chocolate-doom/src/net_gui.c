@@ -223,7 +223,12 @@ static void CheckMD5Sums(void)
 
 void NET_WaitForStart(void)
 {
-    TXT_Init();
+    if (!TXT_Init())
+    {
+        fprintf(stderr, "Failed to initialise GUI\n");
+        exit(-1);
+    }
+
     I_SetWindowCaption();
     I_SetWindowIcon();
 
