@@ -31,6 +31,12 @@
 #include "execute.h"
 #include "m_argv.h"
 
+#ifdef _WIN32
+#define DOOM_BINARY "chocolate-doom.exe"
+#else
+#define DOOM_BINARY INSTALL_DIR "/chocolate-doom"
+#endif
+
 struct execute_context_s
 {
     char *response_file;
@@ -97,14 +103,10 @@ void ExecuteDoom(execute_context_t *context)
 
     // Build the command line
 
-    cmdline = malloc(strlen(INSTALL_DIR) 
+    cmdline = malloc(strlen(DOOM_BINARY) 
                      + strlen(context->response_file) + 20);
 
-#ifdef _WIN32
-    sprintf(cmdline, "chocolate-doom @%s", context->response_file);
-#else
-    sprintf(cmdline, INSTALL_DIR "/chocolate-doom @%s", context->response_file);
-#endif
+    sprintf(cmdline, "%s @%s", DOOM_BINARY, context->response_file);
     
     // Run the command
     system(cmdline);
