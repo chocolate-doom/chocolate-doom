@@ -41,7 +41,10 @@
 #endif
 
 #include "config.h"
+
+#include "doomfeatures.h"
 #include "doomkeys.h"
+
 #include "m_argv.h"
 
 #include "compatibility.h"
