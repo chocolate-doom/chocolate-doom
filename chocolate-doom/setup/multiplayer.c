@@ -92,7 +92,7 @@ static void AddWADs(execute_context_t *exec)
                 AddCmdLineParameter(exec, "-file");
             }
 
-            AddCmdLineParameter(exec, wads[i]);
+            AddCmdLineParameter(exec, "\"%s\"", wads[i]);
         }
     }
 }
