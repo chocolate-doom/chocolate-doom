@@ -29,6 +29,7 @@
 #include "textscreen.h"
 
 #include "execute.h"
+#include "m_argv.h"
 
 struct execute_context_s
 {
@@ -57,6 +58,25 @@ execute_context_t *NewExecuteContext(void)
     }
     
     return result;
+}
+
+void AddConfigParameters(execute_context_t *context)
+{
+    int p;
+
+    p = M_CheckParm("-config");
+
+    if (p > 0)
+    {
+        AddCmdLineParameter(context, "-config \"%s\"", myargv[p + 1]);
+    }
+
+    p = M_CheckParm("-extraconfig");
+
+    if (p > 0)
+    {
+        AddCmdLineParameter(context, "-extraconfig \"%s\"", myargv[p + 1]);
+    }
 }
 
 void AddCmdLineParameter(execute_context_t *context, char *s, ...)
