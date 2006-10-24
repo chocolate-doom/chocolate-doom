@@ -56,7 +56,7 @@ static char *gamemodes[] =
     "Deathmatch 2.0",
 };
 
-char *player_name;
+char *net_player_name;
 char *chat_macros[10];
 
 static char *wads[NUM_WADS] = {};
@@ -464,19 +464,19 @@ void SetChatMacroDefaults(void)
 
 void SetPlayerNameDefault(void)
 {
-    if (player_name == NULL)
+    if (net_player_name == NULL)
     {
-        player_name = getenv("USER");
+        net_player_name = getenv("USER");
     }
 
-    if (player_name == NULL)
+    if (net_player_name == NULL)
     {
-        player_name = getenv("USERNAME");
+        net_player_name = getenv("USERNAME");
     }
 
-    if (player_name == NULL)
+    if (net_player_name == NULL)
     {
-        player_name = "player";
+        net_player_name = "player";
     }
 }
 
@@ -493,7 +493,7 @@ void MultiplayerConfig(void)
     TXT_AddWidgets(window, 
                    TXT_NewStrut(0, 1),
                    TXT_NewHorizBox(TXT_NewLabel("Player name:  "),
-                                   TXT_NewInputBox(&player_name, 25),
+                                   TXT_NewInputBox(&net_player_name, 25),
                                    NULL),
                    TXT_NewStrut(0, 1),
                    TXT_NewSeparator("Chat macros"),
