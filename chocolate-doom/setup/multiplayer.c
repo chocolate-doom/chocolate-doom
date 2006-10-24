@@ -61,7 +61,7 @@ char *chat_macros[10];
 
 static char *wads[NUM_WADS] = {};
 static char *extra_params[NUM_EXTRA_PARAMS] = {};
-static int skill = 0;
+static int skill = 2;
 static int nomonsters = 0;
 static int deathmatch = 0;
 static int fast = 0;
