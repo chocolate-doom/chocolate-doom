@@ -44,6 +44,7 @@
 
 #include "doomfeatures.h"
 #include "doomkeys.h"
+#include "d_englsh.h"
 
 #include "m_argv.h"
 
