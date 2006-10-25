@@ -47,7 +47,15 @@ static void UpdateJoybSpeed(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(var))
 {
     if (always_run)
     {
-       joybspeed = 31;
+        /*
+         <Janizdreg> if you want to pick one for chocolate doom to use, 
+                     pick 29, since that is the most universal one that 
+                     also works with heretic, hexen and strife =P
+
+         NB. This choice also works with original, ultimate and final exes.
+        */
+
+        joybspeed = 29;
     }
     else
     {
@@ -92,7 +100,7 @@ void ConfigKeyboard(void)
     txt_table_t *action_table;
     txt_checkbox_t *run_control;
 
-    always_run = joybspeed > 30;
+    always_run = joybspeed >= 10;
 
     window = TXT_NewWindow("Keyboard configuration");
 

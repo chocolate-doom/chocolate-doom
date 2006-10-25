@@ -392,7 +392,7 @@ void G_BuildTiccmd (ticcmd_t* cmd)
     // allowed an autorun effect
 
     speed = key_speed >= NUMKEYS
-         || joybspeed >= 4
+         || joybspeed >= 10
          || gamekeydown[key_speed] 
          || joybuttons[joybspeed];
  
