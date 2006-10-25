@@ -28,6 +28,7 @@
 
 #include "textscreen.h"
 
+#include "configfile.h"
 #include "execute.h"
 #include "m_argv.h"
 
@@ -121,6 +122,8 @@ void ExecuteDoom(execute_context_t *context)
 static void TestCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
 {
     execute_context_t *exec;
+    char *main_cfg;
+    char *extra_cfg;
     txt_window_t *testwindow;
     txt_label_t *label;
     
@@ -131,14 +134,34 @@ static void TestCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
     TXT_SetWidgetAlign(label, TXT_HORIZ_CENTER);
     TXT_AddWidget(testwindow, label);
     TXT_DrawDesktop();
-    
+
+    // Save temporary configuration files with the current configuration
+
+#ifdef _WIN32
+    main_cfg = "tmp.cfg";
+    extra_cfg = "extratmp.cfg";
+#else
+    main_cfg = "/tmp/tmp.cfg";
+    extra_cfg = "/tmp/extratmp.cfg";
+#endif
+
+    M_SaveMainDefaults(main_cfg);
+    M_SaveExtraDefaults(extra_cfg);
+
     // Run with the -testcontrols parameter
 
     exec = NewExecuteContext();
     AddCmdLineParameter(exec, "-testcontrols");
+    AddCmdLineParameter(exec, "-config %s", main_cfg);
+    AddCmdLineParameter(exec, "-extraconfig %s", extra_cfg);
     ExecuteDoom(exec);
 
     TXT_CloseWindow(testwindow);
+
+    // Delete the temporary config files
+
+    remove(main_cfg);
+    remove(extra_cfg);
 }
 
 txt_window_action_t *TestConfigAction(void)
