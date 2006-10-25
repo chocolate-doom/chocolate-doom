@@ -1046,8 +1046,6 @@ static void LoadResponseFile(int argv_index)
 
             infile[k] = '\0';
 
-            printf("added arg: '%s'\n", newargv[newargc - 1]);
-
             ++k;
         }
     } 
@@ -1063,6 +1061,8 @@ static void LoadResponseFile(int argv_index)
     myargv = newargv;
     myargc = newargc;
 
+#if 0
+    // Disabled - Vanilla Doom does not do this.
     // Display arguments
 
     printf("%d command-line args:\n", myargc);
@@ -1071,6 +1071,7 @@ static void LoadResponseFile(int argv_index)
     {
         printf("'%s'\n", myargv[k]);
     }
+#endif
 }
 
 //
