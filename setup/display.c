@@ -49,7 +49,7 @@ static vidmode_t modes[] =
 static int vidmode = 0;
 
 int autoadjust_video_settings = 1;
-int fullscreen = 0;
+int fullscreen = 1;
 int screenmultiply = 1;
 int startup_delay = 0;
 int show_endoom = 1;
