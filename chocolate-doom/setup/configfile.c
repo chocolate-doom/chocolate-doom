@@ -533,3 +533,47 @@ void M_LoadDefaults (void)
     LoadDefaultCollection(&extra_defaults);
 }
 
+// 
+// Save normal (default.cfg) defaults to a given file
+// 
+
+void M_SaveMainDefaults(char *filename)
+{
+    char *main_filename;
+
+    // Save the normal filename and set this one
+
+    main_filename = doom_defaults.filename;
+    doom_defaults.filename = filename;
+
+    // Save the file
+
+    SaveDefaultCollection(&doom_defaults);
+
+    // Restore the normal filename
+
+    doom_defaults.filename = main_filename;
+}
+
+// 
+// Save extra (chocolate-doom.cfg) defaults to a given file
+// 
+
+void M_SaveExtraDefaults(char *filename)
+{
+    char *main_filename;
+
+    // Save the normal filename and set this one
+
+    main_filename = extra_defaults.filename;
+    extra_defaults.filename = filename;
+
+    // Save the file
+
+    SaveDefaultCollection(&extra_defaults);
+
+    // Restore the normal filename
+
+    extra_defaults.filename = main_filename;
+}
+
