@@ -1501,7 +1501,7 @@ boolean M_Responder (event_t* ev)
 
     if (testcontrols)
     {
-        if (ch == KEY_ESCAPE)
+        if (ch == KEY_ESCAPE || ch == KEY_F10)
         {
             I_Quit();
             return true;
