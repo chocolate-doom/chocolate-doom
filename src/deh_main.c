@@ -335,16 +335,22 @@ static void DEH_ParseFile(char *filename)
 
 void DEH_Init(void)
 {
-    int argc;
+    int p;
 
     InitialiseSections();
 
-    argc = M_CheckParm("-deh");
+    p = M_CheckParm("-deh");
 
-    if (argc > 0)
+    if (p > 0)
     {
-        printf(" loading %s\n", myargv[argc+1]);
-        DEH_ParseFile(myargv[argc+1]);
+        ++p;
+
+        while (p < myargc && myargv[p][0] != '-')
+        {
+            printf(" loading %s\n", myargv[p]);
+            DEH_ParseFile(myargv[p]);
+            ++p;
+        }
     }
 }
 
