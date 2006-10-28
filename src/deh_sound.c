@@ -61,6 +61,12 @@ static void *DEH_SoundStart(deh_context_t *context, char *line)
         DEH_Warning(context, "Invalid sound number: %i", sound_number);
         return NULL;
     }
+
+    if (sound_number >= DEH_VANILLA_NUMSFX)
+    {
+        DEH_Warning(context, "Attempt to modify SFX %i.  This will problems "
+                             "in Vanilla dehacked.", sound_number); 
+    }
     
     sfx = &S_sfx[sound_number];
     

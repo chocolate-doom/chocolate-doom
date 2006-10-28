@@ -31,6 +31,13 @@
 #include "doomfeatures.h"
 #include "md5.h"
 
+// These are the limits that dehacked uses (from dheinit.h in the dehacked
+// source).  If these limits are exceeded, it does not generate an error, but
+// a warning is displayed.
+
+#define DEH_VANILLA_NUMSTATES 966
+#define DEH_VANILLA_NUMSFX 107
+
 void DEH_Init(void);
 
 boolean DEH_ParseAssignment(char *line, char **variable_name, char **value);
