@@ -62,6 +62,12 @@ static void *DEH_FrameStart(deh_context_t *context, char *line)
         return NULL;
     }
 
+    if (frame_number >= DEH_VANILLA_NUMSTATES) 
+    {
+        DEH_Warning(context, "Attempt to modify frame %i: this will cause "
+                             "problems in Vanilla dehacked.", frame_number);
+    }
+
     state = &states[frame_number];
 
     return state;
