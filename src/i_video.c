@@ -1046,6 +1046,23 @@ void I_InitGraphics(void)
     SDL_Event dummy;
     int flags = 0;
 
+#ifdef _WIN32
+
+    // From the SDL 1.2.10 release notes: 
+    //
+    // > The "windib" video driver is the default now, to prevent 
+    // > problems with certain laptops, 64-bit Windows, and Windows 
+    // > Vista. 
+    //
+    // The hell with that.
+
+    if (SDL_getenv("SDL_VIDEODRIVER") == NULL)
+    {
+        SDL_putenv("SDL_VIDEODRIVER=directx");
+    }
+
+#endif
+
     if (SDL_Init(SDL_INIT_VIDEO) < 0) 
     {
         I_Error("Failed to initialise video: %s", SDL_GetError());
