@@ -439,6 +439,20 @@ void I_GetEvent(void)
     }
 }
 
+// Warp the mouse back to the middle of the screen
+
+static void CenterMouse(void)
+{
+    // Warp the the screen center
+
+    SDL_WarpMouse(screen->w / 2, screen->h / 2);
+
+    // Clear any relative movement caused by warping
+
+    SDL_PumpEvents();
+    SDL_GetRelativeMouseState(NULL, NULL);
+}
+
 //
 // Read the change in mouse state to generate mouse motion events
 //
@@ -464,9 +478,7 @@ static void I_ReadMouse(void)
 
     if (MouseShouldBeGrabbed())
     {
-        SDL_WarpMouse(screen->w / 2, screen->h / 2);
-        SDL_PumpEvents();
-        SDL_GetRelativeMouseState(NULL, NULL);
+        CenterMouse();
     }
 }
 
@@ -1150,9 +1162,10 @@ void I_InitGraphics(void)
 
     SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 
-    // clear out any events waiting at the start
+    // clear out any events waiting at the start and center the mouse
   
     while (SDL_PollEvent(&dummy));
+    CenterMouse();
 
     initialised = true;
 }
