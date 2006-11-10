@@ -175,9 +175,19 @@ FILE *W_AddFile (char *filename)
     if (strcasecmp(filename+strlen(filename)-3 , "wad" ) )
     {
 	// single lump file
+
+        // fraggle: Swap the filepos and size here.  The WAD directory
+        // parsing code expects a little-endian directory, so will swap
+        // them back.  Effectively we're constructing a "fake WAD directory"
+        // here, as it would appear on disk.
+
 	fileinfo = Z_Malloc(sizeof(filelump_t), PU_STATIC, 0);
-	fileinfo->filepos = 0;
-	fileinfo->size = FileLength(handle);
+	fileinfo->filepos = LONG(0);
+	fileinfo->size = LONG(FileLength(handle));
+
+        // Name the lump after the base of the filename (without the
+        // extension).
+
 	ExtractFileBase (filename, fileinfo->name);
 	numlumps++;
     }
