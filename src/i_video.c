@@ -1048,6 +1048,13 @@ void I_InitGraphics(void)
 
 #ifdef _WIN32
 
+    // Allow -gdi as a shortcut for using the windib driver.
+
+    if (M_CheckParm("-gdi") > 0)
+    {
+        SDL_putenv("SDL_VIDEODRIVER=windib");
+    }
+
     // From the SDL 1.2.10 release notes: 
     //
     // > The "windib" video driver is the default now, to prevent 
