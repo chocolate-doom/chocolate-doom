@@ -462,8 +462,9 @@ I_InitSound()
 
     // If music or sound is going to play, we need to at least
     // initialise SDL
+    // No sound in screensaver mode.
 
-    if (nomusicparm && nosfxparm)
+    if (screensaver_mode || (nomusicparm && nosfxparm))
         return;
 
     if (SDL_Init(SDL_INIT_AUDIO) < 0)

@@ -132,6 +132,11 @@ int mouse_threshold = 10;
 
 static boolean MouseShouldBeGrabbed()
 {
+    // never grab the mouse when in screensaver mode
+   
+    if (screensaver_mode)
+        return false;
+
     // if the window doesnt have focus, never grab it
 
     if (!window_focused)
@@ -382,6 +387,11 @@ void I_GetEvent(void)
             continue;
         }
 
+        if (screensaver_mode && sdlevent.type == SDL_QUIT)
+        {
+            I_Quit();
+        }
+
         // process event
         
         switch (sdlevent.type)
@@ -392,11 +402,13 @@ void I_GetEvent(void)
 		event.data2 = sdlevent.key.keysym.unicode;
                 D_PostEvent(&event);
                 break;
+
             case SDL_KEYUP:
                 event.type = ev_keyup;
                 event.data1 = TranslateKey(&sdlevent.key.keysym);
                 D_PostEvent(&event);
                 break;
+
                 /*
             case SDL_MOUSEMOTION:
                 event.type = ev_mouse;
@@ -406,6 +418,7 @@ void I_GetEvent(void)
                 D_PostEvent(&event);
                 break;
                 */
+
             case SDL_MOUSEBUTTONDOWN:
 		if (usemouse && !nomouse)
 		{
@@ -415,6 +428,7 @@ void I_GetEvent(void)
                     D_PostEvent(&event);
 		}
                 break;
+
             case SDL_MOUSEBUTTONUP:
 		if (usemouse && !nomouse)
 		{
@@ -424,15 +438,18 @@ void I_GetEvent(void)
                     D_PostEvent(&event);
 		}
                 break;
+
             case SDL_QUIT:
                 // bring up the "quit doom?" prompt
                 S_StartSound(NULL,sfx_swtchn);
                 M_QuitDOOM(0);
                 break;
+
             case SDL_ACTIVEEVENT:
                 // need to update our focus state
                 UpdateFocus();
                 break;
+
             default:
                 break;
         }
@@ -534,18 +551,10 @@ static void UpdateGrab(void)
 static void BlitArea(int x1, int y1, int x2, int y2)
 {
     int w = x2 - x1;
-    int y_offset;
+    int x_offset, y_offset;
 
-    // Y offset when running in letterbox mode
-
-    if (fullscreen == FULLSCREEN_LETTERBOX)
-    {
-        y_offset = (LETTERBOX_SCREENHEIGHT - SCREENHEIGHT) / 2;
-    }
-    else
-    {
-        y_offset = 0;
-    }
+    x_offset = ((screen->w / screenmultiply) - SCREENWIDTH) / 2;
+    y_offset = ((screen->h / screenmultiply) - SCREENHEIGHT) / 2;
     
     // Need to byte-copy from buffer into the screen buffer
 
@@ -559,7 +568,8 @@ static void BlitArea(int x1, int y1, int x2, int y2)
         {
             pitch = screen->pitch;
             bufp = screens[0] + y1 * SCREENWIDTH + x1;
-            screenp = (byte *) screen->pixels + (y1 + y_offset) * pitch + x1;
+            screenp = (byte *) screen->pixels + (y1 + y_offset) * pitch 
+                                              + x1 + x_offset;
     
             for (y=y1; y<y2; ++y)
             {
@@ -586,7 +596,7 @@ static void BlitArea(int x1, int y1, int x2, int y2)
             bufp = screens[0] + y1 * SCREENWIDTH + x1;
             screenp = (byte *) screen->pixels 
                     + (y1 + y_offset) * pitch 
-                    + x1 * 2;
+                    + (x1 + x_offset) * 2;
             screenp2 = screenp + screen->pitch;
     
             for (y=y1; y<y2; ++y)
@@ -623,7 +633,7 @@ static void BlitArea(int x1, int y1, int x2, int y2)
             bufp = screens[0] + y1 * SCREENWIDTH + x1;
             screenp = (byte *) screen->pixels 
                     + (y1 + y_offset) * pitch 
-                    + x1 * 3;
+                    + (x1 + x_offset) * 3;
             screenp2 = screenp + screen->pitch;
             screenp3 = screenp2 + screen->pitch;
     
@@ -664,7 +674,7 @@ static void BlitArea(int x1, int y1, int x2, int y2)
             bufp = screens[0] + y1 * SCREENWIDTH + x1;
             screenp = (byte *) screen->pixels 
                     + (y1 + y_offset) * pitch 
-                    + x1 * 4;
+                    + (x1 + x_offset) * 4;
             screenp2 = screenp + screen->pitch;
             screenp3 = screenp2 + screen->pitch;
             screenp4 = screenp3 + screen->pitch;
@@ -1041,10 +1051,75 @@ static void AutoAdjustSettings(void)
     }
 }
 
+// Check if we have been invoked as a screensaver by xscreensaver.
+
+void I_CheckIsScreensaver(void)
+{
+    char *env;
+
+    env = SDL_getenv("XSCREENSAVER_WINDOW");
+
+    if (env != NULL)
+    {
+        screensaver_mode = true;
+    }
+}
+
+// In screensaver mode, pick a screenmultiply value that fits
+// inside the screen.  It is okay to do this because settings
+// are not saved in screensaver mode.
+
+static void FindScreensaverMultiply(void)
+{
+    int i;
+
+    for (i=1; i<=4; ++i)
+    {
+        if (SCREENWIDTH * i <= screen->w
+         && SCREENHEIGHT * i <= screen->h)
+        {
+            screenmultiply = i;
+        }
+    }
+}
+
+// Blank cursor so we don't see the mouse.  It is not okay to
+// do SDL_ShowCursor(0) because this will hide the mouse in
+// the configuration dialog.  Only show no mouse when over this
+// window.
+
+static void SetBlankCursor(void)
+{
+    Uint8 zero = zero;
+    SDL_Cursor *cursor;
+
+    cursor = SDL_CreateCursor(&zero, &zero, 1, 1, 0, 0);
+
+    SDL_SetCursor(cursor);
+}
+
 void I_InitGraphics(void)
 {
     SDL_Event dummy;
     int flags = 0;
+    char *env;
+
+    // Pass through the XSCREENSAVER_WINDOW environment variable to 
+    // SDL_WINDOWID, to embed the SDL window into the Xscreensaver
+    // window.
+
+    env = SDL_getenv("XSCREENSAVER_WINDOW");
+
+    if (env != NULL)
+    {
+        char winenv[30];
+        int winid;
+
+        sscanf(env, "0x%x", &winid);
+        sprintf(winenv, "SDL_WINDOWID=%i", winid);
+
+        SDL_putenv(winenv);
+    }
 
 #ifdef _WIN32
 
@@ -1096,11 +1171,26 @@ void I_InitGraphics(void)
         flags |= SDL_FULLSCREEN;
     }
 
+    if (screensaver_mode)
+    {
+        windowwidth = 0;
+        windowheight = 0;
+    }
+
     screen = SDL_SetVideoMode(windowwidth, windowheight, 8, flags);
 
     if (screen == NULL)
     {
         I_Error("Error setting video mode: %s\n", SDL_GetError());
+    }
+
+    // In screensaver mode, screenmultiply as large as possible
+    // and set a blank cursor.
+
+    if (screensaver_mode)
+    {
+        FindScreensaverMultiply();
+        SetBlankCursor();
     }
 
     // Start with a clear black screen
@@ -1137,7 +1227,7 @@ void I_InitGraphics(void)
     // setting the screen mode, so that the game doesn't start immediately
     // with the player unable to see anything.
 
-    if (fullscreen)
+    if (fullscreen && !screensaver_mode)
     {
         SDL_Delay(startup_delay);
     }
