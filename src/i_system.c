@@ -106,6 +106,7 @@ byte *I_ZoneBase (int *size)
 //
 void I_Init (void)
 {
+    I_CheckIsScreensaver();
     I_InitSound();
     I_InitMusic();
     I_InitTimer();
@@ -164,10 +165,15 @@ void I_Quit (void)
     G_CheckDemoStatus();
     I_ShutdownSound();
     I_ShutdownMusic();
-    M_SaveDefaults ();
+
+    if (!screensaver_mode)
+    {
+        M_SaveDefaults ();
+    }
+
     I_ShutdownGraphics();
 
-    if (show_endoom && !testcontrols)
+    if (show_endoom && !testcontrols && !screensaver_mode)
     {
         I_Endoom();
     }

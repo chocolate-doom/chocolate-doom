@@ -111,6 +111,10 @@ boolean         fastparm;	// checkparm of -fast
 boolean		singletics = false; // debug flag to cancel adaptiveness
 
 
+// If true, game is running as a screensaver
+
+boolean         screensaver_mode = false;
+
 
 //extern int soundVolume;
 //extern  int	sfxVolume;
@@ -1295,7 +1299,7 @@ void D_DoomMain (void)
     char            demolumpname[9];
 
     FindResponseFile ();
-	
+
     // print banner
 
     PrintBanner(PACKAGE_STRING);
