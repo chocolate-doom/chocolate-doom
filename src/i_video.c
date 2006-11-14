@@ -26,6 +26,7 @@
 
 
 #include <SDL.h>
+#include <stdlib.h>
 #include <ctype.h>
 #include <math.h>
 
@@ -1057,7 +1058,7 @@ void I_CheckIsScreensaver(void)
 {
     char *env;
 
-    env = SDL_getenv("XSCREENSAVER_WINDOW");
+    env = getenv("XSCREENSAVER_WINDOW");
 
     if (env != NULL)
     {
@@ -1108,7 +1109,7 @@ void I_InitGraphics(void)
     // SDL_WINDOWID, to embed the SDL window into the Xscreensaver
     // window.
 
-    env = SDL_getenv("XSCREENSAVER_WINDOW");
+    env = getenv("XSCREENSAVER_WINDOW");
 
     if (env != NULL)
     {
@@ -1118,7 +1119,7 @@ void I_InitGraphics(void)
         sscanf(env, "0x%x", &winid);
         sprintf(winenv, "SDL_WINDOWID=%i", winid);
 
-        SDL_putenv(winenv);
+        putenv(winenv);
     }
 
 #ifdef _WIN32
@@ -1127,7 +1128,7 @@ void I_InitGraphics(void)
 
     if (M_CheckParm("-gdi") > 0)
     {
-        SDL_putenv("SDL_VIDEODRIVER=windib");
+        putenv("SDL_VIDEODRIVER=windib");
     }
 
     // From the SDL 1.2.10 release notes: 
@@ -1138,9 +1139,9 @@ void I_InitGraphics(void)
     //
     // The hell with that.
 
-    if (SDL_getenv("SDL_VIDEODRIVER") == NULL)
+    if (getenv("SDL_VIDEODRIVER") == NULL)
     {
-        SDL_putenv("SDL_VIDEODRIVER=directx");
+        putenv("SDL_VIDEODRIVER=directx");
     }
 
 #endif
