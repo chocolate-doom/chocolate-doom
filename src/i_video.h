@@ -58,6 +58,8 @@ void I_EndRead (void);
 void I_SetWindowCaption(void);
 void I_SetWindowIcon(void);
 
+void I_CheckIsScreensaver(void);
+
 extern int autoadjust_video_settings;
 extern boolean screenvisible;
 extern int screenmultiply;

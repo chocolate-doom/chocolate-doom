@@ -55,6 +55,7 @@ extern  boolean	fastparm;	// checkparm of -fast
 extern  boolean	devparm;	// DEBUG: launched with -devparm
 
 
+extern  boolean screensaver_mode;    // game running as a screensaver?
 
 // -----------------------------------------------------
 // Game Mode - identify IWAD as shareware, retail etc.
