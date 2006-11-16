@@ -103,7 +103,7 @@ static void BuildGUI(void)
 static void UpdateGUI(void)
 {
     txt_window_action_t *startgame;
-    char buf[20];
+    char buf[50];
     unsigned int i;
 
     for (i=0; i<MAXPLAYERS; ++i)
