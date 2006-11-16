@@ -672,6 +672,12 @@ static void NET_CL_ParseGameStart(net_packet_t *packet)
 	printf("Syncing netgames like Vanilla Doom.\n");
     }
 
+    if (lowres_turn)
+    {
+        printf("NOTE: Turning resolution is reduced; this is probably "
+               "because there is a client recording a Vanilla demo.\n");
+    }
+
     // Clear the receive window
 
     memset(recvwindow, 0, sizeof(recvwindow));
