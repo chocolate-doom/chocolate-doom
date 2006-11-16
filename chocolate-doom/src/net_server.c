@@ -660,10 +660,6 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
     {
         if (sv_players[i] != NULL && sv_players[i]->recording_lowres)
         {
-            NET_SV_BroadcastMessage("Playing in low resolution turning mode, "
-                                    "because player %i is recording a Vanilla demo.\n",
-                                    i + 1);
-                   
             settings.lowres_turn = true;
         }
     }
