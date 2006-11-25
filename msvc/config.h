@@ -11,17 +11,18 @@
 #define PACKAGE_NAME "Chocolate Doom"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Chocolate Doom 0.2.0"
+#define PACKAGE_STRING "Chocolate Doom 0.0.0"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "chocolate-doom"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "0.2.0"
+#define PACKAGE_VERSION "0.0.0"
 
 /* Version number of package */
-#define VERSION "0.2.0"
+#define VERSION "0.0.0"
 
 /* Define to 1 if your processor stores words with the most significant byte
    first (like Motorola and SPARC, unlike Intel and VAX). */
 /* #undef WORDS_BIGENDIAN */
+
