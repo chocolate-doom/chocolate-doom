@@ -29,20 +29,30 @@
 #ifndef __DOOMTYPE__
 #define __DOOMTYPE__
 
+// C99 integer types; with gcc we just use this.  Other compilers 
+// should add conditional statements that define the C99 types.
 
-#ifndef __BYTEBOOL__
-#define __BYTEBOOL__
-// Fixed to use builtin bool type with C++.
+#include <stdint.h>
+
 #ifdef __cplusplus
+
+// Use builtin bool type with C++.
+
 typedef bool boolean;
+
 #else
-typedef enum {false, true} boolean;
-#endif
-typedef unsigned char byte;
+
+typedef enum 
+{
+	false, 
+	true
+} boolean;
+
 #endif
 
+typedef uint8_t byte;
 
 #include <limits.h>
 
-
 #endif
+
