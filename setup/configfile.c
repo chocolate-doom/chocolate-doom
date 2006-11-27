@@ -227,16 +227,16 @@ static default_t	doom_defaults_list[] =
 
     {"usegamma", &usegamma, DEFAULT_INT, 0, 0},
 
-    {"chatmacro0", &chat_macros[0], DEFAULT_STRING, 0 },
-    {"chatmacro1", &chat_macros[1], DEFAULT_STRING, 0 },
-    {"chatmacro2", &chat_macros[2], DEFAULT_STRING, 0 },
-    {"chatmacro3", &chat_macros[3], DEFAULT_STRING, 0 },
-    {"chatmacro4", &chat_macros[4], DEFAULT_STRING, 0 },
-    {"chatmacro5", &chat_macros[5], DEFAULT_STRING, 0 },
-    {"chatmacro6", &chat_macros[6], DEFAULT_STRING, 0 },
-    {"chatmacro7", &chat_macros[7], DEFAULT_STRING, 0 },
-    {"chatmacro8", &chat_macros[8], DEFAULT_STRING, 0 },
-    {"chatmacro9", &chat_macros[9], DEFAULT_STRING, 0 },
+    {"chatmacro0", &chat_macros[0], DEFAULT_STRING, 0, 0 },
+    {"chatmacro1", &chat_macros[1], DEFAULT_STRING, 0, 0 },
+    {"chatmacro2", &chat_macros[2], DEFAULT_STRING, 0, 0 },
+    {"chatmacro3", &chat_macros[3], DEFAULT_STRING, 0, 0 },
+    {"chatmacro4", &chat_macros[4], DEFAULT_STRING, 0, 0 },
+    {"chatmacro5", &chat_macros[5], DEFAULT_STRING, 0, 0 },
+    {"chatmacro6", &chat_macros[6], DEFAULT_STRING, 0, 0 },
+    {"chatmacro7", &chat_macros[7], DEFAULT_STRING, 0, 0 },
+    {"chatmacro8", &chat_macros[8], DEFAULT_STRING, 0, 0 },
+    {"chatmacro9", &chat_macros[9], DEFAULT_STRING, 0, 0 },
 };
 
 static default_collection_t doom_defaults = 
@@ -260,7 +260,7 @@ static default_t extra_defaults_list[] =
     {"vanilla_savegame_limit",      &vanilla_savegame_limit, DEFAULT_INT, 0, 0},
     {"vanilla_demo_limit",          &vanilla_demo_limit, DEFAULT_INT, 0, 0},
 #ifdef FEATURE_MULTIPLAYER
-    {"player_name",                 &net_player_name,          DEFAULT_STRING, 0},
+    {"player_name",                 &net_player_name,          DEFAULT_STRING, 0, 0},
 #endif
 };
 
