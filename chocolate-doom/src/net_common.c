@@ -191,7 +191,7 @@ static void NET_Conn_ParseReliableACK(net_connection_t *conn, net_packet_t *pack
             
     // Is this an acknowledgement for the first packet in the list?
 
-    if (seq == ((conn->reliable_packets->seq + 1) & 0xff))
+    if (seq == (unsigned int)((conn->reliable_packets->seq + 1) & 0xff))
     {
         net_reliable_packet_t *rp;
 
@@ -224,7 +224,7 @@ static boolean NET_Conn_ReliablePacket(net_connection_t *conn,
         return true;
     }
 
-    if (seq != (conn->reliable_recv_seq & 0xff))
+    if (seq != (unsigned int)(conn->reliable_recv_seq & 0xff))
     {
         // This is not the next expected packet in the sequence!
         //
