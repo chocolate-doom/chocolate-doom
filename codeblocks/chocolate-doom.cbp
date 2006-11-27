@@ -40,9 +40,6 @@
 			<Add alias="All" targets="Debug;Release;" />
 		</VirtualTargets>
 		<Compiler>
-			<Add option="-DFEATURE_MULTIPLAYER" />
-			<Add option="-DFEATURE_DEHACKED" />
-			<Add option="-DFEATURE_WAD_MERGE" />
 			<Add directory="..\textscreen" />
 			<Add directory="..\msvc" />
 			<Add directory="..\src" />
@@ -52,7 +49,7 @@
 		</Linker>
 		<Unit filename="chocolate-doom-res.rc">
 			<Option compilerVar="WINDRES" />
-			<Option objectName="codeblocks\chocolate-doom-res.res" />
+			<Option objectName="chocolate-doom-res.res" />
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
