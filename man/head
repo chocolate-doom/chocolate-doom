@@ -8,7 +8,7 @@ chocolate\-doom \- historically compatible doom engine
 [\fICHOCOLATE\-DOOM OPTIONS\fR]
 .SH DESCRIPTION
 .PP
-chocolate\-doom is a modern doom engine designed to behave
+Chocolate Doom is a modern doom engine designed to behave
 as similar to the original doom game as is possible.
 .br
 Command-line arguments are divided up into \fBDOOM
