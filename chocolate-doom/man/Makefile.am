@@ -9,6 +9,6 @@ chocolate-doom.6: $(MANPAGE_GEN_FILES)
 	cp head $@
 	echo .SH DOOM OPTIONS >> $@
 	awk -F"\t" '{print ".TP\n\\fB"$$1"\\fR"; $$1=""; print }' < doom-options.in >>$@
-	echo .SH CHOCOLATE\\-DOOM OPTIONS >> $@
+	echo .SH CHOCOLATE DOOM OPTIONS >> $@
 	awk -F"\t" '{print ".TP\n\\fB"$$1"\\fR"; $$1=""; print }' < chocolate-doom-options.in >>$@
-	m4 -DAUTHORS="`cat ../AUTHORS`" foot >> $@
+	sed "s/AUTHORS/`cat ../AUTHORS`/" < foot >> $@
