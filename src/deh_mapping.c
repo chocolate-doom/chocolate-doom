@@ -56,7 +56,7 @@ boolean DEH_SetMapping(deh_context_t *context, deh_mapping_t *mapping,
                 return false;
             }
 
-            location = structptr + (entry->location - mapping->base);
+            location = (uint8_t *)structptr + ((uint8_t *)entry->location - (uint8_t *)mapping->base);
 
      //       printf("Setting %p::%s to %i (%i bytes)\n",
      //               structptr, name, value, entry->size);
@@ -64,13 +64,13 @@ boolean DEH_SetMapping(deh_context_t *context, deh_mapping_t *mapping,
             switch (entry->size)
             {
                 case 1:
-                    * ((unsigned char *) location) = value;
+                    * ((uint8_t *) location) = value;
                     break;
                 case 2:
-                    * ((unsigned short *) location) = value;
+                    * ((uint16_t *) location) = value;
                     break;
                 case 4:
-                    * ((unsigned int *) location) = value;
+                    * ((uint32_t *) location) = value;
                     break;
                 default:
                     DEH_Error(context, "Unknown field type for '%s' (BUG)", name);
@@ -109,18 +109,18 @@ void DEH_StructMD5Sum(md5_context_t *context, deh_mapping_t *mapping,
 
         // Add in data for this field
 
-        location = structptr + (entry->location - mapping->base);
+        location = (uint8_t *)structptr + ((uint8_t *)entry->location - (uint8_t *)mapping->base);
 
         switch (entry->size)
         {
             case 1:
-                MD5_UpdateInt32(context, *((unsigned char *) location));
+                MD5_UpdateInt32(context, *((uint8_t *) location));
                 break;
             case 2:
-                MD5_UpdateInt32(context, *((unsigned short *) location));
+                MD5_UpdateInt32(context, *((uint16_t *) location));
                 break;
             case 4:
-                MD5_UpdateInt32(context, *((unsigned int *) location));
+                MD5_UpdateInt32(context, *((uint32_t *) location));
                 break;
             default:
                 I_Error("Unknown dehacked mapping field type for '%s' (BUG)", 
