@@ -1,18 +1,34 @@
 To do:
 
+* Joystick/gamepad support.
 * Aspect ratio correction - stretch 320x200 to 320x240, 640x480, etc.
+* Smarter setup program - detect IWADs automatically and make them 
+  selectable from a list.
+* Free version of the Chocolate Doom logo (from scratch, not using the 
+  Doom imp sprite), so t-shirts can be printed!
+* Icon for chocolate-setup.
 * Automatic WAD installer - download and run TCs from a list automatically
   (automating the current "instructions on wiki" system)
 * On Windows, search the Final Doom/Doom Collector's Edition install 
   dirs for IWADs.
 * Demo hashes for regression testing of this and other ports.
+* Multiplayer:
+  - Master server for locating servers automatically - makes setting up
+    public servers easier.
+  - DWANGO-like interface for finding players and setting up games.
+  - Incorporate local LAN search into setup interface.
+  - Multiplayer options and configuration file (server name, etc)
 * Improve multiplayer startup: 
   - Select an IWAD automatically from the server's game type rather than
     all players having to specify -iwad.
   - Send list of WADs to load instead of all clients having to specify -file.
   - Same applies to dehacked patches and wad merging parameters.
+* MSVC build
 * Portability improvements:
   - Use size-specific types (eg. int32_t instead of int)
   - Don't make structure packing assumptions when loading levels.
+* OPL emulation
+* Port to every OS under the sun
+* PC speaker support.
 * Video capture mode?
 
