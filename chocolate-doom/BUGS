@@ -14,13 +14,6 @@
   of which MIDI instruments are used by doom.exe, it may be possible
   to get a closer conversion.
 
-* Some music which works in Vanilla Doom does not work in Chocolate Doom
-
-  An example is the music on the title screen of deca.wad.  The music here
-  does not seem to be in the .mus format, yet somehow plays in Vanilla
-  Doom nonetheless.  Attempting to convert it using the mmus2mid code 
-  used in Chocolate Doom results in a crash.
-
 * A small number of Doom bugs are almost impossible to emulate.
 
   An example of this can be seen in Ledmeister's "Blackbug" demo which 
