@@ -113,7 +113,7 @@ angle_t			xtoviewangle[SCREENWIDTH+1];
 // fixed_t		finetangent[FINEANGLES/2];
 
 // fixed_t		finesine[5*FINEANGLES/4];
-fixed_t*		finecosine = &finesine[FINEANGLES/4];
+const fixed_t*		finecosine = &finesine[FINEANGLES/4];
 
 
 lighttable_t*		scalelight[LIGHTLEVELS][MAXLIGHTSCALE];
