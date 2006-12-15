@@ -622,7 +622,7 @@ void F_BunnyScroll (void)
 
     V_MarkRect (0, 0, SCREENWIDTH, SCREENHEIGHT);
 	
-    scrolled = (signed int) (320 - (finalecount-230)/2);
+    scrolled = (320 - ((signed int) finalecount-230)/2);
     if (scrolled > 320)
 	scrolled = 320;
     if (scrolled < 0)
