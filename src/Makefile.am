@@ -60,6 +60,7 @@ hu_lib.c             hu_lib.h              \
 hu_stuff.c           hu_stuff.h            \
 i_main.c                                   \
 info.c               info.h                \
+i_scale.c            i_scale.h             \
 i_sound.c            i_sound.h             \
 i_system.c           i_system.h            \
 i_timer.c            i_timer.h             \
