@@ -2,7 +2,7 @@
 //-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2006 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -25,49 +25,19 @@
 //-----------------------------------------------------------------------------
 
 
-#ifndef __I_VIDEO__
-#define __I_VIDEO__
-
+#ifndef __I_SCALE__
+#define __I_SCALE__
 
 #include "doomtype.h"
 
+void I_InitScale(byte *_src_buffer, byte *_dest_buffer, int _dest_pitch);
+void I_Scale1x(int x1, int y1, int x2, int y2);
+void I_Scale2x(int x1, int y1, int x2, int y2);
+void I_Scale3x(int x1, int y1, int x2, int y2);
+void I_Scale4x(int x1, int y1, int x2, int y2);
+void I_Stretch1x(int x1, int y1, int x2, int y2);
+void I_Stretch2x(int x1, int y1, int x2, int y2);
+void I_InitStretchTables(byte *palette);
 
+#endif /* #ifndef __I_SCALE__ */
 
-// Called by D_DoomMain,
-// determines the hardware configuration
-// and sets up the video mode
-void I_InitGraphics (void);
-
-
-void I_ShutdownGraphics(void);
-
-// Takes full 8 bit values.
-void I_SetPalette (byte* palette);
-
-void I_UpdateNoBlit (void);
-void I_FinishUpdate (void);
-
-// Wait for vertical retrace or pause a bit.
-void I_WaitVBL(int count);
-
-void I_ReadScreen (byte* scr);
-
-void I_BeginRead (void);
-void I_EndRead (void);
-
-void I_SetWindowCaption(void);
-void I_SetWindowIcon(void);
-
-void I_CheckIsScreensaver(void);
-
-extern int autoadjust_video_settings;
-extern boolean screenvisible;
-extern int screenmultiply;
-extern int fullscreen;
-extern int aspect_ratio_correct;
-extern boolean grabmouse;
-extern float mouse_acceleration;
-extern int mouse_threshold;
-extern int startup_delay;
-
-#endif
