@@ -9,7 +9,7 @@
 		<Option virtualFolders="" />
 		<Build>
 			<Target title="Debug-dyn">
-				<Option output="..\bin\lib\libtextscreen-dbg.dll" />
+				<Option output="..\bin\lib\libtextscreen-dbg.dll" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="..\bin" />
 				<Option object_output="..\obj\dbg-dyn" />
 				<Option type="3" />
@@ -22,7 +22,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release-dyn">
-				<Option output="..\bin\lib\libtextscreen.dll" />
+				<Option output="..\bin\lib\libtextscreen.dll" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="..\bin" />
 				<Option object_output="..\obj\rel-dyn" />
 				<Option type="3" />
@@ -37,7 +37,7 @@
 				</Linker>
 			</Target>
 			<Target title="Debug-stc">
-				<Option output="..\bin\lib\libtextscreen-dbg.a" />
+				<Option output="..\bin\lib\libtextscreen-dbg.a" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="" />
 				<Option object_output="..\obj\dbg-stc" />
 				<Option type="2" />
@@ -49,7 +49,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release-stc">
-				<Option output="..\bin\lib\libtextscreen.a" />
+				<Option output="..\bin\lib\libtextscreen.a" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="" />
 				<Option object_output="..\obj\rel-stc" />
 				<Option type="2" />
@@ -364,6 +364,8 @@
 			<Option target="Release-stc" />
 			<Option target="Debug-stc" />
 		</Unit>
-		<Extensions />
+		<Extensions>
+			<code_completion />
+		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
