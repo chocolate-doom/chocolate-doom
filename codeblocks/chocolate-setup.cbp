@@ -403,6 +403,8 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
-		<Extensions />
+		<Extensions>
+			<code_completion />
+		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
