@@ -348,6 +348,7 @@ static default_t extra_defaults_list[] =
 {
     {"autoadjust_video_settings",   &autoadjust_video_settings, DEFAULT_INT, 0, 0},
     {"fullscreen",                  &fullscreen, DEFAULT_INT, 0, 0},
+    {"aspect_ratio_correct",        &aspect_ratio_correct, DEFAULT_INT, 0, 0},
     {"startup_delay",               &startup_delay, DEFAULT_INT, 0, 0},
     {"screenmultiply",              &screenmultiply, DEFAULT_INT, 0, 0},
     {"grabmouse",                   &grabmouse, DEFAULT_INT, 0, 0},

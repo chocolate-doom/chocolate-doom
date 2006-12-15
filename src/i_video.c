@@ -37,6 +37,7 @@
 #include "doomdef.h"
 #include "doomstat.h"
 #include "d_main.h"
+#include "i_scale.h"
 #include "i_system.h"
 #include "i_timer.h"
 #include "m_argv.h"
@@ -49,13 +50,19 @@
 
 // Alternate screenheight for letterbox mode
 
-#define LETTERBOX_SCREENHEIGHT 240
+#define SCREENHEIGHT_4_3 240
 
 enum
 {
     FULLSCREEN_OFF,
     FULLSCREEN_ON,
-    FULLSCREEN_LETTERBOX,
+};
+
+enum
+{
+    RATIO_CORRECT_NONE,
+    RATIO_CORRECT_LETTERBOX,
+    RATIO_CORRECT_STRETCH,
 };
 
 extern void M_QuitDOOM();
@@ -89,6 +96,10 @@ int autoadjust_video_settings = 1;
 // Run in full screen mode?  (int type for config code)
 
 int fullscreen = FULLSCREEN_ON;
+
+// Aspect ratio correction mode
+
+int aspect_ratio_correct = RATIO_CORRECT_NONE;
 
 // Time to wait for the screen to settle on startup before starting the
 // game (ms)
@@ -547,165 +558,77 @@ static void UpdateGrab(void)
 
 // Update a small portion of the screen
 //
-// Does 2x stretching and buffer blitting if neccessary
+// Does stretching and buffer blitting if neccessary
 
 static void BlitArea(int x1, int y1, int x2, int y2)
 {
-    int w = x2 - x1;
+    void (*scale_function)(int x1, int y1, int x2, int y2);
     int x_offset, y_offset;
 
-    x_offset = ((screen->w / screenmultiply) - SCREENWIDTH) / 2;
-    y_offset = ((screen->h / screenmultiply) - SCREENHEIGHT) / 2;
-    
-    // Need to byte-copy from buffer into the screen buffer
-
-    if (screenmultiply == 1 && !native_surface)
+    if (native_surface)
     {
-        byte *bufp, *screenp;
-        int y;
-        int pitch;
+	return;
+    }
 
-        if (SDL_LockSurface(screen) >= 0)
+    if (aspect_ratio_correct == RATIO_CORRECT_LETTERBOX)
+    {
+        x_offset = (screen->w - SCREENWIDTH * screenmultiply) / 2;
+        y_offset = (screen->h - SCREENHEIGHT * screenmultiply) / 2;
+    }
+    else
+    {
+        x_offset = 0;
+        y_offset = 0;
+    }
+
+    if (aspect_ratio_correct == RATIO_CORRECT_STRETCH)
+    {
+        if (screenmultiply == 1)
         {
-            pitch = screen->pitch;
-            bufp = screens[0] + y1 * SCREENWIDTH + x1;
-            screenp = (byte *) screen->pixels + (y1 + y_offset) * pitch 
-                                              + x1 + x_offset;
-    
-            for (y=y1; y<y2; ++y)
-            {
-                memcpy(screenp, bufp, w);
-                screenp += pitch;
-                bufp += SCREENWIDTH;
-            }
-    
-            SDL_UnlockSurface(screen);
+            scale_function = I_Stretch1x;
+        }
+        else if (screenmultiply == 2)
+        { 
+            scale_function = I_Stretch2x;
+        }
+        else
+        {
+            I_Error("No aspect ratio stretching function for screenmultiply=%i",
+                    screenmultiply);
+            return;
+        }
+    } else {
+        if (screenmultiply == 1)
+        {
+            scale_function = I_Scale1x;
+        }
+        else if (screenmultiply == 2) 
+        {
+            scale_function = I_Scale2x;
+        }
+        else if (screenmultiply == 3)
+        {
+            scale_function = I_Scale3x;
+        }
+        else if (screenmultiply == 4)
+        {
+            scale_function = I_Scale4x;
+        }
+        else
+        {
+            I_Error("No scale function found!");
+            return;
         }
     }
 
-    // scales the screen size before blitting it
-
-    if (screenmultiply == 2)
+    if (SDL_LockSurface(screen) >= 0)
     {
-        byte *bufp, *screenp, *screenp2;
-        int x, y;
-        int pitch;
-
-        if (SDL_LockSurface(screen) >= 0)
-        {
-            pitch = screen->pitch * 2;
-            bufp = screens[0] + y1 * SCREENWIDTH + x1;
-            screenp = (byte *) screen->pixels 
-                    + (y1 + y_offset) * pitch 
-                    + (x1 + x_offset) * 2;
-            screenp2 = screenp + screen->pitch;
-    
-            for (y=y1; y<y2; ++y)
-            {
-                byte *sp, *sp2, *bp;
-                sp = screenp;
-                sp2 = screenp2;
-                bp = bufp;
-    
-                for (x=x1; x<x2; ++x)
-                {
-                    *sp++ = *bp;  *sp++ = *bp;
-                    *sp2++ = *bp; *sp2++ = *bp;
-                    ++bp;
-                }
-                screenp += pitch;
-                screenp2 += pitch;
-                bufp += SCREENWIDTH;
-            }
-    
-            SDL_UnlockSurface(screen);
-        }
-    }
-
-    if (screenmultiply == 3)
-    {
-        byte *bufp, *screenp, *screenp2, *screenp3;
-        int x, y;
-        int pitch;
-
-        if (SDL_LockSurface(screen) >= 0)
-        {
-            pitch = screen->pitch * 3;
-            bufp = screens[0] + y1 * SCREENWIDTH + x1;
-            screenp = (byte *) screen->pixels 
-                    + (y1 + y_offset) * pitch 
-                    + (x1 + x_offset) * 3;
-            screenp2 = screenp + screen->pitch;
-            screenp3 = screenp2 + screen->pitch;
-    
-            for (y=y1; y<y2; ++y)
-            {
-                byte *sp, *sp2, *sp3, *bp;
-                sp = screenp;
-                sp2 = screenp2;
-                sp3 = screenp3;
-                bp = bufp;
-    
-                for (x=x1; x<x2; ++x)
-                {
-                    *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;
-                    *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp;
-                    *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp;
-                    ++bp;
-                }
-                screenp += pitch;
-                screenp2 += pitch;
-                screenp3 += pitch;
-                bufp += SCREENWIDTH;
-            }
-    
-            SDL_UnlockSurface(screen);
-        }
-    }
-
-    if (screenmultiply == 4)
-    {
-        byte *bufp, *screenp, *screenp2, *screenp3, *screenp4;
-        int x, y;
-        int pitch;
-
-        if (SDL_LockSurface(screen) >= 0)
-        {
-            pitch = screen->pitch * 4;
-            bufp = screens[0] + y1 * SCREENWIDTH + x1;
-            screenp = (byte *) screen->pixels 
-                    + (y1 + y_offset) * pitch 
-                    + (x1 + x_offset) * 4;
-            screenp2 = screenp + screen->pitch;
-            screenp3 = screenp2 + screen->pitch;
-            screenp4 = screenp3 + screen->pitch;
-    
-            for (y=y1; y<y2; ++y)
-            {
-                byte *sp, *sp2, *sp3, *sp4, *bp;
-                sp = screenp;
-                sp2 = screenp2;
-                sp3 = screenp3;
-                sp4 = screenp4;
-                bp = bufp;
-    
-                for (x=x1; x<x2; ++x)
-                {
-                    *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;
-                    *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp;
-                    *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp;
-                    *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp;
-                    ++bp;
-                }
-                screenp += pitch;
-                screenp2 += pitch;
-                screenp3 += pitch;
-                screenp4 += pitch;
-                bufp += SCREENWIDTH;
-            }
-    
-            SDL_UnlockSurface(screen);
-        }
+        I_InitScale(screens[0], 
+                    (byte *) screen->pixels + (y_offset * screen->pitch)
+                                            + x_offset, 
+                    screen->pitch);
+        scale_function(x1, y1, x2, y2);
+      	SDL_UnlockSurface(screen);
     }
 }
 
@@ -902,10 +825,10 @@ static void GetWindowDimensions(int *windowwidth, int *windowheight)
 {
     *windowwidth = SCREENWIDTH * screenmultiply;
 
-    if (fullscreen == FULLSCREEN_LETTERBOX)
-        *windowheight = LETTERBOX_SCREENHEIGHT * screenmultiply;
-    else
+    if (aspect_ratio_correct == RATIO_CORRECT_NONE)
         *windowheight = SCREENHEIGHT * screenmultiply;
+    else
+        *windowheight = SCREENHEIGHT_4_3 * screenmultiply;
 }
 
 // Check if the screen mode for the current settings is in the list available
@@ -988,27 +911,28 @@ static void CheckCommandLine(void)
 static void AutoAdjustSettings(void)
 {
     int oldw, oldh;
-    int old_fullscreen, old_screenmultiply;
+    int old_ratio, old_screenmultiply;
 
     GetWindowDimensions(&oldw, &oldh);
     old_screenmultiply = screenmultiply;
-    old_fullscreen = fullscreen;
+    old_ratio = aspect_ratio_correct;
 
     if (!CheckValidFSMode() && screenmultiply == 1 
-     && fullscreen == FULLSCREEN_ON)
+     && fullscreen == FULLSCREEN_ON
+     && aspect_ratio_correct == RATIO_CORRECT_NONE)
     {
         // 320x200 is not valid.
 
         // Try turning on letterbox mode - avoid doubling up
         // the screen if possible
 
-        fullscreen = FULLSCREEN_LETTERBOX;
+        aspect_ratio_correct = RATIO_CORRECT_LETTERBOX;
 
         if (!CheckValidFSMode())
         {
             // That doesn't work. Change it back.
 
-            fullscreen = FULLSCREEN_ON;
+            aspect_ratio_correct = RATIO_CORRECT_NONE;
         }
     }
 
@@ -1019,14 +943,16 @@ static void AutoAdjustSettings(void)
         screenmultiply = 2;
     }
 
-    if (!CheckValidFSMode() && fullscreen == FULLSCREEN_ON)
+    if (!CheckValidFSMode() 
+     && fullscreen == FULLSCREEN_ON
+     && aspect_ratio_correct == RATIO_CORRECT_NONE)
     {
         // This is not a valid mode.  Try turning on letterbox mode
 
-        fullscreen = FULLSCREEN_LETTERBOX;
+        aspect_ratio_correct = RATIO_CORRECT_LETTERBOX;
     }
 
-    if (old_fullscreen != fullscreen 
+    if (old_ratio != aspect_ratio_correct
      || old_screenmultiply != screenmultiply)
     {
         printf("I_InitGraphics: %ix%i resolution is not supported "
@@ -1034,8 +960,8 @@ static void AutoAdjustSettings(void)
         printf("I_InitGraphics: Video settings adjusted to "
                "compensate:\n");
         
-        if (fullscreen != old_fullscreen)
-            printf("\tletterbox mode on (fullscreen=2)\n");
+        if (old_ratio != aspect_ratio_correct)
+            printf("\tletterbox mode on (aspect_ratio_correct=2)\n");
         if (screenmultiply != old_screenmultiply)
             printf("\tscreenmultiply=%i\n", screenmultiply);
         
@@ -1102,6 +1028,7 @@ static void SetBlankCursor(void)
 void I_InitGraphics(void)
 {
     SDL_Event dummy;
+    byte *doompal;
     int flags = 0;
     char *env;
 
@@ -1155,6 +1082,13 @@ void I_InitGraphics(void)
 
     CheckCommandLine();
 
+    // Don't allow letterbox mode when windowed
+ 
+    if (!fullscreen && aspect_ratio_correct == RATIO_CORRECT_LETTERBOX)
+    {
+        aspect_ratio_correct = RATIO_CORRECT_NONE;
+    }
+
     if (fullscreen && autoadjust_video_settings)
     {
         // Check that the fullscreen mode we are trying to use is valid;
@@ -1162,6 +1096,17 @@ void I_InitGraphics(void)
 
         AutoAdjustSettings();
     }
+
+    // Generate lookup tables before setting the video mode.
+
+    doompal = W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE);
+
+    if (aspect_ratio_correct == RATIO_CORRECT_STRETCH)
+    {
+        I_InitStretchTables(doompal);
+    }
+
+    // Set the video mode.
 
     GetWindowDimensions(&windowwidth, &windowheight);
 
@@ -1212,7 +1157,7 @@ void I_InitGraphics(void)
     
     // Set the palette
 
-    I_SetPalette (W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE));
+    I_SetPalette(doompal);
     SDL_SetColors(screen, palette, 0, 256);
 
     // Setup title and icon
@@ -1240,7 +1185,9 @@ void I_InitGraphics(void)
 
     native_surface = !SDL_MUSTLOCK(screen) 
                   && screenmultiply == 1 
-                  && screen->pitch == SCREENWIDTH;
+                  && screen->pitch == SCREENWIDTH
+                  && (aspect_ratio_correct == RATIO_CORRECT_NONE
+                   || aspect_ratio_correct == RATIO_CORRECT_LETTERBOX);
 
     // If not, allocate a buffer and copy from that buffer to the 
     // screen when we do an update
@@ -1249,9 +1196,9 @@ void I_InitGraphics(void)
     {
 	screens[0] = (unsigned char *) (screen->pixels);
 
-        if (fullscreen == FULLSCREEN_LETTERBOX)
+        if (aspect_ratio_correct == RATIO_CORRECT_LETTERBOX)
         {
-            screens[0] += ((LETTERBOX_SCREENHEIGHT - SCREENHEIGHT) * screen->pitch) / 2;
+            screens[0] += ((SCREENHEIGHT_4_3 - SCREENHEIGHT) * screen->pitch) / 2;
         }
     }
     else
