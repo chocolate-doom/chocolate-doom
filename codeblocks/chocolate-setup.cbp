@@ -48,6 +48,12 @@
 			<Add option="-lmingw32 -lSDLmain -lSDL -mwindows" />
 			<Add directory="..\bin" />
 		</Linker>
+		<Unit filename="chocolate-setup-res.rc">
+			<Option compilerVar="WINDRES" />
+			<Option objectName="codeblocks\chocolate-setup-res.res" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
 		<Unit filename="..\setup\compatibility.c">
 			<Option compilerVar="CC" />
 			<Option target="Debug" />

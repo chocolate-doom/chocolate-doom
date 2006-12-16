@@ -1,0 +1,20 @@
+1 ICON "..\\data\\chocolate-setup.ico"
+
+1 VERSIONINFO
+FILETYPE 1
+{
+ BLOCK "StringFileInfo"
+ {
+  BLOCK "040904E4"
+  {
+   VALUE "FileVersion", ""
+   VALUE "FileDescription", ""
+   VALUE "InternalName", "Chocolate-Setup"
+   VALUE "CompanyName", "Chocolate-Setup"
+   VALUE "LegalCopyright", "GNU General Public License"
+   VALUE "ProductName", "Chocolate-Setup"
+   VALUE "ProductVersion", ""
+  }
+ }
+}
+
