@@ -143,3 +143,9 @@ txt_radiobutton_t *TXT_NewRadioButton(char *label, int *variable, int value)
     return radiobutton;
 }
 
+void TXT_SetRadioButtonLabel(txt_radiobutton_t *radiobutton, char *value)
+{
+    free(radiobutton->label);
+    radiobutton->label = strdup(value);
+}
+
