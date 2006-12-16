@@ -140,7 +140,6 @@ endif
 chocolate_doom_LDADD = ../textscreen/libtextscreen.a @LDFLAGS@ @SDL_LIBS@ @SDLMIXER_LIBS@ @SDLNET_LIBS@ 
 
 EXTRA_DIST =                               \
-        convert-icon                       \
         chocolate_doom_icon.c              \
         chocolate-doom-screensaver.desktop
 
@@ -150,5 +149,5 @@ EXTRA_DIST =                               \
 	$(WINDRES) $^ -o $@
 
 chocolate_doom_icon.c : ../data/chocolate-doom.png
-	./convert-icon $^ $@
+	../data/convert-icon $^ $@
 

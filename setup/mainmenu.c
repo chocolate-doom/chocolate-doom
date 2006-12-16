@@ -28,6 +28,8 @@
 #include "configfile.h"
 #include "m_argv.h"
 
+#include "chocolate_setup_icon.c"
+
 #include "compatibility.h"
 #include "display.h"
 #include "keyboard.h"
@@ -140,6 +142,28 @@ static void InitConfig(void)
     M_LoadDefaults();
 }
 
+//
+// Application icon
+//
+
+static void SetIcon(void)
+{
+    SDL_Surface *surface;
+
+    surface = SDL_CreateRGBSurfaceFrom(chocolate_setup_data,
+                                       chocolate_setup_w,
+                                       chocolate_setup_h,
+                                       24,
+                                       chocolate_setup_w * 3,
+                                       0xff << 0,
+                                       0xff << 8,
+                                       0xff << 16,
+                                       0);
+
+    SDL_WM_SetIcon(surface, NULL);
+    SDL_FreeSurface(surface);
+}
+
 // 
 // Initialise and run the textscreen GUI.
 //
@@ -153,6 +177,7 @@ static void RunGUI(void)
     }
 
     TXT_SetDesktopTitle(PACKAGE_NAME " Setup ver " PACKAGE_VERSION);
+    SetIcon();
     
     MainMenu();
 
