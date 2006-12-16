@@ -35,6 +35,7 @@ struct txt_radiobutton_s
 };
 
 txt_radiobutton_t *TXT_NewRadioButton(char *label, int *variable, int value);
+void TXT_SetRadioButtonLabel(txt_radiobutton_t *radiobutton, char *value);
 
 #endif /* #ifndef TXT_RADIOBUTTON_H */
 
