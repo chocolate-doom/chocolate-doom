@@ -1617,14 +1617,22 @@ void D_DoomMain (void)
     p = M_CheckParm ("-warp");
     if (p && p < myargc-1)
     {
-	if (gamemode == commercial)
-	    startmap = atoi (myargv[p+1]);
-	else
-	{
-	    startepisode = myargv[p+1][0]-'0';
-	    startmap = myargv[p+2][0]-'0';
-	}
-	autostart = true;
+        if (gamemode == commercial)
+            startmap = atoi (myargv[p+1]);
+        else
+        {
+            startepisode = myargv[p+1][0]-'0';
+
+            if (p + 2 < myargc)
+            {
+                startmap = myargv[p+2][0]-'0';
+            }
+            else
+            {
+                startmap = 1;
+            }
+        }
+        autostart = true;
     }
 
     // Invoked by setup to test the controls.
