@@ -60,6 +60,9 @@ AC_SUBST(ac_aux_dir)
 
 AC_C_BIGENDIAN
 
+dnl Shut up the datarootdir warnings.
+AC_DEFUN([AC_DATAROOTDIR_CHECKED])
+
 AC_OUTPUT([
 Makefile
 textscreen/Makefile
@@ -68,5 +71,6 @@ setup/Makefile
 man/Makefile
 src/Makefile
 src/chocolate-doom-res.rc
+setup/chocolate-setup-res.rc
 ])
 
