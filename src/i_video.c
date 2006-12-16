@@ -961,7 +961,8 @@ static void AutoAdjustSettings(void)
                "compensate:\n");
         
         if (old_ratio != aspect_ratio_correct)
-            printf("\tletterbox mode on (aspect_ratio_correct=2)\n");
+            printf("\tletterbox mode on (aspect_ratio_correct=%i)\n",
+                   aspect_ratio_correct);
         if (screenmultiply != old_screenmultiply)
             printf("\tscreenmultiply=%i\n", screenmultiply);
         
