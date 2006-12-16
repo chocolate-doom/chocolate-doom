@@ -25,30 +25,39 @@
 typedef struct 
 {
     char *description;
-    int fullscreen;
+    char *description_4_3;
     int screenmultiply;
+    txt_radiobutton_t *widget;
 } vidmode_t;
+
+enum
+{
+    RATIO_CORRECT_NONE,
+    RATIO_CORRECT_LETTERBOX,
+    RATIO_CORRECT_STRETCH,
+    NUM_RATIO_CORRECT,
+};
 
 static vidmode_t modes[] = 
 {
-    { "320x200",  0, 1 },
-    { "640x400",  0, 2 },
-    { "960x600",  0, 3 },
-    { "1280x800", 0, 4 },
-    { "320x200",  1, 1 },
-    { "320x240",  2, 1 },
-    { "640x400",  1, 2 },
-    { "640x480",  2, 2 },
-    { "960x600",  1, 3 },
-    { "960x720",  2, 3 },
-    { "1280x800", 1, 4 },
-    { "1280x960", 2, 4 },
-    { NULL,       0, 0 },
+    { "320x200",  "320x240",  1, NULL },
+    { "960x600",  "960x720",  3, NULL },
+    { "640x400",  "640x480",  2, NULL },
+    { "1280x800", "1280x960", 4, NULL },
+    { NULL,       NULL,       0, NULL },
+};
+
+static char *aspect_ratio_strings[] =
+{
+    "Disabled",
+    "Letterbox mode",
+    "Stretch to 4:3",
 };
 
 static int vidmode = 0;
 
 int autoadjust_video_settings = 1;
+int aspect_ratio_correct = RATIO_CORRECT_NONE;
 int fullscreen = 1;
 int screenmultiply = 1;
 int startup_delay = 0;
@@ -65,8 +74,7 @@ static void SetCurrentMode(void)
 
     for (i=0; modes[i].description != NULL; ++i)
     {
-        if (fullscreen == modes[i].fullscreen
-         && screenmultiply == modes[i].screenmultiply)
+        if (screenmultiply == modes[i].screenmultiply)
         {
             vidmode = i;
             break;
@@ -78,17 +86,33 @@ static void ModeSelected(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(mode))
 {
     TXT_CAST_ARG(vidmode_t, mode);
 
-    fullscreen = mode->fullscreen;
     screenmultiply = mode->screenmultiply;
+}
+
+static void UpdateModes(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
+{
+    int i;
+
+    for (i=0; modes[i].description != NULL; ++i)
+    {
+        if (aspect_ratio_correct == RATIO_CORRECT_NONE)
+        {
+            TXT_SetRadioButtonLabel(modes[i].widget, modes[i].description);
+        }
+        else
+        {
+            TXT_SetRadioButtonLabel(modes[i].widget, modes[i].description_4_3);
+        }
+    }
 }
 
 void ConfigDisplay(void)
 {
     txt_window_t *window;
-    txt_table_t *windowed_table;
-    txt_table_t *fullscreen_table;
-    txt_table_t *misc_table;
+    txt_table_t *ar_table;
+    txt_table_t *modes_table;
     txt_radiobutton_t *rbutton;
+    txt_dropdown_list_t *ar_dropdown;
     int i;
 
     // Find the current mode
@@ -100,38 +124,37 @@ void ConfigDisplay(void)
     window = TXT_NewWindow("Display Configuration");
 
     TXT_AddWidgets(window, 
-                   TXT_NewSeparator("Fullscreen modes"),
-                   fullscreen_table = TXT_NewTable(2),
-                   TXT_NewSeparator("Windowed modes"),
-                   windowed_table = TXT_NewTable(2),
+                   TXT_NewCheckBox("Fullscreen", &fullscreen),
+                   ar_table = TXT_NewTable(2),
+                   TXT_NewSeparator("Screen mode"),
+                   modes_table = TXT_NewTable(2),
                    TXT_NewSeparator("Misc."),
                    TXT_NewCheckBox("Show ENDOOM screen", &show_endoom),
-                   misc_table = TXT_NewTable(2),
                    NULL);
 
-    TXT_SetColumnWidths(windowed_table, 14, 14);
-    
-    for (i=0; modes[i].fullscreen == 0; ++i)
-    {
-        rbutton = TXT_NewRadioButton(modes[i].description, &vidmode, i);
-        TXT_AddWidget(windowed_table, rbutton);
-        TXT_SignalConnect(rbutton, "selected", ModeSelected, &modes[i]);
-    }
+    TXT_SetColumnWidths(ar_table, 25, 0);
 
-    TXT_SetColumnWidths(fullscreen_table, 14, 14);
-
-    for (; modes[i].description != NULL; ++i)
-    {
-        rbutton = TXT_NewRadioButton(modes[i].description, &vidmode, i);
-        TXT_AddWidget(fullscreen_table, rbutton);
-        TXT_SignalConnect(rbutton, "selected", ModeSelected, &modes[i]);
-    }
-
-    TXT_SetColumnWidths(misc_table, 22, 5);
-
-    TXT_AddWidgets(misc_table,
+    TXT_AddWidgets(ar_table,
+                   TXT_NewLabel("Aspect ratio correction"),
+                   ar_dropdown = TXT_NewDropdownList(&aspect_ratio_correct,
+                                                     aspect_ratio_strings,
+                                                     NUM_RATIO_CORRECT),
                    TXT_NewLabel("Startup delay (ms)"),
                    TXT_NewIntInputBox(&startup_delay, 5),
                    NULL);
+
+    TXT_SignalConnect(ar_dropdown, "changed", UpdateModes, NULL);
+
+    TXT_SetColumnWidths(modes_table, 14, 14);
+
+    for (i=0; modes[i].description != NULL; ++i)
+    {
+        rbutton = TXT_NewRadioButton(modes[i].description, &vidmode, i);
+        modes[i].widget = rbutton;
+        TXT_AddWidget(modes_table, rbutton);
+        TXT_SignalConnect(rbutton, "selected", ModeSelected, &modes[i]);
+    }
+
+    UpdateModes(NULL, NULL);
 }
 

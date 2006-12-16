@@ -23,6 +23,7 @@
 #define SETUP_DISPLAY_H
 
 extern int autoadjust_video_settings;
+extern int aspect_ratio_correct;
 extern int fullscreen;
 extern int screenmultiply;
 extern int startup_delay;
