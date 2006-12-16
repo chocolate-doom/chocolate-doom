@@ -69,6 +69,8 @@ static void ItemSelected(TXT_UNCAST_ARG(button), TXT_UNCAST_ARG(callback_data))
 
     *callback_data->list->variable = callback_data->item;
 
+    TXT_EmitSignal(callback_data->list, "changed");
+
     // Close the window
 
     TXT_CloseWindow(callback_data->window);
