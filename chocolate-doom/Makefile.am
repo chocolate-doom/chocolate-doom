@@ -18,16 +18,22 @@ CODEBLOCKS_FILES=                              \
         codeblocks/chocolate-doom-res.rc       \
         codeblocks/textscreen.cbp
 
+DATA_FILES=                             \
+        data/chocolate-doom.ico         \
+        data/chocolate-doom.png         \
+        data/chocolate-setup.ico        \
+        data/chocolate-setup.png        \
+        data/convert-icon
+
 EXTRA_DIST=                             \
         $(AUX_DIST_GEN)                 \
         $(MSVC_FILES)                   \
         $(CODEBLOCKS_FILES)             \
+        $(DATA_FILES)                   \
         config.h                        \
         HACKING                         \
         TODO                            \
-        BUGS                            \
-        data/chocolate-doom.png         \
-        data/chocolate-doom.ico
+        BUGS
 
 MAINTAINERCLEANFILES =  $(AUX_DIST_GEN)
 

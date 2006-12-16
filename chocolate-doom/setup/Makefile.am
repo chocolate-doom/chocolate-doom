@@ -6,7 +6,7 @@ AM_CFLAGS = @SDL_CFLAGS@ -I../textscreen -I../src -DINSTALL_DIR="\"$(gamesdir)\"
 games_PROGRAMS = chocolate-setup
 
 chocolate_setup_LDADD = @LDFLAGS@ @SDL_LIBS@ ../textscreen/libtextscreen.a
-chocolate_setup_SOURCES =                       \
+SOURCE_FILES =                                  \
     compatibility.c   compatibility.h           \
     configfile.c      configfile.h              \
     display.c         display.h                 \
@@ -19,4 +19,21 @@ chocolate_setup_SOURCES =                       \
     execute.c         execute.h                 \
     txt_keyinput.c    txt_keyinput.h            \
     txt_mouseinput.c  txt_mouseinput.h
+
+EXTRA_DIST=                                     \
+    chocolate_setup_icon.c
+
+if HAVE_WINDRES
+chocolate_setup_SOURCES=$(SOURCE_FILES) chocolate-setup-res.rc
+else
+chocolate_setup_SOURCES=$(SOURCE_FILES)
+endif
+
+.rc.o:
+	$(WINDRES) $^ -o $@
+%.o : %.rc
+	$(WINDRES) $^ -o $@
+
+chocolate_setup_icon.c : ../data/chocolate-setup.png
+	../data/convert-icon $^ $@
 
