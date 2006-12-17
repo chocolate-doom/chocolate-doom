@@ -513,7 +513,7 @@ void MultiplayerConfig(void)
 
         TXT_AddWidgets(table,
                        label,
-                       TXT_NewInputBox(&chat_macros[i], 40),
+                       TXT_NewInputBox(&chat_macros[(i + 1) % 10], 40),
                        NULL);
     }
     
