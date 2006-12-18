@@ -1,3 +1,32 @@
+// Emacs style mode select   -*- C++ -*- 
+//-----------------------------------------------------------------------------
+//
+// Copyright(C) 1993-1996 Id Software, Inc.
+// Copyright(C) 2005,2006 Simon Howard
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+// 02111-1307, USA.
+//
+// DESCRIPTION:
+//     Screen scale-up code: 
+//         1x,2x,3x,4x pixel doubling
+//         Aspect ratio-correcting stretch functions
+//
+//-----------------------------------------------------------------------------
+
+
 
 #include "doomdef.h"
 #include "doomtype.h"
@@ -23,12 +52,22 @@ static int dest_pitch;
 
 static byte *stretch_tables[2];
 
+// Called to set the source and destination buffers before doing the
+// scale.
+
 void I_InitScale(byte *_src_buffer, byte *_dest_buffer, int _dest_pitch)
 {
     src_buffer = _src_buffer;
     dest_buffer = _dest_buffer;
     dest_pitch = _dest_pitch;
 }
+
+//
+// Pixel doubling scale-up functions.
+//
+
+// 1x scale doesn't really do any scaling: it just copies the buffer
+// a line at a time for when pitch != SCREENWIDTH (!native_surface)
 
 void I_Scale1x(int x1, int y1, int x2, int y2)
 {
@@ -217,6 +256,9 @@ static byte *GenerateStretchTable(byte *palette, int pct)
     return result;
 }
 
+// Called at startup to generate the lookup tables for aspect ratio
+// correcting scale up.
+
 void I_InitStretchTables(byte *palette)
 {
     // We only actually need two lookup tables:
@@ -235,6 +277,13 @@ void I_InitStretchTables(byte *palette)
     stretch_tables[1] = GenerateStretchTable(palette, 40);
     puts("");
 }
+
+// 
+// Aspect ratio correcting scale up functions.
+//
+// These double up pixels to stretch the screen when using a 4:3
+// screen mode.
+//
 
 static void WriteBlendedLine1x(byte *dest, byte *src1, byte *src2, 
                                byte *stretch_table)
