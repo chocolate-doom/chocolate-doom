@@ -591,6 +591,14 @@ static void BlitArea(int x1, int y1, int x2, int y2)
         { 
             scale_function = I_Stretch2x;
         }
+        else if (screenmultiply == 3)
+        { 
+            scale_function = I_Stretch3x;
+        }
+        else if (screenmultiply == 4)
+        { 
+            scale_function = I_Stretch4x;
+        }
         else
         {
             I_Error("No aspect ratio stretching function for screenmultiply=%i",
