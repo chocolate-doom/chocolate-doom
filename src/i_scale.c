@@ -402,3 +402,285 @@ void I_Stretch2x(int x1, int y1, int x2, int y2)
     }
 }
 
+static void WriteLine3x(byte *dest, byte *src)
+{
+    int x;
+
+    for (x=0; x<SCREENWIDTH; ++x)
+    {
+        dest[0] = *src;
+        dest[1] = *src;
+        dest[2] = *src;
+        dest += 3;
+        ++src;
+    }
+}
+
+static void WriteBlendedLine3x(byte *dest, byte *src1, byte *src2, 
+                               byte *stretch_table)
+{
+    int x;
+    int val;
+
+    for (x=0; x<SCREENWIDTH; ++x)
+    {
+        val = stretch_table[*src1 * 256 + *src2];
+        dest[0] = val;
+        dest[1] = val;
+        dest[2] = val;
+        dest += 3;
+        ++src1;
+        ++src2;
+    }
+} 
+
+void I_Stretch3x(int x1, int y1, int x2, int y2)
+{
+    byte *bufp, *screenp;
+    int y;
+
+    // Only works with full screen update
+
+    if (x1 != 0 || y1 != 0 || x2 != SCREENWIDTH || y2 != SCREENHEIGHT)
+    {
+        return;
+    }    
+
+    // Need to byte-copy from buffer into the screen buffer
+
+    bufp = src_buffer + y1 * SCREENWIDTH + x1;
+    screenp = (byte *) dest_buffer + y1 * dest_pitch + x1;
+
+    // For every 5 lines of src_buffer, 18 lines are written to dest_buffer.
+    // (200 -> 720)
+
+    for (y=0; y<SCREENHEIGHT; y += 5)
+    {
+        // 100% line 0
+        WriteLine3x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 0
+        WriteLine3x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 0
+        WriteLine3x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 60% line 0, 40% line 1
+        WriteBlendedLine3x(screenp, bufp + SCREENWIDTH, bufp, stretch_tables[1]);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+
+        // 100% line 1
+        WriteLine3x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 1
+        WriteLine3x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 1
+        WriteLine3x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 20% line 1, 80% line 2
+        WriteBlendedLine3x(screenp, bufp, bufp + SCREENWIDTH, stretch_tables[0]);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+
+        // 100% line 2
+        WriteLine3x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 2
+        WriteLine3x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 80% line 2, 20% line 3
+        WriteBlendedLine3x(screenp, bufp + SCREENWIDTH, bufp, stretch_tables[0]);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+
+        // 100% line 3
+        WriteLine3x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 3
+        WriteLine3x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 3
+        WriteLine3x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 40% line 3, 60% line 4
+        WriteBlendedLine3x(screenp, bufp, bufp + SCREENWIDTH, stretch_tables[1]);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+
+        // 100% line 4
+        WriteLine3x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 4
+        WriteLine3x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 4
+        WriteLine3x(screenp, bufp);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+    }
+}
+
+static void WriteLine4x(byte *dest, byte *src)
+{
+    int x;
+
+    for (x=0; x<SCREENWIDTH; ++x)
+    {
+        dest[0] = *src;
+        dest[1] = *src;
+        dest[2] = *src;
+        dest[3] = *src;
+        dest += 4;
+        ++src;
+    }
+}
+
+static void WriteBlendedLine4x(byte *dest, byte *src1, byte *src2, 
+                               byte *stretch_table)
+{
+    int x;
+    int val;
+
+    for (x=0; x<SCREENWIDTH; ++x)
+    {
+        val = stretch_table[*src1 * 256 + *src2];
+        dest[0] = val;
+        dest[1] = val;
+        dest[2] = val;
+        dest[3] = val;
+        dest += 4;
+        ++src1;
+        ++src2;
+    }
+} 
+
+void I_Stretch4x(int x1, int y1, int x2, int y2)
+{
+    byte *bufp, *screenp;
+    int y;
+
+    // Only works with full screen update
+
+    if (x1 != 0 || y1 != 0 || x2 != SCREENWIDTH || y2 != SCREENHEIGHT)
+    {
+        return;
+    }    
+
+    // Need to byte-copy from buffer into the screen buffer
+
+    bufp = src_buffer + y1 * SCREENWIDTH + x1;
+    screenp = (byte *) dest_buffer + y1 * dest_pitch + x1;
+
+    // For every 5 lines of src_buffer, 24 lines are written to dest_buffer.
+    // (200 -> 960)
+
+    for (y=0; y<SCREENHEIGHT; y += 5)
+    {
+        // 100% line 0
+        WriteLine4x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 0
+        WriteLine4x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 0
+        WriteLine4x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 0
+        WriteLine4x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 90% line 0, 20% line 1
+        WriteBlendedLine4x(screenp, bufp + SCREENWIDTH, bufp, stretch_tables[0]);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+
+        // 100% line 1
+        WriteLine4x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 1
+        WriteLine4x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 1
+        WriteLine4x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 1
+        WriteLine4x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 60% line 1, 40% line 2
+        WriteBlendedLine4x(screenp, bufp + SCREENWIDTH, bufp, stretch_tables[1]);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+
+        // 100% line 2
+        WriteLine4x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 2
+        WriteLine4x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 2
+        WriteLine4x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 2
+        WriteLine4x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 40% line 2, 60% line 3
+        WriteBlendedLine4x(screenp, bufp, bufp + SCREENWIDTH, stretch_tables[1]);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+
+        // 100% line 3
+        WriteLine4x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 3
+        WriteLine4x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 3
+        WriteLine4x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 3
+        WriteLine4x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 20% line 3, 80% line 4
+        WriteBlendedLine4x(screenp, bufp, bufp + SCREENWIDTH, stretch_tables[0]);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+
+        // 100% line 4
+        WriteLine4x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 4
+        WriteLine4x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 4
+        WriteLine4x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 4
+        WriteLine4x(screenp, bufp);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+    }
+}
+
