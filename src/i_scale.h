@@ -37,6 +37,8 @@ void I_Scale3x(int x1, int y1, int x2, int y2);
 void I_Scale4x(int x1, int y1, int x2, int y2);
 void I_Stretch1x(int x1, int y1, int x2, int y2);
 void I_Stretch2x(int x1, int y1, int x2, int y2);
+void I_Stretch3x(int x1, int y1, int x2, int y2);
+void I_Stretch4x(int x1, int y1, int x2, int y2);
 void I_InitStretchTables(byte *palette);
 
 #endif /* #ifndef __I_SCALE__ */
