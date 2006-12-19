@@ -21,28 +21,7 @@ DOS Doom should therefore simply work out of the box.  However,
 Chocolate Doom also provides some extra settings.  These are stored
 in a separate file named 'chocolate-doom.cfg'.
 
-Options:
-
-  fullscreen           If 1, the game runs fullscreen.
-
-  grabmouse            If 1, the mouse pointer is "grabbed" during play.  
-                       This is only applicable if playing in windowed mode 
-                       (not fullscreen)
-
-  mouse_acceleration   Controls the acceleration applied to the mouse.  
-                       Acceleration has the effect of turning a greater 
-                       amount when the mouse is moved quickly. When this has 
-                       a value of 1.0, there is no acceleration. Larger values 
-                       apply a greater acceleration.
-
-  novert               Emulates the behavior of the DOS program "novert".  
-                       If this is 1, vertical mouse movement is ignored, 
-                       and the player will not move forward and backward 
-                       when the mouse is moved.
-
-  screenmultiply       If this has the value 1, the game runs in a 320x200 
-                       window.  If this has the value 2, this is doubled up 
-                       to a 640x400 window.
+The configuration can be edited using the chocolate-setup tool.
 
 == Command-line options ==
 
@@ -123,6 +102,6 @@ Here are some examples:
    information.
 
  * Chocolate Doom is currently a beta version.  Not all planned features 
-   have been implemented yet.  Please send feedback and bug reports to 
-   fraggle@alkali.org.  Thanks!
+   have been implemented yet; see TODO.  Please send feedback and bug 
+   reports to fraggle@gmail.com.  Thanks!
 
