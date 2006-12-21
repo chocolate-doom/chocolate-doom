@@ -104,6 +104,15 @@ static registry_value_t uninstall_values[] =
             "Uninstall\\Final Doom for Windows 95",
         "UninstallString",
     },
+
+    // Shareware version
+
+    {
+        HKEY_LOCAL_MACHINE, 
+        "Software\\Microsoft\\Windows\\CurrentVersion\\"
+            "Uninstall\\Doom Shareware for Windows 95",
+        "UninstallString",
+    },
 };
 
 // Value installed by the Collector's Edition when it is installed
