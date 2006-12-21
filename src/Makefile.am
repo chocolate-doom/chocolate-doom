@@ -40,6 +40,7 @@ deh_weapon.c                               \
 d_englsh.h                                 \
 d_event.h                                  \
 d_items.c            d_items.h             \
+d_iwad.c             d_iwad.h              \
 d_main.c             d_main.h              \
 d_net.c              d_net.h               \
 doomdata.h                                 \

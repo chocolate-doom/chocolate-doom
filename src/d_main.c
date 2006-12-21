@@ -28,11 +28,6 @@
 //-----------------------------------------------------------------------------
 
 
-
-#define	BGCOLOR		7
-#define	FGCOLOR		8
-
-
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -47,6 +42,7 @@
 #include "doomfeatures.h"
 #include "sounds.h"
 
+#include "d_iwad.h"
 
 #include "z_zone.h"
 #include "w_wad.h"
@@ -595,345 +591,6 @@ static boolean D_AddFile(char *filename)
     return handle != NULL;
 }
 
-
-// Check if a file exists
-
-static int FileExists(char *filename)
-{
-    FILE *fstream;
-
-    fstream = fopen(filename, "r");
-
-    if (fstream != NULL)
-    {
-        fclose(fstream);
-        return 1;
-    }
-    else
-    {
-        return 0;
-    }
-}
-
-struct 
-{
-    char *name;
-    GameMission_t mission;
-} iwads[] = {
-    {"doom2.wad",    doom2},
-    {"plutonia.wad", pack_plut},
-    {"tnt.wad",      pack_tnt},
-    {"doom.wad",     doom},
-    {"doom1.wad",    doom},
-};
-
-// Search a directory to try to find an IWAD
-// Returns the location of the IWAD if found, otherwise NULL.
-
-static char *SearchDirectoryForIWAD(char *dir)
-{
-    size_t i;
-
-    for (i=0; i<sizeof(iwads) / sizeof(*iwads); ++i) 
-    {
-        char *filename; 
-	char *iwadname;
-
-	iwadname = DEH_String(iwads[i].name);
-	
-	filename = malloc(strlen(dir) + strlen(iwadname) + 3);
-
-        sprintf(filename, "%s/%s", dir, iwadname);
-
-        if (FileExists(filename))
-        {
-            iwadfile = filename;
-            gamemission = iwads[i].mission;
-            return filename;
-        }
-
-        free(filename);
-    }
-
-    return NULL;
-}
-
-// When given an IWAD with the '-iwad' parameter,
-// attempt to identify it by its name.
-
-static void IdentifyIWADByName(char *name)
-{
-    size_t i;
-
-    gamemission = none;
-    
-    for (i=0; i<sizeof(iwads) / sizeof(*iwads); ++i)
-    {
-	char *iwadname;
-
-	iwadname = DEH_String(iwads[i].name);
-
-        if (strlen(name) < strlen(iwadname))
-            continue;
-
-        // Check if it ends in this IWAD name.
-
-        if (!strcasecmp(name + strlen(name) - strlen(iwadname), 
-                        iwadname))
-        {
-            gamemission = iwads[i].mission;
-            break;
-        }
-    }
-}
-
-//
-// FindIWAD
-// Checks availability of IWAD files by name,
-// to determine whether registered/commercial features
-// should be executed (notably loading PWADs).
-//
-
-static void FindIWAD (void)
-{
-    char *doomwaddir;
-    char *result;
-    int iwadparm;
-
-    result = 0;
-    doomwaddir = getenv("DOOMWADDIR");
-    iwadparm = M_CheckParm("-iwad");
-
-    if (iwadparm)
-    {
-        iwadfile = myargv[iwadparm + 1];
-        result = iwadfile;
-        IdentifyIWADByName(iwadfile);
-    }
-    else if (doomwaddir != NULL)
-    {
-        result = SearchDirectoryForIWAD(doomwaddir);
-    }
-
-    if (result == NULL)
-        result = SearchDirectoryForIWAD(".");
-    if (result == NULL)
-        result = SearchDirectoryForIWAD("/usr/share/games/doom");
-    if (result == NULL)
-        result = SearchDirectoryForIWAD("/usr/local/share/games/doom");
-
-    if (result == NULL)
-    {
-        I_Error("Game mode indeterminate.  No IWAD file was found.  Try\n"
-                "specifying one with the '-iwad' command line parameter.\n");
-    }
-}
-
-// Strings for dehacked replacements of the startup banner
-//
-// These are from the original source: some of them are perhaps
-// not used in any dehacked patches
-
-static char *banners[] = 
-{
-    // doom1.wad
-    "                            "
-    "DOOM Shareware Startup v%i.%i"
-    "                           ",
-    // doom.wad
-    "                            "
-    "DOOM Registered Startup v%i.%i"
-    "                           ",
-    // Registered DOOM uses this
-    "                          "
-    "DOOM System Startup v%i.%i"
-    "                          ",
-    // doom.wad (Ultimate DOOM)
-    "                         "
-    "The Ultimate DOOM Startup v%i.%i"
-    "                        ",
-    // doom2.wad
-    "                         "
-    "DOOM 2: Hell on Earth v%i.%i"
-    "                           ",
-    // tnt.wad
-    "                     "
-    "DOOM 2: TNT - Evilution v%i.%i"
-    "                           ",
-    // plutonia.wad
-    "                   "
-    "DOOM 2: Plutonia Experiment v%i.%i"
-    "                           ",
-};
-
-// Copyright message banners
-// Some dehacked mods replace these.  These are only displayed if they are 
-// replaced by dehacked.
-
-static char *copyright_banners[] =
-{
-    "===========================================================================\n"
-    "ATTENTION:  This version of DOOM has been modified.  If you would like to\n"
-    "get a copy of the original game, call 1-800-IDGAMES or see the readme file.\n"
-    "        You will not receive technical support for modified games.\n"
-    "                      press enter to continue\n"
-    "===========================================================================\n",
-
-    "===========================================================================\n"
-    "                 Commercial product - do not distribute!\n"
-    "         Please report software piracy to the SPA: 1-800-388-PIR8\n"
-    "===========================================================================\n",
-
-    "===========================================================================\n"
-    "                                Shareware!\n"
-    "===========================================================================\n"
-};
-
-//
-// Get game name: if the startup banner has been replaced, use that.
-// Otherwise, use the name given
-// 
-
-static char *GetGameName(char *gamename)
-{
-    size_t i;
-    char *deh_sub;
-    
-    for (i=0; i<sizeof(banners) / sizeof(*banners); ++i)
-    {
-        // Has the banner been replaced?
-
-        deh_sub = DEH_String(banners[i]);
-        
-        if (deh_sub != banners[i])
-        {
-            // Has been replaced
-            // We need to expand via printf to include the Doom version 
-            // number
-            // We also need to cut off spaces to get the basic name
-
-            gamename = Z_Malloc(strlen(deh_sub) + 10, PU_STATIC, 0);
-            sprintf(gamename, deh_sub, DOOM_VERSION / 100, DOOM_VERSION % 100);
-
-            while (gamename[0] != '\0' && isspace(gamename[0]))
-                strcpy(gamename, gamename+1);
-
-            while (gamename[0] != '\0' && isspace(gamename[strlen(gamename)-1]))
-                gamename[strlen(gamename) - 1] = '\0';
-            
-            return gamename;
-        }
-    }
-
-    return gamename;
-}
-
-
-//
-// Find out what version of Doom is playing.
-//
-
-static void IdentifyVersion(void)
-{
-    // gamemission is set up by the FindIWAD function.  But if 
-    // we specify '-iwad', we have to identify using 
-    // IdentifyIWADByName.  However, if the iwad does not match
-    // any known IWAD name, we may have a dilemma.  Try to 
-    // identify by its contents.
-
-    if (gamemission == none)
-    {
-        unsigned int i;
-
-        for (i=0; i<numlumps; ++i)
-        {
-            if (!strncasecmp(lumpinfo[i].name, "MAP01", 8))
-            {
-                gamemission = doom2;
-                break;
-            } 
-            else if (!strncasecmp(lumpinfo[i].name, "E1M1", 8))
-            {
-                gamemission = doom;
-                break;
-            }
-        }
-
-        if (gamemission == none)
-        {
-            // Still no idea.  I don't think this is going to work.
-
-            I_Error("Unknown or invalid IWAD file.");
-        }
-    }
-
-    // Make sure gamemode is set up correctly
-
-    if (gamemission == doom)
-    {
-        // Doom 1.  But which version?
-
-        if (W_CheckNumForName("E4M1") > 0)
-        {
-            // Ultimate Doom
-
-            gamemode = retail;
-        } 
-        else if (W_CheckNumForName("E3M1") > 0)
-        {
-            gamemode = registered;
-        }
-        else
-        {
-            gamemode = shareware;
-        }
-    }
-    else
-    {
-        // Doom 2 of some kind.
-
-        gamemode = commercial;
-    }
-}
-
-// Set the gamedescription string
-
-static void SetGameDescription(void)
-{
-    gamedescription = "Unknown";
-
-    if (gamemission == doom)
-    {
-        // Doom 1.  But which version?
-
-        if (gamemode == retail)
-        {
-            // Ultimate Doom
-
-            gamedescription = GetGameName("The Ultimate DOOM");
-        } 
-        else if (gamemode == registered)
-        {
-            gamedescription = GetGameName("DOOM Registered");
-        }
-        else if (gamemode == shareware)
-        {
-            gamedescription = GetGameName("DOOM Shareware");
-        }
-    }
-    else
-    {
-        // Doom 2 of some kind.  But which mission?
-
-        if (gamemission == doom2)
-            gamedescription = GetGameName("DOOM 2: Hell on Earth");
-        else if (gamemission == pack_plut)
-            gamedescription = GetGameName("DOOM 2: Plutonia Experiment"); 
-        else if (gamemission == pack_tnt)
-            gamedescription = GetGameName("DOOM 2: TNT - Evilution");
-    }
-}
-
 #define MAXARGVS        100
 	
 static void LoadResponseFile(int argv_index)
@@ -1107,6 +764,29 @@ void PrintBanner(char *msg)
     puts(msg);
 }
 
+// Copyright message banners
+// Some dehacked mods replace these.  These are only displayed if they are 
+// replaced by dehacked.
+
+static char *copyright_banners[] =
+{
+    "===========================================================================\n"
+    "ATTENTION:  This version of DOOM has been modified.  If you would like to\n"
+    "get a copy of the original game, call 1-800-IDGAMES or see the readme file.\n"
+    "        You will not receive technical support for modified games.\n"
+    "                      press enter to continue\n"
+    "===========================================================================\n",
+
+    "===========================================================================\n"
+    "                 Commercial product - do not distribute!\n"
+    "         Please report software piracy to the SPA: 1-800-388-PIR8\n"
+    "===========================================================================\n",
+
+    "===========================================================================\n"
+    "                                Shareware!\n"
+    "===========================================================================\n"
+};
+
 // Prints a message only if it has been modified by dehacked.
 
 void PrintDehackedBanners(void)
@@ -1129,57 +809,6 @@ void PrintDehackedBanners(void)
             if (deh_s[strlen(deh_s) - 1] != '\n')
             {
                 printf("\n");
-            }
-        }
-    }
-}
-
-// 
-// SetSaveGameDir
-//
-// Chooses the directory used to store saved games.
-//
-
-static void SetSaveGameDir(void)
-{
-    size_t i;
-
-    if (!strcmp(configdir, ""))
-    {
-        // Use the current directory, just like configdir.
-
-        savegamedir = strdup("");
-    }
-    else
-    {
-        // Directory for savegames
-
-        savegamedir = malloc(strlen(configdir) + 30);
-        sprintf(savegamedir, "%ssavegames", configdir);
-
-        M_MakeDirectory(savegamedir);
-
-        // Find what subdirectory to use for savegames
-        //
-        // They should be stored in something like
-        //    ~/.chocolate-doom/savegames/doom.wad/
-        //
-        // The directory depends on the IWAD, so that savegames for
-        // different IWADs are kept separate.
-        //
-        // Note that we match on gamemission rather than on IWAD name.
-        // This ensures that doom1.wad and doom.wad saves are stored
-        // in the same place.
-
-        for (i=0; i<sizeof(iwads) / sizeof(*iwads); ++i)
-        {
-            if (gamemission == iwads[i].mission)
-            {
-                strcat(savegamedir, "/");
-                strcat(savegamedir, iwads[i].name);
-                strcat(savegamedir, "/");
-                M_MakeDirectory(savegamedir);
-                break;
             }
         }
     }
@@ -1327,14 +956,20 @@ void D_DoomMain (void)
     if (M_CheckParm("-search"))
         NET_LANQuery();
             
-
-
 #ifdef FEATURE_DEHACKED
     printf("DEH_Init: Init Dehacked support.\n");
     DEH_Init();
 #endif
 
-    FindIWAD ();
+    iwadfile = D_FindIWAD();
+
+    // None found?
+
+    if (iwadfile == NULL)
+    {
+        I_Error("Game mode indeterminate.  No IWAD file was found.  Try\n"
+                "specifying one with the '-iwad' command line parameter.\n");
+    }
 	
     setbuf (stdout, NULL);
     modifiedgame = false;
@@ -1545,10 +1180,10 @@ void D_DoomMain (void)
 
     W_GenerateHashTable();
     
-    IdentifyVersion();
+    D_IdentifyVersion();
     InitGameVersion();
-    SetGameDescription();
-    SetSaveGameDir();
+    D_SetGameDescription();
+    D_SetSaveGameDir();
 
     // Check for -file in shareware
     if (modifiedgame)
