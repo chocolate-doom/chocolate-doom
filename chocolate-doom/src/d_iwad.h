@@ -1,8 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2006 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -20,53 +19,18 @@
 // 02111-1307, USA.
 //
 // DESCRIPTION:
+//     Find IWAD and initialise according to IWAD type.
 //
-//    
 //-----------------------------------------------------------------------------
 
 
-#ifndef __M_MISC__
-#define __M_MISC__
+#ifndef __D_IWAD__
+#define __D_IWAD__
 
-
-#include "doomtype.h"
-//
-// MISC
-//
-
-
-
-boolean
-M_WriteFile
-( char const*	name,
-  void*		source,
-  int		length );
-
-int
-M_ReadFile
-( char const*	name,
-  byte**	buffer );
-
-void M_ScreenShot (void);
-
-void M_LoadDefaults (void);
-
-void M_SaveDefaults (void);
-
-void M_SetConfigDir(void);
-
-void M_MakeDirectory(char *dir);
-
-boolean M_FileExists(char *file);
-
-
-int
-M_DrawText
-( int		x,
-  int		y,
-  boolean	direct,
-  char*		string );
-
-extern char *configdir;
+char *D_FindIWAD(void);
+void D_SetSaveGameDir(void);
+void D_IdentifyVersion(void);
+void D_SetGameDescription(void);
 
 #endif
+

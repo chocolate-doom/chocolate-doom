@@ -122,6 +122,25 @@ void M_MakeDirectory(char *path)
 #endif
 }
 
+// Check if a file exists
+
+boolean M_FileExists(char *filename)
+{
+    FILE *fstream;
+
+    fstream = fopen(filename, "r");
+
+    if (fstream != NULL)
+    {
+        fclose(fstream);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 
 
 
