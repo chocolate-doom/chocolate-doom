@@ -136,8 +136,8 @@ static char *collectors_edition_subdirs[] =
 static char *GetRegistryString(registry_value_t *reg_val)
 {
     HKEY key;
-    int len;
-    int valtype;
+    DWORD len;
+    DWORD valtype;
     char *result;
 
     // Open the key (directory where the value is stored)
@@ -167,7 +167,7 @@ static char *GetRegistryString(registry_value_t *reg_val)
 
     result = Z_Malloc(len, PU_STATIC, 0);
 
-    if (RegQueryValueEx(key, reg_val->value, NULL, &valtype, result, &len) 
+    if (RegQueryValueEx(key, reg_val->value, NULL, &valtype, (unsigned char *) result, &len) 
           != ERROR_SUCCESS)
     {
         Z_Free(result);
