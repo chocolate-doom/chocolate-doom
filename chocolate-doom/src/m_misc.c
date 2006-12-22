@@ -671,7 +671,8 @@ void M_SetConfigDir(void)
 
         configdir = malloc(strlen(homedir) + strlen(PACKAGE_TARNAME) + 5);
 
-        sprintf(configdir, "%s/.%s/", homedir, PACKAGE_TARNAME);
+        sprintf(configdir, "%s%c.%s%c", homedir, DIR_SEPARATOR,
+			                PACKAGE_TARNAME, DIR_SEPARATOR);
 
         // make the directory if it doesnt already exist
 
