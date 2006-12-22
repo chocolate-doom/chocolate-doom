@@ -72,6 +72,10 @@
      * Autoadjusting the screen mode can now be disabled.
      * On Windows, the registry is queried to detect installed versions of
        Doom and automatically locate IWAD files.
+     * DOOMWADDIR can be used like PATH to specify multiple locations in
+       which to search for IWAD files.  Also, '-iwad' is now enhanced,
+       so that eg. '-iwad doom.wad' will now search all IWAD search
+       paths for 'doom.wad'.
      
     Portability improvements: 
      * Chocolate Doom now compiles and runs cleanly on MacOS X.  Huge

@@ -39,15 +39,20 @@
 #include "z_zone.h"
 
 // Array of locations to search for IWAD files
+//
+// "128 IWAD search directories should be enough for anybody".
 
-#define MAX_IWAD_DIRS 32
+#define MAX_IWAD_DIRS 128
 static char *iwad_dirs[MAX_IWAD_DIRS];
 static int num_iwad_dirs = 0;
 
 static void AddIWADDir(char *dir)
 {
-    iwad_dirs[num_iwad_dirs] = dir;
-    ++num_iwad_dirs;
+    if (num_iwad_dirs < MAX_IWAD_DIRS)
+    {
+        iwad_dirs[num_iwad_dirs] = dir;
+        ++num_iwad_dirs;
+    }
 }
 
 // This is Windows-specific code that automatically finds the location
@@ -276,7 +281,7 @@ static char *SearchDirectoryForIWAD(char *dir)
         
         filename = Z_Malloc(strlen(dir) + strlen(iwadname) + 3, PU_STATIC, 0);
 
-        sprintf(filename, "%s/%s", dir, iwadname);
+        sprintf(filename, "%s%c%s", dir, DIR_SEPARATOR, iwadname);
 
         if (M_FileExists(filename))
         {
@@ -320,25 +325,68 @@ static void IdentifyIWADByName(char *name)
 }
 
 //
-// Build a list of IWAD files
-//
+// Add directories from the list in the DOOMWADDIR environment variable.
+// 
 
-static void BuildIWADDirList(void)
+static void AddDoomWadDirs(void)
 {
     char *doomwaddir;
+    char *p;
 
     // Check the DOOMWADDIR environment variable.
 
     doomwaddir = getenv("DOOMWADDIR");
 
-    if (doomwaddir != NULL)
+    if (doomwaddir == NULL)
     {
-        AddIWADDir(doomwaddir);
+        return;
     }
 
+    doomwaddir = strdup(doomwaddir);
+
+    // Add the initial directory
+
+    AddIWADDir(doomwaddir);
+
+    // Split into individual dirs within the list.
+
+    p = doomwaddir;
+
+    for (;;)
+    {
+        p = strchr(p, PATH_SEPARATOR);
+
+        if (p != NULL)
+        {
+            // Break at the separator and store the right hand side
+            // as another iwad dir
+  
+            *p = '\0';
+            p += 1;
+
+            AddIWADDir(p);
+        }
+        else
+        {
+            break;
+        }
+    }
+}
+
+
+//
+// Build a list of IWAD files
+//
+
+static void BuildIWADDirList(void)
+{
     // Look in the current directory.  Doom always does this.
 
     AddIWADDir(".");
+
+    // Add dirs from DOOMWADDIR
+
+    AddDoomWadDirs();
 
 #ifdef _WIN32
 
@@ -358,6 +406,48 @@ static void BuildIWADDirList(void)
 }
 
 //
+// Searches IWAD search paths for an IWAD with a specific name.
+// 
+
+
+char *D_FindIWADByName(char *name)
+{
+    char *buf;
+    int i;
+    boolean exists;
+    
+    // Absolute path?
+
+    if (M_FileExists(name))
+    {
+        return name;
+    }
+    
+    // Search through all IWAD paths for a file with the given name.
+
+    for (i=0; i<num_iwad_dirs; ++i)
+    {
+        // Construct a string for the full path
+
+        buf = Z_Malloc(strlen(iwad_dirs[i]) + strlen(name) + 5, PU_STATIC, 0);
+        sprintf(buf, "%s%c%s", iwad_dirs[i], DIR_SEPARATOR, name);
+
+        exists = M_FileExists(buf);
+
+        if (exists)
+        {
+            return buf;
+        }
+
+        Z_Free(buf);
+    }
+
+    // File not found
+
+    return NULL;
+}
+
+//
 // FindIWAD
 // Checks availability of IWAD files by name,
 // to determine whether registered/commercial features
@@ -367,22 +457,35 @@ static void BuildIWADDirList(void)
 char *D_FindIWAD(void)
 {
     char *result;
+    char *iwadfile;
     int iwadparm;
     int i;
+
+    // Build a list of locations to look for an IWAD
+
+    BuildIWADDirList();
+
+    // Check for the -iwad parameter
 
     iwadparm = M_CheckParm("-iwad");
 
     if (iwadparm)
     {
-        result = myargv[iwadparm + 1];
+        // Search through IWAD dirs for an IWAD with the given name.
+
+        iwadfile = myargv[iwadparm + 1];
+
+        result = D_FindIWADByName(iwadfile);
+
+        if (result == NULL)
+        {
+            I_Error("IWAD file '%s' not found!", iwadfile);
+        }
+        
         IdentifyIWADByName(result);
     }
     else
     {
-        // Build a list of locations to look for an IWAD
-
-        BuildIWADDirList();
-
         // Search through the list and look for an IWAD
 
         result = NULL;
@@ -437,9 +540,8 @@ void D_SetSaveGameDir(void)
         {
             if (gamemission == iwads[i].mission)
             {
-                strcat(savegamedir, "/");
-                strcat(savegamedir, iwads[i].name);
-                strcat(savegamedir, "/");
+                sprintf(savegamedir, "%c%s%c", 
+                        DIR_SEPARATOR, iwads[i].name, DIR_SEPARATOR);
                 M_MakeDirectory(savegamedir);
                 break;
             }
