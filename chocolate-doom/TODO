@@ -12,8 +12,6 @@ To do:
 * Better icon for chocolate-setup.
 * Automatic WAD installer - download and run TCs from a list automatically
   (automating the current "instructions on wiki" system)
-* On Windows, search the Final Doom/Doom Collector's Edition install 
-  dirs for IWADs.
 * Demo hashes for regression testing of this and other ports.
 * Multiplayer:
   - Master server for locating servers automatically - makes setting up
