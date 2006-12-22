@@ -79,9 +79,7 @@ static void ExtractFileBase(char *path, char *dest)
     src = path + strlen(path) - 1;
     
     // back up until a \ or the start
-    while (src != path
-	   && *(src-1) != '\\'
-	   && *(src-1) != '/')
+    while (src != path && *(src - 1) != DIR_SEPARATOR)
     {
 	src--;
     }
