@@ -36,6 +36,8 @@
        The game runs in 320x240/640x480 instead, with black borders.
        The system automatically adjusts to this if closer modes are 
        unavailable.
+     * Aspect ratio correction: you can (also) run at 640x480 without black 
+       borders at the top and bottom of the screen.
      * Working three-screen mode, as seen in early versions of Doom!
        To test this out, put three computers on a LAN and type:
          chocolate-doom -server
@@ -68,6 +70,8 @@
      * It is now possible to record demos of unlimited length (by default, 
        the Vanilla limit still applies, but it can now be disabled).
      * Autoadjusting the screen mode can now be disabled.
+     * On Windows, the registry is queried to detect installed versions of
+       Doom and automatically locate IWAD files.
      
     Portability improvements: 
      * Chocolate Doom now compiles and runs cleanly on MacOS X.  Huge
