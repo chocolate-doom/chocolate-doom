@@ -32,7 +32,12 @@
 // C99 integer types; with gcc we just use this.  Other compilers 
 // should add conditional statements that define the C99 types.
 
-#include <stdint.h>
+// What is really wanted here is stdint.h; however, some old versions
+// of Solaris don't have stdint.h and only have inttypes.h (the 
+// pre-standardisation version).  inttypes.h is also in the C99 
+// standard and defined to include stdint.h, so include this. 
+
+#include <inttypes.h>
 
 #ifdef __cplusplus
 
@@ -44,8 +49,8 @@ typedef bool boolean;
 
 typedef enum 
 {
-	false, 
-	true
+    false, 
+    true
 } boolean;
 
 #endif
