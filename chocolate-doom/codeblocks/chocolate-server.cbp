@@ -39,7 +39,7 @@
 			<Add alias="All" targets="Debug;Release;" />
 		</VirtualTargets>
 		<Compiler>
-			<Add directory="..\msvc" />
+			<Add directory="." />
 			<Add directory="..\textscreen" />
 		</Compiler>
 		<Linker>
