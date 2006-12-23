@@ -5,7 +5,7 @@
 #define PACKAGE "chocolate-doom"
 
 /* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT "fraggle@alkali.org"
+#define PACKAGE_BUGREPORT "fraggle@gmail.com"
 
 /* Define to the full name of this package. */
 #define PACKAGE_NAME "Chocolate Doom"
