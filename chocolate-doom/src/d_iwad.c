@@ -170,12 +170,12 @@ static char *GetRegistryString(registry_value_t *reg_val)
 
     // Allocate a buffer for the value and read the value
 
-    result = Z_Malloc(len, PU_STATIC, 0);
+    result = malloc(len);
 
     if (RegQueryValueEx(key, reg_val->value, NULL, &valtype, (unsigned char *) result, &len) 
           != ERROR_SUCCESS)
     {
-        Z_Free(result);
+        free(result);
         return NULL;
     }
 
@@ -209,7 +209,7 @@ static void CheckUninstallStrings(void)
 
         if (unstr == NULL)
         {
-            Z_Free(val);
+            free(val);
         }
         else
         {
@@ -238,17 +238,16 @@ static void CheckCollectorsEdition(void)
     for (i=0; i<sizeof(collectors_edition_subdirs)
                   / sizeof(*collectors_edition_subdirs); ++i)
     {
-        subpath = Z_Malloc(strlen(install_path)
-                           + strlen(collectors_edition_subdirs[i])
-                           + 5,
-                           PU_STATIC, 0);
+        subpath = malloc(strlen(install_path)
+                         + strlen(collectors_edition_subdirs[i])
+                         + 5);
 
         sprintf(subpath, "%s\\%s", install_path, collectors_edition_subdirs[i]);
 
         AddIWADDir(subpath);
     }
 
-    Z_Free(install_path);
+    free(install_path);
 }
 
 #endif
@@ -279,7 +278,7 @@ static char *SearchDirectoryForIWAD(char *dir)
 
         iwadname = DEH_String(iwads[i].name);
         
-        filename = Z_Malloc(strlen(dir) + strlen(iwadname) + 3, PU_STATIC, 0);
+        filename = malloc(strlen(dir) + strlen(iwadname) + 3);
 
         sprintf(filename, "%s%c%s", dir, DIR_SEPARATOR, iwadname);
 
@@ -289,7 +288,7 @@ static char *SearchDirectoryForIWAD(char *dir)
             return filename;
         }
 
-        Z_Free(filename);
+        free(filename);
     }
 
     return NULL;
@@ -409,7 +408,6 @@ static void BuildIWADDirList(void)
 // Searches IWAD search paths for an IWAD with a specific name.
 // 
 
-
 char *D_FindIWADByName(char *name)
 {
     char *buf;
@@ -429,7 +427,7 @@ char *D_FindIWADByName(char *name)
     {
         // Construct a string for the full path
 
-        buf = Z_Malloc(strlen(iwad_dirs[i]) + strlen(name) + 5, PU_STATIC, 0);
+        buf = malloc(strlen(iwad_dirs[i]) + strlen(name) + 5);
         sprintf(buf, "%s%c%s", iwad_dirs[i], DIR_SEPARATOR, name);
 
         exists = M_FileExists(buf);
@@ -439,7 +437,7 @@ char *D_FindIWADByName(char *name)
             return buf;
         }
 
-        Z_Free(buf);
+        free(buf);
     }
 
     // File not found
@@ -729,5 +727,29 @@ void D_SetGameDescription(void)
         else if (gamemission == pack_tnt)
             gamedescription = GetGameName("DOOM 2: TNT - Evilution");
     }
+}
+
+// Clever hack: Setup can invoke Doom to determine which IWADs are installed.
+// Doom searches install paths and exits with the return code being a 
+// bitmask of the installed IWAD files.
+
+void D_FindInstalledIWADs(void)
+{
+    int i;
+    int result;
+
+    BuildIWADDirList();
+
+    result = 0;
+
+    for (i=0; i<sizeof(iwads) / sizeof(*iwads); ++i)
+    {
+        if (D_FindIWADByName(iwads[i].name) != NULL)
+        {
+            result |= 1 << i;
+        }
+    }
+
+    exit(result);
 }
 

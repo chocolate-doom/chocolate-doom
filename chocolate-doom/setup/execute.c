@@ -26,6 +26,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <sys/types.h>
+#include <sys/wait.h>
+
 #include "textscreen.h"
 
 #include "configfile.h"
@@ -96,9 +99,10 @@ void AddCmdLineParameter(execute_context_t *context, char *s, ...)
     fprintf(context->stream, "\n");
 }
 
-void ExecuteDoom(execute_context_t *context)
+int ExecuteDoom(execute_context_t *context)
 {
     char *cmdline;
+    int result;
     
     fclose(context->stream);
 
@@ -110,13 +114,22 @@ void ExecuteDoom(execute_context_t *context)
     sprintf(cmdline, "%s @%s", DOOM_BINARY, context->response_file);
     
     // Run the command
-    system(cmdline);
+    result = system(cmdline);
 
     free(cmdline);
     
     // Destroy context 
     remove(context->response_file);
     free(context);
+
+    if (WIFEXITED(result))
+    {
+        return WEXITSTATUS(result);
+    }
+    else
+    {
+        return -1;
+    }
 }
 
 static void TestCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
@@ -172,5 +185,28 @@ txt_window_action_t *TestConfigAction(void)
     TXT_SignalConnect(test_action, "pressed", TestCallback, NULL);
 
     return test_action;
+}
+
+// Invokes Doom to find which IWADs are installed.
+// This is a cheap hack to avoid duplication of the complicated install
+// path searching code inside Doom.
+
+int FindInstalledIWADs(void)
+{
+    execute_context_t *context;
+    int result;
+
+    context = NewExecuteContext();
+    AddCmdLineParameter(context, "-findiwads");
+    result = ExecuteDoom(context);
+
+    if (result < 0)
+    {
+        return 0;
+    }
+    else
+    {
+        return result;
+    }
 }
 
