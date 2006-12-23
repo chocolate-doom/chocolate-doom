@@ -40,9 +40,9 @@
 		</VirtualTargets>
 		<Compiler>
 			<Add option="-Wall" />
-			<Add directory="..\textscreen" />
-			<Add directory="..\msvc" />
+			<Add directory="." />
 			<Add directory="..\src" />
+			<Add directory="..\textscreen" />
 		</Compiler>
 		<Linker>
 			<Add option="-lmingw32 -lSDLmain -lSDL -mwindows" />
@@ -50,7 +50,7 @@
 		</Linker>
 		<Unit filename="chocolate-setup-res.rc">
 			<Option compilerVar="WINDRES" />
-			<Option objectName="codeblocks\chocolate-setup-res.res" />
+			<Option objectName="chocolate-setup-res.res" />
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
