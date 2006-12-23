@@ -40,9 +40,9 @@
 			<Add alias="All" targets="Debug;Release;" />
 		</VirtualTargets>
 		<Compiler>
-			<Add directory="..\textscreen" />
-			<Add directory="..\msvc" />
+			<Add directory="." />
 			<Add directory="..\src" />
+			<Add directory="..\textscreen" />
 		</Compiler>
 		<Linker>
 			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_mixer -lSDL_net -mwindows" />
@@ -53,7 +53,7 @@
 			<Option target="Debug" />
 			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\msvc\config.h">
+		<Unit filename="config.h">
 			<Option compilerVar="CPP" />
 			<Option compile="0" />
 			<Option link="0" />
