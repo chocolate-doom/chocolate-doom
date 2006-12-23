@@ -26,10 +26,17 @@
 
 typedef struct execute_context_s execute_context_t;
 
+#define IWAD_DOOM2    (1 << 0)       /* doom2.wad */
+#define IWAD_PLUTONIA (1 << 1)       /* plutonia.wad */
+#define IWAD_TNT      (1 << 2)       /* tnt.wad */
+#define IWAD_DOOM     (1 << 3)       /* doom.wad */
+#define IWAD_DOOM1    (1 << 4)       /* doom1.wad */
+
 execute_context_t *NewExecuteContext(void);
 void AddCmdLineParameter(execute_context_t *context, char *s, ...);
 void AddConfigParameters(execute_context_t *context);
-void ExecuteDoom(execute_context_t *context);
+int ExecuteDoom(execute_context_t *context);
+int FindInstalledIWADs(void);
 
 txt_window_action_t *TestConfigAction(void);
 

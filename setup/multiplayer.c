@@ -34,11 +34,39 @@
 #define NUM_WADS 10
 #define NUM_EXTRA_PARAMS 10
 
+typedef struct
+{
+    char *filename;
+    char *description;
+    int mask;
+} iwad_t;
+
 typedef enum
 {
     WARP_DOOM1,
     WARP_DOOM2,
 } warptype_t;
+
+static iwad_t iwads[] = 
+{
+    { "doom.wad",     "Doom",                                IWAD_DOOM },
+    { "doom2.wad",    "Doom 2",                              IWAD_DOOM2 },
+    { "tnt.wad",      "Final Doom: TNT: Evilution",          IWAD_TNT },
+    { "plutonia.wad", "Final Doom: The Plutonia Experiment", IWAD_PLUTONIA },
+    { "doom1.wad",    "Doom shareware",                      IWAD_DOOM1 },
+};
+
+// Array of IWADs found to be installed
+
+static char *found_iwads[5];
+
+// Index of the currently selected IWAD
+
+static int found_iwad_selected;
+
+// Filename to pass to '-iwad'.
+
+static char *iwadfile;
 
 static char *skills[] = 
 {
@@ -78,6 +106,23 @@ static int warpmap = 1;
 
 static char *connect_address = NULL;
 
+// Find an IWAD from its description
+
+static iwad_t *GetIWADForDescription(char *description)
+{
+    int i;
+
+    for (i=0; i<sizeof(iwads) / sizeof(*iwads); ++i)
+    {
+        if (!strcmp(iwads[i].description, description))
+        {
+            return &iwads[i];;
+        }
+    }
+
+    return NULL;
+}
+
 static void AddWADs(execute_context_t *exec)
 {
     int have_wads = 0;
@@ -115,6 +160,12 @@ static void StartGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
     execute_context_t *exec;
 
     exec = NewExecuteContext();
+
+    if (iwadfile != NULL)
+    {
+        AddCmdLineParameter(exec, "-iwad %s", iwadfile);
+    }
+
     AddCmdLineParameter(exec, "-server");
     AddCmdLineParameter(exec, "-skill %i", skill + 1);
 
@@ -194,7 +245,6 @@ static void SetDoom1Warp(TXT_UNCAST_ARG(widget), void *val)
 
     l = (int) val;
 
-    warptype = WARP_DOOM1;
     warpepisode = l / 10;
     warpmap = l % 10;
 
@@ -207,7 +257,6 @@ static void SetDoom2Warp(TXT_UNCAST_ARG(widget), void *val)
 
     l = (int) val;
 
-    warptype = WARP_DOOM2;
     warpmap = l;
 
     UpdateWarpButton();
@@ -228,68 +277,171 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
     char buf[10];
     int x, y;
     int l;
+    int i;
 
     window = TXT_NewWindow("Select level");
 
-    table = TXT_NewTable(8);
+    table = TXT_NewTable(4);
 
     TXT_AddWidget(window, table);
 
-    for (y=1; y<=9; ++y)
+    if (warptype == WARP_DOOM1)
     {
-        // MAP?? levels
-
-        for (x=0; x<4; ++x) 
-        {
-            l = x * 9 + y;
-            
-            if (l > 32)
-            {
-                TXT_AddWidget(table, NULL);
-            }
-            else
-            {
-                sprintf(buf, " MAP%02i ", l);
-                button = TXT_NewButton(buf);
-                TXT_SignalConnect(button, "pressed", 
-                                  SetDoom2Warp, (void *) l);
-                TXT_SignalConnect(button, "pressed",
-                                  CloseLevelSelectDialog, window);
-                TXT_AddWidget(table, button);
-
-                if (warptype == WARP_DOOM2
-                 && warpmap == l)
-                {
-                    TXT_SelectWidget(table, button);
-                }
-            }
-        }
-
         // ExMy levels
         
-        for (x=1; x<=4; ++x)
+        for (i=0; i<4 * 9; ++i)
         {
-            if (y > 9)
-            {
-                TXT_AddWidget(table, NULL);
-            }
-            else
-            {
-                sprintf(buf, " E%iM%i ", x, y);
-                button = TXT_NewButton(buf);
-                TXT_SignalConnect(button, "pressed",
-                                  SetDoom1Warp, (void *) (x * 10 + y));
-                TXT_SignalConnect(button, "pressed",
-                                  CloseLevelSelectDialog, window);
-                TXT_AddWidget(table, button);
+            x = (i % 4) + 1;
+            y = (i / 4) + 1;
 
-                if (warptype == WARP_DOOM1
-                 && warpepisode == x && warpmap == y)
-                {
-                    TXT_SelectWidget(table, button);
-                }
+            sprintf(buf, " E%iM%i ", x, y);
+            button = TXT_NewButton(buf);
+            TXT_SignalConnect(button, "pressed",
+                              SetDoom1Warp, (void *) (x * 10 + y));
+            TXT_SignalConnect(button, "pressed",
+                              CloseLevelSelectDialog, window);
+            TXT_AddWidget(table, button);
+
+            if (warpepisode == x && warpmap == y)
+            {
+                TXT_SelectWidget(table, button);
             }
         }
+    }
+    else
+    {
+        for (i=0; i<32; ++i)
+        {
+            x = i % 4;
+            y = i / 4;
+
+            l = x * 8 + y + 1;
+          
+            sprintf(buf, " MAP%02i ", l);
+            button = TXT_NewButton(buf);
+            TXT_SignalConnect(button, "pressed", 
+                              SetDoom2Warp, (void *) l);
+            TXT_SignalConnect(button, "pressed",
+                              CloseLevelSelectDialog, window);
+            TXT_AddWidget(table, button);
+
+            if (warpmap == l)
+            {
+                TXT_SelectWidget(table, button);
+            }
+        }
+    }
+}
+
+static void IWADSelected(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
+{
+    iwad_t *iwad;
+
+    // Find the iwad_t selected
+
+    iwad = GetIWADForDescription(found_iwads[found_iwad_selected]);
+
+    // Update iwadfile
+
+    iwadfile = iwad->filename;
+}
+
+// Called when the IWAD button is changed, to update warptype.
+
+static void UpdateWarpType(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
+{
+    warptype_t new_warptype;
+    iwad_t *iwad;
+    
+    // Get the selected IWAD
+
+    iwad = GetIWADForDescription(found_iwads[found_iwad_selected]);
+
+    // Find the new warp type
+
+    if (iwad->mask & (IWAD_DOOM | IWAD_DOOM1))
+    {
+        new_warptype = WARP_DOOM1;
+    }
+    else
+    {
+        new_warptype = WARP_DOOM2;
+    }
+
+    // Reset to E1M1 / MAP01 when the warp type is changed.
+
+    if (new_warptype != warptype)
+    {
+        warpepisode = 1;
+        warpmap = 1;
+    }
+
+    warptype = new_warptype;
+
+    UpdateWarpButton();
+}
+
+static txt_widget_t *IWADSelector(void)
+{
+    txt_dropdown_list_t *dropdown;
+    int installed_iwads;
+    int num_iwads;
+    int i;
+
+    // Find out what WADs are installed
+    
+    installed_iwads = FindInstalledIWADs();
+
+    // Build a list of the descriptions for all installed IWADs
+
+    num_iwads = 0;
+
+    for (i=0; i<sizeof(iwads) / sizeof(*iwads); ++i)
+    {
+        if (installed_iwads & iwads[i].mask)
+        {
+            found_iwads[num_iwads] = iwads[i].description;
+            ++num_iwads;
+        }
+    }
+
+    // Build a dropdown list of IWADs
+
+    if (num_iwads == 0)
+    {
+        // No IWAD found.  Show Doom 2 options, but this probably
+        // isn't going to work.
+
+        warptype = WARP_DOOM2;
+        warpepisode = 1;
+        warpmap = 1;
+        iwadfile = NULL;
+        UpdateWarpButton();
+
+        return (txt_widget_t *) TXT_NewLabel("Doom 2");
+    }
+    else if (num_iwads == 1)
+    {
+        // We have only one IWAD.  Show the first one as a label.
+
+        found_iwad_selected = 0;
+        IWADSelected(NULL, NULL);
+
+        return (txt_widget_t *) TXT_NewLabel(found_iwads[0]);
+    }
+    else
+    {
+        // Dropdown list allowing IWAD to be selected.
+
+        found_iwad_selected = 0;
+        IWADSelected(NULL, NULL);
+
+        dropdown = TXT_NewDropdownList(&found_iwad_selected, 
+                                       found_iwads, num_iwads);
+
+        TXT_SignalConnect(dropdown, "changed", IWADSelected, NULL);
+
+        return (txt_widget_t *) dropdown;
     }
 }
 
@@ -345,6 +497,7 @@ void StartMultiGame(void)
     txt_window_t *window;
     txt_table_t *gameopt_table;
     txt_table_t *advanced_table;
+    txt_widget_t *iwad_selector;
 
     window = TXT_NewWindow("Start multiplayer game");
 
@@ -366,6 +519,8 @@ void StartMultiGame(void)
     TXT_SetColumnWidths(gameopt_table, 12, 12);
 
     TXT_AddWidgets(gameopt_table,
+           TXT_NewLabel("Game"),
+           iwad_selector = IWADSelector(),
            TXT_NewLabel("Skill"),
            TXT_NewDropdownList(&skill, skills, 5),
            TXT_NewLabel("Game type"),
@@ -380,11 +535,14 @@ void StartMultiGame(void)
 
     TXT_SetColumnWidths(advanced_table, 12, 12);
 
+    TXT_SignalConnect(iwad_selector, "changed", UpdateWarpType, NULL);
+
     TXT_AddWidgets(advanced_table, 
                    TXT_NewLabel("UDP port"),
                    TXT_NewIntInputBox(&udpport, 5),
                    NULL);
 
+    UpdateWarpType(NULL, NULL);
     UpdateWarpButton();
 }
 
@@ -419,21 +577,30 @@ static txt_window_action_t *JoinGameAction(void)
     return action;
 }
 
-
 void JoinMultiGame(void)
 {
     txt_window_t *window;
+    txt_table_t *gameopt_table;
 
     window = TXT_NewWindow("Join multiplayer game");
 
     TXT_AddWidgets(window, 
-        TXT_NewLabel("Connect to address: "),
-        TXT_NewInputBox(&connect_address, 40),
+        gameopt_table = TXT_NewTable(2),
         TXT_NewStrut(0, 1),
         TXT_NewButton2("Add extra parameters...", OpenExtraParamsWindow, NULL),
-        TXT_NewButton2("Add WADs...", OpenWadsWindow, NULL),
+    //    TXT_NewButton2("Add WADs...", OpenWadsWindow, NULL),
         NULL);
 
+    TXT_SetColumnWidths(gameopt_table, 12, 12);
+
+    TXT_AddWidgets(gameopt_table,
+                   TXT_NewLabel("Game"),
+                   IWADSelector(),
+                   TXT_NewLabel("Server address "),
+                   TXT_NewInputBox(&connect_address, 40),
+                   NULL);
+
+    TXT_SetWindowAction(window, TXT_HORIZ_CENTER, WadWindowAction());
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, JoinGameAction());
 }
 

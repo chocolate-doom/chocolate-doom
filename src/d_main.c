@@ -929,6 +929,11 @@ void D_DoomMain (void)
 
     FindResponseFile ();
 
+    if (M_CheckParm("-findiwads") > 0)
+    {
+        D_FindInstalledIWADs();
+    }
+
     // print banner
 
     PrintBanner(PACKAGE_STRING);
