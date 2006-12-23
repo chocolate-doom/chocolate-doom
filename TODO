@@ -5,8 +5,6 @@ To do:
   - Debian/Ubuntu .deb packages, Fedora .rpm packages.
   - Windows NSIS installer.
   - MacOS X .dmg packages (should be universal binaries!)
-* Smarter setup program - detect IWADs automatically and make them 
-  selectable from a list.
 * Free version of the Chocolate Doom logo (from scratch, not using the 
   Doom imp sprite), so t-shirts can be printed!
 * Better icon for chocolate-setup.
