@@ -1,0 +1,154 @@
+#!/usr/bin/env python
+
+import re
+import glob
+
+class Category:
+    def __init__(self, description):
+        self.description = description
+        self.params = []
+
+    def add_param(self, param):
+        self.params.append(param)
+
+    def format(self):
+        result = ".SH " + self.description.upper() + "\n"
+
+        for p in self.params:
+            result += ".TP\n"
+            result += p.format()
+
+        return result
+
+categories = {
+    None:      Category("General options"),
+    "video":   Category("Display options"),
+    "demo":    Category("Demo options"),
+    "net":     Category("Networking options"),
+    "mod":     Category("Dehacked and WAD merging"),
+    "compat":  Category("Compatibility"),
+}
+
+class Parameter:
+    def __init__(self):
+        self.text = ""
+        self.name = ""
+        self.args = None
+        self.platform = None
+        self.category = None
+
+    def add_text(self, text):
+        if len(text) <= 0:
+            pass
+        elif text[0] == "@":
+            match = re.match('@(\S+)\s+(.*)', text)
+
+            if not match:
+                raise "Malformed option line: %s" % text
+
+            option_type = match.group(1)
+            data = match.group(2)
+            
+            if option_type == "arg":
+                self.args = data
+            elif option_type == "platform":
+                self.platform = data
+            elif option_type == "category":
+                self.category = data
+            else:
+                raise "Unknown option type '%s'" % option_type
+
+        else:
+            self.text += text + " "
+
+    def format(self):
+        result = self.name
+
+        if self.args:
+            result += " " + self.args
+
+        result = '\\fB' + result + '\\fR'
+
+        result += "\n"
+
+        if self.platform:
+            result += "[%s only] " % self.platform
+
+        result += self.text + "\n"
+
+        return result
+
+def process_file(file):
+    f = open(file)
+
+    try:
+        param = None
+        waiting_for_checkparm = False
+
+        for line in f:
+            line = line.rstrip()
+
+            # Currently reading a doc comment?
+
+            if param:
+                # End of doc comment
+
+                if not re.match('\s*//', line):
+                    waiting_for_checkparm = True
+
+                # Waiting for the M_CheckParm call that contains the
+                # name of the parameter we are documenting?
+
+                if waiting_for_checkparm:
+                    match = re.search('M_CheckParm\s*\(\s*"(.*?)"\s*\)', line)
+
+                    if match:
+                        # Found the name!  Finished documenting this 
+                        # parameter.
+
+                        param.name = match.group(1)
+                        categories[param.category].add_param(param)
+                        param = None
+
+                else:
+                    # More documentation text
+
+                    munged_line = re.sub('\s*\/\/\s*', '', line, 1)
+                    munged_line = re.sub('\s*$', '', munged_line)
+                    param.add_text(munged_line)
+
+            # Check for start of a doc comment
+
+            if re.search("//!", line):
+                param = Parameter()
+                waiting_for_checkparm = False
+    finally:
+        f.close()
+
+def print_file_contents(file):
+    f = open(file)
+
+    try:
+        for line in f:
+            print line.rstrip()
+
+    finally:
+        f.close()
+
+# Process all C source files.
+
+files = glob.glob("../src/*.c")
+
+for file in files:
+    process_file(file)
+
+print_file_contents("header")
+
+print categories[None].format()
+
+for c in categories:
+    if c != None:
+        print categories[c].format()
+
+print_file_contents("footer")
+

@@ -616,6 +616,14 @@ void M_LoadDefaults (void)
     int i;
  
     // check for a custom default file
+
+    //!
+    // @arg <file>
+    //
+    // Load configuration from the specified file, instead of
+    // default.cfg.
+    //
+
     i = M_CheckParm ("-config");
 
     if (i && i<myargc-1)
@@ -630,6 +638,11 @@ void M_LoadDefaults (void)
     }
 
     printf("saving config in %s\n", doom_defaults.filename);
+
+    //!
+    // Load extra configuration from the specified file, instead 
+    // of chocolate-doom.cfg.
+    //
 
     i = M_CheckParm("-extraconfig");
 
@@ -681,8 +694,12 @@ void M_SetConfigDir(void)
     else
     {
 #ifdef _WIN32
-        // when given the -cdrom option, save config+savegames in 
-        // c:\doomdata.  This only applies under Windows.
+        //!
+        // @platform windows
+        //
+        // Save configuration data and savegames in c:\doomdata,
+        // allowing play from CD.
+        //
 
         if (M_CheckParm("-cdrom") > 0)
         {

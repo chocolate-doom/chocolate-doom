@@ -248,6 +248,12 @@ void D_CheckNetGame (void)
     {
         net_addr_t *addr = NULL;
 
+        //!
+        // @category net
+        //
+        // Start a multiplayer server, listening for connections.
+        //
+
         if (M_CheckParm("-server") > 0)
         {
             NET_SV_Init();
@@ -259,6 +265,13 @@ void D_CheckNetGame (void)
         }
         else
         {
+            //! 
+            // @category net
+            //
+            // Automatically search the local LAN for a multiplayer
+            // server and join it.
+            //
+
             i = M_CheckParm("-autojoin");
 
             if (i > 0)
@@ -270,6 +283,14 @@ void D_CheckNetGame (void)
                     I_Error("No server found on local LAN");
                 }
             }
+
+            //!
+            // @arg <address>
+            // @category net
+            //
+            // Connect to a multiplayer server running on the given 
+            // address.
+            //
             
             i = M_CheckParm("-connect");
 
@@ -292,11 +313,23 @@ void D_CheckNetGame (void)
                 drone = true;
             }
 
+            //!
+            // @category net
+            //
+            // Run as the left screen in three screen mode.
+            //
+
             if (M_CheckParm("-left") > 0)
             {
                 viewangleoffset = ANG90;
                 drone = true;
             }
+
+            //! 
+            // @category net
+            //
+            // Run as the right screen in three screen mode.
+            //
 
             if (M_CheckParm("-right") > 0)
             {

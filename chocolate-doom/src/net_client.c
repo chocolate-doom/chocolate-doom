@@ -390,17 +390,39 @@ void NET_CL_StartGame(void)
     settings.nomonsters = nomonsters;
     settings.timelimit = timelimit;
 
+    //!
+    // @category net
+    //
+    // Use original game sync code.
+    //
+
     if (M_CheckParm("-oldsync") > 0)
 	settings.new_sync = 0;
     else
 	settings.new_sync = 1;
     
+    //!
+    // @category net
+    // @arg <n>
+    //
+    // Send n extra tics in every packet as insurance against dropped
+    // packets.
+    //
+
     i = M_CheckParm("-extratics");
 
     if (i > 0)
         settings.extratics = atoi(myargv[i+1]);
     else
         settings.extratics = 1;
+
+    //!
+    // @category net
+    // @arg <n>
+    //
+    // Reduce the resolution of the game by a factor of n, reducing
+    // the amount of network bandwidth needed.
+    //
 
     i = M_CheckParm("-dup");
 

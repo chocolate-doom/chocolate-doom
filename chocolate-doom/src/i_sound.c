@@ -453,12 +453,37 @@ I_InitSound()
         channels_playing[i] = sfx_None;
     }
 
-    nomusicparm = M_CheckParm("-nomusic") > 0
-               || M_CheckParm("-nosound") > 0
-               || snd_musicdevice < SNDDEVICE_ADLIB;
-    nosfxparm = M_CheckParm("-nosfx") > 0
-             || M_CheckParm("-nosound") > 0
-             || snd_sfxdevice < SNDDEVICE_SB;
+    //! 
+    // Disable music playback.
+    //
+
+    nomusicparm = M_CheckParm("-nomusic") > 0;
+
+    if (snd_musicdevice < SNDDEVICE_ADLIB)
+    {
+        nomusicparm = true;
+    }
+
+    //!
+    // Disable sound effects.
+    //
+
+    nosfxparm = M_CheckParm("-nosfx") > 0;
+
+    if (snd_sfxdevice < SNDDEVICE_SB)
+    {
+        nosfxparm = true;
+    }
+
+    //!
+    // Disable sound effects and music.
+    //
+
+    if (M_CheckParm("-nosound") > 0)
+    {
+        nosfxparm = true;
+        nomusicparm = true;
+    }
 
     // If music or sound is going to play, we need to at least
     // initialise SDL

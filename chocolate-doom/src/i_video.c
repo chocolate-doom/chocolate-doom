@@ -866,13 +866,24 @@ static boolean CheckValidFSMode(void)
 
 static void CheckCommandLine(void)
 {
-    // mouse grabbing
+    //!
+    // @category video 
+    //
+    // Grab the mouse when running in windowed mode.
+    //
 
     if (M_CheckParm("-grabmouse"))
     {
         grabmouse = true;
     }
-    else if (M_CheckParm("-nograbmouse"))
+
+    //!
+    // @category video 
+    //
+    // Don't grab the mouse when running in windowed mode.
+    //
+
+    if (M_CheckParm("-nograbmouse"))
     {
         grabmouse = false;
     }
@@ -880,32 +891,78 @@ static void CheckCommandLine(void)
     // default to fullscreen mode, allow override with command line
     // nofullscreen because we love prboom
 
+    //!
+    // @category video 
+    //
+    // Run in a window.
+    //
+
     if (M_CheckParm("-window") || M_CheckParm("-nofullscreen"))
     {
         fullscreen = FULLSCREEN_OFF;
     }
-    else if (M_CheckParm("-fullscreen"))
+
+    //!
+    // @category video 
+    //
+    // Run in fullscreen mode.
+    //
+
+    if (M_CheckParm("-fullscreen"))
     {
         fullscreen = FULLSCREEN_ON;
     }
 
+    //!
+    // @category video 
+    //
+    // Disable the mouse.
+    //
+
     nomouse = M_CheckParm("-nomouse") > 0;
 
-    // scale-by-2 mode
+    // 2x, 3x, 4x scale mode
  
+    //!
+    // @category video 
+    //
+    // Don't scale up the screen.
+    //
+
     if (M_CheckParm("-1"))
     {
         screenmultiply = 1;
     }
-    else if (M_CheckParm("-2"))
+
+    //!
+    // @category video 
+    //
+    // Double up the screen to 2x its size.
+    //
+
+    if (M_CheckParm("-2"))
     {
         screenmultiply = 2;
     }
-    else if (M_CheckParm("-3"))
+
+    //!
+    // @category video 
+    //
+    // Double up the screen to 3x its size.
+    //
+
+    if (M_CheckParm("-3"))
     {
         screenmultiply = 3;
     }
-    else if (M_CheckParm("-4"))
+
+    //!
+    // @category video 
+    //
+    // Double up the screen to 4x its size.
+    //
+
+    if (M_CheckParm("-4"))
     {
         screenmultiply = 4;
     }
@@ -1061,6 +1118,13 @@ void I_InitGraphics(void)
 #ifdef _WIN32
 
     // Allow -gdi as a shortcut for using the windib driver.
+
+    //!
+    // @category video 
+    // @platform windows
+    //
+    // Use the Windows GDI driver instead of DirectX.
+    //
 
     if (M_CheckParm("-gdi") > 0)
     {
