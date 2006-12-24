@@ -21,7 +21,6 @@
 // Code specific to the standalone dedicated server.
 //
 
-#include <SDL.h>
 #include <stdlib.h>
 #include <stdarg.h>
 

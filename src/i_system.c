@@ -30,7 +30,7 @@
 #include <string.h>
 
 #include <stdarg.h>
-#include <SDL.h>
+#include "SDL.h"
 
 #include "deh_main.h"
 #include "doomdef.h"
