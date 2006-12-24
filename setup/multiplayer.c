@@ -161,6 +161,11 @@ static void StartGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
 
     exec = NewExecuteContext();
 
+    // Extra parameters come first, before all others; this way,
+    // they can override any of the options set in the dialog.
+
+    AddExtraParameters(exec);
+
     if (iwadfile != NULL)
     {
         AddCmdLineParameter(exec, "-iwad %s", iwadfile);
@@ -211,7 +216,6 @@ static void StartGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
     AddCmdLineParameter(exec, "-port %i", udpport);
 
     AddWADs(exec);
-    AddExtraParameters(exec);
 
     TXT_Shutdown();
     
@@ -384,6 +388,7 @@ static void UpdateWarpType(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 static txt_widget_t *IWADSelector(void)
 {
     txt_dropdown_list_t *dropdown;
+    txt_widget_t *result;
     int installed_iwads;
     int num_iwads;
     int i;
@@ -405,44 +410,41 @@ static txt_widget_t *IWADSelector(void)
         }
     }
 
-    // Build a dropdown list of IWADs
+    // If no IWADs are found, provide Doom 2 as an option, but
+    // we're probably screwed.
 
     if (num_iwads == 0)
     {
-        // No IWAD found.  Show Doom 2 options, but this probably
-        // isn't going to work.
-
-        warptype = WARP_DOOM2;
-        warpepisode = 1;
-        warpmap = 1;
-        iwadfile = NULL;
-        UpdateWarpButton();
-
-        return (txt_widget_t *) TXT_NewLabel("Doom 2");
+        found_iwads[0] = "Doom 2";
+        num_iwads = 1;
     }
-    else if (num_iwads == 1)
+
+    // Build a dropdown list of IWADs
+
+    if (num_iwads < 2)
     {
-        // We have only one IWAD.  Show the first one as a label.
+        // We have only one IWAD.  Show as a label.
 
-        found_iwad_selected = 0;
-        IWADSelected(NULL, NULL);
-
-        return (txt_widget_t *) TXT_NewLabel(found_iwads[0]);
+        result = (txt_widget_t *) TXT_NewLabel(found_iwads[0]);
     }
     else
     {
         // Dropdown list allowing IWAD to be selected.
-
-        found_iwad_selected = 0;
-        IWADSelected(NULL, NULL);
 
         dropdown = TXT_NewDropdownList(&found_iwad_selected, 
                                        found_iwads, num_iwads);
 
         TXT_SignalConnect(dropdown, "changed", IWADSelected, NULL);
 
-        return (txt_widget_t *) dropdown;
+        result = (txt_widget_t *) dropdown;
     }
+
+    // Select first in the list.
+
+    found_iwad_selected = 0;
+    IWADSelected(NULL, NULL);
+
+    return result;
 }
 
 static txt_window_action_t *StartGameAction(void)
