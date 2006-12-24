@@ -1800,6 +1800,14 @@ void G_RecordDemo (char* name)
     strcpy (demoname, name); 
     strcat (demoname, ".lmp"); 
     maxsize = 0x20000;
+
+    //!
+    // @arg <size>
+    // @category demo
+    //
+    // Specify the demo buffer size (KiB)
+    //
+
     i = M_CheckParm ("-maxdemo");
     if (i && i<myargc-1)
 	maxsize = atoi(myargv[i+1])*1024;
@@ -1814,8 +1822,12 @@ void G_BeginRecording (void)
 { 
     int             i; 
 
-    // Check for the longtics parameter, to record hires angle
-    // turns in demos
+    //!
+    // @category demo
+    //
+    // Record a high resolution "Doom 1.91" demo.
+    //
+
     longtics = M_CheckParm("-longtics") != 0;
 
     // If not recording a longtics demo, record in low res
@@ -1921,8 +1933,17 @@ void G_DoPlayDemo (void)
 // G_TimeDemo 
 //
 void G_TimeDemo (char* name) 
-{ 	 
+{
+    //!
+    // Disable rendering the screen entirely.
+    //
+
     nodrawers = M_CheckParm ("-nodraw"); 
+
+    //!
+    // Disable blitting the screen.
+    //
+
     noblit = M_CheckParm ("-noblit"); 
     timingdemo = true; 
     singletics = true; 

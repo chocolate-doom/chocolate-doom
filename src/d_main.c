@@ -833,6 +833,14 @@ static void InitGameVersion(void)
     int p;
     int i;
 
+    //! 
+    // @arg <version>
+    // @category compat
+    //
+    // Emulate a specific version of Doom.  Valid values are "1.9",
+    // "ultimate" and "final".
+    //
+
     p = M_CheckParm("-gameversion");
 
     if (p > 0)
@@ -929,6 +937,9 @@ void D_DoomMain (void)
 
     FindResponseFile ();
 
+    // Undocumented "search for IWADs" parameter used by the setup
+    // tool.
+
     if (M_CheckParm("-findiwads") > 0)
     {
         D_FindInstalledIWADs();
@@ -941,6 +952,13 @@ void D_DoomMain (void)
     printf (DEH_String("Z_Init: Init zone memory allocation daemon. \n"));
     Z_Init ();
 
+    //!
+    // @category net
+    //
+    // Start a dedicated server, routing packets but not participating
+    // in the game itself.
+    //
+
     if (M_CheckParm("-dedicated") > 0)
     {
         printf("Dedicated server mode.\n");
@@ -949,7 +967,13 @@ void D_DoomMain (void)
         // Never returns
     }
 
-    // Query network servers?
+    //!
+    // @arg <address>
+    // @category net
+    //
+    // Query the status of the server running on the given IP
+    // address.
+    //
 
     p = M_CheckParm("-query");
 
@@ -957,6 +981,12 @@ void D_DoomMain (void)
     {
         NET_QueryAddress(myargv[p+1]);
     }
+
+    //!
+    // @category net
+    //
+    // Search the local LAN for running servers.
+    //
 
     if (M_CheckParm("-search"))
         NET_LANQuery();
@@ -978,15 +1008,50 @@ void D_DoomMain (void)
 	
     setbuf (stdout, NULL);
     modifiedgame = false;
+
+    //!
+    // Disable monsters.
+    //
 	
     nomonsters = M_CheckParm ("-nomonsters");
+
+    //!
+    // Monsters respawn after being killed.
+    //
+
     respawnparm = M_CheckParm ("-respawn");
+
+    //!
+    // Monsters move faster.
+    //
+
     fastparm = M_CheckParm ("-fast");
+
+    //! 
+    // Developer mode.  F1 saves a screenshot in the current working
+    // directory.
+    //
+
     devparm = M_CheckParm ("-devparm");
+
+    //!
+    // @category net
+    //
+    // Start a deathmatch game.
+    //
+
+    if (M_CheckParm ("-deathmatch"))
+	deathmatch = 1;
+
+    //!
+    // @category net
+    //
+    // Start a deathmatch 2.0 game.  Weapons do not stay in place and
+    // all items respawn after 30 seconds.
+    //
+
     if (M_CheckParm ("-altdeath"))
 	deathmatch = 2;
-    else if (M_CheckParm ("-deathmatch"))
-	deathmatch = 1;
 
     if (devparm)
 	printf(DEH_String(D_DEVSTR));
@@ -995,7 +1060,13 @@ void D_DoomMain (void)
 
     M_SetConfigDir();
     
-    // turbo option
+    //!
+    // @arg <x>
+    //
+    // Turbo mode.  The player's speed is multiplied by x%.  If unspecified,
+    // x defaults to 200.  Values are rounded up to 10 and down to 400.
+    //
+
     if ( (p=M_CheckParm ("-turbo")) )
     {
 	int     scale = 200;
@@ -1030,6 +1101,14 @@ void D_DoomMain (void)
     // Merged PWADs are loaded first, because they are supposed to be 
     // modified IWADs.
 
+    //!
+    // @arg <files>
+    // @category mod
+    //
+    // Simulates the behavior of deutex's -merge option, merging a PWAD
+    // into the main IWAD.  Multiple files may be specified.
+    //
+
     p = M_CheckParm("-merge");
 
     if (p > 0)
@@ -1045,6 +1124,13 @@ void D_DoomMain (void)
 
     // NWT's -merge option:
 
+    //!
+    // @arg <files>
+    // @category mod
+    //
+    // Simulates the behavior of NWT's -merge option.  Multiple files
+    // may be specified.
+
     p = M_CheckParm("-nwtmerge");
 
     if (p > 0)
@@ -1058,6 +1144,14 @@ void D_DoomMain (void)
     
     // Add flats
 
+    //!
+    // @arg <files>
+    // @category mod
+    //
+    // Simulates the behavior of NWT's -af option, merging flats into
+    // the main IWAD directory.  Multiple files may be specified.
+    //
+
     p = M_CheckParm("-af");
 
     if (p > 0)
@@ -1069,7 +1163,13 @@ void D_DoomMain (void)
         }
     }
 
-    // Add sprites
+    //!
+    // @arg <files>
+    // @category mod
+    //
+    // Simulates the behavior of NWT's -as option, merging sprites
+    // into the main IWAD directory.  Multiple files may be specified.
+    //
 
     p = M_CheckParm("-as");
 
@@ -1082,7 +1182,12 @@ void D_DoomMain (void)
         }
     }
 
-    // Add sprites AND flats
+    //!
+    // @arg <files>
+    // @category mod
+    //
+    // Equivalent to "-af <files> -as <files>".
+    //
 
     p = M_CheckParm("-aa");
 
@@ -1097,7 +1202,11 @@ void D_DoomMain (void)
 
 #endif
 
-    // Load normal PWADs
+    //!
+    // @arg <files>
+    //
+    // Load the specified PWAD files.
+    //
 
     p = M_CheckParm ("-file");
     if (p)
@@ -1145,11 +1254,28 @@ void D_DoomMain (void)
 	}
 	D_AddFile (file);
     }
-	
+
+    //!
+    // @arg <demo>
+    // @category demo
+    //
+    // Play back the demo named demo.lmp.
+    //
+
     p = M_CheckParm ("-playdemo");
 
     if (!p)
+    {
+        //!
+        // @arg <demo>
+        // @category demo
+        //
+        // Play back the demo named demo.lmp, determining the framerate
+        // of the screen.
+        //
 	p = M_CheckParm ("-timedemo");
+
+    }
 
     if (p && p < myargc-1)
     {
@@ -1221,15 +1347,29 @@ void D_DoomMain (void)
     startmap = 1;
     autostart = false;
 
-		
+    //!
+    // @arg <skill>
+    //
+    // Set the game skill, 1-5 (1: easiest, 5: hardest).  A skill of
+    // 0 disables all monsters.
+    //
+
     p = M_CheckParm ("-skill");
+
     if (p && p < myargc-1)
     {
 	startskill = myargv[p+1][0]-'1';
 	autostart = true;
     }
 
+    //!
+    // @arg <n>
+    //
+    // Start playing on episode n (1-4)
+    //
+
     p = M_CheckParm ("-episode");
+
     if (p && p < myargc-1)
     {
 	startepisode = myargv[p+1][0]-'0';
@@ -1239,14 +1379,29 @@ void D_DoomMain (void)
 	
     timelimit = 0;
 
+    //! 
+    // @arg <n>
+    // @category net
+    //
+    // For multiplayer games: exit each level after n minutes.
+    //
+
     p = M_CheckParm ("-timer");
+
     if (p && p < myargc-1 && deathmatch)
     {
 	timelimit = atoi(myargv[p+1]);
 	printf("timer: %i\n", timelimit);
     }
 
+    //!
+    // @category net
+    //
+    // Austin Virtual Gaming: end levels after 20 minutes.
+    //
+
     p = M_CheckParm ("-avg");
+
     if (p && p < myargc-1 && deathmatch)
     {
 	printf(DEH_String("Austin Virtual Gaming: Levels will end "
@@ -1254,7 +1409,15 @@ void D_DoomMain (void)
 	timelimit = 20;
     }
 
+    //!
+    // @arg [<x> <y> | <xy>]
+    //
+    // Start a game immediately, warping to ExMy (Doom 1) or MAPxy
+    // (Doom 2)
+    //
+
     p = M_CheckParm ("-warp");
+
     if (p && p < myargc-1)
     {
         if (gamemode == commercial)
@@ -1275,6 +1438,7 @@ void D_DoomMain (void)
         autostart = true;
     }
 
+    // Undocumented:
     // Invoked by setup to test the controls.
 
     p = M_CheckParm("-testcontrols");
@@ -1291,6 +1455,12 @@ void D_DoomMain (void)
     // We do this here and save the slot number, so that the network code
     // can override it or send the load slot to other players.
 
+    //!
+    // @arg <s>
+    //
+    // Load the game in slot s.
+    //
+
     p = M_CheckParm ("-loadgame");
     
     if (p && p < myargc-1)
@@ -1303,9 +1473,22 @@ void D_DoomMain (void)
         startloadgame = -1;
     }
 
+    //!
+    // @category video
+    //
+    // Disable vertical mouse movement.
+    //
+
     if (M_CheckParm("-novert"))
         novert = true;
-    else if (M_CheckParm("-nonovert"))
+
+    //!
+    // @category video
+    //
+    // Enable vertical mouse movement.
+    //
+
+    if (M_CheckParm("-nonovert"))
         novert = false;
 
     if (W_CheckNumForName("SS_START") >= 0
@@ -1372,7 +1555,13 @@ void D_DoomMain (void)
     if (gamemode == commercial && W_CheckNumForName("map01") < 0)
         storedemo = true;
 
-    // start the apropriate game based on parms
+    //!
+    // @arg <x>
+    // @category demo
+    //
+    // Record a demo named x.lmp.
+    //
+
     p = M_CheckParm ("-record");
 
     if (p && p < myargc-1)
@@ -1380,7 +1569,7 @@ void D_DoomMain (void)
 	G_RecordDemo (myargv[p+1]);
 	autostart = true;
     }
-	
+
     p = M_CheckParm ("-playdemo");
     if (p && p < myargc-1)
     {

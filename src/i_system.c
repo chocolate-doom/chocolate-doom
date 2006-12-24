@@ -75,6 +75,12 @@ int  I_GetHeapSize (void)
 {
     int p;
 
+    //!
+    // @arg <mb>
+    //
+    // Specify the heap size, in MiB (default 16).
+    //
+
     p = M_CheckParm("-mb");
     
     if (p > 0)

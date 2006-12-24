@@ -339,6 +339,13 @@ void DEH_Init(void)
 
     InitialiseSections();
 
+    //!
+    // @arg <files>
+    // @category mod
+    //
+    // Load the given dehacked patch(es)
+    //
+
     p = M_CheckParm("-deh");
 
     if (p > 0)

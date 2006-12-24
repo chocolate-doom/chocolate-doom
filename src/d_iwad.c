@@ -465,6 +465,12 @@ char *D_FindIWAD(void)
 
     // Check for the -iwad parameter
 
+    //!
+    // Specify an IWAD file to use.
+    //
+    // @arg <file>
+    //
+
     iwadparm = M_CheckParm("-iwad");
 
     if (iwadparm)
