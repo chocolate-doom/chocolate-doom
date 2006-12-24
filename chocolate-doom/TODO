@@ -5,9 +5,10 @@ To do:
   - Debian/Ubuntu .deb packages, Fedora .rpm packages.
   - Windows NSIS installer.
   - MacOS X .dmg packages (should be universal binaries!)
+* Better icon for chocolate-setup.
 * Free version of the Chocolate Doom logo (from scratch, not using the 
   Doom imp sprite), so t-shirts can be printed!
-* Better icon for chocolate-setup.
+* Javadoc-style tool for documenting command line parameters.
 * Automatic WAD installer - download and run TCs from a list automatically
   (automating the current "instructions on wiki" system)
 * Demo hashes for regression testing of this and other ports.
