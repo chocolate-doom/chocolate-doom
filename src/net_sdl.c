@@ -161,6 +161,14 @@ static boolean NET_SDL_InitClient(void)
 {
     int p;
 
+    //!
+    // @category net
+    // @arg <n>
+    //
+    // Use the specified UDP port for communications, instead of 
+    // the default (2342).
+    //
+
     p = M_CheckParm("-port");
     if (p > 0)
         port = atoi(myargv[p+1]);
