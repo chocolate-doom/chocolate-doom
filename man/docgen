@@ -1,5 +1,22 @@
 #!/usr/bin/env python
+# 
+# Command line parameter self-documentation tool.  Reads comments from
+# the source code in the following form:
+#
+#   //!
+#   // @arg <extra arguments>
+#   // @category Category
+#   // @platform <some platform that the parameter is specific to
+#   //
+#   // Long description of the parameter
+#   //
+#
+#   something_involving = M_CheckParm("-param");
+#
+# From this, a manpage can be automatically generated of the command
+# line parameters.
 
+import sys
 import re
 import glob
 
@@ -11,12 +28,24 @@ class Category:
     def add_param(self, param):
         self.params.append(param)
 
-    def format(self):
+    def manpage_output(self):
         result = ".SH " + self.description.upper() + "\n"
+
+        self.params.sort()
 
         for p in self.params:
             result += ".TP\n"
-            result += p.format()
+            result += p.manpage_output()
+
+        return result
+
+    def wiki_output(self):
+        result = "=== %s ===\n" % self.description
+
+        self.params.sort()
+
+        for p in self.params:
+            result += "; " + p.wiki_output() + "\n"
 
         return result
 
@@ -30,6 +59,12 @@ categories = {
 }
 
 class Parameter:
+    def __cmp__(self, other):
+        if self.name < other.name:
+            return -1
+        else:
+            return 1
+
     def __init__(self):
         self.text = ""
         self.name = ""
@@ -61,7 +96,7 @@ class Parameter:
         else:
             self.text += text + " "
 
-    def format(self):
+    def manpage_output(self):
         result = self.name
 
         if self.args:
@@ -74,7 +109,24 @@ class Parameter:
         if self.platform:
             result += "[%s only] " % self.platform
 
-        result += self.text + "\n"
+        escaped = re.sub('\\\\', '\\\\\\\\', self.text)
+
+        result += escaped + "\n"
+
+        return result
+
+    def wiki_output(self):
+        result = self.name
+
+        if self.args:
+            result += " " + self.args
+
+        result += ": "
+
+        result += self.text
+
+        if self.platform:
+            result += "'''(%s only)'''"
 
         return result
 
@@ -125,6 +177,14 @@ def process_file(file):
     finally:
         f.close()
 
+def process_files():
+    # Process all C source files.
+
+    files = glob.glob("../src/*.c")
+
+    for file in files:
+        process_file(file)
+
 def print_file_contents(file):
     f = open(file)
 
@@ -135,20 +195,33 @@ def print_file_contents(file):
     finally:
         f.close()
 
-# Process all C source files.
+def manpage_output(): 
 
-files = glob.glob("../src/*.c")
+    process_files()
 
-for file in files:
-    process_file(file)
+    print_file_contents("header")
 
-print_file_contents("header")
+    print categories[None].manpage_output()
 
-print categories[None].format()
+    for c in categories:
+        if c != None:
+            print categories[c].manpage_output()
 
-for c in categories:
-    if c != None:
-        print categories[c].format()
+    print_file_contents("footer")
 
-print_file_contents("footer")
+def wiki_output():
+    process_files()
+
+    print categories[None].wiki_output()
+
+    for c in categories:
+        if c != None:
+            print categories[c].wiki_output()
+
+if len(sys.argv) > 1 and sys.argv[1] == "-m":
+    manpage_output()
+elif len(sys.argv) > 1 and sys.argv[1] == "-w":
+    wiki_output()
+else:
+    print "%s [ -m | -w ]" % sys.argv[0]
 
