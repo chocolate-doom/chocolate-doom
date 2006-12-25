@@ -94,7 +94,7 @@ static int nomonsters = 0;
 static int deathmatch = 0;
 static int fast = 0;
 static int respawn = 0;
-static int udpport = 4815;
+static int udpport = 2342;
 static int timer = 0;
 
 static txt_button_t *warpbutton;
