@@ -28,6 +28,38 @@ class Category:
     def add_param(self, param):
         self.params.append(param)
 
+    # Find the maximum width of a parameter in this category
+
+    def paramtext_width(self):
+        w = 0
+
+        for p in self.params:
+            pw = len(p.name) + 5
+
+            if p.args:
+                pw += len(p.args)
+
+            if pw > w:
+                w = pw
+
+        return w
+
+    # Plain text output
+
+    def plaintext_output(self):
+        result = "=== %s ===\n\n" % self.description
+
+        self.params.sort()
+
+        w = self.paramtext_width()
+
+        for p in self.params:
+            result += p.plaintext_output(w)
+
+        result = result.rstrip() + "\n"
+
+        return result
+
     def manpage_output(self):
         result = ".SH " + self.description.upper() + "\n"
 
@@ -130,6 +162,45 @@ class Parameter:
 
         return result
 
+    def plaintext_output(self, w):
+
+        # Build the first line, with the argument on
+
+        line = "  " + self.name
+        if self.args:
+            line += " " + self.args
+
+        # pad up to the plaintext width
+
+        line += " " * (w - len(line))
+
+        # Build the description text
+
+        description = self.text
+
+        if self.platform:
+            description += " (%s only)" % self.platform
+
+        # Build the complete text for the argument
+        # Split the description into words and add a word at a time
+
+        result = ""
+        for word in re.split('\s+', description):
+
+            # Break onto the next line?
+
+            if len(line) + len(word) + 1 > 75:
+                result += line + "\n"
+                line = " " * w
+
+            # Add another word
+
+            line += word + " "
+
+        result += line + "\n\n"
+
+        return result
+
 def process_file(file):
     f = open(file)
 
@@ -177,10 +248,10 @@ def process_file(file):
     finally:
         f.close()
 
-def process_files():
+def process_files(dir):
     # Process all C source files.
 
-    files = glob.glob("../src/*.c")
+    files = glob.glob(dir + "/*.c")
 
     for file in files:
         process_file(file)
@@ -195,9 +266,9 @@ def print_file_contents(file):
     finally:
         f.close()
 
-def manpage_output(): 
+def manpage_output(dir): 
 
-    process_files()
+    process_files(dir)
 
     print_file_contents("header")
 
@@ -209,8 +280,8 @@ def manpage_output():
 
     print_file_contents("footer")
 
-def wiki_output():
-    process_files()
+def wiki_output(dir):
+    process_files(dir)
 
     print categories[None].wiki_output()
 
@@ -218,10 +289,28 @@ def wiki_output():
         if c != None:
             print categories[c].wiki_output()
 
-if len(sys.argv) > 1 and sys.argv[1] == "-m":
-    manpage_output()
-elif len(sys.argv) > 1 and sys.argv[1] == "-w":
-    wiki_output()
+def plaintext_output(dir):
+    process_files(dir)
+
+    print "== Command line parameters =="
+    print 
+    print "This is a list of the command line parameters supported by "
+    print "Chocolate Doom.  A number of additional parameters are supported "
+    print "in addition to those present in Vanilla Doom. "
+    print
+
+    print categories[None].plaintext_output()
+
+    for c in categories:
+        if c != None:
+            print categories[c].plaintext_output()
+
+if len(sys.argv) > 2 and sys.argv[1] == "-m":
+    manpage_output(sys.argv[2])
+elif len(sys.argv) > 2 and sys.argv[1] == "-w":
+    wiki_output(sys.argv[2])
+elif len(sys.argv) > 2 and sys.argv[1] == "-p":
+    plaintext_output(sys.argv[2])
 else:
-    print "%s [ -m | -w ]" % sys.argv[0]
+    print "%s [ -m | -w | -p ] <directory>" % sys.argv[0]
 
