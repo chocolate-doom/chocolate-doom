@@ -23,15 +23,25 @@
 
 #include <stdlib.h>
 
+#include "SDL.h"
 #include "textscreen.h"
 
 #include "sound.h"
+
+// Disable MIDI music on OSX: there are problems with the native
+// MIDI code in SDL_mixer.
+
+#ifdef __MACOSX__
+#define DEFAULT_MUSIC_DEVICE 0
+#else
+#define DEFAULT_MUSIC_DEVICE 3
+#endif
 
 int snd_sfxdevice = 3;
 int numChannels = 8;
 int sfxVolume = 15;
 
-int snd_musicdevice = 3;
+int snd_musicdevice = DEFAULT_MUSIC_DEVICE;
 int musicVolume = 15;
 
 static int snd_sfxenabled;
