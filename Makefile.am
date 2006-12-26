@@ -31,6 +31,7 @@ EXTRA_DIST=                             \
         $(CODEBLOCKS_FILES)             \
         $(DATA_FILES)                   \
         config.h                        \
+        CMDLINE                         \
         HACKING                         \
         TODO                            \
         BUGS
@@ -39,4 +40,7 @@ MAINTAINERCLEANFILES =  $(AUX_DIST_GEN)
 
 docdir=$(prefix)/share/doc/@PACKAGE@
 SUBDIRS=textscreen src man setup
+
+CMDLINE : src/
+	./man/docgen -p $? > $@
 
