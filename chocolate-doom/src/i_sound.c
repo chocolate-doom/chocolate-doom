@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "SDL.h"
-#include <SDL_mixer.h>
+#include "SDL_mixer.h"
 
 #ifndef _WIN32
 #include <unistd.h>
@@ -78,7 +78,15 @@ static boolean music_initialised = false;
 static Mix_Chunk sound_chunks[NUMSFX];
 static int channels_playing[NUM_CHANNELS];
 
-int snd_musicdevice = SNDDEVICE_SB;
+// Disable music on OSX by default; there are problems with SDL_mixer.
+
+#ifndef __MACOSX__
+#define DEFAULT_MUSIC_DEVICE SNDDEVICE_SB
+#else
+#define DEFAULT_MUSIC_DEVICE SNDDEVICE_NONE
+#endif
+
+int snd_musicdevice = DEFAULT_MUSIC_DEVICE;
 int snd_sfxdevice = SNDDEVICE_SB;
 
 // When a sound stops, check if it is still playing.  If it is not, 
@@ -474,6 +482,20 @@ I_InitSound()
     {
         nosfxparm = true;
     }
+
+    // When trying to run with music enabled on OSX, display
+    // a warning message.
+
+#ifdef __MACOSX__
+    if (!nomusicparm)
+    {
+        printf("\n"
+               "                   *** WARNING ***\n"
+               "      Music playback on OSX may cause crashes and\n"
+               "      is disabled by default.\n"
+               "\n");
+    }
+#endif
 
     //!
     // Disable sound effects and music.
