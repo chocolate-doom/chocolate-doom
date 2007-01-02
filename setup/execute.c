@@ -28,7 +28,7 @@
 
 #include <sys/types.h>
 
-#ifndef WINDOWS
+#ifndef _WIN32
     #include <sys/wait.h>
 #else
     #define WEXITSTATUS(stat_val) ((stat_val) & 255) 
