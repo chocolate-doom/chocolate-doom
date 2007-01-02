@@ -27,7 +27,13 @@
 #include <string.h>
 
 #include <sys/types.h>
-#include <sys/wait.h>
+
+#ifndef WINDOWS
+    #include <sys/wait.h>
+#else
+    #define WEXITSTATUS(stat_val) ((stat_val) & 255) 
+    #define WIFEXITED(stat_val) (((stat_val) & 0xff00) == 0)
+#endif
 
 #include "textscreen.h"
 
