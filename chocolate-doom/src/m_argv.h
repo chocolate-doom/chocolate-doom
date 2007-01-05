@@ -38,5 +38,6 @@ extern  char**	myargv;
 // in the arg list (0 if not found).
 int M_CheckParm (char* check);
 
+void M_FindResponseFile(void);
 
 #endif
