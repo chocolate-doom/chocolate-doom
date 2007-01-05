@@ -48,8 +48,8 @@
 
 
 // QuitDOOM messages
-// 7 per each game type
-#define NUM_QUITMESSAGES   7
+// 8 per each game type
+#define NUM_QUITMESSAGES   8
 
 extern char *doom1_endmsg[];
 extern char *doom2_endmsg[];
