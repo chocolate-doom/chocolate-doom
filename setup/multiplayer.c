@@ -466,7 +466,7 @@ static void OpenWadsWindow(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
 
     for (i=0; i<NUM_WADS; ++i)
     {
-        TXT_AddWidget(window, TXT_NewInputBox(&wads[i], 40));
+        TXT_AddWidget(window, TXT_NewInputBox(&wads[i], 60));
     }
 }
 
@@ -505,8 +505,8 @@ void StartMultiGame(void)
 
     TXT_AddWidgets(window, 
                    gameopt_table = TXT_NewTable(2),
-                   TXT_NewSeparator("Monsters"),
-                   TXT_NewInvertedCheckBox("Monsters", &nomonsters),
+                   TXT_NewSeparator("Monster options"),
+                   TXT_NewInvertedCheckBox("Monsters enabled", &nomonsters),
                    TXT_NewCheckBox("Fast monsters", &fast),
                    TXT_NewCheckBox("Respawning monsters", &respawn),
                    TXT_NewSeparator("Advanced"),
