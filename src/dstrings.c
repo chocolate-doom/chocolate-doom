@@ -30,6 +30,7 @@
 
 char *doom1_endmsg[] =
 {
+  "are you sure you want to\nquit this great game?",
   "please don't leave, there's more\ndemons to toast!",
   "let's beat it -- this is turning\ninto a bloodbath!",
   "i wouldn't leave if i were you. \ndos is much worse.",
@@ -42,6 +43,7 @@ char *doom1_endmsg[] =
 char *doom2_endmsg[] =
 {
   // QuitDOOM II messages
+  "are you sure you want to\nquit this great game?",
   "you want to quit?\nthen, thou hast lost an eighth!",
   "don't go now, there's a \ndimensional shambler waiting \nat the dos prompt!",
   "get outta here and go back\nto your boring programs.",
