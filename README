@@ -48,7 +48,7 @@ To play TCs using Chocolate Doom, run like this:
 
 Here are some examples:
 
-  chocolate-doom -merge batman.wad -deh batman.deh      (Batman Doom)
+  chocolate-doom -merge batman.wad -deh batman.deh vbatman.deh  (Batman Doom)
   chocolate-doom -merge aoddoom1.wad -deh aoddoom1.deh  (Army of Darkness Doom)
 
 == Other information ==
