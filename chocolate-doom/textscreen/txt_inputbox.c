@@ -175,7 +175,7 @@ static int TXT_IntInputBoxKeyPress(TXT_UNCAST_ARG(inputbox), int key)
     {
         if (key == KEY_ENTER)
         {
-            SetBufferFromValue(inputbox);
+            strcpy(inputbox->buffer, "");
             inputbox->editing = 1;
             return 1;
         }
