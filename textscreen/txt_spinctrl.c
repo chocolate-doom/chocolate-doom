@@ -295,7 +295,7 @@ static int TXT_SpinControlKeyPress(TXT_UNCAST_ARG(spincontrol), int key)
         if (key == KEY_ENTER)
         {
             spincontrol->editing = 1;
-            SetBuffer(spincontrol);
+            strcpy(spincontrol->buffer, "");
             return 1;
         }
         if (key == KEY_LEFTARROW)
