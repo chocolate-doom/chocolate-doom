@@ -254,10 +254,7 @@ static int TranslateKey(SDL_keysym *sym)
 
       case SDLK_PAUSE:       return KEY_PAUSE;
 
-      case SDLK_EQUALS:
       case SDLK_KP_EQUALS:   return KEY_EQUALS;
-
-      case SDLK_MINUS:       return KEY_MINUS;
 
       case SDLK_LSHIFT:
       case SDLK_RSHIFT:
