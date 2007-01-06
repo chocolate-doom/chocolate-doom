@@ -73,9 +73,9 @@ static char *TempFile(char *s)
 
     // Check the TEMP environment variable to find the location.
 
-    temp = getenv("TEMP");
+    tempdir = getenv("TEMP");
 
-    if (temp == NULL)
+    if (tempdir == NULL)
     {
         tempdir = ".";
     }

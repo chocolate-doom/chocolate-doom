@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_project_file>
-	<FileVersion major="1" minor="5" />
+	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="chocolate-server" />
 		<Option pch_mode="2" />
-		<Option default_target="" />
 		<Option compiler="gcc" />
-		<Option virtualFolders="" />
 		<Build>
 			<Target title="Debug">
 				<Option output="..\bin\chocolate-server-dbg.exe" prefix_auto="0" extension_auto="0" />
@@ -47,134 +45,50 @@
 		</Linker>
 		<Unit filename="..\src\d_dedicated.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug" />
-			<Option target="Release" />
 		</Unit>
 		<Unit filename="..\src\i_main.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug" />
-			<Option target="Release" />
 		</Unit>
 		<Unit filename="..\src\i_timer.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug" />
-			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\src\i_timer.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
+		<Unit filename="..\src\i_timer.h" />
 		<Unit filename="..\src\m_argv.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug" />
-			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\src\m_argv.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
+		<Unit filename="..\src\m_argv.h" />
 		<Unit filename="..\src\net_common.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug" />
-			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\src\net_common.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
+		<Unit filename="..\src\net_common.h" />
 		<Unit filename="..\src\net_dedicated.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug" />
-			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\src\net_dedicated.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
+		<Unit filename="..\src\net_dedicated.h" />
 		<Unit filename="..\src\net_io.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug" />
-			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\src\net_io.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
+		<Unit filename="..\src\net_io.h" />
 		<Unit filename="..\src\net_packet.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug" />
-			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\src\net_packet.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
+		<Unit filename="..\src\net_packet.h" />
 		<Unit filename="..\src\net_sdl.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug" />
-			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\src\net_sdl.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
+		<Unit filename="..\src\net_sdl.h" />
 		<Unit filename="..\src\net_server.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug" />
-			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\src\net_server.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
+		<Unit filename="..\src\net_server.h" />
 		<Unit filename="..\src\net_structrw.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug" />
-			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\src\net_structrw.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
+		<Unit filename="..\src\net_structrw.h" />
 		<Unit filename="..\src\z_native.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug" />
-			<Option target="Release" />
 		</Unit>
-		<Unit filename="..\src\z_zone.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug" />
-			<Option target="Release" />
-		</Unit>
+		<Unit filename="..\src\z_zone.h" />
 		<Extensions>
 			<code_completion />
 		</Extensions>

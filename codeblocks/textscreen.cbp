@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_project_file>
-	<FileVersion major="1" minor="5" />
+	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="textscreen" />
 		<Option pch_mode="2" />
-		<Option default_target="" />
 		<Option compiler="gcc" />
-		<Option virtualFolders="" />
 		<Build>
 			<Target title="Debug-dyn">
 				<Option output="..\bin\lib\libtextscreen-dbg.dll" prefix_auto="0" extension_auto="0" />
@@ -74,296 +72,76 @@
 		<Linker>
 			<Add option="-lmingw32 -lSDLmain -lSDL -mwindows" />
 		</Linker>
-		<Unit filename="..\textscreen\textscreen.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
-		</Unit>
+		<Unit filename="..\textscreen\textscreen.h" />
 		<Unit filename="..\textscreen\txt_button.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
 		</Unit>
-		<Unit filename="..\textscreen\txt_button.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
-		</Unit>
+		<Unit filename="..\textscreen\txt_button.h" />
 		<Unit filename="..\textscreen\txt_checkbox.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
 		</Unit>
-		<Unit filename="..\textscreen\txt_checkbox.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
-		</Unit>
+		<Unit filename="..\textscreen\txt_checkbox.h" />
 		<Unit filename="..\textscreen\txt_desktop.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
 		</Unit>
-		<Unit filename="..\textscreen\txt_desktop.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
-		</Unit>
+		<Unit filename="..\textscreen\txt_desktop.h" />
 		<Unit filename="..\textscreen\txt_dropdown.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
 		</Unit>
-		<Unit filename="..\textscreen\txt_dropdown.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
-		</Unit>
-		<Unit filename="..\textscreen\txt_font.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
-		</Unit>
+		<Unit filename="..\textscreen\txt_dropdown.h" />
+		<Unit filename="..\textscreen\txt_font.h" />
 		<Unit filename="..\textscreen\txt_gui.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
 		</Unit>
-		<Unit filename="..\textscreen\txt_gui.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
-		</Unit>
+		<Unit filename="..\textscreen\txt_gui.h" />
 		<Unit filename="..\textscreen\txt_inputbox.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
 		</Unit>
-		<Unit filename="..\textscreen\txt_inputbox.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
-		</Unit>
+		<Unit filename="..\textscreen\txt_inputbox.h" />
 		<Unit filename="..\textscreen\txt_io.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
 		</Unit>
-		<Unit filename="..\textscreen\txt_io.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
-		</Unit>
+		<Unit filename="..\textscreen\txt_io.h" />
 		<Unit filename="..\textscreen\txt_label.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
 		</Unit>
-		<Unit filename="..\textscreen\txt_label.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
-		</Unit>
+		<Unit filename="..\textscreen\txt_label.h" />
 		<Unit filename="..\textscreen\txt_main.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
 		</Unit>
-		<Unit filename="..\textscreen\txt_main.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
-		</Unit>
+		<Unit filename="..\textscreen\txt_main.h" />
 		<Unit filename="..\textscreen\txt_radiobutton.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
 		</Unit>
-		<Unit filename="..\textscreen\txt_radiobutton.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
-		</Unit>
+		<Unit filename="..\textscreen\txt_radiobutton.h" />
 		<Unit filename="..\textscreen\txt_separator.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
 		</Unit>
-		<Unit filename="..\textscreen\txt_separator.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
-		</Unit>
+		<Unit filename="..\textscreen\txt_separator.h" />
 		<Unit filename="..\textscreen\txt_spinctrl.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Debug-stc" />
-			<Option target="Release-stc" />
 		</Unit>
-		<Unit filename="..\textscreen\txt_spinctrl.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Debug-stc" />
-			<Option target="Release-stc" />
-		</Unit>
+		<Unit filename="..\textscreen\txt_spinctrl.h" />
 		<Unit filename="..\textscreen\txt_strut.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
 		</Unit>
-		<Unit filename="..\textscreen\txt_strut.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
-		</Unit>
+		<Unit filename="..\textscreen\txt_strut.h" />
 		<Unit filename="..\textscreen\txt_table.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
 		</Unit>
-		<Unit filename="..\textscreen\txt_table.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
-		</Unit>
+		<Unit filename="..\textscreen\txt_table.h" />
 		<Unit filename="..\textscreen\txt_widget.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
 		</Unit>
-		<Unit filename="..\textscreen\txt_widget.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
-		</Unit>
+		<Unit filename="..\textscreen\txt_widget.h" />
 		<Unit filename="..\textscreen\txt_window.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
 		</Unit>
-		<Unit filename="..\textscreen\txt_window.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
-		</Unit>
+		<Unit filename="..\textscreen\txt_window.h" />
 		<Unit filename="..\textscreen\txt_window_action.c">
 			<Option compilerVar="CC" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
 		</Unit>
-		<Unit filename="..\textscreen\txt_window_action.h">
-			<Option compilerVar="CPP" />
-			<Option compile="0" />
-			<Option link="0" />
-			<Option target="Debug-dyn" />
-			<Option target="Release-dyn" />
-			<Option target="Release-stc" />
-			<Option target="Debug-stc" />
-		</Unit>
+		<Unit filename="..\textscreen\txt_window_action.h" />
 		<Extensions>
 			<code_completion />
 		</Extensions>
