@@ -677,7 +677,7 @@ static boolean ConvertMus(byte *musdata, int len, char *filename)
 
 void *I_RegisterSong(void *data, int len)
 {
-    char filename[64];
+    char *filename;
     Mix_Music *music;
 
     if (!music_initialised)
@@ -686,11 +686,7 @@ void *I_RegisterSong(void *data, int len)
     // MUS files begin with "MUS"
     // Reject anything which doesnt have this signature
     
-#ifdef _WIN32
-    sprintf(filename, "doom.mid");
-#else
-    sprintf(filename, "/tmp/doom-%i.mid", getpid());
-#endif
+    filename = M_TempFile("doom.mid");
 
     if (IsMid(data, len) && len < MAXMIDLENGTH)
     {
@@ -717,6 +713,8 @@ void *I_RegisterSong(void *data, int len)
     // remove file now
 
     remove(filename);
+
+    Z_Free(filename);
 
     return music;
 }

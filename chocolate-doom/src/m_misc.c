@@ -198,6 +198,37 @@ int M_ReadFile(char const *name, byte **buffer)
     return length;
 }
 
+// Returns the path to a temporary file of the given name, stored
+// inside the system temporary directory.
+//
+// The returned value must be freed with Z_Free after use.
+
+char *M_TempFile(char *s)
+{
+    char *result;
+    char *tempdir;
+
+#ifdef _WIN32
+
+    // Check the TEMP environment variable to find the location.
+
+    temp = getenv("TEMP");
+
+    if (temp == NULL)
+    {
+        tempdir = ".";
+    }
+#else
+    // In Unix, just use /tmp.
+
+    tempdir = "/tmp";
+#endif
+
+    result = Z_Malloc(strlen(tempdir) + strlen(s) + 2, PU_STATIC, 0);
+    sprintf(result, "%s%c%s", tempdir, DIR_SEPARATOR, s);
+
+    return result;
+}
 
 //
 // DEFAULTS
