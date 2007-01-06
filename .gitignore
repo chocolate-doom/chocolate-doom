@@ -1,3 +1,17 @@
+Makefile.in
+Makefile
+INSTALL
+CMDLINE
+autotools
+aclocal.m4
+configure
+config.hin
+config.log
+config.status
+config.h
+autom4te.cache
+stamp-h
+stamp-h.in
 
 # These are the default patterns globally ignored by Subversion:
 *.o
