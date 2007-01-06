@@ -57,6 +57,8 @@ void M_SetConfigDir(void);
 
 void M_MakeDirectory(char *dir);
 
+char *M_TempFile(char *s);
+
 boolean M_FileExists(char *file);
 
 

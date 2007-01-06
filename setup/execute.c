@@ -47,11 +47,49 @@
 #define DOOM_BINARY INSTALL_DIR "/chocolate-doom"
 #endif
 
+#ifdef _WIN32
+#define DIR_SEPARATOR '\\'
+#define PATH_SEPARATOR ';'
+#else
+#define DIR_SEPARATOR '/'
+#define PATH_SEPARATOR ':'
+#endif
+
 struct execute_context_s
 {
     char *response_file;
     FILE *stream;
 };
+
+// Returns the path to a temporary file of the given name, stored
+// inside the system temporary directory.
+
+static char *TempFile(char *s)
+{
+    char *result;
+    char *tempdir;
+
+#ifdef _WIN32
+
+    // Check the TEMP environment variable to find the location.
+
+    temp = getenv("TEMP");
+
+    if (temp == NULL)
+    {
+        tempdir = ".";
+    }
+#else
+    // In Unix, just use /tmp.
+
+    tempdir = "/tmp";
+#endif
+
+    result = malloc(strlen(tempdir) + strlen(s) + 2);
+    sprintf(result, "%s%c%s", tempdir, DIR_SEPARATOR, s);
+
+    return result;
+}
 
 execute_context_t *NewExecuteContext(void)
 {
@@ -59,12 +97,7 @@ execute_context_t *NewExecuteContext(void)
 
     result = malloc(sizeof(execute_context_t));
     
-#ifdef _WIN32
-    result->response_file = "chocolat.rsp";
-#else
-    result->response_file = "/tmp/chocolate.rsp";
-#endif
-
+    result->response_file = TempFile("chocolat.rsp");
     result->stream = fopen(result->response_file, "w");
 
     if (result->stream == NULL)
@@ -126,6 +159,7 @@ int ExecuteDoom(execute_context_t *context)
     
     // Destroy context 
     remove(context->response_file);
+    free(context->response_file);
     free(context);
 
     if (WIFEXITED(result))
@@ -156,13 +190,8 @@ static void TestCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
 
     // Save temporary configuration files with the current configuration
 
-#ifdef _WIN32
-    main_cfg = "tmp.cfg";
-    extra_cfg = "extratmp.cfg";
-#else
-    main_cfg = "/tmp/tmp.cfg";
-    extra_cfg = "/tmp/extratmp.cfg";
-#endif
+    main_cfg = TempFile("tmp.cfg");
+    extra_cfg = TempFile("extratmp.cfg");
 
     M_SaveMainDefaults(main_cfg);
     M_SaveExtraDefaults(extra_cfg);
@@ -181,6 +210,8 @@ static void TestCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
 
     remove(main_cfg);
     remove(extra_cfg);
+    free(main_cfg);
+    free(extra_cfg);
 }
 
 txt_window_action_t *TestConfigAction(void)
