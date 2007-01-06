@@ -130,6 +130,10 @@ static int disk_image_w, disk_image_h;
 static byte *saved_background;
 static boolean window_focused;
 
+// Empty mouse cursor
+
+static SDL_Cursor *cursors[2];
+
 // Mouse acceleration
 //
 // This emulates some of the behavior of DOS mouse drivers by increasing
@@ -540,15 +544,20 @@ static void UpdateGrab(void)
 
     grab = MouseShouldBeGrabbed();
 
-    if (grab && !currently_grabbed)
+    if (screensaver_mode)
     {
-        SDL_ShowCursor(0);
+        // Hide the cursor in screensaver mode
+
+        SDL_SetCursor(cursors[0]);
+    }
+    else if (grab && !currently_grabbed)
+    {
+        SDL_SetCursor(cursors[0]);
         SDL_WM_GrabInput(SDL_GRAB_ON);
     }
-
-    if (!grab && currently_grabbed)
+    else if (!grab && currently_grabbed)
     {
-        SDL_ShowCursor(1);
+        SDL_SetCursor(cursors[1]);
         SDL_WM_GrabInput(SDL_GRAB_OFF);
     }
 
@@ -1076,19 +1085,19 @@ static void FindScreensaverMultiply(void)
     }
 }
 
-// Blank cursor so we don't see the mouse.  It is not okay to
-// do SDL_ShowCursor(0) because this will hide the mouse in
-// the configuration dialog.  Only show no mouse when over this
-// window.
-
-static void SetBlankCursor(void)
+static void CreateCursors(void)
 {
-    Uint8 zero = zero;
-    SDL_Cursor *cursor;
+    static Uint8 empty_cursor_data = 0;
 
-    cursor = SDL_CreateCursor(&zero, &zero, 1, 1, 0, 0);
+    // Save the default cursor so it can be recalled later
 
-    SDL_SetCursor(cursor);
+    cursors[1] = SDL_GetCursor();
+
+    // Create an empty cursor
+
+    cursors[0] = SDL_CreateCursor(&empty_cursor_data,
+                                  &empty_cursor_data,
+                                  1, 1, 0, 0);
 }
 
 void I_InitGraphics(void)
@@ -1209,7 +1218,6 @@ void I_InitGraphics(void)
     if (screensaver_mode)
     {
         FindScreensaverMultiply();
-        SetBlankCursor();
     }
 
     // Start with a clear black screen
@@ -1237,6 +1245,8 @@ void I_InitGraphics(void)
 
     I_SetWindowCaption();
     I_SetWindowIcon();
+
+    CreateCursors();
 
     UpdateFocus();
     UpdateGrab();
