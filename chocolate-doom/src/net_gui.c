@@ -153,6 +153,20 @@ static void UpdateGUI(void)
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, startgame);
 }
 
+static void PrintMD5Digest(char *s, byte *digest)
+{
+    int i;
+
+    printf("%s: ", s);
+
+    for (i=0; i<sizeof(md5_digest_t); ++i)
+    {
+        printf("%02x", digest[i]);
+    }
+
+    printf("\n");
+}
+
 static void CheckMD5Sums(void)
 {
     boolean correct_wad, correct_deh;
@@ -173,6 +187,28 @@ static void CheckMD5Sums(void)
     if (correct_wad && correct_deh && same_freedoom)
     {
         return;
+    }
+
+    if (!correct_wad)
+    {
+        printf("Warning: WAD MD5 does not match server:\n");
+        PrintMD5Digest("Local", net_local_wad_md5sum);
+        PrintMD5Digest("Server", net_server_wad_md5sum);
+    }
+
+    if (!same_freedoom)
+    {
+        printf("Warning: Mixing Freedoom with non-Freedoom\n");
+        printf("Local: %i  Server: %i\n", 
+               net_local_is_freedoom, 
+               net_server_is_freedoom);
+    }
+
+    if (!correct_deh)
+    {
+        printf("Warning: Dehacked MD5 does not match server:\n");
+        PrintMD5Digest("Local", net_local_deh_md5sum);
+        PrintMD5Digest("Server", net_server_deh_md5sum);
     }
 
     window = TXT_NewWindow("WARNING");
