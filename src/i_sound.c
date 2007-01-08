@@ -522,7 +522,7 @@ I_InitSound()
 
     if (Mix_OpenAudio(22050, AUDIO_S16LSB, 2, 1024) < 0)
     {
-        fprintf(stderr, "Error initialising SDL_mixer: %s\n", SDL_GetError());
+        fprintf(stderr, "Error initialising SDL_mixer: %s\n", Mix_GetError());
         return;
     }
 
@@ -707,7 +707,7 @@ void *I_RegisterSong(void *data, int len)
     {
         // Failed to load
 
-        fprintf(stderr, "Error loading midi\n");
+        fprintf(stderr, "Error loading midi: %s\n", Mix_GetError());
     }
 
     // remove file now
