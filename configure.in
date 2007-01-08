@@ -31,13 +31,17 @@ SDL_LIBS=`echo $SDL_LIBS | sed 's/mwindows/mconsole/'`
 AC_CHECK_LIB(SDL_mixer,Mix_LoadMUS,[
 dnl    AC_DEFINE(HAVE_LIBSDL_MIXER)
     SDLMIXER_LIBS="$SDLMIXER_LIBS -lSDL_mixer"
-],echo "*** Compiling without SDL_mixer installed probably won't work"
-,$SDL_LIBS $SDLMIXER_LIBS)
+],[
+    echo "*** Could not find SDL_mixer.  Please install it."
+    exit -1
+],$SDL_LIBS $SDLMIXER_LIBS)
 
 AC_CHECK_LIB(SDL_net,SDLNet_UDP_Send,[
     SDLNET_LIBS="$SDLNET_LIBS -lSDL_net"
-],echo "*** Compiling without SDL_net installed probably won't work"
-,$SDL_LIBS $SDLNET_LIBS)
+],[
+    echo "*** Could not find SDL_net.  Please install it."
+    exit -1
+] ,$SDL_LIBS $SDLNET_LIBS)
 
 AC_CHECK_TOOL(WINDRES, windres, )
 
