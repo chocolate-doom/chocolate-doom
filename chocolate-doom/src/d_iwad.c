@@ -391,8 +391,8 @@ static void BuildIWADDirList(void)
 
     if (doomwaddir != NULL)
     {
-	AddIWADDir(doomwaddir);
-    }	
+        AddIWADDir(doomwaddir);
+    }        
 
     // Add dirs from DOOMWADPATH
 
@@ -555,7 +555,8 @@ void D_SetSaveGameDir(void)
         {
             if (gamemission == iwads[i].mission)
             {
-                sprintf(savegamedir, "%c%s%c", 
+                sprintf(savegamedir + strlen(savegamedir), 
+                        "%c%s%c", 
                         DIR_SEPARATOR, iwads[i].name, DIR_SEPARATOR);
                 M_MakeDirectory(savegamedir);
                 break;
