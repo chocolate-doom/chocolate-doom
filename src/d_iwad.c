@@ -324,32 +324,32 @@ static void IdentifyIWADByName(char *name)
 }
 
 //
-// Add directories from the list in the DOOMWADDIR environment variable.
+// Add directories from the list in the DOOMWADPATH environment variable.
 // 
 
-static void AddDoomWadDirs(void)
+static void AddDoomWadPath(void)
 {
-    char *doomwaddir;
+    char *doomwadpath;
     char *p;
 
-    // Check the DOOMWADDIR environment variable.
+    // Check the DOOMWADPATH environment variable.
 
-    doomwaddir = getenv("DOOMWADDIR");
+    doomwadpath = getenv("DOOMWADPATH");
 
-    if (doomwaddir == NULL)
+    if (doomwadpath == NULL)
     {
         return;
     }
 
-    doomwaddir = strdup(doomwaddir);
+    doomwadpath = strdup(doomwadpath);
 
     // Add the initial directory
 
-    AddIWADDir(doomwaddir);
+    AddIWADDir(doomwadpath);
 
     // Split into individual dirs within the list.
 
-    p = doomwaddir;
+    p = doomwadpath;
 
     for (;;)
     {
@@ -379,13 +379,24 @@ static void AddDoomWadDirs(void)
 
 static void BuildIWADDirList(void)
 {
+    char *doomwaddir;
+
     // Look in the current directory.  Doom always does this.
 
     AddIWADDir(".");
 
-    // Add dirs from DOOMWADDIR
+    // Add DOOMWADDIR if it is in the environment
 
-    AddDoomWadDirs();
+    doomwaddir = getenv("DOOMWADDIR");
+
+    if (doomwaddir != NULL)
+    {
+	AddIWADDir(doomwaddir);
+    }	
+
+    // Add dirs from DOOMWADPATH
+
+    AddDoomWadPath();
 
 #ifdef _WIN32
 
