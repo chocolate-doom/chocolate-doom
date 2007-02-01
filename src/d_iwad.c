@@ -416,10 +416,10 @@ static void BuildIWADDirList(void)
 }
 
 //
-// Searches IWAD search paths for an IWAD with a specific name.
+// Searches WAD search paths for an WAD with a specific filename.
 // 
 
-char *D_FindIWADByName(char *name)
+char *D_FindWADByName(char *name)
 {
     char *buf;
     int i;
@@ -457,6 +457,29 @@ char *D_FindIWADByName(char *name)
 }
 
 //
+// D_TryWADByName
+//
+// Searches for a WAD by its filename, or passes through the filename
+// if not found.
+//
+
+char *D_TryFindWADByName(char *filename)
+{
+    char *result;
+
+    result = D_FindWADByName(filename);
+
+    if (result != NULL)
+    {
+        return result;
+    }
+    else
+    {
+        return filename;
+    }
+}
+
+//
 // FindIWAD
 // Checks availability of IWAD files by name,
 // to determine whether registered/commercial features
@@ -490,7 +513,7 @@ char *D_FindIWAD(void)
 
         iwadfile = myargv[iwadparm + 1];
 
-        result = D_FindIWADByName(iwadfile);
+        result = D_FindWADByName(iwadfile);
 
         if (result == NULL)
         {
@@ -762,7 +785,7 @@ void D_FindInstalledIWADs(void)
 
     for (i=0; i<sizeof(iwads) / sizeof(*iwads); ++i)
     {
-        if (D_FindIWADByName(iwads[i].name) != NULL)
+        if (D_FindWADByName(iwads[i].name) != NULL)
         {
             result |= 1 << i;
         }
