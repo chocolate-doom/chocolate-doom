@@ -195,41 +195,42 @@ int             novert = 0;
  
 #define TURBOTHRESHOLD	0x32
 
-fixed_t		forwardmove[2] = {0x19, 0x32}; 
-fixed_t		sidemove[2] = {0x18, 0x28}; 
-fixed_t		angleturn[3] = {640, 1280, 320};	// + slow turn 
+fixed_t         forwardmove[2] = {0x19, 0x32}; 
+fixed_t         sidemove[2] = {0x18, 0x28}; 
+fixed_t         angleturn[3] = {640, 1280, 320};    // + slow turn 
 
 #define SLOWTURNTICS	6 
  
 #define NUMKEYS		256 
 
-boolean         gamekeydown[NUMKEYS]; 
-int             turnheld;				// for accelerative turning 
+static boolean  gamekeydown_initialised = false;
+static boolean  gamekeydown[NUMKEYS]; 
+static int      turnheld;		// for accelerative turning 
  
-boolean		mousearray[4]; 
-boolean*	mousebuttons = &mousearray[1];		// allow [-1]
+static boolean  mousearray[4]; 
+static boolean *mousebuttons = &mousearray[1];  // allow [-1]
 
 // mouse values are used once 
 int             mousex;
-int		mousey;         
+int             mousey;         
 
-int             dclicktime;
-boolean	        dclickstate;
-int		dclicks; 
-int             dclicktime2;
-boolean		dclickstate2;
-int		dclicks2;
+static int      dclicktime;
+static boolean  dclickstate;
+static int      dclicks; 
+static int      dclicktime2;
+static boolean  dclickstate2;
+static int      dclicks2;
 
 // joystick values are repeated 
-int             joyxmove;
-int		joyymove;
-boolean         joyarray[5]; 
-boolean*	joybuttons = &joyarray[1];		// allow [-1] 
+static int      joyxmove;
+static int      joyymove;
+static boolean  joyarray[5]; 
+static boolean *joybuttons = &joyarray[1];		// allow [-1] 
  
-int		savegameslot; 
-char		savedescription[32]; 
+static int      savegameslot; 
+static char     savedescription[32]; 
  
-int             testcontrols_mousespeed;
+static int      testcontrols_mousespeed;
  
 #define	BODYQUESIZE	32
 
@@ -643,7 +644,15 @@ void G_DoLoadLevel (void)
     Z_CheckHeap ();
     
     // clear cmd building stuff
-    memset (gamekeydown, 0, sizeof(gamekeydown)); 
+
+    // Initialise gamekeydown when the first level is loaded
+  
+    if (!gamekeydown_initialised)
+    {
+        memset (gamekeydown, 0, sizeof(gamekeydown)); 
+        gamekeydown_initialised = true;
+    }
+
     joyxmove = joyymove = 0; 
     mousex = mousey = 0; 
     sendpause = sendsave = paused = false; 
