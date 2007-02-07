@@ -107,9 +107,6 @@
        is possible to disable sound, as with Vanilla.
      * Repeat key presses when the key is held down (this is the Vanilla 
        behavior)  - thanks to Mad_Mac for pointing this out.
-     * Don't throw away key press state when starting a new level - allows
-       shift to be held down for run when moving between levels (thanks
-       to Zack Friedrich <zack18@comcast.net>.
      * Don't print a list of all arguments read from response files - Vanilla
        doesn't do this.
      * Autorun only when joyb_speed >= 10, not >= 4.  Thanks to Janizdreg 
