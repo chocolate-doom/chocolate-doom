@@ -203,7 +203,6 @@ fixed_t         angleturn[3] = {640, 1280, 320};    // + slow turn
  
 #define NUMKEYS		256 
 
-static boolean  gamekeydown_initialised = false;
 static boolean  gamekeydown[NUMKEYS]; 
 static int      turnheld;		// for accelerative turning 
  
@@ -645,14 +644,7 @@ void G_DoLoadLevel (void)
     
     // clear cmd building stuff
 
-    // Initialise gamekeydown when the first level is loaded
-  
-    if (!gamekeydown_initialised)
-    {
-        memset (gamekeydown, 0, sizeof(gamekeydown)); 
-        gamekeydown_initialised = true;
-    }
-
+    memset (gamekeydown, 0, sizeof(gamekeydown)); 
     joyxmove = joyymove = 0; 
     mousex = mousey = 0; 
     sendpause = sendsave = paused = false; 
