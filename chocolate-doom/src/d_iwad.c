@@ -280,7 +280,14 @@ static char *SearchDirectoryForIWAD(char *dir)
         
         filename = malloc(strlen(dir) + strlen(iwadname) + 3);
 
-        sprintf(filename, "%s%c%s", dir, DIR_SEPARATOR, iwadname);
+        if (!strcmp(dir, "."))
+        {
+            strcpy(filename, iwadname);
+        }
+        else
+        {
+            sprintf(filename, "%s%c%s", dir, DIR_SEPARATOR, iwadname);
+        }
 
         if (M_FileExists(filename))
         {
