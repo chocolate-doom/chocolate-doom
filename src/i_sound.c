@@ -194,8 +194,8 @@ static boolean CacheSFX(int sound)
     int lumpnum;
     int lumplen;
     int samplerate;
-    int length;
-    int expanded_length;
+    unsigned int length;
+    unsigned int expanded_length;
     byte *data;
 
     // need to load the sound
@@ -207,16 +207,17 @@ static boolean CacheSFX(int sound)
     // Check the header, and ensure this is a valid sound
 
     if (lumplen < 8
-     || data[0] != 0x03 || data[1] != 0x00
-     || data[6] != 0x00 || data[7] != 0x00)
+     || data[0] != 0x03 || data[1] != 0x00)
     {
         // Invalid sound
 
         return false;
     }
     
+    // 16 bit sample rate field, 32 bit length field
+
     samplerate = (data[3] << 8) | data[2];
-    length = (data[5] << 8) | data[4];
+    length = (data[7] << 24) | (data[6] << 16) | (data[5] << 8) | data[4];
 
     // If the header specifies that the length of the sound is greater than
     // the length of the lump itself, this is an invalid sound lump
@@ -226,7 +227,7 @@ static boolean CacheSFX(int sound)
         return false;
     }
 
-    expanded_length = (length * 22050) / (samplerate / 4);
+    expanded_length = (uint32_t) ((((uint64_t) length) * 4 * 22050) / samplerate);
 
     sound_chunks[sound].allocated = 1;
     sound_chunks[sound].alen = expanded_length;
@@ -234,7 +235,7 @@ static boolean CacheSFX(int sound)
         = Z_Malloc(expanded_length, PU_STATIC, &sound_chunks[sound].abuf);
     sound_chunks[sound].volume = MIX_MAX_VOLUME;
 
-    ExpandSoundData(data + 8, samplerate, length, &sound_chunks[sound]);
+    ExpandSoundData(data + 8, samplerate, length - 8, &sound_chunks[sound]);
 
     // don't need the original lump any more
   
