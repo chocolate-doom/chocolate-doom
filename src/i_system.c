@@ -239,6 +239,6 @@ void I_Error (char *error, ...)
     D_QuitNetGame ();
     I_ShutdownGraphics();
     
-    exit(-1);
+    abort();
 }
 
