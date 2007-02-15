@@ -1822,7 +1822,7 @@ void M_Drawer (void)
 	    for (i = 0; i < strlen(messageString + start); i++)
 		if (messageString[start + i] == '\n')
 		{
-		    memset(string, 0, 40);
+		    memset(string, 0, sizeof(string));
 		    strncpy(string, messageString + start, i);
 		    foundnewline = 1;
 		    start += i + 1;
