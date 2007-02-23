@@ -263,6 +263,7 @@ static default_t extra_defaults_list[] =
 #ifdef FEATURE_MULTIPLAYER
     {"player_name",                 &net_player_name,          DEFAULT_STRING, 0, 0},
 #endif
+    {"video_driver",                &video_driver,             DEFAULT_STRING, 0, 0},
 };
 
 static default_collection_t extra_defaults =
