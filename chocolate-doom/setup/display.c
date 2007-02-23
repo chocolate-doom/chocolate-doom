@@ -56,12 +56,48 @@ static char *aspect_ratio_strings[] =
 
 static int vidmode = 0;
 
+char *video_driver = "";
 int autoadjust_video_settings = 1;
 int aspect_ratio_correct = RATIO_CORRECT_NONE;
 int fullscreen = 1;
 int screenmultiply = 1;
 int startup_delay = 0;
 int show_endoom = 1;
+
+#ifdef _WIN32
+
+static int win32_video_driver = 0;
+
+static char *win32_video_drivers[] = 
+{
+    "DirectX",
+    "Windows GDI",
+};
+
+static void SetWin32VideoDriver(void)
+{
+    if (!strcmp(video_driver, "windib"))
+    {
+        win32_video_driver = 1;
+    }
+    else
+    {
+        win32_video_driver = 0;
+    }
+}
+
+static void UpdateVideoDriver(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
+{
+    char *drivers[] = 
+    {
+        "",
+        "windib",
+    };
+
+    video_driver = drivers[win32_video_driver];
+}
+
+#endif
 
 // Given the video settings (fullscreen, screenmultiply, etc), find the
 // current video mode
@@ -122,6 +158,21 @@ void ConfigDisplay(void)
     // Open the window
     
     window = TXT_NewWindow("Display Configuration");
+
+#ifdef _WIN32
+    {
+        txt_dropdown_list_t *driver_list;
+
+        driver_list = TXT_NewDropdownList(&win32_video_driver,
+                                          win32_video_drivers,
+                                          2));
+
+        TXT_SignalConnect(driver_list, "changed", UpdateVideoDriver, NULL);
+        SetWin32VideoDriver();
+
+        TXT_AddWidget(window, driver_list);
+    }
+#endif
 
     TXT_AddWidgets(window, 
                    TXT_NewCheckBox("Fullscreen", &fullscreen),
