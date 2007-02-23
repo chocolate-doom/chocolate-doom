@@ -67,6 +67,10 @@ enum
 
 extern void M_QuitDOOM();
 
+// SDL video driver name
+
+char *video_driver = "";
+
 static SDL_Surface *screen;
 
 // palette
@@ -1100,28 +1104,19 @@ static void CreateCursors(void)
                                   1, 1, 0, 0);
 }
 
-void I_InitGraphics(void)
+static void SetSDLVideoDriver(void)
 {
-    SDL_Event dummy;
-    byte *doompal;
-    int flags = 0;
-    char *env;
+    // Allow a default value for the SDL video driver to be specified
+    // in the configuration file.
 
-    // Pass through the XSCREENSAVER_WINDOW environment variable to 
-    // SDL_WINDOWID, to embed the SDL window into the Xscreensaver
-    // window.
-
-    env = getenv("XSCREENSAVER_WINDOW");
-
-    if (env != NULL)
+    if (strcmp(video_driver, "") != 0)
     {
-        char winenv[30];
-        int winid;
+        char *env_string;
 
-        sscanf(env, "0x%x", &winid);
-        sprintf(winenv, "SDL_WINDOWID=%i", winid);
-
-        putenv(winenv);
+        env_string = malloc(strlen(video_driver) + 30);
+        sprintf(env_string, "SDL_VIDEODRIVER=%s", env_string);
+        putenv(env_string);
+        free(env_string);
     }
 
 #ifdef _WIN32
@@ -1152,8 +1147,34 @@ void I_InitGraphics(void)
     {
         putenv("SDL_VIDEODRIVER=directx");
     }
-
 #endif
+}
+
+void I_InitGraphics(void)
+{
+    SDL_Event dummy;
+    byte *doompal;
+    int flags = 0;
+    char *env;
+
+    // Pass through the XSCREENSAVER_WINDOW environment variable to 
+    // SDL_WINDOWID, to embed the SDL window into the Xscreensaver
+    // window.
+
+    env = getenv("XSCREENSAVER_WINDOW");
+
+    if (env != NULL)
+    {
+        char winenv[30];
+        int winid;
+
+        sscanf(env, "0x%x", &winid);
+        sprintf(winenv, "SDL_WINDOWID=%i", winid);
+
+        putenv(winenv);
+    }
+
+    SetSDLVideoDriver();
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) 
     {

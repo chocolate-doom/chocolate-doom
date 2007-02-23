@@ -408,6 +408,7 @@ static default_t extra_defaults_list[] =
     {"show_endoom",                 &show_endoom, DEFAULT_INT, 0, 0},
     {"vanilla_savegame_limit",      &vanilla_savegame_limit, DEFAULT_INT, 0, 0},
     {"vanilla_demo_limit",          &vanilla_demo_limit, DEFAULT_INT, 0, 0},
+    {"video_driver",                &video_driver, DEFAULT_STRING, 0, 0},
 #ifdef FEATURE_MULTIPLAYER
     {"player_name",                 &net_player_name,          DEFAULT_STRING, 0, 0},
 #endif

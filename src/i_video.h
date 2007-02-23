@@ -60,6 +60,7 @@ void I_SetWindowIcon(void);
 
 void I_CheckIsScreensaver(void);
 
+extern char *video_driver;
 extern int autoadjust_video_settings;
 extern boolean screenvisible;
 extern int screenmultiply;
