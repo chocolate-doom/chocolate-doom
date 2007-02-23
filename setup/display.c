@@ -18,6 +18,9 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
+
+#include <string.h>
+
 #include "textscreen.h"
 
 #include "display.h"
@@ -165,7 +168,7 @@ void ConfigDisplay(void)
 
         driver_list = TXT_NewDropdownList(&win32_video_driver,
                                           win32_video_drivers,
-                                          2));
+                                          2);
 
         TXT_SignalConnect(driver_list, "changed", UpdateVideoDriver, NULL);
         SetWin32VideoDriver();
