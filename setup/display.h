@@ -28,6 +28,7 @@ extern int fullscreen;
 extern int screenmultiply;
 extern int startup_delay;
 extern int show_endoom;
+extern char *video_driver;
 
 void ConfigDisplay(void);
 
