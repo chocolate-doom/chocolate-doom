@@ -5,7 +5,7 @@ AM_CFLAGS = @SDL_CFLAGS@ -I../textscreen -I../src -DINSTALL_DIR="\"$(gamesdir)\"
 
 games_PROGRAMS = chocolate-setup
 
-chocolate_setup_LDADD = @LDFLAGS@ @SDL_LIBS@ ../textscreen/libtextscreen.a
+chocolate_setup_LDADD = ../textscreen/libtextscreen.a @LDFLAGS@ @SDL_LIBS@
 SOURCE_FILES =                                  \
     compatibility.c   compatibility.h           \
     configfile.c      configfile.h              \
