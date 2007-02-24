@@ -162,6 +162,17 @@ void ConfigDisplay(void)
     
     window = TXT_NewWindow("Display Configuration");
 
+    TXT_AddWidgets(window, 
+                   TXT_NewCheckBox("Fullscreen", &fullscreen),
+                   ar_table = TXT_NewTable(2),
+                   TXT_NewSeparator("Screen mode"),
+                   modes_table = TXT_NewTable(2),
+                   TXT_NewSeparator("Misc."),
+                   TXT_NewCheckBox("Show ENDOOM screen", &show_endoom),
+                   NULL);
+
+    TXT_SetColumnWidths(ar_table, 25, 0);
+
 #ifdef _WIN32
     {
         txt_dropdown_list_t *driver_list;
@@ -173,20 +184,12 @@ void ConfigDisplay(void)
         TXT_SignalConnect(driver_list, "changed", UpdateVideoDriver, NULL);
         SetWin32VideoDriver();
 
-        TXT_AddWidget(window, driver_list);
+        TXT_AddWidgets(ar_table,
+                       TXT_NewLabel("Video driver"),
+                       driver_list,
+                       NULL);
     }
 #endif
-
-    TXT_AddWidgets(window, 
-                   TXT_NewCheckBox("Fullscreen", &fullscreen),
-                   ar_table = TXT_NewTable(2),
-                   TXT_NewSeparator("Screen mode"),
-                   modes_table = TXT_NewTable(2),
-                   TXT_NewSeparator("Misc."),
-                   TXT_NewCheckBox("Show ENDOOM screen", &show_endoom),
-                   NULL);
-
-    TXT_SetColumnWidths(ar_table, 25, 0);
 
     TXT_AddWidgets(ar_table,
                    TXT_NewLabel("Aspect ratio correction"),
