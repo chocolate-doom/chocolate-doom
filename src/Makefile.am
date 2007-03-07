@@ -22,6 +22,8 @@ z_native.c           z_zone.h
 chocolate_server_SOURCES=$(DEDSERV_FILES)
 chocolate_server_LDADD = @LDFLAGS@ @SDL_LIBS@ @SDLNET_LIBS@ 
 
+SUBDIRS=pcsound
+
 SOURCE_FILES=\
 am_map.c             am_map.h              \
 deh_ammo.c                                 \
@@ -62,6 +64,7 @@ hu_stuff.c           hu_stuff.h            \
 i_main.c                                   \
 info.c               info.h                \
 i_scale.c            i_scale.h             \
+i_pcsound.c          i_pcsound.h           \
 i_sound.c            i_sound.h             \
 i_system.c           i_system.h            \
 i_timer.c            i_timer.h             \
@@ -138,7 +141,7 @@ else
 chocolate_doom_SOURCES=$(SOURCE_FILES)
 endif
 
-chocolate_doom_LDADD = ../textscreen/libtextscreen.a @LDFLAGS@ @SDL_LIBS@ @SDLMIXER_LIBS@ @SDLNET_LIBS@ 
+chocolate_doom_LDADD = ../textscreen/libtextscreen.a pcsound/libpcsound.a @LDFLAGS@ @SDL_LIBS@ @SDLMIXER_LIBS@ @SDLNET_LIBS@ 
 
 EXTRA_DIST =                               \
         chocolate_doom_icon.c              \

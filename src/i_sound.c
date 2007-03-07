@@ -39,6 +39,7 @@
 #include "z_zone.h"
 
 #include "i_system.h"
+#include "i_pcsound.h"
 #include "i_sound.h"
 #include "deh_main.h"
 #include "m_argv.h"
@@ -122,7 +123,7 @@ void ReleaseSoundOnChannel(int channel)
 static void ExpandSoundData(byte *data, int samplerate, int length,
                             Mix_Chunk *destination)
 {
-    byte *expanded = (byte *) destination->abuf;
+    Sint16 *expanded = (Sint16 *) destination->abuf;
     int expanded_length;
     int expand_ratio;
     int i;
@@ -135,28 +136,25 @@ static void ExpandSoundData(byte *data, int samplerate, int length,
 
         for (i=0; i<length; ++i)
         {
-            Uint16 sample;
+            Sint16 sample;
 
             sample = data[i] | (data[i] << 8);
             sample -= 32768;
 
-            expanded[i * 8] = expanded[i * 8 + 2]
-              = expanded[i * 8 + 4] = expanded[i * 8 + 6] = sample & 0xff;
-            expanded[i * 8 + 1] = expanded[i * 8 + 3]
-              = expanded[i * 8 + 5] = expanded[i * 8 + 7] = (sample >> 8) & 0xff;
+            expanded[i * 4] = expanded[i * 4 + 1]
+                = expanded[i * 4 + 2] = expanded[i * 4 + 3] = sample;
         }
     }
     else if (samplerate == 22050)
     {
         for (i=0; i<length; ++i)
         {
-            Uint16 sample;
+            Sint16 sample;
 
             sample = data[i] | (data[i] << 8);
             sample -= 32768;
 
-            expanded[i * 4] = expanded[i * 4 + 2] = sample & 0xff;
-            expanded[i * 4 + 1] = expanded[i * 4 + 3] = (sample >> 8) & 0xff;
+            expanded[i * 2] = expanded[i * 2 + 1] = sample;
         }
     }
     else
@@ -170,7 +168,7 @@ static void ExpandSoundData(byte *data, int samplerate, int length,
 
         for (i=0; i<expanded_length; ++i)
         {
-            Uint16 sample;
+            Sint16 sample;
             int src;
 
             src = (i * expand_ratio) >> 8;
@@ -180,8 +178,7 @@ static void ExpandSoundData(byte *data, int samplerate, int length,
 
             // expand 8->16 bits, mono->stereo
 
-            expanded[i * 4] = expanded[i * 4 + 2] = sample & 0xff;
-            expanded[i * 4 + 1] = expanded[i * 4 + 3] = (sample >> 8) & 0xff;
+            expanded[i * 2] = expanded[i * 2 + 1] = sample;
         }
     }
 }
@@ -200,7 +197,7 @@ static boolean CacheSFX(int sound)
 
     // need to load the sound
 
-    lumpnum = I_GetSfxLumpNum(&S_sfx[sound]);
+    lumpnum = S_sfx[sound].lumpnum;
     data = W_CacheLumpNum(lumpnum, PU_STATIC);
     lumplen = W_LumpLength(lumpnum);
 
@@ -213,7 +210,7 @@ static boolean CacheSFX(int sound)
 
         return false;
     }
-    
+
     // 16 bit sample rate field, 32 bit length field
 
     samplerate = (data[3] << 8) | data[2];
@@ -288,9 +285,24 @@ void I_SetSfxVolume(int volume)
 int I_GetSfxLumpNum(sfxinfo_t* sfx)
 {
     char namebuf[9];
-    sprintf(namebuf, "ds%s", DEH_String(sfx->name));
+    char *prefix;
+
+    // Different prefix for PC speaker sound effects.
+
+    if (snd_sfxdevice == SNDDEVICE_PCSPEAKER)
+    {
+        prefix = "dp";
+    }
+    else
+    {
+        prefix = "ds";
+    }
+
+    sprintf(namebuf, "%s%s", prefix, DEH_String(sfx->name));
+    
     return W_GetNumForName(namebuf);
 }
+
 //
 // Starting a sound means adding it
 //  to the current list of active sounds
@@ -316,6 +328,11 @@ I_StartSound
 
     if (!sound_initialised)
         return 0;
+
+    if (snd_sfxdevice == SNDDEVICE_PCSPEAKER)
+    {
+        return I_PCS_StartSound(id, channel, vol, sep, pitch, priority);
+    }
 
     // Release a sound effect if there is already one playing
     // on this channel
@@ -349,6 +366,12 @@ void I_StopSound (int handle)
     if (!sound_initialised)
         return;
 
+    if (snd_sfxdevice == SNDDEVICE_PCSPEAKER)
+    {
+        I_PCS_StopSound(handle);
+        return;
+    }
+    
     Mix_HaltChannel(handle);
 
     // Sound data is no longer needed; release the
@@ -366,7 +389,14 @@ int I_SoundIsPlaying(int handle)
     if (handle < 0)
         return false;
 
-    return Mix_Playing(handle);
+    if (snd_sfxdevice == SNDDEVICE_PCSPEAKER)
+    {
+        return I_PCS_SoundIsPlaying(handle);
+    }
+    else
+    {
+        return Mix_Playing(handle);
+    }
 }
 
 
@@ -382,6 +412,11 @@ void I_UpdateSound( void )
 
     if (!sound_initialised)
         return;
+
+    if (snd_sfxdevice == SNDDEVICE_PCSPEAKER)
+    {
+        return;
+    }
 
     // Check all channels to see if a sound has finished
 
@@ -424,6 +459,11 @@ I_UpdateSoundParams
 
     if (!sound_initialised)
         return;
+
+    if (snd_sfxdevice == SNDDEVICE_PCSPEAKER)
+    {
+        return;
+    }
 
     left = ((254 - sep) * vol) / 127;
     right = ((sep) * vol) / 127;
@@ -472,16 +512,32 @@ I_InitSound()
     {
         nomusicparm = true;
     }
-
+ 
     //!
     // Disable sound effects.
     //
 
     nosfxparm = M_CheckParm("-nosfx") > 0;
 
-    if (snd_sfxdevice < SNDDEVICE_SB)
+    // If the SFX device is 0 (none), then disable sound effects,
+    // just like if we specified -nosfx.  However, we still continue
+    // with initialising digital sound output even if we are using
+    // the PC speaker, because we might be using the SDL PC speaker
+    // emulation.
+
+    if (snd_sfxdevice == SNDDEVICE_NONE)
     {
         nosfxparm = true;
+    }
+
+    //!
+    // Disable sound effects and music.
+    //
+
+    if (M_CheckParm("-nosound") > 0)
+    {
+        nosfxparm = true;
+        nomusicparm = true;
     }
 
     // When trying to run with music enabled on OSX, display
@@ -498,16 +554,6 @@ I_InitSound()
     }
 #endif
 
-    //!
-    // Disable sound effects and music.
-    //
-
-    if (M_CheckParm("-nosound") > 0)
-    {
-        nosfxparm = true;
-        nomusicparm = true;
-    }
-
     // If music or sound is going to play, we need to at least
     // initialise SDL
     // No sound in screensaver mode.
@@ -521,7 +567,7 @@ I_InitSound()
         return;
     }
 
-    if (Mix_OpenAudio(22050, AUDIO_S16LSB, 2, 1024) < 0)
+    if (Mix_OpenAudio(22050, AUDIO_S16SYS, 2, 1024) < 0)
     {
         fprintf(stderr, "Error initialising SDL_mixer: %s\n", Mix_GetError());
         return;
@@ -530,6 +576,13 @@ I_InitSound()
     Mix_AllocateChannels(NUM_CHANNELS);
     
     SDL_PauseAudio(0);
+
+    // If we are using the PC speaker, we now need to initialise it.
+
+    if (snd_sfxdevice == SNDDEVICE_PCSPEAKER)
+    {
+        I_PCS_InitSound();
+    }
 
     if (!nomusicparm)
         music_initialised = true;
