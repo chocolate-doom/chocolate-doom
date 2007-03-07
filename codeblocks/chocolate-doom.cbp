@@ -158,6 +158,10 @@
 		<Unit filename="..\src\i_main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\src\i_pcsound.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\i_pcsound.h" />
 		<Unit filename="..\src\i_scale.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -334,6 +338,16 @@
 		</Unit>
 		<Unit filename="..\src\p_tick.h" />
 		<Unit filename="..\src\p_user.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\pcsound\pcsound.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\pcsound\pcsound.h" />
+		<Unit filename="..\src\pcsound\pcsound_sdl.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\pcsound\pcsound_win32.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\r_bsp.c">

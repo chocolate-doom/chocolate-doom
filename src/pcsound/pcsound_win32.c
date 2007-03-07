@@ -34,7 +34,7 @@ static SDL_Thread *sound_thread_handle;
 static int sound_thread_running;
 static pcsound_callback_func callback;
 
-static void SoundThread(void *unused)
+static int SoundThread(void *unused)
 {
     int frequency;
     int duration;
@@ -51,7 +51,9 @@ static void SoundThread(void *unused)
         {
             Sleep(duration);
         }
-    }    
+    }
+    
+    return 0;    
 }
 
 static int PCSound_Win32_Init(pcsound_callback_func callback_func)
