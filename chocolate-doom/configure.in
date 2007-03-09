@@ -24,10 +24,6 @@ fi
 
 AM_PATH_SDL(1.1.3)
 
-# Always build a console mode app
-
-SDL_LIBS=`echo $SDL_LIBS | sed 's/mwindows/mconsole/'`
-
 AC_CHECK_LIB(SDL_mixer,Mix_LoadMUS,[
 dnl    AC_DEFINE(HAVE_LIBSDL_MIXER)
     SDLMIXER_LIBS="$SDLMIXER_LIBS -lSDL_mixer"
