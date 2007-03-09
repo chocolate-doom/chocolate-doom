@@ -104,5 +104,10 @@ void TXT_GetMousePosition(int *x, int *y);
 
 void TXT_Sleep(int timeout);
 
+// Controls whether keys are returned from TXT_GetChar based on keyboard
+// mapping, or raw key code.
+
+void TXT_EnableKeyMapping(int enable);
+
 #endif /* #ifndef TXT_MAIN_H */
 

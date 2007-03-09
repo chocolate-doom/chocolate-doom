@@ -44,6 +44,11 @@ static int KeyPressCallback(txt_window_t *window, int key,
         *key_input->variable = key;
         TXT_EmitSignal(key_input, "set");
         TXT_CloseWindow(window);
+
+        // Re-enable key mappings now that we have the key
+
+        TXT_EnableKeyMapping(1);
+
         return 1;
     }
     else
@@ -69,6 +74,10 @@ static void OpenPromptWindow(txt_key_input_t *key_input)
     TXT_SetWidgetAlign(label, TXT_HORIZ_CENTER);
 
     TXT_SetKeyListener(window, KeyPressCallback, key_input);
+
+    // Disable key mappings while we prompt for the key press
+
+    TXT_EnableKeyMapping(0);
 }
 
 static void TXT_KeyInputSizeCalc(TXT_UNCAST_ARG(key_input))
