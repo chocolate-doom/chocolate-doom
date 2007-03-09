@@ -1406,17 +1406,10 @@ boolean M_Responder (event_t* ev)
     static  int     mousex = 0;
     static  int     lastx = 0;
 	
-    // There is a distinction here between the typed character and the key
-    // pressed.  'key' is the key code, while 'ch' is the actual character
-    // typed.  For an example, on a German QWERTZ keyboard, if 'z' is
-    // pressed, ch='z' but key='y' (the position it occupies on the 
-    // "standard" american keyboard)
-    //
-    // When dealing with actual keys pressed, we must use key, but any time
-    // we want the actual character typed, we use ch.
-
-    key = -1;
+    // key is the key pressed, ch is the actual character typed
+  
     ch = 0;
+    key = -1;
 	
     if (ev->type == ev_joystick && joywait < I_GetTime())
     {
@@ -1498,11 +1491,13 @@ boolean M_Responder (event_t* ev)
 	    }
 	}
 	else
+	{
 	    if (ev->type == ev_keydown)
 	    {
 		key = ev->data1;
-                ch = ev->data2;
+		ch = ev->data2;
 	    }
+	}
     }
     
     if (key == -1)
@@ -1547,11 +1542,14 @@ boolean M_Responder (event_t* ev)
 	    break;
 				
 	  default:
-	    ch = toupper(ch);
-	    if (ch != ' ')
+	    // Entering a character - use the 'ch' value, not the key
+
+            ch = toupper(ch);
+
+            if (ch != ' '
+             && (ch - HU_FONTSTART < 0 || ch - HU_FONTSTART >= HU_FONTSIZE))
             {
-		if (ch-HU_FONTSTART < 0 || ch-HU_FONTSTART >= HU_FONTSIZE)
-		    break;
+                break;
             }
 
 	    if (ch >= 32 && ch <= 127 &&
@@ -1560,7 +1558,7 @@ boolean M_Responder (event_t* ev)
 		(SAVESTRINGSIZE-2)*8)
 	    {
 		savegamestrings[saveSlot][saveCharIndex++] = ch;
-		savegamestrings[saveSlot][saveCharIndex] = '\0';
+		savegamestrings[saveSlot][saveCharIndex] = 0;
 	    }
 	    break;
 	}
@@ -1571,13 +1569,13 @@ boolean M_Responder (event_t* ev)
     if (messageToPrint)
     {
 	if (messageNeedsInput == true &&
-	    !(ch == ' ' || ch == 'n' || ch == 'y' || key == KEY_ESCAPE))
+	    !(key == ' ' || key == 'n' || key == 'y' || key == KEY_ESCAPE))
 	    return false;
 		
 	menuactive = messageLastMenuActive;
 	messageToPrint = 0;
 	if (messageRoutine)
-	    messageRoutine(ch);
+	    messageRoutine(key);
 			
 	menuactive = false;
 	S_StartSound(NULL,sfx_swtchx);
@@ -1771,14 +1769,14 @@ boolean M_Responder (event_t* ev)
 	
       default:
 	for (i = itemOn+1;i < currentMenu->numitems;i++)
-	    if (currentMenu->menuitems[i].alphaKey == ch)
+	    if (currentMenu->menuitems[i].alphaKey == key)
 	    {
 		itemOn = i;
 		S_StartSound(NULL,sfx_pstop);
 		return true;
 	    }
 	for (i = 0;i <= itemOn;i++)
-	    if (currentMenu->menuitems[i].alphaKey == ch)
+	    if (currentMenu->menuitems[i].alphaKey == key)
 	    {
 		itemOn = i;
 		S_StartSound(NULL,sfx_pstop);
