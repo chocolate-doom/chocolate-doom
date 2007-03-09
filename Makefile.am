@@ -39,7 +39,7 @@ EXTRA_DIST=                             \
 MAINTAINERCLEANFILES =  $(AUX_DIST_GEN)
 
 docdir=$(prefix)/share/doc/@PACKAGE@
-SUBDIRS=textscreen src man setup
+SUBDIRS=textscreen pcsound src man setup
 
 CMDLINE : src/
 	./man/docgen -p $? > $@
