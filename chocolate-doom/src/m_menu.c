@@ -1397,6 +1397,7 @@ M_WriteText
 boolean M_Responder (event_t* ev)
 {
     int             ch;
+    int             key;
     int             i;
     static  int     joywait = 0;
     static  int     mousewait = 0;
@@ -1405,40 +1406,50 @@ boolean M_Responder (event_t* ev)
     static  int     mousex = 0;
     static  int     lastx = 0;
 	
-    ch = -1;
+    // There is a distinction here between the typed character and the key
+    // pressed.  'key' is the key code, while 'ch' is the actual character
+    // typed.  For an example, on a German QWERTZ keyboard, if 'z' is
+    // pressed, ch='z' but key='y' (the position it occupies on the 
+    // "standard" american keyboard)
+    //
+    // When dealing with actual keys pressed, we must use key, but any time
+    // we want the actual character typed, we use ch.
+
+    key = -1;
+    ch = 0;
 	
     if (ev->type == ev_joystick && joywait < I_GetTime())
     {
 	if (ev->data3 == -1)
 	{
-	    ch = KEY_UPARROW;
+	    key = KEY_UPARROW;
 	    joywait = I_GetTime() + 5;
 	}
 	else if (ev->data3 == 1)
 	{
-	    ch = KEY_DOWNARROW;
+	    key = KEY_DOWNARROW;
 	    joywait = I_GetTime() + 5;
 	}
 		
 	if (ev->data2 == -1)
 	{
-	    ch = KEY_LEFTARROW;
+	    key = KEY_LEFTARROW;
 	    joywait = I_GetTime() + 2;
 	}
 	else if (ev->data2 == 1)
 	{
-	    ch = KEY_RIGHTARROW;
+	    key = KEY_RIGHTARROW;
 	    joywait = I_GetTime() + 2;
 	}
 		
 	if (ev->data1&1)
 	{
-	    ch = KEY_ENTER;
+	    key = KEY_ENTER;
 	    joywait = I_GetTime() + 5;
 	}
 	if (ev->data1&2)
 	{
-	    ch = KEY_BACKSPACE;
+	    key = KEY_BACKSPACE;
 	    joywait = I_GetTime() + 5;
 	}
     }
@@ -1449,13 +1460,13 @@ boolean M_Responder (event_t* ev)
 	    mousey += ev->data3;
 	    if (mousey < lasty-30)
 	    {
-		ch = KEY_DOWNARROW;
+		key = KEY_DOWNARROW;
 		mousewait = I_GetTime() + 5;
 		mousey = lasty -= 30;
 	    }
 	    else if (mousey > lasty+30)
 	    {
-		ch = KEY_UPARROW;
+		key = KEY_UPARROW;
 		mousewait = I_GetTime() + 5;
 		mousey = lasty += 30;
 	    }
@@ -1463,37 +1474,38 @@ boolean M_Responder (event_t* ev)
 	    mousex += ev->data2;
 	    if (mousex < lastx-30)
 	    {
-		ch = KEY_LEFTARROW;
+		key = KEY_LEFTARROW;
 		mousewait = I_GetTime() + 5;
 		mousex = lastx -= 30;
 	    }
 	    else if (mousex > lastx+30)
 	    {
-		ch = KEY_RIGHTARROW;
+		key = KEY_RIGHTARROW;
 		mousewait = I_GetTime() + 5;
 		mousex = lastx += 30;
 	    }
 		
 	    if (ev->data1&1)
 	    {
-		ch = KEY_ENTER;
+		key = KEY_ENTER;
 		mousewait = I_GetTime() + 15;
 	    }
 			
 	    if (ev->data1&2)
 	    {
-		ch = KEY_BACKSPACE;
+		key = KEY_BACKSPACE;
 		mousewait = I_GetTime() + 15;
 	    }
 	}
 	else
 	    if (ev->type == ev_keydown)
 	    {
-		ch = ev->data1;
+		key = ev->data1;
+                ch = ev->data2;
 	    }
     }
     
-    if (ch == -1)
+    if (key == -1)
 	return false;
 
     // In testcontrols mode, none of the function keys should do anything
@@ -1501,7 +1513,7 @@ boolean M_Responder (event_t* ev)
 
     if (testcontrols)
     {
-        if (ch == KEY_ESCAPE || ch == KEY_F10)
+        if (key == KEY_ESCAPE || key == KEY_F10)
         {
             I_Quit();
             return true;
@@ -1513,7 +1525,7 @@ boolean M_Responder (event_t* ev)
     // Save Game string input
     if (saveStringEnter)
     {
-	switch(ch)
+	switch(key)
 	{
 	  case KEY_BACKSPACE:
 	    if (saveCharIndex > 0)
@@ -1536,16 +1548,19 @@ boolean M_Responder (event_t* ev)
 				
 	  default:
 	    ch = toupper(ch);
-	    if (ch != 32)
+	    if (ch != ' ')
+            {
 		if (ch-HU_FONTSTART < 0 || ch-HU_FONTSTART >= HU_FONTSIZE)
 		    break;
+            }
+
 	    if (ch >= 32 && ch <= 127 &&
 		saveCharIndex < SAVESTRINGSIZE-1 &&
 		M_StringWidth(savegamestrings[saveSlot]) <
 		(SAVESTRINGSIZE-2)*8)
 	    {
 		savegamestrings[saveSlot][saveCharIndex++] = ch;
-		savegamestrings[saveSlot][saveCharIndex] = 0;
+		savegamestrings[saveSlot][saveCharIndex] = '\0';
 	    }
 	    break;
 	}
@@ -1556,7 +1571,7 @@ boolean M_Responder (event_t* ev)
     if (messageToPrint)
     {
 	if (messageNeedsInput == true &&
-	    !(ch == ' ' || ch == 'n' || ch == 'y' || ch == KEY_ESCAPE))
+	    !(ch == ' ' || ch == 'n' || ch == 'y' || key == KEY_ESCAPE))
 	    return false;
 		
 	menuactive = messageLastMenuActive;
@@ -1569,7 +1584,7 @@ boolean M_Responder (event_t* ev)
 	return true;
     }
 	
-    if (devparm && ch == KEY_F1)
+    if (devparm && key == KEY_F1)
     {
 	G_ScreenShot ();
 	return true;
@@ -1578,7 +1593,7 @@ boolean M_Responder (event_t* ev)
     
     // F-Keys
     if (!menuactive)
-	switch(ch)
+	switch(key)
 	{
 	  case KEY_MINUS:         // Screen size down
 	    if (automapactive || chat_on)
@@ -1669,7 +1684,7 @@ boolean M_Responder (event_t* ev)
     // Pop-up menu?
     if (!menuactive)
     {
-	if (ch == KEY_ESCAPE)
+	if (key == KEY_ESCAPE)
 	{
 	    M_StartControlPanel ();
 	    S_StartSound(NULL,sfx_swtchn);
@@ -1680,7 +1695,7 @@ boolean M_Responder (event_t* ev)
 
     
     // Keys usable within menu
-    switch (ch)
+    switch (key)
     {
       case KEY_DOWNARROW:
 	do
