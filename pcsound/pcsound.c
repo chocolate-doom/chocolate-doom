@@ -27,15 +27,24 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "config.h"
 #include "pcsound.h"
 
 #ifdef _WIN32
 extern pcsound_driver_t pcsound_win32_driver;
 #endif
+
+#ifdef HAVE_LINUX_KD_H
+extern pcsound_driver_t pcsound_linux_driver;
+#endif
+
 extern pcsound_driver_t pcsound_sdl_driver;
 
 static pcsound_driver_t *drivers[] = 
 {
+#ifdef HAVE_LINUX_KD_H
+    &pcsound_linux_driver,
+#endif
 #ifdef _WIN32
     &pcsound_win32_driver,
 #endif
