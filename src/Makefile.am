@@ -3,7 +3,7 @@ gamesdir = $(prefix)/games
 
 games_PROGRAMS = chocolate-doom chocolate-server
 
-AM_CFLAGS = -I../textscreen @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
+AM_CFLAGS = -I../textscreen -I../pcsound @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
 DEDSERV_FILES=\
 d_dedicated.c                              \
@@ -21,8 +21,6 @@ z_native.c           z_zone.h
 
 chocolate_server_SOURCES=$(DEDSERV_FILES)
 chocolate_server_LDADD = @LDFLAGS@ @SDL_LIBS@ @SDLNET_LIBS@ 
-
-SUBDIRS=pcsound
 
 SOURCE_FILES=\
 am_map.c             am_map.h              \
@@ -141,7 +139,7 @@ else
 chocolate_doom_SOURCES=$(SOURCE_FILES)
 endif
 
-chocolate_doom_LDADD = ../textscreen/libtextscreen.a pcsound/libpcsound.a @LDFLAGS@ @SDL_LIBS@ @SDLMIXER_LIBS@ @SDLNET_LIBS@ 
+chocolate_doom_LDADD = ../textscreen/libtextscreen.a ../pcsound/libpcsound.a @LDFLAGS@ @SDL_LIBS@ @SDLMIXER_LIBS@ @SDLNET_LIBS@ 
 
 EXTRA_DIST =                               \
         chocolate_doom_icon.c              \

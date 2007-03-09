@@ -74,7 +74,7 @@ textscreen/examples/Makefile
 setup/Makefile
 man/Makefile
 src/Makefile
-src/pcsound/Makefile
+pcsound/Makefile
 src/chocolate-doom-res.rc
 setup/chocolate-setup-res.rc
 ])
