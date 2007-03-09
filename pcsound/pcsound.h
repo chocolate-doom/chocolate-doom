@@ -26,6 +26,8 @@
 #ifndef PCSOUND_H
 #define PCSOUND_H
 
+#define PCSOUND_8253_FREQUENCY 1193280
+
 typedef struct pcsound_driver_s pcsound_driver_t;
 typedef void (*pcsound_callback_func)(int *duration, int *frequency);
 typedef int (*pcsound_init_func)(pcsound_callback_func callback);
