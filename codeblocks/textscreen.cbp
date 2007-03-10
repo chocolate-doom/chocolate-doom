@@ -6,38 +6,10 @@
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
-			<Target title="Debug-dyn">
-				<Option output="..\lib\libtextscreen-dbg.dll" prefix_auto="0" extension_auto="0" />
-				<Option working_dir="..\bin" />
-				<Option object_output="..\obj\libtextscreen\dbg-dyn" />
-				<Option type="3" />
-				<Option compiler="gcc" />
-				<Option createDefFile="1" />
-				<Option createStaticLib="1" />
-				<Compiler>
-					<Add option="-W" />
-					<Add option="-g" />
-				</Compiler>
-			</Target>
-			<Target title="Release-dyn">
-				<Option output="..\lib\libtextscreen.dll" prefix_auto="0" extension_auto="0" />
-				<Option working_dir="..\bin" />
-				<Option object_output="..\obj\libtextscreen\rel-dyn" />
-				<Option type="3" />
-				<Option compiler="gcc" />
-				<Option createDefFile="1" />
-				<Option createStaticLib="1" />
-				<Compiler>
-					<Add option="-O2" />
-				</Compiler>
-				<Linker>
-					<Add option="-s" />
-				</Linker>
-			</Target>
-			<Target title="Debug-stc">
+			<Target title="Debug">
 				<Option output="..\lib\libtextscreen-dbg.a" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="" />
-				<Option object_output="..\obj\libtextscreen\dbg-stc" />
+				<Option object_output="..\obj\libtextscreen\debug" />
 				<Option type="2" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -46,10 +18,10 @@
 					<Add option="-g" />
 				</Compiler>
 			</Target>
-			<Target title="Release-stc">
+			<Target title="Release">
 				<Option output="..\lib\libtextscreen.a" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="" />
-				<Option object_output="..\obj\libtextscreen\rel-stc" />
+				<Option object_output="..\obj\libtextscreen\release" />
 				<Option type="2" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -62,9 +34,7 @@
 			</Target>
 		</Build>
 		<VirtualTargets>
-			<Add alias="All" targets="Debug-dyn;Release-dyn;Debug-stc;Release-stc;" />
-			<Add alias="Debug" targets="Debug-dyn;Debug-stc;" />
-			<Add alias="Release" targets="Release-dyn;Release-stc;" />
+			<Add alias="All" targets="Debug;Release;" />
 		</VirtualTargets>
 		<Compiler>
 			<Add directory="..\src" />
