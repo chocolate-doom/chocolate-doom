@@ -705,6 +705,10 @@ void M_LoadDefaults (void)
 
 void M_SetConfigDir(void)
 {
+#ifndef _WIN32
+    // Ignore the HOME environment variable on Windows - just behave
+    // like Vanilla Doom.
+
     char *homedir;
 
     homedir = getenv("HOME");
@@ -724,6 +728,7 @@ void M_SetConfigDir(void)
         M_MakeDirectory(configdir);
     }
     else
+#endif /* #ifndef _WIN32 */
     {
 #ifdef _WIN32
         //!
