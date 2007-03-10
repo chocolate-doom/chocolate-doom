@@ -2,14 +2,14 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="textscreen" />
+		<Option title="libtextscreen" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug-dyn">
-				<Option output="..\bin\lib\libtextscreen-dbg.dll" prefix_auto="0" extension_auto="0" />
+				<Option output="..\lib\libtextscreen-dbg.dll" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="..\bin" />
-				<Option object_output="..\obj\dbg-dyn" />
+				<Option object_output="..\obj\libtextscreen\dbg-dyn" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -20,9 +20,9 @@
 				</Compiler>
 			</Target>
 			<Target title="Release-dyn">
-				<Option output="..\bin\lib\libtextscreen.dll" prefix_auto="0" extension_auto="0" />
+				<Option output="..\lib\libtextscreen.dll" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="..\bin" />
-				<Option object_output="..\obj\rel-dyn" />
+				<Option object_output="..\obj\libtextscreen\rel-dyn" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -35,9 +35,9 @@
 				</Linker>
 			</Target>
 			<Target title="Debug-stc">
-				<Option output="..\bin\lib\libtextscreen-dbg.a" prefix_auto="0" extension_auto="0" />
+				<Option output="..\lib\libtextscreen-dbg.a" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="" />
-				<Option object_output="..\obj\dbg-stc" />
+				<Option object_output="..\obj\libtextscreen\dbg-stc" />
 				<Option type="2" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -47,9 +47,9 @@
 				</Compiler>
 			</Target>
 			<Target title="Release-stc">
-				<Option output="..\bin\lib\libtextscreen.a" prefix_auto="0" extension_auto="0" />
+				<Option output="..\lib\libtextscreen.a" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="" />
-				<Option object_output="..\obj\rel-stc" />
+				<Option object_output="..\obj\libtextscreen\rel-stc" />
 				<Option type="2" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />

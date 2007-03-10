@@ -84,7 +84,7 @@ void PCSCallbackFunc(int *duration, int *freq)
         // for a full discussion of this.
         // Check we don't overflow the frequency table.
 
-        if (tone < NUM_FREQUENCIES)
+        if (tone < (int)NUM_FREQUENCIES)
         {
             *freq = (int) frequencies[tone];
         }

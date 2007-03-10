@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="libpcsound" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="..\lib\libpcsound-dbg.a" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="..\obj\libpcsound\dbg" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="..\lib\libpcsound.a" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="..\obj\libpcsound\release" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="Debug-dyn;Release-dyn;Debug-stc;Release-stc;" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="." />
+		</Compiler>
+		<Linker>
+			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_mixer -lSDL_net -mwindows" />
+		</Linker>
+		<Unit filename="..\pcsound\pcsound.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\pcsound\pcsound.h" />
+		<Unit filename="..\pcsound\pcsound_linux.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\pcsound\pcsound_sdl.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\pcsound\pcsound_win32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
