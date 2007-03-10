@@ -189,7 +189,7 @@ static void ExpandSoundData(byte *data, int samplerate, int length,
 static boolean CacheSFX(int sound)
 {
     int lumpnum;
-    int lumplen;
+    unsigned int lumplen;
     int samplerate;
     unsigned int length;
     unsigned int expanded_length;
