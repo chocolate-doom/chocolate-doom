@@ -190,7 +190,7 @@ static char *GetRegistryString(registry_value_t *reg_val)
 
 static void CheckUninstallStrings(void)
 {
-    int i;
+    unsigned int i;
 
     for (i=0; i<sizeof(uninstall_values) / sizeof(*uninstall_values); ++i)
     {
@@ -226,7 +226,7 @@ static void CheckCollectorsEdition(void)
 {
     char *install_path;
     char *subpath;
-    int i;
+    unsigned int i;
 
     install_path = GetRegistryString(&collectors_edition_value);
 
@@ -783,7 +783,7 @@ void D_SetGameDescription(void)
 
 void D_FindInstalledIWADs(void)
 {
-    int i;
+    unsigned int i;
     int result;
 
     BuildIWADDirList();

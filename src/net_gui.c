@@ -155,7 +155,7 @@ static void UpdateGUI(void)
 
 static void PrintMD5Digest(char *s, byte *digest)
 {
-    int i;
+    unsigned int i;
 
     printf("%s: ", s);
 
