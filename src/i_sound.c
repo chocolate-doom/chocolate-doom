@@ -79,6 +79,10 @@ static boolean music_initialised = false;
 static Mix_Chunk sound_chunks[NUMSFX];
 static int channels_playing[NUM_CHANNELS];
 
+static int mixer_freq;
+static Uint16 mixer_format;
+static int mixer_channels;
+
 // Disable music on OSX by default; there are problems with SDL_mixer.
 
 #ifndef __MACOSX__
@@ -117,53 +121,71 @@ void ReleaseSoundOnChannel(int channel)
     Z_ChangeTag(sound_chunks[id].abuf, PU_CACHE);
 }
 
-// Expands the 11025Hz, 8bit, mono sound effects in Doom to
-// 22050Hz, 16bit stereo
-
-static void ExpandSoundData(byte *data, int samplerate, int length,
-                            Mix_Chunk *destination)
+static boolean ConvertibleRatio(int freq1, int freq2)
 {
-    Sint16 *expanded = (Sint16 *) destination->abuf;
-    int expanded_length;
-    int expand_ratio;
-    int i;
+    int ratio;
 
-    if (samplerate == 11025)
+    if (freq1 > freq2)
     {
-        // Most of Doom's sound effects are 11025Hz
-
-        // need to expand to 2 channels, 11025->22050 and 8->16 bit
-
-        for (i=0; i<length; ++i)
-        {
-            Sint16 sample;
-
-            sample = data[i] | (data[i] << 8);
-            sample -= 32768;
-
-            expanded[i * 4] = expanded[i * 4 + 1]
-                = expanded[i * 4 + 2] = expanded[i * 4 + 3] = sample;
-        }
+        return ConvertibleRatio(freq2, freq1);
     }
-    else if (samplerate == 22050)
+    else if ((freq2 % freq1) != 0)
     {
-        for (i=0; i<length; ++i)
-        {
-            Sint16 sample;
+        // Not in a direct ratio
 
-            sample = data[i] | (data[i] << 8);
-            sample -= 32768;
-
-            expanded[i * 2] = expanded[i * 2 + 1] = sample;
-        }
+        return false;
     }
     else
     {
-        // Generic expansion function for all other sample rates
+        // Check the ratio is a power of 2
+
+        ratio = freq2 / freq1;
+
+        while ((ratio & 1) == 0)
+        {
+            ratio = ratio >> 1;
+        }
+
+        return ratio == 1;
+    }
+}
+
+// Generic sound expansion function for any sample rate
+
+static void ExpandSoundData(byte *data,
+                            int samplerate,
+                            int length,
+                            Mix_Chunk *destination)
+{
+    SDL_AudioCVT convertor;
+    
+    if (ConvertibleRatio(samplerate, mixer_freq)
+     && SDL_BuildAudioCVT(&convertor,
+                          AUDIO_U8, 1, samplerate,
+                          mixer_format, mixer_channels, mixer_freq))
+    {
+        convertor.buf = destination->abuf;
+        convertor.len = length;
+        memcpy(convertor.buf, data, length);
+
+        SDL_ConvertAudio(&convertor);
+    }
+    else
+    {
+        Sint16 *expanded = (Sint16 *) destination->abuf;
+        int expanded_length;
+        int expand_ratio;
+        int i;
+
+        // Generic expansion if conversion does not work:
+        //
+        // SDL's audio conversion only works for rate conversions that are
+        // powers of 2; if the two formats are not in a direct power of 2
+        // ratio, do this naive conversion instead.
 
         // number of samples in the converted sound
 
-        expanded_length = (length * 22050) / samplerate;
+        expanded_length = (length * mixer_freq) / samplerate;
         expand_ratio = (length << 8) / expanded_length;
 
         for (i=0; i<expanded_length; ++i)
@@ -224,7 +246,7 @@ static boolean CacheSFX(int sound)
         return false;
     }
 
-    expanded_length = (uint32_t) ((((uint64_t) length) * 4 * 22050) / samplerate);
+    expanded_length = (uint32_t) ((((uint64_t) length) * 4 * mixer_freq) / samplerate);
 
     sound_chunks[sound].allocated = 1;
     sound_chunks[sound].alen = expanded_length;
@@ -232,7 +254,10 @@ static boolean CacheSFX(int sound)
         = Z_Malloc(expanded_length, PU_STATIC, &sound_chunks[sound].abuf);
     sound_chunks[sound].volume = MIX_MAX_VOLUME;
 
-    ExpandSoundData(data + 8, samplerate, length - 8, &sound_chunks[sound]);
+    ExpandSoundData(data + 8, 
+                    samplerate, 
+                    length - 8, 
+                    &sound_chunks[sound]);
 
     // don't need the original lump any more
   
@@ -572,6 +597,8 @@ I_InitSound()
         fprintf(stderr, "Error initialising SDL_mixer: %s\n", Mix_GetError());
         return;
     }
+
+    Mix_QuerySpec(&mixer_freq, &mixer_format, &mixer_channels);
 
     Mix_AllocateChannels(NUM_CHANNELS);
     
