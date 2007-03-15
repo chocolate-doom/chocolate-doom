@@ -64,6 +64,7 @@ info.c               info.h                \
 i_scale.c            i_scale.h             \
 i_pcsound.c          i_pcsound.h           \
 i_sound.c            i_sound.h             \
+                     i_swap.h              \
 i_system.c           i_system.h            \
 i_timer.c            i_timer.h             \
 i_video.c            i_video.h             \
@@ -77,7 +78,6 @@ md5.c                md5.h                 \
 memio.c              memio.h               \
 mus2mid.c            mus2mid.h             \
 m_random.c           m_random.h            \
-m_swap.c             m_swap.h              \
 net_client.c         net_client.h          \
 net_common.c         net_common.h          \
 net_dedicated.c      net_dedicated.h       \

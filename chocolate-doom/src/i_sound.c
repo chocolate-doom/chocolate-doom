@@ -41,10 +41,10 @@
 #include "i_system.h"
 #include "i_pcsound.h"
 #include "i_sound.h"
+#include "i_swap.h"
 #include "deh_main.h"
 #include "m_argv.h"
 #include "m_misc.h"
-#include "m_swap.h"
 #include "w_wad.h"
 
 #include "doomdef.h"

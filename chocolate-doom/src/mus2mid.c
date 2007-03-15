@@ -26,7 +26,7 @@
 #include <stdio.h>
 
 #include "doomtype.h"
-#include "m_swap.h"
+#include "i_swap.h"
 
 #include "memio.h"
 #include "mus2mid.h"

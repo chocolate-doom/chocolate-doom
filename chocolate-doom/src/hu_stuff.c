@@ -31,7 +31,7 @@
 #include "z_zone.h"
 
 #include "deh_main.h"
-#include "m_swap.h"
+#include "i_swap.h"
 
 #include "hu_stuff.h"
 #include "hu_lib.h"

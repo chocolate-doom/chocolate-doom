@@ -33,7 +33,7 @@
 #include <string.h>
 
 #include "doomtype.h"
-#include "m_swap.h"
+#include "i_swap.h"
 #include "i_system.h"
 #include "i_video.h"
 #include "z_zone.h"

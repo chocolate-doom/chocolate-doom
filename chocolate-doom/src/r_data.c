@@ -28,10 +28,10 @@
 
 
 #include "deh_main.h"
+#include "i_swap.h"
 #include "i_system.h"
 #include "z_zone.h"
 
-#include "m_swap.h"
 
 #include "w_wad.h"
 
