@@ -32,7 +32,7 @@
 #include "z_zone.h"
 
 #include "deh_main.h"
-#include "m_swap.h"
+#include "i_swap.h"
 #include "m_bbox.h"
 
 #include "g_game.h"

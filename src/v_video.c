@@ -36,7 +36,7 @@
 #include "doomdata.h"
 
 #include "m_bbox.h"
-#include "m_swap.h"
+#include "i_swap.h"
 
 #include "v_video.h"
 

@@ -49,12 +49,12 @@
 #include "z_zone.h"
 
 #include "m_menu.h"
-#include "m_swap.h"
 #include "m_argv.h"
 #include "net_client.h"
 
 #include "w_wad.h"
 
+#include "i_swap.h"
 #include "i_system.h"
 #include "i_video.h"
 #include "v_video.h"

@@ -29,7 +29,7 @@
 #include "doomdef.h"
 
 #include "v_video.h"
-#include "m_swap.h"
+#include "i_swap.h"
 
 #include "hu_lib.h"
 #include "r_local.h"
