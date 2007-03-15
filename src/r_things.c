@@ -33,8 +33,8 @@
 
 #include "deh_main.h"
 #include "doomdef.h"
-#include "m_swap.h"
 
+#include "i_swap.h"
 #include "i_system.h"
 #include "z_zone.h"
 #include "w_wad.h"

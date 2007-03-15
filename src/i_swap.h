@@ -2,7 +2,7 @@
 //-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005,2006,2007 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -25,26 +25,26 @@
 //-----------------------------------------------------------------------------
 
 
-#ifndef __M_SWAP__
-#define __M_SWAP__
+#ifndef __I_SWAP__
+#define __I_SWAP__
 
-
-#include "config.h"
-
+#include "SDL_endian.h"
 
 // Endianess handling.
 // WAD files are stored little endian.
-#ifdef WORDS_BIGENDIAN
-extern unsigned short	SwapSHORT(unsigned short);
-extern unsigned int	SwapLONG(unsigned int);
-#define SHORT(x)	((short)SwapSHORT((unsigned short) (x)))
-#define LONG(x)         ((int)SwapLONG((unsigned int) (x)))
-#else
-#define SHORT(x)	(x)
-#define LONG(x)         (x)
+
+// Just use SDL's endianness swapping functions.
+
+#define SHORT(x)  SDL_SwapLE16(x)
+#define LONG(x)   SDL_SwapLE32(x)
+
+// Defines for checking the endianness of the system.
+
+#if SDL_BYTEORDER == SYS_LIL_ENDIAN
+#define SYS_LITTLE_ENDIAN
+#elif SDL_BYTEORDER == SYS_BIG_ENDIAN
+#define SYS_BIG_ENDIAN
 #endif
 
-
-
-
 #endif
+

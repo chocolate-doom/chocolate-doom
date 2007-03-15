@@ -34,8 +34,7 @@
 #include "z_zone.h"
 #include "v_video.h"
 
-#include "m_swap.h"
-
+#include "i_swap.h"
 #include "i_system.h"
 
 #include "w_wad.h"

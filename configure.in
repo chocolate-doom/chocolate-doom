@@ -60,8 +60,6 @@ AC_SUBST(SDLNET_LIBS)
 
 AC_SUBST(ac_aux_dir)
 
-AC_C_BIGENDIAN
-
 dnl Shut up the datarootdir warnings.
 AC_DEFUN([AC_DATAROOTDIR_CHECKED])
 

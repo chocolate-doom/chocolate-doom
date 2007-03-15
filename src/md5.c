@@ -19,16 +19,23 @@
  *  - Ian Jackson <ian@chiark.greenend.org.uk>.
  * Still in the public domain.
  */
-#include "config.h"
+
+#include "i_swap.h"
 
 #include <string.h>             /* for memcpy() */
 #include <sys/types.h>          /* for stupid systems */
 
 #include "md5.h"
 
-#ifdef WORDS_BIGENDIAN
-void
-byteSwap(UWORD32 *buf, unsigned words)
+#ifdef SYS_LITTLE_ENDIAN
+
+// Little endian system - no byte swapping required
+
+#define ByteSwapBlock(x)
+
+#else
+
+void ByteSwapBlock(UWORD32 *buf, unsigned words)
 {
         md5byte *p = (md5byte *)buf;
 
@@ -38,9 +45,8 @@ byteSwap(UWORD32 *buf, unsigned words)
                 p += 4;
         } while (--words);
 }
-#else
-#define byteSwap(buf,words)
-#endif
+
+#endif /* #ifndef SYS_LITTLE_ENDIAN */
 
 /*
  * Start MD5 accumulation.  Set bit count to 0 and buffer to mysterious
@@ -80,7 +86,7 @@ MD5_Update(md5_context_t *ctx, md5byte const *buf, unsigned len)
         }
         /* First chunk is an odd size */
         memcpy((md5byte *)ctx->in + 64 - t, buf, t);
-        byteSwap(ctx->in, 16);
+        ByteSwapBlock(ctx->in, 16);
         MD5_Transform(ctx->buf, ctx->in);
         buf += t;
         len -= t;
@@ -88,7 +94,7 @@ MD5_Update(md5_context_t *ctx, md5byte const *buf, unsigned len)
         /* Process data in 64-byte chunks */
         while (len >= 64) {
                 memcpy(ctx->in, buf, 64);
-                byteSwap(ctx->in, 16);
+                ByteSwapBlock(ctx->in, 16);
                 MD5_Transform(ctx->buf, ctx->in);
                 buf += 64;
                 len -= 64;
@@ -133,20 +139,20 @@ MD5_Final(md5byte digest[16], md5_context_t *ctx)
 
         if (count < 0) {        /* Padding forces an extra block */
                 memset(p, 0, count + 8);
-                byteSwap(ctx->in, 16);
+                ByteSwapBlock(ctx->in, 16);
                 MD5_Transform(ctx->buf, ctx->in);
                 p = (md5byte *)ctx->in;
                 count = 56;
         }
         memset(p, 0, count);
-        byteSwap(ctx->in, 14);
+        ByteSwapBlock(ctx->in, 14);
 
         /* Append length in bits and transform */
         ctx->in[14] = ctx->bytes[0] << 3;
         ctx->in[15] = ctx->bytes[1] << 3 | ctx->bytes[0] >> 29;
         MD5_Transform(ctx->buf, ctx->in);
 
-        byteSwap(ctx->buf, 4);
+        ByteSwapBlock(ctx->buf, 4);
         memcpy(digest, ctx->buf, 16);
         memset(ctx, 0, sizeof(ctx));    /* In case it's sensitive */
 }
@@ -255,3 +261,4 @@ MD5_Transform(UWORD32 buf[4], UWORD32 const in[16])
 }
 
 #endif
+
