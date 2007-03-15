@@ -20,6 +20,7 @@
  * Still in the public domain.
  */
 
+#include "doomdef.h"
 #include "i_swap.h"
 
 #include <string.h>             /* for memcpy() */
@@ -35,12 +36,12 @@
 
 #else
 
-void ByteSwapBlock(UWORD32 *buf, unsigned words)
+void ByteSwapBlock(uint32_t *buf, unsigned words)
 {
-        md5byte *p = (md5byte *)buf;
+        byte *p = (byte *)buf;
 
         do {
-                *buf++ = (UWORD32)((unsigned)p[3] << 8 | p[2]) << 16 |
+                *buf++ = (uint32_t)((unsigned)p[3] << 8 | p[2]) << 16 |
                         ((unsigned)p[1] << 8 | p[0]);
                 p += 4;
         } while (--words);
@@ -69,9 +70,9 @@ MD5_Init(md5_context_t *ctx)
  * of bytes.
  */
 void
-MD5_Update(md5_context_t *ctx, md5byte const *buf, unsigned len)
+MD5_Update(md5_context_t *ctx, byte const *buf, unsigned len)
 {
-        UWORD32 t;
+        uint32_t t;
 
         /* Update byte count */
 
@@ -81,11 +82,11 @@ MD5_Update(md5_context_t *ctx, md5byte const *buf, unsigned len)
 
         t = 64 - (t & 0x3f);    /* Space available in ctx->in (at least 1) */
         if (t > len) {
-                memcpy((md5byte *)ctx->in + 64 - t, buf, len);
+                memcpy((byte *)ctx->in + 64 - t, buf, len);
                 return;
         }
         /* First chunk is an odd size */
-        memcpy((md5byte *)ctx->in + 64 - t, buf, t);
+        memcpy((byte *)ctx->in + 64 - t, buf, t);
         ByteSwapBlock(ctx->in, 16);
         MD5_Transform(ctx->buf, ctx->in);
         buf += t;
@@ -106,7 +107,7 @@ MD5_Update(md5_context_t *ctx, md5byte const *buf, unsigned len)
 
 void MD5_UpdateInt32(md5_context_t *context, unsigned int val)
 {
-        md5byte buf[4];
+        byte buf[4];
 
         buf[0] = (val >> 24) & 0xff;
         buf[1] = (val >> 16) & 0xff;
@@ -118,7 +119,7 @@ void MD5_UpdateInt32(md5_context_t *context, unsigned int val)
 
 void MD5_UpdateString(md5_context_t *context, char *str)
 {
-        MD5_Update(context, (md5byte *) str, strlen(str) + 1);
+        MD5_Update(context, (byte *) str, strlen(str) + 1);
 }
 
 /*
@@ -126,10 +127,10 @@ void MD5_UpdateString(md5_context_t *context, char *str)
  * 1 0* (64-bit count of bits processed, MSB-first)
  */
 void
-MD5_Final(md5byte digest[16], md5_context_t *ctx)
+MD5_Final(byte digest[16], md5_context_t *ctx)
 {
         int count = ctx->bytes[0] & 0x3f;       /* Number of bytes in ctx->in */
-        md5byte *p = (md5byte *)ctx->in + count;
+        byte *p = (byte *)ctx->in + count;
 
         /* Set the first char of padding to 0x80.  There is always room. */
         *p++ = 0x80;
@@ -141,7 +142,7 @@ MD5_Final(md5byte digest[16], md5_context_t *ctx)
                 memset(p, 0, count + 8);
                 ByteSwapBlock(ctx->in, 16);
                 MD5_Transform(ctx->buf, ctx->in);
-                p = (md5byte *)ctx->in;
+                p = (byte *)ctx->in;
                 count = 56;
         }
         memset(p, 0, count);
@@ -177,9 +178,9 @@ MD5_Final(md5byte digest[16], md5_context_t *ctx)
  * the data and converts bytes into longwords for this routine.
  */
 void
-MD5_Transform(UWORD32 buf[4], UWORD32 const in[16])
+MD5_Transform(uint32_t buf[4], uint32_t const in[16])
 {
-        register UWORD32 a, b, c, d;
+        register uint32_t a, b, c, d;
 
         a = buf[0];
         b = buf[1];
