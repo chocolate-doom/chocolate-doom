@@ -280,7 +280,6 @@ extern char*	chat_macros[];
 extern int      show_endoom;
 extern int      vanilla_savegame_limit;
 extern int      vanilla_demo_limit;
-extern int      vanilla_keyboard_mapping;
 
 extern int snd_musicdevice;
 extern int snd_sfxdevice;
