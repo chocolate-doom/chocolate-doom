@@ -70,5 +70,6 @@ extern boolean grabmouse;
 extern float mouse_acceleration;
 extern int mouse_threshold;
 extern int startup_delay;
+extern int vanilla_keyboard_mapping;
 
 #endif
