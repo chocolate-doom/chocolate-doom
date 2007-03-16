@@ -33,6 +33,7 @@ extern int key_use;
 extern int key_strafe;
 extern int key_speed;
 extern int joybspeed;
+extern int vanilla_keyboard_mapping;
 
 void ConfigKeyboard(void);
 

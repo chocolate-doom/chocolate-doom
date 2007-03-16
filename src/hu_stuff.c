@@ -551,7 +551,7 @@ boolean HU_Responder(event_t *ev)
 	    message_counter = HU_MSGTIMEOUT;
 	    eatkey = true;
 	}
-	else if (netgame && ev->data1 == HU_INPUTTOGGLE)
+	else if (netgame && ev->data2 == HU_INPUTTOGGLE)
 	{
 	    eatkey = chat_on = true;
 	    HUlib_resetIText(&w_chat);
@@ -561,7 +561,7 @@ boolean HU_Responder(event_t *ev)
 	{
 	    for (i=0; i<MAXPLAYERS ; i++)
 	    {
-		if (ev->data1 == destination_keys[i])
+		if (ev->data2 == destination_keys[i])
 		{
 		    if (playeringame[i] && i!=consoleplayer)
 		    {

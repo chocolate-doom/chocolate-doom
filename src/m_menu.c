@@ -1569,13 +1569,13 @@ boolean M_Responder (event_t* ev)
     if (messageToPrint)
     {
 	if (messageNeedsInput == true &&
-	    !(key == ' ' || key == 'n' || key == 'y' || key == KEY_ESCAPE))
+	    !(ch == ' ' || ch == 'n' || ch == 'y' || key == KEY_ESCAPE))
 	    return false;
 		
 	menuactive = messageLastMenuActive;
 	messageToPrint = 0;
 	if (messageRoutine)
-	    messageRoutine(key);
+	    messageRoutine(ch);
 			
 	menuactive = false;
 	S_StartSound(NULL,sfx_swtchx);
@@ -1769,14 +1769,14 @@ boolean M_Responder (event_t* ev)
 	
       default:
 	for (i = itemOn+1;i < currentMenu->numitems;i++)
-	    if (currentMenu->menuitems[i].alphaKey == key)
+	    if (currentMenu->menuitems[i].alphaKey == ch)
 	    {
 		itemOn = i;
 		S_StartSound(NULL,sfx_pstop);
 		return true;
 	    }
 	for (i = 0;i <= itemOn;i++)
-	    if (currentMenu->menuitems[i].alphaKey == key)
+	    if (currentMenu->menuitems[i].alphaKey == ch)
 	    {
 		itemOn = i;
 		S_StartSound(NULL,sfx_pstop);
