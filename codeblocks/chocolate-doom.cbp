@@ -169,6 +169,7 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\i_sound.h" />
+		<Unit filename="..\src\i_swap.h" />
 		<Unit filename="..\src\i_system.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -213,10 +214,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\m_random.h" />
-		<Unit filename="..\src\m_swap.c">
-			<Option compilerVar="CC" />
-		</Unit>
-		<Unit filename="..\src\m_swap.h" />
 		<Unit filename="..\src\md5.c">
 			<Option compilerVar="CC" />
 		</Unit>
