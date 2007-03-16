@@ -37,6 +37,8 @@ int key_strafe = KEY_RALT;
 int key_speed = KEY_RSHIFT;
 int joybspeed = 3;
 
+int vanilla_keyboard_mapping = 1;
+
 static int always_run = 0;
 
 static int *allkeys[] = {&key_left, &key_right, &key_up, &key_down, 
@@ -107,10 +109,14 @@ void ConfigKeyboard(void)
     TXT_AddWidgets(window, 
                    TXT_NewSeparator("Movement"),
                    movement_table = TXT_NewTable(2),
-                   run_control = TXT_NewCheckBox("Always run", &always_run),
 
                    TXT_NewSeparator("Action"),
                    action_table = TXT_NewTable(2),
+
+                   TXT_NewSeparator("Misc."),
+                   run_control = TXT_NewCheckBox("Always run", &always_run),
+                   TXT_NewInvertedCheckBox("Use native keyboard mapping", 
+                                           &vanilla_keyboard_mapping),
                    NULL);
 
     TXT_SetColumnWidths(movement_table, 20, 8);

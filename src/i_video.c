@@ -138,6 +138,12 @@ static boolean window_focused;
 
 static SDL_Cursor *cursors[2];
 
+// If true, keyboard mapping is ignored, like in Vanilla Doom.
+// The sensible thing to do is to disable this if you have a non-US
+// keyboard.
+
+int vanilla_keyboard_mapping = true;
+
 // Mouse acceleration
 //
 // This emulates some of the behavior of DOS mouse drivers by increasing
@@ -419,7 +425,26 @@ void I_GetEvent(void)
             case SDL_KEYDOWN:
                 event.type = ev_keydown;
                 event.data1 = TranslateKey(&sdlevent.key.keysym);
-		event.data2 = sdlevent.key.keysym.unicode;
+
+                // If Vanilla keyboard mapping enabled, the keyboard
+                // scan code is used to give the character typed.
+                // This does not change depending on keyboard layout.
+                // If you have a German keyboard, pressing 'z' will
+                // give 'y', for example.  It is desirable to be able
+                // to fix this so that people with non-standard 
+                // keyboard mappings can type properly.  If vanilla
+                // mode is disabled, use the properly translated 
+                // version.
+
+                if (vanilla_keyboard_mapping)
+                {
+                    event.data2 = event.data1;
+                }
+                else
+                {
+                    event.data2 = sdlevent.key.keysym.unicode;
+                }
+
                 D_PostEvent(&event);
                 break;
 

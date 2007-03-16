@@ -188,7 +188,7 @@ typedef struct
     char      *filename;
 } default_collection_t;
 
-static default_t	doom_defaults_list[] =
+static default_t doom_defaults_list[] =
 {
     {"mouse_sensitivity", &mouseSensitivity, DEFAULT_INT, 0, 0},
     {"sfx_volume",&sfxVolume, DEFAULT_INT, 0, 0},
@@ -265,6 +265,7 @@ static default_t extra_defaults_list[] =
     {"show_endoom",                 &show_endoom, DEFAULT_INT, 0, 0},
     {"vanilla_savegame_limit",      &vanilla_savegame_limit, DEFAULT_INT, 0, 0},
     {"vanilla_demo_limit",          &vanilla_demo_limit, DEFAULT_INT, 0, 0},
+    {"vanilla_keyboard_mapping",    &vanilla_keyboard_mapping, DEFAULT_INT, 0, 0},
 #ifdef FEATURE_MULTIPLAYER
     {"player_name",                 &net_player_name,          DEFAULT_STRING, 0, 0},
 #endif

@@ -280,6 +280,7 @@ extern char*	chat_macros[];
 extern int      show_endoom;
 extern int      vanilla_savegame_limit;
 extern int      vanilla_demo_limit;
+extern int      vanilla_keyboard_mapping;
 
 extern int snd_musicdevice;
 extern int snd_sfxdevice;
@@ -408,6 +409,7 @@ static default_t extra_defaults_list[] =
     {"show_endoom",                 &show_endoom, DEFAULT_INT, 0, 0},
     {"vanilla_savegame_limit",      &vanilla_savegame_limit, DEFAULT_INT, 0, 0},
     {"vanilla_demo_limit",          &vanilla_demo_limit, DEFAULT_INT, 0, 0},
+    {"vanilla_keyboard_mapping",    &vanilla_keyboard_mapping, DEFAULT_INT, 0, 0},
     {"video_driver",                &video_driver, DEFAULT_STRING, 0, 0},
 #ifdef FEATURE_MULTIPLAYER
     {"player_name",                 &net_player_name,          DEFAULT_STRING, 0, 0},
