@@ -28,6 +28,5 @@ To do:
   - Don't make structure packing assumptions when loading levels.
 * OPL emulation
 * Port to every OS under the sun
-* PC speaker support.
 * Video capture mode?
 
