@@ -29,6 +29,7 @@
 
 #include "doomdef.h"
 #include "doomtype.h"
+#include "d_iwad.h"
 #include "m_argv.h"
 
 #include "deh_defs.h"
@@ -335,6 +336,7 @@ static void DEH_ParseFile(char *filename)
 
 void DEH_Init(void)
 {
+    char *filename;
     int p;
 
     InitialiseSections();
@@ -354,8 +356,9 @@ void DEH_Init(void)
 
         while (p < myargc && myargv[p][0] != '-')
         {
-            printf(" loading %s\n", myargv[p]);
-            DEH_ParseFile(myargv[p]);
+            filename = D_TryFindWADByName(myargv[p]);
+            printf(" loading %s\n", filename);
+            DEH_ParseFile(filename);
             ++p;
         }
     }

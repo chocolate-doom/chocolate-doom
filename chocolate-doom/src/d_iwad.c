@@ -43,6 +43,8 @@
 // "128 IWAD search directories should be enough for anybody".
 
 #define MAX_IWAD_DIRS 128
+
+static boolean iwad_dirs_built = false;
 static char *iwad_dirs[MAX_IWAD_DIRS];
 static int num_iwad_dirs = 0;
 
@@ -388,6 +390,11 @@ static void BuildIWADDirList(void)
 {
     char *doomwaddir;
 
+    if (iwad_dirs_built)
+    {
+        return;
+    }
+
     // Look in the current directory.  Doom always does this.
 
     AddIWADDir(".");
@@ -420,6 +427,10 @@ static void BuildIWADDirList(void)
     AddIWADDir("/usr/local/share/games/doom");
 
 #endif
+
+    // Don't run this function again.
+
+    iwad_dirs_built = true;
 }
 
 //
@@ -438,6 +449,8 @@ char *D_FindWADByName(char *name)
     {
         return name;
     }
+
+    BuildIWADDirList();
     
     // Search through all IWAD paths for a file with the given name.
 
@@ -500,10 +513,6 @@ char *D_FindIWAD(void)
     int iwadparm;
     int i;
 
-    // Build a list of locations to look for an IWAD
-
-    BuildIWADDirList();
-
     // Check for the -iwad parameter
 
     //!
@@ -535,6 +544,8 @@ char *D_FindIWAD(void)
 
         result = NULL;
 
+        BuildIWADDirList();
+    
         for (i=0; result == NULL && i<num_iwad_dirs; ++i)
         {
             result = SearchDirectoryForIWAD(iwad_dirs[i]);
