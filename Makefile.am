@@ -42,5 +42,5 @@ docdir=$(prefix)/share/doc/@PACKAGE@
 SUBDIRS=textscreen pcsound src man setup
 
 CMDLINE : src/
-	./man/docgen -p $? > $@
+	./man/docgen -p src/ > $@
 
