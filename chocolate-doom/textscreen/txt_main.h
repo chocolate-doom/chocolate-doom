@@ -30,7 +30,7 @@
 // The textscreen API itself doesn't need SDL; however, SDL needs its
 // headers included where main() is defined.
 
-#include <SDL.h>
+#include "SDL.h"
 
 // Special keypress values that correspond to mouse button clicks
 //
