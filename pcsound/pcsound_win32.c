@@ -25,7 +25,7 @@
 
 #ifdef _WIN32
 
-#include <SDL.h>
+#include "SDL.h"
 #include <windows.h>
 
 #include "pcsound.h"
