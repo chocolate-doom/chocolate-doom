@@ -38,6 +38,9 @@
        unavailable.
      * Aspect ratio correction: you can (also) run at 640x480 without black 
        borders at the top and bottom of the screen.
+     * PC speaker sound effect support.  Chocolate Doom can output real
+       PC speaker sounds on Linux, or emulate a PC speaker through the
+       sound card.
      * Working three-screen mode, as seen in early versions of Doom!
        To test this out, put three computers on a LAN and type:
          chocolate-doom -server
@@ -72,10 +75,15 @@
      * Autoadjusting the screen mode can now be disabled.
      * On Windows, the registry is queried to detect installed versions of
        Doom and automatically locate IWAD files.
-     * DOOMWADDIR can be used like PATH to specify multiple locations in
-       which to search for IWAD files.  Also, '-iwad' is now enhanced,
-       so that eg. '-iwad doom.wad' will now search all IWAD search
-       paths for 'doom.wad'.
+     * Added DOOMWADPATH that can be used like PATH to specify multiple 
+       locations in which to search for IWAD files.  Also, '-iwad' is 
+       now enhanced, so that eg. '-iwad doom.wad' will now search all 
+       IWAD search paths for 'doom.wad'.
+     * Improved mouse tracking that should no longer lag.  Thanks to 
+       entryway for research into this.
+     * The SDL driver can now be specified in the configuration file.  
+       The setup tool has an option on Windows to select between
+       DirectX and windib.
      
     Portability improvements: 
      * Chocolate Doom now compiles and runs cleanly on MacOS X.  Huge
@@ -88,6 +96,8 @@
      * Chocolate Doom now compiles and runs on Solaris/SPARC, including
        the Sun compiler.  Thanks to Mike Spooner for some portability 
        fixes.
+     * Improved audio rate conversion, so that sound should play properly
+       on machines that don't support low bitrate output.
 
     Compatibility fixes:
      * Check for IWADs in the same order as Vanilla Doom.
@@ -118,6 +128,10 @@
        (Thanks grazza)
      * Allow dehacked 2.3 patches to be loaded.
      * Add more dehacked string replacements.
+     * Compatibility option to enable or disable native key mappings.  This
+       means that people with non-US keyboards can decide whether to use
+       their correct native mapping or behave like Vanilla mapping (which
+       assumes all keyboards are US).
 
     Bugs fixed:
      * Fix crash when starting new levels due to the intermission screen
@@ -133,6 +147,12 @@
      * Fix loading of dehacked "sound" sections.
      * Make sure that modified copyright banners always end in a newline
        - this fixes a bug with av.wad (thanks myk)
+     * Added missing quit message ("are you sure you want to quit this
+       great game?").
+     * Fix when playing long sound effects - the death sound in marina.wad
+       now plays properly, for example.
+     * Fix buffer overrun on the quicksave prompt screen that caused a
+       mysterious cycling character to appear.
 
 0.1.4 (2006-02-13):
 
