@@ -24,7 +24,7 @@
 //
 //-----------------------------------------------------------------------------
 
-#include <SDL.h>
+#include "SDL.h"
 
 #include <ctype.h>
 #include <stdlib.h>
