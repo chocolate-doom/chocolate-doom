@@ -43,6 +43,7 @@
 		</Compiler>
 		<Linker>
 			<Add option="-lpcsound -ltextscreen -lmingw32 -lSDLmain -lSDL -lSDL_mixer -lSDL_net -mwindows" />
+			<Add directory="..\lib" />
 		</Linker>
 		<Unit filename="chocolate-doom-res.rc">
 			<Option compilerVar="WINDRES" />

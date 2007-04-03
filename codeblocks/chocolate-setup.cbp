@@ -43,7 +43,7 @@
 		</Compiler>
 		<Linker>
 			<Add option="-ltextscreen -lmingw32 -lSDLmain -lSDL -mwindows" />
-			<Add directory="..\bin" />
+			<Add directory="..\lib" />
 		</Linker>
 		<Unit filename="chocolate-setup-res.rc">
 			<Option compilerVar="WINDRES" />
