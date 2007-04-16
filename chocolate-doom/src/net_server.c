@@ -1514,7 +1514,7 @@ void NET_SV_Run(void)
 
         for (i=0; i<MAXPLAYERS; ++i)
         {
-            if (sv_players[i] != NULL)
+            if (sv_players[i] != NULL && ClientConnected(sv_players[i]))
             {
                 NET_SV_CheckResends(sv_players[i]);
             }
