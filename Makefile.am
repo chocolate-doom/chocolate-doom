@@ -14,9 +14,12 @@ CODEBLOCKS_FILES=                              \
         codeblocks/chocolate-doom.cbp          \
         codeblocks/chocolate-doom.workspace    \
         codeblocks/chocolate-server.cbp        \
-        codeblocks/chocolate-setup.cbp        \
+        codeblocks/chocolate-setup.cbp         \
         codeblocks/chocolate-doom-res.rc       \
-        codeblocks/textscreen.cbp
+        codeblocks/textscreen.cbp              \
+        codeblocks/chocolate-setup-res.rc      \
+        codeblocks/config.h                    \
+        codeblocks/libpcsound.cbp
 
 DATA_FILES=                             \
         data/chocolate-doom.ico         \
