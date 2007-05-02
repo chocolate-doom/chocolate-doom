@@ -7,7 +7,9 @@ AUX_DIST_GEN =                          \
 
 MSVC_FILES=                             \
         msvc/README                     \
-        msvc/config.h
+        msvc/config.h                   \
+        msvc/inttypes.h                 \
+        msvc/stdint.h
 
 CODEBLOCKS_FILES=                              \
         codeblocks/README                      \
