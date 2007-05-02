@@ -46,6 +46,10 @@ MAINTAINERCLEANFILES =  $(AUX_DIST_GEN)
 docdir=$(prefix)/share/doc/@PACKAGE@
 SUBDIRS=textscreen pcsound src man setup
 
+if HAVE_PYTHON
+
 CMDLINE : src/
 	./man/docgen -p src/ > $@
+
+endif
 
