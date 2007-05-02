@@ -150,6 +150,10 @@ EXTRA_DIST =                               \
 %.o : %.rc
 	$(WINDRES) $^ -o $@
 
+if HAVE_PYTHON
+
 chocolate_doom_icon.c : ../data/chocolate-doom.png
 	../data/convert-icon $^ $@
+
+endif
 
