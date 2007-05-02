@@ -34,6 +34,10 @@ endif
 %.o : %.rc
 	$(WINDRES) $^ -o $@
 
+if HAVE_PYTHON
+
 chocolate_setup_icon.c : ../data/chocolate-setup.png
 	../data/convert-icon $^ $@
+
+endif
 
