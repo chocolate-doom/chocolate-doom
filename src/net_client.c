@@ -450,7 +450,7 @@ static void NET_CL_SendGameDataACK(void)
     packet = NET_NewPacket(10);
 
     NET_WriteInt16(packet, NET_PACKET_TYPE_GAMEDATA_ACK);
-    NET_WriteInt8(packet, gametic & 0xff);
+    NET_WriteInt8(packet, (gametic / ticdup) & 0xff);
 
     NET_Conn_SendPacket(&client_connection, packet);
 
@@ -482,7 +482,7 @@ static void NET_CL_SendTics(int start, int end)
     // Write the start tic and number of tics.  Send only the low byte
     // of start - it can be inferred by the server.
 
-    NET_WriteInt8(packet, gametic & 0xff);
+    NET_WriteInt8(packet, (gametic / ticdup) & 0xff);
     NET_WriteInt8(packet, start & 0xff);
     NET_WriteInt8(packet, end - start + 1);
 
