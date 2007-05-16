@@ -96,6 +96,7 @@ r_segs.c             r_segs.h              \
 r_sky.c              r_sky.h               \
 r_state.h                                  \
 r_things.c           r_things.h            \
+sounds.c             sounds.h              \
 s_sound.c            s_sound.h             \
 st_lib.c             st_lib.h              \
 st_stuff.c           st_stuff.h            \
@@ -105,10 +106,6 @@ wi_stuff.c           wi_stuff.h            \
 w_checksum.c         w_checksum.h          \
 w_wad.c              w_wad.h               \
 z_zone.c             z_zone.h   
-
-ASDF=\
-sounds.c             sounds.h              \
-asdf
 
 # source files needed for FEATURE_DEHACKED
 
