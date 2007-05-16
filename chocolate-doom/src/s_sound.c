@@ -82,15 +82,16 @@ const char snd_prefixen[]
 #define NA			0
 #define S_NUMCHANNELS		2
 
+// Disable music on OSX by default; there are problems with SDL_mixer.
 
-// Current music/sfx card - index useless
-//  w/o a reference LUT in a sound module.
-extern int snd_MusicDevice;
-extern int snd_SfxDevice;
-// Config file? Same disclaimer as above.
-extern int snd_DesiredMusicDevice;
-extern int snd_DesiredSfxDevice;
+#ifndef __MACOSX__
+#define DEFAULT_MUSIC_DEVICE SNDDEVICE_SB
+#else
+#define DEFAULT_MUSIC_DEVICE SNDDEVICE_NONE
+#endif
 
+int snd_musicdevice = DEFAULT_MUSIC_DEVICE;
+int snd_sfxdevice = SNDDEVICE_SB;
 
 
 typedef struct
@@ -169,6 +170,8 @@ void S_Init
 {  
   int		i;
 
+  I_InitSound();
+
   // Whatever these did with DMX, these are rather dummies now.
   I_SetChannels();
   
@@ -195,6 +198,10 @@ void S_Init
 }
 
 
+void S_Shutdown(void)
+{
+  I_ShutdownSound();
+}
 
 
 //
