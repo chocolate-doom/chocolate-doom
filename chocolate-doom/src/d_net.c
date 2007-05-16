@@ -67,17 +67,31 @@ int         	nettics[MAXPLAYERS];
 
 int             maketic;
 
+// Used for original sync code.
+
 int		lastnettic;
-int             skiptics;
-int		ticdup;		
+int             skiptics = 0;
+
+// Reduce the bandwidth needed by sampling game input less and transmitting
+// less.  If ticdup is 2, sample half normal, 3 = one third normal, etc.
+
+int		ticdup;
+
+// Send this many extra (backup) tics in each packet.
+
 int             extratics;
+
+// Amount to offset the timer for game sync.
+
 fixed_t         offsetms;
 
+// Use new client syncronisation code
 
-void D_ProcessEvents (void); 
-void G_BuildTiccmd (ticcmd_t *cmd); 
-void D_DoAdvanceDemo (void);
- 
+boolean         net_cl_new_sync = true;
+
+// Connected but not participating in the game (observer)
+
+boolean drone = false;
 
 // 35 fps clock adjusted by offsetms milliseconds
 
