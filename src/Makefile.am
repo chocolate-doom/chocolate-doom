@@ -22,21 +22,8 @@ z_native.c           z_zone.h
 chocolate_server_SOURCES=$(DEDSERV_FILES)
 chocolate_server_LDADD = @LDFLAGS@ @SDL_LIBS@ @SDLNET_LIBS@ 
 
-SOURCE_FILES=\
+MAIN_SOURCE_FILES=\
 am_map.c             am_map.h              \
-deh_ammo.c                                 \
-deh_cheat.c                                \
-deh_defs.h                                 \
-deh_frame.c                                \
-deh_io.c             deh_io.h              \
-deh_main.c           deh_main.h            \
-deh_mapping.c        deh_mapping.h         \
-deh_misc.c           deh_misc.h            \
-deh_ptr.c                                  \
-deh_sound.c                                \
-deh_text.c                                 \
-deh_thing.c                                \
-deh_weapon.c                               \
 d_englsh.h                                 \
 d_event.h                                  \
 d_items.c            d_items.h             \
@@ -78,18 +65,6 @@ md5.c                md5.h                 \
 memio.c              memio.h               \
 mus2mid.c            mus2mid.h             \
 m_random.c           m_random.h            \
-net_client.c         net_client.h          \
-net_common.c         net_common.h          \
-net_dedicated.c      net_dedicated.h       \
-net_defs.h                                 \
-net_gui.c            net_gui.h             \
-net_io.c             net_io.h              \
-net_loop.c           net_loop.h            \
-net_packet.c         net_packet.h          \
-net_query.c          net_query.h           \
-net_sdl.c            net_sdl.h             \
-net_server.c         net_server.h          \
-net_structrw.c       net_structrw.h        \
 p_ceilng.c                                 \
 p_doors.c                                  \
 p_enemy.c                                  \
@@ -121,7 +96,6 @@ r_segs.c             r_segs.h              \
 r_sky.c              r_sky.h               \
 r_state.h                                  \
 r_things.c           r_things.h            \
-sounds.c             sounds.h              \
 s_sound.c            s_sound.h             \
 st_lib.c             st_lib.h              \
 st_stuff.c           st_stuff.h            \
@@ -129,9 +103,55 @@ tables.c             tables.h              \
 v_video.c            v_video.h             \
 wi_stuff.c           wi_stuff.h            \
 w_checksum.c         w_checksum.h          \
-w_merge.c            w_merge.h             \
 w_wad.c              w_wad.h               \
 z_zone.c             z_zone.h   
+
+ASDF=\
+sounds.c             sounds.h              \
+asdf
+
+# source files needed for FEATURE_DEHACKED
+
+FEATURE_DEHACKED_SOURCE_FILES=             \
+deh_ammo.c                                 \
+deh_cheat.c                                \
+deh_defs.h                                 \
+deh_frame.c                                \
+deh_io.c             deh_io.h              \
+deh_main.c           deh_main.h            \
+deh_mapping.c        deh_mapping.h         \
+deh_misc.c           deh_misc.h            \
+deh_ptr.c                                  \
+deh_sound.c                                \
+deh_text.c                                 \
+deh_thing.c                                \
+deh_weapon.c
+
+# source files needed for FEATURE_MULTIPLAYER
+
+FEATURE_MULTIPLAYER_SOURCE_FILES=          \
+net_client.c         net_client.h          \
+net_common.c         net_common.h          \
+net_dedicated.c      net_dedicated.h       \
+net_defs.h                                 \
+net_gui.c            net_gui.h             \
+net_io.c             net_io.h              \
+net_loop.c           net_loop.h            \
+net_packet.c         net_packet.h          \
+net_query.c          net_query.h           \
+net_sdl.c            net_sdl.h             \
+net_server.c         net_server.h          \
+net_structrw.c       net_structrw.h
+
+# source files needed for FEATURE_WAD_MERGE
+
+FEATURE_WAD_MERGE_SOURCE_FILES =           \
+w_merge.c            w_merge.h
+
+SOURCE_FILES = $(MAIN_SOURCE_FILES)                \
+               $(FEATURE_DEHACKED_SOURCE_FILES)    \
+               $(FEATURE_MULTIPLAYER_SOURCE_FILES) \
+               $(FEATURE_WAD_MERGE_SOURCE_FILES)
 
 if HAVE_WINDRES
 chocolate_doom_SOURCES=$(SOURCE_FILES) chocolate-doom-res.rc
