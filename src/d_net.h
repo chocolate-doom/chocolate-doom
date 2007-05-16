@@ -50,5 +50,8 @@ void TryRunTics (void);
 // Called at start of game loop to initialise timers
 void D_StartGameLoop(void);
 
+extern boolean drone;
+extern boolean net_cl_new_sync;
+
 #endif
 

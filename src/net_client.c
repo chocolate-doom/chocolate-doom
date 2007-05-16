@@ -182,14 +182,6 @@ unsigned int net_local_is_freedoom;
 
 static fixed_t average_latency;
 
-// Use new-style ticcmd sync (fixes indigo lag)
-
-boolean net_cl_new_sync = true;
-
-// Connected but not participating in the game (observer)
-
-boolean drone = false;
-
 #define NET_CL_ExpandTicNum(b) NET_ExpandTicNum(recvwindow_start, (b))
 
 // Called when a player leaves the game

@@ -50,8 +50,6 @@ extern char net_player_names[MAXPLAYERS][MAXPLAYERNAME];
 extern char net_player_addresses[MAXPLAYERS][MAXPLAYERNAME];
 extern int net_player_number;
 extern char *net_player_name;
-extern boolean net_cl_new_sync;
-extern boolean drone;
 
 extern md5_digest_t net_server_wad_md5sum;
 extern md5_digest_t net_server_deh_md5sum;

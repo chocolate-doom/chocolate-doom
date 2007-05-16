@@ -791,6 +791,7 @@ void D_DoomMain (void)
     printf (DEH_String("Z_Init: Init zone memory allocation daemon. \n"));
     Z_Init ();
 
+#ifdef FEATURE_MULTIPLAYER
     //!
     // @category net
     //
@@ -829,6 +830,8 @@ void D_DoomMain (void)
 
     if (M_CheckParm("-search"))
         NET_LANQuery();
+
+#endif
             
 #ifdef FEATURE_DEHACKED
     printf("DEH_Init: Init Dehacked support.\n");
