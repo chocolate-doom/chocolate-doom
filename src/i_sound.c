@@ -43,6 +43,7 @@
 #include "i_sound.h"
 #include "i_swap.h"
 #include "deh_main.h"
+#include "s_sound.h"
 #include "m_argv.h"
 #include "m_misc.h"
 #include "w_wad.h"
@@ -52,23 +53,6 @@
 #define NUM_CHANNELS		16
 
 #define MAXMIDLENGTH        (96 * 1024)
-
-enum 
-{
-    SNDDEVICE_NONE = 0,
-    SNDDEVICE_PCSPEAKER = 1,
-    SNDDEVICE_ADLIB = 2,
-    SNDDEVICE_SB = 3,
-    SNDDEVICE_PAS = 4,
-    SNDDEVICE_GUS = 5,
-    SNDDEVICE_WAVEBLASTER = 6,
-    SNDDEVICE_SOUNDCANVAS = 7,
-    SNDDEVICE_GENMIDI = 8,
-    SNDDEVICE_AWE32 = 9,
-};
-
-extern int snd_sfxdevice;
-extern int snd_musicdevice;
 
 static boolean nosfxparm;
 static boolean nomusicparm;
@@ -82,17 +66,6 @@ static int channels_playing[NUM_CHANNELS];
 static int mixer_freq;
 static Uint16 mixer_format;
 static int mixer_channels;
-
-// Disable music on OSX by default; there are problems with SDL_mixer.
-
-#ifndef __MACOSX__
-#define DEFAULT_MUSIC_DEVICE SNDDEVICE_SB
-#else
-#define DEFAULT_MUSIC_DEVICE SNDDEVICE_NONE
-#endif
-
-int snd_musicdevice = DEFAULT_MUSIC_DEVICE;
-int snd_sfxdevice = SNDDEVICE_SB;
 
 // When a sound stops, check if it is still playing.  If it is not, 
 // we can mark the sound data as CACHE to be freed back for other
@@ -506,6 +479,9 @@ void I_ShutdownSound(void)
 
     Mix_CloseAudio();
     SDL_QuitSubSystem(SDL_INIT_AUDIO);
+
+    sound_initialised = false;
+    music_initialised = false;
 }
 
 
@@ -624,15 +600,6 @@ I_InitSound()
 //
 // MUSIC API.
 //
-
-void I_InitMusic(void)		
-{ 
-}
-
-void I_ShutdownMusic(void)	
-{ 
-    music_initialised = false;
-}
 
 static boolean  musicpaused = false;
 static int currentMusicVolume;

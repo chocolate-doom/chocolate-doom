@@ -49,8 +49,6 @@ hu_stuff.c           hu_stuff.h            \
 i_main.c                                   \
 info.c               info.h                \
 i_scale.c            i_scale.h             \
-i_pcsound.c          i_pcsound.h           \
-i_sound.c            i_sound.h             \
                      i_swap.h              \
 i_system.c           i_system.h            \
 i_timer.c            i_timer.h             \
@@ -63,7 +61,6 @@ m_menu.c             m_menu.h              \
 m_misc.c             m_misc.h              \
 md5.c                md5.h                 \
 memio.c              memio.h               \
-mus2mid.c            mus2mid.h             \
 m_random.c           m_random.h            \
 p_ceilng.c                                 \
 p_doors.c                                  \
@@ -97,7 +94,6 @@ r_sky.c              r_sky.h               \
 r_state.h                                  \
 r_things.c           r_things.h            \
 sounds.c             sounds.h              \
-s_sound.c            s_sound.h             \
 st_lib.c             st_lib.h              \
 st_stuff.c           st_stuff.h            \
 tables.c             tables.h              \
@@ -145,10 +141,19 @@ net_structrw.c       net_structrw.h
 FEATURE_WAD_MERGE_SOURCE_FILES =           \
 w_merge.c            w_merge.h
 
+# source files needed for FEATURE_SOUND
+
+FEATURE_SOUND_SOURCE_FILES =               \
+i_pcsound.c          i_pcsound.h           \
+i_sound.c            i_sound.h             \
+mus2mid.c            mus2mid.h             \
+s_sound.c            s_sound.h
+
 SOURCE_FILES = $(MAIN_SOURCE_FILES)                \
                $(FEATURE_DEHACKED_SOURCE_FILES)    \
                $(FEATURE_MULTIPLAYER_SOURCE_FILES) \
-               $(FEATURE_WAD_MERGE_SOURCE_FILES)
+               $(FEATURE_WAD_MERGE_SOURCE_FILES)   \
+               $(FEATURE_SOUND_SOURCE_FILES)
 
 if HAVE_WINDRES
 chocolate_doom_SOURCES=$(SOURCE_FILES) chocolate-doom-res.rc
@@ -160,7 +165,8 @@ chocolate_doom_LDADD = ../textscreen/libtextscreen.a ../pcsound/libpcsound.a @LD
 
 EXTRA_DIST =                               \
         chocolate_doom_icon.c              \
-        chocolate-doom-screensaver.desktop
+        chocolate-doom-screensaver.desktop \
+        s_dummy.c
 
 .rc.o:
 	$(WINDRES) $^ -o $@

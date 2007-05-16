@@ -34,11 +34,12 @@
 
 #include "deh_main.h"
 #include "doomdef.h"
+#include "doomstat.h"
 #include "m_argv.h"
 #include "m_misc.h"
-#include "i_sound.h"
 #include "i_timer.h"
 #include "i_video.h"
+#include "s_sound.h"
 
 #include "d_net.h"
 #include "g_game.h"
@@ -113,8 +114,6 @@ byte *I_ZoneBase (int *size)
 void I_Init (void)
 {
     I_CheckIsScreensaver();
-    I_InitSound();
-    I_InitMusic();
     I_InitTimer();
 }
 
@@ -169,8 +168,7 @@ void I_Quit (void)
 {
     D_QuitNetGame ();
     G_CheckDemoStatus();
-    I_ShutdownSound();
-    I_ShutdownMusic();
+    S_Shutdown();
 
     if (!screensaver_mode)
     {
