@@ -27,6 +27,7 @@
 #include <stdlib.h>
 
 #include "doomdef.h"
+#include "doomfeatures.h"
 #include "doomtype.h"
 #include "deh_defs.h"
 #include "deh_main.h"
@@ -48,7 +49,6 @@ DEH_END_MAPPING
 static void *DEH_SoundStart(deh_context_t *context, char *line)
 {
     int sound_number = 0;
-    sfxinfo_t *sfx;
     
     if (sscanf(line, "Sound %i", &sound_number) != 1)
     {
@@ -67,10 +67,16 @@ static void *DEH_SoundStart(deh_context_t *context, char *line)
         DEH_Warning(context, "Attempt to modify SFX %i.  This will problems "
                              "in Vanilla dehacked.", sound_number); 
     }
+
+#ifdef FEATURE_SOUND
     
-    sfx = &S_sfx[sound_number];
-    
-    return sfx;
+    return &S_sfx[sound_number];
+
+#else
+
+    return NULL;
+
+#endif
 }
 
 static void DEH_SoundParseLine(deh_context_t *context, char *line, void *tag)
