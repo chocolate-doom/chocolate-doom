@@ -605,7 +605,7 @@ ST_Responder (event_t* ev)
     }
     
     // 'clev' change-level cheat
-    if (cht_CheckCheat(&cheat_clev, ev->data2))
+    if (!netgame && cht_CheckCheat(&cheat_clev, ev->data2))
     {
       char		buf[3];
       int		epsd;
