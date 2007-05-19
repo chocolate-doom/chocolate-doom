@@ -47,6 +47,52 @@ static int console_handle;
 static pcsound_callback_func callback;
 static int sound_thread_running = 0;
 static SDL_Thread *sound_thread_handle;
+static int sleep_adjust = 0;
+
+static void AdjustedSleep(unsigned int ms)
+{
+    unsigned int start_time;
+    unsigned int end_time;
+    unsigned int actual_time;
+
+    // Adjust based on previous error to keep the tempo right
+
+    if (sleep_adjust > ms)
+    {
+        sleep_adjust -= ms;
+        return;
+    }
+    else
+    {
+        ms -= sleep_adjust;
+    }
+
+    // Do the sleep and record how long it takes
+
+    start_time = SDL_GetTicks();
+
+    SDL_Delay(ms);
+    
+    end_time = SDL_GetTicks();
+
+    if (end_time > start_time)
+    {
+        actual_time = end_time - start_time;
+    }
+    else
+    {
+        actual_time = ms;
+    }
+
+    if (actual_time < ms)
+    {
+        actual_time = ms;
+    }
+
+    // Save sleep_adjust for next time
+
+    sleep_adjust = actual_time - ms;
+}
 
 static int SoundThread(void *unused)
 {
@@ -69,7 +115,7 @@ static int SoundThread(void *unused)
 
         ioctl(console_handle, KIOCSOUND, cycles);
 
-        usleep(duration * 1000);
+        AdjustedSleep(duration);
     }
 
     return 0;
