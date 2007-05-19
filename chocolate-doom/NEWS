@@ -153,6 +153,7 @@
        now plays properly, for example.
      * Fix buffer overrun on the quicksave prompt screen that caused a
        mysterious cycling character to appear.
+     * IDCLEV should not work in net games (thanks Janizdreg)
 
 0.1.4 (2006-02-13):
 
