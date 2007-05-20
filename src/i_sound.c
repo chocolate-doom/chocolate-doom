@@ -477,6 +477,7 @@ void I_ShutdownSound(void)
     if (!sound_initialised && !music_initialised)
         return;
 
+    Mix_HaltMusic();
     Mix_CloseAudio();
     SDL_QuitSubSystem(SDL_INIT_AUDIO);
 
