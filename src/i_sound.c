@@ -132,7 +132,8 @@ static void ExpandSoundData(byte *data,
 {
     SDL_AudioCVT convertor;
     
-    if (ConvertibleRatio(samplerate, mixer_freq)
+    if (samplerate <= mixer_freq
+     && ConvertibleRatio(samplerate, mixer_freq)
      && SDL_BuildAudioCVT(&convertor,
                           AUDIO_U8, 1, samplerate,
                           mixer_format, mixer_channels, mixer_freq))
