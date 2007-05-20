@@ -1402,13 +1402,13 @@ void D_DoomMain (void)
     NET_Init ();
 #endif
 
+    printf (DEH_String("S_Init: Setting up sound.\n"));
+    S_Init (sfxVolume * 8, musicVolume * 8);
+
     printf (DEH_String("D_CheckNetGame: Checking network game status.\n"));
     D_CheckNetGame ();
 
     PrintGameVersion();
-
-    printf (DEH_String("S_Init: Setting up sound.\n"));
-    S_Init (sfxVolume * 8, musicVolume * 8);
 
     printf (DEH_String("HU_Init: Setting up heads up display.\n"));
     HU_Init ();
