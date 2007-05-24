@@ -109,5 +109,9 @@ void TXT_Sleep(int timeout);
 
 void TXT_EnableKeyMapping(int enable);
 
+// Set the window title of the window containing the text mode screen
+
+void TXT_SetWindowTitle(char *title);
+
 #endif /* #ifndef TXT_MAIN_H */
 
