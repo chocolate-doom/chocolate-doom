@@ -32,7 +32,7 @@
 
 // Little endian system - no byte swapping required
 
-#define ByteSwapBlock(x)
+#define ByteSwapBlock(x, y)
 
 #else
 
