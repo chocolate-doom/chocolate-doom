@@ -518,3 +518,8 @@ void TXT_EnableKeyMapping(int enable)
     key_mapping = enable;
 }
 
+void TXT_SetWindowTitle(char *title)
+{
+    SDL_WM_SetCaption(title, NULL);
+}
+
