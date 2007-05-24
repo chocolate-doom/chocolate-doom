@@ -110,7 +110,7 @@ void TXT_SetDesktopTitle(char *title)
 {
     free(desktop_title);
     desktop_title = strdup(title);
-    SDL_WM_SetCaption(title, NULL);
+    TXT_SetWindowTitle(title);
 }
 
 void TXT_DrawDesktop(void)
