@@ -30,7 +30,6 @@
 #include <string.h>
 
 #include <stdarg.h>
-#include "SDL.h"
 
 #include "deh_main.h"
 #include "doomdef.h"
@@ -187,7 +186,7 @@ void I_Quit (void)
 
 void I_WaitVBL(int count)
 {
-    SDL_Delay((count * 1000) / 70);
+    I_Sleep((count * 1000) / 70);
 }
 
 byte*	I_AllocLow(int length)
