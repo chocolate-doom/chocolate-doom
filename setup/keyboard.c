@@ -23,6 +23,7 @@
 #include "execute.h"
 #include "txt_keyinput.h"
 
+#include "joystick.h"
 #include "keyboard.h"
 
 int key_left = KEY_LEFTARROW;
@@ -35,7 +36,6 @@ int key_fire = KEY_RCTRL;
 int key_use = ' ';
 int key_strafe = KEY_RALT;
 int key_speed = KEY_RSHIFT;
-int joybspeed = 3;
 
 int vanilla_keyboard_mapping = 1;
 

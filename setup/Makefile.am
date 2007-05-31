@@ -10,6 +10,7 @@ SOURCE_FILES =                                  \
     compatibility.c   compatibility.h           \
     configfile.c      configfile.h              \
     display.c         display.h                 \
+    joystick.c        joystick.h                \
     keyboard.c        keyboard.h                \
     m_argv.c          m_argv.h                  \
     mainmenu.c                                  \
@@ -17,6 +18,7 @@ SOURCE_FILES =                                  \
     multiplayer.c     multiplayer.h             \
     sound.c           sound.h                   \
     execute.c         execute.h                 \
+    txt_joybinput.c   txt_joybinput.h           \
     txt_keyinput.c    txt_keyinput.h            \
     txt_mouseinput.c  txt_mouseinput.h
 

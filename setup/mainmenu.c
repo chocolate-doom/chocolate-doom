@@ -32,6 +32,7 @@
 
 #include "compatibility.h"
 #include "display.h"
+#include "joystick.h"
 #include "keyboard.h"
 #include "mouse.h"
 #include "multiplayer.h"
@@ -106,6 +107,8 @@ void MainMenu(void)
     TXT_AddWidgets(window,
           TXT_NewButton2("Configure Display", 
                          (TxtWidgetSignalFunc) ConfigDisplay, NULL),
+          TXT_NewButton2("Configure Joystick", 
+                         (TxtWidgetSignalFunc) ConfigJoystick, NULL),
           TXT_NewButton2("Configure Keyboard", 
                          (TxtWidgetSignalFunc) ConfigKeyboard, NULL),
           TXT_NewButton2("Configure Mouse", 
