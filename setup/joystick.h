@@ -1,8 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2006 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -19,32 +18,23 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// DESCRIPTION:
-//	Main program, simply calls D_DoomMain high level loop.
-//
-//-----------------------------------------------------------------------------
 
+#ifndef SETUP_JOYSTICK_H
+#define SETUP_JOYSTICK_H
 
-#include "SDL.h"
+extern int usejoystick;
+extern int joybfire;
+extern int joybstrafe;
+extern int joybuse;
+extern int joybspeed;
 
-#include <signal.h>
+extern int joystick_index;
+extern int joystick_x_axis;
+extern int joystick_x_invert;
+extern int joystick_y_axis;
+extern int joystick_y_invert;
 
-#include "doomdef.h"
-#include "i_system.h"
-#include "m_argv.h"
-#include "d_main.h"
+void ConfigJoystick(void);
 
-int main(int argc, char **argv) 
-{ 
-    // save arguments
-
-    myargc = argc; 
-    myargv = argv; 
-
-    // start doom
- 
-    D_DoomMain (); 
-
-    return 0;
-} 
+#endif /* #ifndef SETUP_JOYSTICK_H */
 

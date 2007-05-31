@@ -50,6 +50,7 @@
 
 #include "compatibility.h"
 #include "display.h"
+#include "joystick.h"
 #include "keyboard.h"
 #include "mouse.h"
 #include "multiplayer.h"
@@ -135,11 +136,6 @@ static int showMessages = 1;
 static int screenblocks = 9;
 static int detailLevel = 0;
 static int usegamma = 0;
-
-static int usejoystick = 0;
-static int joybfire = 0;
-static int joybstrafe = 1;
-static int joybuse = 2;
 
 // dos specific options: these are unused but should be maintained
 // so that the config file can be shared between chocolate
@@ -270,6 +266,11 @@ static default_t extra_defaults_list[] =
     {"player_name",                 &net_player_name,          DEFAULT_STRING, 0, 0},
 #endif
     {"video_driver",                &video_driver,             DEFAULT_STRING, 0, 0},
+    {"joystick_index",              &joystick_index, DEFAULT_INT, 0, 0},
+    {"joystick_x_axis",             &joystick_x_axis, DEFAULT_INT, 0, 0},
+    {"joystick_x_invert",           &joystick_x_invert, DEFAULT_INT, 0, 0},
+    {"joystick_y_axis",             &joystick_y_axis, DEFAULT_INT, 0, 0},
+    {"joystick_y_invert",           &joystick_y_invert, DEFAULT_INT, 0, 0},
 };
 
 static default_collection_t extra_defaults =
