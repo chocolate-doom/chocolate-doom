@@ -1,8 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2007 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -19,32 +18,27 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// DESCRIPTION:
-//	Main program, simply calls D_DoomMain high level loop.
+
+#ifndef TXT_JOYB_INPUT_H
+#define TXT_JOYB_INPUT_H
+
+typedef struct txt_joystick_input_s txt_joystick_input_t;
+
+#include "txt_widget.h"
+
 //
-//-----------------------------------------------------------------------------
+// A joystick input is like an input box.  When selected, a box pops up
+// allowing a joystick button to be pressed to select it.
+//
 
+struct txt_joystick_input_s
+{
+    txt_widget_t widget;
+    int *variable;
+};
 
-#include "SDL.h"
+txt_joystick_input_t *TXT_NewJoystickInput(int *variable);
 
-#include <signal.h>
+#endif /* #ifndef TXT_JOYB_INPUT_H */
 
-#include "doomdef.h"
-#include "i_system.h"
-#include "m_argv.h"
-#include "d_main.h"
-
-int main(int argc, char **argv) 
-{ 
-    // save arguments
-
-    myargc = argc; 
-    myargv = argv; 
-
-    // start doom
- 
-    D_DoomMain (); 
-
-    return 0;
-} 
 

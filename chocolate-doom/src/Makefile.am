@@ -48,6 +48,7 @@ hu_lib.c             hu_lib.h              \
 hu_stuff.c           hu_stuff.h            \
 i_main.c                                   \
 info.c               info.h                \
+i_joystick.c         i_joystick.h          \
 i_scale.c            i_scale.h             \
                      i_swap.h              \
 i_system.c           i_system.h            \

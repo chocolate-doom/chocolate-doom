@@ -54,6 +54,7 @@
 
 #include "w_wad.h"
 
+#include "i_joystick.h"
 #include "i_swap.h"
 #include "i_system.h"
 #include "i_video.h"
@@ -413,6 +414,12 @@ static default_t extra_defaults_list[] =
 #ifdef FEATURE_MULTIPLAYER
     {"player_name",                 &net_player_name,          DEFAULT_STRING, 0, 0},
 #endif
+
+    {"joystick_index",              &joystick_index, DEFAULT_INT, 0, 0},
+    {"joystick_x_axis",             &joystick_x_axis, DEFAULT_INT, 0, 0},
+    {"joystick_x_invert",           &joystick_x_invert, DEFAULT_INT, 0, 0},
+    {"joystick_y_axis",             &joystick_y_axis, DEFAULT_INT, 0, 0},
+    {"joystick_y_invert",           &joystick_y_invert, DEFAULT_INT, 0, 0},
 };
 
 static default_collection_t extra_defaults =
