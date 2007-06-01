@@ -98,13 +98,23 @@ void ConfigJoystick(void)
     TXT_AddWidgets(button_table,
                    TXT_NewLabel("Fire"),
                    TXT_NewJoystickInput(&joybfire),
-                   TXT_NewLabel("Speed"),
-                   TXT_NewJoystickInput(&joybspeed),
                    TXT_NewLabel("Use"),
                    TXT_NewJoystickInput(&joybuse),
                    TXT_NewLabel("Strafe"),
                    TXT_NewJoystickInput(&joybstrafe),
                    NULL);
+
+    // High values of joybspeed are used to activate the "always run mode"
+    // trick in Vanilla Doom.  If this has been enabled, not only is the
+    // joybspeed value meaningless, but the control itself is useless.
+
+    if (joybspeed < 20)
+    {
+        TXT_AddWidgets(button_table,
+                       TXT_NewLabel("Speed"),
+                       TXT_NewJoystickInput(&joybspeed),
+                       NULL);
+    }
 
     SetJoystickButtonLabel();
 }
