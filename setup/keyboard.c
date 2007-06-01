@@ -61,7 +61,7 @@ static void UpdateJoybSpeed(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(var))
     }
     else
     {
-       joybspeed = 0;
+        joybspeed = 0;
     }
 }
 
@@ -102,7 +102,7 @@ void ConfigKeyboard(void)
     txt_table_t *action_table;
     txt_checkbox_t *run_control;
 
-    always_run = joybspeed >= 10;
+    always_run = joybspeed >= 20;
 
     window = TXT_NewWindow("Keyboard configuration");
 
