@@ -155,6 +155,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\hu_stuff.h" />
+		<Unit filename="..\src\i_joystick.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\i_joystick.h" />
 		<Unit filename="..\src\i_main.c">
 			<Option compilerVar="CC" />
 		</Unit>
