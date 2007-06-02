@@ -64,6 +64,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\setup\execute.h" />
+		<Unit filename="..\setup\joystick.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\setup\joystick.h" />
 		<Unit filename="..\setup\keyboard.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -87,6 +91,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\setup\sound.h" />
+		<Unit filename="..\setup\txt_joybinput.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\setup\txt_joybinput.h" />
 		<Unit filename="..\setup\txt_keyinput.c">
 			<Option compilerVar="CC" />
 		</Unit>
