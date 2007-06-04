@@ -23,7 +23,6 @@
 
 #include <stdlib.h>
 
-#include "SDL.h"
 #include "textscreen.h"
 
 #include "sound.h"
