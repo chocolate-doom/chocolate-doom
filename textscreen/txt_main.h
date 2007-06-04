@@ -20,17 +20,17 @@
 //
 //-----------------------------------------------------------------------------
 //
-// Text mode emulation in SDL
+// Base interface that abstracts the text mode screen.
 //
 //-----------------------------------------------------------------------------
 
 #ifndef TXT_MAIN_H
 #define TXT_MAIN_H
 
-// The textscreen API itself doesn't need SDL; however, SDL needs its
-// headers included where main() is defined.
+// For the moment, txt_sdl.c is the only implementation of the base 
+// text mode screen API:
 
-#include "SDL.h"
+#include "txt_sdl.h"
 
 // Special keypress values that correspond to mouse button clicks
 //
