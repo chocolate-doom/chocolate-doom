@@ -25,6 +25,7 @@
 typedef struct txt_joystick_input_s txt_joystick_input_t;
 
 #include "txt_widget.h"
+#include "txt_window.h"
 
 //
 // A joystick input is like an input box.  When selected, a box pops up
@@ -35,6 +36,7 @@ struct txt_joystick_input_s
 {
     txt_widget_t widget;
     int *variable;
+    txt_window_t *prompt_window;
 };
 
 txt_joystick_input_t *TXT_NewJoystickInput(int *variable);
