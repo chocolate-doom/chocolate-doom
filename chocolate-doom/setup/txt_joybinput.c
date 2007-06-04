@@ -30,9 +30,36 @@
 #include "txt_gui.h"
 #include "txt_io.h"
 #include "txt_label.h"
+#include "txt_sdl.h"
 #include "txt_window.h"
 
 #define JOYSTICK_INPUT_WIDTH 10
+
+// Called in response to SDL events when the prompt window is open:
+
+static int EventCallback(SDL_Event *event, TXT_UNCAST_ARG(joystick_input))
+{
+    TXT_CAST_ARG(txt_joystick_input_t, joystick_input);
+
+    // Got the joystick button press?
+
+    if (event->type == SDL_JOYBUTTONDOWN)
+    {
+        *joystick_input->variable = event->jbutton.button;
+        TXT_CloseWindow(joystick_input->prompt_window);
+        return 1;
+    }
+
+    return 0;
+}
+
+// When the prompt window is closed, disable the event callback function;
+// we are no longer interested in receiving notification of events.
+
+static void PromptWindowClosed(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
+{
+    TXT_SDL_SetEventCallback(NULL, NULL);
+}
 
 static void OpenPromptWindow(txt_joystick_input_t *joystick_input)
 {
@@ -49,6 +76,9 @@ static void OpenPromptWindow(txt_joystick_input_t *joystick_input)
 
     TXT_AddWidget(window, label);
     TXT_SetWidgetAlign(label, TXT_HORIZ_CENTER);
+    TXT_SDL_SetEventCallback(EventCallback, joystick_input);
+    TXT_SignalConnect(window, "closed", PromptWindowClosed, NULL);
+    joystick_input->prompt_window = window;
 }
 
 static void TXT_JoystickInputSizeCalc(TXT_UNCAST_ARG(joystick_input))
