@@ -33,6 +33,7 @@
 #include "doomkeys.h"
 
 #include "txt_main.h"
+#include "txt_sdl.h"
 #include "txt_font.h"
 
 #define CHAR_W 8
@@ -45,6 +46,9 @@
 static SDL_Surface *screen;
 static unsigned char *screendata;
 static int key_mapping = 1;
+
+static TxtSDLEventCallbackFunc event_callback;
+static void *event_callback_data;
 
 //#define TANGO
 
@@ -321,6 +325,19 @@ signed int TXT_GetChar(void)
 
     while (SDL_PollEvent(&ev))
     {
+        // If there is an event callback, allow it to intercept this
+        // event.
+
+        if (event_callback != NULL)
+        {
+            if (event_callback(&ev, event_callback_data))
+            {
+                continue;
+            }
+        }
+
+        // Process the event.
+
         switch (ev.type)
         {
             case SDL_MOUSEBUTTONDOWN:
@@ -521,5 +538,11 @@ void TXT_EnableKeyMapping(int enable)
 void TXT_SetWindowTitle(char *title)
 {
     SDL_WM_SetCaption(title, NULL);
+}
+
+void TXT_SDL_SetEventCallback(TxtSDLEventCallbackFunc callback, void *user_data)
+{
+    event_callback = callback;
+    event_callback_data = user_data;
 }
 
