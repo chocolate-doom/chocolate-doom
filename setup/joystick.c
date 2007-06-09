@@ -137,23 +137,96 @@ static void SetCalibrationLabel(void)
     {
         case CALIBRATE_CENTER:
             message = "Move the joystick to the\n"
-                      "center, and press fire.";
+                      "center, and press a button.";
             break;
         case CALIBRATE_UP:
             message = "Move the joystick up,\n"
-                      "and press fire.";
+                      "and press a button.";
             break;
         case CALIBRATE_LEFT:
             message = "Move the joystick to the\n"
-                      "left, and press fire.";
+                      "left, and press a button.";
             break;
     }
 
     TXT_SetLabel(calibration_label, message);
 }
 
+static void CalibrateAxis(int *axis_index, int *axis_invert)
+{
+    SDL_Joystick *joystick;
+    int best_axis;
+    int best_value;
+    int best_invert;
+    Sint16 axis_value;
+    int i;
+
+    joystick = all_joysticks[joystick_index];
+
+    // Check all axes to find which axis has the largest value.  We test
+    // for one axis at a time, so eg. when we prompt to push the joystick 
+    // left, whichever axis has the largest value is the left axis.
+
+    best_axis = 0;
+    best_value = 0;
+    best_invert = 0;
+
+    for (i=0; i<SDL_JoystickNumAxes(joystick); ++i)
+    {
+        axis_value = SDL_JoystickGetAxis(joystick, i);
+    
+        if (abs(axis_value) > best_value)
+        {
+            best_value = abs(axis_value);
+            best_invert = axis_value < 0;
+            best_axis = i;
+        }
+    }
+
+    // Save the best values we have found
+
+    *axis_index = best_axis;
+    *axis_invert = best_invert;
+}
+
 static int CalibrationEventCallback(SDL_Event *event, void *user_data)
 {
+    if (event->type == SDL_JOYBUTTONDOWN
+     && (joystick_index == -1 || event->jbutton.which == joystick_index))
+    {
+        switch (calibrate_stage)
+        {
+            case CALIBRATE_CENTER:
+                // Centering stage selects which joystick to use.
+                joystick_index = event->jbutton.which;
+                break;
+
+            case CALIBRATE_LEFT:
+                CalibrateAxis(&joystick_x_axis, &joystick_x_invert);
+                break;
+
+            case CALIBRATE_UP:
+                CalibrateAxis(&joystick_y_axis, &joystick_y_invert);
+                break;
+        }
+
+        if (calibrate_stage == CALIBRATE_UP)
+        {
+            // Final stage; close the window
+
+            TXT_CloseWindow(calibration_window);
+        }
+        else
+        {
+            // Advance to the next calibration stage
+
+            ++calibrate_stage;
+            SetCalibrationLabel();
+        }
+
+        return 1;
+    }
+
     return 0;
 }
 
@@ -203,11 +276,22 @@ static void CalibrateJoystick(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
                    TXT_NewStrut(0, 1),
                    NULL);
 
+    TXT_SetWindowAction(calibration_window, TXT_HORIZ_LEFT, NULL);
+    TXT_SetWindowAction(calibration_window, TXT_HORIZ_CENTER, 
+                        TXT_NewWindowAbortAction(calibration_window));
+    TXT_SetWindowAction(calibration_window, TXT_HORIZ_RIGHT, NULL);
+
     TXT_SetWidgetAlign(calibration_label, TXT_HORIZ_CENTER);
-    SetCalibrationLabel();
     TXT_SDL_SetEventCallback(CalibrationEventCallback, NULL);
 
     TXT_SignalConnect(calibration_window, "closed", CalibrateWindowClosed, NULL);
+
+    // Start calibration
+
+    joystick_index = -1;
+    calibrate_stage = CALIBRATE_CENTER;
+
+    SetCalibrationLabel();
 }
 
 
