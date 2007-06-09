@@ -4,3 +4,4 @@ Makefile.in
 *.rc
 chocolate-doom
 chocolate-server
+*.exe

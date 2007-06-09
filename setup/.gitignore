@@ -3,3 +3,4 @@ Makefile
 .deps
 chocolate-setup
 *.rc
+*.exe

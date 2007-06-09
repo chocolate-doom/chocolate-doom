@@ -3,3 +3,4 @@ Makefile
 .deps
 guitest
 calculator
+*.exe
