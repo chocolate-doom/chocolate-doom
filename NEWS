@@ -132,6 +132,8 @@
        means that people with non-US keyboards can decide whether to use
        their correct native mapping or behave like Vanilla mapping (which
        assumes all keyboards are US).
+     * Emulate overflow bug in P_FindNextHighestFloor.  Thanks to
+       entryway for the fix for this.
 
     Bugs fixed:
      * Fix crash when starting new levels due to the intermission screen
