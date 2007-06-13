@@ -555,6 +555,8 @@ void I_StartTic (void)
     {
         I_ReadMouse();
     }
+
+    I_UpdateJoystick();
 }
 
 
