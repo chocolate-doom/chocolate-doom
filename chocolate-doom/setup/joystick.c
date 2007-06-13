@@ -79,6 +79,11 @@ static int OpenAllJoysticks(void)
     int num_joysticks;
     int result;
 
+    if (SDL_Init(SDL_INIT_JOYSTICK) < 0)
+    {
+        return 0;
+    }
+
     // SDL_JoystickOpen() all joysticks.
 
     num_joysticks = SDL_NumJoysticks();
@@ -104,6 +109,10 @@ static int OpenAllJoysticks(void)
         free(all_joysticks);
         all_joysticks = NULL;
     }
+    else
+    {
+        SDL_JoystickEventState(SDL_ENABLE);
+    }
 
     return result;
 }
@@ -124,6 +133,9 @@ static void CloseAllJoysticks(void)
             SDL_JoystickClose(all_joysticks[i]);
         }
     }
+
+    SDL_JoystickEventState(SDL_DISABLE);
+    SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
 
     free(all_joysticks);
     all_joysticks = NULL;
@@ -178,7 +190,7 @@ static void CalibrateAxis(int *axis_index, int *axis_invert)
         if (abs(axis_value) > best_value)
         {
             best_value = abs(axis_value);
-            best_invert = axis_value < 0;
+            best_invert = axis_value > 0;
             best_axis = i;
         }
     }

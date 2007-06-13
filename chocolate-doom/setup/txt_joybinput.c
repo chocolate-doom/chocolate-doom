@@ -64,6 +64,8 @@ static void PromptWindowClosed(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(joystick))
 
     SDL_JoystickClose(joystick);
     TXT_SDL_SetEventCallback(NULL, NULL);
+    SDL_JoystickEventState(SDL_DISABLE);
+    SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
 }
 
 static void OpenErrorWindow(void)
@@ -85,6 +87,11 @@ static void OpenPromptWindow(txt_joystick_input_t *joystick_input)
     txt_window_t *window;
     txt_label_t *label;
     SDL_Joystick *joystick;
+
+    if (SDL_Init(SDL_INIT_JOYSTICK) < 0)
+    {
+        return;
+    }
 
     // Check the current joystick is valid
 
@@ -111,6 +118,8 @@ static void OpenPromptWindow(txt_joystick_input_t *joystick_input)
     TXT_SDL_SetEventCallback(EventCallback, joystick_input);
     TXT_SignalConnect(window, "closed", PromptWindowClosed, joystick);
     joystick_input->prompt_window = window;
+
+    SDL_JoystickEventState(SDL_ENABLE);
 }
 
 static void TXT_JoystickInputSizeCalc(TXT_UNCAST_ARG(joystick_input))
