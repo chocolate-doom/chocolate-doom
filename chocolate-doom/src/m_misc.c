@@ -284,6 +284,7 @@ extern int      vanilla_demo_limit;
 
 extern int snd_musicdevice;
 extern int snd_sfxdevice;
+extern int snd_samplerate;
 
 // dos specific options: these are unused but should be maintained
 // so that the config file can be shared between chocolate
@@ -406,6 +407,7 @@ static default_t extra_defaults_list[] =
     {"novert",                      &novert, DEFAULT_INT, 0, 0},
     {"mouse_acceleration",          &mouse_acceleration, DEFAULT_FLOAT, 0, 0},
     {"mouse_threshold",             &mouse_threshold, DEFAULT_INT, 0, 0},
+    {"snd_samplerate",              &snd_samplerate, DEFAULT_INT, 0, 0},
     {"show_endoom",                 &show_endoom, DEFAULT_INT, 0, 0},
     {"vanilla_savegame_limit",      &vanilla_savegame_limit, DEFAULT_INT, 0, 0},
     {"vanilla_demo_limit",          &vanilla_demo_limit, DEFAULT_INT, 0, 0},

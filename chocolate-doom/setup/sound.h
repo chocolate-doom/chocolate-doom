@@ -29,6 +29,8 @@ extern int sfxVolume;
 extern int snd_musicdevice;
 extern int musicVolume;
 
+extern int snd_samplerate;
+
 void ConfigSound(void);
 
 #endif /* #ifndef SETUP_SOUND_H */
