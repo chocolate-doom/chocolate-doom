@@ -220,10 +220,12 @@ static int      dclicktime2;
 static boolean  dclickstate2;
 static int      dclicks2;
 
+#define MAX_JOY_BUTTONS 20
+
 // joystick values are repeated 
 static int      joyxmove;
 static int      joyymove;
-static boolean  joyarray[5]; 
+static boolean  joyarray[MAX_JOY_BUTTONS + 1]; 
 static boolean *joybuttons = &joyarray[1];		// allow [-1] 
  
 static int      savegameslot; 
@@ -392,7 +394,7 @@ void G_BuildTiccmd (ticcmd_t* cmd)
     // allowed an autorun effect
 
     speed = key_speed >= NUMKEYS
-         || joybspeed >= 20
+         || joybspeed >= MAX_JOY_BUTTONS
          || gamekeydown[key_speed] 
          || joybuttons[joybspeed];
  
@@ -657,6 +659,16 @@ void G_DoLoadLevel (void)
     }
 } 
  
+
+static void SetJoyButtons(unsigned int buttons_mask)
+{
+    int i;
+
+    for (i=0; i<MAX_JOY_BUTTONS; ++i)
+    {
+        joybuttons[i] = (buttons_mask & (1 << i)) != 0;
+    }
+}
  
 //
 // G_Responder  
@@ -752,10 +764,7 @@ boolean G_Responder (event_t* ev)
 	return true;    // eat events 
  
       case ev_joystick: 
-	joybuttons[0] = ev->data1 & 1; 
-	joybuttons[1] = ev->data1 & 2; 
-	joybuttons[2] = ev->data1 & 4; 
-	joybuttons[3] = ev->data1 & 8; 
+        SetJoyButtons(ev->data1);
 	joyxmove = ev->data2; 
 	joyymove = ev->data3; 
 	return true;    // eat events 
