@@ -37,6 +37,7 @@
 #include "doomdef.h"
 #include "doomstat.h"
 #include "d_main.h"
+#include "i_joystick.h"
 #include "i_scale.h"
 #include "i_system.h"
 #include "i_swap.h"

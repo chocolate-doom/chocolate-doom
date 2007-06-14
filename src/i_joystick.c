@@ -163,13 +163,16 @@ static int GetAxisState(int axis, int invert)
 
 void I_UpdateJoystick(void)
 {
-    event_t ev;
+    if (joystick != NULL)
+    {
+        event_t ev;
 
-    ev.type = ev_joystick;
-    ev.data1 = GetButtonState();
-    ev.data2 = GetAxisState(joystick_x_axis, joystick_x_invert);
-    ev.data3 = GetAxisState(joystick_y_axis, joystick_y_invert);
+        ev.type = ev_joystick;
+        ev.data1 = GetButtonState();
+        ev.data2 = GetAxisState(joystick_x_axis, joystick_x_invert);
+        ev.data3 = GetAxisState(joystick_y_axis, joystick_y_invert);
 
-    D_PostEvent(&ev);
+        D_PostEvent(&ev);
+    }
 }
 
