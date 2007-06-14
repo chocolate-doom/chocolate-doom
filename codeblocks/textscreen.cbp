@@ -76,14 +76,15 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\textscreen\txt_label.h" />
-		<Unit filename="..\textscreen\txt_main.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="..\textscreen\txt_main.h" />
 		<Unit filename="..\textscreen\txt_radiobutton.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\textscreen\txt_radiobutton.h" />
+		<Unit filename="..\textscreen\txt_sdl.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\textscreen\txt_sdl.h" />
 		<Unit filename="..\textscreen\txt_separator.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -114,6 +115,7 @@
 		<Unit filename="..\textscreen\txt_window_action.h" />
 		<Extensions>
 			<code_completion />
+			<envvars />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
