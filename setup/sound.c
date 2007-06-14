@@ -72,6 +72,8 @@ int sfxVolume = 15;
 int snd_musicdevice = DEFAULT_MUSIC_DEVICE;
 int musicVolume = 15;
 
+int snd_samplerate = 22050;
+
 static int snd_sfxmode;
 static int snd_musicenabled;
 

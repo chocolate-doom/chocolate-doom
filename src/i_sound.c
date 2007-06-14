@@ -67,6 +67,8 @@ static int mixer_freq;
 static Uint16 mixer_format;
 static int mixer_channels;
 
+int snd_samplerate = MIX_DEFAULT_FREQUENCY;
+
 // When a sound stops, check if it is still playing.  If it is not, 
 // we can mark the sound data as CACHE to be freed back for other
 // means.
@@ -570,7 +572,7 @@ I_InitSound()
         return;
     }
 
-    if (Mix_OpenAudio(22050, AUDIO_S16SYS, 2, 1024) < 0)
+    if (Mix_OpenAudio(snd_samplerate, AUDIO_S16SYS, 2, 1024) < 0)
     {
         fprintf(stderr, "Error initialising SDL_mixer: %s\n", Mix_GetError());
         return;
