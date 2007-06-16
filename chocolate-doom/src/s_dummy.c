@@ -41,16 +41,15 @@ int musicVolume = 8;
 
 // number of channels available
 
-int			numChannels = 8;
+int                        numChannels = 8;
 
 //
 // Initializes sound stuff, including volume
 // Sets channels, SFX and music volume,
 //  allocates channel buffer, sets S_sfx lookup.
 //
-void S_Init
-( int		sfxVolume,
-  int		musicVolume )
+
+void S_Init(int sfxVolume, int musicVolume)
 {  
 }
 
@@ -63,32 +62,23 @@ void S_Shutdown(void)
 // Kills playing sounds at start of level,
 //  determines music if any, changes music.
 //
+
 void S_Start(void)
 {
-}	
+}        
 
-void
-S_StartSoundAtVolume
-( void*		origin_p,
-  int		sfx_id,
-  int		volume )
-{
-}	
-
-void
-S_StartSound
-( void*		origin,
-  int		sfx_id )
+void S_StartSound(mobj_t *origin, int sfx_id)
 {
 }
 
-void S_StopSound(void *origin)
+void S_StopSound(mobj_t *origin)
 {
 }
 
 //
 // Stop and resume music, during game PAUSE.
 //
+
 void S_PauseSound(void)
 {
 }
@@ -101,7 +91,8 @@ void S_ResumeSound(void)
 //
 // Updates music & sounds
 //
-void S_UpdateSounds(void* listener_p)
+
+void S_UpdateSounds(mobj_t *listener)
 {
 }
 
@@ -116,14 +107,12 @@ void S_SetSfxVolume(int volume)
 //
 // Starts some music with the music id found in sounds.h.
 //
+
 void S_StartMusic(int m_id)
 {
 }
 
-void
-S_ChangeMusic
-( int			musicnum,
-  int			looping )
+void S_ChangeMusic(int musicnum, int looping)
 {
 }
 
@@ -132,49 +121,7 @@ boolean S_MusicPlaying(void)
     return false;
 }
 
-
 void S_StopMusic(void)
 {
 }
-
-void S_StopChannel(int cnum)
-{
-}
-
-
-
-//
-// Changes volume, stereo-separation, and pitch variables
-//  from the norm of a sound effect to be played.
-// If the sound is not audible, returns a 0.
-// Otherwise, modifies parameters and returns 1.
-//
-int
-S_AdjustSoundParams
-( mobj_t*	listener,
-  mobj_t*	source,
-  int*		vol,
-  int*		sep,
-  int*		pitch )
-{
-    return 0;
-}
-
-
-
-
-//
-// S_getChannel :
-//   If none available, return -1.  Otherwise channel #.
-//
-int
-S_getChannel
-( void*		origin,
-  sfxinfo_t*	sfxinfo )
-{
-    return -1;
-}
-
-
-
 
