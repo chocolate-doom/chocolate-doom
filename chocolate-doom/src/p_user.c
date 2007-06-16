@@ -90,7 +90,7 @@ void P_CalcHeight (player_t* player)
 	FixedMul (player->mo->momx, player->mo->momx)
 	+ FixedMul (player->mo->momy,player->mo->momy);
     
-    player->bob >>= 2;
+    player->bob /= 4;
 
     if (player->bob>MAXBOB)
 	player->bob = MAXBOB;

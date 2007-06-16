@@ -154,8 +154,8 @@ void P_XYMovement (mobj_t* mo)
 	{
 	    ptryx = mo->x + xmove/2;
 	    ptryy = mo->y + ymove/2;
-	    xmove >>= 1;
-	    ymove >>= 1;
+	    xmove /= 2;
+	    ymove /= 2;
 	}
 	else
 	{
@@ -255,7 +255,7 @@ void P_ZMovement (mobj_t* mo)
 	mo->player->viewheight -= mo->floorz-mo->z;
 
 	mo->player->deltaviewheight
-	    = (VIEWHEIGHT - mo->player->viewheight)>>3;
+	    = (VIEWHEIGHT - mo->player->viewheight) / 8;
     }
     
     // adjust height
@@ -271,7 +271,7 @@ void P_ZMovement (mobj_t* mo)
 	    dist = P_AproxDistance (mo->x - mo->target->x,
 				    mo->y - mo->target->y);
 	    
-	    delta =(mo->target->z + (mo->height>>1)) - mo->z;
+	    delta = mo->target->z + (mo->height / 2) - mo->z;
 
 	    if (delta<0 && dist < -(delta*3) )
 		mo->z -= FLOATSPEED;
@@ -326,7 +326,7 @@ void P_ZMovement (mobj_t* mo)
 		// Decrease viewheight for a moment
 		// after hitting the ground (hard),
 		// and utter appropriate sound.
-		mo->player->deltaviewheight = mo->momz>>3;
+		mo->player->deltaviewheight = mo->momz / 8;
 		S_StartSound (mo, sfx_oof);
 	    }
 	    mo->momz = 0;
@@ -914,9 +914,9 @@ void P_CheckMissileSpawn (mobj_t* th)
     
     // move a little forward so an angle can
     // be computed if it immediately explodes
-    th->x += (th->momx>>1);
-    th->y += (th->momy>>1);
-    th->z += (th->momz>>1);
+    th->x += (th->momx / 2);
+    th->y += (th->momy / 2);
+    th->z += (th->momz / 2);
 
     if (!P_TryMove (th, th->x, th->y))
 	P_ExplodeMissile (th);
