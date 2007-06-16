@@ -98,25 +98,21 @@ static void ExtractFileBase(char *path, char *dest)
 }
 
 // Hash function used for lump names.
-// Must be mod'ed with table size.
-// Can be used for any 8-character names.
-// by Lee Killough
 
 unsigned int W_LumpNameHash(const char *s)
 {
-  unsigned int hash;
+    // This is the djb2 string hash function, modded to work on strings
+    // that have a maximum length of 8.
 
-  ((hash =        toupper(s[0]), s[1]) &&
-   (hash = hash*3+toupper(s[1]), s[2]) &&
-   (hash = hash*2+toupper(s[2]), s[3]) &&
-   (hash = hash*2+toupper(s[3]), s[4]) &&
-   (hash = hash*2+toupper(s[4]), s[5]) &&
-   (hash = hash*2+toupper(s[5]), s[6]) &&
-   (hash = hash*2+toupper(s[6]),
-    hash = hash*2+toupper(s[7]))
-  );
+    unsigned int result = 5381;
+    unsigned int i;
 
-  return hash;
+    for (i=0; i < 8 && s[i] != '\0'; ++i)
+    {
+        result = ((result << 5) ^ result ) ^ toupper(s[i]);
+    }
+
+    return result;
 }
 
 //
