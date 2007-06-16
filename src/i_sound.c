@@ -50,9 +50,9 @@
 
 #include "doomdef.h"
 
-#define NUM_CHANNELS		16
+#define NUM_CHANNELS 16
 
-#define MAXMIDLENGTH        (96 * 1024)
+#define MAXMIDLENGTH (96 * 1024)
 
 static boolean nosfxparm;
 static boolean nomusicparm;
@@ -242,40 +242,21 @@ static boolean CacheSFX(int sound)
     return true;
 }
 
-static Mix_Chunk *getsfx(int sound)
+static Mix_Chunk *GetSFXChunk(int sound_id)
 {
-    if (sound_chunks[sound].abuf == NULL)
+    if (sound_chunks[sound_id].abuf == NULL)
     {
-        if (!CacheSFX(sound))
+        if (!CacheSFX(sound_id))
             return NULL;
     }
     else
     {
         // don't free the sound while it is playing!
    
-        Z_ChangeTag(sound_chunks[sound].abuf, PU_STATIC);
+        Z_ChangeTag(sound_chunks[sound_id].abuf, PU_STATIC);
     }
 
-    return &sound_chunks[sound];
-}
-
-//
-// SFX API
-// Note: this was called by S_Init.
-// However, whatever they did in the
-// old DPMS based DOS version, this
-// were simply dummies in the Linux
-// version.
-// See soundserver initdata().
-//
-void I_SetChannels()
-{
-}	
-
- 
-void I_SetSfxVolume(int volume)
-{
-    // Unused
+    return &sound_chunks[sound_id];
 }
 
 
@@ -283,6 +264,7 @@ void I_SetSfxVolume(int volume)
 // Retrieve the raw data lump index
 //  for a given SFX name.
 //
+
 int I_GetSfxLumpNum(sfxinfo_t* sfx)
 {
     char namebuf[9];
@@ -316,6 +298,7 @@ int I_GetSfxLumpNum(sfxinfo_t* sfx)
 // Pitching (that is, increased speed of playback)
 //  is set, but currently not used by mixing.
 //
+
 int
 I_StartSound
 ( int		id,
@@ -342,7 +325,7 @@ I_StartSound
 
     // Get the sound data
 
-    chunk = getsfx(id);
+    chunk = GetSFXChunk(id);
 
     if (chunk == NULL)
     {
