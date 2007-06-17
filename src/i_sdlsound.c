@@ -30,35 +30,17 @@
 #include "SDL.h"
 #include "SDL_mixer.h"
 
-#ifndef _WIN32
-#include <unistd.h>
-#endif
-
-#include "memio.h"
-#include "mus2mid.h"
-#include "z_zone.h"
-
-#include "i_system.h"
-#include "i_pcsound.h"
-#include "i_sound.h"
-#include "i_swap.h"
 #include "deh_main.h"
 #include "s_sound.h"
 #include "m_argv.h"
-#include "m_misc.h"
 #include "w_wad.h"
+#include "z_zone.h"
 
 #include "doomdef.h"
 
 #define NUM_CHANNELS 16
 
-#define MAXMIDLENGTH (96 * 1024)
-
-static boolean nosfxparm;
-static boolean nomusicparm;
-
 static boolean sound_initialised = false;
-static boolean music_initialised = false;
 
 static Mix_Chunk sound_chunks[NUMSFX];
 static int channels_playing[NUM_CHANNELS];
@@ -67,19 +49,19 @@ static int mixer_freq;
 static Uint16 mixer_format;
 static int mixer_channels;
 
-int snd_samplerate = MIX_DEFAULT_FREQUENCY;
-
 // When a sound stops, check if it is still playing.  If it is not, 
 // we can mark the sound data as CACHE to be freed back for other
 // means.
 
-void ReleaseSoundOnChannel(int channel)
+static void ReleaseSoundOnChannel(int channel)
 {
     int i;
     int id = channels_playing[channel];
 
     if (!id)
+    {
         return;
+    }
 
     channels_playing[channel] = sfx_None;
     
@@ -265,26 +247,30 @@ static Mix_Chunk *GetSFXChunk(int sound_id)
 //  for a given SFX name.
 //
 
-int I_GetSfxLumpNum(sfxinfo_t* sfx)
+static int I_SDL_GetSfxLumpNum(sfxinfo_t* sfx)
 {
     char namebuf[9];
-    char *prefix;
 
-    // Different prefix for PC speaker sound effects.
-
-    if (snd_sfxdevice == SNDDEVICE_PCSPEAKER)
-    {
-        prefix = "dp";
-    }
-    else
-    {
-        prefix = "ds";
-    }
-
-    sprintf(namebuf, "%s%s", prefix, DEH_String(sfx->name));
+    sprintf(namebuf, "ds%s", DEH_String(sfx->name));
     
     return W_GetNumForName(namebuf);
 }
+
+static void I_SDL_UpdateSoundParams(int handle, int vol, int sep)
+{
+    int left, right;
+
+    if (!sound_initialised)
+    {
+        return;
+    }
+
+    left = ((254 - sep) * vol) / 127;
+    right = ((sep) * vol) / 127;
+
+    Mix_SetPanning(handle, left, right);
+}
+
 
 //
 // Starting a sound means adding it
@@ -299,23 +285,13 @@ int I_GetSfxLumpNum(sfxinfo_t* sfx)
 //  is set, but currently not used by mixing.
 //
 
-int
-I_StartSound
-( int		id,
-  int           channel,
-  int		vol,
-  int		sep,
-  int		pitch,
-  int		priority )
+static int I_SDL_StartSound(int id, int channel, int vol, int sep)
 {
     Mix_Chunk *chunk;
 
     if (!sound_initialised)
-        return 0;
-
-    if (snd_sfxdevice == SNDDEVICE_PCSPEAKER)
     {
-        return I_PCS_StartSound(id, channel, vol, sep, pitch, priority);
+        return -1;
     }
 
     // Release a sound effect if there is already one playing
@@ -340,22 +316,18 @@ I_StartSound
 
     // set separation, etc.
  
-    I_UpdateSoundParams(channel, vol, sep, pitch);
+    I_SDL_UpdateSoundParams(channel, vol, sep);
 
     return channel;
 }
 
-void I_StopSound (int handle)
+static void I_SDL_StopSound (int handle)
 {
     if (!sound_initialised)
-        return;
-
-    if (snd_sfxdevice == SNDDEVICE_PCSPEAKER)
     {
-        I_PCS_StopSound(handle);
         return;
     }
-    
+
     Mix_HaltChannel(handle);
 
     // Sound data is no longer needed; release the
@@ -365,48 +337,29 @@ void I_StopSound (int handle)
 }
 
 
-int I_SoundIsPlaying(int handle)
+static boolean I_SDL_SoundIsPlaying(int handle)
 {
-    if (!sound_initialised) 
-        return false;
-
     if (handle < 0)
+    {
         return false;
+    }
 
-    if (snd_sfxdevice == SNDDEVICE_PCSPEAKER)
-    {
-        return I_PCS_SoundIsPlaying(handle);
-    }
-    else
-    {
-        return Mix_Playing(handle);
-    }
+    return Mix_Playing(handle);
 }
-
-
-
 
 // 
 // Periodically called to update the sound system
 //
 
-void I_UpdateSound( void )
+static void I_SDL_UpdateSound(void)
 {
     int i;
-
-    if (!sound_initialised)
-        return;
-
-    if (snd_sfxdevice == SNDDEVICE_PCSPEAKER)
-    {
-        return;
-    }
 
     // Check all channels to see if a sound has finished
 
     for (i=0; i<NUM_CHANNELS; ++i)
     {
-        if (channels_playing[i] && !I_SoundIsPlaying(i))
+        if (channels_playing[i] && !I_SDL_SoundIsPlaying(i))
         {
             // Sound has finished playing on this channel,
             // but sound data has not been released to cache
@@ -416,65 +369,20 @@ void I_UpdateSound( void )
     }
 }
 
-
-// 
-// This would be used to write out the mixbuffer
-//  during each game loop update.
-// Updates sound buffer and audio device at runtime. 
-// It is called during Timer interrupt with SNDINTR.
-// Mixing now done synchronous, and
-//  only output be done asynchronous?
-//
-void
-I_SubmitSound(void)
-{
-}
-
-
-
-void 
-I_UpdateSoundParams
-( int	handle,
-  int	vol,
-  int	sep,
-  int	pitch)
-{
-    int left, right;
-
+static void I_SDL_ShutdownSound(void)
+{    
     if (!sound_initialised)
-        return;
-
-    if (snd_sfxdevice == SNDDEVICE_PCSPEAKER)
     {
         return;
     }
 
-    left = ((254 - sep) * vol) / 127;
-    right = ((sep) * vol) / 127;
-
-    Mix_SetPanning(handle, left, right);
-}
-
-
-
-
-void I_ShutdownSound(void)
-{    
-    if (!sound_initialised && !music_initialised)
-        return;
-
-    Mix_HaltMusic();
     Mix_CloseAudio();
     SDL_QuitSubSystem(SDL_INIT_AUDIO);
 
     sound_initialised = false;
-    music_initialised = false;
 }
 
-
-
-void
-I_InitSound()
+static boolean I_SDL_InitSound()
 { 
     int i;
     
@@ -490,75 +398,16 @@ I_InitSound()
         channels_playing[i] = sfx_None;
     }
 
-    //! 
-    // Disable music playback.
-    //
-
-    nomusicparm = M_CheckParm("-nomusic") > 0;
-
-    if (snd_musicdevice < SNDDEVICE_ADLIB)
-    {
-        nomusicparm = true;
-    }
- 
-    //!
-    // Disable sound effects.
-    //
-
-    nosfxparm = M_CheckParm("-nosfx") > 0;
-
-    // If the SFX device is 0 (none), then disable sound effects,
-    // just like if we specified -nosfx.  However, we still continue
-    // with initialising digital sound output even if we are using
-    // the PC speaker, because we might be using the SDL PC speaker
-    // emulation.
-
-    if (snd_sfxdevice == SNDDEVICE_NONE)
-    {
-        nosfxparm = true;
-    }
-
-    //!
-    // Disable sound effects and music.
-    //
-
-    if (M_CheckParm("-nosound") > 0)
-    {
-        nosfxparm = true;
-        nomusicparm = true;
-    }
-
-    // When trying to run with music enabled on OSX, display
-    // a warning message.
-
-#ifdef __MACOSX__
-    if (!nomusicparm)
-    {
-        printf("\n"
-               "                   *** WARNING ***\n"
-               "      Music playback on OSX may cause crashes and\n"
-               "      is disabled by default.\n"
-               "\n");
-    }
-#endif
-
-    // If music or sound is going to play, we need to at least
-    // initialise SDL
-    // No sound in screensaver mode.
-
-    if (screensaver_mode || (nomusicparm && nosfxparm))
-        return;
-
     if (SDL_Init(SDL_INIT_AUDIO) < 0)
     {
         fprintf(stderr, "Unable to set up sound.\n");
-        return;
+        return false;
     }
 
     if (Mix_OpenAudio(snd_samplerate, AUDIO_S16SYS, 2, 1024) < 0)
     {
         fprintf(stderr, "Error initialising SDL_mixer: %s\n", Mix_GetError());
-        return;
+        return false;
     }
 
     Mix_QuerySpec(&mixer_freq, &mixer_format, &mixer_channels);
@@ -567,201 +416,32 @@ I_InitSound()
     
     SDL_PauseAudio(0);
 
-    // If we are using the PC speaker, we now need to initialise it.
+    sound_initialised = true;
 
-    if (snd_sfxdevice == SNDDEVICE_PCSPEAKER)
-    {
-        I_PCS_InitSound();
-    }
-
-    if (!nomusicparm)
-        music_initialised = true;
-
-    if (!nosfxparm)
-        sound_initialised = true;
+    return true;
 }
 
-
-
-
-//
-// MUSIC API.
-//
-
-static boolean  musicpaused = false;
-static int currentMusicVolume;
-
-//
-// SDL_mixer's native MIDI music playing does not pause properly.
-// As a workaround, set the volume to 0 when paused.
-//
-
-static void UpdateMusicVolume(void)
+static snddevice_t sound_sdl_devices[] = 
 {
-    int vol;
+    SNDDEVICE_SB,
+    SNDDEVICE_PAS,
+    SNDDEVICE_GUS,
+    SNDDEVICE_WAVEBLASTER,
+    SNDDEVICE_SOUNDCANVAS,
+    SNDDEVICE_AWE32,
+};
 
-    if (musicpaused)
-        vol = 0;
-    else
-        vol = (currentMusicVolume * MIX_MAX_VOLUME) / 127;
-
-    Mix_VolumeMusic(vol);
-}
-
-// MUSIC API - dummy. Some code from DOS version.
-void I_SetMusicVolume(int volume)
+sound_module_t sound_sdl_module = 
 {
-    // Internal state variable.
-    currentMusicVolume = volume;
-
-    UpdateMusicVolume();
-}
-
-void I_PlaySong(void *handle, int looping)
-{
-    Mix_Music *music = (Mix_Music *) handle;
-    int loops;
-
-    if (!music_initialised)
-        return;
-
-    if (handle == NULL)
-        return;
-
-    if (looping)
-        loops = -1;
-    else
-        loops = 1;
-
-    Mix_PlayMusic(music, loops);
-}
-
-void I_PauseSong (void *handle)
-{
-    if (!music_initialised)
-        return;
-
-    musicpaused = true;
-
-    UpdateMusicVolume();
-}
-
-void I_ResumeSong (void *handle)
-{
-    if (!music_initialised)
-        return;
-
-    musicpaused = false;
-
-    UpdateMusicVolume();
-}
-
-void I_StopSong(void *handle)
-{
-    if (!music_initialised)
-        return;
-
-    Mix_HaltMusic();
-}
-
-void I_UnRegisterSong(void *handle)
-{
-    Mix_Music *music = (Mix_Music *) handle;
-
-    if (!music_initialised)
-        return;
-
-    if (handle == NULL)
-        return;
-
-    Mix_FreeMusic(music);
-}
-
-// Determine whether memory block is a .mid file 
-
-static boolean IsMid(byte *mem, int len)
-{
-    return len > 4 && !memcmp(mem, "MThd", 4);
-}
-
-static boolean ConvertMus(byte *musdata, int len, char *filename)
-{
-    MEMFILE *instream;
-    MEMFILE *outstream;
-    void *outbuf;
-    size_t outbuf_len;
-    int result;
-
-    instream = mem_fopen_read(musdata, len);
-    outstream = mem_fopen_write();
-
-    result = mus2mid(instream, outstream);
-
-    if (result == 0)
-    {
-        mem_get_buf(outstream, &outbuf, &outbuf_len);
-
-        M_WriteFile(filename, outbuf, outbuf_len);
-    }
-
-    mem_fclose(instream);
-    mem_fclose(outstream);
-
-    return result;
-}
-
-void *I_RegisterSong(void *data, int len)
-{
-    char *filename;
-    Mix_Music *music;
-
-    if (!music_initialised)
-        return NULL;
-    
-    // MUS files begin with "MUS"
-    // Reject anything which doesnt have this signature
-    
-    filename = M_TempFile("doom.mid");
-
-    if (IsMid(data, len) && len < MAXMIDLENGTH)
-    {
-        M_WriteFile(filename, data, len);
-    }
-    else 
-    {
-	// Assume a MUS file and try to convert
-
-        ConvertMus(data, len, filename);
-    }
-
-    // Load the MIDI
-
-    music = Mix_LoadMUS(filename);
-    
-    if (music == NULL)
-    {
-        // Failed to load
-
-        fprintf(stderr, "Error loading midi: %s\n", Mix_GetError());
-    }
-
-    // remove file now
-
-    remove(filename);
-
-    Z_Free(filename);
-
-    return music;
-}
-
-// Is the song playing?
-boolean I_QrySongPlaying(void *handle)
-{
-    if (!music_initialised)
-        return false;
-
-    return Mix_PlayingMusic();
-}
-
-
+    sound_sdl_devices,
+    sizeof(sound_sdl_devices) / sizeof(*sound_sdl_devices),
+    I_SDL_InitSound,
+    I_SDL_ShutdownSound,
+    I_SDL_GetSfxLumpNum,
+    I_SDL_UpdateSound,
+    I_SDL_UpdateSoundParams,
+    I_SDL_StartSound,
+    I_SDL_StopSound,
+    I_SDL_SoundIsPlaying,
+};
 

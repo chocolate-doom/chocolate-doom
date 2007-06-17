@@ -68,15 +68,7 @@ static void *DEH_SoundStart(deh_context_t *context, char *line)
                              "in Vanilla dehacked.", sound_number); 
     }
 
-#ifdef FEATURE_SOUND
-    
     return &S_sfx[sound_number];
-
-#else
-
-    return NULL;
-
-#endif
 }
 
 static void DEH_SoundParseLine(deh_context_t *context, char *line, void *tag)

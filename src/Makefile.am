@@ -95,6 +95,7 @@ r_sky.c              r_sky.h               \
 r_state.h                                  \
 r_things.c           r_things.h            \
 sounds.c             sounds.h              \
+s_sound.c            s_sound.h             \
 st_lib.c             st_lib.h              \
 st_stuff.c           st_stuff.h            \
 tables.c             tables.h              \
@@ -146,9 +147,9 @@ w_merge.c            w_merge.h
 
 FEATURE_SOUND_SOURCE_FILES =               \
 i_pcsound.c          i_pcsound.h           \
-i_sound.c            i_sound.h             \
-mus2mid.c            mus2mid.h             \
-s_sound.c            s_sound.h
+i_sdlsound.c                               \
+i_sdlmusic.c         i_music.h             \
+mus2mid.c            mus2mid.h
 
 SOURCE_FILES = $(MAIN_SOURCE_FILES)                \
                $(FEATURE_DEHACKED_SOURCE_FILES)    \

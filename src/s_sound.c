@@ -26,20 +26,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "i_music.h"
 #include "i_system.h"
-#include "i_sound.h"
+
+#include "doomfeatures.h"
+#include "deh_main.h"
+
+#include "doomstat.h"
+#include "doomdef.h"
+
 #include "sounds.h"
 #include "s_sound.h"
 
-#include "deh_main.h"
-#include "z_zone.h"
 #include "m_random.h"
-#include "w_wad.h"
+#include "m_argv.h"
 
-#include "doomdef.h"
 #include "p_local.h"
-
-#include "doomstat.h"
+#include "w_wad.h"
+#include "z_zone.h"
 
 // when to clip out sounds
 // Does not fit the large outdoor areas.
@@ -74,10 +78,6 @@
 #define DEFAULT_MUSIC_DEVICE SNDDEVICE_NONE
 #endif
 
-int snd_musicdevice = DEFAULT_MUSIC_DEVICE;
-int snd_sfxdevice = SNDDEVICE_SB;
-
-
 typedef struct
 {
     // sound information (if null, channel avail.)
@@ -91,6 +91,9 @@ typedef struct
     
 } channel_t;
 
+// Low-level sound module we are using
+
+static sound_module_t *sound_module;
 
 // The set of channels available
 
@@ -104,6 +107,10 @@ int sfxVolume = 8;
 // Maximum volume of music. 
 
 int musicVolume = 8;
+
+// Sound sample rate to use for digital output (Hz)
+
+int snd_samplerate = 22050;
 
 // Internal volume level, ranging from 0-127
 
@@ -121,6 +128,81 @@ static musicinfo_t *mus_playing = NULL;
 
 int numChannels = 8;
 
+int snd_musicdevice = DEFAULT_MUSIC_DEVICE;
+int snd_sfxdevice = SNDDEVICE_SB;
+
+// Sound effect modules
+
+extern sound_module_t sound_sdl_module;
+extern sound_module_t sound_pcsound_module;
+
+// Compiled-in sound modules:
+
+static sound_module_t *sound_modules[] = 
+{
+#ifdef FEATURE_SOUND
+    &sound_sdl_module,
+    &sound_pcsound_module,
+#endif
+};
+
+// Check if a sound device is in the given list of devices
+
+static boolean SndDeviceInList(snddevice_t device, snddevice_t *list,
+                               int len)
+{
+    int i;
+
+    for (i=0; i<len; ++i)
+    {
+        if (device == list[i])
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+// Find and initialise a sound_module_t appropriate for the setting
+// in snd_sfxdevice.
+
+static void InitSfxModule(void)
+{
+    int i;
+
+    sound_module = NULL;
+
+    for (i=0; i<sizeof(sound_modules) / sizeof(*sound_modules); ++i)
+    {
+        // Is the sfx device in the list of devices supported by
+        // this module?
+
+        if (SndDeviceInList(snd_sfxdevice, 
+                            sound_modules[i]->sound_devices,
+                            sound_modules[i]->num_sound_devices))
+        {
+            // Initialise the module
+
+            if (sound_modules[i]->Init())
+            {
+                sound_module = sound_modules[i];
+                return;
+            }
+        }
+    }
+}
+
+// Initialise music according to snd_musicdevice.
+
+static void InitMusicModule(void)
+{
+    if (snd_musicdevice >= SNDDEVICE_ADLIB)
+    {
+        I_InitMusic();
+    }
+}
+
 //
 // Initializes sound stuff, including volume
 // Sets channels, SFX and music volume,
@@ -131,7 +213,20 @@ void S_Init(int sfxVolume, int musicVolume)
 {  
     int i;
 
-    I_InitSound();
+    // Initialise the sound and music subsystems.
+
+    if (M_CheckParm("-nosound") <= 0 && !screensaver_mode)
+    {
+        if (M_CheckParm("-nosfx") <= 0)
+        {
+            InitSfxModule();
+        }
+
+        if (M_CheckParm("-nomusic") <= 0)
+        {
+            InitMusicModule();
+        }
+    }
 
     S_SetSfxVolume(sfxVolume);
     S_SetMusicVolume(musicVolume);
@@ -159,7 +254,12 @@ void S_Init(int sfxVolume, int musicVolume)
 
 void S_Shutdown(void)
 {
-    I_ShutdownSound();
+    if (sound_module != NULL)
+    {
+        sound_module->Shutdown();
+    }
+
+    I_ShutdownMusic();
 }
 
 static void S_StopChannel(int cnum)
@@ -172,9 +272,13 @@ static void S_StopChannel(int cnum)
     if (c->sfxinfo)
     {
         // stop the sound playing
-        if (I_SoundIsPlaying(c->handle))
+
+        if (sound_module != NULL)
         {
-            I_StopSound(c->handle);
+            if (sound_module->SoundIsPlaying(c->handle))
+            {
+                sound_module->StopSound(c->handle);
+            }
         }
 
         // check to see if other channels are playing the sound
@@ -228,15 +332,15 @@ void S_Start(void)
         {
             // Song - Who? - Where?
 
-            mus_e3m4,        // American        e4m1
-            mus_e3m2,        // Romero        e4m2
+            mus_e3m4,        // American     e4m1
+            mus_e3m2,        // Romero       e4m2
             mus_e3m3,        // Shawn        e4m3
-            mus_e1m5,        // American        e4m4
-            mus_e2m7,        // Tim         e4m5
-            mus_e2m4,        // Romero        e4m6
-            mus_e2m6,        // J.Anderson        e4m7 CHIRON.WAD
+            mus_e1m5,        // American     e4m4
+            mus_e2m7,        // Tim          e4m5
+            mus_e2m4,        // Romero       e4m6
+            mus_e2m6,        // J.Anderson   e4m7 CHIRON.WAD
             mus_e2m5,        // Shawn        e4m8
-            mus_e1m9        // Tim                e4m9
+            mus_e1m9,        // Tim          e4m9
         };
 
         if (gameepisode < 4)
@@ -326,14 +430,14 @@ static int S_GetChannel(mobj_t *origin, sfxinfo_t *sfxinfo)
 }
 
 //
-// Changes volume, stereo-separation, and pitch variables
+// Changes volume and stereo-separation variables
 //  from the norm of a sound effect to be played.
 // If the sound is not audible, returns a 0.
 // Otherwise, modifies parameters and returns 1.
 //
 
 static int S_AdjustSoundParams(mobj_t *listener, mobj_t *source,
-                               int *vol, int *sep, int *pitch)
+                               int *vol, int *sep)
 {
     fixed_t        approx_dist;
     fixed_t        adx;
@@ -406,7 +510,6 @@ void S_StartSound(void *origin_p, int sfx_id)
     mobj_t *origin;
     int rc;
     int sep;
-    int pitch;
     int priority;
     int cnum;
     int volume;
@@ -425,7 +528,6 @@ void S_StartSound(void *origin_p, int sfx_id)
     // Initialize sound parameters
     if (sfx->link)
     {
-        pitch = sfx->pitch;
         priority = sfx->priority;
         volume += sfx->volume;
 
@@ -441,7 +543,6 @@ void S_StartSound(void *origin_p, int sfx_id)
     }        
     else
     {
-        pitch = NORM_PITCH;
         priority = NORM_PRIORITY;
     }
 
@@ -453,8 +554,7 @@ void S_StartSound(void *origin_p, int sfx_id)
         rc = S_AdjustSoundParams(players[consoleplayer].mo,
                                  origin,
                                  &volume,
-                                 &sep,
-                                 &pitch);
+                                 &sep);
 
         if (origin->x == players[consoleplayer].mo->x
          && origin->y == players[consoleplayer].mo->y)
@@ -472,36 +572,6 @@ void S_StartSound(void *origin_p, int sfx_id)
         sep = NORM_SEP;
     }
 
-    // hacks to vary the sfx pitches
-    if (sfx_id >= sfx_sawup
-     && sfx_id <= sfx_sawhit)
-    {        
-        pitch += 8 - (M_Random()&15);
-
-        if (pitch < 0)
-        {
-            pitch = 0;
-        }
-        else if (pitch > 255)
-        {
-            pitch = 255;
-        }
-    }
-    else if (sfx_id != sfx_itemup
-          && sfx_id != sfx_tink)
-    {
-        pitch += 16 - (M_Random()&31);
-
-        if (pitch < 0)
-        {
-            pitch = 0;
-        }
-        else if (pitch > 255)
-        {
-            pitch = 255;
-        }
-    }
-
     // kill old sound
     S_StopSound(origin);
 
@@ -513,32 +583,29 @@ void S_StartSound(void *origin_p, int sfx_id)
         return;
     }
 
-    //
-    // This is supposed to handle the loading/caching.
-    // For some odd reason, the caching is done nearly
-    //  each time the sound is needed?
-    //
-
-    // get lumpnum if necessary
-    if (sfx->lumpnum < 0)
-    {
-        sfx->lumpnum = I_GetSfxLumpNum(sfx);
-    }
-
     // increase the usefulness
     if (sfx->usefulness++ < 0)
     {
         sfx->usefulness = 1;
     }
 
-    // Assigns the handle to one of the channels in the
-    //  mix/output buffer.
-    channels[cnum].handle = I_StartSound(sfx_id,
-                                         cnum,
-                                         volume,
-                                         sep,
-                                         pitch,
-                                         priority);
+    if (sound_module != NULL)
+    {
+        // Get lumpnum if necessary
+
+        if (sfx->lumpnum < 0)
+        {
+            sfx->lumpnum = sound_module->GetSfxLumpNum(sfx);
+        }
+
+        // Assigns the handle to one of the channels in the
+        //  mix/output buffer.
+
+        channels[cnum].handle = sound_module->StartSound(sfx_id,
+                                                         cnum,
+                                                         volume,
+                                                         sep);
+    }
 }        
 
 //
@@ -573,7 +640,6 @@ void S_UpdateSounds(mobj_t *listener)
     int                cnum;
     int                volume;
     int                sep;
-    int                pitch;
     sfxinfo_t*        sfx;
     channel_t*        c;
 
@@ -584,16 +650,14 @@ void S_UpdateSounds(mobj_t *listener)
 
         if (c->sfxinfo)
         {
-            if (I_SoundIsPlaying(c->handle))
+            if (sound_module != NULL && sound_module->SoundIsPlaying(c->handle))
             {
                 // initialize parameters
                 volume = snd_SfxVolume;
-                pitch = NORM_PITCH;
                 sep = NORM_SEP;
 
                 if (sfx->link)
                 {
-                    pitch = sfx->pitch;
                     volume += sfx->volume;
                     if (volume < 1)
                     {
@@ -613,8 +677,7 @@ void S_UpdateSounds(mobj_t *listener)
                     audible = S_AdjustSoundParams(listener,
                                                   c->origin,
                                                   &volume,
-                                                  &sep,
-                                                  &pitch);
+                                                  &sep);
                     
                     if (!audible)
                     {
@@ -622,7 +685,7 @@ void S_UpdateSounds(mobj_t *listener)
                     }
                     else
                     {
-                        I_UpdateSoundParams(c->handle, volume, sep, pitch);
+                        sound_module->UpdateSoundParams(c->handle, volume, sep);
                     }
                 }
             }
