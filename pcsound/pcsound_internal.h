@@ -19,22 +19,29 @@
 // 02111-1307, USA.
 //
 // DESCRIPTION:
-//	System interface for PC speaker sound.
+//    PC speaker interface.
 //
 //-----------------------------------------------------------------------------
 
-#ifndef __I_PCSOUND_H__
-#define __I_PCSOUND_H__
+#ifndef PCSOUND_INTERNAL_H
+#define PCSOUND_INTERNAL_H
 
-int I_PCS_StartSound(int id,
-                     int channel,
-                     int vol,
-                     int sep,
-                     int pitch,
-                     int priority);
-void I_PCS_StopSound(int handle);
-int I_PCS_SoundIsPlaying(int handle);
-void I_PCS_InitSound(void);
+#include "pcsound.h"
 
-#endif /* #ifndef __I_PCSOUND_H__ */
+#define PCSOUND_8253_FREQUENCY 1193280
+
+typedef struct pcsound_driver_s pcsound_driver_t;
+typedef int (*pcsound_init_func)(pcsound_callback_func callback);
+typedef void (*pcsound_shutdown_func)(void);
+
+struct pcsound_driver_s
+{
+    char *name;
+    pcsound_init_func init_func;
+    pcsound_shutdown_func shutdown_func;
+};
+
+extern int pcsound_sample_rate;
+
+#endif /* #ifndef PCSOUND_INTERNAL_H */
 

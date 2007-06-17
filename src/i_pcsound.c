@@ -28,8 +28,8 @@
 #include "doomdef.h"
 #include "doomtype.h"
 
-#include "i_pcsound.h"
-#include "i_sound.h"
+#include "deh_main.h"
+#include "s_sound.h"
 #include "sounds.h"
 
 #include "w_wad.h"
@@ -62,7 +62,7 @@ static float frequencies[] = {
 
 #define NUM_FREQUENCIES (sizeof(frequencies) / sizeof(*frequencies))
 
-void PCSCallbackFunc(int *duration, int *freq)
+static void PCSCallbackFunc(int *duration, int *freq)
 {
     int tone;
 
@@ -144,12 +144,10 @@ static boolean CachePCSLump(int sound_id)
     return true;
 }
 
-int I_PCS_StartSound(int id,
-                     int channel,
-                     int vol,
-                     int sep,
-                     int pitch,
-                     int priority)
+static int I_PCS_StartSound(int id,
+                            int channel,
+                            int vol,
+                            int sep)
 {
     int result;
 
@@ -192,7 +190,7 @@ int I_PCS_StartSound(int id,
     }
 }
 
-void I_PCS_StopSound(int handle)
+static void I_PCS_StopSound(int handle)
 {
     if (!pcs_initialised)
     {
@@ -214,7 +212,22 @@ void I_PCS_StopSound(int handle)
     SDL_UnlockMutex(sound_lock);
 }
 
-int I_PCS_SoundIsPlaying(int handle)
+//
+// Retrieve the raw data lump index
+//  for a given SFX name.
+//
+
+static int I_PCS_GetSfxLumpNum(sfxinfo_t* sfx)
+{
+    char namebuf[9];
+
+    sprintf(namebuf, "dp%s", DEH_String(sfx->name));
+    
+    return W_GetNumForName(namebuf);
+}
+
+
+static boolean I_PCS_SoundIsPlaying(int handle)
 {
     if (!pcs_initialised)
     {
@@ -229,10 +242,58 @@ int I_PCS_SoundIsPlaying(int handle)
     return current_sound_lump != NULL && current_sound_remaining > 0;
 }
 
-void I_PCS_InitSound(void)
+static boolean I_PCS_InitSound(void)
 {
+    // Use the sample rate from the configuration file
+
+    PCSound_SetSampleRate(snd_samplerate);
+
+    // Initialise the PC speaker subsystem.
+
     pcs_initialised = PCSound_Init(PCSCallbackFunc);
 
-    sound_lock = SDL_CreateMutex();
+    if (pcs_initialised)
+    {
+        sound_lock = SDL_CreateMutex();
+    }
+
+    return pcs_initialised;
 }
+
+static void I_PCS_ShutdownSound(void)
+{
+    if (pcs_initialised)
+    {
+        PCSound_Shutdown();
+    }
+}
+
+static void I_PCS_UpdateSound(void)
+{
+    // no-op.
+}
+
+void I_PCS_UpdateSoundParams(int channel, int vol, int sep)
+{
+    // no-op.
+}
+
+static snddevice_t sound_pcsound_devices[] = 
+{
+    SNDDEVICE_PCSPEAKER,
+};
+
+sound_module_t sound_pcsound_module = 
+{
+    sound_pcsound_devices,
+    sizeof(sound_pcsound_devices) / sizeof(*sound_pcsound_devices),
+    I_PCS_InitSound,
+    I_PCS_ShutdownSound,
+    I_PCS_GetSfxLumpNum,
+    I_PCS_UpdateSound,
+    I_PCS_UpdateSoundParams,
+    I_PCS_StartSound,
+    I_PCS_StopSound,
+    I_PCS_SoundIsPlaying,
+};
 
