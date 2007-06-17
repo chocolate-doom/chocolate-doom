@@ -59,7 +59,6 @@
 #include "p_saveg.h"
 
 #include "i_system.h"
-#include "i_sound.h"
 #include "i_timer.h"
 #include "i_video.h"
 

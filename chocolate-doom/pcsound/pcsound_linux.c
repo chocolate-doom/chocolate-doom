@@ -40,6 +40,7 @@
 #include "SDL_thread.h"
 
 #include "pcsound.h"
+#include "pcsound_internal.h"
 
 #define CONSOLE_DEVICE "/dev/console"
 

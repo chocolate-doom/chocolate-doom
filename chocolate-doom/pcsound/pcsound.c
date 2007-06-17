@@ -29,6 +29,7 @@
 
 #include "config.h"
 #include "pcsound.h"
+#include "pcsound_internal.h"
 
 #ifdef _WIN32
 extern pcsound_driver_t pcsound_win32_driver;
@@ -53,6 +54,13 @@ static pcsound_driver_t *drivers[] =
 };
 
 static pcsound_driver_t *pcsound_driver = NULL;
+
+int pcsound_sample_rate;
+
+void PCSound_SetSampleRate(int rate)
+{
+    pcsound_sample_rate = rate;
+}
 
 int PCSound_Init(pcsound_callback_func callback_func)
 {

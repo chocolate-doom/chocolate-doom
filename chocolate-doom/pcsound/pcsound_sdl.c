@@ -30,8 +30,16 @@
 #include "SDL_mixer.h"
 
 #include "pcsound.h"
+#include "pcsound_internal.h"
 
 #define SQUARE_WAVE_AMP 0x2000
+
+// If true, we initialised SDL and have the responsibility to shut it 
+// down
+
+static int sdl_was_initialised = 0;
+
+// Callback function to invoke when we want new sound data
 
 static pcsound_callback_func callback;
 
@@ -137,15 +145,56 @@ static void PCSound_Mix_Callback(void *udata, Uint8 *stream, int len)
     }
 }
 
+static int SDLIsInitialised(void)
+{
+    int freq, channels;
+    Uint16 format;
+
+    return Mix_QuerySpec(&freq, &format, &channels);
+}
+
+static void PCSound_SDL_Shutdown(void)
+{
+    if (sdl_was_initialised)
+    {
+        Mix_CloseAudio();
+        SDL_QuitSubSystem(SDL_INIT_AUDIO);
+        sdl_was_initialised = 0;
+    }
+}
+
 static int PCSound_SDL_Init(pcsound_callback_func callback_func)
 {
-    // Check that SDL_mixer has been opened already
-    // If not, fail
+    // Check if SDL_mixer has been opened already
+    // If not, we must initialise it now
 
-    if (!Mix_QuerySpec(&mixing_freq, &mixing_format, &mixing_channels))
+    if (!SDLIsInitialised())
     {
-        return 0;
+        if (SDL_Init(SDL_INIT_AUDIO) < 0)
+        {
+            fprintf(stderr, "Unable to set up sound.\n");
+            return 0;
+        }
+
+        if (Mix_OpenAudio(pcsound_sample_rate, AUDIO_S16SYS, 2, 1024) < 0)
+        {
+            fprintf(stderr, "Error initialising SDL_mixer: %s\n", Mix_GetError());
+
+            SDL_QuitSubSystem(SDL_INIT_AUDIO);
+            return 0;
+        }
+
+        SDL_PauseAudio(0);
+
+        // When this module shuts down, it has the responsibility to 
+        // shut down SDL.
+
+        sdl_was_initialised = 1;
     }
+
+    // Get the mixer frequency, format and number of channels.
+
+    Mix_QuerySpec(&mixing_freq, &mixing_format, &mixing_channels);
 
     // Only supports AUDIO_S16SYS
 
@@ -154,6 +203,8 @@ static int PCSound_SDL_Init(pcsound_callback_func callback_func)
         fprintf(stderr, 
                 "PCSound_SDL only supports native signed 16-bit LSB, "
                 "stereo format!\n");
+
+        PCSound_SDL_Shutdown();
         return 0;
     }
 
@@ -164,10 +215,6 @@ static int PCSound_SDL_Init(pcsound_callback_func callback_func)
     Mix_SetPostMix(PCSound_Mix_Callback, NULL);
 
     return 1;
-}
-
-static void PCSound_SDL_Shutdown(void)
-{
 }
 
 pcsound_driver_t pcsound_sdl_driver = 

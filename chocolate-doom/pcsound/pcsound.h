@@ -26,22 +26,21 @@
 #ifndef PCSOUND_H
 #define PCSOUND_H
 
-#define PCSOUND_8253_FREQUENCY 1193280
-
-typedef struct pcsound_driver_s pcsound_driver_t;
 typedef void (*pcsound_callback_func)(int *duration, int *frequency);
-typedef int (*pcsound_init_func)(pcsound_callback_func callback);
-typedef void (*pcsound_shutdown_func)(void);
 
-struct pcsound_driver_s
-{
-    char *name;
-    pcsound_init_func init_func;
-    pcsound_shutdown_func shutdown_func;
-};
+// Initialise the PC speaker subsystem.  The given function is called
+// periodically to request more sound data to play.
 
 int PCSound_Init(pcsound_callback_func callback_func);
+
+// Shut down the PC speaker subsystem.
+
 void PCSound_Shutdown(void);
+
+// Set the preferred output sample rate when emulating a PC speaker. 
+// This must be called before PCSound_Init.
+
+void PCSound_SetSampleRate(int rate);
 
 #endif /* #ifndef PCSOUND_H */
 
