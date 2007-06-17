@@ -52,7 +52,9 @@ static boolean sdl_was_initialised = false;
 static boolean musicpaused = false;
 static int current_music_volume;
 
-void I_ShutdownMusic(void)
+// Shutdown music
+
+static void I_SDL_ShutdownMusic(void)
 {    
     if (music_initialised)
     {
@@ -76,7 +78,9 @@ static boolean SDLIsInitialised(void)
     return Mix_QuerySpec(&freq, &format, &channels) != 0;
 }
 
-void I_InitMusic()
+// Initialise music subsystem
+
+static boolean I_SDL_InitMusic(void)
 { 
     // When trying to run with music enabled on OSX, display
     // a warning message.
@@ -97,14 +101,14 @@ void I_InitMusic()
         if (SDL_Init(SDL_INIT_AUDIO) < 0)
         {
             fprintf(stderr, "Unable to set up sound.\n");
-            return;
+            return false;
         }
 
         if (Mix_OpenAudio(snd_samplerate, AUDIO_S16SYS, 2, 1024) < 0)
         {
             fprintf(stderr, "Error initialising SDL_mixer: %s\n", Mix_GetError());
             SDL_QuitSubSystem(SDL_INIT_AUDIO);
-            return;
+            return false;
         }
 
         SDL_PauseAudio(0);
@@ -113,6 +117,8 @@ void I_InitMusic()
     }
 
     music_initialised = true;
+
+    return true;
 }
 
 //
@@ -136,8 +142,9 @@ static void UpdateMusicVolume(void)
     Mix_VolumeMusic(vol);
 }
 
-// MUSIC API - dummy. Some code from DOS version.
-void I_SetMusicVolume(int volume)
+// Set music volume (0 - 127)
+
+static void I_SDL_SetMusicVolume(int volume)
 {
     // Internal state variable.
     current_music_volume = volume;
@@ -145,7 +152,9 @@ void I_SetMusicVolume(int volume)
     UpdateMusicVolume();
 }
 
-void I_PlaySong(void *handle, int looping)
+// Start playing a mid
+
+static void I_SDL_PlaySong(void *handle, int looping)
 {
     Mix_Music *music = (Mix_Music *) handle;
     int loops;
@@ -172,7 +181,7 @@ void I_PlaySong(void *handle, int looping)
     Mix_PlayMusic(music, loops);
 }
 
-void I_PauseSong (void *handle)
+static void I_SDL_PauseSong(void)
 {
     if (!music_initialised)
     {
@@ -184,7 +193,7 @@ void I_PauseSong (void *handle)
     UpdateMusicVolume();
 }
 
-void I_ResumeSong (void *handle)
+static void I_SDL_ResumeSong(void)
 {
     if (!music_initialised)
     {
@@ -196,7 +205,7 @@ void I_ResumeSong (void *handle)
     UpdateMusicVolume();
 }
 
-void I_StopSong(void *handle)
+static void I_SDL_StopSong(void)
 {
     if (!music_initialised)
     {
@@ -206,7 +215,7 @@ void I_StopSong(void *handle)
     Mix_HaltMusic();
 }
 
-void I_UnRegisterSong(void *handle)
+static void I_SDL_UnRegisterSong(void *handle)
 {
     Mix_Music *music = (Mix_Music *) handle;
 
@@ -256,7 +265,7 @@ static boolean ConvertMus(byte *musdata, int len, char *filename)
     return result;
 }
 
-void *I_RegisterSong(void *data, int len)
+static void *I_SDL_RegisterSong(void *data, int len)
 {
     char *filename;
     Mix_Music *music;
@@ -303,7 +312,7 @@ void *I_RegisterSong(void *data, int len)
 }
 
 // Is the song playing?
-boolean I_QrySongPlaying(void *handle)
+static boolean I_SDL_MusicIsPlaying(void)
 {
     if (!music_initialised)
     {
@@ -313,5 +322,32 @@ boolean I_QrySongPlaying(void *handle)
     return Mix_PlayingMusic();
 }
 
+static snddevice_t music_sdl_devices[] =
+{
+    SNDDEVICE_ADLIB,
+    SNDDEVICE_SB,
+    SNDDEVICE_PAS,
+    SNDDEVICE_GUS,
+    SNDDEVICE_WAVEBLASTER,
+    SNDDEVICE_SOUNDCANVAS,
+    SNDDEVICE_GENMIDI,
+    SNDDEVICE_AWE32,
+};
+
+music_module_t music_sdl_module =
+{
+    music_sdl_devices,
+    sizeof(music_sdl_devices) / sizeof(*music_sdl_devices),
+    I_SDL_InitMusic,
+    I_SDL_ShutdownMusic,
+    I_SDL_SetMusicVolume,
+    I_SDL_PauseSong,
+    I_SDL_ResumeSong,
+    I_SDL_RegisterSong,
+    I_SDL_UnRegisterSong,
+    I_SDL_PlaySong,
+    I_SDL_StopSong,
+    I_SDL_MusicIsPlaying,
+};
 
 

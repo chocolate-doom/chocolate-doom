@@ -45,8 +45,12 @@ typedef enum
     SNDDEVICE_AWE32 = 9,
 } snddevice_t;
 
+// Interface for sound modules
+
 typedef struct
 {
+    // List of sound devices that this sound module is used for.
+
     snddevice_t *sound_devices;
     int num_sound_devices;
 
@@ -85,6 +89,57 @@ typedef struct
     boolean (*SoundIsPlaying)(int channel);
 
 } sound_module_t;
+
+// Interface for music modules
+
+typedef struct
+{
+    // List of sound devices that this music module is used for.
+
+    snddevice_t *sound_devices;
+    int num_sound_devices;
+
+    // Initialise the music subsystem
+
+    boolean (*Init)(void);
+
+    // Shutdown the music subsystem
+
+    void (*Shutdown)(void);
+
+    // Set music volume - range 0-127
+
+    void (*SetMusicVolume)(int volume);
+
+    // Pause music
+
+    void (*PauseMusic)(void);
+
+    // Un-pause music
+
+    void (*ResumeMusic)(void);
+
+    // Register a song handle from data
+    // Returns a handle that can be used to play the song
+
+    void *(*RegisterSong)(void *data, int len);
+
+    // Un-register (free) song data
+
+    void (*UnRegisterSong)(void *handle);
+
+    // Play the song
+
+    void (*PlaySong)(void *handle, int looping);
+
+    // Stop playing the current song.
+
+    void (*StopSong)(void);
+
+    // Query if music is playing.
+
+    boolean (*MusicIsPlaying)(void);
+} music_module_t;
 
 extern int snd_sfxdevice;
 extern int snd_musicdevice;

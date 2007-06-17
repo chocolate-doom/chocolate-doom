@@ -167,8 +167,7 @@ chocolate_doom_LDADD = ../textscreen/libtextscreen.a ../pcsound/libpcsound.a @LD
 
 EXTRA_DIST =                               \
         chocolate_doom_icon.c              \
-        chocolate-doom-screensaver.desktop \
-        s_dummy.c
+        chocolate-doom-screensaver.desktop
 
 .rc.o:
 	$(WINDRES) $^ -o $@
