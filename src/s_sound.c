@@ -26,7 +26,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "i_music.h"
 #include "i_system.h"
 
 #include "doomfeatures.h"
@@ -91,9 +90,10 @@ typedef struct
     
 } channel_t;
 
-// Low-level sound module we are using
+// Low-level sound and music modules we are using
 
 static sound_module_t *sound_module;
+static music_module_t *music_module;
 
 // The set of channels available
 
@@ -131,10 +131,11 @@ int numChannels = 8;
 int snd_musicdevice = DEFAULT_MUSIC_DEVICE;
 int snd_sfxdevice = SNDDEVICE_SB;
 
-// Sound effect modules
+// Sound modules
 
 extern sound_module_t sound_sdl_module;
 extern sound_module_t sound_pcsound_module;
+extern music_module_t music_sdl_module;
 
 // Compiled-in sound modules:
 
@@ -144,6 +145,17 @@ static sound_module_t *sound_modules[] =
     &sound_sdl_module,
     &sound_pcsound_module,
 #endif
+    NULL,
+};
+
+// Compiled-in music modules:
+
+static music_module_t *music_modules[] =
+{
+#ifdef FEATURE_SOUND
+    &music_sdl_module,
+#endif
+    NULL,
 };
 
 // Check if a sound device is in the given list of devices
@@ -173,7 +185,7 @@ static void InitSfxModule(void)
 
     sound_module = NULL;
 
-    for (i=0; i<sizeof(sound_modules) / sizeof(*sound_modules); ++i)
+    for (i=0; sound_modules[i] != NULL; ++i)
     {
         // Is the sfx device in the list of devices supported by
         // this module?
@@ -197,9 +209,27 @@ static void InitSfxModule(void)
 
 static void InitMusicModule(void)
 {
-    if (snd_musicdevice >= SNDDEVICE_ADLIB)
+    int i;
+
+    music_module = NULL;
+
+    for (i=0; music_modules[i] != NULL; ++i)
     {
-        I_InitMusic();
+        // Is the music device in the list of devices supported
+        // by this module?
+
+        if (SndDeviceInList(snd_musicdevice, 
+                            music_modules[i]->sound_devices,
+                            music_modules[i]->num_sound_devices))
+        {
+            // Initialise the module
+
+            if (music_modules[i]->Init())
+            {
+                music_module = music_modules[i];
+                return;
+            }
+        }
     }
 }
 
@@ -259,7 +289,10 @@ void S_Shutdown(void)
         sound_module->Shutdown();
     }
 
-    I_ShutdownMusic();
+    if (music_module != NULL)
+    {
+        music_module->Shutdown();
+    }
 }
 
 static void S_StopChannel(int cnum)
@@ -616,7 +649,10 @@ void S_PauseSound(void)
 {
     if (mus_playing && !mus_paused)
     {
-        I_PauseSong(mus_playing->handle);
+        if (music_module != NULL)
+        {
+            music_module->PauseMusic();
+        }
         mus_paused = true;
     }
 }
@@ -625,7 +661,10 @@ void S_ResumeSound(void)
 {
     if (mus_playing && mus_paused)
     {
-        I_ResumeSong(mus_playing->handle);
+        if (music_module != NULL)
+        {
+            music_module->ResumeMusic();
+        }
         mus_paused = false;
     }
 }
@@ -707,8 +746,10 @@ void S_SetMusicVolume(int volume)
                 volume);
     }    
 
-    I_SetMusicVolume(127);
-    I_SetMusicVolume(volume);
+    if (music_module != NULL)
+    {
+        music_module->SetMusicVolume(volume);
+    }
 }
 
 void S_SetSfxVolume(int volume)
@@ -732,8 +773,9 @@ void S_StartMusic(int m_id)
 
 void S_ChangeMusic(int musicnum, int looping)
 {
-    musicinfo_t*        music = NULL;
-    char                namebuf[9];
+    musicinfo_t *music = NULL;
+    char namebuf[9];
+    void *handle;
 
     if (musicnum <= mus_None || musicnum >= NUMMUSIC)
     {
@@ -759,36 +801,54 @@ void S_ChangeMusic(int musicnum, int looping)
         music->lumpnum = W_GetNumForName(namebuf);
     }
 
-    // load & register it
-    music->data = W_CacheLumpNum(music->lumpnum, PU_MUSIC);
-    music->handle = I_RegisterSong(music->data, W_LumpLength(music->lumpnum));
+    if (music_module != NULL)
+    {
+        // Load & register it
 
-    // play it
-    I_PlaySong(music->handle, looping);
+        music->data = W_CacheLumpNum(music->lumpnum, PU_MUSIC);
+        handle = music_module->RegisterSong(music->data, 
+                                            W_LumpLength(music->lumpnum));
+        music->handle = handle;
+
+        // Play it
+
+        music_module->PlaySong(handle, looping);
+    }
 
     mus_playing = music;
 }
 
 boolean S_MusicPlaying(void)
 {
-    return I_QrySongPlaying(NULL);
+    if (music_module != NULL)
+    {
+        return music_module->MusicIsPlaying();
+    }
+    else
+    {
+        return false;
+    }
 }
 
 void S_StopMusic(void)
 {
     if (mus_playing)
     {
-        if (mus_paused)
+        if (music_module != NULL)
         {
-            I_ResumeSong(mus_playing->handle);
+            if (mus_paused)
+            {
+                music_module->ResumeMusic();
+            }
+
+            music_module->StopSong();
+            music_module->UnRegisterSong(mus_playing->handle);
+            Z_ChangeTag(mus_playing->data, PU_CACHE);
+            
+            mus_playing->data = NULL;
         }
 
-        I_StopSong(mus_playing->handle);
-        I_UnRegisterSong(mus_playing->handle);
-        Z_ChangeTag(mus_playing->data, PU_CACHE);
-        
-        mus_playing->data = 0;
-        mus_playing = 0;
+        mus_playing = NULL;
     }
 }
 
