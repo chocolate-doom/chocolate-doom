@@ -89,6 +89,7 @@
 		<Unit filename="..\src\z_zone.h" />
 		<Extensions>
 			<code_completion />
+			<envvars />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
