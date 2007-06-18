@@ -155,6 +155,14 @@ static void AddExtraParameters(execute_context_t *exec)
     }
 }
 
+static void AddIWADParameter(execute_context_t *exec)
+{
+    if (iwadfile != NULL)
+    {
+        AddCmdLineParameter(exec, "-iwad %s", iwadfile);
+    }
+}
+
 static void StartGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
 {
     execute_context_t *exec;
@@ -166,11 +174,7 @@ static void StartGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
 
     AddExtraParameters(exec);
 
-    if (iwadfile != NULL)
-    {
-        AddCmdLineParameter(exec, "-iwad %s", iwadfile);
-    }
-
+    AddIWADParameter(exec);
     AddCmdLineParameter(exec, "-server");
     AddCmdLineParameter(exec, "-skill %i", skill + 1);
 
@@ -555,7 +559,12 @@ static void DoJoinGame(void *unused1, void *unused2)
     exec = NewExecuteContext();
 
     AddCmdLineParameter(exec, "-connect %s", connect_address);
+
+    // Extra parameters come first, so that they can be used to override
+    // the other parameters.
+
     AddExtraParameters(exec);
+    AddIWADParameter(exec);
     AddWADs(exec);
 
     TXT_Shutdown();
