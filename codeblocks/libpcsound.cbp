@@ -44,6 +44,7 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\pcsound\pcsound.h" />
+		<Unit filename="..\pcsound\pcsound_internal.h" />
 		<Unit filename="..\pcsound\pcsound_linux.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -55,6 +56,7 @@
 		</Unit>
 		<Extensions>
 			<code_completion />
+			<envvars />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

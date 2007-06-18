@@ -165,15 +165,16 @@
 		<Unit filename="..\src\i_pcsound.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\src\i_pcsound.h" />
 		<Unit filename="..\src\i_scale.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\i_scale.h" />
-		<Unit filename="..\src\i_sound.c">
+		<Unit filename="..\src\i_sdlmusic.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\src\i_sound.h" />
+		<Unit filename="..\src\i_sdlsound.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="..\src\i_swap.h" />
 		<Unit filename="..\src\i_system.c">
 			<Option compilerVar="CC" />
@@ -422,6 +423,7 @@
 		<Unit filename="..\src\z_zone.h" />
 		<Extensions>
 			<code_completion />
+			<envvars />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
