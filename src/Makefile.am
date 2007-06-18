@@ -146,9 +146,9 @@ w_merge.c            w_merge.h
 # source files needed for FEATURE_SOUND
 
 FEATURE_SOUND_SOURCE_FILES =               \
-i_pcsound.c          i_pcsound.h           \
+i_pcsound.c                                \
 i_sdlsound.c                               \
-i_sdlmusic.c         i_music.h             \
+i_sdlmusic.c                               \
 mus2mid.c            mus2mid.h
 
 SOURCE_FILES = $(MAIN_SOURCE_FILES)                \
