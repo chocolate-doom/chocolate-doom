@@ -43,6 +43,8 @@ int joybfire = 0;
 int joybstrafe = 1;
 int joybuse = 2;
 int joybspeed = 3;
+int joybstrafeleft = -1;
+int joybstraferight = -1;
 
 // Joystick to use, as an SDL joystick index:
 
@@ -325,6 +327,12 @@ static void SetJoystickButtonLabel(void)
     TXT_SetButtonLabel(joystick_button, name);
 }
 
+static void AddJoystickControl(txt_table_t *table, char *label, int *var)
+{
+    TXT_AddWidget(table, TXT_NewLabel(label));
+    TXT_AddWidget(table, TXT_NewJoystickInput(var));
+}
+
 void ConfigJoystick(void)
 {
     txt_window_t *window;
@@ -351,14 +359,8 @@ void ConfigJoystick(void)
 
     TXT_SetColumnWidths(button_table, 20, 15);
 
-    TXT_AddWidgets(button_table,
-                   TXT_NewLabel("Fire"),
-                   TXT_NewJoystickInput(&joybfire),
-                   TXT_NewLabel("Use"),
-                   TXT_NewJoystickInput(&joybuse),
-                   TXT_NewLabel("Strafe"),
-                   TXT_NewJoystickInput(&joybstrafe),
-                   NULL);
+    AddJoystickControl(button_table, "Fire", &joybfire);
+    AddJoystickControl(button_table, "Use", &joybuse);
 
     // High values of joybspeed are used to activate the "always run mode"
     // trick in Vanilla Doom.  If this has been enabled, not only is the
@@ -366,11 +368,13 @@ void ConfigJoystick(void)
 
     if (joybspeed < 20)
     {
-        TXT_AddWidgets(button_table,
-                       TXT_NewLabel("Speed"),
-                       TXT_NewJoystickInput(&joybspeed),
-                       NULL);
+        AddJoystickControl(button_table, "Speed", &joybspeed);
     }
+
+    AddJoystickControl(button_table, "Strafe", &joybstrafe);
+
+    AddJoystickControl(button_table, "Strafe Left", &joybstrafeleft);
+    AddJoystickControl(button_table, "Strafe Right", &joybstraferight);
 
     TXT_SignalConnect(joystick_button, "pressed", CalibrateJoystick, NULL);
 

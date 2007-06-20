@@ -177,11 +177,23 @@ int		key_speed = KEY_RSHIFT;
 int             mousebfire = 0;
 int             mousebstrafe = 1;
 int             mousebforward = 2;
+
+int             mousebstrafeleft = -1;
+int             mousebstraferight = -1;
+int             mousebbackward = -1;
+int             mousebuse = -1;
+
+// Control whether if a mouse button is double clicked, it acts like 
+// "use" has been pressed
+
+int             dclick_use = 1;
  
 int             joybfire = 0; 
 int             joybstrafe = 1; 
 int             joybuse = 3; 
 int             joybspeed = 2; 
+int             joybstrafeleft = -1;
+int             joybstraferight = -1;
 
 // fraggle: Disallow mouse and joystick movement to cause forward/backward
 // motion.  Specified with the '-novert' command line parameter.
@@ -465,11 +477,21 @@ void G_BuildTiccmd (ticcmd_t* cmd)
         if (joyymove > 0) 
             forward -= forwardmove[speed]; 
     }
-    if (gamekeydown[key_straferight]) 
-	side += sidemove[speed]; 
-    if (gamekeydown[key_strafeleft]) 
-	side -= sidemove[speed];
-    
+
+    if (gamekeydown[key_strafeleft]
+     || joybuttons[joybstrafeleft]
+     || mousebuttons[mousebstrafeleft]) 
+    {
+        side -= sidemove[speed];
+    }
+
+    if (gamekeydown[key_straferight]
+     || joybuttons[joybstraferight]
+     || mousebuttons[mousebstraferight])
+    {
+        side += sidemove[speed]; 
+    }
+
     // buttons
     cmd->chatchar = HU_dequeueChatChar(); 
  
@@ -477,7 +499,9 @@ void G_BuildTiccmd (ticcmd_t* cmd)
 	|| joybuttons[joybfire]) 
 	cmd->buttons |= BT_ATTACK; 
  
-    if (gamekeydown[key_use] || joybuttons[joybuse] ) 
+    if (gamekeydown[key_use]
+     || joybuttons[joybuse]
+     || mousebuttons[mousebuse])
     { 
 	cmd->buttons |= BT_USE;
 	// clear double clicks if hit use button 
@@ -495,59 +519,68 @@ void G_BuildTiccmd (ticcmd_t* cmd)
     
     // mouse
     if (mousebuttons[mousebforward]) 
+    {
 	forward += forwardmove[speed];
-    
-    // forward double click
-    if (mousebuttons[mousebforward] != dclickstate && dclicktime > 1 ) 
-    { 
-	dclickstate = mousebuttons[mousebforward]; 
-	if (dclickstate) 
-	    dclicks++; 
-	if (dclicks == 2) 
-	{ 
-	    cmd->buttons |= BT_USE; 
-	    dclicks = 0; 
-	} 
-	else 
-	    dclicktime = 0; 
-    } 
-    else 
-    { 
-	dclicktime += ticdup; 
-	if (dclicktime > 20) 
-	{ 
-	    dclicks = 0; 
-	    dclickstate = 0; 
-	} 
     }
-    
-    // strafe double click
-    bstrafe =
-	mousebuttons[mousebstrafe] 
-	|| joybuttons[joybstrafe]; 
-    if (bstrafe != dclickstate2 && dclicktime2 > 1 ) 
-    { 
-	dclickstate2 = bstrafe; 
-	if (dclickstate2) 
-	    dclicks2++; 
-	if (dclicks2 == 2) 
-	{ 
-	    cmd->buttons |= BT_USE; 
-	    dclicks2 = 0; 
-	} 
-	else 
-	    dclicktime2 = 0; 
-    } 
-    else 
-    { 
-	dclicktime2 += ticdup; 
-	if (dclicktime2 > 20) 
-	{ 
-	    dclicks2 = 0; 
-	    dclickstate2 = 0; 
-	} 
-    } 
- 
+    if (mousebuttons[mousebbackward])
+    {
+        forward -= forwardmove[speed];
+    }
+
+    if (dclick_use)
+    {
+        // forward double click
+        if (mousebuttons[mousebforward] != dclickstate && dclicktime > 1 ) 
+        { 
+            dclickstate = mousebuttons[mousebforward]; 
+            if (dclickstate) 
+                dclicks++; 
+            if (dclicks == 2) 
+            { 
+                cmd->buttons |= BT_USE; 
+                dclicks = 0; 
+            } 
+            else 
+                dclicktime = 0; 
+        } 
+        else 
+        { 
+            dclicktime += ticdup; 
+            if (dclicktime > 20) 
+            { 
+                dclicks = 0; 
+                dclickstate = 0; 
+            } 
+        }
+        
+        // strafe double click
+        bstrafe =
+            mousebuttons[mousebstrafe] 
+            || joybuttons[joybstrafe]; 
+        if (bstrafe != dclickstate2 && dclicktime2 > 1 ) 
+        { 
+            dclickstate2 = bstrafe; 
+            if (dclickstate2) 
+                dclicks2++; 
+            if (dclicks2 == 2) 
+            { 
+                cmd->buttons |= BT_USE; 
+                dclicks2 = 0; 
+            } 
+            else 
+                dclicktime2 = 0; 
+        } 
+        else 
+        { 
+            dclicktime2 += ticdup; 
+            if (dclicktime2 > 20) 
+            { 
+                dclicks2 = 0; 
+                dclickstate2 = 0; 
+            } 
+        } 
+    }
+
     // fraggle: allow disabling mouse y movement
  
     if (!novert) 

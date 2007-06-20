@@ -32,6 +32,11 @@ extern int grabmouse;
 extern int mousebfire;
 extern int mousebforward;
 extern int mousebstrafe;
+extern int mousebstrafeleft;
+extern int mousebstraferight;
+extern int mousebbackward;
+extern int mousebuse;
+extern int dclick_use;
 
 void ConfigMouse(void);
 

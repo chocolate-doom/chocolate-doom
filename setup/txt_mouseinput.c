@@ -117,9 +117,9 @@ static void TXT_MouseInputDrawer(TXT_UNCAST_ARG(mouse_input), int selected)
     char buf[20];
     int i;
 
-    if (*mouse_input->variable == -1)
+    if (*mouse_input->variable < 0)
     {
-        strcpy(buf, "");
+        strcpy(buf, "(none)");
     }
     else
     {
