@@ -272,6 +272,11 @@ static default_t extra_defaults_list[] =
     {"joystick_x_invert",           &joystick_x_invert, DEFAULT_INT, 0, 0},
     {"joystick_y_axis",             &joystick_y_axis, DEFAULT_INT, 0, 0},
     {"joystick_y_invert",           &joystick_y_invert, DEFAULT_INT, 0, 0},
+    {"joyb_strafeleft",             &joybstrafeleft, DEFAULT_INT, 0, 0},
+    {"joyb_straferight",            &joybstraferight, DEFAULT_INT, 0, 0},
+    {"dclick_use",                  &dclick_use, DEFAULT_INT, 0, 0},
+    {"mouseb_strafeleft",           &mousebstrafeleft, DEFAULT_INT, 0, 0},
+    {"mouseb_straferight",           &mousebstraferight, DEFAULT_INT, 0, 0},
 };
 
 static default_collection_t extra_defaults =
