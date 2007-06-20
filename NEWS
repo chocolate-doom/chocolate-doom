@@ -30,7 +30,7 @@
        Doom .mus format to .mid a lot better.  As one example, tnt.wad
        Map02 is now a lot closer to how Vanilla says.  Also, the music 
        on the deca.wad titlescreen now plays!
-     * x3 and x4 display scale.
+     * x3, x4 and x5 display scale (thanks to MikeRS for x5 scale).
      * Fullscreen "letterbox" mode allows Chocolate Doom to run on machines
        where 1.6:1 aspect ratio modes are unavailable (320x200/640x400).
        The game runs in 320x240/640x480 instead, with black borders.

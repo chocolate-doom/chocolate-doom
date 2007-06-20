@@ -47,6 +47,7 @@ static vidmode_t modes[] =
     { "960x600",  "960x720",  3, NULL },
     { "640x400",  "640x480",  2, NULL },
     { "1280x800", "1280x960", 4, NULL },
+    { "1600x1000", "1600x1200", 5, NULL },
     { NULL,       NULL,       0, NULL },
 };
 

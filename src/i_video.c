@@ -640,6 +640,10 @@ static void BlitArea(int x1, int y1, int x2, int y2)
         { 
             scale_function = I_Stretch4x;
         }
+        else if (screenmultiply == 5)
+        {
+            scale_function = I_Stretch5x;
+        }
         else
         {
             I_Error("No aspect ratio stretching function for screenmultiply=%i",
@@ -662,6 +666,10 @@ static void BlitArea(int x1, int y1, int x2, int y2)
         else if (screenmultiply == 4)
         {
             scale_function = I_Scale4x;
+        }
+        else if (screenmultiply == 5)
+        {
+            scale_function = I_Scale5x;
         }
         else
         {
@@ -962,7 +970,7 @@ static void CheckCommandLine(void)
 
     nomouse = M_CheckParm("-nomouse") > 0;
 
-    // 2x, 3x, 4x scale mode
+    // 2x, 3x, 4x, 5x scale mode
  
     //!
     // @category video 
@@ -1008,10 +1016,21 @@ static void CheckCommandLine(void)
         screenmultiply = 4;
     }
 
+    //!
+    // @category video
+    //
+    // Double up the screen to 5x its size.
+    //
+
+    if (M_CheckParm("-5"))
+    {
+        screenmultiply = 5;
+    }
+
     if (screenmultiply < 1)
         screenmultiply = 1;
-    if (screenmultiply > 4)
-        screenmultiply = 4;
+    if (screenmultiply > 5)
+        screenmultiply = 5;
 }
 
 static void AutoAdjustSettings(void)
