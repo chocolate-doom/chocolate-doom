@@ -143,9 +143,9 @@ static void TXT_JoystickInputDrawer(TXT_UNCAST_ARG(joystick_input), int selected
     char buf[20];
     int i;
 
-    if (*joystick_input->variable == -1)
+    if (*joystick_input->variable < 0)
     {
-        strcpy(buf, "");
+        strcpy(buf, "(none)");
     }
     else
     {
