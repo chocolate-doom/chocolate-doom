@@ -1,6 +1,5 @@
 To do:
 
-* Joystick/gamepad support.
 * Install packages:
   - Debian/Ubuntu .deb packages, Fedora .rpm packages.
   - Windows NSIS installer.
@@ -8,13 +7,11 @@ To do:
 * Better icon for chocolate-setup.
 * Free version of the Chocolate Doom logo (from scratch, not using the 
   Doom imp sprite), so t-shirts can be printed!
-* Automatic WAD installer - download and run TCs from a list automatically
-  (automating the current "instructions on wiki" system)
-* Demo hashes for regression testing of this and other ports.
+* File selector for chocolate-setup, so that WADs can be selected from
+  a browser, instead of simply typing the filenames.
 * Multiplayer:
   - Master server for locating servers automatically - makes setting up
     public servers easier.
-  - DWANGO-like interface for finding players and setting up games.
   - Incorporate local LAN search into setup interface.
   - Multiplayer options and configuration file (server name, etc)
 * Improve multiplayer startup: 
@@ -22,11 +19,19 @@ To do:
     all players having to specify -iwad.
   - Send list of WADs to load instead of all clients having to specify -file.
   - Same applies to dehacked patches and wad merging parameters.
-* MSVC build
 * Portability improvements:
+  - Test on and fix for architectures where ((-2) >> 1) != -1
   - Use size-specific types (eg. int32_t instead of int)
   - Don't make structure packing assumptions when loading levels.
-* OPL emulation
 * Port to every OS under the sun
+
+Crazy pie in the sky ideas:
+
+* Automatic WAD installer - download and run TCs from a list automatically
+  (automating the current "instructions on wiki" system)
+* DWANGO-like interface for finding players and setting up games.
+* Demo hashes for regression testing of this and other ports.
+* MSVC build
+* OPL emulation
 * Video capture mode?
 
