@@ -39,6 +39,7 @@ void I_Scale1x(int x1, int y1, int x2, int y2);
 void I_Scale2x(int x1, int y1, int x2, int y2);
 void I_Scale3x(int x1, int y1, int x2, int y2);
 void I_Scale4x(int x1, int y1, int x2, int y2);
+void I_Scale5x(int x1, int y1, int x2, int y2);
 
 // Aspect ratio correcting scale up functions
 
@@ -46,6 +47,7 @@ void I_Stretch1x(int x1, int y1, int x2, int y2);
 void I_Stretch2x(int x1, int y1, int x2, int y2);
 void I_Stretch3x(int x1, int y1, int x2, int y2);
 void I_Stretch4x(int x1, int y1, int x2, int y2);
+void I_Stretch5x(int x1, int y1, int x2, int y2);
 
 #endif /* #ifndef __I_SCALE__ */
 
