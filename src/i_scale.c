@@ -190,6 +190,48 @@ void I_Scale4x(int x1, int y1, int x2, int y2)
     }
 }
 
+void I_Scale5x(int x1, int y1, int x2, int y2)
+{
+    byte *bufp, *screenp, *screenp2, *screenp3, *screenp4, *screenp5;
+    int x, y;
+    int multi_pitch;
+
+    multi_pitch = dest_pitch * 5;
+    bufp = src_buffer + y1 * SCREENWIDTH + x1;
+    screenp = (byte *) dest_buffer + (y1 * dest_pitch + x1) * 5;
+    screenp2 = screenp + dest_pitch;
+    screenp3 = screenp + dest_pitch * 2;
+    screenp4 = screenp + dest_pitch * 3;
+    screenp5 = screenp + dest_pitch * 4;
+
+    for (y=y1; y<y2; ++y)
+    {
+        byte *sp, *sp2, *sp3, *sp4, *sp5, *bp;
+        sp = screenp;
+        sp2 = screenp2;
+        sp3 = screenp3;
+        sp4 = screenp4;
+        sp5 = screenp5;
+        bp = bufp;
+
+        for (x=x1; x<x2; ++x)
+        {
+            *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;
+            *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp;
+            *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp;
+            *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp;
+            *sp5++ = *bp; *sp5++ = *bp; *sp5++ = *bp; *sp5++ = *bp; *sp5++ = *bp;
+            ++bp;
+        }
+        screenp += multi_pitch;
+        screenp2 += multi_pitch;
+        screenp3 += multi_pitch;
+        screenp4 += multi_pitch;
+        screenp5 += multi_pitch;
+        bufp += SCREENWIDTH;
+    }
+}
+
 // Search through the given palette, finding the nearest color that matches
 // the given color.
 
@@ -729,6 +771,70 @@ void I_Stretch4x(int x1, int y1, int x2, int y2)
 
         // 100% line 4
         WriteLine4x(screenp, bufp);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+    }
+}
+
+static void WriteLine5x(byte *dest, byte *src)
+{
+    int x;
+
+    for (x=0; x<SCREENWIDTH; ++x)
+    {
+        dest[0] = *src;
+        dest[1] = *src;
+        dest[2] = *src;
+        dest[3] = *src;
+        dest[4] = *src;
+        dest += 5;
+        ++src;
+    }
+}
+
+void I_Stretch5x(int x1, int y1, int x2, int y2)
+{
+    byte *bufp, *screenp;
+    int y;
+
+    // Only works with full screen update
+
+    if (x1 != 0 || y1 != 0 || x2 != SCREENWIDTH || y2 != SCREENHEIGHT)
+    {
+        return;
+    }    
+
+    // Need to byte-copy from buffer into the screen buffer
+
+    bufp = src_buffer + y1 * SCREENWIDTH + x1;
+    screenp = (byte *) dest_buffer + y1 * dest_pitch + x1;
+
+    // For every 1 line of src_buffer, 6 lines are written to dest_buffer.
+    // (200 -> 1200)
+
+    for (y=0; y<SCREENHEIGHT; y += 1)
+    {
+        // 100% line 0
+        WriteLine5x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 0
+        WriteLine5x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 0
+        WriteLine5x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 0
+        WriteLine5x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 0
+        WriteLine5x(screenp, bufp);
+        screenp += dest_pitch;
+
+        // 100% line 0
+        WriteLine5x(screenp, bufp);
         screenp += dest_pitch; bufp += SCREENWIDTH;
     }
 }
