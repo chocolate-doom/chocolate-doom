@@ -220,7 +220,7 @@ boolean P_CheckMissileRange (mobj_t* actor)
     if (!actor->info->meleestate)
 	dist -= 128*FRACUNIT;	// no melee attack, so fire more
 
-    dist /= FRACUNIT;
+    dist >>= 16;
 
     if (actor->type == MT_VILE)
     {
@@ -233,7 +233,7 @@ boolean P_CheckMissileRange (mobj_t* actor)
     {
 	if (dist < 196)	
 	    return false;	// close for fist attack
-	dist /= 2;
+	dist >>= 1;
     }
 	
 
@@ -241,7 +241,7 @@ boolean P_CheckMissileRange (mobj_t* actor)
 	|| actor->type == MT_SPIDER
 	|| actor->type == MT_SKULL)
     {
-	dist /= 2;
+	dist >>= 1;
     }
     
     if (dist > 200)
@@ -1149,9 +1149,9 @@ boolean PIT_VileCheck (mobj_t*	thing)
 		
     corpsehit = thing;
     corpsehit->momx = corpsehit->momy = 0;
-    corpsehit->height *= 4;
+    corpsehit->height <<= 2;
     check = P_CheckPosition (corpsehit, corpsehit->x, corpsehit->y);
-    corpsehit->height /= 4;
+    corpsehit->height >>= 2;
 
     if (!check)
 	return true;		// doesn't fit here
@@ -1439,7 +1439,7 @@ void A_SkullAttack (mobj_t* actor)
     
     if (dist < 1)
 	dist = 1;
-    actor->momz = (dest->z+(dest->height / 2) - actor->z) / dist;
+    actor->momz = (dest->z+(dest->height>>1) - actor->z) / dist;
 }
 
 

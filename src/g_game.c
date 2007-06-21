@@ -1638,7 +1638,7 @@ G_InitNew
     if (fastparm || (skill == sk_nightmare && gameskill != sk_nightmare) )
     { 
 	for (i=S_SARG_RUN1 ; i<=S_SARG_PAIN2 ; i++) 
-	    states[i].tics /= 2;
+	    states[i].tics >>= 1; 
 	mobjinfo[MT_BRUISERSHOT].speed = 20*FRACUNIT; 
 	mobjinfo[MT_HEADSHOT].speed = 20*FRACUNIT; 
 	mobjinfo[MT_TROOPSHOT].speed = 20*FRACUNIT; 
@@ -1646,7 +1646,7 @@ G_InitNew
     else if (skill != sk_nightmare && gameskill == sk_nightmare) 
     { 
 	for (i=S_SARG_RUN1 ; i<=S_SARG_PAIN2 ; i++) 
-	    states[i].tics *= 2;
+	    states[i].tics <<= 1; 
 	mobjinfo[MT_BRUISERSHOT].speed = 15*FRACUNIT; 
 	mobjinfo[MT_HEADSHOT].speed = 10*FRACUNIT; 
 	mobjinfo[MT_TROOPSHOT].speed = 10*FRACUNIT; 
