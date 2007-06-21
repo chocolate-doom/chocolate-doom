@@ -171,7 +171,6 @@ mline_t player_arrow[] = {
     { { -R+3*R/8, 0 }, { -R+R/8, -R/4 } }
 };
 #undef R
-#define NUMPLYRLINES (sizeof(player_arrow)/sizeof(mline_t))
 
 #define R ((8*PLAYERRADIUS)/7)
 mline_t cheat_player_arrow[] = {
@@ -193,7 +192,6 @@ mline_t cheat_player_arrow[] = {
     { { R/6+R/32, -R/7-R/32 }, { R/6+R/10, -R/7 } }
 };
 #undef R
-#define NUMCHEATPLYRLINES (sizeof(cheat_player_arrow)/sizeof(mline_t))
 
 #define R (FRACUNIT)
 mline_t triangle_guy[] = {
@@ -202,7 +200,6 @@ mline_t triangle_guy[] = {
     { { 0, R }, { -.867*R, -.5*R } }
 };
 #undef R
-#define NUMTRIANGLEGUYLINES (sizeof(triangle_guy)/sizeof(mline_t))
 
 #define R (FRACUNIT)
 mline_t thintriangle_guy[] = {
@@ -211,7 +208,6 @@ mline_t thintriangle_guy[] = {
     { { -.5*R, .7*R }, { -.5*R, -.7*R } }
 };
 #undef R
-#define NUMTHINTRIANGLEGUYLINES (sizeof(thintriangle_guy)/sizeof(mline_t))
 
 
 
@@ -800,7 +796,7 @@ void AM_updateLightLev(void)
     if (amclock>nexttic)
     {
 	lightlev = litelevels[litelevelscnt++];
-	if (litelevelscnt == sizeof(litelevels)/sizeof(int)) litelevelscnt = 0;
+	if (litelevelscnt == arrlen(litelevels)) litelevelscnt = 0;
 	nexttic = amclock + 6 - (amclock % 6);
     }
 
@@ -1262,11 +1258,11 @@ void AM_drawPlayers(void)
     {
 	if (cheating)
 	    AM_drawLineCharacter
-		(cheat_player_arrow, NUMCHEATPLYRLINES, 0,
+		(cheat_player_arrow, arrlen(cheat_player_arrow), 0,
 		 plr->mo->angle, WHITE, plr->mo->x, plr->mo->y);
 	else
 	    AM_drawLineCharacter
-		(player_arrow, NUMPLYRLINES, 0, plr->mo->angle,
+		(player_arrow, arrlen(player_arrow), 0, plr->mo->angle,
 		 WHITE, plr->mo->x, plr->mo->y);
 	return;
     }
@@ -1288,7 +1284,7 @@ void AM_drawPlayers(void)
 	    color = their_colors[their_color];
 	
 	AM_drawLineCharacter
-	    (player_arrow, NUMPLYRLINES, 0, p->mo->angle,
+	    (player_arrow, arrlen(player_arrow), 0, p->mo->angle,
 	     color, p->mo->x, p->mo->y);
     }
 
@@ -1308,7 +1304,7 @@ AM_drawThings
 	while (t)
 	{
 	    AM_drawLineCharacter
-		(thintriangle_guy, NUMTHINTRIANGLEGUYLINES,
+		(thintriangle_guy, arrlen(thintriangle_guy),
 		 16<<FRACBITS, t->angle, colors+lightlev, t->x, t->y);
 	    t = t->snext;
 	}

@@ -44,6 +44,7 @@
 
 #include "doomfeatures.h"
 #include "doomkeys.h"
+#include "doomtype.h"
 #include "d_englsh.h"
 
 #include "m_argv.h"
@@ -243,7 +244,7 @@ static default_t doom_defaults_list[] =
 static default_collection_t doom_defaults = 
 {
     doom_defaults_list,
-    sizeof(doom_defaults_list) / sizeof(*doom_defaults_list),
+    arrlen(doom_defaults_list),
     NULL,
 };
 
@@ -282,7 +283,7 @@ static default_t extra_defaults_list[] =
 static default_collection_t extra_defaults =
 {
     extra_defaults_list,
-    sizeof(extra_defaults_list) / sizeof(*extra_defaults_list),
+    arrlen(extra_defaults_list),
     NULL,
 };
 

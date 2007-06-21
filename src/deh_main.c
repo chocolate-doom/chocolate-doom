@@ -77,8 +77,6 @@ static deh_section_t *section_types[] =
     &deh_section_weapon,
 };
 
-static int num_section_types = sizeof(section_types) / sizeof(*section_types);
-
 void DEH_Checksum(md5_digest_t digest)
 {
     md5_context_t md5_context;
@@ -86,7 +84,7 @@ void DEH_Checksum(md5_digest_t digest)
 
     MD5_Init(&md5_context);
 
-    for (i=0; i<num_section_types; ++i)
+    for (i=0; i<arrlen(section_types); ++i)
     {
         if (section_types[i]->md5_hash != NULL)
         {
@@ -103,7 +101,7 @@ static void InitialiseSections(void)
 {
     int i;
 
-    for (i=0; i<num_section_types; ++i)
+    for (i=0; i<arrlen(section_types); ++i)
     {
         if (section_types[i]->init != NULL)
         {
@@ -118,7 +116,7 @@ static deh_section_t *GetSectionByName(char *name)
 {
     int i;
 
-    for (i=0; i<num_section_types; ++i)
+    for (i=0; i<arrlen(section_types); ++i)
     {
         if (!strcasecmp(section_types[i]->name, name))
         {
@@ -218,7 +216,7 @@ static boolean CheckSignatures(deh_context_t *context)
 
     // Check all signatures to see if one matches
 
-    for (i=0; i<sizeof(deh_signatures) / sizeof(*deh_signatures); ++i)
+    for (i=0; i<arrlen(deh_signatures); ++i)
     {
         if (!strcmp(deh_signatures[i], line))
         {

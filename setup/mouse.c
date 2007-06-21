@@ -22,6 +22,7 @@
 #include <stdlib.h>
 
 #include "textscreen.h"
+#include "doomtype.h"
 
 #include "execute.h"
 #include "txt_mouseinput.h"
@@ -64,7 +65,7 @@ static void MouseSetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))
     // Check if the same mouse button is used for a different action
     // If so, set the other action(s) to -1 (unset)
 
-    for (i=0; i<sizeof(all_mouse_buttons) / sizeof(*all_mouse_buttons); ++i)
+    for (i=0; i<arrlen(all_mouse_buttons); ++i)
     {
         if (*all_mouse_buttons[i] == *variable
          && all_mouse_buttons[i] != variable)

@@ -19,6 +19,7 @@
 // 02111-1307, USA.
 //
 #include "textscreen.h"
+#include "doomtype.h"
 
 #include "execute.h"
 #include "txt_keyinput.h"
@@ -72,7 +73,7 @@ static void KeySetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))
     TXT_CAST_ARG(int, variable);
     unsigned int i;
 
-    for (i=0; i<sizeof(allkeys) / sizeof(*allkeys); ++i)
+    for (i=0; i<arrlen(allkeys); ++i)
     {
         if (*variable == *allkeys[i] && allkeys[i] != variable)
         {

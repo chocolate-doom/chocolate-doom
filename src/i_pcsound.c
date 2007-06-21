@@ -60,8 +60,6 @@ static float frequencies[] = {
     2157.64, 2217.80, 2285.78, 2353.41, 2420.24, 2490.98, 2565.97, 2639.77,
 };
 
-#define NUM_FREQUENCIES (sizeof(frequencies) / sizeof(*frequencies))
-
 static void PCSCallbackFunc(int *duration, int *freq)
 {
     int tone;
@@ -84,7 +82,7 @@ static void PCSCallbackFunc(int *duration, int *freq)
         // for a full discussion of this.
         // Check we don't overflow the frequency table.
 
-        if (tone < (int)NUM_FREQUENCIES)
+        if (tone < arrlen(frequencies))
         {
             *freq = (int) frequencies[tone];
         }
@@ -286,7 +284,7 @@ static snddevice_t sound_pcsound_devices[] =
 sound_module_t sound_pcsound_module = 
 {
     sound_pcsound_devices,
-    sizeof(sound_pcsound_devices) / sizeof(*sound_pcsound_devices),
+    arrlen(sound_pcsound_devices),
     I_PCS_InitSound,
     I_PCS_ShutdownSound,
     I_PCS_GetSfxLumpNum,

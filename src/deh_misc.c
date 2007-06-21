@@ -206,7 +206,7 @@ static void DEH_MiscParseLine(deh_context_t *context, char *line, void *tag)
         return;
     }
 
-    for (i=0; i<sizeof(misc_settings) / sizeof(*misc_settings); ++i)
+    for (i=0; i<arrlen(misc_settings); ++i)
     {
         if (!strcasecmp(variable_name, misc_settings[i].deh_name))
         {
@@ -222,7 +222,7 @@ static void DEH_MiscMD5Sum(md5_context_t *context)
 {
     unsigned int i;
 
-    for (i=0; i<sizeof(misc_settings) / sizeof(*misc_settings); ++i)
+    for (i=0; i<arrlen(misc_settings); ++i)
     {
         MD5_UpdateInt32(context, *misc_settings[i].value);
     }

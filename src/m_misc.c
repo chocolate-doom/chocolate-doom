@@ -401,7 +401,7 @@ static default_t	doom_defaults_list[] =
 static default_collection_t doom_defaults = 
 {
     doom_defaults_list,
-    sizeof(doom_defaults_list) / sizeof(*doom_defaults_list),
+    arrlen(doom_defaults_list),
     NULL,
 };
 
@@ -444,7 +444,7 @@ static default_t extra_defaults_list[] =
 static default_collection_t extra_defaults =
 {
     extra_defaults_list,
-    sizeof(extra_defaults_list) / sizeof(*extra_defaults_list),
+    arrlen(extra_defaults_list),
     NULL,
 };
 

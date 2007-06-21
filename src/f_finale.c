@@ -132,7 +132,7 @@ void F_StartFinale (void)
 
     // Find the right screen and set the text and background
 
-    for (i=0; i<sizeof(textscreens) / sizeof(textscreen_t); ++i)
+    for (i=0; i<arrlen(textscreens); ++i)
     {
         textscreen_t *screen = &textscreens[i];
 

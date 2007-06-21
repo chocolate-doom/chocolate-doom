@@ -64,7 +64,7 @@ static deh_cheat_t *FindCheatByName(char *name)
 {
     size_t i;
     
-    for (i=0; i<sizeof(allcheats) / sizeof(*allcheats); ++i)
+    for (i=0; i<arrlen(allcheats); ++i)
     {
         if (!strcasecmp(allcheats[i].name, name))
             return &allcheats[i];
