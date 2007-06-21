@@ -24,6 +24,7 @@
 
 #include "d_englsh.h"
 #include "textscreen.h"
+#include "doomtype.h"
 
 #include "configfile.h"
 
@@ -112,7 +113,7 @@ static iwad_t *GetIWADForDescription(char *description)
 {
     int i;
 
-    for (i=0; i<sizeof(iwads) / sizeof(*iwads); ++i)
+    for (i=0; i<arrlen(iwads); ++i)
     {
         if (!strcmp(iwads[i].description, description))
         {
@@ -405,7 +406,7 @@ static txt_widget_t *IWADSelector(void)
 
     num_iwads = 0;
 
-    for (i=0; i<sizeof(iwads) / sizeof(*iwads); ++i)
+    for (i=0; i<arrlen(iwads); ++i)
     {
         if (installed_iwads & iwads[i].mask)
         {

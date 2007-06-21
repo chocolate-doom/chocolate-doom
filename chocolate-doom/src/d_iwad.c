@@ -194,7 +194,7 @@ static void CheckUninstallStrings(void)
 {
     unsigned int i;
 
-    for (i=0; i<sizeof(uninstall_values) / sizeof(*uninstall_values); ++i)
+    for (i=0; i<arrlen(uninstall_values); ++i)
     {
         char *val;
         char *path;
@@ -237,8 +237,7 @@ static void CheckCollectorsEdition(void)
         return;
     }
 
-    for (i=0; i<sizeof(collectors_edition_subdirs)
-                  / sizeof(*collectors_edition_subdirs); ++i)
+    for (i=0; i<arrlen(collectors_edition_subdirs); ++i)
     {
         subpath = malloc(strlen(install_path)
                          + strlen(collectors_edition_subdirs[i])
@@ -273,7 +272,7 @@ static char *SearchDirectoryForIWAD(char *dir)
 {
     size_t i;
 
-    for (i=0; i<sizeof(iwads) / sizeof(*iwads); ++i) 
+    for (i=0; i<arrlen(iwads); ++i) 
     {
         char *filename; 
         char *iwadname;
@@ -312,7 +311,7 @@ static void IdentifyIWADByName(char *name)
 
     gamemission = none;
     
-    for (i=0; i<sizeof(iwads) / sizeof(*iwads); ++i)
+    for (i=0; i<arrlen(iwads); ++i)
     {
         char *iwadname;
 
@@ -592,7 +591,7 @@ void D_SetSaveGameDir(void)
         // This ensures that doom1.wad and doom.wad saves are stored
         // in the same place.
 
-        for (i=0; i<sizeof(iwads) / sizeof(*iwads); ++i)
+        for (i=0; i<arrlen(iwads); ++i)
         {
             if (gamemission == iwads[i].mission)
             {
@@ -653,7 +652,7 @@ static char *GetGameName(char *gamename)
     size_t i;
     char *deh_sub;
     
-    for (i=0; i<sizeof(banners) / sizeof(*banners); ++i)
+    for (i=0; i<arrlen(banners); ++i)
     {
         // Has the banner been replaced?
 
@@ -801,7 +800,7 @@ void D_FindInstalledIWADs(void)
 
     result = 0;
 
-    for (i=0; i<sizeof(iwads) / sizeof(*iwads); ++i)
+    for (i=0; i<arrlen(iwads); ++i)
     {
         if (D_FindWADByName(iwads[i].name) != NULL)
         {

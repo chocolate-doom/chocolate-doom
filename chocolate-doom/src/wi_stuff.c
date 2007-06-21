@@ -270,9 +270,9 @@ static anim_t epsd2animinfo[] =
 
 static int NUMANIMS[NUMEPISODES] =
 {
-    sizeof(epsd0animinfo)/sizeof(anim_t),
-    sizeof(epsd1animinfo)/sizeof(anim_t),
-    sizeof(epsd2animinfo)/sizeof(anim_t)
+    arrlen(epsd0animinfo),
+    arrlen(epsd1animinfo),
+    arrlen(epsd2animinfo),
 };
 
 static anim_t *anims[NUMEPISODES] =
