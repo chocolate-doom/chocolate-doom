@@ -777,7 +777,7 @@ R_InitBuffer
     // Handle resize,
     //  e.g. smaller view windows
     //  with border and/or status bar.
-    viewwindowx = (SCREENWIDTH-width) / 2;
+    viewwindowx = (SCREENWIDTH-width) >> 1; 
 
     // Column offset. For windows.
     for (i=0 ; i<width ; i++) 
@@ -787,7 +787,7 @@ R_InitBuffer
     if (width == SCREENWIDTH) 
 	viewwindowy = 0; 
     else 
-	viewwindowy = (SCREENHEIGHT-SBARHEIGHT-height) / 2;
+	viewwindowy = (SCREENHEIGHT-SBARHEIGHT-height) >> 1; 
 
     // Preclaculate all row offsets.
     for (i=0 ; i<height ; i++) 
