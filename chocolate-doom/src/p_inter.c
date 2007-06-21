@@ -678,7 +678,7 @@ P_KillMobj
 	target->flags &= ~MF_NOGRAVITY;
 
     target->flags |= MF_CORPSE|MF_DROPOFF;
-    target->height /= 4;
+    target->height >>= 2;
 
     if (source && source->player)
     {
@@ -797,7 +797,7 @@ P_DamageMobj
 	
     player = target->player;
     if (player && gameskill == sk_baby)
-	damage /= 2; 	// take half damage in trainer mode
+	damage >>= 1; 	// take half damage in trainer mode
 		
 
     // Some close combat weapons should not
@@ -814,7 +814,7 @@ P_DamageMobj
 				target->x,
 				target->y);
 		
-	thrust = damage*(FRACUNIT / 8)*100/target->info->mass;
+	thrust = damage*(FRACUNIT>>3)*100/target->info->mass;
 
 	// make fall forwards sometimes
 	if ( damage < 40
