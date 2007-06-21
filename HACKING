@@ -113,6 +113,37 @@ void FunctionName(int argument, int arg2, int arg3, int arg4, int arg5,
     } while (condition);
 }
 
+Portability
+===========
+
+Chocolate Doom is designed to be cross-platform and work on different
+Operating Systems and processors.  Bear this in mind when writing code.
+
+Do not use the long type (its size differs across platforms; use 
+int or int64_t depending on which you want).
+
+Use Doom's byte data type for byte data. 'int' is assumed to be a
+32-bit integer, and 'short' is a 16-bit integer. You can also use the
+ISO C99 data types: intN_t and uintN_t where N is 8,16,32,64.
+
+Be careful with platform dependencies: do not use Windows API 
+functions, for example.  Use SDL where possible.
+
+Preprocessor #defines are set that can be used to identify the OS
+if necessary: _WIN32 for Windows and __MACOSX__ for MacOS X. Others
+are set through SDL.  Try to avoid this if possible.
+
+Be careful of endianness!  Doom has SHORT() and LONG() macros that
+do endianness conversion.  Never assume that integer types have a 
+particular byte ordering.  Similarly, never assume that fields 
+inside a structure are aligned in a particular way.  This is most 
+relevant when reading or writing data to a file or a network pipe.
+
+For signed integers, you shouldn't assume that (i >> n) is the same as
+(i / (1 << n)).  However, most processors handle bitshifts of signed
+integers properly, so it's not a huge problem.
+
+
 GNU GPL and licensing
 =====================
 
