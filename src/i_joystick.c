@@ -37,6 +37,11 @@
 #include "d_main.h"
 #include "i_joystick.h"
 
+// When an axis is within the dead zone, it is set to zero.
+// This is 5% of the full range:
+
+#define DEAD_ZONE (32768 / 20)
+
 static SDL_Joystick *joystick = NULL;
 
 // Configuration variables:
@@ -156,6 +161,11 @@ static int GetAxisState(int axis, int invert)
     if (invert)
     {
         result = -result;
+    }
+
+    if (result < DEAD_ZONE && result > -DEAD_ZONE)
+    {
+        result = 0;
     }
 
     return result;
