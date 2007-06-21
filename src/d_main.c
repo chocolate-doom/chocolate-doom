@@ -631,7 +631,7 @@ void PrintDehackedBanners(void)
 {
     size_t i;
 
-    for (i=0; i<sizeof(copyright_banners) / sizeof(char *); ++i)
+    for (i=0; i<arrlen(copyright_banners); ++i)
     {
         char *deh_s;
 
