@@ -50,8 +50,6 @@
 #include "net_loop.h"
 
 
-#define FPS 35
-
 //
 // NETWORKING
 //
@@ -109,7 +107,7 @@ static int GetAdjustedTime(void)
         time_ms += (offsetms / FRACUNIT);
     }
 
-    return (time_ms * FPS) / 1000;
+    return (time_ms * TICRATE) / 1000;
 }
 
 //

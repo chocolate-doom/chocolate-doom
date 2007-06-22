@@ -1269,7 +1269,7 @@ void P_SpawnSpecials (void)
     if (timelimit > 0)
     {
         levelTimer = true;
-        levelTimeCount = timelimit * 60 * 35;
+        levelTimeCount = timelimit * 60 * TICRATE;
     }
     else
     {

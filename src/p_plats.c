@@ -210,7 +210,7 @@ EV_DoPlat
 		plat->low = sec->floorheight;
 
 	    plat->high = sec->floorheight;
-	    plat->wait = 35*PLATWAIT;
+	    plat->wait = TICRATE*PLATWAIT;
 	    plat->status = down;
 	    S_StartSound(&sec->soundorg,sfx_pstart);
 	    break;
@@ -223,7 +223,7 @@ EV_DoPlat
 		plat->low = sec->floorheight;
 
 	    plat->high = sec->floorheight;
-	    plat->wait = 35*PLATWAIT;
+	    plat->wait = TICRATE*PLATWAIT;
 	    plat->status = down;
 	    S_StartSound(&sec->soundorg,sfx_pstart);
 	    break;
@@ -240,7 +240,7 @@ EV_DoPlat
 	    if (plat->high < sec->floorheight)
 		plat->high = sec->floorheight;
 
-	    plat->wait = 35*PLATWAIT;
+	    plat->wait = TICRATE*PLATWAIT;
 	    plat->status = P_Random()&1;
 
 	    S_StartSound(&sec->soundorg,sfx_pstart);
