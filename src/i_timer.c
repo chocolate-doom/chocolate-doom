@@ -27,6 +27,7 @@
 #include "SDL.h"
 
 #include "i_timer.h"
+#include "doomdef.h"
 
 //
 // I_GetTime
@@ -46,7 +47,7 @@ int  I_GetTime (void)
 
     ticks -= basetime;
 
-    return (ticks * 35) / 1000;    
+    return (ticks * TICRATE) / 1000;    
 }
 
 //
