@@ -276,7 +276,7 @@ static void NET_CL_ExpandFullTiccmd(net_full_ticcmd_t *cmd, unsigned int seq)
     // the same lag.  Don't adjust in the first few tics of play, as 
     // we don't have an accurate value for average_latency yet.
 
-    if (seq > 35)
+    if (seq > TICRATE)
     {
         adjustment = (cmd->latency * FRACUNIT) - average_latency;
 

@@ -512,7 +512,7 @@ void D_DoAdvanceDemo (void)
     {
       case 0:
 	if ( gamemode == commercial )
-	    pagetic = 35 * 11;
+	    pagetic = TICRATE * 11;
 	else
 	    pagetic = 170;
 	gamestate = GS_DEMOSCREEN;
@@ -537,7 +537,7 @@ void D_DoAdvanceDemo (void)
 	gamestate = GS_DEMOSCREEN;
 	if ( gamemode == commercial)
 	{
-	    pagetic = 35 * 11;
+	    pagetic = TICRATE * 11;
 	    pagename = DEH_String("TITLEPIC");
 	    S_StartMusic(mus_dm2ttl);
 	}
