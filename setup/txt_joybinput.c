@@ -48,6 +48,7 @@ static int EventCallback(SDL_Event *event, TXT_UNCAST_ARG(joystick_input))
     if (event->type == SDL_JOYBUTTONDOWN)
     {
         *joystick_input->variable = event->jbutton.button;
+        TXT_EmitSignal(joystick_input, "set");
         TXT_CloseWindow(joystick_input->prompt_window);
         return 1;
     }
