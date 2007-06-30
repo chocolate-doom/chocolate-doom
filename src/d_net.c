@@ -413,11 +413,7 @@ static int GetLowTic(void)
     int i;
     int lowtic;
 
-    if (demoplayback)
-    {
-        lowtic = maketic;
-    }
-    else
+    if (net_client_connected)
     {
         lowtic = INT_MAX;
     
@@ -429,6 +425,10 @@ static int GetLowTic(void)
                     lowtic = nettics[i];
             }
         }
+    }
+    else
+    {
+        lowtic = maketic;
     }
 
     return lowtic;
