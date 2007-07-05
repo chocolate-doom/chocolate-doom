@@ -197,8 +197,6 @@ void ConfigDisplay(void)
                    ar_dropdown = TXT_NewDropdownList(&aspect_ratio_correct,
                                                      aspect_ratio_strings,
                                                      NUM_RATIO_CORRECT),
-                   TXT_NewLabel("Startup delay (ms)"),
-                   TXT_NewIntInputBox(&startup_delay, 5),
                    NULL);
 
     TXT_SignalConnect(ar_dropdown, "changed", UpdateModes, NULL);
