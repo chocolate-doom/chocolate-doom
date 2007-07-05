@@ -58,8 +58,7 @@ static void QuitConfirm(void *unused1, void *unused2)
     window = TXT_NewWindow(NULL);
 
     TXT_AddWidgets(window, 
-                   label = TXT_NewLabel("Save settings and\n"
-                                        "quit setup?"),
+                   label = TXT_NewLabel("Exiting setup.\nSave settings?"),
                    TXT_NewStrut(24, 0),
                    yes_button = TXT_NewButton2("  Yes  ", DoQuit, DoQuit),
                    no_button = TXT_NewButton2("  No   ", DoQuit, NULL),
