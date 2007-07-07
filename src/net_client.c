@@ -213,6 +213,13 @@ static void NET_CL_Disconnected(void)
 {
     int i;
 
+    // In drone mode, the game cannot continue once disconnected.
+
+    if (drone)
+    { 
+        I_Error("Disconnected from server in drone mode.");
+    }
+
     // disconnected from server
 
     players[consoleplayer].message = "Disconnected from server";
