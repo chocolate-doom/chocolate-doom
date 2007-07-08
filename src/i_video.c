@@ -290,8 +290,7 @@ static int TranslateKey(SDL_keysym *sym)
 
       case SDLK_PAUSE:	return KEY_PAUSE;
 
-      case SDLK_EQUALS:
-      case SDLK_KP_EQUALS:	return KEY_EQUALS;
+      case SDLK_EQUALS: return KEY_EQUALS;
 
       case SDLK_MINUS:          return KEY_MINUS;
 
@@ -323,15 +322,19 @@ static int TranslateKey(SDL_keysym *sym)
       case SDLK_KP8: return KEYP_8;
       case SDLK_KP9: return KEYP_9;
 
+      case SDLK_KP_PERIOD:   return KEYP_PERIOD;
+      case SDLK_KP_MULTIPLY: return KEYP_MULTIPLY;
+      case SDLK_KP_PLUS:     return KEYP_PLUS;
+      case SDLK_KP_MINUS:    return KEYP_MINUS;
+      case SDLK_KP_DIVIDE:   return KEYP_DIVIDE;
+      case SDLK_KP_EQUALS:   return KEYP_EQUALS;
+      case SDLK_KP_ENTER:    return KEYP_ENTER;
+
       case SDLK_HOME: return KEY_HOME;
       case SDLK_INSERT: return KEY_INS;
       case SDLK_END: return KEY_END;
       case SDLK_PAGEUP: return KEY_PGUP;
       case SDLK_PAGEDOWN: return KEY_PGDN;
-      case SDLK_KP_MULTIPLY: return KEYP_MULTIPLY;
-      case SDLK_KP_PLUS: return KEYP_PLUS;
-      case SDLK_KP_MINUS: return KEYP_MINUS;
-      case SDLK_KP_DIVIDE: return KEYP_DIVIDE;
 
       default:
         return tolower(sym->sym);
