@@ -1957,7 +1957,14 @@ void G_DoPlayDemo (void)
 	
     for (i=0 ; i<MAXPLAYERS ; i++) 
 	playeringame[i] = *demo_p++; 
-    if (playeringame[1]) 
+
+    //!
+    // @category demo
+    // 
+    // Play back a demo recorded in a netgame with a single player.
+    //
+
+    if (playeringame[1] || M_CheckParm("-netdemo") > 0) 
     { 
 	netgame = true; 
 	netdemo = true; 
