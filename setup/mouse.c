@@ -87,7 +87,7 @@ static void AddMouseControl(txt_table_t *table, char *label, int *var)
     TXT_SignalConnect(mouse_input, "set", MouseSetCallback, var);
 }
 
-static void ConfigExtraButtons(void)
+static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 {
     txt_window_t *window;
     txt_table_t *buttons_table;
