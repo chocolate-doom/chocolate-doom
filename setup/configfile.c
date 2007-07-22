@@ -277,7 +277,9 @@ static default_t extra_defaults_list[] =
     {"joyb_straferight",            &joybstraferight, DEFAULT_INT, 0, 0},
     {"dclick_use",                  &dclick_use, DEFAULT_INT, 0, 0},
     {"mouseb_strafeleft",           &mousebstrafeleft, DEFAULT_INT, 0, 0},
-    {"mouseb_straferight",           &mousebstraferight, DEFAULT_INT, 0, 0},
+    {"mouseb_straferight",          &mousebstraferight, DEFAULT_INT, 0, 0},
+    {"mouseb_use",                  &mousebuse, DEFAULT_INT, 0, 0},
+    {"mouseb_backward",             &mousebbackward, DEFAULT_INT, 0, 0},
 };
 
 static default_collection_t extra_defaults =
