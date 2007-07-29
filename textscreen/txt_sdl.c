@@ -322,6 +322,24 @@ static int TranslateKey(SDL_keysym *sym)
     }
 }
 
+// Convert an SDL button index to textscreen button index.
+//
+// Note special cases because 2 == mid in SDL, 3 == mid in textscreen/setup
+
+static int SDLButtonToTXTButton(int button)
+{
+    switch (button)
+    {
+        case SDL_BUTTON_LEFT:
+            return TXT_MOUSE_LEFT;
+        case SDL_BUTTON_RIGHT:
+            return TXT_MOUSE_RIGHT;
+        case SDL_BUTTON_MIDDLE:
+            return TXT_MOUSE_MIDDLE;
+        default:
+            return TXT_MOUSE_BASE + button - 1;
+    }
+}
 
 signed int TXT_GetChar(void)
 {
@@ -345,12 +363,10 @@ signed int TXT_GetChar(void)
         switch (ev.type)
         {
             case SDL_MOUSEBUTTONDOWN:
-                if (ev.button.button == SDL_BUTTON_LEFT)
-                    return TXT_MOUSE_LEFT;
-                else if (ev.button.button == SDL_BUTTON_RIGHT)
-                    return TXT_MOUSE_RIGHT;
-                else if (ev.button.button == SDL_BUTTON_MIDDLE)
-                    return TXT_MOUSE_MIDDLE;
+                if (ev.button.button < TXT_MAX_MOUSE_BUTTONS)
+                {
+                    return SDLButtonToTXTButton(ev.button.button);
+                }
                 break;
 
             case SDL_KEYDOWN:

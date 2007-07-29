@@ -33,21 +33,6 @@
 
 #define MOUSE_INPUT_WIDTH 8
 
-static int MouseButtonToSetting(int b)
-{
-    switch (b)
-    {
-        case TXT_MOUSE_LEFT:
-            return 0;
-        case TXT_MOUSE_RIGHT:
-            return 1;
-        case TXT_MOUSE_MIDDLE:
-            return 2;
-        default:
-            return -1;
-    }
-}
-
 static int MousePressCallback(txt_window_t *window, 
                               int x, int y, int b,
                               TXT_UNCAST_ARG(mouse_input))
@@ -56,7 +41,7 @@ static int MousePressCallback(txt_window_t *window,
 
     // Got the mouse press.  Save to the variable and close the window.
 
-    *mouse_input->variable = MouseButtonToSetting(b);
+    *mouse_input->variable = b - TXT_MOUSE_BASE;
     TXT_EmitSignal(mouse_input, "set");
     TXT_CloseWindow(window);
 

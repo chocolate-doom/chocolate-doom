@@ -390,9 +390,7 @@ void TXT_WindowKeyPress(txt_window_t *window, int c)
 
     // Is this a mouse button ?
     
-    if (c == TXT_MOUSE_LEFT
-     || c == TXT_MOUSE_MIDDLE
-     || c == TXT_MOUSE_RIGHT)
+    if (c >= TXT_MOUSE_BASE && c < TXT_MOUSE_BASE + TXT_MAX_MOUSE_BUTTONS)
     {
         MouseButtonPress(window, c);
         return;
