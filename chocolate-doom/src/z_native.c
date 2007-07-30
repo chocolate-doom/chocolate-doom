@@ -42,6 +42,7 @@ struct memblock_s
 {
     int id; // = ZONEID
     int tag;
+    int size;
     void **user;
     memblock_t *prev;
     memblock_t *next;
@@ -51,13 +52,52 @@ struct memblock_s
  
 static memblock_t *allocated_blocks[PU_NUM_TAGS];
 
+#ifdef TESTING
+
+static int test_malloced = 0;
+
+void *test_malloc(size_t size)
+{
+    int *result;
+
+    if (test_malloced + size > 2 * 1024 * 1024)
+    {
+        return NULL;
+    }
+
+    test_malloced += size;
+
+    result = malloc(size + sizeof(int));
+
+    *result = size;
+
+    return result + 1;
+}
+
+void test_free(void *data)
+{
+    int *i;
+
+    i = ((int *) data) - 1;
+
+    test_malloced -= *i;
+
+    free(i);
+}
+
+#define malloc test_malloc
+#define free test_free
+
+#endif /* #ifdef TESTING */
+
+
 // Add a block into the linked list for its type.
 
 static void Z_InsertBlock(memblock_t *block)
 {
     block->prev = NULL;
     block->next = allocated_blocks[block->tag];
-    allocated_blocks[block->tag] = block->next;
+    allocated_blocks[block->tag] = block;
     
     if (block->next != NULL)
     {
@@ -108,7 +148,9 @@ void Z_Free (void* ptr)
     block = (memblock_t *) ((byte *)ptr - sizeof(memblock_t));
 
     if (block->id != ZONEID)
+    {
         I_Error ("Z_Free: freed a pointer without ZONEID");
+    }
 		
     if (block->tag != PU_FREE && block->user != NULL)
     {
@@ -124,7 +166,69 @@ void Z_Free (void* ptr)
     free(block);
 }
 
+// Empty data from the cache list to allocate enough data of the size
+// required.
+//
+// Returns true if any blocks were freed.
 
+static boolean ClearCache(int size)
+{
+    memblock_t *block;
+    memblock_t *next_block;
+    int remaining;
+
+    block = allocated_blocks[PU_CACHE];
+
+    if (block == NULL)
+    {
+        // Cache is already empty.
+
+        return false;
+    }
+
+    // Search to the end of the PU_CACHE list.  The blocks at the end
+    // of the list are the ones that have been free for longer and
+    // are more likely to be unneeded now.
+
+    while (block->next != NULL)
+    {
+        block = block->next;
+    }
+
+    //printf("out of memory; cleaning out the cache: %i\n", test_malloced);
+
+    // Search backwards through the list freeing blocks until we have
+    // freed the amount of memory required.
+
+    remaining = size;
+
+    while (remaining > 0)
+    {
+        if (block == NULL)
+        {
+            // No blocks left to free; we've done our best.
+  
+            break;
+        }
+
+        next_block = block->prev;
+
+        Z_RemoveBlock(block);
+
+        remaining -= block->size;
+
+        if (block->user)
+        {
+            *block->user = NULL;
+        }
+
+        free(block);
+
+        block = next_block;
+    }
+
+    return true;
+}
 
 //
 // Z_Malloc
@@ -144,15 +248,34 @@ void *Z_Malloc(int size, int tag, void *user)
     }
 
     if (user == NULL && tag >= PU_PURGELEVEL)
+    {
         I_Error ("Z_Malloc: an owner is required for purgable blocks");
+    }
+
+    // Malloc a block of the required size
     
-    newblock = (memblock_t *) malloc(sizeof(memblock_t) + size);
+    newblock = NULL;
+
+    while (newblock == NULL)
+    {
+        newblock = (memblock_t *) malloc(sizeof(memblock_t) + size);
+
+        if (newblock == NULL)
+        {
+            if (!ClearCache(sizeof(memblock_t) + size))
+            {
+                I_Error("Out of memory!");
+            }
+        }
+    }
+
     newblock->tag = tag;
     
     // Hook into the linked list for this tag type
 
     newblock->id = ZONEID;
     newblock->user = user;
+    newblock->size = size;
 
     Z_InsertBlock(newblock);
 
