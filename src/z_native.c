@@ -264,7 +264,7 @@ void *Z_Malloc(int size, int tag, void *user)
         {
             if (!ClearCache(sizeof(memblock_t) + size))
             {
-                I_Error("Out of memory!");
+                I_Error("Z_Malloc: failed on allocation of %i bytes", size);
             }
         }
     }
