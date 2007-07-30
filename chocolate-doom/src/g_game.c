@@ -673,7 +673,6 @@ void G_DoLoadLevel (void)
 		 
     P_SetupLevel (gameepisode, gamemap, 0, gameskill);    
     displayplayer = consoleplayer;		// view the guy you are playing    
-    starttime = I_GetTime (); 
     gameaction = ga_nothing; 
     Z_CheckHeap ();
     
@@ -1974,6 +1973,7 @@ void G_DoPlayDemo (void)
     precache = false;
     G_InitNew (skill, episode, map); 
     precache = true; 
+    starttime = I_GetTime (); 
 
     usergame = false; 
     demoplayback = true; 
