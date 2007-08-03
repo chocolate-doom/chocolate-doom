@@ -199,12 +199,18 @@ static boolean CacheSFX(int sound)
     // If the header specifies that the length of the sound is greater than
     // the length of the lump itself, this is an invalid sound lump
 
-    if (length - 8 > lumplen)
+    if (length > lumplen - 8)
     {
         return false;
     }
 
-    expanded_length = (uint32_t) ((((uint64_t) length) * 4 * mixer_freq) / samplerate);
+    // Sample rate conversion
+
+    expanded_length = (uint32_t) ((((uint64_t) length) * mixer_freq) / samplerate);
+
+    // Double up twice: 8 -> 16 bit and mono -> stereo
+
+    expanded_length *= 4;
 
     sound_chunks[sound].allocated = 1;
     sound_chunks[sound].alen = expanded_length;
@@ -214,7 +220,7 @@ static boolean CacheSFX(int sound)
 
     ExpandSoundData(data + 8, 
                     samplerate, 
-                    length - 8, 
+                    length, 
                     &sound_chunks[sound]);
 
     // don't need the original lump any more
