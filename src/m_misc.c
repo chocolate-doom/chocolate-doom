@@ -875,23 +875,6 @@ WritePCXfile
     Z_Free (pcx);
 }
 
-static boolean FileExists(char *filename)
-{
-    FILE *handle;
-
-    handle = fopen(filename, "rb");
-
-    if (handle != NULL)
-    {
-        fclose(handle);
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-}
-
 //
 // M_ScreenShot
 //
@@ -912,7 +895,7 @@ void M_ScreenShot (void)
     {
 	lbmname[4] = i/10 + '0';
 	lbmname[5] = i%10 + '0';
-	if (!FileExists(lbmname))
+	if (!M_FileExists(lbmname))
 	    break;	// file doesn't exist
     }
     if (i==100)
