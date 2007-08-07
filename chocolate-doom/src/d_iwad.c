@@ -140,6 +140,24 @@ static char *collectors_edition_subdirs[] =
     "Ultimate Doom",
 };
 
+// Location where Steam is installed
+
+static registry_value_t steam_install_location =
+{
+    HKEY_LOCAL_MACHINE,
+    "Software\\Valve\\Steam",
+    "InstallPath",
+};
+
+// Subdirs of the steam install directory where IWADs are found
+
+static char *steam_install_subdirs[] =
+{
+    "steamapps\\common\\doom 2",
+    "steamapps\\common\\ultimate doom",
+    "steamapps\\common\\final doom\\base",
+};
+
 static char *GetRegistryString(registry_value_t *reg_val)
 {
     HKEY key;
@@ -250,6 +268,41 @@ static void CheckCollectorsEdition(void)
 
     free(install_path);
 }
+
+
+// Check for Doom downloaded via Steam
+
+static void CheckSteamEdition(void)
+{
+    char *install_path;
+    char *subpath;
+    int i;
+
+    install_path = GetRegistryString(&steam_install_location);
+
+    if (install_path == NULL)
+    {
+        return;
+    }
+
+    for (i=0; i<arrlen(steam_install_subdirs); ++i)
+    {
+        subpath = malloc(strlen(install_path) 
+                         + strlen(steam_install_subdirs[i]) + 5);
+
+        sprintf(subpath, "%s%s", install_path, steam_install_subdirs[i]);
+
+        if (M_FileExists(subpath))
+        {
+            AddIWADDir(subpath);
+        }
+        else
+        {
+            free(subpath);
+        }
+    }
+}
+
 
 #endif
 
@@ -417,6 +470,7 @@ static void BuildIWADDirList(void)
 
     CheckUninstallStrings();
     CheckCollectorsEdition();
+    CheckSteamEdition();
 
 #else
 
