@@ -153,8 +153,8 @@ static registry_value_t steam_install_location =
 
 static char *steam_install_subdirs[] =
 {
-    "steamapps\\common\\doom 2",
-    "steamapps\\common\\ultimate doom",
+    "steamapps\\common\\doom 2\\base",
+    "steamapps\\common\\ultimate doom\\base",
     "steamapps\\common\\final doom\\base",
 };
 
