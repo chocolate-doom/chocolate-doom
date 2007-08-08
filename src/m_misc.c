@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <errno.h>
 
 // for mkdir:
 
@@ -138,7 +139,10 @@ boolean M_FileExists(char *filename)
     }
     else
     {
-        return false;
+        // If we can't open because the file is a directory, the 
+        // "file" exists at least!
+
+        return errno == EISDIR;
     }
 }
 
