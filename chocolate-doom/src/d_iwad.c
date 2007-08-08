@@ -307,6 +307,21 @@ static void CheckSteamEdition(void)
     }
 }
 
+// Default install directories for DOS Doom
+
+static void CheckDOSDefaults(void)
+{
+    // These are the default install directories used by the deice
+    // installer program:
+
+    AddIWADDir("\\doom2");              // Doom II
+    AddIWADDir("\\plutonia");           // Final Doom
+    AddIWADDir("\\tnt");
+    AddIWADDir("\\doom_se");            // Ultimate Doom
+    AddIWADDir("\\doom");               // Shareware / Registered Doom
+    AddIWADDir("\\dooms");              // Shareware versions
+    AddIWADDir("\\doomsw");
+}
 
 #endif
 
@@ -475,6 +490,7 @@ static void BuildIWADDirList(void)
     CheckUninstallStrings();
     CheckCollectorsEdition();
     CheckSteamEdition();
+    CheckDOSDefaults();
 
 #else
 
