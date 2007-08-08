@@ -290,7 +290,7 @@ static void CheckSteamEdition(void)
         subpath = malloc(strlen(install_path) 
                          + strlen(steam_install_subdirs[i]) + 5);
 
-        sprintf(subpath, "%s%s", install_path, steam_install_subdirs[i]);
+        sprintf(subpath, "%s\\%s", install_path, steam_install_subdirs[i]);
 
         if (M_FileExists(subpath))
         {
