@@ -285,6 +285,8 @@ static void CheckSteamEdition(void)
         return;
     }
 
+    fprintf(stderr, "Found Steam in %s\n", install_path);
+
     for (i=0; i<arrlen(steam_install_subdirs); ++i)
     {
         subpath = malloc(strlen(install_path) 
@@ -294,10 +296,12 @@ static void CheckSteamEdition(void)
 
         if (M_FileExists(subpath))
         {
+            fprintf(stderr, "Steam IWADs in %s\n", subpath);
             AddIWADDir(subpath);
         }
         else
         {
+            fprintf(stderr, "%s not found\n", subpath);
             free(subpath);
         }
     }
