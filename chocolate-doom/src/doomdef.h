@@ -81,32 +81,15 @@ typedef enum
 #define RANGECHECK
 
 
-// This one switches between MIT SHM (no proper mouse)
-// and XFree86 DGA (mickey sampling). The original
-// linuxdoom used SHM, which is default.
-//#define X11_DGA		1
 
+// Screen width and height.
 
-//
-// For resize of screen, at start of game.
-// It will not work dynamically, see visplanes.
-//
-#define	BASE_WIDTH		320
-
-// It is educational but futile to change this
-//  scaling e.g. to 2. Drawing of status bar,
-//  menues etc. is tied to the scale implied
-//  by the graphics.
-#define	SCREEN_MUL		1
-#define	INV_ASPECT_RATIO	0.625 // 0.75, ideally
-
-// Defines suck. C sucks.
-// C++ might sucks for OOP, but it sure is a better C.
-// So there.
 #define SCREENWIDTH  320
-//SCREEN_MUL*BASE_WIDTH //320
 #define SCREENHEIGHT 200
-//(int)(SCREEN_MUL*BASE_WIDTH*INV_ASPECT_RATIO) //200
+
+// Alternate screenheight for letterbox/aspect ratio corrected mode
+
+#define SCREENHEIGHT_4_3 240
 
 
 
