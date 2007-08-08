@@ -49,10 +49,6 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
-// Alternate screenheight for letterbox mode
-
-#define SCREENHEIGHT_4_3 240
-
 enum
 {
     FULLSCREEN_OFF,
