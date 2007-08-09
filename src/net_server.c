@@ -1382,6 +1382,27 @@ void NET_SV_CheckDeadlock(net_client_t *client)
     }
 }
 
+// Called when all players have disconnected.  Return to listening for 
+// players to start a new game, and disconnect any drones still connected.
+
+static void NET_SV_GameEnded(void)
+{
+    int i;
+
+    printf("Game ended, clearing out all remaining clients\n");
+
+    server_state = SERVER_WAITING_START;
+    sv_gamemode = indetermined;
+
+    for (i=0; i<MAXNETNODES; ++i)
+    {
+        if (clients[i].active)
+        {
+            NET_SV_DisconnectClient(&clients[i]);
+        }
+    }
+}
+
 // Perform any needed action on a client
 
 static void NET_SV_RunClient(net_client_t *client)
@@ -1409,11 +1430,12 @@ static void NET_SV_RunClient(net_client_t *client)
 
         // Are there any clients left connected?  If not, return the
         // server to the waiting-for-players state.
+        //
+	// Disconnect any drones still connected.
 
-        if (NET_SV_NumClients() <= 0)
+        if (NET_SV_NumPlayers() <= 0)
         {
-            server_state = SERVER_WAITING_START;
-            sv_gamemode = indetermined;
+            NET_SV_GameEnded();
         }
     }
     
