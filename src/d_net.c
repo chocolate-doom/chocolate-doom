@@ -207,7 +207,6 @@ void NetUpdate (void)
         }
 
 #endif
-
         netcmds[consoleplayer][maketic % BACKUPTICS] = cmd;
 
 	++maketic;
@@ -408,6 +407,23 @@ void D_QuitNetGame (void)
 
 }
 
+// Returns true if there are currently any players in the game.
+
+static boolean PlayersInGame(void)
+{
+    int i;
+
+    for (i=0; i<MAXPLAYERS; ++i)
+    {
+        if (playeringame[i])
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 static int GetLowTic(void)
 {
     int i;
@@ -454,7 +470,7 @@ void TryRunTics (void)
     int realtics;
     int	availabletics;
     int	counts;
-    
+
     // get real tics		
     entertic = I_GetTime() / ticdup;
     realtics = entertic - oldentertics;
@@ -539,7 +555,8 @@ void TryRunTics (void)
 	counts = 1;
 		
     // wait for new tics if needed
-    while (lowtic < gametic/ticdup + counts)	
+
+    while (!PlayersInGame() || lowtic < gametic/ticdup + counts)	
     {
 	NetUpdate ();   
 
@@ -564,6 +581,14 @@ void TryRunTics (void)
     {
 	for (i=0 ; i<ticdup ; i++)
 	{
+            // check that there are players in the game.  if not, we cannot
+            // run a tic.
+        
+            if (!PlayersInGame())
+            {
+                return;
+            }
+    
 	    if (gametic/ticdup > lowtic)
 		I_Error ("gametic>lowtic");
 	    if (advancedemo)
@@ -592,3 +617,4 @@ void TryRunTics (void)
 	NetUpdate ();	// check for new console commands
     }
 }
+
