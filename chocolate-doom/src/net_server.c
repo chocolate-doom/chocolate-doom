@@ -1389,8 +1389,6 @@ static void NET_SV_GameEnded(void)
 {
     int i;
 
-    printf("Game ended, clearing out all remaining clients\n");
-
     server_state = SERVER_WAITING_START;
     sv_gamemode = indetermined;
 
