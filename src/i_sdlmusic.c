@@ -85,7 +85,7 @@ static boolean I_SDL_InitMusic(void)
     // When trying to run with music enabled on OSX, display
     // a warning message.
 
-#ifdef __MACOSX__
+#ifdef __APPLE__
     printf("\n"
            "                   *** WARNING ***\n"
            "      Music playback on OSX may cause crashes and\n"

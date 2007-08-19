@@ -71,7 +71,7 @@
 
 // Disable music on OSX by default; there are problems with SDL_mixer.
 
-#ifndef __MACOSX__
+#ifndef __APPLE__
 #define DEFAULT_MUSIC_DEVICE SNDDEVICE_SB
 #else
 #define DEFAULT_MUSIC_DEVICE SNDDEVICE_NONE
