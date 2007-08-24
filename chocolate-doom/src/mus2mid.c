@@ -91,7 +91,7 @@ static unsigned int queuedtime = 0;
 
 // Counter for the length of the track
 
-static unsigned int tracksize = 0; 
+static unsigned int tracksize;
 
 static byte mus2midi_translation[] = 
 { 
@@ -429,6 +429,7 @@ boolean mus2mid(MEMFILE *musinput, MEMFILE *midioutput)
 	// writing MIDI data...
 
 	mem_fwrite(midiheader, 1, sizeof(midiheader), midioutput);
+	tracksize = 0;
 
 	// Now, process the MUS file:
 	while (!hitscoreend) 
