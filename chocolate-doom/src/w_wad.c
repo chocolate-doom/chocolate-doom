@@ -32,13 +32,31 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "doomdef.h"
 #include "doomtype.h"
+
 #include "i_swap.h"
 #include "i_system.h"
 #include "i_video.h"
 #include "z_zone.h"
 
 #include "w_wad.h"
+
+typedef struct
+{
+    // Should be "IWAD" or "PWAD".
+    char		identification[4];		
+    int			numlumps;
+    int			infotableofs;
+} PACKEDATTR wadinfo_t;
+
+
+typedef struct
+{
+    int			filepos;
+    int			size;
+    char		name[8];
+} PACKEDATTR filelump_t;
 
 //
 // GLOBALS
