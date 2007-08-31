@@ -25,6 +25,7 @@
 
 #include <stdio.h>
 
+#include "doomdef.h"
 #include "doomtype.h"
 #include "i_swap.h"
 
@@ -64,7 +65,7 @@ typedef struct
 	unsigned short primarychannels;
 	unsigned short secondarychannels;
 	unsigned short instrumentcount;
-} musheader;
+} PACKEDATTR musheader;
 
 // Standard MIDI type 0 header + track header
 static byte midiheader[] = 

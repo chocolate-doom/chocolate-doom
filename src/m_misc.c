@@ -815,7 +815,7 @@ typedef struct
     
     char		filler[58];
     unsigned char	data;		// unbounded
-} pcx_t;
+} PACKEDATTR pcx_t;
 
 
 //
