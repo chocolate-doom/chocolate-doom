@@ -98,8 +98,8 @@ typedef struct
     // Block origin (allways UL),
     // which has allready accounted
     // for the internal origin of the patch.
-    int		originx;	
-    int		originy;
+    short	originx;	
+    short	originy;
     int		patch;
 } texpatch_t;
 
