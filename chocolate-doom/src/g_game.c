@@ -469,14 +469,10 @@ void G_BuildTiccmd (ticcmd_t* cmd)
 	forward -= forwardmove[speed]; 
     }
 
-    // fraggle: allow disabling joystick y movement
-    if (!novert)
-    {
-        if (joyymove < 0) 
-            forward += forwardmove[speed]; 
-        if (joyymove > 0) 
-            forward -= forwardmove[speed]; 
-    }
+    if (joyymove < 0) 
+        forward += forwardmove[speed]; 
+    if (joyymove > 0) 
+        forward -= forwardmove[speed]; 
 
     if (gamekeydown[key_strafeleft]
      || joybuttons[joybstrafeleft]
