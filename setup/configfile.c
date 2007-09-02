@@ -529,7 +529,7 @@ void M_LoadDefaults (void)
         sprintf(doom_defaults.filename, "%sdefault.cfg", configdir);
     }
 
-    printf("saving config in %s\n", doom_defaults.filename);
+//    printf("saving config in %s\n", doom_defaults.filename);
 
     i = M_CheckParm("-extraconfig");
 
