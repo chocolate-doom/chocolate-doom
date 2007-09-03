@@ -110,7 +110,7 @@ int musicVolume = 8;
 
 // Sound sample rate to use for digital output (Hz)
 
-int snd_samplerate = 22050;
+int snd_samplerate = 44100;
 
 // Internal volume level, ranging from 0-127
 
