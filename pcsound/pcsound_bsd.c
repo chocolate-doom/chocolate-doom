@@ -142,24 +142,10 @@ static void AdjustedBeep(int speaker_handle, int ms, int freq)
     sleep_adjust = actual_time - ms;
 }
 
-static void SoundServer(void)
+static void SoundServer(int speaker_handle)
 {
-    int speaker_handle;
     tone_t tone;
     int result;
-
-    // Try to open the speaker device
-
-    speaker_handle = open(SPEAKER_DEVICE, O_WRONLY);
-
-    if (speaker_handle == -1)
-    {
-        // Don't have permissions for the console device?
-
-	fprintf(stderr, "PCSound_BSD_Init: Failed to open '%s': %s\n",
-			SPEAKER_DEVICE, strerror(errno));
-        return;
-    }
 
     // Run in a loop, invoking the callback
 
@@ -181,10 +167,6 @@ static void SoundServer(void)
 
         AdjustedBeep(speaker_handle, tone.duration, tone.frequency);
     }
-
-    // Finished, close the handle
-
-    close(speaker_handle);
 }
 
 // Start up the sound server.  Returns non-zero if successful.
@@ -192,12 +174,27 @@ static void SoundServer(void)
 static int StartSoundServer(void)
 {
     int result;
+    int speaker_handle;
+
+    // Try to open the speaker device
+
+    speaker_handle = open(SPEAKER_DEVICE, O_WRONLY);
+
+    if (speaker_handle == -1)
+    {
+        // Don't have permissions for the console device?
+
+	fprintf(stderr, "StartSoundServer: Failed to open '%s': %s\n",
+                        SPEAKER_DEVICE, strerror(errno));
+        return 0;
+    }
 
     // Create a pipe for communications
 
     if (socketpair(AF_UNIX, SOCK_STREAM, 0, sound_server_pipe) < 0)
     {
         perror("socketpair");
+        close(speaker_handle);
         return 0;
     }
 
@@ -210,13 +207,15 @@ static int StartSoundServer(void)
     if (result < 0)
     {
         fprintf(stderr, "Failed to fork sound server!\n");
+        close(speaker_handle);
         return 0;
     }
     else if (result == 0)
     {
         // This is the child (sound server)
 
-        SoundServer();
+        SoundServer(speaker_handle);
+        close(speaker_handle);
 
         exit(0);
     }
