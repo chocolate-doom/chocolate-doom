@@ -35,6 +35,10 @@
 extern pcsound_driver_t pcsound_win32_driver;
 #endif
 
+#ifdef HAVE_DEV_ISA_SPKRIO_H
+extern pcsound_driver_t pcsound_bsd_driver;
+#endif
+
 #ifdef HAVE_LINUX_KD_H
 extern pcsound_driver_t pcsound_linux_driver;
 #endif
@@ -45,6 +49,9 @@ static pcsound_driver_t *drivers[] =
 {
 #ifdef HAVE_LINUX_KD_H
     &pcsound_linux_driver,
+#endif
+#ifdef HAVE_DEV_ISA_SPKRIO_H
+    &pcsound_bsd_driver,
 #endif
 #ifdef _WIN32
     &pcsound_win32_driver,
