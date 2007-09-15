@@ -1609,11 +1609,7 @@ void A_Fall (mobj_t *actor)
 //
 void A_Explode (mobj_t* thingy)
 {
-    mobj_t *target;
-
-    target = P_SubstNullMobj(thingy->target);
-
-    P_RadiusAttack(thingy, target, 128);
+    P_RadiusAttack(thingy, thingy->target, 128);
 }
 
 
