@@ -157,7 +157,10 @@ typedef struct
     }			d;
 } intercept_t;
 
-#define MAXINTERCEPTS	128
+// Extended MAXINTERCEPTS, to allow for intercepts overrun emulation.
+
+#define MAXINTERCEPTS_ORIGINAL 128
+#define MAXINTERCEPTS          (MAXINTERCEPTS_ORIGINAL + 61)
 
 extern intercept_t	intercepts[MAXINTERCEPTS];
 extern intercept_t*	intercept_p;

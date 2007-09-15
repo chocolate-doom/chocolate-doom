@@ -3,6 +3,7 @@
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005, 2006 Andrey Budko
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -35,6 +36,7 @@
 #include "m_bbox.h"
 
 #include "doomdef.h"
+#include "doomstat.h"
 #include "p_local.h"
 
 
@@ -549,6 +551,8 @@ divline_t 	trace;
 boolean 	earlyout;
 int		ptflags;
 
+static void InterceptsOverrun(int num_intercepts, intercept_t *intercept);
+
 //
 // PIT_AddLineIntercepts.
 // Looks for lines in the given block
@@ -604,6 +608,7 @@ PIT_AddLineIntercepts (line_t* ld)
     intercept_p->frac = frac;
     intercept_p->isaline = true;
     intercept_p->d.line = ld;
+    InterceptsOverrun(intercept_p - intercepts, intercept_p);
     intercept_p++;
 
     return true;	// continue
@@ -669,6 +674,7 @@ boolean PIT_AddThingIntercepts (mobj_t* thing)
     intercept_p->frac = frac;
     intercept_p->isaline = false;
     intercept_p->d.thing = thing;
+    InterceptsOverrun(intercept_p - intercepts, intercept_p);
     intercept_p++;
 
     return true;		// keep going
@@ -730,7 +736,110 @@ P_TraverseIntercepts
     return true;		// everything was traversed
 }
 
+extern fixed_t bulletslope;
 
+// Intercepts Overrun emulation, from PrBoom-plus.
+// Thanks to Andrey Budko (entryway) for researching this and his 
+// implementation of Intercepts Overrun emulation in PrBoom-plus
+// which this is based on.
+
+typedef struct
+{
+  int len;
+  int *adr;
+} intercepts_overrun_t;
+
+// Intercepts memory table.  This is where various variables are located
+// in memory in Vanilla Doom.  When the intercepts table overflows, we
+// need to write to them.
+//
+// These are treated as ints when writing, which is okay in most cases,
+// as most of them are ints.  However, there is one potential 
+// cross-platform issue when overwriting the playerstarts[] array, as
+// this contains 16-bit integers, and these fields may get the wrong
+// values.
+
+static intercepts_overrun_t intercepts_overrun[] =
+{
+	{4,   NULL},
+	{4,   NULL},     //&earlyout},
+	{4,   NULL},     //&intercept_p},
+	{4,   &lowfloor},
+	{4,   &openbottom},
+	{4,   &opentop},
+	{4,   &openrange},
+	{4,   NULL},
+	{120, NULL},     //&activeplats},
+	{8,   NULL},
+	{4,   &bulletslope},
+	{4,   NULL},     //&swingx},
+	{4,   NULL},     //&swingy},
+	{4,   NULL},
+	{40,  (int*)&playerstarts},
+	{4,   NULL},     //&blocklinks},
+	{4,   &bmapwidth},
+	{4,   NULL},     //&blockmap},
+	{4,   &bmaporgx},
+	{4,   &bmaporgy},
+	{4,   NULL},     //&blockmaplump},
+	{4,   &bmapheight},
+	{0,   NULL}
+};
+
+// Overwrite a specific memory location with a value.
+
+static void InterceptsMemoryOverrun(int location, int value)
+{
+	int i, offset;
+
+	i = 0;
+	offset = 0;
+
+	// Search down the array until we find the right entry
+
+	while (intercepts_overrun[i].len != 0)
+	{
+		if (offset + intercepts_overrun[i].len > location)
+		{
+			if (intercepts_overrun[i].adr != NULL)
+			{
+				intercepts_overrun[i].adr[(location - offset) / 4]
+				    = value;
+			}
+			break;
+		}
+
+		offset += intercepts_overrun[i].len;
+		++i;
+	}
+}
+
+// Emulate overruns of the intercepts[] array.
+
+static void InterceptsOverrun(int num_intercepts, intercept_t *intercept)
+{
+	int location;
+
+	if (num_intercepts <= MAXINTERCEPTS_ORIGINAL)
+	{
+		// No overrun
+
+		return;
+	}
+
+	location = (num_intercepts - MAXINTERCEPTS_ORIGINAL - 1) * 12;
+
+	// Overwrite memory that is overwritten in Vanilla Doom, using
+	// the values from the intercept structure.
+	//
+	// Note: the ->d.{thing,line} member should really have its
+	// address translated into the correct address value for 
+	// Vanilla Doom.
+
+	InterceptsMemoryOverrun(location, intercept->frac);
+	InterceptsMemoryOverrun(location + 4, intercept->isaline);
+	InterceptsMemoryOverrun(location + 8, (int) intercept->d.thing);
+}
 
 
 //
