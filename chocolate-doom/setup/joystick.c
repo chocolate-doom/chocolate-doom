@@ -317,7 +317,7 @@ static void CalibrateJoystick(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 void JoyButtonSetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))
 {
     TXT_CAST_ARG(int, variable);
-    int i;
+    unsigned int i;
 
     // Only allow a button to be bound to one action at a time.  If 
     // we assign a key that another action is using, set that other action
