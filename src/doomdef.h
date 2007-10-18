@@ -31,6 +31,21 @@
 #include <stdio.h>
 #include <string.h>
 
+// Portable header to provide the strcasecmp/strncasecmp functions.
+// On Windows, stricmp/strnicmp is used as a replacement.
+
+#ifdef _WIN32
+
+#define strcasecmp stricmp
+#define strncasecmp strnicmp
+
+#else
+
+#include <strings.h>
+
+#endif
+
+
 //
 // The packed attribute forces structures to be packed into the minimum 
 // space necessary.  If this is not done, the compiler may align structure
