@@ -31,11 +31,13 @@
 #include <stdio.h>
 #include <string.h>
 
-// Portable header to provide the strcasecmp/strncasecmp functions.
-// On Windows, stricmp/strnicmp is used as a replacement.
+// #define macros to provide functions missing in Windows.
+// Outside Windows, we use strings.h for str[n]casecmp.
 
 #ifdef _WIN32
 
+#define snprintf _snprintf
+#define vsnprintf _vsnprintf
 #define strcasecmp stricmp
 #define strncasecmp strnicmp
 
