@@ -39,6 +39,10 @@
 #define CHAR_W 8
 #define CHAR_H 16
 
+#if defined(_MSC_VER) && !defined(__cplusplus)
+#define inline __inline
+#endif
+
 // Time between character blinks in ms
 
 #define BLINK_PERIOD 250
