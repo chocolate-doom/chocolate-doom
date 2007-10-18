@@ -79,7 +79,7 @@ static deh_section_t *section_types[] =
 void DEH_Checksum(md5_digest_t digest)
 {
     md5_context_t md5_context;
-    int i;
+    unsigned int i;
 
     MD5_Init(&md5_context);
 
@@ -98,7 +98,7 @@ void DEH_Checksum(md5_digest_t digest)
 
 static void InitialiseSections(void)
 {
-    int i;
+    unsigned int i;
 
     for (i=0; i<arrlen(section_types); ++i)
     {
@@ -113,7 +113,7 @@ static void InitialiseSections(void)
 
 static deh_section_t *GetSectionByName(char *name)
 {
-    int i;
+    unsigned int i;
 
     for (i=0; i<arrlen(section_types); ++i)
     {

@@ -111,7 +111,7 @@ static char *connect_address = NULL;
 
 static iwad_t *GetIWADForDescription(char *description)
 {
-    int i;
+    unsigned int i;
 
     for (i=0; i<arrlen(iwads); ++i)
     {
@@ -396,7 +396,7 @@ static txt_widget_t *IWADSelector(void)
     txt_widget_t *result;
     int installed_iwads;
     int num_iwads;
-    int i;
+    unsigned int i;
 
     // Find out what WADs are installed
     

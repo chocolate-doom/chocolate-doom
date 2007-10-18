@@ -62,7 +62,7 @@ static float frequencies[] = {
 
 static void PCSCallbackFunc(int *duration, int *freq)
 {
-    int tone;
+    unsigned int tone;
 
     *duration = 1000 / 140;
 
