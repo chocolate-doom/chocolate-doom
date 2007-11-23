@@ -30,9 +30,9 @@
 
 #ifndef _WIN32
     #include <sys/wait.h>
+    #include <unistd.h>
 #else
-    #define WEXITSTATUS(stat_val) ((stat_val) & 255) 
-    #define WIFEXITED(stat_val) (((stat_val) & 0xff00) == 0)
+    #include <process.h>
 #endif
 
 #include "textscreen.h"
@@ -138,38 +138,79 @@ void AddCmdLineParameter(execute_context_t *context, char *s, ...)
     fprintf(context->stream, "\n");
 }
 
+#ifdef _WIN32
+
+static int ExecuteCommand(const char **argv)
+{
+    return _spawnv(_P_WAIT, argv[0], argv);
+}
+
+#else
+
+static int ExecuteCommand(const char **argv)
+{
+    pid_t childpid;
+    int result;
+
+    childpid = fork();
+
+    if (childpid == 0) 
+    {
+        // This is the child.  Execute the command.
+
+        execv(argv[0], (char **) argv);
+
+        exit(-1);
+    }
+    else
+    {
+        // This is the parent.  Wait for the child to finish, and return
+        // the status code.
+
+        waitpid(childpid, &result, 0);
+
+        if (WIFEXITED(result)) 
+        {
+            return WEXITSTATUS(result);
+        }
+        else
+        {
+            return -1;
+        }
+    }
+}
+
+#endif
+
 int ExecuteDoom(execute_context_t *context)
 {
-    char *cmdline;
+    const char *argv[3];
+    char *response_file_arg;
     int result;
     
     fclose(context->stream);
 
     // Build the command line
 
-    cmdline = malloc(strlen(DOOM_BINARY) 
-                     + strlen(context->response_file) + 20);
+    response_file_arg = malloc(strlen(context->response_file) + 2);
+    sprintf(response_file_arg, "@%s", context->response_file);
 
-    sprintf(cmdline, "%s @%s", DOOM_BINARY, context->response_file);
-    
-    // Run the command
-    result = system(cmdline);
+    argv[0] = DOOM_BINARY;
+    argv[1] = response_file_arg;
+    argv[2] = NULL;
 
-    free(cmdline);
+    // Run Doom
+
+    result = ExecuteCommand(argv);
+
+    free(response_file_arg);
     
     // Destroy context 
     remove(context->response_file);
     free(context->response_file);
     free(context);
 
-    if (WIFEXITED(result))
-    {
-        return WEXITSTATUS(result);
-    }
-    else
-    {
-        return -1;
-    }
+    return result;
 }
 
 static void TestCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
