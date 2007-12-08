@@ -74,7 +74,8 @@
        the Vanilla limit still applies, but it can now be disabled).
      * Autoadjusting the screen mode can now be disabled.
      * On Windows, the registry is queried to detect installed versions of
-       Doom and automatically locate IWAD files.
+       Doom and automatically locate IWAD files.  IWADs installed through
+       Steam are also autodetected.
      * Added DOOMWADPATH that can be used like PATH to specify multiple 
        locations in which to search for IWAD files.  Also, '-iwad' is 
        now enhanced, so that eg. '-iwad doom.wad' will now search all 
@@ -84,6 +85,9 @@
      * The SDL driver can now be specified in the configuration file.  
        The setup tool has an option on Windows to select between
        DirectX and windib.
+     * Joystick support.
+     * Configuration file option to change the sound sample rate.
+     * More than three mouse buttons are now supported.
      
     Portability improvements: 
      * Chocolate Doom now compiles and runs cleanly on MacOS X.  Huge
@@ -134,6 +138,13 @@
        assumes all keyboards are US).
      * Emulate overflow bug in P_FindNextHighestFloor.  Thanks to
        entryway for the fix for this.
+     * Add -netdemo command line parameter, for playing back netgame
+       demos recorded with a single player.
+     * The numeric keypad now behaves like Vanilla Doom does.
+     * Fix some crashes when loading from savegames.
+     * Add intercepts overrun emulation from PrBoom-plus.  Thanks again
+       to entryway for his research on this subject.
+     * Add playeringame overrun emulation.
 
     Bugs fixed:
      * Fix crash when starting new levels due to the intermission screen
@@ -156,6 +167,13 @@
      * Fix buffer overrun on the quicksave prompt screen that caused a
        mysterious cycling character to appear.
      * IDCLEV should not work in net games (thanks Janizdreg)
+     * Stop music playing at the ENDOOM screen.
+     * Fix sound sample rate conversion crash.
+     * Fix 'pop' heard at the end of sound effects.
+     * Fix crash when playing long sounds.
+     * Fix bug with -timedemo accuracy over multi-level demos.
+     * Fix bug with the automap always following player 1 in multiplayer
+       mode (thanks Janizdreg).
 
 0.1.4 (2006-02-13):
 
