@@ -1,3 +1,520 @@
+2007-12-08 11:07:13 fraggle
+	
+	Update NEWS.
+
+2007-11-23 18:26:40 fraggle
+	
+	Use _spawnv() to invoke Doom under Windows, rather than system().
+	Fixes bug with DOS window "flashing up" when opening the multiplayer
+	dialogs.
+
+2007-10-19 00:55:11 fraggle
+	
+	Reorder actionf_t union members to fix warnings in info.c.
+
+2007-10-19 00:54:11 fraggle
+	
+	Shut up signed / unsigned comparison warnings.
+
+2007-10-19 00:44:56 fraggle
+	
+	#define snprintf, vsnprintf to _snprintf, _vsnprintf in MSVC.
+
+2007-10-19 00:40:50 fraggle
+	
+	#define inline to _inline in MSVC.
+
+2007-10-19 00:38:53 fraggle
+	
+	Fix for strcasecmp in MSVC; #define to stricmp.  Outside MSVC, use
+	strings.h.
+
+2007-09-15 18:09:47 fraggle
+	
+	Fix desyncs caused by previous change to A_Explode.
+
+2007-09-15 14:13:00 fraggle
+	
+	Check for playeringame overflow when spawning a new player (for
+	compatibility with vex6d.wad / bug_wald.lmp)
+
+2007-09-15 13:35:33 fraggle
+	
+	Add intercepts overrun emulation from PrBoom-plus.
+
+2007-09-14 23:20:08 fraggle
+	
+	Add P_SubstNullMobj, substitute NULL mobjs for a dummy mobj where
+	mo->target is not checked for NULL.
+
+2007-09-11 10:02:24 fraggle
+	
+	Remove obsolete autotools scripts from dist, require automake 1.8
+	(please upgrade!)
+
+2007-09-05 00:50:56 fraggle
+	
+	Fix build failure when python is not installed.
+
+2007-09-03 02:05:27 fraggle
+	
+	Up the default sample rate to 44100.
+
+2007-09-03 02:00:19 fraggle
+	
+	Fix crash when playing long sounds (like DSBOSSIT)
+
+2007-09-03 01:43:29 fraggle
+	
+	Try to open /dev/speaker in the parent process, so that we can tell if
+	we don't have permission to open it before we fork.
+
+2007-09-03 01:30:51 fraggle
+	
+	Add pcsound driver for OpenBSD.
+
+2007-09-02 21:17:19 fraggle
+	
+	Disable "saving config in ...  " message for setup (thanks MikeRS)
+
+2007-09-02 21:14:40 fraggle
+	
+	Don't make novert affect the joystick as well (thanks Janizdreg)
+
+2007-08-31 09:59:34 fraggle
+	
+	Make SHORT and LONG macros return signed values; this is the behaviour
+	of the versions in the original source and some code depends on it.
+
+2007-08-31 09:31:48 fraggle
+	
+	Use short for texpatch_t .originx, .originy: fixes problem caused by
+	sign conversion in the endianness code.
+
+2007-08-31 08:27:44 fraggle
+	
+	Use gcc packed attribute for all structures read/written to disk.  This
+	fixes architectures where structure fields are aligned differently to
+	optimise reads, causing the game to crash.
+
+2007-08-27 20:31:30 fraggle
+	
+	Fix bug where the automap always follows player 1 in multiplayer mode
+	(thanks Janizdreg!)
+
+2007-08-24 01:27:39 fraggle
+	
+	Initialise tracksize variable before mus2mid conversion, otherwise it
+	is not reset the next time we convert a mid
+
+2007-08-20 00:54:27 fraggle
+	
+	Use __APPLE__ instead of __MACOSX__.
+
+2007-08-09 01:28:34 fraggle
+	
+	Remove debugging message.
+
+2007-08-09 01:04:03 fraggle
+	
+	Don't crash when all players have quit.
+
+2007-08-09 01:03:41 fraggle
+	
+	Disconnect any remaining drones when the last real player quits.
+
+2007-08-08 22:14:48 fraggle
+	
+	Remove M_FileExists check for steam directories and add them as
+	possible search paths anyway.
+
+2007-08-08 22:11:29 fraggle
+	
+	Add the default DEICE install directories to the IWAD search path on
+	Windows.
+
+2007-08-08 21:06:46 fraggle
+	
+	Match steam IWAD directory order to IWAD search order.
+
+2007-08-08 19:04:35 fraggle
+	
+	Move SCREENHEIGHT_4_3 to doomdef.h; remove some unused constants.
+
+2007-08-08 19:03:32 fraggle
+	
+	Make M_FileExists work on directories.
+
+2007-08-08 03:00:53 fraggle
+	
+	Add temporary debugging messages for Steam support.
+
+2007-08-08 02:17:38 fraggle
+	
+	Don't assume Steam InstallPath ends in a \
+
+2007-08-07 05:26:16 fraggle
+	
+	All of the steam IWADs are in \base subdirectories.
+
+2007-08-07 02:19:49 fraggle
+	
+	Autodetect IWADs installed by Steam.
+
+2007-08-06 05:48:55 fraggle
+	
+	Remove duplicate FileExists function.
+
+2007-08-03 23:17:15 fraggle
+	
+	Fix 'pop' at the end of sound effects caused by an audio conversion
+	bug.
+
+2007-07-30 03:03:23 fraggle
+	
+	Set timedemo start time when demo playback begins, not when the level
+	begins.  Using the level start time causes problems when timing
+	multi-level demos.
+
+2007-07-30 01:44:49 fraggle
+	
+	Make the z_native "out of memory" error message match the normal
+	z_zone one.
+
+2007-07-30 01:31:33 fraggle
+	
+	Fix bug in z_native linked list logic.  Clear out all PU_CACHE blocks
+	when out of memory.
+
+2007-07-30 00:41:12 fraggle
+	
+	Allow more than the standard three mouse buttons to be defined through
+	setup (hopefully)
+
+2007-07-22 15:45:53 fraggle
+	
+	Add missing new mouse buttons to setup (thanks RazTK).
+
+2007-07-10 14:37:58 fraggle
+	
+	Another crazy idea.
+
+2007-07-10 14:37:44 fraggle
+	
+	Shut up compiler warning.
+
+2007-07-08 21:53:18 fraggle
+	
+	Make the numeric keypad behave like Vanilla does.
+
+2007-07-08 18:52:45 fraggle
+	
+	Add -netdemo for playing back netgame demos that only have a single
+	player.
+
+2007-07-08 00:58:24 fraggle
+	
+	Make drones quit when disconnected from the server.
+
+2007-07-08 00:45:55 fraggle
+	
+	Don't grab the mouse if a drone player (no input, so it isn't needed).
+
+2007-07-05 13:06:10 fraggle
+	
+	Clearer prompt when asking whether to save settings on exit of setup.
+
+2007-07-05 12:57:18 fraggle
+	
+	Remove "startup delay" from the setup display configuration dialog.
+
+2007-07-04 23:57:07 fraggle
+	
+	Add pcsound_internal.h to dist.
+
+2007-06-30 15:34:03 fraggle
+	
+	Don't crash if there is a multiplayer demo in the demo loop.
+
+2007-06-28 00:15:56 fraggle
+	
+	Interpret skill level setting as a signed integer, to allow -skill 0.
+
+2007-06-22 20:14:49 fraggle
+	
+	Don't allow two actions bound to the same button in setup.
+
+2007-06-22 12:55:14 fraggle
+	
+	Replace 35 with TICRATE where appropriate.
+
+2007-06-21 23:51:47 fraggle
+	
+	Add a joystick dead zone for joysticks that don't have them.
+
+2007-06-21 23:00:38 fraggle
+	
+	Revert previous change from bitshifts to divides; this causes demo
+	desyncs.
+
+2007-06-21 12:33:46 fraggle
+	
+	Add arrlen() macro as a clearer way of doing sizeof(array) /
+	sizeof(*array)
+
+2007-06-21 12:32:04 fraggle
+	
+	Add portability section to HACKING file.
+
+2007-06-20 12:44:46 fraggle
+	
+	Update TODO.
+
+2007-06-20 12:21:57 fraggle
+	
+	Add x5 screen scale (thanks MikeRS!)
+
+2007-06-20 01:37:40 fraggle
+	
+	Add new configuration options for the mouse and joystick for controls
+	that are available through the keyboard.  Justification: this is
+	already possible through advanced mouse drivers and programs like
+	js2x, so there might as well be a proper interface for it.
+
+2007-06-19 00:59:08 rtc_marine
+	
+	Update codeblocks projects for new sound stuff Include envvars in
+	projects, which is part of the new format
+
+2007-06-19 00:50:42 fraggle
+	
+	Add -iwad when joining a game, as well as when creating one (thanks
+	MikeRS :-)
+
+2007-06-19 00:47:44 fraggle
+	
+	Remove deleted headers from Makefile.am.
+
+2007-06-17 20:19:37 fraggle
+	
+	Make the music code modular as well, although for the time being there
+	is only one module.  Remove s_dummy.c.
+
+2007-06-17 19:40:02 fraggle
+	
+	Split i_sound.c into i_sdlsound.c, i_sdlmusic.c, with generic "sound
+	driver" modules, one for PC speaker and one for digital output.
+
+2007-06-16 17:16:45 fraggle
+	
+	Switch back to z_zone, not z_native (oops!)
+
+2007-06-16 17:04:00 fraggle
+	
+	Clean up sound code
+
+2007-06-16 17:03:10 fraggle
+	
+	Use divides instead of bitshifts, for clarity
+
+2007-06-16 17:02:58 fraggle
+	
+	Shut up strict aliasing warnings
+
+2007-06-16 17:02:46 fraggle
+	
+	Switch to djb2 hash function and shut up compiler warnings
+
+2007-06-15 00:20:30 rtc_marine
+	
+	Update codeblocks project
+
+2007-06-14 22:45:50 fraggle
+	
+	Add configuration file variable to change the sound sample rate
+	(snd_samplerate)
+
+2007-06-14 22:15:52 fraggle
+	
+	Support up to 20 joystick buttons.  Justification: most modern
+	joysticks and joypads have many more than four buttons.  Keeping the
+	limit at four buttons restricts the player into using the first four
+	buttons on his joystick/pad, which could be any arbitrary four set of
+	buttons.
+
+2007-06-14 22:03:22 fraggle
+	
+	Don't send joystick updates when the joystick is disabled.  Shut up
+	warning caused by missing header.
+
+2007-06-13 20:12:13 fraggle
+	
+	Working joystick code.
+
+2007-06-12 19:49:29 fraggle
+	
+	Emulate overflows in P_FindNextHighestFloor.  Thanks to entryway for
+	this fix.
+
+2007-06-09 23:28:55 fraggle
+	
+	Joystick calibration (untested)
+
+2007-06-09 19:01:00 fraggle
+	
+	Add stamp-h1 to svn:ignore.
+
+2007-06-09 19:00:19 fraggle
+	
+	Add *.exe to svn:ignore.
+
+2007-06-09 18:51:16 fraggle
+	
+	Initial joystick calibration code.
+
+2007-06-09 18:49:05 fraggle
+	
+	Open the joystick when prompting for a new button.
+
+2007-06-09 18:45:14 fraggle
+	
+	Set svn:ignore on pcsound directory.
+
+2007-06-04 19:35:51 fraggle
+	
+	Remove unneeded SDL.h include.
+
+2007-06-04 19:34:51 fraggle
+	
+	Oops!
+
+2007-06-04 19:34:24 fraggle
+	
+	Completed joystick button selection widget (untested)
+
+2007-06-04 19:32:50 fraggle
+	
+	Rename txt_main.c to txt_sdl.c; add txt_sdl.h for SDL-specific API
+	functions, while keeping txt_main.h for the common API.  Add
+	TXT_SDL_SetEventCallback to allow programs to intercept SDL events in
+	the textscreen main loop.
+
+2007-06-02 08:04:28 rtc_marine
+	
+	Update codeblocks projects for joystick stuff
+
+2007-06-01 19:08:42 fraggle
+	
+	Display a meaningful message when trying to start with an invalid
+	Joystick ID.
+
+2007-06-01 19:08:09 fraggle
+	
+	Up the threshold for the always run hack to 20; it's conceivable that
+	there are control pads with more than 10 buttons.
+
+2007-06-01 19:06:15 fraggle
+	
+	Hide the joystick speed control when the always run hack is being
+	used.
+
+2007-06-01 00:16:23 fraggle
+	
+	Initial joystick support.
+
+2007-05-24 15:31:54 fraggle
+	
+	Fix ByteSwapBlock macro.
+
+2007-05-24 15:29:08 fraggle
+	
+	Add TXT_SetWindowTitle function to wrap SDL_WM_SetCaption, so that
+	txt_desktop.c doesn't need to call SDL functions directly.
+
+2007-05-24 15:26:08 fraggle
+	
+	Use I_Sleep in i_system.c instead of SDL_Delay directly.
+
+2007-05-20 16:06:46 fraggle
+	
+	Fix crash when converting audio down to a lower sample rate.
+
+2007-05-20 03:20:54 fraggle
+	
+	Stop music on sound shutdown so music isn't left playing at the ENDOOM
+	screen.
+
+2007-05-20 03:20:22 fraggle
+	
+	Initialise sound before network setup to fix bug with sound effects
+	not playing when playing netgames on Windows (text mode waiting screen
+	shutdown causes sound not to start up?)
+
+2007-05-19 23:53:10 fraggle
+	
+	Update NEWS.
+
+2007-05-19 23:48:39 fraggle
+	
+	Don't allow idclev in netgames.
+
+2007-05-19 17:42:56 fraggle
+	
+	Fix tempo problems in pcsound linux driver.
+
+2007-05-16 15:28:22 fraggle
+	
+	Add FEATURE_SOUND.
+
+2007-05-16 14:52:09 fraggle
+	
+	Oops!
+
+2007-05-16 14:49:04 fraggle
+	
+	Rejig net_cl_new_sync and drone to be in d_net.c instead of
+	net_client.c.  Fix FEATURE_MULTIPLAYER conditional compile.  Move some
+	function definitions in d_net.c into headers.  Reorganise the Makefile
+	to split out files into sections based on features.
+
+2007-05-09 19:48:32 fraggle
+	
+	Fix ticdup.
+
+2007-05-02 03:03:44 fraggle
+	
+	Check in autoconf if python is installed; if not, don't run python
+	scripts.
+
+2007-05-02 02:51:15 fraggle
+	
+	Add missing files to dist.
+
+2007-04-29 15:53:37 fraggle
+	
+	Add missing codeblocks workspace files to dist.
+
+2007-04-16 12:34:26 fraggle
+	
+	Fix crash: don't check for client resends after they have
+	disconnected.
+
+2007-04-03 10:31:12 rtc_marine
+	
+	Fix building with gcc 4.x
+
+2007-03-27 12:57:28 fraggle
+	
+	Update NEWS.
+
+2007-03-27 12:44:53 fraggle
+	
+	Update ChangeLog.
+
+2007-03-27 12:40:04 fraggle
+	
+	<SDL.h> -> "SDL.h"
+
 2007-03-27 00:20:10 fraggle
 	
 	Fix docgen makefile dependencies.
