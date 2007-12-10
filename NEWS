@@ -1,17 +1,17 @@
 
-0.2.1 (???):
+1.0.0 (2007-12-10):
 
     This release is dedicated to Dylan 'Toke' McIntosh, who was
-    tragically killed in a car crash earlier this year.  I knew Dylan
+    tragically killed in a car crash in 2006.  I knew Dylan
     from IRC and the Doomworld forums for several years, and he had
     a deep passion for this game.  He was also a huge help for me while
     developing Chocolate Doom, as he helped point out a lot of small
     quirks in Vanilla Doom that I didn't know about. His death is a 
     great loss.  RIP Toke.
 
-    This is version 0.2.1: the reason for this is to distinguish from
-    the various beta versions that have been built over the past months
-    before this release, as these all had the version "0.2.0".
+    This is the first release to reach full feature parity with 
+    Vanilla Doom.  As a result, I have made this version 1.0.0, so
+    Chocolate Doom is no longer beta!
 
     Big new features:
      * Multiplayer!  This version includes an entirely new multiplayer
