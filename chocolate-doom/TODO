@@ -4,6 +4,9 @@ To do:
   - Debian/Ubuntu .deb packages, Fedora .rpm packages.
   - Windows NSIS installer.
   - MacOS X .dmg packages (should be universal binaries!)
+* mmap()ed WAD file I/O.  This is potentially useful for ports to 
+  embedded / low memory systems, as currently the contents of WAD lumps
+  are copied into the zone memory.
 * Better icon for chocolate-setup.
 * Free version of the Chocolate Doom logo (from scratch, not using the 
   Doom imp sprite), so t-shirts can be printed!
