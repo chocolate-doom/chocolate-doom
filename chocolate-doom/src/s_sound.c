@@ -241,18 +241,43 @@ static void InitMusicModule(void)
 
 void S_Init(int sfxVolume, int musicVolume)
 {  
+    boolean nosound, nosfx, nomusic;
     int i;
+
+    //!
+    // @vanilla
+    //
+    // Disable all sound output.
+    //
+
+    nosound = M_CheckParm("-nosound") > 0;
+
+    //!
+    // @vanilla
+    //
+    // Disable sound effects. 
+    //
+
+    nosfx = M_CheckParm("-nosfx") > 0;
+
+    //!
+    // @vanilla
+    //
+    // Disable music.
+    //
+
+    nomusic = M_CheckParm("-nomusic") > 0;
 
     // Initialise the sound and music subsystems.
 
-    if (M_CheckParm("-nosound") <= 0 && !screensaver_mode)
+    if (!nosound && !screensaver_mode)
     {
-        if (M_CheckParm("-nosfx") <= 0)
+        if (!nosfx)
         {
             InitSfxModule();
         }
 
-        if (M_CheckParm("-nomusic") <= 0)
+        if (!nomusic)
         {
             InitMusicModule();
         }

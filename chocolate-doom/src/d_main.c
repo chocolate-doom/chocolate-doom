@@ -851,24 +851,32 @@ void D_DoomMain (void)
     modifiedgame = false;
 
     //!
+    // @vanilla
+    //
     // Disable monsters.
     //
 	
     nomonsters = M_CheckParm ("-nomonsters");
 
     //!
+    // @vanilla
+    //
     // Monsters respawn after being killed.
     //
 
     respawnparm = M_CheckParm ("-respawn");
 
     //!
+    // @vanilla
+    //
     // Monsters move faster.
     //
 
     fastparm = M_CheckParm ("-fast");
 
     //! 
+    // @vanilla
+    //
     // Developer mode.  F1 saves a screenshot in the current working
     // directory.
     //
@@ -877,6 +885,7 @@ void D_DoomMain (void)
 
     //!
     // @category net
+    // @vanilla
     //
     // Start a deathmatch game.
     //
@@ -886,6 +895,7 @@ void D_DoomMain (void)
 
     //!
     // @category net
+    // @vanilla
     //
     // Start a deathmatch 2.0 game.  Weapons do not stay in place and
     // all items respawn after 30 seconds.
@@ -903,6 +913,7 @@ void D_DoomMain (void)
     
     //!
     // @arg <x>
+    // @vanilla
     //
     // Turbo mode.  The player's speed is multiplied by x%.  If unspecified,
     // x defaults to 200.  Values are rounded up to 10 and down to 400.
@@ -1065,6 +1076,7 @@ void D_DoomMain (void)
 
     //!
     // @arg <files>
+    // @vanilla
     //
     // Load the specified PWAD files.
     //
@@ -1125,6 +1137,7 @@ void D_DoomMain (void)
     //!
     // @arg <demo>
     // @category demo
+    // @vanilla
     //
     // Play back the demo named demo.lmp.
     //
@@ -1136,6 +1149,7 @@ void D_DoomMain (void)
         //!
         // @arg <demo>
         // @category demo
+        // @vanilla
         //
         // Play back the demo named demo.lmp, determining the framerate
         // of the screen.
@@ -1216,6 +1230,7 @@ void D_DoomMain (void)
 
     //!
     // @arg <skill>
+    // @vanilla
     //
     // Set the game skill, 1-5 (1: easiest, 5: hardest).  A skill of
     // 0 disables all monsters.
@@ -1231,6 +1246,7 @@ void D_DoomMain (void)
 
     //!
     // @arg <n>
+    // @vanilla
     //
     // Start playing on episode n (1-4)
     //
@@ -1249,6 +1265,7 @@ void D_DoomMain (void)
     //! 
     // @arg <n>
     // @category net
+    // @vanilla
     //
     // For multiplayer games: exit each level after n minutes.
     //
@@ -1263,6 +1280,7 @@ void D_DoomMain (void)
 
     //!
     // @category net
+    // @vanilla
     //
     // Austin Virtual Gaming: end levels after 20 minutes.
     //
@@ -1278,6 +1296,7 @@ void D_DoomMain (void)
 
     //!
     // @arg [<x> <y> | <xy>]
+    // @vanilla
     //
     // Start a game immediately, warping to ExMy (Doom 1) or MAPxy
     // (Doom 2)
@@ -1324,6 +1343,7 @@ void D_DoomMain (void)
 
     //!
     // @arg <s>
+    // @vanilla
     //
     // Load the game in slot s.
     //
@@ -1425,6 +1445,7 @@ void D_DoomMain (void)
     //!
     // @arg <x>
     // @category demo
+    // @vanilla
     //
     // Record a demo named x.lmp.
     //
