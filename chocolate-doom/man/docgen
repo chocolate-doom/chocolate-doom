@@ -100,6 +100,8 @@ categories = {
     "compat":  Category("Compatibility"),
 }
 
+wikipages = []
+
 # Show options that are in Vanilla Doom? Or only new options?
 
 show_vanilla_options = True
@@ -175,7 +177,7 @@ class Parameter:
 
         result += ": "
 
-        result += self.text
+        result += add_wiki_links(self.text)
 
         if self.platform:
             result += "'''(%s only)'''" % self.platform
@@ -220,6 +222,32 @@ class Parameter:
         result += line + "\n\n"
 
         return result
+
+# Read list of wiki pages
+
+def read_wikipages():
+    f = open("wikipages")
+
+    try:
+        for line in f:
+            line = line.rstrip()
+
+            line = re.sub('\#.*$', '', line)
+
+            if not re.match('^\s*$', line):
+                wikipages.append(line)
+    finally:
+        f.close()
+
+# Add wiki page links
+
+def add_wiki_links(text):
+    for pagename in wikipages:
+        page_re = re.compile('(%s)' % pagename, re.IGNORECASE)
+    #   text = page_re.sub("SHOES", text)
+        text = page_re.sub('[[\\1]]', text)
+
+    return text
 
 def process_file(file):
     f = open(file)
@@ -301,6 +329,7 @@ def manpage_output(dir):
     print_file_contents("footer")
 
 def wiki_output(dir):
+    read_wikipages()
     process_files(dir)
 
     print categories[None].wiki_output()
