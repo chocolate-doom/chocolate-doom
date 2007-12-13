@@ -1842,6 +1842,7 @@ void G_RecordDemo (char* name)
     //!
     // @arg <size>
     // @category demo
+    // @vanilla
     //
     // Specify the demo buffer size (KiB)
     //
@@ -1981,12 +1982,16 @@ void G_DoPlayDemo (void)
 void G_TimeDemo (char* name) 
 {
     //!
+    // @vanilla 
+    //
     // Disable rendering the screen entirely.
     //
 
     nodrawers = M_CheckParm ("-nodraw"); 
 
     //!
+    // @vanilla
+    //
     // Disable blitting the screen.
     //
 

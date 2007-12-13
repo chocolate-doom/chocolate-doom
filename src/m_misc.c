@@ -682,6 +682,7 @@ void M_LoadDefaults (void)
 
     //!
     // @arg <file>
+    // @vanilla
     //
     // Load configuration from the specified file, instead of
     // default.cfg.
@@ -764,6 +765,7 @@ void M_SetConfigDir(void)
 #ifdef _WIN32
         //!
         // @platform windows
+        // @vanilla
         //
         // Save configuration data and savegames in c:\doomdata,
         // allowing play from CD.
