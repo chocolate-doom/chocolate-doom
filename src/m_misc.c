@@ -704,6 +704,8 @@ void M_LoadDefaults (void)
     printf("saving config in %s\n", doom_defaults.filename);
 
     //!
+    // @arg <file>
+    //
     // Load extra configuration from the specified file, instead 
     // of chocolate-doom.cfg.
     //
