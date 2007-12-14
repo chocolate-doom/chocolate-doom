@@ -2,6 +2,8 @@
     Bugs fixed:
      * Desync with STRAIN demos and dehacked Misc values not being 
        set properly (thanks Lemonzest)
+     * Don't grab the mouse if the mouse is disabled via -nomouse
+       or use_mouse in the configuration file (thanks MikeRS).
 
 1.0.0 (2007-12-10):
 
