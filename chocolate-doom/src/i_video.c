@@ -171,6 +171,11 @@ static boolean MouseShouldBeGrabbed()
     if (fullscreen != FULLSCREEN_OFF)
         return true;
 
+    // Don't grab the mouse if mouse input is disabled
+
+    if (!usemouse || nomouse)
+        return false;
+
     // Drone players don't need mouse focus
 
     if (drone)
