@@ -27,6 +27,8 @@
 #ifndef DEH_MISC_H
 #define DEH_MISC_H
 
+#include "doomfeatures.h"
+
 #define DEH_DEFAULT_INITIAL_HEALTH 100
 #define DEH_DEFAULT_INITIAL_BULLETS 50
 #define DEH_DEFAULT_MAX_HEALTH 200
