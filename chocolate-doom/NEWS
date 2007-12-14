@@ -1,4 +1,8 @@
 
+    Bugs fixed:
+     * Desync with STRAIN demos and dehacked Misc values not being 
+       set properly (thanks Lemonzest)
+
 1.0.0 (2007-12-10):
 
     This release is dedicated to Dylan 'Toke' McIntosh, who was
