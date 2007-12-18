@@ -505,6 +505,10 @@ void I_GetEvent(void)
                 UpdateFocus();
                 break;
 
+            case SDL_VIDEOEXPOSE:
+                palette_to_set = true;
+                break;
+
             default:
                 break;
         }
@@ -813,7 +817,7 @@ void I_FinishUpdate (void)
     if (palette_to_set)
     {
         SDL_SetColors(screen, palette, 0, 256);
-        palette_to_set = 0;
+        palette_to_set = false;
     }
     else
     {
@@ -845,7 +849,7 @@ void I_SetPalette (byte *doompalette)
         palette[i].b = gammatable[usegamma][*doompalette++];
     }
 
-    palette_to_set = 1;
+    palette_to_set = true;
 }
 
 // 
@@ -1387,7 +1391,11 @@ void I_InitGraphics(void)
     // clear out any events waiting at the start and center the mouse
   
     while (SDL_PollEvent(&dummy));
-    CenterMouse();
+
+    if (usemouse && !nomouse && (fullscreen || grabmouse))
+    {
+        CenterMouse();
+    }
 
     initialised = true;
 }
