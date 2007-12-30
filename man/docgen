@@ -326,6 +326,7 @@ def manpage_output(dir):
         if c != None:
             print categories[c].manpage_output()
 
+    print_file_contents("environment")
     print_file_contents("footer")
 
 def wiki_output(dir):

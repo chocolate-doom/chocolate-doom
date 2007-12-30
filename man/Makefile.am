@@ -1,5 +1,5 @@
 
-MANPAGE_GEN_FILES=header footer docgen
+MANPAGE_GEN_FILES=header footer environment docgen
 
 if HAVE_PYTHON
 
@@ -10,5 +10,6 @@ chocolate-doom.6: ../src $(MANPAGE_GEN_FILES)
 
 endif
 
-EXTRA_DIST = $(man_MANS) $(MANPAGE_GEN_FILES) 
+EXTRA_DIST = $(man_MANS) $(MANPAGE_GEN_FILES)        \
+	     wikipages
 
