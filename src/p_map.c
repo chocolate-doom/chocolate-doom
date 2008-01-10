@@ -46,6 +46,26 @@
 // Data.
 #include "sounds.h"
 
+// Spechit overrun magic value.
+//
+// This is the value used by PrBoom-plus.  I think the value below is 
+// actually better and works with more demos.  However, I think
+// it's better for the spechits emulation to be compatible with
+// PrBoom-plus, at least so that the big spechits emulation list
+// on Doomworld can also be used with Chocolate Doom.
+
+#define DEFAULT_SPECHIT_MAGIC 0x01C09C98
+
+// This is from a post by myk on the Doomworld forums, 
+// outputted from entryway's spechit_magic generator for
+// s205n546.lmp.  The _exact_ value of this isn't too
+// important; as long as it is in the right general
+// range, it will usually work.  Otherwise, we can use
+// the generator (hacked doom2.exe) and provide it 
+// with -spechit.
+
+//#define DEFAULT_SPECHIT_MAGIC 0x84f968e8
+
 
 fixed_t		tmbbox[4];
 mobj_t*		tmthing;
@@ -1394,15 +1414,7 @@ static void SpechitOverrun(line_t *ld)
         }
         else
         {
-            // This is from a post by myk on the Doomworld forums, 
-            // outputted from entryway's spechit_magic generator for
-            // s205n546.lmp.  The _exact_ value of this isn't too
-            // important; as long as it is in the right general
-            // range, it will usually work.  Otherwise, we can use
-            // the generator (hacked doom2.exe) and provide it 
-            // with -spechit.
-
-            baseaddr = 0x84f968e8;
+            baseaddr = DEFAULT_SPECHIT_MAGIC;
         }
     }
     
