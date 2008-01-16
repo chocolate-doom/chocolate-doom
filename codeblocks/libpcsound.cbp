@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="..\lib\libpcsound-dbg.a" prefix_auto="1" extension_auto="1" />
+				<Option output="..\lib\libpcsound-dbg" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="..\obj\libpcsound\dbg" />
 				<Option type="2" />
@@ -17,7 +17,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="..\lib\libpcsound.a" prefix_auto="1" extension_auto="1" />
+				<Option output="..\lib\libpcsound" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="..\obj\libpcsound\release" />
 				<Option type="2" />
@@ -36,9 +36,10 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add directory="." />
+			<Add directory="..\src" />
 		</Compiler>
 		<Linker>
-			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_mixer -lSDL_net -mwindows" />
+			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_mixer -mwindows" />
 		</Linker>
 		<Unit filename="..\pcsound\pcsound.c">
 			<Option compilerVar="CC" />
@@ -57,6 +58,7 @@
 		<Extensions>
 			<code_completion />
 			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

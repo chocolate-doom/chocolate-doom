@@ -39,7 +39,7 @@
 			<Add directory="..\textscreen" />
 		</Compiler>
 		<Linker>
-			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_mixer -lSDL_net -mwindows" />
+			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_net -mwindows" />
 		</Linker>
 		<Unit filename="..\src\d_dedicated.c">
 			<Option compilerVar="CC" />
@@ -90,6 +90,7 @@
 		<Extensions>
 			<code_completion />
 			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
