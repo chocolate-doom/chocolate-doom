@@ -34,6 +34,7 @@
 // #define macros to provide functions missing in Windows.
 // Outside Windows, we use strings.h for str[n]casecmp.
 
+
 #ifdef _WIN32
 
 #define snprintf _snprintf

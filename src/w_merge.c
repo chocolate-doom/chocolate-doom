@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "doomdef.h"
 #include "i_system.h"
 #include "w_merge.h"
 #include "w_wad.h"
