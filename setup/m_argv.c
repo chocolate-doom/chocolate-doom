@@ -3,6 +3,7 @@
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
+// Copyright(C) 2008 "GhostlyDeath" (ghostlydeath@gmail.com)
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -30,8 +31,15 @@
 int		myargc;
 char**		myargv;
 
-
-
+// From doomdef.h -- no need to include it all!
+#ifdef _WIN32
+#define snprintf _snprintf
+#define vsnprintf _vsnprintf
+#define strcasecmp stricmp
+#define strncasecmp strnicmp
+#else
+#include <strings.h>
+#endif
 
 //
 // M_CheckParm
