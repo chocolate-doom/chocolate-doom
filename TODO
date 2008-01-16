@@ -36,7 +36,6 @@ Crazy pie in the sky ideas:
   automatically download and play speedruns.
 * DWANGO-like interface for finding players and setting up games.
 * Demo hashes for regression testing of this and other ports.
-* MSVC build
 * OPL emulation
 * Video capture mode?
 
