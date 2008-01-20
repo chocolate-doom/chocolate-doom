@@ -72,7 +72,7 @@ void I_InitScale(byte *_src_buffer, byte *_dest_buffer, int _dest_pitch)
 // 1x scale doesn't really do any scaling: it just copies the buffer
 // a line at a time for when pitch != SCREENWIDTH (!native_surface)
 
-static void I_Scale1x(int x1, int y1, int x2, int y2)
+static boolean I_Scale1x(int x1, int y1, int x2, int y2)
 {
     byte *bufp, *screenp;
     int y;
@@ -89,6 +89,8 @@ static void I_Scale1x(int x1, int y1, int x2, int y2)
         screenp += dest_pitch;
         bufp += SCREENWIDTH;
     }
+
+    return true;
 }
 
 screen_mode_t mode_scale_1x = {
@@ -99,7 +101,7 @@ screen_mode_t mode_scale_1x = {
 
 // 2x scale (640x400)
 
-static void I_Scale2x(int x1, int y1, int x2, int y2)
+static boolean I_Scale2x(int x1, int y1, int x2, int y2)
 {
     byte *bufp, *screenp, *screenp2;
     int x, y;
@@ -127,6 +129,8 @@ static void I_Scale2x(int x1, int y1, int x2, int y2)
         screenp2 += multi_pitch;
         bufp += SCREENWIDTH;
     }
+
+    return true;
 }
 
 screen_mode_t mode_scale_2x = {
@@ -137,7 +141,7 @@ screen_mode_t mode_scale_2x = {
 
 // 3x scale (960x600)
 
-static void I_Scale3x(int x1, int y1, int x2, int y2)
+static boolean I_Scale3x(int x1, int y1, int x2, int y2)
 {
     byte *bufp, *screenp, *screenp2, *screenp3;
     int x, y;
@@ -169,6 +173,8 @@ static void I_Scale3x(int x1, int y1, int x2, int y2)
         screenp3 += multi_pitch;
         bufp += SCREENWIDTH;
     }
+
+    return true;
 }
 
 screen_mode_t mode_scale_3x = {
@@ -179,7 +185,7 @@ screen_mode_t mode_scale_3x = {
 
 // 4x scale (1280x800)
 
-static void I_Scale4x(int x1, int y1, int x2, int y2)
+static boolean I_Scale4x(int x1, int y1, int x2, int y2)
 {
     byte *bufp, *screenp, *screenp2, *screenp3, *screenp4;
     int x, y;
@@ -215,6 +221,8 @@ static void I_Scale4x(int x1, int y1, int x2, int y2)
         screenp4 += multi_pitch;
         bufp += SCREENWIDTH;
     }
+
+    return true;
 }
 
 screen_mode_t mode_scale_4x = {
@@ -225,7 +233,7 @@ screen_mode_t mode_scale_4x = {
 
 // 5x scale (1600x1000)
 
-static void I_Scale5x(int x1, int y1, int x2, int y2)
+static boolean I_Scale5x(int x1, int y1, int x2, int y2)
 {
     byte *bufp, *screenp, *screenp2, *screenp3, *screenp4, *screenp5;
     int x, y;
@@ -265,6 +273,8 @@ static void I_Scale5x(int x1, int y1, int x2, int y2)
         screenp5 += multi_pitch;
         bufp += SCREENWIDTH;
     }
+
+    return true;
 }
 
 screen_mode_t mode_scale_5x = {
@@ -396,7 +406,7 @@ static inline void WriteBlendedLine1x(byte *dest, byte *src1, byte *src2,
 
 // 1x stretch (320x240)
 
-static void I_Stretch1x(int x1, int y1, int x2, int y2)
+static boolean I_Stretch1x(int x1, int y1, int x2, int y2)
 {
     byte *bufp, *screenp;
     int y;
@@ -405,7 +415,7 @@ static void I_Stretch1x(int x1, int y1, int x2, int y2)
 
     if (x1 != 0 || y1 != 0 || x2 != SCREENWIDTH || y2 != SCREENHEIGHT)
     {
-        return;
+        return false;
     }    
 
     // Need to byte-copy from buffer into the screen buffer
@@ -442,6 +452,8 @@ static void I_Stretch1x(int x1, int y1, int x2, int y2)
         memcpy(screenp, bufp, SCREENWIDTH);
         screenp += dest_pitch; bufp += SCREENWIDTH;
     }
+
+    return true;
 }
 
 screen_mode_t mode_stretch_1x = {
@@ -483,7 +495,7 @@ static inline void WriteBlendedLine2x(byte *dest, byte *src1, byte *src2,
 
 // 2x stretch (640x480)
 
-static void I_Stretch2x(int x1, int y1, int x2, int y2)
+static boolean I_Stretch2x(int x1, int y1, int x2, int y2)
 {
     byte *bufp, *screenp;
     int y;
@@ -492,7 +504,7 @@ static void I_Stretch2x(int x1, int y1, int x2, int y2)
 
     if (x1 != 0 || y1 != 0 || x2 != SCREENWIDTH || y2 != SCREENHEIGHT)
     {
-        return;
+        return false;
     }    
 
     // Need to byte-copy from buffer into the screen buffer
@@ -553,6 +565,8 @@ static void I_Stretch2x(int x1, int y1, int x2, int y2)
         WriteLine2x(screenp, bufp);
         screenp += dest_pitch; bufp += SCREENWIDTH;
     }
+
+    return true;
 }
 
 screen_mode_t mode_stretch_2x = {
@@ -595,7 +609,7 @@ static inline void WriteBlendedLine3x(byte *dest, byte *src1, byte *src2,
 
 // 3x stretch (960x720)
 
-static void I_Stretch3x(int x1, int y1, int x2, int y2)
+static boolean I_Stretch3x(int x1, int y1, int x2, int y2)
 {
     byte *bufp, *screenp;
     int y;
@@ -604,7 +618,7 @@ static void I_Stretch3x(int x1, int y1, int x2, int y2)
 
     if (x1 != 0 || y1 != 0 || x2 != SCREENWIDTH || y2 != SCREENHEIGHT)
     {
-        return;
+        return false;
     }    
 
     // Need to byte-copy from buffer into the screen buffer
@@ -689,6 +703,8 @@ static void I_Stretch3x(int x1, int y1, int x2, int y2)
         WriteLine3x(screenp, bufp);
         screenp += dest_pitch; bufp += SCREENWIDTH;
     }
+
+    return true;
 }
 
 screen_mode_t mode_stretch_3x = {
@@ -733,7 +749,7 @@ static inline void WriteBlendedLine4x(byte *dest, byte *src1, byte *src2,
 
 // 4x stretch (1280x960)
 
-static void I_Stretch4x(int x1, int y1, int x2, int y2)
+static boolean I_Stretch4x(int x1, int y1, int x2, int y2)
 {
     byte *bufp, *screenp;
     int y;
@@ -742,7 +758,7 @@ static void I_Stretch4x(int x1, int y1, int x2, int y2)
 
     if (x1 != 0 || y1 != 0 || x2 != SCREENWIDTH || y2 != SCREENHEIGHT)
     {
-        return;
+        return false;
     }    
 
     // Need to byte-copy from buffer into the screen buffer
@@ -851,6 +867,8 @@ static void I_Stretch4x(int x1, int y1, int x2, int y2)
         WriteLine4x(screenp, bufp);
         screenp += dest_pitch; bufp += SCREENWIDTH;
     }
+
+    return true;
 }
 
 screen_mode_t mode_stretch_4x = {
@@ -877,7 +895,7 @@ static inline void WriteLine5x(byte *dest, byte *src)
 
 // 5x stretch (1600x1200)
 
-static void I_Stretch5x(int x1, int y1, int x2, int y2)
+static boolean I_Stretch5x(int x1, int y1, int x2, int y2)
 {
     byte *bufp, *screenp;
     int y;
@@ -886,7 +904,7 @@ static void I_Stretch5x(int x1, int y1, int x2, int y2)
 
     if (x1 != 0 || y1 != 0 || x2 != SCREENWIDTH || y2 != SCREENHEIGHT)
     {
-        return;
+        return false;
     }    
 
     // Need to byte-copy from buffer into the screen buffer
@@ -923,6 +941,8 @@ static void I_Stretch5x(int x1, int y1, int x2, int y2)
         WriteLine5x(screenp, bufp);
         screenp += dest_pitch; bufp += SCREENWIDTH;
     }
+
+    return true;
 }
 
 screen_mode_t mode_stretch_5x = {
@@ -978,7 +998,7 @@ static inline void WriteSquashedLine1x(byte *dest, byte *src)
 
 // 1x squashed (256x200)
 
-static void I_Squash1x(int x1, int y1, int x2, int y2)
+static boolean I_Squash1x(int x1, int y1, int x2, int y2)
 {
     byte *bufp, *screenp;
     int y;
@@ -987,7 +1007,7 @@ static void I_Squash1x(int x1, int y1, int x2, int y2)
 
     if (x1 != 0 || y1 != 0 || x2 != SCREENWIDTH || y2 != SCREENHEIGHT)
     {
-        return;
+        return false;
     }    
 
     bufp = src_buffer;
@@ -1000,6 +1020,8 @@ static void I_Squash1x(int x1, int y1, int x2, int y2)
         screenp += dest_pitch;
         bufp += SCREENWIDTH;
     }
+
+    return true;
 }
 
 screen_mode_t mode_squash_1x = {
@@ -1075,7 +1097,7 @@ static inline void WriteSquashedLine2x(byte *dest, byte *src)
 
 // 2x squash (512x400)
 
-static void I_Squash2x(int x1, int y1, int x2, int y2)
+static boolean I_Squash2x(int x1, int y1, int x2, int y2)
 {
     byte *bufp, *screenp;
     int y;
@@ -1084,7 +1106,7 @@ static void I_Squash2x(int x1, int y1, int x2, int y2)
 
     if (x1 != 0 || y1 != 0 || x2 != SCREENWIDTH || y2 != SCREENHEIGHT)
     {
-        return;
+        return false;
     }    
 
     bufp = src_buffer;
@@ -1097,6 +1119,8 @@ static void I_Squash2x(int x1, int y1, int x2, int y2)
         screenp += dest_pitch * 2;
         bufp += SCREENWIDTH;
     }
+
+    return true;
 }
 
 screen_mode_t mode_squash_2x = {
@@ -1155,7 +1179,7 @@ static inline void WriteSquashedLine3x(byte *dest, byte *src)
 // exactly.
 //
 
-static void I_Squash3x(int x1, int y1, int x2, int y2)
+static boolean I_Squash3x(int x1, int y1, int x2, int y2)
 {
     byte *bufp, *screenp;
     int y;
@@ -1164,7 +1188,7 @@ static void I_Squash3x(int x1, int y1, int x2, int y2)
 
     if (x1 != 0 || y1 != 0 || x2 != SCREENWIDTH || y2 != SCREENHEIGHT)
     {
-        return;
+        return false;
     }    
 
     bufp = src_buffer;
@@ -1177,6 +1201,8 @@ static void I_Squash3x(int x1, int y1, int x2, int y2)
         screenp += dest_pitch * 3;
         bufp += SCREENWIDTH;
     }
+
+    return true;
 }
 
 screen_mode_t mode_squash_3x = {
@@ -1263,7 +1289,7 @@ static inline void WriteSquashedLine4x(byte *dest, byte *src)
 // 4x squashed (1024x800)
 //
 
-static void I_Squash4x(int x1, int y1, int x2, int y2)
+static boolean I_Squash4x(int x1, int y1, int x2, int y2)
 {
     byte *bufp, *screenp;
     int y;
@@ -1272,7 +1298,7 @@ static void I_Squash4x(int x1, int y1, int x2, int y2)
 
     if (x1 != 0 || y1 != 0 || x2 != SCREENWIDTH || y2 != SCREENHEIGHT)
     {
-        return;
+        return false;
     }    
 
     bufp = src_buffer;
@@ -1285,6 +1311,8 @@ static void I_Squash4x(int x1, int y1, int x2, int y2)
         screenp += dest_pitch * 4;
         bufp += SCREENWIDTH;
     }
+
+    return true;
 }
 
 screen_mode_t mode_squash_4x = {
@@ -1325,7 +1353,7 @@ static inline void WriteSquashedLine5x(byte *dest, byte *src)
 // 5x squashed (1280x1000)
 //
 
-static void I_Squash5x(int x1, int y1, int x2, int y2)
+static boolean I_Squash5x(int x1, int y1, int x2, int y2)
 {
     byte *bufp, *screenp;
     int y;
@@ -1334,7 +1362,7 @@ static void I_Squash5x(int x1, int y1, int x2, int y2)
 
     if (x1 != 0 || y1 != 0 || x2 != SCREENWIDTH || y2 != SCREENHEIGHT)
     {
-        return;
+        return false;
     }    
 
     bufp = src_buffer;
@@ -1347,6 +1375,8 @@ static void I_Squash5x(int x1, int y1, int x2, int y2)
         screenp += dest_pitch * 5;
         bufp += SCREENWIDTH;
     }
+
+    return true;
 }
 
 screen_mode_t mode_squash_5x = {
