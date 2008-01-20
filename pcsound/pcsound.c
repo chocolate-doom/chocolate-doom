@@ -87,7 +87,7 @@ int PCSound_Init(pcsound_callback_func callback_func)
     {
         for (i=0; drivers[i] != NULL; ++i)
         {
-            if (!strcasecmp(drivers[i]->name, driver_name))
+            if (!strcmp(drivers[i]->name, driver_name))
             {
                 // Found the driver!
 
