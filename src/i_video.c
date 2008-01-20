@@ -854,6 +854,8 @@ void I_SetWindowIcon(void)
 
 static void CheckCommandLine(void)
 {
+    int i;
+
     //!
     // @category video 
     //
@@ -909,6 +911,31 @@ static void CheckCommandLine(void)
 
     nomouse = M_CheckParm("-nomouse") > 0;
 
+    //!
+    // @category video
+    //
+    // Specify the screen width, in pixels.
+    //
+
+    i = M_CheckParm("-width");
+
+    if (i > 0)
+    {
+        screen_width = atoi(myargv[i + 1]);
+    }
+
+    //!
+    // @category video
+    //
+    // Specify the screen height, in pixels.
+    //
+
+    i = M_CheckParm("-height");
+
+    if (i > 0)
+    {
+        screen_height = atoi(myargv[i + 1]);
+    }
 }
 
 // Pick the modes list to use:
