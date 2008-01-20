@@ -30,24 +30,31 @@
 
 #include "doomtype.h"
 
-void I_InitStretchTables(byte *palette);
 void I_InitScale(byte *_src_buffer, byte *_dest_buffer, int _dest_pitch);
 
-// Normal pixel-perfect doubling functions.
+// Scaled modes (direct multiples of 320x200)
 
-void I_Scale1x(int x1, int y1, int x2, int y2);
-void I_Scale2x(int x1, int y1, int x2, int y2);
-void I_Scale3x(int x1, int y1, int x2, int y2);
-void I_Scale4x(int x1, int y1, int x2, int y2);
-void I_Scale5x(int x1, int y1, int x2, int y2);
+extern screen_mode_t mode_scale_1x;
+extern screen_mode_t mode_scale_2x;
+extern screen_mode_t mode_scale_3x;
+extern screen_mode_t mode_scale_4x;
+extern screen_mode_t mode_scale_5x;
 
-// Aspect ratio correcting scale up functions
+// Vertically stretched modes (320x200 -> multiples of 320x240)
 
-void I_Stretch1x(int x1, int y1, int x2, int y2);
-void I_Stretch2x(int x1, int y1, int x2, int y2);
-void I_Stretch3x(int x1, int y1, int x2, int y2);
-void I_Stretch4x(int x1, int y1, int x2, int y2);
-void I_Stretch5x(int x1, int y1, int x2, int y2);
+extern screen_mode_t mode_stretch_1x;
+extern screen_mode_t mode_stretch_2x;
+extern screen_mode_t mode_stretch_3x;
+extern screen_mode_t mode_stretch_4x;
+extern screen_mode_t mode_stretch_5x;
+
+// Horizontally squashed modes (320x200 -> multiples of 256x200)
+
+extern screen_mode_t mode_squash_1x;
+extern screen_mode_t mode_squash_2x;
+extern screen_mode_t mode_squash_3x;
+extern screen_mode_t mode_squash_4x;
+extern screen_mode_t mode_squash_5x;
 
 #endif /* #ifndef __I_SCALE__ */
 

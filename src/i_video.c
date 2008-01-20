@@ -38,10 +38,11 @@
 #include "doomstat.h"
 #include "d_main.h"
 #include "i_joystick.h"
-#include "i_scale.h"
 #include "i_system.h"
 #include "i_swap.h"
 #include "i_timer.h"
+#include "i_video.h"
+#include "i_scale.h"
 #include "m_argv.h"
 #include "s_sound.h"
 #include "sounds.h"
@@ -49,17 +50,35 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
-enum
-{
-    FULLSCREEN_OFF,
-    FULLSCREEN_ON,
+// Non aspect ratio-corrected modes (direct multiples of 320x200)
+
+static screen_mode_t *screen_modes[] = {
+    &mode_scale_1x,
+    &mode_scale_2x,
+    &mode_scale_3x,
+    &mode_scale_4x,
+    &mode_scale_5x,
 };
 
-enum
-{
-    RATIO_CORRECT_NONE,
-    RATIO_CORRECT_LETTERBOX,
-    RATIO_CORRECT_STRETCH,
+// Aspect ratio corrected modes (4:3 ratio)
+
+static screen_mode_t *screen_modes_corrected[] = {
+
+    // Vertically stretched modes (320x200 -> 320x240 and multiples)
+
+    &mode_stretch_1x,
+    &mode_stretch_2x,
+    &mode_stretch_3x,
+    &mode_stretch_4x,
+    &mode_stretch_5x,
+
+    // Horizontally squashed modes (320x200 -> 256x200 and multiples)
+
+    &mode_squash_1x,
+    &mode_squash_2x,
+    &mode_squash_3x,
+    &mode_squash_4x,
+    &mode_squash_5x,
 };
 
 extern void M_QuitDOOM();
@@ -71,6 +90,7 @@ char *video_driver = "";
 static SDL_Surface *screen;
 
 // palette
+
 static SDL_Color palette[256];
 static boolean palette_to_set;
 
@@ -89,6 +109,11 @@ extern int usemouse;
 
 static boolean native_surface;
 
+// Screen width and height, from configuration file.
+
+int screen_width = SCREENWIDTH;
+int screen_height = SCREENHEIGHT;
+
 // Automatically adjust video settings if the selected mode is 
 // not a valid video mode.
 
@@ -96,11 +121,11 @@ int autoadjust_video_settings = 1;
 
 // Run in full screen mode?  (int type for config code)
 
-int fullscreen = FULLSCREEN_ON;
+int fullscreen = true;
 
 // Aspect ratio correction mode
 
-int aspect_ratio_correct = RATIO_CORRECT_NONE;
+int aspect_ratio_correct = true;
 
 // Time to wait for the screen to settle on startup before starting the
 // game (ms)
@@ -116,13 +141,6 @@ int grabmouse = true;
 
 boolean screenvisible;
 
-// Blocky mode,
-// replace each 320x200 pixel with screenmultiply*screenmultiply pixels.
-// According to Dave Taylor, it still is a bonehead thing
-// to use ....
-
-int screenmultiply = 1;
-
 // disk image data and background overwritten by the disk to be
 // restored by EndRead
 
@@ -134,6 +152,10 @@ static boolean window_focused;
 // Empty mouse cursor
 
 static SDL_Cursor *cursors[2];
+
+// The screen mode and scale functions being used
+
+static screen_mode_t *screen_mode;
 
 // If true, keyboard mapping is ignored, like in Vanilla Doom.
 // The sensible thing to do is to disable this if you have a non-US
@@ -168,7 +190,7 @@ static boolean MouseShouldBeGrabbed()
     // always grab the mouse when full screen (dont want to 
     // see the mouse pointer)
 
-    if (fullscreen != FULLSCREEN_OFF)
+    if (fullscreen)
         return true;
 
     // Don't grab the mouse if mouse input is disabled
@@ -624,72 +646,9 @@ static void BlitArea(int x1, int y1, int x2, int y2)
 	return;
     }
 
-    if (aspect_ratio_correct == RATIO_CORRECT_LETTERBOX)
-    {
-        x_offset = (screen->w - SCREENWIDTH * screenmultiply) / 2;
-        y_offset = (screen->h - SCREENHEIGHT * screenmultiply) / 2;
-    }
-    else
-    {
-        x_offset = 0;
-        y_offset = 0;
-    }
-
-    if (aspect_ratio_correct == RATIO_CORRECT_STRETCH)
-    {
-        if (screenmultiply == 1)
-        {
-            scale_function = I_Stretch1x;
-        }
-        else if (screenmultiply == 2)
-        { 
-            scale_function = I_Stretch2x;
-        }
-        else if (screenmultiply == 3)
-        { 
-            scale_function = I_Stretch3x;
-        }
-        else if (screenmultiply == 4)
-        { 
-            scale_function = I_Stretch4x;
-        }
-        else if (screenmultiply == 5)
-        {
-            scale_function = I_Stretch5x;
-        }
-        else
-        {
-            I_Error("No aspect ratio stretching function for screenmultiply=%i",
-                    screenmultiply);
-            return;
-        }
-    } else {
-        if (screenmultiply == 1)
-        {
-            scale_function = I_Scale1x;
-        }
-        else if (screenmultiply == 2) 
-        {
-            scale_function = I_Scale2x;
-        }
-        else if (screenmultiply == 3)
-        {
-            scale_function = I_Scale3x;
-        }
-        else if (screenmultiply == 4)
-        {
-            scale_function = I_Scale4x;
-        }
-        else if (screenmultiply == 5)
-        {
-            scale_function = I_Scale5x;
-        }
-        else
-        {
-            I_Error("No scale function found!");
-            return;
-        }
-    }
+    x_offset = (screen->w - screen_mode->width) / 2;
+    y_offset = (screen->h - screen_mode->height) / 2;
+    scale_function = screen_mode->DrawScreen;
 
     if (SDL_LockSurface(screen) >= 0)
     {
@@ -710,11 +669,15 @@ static void UpdateRect(int x1, int y1, int x2, int y2)
 
     // Update the area
 
+/*
+    TODO: fix loading disk
+
     SDL_UpdateRect(screen, 
                    x1 * screenmultiply, 
                    y1 * screenmultiply, 
                    (x2-x1) * screenmultiply, 
                    (y2-y1) * screenmultiply);
+*/
 }
 
 void I_BeginRead(void)
@@ -889,43 +852,6 @@ void I_SetWindowIcon(void)
     SDL_FreeSurface(surface);
 }
 
-// Get window dimensions for the current settings
-
-static void GetWindowDimensions(int *windowwidth, int *windowheight)
-{
-    *windowwidth = SCREENWIDTH * screenmultiply;
-
-    if (aspect_ratio_correct == RATIO_CORRECT_NONE)
-        *windowheight = SCREENHEIGHT * screenmultiply;
-    else
-        *windowheight = SCREENHEIGHT_4_3 * screenmultiply;
-}
-
-// Check if the screen mode for the current settings is in the list available
-// Not all machines support running in 320x200/640x400 (only support 4:3)
-// Some don't even support modes below 640x480.
-
-static boolean CheckValidFSMode(void)
-{
-    SDL_Rect **modes;
-    int i;
-    int w, h;
-
-    GetWindowDimensions(&w, &h);
-
-    modes = SDL_ListModes(NULL, SDL_FULLSCREEN);
-
-    for (i=0; modes[i]; ++i)
-    {
-        if (w == modes[i]->w && h == modes[i]->h)
-            return true;
-    }
-
-    // not found
-
-    return false;
-}
-
 static void CheckCommandLine(void)
 {
     //!
@@ -961,7 +887,7 @@ static void CheckCommandLine(void)
 
     if (M_CheckParm("-window") || M_CheckParm("-nofullscreen"))
     {
-        fullscreen = FULLSCREEN_OFF;
+        fullscreen = false;
     }
 
     //!
@@ -972,7 +898,7 @@ static void CheckCommandLine(void)
 
     if (M_CheckParm("-fullscreen"))
     {
-        fullscreen = FULLSCREEN_ON;
+        fullscreen = true;
     }
 
     //!
@@ -983,138 +909,207 @@ static void CheckCommandLine(void)
 
     nomouse = M_CheckParm("-nomouse") > 0;
 
-    // 2x, 3x, 4x, 5x scale mode
- 
-    //!
-    // @category video 
-    //
-    // Don't scale up the screen.
-    //
-
-    if (M_CheckParm("-1"))
-    {
-        screenmultiply = 1;
-    }
-
-    //!
-    // @category video 
-    //
-    // Double up the screen to 2x its size.
-    //
-
-    if (M_CheckParm("-2"))
-    {
-        screenmultiply = 2;
-    }
-
-    //!
-    // @category video 
-    //
-    // Double up the screen to 3x its size.
-    //
-
-    if (M_CheckParm("-3"))
-    {
-        screenmultiply = 3;
-    }
-
-    //!
-    // @category video 
-    //
-    // Double up the screen to 4x its size.
-    //
-
-    if (M_CheckParm("-4"))
-    {
-        screenmultiply = 4;
-    }
-
-    //!
-    // @category video
-    //
-    // Double up the screen to 5x its size.
-    //
-
-    if (M_CheckParm("-5"))
-    {
-        screenmultiply = 5;
-    }
-
-    if (screenmultiply < 1)
-        screenmultiply = 1;
-    if (screenmultiply > 5)
-        screenmultiply = 5;
 }
 
-static void AutoAdjustSettings(void)
+// Pick the modes list to use:
+
+static void GetScreenModes(screen_mode_t ***modes_list, int *num_modes)
 {
-    int oldw, oldh;
-    int old_ratio, old_screenmultiply;
-
-    GetWindowDimensions(&oldw, &oldh);
-    old_screenmultiply = screenmultiply;
-    old_ratio = aspect_ratio_correct;
-
-    if (!CheckValidFSMode() && screenmultiply == 1 
-     && fullscreen == FULLSCREEN_ON
-     && aspect_ratio_correct == RATIO_CORRECT_NONE)
+    if (aspect_ratio_correct)
     {
-        // 320x200 is not valid.
+        *modes_list = screen_modes_corrected;
+        *num_modes = arrlen(screen_modes_corrected);
+    }
+    else
+    {
+        *modes_list = screen_modes;
+        *num_modes = arrlen(screen_modes);
+    }
+}
 
-        // Try turning on letterbox mode - avoid doubling up
-        // the screen if possible
+// Find which screen_mode_t to use for the given width and height.
 
-        aspect_ratio_correct = RATIO_CORRECT_LETTERBOX;
+static screen_mode_t *I_FindScreenMode(int w, int h)
+{
+    screen_mode_t **modes_list;
+    screen_mode_t *best_mode;
+    int modes_list_length;
+    int num_pixels;
+    int best_num_pixels;
+    int i;
 
-        if (!CheckValidFSMode())
+    // Special case: 320x200 and 640x400 are available even if aspect 
+    // ratio correction is turned on.  These modes have non-square
+    // pixels.
+
+    if (w == SCREENWIDTH && h == SCREENHEIGHT)
+    {
+        return &mode_scale_1x;
+    }
+    else if (w == SCREENWIDTH*2 && h == SCREENHEIGHT*2)
+    {
+        return &mode_scale_2x;
+    }
+
+    GetScreenModes(&modes_list, &modes_list_length);
+
+    // Find the biggest screen_mode_t in the list that fits within these 
+    // dimensions
+
+    best_mode = NULL;
+    best_num_pixels = 0;
+
+    for (i=0; i<modes_list_length; ++i) 
+    {
+        // Will this fit within the dimensions? If not, ignore.
+
+        if (modes_list[i]->width > w || modes_list[i]->height > h)
         {
-            // That doesn't work. Change it back.
+            continue;
+        }
 
-            aspect_ratio_correct = RATIO_CORRECT_NONE;
+        num_pixels = modes_list[i]->width * modes_list[i]->height;
+
+        if (num_pixels > best_num_pixels)
+        {
+            // This is a better mode than the current one
+
+            best_mode = modes_list[i];
+            best_num_pixels = num_pixels;
         }
     }
 
-    if (!CheckValidFSMode() && screenmultiply == 1)
-    {
-        // Try doubling up the screen to 640x400
+    return best_mode;
+}
 
-        screenmultiply = 2;
+// If the video mode set in the configuration file is not available,
+// try to choose a different mode.
+
+static void I_AutoAdjustSettings(void)
+{
+    if (fullscreen)
+    {
+        SDL_Rect **modes;
+        SDL_Rect *best_mode;
+        screen_mode_t *screen_mode;
+        int num_pixels, best_num_pixels;
+        int i;
+
+        modes = SDL_ListModes(NULL, SDL_FULLSCREEN);
+
+        // Find the best mode that matches the mode specified in the
+        // configuration file
+
+        best_mode = NULL;
+        best_num_pixels = INT_MAX;
+
+        for (i=0; modes[i] != NULL; ++i) 
+        {
+            //printf("%ix%i?\n", modes[i]->w, modes[i]->h);
+
+            // What screen_mode_t would be used for this video mode?
+
+            screen_mode = I_FindScreenMode(modes[i]->w, modes[i]->h);
+
+            // Never choose a screen mode that we cannot run in, or
+            // is poor quality for fullscreen
+
+            if (screen_mode == NULL || screen_mode->poor_quality)
+            {
+            //    printf("\tUnsupported / poor quality\n");
+                continue;
+            }
+
+            // Do we have the exact mode?
+            // If so, no autoadjust needed
+
+            if (screen_width == modes[i]->w && screen_height == modes[i]->h)
+            {
+            //    printf("\tExact mode!\n");
+                return;
+            }
+
+            // Only use modes bigger than the specified mode
+
+            if (modes[i]->w < screen_width || modes[i]->h < screen_height)
+            {
+            //    printf("\t< %ix%i\n", screen_width, screen_height);
+                continue;
+            }
+
+            // Is this mode better than the current mode?
+
+            num_pixels = modes[i]->w * modes[i]->h;
+
+            if (num_pixels < best_num_pixels)
+            {
+            //    printf("\tA valid mode\n");
+                best_num_pixels = num_pixels;
+                best_mode = modes[i];
+            }
+        }
+
+        if (best_mode == NULL)
+        {
+            // Unable to find a valid mode!
+
+            if (screen_width <= SCREENWIDTH && screen_height <= SCREENHEIGHT)
+            {
+                I_Error("Unable to find any valid video mode at all!");
+            }
+
+            // Reset back to the original defaults and try to find a
+            // mode
+
+            screen_width = SCREENWIDTH;
+            screen_height = SCREENHEIGHT;
+
+            I_AutoAdjustSettings();
+          
+            return;
+        }
+
+        printf("I_InitGraphics: %ix%i mode not supported on this machine.\n",
+               screen_width, screen_height);
+
+        screen_width = best_mode->w;
+        screen_height = best_mode->h;
+
+    }
+    else
+    {
+        screen_mode_t *best_mode;
+
+        //
+        // Windowed mode.
+        //
+        // Find a screen_mode_t to fit within the current settings
+        //
+
+        best_mode = I_FindScreenMode(screen_width, screen_height);
+
+        // Do we have the exact mode already?
+
+        if (best_mode->width == screen_width 
+         && best_mode->height == screen_height)
+        {
+            return;
+        }
+
+        printf("I_InitGraphics: Cannot run at specified mode: %ix%i\n",
+               screen_width, screen_height);
+
+        screen_width = best_mode->width;
+        screen_height = best_mode->height;
     }
 
-    if (!CheckValidFSMode() 
-     && fullscreen == FULLSCREEN_ON
-     && aspect_ratio_correct == RATIO_CORRECT_NONE)
-    {
-        // This is not a valid mode.  Try turning on letterbox mode
+    printf("I_InitGraphics: Auto-adjusted to %ix%i.\n",
+           screen_width, screen_height);
 
-        aspect_ratio_correct = RATIO_CORRECT_LETTERBOX;
-    }
-
-    if (old_ratio != aspect_ratio_correct
-     || old_screenmultiply != screenmultiply)
-    {
-        printf("I_InitGraphics: %ix%i resolution is not supported "
-               "on this machine. \n", oldw, oldh);
-        printf("I_InitGraphics: Video settings adjusted to "
-               "compensate:\n");
-        
-        if (old_ratio != aspect_ratio_correct)
-            printf("\tletterbox mode on (aspect_ratio_correct=%i)\n",
-                   aspect_ratio_correct);
-        if (screenmultiply != old_screenmultiply)
-            printf("\tscreenmultiply=%i\n", screenmultiply);
-        
-        printf("NOTE: Your video settings have been adjusted.  "
-               "To disable this behavior,\n"
-               "set autoadjust_video_settings to 0 in your "
-               "configuration file.\n");
-    }
-    
-    if (!CheckValidFSMode())
-    {
-        printf("I_InitGraphics: WARNING: Unable to find a valid "
-               "fullscreen video mode to run in.\n");
-    }
+    printf("NOTE: Your video settings have been adjusted.  "
+           "To disable this behavior,\n"
+           "set autoadjust_video_settings to 0 in your "
+           "configuration file.\n");
 }
 
 // Check if we have been invoked as a screensaver by xscreensaver.
@@ -1128,24 +1123,6 @@ void I_CheckIsScreensaver(void)
     if (env != NULL)
     {
         screensaver_mode = true;
-    }
-}
-
-// In screensaver mode, pick a screenmultiply value that fits
-// inside the screen.  It is okay to do this because settings
-// are not saved in screensaver mode.
-
-static void FindScreensaverMultiply(void)
-{
-    int i;
-
-    for (i=1; i<=4; ++i)
-    {
-        if (SCREENWIDTH * i <= screen->w
-         && SCREENHEIGHT * i <= screen->h)
-        {
-            screenmultiply = i;
-        }
     }
 }
 
@@ -1245,45 +1222,54 @@ void I_InitGraphics(void)
 
     CheckCommandLine();
 
-    // Don't allow letterbox mode when windowed
- 
-    if (!fullscreen && aspect_ratio_correct == RATIO_CORRECT_LETTERBOX)
-    {
-        aspect_ratio_correct = RATIO_CORRECT_NONE;
-    }
-
-    if (fullscreen && autoadjust_video_settings)
-    {
-        // Check that the fullscreen mode we are trying to use is valid;
-        // if not, try to automatically select a more appropriate one.
-
-        AutoAdjustSettings();
-    }
-
-    // Generate lookup tables before setting the video mode.
-
     doompal = W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE);
-
-    if (aspect_ratio_correct == RATIO_CORRECT_STRETCH)
-    {
-        I_InitStretchTables(doompal);
-    }
-
-    // Set the video mode.
-
-    GetWindowDimensions(&windowwidth, &windowheight);
-
-    flags |= SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF;
-
-    if (fullscreen != FULLSCREEN_OFF)
-    {
-        flags |= SDL_FULLSCREEN;
-    }
 
     if (screensaver_mode)
     {
         windowwidth = 0;
         windowheight = 0;
+    }
+    else
+    {
+        if (autoadjust_video_settings)
+        {
+            I_AutoAdjustSettings();
+        }
+
+        windowwidth = screen_width;
+        windowheight = screen_height;
+
+        screen_mode = I_FindScreenMode(windowwidth, windowheight);
+
+        if (screen_mode == NULL)
+        {
+            I_Error("I_InitGraphics: Unable to find a screen mode small "
+                    "enough for %ix%i", windowwidth, windowheight);
+        }
+
+        if (windowwidth != screen_mode->width
+         || windowheight != screen_mode->height)
+        {
+            printf("I_InitGraphics: Letterboxed (%ix%i within %ix%i)\n",
+                   screen_mode->width, screen_mode->height,
+                   windowwidth, windowheight);
+        }
+
+        // Generate lookup tables before setting the video mode.
+
+        if (screen_mode->InitMode != NULL)
+        {
+            screen_mode->InitMode(doompal);
+        }
+    }
+
+    // Set the video mode.
+
+    flags |= SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF;
+
+    if (fullscreen)
+    {
+        flags |= SDL_FULLSCREEN;
     }
 
     screen = SDL_SetVideoMode(windowwidth, windowheight, 8, flags);
@@ -1291,14 +1277,6 @@ void I_InitGraphics(void)
     if (screen == NULL)
     {
         I_Error("Error setting video mode: %s\n", SDL_GetError());
-    }
-
-    // In screensaver mode, screenmultiply as large as possible
-    // and set a blank cursor.
-
-    if (screensaver_mode)
-    {
-        FindScreensaverMultiply();
     }
 
     // Start with a clear black screen
@@ -1316,7 +1294,7 @@ void I_InitGraphics(void)
 
         SDL_UnlockSurface(screen);
     }
-    
+
     // Set the palette
 
     I_SetPalette(doompal);
@@ -1332,6 +1310,26 @@ void I_InitGraphics(void)
     UpdateFocus();
     UpdateGrab();
 
+    // In screensaver mode, now find a screen_mode to use.
+
+    if (screensaver_mode)
+    {
+        screen_mode = I_FindScreenMode(screen->w, screen->h);
+
+        if (screen_mode == NULL)
+        {
+            I_Error("I_InitGraphics: Unable to find a screen mode small "
+                    "enough for %ix%i", screen->w, screen->h);
+        }
+
+        // Generate lookup tables before setting the video mode.
+
+        if (screen_mode->InitMode != NULL)
+        {
+            screen_mode->InitMode(doompal);
+        }
+    }
+    
     // On some systems, it takes a second or so for the screen to settle
     // after changing modes.  We include the option to add a delay when
     // setting the screen mode, so that the game doesn't start immediately
@@ -1348,35 +1346,32 @@ void I_InitGraphics(void)
     // If we have to multiply, drawing is done to a separate 320x200 buf
 
     native_surface = !SDL_MUSTLOCK(screen) 
-                  && screenmultiply == 1 
+                  && screen_mode == &mode_scale_1x
                   && screen->pitch == SCREENWIDTH
-                  && (aspect_ratio_correct == RATIO_CORRECT_NONE
-                   || aspect_ratio_correct == RATIO_CORRECT_LETTERBOX);
+                  && aspect_ratio_correct;
 
     // If not, allocate a buffer and copy from that buffer to the 
     // screen when we do an update
 
     if (native_surface)
     {
-	screens[0] = (unsigned char *) (screen->pixels);
+	screens[0] = (unsigned char *) screen->pixels;
 
-        if (aspect_ratio_correct == RATIO_CORRECT_LETTERBOX)
-        {
-            screens[0] += ((SCREENHEIGHT_4_3 - SCREENHEIGHT) * screen->pitch) / 2;
-        }
+        screens[0] += (screen->h - SCREENHEIGHT) / 2;
     }
     else
     {
-	screens[0] = (unsigned char *) Z_Malloc (SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
+	screens[0] = (unsigned char *) Z_Malloc (SCREENWIDTH * SCREENHEIGHT, 
+                                                 PU_STATIC, NULL);
+
+        // Clear the screen to black.
+
+        memset(screens[0], 0, SCREENWIDTH * SCREENHEIGHT);
     }
 
     // "Loading from disk" icon
 
     LoadDiskImage();
-
-    // Clear the screen to black.
-
-    memset(screens[0], 0, SCREENWIDTH * SCREENHEIGHT);
 
     // We need SDL to give us translated versions of keys as well
 

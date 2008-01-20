@@ -120,12 +120,13 @@ typedef enum
 #define SCREENWIDTH  320
 #define SCREENHEIGHT 200
 
-// Alternate screenheight for letterbox/aspect ratio corrected mode
+// Screen width used for "squash" scale functions
+
+#define SCREENWIDTH_4_3 256
+
+// Screen height used for "stretch" scale functions.
 
 #define SCREENHEIGHT_4_3 240
-
-
-
 
 // The maximum number of players, multiplayer/networking.
 #define MAXPLAYERS		4

@@ -31,7 +31,30 @@
 
 #include "doomtype.h"
 
+typedef struct 
+{
+        // Screen width and height
 
+        int width;
+        int height;
+
+        // Initialisation function to call when using this mode.
+        // Called with a pointer to the Doom palette.
+        //
+        // If NULL, no init function is called.
+
+        void (*InitMode)(byte *palette);
+        
+        // Function to call to draw the screen from the source buffer.
+
+        void (*DrawScreen)(int x1, int y1, int x2, int y2);
+
+        // If true, this is a "poor quality" mode.  The autoadjust 
+        // code should always attempt to use a different mode to this 
+        // mode in fullscreen.
+
+        boolean poor_quality;
+} screen_mode_t;
 
 // Called by D_DoomMain,
 // determines the hardware configuration
@@ -63,13 +86,14 @@ void I_CheckIsScreensaver(void);
 extern char *video_driver;
 extern int autoadjust_video_settings;
 extern boolean screenvisible;
-extern int screenmultiply;
+extern int screen_width, screen_height;
 extern int fullscreen;
 extern int aspect_ratio_correct;
-extern boolean grabmouse;
+extern int grabmouse;
 extern float mouse_acceleration;
 extern int mouse_threshold;
 extern int startup_delay;
 extern int vanilla_keyboard_mapping;
 
 #endif
+
