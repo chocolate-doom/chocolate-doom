@@ -421,7 +421,8 @@ boolean mus2mid(MEMFILE *musinput, MEMFILE *midioutput)
 #endif
 
 	// Seek to where the data is held
-	if (mem_fseek(musinput, (long)musfileheader.scorestart, SEEK_SET) != 0) 
+	if (mem_fseek(musinput, (long)musfileheader.scorestart, 
+                      MEM_SEEK_SET) != 0) 
 	{
 		return true;
 	}
@@ -604,7 +605,7 @@ boolean mus2mid(MEMFILE *musinput, MEMFILE *midioutput)
 	}
 
 	// Write the track size into the stream
-	if (mem_fseek(midioutput, 18, SEEK_SET)) 
+	if (mem_fseek(midioutput, 18, MEM_SEEK_SET)) 
 	{
 		return true;
 	}
