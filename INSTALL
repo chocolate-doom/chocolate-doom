@@ -13,8 +13,8 @@ Chocolate Doom requires the following to be installed:
  * A C compiler (gcc is recommended)
  * make (GNU make is recommended)
  * LibSDL (see http://www.libsdl.org/)
- * SDL_mixer
- * SDL_net
+ * SDL_mixer (see http://www.libsdl.org/projects/SDL_mixer/)
+ * SDL_net (see http://www.libsdl.org/projects/SDL_net/)
  * Python (optional)
 
 Building Chocolate Doom
@@ -103,4 +103,20 @@ Id Software released upgrade patches that will update your game to 1.9.  Look
 on doomworld.com for the patches.  As the patches are binary patches that run
 as DOS executables, you will need a DOS emulator (such as DOSBox) to install
 them.  
+
+Music support
+-------------
+
+Support for Doom's MIDI music is available through timidity:
+
+  http://timidity.sourceforge.net/
+
+A good set of patches for Timidity is the eawpats collection, which can
+be found here:
+
+  http://www.doomworld.com/idgames/index.php?id=13928
+  (Doom idgames archive, /sounds/eawpats.zip)
+
+If compiling from source, be sure to compile and install timidity
+before installing SDL_mixer.
 
