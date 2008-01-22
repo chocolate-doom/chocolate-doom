@@ -1,0 +1,106 @@
+
+Chocolate Doom installation
+===========================
+
+These are instructions for how to install Chocolate Doom on Unix-like
+Operating Systems.
+
+Dependencies
+------------
+
+Chocolate Doom requires the following to be installed:
+
+ * A C compiler (gcc is recommended)
+ * make (GNU make is recommended)
+ * LibSDL (see http://www.libsdl.org/)
+ * SDL_mixer
+ * SDL_net
+ * Python (optional)
+
+Building Chocolate Doom
+-----------------------
+
+On a Unix system, follow the standard instructions for installing an 
+autotools-based package:
+
+ 1. Run './configure' to initialise the package.
+ 2. Run 'make' to compile the package.
+ 3. Run 'make install' to install the package.
+
+Advanced topics such as cross-compilation are beyond the scope of this 
+document.  Please see the GNU autoconf / automake documentation for more
+information.
+
+Installing an IWAD file
+-----------------------
+
+To play Doom, an IWAD file is needed. This contains the Doom game data.  The
+file usually has one of the following filenames:
+
+   doom1.wad                   (Shareware Doom)
+   doom.wad                    (Registered / Ultimate Doom)
+   doom2.wad                   (Doom 2)
+   tnt.wad                     (Final Doom: TNT: Evilution)
+   plutonia.wad                (Final Doom: Plutonia Experiment)
+
+When you have this file (see the next section, "Obtaining an IWAD file", for 
+how to get this file), install it through one of the following methods:
+
+ * Put the file into the /usr/share/games/doom or 
+   /usr/local/share/games/doom directories.
+ * Install it into a directory and set the environment variable DOOMWADDIR to
+   be the path to that directory.
+ * Install multiple IWADs into separate directories and set the environment
+   variable DOOMWADPATH to be a colon-separated list of directories to search
+   (similar to the Unix PATH environment variable).
+ * Run Chocolate Doom with the '-iwad' command line parameter to specify the
+   IWAD file to use, eg.
+
+       chocolate-doom -file /root/doom2.wad
+
+Obtaining an IWAD file
+----------------------
+
+Obtaining the IWAD file may be a complicated process under Unix.  The method
+depends on how you obtained your copy of the game:
+
+ * There have been several CD-based versions of Doom.  Generally, the IWAD
+   files can be found on the CD and copied off directly.
+
+ * The IWAD files may not be directly available on the CD.  Look for a program
+   named "deice.exe".  In the same directory, there should be a single large
+   file with a numbered extension (eg. "resource.1"); to extract this, follow
+   the same instructions as for the floppy disk version (see below).
+
+ * If you have the floppy disk version of Doom, first copy the contents of all
+   the floppy disks into a directory together.  You will have several large
+   files with numbered extensions.  Concatenate these into a single file, eg.
+
+       cat doom_se.1 doom_se.2 doom_se.3 doom_se.4 doom_se.5 > doom_se.exe
+
+   The resulting file is self-extracting LHA file.  If you have a DOS emulator
+   (such as DOSbox), you can run it to extract the files; alternatively, you
+   can use the Unix LHA tool to extract the archive.
+
+ * The Doom games are also available for download on Steam
+   (http://www.steampowered.com/).  To find the IWAD files, look in your Steam
+   directory, under the "steamapps/common" path.  
+
+Installing upgrades
+-------------------
+
+Chocolate Doom requires a Doom 1.9 IWAD file.  Generally, if you install a
+recent version of Doom you should automatically have a 1.9 IWAD.  However, if
+you are installing from a very old CD version or from floppy disks, you might
+find you have an older version.  
+
+The most obvious symptom of an out of date IWAD file is that the game will
+exit at the title screen before the demo starts, with the message "Demo is
+from a different game version!".  If this happens, your IWAD file is out of
+date and you need to upgrade.
+
+Id Software released upgrade patches that will update your game to 1.9.  Look
+on doomworld.com for the patches.  As the patches are binary patches that run
+as DOS executables, you will need a DOS emulator (such as DOSBox) to install
+them.  
+
