@@ -6,7 +6,10 @@ MSVC_FILES=                             \
         msvc/README                     \
         msvc/config.h                   \
         msvc/inttypes.h                 \
-        msvc/stdint.h
+        msvc/stdint.h                   \
+        msvc/win32.rc                   \
+        vc9/ChocolateDoom.sln           \
+        vc9/ChocolateDoom.vcproj
 
 CODEBLOCKS_FILES=                              \
         codeblocks/README                      \
