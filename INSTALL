@@ -99,10 +99,15 @@ exit at the title screen before the demo starts, with the message "Demo is
 from a different game version!".  If this happens, your IWAD file is out of
 date and you need to upgrade.
 
-Id Software released upgrade patches that will update your game to 1.9.  Look
-on doomworld.com for the patches.  As the patches are binary patches that run
-as DOS executables, you will need a DOS emulator (such as DOSBox) to install
-them.  
+Id Software released upgrade patches that will update your game to 1.9.  The 
+following sites have the patches:
+
+  http://www.doomworld.com/files/patches.shtml 
+  http://www.doom2.net/doom2/utils.html
+  ftp://ftp.idsoftware.com/idstuff/doom2
+
+As the patches are binary patches that run as DOS executables, you will
+need a DOS emulator (such as DOSBox) to install them.  
 
 Music support
 -------------
