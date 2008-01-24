@@ -453,7 +453,7 @@ static default_collection_t extra_defaults =
     NULL,
 };
 
-static int scantokey[128] =
+static const int scantokey[128] =
 {
     0  ,    27,     '1',    '2',    '3',    '4',    '5',    '6',
     '7',    '8',    '9',    '0',    '-',    '=',    KEY_BACKSPACE, 9,
