@@ -1,13 +1,32 @@
 
+     * The video mode code has been radically restructured.  The video mode is
+       now chosen by directly specifying the mode to use; the scale factor is
+       then chosen to fit the screen.  This is helpful when using widescreen
+       monitors (thanks Linguica)
+     * MSVC build project files (thanks GhostlyDeath).
+     * Unix manpage improvements; the manpage now lists the environment
+       variables that Chocolate Doom uses.  Manpages have been added for
+       chocolate-setup and chocolate-server, from the versions for the Debian
+       Chocolate Doom package (thanks Jon Dowland).
+     * INSTALL file with installation instructions for installing Chocolate
+       Doom on Unix systems.
+
+    Compatibility:
+     * Use the same spechits compatibility value as PrBoom+, for consistency
+       (thanks Lemonzest).
+
     Bugs fixed:
-     * Desync with STRAIN demos and dehacked Misc values not being 
-       set properly (thanks Lemonzest)
-     * Don't grab the mouse if the mouse is disabled via -nomouse
-       or use_mouse in the configuration file (thanks MikeRS).
-     * Don't center the mouse on startup if the mouse is disabled
-       (thanks Siggi).
-     * Reset the palette when the window is restored to clear
-       any screen corruption (thanks Catoptromancy).
+     * Desync with STRAIN demos and dehacked Misc values not being set
+       properly (thanks Lemonzest)
+     * Don't grab the mouse if the mouse is disabled via -nomouse or use_mouse
+       in the configuration file (thanks MikeRS).
+     * Don't center the mouse on startup if the mouse is disabled (thanks
+       Siggi).
+     * Reset the palette when the window is restored to clear any screen
+       corruption (thanks Catoptromancy).
+     * mus2mid.c should use MEM_SEEK_SET, not SEEK_SET (thanks Russell)
+     * Fast/Respawn options were not being exchanged when starting netgames
+       (thanks GhostlyDeath).
 
 1.0.0 (2007-12-10):
 
