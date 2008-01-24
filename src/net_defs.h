@@ -120,6 +120,8 @@ typedef struct
     int deathmatch;
     int episode;
     int nomonsters;
+    int fast_monsters;
+    int respawn_monsters;
     int map;
     int skill;
     int gameversion;

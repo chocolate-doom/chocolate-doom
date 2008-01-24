@@ -35,6 +35,8 @@ void NET_WriteSettings(net_packet_t *packet, net_gamesettings_t *settings)
     NET_WriteInt8(packet, settings->extratics);
     NET_WriteInt8(packet, settings->deathmatch);
     NET_WriteInt8(packet, settings->nomonsters);
+    NET_WriteInt8(packet, settings->fast_monsters);
+    NET_WriteInt8(packet, settings->respawn_monsters);
     NET_WriteInt8(packet, settings->episode);
     NET_WriteInt8(packet, settings->map);
     NET_WriteInt8(packet, settings->skill);
@@ -51,6 +53,8 @@ boolean NET_ReadSettings(net_packet_t *packet, net_gamesettings_t *settings)
         && NET_ReadInt8(packet, (unsigned int *) &settings->extratics)
         && NET_ReadInt8(packet, (unsigned int *) &settings->deathmatch)
         && NET_ReadInt8(packet, (unsigned int *) &settings->nomonsters)
+        && NET_ReadInt8(packet, (unsigned int *) &settings->fast_monsters)
+        && NET_ReadInt8(packet, (unsigned int *) &settings->respawn_monsters)
         && NET_ReadInt8(packet, (unsigned int *) &settings->episode)
         && NET_ReadInt8(packet, (unsigned int *) &settings->map)
         && NET_ReadSInt8(packet, &settings->skill)

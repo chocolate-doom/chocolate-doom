@@ -387,6 +387,8 @@ void NET_CL_StartGame(void)
     settings.loadgame = startloadgame;
     settings.gameversion = gameversion;
     settings.nomonsters = nomonsters;
+    settings.fast_monsters = fastparm;
+    settings.respawn_monsters = respawnparm;
     settings.timelimit = timelimit;
 
     //!
@@ -685,6 +687,8 @@ static void NET_CL_ParseGameStart(net_packet_t *packet)
     startloadgame = settings.loadgame;
     lowres_turn = settings.lowres_turn;
     nomonsters = settings.nomonsters;
+    fastparm = settings.fast_monsters;
+    respawnparm = settings.respawn_monsters;
     net_cl_new_sync = settings.new_sync != 0;
     timelimit = settings.timelimit;
 
