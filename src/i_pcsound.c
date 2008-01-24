@@ -46,7 +46,7 @@ static uint8_t *current_sound_pos = NULL;
 static unsigned int current_sound_remaining = 0;
 static int current_sound_handle = 0;
 
-static float frequencies[] = {
+static const float frequencies[] = {
     0, 175.00, 180.02, 185.01, 190.02, 196.02, 202.02, 208.01, 214.02, 220.02,
     226.02, 233.04, 240.02, 247.03, 254.03, 262.00, 269.03, 277.03, 285.04,
     294.03, 302.07, 311.04, 320.05, 330.06, 339.06, 349.08, 359.06, 370.09,
