@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_workspace_file>
 	<Workspace title="chocolate-doom">
-		<Project filename="chocolate-doom.cbp" active="1">
+		<Project filename="game.cbp" active="1">
 			<Depends filename="textscreen.cbp" />
 			<Depends filename="libpcsound.cbp" />
 		</Project>
-		<Project filename="chocolate-server.cbp" />
-		<Project filename="chocolate-setup.cbp">
+		<Project filename="server.cbp" />
+		<Project filename="setup.cbp">
 			<Depends filename="textscreen.cbp" />
 		</Project>
 		<Project filename="textscreen.cbp" />
