@@ -173,6 +173,7 @@ int             key_fire = KEY_RCTRL;
 int		key_use = ' ';
 int		key_strafe = KEY_RALT;
 int		key_speed = KEY_RSHIFT; 
+int 	key_showscores = 'f';
  
 int             mousebfire = 0;
 int             mousebstrafe = 1;
@@ -215,7 +216,7 @@ fixed_t         angleturn[3] = {640, 1280, 320};    // + slow turn
  
 #define NUMKEYS		256 
 
-static boolean  gamekeydown[NUMKEYS]; 
+static boolean  	gamekeydown[NUMKEYS]; 
 static int      turnheld;		// for accelerative turning 
  
 static boolean  mousearray[4]; 

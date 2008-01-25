@@ -34,6 +34,7 @@ extern int key_strafe;
 extern int key_speed;
 extern int joybspeed;
 extern int vanilla_keyboard_mapping;
+extern int key_showscores;
 
 void ConfigKeyboard(void);
 

@@ -86,6 +86,7 @@ static char *gamemodes[] =
 };
 
 char *net_player_name;
+int net_player_color;
 char *chat_macros[10];
 
 static char *wads[NUM_WADS];
@@ -676,6 +677,9 @@ void MultiplayerConfig(void)
                    TXT_NewStrut(0, 1),
                    TXT_NewHorizBox(TXT_NewLabel("Player name:  "),
                                    TXT_NewInputBox(&net_player_name, 25),
+                                   NULL),
+                   TXT_NewHorizBox(TXT_NewLabel("Player color:  "),
+                                   TXT_NewSpinControl(&net_player_color, 0, 19),
                                    NULL),
                    TXT_NewStrut(0, 1),
                    TXT_NewSeparator("Chat macros"),

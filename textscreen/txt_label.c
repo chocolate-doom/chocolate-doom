@@ -176,8 +176,8 @@ txt_label_t *TXT_NewLabel(char *text)
 
     // Default colors
 
-    label->bgcolor = TXT_COLOR_BLUE;
-    label->fgcolor = TXT_COLOR_BRIGHT_WHITE;
+    label->bgcolor = TXT_COLOR_RED;
+    label->fgcolor = TXT_COLOR_YELLOW;
 
     TXT_SetLabel(label, text);
 

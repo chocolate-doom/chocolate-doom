@@ -37,6 +37,7 @@ int key_fire = KEY_RCTRL;
 int key_use = ' ';
 int key_strafe = KEY_RALT;
 int key_speed = KEY_RSHIFT;
+int key_showscores = 'f';
 
 int vanilla_keyboard_mapping = 1;
 
@@ -116,6 +117,7 @@ void ConfigKeyboard(void)
 
                    TXT_NewSeparator("Misc."),
                    run_control = TXT_NewCheckBox("Always run", &always_run),
+                   
                    TXT_NewInvertedCheckBox("Use native keyboard mapping", 
                                            &vanilla_keyboard_mapping),
                    NULL);
@@ -132,6 +134,7 @@ void ConfigKeyboard(void)
     AddKeyControl(movement_table, "Strafe Right", &key_straferight);
     AddKeyControl(movement_table, "Speed On", &key_speed);
     AddKeyControl(movement_table, "Strafe On", &key_strafe);
+    AddKeyControl(movement_table, "Show Scores", &key_showscores);
 
     TXT_SetColumnWidths(action_table, 20, 8);
 

@@ -112,7 +112,7 @@ static void TXT_KeyInputDrawer(TXT_UNCAST_ARG(key_input), int selected)
     }
     else
     {
-        TXT_BGColor(TXT_COLOR_BLUE, 0);
+        TXT_BGColor(TXT_COLOR_RED, 0);
     }
 
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);

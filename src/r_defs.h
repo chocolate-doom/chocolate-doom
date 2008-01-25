@@ -54,7 +54,7 @@
 #define SIL_TOP			2
 #define SIL_BOTH		3
 
-#define MAXDRAWSEGS		256
+#define MAXDRAWSEGS		512
 
 
 
@@ -407,6 +407,7 @@ typedef struct vissprite_s
     lighttable_t*	colormap;
    
     int			mobjflags;
+    int			colorize;		// colorize?
     
 } vissprite_t;
 

@@ -23,6 +23,7 @@
 #define SETUP_MULTIPLAYER_H
 
 extern char *net_player_name;
+extern int net_player_color;
 extern char *chat_macros[10];
 
 void StartMultiGame(void);

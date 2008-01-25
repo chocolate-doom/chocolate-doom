@@ -261,6 +261,8 @@ extern int	key_use;
 extern int	key_strafe;
 extern int	key_speed;
 
+extern int key_showscores;
+
 extern int	mousebfire;
 extern int	mousebstrafe;
 extern int	mousebforward;
@@ -429,6 +431,7 @@ static default_t extra_defaults_list[] =
     {"video_driver",                &video_driver, DEFAULT_STRING, 0, 0},
 #ifdef FEATURE_MULTIPLAYER
     {"player_name",                 &net_player_name,          DEFAULT_STRING, 0, 0},
+    {"player_color",				&net_player_color,		   DEFAULT_STRING, 0, 0},
 #endif
 
     {"joystick_index",              &joystick_index, DEFAULT_INT, 0, 0},
@@ -444,6 +447,7 @@ static default_t extra_defaults_list[] =
     {"mouseb_backward",             &mousebbackward, DEFAULT_INT, 0, 0},
 
     {"dclick_use",                  &dclick_use, DEFAULT_INT, 0, 0},
+    {"key_showscores",				&key_showscores, DEFAULT_KEY, 0, 0},
 };
 
 static default_collection_t extra_defaults =

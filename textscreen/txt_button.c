@@ -46,8 +46,8 @@ static void TXT_ButtonDrawer(TXT_UNCAST_ARG(button), int selected)
 
     w = button->widget.w;
 
-    TXT_BGColor(TXT_COLOR_BLUE, 0);
-    TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
+    TXT_BGColor(TXT_COLOR_RED, 0);
+    TXT_FGColor(TXT_COLOR_YELLOW);
 
     if (selected)
     {

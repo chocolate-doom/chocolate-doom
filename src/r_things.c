@@ -414,12 +414,18 @@ R_DrawVisSprite
 	// NULL colormap = shadow draw
 	colfunc = fuzzcolfunc;
     }
-    else if (vis->mobjflags & MF_TRANSLATION)
+    else if (vis->colorize > 0)
+    {
+    	colfunc = transcolfunc;
+    	dc_translation = translationtables - 256 + ((vis->colorize+1) * 256);
+//	   		 ( (vis->mobjflags & MF_TRANSLATION) >> (MF_TRANSSHIFT-8) );
+    }
+    /*else if (vis->mobjflags & MF_TRANSLATION)
     {
 	colfunc = transcolfunc;
 	dc_translation = translationtables - 256 +
 	    ( (vis->mobjflags & MF_TRANSLATION) >> (MF_TRANSSHIFT-8) );
-    }
+    }*/
 	
     dc_iscale = abs(vis->xiscale)>>detailshift;
     dc_texturemid = vis->texturemid;
@@ -473,6 +479,7 @@ void R_ProjectSprite (mobj_t* thing)
     boolean		flip;
     
     int			index;
+    int i;
 
     vissprite_t*	vis;
     
@@ -548,7 +555,29 @@ void R_ProjectSprite (mobj_t* thing)
     
     // store information in a vissprite
     vis = R_NewVisSprite ();
-    vis->mobjflags = thing->flags;
+    //vis->mobjflags = thing->flags;
+    if (thing->player)
+    {
+    	for (i = 0; i < MAXPLAYERS; i++)
+    	{
+    		if (playeringame[i])
+    		{
+    			if (thing->player == &players[i])
+    			{
+    				switch (i)
+    				{
+    					case 0: vis->colorize = PLAYERCOLOR_GREEN; break;
+    					case 1: vis->colorize = PLAYERCOLOR_INDIGO; break;
+    					case 2: vis->colorize = PLAYERCOLOR_BROWN; break;
+    					default: vis->colorize = PLAYERCOLOR_RED; break;
+    				}
+    			}
+    		}
+    	}
+	    //vis->colorize = thing->player->color;
+	}
+	else
+		vis->colorize = 0;
     vis->scale = xscale<<detailshift;
     vis->gx = thing->x;
     vis->gy = thing->y;
@@ -696,6 +725,7 @@ void R_DrawPSprite (pspdef_t* psp)
     vis->x1 = x1 < 0 ? 0 : x1;
     vis->x2 = x2 >= viewwidth ? viewwidth-1 : x2;	
     vis->scale = pspritescale<<detailshift;
+    vis->colorize = 0;
     
     if (flip)
     {

@@ -76,7 +76,7 @@ static void DrawDesktopBackground(char *title)
     for (i=0; i<TXT_SCREEN_W * TXT_SCREEN_H; ++i)
     {
         *p++ = 0xb1;
-        *p++ = TXT_COLOR_GREY | (TXT_COLOR_BLUE << 4);
+        *p++ = TXT_COLOR_BLACK | (TXT_COLOR_RED << 4);
     }
 
     // Draw the top and bottom banners
@@ -86,7 +86,7 @@ static void DrawDesktopBackground(char *title)
     for (i=0; i<TXT_SCREEN_W; ++i)
     {
         *p++ = ' ';
-        *p++ = TXT_COLOR_BLACK | (TXT_COLOR_GREY << 4);
+        *p++ = TXT_COLOR_BRIGHT_WHITE | (TXT_COLOR_RED << 4);
     }
 
     p = screendata + (TXT_SCREEN_H - 1) * TXT_SCREEN_W * 2;
@@ -94,14 +94,14 @@ static void DrawDesktopBackground(char *title)
     for (i=0; i<TXT_SCREEN_W; ++i)
     {
         *p++ = ' ';
-        *p++ = TXT_COLOR_BLACK | (TXT_COLOR_GREY << 4);
+        *p++ = TXT_COLOR_BRIGHT_WHITE | (TXT_COLOR_RED << 4);
     }
 
     // Print the title
 
     TXT_GotoXY(0, 0);
-    TXT_FGColor(TXT_COLOR_BLACK);
-    TXT_BGColor(TXT_COLOR_GREY, 0);
+    TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
+    TXT_BGColor(TXT_COLOR_RED, 0);
 
     TXT_PutChar(' ');
     TXT_Puts(title);

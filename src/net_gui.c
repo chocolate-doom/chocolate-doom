@@ -112,7 +112,7 @@ static void UpdateGUI(void)
 
         if ((signed) i == net_player_number)
         {
-            color = TXT_COLOR_YELLOW;
+            color = TXT_COLOR_BRIGHT_GREEN;
         }
 
         TXT_SetFGColor(player_labels[i], color);

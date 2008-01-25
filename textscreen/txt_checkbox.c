@@ -48,31 +48,31 @@ static void TXT_CheckBoxDrawer(TXT_UNCAST_ARG(checkbox), int selected)
 
     w = checkbox->widget.w;
 
-    TXT_BGColor(TXT_COLOR_BLUE, 0);
-    TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);
-    TXT_DrawString(" (");
+    TXT_BGColor(TXT_COLOR_RED, 0);
+    TXT_FGColor(TXT_COLOR_YELLOW);
+    TXT_DrawString(" [");
 
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
 
     if ((*checkbox->variable != 0) ^ checkbox->inverted)
     {
-        TXT_DrawString("\x07");
+        TXT_DrawString("\xFB");	// check mark!
     }
     else
     {
         TXT_DrawString(" ");
     }
 
-    TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);
+    TXT_FGColor(TXT_COLOR_YELLOW);
 
-    TXT_DrawString(") ");
+    TXT_DrawString("] ");
 
     if (selected)
     {
         TXT_BGColor(TXT_COLOR_GREY, 0);
     }
 
-    TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
+    TXT_FGColor(TXT_COLOR_YELLOW);
 
     TXT_DrawString(checkbox->label);
     

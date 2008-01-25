@@ -159,7 +159,7 @@ static void TXT_JoystickInputDrawer(TXT_UNCAST_ARG(joystick_input), int selected
     }
     else
     {
-        TXT_BGColor(TXT_COLOR_BLUE, 0);
+        TXT_BGColor(TXT_COLOR_RED, 0);
     }
 
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);

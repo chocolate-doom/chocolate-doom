@@ -70,7 +70,7 @@ void TXT_DrawDesktopBackground(char *title)
     for (i=0; i<TXT_SCREEN_W * TXT_SCREEN_H; ++i)
     {
         *p++ = 0xb1;
-        *p++ = TXT_COLOR_GREY | (TXT_COLOR_BLUE << 4);
+        *p++ = TXT_COLOR_BRIGHT_WHITE | (TXT_COLOR_RED << 4);
     }
 
     // Draw the top and bottom banners
@@ -130,8 +130,8 @@ void TXT_DrawWindowFrame(char *title, int x, int y, int w, int h)
     int x1, y1;
     int bx, by;
 
-    TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);
-    TXT_BGColor(TXT_COLOR_BLUE, 0);
+    TXT_FGColor(TXT_COLOR_BRIGHT_RED);
+    TXT_BGColor(TXT_COLOR_RED, 0);
 
     for (y1=y; y1<y+h; ++y1)
     {
@@ -164,8 +164,8 @@ void TXT_DrawWindowFrame(char *title, int x, int y, int w, int h)
     if (title != NULL)
     {
         TXT_GotoXY(x + 1, y + 1);
-        TXT_BGColor(TXT_COLOR_GREY, 0);
-        TXT_FGColor(TXT_COLOR_BLUE);
+        TXT_BGColor(TXT_COLOR_BLACK, 0);
+        TXT_FGColor(TXT_COLOR_BRIGHT_RED);
 
         for (x1=0; x1<w-2; ++x1)
         {
@@ -190,8 +190,8 @@ void TXT_DrawSeparator(int x, int y, int w)
 
     data = TXT_GetScreenData();
 
-    TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);
-    TXT_BGColor(TXT_COLOR_BLUE, 0);
+    TXT_FGColor(TXT_COLOR_BRIGHT_RED);
+    TXT_BGColor(TXT_COLOR_RED, 0);
 
     if (!VALID_Y(y))
     {

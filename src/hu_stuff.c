@@ -45,6 +45,7 @@
 // Data.
 #include "dstrings.h"
 #include "sounds.h"
+#include "net_client.h"
 
 //
 // Locally used constants, shortcuts.
@@ -439,8 +440,12 @@ void HU_Erase(void)
 void HU_Ticker(void)
 {
 
-    int i, rc;
+    int i, rc, j;
     char c;
+    char tmpStr[128];
+    
+    for (j = 0; j < 128; j++)
+    	tmpStr[j] = 0;
 
     // tick down message counter if message is up
     if (message_counter && !--message_counter)
@@ -487,8 +492,10 @@ void HU_Ticker(void)
 			    && (chat_dest[i] == consoleplayer+1
 				|| chat_dest[i] == HU_BROADCAST))
 			{
+				sprintf(tmpStr, "%s: ", net_player_names[i]);
 			    HUlib_addMessageToSText(&w_message,
-						    DEH_String(player_names[i]),
+			    			tmpStr,
+						    //DEH_String(player_names[i]),
 						    w_inputbuffer[i].l.l);
 			    
 			    message_nottobefuckedwith = true;

@@ -75,7 +75,7 @@ int		columnofs[MAXWIDTH];
 //  translate a limited part to another
 //  (color ramps used for  suit colors).
 //
-byte		translations[3][256];	
+byte		translations[MAXPLAYERCOLORS][256];	
  
  
 
@@ -532,28 +532,69 @@ void R_DrawTranslatedColumnLow (void)
 // Assumes a given structure of the PLAYPAL.
 // Could be read from a lump instead.
 //
+
+#define TRANSPLY(x) (256 * (x))
+#define TRANTODO(x) translationtables[i + TRANSPLY((x))] = 0
+
 void R_InitTranslationTables (void)
 {
-    int		i;
+    int		i, j;
 	
-    translationtables = Z_Malloc (256*3, PU_STATIC, 0);
+    translationtables = Z_Malloc (256 * (MAXPLAYERCOLORS + 1), PU_STATIC, 0);
     
     // translate just the 16 green colors
     for (i=0 ; i<256 ; i++)
     {
-	if (i >= 0x70 && i<= 0x7f)
-	{
-	    // map green ramp to gray, brown, red
-	    translationtables[i] = 0x60 + (i&0xf);
-	    translationtables [i+256] = 0x40 + (i&0xf);
-	    translationtables [i+512] = 0x20 + (i&0xf);
-	}
-	else
-	{
-	    // Keep all other colors as is.
-	    translationtables[i] = translationtables[i+256] 
-		= translationtables[i+512] = i;
-	}
+		if (i >= 112 && i<= 127)
+		{
+			/* Indigo */
+			translationtables[i + TRANSPLY(PLAYERCOLOR_INDIGO)] = 96 + (i&0xf);
+			/* Brown */
+			translationtables[i + TRANSPLY(PLAYERCOLOR_BROWN)] = 64 + (i&0xf);
+			/* Red */
+			translationtables[i + TRANSPLY(PLAYERCOLOR_RED)] = 32 + (i&0xf);
+			
+			/* Pink */
+			translationtables[i + TRANSPLY(PLAYERCOLOR_PINK)] = 16 + (i&0xf);
+			/* Orange */
+			translationtables[i + TRANSPLY(PLAYERCOLOR_ORANGE)] = 208 + (i&0xf);
+			/* Yellow */
+			TRANTODO(PLAYERCOLOR_YELLOW);
+			/* Blue */
+			translationtables[i + TRANSPLY(PLAYERCOLOR_BLUE)] = 192 + (i&0xf);
+			/* Dark Blue */
+			TRANTODO(PLAYERCOLOR_DARKBLUE);
+			/* Bright Red */
+			translationtables[i + TRANSPLY(PLAYERCOLOR_BRIGHTRED)] = 168 + (i&0xf);
+			/* Dark Red */
+			translationtables[i + TRANSPLY(PLAYERCOLOR_DARKRED)] = 184 + (i&0xf);
+			/* White */
+			translationtables[i + TRANSPLY(PLAYERCOLOR_WHITE)] = 80 + (i&0xf);
+			/* Tan */
+			translationtables[i + TRANSPLY(PLAYERCOLOR_TAN)] = 48 + (i&0xf);
+			/* Black */
+			translationtables[i + TRANSPLY(PLAYERCOLOR_BLACK)] = 0;	// heh
+			/* Light Brown */
+			translationtables[i + TRANSPLY(PLAYERCOLOR_LIGHTBROWN)] = 128 + (i&0xf);
+			/* Magenta */
+			TRANTODO(PLAYERCOLOR_MAGENTA);
+			/* Moss */
+			TRANTODO(PLAYERCOLOR_MOSS);
+			/* Dirt */
+			TRANTODO(PLAYERCOLOR_DIRT);
+			/* Camo */
+			TRANTODO(PLAYERCOLOR_CAMO);
+		}
+		else
+		{
+			// Don't touch other colors
+			for (j = 0; j < MAXPLAYERCOLORS; j++)
+				translationtables[i + TRANSPLY(j)] = i;
+				
+			// Keep all other colors as is.
+			/*translationtables[i] = translationtables[i+256] 
+			= translationtables[i+512] = i;*/
+		}
     }
 }
 

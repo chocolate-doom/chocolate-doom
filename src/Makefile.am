@@ -19,8 +19,8 @@ net_server.c         net_server.h          \
 net_structrw.c       net_structrw.h        \
 z_native.c           z_zone.h
 
-chocolate_server_SOURCES=$(DEDSERV_FILES)
-chocolate_server_LDADD = @LDFLAGS@ @SDL_LIBS@ @SDLNET_LIBS@ 
+strawberry_server_SOURCES=$(DEDSERV_FILES)
+strawberry_server_LDADD = @LDFLAGS@ @SDL_LIBS@ @SDLNET_LIBS@ 
 
 MAIN_SOURCE_FILES=\
 am_map.c             am_map.h              \
@@ -158,12 +158,12 @@ SOURCE_FILES = $(MAIN_SOURCE_FILES)                \
                $(FEATURE_SOUND_SOURCE_FILES)
 
 if HAVE_WINDRES
-chocolate_doom_SOURCES=$(SOURCE_FILES) chocolate-doom-res.rc
+strawberry_doom_SOURCES=$(SOURCE_FILES) chocolate-doom-res.rc
 else
-chocolate_doom_SOURCES=$(SOURCE_FILES)
+strawberry_doom_SOURCES=$(SOURCE_FILES)
 endif
 
-chocolate_doom_LDADD = ../textscreen/libtextscreen.a ../pcsound/libpcsound.a @LDFLAGS@ @SDL_LIBS@ @SDLMIXER_LIBS@ @SDLNET_LIBS@ 
+strawberry_doom_LDADD = ../textscreen/libtextscreen.a ../pcsound/libpcsound.a @LDFLAGS@ @SDL_LIBS@ @SDLMIXER_LIBS@ @SDLNET_LIBS@ 
 
 EXTRA_DIST =                               \
         chocolate_doom_icon.c              \

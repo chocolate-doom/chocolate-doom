@@ -107,6 +107,33 @@ void R_FillBackScreen (void);
 // If the view size is not full screen, draws a border around it.
 void R_DrawViewBorder (void);
 
-
+// More player colors! -- GhostlyDeath
+enum
+{
+	// Standard Colors
+	PLAYERCOLOR_GREEN,		// 112 - 127
+	PLAYERCOLOR_INDIGO,		// 96 - 111
+	PLAYERCOLOR_BROWN,		// 128 - 143
+	PLAYERCOLOR_RED,		// 32 - 47
+	
+	// Extended Colors
+	PLAYERCOLOR_PINK,		// 16-31
+	PLAYERCOLOR_ORANGE,		// 208-223
+	PLAYERCOLOR_YELLOW,		// 224 - 231, 160 - 167
+	PLAYERCOLOR_BLUE,		// 192 - 207
+	PLAYERCOLOR_DARKBLUE,	// 240 - 247
+	PLAYERCOLOR_BRIGHTRED,	// 168 - 183
+	PLAYERCOLOR_DARKRED,	// 176 - 191
+	PLAYERCOLOR_WHITE,		// 80 - 95
+	PLAYERCOLOR_TAN,		// 48 - 63
+	PLAYERCOLOR_BLACK,		// 0
+	PLAYERCOLOR_LIGHTBROWN,	// 64 - 79
+	PLAYERCOLOR_MAGENTA,	// 250 - 254
+	PLAYERCOLOR_MOSS,		// 152 - 159
+	PLAYERCOLOR_DIRT,		// 144 - 151
+	PLAYERCOLOR_CAMO,		// 144 - 151, 152 - 159 Alternating
+	
+	MAXPLAYERCOLORS
+};
 
 #endif

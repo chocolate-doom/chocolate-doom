@@ -203,7 +203,7 @@ static void TXT_DropdownListDrawer(TXT_UNCAST_ARG(list), int selected)
     }
     else
     {
-        TXT_BGColor(TXT_COLOR_BLUE, 0);
+        TXT_BGColor(TXT_COLOR_RED, 0);
     }
 
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);

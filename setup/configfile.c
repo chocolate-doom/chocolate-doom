@@ -266,6 +266,7 @@ static default_t extra_defaults_list[] =
     {"vanilla_keyboard_mapping",    &vanilla_keyboard_mapping, DEFAULT_INT, 0, 0},
 #ifdef FEATURE_MULTIPLAYER
     {"player_name",                 &net_player_name,          DEFAULT_STRING, 0, 0},
+    {"player_color",				&net_player_color,		   DEFAULT_INT, 0, 0},
 #endif
     {"video_driver",                &video_driver,             DEFAULT_STRING, 0, 0},
     {"joystick_index",              &joystick_index, DEFAULT_INT, 0, 0},
@@ -280,6 +281,8 @@ static default_t extra_defaults_list[] =
     {"mouseb_straferight",          &mousebstraferight, DEFAULT_INT, 0, 0},
     {"mouseb_use",                  &mousebuse, DEFAULT_INT, 0, 0},
     {"mouseb_backward",             &mousebbackward, DEFAULT_INT, 0, 0},
+    
+    {"key_showscores",				&key_showscores, DEFAULT_KEY, 0, 0},
 };
 
 static default_collection_t extra_defaults =

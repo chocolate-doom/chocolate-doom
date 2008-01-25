@@ -126,6 +126,7 @@ unsigned int net_drones_in_game;
 
 char net_player_addresses[MAXPLAYERS][MAXPLAYERNAME];
 char net_player_names[MAXPLAYERS][MAXPLAYERNAME];
+int net_player_colors[MAXPLAYERS];
 
 // MD5 checksums of the wad directory and dehacked data that the server
 // has sent to us.
@@ -148,6 +149,7 @@ boolean net_waiting_for_start = false;
 // Name that we send to the server
 
 char *net_player_name = NULL;
+int net_player_color = 0;
 
 // The last ticcmd constructed
 
