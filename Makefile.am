@@ -23,11 +23,11 @@ CODEBLOCKS_FILES=                              \
         codeblocks/config.h                    \
         codeblocks/libpcsound.cbp
 
-DATA_FILES=                             \
-        data/chocolate-doom.ico         \
-        data/chocolate-doom.png         \
-        data/chocolate-setup.ico        \
-        data/chocolate-setup.png        \
+DATA_FILES=                   \
+        data/doom.ico         \
+        data/doom.png         \
+        data/setup.ico        \
+        data/setup.png        \
         data/convert-icon
 
 EXTRA_DIST=                             \
