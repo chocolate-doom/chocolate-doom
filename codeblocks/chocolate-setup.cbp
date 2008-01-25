@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="chocolate-setup" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="..\bin\chocolate-setup-dbg.exe" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="..\bin" />
+				<Option object_output="..\obj\dbg\" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-W" />
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="..\bin\chocolate-setup.exe" prefix_auto="0" extension_auto="0" />
+				<Option working_dir="..\bin" />
+				<Option object_output="..\obj\rel\" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<VirtualTargets>
+			<Add alias="All" targets="Debug;Release;" />
+		</VirtualTargets>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-D_WIN32" />
+			<Add directory="." />
+			<Add directory="..\src" />
+			<Add directory="..\textscreen" />
+		</Compiler>
+		<Linker>
+			<Add option="-ltextscreen -lmingw32 -lSDLmain -lSDL -mwindows" />
+			<Add directory="..\lib" />
+		</Linker>
+		<Unit filename="chocolate-setup-res.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
+		<Unit filename="..\setup\compatibility.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\setup\compatibility.h" />
+		<Unit filename="..\setup\configfile.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\setup\configfile.h" />
+		<Unit filename="..\setup\display.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\setup\display.h" />
+		<Unit filename="..\setup\execute.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\setup\execute.h" />
+		<Unit filename="..\setup\joystick.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\setup\joystick.h" />
+		<Unit filename="..\setup\keyboard.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\setup\keyboard.h" />
+		<Unit filename="..\setup\m_argv.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\setup\m_argv.h" />
+		<Unit filename="..\setup\mainmenu.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\setup\mouse.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\setup\mouse.h" />
+		<Unit filename="..\setup\multiplayer.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\setup\multiplayer.h" />
+		<Unit filename="..\setup\sound.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\setup\sound.h" />
+		<Unit filename="..\setup\txt_joybinput.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\setup\txt_joybinput.h" />
+		<Unit filename="..\setup\txt_keyinput.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\setup\txt_keyinput.h" />
+		<Unit filename="..\setup\txt_mouseinput.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\setup\txt_mouseinput.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

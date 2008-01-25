@@ -1,0 +1,21 @@
+
+* Sound may not set volumes correctly.
+
+  It is possible that volume of sound effects does not scale properly 
+  with distance from the sound source.  It is also possible that sound 
+  effects are cut off at the wrong distance. This needs further 
+  investigation.
+
+* Music plays back differently.
+
+  The DOS music code was not in the Doom source release as Doom used
+  a proprietary sound library.  The mus <-> mid conversion mostly 
+  works well but some patches are different.  By closer examination 
+  of which MIDI instruments are used by doom.exe, it may be possible
+  to get a closer conversion.
+
+* A small number of Doom bugs are almost impossible to emulate.
+
+  An example of this can be seen in Ledmeister's "Blackbug" demo which 
+  shows a bug that relies on the memory layout of the Doom executable.  
+

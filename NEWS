@@ -1,0 +1,296 @@
+
+     * The video mode code has been radically restructured.  The video mode is
+       now chosen by directly specifying the mode to use; the scale factor is
+       then chosen to fit the screen.  This is helpful when using widescreen
+       monitors (thanks Linguica)
+     * MSVC build project files (thanks GhostlyDeath).
+     * Unix manpage improvements; the manpage now lists the environment
+       variables that Chocolate Doom uses.  Manpages have been added for
+       chocolate-setup and chocolate-server, from the versions for the Debian
+       Chocolate Doom package (thanks Jon Dowland).
+     * INSTALL file with installation instructions for installing Chocolate
+       Doom on Unix systems.
+
+    Compatibility:
+     * Use the same spechits compatibility value as PrBoom+, for consistency
+       (thanks Lemonzest).
+
+    Bugs fixed:
+     * Desync with STRAIN demos and dehacked Misc values not being set
+       properly (thanks Lemonzest)
+     * Don't grab the mouse if the mouse is disabled via -nomouse or use_mouse
+       in the configuration file (thanks MikeRS).
+     * Don't center the mouse on startup if the mouse is disabled (thanks
+       Siggi).
+     * Reset the palette when the window is restored to clear any screen
+       corruption (thanks Catoptromancy).
+     * mus2mid.c should use MEM_SEEK_SET, not SEEK_SET (thanks Russell)
+     * Fast/Respawn options were not being exchanged when starting netgames
+       (thanks GhostlyDeath).
+
+1.0.0 (2007-12-10):
+
+    This release is dedicated to Dylan 'Toke' McIntosh, who was
+    tragically killed in a car crash in 2006.  I knew Dylan
+    from IRC and the Doomworld forums for several years, and he had
+    a deep passion for this game.  He was also a huge help for me while
+    developing Chocolate Doom, as he helped point out a lot of small
+    quirks in Vanilla Doom that I didn't know about. His death is a 
+    great loss.  RIP Toke.
+
+    This is the first release to reach full feature parity with 
+    Vanilla Doom.  As a result, I have made this version 1.0.0, so
+    Chocolate Doom is no longer beta!
+
+    Big new features:
+     * Multiplayer!  This version includes an entirely new multiplayer
+       engine, based on a packet server architecture.  I'd like to thank
+       joe, pritch, Meph and myk, and everyone else who has helped test
+       the new code for their support, feedback and help in testing this.  
+       The new code still needs more testing, and I'm eager to hear any 
+       feedback on this.
+     * A working setup tool.  This has the same look and feel as the 
+       original setup.exe.  I hope people like it!  Note that it has 
+       some advantages over the original setup.exe - for example, 
+       you can use the mouse.
+
+    Other new features:
+     * New mus conversion code thanks to Ben Ryves.  This converts the
+       Doom .mus format to .mid a lot better.  As one example, tnt.wad
+       Map02 is now a lot closer to how Vanilla says.  Also, the music 
+       on the deca.wad titlescreen now plays!
+     * x3, x4 and x5 display scale (thanks to MikeRS for x5 scale).
+     * Fullscreen "letterbox" mode allows Chocolate Doom to run on machines
+       where 1.6:1 aspect ratio modes are unavailable (320x200/640x400).
+       The game runs in 320x240/640x480 instead, with black borders.
+       The system automatically adjusts to this if closer modes are 
+       unavailable.
+     * Aspect ratio correction: you can (also) run at 640x480 without black 
+       borders at the top and bottom of the screen.
+     * PC speaker sound effect support.  Chocolate Doom can output real
+       PC speaker sounds on Linux, or emulate a PC speaker through the
+       sound card.
+     * Working three-screen mode, as seen in early versions of Doom!
+       To test this out, put three computers on a LAN and type:
+         chocolate-doom -server
+	 chocolate-doom -autojoin -left
+	 chocolate-doom -autojoin -right
+     * Allow a delay to be specified on startup, to allow the display to
+       settle after changing modes before starting the game.
+     * Allow the full path and filename to be specified when loading demos:
+       It is now possible to type 'chocolate-doom -playdemo /tmp/foo.lmp'
+       for example.
+     * Savegames are now stored in separate directories depending on
+       the IWAD: eg. the savegames for Doom II are stored in a different
+       place to those for Doom I, Final Doom, etc. (this does not affect
+       Windows).
+     * New mouse acceleration code works based on a threshold and 
+       acceleration.  Hopefully this should be closer to what the DOS
+       drivers do.  There is a 'test' feature in the setup tool to help 
+       in configuring this.
+     * New '-nwtmerge' command line option that emulates NWT's '-merge'
+       option.  This allows TiC's Obituary TC to be played.
+     * The ENDOOM screen no longer closes automatically, you have to click
+       the window to make it go away.
+     * Spechit overrun fixes and improvements.  Thanks to entryway for
+       his continued research on this topic (and because I stole your
+       improvements :-).  Thanks to Quasar for reporting a bug as well.
+     * Multiple dehacked patches can be specified on the command line,
+       in the same way as with WADs - eg. -deh foo.deh bar.deh baz.deh.
+     * Default zone memory size increased to 16MB; this can be controlled
+       using the -mb command-line option.
+     * It is now possible to record demos of unlimited length (by default, 
+       the Vanilla limit still applies, but it can now be disabled).
+     * Autoadjusting the screen mode can now be disabled.
+     * On Windows, the registry is queried to detect installed versions of
+       Doom and automatically locate IWAD files.  IWADs installed through
+       Steam are also autodetected.
+     * Added DOOMWADPATH that can be used like PATH to specify multiple 
+       locations in which to search for IWAD files.  Also, '-iwad' is 
+       now enhanced, so that eg. '-iwad doom.wad' will now search all 
+       IWAD search paths for 'doom.wad'.
+     * Improved mouse tracking that should no longer lag.  Thanks to 
+       entryway for research into this.
+     * The SDL driver can now be specified in the configuration file.  
+       The setup tool has an option on Windows to select between
+       DirectX and windib.
+     * Joystick support.
+     * Configuration file option to change the sound sample rate.
+     * More than three mouse buttons are now supported.
+     
+    Portability improvements: 
+     * Chocolate Doom now compiles and runs cleanly on MacOS X.  Huge
+       thanks go to Insomniak who kindly gave me an account on his machine
+       so that I could debug this remotely.  Big thanks also go to 
+       athanatos on the Doomworld forums for his patience in testing 
+       various ideas as I tried to get Chocolate Doom up and running
+       on MacOS.
+     * Chocolate Doom now compiles and runs natively on AMD64.
+     * Chocolate Doom now compiles and runs on Solaris/SPARC, including
+       the Sun compiler.  Thanks to Mike Spooner for some portability 
+       fixes.
+     * Improved audio rate conversion, so that sound should play properly
+       on machines that don't support low bitrate output.
+
+    Compatibility fixes:
+     * Check for IWADs in the same order as Vanilla Doom.
+     * Dehacked code will now not allow string replacements to be longer than
+       those possible through DOS dehacked.
+     * Fix sound effects playing too loud on level 8 (thanks to myk
+       for his continued persistence in getting me to fix this)
+     * Save demos when quitting normally - it is no longer necessary to
+       press 'q' to quit and save a demo.
+     * Fix spacing of -devparm mode dots.
+     * Fix sky behavior to be the same as Vanilla Doom - when playing in
+       Doom II, the skies never change from the sky on the first level
+       unless the player loads from a savegame. 
+     * Make -nomouse and config file use_mouse work again.
+     * Fix the -nomusic command-line parameter.  Make the snd_sfxdevice
+       snd_musicdevice values in the configuration file work, so that it
+       is possible to disable sound, as with Vanilla.
+     * Repeat key presses when the key is held down (this is the Vanilla 
+       behavior)  - thanks to Mad_Mac for pointing this out.
+     * Don't print a list of all arguments read from response files - Vanilla
+       doesn't do this.
+     * Autorun only when joyb_speed >= 10, not >= 4.  Thanks to Janizdreg 
+       for this.
+     * Emulate a bug in DOS dehacked that can overflow the dehacked
+       frame table and corrupt the weaponinfo table.  Note that this means
+       Batman Doom will no longer play properly (identical behavior
+       to Vanilla); vbatman.deh needs to also be applied to fix it.
+       (Thanks grazza)
+     * Allow dehacked 2.3 patches to be loaded.
+     * Add more dehacked string replacements.
+     * Compatibility option to enable or disable native key mappings.  This
+       means that people with non-US keyboards can decide whether to use
+       their correct native mapping or behave like Vanilla mapping (which
+       assumes all keyboards are US).
+     * Emulate overflow bug in P_FindNextHighestFloor.  Thanks to
+       entryway for the fix for this.
+     * Add -netdemo command line parameter, for playing back netgame
+       demos recorded with a single player.
+     * The numeric keypad now behaves like Vanilla Doom does.
+     * Fix some crashes when loading from savegames.
+     * Add intercepts overrun emulation from PrBoom-plus.  Thanks again
+       to entryway for his research on this subject.
+     * Add playeringame overrun emulation.
+
+    Bugs fixed:
+     * Fix crash when starting new levels due to the intermission screen
+       being drawn after the WI_ subsystem is shut down (thanks 
+       pritch and joe)
+     * Catch failures to initialise sound properly, and fail gracefully.
+     * Fix crasher in 1427uv01.lmp (thanks ultdoomer)
+     * Fix crash in udm1.wad.
+     * Fix crash when loading a savegame with revenant tracer missiles.
+     * Fix crash when loading a savegame when a mancubus was in the middle
+       of firing.
+     * Fix Doom 1 E1-3 intermission screen animations.
+     * Fix loading of dehacked "sound" sections.
+     * Make sure that modified copyright banners always end in a newline
+       - this fixes a bug with av.wad (thanks myk)
+     * Added missing quit message ("are you sure you want to quit this
+       great game?").
+     * Fix when playing long sound effects - the death sound in marina.wad
+       now plays properly, for example.
+     * Fix buffer overrun on the quicksave prompt screen that caused a
+       mysterious cycling character to appear.
+     * IDCLEV should not work in net games (thanks Janizdreg)
+     * Stop music playing at the ENDOOM screen.
+     * Fix sound sample rate conversion crash.
+     * Fix 'pop' heard at the end of sound effects.
+     * Fix crash when playing long sounds.
+     * Fix bug with -timedemo accuracy over multi-level demos.
+     * Fix bug with the automap always following player 1 in multiplayer
+       mode (thanks Janizdreg).
+
+0.1.4 (2006-02-13):
+
+    NWT-style merging command line options (allows Mordeth to be played)
+    Unix manpage (thanks Jon Dowland)
+    Dehacked improvements/fixes:
+     * Allow changing the names of graphic lumps used in menu, status bar
+       intermission screen, etc.
+     * Allow changing skies, animated flats + textures
+     * Allow changing more startup strings.
+     * Allow text replacements on music + sfx lump names
+    Fix for plutonia map12 crash.
+    Fix bug with playing long sfx at odd sample rates.
+    Big Endian fixes (for MacOS X).  Thanks to athanatos for helping
+        find some of these.
+    Install into /usr/games, rather than /usr/bin (thanks Jon Dowland)
+
+0.1.3 (2006-01-20):
+
+    Imported the spechit overrun emulation code from prboom-plus.  Thanks to
+         Andrey Budko for this.
+    New show_endoom option in the chocolate-doom.cfg config file allows
+         the ENDOOM screen to be disabled.
+    Chocolate Doom is now savegame-compatible with Vanilla Doom.
+
+    Fixes for big endian machines (thanks locust)
+    Fixed the behavior of the dehacked maximum health setting.
+    Fix the "-skill 0" hack to play without any items (thanks to Janizdreg
+        for pointing out that this was nonfunctional)
+    Fix playing of sounds at odd sample rates (again).  Sound effects at
+        any sample rate now play, but only sounds with valid headers.
+        This is the *real* way Vanilla Doom behaves.  Thanks to myk for
+        pointing out the incorrect behavior.
+
+0.1.2 (2005-10-29):
+
+    Silence sounds at odd sample rates (rather than bombing out); this
+        is the way Vanilla Doom behaves.
+    Handle multiple replacements of the same sprite in a PWAD.
+    Support specifying a specific version to emulate via the command line
+        (-gameversion)
+    Fix help screen orderings and skull positions.  Behave exactly as
+        the original executables do.
+
+0.1.1 (2005-10-18):
+    Display startup "banners" if they have been modified through 
+        dehacked.
+    Dehacked "Misc" section support.
+
+    Bugs fixed:
+     * Doom 1 skies always using Episode 1 sky
+     * Crash when switching applications while running fullscreen
+     * Lost soul bounce logic (do not bounce in Registered/Shareware)
+     * Mouse buttons mapped incorrectly (button 1 is right, 2 is middle)
+     * Music not pausing when game is paused, when using SDL_mixer's 
+       native MIDI playback.
+     * Pink icon on startup (palette should be fully set before anything is
+       loaded)
+
+0.1.0 (2005-10-09):
+    Dehacked support
+    WAD merging for TCs
+    ENDOOM display
+    Fix bug with invalid MUS files causing crashes
+    Final Doom fixes
+
+0.0.4 (2005-09-27):
+    Application icon and version info included in Windows .exe files
+    Fixes for non-x86 architectures
+    Fix uac_dead.wad (platform drop on e1m8 should occur when all
+        bosses die, not just barons)
+    Fix "loading" icon to work for all graphics modes
+
+0.0.3 (2005-09-17):
+    Mouse acceleration code to emulate the behaviour of old
+        DOS mouse drivers (thanks to Toke for information about 
+        this and suggestions)
+    Lock surfaces properly when we have to (fixes crash under
+        Windows 98)
+
+0.0.2 (2005-09-13):
+    Remove temporary MIDI files generated by sound code.
+    Fix sound not playing at the right volume
+    Allow alt-tab away while running in fullscreen under Windows
+    Add second configuration file (chocolate-doom.cfg) to allow 
+        chocolate-doom specific settings.
+    Fix switches not changing in Ultimate Doom
+
+0.0.1 (2005-09-07):
+    First beta release
+

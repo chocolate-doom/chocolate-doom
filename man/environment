@@ -1,0 +1,17 @@
+.SH ENVIRONMENT
+This section describes environment variables that control Chocolate Doom's
+behavior.
+.TP 
+\fBDOOMWADDIR\fR, \fBDOOMWADPATH\fR
+These environment variables provide paths to search for Doom .WAD files when
+looking for a game IWAD file or a PWAD file specified with the '-file' option.
+\fBDOOMWADDIR\fR specifies a single path in which to look for WAD files,
+while \fBDOOMWWADDIR\fR specifies a colon-separated list of paths to search.
+.TP
+\fBPCSOUND_DRIVER\fR
+When running in PC speaker sound effect mode, this environment variable 
+specifies a PC speaker driver to use for sound effect playback.  Valid
+options are "Linux" for the Linux console mode driver, "BSD" for the
+NetBSD/OpenBSD PC speaker driver, and "SDL" for SDL-based emulated PC speaker 
+playback (using the digital output).
+

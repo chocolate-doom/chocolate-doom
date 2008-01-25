@@ -1,0 +1,73 @@
+
+Chocolate Doom is a Doom source port which aims to behave as closely
+as possible to the original DOS Doom executables.
+
+Chocolate Doom aims to:
+
+ * Be compatible with DOS Doom demos
+ * Be compatible with DOS Doom configuration files
+ * Be compatible with DOS Doom savegames
+ * Be compatible with DOS Doom bugs
+ * Provide the same "feel" as DOS Doom (display and input should behave
+   the same)
+ * As far as possible, provide all the same features that are available
+   using the DOS version.
+
+== Configuration File ==
+
+Chocolate Doom is compatible with the DOS Doom configuration file
+(normally named 'default.cfg').  Existing configuration files for
+DOS Doom should therefore simply work out of the box.  However,
+Chocolate Doom also provides some extra settings.  These are stored
+in a separate file named 'chocolate-doom.cfg'.
+
+The configuration can be edited using the chocolate-setup tool.
+
+== Command-line options ==
+
+For a complete list of command-line options, see the CMDLINE 
+file.
+
+== Playing TCs ==
+
+With Vanilla Doom there is no way to include sprites in PWAD files.  
+Chocolate Doom's '-file' command line option behaves exactly the
+same as Vanilla Doom, and trying to play TCs by adding the WAD files
+using '-file' will not work.
+
+Many Total Conversions (TCs) are distributed as a PWAD file which must
+be merged into the main IWAD.  Typically a copy of DEUSF.EXE is
+included which performs this merge.  Chocolate Doom includes a new
+option, '-merge', which will simulate this merge.  Essentially, the 
+WAD directory is merged in memory, removing the need to modify the 
+IWAD on disk.
+
+To play TCs using Chocolate Doom, run like this:
+
+  chocolate-doom -merge thetc.wad
+
+Here are some examples:
+
+  chocolate-doom -merge batman.wad -deh batman.deh vbatman.deh  (Batman Doom)
+  chocolate-doom -merge aoddoom1.wad -deh aoddoom1.deh  (Army of Darkness Doom)
+
+== Other information ==
+
+ * More information, including information about how to play various classic
+   TCs, is available on the Chocolate Doom website: 
+
+   http://www.chocolate-doom.org/
+
+   You are encouraged to sign up and contribute any useful information you may
+   have regarding the port!
+
+ * Chocolate Doom is not perfect.  See the BUGS file for a list of 
+   known issues,
+
+ * Chocolate Doom is under the GNU GPL.  See the COPYING file for more 
+   information.
+
+ * Chocolate Doom is currently a beta version.  Not all planned features 
+   have been implemented yet; see TODO.  Please send feedback and bug 
+   reports to fraggle@gmail.com.  Thanks!
+

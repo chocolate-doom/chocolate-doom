@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual C++ Express 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chocolate Doom", "ChocolateDoom.vcproj", "{8B744A3B-8F18-41A0-85A3-293816E85B6E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug Client|Win32 = Debug Client|Win32
+		Debug Server|Win32 = Debug Server|Win32
+		Debug Setup|Win32 = Debug Setup|Win32
+		Release Client|Win32 = Release Client|Win32
+		Release Server|Win32 = Release Server|Win32
+		Release Setup|Win32 = Release Setup|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8B744A3B-8F18-41A0-85A3-293816E85B6E}.Debug Client|Win32.ActiveCfg = Debug|Win32
+		{8B744A3B-8F18-41A0-85A3-293816E85B6E}.Debug Client|Win32.Build.0 = Debug|Win32
+		{8B744A3B-8F18-41A0-85A3-293816E85B6E}.Debug Server|Win32.ActiveCfg = Debug Server|Win32
+		{8B744A3B-8F18-41A0-85A3-293816E85B6E}.Debug Server|Win32.Build.0 = Debug Server|Win32
+		{8B744A3B-8F18-41A0-85A3-293816E85B6E}.Debug Setup|Win32.ActiveCfg = Debug Setup|Win32
+		{8B744A3B-8F18-41A0-85A3-293816E85B6E}.Debug Setup|Win32.Build.0 = Debug Setup|Win32
+		{8B744A3B-8F18-41A0-85A3-293816E85B6E}.Release Client|Win32.ActiveCfg = Release|Win32
+		{8B744A3B-8F18-41A0-85A3-293816E85B6E}.Release Client|Win32.Build.0 = Release|Win32
+		{8B744A3B-8F18-41A0-85A3-293816E85B6E}.Release Server|Win32.ActiveCfg = Release Server|Win32
+		{8B744A3B-8F18-41A0-85A3-293816E85B6E}.Release Server|Win32.Build.0 = Release Server|Win32
+		{8B744A3B-8F18-41A0-85A3-293816E85B6E}.Release Setup|Win32.ActiveCfg = Release Setup|Win32
+		{8B744A3B-8F18-41A0-85A3-293816E85B6E}.Release Setup|Win32.Build.0 = Release Setup|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

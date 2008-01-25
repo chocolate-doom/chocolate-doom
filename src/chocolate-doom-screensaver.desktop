@@ -1,0 +1,12 @@
+
+[Desktop Entry]
+Encoding=UTF-8
+Name=Doom
+Comment=DOOM by Id Software.
+TryExec=chocolate-doom
+Exec=chocolate-doom
+StartupNotify=false
+Terminal=false
+Type=Application
+Categories=Screensaver
+

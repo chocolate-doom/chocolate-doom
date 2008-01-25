@@ -1,0 +1,386 @@
+#!/usr/bin/env python
+# 
+# Command line parameter self-documentation tool.  Reads comments from
+# the source code in the following form:
+#
+#   //!
+#   // @arg <extra arguments>
+#   // @category Category
+#   // @platform <some platform that the parameter is specific to>
+#   //
+#   // Long description of the parameter
+#   //
+#
+#   something_involving = M_CheckParm("-param");
+#
+# From this, a manpage can be automatically generated of the command
+# line parameters.
+
+import sys
+import re
+import glob
+import getopt
+
+class Category:
+    def __init__(self, description):
+        self.description = description
+        self.params = []
+
+    def add_param(self, param):
+        self.params.append(param)
+
+    # Find the maximum width of a parameter in this category
+
+    def paramtext_width(self):
+        w = 0
+
+        for p in self.params:
+            pw = len(p.name) + 5
+
+            if p.args:
+                pw += len(p.args)
+
+            if pw > w:
+                w = pw
+
+        return w
+
+    # Plain text output
+
+    def plaintext_output(self):
+        result = "=== %s ===\n\n" % self.description
+
+        self.params.sort()
+
+        w = self.paramtext_width()
+
+        for p in self.params:
+            if p.should_show():
+                result += p.plaintext_output(w)
+
+        result = result.rstrip() + "\n"
+
+        return result
+
+    def manpage_output(self):
+        result = ".SH " + self.description.upper() + "\n"
+
+        self.params.sort()
+
+        for p in self.params:
+            if p.should_show():
+                result += ".TP\n"
+                result += p.manpage_output()
+
+        return result
+
+    def wiki_output(self):
+        result = "=== %s ===\n" % self.description
+
+        self.params.sort()
+
+        for p in self.params:
+            if p.should_show():
+                result += "; " + p.wiki_output() + "\n"
+
+        # Escape special HTML characters
+
+        result = result.replace("&", "&amp;")
+        result = result.replace("<", "&lt;")
+        result = result.replace(">", "&gt;")
+
+        return result
+
+categories = {
+    None:      Category("General options"),
+    "video":   Category("Display options"),
+    "demo":    Category("Demo options"),
+    "net":     Category("Networking options"),
+    "mod":     Category("Dehacked and WAD merging"),
+    "compat":  Category("Compatibility"),
+}
+
+wikipages = []
+
+# Show options that are in Vanilla Doom? Or only new options?
+
+show_vanilla_options = True
+
+class Parameter:
+    def __cmp__(self, other):
+        if self.name < other.name:
+            return -1
+        else:
+            return 1
+
+    def __init__(self):
+        self.text = ""
+        self.name = ""
+        self.args = None
+        self.platform = None
+        self.category = None
+        self.vanilla_option = False
+
+    def should_show(self):
+        return not self.vanilla_option or show_vanilla_options
+
+    def add_text(self, text):
+        if len(text) <= 0:
+            pass
+        elif text[0] == "@":
+            match = re.match('@(\S+)\s*(.*)', text)
+
+            if not match:
+                raise "Malformed option line: %s" % text
+
+            option_type = match.group(1)
+            data = match.group(2)
+            
+            if option_type == "arg":
+                self.args = data
+            elif option_type == "platform":
+                self.platform = data
+            elif option_type == "category":
+                self.category = data
+            elif option_type == "vanilla":
+                self.vanilla_option = True
+            else:
+                raise "Unknown option type '%s'" % option_type
+
+        else:
+            self.text += text + " "
+
+    def manpage_output(self):
+        result = self.name
+
+        if self.args:
+            result += " " + self.args
+
+        result = '\\fB' + result + '\\fR'
+
+        result += "\n"
+
+        if self.platform:
+            result += "[%s only] " % self.platform
+
+        escaped = re.sub('\\\\', '\\\\\\\\', self.text)
+
+        result += escaped + "\n"
+
+        return result
+
+    def wiki_output(self):
+        result = self.name
+
+        if self.args:
+            result += " " + self.args
+
+        result += ": "
+
+        result += add_wiki_links(self.text)
+
+        if self.platform:
+            result += "'''(%s only)'''" % self.platform
+
+        return result
+
+    def plaintext_output(self, w):
+
+        # Build the first line, with the argument on
+
+        line = "  " + self.name
+        if self.args:
+            line += " " + self.args
+
+        # pad up to the plaintext width
+
+        line += " " * (w - len(line))
+
+        # Build the description text
+
+        description = self.text
+
+        if self.platform:
+            description += " (%s only)" % self.platform
+
+        # Build the complete text for the argument
+        # Split the description into words and add a word at a time
+
+        result = ""
+        for word in re.split('\s+', description):
+
+            # Break onto the next line?
+
+            if len(line) + len(word) + 1 > 75:
+                result += line + "\n"
+                line = " " * w
+
+            # Add another word
+
+            line += word + " "
+
+        result += line + "\n\n"
+
+        return result
+
+# Read list of wiki pages
+
+def read_wikipages():
+    f = open("wikipages")
+
+    try:
+        for line in f:
+            line = line.rstrip()
+
+            line = re.sub('\#.*$', '', line)
+
+            if not re.match('^\s*$', line):
+                wikipages.append(line)
+    finally:
+        f.close()
+
+# Add wiki page links
+
+def add_wiki_links(text):
+    for pagename in wikipages:
+        page_re = re.compile('(%s)' % pagename, re.IGNORECASE)
+    #   text = page_re.sub("SHOES", text)
+        text = page_re.sub('[[\\1]]', text)
+
+    return text
+
+def process_file(file):
+    f = open(file)
+
+    try:
+        param = None
+        waiting_for_checkparm = False
+
+        for line in f:
+            line = line.rstrip()
+
+            # Currently reading a doc comment?
+
+            if param:
+                # End of doc comment
+
+                if not re.match('\s*//', line):
+                    waiting_for_checkparm = True
+
+                # Waiting for the M_CheckParm call that contains the
+                # name of the parameter we are documenting?
+
+                if waiting_for_checkparm:
+                    match = re.search('M_CheckParm\s*\(\s*"(.*?)"\s*\)', line)
+
+                    if match:
+                        # Found the name!  Finished documenting this 
+                        # parameter.
+
+                        param.name = match.group(1)
+                        categories[param.category].add_param(param)
+                        param = None
+
+                else:
+                    # More documentation text
+
+                    munged_line = re.sub('\s*\/\/\s*', '', line, 1)
+                    munged_line = re.sub('\s*$', '', munged_line)
+                    param.add_text(munged_line)
+
+            # Check for start of a doc comment
+
+            if re.search("//!", line):
+                param = Parameter()
+                waiting_for_checkparm = False
+    finally:
+        f.close()
+
+def process_files(dir):
+    # Process all C source files.
+
+    files = glob.glob(dir + "/*.c")
+
+    for file in files:
+        process_file(file)
+
+def print_file_contents(file):
+    f = open(file)
+
+    try:
+        for line in f:
+            print line.rstrip()
+
+    finally:
+        f.close()
+
+def manpage_output(dir): 
+
+    process_files(dir)
+
+    print_file_contents("header")
+
+    print categories[None].manpage_output()
+
+    for c in categories:
+        if c != None:
+            print categories[c].manpage_output()
+
+    print_file_contents("environment")
+    print_file_contents("footer")
+
+def wiki_output(dir):
+    read_wikipages()
+    process_files(dir)
+
+    print categories[None].wiki_output()
+
+    for c in categories:
+        if c != None:
+            print categories[c].wiki_output()
+
+def plaintext_output(dir):
+    process_files(dir)
+
+    print "== Command line parameters =="
+    print 
+    print "This is a list of the command line parameters supported by "
+    print "Chocolate Doom.  A number of additional parameters are supported "
+    print "in addition to those present in Vanilla Doom. "
+    print
+
+    print categories[None].plaintext_output()
+
+    for c in categories:
+        if c != None:
+            print categories[c].plaintext_output()
+
+def usage():
+    print "Usage: %s [-V] ( -m | -w | -p ) <directory>" % sys.argv[0]
+    print "   -m :  Manpage output"
+    print "   -w :  Wikitext output"
+    print "   -p :  Plaintext output"
+    print "   -V :  Don't show Vanilla Doom options"
+    sys.exit(0)
+
+# Parse command line
+
+opts, args = getopt.getopt(sys.argv[1:], "mwpV")
+
+output_function = None
+
+for opt in opts:
+    if opt[0] == "-m":
+        output_function = manpage_output
+    elif opt[0] == "-w":
+        output_function = wiki_output
+    elif opt[0] == "-p":
+        output_function = plaintext_output
+    elif opt[0] == "-V":
+        show_vanilla_options = False
+
+if output_function == None or len(args) != 1:
+    usage()
+else:
+    output_function(args[0])
+

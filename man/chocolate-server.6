@@ -1,0 +1,34 @@
+.TH chocolate\-server 6
+.SH NAME
+chocolate\-server \- dedicated server for chocolate\-doom
+.SH SYNOPSIS
+.B chocolate\-server
+[OPTIONS]
+.SH DESCRIPTION
+.PP
+Chocolate Doom is a modern doom engine designed to behave
+as similar to the original doom game as is possible.
+.PP
+.B chocolate\-server
+is a dedicated server for Chocolate Doom. It is equivalent to 
+running 
+.B chocolate\-doom
+with the "-dedicated" option.
+.PP
+Game options are not specified to the server, which merely acts to
+retransmit data between players in the game; parameters for the
+game should be specified by the first player to connect to the server,
+who is designated the controlling player.
+.br
+.SH OPTIONS
+.TP
+\fB-port <n>\fR
+Use the specified UDP port for communications, instead of the default (2342). 
+.SH AUTHOR
+Chocolate Doom is written and maintained by Simon Howard.
+.PP
+This manual was written by Jon Dowland.
+.SH COPYRIGHT
+Copyright \(co id Software Inc.
+Copyright \(co 2005-7 Simon Howard.
+

@@ -1,0 +1,20 @@
+1 ICON "..\\data\\chocolate-doom.ico"
+
+1 VERSIONINFO
+FILETYPE 1
+{
+ BLOCK "StringFileInfo"
+ {
+  BLOCK "040904E4"
+  {
+   VALUE "FileVersion", ""
+   VALUE "FileDescription", ""
+   VALUE "InternalName", "Chocolate-Doom"
+   VALUE "CompanyName", "Chocolate-Doom"
+   VALUE "LegalCopyright", "GNU General Public License"
+   VALUE "ProductName", "Chocolate-Doom"
+   VALUE "ProductVersion", ""
+  }
+ }
+}
+
