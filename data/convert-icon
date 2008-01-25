@@ -41,7 +41,7 @@ def convert_image(filename, output_filename):
 
     size = im.size
 
-    struct_name = os.path.basename(filename)
+    struct_name = os.path.basename(output_filename)
     struct_name = re.sub(re.compile("\\..*$"), "", struct_name)
     struct_name = re.sub(re.compile("\W"), "_", struct_name)
 
