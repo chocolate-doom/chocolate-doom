@@ -1,9 +1,9 @@
 .\" this section from head
-.TH chocolate\-doom 6
+.TH strawberry\-doom 6
 .SH NAME
-chocolate\-doom \- historically compatible doom engine
+strawberry\-doom \- historically compatible doom engine
 .SH SYNOPSIS
-.B chocolate\-doom
+.B strawberry\-doom
 [\fIOPTIONS\fR]
 .SH DESCRIPTION
 .PP

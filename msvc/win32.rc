@@ -41,11 +41,11 @@ BEGIN
 		BLOCK "040904E4"
 		BEGIN
 			VALUE "FileVersion", "1.0.0"
-			VALUE "FileDescription", "Chocolate Doom 1.0.0"
-			VALUE "InternalName", "chocolate-doom"
-			VALUE "CompanyName", "fraggle@gmail.com"
+			VALUE "FileDescription", "Strawberry Doom 1.0.0"
+			VALUE "InternalName", "strawberry-doom"
+			VALUE "CompanyName", "ghostlydeath@gmail.com"
 			VALUE "LegalCopyright", "GNU General Public License"
-			VALUE "ProductName", "Chocolate Doom"
+			VALUE "ProductName", "Strawberry Doom"
 			VALUE "ProductVersion", "1.0.0"
 		END
 	END

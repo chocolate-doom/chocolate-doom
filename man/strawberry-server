@@ -1,6 +1,6 @@
-.TH chocolate\-server 6
+.TH strawberry\-server 6
 .SH NAME
-chocolate\-server \- dedicated server for chocolate\-doom
+strawberry\-server \- dedicated server for strawberry\-doom
 .SH SYNOPSIS
 .B chocolate\-server
 [OPTIONS]
@@ -9,10 +9,10 @@ chocolate\-server \- dedicated server for chocolate\-doom
 Chocolate Doom is a modern doom engine designed to behave
 as similar to the original doom game as is possible.
 .PP
-.B chocolate\-server
+.B strawberry\-server
 is a dedicated server for Chocolate Doom. It is equivalent to 
 running 
-.B chocolate\-doom
+.B strawberry\-doom
 with the "-dedicated" option.
 .PP
 Game options are not specified to the server, which merely acts to

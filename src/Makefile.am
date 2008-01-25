@@ -1,7 +1,7 @@
 
 gamesdir = $(prefix)/games
 
-games_PROGRAMS = chocolate-doom chocolate-server
+games_PROGRAMS = strawberry-doom strawberry-server
 
 AM_CFLAGS = -I../textscreen -I../pcsound @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 

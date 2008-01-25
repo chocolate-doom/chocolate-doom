@@ -42,9 +42,9 @@
 #include "m_argv.h"
 
 #ifdef _WIN32
-#define DOOM_BINARY "chocolate-doom.exe"
+#define DOOM_BINARY "strawberry-doom.exe"
 #else
-#define DOOM_BINARY INSTALL_DIR "/chocolate-doom"
+#define DOOM_BINARY INSTALL_DIR "/strawberry-doom"
 #endif
 
 #ifdef _WIN32
@@ -97,7 +97,7 @@ execute_context_t *NewExecuteContext(void)
 
     result = malloc(sizeof(execute_context_t));
     
-    result->response_file = TempFile("chocolat.rsp");
+    result->response_file = TempFile("strawber.rsp");
     result->stream = fopen(result->response_file, "w");
 
     if (result->stream == NULL)

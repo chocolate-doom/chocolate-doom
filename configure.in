@@ -1,4 +1,4 @@
-AC_INIT(Chocolate Doom, 1.0.0, fraggle@gmail.com, chocolate-doom)
+AC_INIT(Strawberry Doom, 1.0.0, ghostlydeath@gmail.com, strawberry-doom)
 
 AC_CONFIG_AUX_DIR(autotools)
 
