@@ -45,7 +45,7 @@
 			<Add option="-ltextscreen -lmingw32 -lSDLmain -lSDL -mwindows" />
 			<Add directory="..\lib" />
 		</Linker>
-		<Unit filename="chocolate-setup-res.rc">
+		<Unit filename="setup-res.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>
 		<Unit filename="..\setup\compatibility.c">
@@ -106,6 +106,7 @@
 		<Extensions>
 			<code_completion />
 			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
