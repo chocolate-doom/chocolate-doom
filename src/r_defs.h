@@ -54,7 +54,7 @@
 #define SIL_TOP			2
 #define SIL_BOTH		3
 
-#define MAXDRAWSEGS		512
+#define MAXDRAWSEGS		2048
 
 
 
