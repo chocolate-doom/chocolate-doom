@@ -241,18 +241,18 @@ void P_PlayerThink (player_t* player)
 	
     // fixme: do this in the cheat code
     if (player->cheats & CF_NOCLIP)
-	player->mo->flags |= MF_NOCLIP;
+		player->mo->flags |= MF_NOCLIP;
     else
-	player->mo->flags &= ~MF_NOCLIP;
+		player->mo->flags &= ~MF_NOCLIP;
     
     // chain saw run forward
     cmd = &player->cmd;
     if (player->mo->flags & MF_JUSTATTACKED)
     {
-	cmd->angleturn = 0;
-	cmd->forwardmove = 0xc800/512;
-	cmd->sidemove = 0;
-	player->mo->flags &= ~MF_JUSTATTACKED;
+		cmd->angleturn = 0;
+		cmd->forwardmove = 0xc800/512;
+		cmd->sidemove = 0;
+		player->mo->flags &= ~MF_JUSTATTACKED;
     }
 			
 	

@@ -3,9 +3,9 @@ gamesdir = $(prefix)/games
 
 AM_CFLAGS = @SDL_CFLAGS@ -I../textscreen -I../src -DINSTALL_DIR="\"$(gamesdir)\""
 
-games_PROGRAMS = chocolate-setup
+games_PROGRAMS = strawberry-setup
 
-chocolate_setup_LDADD = ../textscreen/libtextscreen.a @LDFLAGS@ @SDL_LIBS@
+strawberry_setup_LDADD = ../textscreen/libtextscreen.a @LDFLAGS@ @SDL_LIBS@
 SOURCE_FILES =                                  \
     compatibility.c   compatibility.h           \
     configfile.c      configfile.h              \
@@ -26,9 +26,9 @@ EXTRA_DIST=                                     \
     chocolate_setup_icon.c
 
 if HAVE_WINDRES
-chocolate_setup_SOURCES=$(SOURCE_FILES) chocolate-setup-res.rc
+strawberry_setup_SOURCES=$(SOURCE_FILES) chocolate-setup-res.rc
 else
-chocolate_setup_SOURCES=$(SOURCE_FILES)
+strawberry_setup_SOURCES=$(SOURCE_FILES)
 endif
 
 .rc.o:

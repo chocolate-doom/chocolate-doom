@@ -476,11 +476,11 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         return;
     }
 
-    if (strcmp(client_version, PACKAGE_STRING) != 0)
+    /*if (strcmp(client_version, PACKAGE_STRING) != 0)
     {
         NET_SV_SendReject(addr, "Different versions cannot play a network game!");
         return;
-    }
+    }*/ // woops
 
     // read the game mode and mission
 

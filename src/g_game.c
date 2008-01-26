@@ -78,7 +78,7 @@
 #include "g_game.h"
 
 
-#define SAVEGAMESIZE	2883584 //0x2c000
+#define SAVEGAMESIZE	0x2c000
 
 
 
