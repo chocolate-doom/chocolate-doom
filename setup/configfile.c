@@ -283,6 +283,7 @@ static default_t extra_defaults_list[] =
     {"mouseb_backward",             &mousebbackward, DEFAULT_INT, 0, 0},
     
     {"key_showscores",				&key_showscores, DEFAULT_KEY, 0, 0},
+    {"supercoopspy",				&supercoopspy, DEFAULT_INT, 0, 0},
 };
 
 static default_collection_t extra_defaults =

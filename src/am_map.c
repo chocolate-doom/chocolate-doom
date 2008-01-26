@@ -49,6 +49,7 @@
 #include "dstrings.h"
 
 #include "am_map.h"
+#include "g_game.h"
 
 
 // For use if I do walls with outsides/insides
@@ -473,23 +474,46 @@ void AM_initVariables(void)
     m_h = FTOM(f_h);
 
     // find player to center on initially
-    if (playeringame[consoleplayer])
+    if (supercoopspy)
     {
-        plr = &players[consoleplayer];
-    }
-    else
-    {
-        plr = &players[0];
+		if (playeringame[displayplayer])
+		{
+		    plr = &players[displayplayer];
+		}
+		else
+		{
+		    plr = &players[0];
 
-	for (pnum=0;pnum<MAXPLAYERS;pnum++)
-        {
-	    if (playeringame[pnum])
-            {
-                plr = &players[pnum];
-		break;
-            }
-        }
-    }
+		for (pnum=0;pnum<MAXPLAYERS;pnum++)
+		    {
+			if (playeringame[pnum])
+		        {
+		            plr = &players[pnum];
+			break;
+		        }
+		    }
+		}
+	}
+	else
+	{
+		if (playeringame[consoleplayer])
+		{
+		    plr = &players[consoleplayer];
+		}
+		else
+		{
+		    plr = &players[0];
+
+		for (pnum=0;pnum<MAXPLAYERS;pnum++)
+		    {
+			if (playeringame[pnum])
+		        {
+		            plr = &players[pnum];
+			break;
+		        }
+		    }
+		}
+	}
 
     m_x = plr->mo->x - m_w/2;
     m_y = plr->mo->y - m_h/2;

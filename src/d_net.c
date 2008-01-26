@@ -558,20 +558,20 @@ void TryRunTics (void)
 
     while (!PlayersInGame() || lowtic < gametic/ticdup + counts)	
     {
-	NetUpdate ();   
+		NetUpdate ();   
 
-        lowtic = GetLowTic();
+		    lowtic = GetLowTic();
 	
-	if (lowtic < gametic/ticdup)
-	    I_Error ("TryRunTics: lowtic < gametic");
-    
-        // Don't stay in this loop forever.  The menu is still running,
-        // so return to update the screen
+		if (lowtic < gametic/ticdup)
+			I_Error ("TryRunTics: lowtic < gametic");
+		
+		    // Don't stay in this loop forever.  The menu is still running,
+		    // so return to update the screen
 
-	if (I_GetTime() / ticdup - entertic > 0)
-	{
-	    return;
-	} 
+		if (I_GetTime() / ticdup - entertic > 0)
+		{
+			return;
+		} 
 
         I_Sleep(1);
     }
@@ -581,6 +581,7 @@ void TryRunTics (void)
     {
 	for (i=0 ; i<ticdup ; i++)
 	{
+		
             // check that there are players in the game.  if not, we cannot
             // run a tic.
         

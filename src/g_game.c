@@ -174,6 +174,8 @@ int		key_use = ' ';
 int		key_strafe = KEY_RALT;
 int		key_speed = KEY_RSHIFT; 
 int 	key_showscores = 'f';
+
+int supercoopspy = 1;
  
 int             mousebfire = 0;
 int             mousebstrafe = 1;
@@ -713,6 +715,21 @@ boolean G_Responder (event_t* ev)
 	    displayplayer++; 
 	    if (displayplayer == MAXPLAYERS) 
 		displayplayer = 0; 
+		
+		if (supercoopspy)
+		{
+			if (automapactive)
+			{
+				AM_Start();	// redo the automap
+			}
+			else
+			{
+				AM_Start();
+				automapactive = false;	// hack
+			}
+			HU_Start();
+			ST_Start();	// redo the Statusbar
+		}
 	} while (!playeringame[displayplayer] && displayplayer != consoleplayer); 
 	return true; 
     }

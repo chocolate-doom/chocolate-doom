@@ -43,6 +43,7 @@
 #include "p_local.h"
 #include "w_wad.h"
 #include "z_zone.h"
+#include "g_game.h"
 
 // when to clip out sounds
 // Does not fit the large outdoor areas.
@@ -607,28 +608,56 @@ void S_StartSound(void *origin_p, int sfx_id)
 
     // Check to see if it is audible,
     //  and if not, modify the params
-    if (origin && origin != players[consoleplayer].mo)
+    if (supercoopspy)
     {
-        rc = S_AdjustSoundParams(players[consoleplayer].mo,
-                                 origin,
-                                 &volume,
-                                 &sep);
+		if (origin && origin != players[displayplayer].mo)
+		{
+		    rc = S_AdjustSoundParams(players[displayplayer].mo,
+		                             origin,
+		                             &volume,
+		                             &sep);
 
-        if (origin->x == players[consoleplayer].mo->x
-         && origin->y == players[consoleplayer].mo->y)
-        {        
-            sep = NORM_SEP;
-        }
+		    if (origin->x == players[displayplayer].mo->x
+		     && origin->y == players[displayplayer].mo->y)
+		    {        
+		        sep = NORM_SEP;
+		    }
 
-        if (!rc)
-        {
-            return;
-        }
-    }        
-    else
-    {
-        sep = NORM_SEP;
-    }
+		    if (!rc)
+		    {
+		        return;
+		    }
+		}        
+		else
+		{
+		    sep = NORM_SEP;
+		}
+	}
+	else
+	{
+		if (origin && origin != players[consoleplayer].mo)
+		{
+		    rc = S_AdjustSoundParams(players[consoleplayer].mo,
+		                             origin,
+		                             &volume,
+		                             &sep);
+
+		    if (origin->x == players[consoleplayer].mo->x
+		     && origin->y == players[consoleplayer].mo->y)
+		    {        
+		        sep = NORM_SEP;
+		    }
+
+		    if (!rc)
+		    {
+		        return;
+		    }
+		}        
+		else
+		{
+		    sep = NORM_SEP;
+		}
+	}
 
     // kill old sound
     S_StopSound(origin);

@@ -333,7 +333,7 @@ static patch_t*		keys[NUMCARDS];
 static patch_t*		faces[ST_NUMFACES];
 
 // face background
-static patch_t*		faceback;
+static patch_t*		faceback[MAXPLAYERS];	// GhostlyDeath
 
  // main bar right
 static patch_t*		armsbg;
@@ -435,7 +435,12 @@ void ST_refreshBackground(void)
 	V_DrawPatch(ST_X, 0, BG, sbar);
 
 	if (netgame)
-	    V_DrawPatch(ST_FX, 0, BG, faceback);
+	{
+		if (supercoopspy)
+			V_DrawPatch(ST_FX, 0, BG, faceback[displayplayer]);
+		else
+			V_DrawPatch(ST_FX, 0, BG, faceback[consoleplayer]);
+	}
 
 	V_CopyRect(ST_X, 0, BG, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y, FG);
     }
@@ -1099,8 +1104,12 @@ void ST_loadGraphics(void)
     }
 
     // face backgrounds for different color players
-    sprintf(namebuf, DEH_String("STFB%d"), consoleplayer);
-    faceback = (patch_t *) W_CacheLumpName(namebuf, PU_STATIC);
+    for (i = 0; i < MAXPLAYERS; i++)
+    {
+		sprintf(namebuf, DEH_String("STFB%d"), i);
+	
+		faceback[i] = (patch_t *) W_CacheLumpName(namebuf, PU_STATIC);
+	}
 
     // status bar background bits
     sbar = (patch_t *) W_CacheLumpName(DEH_String("STBAR"), PU_STATIC);
@@ -1162,7 +1171,8 @@ void ST_unloadGraphics(void)
 	Z_ChangeTag(keys[i], PU_CACHE);
 
     Z_ChangeTag(sbar, PU_CACHE);
-    Z_ChangeTag(faceback, PU_CACHE);
+    for (i = 0; i < MAXPLAYERS; i++)
+	    Z_ChangeTag(faceback[i], PU_CACHE);
 
     for (i=0;i<ST_NUMFACES;i++)
 	Z_ChangeTag(faces[i], PU_CACHE);
@@ -1184,7 +1194,7 @@ void ST_initData(void)
     int		i;
 
     st_firsttime = true;
-    plyr = &players[consoleplayer];
+    plyr = &players[displayplayer];
 
     st_clock = 0;
     st_chatstate = StartChatState;

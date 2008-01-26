@@ -85,4 +85,6 @@ void G_DrawMouseSpeedBox(void);
 
 extern boolean  	gamekeydown[NUMKEYS]; 
 
+extern int supercoopspy;
+
 #endif

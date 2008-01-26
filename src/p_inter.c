@@ -46,6 +46,7 @@
 #include "s_sound.h"
 
 #include "p_inter.h"
+#include "g_game.h"
 
 
 #define BONUSADD	6
@@ -190,8 +191,16 @@ P_GiveWeapon
 	    P_GiveAmmo (player, weaponinfo[weapon].ammo, 2);
 	player->pendingweapon = weapon;
 
-	if (player == &players[consoleplayer])
-	    S_StartSound (NULL, sfx_wpnup);
+	if (supercoopspy)
+	{
+		if (player == &players[displayplayer])
+			S_StartSound (NULL, sfx_wpnup);
+	}
+	else
+	{
+		if (player == &players[consoleplayer])
+			S_StartSound (NULL, sfx_wpnup);
+	}
 	return false;
     }
 	
@@ -656,8 +665,16 @@ P_TouchSpecialThing
 	player->itemcount++;
     P_RemoveMobj (special);
     player->bonuscount += BONUSADD;
-    if (player == &players[consoleplayer])
-	S_StartSound (NULL, sound);
+    if (supercoopspy)
+    {
+		if (player == &players[consoleplayer])
+			S_StartSound (NULL, sound);
+	}
+	else
+	{
+		if (player == &players[displayplayer])
+			S_StartSound (NULL, sound);
+	}
 }
 
 
@@ -882,8 +899,16 @@ P_DamageMobj
 	
 	temp = damage < 100 ? damage : 100;
 
-	if (player == &players[consoleplayer])
-	    I_Tactile (40,10,40+temp*2);
+	if (supercoopspy)
+	{
+		if (player == &players[displayplayer])
+			I_Tactile (40,10,40+temp*2);
+	}
+	else
+	{
+		if (player == &players[consoleplayer])
+			I_Tactile (40,10,40+temp*2);
+	}
     }
     
     // do the damage	

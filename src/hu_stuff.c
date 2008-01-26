@@ -363,7 +363,10 @@ void HU_Start(void)
     if (headsupactive)
 	HU_Stop();
 
-    plr = &players[consoleplayer];
+	if (supercoopspy)
+		plr = &players[displayplayer];
+	else
+	    plr = &players[consoleplayer];
     message_on = false;
     message_dontfuckwithme = false;
     message_nottobefuckedwith = false;

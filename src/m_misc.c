@@ -70,6 +70,7 @@
 #include "dstrings.h"
 
 #include "m_misc.h"
+#include "g_game.h"
 
 //
 // M_DrawText
@@ -301,6 +302,8 @@ extern int snd_musicdevice;
 extern int snd_sfxdevice;
 extern int snd_samplerate;
 
+extern int supercoopspy;
+
 // dos specific options: these are unused but should be maintained
 // so that the config file can be shared between chocolate
 // doom and doom.exe
@@ -448,6 +451,7 @@ static default_t extra_defaults_list[] =
 
     {"dclick_use",                  &dclick_use, DEFAULT_INT, 0, 0},
     {"key_showscores",				&key_showscores, DEFAULT_KEY, 0, 0},
+    {"supercoopspy",				&supercoopspy, DEFAULT_INT, 0, 0},
 };
 
 static default_collection_t extra_defaults =
