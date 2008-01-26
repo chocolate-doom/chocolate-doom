@@ -115,5 +115,7 @@ V_MarkRect
   int		y,
   int		width,
   int		height );
+  
+void V_DrawRect(int x, int y, int width, int height, int color);
 
 #endif

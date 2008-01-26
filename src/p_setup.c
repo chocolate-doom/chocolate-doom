@@ -631,6 +631,8 @@ P_SetupLevel
     wminfo.partime = 180;
     for (i=0 ; i<MAXPLAYERS ; i++)
     {
+		if (playeringame[i])
+			players[i].deaths = 0;
 	players[i].killcount = players[i].secretcount 
 	    = players[i].itemcount = 0;
     }

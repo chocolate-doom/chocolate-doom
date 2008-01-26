@@ -212,11 +212,9 @@ fixed_t         forwardmove[2] = {0x19, 0x32};
 fixed_t         sidemove[2] = {0x18, 0x28}; 
 fixed_t         angleturn[3] = {640, 1280, 320};    // + slow turn 
 
-#define SLOWTURNTICS	6 
- 
-#define NUMKEYS		256 
+#define SLOWTURNTICS	6  
 
-static boolean  	gamekeydown[NUMKEYS]; 
+boolean  	gamekeydown[NUMKEYS]; 
 static int      turnheld;		// for accelerative turning 
  
 static boolean  mousearray[4]; 
@@ -998,8 +996,7 @@ void G_InitPlayer (int player)
     p = &players[player]; 
 	 
     // clear everything else to defaults 
-    G_PlayerReborn (player); 
-	 
+    G_PlayerReborn (player);  
 } 
  
  
@@ -1037,11 +1034,15 @@ void G_PlayerReborn (int player)
     int		killcount;
     int		itemcount;
     int		secretcount; 
+    int		deaths;
+    int		color;
 	 
     memcpy (frags,players[player].frags,sizeof(frags)); 
     killcount = players[player].killcount; 
     itemcount = players[player].itemcount; 
     secretcount = players[player].secretcount; 
+    deaths = players[player].deaths;
+    color = players[player].color;
 	 
     p = &players[player]; 
     memset (p, 0, sizeof(*p)); 
@@ -1050,6 +1051,8 @@ void G_PlayerReborn (int player)
     players[player].killcount = killcount; 
     players[player].itemcount = itemcount; 
     players[player].secretcount = secretcount; 
+    players[player].deaths = deaths;
+    players[player].color = i;	// TODO: personalize!
  
     p->usedown = p->attackdown = true;	// don't do anything immediately 
     p->playerstate = PST_LIVE;       
@@ -1116,6 +1119,8 @@ G_CheckSpot
 	 
     if (players[consoleplayer].viewz != 1) 
 	S_StartSound (mo, sfx_telept);	// don't start sound on first frame 
+	
+	//players[playernum].mo->color = players[playernum].color;
  
     return true; 
 } 

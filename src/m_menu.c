@@ -222,8 +222,8 @@ void M_DrawThermo(int x,int y,int thermWidth,int thermDot);
 void M_DrawEmptyCell(menu_t *menu,int item);
 void M_DrawSelCell(menu_t *menu,int item);
 void M_WriteText(int x, int y, char *string);
-int  M_StringWidth(char *string);
-int  M_StringHeight(char *string);
+//int  M_StringWidth(char *string);	// allready in m_menu.h!
+//int  M_StringHeight(char *string);	// allready in m_menu.h
 void M_StartControlPanel(void);
 void M_StartMessage(char *string,void *routine,boolean input);
 void M_StopMessage(void);

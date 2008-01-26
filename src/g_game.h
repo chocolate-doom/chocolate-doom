@@ -81,4 +81,8 @@ void G_ScreenShot (void);
 
 void G_DrawMouseSpeedBox(void);
 
+#define NUMKEYS		256
+
+extern boolean  	gamekeydown[NUMKEYS]; 
+
 #endif

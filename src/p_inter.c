@@ -698,21 +698,24 @@ P_KillMobj
     
     if (target->player)
     {
-	// count environment kills against you
-	if (!source)	
-	    target->player->frags[target->player-players]++;
+		// if you die, die
+		target->player->deaths += 1;
+		
+		// count environment kills against you
+		if (!source)	
+			target->player->frags[target->player-players]++;
 			
-	target->flags &= ~MF_SOLID;
-	target->player->playerstate = PST_DEAD;
-	P_DropWeapon (target->player);
+		target->flags &= ~MF_SOLID;
+		target->player->playerstate = PST_DEAD;
+		P_DropWeapon (target->player);
 
-	if (target->player == &players[consoleplayer]
-	    && automapactive)
-	{
-	    // don't die in auto map,
-	    // switch view prior to dying
-	    AM_Stop ();
-	}
+		if (target->player == &players[consoleplayer]
+			&& automapactive)
+		{
+			// don't die in auto map,
+			// switch view prior to dying
+			AM_Stop ();
+		}
 	
     }
 

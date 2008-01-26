@@ -166,6 +166,7 @@ typedef struct player_s
     boolean		didsecret;	
     
     int 		color;
+    int deaths;
 
 } player_t;
 

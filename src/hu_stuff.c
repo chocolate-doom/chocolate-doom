@@ -47,6 +47,9 @@
 #include "sounds.h"
 #include "net_client.h"
 
+#include "g_game.h"
+#include "m_menu.h"
+
 //
 // Locally used constants, shortcuts.
 //
@@ -417,14 +420,261 @@ void HU_Start(void)
     headsupactive = true;
 
 }
+extern int key_showscores;
 
 void HU_Drawer(void)
 {
+	char playername[32];
+	char num[5];
+	int i, j;
+	int curlife;
+	int restlife;
+	int maxlife;
+	int curarmor;
+	int restarmor;
+	int maxarmor;
+	int x, y;
+	int frags;
 
     HUlib_drawSText(&w_message);
     HUlib_drawIText(&w_chat);
     if (automapactive)
 	HUlib_drawTextLine(&w_title, false);
+	
+	if (gamekeydown[key_showscores])
+    {
+    	y = 90;
+    	
+    	M_DrawText(10, y-15, true, "** NAME **");
+    	if (deathmatch)
+    	{
+    		M_DrawText(120, y-15, true, "FRAG");
+    		M_DrawText(155, y-15, true, "KILL");
+    		M_DrawText(185, y-15, true, "DETH");
+    		M_DrawText(220, y-15, true, "SELF");
+    	}
+    	else
+    	{
+    		M_DrawText(120, y-15, true, "KILL");
+    		M_DrawText(155, y-15, true, "ITEM");
+    		M_DrawText(185, y-15, true, "SCRT");
+    		M_DrawText(220, y-15, true, "FRAG");
+    		M_DrawText(255, y-15, true, "DETH");
+    	}
+    	
+    	for (i = 0; i < MAXPLAYERS; i++)
+    	{
+    		if (playeringame[i])
+    		{
+    			// If !deathmatch, draw life as a bar
+    			for (j = 0; j < 32; j++)
+    				playername[j] = 0;
+    			
+    			if (strlen(net_player_names[i]) < 3)
+    			{
+    				switch (i)
+    				{
+    					case 0: sprintf(playername, "%s", "Green"); break;
+    					case 1: sprintf(playername, "%s", "Indigo"); break;
+    					case 2: sprintf(playername, "%s", "Brown"); break;
+    					case 3: sprintf(playername, "%s", "Red"); break;
+    					default: sprintf(playername, "%s", "Who?"); break;
+    				}
+    			}
+    			else
+	    			sprintf(playername, "%s", net_player_names[i]);
+    			
+    			if (!deathmatch || demoplayback)
+    			{
+					// Life    				
+    				curlife = players[i].health;
+    				if (curlife > 100)
+    				{
+    					maxlife = curlife - 100;
+    					curlife = 100;
+    				}
+    				restlife = 100 - curlife;
+    				
+					V_DrawRect(10, y-2, curlife, 12, 112);	// Current Life
+					V_DrawRect(10+curlife, y-2, restlife, 12, 176);	// Rest life
+					
+					// Armor
+    				curarmor = players[i].armorpoints;
+    				if (curarmor > 100)
+    				{
+    					maxlife = curarmor - 100;
+    					curarmor = 100;
+    				}
+    				restarmor = 100 - curarmor;
+    				
+					V_DrawRect(10, (y+6)-2, curarmor, 6, 202);	// Current armor
+					//V_DrawRect(10+curarmor, y-2, restarmor, 6, 176);	// Rest armor
+    			}
+    			
+    			// Name
+				M_DrawText(10, y, true, playername);
+				
+				// Score
+				if (deathmatch)
+				{
+					// Frags = Kills - Suicides
+					frags = 0;
+					for (j = 0; j < 5; j++)
+						num[j] = 0;
+					for (j = 0; j < MAXPLAYERS; j++)
+					{
+						if (playeringame[j])
+						{
+							if (j == i)
+								frags -= players[i].frags[j];
+							else
+								frags += players[i].frags[j];
+						}
+					}
+						
+					sprintf(num, "%3i", frags);
+					M_DrawText(120, y, true, num);
+					
+					// Kills = Kills (no suicide counts)
+					frags = 0;
+					for (j = 0; j < 5; j++)
+						num[j] = 0;
+					for (j = 0; j < MAXPLAYERS; j++)
+					{
+						if (playeringame[j])
+						{
+							if (j != i)
+								frags += players[i].frags[j];
+						}
+					}
+						
+					sprintf(num, "%3i", frags);
+					M_DrawText(155, y, true, num);
+					
+					// Deaths = Deaths from everyone with suicides
+					frags = 0;
+					for (j = 0; j < 5; j++)
+						num[j] = 0;
+						
+					frags = players[i].deaths;
+						
+					sprintf(num, "%3i", frags);
+					M_DrawText(185, y, true, num);
+					
+					// Suicides = Self explanatory
+					frags = 0;
+					for (j = 0; j < 5; j++)
+						num[j] = 0;
+					for (j = 0; j < MAXPLAYERS; j++)
+					{
+						if (playeringame[j])
+						{
+							if (j == i)
+								frags += players[i].frags[j];
+						}
+					}
+						
+					sprintf(num, "%3i", frags);
+					M_DrawText(220, y, true, num);
+					
+				/*	frags = 0;
+					for (j = 0; j < 5; j++)
+						num[j] = 0;
+					for (j = 0; j < MAXPLAYERS; j++)
+						if (playeringame[j])
+							if (j != i)
+								frags += players[j].frags[j];
+					sprintf(num, "%3i", frags);
+					M_DrawText(155, y, true, num);
+					
+					/*for (j = 0; j < 5; j++)
+						num[j] = 0;
+					M_DrawText(155, y, true, num);
+					
+					for (j = 0; j < 5; j++)
+						num[j] = 0;
+					M_DrawText(185, y, true, num);*/
+				}
+				else	// Coop
+				{
+					// Killcount
+					frags = 0;
+					for (j = 0; j < 5; j++)
+						num[j] = 0;
+					for (j = 0; j < MAXPLAYERS; j++)
+					{
+						if (playeringame[j])
+							frags = players[i].killcount;
+					}
+						
+					sprintf(num, "%3i", frags);
+					M_DrawText(120, y, true, num);
+					
+					// itemcount
+					frags = 0;
+					for (j = 0; j < 5; j++)
+						num[j] = 0;
+					for (j = 0; j < MAXPLAYERS; j++)
+					{
+						if (playeringame[j])
+							frags = players[i].itemcount;
+					}
+						
+					sprintf(num, "%3i", frags);
+					M_DrawText(155, y, true, num);
+					
+					// secretcount
+					frags = 0;
+					for (j = 0; j < 5; j++)
+						num[j] = 0;
+					for (j = 0; j < MAXPLAYERS; j++)
+					{
+						if (playeringame[j])
+							frags = players[i].secretcount;
+					}
+						
+					sprintf(num, "%3i", frags);
+					M_DrawText(185, y, true, num);
+					
+					// Frags = Kills - Suicides
+					frags = 0;
+					for (j = 0; j < 5; j++)
+						num[j] = 0;
+					for (j = 0; j < MAXPLAYERS; j++)
+					{
+						if (playeringame[j])
+						{
+							if (j == i)
+								frags -= players[i].frags[j];
+							else
+								frags += players[i].frags[j];
+						}
+					}
+					
+					sprintf(num, "%3i", frags);
+					M_DrawText(220, y, true, num);
+					
+					// Deaths = Deaths from everyone with suicides
+					frags = 0;
+					for (j = 0; j < 5; j++)
+						num[j] = 0;
+						
+					frags = players[i].deaths;
+						
+					sprintf(num, "%3i", frags);
+					M_DrawText(255, y, true, num);
+					
+					/*M_DrawText(120, y-15, true, "KILL");
+					M_DrawText(155, y-15, true, "ITEM");
+					M_DrawText(185, y-15, true, "SCRT");
+					M_DrawText(220, y-15, true, "FRAG");
+					M_DrawText(255, y-15, true, "DETH");*/
+				}
+    		}
+    		
+    		y += 15;
+    	}
+    }
 
 }
 
@@ -443,6 +693,7 @@ void HU_Ticker(void)
     int i, rc, j;
     char c;
     char tmpStr[128];
+    hu_textline_t htt;
     
     for (j = 0; j < 128; j++)
     	tmpStr[j] = 0;

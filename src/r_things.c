@@ -556,7 +556,7 @@ void R_ProjectSprite (mobj_t* thing)
     // store information in a vissprite
     vis = R_NewVisSprite ();
     //vis->mobjflags = thing->flags;
-    if (thing->player)
+    /*if (thing->player)
     {
     	for (i = 0; i < MAXPLAYERS; i++)
     	{
@@ -577,7 +577,8 @@ void R_ProjectSprite (mobj_t* thing)
 	    //vis->colorize = thing->player->color;
 	}
 	else
-		vis->colorize = 0;
+		vis->colorize = 0;*/
+	vis->colorize = thing->color;
     vis->scale = xscale<<detailshift;
     vis->gx = thing->x;
     vis->gy = thing->y;

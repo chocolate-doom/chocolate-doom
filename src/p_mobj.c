@@ -532,6 +532,7 @@ P_SpawnMobj
     mobj->height = info->height;
     mobj->flags = info->flags;
     mobj->health = info->spawnhealth;
+    mobj->color = 0;
 
     if (gameskill != sk_nightmare)
 	mobj->reactiontime = info->reactiontime;
@@ -719,6 +720,15 @@ void P_SpawnPlayer (mapthing_t* mthing)
     p->extralight = 0;
     p->fixedcolormap = 0;
     p->viewheight = VIEWHEIGHT;
+    
+    // TODO
+    if (p == &players[0]) p->mo->color = PLAYERCOLOR_GREEN;
+    else if (p == &players[1]) p->mo->color = PLAYERCOLOR_INDIGO;
+    else if (p == &players[2]) p->mo->color = PLAYERCOLOR_BROWN;
+    else if (p == &players[3]) p->mo->color = PLAYERCOLOR_RED;
+    else p->mo->color = PLAYERCOLOR_ORANGE;
+    
+    p->color = p->mo->color;
 
     // setup gun psprite
     P_SetupPsprites (p);

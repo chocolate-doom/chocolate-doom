@@ -285,6 +285,8 @@ typedef struct mobj_s
     // Thing being chased/attacked for tracers.
     struct mobj_s*	tracer;	
     
+    int color;	// colors!
+    
 } mobj_t;
 
 

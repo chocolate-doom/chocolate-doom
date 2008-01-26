@@ -64,6 +64,9 @@ void M_StartControlPanel (void);
 extern int detailLevel;
 extern int screenblocks;
 
+int  M_StringWidth(char *string);
+int  M_StringHeight(char *string);
+
 
 
 #endif    
