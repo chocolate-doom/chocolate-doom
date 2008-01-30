@@ -1334,6 +1334,26 @@ static void SetSDLVideoDriver(void)
 #endif
 }
 
+static char *WindowBoxType(screen_mode_t *mode, int w, int h)
+{
+    if (mode->width != w && mode->height != h) 
+    {
+        return "Windowboxed";
+    }
+    else if (mode->width == w) 
+    {
+        return "Letterboxed";
+    }
+    else if (mode->height == h)
+    {
+        return "Pillarboxed";
+    }
+    else
+    {
+        return "...";
+    }
+}
+
 void I_InitGraphics(void)
 {
     SDL_Event dummy;
@@ -1397,7 +1417,8 @@ void I_InitGraphics(void)
         if (windowwidth != screen_mode->width
          || windowheight != screen_mode->height)
         {
-            printf("I_InitGraphics: Letterboxed (%ix%i within %ix%i)\n",
+            printf("I_InitGraphics: %s (%ix%i within %ix%i)\n",
+                   WindowBoxType(screen_mode, windowwidth, windowheight),
                    screen_mode->width, screen_mode->height,
                    windowwidth, windowheight);
         }
