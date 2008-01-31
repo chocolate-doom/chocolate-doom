@@ -483,13 +483,13 @@ P_TouchSpecialThing
 	break;
 	
       case SPR_MEDI:
-	if (!P_GiveBody (player, 25))
-	    return;
-
 	if (player->health < 25)
 	    player->message = DEH_String(GOTMEDINEED);
 	else
 	    player->message = DEH_String(GOTMEDIKIT);
+
+	if (!P_GiveBody (player, 25))
+	    return;
 	break;
 
 	
@@ -943,4 +943,5 @@ P_DamageMobj
     }
 			
 }
+
 
