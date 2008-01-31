@@ -7,7 +7,7 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="..\bin\chocolate-doom-dbg.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="..\bin\$(PROJECT_NAME)-dbg.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="..\bin" />
 				<Option object_output="..\obj\dbg" />
 				<Option type="0" />
@@ -19,7 +19,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="..\bin\chocolate-doom.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="..\bin\$(PROJECT_NAME).exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="..\bin" />
 				<Option object_output="..\obj\rel" />
 				<Option type="0" />
