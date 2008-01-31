@@ -76,7 +76,8 @@ setup/Makefile
 man/Makefile
 src/Makefile
 pcsound/Makefile
-src/chocolate-doom-res.rc
-setup/chocolate-setup-res.rc
+src/resource.rc
+src/doom-screensaver.desktop
+setup/setup-res.rc
 ])
 

@@ -158,16 +158,16 @@ SOURCE_FILES = $(MAIN_SOURCE_FILES)                \
                $(FEATURE_SOUND_SOURCE_FILES)
 
 if HAVE_WINDRES
-strawberry_doom_SOURCES=$(SOURCE_FILES) chocolate-doom-res.rc
+strawberry_doom_SOURCES=$(SOURCE_FILES) resource.rc
 else
 strawberry_doom_SOURCES=$(SOURCE_FILES)
 endif
 
 strawberry_doom_LDADD = ../textscreen/libtextscreen.a ../pcsound/libpcsound.a @LDFLAGS@ @SDL_LIBS@ @SDLMIXER_LIBS@ @SDLNET_LIBS@ 
 
-EXTRA_DIST =                               \
-        chocolate_doom_icon.c              \
-        chocolate-doom-screensaver.desktop
+EXTRA_DIST =                        \
+        icon.c                      \
+        doom-screensaver.desktop.in
 
 .rc.o:
 	$(WINDRES) $^ -o $@
@@ -176,7 +176,7 @@ EXTRA_DIST =                               \
 
 if HAVE_PYTHON
 
-chocolate_doom_icon.c : ../data/chocolate-doom.png
+icon.c : ../data/doom.png
 	../data/convert-icon $^ $@
 
 endif

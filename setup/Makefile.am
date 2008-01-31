@@ -23,10 +23,10 @@ SOURCE_FILES =                                  \
     txt_mouseinput.c  txt_mouseinput.h
 
 EXTRA_DIST=                                     \
-    chocolate_setup_icon.c
+    setup_icon.c
 
 if HAVE_WINDRES
-strawberry_setup_SOURCES=$(SOURCE_FILES) chocolate-setup-res.rc
+strawberry_setup_SOURCES=$(SOURCE_FILES) setup-res.rc
 else
 strawberry_setup_SOURCES=$(SOURCE_FILES)
 endif
@@ -38,7 +38,7 @@ endif
 
 if HAVE_PYTHON
 
-chocolate_setup_icon.c : ../data/chocolate-setup.png
+setup_icon.c : ../data/setup.png
 	../data/convert-icon $^ $@
 
 endif

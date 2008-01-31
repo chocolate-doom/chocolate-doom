@@ -37,14 +37,15 @@
 
 #include "textscreen.h"
 
+#include "config.h"
 #include "configfile.h"
 #include "execute.h"
 #include "m_argv.h"
 
 #ifdef _WIN32
-#define DOOM_BINARY "strawberry-doom.exe"
+#define DOOM_BINARY PACKAGE_TARNAME ".exe"
 #else
-#define DOOM_BINARY INSTALL_DIR "/strawberry-doom"
+#define DOOM_BINARY INSTALL_DIR "/" PACKAGE_TARNAME
 #endif
 
 #ifdef _WIN32

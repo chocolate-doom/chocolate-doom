@@ -30,7 +30,7 @@
 #include <ctype.h>
 #include <math.h>
 
-#include "chocolate_doom_icon.c"
+#include "icon.c"
 
 #include "config.h"
 #include "deh_main.h"
@@ -850,11 +850,11 @@ void I_SetWindowIcon(void)
 {
     SDL_Surface *surface;
 
-    surface = SDL_CreateRGBSurfaceFrom(chocolate_doom_data,
-                                       chocolate_doom_w,
-                                       chocolate_doom_h,
+    surface = SDL_CreateRGBSurfaceFrom(icon_data,
+                                       icon_w,
+                                       icon_h,
                                        24,
-                                       chocolate_doom_w * 3,
+                                       icon_w * 3,
                                        0xff << 0,
                                        0xff << 8,
                                        0xff << 16,
@@ -1334,6 +1334,26 @@ static void SetSDLVideoDriver(void)
 #endif
 }
 
+static char *WindowBoxType(screen_mode_t *mode, int w, int h)
+{
+    if (mode->width != w && mode->height != h) 
+    {
+        return "Windowboxed";
+    }
+    else if (mode->width == w) 
+    {
+        return "Letterboxed";
+    }
+    else if (mode->height == h)
+    {
+        return "Pillarboxed";
+    }
+    else
+    {
+        return "...";
+    }
+}
+
 void I_InitGraphics(void)
 {
     SDL_Event dummy;
@@ -1397,7 +1417,8 @@ void I_InitGraphics(void)
         if (windowwidth != screen_mode->width
          || windowheight != screen_mode->height)
         {
-            printf("I_InitGraphics: Letterboxed (%ix%i within %ix%i)\n",
+            printf("I_InitGraphics: %s (%ix%i within %ix%i)\n",
+                   WindowBoxType(screen_mode, windowwidth, windowheight),
                    screen_mode->width, screen_mode->height,
                    windowwidth, windowheight);
         }

@@ -12,22 +12,22 @@ MSVC_FILES=                             \
         vc9/ChocolateDoom.vcproj
 
 CODEBLOCKS_FILES=                              \
-        codeblocks/README                      \
-        codeblocks/chocolate-doom.cbp          \
-        codeblocks/chocolate-doom.workspace    \
-        codeblocks/chocolate-server.cbp        \
-        codeblocks/chocolate-setup.cbp         \
-        codeblocks/chocolate-doom-res.rc       \
-        codeblocks/textscreen.cbp              \
-        codeblocks/chocolate-setup-res.rc      \
-        codeblocks/config.h                    \
-        codeblocks/libpcsound.cbp
+	codeblocks/config.h                    \
+	codeblocks/game.cbp                    \
+	codeblocks/game-res.rc                 \
+	codeblocks/libpcsound.cbp              \
+	codeblocks/main.workspace              \
+	codeblocks/README                      \
+	codeblocks/server.cbp                  \
+	codeblocks/setup.cbp                   \
+	codeblocks/setup-res.rc                \
+	codeblocks/textscreen.cbp
 
-DATA_FILES=                             \
-        data/chocolate-doom.ico         \
-        data/chocolate-doom.png         \
-        data/chocolate-setup.ico        \
-        data/chocolate-setup.png        \
+DATA_FILES=                   \
+        data/doom.ico         \
+        data/doom.png         \
+        data/setup.ico        \
+        data/setup.png        \
         data/convert-icon
 
 EXTRA_DIST=                             \

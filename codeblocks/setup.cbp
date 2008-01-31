@@ -2,12 +2,12 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="chocolate-setup" />
+		<Option title="strawberry-setup" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="..\bin\chocolate-setup-dbg.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="..\bin\$(PROJECT_NAME)-dbg.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="..\bin" />
 				<Option object_output="..\obj\dbg\" />
 				<Option type="0" />
@@ -18,7 +18,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="..\bin\chocolate-setup.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="..\bin\$(PROJECT_NAME).exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="..\bin" />
 				<Option object_output="..\obj\rel\" />
 				<Option type="0" />
@@ -45,7 +45,7 @@
 			<Add option="-ltextscreen -lmingw32 -lSDLmain -lSDL -mwindows" />
 			<Add directory="..\lib" />
 		</Linker>
-		<Unit filename="chocolate-setup-res.rc">
+		<Unit filename="setup-res.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>
 		<Unit filename="..\setup\compatibility.c">
@@ -106,6 +106,7 @@
 		<Extensions>
 			<code_completion />
 			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

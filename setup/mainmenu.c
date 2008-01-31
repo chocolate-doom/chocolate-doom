@@ -28,7 +28,7 @@
 #include "configfile.h"
 #include "m_argv.h"
 
-#include "chocolate_setup_icon.c"
+#include "setup_icon.c"
 
 #include "compatibility.h"
 #include "display.h"
@@ -152,11 +152,11 @@ static void SetIcon(void)
 {
     SDL_Surface *surface;
 
-    surface = SDL_CreateRGBSurfaceFrom(chocolate_setup_data,
-                                       chocolate_setup_w,
-                                       chocolate_setup_h,
+    surface = SDL_CreateRGBSurfaceFrom(setup_icon_data,
+                                       setup_icon_w,
+                                       setup_icon_h,
                                        24,
-                                       chocolate_setup_w * 3,
+                                       setup_icon_w * 3,
                                        0xff << 0,
                                        0xff << 8,
                                        0xff << 16,

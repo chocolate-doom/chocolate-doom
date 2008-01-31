@@ -1,4 +1,4 @@
-1 ICON "..\\data\\chocolate-doom.ico"
+1 ICON "..\\data\\setup.ico"
 
 1 VERSIONINFO
 PRODUCTVERSION @WINDOWS_RC_VERSION@
@@ -10,11 +10,11 @@ FILETYPE 1
   BLOCK "040904E4"
   {
    VALUE "FileVersion", "@PACKAGE_VERSION@"
-   VALUE "FileDescription", "@PACKAGE_STRING@"
+   VALUE "FileDescription", "@PACKAGE_STRING@ Setup"
    VALUE "InternalName", "@PACKAGE_TARNAME@"
    VALUE "CompanyName", "@PACKAGE_BUGREPORT@"
    VALUE "LegalCopyright", "GNU General Public License"
-   VALUE "ProductName", "@PACKAGE_NAME@"
+   VALUE "ProductName", "@PACKAGE_NAME@ Setup"
    VALUE "ProductVersion", "@PACKAGE_VERSION@"
   }
  }

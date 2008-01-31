@@ -2,12 +2,12 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="chocolate-doom" />
+		<Option title="strawberry-doom" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="..\bin\chocolate-doom-dbg.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="..\bin\$(PROJECT_NAME)-dbg.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="..\bin" />
 				<Option object_output="..\obj\dbg" />
 				<Option type="0" />
@@ -19,7 +19,7 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="..\bin\chocolate-doom.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="..\bin\$(PROJECT_NAME).exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="..\bin" />
 				<Option object_output="..\obj\rel" />
 				<Option type="0" />
@@ -45,17 +45,14 @@
 			<Add option="-lpcsound -ltextscreen -lmingw32 -lSDLmain -lSDL -lSDL_mixer -lSDL_net -mwindows" />
 			<Add directory="..\lib" />
 		</Linker>
-		<Unit filename="chocolate-doom-res.rc">
+		<Unit filename="config.h" />
+		<Unit filename="game-res.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>
-		<Unit filename="config.h" />
 		<Unit filename="..\src\am_map.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\am_map.h" />
-		<Unit filename="..\src\chocolate_doom_icon.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="..\src\d_englsh.h" />
 		<Unit filename="..\src\d_event.h" />
 		<Unit filename="..\src\d_items.c">
@@ -424,6 +421,7 @@
 		<Extensions>
 			<code_completion />
 			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
