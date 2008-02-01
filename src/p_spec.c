@@ -1080,9 +1080,9 @@ void P_PlayerInSpecialSector (player_t* player)
 	break;
 			
       default:
-	I_Error ("P_PlayerInSpecialSector: "
+	/*I_Error ("P_PlayerInSpecialSector: "
 		 "unknown special %i",
-		 sector->special);
+		 sector->special);*/ // Dont commit suicide
 	break;
     };
 }
