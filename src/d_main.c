@@ -242,6 +242,11 @@ void D_Display (void)
     if (nodrawers)
 	return;                    // for comparative timing / profiling
 		
+    if (demoplayback && demorecording)
+    {
+        return;
+    }
+    
     redrawsbar = false;
     
     // change the view size if needed
@@ -395,9 +400,6 @@ extern  boolean         demorecording;
 
 void D_DoomLoop (void)
 {
-    if (demorecording)
-	G_BeginRecording ();
-		
     if (M_CheckParm ("-debugfile"))
     {
 	char    filename[20];

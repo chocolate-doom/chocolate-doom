@@ -145,6 +145,11 @@ void NetUpdate (void)
 
     lasttime = nowtime;
 
+    if (demoplayback && demorecording)
+    {
+        newtics = 1;
+    }
+
     if (skiptics <= newtics)
     {
         newtics -= skiptics;
