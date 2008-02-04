@@ -27,44 +27,50 @@
 
 typedef struct 
 {
-    char *description;
-    char *description_4_3;
-    int screenmultiply;
-    txt_radiobutton_t *widget;
-} vidmode_t;
+    int w, h;
+} screen_mode_t;
 
-enum
+// List of aspect ratio-uncorrected modes
+
+static screen_mode_t screen_modes_unscaled[] = 
 {
-    RATIO_CORRECT_NONE,
-    RATIO_CORRECT_LETTERBOX,
-    RATIO_CORRECT_STRETCH,
-    NUM_RATIO_CORRECT,
+    { 320,  200 },
+    { 640,  400 },
+    { 960,  600 },
+    { 1280, 800 },
+    { 1600, 1000 },
+    { 0, 0},
 };
 
-static vidmode_t modes[] = 
+// List of aspect ratio-corrected modes
+
+static screen_mode_t screen_modes_scaled[] = 
 {
-    { "320x200",  "320x240",  1, NULL },
-    { "960x600",  "960x720",  3, NULL },
-    { "640x400",  "640x480",  2, NULL },
-    { "1280x800", "1280x960", 4, NULL },
-    { "1600x1000", "1600x1200", 5, NULL },
-    { NULL,       NULL,       0, NULL },
+    { 256,  200 },
+    { 320,  240 },
+    { 512,  400 },
+    { 640,  480 },
+    { 800,  600 },
+    { 960,  720 },
+    { 1024, 800 },
+    { 1280, 960 },
+    { 1280, 1000 },
+    { 1600, 1200 },
+    { 0, 0},
 };
 
-static char *aspect_ratio_strings[] =
-{
-    "Disabled",
-    "Letterbox mode",
-    "Stretch to 4:3",
-};
+// List of fullscreen modes generated at runtime
+
+static screen_mode_t *screen_modes_fullscreen = NULL;
 
 static int vidmode = 0;
 
 char *video_driver = "";
 int autoadjust_video_settings = 1;
-int aspect_ratio_correct = RATIO_CORRECT_NONE;
+int aspect_ratio_correct = 1;
 int fullscreen = 1;
-int screenmultiply = 1;
+int screen_width = 320;
+int screen_height = 200;
 int startup_delay = 0;
 int show_endoom = 1;
 
@@ -103,80 +109,181 @@ static void UpdateVideoDriver(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
 #endif
 
-// Given the video settings (fullscreen, screenmultiply, etc), find the
-// current video mode
-
-static void SetCurrentMode(void)
-{
-    int i;
-
-    vidmode = 0;
-
-    for (i=0; modes[i].description != NULL; ++i)
-    {
-        if (screenmultiply == modes[i].screenmultiply)
-        {
-            vidmode = i;
-            break;
-        }
-    }
-}
-
 static void ModeSelected(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(mode))
 {
-    TXT_CAST_ARG(vidmode_t, mode);
+    TXT_CAST_ARG(screen_mode_t, mode);
 
-    screenmultiply = mode->screenmultiply;
+    screen_width = mode->w;
+    screen_height = mode->h;
 }
 
-static void UpdateModes(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
+static int GoodFullscreenMode(screen_mode_t *mode)
 {
+    int w, h;
+
+    w = mode->w;
+    h = mode->h;
+
+    // 320x200 and 640x400 are always good
+
+    if ((w == 320 && h == 200) || (w == 640 && h == 400))
+    {
+        return 1;
+    }
+
+    return w >= 640 && h >= 480;
+}
+
+// Build screen_modes_fullscreen
+
+static void BuildFullscreenModesList(void)
+{
+    SDL_Rect **modes;
+    screen_mode_t *m1;
+    screen_mode_t *m2;
+    screen_mode_t m;
+    int num_modes;
     int i;
 
-    for (i=0; modes[i].description != NULL; ++i)
+    if (screen_modes_fullscreen != NULL)
     {
-        if (aspect_ratio_correct == RATIO_CORRECT_NONE)
+        return;
+    }
+
+    // Get a list of fullscreen modes and find out how many
+    // modes are in the list.
+
+    modes = SDL_ListModes(NULL, SDL_FULLSCREEN);
+
+    for (num_modes=0; modes[num_modes] != NULL; ++num_modes);
+
+    // Build the screen_modes_fullscreen array
+
+    screen_modes_fullscreen = malloc(sizeof(screen_mode_t) * (num_modes + 1));
+
+    for (i=0; i<num_modes; ++i)
+    {
+        screen_modes_fullscreen[i].w = modes[i]->w;
+        screen_modes_fullscreen[i].h = modes[i]->h;
+    }
+
+    screen_modes_fullscreen[i].w = 0;
+    screen_modes_fullscreen[i].h = 0;
+
+    // Reverse the order of the modes list (smallest modes first)
+
+    for (i=0; i<num_modes / 2; ++i)
+    {
+        m1 = &screen_modes_fullscreen[i];
+        m2 = &screen_modes_fullscreen[num_modes - 1 - i];
+
+        memcpy(&m, m1, sizeof(screen_mode_t));
+        memcpy(m1, m2, sizeof(screen_mode_t));
+        memcpy(m2, &m, sizeof(screen_mode_t));
+    }
+}
+
+static int FindBestMode(screen_mode_t *modes)
+{
+    int i;
+    int best_mode;
+    int best_mode_diff;
+    int diff;
+
+    best_mode = -1;
+    best_mode_diff = 0;
+
+    for (i=0; modes[i].w != 0; ++i)
+    {
+        diff = (screen_width - modes[i].w) * (screen_width - modes[i].w) 
+             + (screen_height - modes[i].h) * (screen_height - modes[i].h);
+
+        if (best_mode == -1 || diff < best_mode_diff)
         {
-            TXT_SetRadioButtonLabel(modes[i].widget, modes[i].description);
-        }
-        else
-        {
-            TXT_SetRadioButtonLabel(modes[i].widget, modes[i].description_4_3);
+            best_mode_diff = diff;
+            best_mode = i;
         }
     }
+
+    return best_mode;
+}
+
+static void GenerateModesTable(TXT_UNCAST_ARG(widget),
+                               TXT_UNCAST_ARG(modes_table))
+{
+    TXT_CAST_ARG(txt_table_t, modes_table);
+    char buf[15];
+    screen_mode_t *modes;
+    txt_radiobutton_t *rbutton;
+    int i;
+
+    // Pick which modes list to use
+
+    if (fullscreen)
+    {
+        BuildFullscreenModesList();
+        modes = screen_modes_fullscreen;
+    }
+    else if (aspect_ratio_correct) 
+    {
+        modes = screen_modes_scaled;
+    }
+    else
+    {
+        modes = screen_modes_unscaled;
+    }
+
+    // Build the table
+ 
+    TXT_ClearTable(modes_table);
+    TXT_SetColumnWidths(modes_table, 14, 14, 14);
+
+    for (i=0; modes[i].w != 0; ++i) 
+    {
+        // Skip bad fullscreen modes
+
+        if (fullscreen && !GoodFullscreenMode(&modes[i]))
+        {
+            continue;
+        }
+
+        sprintf(buf, "%ix%i", modes[i].w, modes[i].h);
+        rbutton = TXT_NewRadioButton(buf, &vidmode, i);
+        TXT_AddWidget(modes_table, rbutton);
+        TXT_SignalConnect(rbutton, "selected", ModeSelected, &modes[i]);
+    }
+
+    // Find the nearest mode in the list that matches the current
+    // settings
+
+    vidmode = FindBestMode(modes);
 }
 
 void ConfigDisplay(void)
 {
     txt_window_t *window;
-    txt_table_t *ar_table;
     txt_table_t *modes_table;
-    txt_radiobutton_t *rbutton;
-    txt_dropdown_list_t *ar_dropdown;
-    int i;
-
-    // Find the current mode
-
-    SetCurrentMode();
+    txt_checkbox_t *fs_checkbox;
+    txt_checkbox_t *ar_checkbox;
 
     // Open the window
     
     window = TXT_NewWindow("Display Configuration");
 
     TXT_AddWidgets(window, 
-                   TXT_NewCheckBox("Fullscreen", &fullscreen),
-                   ar_table = TXT_NewTable(2),
-                   TXT_NewSeparator("Screen mode"),
-                   modes_table = TXT_NewTable(2),
-                   TXT_NewSeparator("Misc."),
-                   TXT_NewCheckBox("Show ENDOOM screen", &show_endoom),
+                   fs_checkbox = TXT_NewCheckBox("Fullscreen", &fullscreen),
+                   ar_checkbox = TXT_NewCheckBox("Correct aspect ratio",
+                                                 &aspect_ratio_correct),
                    NULL);
-
-    TXT_SetColumnWidths(ar_table, 25, 0);
 
 #ifdef _WIN32
     {
+        txt_table_t *driver_table;
         txt_dropdown_list_t *driver_list;
+
+        driver_table = TXT_NewTable(2);
+
+        TXT_SetColumnWidths(driver_table, 25, 0);
 
         driver_list = TXT_NewDropdownList(&win32_video_driver,
                                           win32_video_drivers,
@@ -185,32 +292,25 @@ void ConfigDisplay(void)
         TXT_SignalConnect(driver_list, "changed", UpdateVideoDriver, NULL);
         SetWin32VideoDriver();
 
-        TXT_AddWidgets(ar_table,
+        TXT_AddWidgets(driver_table,
                        TXT_NewLabel("Video driver"),
                        driver_list,
                        NULL);
+
+        TXT_AddWidget(window, driver_table);
     }
 #endif
 
-    TXT_AddWidgets(ar_table,
-                   TXT_NewLabel("Aspect ratio correction"),
-                   ar_dropdown = TXT_NewDropdownList(&aspect_ratio_correct,
-                                                     aspect_ratio_strings,
-                                                     NUM_RATIO_CORRECT),
+    TXT_AddWidgets(window,
+                   TXT_NewSeparator("Screen mode"),
+                   modes_table = TXT_NewTable(3),
+                   TXT_NewSeparator("Misc."),
+                   TXT_NewCheckBox("Show ENDOOM screen", &show_endoom),
                    NULL);
 
-    TXT_SignalConnect(ar_dropdown, "changed", UpdateModes, NULL);
+    TXT_SignalConnect(fs_checkbox, "changed", GenerateModesTable, modes_table);
+    TXT_SignalConnect(ar_checkbox, "changed", GenerateModesTable, modes_table);
 
-    TXT_SetColumnWidths(modes_table, 14, 14);
-
-    for (i=0; modes[i].description != NULL; ++i)
-    {
-        rbutton = TXT_NewRadioButton(modes[i].description, &vidmode, i);
-        modes[i].widget = rbutton;
-        TXT_AddWidget(modes_table, rbutton);
-        TXT_SignalConnect(rbutton, "selected", ModeSelected, &modes[i]);
-    }
-
-    UpdateModes(NULL, NULL);
+    GenerateModesTable(NULL, modes_table);
 }
 

@@ -53,6 +53,7 @@ void TXT_AddWidget(TXT_UNCAST_ARG(table), TXT_UNCAST_ARG(widget));
 void TXT_AddWidgets(TXT_UNCAST_ARG(table), ...);
 int TXT_SelectWidget(TXT_UNCAST_ARG(table), TXT_UNCAST_ARG(widget));
 void TXT_SetColumnWidths(TXT_UNCAST_ARG(table), ...);
+void TXT_ClearTable(TXT_UNCAST_ARG(table));
 
 #endif /* #ifndef TXT_TABLE_T */
 
