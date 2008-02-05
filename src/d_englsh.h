@@ -1,4 +1,4 @@
-// Emacs style mode select   -*- C++ -*- 
+	// Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
@@ -697,5 +697,16 @@
 #define CC_CYBER	"THE CYBERDEMON"
 #define CC_HERO	"OUR HERO"
 
+// GhostlyDeath: obituaries
+#define OBIT_P2P_FIST1 "%s was killed by %s's fists."
+#define OBIT_P2P_CHAINSAW1 "%s was killed by %s's chainsaw."
+#define OBIT_P2P_PISTOL1 "%s was killed by %s's pistol."
+#define OBIT_P2P_SHOTGUN1 "%s was killed by %'s shotgun."
+#define OBIT_P2P_SSG1 "%s was killed by %s's super shotgun."
+#define OBIT_P2P_ROCKET1 "%s was killed by %s's rocket."
+#define OBIT_P2P_ROCKETSPLASH1 "%s was killed by %'s exploding rocket."
+#define OBIT_P2P_PLASMA1 "%s was killed by %s's Plasma rifle."
+#define OBIT_P2P_BFGBALL1 "%s was killed by %s's BFG Ball."
+#define OBIT_P2P_BFGSPRAY1 "%s was killed by %s's BFG Spray."
 
 #endif
