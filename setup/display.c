@@ -74,6 +74,13 @@ int screen_height = 200;
 int startup_delay = 0;
 int show_endoom = 1;
 
+// These are the last screen width/height values that were chosen by the
+// user.  These are used when finding the "nearest" mode, so when 
+// changing the fullscreen / aspect ratio options, the setting does not
+// jump around.
+
+static int selected_screen_width = 0, selected_screen_height;
+
 #ifdef _WIN32
 
 static int win32_video_driver = 0;
@@ -115,6 +122,11 @@ static void ModeSelected(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(mode))
 
     screen_width = mode->w;
     screen_height = mode->h;
+
+    // This is now the most recently selected screen width
+
+    selected_screen_width = screen_width;
+    selected_screen_height = screen_height;
 }
 
 static int GoodFullscreenMode(screen_mode_t *mode)
@@ -195,8 +207,10 @@ static int FindBestMode(screen_mode_t *modes)
 
     for (i=0; modes[i].w != 0; ++i)
     {
-        diff = (screen_width - modes[i].w) * (screen_width - modes[i].w) 
-             + (screen_height - modes[i].h) * (screen_height - modes[i].h);
+        diff = (selected_screen_width - modes[i].w)
+                  * (selected_screen_width - modes[i].w) 
+             + (selected_screen_height - modes[i].h)
+                  * (selected_screen_height - modes[i].h);
 
         if (best_mode == -1 || diff < best_mode_diff)
         {
@@ -236,7 +250,7 @@ static void GenerateModesTable(TXT_UNCAST_ARG(widget),
     // Build the table
  
     TXT_ClearTable(modes_table);
-    TXT_SetColumnWidths(modes_table, 14, 14, 14);
+    TXT_SetColumnWidths(modes_table, 15, 15, 15);
 
     for (i=0; modes[i].w != 0; ++i) 
     {
@@ -257,6 +271,9 @@ static void GenerateModesTable(TXT_UNCAST_ARG(widget),
     // settings
 
     vidmode = FindBestMode(modes);
+
+    screen_width = modes[vidmode].w;
+    screen_height = modes[vidmode].h;
 }
 
 void ConfigDisplay(void)
@@ -266,9 +283,19 @@ void ConfigDisplay(void)
     txt_checkbox_t *fs_checkbox;
     txt_checkbox_t *ar_checkbox;
 
+    // First time in? Initialise selected_screen_{width,height}
+
+    if (selected_screen_width == 0)
+    {
+        selected_screen_width = screen_width;
+        selected_screen_height = screen_height;
+    }
+
     // Open the window
     
     window = TXT_NewWindow("Display Configuration");
+
+    TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_TOP, 40, 5);
 
     TXT_AddWidgets(window, 
                    fs_checkbox = TXT_NewCheckBox("Fullscreen", &fullscreen),
