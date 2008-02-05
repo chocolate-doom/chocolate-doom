@@ -276,7 +276,7 @@ static void CheckSteamEdition(void)
 {
     char *install_path;
     char *subpath;
-    int i;
+    size_t i;
 
     install_path = GetRegistryString(&steam_install_location);
 
