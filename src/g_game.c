@@ -76,6 +76,7 @@
 
 
 #include "g_game.h"
+#include "b_bot.h"
 
 
 #define SAVEGAMESIZE	0x2c000
@@ -401,240 +402,245 @@ void G_BuildTiccmd (ticcmd_t* cmd)
     cmd->consistancy = 
 	consistancy[consoleplayer][maketic%BACKUPTICS]; 
 
- 
-    strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe] 
-	|| joybuttons[joybstrafe]; 
-
-    // fraggle: support the old "joyb_speed = 31" hack which
-    // allowed an autorun effect
-
-    speed = key_speed >= NUMKEYS
-         || joybspeed >= MAX_JOY_BUTTONS
-         || gamekeydown[key_speed] 
-         || joybuttons[joybspeed];
- 
-    forward = side = 0;
-    
-    // use two stage accelerative turning
-    // on the keyboard and joystick
-    if (joyxmove < 0
-	|| joyxmove > 0  
-	|| gamekeydown[key_right]
-	|| gamekeydown[key_left]) 
-	turnheld += ticdup; 
-    else 
-	turnheld = 0; 
-
-    if (turnheld < SLOWTURNTICS) 
-	tspeed = 2;             // slow turn 
-    else 
-	tspeed = speed;
-    
-    // let movement keys cancel each other out
-    if (strafe) 
-    { 
-	if (gamekeydown[key_right]) 
+	if (M_CheckParm("-bot"))
 	{
-	    // fprintf(stderr, "strafe right\n");
-	    side += sidemove[speed]; 
 	}
-	if (gamekeydown[key_left]) 
+	else
 	{
-	    //	fprintf(stderr, "strafe left\n");
-	    side -= sidemove[speed]; 
-	}
-	if (joyxmove > 0) 
-	    side += sidemove[speed]; 
-	if (joyxmove < 0) 
-	    side -= sidemove[speed]; 
- 
-    } 
-    else 
-    { 
-	if (gamekeydown[key_right]) 
-	    cmd->angleturn -= angleturn[tspeed]; 
-	if (gamekeydown[key_left]) 
-	    cmd->angleturn += angleturn[tspeed]; 
-	if (joyxmove > 0) 
-	    cmd->angleturn -= angleturn[tspeed]; 
-	if (joyxmove < 0) 
-	    cmd->angleturn += angleturn[tspeed]; 
-    } 
- 
-    if (gamekeydown[key_up]) 
-    {
-	// fprintf(stderr, "up\n");
-	forward += forwardmove[speed]; 
-    }
-    if (gamekeydown[key_down]) 
-    {
-	// fprintf(stderr, "down\n");
-	forward -= forwardmove[speed]; 
-    }
+		strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe] 
+		|| joybuttons[joybstrafe]; 
 
-    if (joyymove < 0) 
-        forward += forwardmove[speed]; 
-    if (joyymove > 0) 
-        forward -= forwardmove[speed]; 
+		// fraggle: support the old "joyb_speed = 31" hack which
+		// allowed an autorun effect
 
-    if (gamekeydown[key_strafeleft]
-     || joybuttons[joybstrafeleft]
-     || mousebuttons[mousebstrafeleft]) 
-    {
-        side -= sidemove[speed];
-    }
-
-    if (gamekeydown[key_straferight]
-     || joybuttons[joybstraferight]
-     || mousebuttons[mousebstraferight])
-    {
-        side += sidemove[speed]; 
-    }
-
-    // buttons
-    cmd->chatchar = HU_dequeueChatChar(); 
- 
-    if (gamekeydown[key_fire] || mousebuttons[mousebfire] 
-	|| joybuttons[joybfire]) 
-	cmd->buttons |= BT_ATTACK; 
- 
-    if (gamekeydown[key_use]
-     || joybuttons[joybuse]
-     || mousebuttons[mousebuse])
-    { 
-	cmd->buttons |= BT_USE;
-	// clear double clicks if hit use button 
-	dclicks = 0;                   
-    } 
-
-    // chainsaw overrides 
-    for (i=0 ; i<NUMWEAPONS-1 ; i++)        
-	if (gamekeydown['1'+i]) 
-	{ 
-	    cmd->buttons |= BT_CHANGE; 
-	    cmd->buttons |= i<<BT_WEAPONSHIFT; 
-	    break; 
-	}
-    
-    // mouse
-    if (mousebuttons[mousebforward]) 
-    {
-	forward += forwardmove[speed];
-    }
-    if (mousebuttons[mousebbackward])
-    {
-        forward -= forwardmove[speed];
-    }
-
-    if (dclick_use)
-    {
-        // forward double click
-        if (mousebuttons[mousebforward] != dclickstate && dclicktime > 1 ) 
-        { 
-            dclickstate = mousebuttons[mousebforward]; 
-            if (dclickstate) 
-                dclicks++; 
-            if (dclicks == 2) 
-            { 
-                cmd->buttons |= BT_USE; 
-                dclicks = 0; 
-            } 
-            else 
-                dclicktime = 0; 
-        } 
-        else 
-        { 
-            dclicktime += ticdup; 
-            if (dclicktime > 20) 
-            { 
-                dclicks = 0; 
-                dclickstate = 0; 
-            } 
-        }
-        
-        // strafe double click
-        bstrafe =
-            mousebuttons[mousebstrafe] 
-            || joybuttons[joybstrafe]; 
-        if (bstrafe != dclickstate2 && dclicktime2 > 1 ) 
-        { 
-            dclickstate2 = bstrafe; 
-            if (dclickstate2) 
-                dclicks2++; 
-            if (dclicks2 == 2) 
-            { 
-                cmd->buttons |= BT_USE; 
-                dclicks2 = 0; 
-            } 
-            else 
-                dclicktime2 = 0; 
-        } 
-        else 
-        { 
-            dclicktime2 += ticdup; 
-            if (dclicktime2 > 20) 
-            { 
-                dclicks2 = 0; 
-                dclickstate2 = 0; 
-            } 
-        } 
-    }
-
-    // fraggle: allow disabling mouse y movement
- 
-    if (!novert) 
-    {
-        forward += mousey; 
-    }
-
-    if (strafe) 
-	side += mousex*2; 
-    else 
-	cmd->angleturn -= mousex*0x8; 
-
-    if (mousex == 0)
-    {
-        // No movement in the previous frame
-
-        testcontrols_mousespeed = 0;
-    }
-    
-    mousex = mousey = 0; 
+		speed = key_speed >= NUMKEYS
+		     || joybspeed >= MAX_JOY_BUTTONS
+		     || gamekeydown[key_speed] 
+		     || joybuttons[joybspeed];
 	 
-    if (forward > MAXPLMOVE) 
-	forward = MAXPLMOVE; 
-    else if (forward < -MAXPLMOVE) 
-	forward = -MAXPLMOVE; 
-    if (side > MAXPLMOVE) 
-	side = MAXPLMOVE; 
-    else if (side < -MAXPLMOVE) 
-	side = -MAXPLMOVE; 
- 
-    cmd->forwardmove += forward; 
-    cmd->sidemove += side;
-    
-    // special buttons
-    if (sendpause) 
-    { 
-	sendpause = false; 
-	cmd->buttons = BT_SPECIAL | BTS_PAUSE; 
-    } 
- 
-    if (sendsave) 
-    { 
-	sendsave = false; 
-	cmd->buttons = BT_SPECIAL | BTS_SAVEGAME | (savegameslot<<BTS_SAVESHIFT); 
-    } 
+		forward = side = 0;
+		
+		// use two stage accelerative turning
+		// on the keyboard and joystick
+		if (joyxmove < 0
+		|| joyxmove > 0  
+		|| gamekeydown[key_right]
+		|| gamekeydown[key_left]) 
+		turnheld += ticdup; 
+		else 
+		turnheld = 0; 
 
-    // low-res turning
+		if (turnheld < SLOWTURNTICS) 
+		tspeed = 2;             // slow turn 
+		else 
+		tspeed = speed;
+		
+		// let movement keys cancel each other out
+		if (strafe) 
+		{ 
+		if (gamekeydown[key_right]) 
+		{
+			// fprintf(stderr, "strafe right\n");
+			side += sidemove[speed]; 
+		}
+		if (gamekeydown[key_left]) 
+		{
+			//	fprintf(stderr, "strafe left\n");
+			side -= sidemove[speed]; 
+		}
+		if (joyxmove > 0) 
+			side += sidemove[speed]; 
+		if (joyxmove < 0) 
+			side -= sidemove[speed]; 
+	 
+		} 
+		else 
+		{ 
+		if (gamekeydown[key_right]) 
+			cmd->angleturn -= angleturn[tspeed]; 
+		if (gamekeydown[key_left]) 
+			cmd->angleturn += angleturn[tspeed]; 
+		if (joyxmove > 0) 
+			cmd->angleturn -= angleturn[tspeed]; 
+		if (joyxmove < 0) 
+			cmd->angleturn += angleturn[tspeed]; 
+		} 
+	 
+		if (gamekeydown[key_up]) 
+		{
+		// fprintf(stderr, "up\n");
+		forward += forwardmove[speed]; 
+		}
+		if (gamekeydown[key_down]) 
+		{
+		// fprintf(stderr, "down\n");
+		forward -= forwardmove[speed]; 
+		}
 
-    if (lowres_turn)
-    {
-        // round angleturn to the nearest 256 boundary
-        // for recording demos with single byte values for turn
+		if (joyymove < 0) 
+		    forward += forwardmove[speed]; 
+		if (joyymove > 0) 
+		    forward -= forwardmove[speed]; 
 
-        cmd->angleturn = (cmd->angleturn + 128) & 0xff00;
-    }
+		if (gamekeydown[key_strafeleft]
+		 || joybuttons[joybstrafeleft]
+		 || mousebuttons[mousebstrafeleft]) 
+		{
+		    side -= sidemove[speed];
+		}
+
+		if (gamekeydown[key_straferight]
+		 || joybuttons[joybstraferight]
+		 || mousebuttons[mousebstraferight])
+		{
+		    side += sidemove[speed]; 
+		}
+
+		// buttons
+		cmd->chatchar = HU_dequeueChatChar(); 
+	 
+		if (gamekeydown[key_fire] || mousebuttons[mousebfire] 
+		|| joybuttons[joybfire]) 
+		cmd->buttons |= BT_ATTACK; 
+	 
+		if (gamekeydown[key_use]
+		 || joybuttons[joybuse]
+		 || mousebuttons[mousebuse])
+		{ 
+		cmd->buttons |= BT_USE;
+		// clear double clicks if hit use button 
+		dclicks = 0;                   
+		} 
+
+		// chainsaw overrides 
+		for (i=0 ; i<NUMWEAPONS-1 ; i++)        
+		if (gamekeydown['1'+i]) 
+		{ 
+			cmd->buttons |= BT_CHANGE; 
+			cmd->buttons |= i<<BT_WEAPONSHIFT; 
+			break; 
+		}
+		
+		// mouse
+		if (mousebuttons[mousebforward]) 
+		{
+		forward += forwardmove[speed];
+		}
+		if (mousebuttons[mousebbackward])
+		{
+		    forward -= forwardmove[speed];
+		}
+
+		if (dclick_use)
+		{
+		    // forward double click
+		    if (mousebuttons[mousebforward] != dclickstate && dclicktime > 1 ) 
+		    { 
+		        dclickstate = mousebuttons[mousebforward]; 
+		        if (dclickstate) 
+		            dclicks++; 
+		        if (dclicks == 2) 
+		        { 
+		            cmd->buttons |= BT_USE; 
+		            dclicks = 0; 
+		        } 
+		        else 
+		            dclicktime = 0; 
+		    } 
+		    else 
+		    { 
+		        dclicktime += ticdup; 
+		        if (dclicktime > 20) 
+		        { 
+		            dclicks = 0; 
+		            dclickstate = 0; 
+		        } 
+		    }
+		    
+		    // strafe double click
+		    bstrafe =
+		        mousebuttons[mousebstrafe] 
+		        || joybuttons[joybstrafe]; 
+		    if (bstrafe != dclickstate2 && dclicktime2 > 1 ) 
+		    { 
+		        dclickstate2 = bstrafe; 
+		        if (dclickstate2) 
+		            dclicks2++; 
+		        if (dclicks2 == 2) 
+		        { 
+		            cmd->buttons |= BT_USE; 
+		            dclicks2 = 0; 
+		        } 
+		        else 
+		            dclicktime2 = 0; 
+		    } 
+		    else 
+		    { 
+		        dclicktime2 += ticdup; 
+		        if (dclicktime2 > 20) 
+		        { 
+		            dclicks2 = 0; 
+		            dclickstate2 = 0; 
+		        } 
+		    } 
+		}
+
+		// fraggle: allow disabling mouse y movement
+	 
+		if (!novert) 
+		{
+		    forward += mousey; 
+		}
+
+		if (strafe) 
+		side += mousex*2; 
+		else 
+		cmd->angleturn -= mousex*0x8; 
+
+		if (mousex == 0)
+		{
+		    // No movement in the previous frame
+
+		    testcontrols_mousespeed = 0;
+		}
+		
+		mousex = mousey = 0; 
+		 
+		if (forward > MAXPLMOVE) 
+		forward = MAXPLMOVE; 
+		else if (forward < -MAXPLMOVE) 
+		forward = -MAXPLMOVE; 
+		if (side > MAXPLMOVE) 
+		side = MAXPLMOVE; 
+		else if (side < -MAXPLMOVE) 
+		side = -MAXPLMOVE; 
+	 
+		cmd->forwardmove += forward; 
+		cmd->sidemove += side;
+		
+		// special buttons
+		if (sendpause) 
+		{ 
+		sendpause = false; 
+		cmd->buttons = BT_SPECIAL | BTS_PAUSE; 
+		} 
+	 
+		if (sendsave) 
+		{ 
+		sendsave = false; 
+		cmd->buttons = BT_SPECIAL | BTS_SAVEGAME | (savegameslot<<BTS_SAVESHIFT); 
+		} 
+
+		// low-res turning
+
+		if (lowres_turn)
+		{
+		    // round angleturn to the nearest 256 boundary
+		    // for recording demos with single byte values for turn
+
+		    cmd->angleturn = (cmd->angleturn + 128) & 0xff00;
+		}
+	}
 } 
  
 
