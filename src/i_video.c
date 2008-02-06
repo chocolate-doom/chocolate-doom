@@ -1201,6 +1201,7 @@ static void CheckCommandLine(void)
 
     //!
     // @category video
+    // @arg <x>
     //
     // Specify the screen width, in pixels.
     //
@@ -1214,6 +1215,7 @@ static void CheckCommandLine(void)
 
     //!
     // @category video
+    // @arg <y>
     //
     // Specify the screen height, in pixels.
     //
@@ -1223,6 +1225,26 @@ static void CheckCommandLine(void)
     if (i > 0)
     {
         screen_height = atoi(myargv[i + 1]);
+    }
+
+    //!
+    // @category video
+    // @arg <WxY>
+    //
+    // Specify the screen mode (when running fullscreen) or the window
+    // dimensions (when running in windowed mode).
+
+    i = M_CheckParm("-geometry");
+
+    if (i > 0)
+    {
+        int w, h;
+
+        if (sscanf(myargv[i + 1], "%ix%i", &w, &h) == 2)
+        {
+            screen_width = w;
+            screen_height = h;
+        }
     }
 
     //!
