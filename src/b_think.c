@@ -149,6 +149,11 @@ void B_AttackTarget(botcontrol_t *mind)
 	angle_t victimangle = 0;
 	angle_t myangle = 0;
 	angle_t actualangle = 0;
+	angle_t virtualangle = 0;
+	int someactualangle = 0;
+	int somevirtualangle = 0;
+	int somemyangle = 0;
+	int someoffset = 0;
 
 	if (mind->target == NULL) // right...
 	{
@@ -163,45 +168,29 @@ void B_AttackTarget(botcontrol_t *mind)
 			if (mind->target->health > 0)
 			{
 				// First Face the target
-				victimangle = mind->target->angle;
-				myangle = mind->me->mo->angle;
-			
 				actualangle = R_PointToAngle2 (mind->me->mo->x, mind->me->mo->y, mind->target->x ,mind->target->y);
+				virtualangle = mind->me->mo->angle;
+				myangle = mind->me->mo->angle;
 				
-				/* GhostlyDeath Thinking:
-					ok if myangle = 200 and actual angle is 100...
-					
-					turn right if myangle < actual angle
-					turn left if myangle > actual angle
-					
-					so.. to make the bots face the target faster they need improved speed when facing
-					200 - 100 > 90 = false
-					
-					now if myangle = 200 and actual angle is 150
-					200 - 150 > 90 = false
-					200 - 150 < 90 = true
+				/* Thinking some more
+					player->mo->angle += (cmd->angleturn<<16);
 				*/
 				
-				if (myangle - actualangle < ANG90)
+				someactualangle = actualangle >> 16;
+				somevirtualangle = virtualangle >> 16;
+				somemyangle = myangle >> 16;
+				
+				while (somevirtualangle != someactualangle)
 				{
-					if (myangle < actualangle)
-						mind->cmd->angleturn += botangleturn[2];
-					else if (myangle > actualangle)
-						mind->cmd->angleturn -= botangleturn[2];
-				}
-				else if (myangle - actualangle < ANG180)
-				{
-					if (myangle < actualangle)
-						mind->cmd->angleturn += botangleturn[1];
-					else if (myangle > actualangle)
-						mind->cmd->angleturn -= botangleturn[1];
-				}
-				else
-				{
-					if (myangle < actualangle)
-						mind->cmd->angleturn += botangleturn[1] * 2;
-					else if (myangle > actualangle)
-						mind->cmd->angleturn -= botangleturn[1] * 2;
+					if (somevirtualangle + someoffset < someactualangle)
+						someoffset++;
+					else if (somevirtualangle + someoffset > someactualangle)
+						someoffset--;
+					else
+					{
+						mind->cmd->angleturn += someoffset;
+						break;
+					}
 				}
 
 				// Forward Moving
