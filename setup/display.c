@@ -136,12 +136,22 @@ static int GoodFullscreenMode(screen_mode_t *mode)
     w = mode->w;
     h = mode->h;
 
-    // 320x200 and 640x400 are always good
+    // 320x200 and 640x400 are always good (special case)
 
     if ((w == 320 && h == 200) || (w == 640 && h == 400))
     {
         return 1;
     }
+
+    // Special case: 320x240 letterboxed mode is okay (but not aspect
+    // ratio corrected 320x240)
+
+    if (w == 320 && h == 240 && !aspect_ratio_correct)
+    {
+        return 1;
+    }
+
+    // Ignore all modes less than 640x480
 
     return w >= 640 && h >= 480;
 }
@@ -207,6 +217,11 @@ static int FindBestMode(screen_mode_t *modes)
 
     for (i=0; modes[i].w != 0; ++i)
     {
+        if (fullscreen && !GoodFullscreenMode(&modes[i]))
+        {
+            continue;
+        }
+
         diff = (selected_screen_width - modes[i].w)
                   * (selected_screen_width - modes[i].w) 
              + (selected_screen_height - modes[i].h)
