@@ -287,6 +287,8 @@ typedef struct mobj_s
     
     int color;	// colors!
     
+    int mobjdontexist;
+    
 } mobj_t;
 
 

@@ -69,7 +69,7 @@ mind->node = (nodex);\
 }\
 else\
 {\
-if(((pri) >= targpin) && (((mobj_t*)currentthinker)->health > 0))\
+if(((pri) >= targpin) && (((mobj_t*)currentthinker)->health > 0) && (B_Distance(((mobj_t*)currentthinker), mind->me->mo) < 2048))\
 {\
 targpin = (pri);\
 newtarget = ((mobj_t*)currentthinker);\
@@ -86,10 +86,23 @@ if (THISIS((x)) && !(mind->me->weaponowned[(thisgun)]) && (targpin < 10))
 }
 */
 
+#define CURTHINK ((mobj_t*)currentthinker)
+
 #define DOWHENWEAPON(x,pri,thisgun) if (THISIS((x)) && (mind->me->weaponowned[(thisgun)] == 0) && ((pri) >= targpin))\
 {\
-	if (((((mobj_t*)currentthinker)->z >> FRACBITS) - (mind->me->mo->z >> FRACBITS) > -24) ||\
-		((((mobj_t*)currentthinker)->z >> FRACBITS) - (mind->me->mo->z >> FRACBITS) < 24))\
+if ((mind->me->mo->z > (((mobj_t*)currentthinker)->z - 23)) &&\
+(mind->me->mo->z < (((mobj_t*)currentthinker)->z + 23)))\
+	{\
+		newtarget = ((mobj_t*)currentthinker);\
+		mind->node = BA_GATHERING;\
+		targpin = (pri);\
+	}\
+}
+
+#define DOWHENHEALTH(x,pri,heals) if (THISIS((x)) && (mind->me->health + (heals) < 100) && ((pri) >= targpin))\
+{\
+if ((mind->me->mo->z > (((mobj_t*)currentthinker)->z - 23)) &&\
+(mind->me->mo->z < (((mobj_t*)currentthinker)->z + 23)))\
 	{\
 		newtarget = ((mobj_t*)currentthinker);\
 		mind->node = BA_GATHERING;\
@@ -146,7 +159,21 @@ void B_Look(botcontrol_t *mind)
 			{
 				/* ENEMY PLAYER */
 				if (THISIS(MT_PLAYER) && deathmatch)
-					SETTARGET(100, BA_ATTACKING);
+				{
+					int i;
+					
+					for (i = 0; i < MAXPLAYERS; i++)
+					{
+						if ((mobj_t*)currentthinker == players[i].mo)
+						{
+							if (mind->allied[i] == 0)
+							{
+								SETTARGET(100, BA_ATTACKING);
+								break;
+							}
+						}
+					}
+				}
 		
 				/* MONSTERS */
 				// Boss Monsters that may win the game (ingore barons of hell here)
@@ -199,6 +226,9 @@ void B_Look(botcontrol_t *mind)
 				DOWHENWEAPON(MT_MISC28, 30, wp_plasma)
 				
 				/* HEALTH */
+				/*DOWHENHEALTH(MT_MISC10, 40, 10)	// Stimpack
+				DOWHENHEALTH(MT_MISC11, 40, 25) // Medkit
+				DOWHENHEALTH(MT_MISC2, 40, -1) // Health bonus*/
 			}
 		}
 		

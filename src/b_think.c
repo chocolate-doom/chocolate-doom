@@ -40,6 +40,15 @@ void B_BuildTicCommand(ticcmd_t* cmd)
 	me->cmd->buttons = 0;
 	me->me = &players[botplayer];
 	
+	if (M_CheckParm("-buddy1"))
+		me->allied[0] = 1;
+	if (M_CheckParm("-buddy2"))
+		me->allied[1] = 1;
+	if (M_CheckParm("-buddy3"))
+		me->allied[2] = 1;
+	if (M_CheckParm("-buddy4"))
+		me->allied[3] = 1;
+	
 	if (playeringame[botplayer])
 	{	
 		me->cmd->buttons = 0;
@@ -334,6 +343,26 @@ void B_AttackTarget(botcontrol_t *mind)
 					case wp_shotgun:
 					case wp_supershotgun:
 					default:
+						if ((B_Distance(mind->target, mind->me->mo) > 2048) && (mind->me->readyweapon == wp_supershotgun))
+						{
+							int j;
+							for (j = 0; j < NUMWEAPONS; j++)
+							{
+								if (mind->me->weaponowned[j] &&
+									(j != wp_supershotgun) &&
+									(j != wp_fist) &&
+									(j != wp_chainsaw))
+								{
+									if (mind->me->ammo[weaponinfo[j].ammo] > 0)
+									{
+										mind->cmd->buttons = BT_CHANGE; 
+										mind->cmd->buttons |= j<<BT_WEAPONSHIFT;
+										return;
+									}
+								}
+							}
+						}
+				
 						if (mind->forwardtics > 0)
 						{
 							if ((B_Random() % 10) == 0)
@@ -406,10 +435,11 @@ void B_Gather(botcontrol_t *mind)
 	
 	if (mind->target == NULL)
 		B_GoBackExploring(mind);
-	else if (mind->me->attacker)	// WHO THE FUCK PISSED ME OFF!?
+	else if (mind->me->attacker && (P_CheckSight(mind->me->mo, mind->me->attacker)))	// WHO THE FUCK PISSED ME OFF!?
 	{
 		mind->target = mind->me->attacker;
 		mind->node = BA_ATTACKING;
+		B_GoBackExploring(mind);
 	}
 	else
 	{
@@ -425,6 +455,12 @@ void B_Gather(botcontrol_t *mind)
 			DIDWEGETTHEWEAPON(MT_MISC26, wp_chainsaw)
 			DIDWEGETTHEWEAPON(MT_MISC27, wp_missile)
 			DIDWEGETTHEWEAPON(MT_MISC28, wp_plasma)
+			
+			if (mind->target->mobjdontexist)
+			{
+				mind->target = NULL;
+				B_GoBackExploring(mind);
+			}
 		}
 		else
 			B_GoBackExploring(mind);

@@ -47,6 +47,7 @@ typedef struct botcontrol_s
 	int forwardtics;
 	int sidetics;
 	int turntics;
+	int allied[MAXPLAYERS];
 } botcontrol_t;
 
 extern int botplayer;
