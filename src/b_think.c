@@ -137,6 +137,13 @@ void B_PerformPress(botcontrol_t *mind)
     P_PathTraverse ( x1, y1, x2, y2, PT_ADDLINES, B_UseTraverse);
 }
 
+static void B_GoBackExploring(botcontrol_t *mind)
+{
+	mind->cmd->buttons = 0;
+	mind->node = BA_EXPLORING;
+	mind->target = NULL;    
+}
+
 void B_AttackTarget(botcontrol_t *mind)
 {
 	angle_t victimangle = 0;
@@ -248,18 +255,11 @@ void B_AttackTarget(botcontrol_t *mind)
 					mind->cmd->buttons |= BT_ATTACK;
 			}
 			else
-				goto gobackexploring;
+				B_GoBackExploring(mind);
 		}
 		else
-			goto gobackexploring;
+			B_GoBackExploring(mind);
 	}
-	
-	return;
-	
-gobackexploring:
-	mind->cmd->buttons = 0;
-	mind->node = BA_EXPLORING;
-	mind->target = NULL;
 }
 
 void B_Gather(botcontrol_t *mind)

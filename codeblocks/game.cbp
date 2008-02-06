@@ -53,6 +53,13 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\am_map.h" />
+		<Unit filename="..\src\b_bot.h" />
+		<Unit filename="..\src\b_look.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\b_think.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="..\src\d_englsh.h" />
 		<Unit filename="..\src\d_event.h" />
 		<Unit filename="..\src\d_items.c">
