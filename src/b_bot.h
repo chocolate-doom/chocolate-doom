@@ -42,6 +42,8 @@ typedef struct botcontrol_s
 	player_t *me;
 	int node;
 	
+	int pistoltimeout;
+	int chainguntimeout;
 	int forwardtics;
 	int sidetics;
 	int turntics;

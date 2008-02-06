@@ -154,6 +154,8 @@ void B_AttackTarget(botcontrol_t *mind)
 	int somevirtualangle = 0;
 	int somemyangle = 0;
 	int someoffset = 0;
+	
+	mind->cmd->buttons &= ~((byte)BT_ATTACK);
 
 	if (mind->target == NULL) // right...
 	{
@@ -194,54 +196,206 @@ void B_AttackTarget(botcontrol_t *mind)
 				}
 
 				// Forward Moving
-				if (mind->forwardtics > 0)
+				switch (mind->me->readyweapon)
 				{
-					if ((B_Random() % 10) == 0)
-						mind->cmd->forwardmove = +botforwardmove[0];
-					else
-						mind->cmd->forwardmove = +botforwardmove[1];
+					case wp_fist:		// chharrrge!!
+					case wp_chainsaw:
+						if (mind->forwardtics > 0)
+						{
+							if ((B_Random() % 10) == 0)
+								mind->cmd->forwardmove = botforwardmove[0];
+							else
+								mind->cmd->forwardmove = botforwardmove[1];
 			
-					mind->forwardtics--;
-				}
-				else if (mind->forwardtics > 0)
-				{
-					if ((B_Random() % 10) == 0)
-						mind->cmd->forwardmove = +botforwardmove[0];
-					else
-						mind->cmd->forwardmove = +botforwardmove[1];
+							mind->forwardtics--;
+						}
+						else
+							mind->forwardtics = B_Random() * 2;
+							
+						if (!(mind->cmd->buttons & BT_ATTACK))
+							mind->cmd->buttons |= BT_ATTACK;
+						break;
+						
+					case wp_bfg:
+					case wp_missile:
+					case wp_plasma:
+						if (mind->forwardtics > 0)
+						{
+							if ((B_Random() % 10) == 0)
+								mind->cmd->forwardmove = botforwardmove[0];
+							else
+								mind->cmd->forwardmove = botforwardmove[1];
 			
-					mind->forwardtics++;
-				}
-				else
-				{
-					if ((B_Random() % 2) == 0)
-						mind->forwardtics = -(B_Random() / 2);
-					else
-						mind->forwardtics = B_Random() / 2;
-				}
+							mind->forwardtics--;
+						}
+						else if (mind->forwardtics < 0)
+						{
+							if ((B_Random() % 10) == 0)
+								mind->cmd->forwardmove = -botforwardmove[0];
+							else
+								mind->cmd->forwardmove = -botforwardmove[1];
+			
+							mind->forwardtics++;
+						}
+						else
+						{
+							if ((B_Random() % 2) == 0)
+								mind->forwardtics = -(B_Random() / 2);
+							else
+								mind->forwardtics = B_Random() / 2;
+						}
 				
-				// Strafe and dodging
-				if (mind->sidetics > 0)
-				{
-					mind->cmd->sidemove = botsidemove[1];
-					mind->sidetics--;
-				}
-				else if (mind->sidetics < 0)
-				{
-					mind->cmd->sidemove -= botsidemove[1];
-					mind->sidetics++;
-				}
-				else
-				{
-					if (B_Random() % 2 == 0)
-						mind->sidetics = B_Random() * 3;
-					else
-						mind->sidetics = -(B_Random() * 3);
-				}
+						// Strafe and dodging
+						if (mind->sidetics > 0)
+						{
+							mind->cmd->sidemove = botsidemove[1];
+							mind->sidetics--;
+						}
+						else if (mind->sidetics < 0)
+						{
+							mind->cmd->sidemove = -botsidemove[1];
+							mind->sidetics++;
+						}
+						else
+						{
+							if (B_Random() % 2 == 0)
+								mind->sidetics = B_Random();
+							else
+								mind->sidetics = -(B_Random());
+						}
+						
+						if (B_Random() % 2 == 0)
+							mind->cmd->angleturn -= B_Random() / 4;
+						else
+							mind->cmd->angleturn += B_Random() / 4;
+						
+						// Now shoot at it!
+						if (!(mind->cmd->buttons & BT_ATTACK))
+							mind->cmd->buttons |= BT_ATTACK;
+						break;
+						
+					case wp_pistol:
+					case wp_chaingun:
+						if (mind->forwardtics > 0)
+						{
+							if ((B_Random() % 10) == 0)
+								mind->cmd->forwardmove = botforwardmove[0];
+							else
+								mind->cmd->forwardmove = botforwardmove[1];
+			
+							mind->forwardtics--;
+						}
+						else if (mind->forwardtics < 0)
+						{
+							if ((B_Random() % 10) == 0)
+								mind->cmd->forwardmove = -botforwardmove[0];
+							else
+								mind->cmd->forwardmove = -botforwardmove[1];
+			
+							mind->forwardtics++;
+						}
+						else
+						{
+							if ((B_Random() % 2) == 0)
+								mind->forwardtics = -(B_Random() / 2);
+							else
+								mind->forwardtics = B_Random() / 2;
+						}
 				
-				// Now shoot at it!
-				if (!(mind->cmd->buttons & BT_ATTACK))
-					mind->cmd->buttons |= BT_ATTACK;
+						// Strafe and dodging
+						if (mind->sidetics > 0)
+						{
+							mind->cmd->sidemove = botsidemove[1];
+							mind->sidetics--;
+						}
+						else if (mind->sidetics < 0)
+						{
+							mind->cmd->sidemove = -botsidemove[1];
+							mind->sidetics++;
+						}
+						else
+						{
+							if (B_Random() % 4 == 0)
+								mind->sidetics = -(B_Random());
+							else
+								mind->sidetics = B_Random();
+						}
+						
+						// Now shoot at it!
+						if ((mind->me->readyweapon == wp_pistol))
+						{
+							if (mind->pistoltimeout == 0)
+							{
+								mind->pistoltimeout = 20; // 4 + 6 + 4 + 5 = 19 + 1 for good luck
+								mind->cmd->buttons |= BT_ATTACK;
+							}
+							else
+								mind->pistoltimeout--;
+						}
+						else if ((mind->me->readyweapon == wp_chaingun))
+						{
+							if (mind->chainguntimeout == 0)
+							{
+								mind->chainguntimeout = 9; // 4 + 4 + 0 = 8 + 1 for good luck
+								mind->cmd->buttons |= BT_ATTACK;
+							}
+							else
+								mind->chainguntimeout--;
+						}
+						break;
+						
+					case wp_shotgun:
+					case wp_supershotgun:
+					default:
+						if (mind->forwardtics > 0)
+						{
+							if ((B_Random() % 10) == 0)
+								mind->cmd->forwardmove = botforwardmove[0];
+							else
+								mind->cmd->forwardmove = botforwardmove[1];
+			
+							mind->forwardtics--;
+						}
+						else if (mind->forwardtics < 0)
+						{
+							if ((B_Random() % 10) == 0)
+								mind->cmd->forwardmove = -botforwardmove[0];
+							else
+								mind->cmd->forwardmove = -botforwardmove[1];
+			
+							mind->forwardtics++;
+						}
+						else
+						{
+							if ((B_Random() % 2) == 0)
+								mind->forwardtics = -(B_Random() / 2);
+							else
+								mind->forwardtics = B_Random() / 2;
+						}
+				
+						// Strafe and dodging
+						if (mind->sidetics > 0)
+						{
+							mind->cmd->sidemove = botsidemove[1];
+							mind->sidetics--;
+						}
+						else if (mind->sidetics < 0)
+						{
+							mind->cmd->sidemove = -botsidemove[1];
+							mind->sidetics++;
+						}
+						else
+						{
+							if (B_Random() % 2 == 0)
+								mind->sidetics = B_Random();
+							else
+								mind->sidetics = -(B_Random());
+						}
+						
+						// Now shoot at it!
+						mind->cmd->buttons |= BT_ATTACK;
+						break;
+				}
 			}
 			else
 				B_GoBackExploring(mind);

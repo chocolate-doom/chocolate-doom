@@ -30,8 +30,55 @@ fixed_t         botforwardmove[2] = {0x19, 0x32};
 fixed_t         botsidemove[2] = {0x18, 0x28}; 
 fixed_t         botangleturn[3] = {640, 1280, 320};    // + slow turn 
 
+/*
+{
+	if ((mind->me->readyweapon == wp_fist) || (mind->me->readyweapon == wp_chainsaw))
+	{
+		if (((pri) >= targpin) && (((mobj_t*)currentthinker)->health > 0) && B_Distance(mind->me->mo, ((mobj_t*)currentthinker)) < distance)
+		{
+			distance = B_Distance(mind->me->mo, ((mobj_t*)currentthinker));
+			targpin = (pri);
+			newtarget = ((mobj_t*)currentthinker);
+			mind->node = (nodex);
+		}
+	}
+	else
+	{
+		if(((pri) >= targpin) && (((mobj_t*)currentthinker)->health > 0))
+		{
+			targpin = (pri);
+			newtarget = ((mobj_t*)currentthinker);
+			mind->node = (nodex);
+		}
+	}
+}
+*/
+
 #define THISIS(x) (((mobj_t*)currentthinker)->type == (x))
-#define SETTARGET(pri,nodex) {if(((pri) >= targpin) && (((mobj_t*)currentthinker)->health > 0)) { targpin = (pri); newtarget = ((mobj_t*)currentthinker); mind->node = (nodex);} }
+#define SETTARGET(pri,nodex) \
+{\
+if ((mind->me->readyweapon == wp_fist) || (mind->me->readyweapon == wp_chainsaw))\
+{\
+if (((pri) >= targpin) && (((mobj_t*)currentthinker)->health > 0) && B_Distance(mind->me->mo, ((mobj_t*)currentthinker)) < distance)\
+{\
+distance = B_Distance(mind->me->mo, ((mobj_t*)currentthinker));\
+targpin = (pri);\
+newtarget = ((mobj_t*)currentthinker);\
+mind->node = (nodex);\
+}\
+}\
+else\
+{\
+if(((pri) >= targpin) && (((mobj_t*)currentthinker)->health > 0))\
+{\
+targpin = (pri);\
+newtarget = ((mobj_t*)currentthinker);\
+mind->node = (nodex);\
+}\
+}\
+}
+
+//{if(((pri) >= targpin) && (((mobj_t*)currentthinker)->health > 0) && ()) { targpin = (pri); newtarget = ((mobj_t*)currentthinker); mind->node = (nodex);} }
 #define DOWHENENEMY(x,pri,nodex) if (THISIS((x))) SETTARGET((pri),(nodex))
 #define WHATDISTANCE (B_Distance(((mobj_t*)currentthinker), mind->me->mo))
 
@@ -66,6 +113,7 @@ void B_Look(botcontrol_t *mind)
 	mobj_t* newtarget;
 	int targpin = 0;
 	currentthinker = thinkercap.next;
+	int distance = 10000;
 	
 	mind->target = NULL;
 	
@@ -143,26 +191,26 @@ void B_Explore(botcontrol_t *mind)
 		if (mind->forwardtics > 0)
 		{
 			if ((B_Random() % 10) == 0)
-				mind->cmd->forwardmove = +botforwardmove[0];
+				mind->cmd->forwardmove = botforwardmove[0];
 			else
-				mind->cmd->forwardmove = +botforwardmove[1];
+				mind->cmd->forwardmove = botforwardmove[1];
 			
 			mind->forwardtics--;
 		}
-		else if (mind->forwardtics > 0)
+		else if (mind->forwardtics < 0)
 		{
 			if ((B_Random() % 10) == 0)
-				mind->cmd->forwardmove = +botforwardmove[0];
+				mind->cmd->forwardmove = -botforwardmove[0];
 			else
-				mind->cmd->forwardmove = +botforwardmove[1];
+				mind->cmd->forwardmove = -botforwardmove[1];
 			
 			mind->forwardtics++;
 		}
 		else
 		{
-			//if ((B_Random() % 5) == 0)
-			//	mind->forwardtics = -(B_Random() / 5);
-			//else
+			if ((B_Random() % 4) == 0)
+				mind->forwardtics = -(B_Random() / 5);
+			else
 				mind->forwardtics = B_Random() * 2;
 		}
 		
@@ -188,11 +236,11 @@ void B_Explore(botcontrol_t *mind)
 		else
 		{
 			if ((B_Random() % 3) == 0)
-				mind->turntics = -(B_Random() * 2);
+				mind->turntics = -(B_Random() * 4);
 			else if ((B_Random() % 3) == 1)
 				mind->turntics = 0;
 			else
-				mind->turntics = B_Random() * 2;
+				mind->turntics = B_Random() * 4;
 		}
 		
 		// Strafing
@@ -203,7 +251,7 @@ void B_Explore(botcontrol_t *mind)
 		}
 		else if (mind->sidetics < 0)
 		{
-			mind->cmd->sidemove -= botsidemove[1];
+			mind->cmd->sidemove = -botsidemove[1];
 			mind->sidetics++;
 		}
 	}
