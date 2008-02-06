@@ -164,12 +164,15 @@ void B_Look(botcontrol_t *mind)
 					
 					for (i = 0; i < MAXPLAYERS; i++)
 					{
-						if ((mobj_t*)currentthinker == players[i].mo)
+						if (playeringame[i])
 						{
-							if (mind->allied[i] == 0)
+							if ((mobj_t*)currentthinker == players[i].mo)
 							{
-								SETTARGET(100, BA_ATTACKING);
-								break;
+								if (mind->allied[i] == 0)
+								{
+									SETTARGET(100, BA_ATTACKING);
+									break;
+								}
 							}
 						}
 					}
