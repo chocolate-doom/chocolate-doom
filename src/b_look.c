@@ -78,9 +78,29 @@ mind->node = (nodex);\
 }\
 }
 
+/*	x pri thisgun
+if (THISIS((x)) && !(mind->me->weaponowned[(thisgun)]) && (targpin < 10))
+{
+	newtarget = ((mobj_t*)currentthinker);
+	mind->node = BA_GATHERING;
+}
+*/
+
+#define DOWHENWEAPON(x,pri,thisgun) if (THISIS((x)) && (mind->me->weaponowned[(thisgun)] == 0) && ((pri) >= targpin))\
+{\
+	if (((((mobj_t*)currentthinker)->z >> FRACBITS) - (mind->me->mo->z >> FRACBITS) > -24) ||\
+		((((mobj_t*)currentthinker)->z >> FRACBITS) - (mind->me->mo->z >> FRACBITS) < 24))\
+	{\
+		newtarget = ((mobj_t*)currentthinker);\
+		mind->node = BA_GATHERING;\
+		targpin = (pri);\
+	}\
+}
+
 //{if(((pri) >= targpin) && (((mobj_t*)currentthinker)->health > 0) && ()) { targpin = (pri); newtarget = ((mobj_t*)currentthinker); mind->node = (nodex);} }
 #define DOWHENENEMY(x,pri,nodex) if (THISIS((x))) SETTARGET((pri),(nodex))
 #define WHATDISTANCE (B_Distance(((mobj_t*)currentthinker), mind->me->mo))
+#define TARMOBJ ((mobj_t*)currentthinker)
 
 // returns distance
 int B_Distance(mobj_t *a, mobj_t *b)
@@ -98,7 +118,7 @@ int B_Distance(mobj_t *a, mobj_t *b)
 		z1 = a->z >> FRACBITS;
 		z2 = b->z >> FRACBITS;
 		
-		return sqrt(
+		return (int)sqrt(
 			pow(x2 - x1, 2) +
 			pow(y2 - y1, 2) +
 			pow(z2 - z1, 2)
@@ -170,6 +190,14 @@ void B_Look(botcontrol_t *mind)
 				DOWHENENEMY(MT_HEAD, 10, BA_ATTACKING)
 		
 				/* WEAPONS AND AMMO */
+				DOWHENWEAPON(MT_CHAINGUN, 30, wp_chaingun)
+				DOWHENWEAPON(MT_SHOTGUN, 30, wp_shotgun)
+				DOWHENWEAPON(MT_SUPERSHOTGUN, 30, wp_supershotgun)
+				DOWHENWEAPON(MT_MISC25, 30, wp_bfg)
+				DOWHENWEAPON(MT_MISC26, 30, wp_chainsaw)
+				DOWHENWEAPON(MT_MISC27, 30, wp_missile)
+				DOWHENWEAPON(MT_MISC28, 30, wp_plasma)
+				
 				/* HEALTH */
 			}
 		}
@@ -183,6 +211,8 @@ void B_Look(botcontrol_t *mind)
 
 void B_Explore(botcontrol_t *mind)
 {
+	BOTTEXT("EXPLORING");
+	
 	B_Look(mind);
 	
 	if (mind->node == BA_EXPLORING)
@@ -253,6 +283,44 @@ void B_Explore(botcontrol_t *mind)
 		{
 			mind->cmd->sidemove = -botsidemove[1];
 			mind->sidetics++;
+		}
+	}
+}
+
+void B_FaceTarget(botcontrol_t *mind)
+{
+	angle_t victimangle = 0;
+	angle_t myangle = 0;
+	angle_t actualangle = 0;
+	angle_t virtualangle = 0;
+	int someactualangle = 0;
+	int somevirtualangle = 0;
+	int somemyangle = 0;
+	int someoffset = 0;
+	
+	// First Face the target
+	actualangle = R_PointToAngle2 (mind->me->mo->x, mind->me->mo->y, mind->target->x ,mind->target->y);
+	virtualangle = mind->me->mo->angle;
+	myangle = mind->me->mo->angle;
+	
+	/* Thinking some more
+		player->mo->angle += (cmd->angleturn<<16);
+	*/
+	
+	someactualangle = actualangle >> 16;
+	somevirtualangle = virtualangle >> 16;
+	somemyangle = myangle >> 16;
+	
+	while (somevirtualangle != someactualangle)
+	{
+		if (somevirtualangle + someoffset < someactualangle)
+			someoffset++;
+		else if (somevirtualangle + someoffset > someactualangle)
+			someoffset--;
+		else
+		{
+			mind->cmd->angleturn += someoffset;
+			break;
 		}
 	}
 }

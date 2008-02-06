@@ -67,10 +67,14 @@ void B_Gather(botcontrol_t *mind);
 void B_Explore(botcontrol_t *mind);
 void B_AttackTarget(botcontrol_t *mind);
 int B_Distance(mobj_t *a, mobj_t *b);
+void B_FaceTarget(botcontrol_t *mind);
 
 extern fixed_t         botforwardmove[2]; 
 extern fixed_t         botsidemove[2]; 
 extern fixed_t         botangleturn[3];    // + slow turn 
+extern char *botmessage;
+
+#define BOTTEXT(message) botmessage = message;
 
 #endif /* __B_BOT_H__ */
 

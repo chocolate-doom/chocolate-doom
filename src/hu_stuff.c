@@ -49,6 +49,7 @@
 
 #include "g_game.h"
 #include "m_menu.h"
+#include "b_bot.h"
 
 //
 // Locally used constants, shortcuts.
@@ -443,6 +444,9 @@ void HU_Drawer(void)
     HUlib_drawIText(&w_chat);
     if (automapactive)
 	HUlib_drawTextLine(&w_title, false);
+	
+	if (botmessage)
+		M_DrawText(0, 200-40, true, botmessage);
 	
 	if (gamekeydown[key_showscores])
     {
