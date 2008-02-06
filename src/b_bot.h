@@ -31,6 +31,9 @@
 #include "d_ticcmd.h"
 #include "p_mobj.h"
 #include "d_player.h"
+#include "m_random.h"
+#include "p_local.h"
+#include "d_event.h"
 
 typedef struct botcontrol_s
 {
@@ -38,6 +41,10 @@ typedef struct botcontrol_s
 	mobj_t *target;
 	player_t *me;
 	int node;
+	
+	int forwardtics;
+	int sidetics;
+	int turntics;
 } botcontrol_t;
 
 extern int botplayer;
@@ -54,8 +61,14 @@ enum
 	
 void B_BuildTicCommand(ticcmd_t* cmd);
 void B_Look(botcontrol_t *mind);
-void B_Exploring(botcontrol_t *mind);
+void B_Gather(botcontrol_t *mind);
+void B_Explore(botcontrol_t *mind);
 void B_AttackTarget(botcontrol_t *mind);
+int B_Distance(mobj_t *a, mobj_t *b);
+
+extern fixed_t         botforwardmove[2]; 
+extern fixed_t         botsidemove[2]; 
+extern fixed_t         botangleturn[3];    // + slow turn 
 
 #endif /* __B_BOT_H__ */
 

@@ -58,6 +58,7 @@ static const unsigned char rndtable[256] = {
 
 int	rndindex = 0;
 int	prndindex = 0;
+int	brndindex = 0;
 
 // Which one is deterministic?
 int P_Random (void)
@@ -79,6 +80,12 @@ void M_ClearRandom (void)
     // Seed the M_Random counter from the system time
 
     rndindex = time(NULL) & 0xff;
+}
+
+int B_Random(void)
+{
+	brndindex = (brndindex+1)&0xff;
+    return rndtable[brndindex];
 }
 
 

@@ -23,26 +23,246 @@
 //
 //-----------------------------------------------------------------------------
 
+#include "b_bot.h"
+
 int botplayer = 0;
 botcontrol_t botactions[MAXPLAYERS];
+void B_PerformPress(botcontrol_t *mind);
+int interuse = 0;
 
 void B_BuildTicCommand(ticcmd_t* cmd)
 {
+	botplayer = consoleplayer;
 	botcontrol_t *me = &botactions[botplayer];
+	me->cmd = cmd;
+	me->cmd->buttons = 0;
+	me->me = &players[botplayer];
 	
-	switch(botactions[botplayer])
+	if (playeringame[botplayer])
 	{	
-		case BA_EXPLORING:	// Searching around the map
+		me->cmd->buttons = 0;
+		
+		if (me->me->mo)
+		{
+			if (me->me->health < 1)
+				me->cmd->buttons |= BT_USE;
+			else
+				me->cmd->buttons = 0;
 			
-			break;
+			switch(me->node)
+			{	
+				case BA_EXPLORING:	// Searching around the map
+					B_Explore(me);
+					break;
 			
-		case BA_ATTACKING:
-			B_AttackTarget(me);
-			break;
+				case BA_GATHERING:
+					B_Gather(me);
+					break;
 			
-		default:
-			botactions[botplayer].node = BA_EXPLORING;
-			break;
+				case BA_ATTACKING:
+					B_AttackTarget(me);
+					break;
+			
+				default:
+					me->node = BA_EXPLORING;
+					break;
+			}
+			
+			if (gametic % 35 == 0)
+				B_PerformPress(me);
+		}
+		
+		if (gamestate == GS_INTERMISSION)
+		{
+			if (interuse > 100)
+				interuse--;
+			else
+			{
+				me->cmd->buttons = BT_USE;
+			}
+		}
+		else
+		{
+			interuse = 100;
+		}
 	}
+}
+
+botcontrol_t *mind2;
+mobj_t* botusething;
+int botopenrange;
+
+boolean	B_UseTraverse (intercept_t* in)
+{
+    int		side;
+	
+    if (!in->d.line->special)
+    {
+		P_LineOpening (in->d.line);
+		if (botopenrange <= 0) // can't use through a wall
+			return false;	
+		
+		return true; // not a special line, but keep checking
+    }
+	
+    side = 0;
+    if (P_PointOnLineSide (botusething->x, botusething->y, in->d.line) == 1)
+		side = 1;
+		
+	mind2->cmd->buttons |= BT_USE;
+
+    // can't use for than one special line in a row
+    return false;
+}
+
+void B_PerformPress(botcontrol_t *mind)
+{
+	int		angle;
+    fixed_t	x1;
+    fixed_t	y1;
+    fixed_t	x2;
+    fixed_t	y2;
+    
+    mind2 = mind;
+	
+    botusething = mind->me->mo;
+		
+    angle = mind->me->mo->angle >> ANGLETOFINESHIFT;
+
+    x1 = mind->me->mo->x;
+    y1 = mind->me->mo->y;
+    x2 = x1 + (USERANGE>>FRACBITS)*finecosine[angle];
+    y2 = y1 + (USERANGE>>FRACBITS)*finesine[angle];
+	
+    P_PathTraverse ( x1, y1, x2, y2, PT_ADDLINES, B_UseTraverse);
+}
+
+void B_AttackTarget(botcontrol_t *mind)
+{
+	angle_t victimangle = 0;
+	angle_t myangle = 0;
+	angle_t actualangle = 0;
+
+	if (mind->target == NULL) // right...
+	{
+		mind->node = BA_EXPLORING;
+		mind->target = NULL;
+		B_Explore(mind);
+	}
+	else
+	{
+		if (P_CheckSight(mind->me->mo, mind->target))
+		{
+			if (mind->target->health > 0)
+			{
+				// First Face the target
+				victimangle = mind->target->angle;
+				myangle = mind->me->mo->angle;
+			
+				actualangle = R_PointToAngle2 (mind->me->mo->x, mind->me->mo->y, mind->target->x ,mind->target->y);
+				
+				/* GhostlyDeath Thinking:
+					ok if myangle = 200 and actual angle is 100...
+					
+					turn right if myangle < actual angle
+					turn left if myangle > actual angle
+					
+					so.. to make the bots face the target faster they need improved speed when facing
+					200 - 100 > 90 = false
+					
+					now if myangle = 200 and actual angle is 150
+					200 - 150 > 90 = false
+					200 - 150 < 90 = true
+				*/
+				
+				if (myangle - actualangle < ANG90)
+				{
+					if (myangle < actualangle)
+						mind->cmd->angleturn += botangleturn[2];
+					else if (myangle > actualangle)
+						mind->cmd->angleturn -= botangleturn[2];
+				}
+				else if (myangle - actualangle < ANG180)
+				{
+					if (myangle < actualangle)
+						mind->cmd->angleturn += botangleturn[1];
+					else if (myangle > actualangle)
+						mind->cmd->angleturn -= botangleturn[1];
+				}
+				else
+				{
+					if (myangle < actualangle)
+						mind->cmd->angleturn += botangleturn[1] * 2;
+					else if (myangle > actualangle)
+						mind->cmd->angleturn -= botangleturn[1] * 2;
+				}
+
+				// Forward Moving
+				if (mind->forwardtics > 0)
+				{
+					if ((B_Random() % 10) == 0)
+						mind->cmd->forwardmove = +botforwardmove[0];
+					else
+						mind->cmd->forwardmove = +botforwardmove[1];
+			
+					mind->forwardtics--;
+				}
+				else if (mind->forwardtics > 0)
+				{
+					if ((B_Random() % 10) == 0)
+						mind->cmd->forwardmove = +botforwardmove[0];
+					else
+						mind->cmd->forwardmove = +botforwardmove[1];
+			
+					mind->forwardtics++;
+				}
+				else
+				{
+					if ((B_Random() % 2) == 0)
+						mind->forwardtics = -(B_Random() / 2);
+					else
+						mind->forwardtics = B_Random() / 2;
+				}
+				
+				// Strafe and dodging
+				if (mind->sidetics > 0)
+				{
+					mind->cmd->sidemove = botsidemove[1];
+					mind->sidetics--;
+				}
+				else if (mind->sidetics < 0)
+				{
+					mind->cmd->sidemove -= botsidemove[1];
+					mind->sidetics++;
+				}
+				else
+				{
+					if (B_Random() % 2 == 0)
+						mind->sidetics = B_Random() * 3;
+					else
+						mind->sidetics = -(B_Random() * 3);
+				}
+				
+				// Now shoot at it!
+				if (!(mind->cmd->buttons & BT_ATTACK))
+					mind->cmd->buttons |= BT_ATTACK;
+			}
+			else
+				goto gobackexploring;
+		}
+		else
+			goto gobackexploring;
+	}
+	
+	return;
+	
+gobackexploring:
+	mind->cmd->buttons = 0;
+	mind->node = BA_EXPLORING;
+	mind->target = NULL;
+}
+
+void B_Gather(botcontrol_t *mind)
+{
 }
 

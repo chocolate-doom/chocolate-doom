@@ -404,6 +404,7 @@ void G_BuildTiccmd (ticcmd_t* cmd)
 
 	if (M_CheckParm("-bot"))
 	{
+		B_BuildTicCommand(cmd);
 	}
 	else
 	{
