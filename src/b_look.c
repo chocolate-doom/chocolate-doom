@@ -88,7 +88,7 @@ if (THISIS((x)) && !(mind->me->weaponowned[(thisgun)]) && (targpin < 10))
 
 #define CURTHINK ((mobj_t*)currentthinker)
 
-#define DOWHENWEAPON(x,pri,thisgun) if (THISIS((x)) && (mind->me->weaponowned[(thisgun)] == 0) && ((pri) >= targpin))\
+#define DOWHENWEAPON(x,pri,thisgun) if (THISIS((x)) && (mind->me->weaponowned[(thisgun)] == 0) && ((pri) > targpin))\
 {\
 if ((mind->me->mo->z > (((mobj_t*)currentthinker)->z - 23)) &&\
 (mind->me->mo->z < (((mobj_t*)currentthinker)->z + 23)))\
@@ -99,7 +99,7 @@ if ((mind->me->mo->z > (((mobj_t*)currentthinker)->z - 23)) &&\
 	}\
 }
 
-#define DOWHENHEALTH(x,pri,heals) if (THISIS((x)) && (mind->me->health + (heals) < 100) && ((pri) >= targpin))\
+#define DOWHENHEALTH(x,pri,heals) if (THISIS((x)) && (mind->me->health + (heals) < 100) && ((pri) > 	q targpin))\
 {\
 if ((mind->me->mo->z > (((mobj_t*)currentthinker)->z - 23)) &&\
 (mind->me->mo->z < (((mobj_t*)currentthinker)->z + 23)))\
@@ -158,25 +158,49 @@ void B_Look(botcontrol_t *mind)
 							(mind->me->mo != (mobj_t*)currentthinker))
 			{
 				/* ENEMY PLAYER */
-				if (THISIS(MT_PLAYER) && deathmatch)
+				DOWHENENEMY(MT_PLAYER, 100, BA_ATTACKING)
+				/*if ((((mobj_t*)currentthinker)->type == MT_PLAYER) && deathmatch)
 				{
+					int isanally;
 					int i;
 					
 					for (i = 0; i < MAXPLAYERS; i++)
 					{
 						if (playeringame[i])
-						{
-							if ((mobj_t*)currentthinker == players[i].mo)
+							if (((mobj_t*)currentthinker) == players[i].mo)
 							{
-								if (mind->allied[i] == 0)
-								{
-									SETTARGET(100, BA_ATTACKING);
-									break;
-								}
+								if (mind->allied[i] == 1)
+									isanally = 1;
+								else
+									isanally = 0;
+									
+								break;
+							}
+					}
+					
+					if (isanally == 0)
+					{
+						if ((mind->me->readyweapon == wp_fist) || (mind->me->readyweapon == wp_chainsaw))
+						{
+							if ((100 >= targpin) && (((mobj_t*)currentthinker)->health > 0) && B_Distance(mind->me->mo, ((mobj_t*)currentthinker)) < distance)
+							{
+								distance = B_Distance(mind->me->mo, ((mobj_t*)currentthinker));
+								targpin = 100;
+								newtarget = ((mobj_t*)currentthinker);
+								mind->node = BA_ATTACKING;
+							}
+						}
+						else
+						{
+							if((100 >= targpin) && (((mobj_t*)currentthinker)->health > 0))
+							{
+								targpin = 100;
+								newtarget = ((mobj_t*)currentthinker);
+								mind->node = BA_ATTACKING;
 							}
 						}
 					}
-				}
+				}*/
 		
 				/* MONSTERS */
 				// Boss Monsters that may win the game (ingore barons of hell here)

@@ -42,12 +42,20 @@ void B_BuildTicCommand(ticcmd_t* cmd)
 	
 	if (M_CheckParm("-buddy1"))
 		me->allied[0] = 1;
+	else
+		me->allied[0] = 0;
 	if (M_CheckParm("-buddy2"))
 		me->allied[1] = 1;
+	else
+		me->allied[1] = 0;
 	if (M_CheckParm("-buddy3"))
 		me->allied[2] = 1;
+	else
+		me->allied[2] = 0;
 	if (M_CheckParm("-buddy4"))
 		me->allied[3] = 1;
+	else
+		me->allied[3] = 0;
 	
 	if (playeringame[botplayer])
 	{	
@@ -455,12 +463,6 @@ void B_Gather(botcontrol_t *mind)
 			DIDWEGETTHEWEAPON(MT_MISC26, wp_chainsaw)
 			DIDWEGETTHEWEAPON(MT_MISC27, wp_missile)
 			DIDWEGETTHEWEAPON(MT_MISC28, wp_plasma)
-			
-			if (mind->target->mobjdontexist)
-			{
-				mind->target = NULL;
-				B_GoBackExploring(mind);
-			}
 		}
 		else
 			B_GoBackExploring(mind);

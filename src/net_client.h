@@ -52,6 +52,7 @@ extern int net_player_colors[MAXPLAYERS];
 extern int net_player_number;
 extern char *net_player_name;
 extern int net_player_color;
+extern int ticsent;
 
 extern md5_digest_t net_server_wad_md5sum;
 extern md5_digest_t net_server_deh_md5sum;
