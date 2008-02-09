@@ -31,6 +31,7 @@ extern int show_endoom;
 extern char *video_driver;
 
 void ConfigDisplay(void);
+void SetDisplayDriver(void);
 
 #endif /* #ifndef SETUP_DISPLAY_H */
 

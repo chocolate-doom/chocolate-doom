@@ -81,40 +81,48 @@ int show_endoom = 1;
 
 static int selected_screen_width = 0, selected_screen_height;
 
-#ifdef _WIN32
+static int system_video_env_set;
 
-static int win32_video_driver = 0;
+// Set the SDL_VIDEODRIVER environment variable
 
-static char *win32_video_drivers[] = 
+void SetDisplayDriver(void)
 {
-    "DirectX",
-    "Windows GDI",
-};
+    static int first_time = 1;
 
-static void SetWin32VideoDriver(void)
-{
-    if (!strcmp(video_driver, "windib"))
+    if (first_time)
     {
-        win32_video_driver = 1;
+        system_video_env_set = getenv("SDL_VIDEODRIVER") != NULL;
+
+        first_time = 0;
+    }
+    
+    // Don't override the command line environment, if it has been set.
+
+    if (system_video_env_set)
+    {
+        return;
+    }
+
+    // Use the value from the configuration file, if it has been set.
+
+    if (strcmp(video_driver, "") != 0)
+    {
+        char *env_string;
+
+        env_string = malloc(strlen(video_driver) + 30);
+        sprintf(env_string, "SDL_VIDEODRIVER=%s", video_driver);
+        putenv(env_string);
+        free(env_string);
     }
     else
     {
-        win32_video_driver = 0;
+#ifdef _WIN32
+        // On Windows, use DirectX over windib by default.
+
+        putenv("SDL_VIDEODRIVER=directx");
+#endif
     }
 }
-
-static void UpdateVideoDriver(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
-{
-    char *drivers[] = 
-    {
-        "",
-        "windib",
-    };
-
-    video_driver = drivers[win32_video_driver];
-}
-
-#endif
 
 static void ModeSelected(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(mode))
 {
@@ -167,9 +175,11 @@ static void BuildFullscreenModesList(void)
     int num_modes;
     int i;
 
+    // Free the existing modes list, if one exists
+
     if (screen_modes_fullscreen != NULL)
     {
-        return;
+        free(screen_modes_fullscreen);
     }
 
     // Get a list of fullscreen modes and find out how many
@@ -250,7 +260,11 @@ static void GenerateModesTable(TXT_UNCAST_ARG(widget),
 
     if (fullscreen)
     {
-        BuildFullscreenModesList();
+        if (screen_modes_fullscreen == NULL)
+        {
+            BuildFullscreenModesList();
+        }
+
         modes = screen_modes_fullscreen;
     }
     else if (aspect_ratio_correct) 
@@ -291,6 +305,66 @@ static void GenerateModesTable(TXT_UNCAST_ARG(widget),
     screen_height = modes[vidmode].h;
 }
 
+#ifdef _WIN32
+
+static int win32_video_driver = 0;
+
+static char *win32_video_drivers[] = 
+{
+    "DirectX",
+    "Windows GDI",
+};
+
+// Restart the textscreen library.  Used when the video_driver variable
+// is changed.
+
+static void RestartTextscreen(void)
+{
+    TXT_Shutdown();
+
+    SetDisplayDriver();
+
+    TXT_Init();
+}
+
+static void SetWin32VideoDriver(void)
+{
+    if (!strcmp(video_driver, "windib"))
+    {
+        win32_video_driver = 1;
+    }
+    else
+    {
+        win32_video_driver = 0;
+    }
+}
+
+static void UpdateVideoDriver(TXT_UNCAST_ARG(widget), 
+                              TXT_UNCAST_ARG(modes_table))
+{
+    TXT_CAST_ARG(txt_table_t, modes_table);
+    char *drivers[] = 
+    {
+        "",
+        "windib",
+    };
+
+    video_driver = drivers[win32_video_driver != 0];
+
+    // When the video driver is changed, we need to restart the textscreen 
+    // library.
+
+    RestartTextscreen();
+
+    // Rebuild the video modes list
+
+    BuildFullscreenModesList();
+    GenerateModesTable(NULL, modes_table);
+}
+
+#endif
+
+
 void ConfigDisplay(void)
 {
     txt_window_t *window;
@@ -318,6 +392,11 @@ void ConfigDisplay(void)
                                                  &aspect_ratio_correct),
                    NULL);
 
+    modes_table = TXT_NewTable(3);
+
+    // On Windows, there is an extra control to change between 
+    // the Windows GDI and DirectX video drivers.
+
 #ifdef _WIN32
     {
         txt_table_t *driver_table;
@@ -325,27 +404,28 @@ void ConfigDisplay(void)
 
         driver_table = TXT_NewTable(2);
 
-        TXT_SetColumnWidths(driver_table, 25, 0);
-
-        driver_list = TXT_NewDropdownList(&win32_video_driver,
-                                          win32_video_drivers,
-                                          2);
-
-        TXT_SignalConnect(driver_list, "changed", UpdateVideoDriver, NULL);
-        SetWin32VideoDriver();
+        TXT_SetColumnWidths(driver_table, 20, 0);
 
         TXT_AddWidgets(driver_table,
                        TXT_NewLabel("Video driver"),
-                       driver_list,
+                       driver_list = TXT_NewDropdownList(&win32_video_driver,
+                                                         win32_video_drivers,
+                                                         2),
                        NULL);
+
+        TXT_SignalConnect(driver_list, "changed",
+                          UpdateVideoDriver, modes_table);
+        SetWin32VideoDriver();
 
         TXT_AddWidget(window, driver_table);
     }
 #endif
 
+    // Screen modes list
+
     TXT_AddWidgets(window,
                    TXT_NewSeparator("Screen mode"),
-                   modes_table = TXT_NewTable(3),
+                   modes_table,
                    TXT_NewSeparator("Misc."),
                    TXT_NewCheckBox("Show ENDOOM screen", &show_endoom),
                    NULL);
