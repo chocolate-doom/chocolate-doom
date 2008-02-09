@@ -445,8 +445,8 @@ void HU_Drawer(void)
     if (automapactive)
 	HUlib_drawTextLine(&w_title, false);
 	
-	if (botmessage)
-		M_DrawText(0, 200-40, true, botmessage);
+	//if (botmessage)
+	//	M_DrawText(0, 200-40, true, botmessage);
 	
 	if (gamekeydown[key_showscores])
     {
@@ -491,7 +491,7 @@ void HU_Drawer(void)
     			else
 	    			sprintf(playername, "%s", net_player_names[i]);
     			
-    			if (!deathmatch || demoplayback)
+    			if ((players[consoleplayer].team == players[i].team) || (!deathmatch || demoplayback))
     			{
 					// Life    				
     				curlife = players[i].health;

@@ -90,7 +90,7 @@ if (THISIS((x)) && !(mind->me->weaponowned[(thisgun)]) && (targpin < 10))
 
 #define DOWHENWEAPON(x,pri,thisgun) if (B_Distance(((mobj_t*)currentthinker), mind->me->mo) < weapondistance)\
 {\
-if (THISIS((x)) && (mind->me->weaponowned[(thisgun)] == 0) && ((pri) > targpin))\
+if (THISIS((x)) && (mind->me->weaponowned[(thisgun)] == 0) && ((pri) > targpin) && (deathmatch == 0 || deathmatch == 1))\
 {\
 if ((mind->me->mo->z > (((mobj_t*)currentthinker)->z - 23)) &&\
 (mind->me->mo->z < (((mobj_t*)currentthinker)->z + 23)))\
@@ -101,7 +101,7 @@ if ((mind->me->mo->z > (((mobj_t*)currentthinker)->z - 23)) &&\
 		weapondistance = B_Distance(((mobj_t*)currentthinker), mind->me->mo);\
 	}\
 }\
-else if (THISIS((x)) && (((mobj_t*)currentthinker)->flags & MF_DROPPED) && (((pri) / 2) > targpin))\
+else if (THISIS((x)) && ((((mobj_t*)currentthinker)->flags & MF_DROPPED) || deathmatch == 2) && (((pri) / 2) > targpin))\
 {\
 if (mind->me->ammo[weaponinfo[(thisgun)].ammo] < mind->me->maxammo[weaponinfo[(thisgun)].ammo])\
 {\
@@ -128,6 +128,20 @@ if ((mind->me->mo->z > (((mobj_t*)currentthinker)->z - 23)) &&\
 		mind->node = BA_GATHERING;\
 		targpin = (pri);\
 		healthdistance = B_Distance(((mobj_t*)currentthinker), mind->me->mo);\
+	}\
+}
+
+#define DOWHENARMOR(x,pri,heals) if (B_Distance(((mobj_t*)currentthinker), mind->me->mo) < armordistacne)\
+if (THISIS((x)) && (mind->me->armorpoints + (heals) < 100) && ((pri) > targpin))\
+{\
+if (((mobj_t*)currentthinker)->state != S_NULL)\
+if ((mind->me->mo->z > (((mobj_t*)currentthinker)->z - 23)) &&\
+(mind->me->mo->z < (((mobj_t*)currentthinker)->z + 23)))\
+	{\
+		newtarget = ((mobj_t*)currentthinker);\
+		mind->node = BA_GATHERING;\
+		targpin = (pri);\
+		armordistacne = B_Distance(((mobj_t*)currentthinker), mind->me->mo);\
 	}\
 }
 
@@ -170,6 +184,7 @@ void B_Look(botcontrol_t *mind)
 	int distance = 10000;
 	int weapondistance = 10000;
 	int healthdistance = 10000;
+	int armordistacne = 10000;
 	
 	mind->target = NULL;
 	
@@ -195,19 +210,15 @@ void B_Look(botcontrol_t *mind)
 					
 					if (deathmatch)
 					{
-						for (i = 0; i < MAXPLAYERS; i++)
+						if ((((mobj_t*)currentthinker)->player))
 						{
-							if (playeringame[i])
-								if (((mobj_t*)currentthinker) == players[i].mo)
-								{
-									if (mind->allied[i] == 1)
-										isanally = 1;
-									else
-										isanally = 0;
-									
-									break;
-								}
+							if ((((mobj_t*)currentthinker)->player->team) == mind->me->team)
+								isanally = 1;
+							else
+								isanally = 0;
 						}
+						else
+							isanally = 0;
 					}
 					else
 						isanally = 1;	// Coop = always an ally
@@ -237,9 +248,10 @@ void B_Look(botcontrol_t *mind)
 					else
 					{
 						// Follow it! =)
-						if (((mobj_t*)currentthinker)->health > 0)
+						if((25 >= targpin) && (((mobj_t*)currentthinker)->health > 0))
 						{
 							mind->follower = ((mobj_t*)currentthinker);
+							targpin = 25;
 						}
 					}
 				}
@@ -297,7 +309,14 @@ void B_Look(botcontrol_t *mind)
 				/* HEALTH */
 				DOWHENHEALTH(MT_MISC10, 40, 10)	// Stimpack
 				DOWHENHEALTH(MT_MISC11, 40, 25) // Medkit
-				DOWHENHEALTH(MT_MISC2, 40, -1) // Health bonus
+				DOWHENHEALTH(MT_MISC2, 20, -1) // Health bonus
+				DOWHENHEALTH(MT_MISC12, 60, 75) // Soulsphere
+				//DOWHENHEALTH(MT_MEGA, 70, -100)// megasphere
+				
+				/* ARMOR */
+				DOWHENARMOR(MT_MISC3, 20, -1)	// Armor Bonus
+				DOWHENARMOR(MT_MISC0, 40, 50)	// Green Armor
+				DOWHENARMOR(MT_MISC1, 60, -50)	// Blue Armor
 			}
 		}
 		
@@ -312,7 +331,7 @@ void B_Explore(botcontrol_t *mind)
 {	
 	B_Look(mind);
 	
-	if ((mind->node == BA_EXPLORING) && (mind->follower == NULL))
+	if ((mind->node == BA_EXPLORING) && ((mind->follower == NULL) || (mind->follower && mind->attackcooldown > 0)))
 	{
 		BOTTEXT("EXPLORING");
 		
@@ -384,9 +403,8 @@ void B_Explore(botcontrol_t *mind)
 			mind->sidetics++;
 		}
 	}
-	else if (mind->follower)
+	else if (mind->follower && (mind->attackcooldown == 0))
 	{
-		BOTTEXT("FOLLOWING");
 		if (mind->follower == NULL)
 			B_GoBackExploring(mind);
 		if ((mind->follower->state == S_NULL) ||
@@ -408,6 +426,9 @@ void B_Explore(botcontrol_t *mind)
 				mind->cmd->forwardmove = botforwardmove[0];
 		}
 	}
+	
+	if (mind->attackcooldown > 0)
+		mind->attackcooldown--;
 }
 
 void B_UniversalTarget(botcontrol_t *mind, mobj_t *target)
@@ -451,6 +472,7 @@ void B_FaceTarget(botcontrol_t *mind)
 
 void B_FaceFollower(botcontrol_t *mind)
 {
+	//if (mind->target != NULL)	// this MAY happen!
 	B_UniversalTarget(mind, mind->follower);
 }
 

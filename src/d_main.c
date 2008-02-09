@@ -1509,6 +1509,62 @@ void D_DoomMain (void)
 		netgame = true;
 	}
 	
+	// teams: -team1 123 = Green, Indigo and Brown are allied
+	p = M_CheckParm ("-team1");
+	if (p && p < myargc-1)
+	{
+		int i;
+		int in;
+		int tmpteam = atoi (myargv[p+1]);
+		
+		while (tmpteam > 0)
+		{
+			in = tmpteam % 10;
+			
+			if ((in >= 1) && (in <= 4))
+				players[in-1].team = 1;
+			
+			tmpteam /= 10;
+		}
+	}
+	
+	p = M_CheckParm ("-team2");
+	if (p && p < myargc-1)
+	{
+		int i;
+		int in;
+		int tmpteam = atoi (myargv[p+1]);
+		
+		while (tmpteam > 0)
+		{
+			in = tmpteam % 10;
+			
+			if ((in >= 1) && (in <= 4))
+				players[in-1].team = 2;
+			
+			tmpteam /= 10;
+		}
+	}
+	
+	p = M_CheckParm ("-team3");
+	if (p && p < myargc-1)
+	{
+		int i;
+		int in;
+		int tmpteam = atoi (myargv[p+1]);
+		
+		while (tmpteam > 0)
+		{
+			in = tmpteam % 10;
+			
+			if ((in >= 1) && (in <= 4))
+				players[in-1].team = 3;
+			
+			tmpteam /= 10;
+		}
+	}
+	
+	
     if (gameaction != ga_loadgame )
     {
 	if (autostart || netgame || localnetgame)

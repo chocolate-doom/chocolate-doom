@@ -174,7 +174,7 @@ void B_GoBackExploring(botcontrol_t *mind)
 {
 	mind->cmd->buttons = 0;
 	mind->node = BA_EXPLORING;
-	mind->target = NULL;    
+	mind->target = NULL; 
 }
 
 void B_AttackTarget(botcontrol_t *mind)
@@ -184,6 +184,8 @@ void B_AttackTarget(botcontrol_t *mind)
 
 	if (mind->target == NULL) // welp, it seems our target decided to die
 		B_GoBackExploring(mind);
+	else if (mind->target->player && (mind->target->player->team == mind->me->team))
+		B_GoBackExploring(mind);
 	else
 	{
 		if (P_CheckSight(mind->me->mo, mind->target))
@@ -192,6 +194,8 @@ void B_AttackTarget(botcontrol_t *mind)
 			{
 				// First Face the target
 				B_FaceTarget(mind);
+				
+				mind->attackcooldown++;
 
 				// Forward Moving
 				switch (mind->me->readyweapon)
@@ -213,7 +217,7 @@ void B_AttackTarget(botcontrol_t *mind)
 									{
 										mind->cmd->buttons |= BT_CHANGE; 
 										mind->cmd->buttons |= j<<BT_WEAPONSHIFT;
-										break;
+										return;
 									}
 								}
 							}
@@ -468,7 +472,7 @@ if (intype == (x))
 
 #define DIDWEGETTHEWEAPON(x,thisgun) if (intype == (x))\
 {\
-	if (mind->target->flags & MF_DROPPED)\
+	if ((mind->target->flags & MF_DROPPED) || (deathmatch == 2))\
 	{\
 		if (!(mind->me->ammo[weaponinfo[(thisgun)].ammo] < mind->me->maxammo[weaponinfo[(thisgun)].ammo]))\
 		{\
@@ -494,13 +498,15 @@ void B_Gather(botcontrol_t *mind)
 	
 	if (mind->target == NULL)
 		B_GoBackExploring(mind);
-	else if (mind->me->attacker && (mind->me->attacker->health > 0) && (P_CheckSight(mind->me->mo, mind->me->attacker)))	// WHO THE FUCK PISSED ME OFF!?
+	else if (mind->me->attacker &&			// WHO THE FUCK PISSED ME OFF!?
+		(mind->me->attacker->health > 0) &&
+		(P_CheckSight(mind->me->mo, mind->me->attacker)))
 	{
 		mind->target = mind->me->attacker;
 		mind->node = BA_ATTACKING;
 	}
 	else
-	{
+	{	
 		if (P_CheckSight(mind->me->mo, mind->target))
 		{
 			B_FaceTarget(mind);

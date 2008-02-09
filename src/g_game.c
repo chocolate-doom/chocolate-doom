@@ -1070,6 +1070,7 @@ void G_PlayerReborn (int player)
     int		secretcount; 
     int		deaths;
     int		color;
+    int team;
 	 
     memcpy (frags,players[player].frags,sizeof(frags)); 
     killcount = players[player].killcount; 
@@ -1077,6 +1078,7 @@ void G_PlayerReborn (int player)
     secretcount = players[player].secretcount; 
     deaths = players[player].deaths;
     color = players[player].color;
+    team = players[player].team;
 	 
     p = &players[player]; 
     memset (p, 0, sizeof(*p)); 
@@ -1095,6 +1097,19 @@ void G_PlayerReborn (int player)
     p->weaponowned[wp_fist] = true; 
     p->weaponowned[wp_pistol] = true; 
     p->ammo[am_clip] = deh_initial_bullets; 
+    p->team = team;
+    
+    if (p->team > 0)
+    {
+    	if (p->team == 1)
+    		p->color = 9;	// bright red
+    	else if (p->team == 2)
+    		p->color = 7;	// Blue
+    	else if (p->team == 3)
+    		p->color = 0;	// Green
+    	else if (p->team == 4)
+    		p->color = 11;	// White
+    }
 	 
     for (i=0 ; i<NUMAMMO ; i++) 
 	p->maxammo[i] = maxammo[i]; 
