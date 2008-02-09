@@ -407,17 +407,13 @@ void G_BuildTiccmd (ticcmd_t* cmd)
 
 	if (M_CheckParm("-bot"))
 	{
-		if (gametic > LastTic)
+		B_BuildTicCommand(cmd);
+		if (lowres_turn)
 		{
-			B_BuildTicCommand(cmd);
-			if (lowres_turn)
-			{
-				// round angleturn to the nearest 256 boundary
-				// for recording demos with single byte values for turn
+			// round angleturn to the nearest 256 boundary
+			// for recording demos with single byte values for turn
 
-				cmd->angleturn = (cmd->angleturn + 128) & 0xff00;
-			}
-			LastTic = gametic;
+			cmd->angleturn = (cmd->angleturn + 128) & 0xff00;
 		}
 	}
 	else

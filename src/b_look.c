@@ -88,7 +88,9 @@ if (THISIS((x)) && !(mind->me->weaponowned[(thisgun)]) && (targpin < 10))
 
 #define CURTHINK ((mobj_t*)currentthinker)
 
-#define DOWHENWEAPON(x,pri,thisgun) if (THISIS((x)) && (mind->me->weaponowned[(thisgun)] == 0) && ((pri) > targpin))\
+#define DOWHENWEAPON(x,pri,thisgun) if (B_Distance(((mobj_t*)currentthinker), mind->me->mo) < weapondistance)\
+{\
+if (THISIS((x)) && (mind->me->weaponowned[(thisgun)] == 0) && ((pri) > targpin))\
 {\
 if ((mind->me->mo->z > (((mobj_t*)currentthinker)->z - 23)) &&\
 (mind->me->mo->z < (((mobj_t*)currentthinker)->z + 23)))\
@@ -96,17 +98,36 @@ if ((mind->me->mo->z > (((mobj_t*)currentthinker)->z - 23)) &&\
 		newtarget = ((mobj_t*)currentthinker);\
 		mind->node = BA_GATHERING;\
 		targpin = (pri);\
+		weapondistance = B_Distance(((mobj_t*)currentthinker), mind->me->mo);\
 	}\
+}\
+else if (THISIS((x)) && (((mobj_t*)currentthinker)->flags & MF_DROPPED) && (((pri) / 2) > targpin))\
+{\
+if (mind->me->ammo[weaponinfo[(thisgun)].ammo] < mind->me->maxammo[weaponinfo[(thisgun)].ammo])\
+{\
+if ((mind->me->mo->z > (((mobj_t*)currentthinker)->z - 23)) &&\
+(mind->me->mo->z < (((mobj_t*)currentthinker)->z + 23)))\
+	{\
+		newtarget = ((mobj_t*)currentthinker);\
+		mind->node = BA_GATHERING;\
+		targpin = (pri);\
+		weapondistance = B_Distance(((mobj_t*)currentthinker), mind->me->mo);\
+	}\
+}\
+}\
 }
 
-#define DOWHENHEALTH(x,pri,heals) if (THISIS((x)) && (mind->me->health + (heals) < 100) && ((pri) > 	q targpin))\
+#define DOWHENHEALTH(x,pri,heals) if (B_Distance(((mobj_t*)currentthinker), mind->me->mo) < healthdistance)\
+if (THISIS((x)) && (mind->me->health + (heals) < 100) && ((pri) > targpin))\
 {\
+if (((mobj_t*)currentthinker)->state != S_NULL)\
 if ((mind->me->mo->z > (((mobj_t*)currentthinker)->z - 23)) &&\
 (mind->me->mo->z < (((mobj_t*)currentthinker)->z + 23)))\
 	{\
 		newtarget = ((mobj_t*)currentthinker);\
 		mind->node = BA_GATHERING;\
 		targpin = (pri);\
+		healthdistance = B_Distance(((mobj_t*)currentthinker), mind->me->mo);\
 	}\
 }
 
@@ -147,6 +168,8 @@ void B_Look(botcontrol_t *mind)
 	int targpin = 0;
 	currentthinker = thinkercap.next;
 	int distance = 10000;
+	int weapondistance = 10000;
+	int healthdistance = 10000;
 	
 	mind->target = NULL;
 	
@@ -253,9 +276,9 @@ void B_Look(botcontrol_t *mind)
 				DOWHENWEAPON(MT_MISC28, 30, wp_plasma)
 				
 				/* HEALTH */
-				/*DOWHENHEALTH(MT_MISC10, 40, 10)	// Stimpack
+				DOWHENHEALTH(MT_MISC10, 40, 10)	// Stimpack
 				DOWHENHEALTH(MT_MISC11, 40, 25) // Medkit
-				DOWHENHEALTH(MT_MISC2, 40, -1) // Health bonus*/
+				DOWHENHEALTH(MT_MISC2, 40, -1) // Health bonus
 			}
 		}
 		

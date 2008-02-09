@@ -56,6 +56,13 @@ void B_BuildTicCommand(ticcmd_t* cmd)
 		me->allied[3] = 1;
 	else
 		me->allied[3] = 0;
+		
+	B_PerformPress(me);
+	
+	if (M_CheckParm("-botdebug"))
+		if (gametic % 35 == 0)
+			if (me->target)
+				P_SpawnMobj(me->target->x, me->target->y, me->target->z, MT_IFOG);
 	
 	if (playeringame[botplayer])
 	{	
@@ -429,10 +436,46 @@ void B_AttackTarget(botcontrol_t *mind)
 	}
 }
 
-#define DIDWEGETTHEWEAPON(x,thisgun) if ((intype == (x)) && (mind->me->weaponowned[(thisgun)]))\
+/*
+if (intype == (x))
+{
+	if ((mind->target->flags & MF_DROPPED) && )
+	{
+		if (!(mind->me->ammo[weaponinfo[(thisgun)].ammo] < mind->me->maxammo[weaponinfo[(thisgun)].ammo]))
+		{
+			B_GoBackExploring(mind);
+			return;
+		}
+	}
+	else
+	{
+		if (mind->me->weaponowned[(thisgun)])
+		{
+			B_GoBackExploring(mind);
+			return;
+		}
+	}
+}
+*/
+
+#define DIDWEGETTHEWEAPON(x,thisgun) if (intype == (x))\
 {\
-	B_GoBackExploring(mind);\
-	return;\
+	if (mind->target->flags & MF_DROPPED)\
+	{\
+		if (!(mind->me->ammo[weaponinfo[(thisgun)].ammo] < mind->me->maxammo[weaponinfo[(thisgun)].ammo]))\
+		{\
+			B_GoBackExploring(mind);\
+			return;\
+		}\
+	}\
+	else\
+	{\
+		if (mind->me->weaponowned[(thisgun)])\
+		{\
+			B_GoBackExploring(mind);\
+			return;\
+		}\
+	}\
 }
 
 void B_Gather(botcontrol_t *mind)
@@ -443,11 +486,10 @@ void B_Gather(botcontrol_t *mind)
 	
 	if (mind->target == NULL)
 		B_GoBackExploring(mind);
-	else if (mind->me->attacker && (P_CheckSight(mind->me->mo, mind->me->attacker)))	// WHO THE FUCK PISSED ME OFF!?
+	else if (mind->me->attacker && (mind->me->attacker->health > 0) && (P_CheckSight(mind->me->mo, mind->me->attacker)))	// WHO THE FUCK PISSED ME OFF!?
 	{
 		mind->target = mind->me->attacker;
 		mind->node = BA_ATTACKING;
-		B_GoBackExploring(mind);
 	}
 	else
 	{
@@ -463,6 +505,9 @@ void B_Gather(botcontrol_t *mind)
 			DIDWEGETTHEWEAPON(MT_MISC26, wp_chainsaw)
 			DIDWEGETTHEWEAPON(MT_MISC27, wp_missile)
 			DIDWEGETTHEWEAPON(MT_MISC28, wp_plasma)
+			
+			if ((mind->target->state == S_NULL) || (mind->target->mobjdontexist))
+				B_GoBackExploring(mind);
 		}
 		else
 			B_GoBackExploring(mind);
