@@ -180,26 +180,37 @@ void B_Look(botcontrol_t *mind)
 			if ((P_CheckSight(mind->me->mo, (mobj_t*)currentthinker)) &&
 							(mind->me->mo != (mobj_t*)currentthinker))
 			{
+				// Barrel
+				if ((((mobj_t*)currentthinker)->type == MT_BARREL) && (B_Distance(((mobj_t*)currentthinker), mind->me->mo) > 256))
+				{
+					SETTARGET(20, BA_ATTACKING)
+				}
+				
 				/* ENEMY PLAYER */
 				//DOWHENENEMY(MT_PLAYER, 100, BA_ATTACKING)
-				if ((((mobj_t*)currentthinker)->type == MT_PLAYER) && deathmatch)
+				if ((((mobj_t*)currentthinker)->type == MT_PLAYER))
 				{
 					int isanally;
 					int i;
 					
-					for (i = 0; i < MAXPLAYERS; i++)
+					if (deathmatch)
 					{
-						if (playeringame[i])
-							if (((mobj_t*)currentthinker) == players[i].mo)
-							{
-								if (mind->allied[i] == 1)
-									isanally = 1;
-								else
-									isanally = 0;
+						for (i = 0; i < MAXPLAYERS; i++)
+						{
+							if (playeringame[i])
+								if (((mobj_t*)currentthinker) == players[i].mo)
+								{
+									if (mind->allied[i] == 1)
+										isanally = 1;
+									else
+										isanally = 0;
 									
-								break;
-							}
+									break;
+								}
+						}
 					}
+					else
+						isanally = 1;	// Coop = always an ally
 					
 					if (isanally == 0)
 					{
@@ -221,6 +232,14 @@ void B_Look(botcontrol_t *mind)
 								newtarget = ((mobj_t*)currentthinker);
 								mind->node = BA_ATTACKING;
 							}
+						}
+					}
+					else
+					{
+						// Follow it! =)
+						if (((mobj_t*)currentthinker)->health > 0)
+						{
+							mind->follower = ((mobj_t*)currentthinker);
 						}
 					}
 				}
@@ -290,13 +309,13 @@ void B_Look(botcontrol_t *mind)
 }
 
 void B_Explore(botcontrol_t *mind)
-{
-	BOTTEXT("EXPLORING");
-	
+{	
 	B_Look(mind);
 	
-	if (mind->node == BA_EXPLORING)
+	if ((mind->node == BA_EXPLORING) && (mind->follower == NULL))
 	{
+		BOTTEXT("EXPLORING");
+		
 		// Forward Moving
 		if (mind->forwardtics > 0)
 		{
@@ -365,9 +384,33 @@ void B_Explore(botcontrol_t *mind)
 			mind->sidetics++;
 		}
 	}
+	else if (mind->follower)
+	{
+		BOTTEXT("FOLLOWING");
+		if (mind->follower == NULL)
+			B_GoBackExploring(mind);
+		if ((mind->follower->state == S_NULL) ||
+			(mind->follower->health < 1) ||
+			(!P_CheckSight(mind->me->mo, mind->follower)))
+		{
+			mind->follower = NULL;
+			B_GoBackExploring(mind);
+		}
+		else
+		{
+			B_FaceFollower(mind);
+			
+			if (B_Distance(mind->follower, mind->me->mo) < BOTFOLLOWDISTANCE)	// move back
+				mind->cmd->forwardmove = -botforwardmove[0];
+			else if (B_Distance(mind->follower, mind->me->mo) > (BOTFOLLOWDISTANCE * 3))	// run forward
+				mind->cmd->forwardmove = botforwardmove[1];
+			else if (B_Distance(mind->follower, mind->me->mo) > BOTFOLLOWDISTANCE + 2)	// walk forwards
+				mind->cmd->forwardmove = botforwardmove[0];
+		}
+	}
 }
 
-void B_FaceTarget(botcontrol_t *mind)
+void B_UniversalTarget(botcontrol_t *mind, mobj_t *target)
 {
 	angle_t victimangle = 0;
 	angle_t myangle = 0;
@@ -379,13 +422,9 @@ void B_FaceTarget(botcontrol_t *mind)
 	int someoffset = 0;
 	
 	// First Face the target
-	actualangle = R_PointToAngle2 (mind->me->mo->x, mind->me->mo->y, mind->target->x ,mind->target->y);
+	actualangle = R_PointToAngle2 (mind->me->mo->x, mind->me->mo->y, target->x ,target->y);
 	virtualangle = mind->me->mo->angle;
 	myangle = mind->me->mo->angle;
-	
-	/* Thinking some more
-		player->mo->angle += (cmd->angleturn<<16);
-	*/
 	
 	someactualangle = actualangle >> 16;
 	somevirtualangle = virtualangle >> 16;
@@ -404,4 +443,20 @@ void B_FaceTarget(botcontrol_t *mind)
 		}
 	}
 }
+
+void B_FaceTarget(botcontrol_t *mind)
+{
+	B_UniversalTarget(mind, mind->target);
+}
+
+void B_FaceFollower(botcontrol_t *mind)
+{
+	B_UniversalTarget(mind, mind->follower);
+}
+
+
+void B_Follow(botcontrol_t *mind)
+{
+}
+
 

@@ -26,15 +26,14 @@
 #include "b_bot.h"
 #include "m_misc.h"
 
-int botplayer = 0;
+int botplayer;
 botcontrol_t botactions[MAXPLAYERS];
 void B_PerformPress(botcontrol_t *mind);
 int interuse = 0;
 char *botmessage;
 
 void B_BuildTicCommand(ticcmd_t* cmd)
-{
-	botplayer = consoleplayer;
+{	
 	botcontrol_t *me = &botactions[botplayer];
 	me->cmd = cmd;
 	me->cmd->buttons = 0;
@@ -112,6 +111,14 @@ void B_BuildTicCommand(ticcmd_t* cmd)
 			interuse = 100;
 		}
 	}
+	
+	if (lowres_turn)
+	{
+		// round angleturn to the nearest 256 boundary
+		// for recording demos with single byte values for turn
+
+		me->cmd->angleturn = (me->cmd->angleturn + 128) & 0xff00;
+	}
 }
 
 botcontrol_t *mind2;
@@ -163,7 +170,7 @@ void B_PerformPress(botcontrol_t *mind)
     P_PathTraverse ( x1, y1, x2, y2, PT_ADDLINES, B_UseTraverse);
 }
 
-static void B_GoBackExploring(botcontrol_t *mind)
+void B_GoBackExploring(botcontrol_t *mind)
 {
 	mind->cmd->buttons = 0;
 	mind->node = BA_EXPLORING;
@@ -191,8 +198,9 @@ void B_AttackTarget(botcontrol_t *mind)
 				{
 					case wp_fist:		// chharrrge!!
 					case wp_chainsaw:
-						// see if we can actually hit it with the fist
-						if (mind->target->info->radius > 50)
+						// see if we can actually hit it with the fist/chainsaw...
+						if ((mind->target->type == MT_BABY) ||
+							(mind->target->type == MT_SPIDER))
 						{
 							int j;
 							for (j = 0; j < NUMWEAPONS; j++)

@@ -39,6 +39,7 @@ typedef struct botcontrol_s
 {
 	ticcmd_t *cmd;
 	mobj_t *target;
+	mobj_t *follower;
 	player_t *me;
 	int node;
 	
@@ -60,6 +61,7 @@ enum
 	BA_ATTACKING,
 	BA_GATHERING,
 	BA_EXPLORING,
+	BA_FOLLOWING,
 };
 	
 void B_BuildTicCommand(ticcmd_t* cmd);
@@ -69,12 +71,16 @@ void B_Explore(botcontrol_t *mind);
 void B_AttackTarget(botcontrol_t *mind);
 int B_Distance(mobj_t *a, mobj_t *b);
 void B_FaceTarget(botcontrol_t *mind);
+void B_FaceFollower(botcontrol_t *mind);
+void B_Follow(botcontrol_t *mind);
+void B_GoBackExploring(botcontrol_t *mind);
 
 extern fixed_t         botforwardmove[2]; 
 extern fixed_t         botsidemove[2]; 
 extern fixed_t         botangleturn[3];    // + slow turn 
 extern char *botmessage;
 
+#define BOTFOLLOWDISTANCE 150
 #define BOTTEXT(message) botmessage = message;
 
 #endif /* __B_BOT_H__ */

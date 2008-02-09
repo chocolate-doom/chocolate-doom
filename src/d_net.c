@@ -49,6 +49,8 @@
 #include "net_sdl.h"
 #include "net_loop.h"
 
+#include "b_bot.h"
+
 
 //
 // NETWORKING
@@ -202,20 +204,69 @@ void NetUpdate (void)
 	}
 
 	//printf ("mk:%i ",maketic);
-	G_BuildTiccmd(&cmd);
+	if (localnetgame && !demoplayback)
+	{
+		int i;
+		ticcmd_t tmp;
+		
+		for (i = 0; i < MAXPLAYERS; i++)
+		{
+			tmp.forwardmove = 0;
+			tmp.sidemove = 0;
+			tmp.angleturn = 0;
+			tmp.chatchar = 0;
+			tmp.buttons = 0;
+			tmp.consistancy = 0;
+			
+			if (i == 0)
+				G_BuildTiccmd(&tmp, 0);
+			else
+			{
+				if (playeringame[i])
+				{
+					botplayer = i;
+					B_BuildTicCommand(&tmp);//&(players[i].cmd));
+				}
+			}
+			
+			nettics[i] = maketic;
+			netcmds[i][maketic % BACKUPTICS] = tmp;
+		}
+		
+		++maketic;
+		//for (i = 1; i < 1+ingamebots;i++);
+		//	G_BuildTiccmd(&(players[i].cmd), 1);
+		//G_BuildTiccmd(&cmd, 0);
+	}
+	else
+		G_BuildTiccmd(&cmd, 0);
 
 #ifdef FEATURE_MULTIPLAYER
         
-        if (netgame && !demoplayback)
+        if (netgame && !demoplayback && !localnetgame)
         {
             NET_CL_SendTiccmd(&cmd, maketic);
+            
+             netcmds[consoleplayer][maketic % BACKUPTICS] = cmd;
+
+			++maketic;
+				nettics[consoleplayer] = maketic;
         }
+        /*else if (localnetgame)
+        {
+        	for (i = 0; i < MAXPLAYERS; i++)
+        		if (playeringame[i])
+        		{
+        			netcmds[i][maketic % BACKUPTICS] = players[i].cmd;
+
+					nettics[i] = maketic;
+					
+        			NET_CL_SendTiccmd(&(players[i].cmd), maketic);
+        		}
+        	++maketic;
+        }*/
 
 #endif
-        netcmds[consoleplayer][maketic % BACKUPTICS] = cmd;
-
-	++maketic;
-        nettics[consoleplayer] = maketic;
     }
 }
 

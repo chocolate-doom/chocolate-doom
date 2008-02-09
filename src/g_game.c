@@ -387,7 +387,7 @@ int G_CmdChecksum (ticcmd_t* cmd)
 
 int LastTic = 0;
 
-void G_BuildTiccmd (ticcmd_t* cmd) 
+void G_BuildTiccmd (ticcmd_t* cmd, int bot) 
 { 
     int		i; 
     boolean	strafe;
@@ -407,14 +407,12 @@ void G_BuildTiccmd (ticcmd_t* cmd)
 
 	if (M_CheckParm("-bot"))
 	{
-		B_BuildTicCommand(cmd);
-		/*if (lowres_turn)
+		if (gametic > LastTic)
 		{
-			// round angleturn to the nearest 256 boundary
-			// for recording demos with single byte values for turn
-
-			cmd->angleturn = (cmd->angleturn + 128) & 0xff00;
-		}*/
+			B_BuildTicCommand(cmd);
+			
+			LastTic = gametic;
+		}
 	}
 	else
 	{
@@ -935,7 +933,7 @@ void G_Ticker (void)
                 turbodetected[i] = false;
 	    }
 			
-	    if (netgame && !netdemo && !(gametic%ticdup) ) 
+	    if (netgame && !netdemo && !(gametic%ticdup) && !localnetgame ) 
 	    { 
 		if (gametic > BACKUPTICS 
 		    && consistancy[i][buf] != cmd->consistancy) 
@@ -1668,9 +1666,9 @@ G_InitNew
     M_ClearRandom (); 
 	 
     if (skill == sk_nightmare || respawnparm )
-	respawnmonsters = true;
+		respawnmonsters = true;
     else
-	respawnmonsters = false;
+		respawnmonsters = false;
 		
     if (fastparm || (skill == sk_nightmare && gameskill != sk_nightmare) )
     { 
@@ -1692,7 +1690,7 @@ G_InitNew
 			 
     // force players to be initialized upon first level load         
     for (i=0 ; i<MAXPLAYERS ; i++) 
-	players[i].playerstate = PST_REBORN; 
+		players[i].playerstate = PST_REBORN; 
  
     usergame = true;                // will be set false if a demo 
     paused = false; 

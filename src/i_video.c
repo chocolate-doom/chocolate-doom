@@ -1161,7 +1161,7 @@ static void CheckCommandLine(void)
     // Don't grab the mouse when running in windowed mode.
     //
 
-    if (M_CheckParm("-nograbmouse") || M_CheckParm("-bot"))
+    if (M_CheckParm("-nograbmouse"))
     {
         grabmouse = false;
     }

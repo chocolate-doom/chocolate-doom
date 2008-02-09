@@ -167,6 +167,7 @@ typedef struct player_s
     
     int 		color;
     int deaths;
+    int bot;	// is a bot
 
 } player_t;
 

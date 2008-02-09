@@ -72,7 +72,7 @@ void G_WorldDone (void);
 
 // Read current data from inputs and build a player movement command.
 
-void G_BuildTiccmd (ticcmd_t *cmd); 
+void G_BuildTiccmd (ticcmd_t *cmd, int bot); 
 
 void G_Ticker (void);
 boolean G_Responder (event_t*	ev);

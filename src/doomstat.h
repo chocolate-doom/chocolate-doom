@@ -73,6 +73,10 @@ extern  boolean	modifiedgame;
 // Selected skill type, map etc.
 //
 
+// GhostlyDeath -- bots in game
+extern int ingamebots;
+extern int localnetgame;
+
 // Defaults for menu, methinks.
 extern  skill_t		startskill;
 extern  int             startepisode;

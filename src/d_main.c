@@ -103,6 +103,9 @@ boolean         nomonsters;	// checkparm of -nomonsters
 boolean         respawnparm;	// checkparm of -respawn
 boolean         fastparm;	// checkparm of -fast
 
+int ingamebots = 0;
+int localnetgame = 0;
+
 boolean		singletics = false; // debug flag to cancel adaptiveness
 
 
@@ -138,7 +141,7 @@ char		mapdir[1024];           // directory of development maps
 
 void D_CheckNetGame (void);
 void D_ProcessEvents (void);
-void G_BuildTiccmd (ticcmd_t* cmd);
+void G_BuildTiccmd (ticcmd_t* cmd, int bot);
 void D_DoAdvanceDemo (void);
 
 
@@ -431,7 +434,7 @@ void D_DoomLoop (void)
 	{
 	    I_StartTic ();
 	    D_ProcessEvents ();
-	    G_BuildTiccmd (&netcmds[consoleplayer][maketic%BACKUPTICS]);
+	    G_BuildTiccmd (&netcmds[consoleplayer][maketic%BACKUPTICS], 0);
 	    if (advancedemo)
 		D_DoAdvanceDemo ();
 	    M_Ticker ();
@@ -1480,10 +1483,35 @@ void D_DoomMain (void)
         strcpy(file, P_SaveGameFile(startloadgame));
 	G_LoadGame (file);
     }
+
+	p = M_CheckParm ("-ingamebots");
+
+	if (p && p < myargc-1)
+	{
+		int i;
+		
+		ingamebots = myargv[p+1][0]-'0';
+	
+		if (ingamebots < 1)
+			ingamebots = 1;
+		else if (ingamebots > 3)
+			ingamebots = 3;
+		
+		if (ingamebots == 1)
+			playeringame[1] = 1;
+		else if (ingamebots == 2)
+			playeringame[1] = playeringame[2] = 1;
+		else if (ingamebots == 3)
+			playeringame[1] = playeringame[2] = playeringame[3] = 1;
+		
+		autostart = true;
+		localnetgame = true;
+		netgame = true;
+	}
 	
     if (gameaction != ga_loadgame )
     {
-	if (autostart || netgame)
+	if (autostart || netgame || localnetgame)
 	    G_InitNew (startskill, startepisode, startmap);
 	else
 	    D_StartTitle ();                // start up intro loop
