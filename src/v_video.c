@@ -40,6 +40,7 @@
 
 #include "v_video.h"
 
+#include "z_zone.h"
 
 // Each screen is [SCREENWIDTH*SCREENHEIGHT]; 
 byte*				screens[5];	
@@ -484,8 +485,11 @@ void V_Init (void)
 		
     // stick these in low dos memory on PCs
 
-    base = I_AllocLow (SCREENWIDTH*SCREENHEIGHT*4);
+    base = Z_Malloc(SCREENWIDTH * SCREENHEIGHT * 4, PU_STATIC, NULL);
 
     for (i=0 ; i<4 ; i++)
+    {
 	screens[i] = base + i*SCREENWIDTH*SCREENHEIGHT;
+    }
 }
+
