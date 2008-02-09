@@ -197,11 +197,11 @@ void NetUpdate (void)
            if (maketic - gameticdiv > 8)
                break;
         }
-	else
-	{
-           if (maketic - gameticdiv >= 5)
-               break;
-	}
+		else
+		{
+		       if (maketic - gameticdiv >= 5)
+		           break;
+		}
 
 	//printf ("mk:%i ",maketic);
 	if (localnetgame && !demoplayback)
@@ -234,9 +234,6 @@ void NetUpdate (void)
 		}
 		
 		++maketic;
-		//for (i = 1; i < 1+ingamebots;i++);
-		//	G_BuildTiccmd(&(players[i].cmd), 1);
-		//G_BuildTiccmd(&cmd, 0);
 	}
 	else
 		G_BuildTiccmd(&cmd, 0);
@@ -246,28 +243,17 @@ void NetUpdate (void)
         if (netgame && !demoplayback && !localnetgame)
         {
             NET_CL_SendTiccmd(&cmd, maketic);
-            
+         }
+#endif
+
+		if (!localnetgame)
+		{
              netcmds[consoleplayer][maketic % BACKUPTICS] = cmd;
 
 			++maketic;
 				nettics[consoleplayer] = maketic;
-        }
-        /*else if (localnetgame)
-        {
-        	for (i = 0; i < MAXPLAYERS; i++)
-        		if (playeringame[i])
-        		{
-        			netcmds[i][maketic % BACKUPTICS] = players[i].cmd;
-
-					nettics[i] = maketic;
-					
-        			NET_CL_SendTiccmd(&(players[i].cmd), maketic);
-        		}
-        	++maketic;
-        }*/
-
-#endif
-    }
+		}
+		}
 }
 
 //
