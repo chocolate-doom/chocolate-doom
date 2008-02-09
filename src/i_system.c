@@ -99,6 +99,21 @@ byte *I_ZoneBase (int *size)
     return zonemem;
 }
 
+// 
+// I_ConsoleStdout
+//
+// Returns true if stdout is a real console, false if it is a file
+//
+
+boolean I_ConsoleStdout(void)
+{
+#ifdef _WIN32
+    // SDL "helpfully" always redirects stdout to a file.
+    return 0;
+#else
+    return isatty(fileno(stdout));
+#endif
+}
 
 //
 // I_Init
