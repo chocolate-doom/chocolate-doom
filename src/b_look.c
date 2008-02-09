@@ -181,8 +181,8 @@ void B_Look(botcontrol_t *mind)
 							(mind->me->mo != (mobj_t*)currentthinker))
 			{
 				/* ENEMY PLAYER */
-				DOWHENENEMY(MT_PLAYER, 100, BA_ATTACKING)
-				/*if ((((mobj_t*)currentthinker)->type == MT_PLAYER) && deathmatch)
+				//DOWHENENEMY(MT_PLAYER, 100, BA_ATTACKING)
+				if ((((mobj_t*)currentthinker)->type == MT_PLAYER) && deathmatch)
 				{
 					int isanally;
 					int i;
@@ -223,7 +223,7 @@ void B_Look(botcontrol_t *mind)
 							}
 						}
 					}
-				}*/
+				}
 		
 				/* MONSTERS */
 				// Boss Monsters that may win the game (ingore barons of hell here)
