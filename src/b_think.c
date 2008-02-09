@@ -58,6 +58,12 @@ void B_BuildTicCommand(ticcmd_t* cmd)
 		
 	B_PerformPress(me);
 	
+	if (me->usecooldown > 70)
+		me->usecooldown = 70;
+	
+	if (me->usecooldown > 0)
+		me->usecooldown--;
+	
 	if (M_CheckParm("-botdebug"))
 		if (gametic % 35 == 0)
 			if (me->target)
@@ -141,8 +147,13 @@ boolean	B_UseTraverse (intercept_t* in)
     side = 0;
     if (P_PointOnLineSide (botusething->x, botusething->y, in->d.line) == 1)
 		side = 1;
-		
-	mind2->cmd->buttons |= BT_USE;
+	
+	if (mind2->usecooldown < 1)
+	{
+		mind2->cmd->buttons |= BT_USE;
+		mind2->usecooldown = 70;
+	}
+	
 
     // can't use for than one special line in a row
     return false;

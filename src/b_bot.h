@@ -50,6 +50,7 @@ typedef struct botcontrol_s
 	int turntics;
 	int allied[MAXPLAYERS];
 	int attackcooldown;
+	int usecooldown;
 } botcontrol_t;
 
 extern int botplayer;

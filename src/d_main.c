@@ -1498,11 +1498,20 @@ void D_DoomMain (void)
 			ingamebots = 3;
 		
 		if (ingamebots == 1)
+		{
 			playeringame[1] = 1;
+			players[1].bot = 1;
+		}
 		else if (ingamebots == 2)
+		{
 			playeringame[1] = playeringame[2] = 1;
+			players[1].bot = players[2].bot = 1;
+		}
 		else if (ingamebots == 3)
+		{
 			playeringame[1] = playeringame[2] = playeringame[3] = 1;
+			players[1].bot = players[2].bot = players[3].bot = 1;
+		}
 		
 		autostart = true;
 		localnetgame = true;

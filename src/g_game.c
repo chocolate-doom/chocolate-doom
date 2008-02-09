@@ -1071,6 +1071,7 @@ void G_PlayerReborn (int player)
     int		deaths;
     int		color;
     int team;
+    int bot;
 	 
     memcpy (frags,players[player].frags,sizeof(frags)); 
     killcount = players[player].killcount; 
@@ -1079,6 +1080,7 @@ void G_PlayerReborn (int player)
     deaths = players[player].deaths;
     color = players[player].color;
     team = players[player].team;
+    bot = players[player].bot;
 	 
     p = &players[player]; 
     memset (p, 0, sizeof(*p)); 
@@ -1098,6 +1100,7 @@ void G_PlayerReborn (int player)
     p->weaponowned[wp_pistol] = true; 
     p->ammo[am_clip] = deh_initial_bullets; 
     p->team = team;
+    p->bot = bot;
     
     if (p->team > 0)
     {

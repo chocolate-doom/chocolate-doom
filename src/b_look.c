@@ -248,10 +248,13 @@ void B_Look(botcontrol_t *mind)
 					else
 					{
 						// Follow it! =)
-						if((25 >= targpin) && (((mobj_t*)currentthinker)->health > 0))
+						if((9 >= targpin) && (((mobj_t*)currentthinker)->health > 0))
 						{
-							mind->follower = ((mobj_t*)currentthinker);
-							targpin = 25;
+							if ((((mobj_t*)currentthinker)->player && !((((mobj_t*)currentthinker)->player->bot))))
+							{
+								mind->follower = ((mobj_t*)currentthinker);
+								targpin = 9;
+							}
 						}
 					}
 				}
@@ -332,9 +335,7 @@ void B_Explore(botcontrol_t *mind)
 	B_Look(mind);
 	
 	if ((mind->node == BA_EXPLORING) && ((mind->follower == NULL) || (mind->follower && mind->attackcooldown > 0)))
-	{
-		BOTTEXT("EXPLORING");
-		
+	{	
 		// Forward Moving
 		if (mind->forwardtics > 0)
 		{
