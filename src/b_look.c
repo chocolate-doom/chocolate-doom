@@ -212,7 +212,7 @@ void B_Look(botcontrol_t *mind)
 					{
 						if ((((mobj_t*)currentthinker)->player))
 						{
-							if ((((mobj_t*)currentthinker)->player->team) == mind->me->team)
+							if (((((mobj_t*)currentthinker)->player->team) == mind->me->team) && (mind->me->team != 0))
 								isanally = 1;
 							else
 								isanally = 0;

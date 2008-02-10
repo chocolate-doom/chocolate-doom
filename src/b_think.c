@@ -195,7 +195,7 @@ void B_AttackTarget(botcontrol_t *mind)
 
 	if (mind->target == NULL) // welp, it seems our target decided to die
 		B_GoBackExploring(mind);
-	else if (mind->target->player && (mind->target->player->team == mind->me->team))
+	else if (mind->target->player && (mind->target->player->team == mind->me->team) && (mind->me->team != 0))
 		B_GoBackExploring(mind);
 	else
 	{

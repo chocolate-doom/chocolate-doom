@@ -1483,6 +1483,15 @@ void D_DoomMain (void)
         strcpy(file, P_SaveGameFile(startloadgame));
 	G_LoadGame (file);
     }
+    
+    {	// scopes are fun stuff in C
+    	int i;	// clear some stuff up incase
+    	for (i = 0;i < MAXPLAYERS; i++)
+    	{
+    		players[i].bot = 0;
+    		players[i].team = 0;
+    	}
+    }
 
 	p = M_CheckParm ("-ingamebots");
 

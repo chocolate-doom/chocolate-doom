@@ -490,8 +490,13 @@ void HU_Drawer(void)
     			}
     			else
 	    			sprintf(playername, "%s", net_player_names[i]);
+	    			
+	    		/*
+	    		    			if (((players[consoleplayer].team == players[i].team && (players[consoleplayer].team != 0)) || (!deathmatch || demoplayback))
+	    		    			*/
     			
-    			if ((players[consoleplayer].team == players[i].team) || (!deathmatch || demoplayback))
+    			if ((deathmatch && ((players[consoleplayer].team == players[i].team) && (players[consoleplayer].team != 0))) ||
+    				!deathmatch)
     			{
 					// Life    				
     				curlife = players[i].health;
