@@ -33,14 +33,18 @@
 #include "txt_strut.h"
 #include "txt_table.h"
 
-static void TXT_TableDestructor(TXT_UNCAST_ARG(table))
+// Remove all entries from a table
+
+void TXT_ClearTable(TXT_UNCAST_ARG(table))
 {
     TXT_CAST_ARG(txt_table_t, table);
     int i;
 
     // Free all widgets
+    // Skip over the first (num_columns) widgets in the array, as these
+    // are the column struts used to control column width
 
-    for (i=0; i<table->num_widgets; ++i)
+    for (i=table->columns; i<table->num_widgets; ++i)
     {
         if (table->widgets[i] != NULL)
         {
@@ -48,9 +52,16 @@ static void TXT_TableDestructor(TXT_UNCAST_ARG(table))
         }
     }
     
-    // Free table resources
+    // Shrink the table to just the column strut widgets
 
-    free(table->widgets);
+    table->num_widgets = table->columns;
+}
+
+static void TXT_TableDestructor(TXT_UNCAST_ARG(table))
+{
+    TXT_CAST_ARG(txt_table_t, table);
+
+    TXT_ClearTable(table);
 }
 
 static int TableRows(txt_table_t *table)

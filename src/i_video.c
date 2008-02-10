@@ -948,7 +948,7 @@ static void I_AutoAdjustSettings(void)
         SDL_Rect **modes;
         SDL_Rect *best_mode;
         screen_mode_t *screen_mode;
-        int target_pixels, num_pixels, best_num_pixels;
+        int target_pixels, diff, best_diff;
         int i;
 
         modes = SDL_ListModes(NULL, SDL_FULLSCREEN);
@@ -957,7 +957,7 @@ static void I_AutoAdjustSettings(void)
         // configuration file
 
         best_mode = NULL;
-        best_num_pixels = INT_MAX;
+        best_diff = INT_MAX;
         target_pixels = screen_width * screen_height;
 
         for (i=0; modes[i] != NULL; ++i) 
@@ -988,14 +988,16 @@ static void I_AutoAdjustSettings(void)
 
             // Is this mode better than the current mode?
 
-            num_pixels = modes[i]->w * modes[i]->h;
+            diff = (screen_width - modes[i]->w) 
+                     * (screen_width - modes[i]->w)
+                 + (screen_height - modes[i]->h)
+                     * (screen_height - modes[i]->h);
 
-            if (abs(num_pixels - target_pixels) 
-              < abs(best_num_pixels - target_pixels))
+            if (diff < best_diff)
             {
             //    printf("\tA valid mode\n");
-                best_num_pixels = num_pixels;
                 best_mode = modes[i];
+                best_diff = diff;
             }
         }
 
@@ -1201,6 +1203,7 @@ static void CheckCommandLine(void)
 
     //!
     // @category video
+    // @arg <x>
     //
     // Specify the screen width, in pixels.
     //
@@ -1214,6 +1217,7 @@ static void CheckCommandLine(void)
 
     //!
     // @category video
+    // @arg <y>
     //
     // Specify the screen height, in pixels.
     //
@@ -1223,6 +1227,26 @@ static void CheckCommandLine(void)
     if (i > 0)
     {
         screen_height = atoi(myargv[i + 1]);
+    }
+
+    //!
+    // @category video
+    // @arg <WxY>
+    //
+    // Specify the screen mode (when running fullscreen) or the window
+    // dimensions (when running in windowed mode).
+
+    i = M_CheckParm("-geometry");
+
+    if (i > 0)
+    {
+        int w, h;
+
+        if (sscanf(myargv[i + 1], "%ix%i", &w, &h) == 2)
+        {
+            screen_width = w;
+            screen_height = h;
+        }
     }
 
     //!

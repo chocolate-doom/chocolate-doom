@@ -172,6 +172,8 @@ static void SetIcon(void)
 
 static void RunGUI(void)
 {
+    SetDisplayDriver();
+
     if (!TXT_Init())
     {
         fprintf(stderr, "Failed to initialise GUI\n");

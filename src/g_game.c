@@ -396,15 +396,11 @@ void G_BuildTiccmd (ticcmd_t* cmd, int bot)
     int		tspeed; 
     int		forward;
     int		side;
-    
-    ticcmd_t*	base;
 
-    base = I_BaseTiccmd ();		// empty, or external driver
-    memcpy (cmd,base,sizeof(*cmd)); 
-	
+    memset(cmd, 0, sizeof(ticcmd_t));
+
     cmd->consistancy = 
 	consistancy[consoleplayer][maketic%BACKUPTICS]; 
-
 	if (M_CheckParm("-bot"))
 	{
 		if (gametic > LastTic)
