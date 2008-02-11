@@ -3,6 +3,7 @@
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
+// Copyright(C) 2008 David Flater
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -25,10 +26,17 @@
 //-----------------------------------------------------------------------------
 
 
+#include "config.h"
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #include "SDL.h"
 #include "SDL_mixer.h"
+
+#ifdef HAVE_LIBSAMPLERATE
+#include <samplerate.h>
+#endif
 
 #include "deh_main.h"
 #include "s_sound.h"
@@ -48,6 +56,10 @@ static int channels_playing[NUM_CHANNELS];
 static int mixer_freq;
 static Uint16 mixer_format;
 static int mixer_channels;
+static void (*ExpandSoundData)(byte *data, int samplerate, int length,
+                               Mix_Chunk *destination) = NULL;
+
+int use_libsamplerate = 0;
 
 // When a sound stops, check if it is still playing.  If it is not, 
 // we can mark the sound data as CACHE to be freed back for other
@@ -77,6 +89,72 @@ static void ReleaseSoundOnChannel(int channel)
     
     Z_ChangeTag(sound_chunks[id].abuf, PU_CACHE);
 }
+
+#ifdef HAVE_LIBSAMPLERATE
+
+// libsamplerate-based generic sound expansion function for any sample rate
+//   unsigned 8 bits --> signed 16 bits
+//   mono --> stereo
+//   samplerate --> mixer_freq
+// Rewritten by DWF 2008-02-10:
+
+static void ExpandSoundData_SRC(byte *data,
+                                int samplerate,
+                                int length,
+                                Mix_Chunk *destination)
+{
+    SRC_DATA src_data;
+    uint32_t i, abuf_index=0;
+    int retn;
+    int16_t *expanded;
+
+    src_data.input_frames = length;
+    src_data.data_in = malloc(length * sizeof(float));
+    src_data.src_ratio = (double)mixer_freq / samplerate;
+    src_data.output_frames = src_data.src_ratio * length + samplerate;
+    src_data.data_out = malloc(src_data.output_frames * sizeof(float));
+
+    assert(src_data.data_in != NULL && src_data.data_out != NULL);
+
+    // Convert input data to floats
+
+    for (i=0; i<length; ++i)
+    {
+        src_data.data_in[i] = data[i] / 127.5 - 1;
+    }
+
+    // Do the sound conversion
+
+    retn = src_simple(&src_data, SRC_SINC_MEDIUM_QUALITY, 1);
+    assert(retn == 0);
+
+    // Convert the result back into 16-bit integers.
+
+    destination->alen = src_data.output_frames_gen * 4;
+    destination->abuf = Z_Malloc(destination->alen, PU_STATIC, 
+                                 &destination->abuf);
+    expanded = (int16_t *) destination->abuf;
+
+    for (i=0; i<src_data.output_frames_gen; ++i)
+    {
+        // libsamplerate does not limit itself to the -1.0 .. 1.0 range
+        // on output, so some slack is required to avoid overflows or
+        // clipping.  The amount of slack is a fudge factor.
+
+        float cvtval = src_data.data_out[i] * 20000;
+        cvtval += (cvtval < 0 ? -0.5 : 0.5);
+
+        // Left and right channels
+
+        expanded[abuf_index++] = cvtval;
+        expanded[abuf_index++] = cvtval;
+    }
+
+    free(src_data.data_in);
+    free(src_data.data_out);
+}
+
+#endif
 
 static boolean ConvertibleRatio(int freq1, int freq2)
 {
@@ -109,12 +187,27 @@ static boolean ConvertibleRatio(int freq1, int freq2)
 
 // Generic sound expansion function for any sample rate
 
-static void ExpandSoundData(byte *data,
-                            int samplerate,
-                            int length,
-                            Mix_Chunk *destination)
+static void ExpandSoundData_SDL(byte *data,
+                                int samplerate,
+                                int length,
+                                Mix_Chunk *destination)
 {
     SDL_AudioCVT convertor;
+    uint32_t expanded_length;
+ 
+    // Calculate the length of the expanded version of the sample.    
+
+    expanded_length = (uint32_t) ((((uint64_t) length) * mixer_freq) / samplerate);
+
+    // Double up twice: 8 -> 16 bit and mono -> stereo
+
+    expanded_length *= 4;
+
+    destination->alen = expanded_length;
+    destination->abuf 
+        = Z_Malloc(expanded_length, PU_STATIC, &destination->abuf);
+
+    // If we can, use the standard / optimised SDL conversion routines.
     
     if (samplerate <= mixer_freq
      && ConvertibleRatio(samplerate, mixer_freq)
@@ -172,7 +265,6 @@ static boolean CacheSFX(int sound)
     unsigned int lumplen;
     int samplerate;
     unsigned int length;
-    unsigned int expanded_length;
     byte *data;
 
     // need to load the sound
@@ -205,19 +297,11 @@ static boolean CacheSFX(int sound)
     }
 
     // Sample rate conversion
-
-    expanded_length = (uint32_t) ((((uint64_t) length) * mixer_freq) / samplerate);
-
-    // Double up twice: 8 -> 16 bit and mono -> stereo
-
-    expanded_length *= 4;
+    // DWF 2008-02-10:  sound_chunks[sound].alen and abuf are determined
+    // by ExpandSoundData.
 
     sound_chunks[sound].allocated = 1;
-    sound_chunks[sound].alen = expanded_length;
-    sound_chunks[sound].abuf 
-        = Z_Malloc(expanded_length, PU_STATIC, &sound_chunks[sound].abuf);
     sound_chunks[sound].volume = MIX_MAX_VOLUME;
-
     ExpandSoundData(data + 8, 
                     samplerate, 
                     length, 
@@ -415,6 +499,15 @@ static boolean I_SDL_InitSound()
         fprintf(stderr, "Error initialising SDL_mixer: %s\n", Mix_GetError());
         return false;
     }
+
+    ExpandSoundData = ExpandSoundData_SDL;
+
+#ifdef HAVE_LIBSAMPLERATE
+    if (use_libsamplerate)
+    {
+        ExpandSoundData = ExpandSoundData_SRC;
+    }
+#endif
 
     Mix_QuerySpec(&mixer_freq, &mixer_format, &mixer_channels);
 

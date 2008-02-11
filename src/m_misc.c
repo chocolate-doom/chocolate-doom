@@ -299,6 +299,10 @@ extern int snd_musicdevice;
 extern int snd_sfxdevice;
 extern int snd_samplerate;
 
+// controls whether to use libsamplerate for sample rate conversions
+
+extern int use_libsamplerate;
+
 // dos specific options: these are unused but should be maintained
 // so that the config file can be shared between chocolate
 // doom and doom.exe
@@ -444,6 +448,7 @@ static default_t extra_defaults_list[] =
     {"mouseb_backward",             &mousebbackward, DEFAULT_INT, 0, 0},
 
     {"dclick_use",                  &dclick_use, DEFAULT_INT, 0, 0},
+    {"use_libsamplerate",           &use_libsamplerate, DEFAULT_INT, 0, 0},
 };
 
 static default_collection_t extra_defaults =
