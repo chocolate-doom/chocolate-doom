@@ -71,7 +71,7 @@ int aspect_ratio_correct = 1;
 int fullscreen = 1;
 int screen_width = 320;
 int screen_height = 200;
-int startup_delay = 0;
+int startup_delay = 1000;
 int show_endoom = 1;
 
 // These are the last screen width/height values that were chosen by the
