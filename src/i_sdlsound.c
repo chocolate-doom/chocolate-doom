@@ -96,7 +96,7 @@ static void ReleaseSoundOnChannel(int channel)
 //   unsigned 8 bits --> signed 16 bits
 //   mono --> stereo
 //   samplerate --> mixer_freq
-// Rewritten by DWF 2008-02-10:
+// DWF 2008-02-10 with cleanups by Simon Howard.
 
 static void ExpandSoundData_SRC(byte *data,
                                 int samplerate,
@@ -111,7 +111,7 @@ static void ExpandSoundData_SRC(byte *data,
     src_data.input_frames = length;
     src_data.data_in = malloc(length * sizeof(float));
     src_data.src_ratio = (double)mixer_freq / samplerate;
-    src_data.output_frames = src_data.src_ratio * length + samplerate;
+    src_data.output_frames = src_data.src_ratio * length + 48000;
     src_data.data_out = malloc(src_data.output_frames * sizeof(float));
 
     assert(src_data.data_in != NULL && src_data.data_out != NULL);
@@ -125,7 +125,7 @@ static void ExpandSoundData_SRC(byte *data,
 
     // Do the sound conversion
 
-    retn = src_simple(&src_data, SRC_SINC_MEDIUM_QUALITY, 1);
+    retn = src_simple(&src_data, SRC_SINC_FASTEST, 1);
     assert(retn == 0);
 
     // Convert the result back into 16-bit integers.
@@ -472,6 +472,38 @@ static void I_SDL_ShutdownSound(void)
     sound_initialised = false;
 }
 
+
+// Preload all the sound effects - stops nasty ingame freezes
+
+static void I_PrecacheSounds(void)
+{
+    int i;
+
+    printf("I_PrecacheSounds: Precaching all sound effects..");
+
+    for (i=sfx_pistol; i<NUMSFX; ++i)
+    {
+        if ((i % 6) == 0)
+        {
+            printf(".");
+            fflush(stdout);
+        }
+
+        if (S_sfx[i].link == NULL)
+        {            
+            S_sfx[i].lumpnum = I_SDL_GetSfxLumpNum(&S_sfx[i]);
+            CacheSFX(i);
+
+            if (sound_chunks[i].abuf != NULL)
+            {
+                Z_ChangeTag(sound_chunks[i].abuf, PU_CACHE);
+            }
+        }
+    }
+
+    printf("\n");
+}
+
 static boolean I_SDL_InitSound()
 { 
     int i;
@@ -502,14 +534,16 @@ static boolean I_SDL_InitSound()
 
     ExpandSoundData = ExpandSoundData_SDL;
 
+    Mix_QuerySpec(&mixer_freq, &mixer_format, &mixer_channels);
+
 #ifdef HAVE_LIBSAMPLERATE
     if (use_libsamplerate)
     {
         ExpandSoundData = ExpandSoundData_SRC;
+
+        I_PrecacheSounds();
     }
 #endif
-
-    Mix_QuerySpec(&mixer_freq, &mixer_format, &mixer_channels);
 
     Mix_AllocateChannels(NUM_CHANNELS);
     
