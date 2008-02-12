@@ -442,6 +442,7 @@ void B_UniversalTarget(botcontrol_t *mind, mobj_t *target)
 	int somevirtualangle = 0;
 	int somemyangle = 0;
 	int someoffset = 0;
+	int badaim = 0;
 	
 	// First Face the target
 	actualangle = R_PointToAngle2 (mind->me->mo->x, mind->me->mo->y, target->x ,target->y);
@@ -452,7 +453,15 @@ void B_UniversalTarget(botcontrol_t *mind, mobj_t *target)
 	somevirtualangle = virtualangle >> 16;
 	somemyangle = myangle >> 16;
 	
-	while (somevirtualangle != someactualangle)
+	if (mind->skill < 5)
+		badaim = (((B_Random() * 10) % ((11 - (mind->skill * 2)) * 20)) + 1) * 750;
+	else
+		badaim = 0;
+		
+	if ((B_Random() % 2) == 0)
+		badaim *= -1;
+	
+	while (somevirtualangle != someactualangle + badaim)
 	{
 		if (somevirtualangle + someoffset < someactualangle)
 			someoffset++;

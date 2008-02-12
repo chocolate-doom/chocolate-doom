@@ -77,6 +77,7 @@
 
 
 #include "d_main.h"
+#include "b_bot.h"
 
 //
 // D-DoomLoop()
@@ -1526,6 +1527,57 @@ void D_DoomMain (void)
 		localnetgame = true;
 		netgame = true;
 	}
+	
+	// skills
+	if (M_CheckParm ("-bot1skill"))
+	{
+		p = M_CheckParm ("-bot1skill");
+		if (p && p < myargc-1)
+			botactions[1].skill = myargv[p+1][0]-'0';
+		else
+			botactions[1].skill = 3;
+	}
+	else
+		botactions[1].skill = 3;
+		
+	if (botactions[1].skill < 1)
+		botactions[1].skill = 1;
+	else if (botactions[1].skill > 5)
+		botactions[1].skill = 5;
+	
+	// skills
+	if (M_CheckParm ("-bot2skill"))
+	{
+		p = M_CheckParm ("-bot2skill");
+		if (p && p < myargc-1)
+			botactions[2].skill = myargv[p+1][0]-'0';
+		else
+			botactions[2].skill = 3;
+	}
+	else
+		botactions[2].skill = 3;
+		
+	if (botactions[2].skill < 1)
+		botactions[2].skill = 1;
+	else if (botactions[2].skill > 5)
+		botactions[2].skill = 5;
+	
+	// skills
+	if (M_CheckParm ("-bot3skill"))
+	{
+		p = M_CheckParm ("-bot3skill");
+		if (p && p < myargc-1)
+			botactions[3].skill = myargv[p+1][0]-'0';
+		else
+			botactions[3].skill = 3;
+	}
+	else
+		botactions[3].skill = 3;
+		
+	if (botactions[3].skill < 1)
+		botactions[3].skill = 1;
+	else if (botactions[3].skill > 5)
+		botactions[3].skill = 5;
 	
 	// teams: -team1 123 = Green, Indigo and Brown are allied
 	p = M_CheckParm ("-team1");
