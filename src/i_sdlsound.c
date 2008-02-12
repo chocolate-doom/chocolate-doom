@@ -111,7 +111,9 @@ static void ExpandSoundData_SRC(byte *data,
     src_data.input_frames = length;
     src_data.data_in = malloc(length * sizeof(float));
     src_data.src_ratio = (double)mixer_freq / samplerate;
-    src_data.output_frames = src_data.src_ratio * length + 48000;
+
+    // We include some extra space here in case of rounding-up.
+    src_data.output_frames = src_data.src_ratio * length + (mixer_freq / 4);
     src_data.data_out = malloc(src_data.output_frames * sizeof(float));
 
     assert(src_data.data_in != NULL && src_data.data_out != NULL);
