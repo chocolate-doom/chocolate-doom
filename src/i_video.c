@@ -130,7 +130,7 @@ int aspect_ratio_correct = true;
 // Time to wait for the screen to settle on startup before starting the
 // game (ms)
 
-int startup_delay = 0;
+int startup_delay = 1000;
 
 // Grab the mouse? (int type for config code)
 
