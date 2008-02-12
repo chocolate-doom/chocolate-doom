@@ -31,6 +31,8 @@ extern int musicVolume;
 
 extern int snd_samplerate;
 
+extern int use_libsamplerate;
+
 void ConfigSound(void);
 
 #endif /* #ifndef SETUP_SOUND_H */
