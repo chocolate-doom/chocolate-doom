@@ -7,9 +7,6 @@ To do:
 * mmap()ed WAD file I/O.  This is potentially useful for ports to 
   embedded / low memory systems, as currently the contents of WAD lumps
   are copied into the zone memory.
-* Better icon for chocolate-setup.
-* Free version of the Chocolate Doom logo (from scratch, not using the 
-  Doom imp sprite), so t-shirts can be printed!
 * File selector for chocolate-setup, so that WADs can be selected from
   a browser, instead of simply typing the filenames.
 * Multiplayer:

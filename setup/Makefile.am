@@ -3,9 +3,9 @@ gamesdir = $(prefix)/games
 
 AM_CFLAGS = @SDL_CFLAGS@ -I../textscreen -I../src -DINSTALL_DIR="\"$(gamesdir)\""
 
-games_PROGRAMS = strawberry-setup
+games_PROGRAMS = strawberry-config
 
-strawberry_setup_LDADD = ../textscreen/libtextscreen.a @LDFLAGS@ @SDL_LIBS@
+strawberry_config_LDADD = ../textscreen/libtextscreen.a @LDFLAGS@ @SDL_LIBS@
 SOURCE_FILES =                                  \
     compatibility.c   compatibility.h           \
     configfile.c      configfile.h              \
@@ -26,9 +26,9 @@ EXTRA_DIST=                                     \
     setup_icon.c
 
 if HAVE_WINDRES
-strawberry_setup_SOURCES=$(SOURCE_FILES) setup-res.rc
+strawberry_config_SOURCES=$(SOURCE_FILES) setup-res.rc
 else
-strawberry_setup_SOURCES=$(SOURCE_FILES)
+strawberry_config_SOURCES=$(SOURCE_FILES)
 endif
 
 .rc.o:

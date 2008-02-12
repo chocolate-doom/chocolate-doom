@@ -68,7 +68,8 @@ void M_MakeDirectory(char *path)
 #ifdef _WIN32
     mkdir(path);
 #else
-    mkdir(path, 0755);
+    mkdir(path, 0);	// GhostlyDeath -- eww Octal, rather use chmod!
+    chmod(path, S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP);
 #endif
 }
 
@@ -82,13 +83,33 @@ void M_MakeDirectory(char *path)
 
 void M_SetConfigDir(void)
 {
-#ifndef _WIN32
     // Ignore the HOME environment variable on Windows - just behave
     // like Vanilla Doom.
+	// GhostlyDeath: NO DONT! You'll break vista!
 
-    char *homedir;
+	int i;
+	char RealHomeDir[256];
+    char *homedir = NULL;
 
+#ifdef _WIN32	// Win32 goodness =)
+	for (i = 0; i < 256; i++)
+		RealHomeDir[i] = 0;
+	
+	if ((getenv("HOMEDRIVE") != NULL) && (getenv("HOMEPATH") != NULL))
+	{
+#ifdef _MSC_VER >= 1400
+		sprintf_s(RealHomeDir, 256, "%s%s", getenv("HOMEDRIVE"), getenv("HOMEPATH"));
+#elif __GNUC__
+		snprintf(RealHomeDir, 256, "%s%s", getenv("HOMEDRIVE"), getenv("HOMEPATH"));
+#else
+		sprintf(RealHomeDir, "%s%s", getenv("HOMEDRIVE"), getenv("HOMEPATH"));
+#endif
+
+		homedir = RealHomeDir;
+	}
+#else
     homedir = getenv("HOME");
+#endif
 
     if (homedir != NULL)
     {
@@ -97,18 +118,22 @@ void M_SetConfigDir(void)
 
         configdir = malloc(strlen(homedir) + strlen(PACKAGE_TARNAME) + 5);
 
-        sprintf(configdir, "%s/.%s/", homedir, PACKAGE_TARNAME);
+        sprintf(configdir, "%s%c.%s%c", homedir, DIR_SEPARATOR,
+			                PACKAGE_TARNAME, DIR_SEPARATOR);
 
         // make the directory if it doesnt already exist
 
         M_MakeDirectory(configdir);
     }
     else
-#endif /* #ifndef _WIN32 */
     {
-#ifdef _WIN32
-        // when given the -cdrom option, save config+savegames in 
-        // c:\doomdata.  This only applies under Windows.
+        //!
+        // @platform windows
+        // @vanilla
+        //
+        // Save configuration data and savegames in c:\doomdata,
+        // allowing play from CD.
+        //
 
         if (M_CheckParm("-cdrom") > 0)
         {
@@ -118,8 +143,7 @@ void M_SetConfigDir(void)
             M_MakeDirectory(configdir);
         }
         else
-#endif
-        {
+        {	// On non NT systems, it will be in the current dir but it works since they dont go nuts
             configdir = strdup("");
         }
     }
