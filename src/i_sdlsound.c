@@ -479,6 +479,7 @@ static void I_SDL_ShutdownSound(void)
 
 static void I_PrecacheSounds(void)
 {
+    char namebuf[9];
     int i;
 
     printf("I_PrecacheSounds: Precaching all sound effects..");
@@ -491,9 +492,12 @@ static void I_PrecacheSounds(void)
             fflush(stdout);
         }
 
-        if (S_sfx[i].link == NULL)
-        {            
-            S_sfx[i].lumpnum = I_SDL_GetSfxLumpNum(&S_sfx[i]);
+        sprintf(namebuf, "ds%s", DEH_String(S_sfx[i].name));
+
+        S_sfx[i].lumpnum = W_CheckNumForName(namebuf);
+
+        if (S_sfx[i].lumpnum != -1)
+        {
             CacheSFX(i);
 
             if (sound_chunks[i].abuf != NULL)
