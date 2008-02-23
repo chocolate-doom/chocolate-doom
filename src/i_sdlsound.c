@@ -46,6 +46,7 @@
 
 #include "doomdef.h"
 
+#define LOW_PASS_FILTER
 #define NUM_CHANNELS 16
 
 static boolean sound_initialised = false;
@@ -255,6 +256,33 @@ static void ExpandSoundData_SDL(byte *data,
 
             expanded[i * 2] = expanded[i * 2 + 1] = sample;
         }
+
+#ifdef LOW_PASS_FILTER
+        // Perform a low-pass filter on the upscaled sound to filter
+        // out high-frequency noise from the conversion process.
+
+        {
+            float rc, dt, alpha;
+
+            // Low-pass filter for cutoff frequency f:
+            //
+            // For sampling rate r, dt = 1 / r
+            // rc = 1 / 2*pi*f
+            // alpha = dt / (rc + dt)
+
+            // Filter to the half sample rate of the original sound effect
+            // (maximum frequency, by nyquist)
+
+            dt = 1.0 / mixer_freq;
+            rc = 1.0 / (3.14 * samplerate);
+            alpha = dt / (rc + dt);
+
+            for (i=1; i<expanded_length; ++i) 
+            {
+                expanded[i] = alpha * expanded[i] + (1 - alpha) * expanded[i-1];
+            }
+        }
+#endif /* #ifdef LOW_PASS_FILTER */
     }
 }
 
