@@ -1555,15 +1555,15 @@ void I_InitGraphics(void)
     {
 	screens[0] = (unsigned char *) Z_Malloc (SCREENWIDTH * SCREENHEIGHT, 
                                                  PU_STATIC, NULL);
-
-        // Clear the screen to black.
-
-        memset(screens[0], 0, SCREENWIDTH * SCREENHEIGHT);
     }
 
     // "Loading from disk" icon
 
     LoadDiskImage();
+
+    // Clear the screen to black.
+
+    memset(screens[0], 0, SCREENWIDTH * SCREENHEIGHT);
 
     // We need SDL to give us translated versions of keys as well
 
