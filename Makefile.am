@@ -49,7 +49,7 @@ SUBDIRS=textscreen pcsound src man setup
 if HAVE_PYTHON
 
 CMDLINE : src/
-	./man/docgen -p src/ > $@
+	./man/docgen -p man/CMDLINE.template src/ > $@
 
 endif
 

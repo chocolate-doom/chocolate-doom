@@ -1,3 +1,17 @@
+.TH chocolate\-doom 6
+.SH NAME
+chocolate\-doom \- historically compatible doom engine
+.SH SYNOPSIS
+.B chocolate\-doom
+[\fIOPTIONS\fR]
+.SH DESCRIPTION
+.PP
+Chocolate Doom is a modern doom engine designed to behave
+as similar to the original doom game as is possible.
+.br
+
+@content
+
 .SH ENVIRONMENT
 This section describes environment variables that control Chocolate Doom's
 behavior.
@@ -14,4 +28,11 @@ specifies a PC speaker driver to use for sound effect playback.  Valid
 options are "Linux" for the Linux console mode driver, "BSD" for the
 NetBSD/OpenBSD PC speaker driver, and "SDL" for SDL-based emulated PC speaker 
 playback (using the digital output).
+
+.SH AUTHOR
+Chocolate Doom is written and maintained by Simon Howard.  It is based on
+the LinuxDoom source code, released by Id Software.
+.SH COPYRIGHT
+Copyright \(co id Software Inc.
+Copyright \(co 2005-8 Simon Howard.
 

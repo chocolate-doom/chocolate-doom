@@ -1,0 +1,53 @@
+.TH default.cfg 5
+.SH NAME
+default.cfg \- Chocolate Doom configuration file
+.SH DESCRIPTION
+.PP
+\fIdefault.cfg\fR
+is the configuration file for \fBchocolate-doom\fR(6).  The configuration
+options stored in the file are the same as those stored in the
+original DOS Vanilla Doom. 
+Extra Chocolate Doom-specific options are stored in a separate 
+configuration file, \fBchocolate-doom.cfg\fR.
+.PP
+\fIdefault.cfg\fR is normally stored in the user's home directory,
+in \fI~/.chocolate-doom/default.cfg\fR.
+.PP
+The \fBchocolate-setup\fR(6) tool provides a simple to use front-end
+for editing \fIdefault.cfg\fR.
+.br
+.SH FILE FORMAT
+The file is a plain-text file, consisting of a list of configuration
+options and their values, separated by whitespace.  Each option is stored
+on a separate line.  Options have different types; an option may have 
+either an integer, floating point or string value.  If the option is
+of a string type, the value is surrounded by quotes (").
+.PP
+For example:
+.RS
+.PP
+integer_value                1
+.br
+integer_value2               1
+.br
+floating_point_value         4.2
+.br
+string_value                 "hello world"
+.RE
+.PP
+Invalid lines or comments in the file will be ignored, but it is advisable
+not to put them in the file; the file is rewritten from scratch every time
+the game exits, so any invalid lines or comments will be lost.
+.PP
+Some options are used for keyboard key bindings; these are stored as 
+integer values containing the keyboard scan code of the key to be bound to.
+Boolean values are also stored as integers, with a value of zero usually
+indicating "false" and a non-zero value indicating "true".
+
+@content
+
+.SH SEE ALSO
+\fBchocolate-doom\fR(6),
+\fBchocolate-doom.cfg\fR(5),
+\fBchocolate-setup\fR(6)
+
