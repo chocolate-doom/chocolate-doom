@@ -359,6 +359,8 @@ typedef struct
 #define CONFIG_VARIABLE_STRING(name, variable) \
     { #name, &variable, DEFAULT_STRING, 0, 0 }
 
+//! @begin_config_file default.cfg
+
 static default_t	doom_defaults_list[] =
 {
     //! 
@@ -649,6 +651,8 @@ static default_collection_t doom_defaults =
     arrlen(doom_defaults_list),
     NULL,
 };
+
+//! @begin_config_file chocolate-doom.cfg
 
 static default_t extra_defaults_list[] = 
 {
