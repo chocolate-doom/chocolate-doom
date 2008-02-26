@@ -61,8 +61,6 @@ class ConfigFile:
     def manpage_output(self):
         result = ".SH CONFIGURATION VARIABLES\n"
 
-        self.variables.sort()
-
         for v in self.variables:
             result += ".TP\n"
             result += v.manpage_output()
@@ -71,8 +69,6 @@ class ConfigFile:
 
     def plaintext_output(self):
         result = ""
-
-        self.variables.sort()
 
         w = parameter_list_width(self.variables)
 
@@ -314,6 +310,9 @@ def add_parameter(param, line, config_file):
     if match:
         param.name = match.group(1)
         config_file.add_variable(param)
+        return
+
+    raise Exception(param.text)
 
 def process_file(file):
 
