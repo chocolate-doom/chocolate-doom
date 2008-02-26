@@ -387,7 +387,7 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_INT(music_volume,      musicVolume),
 
     //!
-    // If non-zero, messages are display on the heads-up display
+    // If non-zero, messages are displayed on the heads-up display
     // in the game ("picked up a clip", etc).  If zero, these messages
     // are not displayed.
     //
@@ -547,7 +547,8 @@ static default_t	doom_defaults_list[] =
     //!
     // Sound effects device.  A value of zero disables in-game sound 
     // effects, a value of 1 enables PC speaker sound effects, while 
-    // any other value enables the "normal" digital sound effects.
+    // a value in the range 2-9 enables the "normal" digital sound 
+    // effects.
     //
 
     CONFIG_VARIABLE_INT(snd_sfxdevice,     snd_sfxdevice),
@@ -815,7 +816,7 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joystick_x_invert,         joystick_x_invert),
 
     //!
-    // Joystick axis to use to for horizontal (Y) movement.
+    // Joystick axis to use to for vertical (Y) movement.
     //
 
     CONFIG_VARIABLE_INT(joystick_y_axis,           joystick_y_axis),
