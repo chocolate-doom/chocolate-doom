@@ -10,10 +10,27 @@
        Chocolate Doom package (thanks Jon Dowland).
      * INSTALL file with installation instructions for installing Chocolate
        Doom on Unix systems.
+     * Support for high quality resampling of sound effects using 
+       libsamplerate (thanks David Flater).
+     * A low pass filter is applied when doing sound resampling in an
+       attempt to filter out high frequency noise from the resampling
+       process.
+     * R_Main progress box is not displayed if stdout is a file (produces
+       cleaner output).
+     * Client/server version checking can be disabled to allow different
+       versions of Chocolate Doom to play together, or Chocolate Doom
+       clients to play with Strawberry Doom clients.
+     * Unix manpages are now generated for the Chocolate Doom 
+       configuration files.
 
     Compatibility:
      * Use the same spechits compatibility value as PrBoom+, for consistency
        (thanks Lemonzest).
+     * The intercepts overrun code has been refactored to work on big
+       endian machines.
+     * The default startup delay has been set to one second, to allow 
+       time for the screen to settle before starting the game (some 
+       monitors have a delay before they come back on after changing modes).
 
     Bugs fixed:
      * Desync with STRAIN demos and dehacked Misc values not being set
@@ -27,6 +44,11 @@
      * mus2mid.c should use MEM_SEEK_SET, not SEEK_SET (thanks Russell)
      * Fast/Respawn options were not being exchanged when starting netgames
        (thanks GhostlyDeath).
+     * Letterbox mode is more accurately described as "pillarboxed" or 
+       "windowboxed" where appropriate (thanks MikeRS)
+     * Process affinity mask is set to 1 on Windows, to work around a 
+       bug in SDL_mixer that can cause crashes on multi-core machines
+       (thanks entryway).
 
 1.0.0 (2007-12-10):
 
