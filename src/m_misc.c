@@ -37,6 +37,9 @@
 
 #ifdef _WIN32
 #include <io.h>
+#ifdef _MSC_VER
+#include <direct.h>
+#endif
 #else
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -1080,7 +1083,7 @@ static void LoadDefaultCollection(default_collection_t *collection)
                     break;
 
                 case DEFAULT_FLOAT:
-                    * (float *) def->location = atof(strparm);
+                    * (float *) def->location = (float) atof(strparm);
                     break;
             }
 

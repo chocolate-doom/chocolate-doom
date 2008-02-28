@@ -3,7 +3,7 @@
        now chosen by directly specifying the mode to use; the scale factor is
        then chosen to fit the screen.  This is helpful when using widescreen
        monitors (thanks Linguica)
-     * MSVC build project files (thanks GhostlyDeath).
+     * MSVC build project files (thanks GhostlyDeath and entryway).
      * Unix manpage improvements; the manpage now lists the environment
        variables that Chocolate Doom uses.  Manpages have been added for
        chocolate-setup and chocolate-server, from the versions for the Debian

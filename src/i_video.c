@@ -414,7 +414,7 @@ static int AccelerateMouse(int val)
 
     if (val > mouse_threshold)
     {
-        return (val - mouse_threshold) * mouse_acceleration + mouse_threshold;
+        return (int)((val - mouse_threshold) * mouse_acceleration + mouse_threshold);
     }
     else
     {

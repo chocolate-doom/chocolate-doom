@@ -32,6 +32,10 @@
 #include "i_video.h"
 #include "z_zone.h"
 
+#if defined(_MSC_VER) && !defined(__cplusplus)
+#define inline __inline
+#endif
+
 // Should be screens[0]
 
 static byte *src_buffer;
