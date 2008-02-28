@@ -25,9 +25,9 @@
 
 #ifndef DEDICATEDSERVER
 #ifdef CHOCOLATESETUP
-1 ICON "../data/chocolate-setup.ico"
+1 ICON "../data/setup.ico"
 #else
-1 ICON "../data/chocolate-doom.ico"
+1 ICON "../data/doom.ico"
 #endif
 #endif
 
@@ -50,3 +50,4 @@ BEGIN
 		END
 	END
 END
+
