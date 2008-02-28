@@ -502,7 +502,7 @@
 			Name="Source"
 			>
 			<File
-				RelativePath="..\src\chocolate_doom_icon.c"
+				RelativePath="..\src\icon.c"
 				>
 				<FileConfiguration
 					Name="Debug Server|Win32"
@@ -8650,7 +8650,7 @@
 			Name="Setup"
 			>
 			<File
-				RelativePath="..\setup\chocolate_setup_icon.c"
+				RelativePath="..\setup\setup_icon.c"
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
