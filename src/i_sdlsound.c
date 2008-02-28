@@ -273,13 +273,13 @@ static void ExpandSoundData_SDL(byte *data,
             // Filter to the half sample rate of the original sound effect
             // (maximum frequency, by nyquist)
 
-            dt = 1.0 / mixer_freq;
-            rc = 1.0 / (3.14 * samplerate);
+            dt = 1.0f / mixer_freq;
+            rc = 1.0f / (3.14f * samplerate);
             alpha = dt / (rc + dt);
 
             for (i=1; i<expanded_length; ++i) 
             {
-                expanded[i] = alpha * expanded[i] + (1 - alpha) * expanded[i-1];
+                expanded[i] = (Sint16) (alpha * expanded[i] + (1 - alpha) * expanded[i-1]);
             }
         }
 #endif /* #ifdef LOW_PASS_FILTER */
@@ -538,7 +538,7 @@ static void I_PrecacheSounds(void)
     printf("\n");
 }
 
-static boolean I_SDL_InitSound()
+static boolean I_SDL_InitSound(void)
 { 
     int i;
     
