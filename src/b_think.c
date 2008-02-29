@@ -578,6 +578,13 @@ void B_Gather(botcontrol_t *mind)
 	{	
 		if (P_CheckSight(mind->me->mo, mind->target))
 		{
+			if ((mind->me->mo->z < (mind->target->z - 23)) ||
+				(mind->me->mo->z > (mind->target->z + 23)))
+			{
+				B_GoBackExploring(mind);
+				return;
+			}
+			
 			B_FaceTarget(mind);
 			mind->cmd->forwardmove = botforwardmove[1];
 			
