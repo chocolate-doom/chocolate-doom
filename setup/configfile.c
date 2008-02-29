@@ -306,13 +306,9 @@ static default_t extra_defaults_list[] =
     {"mouseb_straferight",          &mousebstraferight, DEFAULT_INT, 0, 0},
     {"mouseb_use",                  &mousebuse, DEFAULT_INT, 0, 0},
     {"mouseb_backward",             &mousebbackward, DEFAULT_INT, 0, 0},
-<<<<<<< .working
-    
     {"key_showscores",				&key_showscores, DEFAULT_KEY, 0, 0},
     {"supercoopspy",				&supercoopspy, DEFAULT_INT, 0, 0},
-=======
     {"use_libsamplerate",           &use_libsamplerate, DEFAULT_INT, 0, 0},
->>>>>>> .merge-right.r1097
 };
 
 static default_collection_t extra_defaults =
