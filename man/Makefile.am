@@ -5,9 +5,7 @@ if HAVE_PYTHON
 
 man_MANS=strawberry-doom.6 \
 		strawberry-server.6 \
-		strawberry-setup.6 \
-		default.cfg.5 \
-		$(PACKAGE).cfg.5
+		strawberry-setup.6
 
 strawberry-doom.6: ../src $(MANPAGE_GEN_FILES)
 	./docgen -m manpage.template ../src > $@

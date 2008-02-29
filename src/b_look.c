@@ -29,6 +29,18 @@
 fixed_t         botforwardmove[2] = {0x19, 0x32}; 
 fixed_t         botsidemove[2] = {0x18, 0x28}; 
 fixed_t         botangleturn[3] = {640, 1280, 320};    // + slow turn 
+mobj_t*	botlinetarget;
+mobj_t*	botshootthing;
+fixed_t	botshootz;	
+int	botla_damage;
+fixed_t	botattackrange;
+fixed_t	botaimslope;
+fixed_t bottopslope;
+fixed_t botbottomslope;	
+fixed_t		botopentop;
+fixed_t 		botopenbottom;
+fixed_t		botopenrange;
+fixed_t		botlowfloor;
 
 /*
 {
@@ -334,7 +346,7 @@ void B_Explore(botcontrol_t *mind)
 {	
 	B_Look(mind);
 	
-	if ((mind->node == BA_EXPLORING) && ((mind->follower == NULL) || (mind->follower && mind->attackcooldown > 0)))
+	if (((mind->node == BA_EXPLORING) && ((mind->follower == NULL))) || (mind->follower && mind->attackcooldown > 0))
 	{	
 		// Forward Moving
 		if (mind->forwardtics > 0)
@@ -489,6 +501,182 @@ void B_FaceFollower(botcontrol_t *mind)
 
 void B_Follow(botcontrol_t *mind)
 {
+}
+
+void P_BotLineOpening (line_t* linedef)
+{
+    sector_t*	front;
+    sector_t*	back;
+	
+    if (linedef->sidenum[1] == -1)
+    {
+	// single sided line
+	botopenrange = 0;
+	return;
+    }
+	 
+    front = linedef->frontsector;
+    back = linedef->backsector;
+	
+    if (front->ceilingheight < back->ceilingheight)
+	botopentop = front->ceilingheight;
+    else
+	botopentop = back->ceilingheight;
+
+    if (front->floorheight > back->floorheight)
+    {
+	botopenbottom = front->floorheight;
+	botlowfloor = back->floorheight;
+    }
+    else
+    {
+	botopenbottom = back->floorheight;
+	botlowfloor = front->floorheight;
+    }
+	
+    botopenrange = botopentop - botopenbottom;
+}
+
+//
+// PTR_AimTraverse
+// Sets linetaget and aimslope when a target is aimed at.
+//
+boolean PTR_BotAimTraverse (intercept_t* in)
+{
+    line_t*		li;
+    mobj_t*		th;
+    fixed_t		slope;
+    fixed_t		thingtopslope;
+    fixed_t		thingbottomslope;
+    fixed_t		dist;
+		
+    if (in->isaline)
+    {
+	li = in->d.line;
+	
+	if ( !(li->flags & ML_TWOSIDED) )
+	    return false;		// stop
+	
+	// Crosses a two sided line.
+	// A two sided line will restrict
+	// the possible target ranges.
+	P_BotLineOpening (li);
+	
+	if (botopenbottom >= botopentop)
+	    return false;		// stop
+	
+	dist = FixedMul (botattackrange, in->frac);
+
+	if (li->frontsector->floorheight != li->backsector->floorheight)
+	{
+	    slope = FixedDiv (botopenbottom - botshootz , dist);
+	    if (slope > botbottomslope)
+		botbottomslope = slope;
+	}
+		
+	if (li->frontsector->ceilingheight != li->backsector->ceilingheight)
+	{
+	    slope = FixedDiv (botopentop - botshootz , dist);
+	    if (slope < bottopslope)
+		bottopslope = slope;
+	}
+		
+	if (bottopslope <= botbottomslope)
+	    return false;		// stop
+			
+	return true;			// shot continues
+    }
+    
+    // shoot a thing
+    th = in->d.thing;
+    if (th == botshootthing)
+	return true;			// can't shoot self
+    
+    if (!(th->flags&MF_SHOOTABLE))
+	return true;			// corpse or something
+
+    // check angles to see if the thing can be aimed at
+    dist = FixedMul (botattackrange, in->frac);
+    thingtopslope = FixedDiv (th->z+th->height - botshootz , dist);
+
+    if (thingtopslope < botbottomslope)
+	return true;			// shot over the thing
+
+    thingbottomslope = FixedDiv (th->z - botshootz, dist);
+
+    if (thingbottomslope > bottopslope)
+	return true;			// shot under the thing
+    
+    // this thing can be hit!
+    if (thingtopslope > bottopslope)
+	thingtopslope = bottopslope;
+    
+    if (thingbottomslope < botbottomslope)
+	thingbottomslope = botbottomslope;
+
+    botaimslope = (thingtopslope+thingbottomslope)/2;
+    botlinetarget = th;
+
+    return false;			// don't go any farther
+}
+
+//
+// P_BotAimLineAttack
+//
+int
+P_BotAimLineAttack
+( mobj_t*	t1,
+  angle_t	angle,
+  fixed_t	distance,botcontrol_t *mind )
+{
+    fixed_t	x2;
+    fixed_t	y2;
+	
+    angle >>= ANGLETOFINESHIFT;
+    botshootthing = t1;
+    
+    x2 = t1->x + (distance>>FRACBITS)*finecosine[angle];
+    y2 = t1->y + (distance>>FRACBITS)*finesine[angle];
+    botshootz = t1->z + (t1->height>>1) + 8*FRACUNIT;
+
+    // can't shoot outside view angles
+    bottopslope = 100*FRACUNIT/160;	
+    botbottomslope = -100*FRACUNIT/160;
+    
+    botattackrange = distance;
+    botlinetarget = NULL;
+	
+    P_PathTraverse ( t1->x, t1->y,
+		     x2, y2,
+		     PT_ADDLINES|PT_ADDTHINGS,
+		     PTR_BotAimTraverse );
+		
+    if (botlinetarget)
+	{
+		int isanally;
+					
+		if (deathmatch)
+		{
+			if ((botlinetarget->player))
+			{
+				if (((botlinetarget->player->team) == mind->me->team) && (mind->me->team != 0))
+					isanally = 1;
+				else
+					isanally = 0;
+			}
+			else
+				isanally = 0;
+		}
+		else
+			isanally = 1;	// Coop = always an ally
+			
+		if (isanally)
+			return 0;
+		else
+			return 1;
+	}
+	else
+    	return 1;
 }
 
 

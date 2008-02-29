@@ -77,11 +77,25 @@ void B_FaceTarget(botcontrol_t *mind);
 void B_FaceFollower(botcontrol_t *mind);
 void B_Follow(botcontrol_t *mind);
 void B_GoBackExploring(botcontrol_t *mind);
+int P_BotAimLineAttack(mobj_t* t1, angle_t angle, fixed_t distance, botcontrol_t *mind);
+boolean PTR_BotAimTraverse(intercept_t* in);
 
-extern fixed_t         botforwardmove[2]; 
-extern fixed_t         botsidemove[2]; 
-extern fixed_t         botangleturn[3];    // + slow turn 
+extern fixed_t botforwardmove[2]; 
+extern fixed_t botsidemove[2]; 
+extern fixed_t botangleturn[3];    // + slow turn 
 extern char *botmessage;
+extern mobj_t*	botlinetarget;
+extern mobj_t*	botshootthing;
+extern fixed_t	botshootz;	
+extern int	botla_damage;
+extern fixed_t	botattackrange;
+extern fixed_t	botaimslope;
+extern fixed_t bottopslope;
+extern fixed_t botbottomslope;	
+extern fixed_t		botopentop;
+extern fixed_t 		botopenbottom;
+extern fixed_t		botopenrange;
+extern fixed_t		botlowfloor;
 
 #define BOTFOLLOWDISTANCE 150
 #define BOTTEXT(message) botmessage = message;

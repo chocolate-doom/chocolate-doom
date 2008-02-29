@@ -199,6 +199,30 @@ void B_AttackTarget(botcontrol_t *mind)
 		B_GoBackExploring(mind);
 	else
 	{
+		int isanally;
+					
+		
+		if ((mind->target->player))
+		{
+			if (deathmatch)
+			{
+				if (((mind->target->player->team) == mind->me->team) && (mind->me->team != 0))
+					isanally = 1;
+				else
+					isanally = 0;
+			}
+			else
+				isanally = 1;	// Was probably an accident!
+		}
+		else
+			isanally = 0;
+			
+		if (isanally)
+		{
+			B_GoBackExploring(mind);
+			return;
+		}
+			
 		if (P_CheckSight(mind->me->mo, mind->target))
 		{
 			if (mind->target->health > 0)
@@ -206,7 +230,7 @@ void B_AttackTarget(botcontrol_t *mind)
 				// First Face the target
 				B_FaceTarget(mind);
 				
-				mind->attackcooldown++;
+				mind->attackcooldown += 2;
 
 				// Forward Moving
 				switch (mind->me->readyweapon)
@@ -247,7 +271,12 @@ void B_AttackTarget(botcontrol_t *mind)
 							mind->forwardtics = B_Random() * 2;
 							
 						if (!(mind->cmd->buttons & BT_ATTACK))
-							mind->cmd->buttons |= BT_ATTACK;
+						{
+							if (P_BotAimLineAttack(mind->me->mo, mind->me->mo->angle, 64, mind))
+								mind->cmd->buttons |= BT_ATTACK;
+							else
+								mind->cmd->buttons &= ~BT_ATTACK;
+						}
 						break;
 						
 					case wp_bfg:
@@ -308,7 +337,12 @@ void B_AttackTarget(botcontrol_t *mind)
 						
 						// Now shoot at it!
 						if (!(mind->cmd->buttons & BT_ATTACK))
-							mind->cmd->buttons |= BT_ATTACK;
+						{
+							if (P_BotAimLineAttack(mind->me->mo, mind->me->mo->angle, 2048, mind))
+								mind->cmd->buttons |= BT_ATTACK;
+							else
+								mind->cmd->buttons &= ~BT_ATTACK;
+						}
 						break;
 						
 					case wp_pistol:
@@ -386,7 +420,12 @@ void B_AttackTarget(botcontrol_t *mind)
 							}
 						}
 						else
-							mind->cmd->buttons |= BT_ATTACK;
+						{
+							if (P_BotAimLineAttack(mind->me->mo, mind->me->mo->angle, 2048, mind))
+								mind->cmd->buttons |= BT_ATTACK;
+							else
+								mind->cmd->buttons &= ~BT_ATTACK;
+						}
 							
 						break;
 						
@@ -462,7 +501,11 @@ void B_AttackTarget(botcontrol_t *mind)
 						}
 						
 						// Now shoot at it!
-						mind->cmd->buttons |= BT_ATTACK;
+						if (P_BotAimLineAttack(mind->me->mo, mind->me->mo->angle, 2048, mind))
+							mind->cmd->buttons |= BT_ATTACK;
+						else
+								mind->cmd->buttons &= ~BT_ATTACK;
+								
 						break;
 				}
 			}
