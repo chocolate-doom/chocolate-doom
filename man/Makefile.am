@@ -1,12 +1,22 @@
 
-MANPAGE_GEN_FILES=header footer environment docgen
+MANPAGE_GEN_FILES=manpage.template docgen default.cfg.template extra.cfg.template
 
 if HAVE_PYTHON
 
-man_MANS=strawberry-doom.6 strawberry-server.6 strawberry-setup.6
+man_MANS=strawberry-doom.6 \
+		strawberry-server.6 \
+		strawberry-setup.6 \
+		default.cfg.5 \
+		$(PACKAGE).cfg.5
 
 strawberry-doom.6: ../src $(MANPAGE_GEN_FILES)
-	./docgen -m ../src > $@
+	./docgen -m manpage.template ../src > $@
+
+default.cfg.5: ../src default.cfg.template
+	./docgen -m default.cfg.template -c default.cfg ../src > $@
+
+$(PACKAGE).cfg.5: ../src extra.cfg.template
+	./docgen -m extra.cfg.template -c $(PACKAGE).cfg ../src > $@
 
 endif
 

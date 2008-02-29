@@ -511,7 +511,7 @@ void R_ProjectSprite (mobj_t* thing)
     
     // decide which patch to use for sprite relative to player
 #ifdef RANGECHECK
-    if (thing->sprite >= (unsigned int) numsprites)
+    if ((unsigned int) thing->sprite >= (unsigned int) numsprites)
 	I_Error ("R_ProjectSprite: invalid sprite number %i ",
 		 thing->sprite);
 #endif

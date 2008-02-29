@@ -74,6 +74,8 @@ int musicVolume = 15;
 
 int snd_samplerate = 22050;
 
+int use_libsamplerate = 0;
+
 static int snd_sfxmode;
 static int snd_musicenabled;
 

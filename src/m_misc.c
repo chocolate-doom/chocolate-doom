@@ -37,6 +37,9 @@
 
 #ifdef _WIN32
 #include <io.h>
+#ifdef _MSC_VER
+#include <direct.h>
+#endif
 #else
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -305,6 +308,10 @@ extern int snd_samplerate;
 
 extern int supercoopspy;
 
+// controls whether to use libsamplerate for sample rate conversions
+
+extern int use_libsamplerate;
+
 // dos specific options: these are unused but should be maintained
 // so that the config file can be shared between chocolate
 // doom and doom.exe
@@ -352,60 +359,300 @@ typedef struct
     char      *filename;
 } default_collection_t;
 
+#define CONFIG_VARIABLE_KEY(name, variable) \
+    { #name, &variable, DEFAULT_KEY, 0, 0 }
+#define CONFIG_VARIABLE_INT(name, variable) \
+    { #name, &variable, DEFAULT_INT, 0, 0 }
+#define CONFIG_VARIABLE_FLOAT(name, variable) \
+    { #name, &variable, DEFAULT_FLOAT, 0, 0 }
+#define CONFIG_VARIABLE_STRING(name, variable) \
+    { #name, &variable, DEFAULT_STRING, 0, 0 }
+
+//! @begin_config_file default.cfg
+
 static default_t	doom_defaults_list[] =
 {
-    {"mouse_sensitivity", &mouseSensitivity, DEFAULT_INT, 0, 0},
-    {"sfx_volume",&sfxVolume, DEFAULT_INT, 0, 0},
-    {"music_volume",&musicVolume, DEFAULT_INT, 0, 0},
-    {"show_messages",&showMessages, DEFAULT_INT, 0, 0},
+    //! 
+    // Mouse sensitivity.  This value is used to multiply input mouse
+    // movement to control the effect of moving the mouse.
+    //
+    // The "normal" maximum value available for this through the 
+    // in-game options menu is 9. A value of 31 or greater will cause
+    // the game to crash when entering the options menu.
+    //
 
-    {"key_right",&key_right, DEFAULT_KEY, 0, 0},
-    {"key_left",&key_left, DEFAULT_KEY, 0, 0},
-    {"key_up",&key_up, DEFAULT_KEY, 0, 0},
-    {"key_down",&key_down, DEFAULT_KEY, 0, 0},
-    {"key_strafeleft",&key_strafeleft, DEFAULT_KEY, 0, 0},
-    {"key_straferight",&key_straferight, DEFAULT_KEY, 0, 0},
+    CONFIG_VARIABLE_INT(mouse_sensitivity, mouseSensitivity),
 
-    {"key_fire",&key_fire, DEFAULT_KEY, 0, 0},
-    {"key_use",&key_use, DEFAULT_KEY, 0, 0},
-    {"key_strafe",&key_strafe, DEFAULT_KEY, 0, 0},
-    {"key_speed",&key_speed, DEFAULT_KEY, 0, 0},
+    //!
+    // Volume of sound effects, range 0-15.
+    //
 
-    {"use_mouse",&usemouse, DEFAULT_INT, 0, 0},
-    {"mouseb_fire",&mousebfire, DEFAULT_INT, 0, 0},
-    {"mouseb_strafe",&mousebstrafe, DEFAULT_INT, 0, 0},
-    {"mouseb_forward",&mousebforward, DEFAULT_INT, 0, 0},
+    CONFIG_VARIABLE_INT(sfx_volume,        sfxVolume),
 
-    {"use_joystick",&usejoystick, DEFAULT_INT, 0, 0},
-    {"joyb_fire",&joybfire, DEFAULT_INT, 0, 0},
-    {"joyb_strafe",&joybstrafe, DEFAULT_INT, 0, 0},
-    {"joyb_use",&joybuse, DEFAULT_INT, 0, 0},
-    {"joyb_speed",&joybspeed, DEFAULT_INT, 0, 0},
+    //!
+    // Volume of in-game music, range 0-15.
+    //
 
-    {"screenblocks",&screenblocks, DEFAULT_INT, 0, 0},
-    {"detaillevel",&detailLevel, DEFAULT_INT, 0, 0},
+    CONFIG_VARIABLE_INT(music_volume,      musicVolume),
 
-    {"snd_channels",&numChannels, DEFAULT_INT, 0, 0},
+    //!
+    // If non-zero, messages are displayed on the heads-up display
+    // in the game ("picked up a clip", etc).  If zero, these messages
+    // are not displayed.
+    //
 
-    {"snd_musicdevice", &snd_musicdevice, DEFAULT_INT, 0, 0},
-    {"snd_sfxdevice", &snd_sfxdevice, DEFAULT_INT, 0, 0},
-    {"snd_sbport", &snd_sbport, DEFAULT_INT, 0, 0},
-    {"snd_sbirq", &snd_sbirq, DEFAULT_INT, 0, 0},
-    {"snd_sbdma", &snd_sbdma, DEFAULT_INT, 0, 0},
-    {"snd_mport", &snd_mport, DEFAULT_INT, 0, 0},
+    CONFIG_VARIABLE_INT(show_messages,     showMessages),
 
-    {"usegamma", &usegamma, DEFAULT_INT, 0, 0},
+    //! 
+    // Keyboard key to turn right.
+    //
 
-    {"chatmacro0", &chat_macros[0], DEFAULT_STRING, 0, 0 },
-    {"chatmacro1", &chat_macros[1], DEFAULT_STRING, 0, 0 },
-    {"chatmacro2", &chat_macros[2], DEFAULT_STRING, 0, 0 },
-    {"chatmacro3", &chat_macros[3], DEFAULT_STRING, 0, 0 },
-    {"chatmacro4", &chat_macros[4], DEFAULT_STRING, 0, 0 },
-    {"chatmacro5", &chat_macros[5], DEFAULT_STRING, 0, 0 },
-    {"chatmacro6", &chat_macros[6], DEFAULT_STRING, 0, 0 },
-    {"chatmacro7", &chat_macros[7], DEFAULT_STRING, 0, 0 },
-    {"chatmacro8", &chat_macros[8], DEFAULT_STRING, 0, 0 },
-    {"chatmacro9", &chat_macros[9], DEFAULT_STRING, 0, 0 },
+    CONFIG_VARIABLE_KEY(key_right,         key_right),
+
+    //!
+    // Keyboard key to turn left.
+    //
+
+    CONFIG_VARIABLE_KEY(key_left,          key_left),
+
+    //!
+    // Keyboard key to move forward.
+    //
+
+    CONFIG_VARIABLE_KEY(key_up,            key_up),
+
+    //!
+    // Keyboard key to move backward.
+    //
+
+    CONFIG_VARIABLE_KEY(key_down,          key_down),
+
+    //!
+    // Keyboard key to strafe left.
+    //
+
+    CONFIG_VARIABLE_KEY(key_strafeleft,    key_strafeleft),
+
+    //!
+    // Keyboard key to strafe right.
+    //
+
+    CONFIG_VARIABLE_KEY(key_straferight,   key_straferight),
+
+    //!
+    // Keyboard key to fire the currently selected weapon.
+    //
+
+    CONFIG_VARIABLE_KEY(key_fire,          key_fire),
+
+    //!
+    // Keyboard key to "use" an object, eg. a door or switch.
+    //
+
+    CONFIG_VARIABLE_KEY(key_use,           key_use),
+
+    //!
+    // Keyboard key to turn on strafing.  When held down, pressing the
+    // key to turn left or right causes the player to strafe left or
+    // right instead.
+    //
+
+    CONFIG_VARIABLE_KEY(key_strafe,        key_strafe),
+
+    //!
+    // Keyboard key to make the player run.
+    //
+
+    CONFIG_VARIABLE_KEY(key_speed,         key_speed),
+
+    //!
+    // If non-zero, mouse input is enabled.  If zero, mouse input is
+    // disabled.
+    //
+
+    CONFIG_VARIABLE_INT(use_mouse,         usemouse),
+
+    //!
+    // Mouse button to fire the currently selected weapon.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_fire,       mousebfire),
+
+    //!
+    // Mouse button to turn on strafing.  When held down, the player
+    // will strafe left and right instead of turning left and right.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_strafe,     mousebstrafe),
+
+    //!
+    // Mouse button to move forward.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_forward,    mousebforward),
+
+    //!
+    // If non-zero, joystick input is enabled.
+    //
+
+    CONFIG_VARIABLE_INT(use_joystick,      usejoystick),
+
+    //!
+    // Joystick button to fire the current weapon.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_fire,         joybfire),
+
+    //!
+    // Joystick button to fire the current weapon.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_strafe,       joybstrafe),
+
+    //!
+    // Joystick button to "use" an object, eg. a door or switch.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_use,          joybuse),
+
+    //!
+    // Joystick button to make the player run.
+    //
+    // If this has a value of 20 or greater, the player will always run.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_speed,        joybspeed),
+
+    //!
+    // Screen size, range 3-11.
+    //
+    // A value of 11 gives a full-screen view with the status bar not 
+    // displayed.  A value of 10 gives a full-screen view with the
+    // status bar displayed.
+    //
+
+    CONFIG_VARIABLE_INT(screenblocks,      screenblocks),
+
+    //!
+    // Screen detail.  Zero gives normal "high detail" mode, while
+    // a non-zero value gives "low detail" mode.
+    //
+
+    CONFIG_VARIABLE_INT(detaillevel,       detailLevel),
+
+    //!
+    // Number of sounds that will be played simultaneously.
+    //
+
+    CONFIG_VARIABLE_INT(snd_channels,      numChannels),
+
+    //!
+    // Music output device.  A non-zero value gives MIDI sound output,
+    // while a value of zero disables music.
+    //
+
+    CONFIG_VARIABLE_INT(snd_musicdevice,   snd_musicdevice),
+
+    //!
+    // Sound effects device.  A value of zero disables in-game sound 
+    // effects, a value of 1 enables PC speaker sound effects, while 
+    // a value in the range 2-9 enables the "normal" digital sound 
+    // effects.
+    //
+
+    CONFIG_VARIABLE_INT(snd_sfxdevice,     snd_sfxdevice),
+
+    //!
+    // SoundBlaster I/O port. Unused.
+    //
+
+    CONFIG_VARIABLE_INT(snd_sbport,        snd_sbport),
+
+    //!
+    // SoundBlaster IRQ.  Unused.
+    //
+
+    CONFIG_VARIABLE_INT(snd_sbirq,         snd_sbirq),
+
+    //!
+    // SoundBlaster DMA channel.  Unused.
+    //
+
+    CONFIG_VARIABLE_INT(snd_sbdma,         snd_sbdma),
+
+    //!
+    // Output port to use for OPL MIDI playback.  Unused.
+    //
+
+    CONFIG_VARIABLE_INT(snd_mport,         snd_mport),
+
+    //!
+    // Gamma correction level.  A value of zero disables gamma 
+    // correction, while a value in the range 1-4 gives increasing
+    // levels of gamma correction.
+    //
+
+    CONFIG_VARIABLE_INT(usegamma,          usegamma),
+
+    //!
+    // Multiplayer chat macro: message to send when alt+0 is pressed.
+    //
+
+    CONFIG_VARIABLE_STRING(chatmacro0,     chat_macros[0]),
+
+    //!
+    // Multiplayer chat macro: message to send when alt+1 is pressed.
+    //
+
+    CONFIG_VARIABLE_STRING(chatmacro1,     chat_macros[1]),
+
+    //!
+    // Multiplayer chat macro: message to send when alt+2 is pressed.
+    //
+
+    CONFIG_VARIABLE_STRING(chatmacro2,     chat_macros[2]),
+
+    //!
+    // Multiplayer chat macro: message to send when alt+3 is pressed.
+    //
+
+    CONFIG_VARIABLE_STRING(chatmacro3,     chat_macros[3]),
+
+    //!
+    // Multiplayer chat macro: message to send when alt+4 is pressed.
+    //
+
+    CONFIG_VARIABLE_STRING(chatmacro4,     chat_macros[4]),
+
+    //!
+    // Multiplayer chat macro: message to send when alt+5 is pressed.
+    //
+
+    CONFIG_VARIABLE_STRING(chatmacro5,     chat_macros[5]),
+
+    //!
+    // Multiplayer chat macro: message to send when alt+6 is pressed.
+    //
+
+    CONFIG_VARIABLE_STRING(chatmacro6,     chat_macros[6]),
+
+    //!
+    // Multiplayer chat macro: message to send when alt+7 is pressed.
+    //
+
+    CONFIG_VARIABLE_STRING(chatmacro7,     chat_macros[7]),
+
+    //!
+    // Multiplayer chat macro: message to send when alt+8 is pressed.
+    //
+
+    CONFIG_VARIABLE_STRING(chatmacro8,     chat_macros[8]),
+
+    //!
+    // Multiplayer chat macro: message to send when alt+9 is pressed.
+    //
+
+    CONFIG_VARIABLE_STRING(chatmacro9,     chat_macros[9]),
 };
 
 static default_collection_t doom_defaults = 
@@ -415,42 +662,231 @@ static default_collection_t doom_defaults =
     NULL,
 };
 
+//! @begin_config_file chocolate-doom.cfg
+
 static default_t extra_defaults_list[] = 
 {
-    {"autoadjust_video_settings",   &autoadjust_video_settings, DEFAULT_INT, 0, 0},
-    {"fullscreen",                  &fullscreen, DEFAULT_INT, 0, 0},
-    {"aspect_ratio_correct",        &aspect_ratio_correct, DEFAULT_INT, 0, 0},
-    {"startup_delay",               &startup_delay, DEFAULT_INT, 0, 0},
-    {"screen_width",                &screen_width, DEFAULT_INT, 0, 0},
-    {"screen_height",               &screen_height, DEFAULT_INT, 0, 0},
-    {"grabmouse",                   &grabmouse, DEFAULT_INT, 0, 0},
-    {"novert",                      &novert, DEFAULT_INT, 0, 0},
-    {"mouse_acceleration",          &mouse_acceleration, DEFAULT_FLOAT, 0, 0},
-    {"mouse_threshold",             &mouse_threshold, DEFAULT_INT, 0, 0},
-    {"snd_samplerate",              &snd_samplerate, DEFAULT_INT, 0, 0},
-    {"show_endoom",                 &show_endoom, DEFAULT_INT, 0, 0},
-    {"vanilla_savegame_limit",      &vanilla_savegame_limit, DEFAULT_INT, 0, 0},
-    {"vanilla_demo_limit",          &vanilla_demo_limit, DEFAULT_INT, 0, 0},
-    {"vanilla_keyboard_mapping",    &vanilla_keyboard_mapping, DEFAULT_INT, 0, 0},
-    {"video_driver",                &video_driver, DEFAULT_STRING, 0, 0},
+    //!
+    // If non-zero, video settings will be autoadjusted to a valid 
+    // configuration when the screen_width and screen_height variables
+    // do not match any valid configuration.
+    //
+
+    CONFIG_VARIABLE_INT(autoadjust_video_settings, autoadjust_video_settings),
+
+    //!
+    // If non-zero, the game will run in full screen mode.  If zero,
+    // the game will run in a window.
+    //
+
+    CONFIG_VARIABLE_INT(fullscreen,                fullscreen),
+
+    //!
+    // If non-zero, the screen will be stretched vertically to display
+    // correctly on a square pixel video mode.
+    //
+
+    CONFIG_VARIABLE_INT(aspect_ratio_correct,      aspect_ratio_correct),
+
+    //!
+    // Number of milliseconds to wait on startup after the video mode
+    // has been set, before the game will start.  This allows the 
+    // screen to settle on some monitors that do not display an image 
+    // for a brief interval after changing video modes.
+    //
+
+    CONFIG_VARIABLE_INT(startup_delay,             startup_delay),
+
+    //!
+    // Screen width in pixels.  If running in full screen mode, this is
+    // the X dimension of the video mode to use.  If running in
+    // windowed mode, this is the width of the window in which the game
+    // will run.
+    //
+
+    CONFIG_VARIABLE_INT(screen_width,              screen_width),
+
+    //!
+    // Screen height in pixels.  If running in full screen mode, this is
+    // the Y dimension of the video mode to use.  If running in
+    // windowed mode, this is the height of the window in which the game
+    // will run.
+    //
+
+    CONFIG_VARIABLE_INT(screen_height,             screen_height),
+
+    //!
+    // If this is non-zero, the mouse will be "grabbed" when running
+    // in windowed mode so that it can be used as an input device.
+    // When running full screen, this has no effect.
+    //
+
+    CONFIG_VARIABLE_INT(grabmouse,                 grabmouse),
+
+    //!
+    // If non-zero, all vertical mouse movement is ignored.  This 
+    // emulates the behavior of the "novert" tool available under DOS
+    // that performs the same function.
+    //
+
+    CONFIG_VARIABLE_INT(novert,                    novert),
+
+    //!
+    // Mouse acceleration factor.  When the speed of mouse movement
+    // exceeds the threshold value (mouse_threshold), the speed is
+    // multiplied by this value.
+    //
+
+    CONFIG_VARIABLE_FLOAT(mouse_acceleration,      mouse_acceleration),
+
+    //!
+    // Mouse acceleration threshold.  When the speed of mouse movement
+    // exceeds this threshold value, the speed is multiplied by an 
+    // acceleration factor (mouse_acceleration).
+    //
+
+    CONFIG_VARIABLE_INT(mouse_threshold,           mouse_threshold),
+
+    //!
+    // Sound output sample rate, in Hz.  Typical values to use are 
+    // 11025, 22050, 44100 and 48000.
+    //
+
+    CONFIG_VARIABLE_INT(snd_samplerate,            snd_samplerate),
+
+    //!
+    // If non-zero, the ENDOOM screen is displayed when exiting the
+    // game.  If zero, the ENDOOM screen is not displayed.
+    //
+
+    CONFIG_VARIABLE_INT(show_endoom,               show_endoom),
+
+    //!
+    // If non-zero, the Vanilla savegame limit is enforced; if the 
+    // savegame exceeds 180224 bytes in size, the game will exit with
+    // an error.  If this has a value of zero, there is no limit to
+    // the size of savegames.
+    //
+
+    CONFIG_VARIABLE_INT(vanilla_savegame_limit,    vanilla_savegame_limit),
+
+    //!
+    // If non-zero, the Vanilla demo size limit is enforced; the game 
+    // exits with an error when a demo exceeds the demo size limit
+    // (128KiB by default).  If this has a value of zero, there is no
+    // limit to the size of demos.
+    //
+
+    CONFIG_VARIABLE_INT(vanilla_demo_limit,        vanilla_demo_limit),
+
+    //!
+    // If non-zero, the game behaves like Vanilla Doom, always assuming
+    // an American keyboard mapping.  If this has a value of zero, the 
+    // native keyboard mapping of the keyboard is used.
+    //
+
+    CONFIG_VARIABLE_INT(vanilla_keyboard_mapping,  vanilla_keyboard_mapping),
+
+    //!
+    // Name of the SDL video driver to use.  If this is an empty string,
+    // the default video driver is used.
+    //
+
+    CONFIG_VARIABLE_STRING(video_driver,           video_driver),
+
 #ifdef FEATURE_MULTIPLAYER
-    {"player_name",                 &net_player_name,          DEFAULT_STRING, 0, 0},
+
+    //!
+    // Name to use in network games for identification.  This is only 
+    // used on the "waiting" screen while waiting for the game to start.
+    //
+
+    CONFIG_VARIABLE_STRING(player_name,            net_player_name),
+
     {"player_color",				&net_player_color,		   DEFAULT_STRING, 0, 0},
 #endif
 
-    {"joystick_index",              &joystick_index, DEFAULT_INT, 0, 0},
-    {"joystick_x_axis",             &joystick_x_axis, DEFAULT_INT, 0, 0},
-    {"joystick_x_invert",           &joystick_x_invert, DEFAULT_INT, 0, 0},
-    {"joystick_y_axis",             &joystick_y_axis, DEFAULT_INT, 0, 0},
-    {"joystick_y_invert",           &joystick_y_invert, DEFAULT_INT, 0, 0},
-    {"joyb_strafeleft",             &joybstrafeleft, DEFAULT_INT, 0, 0},
-    {"joyb_straferight",            &joybstraferight, DEFAULT_INT, 0, 0},
-    {"mouseb_strafeleft",           &mousebstrafeleft, DEFAULT_INT, 0, 0},
-    {"mouseb_straferight",          &mousebstraferight, DEFAULT_INT, 0, 0},
-    {"mouseb_use",                  &mousebuse, DEFAULT_INT, 0, 0},
-    {"mouseb_backward",             &mousebbackward, DEFAULT_INT, 0, 0},
+    //!
+    // Joystick number to use; '0' is the first joystick.  A negative
+    // value ('-1') indicates that no joystick is configured.
+    //
 
-    {"dclick_use",                  &dclick_use, DEFAULT_INT, 0, 0},
+    CONFIG_VARIABLE_INT(joystick_index,            joystick_index),
+
+    //!
+    // Joystick axis to use to for horizontal (X) movement.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_x_axis,           joystick_x_axis),
+
+    //!
+    // If non-zero, movement on the horizontal joystick axis is inverted.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_x_invert,         joystick_x_invert),
+
+    //!
+    // Joystick axis to use to for vertical (Y) movement.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_y_axis,           joystick_y_axis),
+
+    //!
+    // If non-zero, movement on the vertical joystick axis is inverted.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_y_invert,         joystick_y_invert),
+
+    //!
+    // Joystick button to strafe left.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_strafeleft,           joybstrafeleft),
+
+    //!
+    // Joystick button to strafe right.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_straferight,          joybstraferight),
+
+    //!
+    // Mouse button to strafe left.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_strafeleft,         mousebstrafeleft),
+
+    //!
+    // Mouse button to strafe right.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_straferight,        mousebstraferight),
+
+    //!
+    // Mouse button to "use" an object, eg. a door or switch.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_use,                mousebuse),
+
+    //!
+    // Mouse button to move backwards.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_backward,           mousebbackward),
+
+    //!
+    // If non-zero, double-clicking a mouse button acts like pressing
+    // the "use" key to use an object in-game, eg. a door or switch.
+    //
+
+    CONFIG_VARIABLE_INT(dclick_use,                dclick_use),
+
+    //!
+    // If non-zero, libsamplerate is used to resample sound effects to
+    // the output sample rate.  This has no effect if libsamplerate
+    // support has not been compiled into the game.
+    //
+
+    CONFIG_VARIABLE_INT(use_libsamplerate,         use_libsamplerate),
     {"key_showscores",				&key_showscores, DEFAULT_KEY, 0, 0},
     {"supercoopspy",				&supercoopspy, DEFAULT_INT, 0, 0},
 };
@@ -656,7 +1092,7 @@ static void LoadDefaultCollection(default_collection_t *collection)
                     break;
 
                 case DEFAULT_FLOAT:
-                    * (float *) def->location = atof(strparm);
+                    * (float *) def->location = (float) atof(strparm);
                     break;
             }
 

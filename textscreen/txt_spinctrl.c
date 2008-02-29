@@ -403,7 +403,7 @@ txt_spincontrol_t *TXT_NewFloatSpinControl(float *value, float min, float max)
     spincontrol->value = (void *) value;
     spincontrol->min.f = min;
     spincontrol->max.f = max;
-    spincontrol->step.f = 0.1;
+    spincontrol->step.f = 0.1f;
 
     return spincontrol;
 }

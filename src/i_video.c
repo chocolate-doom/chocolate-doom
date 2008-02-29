@@ -130,7 +130,7 @@ int aspect_ratio_correct = true;
 // Time to wait for the screen to settle on startup before starting the
 // game (ms)
 
-int startup_delay = 0;
+int startup_delay = 1000;
 
 // Grab the mouse? (int type for config code)
 
@@ -414,7 +414,7 @@ static int AccelerateMouse(int val)
 
     if (val > mouse_threshold)
     {
-        return (val - mouse_threshold) * mouse_acceleration + mouse_threshold;
+        return (int)((val - mouse_threshold) * mouse_acceleration + mouse_threshold);
     }
     else
     {
@@ -1555,15 +1555,15 @@ void I_InitGraphics(void)
     {
 	screens[0] = (unsigned char *) Z_Malloc (SCREENWIDTH * SCREENHEIGHT, 
                                                  PU_STATIC, NULL);
-
-        // Clear the screen to black.
-
-        memset(screens[0], 0, SCREENWIDTH * SCREENHEIGHT);
     }
 
     // "Loading from disk" icon
 
     LoadDiskImage();
+
+    // Clear the screen to black.
+
+    memset(screens[0], 0, SCREENWIDTH * SCREENHEIGHT);
 
     // We need SDL to give us translated versions of keys as well
 

@@ -8,8 +8,8 @@ MSVC_FILES=                             \
         msvc/inttypes.h                 \
         msvc/stdint.h                   \
         msvc/win32.rc                   \
-        vc9/ChocolateDoom.sln           \
-        vc9/ChocolateDoom.vcproj
+        msvc/ChocolateDoom.sln          \
+        msvc/ChocolateDoom.vcproj
 
 CODEBLOCKS_FILES=                              \
 	codeblocks/config.h                    \
@@ -49,7 +49,7 @@ SUBDIRS=textscreen pcsound src man setup
 if HAVE_PYTHON
 
 CMDLINE : src/
-	./man/docgen -p src/ > $@
+	./man/docgen -p man/CMDLINE.template src/ > $@
 
 endif
 

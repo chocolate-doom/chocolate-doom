@@ -273,8 +273,8 @@ static void NET_CL_ExpandFullTiccmd(net_full_ticcmd_t *cmd, unsigned int seq)
         {
             // Low level filter
 
-            average_latency = (average_latency * 0.9)
-                            + (latency * FRACUNIT * 0.1);
+            average_latency = (fixed_t)((average_latency * 0.9)
+                            + (latency * FRACUNIT * 0.1));
         }
     }
 

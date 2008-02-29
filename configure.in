@@ -43,6 +43,9 @@ AC_CHECK_LIB(SDL_net,SDLNet_UDP_Send,[
     exit -1
 ] ,$SDL_LIBS $SDLNET_LIBS)
 
+# DWF 2008-02-10:  FIXME
+AC_CHECK_LIB(samplerate, src_new)
+
 AC_CHECK_TOOL(WINDRES, windres, )
 
 AM_CONDITIONAL(HAVE_WINDRES, test "$WINDRES" != "")

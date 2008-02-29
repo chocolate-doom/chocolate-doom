@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual C++ Express 2008
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Chocolate Doom", "ChocolateDoom.vcproj", "{8B744A3B-8F18-41A0-85A3-293816E85B6E}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Strawberry Doom", "StrawberryDoom.vcproj", "{8B744A3B-8F18-41A0-85A3-293816E85B6E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
