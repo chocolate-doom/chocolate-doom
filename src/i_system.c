@@ -42,6 +42,7 @@
 #include "doomdef.h"
 #include "doomstat.h"
 #include "m_argv.h"
+#include "m_config.h"
 #include "m_misc.h"
 #include "i_joystick.h"
 #include "i_timer.h"

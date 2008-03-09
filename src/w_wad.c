@@ -38,6 +38,7 @@
 #include "i_swap.h"
 #include "i_system.h"
 #include "i_video.h"
+#include "m_misc.h"
 #include "z_zone.h"
 
 #include "w_wad.h"
@@ -70,24 +71,6 @@ unsigned int numlumps = 0;
 // Hash table for fast lookups
 
 static lumpinfo_t **lumphash;
-
-static int FileLength (FILE *handle)
-{ 
-    long savedpos;
-    long length;
-    // save the current position in the file
-    savedpos = ftell(handle);
-    
-    // jump to the end and find the length
-    fseek(handle, 0, SEEK_END);
-    length = ftell(handle);
-
-    // go back to the old location
-    fseek(handle, savedpos, SEEK_SET);
-
-    return length;
-}
-
 
 static void ExtractFileBase(char *path, char *dest)
 {
@@ -195,7 +178,7 @@ FILE *W_AddFile (char *filename)
 
 	fileinfo = Z_Malloc(sizeof(filelump_t), PU_STATIC, 0);
 	fileinfo->filepos = LONG(0);
-	fileinfo->size = LONG(FileLength(handle));
+	fileinfo->size = LONG(M_FileLength(handle));
 
         // Name the lump after the base of the filename (without the
         // extension).
