@@ -620,6 +620,13 @@ static boolean I_SDL_InitSound(void)
 
         I_PrecacheSounds();
     }
+#else
+    if (use_libsamplerate)
+    {
+        fprintf(stderr, "I_SDL_InitSound: use_libsamplerate=%i, but "
+                        "libsamplerate support not compiled in.\n",
+                        use_libsamplerate);
+    }
 #endif
 
     Mix_AllocateChannels(NUM_CHANNELS);
