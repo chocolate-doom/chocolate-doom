@@ -36,6 +36,7 @@
 		</VirtualTargets>
 		<Compiler>
 			<Add directory="." />
+			<Add directory="..\src" />
 			<Add directory="..\textscreen" />
 		</Compiler>
 		<Linker>
@@ -55,6 +56,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\m_argv.h" />
+		<Unit filename="..\src\m_misc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\m_misc.h" />
 		<Unit filename="..\src\net_common.c">
 			<Option compilerVar="CC" />
 		</Unit>
