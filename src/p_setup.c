@@ -147,13 +147,12 @@ void P_LoadVertexes (int lump)
     {
 	li->x = SHORT(ml->x)<<FRACBITS;
 	li->y = SHORT(ml->y)<<FRACBITS;
+        li->x = -li->x;
     }
 
     // Free buffer memory.
     Z_Free (data);
 }
-
-
 
 //
 // P_LoadSegs
@@ -177,10 +176,16 @@ void P_LoadSegs (int lump)
     li = segs;
     for (i=0 ; i<numsegs ; i++, li++, ml++)
     {
+        {
+            int tmp = ml->v1;
+            ml->v1 = ml->v2;
+            ml->v2 = tmp;
+        }
 	li->v1 = &vertexes[SHORT(ml->v1)];
 	li->v2 = &vertexes[SHORT(ml->v2)];
 					
 	li->angle = (SHORT(ml->angle))<<16;
+        li->angle = -li->angle;
 	li->offset = (SHORT(ml->offset))<<16;
 	linedef = SHORT(ml->linedef);
 	ldef = &lines[linedef];
@@ -285,11 +290,21 @@ void P_LoadNodes (int lump)
 	no->y = SHORT(mn->y)<<FRACBITS;
 	no->dx = SHORT(mn->dx)<<FRACBITS;
 	no->dy = SHORT(mn->dy)<<FRACBITS;
+        no->x += no->dx; no->y += no->dy;
+        no->x = -no->x;
+        no->dy = -no->dy;
 	for (j=0 ; j<2 ; j++)
 	{
 	    no->children[j] = SHORT(mn->children[j]);
 	    for (k=0 ; k<4 ; k++)
 		no->bbox[j][k] = SHORT(mn->bbox[j][k])<<FRACBITS;
+        
+            {
+                fixed_t tmp;
+                tmp = no->bbox[j][2];
+                no->bbox[j][2] = -no->bbox[j][3];
+                no->bbox[j][3] = -tmp;
+            }
 	}
     }
 	
@@ -341,7 +356,9 @@ void P_LoadThings (int lump)
 	// Do spawn all other stuff. 
 	mt->x = SHORT(mt->x);
 	mt->y = SHORT(mt->y);
+        mt->x = -mt->x;
 	mt->angle = SHORT(mt->angle);
+        mt->angle = 180-mt->angle;
 	mt->type = SHORT(mt->type);
 	mt->options = SHORT(mt->options);
 	
@@ -374,6 +391,11 @@ void P_LoadLineDefs (int lump)
     ld = lines;
     for (i=0 ; i<numlines ; i++, mld++, ld++)
     {
+        {
+            short tmp = mld->v1;
+            mld->v1 = mld->v2;
+            mld->v2 = tmp;
+        }
 	ld->flags = SHORT(mld->flags);
 	ld->special = SHORT(mld->special);
 	ld->tag = SHORT(mld->tag);
@@ -484,6 +506,25 @@ void P_LoadBlockMap (int lump)
     bmaporgy = blockmaplump[1]<<FRACBITS;
     bmapwidth = blockmaplump[2];
     bmapheight = blockmaplump[3];
+
+    bmaporgx += bmapwidth * 128 * FRACUNIT;
+    bmaporgx = -bmaporgx;
+
+    {
+        int x, y;
+        short *rowoffset;
+
+        for (y=0; y<bmapheight; ++y) {
+            rowoffset = blockmap + y * bmapwidth;
+            for (x=0; x<bmapwidth/2; ++x) {
+                short tmp;
+
+                tmp = rowoffset[x];
+                rowoffset[x] = rowoffset[bmapwidth-1-x];
+                rowoffset[bmapwidth-1-x] = tmp;
+            }
+        }
+    }
 	
     // clear out mobj chains
     count = sizeof(*blocklinks)* bmapwidth*bmapheight;
