@@ -39,6 +39,7 @@
 #endif
 
 #include "deh_main.h"
+#include "i_system.h"
 #include "s_sound.h"
 #include "m_argv.h"
 #include "w_wad.h"
@@ -93,6 +94,33 @@ static void ReleaseSoundOnChannel(int channel)
 
 #ifdef HAVE_LIBSAMPLERATE
 
+// Returns the conversion mode for libsamplerate to use.
+
+static int SRC_ConversionMode(void)
+{
+    switch (use_libsamplerate)
+    {
+        // 0 = disabled
+
+        default:
+        case 0:
+            return -1;
+
+        // Ascending numbers give higher quality
+
+        case 1:
+            return SRC_LINEAR;
+        case 2:
+            return SRC_ZERO_ORDER_HOLD;
+        case 3:
+            return SRC_SINC_FASTEST;
+        case 4:
+            return SRC_SINC_MEDIUM_QUALITY;
+        case 5:
+            return SRC_SINC_BEST_QUALITY;
+    }
+}
+
 // libsamplerate-based generic sound expansion function for any sample rate
 //   unsigned 8 bits --> signed 16 bits
 //   mono --> stereo
@@ -132,7 +160,7 @@ static uint32_t ExpandSoundData_SRC(byte *data,
 
     // Do the sound conversion
 
-    retn = src_simple(&src_data, SRC_SINC_BEST_QUALITY, 1);
+    retn = src_simple(&src_data, SRC_ConversionMode(), 1);
     assert(retn == 0);
 
     // Convert the result back into 16-bit integers.
@@ -614,14 +642,20 @@ static boolean I_SDL_InitSound(void)
     Mix_QuerySpec(&mixer_freq, &mixer_format, &mixer_channels);
 
 #ifdef HAVE_LIBSAMPLERATE
-    if (use_libsamplerate)
+    if (use_libsamplerate != 0)
     {
+        if (SRC_ConversionMode() < 0)
+        {
+            I_Error("I_SDL_InitSound: Invalid value for use_libsamplerate: %i",
+                    use_libsamplerate);
+        }
+
         ExpandSoundData = ExpandSoundData_SRC;
 
         I_PrecacheSounds();
     }
 #else
-    if (use_libsamplerate)
+    if (use_libsamplerate != 0)
     {
         fprintf(stderr, "I_SDL_InitSound: use_libsamplerate=%i, but "
                         "libsamplerate support not compiled in.\n",
