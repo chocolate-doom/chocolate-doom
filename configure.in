@@ -24,7 +24,7 @@ then
         CFLAGS="-O$OPT_LEVEL -g -Wall $orig_CFLAGS"
 fi
 
-AC_CHECK_HEADERS([linux/kd.h dev/isa/spkrio.h])
+AC_CHECK_HEADERS([linux/kd.h dev/isa/spkrio.h dev/speaker/speaker.h])
 
 AM_PATH_SDL(1.1.3)
 
