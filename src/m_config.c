@@ -697,9 +697,16 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(dclick_use,                dclick_use),
 
     //!
-    // If non-zero, libsamplerate is used to resample sound effects to
-    // the output sample rate.  This has no effect if libsamplerate
-    // support has not been compiled into the game.
+    // Controls whether libsamplerate support is used for performing
+    // sample rate conversions of sound effects.  Support for this
+    // must be compiled into the program.
+    //
+    // If zero, libsamplerate support is disabled.  If non-zero, 
+    // libsamplerate is enabled. Increasing values roughly correspond
+    // to higher quality conversion; the higher the quality, the 
+    // slower the conversion process.  Linear conversion = 1; 
+    // Zero order hold = 2; Fast Sinc filter = 3; Medium quality
+    // Sinc filter = 4; High quality Sinc filter = 5.
     //
 
     CONFIG_VARIABLE_INT(use_libsamplerate,         use_libsamplerate),
