@@ -34,6 +34,10 @@ typedef enum
     CALIBRATE_UP,
 } calibration_stage_t;
 
+// SDL joystick successfully initialised?
+
+static int joystick_initted = 0;
+
 // Joystick enable/disable
 
 int usejoystick = 0;
@@ -79,6 +83,23 @@ static txt_label_t *calibration_label;
 static calibration_stage_t calibrate_stage;
 static SDL_Joystick **all_joysticks = NULL;
 
+// Set the label showing the name of the currently selected joystick
+
+static void SetJoystickButtonLabel(void)
+{
+    char *name;
+
+    name = "None set";
+
+    if (joystick_initted 
+     && joystick_index >= 0 && joystick_index < SDL_NumJoysticks())
+    {
+        name = (char *) SDL_JoystickName(joystick_index);
+    }
+
+    TXT_SetButtonLabel(joystick_button, name);
+}
+
 // Try to open all joysticks visible to SDL.
 
 static int OpenAllJoysticks(void)
@@ -87,7 +108,7 @@ static int OpenAllJoysticks(void)
     int num_joysticks;
     int result;
 
-    if (SDL_Init(SDL_INIT_JOYSTICK) < 0)
+    if (!joystick_initted)
     {
         return 0;
     }
@@ -112,14 +133,16 @@ static int OpenAllJoysticks(void)
         }
     }
 
-    if (!result)
+    // Success? Turn on joystick events.
+
+    if (result)
     {
-        free(all_joysticks);
-        all_joysticks = NULL;
+        SDL_JoystickEventState(SDL_ENABLE);
     }
     else
     {
-        SDL_JoystickEventState(SDL_ENABLE);
+        free(all_joysticks);
+        all_joysticks = NULL;
     }
 
     return result;
@@ -143,7 +166,6 @@ static void CloseAllJoysticks(void)
     }
 
     SDL_JoystickEventState(SDL_DISABLE);
-    SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
 
     free(all_joysticks);
     all_joysticks = NULL;
@@ -265,12 +287,16 @@ static void NoJoystick(void)
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, 
                         TXT_NewWindowEscapeAction(window));
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, NULL);
+
+    joystick_index = -1;
+    SetJoystickButtonLabel();
 }
 
 static void CalibrateWindowClosed(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 {
     CloseAllJoysticks();
     TXT_SDL_SetEventCallback(NULL, NULL);
+    SetJoystickButtonLabel();
 }
 
 static void CalibrateJoystick(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
@@ -338,18 +364,13 @@ void JoyButtonSetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))
 // GUI
 //
 
-static void SetJoystickButtonLabel(void)
+static void JoystickWindowClosed(TXT_UNCAST_ARG(window), TXT_UNCAST_ARG(unused))
 {
-    char *name;
-
-    name = "None set";
-
-    if (joystick_index >= 0 && joystick_index < SDL_NumJoysticks())
+    if (joystick_initted)
     {
-        name = (char *) SDL_JoystickName(joystick_index);
+        SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
+        joystick_initted = 0;
     }
-
-    TXT_SetButtonLabel(joystick_button, name);
 }
 
 static void AddJoystickControl(txt_table_t *table, char *label, int *var)
@@ -370,7 +391,10 @@ void ConfigJoystick(void)
     txt_table_t *button_table;
     txt_table_t *joystick_table;
 
-    SDL_Init(SDL_INIT_JOYSTICK);
+    if (!joystick_initted) 
+    {
+        joystick_initted = SDL_Init(SDL_INIT_JOYSTICK) >= 0;
+    }
 
     window = TXT_NewWindow("Joystick configuration");
 
@@ -408,6 +432,7 @@ void ConfigJoystick(void)
     AddJoystickControl(button_table, "Strafe Right", &joybstraferight);
 
     TXT_SignalConnect(joystick_button, "pressed", CalibrateJoystick, NULL);
+    TXT_SignalConnect(window, "closed", JoystickWindowClosed, NULL);
 
     SetJoystickButtonLabel();
 }
