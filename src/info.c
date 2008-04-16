@@ -1099,7 +1099,8 @@ state_t	states[NUMSTATES] = {
     {SPR_TLP2,32768,4,{NULL},S_TECH2LAMP2,0,0},	// S_TECH2LAMP
     {SPR_TLP2,32769,4,{NULL},S_TECH2LAMP3,0,0},	// S_TECH2LAMP2
     {SPR_TLP2,32770,4,{NULL},S_TECH2LAMP4,0,0},	// S_TECH2LAMP3
-    {SPR_TLP2,32771,4,{NULL},S_TECH2LAMP,0,0}	// S_TECH2LAMP4
+    {SPR_TLP2,32771,4,{NULL},S_TECH2LAMP,0,0},	// S_TECH2LAMP4
+    {SPR_TROO,0,-1,{NULL},S_WAYPOINT1,0,0},	// S_NULL
 };
 
 
@@ -4665,6 +4666,32 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
 	sfx_None,		// activesound
 	MF_NOBLOCKMAP,		// flags
 	S_NULL		// raisestate
-    }
+    },
+    
+    {		// MT_BOT_WAYPOINT
+	50700,		// doomednum
+	S_WAYPOINT1,		// spawnstate
+	100,		// spawnhealth
+	S_NULL,		// seestate
+	sfx_None,		// seesound
+	0,		// reactiontime
+	sfx_None,		// attacksound
+	S_NULL,		// painstate
+	0,		// painchance
+	sfx_plpain,		// painsound
+	S_NULL,		// meleestate
+	S_NULL,		// missilestate
+	S_NULL,		// deathstate
+	S_NULL,		// xdeathstate
+	sfx_None,		// deathsound
+	0,		// speed
+	16*FRACUNIT,		// radius
+	0,		// height
+	0,		// mass
+	0,		// damage
+	sfx_None,		// activesound
+	MF_NOGRAVITY,		// flags
+	S_NULL		// raisestate
+    },
 };
 

@@ -190,7 +190,7 @@ int B_Distance(mobj_t *a, mobj_t *b)
 void B_Look(botcontrol_t *mind)
 {
 	thinker_t*	currentthinker;
-	mobj_t* newtarget;
+	mobj_t* newtarget = NULL;
 	int targpin = 0;
 	currentthinker = thinkercap.next;
 	int distance = 10000;

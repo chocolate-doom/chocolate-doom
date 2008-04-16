@@ -1634,7 +1634,6 @@ void D_DoomMain (void)
 		}
 	}
 	
-	
     if (gameaction != ga_loadgame )
     {
 	if (autostart || netgame || localnetgame)

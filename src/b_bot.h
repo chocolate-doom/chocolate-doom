@@ -35,13 +35,17 @@
 #include "p_local.h"
 #include "d_event.h"
 
+#define MAXBOTWAYPOINTS 10
+
 typedef struct botcontrol_s
 {
 	ticcmd_t *cmd;
 	mobj_t *target;
 	mobj_t *follower;
+	mobj_t *goal;
 	player_t *me;
 	int node;
+	mobj_t *waypoints[MAXBOTWAYPOINTS];
 	
 	int pistoltimeout;
 	int chainguntimeout;
@@ -59,12 +63,12 @@ extern botcontrol_t botactions[MAXPLAYERS];
 
 enum
 {
-	BA_NULL,
-	BA_LOOKING,
-	BA_ATTACKING,
-	BA_GATHERING,
-	BA_EXPLORING,
-	BA_FOLLOWING,
+	BA_NULL = 0,
+	BA_LOOKING = 1,
+	BA_ATTACKING = 2,
+	BA_GATHERING = 4,
+	BA_EXPLORING = 8,
+	BA_FOLLOWING = 16,
 };
 	
 void B_BuildTicCommand(ticcmd_t* cmd);

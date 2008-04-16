@@ -656,13 +656,18 @@ extern  gamestate_t     wipegamestate;
  
 void G_DoLoadLevel (void) 
 { 
-    int             i; 
+    int             i;
+    int j; 
 
     // Set the sky map.
     // First thing, we have a dummy sky texture name,
     //  a flat. The data is in the WAD only because
     //  we look for an actual index, instead of simply
     //  setting one.
+    
+    for (i = 0; i < MAXPLAYERS; i++)
+    	for (j = 0; j < MAXBOTWAYPOINTS; j++)
+    		botactions[i].waypoints[j] = NULL;
 
     skyflatnum = R_FlatNumForName(DEH_String(SKYFLATNAME));
 
