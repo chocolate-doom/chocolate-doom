@@ -8,11 +8,18 @@
 
 * Music plays back differently.
 
-  The DOS music code was not in the Doom source release as Doom used
-  a proprietary sound library.  The mus <-> mid conversion mostly 
-  works well but some patches are different.  By closer examination 
-  of which MIDI instruments are used by doom.exe, it may be possible
-  to get a closer conversion.
+  Vanilla Doom was typically played with a SoundBlaster (or compatible)
+  card.  It programmed the registers for the OPL music chip directly
+  in order to emulate the various General MIDI instruments.  However,
+  Chocolate Doom uses the OS's native MIDI playback interfaces to play
+  MIDI sound.  As the OPL is programmed differently, the music sounds
+  different to the original, even when using an original SoundBlaster
+  card.
+
+  This can be worked around in the future: OPL emulation code exists that
+  simulates an OPL chip in software.  Furthermore, depending on the OS,
+  it may be possible to program the OPL directly in order to get the 
+  same sound.
 
 * A small number of Doom bugs are almost impossible to emulate.
 

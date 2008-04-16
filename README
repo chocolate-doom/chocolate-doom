@@ -56,18 +56,23 @@ Here are some examples:
  * More information, including information about how to play various classic
    TCs, is available on the Chocolate Doom website: 
 
-   http://www.chocolate-doom.org/
+     http://www.chocolate-doom.org/
 
    You are encouraged to sign up and contribute any useful information you may
    have regarding the port!
 
- * Chocolate Doom is not perfect.  See the BUGS file for a list of 
-   known issues,
+ * Chocolate Doom is not perfect.  See the BUGS file for a list of known
+   issues. New bug reports can be submitted to the Chocolate Doom bug
+   tracker on Sourceforge.  See:
 
- * Chocolate Doom is under the GNU GPL.  See the COPYING file for more 
-   information.
+     http://sourceforge.net/projects/chocolate-doom
 
- * Chocolate Doom is currently a beta version.  Not all planned features 
-   have been implemented yet; see TODO.  Please send feedback and bug 
-   reports to fraggle@gmail.com.  Thanks!
+ * Source code patches are welcome, but please follow the style guidelines -
+   see the file named HACKING included with the source distribution.
+
+ * Chocolate Doom is distributed under the GNU GPL.  See the COPYING file 
+   for more information.
+
+ * Please send any feedback, questions or suggestions to fraggle@gmail.com.  
+   Thanks!
 
