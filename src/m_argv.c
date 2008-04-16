@@ -31,6 +31,7 @@
 
 #include "doomdef.h"
 #include "i_system.h"
+#include "m_misc.h"
 
 int		myargc;
 char**		myargv;
@@ -44,6 +45,8 @@ char**		myargv;
 // in the program's command line arguments.
 // Returns the argument number (1 to argc-1)
 // or 0 if not present
+//
+
 int M_CheckParm (char *check)
 {
     int		i;
@@ -83,11 +86,7 @@ static void LoadResponseFile(int argv_index)
 
     printf("Found response file %s!\n", response_filename);
 
-    // Find size of file
-
-    fseek(handle, 0, SEEK_END);
-    size = ftell(handle);
-    fseek(handle, 0, SEEK_SET);
+    size = M_FileLength(handle);
 
     // Read in the entire file
     // Allocate one byte extra - this is incase there is an argument
@@ -204,6 +203,7 @@ static void LoadResponseFile(int argv_index)
 //
 // Find a Response File
 //
+
 void M_FindResponseFile(void)
 {
     int             i;
@@ -216,7 +216,4 @@ void M_FindResponseFile(void)
         }
     }
 }
-
-
-
 

@@ -118,4 +118,6 @@ V_MarkRect
   
 void V_DrawRect(int x, int y, int width, int height, int color);
 
+void V_ScreenShot(void);
+
 #endif

@@ -885,7 +885,8 @@ void G_Ticker (void)
 	    G_DoWorldDone (); 
 	    break; 
 	  case ga_screenshot: 
-	    M_ScreenShot (); 
+	    V_ScreenShot (); 
+            players[consoleplayer].message = DEH_String("screen shot");
 	    gameaction = ga_nothing; 
 	    break; 
 	  case ga_nothing: 

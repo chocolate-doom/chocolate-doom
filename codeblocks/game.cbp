@@ -208,6 +208,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\m_cheat.h" />
+		<Unit filename="..\src\m_config.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\m_config.h" />
 		<Unit filename="..\src\m_fixed.c">
 			<Option compilerVar="CC" />
 		</Unit>

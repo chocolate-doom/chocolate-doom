@@ -54,6 +54,7 @@
 #include "f_wipe.h"
 
 #include "m_argv.h"
+#include "m_config.h"
 #include "m_misc.h"
 #include "m_menu.h"
 #include "p_saveg.h"
