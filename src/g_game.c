@@ -1485,21 +1485,25 @@ G_SaveGame
  
 void G_DoSaveGame (void) 
 { 
-    char	name[100]; 
-    char*	description; 
-	
-    strcpy(name, P_SaveGameFile(savegameslot));
+    char *savegame_file;
+    char *temp_savegame_file;
 
-    description = savedescription; 
-	 
-    save_stream = fopen(name, "wb");
+    temp_savegame_file = P_TempSaveGameFile();
+    savegame_file = P_SaveGameFile(savegameslot);
+
+    // Open the savegame file for writing.  We write to a temporary file
+    // and then rename it at the end if it was successfully written.
+    // This prevents an existing savegame from being overwritten by 
+    // a corrupted one, or if a savegame buffer overrun occurs.
+
+    save_stream = fopen(temp_savegame_file, "wb");
 
     if (save_stream == NULL)
     {
         return;
     }
 
-    P_WriteSaveGameHeader(description);
+    P_WriteSaveGameHeader(savedescription);
  
     P_ArchivePlayers (); 
     P_ArchiveWorld (); 
@@ -1516,11 +1520,19 @@ void G_DoSaveGame (void)
         I_Error ("Savegame buffer overrun");
     }
     
+    // Finish up, close the savegame file.
+
     fclose(save_stream);
 
+    // Now rename the temporary savegame file to the actual savegame
+    // file, overwriting the old savegame if there was one there.
+
+    remove(savegame_file);
+    rename(temp_savegame_file, savegame_file);
+    
     gameaction = ga_nothing; 
     strcpy(savedescription, "");
-	 
+
     players[consoleplayer].message = DEH_String(GGSAVED);
 
     // draw the pattern into the back screen
