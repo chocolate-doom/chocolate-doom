@@ -22,6 +22,7 @@
        clients to play with Strawberry Doom clients.
      * Unix manpages are now generated for the Chocolate Doom 
        configuration files.
+     * The BSD PC speaker driver now works on FreeBSD.
 
     Compatibility:
      * Use the same spechits compatibility value as PrBoom+, for consistency
@@ -49,6 +50,8 @@
      * Process affinity mask is set to 1 on Windows, to work around a 
        bug in SDL_mixer that can cause crashes on multi-core machines
        (thanks entryway).
+     * Bugs in the joystick configuration dialog in the setup tool have
+       been fixed.
 
 1.0.0 (2007-12-10):
 
