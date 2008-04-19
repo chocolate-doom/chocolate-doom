@@ -216,41 +216,6 @@ static uint32_t ExpandSoundData_SRC(byte *data,
     return clipped;
 }
 
-// Preload all the sound effects - stops nasty ingame freezes
-
-static void I_PrecacheSounds(void)
-{
-    char namebuf[9];
-    int i;
-
-    printf("I_PrecacheSounds: Precaching all sound effects..");
-
-    for (i=sfx_pistol; i<NUMSFX; ++i)
-    {
-        if ((i % 6) == 0)
-        {
-            printf(".");
-            fflush(stdout);
-        }
-
-        sprintf(namebuf, "ds%s", DEH_String(S_sfx[i].name));
-
-        S_sfx[i].lumpnum = W_CheckNumForName(namebuf);
-
-        if (S_sfx[i].lumpnum != -1)
-        {
-            CacheSFX(i);
-
-            if (sound_chunks[i].abuf != NULL)
-            {
-                Z_ChangeTag(sound_chunks[i].abuf, PU_CACHE);
-            }
-        }
-    }
-
-    printf("\n");
-}
-
 #endif
 
 static boolean ConvertibleRatio(int freq1, int freq2)
@@ -449,6 +414,45 @@ static boolean CacheSFX(int sound)
 
     return true;
 }
+
+#ifdef HAVE_LIBSAMPLERATE
+
+// Preload all the sound effects - stops nasty ingame freezes
+
+static void I_PrecacheSounds(void)
+{
+    char namebuf[9];
+    int i;
+
+    printf("I_PrecacheSounds: Precaching all sound effects..");
+
+    for (i=sfx_pistol; i<NUMSFX; ++i)
+    {
+        if ((i % 6) == 0)
+        {
+            printf(".");
+            fflush(stdout);
+        }
+
+        sprintf(namebuf, "ds%s", DEH_String(S_sfx[i].name));
+
+        S_sfx[i].lumpnum = W_CheckNumForName(namebuf);
+
+        if (S_sfx[i].lumpnum != -1)
+        {
+            CacheSFX(i);
+
+            if (sound_chunks[i].abuf != NULL)
+            {
+                Z_ChangeTag(sound_chunks[i].abuf, PU_CACHE);
+            }
+        }
+    }
+
+    printf("\n");
+}
+
+#endif
 
 static Mix_Chunk *GetSFXChunk(int sound_id)
 {
