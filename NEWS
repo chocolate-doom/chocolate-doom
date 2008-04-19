@@ -32,6 +32,9 @@
      * The default startup delay has been set to one second, to allow 
        time for the screen to settle before starting the game (some 
        monitors have a delay before they come back on after changing modes).
+     * If a savegame buffer overrun occurs, the savegame does not get saved
+       and existing savegames are not overwritten (same behaviour as 
+       Vanilla).
 
     Bugs fixed:
      * Desync with STRAIN demos and dehacked Misc values not being set
