@@ -54,7 +54,7 @@ int main(int argc, char **argv)
     if (!SetProcessAffinityMask(GetCurrentProcess(), 1))
     {
         fprintf(stderr, "Failed to set process affinity mask (%d)\n",
-                GetLastError());
+                (int) GetLastError());
     }
 #endif
 
