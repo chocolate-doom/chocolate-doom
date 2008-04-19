@@ -1,3 +1,401 @@
+2008-04-19 16:30:42 fraggle
+	
+	Fix some more warnings.
+
+2008-04-19 16:27:50 fraggle
+	
+	Fix warning.
+
+2008-04-19 14:43:17 fraggle
+	
+	Don't successfully save a savegame if a buffer overrun occurs, and
+	don't overwrite the existing savegame.
+
+2008-04-19 14:24:59 fraggle
+	
+	Update NEWS.
+
+2008-04-16 21:30:04 fraggle
+	
+	Update some of the documentation.
+
+2008-04-16 00:16:16 fraggle
+	
+	Make the BSD PC speaker driver work on FreeBSD.
+
+2008-04-15 22:40:33 fraggle
+	
+	Make use_libsamplerate be an integer value that controls conversion
+	quality, rather than an on/off setting.
+
+2008-04-15 22:19:35 fraggle
+	
+	Fix bug with joystick configuration.
+
+2008-04-02 01:00:11 fraggle
+	
+	April Fools!
+
+2008-04-01 01:10:20 fraggle
+	
+	Flip all levels on load - the game is more fun this way.
+
+2008-03-30 23:17:13 rtc_marine
+	
+	Fix an error message
+
+2008-03-15 23:54:00 rtc_marine
+	
+	Fix build of Chocolate Server
+
+2008-03-13 18:41:00 fraggle
+	
+	Display a warning message if use_libsamplerate != 0, but libsamplerate
+	support is not compiled in.
+
+2008-03-13 18:33:59 fraggle
+	
+	Apply SRC patch from David Flater.
+
+2008-03-12 20:12:51 fraggle
+	
+	Add "see also" sections to manpages and GPL note.  Add "files" section
+	to chocolate-doom.6
+
+2008-03-09 03:19:35 rtc_marine
+	
+	update codeblocks project to reflect previous commit changes
+
+2008-03-09 03:02:48 fraggle
+	
+	Split out configuration file code from m_misc.c into m_config.c.  Move
+	screenshot code into v_video.c Add M_FileLength common function for
+	finding the length of an open file.
+
+2008-02-28 21:22:41 fraggle
+	
+	Move vc9/ project files into the msvc/ directory and update the README
+	file for the MSVC files.
+
+2008-02-28 20:07:31 fraggle
+	
+	Fix MSVC project file and resource file for new filenames.
+
+2008-02-28 20:04:10 fraggle
+	
+	Add fixes for MSVC warnings (thanks entryway).
+
+2008-02-26 22:13:35 fraggle
+	
+	Update NEWS.
+
+2008-02-26 22:10:06 fraggle
+	
+	Don't sort config file variables alphabetically.  Throw an exception
+	for unknown documentation comments.
+
+2008-02-26 22:05:41 fraggle
+	
+	Minor config file documentation fixes.
+
+2008-02-25 23:50:07 fraggle
+	
+	Replace manpage header, footer, environment files with a single
+	template file.  Generate documentation for the default.cfg and
+	chocolate-doom.cfg configuration files.
+
+2008-02-24 20:25:51 fraggle
+	
+	Switch to using CONFIG_VARIABLE_ macros for the configuration file
+	tables.  Add documentation for each value (for autogenerating
+	documentation).
+
+2008-02-24 00:55:07 fraggle
+	
+	Fix leftover "junk" displayed on the screen on the initial melt when
+	using -warp.
+
+2008-02-23 22:51:17 fraggle
+	
+	Perform a low-pass filter of converted sounds to filter out
+	high-frequency noise from the upscaling process.
+
+2008-02-21 20:01:30 fraggle
+	
+	Shut up compile warning.
+
+2008-02-17 03:12:25 fraggle
+	
+	Add command line option for server to allow client version checking to
+	be disabled.
+
+2008-02-13 19:06:11 fraggle
+	
+	Don't try to precache sound effects that don't exist.
+
+2008-02-12 22:16:12 fraggle
+	
+	Add comment.
+
+2008-02-12 22:07:41 fraggle
+	
+	Use SRC_SINC_FASTEST for speed when using libsamplerate for
+	conversions, and precache all sound effects for speed.
+
+2008-02-12 21:29:58 fraggle
+	
+	Add use_libsamplerate variable to setup.
+
+2008-02-12 21:26:31 fraggle
+	
+	Set the default startup_delay to 1s.
+
+2008-02-11 22:59:51 fraggle
+	
+	Add support for sample rate conversion using libsamplerate (thanks to
+	David Flater for this patch).
+
+2008-02-10 18:44:05 fraggle
+	
+	Fix compiler warnings.  Refactor the intercepts overrun code so that
+	it should work properly on big endian machines as well as little
+	endian machines.
+
+2008-02-09 22:31:02 fraggle
+	
+	Fix up the R_Main startup progress dots.  If stdout is a file, don't
+	display the surrounding box.
+
+2008-02-09 22:21:33 fraggle
+	
+	Set the process affinity mask to 1 on Windows, to work around a bug in
+	SDL_mixer (thanks entryway).
+
+2008-02-09 22:04:13 fraggle
+	
+	Set the SDL_VIDEODRIVER in setup, so that we get the correct modes
+	list (different video drivers can give different results).  Restart
+	textscreen when the video driver is changed.
+
+2008-02-09 20:30:27 fraggle
+	
+	Define WIN32_LEAN_AND_MEAN to fix windows build of i_system.c.
+
+2008-02-09 19:17:19 fraggle
+	
+	Remove some unneeded functions from i_system.c.  Make I_Error exit
+	using exit() rather than abort().  Display a message box with the
+	error on Windows.
+
+2008-02-06 23:55:33 fraggle
+	
+	Use geometric distance to find the nearest mode when autoadjusting,
+	rather than number of pixels.
+
+2008-02-06 23:42:29 fraggle
+	
+	Add -geometry command line parameter to allow the screen size to be
+	specified with one combined option.
+
+2008-02-06 22:18:16 fraggle
+	
+	Make 320x240 a "good" mode when aspect ratio correction is turned off.
+	Don't switch to "bad" modes when changing other settings.
+
+2008-02-05 23:32:30 fraggle
+	
+	Set screen_{width,height} when finding the nearest mode.  Save the
+	last mode explicitly selected and use this as criteria for which mode
+	is nearest.  Align the display window so that the top always stays
+	still.
+
+2008-02-05 05:34:07 rtc_marine
+	
+	fix a few warnings
+
+2008-02-04 22:45:53 fraggle
+	
+	Mark 512x400 as a "bad" mode (don't autoadjust to it in fullscreen).
+	Makes 640x480 the default when 320x200 mode is not available.
+
+2008-02-04 22:43:11 fraggle
+	
+	Update chocolate-setup to the new screen mode config system.
+
+2008-01-31 22:43:20 rtc_marine
+	
+	Use project names as binary names
+
+2008-01-30 19:09:31 fraggle
+	
+	Be more accurate in describing windowboxed modes as either
+	"pillarboxed", "letterboxed" or "windowboxed".
+
+2008-01-26 15:38:28 fraggle
+	
+	Update make dist for new codeblocks files.
+
+2008-01-25 23:05:53 rtc_marine
+	
+	Change filenames to be name independant Update the project files and
+	main workspace
+
+2008-01-25 22:48:23 fraggle
+	
+	Update win32 resource files for the new icon filenames.
+
+2008-01-25 17:37:48 fraggle
+	
+	Rename some files to be package name independent.
+
+2008-01-24 19:26:12 fraggle
+	
+	Update NEWS.
+
+2008-01-24 19:14:44 fraggle
+	
+	Add manpages for chocolate-setup, chocolate-server, based on the
+	versions by Jon Dowland for the Chocolate Doom debian package
+	(thanks!)
+
+2008-01-24 19:10:49 fraggle
+	
+	Make lookup tables const where possible.
+
+2008-01-24 19:09:47 fraggle
+	
+	Fix fast / respawning monsters parameter not exchanged when starting
+	netgames (thanks GhostlyDeath).
+
+2008-01-23 23:56:35 fraggle
+	
+	Add URLs for patches.
+
+2008-01-22 20:02:02 fraggle
+	
+	Use MEM_SEEK_SET for memio, not SEEK_SET.
+
+2008-01-22 20:00:42 fraggle
+	
+	Add SDL_mixer, SDL_net URLs and a section on timidity.
+
+2008-01-22 19:55:50 fraggle
+	
+	Include MSVC project files in make dist.
+
+2008-01-22 19:52:38 fraggle
+	
+	Add INSTALL file.
+
+2008-01-21 15:07:15 GhostlyDeath
+	
+	Removed spaces from VC9 Project
+
+2008-01-20 16:18:16 fraggle
+	
+	Fix loading disk icon.  Add back -1, -2, -3 command line options for
+	scale.  Only allow 320x200, 640x400 special case for aspect ratio
+	correct when running fullscreen.  Clean up "nearest mode"
+	autoadjustment.  Fix crash with autoadjust when running windowed.
+
+2008-01-20 04:59:50 fraggle
+	
+	Add -width, -height command line parameters for specifying the screen
+	mode.
+
+2008-01-20 04:47:52 fraggle
+	
+	Refactor the video mode configuration system.  The previous system was
+	built around the program choosing a screen mode from the user's
+	settings, this is based around choosing settings from the specified
+	screen mode.  As such, the old screenmultiply config variable is now
+	gone.  Also, aspect ratio correction is now on by default.  Add new
+	aspect ratio correction functions for horizontal squashing (as a
+	complement to the existing vertical stretching).
+
+2008-01-20 01:59:39 fraggle
+	
+	Use strcmp(), not strcasecmp() for checking driver name
+
+2008-01-20 00:22:47 fraggle
+	
+	Revert doomdef.h include added to pcsound.c.
+
+2008-01-16 14:41:07 rtc_marine
+	
+	Fix build Remove unused libraries from certain projects
+
+2008-01-16 14:33:08 GhostlyDeath
+	
+	Updated VC9 project, -setup and -server now build correctly
+
+2008-01-16 13:39:24 GhostlyDeath
+	
+	Added MSVC9 (2k8 Express) Project File; The client builds but -setup
+	and -server just need to have files excluded/included from the project
+
+2008-01-16 11:13:42 rtc_marine
+	
+	Update config.h to 1.0.0 for the codeblocks projects
+
+2008-01-12 12:28:08 fraggle
+	
+	Make sure we credit Id in the manpage as well.  Update copyright to
+	2008.
+
+2008-01-10 00:46:53 fraggle
+	
+	Use the same spechits magic value that PrBoom-plus uses (thanks
+	Lemonzest).
+
+2007-12-30 04:51:56 fraggle
+	
+	Add environment variable section to manpage.
+
+2007-12-18 22:09:51 fraggle
+	
+	Don't center the mouse on startup if the mouse is disabled (thanks
+	Siggi) Reset the palette when the window is restored to clear any
+	screen corruption (thanks Catoptromancy)
+
+2007-12-14 22:23:13 fraggle
+	
+	Don't grab the mouse if the mouse is disabled by -nomouse or through
+	use_mouse in the configuration file (thanks MikeRS).
+
+2007-12-14 18:31:28 fraggle
+	
+	Update NEWS.
+
+2007-12-14 18:29:23 fraggle
+	
+	Include doomfeatures.h in deh_misc.h so that FEATURE_DEHACKED is
+	checked properly.  Fixes STRAIN desyncs with BFG Cells/Shot not set
+	properly.
+
+2007-12-13 23:04:58 fraggle
+	
+	Add a list of wiki pages to link to and automatically insert links.
+
+2007-12-13 22:32:33 fraggle
+	
+	Add missing argument to the extraconfig command line parameter.
+
+2007-12-13 22:27:07 fraggle
+	
+	Add mmapped file IO note to TODO.
+
+2007-12-13 22:26:16 fraggle
+	
+	Add @vanilla tag for Vanilla doom command line options.  Add missing
+	documentation for -nosound, -nomusic, -nosfx.  Fix up some bugs with
+	the docgen wikitext output and allow control over output of Vanilla
+	options.
+
+2007-12-10 21:03:28 fraggle
+	
+	Bump version to 1.0.0 and update ChangeLog.
+
 2007-12-08 11:07:13 fraggle
 	
 	Update NEWS.
