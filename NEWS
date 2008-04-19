@@ -1,4 +1,6 @@
 
+1.1.0 (2008-04-19):
+
      * The video mode code has been radically restructured.  The video mode is
        now chosen by directly specifying the mode to use; the scale factor is
        then chosen to fit the screen.  This is helpful when using widescreen
