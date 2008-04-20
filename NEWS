@@ -1,3 +1,8 @@
+1.1.1 (2008-04-20):
+
+    The previous release (v1.1.0) included a bug that broke compilation
+    when libsamplerate support was enabled.  The only change in this 
+    version is to fix this bug.
 
 1.1.0 (2008-04-19):
 
