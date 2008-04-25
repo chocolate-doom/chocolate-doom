@@ -178,7 +178,7 @@ EXTRA_DIST =                        \
 
 if HAVE_PYTHON
 
-icon.c : ../data/doom.png
+icon.c : ../data/doom.ico
 	../data/convert-icon $^ $@
 
 endif
