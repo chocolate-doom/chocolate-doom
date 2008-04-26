@@ -38,7 +38,7 @@ endif
 
 if HAVE_PYTHON
 
-setup_icon.c : ../data/setup.png
+setup_icon.c : ../data/setup.ico
 	../data/convert-icon $^ $@
 
 endif
