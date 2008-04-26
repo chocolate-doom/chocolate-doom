@@ -151,6 +151,24 @@ static void InitConfig(void)
 static void SetIcon(void)
 {
     SDL_Surface *surface;
+    Uint8 *mask;
+    int i;
+
+    // Generate the mask
+  
+    mask = malloc(setup_icon_w * setup_icon_h / 8);
+    memset(mask, 0, setup_icon_w * setup_icon_h / 8);
+
+    for (i=0; i<setup_icon_w * setup_icon_h; ++i) 
+    {
+        if (setup_icon_data[i * 3] != 0x00
+         || setup_icon_data[i * 3 + 1] != 0x00
+         || setup_icon_data[i * 3 + 2] != 0x00)
+        {
+            mask[i / 8] |= 1 << (7 - i % 8);
+        }
+    }
+
 
     surface = SDL_CreateRGBSurfaceFrom(setup_icon_data,
                                        setup_icon_w,
@@ -162,8 +180,9 @@ static void SetIcon(void)
                                        0xff << 16,
                                        0);
 
-    SDL_WM_SetIcon(surface, NULL);
+    SDL_WM_SetIcon(surface, mask);
     SDL_FreeSurface(surface);
+    free(mask);
 }
 
 // 
