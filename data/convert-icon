@@ -29,7 +29,7 @@ import re
 try:
         import Image
 except ImportError:
-        print "WARNING: Could not update %s.  Please install the Python Image library." % sys.argv[2]
+        print "WARNING: Could not update %s.  Please install the Python Imaging library." % sys.argv[2]
         sys.exit(0)
 
 
