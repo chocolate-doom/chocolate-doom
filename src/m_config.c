@@ -125,6 +125,9 @@ extern int snd_musicdevice;
 extern int snd_sfxdevice;
 extern int snd_samplerate;
 
+extern int key_showscores;
+extern int supercoopspy;
+
 // controls whether to use libsamplerate for sample rate conversions
 
 extern int use_libsamplerate;
@@ -710,6 +713,9 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(use_libsamplerate,         use_libsamplerate),
+    
+	{"key_showscores",                          &key_showscores, DEFAULT_KEY, 0, 0},
+     {"supercoopspy",                            &supercoopspy, DEFAULT_INT, 0, 0},
 };
 
 static default_collection_t extra_defaults =

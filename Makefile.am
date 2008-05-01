@@ -8,8 +8,8 @@ MSVC_FILES=                             \
         msvc/inttypes.h                 \
         msvc/stdint.h                   \
         msvc/win32.rc                   \
-        msvc/ChocolateDoom.sln          \
-        msvc/ChocolateDoom.vcproj
+        msvc/StrawberryDoom.sln          \
+        msvc/StrawberryDoom.vcproj
 
 CODEBLOCKS_FILES=                              \
 	codeblocks/config.h                    \
