@@ -243,6 +243,7 @@ static void UpdateFocus(void)
 static void LoadDiskImage(void)
 {
     patch_t *disk;
+    char *disk_name;
     int y;
     char buf[20];
 
@@ -258,9 +259,11 @@ static void LoadDiskImage(void)
     }
 
     if (M_CheckParm("-cdrom") > 0)
-        disk = (patch_t *) W_CacheLumpName(DEH_String("STCDROM"), PU_STATIC);
+        disk_name = DEH_String("STCDROM");
     else
-        disk = (patch_t *) W_CacheLumpName(DEH_String("STDISK"), PU_STATIC);
+        disk_name = DEH_String("STDISK");
+
+    disk = W_CacheLumpName(disk_name, PU_STATIC);
 
     V_DrawPatch(0, 0, 0, disk);
     disk_image_w = SHORT(disk->width);
@@ -277,7 +280,7 @@ static void LoadDiskImage(void)
         memset(screens[0] + SCREENWIDTH * y, 0, disk_image_w);
     }
 
-    Z_Free(disk);
+    W_ReleaseLumpName(disk_name);
 }
 
 //
