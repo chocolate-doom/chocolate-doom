@@ -346,9 +346,6 @@ static int		NUMCMAPS;
 //	GRAPHICS
 //
 
-// background (map of levels).
-static patch_t*		bg;
-
 // You Are Here graphic
 static patch_t*		yah[2]; 
 
@@ -1547,28 +1544,17 @@ void WI_Ticker(void)
 
 }
 
-void WI_loadData(void)
+typedef void (*load_callback_t)(char *lumpname, patch_t **variable);
+
+// Common load/unload function.  Iterates over all the graphics
+// lumps to be loaded/unloaded into memory.
+
+static void WI_loadUnloadData(load_callback_t callback)
 {
     int		i;
     int		j;
     char	name[9];
     anim_t*	a;
-
-    if (gamemode == commercial)
-	strcpy(name, DEH_String("INTERPIC"));
-    else 
-	sprintf(name, DEH_String("WIMAP%d"), wbs->epsd);
-    
-    if ( gamemode == retail )
-    {
-      if (wbs->epsd == 3)
-	strcpy(name, DEH_String("INTERPIC"));
-    }
-
-    // background
-    bg = W_CacheLumpName(name, PU_CACHE);    
-    V_DrawPatch(0, 0, 1, bg);
-
 
     // UNUSED unsigned char *pic = screens[1];
     // if (gamemode == commercial)
@@ -1583,33 +1569,28 @@ void WI_loadData(void)
 
     if (gamemode == commercial)
     {
-	NUMCMAPS = 32;								
-	lnames = (patch_t **) Z_Malloc(sizeof(patch_t*) * NUMCMAPS,
-				       PU_STATIC, 0);
 	for (i=0 ; i<NUMCMAPS ; i++)
 	{								
 	    sprintf(name, DEH_String("CWILV%2.2d"), i);
-	    lnames[i] = W_CacheLumpName(name, PU_STATIC);
+            callback(name, &lnames[i]);
 	}					
     }
     else
     {
-	lnames = (patch_t **) Z_Malloc(sizeof(patch_t*) * NUMMAPS,
-				       PU_STATIC, 0);
 	for (i=0 ; i<NUMMAPS ; i++)
 	{
 	    sprintf(name, DEH_String("WILV%d%d"), wbs->epsd, i);
-	    lnames[i] = W_CacheLumpName(name, PU_STATIC);
+            callback(name, &lnames[i]);
 	}
 
 	// you are here
-	yah[0] = W_CacheLumpName(DEH_String("WIURH0"), PU_STATIC);
+        callback(DEH_String("WIURH0"), &yah[0]);
 
 	// you are here (alt.)
-	yah[1] = W_CacheLumpName(DEH_String("WIURH1"), PU_STATIC);
+        callback(DEH_String("WIURH1"), &yah[1]);
 
 	// splat
-	splat = W_CacheLumpName(DEH_String("WISPLAT"), PU_STATIC); 
+        callback(DEH_String("WISPLAT"), &splat);
 	
 	if (wbs->epsd < 3)
 	{
@@ -1624,7 +1605,7 @@ void WI_loadData(void)
 			// animations
 			sprintf(name, DEH_String("WIA%d%.2d%.2d"), 
 				      wbs->epsd, j, i);  
-			a->p[i] = W_CacheLumpName(name, PU_STATIC);
+                        callback(name, &a->p[i]);
 		    }
 		    else
 		    {
@@ -1637,150 +1618,149 @@ void WI_loadData(void)
     }
 
     // More hacks on minus sign.
-    wiminus = W_CacheLumpName(DEH_String("WIMINUS"), PU_STATIC); 
+    callback(DEH_String("WIMINUS"), &wiminus);
 
     for (i=0;i<10;i++)
     {
 	 // numbers 0-9
 	sprintf(name, DEH_String("WINUM%d"), i);     
-	num[i] = W_CacheLumpName(name, PU_STATIC);
+        callback(name, &num[i]);
     }
 
     // percent sign
-    percent = W_CacheLumpName(DEH_String("WIPCNT"), PU_STATIC);
+    callback(DEH_String("WIPCNT"), &percent);
 
     // "finished"
-    finished = W_CacheLumpName(DEH_String("WIF"), PU_STATIC);
+    callback(DEH_String("WIF"), &finished);
 
     // "entering"
-    entering = W_CacheLumpName(DEH_String("WIENTER"), PU_STATIC);
+    callback(DEH_String("WIENTER"), &entering);
 
     // "kills"
-    kills = W_CacheLumpName(DEH_String("WIOSTK"), PU_STATIC);   
+    callback(DEH_String("WIOSTK"), &kills);
 
     // "scrt"
-    secret = W_CacheLumpName(DEH_String("WIOSTS"), PU_STATIC);
+    callback(DEH_String("WIOSTS"), &secret);
 
      // "secret"
-    sp_secret = W_CacheLumpName(DEH_String("WISCRT2"), PU_STATIC);
+    callback(DEH_String("WISCRT2"), &sp_secret);
 
     // french wad uses WIOBJ (?)
     if (W_CheckNumForName(DEH_String("WIOBJ")) >= 0)
     {
     	// "items"
     	if (netgame && !deathmatch)
-            items = W_CacheLumpName(DEH_String("WIOBJ"), PU_STATIC);    
+            callback(DEH_String("WIOBJ"), &items);
     	else
-            items = W_CacheLumpName(DEH_String("WIOSTI"), PU_STATIC);
+            callback(DEH_String("WIOSTI"), &items);
     } else {
-	items = W_CacheLumpName(DEH_String("WIOSTI"), PU_STATIC);
+        callback(DEH_String("WIOSTI"), &items);
     }
 
     // "frgs"
-    frags = W_CacheLumpName(DEH_String("WIFRGS"), PU_STATIC);    
+    callback(DEH_String("WIFRGS"), &frags);
 
     // ":"
-    colon = W_CacheLumpName(DEH_String("WICOLON"), PU_STATIC); 
+    callback(DEH_String("WICOLON"), &colon);
 
     // "time"
-    timepatch = W_CacheLumpName(DEH_String("WITIME"), PU_STATIC);   
+    callback(DEH_String("WITIME"), &timepatch);   
 
     // "sucks"
-    sucks = W_CacheLumpName(DEH_String("WISUCKS"), PU_STATIC);  
+    callback(DEH_String("WISUCKS"), &sucks);  
 
     // "par"
-    par = W_CacheLumpName(DEH_String("WIPAR"), PU_STATIC);   
+    callback(DEH_String("WIPAR"), &par);   
 
     // "killers" (vertical)
-    killers = W_CacheLumpName(DEH_String("WIKILRS"), PU_STATIC);
+    callback(DEH_String("WIKILRS"), &killers);
 
     // "victims" (horiz)
-    victims = W_CacheLumpName(DEH_String("WIVCTMS"), PU_STATIC);
+    callback(DEH_String("WIVCTMS"), &victims);
 
     // "total"
-    total = W_CacheLumpName(DEH_String("WIMSTT"), PU_STATIC);   
-
-    // your face
-    star = W_CacheLumpName(DEH_String("STFST01"), PU_STATIC);
-
-    // dead face
-    bstar = W_CacheLumpName(DEH_String("STFDEAD0"), PU_STATIC);    
+    callback(DEH_String("WIMSTT"), &total);   
 
     for (i=0 ; i<MAXPLAYERS ; i++)
     {
 	// "1,2,3,4"
 	sprintf(name, DEH_String("STPB%d"), i);      
-	p[i] = W_CacheLumpName(name, PU_STATIC);
+        callback(name, &p[i]);
 
 	// "1,2,3,4"
 	sprintf(name, DEH_String("WIBP%d"), i+1);     
-	bp[i] = W_CacheLumpName(name, PU_STATIC);
+        callback(name, &bp[i]);
     }
 
 }
 
-void WI_unloadData(void)
+static void WI_loadCallback(char *name, patch_t **variable)
 {
-    int		i;
-    int		j;
+    *variable = W_CacheLumpName(name, PU_STATIC);
+}
 
-    Z_ChangeTag(wiminus, PU_CACHE);
+void WI_loadData(void)
+{
+    char bg_lumpname[9];
+    patch_t *bg;
 
-    for (i=0 ; i<10 ; i++)
-	Z_ChangeTag(num[i], PU_CACHE);
-    
     if (gamemode == commercial)
     {
-  	for (i=0 ; i<NUMCMAPS ; i++)
-	    Z_ChangeTag(lnames[i], PU_CACHE);
+	NUMCMAPS = 32;								
+	lnames = (patch_t **) Z_Malloc(sizeof(patch_t*) * NUMCMAPS,
+				       PU_STATIC, NULL);
     }
     else
     {
-	Z_ChangeTag(yah[0], PU_CACHE);
-	Z_ChangeTag(yah[1], PU_CACHE);
+	lnames = (patch_t **) Z_Malloc(sizeof(patch_t*) * NUMMAPS,
+				       PU_STATIC, NULL);
+    }
 
-	Z_ChangeTag(splat, PU_CACHE);
+    WI_loadUnloadData(WI_loadCallback);
 
-	for (i=0 ; i<NUMMAPS ; i++)
-	    Z_ChangeTag(lnames[i], PU_CACHE);
-	
-	if (wbs->epsd < 3)
-	{
-	    for (j=0;j<NUMANIMS[wbs->epsd];j++)
-	    {
-		if (wbs->epsd != 1 || j != 8)
-		    for (i=0;i<anims[wbs->epsd][j].nanims;i++)
-			Z_ChangeTag(anims[wbs->epsd][j].p[i], PU_CACHE);
-	    }
-	}
+    // These two graphics are special cased because we're sharing
+    // them with the status bar code
+
+    // your face
+    star = W_CacheLumpName(DEH_String("STFST01"), PU_STATIC);
+
+    // dead face
+    bstar = W_CacheLumpName(DEH_String("STFDEAD0"), PU_STATIC);
+
+    // Background image
+
+    if (gamemode == commercial)
+    {
+	strcpy(bg_lumpname, DEH_String("INTERPIC"));
+    }
+    else if (gamemode == retail && wbs->epsd == 3)
+    {
+	strcpy(bg_lumpname, DEH_String("INTERPIC"));
+    }
+    else 
+    {
+	sprintf(bg_lumpname, DEH_String("WIMAP%d"), wbs->epsd);
     }
     
-    Z_Free(lnames);
+    bg = W_CacheLumpName(bg_lumpname, PU_CACHE);
+    V_DrawPatch(0, 0, 1, bg);
+}
 
-    Z_ChangeTag(percent, PU_CACHE);
-    Z_ChangeTag(colon, PU_CACHE);
-    Z_ChangeTag(finished, PU_CACHE);
-    Z_ChangeTag(entering, PU_CACHE);
-    Z_ChangeTag(kills, PU_CACHE);
-    Z_ChangeTag(secret, PU_CACHE);
-    Z_ChangeTag(sp_secret, PU_CACHE);
-    Z_ChangeTag(items, PU_CACHE);
-    Z_ChangeTag(frags, PU_CACHE);
-    Z_ChangeTag(timepatch, PU_CACHE);
-    Z_ChangeTag(sucks, PU_CACHE);
-    Z_ChangeTag(par, PU_CACHE);
+static void WI_unloadCallback(char *name, patch_t **variable)
+{
+    W_ReleaseLumpName(name);
+    *variable = NULL;
+}
 
-    Z_ChangeTag(victims, PU_CACHE);
-    Z_ChangeTag(killers, PU_CACHE);
-    Z_ChangeTag(total, PU_CACHE);
-    //  Z_ChangeTag(star, PU_CACHE);
-    //  Z_ChangeTag(bstar, PU_CACHE);
-    
-    for (i=0 ; i<MAXPLAYERS ; i++)
-	Z_ChangeTag(p[i], PU_CACHE);
+void WI_unloadData(void)
+{
+    WI_loadUnloadData(WI_unloadCallback);
 
-    for (i=0 ; i<MAXPLAYERS ; i++)
-	Z_ChangeTag(bp[i], PU_CACHE);
+    // We do not free these lumps as they are shared with the status
+    // bar code.
+   
+    // W_ReleaseLumpName("STFST01");
+    // W_ReleaseLumpName("STFDEAD0");
 }
 
 void WI_Drawer (void)

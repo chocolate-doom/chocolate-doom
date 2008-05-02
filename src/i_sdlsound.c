@@ -410,7 +410,7 @@ static boolean CacheSFX(int sound)
 
     // don't need the original lump any more
   
-    Z_ChangeTag(data, PU_CACHE);
+    W_ReleaseLumpNum(lumpnum);
 
     return true;
 }

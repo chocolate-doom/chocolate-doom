@@ -457,6 +457,15 @@ void W_ReadLump(unsigned int lump, void *dest)
 //
 // W_CacheLumpNum
 //
+// Load a lump into memory and return a pointer to a buffer containing
+// the lump data.
+//
+// 'tag' is the type of zone memory buffer to allocate for the lump
+// (usually PU_STATIC or PU_CACHE).  If the lump is loaded as 
+// PU_STATIC, it should be released back using W_ReleaseLumpNum
+// when no longer needed (do not use Z_ChangeTag).
+//
+
 void *W_CacheLumpNum(int lump, int tag)
 {
     byte*	ptr;
@@ -489,6 +498,31 @@ void *W_CacheLumpNum(int lump, int tag)
 void *W_CacheLumpName(char *name, int tag)
 {
     return W_CacheLumpNum(W_GetNumForName(name), tag);
+}
+
+// 
+// Release a lump back to the cache, so that it can be reused later 
+// without having to read from disk again, or alternatively, discarded
+// if we run out of memory.
+//
+// Back in Vanilla Doom, this was just done using Z_ChangeTag 
+// directly, but now that we have WAD mmap, things are a bit more
+// complicated ...
+//
+
+void W_ReleaseLumpNum(int lump)
+{
+    if ((unsigned)lump >= numlumps)
+    {
+	I_Error ("W_ReleaseLumpNum: %i >= numlumps", lump);
+    }
+		
+    Z_ChangeTag(lumpinfo[lump].cache, PU_CACHE);
+}
+
+void W_ReleaseLumpName(char *name)
+{
+    W_ReleaseLumpNum(W_GetNumForName(name));
 }
 
 #if 0

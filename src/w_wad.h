@@ -79,5 +79,8 @@ void    W_GenerateHashTable(void);
 
 extern unsigned int W_LumpNameHash(const char *s);
 
+void    W_ReleaseLumpNum(int lump);
+void    W_ReleaseLumpName(char *name);
+
 
 #endif

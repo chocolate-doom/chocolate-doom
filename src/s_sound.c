@@ -830,7 +830,7 @@ void S_ChangeMusic(int musicnum, int looping)
     {
         // Load & register it
 
-        music->data = W_CacheLumpNum(music->lumpnum, PU_MUSIC);
+        music->data = W_CacheLumpNum(music->lumpnum, PU_STATIC);
         handle = music_module->RegisterSong(music->data, 
                                             W_LumpLength(music->lumpnum));
         music->handle = handle;
@@ -868,7 +868,7 @@ void S_StopMusic(void)
 
             music_module->StopSong();
             music_module->UnRegisterSong(mus_playing->handle);
-            Z_ChangeTag(mus_playing->data, PU_CACHE);
+            W_ReleaseLumpNum(mus_playing->lumpnum);
             
             mus_playing->data = NULL;
         }

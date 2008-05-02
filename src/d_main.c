@@ -583,7 +583,7 @@ char            title[128];
 
 static boolean D_AddFile(char *filename)
 {
-    FILE *handle;
+    wad_file_t *handle;
 
     printf(" adding %s\n", filename);
     handle = W_AddFile(filename);

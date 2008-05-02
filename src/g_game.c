@@ -2046,7 +2046,7 @@ boolean G_CheckDemoStatus (void)
 	 
     if (demoplayback) 
     { 
-	Z_ChangeTag (demobuffer, PU_CACHE); 
+        W_ReleaseLumpName(defdemoname);
 	demoplayback = false; 
 	netdemo = false;
 	netgame = false;
