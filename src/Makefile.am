@@ -105,6 +105,9 @@ v_video.c            v_video.h             \
 wi_stuff.c           wi_stuff.h            \
 w_checksum.c         w_checksum.h          \
 w_wad.c              w_wad.h               \
+w_file.c             w_file.h              \
+w_file_stdc.c                              \
+w_file_posix.c                             \
 z_zone.c             z_zone.h   
 
 # source files needed for FEATURE_DEHACKED

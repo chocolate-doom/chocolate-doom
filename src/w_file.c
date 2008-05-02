@@ -2,7 +2,7 @@
 //-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2008 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -24,60 +24,57 @@
 //
 //-----------------------------------------------------------------------------
 
+#include "config.h"
 
-#ifndef __W_WAD__
-#define __W_WAD__
-
-#include <stdio.h>
-
+#include "doomdef.h"
 #include "doomtype.h"
 
 #include "w_file.h"
 
+extern wad_file_class_t stdc_wad_file;
 
-//
-// TYPES
-//
+#ifdef HAVE_MMAP
+extern wad_file_class_t posix_wad_file;
+#endif 
 
-//
-// WADFILE I/O related stuff.
-//
-
-typedef struct lumpinfo_s lumpinfo_t;
-
-struct lumpinfo_s
+static wad_file_class_t *wad_file_classes[] = 
 {
-    char	name[8];
-    wad_file_t *wad_file;
-    int		position;
-    int		size;
-    void       *cache;
-
-    // Used for hash table lookups
-
-    lumpinfo_t *next;
+#ifdef HAVE_MMAP
+    &posix_wad_file,
+#endif
+    &stdc_wad_file,
 };
 
+wad_file_t *W_OpenFile(char *path)
+{
+    wad_file_t *result;
+    int i;
 
-extern	void**		lumpcache;
-extern	lumpinfo_t*	lumpinfo;
-extern	unsigned int	numlumps;
+    // Try all classes in order until we find one that works
 
-wad_file_t *W_AddFile (char *filename);
-void    W_Reload (void);
+    result = NULL;
 
-int	W_CheckNumForName (char* name);
-int	W_GetNumForName (char* name);
+    for (i=0; i<arrlen(wad_file_classes); ++i) 
+    {
+        result = wad_file_classes[i]->OpenFile(path);
 
-int	W_LumpLength (unsigned int lump);
-void    W_ReadLump (unsigned int lump, void *dest);
+        if (result != NULL)
+        {
+            break;
+        }
+    }
 
-void*	W_CacheLumpNum (int lump, int tag);
-void*	W_CacheLumpName (char* name, int tag);
+    return result;
+}
 
-void    W_GenerateHashTable(void);
+void W_CloseFile(wad_file_t *wad)
+{
+    wad->file_class->CloseFile(wad);
+}
 
-extern unsigned int W_LumpNameHash(const char *s);
+size_t W_Read(wad_file_t *wad, unsigned int offset,
+              void *buffer, size_t buffer_len)
+{
+    return wad->file_class->Read(wad, offset, buffer, buffer_len);
+}
 
-
-#endif
