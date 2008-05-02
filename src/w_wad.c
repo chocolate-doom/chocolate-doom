@@ -137,17 +137,17 @@ unsigned int		reloadlump;
 char*			reloadname;
 
 
-FILE *W_AddFile (char *filename)
+wad_file_t *W_AddFile (char *filename)
 {
     wadinfo_t		header;
     lumpinfo_t*		lump_p;
     unsigned int	i;
-    FILE               *handle;
+    wad_file_t         *wad_file;
     int			length;
     int			startlump;
     filelump_t*		fileinfo;
     filelump_t*         filerover;
-    FILE               *storehandle;
+    wad_file_t         *storehandle;
     
     // open the file and add to directory
 
@@ -158,10 +158,12 @@ FILE *W_AddFile (char *filename)
 	reloadname = filename;
 	reloadlump = numlumps;
     }
+
+    wad_file = W_OpenFile(filename);
 		
-    if ( (handle = fopen(filename,"rb")) == NULL)
+    if (wad_file == NULL)
     {
-	printf (" couldn't open %s\n",filename);
+	printf (" couldn't open %s\n", filename);
 	return NULL;
     }
 
@@ -178,7 +180,7 @@ FILE *W_AddFile (char *filename)
 
 	fileinfo = Z_Malloc(sizeof(filelump_t), PU_STATIC, 0);
 	fileinfo->filepos = LONG(0);
-	fileinfo->size = LONG(M_FileLength(handle));
+	fileinfo->size = LONG(wad_file->length);
 
         // Name the lump after the base of the filename (without the
         // extension).
@@ -189,7 +191,8 @@ FILE *W_AddFile (char *filename)
     else 
     {
 	// WAD file
-	fread (&header, sizeof(header), 1, handle);
+        W_Read(wad_file, 0, &header, sizeof(header));
+
 	if (strncmp(header.identification,"IWAD",4))
 	{
 	    // Homebrew levels?
@@ -201,16 +204,16 @@ FILE *W_AddFile (char *filename)
 	    
 	    // ???modifiedgame = true;		
 	}
+
 	header.numlumps = LONG(header.numlumps);
 	header.infotableofs = LONG(header.infotableofs);
 	length = header.numlumps*sizeof(filelump_t);
 	fileinfo = Z_Malloc(length, PU_STATIC, 0);
-	fseek(handle, header.infotableofs, SEEK_SET);
-	fread(fileinfo, length, 1, handle);
+
+        W_Read(wad_file, header.infotableofs, fileinfo, length);
 	numlumps += header.numlumps;
     }
 
-    
     // Fill in lumpinfo
     lumpinfo = realloc (lumpinfo, numlumps*sizeof(lumpinfo_t));
 
@@ -219,19 +222,21 @@ FILE *W_AddFile (char *filename)
 
     lump_p = &lumpinfo[startlump];
 	
-    storehandle = reloadname ? NULL : handle;
+    storehandle = reloadname ? NULL : wad_file;
 	
     for (i=startlump,filerover=fileinfo ; i<numlumps ; i++,lump_p++, filerover++)
     {
-	lump_p->handle = storehandle;
+	lump_p->wad_file = storehandle;
 	lump_p->position = LONG(filerover->filepos);
 	lump_p->size = LONG(filerover->size);
         lump_p->cache = NULL;
-	strncpy (lump_p->name, filerover->name, 8);
+	strncpy(lump_p->name, filerover->name, 8);
     }
 	
     if (reloadname)
-	fclose (handle);
+    {
+        W_CloseFile(wad_file);
+    }
 
     Z_Free(fileinfo);
 
@@ -241,7 +246,7 @@ FILE *W_AddFile (char *filename)
         lumphash = NULL;
     }
 
-    return handle;
+    return wad_file;
 }
 
 
@@ -258,39 +263,44 @@ void W_Reload (void)
     int			lumpcount;
     lumpinfo_t*		lump_p;
     unsigned int	i;
-    FILE               *handle;
+    wad_file_t*         wad_file;
     int			length;
     filelump_t*		fileinfo;
 	
-    if (!reloadname)
+    if (reloadname == NULL)
+    {
 	return;
+    }
 		
-    if ( (handle = fopen(reloadname,"rb")) == NULL)
-	I_Error ("W_Reload: couldn't open %s",reloadname);
+    wad_file = W_OpenFile(reloadname);
 
-    fread(&header, sizeof(header), 1, handle);
+    if (wad_file == NULL)
+    {
+	I_Error ("W_Reload: couldn't open %s", reloadname);
+    }
+
+    W_Read(wad_file, 0, &header, sizeof(header));
     lumpcount = LONG(header.numlumps);
     header.infotableofs = LONG(header.infotableofs);
     length = lumpcount*sizeof(filelump_t);
     fileinfo = Z_Malloc(length, PU_STATIC, 0);
-    fseek(handle, header.infotableofs, SEEK_SET);
-    fread(fileinfo, length, 1, handle);
+    W_Read(wad_file, header.infotableofs, fileinfo, length);
     
     // Fill in lumpinfo
     lump_p = &lumpinfo[reloadlump];
 	
-    for (i=reloadlump ;
-	 i<reloadlump+lumpcount ;
-	 i++,lump_p++, fileinfo++)
+    for (i=reloadlump; i<reloadlump+lumpcount; i++, lump_p++, fileinfo++)
     {
 	if (lumpinfo[i].cache)
+        {
 	    Z_Free (lumpinfo[i].cache);
+        }
 
 	lump_p->position = LONG(fileinfo->filepos);
 	lump_p->size = LONG(fileinfo->size);
     }
 	
-    fclose(handle);
+    W_CloseFile(wad_file);
 
     Z_Free(fileinfo);
 }
@@ -394,40 +404,49 @@ int W_LumpLength (unsigned int lump)
 // Loads the lump into the given buffer,
 //  which must be >= W_LumpLength().
 //
-void
-W_ReadLump
-( unsigned int	lump,
-  void*		dest )
+void W_ReadLump(unsigned int lump, void *dest)
 {
     int		c;
     lumpinfo_t*	l;
-    FILE       *handle;
+    wad_file_t* wad_file;
 	
     if (lump >= numlumps)
+    {
 	I_Error ("W_ReadLump: %i >= numlumps",lump);
+    }
 
     l = lumpinfo+lump;
 	
     I_BeginRead ();
 	
-    if (l->handle == NULL)
+    if (l->wad_file == NULL)
     {
 	// reloadable file, so use open / read / close
-	if ( (handle = fopen(reloadname,"rb")) == NULL)
+        
+        wad_file = W_OpenFile(reloadname);
+
+        if (wad_file == NULL)
+        {
 	    I_Error ("W_ReadLump: couldn't open %s",reloadname);
+        }
     }
     else
-	handle = l->handle;
+    {
+	wad_file = l->wad_file;
+    }
 		
-    fseek(handle, l->position, SEEK_SET);
-    c = fread (dest, 1, l->size, handle);
+    c = W_Read(wad_file, l->position, dest, l->size);
 
     if (c < l->size)
+    {
 	I_Error ("W_ReadLump: only read %i of %i on lump %i",
-		 c,l->size,lump);	
+		 c, l->size, lump);	
+    }
 
-    if (l->handle == NULL)
-	fclose (handle);
+    if (l->wad_file == NULL)
+    {
+        W_CloseFile(wad_file);
+    }
 		
     I_EndRead ();
 }
@@ -438,10 +457,7 @@ W_ReadLump
 //
 // W_CacheLumpNum
 //
-void*
-W_CacheLumpNum
-( int		lump,
-  int		tag )
+void *W_CacheLumpNum(int lump, int tag)
 {
     byte*	ptr;
 
@@ -459,7 +475,7 @@ W_CacheLumpNum
     else
     {
 	//printf ("cache hit on lump %i\n",lump);
-	Z_ChangeTag (lumpinfo[lump].cache,tag);
+	Z_ChangeTag (lumpinfo[lump].cache, tag);
     }
 	
     return lumpinfo[lump].cache;
@@ -470,12 +486,9 @@ W_CacheLumpNum
 //
 // W_CacheLumpName
 //
-void*
-W_CacheLumpName
-( char*		name,
-  int		tag )
+void *W_CacheLumpName(char *name, int tag)
 {
-    return W_CacheLumpNum (W_GetNumForName(name), tag);
+    return W_CacheLumpNum(W_GetNumForName(name), tag);
 }
 
 #if 0

@@ -645,7 +645,7 @@ void W_NWTMergeFile(char *filename, int flags)
 
 void W_NWTDashMerge(char *filename)
 {
-    FILE *handle;
+    wad_file_t *wad_file;
     int old_numlumps;
     int i;
 
@@ -653,10 +653,12 @@ void W_NWTDashMerge(char *filename)
 
     // Load PWAD
 
-    handle = W_AddFile(filename);
+    wad_file = W_AddFile(filename);
 
-    if (handle == NULL)
+    if (wad_file == NULL)
+    {
         return;
+    }
 
     // iwad is at the start, pwad was appended to the end
 
@@ -687,6 +689,7 @@ void W_NWTDashMerge(char *filename)
     // The PWAD must now be added in again with -file.
 
     numlumps = old_numlumps;
-    fclose(handle);
+
+    W_CloseFile(wad_file);
 }
 
