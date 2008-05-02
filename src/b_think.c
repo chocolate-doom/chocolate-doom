@@ -269,14 +269,11 @@ void B_AttackTarget(botcontrol_t *mind)
 						}
 						else
 							mind->forwardtics = B_Random() * 2;
-							
-						if (!(mind->cmd->buttons & BT_ATTACK))
-						{
-							if (P_BotAimLineAttack(mind->me->mo, mind->me->mo->angle, 64, mind))
-								mind->cmd->buttons |= BT_ATTACK;
-							else
-								mind->cmd->buttons &= ~BT_ATTACK;
-						}
+						
+						if (P_BotAimLineAttack(mind->me->mo, mind->me->mo->angle, MELEERANGE, mind))
+							mind->cmd->buttons |= BT_ATTACK;
+						else
+							mind->cmd->buttons &= ~BT_ATTACK;
 						break;
 						
 					case wp_bfg:
@@ -336,13 +333,10 @@ void B_AttackTarget(botcontrol_t *mind)
 							mind->cmd->angleturn += B_Random() / 4;
 						
 						// Now shoot at it!
-						if (!(mind->cmd->buttons & BT_ATTACK))
-						{
-							if (P_BotAimLineAttack(mind->me->mo, mind->me->mo->angle, 2048, mind))
-								mind->cmd->buttons |= BT_ATTACK;
-							else
-								mind->cmd->buttons &= ~BT_ATTACK;
-						}
+						if (P_BotAimLineAttack(mind->me->mo, mind->me->mo->angle, MISSILERANGE, mind))
+							mind->cmd->buttons |= BT_ATTACK;
+						else
+							mind->cmd->buttons &= ~BT_ATTACK;
 						break;
 						
 					case wp_pistol:
@@ -403,7 +397,11 @@ void B_AttackTarget(botcontrol_t *mind)
 								if (mind->pistoltimeout == 0)
 								{
 									mind->pistoltimeout = 20; // 4 + 6 + 4 + 5 = 19 + 1 for good luck
-									mind->cmd->buttons |= BT_ATTACK;
+									
+									if (P_BotAimLineAttack(mind->me->mo, mind->me->mo->angle, 64, mind))
+										mind->cmd->buttons |= BT_ATTACK;
+									else
+										mind->cmd->buttons &= ~BT_ATTACK;
 								}
 								else
 									mind->pistoltimeout--;
@@ -413,7 +411,11 @@ void B_AttackTarget(botcontrol_t *mind)
 								if (mind->chainguntimeout == 0)
 								{
 									mind->chainguntimeout = 9; // 4 + 4 + 0 = 8 + 1 for good luck
-									mind->cmd->buttons |= BT_ATTACK;
+									
+									if (P_BotAimLineAttack(mind->me->mo, mind->me->mo->angle, MISSILERANGE, mind))
+										mind->cmd->buttons |= BT_ATTACK;
+									else
+										mind->cmd->buttons &= ~BT_ATTACK;
 								}
 								else
 									mind->chainguntimeout--;
@@ -421,7 +423,7 @@ void B_AttackTarget(botcontrol_t *mind)
 						}
 						else
 						{
-							if (P_BotAimLineAttack(mind->me->mo, mind->me->mo->angle, 2048, mind))
+							if (P_BotAimLineAttack(mind->me->mo, mind->me->mo->angle, MISSILERANGE, mind))
 								mind->cmd->buttons |= BT_ATTACK;
 							else
 								mind->cmd->buttons &= ~BT_ATTACK;
@@ -432,7 +434,7 @@ void B_AttackTarget(botcontrol_t *mind)
 					case wp_shotgun:
 					case wp_supershotgun:
 					default:
-						if ((B_Distance(mind->target, mind->me->mo) > 2048) && (mind->me->readyweapon == wp_supershotgun))
+						if ((B_Distance(mind->target, mind->me->mo) > (MISSILERANGE / 2)) && (mind->me->readyweapon == wp_supershotgun))
 						{
 							int j;
 							for (j = 0; j < NUMWEAPONS; j++)
@@ -501,10 +503,10 @@ void B_AttackTarget(botcontrol_t *mind)
 						}
 						
 						// Now shoot at it!
-						if (P_BotAimLineAttack(mind->me->mo, mind->me->mo->angle, 2048, mind))
+						if (P_BotAimLineAttack(mind->me->mo, mind->me->mo->angle, MISSILERANGE, mind))
 							mind->cmd->buttons |= BT_ATTACK;
 						else
-								mind->cmd->buttons &= ~BT_ATTACK;
+							mind->cmd->buttons &= ~BT_ATTACK;
 								
 						break;
 				}

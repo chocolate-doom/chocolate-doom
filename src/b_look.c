@@ -444,7 +444,7 @@ void B_Explore(botcontrol_t *mind)
 		mind->attackcooldown--;
 }
 
-void B_UniversalTarget(botcontrol_t *mind, mobj_t *target)
+void B_UniversalTarget(botcontrol_t *mind, mobj_t *target, int perfect)
 {
 	angle_t victimangle = 0;
 	angle_t myangle = 0;
@@ -465,13 +465,18 @@ void B_UniversalTarget(botcontrol_t *mind, mobj_t *target)
 	somevirtualangle = virtualangle >> 16;
 	somemyangle = myangle >> 16;
 	
-	if (mind->skill < 5)
-		badaim = (((B_Random() * 10) % ((11 - (mind->skill * 2)) * 20)) + 1) * 12;
-	else
+	if (perfect)
 		badaim = 0;
+	else
+	{
+		if (mind->skill < 5)
+			badaim = (((B_Random() * 10) % ((11 - (mind->skill * 2)) * 20)) + 1) * 12;
+		else
+			badaim = 0;
 		
-	if ((B_Random() % 2) == 0)
-		badaim *= -1;
+		if ((B_Random() % 2) == 0)
+			badaim *= -1;
+	}
 	
 	while (somevirtualangle != (someactualangle + badaim))
 	{
@@ -489,13 +494,13 @@ void B_UniversalTarget(botcontrol_t *mind, mobj_t *target)
 
 void B_FaceTarget(botcontrol_t *mind)
 {
-	B_UniversalTarget(mind, mind->target);
+	B_UniversalTarget(mind, mind->target, 0);
 }
 
 void B_FaceFollower(botcontrol_t *mind)
 {
 	//if (mind->target != NULL)	// this MAY happen!
-	B_UniversalTarget(mind, mind->follower);
+	B_UniversalTarget(mind, mind->follower, 1);
 }
 
 
@@ -510,28 +515,28 @@ void P_BotLineOpening (line_t* linedef)
 	
     if (linedef->sidenum[1] == -1)
     {
-	// single sided line
-	botopenrange = 0;
-	return;
+		// single sided line
+		botopenrange = 0;
+		return;
     }
 	 
     front = linedef->frontsector;
     back = linedef->backsector;
 	
     if (front->ceilingheight < back->ceilingheight)
-	botopentop = front->ceilingheight;
+		botopentop = front->ceilingheight;
     else
-	botopentop = back->ceilingheight;
+		botopentop = back->ceilingheight;
 
     if (front->floorheight > back->floorheight)
     {
-	botopenbottom = front->floorheight;
-	botlowfloor = back->floorheight;
+		botopenbottom = front->floorheight;
+		botlowfloor = back->floorheight;
     }
     else
     {
-	botopenbottom = back->floorheight;
-	botlowfloor = front->floorheight;
+		botopenbottom = back->floorheight;
+		botlowfloor = front->floorheight;
     }
 	
     botopenrange = botopentop - botopenbottom;
@@ -631,6 +636,7 @@ P_BotAimLineAttack
 {
     fixed_t	x2;
     fixed_t	y2;
+    int isanally = 1;
 	
     angle >>= ANGLETOFINESHIFT;
     botshootthing = t1;
@@ -652,31 +658,27 @@ P_BotAimLineAttack
 		     PTR_BotAimTraverse );
 		
     if (botlinetarget)
-	{
-		int isanally;
-					
-		if (deathmatch)
+	{	
+		if (botlinetarget->player)
 		{
-			if ((botlinetarget->player))
+			if (deathmatch)
 			{
-				if (((botlinetarget->player->team) == mind->me->team) && (mind->me->team != 0))
+				if ((botlinetarget->player->team == mind->me->team) && (mind->me->team != 0))
 					isanally = 1;
 				else
 					isanally = 0;
 			}
 			else
-				isanally = 0;
+				isanally = 1;
 		}
 		else
-			isanally = 1;	// Coop = always an ally
-			
-		if (isanally)
-			return 0;
-		else
-			return 1;
+			isanally = 0;	// Made this bug before!
 	}
 	else
-    	return 1;
+		isanally = 0;
+	
+	
+    return !isanally;
 }
 
 
