@@ -466,28 +466,46 @@ void W_ReadLump(unsigned int lump, void *dest)
 // when no longer needed (do not use Z_ChangeTag).
 //
 
-void *W_CacheLumpNum(int lump, int tag)
+void *W_CacheLumpNum(int lumpnum, int tag)
 {
-    byte*	ptr;
+    byte *result;
+    lumpinfo_t *lump;
 
-    if ((unsigned)lump >= numlumps)
-	I_Error ("W_CacheLumpNum: %i >= numlumps",lump);
-		
-    if (!lumpinfo[lump].cache)
+    if ((unsigned)lumpnum >= numlumps)
     {
-	// read the lump in
-	
-	//printf ("cache miss on lump %i\n",lump);
-	ptr = Z_Malloc (W_LumpLength (lump), tag, &lumpinfo[lump].cache);
-	W_ReadLump (lump, lumpinfo[lump].cache);
+	I_Error ("W_CacheLumpNum: %i >= numlumps", lumpnum);
+    }
+
+    lump = &lumpinfo[lumpnum];
+
+    // Get the pointer to return.  If the lump is in a memory-mapped
+    // file, we can just return a pointer to within the memory-mapped
+    // region.  If the lump is in an ordinary file, we may already
+    // have it cached; otherwise, load it into memory.
+
+    if (lump->wad_file->mapped != NULL)
+    {
+        // Memory mapped file, return from the mmapped region.
+
+        result = lump->wad_file->mapped + lump->position;
+    }
+    else if (lump->cache != NULL)
+    {
+        // Already cached, so just switch the zone tag.
+
+        result = lump->cache;
+        Z_ChangeTag(lump->cache, tag);
     }
     else
     {
-	//printf ("cache hit on lump %i\n",lump);
-	Z_ChangeTag (lumpinfo[lump].cache, tag);
+        // Not yet loaded, so load it now
+
+        lump->cache = Z_Malloc(W_LumpLength(lumpnum), tag, &lump->cache);
+	W_ReadLump (lumpnum, lump->cache);
+        result = lump->cache;
     }
 	
-    return lumpinfo[lump].cache;
+    return result;
 }
 
 
@@ -510,14 +528,25 @@ void *W_CacheLumpName(char *name, int tag)
 // complicated ...
 //
 
-void W_ReleaseLumpNum(int lump)
+void W_ReleaseLumpNum(int lumpnum)
 {
-    if ((unsigned)lump >= numlumps)
+    lumpinfo_t *lump;
+
+    if ((unsigned)lumpnum >= numlumps)
     {
-	I_Error ("W_ReleaseLumpNum: %i >= numlumps", lump);
+	I_Error ("W_ReleaseLumpNum: %i >= numlumps", lumpnum);
     }
-		
-    Z_ChangeTag(lumpinfo[lump].cache, PU_CACHE);
+
+    lump = &lumpinfo[lumpnum];
+
+    if (lump->wad_file->mapped != NULL)
+    {
+        // Memory-mapped file, so nothing needs to be done here.
+    }
+    else
+    {
+        Z_ChangeTag(lump->cache, PU_CACHE);
+    }
 }
 
 void W_ReleaseLumpName(char *name)
