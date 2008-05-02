@@ -45,6 +45,7 @@ static uint8_t *current_sound_lump = NULL;
 static uint8_t *current_sound_pos = NULL;
 static unsigned int current_sound_remaining = 0;
 static int current_sound_handle = 0;
+static int current_sound_lump_num = -1;
 
 static const float frequencies[] = {
     0.0f, 175.00f, 180.02f, 185.01f, 190.02f, 196.02f, 202.02f, 208.01f, 214.02f, 220.02f,
@@ -111,7 +112,7 @@ static boolean CachePCSLump(int sound_id)
  
     if (current_sound_lump != NULL)
     {
-        Z_ChangeTag(current_sound_lump, PU_CACHE);
+        W_ReleaseLumpNum(current_sound_lump_num);
         current_sound_lump = NULL;
     }
 
@@ -138,6 +139,7 @@ static boolean CachePCSLump(int sound_id)
 
     current_sound_remaining = headerlen;
     current_sound_pos = current_sound_lump + 4;
+    current_sound_lump_num = S_sfx[sound_id].lumpnum;
 
     return true;
 }

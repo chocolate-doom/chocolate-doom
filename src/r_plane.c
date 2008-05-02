@@ -372,6 +372,7 @@ void R_DrawPlanes (void)
     int			x;
     int			stop;
     int			angle;
+    int                 lumpnum;
 				
 #ifdef RANGECHECK
     if (ds_p - drawsegs > MAXDRAWSEGS)
@@ -421,9 +422,8 @@ void R_DrawPlanes (void)
 	}
 	
 	// regular flat
-	ds_source = W_CacheLumpNum(firstflat +
-				   flattranslation[pl->picnum],
-				   PU_STATIC);
+        lumpnum = firstflat + flattranslation[pl->picnum];
+	ds_source = W_CacheLumpNum(lumpnum, PU_STATIC);
 	
 	planeheight = abs(pl->height-viewz);
 	light = (pl->lightlevel >> LIGHTSEGSHIFT)+extralight;
@@ -449,6 +449,6 @@ void R_DrawPlanes (void)
 			pl->bottom[x]);
 	}
 	
-	Z_ChangeTag (ds_source, PU_CACHE);
+        W_ReleaseLumpNum(lumpnum);
     }
 }

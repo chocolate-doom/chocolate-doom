@@ -525,10 +525,13 @@ void AM_loadPics(void)
 void AM_unloadPics(void)
 {
     int i;
+    char namebuf[9];
   
     for (i=0;i<10;i++)
-	Z_ChangeTag(marknums[i], PU_CACHE);
-
+    {
+	sprintf(namebuf, DEH_String("AMMNUM%d"), i);
+	W_ReleaseLumpName(namebuf);
+    }
 }
 
 void AM_clearMarks(void)
