@@ -28,6 +28,7 @@
 
 #include "doomdef.h"
 #include "doomtype.h"
+#include "m_argv.h"
 
 #include "w_file.h"
 
@@ -56,6 +57,16 @@ wad_file_t *W_OpenFile(char *path)
 {
     wad_file_t *result;
     int i;
+
+    //!
+    // Do not use the OS's virtual memory subsystem to map WAD files 
+    // directly into memory.
+    //
+
+    if (M_CheckParm("-nommap") > 0) 
+    {
+        return stdc_wad_file.OpenFile(path);
+    }
 
     // Try all classes in order until we find one that works
 
