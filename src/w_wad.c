@@ -128,36 +128,19 @@ unsigned int W_LumpNameHash(const char *s)
 //  with multiple lumps.
 // Other files are single lumps with the base filename
 //  for the lump name.
-//
-// If filename starts with a tilde, the file is handled
-//  specially to allow map reloads.
-// But: the reload feature is a fragile hack...
-
-unsigned int		reloadlump;
-char*			reloadname;
-
 
 wad_file_t *W_AddFile (char *filename)
 {
-    wadinfo_t		header;
-    lumpinfo_t*		lump_p;
-    unsigned int	i;
-    wad_file_t         *wad_file;
-    int			length;
-    int			startlump;
-    filelump_t*		fileinfo;
-    filelump_t*         filerover;
-    wad_file_t         *storehandle;
+    wadinfo_t header;
+    lumpinfo_t *lump_p;
+    unsigned int i;
+    wad_file_t *wad_file;
+    int length;
+    int startlump;
+    filelump_t *fileinfo;
+    filelump_t *filerover;
     
     // open the file and add to directory
-
-    // handle reload indicator.
-    if (filename[0] == '~')
-    {
-	filename++;
-	reloadname = filename;
-	reloadlump = numlumps;
-    }
 
     wad_file = W_OpenFile(filename);
 		
@@ -215,29 +198,29 @@ wad_file_t *W_AddFile (char *filename)
     }
 
     // Fill in lumpinfo
-    lumpinfo = realloc (lumpinfo, numlumps*sizeof(lumpinfo_t));
+    lumpinfo = realloc(lumpinfo, numlumps * sizeof(lumpinfo_t));
 
-    if (!lumpinfo)
+    if (lumpinfo == NULL)
+    {
 	I_Error ("Couldn't realloc lumpinfo");
+    }
 
     lump_p = &lumpinfo[startlump];
 	
-    storehandle = reloadname ? NULL : wad_file;
-	
-    for (i=startlump,filerover=fileinfo ; i<numlumps ; i++,lump_p++, filerover++)
+    filerover = fileinfo;
+
+    for (i=startlump; i<numlumps; ++i)
     {
-	lump_p->wad_file = storehandle;
+	lump_p->wad_file = wad_file;
 	lump_p->position = LONG(filerover->filepos);
 	lump_p->size = LONG(filerover->size);
         lump_p->cache = NULL;
 	strncpy(lump_p->name, filerover->name, 8);
+
+        ++lump_p;
+        ++filerover;
     }
 	
-    if (reloadname)
-    {
-        W_CloseFile(wad_file);
-    }
-
     Z_Free(fileinfo);
 
     if (lumphash != NULL)
@@ -247,62 +230,6 @@ wad_file_t *W_AddFile (char *filename)
     }
 
     return wad_file;
-}
-
-
-
-
-//
-// W_Reload
-// Flushes any of the reloadable lumps in memory
-//  and reloads the directory.
-//
-void W_Reload (void)
-{
-    wadinfo_t		header;
-    int			lumpcount;
-    lumpinfo_t*		lump_p;
-    unsigned int	i;
-    wad_file_t*         wad_file;
-    int			length;
-    filelump_t*		fileinfo;
-	
-    if (reloadname == NULL)
-    {
-	return;
-    }
-		
-    wad_file = W_OpenFile(reloadname);
-
-    if (wad_file == NULL)
-    {
-	I_Error ("W_Reload: couldn't open %s", reloadname);
-    }
-
-    W_Read(wad_file, 0, &header, sizeof(header));
-    lumpcount = LONG(header.numlumps);
-    header.infotableofs = LONG(header.infotableofs);
-    length = lumpcount*sizeof(filelump_t);
-    fileinfo = Z_Malloc(length, PU_STATIC, 0);
-    W_Read(wad_file, header.infotableofs, fileinfo, length);
-    
-    // Fill in lumpinfo
-    lump_p = &lumpinfo[reloadlump];
-	
-    for (i=reloadlump; i<reloadlump+lumpcount; i++, lump_p++, fileinfo++)
-    {
-	if (lumpinfo[i].cache)
-        {
-	    Z_Free (lumpinfo[i].cache);
-        }
-
-	lump_p->position = LONG(fileinfo->filepos);
-	lump_p->size = LONG(fileinfo->size);
-    }
-	
-    W_CloseFile(wad_file);
-
-    Z_Free(fileinfo);
 }
 
 
@@ -378,9 +305,11 @@ int W_GetNumForName (char* name)
 
     i = W_CheckNumForName (name);
     
-    if (i == -1)
-      I_Error ("W_GetNumForName: %s not found!", name);
-      
+    if (i < 0)
+    {
+        I_Error ("W_GetNumForName: %s not found!", name);
+    }
+ 
     return i;
 }
 
@@ -392,7 +321,9 @@ int W_GetNumForName (char* name)
 int W_LumpLength (unsigned int lump)
 {
     if (lump >= numlumps)
-	I_Error ("W_LumpLength: %i >= numlumps",lump);
+    {
+	I_Error ("W_LumpLength: %i >= numlumps", lump);
+    }
 
     return lumpinfo[lump].size;
 }
@@ -406,36 +337,19 @@ int W_LumpLength (unsigned int lump)
 //
 void W_ReadLump(unsigned int lump, void *dest)
 {
-    int		c;
-    lumpinfo_t*	l;
-    wad_file_t* wad_file;
+    int c;
+    lumpinfo_t *l;
 	
     if (lump >= numlumps)
     {
-	I_Error ("W_ReadLump: %i >= numlumps",lump);
+	I_Error ("W_ReadLump: %i >= numlumps", lump);
     }
 
     l = lumpinfo+lump;
 	
     I_BeginRead ();
 	
-    if (l->wad_file == NULL)
-    {
-	// reloadable file, so use open / read / close
-        
-        wad_file = W_OpenFile(reloadname);
-
-        if (wad_file == NULL)
-        {
-	    I_Error ("W_ReadLump: couldn't open %s",reloadname);
-        }
-    }
-    else
-    {
-	wad_file = l->wad_file;
-    }
-		
-    c = W_Read(wad_file, l->position, dest, l->size);
+    c = W_Read(l->wad_file, l->position, dest, l->size);
 
     if (c < l->size)
     {
@@ -443,11 +357,6 @@ void W_ReadLump(unsigned int lump, void *dest)
 		 c, l->size, lump);	
     }
 
-    if (l->wad_file == NULL)
-    {
-        W_CloseFile(wad_file);
-    }
-		
     I_EndRead ();
 }
 

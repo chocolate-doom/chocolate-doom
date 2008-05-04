@@ -59,12 +59,10 @@ struct lumpinfo_s
 };
 
 
-extern	void**		lumpcache;
-extern	lumpinfo_t*	lumpinfo;
-extern	unsigned int	numlumps;
+extern lumpinfo_t *lumpinfo;
+extern unsigned int numlumps;
 
 wad_file_t *W_AddFile (char *filename);
-void    W_Reload (void);
 
 int	W_CheckNumForName (char* name);
 int	W_GetNumForName (char* name);
