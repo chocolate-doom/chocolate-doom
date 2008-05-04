@@ -31,6 +31,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
+#include "i_system.h"
 #include "w_file.h"
 #include "z_zone.h"
 
@@ -55,7 +56,7 @@ static void MapFile(win32_wad_file_t *wad, char *filename)
     if (wad->handle_map == NULL)
     {
         fprintf(stderr, "W_Win32_OpenFile: Unable to CreateFileMapping() "
-                        "for %s\n" filename);
+                        "for %s\n", filename);
         return;
     }
 
@@ -88,7 +89,7 @@ static wad_file_t *W_Win32_OpenFile(char *path)
     HANDLE handle;
     OFSTRUCT fileinfo;
 
-    handle = OpenFile(path, &fileinfo, OF_READ);
+    handle = (HANDLE) OpenFile(path, &fileinfo, OF_READ);
 
     if (handle == (HANDLE) HFILE_ERROR)
     {
@@ -119,7 +120,7 @@ static void W_Win32_CloseFile(wad_file_t *wad)
 
     if (win32_wad->wad.mapped != NULL)
     {
-        UnmapViewOfFile(win32->wad.mapped);
+        UnmapViewOfFile(win32_wad->wad.mapped);
     }
 
     if (win32_wad->handle_map != NULL)
@@ -151,7 +152,7 @@ size_t W_Win32_Read(wad_file_t *wad, unsigned int offset,
 
     // Jump to the specified position in the file.
 
-    result = SetFilePointer(win32_wad->handle, offset, NULL, FILE_START);
+    result = SetFilePointer(win32_wad->handle, offset, NULL, FILE_BEGIN);
 
     if (result == INVALID_SET_FILE_POINTER)
     {

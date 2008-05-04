@@ -108,6 +108,7 @@ w_wad.c              w_wad.h               \
 w_file.c             w_file.h              \
 w_file_stdc.c                              \
 w_file_posix.c                             \
+w_file_win32.c                             \
 z_zone.c             z_zone.h   
 
 # source files needed for FEATURE_DEHACKED
