@@ -1,19 +1,21 @@
 1 ICON "..\\data\\doom.ico"
 
 1 VERSIONINFO
+PRODUCTVERSION 1,1,1,0
+FILEVERSION 1,1,1,0
 FILETYPE 1
 {
  BLOCK "StringFileInfo"
  {
   BLOCK "040904E4"
   {
-   VALUE "FileVersion", ""
-   VALUE "FileDescription", ""
+   VALUE "FileVersion", "1.1.1"
+   VALUE "FileDescription", "1.1.1"
    VALUE "InternalName", "Chocolate-Doom"
    VALUE "CompanyName", "Chocolate-Doom"
    VALUE "LegalCopyright", "GNU General Public License"
    VALUE "ProductName", "Chocolate-Doom"
-   VALUE "ProductVersion", ""
+   VALUE "ProductVersion", "1.1.1"
   }
  }
 }

@@ -84,5 +84,3 @@ size_t W_Read(wad_file_t *wad, unsigned int offset,
               void *buffer, size_t buffer_len);
 
 #endif /* #ifndef __W_FILE__ */
-
-
