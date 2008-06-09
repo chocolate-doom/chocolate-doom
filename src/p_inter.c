@@ -411,7 +411,9 @@ P_TouchSpecialThing
 	    return;
 	player->health = deh_megasphere_health;
 	player->mo->health = player->health;
-	P_GiveArmor (player, deh_blue_armor_class);
+        // We always give armor type 2 for the megasphere; dehacked only 
+        // affects the MegaArmor.
+	P_GiveArmor (player, 2);
 	player->message = DEH_String(GOTMSPHERE);
 	sound = sfx_getpow;
 	break;
