@@ -392,8 +392,10 @@ P_TouchSpecialThing
 	player->armorpoints++;		// can go over 100%
 	if (player->armorpoints > deh_max_armor)
 	    player->armorpoints = deh_max_armor;
+        // deh_green_armor_class only applies to the green armor shirt;
+        // for the armor helmets, armortype 1 is always used.
 	if (!player->armortype)
-	    player->armortype = deh_green_armor_class;
+	    player->armortype = 1;
 	player->message = DEH_String(GOTARMBONUS);
 	break;
 	
