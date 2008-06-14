@@ -1920,7 +1920,45 @@ void G_DeferedPlayDemo (char* name)
     defdemoname = name; 
     gameaction = ga_playdemo; 
 } 
- 
+
+// Generate a string describing a demo version
+
+static char *DemoVersionDescription(int version)
+{
+    static char resultbuf[16];
+
+    switch (version)
+    {
+        case 104:
+            return "v1.4";
+        case 105:
+            return "v1.5";
+        case 106:
+            return "v1.6/v1.666";
+        case 107:
+            return "v1.7/v1.7a";
+        case 108:
+            return "v1.8";
+        case 109:
+            return "v1.9";
+        default:
+            break;
+    }
+
+    // Unknown version.  Perhaps this is a pre-v1.4 IWAD?  If the version
+    // byte is in the range 0-4 then it can be a v1.0-v1.2 demo.
+
+    if (version >= 0 && version <= 4)
+    {
+        return "v1.0/v1.1/v1.2";
+    }
+    else
+    {
+        sprintf(resultbuf, "%i.%i (unknown)", version / 100, version % 100);
+        return resultbuf;
+    }
+}
+
 void G_DoPlayDemo (void) 
 { 
     skill_t skill; 
@@ -1943,12 +1981,16 @@ void G_DoPlayDemo (void)
     }
     else
     {
-        char errorbuf[80];
+        char *message = "Demo is from a different game version!\n"
+                        "(read %i, should be %i)\n"
+                        "\n"
+                        "*** You may need to upgrade your version "
+                            "of Doom to v1.9. ***\n"
+                        "    See: http://doomworld.com/files/patches.shtml\n"
+                        "    This appears to be %s.";
 
-        sprintf(errorbuf, "Demo is from a different game version! (read %i, should be %i)\n",
-                demoversion, DOOM_VERSION);
-
-        I_Error(errorbuf);
+        I_Error(message, demoversion, DOOM_VERSION,
+                         DemoVersionDescription(demoversion));
     }
     
     skill = *demo_p++; 
