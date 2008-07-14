@@ -63,8 +63,8 @@
 #define GRAYSRANGE	16
 #define BROWNS		(4*16)
 #define BROWNRANGE	16
-#define YELLOWS		(256-32+7)
-#define YELLOWRANGE	1
+#define YELLOWS		(256-32)
+#define YELLOWRANGE	8
 #define BLACK		0
 #define WHITE		(256-47)
 
@@ -78,7 +78,7 @@
 #define TSWALLRANGE	GRAYSRANGE
 #define FDWALLCOLORS	BROWNS
 #define FDWALLRANGE	BROWNRANGE
-#define CDWALLCOLORS	YELLOWS
+#define CDWALLCOLORS	(YELLOWS + 7)
 #define CDWALLRANGE	YELLOWRANGE
 #define THINGCOLORS	GREENS
 #define THINGRANGE	GREENRANGE
@@ -1326,25 +1326,80 @@ void AM_drawPlayers(void)
 
 }
 
+// GhostlyDeath -- Carbon copy from ReMooD
+void A_Look();
+
 void
 AM_drawThings
 ( int	colors,
   int 	colorrange)
 {
-    int		i;
-    mobj_t*	t;
+	int i;
+	int color = colors;
+	angle_t tangle;
+	mobj_t *t;
 
-    for (i=0;i<numsectors;i++)
-    {
-	t = sectors[i].thinglist;
-	while (t)
+	for (i = 0; i < numsectors; i++)
 	{
-	    AM_drawLineCharacter
-		(thintriangle_guy, arrlen(thintriangle_guy),
-		 16<<FRACBITS, t->angle, colors+lightlev, t->x, t->y);
-	    t = t->snext;
+		t = sectors[i].thinglist;
+		
+		while (t)
+		{	
+			// Modify Angle
+			switch (t->type)
+			{
+				case MT_TFOG:
+				case MT_IFOG:
+					tangle = t->angle + (ANG45 * (gametic % 8));
+					break;
+					
+				default:
+					tangle = t->angle;
+					break;
+			}
+			
+			// Modify Color
+			if (t->info->flags & MF_COUNTKILL || t->type == MT_SKULL)
+			{
+				if (t->health <= 0 || t->flags & MF_CORPSE)
+					color = GRAYS + (GRAYSRANGE >> 1);
+				else
+				{
+					if (t->target && t->state && t->state->action.acv != A_Look)
+						color = REDS + (gametic % REDRANGE);
+					else
+						color = REDS + ((gametic >> 1) % REDRANGE);
+				}
+			}
+			else if (t->info->flags & MF_SPECIAL)
+			{
+				switch (t->type)
+				{
+					case MT_MISC12:		// Soul Sphere
+					case MT_MEGA:		// Mega Sphere
+					case MT_INV:		// Invincibility Sphere
+					case MT_INS:		// Partial Invisibility Sphere
+					case MT_MISC13:		// Berzerker
+					case MT_MISC14:		// Radiation Suit
+					case MT_MISC15:		// Computer Map
+					case MT_MISC16:		// Light Amplification Goggles
+						color = YELLOWS + ((gametic >> 1) % YELLOWRANGE);
+						break;
+						
+					default:
+						color = YELLOWS + 7;
+						break;
+				}
+			}
+			else
+				color = colors + lightlev;
+			
+			AM_drawLineCharacter
+				(thintriangle_guy, arrlen(thintriangle_guy),
+				 (t->info->radius > 0 ? t->info->radius / FRACUNIT: 2) << FRACBITS, tangle, color, t->x, t->y);
+			t = t->snext;
+		}
 	}
-    }
 }
 
 void AM_drawMarks(void)
