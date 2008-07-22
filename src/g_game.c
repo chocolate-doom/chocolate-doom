@@ -141,10 +141,10 @@ int             levelstarttic;          // gametic at level start
 int             totalkills, totalitems, totalsecret;    // for intermission 
  
 char            demoname[32]; 
-boolean         demorecording; 
+int         demorecording; 
 boolean         longtics;               // cph's doom 1.91 longtics hack
 boolean         lowres_turn;            // low resolution turning for longtics
-boolean         demoplayback; 
+int         demoplayback; 
 boolean		netdemo; 
 byte*		demo_in_buffer;
 byte*		demo_out_buffer;
@@ -1915,48 +1915,75 @@ void G_RecordDemo (char* name)
 	
     demorecording = true; 
 } 
+
+// GhostlyDeath <July 22, 2008> -- UDDF
+void G_RecordUDDF(char* name)
+{
+    int             i; 
+    int				maxsize;
+    
+	usergame = false; 
+	strcpy (demoname, name); 
+	strcat (demoname, ".udf"); 
+	maxsize = 0x20000;
+
+	i = M_CheckParm ("-maxdemo");
+	if (i && i<myargc-1)
+	maxsize = atoi(myargv[i+1])*1024;
+	demo_out_buffer = Z_Malloc (maxsize,PU_STATIC,NULL); 
+	demoend = demo_out_buffer + maxsize;
+	
+	demorecording = 2;
+}
  
  
 void G_BeginRecording (void) 
 { 
     int             i; 
-
+    
+    if (demorecording == 2)
+    {
+    }
+    else
+    {
+    
     //!
     // @category demo
     //
     // Record a high resolution "Doom 1.91" demo.
     //
-
-    longtics = M_CheckParm("-longtics") != 0;
-
-    // If not recording a longtics demo, record in low res
-
-    lowres_turn = !longtics;
     
-    demo_out_p = demo_out_buffer;
-	
-    // Save the right version code for this demo
- 
-    if (longtics)
-    {
-        *demo_out_p++ = DOOM_191_VERSION;
-    }
-    else
-    {
-        *demo_out_p++ = DOOM_VERSION;
-    }
+	longtics = M_CheckParm("-longtics") != 0;
 
-    *demo_out_p++ = gameskill; 
-    *demo_out_p++ = gameepisode; 
-    *demo_out_p++ = gamemap; 
-    *demo_out_p++ = deathmatch; 
-    *demo_out_p++ = respawnparm;
-    *demo_out_p++ = fastparm;
-    *demo_out_p++ = nomonsters;
-    *demo_out_p++ = consoleplayer;
+		// If not recording a longtics demo, record in low res
+
+		lowres_turn = !longtics;
+		
+		demo_out_p = demo_out_buffer;
+	
+		// Save the right version code for this demo
 	 
-    for (i=0 ; i<MAXPLAYERS ; i++) 
-	*demo_out_p++ = playeringame[i]; 		 
+		if (longtics)
+		{
+		    *demo_out_p++ = DOOM_191_VERSION;
+		}
+		else
+		{
+		    *demo_out_p++ = DOOM_VERSION;
+		}
+
+		*demo_out_p++ = gameskill; 
+		*demo_out_p++ = gameepisode; 
+		*demo_out_p++ = gamemap; 
+		*demo_out_p++ = deathmatch; 
+		*demo_out_p++ = respawnparm;
+		*demo_out_p++ = fastparm;
+		*demo_out_p++ = nomonsters;
+		*demo_out_p++ = consoleplayer;
+		 
+		for (i=0 ; i<MAXPLAYERS ; i++) 
+		*demo_out_p++ = playeringame[i]; 		 
+	}
 } 
  
 

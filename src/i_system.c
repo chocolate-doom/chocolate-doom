@@ -205,7 +205,7 @@ void I_WaitVBL(int count)
 //
 // I_Error
 //
-extern boolean demorecording;
+extern int demorecording;
 
 static boolean already_quitting = false;
 

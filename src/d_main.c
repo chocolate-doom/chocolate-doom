@@ -401,7 +401,7 @@ void D_Display (void)
 //
 //  D_DoomLoop
 //
-extern  boolean         demorecording;
+extern  int         demorecording;
 
 void D_DoomLoop (void)
 {
@@ -1448,7 +1448,17 @@ void D_DoomMain (void)
 
     if (gamemode == commercial && W_CheckNumForName("map01") < 0)
         storedemo = true;
-
+    
+    p = M_CheckParm("-uddfrecord");
+    
+    if (p && p < myargc-1)
+    {
+    	G_RecordUDDF(myargv[p+1]);
+    	autostart = true;
+    }
+    else
+    {
+    
     //!
     // @arg <x>
     // @category demo
@@ -1459,11 +1469,12 @@ void D_DoomMain (void)
 
     p = M_CheckParm ("-record");
 
-    if (p && p < myargc-1)
-    {
-	G_RecordDemo (myargv[p+1]);
-	autostart = true;
-    }
+		if (p && p < myargc-1)
+		{
+		G_RecordDemo (myargv[p+1]);
+		autostart = true;
+		}
+	}
 
     p = M_CheckParm ("-playdemo");
     if (p && p < myargc-1)
