@@ -32,6 +32,10 @@
 #include "i_video.h"
 #include "z_zone.h"
 
+#if defined(_MSC_VER) && !defined(__cplusplus)
+#define inline __inline
+#endif
+
 // Should be screens[0]
 
 static byte *src_buffer;
@@ -97,6 +101,7 @@ screen_mode_t mode_scale_1x = {
     SCREENWIDTH, SCREENHEIGHT,
     NULL,
     I_Scale1x,
+    false,
 };
 
 // 2x scale (640x400)
@@ -137,6 +142,7 @@ screen_mode_t mode_scale_2x = {
     SCREENWIDTH * 2, SCREENHEIGHT * 2,
     NULL,
     I_Scale2x,
+    false,
 };
 
 // 3x scale (960x600)
@@ -181,6 +187,7 @@ screen_mode_t mode_scale_3x = {
     SCREENWIDTH * 3, SCREENHEIGHT * 3,
     NULL,
     I_Scale3x,
+    false,
 };
 
 // 4x scale (1280x800)
@@ -229,6 +236,7 @@ screen_mode_t mode_scale_4x = {
     SCREENWIDTH * 4, SCREENHEIGHT * 4,
     NULL,
     I_Scale4x,
+    false,
 };
 
 // 5x scale (1600x1000)
@@ -281,6 +289,7 @@ screen_mode_t mode_scale_5x = {
     SCREENWIDTH * 5, SCREENHEIGHT * 5,
     NULL,
     I_Scale5x,
+    false,
 };
 
 
@@ -573,6 +582,7 @@ screen_mode_t mode_stretch_2x = {
     SCREENWIDTH * 2, SCREENHEIGHT_4_3 * 2,
     I_InitStretchTables,
     I_Stretch2x,
+    false,
 };
 
 static inline void WriteLine3x(byte *dest, byte *src)
@@ -711,6 +721,7 @@ screen_mode_t mode_stretch_3x = {
     SCREENWIDTH * 3, SCREENHEIGHT_4_3 * 3,
     I_InitStretchTables,
     I_Stretch3x,
+    false,
 };
 
 static inline void WriteLine4x(byte *dest, byte *src)
@@ -875,6 +886,7 @@ screen_mode_t mode_stretch_4x = {
     SCREENWIDTH * 4, SCREENHEIGHT_4_3 * 4,
     I_InitStretchTables,
     I_Stretch4x,
+    false,
 };
 
 static inline void WriteLine5x(byte *dest, byte *src)
@@ -949,6 +961,7 @@ screen_mode_t mode_stretch_5x = {
     SCREENWIDTH * 5, SCREENHEIGHT_4_3 * 5,
     I_InitStretchTables,
     I_Stretch5x,
+    false,
 };
 
 //
@@ -1127,6 +1140,7 @@ screen_mode_t mode_squash_2x = {
     SCREENWIDTH_4_3 * 2, SCREENHEIGHT * 2,
     I_InitStretchTables,
     I_Squash2x,
+    true,
 };
 
 
@@ -1209,6 +1223,7 @@ screen_mode_t mode_squash_3x = {
     800, 600,
     I_InitSquashTable,
     I_Squash3x,
+    false,
 };
 
 #define DRAW_PIXEL4 \
@@ -1319,6 +1334,7 @@ screen_mode_t mode_squash_4x = {
     SCREENWIDTH_4_3 * 4, SCREENHEIGHT * 4,
     I_InitStretchTables,
     I_Squash4x,
+    false,
 };
 
 #define DRAW_PIXEL5 \
@@ -1383,6 +1399,7 @@ screen_mode_t mode_squash_5x = {
     SCREENWIDTH_4_3 * 5, SCREENHEIGHT * 5,
     I_InitStretchTables,
     I_Squash5x,
+    false,
 };
 
 

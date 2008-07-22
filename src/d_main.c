@@ -54,6 +54,7 @@
 #include "f_wipe.h"
 
 #include "m_argv.h"
+#include "m_config.h"
 #include "m_misc.h"
 #include "m_menu.h"
 #include "p_saveg.h"
@@ -680,7 +681,7 @@ char            title[128];
 
 static boolean D_AddFile(char *filename)
 {
-    FILE *handle;
+    wad_file_t *handle;
 
     printf(" adding %s\n", filename);
     handle = W_AddFile(filename);

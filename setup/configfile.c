@@ -254,7 +254,8 @@ static default_t extra_defaults_list[] =
     {"fullscreen",                  &fullscreen, DEFAULT_INT, 0, 0},
     {"aspect_ratio_correct",        &aspect_ratio_correct, DEFAULT_INT, 0, 0},
     {"startup_delay",               &startup_delay, DEFAULT_INT, 0, 0},
-    {"screenmultiply",              &screenmultiply, DEFAULT_INT, 0, 0},
+    {"screen_width",                &screen_width, DEFAULT_INT, 0, 0},
+    {"screen_height",               &screen_height, DEFAULT_INT, 0, 0},
     {"grabmouse",                   &grabmouse, DEFAULT_INT, 0, 0},
     {"novert",                      &novert, DEFAULT_INT, 0, 0},
     {"mouse_acceleration",          &mouse_acceleration, DEFAULT_FLOAT, 0, 0},
@@ -280,6 +281,7 @@ static default_t extra_defaults_list[] =
     {"mouseb_straferight",          &mousebstraferight, DEFAULT_INT, 0, 0},
     {"mouseb_use",                  &mousebuse, DEFAULT_INT, 0, 0},
     {"mouseb_backward",             &mousebbackward, DEFAULT_INT, 0, 0},
+    {"use_libsamplerate",           &use_libsamplerate, DEFAULT_INT, 0, 0},
 };
 
 static default_collection_t extra_defaults =

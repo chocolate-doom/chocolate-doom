@@ -491,7 +491,7 @@ void R_InitTextures (void)
 	strncpy (name,name_p+i*8, 8);
 	patchlookup[i] = W_CheckNumForName (name);
     }
-    Z_Free (names);
+    W_ReleaseLumpName(DEH_String("PNAMES"));
     
     // Load the map texture definitions from textures.lmp.
     // The data is contained in one or two lumps,
@@ -529,13 +529,20 @@ void R_InitTextures (void)
     temp1 = W_GetNumForName (DEH_String("S_START"));  // P_???????
     temp2 = W_GetNumForName (DEH_String("S_END")) - 1;
     temp3 = ((temp2-temp1+63)/64) + ((numtextures+63)/64);
-    printf("[");
-    for (i = 0; i < temp3; i++)
-	printf(" ");
-    printf("         ]");
-    for (i = 0; i < temp3; i++)
-	printf("\x8");
-    printf("\x8\x8\x8\x8\x8\x8\x8\x8\x8\x8");	
+
+    // If stdout is a real console, use the classic vanilla "filling
+    // up the box" effect, which uses backspace to "step back" inside
+    // the box.  If stdout is a file, don't draw the box.
+
+    if (I_ConsoleStdout())
+    {
+        printf("[");
+        for (i = 0; i < temp3 + 9; i++)
+            printf(" ");
+        printf("]");
+        for (i = 0; i < temp3 + 10; i++)
+            printf("\b");
+    }
 	
     for (i=0 ; i<numtextures ; i++, directory++)
     {
@@ -596,9 +603,9 @@ void R_InitTextures (void)
 
     Z_Free(patchlookup);
 
-    Z_Free (maptex1);
+    W_ReleaseLumpName(DEH_String("TEXTURE1"));
     if (maptex2)
-	Z_Free (maptex2);
+        W_ReleaseLumpName(DEH_String("TEXTURE2"));
     
     // Precalculate whatever possible.	
 

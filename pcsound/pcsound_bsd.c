@@ -26,14 +26,27 @@
 
 #include "config.h"
 
+// OpenBSD/NetBSD:
+
 #ifdef HAVE_DEV_ISA_SPKRIO_H
+#define HAVE_BSD_SPEAKER
+#include <dev/isa/spkrio.h>
+#endif
+
+// FreeBSD
+
+#ifdef HAVE_DEV_SPEAKER_SPEAKER_H
+#define HAVE_BSD_SPEAKER
+#include <dev/speaker/speaker.h>
+#endif
+
+#ifdef HAVE_BSD_SPEAKER
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 #include <signal.h>
-#include <dev/isa/spkrio.h>
 #include <sys/ioctl.h>
 #include <sys/signal.h>
 #include <sys/socket.h>
@@ -310,5 +323,5 @@ pcsound_driver_t pcsound_bsd_driver =
     PCSound_BSD_Shutdown,
 };
 
-#endif /* #ifdef HAVE_DEV_ISA_SPKRIO_H */
+#endif /* #ifdef HAVE_BSD_SPEAKER */
 

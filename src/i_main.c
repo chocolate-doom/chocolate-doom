@@ -29,6 +29,11 @@
 
 #include <signal.h>
 
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
+
 #include "doomdef.h"
 #include "i_system.h"
 #include "m_argv.h"
@@ -40,6 +45,18 @@ int main(int argc, char **argv)
 
     myargc = argc; 
     myargv = argv; 
+
+#ifdef _WIN32
+    // Set the process affinity mask to 1 on Windows, so that all threads
+    // run on the same processor.  This is a workaround for a bug in 
+    // SDL_mixer that causes occasional crashes.
+
+    if (!SetProcessAffinityMask(GetCurrentProcess(), 1))
+    {
+        fprintf(stderr, "Failed to set process affinity mask (%d)\n",
+                (int) GetLastError());
+    }
+#endif
 
     // start doom
  

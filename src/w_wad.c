@@ -38,6 +38,7 @@
 #include "i_swap.h"
 #include "i_system.h"
 #include "i_video.h"
+#include "m_misc.h"
 #include "z_zone.h"
 
 #include "w_wad.h"
@@ -70,24 +71,6 @@ unsigned int numlumps = 0;
 // Hash table for fast lookups
 
 static lumpinfo_t **lumphash;
-
-static int FileLength (FILE *handle)
-{ 
-    long savedpos;
-    long length;
-    // save the current position in the file
-    savedpos = ftell(handle);
-    
-    // jump to the end and find the length
-    fseek(handle, 0, SEEK_END);
-    length = ftell(handle);
-
-    // go back to the old location
-    fseek(handle, savedpos, SEEK_SET);
-
-    return length;
-}
-
 
 static void ExtractFileBase(char *path, char *dest)
 {
@@ -145,40 +128,25 @@ unsigned int W_LumpNameHash(const char *s)
 //  with multiple lumps.
 // Other files are single lumps with the base filename
 //  for the lump name.
-//
-// If filename starts with a tilde, the file is handled
-//  specially to allow map reloads.
-// But: the reload feature is a fragile hack...
 
-unsigned int		reloadlump;
-char*			reloadname;
-
-
-FILE *W_AddFile (char *filename)
+wad_file_t *W_AddFile (char *filename)
 {
-    wadinfo_t		header;
-    lumpinfo_t*		lump_p;
-    unsigned int	i;
-    FILE               *handle;
-    int			length;
-    int			startlump;
-    filelump_t*		fileinfo;
-    filelump_t*         filerover;
-    FILE               *storehandle;
+    wadinfo_t header;
+    lumpinfo_t *lump_p;
+    unsigned int i;
+    wad_file_t *wad_file;
+    int length;
+    int startlump;
+    filelump_t *fileinfo;
+    filelump_t *filerover;
     
     // open the file and add to directory
 
-    // handle reload indicator.
-    if (filename[0] == '~')
-    {
-	filename++;
-	reloadname = filename;
-	reloadlump = numlumps;
-    }
+    wad_file = W_OpenFile(filename);
 		
-    if ( (handle = fopen(filename,"rb")) == NULL)
+    if (wad_file == NULL)
     {
-	printf (" couldn't open %s\n",filename);
+	printf (" couldn't open %s\n", filename);
 	return NULL;
     }
 
@@ -195,7 +163,7 @@ FILE *W_AddFile (char *filename)
 
 	fileinfo = Z_Malloc(sizeof(filelump_t), PU_STATIC, 0);
 	fileinfo->filepos = LONG(0);
-	fileinfo->size = LONG(FileLength(handle));
+	fileinfo->size = LONG(wad_file->length);
 
         // Name the lump after the base of the filename (without the
         // extension).
@@ -206,7 +174,8 @@ FILE *W_AddFile (char *filename)
     else 
     {
 	// WAD file
-	fread (&header, sizeof(header), 1, handle);
+        W_Read(wad_file, 0, &header, sizeof(header));
+
 	if (strncmp(header.identification,"IWAD",4))
 	{
 	    // Homebrew levels?
@@ -218,38 +187,40 @@ FILE *W_AddFile (char *filename)
 	    
 	    // ???modifiedgame = true;		
 	}
+
 	header.numlumps = LONG(header.numlumps);
 	header.infotableofs = LONG(header.infotableofs);
 	length = header.numlumps*sizeof(filelump_t);
 	fileinfo = Z_Malloc(length, PU_STATIC, 0);
-	fseek(handle, header.infotableofs, SEEK_SET);
-	fread(fileinfo, length, 1, handle);
+
+        W_Read(wad_file, header.infotableofs, fileinfo, length);
 	numlumps += header.numlumps;
     }
 
-    
     // Fill in lumpinfo
-    lumpinfo = realloc (lumpinfo, numlumps*sizeof(lumpinfo_t));
+    lumpinfo = realloc(lumpinfo, numlumps * sizeof(lumpinfo_t));
 
-    if (!lumpinfo)
+    if (lumpinfo == NULL)
+    {
 	I_Error ("Couldn't realloc lumpinfo");
+    }
 
     lump_p = &lumpinfo[startlump];
 	
-    storehandle = reloadname ? NULL : handle;
-	
-    for (i=startlump,filerover=fileinfo ; i<numlumps ; i++,lump_p++, filerover++)
+    filerover = fileinfo;
+
+    for (i=startlump; i<numlumps; ++i)
     {
-	lump_p->handle = storehandle;
+	lump_p->wad_file = wad_file;
 	lump_p->position = LONG(filerover->filepos);
 	lump_p->size = LONG(filerover->size);
         lump_p->cache = NULL;
-	strncpy (lump_p->name, filerover->name, 8);
+	strncpy(lump_p->name, filerover->name, 8);
+
+        ++lump_p;
+        ++filerover;
     }
 	
-    if (reloadname)
-	fclose (handle);
-
     Z_Free(fileinfo);
 
     if (lumphash != NULL)
@@ -258,58 +229,7 @@ FILE *W_AddFile (char *filename)
         lumphash = NULL;
     }
 
-    return handle;
-}
-
-
-
-
-//
-// W_Reload
-// Flushes any of the reloadable lumps in memory
-//  and reloads the directory.
-//
-void W_Reload (void)
-{
-    wadinfo_t		header;
-    int			lumpcount;
-    lumpinfo_t*		lump_p;
-    unsigned int	i;
-    FILE               *handle;
-    int			length;
-    filelump_t*		fileinfo;
-	
-    if (!reloadname)
-	return;
-		
-    if ( (handle = fopen(reloadname,"rb")) == NULL)
-	I_Error ("W_Reload: couldn't open %s",reloadname);
-
-    fread(&header, sizeof(header), 1, handle);
-    lumpcount = LONG(header.numlumps);
-    header.infotableofs = LONG(header.infotableofs);
-    length = lumpcount*sizeof(filelump_t);
-    fileinfo = Z_Malloc(length, PU_STATIC, 0);
-    fseek(handle, header.infotableofs, SEEK_SET);
-    fread(fileinfo, length, 1, handle);
-    
-    // Fill in lumpinfo
-    lump_p = &lumpinfo[reloadlump];
-	
-    for (i=reloadlump ;
-	 i<reloadlump+lumpcount ;
-	 i++,lump_p++, fileinfo++)
-    {
-	if (lumpinfo[i].cache)
-	    Z_Free (lumpinfo[i].cache);
-
-	lump_p->position = LONG(fileinfo->filepos);
-	lump_p->size = LONG(fileinfo->size);
-    }
-	
-    fclose(handle);
-
-    Z_Free(fileinfo);
+    return wad_file;
 }
 
 
@@ -385,9 +305,11 @@ int W_GetNumForName (char* name)
 
     i = W_CheckNumForName (name);
     
-    if (i == -1)
-      I_Error ("W_GetNumForName: %s not found!", name);
-      
+    if (i < 0)
+    {
+        I_Error ("W_GetNumForName: %s not found!", name);
+    }
+ 
     return i;
 }
 
@@ -399,7 +321,9 @@ int W_GetNumForName (char* name)
 int W_LumpLength (unsigned int lump)
 {
     if (lump >= numlumps)
-	I_Error ("W_LumpLength: %i >= numlumps",lump);
+    {
+	I_Error ("W_LumpLength: %i >= numlumps", lump);
+    }
 
     return lumpinfo[lump].size;
 }
@@ -411,41 +335,28 @@ int W_LumpLength (unsigned int lump)
 // Loads the lump into the given buffer,
 //  which must be >= W_LumpLength().
 //
-void
-W_ReadLump
-( unsigned int	lump,
-  void*		dest )
+void W_ReadLump(unsigned int lump, void *dest)
 {
-    int		c;
-    lumpinfo_t*	l;
-    FILE       *handle;
+    int c;
+    lumpinfo_t *l;
 	
     if (lump >= numlumps)
-	I_Error ("W_ReadLump: %i >= numlumps",lump);
+    {
+	I_Error ("W_ReadLump: %i >= numlumps", lump);
+    }
 
     l = lumpinfo+lump;
 	
     I_BeginRead ();
 	
-    if (l->handle == NULL)
-    {
-	// reloadable file, so use open / read / close
-	if ( (handle = fopen(reloadname,"rb")) == NULL)
-	    I_Error ("W_ReadLump: couldn't open %s",reloadname);
-    }
-    else
-	handle = l->handle;
-		
-    fseek(handle, l->position, SEEK_SET);
-    c = fread (dest, 1, l->size, handle);
+    c = W_Read(l->wad_file, l->position, dest, l->size);
 
     if (c < l->size)
+    {
 	I_Error ("W_ReadLump: only read %i of %i on lump %i",
-		 c,l->size,lump);	
+		 c, l->size, lump);	
+    }
 
-    if (l->handle == NULL)
-	fclose (handle);
-		
     I_EndRead ();
 }
 
@@ -455,31 +366,55 @@ W_ReadLump
 //
 // W_CacheLumpNum
 //
-void*
-W_CacheLumpNum
-( int		lump,
-  int		tag )
-{
-    byte*	ptr;
+// Load a lump into memory and return a pointer to a buffer containing
+// the lump data.
+//
+// 'tag' is the type of zone memory buffer to allocate for the lump
+// (usually PU_STATIC or PU_CACHE).  If the lump is loaded as 
+// PU_STATIC, it should be released back using W_ReleaseLumpNum
+// when no longer needed (do not use Z_ChangeTag).
+//
 
-    if ((unsigned)lump >= numlumps)
-	I_Error ("W_CacheLumpNum: %i >= numlumps",lump);
-		
-    if (!lumpinfo[lump].cache)
+void *W_CacheLumpNum(int lumpnum, int tag)
+{
+    byte *result;
+    lumpinfo_t *lump;
+
+    if ((unsigned)lumpnum >= numlumps)
     {
-	// read the lump in
-	
-	//printf ("cache miss on lump %i\n",lump);
-	ptr = Z_Malloc (W_LumpLength (lump), tag, &lumpinfo[lump].cache);
-	W_ReadLump (lump, lumpinfo[lump].cache);
+	I_Error ("W_CacheLumpNum: %i >= numlumps", lumpnum);
+    }
+
+    lump = &lumpinfo[lumpnum];
+
+    // Get the pointer to return.  If the lump is in a memory-mapped
+    // file, we can just return a pointer to within the memory-mapped
+    // region.  If the lump is in an ordinary file, we may already
+    // have it cached; otherwise, load it into memory.
+
+    if (lump->wad_file->mapped != NULL)
+    {
+        // Memory mapped file, return from the mmapped region.
+
+        result = lump->wad_file->mapped + lump->position;
+    }
+    else if (lump->cache != NULL)
+    {
+        // Already cached, so just switch the zone tag.
+
+        result = lump->cache;
+        Z_ChangeTag(lump->cache, tag);
     }
     else
     {
-	//printf ("cache hit on lump %i\n",lump);
-	Z_ChangeTag (lumpinfo[lump].cache,tag);
+        // Not yet loaded, so load it now
+
+        lump->cache = Z_Malloc(W_LumpLength(lumpnum), tag, &lump->cache);
+	W_ReadLump (lumpnum, lump->cache);
+        result = lump->cache;
     }
 	
-    return lumpinfo[lump].cache;
+    return result;
 }
 
 
@@ -487,12 +422,45 @@ W_CacheLumpNum
 //
 // W_CacheLumpName
 //
-void*
-W_CacheLumpName
-( char*		name,
-  int		tag )
+void *W_CacheLumpName(char *name, int tag)
 {
-    return W_CacheLumpNum (W_GetNumForName(name), tag);
+    return W_CacheLumpNum(W_GetNumForName(name), tag);
+}
+
+// 
+// Release a lump back to the cache, so that it can be reused later 
+// without having to read from disk again, or alternatively, discarded
+// if we run out of memory.
+//
+// Back in Vanilla Doom, this was just done using Z_ChangeTag 
+// directly, but now that we have WAD mmap, things are a bit more
+// complicated ...
+//
+
+void W_ReleaseLumpNum(int lumpnum)
+{
+    lumpinfo_t *lump;
+
+    if ((unsigned)lumpnum >= numlumps)
+    {
+	I_Error ("W_ReleaseLumpNum: %i >= numlumps", lumpnum);
+    }
+
+    lump = &lumpinfo[lumpnum];
+
+    if (lump->wad_file->mapped != NULL)
+    {
+        // Memory-mapped file, so nothing needs to be done here.
+    }
+    else
+    {
+        Z_ChangeTag(lump->cache, PU_CACHE);
+    }
+}
+
+void W_ReleaseLumpName(char *name)
+{
+    W_ReleaseLumpNum(W_GetNumForName(name));
 }
 
 #if 0

@@ -31,10 +31,10 @@
 #include "w_checksum.h"
 #include "w_wad.h"
 
-static FILE **open_wadfiles = NULL;
+static wad_file_t **open_wadfiles = NULL;
 static int num_open_wadfiles = 0;
 
-static int GetFileNumber(FILE *handle)
+static int GetFileNumber(wad_file_t *handle)
 {
     int i;
     int result;
@@ -51,7 +51,7 @@ static int GetFileNumber(FILE *handle)
     // Allocate another slot for this file.
 
     open_wadfiles = realloc(open_wadfiles,
-                            sizeof(FILE *) * (num_open_wadfiles + 1));
+                            sizeof(wad_file_t *) * (num_open_wadfiles + 1));
     open_wadfiles[num_open_wadfiles] = handle;
 
     result = num_open_wadfiles;
@@ -67,7 +67,7 @@ static void ChecksumAddLump(md5_context_t *md5_context, lumpinfo_t *lump)
     strncpy(buf, lump->name, 8);
     buf[8] = '\0';
     MD5_UpdateString(md5_context, buf);
-    MD5_UpdateInt32(md5_context, GetFileNumber(lump->handle));
+    MD5_UpdateInt32(md5_context, GetFileNumber(lump->wad_file));
     MD5_UpdateInt32(md5_context, lump->position);
     MD5_UpdateInt32(md5_context, lump->size);
 }

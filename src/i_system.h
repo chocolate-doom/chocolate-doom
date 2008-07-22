@@ -41,6 +41,8 @@ void I_Init (void);
 // for the zone management.
 byte*	I_ZoneBase (int *size);
 
+boolean I_ConsoleStdout(void);
+
 
 // Called by D_DoomLoop,
 // called before processing any tics in a frame
@@ -86,3 +88,4 @@ void I_Error (char *error, ...);
 
 
 #endif
+

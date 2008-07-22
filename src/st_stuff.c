@@ -1053,7 +1053,12 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
 
 }
 
-void ST_loadGraphics(void)
+typedef void (*load_callback_t)(char *lumpname, patch_t **variable); 
+
+// Iterates through all graphics to be loaded or unloaded, along with
+// the variable they use, invoking the specified callback function.
+
+static void ST_loadUnloadGraphics(load_callback_t callback)
 {
 
     int		i;
@@ -1066,33 +1071,34 @@ void ST_loadGraphics(void)
     for (i=0;i<10;i++)
     {
 	sprintf(namebuf, DEH_String("STTNUM%d"), i);
-	tallnum[i] = (patch_t *) W_CacheLumpName(namebuf, PU_STATIC);
+        callback(namebuf, &tallnum[i]);
 
 	sprintf(namebuf, DEH_String("STYSNUM%d"), i);
-	shortnum[i] = (patch_t *) W_CacheLumpName(namebuf, PU_STATIC);
+        callback(namebuf, &shortnum[i]);
     }
 
     // Load percent key.
     //Note: why not load STMINUS here, too?
-    tallpercent = (patch_t *) W_CacheLumpName(DEH_String("STTPRCNT"), PU_STATIC);
+
+    callback(DEH_String("STTPRCNT"), &tallpercent);
 
     // key cards
     for (i=0;i<NUMCARDS;i++)
     {
 	sprintf(namebuf, DEH_String("STKEYS%d"), i);
-	keys[i] = (patch_t *) W_CacheLumpName(namebuf, PU_STATIC);
+        callback(namebuf, &keys[i]);
     }
 
     // arms background
-    armsbg = (patch_t *) W_CacheLumpName(DEH_String("STARMS"), PU_STATIC);
+    callback(DEH_String("STARMS"), &armsbg);
 
     // arms ownership widgets
-    for (i=0;i<6;i++)
+    for (i=0; i<6; i++)
     {
 	sprintf(namebuf, DEH_String("STGNUM%d"), i+2);
 
 	// gray #
-	arms[i][0] = (patch_t *) W_CacheLumpName(namebuf, PU_STATIC);
+        callback(namebuf, &arms[i][0]);
 
 	// yellow #
 	arms[i][1] = shortnum[i+2]; 
@@ -1100,34 +1106,52 @@ void ST_loadGraphics(void)
 
     // face backgrounds for different color players
     sprintf(namebuf, DEH_String("STFB%d"), consoleplayer);
-    faceback = (patch_t *) W_CacheLumpName(namebuf, PU_STATIC);
+    callback(namebuf, &faceback);
 
     // status bar background bits
-    sbar = (patch_t *) W_CacheLumpName(DEH_String("STBAR"), PU_STATIC);
+    callback(DEH_String("STBAR"), &sbar);
 
     // face states
     facenum = 0;
-    for (i=0;i<ST_NUMPAINFACES;i++)
+    for (i=0; i<ST_NUMPAINFACES; i++)
     {
-	for (j=0;j<ST_NUMSTRAIGHTFACES;j++)
+	for (j=0; j<ST_NUMSTRAIGHTFACES; j++)
 	{
 	    sprintf(namebuf, DEH_String("STFST%d%d"), i, j);
-	    faces[facenum++] = W_CacheLumpName(namebuf, PU_STATIC);
+            callback(namebuf, &faces[facenum]);
+            ++facenum;
 	}
 	sprintf(namebuf, DEH_String("STFTR%d0"), i);	// turn right
-	faces[facenum++] = W_CacheLumpName(namebuf, PU_STATIC);
+        callback(namebuf, &faces[facenum]);
+        ++facenum;
 	sprintf(namebuf, DEH_String("STFTL%d0"), i);	// turn left
-	faces[facenum++] = W_CacheLumpName(namebuf, PU_STATIC);
+        callback(namebuf, &faces[facenum]);
+        ++facenum;
 	sprintf(namebuf, DEH_String("STFOUCH%d"), i);	// ouch!
-	faces[facenum++] = W_CacheLumpName(namebuf, PU_STATIC);
+        callback(namebuf, &faces[facenum]);
+        ++facenum;
 	sprintf(namebuf, DEH_String("STFEVL%d"), i);	// evil grin ;)
-	faces[facenum++] = W_CacheLumpName(namebuf, PU_STATIC);
+        callback(namebuf, &faces[facenum]);
+        ++facenum;
 	sprintf(namebuf, DEH_String("STFKILL%d"), i);	// pissed off
-	faces[facenum++] = W_CacheLumpName(namebuf, PU_STATIC);
+        callback(namebuf, &faces[facenum]);
+        ++facenum;
     }
-    faces[facenum++] = W_CacheLumpName(DEH_String("STFGOD0"), PU_STATIC);
-    faces[facenum++] = W_CacheLumpName(DEH_String("STFDEAD0"), PU_STATIC);
 
+    callback(DEH_String("STFGOD0"), &faces[facenum]);
+    ++facenum;
+    callback(DEH_String("STFDEAD0"), &faces[facenum]);
+    ++facenum;
+}
+
+static void ST_loadCallback(char *lumpname, patch_t **variable)
+{
+    *variable = W_CacheLumpName(lumpname, PU_STATIC);
+}
+
+void ST_loadGraphics(void)
+{
+    ST_loadUnloadGraphics(ST_loadCallback);
 }
 
 void ST_loadData(void)
@@ -1136,41 +1160,15 @@ void ST_loadData(void)
     ST_loadGraphics();
 }
 
+static void ST_unloadCallback(char *lumpname, patch_t **variable)
+{
+    W_ReleaseLumpName(lumpname);
+    *variable = NULL;
+}
+
 void ST_unloadGraphics(void)
 {
-
-    int i;
-
-    // unload the numbers, tall and short
-    for (i=0;i<10;i++)
-    {
-	Z_ChangeTag(tallnum[i], PU_CACHE);
-	Z_ChangeTag(shortnum[i], PU_CACHE);
-    }
-    // unload tall percent
-    Z_ChangeTag(tallpercent, PU_CACHE); 
-
-    // unload arms background
-    Z_ChangeTag(armsbg, PU_CACHE); 
-
-    // unload gray #'s
-    for (i=0;i<6;i++)
-	Z_ChangeTag(arms[i][0], PU_CACHE);
-    
-    // unload the key cards
-    for (i=0;i<NUMCARDS;i++)
-	Z_ChangeTag(keys[i], PU_CACHE);
-
-    Z_ChangeTag(sbar, PU_CACHE);
-    Z_ChangeTag(faceback, PU_CACHE);
-
-    for (i=0;i<ST_NUMFACES;i++)
-	Z_ChangeTag(faces[i], PU_CACHE);
-
-    // Note: nobody ain't seen no unloading
-    //   of stminus yet. Dude.
-    
-
+    ST_loadUnloadGraphics(ST_unloadCallback);
 }
 
 void ST_unloadData(void)

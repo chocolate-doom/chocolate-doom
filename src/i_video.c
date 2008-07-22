@@ -130,7 +130,7 @@ int aspect_ratio_correct = true;
 // Time to wait for the screen to settle on startup before starting the
 // game (ms)
 
-int startup_delay = 0;
+int startup_delay = 1000;
 
 // Grab the mouse? (int type for config code)
 
@@ -243,6 +243,7 @@ static void UpdateFocus(void)
 static void LoadDiskImage(void)
 {
     patch_t *disk;
+    char *disk_name;
     int y;
     char buf[20];
 
@@ -258,9 +259,11 @@ static void LoadDiskImage(void)
     }
 
     if (M_CheckParm("-cdrom") > 0)
-        disk = (patch_t *) W_CacheLumpName(DEH_String("STCDROM"), PU_STATIC);
+        disk_name = DEH_String("STCDROM");
     else
-        disk = (patch_t *) W_CacheLumpName(DEH_String("STDISK"), PU_STATIC);
+        disk_name = DEH_String("STDISK");
+
+    disk = W_CacheLumpName(disk_name, PU_STATIC);
 
     V_DrawPatch(0, 0, 0, disk);
     disk_image_w = SHORT(disk->width);
@@ -277,7 +280,7 @@ static void LoadDiskImage(void)
         memset(screens[0] + SCREENWIDTH * y, 0, disk_image_w);
     }
 
-    Z_Free(disk);
+    W_ReleaseLumpName(disk_name);
 }
 
 //
@@ -414,7 +417,7 @@ static int AccelerateMouse(int val)
 
     if (val > mouse_threshold)
     {
-        return (val - mouse_threshold) * mouse_acceleration + mouse_threshold;
+        return (int)((val - mouse_threshold) * mouse_acceleration + mouse_threshold);
     }
     else
     {
@@ -859,6 +862,23 @@ void I_SetWindowCaption(void)
 void I_SetWindowIcon(void)
 {
     SDL_Surface *surface;
+    Uint8 *mask;
+    int i;
+
+    // Generate the mask
+  
+    mask = malloc(icon_w * icon_h / 8);
+    memset(mask, 0, icon_w * icon_h / 8);
+
+    for (i=0; i<icon_w * icon_h; ++i) 
+    {
+        if (icon_data[i * 3] != 0x00
+         || icon_data[i * 3 + 1] != 0x00
+         || icon_data[i * 3 + 2] != 0x00)
+        {
+            mask[i / 8] |= 1 << (7 - i % 8);
+        }
+    }
 
     surface = SDL_CreateRGBSurfaceFrom(icon_data,
                                        icon_w,
@@ -870,8 +890,9 @@ void I_SetWindowIcon(void)
                                        0xff << 16,
                                        0);
 
-    SDL_WM_SetIcon(surface, NULL);
+    SDL_WM_SetIcon(surface, mask);
     SDL_FreeSurface(surface);
+    free(mask);
 }
 
 // Pick the modes list to use:
@@ -958,7 +979,7 @@ static void I_AutoAdjustSettings(void)
         SDL_Rect **modes;
         SDL_Rect *best_mode;
         screen_mode_t *screen_mode;
-        int target_pixels, num_pixels, best_num_pixels;
+        int target_pixels, diff, best_diff;
         int i;
 
         modes = SDL_ListModes(NULL, SDL_FULLSCREEN);
@@ -967,7 +988,7 @@ static void I_AutoAdjustSettings(void)
         // configuration file
 
         best_mode = NULL;
-        best_num_pixels = INT_MAX;
+        best_diff = INT_MAX;
         target_pixels = screen_width * screen_height;
 
         for (i=0; modes[i] != NULL; ++i) 
@@ -998,14 +1019,16 @@ static void I_AutoAdjustSettings(void)
 
             // Is this mode better than the current mode?
 
-            num_pixels = modes[i]->w * modes[i]->h;
+            diff = (screen_width - modes[i]->w) 
+                     * (screen_width - modes[i]->w)
+                 + (screen_height - modes[i]->h)
+                     * (screen_height - modes[i]->h);
 
-            if (abs(num_pixels - target_pixels) 
-              < abs(best_num_pixels - target_pixels))
+            if (diff < best_diff)
             {
             //    printf("\tA valid mode\n");
-                best_num_pixels = num_pixels;
                 best_mode = modes[i];
+                best_diff = diff;
             }
         }
 
@@ -1211,6 +1234,7 @@ static void CheckCommandLine(void)
 
     //!
     // @category video
+    // @arg <x>
     //
     // Specify the screen width, in pixels.
     //
@@ -1224,6 +1248,7 @@ static void CheckCommandLine(void)
 
     //!
     // @category video
+    // @arg <y>
     //
     // Specify the screen height, in pixels.
     //
@@ -1233,6 +1258,26 @@ static void CheckCommandLine(void)
     if (i > 0)
     {
         screen_height = atoi(myargv[i + 1]);
+    }
+
+    //!
+    // @category video
+    // @arg <WxY>
+    //
+    // Specify the screen mode (when running fullscreen) or the window
+    // dimensions (when running in windowed mode).
+
+    i = M_CheckParm("-geometry");
+
+    if (i > 0)
+    {
+        int w, h;
+
+        if (sscanf(myargv[i + 1], "%ix%i", &w, &h) == 2)
+        {
+            screen_width = w;
+            screen_height = h;
+        }
     }
 
     //!
@@ -1344,6 +1389,26 @@ static void SetSDLVideoDriver(void)
 #endif
 }
 
+static char *WindowBoxType(screen_mode_t *mode, int w, int h)
+{
+    if (mode->width != w && mode->height != h) 
+    {
+        return "Windowboxed";
+    }
+    else if (mode->width == w) 
+    {
+        return "Letterboxed";
+    }
+    else if (mode->height == h)
+    {
+        return "Pillarboxed";
+    }
+    else
+    {
+        return "...";
+    }
+}
+
 void I_InitGraphics(void)
 {
     SDL_Event dummy;
@@ -1407,7 +1472,8 @@ void I_InitGraphics(void)
         if (windowwidth != screen_mode->width
          || windowheight != screen_mode->height)
         {
-            printf("I_InitGraphics: Letterboxed (%ix%i within %ix%i)\n",
+            printf("I_InitGraphics: %s (%ix%i within %ix%i)\n",
+                   WindowBoxType(screen_mode, windowwidth, windowheight),
                    screen_mode->width, screen_mode->height,
                    windowwidth, windowheight);
         }
@@ -1520,15 +1586,15 @@ void I_InitGraphics(void)
     {
 	screens[0] = (unsigned char *) Z_Malloc (SCREENWIDTH * SCREENHEIGHT, 
                                                  PU_STATIC, NULL);
-
-        // Clear the screen to black.
-
-        memset(screens[0], 0, SCREENWIDTH * SCREENHEIGHT);
     }
 
     // "Loading from disk" icon
 
     LoadDiskImage();
+
+    // Clear the screen to black.
+
+    memset(screens[0], 0, SCREENWIDTH * SCREENHEIGHT);
 
     // We need SDL to give us translated versions of keys as well
 

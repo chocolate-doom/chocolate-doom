@@ -10,6 +10,7 @@ d_dedicated.c                              \
 i_main.c                                   \
 i_timer.c            i_timer.h             \
 m_argv.c             m_argv.h              \
+m_misc.c             m_misc.h              \
 net_common.c         net_common.h          \
 net_dedicated.c      net_dedicated.h       \
 net_io.c             net_io.h              \
@@ -57,6 +58,7 @@ i_video.c            i_video.h             \
 m_argv.c             m_argv.h              \
 m_bbox.c             m_bbox.h              \
 m_cheat.c            m_cheat.h             \
+m_config.c           m_config.h            \
 m_fixed.c            m_fixed.h             \
 m_menu.c             m_menu.h              \
 m_misc.c             m_misc.h              \
@@ -103,6 +105,10 @@ v_video.c            v_video.h             \
 wi_stuff.c           wi_stuff.h            \
 w_checksum.c         w_checksum.h          \
 w_wad.c              w_wad.h               \
+w_file.c             w_file.h              \
+w_file_stdc.c                              \
+w_file_posix.c                             \
+w_file_win32.c                             \
 z_zone.c             z_zone.h   
 
 # source files needed for FEATURE_DEHACKED
@@ -176,7 +182,7 @@ EXTRA_DIST =                        \
 
 if HAVE_PYTHON
 
-icon.c : ../data/doom.png
+icon.c : ../data/doom.ico
 	../data/convert-icon $^ $@
 
 endif

@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 # 
-# Command line parameter self-documentation tool.  Reads comments from
-# the source code in the following form:
+# Chocolate Doom self-documentation tool.  This works similar to javadoc
+# or doxygen, but documents command line parameters and configuration
+# file values, generating documentation in Unix manpage, wikitext and
+# plain text forms.
+#
+# Comments are read from the source code in the following form:
 #
 #   //!
 #   // @arg <extra arguments>
@@ -13,13 +17,67 @@
 #
 #   something_involving = M_CheckParm("-param");
 #
-# From this, a manpage can be automatically generated of the command
-# line parameters.
+# For configuration file values:
+#
+#   //! @begin_config_file myconfig.cfg
+#
+#   //!
+#   // Description of the configuration file value.
+#   //
+#
+#   CONFIG_VARIABLE_INT(my_variable,       c_variable),
+#
 
 import sys
+import os
 import re
 import glob
 import getopt
+
+# Find the maximum width of a list of parameters (for plain text output)
+
+def parameter_list_width(params):
+    w = 0
+
+    for p in params:
+        pw = len(p.name) + 5
+
+        if p.args:
+            pw += len(p.args)
+
+        if pw > w:
+            w = pw
+
+    return w
+
+class ConfigFile:
+    def __init__(self, filename):
+        self.filename = filename
+        self.variables = []
+
+    def add_variable(self, variable):
+        self.variables.append(variable)
+
+    def manpage_output(self):
+        result = ".SH CONFIGURATION VARIABLES\n"
+
+        for v in self.variables:
+            result += ".TP\n"
+            result += v.manpage_output()
+
+        return result
+
+    def plaintext_output(self):
+        result = ""
+
+        w = parameter_list_width(self.variables)
+
+        for p in self.variables:
+            result += p.plaintext_output(w)
+
+        result = result.rstrip() + "\n"
+
+        return result
 
 class Category:
     def __init__(self, description):
@@ -29,22 +87,6 @@ class Category:
     def add_param(self, param):
         self.params.append(param)
 
-    # Find the maximum width of a parameter in this category
-
-    def paramtext_width(self):
-        w = 0
-
-        for p in self.params:
-            pw = len(p.name) + 5
-
-            if p.args:
-                pw += len(p.args)
-
-            if pw > w:
-                w = pw
-
-        return w
-
     # Plain text output
 
     def plaintext_output(self):
@@ -52,7 +94,7 @@ class Category:
 
         self.params.sort()
 
-        w = self.paramtext_width()
+        w = parameter_list_width(self.params)
 
         for p in self.params:
             if p.should_show():
@@ -101,6 +143,7 @@ categories = {
 }
 
 wikipages = []
+config_files = {}
 
 # Show options that are in Vanilla Doom? Or only new options?
 
@@ -249,7 +292,32 @@ def add_wiki_links(text):
 
     return text
 
+def add_parameter(param, line, config_file):
+
+    # Is this documenting a command line parameter?
+
+    match = re.search('M_CheckParm\s*\(\s*"(.*?)"\s*\)', line)
+
+    if match:
+        param.name = match.group(1)
+        categories[param.category].add_param(param)
+        return
+
+    # Documenting a configuration file variable?
+
+    match = re.search('CONFIG_VARIABLE_\S+\s*\(\s*(\S+?),', line)
+
+    if match:
+        param.name = match.group(1)
+        config_file.add_variable(param)
+        return
+
+    raise Exception(param.text)
+
 def process_file(file):
+
+    current_config_file = None
+
     f = open(file)
 
     try:
@@ -259,6 +327,11 @@ def process_file(file):
         for line in f:
             line = line.rstrip()
 
+            # Ignore empty lines
+
+            if re.match('\s*$', line):
+                continue
+
             # Currently reading a doc comment?
 
             if param:
@@ -267,20 +340,12 @@ def process_file(file):
                 if not re.match('\s*//', line):
                     waiting_for_checkparm = True
 
-                # Waiting for the M_CheckParm call that contains the
-                # name of the parameter we are documenting?
+                # The first non-empty line after the documentation comment
+                # ends must contain the thing being documented.
 
                 if waiting_for_checkparm:
-                    match = re.search('M_CheckParm\s*\(\s*"(.*?)"\s*\)', line)
-
-                    if match:
-                        # Found the name!  Finished documenting this 
-                        # parameter.
-
-                        param.name = match.group(1)
-                        categories[param.category].add_param(param)
-                        param = None
-
+                    add_parameter(param, line, current_config_file)
+                    param = None
                 else:
                     # More documentation text
 
@@ -291,72 +356,72 @@ def process_file(file):
             # Check for start of a doc comment
 
             if re.search("//!", line):
-                param = Parameter()
-                waiting_for_checkparm = False
+                match = re.search("@begin_config_file\s*(\S+)", line)
+
+                if match:
+                    # Beginning a configuration file
+                    filename = match.group(1)
+                    current_config_file = ConfigFile(filename)
+                    config_files[filename] = current_config_file
+                else:
+                    # Start of a normal comment
+                    param = Parameter()
+                    waiting_for_checkparm = False
     finally:
         f.close()
 
 def process_files(dir):
     # Process all C source files.
 
-    files = glob.glob(dir + "/*.c")
+    if os.path.isdir(dir):
+        files = glob.glob(dir + "/*.c")
 
-    for file in files:
-        process_file(file)
+        for file in files:
+            process_file(file)
+    else:
+        # Special case to allow a single file to be specified as a target
 
-def print_file_contents(file):
-    f = open(file)
+        process_file(dir)
+
+def print_template(template_file, content):
+    f = open(template_file)
 
     try:
         for line in f:
+            line = line.replace("@content", content)
             print line.rstrip()
 
     finally:
         f.close()
 
-def manpage_output(dir): 
+def manpage_output(targets, template_file): 
+    
+    content = ""
 
-    process_files(dir)
+    for t in targets:
+        content += t.manpage_output() + "\n"
 
-    print_file_contents("header")
+    print_template(template_file, content)
 
-    print categories[None].manpage_output()
-
-    for c in categories:
-        if c != None:
-            print categories[c].manpage_output()
-
-    print_file_contents("environment")
-    print_file_contents("footer")
-
-def wiki_output(dir):
+def wiki_output(targets, template):
     read_wikipages()
-    process_files(dir)
 
-    print categories[None].wiki_output()
+    for t in targets:
+        print t.wiki_output()
 
-    for c in categories:
-        if c != None:
-            print categories[c].wiki_output()
+def plaintext_output(targets, template_file):
 
-def plaintext_output(dir):
-    process_files(dir)
+    content = ""
 
-    print "== Command line parameters =="
-    print 
-    print "This is a list of the command line parameters supported by "
-    print "Chocolate Doom.  A number of additional parameters are supported "
-    print "in addition to those present in Vanilla Doom. "
-    print
+    for t in targets:
+        content += t.plaintext_output() + "\n"
 
-    print categories[None].plaintext_output()
-
-    for c in categories:
-        if c != None:
-            print categories[c].plaintext_output()
+    print_template(template_file, content)
 
 def usage():
-    print "Usage: %s [-V] ( -m | -w | -p ) <directory>" % sys.argv[0]
+    print "Usage: %s [-V] [-c filename ]( -m | -w | -p ) <directory>" \
+            % sys.argv[0]
+    print "   -c :  Provide documentation for the specified configuration file"
     print "   -m :  Manpage output"
     print "   -w :  Wikitext output"
     print "   -p :  Plaintext output"
@@ -365,22 +430,48 @@ def usage():
 
 # Parse command line
 
-opts, args = getopt.getopt(sys.argv[1:], "mwpV")
+opts, args = getopt.getopt(sys.argv[1:], "m:wp:c:V")
 
 output_function = None
+template = None
+doc_config_file = None
 
 for opt in opts:
     if opt[0] == "-m":
         output_function = manpage_output
+        template = opt[1]
     elif opt[0] == "-w":
         output_function = wiki_output
     elif opt[0] == "-p":
         output_function = plaintext_output
+        template = opt[1]
     elif opt[0] == "-V":
         show_vanilla_options = False
+    elif opt[0] == "-c":
+        doc_config_file = opt[1]
 
 if output_function == None or len(args) != 1:
     usage()
 else:
-    output_function(args[0])
+
+    # Process specified files
+
+    process_files(args[0])
+
+    # Build a list of things to document
+
+    documentation_targets = []
+
+    if doc_config_file:
+        documentation_targets.append(config_files[doc_config_file])
+    else:
+        documentation_targets.append(categories[None])
+
+        for c in categories:
+            if c != None:
+                documentation_targets.append(categories[c])
+
+    # Generate the output
+
+    output_function(documentation_targets, template)
 
