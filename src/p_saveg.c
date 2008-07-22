@@ -26,6 +26,7 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "dstrings.h"
 #include "deh_main.h"
@@ -44,10 +45,35 @@
 FILE *save_stream;
 int savegamelength;
 
+// Get the filename of a temporary file to write the savegame to.  After
+// the file has been successfully saved, it will be renamed to the 
+// real file.
+
+char *P_TempSaveGameFile(void)
+{
+    static char *filename = NULL;
+
+    if (filename == NULL)
+    {
+        filename = malloc(strlen(savegamedir) + 32);
+    }
+
+    sprintf(filename, "%stemp.dsg", savegamedir);
+
+    return filename;
+}
+
+// Get the filename of the save game file to use for the specified slot.
+
 char *P_SaveGameFile(int slot)
 {
-    static char filename[256];
+    static char *filename = NULL;
     char basename[32];
+
+    if (filename == NULL)
+    {
+        filename = malloc(strlen(savegamedir) + 32);
+    }
 
     sprintf(basename, DEH_String(SAVEGAMENAME "%d.dsg"), slot);
 

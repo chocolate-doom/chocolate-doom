@@ -25,28 +25,36 @@
 
 #ifndef DEDICATEDSERVER
 #ifdef CHOCOLATESETUP
-1 ICON "../data/chocolate-setup.ico"
+1 ICON "../data/setup.ico"
 #else
-1 ICON "../data/chocolate-doom.ico"
+1 ICON "../data/doom.ico"
 #endif
 #endif
 
 1 VERSIONINFO
-PRODUCTVERSION 1,0,0,0
-FILEVERSION 1,0,0,0
+PRODUCTVERSION 1,1,1,0
+FILEVERSION 1,1,1,0
 FILETYPE 1
 BEGIN
 	BLOCK "StringFileInfo"
 	BEGIN
 		BLOCK "040904E4"
 		BEGIN
-			VALUE "FileVersion", "1.0.0"
-			VALUE "FileDescription", "Chocolate Doom 1.0.0"
+			VALUE "FileVersion", "1.1.1"
+			VALUE "FileDescription", "Chocolate Doom 1.1.1"
 			VALUE "InternalName", "chocolate-doom"
 			VALUE "CompanyName", "fraggle@gmail.com"
 			VALUE "LegalCopyright", "GNU General Public License"
 			VALUE "ProductName", "Chocolate Doom"
-			VALUE "ProductVersion", "1.0.0"
+			VALUE "ProductVersion", "1.1.1"
 		END
 	END
 END
+
+// GhostlyDeath - Preferebly for codeblocks (if it even uses this RC!)
+#ifdef __MINGW32__
+#ifdef CHOCOLATESETUP
+// RT_MANIFEST might NOT be defined
+1 24 "../setup/setup-manifest.xml"
+#endif
+#endif

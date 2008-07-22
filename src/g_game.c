@@ -389,15 +389,11 @@ void G_BuildTiccmd (ticcmd_t* cmd)
     int		tspeed; 
     int		forward;
     int		side;
-    
-    ticcmd_t*	base;
 
-    base = I_BaseTiccmd ();		// empty, or external driver
-    memcpy (cmd,base,sizeof(*cmd)); 
-	
+    memset(cmd, 0, sizeof(ticcmd_t));
+
     cmd->consistancy = 
 	consistancy[consoleplayer][maketic%BACKUPTICS]; 
-
  
     strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe] 
 	|| joybuttons[joybstrafe]; 
@@ -851,7 +847,8 @@ void G_Ticker (void)
 	    G_DoWorldDone (); 
 	    break; 
 	  case ga_screenshot: 
-	    M_ScreenShot (); 
+	    V_ScreenShot (); 
+            players[consoleplayer].message = DEH_String("screen shot");
 	    gameaction = ga_nothing; 
 	    break; 
 	  case ga_nothing: 
@@ -1488,21 +1485,25 @@ G_SaveGame
  
 void G_DoSaveGame (void) 
 { 
-    char	name[100]; 
-    char*	description; 
-	
-    strcpy(name, P_SaveGameFile(savegameslot));
+    char *savegame_file;
+    char *temp_savegame_file;
 
-    description = savedescription; 
-	 
-    save_stream = fopen(name, "wb");
+    temp_savegame_file = P_TempSaveGameFile();
+    savegame_file = P_SaveGameFile(savegameslot);
+
+    // Open the savegame file for writing.  We write to a temporary file
+    // and then rename it at the end if it was successfully written.
+    // This prevents an existing savegame from being overwritten by 
+    // a corrupted one, or if a savegame buffer overrun occurs.
+
+    save_stream = fopen(temp_savegame_file, "wb");
 
     if (save_stream == NULL)
     {
         return;
     }
 
-    P_WriteSaveGameHeader(description);
+    P_WriteSaveGameHeader(savedescription);
  
     P_ArchivePlayers (); 
     P_ArchiveWorld (); 
@@ -1519,11 +1520,19 @@ void G_DoSaveGame (void)
         I_Error ("Savegame buffer overrun");
     }
     
+    // Finish up, close the savegame file.
+
     fclose(save_stream);
 
+    // Now rename the temporary savegame file to the actual savegame
+    // file, overwriting the old savegame if there was one there.
+
+    remove(savegame_file);
+    rename(temp_savegame_file, savegame_file);
+    
     gameaction = ga_nothing; 
     strcpy(savedescription, "");
-	 
+
     players[consoleplayer].message = DEH_String(GGSAVED);
 
     // draw the pattern into the back screen
@@ -1911,7 +1920,45 @@ void G_DeferedPlayDemo (char* name)
     defdemoname = name; 
     gameaction = ga_playdemo; 
 } 
- 
+
+// Generate a string describing a demo version
+
+static char *DemoVersionDescription(int version)
+{
+    static char resultbuf[16];
+
+    switch (version)
+    {
+        case 104:
+            return "v1.4";
+        case 105:
+            return "v1.5";
+        case 106:
+            return "v1.6/v1.666";
+        case 107:
+            return "v1.7/v1.7a";
+        case 108:
+            return "v1.8";
+        case 109:
+            return "v1.9";
+        default:
+            break;
+    }
+
+    // Unknown version.  Perhaps this is a pre-v1.4 IWAD?  If the version
+    // byte is in the range 0-4 then it can be a v1.0-v1.2 demo.
+
+    if (version >= 0 && version <= 4)
+    {
+        return "v1.0/v1.1/v1.2";
+    }
+    else
+    {
+        sprintf(resultbuf, "%i.%i (unknown)", version / 100, version % 100);
+        return resultbuf;
+    }
+}
+
 void G_DoPlayDemo (void) 
 { 
     skill_t skill; 
@@ -1934,12 +1981,16 @@ void G_DoPlayDemo (void)
     }
     else
     {
-        char errorbuf[80];
+        char *message = "Demo is from a different game version!\n"
+                        "(read %i, should be %i)\n"
+                        "\n"
+                        "*** You may need to upgrade your version "
+                            "of Doom to v1.9. ***\n"
+                        "    See: http://doomworld.com/files/patches.shtml\n"
+                        "    This appears to be %s.";
 
-        sprintf(errorbuf, "Demo is from a different game version! (read %i, should be %i)\n",
-                demoversion, DOOM_VERSION);
-
-        I_Error(errorbuf);
+        I_Error(message, demoversion, DOOM_VERSION,
+                         DemoVersionDescription(demoversion));
     }
     
     skill = *demo_p++; 
@@ -2037,7 +2088,7 @@ boolean G_CheckDemoStatus (void)
 	 
     if (demoplayback) 
     { 
-	Z_ChangeTag (demobuffer, PU_CACHE); 
+        W_ReleaseLumpName(defdemoname);
 	demoplayback = false; 
 	netdemo = false;
 	netgame = false;

@@ -23,7 +23,8 @@ SOURCE_FILES =                                  \
     txt_mouseinput.c  txt_mouseinput.h
 
 EXTRA_DIST=                                     \
-    setup_icon.c
+    setup_icon.c                                \
+    setup-manifest.xml
 
 if HAVE_WINDRES
 chocolate_setup_SOURCES=$(SOURCE_FILES) setup-res.rc
@@ -38,7 +39,7 @@ endif
 
 if HAVE_PYTHON
 
-setup_icon.c : ../data/setup.png
+setup_icon.c : ../data/setup.ico
 	../data/convert-icon $^ $@
 
 endif

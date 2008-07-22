@@ -31,10 +31,18 @@
 
 #include <stdarg.h>
 
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#else
+#include <unistd.h>
+#endif
+
 #include "deh_main.h"
 #include "doomdef.h"
 #include "doomstat.h"
 #include "m_argv.h"
+#include "m_config.h"
 #include "m_misc.h"
 #include "i_joystick.h"
 #include "i_timer.h"
@@ -51,26 +59,14 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+int mb_used = 16;
+int show_endoom = 1;
 
-int	mb_used = 16;
-int     show_endoom = 1;
+// Tactile feedback function, probably used for the Logitech Cyberman
 
-void
-I_Tactile
-( int	on,
-  int	off,
-  int	total )
+void I_Tactile(int on, int off, int total)
 {
-  // UNUSED.
-  on = off = total = 0;
 }
-
-ticcmd_t	emptycmd;
-ticcmd_t*	I_BaseTiccmd(void)
-{
-    return &emptycmd;
-}
-
 
 int  I_GetHeapSize (void)
 {
@@ -106,7 +102,21 @@ byte *I_ZoneBase (int *size)
     return zonemem;
 }
 
+// 
+// I_ConsoleStdout
+//
+// Returns true if stdout is a real console, false if it is a file
+//
 
+boolean I_ConsoleStdout(void)
+{
+#ifdef _WIN32
+    // SDL "helpfully" always redirects stdout to a file.
+    return 0;
+#else
+    return isatty(fileno(stdout));
+#endif
+}
 
 //
 // I_Init
@@ -165,6 +175,7 @@ void I_Endoom(void)
 //
 // I_Quit
 //
+
 void I_Quit (void)
 {
     D_QuitNetGame ();
@@ -191,16 +202,6 @@ void I_WaitVBL(int count)
     I_Sleep((count * 1000) / 70);
 }
 
-byte*	I_AllocLow(int length)
-{
-    byte*	mem;
-        
-    mem = (byte *)malloc (length);
-    memset (mem,0,length);
-    return mem;
-}
-
-
 //
 // I_Error
 //
@@ -223,21 +224,40 @@ void I_Error (char *error, ...)
     }
     
     // Message first.
-    va_start (argptr,error);
-    fprintf (stderr, "Error: ");
-    vfprintf (stderr,error,argptr);
-    fprintf (stderr, "\n");
-    va_end (argptr);
-
-    fflush( stderr );
+    va_start(argptr, error);
+    fprintf(stderr, "Error: ");
+    vfprintf(stderr, error, argptr);
+    fprintf(stderr, "\n");
+    va_end(argptr);
+    fflush(stderr);
 
     // Shutdown. Here might be other errors.
+
     if (demorecording)
+    {
 	G_CheckDemoStatus();
+    }
 
     D_QuitNetGame ();
     I_ShutdownGraphics();
+    S_Shutdown();
     
-    abort();
+#ifdef _WIN32
+    // On Windows, pop up a dialog box with the error message.
+    {
+        char msgbuf[512];
+
+        va_start(argptr, error);
+        memset(msgbuf, 0, sizeof(msgbuf));
+        vsnprintf(msgbuf, sizeof(msgbuf) - 1, error, argptr);
+        va_end(argptr);
+
+        MessageBox(NULL, msgbuf, "Error", MB_OK);
+    }
+#endif
+
+    // abort();
+
+    exit(-1);
 }
 

@@ -32,6 +32,8 @@
 #include "i_system.h"
 #include "i_timer.h"
 
+#include "m_argv.h"
+
 #include "net_client.h"
 #include "net_common.h"
 #include "net_defs.h"
@@ -478,8 +480,22 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
 
     if (strcmp(client_version, PACKAGE_STRING) != 0)
     {
-        NET_SV_SendReject(addr, "Different versions cannot play a network game!");
-        return;
+        //!
+        // @category net
+        //
+        // When running a netgame server, ignore version mismatches between
+        // the server and the client. Using this option may cause game
+        // desyncs to occur, or differences in protocol may mean the netgame
+        // will simply not function at all.
+        //
+
+        if (M_CheckParm("-ignoreversion") == 0) 
+        {
+            NET_SV_SendReject(addr,
+                              "Version mismatch: server version is: "
+                              PACKAGE_STRING);
+            return;
+        }
     }
 
     // read the game mode and mission

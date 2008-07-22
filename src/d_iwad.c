@@ -34,6 +34,7 @@
 #include "doomstat.h"
 #include "i_system.h"
 #include "m_argv.h"
+#include "m_config.h"
 #include "m_misc.h"
 #include "w_wad.h"
 #include "z_zone.h"
@@ -276,7 +277,7 @@ static void CheckSteamEdition(void)
 {
     char *install_path;
     char *subpath;
-    int i;
+    size_t i;
 
     install_path = GetRegistryString(&steam_install_location);
 

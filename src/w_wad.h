@@ -32,6 +32,8 @@
 
 #include "doomtype.h"
 
+#include "w_file.h"
+
 
 //
 // TYPES
@@ -46,7 +48,7 @@ typedef struct lumpinfo_s lumpinfo_t;
 struct lumpinfo_s
 {
     char	name[8];
-    FILE       *handle;
+    wad_file_t *wad_file;
     int		position;
     int		size;
     void       *cache;
@@ -57,12 +59,10 @@ struct lumpinfo_s
 };
 
 
-extern	void**		lumpcache;
-extern	lumpinfo_t*	lumpinfo;
-extern	unsigned int	numlumps;
+extern lumpinfo_t *lumpinfo;
+extern unsigned int numlumps;
 
-FILE   *W_AddFile (char *filename);
-void    W_Reload (void);
+wad_file_t *W_AddFile (char *filename);
 
 int	W_CheckNumForName (char* name);
 int	W_GetNumForName (char* name);
@@ -76,6 +76,9 @@ void*	W_CacheLumpName (char* name, int tag);
 void    W_GenerateHashTable(void);
 
 extern unsigned int W_LumpNameHash(const char *s);
+
+void    W_ReleaseLumpNum(int lump);
+void    W_ReleaseLumpName(char *name);
 
 
 #endif

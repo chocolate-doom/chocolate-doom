@@ -20,7 +20,7 @@
 // 02111-1307, USA.
 //
 // DESCRIPTION:
-//
+//      Miscellaneous.
 //    
 //-----------------------------------------------------------------------------
 
@@ -29,46 +29,16 @@
 #define __M_MISC__
 
 
+#include <stdio.h>
+
 #include "doomtype.h"
-//
-// MISC
-//
 
-
-
-boolean
-M_WriteFile
-( char const*	name,
-  void*		source,
-  int		length );
-
-int
-M_ReadFile
-( char const*	name,
-  byte**	buffer );
-
-void M_ScreenShot (void);
-
-void M_LoadDefaults (void);
-
-void M_SaveDefaults (void);
-
-void M_SetConfigDir(void);
-
+boolean M_WriteFile(char *name, void *source, int length);
+int M_ReadFile(char *name, byte **buffer);
 void M_MakeDirectory(char *dir);
-
 char *M_TempFile(char *s);
-
 boolean M_FileExists(char *file);
-
-
-int
-M_DrawText
-( int		x,
-  int		y,
-  boolean	direct,
-  char*		string );
-
-extern char *configdir;
+long M_FileLength(FILE *handle);
 
 #endif
+

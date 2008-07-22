@@ -62,9 +62,8 @@ int deh_max_armor = DEH_DEFAULT_MAX_ARMOR;
 // This is the armor class that is given when picking up the green 
 // armor or an armor helmet. See P_TouchSpecialThing in p_inter.c
 //
-// Question: Does DOS dehacked modify the armor helmet behavior 
-// as well as the green armor behavior?  I am currently following
-// the Boom behavior, which is "yes".
+// DOS dehacked only modifies the behavior of the green armor shirt,
+// the armor class set by armor helmets is not affected.
 
 int deh_green_armor_class = DEH_DEFAULT_GREEN_ARMOR_CLASS;
 
@@ -72,9 +71,8 @@ int deh_green_armor_class = DEH_DEFAULT_GREEN_ARMOR_CLASS;
 // This is the armor class that is given when picking up the blue 
 // armor or a megasphere. See P_TouchSpecialThing in p_inter.c
 //
-// Question: Does DOS dehacked modify the megasphere behavior 
-// as well as the blue armor behavior?  I am currently following
-// the Boom behavior, which is "yes".
+// DOS dehacked only modifies the MegaArmor behavior and not
+// the MegaSphere, which always gives armor type 2.
 
 int deh_blue_armor_class = DEH_DEFAULT_BLUE_ARMOR_CLASS;
 

@@ -136,7 +136,7 @@ void P_LoadVertexes (int lump)
     vertexes = Z_Malloc (numvertexes*sizeof(vertex_t),PU_LEVEL,0);	
 
     // Load data into cache.
-    data = W_CacheLumpNum (lump,PU_STATIC);
+    data = W_CacheLumpNum (lump, PU_STATIC);
 	
     ml = (mapvertex_t *)data;
     li = vertexes;
@@ -150,7 +150,7 @@ void P_LoadVertexes (int lump)
     }
 
     // Free buffer memory.
-    Z_Free (data);
+    W_ReleaseLumpNum(lump);
 }
 
 
@@ -194,7 +194,7 @@ void P_LoadSegs (int lump)
 	    li->backsector = 0;
     }
 	
-    Z_Free (data);
+    W_ReleaseLumpNum(lump);
 }
 
 
@@ -222,7 +222,7 @@ void P_LoadSubsectors (int lump)
 	ss->firstline = SHORT(ms->firstseg);
     }
 	
-    Z_Free (data);
+    W_ReleaseLumpNum(lump);
 }
 
 
@@ -256,7 +256,7 @@ void P_LoadSectors (int lump)
 	ss->thinglist = NULL;
     }
 	
-    Z_Free (data);
+    W_ReleaseLumpNum(lump);
 }
 
 
@@ -293,7 +293,7 @@ void P_LoadNodes (int lump)
 	}
     }
 	
-    Z_Free (data);
+    W_ReleaseLumpNum(lump);
 }
 
 
@@ -348,7 +348,7 @@ void P_LoadThings (int lump)
 	P_SpawnMapThing (mt);
     }
 	
-    Z_Free (data);
+    W_ReleaseLumpNum(lump);
 }
 
 
@@ -429,8 +429,8 @@ void P_LoadLineDefs (int lump)
 	else
 	    ld->backsector = 0;
     }
-	
-    Z_Free (data);
+
+    W_ReleaseLumpNum(lump);
 }
 
 
@@ -460,8 +460,8 @@ void P_LoadSideDefs (int lump)
 	sd->midtexture = R_TextureNumForName(msd->midtexture);
 	sd->sector = &sectors[SHORT(msd->sector)];
     }
-	
-    Z_Free (data);
+
+    W_ReleaseLumpNum(lump);
 }
 
 
@@ -656,9 +656,6 @@ P_SetupLevel
 
     // UNUSED W_Profile ();
     P_InitThinkers ();
-
-    // if working with a devlopment map, reload it
-    W_Reload ();			
 	   
     // find map name
     if ( gamemode == commercial)

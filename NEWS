@@ -1,19 +1,47 @@
+1.1.1 (2008-04-20):
+
+    The previous release (v1.1.0) included a bug that broke compilation
+    when libsamplerate support was enabled.  The only change in this 
+    version is to fix this bug.
+
+1.1.0 (2008-04-19):
 
      * The video mode code has been radically restructured.  The video mode is
        now chosen by directly specifying the mode to use; the scale factor is
        then chosen to fit the screen.  This is helpful when using widescreen
        monitors (thanks Linguica)
-     * MSVC build project files (thanks GhostlyDeath).
+     * MSVC build project files (thanks GhostlyDeath and entryway).
      * Unix manpage improvements; the manpage now lists the environment
        variables that Chocolate Doom uses.  Manpages have been added for
        chocolate-setup and chocolate-server, from the versions for the Debian
        Chocolate Doom package (thanks Jon Dowland).
      * INSTALL file with installation instructions for installing Chocolate
        Doom on Unix systems.
+     * Support for high quality resampling of sound effects using 
+       libsamplerate (thanks David Flater).
+     * A low pass filter is applied when doing sound resampling in an
+       attempt to filter out high frequency noise from the resampling
+       process.
+     * R_Main progress box is not displayed if stdout is a file (produces
+       cleaner output).
+     * Client/server version checking can be disabled to allow different
+       versions of Chocolate Doom to play together, or Chocolate Doom
+       clients to play with Strawberry Doom clients.
+     * Unix manpages are now generated for the Chocolate Doom 
+       configuration files.
+     * The BSD PC speaker driver now works on FreeBSD.
 
     Compatibility:
      * Use the same spechits compatibility value as PrBoom+, for consistency
        (thanks Lemonzest).
+     * The intercepts overrun code has been refactored to work on big
+       endian machines.
+     * The default startup delay has been set to one second, to allow 
+       time for the screen to settle before starting the game (some 
+       monitors have a delay before they come back on after changing modes).
+     * If a savegame buffer overrun occurs, the savegame does not get saved
+       and existing savegames are not overwritten (same behaviour as 
+       Vanilla).
 
     Bugs fixed:
      * Desync with STRAIN demos and dehacked Misc values not being set
@@ -27,6 +55,13 @@
      * mus2mid.c should use MEM_SEEK_SET, not SEEK_SET (thanks Russell)
      * Fast/Respawn options were not being exchanged when starting netgames
        (thanks GhostlyDeath).
+     * Letterbox mode is more accurately described as "pillarboxed" or 
+       "windowboxed" where appropriate (thanks MikeRS)
+     * Process affinity mask is set to 1 on Windows, to work around a 
+       bug in SDL_mixer that can cause crashes on multi-core machines
+       (thanks entryway).
+     * Bugs in the joystick configuration dialog in the setup tool have
+       been fixed.
 
 1.0.0 (2007-12-10):
 
