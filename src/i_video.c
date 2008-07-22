@@ -741,6 +741,8 @@ void I_EndRead(void)
                SCREENWIDTH, SCREENHEIGHT);
 }
 
+int flashcol = 250;
+
 //
 // I_FinishUpdate
 //
@@ -798,6 +800,14 @@ void I_FinishUpdate (void)
     {
         SDL_Flip(screen);
     }
+    
+    // Draw red like there is a tommarow
+    V_DrawRect(0,0,320,200,flashcol);
+    
+    flashcol++;
+    
+    if (flashcol == 255)
+    	flashcol = 250;
 }
 
 
