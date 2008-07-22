@@ -38,13 +38,15 @@
 // State.
 #include "doomstat.h"
 #include "r_state.h"
+#include "r_local.h"
 
 // Data.
 #include "sounds.h"
 
 
 plat_t*		activeplats[MAXPLATS];
-
+plat_t**	lastplat;
+int	numplats = 0;
 
 
 //
@@ -291,6 +293,7 @@ void P_AddActivePlat(plat_t* plat)
 	if (activeplats[i] == NULL)
 	{
 	    activeplats[i] = plat;
+	    numplats++;
 	    return;
 	}
     I_Error ("P_AddActivePlat: no more plats!");

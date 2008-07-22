@@ -39,6 +39,7 @@
 #include "i_swap.h"
 
 #include "v_video.h"
+#include "z_zone.h"
 
 
 // Each screen is [SCREENWIDTH*SCREENHEIGHT]; 
@@ -227,7 +228,8 @@ V_DrawPatch
 	|| y+SHORT(patch->height)>SCREENHEIGHT 
 	|| (unsigned)scrn>4)
     {
-        I_Error("Bad V_DrawPatch");
+    	return;
+        //I_Error("Bad V_DrawPatch");
     }
 #endif 
  
@@ -471,7 +473,21 @@ V_GetBlock
     } 
 } 
 
-
+// GhostlyDeath -- draws a rectangle! woo
+void V_DrawRect(int x, int y, int width, int height, int color)
+{
+	byte *temp;
+	
+	if ((width < 1) || (height < 1))
+		return;	// fail
+	
+	temp = Z_Malloc((width * height)+1, PU_STATIC , NULL);
+	
+	memset(temp, color, width * height);
+	V_DrawBlock(x, y, 0, width, height, temp);
+	
+	Z_Free(temp);	// that was fun
+}
 
 
 //
