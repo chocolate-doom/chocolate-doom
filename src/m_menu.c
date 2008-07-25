@@ -777,6 +777,7 @@ void M_DrawReadThis1(void)
             break;
 
         case exe_ultimate:
+        case exe_chex:
 
             // Ultimate Doom always displays "HELP1".
 
@@ -901,7 +902,9 @@ void M_NewGame(int choice)
 	return;
     }
 	
-    if ( gamemode == commercial )
+    // Chex Quest disabled the episode select screen, as did Doom II.
+
+    if (gamemode == commercial || gameversion == exe_chex)
 	M_SetupNextMenu(&NewDef);
     else
 	M_SetupNextMenu(&EpiDef);

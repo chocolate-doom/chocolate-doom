@@ -1258,18 +1258,33 @@ void G_DoCompleted (void)
     if (automapactive) 
 	AM_Stop (); 
 	
-    if ( gamemode != commercial)
-	switch(gamemap)
-	{
-	  case 8:
-	    gameaction = ga_victory;
-	    return;
-	  case 9: 
-	    for (i=0 ; i<MAXPLAYERS ; i++) 
-		players[i].didsecret = true; 
-	    break;
-	}
-		
+    if (gamemode != commercial)
+    {
+        // Chex Quest ends after 5 levels, rather than 8.
+
+        if (gameversion == exe_chex)
+        {
+            if (gamemap == 5)
+            {
+                gameaction = ga_victory;
+                return;
+            }
+        }
+        else
+        {
+            switch(gamemap)
+            {
+              case 8:
+                gameaction = ga_victory;
+                return;
+              case 9: 
+                for (i=0 ; i<MAXPLAYERS ; i++) 
+                    players[i].didsecret = true; 
+                break;
+            }
+        }
+    }
+
 //#if 0  Hmmm - why?
     if ( (gamemap == 8)
 	 && (gamemode != commercial) ) 
