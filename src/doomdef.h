@@ -105,6 +105,7 @@ typedef enum
 {
     exe_doom_1_9,   // Doom 1.9: used for shareware, registered and commercial
     exe_ultimate,   // Ultimate Doom (retail)
+    exe_chex,       // Chex Quest executable (based on Ultimate Doom)
     exe_final,      // Final Doom
 } GameVersion_t;
 

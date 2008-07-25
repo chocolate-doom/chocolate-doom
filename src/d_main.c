@@ -662,6 +662,7 @@ static struct
     {"Doom 1.9",             "1.9",        exe_doom_1_9},
     {"Ultimate Doom",        "ultimate",   exe_ultimate},
     {"Final Doom",           "final",      exe_final},
+    {"Chex Quest",           "chex",       exe_chex},
     { NULL,                  NULL,         0},
 };
 
@@ -710,7 +711,11 @@ static void InitGameVersion(void)
     {
         // Determine automatically
 
-        if (gamemode == shareware || gamemode == registered)
+        if (gameversion == exe_chex) 
+        {
+            // Already determined
+        }
+        else if (gamemode == shareware || gamemode == registered)
         {
             // original
 
