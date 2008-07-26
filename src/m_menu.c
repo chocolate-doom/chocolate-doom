@@ -781,6 +781,9 @@ void M_DrawReadThis1(void)
 
             // Ultimate Doom always displays "HELP1".
 
+            // Chex Quest version also uses "HELP1", even though it is based
+            // on Final Doom.
+
             lumpname = "HELP1";
 
             break;
