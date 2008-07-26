@@ -59,6 +59,10 @@ extern deh_section_t deh_section_thing;
 // deh_weapon.c: 
 extern deh_section_t deh_section_weapon;
 
+// If true, we can do long string replacements.
+
+boolean deh_allow_long_strings = false;
+
 //
 // List of section types:
 //
@@ -226,6 +230,24 @@ static boolean CheckSignatures(deh_context_t *context)
     return false;
 }
 
+// Parses a comment string in a dehacked file.
+
+static void DEH_ParseComment(char *comment)
+{
+    // Allow comments containing this special value to allow string
+    // replacements longer than those permitted by DOS dehacked.
+    // This allows us to use a dehacked patch for doing string 
+    // replacements for emulating Chex Quest.
+    //
+    // If you use this, your dehacked patch may not work in Vanilla
+    // Doom.
+
+    if (strstr(comment, "*allow-long-strings*") != NULL)
+    {
+        deh_allow_long_strings = true;
+    }
+}
+
 // Parses a dehacked file by reading from the context
 
 static void DEH_ParseContext(deh_context_t *context)
@@ -241,6 +263,8 @@ static void DEH_ParseContext(deh_context_t *context)
     {
         DEH_Error(context, "This is not a valid dehacked patch file!");
     }
+
+    deh_allow_long_strings = false;
     
     // Read the file
     
@@ -262,6 +286,7 @@ static void DEH_ParseContext(deh_context_t *context)
         {
             // comment
 
+            DEH_ParseComment(line);
             continue;
         }
 
