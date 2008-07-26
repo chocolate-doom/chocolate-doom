@@ -624,13 +624,20 @@ ST_Responder (event_t* ev)
 	map = buf[1] - '0';
       }
 
+      // Chex.exe always warps to episode 1.
+
+      if (gameversion == exe_chex)
+      {
+        epsd = 1;
+      }
+
       // Catch invalid maps.
       if (epsd < 1)
 	return false;
 
       if (map < 1)
 	return false;
-      
+
       // Ohmygod - this is not going to work.
       if ((gamemode == retail)
 	  && ((epsd > 4) || (map > 9)))
