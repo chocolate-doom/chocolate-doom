@@ -59,6 +59,7 @@ char *DEH_String(char *s);
 #endif
 
 extern boolean deh_allow_long_strings;
+extern boolean deh_allow_long_cheats;
 
 #endif /* #ifndef DEH_MAIN_H */
 
