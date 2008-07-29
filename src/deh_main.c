@@ -63,6 +63,10 @@ extern deh_section_t deh_section_weapon;
 
 boolean deh_allow_long_strings = false;
 
+// If true, we can do cheat replacements longer than the originals.
+
+boolean deh_allow_long_cheats = false;
+
 //
 // List of section types:
 //
@@ -246,6 +250,15 @@ static void DEH_ParseComment(char *comment)
     {
         deh_allow_long_strings = true;
     }
+
+    // Allow magic comments to allow longer cheat replacements than
+    // those permitted by DOS dehacked.  This is also for Chex
+    // Quest.
+
+    if (strstr(comment, "*allow-long-cheats*") != NULL)
+    {
+        deh_allow_long_cheats = true;
+    }
 }
 
 // Parses a dehacked file by reading from the context
@@ -265,6 +278,7 @@ static void DEH_ParseContext(deh_context_t *context)
     }
 
     deh_allow_long_strings = false;
+    deh_allow_long_cheats = false;
     
     // Read the file
     
