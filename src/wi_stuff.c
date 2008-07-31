@@ -347,10 +347,10 @@ static int		NUMCMAPS;
 //
 
 // You Are Here graphic
-static patch_t*		yah[2]; 
+static patch_t*		yah[3] = { NULL, NULL, NULL }; 
 
 // splat
-static patch_t*		splat;
+static patch_t*		splat[2] = { NULL, NULL };
 
 // %, : graphics
 static patch_t*		percent;
@@ -489,7 +489,7 @@ WI_drawOnLnode
 	{
 	    i++;
 	}
-    } while (!fits && i!=2);
+    } while (!fits && i!=2 && c[i] != NULL);
 
     if (fits && i<2)
     {
@@ -800,11 +800,11 @@ void WI_drawShowNextLoc(void)
 
 	// draw a splat on taken cities.
 	for (i=0 ; i<=last ; i++)
-	    WI_drawOnLnode(i, &splat);
+	    WI_drawOnLnode(i, splat);
 
 	// splat the secret level?
 	if (wbs->didsecret)
-	    WI_drawOnLnode(8, &splat);
+	    WI_drawOnLnode(8, splat);
 
 	// draw flashing ptr
 	if (snl_pointeron)
@@ -1590,7 +1590,7 @@ static void WI_loadUnloadData(load_callback_t callback)
         callback(DEH_String("WIURH1"), &yah[1]);
 
 	// splat
-        callback(DEH_String("WISPLAT"), &splat);
+        callback(DEH_String("WISPLAT"), &splat[0]);
 	
 	if (wbs->epsd < 3)
 	{
