@@ -351,21 +351,25 @@ static void DEH_ParseContext(deh_context_t *context)
 
 // Parses a dehacked file
 
-static void DEH_ParseFile(char *filename)
+int DEH_LoadFile(char *filename)
 {
     deh_context_t *context;
+
+    printf(" loading %s\n", filename);
 
     context = DEH_OpenFile(filename);
 
     if (context == NULL)
     {
-        fprintf(stderr, "DEH_ParseFile: Unable to open %s\n", filename);
-        return;
+        fprintf(stderr, "DEH_LoadFile: Unable to open %s\n", filename);
+        return 0;
     }
     
     DEH_ParseContext(context);
     
     DEH_CloseFile(context);
+
+    return 1;
 }
 
 // Checks the command line for -deh argument
@@ -393,8 +397,7 @@ void DEH_Init(void)
         while (p < myargc && myargv[p][0] != '-')
         {
             filename = D_TryFindWADByName(myargv[p]);
-            printf(" loading %s\n", filename);
-            DEH_ParseFile(filename);
+            DEH_LoadFile(filename);
             ++p;
         }
     }

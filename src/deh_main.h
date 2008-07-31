@@ -39,6 +39,7 @@
 #define DEH_VANILLA_NUMSFX 107
 
 void DEH_Init(void);
+int DEH_LoadFile(char *filename);
 
 boolean DEH_ParseAssignment(char *line, char **variable_name, char **value);
 
