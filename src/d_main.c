@@ -770,6 +770,22 @@ void PrintGameVersion(void)
     }
 }
 
+// Load the Chex Quest dehacked file, if we are in Chex mode.
+
+static void LoadChexDeh(void)
+{
+    if (gameversion == exe_chex)
+    {
+        if (!DEH_LoadFile("chex.deh"))
+        {
+            I_Error("Unable to find Chex Quest dehacked file (chex.deh).\n"
+                    "The dehacked file is required in order to emulate\n"
+                    "chex.exe correctly.  Please download it from the\n"
+                    "/idgames repository.");
+        }
+    }
+}
+
 //
 // D_DoomMain
 //
@@ -1200,6 +1216,7 @@ void D_DoomMain (void)
     
     D_IdentifyVersion();
     InitGameVersion();
+    LoadChexDeh();
     D_SetGameDescription();
     D_SetSaveGameDir();
 
