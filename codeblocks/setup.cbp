@@ -41,6 +41,9 @@
 			<Add directory="..\src" />
 			<Add directory="..\textscreen" />
 		</Compiler>
+		<ResourceCompiler>
+			<Add directory="..\setup" />
+		</ResourceCompiler>
 		<Linker>
 			<Add option="-ltextscreen -lmingw32 -lSDLmain -lSDL -mwindows" />
 			<Add directory="..\lib" />
