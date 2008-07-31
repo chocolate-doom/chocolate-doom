@@ -55,11 +55,12 @@ static iwad_t iwads[] =
     { "tnt.wad",      "Final Doom: TNT: Evilution",          IWAD_TNT },
     { "plutonia.wad", "Final Doom: The Plutonia Experiment", IWAD_PLUTONIA },
     { "doom1.wad",    "Doom shareware",                      IWAD_DOOM1 },
+    { "chex.wad",     "Chex Quest",                          IWAD_CHEX },
 };
 
 // Array of IWADs found to be installed
 
-static char *found_iwads[5];
+static char *found_iwads[6];
 
 // Index of the currently selected IWAD
 
@@ -76,6 +77,15 @@ static char *skills[] =
     "Hurt me plenty.",
     "Ultra-violence",
     "NIGHTMARE!",
+};
+
+static char *chex_skills[] = 
+{
+    "Easy does it",
+    "Not so sticky",
+    "Gobs of goo",
+    "Extreme ooze",
+    "SUPER SLIMEY!"
 };
 
 static char *gamemodes[] = 
@@ -98,6 +108,7 @@ static int respawn = 0;
 static int udpport = 2342;
 static int timer = 0;
 
+static txt_dropdown_list_t *skillbutton;
 static txt_button_t *warpbutton;
 static warptype_t warptype = WARP_DOOM2;
 static int warpepisode = 1;
@@ -117,12 +128,18 @@ static iwad_t *GetIWADForDescription(char *description)
     {
         if (!strcmp(iwads[i].description, description))
         {
-            return &iwads[i];;
+            return &iwads[i];
         }
     }
 
     return NULL;
 }
+
+static iwad_t *GetCurrentIWAD(void)
+{
+    return GetIWADForDescription(found_iwads[found_iwad_selected]);
+}
+
 
 static void AddWADs(execute_context_t *exec)
 {
@@ -248,6 +265,20 @@ static void UpdateWarpButton(void)
     TXT_SetButtonLabel(warpbutton, buf);
 }
 
+static void UpdateSkillButton(void)
+{
+    iwad_t *iwad = GetCurrentIWAD();
+
+    if (iwad->mask == IWAD_CHEX)
+    {
+        skillbutton->values = chex_skills;
+    }
+    else
+    {
+        skillbutton->values = skills;
+    }
+}
+
 static void SetDoom1Warp(TXT_UNCAST_ARG(widget), void *val)
 {
     int l;
@@ -283,6 +314,7 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
     txt_window_t *window;
     txt_table_t *table;
     txt_button_t *button;
+    iwad_t *iwad;
     char buf[10];
     int x, y;
     int l;
@@ -298,10 +330,26 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
     {
         // ExMy levels
         
+        iwad = GetCurrentIWAD();
+
         for (i=0; i<4 * 9; ++i)
         {
             x = (i % 4) + 1;
             y = (i / 4) + 1;
+
+            // chex.wad only has E1M1-E1M5.
+
+            if (iwad->mask == IWAD_CHEX && (x > 1 || y > 5))
+            {
+                continue;
+            }
+
+            // doom1.wad only has E1
+
+            if (iwad->mask == IWAD_DOOM1 && x > 1)
+            {
+                continue;
+            }
 
             sprintf(buf, " E%iM%i ", x, y);
             button = TXT_NewButton(buf);
@@ -348,7 +396,7 @@ static void IWADSelected(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
     // Find the iwad_t selected
 
-    iwad = GetIWADForDescription(found_iwads[found_iwad_selected]);
+    iwad = GetCurrentIWAD();
 
     // Update iwadfile
 
@@ -368,7 +416,7 @@ static void UpdateWarpType(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
     // Find the new warp type
 
-    if (iwad->mask & (IWAD_DOOM | IWAD_DOOM1))
+    if (iwad->mask & (IWAD_DOOM | IWAD_DOOM1 | IWAD_CHEX))
     {
         new_warptype = WARP_DOOM1;
     }
@@ -388,6 +436,7 @@ static void UpdateWarpType(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     warptype = new_warptype;
 
     UpdateWarpButton();
+    UpdateSkillButton();
 }
 
 static txt_widget_t *IWADSelector(void)
@@ -529,7 +578,7 @@ void StartMultiGame(void)
            TXT_NewLabel("Game"),
            iwad_selector = IWADSelector(),
            TXT_NewLabel("Skill"),
-           TXT_NewDropdownList(&skill, skills, 5),
+           skillbutton = TXT_NewDropdownList(&skill, skills, 5),
            TXT_NewLabel("Game type"),
            TXT_NewDropdownList(&deathmatch, gamemodes, 3),
            TXT_NewLabel("Level warp"),
