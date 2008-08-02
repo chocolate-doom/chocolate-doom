@@ -774,14 +774,23 @@ void PrintGameVersion(void)
 
 static void LoadChexDeh(void)
 {
+    char *chex_deh;
+
     if (gameversion == exe_chex)
     {
-        if (!DEH_LoadFile("chex.deh"))
+        chex_deh = D_FindWADByName("chex.deh");
+
+        if (chex_deh == NULL)
         {
             I_Error("Unable to find Chex Quest dehacked file (chex.deh).\n"
                     "The dehacked file is required in order to emulate\n"
                     "chex.exe correctly.  Please download it from the\n"
                     "/idgames repository.");
+        }
+
+        if (!DEH_LoadFile(chex_deh))
+        {
+            I_Error("Failed to load chex.deh needed for emulating chex.exe.");
         }
     }
 }
