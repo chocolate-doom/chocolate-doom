@@ -27,7 +27,7 @@
 #include <math.h>
 
 // Huge ass if statement to determine if we should pick up this discarded weapon for ammo
-#define ISWEAPONAMMOWORTHIT(wp) \
+/*#define ISWEAPONAMMOWORTHIT(wp) \
 (\
 	player->weaponowned[wp] &&\
 	(\
@@ -40,7 +40,7 @@
 			((thatmobj->flags & MF_DROPPED ? clipammo[weaponinfo[wp].ammo] : clipammo[weaponinfo[wp].ammo] << 1) <<\
 				(gameskill == sk_baby || gameskill == sk_nightmare ? 1 : 0)))))\
 	)\
-)
+)*/
 
 void B_LookForStuff(bmind_t* mind)
 {
@@ -50,120 +50,174 @@ void B_LookForStuff(bmind_t* mind)
 	mobj_t* ourmobj = player->mo;
 	mobj_t* thatmobj = NULL;
 	int DoGather = 0;
+	int DoAttack = 0;
 	int GatherDistance = 10000;
+	int AttackDistance = 10000;
 	int DoPickup = 0;
+	int GoAttack = 0;
+	int AttackBySight = 0;
 	mobj_t* tGather = NULL;
+	mobj_t* tAttack = NULL;
 	
 	DoGather = !mind->GatherTarget;
+	DoAttack = !mind->AttackTarget;
 	
-	while (currentthinker != &thinkercap)
-	{
-		if ((currentthinker->function.acp1 == (actionf_p1)P_MobjThinker))
+	if (DoAttack || DoGather)
+		while (currentthinker != &thinkercap)
 		{
-			thatmobj = (mobj_t*)currentthinker;
-			
-			/* Thing has life > 0 */
-			if (thatmobj->health > 0)
+			if ((currentthinker->function.acp1 == (actionf_p1)P_MobjThinker))
 			{
-				/* Players */
-				if (thatmobj->type == MT_PLAYER)
+				thatmobj = (mobj_t*)currentthinker;
+			
+				if (DoAttack)
 				{
-					// In Deathmatch, so we want it dead
-					if (deathmatch)
+					GoAttack = 0;
+					
+					/* Thing has life > 0 */
+					if (thatmobj->health > 0)
 					{
+						/* Players */
+						if (thatmobj->type == MT_PLAYER)
+						{
+							// In Deathmatch, so we want it dead
+							if (deathmatch)
+							{
+								GoAttack = 1;
+							}
+					
+							// In Coop, so we want to protect it
+							else
+							{
+							}
+						}
+			
+						/* Monsters */
+						else if (((thatmobj->type >= MT_POSSESSED) && (thatmobj->type <= MT_VILE)) ||
+							(thatmobj->type == MT_UNDEAD) ||
+							(thatmobj->type == MT_FATSO) ||
+							((thatmobj->type >= MT_CHAINGUY) && (thatmobj->type <= MT_BRUISER)) ||
+							((thatmobj->type >= MT_KNIGHT) && (thatmobj->type <= MT_BOSSBRAIN)))
+						{
+							GoAttack = 1;
+						}
 					}
 					
-					// In Coop, so we want to protect it
-					else
+					if (GoAttack)
 					{
-					}
+						if (tAttack && thatmobj->health > tAttack->health)
+						{
+							if (B_BuildPath(mind, player->mo->subsector, thatmobj->subsector, BP_CHECKPATH) < AttackDistance)
+							{
+								AttackDistance = B_BuildPath(mind, player->mo->subsector, thatmobj->subsector, BP_CHECKPATH);
+								tAttack = thatmobj;
+							}
+							else if (P_CheckSight(player->mo, thatmobj))
+							{
+								AttackDistance = 64;
+								tAttack = thatmobj;
+							}
+						}
+						else if (!tAttack)
+						{
+							if (B_BuildPath(mind, player->mo->subsector, thatmobj->subsector, BP_CHECKPATH) < AttackDistance)
+							{
+								AttackDistance = B_BuildPath(mind, player->mo->subsector, thatmobj->subsector, BP_CHECKPATH);
+								tAttack = thatmobj;
+							}
+							else if (P_CheckSight(player->mo, thatmobj))
+							{
+								AttackDistance = 64;
+								tAttack = thatmobj;
+							}
+						}
+					}	
 				}
 			
-				/* Monsters */
-				if (((thatmobj->type >= MT_POSSESSED) && (thatmobj->type <= MT_VILE)) ||
-					(thatmobj->type == MT_UNDEAD) ||
-					(thatmobj->type == MT_FATSO) ||
-					((thatmobj->type >= MT_CHAINGUY) && (thatmobj->type <= MT_BRUISER)) ||
-					((thatmobj->type >= MT_KNIGHT) && (thatmobj->type <= MT_BOSSBRAIN)))
+				if (DoGather)
 				{
+					DoPickup = 0;
+				
+					/* Health Items */
+			
+					/* Armor Items */
+			
+					/* Weapons */
+					if ((thatmobj->type >= MT_MISC25) && (thatmobj->type <= MT_SUPERSHOTGUN))
+					{
+						switch (thatmobj->type)
+						{
+							case MT_MISC25:			// BFG9000
+								if (!player->weaponowned[wp_bfg] || ISWEAPONAMMOWORTHIT(wp_bfg))
+									DoPickup = 1;
+								break;
+							case MT_CHAINGUN:		// Chaingun
+								if (!player->weaponowned[wp_chaingun] || ISWEAPONAMMOWORTHIT(wp_chaingun))
+									DoPickup = 1;
+								break;
+							case MT_MISC26:			// Chainsaw
+								if (!player->weaponowned[wp_chainsaw] || ISWEAPONAMMOWORTHIT(wp_chainsaw))
+									DoPickup = 1;
+								break;
+							case MT_MISC27:			// Rocket Launcher
+								if (!player->weaponowned[wp_missile] || ISWEAPONAMMOWORTHIT(wp_missile))
+									DoPickup = 1;
+								break;
+							case MT_MISC28:			// Plasma Gun
+								if (!player->weaponowned[wp_plasma] || ISWEAPONAMMOWORTHIT(wp_plasma))
+									DoPickup = 1;
+								break;
+							case MT_SHOTGUN:		// Shotgun
+								if (!player->weaponowned[wp_shotgun] || ISWEAPONAMMOWORTHIT(wp_shotgun))
+									DoPickup = 1;
+								break;
+							case MT_SUPERSHOTGUN:	// Super Shotgun
+								if (!player->weaponowned[wp_supershotgun] || ISWEAPONAMMOWORTHIT(wp_supershotgun))
+									DoPickup = 1;
+								break;
+							default:
+								break;
+						}
+					}
+			
+					/* Ammo */
+					if ((thatmobj->type >= MT_CLIP) && (thatmobj->type <= MT_MISC24))
+					{
+					}
+			
+					/* Keys */
+					if ((thatmobj->type >= MT_MISC4) && (thatmobj->type <= MT_MISC9))
+					{
+					}
+				
+					if (DoPickup)
+						if (B_BuildPath(mind, player->mo->subsector, thatmobj->subsector, BP_CHECKPATH) < GatherDistance)
+						{
+							GatherDistance = B_BuildPath(mind, player->mo->subsector, thatmobj->subsector, BP_CHECKPATH);
+							tGather = thatmobj;
+						}
 				}
 			}
-			
-			if (DoGather)
-			{
-				DoPickup = 0;
-				
-				/* Health Items */
-			
-				/* Armor Items */
-			
-				/* Weapons */
-				if ((thatmobj->type >= MT_MISC25) && (thatmobj->type <= MT_SUPERSHOTGUN))
-				{
-					switch (thatmobj->type)
-					{
-						case MT_MISC25:			// BFG9000
-							if (!player->weaponowned[wp_bfg] || ISWEAPONAMMOWORTHIT(wp_bfg))
-								DoPickup = 1;
-							break;
-						case MT_CHAINGUN:		// Chaingun
-							if (!player->weaponowned[wp_chaingun] || ISWEAPONAMMOWORTHIT(wp_chaingun))
-								DoPickup = 1;
-							break;
-						case MT_MISC26:			// Chainsaw
-							if (!player->weaponowned[wp_chainsaw] || ISWEAPONAMMOWORTHIT(wp_chainsaw))
-								DoPickup = 1;
-							break;
-						case MT_MISC27:			// Rocket Launcher
-							if (!player->weaponowned[wp_missile] || ISWEAPONAMMOWORTHIT(wp_missile))
-								DoPickup = 1;
-							break;
-						case MT_MISC28:			// Plasma Gun
-							if (!player->weaponowned[wp_plasma] || ISWEAPONAMMOWORTHIT(wp_plasma))
-								DoPickup = 1;
-							break;
-						case MT_SHOTGUN:		// Shotgun
-							if (!player->weaponowned[wp_shotgun] || ISWEAPONAMMOWORTHIT(wp_shotgun))
-								DoPickup = 1;
-							break;
-						case MT_SUPERSHOTGUN:	// Super Shotgun
-							if (!player->weaponowned[wp_supershotgun] || ISWEAPONAMMOWORTHIT(wp_supershotgun))
-								DoPickup = 1;
-							break;
-						default:
-							break;
-					}
-				}
-			
-				/* Ammo */
-				if ((thatmobj->type >= MT_CLIP) && (thatmobj->type <= MT_MISC24))
-				{
-				}
-			
-				/* Keys */
-				if ((thatmobj->type >= MT_MISC4) && (thatmobj->type <= MT_MISC9))
-				{
-				}
-				
-				if (DoPickup)
-					if (B_BuildPath(mind, player->mo->subsector, thatmobj->subsector, BP_CHECKPATH) < GatherDistance)
-					{
-						GatherDistance = B_BuildPath(mind, player->mo->subsector, thatmobj->subsector, BP_CHECKPATH);
-						tGather = thatmobj;
-					}
-			}
-		}
 		
-		// Next Thinker
-		currentthinker = currentthinker->next;
-	}
+			// Next Thinker
+			currentthinker = currentthinker->next;
+		}
 	
 	// Build a path
 	if (DoGather && tGather)
 	{
 		mind->GatherTarget = tGather;
 		mind->flags |= BF_GATHERING;
-		B_BuildPath(mind, player->mo->subsector, mind->GatherTarget->subsector, 0);
+		if (!mind->PathNodes[mind->PathIterator] && !mind->PathIterator)
+			B_BuildPath(mind, player->mo->subsector, mind->GatherTarget->subsector, 0);
+	}
+	
+	// Attack enemy
+	if (DoAttack && tAttack)
+	{
+		mind->AttackTarget = tAttack;
+		mind->flags |= BF_ATTACKING;
+		if (!mind->PathNodes[mind->PathIterator] && !mind->PathIterator)
+			B_BuildPath(mind, player->mo->subsector, mind->AttackTarget->subsector, 0);
 	}
 }
 

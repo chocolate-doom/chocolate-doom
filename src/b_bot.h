@@ -72,6 +72,7 @@ int B_BuildPath(bmind_t* mind, subsector_t* src, subsector_t* dest, int flags);
 void B_LookForStuff(bmind_t* mind);
 void B_BuildTicCommand(ticcmd_t* cmd, int playernum);
 void B_InitializeForLevel(void);
+int B_IsWeaponAmmoWorthIt(bmind_t* mind, weapontype_t wp);
 
 #define BOTBADPATH 0x7FFFFFFF
 
@@ -84,7 +85,7 @@ void B_InitializeForLevel(void);
 #define BF_DEFENDING		16
 
 #define B_PathDistance(a,b) ((int)sqrt(pow((((b)->x >> FRACBITS) - ((a)->x >> FRACBITS)), 2) + pow((((b)->y >> FRACBITS) - ((a)->y >> FRACBITS)), 2)))
-//((int)sqrt(pow((a)->x >> FRACBITS, 2) + pow((b)->y >> FRACBITS, 2)))
+#define ISWEAPONAMMOWORTHIT(a) B_IsWeaponAmmoWorthIt(mind, (a))
 
 #endif /* __B_BOT_H__ */
 
