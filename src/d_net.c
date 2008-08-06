@@ -223,10 +223,7 @@ void NetUpdate (void)
 			else
 			{
 				if (playeringame[i])
-				{
-					botplayer = i;
-					B_BuildTicCommand(&tmp);//&(players[i].cmd));
-				}
+					B_BuildTicCommand(&tmp, i);
 			}
 			
 			nettics[i] = maketic;

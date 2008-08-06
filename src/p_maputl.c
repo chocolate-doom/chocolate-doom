@@ -607,6 +607,7 @@ PIT_AddLineIntercepts (line_t* ld)
 	
     intercept_p->frac = frac;
     intercept_p->isaline = true;
+    intercept_p->isathing = false;
     intercept_p->d.line = ld;
     InterceptsOverrun(intercept_p - intercepts, intercept_p);
     intercept_p++;
@@ -673,6 +674,7 @@ boolean PIT_AddThingIntercepts (mobj_t* thing)
 
     intercept_p->frac = frac;
     intercept_p->isaline = false;
+    intercept_p->isathing = true;
     intercept_p->d.thing = thing;
     InterceptsOverrun(intercept_p - intercepts, intercept_p);
     intercept_p++;

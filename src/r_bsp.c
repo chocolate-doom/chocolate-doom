@@ -40,6 +40,7 @@
 // State.
 #include "doomstat.h"
 #include "r_state.h"
+#include "b_bot.h"
 
 //#include "r_local.h"
 
@@ -516,9 +517,9 @@ void R_Subsector (int num)
 
     if (frontsector->floorheight < viewz)
     {
-	floorplane = R_FindPlane (frontsector->floorheight,
-				  frontsector->floorpic,
-				  frontsector->lightlevel);
+		floorplane = R_FindPlane (frontsector->floorheight,
+						  frontsector->floorpic,
+						  frontsector->lightlevel);
     }
     else
 	floorplane = NULL;

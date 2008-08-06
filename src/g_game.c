@@ -405,7 +405,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int bot)
 	{
 		if (gametic > LastTic)
 		{
-			B_BuildTicCommand(cmd);
+			B_BuildTicCommand(cmd, 0);
 			
 			LastTic = gametic;
 		}
@@ -665,9 +665,9 @@ void G_DoLoadLevel (void)
     //  we look for an actual index, instead of simply
     //  setting one.
     
-    for (i = 0; i < MAXPLAYERS; i++)
+    /*for (i = 0; i < MAXPLAYERS; i++)
     	for (j = 0; j < MAXBOTWAYPOINTS; j++)
-    		botactions[i].waypoints[j] = NULL;
+    		botactions[i].waypoints[j] = NULL;*/
 
     skyflatnum = R_FlatNumForName(DEH_String(SKYFLATNAME));
 
@@ -690,6 +690,9 @@ void G_DoLoadLevel (void)
     displayplayer = consoleplayer;		// view the guy you are playing    
     gameaction = ga_nothing; 
     Z_CheckHeap ();
+    
+    // Build Bot from level data
+    B_InitializeForLevel();
     
     // clear cmd building stuff
 

@@ -53,6 +53,7 @@ extern  boolean	respawnparm;	// checkparm of -respawn
 extern  boolean	fastparm;	// checkparm of -fast
 
 extern  boolean	devparm;	// DEBUG: launched with -devparm
+extern  boolean botparm;
 
 
 extern  boolean screensaver_mode;    // game running as a screensaver?

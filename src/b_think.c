@@ -26,583 +26,160 @@
 #include "b_bot.h"
 #include "m_misc.h"
 
-int botplayer;
-botcontrol_t botactions[MAXPLAYERS];
-void B_PerformPress(botcontrol_t *mind);
-int interuse = 0;
-char *botmessage;
+fixed_t         botforwardmove[2] = {0x19, 0x32}; 
+fixed_t         botsidemove[2] = {0x18, 0x28}; 
+fixed_t         botangleturn[3] = {640, 1280, 320};    // + slow turn 
 
-void B_BuildTicCommand(ticcmd_t* cmd)
-{	
-	botcontrol_t *me = &botactions[botplayer];
-	me->cmd = cmd;
-	me->cmd->buttons = 0;
-	me->me = &players[botplayer];
+void B_FaceNode(bmind_t* mind, ticcmd_t* cmd, bnode_t* target)
+{
+	angle_t myangle = 0;
+	angle_t actualangle = 0;
+	angle_t virtualangle = 0;
+	int someactualangle = 0;
+	int somevirtualangle = 0;
+	int somemyangle = 0;
+	int someoffset = 0;
 	
-	if (M_CheckParm("-buddy1"))
-		me->allied[0] = 1;
-	else
-		me->allied[0] = 0;
-	if (M_CheckParm("-buddy2"))
-		me->allied[1] = 1;
-	else
-		me->allied[1] = 0;
-	if (M_CheckParm("-buddy3"))
-		me->allied[2] = 1;
-	else
-		me->allied[2] = 0;
-	if (M_CheckParm("-buddy4"))
-		me->allied[3] = 1;
-	else
-		me->allied[3] = 0;
-		
-	B_PerformPress(me);
+	// First Face the target
+	actualangle = R_PointToAngle2 (mind->player->mo->x, mind->player->mo->y, target->x ,target->y);
+	virtualangle = mind->player->mo->angle;
+	myangle = mind->player->mo->angle;
 	
-	if (me->usecooldown > 70)
-		me->usecooldown = 70;
+	someactualangle = actualangle >> 16;
+	somevirtualangle = virtualangle >> 16;
+	somemyangle = myangle >> 16;
 	
-	if (me->usecooldown > 0)
-		me->usecooldown--;
-	
-	if (M_CheckParm("-botdebug"))
-		if (gametic % 35 == 0)
-			if (me->target)
-				P_SpawnMobj(me->target->x, me->target->y, me->target->z, MT_IFOG);
-	
-	if (playeringame[botplayer])
-	{	
-		me->cmd->buttons = 0;
-		
-		if (me->me->mo)
-		{
-			if (me->me->health < 1)
-				me->cmd->buttons |= BT_USE;
-			else
-				me->cmd->buttons = 0;
-			
-			switch(me->node)
-			{	
-				case BA_EXPLORING:	// Searching around the map
-					B_Explore(me);
-					break;
-			
-				case BA_GATHERING:
-					B_Gather(me);
-					break;
-			
-				case BA_ATTACKING:
-					B_AttackTarget(me);
-					break;
-			
-				default:
-					me->node = BA_EXPLORING;
-					break;
-			}
-			
-			if (gametic % 2 == 0)
-				B_PerformPress(me);
-		}
-		
-		if (gamestate == GS_INTERMISSION)
-		{
-			if (interuse > 100)
-				interuse--;
-			else
-			{
-				me->cmd->buttons = BT_USE;
-			}
-		}
+	while (somevirtualangle != (someactualangle))
+	{
+		if (somevirtualangle + someoffset < (someactualangle))
+			someoffset++;
+		else if (somevirtualangle + someoffset > (someactualangle))
+			someoffset--;
 		else
 		{
-			interuse = 100;
+			cmd->angleturn += someoffset;
+			break;
 		}
 	}
-	
-	if (lowres_turn)
-	{
-		// round angleturn to the nearest 256 boundary
-		// for recording demos with single byte values for turn
+}
 
-		me->cmd->angleturn = (me->cmd->angleturn + 128) & 0xff00;
+void B_FaceMobj(bmind_t* mind, ticcmd_t* cmd, mobj_t *target)
+{
+	angle_t myangle = 0;
+	angle_t actualangle = 0;
+	angle_t virtualangle = 0;
+	int someactualangle = 0;
+	int somevirtualangle = 0;
+	int somemyangle = 0;
+	int someoffset = 0;
+	
+	// First Face the target
+	actualangle = R_PointToAngle2 (mind->player->mo->x, mind->player->mo->y, target->x ,target->y);
+	virtualangle = mind->player->mo->angle;
+	myangle = mind->player->mo->angle;
+	
+	someactualangle = actualangle >> 16;
+	somevirtualangle = virtualangle >> 16;
+	somemyangle = myangle >> 16;
+	
+	while (somevirtualangle != (someactualangle))
+	{
+		if (somevirtualangle + someoffset < (someactualangle))
+			someoffset++;
+		else if (somevirtualangle + someoffset > (someactualangle))
+			someoffset--;
+		else
+		{
+			cmd->angleturn += someoffset;
+			break;
+		}
 	}
 }
 
-botcontrol_t *mind2;
-mobj_t* botusething;
-int botopenrange;
-
-boolean	B_UseTraverse (intercept_t* in)
+void B_BuildTicCommand(ticcmd_t* cmd, int playernum)
 {
-    int		side;
+	size_t i;
+	player_t* player = &players[playernum];
+	bmind_t* mind = &BotMinds[playernum];
 	
-    if (!in->d.line->special)
-    {
-		P_LineOpening (in->d.line);
-		if (botopenrange <= 0) // can't use through a wall
-			return false;	
-		
-		return true; // not a special line, but keep checking
-    }
-	
-    side = 0;
-    if (P_PointOnLineSide (botusething->x, botusething->y, in->d.line) == 1)
-		side = 1;
-	
-	if (mind2->usecooldown < 1)
+	if (player->health < 1)
 	{
-		mind2->cmd->buttons |= BT_USE;
-		mind2->usecooldown = 70;
-	}
-	
-
-    // can't use for than one special line in a row
-    return false;
-}
-
-void B_PerformPress(botcontrol_t *mind)
-{
-	int		angle;
-    fixed_t	x1;
-    fixed_t	y1;
-    fixed_t	x2;
-    fixed_t	y2;
-    
-    mind2 = mind;
-	
-    botusething = mind->me->mo;
+		memset(mind->PathNodes, 0, sizeof(mind->PathNodes));
+		mind->PathIterator = 0;
+		mind->GatherTarget = NULL;
 		
-    angle = mind->me->mo->angle >> ANGLETOFINESHIFT;
-
-    x1 = mind->me->mo->x;
-    y1 = mind->me->mo->y;
-    x2 = x1 + (USERANGE>>FRACBITS)*finecosine[angle];
-    y2 = y1 + (USERANGE>>FRACBITS)*finesine[angle];
-	
-    P_PathTraverse ( x1, y1, x2, y2, PT_ADDLINES, B_UseTraverse);
-}
-
-void B_GoBackExploring(botcontrol_t *mind)
-{
-	mind->cmd->buttons = 0;
-	mind->node = BA_EXPLORING;
-	mind->target = NULL; 
-}
-
-void B_AttackTarget(botcontrol_t *mind)
-{
-	mind->cmd->buttons &= ~((byte)BT_ATTACK);
-	BOTTEXT("ATTACKING");
-
-	if (mind->target == NULL) // welp, it seems our target decided to die
-		B_GoBackExploring(mind);
-	else if (mind->target->player && (mind->target->player->team == mind->me->team) && (mind->me->team != 0))
-		B_GoBackExploring(mind);
+		cmd->buttons |= BT_USE;
+	}
 	else
 	{
-		int isanally;
-					
+		B_LookForStuff(mind);
+	
+		if (botparm)
+		{
+			if (gametic % 10 == 0)
+			{
+				i = 0;
 		
-		if ((mind->target->player))
-		{
-			if (deathmatch)
-			{
-				if (((mind->target->player->team) == mind->me->team) && (mind->me->team != 0))
-					isanally = 1;
-				else
-					isanally = 0;
-			}
-			else
-				isanally = 1;	// Was probably an accident!
-		}
-		else
-			isanally = 0;
-			
-		if (isanally)
-		{
-			B_GoBackExploring(mind);
-			return;
-		}
-			
-		if (P_CheckSight(mind->me->mo, mind->target))
-		{
-			if (mind->target->health > 0)
-			{
-				// First Face the target
-				B_FaceTarget(mind);
-				
-				mind->attackcooldown += 2;
-
-				// Forward Moving
-				switch (mind->me->readyweapon)
+				while (mind->PathNodes[i])
 				{
-					case wp_fist:		// chharrrge!!
-					case wp_chainsaw:
-						// see if we can actually hit it with the fist/chainsaw...
-						if ((mind->target->type == MT_BABY) ||
-							(mind->target->type == MT_SPIDER))
-						{
-							int j;
-							for (j = 0; j < NUMWEAPONS; j++)
-							{
-								if (mind->me->weaponowned[j] &&
-									(j != wp_fist) &&
-									(j != wp_chainsaw))
-								{
-									if (mind->me->ammo[weaponinfo[j].ammo] > 0)
-									{
-										mind->cmd->buttons |= BT_CHANGE; 
-										mind->cmd->buttons |= j<<BT_WEAPONSHIFT;
-										return;
-									}
-								}
-							}
-						}
-						
-						if (mind->forwardtics > 0)
-						{
-							if ((B_Random() % 10) == 0)
-								mind->cmd->forwardmove += botforwardmove[0];
-							else
-								mind->cmd->forwardmove += botforwardmove[1];
-			
-							mind->forwardtics--;
-						}
-						else
-							mind->forwardtics = B_Random() * 2;
-						
-						if (P_BotAimLineAttack(mind->me->mo, mind->me->mo->angle, MELEERANGE, mind))
-							mind->cmd->buttons |= BT_ATTACK;
-						else
-							mind->cmd->buttons &= ~BT_ATTACK;
-						break;
-						
-					case wp_bfg:
-					case wp_missile:
-					case wp_plasma:
-						if (mind->forwardtics > 0)
-						{
-							if ((B_Random() % 10) == 0)
-								mind->cmd->forwardmove += botforwardmove[0];
-							else
-								mind->cmd->forwardmove += botforwardmove[1];
-			
-							mind->forwardtics--;
-						}
-						else if (mind->forwardtics < 0)
-						{
-							if ((B_Random() % 10) == 0)
-								mind->cmd->forwardmove -= botforwardmove[0];
-							else
-								mind->cmd->forwardmove -= botforwardmove[1];
-			
-							mind->forwardtics++;
-						}
-						else
-						{
-							if ((B_Random() % 2) == 0)
-								mind->forwardtics = -(B_Random() / 2);
-							else
-								mind->forwardtics = B_Random() / 2;
-						}
-				
-						// Strafe and dodging
-						if (mind->skill >= 3)
-						{
-							if (mind->sidetics > 0)
-							{
-								mind->cmd->sidemove += botsidemove[1];
-								mind->sidetics--;
-							}
-							else if (mind->sidetics < 0)
-							{
-								mind->cmd->sidemove -= botsidemove[1];
-								mind->sidetics++;
-							}
-							else
-							{
-								if (B_Random() % 2 == 0)
-									mind->sidetics = B_Random();
-								else
-									mind->sidetics = -(B_Random());
-							}
-						}
-						
-						if (B_Random() % 2 == 0)
-							mind->cmd->angleturn -= B_Random() / 4;
-						else
-							mind->cmd->angleturn += B_Random() / 4;
-						
-						// Now shoot at it!
-						if (P_BotAimLineAttack(mind->me->mo, mind->me->mo->angle, MISSILERANGE, mind))
-							mind->cmd->buttons |= BT_ATTACK;
-						else
-							mind->cmd->buttons &= ~BT_ATTACK;
-						break;
-						
-					case wp_pistol:
-					case wp_chaingun:
-						if (mind->forwardtics > 0)
-						{
-							if ((B_Random() % 10) == 0)
-								mind->cmd->forwardmove += botforwardmove[0];
-							else
-								mind->cmd->forwardmove += botforwardmove[1];
-			
-							mind->forwardtics--;
-						}
-						else if (mind->forwardtics < 0)
-						{
-							if ((B_Random() % 10) == 0)
-								mind->cmd->forwardmove -= botforwardmove[0];
-							else
-								mind->cmd->forwardmove -= botforwardmove[1];
-			
-							mind->forwardtics++;
-						}
-						else
-						{
-							if ((B_Random() % 2) == 0)
-								mind->forwardtics = -(B_Random() / 2);
-							else
-								mind->forwardtics = B_Random() / 2;
-						}
-				
-						// Strafe and dodging
-						if (mind->skill >= 3)
-						{
-							if (mind->sidetics > 0)
-							{
-								mind->cmd->sidemove += botsidemove[1];
-								mind->sidetics--;
-							}
-							else if (mind->sidetics < 0)
-							{
-								mind->cmd->sidemove -= botsidemove[1];
-								mind->sidetics++;
-							}
-							else
-							{
-								if (B_Random() % 4 == 0)
-									mind->sidetics = -(B_Random());
-								else
-									mind->sidetics = B_Random();
-							}
-						}
-						
-						// Now shoot at it!
-						if (mind->skill >= 4)
-						{
-							if ((mind->me->readyweapon == wp_pistol))
-							{
-								if (mind->pistoltimeout == 0)
-								{
-									mind->pistoltimeout = 20; // 4 + 6 + 4 + 5 = 19 + 1 for good luck
-									
-									if (P_BotAimLineAttack(mind->me->mo, mind->me->mo->angle, 64, mind))
-										mind->cmd->buttons |= BT_ATTACK;
-									else
-										mind->cmd->buttons &= ~BT_ATTACK;
-								}
-								else
-									mind->pistoltimeout--;
-							}
-							else if ((mind->me->readyweapon == wp_chaingun))
-							{
-								if (mind->chainguntimeout == 0)
-								{
-									mind->chainguntimeout = 9; // 4 + 4 + 0 = 8 + 1 for good luck
-									
-									if (P_BotAimLineAttack(mind->me->mo, mind->me->mo->angle, MISSILERANGE, mind))
-										mind->cmd->buttons |= BT_ATTACK;
-									else
-										mind->cmd->buttons &= ~BT_ATTACK;
-								}
-								else
-									mind->chainguntimeout--;
-							}
-						}
-						else
-						{
-							if (P_BotAimLineAttack(mind->me->mo, mind->me->mo->angle, MISSILERANGE, mind))
-								mind->cmd->buttons |= BT_ATTACK;
-							else
-								mind->cmd->buttons &= ~BT_ATTACK;
-						}
-							
-						break;
-						
-					case wp_shotgun:
-					case wp_supershotgun:
-					default:
-						if ((B_Distance(mind->target, mind->me->mo) > (MISSILERANGE / 2)) && (mind->me->readyweapon == wp_supershotgun))
-						{
-							int j;
-							for (j = 0; j < NUMWEAPONS; j++)
-							{
-								if (mind->me->weaponowned[j] &&
-									(j != wp_supershotgun) &&
-									(j != wp_fist) &&
-									(j != wp_chainsaw))
-								{
-									if (mind->me->ammo[weaponinfo[j].ammo] > 0)
-									{
-										mind->cmd->buttons = BT_CHANGE; 
-										mind->cmd->buttons |= j<<BT_WEAPONSHIFT;
-										return;
-									}
-								}
-							}
-						}
-				
-						if (mind->forwardtics > 0)
-						{
-							if ((B_Random() % 10) == 0)
-								mind->cmd->forwardmove += botforwardmove[0];
-							else
-								mind->cmd->forwardmove += botforwardmove[1];
-			
-							mind->forwardtics--;
-						}
-						else if (mind->forwardtics < 0)
-						{
-							if ((B_Random() % 10) == 0)
-								mind->cmd->forwardmove -= botforwardmove[0];
-							else
-								mind->cmd->forwardmove -= botforwardmove[1];
-			
-							mind->forwardtics++;
-						}
-						else
-						{
-							if ((B_Random() % 2) == 0)
-								mind->forwardtics = -(B_Random() / 2);
-							else
-								mind->forwardtics = B_Random() / 2;
-						}
-				
-						// Strafe and dodging
-						if (mind->skill >= 3)
-						{
-							if (mind->sidetics > 0)
-							{
-								mind->cmd->sidemove += botsidemove[1];
-								mind->sidetics--;
-							}
-							else if (mind->sidetics < 0)
-							{
-								mind->cmd->sidemove -= botsidemove[1];
-								mind->sidetics++;
-							}
-							else
-							{
-								if (B_Random() % 2 == 0)
-									mind->sidetics = B_Random();
-								else
-									mind->sidetics = -(B_Random());
-							}
-						}
-						
-						// Now shoot at it!
-						if (P_BotAimLineAttack(mind->me->mo, mind->me->mo->angle, MISSILERANGE, mind))
-							mind->cmd->buttons |= BT_ATTACK;
-						else
-							mind->cmd->buttons &= ~BT_ATTACK;
-								
-						break;
+					P_SpawnMobj(
+						mind->PathNodes[i]->x,
+						mind->PathNodes[i]->y,
+						mind->PathNodes[i]->subsector->sector->floorheight,
+						MT_IFOG);
+					i++;
 				}
+				
+				if (mind->GatherTarget)
+					P_SpawnMobj(
+						mind->GatherTarget->x,
+						mind->GatherTarget->y,
+						mind->GatherTarget->z,
+						MT_TFOG);
+						
+				for (i = 0; i < NumBotNodes; i++)
+					if (BotReject[player->mo->subsector - subsectors][i])
+						P_SpawnMobj(
+						BotNodes[i].x,
+						BotNodes[i].y,
+						BotNodes[i].subsector->sector->floorheight,
+						MT_PUFF);
 			}
-			else
-				B_GoBackExploring(mind);
 		}
-		else
-			B_GoBackExploring(mind);
-	}
-}
-
-/*
-if (intype == (x))
-{
-	if ((mind->target->flags & MF_DROPPED) && )
-	{
-		if (!(mind->me->ammo[weaponinfo[(thisgun)].ammo] < mind->me->maxammo[weaponinfo[(thisgun)].ammo]))
-		{
-			B_GoBackExploring(mind);
-			return;
-		}
-	}
-	else
-	{
-		if (mind->me->weaponowned[(thisgun)])
-		{
-			B_GoBackExploring(mind);
-			return;
-		}
-	}
-}
-*/
-
-#define DIDWEGETTHEWEAPON(x,thisgun) if (intype == (x))\
-{\
-	if ((mind->target->flags & MF_DROPPED) || (deathmatch == 2))\
-	{\
-		if (!(mind->me->ammo[weaponinfo[(thisgun)].ammo] < mind->me->maxammo[weaponinfo[(thisgun)].ammo]))\
-		{\
-			B_GoBackExploring(mind);\
-			return;\
-		}\
-	}\
-	else\
-	{\
-		if (mind->me->weaponowned[(thisgun)])\
-		{\
-			B_GoBackExploring(mind);\
-			return;\
-		}\
-	}\
-}
-
-void B_Gather(botcontrol_t *mind)
-{
-	int intype = mind->target->type;
 	
-	BOTTEXT("GATHERING");
-	
-	if (mind->target == NULL)
-		B_GoBackExploring(mind);
-	else if (mind->me->attacker &&			// WHO THE FUCK PISSED ME OFF!?
-		(mind->me->attacker->health > 0) &&
-		(P_CheckSight(mind->me->mo, mind->me->attacker)))
-	{
-		mind->target = mind->me->attacker;
-		mind->node = BA_ATTACKING;
-	}
-	else
-	{	
-		if (P_CheckSight(mind->me->mo, mind->target))
+		// Do we have a target to follow
+		if (mind->PathNodes[mind->PathIterator])
 		{
-			if ((mind->me->mo->z < (mind->target->z - 23)) ||
-				(mind->me->mo->z > (mind->target->z + 23)))
+			B_FaceNode(mind, cmd, mind->PathNodes[mind->PathIterator]);
+			cmd->forwardmove = botforwardmove[1];
+			
+			if (!BotReject[player->mo->subsector - subsectors][mind->PathNodes[mind->PathIterator]->subsector - subsectors])
 			{
-				B_GoBackExploring(mind);
-				return;
+				memset(mind->PathNodes, 0, sizeof(mind->PathNodes));
+				mind->PathIterator = 0;
 			}
-			
-			B_FaceTarget(mind);
-			mind->cmd->forwardmove = botforwardmove[1];
-			
-			DIDWEGETTHEWEAPON(MT_CHAINGUN, wp_chaingun)
-			DIDWEGETTHEWEAPON(MT_SHOTGUN, wp_shotgun)
-			DIDWEGETTHEWEAPON(MT_SUPERSHOTGUN, wp_supershotgun)
-			DIDWEGETTHEWEAPON(MT_MISC25, wp_bfg)
-			DIDWEGETTHEWEAPON(MT_MISC26, wp_chainsaw)
-			DIDWEGETTHEWEAPON(MT_MISC27, wp_missile)
-			DIDWEGETTHEWEAPON(MT_MISC28, wp_plasma)
-			
-			if ((mind->target->state == S_NULL) || (mind->target->mobjdontexist))
-				B_GoBackExploring(mind);
+			else if (player->mo->subsector == mind->PathNodes[mind->PathIterator]->subsector)
+				if (B_PathDistance(player->mo, mind->PathNodes[mind->PathIterator]) <= 16)
+					mind->PathIterator++;
 		}
-		else
-			B_GoBackExploring(mind);
+		else if (!mind->PathNodes[mind->PathIterator] && mind->PathIterator)
+		{
+			memset(mind->PathNodes, 0, sizeof(mind->PathNodes));
+			mind->PathIterator = 0;
+		}
+		else if (!mind->PathNodes[mind->PathIterator] && !mind->PathIterator && mind->GatherTarget)
+		{
+			if (!BotReject[player->mo->subsector - subsectors][mind->GatherTarget->subsector - subsectors])
+				mind->GatherTarget = NULL;
+			else
+			{
+				B_FaceMobj(mind, cmd, mind->GatherTarget);
+				cmd->forwardmove = botforwardmove[1];
+			}
+		}
+	
+		if (mind->GatherTarget && mind->GatherTarget->mobjdontexist)
+			mind->GatherTarget = NULL;
 	}
 }
 

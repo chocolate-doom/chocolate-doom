@@ -151,6 +151,7 @@ typedef struct
 {
     fixed_t	frac;		// along trace line
     boolean	isaline;
+    boolean isathing;
     union {
 	mobj_t*	thing;
 	line_t*	line;

@@ -106,7 +106,7 @@ wi_stuff.c           wi_stuff.h            \
 w_checksum.c         w_checksum.h          \
 w_wad.c              w_wad.h               \
 z_zone.c             z_zone.h              \
-b_look.c                                   \
+b_look.c             b_base.c              \
 b_think.c            b_bot.h               \
 byteptr.c            byteptr.h
 

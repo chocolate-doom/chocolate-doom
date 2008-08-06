@@ -35,74 +35,56 @@
 #include "p_local.h"
 #include "d_event.h"
 
-#define MAXBOTWAYPOINTS 10
+#define MAXPATHSEGMENTS 64
 
-typedef struct botcontrol_s
+typedef struct bnode_s
 {
-	ticcmd_t *cmd;
-	mobj_t *target;
-	mobj_t *follower;
-	mobj_t *goal;
-	player_t *me;
-	int node;
-	mobj_t *waypoints[MAXBOTWAYPOINTS];
-	
-	int pistoltimeout;
-	int chainguntimeout;
-	int forwardtics;
-	int sidetics;
-	int turntics;
-	int allied[MAXPLAYERS];
-	int attackcooldown;
-	int usecooldown;
-	int skill;
-} botcontrol_t;
+	fixed_t x;
+	fixed_t y;
+	int count;
+	subsector_t* subsector;
+} bnode_t;
 
-extern int botplayer;
-extern botcontrol_t botactions[MAXPLAYERS];
-
-enum
+typedef struct bmind_s
 {
-	BA_NULL = 0,
-	BA_LOOKING = 1,
-	BA_ATTACKING = 2,
-	BA_GATHERING = 4,
-	BA_EXPLORING = 8,
-	BA_FOLLOWING = 16,
-};
+	player_t* player;
+	UInt16 flags;
 	
-void B_BuildTicCommand(ticcmd_t* cmd);
-void B_Look(botcontrol_t *mind);
-void B_Gather(botcontrol_t *mind);
-void B_Explore(botcontrol_t *mind);
-void B_AttackTarget(botcontrol_t *mind);
-int B_Distance(mobj_t *a, mobj_t *b);
-void B_FaceTarget(botcontrol_t *mind);
-void B_FaceFollower(botcontrol_t *mind);
-void B_Follow(botcontrol_t *mind);
-void B_GoBackExploring(botcontrol_t *mind);
-int P_BotAimLineAttack(mobj_t* t1, angle_t angle, fixed_t distance, botcontrol_t *mind);
-boolean PTR_BotAimTraverse(intercept_t* in);
+	/* Path */
+	int PathIterator;
+	bnode_t* PathNodes[MAXPATHSEGMENTS];
+	
+	/* Gathering */
+	mobj_t* GatherTarget;
+	
+	/* Attacking */
+	mobj_t* AttackTarget;
+} bmind_t;
 
-extern fixed_t botforwardmove[2]; 
-extern fixed_t botsidemove[2]; 
-extern fixed_t botangleturn[3];    // + slow turn 
-extern char *botmessage;
-extern mobj_t*	botlinetarget;
-extern mobj_t*	botshootthing;
-extern fixed_t	botshootz;	
-extern int	botla_damage;
-extern fixed_t	botattackrange;
-extern fixed_t	botaimslope;
-extern fixed_t bottopslope;
-extern fixed_t botbottomslope;	
-extern fixed_t		botopentop;
-extern fixed_t 		botopenbottom;
-extern fixed_t		botopenrange;
-extern fixed_t		botlowfloor;
+extern size_t NumBotNodes;
+extern size_t NumBotSectors;
+extern bnode_t* BotNodes;
+extern UInt8** BotReject;
+extern bmind_t BotMinds[4];
+extern bnode_t*** BotSectorNodes;
 
-#define BOTFOLLOWDISTANCE 150
-#define BOTTEXT(message) botmessage = message;
+int B_BuildPath(bmind_t* mind, subsector_t* src, subsector_t* dest, int flags);
+void B_LookForStuff(bmind_t* mind);
+void B_BuildTicCommand(ticcmd_t* cmd, int playernum);
+void B_InitializeForLevel(void);
+
+#define BOTBADPATH 0x7FFFFFFF
+
+#define BP_CHECKPATH		1
+
+#define BF_EXPLORING		1
+#define BF_GATHERING		2
+#define BF_ATTACKING		4
+#define BF_HUNTING			8
+#define BF_DEFENDING		16
+
+#define B_PathDistance(a,b) ((int)sqrt(pow((((b)->x >> FRACBITS) - ((a)->x >> FRACBITS)), 2) + pow((((b)->y >> FRACBITS) - ((a)->y >> FRACBITS)), 2)))
+//((int)sqrt(pow((a)->x >> FRACBITS, 2) + pow((b)->y >> FRACBITS, 2)))
 
 #endif /* __B_BOT_H__ */
 

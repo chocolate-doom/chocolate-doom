@@ -101,6 +101,7 @@ char *          iwadfile;
 
 
 boolean		devparm;	// started game with -devparm
+boolean botparm;
 boolean         nomonsters;	// checkparm of -nomonsters
 boolean         respawnparm;	// checkparm of -respawn
 boolean         fastparm;	// checkparm of -fast
@@ -889,6 +890,7 @@ void D_DoomMain (void)
     //
 
     devparm = M_CheckParm ("-devparm");
+    botparm = M_CheckParm ("-botparm");
 
     //!
     // @category net
@@ -1541,7 +1543,7 @@ void D_DoomMain (void)
 	}
 	
 	// skills
-	if (M_CheckParm ("-bot1skill"))
+	/*if (M_CheckParm ("-bot1skill"))
 	{
 		p = M_CheckParm ("-bot1skill");
 		if (p && p < myargc-1)
@@ -1644,7 +1646,7 @@ void D_DoomMain (void)
 			
 			tmpteam /= 10;
 		}
-	}
+	}*/
 	
     if (gameaction != ga_loadgame )
     {
