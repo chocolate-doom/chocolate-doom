@@ -408,7 +408,8 @@ void B_InitializeForLevel(void)
 				BotNodes[i].y,
 				BotNodes[i].subsector->sector->floorheight,
 				MT_MISC49);
-				
+			
+#if 0	
 	if (botparm)
 	{
 		FILE* Temp = fopen("nodeout.cvs", "wt");
@@ -439,5 +440,6 @@ void B_InitializeForLevel(void)
 			fclose(Temp);
 		}
 	}
+#endif
 }
 

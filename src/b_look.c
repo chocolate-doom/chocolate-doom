@@ -59,8 +59,10 @@ void B_LookForStuff(bmind_t* mind)
 	mobj_t* tGather = NULL;
 	mobj_t* tAttack = NULL;
 	
-	DoGather = !mind->GatherTarget;
-	DoAttack = !mind->AttackTarget;
+	if (!mind->GatherTarget)
+		DoGather = 1;
+	if (!mind->AttackTarget)
+		DoAttack = 1;
 	
 	if (DoAttack || DoGather)
 		while (currentthinker != &thinkercap)
@@ -79,6 +81,12 @@ void B_LookForStuff(bmind_t* mind)
 						/* Players */
 						if (thatmobj->type == MT_PLAYER)
 						{
+							if (thatmobj == player->mo);
+							{
+								currentthinker = currentthinker->next;
+								continue;
+							}
+							
 							// In Deathmatch, so we want it dead
 							if (deathmatch)
 							{
@@ -138,6 +146,31 @@ void B_LookForStuff(bmind_t* mind)
 					DoPickup = 0;
 				
 					/* Health Items */
+					switch (thatmobj->type)
+					{
+						case MT_MISC2:	// Health Bonus
+							if (player->health < 200)
+								DoPickup = 1;
+							break;
+						case MT_MISC10:	// Stim pack
+							if (player->health < 90)
+								DoPickup = 1;
+							break;
+						case MT_MISC11:	// Medikit
+							if (player->health < 75)
+								DoPickup = 1;
+							break;
+						case MT_MISC12:	// Soul Sphere
+							if (player->health < 150)
+								DoPickup = 1;
+							break;
+						case MT_MISC13:	// Berzerker
+							if (player->health < 25)
+								DoPickup = 1;
+							break;
+						default:
+							break;
+					}
 			
 					/* Armor Items */
 			
@@ -268,17 +301,20 @@ int B_BuildPath(bmind_t* mind, subsector_t* src, subsector_t* dest, int flags)
 		while (BotSectorNodes[ssx][eax] != NULL)
 		{
 			curss = BotSectorNodes[ssx][eax];
+			actualdistance = 0;
 			
 			if (BotReject[curss - subsectors][dest - subsectors])
 			{
-				list[0] = &BotNodes[curss - subsectors];
-				list[1] = &BotNodes[dest - subsectors];
+				actualdistance = B_PathDistance(&BotNodes[src - subsectors], &BotNodes[curss - subsectors]);
+				actualdistance += B_PathDistance(&BotNodes[curss - subsectors], &BotNodes[dest - subsectors]);
 				
-				actualdistance = B_PathDistance(&BotNodes[src - subsectors], list[0]);
-				actualdistance += B_PathDistance(list[0], list[1]);
+				if (actualdistance < realdistance)
+				{
+					list[0] = &BotNodes[curss - subsectors];
+					list[1] = &BotNodes[dest - subsectors];
 				
-				realdistance = actualdistance;
-				break;
+					realdistance = actualdistance;
+				}
 			}
 			
 			eax++;

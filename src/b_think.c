@@ -80,7 +80,7 @@ int B_IsWeaponAmmoWorthIt(bmind_t* mind, weapontype_t wp)
 	if (gameskill == sk_baby || gameskill == sk_nightmare)
 		clip <<= 1;
 	
-	return (max - clip > cur);
+	return (cur < max - clip);
 }
 
 void B_FaceNode(bmind_t* mind, ticcmd_t* cmd, bnode_t* target)
@@ -156,6 +156,7 @@ void B_BuildTicCommand(ticcmd_t* cmd, int playernum)
 	bmind_t* mind = &BotMinds[playernum];
 	angle_t	angle;
 	int mx, my;
+	int nx, ny;
 	
 	if (player->health < 1)
 	{
@@ -169,7 +170,7 @@ void B_BuildTicCommand(ticcmd_t* cmd, int playernum)
 	else
 	{
 		B_LookForStuff(mind);
-	
+
 		if (botparm)
 		{
 			if (gametic % 10 == 0)
@@ -195,9 +196,9 @@ void B_BuildTicCommand(ticcmd_t* cmd, int playernum)
 						
 				if (mind->AttackTarget)
 					P_SpawnMobj(
-						mind->GatherTarget->x,
-						mind->GatherTarget->y,
-						mind->GatherTarget->z,
+						mind->AttackTarget->x,
+						mind->AttackTarget->y,
+						mind->AttackTarget->z,
 						MT_TFOG);
 						
 				for (i = 0; i < NumBotNodes; i++)
@@ -208,23 +209,37 @@ void B_BuildTicCommand(ticcmd_t* cmd, int playernum)
 						BotNodes[i].subsector->sector->floorheight,
 						MT_PUFF);
 			}
-			
-			printf("Attack = 0x%08X, Gather 0x%08X || Cur = %i, nPath = %i {pI = %i}, Goal = %i\n",
+		
+#if 0
+			printf("Attack = 0x%08X, Gather 0x%08X || Cur = %i, Gaol = %i, ",
 					mind->AttackTarget,
 					mind->GatherTarget,
 					player->mo->subsector - subsectors,
-					(mind->PathNodes[mind->PathIterator] ? 
-						mind->PathNodes[mind->PathIterator]->subsector - subsectors : -1),
-					mind->PathIterator,
-					(mind->GatherTarget ? mind->GatherTarget->subsector - subsectors : -1)
-					);
+					(mind->GatherTarget ? mind->GatherTarget->subsector - subsectors : -1));
+			i = 0;
+			while (mind->PathNodes[i])
+			{
+				if (i == mind->PathIterator)
+					printf("<%i>, ", mind->PathNodes[i]->subsector - subsectors);
+				else
+					printf(" %i , ", mind->PathNodes[i]->subsector - subsectors);
+				i++;
+			}
+			printf("\n");
+#endif
 		}
 		
-#define CHECKGUN(t,wp) (mind->GatherTarget->type == (t) && (!player->weaponowned[(wp)] || ISWEAPONAMMOWORTHIT((wp))))
+#define CHECKGUN(t,wp) (mind->GatherTarget && mind->GatherTarget->type == (t) && (!player->weaponowned[(wp)] || ISWEAPONAMMOWORTHIT((wp))))
 		
 		/* Check Targets */
 		if (mind->AttackTarget)
 		{
+			if (mind->AttackTarget->mobjdontexist)
+				mind->AttackTarget = NULL;
+			else if (mind->AttackTarget->health <= 0)
+				mind->AttackTarget = NULL;
+			else if (!P_CheckSight(player->mo, mind->AttackTarget))
+				mind->AttackTarget = NULL;
 		}
 
 		if (mind->GatherTarget)
@@ -234,21 +249,75 @@ void B_BuildTicCommand(ticcmd_t* cmd, int playernum)
 				mind->GatherTarget = NULL;
 				
 			// Guns?
-			if (!CHECKGUN(MT_MISC25, wp_bfg) ||
-				!CHECKGUN(MT_CHAINGUN, wp_chaingun) ||
-				!CHECKGUN(MT_MISC26, wp_chainsaw) ||
-				!CHECKGUN(MT_MISC27, wp_missile) ||
-				!CHECKGUN(MT_MISC28, wp_plasma) ||
-				!CHECKGUN(MT_SHOTGUN, wp_shotgun) ||
+			else if (!CHECKGUN(MT_MISC25, wp_bfg) &&
+				!CHECKGUN(MT_CHAINGUN, wp_chaingun) &&
+				!CHECKGUN(MT_MISC26, wp_chainsaw) &&
+				!CHECKGUN(MT_MISC27, wp_missile) &&
+				!CHECKGUN(MT_MISC28, wp_plasma) &&
+				!CHECKGUN(MT_SHOTGUN, wp_shotgun) &&
 				!CHECKGUN(MT_SUPERSHOTGUN, wp_supershotgun))
 				mind->GatherTarget = NULL;
+			else
+				switch (mind->GatherTarget->type)
+				{
+					case MT_MISC2:	// Health Bonus
+						if (!(player->health < 200))
+							mind->GatherTarget = NULL;
+						break;
+					case MT_MISC10:	// Stim pack
+						if (!(player->health < 90))
+							mind->GatherTarget = NULL;
+						break;
+					case MT_MISC11:	// Medikit
+						if (!(player->health < 75))
+							mind->GatherTarget = NULL;
+						break;
+					case MT_MISC12:	// Soul Sphere
+						if (!(player->health < 150))
+							mind->GatherTarget = NULL;
+						break;
+					case MT_MISC13:	// Berzerker
+						if (!(player->health < 25))
+							mind->GatherTarget = NULL;
+						break;
+					default:
+						break;
+				}
 		}
 		
 		/* Follow a path */
 		if (mind->PathNodes[mind->PathIterator])
 		{
-			B_FaceNode(mind, cmd, mind->PathNodes[mind->PathIterator]);
-			cmd->forwardmove = botforwardmove[1];
+			if (mind->AttackTarget)
+			{
+				B_FaceMobj(mind, cmd, mind->AttackTarget);
+				cmd->buttons |= BT_ATTACK;
+				
+				angle = R_PointToAngle2(
+					mind->PathNodes[mind->PathIterator]->x, mind->PathNodes[mind->PathIterator]->y,
+					player->mo->x, player->mo->y
+					);
+				angle >>= ANGLETOFINESHIFT;
+				mx = FixedMul(32 << FRACBITS, finecosine[angle]) >> FRACBITS;
+				my = FixedMul(32 << FRACBITS, finesine[angle]) >> FRACBITS;
+				
+				angle = R_PointToAngle2(
+					player->mo->x, player->mo->y,
+					mind->AttackTarget->x, mind->AttackTarget->y
+					);
+				angle >>= ANGLETOFINESHIFT;
+				nx = FixedMul(32 << FRACBITS, finecosine[angle]) >> FRACBITS;
+				ny = FixedMul(32 << FRACBITS, finesine[angle]) >> FRACBITS;
+				
+				// This seems to work:
+				cmd->forwardmove = (nx + my) >> 1;
+				cmd->sidemove = (ny + mx) >> 1;
+			}
+			else
+			{
+				B_FaceNode(mind, cmd, mind->PathNodes[mind->PathIterator]);
+				cmd->forwardmove = botforwardmove[1];
+			}
 			
 			if (!BotReject[player->mo->subsector - subsectors][mind->PathNodes[mind->PathIterator]->subsector - subsectors])
 			{
@@ -256,19 +325,19 @@ void B_BuildTicCommand(ticcmd_t* cmd, int playernum)
 				mind->PathIterator = 0;
 			}
 			else if (player->mo->subsector == mind->PathNodes[mind->PathIterator]->subsector)
-				if (B_PathDistance(player->mo, mind->PathNodes[mind->PathIterator]) <= 24)
+				if (B_PathDistance(player->mo, mind->PathNodes[mind->PathIterator]) <= 32)
+				{
 					mind->PathIterator++;
-		}
-		
-		/* Out of nodes */
-		else if (!mind->PathNodes[mind->PathIterator] && mind->PathIterator)
-		{
-			memset(mind->PathNodes, 0, sizeof(mind->PathNodes));
-			mind->PathIterator = 0;
+					if (!mind->PathNodes[mind->PathIterator])
+					{
+						memset(mind->PathNodes, 0, sizeof(mind->PathNodes));
+						mind->PathIterator = 0;
+					}
+				}
 		}
 		
 		/* Run tword an item*/
-		if (!mind->PathNodes[mind->PathIterator] && !mind->PathIterator && mind->GatherTarget)
+		else if (mind->GatherTarget)
 		{
 			if (!BotReject[player->mo->subsector - subsectors][mind->GatherTarget->subsector - subsectors])
 				mind->GatherTarget = NULL;
@@ -277,6 +346,12 @@ void B_BuildTicCommand(ticcmd_t* cmd, int playernum)
 				B_FaceMobj(mind, cmd, mind->GatherTarget);
 				cmd->forwardmove = botforwardmove[1];
 			}
+		}
+		else if (mind->AttackTarget)
+		{
+			B_FaceMobj(mind, cmd, mind->AttackTarget);
+			cmd->buttons |= BT_ATTACK;
+			cmd->sidemove = botsidemove[1];
 		}
 
 #if 0
