@@ -88,14 +88,14 @@ int B_PTR_LinePossible(intercept_t* in)
 		// There may be a ceiling in the way
 		if (botceil == li->frontsector->ceilingheight)
 		{
-			if (li->backsector->ceilingheight < botfloor)
+			if (li->backsector->ceilingheight <= botfloor)
 				return false;
 				
 			botceil = li->backsector->ceilingheight;
 		}
 		else if (botceil == li->backsector->ceilingheight)
 		{
-			if (li->frontsector->ceilingheight < botfloor)
+			if (li->frontsector->ceilingheight <= botfloor)
 				return false;
 			
 			botceil = li->frontsector->ceilingheight;
@@ -110,47 +110,6 @@ int B_PTR_LinePossible(intercept_t* in)
 			return false;	// Stop
 				
 	}
-
-#if 0	
-	sub = R_PointInSubsector(trace.dx, trace.dy);
-
-	if (sub)
-	{
-		// Only check heights if the sector doesn't match the last one
-		if (sub->sector != botlastsector)
-		{
-			// Can't fit in this sector?
-			if (((sub->sector->ceilingheight - sub->sector->floorheight) >> FRACBITS) <= 56)
-				return false;	// Stop
-			
-			// Last floor is higher than ceiling
-			if (botfloor > sub->sector->ceilingheight)
-				return false;	// Stop
-		
-			// Floor is higher than last floor
-			if (sub->sector->floorheight > botfloor)
-			{
-				// Can we step up it?
-				if (((sub->sector->floorheight - botfloor) >> FRACBITS) <= 24)
-				{
-					botfloor = sub->sector->floorheight;
-					botceil = sub->sector->ceilingheight;
-				}
-				else
-					return false;	// Stop
-			}
-			else
-			{
-				botfloor = sub->sector->floorheight;
-				botceil = sub->sector->ceilingheight;
-			}
-			
-			botlastsector = sub->sector;
-		}
-	}
-	else
-		return false;	// Stop
-#endif
 	
 	return true;
 }
@@ -393,12 +352,6 @@ void B_InitializeForLevel(void)
 								BotNodes[j].x, BotNodes[j].y, BotNodes[j].subsector))
 				BotReject[i][j] = 1;
 		}
-		
-	/* Prepare for hubbing */
-	for (i = 0; i < NumBotNodes; i++)
-		for (j = 0; j < NumBotNodes; j++)
-			if (BotReject[i][j])
-				BotNodes[i].count++;
 				
 	// Spawn a candle
 	if (botparm)

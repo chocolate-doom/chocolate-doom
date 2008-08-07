@@ -41,7 +41,6 @@ typedef struct bnode_s
 {
 	fixed_t x;
 	fixed_t y;
-	int count;
 	subsector_t* subsector;
 } bnode_t;
 
@@ -59,6 +58,11 @@ typedef struct bmind_s
 	
 	/* Attacking */
 	mobj_t* AttackTarget;
+	int pistoltimeout;
+	int chainguntimeout;
+	int sidetics;
+	int forwardtics;
+	
 } bmind_t;
 
 #define BMC_PLAYER		1

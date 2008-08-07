@@ -80,35 +80,58 @@ static int B_CheckWeapon(bmind_t* mind, mobj_t* target, bmocheck_t* check, void*
 		return 1;
 }
 
+/* B_CheckMonster() -- Checks a monster to determine if it's worth attacking */
+static int B_CheckMonster(bmind_t* mind, mobj_t* target, bmocheck_t* check, void* data)
+{
+	if (target->health > 0)
+		return 1;
+	else
+		return 0;
+}
+
+/* B_CheckPlayer() -- Checks a player to determine if it's worth attacking */
+static int B_CheckPlayer(bmind_t* mind, mobj_t* target, bmocheck_t* check, void* data)
+{
+	if (deathmatch)
+	{
+		if (target->health > 0)
+			return 1;
+		else
+			return 0;
+	}
+	else
+		return 0;
+}
+
 // Structure containing check info
 bmocheck_t BotMobjCheck[NUMMOBJTYPES] =
 {
-	{NULL, 0, 0},		// MT_PLAYER
-	{NULL, 0, 0},		// MT_POSSESSED
-	{NULL, 0, 0},		// MT_SHOTGUY
-	{NULL, 0, 0},		// MT_VILE
+	{B_CheckPlayer, BMC_PLAYER, 0},			// MT_PLAYER
+	{B_CheckMonster, BMC_MONSTER, 0},		// MT_POSSESSED
+	{B_CheckMonster, BMC_MONSTER, 0},		// MT_SHOTGUY
+	{B_CheckMonster, BMC_MONSTER, 0},		// MT_VILE
 	{NULL, 0, 0},		// MT_FIRE
-	{NULL, 0, 0},		// MT_UNDEAD
+	{B_CheckMonster, BMC_MONSTER, 0},		// MT_UNDEAD
 	{NULL, 0, 0},		// MT_TRACER
 	{NULL, 0, 0},		// MT_SMOKE
-	{NULL, 0, 0},		// MT_FATSO
+	{B_CheckMonster, BMC_MONSTER, 0},		// MT_FATSO
 	{NULL, 0, 0},		// MT_FATSHOT
-	{NULL, 0, 0},		// MT_CHAINGUY
-	{NULL, 0, 0},		// MT_TROOP
-	{NULL, 0, 0},		// MT_SERGEANT
-	{NULL, 0, 0},		// MT_SHADOWS
-	{NULL, 0, 0},		// MT_HEAD
-	{NULL, 0, 0},		// MT_BRUISER
+	{B_CheckMonster, BMC_MONSTER, 0},		// MT_CHAINGUY
+	{B_CheckMonster, BMC_MONSTER, 0},		// MT_TROOP
+	{B_CheckMonster, BMC_MONSTER, 0},		// MT_SERGEANT
+	{B_CheckMonster, BMC_MONSTER, 0},		// MT_SHADOWS
+	{B_CheckMonster, BMC_MONSTER, 0},		// MT_HEAD
+	{B_CheckMonster, BMC_MONSTER, 0},		// MT_BRUISER
 	{NULL, 0, 0},		// MT_BRUISERSHOT
-	{NULL, 0, 0},		// MT_KNIGHT
-	{NULL, 0, 0},		// MT_SKULL
-	{NULL, 0, 0},		// MT_SPIDER
-	{NULL, 0, 0},		// MT_BABY
-	{NULL, 0, 0},		// MT_CYBORG
-	{NULL, 0, 0},		// MT_PAIN
-	{NULL, 0, 0},		// MT_WOLFSS
-	{NULL, 0, 0},		// MT_KEEN
-	{NULL, 0, 0},		// MT_BOSSBRAIN
+	{B_CheckMonster, BMC_MONSTER, 0},		// MT_KNIGHT
+	{B_CheckMonster, BMC_MONSTER, 0},		// MT_SKULL
+	{B_CheckMonster, BMC_MONSTER, 0},		// MT_SPIDER
+	{B_CheckMonster, BMC_MONSTER, 0},		// MT_BABY
+	{B_CheckMonster, BMC_MONSTER, 0},		// MT_CYBORG
+	{B_CheckMonster, BMC_MONSTER, 0},		// MT_PAIN
+	{B_CheckMonster, BMC_MONSTER, 0},		// MT_WOLFSS
+	{B_CheckMonster, BMC_MONSTER, 0},		// MT_KEEN
+	{B_CheckMonster, BMC_MONSTER, 0},		// MT_BOSSBRAIN
 	{NULL, 0, 0},		// MT_BOSSSPIT
 	{NULL, 0, 0},		// MT_BOSSTARGET
 	{NULL, 0, 0},		// MT_SPAWNSHOT
@@ -227,13 +250,23 @@ void B_LookForStuff(bmind_t* mind)
 	thinker_t* currentthinker = thinkercap.next;
 	mobj_t* thatmobj = NULL;
 	mobj_t* NewGather = NULL;
+	mobj_t* NewAttack = NULL;
 	int GatherDistance = 8192;
+	int AttackDistance = 8192;
+	int CurDist;
+	int inView = 0;
 	
 	while (currentthinker != &thinkercap)
 	{
 		if ((currentthinker->function.acp1 == (actionf_p1)P_MobjThinker))
 		{
 			thatmobj = (mobj_t*)currentthinker;
+			
+			if (thatmobj == mind->player->mo)
+			{
+				currentthinker = currentthinker->next;
+				continue;
+			}
 			
 			// Check to see if it has a checker function
 			if (BotMobjCheck[thatmobj->type].func)
@@ -249,20 +282,46 @@ void B_LookForStuff(bmind_t* mind)
 								BotMobjCheck[thatmobj->type].poff)
 							)
 						{
-							if (B_BuildPath(mind, mind->player->mo->subsector,
-								thatmobj->subsector, BP_CHECKPATH) < GatherDistance)
+							if ((CurDist = B_BuildPath(mind, mind->player->mo->subsector,
+								thatmobj->subsector, BP_CHECKPATH)) < GatherDistance)
 							{
-								GatherDistance = B_BuildPath(mind, mind->player->mo->subsector, thatmobj->subsector, BP_CHECKPATH);
+								GatherDistance = CurDist;
 								NewGather = thatmobj;
 							}
 							else if (P_CheckSight(mind->player->mo, thatmobj) &&
-								B_PathDistance(mind->player->mo, thatmobj) < GatherDistance)
+								(CurDist = B_PathDistance(mind->player->mo, thatmobj)) < GatherDistance)
 							{
-								GatherDistance = B_PathDistance(mind->player->mo, thatmobj);
+								GatherDistance = CurDist;
 								NewGather = thatmobj;
 							}
 						}
 				}
+				else if ((BotMobjCheck[thatmobj->type].type >= BMC_PLAYER) &&
+						(BotMobjCheck[thatmobj->type].type <= BMC_MONSTER))
+						if (!mind->AttackTarget)
+							if (BotMobjCheck[thatmobj->type].func(
+									mind, thatmobj,
+									&BotMobjCheck[thatmobj->type],
+									BotMobjCheck[thatmobj->type].poff)
+								)
+							{
+								CurDist = B_PathDistance(mind->player->mo, thatmobj);
+								
+								if (P_CheckSight(mind->player->mo, thatmobj) &&
+									CurDist < (MISSILERANGE >> FRACBITS) && CurDist < AttackDistance)
+								{
+									AttackDistance = CurDist;
+									NewAttack = thatmobj;
+									inView = 1;
+								}
+								else if ((CurDist = B_BuildPath(mind, mind->player->mo->subsector,
+									thatmobj->subsector, BP_CHECKPATH)) < AttackDistance)
+								{
+									AttackDistance = CurDist;
+									NewAttack = thatmobj;
+									inView = 0;
+								}
+							}
 			}
 		}
 		
@@ -278,6 +337,16 @@ void B_LookForStuff(bmind_t* mind)
 		if (!(BotReject[mind->player->mo->subsector - subsectors][mind->GatherTarget->subsector - subsectors]))
 			if (!mind->PathNodes[mind->PathIterator] && !mind->PathIterator)
 				B_BuildPath(mind, mind->player->mo->subsector, mind->GatherTarget->subsector, 0);
+	}
+	
+	if (NewAttack)
+	{
+		mind->AttackTarget = NewAttack;
+		mind->flags |= BF_ATTACKING;
+		
+		if (!inView)
+			if (!mind->PathNodes[mind->PathIterator] && !mind->PathIterator)
+				B_BuildPath(mind, mind->player->mo->subsector, mind->AttackTarget->subsector, 0);
 	}
 	
 #if 0
