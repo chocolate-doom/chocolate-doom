@@ -61,6 +61,21 @@ typedef struct bmind_s
 	mobj_t* AttackTarget;
 } bmind_t;
 
+#define BMC_PLAYER		1
+#define BMC_MONSTER		2
+#define BMC_WEAPON		3
+#define BMC_AMMO		4
+#define BMC_HEALTH		5
+#define BMC_ARMOR		6
+
+typedef struct bmocheck_s
+{
+	int (*func)(bmind_t*, mobj_t*, struct bmocheck_s*, void*);
+	int type;
+	void* poff;
+} bmocheck_t;
+
+extern bmocheck_t BotMobjCheck[NUMMOBJTYPES];
 extern size_t NumBotNodes;
 extern size_t NumBotSectors;
 extern bnode_t* BotNodes;

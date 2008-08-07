@@ -25,6 +25,9 @@
 
 #include "b_bot.h"
 #include "m_misc.h"
+#include "doomdef.h"
+
+extern int longtics;
 
 fixed_t         botforwardmove[2] = {0x19, 0x32}; 
 fixed_t         botsidemove[2] = {0x18, 0x28}; 
@@ -209,80 +212,19 @@ void B_BuildTicCommand(ticcmd_t* cmd, int playernum)
 						BotNodes[i].subsector->sector->floorheight,
 						MT_PUFF);
 			}
-		
-#if 0
-			printf("Attack = 0x%08X, Gather 0x%08X || Cur = %i, Gaol = %i, ",
-					mind->AttackTarget,
-					mind->GatherTarget,
-					player->mo->subsector - subsectors,
-					(mind->GatherTarget ? mind->GatherTarget->subsector - subsectors : -1));
-			i = 0;
-			while (mind->PathNodes[i])
-			{
-				if (i == mind->PathIterator)
-					printf("<%i>, ", mind->PathNodes[i]->subsector - subsectors);
-				else
-					printf(" %i , ", mind->PathNodes[i]->subsector - subsectors);
-				i++;
-			}
-			printf("\n");
-#endif
 		}
 		
-#define CHECKGUN(t,wp) (mind->GatherTarget && mind->GatherTarget->type == (t) && (!player->weaponowned[(wp)] || ISWEAPONAMMOWORTHIT((wp))))
-		
-		/* Check Targets */
-		if (mind->AttackTarget)
-		{
-			if (mind->AttackTarget->mobjdontexist)
-				mind->AttackTarget = NULL;
-			else if (mind->AttackTarget->health <= 0)
-				mind->AttackTarget = NULL;
-			else if (!P_CheckSight(player->mo, mind->AttackTarget))
-				mind->AttackTarget = NULL;
-		}
-
 		if (mind->GatherTarget)
 		{
-			// No Longer exists?
 			if (mind->GatherTarget->mobjdontexist)
 				mind->GatherTarget = NULL;
-				
-			// Guns?
-			else if (!CHECKGUN(MT_MISC25, wp_bfg) &&
-				!CHECKGUN(MT_CHAINGUN, wp_chaingun) &&
-				!CHECKGUN(MT_MISC26, wp_chainsaw) &&
-				!CHECKGUN(MT_MISC27, wp_missile) &&
-				!CHECKGUN(MT_MISC28, wp_plasma) &&
-				!CHECKGUN(MT_SHOTGUN, wp_shotgun) &&
-				!CHECKGUN(MT_SUPERSHOTGUN, wp_supershotgun))
+			else if (!(BotMobjCheck[mind->GatherTarget->type].func
+				(
+					mind, mind->GatherTarget,
+					&BotMobjCheck[mind->GatherTarget->type],
+					BotMobjCheck[mind->GatherTarget->type].poff)
+				))
 				mind->GatherTarget = NULL;
-			else
-				switch (mind->GatherTarget->type)
-				{
-					case MT_MISC2:	// Health Bonus
-						if (!(player->health < 200))
-							mind->GatherTarget = NULL;
-						break;
-					case MT_MISC10:	// Stim pack
-						if (!(player->health < 90))
-							mind->GatherTarget = NULL;
-						break;
-					case MT_MISC11:	// Medikit
-						if (!(player->health < 75))
-							mind->GatherTarget = NULL;
-						break;
-					case MT_MISC12:	// Soul Sphere
-						if (!(player->health < 150))
-							mind->GatherTarget = NULL;
-						break;
-					case MT_MISC13:	// Berzerker
-						if (!(player->health < 25))
-							mind->GatherTarget = NULL;
-						break;
-					default:
-						break;
-				}
 		}
 		
 		/* Follow a path */
@@ -292,26 +234,6 @@ void B_BuildTicCommand(ticcmd_t* cmd, int playernum)
 			{
 				B_FaceMobj(mind, cmd, mind->AttackTarget);
 				cmd->buttons |= BT_ATTACK;
-				
-				angle = R_PointToAngle2(
-					mind->PathNodes[mind->PathIterator]->x, mind->PathNodes[mind->PathIterator]->y,
-					player->mo->x, player->mo->y
-					);
-				angle >>= ANGLETOFINESHIFT;
-				mx = FixedMul(32 << FRACBITS, finecosine[angle]) >> FRACBITS;
-				my = FixedMul(32 << FRACBITS, finesine[angle]) >> FRACBITS;
-				
-				angle = R_PointToAngle2(
-					player->mo->x, player->mo->y,
-					mind->AttackTarget->x, mind->AttackTarget->y
-					);
-				angle >>= ANGLETOFINESHIFT;
-				nx = FixedMul(32 << FRACBITS, finecosine[angle]) >> FRACBITS;
-				ny = FixedMul(32 << FRACBITS, finesine[angle]) >> FRACBITS;
-				
-				// This seems to work:
-				cmd->forwardmove = (nx + my) >> 1;
-				cmd->sidemove = (ny + mx) >> 1;
 			}
 			else
 			{
@@ -339,132 +261,30 @@ void B_BuildTicCommand(ticcmd_t* cmd, int playernum)
 		/* Run tword an item*/
 		else if (mind->GatherTarget)
 		{
-			if (!BotReject[player->mo->subsector - subsectors][mind->GatherTarget->subsector - subsectors])
-				mind->GatherTarget = NULL;
+			// If we can't see the item but out reject says we can get to it, plot a new path
+			if (!P_CheckSight(player->mo, mind->GatherTarget) &&
+				BotReject[player->mo->subsector - subsectors][mind->GatherTarget->subsector - subsectors])
+			{
+				if (B_BuildPath(mind, mind->player->mo->subsector, mind->GatherTarget->subsector, 0) == BOTBADPATH)
+					mind->GatherTarget = NULL;
+			}
 			else
 			{
 				B_FaceMobj(mind, cmd, mind->GatherTarget);
 				cmd->forwardmove = botforwardmove[1];
 			}
 		}
+		
+		/* Shoot an enemy */
 		else if (mind->AttackTarget)
 		{
 			B_FaceMobj(mind, cmd, mind->AttackTarget);
 			cmd->buttons |= BT_ATTACK;
-			cmd->sidemove = botsidemove[1];
 		}
-
-#if 0
-		// if we have an attack target...
-		if (mind->AttackTarget)
-			if (mind->AttackTarget->health <= 0 || !P_CheckSight(player->mo, mind->AttackTarget))
-				mind->AttackTarget = NULL;
-	
-		// Do we have a target to follow
-		if (mind->PathNodes[mind->PathIterator])
-		{
-			if (mind->AttackTarget)
-			{
-				B_FaceMobj(mind, cmd, mind->AttackTarget);
-				cmd->buttons |= BT_ATTACK;
-				
-				angle = R_PointToAngle2(
-					mind->PathNodes[mind->PathIterator]->x, mind->PathNodes[mind->PathIterator]->y,
-					player->mo->x, player->mo->y
-					);
-				angle >>= ANGLETOFINESHIFT;
-				mx = FixedMul(32 << FRACBITS, finecosine[angle]) >> FRACBITS;
-				my = FixedMul(32 << FRACBITS, finesine[angle]) >> FRACBITS;
-				
-				cmd->forwardmove = mx & (botforwardmove[1] | 0x80000000);
-				cmd->sidemove = my & (botsidemove[1] | 0x80000000);
-			}
-			else
-			{
-				if (mind->AttackTarget)
-					mind->AttackTarget = NULL;
-				B_FaceNode(mind, cmd, mind->PathNodes[mind->PathIterator]);
-				cmd->forwardmove = botforwardmove[1];
-			}
-			
-			if (!BotReject[player->mo->subsector - subsectors][mind->PathNodes[mind->PathIterator]->subsector - subsectors])
-			{
-				memset(mind->PathNodes, 0, sizeof(mind->PathNodes));
-				mind->PathIterator = 0;
-			}
-			else if (player->mo->subsector == mind->PathNodes[mind->PathIterator]->subsector)
-				if (B_PathDistance(player->mo, mind->PathNodes[mind->PathIterator]) <= 32)
-					mind->PathIterator++;
-		}
-		
-		/* No more paths */
-		else if (!mind->PathNodes[mind->PathIterator] && mind->PathIterator)
-		{
-			memset(mind->PathNodes, 0, sizeof(mind->PathNodes));
-			mind->PathIterator = 0;
-		}
-		
-		/* Ran out of paths and we are gathering */
-		else if (!mind->PathNodes[mind->PathIterator] && !mind->PathIterator && (mind->GatherTarget || mind->AttackTarget))
-		{
-			if (mind->GatherTarget && !BotReject[player->mo->subsector - subsectors][mind->GatherTarget->subsector - subsectors])
-				mind->GatherTarget = NULL;
-			
-			if (mind->GatherTarget)
-			{
-				if (mind->AttackTarget)
-				{
-					B_FaceMobj(mind, cmd, mind->AttackTarget);
-					angle = R_PointToAngle2(
-						mind->PathNodes[mind->PathIterator]->x, mind->PathNodes[mind->PathIterator]->y,
-						player->mo->x, player->mo->y
-						);
-					angle >>= ANGLETOFINESHIFT;
-					mx = FixedMul(32 << FRACBITS, finecosine[angle]) >> FRACBITS;
-					my = FixedMul(32 << FRACBITS, finesine[angle]) >> FRACBITS;
-				
-					cmd->forwardmove = my;
-					cmd->sidemove = mx;
-				}
-				else
-				{
-					B_FaceMobj(mind, cmd, mind->GatherTarget);
-					cmd->forwardmove = botforwardmove[1];
-				}
-			}
-			else if (mind->AttackTarget)
-			{
-				B_FaceMobj(mind, cmd, mind->AttackTarget);
-				cmd->buttons |= BT_ATTACK;
-			}
-		}
-		
-		/* these mobjs could go poof */
-		if (mind->GatherTarget)
-		{
-			// This is like this for a reason, it's so the checks can have an early out, instead of checking all of these
-			// at once
-			if (mind->GatherTarget->mobjdontexist)
-				mind->GatherTarget = NULL;
-			else if (!(mind->GatherTarget->type == MT_MISC25 && (!player->weaponowned[wp_bfg] || ISWEAPONAMMOWORTHIT(wp_bfg))))
-				mind->GatherTarget = NULL;
-			else if (!(mind->GatherTarget->type == MT_CHAINGUN && (!player->weaponowned[wp_chaingun] || ISWEAPONAMMOWORTHIT(wp_chaingun))))
-				mind->GatherTarget = NULL;
-			else if (!(mind->GatherTarget->type == MT_MISC26 && (!player->weaponowned[wp_chainsaw] || ISWEAPONAMMOWORTHIT(wp_chainsaw))))
-				mind->GatherTarget = NULL;
-			else if (!(mind->GatherTarget->type == MT_MISC27 && (!player->weaponowned[wp_missile] || ISWEAPONAMMOWORTHIT(wp_missile))))
-				mind->GatherTarget = NULL;
-			else if (!(mind->GatherTarget->type == MT_MISC28 && (!player->weaponowned[wp_plasma] || ISWEAPONAMMOWORTHIT(wp_plasma))))
-				mind->GatherTarget = NULL;
-			else if (!(mind->GatherTarget->type == MT_SHOTGUN && (!player->weaponowned[wp_shotgun] || ISWEAPONAMMOWORTHIT(wp_shotgun))))
-				mind->GatherTarget = NULL;
-			else if (!(mind->GatherTarget->type == MT_SUPERSHOTGUN && (!player->weaponowned[wp_supershotgun] || ISWEAPONAMMOWORTHIT(wp_supershotgun))))
-				mind->GatherTarget = NULL;
-		}
-		
-		if (mind->AttackTarget && mind->AttackTarget->mobjdontexist)
-			mind->AttackTarget = NULL;
-#endif
 	}
+	
+	// Lower resolution for demo recording goodness
+	if (!longtics)
+		cmd->angleturn = (cmd->angleturn + 128) & 0xff00;
 }
 
