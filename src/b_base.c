@@ -142,6 +142,7 @@ void B_InitializeForLevel(void)
 #endif
 	double dx, dy;
 	fixed_t tx, ty;
+	size_t SizeUsed = 0;
 	
 	if (!M_CheckParm("-bot") && !M_CheckParm("-ingamebots"))
 		return;
@@ -168,7 +169,8 @@ void B_InitializeForLevel(void)
 	if (BotSectorNodes)
 	{
 		for (i = 0; i < NumBotSectors; i++)
-			Z_Free(BotSectorNodes[i]);
+			if (BotSectorNodes[i])
+				Z_Free(BotSectorNodes[i]);
 		Z_Free(BotSectorNodes);
 	}
 	
@@ -178,20 +180,24 @@ void B_InitializeForLevel(void)
 	
 	BotNodes = Z_Malloc(sizeof(bnode_t) * NumBotNodes, PU_STATIC, 0);
 	memset(BotNodes, 0, sizeof(bnode_t) * NumBotNodes);
+	SizeUsed += sizeof(bnode_t) * NumBotNodes;
 	
 	BotReject = Z_Malloc(sizeof(UInt8*) * NumBotNodes, PU_STATIC, 0);
 	memset(BotReject, 0, sizeof(UInt8*) * NumBotNodes);
+	SizeUsed += sizeof(UInt8*) * NumBotNodes;
 	
 	for (i = 0; i < NumBotNodes; i++)
 	{
 		BotReject[i] = Z_Malloc(sizeof(UInt8) * NumBotNodes, PU_STATIC, 0);
 		memset(BotReject[i], 0, sizeof(UInt8) * NumBotNodes);
+		SizeUsed += sizeof(UInt8) * NumBotNodes;
 	}
 	
 #define FIXEDTODOUBLE(x) (((double)(x)) / 65536.0)
 #define DOUBLETOFIXED(x) ((double)((x) * 65536.0))
 	
 	/* Build Basic Node Table */
+	printf("Building node table...");
 	for (i = 0; i < NumBotNodes; i++)
 	{
 		tx = 0;
@@ -208,131 +214,42 @@ void B_InitializeForLevel(void)
 		BotNodes[i].x = DOUBLETOFIXED(dx / (double)subsectors[i].numlines);
 		BotNodes[i].y = DOUBLETOFIXED(dy / (double)subsectors[i].numlines);
 		BotNodes[i].subsector = &subsectors[i];
-#if 0
-		// thanks to exp[x] for some pointers and some help for returning back to Algebra 2 back in 12th grade!
-		// Reset and allocate
-		PolyArea = 0;
-		CenterX = 0;
-		CenterY = 0;
-		
-		// Get the vertexes
-		vx = Z_Malloc(sizeof(fixed_t) * subsectors[i].numlines, PU_STATIC, NULL);
-		vy = Z_Malloc(sizeof(fixed_t) * subsectors[i].numlines, PU_STATIC, NULL);
-		memset(vx, 0, sizeof(fixed_t) * subsectors[i].numlines);
-		memset(vy, 0, sizeof(fixed_t) * subsectors[i].numlines);
-		
-		for (j = 0; j < subsectors[i].numlines - 1; j++)
-		{
-			vx[j] = segs[subsectors[i].firstline + j].v1->x;
-			vy[j] = segs[subsectors[i].firstline + j].v1->y;
-			vx[j+1] = segs[subsectors[i].firstline + j].v2->x;
-			vy[j+1] = segs[subsectors[i].firstline + j].v2->y;
-		}
-		
-		// Get the area of the polygon
-		Sum = 0;
-		for (j = 0; j < subsectors[i].numlines - 1; j++)
-			Sum += ((FIXEDTODOUBLE(vx[j]) * FIXEDTODOUBLE(vy[j+1])) - (FIXEDTODOUBLE(vx[j+1]) * FIXEDTODOUBLE(vy[j])));
-		PolyArea = Sum;
-		PolyArea /= 2.0;
-		
-		// Get the center of the polygon (X)
-		Sum = 0;
-		for (j = 0; j < subsectors[i].numlines - 1; j++)
-			Sum += (FIXEDTODOUBLE(vx[j]) + FIXEDTODOUBLE(vx[j+1])) * ((FIXEDTODOUBLE(vx[j]) * FIXEDTODOUBLE(vy[j+1])) - (FIXEDTODOUBLE(vx[j+1]) * FIXEDTODOUBLE(vy[j])));
-		CenterX = Sum;
-		CenterX /= 6.0 * PolyArea;
-		
-		// Get the center of the polygon (Y)
-		Sum = 0;
-		for (j = 0; j < subsectors[i].numlines - 1; j++)
-			Sum += (FIXEDTODOUBLE(vy[j]) + FIXEDTODOUBLE(vy[j+1])) * ((FIXEDTODOUBLE(vx[j]) * FIXEDTODOUBLE(vy[j+1])) - (FIXEDTODOUBLE(vx[j+1]) * FIXEDTODOUBLE(vy[j])));
-		CenterY = Sum;
-		CenterY /= 6.0 * PolyArea;
-		
-		BotNodes[i].x = DOUBLETOFIXED(CenterX);
-		BotNodes[i].y = DOUBLETOFIXED(CenterY);
-		BotNodes[i].subsector = &subsectors[i];
-		
-		// Clear Vertex list
-		Z_Free(vx);
-		Z_Free(vy);
-#endif
-#if 0
-		// Reset
-		memset(tpx, 0xFF, sizeof(tpx));
-		memset(tpy, 0xFF, sizeof(tpy));
-		tcx = 0;
-		tcy = 0;
-		rx = by = -(32767 << FRACBITS);
-		lx = ty = 32767 << FRACBITS;
-		
-		// If this is not a triangle, get the "center"
-		if (subsectors[i].numlines > 3)
-		{
-			for (j = 0; j < subsectors[i].numlines; j++)
-			{
-				// VERTEX 1
-				if (segs[subsectors[i].firstline + j].v1->x < lx)
-					lx = segs[subsectors[i].firstline + j].v1->x;
-				if (segs[subsectors[i].firstline + j].v1->x > rx)
-					rx = segs[subsectors[i].firstline + j].v1->x;
-			
-				if (segs[subsectors[i].firstline + j].v1->y < ty)
-					ty = segs[subsectors[i].firstline + j].v1->y;
-				if (segs[subsectors[i].firstline + j].v1->y > by)
-					by = segs[subsectors[i].firstline + j].v1->y;
-			
-				// VERTEX 2
-				if (segs[subsectors[i].firstline + j].v2->x < lx)
-					lx = segs[subsectors[i].firstline + j].v2->x;
-				if (segs[subsectors[i].firstline + j].v2->x > rx)
-					rx = segs[subsectors[i].firstline + j].v2->x;
-				
-				if (segs[subsectors[i].firstline + j].v2->y < ty)
-					ty = segs[subsectors[i].firstline + j].v2->y;
-				if (segs[subsectors[i].firstline + j].v2->y > by)
-					by = segs[subsectors[i].firstline + j].v2->y;
-			}
-			
-			// Get the center
-			BotNodes[i].x = FixedDiv(lx + rx, 2 << FRACBITS);
-			BotNodes[i].y = FixedDiv(ty + by, 2 << FRACBITS);
-		}
-		// If it is a triangle, get the best we can do to get the center
-		else
-		{
-			for (j = 0; j < subsectors[i].numlines; j++)
-			{
-			}
-		}
-#endif
 	}
+	printf("Done!\n");
 	
 	/* Prepare Sector Table */
 		// This table contains a NULL terminated list of subsectors in a sector
+	printf("Building sector table...");
+	printf("allocating...");
 	subsectorcount = Z_Malloc(sizeof(int) * NumBotSectors, PU_STATIC, 0);
 	memset(subsectorcount, 0, sizeof(int) * NumBotSectors);
 	subsectorit = Z_Malloc(sizeof(int) * NumBotSectors, PU_STATIC, 0);
 	memset(subsectorit, 0, sizeof(int) * NumBotSectors);
 	
+	printf("counting...");
 	for (i = 0; i < NumBotNodes; i++)
 		subsectorcount[BotNodes[i].subsector->sector - sectors]++;
 		
 	BotSectorNodes = Z_Malloc(sizeof(bnode_t**) * NumBotSectors, PU_STATIC, 0);
 	memset(BotSectorNodes, 0, sizeof(bnode_t**) * NumBotSectors);
+	SizeUsed += sizeof(bnode_t**) * NumBotSectors;
 	
 	// Allocate space for pointer arrays
+	printf("allocating sub lists...");
 	for (i = 0; i < NumBotSectors; i++)
 	{
 		if (subsectorcount[i])
 		{
 			BotSectorNodes[i] = Z_Malloc((sizeof(bnode_t*) * subsectorcount[i]) + sizeof(bnode_t*), PU_STATIC, 0);
 			memset(BotSectorNodes[i], 0, (sizeof(bnode_t*) * subsectorcount[i]) + sizeof(bnode_t*));
+			SizeUsed += (sizeof(bnode_t*) * subsectorcount[i]) + sizeof(bnode_t*);
 		}
+		else
+			BotSectorNodes[i] = NULL;
 	}
 	
 	// Create NULL Terminated list
+	printf("creating list...");
 	for (i = 0; i < NumBotNodes; i++)
 	{
 		BotSectorNodes[BotNodes[i].subsector->sector - sectors][subsectorit[BotNodes[i].subsector->sector - sectors]] = BotNodes[i].subsector;
@@ -341,17 +258,24 @@ void B_InitializeForLevel(void)
 	
 	Z_Free(subsectorit);
 	Z_Free(subsectorcount);
+	printf("Done!\n");
 	
 	/* Subsector lookup table */
+	printf("Creating bot reject...\n");
 	for (i = 0; i < NumBotNodes; i++)
+	{
+		printf("\r%03i%% Complete", (int)(((float)i / (float)NumBotNodes) * (float)100));
+			
 		for (j = 0; j < NumBotNodes; j++)
-		{
+		{	
 			if (i == j)
 				BotReject[i][j] = 1;
 			else if (B_LinePossible(BotNodes[i].x, BotNodes[i].y, BotNodes[i].subsector,
 								BotNodes[j].x, BotNodes[j].y, BotNodes[j].subsector))
 				BotReject[i][j] = 1;
 		}
+	}
+	printf("Done!\n");
 				
 	// Spawn a candle
 	if (botparm)
@@ -362,37 +286,6 @@ void B_InitializeForLevel(void)
 				BotNodes[i].subsector->sector->floorheight,
 				MT_MISC49);
 			
-#if 0	
-	if (botparm)
-	{
-		FILE* Temp = fopen("nodeout.cvs", "wt");
-		FILE* Temp2 = fopen("nodeout2", "wb");
-		unsigned char On = 0x00;
-		unsigned char Off = 0xFF;
-		
-		if (Temp)
-		{
-			for (i = 0; i < NumBotNodes; i++)
-			{
-				for (j = 0; j < NumBotNodes; j++)
-				{
-					if (BotReject[i][j])
-						fwrite(&On, 1, 3, Temp2);
-					else
-						fwrite(&Off, 1, 3, Temp2);
-					
-					fprintf(Temp, "%i", BotReject[i][j]);
-					
-					if (j < NumBotNodes - 1)
-						fprintf(Temp, ",");
-				}
-				
-				fprintf(Temp, "\n");
-			}
-			
-			fclose(Temp);
-		}
-	}
-#endif
+	printf("Used %lu bytes (%lu KiB, %lu MiB) for bot navigation\n", SizeUsed, SizeUsed >> 10, SizeUsed >> 20);
 }
 
