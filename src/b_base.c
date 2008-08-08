@@ -287,5 +287,7 @@ void B_InitializeForLevel(void)
 				MT_MISC49);
 			
 	printf("Used %lu bytes (%lu KiB, %lu MiB) for bot navigation\n", SizeUsed, SizeUsed >> 10, SizeUsed >> 20);
+	
+	Z_CheckHeap();
 }
 

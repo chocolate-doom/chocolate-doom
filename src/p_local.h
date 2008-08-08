@@ -159,8 +159,10 @@ typedef struct
 } intercept_t;
 
 // Extended MAXINTERCEPTS, to allow for intercepts overrun emulation.
+// NOT ANY MORE!!
 
-#define MAXINTERCEPTS_ORIGINAL 128
+// GhostlyDeath -- These values cause problems with bot reject code
+#define MAXINTERCEPTS_ORIGINAL 512// 128
 #define MAXINTERCEPTS          (MAXINTERCEPTS_ORIGINAL + 61)
 
 extern intercept_t	intercepts[MAXINTERCEPTS];
