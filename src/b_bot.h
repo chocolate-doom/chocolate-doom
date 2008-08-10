@@ -77,6 +77,7 @@ typedef struct bmocheck_s
 	int (*func)(bmind_t*, mobj_t*, struct bmocheck_s*, void*);
 	int type;
 	void* poff;
+	int pform;		// Goes into the priority formula
 } bmocheck_t;
 
 /** Instead of having multiple arrays which will waste space in the future? **/
@@ -153,7 +154,7 @@ extern bnode_t*** BotSectorNodes;
 
 int B_CheckLine(bmind_t* mind, subsector_t* src, subsector_t* dest);
 #define B_CheckLineInt(a,s,d) B_CheckLine((a), subsectors + (b), subsectors + (d))
-int B_BuildPath(bmind_t* mind, subsector_t* src, subsector_t* dest, int flags);
+int B_BuildPath(bmind_t* mind, subsector_t* src, subsector_t* dest, int flags, int priority);
 void B_LookForStuff(bmind_t* mind);
 void B_BuildTicCommand(ticcmd_t* cmd, int playernum);
 void B_InitializeForLevel(void);

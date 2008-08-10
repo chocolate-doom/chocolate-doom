@@ -411,7 +411,7 @@ void B_BuildTicCommand(ticcmd_t* cmd, int playernum)
 			if (!P_CheckSight(player->mo, mind->GatherTarget) &&
 				B_CheckLine(mind, player->mo->subsector, mind->GatherTarget->subsector))
 			{
-				if (B_BuildPath(mind, mind->player->mo->subsector, mind->GatherTarget->subsector, 0) == BOTBADPATH)
+				if (B_BuildPath(mind, mind->player->mo->subsector, mind->GatherTarget->subsector, 0, 0) == BOTBADPATH)
 					mind->GatherTarget = NULL;
 			}
 			// We are trying to go for a straight path to the item but we can't get to it

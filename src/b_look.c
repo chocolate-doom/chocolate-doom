@@ -29,6 +29,11 @@
 // Blank Player for offsets and stuff
 static player_t botblank;
 
+#define BCP_HIGH	1024	// 3 << 8, Use Dijkstra's Algoritm
+#define BCP_MEDIUM	512		// 2 << 8, Use BFS Search
+#define BCP_LOW		256		// 1 << 8, Use Sector to Sector Lookup (L-Shape Search)
+#define BCP_NONE	0		// 0 << 8, Same as above
+
 /* B_CheckWeapon() -- Checks a weapon to determine if it should be picked up */
 static int B_CheckWeapon(bmind_t* mind, mobj_t* target, bmocheck_t* check, void* data)
 {
@@ -64,8 +69,10 @@ static int B_CheckWeapon(bmind_t* mind, mobj_t* target, bmocheck_t* check, void*
 				ClipSize <<= 1;
 				
 			// Should we pick it up for ammo?
-			if (CurAmmo < MaxAmmo - ClipSize)
-				return 1;
+			if (CurAmmo < ((MaxAmmo - ClipSize) >> 1))
+				return 1 | BCP_LOW;
+			else if (CurAmmo < (MaxAmmo - ClipSize))
+				return 1 | BCP_NONE;
 			else
 				return 0;
 		}
@@ -77,14 +84,14 @@ static int B_CheckWeapon(bmind_t* mind, mobj_t* target, bmocheck_t* check, void*
 	
 	/* We don't own it so we can freely pick it up! */
 	else
-		return 1;
+		return 1 | check->pform;
 }
 
 /* B_CheckMonster() -- Checks a monster to determine if it's worth attacking */
 static int B_CheckMonster(bmind_t* mind, mobj_t* target, bmocheck_t* check, void* data)
 {
 	if (target->health > 0)
-		return 1;
+		return 1 | check->pform;
 	else
 		return 0;
 }
@@ -95,7 +102,7 @@ static int B_CheckPlayer(bmind_t* mind, mobj_t* target, bmocheck_t* check, void*
 	if (deathmatch)
 	{
 		if (target->health > 0)
-			return 1;
+			return 1 | check->pform;
 		else
 			return 0;
 	}
@@ -103,16 +110,28 @@ static int B_CheckPlayer(bmind_t* mind, mobj_t* target, bmocheck_t* check, void*
 		return 0;
 }
 
-/* B_CheckArmor() -- Checks a player to determine if it's worth picking up */
+/* B_CheckArmor() -- Checks armor to determine if it's worth picking up */
 static int B_CheckArmor(bmind_t* mind, mobj_t* target, bmocheck_t* check, void* data)
 {
 	if (mind->player->armorpoints < (((int)data) >> 1))
-		return 1;
+		return 1 | check->pform;
+	else
+		return 0;
+}
+
+/* B_CheckHealth() -- Checks health to determine if it's worth picking up */
+// priority matches input
+static int B_CheckHealth(bmind_t* mind, mobj_t* target, bmocheck_t* check, void* data)
+{
+	if (mind->player->health < (int)data)
+		return 1 | check->pform;
 	else
 		return 0;
 }
 
 /* B_CheckAmmo() -- Checks ammo to determine if it's worth picking up */
+// None = Current ammo is more than half the pickup range
+// Low  = Current ammo is less than half the pickup range
 static int B_CheckAmmo(bmind_t* mind, mobj_t* target, bmocheck_t* check, void* data)
 {
 	ammotype_t AmmoType = (int)data & 0xF;
@@ -123,8 +142,10 @@ static int B_CheckAmmo(bmind_t* mind, mobj_t* target, bmocheck_t* check, void* d
 	if (gameskill == sk_baby || gameskill == sk_nightmare)
 		ClipSize <<= 1;
 		
-	if (CurAmmo < MaxAmmo - ClipSize)
-		return 1;
+	if (CurAmmo < ((MaxAmmo - ClipSize) >> 1))
+		return 1 | BCP_LOW;
+	else if (CurAmmo < (MaxAmmo - ClipSize))
+		return 1 | BCP_NONE;
 	else
 		return 0;
 }
@@ -132,143 +153,143 @@ static int B_CheckAmmo(bmind_t* mind, mobj_t* target, bmocheck_t* check, void* d
 // Structure containing check info
 bmocheck_t BotMobjCheck[NUMMOBJTYPES] =
 {
-	{B_CheckPlayer, BMC_PLAYER, 0},			// MT_PLAYER
-	{B_CheckMonster, BMC_MONSTER, 0},		// MT_POSSESSED
-	{B_CheckMonster, BMC_MONSTER, 0},		// MT_SHOTGUY
-	{B_CheckMonster, BMC_MONSTER, 0},		// MT_VILE
-	{NULL, 0, 0},		// MT_FIRE
-	{B_CheckMonster, BMC_MONSTER, 0},		// MT_UNDEAD
-	{NULL, 0, 0},		// MT_TRACER
-	{NULL, 0, 0},		// MT_SMOKE
-	{B_CheckMonster, BMC_MONSTER, 0},		// MT_FATSO
-	{NULL, 0, 0},		// MT_FATSHOT
-	{B_CheckMonster, BMC_MONSTER, 0},		// MT_CHAINGUY
-	{B_CheckMonster, BMC_MONSTER, 0},		// MT_TROOP
-	{B_CheckMonster, BMC_MONSTER, 0},		// MT_SERGEANT
-	{B_CheckMonster, BMC_MONSTER, 0},		// MT_SHADOWS
-	{B_CheckMonster, BMC_MONSTER, 0},		// MT_HEAD
-	{B_CheckMonster, BMC_MONSTER, 0},		// MT_BRUISER
-	{NULL, 0, 0},		// MT_BRUISERSHOT
-	{B_CheckMonster, BMC_MONSTER, 0},		// MT_KNIGHT
-	{B_CheckMonster, BMC_MONSTER, 0},		// MT_SKULL
-	{B_CheckMonster, BMC_MONSTER, 0},		// MT_SPIDER
-	{B_CheckMonster, BMC_MONSTER, 0},		// MT_BABY
-	{B_CheckMonster, BMC_MONSTER, 0},		// MT_CYBORG
-	{B_CheckMonster, BMC_MONSTER, 0},		// MT_PAIN
-	{B_CheckMonster, BMC_MONSTER, 0},		// MT_WOLFSS
-	{B_CheckMonster, BMC_MONSTER, 0},		// MT_KEEN
-	{B_CheckMonster, BMC_MONSTER, 0},		// MT_BOSSBRAIN
-	{NULL, 0, 0},		// MT_BOSSSPIT
-	{NULL, 0, 0},		// MT_BOSSTARGET
-	{NULL, 0, 0},		// MT_SPAWNSHOT
-	{NULL, 0, 0},		// MT_SPAWNFIRE
-	{NULL, 0, 0},		// MT_BARREL
-	{NULL, 0, 0},		// MT_TROOPSHOT
-	{NULL, 0, 0},		// MT_HEADSHOT
-	{NULL, 0, 0},		// MT_ROCKET
-	{NULL, 0, 0},		// MT_PLASMA
-	{NULL, 0, 0},		// MT_BFG
-	{NULL, 0, 0},		// MT_ARACHPLAZ
-	{NULL, 0, 0},		// MT_PUFF
-	{NULL, 0, 0},		// MT_BLOOD
-	{NULL, 0, 0},		// MT_TFOG
-	{NULL, 0, 0},		// MT_IFOG
-	{NULL, 0, 0},		// MT_TELEPORTMAN
-	{NULL, 0, 0},		// MT_EXTRABFG
-	{B_CheckArmor, BMC_HEALTH, 100},		// MT_MISC0	-- Green Armor
-	{NULL, 0, 0},		// MT_MISC1
-	{NULL, 0, 0},		// MT_MISC2
-	{NULL, 0, 0},		// MT_MISC3
-	{NULL, 0, 0},		// MT_MISC4
-	{NULL, 0, 0},		// MT_MISC5
-	{NULL, 0, 0},		// MT_MISC6
-	{NULL, 0, 0},		// MT_MISC7
-	{NULL, 0, 0},		// MT_MISC8
-	{NULL, 0, 0},		// MT_MISC9
-	{NULL, 0, 0},		// MT_MISC10
-	{NULL, 0, 0},		// MT_MISC11
-	{NULL, 0, 0},		// MT_MISC12
-	{NULL, 0, 0},		// MT_INV
-	{NULL, 0, 0},		// MT_MISC13
-	{NULL, 0, 0},		// MT_INS
-	{NULL, 0, 0},		// MT_MISC14
-	{NULL, 0, 0},		// MT_MISC15
-	{NULL, 0, 0},		// MT_MISC16
-	{NULL, 0, 0},		// MT_MEGA
-	{B_CheckAmmo, BMC_AMMO, am_clip | 1 << 4},		// MT_CLIP
-	{B_CheckAmmo, BMC_AMMO, am_clip | 5 << 4},		// MT_MISC17
-	{B_CheckAmmo, BMC_AMMO, am_misl | 1 << 4},		// MT_MISC18
-	{B_CheckAmmo, BMC_AMMO, am_misl | 5 << 4},		// MT_MISC19
-	{B_CheckAmmo, BMC_AMMO, am_cell | 1 << 4},		// MT_MISC20
-	{B_CheckAmmo, BMC_AMMO, am_cell | 5 << 4},		// MT_MISC21
-	{B_CheckAmmo, BMC_AMMO, am_shell | 1 << 4},		// MT_MISC22
-	{B_CheckAmmo, BMC_AMMO, am_shell | 5 << 4},		// MT_MISC23
-	{NULL, 0, 0},		// MT_MISC24
-	{B_CheckWeapon, BMC_WEAPON, wp_bfg},			// MT_MISC25
-	{B_CheckWeapon, BMC_WEAPON, wp_chaingun},		// MT_CHAINGUN
-	{B_CheckWeapon, BMC_WEAPON, wp_chainsaw},		// MT_MISC26
-	{B_CheckWeapon, BMC_WEAPON, wp_missile},		// MT_MISC27
-	{B_CheckWeapon, BMC_WEAPON, wp_plasma},			// MT_MISC28
-	{B_CheckWeapon, BMC_WEAPON, wp_shotgun},		// MT_SHOTGUN
-	{B_CheckWeapon, BMC_WEAPON, wp_supershotgun},	// MT_SUPERSHOTGUN
-	{NULL, 0, 0},		// MT_MISC29
-	{NULL, 0, 0},		// MT_MISC30
-	{NULL, 0, 0},		// MT_MISC31
-	{NULL, 0, 0},		// MT_MISC32
-	{NULL, 0, 0},		// MT_MISC33
-	{NULL, 0, 0},		// MT_MISC34
-	{NULL, 0, 0},		// MT_MISC35
-	{NULL, 0, 0},		// MT_MISC36
-	{NULL, 0, 0},		// MT_MISC37
-	{NULL, 0, 0},		// MT_MISC38
-	{NULL, 0, 0},		// MT_MISC39
-	{NULL, 0, 0},		// MT_MISC40
-	{NULL, 0, 0},		// MT_MISC41
-	{NULL, 0, 0},		// MT_MISC42
-	{NULL, 0, 0},		// MT_MISC43
-	{NULL, 0, 0},		// MT_MISC44
-	{NULL, 0, 0},		// MT_MISC45
-	{NULL, 0, 0},		// MT_MISC46
-	{NULL, 0, 0},		// MT_MISC47
-	{NULL, 0, 0},		// MT_MISC48
-	{NULL, 0, 0},		// MT_MISC49
-	{NULL, 0, 0},		// MT_MISC50
-	{NULL, 0, 0},		// MT_MISC51
-	{NULL, 0, 0},		// MT_MISC52
-	{NULL, 0, 0},		// MT_MISC53
-	{NULL, 0, 0},		// MT_MISC54
-	{NULL, 0, 0},		// MT_MISC55
-	{NULL, 0, 0},		// MT_MISC56
-	{NULL, 0, 0},		// MT_MISC57
-	{NULL, 0, 0},		// MT_MISC58
-	{NULL, 0, 0},		// MT_MISC59
-	{NULL, 0, 0},		// MT_MISC60
-	{NULL, 0, 0},		// MT_MISC61
-	{NULL, 0, 0},		// MT_MISC62
-	{NULL, 0, 0},		// MT_MISC63
-	{NULL, 0, 0},		// MT_MISC64
-	{NULL, 0, 0},		// MT_MISC65
-	{NULL, 0, 0},		// MT_MISC66
-	{NULL, 0, 0},		// MT_MISC67
-	{NULL, 0, 0},		// MT_MISC68
-	{NULL, 0, 0},		// MT_MISC69
-	{NULL, 0, 0},		// MT_MISC70
-	{NULL, 0, 0},		// MT_MISC71
-	{NULL, 0, 0},		// MT_MISC72
-	{NULL, 0, 0},		// MT_MISC73
-	{NULL, 0, 0},		// MT_MISC74
-	{NULL, 0, 0},		// MT_MISC75
-	{NULL, 0, 0},		// MT_MISC76
-	{NULL, 0, 0},		// MT_MISC77
-	{NULL, 0, 0},		// MT_MISC78
-	{NULL, 0, 0},		// MT_MISC79
-	{NULL, 0, 0},		// MT_MISC80
-	{NULL, 0, 0},		// MT_MISC81
-	{NULL, 0, 0},		// MT_MISC82
-	{NULL, 0, 0},		// MT_MISC83
-	{NULL, 0, 0},		// MT_MISC84
-	{NULL, 0, 0},		// MT_MISC85
-	{NULL, 0, 0},		// MT_MISC86
+	{B_CheckPlayer, BMC_PLAYER, 0, BCP_HIGH},			// MT_PLAYER
+	{B_CheckMonster, BMC_MONSTER, 0, BCP_NONE},		// MT_POSSESSED
+	{B_CheckMonster, BMC_MONSTER, 0, BCP_LOW},		// MT_SHOTGUY
+	{B_CheckMonster, BMC_MONSTER, 0, BCP_HIGH},		// MT_VILE
+	{NULL, 0, 0, 0},		// MT_FIRE
+	{B_CheckMonster, BMC_MONSTER, 0, BCP_MEDIUM},		// MT_UNDEAD
+	{NULL, 0, 0, 0},		// MT_TRACER
+	{NULL, 0, 0, 0},		// MT_SMOKE
+	{B_CheckMonster, BMC_MONSTER, 0, BCP_MEDIUM},		// MT_FATSO
+	{NULL, 0, 0, 0},		// MT_FATSHOT
+	{B_CheckMonster, BMC_MONSTER, 0, BCP_LOW},		// MT_CHAINGUY
+	{B_CheckMonster, BMC_MONSTER, 0, BCP_LOW},		// MT_TROOP
+	{B_CheckMonster, BMC_MONSTER, 0, BCP_LOW},		// MT_SERGEANT
+	{B_CheckMonster, BMC_MONSTER, 0, BCP_LOW},		// MT_SHADOWS
+	{B_CheckMonster, BMC_MONSTER, 0, BCP_MEDIUM},		// MT_HEAD
+	{B_CheckMonster, BMC_MONSTER, 0, BCP_MEDIUM},		// MT_BRUISER
+	{NULL, 0, 0, 0},		// MT_BRUISERSHOT
+	{B_CheckMonster, BMC_MONSTER, 0, BCP_MEDIUM},		// MT_KNIGHT
+	{B_CheckMonster, BMC_MONSTER, 0, BCP_NONE},		// MT_SKULL
+	{B_CheckMonster, BMC_MONSTER, 0, BCP_HIGH},		// MT_SPIDER
+	{B_CheckMonster, BMC_MONSTER, 0, BCP_MEDIUM},		// MT_BABY
+	{B_CheckMonster, BMC_MONSTER, 0, BCP_HIGH},		// MT_CYBORG
+	{B_CheckMonster, BMC_MONSTER, 0, BCP_HIGH},		// MT_PAIN
+	{B_CheckMonster, BMC_MONSTER, 0, BCP_LOW},		// MT_WOLFSS
+	{B_CheckMonster, BMC_MONSTER, 0, BCP_HIGH},		// MT_KEEN
+	{B_CheckMonster, BMC_MONSTER, 0, BCP_NONE},		// MT_BOSSBRAIN
+	{NULL, 0, 0, 0},		// MT_BOSSSPIT
+	{NULL, 0, 0, 0},		// MT_BOSSTARGET
+	{NULL, 0, 0, 0},		// MT_SPAWNSHOT
+	{NULL, 0, 0, 0},		// MT_SPAWNFIRE
+	{NULL, 0, 0, 0},		// MT_BARREL
+	{NULL, 0, 0, 0},		// MT_TROOPSHOT
+	{NULL, 0, 0, 0},		// MT_HEADSHOT
+	{NULL, 0, 0, 0},		// MT_ROCKET
+	{NULL, 0, 0, 0},		// MT_PLASMA
+	{NULL, 0, 0, 0},		// MT_BFG
+	{NULL, 0, 0, 0},		// MT_ARACHPLAZ
+	{NULL, 0, 0, 0},		// MT_PUFF
+	{NULL, 0, 0, 0},		// MT_BLOOD
+	{NULL, 0, 0, 0},		// MT_TFOG
+	{NULL, 0, 0, 0},		// MT_IFOG
+	{NULL, 0, 0, 0},		// MT_TELEPORTMAN
+	{NULL, 0, 0, 0},		// MT_EXTRABFG
+	{B_CheckArmor, BMC_ARMOR, 100, BCP_LOW},		// MT_MISC0	-- Green Armor
+	{B_CheckArmor, BMC_ARMOR, 200, BCP_MEDIUM},		// MT_MISC1	-- Blue Armor
+	{B_CheckHealth, BMC_HEALTH, 200, BCP_NONE},		// MT_MISC2 -- Health Potion
+	{B_CheckArmor, BMC_ARMOR, 400, BCP_NONE},		// MT_MISC3 -- Armor Helmet
+	{NULL, 0, 0, 0},		// MT_MISC4
+	{NULL, 0, 0, 0},		// MT_MISC5
+	{NULL, 0, 0, 0},		// MT_MISC6
+	{NULL, 0, 0, 0},		// MT_MISC7
+	{NULL, 0, 0, 0},		// MT_MISC8
+	{NULL, 0, 0, 0},		// MT_MISC9
+	{B_CheckHealth, BMC_HEALTH, 90, BCP_LOW},		// MT_MISC10 -- Stimpack
+	{B_CheckHealth, BMC_HEALTH, 75, BCP_LOW},		// MT_MISC11 -- Medikit
+	{B_CheckHealth, BMC_HEALTH, 150, BCP_HIGH},		// MT_MISC12 -- Soulsphere
+	{NULL, 0, 0, 0},		// MT_INV
+	{B_CheckHealth, BMC_HEALTH, 25, BCP_MEDIUM},		// MT_MISC13 -- Bezerker
+	{NULL, 0, 0, 0},		// MT_INS
+	{NULL, 0, 0, 0},		// MT_MISC14
+	{NULL, 0, 0, 0},		// MT_MISC15
+	{NULL, 0, 0, 0},		// MT_MISC16
+	{NULL, 0, 0, 0},		// MT_MEGA
+	{B_CheckAmmo, BMC_AMMO, am_clip | (1 << 4), 0},		// MT_CLIP
+	{B_CheckAmmo, BMC_AMMO, am_clip | (5 << 4), 0},		// MT_MISC17
+	{B_CheckAmmo, BMC_AMMO, am_misl | (1 << 4), 0},		// MT_MISC18
+	{B_CheckAmmo, BMC_AMMO, am_misl | (5 << 4), 0},		// MT_MISC19
+	{B_CheckAmmo, BMC_AMMO, am_cell | (1 << 4), 0},		// MT_MISC20
+	{B_CheckAmmo, BMC_AMMO, am_cell | (5 << 4), 0},		// MT_MISC21
+	{B_CheckAmmo, BMC_AMMO, am_shell | (1 << 4), 0},		// MT_MISC22
+	{B_CheckAmmo, BMC_AMMO, am_shell | (5 << 4), 0},		// MT_MISC23
+	{NULL, 0, 0, 0},		// MT_MISC24
+	{B_CheckWeapon, BMC_WEAPON, wp_bfg, BCP_MEDIUM},			// MT_MISC25
+	{B_CheckWeapon, BMC_WEAPON, wp_chaingun, BCP_MEDIUM},		// MT_CHAINGUN
+	{B_CheckWeapon, BMC_WEAPON, wp_chainsaw, BCP_LOW},		// MT_MISC26
+	{B_CheckWeapon, BMC_WEAPON, wp_missile, BCP_MEDIUM},		// MT_MISC27
+	{B_CheckWeapon, BMC_WEAPON, wp_plasma, BCP_MEDIUM},			// MT_MISC28
+	{B_CheckWeapon, BMC_WEAPON, wp_shotgun, BCP_MEDIUM},		// MT_SHOTGUN
+	{B_CheckWeapon, BMC_WEAPON, wp_supershotgun, BCP_MEDIUM},	// MT_SUPERSHOTGUN
+	{NULL, 0, 0, 0},		// MT_MISC29
+	{NULL, 0, 0, 0},		// MT_MISC30
+	{NULL, 0, 0, 0},		// MT_MISC31
+	{NULL, 0, 0, 0},		// MT_MISC32
+	{NULL, 0, 0, 0},		// MT_MISC33
+	{NULL, 0, 0, 0},		// MT_MISC34
+	{NULL, 0, 0, 0},		// MT_MISC35
+	{NULL, 0, 0, 0},		// MT_MISC36
+	{NULL, 0, 0, 0},		// MT_MISC37
+	{NULL, 0, 0, 0},		// MT_MISC38
+	{NULL, 0, 0, 0},		// MT_MISC39
+	{NULL, 0, 0, 0},		// MT_MISC40
+	{NULL, 0, 0, 0},		// MT_MISC41
+	{NULL, 0, 0, 0},		// MT_MISC42
+	{NULL, 0, 0, 0},		// MT_MISC43
+	{NULL, 0, 0, 0},		// MT_MISC44
+	{NULL, 0, 0, 0},		// MT_MISC45
+	{NULL, 0, 0, 0},		// MT_MISC46
+	{NULL, 0, 0, 0},		// MT_MISC47
+	{NULL, 0, 0, 0},		// MT_MISC48
+	{NULL, 0, 0, 0},		// MT_MISC49
+	{NULL, 0, 0, 0},		// MT_MISC50
+	{NULL, 0, 0, 0},		// MT_MISC51
+	{NULL, 0, 0, 0},		// MT_MISC52
+	{NULL, 0, 0, 0},		// MT_MISC53
+	{NULL, 0, 0, 0},		// MT_MISC54
+	{NULL, 0, 0, 0},		// MT_MISC55
+	{NULL, 0, 0, 0},		// MT_MISC56
+	{NULL, 0, 0, 0},		// MT_MISC57
+	{NULL, 0, 0, 0},		// MT_MISC58
+	{NULL, 0, 0, 0},		// MT_MISC59
+	{NULL, 0, 0, 0},		// MT_MISC60
+	{NULL, 0, 0, 0},		// MT_MISC61
+	{NULL, 0, 0, 0},		// MT_MISC62
+	{NULL, 0, 0, 0},		// MT_MISC63
+	{NULL, 0, 0, 0},		// MT_MISC64
+	{NULL, 0, 0, 0},		// MT_MISC65
+	{NULL, 0, 0, 0},		// MT_MISC66
+	{NULL, 0, 0, 0},		// MT_MISC67
+	{NULL, 0, 0, 0},		// MT_MISC68
+	{NULL, 0, 0, 0},		// MT_MISC69
+	{NULL, 0, 0, 0},		// MT_MISC70
+	{NULL, 0, 0, 0},		// MT_MISC71
+	{NULL, 0, 0, 0},		// MT_MISC72
+	{NULL, 0, 0, 0},		// MT_MISC73
+	{NULL, 0, 0, 0},		// MT_MISC74
+	{NULL, 0, 0, 0},		// MT_MISC75
+	{NULL, 0, 0, 0},		// MT_MISC76
+	{NULL, 0, 0, 0},		// MT_MISC77
+	{NULL, 0, 0, 0},		// MT_MISC78
+	{NULL, 0, 0, 0},		// MT_MISC79
+	{NULL, 0, 0, 0},		// MT_MISC80
+	{NULL, 0, 0, 0},		// MT_MISC81
+	{NULL, 0, 0, 0},		// MT_MISC82
+	{NULL, 0, 0, 0},		// MT_MISC83
+	{NULL, 0, 0, 0},		// MT_MISC84
+	{NULL, 0, 0, 0},		// MT_MISC85
+	{NULL, 0, 0, 0},		// MT_MISC86
 };
 
 void B_LookForStuff(bmind_t* mind)
@@ -281,6 +302,8 @@ void B_LookForStuff(bmind_t* mind)
 	int AttackDistance = 8192;
 	int CurDist;
 	int inView = 0;
+	int priority = 0;
+	int priorityx = 0;
 	
 	while (currentthinker != &thinkercap)
 	{
@@ -302,30 +325,43 @@ void B_LookForStuff(bmind_t* mind)
 					(BotMobjCheck[thatmobj->type].type <= BMC_ARMOR))
 				{
 					if (!mind->GatherTarget)
-						if (BotMobjCheck[thatmobj->type].func(
+						if (priority = BotMobjCheck[thatmobj->type].func(
 								mind, thatmobj,
 								&BotMobjCheck[thatmobj->type],
 								BotMobjCheck[thatmobj->type].poff)
 							)
 						{
+							/* just this is needed */
 							if ((CurDist = B_BuildPath(mind, mind->player->mo->subsector,
-								thatmobj->subsector, BP_CHECKPATH)) < GatherDistance)
+								thatmobj->subsector, BP_CHECKPATH, priority >> 8)) < GatherDistance)
 							{
 								GatherDistance = CurDist;
 								NewGather = thatmobj;
+								priorityx = priority;
+							}
+
+#if 0
+							if ((CurDist = B_BuildPath(mind, mind->player->mo->subsector,
+								thatmobj->subsector, BP_CHECKPATH, priority >> 1)) < GatherDistance)
+							{
+								GatherDistance = CurDist;
+								NewGather = thatmobj;
+								priorityx = priority;
 							}
 							else if (P_CheckSight(mind->player->mo, thatmobj) &&
 								(CurDist = B_PathDistance(mind->player->mo, thatmobj)) < GatherDistance)
 							{
 								GatherDistance = CurDist;
 								NewGather = thatmobj;
+								priorityx = priority;
 							}
+#endif
 						}
 				}
 				else if ((BotMobjCheck[thatmobj->type].type >= BMC_PLAYER) &&
 						(BotMobjCheck[thatmobj->type].type <= BMC_MONSTER))
 						if (!mind->AttackTarget)
-							if (BotMobjCheck[thatmobj->type].func(
+							if (priority = BotMobjCheck[thatmobj->type].func(
 									mind, thatmobj,
 									&BotMobjCheck[thatmobj->type],
 									BotMobjCheck[thatmobj->type].poff)
@@ -339,13 +375,15 @@ void B_LookForStuff(bmind_t* mind)
 									AttackDistance = CurDist;
 									NewAttack = thatmobj;
 									inView = 1;
+									priorityx = priority;
 								}
 								else if ((CurDist = B_BuildPath(mind, mind->player->mo->subsector,
-									thatmobj->subsector, BP_CHECKPATH)) < AttackDistance)
+									thatmobj->subsector, BP_CHECKPATH, priority >> 8)) < AttackDistance)
 								{
 									AttackDistance = CurDist;
 									NewAttack = thatmobj;
 									inView = 0;
+									priorityx = priority;
 								}
 							}
 			}
@@ -362,7 +400,7 @@ void B_LookForStuff(bmind_t* mind)
 		// Check to see if we can easily walk to the item that we will pickup
 		if (!(B_CheckLine(mind, mind->player->mo->subsector, mind->GatherTarget->subsector)))
 			if (!mind->PathNodes[mind->PathIterator] && !mind->PathIterator)
-				B_BuildPath(mind, mind->player->mo->subsector, mind->GatherTarget->subsector, 0);
+				B_BuildPath(mind, mind->player->mo->subsector, mind->GatherTarget->subsector, 0, priorityx >> 8);
 	}
 	
 	if (NewAttack)
@@ -372,219 +410,8 @@ void B_LookForStuff(bmind_t* mind)
 		
 		if (!inView)
 			if (!mind->PathNodes[mind->PathIterator] && !mind->PathIterator)
-				B_BuildPath(mind, mind->player->mo->subsector, mind->AttackTarget->subsector, 0);
+				B_BuildPath(mind, mind->player->mo->subsector, mind->AttackTarget->subsector, 0, priorityx >> 8);
 	}
-	
-#if 0
-	player_t* player = mind->player;
-	size_t i, j;
-	thinker_t* currentthinker = thinkercap.next;
-	mobj_t* ourmobj = player->mo;
-	mobj_t* thatmobj = NULL;
-	int DoGather = 0;
-	int DoAttack = 0;
-	int GatherDistance = 10000;
-	int AttackDistance = 10000;
-	int DoPickup = 0;
-	int GoAttack = 0;
-	int AttackBySight = 0;
-	mobj_t* tGather = NULL;
-	mobj_t* tAttack = NULL;
-	
-	if (!mind->GatherTarget)
-		DoGather = 1;
-	if (!mind->AttackTarget)
-		DoAttack = 1;
-	
-	if (DoAttack || DoGather)
-		while (currentthinker != &thinkercap)
-		{
-			if ((currentthinker->function.acp1 == (actionf_p1)P_MobjThinker))
-			{
-				thatmobj = (mobj_t*)currentthinker;
-			
-				if (DoAttack)
-				{
-					GoAttack = 0;
-					
-					/* Thing has life > 0 */
-					if (thatmobj->health > 0)
-					{
-						/* Players */
-						if (thatmobj->type == MT_PLAYER)
-						{
-							if (thatmobj == player->mo);
-							{
-								currentthinker = currentthinker->next;
-								continue;
-							}
-							
-							// In Deathmatch, so we want it dead
-							if (deathmatch)
-							{
-								GoAttack = 1;
-							}
-					
-							// In Coop, so we want to protect it
-							else
-							{
-							}
-						}
-			
-						/* Monsters */
-						else if (((thatmobj->type >= MT_POSSESSED) && (thatmobj->type <= MT_VILE)) ||
-							(thatmobj->type == MT_UNDEAD) ||
-							(thatmobj->type == MT_FATSO) ||
-							((thatmobj->type >= MT_CHAINGUY) && (thatmobj->type <= MT_BRUISER)) ||
-							((thatmobj->type >= MT_KNIGHT) && (thatmobj->type <= MT_BOSSBRAIN)))
-						{
-							GoAttack = 1;
-						}
-					}
-					
-					if (GoAttack)
-					{
-						if (tAttack && thatmobj->health > tAttack->health)
-						{
-							if (B_BuildPath(mind, player->mo->subsector, thatmobj->subsector, BP_CHECKPATH) < AttackDistance)
-							{
-								AttackDistance = B_BuildPath(mind, player->mo->subsector, thatmobj->subsector, BP_CHECKPATH);
-								tAttack = thatmobj;
-							}
-							else if (P_CheckSight(player->mo, thatmobj))
-							{
-								AttackDistance = 64;
-								tAttack = thatmobj;
-							}
-						}
-						else if (!tAttack)
-						{
-							if (B_BuildPath(mind, player->mo->subsector, thatmobj->subsector, BP_CHECKPATH) < AttackDistance)
-							{
-								AttackDistance = B_BuildPath(mind, player->mo->subsector, thatmobj->subsector, BP_CHECKPATH);
-								tAttack = thatmobj;
-							}
-							else if (P_CheckSight(player->mo, thatmobj))
-							{
-								AttackDistance = 64;
-								tAttack = thatmobj;
-							}
-						}
-					}	
-				}
-			
-				if (DoGather)
-				{
-					DoPickup = 0;
-				
-					/* Health Items */
-					switch (thatmobj->type)
-					{
-						case MT_MISC2:	// Health Bonus
-							if (player->health < 200)
-								DoPickup = 1;
-							break;
-						case MT_MISC10:	// Stim pack
-							if (player->health < 90)
-								DoPickup = 1;
-							break;
-						case MT_MISC11:	// Medikit
-							if (player->health < 75)
-								DoPickup = 1;
-							break;
-						case MT_MISC12:	// Soul Sphere
-							if (player->health < 150)
-								DoPickup = 1;
-							break;
-						case MT_MISC13:	// Berzerker
-							if (player->health < 25)
-								DoPickup = 1;
-							break;
-						default:
-							break;
-					}
-			
-					/* Armor Items */
-			
-					/* Weapons */
-					if ((thatmobj->type >= MT_MISC25) && (thatmobj->type <= MT_SUPERSHOTGUN))
-					{
-						switch (thatmobj->type)
-						{
-							case MT_MISC25:			// BFG9000
-								if (!player->weaponowned[wp_bfg] || ISWEAPONAMMOWORTHIT(wp_bfg))
-									DoPickup = 1;
-								break;
-							case MT_CHAINGUN:		// Chaingun
-								if (!player->weaponowned[wp_chaingun] || ISWEAPONAMMOWORTHIT(wp_chaingun))
-									DoPickup = 1;
-								break;
-							case MT_MISC26:			// Chainsaw
-								if (!player->weaponowned[wp_chainsaw] || ISWEAPONAMMOWORTHIT(wp_chainsaw))
-									DoPickup = 1;
-								break;
-							case MT_MISC27:			// Rocket Launcher
-								if (!player->weaponowned[wp_missile] || ISWEAPONAMMOWORTHIT(wp_missile))
-									DoPickup = 1;
-								break;
-							case MT_MISC28:			// Plasma Gun
-								if (!player->weaponowned[wp_plasma] || ISWEAPONAMMOWORTHIT(wp_plasma))
-									DoPickup = 1;
-								break;
-							case MT_SHOTGUN:		// Shotgun
-								if (!player->weaponowned[wp_shotgun] || ISWEAPONAMMOWORTHIT(wp_shotgun))
-									DoPickup = 1;
-								break;
-							case MT_SUPERSHOTGUN:	// Super Shotgun
-								if (!player->weaponowned[wp_supershotgun] || ISWEAPONAMMOWORTHIT(wp_supershotgun))
-									DoPickup = 1;
-								break;
-							default:
-								break;
-						}
-					}
-			
-					/* Ammo */
-					if ((thatmobj->type >= MT_CLIP) && (thatmobj->type <= MT_MISC24))
-					{
-					}
-			
-					/* Keys */
-					if ((thatmobj->type >= MT_MISC4) && (thatmobj->type <= MT_MISC9))
-					{
-					}
-				
-					if (DoPickup)
-						if (B_BuildPath(mind, player->mo->subsector, thatmobj->subsector, BP_CHECKPATH) < GatherDistance)
-						{
-							GatherDistance = B_BuildPath(mind, player->mo->subsector, thatmobj->subsector, BP_CHECKPATH);
-							tGather = thatmobj;
-						}
-				}
-			}
-		
-			// Next Thinker
-			currentthinker = currentthinker->next;
-		}
-	
-	// Build a path
-	if (DoGather && tGather)
-	{
-		mind->GatherTarget = tGather;
-		mind->flags |= BF_GATHERING;
-		if (!mind->PathNodes[mind->PathIterator] && !mind->PathIterator)
-			B_BuildPath(mind, player->mo->subsector, mind->GatherTarget->subsector, 0);
-	}
-	
-	// Attack enemy
-	if (DoAttack && tAttack)
-	{
-		mind->AttackTarget = tAttack;
-		mind->flags |= BF_ATTACKING;
-		if (!mind->PathNodes[mind->PathIterator] && !mind->PathIterator)
-			B_BuildPath(mind, player->mo->subsector, mind->AttackTarget->subsector, 0);
-	}
-#endif
 }
 
 /* B_PathDistance() -- Distance between nodes in normal ints */
@@ -598,7 +425,7 @@ int B_PathDistance(bnode_t* a, bnode_t* b)
 #endif
 
 /* B_BuildPath() -- Build path to the target and return the distance */
-int B_BuildPath(bmind_t* mind, subsector_t* src, subsector_t* dest, int flags)
+int B_BuildPath(bmind_t* mind, subsector_t* src, subsector_t* dest, int flags, int priority)
 {
 	size_t i, j;
 	int realdistance = BOTBADPATH;
@@ -621,7 +448,81 @@ int B_BuildPath(bmind_t* mind, subsector_t* src, subsector_t* dest, int flags)
 		realdistance = actualdistance;
 	}
 	
-	/* No straight path exists */
+	/* No straight path exists -- priority is used here */
+	else
+	{
+		switch (priority)
+		{
+			/* Dijkstra (Shortest Path) */
+			case 3:
+				//break;
+			
+			/* BFS (First Path) */
+			case 2:
+				//break;
+			
+			/* SECTOR TO SECTOR (Shortest Path) */	
+			case 1:
+				ssx = src->sector - sectors;
+				dsx = dest->sector - sectors;
+				eax = 0;
+		
+				// BotSectorNodes = Pointer to an array that contains a sector list
+				while (BotSectorNodes[ssx][eax] != NULL)
+				{
+					curss = BotSectorNodes[ssx][eax];
+					actualdistance = 0;
+			
+					if (B_CheckLine(mind, curss, dest))
+					{
+						actualdistance = B_PathDistance(&BotNodes[src - subsectors], &BotNodes[curss - subsectors]);
+						actualdistance += B_PathDistance(&BotNodes[curss - subsectors], &BotNodes[dest - subsectors]);
+				
+						if (actualdistance < realdistance)
+						{
+							list[0] = &BotNodes[curss - subsectors];
+							list[1] = &BotNodes[dest - subsectors];
+				
+							realdistance = actualdistance;
+						}
+					}
+			
+					eax++;
+				}
+				break;
+			
+			/* SECTOR TO SECTOR (First Path) */
+			default:
+				ssx = src->sector - sectors;
+				dsx = dest->sector - sectors;
+				eax = 0;
+		
+				// BotSectorNodes = Pointer to an array that contains a sector list
+				while (BotSectorNodes[ssx][eax] != NULL)
+				{
+					curss = BotSectorNodes[ssx][eax];
+					actualdistance = 0;
+					
+					// If the line checks out, end the loop and set this as the path
+					if (B_CheckLine(mind, curss, dest))
+					{
+						actualdistance = B_PathDistance(&BotNodes[src - subsectors], &BotNodes[curss - subsectors]);
+						actualdistance += B_PathDistance(&BotNodes[curss - subsectors], &BotNodes[dest - subsectors]);
+				
+						list[0] = &BotNodes[curss - subsectors];
+						list[1] = &BotNodes[dest - subsectors];
+			
+						realdistance = actualdistance;
+						break;
+					}
+			
+					eax++;
+				}
+				break;
+		}
+	}
+	
+#if 0
 	else
 	{
 		ssx = src->sector - sectors;
@@ -647,12 +548,14 @@ int B_BuildPath(bmind_t* mind, subsector_t* src, subsector_t* dest, int flags)
 					list[1] = &BotNodes[dest - subsectors];
 				
 					realdistance = actualdistance;
+					break;
 				}
 			}
 			
 			eax++;
 		}
 	}
+#endif
 	
 	// Create path in the bot's mind
 	if (!(flags & BP_CHECKPATH))

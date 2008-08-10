@@ -451,16 +451,7 @@ void B_InitializeForLevel(void)
 					
 					BotReject[i][j].DynSectors = Z_Malloc(sizeof(sector_t*) * (k + 1), PU_STATIC, NULL);
 					memset(BotReject[i][j].DynSectors, 0, sizeof(sector_t*) * (k + 1));
-					
-					Rover = tDynList;
-					Mover = BotReject[i][j].DynSectors;
-					while (*Rover)
-					{
-						*Mover = *Rover;
-						
-						Mover++;
-						Rover++;
-					}
+					memcpy(BotReject[i][j].DynSectors, tDynList, sizeof(sector_t*) * k);
 				}
 				
 				if (tDynList)
@@ -523,7 +514,6 @@ int B_CheckLine(bmind_t* mind, subsector_t* src, subsector_t* dest)
 		if (rej->DynSectors)
 		{
 			Rover = rej->DynSectors;
-			printf("?");
 			
 			while (*Rover)
 			{
