@@ -261,6 +261,8 @@ void B_BuildTicCommand(ticcmd_t* cmd, int playernum)
 	int mx, my;
 	int nx, ny;
 	int* timer;
+	int px;
+	int terminate;
 	
 	if (gamestate == GS_INTERMISSION)
 	{
@@ -387,8 +389,46 @@ void B_BuildTicCommand(ticcmd_t* cmd, int playernum)
 			// If we happen to have landed in a sector where we can't possibly get to our goal
 			if (!B_CheckLine(mind, player->mo->subsector, mind->PathNodes[mind->PathIterator]->subsector))
 			{
-				memset(mind->PathNodes, 0, sizeof(mind->PathNodes));
-				mind->PathIterator = 0;
+				// Increment the failcount
+				mind->failcount++;
+				
+				px = mind->priority + (mind->failcount >> 1);
+				
+				if (px > 3)
+					px = 3;
+					
+				terminate = 0;
+				
+				// Attempt to rebuild the path
+				if (mind->failcount < (1 << 4))
+				{
+					if (B_BuildPath(mind, mind->player->mo->subsector, mind->GatherTarget->subsector, 0, px) == BOTBADPATH)
+						terminate = 1;
+				}
+				else
+					terminate = 1;
+				
+				if (terminate)
+				{
+					// Failed too many times, drop the path and ignore the item
+					if (mind->GatherTarget)
+					{
+						mind->failtype = mind->GatherTarget->type;
+						mind->GatherTarget = NULL;
+					}
+					
+					mind->failcount = 0;
+					mind->priority = 0;
+					
+					// There was obviously an error in the node system
+					if (mind->PathIterator)
+						BotReject[mind->PathNodes[mind->PathIterator - 1]->subsector - subsectors]
+							[mind->PathNodes[mind->PathIterator]->subsector - subsectors].Mode = 0;
+					
+					// Clear Path
+					memset(mind->PathNodes, 0, sizeof(mind->PathNodes));
+					mind->PathIterator = 0;
+				}
 			}
 			
 			// If we reached the destination, iterate
@@ -400,6 +440,7 @@ void B_BuildTicCommand(ticcmd_t* cmd, int playernum)
 					{
 						memset(mind->PathNodes, 0, sizeof(mind->PathNodes));
 						mind->PathIterator = 0;
+						mind->failcount = 0;
 					}
 				}
 		}
@@ -411,7 +452,7 @@ void B_BuildTicCommand(ticcmd_t* cmd, int playernum)
 			if (!P_CheckSight(player->mo, mind->GatherTarget) &&
 				B_CheckLine(mind, player->mo->subsector, mind->GatherTarget->subsector))
 			{
-				if (B_BuildPath(mind, mind->player->mo->subsector, mind->GatherTarget->subsector, 0, 0) == BOTBADPATH)
+				if (B_BuildPath(mind, mind->player->mo->subsector, mind->GatherTarget->subsector, 0, mind->priority) == BOTBADPATH)
 					mind->GatherTarget = NULL;
 			}
 			// We are trying to go for a straight path to the item but we can't get to it

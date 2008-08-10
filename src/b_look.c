@@ -183,7 +183,7 @@ bmocheck_t BotMobjCheck[NUMMOBJTYPES] =
 	{NULL, 0, 0, 0},		// MT_BOSSTARGET
 	{NULL, 0, 0, 0},		// MT_SPAWNSHOT
 	{NULL, 0, 0, 0},		// MT_SPAWNFIRE
-	{NULL, 0, 0, 0},		// MT_BARREL
+	{B_CheckMonster, BMC_MONSTER, 0, BCP_NONE},		// MT_BARREL
 	{NULL, 0, 0, 0},		// MT_TROOPSHOT
 	{NULL, 0, 0, 0},		// MT_HEADSHOT
 	{NULL, 0, 0, 0},		// MT_ROCKET
@@ -324,7 +324,7 @@ void B_LookForStuff(bmind_t* mind)
 				if ((BotMobjCheck[thatmobj->type].type >= BMC_WEAPON) &&
 					(BotMobjCheck[thatmobj->type].type <= BMC_ARMOR))
 				{
-					if (!mind->GatherTarget)
+					if (!mind->GatherTarget && thatmobj->type != mind->failtype)
 						if (priority = BotMobjCheck[thatmobj->type].func(
 								mind, thatmobj,
 								&BotMobjCheck[thatmobj->type],
@@ -397,10 +397,13 @@ void B_LookForStuff(bmind_t* mind)
 		mind->GatherTarget = NewGather;
 		mind->flags |= BF_GATHERING;
 		
-		// Check to see if we can easily walk to the item that we will pickup
-		if (!(B_CheckLine(mind, mind->player->mo->subsector, mind->GatherTarget->subsector)))
-			if (!mind->PathNodes[mind->PathIterator] && !mind->PathIterator)
-				B_BuildPath(mind, mind->player->mo->subsector, mind->GatherTarget->subsector, 0, priorityx >> 8);
+		if (!mind->PathNodes[mind->PathIterator] && !mind->PathIterator)
+		{
+			B_BuildPath(mind, mind->player->mo->subsector, mind->GatherTarget->subsector, 0, priorityx >> 8);
+			mind->priority = priorityx >> 8;
+			mind->failcount = 0;
+			mind->failtype = -1;
+		}
 	}
 	
 	if (NewAttack)
@@ -410,7 +413,11 @@ void B_LookForStuff(bmind_t* mind)
 		
 		if (!inView)
 			if (!mind->PathNodes[mind->PathIterator] && !mind->PathIterator)
-				B_BuildPath(mind, mind->player->mo->subsector, mind->AttackTarget->subsector, 0, priorityx >> 8);
+			{
+				B_BuildPath(mind, mind->player->mo->subsector, mind->AttackTarget->subsector, 0, priorityx >> 8);		
+				mind->priority = priorityx >> 8;
+				mind->failcount = 0;
+			}
 	}
 }
 

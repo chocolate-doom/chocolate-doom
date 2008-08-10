@@ -293,6 +293,7 @@ void B_InitializeForLevel(void)
 	{
 		BotMinds[i].player = &players[i];
 		BotMinds[i].flags = BF_EXPLORING;
+		BotMinds[i].failtype = -1;
 	}
 	
 	/* Free Previous Nodes */

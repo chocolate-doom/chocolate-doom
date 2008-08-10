@@ -52,6 +52,9 @@ typedef struct bmind_s
 	/* Path */
 	int PathIterator;
 	bnode_t* PathNodes[MAXPATHSEGMENTS];
+	int priority;
+	int failcount;
+	int failtype;
 	
 	/* Gathering */
 	mobj_t* GatherTarget;
