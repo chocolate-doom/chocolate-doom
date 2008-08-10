@@ -195,6 +195,61 @@ int B_CheckFriendlyFire(bmind_t* mind)
 			PT_ADDTHINGS, B_PTR_FFCheck);
 }
 
+int dopress = 0;
+bmind_t* mindx = NULL;
+
+int B_PTR_PressCheck(intercept_t* in)
+{
+    int		side;
+	
+    if (!in->d.line->special)
+    {
+		P_LineOpening(in->d.line);
+		if (openrange <= 0) // can't use through a wall
+			return false;	
+		
+		return true; // not a special line, but keep checking
+    }
+	
+    /*side = 0;
+    
+    if (P_PointOnLineSide (mindx->player->mo->x, mindx->player->mo->y, in->d.line) == 1)
+		side = 1;*/
+	
+	// togglable door!
+	switch (in->d.line->special)
+	{
+		case 1:
+		case 117:
+			if (in->d.line->backsector->ceilingheight == in->d.line->backsector->floorheight)
+				dopress = 1;
+			return false;
+			
+		default:
+			return false;
+	}
+}
+
+int B_CheckPress(bmind_t* mind)
+{
+	dopress = 0;
+	mindx = mind;
+	
+	if (!mind)
+		return 0;
+	if (!mind->player)
+		return 0;
+	if (!mind->player->mo)
+		return 0;
+	
+	P_PathTraverse(mind->player->mo->x, mind->player->mo->y,
+		mind->player->mo->x + ((USERANGE>>FRACBITS)*finecosine[mind->player->mo->angle >> ANGLETOFINESHIFT]),
+		mind->player->mo->y + ((USERANGE>>FRACBITS)*finesine[mind->player->mo->angle >> ANGLETOFINESHIFT]),
+		PT_ADDLINES, B_PTR_PressCheck);
+	
+	return dopress;
+}
+
 int EnterTic = 0;
 
 void B_BuildTicCommand(ticcmd_t* cmd, int playernum)
@@ -261,14 +316,6 @@ void B_BuildTicCommand(ticcmd_t* cmd, int playernum)
 						mind->AttackTarget->y,
 						mind->AttackTarget->z,
 						MT_TFOG);
-						
-				for (i = 0; i < NumBotNodes; i++)
-					if (BotReject[player->mo->subsector - subsectors][i])
-						P_SpawnMobj(
-						BotNodes[i].x,
-						BotNodes[i].y,
-						BotNodes[i].subsector->sector->floorheight,
-						MT_PUFF);
 			}
 		}
 		
@@ -321,6 +368,11 @@ void B_BuildTicCommand(ticcmd_t* cmd, int playernum)
 		/* Follow a path */
 		if (mind->PathNodes[mind->PathIterator])
 		{
+			if (B_CheckPress(mind))
+				cmd->buttons |= BT_USE;
+			else
+				cmd->buttons &= ~BT_USE;
+			
 			/*if (mind->AttackTarget)
 			{
 				B_FaceMobj(mind, cmd, mind->AttackTarget);
@@ -333,7 +385,7 @@ void B_BuildTicCommand(ticcmd_t* cmd, int playernum)
 			/*}*/
 			
 			// If we happen to have landed in a sector where we can't possibly get to our goal
-			if (!BotReject[player->mo->subsector - subsectors][mind->PathNodes[mind->PathIterator]->subsector - subsectors])
+			if (!B_CheckLine(mind, player->mo->subsector, mind->PathNodes[mind->PathIterator]->subsector))
 			{
 				memset(mind->PathNodes, 0, sizeof(mind->PathNodes));
 				mind->PathIterator = 0;
@@ -355,15 +407,15 @@ void B_BuildTicCommand(ticcmd_t* cmd, int playernum)
 		/* Run tword an item*/
 		else if (mind->GatherTarget)
 		{
-			// If we can't see the item but out reject says we can get to it, plot a new path
+			// If we can't see the item but our reject says we can get to it, plot a new path
 			if (!P_CheckSight(player->mo, mind->GatherTarget) &&
-				BotReject[player->mo->subsector - subsectors][mind->GatherTarget->subsector - subsectors])
+				B_CheckLine(mind, player->mo->subsector, mind->GatherTarget->subsector))
 			{
 				if (B_BuildPath(mind, mind->player->mo->subsector, mind->GatherTarget->subsector, 0) == BOTBADPATH)
 					mind->GatherTarget = NULL;
 			}
 			// We are trying to go for a straight path to the item but we can't get to it
-			else if (!BotReject[player->mo->subsector - subsectors][mind->GatherTarget->subsector - subsectors])
+			else if (!B_CheckLine(mind, player->mo->subsector, mind->GatherTarget->subsector))
 				mind->GatherTarget = NULL;
 			// None of the above
 			else

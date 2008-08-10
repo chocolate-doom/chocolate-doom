@@ -79,14 +79,80 @@ typedef struct bmocheck_s
 	void* poff;
 } bmocheck_t;
 
+/** Instead of having multiple arrays which will waste space in the future? **/
+/*
+	such as: sector_t**** BotDynSectors
+			1d --> Source SubSector (array -> destination)
+			2d --> Destination SubSector (array -> pointer list)
+			3d --> NULL terminated list of dynamic sectors on the way (array -> contents)
+			$$ --> Pointer to a sector
+			
+		I'm on 64-bit so a pointer is 8 bytes, then let's say there are 100
+		nodes... this is a three dimensional array, but let's assume no path
+		has dynamic sectors in the way...
+
+		[i]         [j]
+		(8 * 100) * (8 * 100) =
+			  800 *       800 = 640,000 Bytes (625 KiB)
+		
+	original was: UInt** BotReject
+			1d --> Source Subsector (array -> destination value)
+			2d --> Destination Subsector
+			$$ --> 1 if a path is possible
+	
+		[i]         [j]
+		(8 * 100) * (1 * 100) =
+		      800 *       100 = 80,000 Bytes (78 KiB)
+	          
+	new is:
+			1d --> Source Subsector (array->destination
+			2d --> Destination Subsector
+			$$ --> Structure
+		
+		Struct is 1 + 8 = 9
+		
+		[i]         [j]
+		(8 * 100) * (9 * 100) =
+		      800 *       900 = 720,000 Bytes (703 KiB)
+		
+	totals:
+			  640,000 Bytes (625 KiB)
+			+  80,000 Bytes ( 78 KiB)
+		=============================
+		      720,000 Bytes (703 KiB)
+		      
+	I don't know but it could save in the future? since the first bit is always
+	8 * 100
+*/
+
+#define BRM_BLUEKEY		2	// A dynamic sector requires a blue key
+#define BRM_REDKEY		4	// "    "      "        "    a red key
+#define BRM_YELLOWKEY	8	// "    "      "        "    a yellow key
+#define BRM_BLUESKULL	16	// "    "      "        "    a blue skull
+#define BRM_REDSKULL	32	// "    "      "        "    a red skull
+#define BRM_YELLOWSKULL	64	// "    "      "        "    a yellow skull
+
+typedef struct brejectinfo_s
+{
+	UInt8 Mode;				// if first bit is set, path is possible
+	
+	sector_t** DynSectors;	// Sectors that must be checked to see if there is
+							// a clear path. Dynamic sectors 
+	// Checked in this order ---->
+	// [First Sector] [Next Sector] ...
+} brejectinfo_t;
+
+extern brejectinfo_t** BotReject;
+
 extern bmocheck_t BotMobjCheck[NUMMOBJTYPES];
 extern size_t NumBotNodes;
 extern size_t NumBotSectors;
 extern bnode_t* BotNodes;
-extern UInt8** BotReject;
 extern bmind_t BotMinds[4];
 extern bnode_t*** BotSectorNodes;
 
+int B_CheckLine(bmind_t* mind, subsector_t* src, subsector_t* dest);
+#define B_CheckLineInt(a,s,d) B_CheckLine((a), subsectors + (b), subsectors + (d))
 int B_BuildPath(bmind_t* mind, subsector_t* src, subsector_t* dest, int flags);
 void B_LookForStuff(bmind_t* mind);
 void B_BuildTicCommand(ticcmd_t* cmd, int playernum);

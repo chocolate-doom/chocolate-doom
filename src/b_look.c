@@ -103,6 +103,32 @@ static int B_CheckPlayer(bmind_t* mind, mobj_t* target, bmocheck_t* check, void*
 		return 0;
 }
 
+/* B_CheckArmor() -- Checks a player to determine if it's worth picking up */
+static int B_CheckArmor(bmind_t* mind, mobj_t* target, bmocheck_t* check, void* data)
+{
+	if (mind->player->armorpoints < (((int)data) >> 1))
+		return 1;
+	else
+		return 0;
+}
+
+/* B_CheckAmmo() -- Checks ammo to determine if it's worth picking up */
+static int B_CheckAmmo(bmind_t* mind, mobj_t* target, bmocheck_t* check, void* data)
+{
+	ammotype_t AmmoType = (int)data & 0xF;
+	int MaxAmmo = mind->player->maxammo[AmmoType];
+	int CurAmmo = mind->player->ammo[AmmoType];
+	int ClipSize = clipammo[AmmoType] * ((int)data >> 4);
+	
+	if (gameskill == sk_baby || gameskill == sk_nightmare)
+		ClipSize <<= 1;
+		
+	if (CurAmmo < MaxAmmo - ClipSize)
+		return 1;
+	else
+		return 0;
+}
+
 // Structure containing check info
 bmocheck_t BotMobjCheck[NUMMOBJTYPES] =
 {
@@ -149,7 +175,7 @@ bmocheck_t BotMobjCheck[NUMMOBJTYPES] =
 	{NULL, 0, 0},		// MT_IFOG
 	{NULL, 0, 0},		// MT_TELEPORTMAN
 	{NULL, 0, 0},		// MT_EXTRABFG
-	{NULL, 0, 0},		// MT_MISC0
+	{B_CheckArmor, BMC_HEALTH, 100},		// MT_MISC0	-- Green Armor
 	{NULL, 0, 0},		// MT_MISC1
 	{NULL, 0, 0},		// MT_MISC2
 	{NULL, 0, 0},		// MT_MISC3
@@ -169,14 +195,14 @@ bmocheck_t BotMobjCheck[NUMMOBJTYPES] =
 	{NULL, 0, 0},		// MT_MISC15
 	{NULL, 0, 0},		// MT_MISC16
 	{NULL, 0, 0},		// MT_MEGA
-	{NULL, 0, 0},		// MT_CLIP
-	{NULL, 0, 0},		// MT_MISC17
-	{NULL, 0, 0},		// MT_MISC18
-	{NULL, 0, 0},		// MT_MISC19
-	{NULL, 0, 0},		// MT_MISC20
-	{NULL, 0, 0},		// MT_MISC21
-	{NULL, 0, 0},		// MT_MISC22
-	{NULL, 0, 0},		// MT_MISC23
+	{B_CheckAmmo, BMC_AMMO, am_clip | 1 << 4},		// MT_CLIP
+	{B_CheckAmmo, BMC_AMMO, am_clip | 5 << 4},		// MT_MISC17
+	{B_CheckAmmo, BMC_AMMO, am_misl | 1 << 4},		// MT_MISC18
+	{B_CheckAmmo, BMC_AMMO, am_misl | 5 << 4},		// MT_MISC19
+	{B_CheckAmmo, BMC_AMMO, am_cell | 1 << 4},		// MT_MISC20
+	{B_CheckAmmo, BMC_AMMO, am_cell | 5 << 4},		// MT_MISC21
+	{B_CheckAmmo, BMC_AMMO, am_shell | 1 << 4},		// MT_MISC22
+	{B_CheckAmmo, BMC_AMMO, am_shell | 5 << 4},		// MT_MISC23
 	{NULL, 0, 0},		// MT_MISC24
 	{B_CheckWeapon, BMC_WEAPON, wp_bfg},			// MT_MISC25
 	{B_CheckWeapon, BMC_WEAPON, wp_chaingun},		// MT_CHAINGUN
@@ -334,7 +360,7 @@ void B_LookForStuff(bmind_t* mind)
 		mind->flags |= BF_GATHERING;
 		
 		// Check to see if we can easily walk to the item that we will pickup
-		if (!(BotReject[mind->player->mo->subsector - subsectors][mind->GatherTarget->subsector - subsectors]))
+		if (!(B_CheckLine(mind, mind->player->mo->subsector, mind->GatherTarget->subsector)))
 			if (!mind->PathNodes[mind->PathIterator] && !mind->PathIterator)
 				B_BuildPath(mind, mind->player->mo->subsector, mind->GatherTarget->subsector, 0);
 	}
@@ -587,7 +613,7 @@ int B_BuildPath(bmind_t* mind, subsector_t* src, subsector_t* dest, int flags)
 	memset(list, 0, sizeof(list));
 	
 	/* Check for a straight path */
-	if (BotReject[src - subsectors][dest - subsectors])
+	if (B_CheckLine(mind, src, dest))
 	{
 		list[0] = &BotNodes[dest - subsectors];
 		actualdistance = B_PathDistance(&BotNodes[src - subsectors], list[0]);
@@ -610,7 +636,7 @@ int B_BuildPath(bmind_t* mind, subsector_t* src, subsector_t* dest, int flags)
 			curss = BotSectorNodes[ssx][eax];
 			actualdistance = 0;
 			
-			if (BotReject[curss - subsectors][dest - subsectors])
+			if (B_CheckLine(mind, curss, dest))
 			{
 				actualdistance = B_PathDistance(&BotNodes[src - subsectors], &BotNodes[curss - subsectors]);
 				actualdistance += B_PathDistance(&BotNodes[curss - subsectors], &BotNodes[dest - subsectors]);
