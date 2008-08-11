@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// Copyright(C) 2008 GhostlyDeath
+// Copyright(C) 2008 GhostlyDeath (ghostlydeath@gmail.com)
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -38,6 +38,7 @@ bnode_t* BotNodes = NULL;
 
 // Reject map for nodes
 brejectinfo_t** BotReject = NULL;
+UInt8* BotFinal = NULL;
 
 // Thinkers
 bmind_t BotMinds[4];
@@ -283,6 +284,11 @@ void B_InitializeForLevel(void)
 	size_t SizeUsed = 0;
 	sector_t** Rover;
 	sector_t** Mover;
+	Int16* Temp;
+	Int16* Temp2;
+	Int16* Zover;
+	Int16* Wover;
+	Int16 firstnum, lastnum;
 	
 	if (!M_CheckParm("-bot") && !M_CheckParm("-ingamebots"))
 		return;
@@ -298,7 +304,12 @@ void B_InitializeForLevel(void)
 	
 	/* Free Previous Nodes */
 	if (BotNodes)
+	{
+		for(i = 0; i < NumBotNodes; i++)
+			if (BotNodes[i].connections)
+				Z_Free(BotNodes[i].connections);
 		Z_Free(BotNodes);
+	}
 		
 	if (BotReject)
 	{
@@ -313,6 +324,9 @@ void B_InitializeForLevel(void)
 		
 		Z_Free(BotReject);
 	}
+	
+	if (BotFinal)
+		Z_Free(BotFinal);
 	
 	if (BotSectorNodes)
 	{
@@ -417,6 +431,11 @@ void B_InitializeForLevel(void)
 	Z_Free(subsectorcount);
 	if (botparm)
 		printf("Done!\n");
+		
+	/* For Searching trees */
+	BotFinal = Z_Malloc(sizeof(UInt8) * NumBotNodes, PU_STATIC, 0);
+	memset(BotFinal, 0, sizeof(UInt8) * NumBotNodes);
+	SizeUsed += sizeof(UInt8) * NumBotNodes;
 	
 	/* Subsector lookup table */
 	if (botparm)
@@ -453,6 +472,7 @@ void B_InitializeForLevel(void)
 					BotReject[i][j].DynSectors = Z_Malloc(sizeof(sector_t*) * (k + 1), PU_STATIC, NULL);
 					memset(BotReject[i][j].DynSectors, 0, sizeof(sector_t*) * (k + 1));
 					memcpy(BotReject[i][j].DynSectors, tDynList, sizeof(sector_t*) * k);
+					SizeUsed += sizeof(sector_t*) * (k + 1);
 				}
 				
 				if (tDynList)
@@ -463,6 +483,109 @@ void B_InitializeForLevel(void)
 			}
 		}
 	}
+	
+	if (botparm)
+		printf("Done!\n");
+	
+	/* Setup Connections */
+	if (botparm)
+		printf("Setting up connections...");
+		
+	Temp = Z_Malloc(sizeof(Int16) * NumBotNodes, PU_STATIC, 0);
+	Temp2 = Z_Malloc(sizeof(Int16) * NumBotNodes, PU_STATIC, 0);
+	for (i = 0; i < NumBotNodes; i++)
+	{
+		// Clear
+		memset(Temp, 0, sizeof(Int16) * NumBotNodes);
+		memset(Temp2, 0, sizeof(Int16) * NumBotNodes);
+		Zover = Temp;
+		firstnum = 0;
+		lastnum = 0;
+		
+		for (j = 0; j < NumBotNodes; j++)
+		{
+			// Ignore self
+			if (i == j)
+				continue;
+				
+			// Check reject -- always accept dynamic sectors too
+			if (BotReject[i][j].Mode)
+			{
+				*Zover = j;
+				Zover++;
+			}
+		}
+		
+		*Zover = -3;
+		
+		/* Count how many entries we will really create... */
+		k = 1;
+		Zover = Temp;
+		while (*Zover != -3)
+		{
+			firstnum = *Zover;
+			lastnum = *Zover;
+		
+			while (*Zover == (*(Zover+1) - 1))
+			{
+				lastnum = *Zover;
+				Zover++;
+			}
+		
+			// Alone
+			if (firstnum == lastnum)
+				k++;
+			// Group
+			else
+				k += 3;
+				
+			Zover++;
+		}
+		
+		// Create List
+		BotNodes[i].connections = Z_Malloc(sizeof(Int16) * k, PU_STATIC, NULL);
+		memset(BotNodes[i].connections, 0, sizeof(Int16) * k);
+		SizeUsed += sizeof(Int16) * k;
+		
+		// Copy list
+		Zover = Temp;
+		Wover = BotNodes[i].connections;
+		while (*Zover != -3)
+		{
+			firstnum = *Zover;
+			lastnum = *Zover;
+		
+			while (*Zover == (*(Zover+1) - 1))
+			{
+				lastnum = *Zover;
+				Zover++;
+			}
+		
+			// Alone
+			if (firstnum == lastnum)
+			{
+				*Wover = firstnum;
+				Wover++;
+			}
+			// Group
+			else
+			{
+				*Wover = -1;
+				Wover++;
+				*Wover = firstnum;
+				Wover++;
+				*Wover = lastnum;
+				Wover++;
+			}
+				
+			Zover++;
+		}
+		
+		*Wover = -2;
+	}
+	
+	Z_Free(Temp2);
+	Z_Free(Temp);
 	
 	if (botparm)
 		printf("Done!\n");

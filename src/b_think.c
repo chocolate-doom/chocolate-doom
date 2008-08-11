@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// Copyright(C) 2008 GhostlyDeath
+// Copyright(C) 2008 GhostlyDeath (ghostlydeath@gmail.com)
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -402,7 +402,7 @@ void B_BuildTicCommand(ticcmd_t* cmd, int playernum)
 				// Attempt to rebuild the path
 				if (mind->failcount < (1 << 4))
 				{
-					if (B_BuildPath(mind, mind->player->mo->subsector, mind->GatherTarget->subsector, 0, px) == BOTBADPATH)
+					if (B_BuildPath(mind, mind->player->mo->subsector, mind->PathNodes[mind->PathIterator]->subsector, 0, px) == BOTBADPATH)
 						terminate = 1;
 				}
 				else

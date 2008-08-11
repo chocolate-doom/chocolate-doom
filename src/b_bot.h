@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// Copyright(C) 2008 GhostlyDeath
+// Copyright(C) 2008 GhostlyDeath (ghostlydeath@gmail.com)
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -42,6 +42,8 @@ typedef struct bnode_s
 	fixed_t x;
 	fixed_t y;
 	subsector_t* subsector;
+	
+	Int16* connections;	// Subsectors connected to, -2 = end, -1 = linear set
 } bnode_t;
 
 typedef struct bmind_s
@@ -154,6 +156,7 @@ extern size_t NumBotSectors;
 extern bnode_t* BotNodes;
 extern bmind_t BotMinds[4];
 extern bnode_t*** BotSectorNodes;
+extern UInt8* BotFinal;
 
 int B_CheckLine(bmind_t* mind, subsector_t* src, subsector_t* dest);
 #define B_CheckLineInt(a,s,d) B_CheckLine((a), subsectors + (b), subsectors + (d))

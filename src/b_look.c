@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// Copyright(C) 2008 GhostlyDeath
+// Copyright(C) 2008 GhostlyDeath (ghostlydeath@gmail.com)
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -421,15 +421,18 @@ void B_LookForStuff(bmind_t* mind)
 	}
 }
 
-/* B_PathDistance() -- Distance between nodes in normal ints */
-#if 0
-int B_PathDistance(bnode_t* a, bnode_t* b)
+int B_BFSLink(bmind_t* mind, subsector_t* src, subsector_t* dest, bnode_t** listptr)
 {
-	return (int)sqrt(
-		pow(a->x >> FRACBITS, 2) +
-		pow(b->y >> FRACBITS, 2));
+	int dist = BOTBADPATH;
+	size_t it = 0;
+	
+	memset(BotFinal, 0, sizeof(UInt8) * NumBotNodes);
+	
+	// Visit the source
+	BotFinal[src - subsectors] = 1;
+	
+	return dist;
 }
-#endif
 
 /* B_BuildPath() -- Build path to the target and return the distance */
 int B_BuildPath(bmind_t* mind, subsector_t* src, subsector_t* dest, int flags, int priority)
@@ -466,6 +469,7 @@ int B_BuildPath(bmind_t* mind, subsector_t* src, subsector_t* dest, int flags, i
 			
 			/* BFS (First Path) */
 			case 2:
+				//realdistance = B_BFSLink(mind, src, dest, &list);
 				//break;
 			
 			/* SECTOR TO SECTOR (Shortest Path) */	
