@@ -57,6 +57,9 @@
 		<Unit filename="..\src\b_look.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\src\b_base.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="..\src\b_think.c">
 			<Option compilerVar="CC" />
 		</Unit>
