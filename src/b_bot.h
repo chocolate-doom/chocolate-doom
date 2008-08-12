@@ -177,6 +177,7 @@ int B_IsWeaponAmmoWorthIt(bmind_t* mind, weapontype_t wp);
 #define BF_DEFENDING		16
 
 #define B_PathDistance(a,b) ((int)sqrt(pow((((b)->x >> FRACBITS) - ((a)->x >> FRACBITS)), 2) + pow((((b)->y >> FRACBITS) - ((a)->y >> FRACBITS)), 2)))
+#define B_PathDistanceDirect(a,b) ((int)sqrt(pow((((b).x >> FRACBITS) - ((a).x >> FRACBITS)), 2) + pow((((b).y >> FRACBITS) - ((a).y >> FRACBITS)), 2)))
 #define ISWEAPONAMMOWORTHIT(a) B_IsWeaponAmmoWorthIt(mind, (a))
 
 #endif /* __B_BOT_H__ */

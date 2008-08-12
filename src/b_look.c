@@ -436,11 +436,12 @@ int B_BFSLink(bmind_t* mind, subsector_t* src, subsector_t* dest, bnode_t** list
 	Int16 Goal = dest - subsectors;
 	size_t i = 0, j = 0, k = 0;
 	bnode_t* t;
+	int fallout = 0;
 	
 	/* Allocate the Chunk */
 	Chunk = Z_Malloc(sizeof(Int16) * NumBotNodes * NumBotNodes, PU_STATIC, NULL);
 	Crumbs = Z_Malloc(sizeof(Int16) * NumBotNodes, PU_STATIC, NULL);
-	memset(Chunk, -1, sizeof(Int16) * NumBotNodes * NumBotNodes);
+	memset(Chunk, 0xFF, sizeof(Int16) * NumBotNodes * NumBotNodes);
 	memset(Crumbs, 0xFF, sizeof(Int16) * NumBotNodes);
 	In = Chunk;
 	Out = Chunk;
@@ -457,14 +458,16 @@ int B_BFSLink(bmind_t* mind, subsector_t* src, subsector_t* dest, bnode_t** list
 	// There may be no connections, be sure there are
 	if (Con)
 	{
+		BotFinal[*In] = 1;
+		
 		// Scan the input
 		while (*In != -1)
 		{
 			// If the input wasn't visited, visit it
-			if (!BotFinal[*In])
+			/*if (!BotFinal[*In])
 			{
 				// Visit self
-				BotFinal[*In] = 1;
+				BotFinal[*In] = 1;*/
 				
 				// Set the connection list to the node we shall visit
 				Con = BotNodes[*In].connections;
@@ -472,10 +475,10 @@ int B_BFSLink(bmind_t* mind, subsector_t* src, subsector_t* dest, bnode_t** list
 				if (Con)
 				{
 					// There are so let's add them
-					while (*Con != -2)
+					while (*Con != -1)
 					{
 						// Continual Array
-						if (*Con == -1)
+						if (*Con == -2)
 						{
 							Con++;
 							First = *Con;
@@ -492,7 +495,10 @@ int B_BFSLink(bmind_t* mind, subsector_t* src, subsector_t* dest, bnode_t** list
 									Crumbs[First + x] = *In;
 							
 									if (*Out == Goal)
-										goto wefoundamatch;
+									{
+										fallout = 1;
+										break;
+									}
 								
 									Out++;
 								}
@@ -509,64 +515,70 @@ int B_BFSLink(bmind_t* mind, subsector_t* src, subsector_t* dest, bnode_t** list
 								Crumbs[*Con] = *In;
 						
 								if (*Out == Goal)
-									goto wefoundamatch;
+								{
+									fallout = 1;
+									break;
+								}
 						
 								Out++;
 							}
 						
 							Con++;
 						}
+						
+						if (fallout)
+							break;
 					}
 				}
-			}
+			/*}*/
+			
+			if (fallout)
+				break;
 			
 			In++;
 		}
 	}
-
-normaltermination:
+	
+	if (fallout)
+	{
+		x = *Out;
+		i = 0;
+		dist = 0;
+	
+		while (x != -1)
+		{
+			listptr[i] = &BotNodes[x];
+		
+			if (x == Crumbs[x])
+				I_Error("Self referenced node!");
+			
+			x = Crumbs[x];
+			i++;
+		}
+	
+		printf("!!!#");
+	
+		k = i;
+	
+		for (j = 0; j < i; j++, i--)
+		{
+			t = listptr[j];
+			listptr[j] = listptr[i];
+			listptr[i] = t;
+		}
+	
+		dist = 0;
+	
+		for (i = 0; i < k - 1; i++)
+			dist += B_PathDistance(listptr[i], listptr[i+1]);
+	}
+	
 	/* Deallocate the Chunk */
 	Z_Free(Chunk);
 	Z_Free(Crumbs);
 	
+	printf("dist = %i\n", dist);
 	return dist;
-
-	/* They say gotos are bad... */	
-wefoundamatch:
-	x = *Out;
-	i = 0;
-	dist = 0;
-	
-	while (x != -1)
-	{
-		printf("%i: %i\n", x, i);
-		listptr[i] = &BotNodes[x];
-		
-		if (x == Crumbs[x])
-		{
-			printf("Self referenced node!");
-			break;
-		}
-			
-		x = Crumbs[x];
-		i++;
-	}
-	
-	k = i;
-	
-	for (j = 0; j < i; j++, i--)
-	{
-		t = listptr[j];
-		listptr[j] = listptr[i];
-		listptr[i] = t;
-	}
-	
-	dist = 0;
-	
-	for (i = 0; i < k - 2; k++)
-		dist += B_PathDistance(listptr[i], listptr[i+1]);
-	
-	goto normaltermination;
 	
 #if 0
 	int dist = BOTBADPATH;

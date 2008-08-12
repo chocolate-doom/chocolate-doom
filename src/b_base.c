@@ -502,7 +502,7 @@ void B_InitializeForLevel(void)
 #endif
 	for (x = 0; x < NumBotNodes; x++)
 	{
-		k = 0;
+		k = 1;
 		
 		for (y = 0; y < NumBotNodes; y++)
 			if (BotReject[x][y].Mode)
@@ -521,7 +521,7 @@ void B_InitializeForLevel(void)
 				tmp++;
 			}
 		
-		BotNodes[x].connections[tmp] = -2;
+		BotNodes[x].connections[tmp] = -1;
 #if 0
 		// Clear
 		memset(Temp, 0, sizeof(Int16) * NumBotNodes);
