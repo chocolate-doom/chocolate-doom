@@ -50,6 +50,7 @@
 
 void	P_SpawnMapThing (mapthing_t*	mthing);
 
+int flip = 0;
 
 //
 // MAP related Lookup tables.
@@ -145,8 +146,10 @@ void P_LoadVertexes (int lump)
     // internal representation as fixed.
     for (i=0 ; i<numvertexes ; i++, li++, ml++)
     {
-	li->x = SHORT(ml->x)<<FRACBITS;
-	li->y = SHORT(ml->y)<<FRACBITS;
+		li->x = SHORT(ml->x)<<FRACBITS;
+		li->y = SHORT(ml->y)<<FRACBITS;
+		if (flip)
+			li->x = -li->x;
     }
 
     // Free buffer memory.
@@ -167,6 +170,7 @@ void P_LoadSegs (int lump)
     line_t*		ldef;
     int			linedef;
     int			side;
+    int tmp;
 	
     numsegs = W_LumpLength (lump) / sizeof(mapseg_t);
     segs = Z_Malloc (numsegs*sizeof(seg_t),PU_LEVEL,0);	
@@ -177,21 +181,32 @@ void P_LoadSegs (int lump)
     li = segs;
     for (i=0 ; i<numsegs ; i++, li++, ml++)
     {
-	li->v1 = &vertexes[SHORT(ml->v1)];
-	li->v2 = &vertexes[SHORT(ml->v2)];
+    	if (flip)
+    	{
+    		tmp = ml->v1;
+    		ml->v1 = ml->v2;
+    		ml->v2 = tmp;
+    	}
+    	
+		li->v1 = &vertexes[SHORT(ml->v1)];
+		li->v2 = &vertexes[SHORT(ml->v2)];
 					
-	li->angle = (SHORT(ml->angle))<<16;
-	li->offset = (SHORT(ml->offset))<<16;
-	linedef = SHORT(ml->linedef);
-	ldef = &lines[linedef];
-	li->linedef = ldef;
-	side = SHORT(ml->side);
-	li->sidedef = &sides[ldef->sidenum[side]];
-	li->frontsector = sides[ldef->sidenum[side]].sector;
-	if (ldef-> flags & ML_TWOSIDED)
-	    li->backsector = sides[ldef->sidenum[side^1]].sector;
-	else
-	    li->backsector = 0;
+		li->angle = (SHORT(ml->angle))<<16;
+		
+		if (flip)
+			li->angle = -li->angle;
+		
+		li->offset = (SHORT(ml->offset))<<16;
+		linedef = SHORT(ml->linedef);
+		ldef = &lines[linedef];
+		li->linedef = ldef;
+		side = SHORT(ml->side);
+		li->sidedef = &sides[ldef->sidenum[side]];
+		li->frontsector = sides[ldef->sidenum[side]].sector;
+		if (ldef-> flags & ML_TWOSIDED)
+			li->backsector = sides[ldef->sidenum[side^1]].sector;
+		else
+			li->backsector = 0;
     }
 	
     Z_Free (data);
@@ -271,6 +286,7 @@ void P_LoadNodes (int lump)
     int		k;
     mapnode_t*	mn;
     node_t*	no;
+    fixed_t tmp;
 	
     numnodes = W_LumpLength (lump) / sizeof(mapnode_t);
     nodes = Z_Malloc (numnodes*sizeof(node_t),PU_LEVEL,0);	
@@ -281,16 +297,32 @@ void P_LoadNodes (int lump)
     
     for (i=0 ; i<numnodes ; i++, no++, mn++)
     {
-	no->x = SHORT(mn->x)<<FRACBITS;
-	no->y = SHORT(mn->y)<<FRACBITS;
-	no->dx = SHORT(mn->dx)<<FRACBITS;
-	no->dy = SHORT(mn->dy)<<FRACBITS;
-	for (j=0 ; j<2 ; j++)
-	{
-	    no->children[j] = SHORT(mn->children[j]);
-	    for (k=0 ; k<4 ; k++)
-		no->bbox[j][k] = SHORT(mn->bbox[j][k])<<FRACBITS;
-	}
+		no->x = SHORT(mn->x)<<FRACBITS;
+		no->y = SHORT(mn->y)<<FRACBITS;
+		no->dx = SHORT(mn->dx)<<FRACBITS;
+		no->dy = SHORT(mn->dy)<<FRACBITS;
+		
+		if (flip)
+		{
+			no->x += no->dx;
+			no->y += no->dy;
+			no->x = -no->x;
+			no->dy = -no->dy;
+		}
+	
+		for (j=0 ; j<2 ; j++)
+		{
+			no->children[j] = SHORT(mn->children[j]);
+			for (k=0 ; k<4 ; k++)
+			no->bbox[j][k] = SHORT(mn->bbox[j][k])<<FRACBITS;
+			
+			if (flip)
+			{
+				tmp = no->bbox[j][2];
+				no->bbox[j][2] = -no->bbox[j][3];
+				no->bbox[j][3] = -tmp;
+			}
+		}
     }
 	
     Z_Free (data);
@@ -341,7 +373,15 @@ void P_LoadThings (int lump)
 	// Do spawn all other stuff. 
 	mt->x = SHORT(mt->x);
 	mt->y = SHORT(mt->y);
+	
+	if (flip)
+		mt->x = -mt->x;
+	
 	mt->angle = SHORT(mt->angle);
+	
+	if (flip)
+		mt->angle = 180 - mt->angle;
+		
 	mt->type = SHORT(mt->type);
 	mt->options = SHORT(mt->options);
 	
@@ -364,6 +404,7 @@ void P_LoadLineDefs (int lump)
     line_t*		ld;
     vertex_t*		v1;
     vertex_t*		v2;
+    short tmp;
 	
     numlines = W_LumpLength (lump) / sizeof(maplinedef_t);
     lines = Z_Malloc (numlines*sizeof(line_t),PU_LEVEL,0);	
@@ -374,60 +415,67 @@ void P_LoadLineDefs (int lump)
     ld = lines;
     for (i=0 ; i<numlines ; i++, mld++, ld++)
     {
-	ld->flags = SHORT(mld->flags);
-	ld->special = SHORT(mld->special);
-	ld->tag = SHORT(mld->tag);
-	v1 = ld->v1 = &vertexes[SHORT(mld->v1)];
-	v2 = ld->v2 = &vertexes[SHORT(mld->v2)];
-	ld->dx = v2->x - v1->x;
-	ld->dy = v2->y - v1->y;
-	
-	if (!ld->dx)
-	    ld->slopetype = ST_VERTICAL;
-	else if (!ld->dy)
-	    ld->slopetype = ST_HORIZONTAL;
-	else
-	{
-	    if (FixedDiv (ld->dy , ld->dx) > 0)
-		ld->slopetype = ST_POSITIVE;
-	    else
-		ld->slopetype = ST_NEGATIVE;
-	}
+    	if (flip)
+		{
+			tmp = mld->v1;
+			mld->v1 = mld->v2;
+			mld->v2 = tmp;
+		}
 		
-	if (v1->x < v2->x)
-	{
-	    ld->bbox[BOXLEFT] = v1->x;
-	    ld->bbox[BOXRIGHT] = v2->x;
-	}
-	else
-	{
-	    ld->bbox[BOXLEFT] = v2->x;
-	    ld->bbox[BOXRIGHT] = v1->x;
-	}
+		ld->flags = SHORT(mld->flags);
+		ld->special = SHORT(mld->special);
+		ld->tag = SHORT(mld->tag);
+		v1 = ld->v1 = &vertexes[SHORT(mld->v1)];
+		v2 = ld->v2 = &vertexes[SHORT(mld->v2)];
+		ld->dx = v2->x - v1->x;
+		ld->dy = v2->y - v1->y;
+	
+		if (!ld->dx)
+			ld->slopetype = ST_VERTICAL;
+		else if (!ld->dy)
+			ld->slopetype = ST_HORIZONTAL;
+		else
+		{
+			if (FixedDiv (ld->dy , ld->dx) > 0)
+			ld->slopetype = ST_POSITIVE;
+			else
+			ld->slopetype = ST_NEGATIVE;
+		}
+		
+		if (v1->x < v2->x)
+		{
+			ld->bbox[BOXLEFT] = v1->x;
+			ld->bbox[BOXRIGHT] = v2->x;
+		}
+		else
+		{
+			ld->bbox[BOXLEFT] = v2->x;
+			ld->bbox[BOXRIGHT] = v1->x;
+		}
 
-	if (v1->y < v2->y)
-	{
-	    ld->bbox[BOXBOTTOM] = v1->y;
-	    ld->bbox[BOXTOP] = v2->y;
-	}
-	else
-	{
-	    ld->bbox[BOXBOTTOM] = v2->y;
-	    ld->bbox[BOXTOP] = v1->y;
-	}
+		if (v1->y < v2->y)
+		{
+			ld->bbox[BOXBOTTOM] = v1->y;
+			ld->bbox[BOXTOP] = v2->y;
+		}
+		else
+		{
+			ld->bbox[BOXBOTTOM] = v2->y;
+			ld->bbox[BOXTOP] = v1->y;
+		}
 
-	ld->sidenum[0] = SHORT(mld->sidenum[0]);
-	ld->sidenum[1] = SHORT(mld->sidenum[1]);
+		ld->sidenum[0] = SHORT(mld->sidenum[0]);
+		ld->sidenum[1] = SHORT(mld->sidenum[1]);
 
-	if (ld->sidenum[0] != -1)
-	    ld->frontsector = sides[ld->sidenum[0]].sector;
-	else
-	    ld->frontsector = 0;
+		if (ld->sidenum[0] != -1)
+			ld->frontsector = sides[ld->sidenum[0]].sector;
+		else
+			ld->frontsector = 0;
 
-	if (ld->sidenum[1] != -1)
-	    ld->backsector = sides[ld->sidenum[1]].sector;
-	else
-	    ld->backsector = 0;
+		if (ld->sidenum[1] != -1)
+			ld->backsector = sides[ld->sidenum[1]].sector;
+		else
+			ld->backsector = 0;
     }
 	
     Z_Free (data);
@@ -472,6 +520,9 @@ void P_LoadBlockMap (int lump)
 {
     int		i;
     int		count;
+    int x, y;
+    short tmp;
+    short *rowoffset;
 	
     blockmaplump = W_CacheLumpNum (lump,PU_LEVEL);
     blockmap = blockmaplump+4;
@@ -484,6 +535,23 @@ void P_LoadBlockMap (int lump)
     bmaporgy = blockmaplump[1]<<FRACBITS;
     bmapwidth = blockmaplump[2];
     bmapheight = blockmaplump[3];
+    
+    if (flip)
+    {
+		bmaporgx += bmapwidth * 128 * FRACUNIT;
+		bmaporgx = -bmaporgx;
+
+		for (y=0; y<bmapheight; ++y)
+		{
+			rowoffset = blockmap + y * bmapwidth;
+			for (x=0; x<bmapwidth/2; ++x)
+			{
+				tmp = rowoffset[x];
+				rowoffset[x] = rowoffset[bmapwidth-1-x];
+				rowoffset[bmapwidth-1-x] = tmp;
+			}
+		}
+	}
 	
     // clear out mobj chains
     count = sizeof(*blocklinks)* bmapwidth*bmapheight;
@@ -626,6 +694,9 @@ P_SetupLevel
     int		i;
     char	lumpname[9];
     int		lumpnum;
+    
+    if (M_CheckParm("-flip"))
+    	flip = 1;
 	
     totalkills = totalitems = totalsecret = wminfo.maxfrags = 0;
     wminfo.partime = 180;
