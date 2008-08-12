@@ -400,7 +400,7 @@ void B_BuildTicCommand(ticcmd_t* cmd, int playernum)
 				terminate = 0;
 				
 				// Attempt to rebuild the path
-				if (mind->failcount < (1 << 4))
+				if (mind->failcount < (1 << 3))
 				{
 					if (B_BuildPath(mind, mind->player->mo->subsector, mind->PathNodes[mind->PathIterator]->subsector, 0, px) == BOTBADPATH)
 						terminate = 1;

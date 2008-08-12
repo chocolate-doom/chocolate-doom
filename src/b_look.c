@@ -24,6 +24,7 @@
 //-----------------------------------------------------------------------------
 
 #include "b_bot.h"
+#include "z_zone.h"
 #include <math.h>
 
 // Blank Player for offsets and stuff
@@ -421,17 +422,170 @@ void B_LookForStuff(bmind_t* mind)
 	}
 }
 
+/* B_BFSLink() -- Searches through the node tree for a path */
 int B_BFSLink(bmind_t* mind, subsector_t* src, subsector_t* dest, bnode_t** listptr)
 {
 	int dist = BOTBADPATH;
-	size_t it = 0;
+	Int16* Chunk = NULL;
+	Int16* Crumbs = NULL;
+	Int16* In = NULL;
+	Int16* Out = NULL;
+	Int16* Con = NULL;
+	Int16 First, Last;
+	Int16 x;
+	Int16 Goal = dest - subsectors;
+	size_t i = 0, j = 0, k = 0;
+	bnode_t* t;
 	
-	memset(BotFinal, 0, sizeof(UInt8) * NumBotNodes);
+	/* Allocate the Chunk */
+	Chunk = Z_Malloc(sizeof(Int16) * NumBotNodes * NumBotNodes, PU_STATIC, NULL);
+	Crumbs = Z_Malloc(sizeof(Int16) * NumBotNodes, PU_STATIC, NULL);
+	memset(Chunk, -1, sizeof(Int16) * NumBotNodes * NumBotNodes);
+	memset(Crumbs, 0xFF, sizeof(Int16) * NumBotNodes);
+	In = Chunk;
+	Out = Chunk;
 	
-	// Visit the source
-	BotFinal[src - subsectors] = 1;
+	/* Add the first links to the chunk */
+	// Never bother checking the first connections as these lines were already
+	// checked before the graph is even being checked
+	Con = BotNodes[src - subsectors].connections;
+	
+	// Add the first node
+	*Out = src - subsectors;
+	Out++;
+	
+	// There may be no connections, be sure there are
+	if (Con)
+	{
+		// Scan the input
+		while (*In != -1)
+		{
+			// If the input wasn't visited, visit it
+			if (!BotFinal[*In])
+			{
+				// Visit self
+				BotFinal[*In] = 1;
+				
+				// Set the connection list to the node we shall visit
+				Con = BotNodes[*In].connections;
+				
+				if (Con)
+				{
+					// There are so let's add them
+					while (*Con != -2)
+					{
+						// Continual Array
+						if (*Con == -1)
+						{
+							Con++;
+							First = *Con;
+							Con++;
+							Last = *Con;
+							Con++;
+				
+							for (x = First; x < Last; x++)
+							{
+								if (!BotFinal[First + x])
+								{
+									*Out = First + x;
+									BotFinal[First + x] = 1;
+									Crumbs[First + x] = *In;
+							
+									if (*Out == Goal)
+										goto wefoundamatch;
+								
+									Out++;
+								}
+							}
+						}
+			
+						// Normal List
+						else
+						{
+							if (!BotFinal[*Con])
+							{
+								*Out = *Con;
+								BotFinal[*Con] = 1;
+								Crumbs[*Con] = *In;
+						
+								if (*Out == Goal)
+									goto wefoundamatch;
+						
+								Out++;
+							}
+						
+							Con++;
+						}
+					}
+				}
+			}
+			
+			In++;
+		}
+	}
+
+normaltermination:
+	/* Deallocate the Chunk */
+	Z_Free(Chunk);
+	Z_Free(Crumbs);
 	
 	return dist;
+
+	/* They say gotos are bad... */	
+wefoundamatch:
+	x = *Out;
+	i = 0;
+	dist = 0;
+	
+	while (x != -1)
+	{
+		printf("%i: %i\n", x, i);
+		listptr[i] = &BotNodes[x];
+		
+		if (x == Crumbs[x])
+		{
+			printf("Self referenced node!");
+			break;
+		}
+			
+		x = Crumbs[x];
+		i++;
+	}
+	
+	k = i;
+	
+	for (j = 0; j < i; j++, i--)
+	{
+		t = listptr[j];
+		listptr[j] = listptr[i];
+		listptr[i] = t;
+	}
+	
+	dist = 0;
+	
+	for (i = 0; i < k - 2; k++)
+		dist += B_PathDistance(listptr[i], listptr[i+1]);
+	
+	goto normaltermination;
+	
+#if 0
+	int dist = BOTBADPATH;
+	size_t it = 0;
+	
+	// Mark all points unvisited
+	memset(BotFinal, 0, sizeof(UInt8) * NumBotNodes);
+	
+	// Mark root as visisted
+	BotFinal[src - subsectors] = 1;
+	
+	// Add the initial kids to the queue
+	
+	
+	// Add children to the queue
+	while 
+	
+	return dist;
+#endif
 }
 
 /* B_BuildPath() -- Build path to the target and return the distance */
@@ -469,8 +623,8 @@ int B_BuildPath(bmind_t* mind, subsector_t* src, subsector_t* dest, int flags, i
 			
 			/* BFS (First Path) */
 			case 2:
-				//realdistance = B_BFSLink(mind, src, dest, &list);
-				//break;
+				realdistance = B_BFSLink(mind, src, dest, list);
+				break;
 			
 			/* SECTOR TO SECTOR (Shortest Path) */	
 			case 1:

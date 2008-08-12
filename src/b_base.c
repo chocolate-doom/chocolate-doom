@@ -288,6 +288,8 @@ void B_InitializeForLevel(void)
 	Int16* Temp2;
 	Int16* Zover;
 	Int16* Wover;
+	Int16 tmp;
+	Int16 x, y, z;
 	Int16 firstnum, lastnum;
 	
 	if (!M_CheckParm("-bot") && !M_CheckParm("-ingamebots"))
@@ -470,10 +472,13 @@ void B_InitializeForLevel(void)
 					}
 					
 					BotReject[i][j].DynSectors = Z_Malloc(sizeof(sector_t*) * (k + 1), PU_STATIC, NULL);
-					memset(BotReject[i][j].DynSectors, 0, sizeof(sector_t*) * (k + 1));
 					memcpy(BotReject[i][j].DynSectors, tDynList, sizeof(sector_t*) * k);
+					BotReject[i][j].DynSectors[k] = NULL;
+
 					SizeUsed += sizeof(sector_t*) * (k + 1);
 				}
+				else
+					BotReject[i][j].DynSectors = NULL;
 				
 				if (tDynList)
 				{
@@ -490,11 +495,34 @@ void B_InitializeForLevel(void)
 	/* Setup Connections */
 	if (botparm)
 		printf("Setting up connections...");
-		
+
+#if 0	
 	Temp = Z_Malloc(sizeof(Int16) * NumBotNodes, PU_STATIC, 0);
 	Temp2 = Z_Malloc(sizeof(Int16) * NumBotNodes, PU_STATIC, 0);
-	for (i = 0; i < NumBotNodes; i++)
+#endif
+	for (x = 0; x < NumBotNodes; x++)
 	{
+		k = 0;
+		
+		for (y = 0; y < NumBotNodes; y++)
+			if (BotReject[x][y].Mode)
+				k++;
+		
+		BotNodes[x].connections = Z_Malloc(sizeof(Int16) * k, PU_STATIC, NULL);
+		memset(BotNodes[x].connections, 0, sizeof(Int16) * k);
+		SizeUsed += sizeof(Int16) * k;
+		
+		tmp = 0;
+		
+		for (y = 0; y < NumBotNodes; y++)
+			if (BotReject[x][y].Mode)
+			{
+				BotNodes[x].connections[tmp] = y;
+				tmp++;
+			}
+		
+		BotNodes[x].connections[tmp] = -2;
+#if 0
 		// Clear
 		memset(Temp, 0, sizeof(Int16) * NumBotNodes);
 		memset(Temp2, 0, sizeof(Int16) * NumBotNodes);
@@ -582,10 +610,13 @@ void B_InitializeForLevel(void)
 		}
 		
 		*Wover = -2;
+#endif
 	}
 	
+#if 0
 	Z_Free(Temp2);
 	Z_Free(Temp);
+#endif
 	
 	if (botparm)
 		printf("Done!\n");

@@ -35,7 +35,7 @@
 #include "p_local.h"
 #include "d_event.h"
 
-#define MAXPATHSEGMENTS 64
+#define MAXPATHSEGMENTS 2000
 
 typedef struct bnode_s
 {
