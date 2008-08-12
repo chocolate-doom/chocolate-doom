@@ -1068,7 +1068,7 @@ void G_PlayerFinishLevel (int player)
 void G_PlayerReborn (int player) 
 { 
     player_t*	p; 
-    int		i; 
+    int		i = 0; 
     int		frags[MAXPLAYERS]; 
     int		killcount;
     int		itemcount;

@@ -556,15 +556,13 @@ int B_BFSLink(bmind_t* mind, subsector_t* src, subsector_t* dest, bnode_t** list
 			i++;
 		}
 	
-		printf("!!!#");
-	
 		k = i;
 	
-		for (j = 0; j < i; j++, i--)
+		for (j = 0; j < (k >> 1); j++)
 		{
 			t = listptr[j];
-			listptr[j] = listptr[i];
-			listptr[i] = t;
+			listptr[j] = listptr[k - 1 - j];
+			listptr[k - 1 - j] = t;
 		}
 	
 		dist = 0;
