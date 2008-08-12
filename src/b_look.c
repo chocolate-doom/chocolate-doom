@@ -576,8 +576,6 @@ int B_BFSLink(bmind_t* mind, subsector_t* src, subsector_t* dest, bnode_t** list
 	/* Deallocate the Chunk */
 	Z_Free(Chunk);
 	Z_Free(Crumbs);
-	
-	printf("dist = %i\n", dist);
 	return dist;
 	
 #if 0
