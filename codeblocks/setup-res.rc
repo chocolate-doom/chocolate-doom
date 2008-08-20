@@ -1,4 +1,4 @@
-1 ICON "..\\data\\setup.ico"
+1 ICON "../data/setup.ico"
 
 CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "setup-manifest.xml"
 
