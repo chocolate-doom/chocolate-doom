@@ -784,8 +784,9 @@ static void LoadChexDeh(void)
         {
             I_Error("Unable to find Chex Quest dehacked file (chex.deh).\n"
                     "The dehacked file is required in order to emulate\n"
-                    "chex.exe correctly.  Please download it from the\n"
-                    "/idgames repository.");
+                    "chex.exe correctly.  It can be found in your nearest\n"
+                    "/idgames repository mirror at:\n\n"
+                    "   utils/exe_edit/patches/chexdeh.zip");
         }
 
         if (!DEH_LoadFile(chex_deh))
