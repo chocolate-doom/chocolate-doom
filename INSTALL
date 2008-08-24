@@ -56,7 +56,7 @@ how to get this file), install it through one of the following methods:
  * Run Chocolate Doom with the '-iwad' command line parameter to specify the
    IWAD file to use, eg.
 
-       chocolate-doom -file /root/doom2.wad
+       chocolate-doom -iwad /root/doom2.wad
 
 Obtaining an IWAD file
 ----------------------
@@ -85,6 +85,23 @@ depends on how you obtained your copy of the game:
  * The Doom games are also available for download on Steam
    (http://www.steampowered.com/).  To find the IWAD files, look in your Steam
    directory, under the "steamapps/common" path.  
+
+Playing with Chex Quest
+-----------------------
+
+Chex Quest is a game based on Doom with some minor modifications that was 
+distributed with boxes of Chex cereal in 1997.  It is possible to play 
+Chex Quest using Chocolate Doom.  To do this, the following files are
+needed:
+
+ * The IWAD file 'chex.wad', from the Chex Quest CD.
+ * The dehacked patch 'chex.deh', which can be found in the /idgames
+   repository in utils/exe_edit/patches/chexdeh.zip.
+
+Copy these files into a directory together and use the '-iwad' command
+line parameter to specify the Chex Quest IWAD file:
+
+   chocolate-doom -iwad chex.wad
 
 Installing upgrades
 -------------------
