@@ -23,8 +23,8 @@
 
 // P_user.c
 
-#include "DoomDef.h"
-#include "P_local.h"
+#include "doomdef.h"
+#include "p_local.h"
 #include "soundst.h"
 
 void P_PlayerNextArtifact(player_t * player);

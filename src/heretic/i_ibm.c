@@ -28,8 +28,8 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <graph.h>
-#include "DoomDef.h"
-#include "R_local.h"
+#include "doomdef.h"
+#include "r_local.h"
 #include "sounds.h"
 #include "i_sound.h"
 #include "dmx.h"

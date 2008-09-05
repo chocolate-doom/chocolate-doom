@@ -79,6 +79,8 @@ textscreen/examples/Makefile
 setup/Makefile
 man/Makefile
 src/Makefile
+src/heretic/Makefile
+src/hexen/Makefile
 pcsound/Makefile
 src/resource.rc
 src/doom-screensaver.desktop

@@ -26,18 +26,20 @@
 #include <libc.h>
 #include <ctype.h>
 
-// next doesn't need a binary flag in open call
-#define	O_BINARY	0
 
 #else
 
 #include <malloc.h>
-#include <io.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #endif
 
-#include "DoomDef.h"
+// next doesn't need a binary flag in open call
+#ifndef O_BINARY
+#define	O_BINARY	0
+#endif
+
+#include "doomdef.h"
 
 //===============
 //   TYPES

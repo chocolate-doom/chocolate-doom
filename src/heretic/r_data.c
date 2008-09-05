@@ -23,9 +23,9 @@
 
 // R_data.c
 
-#include "DoomDef.h"
-#include "R_local.h"
-#include "P_local.h"
+#include "doomdef.h"
+#include "r_local.h"
+#include "p_local.h"
 
 extern void CheckAbortStartup(void);
 

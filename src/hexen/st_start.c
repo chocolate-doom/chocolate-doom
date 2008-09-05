@@ -24,18 +24,15 @@
 
 
 // HEADER FILES ------------------------------------------------------------
-#ifdef __WATCOMC__
-#include <sys\stat.h>
-#include <sys\types.h>
-#include <io.h>
-#else
-#include <libc.h>
 #include <ctype.h>
+#include <fcntl.h>
+#include <stdarg.h>
+
+#ifndef O_BINARY
 #define O_BINARY 0
 #endif
+
 #include "h2def.h"
-#include <fcntl.h>
-#include <stdarg.h>             // Needed for next as well as dos
 #include "st_start.h"
 
 

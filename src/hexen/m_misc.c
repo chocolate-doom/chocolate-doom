@@ -29,11 +29,8 @@
 #else
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <direct.h>
 #include <fcntl.h>
 #include <stdlib.h>
-#include <io.h>
-#include <conio.h>
 #endif
 #include <ctype.h>
 #include "h2def.h"
@@ -567,12 +564,8 @@ default_t defaults[] = {
 
     {"usegamma", &usegamma, 0},
 
-#ifdef __NeXT__
 #define DEFAULT_SAVEPATH		"hexndata/"
-#endif
-#ifdef __WATCOMC__
-#define DEFAULT_SAVEPATH		"hexndata\\"
-#endif
+
     {"savedir", (int *) &SavePath, (int) DEFAULT_SAVEPATH},
 
     {"messageson", (int *) &messageson, 1},

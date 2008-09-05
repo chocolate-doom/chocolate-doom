@@ -1,4 +1,6 @@
 
+SUBDIRS=heretic hexen
+
 gamesdir = $(prefix)/games
 
 games_PROGRAMS = chocolate-doom chocolate-server
