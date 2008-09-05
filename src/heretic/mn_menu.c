@@ -24,9 +24,9 @@
 // MN_menu.c
 
 #include <ctype.h>
-#include "DoomDef.h"
-#include "P_local.h"
-#include "R_local.h"
+#include "doomdef.h"
+#include "p_local.h"
+#include "r_local.h"
 #include "soundst.h"
 
 // Macros

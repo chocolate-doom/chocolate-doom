@@ -28,14 +28,13 @@
 #else
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <direct.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #endif
 
 #include <ctype.h>
 
-#include "DoomDef.h"
+#include "doomdef.h"
 #include "soundst.h"
 
 int myargc;

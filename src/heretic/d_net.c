@@ -24,7 +24,7 @@
 // d_net.c
 // This version has the fixed ticdup code
 
-#include "DoomDef.h"
+#include "doomdef.h"
 
 #define NCMD_EXIT               0x80000000
 #define NCMD_RETRANSMIT 0x40000000

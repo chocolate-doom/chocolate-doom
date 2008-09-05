@@ -23,7 +23,7 @@
 #ifndef __I_HEADER_H__
 #define __I_HEADER_H__
 
-#include "DoomDef.h"
+#include "doomdef.h"
 
 //--------
 //SOUND IO

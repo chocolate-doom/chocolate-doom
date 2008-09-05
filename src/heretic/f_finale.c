@@ -22,7 +22,7 @@
 //-----------------------------------------------------------------------------
 // F_finale.c
 
-#include "DoomDef.h"
+#include "doomdef.h"
 #include "soundst.h"
 #include <ctype.h>
 
@@ -153,7 +153,7 @@ void F_Ticker(void)
 =======================
 */
 
-//#include "HU_stuff.h"
+//#include "hu_stuff.h"
 //extern        patch_t *hu_font[HU_FONTSIZE];
 
 void F_TextWrite(void)

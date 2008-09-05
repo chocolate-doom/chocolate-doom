@@ -31,8 +31,8 @@
 #endif
 #include <stdio.h>
 #include <stdlib.h>
-#include "DoomDef.h"
-#include "P_local.h"
+#include "doomdef.h"
+#include "p_local.h"
 #include "soundst.h"
 
 boolean shareware = false;      // true if only episode 1 present

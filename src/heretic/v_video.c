@@ -23,7 +23,7 @@
 
 // V_video.c
 
-#include "DoomDef.h"
+#include "doomdef.h"
 
 #define SC_INDEX 0x3c4
 

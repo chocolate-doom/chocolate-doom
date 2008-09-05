@@ -23,8 +23,8 @@
 // R_things.c
 #include <stdio.h>
 #include <stdlib.h>
-#include "DoomDef.h"
-#include "R_local.h"
+#include "doomdef.h"
+#include "r_local.h"
 
 void R_DrawColumn(void);
 void R_DrawFuzzColumn(void);

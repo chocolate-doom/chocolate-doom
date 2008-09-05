@@ -295,7 +295,6 @@ static Menu_t *Menus[] = {
     &SaveMenu
 };
 
-#ifdef __WATCOMC__
 static char *GammaText[] = {
     TXT_GAMMA_LEVEL_OFF,
     TXT_GAMMA_LEVEL_1,
@@ -303,7 +302,6 @@ static char *GammaText[] = {
     TXT_GAMMA_LEVEL_3,
     TXT_GAMMA_LEVEL_4
 };
-#endif
 
 // CODE --------------------------------------------------------------------
 

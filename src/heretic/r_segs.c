@@ -29,8 +29,8 @@
 //**
 //**************************************************************************
 
-#include "DoomDef.h"
-#include "R_local.h"
+#include "doomdef.h"
+#include "r_local.h"
 
 // OPTIMIZE: closed two sided lines as single sided
 

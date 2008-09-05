@@ -22,8 +22,8 @@
 //-----------------------------------------------------------------------------
 // R_bsp.c
 
-#include "DoomDef.h"
-#include "R_local.h"
+#include "doomdef.h"
+#include "r_local.h"
 
 seg_t *curline;
 side_t *sidedef;
