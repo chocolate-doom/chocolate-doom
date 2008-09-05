@@ -1903,18 +1903,8 @@ void G_DoSaveGame(void)
 
 void SV_Open(char *fileName)
 {
-    MallocFailureOk = true;
-    save_p = savebuffer = Z_Malloc(SAVEGAMESIZE, PU_STATIC, NULL);
-    MallocFailureOk = false;
-    if (savebuffer == NULL)
-    {                           // Not enough memory - use file save method
-        SaveGameType = SVG_FILE;
-        SaveGameFP = fopen(fileName, "wb");
-    }
-    else
-    {
-        SaveGameType = SVG_RAM;
-    }
+    SaveGameType = SVG_FILE;
+    SaveGameFP = fopen(fileName, "wb");
 }
 
 //==========================================================================
