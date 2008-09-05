@@ -47,10 +47,8 @@ r_things.c                                           \
 sb_bar.c                                             \
 sounds.c               sounds.h                      \
                        soundst.h                     \
-tables.c                                             \
 v_video.c                                            \
-w_wad.c                                              \
-z_zone.c 
+w_wad.c                                              
 
 EXTRA_DIST=                                          \
 i_sound.c              i_sound.h                     \
@@ -58,4 +56,5 @@ i_cyber.c                                            \
 i_ibm.c   
 
 libheretic_a_SOURCES=$(SOURCE_FILES)
+libheretic_a_CFLAGS=-I..
 
