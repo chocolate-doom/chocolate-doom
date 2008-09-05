@@ -1,3 +1,25 @@
+// Emacs style mode select   -*- C++ -*- 
+//-----------------------------------------------------------------------------
+//
+// Copyright(C) 1993-1996 Id Software, Inc.
+// Copyright(C) 1993-2008 Raven Software
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+// 02111-1307, USA.
+//
+//-----------------------------------------------------------------------------
 #ifndef __I_HEADER_H__
 #define __I_HEADER_H__
 
@@ -48,7 +70,7 @@ void I_StopSong(int handle);
 //  SFX I/O
 //
 
-void *I_GetSoundEffect (char *soundname);
+void *I_GetSoundEffect(char *soundname);
 // called by routines which wish to play a sound effect at some later
 // time.  Pass it the lump name of a sound effect WITHOUT the sfx
 // prefix.  This means the maximum name length is 7 letters/digits.
@@ -56,21 +78,21 @@ void *I_GetSoundEffect (char *soundname);
 // They refer to the card type.  The routine will cache in the
 // appropriate sound effect when it is played.
 
-void I_UngetSoundEffect (void *soundset);
+void I_UngetSoundEffect(void *soundset);
 // called by routines which wish to no longer use the sounds at all
 // frees up the associated structure.  It stops any currently playing
 // sound effects.
 
-void I_StartSound (channel_t *c, int vol, int sep, int pitch, int priority);
+void I_StartSound(channel_t * c, int vol, int sep, int pitch, int priority);
 // Starts a sound in a particular sound channel
 
-void I_UpdateSoundParams(channel_t *c, int vol, int sep, int pitch);
+void I_UpdateSoundParams(channel_t * c, int vol, int sep, int pitch);
 // Updates the volume, separation, and pitch of a sound channel
 
-void I_StopSound(channel_t *c);
+void I_StopSound(channel_t * c);
 // Stops a sound channel
 
-int I_SoundIsPlaying(channel_t *c);
+int I_SoundIsPlaying(channel_t * c);
 // called by S_*()'s to see if a channel is still playing.  Returns 0
 // if no longer playing, 1 if playing.
 

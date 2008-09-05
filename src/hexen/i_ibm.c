@@ -1,9 +1,26 @@
+// Emacs style mode select   -*- C++ -*- 
+//-----------------------------------------------------------------------------
+//
+// Copyright(C) 1993-1996 Id Software, Inc.
+// Copyright(C) 1993-2008 Raven Software
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+// 02111-1307, USA.
+//
+//-----------------------------------------------------------------------------
 
-//**************************************************************************
-//**
-//** I_IBM.C
-//**
-//**************************************************************************
 
 #include <dos.h>
 #include <conio.h>
@@ -12,7 +29,7 @@
 #include <graph.h>
 #include "h2def.h"
 #include "r_local.h"
-#include "p_local.h"    // for P_AproxDistance
+#include "p_local.h"            // for P_AproxDistance
 #include "sounds.h"
 #include "i_sound.h"
 #include "soundst.h"
@@ -57,26 +74,26 @@ int DisplayTicker = 0;
 
 void main(int argc, char **argv)
 {
-	myargc = argc;
-	myargv = argv;
-	H2_Main();
+    myargc = argc;
+    myargv = argv;
+    H2_Main();
 }
 
-void I_StartupNet (void);
-void I_ShutdownNet (void);
+void I_StartupNet(void);
+void I_ShutdownNet(void);
 void I_ReadExternDriver(void);
 
 typedef struct
 {
-	unsigned        edi, esi, ebp, reserved, ebx, edx, ecx, eax;
-	unsigned short  flags, es, ds, fs, gs, ip, cs, sp, ss;
+    unsigned edi, esi, ebp, reserved, ebx, edx, ecx, eax;
+    unsigned short flags, es, ds, fs, gs, ip, cs, sp, ss;
 } dpmiregs_t;
 
-extern  dpmiregs_t      dpmiregs;
+extern dpmiregs_t dpmiregs;
 
-void I_ReadMouse (void);
+void I_ReadMouse(void);
 
-extern  int     usemouse, usejoystick;
+extern int usemouse, usejoystick;
 
 extern void **lumpcache;
 
@@ -110,7 +127,7 @@ extern sfxinfo_t S_sfx[];
 extern musicinfo_t S_music[];
 
 static channel_t Channel[MAX_CHANNELS];
-static int RegisteredSong; //the current registered song.
+static int RegisteredSong;      //the current registered song.
 static int NextCleanup;
 static boolean MusicPaused;
 static int Mus_Song = -1;
@@ -140,8 +157,8 @@ extern int startmap;
 
 void S_Start(void)
 {
-	S_StopAllSound();
-	S_StartSong(gamemap, true);
+    S_StopAllSound();
+    S_StartSong(gamemap, true);
 }
 
 //==========================================================================
@@ -152,83 +169,83 @@ void S_Start(void)
 
 void S_StartSong(int song, boolean loop)
 {
-	char *songLump;
-	int track;
+    char *songLump;
+    int track;
 
-	if(i_CDMusic)
-	{ // Play a CD track, instead
-		if(i_CDTrack)
-		{ // Default to the player-chosen track
-			track = i_CDTrack;
-		}
-		else
-		{
-			track = P_GetMapCDTrack(gamemap);
-		}
-		if(track == i_CDCurrentTrack && i_CDMusicLength > 0)
-		{
-			return;
-		}
-		if(!I_CDMusPlay(track))
-		{
-			if(loop)
-			{
-				i_CDMusicLength = 35*I_CDMusTrackLength(track);
-				oldTic = gametic;
-			}
-			else
-			{
-				i_CDMusicLength = -1;
-			}
-			i_CDCurrentTrack = track;
-		}
-	}
-	else
-	{
-		if(song == Mus_Song)
-		{ // don't replay an old song
-			return;
-		}
-		if(RegisteredSong)
-		{
-			I_StopSong(RegisteredSong);
-			I_UnRegisterSong(RegisteredSong);
-			if(UseSndScript)
-			{
-				Z_Free(Mus_SndPtr);
-			}
-			else
-			{
-				Z_ChangeTag(lumpcache[Mus_LumpNum], PU_CACHE);
-			}
-			#ifdef __WATCOMC__
-				_dpmi_unlockregion(Mus_SndPtr, lumpinfo[Mus_LumpNum].size);
-			#endif
-			RegisteredSong = 0;
-		}
-		songLump = P_GetMapSongLump(song);
-		if(!songLump)
-		{
-			return;
-		}
-		if(UseSndScript)
-		{
-			char name[128];
-			sprintf(name, "%s%s.lmp", ArchivePath, songLump);
-			M_ReadFile(name, (byte **)&Mus_SndPtr);
-		}
-		else
-		{
-			Mus_LumpNum = W_GetNumForName(songLump);
-			Mus_SndPtr = W_CacheLumpNum(Mus_LumpNum, PU_MUSIC);
-		}
-		#ifdef __WATCOMC__
-			_dpmi_lockregion(Mus_SndPtr, lumpinfo[Mus_LumpNum].size);
-		#endif
-		RegisteredSong = I_RegisterSong(Mus_SndPtr);
-		I_PlaySong(RegisteredSong, loop); // 'true' denotes endless looping.
-		Mus_Song = song;
-	}
+    if (i_CDMusic)
+    {                           // Play a CD track, instead
+        if (i_CDTrack)
+        {                       // Default to the player-chosen track
+            track = i_CDTrack;
+        }
+        else
+        {
+            track = P_GetMapCDTrack(gamemap);
+        }
+        if (track == i_CDCurrentTrack && i_CDMusicLength > 0)
+        {
+            return;
+        }
+        if (!I_CDMusPlay(track))
+        {
+            if (loop)
+            {
+                i_CDMusicLength = 35 * I_CDMusTrackLength(track);
+                oldTic = gametic;
+            }
+            else
+            {
+                i_CDMusicLength = -1;
+            }
+            i_CDCurrentTrack = track;
+        }
+    }
+    else
+    {
+        if (song == Mus_Song)
+        {                       // don't replay an old song
+            return;
+        }
+        if (RegisteredSong)
+        {
+            I_StopSong(RegisteredSong);
+            I_UnRegisterSong(RegisteredSong);
+            if (UseSndScript)
+            {
+                Z_Free(Mus_SndPtr);
+            }
+            else
+            {
+                Z_ChangeTag(lumpcache[Mus_LumpNum], PU_CACHE);
+            }
+#ifdef __WATCOMC__
+            _dpmi_unlockregion(Mus_SndPtr, lumpinfo[Mus_LumpNum].size);
+#endif
+            RegisteredSong = 0;
+        }
+        songLump = P_GetMapSongLump(song);
+        if (!songLump)
+        {
+            return;
+        }
+        if (UseSndScript)
+        {
+            char name[128];
+            sprintf(name, "%s%s.lmp", ArchivePath, songLump);
+            M_ReadFile(name, (byte **) & Mus_SndPtr);
+        }
+        else
+        {
+            Mus_LumpNum = W_GetNumForName(songLump);
+            Mus_SndPtr = W_CacheLumpNum(Mus_LumpNum, PU_MUSIC);
+        }
+#ifdef __WATCOMC__
+        _dpmi_lockregion(Mus_SndPtr, lumpinfo[Mus_LumpNum].size);
+#endif
+        RegisteredSong = I_RegisterSong(Mus_SndPtr);
+        I_PlaySong(RegisteredSong, loop);       // 'true' denotes endless looping.
+        Mus_Song = song;
+    }
 }
 
 //==========================================================================
@@ -239,98 +256,98 @@ void S_StartSong(int song, boolean loop)
 
 void S_StartSongName(char *songLump, boolean loop)
 {
-	int cdTrack;
+    int cdTrack;
 
-	if(!songLump)
-	{
-		return;
-	}
-	if(i_CDMusic)
-	{
-		cdTrack = 0;
+    if (!songLump)
+    {
+        return;
+    }
+    if (i_CDMusic)
+    {
+        cdTrack = 0;
 
-		if(!strcmp(songLump, "hexen"))
-		{
-			cdTrack = P_GetCDTitleTrack();
-		}
-		else if(!strcmp(songLump, "hub"))
-		{
-			cdTrack = P_GetCDIntermissionTrack();
-		}
-		else if(!strcmp(songLump, "hall"))
-		{
-			cdTrack = P_GetCDEnd1Track();
-		}
-		else if(!strcmp(songLump, "orb"))
-		{
-			cdTrack = P_GetCDEnd2Track();
-		}
-		else if(!strcmp(songLump, "chess") && !i_CDTrack)
-		{
-			cdTrack = P_GetCDEnd3Track();
-		}
+        if (!strcmp(songLump, "hexen"))
+        {
+            cdTrack = P_GetCDTitleTrack();
+        }
+        else if (!strcmp(songLump, "hub"))
+        {
+            cdTrack = P_GetCDIntermissionTrack();
+        }
+        else if (!strcmp(songLump, "hall"))
+        {
+            cdTrack = P_GetCDEnd1Track();
+        }
+        else if (!strcmp(songLump, "orb"))
+        {
+            cdTrack = P_GetCDEnd2Track();
+        }
+        else if (!strcmp(songLump, "chess") && !i_CDTrack)
+        {
+            cdTrack = P_GetCDEnd3Track();
+        }
 /*	Uncomment this, if Kevin writes a specific song for startup
 		else if(!strcmp(songLump, "start"))
 		{
 			cdTrack = P_GetCDStartTrack();
 		}
 */
-		if(!cdTrack || (cdTrack == i_CDCurrentTrack && i_CDMusicLength > 0))
-		{
-			return;
-		}
-		if(!I_CDMusPlay(cdTrack))
-		{
-			if(loop)
-			{
-				i_CDMusicLength = 35*I_CDMusTrackLength(cdTrack);
-				oldTic = gametic;
-			}
-			else
-			{
-				i_CDMusicLength = -1;
-			}
-			i_CDCurrentTrack = cdTrack;
-			i_CDTrack = false;
-		}
-	}
-	else
-	{
-		if(RegisteredSong)
-		{
-			I_StopSong(RegisteredSong);
-			I_UnRegisterSong(RegisteredSong);
-			if(UseSndScript)
-			{
-				Z_Free(Mus_SndPtr);
-			}
-			else
-			{
-				Z_ChangeTag(lumpcache[Mus_LumpNum], PU_CACHE);
-			}
-			#ifdef __WATCOMC__
-				_dpmi_unlockregion(Mus_SndPtr, lumpinfo[Mus_LumpNum].size);
-			#endif
-			RegisteredSong = 0;
-		}
-		if(UseSndScript)
-		{
-			char name[128];
-			sprintf(name, "%s%s.lmp", ArchivePath, songLump);
-			M_ReadFile(name, (byte **)&Mus_SndPtr);
-		}
-		else
-		{
-			Mus_LumpNum = W_GetNumForName(songLump);
-			Mus_SndPtr = W_CacheLumpNum(Mus_LumpNum, PU_MUSIC);
-		}
-		#ifdef __WATCOMC__
-			_dpmi_lockregion(Mus_SndPtr, lumpinfo[Mus_LumpNum].size);
-		#endif
-		RegisteredSong = I_RegisterSong(Mus_SndPtr);
-		I_PlaySong(RegisteredSong, loop); // 'true' denotes endless looping.
-		Mus_Song = -1;
-	}
+        if (!cdTrack || (cdTrack == i_CDCurrentTrack && i_CDMusicLength > 0))
+        {
+            return;
+        }
+        if (!I_CDMusPlay(cdTrack))
+        {
+            if (loop)
+            {
+                i_CDMusicLength = 35 * I_CDMusTrackLength(cdTrack);
+                oldTic = gametic;
+            }
+            else
+            {
+                i_CDMusicLength = -1;
+            }
+            i_CDCurrentTrack = cdTrack;
+            i_CDTrack = false;
+        }
+    }
+    else
+    {
+        if (RegisteredSong)
+        {
+            I_StopSong(RegisteredSong);
+            I_UnRegisterSong(RegisteredSong);
+            if (UseSndScript)
+            {
+                Z_Free(Mus_SndPtr);
+            }
+            else
+            {
+                Z_ChangeTag(lumpcache[Mus_LumpNum], PU_CACHE);
+            }
+#ifdef __WATCOMC__
+            _dpmi_unlockregion(Mus_SndPtr, lumpinfo[Mus_LumpNum].size);
+#endif
+            RegisteredSong = 0;
+        }
+        if (UseSndScript)
+        {
+            char name[128];
+            sprintf(name, "%s%s.lmp", ArchivePath, songLump);
+            M_ReadFile(name, (byte **) & Mus_SndPtr);
+        }
+        else
+        {
+            Mus_LumpNum = W_GetNumForName(songLump);
+            Mus_SndPtr = W_CacheLumpNum(Mus_LumpNum, PU_MUSIC);
+        }
+#ifdef __WATCOMC__
+        _dpmi_lockregion(Mus_SndPtr, lumpinfo[Mus_LumpNum].size);
+#endif
+        RegisteredSong = I_RegisterSong(Mus_SndPtr);
+        I_PlaySong(RegisteredSong, loop);       // 'true' denotes endless looping.
+        Mus_Song = -1;
+    }
 }
 
 //==========================================================================
@@ -341,16 +358,16 @@ void S_StartSongName(char *songLump, boolean loop)
 
 int S_GetSoundID(char *name)
 {
-	int i;
+    int i;
 
-	for(i = 0; i < NUMSFX; i++)
-	{
-		if(!strcmp(S_sfx[i].tagName, name))
-		{
-			return i;
-		}
-	}
-	return 0;
+    for (i = 0; i < NUMSFX; i++)
+    {
+        if (!strcmp(S_sfx[i].tagName, name))
+        {
+            return i;
+        }
+    }
+    return 0;
 }
 
 //==========================================================================
@@ -359,9 +376,9 @@ int S_GetSoundID(char *name)
 //
 //==========================================================================
 
-void S_StartSound(mobj_t *origin, int sound_id)
+void S_StartSound(mobj_t * origin, int sound_id)
 {
-	S_StartSoundAtVolume(origin, sound_id, 127);
+    S_StartSoundAtVolume(origin, sound_id, 127);
 }
 
 //==========================================================================
@@ -370,173 +387,174 @@ void S_StartSound(mobj_t *origin, int sound_id)
 //
 //==========================================================================
 
-void S_StartSoundAtVolume(mobj_t *origin, int sound_id, int volume)
+void S_StartSoundAtVolume(mobj_t * origin, int sound_id, int volume)
 {
-	int dist, vol;
-	int i;
-	int priority;
-	int sep;
-	int angle;
-	int absx;
-	int absy;
+    int dist, vol;
+    int i;
+    int priority;
+    int sep;
+    int angle;
+    int absx;
+    int absy;
 
-	static int sndcount = 0;
-	int chan;
+    static int sndcount = 0;
+    int chan;
 
-	if(sound_id == 0 || snd_MaxVolume == 0)
-		return;
-	if(origin == NULL)
-	{
-		origin = players[displayplayer].mo;
-	}
-	if(volume == 0)
-	{
-		return;
-	}
+    if (sound_id == 0 || snd_MaxVolume == 0)
+        return;
+    if (origin == NULL)
+    {
+        origin = players[displayplayer].mo;
+    }
+    if (volume == 0)
+    {
+        return;
+    }
 
-	// calculate the distance before other stuff so that we can throw out
-	// sounds that are beyond the hearing range.
-	absx = abs(origin->x-players[displayplayer].mo->x);
-	absy = abs(origin->y-players[displayplayer].mo->y);
-	dist = absx+absy-(absx > absy ? absy>>1 : absx>>1);
-	dist >>= FRACBITS;
-	if(dist >= MAX_SND_DIST)
-	{
-	  return; // sound is beyond the hearing range...
-	}
-	if(dist < 0)
-	{
-		dist = 0;
-	}
-	priority = S_sfx[sound_id].priority;
-	priority *= (PRIORITY_MAX_ADJUST-(dist/DIST_ADJUST));
-	if(!S_StopSoundID(sound_id, priority))
-	{
-		return; // other sounds have greater priority
-	}
-	for(i=0; i<snd_Channels; i++)
-	{
-		if(origin->player)
-		{
-			i = snd_Channels;
-			break; // let the player have more than one sound.
-		}
-		if(origin == Channel[i].mo)
-		{ // only allow other mobjs one sound
-			S_StopSound(Channel[i].mo);
-			break;
-		}
-	}
-	if(i >= snd_Channels)
-	{
-		for(i = 0; i < snd_Channels; i++)
-		{
-			if(Channel[i].mo == NULL)
-			{
-				break;
-			}
-		}
-		if(i >= snd_Channels)
-		{
-			// look for a lower priority sound to replace.
-			sndcount++;
-			if(sndcount >= snd_Channels)
-			{
-				sndcount = 0;
-			}
-			for(chan = 0; chan < snd_Channels; chan++)
-			{
-				i = (sndcount+chan)%snd_Channels;
-				if(priority >= Channel[i].priority)
-				{
-					chan = -1; //denote that sound should be replaced.
-					break;
-				}
-			}
-			if(chan != -1)
-			{
-				return; //no free channels.
-			}
-			else //replace the lower priority sound.
-			{
-				if(Channel[i].handle)
-				{
-					if(I_SoundIsPlaying(Channel[i].handle))
-					{
-						I_StopSound(Channel[i].handle);
-					}
-					if(S_sfx[Channel[i].sound_id].usefulness > 0)
-					{
-						S_sfx[Channel[i].sound_id].usefulness--;
-					}
-				}
-			}
-		}
-	}
-	if(S_sfx[sound_id].lumpnum == 0)
-	{
-		S_sfx[sound_id].lumpnum = I_GetSfxLumpNum(&S_sfx[sound_id]);
-	}
-	if(S_sfx[sound_id].snd_ptr == NULL)
-	{
-		if(UseSndScript)
-		{
-			char name[128];
-			sprintf(name, "%s%s.lmp", ArchivePath, S_sfx[sound_id].lumpname);
-			M_ReadFile(name, (byte **)&S_sfx[sound_id].snd_ptr);
-		}
-		else
-		{
-			S_sfx[sound_id].snd_ptr = W_CacheLumpNum(S_sfx[sound_id].lumpnum,
-				PU_SOUND);
-		}
-		#ifdef __WATCOMC__
-		_dpmi_lockregion(S_sfx[sound_id].snd_ptr,
-			lumpinfo[S_sfx[sound_id].lumpnum].size);
-		#endif
-	}
+    // calculate the distance before other stuff so that we can throw out
+    // sounds that are beyond the hearing range.
+    absx = abs(origin->x - players[displayplayer].mo->x);
+    absy = abs(origin->y - players[displayplayer].mo->y);
+    dist = absx + absy - (absx > absy ? absy >> 1 : absx >> 1);
+    dist >>= FRACBITS;
+    if (dist >= MAX_SND_DIST)
+    {
+        return;                 // sound is beyond the hearing range...
+    }
+    if (dist < 0)
+    {
+        dist = 0;
+    }
+    priority = S_sfx[sound_id].priority;
+    priority *= (PRIORITY_MAX_ADJUST - (dist / DIST_ADJUST));
+    if (!S_StopSoundID(sound_id, priority))
+    {
+        return;                 // other sounds have greater priority
+    }
+    for (i = 0; i < snd_Channels; i++)
+    {
+        if (origin->player)
+        {
+            i = snd_Channels;
+            break;              // let the player have more than one sound.
+        }
+        if (origin == Channel[i].mo)
+        {                       // only allow other mobjs one sound
+            S_StopSound(Channel[i].mo);
+            break;
+        }
+    }
+    if (i >= snd_Channels)
+    {
+        for (i = 0; i < snd_Channels; i++)
+        {
+            if (Channel[i].mo == NULL)
+            {
+                break;
+            }
+        }
+        if (i >= snd_Channels)
+        {
+            // look for a lower priority sound to replace.
+            sndcount++;
+            if (sndcount >= snd_Channels)
+            {
+                sndcount = 0;
+            }
+            for (chan = 0; chan < snd_Channels; chan++)
+            {
+                i = (sndcount + chan) % snd_Channels;
+                if (priority >= Channel[i].priority)
+                {
+                    chan = -1;  //denote that sound should be replaced.
+                    break;
+                }
+            }
+            if (chan != -1)
+            {
+                return;         //no free channels.
+            }
+            else                //replace the lower priority sound.
+            {
+                if (Channel[i].handle)
+                {
+                    if (I_SoundIsPlaying(Channel[i].handle))
+                    {
+                        I_StopSound(Channel[i].handle);
+                    }
+                    if (S_sfx[Channel[i].sound_id].usefulness > 0)
+                    {
+                        S_sfx[Channel[i].sound_id].usefulness--;
+                    }
+                }
+            }
+        }
+    }
+    if (S_sfx[sound_id].lumpnum == 0)
+    {
+        S_sfx[sound_id].lumpnum = I_GetSfxLumpNum(&S_sfx[sound_id]);
+    }
+    if (S_sfx[sound_id].snd_ptr == NULL)
+    {
+        if (UseSndScript)
+        {
+            char name[128];
+            sprintf(name, "%s%s.lmp", ArchivePath, S_sfx[sound_id].lumpname);
+            M_ReadFile(name, (byte **) & S_sfx[sound_id].snd_ptr);
+        }
+        else
+        {
+            S_sfx[sound_id].snd_ptr = W_CacheLumpNum(S_sfx[sound_id].lumpnum,
+                                                     PU_SOUND);
+        }
+#ifdef __WATCOMC__
+        _dpmi_lockregion(S_sfx[sound_id].snd_ptr,
+                         lumpinfo[S_sfx[sound_id].lumpnum].size);
+#endif
+    }
 
-	vol = (SoundCurve[dist]*(snd_MaxVolume*8)*volume)>>14;
-	if(origin == players[displayplayer].mo)
-	{
-		sep = 128;
+    vol = (SoundCurve[dist] * (snd_MaxVolume * 8) * volume) >> 14;
+    if (origin == players[displayplayer].mo)
+    {
+        sep = 128;
 //              vol = (volume*(snd_MaxVolume+1)*8)>>7;
-	}
-	else
-	{
-		angle = R_PointToAngle2(players[displayplayer].mo->x,
-			players[displayplayer].mo->y, Channel[i].mo->x, Channel[i].mo->y);
-		angle = (angle-viewangle)>>24;
-		sep = angle*2-128;
-		if(sep < 64)
-			sep = -sep;
-		if(sep > 192)
-			sep = 512-sep;
+    }
+    else
+    {
+        angle = R_PointToAngle2(players[displayplayer].mo->x,
+                                players[displayplayer].mo->y,
+                                Channel[i].mo->x, Channel[i].mo->y);
+        angle = (angle - viewangle) >> 24;
+        sep = angle * 2 - 128;
+        if (sep < 64)
+            sep = -sep;
+        if (sep > 192)
+            sep = 512 - sep;
 //              vol = SoundCurve[dist];
-	}
+    }
 
-	if(S_sfx[sound_id].changePitch)
-	{
-		Channel[i].pitch = (byte)(127+(M_Random()&7)-(M_Random()&7));
-	}
-	else
-	{
-		Channel[i].pitch = 127;
-	}
-	Channel[i].handle = I_StartSound(sound_id, S_sfx[sound_id].snd_ptr, vol,
-		sep, Channel[i].pitch, 0);
-	Channel[i].mo = origin;
-	Channel[i].sound_id = sound_id;
-	Channel[i].priority = priority;
-	Channel[i].volume = volume;
-	if(S_sfx[sound_id].usefulness < 0)
-	{
-		S_sfx[sound_id].usefulness = 1;
-	}
-	else
-	{
-		S_sfx[sound_id].usefulness++;
-	}
+    if (S_sfx[sound_id].changePitch)
+    {
+        Channel[i].pitch = (byte) (127 + (M_Random() & 7) - (M_Random() & 7));
+    }
+    else
+    {
+        Channel[i].pitch = 127;
+    }
+    Channel[i].handle = I_StartSound(sound_id, S_sfx[sound_id].snd_ptr, vol,
+                                     sep, Channel[i].pitch, 0);
+    Channel[i].mo = origin;
+    Channel[i].sound_id = sound_id;
+    Channel[i].priority = priority;
+    Channel[i].volume = volume;
+    if (S_sfx[sound_id].usefulness < 0)
+    {
+        S_sfx[sound_id].usefulness = 1;
+    }
+    else
+    {
+        S_sfx[sound_id].usefulness++;
+    }
 }
 
 //==========================================================================
@@ -547,49 +565,49 @@ void S_StartSoundAtVolume(mobj_t *origin, int sound_id, int volume)
 
 boolean S_StopSoundID(int sound_id, int priority)
 {
-	int i;
-	int lp; //least priority
-	int found;
+    int i;
+    int lp;                     //least priority
+    int found;
 
-	if(S_sfx[sound_id].numchannels == -1)
-	{
-		return(true);
-	}
-	lp = -1; //denote the argument sound_id
-	found = 0;
-	for(i=0; i<snd_Channels; i++)
-	{
-		if(Channel[i].sound_id == sound_id && Channel[i].mo)
-		{
-			found++; //found one.  Now, should we replace it??
-			if(priority >= Channel[i].priority)
-			{ // if we're gonna kill one, then this'll be it
-				lp = i;
-				priority = Channel[i].priority;
-			}
-		}
-	}
-	if(found < S_sfx[sound_id].numchannels)
-	{
-		return(true);
-	}
-	else if(lp == -1)
-	{
-		return(false); // don't replace any sounds
-	}
-	if(Channel[lp].handle)
-	{
-		if(I_SoundIsPlaying(Channel[lp].handle))
-		{
-			I_StopSound(Channel[lp].handle);
-		}
-		if(S_sfx[Channel[lp].sound_id].usefulness > 0)
-		{
-			S_sfx[Channel[lp].sound_id].usefulness--;
-		}
-		Channel[lp].mo = NULL;
-	}
-	return(true);
+    if (S_sfx[sound_id].numchannels == -1)
+    {
+        return (true);
+    }
+    lp = -1;                    //denote the argument sound_id
+    found = 0;
+    for (i = 0; i < snd_Channels; i++)
+    {
+        if (Channel[i].sound_id == sound_id && Channel[i].mo)
+        {
+            found++;            //found one.  Now, should we replace it??
+            if (priority >= Channel[i].priority)
+            {                   // if we're gonna kill one, then this'll be it
+                lp = i;
+                priority = Channel[i].priority;
+            }
+        }
+    }
+    if (found < S_sfx[sound_id].numchannels)
+    {
+        return (true);
+    }
+    else if (lp == -1)
+    {
+        return (false);         // don't replace any sounds
+    }
+    if (Channel[lp].handle)
+    {
+        if (I_SoundIsPlaying(Channel[lp].handle))
+        {
+            I_StopSound(Channel[lp].handle);
+        }
+        if (S_sfx[Channel[lp].sound_id].usefulness > 0)
+        {
+            S_sfx[Channel[lp].sound_id].usefulness--;
+        }
+        Channel[lp].mo = NULL;
+    }
+    return (true);
 }
 
 //==========================================================================
@@ -598,23 +616,23 @@ boolean S_StopSoundID(int sound_id, int priority)
 //
 //==========================================================================
 
-void S_StopSound(mobj_t *origin)
+void S_StopSound(mobj_t * origin)
 {
-	int i;
+    int i;
 
-	for(i=0;i<snd_Channels;i++)
-	{
-		if(Channel[i].mo == origin)
-		{
-			I_StopSound(Channel[i].handle);
-			if(S_sfx[Channel[i].sound_id].usefulness > 0)
-			{
-				S_sfx[Channel[i].sound_id].usefulness--;
-			}
-			Channel[i].handle = 0;
-			Channel[i].mo = NULL;
-		}
-	}
+    for (i = 0; i < snd_Channels; i++)
+    {
+        if (Channel[i].mo == origin)
+        {
+            I_StopSound(Channel[i].handle);
+            if (S_sfx[Channel[i].sound_id].usefulness > 0)
+            {
+                S_sfx[Channel[i].sound_id].usefulness--;
+            }
+            Channel[i].handle = 0;
+            Channel[i].mo = NULL;
+        }
+    }
 }
 
 //==========================================================================
@@ -625,17 +643,17 @@ void S_StopSound(mobj_t *origin)
 
 void S_StopAllSound(void)
 {
-	int i;
+    int i;
 
-	//stop all sounds
-	for(i=0; i < snd_Channels; i++)
-	{
-		if(Channel[i].handle)
-		{
-			S_StopSound(Channel[i].mo);
-		}
-	}
-	memset(Channel, 0, 8*sizeof(channel_t));
+    //stop all sounds
+    for (i = 0; i < snd_Channels; i++)
+    {
+        if (Channel[i].handle)
+        {
+            S_StopSound(Channel[i].mo);
+        }
+    }
+    memset(Channel, 0, 8 * sizeof(channel_t));
 }
 
 //==========================================================================
@@ -644,15 +662,15 @@ void S_StopAllSound(void)
 //
 //==========================================================================
 
-void S_SoundLink(mobj_t *oldactor, mobj_t *newactor)
+void S_SoundLink(mobj_t * oldactor, mobj_t * newactor)
 {
-	int i;
+    int i;
 
-	for(i=0;i<snd_Channels;i++)
-	{
-		if(Channel[i].mo == oldactor)
-			Channel[i].mo = newactor;
-	}
+    for (i = 0; i < snd_Channels; i++)
+    {
+        if (Channel[i].mo == oldactor)
+            Channel[i].mo = newactor;
+    }
 }
 
 //==========================================================================
@@ -663,14 +681,14 @@ void S_SoundLink(mobj_t *oldactor, mobj_t *newactor)
 
 void S_PauseSound(void)
 {
-	if(i_CDMusic)
-	{
-		I_CDMusStop();
-	}
-	else
-	{
-		I_PauseSong(RegisteredSong);
-	}
+    if (i_CDMusic)
+    {
+        I_CDMusStop();
+    }
+    else
+    {
+        I_PauseSong(RegisteredSong);
+    }
 }
 
 //==========================================================================
@@ -681,14 +699,14 @@ void S_PauseSound(void)
 
 void S_ResumeSound(void)
 {
-	if(i_CDMusic)
-	{
-		I_CDMusResume();
-	}
-	else
-	{
-		I_ResumeSong(RegisteredSong);
-	}
+    if (i_CDMusic)
+    {
+        I_CDMusResume();
+    }
+    else
+    {
+        I_ResumeSong(RegisteredSong);
+    }
 }
 
 //==========================================================================
@@ -697,127 +715,131 @@ void S_ResumeSound(void)
 //
 //==========================================================================
 
-void S_UpdateSounds(mobj_t *listener)
+void S_UpdateSounds(mobj_t * listener)
 {
-	int i, dist, vol;
-	int angle;
-	int sep;
-	int priority;
-	int absx;
-	int absy;
+    int i, dist, vol;
+    int angle;
+    int sep;
+    int priority;
+    int absx;
+    int absy;
 
-	if(i_CDMusic)
-	{
-		I_UpdateCDMusic();
-	}
-	if(snd_MaxVolume == 0)
-	{
-		return;
-	}
+    if (i_CDMusic)
+    {
+        I_UpdateCDMusic();
+    }
+    if (snd_MaxVolume == 0)
+    {
+        return;
+    }
 
-	// Update any Sequences
-	SN_UpdateActiveSequences();
+    // Update any Sequences
+    SN_UpdateActiveSequences();
 
-	if(NextCleanup < gametic)
-	{
-		if(UseSndScript)
-		{
-			for(i = 0; i < NUMSFX; i++)
-			{
-				if(S_sfx[i].usefulness == 0 && S_sfx[i].snd_ptr)
-				{
-					S_sfx[i].usefulness = -1;
-				}
-			}
-		}
-		else
-		{
-			for(i = 0; i < NUMSFX; i++)
-			{
-				if(S_sfx[i].usefulness == 0 && S_sfx[i].snd_ptr)
-				{
-					if(lumpcache[S_sfx[i].lumpnum])
-					{
-						if(((memblock_t *)((byte*)
-							(lumpcache[S_sfx[i].lumpnum])-
-							sizeof(memblock_t)))->id == 0x1d4a11)
-						{ // taken directly from the Z_ChangeTag macro
-							Z_ChangeTag2(lumpcache[S_sfx[i].lumpnum],
-								PU_CACHE);
+    if (NextCleanup < gametic)
+    {
+        if (UseSndScript)
+        {
+            for (i = 0; i < NUMSFX; i++)
+            {
+                if (S_sfx[i].usefulness == 0 && S_sfx[i].snd_ptr)
+                {
+                    S_sfx[i].usefulness = -1;
+                }
+            }
+        }
+        else
+        {
+            for (i = 0; i < NUMSFX; i++)
+            {
+                if (S_sfx[i].usefulness == 0 && S_sfx[i].snd_ptr)
+                {
+                    if (lumpcache[S_sfx[i].lumpnum])
+                    {
+                        if (((memblock_t *) ((byte *)
+                                             (lumpcache[S_sfx[i].lumpnum]) -
+                                             sizeof(memblock_t)))->id ==
+                            0x1d4a11)
+                        {       // taken directly from the Z_ChangeTag macro
+                            Z_ChangeTag2(lumpcache[S_sfx[i].lumpnum],
+                                         PU_CACHE);
 #ifdef __WATCOMC__
-								_dpmi_unlockregion(S_sfx[i].snd_ptr,
-									lumpinfo[S_sfx[i].lumpnum].size);
+                            _dpmi_unlockregion(S_sfx[i].snd_ptr,
+                                               lumpinfo[S_sfx[i].lumpnum].
+                                               size);
 #endif
-						}
-					}
-					S_sfx[i].usefulness = -1;
-					S_sfx[i].snd_ptr = NULL;
-				}
-			}
-		}
-		NextCleanup = gametic+35*30; // every 30 seconds
-	}
-	for(i=0;i<snd_Channels;i++)
-	{
-		if(!Channel[i].handle || S_sfx[Channel[i].sound_id].usefulness == -1)
-		{
-			continue;
-		}
-		if(!I_SoundIsPlaying(Channel[i].handle))
-		{
-			if(S_sfx[Channel[i].sound_id].usefulness > 0)
-			{
-				S_sfx[Channel[i].sound_id].usefulness--;
-			}
-			Channel[i].handle = 0;
-			Channel[i].mo = NULL;
-			Channel[i].sound_id = 0;
-		}
-		if(Channel[i].mo == NULL || Channel[i].sound_id == 0
-			|| Channel[i].mo == listener)
-		{
-			continue;
-		}
-		else
-		{
-			absx = abs(Channel[i].mo->x-listener->x);
-			absy = abs(Channel[i].mo->y-listener->y);
-			dist = absx+absy-(absx > absy ? absy>>1 : absx>>1);
-			dist >>= FRACBITS;
+                        }
+                    }
+                    S_sfx[i].usefulness = -1;
+                    S_sfx[i].snd_ptr = NULL;
+                }
+            }
+        }
+        NextCleanup = gametic + 35 * 30;        // every 30 seconds
+    }
+    for (i = 0; i < snd_Channels; i++)
+    {
+        if (!Channel[i].handle || S_sfx[Channel[i].sound_id].usefulness == -1)
+        {
+            continue;
+        }
+        if (!I_SoundIsPlaying(Channel[i].handle))
+        {
+            if (S_sfx[Channel[i].sound_id].usefulness > 0)
+            {
+                S_sfx[Channel[i].sound_id].usefulness--;
+            }
+            Channel[i].handle = 0;
+            Channel[i].mo = NULL;
+            Channel[i].sound_id = 0;
+        }
+        if (Channel[i].mo == NULL || Channel[i].sound_id == 0
+            || Channel[i].mo == listener)
+        {
+            continue;
+        }
+        else
+        {
+            absx = abs(Channel[i].mo->x - listener->x);
+            absy = abs(Channel[i].mo->y - listener->y);
+            dist = absx + absy - (absx > absy ? absy >> 1 : absx >> 1);
+            dist >>= FRACBITS;
 
-			if(dist >= MAX_SND_DIST)
-			{
-				S_StopSound(Channel[i].mo);
-				continue;
-			}
-			if(dist < 0)
-			{
-				dist = 0;
-			}
-			//vol = SoundCurve[dist];
-			vol = (SoundCurve[dist]*(snd_MaxVolume*8)*Channel[i].volume)>>14;
-			if(Channel[i].mo == listener)
-			{
-				sep = 128;
-			}
-			else
-			{
-				angle = R_PointToAngle2(listener->x, listener->y,
-								Channel[i].mo->x, Channel[i].mo->y);
-				angle = (angle-viewangle)>>24;
-				sep = angle*2-128;
-				if(sep < 64)
-					sep = -sep;
-				if(sep > 192)
-					sep = 512-sep;
-			}
-			I_UpdateSoundParams(Channel[i].handle, vol, sep,
-				Channel[i].pitch);
-			priority = S_sfx[Channel[i].sound_id].priority;
-			priority *= PRIORITY_MAX_ADJUST-(dist/DIST_ADJUST);
-			Channel[i].priority = priority;
-		}
-	}
+            if (dist >= MAX_SND_DIST)
+            {
+                S_StopSound(Channel[i].mo);
+                continue;
+            }
+            if (dist < 0)
+            {
+                dist = 0;
+            }
+            //vol = SoundCurve[dist];
+            vol =
+                (SoundCurve[dist] * (snd_MaxVolume * 8) *
+                 Channel[i].volume) >> 14;
+            if (Channel[i].mo == listener)
+            {
+                sep = 128;
+            }
+            else
+            {
+                angle = R_PointToAngle2(listener->x, listener->y,
+                                        Channel[i].mo->x, Channel[i].mo->y);
+                angle = (angle - viewangle) >> 24;
+                sep = angle * 2 - 128;
+                if (sep < 64)
+                    sep = -sep;
+                if (sep > 192)
+                    sep = 512 - sep;
+            }
+            I_UpdateSoundParams(Channel[i].handle, vol, sep,
+                                Channel[i].pitch);
+            priority = S_sfx[Channel[i].sound_id].priority;
+            priority *= PRIORITY_MAX_ADJUST - (dist / DIST_ADJUST);
+            Channel[i].priority = priority;
+        }
+    }
 }
 
 //==========================================================================
@@ -828,37 +850,37 @@ void S_UpdateSounds(mobj_t *listener)
 
 void S_Init(void)
 {
-	SoundCurve = W_CacheLumpName("SNDCURVE", PU_STATIC);
+    SoundCurve = W_CacheLumpName("SNDCURVE", PU_STATIC);
 //      SoundCurve = Z_Malloc(MAX_SND_DIST, PU_STATIC, NULL);
-	I_StartupSound();
-	if(snd_Channels > 8)
-	{
-		snd_Channels = 8;
-	}
-	I_SetChannels(snd_Channels);
-	I_SetMusicVolume(snd_MusicVolume);
+    I_StartupSound();
+    if (snd_Channels > 8)
+    {
+        snd_Channels = 8;
+    }
+    I_SetChannels(snd_Channels);
+    I_SetMusicVolume(snd_MusicVolume);
 
-	// Attempt to setup CD music
-	if(snd_MusicDevice == snd_CDMUSIC)
-	{
-	   	ST_Message("    Attempting to initialize CD Music: ");
-		if(!cdrom)
-		{
-			i_CDMusic = (I_CDMusInit() != -1);
-		}
-		else
-		{ // The user is trying to use the cdrom for both game and music
-			i_CDMusic = false;
-		}
-	   	if(i_CDMusic)
-	   	{
-	   		ST_Message("initialized.\n");
-	   	}
-	   	else
-	   	{
-	   		ST_Message("failed.\n");
-	   	}
-	}
+    // Attempt to setup CD music
+    if (snd_MusicDevice == snd_CDMUSIC)
+    {
+        ST_Message("    Attempting to initialize CD Music: ");
+        if (!cdrom)
+        {
+            i_CDMusic = (I_CDMusInit() != -1);
+        }
+        else
+        {                       // The user is trying to use the cdrom for both game and music
+            i_CDMusic = false;
+        }
+        if (i_CDMusic)
+        {
+            ST_Message("initialized.\n");
+        }
+        else
+        {
+            ST_Message("failed.\n");
+        }
+    }
 }
 
 //==========================================================================
@@ -867,24 +889,24 @@ void S_Init(void)
 //
 //==========================================================================
 
-void S_GetChannelInfo(SoundInfo_t *s)
+void S_GetChannelInfo(SoundInfo_t * s)
 {
-	int i;
-	ChanInfo_t *c;
+    int i;
+    ChanInfo_t *c;
 
-	s->channelCount = snd_Channels;
-	s->musicVolume = snd_MusicVolume;
-	s->soundVolume = snd_MaxVolume;
-	for(i = 0; i < snd_Channels; i++)
-	{
-		c = &s->chan[i];
-		c->id = Channel[i].sound_id;
-		c->priority = Channel[i].priority;
-		c->name = S_sfx[c->id].lumpname;
-		c->mo = Channel[i].mo;
-		c->distance = P_AproxDistance(c->mo->x-viewx, c->mo->y-viewy)
-			>>FRACBITS;
-	}
+    s->channelCount = snd_Channels;
+    s->musicVolume = snd_MusicVolume;
+    s->soundVolume = snd_MaxVolume;
+    for (i = 0; i < snd_Channels; i++)
+    {
+        c = &s->chan[i];
+        c->id = Channel[i].sound_id;
+        c->priority = Channel[i].priority;
+        c->name = S_sfx[c->id].lumpname;
+        c->mo = Channel[i].mo;
+        c->distance = P_AproxDistance(c->mo->x - viewx, c->mo->y - viewy)
+            >> FRACBITS;
+    }
 }
 
 //==========================================================================
@@ -893,21 +915,21 @@ void S_GetChannelInfo(SoundInfo_t *s)
 //
 //==========================================================================
 
-boolean S_GetSoundPlayingInfo(mobj_t *mobj, int sound_id)
+boolean S_GetSoundPlayingInfo(mobj_t * mobj, int sound_id)
 {
-	int i;
+    int i;
 
-	for(i = 0; i < snd_Channels; i++)
-	{
-		if(Channel[i].sound_id == sound_id && Channel[i].mo == mobj)
-		{
-			if(I_SoundIsPlaying(Channel[i].handle))
-			{
-				return true;
-			}
-		}
-	}
-	return false;
+    for (i = 0; i < snd_Channels; i++)
+    {
+        if (Channel[i].sound_id == sound_id && Channel[i].mo == mobj)
+        {
+            if (I_SoundIsPlaying(Channel[i].handle))
+            {
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 //==========================================================================
@@ -918,30 +940,30 @@ boolean S_GetSoundPlayingInfo(mobj_t *mobj, int sound_id)
 
 void S_SetMusicVolume(void)
 {
-	if(i_CDMusic)
-	{
-		I_CDMusSetVolume(snd_MusicVolume*16); // 0-255
-	}
-	else
-	{
-		I_SetMusicVolume(snd_MusicVolume);
-	}
-	if(snd_MusicVolume == 0)
-	{
-		if(!i_CDMusic)
-		{
-			I_PauseSong(RegisteredSong);
-		}
-		MusicPaused = true;
-	}
-	else if(MusicPaused)
-	{
-		if(!i_CDMusic)
-		{
-			I_ResumeSong(RegisteredSong);
-		}
-		MusicPaused = false;
-	}
+    if (i_CDMusic)
+    {
+        I_CDMusSetVolume(snd_MusicVolume * 16); // 0-255
+    }
+    else
+    {
+        I_SetMusicVolume(snd_MusicVolume);
+    }
+    if (snd_MusicVolume == 0)
+    {
+        if (!i_CDMusic)
+        {
+            I_PauseSong(RegisteredSong);
+        }
+        MusicPaused = true;
+    }
+    else if (MusicPaused)
+    {
+        if (!i_CDMusic)
+        {
+            I_ResumeSong(RegisteredSong);
+        }
+        MusicPaused = false;
+    }
 }
 
 //==========================================================================
@@ -952,17 +974,17 @@ void S_SetMusicVolume(void)
 
 void S_ShutDown(void)
 {
-	extern int tsm_ID;
-	if(tsm_ID != -1)
-	{
-		I_StopSong(RegisteredSong);
-		I_UnRegisterSong(RegisteredSong);
-		I_ShutdownSound();
-	}
-	if(i_CDMusic)
-	{
-		I_CDMusStop();
-	}
+    extern int tsm_ID;
+    if (tsm_ID != -1)
+    {
+        I_StopSong(RegisteredSong);
+        I_UnRegisterSong(RegisteredSong);
+        I_ShutdownSound();
+    }
+    if (i_CDMusic)
+    {
+        I_CDMusStop();
+    }
 }
 
 //==========================================================================
@@ -973,73 +995,73 @@ void S_ShutDown(void)
 
 void S_InitScript(void)
 {
-	int p;
-	int i;
+    int p;
+    int i;
 
-	strcpy(ArchivePath, DEFAULT_ARCHIVEPATH);
-	if(!(p = M_CheckParm("-devsnd")))
-	{
-		UseSndScript = false;
-		SC_OpenLump("sndinfo");
-	}
-	else
-	{
-		UseSndScript = true;
-		SC_OpenFile(myargv[p+1]);
-	}
-	while(SC_GetString())
-	{
-		if(*sc_String == '$')
-		{
-			if(!stricmp(sc_String, "$ARCHIVEPATH"))
-			{
-				SC_MustGetString();
-				strcpy(ArchivePath, sc_String);
-			}
-			else if(!stricmp(sc_String, "$MAP"))
-			{
-				SC_MustGetNumber();
-				SC_MustGetString();
-				if(sc_Number)
-				{
-					P_PutMapSongLump(sc_Number, sc_String);
-				}
-			}
-			continue;
-		}
-		else
-		{
-			for(i = 0; i < NUMSFX; i++)
-			{
-				if(!strcmp(S_sfx[i].tagName, sc_String))
-				{
-					SC_MustGetString();
-					if(*sc_String != '?')
-					{
-						strcpy(S_sfx[i].lumpname, sc_String);
-					}
-					else
-					{
-						strcpy(S_sfx[i].lumpname, "default");
-					}
-					break;
-				}
-			}
-			if(i == NUMSFX)
-			{
-				SC_MustGetString();
-			}
-		}
-	}
-	SC_Close();
+    strcpy(ArchivePath, DEFAULT_ARCHIVEPATH);
+    if (!(p = M_CheckParm("-devsnd")))
+    {
+        UseSndScript = false;
+        SC_OpenLump("sndinfo");
+    }
+    else
+    {
+        UseSndScript = true;
+        SC_OpenFile(myargv[p + 1]);
+    }
+    while (SC_GetString())
+    {
+        if (*sc_String == '$')
+        {
+            if (!stricmp(sc_String, "$ARCHIVEPATH"))
+            {
+                SC_MustGetString();
+                strcpy(ArchivePath, sc_String);
+            }
+            else if (!stricmp(sc_String, "$MAP"))
+            {
+                SC_MustGetNumber();
+                SC_MustGetString();
+                if (sc_Number)
+                {
+                    P_PutMapSongLump(sc_Number, sc_String);
+                }
+            }
+            continue;
+        }
+        else
+        {
+            for (i = 0; i < NUMSFX; i++)
+            {
+                if (!strcmp(S_sfx[i].tagName, sc_String))
+                {
+                    SC_MustGetString();
+                    if (*sc_String != '?')
+                    {
+                        strcpy(S_sfx[i].lumpname, sc_String);
+                    }
+                    else
+                    {
+                        strcpy(S_sfx[i].lumpname, "default");
+                    }
+                    break;
+                }
+            }
+            if (i == NUMSFX)
+            {
+                SC_MustGetString();
+            }
+        }
+    }
+    SC_Close();
 
-	for(i = 0; i < NUMSFX; i++)
-	{
-		if(!strcmp(S_sfx[i].lumpname, ""))
-		{
-			strcpy(S_sfx[i].lumpname, "default");
-		}
-	}
+    for (i = 0; i < NUMSFX; i++)
+    {
+        if (!strcmp(S_sfx[i].lumpname, ""))
+        {
+            strcpy(S_sfx[i].lumpname, "default");
+        }
+    }
 }
 
 //==========================================================================
@@ -1053,19 +1075,18 @@ void S_InitScript(void)
 
 void I_UpdateCDMusic(void)
 {
-	extern boolean MenuActive;
+    extern boolean MenuActive;
 
-	if(MusicPaused || i_CDMusicLength < 0
-	|| (paused && !MenuActive))
-	{ // Non-looping song/song paused
-		return;
-	}
-	i_CDMusicLength -= gametic-oldTic;
-	oldTic = gametic;
-	if(i_CDMusicLength <= 0)
-	{
-		S_StartSong(gamemap, true);
-	}
+    if (MusicPaused || i_CDMusicLength < 0 || (paused && !MenuActive))
+    {                           // Non-looping song/song paused
+        return;
+    }
+    i_CDMusicLength -= gametic - oldTic;
+    oldTic = gametic;
+    if (i_CDMusicLength <= 0)
+    {
+        S_StartSong(gamemap, true);
+    }
 }
 
 /*
@@ -1144,14 +1165,14 @@ void I_UpdateCDMusic(void)
 //
 //==================================================
 
-boolean         joystickpresent;
-extern  unsigned        joystickx, joysticky;
-boolean I_ReadJoystick (void);          // returns false if not connected
+boolean joystickpresent;
+extern unsigned joystickx, joysticky;
+boolean I_ReadJoystick(void);   // returns false if not connected
 
 
 //==================================================
 
-#define VBLCOUNTER              34000           // hardware tics to a frame
+#define VBLCOUNTER              34000   // hardware tics to a frame
 
 
 #define TIMERINT 8
@@ -1176,13 +1197,13 @@ boolean mousepresent;
 
 //===============================
 
-int             ticcount;
+int ticcount;
 
 // REGS stuff used for int calls
 union REGS regs;
 struct SREGS segregs;
 
-boolean novideo; // if true, stay in text mode for debugging
+boolean novideo;                // if true, stay in text mode for debugging
 
 #define KBDQUESIZE 32
 byte keyboardque[KBDQUESIZE];
@@ -1200,27 +1221,26 @@ int kbdtail, kbdhead;
 #define SC_RSHIFT       0x36
 #define SC_LSHIFT       0x2a
 
-byte        scantokey[128] =
-					{
+byte scantokey[128] = {
 //  0           1       2       3       4       5       6       7
 //  8           9       A       B       C       D       E       F
-	0  ,    27,     '1',    '2',    '3',    '4',    '5',    '6',
-	'7',    '8',    '9',    '0',    '-',    '=',    KEY_BACKSPACE, 9, // 0
-	'q',    'w',    'e',    'r',    't',    'y',    'u',    'i',
-	'o',    'p',    '[',    ']',    13 ,    KEY_RCTRL,'a',  's',      // 1
-	'd',    'f',    'g',    'h',    'j',    'k',    'l',    ';',
-	39 ,    '`',    KEY_LSHIFT,92,  'z',    'x',    'c',    'v',      // 2
-	'b',    'n',    'm',    ',',    '.',    '/',    KEY_RSHIFT,'*',
-	KEY_RALT,' ',   0  ,    KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5,   // 3
-	KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10,0  ,    0  , KEY_HOME,
-	KEY_UPARROW,KEY_PGUP,'-',KEY_LEFTARROW,'5',KEY_RIGHTARROW,'+',KEY_END, //4
-	KEY_DOWNARROW,KEY_PGDN,KEY_INS,KEY_DEL,0,0,             0,              KEY_F11,
-	KEY_F12,0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0,        // 5
-	0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0,
-	0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0,        // 6
-	0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0,
-	0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0  ,    0         // 7
-					};
+    0, 27, '1', '2', '3', '4', '5', '6',
+    '7', '8', '9', '0', '-', '=', KEY_BACKSPACE, 9,     // 0
+    'q', 'w', 'e', 'r', 't', 'y', 'u', 'i',
+    'o', 'p', '[', ']', 13, KEY_RCTRL, 'a', 's',        // 1
+    'd', 'f', 'g', 'h', 'j', 'k', 'l', ';',
+    39, '`', KEY_LSHIFT, 92, 'z', 'x', 'c', 'v',        // 2
+    'b', 'n', 'm', ',', '.', '/', KEY_RSHIFT, '*',
+    KEY_RALT, ' ', 0, KEY_F1, KEY_F2, KEY_F3, KEY_F4, KEY_F5,   // 3
+    KEY_F6, KEY_F7, KEY_F8, KEY_F9, KEY_F10, 0, 0, KEY_HOME,
+    KEY_UPARROW, KEY_PGUP, '-', KEY_LEFTARROW, '5', KEY_RIGHTARROW, '+', KEY_END,       //4
+    KEY_DOWNARROW, KEY_PGDN, KEY_INS, KEY_DEL, 0, 0, 0, KEY_F11,
+    KEY_F12, 0, 0, 0, 0, 0, 0, 0,       // 5
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0,     // 6
+    0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0      // 7
+};
 
 //==========================================================================
 
@@ -1232,12 +1252,12 @@ byte        scantokey[128] =
 //
 //--------------------------------------------------------------------------
 
-int I_GetTime (void)
+int I_GetTime(void)
 {
 #ifdef NOTIMER
-	ticcount++;
+    ticcount++;
 #endif
-	return(ticcount);
+    return (ticcount);
 }
 
 //--------------------------------------------------------------------------
@@ -1296,31 +1316,33 @@ void I_UnColorBorder(void)
 
 void I_WaitVBL(int vbls)
 {
-	int stat;
+    int stat;
 
-	if(novideo)
-	{
-		return;
-	}
-	while(vbls--)
-	{
-		do
-		{
-			stat = inp(STATUS_REGISTER_1);
-			if(stat&8)
-			{
-				break;
-			}
-		} while(1);
-		do
-		{
-			stat = inp(STATUS_REGISTER_1);
-			if((stat&8) == 0)
-			{
-				break;
-			}
-		} while(1);
-	}
+    if (novideo)
+    {
+        return;
+    }
+    while (vbls--)
+    {
+        do
+        {
+            stat = inp(STATUS_REGISTER_1);
+            if (stat & 8)
+            {
+                break;
+            }
+        }
+        while (1);
+        do
+        {
+            stat = inp(STATUS_REGISTER_1);
+            if ((stat & 8) == 0)
+            {
+                break;
+            }
+        }
+        while (1);
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -1331,20 +1353,20 @@ void I_WaitVBL(int vbls)
 //
 //--------------------------------------------------------------------------
 
-void I_SetPalette(byte *palette)
+void I_SetPalette(byte * palette)
 {
-	int i;
+    int i;
 
-	if(novideo)
-	{
-		return;
-	}
-	I_WaitVBL(1);
-	_outbyte(PEL_WRITE_ADR, 0);
-	for(i = 0; i < 768; i++)
-	{
-		_outbyte(PEL_DATA, (gammatable[usegamma][*palette++])>>2);
-	}
+    if (novideo)
+    {
+        return;
+    }
+    I_WaitVBL(1);
+    _outbyte(PEL_WRITE_ADR, 0);
+    for (i = 0; i < 768; i++)
+    {
+        _outbyte(PEL_DATA, (gammatable[usegamma][*palette++]) >> 2);
+    }
 }
 
 /*
@@ -1369,88 +1391,88 @@ byte *pcscreen, *destscreen, *destview;
 int UpdateState;
 extern int screenblocks;
 
-void I_Update (void)
+void I_Update(void)
 {
-	int i;
-	byte *dest;
-	int tics;
-	static int lasttic;
+    int i;
+    byte *dest;
+    int tics;
+    static int lasttic;
 
 //
 // blit screen to video
 //
-	if(DisplayTicker)
-	{
-		if(screenblocks > 9 || UpdateState&(I_FULLSCRN|I_MESSAGES))
-		{
-			dest = (byte *)screen;
-		}
-		else
-		{
-			dest = (byte *)pcscreen;
-		}
-		tics = ticcount-lasttic;
-		lasttic = ticcount;
-		if(tics > 20)
-		{
-			tics = 20;
-		}
-		for(i = 0; i < tics; i++)
-		{
-			*dest = 0xff;
-			dest += 2;
-		}
-		for(i = tics; i < 20; i++)
-		{
-			*dest = 0x00;
-			dest += 2;
-		}
-	}
+    if (DisplayTicker)
+    {
+        if (screenblocks > 9 || UpdateState & (I_FULLSCRN | I_MESSAGES))
+        {
+            dest = (byte *) screen;
+        }
+        else
+        {
+            dest = (byte *) pcscreen;
+        }
+        tics = ticcount - lasttic;
+        lasttic = ticcount;
+        if (tics > 20)
+        {
+            tics = 20;
+        }
+        for (i = 0; i < tics; i++)
+        {
+            *dest = 0xff;
+            dest += 2;
+        }
+        for (i = tics; i < 20; i++)
+        {
+            *dest = 0x00;
+            dest += 2;
+        }
+    }
 
-	//memset(pcscreen, 255, SCREENHEIGHT*SCREENWIDTH);
+    //memset(pcscreen, 255, SCREENHEIGHT*SCREENWIDTH);
 
-	if(UpdateState == I_NOUPDATE)
-	{
-		return;
-	}
-	if(UpdateState&I_FULLSCRN)
-	{
-		memcpy(pcscreen, screen, SCREENWIDTH*SCREENHEIGHT);
-		UpdateState = I_NOUPDATE; // clear out all draw types
-	}
-	if(UpdateState&I_FULLVIEW)
-	{
-		if(UpdateState&I_MESSAGES && screenblocks > 7)
-		{
-			for(i = 0; i <
-				(viewwindowy+viewheight)*SCREENWIDTH; i += SCREENWIDTH)
-			{
-				memcpy(pcscreen+i, screen+i, SCREENWIDTH);
-			}
-			UpdateState &= ~(I_FULLVIEW|I_MESSAGES);
-		}
-		else
-		{
-			for(i = viewwindowy*SCREENWIDTH+viewwindowx; i <
-				(viewwindowy+viewheight)*SCREENWIDTH; i += SCREENWIDTH)
-			{
-				memcpy(pcscreen+i, screen+i, viewwidth);
-			}
-			UpdateState &= ~I_FULLVIEW;
-		}
-	}
-	if(UpdateState&I_STATBAR)
-	{
-		memcpy(pcscreen+SCREENWIDTH*(SCREENHEIGHT-SBARHEIGHT),
-			screen+SCREENWIDTH*(SCREENHEIGHT-SBARHEIGHT),
-			SCREENWIDTH*SBARHEIGHT);
-		UpdateState &= ~I_STATBAR;
-	}
-	if(UpdateState&I_MESSAGES)
-	{
-		memcpy(pcscreen, screen, SCREENWIDTH*28);
-		UpdateState &= ~I_MESSAGES;
-	}
+    if (UpdateState == I_NOUPDATE)
+    {
+        return;
+    }
+    if (UpdateState & I_FULLSCRN)
+    {
+        memcpy(pcscreen, screen, SCREENWIDTH * SCREENHEIGHT);
+        UpdateState = I_NOUPDATE;       // clear out all draw types
+    }
+    if (UpdateState & I_FULLVIEW)
+    {
+        if (UpdateState & I_MESSAGES && screenblocks > 7)
+        {
+            for (i = 0; i <
+                 (viewwindowy + viewheight) * SCREENWIDTH; i += SCREENWIDTH)
+            {
+                memcpy(pcscreen + i, screen + i, SCREENWIDTH);
+            }
+            UpdateState &= ~(I_FULLVIEW | I_MESSAGES);
+        }
+        else
+        {
+            for (i = viewwindowy * SCREENWIDTH + viewwindowx; i <
+                 (viewwindowy + viewheight) * SCREENWIDTH; i += SCREENWIDTH)
+            {
+                memcpy(pcscreen + i, screen + i, viewwidth);
+            }
+            UpdateState &= ~I_FULLVIEW;
+        }
+    }
+    if (UpdateState & I_STATBAR)
+    {
+        memcpy(pcscreen + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT),
+               screen + SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT),
+               SCREENWIDTH * SBARHEIGHT);
+        UpdateState &= ~I_STATBAR;
+    }
+    if (UpdateState & I_MESSAGES)
+    {
+        memcpy(pcscreen, screen, SCREENWIDTH * 28);
+        UpdateState &= ~I_MESSAGES;
+    }
 
 
 //  memcpy(pcscreen, screen, SCREENHEIGHT*SCREENWIDTH);
@@ -1464,15 +1486,15 @@ void I_Update (void)
 
 void I_InitGraphics(void)
 {
-	if(novideo)
-	{
-		return;
-	}
-	//grmode = true;
-	regs.w.ax = 0x13;
-	int386(0x10, (const union REGS *)&regs, &regs);
-	pcscreen = destscreen = (byte *)0xa0000;
-	I_SetPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
+    if (novideo)
+    {
+        return;
+    }
+    //grmode = true;
+    regs.w.ax = 0x13;
+    int386(0x10, (const union REGS *) &regs, &regs);
+    pcscreen = destscreen = (byte *) 0xa0000;
+    I_SetPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
 }
 
 //--------------------------------------------------------------------------
@@ -1483,15 +1505,15 @@ void I_InitGraphics(void)
 
 void I_ShutdownGraphics(void)
 {
-	byte mode;
+    byte mode;
 
-	// don't reset mode if it didn't get set
-	mode = *(byte *)0x449;
-	if(mode == 0x12 || mode == 0x13)
-	{
-		regs.w.ax = 3;
-		int386(0x10, &regs, &regs); // back to text mode
-	}
+    // don't reset mode if it didn't get set
+    mode = *(byte *) 0x449;
+    if (mode == 0x12 || mode == 0x13)
+    {
+        regs.w.ax = 3;
+        int386(0x10, &regs, &regs);     // back to text mode
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -1588,69 +1610,70 @@ void   I_StartTic (void)
 #define SC_LEFTARROW            0x4b
 #define SC_RIGHTARROW   0x4d
 
-void   I_StartTic (void)
+void I_StartTic(void)
 {
-	int             k;
-	event_t ev;
+    int k;
+    event_t ev;
 
 
-	I_ReadMouse ();
+    I_ReadMouse();
 
 //
 // keyboard events
 //
-	while (kbdtail < kbdhead)
-	{
-		k = keyboardque[kbdtail&(KBDQUESIZE-1)];
-		kbdtail++;
+    while (kbdtail < kbdhead)
+    {
+        k = keyboardque[kbdtail & (KBDQUESIZE - 1)];
+        kbdtail++;
 
-		// extended keyboard shift key bullshit
-		if ( (k&0x7f)==SC_LSHIFT || (k&0x7f)==SC_RSHIFT )
-		{
-			if ( keyboardque[(kbdtail-2)&(KBDQUESIZE-1)]==0xe0 )
-				continue;
-			k &= 0x80;
-			k |= SC_RSHIFT;
-		}
+        // extended keyboard shift key bullshit
+        if ((k & 0x7f) == SC_LSHIFT || (k & 0x7f) == SC_RSHIFT)
+        {
+            if (keyboardque[(kbdtail - 2) & (KBDQUESIZE - 1)] == 0xe0)
+                continue;
+            k &= 0x80;
+            k |= SC_RSHIFT;
+        }
 
-		if (k==0xe0)
-			continue;               // special / pause keys
-		if (keyboardque[(kbdtail-2)&(KBDQUESIZE-1)] == 0xe1)
-			continue;                               // pause key bullshit
+        if (k == 0xe0)
+            continue;           // special / pause keys
+        if (keyboardque[(kbdtail - 2) & (KBDQUESIZE - 1)] == 0xe1)
+            continue;           // pause key bullshit
 
-		if (k==0xc5 && keyboardque[(kbdtail-2)&(KBDQUESIZE-1)] == 0x9d)
-		{
-			ev.type = ev_keydown;
-			ev.data1 = KEY_PAUSE;
-			H2_PostEvent (&ev);
-			continue;
-		}
+        if (k == 0xc5
+            && keyboardque[(kbdtail - 2) & (KBDQUESIZE - 1)] == 0x9d)
+        {
+            ev.type = ev_keydown;
+            ev.data1 = KEY_PAUSE;
+            H2_PostEvent(&ev);
+            continue;
+        }
 
-		if (k&0x80)
-			ev.type = ev_keyup;
-		else
-			ev.type = ev_keydown;
-		k &= 0x7f;
-		switch (k)
-		{
-		case SC_UPARROW:
-			ev.data1 = KEY_UPARROW;
-			break;
-		case SC_DOWNARROW:
-			ev.data1 = KEY_DOWNARROW;
-			break;
-		case SC_LEFTARROW:
-			ev.data1 = KEY_LEFTARROW;
-			break;
-		case SC_RIGHTARROW:
-			ev.data1 = KEY_RIGHTARROW;
-			break;
-		default:
-			ev.data1 = scantokey[k];
-			break;
-		}
-		H2_PostEvent (&ev);
-	}
+        if (k & 0x80)
+            ev.type = ev_keyup;
+        else
+            ev.type = ev_keydown;
+        k &= 0x7f;
+        switch (k)
+        {
+            case SC_UPARROW:
+                ev.data1 = KEY_UPARROW;
+                break;
+            case SC_DOWNARROW:
+                ev.data1 = KEY_DOWNARROW;
+                break;
+            case SC_LEFTARROW:
+                ev.data1 = KEY_LEFTARROW;
+                break;
+            case SC_RIGHTARROW:
+                ev.data1 = KEY_RIGHTARROW;
+                break;
+            default:
+                ev.data1 = scantokey[k];
+                break;
+        }
+        H2_PostEvent(&ev);
+    }
 
 }
 
@@ -1683,13 +1706,13 @@ void   I_ReadKeys (void)
 ===============
 */
 
-void I_StartFrame (void)
+void I_StartFrame(void)
 {
-	I_JoystickEvents ();
-	if(useexterndriver)
-	{
-		DPMIInt(i_Vector);
-	}
+    I_JoystickEvents();
+    if (useexterndriver)
+    {
+        DPMIInt(i_Vector);
+    }
 }
 
 /*
@@ -1719,10 +1742,10 @@ _outbyte(PEL_DATA,b);
 ================
 */
 
-int I_TimerISR (void)
+int I_TimerISR(void)
 {
-	ticcount++;
-	return 0;
+    ticcount++;
+    return 0;
 }
 
 /*
@@ -1733,7 +1756,7 @@ int I_TimerISR (void)
 ============================================================================
 */
 
-void (__interrupt __far *oldkeyboardisr) () = NULL;
+void (__interrupt __far * oldkeyboardisr) () = NULL;
 
 int lastpress;
 
@@ -1745,16 +1768,16 @@ int lastpress;
 ================
 */
 
-void __interrupt I_KeyboardISR (void)
+void __interrupt I_KeyboardISR(void)
 {
 // Get the scan code
 
-	keyboardque[kbdhead&(KBDQUESIZE-1)] = lastpress = _inbyte(0x60);
-	kbdhead++;
+    keyboardque[kbdhead & (KBDQUESIZE - 1)] = lastpress = _inbyte(0x60);
+    kbdhead++;
 
 // acknowledge the interrupt
 
-	_outbyte(0x20,0x20);
+    _outbyte(0x20, 0x20);
 }
 
 
@@ -1767,22 +1790,22 @@ void __interrupt I_KeyboardISR (void)
 ===============
 */
 
-void I_StartupKeyboard (void)
+void I_StartupKeyboard(void)
 {
 #ifndef NOKBD
-	oldkeyboardisr = _dos_getvect(KEYBOARDINT);
-	_dos_setvect (0x8000 | KEYBOARDINT, I_KeyboardISR);
+    oldkeyboardisr = _dos_getvect(KEYBOARDINT);
+    _dos_setvect(0x8000 | KEYBOARDINT, I_KeyboardISR);
 #endif
 
 //I_ReadKeys ();
 }
 
 
-void I_ShutdownKeyboard (void)
+void I_ShutdownKeyboard(void)
 {
-	if (oldkeyboardisr)
-		_dos_setvect (KEYBOARDINT, oldkeyboardisr);
-	*(short *)0x41c = *(short *)0x41a;      // clear bios key buffer
+    if (oldkeyboardisr)
+        _dos_setvect(KEYBOARDINT, oldkeyboardisr);
+    *(short *) 0x41c = *(short *) 0x41a;        // clear bios key buffer
 }
 
 
@@ -1796,11 +1819,11 @@ void I_ShutdownKeyboard (void)
 */
 
 
-int I_ResetMouse (void)
+int I_ResetMouse(void)
 {
-	regs.w.ax = 0;                  // reset
-	int386 (0x33, &regs, &regs);
-	return regs.w.ax;
+    regs.w.ax = 0;              // reset
+    int386(0x33, &regs, &regs);
+    return regs.w.ax;
 }
 
 
@@ -1815,25 +1838,25 @@ int I_ResetMouse (void)
 
 void I_StartupCyberMan(void);
 
-void I_StartupMouse (void)
+void I_StartupMouse(void)
 {
-   //
-   // General mouse detection
-   //
-	mousepresent = 0;
-	if ( M_CheckParm ("-nomouse") || !usemouse )
-		return;
+    //
+    // General mouse detection
+    //
+    mousepresent = 0;
+    if (M_CheckParm("-nomouse") || !usemouse)
+        return;
 
-	if (I_ResetMouse () != 0xffff)
-	{
-		ST_Message("Mouse: not present\n");
-		return;
-	}
-	ST_Message("Mouse: detected\n");
+    if (I_ResetMouse() != 0xffff)
+    {
+        ST_Message("Mouse: not present\n");
+        return;
+    }
+    ST_Message("Mouse: detected\n");
 
-	mousepresent = 1;
+    mousepresent = 1;
 
-	I_StartupCyberMan();
+    I_StartupCyberMan();
 }
 
 
@@ -1845,12 +1868,12 @@ void I_StartupMouse (void)
 ================
 */
 
-void I_ShutdownMouse (void)
+void I_ShutdownMouse(void)
 {
-	if (!mousepresent)
-	  return;
+    if (!mousepresent)
+        return;
 
-	I_ResetMouse ();
+    I_ResetMouse();
 }
 
 
@@ -1862,29 +1885,29 @@ void I_ShutdownMouse (void)
 ================
 */
 
-void I_ReadMouse (void)
+void I_ReadMouse(void)
 {
-	event_t ev;
+    event_t ev;
 
 //
 // mouse events
 //
-	if (!mousepresent)
-		return;
+    if (!mousepresent)
+        return;
 
-	ev.type = ev_mouse;
+    ev.type = ev_mouse;
 
-	memset (&dpmiregs,0,sizeof(dpmiregs));
-	dpmiregs.eax = 3;                               // read buttons / position
-	DPMIInt (0x33);
-	ev.data1 = dpmiregs.ebx;
+    memset(&dpmiregs, 0, sizeof(dpmiregs));
+    dpmiregs.eax = 3;           // read buttons / position
+    DPMIInt(0x33);
+    ev.data1 = dpmiregs.ebx;
 
-	dpmiregs.eax = 11;                              // read counters
-	DPMIInt (0x33);
-	ev.data2 = (short)dpmiregs.ecx;
-	ev.data3 = -(short)dpmiregs.edx;
+    dpmiregs.eax = 11;          // read counters
+    DPMIInt(0x33);
+    ev.data2 = (short) dpmiregs.ecx;
+    ev.data3 = -(short) dpmiregs.edx;
 
-	H2_PostEvent (&ev);
+    H2_PostEvent(&ev);
 }
 
 /*
@@ -1895,48 +1918,50 @@ void I_ReadMouse (void)
 ============================================================================
 */
 
-int     joyxl, joyxh, joyyl, joyyh;
+int joyxl, joyxh, joyyl, joyyh;
 
-boolean WaitJoyButton (void)
+boolean WaitJoyButton(void)
 {
-	int             oldbuttons, buttons;
+    int oldbuttons, buttons;
 
-	oldbuttons = 0;
-	do
-	{
-		I_WaitVBL (1);
-		buttons =  ((inp(0x201) >> 4)&1)^1;
-		if (buttons != oldbuttons)
-		{
-			oldbuttons = buttons;
-			continue;
-		}
+    oldbuttons = 0;
+    do
+    {
+        I_WaitVBL(1);
+        buttons = ((inp(0x201) >> 4) & 1) ^ 1;
+        if (buttons != oldbuttons)
+        {
+            oldbuttons = buttons;
+            continue;
+        }
 
-		if ( (lastpress& 0x7f) == 1 )
-		{
-			joystickpresent = false;
-			return false;
-		}
-	} while ( !buttons);
+        if ((lastpress & 0x7f) == 1)
+        {
+            joystickpresent = false;
+            return false;
+        }
+    }
+    while (!buttons);
 
-	do
-	{
-		I_WaitVBL (1);
-		buttons =  ((inp(0x201) >> 4)&1)^1;
-		if (buttons != oldbuttons)
-		{
-			oldbuttons = buttons;
-			continue;
-		}
+    do
+    {
+        I_WaitVBL(1);
+        buttons = ((inp(0x201) >> 4) & 1) ^ 1;
+        if (buttons != oldbuttons)
+        {
+            oldbuttons = buttons;
+            continue;
+        }
 
-		if ( (lastpress& 0x7f) == 1 )
-		{
-			joystickpresent = false;
-			return false;
-		}
-	} while ( buttons);
+        if ((lastpress & 0x7f) == 1)
+        {
+            joystickpresent = false;
+            return false;
+        }
+    }
+    while (buttons);
 
-	return true;
+    return true;
 }
 
 
@@ -1949,46 +1974,48 @@ boolean WaitJoyButton (void)
 ===============
 */
 
-int             basejoyx, basejoyy;
+int basejoyx, basejoyy;
 
-void I_StartupJoystick (void)
+void I_StartupJoystick(void)
 {
-	int     centerx, centery;
+    int centerx, centery;
 
-	joystickpresent = 0;
-	if ( M_CheckParm ("-nojoy") || !usejoystick )
-		return;
+    joystickpresent = 0;
+    if (M_CheckParm("-nojoy") || !usejoystick)
+        return;
 
-	if (!I_ReadJoystick ())
-	{
-		joystickpresent = false;
-		ST_Message("joystick not found\n ");
-		return;
-	}
-	ST_Message("joystick found\n");
-	joystickpresent = true;
+    if (!I_ReadJoystick())
+    {
+        joystickpresent = false;
+        ST_Message("joystick not found\n ");
+        return;
+    }
+    ST_Message("joystick found\n");
+    joystickpresent = true;
 
-	ST_RealMessage("CENTER the joystick and press button 1:");
-	if (!WaitJoyButton ())
-		return;
-	I_ReadJoystick ();
-	centerx = joystickx;
-	centery = joysticky;
+    ST_RealMessage("CENTER the joystick and press button 1:");
+    if (!WaitJoyButton())
+        return;
+    I_ReadJoystick();
+    centerx = joystickx;
+    centery = joysticky;
 
-	ST_RealMessage("\nPush the joystick to the UPPER LEFT corner and press button 1:");
-	if (!WaitJoyButton ())
-		return;
-	I_ReadJoystick ();
-	joyxl = (centerx + joystickx)/2;
-	joyyl = (centerx + joysticky)/2;
+    ST_RealMessage
+        ("\nPush the joystick to the UPPER LEFT corner and press button 1:");
+    if (!WaitJoyButton())
+        return;
+    I_ReadJoystick();
+    joyxl = (centerx + joystickx) / 2;
+    joyyl = (centerx + joysticky) / 2;
 
-	ST_RealMessage("\nPush the joystick to the LOWER RIGHT corner and press button 1:");
-	if (!WaitJoyButton ())
-		return;
-	I_ReadJoystick ();
-	joyxh = (centerx + joystickx)/2;
-	joyyh = (centery + joysticky)/2;
-	ST_RealMessage("\n");
+    ST_RealMessage
+        ("\nPush the joystick to the LOWER RIGHT corner and press button 1:");
+    if (!WaitJoyButton())
+        return;
+    I_ReadJoystick();
+    joyxh = (centerx + joystickx) / 2;
+    joyyh = (centery + joysticky) / 2;
+    ST_RealMessage("\n");
 }
 
 /*
@@ -1999,34 +2026,34 @@ void I_StartupJoystick (void)
 ===============
 */
 
-void I_JoystickEvents (void)
+void I_JoystickEvents(void)
 {
-	event_t ev;
+    event_t ev;
 
 //
 // joystick events
 //
-	if (!joystickpresent)
-		return;
+    if (!joystickpresent)
+        return;
 
-	I_ReadJoystick ();
-	ev.type = ev_joystick;
-	ev.data1 =  ((inp(0x201) >> 4)&15)^15;
+    I_ReadJoystick();
+    ev.type = ev_joystick;
+    ev.data1 = ((inp(0x201) >> 4) & 15) ^ 15;
 
-	if (joystickx < joyxl)
-		ev.data2 = -1;
-	else if (joystickx > joyxh)
-		ev.data2 = 1;
-	else
-		ev.data2 = 0;
-	if (joysticky < joyyl)
-		ev.data3 = -1;
-	else if (joysticky > joyyh)
-		ev.data3 = 1;
-	else
-		ev.data3 = 0;
+    if (joystickx < joyxl)
+        ev.data2 = -1;
+    else if (joystickx > joyxh)
+        ev.data2 = 1;
+    else
+        ev.data2 = 0;
+    if (joysticky < joyyl)
+        ev.data3 = -1;
+    else if (joysticky > joyyh)
+        ev.data3 = 1;
+    else
+        ev.data3 = 0;
 
-	H2_PostEvent (&ev);
+    H2_PostEvent(&ev);
 }
 
 
@@ -2041,12 +2068,12 @@ void I_JoystickEvents (void)
 
 #define REALSTACKSIZE   1024
 
-dpmiregs_t      dpmiregs;
+dpmiregs_t dpmiregs;
 
-unsigned                realstackseg;
+unsigned realstackseg;
 
-void I_DivException (void);
-int I_SetDivException (void);
+void I_DivException(void);
+int I_SetDivException(void);
 
 /*
 void DPMIFarCall (void)
@@ -2061,18 +2088,18 @@ void DPMIFarCall (void)
 }
 */
 
-void DPMIInt (int i)
+void DPMIInt(int i)
 {
-	dpmiregs.ss = realstackseg;
-	dpmiregs.sp = REALSTACKSIZE-4;
+    dpmiregs.ss = realstackseg;
+    dpmiregs.sp = REALSTACKSIZE - 4;
 
-	segread (&segregs);
-	regs.w.ax = 0x300;
-	regs.w.bx = i;
-	regs.w.cx = 0;
-	regs.x.edi = (unsigned)&dpmiregs;
-	segregs.es = segregs.ds;
-	int386x( DPMI_INT, &regs, &regs, &segregs );
+    segread(&segregs);
+    regs.w.ax = 0x300;
+    regs.w.bx = i;
+    regs.w.cx = 0;
+    regs.x.edi = (unsigned) &dpmiregs;
+    segregs.es = segregs.ds;
+    int386x(DPMI_INT, &regs, &regs, &segregs);
 }
 
 
@@ -2084,16 +2111,16 @@ void DPMIInt (int i)
 ==============
 */
 
-void I_StartupDPMI (void)
+void I_StartupDPMI(void)
 {
-//	extern char __begtext;
-//	extern char ___argc;
-//	int     n,d;
+//      extern char __begtext;
+//      extern char ___argc;
+//      int     n,d;
 
 //
 // allocate a decent stack for real mode ISRs
 //
-	realstackseg = (int)I_AllocLow (1024) >> 4;
+    realstackseg = (int) I_AllocLow(1024) >> 4;
 
 //
 // lock the entire program down
@@ -2106,23 +2133,23 @@ void I_StartupDPMI (void)
 // catch divide by 0 exception
 //
 #if 0
-	segread(&segregs);
-	regs.w.ax = 0x0203;             // DPMI set processor exception handler vector
-	regs.w.bx = 0;                  // int 0
-	regs.w.cx = segregs.cs;
-	regs.x.edx = (int)&I_DivException;
- printf ("%x : %x\n",regs.w.cx, regs.x.edx);
-	int386( DPMI_INT, &regs, &regs);
+    segread(&segregs);
+    regs.w.ax = 0x0203;         // DPMI set processor exception handler vector
+    regs.w.bx = 0;              // int 0
+    regs.w.cx = segregs.cs;
+    regs.x.edx = (int) &I_DivException;
+    printf("%x : %x\n", regs.w.cx, regs.x.edx);
+    int386(DPMI_INT, &regs, &regs);
 #endif
 
 #if 0
-	n = I_SetDivException ();
-	printf ("return: %i\n",n);
-	n = 100;
-	d = 0;
-   printf ("100 / 0 = %i\n",n/d);
+    n = I_SetDivException();
+    printf("return: %i\n", n);
+    n = 100;
+    d = 0;
+    printf("100 / 0 = %i\n", n / d);
 
-exit (1);
+    exit(1);
 #endif
 }
 
@@ -2136,7 +2163,7 @@ exit (1);
 ============================================================================
 */
 
-void (__interrupt __far *oldtimerisr) ();
+void (__interrupt __far * oldtimerisr) ();
 
 
 /*
@@ -2160,10 +2187,10 @@ _outbyte(PEL_DATA,b);
 
 //void __interrupt IO_TimerISR (void)
 
-void __interrupt __far IO_TimerISR (void)
+void __interrupt __far IO_TimerISR(void)
 {
-	ticcount++;
-	_outbyte(0x20,0x20);                            // Ack the interrupt
+    ticcount++;
+    _outbyte(0x20, 0x20);       // Ack the interrupt
 }
 
 /*
@@ -2178,12 +2205,12 @@ void __interrupt __far IO_TimerISR (void)
 
 void IO_SetTimer0(int speed)
 {
-	if (speed > 0 && speed < 150)
-		I_Error ("INT_SetTimer0: %i is a bad value",speed);
+    if (speed > 0 && speed < 150)
+        I_Error("INT_SetTimer0: %i is a bad value", speed);
 
-	_outbyte(0x43,0x36);                            // Change timer 0
-	_outbyte(0x40,speed);
-	_outbyte(0x40,speed >> 8);
+    _outbyte(0x43, 0x36);       // Change timer 0
+    _outbyte(0x40, speed);
+    _outbyte(0x40, speed >> 8);
 }
 
 
@@ -2206,13 +2233,13 @@ void IO_StartupTimer (void)
 }
 */
 
-void IO_ShutdownTimer (void)
+void IO_ShutdownTimer(void)
 {
-	if (oldtimerisr)
-	{
-		IO_SetTimer0 (0);              // back to 18.4 ips
-		_dos_setvect (TIMERINT, oldtimerisr);
-	}
+    if (oldtimerisr)
+    {
+        IO_SetTimer0(0);        // back to 18.4 ips
+        _dos_setvect(TIMERINT, oldtimerisr);
+    }
 }
 
 //===========================================================================
@@ -2228,23 +2255,23 @@ void IO_ShutdownTimer (void)
 ===============
 */
 
-void I_Init (void)
+void I_Init(void)
 {
-	extern void I_StartupTimer(void);
+    extern void I_StartupTimer(void);
 
-	novideo = M_CheckParm("novideo");
-	ST_Message("  I_StartupDPMI\n");
-	I_StartupDPMI();
-	ST_Message("  I_StartupMouse ");
-	I_StartupMouse();
-//	tprintf("I_StartupJoystick ",1);
-//	I_StartupJoystick();
-//	tprintf("I_StartupKeyboard ",1);
-//	I_StartupKeyboard();
-	ST_Message("  S_Init... ");
-	S_Init();
-	//IO_StartupTimer();
-	S_Start();
+    novideo = M_CheckParm("novideo");
+    ST_Message("  I_StartupDPMI\n");
+    I_StartupDPMI();
+    ST_Message("  I_StartupMouse ");
+    I_StartupMouse();
+//      tprintf("I_StartupJoystick ",1);
+//      I_StartupJoystick();
+//      tprintf("I_StartupKeyboard ",1);
+//      I_StartupKeyboard();
+    ST_Message("  S_Init... ");
+    S_Init();
+    //IO_StartupTimer();
+    S_Start();
 }
 
 
@@ -2258,15 +2285,15 @@ void I_Init (void)
 ===============
 */
 
-void I_Shutdown (void)
+void I_Shutdown(void)
 {
-	I_ShutdownGraphics ();
-	IO_ShutdownTimer ();
-	S_ShutDown ();
-	I_ShutdownMouse ();
-	I_ShutdownKeyboard ();
+    I_ShutdownGraphics();
+    IO_ShutdownTimer();
+    S_ShutDown();
+    I_ShutdownMouse();
+    I_ShutdownKeyboard();
 
-	IO_SetTimer0 (0);
+    IO_SetTimer0(0);
 }
 
 
@@ -2278,21 +2305,21 @@ void I_Shutdown (void)
 ================
 */
 
-void I_Error (char *error, ...)
+void I_Error(char *error, ...)
 {
-	union REGS regs;
+    union REGS regs;
 
-	va_list argptr;
+    va_list argptr;
 
-	D_QuitNetGame ();
-	I_Shutdown ();
-	va_start (argptr,error);
-	regs.x.eax = 0x3;
-	int386(0x10, &regs, &regs);
-	vprintf (error,argptr);
-	va_end (argptr);
-	printf ("\n");
-	exit (1);
+    D_QuitNetGame();
+    I_Shutdown();
+    va_start(argptr, error);
+    regs.x.eax = 0x3;
+    int386(0x10, &regs, &regs);
+    vprintf(error, argptr);
+    va_end(argptr);
+    printf("\n");
+    exit(1);
 }
 
 //--------------------------------------------------------------------------
@@ -2306,11 +2333,11 @@ void I_Error (char *error, ...)
 
 void I_Quit(void)
 {
-	D_QuitNetGame();
-	M_SaveDefaults();
-	I_Shutdown();
+    D_QuitNetGame();
+    M_SaveDefaults();
+    I_Shutdown();
 
-//	scr = (byte *)W_CacheLumpName("ENDTEXT", PU_CACHE);
+//      scr = (byte *)W_CacheLumpName("ENDTEXT", PU_CACHE);
 /*
 	memcpy((void *)0xb8000, scr, 80*25*2);
 	regs.w.ax = 0x0200;
@@ -2320,8 +2347,8 @@ void I_Quit(void)
 	int386(0x10, (const union REGS *)&regs, &regs); // Set text pos
 	_settextposition(24, 1);
 */
-	printf("\nHexen: Beyond Heretic\n");
-	exit(0);
+    printf("\nHexen: Beyond Heretic\n");
+    exit(0);
 }
 
 /*
@@ -2332,49 +2359,50 @@ void I_Quit(void)
 ===============
 */
 
-byte *I_ZoneBase (int *size)
+byte *I_ZoneBase(int *size)
 {
-	int meminfo[32];
-	int heap;
-	byte *ptr;
+    int meminfo[32];
+    int heap;
+    byte *ptr;
 
-	memset (meminfo,0,sizeof(meminfo));
-	segread(&segregs);
-	segregs.es = segregs.ds;
-	regs.w.ax = 0x500;      // get memory info
-	regs.x.edi = (int)&meminfo;
-	int386x( 0x31, &regs, &regs, &segregs );
+    memset(meminfo, 0, sizeof(meminfo));
+    segread(&segregs);
+    segregs.es = segregs.ds;
+    regs.w.ax = 0x500;          // get memory info
+    regs.x.edi = (int) &meminfo;
+    int386x(0x31, &regs, &regs, &segregs);
 
-	heap = meminfo[0];
-	ST_Message ("  DPMI memory: 0x%x, ",heap);
-	ST_Message ("Maxzone: 0x%x\n", maxzone);
+    heap = meminfo[0];
+    ST_Message("  DPMI memory: 0x%x, ", heap);
+    ST_Message("Maxzone: 0x%x\n", maxzone);
 
-	do
-	{
-		heap -= 0x10000;                // leave 64k alone
-		if (heap > maxzone)
-			heap = maxzone;
-		ptr = malloc (heap);
-	} while (!ptr);
+    do
+    {
+        heap -= 0x10000;        // leave 64k alone
+        if (heap > maxzone)
+            heap = maxzone;
+        ptr = malloc(heap);
+    }
+    while (!ptr);
 
-	ST_Message ("  0x%x allocated for zone, ", heap);
-	ST_Message ("ZoneBase: 0x%X\n", (int)ptr);
+    ST_Message("  0x%x allocated for zone, ", heap);
+    ST_Message("ZoneBase: 0x%X\n", (int) ptr);
 
-	if (heap < 0x180000)
-		I_Error ("  Insufficient DPMI memory!");
+    if (heap < 0x180000)
+        I_Error("  Insufficient DPMI memory!");
 #if 0
-	regs.w.ax = 0x501;      // allocate linear block
-	regs.w.bx = heap>>16;
-	regs.w.cx = heap&0xffff;
-	int386( 0x31, &regs, &regs);
-	if (regs.w.cflag)
-		I_Error ("  Couldn't allocate DPMI memory!");
+    regs.w.ax = 0x501;          // allocate linear block
+    regs.w.bx = heap >> 16;
+    regs.w.cx = heap & 0xffff;
+    int386(0x31, &regs, &regs);
+    if (regs.w.cflag)
+        I_Error("  Couldn't allocate DPMI memory!");
 
-	block = (regs.w.si << 16) + regs.w.di;
+    block = (regs.w.si << 16) + regs.w.di;
 #endif
 
-	*size = heap;
-	return ptr;
+    *size = heap;
+    return ptr;
 }
 
 /*
@@ -2385,26 +2413,26 @@ byte *I_ZoneBase (int *size)
 =============
 */
 
-byte *I_AllocLow (int length)
+byte *I_AllocLow(int length)
 {
-	byte    *mem;
+    byte *mem;
 
-	// DPMI call 100h allocates DOS memory
-	segread(&segregs);
-	regs.w.ax = 0x0100;          // DPMI allocate DOS memory
-	regs.w.bx = (length+15) / 16;
-	int386( DPMI_INT, &regs, &regs);
+    // DPMI call 100h allocates DOS memory
+    segread(&segregs);
+    regs.w.ax = 0x0100;         // DPMI allocate DOS memory
+    regs.w.bx = (length + 15) / 16;
+    int386(DPMI_INT, &regs, &regs);
 //      segment = regs.w.ax;
 //   selector = regs.w.dx;
-	if (regs.w.cflag != 0)
-		I_Error ("I_AllocLow: DOS alloc of %i failed, %i free",
-			length, regs.w.bx*16);
+    if (regs.w.cflag != 0)
+        I_Error("I_AllocLow: DOS alloc of %i failed, %i free",
+                length, regs.w.bx * 16);
 
 
-	mem = (void *) ((regs.x.eax & 0xFFFF) << 4);
+    mem = (void *) ((regs.x.eax & 0xFFFF) << 4);
 
-	memset (mem,0,length);
-	return mem;
+    memset(mem, 0, length);
+    return mem;
 }
 
 /*
@@ -2419,8 +2447,8 @@ byte *I_AllocLow (int length)
 typedef struct
 {
 	char    priv[508];
-} doomdata_t;
-*/ // FUCKED LINES
+   } doomdata_t;
+*/// FUCKED LINES
 
 #define DOOMCOM_ID              0x12345678l
 
@@ -2453,10 +2481,10 @@ typedef struct
 
 // packet data to be sent
 	doomdata_t      data;
-} doomcom_t;
-*/ // FUCKED LINES
+   } doomcom_t;
+*/// FUCKED LINES
 
-extern  doomcom_t               *doomcom;
+extern doomcom_t *doomcom;
 
 /*
 ====================
@@ -2466,65 +2494,65 @@ extern  doomcom_t               *doomcom;
 ====================
 */
 
-void I_InitNetwork (void)
+void I_InitNetwork(void)
 {
-	int             i;
+    int i;
 
-	i = M_CheckParm ("-net");
-	if (!i)
-	{
-	//
-	// single player game
-	//
-		doomcom = malloc (sizeof (*doomcom) );
-		memset (doomcom, 0, sizeof(*doomcom) );
-		netgame = false;
-		doomcom->id = DOOMCOM_ID;
-		doomcom->numplayers = doomcom->numnodes = 1;
-		doomcom->deathmatch = false;
-		doomcom->consoleplayer = 0;
-		doomcom->ticdup = 1;
-		doomcom->extratics = 0;
-		return;
-	}
+    i = M_CheckParm("-net");
+    if (!i)
+    {
+        //
+        // single player game
+        //
+        doomcom = malloc(sizeof(*doomcom));
+        memset(doomcom, 0, sizeof(*doomcom));
+        netgame = false;
+        doomcom->id = DOOMCOM_ID;
+        doomcom->numplayers = doomcom->numnodes = 1;
+        doomcom->deathmatch = false;
+        doomcom->consoleplayer = 0;
+        doomcom->ticdup = 1;
+        doomcom->extratics = 0;
+        return;
+    }
 
-	netgame = true;
-	doomcom = (doomcom_t *)atoi(myargv[i+1]);
+    netgame = true;
+    doomcom = (doomcom_t *) atoi(myargv[i + 1]);
 //DEBUG
-doomcom->skill = startskill;
-doomcom->episode = startepisode;
-doomcom->map = startmap;
-doomcom->deathmatch = deathmatch;
+    doomcom->skill = startskill;
+    doomcom->episode = startepisode;
+    doomcom->map = startmap;
+    doomcom->deathmatch = deathmatch;
 
 }
 
-void I_NetCmd (void)
+void I_NetCmd(void)
 {
-	if (!netgame)
-		I_Error ("I_NetCmd when not in netgame");
-	DPMIInt (doomcom->intnum);
+    if (!netgame)
+        I_Error("I_NetCmd when not in netgame");
+    DPMIInt(doomcom->intnum);
 }
 
 //=========================================================================
 //
 // I_CheckExternDriver
 //
-//		Checks to see if a vector, and an address for an external driver
-//			have been passed.
+//              Checks to see if a vector, and an address for an external driver
+//                      have been passed.
 //=========================================================================
 
 void I_CheckExternDriver(void)
 {
-	int i;
+    int i;
 
-	if(!(i = M_CheckParm("-externdriver")))
-	{
-		return;
-	}
-	i_ExternData = (externdata_t *)atoi(myargv[i+1]);
-	i_Vector = i_ExternData->vector;
+    if (!(i = M_CheckParm("-externdriver")))
+    {
+        return;
+    }
+    i_ExternData = (externdata_t *) atoi(myargv[i + 1]);
+    i_Vector = i_ExternData->vector;
 
-	useexterndriver = true;
+    useexterndriver = true;
 }
 
 //=========================================================================
@@ -2543,9 +2571,9 @@ void I_CheckExternDriver(void)
 
 void SetVideoModeHR(void)
 {
-	union REGS regs;
-	regs.x.eax = 0x12;
-	int386(VID_INT, &regs, &regs);
+    union REGS regs;
+    regs.x.eax = 0x12;
+    int386(VID_INT, &regs, &regs);
 }
 
 
@@ -2557,8 +2585,8 @@ void SetVideoModeHR(void)
 
 void ClearScreenHR(void)
 {
-	BITPLANE(MASK_PLANE0|MASK_PLANE1|MASK_PLANE2|MASK_PLANE3);
-	memset((char *)0xa0000,0,38400);
+    BITPLANE(MASK_PLANE0 | MASK_PLANE1 | MASK_PLANE2 | MASK_PLANE3);
+    memset((char *) 0xa0000, 0, 38400);
 }
 
 
@@ -2570,14 +2598,14 @@ void ClearScreenHR(void)
 
 void SlamHR(char *buffer)
 {
-	BITPLANE(MASK_PLANE0);
-	memcpy((char *)0xA0000, buffer+P0OFFSET, 38400);
-	BITPLANE(MASK_PLANE1);
-	memcpy((char *)0xA0000, buffer+P1OFFSET, 38400);
-	BITPLANE(MASK_PLANE2);
-	memcpy((char *)0xA0000, buffer+P2OFFSET, 38400);
-	BITPLANE(MASK_PLANE3);
-	memcpy((char *)0xA0000, buffer+P3OFFSET, 38400);
+    BITPLANE(MASK_PLANE0);
+    memcpy((char *) 0xA0000, buffer + P0OFFSET, 38400);
+    BITPLANE(MASK_PLANE1);
+    memcpy((char *) 0xA0000, buffer + P1OFFSET, 38400);
+    BITPLANE(MASK_PLANE2);
+    memcpy((char *) 0xA0000, buffer + P2OFFSET, 38400);
+    BITPLANE(MASK_PLANE3);
+    memcpy((char *) 0xA0000, buffer + P3OFFSET, 38400);
 }
 
 
@@ -2591,45 +2619,45 @@ void SlamHR(char *buffer)
 
 void SlamBlockHR(int x, int y, int w, int h, char *src)
 {
-	int srcwid = w>>3;
-	char *dest = ((char *)0xA0000) + (y*(640/8)) + (x>>3);
-	char *dst;
-	int i;
+    int srcwid = w >> 3;
+    char *dest = ((char *) 0xA0000) + (y * (640 / 8)) + (x >> 3);
+    char *dst;
+    int i;
 
-	VB_SYNC;
+    VB_SYNC;
 
-	BITPLANE(MASK_PLANE0);
-	dst = dest;
-	for ( i=0; i<h; i++ )
-	{
-		memcpy(dst, src, srcwid);
-		dst += 640/8;
-		src += srcwid;
-	}
-	BITPLANE(MASK_PLANE1);
-	dst = dest;
-	for ( i=0; i<h; i++ )
-	{
-		memcpy(dst, src, srcwid);
-		dst += 640/8;
-		src += srcwid;
-	}
-	BITPLANE(MASK_PLANE2);
-	dst = dest;
-	for ( i=0; i<h; i++ )
-	{
-		memcpy(dst, src, srcwid);
-		dst += 640/8;
-		src += srcwid;
-	}
-	BITPLANE(MASK_PLANE3);
-	dst = dest;
-	for ( i=0; i<h; i++ )
-	{
-		memcpy(dst, src, srcwid);
-		dst += 640/8;
-		src += srcwid;
-	}
+    BITPLANE(MASK_PLANE0);
+    dst = dest;
+    for (i = 0; i < h; i++)
+    {
+        memcpy(dst, src, srcwid);
+        dst += 640 / 8;
+        src += srcwid;
+    }
+    BITPLANE(MASK_PLANE1);
+    dst = dest;
+    for (i = 0; i < h; i++)
+    {
+        memcpy(dst, src, srcwid);
+        dst += 640 / 8;
+        src += srcwid;
+    }
+    BITPLANE(MASK_PLANE2);
+    dst = dest;
+    for (i = 0; i < h; i++)
+    {
+        memcpy(dst, src, srcwid);
+        dst += 640 / 8;
+        src += srcwid;
+    }
+    BITPLANE(MASK_PLANE3);
+    dst = dest;
+    for (i = 0; i < h; i++)
+    {
+        memcpy(dst, src, srcwid);
+        dst += 640 / 8;
+        src += srcwid;
+    }
 }
 
 //==========================================================================
@@ -2640,16 +2668,16 @@ void SlamBlockHR(int x, int y, int w, int h, char *src)
 
 void InitPaletteHR(void)
 {
-	int i;
-	union REGS regs;
+    int i;
+    union REGS regs;
 
-	// Set palette registers to point into color registers
-	for ( i=0; i<16; i++ )
-	{
-		regs.x.eax = (0x10<<8)|0x00;
-		regs.x.ebx = (i<<8)|i;
-		int386(VID_INT, &regs, &regs);
-	}
+    // Set palette registers to point into color registers
+    for (i = 0; i < 16; i++)
+    {
+        regs.x.eax = (0x10 << 8) | 0x00;
+        regs.x.ebx = (i << 8) | i;
+        int386(VID_INT, &regs, &regs);
+    }
 
 }
 
@@ -2660,16 +2688,16 @@ void InitPaletteHR(void)
 //
 //==========================================================================
 
-void SetPaletteHR(byte *palette)
+void SetPaletteHR(byte * palette)
 {
-	int i;
-	VB_SYNC;
-	outp(PEL_WRITE_ADR, 0);
+    int i;
+    VB_SYNC;
+    outp(PEL_WRITE_ADR, 0);
 
-	for(i = 0; i < 16*3; i++)
-	{
-		outp(PEL_DATA, (*palette++));
-	}
+    for (i = 0; i < 16 * 3; i++)
+    {
+        outp(PEL_DATA, (*palette++));
+    }
 }
 
 
@@ -2679,14 +2707,14 @@ void SetPaletteHR(byte *palette)
 //
 //==========================================================================
 
-void GetPaletteHR(byte *palette)
+void GetPaletteHR(byte * palette)
 {
-	int i;
-	outp(PEL_READ_ADR, 0);
-	for (i=0; i<16*3; i++)
-	{
-		*palette++ = inp(PEL_DATA);
-	}
+    int i;
+    outp(PEL_READ_ADR, 0);
+    for (i = 0; i < 16 * 3; i++)
+    {
+        *palette++ = inp(PEL_DATA);
+    }
 }
 
 
@@ -2696,25 +2724,25 @@ void GetPaletteHR(byte *palette)
 //
 //==========================================================================
 
-void FadeToPaletteHR(byte *palette)
+void FadeToPaletteHR(byte * palette)
 {
-	int i,j;
-	int steps=140;          // two-seconds
-	byte basep[16*3];
-	byte work[16*3];
-	int delta;
+    int i, j;
+    int steps = 140;            // two-seconds
+    byte basep[16 * 3];
+    byte work[16 * 3];
+    int delta;
 
-	GetPaletteHR(basep);
-	for(i = 0; i < steps; i++)
-	{
-		for(j = 0; j < 16*3; j++)
-		{
-			delta = palette[j]-basep[j];
-			work[j] = basep[j]+delta*i/steps;
-		}
-		SetPaletteHR(work);
-	}
-	SetPaletteHR(palette);
+    GetPaletteHR(basep);
+    for (i = 0; i < steps; i++)
+    {
+        for (j = 0; j < 16 * 3; j++)
+        {
+            delta = palette[j] - basep[j];
+            work[j] = basep[j] + delta * i / steps;
+        }
+        SetPaletteHR(work);
+    }
+    SetPaletteHR(palette);
 }
 
 
@@ -2754,10 +2782,10 @@ void FadeToBlackHR(void)
 
 void BlackPaletteHR(void)
 {
-	char blackpal[16*3];
+    char blackpal[16 * 3];
 
-	memset(blackpal,0,16*3);
-	SetPaletteHR(blackpal);
+    memset(blackpal, 0, 16 * 3);
+    SetPaletteHR(blackpal);
 }
 
 //==========================================================================
@@ -2770,13 +2798,13 @@ void BlackPaletteHR(void)
 
 void I_StartupReadKeys(void)
 {
-	int k;
+    int k;
 
-   while (kbdtail < kbdhead)
-   {
-	   k = keyboardque[kbdtail&(KBDQUESIZE-1)];
-	   kbdtail++;
-	   if (k == 1)
-		   I_Quit ();
-   }
+    while (kbdtail < kbdhead)
+    {
+        k = keyboardque[kbdtail & (KBDQUESIZE - 1)];
+        kbdtail++;
+        if (k == 1)
+            I_Quit();
+    }
 }

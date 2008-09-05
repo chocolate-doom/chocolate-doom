@@ -1,3 +1,25 @@
+// Emacs style mode select   -*- C++ -*- 
+//-----------------------------------------------------------------------------
+//
+// Copyright(C) 1993-1996 Id Software, Inc.
+// Copyright(C) 1993-2008 Raven Software
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+// 02111-1307, USA.
+//
+//-----------------------------------------------------------------------------
 // DoomData.h
 
 // all external data is defined here
@@ -8,7 +30,8 @@
 
 #ifndef __BYTEBOOL__
 #define __BYTEBOOL__
-typedef enum {false, true} boolean;
+typedef enum
+{ false, true } boolean;
 typedef unsigned char byte;
 #endif
 
@@ -21,35 +44,37 @@ typedef unsigned char byte;
 */
 
 // lump order in a map wad
-enum {ML_LABEL, ML_THINGS, ML_LINEDEFS, ML_SIDEDEFS, ML_VERTEXES, ML_SEGS,
-ML_SSECTORS, ML_NODES, ML_SECTORS , ML_REJECT, ML_BLOCKMAP};
+enum
+{ ML_LABEL, ML_THINGS, ML_LINEDEFS, ML_SIDEDEFS, ML_VERTEXES, ML_SEGS,
+    ML_SSECTORS, ML_NODES, ML_SECTORS, ML_REJECT, ML_BLOCKMAP
+};
 
 
 typedef struct
 {
-	short		x,y;
+    short x, y;
 } mapvertex_t;
 
 typedef struct
 {
-	short		textureoffset;
-	short		rowoffset;
-	char		toptexture[8], bottomtexture[8], midtexture[8];
-	short		sector;				// on viewer's side
+    short textureoffset;
+    short rowoffset;
+    char toptexture[8], bottomtexture[8], midtexture[8];
+    short sector;               // on viewer's side
 } mapsidedef_t;
 
 typedef struct
 {
-	short		v1, v2;
-	short		flags;
-	short		special, tag;
-	short		sidenum[2];			// sidenum[1] will be -1 if one sided
+    short v1, v2;
+    short flags;
+    short special, tag;
+    short sidenum[2];           // sidenum[1] will be -1 if one sided
 } maplinedef_t;
 
 #define	ML_BLOCKING			1
 #define	ML_BLOCKMONSTERS	2
-#define	ML_TWOSIDED			4		// backside will not be present at all 
-									// if not two sided
+#define	ML_TWOSIDED			4       // backside will not be present at all
+                                                                        // if not two sided
 
 // if a texture is pegged, the texture will have the end exposed to air held
 // constant at the top or bottom of the texture (stairs or pulled down things)
@@ -59,50 +84,51 @@ typedef struct
 #define	ML_DONTPEGTOP		8
 #define	ML_DONTPEGBOTTOM	16
 
-#define ML_SECRET			32	// don't map as two sided: IT'S A SECRET!
-#define ML_SOUNDBLOCK		64	// don't let sound cross two of these
-#define	ML_DONTDRAW			128	// don't draw on the automap
-#define	ML_MAPPED			256	// set if allready drawn in automap
+#define ML_SECRET			32      // don't map as two sided: IT'S A SECRET!
+#define ML_SOUNDBLOCK		64      // don't let sound cross two of these
+#define	ML_DONTDRAW			128     // don't draw on the automap
+#define	ML_MAPPED			256     // set if allready drawn in automap
 
 
-typedef	struct
+typedef struct
 {
-	short		floorheight, ceilingheight;
-	char		floorpic[8], ceilingpic[8];
-	short		lightlevel;
-	short		special, tag;
+    short floorheight, ceilingheight;
+    char floorpic[8], ceilingpic[8];
+    short lightlevel;
+    short special, tag;
 } mapsector_t;
 
 typedef struct
 {
-	short		numsegs;
-	short		firstseg;			// segs are stored sequentially
+    short numsegs;
+    short firstseg;             // segs are stored sequentially
 } mapsubsector_t;
 
 typedef struct
 {
-	short		v1, v2;
-	short		angle;		
-	short		linedef, side;
-	short		offset;
+    short v1, v2;
+    short angle;
+    short linedef, side;
+    short offset;
 } mapseg_t;
 
-enum {BOXTOP,BOXBOTTOM,BOXLEFT,BOXRIGHT};	// bbox coordinates
+enum
+{ BOXTOP, BOXBOTTOM, BOXLEFT, BOXRIGHT };       // bbox coordinates
 
 #define	NF_SUBSECTOR	0x8000
 typedef struct
 {
-	short		x,y,dx,dy;			// partition line
-	short		bbox[2][4];			// bounding box for each child
-	unsigned short	children[2];		// if NF_SUBSECTOR its a subsector
+    short x, y, dx, dy;         // partition line
+    short bbox[2][4];           // bounding box for each child
+    unsigned short children[2]; // if NF_SUBSECTOR its a subsector
 } mapnode_t;
 
 typedef struct
 {
-	short		x,y;
-	short		angle;
-	short		type;
-	short		options;
+    short x, y;
+    short angle;
+    short type;
+    short options;
 } mapthing_t;
 
 #define	MTF_EASY		1
@@ -120,22 +146,22 @@ typedef struct
 
 typedef struct
 {
-	short	originx;
-	short	originy;
-	short	patch;
-	short	stepdir;
-	short	colormap;
+    short originx;
+    short originy;
+    short patch;
+    short stepdir;
+    short colormap;
 } mappatch_t;
 
 typedef struct
 {
-	char		name[8];
-	boolean		masked;	
-	short		width;
-	short		height;
-	void		**columndirectory;	// OBSOLETE
-	short		patchcount;
-	mappatch_t	patches[1];
+    char name[8];
+    boolean masked;
+    short width;
+    short height;
+    void **columndirectory;     // OBSOLETE
+    short patchcount;
+    mappatch_t patches[1];
 } maptexture_t;
 
 
@@ -150,31 +176,31 @@ typedef struct
 // posts are runs of non masked source pixels
 typedef struct
 {
-	byte		topdelta;		// -1 is the last post in a column
-	byte		length;
+    byte topdelta;              // -1 is the last post in a column
+    byte length;
 // length data bytes follows
 } post_t;
 
 // column_t is a list of 0 or more post_t, (byte)-1 terminated
-typedef post_t	column_t;
+typedef post_t column_t;
 
 // a patch holds one or more columns
 // patches are used for sprites and all masked pictures
 typedef struct
 {
-	short		width;				// bounding box size
-	short		height;
-	short		leftoffset;			// pixels to the left of origin
-	short		topoffset;			// pixels below the origin
-	int			columnofs[8];		// only [width] used
-									// the [0] is &columnofs[width]
+    short width;                // bounding box size
+    short height;
+    short leftoffset;           // pixels to the left of origin
+    short topoffset;            // pixels below the origin
+    int columnofs[8];           // only [width] used
+    // the [0] is &columnofs[width]
 } patch_t;
 
 // a pic is an unmasked block of pixels
 typedef struct
 {
-	byte		width,height;
-	byte		data;
+    byte width, height;
+    byte data;
 } pic_t;
 
 
@@ -191,5 +217,4 @@ typedef struct
 
 
 
-#endif			// __DOOMDATA__
-
+#endif // __DOOMDATA__
