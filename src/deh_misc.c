@@ -27,7 +27,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "doomdef.h"
 #include "doomtype.h"
 #include "deh_defs.h"
 #include "deh_io.h"

@@ -29,10 +29,11 @@
 
 
 #include <stdlib.h>
+#include <string.h>
 
 #include "z_zone.h"
 #include "i_system.h"
-#include "doomdef.h"
+#include "doomtype.h"
 
 #define ZONEID	0x1d4a11
 

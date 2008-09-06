@@ -39,6 +39,7 @@
 #include "deh_main.h"
 #include "deh_misc.h"
 #include "doomdef.h"
+#include "doomkeys.h"
 
 #include "g_game.h"
 

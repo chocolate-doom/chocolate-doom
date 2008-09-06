@@ -24,7 +24,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 
-#include "doomdef.h"
+#include "doomtype.h"
 #include "i_timer.h"
 
 #include "net_common.h"

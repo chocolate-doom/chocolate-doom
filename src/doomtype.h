@@ -29,6 +29,39 @@
 #ifndef __DOOMTYPE__
 #define __DOOMTYPE__
 
+// #define macros to provide functions missing in Windows.
+// Outside Windows, we use strings.h for str[n]casecmp.
+
+
+#ifdef _WIN32
+
+#define snprintf _snprintf
+#define vsnprintf _vsnprintf
+#define strcasecmp stricmp
+#define strncasecmp strnicmp
+
+#else
+
+#include <strings.h>
+
+#endif
+
+
+//
+// The packed attribute forces structures to be packed into the minimum 
+// space necessary.  If this is not done, the compiler may align structure
+// fields differently to optimise memory access, inflating the overall
+// structure size.  It is important to use the packed attribute on certain
+// structures where alignment is important, particularly data read/written
+// to disk.
+//
+
+#ifdef __GNUC__
+#define PACKEDATTR __attribute__((packed))
+#else
+#define PACKEDATTR
+#endif
+
 // C99 integer types; with gcc we just use this.  Other compilers 
 // should add conditional statements that define the C99 types.
 

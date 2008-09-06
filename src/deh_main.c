@@ -24,9 +24,11 @@
 //
 //-----------------------------------------------------------------------------
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <ctype.h>
 
-#include "doomdef.h"
 #include "doomtype.h"
 #include "d_iwad.h"
 #include "m_argv.h"

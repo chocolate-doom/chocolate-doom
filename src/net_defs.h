@@ -26,9 +26,12 @@
 #ifndef NET_DEFS_H
 #define NET_DEFS_H 
 
-#include "doomdef.h"
 #include "doomtype.h"
 #include "d_ticcmd.h"
+
+// The maximum number of players, multiplayer/networking.
+
+#define MAXPLAYERS		4
 
 typedef struct _net_module_s net_module_t;
 typedef struct _net_packet_s net_packet_t;

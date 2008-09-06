@@ -26,7 +26,7 @@
 #include <string.h>
 
 #include "config.h"
-#include "doomdef.h"
+#include "doomtype.h"
 #include "doomstat.h"
 #include "deh_main.h"
 #include "g_game.h"

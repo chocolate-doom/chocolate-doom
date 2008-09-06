@@ -42,7 +42,7 @@
 #include <sys/types.h>
 #endif
 
-#include "doomdef.h"
+#include "doomtype.h"
 #include "doomstat.h"
 
 #include "deh_main.h"

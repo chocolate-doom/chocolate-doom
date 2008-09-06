@@ -30,6 +30,7 @@
 #include <math.h>
 
 #include "doomdef.h" 
+#include "doomkeys.h"
 #include "doomstat.h"
 
 #include "deh_main.h"

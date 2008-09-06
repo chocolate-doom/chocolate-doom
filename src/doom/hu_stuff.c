@@ -27,6 +27,7 @@
 #include <ctype.h>
 
 #include "doomdef.h"
+#include "doomkeys.h"
 
 #include "z_zone.h"
 

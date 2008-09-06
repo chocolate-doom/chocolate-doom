@@ -26,7 +26,6 @@
 
 #include <stdlib.h>
 
-#include "doomdef.h"
 #include "doomtype.h"
 #include "d_items.h"
 #include "info.h"
