@@ -32,7 +32,7 @@
 #include "deh_main.h"
 
 #include "doomstat.h"
-#include "doomdef.h"
+#include "doomtype.h"
 
 #include "sounds.h"
 #include "s_sound.h"

@@ -28,33 +28,45 @@
 #ifndef __I_VIDEO__
 #define __I_VIDEO__
 
-
 #include "doomtype.h"
+
+// Screen width and height.
+
+#define SCREENWIDTH  320
+#define SCREENHEIGHT 200
+
+// Screen width used for "squash" scale functions
+
+#define SCREENWIDTH_4_3 256
+
+// Screen height used for "stretch" scale functions.
+
+#define SCREENHEIGHT_4_3 240
 
 typedef struct 
 {
-        // Screen width and height
+    // Screen width and height
 
-        int width;
-        int height;
+    int width;
+    int height;
 
-        // Initialisation function to call when using this mode.
-        // Called with a pointer to the Doom palette.
-        //
-        // If NULL, no init function is called.
+    // Initialisation function to call when using this mode.
+    // Called with a pointer to the Doom palette.
+    //
+    // If NULL, no init function is called.
 
-        void (*InitMode)(byte *palette);
-        
-        // Function to call to draw the screen from the source buffer.
-        // Return true if draw was successful.
+    void (*InitMode)(byte *palette);
+    
+    // Function to call to draw the screen from the source buffer.
+    // Return true if draw was successful.
 
-        boolean (*DrawScreen)(int x1, int y1, int x2, int y2);
+    boolean (*DrawScreen)(int x1, int y1, int x2, int y2);
 
-        // If true, this is a "poor quality" mode.  The autoadjust 
-        // code should always attempt to use a different mode to this 
-        // mode in fullscreen.
+    // If true, this is a "poor quality" mode.  The autoadjust 
+    // code should always attempt to use a different mode to this 
+    // mode in fullscreen.
 
-        boolean poor_quality;
+    boolean poor_quality;
 } screen_mode_t;
 
 // Called by D_DoomMain,

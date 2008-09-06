@@ -39,7 +39,7 @@
 #endif
 
 #include "deh_main.h"
-#include "doomdef.h"
+#include "doomtype.h"
 #include "doomstat.h"
 #include "m_argv.h"
 #include "m_config.h"

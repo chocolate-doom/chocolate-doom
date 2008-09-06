@@ -26,7 +26,6 @@
 
 #include "config.h"
 
-#include "doomdef.h"
 #include "doomtype.h"
 #include "m_argv.h"
 

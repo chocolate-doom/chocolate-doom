@@ -29,6 +29,7 @@
 
 #include "config.h"
 #include "doomstat.h"
+#include "doomkeys.h"
 
 #include "i_system.h"
 #include "i_timer.h"

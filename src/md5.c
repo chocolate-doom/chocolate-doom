@@ -20,7 +20,6 @@
  * Still in the public domain.
  */
 
-#include "doomdef.h"
 #include "i_swap.h"
 
 #include <string.h>             /* for memcpy() */

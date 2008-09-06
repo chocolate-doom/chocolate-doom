@@ -30,7 +30,7 @@
 #include "SDL.h"
 #include "SDL_mixer.h"
 
-#include "doomdef.h"
+#include "doomtype.h"
 #include "memio.h"
 #include "mus2mid.h"
 

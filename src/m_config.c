@@ -33,7 +33,8 @@
 
 #include "config.h"
 #include "deh_main.h"
-#include "doomdef.h"
+#include "doomtype.h"
+#include "doomkeys.h"
 #include "doomfeatures.h"
 
 #include "z_zone.h"

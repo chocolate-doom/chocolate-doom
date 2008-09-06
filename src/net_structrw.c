@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "doomdef.h"
+#include "doomtype.h"
 
 #include "net_packet.h"
 #include "net_structrw.h"

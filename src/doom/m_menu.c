@@ -31,6 +31,7 @@
 
 
 #include "doomdef.h"
+#include "doomkeys.h"
 #include "dstrings.h"
 
 #include "d_main.h"

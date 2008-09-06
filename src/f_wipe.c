@@ -33,7 +33,7 @@
 #include "v_video.h"
 #include "m_random.h"
 
-#include "doomdef.h"
+#include "doomtype.h"
 
 #include "f_wipe.h"
 

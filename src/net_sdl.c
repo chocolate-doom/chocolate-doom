@@ -27,7 +27,7 @@
 #include <string.h>
 #include <stdio.h>
 
-#include "doomdef.h"
+#include "doomtype.h"
 #include "i_system.h"
 #include "m_argv.h"
 #include "net_defs.h"

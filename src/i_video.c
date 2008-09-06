@@ -34,7 +34,8 @@
 
 #include "config.h"
 #include "deh_main.h"
-#include "doomdef.h"
+#include "doomtype.h"
+#include "doomkeys.h"
 #include "doomstat.h"
 #include "d_main.h"
 #include "i_joystick.h"

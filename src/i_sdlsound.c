@@ -45,7 +45,7 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
-#include "doomdef.h"
+#include "doomtype.h"
 
 #define LOW_PASS_FILTER
 #define NUM_CHANNELS 16

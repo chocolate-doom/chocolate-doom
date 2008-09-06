@@ -25,7 +25,6 @@
 
 #include "SDL.h"
 
-#include "doomdef.h"
 #include "doomtype.h"
 
 #include "deh_main.h"

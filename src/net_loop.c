@@ -26,7 +26,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "doomdef.h"
+#include "doomtype.h"
 #include "i_system.h"
 #include "net_defs.h"
 #include "net_loop.h"

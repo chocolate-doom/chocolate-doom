@@ -27,7 +27,7 @@
 
 #include "config.h"
 
-#include "doomdef.h"
+#include "doomtype.h"
 #include "doomstat.h"
 #include "i_system.h"
 #include "i_timer.h"

@@ -42,6 +42,7 @@
 // SECTORS do store MObjs anyway.
 #include "p_mobj.h"
 
+#include "i_video.h"
 
 
 

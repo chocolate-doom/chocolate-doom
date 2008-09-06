@@ -27,6 +27,8 @@
 #include "net_defs.h"
 #include "net_packet.h"
 
+#include "doomdef.h"
+
 typedef enum 
 {
     // sending syn packets, waiting for an ACK reply 

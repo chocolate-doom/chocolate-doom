@@ -24,9 +24,9 @@
 //
 //-----------------------------------------------------------------------------
 
+#include <stdio.h>
 #include <stdlib.h>
 
-#include "doomdef.h"
 #include "doomtype.h"
 
 #include "deh_defs.h"

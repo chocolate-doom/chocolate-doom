@@ -24,7 +24,6 @@
 #ifndef NET_CLIENT_H
 #define NET_CLIENT_H
 
-#include "doomdef.h"
 #include "doomtype.h"
 #include "d_ticcmd.h"
 #include "md5.h"
