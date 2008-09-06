@@ -30,7 +30,6 @@
 
 
 #include "i_system.h"
-#include "r_local.h"
 
 #include "doomtype.h"
 #include "doomdata.h"
