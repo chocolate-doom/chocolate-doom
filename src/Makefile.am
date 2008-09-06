@@ -26,7 +26,7 @@ chocolate_server_SOURCES=$(DEDSERV_FILES)
 chocolate_server_LDADD = @LDFLAGS@ @SDL_LIBS@ @SDLNET_LIBS@ 
 
 MAIN_SOURCE_FILES=\
-                     d_event.h             \
+d_event.c            d_event.h             \
 doomkeys.h                                 \
 doomfeatures.h                             \
 doomtype.h                                 \
