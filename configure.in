@@ -79,6 +79,7 @@ textscreen/examples/Makefile
 setup/Makefile
 man/Makefile
 src/Makefile
+src/doom/Makefile
 src/heretic/Makefile
 src/hexen/Makefile
 pcsound/Makefile
