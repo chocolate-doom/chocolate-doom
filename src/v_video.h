@@ -33,7 +33,7 @@
 #include "doomtype.h"
 
 // Needed because we are refering to patches.
-#include "r_data.h"
+#include "v_patch.h"
 
 //
 // VIDEO

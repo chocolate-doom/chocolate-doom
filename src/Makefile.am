@@ -51,6 +51,7 @@ m_random.c           m_random.h            \
 s_sound.c            s_sound.h             \
 tables.c             tables.h              \
 v_video.c            v_video.h             \
+                     v_patch.h             \
 w_checksum.c         w_checksum.h          \
 w_wad.c              w_wad.h               \
 w_file.c             w_file.h              \
