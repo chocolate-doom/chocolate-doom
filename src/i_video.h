@@ -69,6 +69,8 @@ typedef struct
     boolean poor_quality;
 } screen_mode_t;
 
+typedef boolean (*grabmouse_callback_t)(void);
+
 // Called by D_DoomMain,
 // determines the hardware configuration
 // and sets up the video mode
@@ -91,10 +93,13 @@ void I_ReadScreen (byte* scr);
 void I_BeginRead (void);
 void I_EndRead (void);
 
-void I_SetWindowCaption(void);
+void I_SetWindowTitle(char *title);
 void I_SetWindowIcon(void);
 
 void I_CheckIsScreensaver(void);
+void I_SetGrabMouseCallback(grabmouse_callback_t func);
+
+void I_DisplayFPSDots(boolean dots_on);
 
 extern char *video_driver;
 extern int autoadjust_video_settings;
@@ -107,6 +112,8 @@ extern float mouse_acceleration;
 extern int mouse_threshold;
 extern int startup_delay;
 extern int vanilla_keyboard_mapping;
+extern boolean screensaver_mode;
+
 
 #endif
 

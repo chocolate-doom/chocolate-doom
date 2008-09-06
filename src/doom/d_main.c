@@ -107,11 +107,6 @@ boolean         fastparm;	// checkparm of -fast
 boolean		singletics = false; // debug flag to cancel adaptiveness
 
 
-// If true, game is running as a screensaver
-
-boolean         screensaver_mode = false;
-
-
 //extern int soundVolume;
 //extern  int	sfxVolume;
 //extern  int	musicVolume;
@@ -340,7 +335,28 @@ void D_Display (void)
     } while (!done);
 }
 
+//
+// D_GrabMouseCallback
+//
+// Called to determine whether to grab the mouse pointer
+//
 
+boolean D_GrabMouseCallback(void)
+{
+    // Drone players don't need mouse focus
+
+    if (drone)
+        return false;
+
+    // when menu is active or game is paused, release the mouse 
+ 
+    if (menuactive || paused)
+        return false;
+
+    // only grab mouse when playing levels (but not demos)
+
+    return (gamestate == GS_LEVEL) && !demoplayback;
+}
 
 //
 //  D_DoomLoop
@@ -363,6 +379,8 @@ void D_DoomLoop (void)
     TryRunTics();
 
     I_InitGraphics ();
+    I_SetGrabMouseCallback(D_GrabMouseCallback);
+    I_SetWindowTitle(gamedescription);
 
     R_ExecuteSetViewSize();
 
@@ -867,6 +885,8 @@ void D_DoomMain (void)
     //
 
     devparm = M_CheckParm ("-devparm");
+
+    I_DisplayFPSDots(devparm);
 
     //!
     // @category net
