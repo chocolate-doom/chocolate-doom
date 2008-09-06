@@ -36,8 +36,6 @@
 #include "deh_main.h"
 #include "doomtype.h"
 #include "doomkeys.h"
-#include "doomstat.h"
-#include "d_main.h"
 #include "i_joystick.h"
 #include "i_system.h"
 #include "i_swap.h"
@@ -46,7 +44,6 @@
 #include "i_scale.h"
 #include "m_argv.h"
 #include "s_sound.h"
-#include "sounds.h"
 #include "v_video.h"
 #include "w_wad.h"
 #include "z_zone.h"
@@ -137,10 +134,29 @@ int startup_delay = 1000;
 
 int grabmouse = true;
 
+// If true, game is running as a screensaver
+
+boolean screensaver_mode = false;
+
 // Flag indicating whether the screen is currently visible:
 // when the screen isnt visible, don't render the screen
 
 boolean screenvisible;
+
+// If true, we display dots at the bottom of the screen to 
+// indicate FPS.
+
+static boolean display_fps_dots;
+
+// If this is true, the screen is rendered but not blitted to the
+// video buffer.
+
+static boolean noblit;
+
+// Callback function to invoke to determine whether to grab the 
+// mouse pointer.
+
+static grabmouse_callback_t grabmouse_callback = NULL;
 
 // disk image data and background overwritten by the disk to be
 // restored by EndRead
@@ -199,24 +215,34 @@ static boolean MouseShouldBeGrabbed()
     if (!usemouse || nomouse)
         return false;
 
-    // Drone players don't need mouse focus
-
-    if (drone)
-        return false;
-
     // if we specify not to grab the mouse, never grab
  
     if (!grabmouse)
         return false;
 
-    // when menu is active or game is paused, release the mouse 
- 
-    if (menuactive || paused)
-        return false;
+    // Invoke the grabmouse callback function to determine whether
+    // the mouse should be grabbed
 
-    // only grab mouse when playing levels (but not demos)
+    if (grabmouse_callback != NULL)
+    {
+        return grabmouse_callback();
+    }
+    else
+    {
+        return true;
+    }
+}
 
-    return (gamestate == GS_LEVEL) && !demoplayback;
+void I_SetGrabMouseCallback(grabmouse_callback_t func)
+{
+    grabmouse_callback = func;
+}
+
+// Set the variable controlling FPS dots.
+
+void I_DisplayFPSDots(boolean dots_on)
+{
+    display_fps_dots = dots_on;
 }
 
 // Update the value of window_focused when we get a focus event
@@ -520,11 +546,13 @@ void I_GetEvent(void)
 		}
                 break;
 
+/* TODO
             case SDL_QUIT:
                 // bring up the "quit doom?" prompt
                 S_StartSound(NULL,sfx_swtchn);
                 M_QuitDOOM(0);
                 break;
+                */
 
             case SDL_ACTIVEEVENT:
                 // need to update our focus state
@@ -771,9 +799,9 @@ void I_FinishUpdate (void)
         return;
 
     // draws little dots on the bottom of the screen
-    if (devparm)
-    {
 
+    if (display_fps_dots)
+    {
 	i = I_GetTime();
 	tics = i - lasttic;
 	lasttic = i;
@@ -783,7 +811,6 @@ void I_FinishUpdate (void)
 	    screens[0][ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0xff;
 	for ( ; i<20*4 ; i+=4)
 	    screens[0][ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
-    
     }
 
     // draw to screen
@@ -832,16 +859,16 @@ void I_SetPalette (byte *doompalette)
 }
 
 // 
-// Set the window caption
+// Set the window title
 //
 
-void I_SetWindowCaption(void)
+void I_SetWindowTitle(char *title)
 {
     char *buf;
 
-    buf = Z_Malloc(strlen(gamedescription) + strlen(PACKAGE_STRING) + 10, 
+    buf = Z_Malloc(strlen(title) + strlen(PACKAGE_STRING) + 5, 
                    PU_STATIC, NULL);
-    sprintf(buf, "%s - %s", gamedescription, PACKAGE_STRING);
+    sprintf(buf, "%s - %s", title, PACKAGE_STRING);
 
     SDL_WM_SetCaption(buf, NULL);
 
@@ -1167,6 +1194,14 @@ static void SetScaleFactor(int factor)
 static void CheckCommandLine(void)
 {
     int i;
+
+    //!
+    // @vanilla
+    //
+    // Disable blitting the screen.
+    //
+
+    noblit = M_CheckParm ("-noblit"); 
 
     //!
     // @category video 
@@ -1514,9 +1549,6 @@ void I_InitGraphics(void)
     I_SetPalette(doompal);
     SDL_SetColors(screen, palette, 0, 256);
 
-    // Setup title and icon
-
-    I_SetWindowCaption();
     I_SetWindowIcon();
 
     CreateCursors();

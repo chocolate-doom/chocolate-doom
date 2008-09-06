@@ -145,7 +145,7 @@ void I_Endoom(void)
 
     // Make sure the new window has the right title and icon
  
-    I_SetWindowCaption();
+    I_SetWindowTitle("Exit screen");
     I_SetWindowIcon();
     
     // Write the data to the screen memory
