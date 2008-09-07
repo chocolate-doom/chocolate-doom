@@ -34,7 +34,7 @@
 #include "doomtype.h"
 #include "doomdata.h"
 
-#include "deh_main.h"
+#include "deh_str.h"
 #include "m_bbox.h"
 #include "i_swap.h"
 #include "i_video.h"

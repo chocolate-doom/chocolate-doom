@@ -34,7 +34,7 @@
 #include "memio.h"
 #include "mus2mid.h"
 
-#include "deh_main.h"
+#include "deh_str.h"
 #include "m_misc.h"
 #include "s_sound.h"
 #include "w_wad.h"

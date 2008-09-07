@@ -33,7 +33,7 @@
 #include "icon.c"
 
 #include "config.h"
-#include "deh_main.h"
+#include "deh_str.h"
 #include "doomtype.h"
 #include "doomkeys.h"
 #include "i_joystick.h"

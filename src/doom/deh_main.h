@@ -30,6 +30,7 @@
 #include "doomtype.h"
 #include "doomfeatures.h"
 #include "md5.h"
+#include "deh_str.h"
 
 // These are the limits that dehacked uses (from dheinit.h in the dehacked
 // source).  If these limits are exceeded, it does not generate an error, but
@@ -44,20 +45,6 @@ int DEH_LoadFile(char *filename);
 boolean DEH_ParseAssignment(char *line, char **variable_name, char **value);
 
 void DEH_Checksum(md5_digest_t digest);
-
-// deh_text.c:
-//
-// Used to do dehacked text substitutions throughout the program
-
-#ifdef FEATURE_DEHACKED
-
-char *DEH_String(char *s);
-
-#else
-
-#define DEH_String(x) (x)
-
-#endif
 
 extern boolean deh_allow_long_strings;
 extern boolean deh_allow_long_cheats;

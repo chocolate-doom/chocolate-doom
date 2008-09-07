@@ -38,7 +38,7 @@
 #include <unistd.h>
 #endif
 
-#include "deh_main.h"
+#include "deh_str.h"
 #include "doomtype.h"
 #include "doomstat.h"
 #include "m_argv.h"

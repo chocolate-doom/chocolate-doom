@@ -38,7 +38,7 @@
 #include <samplerate.h>
 #endif
 
-#include "deh_main.h"
+#include "deh_str.h"
 #include "i_system.h"
 #include "s_sound.h"
 #include "m_argv.h"
