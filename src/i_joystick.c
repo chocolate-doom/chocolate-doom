@@ -31,10 +31,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "doomdef.h"
 #include "doomtype.h"
 #include "d_event.h"
-#include "d_main.h"
 #include "i_joystick.h"
 
 // When an axis is within the dead zone, it is set to zero.

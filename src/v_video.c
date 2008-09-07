@@ -32,12 +32,11 @@
 #include "i_system.h"
 
 #include "doomtype.h"
-#include "doomdata.h"
 
 #include "deh_str.h"
-#include "m_bbox.h"
 #include "i_swap.h"
 #include "i_video.h"
+#include "m_bbox.h"
 #include "m_misc.h"
 #include "v_video.h"
 #include "w_wad.h"
