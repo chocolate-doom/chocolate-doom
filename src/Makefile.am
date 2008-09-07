@@ -31,7 +31,6 @@ doomkeys.h                                 \
 doomfeatures.h                             \
 doomtype.h                                 \
 d_ticcmd.h                                 \
-f_wipe.c             f_wipe.h              \
 i_main.c                                   \
 i_joystick.c         i_joystick.h          \
 i_scale.c            i_scale.h             \
@@ -40,7 +39,6 @@ i_system.c           i_system.h            \
 i_timer.c            i_timer.h             \
 i_video.c            i_video.h             \
 m_argv.c             m_argv.h              \
-m_bbox.c             m_bbox.h              \
 m_cheat.c            m_cheat.h             \
 m_config.c           m_config.h            \
 m_fixed.c            m_fixed.h             \
