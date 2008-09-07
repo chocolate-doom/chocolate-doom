@@ -29,7 +29,7 @@
 #include "i_system.h"
 
 #include "doomfeatures.h"
-#include "deh_main.h"
+#include "deh_str.h"
 
 #include "doomstat.h"
 #include "doomtype.h"

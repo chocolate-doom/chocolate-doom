@@ -60,5 +60,21 @@ st_lib.c           st_lib.h     \
 st_stuff.c         st_stuff.h   \
 wi_stuff.c         wi_stuff.h
 
-libdoom_a_SOURCES=$(SOURCE_FILES)
+FEATURE_DEHACKED_SOURCE_FILES =            \
+deh_ammo.c                                 \
+deh_cheat.c                                \
+deh_defs.h                                 \
+deh_frame.c                                \
+deh_io.c             deh_io.h              \
+deh_main.c           deh_main.h            \
+deh_mapping.c        deh_mapping.h         \
+deh_misc.c           deh_misc.h            \
+deh_ptr.c                                  \
+deh_sound.c                                \
+deh_text.c                                 \
+deh_thing.c                                \
+deh_weapon.c
+
+libdoom_a_SOURCES = $(SOURCE_FILES)                   \
+                    $(FEATURE_DEHACKED_SOURCE_FILES)
 

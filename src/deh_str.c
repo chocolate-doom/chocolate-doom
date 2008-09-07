@@ -24,15 +24,13 @@
 //
 //-----------------------------------------------------------------------------
 
+#include <stdlib.h>
 #include <string.h>
 
 #include "doomtype.h"
+#include "deh_str.h"
 
 #include "z_zone.h"
-
-#include "deh_defs.h"
-#include "deh_io.h"
-#include "deh_main.h"
 
 typedef struct 
 {
@@ -40,7 +38,7 @@ typedef struct
     char *to_text;
 } deh_substitution_t;
 
-static deh_substitution_t **hash_table;
+static deh_substitution_t **hash_table = NULL;
 static int hash_table_entries;
 static int hash_table_length = -1;
 
@@ -89,6 +87,17 @@ char *DEH_String(char *s)
     // no substitution found
 
     return s;
+}
+
+static void InitHashTable(void)
+{
+    // init hash table
+    
+    hash_table_entries = 0;
+    hash_table_length = 16;
+    hash_table = Z_Malloc(sizeof(deh_substitution_t *) * hash_table_length,
+                          PU_STATIC, NULL);
+    memset(hash_table, 0, sizeof(deh_substitution_t *) * hash_table_length);
 }
 
 static void DEH_AddToHashtable(deh_substitution_t *sub);
@@ -150,105 +159,22 @@ static void DEH_AddToHashtable(deh_substitution_t *sub)
     ++hash_table_entries;
 }
 
-// Given a string length, find the maximum length of a 
-// string that can replace it.
-
-static int TXT_MaxStringLength(int len)
-{
-    // Enough bytes for the string and the NUL terminator
-
-    len += 1;
-
-    // All strings in doom.exe are on 4-byte boundaries, so we may be able
-    // to support a slightly longer string.
-    // Extend up to the next 4-byte boundary
-
-    len += (4 - (len % 4)) % 4;
-            
-    // Less one for the NUL terminator.
-
-    return len - 1;
-}
-
-static void DEH_TextInit(void)
-{
-    // init hash table
-    
-    hash_table_entries = 0;
-    hash_table_length = 16;
-    hash_table = Z_Malloc(sizeof(deh_substitution_t *) * hash_table_length,
-                          PU_STATIC, NULL);
-    memset(hash_table, 0, sizeof(deh_substitution_t *) * hash_table_length);
-}
-
-static void *DEH_TextStart(deh_context_t *context, char *line)
+void DEH_AddStringReplacement(char *from_text, char *to_text)
 {
     deh_substitution_t *sub;
-    int fromlen, tolen;
-    int i;
-    
-    if (sscanf(line, "Text %i %i", &fromlen, &tolen) != 2)
+
+    // Initialise the hash table if this is the first time
+
+    if (hash_table_length < 0)
     {
-        DEH_Warning(context, "Parse error on section start");
-        return NULL;
+        InitHashTable();
     }
 
-    // Only allow string replacements that are possible in Vanilla Doom.  
-    // Chocolate Doom is unforgiving!
+    sub = Z_Malloc(sizeof(*sub), PU_STATIC, 0);
 
-    if (!deh_allow_long_strings && tolen > TXT_MaxStringLength(fromlen))
-    {
-        DEH_Error(context, "Replacement string is longer than the maximum "
-                           "possible in doom.exe");
-        return NULL;
-    }
-
-    sub = Z_Malloc(sizeof(deh_substitution_t), PU_STATIC, NULL);
-    sub->from_text = Z_Malloc(fromlen + 1, PU_STATIC, NULL);
-    sub->to_text = Z_Malloc(tolen + 1, PU_STATIC, NULL);
-
-    // read in the "from" text
-
-    for (i=0; i<fromlen; ++i)
-    {
-        int c;
-
-        c = DEH_GetChar(context);
-            
-        sub->from_text[i] = c;
-    }
-
-    sub->from_text[fromlen] = '\0';
-
-    // read in the "to" text
-
-    for (i=0; i<tolen; ++i)
-    {
-        int c;
-
-        c = DEH_GetChar(context);
-            
-        sub->to_text[i] = c;
-    }
-    sub->to_text[tolen] = '\0';
+    sub->from_text = from_text;
+    sub->to_text = to_text;
 
     DEH_AddToHashtable(sub);
-    
-    return NULL;
 }
-
-static void DEH_TextParseLine(deh_context_t *context, char *line, void *tag)
-{
-    // not used
-}
-
-deh_section_t deh_section_text =
-{
-    "Text",
-    DEH_TextInit,
-    DEH_TextStart,
-    DEH_TextParseLine,
-    NULL,
-    NULL,
-};
 

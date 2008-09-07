@@ -27,7 +27,7 @@
 
 #include "doomtype.h"
 
-#include "deh_main.h"
+#include "deh_str.h"
 #include "s_sound.h"
 #include "sounds.h"
 
