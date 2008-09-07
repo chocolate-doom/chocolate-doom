@@ -43,7 +43,6 @@
 #include "i_video.h"
 #include "i_scale.h"
 #include "m_argv.h"
-#include "s_sound.h"
 #include "v_video.h"
 #include "w_wad.h"
 #include "z_zone.h"

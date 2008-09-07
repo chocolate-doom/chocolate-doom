@@ -22,7 +22,6 @@ g_game.c           g_game.h     \
 hu_lib.c           hu_lib.h     \
 hu_stuff.c         hu_stuff.h   \
 info.c             info.h       \
-m_bbox.c           m_bbox.h     \
 m_menu.c           m_menu.h     \
 p_ceilng.c                      \
 p_doors.c                       \

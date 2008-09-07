@@ -37,7 +37,14 @@
 #include "doomtype.h"
 #include "i_system.h"
 #include "m_argv.h"
-#include "d_main.h"
+
+//
+// D_DoomMain()
+// Not a globally visible function, just included for source reference,
+// calls all startup code, parses command line options.
+//
+
+void D_DoomMain (void);
 
 int main(int argc, char **argv) 
 { 

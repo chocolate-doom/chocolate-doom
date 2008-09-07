@@ -43,7 +43,6 @@
 #endif
 
 #include "doomtype.h"
-#include "doomstat.h"
 
 #include "deh_str.h"
 
