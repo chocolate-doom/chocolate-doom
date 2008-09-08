@@ -42,6 +42,10 @@
 #define DEFAULT_MUSIC_DEVICE SNDDEVICE_NONE
 #endif
 
+// Sound sample rate to use for digital output (Hz)
+
+int snd_samplerate = 44100;
+
 // Low-level sound and music modules we are using
 
 static sound_module_t *sound_module;
