@@ -35,8 +35,8 @@
 #include "mus2mid.h"
 
 #include "deh_str.h"
+#include "i_sound.h"
 #include "m_misc.h"
-#include "s_sound.h"
 #include "w_wad.h"
 #include "z_zone.h"
 

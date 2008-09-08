@@ -54,6 +54,7 @@ r_segs.c           r_segs.h     \
 r_sky.c            r_sky.h      \
                    r_state.h    \
 r_things.c         r_things.h   \
+s_sound.c          s_sound.h    \
 sounds.c           sounds.h     \
 st_lib.c           st_lib.h     \
 st_stuff.c         st_stuff.h   \

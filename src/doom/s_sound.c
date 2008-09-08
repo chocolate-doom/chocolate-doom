@@ -96,10 +96,6 @@ int sfxVolume = 8;
 
 int musicVolume = 8;
 
-// Sound sample rate to use for digital output (Hz)
-
-int snd_samplerate = 44100;
-
 // Internal volume level, ranging from 0-127
 
 static int snd_SfxVolume;
