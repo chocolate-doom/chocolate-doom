@@ -142,6 +142,33 @@ static boolean CachePCSLump(sfxinfo_t *sfxinfo)
     return true;
 }
 
+// These Doom PC speaker sounds are not played - this can be seen in the 
+// Heretic source code, where there are remnants of this left over
+// from Doom.
+
+static boolean IsDisabledSound(sfxinfo_t *sfxinfo)
+{
+    int i;
+    const char *disabled_sounds[] = {
+        "posact",
+        "bgact",
+        "dmact",
+        "dmpain",
+        "popain",
+        "sawidl",
+    };
+
+    for (i=0; i<arrlen(disabled_sounds); ++i)
+    {
+        if (!strcmp(sfxinfo->name, disabled_sounds[i]))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 static int I_PCS_StartSound(sfxinfo_t *sfxinfo,
                             int channel,
                             int vol,
@@ -154,17 +181,10 @@ static int I_PCS_StartSound(sfxinfo_t *sfxinfo,
         return -1;
     }
 
-/* TODO
-    // These PC speaker sounds are not played - this can be seen in the 
-    // Heretic source code, where there are remnants of this left over
-    // from Doom.
-
-    if (id == sfx_posact || id == sfx_bgact || id == sfx_dmact
-     || id == sfx_dmpain || id == sfx_popain || id == sfx_sawidl)
+    if (IsDisabledSound(sfxinfo))
     {
         return -1;
     }
-    */
 
     if (SDL_LockMutex(sound_lock) < 0)
     {
