@@ -40,8 +40,8 @@
 
 #include "deh_str.h"
 #include "i_system.h"
-#include "s_sound.h"
 #include "m_argv.h"
+#include "sounds.h"
 #include "w_wad.h"
 #include "z_zone.h"
 
@@ -53,7 +53,7 @@
 static boolean sound_initialised = false;
 
 static Mix_Chunk sound_chunks[NUMSFX];
-static int channels_playing[NUM_CHANNELS];
+static sfxinfo_t *channels_playing[NUM_CHANNELS];
 
 static int mixer_freq;
 static Uint16 mixer_format;
@@ -70,25 +70,27 @@ int use_libsamplerate = 0;
 static void ReleaseSoundOnChannel(int channel)
 {
     int i;
-    int id = channels_playing[channel];
+    sfxinfo_t *sfxinfo = channels_playing[channel];
+    int id;
 
-    if (!id)
+    if (sfxinfo == NULL)
     {
         return;
     }
 
-    channels_playing[channel] = sfx_None;
+    channels_playing[channel] = NULL;
     
     for (i=0; i<NUM_CHANNELS; ++i)
     {
         // Playing on this channel? if so, don't release.
 
-        if (channels_playing[i] == id)
+        if (channels_playing[i] == sfxinfo)
             return;
     }
 
     // Not used on any channel, and can be safely released
-    
+    // TODO
+    id = sfxinfo - S_sfx;
     Z_ChangeTag(sound_chunks[id].abuf, PU_CACHE);
 }
 
@@ -351,18 +353,19 @@ static uint32_t ExpandSoundData_SDL(byte *data,
 // Load and convert a sound effect
 // Returns true if successful
 
-static boolean CacheSFX(int sound)
+static boolean CacheSFX(sfxinfo_t *sfxinfo)
 {
     int lumpnum;
     unsigned int lumplen;
     int samplerate;
     int clipped;
     unsigned int length;
+    int sound_id;
     byte *data;
 
     // need to load the sound
 
-    lumpnum = S_sfx[sound].lumpnum;
+    lumpnum = sfxinfo->lumpnum;
     data = W_CacheLumpNum(lumpnum, PU_STATIC);
     lumplen = W_LumpLength(lumpnum);
 
@@ -393,19 +396,20 @@ static boolean CacheSFX(int sound)
     // DWF 2008-02-10:  sound_chunks[sound].alen and abuf are determined
     // by ExpandSoundData.
 
-    sound_chunks[sound].allocated = 1;
-    sound_chunks[sound].volume = MIX_MAX_VOLUME;
+    sound_id = sfxinfo - S_sfx;
+    sound_chunks[sound_id].allocated = 1;
+    sound_chunks[sound_id].volume = MIX_MAX_VOLUME;
 
     clipped = ExpandSoundData(data + 8, 
                               samplerate, 
                               length, 
-                              &sound_chunks[sound]);
+                              &sound_chunks[sound_id]);
 
     if (clipped)
     {
         fprintf(stderr, "Sound %d: clipped %u samples (%0.2f %%)\n", 
-                        sound, clipped,
-                        400.0 * clipped / sound_chunks[sound].alen);
+                        sound_id, clipped,
+                        400.0 * clipped / sound_chunks[sound_id].alen);
     }
 
     // don't need the original lump any more
@@ -440,7 +444,7 @@ static void I_PrecacheSounds(void)
 
         if (S_sfx[i].lumpnum != -1)
         {
-            CacheSFX(i);
+            CacheSFX(&S_sfx[i]);
 
             if (sound_chunks[i].abuf != NULL)
             {
@@ -454,11 +458,15 @@ static void I_PrecacheSounds(void)
 
 #endif
 
-static Mix_Chunk *GetSFXChunk(int sound_id)
+static Mix_Chunk *GetSFXChunk(sfxinfo_t *sfxinfo)
 {
+    int sound_id;
+
+    sound_id = sfxinfo - S_sfx;
+
     if (sound_chunks[sound_id].abuf == NULL)
     {
-        if (!CacheSFX(sound_id))
+        if (!CacheSFX(sfxinfo))
             return NULL;
     }
     else
@@ -515,7 +523,7 @@ static void I_SDL_UpdateSoundParams(int handle, int vol, int sep)
 //  is set, but currently not used by mixing.
 //
 
-static int I_SDL_StartSound(int id, int channel, int vol, int sep)
+static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
 {
     Mix_Chunk *chunk;
 
@@ -531,7 +539,7 @@ static int I_SDL_StartSound(int id, int channel, int vol, int sep)
 
     // Get the sound data
 
-    chunk = GetSFXChunk(id);
+    chunk = GetSFXChunk(sfxinfo);
 
     if (chunk == NULL)
     {
@@ -542,7 +550,7 @@ static int I_SDL_StartSound(int id, int channel, int vol, int sep)
 
     Mix_PlayChannelTimed(channel, chunk, 0, -1);
 
-    channels_playing[channel] = id;
+    channels_playing[channel] = sfxinfo;
 
     // set separation, etc.
  

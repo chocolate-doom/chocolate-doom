@@ -35,6 +35,7 @@ i_main.c                                   \
 i_joystick.c         i_joystick.h          \
 i_scale.c            i_scale.h             \
                      i_swap.h              \
+i_sound.c            i_sound.h             \
 i_system.c           i_system.h            \
 i_timer.c            i_timer.h             \
 i_video.c            i_video.h             \

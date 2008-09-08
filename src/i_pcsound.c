@@ -28,8 +28,7 @@
 #include "doomtype.h"
 
 #include "deh_str.h"
-#include "s_sound.h"
-#include "sounds.h"
+#include "i_sound.h"
 
 #include "w_wad.h"
 #include "z_zone.h"
@@ -102,7 +101,7 @@ static void PCSCallbackFunc(int *duration, int *freq)
     SDL_UnlockMutex(sound_lock);
 }
 
-static boolean CachePCSLump(int sound_id)
+static boolean CachePCSLump(sfxinfo_t *sfxinfo)
 {
     int lumplen;
     int headerlen;
@@ -117,8 +116,8 @@ static boolean CachePCSLump(int sound_id)
 
     // Load from WAD
 
-    current_sound_lump = W_CacheLumpNum(S_sfx[sound_id].lumpnum, PU_STATIC);
-    lumplen = W_LumpLength(S_sfx[sound_id].lumpnum);
+    current_sound_lump = W_CacheLumpNum(sfxinfo->lumpnum, PU_STATIC);
+    lumplen = W_LumpLength(sfxinfo->lumpnum);
 
     // Read header
   
@@ -138,12 +137,12 @@ static boolean CachePCSLump(int sound_id)
 
     current_sound_remaining = headerlen;
     current_sound_pos = current_sound_lump + 4;
-    current_sound_lump_num = S_sfx[sound_id].lumpnum;
+    current_sound_lump_num = sfxinfo->lumpnum;
 
     return true;
 }
 
-static int I_PCS_StartSound(int id,
+static int I_PCS_StartSound(sfxinfo_t *sfxinfo,
                             int channel,
                             int vol,
                             int sep)
@@ -155,6 +154,7 @@ static int I_PCS_StartSound(int id,
         return -1;
     }
 
+/* TODO
     // These PC speaker sounds are not played - this can be seen in the 
     // Heretic source code, where there are remnants of this left over
     // from Doom.
@@ -164,13 +164,14 @@ static int I_PCS_StartSound(int id,
     {
         return -1;
     }
+    */
 
     if (SDL_LockMutex(sound_lock) < 0)
     {
         return -1;
     }
 
-    result = CachePCSLump(id);
+    result = CachePCSLump(sfxinfo);
 
     if (result)
     {

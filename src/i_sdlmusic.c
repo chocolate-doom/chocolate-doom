@@ -154,7 +154,7 @@ static void I_SDL_SetMusicVolume(int volume)
 
 // Start playing a mid
 
-static void I_SDL_PlaySong(void *handle, int looping)
+static void I_SDL_PlaySong(void *handle, boolean looping)
 {
     Mix_Music *music = (Mix_Music *) handle;
     int loops;
