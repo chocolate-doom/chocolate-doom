@@ -237,6 +237,10 @@ void D_CheckNetGame (void)
     int i;
     int num_players;
 
+    // Call D_QuitNetGame on exit 
+
+    I_AtExit(D_QuitNetGame, true);
+
     // default values for single player
 
     consoleplayer = 0;

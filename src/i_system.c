@@ -40,27 +40,44 @@
 
 #include "deh_str.h"
 #include "doomtype.h"
-#include "doomstat.h"
 #include "m_argv.h"
 #include "m_config.h"
 #include "m_misc.h"
 #include "i_joystick.h"
 #include "i_timer.h"
 #include "i_video.h"
-#include "s_sound.h"
-
-#include "d_net.h"
-#include "g_game.h"
 
 #include "i_system.h"
 #include "txt_main.h"
-
 
 #include "w_wad.h"
 #include "z_zone.h"
 
 int mb_used = 16;
 int show_endoom = 1;
+
+typedef struct atexit_listentry_s atexit_listentry_t;
+
+struct atexit_listentry_s
+{
+    atexit_func_t func;
+    boolean run_on_error;
+    atexit_listentry_t *next;
+};
+
+static atexit_listentry_t *exit_funcs = NULL;
+
+void I_AtExit(atexit_func_t func, boolean run_on_error)
+{
+    atexit_listentry_t *entry;
+
+    entry = malloc(sizeof(*entry));
+
+    entry->func = func;
+    entry->run_on_error = run_on_error;
+    entry->next = exit_funcs;
+    exit_funcs = entry;
+}
 
 // Tactile feedback function, probably used for the Logitech Cyberman
 
@@ -178,6 +195,19 @@ void I_Endoom(void)
 
 void I_Quit (void)
 {
+    atexit_listentry_t *entry;
+
+    // Run through all exit functions
+ 
+    entry = exit_funcs; 
+
+    while (entry != NULL)
+    {
+        entry->func();
+        entry = entry->next;
+    }
+
+/*
     D_QuitNetGame ();
     G_CheckDemoStatus();
     S_Shutdown();
@@ -188,8 +218,9 @@ void I_Quit (void)
     }
 
     I_ShutdownGraphics();
+    */
 
-    if (show_endoom && !testcontrols && !screensaver_mode)
+    if (show_endoom && !screensaver_mode && !M_CheckParm("-testcontrols"))
     {
         I_Endoom();
     }
@@ -211,7 +242,8 @@ static boolean already_quitting = false;
 
 void I_Error (char *error, ...)
 {
-    va_list	argptr;
+    va_list argptr;
+    atexit_listentry_t *entry;
 
     if (already_quitting)
     {
@@ -233,6 +265,19 @@ void I_Error (char *error, ...)
 
     // Shutdown. Here might be other errors.
 
+    entry = exit_funcs;
+
+    while (entry != NULL)
+    {
+        if (entry->run_on_error)
+        {
+            entry->func();
+        }
+
+        entry = entry->next;
+    }
+  
+  /*
     if (demorecording)
     {
 	G_CheckDemoStatus();
@@ -241,6 +286,7 @@ void I_Error (char *error, ...)
     D_QuitNetGame ();
     I_ShutdownGraphics();
     S_Shutdown();
+    */
     
 #ifdef _WIN32
     // On Windows, pop up a dialog box with the error message.

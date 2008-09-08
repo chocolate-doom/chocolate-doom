@@ -147,6 +147,8 @@ void S_Init(int sfxVolume, int musicVolume)
     {
         S_sfx[i].lumpnum = S_sfx[i].usefulness = -1;
     }
+
+    I_AtExit(S_Shutdown, true);
 }
 
 void S_Shutdown(void)
