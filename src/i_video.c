@@ -1638,5 +1638,9 @@ void I_InitGraphics(void)
     }
 
     initialised = true;
+
+    // Call I_ShutdownGraphics on quit
+
+    I_AtExit(I_ShutdownGraphics, true);
 }
 

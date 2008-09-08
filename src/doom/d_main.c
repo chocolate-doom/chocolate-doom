@@ -950,6 +950,9 @@ void D_DoomMain (void)
     printf (DEH_String("M_LoadDefaults: Load system defaults.\n"));
     M_LoadDefaults ();              // load before initing other systems
 
+    // Save configuration at exit.
+    I_AtExit(M_SaveDefaults, false);
+
     printf (DEH_String("W_Init: Init WADfiles.\n"));
     D_AddFile(iwadfile);
 
@@ -1192,6 +1195,8 @@ void D_DoomMain (void)
         }
 
     }
+
+    I_AtExit((atexit_func_t) G_CheckDemoStatus, true);
 
     // Generate the WAD hash table.  Speed things up a bit.
 
