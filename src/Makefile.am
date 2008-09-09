@@ -31,6 +31,7 @@ doomkeys.h                                 \
 doomfeatures.h                             \
 doomtype.h                                 \
 d_ticcmd.h                                 \
+i_cdmus.c            i_cdmus.h             \
 i_main.c                                   \
 i_joystick.c         i_joystick.h          \
 i_scale.c            i_scale.h             \
