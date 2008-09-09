@@ -61,7 +61,6 @@ w_wad.c                               \
                     xddefs.h          
 
 EXTRA_DIST=                           \
-i_cdmus.c           i_cdmus.h         \
 i_cyber.c                             \
 i_ibm.c                               \
 i_sound.c           i_sound.h
