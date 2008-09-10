@@ -21,6 +21,7 @@
 // Network server code
 //
 
+#include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,7 +29,7 @@
 #include "config.h"
 
 #include "doomtype.h"
-#include "doomstat.h"
+#include "d_mode.h"
 #include "i_system.h"
 #include "i_timer.h"
 
@@ -511,7 +512,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         return;
     }
 
-    if (!NET_ValidGameMode(cl_gamemode, cl_gamemission))
+    if (!D_ValidGameMode(cl_gamemission, cl_gamemode))
     {
         return;
     }

@@ -29,9 +29,19 @@
 #include "doomtype.h"
 #include "d_ticcmd.h"
 
+// Absolute maximum number of "nodes" in the game.  This is different to
+// MAXPLAYERS, as there may be observers that are not participating
+// (eg. left/right monitors)
+
+#define MAXNETNODES 16
+
 // The maximum number of players, multiplayer/networking.
 
 #define MAXPLAYERS		4
+
+// Networking and tick handling related.
+
+#define BACKUPTICS		128
 
 typedef struct _net_module_s net_module_t;
 typedef struct _net_packet_s net_packet_t;

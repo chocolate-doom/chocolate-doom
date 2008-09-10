@@ -30,11 +30,6 @@
 
 #include "d_player.h"
 
-#define MAXNETNODES 8
-
-// Networking and tick handling related.
-#define BACKUPTICS		128
-
 extern int extratics;
 
 // Create any new ticcmds and broadcast to other players.

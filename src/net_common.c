@@ -21,10 +21,12 @@
 // Common code shared between the client and server
 //
 
+#include <stdio.h>
 #include <ctype.h>
 #include <stdlib.h>
 
 #include "doomtype.h"
+#include "d_mode.h"
 #include "i_timer.h"
 
 #include "net_common.h"
@@ -531,24 +533,6 @@ void NET_SafePuts(char *s)
     putchar('\n');
 }
 
-// Check that a gamemode+gamemission received over the network is valid.
-
-boolean NET_ValidGameMode(GameMode_t mode, GameMission_t mission)
-{
-    if (mode == shareware || mode == registered || mode == retail)
-    {
-        return true;
-    }
-    else if (mode == commercial)
-    {
-        return mission == doom2 || mission == pack_tnt || mission == pack_plut;
-    }
-    else
-    {
-        return false;
-    }
-}
-
 // Check that game settings are valid
 
 boolean NET_ValidGameSettings(GameMode_t mode, GameMission_t mission,
@@ -566,7 +550,7 @@ boolean NET_ValidGameSettings(GameMode_t mode, GameMission_t mission,
     if (settings->skill < sk_noitems || settings->skill > sk_nightmare)
         return false;
 
-    if (settings->gameversion < exe_doom_1_9 || settings->gameversion > exe_chex)
+    if (!D_ValidGameVersion(mission, settings->gameversion))
         return false;
 
     if (mode == shareware || mode == retail || mode == registered)
