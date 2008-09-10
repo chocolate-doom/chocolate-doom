@@ -31,7 +31,9 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "doomtype.h"
 #include "i_timer.h"
+#include "d_mode.h"
 
 //
 // Global parameters/defines.
@@ -41,42 +43,6 @@
 
 // Version code for cph's longtics hack ("v1.91")
 #define DOOM_191_VERSION 111
-
-
-// Game mode handling - identify IWAD version
-//  to handle IWAD dependend animations etc.
-typedef enum
-{
-  shareware,	// DOOM 1 shareware, E1, M9
-  registered,	// DOOM 1 registered, E3, M27
-  commercial,	// DOOM 2 retail, E1 M34
-  // DOOM 2 german edition not handled
-  retail,	// DOOM 1 retail, E4, M36
-  indetermined	// Well, no IWAD found.
-  
-} GameMode_t;
-
-
-// Mission packs - might be useful for TC stuff?
-typedef enum
-{
-  doom,		// DOOM 1
-  doom2,	// DOOM 2
-  pack_tnt,	// TNT mission pack
-  pack_plut,	// Plutonia pack
-  none
-
-} GameMission_t;
-
-// What version are we emulating?
-
-typedef enum
-{
-    exe_doom_1_9,   // Doom 1.9: used for shareware, registered and commercial
-    exe_ultimate,   // Ultimate Doom (retail)
-    exe_final,      // Final Doom
-    exe_chex,       // Chex Quest executable (based on Final Doom)
-} GameVersion_t;
 
 
 // If rangecheck is undefined,
@@ -105,18 +71,6 @@ typedef enum
 
 // Deaf monsters/do not react to sound.
 #define	MTF_AMBUSH		8
-
-typedef enum
-{
-    sk_noitems = -1,        // the "-skill 0" hack
-    sk_baby = 0,
-    sk_easy,
-    sk_medium,
-    sk_hard,
-    sk_nightmare
-} skill_t;
-
-
 
 
 //

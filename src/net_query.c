@@ -22,6 +22,7 @@
 //     Querying servers to find their current status.
 //
 
+#include <stdio.h>
 #include <stdarg.h>
 #include <stdlib.h>
 

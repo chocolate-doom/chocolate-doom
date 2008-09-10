@@ -9,6 +9,7 @@ AM_CFLAGS = -Idoom -I../textscreen -I../pcsound @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @
 
 DEDSERV_FILES=\
 d_dedicated.c                              \
+d_mode.c             d_mode.h              \
 i_main.c                                   \
 i_timer.c            i_timer.h             \
 m_argv.c             m_argv.h              \
@@ -27,10 +28,11 @@ chocolate_server_LDADD = @LDFLAGS@ @SDL_LIBS@ @SDLNET_LIBS@
 
 MAIN_SOURCE_FILES=\
 d_event.c            d_event.h             \
-doomkeys.h                                 \
-doomfeatures.h                             \
-doomtype.h                                 \
-d_ticcmd.h                                 \
+                     doomkeys.h            \
+                     doomfeatures.h        \
+                     doomtype.h            \
+d_mode.c             d_mode.h              \
+                     d_ticcmd.h            \
 i_cdmus.c            i_cdmus.h             \
 i_main.c                                   \
 i_joystick.c         i_joystick.h          \

@@ -41,7 +41,10 @@
 // We need the playr data structure as well.
 #include "d_player.h"
 
+// Game mode/mission
+#include "d_mode.h"
 
+#include "net_defs.h"
 
 
 
