@@ -46,6 +46,7 @@ m_argv.c             m_argv.h              \
 m_bbox.c             m_bbox.h              \
 m_cheat.c            m_cheat.h             \
 m_config.c           m_config.h            \
+m_controls.c         m_controls.h          \
 m_fixed.c            m_fixed.h             \
 m_misc.c             m_misc.h              \
 md5.c                md5.h                 \

@@ -39,6 +39,7 @@
 #include "z_zone.h"
 #include "f_finale.h"
 #include "m_argv.h"
+#include "m_controls.h"
 #include "m_misc.h"
 #include "m_menu.h"
 #include "m_random.h"
@@ -157,51 +158,6 @@ boolean         testcontrols = false;    // Invoked by setup to test controls
 wbstartstruct_t wminfo;               	// parms for world map / intermission 
  
 byte		consistancy[MAXPLAYERS][BACKUPTICS]; 
- 
- 
-// 
-// Controls 
-// 
-int             key_right = KEY_RIGHTARROW;
-int		key_left = KEY_LEFTARROW;
-
-int		key_up = KEY_UPARROW;
-int		key_down = KEY_DOWNARROW; 
-int             key_strafeleft = ',';
-int		key_straferight = '.';
-int             key_fire = KEY_RCTRL;
-int		key_use = ' ';
-int		key_strafe = KEY_RALT;
-int		key_speed = KEY_RSHIFT; 
- 
-int             mousebfire = 0;
-int             mousebstrafe = 1;
-int             mousebforward = 2;
-
-int             mousebstrafeleft = -1;
-int             mousebstraferight = -1;
-int             mousebbackward = -1;
-int             mousebuse = -1;
-
-// Control whether if a mouse button is double clicked, it acts like 
-// "use" has been pressed
-
-int             dclick_use = 1;
- 
-int             joybfire = 0; 
-int             joybstrafe = 1; 
-int             joybuse = 3; 
-int             joybspeed = 2; 
-int             joybstrafeleft = -1;
-int             joybstraferight = -1;
-
-// fraggle: Disallow mouse and joystick movement to cause forward/backward
-// motion.  Specified with the '-novert' command line parameter.
-// This is an int to allow saving to config file
-
-int             novert = 0;
- 
- 
  
 #define MAXPLMOVE		(forwardmove[1]) 
  

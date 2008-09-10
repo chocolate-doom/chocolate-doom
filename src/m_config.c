@@ -39,7 +39,7 @@
 
 #include "z_zone.h"
 
-#include "m_menu.h"
+#include "m_controls.h"
 #include "m_argv.h"
 #include "net_client.h"
 
@@ -51,16 +51,10 @@
 #include "i_video.h"
 #include "v_video.h"
 
-#include "hu_stuff.h"
-
-// State.
-#include "doomstat.h"
-
-// Data.
-#include "dstrings.h"
-
 #include "m_misc.h"
 
+#include "m_menu.h"
+#include "doomstat.h"
 
 //
 // DEFAULTS
@@ -71,50 +65,14 @@
 
 char *          configdir;
 
-
 int		usemouse = 1;
 int		usejoystick = 0;
-
-extern int	key_right;
-extern int	key_left;
-extern int	key_up;
-extern int	key_down;
-
-extern int	key_strafeleft;
-extern int	key_straferight;
-
-extern int	key_fire;
-extern int	key_use;
-extern int	key_strafe;
-extern int	key_speed;
-
-extern int	mousebfire;
-extern int	mousebstrafe;
-extern int	mousebforward;
-
-extern int      mousebstrafeleft;
-extern int      mousebstraferight;
-extern int      mousebbackward;
-extern int      mousebuse;
-
-extern int      dclick_use;
-
-extern int	joybfire;
-extern int	joybstrafe;
-extern int	joybuse;
-extern int	joybspeed;
-extern int      joybstrafeleft;
-extern int      joybstraferight;
-
-extern int	viewwidth;
-extern int	viewheight;
 
 extern int	mouseSensitivity;
 extern int	showMessages;
 
 // machine-independent sound params
 extern	int	numChannels;
-
 
 extern char*	chat_macros[];
 
