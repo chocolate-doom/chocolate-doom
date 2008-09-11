@@ -39,6 +39,7 @@
 #endif
 
 #include "deh_str.h"
+#include "i_sound.h"
 #include "i_system.h"
 #include "m_argv.h"
 #include "sounds.h"
