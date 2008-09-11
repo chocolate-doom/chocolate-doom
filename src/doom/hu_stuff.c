@@ -67,7 +67,7 @@
 
 
 
-char*	chat_macros[] =
+char *chat_macros[10] =
 {
     HUSTR_CHATMACRO0,
     HUSTR_CHATMACRO1,

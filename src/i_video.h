@@ -100,20 +100,15 @@ void I_CheckIsScreensaver(void);
 void I_SetGrabMouseCallback(grabmouse_callback_t func);
 
 void I_DisplayFPSDots(boolean dots_on);
+void I_BindVideoVariables(void);
 
 extern char *video_driver;
-extern int autoadjust_video_settings;
 extern boolean screenvisible;
-extern int screen_width, screen_height;
-extern int fullscreen;
-extern int aspect_ratio_correct;
-extern int grabmouse;
 extern float mouse_acceleration;
 extern int mouse_threshold;
-extern int startup_delay;
 extern int vanilla_keyboard_mapping;
 extern boolean screensaver_mode;
-
+extern int usegamma;
 
 #endif
 

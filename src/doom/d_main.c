@@ -55,6 +55,7 @@
 
 #include "m_argv.h"
 #include "m_config.h"
+#include "m_controls.h"
 #include "m_misc.h"
 #include "m_menu.h"
 #include "p_saveg.h"
@@ -333,6 +334,39 @@ void D_Display (void)
 	M_Drawer ();                            // menu is drawn even on top of wipes
 	I_FinishUpdate ();                      // page flip or blit buffer
     } while (!done);
+}
+
+//
+// Add configuration file variable bindings.
+//
+
+void D_BindVariables(void)
+{
+    int i;
+
+    I_BindVariables();
+    M_BindBaseControls();
+    NET_BindVariables();
+
+    M_BindVariable("mouse_sensitivity",      &mouseSensitivity);
+    M_BindVariable("sfx_volume",             &sfxVolume);
+    M_BindVariable("music_volume",           &musicVolume);
+    M_BindVariable("show_messages",          &showMessages);
+    M_BindVariable("screenblocks",           &screenblocks);
+    M_BindVariable("detaillevel",            &detailLevel);
+    M_BindVariable("snd_channels",           &snd_channels);
+    M_BindVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
+    M_BindVariable("vanilla_demo_limit",     &vanilla_demo_limit);
+
+    // Multiplayer chat macros
+
+    for (i=0; i<10; ++i)
+    {
+        char buf[12];
+
+        sprintf(buf, "chatmacro%i", i);
+        M_BindVariable(buf, &chat_macros[i]);
+    }
 }
 
 //
@@ -944,11 +978,13 @@ void D_DoomMain (void)
     }
     
     // init subsystems
-    printf (DEH_String("V_Init: allocate screens.\n"));
-    V_Init ();
+    printf(DEH_String("V_Init: allocate screens.\n"));
+    V_Init();
 
-    printf (DEH_String("M_LoadDefaults: Load system defaults.\n"));
-    M_LoadDefaults ();              // load before initing other systems
+    // Load configuration files before initialising other subsystems.
+    printf(DEH_String("M_LoadDefaults: Load system defaults.\n"));
+    D_BindVariables();
+    M_LoadDefaults();
 
     // Save configuration at exit.
     I_AtExit(M_SaveDefaults, false);

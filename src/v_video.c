@@ -135,10 +135,6 @@ const byte gammatable[5][256] =
 };
 
 
-// Gamma correction level to use
-
-int	usegamma = 0;
-			 
 //
 // V_MarkRect 
 // 

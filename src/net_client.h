@@ -39,6 +39,8 @@ void NET_CL_StartGame();
 void NET_CL_SendTiccmd(ticcmd_t *ticcmd, int maketic);
 void NET_Init(void);
 
+void NET_BindVariables(void);
+
 extern boolean net_client_connected;
 extern boolean net_client_received_wait_data;
 extern boolean net_client_controller;

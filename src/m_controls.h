@@ -55,5 +55,7 @@ extern int joybstraferight;
 extern int dclick_use;
 extern int novert;
  
+void M_BindBaseControls(void);
+
 #endif /* #ifndef __M_CONTROLS_H__ */
 

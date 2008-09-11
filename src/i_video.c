@@ -43,6 +43,7 @@
 #include "i_video.h"
 #include "i_scale.h"
 #include "m_argv.h"
+#include "m_config.h"
 #include "v_video.h"
 #include "w_wad.h"
 #include "z_zone.h"
@@ -78,8 +79,6 @@ static screen_mode_t *screen_modes_corrected[] = {
     &mode_squash_5x,
 };
 
-extern void M_QuitDOOM();
-
 // SDL video driver name
 
 char *video_driver = "";
@@ -100,7 +99,7 @@ static boolean initialised = false;
 // disable mouse?
 
 static boolean nomouse = false;
-extern int usemouse;
+int usemouse = 1;
 
 // if true, screens[0] is screen->pixel
 
@@ -108,30 +107,30 @@ static boolean native_surface;
 
 // Screen width and height, from configuration file.
 
-int screen_width = SCREENWIDTH;
-int screen_height = SCREENHEIGHT;
+static int screen_width = SCREENWIDTH;
+static int screen_height = SCREENHEIGHT;
 
 // Automatically adjust video settings if the selected mode is 
 // not a valid video mode.
 
-int autoadjust_video_settings = 1;
+static int autoadjust_video_settings = 1;
 
 // Run in full screen mode?  (int type for config code)
 
-int fullscreen = true;
+static int fullscreen = true;
 
 // Aspect ratio correction mode
 
-int aspect_ratio_correct = true;
+static int aspect_ratio_correct = true;
 
 // Time to wait for the screen to settle on startup before starting the
 // game (ms)
 
-int startup_delay = 1000;
+static int startup_delay = 1000;
 
 // Grab the mouse? (int type for config code)
 
-int grabmouse = true;
+static int grabmouse = true;
 
 // If true, game is running as a screensaver
 
@@ -190,6 +189,10 @@ int vanilla_keyboard_mapping = true;
 
 float mouse_acceleration = 2.0;
 int mouse_threshold = 10;
+
+// Gamma correction level to use
+
+int usegamma = 0;
 
 static boolean MouseShouldBeGrabbed()
 {
@@ -1642,5 +1645,25 @@ void I_InitGraphics(void)
     // Call I_ShutdownGraphics on quit
 
     I_AtExit(I_ShutdownGraphics, true);
+}
+
+// Bind all variables controlling video options into the configuration
+// file system.
+
+void I_BindVideoVariables(void)
+{
+    M_BindVariable("use_mouse",                 &usemouse);
+    M_BindVariable("autoadjust_video_settings", &autoadjust_video_settings);
+    M_BindVariable("fullscreen",                &fullscreen);
+    M_BindVariable("aspect_ratio_correct",      &aspect_ratio_correct);
+    M_BindVariable("startup_delay",             &startup_delay);
+    M_BindVariable("screen_width",              &screen_width);
+    M_BindVariable("screen_height",             &screen_height);
+    M_BindVariable("grabmouse",                 &grabmouse);
+    M_BindVariable("mouse_acceleration",        &mouse_acceleration);
+    M_BindVariable("mouse_threshold",           &mouse_threshold);
+    M_BindVariable("video_driver",              &video_driver);
+    M_BindVariable("usegamma",                  &usegamma);
+    M_BindVariable("vanilla_keyboard_mapping",  &vanilla_keyboard_mapping);
 }
 

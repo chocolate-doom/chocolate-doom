@@ -34,6 +34,7 @@
 #include "i_system.h"
 #include "i_timer.h"
 #include "m_argv.h"
+#include "m_config.h"
 #include "net_client.h"
 #include "net_common.h"
 #include "net_defs.h"
@@ -1280,5 +1281,10 @@ void NET_CL_Init(void)
 void NET_Init(void)
 {
     NET_CL_Init();
+}
+
+void NET_BindVariables(void)
+{
+    M_BindVariable("player_name", &net_player_name);
 }
 
