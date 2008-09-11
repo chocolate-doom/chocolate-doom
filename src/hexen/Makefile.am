@@ -57,7 +57,6 @@ st_start.c          st_start.h        \
 sv_save.c                             \
                     textdefs.h        \
 v_video.c                             \
-w_wad.c                               \
                     xddefs.h          
 
 EXTRA_DIST=                           \
