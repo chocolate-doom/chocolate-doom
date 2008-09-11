@@ -77,6 +77,13 @@ boolean D_ValidGameVersion(GameMission_t mission, GameVersion_t version)
 {
     int i;
 
+    // All Doom variants can use the Doom versions.
+
+    if (mission == doom2 || mission == pack_plut || mission == pack_tnt)
+    {
+        mission = doom;
+    }
+
     for (i=0; i<arrlen(valid_versions); ++i) 
     {
         if (valid_versions[i].mission == mission 
