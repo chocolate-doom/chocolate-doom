@@ -47,8 +47,7 @@ r_things.c                                           \
 sb_bar.c                                             \
 sounds.c               sounds.h                      \
                        soundst.h                     \
-v_video.c                                            \
-w_wad.c                                              
+v_video.c                                            
 
 EXTRA_DIST=                                          \
 i_sound.c              i_sound.h                     \
