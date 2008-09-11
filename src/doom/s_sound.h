@@ -91,6 +91,7 @@ void S_UpdateSounds(mobj_t *listener);
 void S_SetMusicVolume(int volume);
 void S_SetSfxVolume(int volume);
 
+extern int snd_channels;
 
 #endif
 

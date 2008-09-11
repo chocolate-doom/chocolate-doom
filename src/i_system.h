@@ -93,5 +93,9 @@ void I_Error (char *error, ...);
 
 void I_AtExit(atexit_func_t func, boolean run_if_error);
 
+// Add all system-specific config file variable bindings.
+
+void I_BindVariables(void);
+
 #endif
 

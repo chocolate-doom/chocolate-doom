@@ -33,6 +33,7 @@
 #include "i_sound.h"
 #include "i_video.h"
 #include "m_argv.h"
+#include "m_config.h"
 
 // Disable music on OSX by default; there are problems with SDL_mixer.
 
@@ -59,6 +60,15 @@ int snd_sfxdevice = SNDDEVICE_SB;
 extern sound_module_t sound_sdl_module;
 extern sound_module_t sound_pcsound_module;
 extern music_module_t music_sdl_module;
+
+// DOS-specific options: These are unused but should be maintained
+// so that the config file can be shared between chocolate
+// doom and doom.exe
+
+static int snd_sbport = 0;
+static int snd_sbirq = 0;
+static int snd_sbdma = 0;
+static int snd_mport = 0;
 
 // Compiled-in sound modules:
 
@@ -358,5 +368,19 @@ boolean I_MusicIsPlaying(void)
     {
         return false;
     }
+}
+
+void I_BindSoundVariables(void)
+{
+    extern int use_libsamplerate;
+
+    M_BindVariable("snd_musicdevice",   &snd_musicdevice);
+    M_BindVariable("snd_sfxdevice",     &snd_sfxdevice);
+    M_BindVariable("snd_sbport",        &snd_sbport);
+    M_BindVariable("snd_sbirq",         &snd_sbirq);
+    M_BindVariable("snd_sbdma",         &snd_sbdma);
+    M_BindVariable("snd_mport",         &snd_mport);
+    M_BindVariable("snd_samplerate",    &snd_samplerate);
+    M_BindVariable("use_libsamplerate", &use_libsamplerate);
 }
 

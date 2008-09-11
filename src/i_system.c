@@ -44,6 +44,7 @@
 #include "m_config.h"
 #include "m_misc.h"
 #include "i_joystick.h"
+#include "i_sound.h"
 #include "i_timer.h"
 #include "i_video.h"
 
@@ -305,5 +306,14 @@ void I_Error (char *error, ...)
     // abort();
 
     exit(-1);
+}
+
+void I_BindVariables(void)
+{
+    I_BindVideoVariables();
+    I_BindJoystickVariables();
+    I_BindSoundVariables();
+
+    M_BindVariable("show_endoom", &show_endoom);
 }
 

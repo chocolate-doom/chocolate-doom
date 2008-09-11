@@ -221,5 +221,7 @@ extern int snd_sfxdevice;
 extern int snd_musicdevice;
 extern int snd_samplerate;
 
+void I_BindSoundVariables(void);
+
 #endif
 

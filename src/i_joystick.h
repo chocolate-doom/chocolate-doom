@@ -27,15 +27,11 @@
 #ifndef __I_JOYSTICK__
 #define __I_JOYSTICK__
 
-extern int joystick_index;
-extern int joystick_x_axis;
-extern int joystick_x_invert;
-extern int joystick_y_axis;
-extern int joystick_y_invert;
-
 void I_InitJoystick(void);
 void I_ShutdownJoystick(void);
 void I_UpdateJoystick(void);
+
+void I_BindJoystickVariables(void);
 
 #endif /* #ifndef __I_JOYSTICK__ */
 
