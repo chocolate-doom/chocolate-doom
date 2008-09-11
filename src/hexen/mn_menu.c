@@ -1429,7 +1429,7 @@ boolean MN_Responder(event_t * event)
                              false);
                 return true;
             case KEY_F12:      // F12 - reload current map (devmaps mode)
-                if (netgame || DevMaps == false)
+                if (netgame)
                 {
                     return false;
                 }

@@ -1999,28 +1999,11 @@ static void CheatWarpFunc(player_t * player, Cheat_t * cheat)
         P_SetMessage(player, TXT_CHEATBADINPUT, true);
         return;
     }
-    if (DevMaps)
-    {                           // Search map development directory
-        sprintf(auxName, "%sMAP%02d.WAD", DevMapsDir, map);
-        fp = fopen(auxName, "rb");
-        if (fp)
-        {
-            fclose(fp);
-        }
-        else
-        {                       // Can't find
-            P_SetMessage(player, TXT_CHEATNOMAP, true);
-            return;
-        }
-    }
-    else
-    {                           // Search primary lumps
-        sprintf(mapName, "MAP%02d", map);
-        if (W_CheckNumForName(mapName) == -1)
-        {                       // Can't find
-            P_SetMessage(player, TXT_CHEATNOMAP, true);
-            return;
-        }
+    sprintf(mapName, "MAP%02d", map);
+    if (W_CheckNumForName(mapName) == -1)
+    {                       // Can't find
+        P_SetMessage(player, TXT_CHEATNOMAP, true);
+        return;
     }
     P_SetMessage(player, TXT_CHEATWARP, true);
     G_TeleportNewMap(map, 0);

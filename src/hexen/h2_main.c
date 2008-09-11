@@ -81,7 +81,6 @@ static void AddWADFile(char *file);
 static void DrawAndBlit(void);
 static void ExecOptionFILE(char **args, int tag);
 static void ExecOptionSCRIPTS(char **args, int tag);
-static void ExecOptionDEVMAPS(char **args, int tag);
 static void ExecOptionSKILL(char **args, int tag);
 static void ExecOptionPLAYDEMO(char **args, int tag);
 static void ExecOptionMAXZONE(char **args, int tag);
@@ -101,8 +100,6 @@ extern char *SavePath;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-boolean DevMaps;                // true = Map development mode
-char *DevMapsDir = "";          // development maps directory
 boolean shareware;              // true if only episode 1 present
 boolean nomonsters;             // checkparm of -nomonsters
 boolean respawnparm;            // checkparm of -respawn
@@ -142,7 +139,6 @@ static char *wadfiles[MAXWADFILES] = {
 static execOpt_t ExecOptions[] = {
     {"-file", ExecOptionFILE, 1, 0},
     {"-scripts", ExecOptionSCRIPTS, 1, 0},
-    {"-devmaps", ExecOptionDEVMAPS, 1, 0},
     {"-skill", ExecOptionSKILL, 1, 0},
     {"-playdemo", ExecOptionPLAYDEMO, 1, 0},
     {"-timedemo", ExecOptionPLAYDEMO, 1, 0},
@@ -431,44 +427,6 @@ static void ExecOptionSCRIPTS(char **args, int tag)
 {
     sc_FileScripts = true;
     sc_ScriptsDir = args[1];
-}
-
-//==========================================================================
-//
-// ExecOptionDEVMAPS
-//
-//==========================================================================
-
-static void ExecOptionDEVMAPS(char **args, int tag)
-{
-    DevMaps = true;
-    ST_Message("Map development mode enabled:\n");
-    ST_Message("[config    ] = %s\n", args[1]);
-    SC_OpenFileCLib(args[1]);
-    SC_MustGetStringName("mapsdir");
-    SC_MustGetString();
-    ST_Message("[mapsdir   ] = %s\n", sc_String);
-    DevMapsDir = malloc(strlen(sc_String) + 1);
-    strcpy(DevMapsDir, sc_String);
-    SC_MustGetStringName("scriptsdir");
-    SC_MustGetString();
-    ST_Message("[scriptsdir] = %s\n", sc_String);
-    sc_FileScripts = true;
-    sc_ScriptsDir = malloc(strlen(sc_String) + 1);
-    strcpy(sc_ScriptsDir, sc_String);
-    while (SC_GetString())
-    {
-        if (SC_Compare("file"))
-        {
-            SC_MustGetString();
-            AddWADFile(sc_String);
-        }
-        else
-        {
-            SC_ScriptError(NULL);
-        }
-    }
-    SC_Close();
 }
 
 
