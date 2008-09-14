@@ -120,7 +120,10 @@ static void DEH_CheatParseLine(deh_context_t *context, char *line, void *tag)
             break;
         }
 
-        cheat->seq->sequence[i] = unsvalue[i];
+	if (deh_apply_cheats)
+	{
+	    cheat->seq->sequence[i] = unsvalue[i];
+	}
         ++i;
 
         // Absolute limit - don't exceed
@@ -132,7 +135,10 @@ static void DEH_CheatParseLine(deh_context_t *context, char *line, void *tag)
         }
     }
 
-    cheat->seq->sequence[i] = '\0';
+    if (deh_apply_cheats)
+    {
+        cheat->seq->sequence[i] = '\0';
+    }
 }
 
 deh_section_t deh_section_cheat =
