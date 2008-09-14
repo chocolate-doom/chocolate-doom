@@ -57,31 +57,12 @@ static sfxinfo_t *channels_playing[NUM_CHANNELS];
 static int mixer_freq;
 static Uint16 mixer_format;
 static int mixer_channels;
-static uint32_t (*ExpandSoundData)(byte *data, int samplerate, int length,
-                                   Mix_Chunk *destination) = NULL;
+static void (*ExpandSoundData)(sfxinfo_t *sfxinfo,
+                               byte *data,
+                               int samplerate,
+                               int length) = NULL;
 
 int use_libsamplerate = 0;
-
-// The driver_data field is used to point to a Mix_Chunk structure that
-// has data about the expanded version of the sound effect.  These are
-// allocated on demand.
-
-static Mix_Chunk *GetSoundChunk(sfxinfo_t *sfxinfo)
-{
-    Mix_Chunk *chunk;
-
-    // No chunk for this structure yet? Allocate it.
-
-    if (sfxinfo->driver_data == NULL)
-    {
-	chunk = Z_Malloc(sizeof(Mix_Chunk), PU_STATIC, NULL);
-	chunk->abuf = NULL;
-	chunk->allocated = 0;
-        sfxinfo->driver_data = chunk;
-    }
-
-    return sfxinfo->driver_data;
-}
 
 // When a sound stops, check if it is still playing.  If it is not, 
 // we can mark the sound data as CACHE to be freed back for other
@@ -91,7 +72,6 @@ static void ReleaseSoundOnChannel(int channel)
 {
     int i;
     sfxinfo_t *sfxinfo = channels_playing[channel];
-    Mix_Chunk *chunk;
 
     if (sfxinfo == NULL)
     {
@@ -110,8 +90,31 @@ static void ReleaseSoundOnChannel(int channel)
 
     // Not used on any channel, and can be safely released
 
-    chunk = GetSoundChunk(sfxinfo);
-    Z_ChangeTag(chunk->abuf, PU_CACHE);
+    Z_ChangeTag(sfxinfo->driver_data, PU_CACHE);
+}
+
+// Allocate a new Mix_Chunk along with its data, storing
+// the result in the variable pointed to by variable
+
+static Mix_Chunk *AllocateChunk(sfxinfo_t *sfxinfo, uint32_t len)
+{
+    Mix_Chunk *chunk;
+
+    // Allocate the chunk and the audio buffer together
+
+    chunk = Z_Malloc(len + sizeof(Mix_Chunk),
+                     PU_STATIC,
+                     &sfxinfo->driver_data);
+    sfxinfo->driver_data = chunk;
+
+    // Skip past the chunk structure for the audio buffer
+
+    chunk->abuf = (byte *) (chunk + 1);
+    chunk->alen = len;
+    chunk->allocated = 1;
+    chunk->volume = MIX_MAX_VOLUME;
+
+    return chunk;
 }
 
 #ifdef HAVE_LIBSAMPLERATE
@@ -150,15 +153,17 @@ static int SRC_ConversionMode(void)
 // Returns number of clipped samples.
 // DWF 2008-02-10 with cleanups by Simon Howard.
 
-static uint32_t ExpandSoundData_SRC(byte *data,
-                                    int samplerate,
-                                    int length,
-                                    Mix_Chunk *destination)
+static void ExpandSoundData_SRC(sfxinfo_t *sfxinfo,
+                                byte *data,
+                                int samplerate,
+                                int length)
 {
     SRC_DATA src_data;
     uint32_t i, abuf_index=0, clipped=0;
+    uint32_t alen;
     int retn;
     int16_t *expanded;
+    Mix_Chunk *chunk;
 
     src_data.input_frames = length;
     src_data.data_in = malloc(length * sizeof(float));
@@ -185,12 +190,14 @@ static uint32_t ExpandSoundData_SRC(byte *data,
     retn = src_simple(&src_data, SRC_ConversionMode(), 1);
     assert(retn == 0);
 
-    // Convert the result back into 16-bit integers.
+    // Allocate the new chunk.
 
-    destination->alen = src_data.output_frames_gen * 4;
-    destination->abuf = Z_Malloc(destination->alen, PU_STATIC, 
-                                 &destination->abuf);
-    expanded = (int16_t *) destination->abuf;
+    alen = src_data.output_frames_gen * 4;
+
+    chunk = AllocateChunk(sfxinfo, src_data.output_frames_gen * 4);
+    expanded = (int16_t *) chunk->abuf;
+
+    // Convert the result back into 16-bit integers.
 
     for (i=0; i<src_data.output_frames_gen; ++i)
     {
@@ -219,12 +226,15 @@ static uint32_t ExpandSoundData_SRC(byte *data,
         int32_t cvtval_i = cvtval_f + (cvtval_f < 0 ? -0.5 : 0.5);
 
         // Asymmetrical sound worries me, so we won't use -32768.
-        if (cvtval_i < -INT16_MAX) {
-          cvtval_i = -INT16_MAX;
-          ++clipped;
-        } else if (cvtval_i > INT16_MAX) {
-          cvtval_i = INT16_MAX;
-          ++clipped;
+        if (cvtval_i < -INT16_MAX)
+        {
+            cvtval_i = -INT16_MAX;
+            ++clipped;
+        }
+        else if (cvtval_i > INT16_MAX)
+        {
+            cvtval_i = INT16_MAX;
+            ++clipped;
         }
 
         // Left and right channels
@@ -235,7 +245,13 @@ static uint32_t ExpandSoundData_SRC(byte *data,
 
     free(src_data.data_in);
     free(src_data.data_out);
-    return clipped;
+
+    if (clipped > 0)
+    {
+        fprintf(stderr, "Sound '%s': clipped %u samples (%0.2f %%)\n", 
+                        sfxinfo->name, clipped,
+                        400.0 * clipped / chunk->alen);
+    }
 }
 
 #endif
@@ -272,12 +288,13 @@ static boolean ConvertibleRatio(int freq1, int freq2)
 // Generic sound expansion function for any sample rate.
 // Returns number of clipped samples (always 0).
 
-static uint32_t ExpandSoundData_SDL(byte *data,
-                                    int samplerate,
-                                    int length,
-                                    Mix_Chunk *destination)
+static void ExpandSoundData_SDL(sfxinfo_t *sfxinfo,
+                                byte *data,
+                                int samplerate,
+                                int length)
 {
     SDL_AudioCVT convertor;
+    Mix_Chunk *chunk;
     uint32_t expanded_length;
  
     // Calculate the length of the expanded version of the sample.    
@@ -288,9 +305,9 @@ static uint32_t ExpandSoundData_SDL(byte *data,
 
     expanded_length *= 4;
 
-    destination->alen = expanded_length;
-    destination->abuf 
-        = Z_Malloc(expanded_length, PU_STATIC, &destination->abuf);
+    // Allocate a chunk in which to expand the sound
+
+    chunk = AllocateChunk(sfxinfo, expanded_length);
 
     // If we can, use the standard / optimised SDL conversion routines.
     
@@ -300,7 +317,7 @@ static uint32_t ExpandSoundData_SDL(byte *data,
                           AUDIO_U8, 1, samplerate,
                           mixer_format, mixer_channels, mixer_freq))
     {
-        convertor.buf = destination->abuf;
+        convertor.buf = chunk->abuf;
         convertor.len = length;
         memcpy(convertor.buf, data, length);
 
@@ -308,7 +325,7 @@ static uint32_t ExpandSoundData_SDL(byte *data,
     }
     else
     {
-        Sint16 *expanded = (Sint16 *) destination->abuf;
+        Sint16 *expanded = (Sint16 *) chunk->abuf;
         int expanded_length;
         int expand_ratio;
         int i;
@@ -366,8 +383,6 @@ static uint32_t ExpandSoundData_SDL(byte *data,
         }
 #endif /* #ifdef LOW_PASS_FILTER */
     }
-
-    return 0;
 }
 
 // Load and convert a sound effect
@@ -375,11 +390,9 @@ static uint32_t ExpandSoundData_SDL(byte *data,
 
 static boolean CacheSFX(sfxinfo_t *sfxinfo)
 {
-    Mix_Chunk *chunk;
     int lumpnum;
     unsigned int lumplen;
     int samplerate;
-    int clipped;
     unsigned int length;
     byte *data;
 
@@ -413,21 +426,8 @@ static boolean CacheSFX(sfxinfo_t *sfxinfo)
     }
 
     // Sample rate conversion
-    // DWF 2008-02-10:  chunk->alen and abuf are determined
-    // by ExpandSoundData.
 
-    chunk = GetSoundChunk(sfxinfo);
-    chunk->allocated = 1;
-    chunk->volume = MIX_MAX_VOLUME;
-
-    clipped = ExpandSoundData(data + 8, samplerate, length, chunk);
-
-    if (clipped)
-    {
-        fprintf(stderr, "Sound '%s': clipped %u samples (%0.2f %%)\n", 
-                        sfxinfo->name, clipped,
-                        400.0 * clipped / chunk->alen);
-    }
+    ExpandSoundData(sfxinfo, data + 8, samplerate, length);
 
     // don't need the original lump any more
   
@@ -442,7 +442,6 @@ static boolean CacheSFX(sfxinfo_t *sfxinfo)
 
 static void I_SDL_PrecacheSounds(sfxinfo_t *sounds, int num_sounds)
 {
-    Mix_Chunk *chunk;
     char namebuf[9];
     int i;
 
@@ -469,12 +468,11 @@ static void I_SDL_PrecacheSounds(sfxinfo_t *sounds, int num_sounds)
 
         if (sounds[i].lumpnum != -1)
         {
-            CacheSFX(&sounds[i]);
-	    chunk = GetSoundChunk(&sounds[i]);
+            // Try to cache the sound and then release it as cache
 
-            if (chunk->abuf != NULL)
+            if (CacheSFX(&sounds[i])) 
             {
-                Z_ChangeTag(chunk->abuf, PU_CACHE);
+                Z_ChangeTag(sounds[i].driver_data, PU_CACHE);
             }
         }
     }
@@ -495,24 +493,20 @@ static void I_SDL_PrecacheSounds(sfxinfo_t *sounds, int num_sounds)
 
 static boolean LockSound(sfxinfo_t *sfxinfo)
 {
-    Mix_Chunk *chunk;
+    // If the sound isn't loaded, load it now
 
-    chunk = GetSoundChunk(sfxinfo);
-
-    if (chunk->abuf == NULL)
+    if (sfxinfo->driver_data == NULL)
     {
-        // Not yet loaded, or has been freed.  Load the sound data.
-
         if (!CacheSFX(sfxinfo))
-	{
+        {
             return false;
-	}
+        }
     }
     else
     {
-        // don't free the sound while it is playing!
+        // Lock the sound effect into memory
    
-        Z_ChangeTag(chunk->abuf, PU_STATIC);
+        Z_ChangeTag(sfxinfo->driver_data, PU_STATIC);
     }
 
     return true;
@@ -583,7 +577,7 @@ static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
 	return -1;
     }
 
-    chunk = GetSoundChunk(sfxinfo);
+    chunk = (Mix_Chunk *) sfxinfo->driver_data;
 
     // play sound
 
