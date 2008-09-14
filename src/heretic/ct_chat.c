@@ -387,7 +387,7 @@ void CT_Drawer(void)
 
 void CT_queueChatChar(char ch)
 {
-    if ((tail + 1) & (QUEUESIZE - 1) == head)
+    if (((tail + 1) & (QUEUESIZE - 1)) == head)
     {                           // the queue is full
         return;
     }

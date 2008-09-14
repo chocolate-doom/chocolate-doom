@@ -536,7 +536,7 @@ void H2_ProcessEvents(void)
     event_t *ev;
 
     for (; eventtail != eventhead;
-         eventtail = (++eventtail) & (MAXEVENTS - 1))
+         eventtail = (eventtail + 1) & (MAXEVENTS - 1))
     {
         ev = &events[eventtail];
         if (F_Responder(ev))
@@ -562,7 +562,7 @@ void H2_ProcessEvents(void)
 void H2_PostEvent(event_t * ev)
 {
     events[eventhead] = *ev;
-    eventhead = (++eventhead) & (MAXEVENTS - 1);
+    eventhead = (eventhead + 1) & (MAXEVENTS - 1);
 }
 
 //==========================================================================

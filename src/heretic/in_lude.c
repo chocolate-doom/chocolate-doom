@@ -815,7 +815,6 @@ void IN_DrawDMStats(void)
     int ypos;
     int xpos;
     int kpos;
-    int x;
 
     static int sounds;
 

@@ -23,6 +23,8 @@
 
 // P_user.c
 
+#include <stdlib.h>
+
 #include "doomdef.h"
 #include "p_local.h"
 #include "soundst.h"
@@ -1001,7 +1003,7 @@ boolean P_UseArtifact(player_t * player, artitype_t arti)
                              player->mo->y + 24 * finesine[angle],
                              player->mo->z -
                              15 * FRACUNIT *
-                             (player->mo->flags2 & MF2_FEETARECLIPPED != 0),
+                             (player->mo->flags2 & MF2_FEETARECLIPPED) != 0,
                              MT_FIREBOMB);
             mo->target = player->mo;
             break;

@@ -62,23 +62,22 @@ struct
 {
     mobjtype_t type;
     int speed[2];
-} MonsterMissileInfo[] =
-{
-    { MT_IMPBALL, 10, 20},
-    { MT_MUMMYFX1, 9, 18},
-    { MT_KNIGHTAXE, 9, 18},
-    { MT_REDAXE, 9, 18},
-    { MT_BEASTBALL, 12, 20},
-    { MT_WIZFX1, 18, 24},
-    { MT_SNAKEPRO_A, 14, 20},
-    { MT_SNAKEPRO_B, 14, 20},
-    { MT_HEADFX1, 13, 20},
-    { MT_HEADFX3, 10, 18},
-    { MT_MNTRFX1, 20, 26},
-    { MT_MNTRFX2, 14, 20},
-    { MT_SRCRFX1, 20, 28},
-    { MT_SOR2FX1, 20, 28},
-    { -1, -1, -1}                 // Terminator
+} MonsterMissileInfo[] = {
+    { MT_IMPBALL, { 10, 20 } },
+    { MT_MUMMYFX1, { 9, 18 } },
+    { MT_KNIGHTAXE, { 9, 18 } },
+    { MT_REDAXE, { 9, 18 } },
+    { MT_BEASTBALL, { 12, 20 } },
+    { MT_WIZFX1, { 18, 24 } },
+    { MT_SNAKEPRO_A, { 14, 20 } },
+    { MT_SNAKEPRO_B, { 14, 20 } },
+    { MT_HEADFX1, { 13, 20 } },
+    { MT_HEADFX3, { 10, 18 } },
+    { MT_MNTRFX1, { 20, 26 } },
+    { MT_MNTRFX2, { 14, 20 } },
+    { MT_SRCRFX1, { 20, 28 } },
+    { MT_SOR2FX1, { 20, 28 } },
+    { -1, { -1, -1 } }                 // Terminator
 };
 
 FILE *SaveGameFP;
@@ -930,7 +929,7 @@ boolean G_Responder(event_t * ev)
 void G_Ticker(void)
 {
     int i, buf;
-    ticcmd_t *cmd;
+    ticcmd_t *cmd = NULL;
 
 //
 // do player reborns if needed
@@ -1499,7 +1498,7 @@ void G_DoLoadGame(void)
     // Skip the description field
     memset(vcheck, 0, sizeof(vcheck));
     sprintf(vcheck, "version %i", VERSION);
-    if (strcmp(save_p, vcheck))
+    if (strcmp((char *) save_p, vcheck) != 0)
     {                           // Bad version
         return;
     }
