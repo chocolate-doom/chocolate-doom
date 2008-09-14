@@ -1162,7 +1162,11 @@ void P_AutoUseHealth(player_t * player, int saveHealth)
     int superCount;
     int superSlot;
 
-    normalCount = superCount = 0;
+    normalCount = 0;
+    superCount = 0;
+    normalSlot = 0;
+    superSlot = 0;
+
     for (i = 0; i < player->inventorySlotNum; i++)
     {
         if (player->inventory[i].type == arti_health)

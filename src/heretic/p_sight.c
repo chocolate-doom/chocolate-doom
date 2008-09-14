@@ -22,6 +22,8 @@
 //-----------------------------------------------------------------------------
 // P_sight.c
 
+#include <stdlib.h>
+
 #include "doomdef.h"
 #include "p_local.h"
 

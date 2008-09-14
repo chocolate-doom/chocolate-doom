@@ -22,6 +22,7 @@
 //-----------------------------------------------------------------------------
 // R_planes.c
 
+#include <stdlib.h>
 #include "doomdef.h"
 #include "r_local.h"
 

@@ -796,8 +796,8 @@ boolean AM_clipMline(mline_t * ml, fline_t * fl)
 {
     enum
     { LEFT = 1, RIGHT = 2, BOTTOM = 4, TOP = 8 };
-    register outcode1 = 0, outcode2 = 0, outside;
-    fpoint_t tmp;
+    int outcode1 = 0, outcode2 = 0, outside;
+    fpoint_t tmp = { 0, 0 };
     int dx, dy;
 
 #define DOOUTCODE(oc, mx, my) \
@@ -902,7 +902,7 @@ void AM_drawFline(fline_t * fl, int color)
 {
 
     register int x, y, dx, dy, sx, sy, ax, ay, d;
-    static fuck = 0;
+    static int fuck = 0;
 
     switch (color)
     {
@@ -1448,8 +1448,6 @@ void AM_drawCrosshair(int color)
 
 void AM_Drawer(void)
 {
-    int highestEpisode;
-
     if (!automapactive)
         return;
 

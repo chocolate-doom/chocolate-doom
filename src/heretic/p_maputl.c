@@ -23,6 +23,8 @@
 
 // P_maputl.c
 
+#include <stdlib.h>
+
 #include "doomdef.h"
 #include "p_local.h"
 
@@ -98,7 +100,7 @@ int P_PointOnLineSide(fixed_t x, fixed_t y, line_t * line)
 
 int P_BoxOnLineSide(fixed_t * tmbox, line_t * ld)
 {
-    int p1, p2;
+    int p1 = 0, p2 = 0;
 
     switch (ld->slopetype)
     {

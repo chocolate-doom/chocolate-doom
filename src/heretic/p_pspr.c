@@ -1068,7 +1068,7 @@ void A_FireMacePL1B(player_t * player, pspdef_t * psp)
     player->ammo[am_mace] -= USE_MACE_AMMO_1;
     pmo = player->mo;
     ball = P_SpawnMobj(pmo->x, pmo->y, pmo->z + 28 * FRACUNIT
-                       - FOOTCLIPSIZE * (pmo->flags2 & MF2_FEETARECLIPPED !=
+                       - FOOTCLIPSIZE * ((pmo->flags2 & MF2_FEETARECLIPPED) !=
                                          0), MT_MACEFX2);
     ball->momz = 2 * FRACUNIT + ((player->lookdir) << (FRACBITS - 5));
     angle = pmo->angle;
