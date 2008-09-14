@@ -41,9 +41,6 @@ struct sfxinfo_struct
     // up to 6-character name
     char *name;
 
-    // Sfx singularity (only one at a time)
-    int singularity;
-
     // Sfx priority
     int priority;
 
@@ -66,6 +63,9 @@ struct sfxinfo_struct
 
     // lump number of sfx
     int lumpnum;		
+
+    // data used by the low level code
+    void *driver_data;
 };
 
 //
@@ -144,6 +144,10 @@ typedef struct
 
     boolean (*SoundIsPlaying)(int channel);
 
+    // Called on startup to precache sound effects (if necessary)
+
+    void (*CacheSounds)(sfxinfo_t *sounds, int num_sounds);
+
 } sound_module_t;
 
 void I_InitSound(void);
@@ -154,6 +158,7 @@ void I_UpdateSoundParams(int channel, int vol, int sep);
 int I_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep);
 void I_StopSound(int channel);
 boolean I_SoundIsPlaying(int channel);
+void I_PrecacheSounds(sfxinfo_t *sounds, int num_sounds);
 
 // Interface for music modules
 

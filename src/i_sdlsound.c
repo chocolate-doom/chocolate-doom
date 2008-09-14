@@ -2,7 +2,7 @@
 //-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-8 Simon Howard
 // Copyright(C) 2008 David Flater
 //
 // This program is free software; you can redistribute it and/or
@@ -42,7 +42,6 @@
 #include "i_sound.h"
 #include "i_system.h"
 #include "m_argv.h"
-#include "sounds.h"
 #include "w_wad.h"
 #include "z_zone.h"
 
@@ -53,7 +52,6 @@
 
 static boolean sound_initialised = false;
 
-static Mix_Chunk sound_chunks[NUMSFX];
 static sfxinfo_t *channels_playing[NUM_CHANNELS];
 
 static int mixer_freq;
@@ -64,6 +62,27 @@ static uint32_t (*ExpandSoundData)(byte *data, int samplerate, int length,
 
 int use_libsamplerate = 0;
 
+// The driver_data field is used to point to a Mix_Chunk structure that
+// has data about the expanded version of the sound effect.  These are
+// allocated on demand.
+
+static Mix_Chunk *GetSoundChunk(sfxinfo_t *sfxinfo)
+{
+    Mix_Chunk *chunk;
+
+    // No chunk for this structure yet? Allocate it.
+
+    if (sfxinfo->driver_data == NULL)
+    {
+	chunk = Z_Malloc(sizeof(Mix_Chunk), PU_STATIC, NULL);
+	chunk->abuf = NULL;
+	chunk->allocated = 0;
+        sfxinfo->driver_data = chunk;
+    }
+
+    return sfxinfo->driver_data;
+}
+
 // When a sound stops, check if it is still playing.  If it is not, 
 // we can mark the sound data as CACHE to be freed back for other
 // means.
@@ -72,7 +91,7 @@ static void ReleaseSoundOnChannel(int channel)
 {
     int i;
     sfxinfo_t *sfxinfo = channels_playing[channel];
-    int id;
+    Mix_Chunk *chunk;
 
     if (sfxinfo == NULL)
     {
@@ -90,9 +109,9 @@ static void ReleaseSoundOnChannel(int channel)
     }
 
     // Not used on any channel, and can be safely released
-    // TODO
-    id = sfxinfo - S_sfx;
-    Z_ChangeTag(sound_chunks[id].abuf, PU_CACHE);
+
+    chunk = GetSoundChunk(sfxinfo);
+    Z_ChangeTag(chunk->abuf, PU_CACHE);
 }
 
 #ifdef HAVE_LIBSAMPLERATE
@@ -356,12 +375,12 @@ static uint32_t ExpandSoundData_SDL(byte *data,
 
 static boolean CacheSFX(sfxinfo_t *sfxinfo)
 {
+    Mix_Chunk *chunk;
     int lumpnum;
     unsigned int lumplen;
     int samplerate;
     int clipped;
     unsigned int length;
-    int sound_id;
     byte *data;
 
     // need to load the sound
@@ -394,23 +413,20 @@ static boolean CacheSFX(sfxinfo_t *sfxinfo)
     }
 
     // Sample rate conversion
-    // DWF 2008-02-10:  sound_chunks[sound].alen and abuf are determined
+    // DWF 2008-02-10:  chunk->alen and abuf are determined
     // by ExpandSoundData.
 
-    sound_id = sfxinfo - S_sfx;
-    sound_chunks[sound_id].allocated = 1;
-    sound_chunks[sound_id].volume = MIX_MAX_VOLUME;
+    chunk = GetSoundChunk(sfxinfo);
+    chunk->allocated = 1;
+    chunk->volume = MIX_MAX_VOLUME;
 
-    clipped = ExpandSoundData(data + 8, 
-                              samplerate, 
-                              length, 
-                              &sound_chunks[sound_id]);
+    clipped = ExpandSoundData(data + 8, samplerate, length, chunk);
 
     if (clipped)
     {
-        fprintf(stderr, "Sound %d: clipped %u samples (%0.2f %%)\n", 
-                        sound_id, clipped,
-                        400.0 * clipped / sound_chunks[sound_id].alen);
+        fprintf(stderr, "Sound '%s': clipped %u samples (%0.2f %%)\n", 
+                        sfxinfo->name, clipped,
+                        400.0 * clipped / chunk->alen);
     }
 
     // don't need the original lump any more
@@ -424,14 +440,22 @@ static boolean CacheSFX(sfxinfo_t *sfxinfo)
 
 // Preload all the sound effects - stops nasty ingame freezes
 
-static void I_PrecacheSounds(void)
+static void I_SDL_PrecacheSounds(sfxinfo_t *sounds, int num_sounds)
 {
+    Mix_Chunk *chunk;
     char namebuf[9];
     int i;
 
-    printf("I_PrecacheSounds: Precaching all sound effects..");
+    // Don't need to precache the sounds unless we are using libsamplerate.
 
-    for (i=sfx_pistol; i<NUMSFX; ++i)
+    if (use_libsamplerate == 0)
+    {
+	return;
+    }
+
+    printf("I_SDL_PrecacheSounds: Precaching all sound effects..");
+
+    for (i=0; i<num_sounds; ++i)
     {
         if ((i % 6) == 0)
         {
@@ -439,17 +463,18 @@ static void I_PrecacheSounds(void)
             fflush(stdout);
         }
 
-        sprintf(namebuf, "ds%s", DEH_String(S_sfx[i].name));
+        sprintf(namebuf, "ds%s", DEH_String(sounds[i].name));
 
-        S_sfx[i].lumpnum = W_CheckNumForName(namebuf);
+        sounds[i].lumpnum = W_CheckNumForName(namebuf);
 
-        if (S_sfx[i].lumpnum != -1)
+        if (sounds[i].lumpnum != -1)
         {
-            CacheSFX(&S_sfx[i]);
+            CacheSFX(&sounds[i]);
+	    chunk = GetSoundChunk(&sounds[i]);
 
-            if (sound_chunks[i].abuf != NULL)
+            if (chunk->abuf != NULL)
             {
-                Z_ChangeTag(sound_chunks[i].abuf, PU_CACHE);
+                Z_ChangeTag(chunk->abuf, PU_CACHE);
             }
         }
     }
@@ -457,27 +482,40 @@ static void I_PrecacheSounds(void)
     printf("\n");
 }
 
+#else
+
+static void I_SDL_PrecacheSounds(sfxinfo_t *sounds, int num_sounds)
+{
+    // no-op
+}
+
 #endif
 
-static Mix_Chunk *GetSFXChunk(sfxinfo_t *sfxinfo)
+// Load a SFX chunk into memory and ensure that it is locked.
+
+static boolean LockSound(sfxinfo_t *sfxinfo)
 {
-    int sound_id;
+    Mix_Chunk *chunk;
 
-    sound_id = sfxinfo - S_sfx;
+    chunk = GetSoundChunk(sfxinfo);
 
-    if (sound_chunks[sound_id].abuf == NULL)
+    if (chunk->abuf == NULL)
     {
+        // Not yet loaded, or has been freed.  Load the sound data.
+
         if (!CacheSFX(sfxinfo))
-            return NULL;
+	{
+            return false;
+	}
     }
     else
     {
         // don't free the sound while it is playing!
    
-        Z_ChangeTag(sound_chunks[sound_id].abuf, PU_STATIC);
+        Z_ChangeTag(chunk->abuf, PU_STATIC);
     }
 
-    return &sound_chunks[sound_id];
+    return true;
 }
 
 
@@ -540,12 +578,12 @@ static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
 
     // Get the sound data
 
-    chunk = GetSFXChunk(sfxinfo);
-
-    if (chunk == NULL)
+    if (!LockSound(sfxinfo))
     {
-        return -1;
+	return -1;
     }
+
+    chunk = GetSoundChunk(sfxinfo);
 
     // play sound
 
@@ -628,14 +666,9 @@ static boolean I_SDL_InitSound(void)
     
     // No sounds yet
 
-    for (i=0; i<NUMSFX; ++i)
-    {
-        sound_chunks[i].abuf = NULL;
-    }
-
     for (i=0; i<NUM_CHANNELS; ++i)
     {
-        channels_playing[i] = sfx_None;
+        channels_playing[i] = NULL;
     }
 
     if (SDL_Init(SDL_INIT_AUDIO) < 0)
@@ -664,8 +697,6 @@ static boolean I_SDL_InitSound(void)
         }
 
         ExpandSoundData = ExpandSoundData_SRC;
-
-        I_PrecacheSounds();
     }
 #else
     if (use_libsamplerate != 0)
@@ -707,5 +738,6 @@ sound_module_t sound_sdl_module =
     I_SDL_StartSound,
     I_SDL_StopSound,
     I_SDL_SoundIsPlaying,
+    I_SDL_PrecacheSounds,
 };
 
