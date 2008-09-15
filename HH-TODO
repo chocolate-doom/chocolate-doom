@@ -1,5 +1,4 @@
  * Remove all dependencies of common code on doom/
-    - i_sdlsound.c
     - net_client.c
  * Merge v_video.c to common version and delete duplicates
  * Merge r_draw.c to common version and delete duplicates
@@ -22,6 +21,8 @@ Updates needed for Raven code:
  * Config file code to use m_config.c (and add H/H-specific variables)
  * Use the common i_sound API.  Frequency shifting?
  * Video code to use screens[] - or dump screens[] and use a single variable
+ * Use the common cheats code
+ * Update input code to work properly with vanilla_keyboard_mapping
     
 Clean up Raven code:
  * MAXINT -> INT_MAX, etc.
