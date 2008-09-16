@@ -1978,8 +1978,6 @@ static void CheatWarpFunc(player_t * player, Cheat_t * cheat)
     int ones;
     int map;
     char mapName[9];
-    char auxName[128];
-    FILE *fp;
 
     tens = cheat->args[0] - '0';
     ones = cheat->args[1] - '0';

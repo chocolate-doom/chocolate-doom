@@ -657,7 +657,6 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
     int i;
     int parm;
     char lumpname[9];
-    char auxName[128];
     int lumpnum;
     mobj_t *mobj;
 

@@ -129,7 +129,8 @@ boolean EV_RotatePoly(line_t * line, byte * args, int direction, boolean
     polyobj_t *poly;
 
     polyNum = args[0];
-    if (poly = GetPolyobj(polyNum))
+    poly = GetPolyobj(polyNum);
+    if (poly != NULL)
     {
         if (poly->specialdata && !overRide)
         {                       // poly is already moving
@@ -164,7 +165,7 @@ boolean EV_RotatePoly(line_t * line, byte * args, int direction, boolean
     SN_StartSequence((mobj_t *) & poly->startSpot, SEQ_DOOR_STONE +
                      poly->seqType);
 
-    while (mirror = GetPolyobjMirror(polyNum))
+    while ((mirror = GetPolyobjMirror(polyNum)) != 0)
     {
         poly = GetPolyobj(mirror);
         if (poly && poly->specialdata && !overRide)
@@ -191,7 +192,8 @@ boolean EV_RotatePoly(line_t * line, byte * args, int direction, boolean
         {
             pe->dist = ANGLE_MAX - 1;
         }
-        if (poly = GetPolyobj(polyNum))
+        poly = GetPolyobj(polyNum);
+        if (poly != NULL)
         {
             poly->specialdata = pe;
         }
@@ -259,7 +261,8 @@ boolean EV_MovePoly(line_t * line, byte * args, boolean timesEight, boolean
     angle_t an;
 
     polyNum = args[0];
-    if (poly = GetPolyobj(polyNum))
+    poly = GetPolyobj(polyNum);
+    if (poly != NULL)
     {
         if (poly->specialdata && !overRide)
         {                       // poly is already moving
@@ -293,7 +296,7 @@ boolean EV_MovePoly(line_t * line, byte * args, boolean timesEight, boolean
     SN_StartSequence((mobj_t *) & poly->startSpot, SEQ_DOOR_STONE +
                      poly->seqType);
 
-    while (mirror = GetPolyobjMirror(polyNum))
+    while ((mirror = GetPolyobjMirror(polyNum)) != 0)
     {
         poly = GetPolyobj(mirror);
         if (poly && poly->specialdata && !overRide)
@@ -463,10 +466,11 @@ boolean EV_OpenPolyDoor(line_t * line, byte * args, podoortype_t type)
     int polyNum;
     polydoor_t *pd;
     polyobj_t *poly;
-    angle_t an;
+    angle_t an = 0;
 
     polyNum = args[0];
-    if (poly = GetPolyobj(polyNum))
+    poly = GetPolyobj(polyNum);
+    if (poly != NULL)
     {
         if (poly->specialdata)
         {                       // poly is already moving
@@ -509,7 +513,7 @@ boolean EV_OpenPolyDoor(line_t * line, byte * args, podoortype_t type)
 
     poly->specialdata = pd;
 
-    while (mirror = GetPolyobjMirror(polyNum))
+    while ((mirror = GetPolyobjMirror(polyNum)) != 0)
     {
         poly = GetPolyobj(mirror);
         if (poly && poly->specialdata)

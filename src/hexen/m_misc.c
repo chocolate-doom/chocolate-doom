@@ -168,6 +168,12 @@ unsigned char rndtable[256] = {
 int rndindex = 0;
 int prndindex = 0;
 
+int P_Random(void)
+{
+    prndindex = (prndindex + 1) & 0xff;
+    return rndtable[prndindex];
+}
+
 int M_Random(void)
 {
     rndindex = (rndindex + 1) & 0xff;

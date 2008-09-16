@@ -379,7 +379,7 @@ void SV_LoadGame(int slot)
     SavePtr.b = SaveBuffer + HXS_DESCRIPTION_LENGTH;
 
     // Check the version text
-    if (strcmp(SavePtr.b, HXS_VERSION_TEXT))
+    if (strcmp((char *) SavePtr.b, HXS_VERSION_TEXT))
     {                           // Bad version
         return;
     }
@@ -475,8 +475,8 @@ void SV_MapTeleport(int map, int position)
     boolean rClass;
     boolean playerWasReborn;
     boolean oldWeaponowned[NUMWEAPONS];
-    int oldKeys;
-    int oldPieces;
+    int oldKeys = 0;
+    int oldPieces = 0;
     int bestWeapon;
 
     if (!deathmatch)

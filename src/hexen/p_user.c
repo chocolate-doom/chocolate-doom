@@ -543,6 +543,7 @@ boolean P_UndoPlayerMorph(player_t * player)
         default:
             I_Error("P_UndoPlayerMorph:  Unknown player class %d\n",
                     player->class);
+            return false;
     }
     if (P_TestMobjLocation(mo) == false)
     {                           // Didn't fit
