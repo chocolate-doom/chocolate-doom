@@ -224,11 +224,13 @@ void EV_StopPlat(line_t * line, byte * args)
 
     for (i = 0; i < MAXPLATS; i++)
     {
-        if ((activeplats[i])->tag = args[0])
+        activeplats[i]->tag = args[0];
+
+        if (activeplats[i]->tag != 0)
         {
-            (activeplats[i])->sector->specialdata = NULL;
-            P_TagFinished((activeplats[i])->sector->tag);
-            P_RemoveThinker(&(activeplats[i])->thinker);
+            activeplats[i]->sector->specialdata = NULL;
+            P_TagFinished(activeplats[i]->sector->tag);
+            P_RemoveThinker(&activeplats[i]->thinker);
             activeplats[i] = NULL;
 
             return;

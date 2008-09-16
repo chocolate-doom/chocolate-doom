@@ -181,11 +181,15 @@ boolean EV_Teleport(int tid, mobj_t * thing, boolean fog)
     }
     count = 1 + (P_Random() % count);
     searcher = -1;
+    mo = NULL;
+
     for (i = 0; i < count; i++)
     {
         mo = P_FindMobjFromTID(tid, &searcher);
     }
-    if (!mo)
+    if (mo == NULL)
+    {
         I_Error("Can't find teleport mapspot\n");
+    }
     return P_Teleport(thing, mo->x, mo->y, mo->angle, fog);
 }

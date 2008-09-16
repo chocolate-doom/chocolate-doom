@@ -3533,7 +3533,7 @@ void A_FiredSpawnRock(mobj_t * actor)
 {
     mobj_t *mo;
     int x, y, z;
-    int rtype;
+    int rtype = 0;
 
     switch (P_Random() % 5)
     {
@@ -3970,7 +3970,7 @@ void A_SorcBallOrbit(mobj_t * actor)
             break;
         default:
             I_Error("corrupted sorcerer");
-            break;
+            return;
     }
     actor->angle = angle;
     angle >>= ANGLETOFINESHIFT;
@@ -5047,7 +5047,7 @@ void A_KoraxDecide(mobj_t * actor)
 void A_KoraxMissile(mobj_t * actor)
 {
     int type = P_Random() % 6;
-    int sound;
+    int sound = 0;
 
     S_StartSound(actor, SFX_KORAX_ATTACK);
 

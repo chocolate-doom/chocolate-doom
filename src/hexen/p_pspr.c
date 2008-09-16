@@ -922,7 +922,7 @@ void A_LightningReady(player_t * player, pspdef_t * psp)
 void A_LightningClip(mobj_t * actor)
 {
     mobj_t *cMo;
-    mobj_t *target;
+    mobj_t *target = NULL;
     int zigZag;
 
     if (actor->type == MT_LIGHTNING_FLOOR)
@@ -1968,7 +1968,8 @@ static void CHolyFindTarget(mobj_t * actor)
 {
     mobj_t *target;
 
-    if (target = P_RoughMonsterSearch(actor, 6))
+    target = P_RoughMonsterSearch(actor, 6);
+    if (target != NULL)
     {
         actor->special1 = (int) target;
         actor->flags |= MF_NOCLIP | MF_SKULLFLY;

@@ -1351,7 +1351,7 @@ void P_SpawnPlayer(mapthing_t * mthing)
             break;
         default:
             I_Error("P_SpawnPlayer: Unknown class type");
-            break;
+            return;
     }
 
     // Set translation table data

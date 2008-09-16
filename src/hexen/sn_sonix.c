@@ -183,8 +183,8 @@ void SN_InitSequenceScript(void)
 {
     int i, j;
     int inSequence;
-    int *tempDataStart;
-    int *tempDataPtr;
+    int *tempDataStart = NULL;
+    int *tempDataPtr = NULL;
 
     inSequence = -1;
     ActiveSequences = 0;
