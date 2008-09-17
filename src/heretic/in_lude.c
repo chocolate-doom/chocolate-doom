@@ -400,7 +400,7 @@ void IN_Ticker(void)
                 oldintertime = intertime + 200;
                 break;
             case 2:
-                oldintertime = MAXINT;
+                oldintertime = INT_MAX;
                 break;
             case 3:
                 cnt = 10;

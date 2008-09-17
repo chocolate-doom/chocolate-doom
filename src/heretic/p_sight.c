@@ -171,7 +171,7 @@ boolean P_SightTraverseIntercepts(void)
 
     while (count--)
     {
-        dist = MAXINT;
+        dist = INT_MAX;
         for (scan = intercepts; scan < intercept_p; scan++)
             if (scan->frac < dist)
             {
@@ -181,7 +181,7 @@ boolean P_SightTraverseIntercepts(void)
 
         if (!PTR_SightTraverse(in))
             return false;       // don't bother going farther
-        in->frac = MAXINT;
+        in->frac = INT_MAX;
     }
 
     return true;                // everything was traversed

@@ -134,9 +134,9 @@ int P_GetPlayerNum(player_t * player);
 #define FLOOR_LAVA 2
 #define FLOOR_SLUDGE 3
 
-#define ONFLOORZ MININT
-#define ONCEILINGZ MAXINT
-#define FLOATRANDZ (MAXINT-1)
+#define ONFLOORZ INT_MIN
+#define ONCEILINGZ INT_MAX
+#define FLOATRANDZ (INT_MAX-1)
 
 extern mobjtype_t PuffType;
 extern mobj_t *MissileMobj;
