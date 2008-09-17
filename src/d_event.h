@@ -55,22 +55,6 @@ typedef struct
 } event_t;
 
  
-typedef enum
-{
-    ga_nothing,
-    ga_loadlevel,
-    ga_newgame,
-    ga_loadgame,
-    ga_savegame,
-    ga_playdemo,
-    ga_completed,
-    ga_victory,
-    ga_worlddone,
-    ga_screenshot
-} gameaction_t;
-
-
-
 //
 // Button/action code definitions.
 //
@@ -106,12 +90,6 @@ typedef enum
 
 
 
-
-//
-// GLOBAL VARIABLES
-//
-
-extern  gameaction_t    gameaction;
 
 // Called by IO functions when input is detected.
 void D_PostEvent (event_t *ev);

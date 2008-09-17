@@ -28,7 +28,7 @@
 #ifndef __D_MAIN__
 #define __D_MAIN__
 
-#include "d_event.h"
+#include "doomdef.h"
 
 
 
@@ -47,5 +47,12 @@ void D_AdvanceDemo (void);
 void D_DoAdvanceDemo (void);
 void D_StartTitle (void);
  
+//
+// GLOBAL VARIABLES
+//
+
+extern  gameaction_t    gameaction;
+
 
 #endif
+
