@@ -33,7 +33,7 @@
 #include <stdlib.h>
 #include "doomdef.h"
 #include "p_local.h"
-#include "soundst.h"
+#include "s_sound.h"
 
 boolean shareware = false;      // true if only episode 1 present
 boolean ExtendedWAD = false;    // true if episodes 4 and 5 present

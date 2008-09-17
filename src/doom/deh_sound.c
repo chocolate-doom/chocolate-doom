@@ -41,7 +41,7 @@ DEH_BEGIN_MAPPING(sound_mapping, sfxinfo_t)
     DEH_MAPPING("Zero 1", link)
     DEH_MAPPING("Zero 2", pitch)
     DEH_MAPPING("Zero 3", volume)
-    DEH_MAPPING("Zero 4", data)
+    DEH_UNSUPPORTED_MAPPING("Zero 4")
     DEH_MAPPING("Neg. One 1", usefulness)
     DEH_MAPPING("Neg. One 2", lumpnum)
 DEH_END_MAPPING

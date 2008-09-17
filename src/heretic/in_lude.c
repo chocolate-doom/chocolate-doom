@@ -29,7 +29,7 @@
 */
 
 #include "doomdef.h"
-#include "soundst.h"
+#include "s_sound.h"
 
 typedef enum
 {
