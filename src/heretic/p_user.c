@@ -620,7 +620,7 @@ void P_PlayerThink(player_t * player)
         if (player->weaponowned[newweapon]
             && newweapon != player->readyweapon)
         {
-            if (WeaponInShareware[newweapon] || !shareware)
+            if (WeaponInShareware[newweapon] || gamemode != shareware)
             {
                 player->pendingweapon = newweapon;
             }

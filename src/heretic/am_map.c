@@ -23,11 +23,14 @@
 
 // AM_map.c
 
+#include <stdio.h>
+
 #include "doomdef.h"
 #include "p_local.h"
 #include "am_map.h"
 #include "am_data.h"
-#include <stdio.h>
+
+#include "doomkeys.h"
 
 vertex_t KeyPoints[NUMKEYS];
 

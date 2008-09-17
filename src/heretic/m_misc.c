@@ -52,7 +52,7 @@ boolean M_ValidEpisodeMap(int episode, int map)
     {
         return false;
     }
-    if (shareware)
+    if (gamemode == shareware)
     {                           // Shareware version checks
         if (episode != 1)
         {

@@ -1298,7 +1298,7 @@ void A_DeathBallImpact(mobj_t * ball)
                     newAngle = true;
                     break;
                 }
-                angle += ANGLE_45 / 2;
+                angle += ANG45 / 2;
             }
         }
         if (newAngle)
@@ -1463,7 +1463,7 @@ void A_FireSkullRodPL2(player_t * player, pspdef_t * psp)
 
 void A_SkullRodPL2Seek(mobj_t * actor)
 {
-    P_SeekerMissile(actor, ANGLE_1 * 10, ANGLE_1 * 30);
+    P_SeekerMissile(actor, ANG1 * 10, ANG1 * 30);
 }
 
 //----------------------------------------------------------------------------
@@ -1632,7 +1632,7 @@ void A_PhoenixPuff(mobj_t * actor)
     mobj_t *puff;
     angle_t angle;
 
-    P_SeekerMissile(actor, ANGLE_1 * 5, ANGLE_1 * 10);
+    P_SeekerMissile(actor, ANG1 * 5, ANG1 * 10);
     puff = P_SpawnMobj(actor->x, actor->y, actor->z, MT_PHOENIXPUFF);
     angle = actor->angle + ANG90;
     angle >>= ANGLETOFINESHIFT;

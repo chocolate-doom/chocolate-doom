@@ -180,7 +180,7 @@ int P_FaceMobj(mobj_t * source, mobj_t * target, angle_t * delta)
     if (angle2 > angle1)
     {
         diff = angle2 - angle1;
-        if (diff > ANGLE_180)
+        if (diff > ANG180)
         {
             *delta = ANGLE_MAX - diff;
             return (0);
@@ -194,7 +194,7 @@ int P_FaceMobj(mobj_t * source, mobj_t * target, angle_t * delta)
     else
     {
         diff = angle1 - angle2;
-        if (diff > ANGLE_180)
+        if (diff > ANG180)
         {
             *delta = ANGLE_MAX - diff;
             return (1);
@@ -1129,13 +1129,13 @@ void P_SpawnMapThing(mapthing_t * mthing)
         case MT_ARTISUPERHEAL:
         case MT_ARTITELEPORT:
         case MT_ITEMSHIELD2:
-            if (shareware)
+            if (gamemode == shareware)
             {                   // Don't place on map in shareware version
                 return;
             }
             break;
         case MT_WMACE:
-            if (!shareware)
+            if (gamemode != shareware)
             {                   // Put in the mace spot list
                 P_AddMaceSpot(mthing);
                 return;

@@ -35,7 +35,8 @@
 #include "p_local.h"
 #include "s_sound.h"
 
-boolean shareware = false;      // true if only episode 1 present
+GameMission_t gamemission = heretic;
+GameMode_t gamemode = indetermined;
 boolean ExtendedWAD = false;    // true if episodes 4 and 5 present
 
 boolean nomonsters;             // checkparm of -nomonsters
@@ -378,7 +379,7 @@ void D_DoAdvanceDemo(void)
         case 5:
             pagetic = 200;
             gamestate = GS_DEMOSCREEN;
-            if (shareware)
+            if (gamemode == shareware)
             {
                 pagename = "ORDER";
             }
@@ -919,11 +920,17 @@ void D_DoomMain(void)
 
     if (W_CheckNumForName("E2M1") == -1)
     {                           // Can't find episode 2 maps, must be the shareware WAD
-        shareware = true;
+        gamemode = shareware;
     }
-    else if (W_CheckNumForName("EXTENDED") != -1)
-    {                           // Found extended lump, must be the extended WAD
-        ExtendedWAD = true;
+    else
+    {
+        gamemode = registered;
+
+        // Is this the extended WAD?
+        if (W_CheckNumForName("EXTENDED") != -1)
+        {
+            ExtendedWAD = true;
+        }
     }
 
 #ifdef __WATCOMC__

@@ -25,6 +25,7 @@
 
 #include <ctype.h>
 #include "doomdef.h"
+#include "doomkeys.h"
 #include "p_local.h"
 #include "r_local.h"
 #include "s_sound.h"
@@ -882,7 +883,7 @@ static boolean SCSaveGame(int option)
 
 static boolean SCEpisode(int option)
 {
-    if (shareware && option > 1)
+    if (gamemode == shareware && option > 1)
     {
         P_SetMessage(&players[consoleplayer],
                      "ONLY AVAILABLE IN THE REGISTERED VERSION", true);
@@ -1045,7 +1046,7 @@ boolean MN_Responder(event_t * event)
     key = event->data1;
     if (InfoType)
     {
-        if (shareware)
+        if (gamemode == shareware)
         {
             InfoType = (InfoType + 1) % 5;
         }
