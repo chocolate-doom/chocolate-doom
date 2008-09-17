@@ -25,7 +25,9 @@
 
 #include <math.h>
 #include <stdlib.h>
+
 #include "doomdef.h"
+#include "i_swap.h"
 #include "p_local.h"
 #include "s_sound.h"
 

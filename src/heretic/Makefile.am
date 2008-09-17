@@ -1,5 +1,5 @@
 
-AM_CFLAGS=-I..
+AM_CFLAGS=-I.. @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
 noinst_LIBRARIES=libheretic.a
 
