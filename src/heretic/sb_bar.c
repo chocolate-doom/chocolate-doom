@@ -1275,7 +1275,7 @@ static void CheatWeaponsFunc(player_t * player, Cheat_t * cheat)
     {
         player->weaponowned[i] = true;
     }
-    if (shareware)
+    if (gamemode == shareware)
     {
         player->weaponowned[wp_skullrod] = false;
         player->weaponowned[wp_phoenixrod] = false;
@@ -1377,7 +1377,8 @@ static void CheatArtifact3Func(player_t * player, Cheat_t * cheat)
     {                           // All artifacts
         for (i = arti_none + 1; i < NUMARTIFACTS; i++)
         {
-            if (shareware && (i == arti_superhealth || i == arti_teleport))
+            if (gamemode == shareware 
+             && (i == arti_superhealth || i == arti_teleport))
             {
                 continue;
             }
@@ -1391,7 +1392,8 @@ static void CheatArtifact3Func(player_t * player, Cheat_t * cheat)
     else if (type > arti_none && type < NUMARTIFACTS
              && count > 0 && count < 10)
     {
-        if (shareware && (type == arti_superhealth || type == arti_teleport))
+        if (gamemode == shareware
+         && (type == arti_superhealth || type == arti_teleport))
         {
             P_SetMessage(player, TXT_CHEATARTIFACTSFAIL, false);
             return;

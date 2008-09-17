@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "doomdef.h"
+#include "doomkeys.h"
 #include "p_local.h"
 #include "s_sound.h"
 

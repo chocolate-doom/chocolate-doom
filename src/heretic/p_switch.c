@@ -111,7 +111,7 @@ void P_InitSwitchList(void)
     int episode;
 
     episode = 1;
-    if (!shareware)
+    if (gamemode != shareware)
         episode = 2;
 
     for (index = 0, i = 0; i < MAXSWITCHES; i++)

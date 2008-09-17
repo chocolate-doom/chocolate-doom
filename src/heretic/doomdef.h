@@ -53,46 +53,18 @@
 // WAD file access
 #include "w_wad.h"
 
+// fixed_t
+#include "m_fixed.h"
+
+// angle_t 
+#include "tables.h"
+
+// events
+#include "d_event.h"
+
+#include "d_mode.h"
+
 extern byte *destview, *destscreen;     // PC direct to screen pointers
-
-//
-// most key data are simple ascii (uppercased)
-//
-#define	KEY_RIGHTARROW		0xae
-#define	KEY_LEFTARROW		0xac
-#define	KEY_UPARROW			0xad
-#define	KEY_DOWNARROW		0xaf
-#define	KEY_ESCAPE			27
-#define	KEY_ENTER			13
-#define	KEY_F1				(0x80+0x3b)
-#define	KEY_F2				(0x80+0x3c)
-#define	KEY_F3				(0x80+0x3d)
-#define	KEY_F4				(0x80+0x3e)
-#define	KEY_F5				(0x80+0x3f)
-#define	KEY_F6				(0x80+0x40)
-#define	KEY_F7				(0x80+0x41)
-#define	KEY_F8				(0x80+0x42)
-#define	KEY_F9				(0x80+0x43)
-#define	KEY_F10				(0x80+0x44)
-#define	KEY_F11				(0x80+0x57)
-#define	KEY_F12				(0x80+0x58)
-
-#define	KEY_BACKSPACE		127
-#define	KEY_PAUSE			0xff
-
-#define KEY_EQUALS			0x3d
-#define KEY_MINUS			0x2d
-
-#define	KEY_RSHIFT			(0x80+0x36)
-#define	KEY_RCTRL			(0x80+0x1d)
-#define	KEY_RALT			(0x80+0x38)
-
-#define	KEY_LALT			KEY_RALT
-
-
-#define	FINEANGLES			8192
-#define	FINEMASK			(FINEANGLES-1)
-#define	ANGLETOFINESHIFT	19      // 0x100000000 to 0x2000
 
 #define	SAVEGAMENAME "hticsav"
 #define SAVEGAMENAMECD "c:\\heretic.cd\\hticsav"
@@ -109,48 +81,6 @@ extern byte *destview, *destscreen;     // PC direct to screen pointers
 #define MAXPLAYERS	4
 #define TICRATE		35      // number of tics / second
 #define TICSPERSEC	35
-
-#define	FRACBITS		16
-#define	FRACUNIT		(1<<FRACBITS)
-typedef int fixed_t;
-
-#define ANGLE_1		0x01000000
-#define ANGLE_45	0x20000000
-#define ANGLE_90	0x40000000
-#define ANGLE_180	0x80000000
-#define ANGLE_MAX	0xffffffff
-
-#define	ANG45	0x20000000
-#define	ANG90	0x40000000
-#define	ANG180	0x80000000
-#define	ANG270	0xc0000000
-
-typedef unsigned angle_t;
-
-typedef enum
-{
-    sk_baby,
-    sk_easy,
-    sk_medium,
-    sk_hard,
-    sk_nightmare
-} skill_t;
-
-typedef enum
-{
-    ev_keydown,
-    ev_keyup,
-    ev_mouse,
-    ev_joystick
-} evtype_t;
-
-typedef struct
-{
-    evtype_t type;
-    int data1;                  // keys / mouse/joystick buttons
-    int data2;                  // mouse/joystick x move
-    int data3;                  // mouse/joystick y move
-} event_t;
 
 typedef struct
 {
@@ -633,14 +563,13 @@ extern event_t events[MAXEVENTS];
 extern int eventhead;
 extern int eventtail;
 
-extern fixed_t finesine[5 * FINEANGLES / 4];
-extern fixed_t *finecosine;
-
 extern gameaction_t gameaction;
 
 extern boolean paused;
 
-extern boolean shareware;       // true if main WAD is the shareware version
+extern GameMode_t gamemode;
+extern GameMission_t gamemission;
+
 extern boolean ExtendedWAD;     // true if main WAD is the extended version
 
 extern boolean nomonsters;      // checkparm of -nomonsters
@@ -791,9 +720,6 @@ void D_DoomLoop(void);
 // manages timing and IO
 // calls all ?_Responder, ?_Ticker, and ?_Drawer functions
 // calls I_GetTime, I_StartFrame, and I_StartTic
-
-void D_PostEvent(event_t * ev);
-// called by IO functions when input is detected
 
 void NetUpdate(void);
 // create any new ticcmds and broadcast to other players
