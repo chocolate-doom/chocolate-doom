@@ -52,7 +52,6 @@ v_video.c
 
 EXTRA_DIST=                                          \
 i_sound.c              i_sound.h                     \
-i_cyber.c                                            \
 i_ibm.c   
 
 libheretic_a_SOURCES=$(SOURCE_FILES)

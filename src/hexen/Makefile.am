@@ -60,7 +60,6 @@ v_video.c                             \
                     xddefs.h          
 
 EXTRA_DIST=                           \
-i_cyber.c                             \
 i_ibm.c                               \
 i_sound.c           i_sound.h
 
