@@ -796,6 +796,10 @@ void M_DrawReadThis1(void)
             lumpname = "HELP";
 
             break;
+
+        default:
+            I_Error("Unhandled game version");
+            break;
     }
 
     lumpname = DEH_String(lumpname);
