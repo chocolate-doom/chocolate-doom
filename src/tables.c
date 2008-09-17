@@ -1866,7 +1866,7 @@ const int finesine[10240] =
     65534,65535,65535,65535,65535,65535,65535,65535
 };
 
-
+const fixed_t *finecosine = &finesine[FINEANGLES/4];
 
 const angle_t tantoangle[2049] =
 {

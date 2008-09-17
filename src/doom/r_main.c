@@ -105,17 +105,6 @@ int			viewangletox[FINEANGLES/2];
 // from clipangle to -clipangle.
 angle_t			xtoviewangle[SCREENWIDTH+1];
 
-
-// UNUSED.
-// The finetangentgent[angle+FINEANGLES/4] table
-// holds the fixed_t tangent values for view angles,
-// ranging from INT_MIN to 0 to INT_MAX.
-// fixed_t		finetangent[FINEANGLES/2];
-
-// fixed_t		finesine[5*FINEANGLES/4];
-const fixed_t*		finecosine = &finesine[FINEANGLES/4];
-
-
 lighttable_t*		scalelight[LIGHTLEVELS][MAXLIGHTSCALE];
 lighttable_t*		scalelightfixed[MAXLIGHTSCALE];
 lighttable_t*		zlight[LIGHTLEVELS][MAXLIGHTZ];
