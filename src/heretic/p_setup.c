@@ -27,7 +27,7 @@
 #include <stdlib.h>
 #include "doomdef.h"
 #include "p_local.h"
-#include "soundst.h"
+#include "s_sound.h"
 
 void P_SpawnMapThing(mapthing_t * mthing);
 

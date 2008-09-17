@@ -35,7 +35,7 @@
 #include <ctype.h>
 
 #include "doomdef.h"
-#include "soundst.h"
+#include "s_sound.h"
 
 int myargc;
 char **myargv;

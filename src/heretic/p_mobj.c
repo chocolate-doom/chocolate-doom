@@ -26,7 +26,7 @@
 #include "doomdef.h"
 #include "p_local.h"
 #include "sounds.h"
-#include "soundst.h"
+#include "s_sound.h"
 
 void G_PlayerReborn(int player);
 void P_SpawnMapThing(mapthing_t * mthing);

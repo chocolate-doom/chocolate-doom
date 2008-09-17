@@ -23,7 +23,7 @@
 // F_finale.c
 
 #include "doomdef.h"
-#include "soundst.h"
+#include "s_sound.h"
 #include <ctype.h>
 
 int finalestage;                // 0 = text, 1 = art screen

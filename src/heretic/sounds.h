@@ -93,10 +93,10 @@ typedef enum
     NUMMUSIC
 } musicenum_t;
 
+#if 0
 typedef struct
 {
     char name[8];
-    int p1;
 } musicinfo_t;
 
 typedef struct sfxinfo_s
@@ -109,6 +109,8 @@ typedef struct sfxinfo_s
     int lumpnum;
     int numchannels;            // total number of channels a sound type may occupy
 } sfxinfo_t;
+
+#endif
 
 typedef struct
 {

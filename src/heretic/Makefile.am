@@ -1,4 +1,6 @@
 
+AM_CFLAGS=-I..
+
 noinst_LIBRARIES=libheretic.a
 
 SOURCE_FILES=                                        \
@@ -12,7 +14,6 @@ d_net.c                                              \
                        dstrings.h                    \
 f_finale.c                                           \
 g_game.c                                             \
-                       i_header.h                    \
 info.c                 info.h                        \
 in_lude.c                                            \
 m_misc.c                                             \
@@ -46,7 +47,7 @@ r_segs.c                                             \
 r_things.c                                           \
 sb_bar.c                                             \
 sounds.c               sounds.h                      \
-                       soundst.h                     \
+s_sound.c              s_sound.h                     \
 v_video.c                                            
 
 EXTRA_DIST=                                          \
@@ -55,5 +56,4 @@ i_cyber.c                                            \
 i_ibm.c   
 
 libheretic_a_SOURCES=$(SOURCE_FILES)
-libheretic_a_CFLAGS=-I..
 
