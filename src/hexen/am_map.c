@@ -126,9 +126,9 @@ void AM_getIslope(mline_t *ml, islope_t *is)
 
   dy = ml->a.y - ml->b.y;
   dx = ml->b.x - ml->a.x;
-  if (!dy) is->islp = (dx<0?-MAXINT:MAXINT);
+  if (!dy) is->islp = (dx<0?-INT_MAX:INT_MAX);
   else is->islp = FixedDiv(dx, dy);
-  if (!dx) is->slp = (dy<0?-MAXINT:MAXINT);
+  if (!dx) is->slp = (dy<0?-INT_MAX:INT_MAX);
   else is->slp = FixedDiv(dy, dx);
 }
 */
@@ -192,8 +192,8 @@ void AM_findMinMaxBoundaries(void)
     int i;
     fixed_t a, b;
 
-    min_x = min_y = MAXINT;
-    max_x = max_y = -MAXINT;
+    min_x = min_y = INT_MAX;
+    max_x = max_y = -INT_MAX;
     for (i = 0; i < numvertexes; i++)
     {
         if (vertexes[i].x < min_x)
@@ -223,7 +223,7 @@ void AM_changeWindowLoc(void)
     if (m_paninc.x || m_paninc.y)
     {
         followplayer = 0;
-        f_oldloc.x = MAXINT;
+        f_oldloc.x = INT_MAX;
     }
 
     m_x += m_paninc.x;
@@ -276,7 +276,7 @@ void AM_initVariables(void)
     automapactive = true;
     fb = screen;
 
-    f_oldloc.x = MAXINT;
+    f_oldloc.x = INT_MAX;
     amclock = 0;
     lightlev = 0;
 
@@ -487,7 +487,7 @@ boolean AM_Responder(event_t * ev)
                 break;
             case AM_FOLLOWKEY:
                 followplayer = !followplayer;
-                f_oldloc.x = MAXINT;
+                f_oldloc.x = INT_MAX;
                 P_SetMessage(plr,
                              followplayer ? AMSTR_FOLLOWON : AMSTR_FOLLOWOFF,
                              true);
@@ -576,7 +576,7 @@ void AM_doFollowPlayer(void)
 	 dmapx = (MTOF(plr->mo->x)-MTOF(f_oldloc.x)); //fixed point
 	 dmapy = (MTOF(f_oldloc.y)-MTOF(plr->mo->y));
 
-	 if(f_oldloc.x == MAXINT) //to eliminate an error when the user first
+	 if(f_oldloc.x == INT_MAX) //to eliminate an error when the user first
 		dmapx=0;  //goes into the automap.
 	 mapxstart += dmapx;
 	 mapystart += dmapy;
@@ -650,7 +650,7 @@ void AM_clearFB(int color)
 
         oldplr.x = plr->mo->x;
         oldplr.y = plr->mo->y;
-//              if(f_oldloc.x == MAXINT) //to eliminate an error when the user first
+//              if(f_oldloc.x == INT_MAX) //to eliminate an error when the user first
 //                      dmapx=0;  //goes into the automap.
         mapxstart += dmapx >> 1;
         mapystart += dmapy >> 1;

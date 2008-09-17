@@ -32,6 +32,7 @@
 #define	strcasecmp strcmpi
 #define	strncasecmp strnicmp
 #endif
+#include <limits.h>
 
 #define VERSION 130
 #define VERSION_TEXT "v1.3"
@@ -88,17 +89,6 @@ extern byte *destview, *destscreen;     // PC direct to screen pointers
 
 #define	KEY_LALT			KEY_RALT
 
-
-
-#define MAXCHAR ((char)0x7f)
-#define MAXSHORT ((short)0x7fff)
-#define MAXINT	((int)0x7fffffff)       /* max pos 32-bit int */
-#define MAXLONG ((long)0x7fffffff)
-
-#define MINCHAR ((char)0x80)
-#define MINSHORT ((short)0x8000)
-#define MININT 	((int)0x80000000)       /* max negative 32-bit integer */
-#define MINLONG ((long)0x80000000)
 
 #define	FINEANGLES			8192
 #define	FINEMASK			(FINEANGLES-1)

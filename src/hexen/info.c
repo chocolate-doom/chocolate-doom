@@ -5288,7 +5288,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
      0,                         // speed
      1,                         // radius
      1,                         // height
-     MAXINT,                    // mass
+     INT_MAX,                    // mass
      0,                         // damage
      SFX_NONE,                  // activesound
      MF_NOGRAVITY | MF_NOBLOCKMAP | MF_SHADOW | MF_NOCLIP | MF_DROPOFF, // flags
@@ -5882,7 +5882,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
      0,                         // speed
      15 * FRACUNIT,             // radius
      180 * FRACUNIT,            // height
-     MAXINT,                    // mass
+     INT_MAX,                    // mass
      0,                         // damage
      SFX_NONE,                  // activesound
      MF_SOLID | MF_SHOOTABLE | MF_NOBLOOD,      // flags
@@ -8312,7 +8312,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
      0,                         // speed
      8 * FRACUNIT,              // radius
      24 * FRACUNIT,             // height
-     MAXINT,                    // mass
+     INT_MAX,                    // mass
      0,                         // damage
      SFX_NONE,                  // activesound
      MF_SOLID | MF_SHOOTABLE | MF_NOBLOOD,      // flags
@@ -8339,7 +8339,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
      0,                         // speed
      16 * FRACUNIT,             // radius
      40 * FRACUNIT,             // height
-     MAXINT,                    // mass
+     INT_MAX,                    // mass
      0,                         // damage
      SFX_NONE,                  // activesound
      MF_SOLID | MF_SHOOTABLE | MF_NOBLOOD,      // flags
@@ -8393,7 +8393,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
      0,                         // speed
      6 * FRACUNIT,              // radius
      20 * FRACUNIT,             // height
-     MAXINT,                    // mass
+     INT_MAX,                    // mass
      0,                         // damage
      SFX_NONE,                  // activesound
      MF_SHOOTABLE | MF_SOLID | MF_NOBLOOD,      // flags
@@ -8528,7 +8528,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
      0,                         // speed
      16 * FRACUNIT,             // radius
      72 * FRACUNIT,             // height
-     MAXINT,                    // mass
+     INT_MAX,                    // mass
      0,                         // damage
      SFX_NONE,                  // activesound
      MF_SOLID | MF_SHOOTABLE | MF_NOBLOOD,      // flags
@@ -8582,7 +8582,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
      0,                         // speed
      56 * FRACUNIT,             // radius
      120 * FRACUNIT,            // height
-     MAXINT,                    // mass
+     INT_MAX,                    // mass
      0,                         // damage
      SFX_NONE,                  // activesound
      MF_SOLID | MF_SHOOTABLE | MF_NOBLOOD | MF_NOGRAVITY | MF_SPAWNCEILING,     // flags
@@ -8663,7 +8663,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
      0,                         // speed
      11 * FRACUNIT,             // radius
      130 * FRACUNIT,            // height
-     MAXINT,                    // mass
+     INT_MAX,                    // mass
      0,                         // damage
      SFX_NONE,                  // activesound
      MF_SOLID | MF_SHOOTABLE | MF_NOBLOOD,      // flags
@@ -11660,7 +11660,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
      12,                        // speed
      32 * FRACUNIT,             // radius
      70 * FRACUNIT,             // height
-     MAXINT,                    // mass
+     INT_MAX,                    // mass
      0,                         // damage
      SFX_NONE,                  // activesound
      MF_SOLID | MF_COUNTKILL | MF_NOBLOOD,      // flags
@@ -11984,7 +11984,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
      10 * FRACUNIT,             // speed
      20 * FRACUNIT,             // radius
      65 * FRACUNIT,             // height
-     MAXINT,                    // mass
+     INT_MAX,                    // mass
      0,                         // damage
      SFX_DRAGON_ACTIVE,         // activesound
      MF_SOLID | MF_SHOOTABLE | MF_COUNTKILL | MF_FLOAT | MF_NOGRAVITY | MF_NOBLOOD,     // flags

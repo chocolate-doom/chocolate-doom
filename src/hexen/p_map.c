@@ -505,7 +505,7 @@ boolean PIT_CheckThing(mobj_t * thing)
         {
             if (thing->flags & MF_SHOOTABLE && thing != tmthing->target)
             {
-                if (thing->info->mass != MAXINT)
+                if (thing->info->mass != INT_MAX)
                 {
                     thing->momx += tmthing->momx >> 4;
                     thing->momy += tmthing->momy >> 4;

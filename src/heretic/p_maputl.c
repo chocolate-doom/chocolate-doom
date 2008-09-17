@@ -622,7 +622,7 @@ boolean P_TraverseIntercepts(traverser_t func, fixed_t maxfrac)
 
     while (count--)
     {
-        dist = MAXINT;
+        dist = INT_MAX;
         for (scan = intercepts; scan < intercept_p; scan++)
             if (scan->frac < dist)
             {
@@ -645,7 +645,7 @@ boolean P_TraverseIntercepts(traverser_t func, fixed_t maxfrac)
 
         if (!func(in))
             return false;       // don't bother going farther
-        in->frac = MAXINT;
+        in->frac = INT_MAX;
     }
 
     return true;                // everything was traversed

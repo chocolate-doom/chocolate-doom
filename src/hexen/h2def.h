@@ -27,6 +27,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <values.h>
+
 #include "st_start.h"
 #ifdef __WATCOMC__
 #include <malloc.h>
@@ -117,16 +119,6 @@ extern byte *destview, *destscreen;     // PC direct to screen pointers
 #define KEY_ZERO			0x30
 #define KEY_BACKSLASH		0x5C
 
-
-#define MAXCHAR ((char)0x7f)
-#define MAXSHORT ((short)0x7fff)
-#define MAXINT	((int)0x7fffffff)       /* max pos 32-bit int */
-#define MAXLONG ((long)0x7fffffff)
-
-#define MINCHAR ((char)0x80)
-#define MINSHORT ((short)0x8000)
-#define MININT 	((int)0x80000000)       /* max negative 32-bit integer */
-#define MINLONG ((long)0x80000000)
 
 #define	FINEANGLES			8192
 #define	FINEMASK			(FINEANGLES-1)
