@@ -62,6 +62,7 @@
 // events
 #include "d_event.h"
 
+// gamemode/mission
 #include "d_mode.h"
 
 extern byte *destview, *destscreen;     // PC direct to screen pointers
@@ -665,40 +666,6 @@ extern boolean autostart;
 
 ===============================================================================
 */
-
-
-fixed_t FixedMul(fixed_t a, fixed_t b);
-fixed_t FixedDiv(fixed_t a, fixed_t b);
-fixed_t FixedDiv2(fixed_t a, fixed_t b);
-
-#ifdef __WATCOMC__
-#pragma aux FixedMul =	\
-	"imul ebx",			\
-	"shrd eax,edx,16"	\
-	parm	[eax] [ebx] \
-	value	[eax]		\
-	modify exact [eax edx]
-
-#pragma aux FixedDiv2 =	\
-	"cdq",				\
-	"shld edx,eax,16",	\
-	"sal eax,16",		\
-	"idiv ebx"			\
-	parm	[eax] [ebx] \
-	value	[eax]		\
-	modify exact [eax edx]
-#endif
-
-#ifdef __BIG_ENDIAN__
-short ShortSwap(short);
-long LongSwap(long);
-#define SHORT(x)	ShortSwap(x)
-#define LONG(x)		LongSwap(x)
-#else
-#define SHORT(x)	(x)
-#define LONG(x)		(x)
-#endif
-
 
 #include "z_zone.h"
 

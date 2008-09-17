@@ -23,18 +23,15 @@
 
 // M_misc.c
 
-#ifdef __NeXT__
-#include <libc.h>
-#else
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <fcntl.h>
 #include <stdlib.h>
-#endif
 
 #include <ctype.h>
 
 #include "doomdef.h"
+#include "i_swap.h"
 #include "s_sound.h"
 
 int myargc;

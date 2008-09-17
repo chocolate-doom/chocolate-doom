@@ -25,6 +25,8 @@
 
 #include "doomdef.h"
 
+#include "i_swap.h"
+
 #define SC_INDEX 0x3c4
 
 byte *screen;

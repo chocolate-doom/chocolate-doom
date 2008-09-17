@@ -66,21 +66,6 @@ void D_AdvanceDemo(void);
 void F_Drawer(void);
 boolean F_Responder(event_t * ev);
 
-//---------------------------------------------------------------------------
-//
-// FUNC FixedDiv
-//
-//---------------------------------------------------------------------------
-
-fixed_t FixedDiv(fixed_t a, fixed_t b)
-{
-    if ((abs(a) >> 14) >= abs(b))
-    {
-        return ((a ^ b) < 0 ? INT_MIN : INT_MAX);
-    }
-    return (FixedDiv2(a, b));
-}
-
 /*
 ===============================================================================
 

@@ -24,6 +24,7 @@
 // R_data.c
 
 #include "doomdef.h"
+#include "i_swap.h"
 #include "r_local.h"
 #include "p_local.h"
 
