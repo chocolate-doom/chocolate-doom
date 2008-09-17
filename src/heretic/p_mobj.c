@@ -182,7 +182,7 @@ int P_FaceMobj(mobj_t * source, mobj_t * target, angle_t * delta)
         diff = angle2 - angle1;
         if (diff > ANG180)
         {
-            *delta = ANGLE_MAX - diff;
+            *delta = ANG_MAX - diff;
             return (0);
         }
         else
@@ -196,7 +196,7 @@ int P_FaceMobj(mobj_t * source, mobj_t * target, angle_t * delta)
         diff = angle1 - angle2;
         if (diff > ANG180)
         {
-            *delta = ANGLE_MAX - diff;
+            *delta = ANG_MAX - diff;
             return (1);
         }
         else
