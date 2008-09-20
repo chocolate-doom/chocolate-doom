@@ -1617,7 +1617,6 @@ void I_InitGraphics(void)
                                                     PU_STATIC, NULL);
     }
 
-    screens[0] = I_VideoBuffer;
     V_RestoreBuffer();
 
     // "Loading from disk" icon

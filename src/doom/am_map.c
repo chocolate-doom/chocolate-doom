@@ -288,9 +288,6 @@ cheatseq_t cheat_amap = CHEAT("iddt", 0);
 static boolean stopped = true;
 
 extern boolean viewactive;
-//extern byte screens[][SCREENWIDTH*SCREENHEIGHT];
-
-
 
 void
 V_MarkRect
@@ -459,7 +456,7 @@ void AM_initVariables(void)
     static event_t st_notify = { ev_keyup, AM_MSGENTERED, 0, 0 };
 
     automapactive = true;
-    fb = screens[0];
+    fb = I_VideoBuffer;
 
     f_oldloc.x = INT_MAX;
     amclock = 0;

@@ -305,14 +305,14 @@ void G_DrawMouseSpeedBox(void)
             color = COLOR_BLACK;
         }
 
-        screens[0][(box_y - 4) * SCREENWIDTH + box_x + x + 1] = color;
+        I_VideoBuffer[(box_y - 4) * SCREENWIDTH + box_x + x + 1] = color;
     }
 
     // Draw red line
 
     for (y=box_y - 8; y<box_y; ++y)
     {
-        screens[0][y * SCREENWIDTH + box_x + redline_x] = COLOR_RED;
+        I_VideoBuffer[y * SCREENWIDTH + box_x + redline_x] = COLOR_RED;
     }
 }
  
