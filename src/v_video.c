@@ -481,12 +481,10 @@ void V_ScreenShot (void)
     
     // find a file name to save it to
 
-    strcpy(lbmname, "DOOM00.pcx");
-
-    for (i=0 ; i<=99 ; i++)
+    for (i=0; i<=99; i++)
     {
-        lbmname[4] = i / 10 + '0';
-        lbmname[5] = i % 10 + '0';
+        sprintf(lbmname, "DOOM%02i.pcx", i);
+
         if (!M_FileExists(lbmname))
         {
             break;      // file doesn't exist
