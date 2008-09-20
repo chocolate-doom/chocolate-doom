@@ -30,6 +30,7 @@
 
 #include "doomdef.h"
 #include "s_sound.h"
+#include "i_system.h"
 #include "i_video.h"
 #include "v_video.h"
 

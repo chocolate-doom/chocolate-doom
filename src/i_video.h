@@ -102,6 +102,16 @@ void I_SetGrabMouseCallback(grabmouse_callback_t func);
 void I_DisplayFPSDots(boolean dots_on);
 void I_BindVideoVariables(void);
 
+// Called before processing any tics in a frame (just after displaying a frame).
+// Time consuming syncronous operations are performed here (joystick reading).
+
+void I_StartFrame (void);
+
+// Called before processing each tic in a frame.
+// Quick syncronous operations are performed here.
+
+void I_StartTic (void);
+
 extern char *video_driver;
 extern boolean screenvisible;
 extern float mouse_acceleration;
