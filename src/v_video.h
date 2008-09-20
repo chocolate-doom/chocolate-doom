@@ -60,20 +60,10 @@ void V_CopyRect(int srcx, int srcy, byte *source,
                 int width, int height,
                 int destx, int desty);
 
-void
-V_DrawPatch
-( int		x,
-  int		y,
-  int		scrn,
-  patch_t*	patch);
+void V_DrawPatch(int x, int y, patch_t *patch);
+void V_DrawPatchFlipped(int x, int y, patch_t *patch);
 
-void
-V_DrawPatchDirect
-( int		x,
-  int		y,
-  int		scrn,
-  patch_t*	patch );
-
+void V_DrawPatchDirect(int x, int y, patch_t *patch);
 
 // Draw a linear block of pixels into the view buffer.
 

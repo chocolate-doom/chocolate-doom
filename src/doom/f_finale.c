@@ -294,7 +294,7 @@ void F_TextWrite (void)
 	w = SHORT (hu_font[c]->width);
 	if (cx+w > SCREENWIDTH)
 	    break;
-	V_DrawPatch(cx, cy, 0, hu_font[c]);
+	V_DrawPatch(cx, cy, hu_font[c]);
 	cx+=w;
     }
 	
@@ -538,7 +538,7 @@ void F_CastPrint (char* text)
 	}
 		
 	w = SHORT (hu_font[c]->width);
-	V_DrawPatch(cx, 180, 0, hu_font[c]);
+	V_DrawPatch(cx, 180, hu_font[c]);
 	cx+=w;
     }
 	
@@ -548,7 +548,6 @@ void F_CastPrint (char* text)
 //
 // F_CastDrawer
 //
-void V_DrawPatchFlipped (int x, int y, int scrn, patch_t *patch);
 
 void F_CastDrawer (void)
 {
@@ -559,7 +558,7 @@ void F_CastDrawer (void)
     patch_t*		patch;
     
     // erase the entire screen to a background
-    V_DrawPatch (0,0,0, W_CacheLumpName (DEH_String("BOSSBACK"), PU_CACHE));
+    V_DrawPatch (0, 0, W_CacheLumpName (DEH_String("BOSSBACK"), PU_CACHE));
 
     F_CastPrint (DEH_String(castorder[castnum].name));
     
@@ -571,9 +570,9 @@ void F_CastDrawer (void)
 			
     patch = W_CacheLumpNum (lump+firstspritelump, PU_CACHE);
     if (flip)
-	V_DrawPatchFlipped (160,170,0,patch);
+	V_DrawPatchFlipped(160, 170, patch);
     else
-	V_DrawPatch (160,170,0,patch);
+	V_DrawPatch(160, 170, patch);
 }
 
 
@@ -648,9 +647,9 @@ void F_BunnyScroll (void)
 	return;
     if (finalecount < 1180)
     {
-	V_DrawPatch ((SCREENWIDTH-13*8)/2,
-		     (SCREENHEIGHT-8*8)/2,0, 
-		     W_CacheLumpName (DEH_String("END0"),PU_CACHE));
+        V_DrawPatch((SCREENWIDTH - 13 * 8) / 2,
+                    (SCREENHEIGHT - 8 * 8) / 2, 
+                    W_CacheLumpName(DEH_String("END0"), PU_CACHE));
 	laststage = 0;
 	return;
     }
@@ -665,8 +664,9 @@ void F_BunnyScroll (void)
     }
 	
     sprintf (name, DEH_String("END%i"), stage);
-    V_DrawPatch ((SCREENWIDTH-13*8)/2, (SCREENHEIGHT-8*8)/2,0, 
-	         W_CacheLumpName (name,PU_CACHE));
+    V_DrawPatch((SCREENWIDTH - 13 * 8) / 2, 
+                (SCREENHEIGHT - 8 * 8) / 2, 
+                W_CacheLumpName (name,PU_CACHE));
 }
 
 static void F_ArtScreenDrawer(void)
@@ -703,7 +703,7 @@ static void F_ArtScreenDrawer(void)
 
         lumpname = DEH_String(lumpname);
 
-        V_DrawPatch (0, 0, 0, W_CacheLumpName(lumpname, PU_CACHE));
+        V_DrawPatch (0, 0, W_CacheLumpName(lumpname, PU_CACHE));
     }
 }
 

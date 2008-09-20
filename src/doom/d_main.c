@@ -296,8 +296,8 @@ void D_Display (void)
 	    y = 4;
 	else
 	    y = viewwindowy+4;
-	V_DrawPatchDirect(viewwindowx+(scaledviewwidth-68)/2,
-			  y,0,W_CacheLumpName (DEH_String("M_PAUSE"), PU_CACHE));
+	V_DrawPatchDirect(viewwindowx + (scaledviewwidth - 68) / 2, y,
+                          W_CacheLumpName (DEH_String("M_PAUSE"), PU_CACHE));
     }
 
 
@@ -484,7 +484,7 @@ void D_PageTicker (void)
 //
 void D_PageDrawer (void)
 {
-    V_DrawPatch (0,0, 0, W_CacheLumpName(pagename, PU_CACHE));
+    V_DrawPatch (0, 0, W_CacheLumpName(pagename, PU_CACHE));
 }
 
 
