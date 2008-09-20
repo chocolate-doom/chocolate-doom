@@ -26,6 +26,7 @@
 #include <stdio.h>
 
 #include "doomdef.h"
+#include "i_video.h"
 #include "p_local.h"
 #include "am_map.h"
 #include "am_data.h"
@@ -330,7 +331,7 @@ void AM_initVariables(void)
     //static event_t st_notify = { ev_keyup, AM_MSGENTERED };
 
     automapactive = true;
-    fb = screen;
+    fb = I_VideoBuffer;
 
     f_oldloc.x = INT_MAX;
     amclock = 0;
@@ -779,16 +780,16 @@ void AM_clearFB(int color)
     j = mapystart * finit_width;
     for (i = 0; i < finit_height; i++)
     {
-        memcpy(screen + i * finit_width, maplump + j + mapxstart,
+        memcpy(I_VideoBuffer + i * finit_width, maplump + j + mapxstart,
                finit_width - mapxstart);
-        memcpy(screen + i * finit_width + finit_width - mapxstart,
+        memcpy(I_VideoBuffer + i * finit_width + finit_width - mapxstart,
                maplump + j, mapxstart);
         j += finit_width;
         if (j >= finit_height * finit_width)
             j = 0;
     }
 
-//       memcpy(screen, maplump, finit_width*finit_height);
+//       memcpy(I_VideoBuffer, maplump, finit_width*finit_height);
 //  memset(fb, color, f_w*f_h);
 }
 
