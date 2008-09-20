@@ -298,7 +298,7 @@ static void LoadDiskImage(void)
 
     disk = W_CacheLumpName(disk_name, PU_STATIC);
 
-    V_DrawPatch(0, 0, 0, disk);
+    V_DrawPatch(0, 0, disk);
     disk_image_w = SHORT(disk->width);
     disk_image_h = SHORT(disk->height);
 

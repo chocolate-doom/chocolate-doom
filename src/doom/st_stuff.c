@@ -433,10 +433,14 @@ void ST_refreshBackground(void)
 
     if (st_statusbaron)
     {
-	V_DrawPatch(ST_X, 0, BG, sbar);
+        V_UseBuffer(screens[BG]);
+
+	V_DrawPatch(ST_X, 0, sbar);
 
 	if (netgame)
-	    V_DrawPatch(ST_FX, 0, BG, faceback);
+	    V_DrawPatch(ST_FX, 0, faceback);
+
+        V_RestoreBuffer();
 
 	V_CopyRect(ST_X, 0, screens[BG], ST_WIDTH, ST_HEIGHT, ST_X, ST_Y);
     }

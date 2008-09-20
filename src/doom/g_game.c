@@ -258,8 +258,8 @@ void G_DrawMouseSpeedBox(void)
             lumpname = "M_LSCNTR";
         }
 
-        V_DrawPatchDirect(x, box_y, 0, W_CacheLumpName(DEH_String(lumpname), 
-                                                       PU_CACHE));
+        V_DrawPatchDirect(x, box_y,
+                          W_CacheLumpName(DEH_String(lumpname), PU_CACHE));
         x += 8;
     }
 

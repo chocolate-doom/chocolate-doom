@@ -89,7 +89,6 @@
 #define XHAIRCOLORS	GRAYS
 
 // drawing stuff
-#define	FB		0
 
 #define AM_PANDOWNKEY	KEY_DOWNARROW
 #define AM_PANUPKEY	KEY_UPARROW
@@ -1342,7 +1341,7 @@ void AM_drawMarks(void)
 	    fx = CXMTOF(markpoints[i].x);
 	    fy = CYMTOF(markpoints[i].y);
 	    if (fx >= f_x && fx <= f_w - w && fy >= f_y && fy <= f_h - h)
-		V_DrawPatch(fx, fy, FB, marknums[i]);
+		V_DrawPatch(fx, fy, marknums[i]);
 	}
     }
 
