@@ -30,6 +30,7 @@
 
 #include "doomdef.h"
 #include "s_sound.h"
+#include "i_video.h"
 #include "v_video.h"
 
 typedef enum
@@ -558,7 +559,7 @@ void IN_DrawStatBack(void)
     byte *dest;
 
     src = W_CacheLumpName("FLOOR16", PU_CACHE);
-    dest = screen;
+    dest = I_VideoBuffer;
 
     for (y = 0; y < SCREENHEIGHT; y++)
     {

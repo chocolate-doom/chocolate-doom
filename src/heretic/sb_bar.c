@@ -24,6 +24,7 @@
 // SB_bar.c
 
 #include "doomdef.h"
+#include "i_video.h"
 #include "p_local.h"
 #include "s_sound.h"
 #include "v_video.h"
@@ -125,7 +126,6 @@ patch_t *PatchINVBAR;
 patch_t *PatchARMCLEAR;
 patch_t *PatchCHAINBACK;
 //byte *ShadeTables;
-extern byte *screen;
 int FontBNumBase;
 int spinbooklump;
 int spinflylump;
@@ -558,7 +558,7 @@ static void ShadeLine(int x, int y, int height, int shade)
     byte *shades;
 
     shades = colormaps + 9 * 256 + shade * 2 * 256;
-    dest = screen + y * SCREENWIDTH + x;
+    dest = I_VideoBuffer + y * SCREENWIDTH + x;
     while (height--)
     {
         *(dest) = *(shades + *dest);

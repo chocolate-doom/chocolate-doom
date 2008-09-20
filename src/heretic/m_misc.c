@@ -32,6 +32,7 @@
 
 #include "doomdef.h"
 #include "i_swap.h"
+#include "i_video.h"
 #include "s_sound.h"
 
 int myargc;
@@ -777,7 +778,7 @@ void M_ScreenShot(void)
 #ifdef _WATCOMC_
     linear = pcscreen;
 #else
-    linear = screen;
+    linear = I_VideoBuffer;
 #endif
 //
 // find a file name to save it to

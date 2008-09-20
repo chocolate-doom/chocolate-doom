@@ -26,6 +26,7 @@
 
 #include "doomdef.h"
 #include "i_swap.h"
+#include "i_video.h"
 #include "s_sound.h"
 #include "v_video.h"
 
@@ -110,9 +111,11 @@ boolean F_Responder(event_t * event)
     if (finalestage == 1 && gameepisode == 2)
     {                           // we're showing the water pic, make any key kick to demo mode
         finalestage++;
+        /*
         memset((byte *) 0xa0000, 0, SCREENWIDTH * SCREENHEIGHT);
-        memset(screen, 0, SCREENWIDTH * SCREENHEIGHT);
+        memset(I_VideoBuffer, 0, SCREENWIDTH * SCREENHEIGHT);
         I_SetPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
+        */
         return true;
     }
     return false;
@@ -173,7 +176,7 @@ void F_TextWrite(void)
 // erase the entire screen to a tiled background
 //
     src = W_CacheLumpName(finaleflat, PU_CACHE);
-    dest = screen;
+    dest = I_VideoBuffer;
     for (y = 0; y < SCREENHEIGHT; y++)
     {
         for (x = 0; x < SCREENWIDTH / 64; x++)
@@ -236,7 +239,7 @@ void F_DrawPatchCol(int x, patch_t * patch, int col)
     int count;
 
     column = (column_t *) ((byte *) patch + LONG(patch->columnofs[col]));
-    desttop = screen + x;
+    desttop = I_VideoBuffer + x;
 
 // step through the posts in a column
 
@@ -277,20 +280,20 @@ void F_DemonScroll(void)
     p2 = W_CacheLumpName("FINAL2", PU_LEVEL);
     if (finalecount < 70)
     {
-        memcpy(screen, p1, SCREENHEIGHT * SCREENWIDTH);
+        memcpy(I_VideoBuffer, p1, SCREENHEIGHT * SCREENWIDTH);
         nextscroll = finalecount;
         return;
     }
     if (yval < 64000)
     {
-        memcpy(screen, p2 + SCREENHEIGHT * SCREENWIDTH - yval, yval);
-        memcpy(screen + yval, p1, SCREENHEIGHT * SCREENWIDTH - yval);
+        memcpy(I_VideoBuffer, p2 + SCREENHEIGHT * SCREENWIDTH - yval, yval);
+        memcpy(I_VideoBuffer + yval, p1, SCREENHEIGHT * SCREENWIDTH - yval);
         yval += SCREENWIDTH;
         nextscroll = finalecount + 3;
     }
     else
     {                           //else, we'll just sit here and wait, for now
-        memcpy(screen, p2, SCREENWIDTH * SCREENHEIGHT);
+        memcpy(I_VideoBuffer, p2, SCREENWIDTH * SCREENHEIGHT);
     }
 }
 
@@ -316,8 +319,7 @@ void F_DrawUnderwater(void)
                 underwawa = true;
                 memset((byte *) 0xa0000, 0, SCREENWIDTH * SCREENHEIGHT);
                 I_SetPalette(W_CacheLumpName("E2PAL", PU_CACHE));
-                memcpy(screen, W_CacheLumpName("E2END", PU_CACHE),
-                       SCREENWIDTH * SCREENHEIGHT);
+                V_DrawRawScreen(W_CacheLumpName("E2END", PU_CACHE));
             }
             paused = false;
             MenuActive = false;
@@ -325,8 +327,7 @@ void F_DrawUnderwater(void)
 
             break;
         case 2:
-            memcpy(screen, W_CacheLumpName("TITLE", PU_CACHE),
-                   SCREENWIDTH * SCREENHEIGHT);
+            V_DrawRawScreen(W_CacheLumpName("TITLE", PU_CACHE));
             //D_StartTitle(); // go to intro/demo mode.
     }
 }

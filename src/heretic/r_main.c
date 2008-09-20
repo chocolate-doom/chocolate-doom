@@ -832,7 +832,7 @@ void R_SetupFrame(player_t * player)
 #if 0
     {
         static int frame;
-        memset(screen, frame, SCREENWIDTH * SCREENHEIGHT);
+        memset(I_VideoBuffer, frame, SCREENWIDTH * SCREENHEIGHT);
         frame++;
     }
 #endif
