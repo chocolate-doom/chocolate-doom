@@ -25,6 +25,7 @@
 #include <stdlib.h>
 
 #include "doomdef.h"
+#include "i_system.h"
 #include "m_bbox.h"
 #include "m_random.h"
 #include "p_local.h"

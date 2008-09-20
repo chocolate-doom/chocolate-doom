@@ -25,6 +25,7 @@
 
 #include "doomdef.h"
 #include "i_swap.h"
+#include "i_system.h"
 #include "r_local.h"
 #include "p_local.h"
 

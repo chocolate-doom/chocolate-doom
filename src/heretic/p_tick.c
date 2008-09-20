@@ -24,6 +24,7 @@
 // P_tick.c
 
 #include "doomdef.h"
+#include "i_system.h"
 #include "p_local.h"
 #include "v_video.h"
 

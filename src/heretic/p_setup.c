@@ -28,6 +28,7 @@
 
 #include "doomdef.h"
 #include "i_swap.h"
+#include "i_system.h"
 #include "m_argv.h"
 #include "m_bbox.h"
 #include "p_local.h"

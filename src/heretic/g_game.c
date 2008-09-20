@@ -27,6 +27,8 @@
 #include <string.h>
 #include "doomdef.h"
 #include "doomkeys.h"
+#include "i_timer.h"
+#include "i_system.h"
 #include "m_misc.h"
 #include "m_random.h"
 #include "p_local.h"

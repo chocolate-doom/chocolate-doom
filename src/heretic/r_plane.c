@@ -24,6 +24,7 @@
 
 #include <stdlib.h>
 #include "doomdef.h"
+#include "i_system.h"
 #include "r_local.h"
 
 planefunction_t floorfunc, ceilingfunc;

@@ -20,7 +20,7 @@
 // 02111-1307, USA.
 //
 // DESCRIPTION:
-//	DOOM graphics stuff for X11, UNIX.
+//     Low level graphics code using SDL.
 //
 //-----------------------------------------------------------------------------
 

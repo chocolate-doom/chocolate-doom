@@ -35,14 +35,20 @@
 // and transmitted to other peers (multiplayer).
 // Mainly movements/button commands per game tick,
 // plus a checksum for internal state consistency.
+
 typedef struct
 {
     signed char	forwardmove;	// *2048 for move
     signed char	sidemove;	// *2048 for move
-    short	angleturn;	// <<16 for angle delta
-    byte	chatchar;
-    byte	buttons;
-    byte        consistancy;	// checks for net game
+    short angleturn;            // <<16 for angle delta
+    byte chatchar;
+    byte buttons;
+    byte consistancy;           // checks for net game
+   
+    // Heretic/Hexen specific:
+
+    byte lookfly;               // look/fly up/down/centering
+    byte arti;                  // artitype_t to use
 } ticcmd_t;
 
 

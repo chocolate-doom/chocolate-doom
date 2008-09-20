@@ -27,6 +27,10 @@
 #include "doomdef.h"
 #include "doomkeys.h"
 
+#include "i_system.h"
+#include "i_timer.h"
+#include "i_video.h"
+
 #define NCMD_EXIT               0x80000000
 #define NCMD_RETRANSMIT 0x40000000
 #define NCMD_SETUP              0x20000000

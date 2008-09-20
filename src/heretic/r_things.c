@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include "doomdef.h"
 #include "i_swap.h"
+#include "i_system.h"
 #include "r_local.h"
 
 void R_DrawColumn(void);
