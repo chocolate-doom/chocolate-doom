@@ -23,6 +23,7 @@
 // R_bsp.c
 
 #include "doomdef.h"
+#include "m_bbox.h"
 #include "r_local.h"
 
 seg_t *curline;

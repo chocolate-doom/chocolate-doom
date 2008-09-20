@@ -914,10 +914,6 @@ boolean M_ValidEpisodeMap(int episode, int map);
 void M_ForceUppercase(char *text);
 // Changes a string to uppercase
 
-void M_ClearBox(fixed_t * box);
-void M_AddToBox(fixed_t * box, fixed_t x, fixed_t y);
-// bounding box functions
-
 void M_LoadDefaults(void);
 
 void M_SaveDefaults(void);

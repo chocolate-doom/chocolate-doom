@@ -38,32 +38,36 @@
 //    
 //-----------------------------------------------------------------------------
 
-
-
-
-
 #include "tables.h"
 
+// to get a global angle from cartesian coordinates, the coordinates are
+// flipped until they are in the first octant of the coordinate system, then
+// the y (<=x) is scaled and divided by x to get a tangent (slope) value
+// which is looked up in the tantoangle[] table.  The +1 size is to handle
+// the case when x==y without additional checking.
 
-
-
-int
-SlopeDiv
-( unsigned	num,
-  unsigned	den)
+int SlopeDiv(unsigned int num, unsigned int den)
 {
-    unsigned 	ans;
+    unsigned ans;
     
     if (den < 512)
-	return SLOPERANGE;
+    {
+        return SLOPERANGE;
+    }
+    else
+    {
+        ans = (num << 3) / (den >> 8);
 
-    ans = (num<<3)/(den>>8);
-
-    return ans <= SLOPERANGE ? ans : SLOPERANGE;
+        if (ans <= SLOPERANGE)
+        {
+            return ans;
+        }
+        else
+        {
+            return SLOPERANGE;
+        }
+    }
 }
-
-
-
 
 const int finetangent[4096] =
 {
