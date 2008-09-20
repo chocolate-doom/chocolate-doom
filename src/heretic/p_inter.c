@@ -25,6 +25,7 @@
 
 #include "doomdef.h"
 #include "i_system.h"
+#include "i_timer.h"
 #include "m_random.h"
 #include "p_local.h"
 #include "s_sound.h"
@@ -1036,7 +1037,7 @@ boolean P_ChickenMorphPlayer(player_t * player)
 
     if (player->chickenTics)
     {
-        if ((player->chickenTics < CHICKENTICS - TICSPERSEC)
+        if ((player->chickenTics < CHICKENTICS - TICRATE)
             && !player->powers[pw_weaponlevel2])
         {                       // Make a super chicken
             P_GivePower(player, pw_weaponlevel2);

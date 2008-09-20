@@ -83,8 +83,6 @@ extern byte *destview, *destscreen;     // PC direct to screen pointers
 
 #define NUMARTIFCTS	28
 #define MAXPLAYERS	4
-#define TICRATE		35      // number of tics / second
-#define TICSPERSEC	35
 
 #define	BT_ATTACK		1
 #define	BT_USE			2

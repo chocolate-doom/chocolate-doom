@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include "doomdef.h"
 #include "i_system.h"
+#include "i_timer.h"
 #include "m_random.h"
 #include "p_local.h"
 #include "s_sound.h"
@@ -1859,7 +1860,7 @@ void A_HeadAttack(mobj_t * actor)
             mo->z -= 32 * FRACUNIT;
             mo->special1 = (int) target;
             mo->special2 = 50;  // Timer for active sound
-            mo->health = 20 * TICSPERSEC;       // Duration
+            mo->health = 20 * TICRATE;       // Duration
             S_StartSound(actor, sfx_hedat3);
         }
     }
