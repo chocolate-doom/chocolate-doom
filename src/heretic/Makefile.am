@@ -17,6 +17,7 @@ g_game.c                                             \
 info.c                 info.h                        \
 in_lude.c                                            \
 m_misc.c                                             \
+m_random.c             m_random.h                    \
 mn_menu.c                                            \
 p_ceilng.c                                           \
 p_doors.c                                            \

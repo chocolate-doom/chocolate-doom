@@ -213,9 +213,6 @@ typedef struct
     fixed_t x, y, z;
 } degenmobj_t;
 
-// Most damage defined using HITDICE
-#define HITDICE(a) ((1+(P_Random()&7))*a)
-
 //
 // frame flags
 //
@@ -625,7 +622,6 @@ extern int ticdup;
 
 #define	MAXNETNODES		8
 extern ticcmd_t localcmds[BACKUPTICS];
-extern int rndindex;
 extern int gametic, maketic;
 extern int nettics[MAXNETNODES];
 
@@ -917,14 +913,6 @@ boolean M_ValidEpisodeMap(int episode, int map);
 
 void M_ForceUppercase(char *text);
 // Changes a string to uppercase
-
-int M_Random(void);
-// returns a number from 0 to 255
-int P_Random(void);
-// as M_Random, but used only by the play simulation
-
-void M_ClearRandom(void);
-// fix randoms for demos
 
 void M_ClearBox(fixed_t * box);
 void M_AddToBox(fixed_t * box, fixed_t x, fixed_t y);
