@@ -31,15 +31,6 @@
 // We are referring to patches.
 #include "r_defs.h"
 
-
-//
-// Background and foreground screen numbers
-//
-
-#define FG 0
-
-
-
 //
 // Typedefs of widgets
 //

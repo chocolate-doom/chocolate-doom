@@ -290,8 +290,6 @@ static anim_t *anims[NUMEPISODES] =
 //
 // Locally used stuff.
 //
-#define FB 0
-
 
 // States for single-player
 #define SP_KILLS		0

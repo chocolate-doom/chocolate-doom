@@ -29,12 +29,6 @@
 // We are referring to patches.
 #include "r_defs.h"
 
-
-// background and foreground screen numbers
-// different from other modules.
-#define BG			1
-#define FG			0
-
 // font stuff
 #define HU_CHARERASE	KEY_BACKSPACE
 
