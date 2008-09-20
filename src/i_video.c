@@ -101,7 +101,7 @@ static boolean initialised = false;
 static boolean nomouse = false;
 int usemouse = 1;
 
-// if true, screens[0] is screen->pixel
+// if true, I_VideoBuffer is screen->pixels
 
 static boolean native_surface;
 
@@ -131,6 +131,10 @@ static int startup_delay = 1000;
 // Grab the mouse? (int type for config code)
 
 static int grabmouse = true;
+
+// The screen buffer; this is modified to draw things to the screen
+
+byte *I_VideoBuffer = NULL;
 
 // If true, game is running as a screensaver
 
@@ -304,9 +308,9 @@ static void LoadDiskImage(void)
     for (y=0; y<disk_image_h; ++y) 
     {
         memcpy(disk_image + disk_image_w * y,
-               screens[0] + SCREENWIDTH * y,
+               I_VideoBuffer + SCREENWIDTH * y,
                disk_image_w);
-        memset(screens[0] + SCREENWIDTH * y, 0, disk_image_w);
+        memset(I_VideoBuffer + SCREENWIDTH * y, 0, disk_image_w);
     }
 
     W_ReleaseLumpName(disk_name);
@@ -689,7 +693,7 @@ static boolean BlitArea(int x1, int y1, int x2, int y2)
 
     if (SDL_LockSurface(screen) >= 0)
     {
-        I_InitScale(screens[0], 
+        I_InitScale(I_VideoBuffer,
                     (byte *) screen->pixels + (y_offset * screen->pitch)
                                             + x_offset, 
                     screen->pitch);
@@ -738,7 +742,7 @@ void I_BeginRead(void)
     for (y=0; y<disk_image_h; ++y)
     {
         byte *screenloc = 
-               screens[0] 
+               I_VideoBuffer
                  + (SCREENHEIGHT - 1 - disk_image_h + y) * SCREENWIDTH
                  + (SCREENWIDTH - 1 - disk_image_w);
 
@@ -764,7 +768,7 @@ void I_EndRead(void)
     for (y=0; y<disk_image_h; ++y)
     {
         byte *screenloc = 
-               screens[0] 
+               I_VideoBuffer
                  + (SCREENHEIGHT - 1 - disk_image_h + y) * SCREENWIDTH
                  + (SCREENWIDTH - 1 - disk_image_w);
 
@@ -810,9 +814,9 @@ void I_FinishUpdate (void)
 	if (tics > 20) tics = 20;
 
 	for (i=0 ; i<tics*2 ; i+=4)
-	    screens[0][ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0xff;
+	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0xff;
 	for ( ; i<20*4 ; i+=4)
-	    screens[0][ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
+	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
     }
 
     // draw to screen
@@ -839,7 +843,7 @@ void I_FinishUpdate (void)
 //
 void I_ReadScreen (byte* scr)
 {
-    memcpy (scr, screens[0], SCREENWIDTH*SCREENHEIGHT);
+    memcpy(scr, I_VideoBuffer, SCREENWIDTH*SCREENHEIGHT);
 }
 
 
@@ -1603,15 +1607,17 @@ void I_InitGraphics(void)
 
     if (native_surface)
     {
-	screens[0] = (unsigned char *) screen->pixels;
+	I_VideoBuffer = (unsigned char *) screen->pixels;
 
-        screens[0] += (screen->h - SCREENHEIGHT) / 2;
+        I_VideoBuffer += (screen->h - SCREENHEIGHT) / 2;
     }
     else
     {
-	screens[0] = (unsigned char *) Z_Malloc (SCREENWIDTH * SCREENHEIGHT, 
-                                                 PU_STATIC, NULL);
+	I_VideoBuffer = (unsigned char *) Z_Malloc (SCREENWIDTH * SCREENHEIGHT, 
+                                                    PU_STATIC, NULL);
     }
+
+    V_RestoreBuffer();
 
     // "Loading from disk" icon
 
@@ -1619,7 +1625,7 @@ void I_InitGraphics(void)
 
     // Clear the screen to black.
 
-    memset(screens[0], 0, SCREENWIDTH * SCREENHEIGHT);
+    memset(I_VideoBuffer, 0, SCREENWIDTH * SCREENHEIGHT);
 
     // We need SDL to give us translated versions of keys as well
 

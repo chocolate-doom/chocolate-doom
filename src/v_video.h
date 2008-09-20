@@ -54,17 +54,11 @@ extern const byte gammatable[5][256];
 // Allocates buffer screens, call before R_Init.
 void V_Init (void);
 
+// Draw a block from the specified source screen to the screen.
 
-void
-V_CopyRect
-( int		srcx,
-  int		srcy,
-  int		srcscrn,
-  int		width,
-  int		height,
-  int		destx,
-  int		desty,
-  int		destscrn );
+void V_CopyRect(int srcx, int srcy, byte *source,
+                int width, int height,
+                int destx, int desty);
 
 void
 V_DrawPatch
@@ -110,5 +104,7 @@ V_MarkRect
   int		height );
 
 void V_ScreenShot(void);
+
+void V_RestoreBuffer(void);
 
 #endif

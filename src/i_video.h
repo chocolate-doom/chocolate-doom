@@ -109,6 +109,7 @@ extern int mouse_threshold;
 extern int vanilla_keyboard_mapping;
 extern boolean screensaver_mode;
 extern int usegamma;
+extern byte *I_VideoBuffer;
 
 #endif
 
