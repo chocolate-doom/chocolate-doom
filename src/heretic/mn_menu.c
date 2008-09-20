@@ -1163,7 +1163,6 @@ boolean MN_Responder(event_t * event)
                 BorderNeedRefresh = true;
                 UpdateState |= I_FULLSCRN;
                 return (true);
-#ifndef __NeXT__
             case KEY_F1:       // help screen
                 SCInfo(0);      // start up info screens
                 MenuActive = true;
@@ -1301,7 +1300,6 @@ boolean MN_Responder(event_t * event)
                 }
                 I_SetPalette((byte *) W_CacheLumpName("PLAYPAL", PU_CACHE));
                 return true;
-#endif
         }
 
     }

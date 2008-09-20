@@ -381,15 +381,6 @@ visplane_t *R_CheckPlane(visplane_t * pl, int start, int stop);
 //
 extern int drawbsp;
 
-void RD_OpenMapWindow(void);
-void RD_ClearMapWindow(void);
-void RD_DisplayLine(int x1, int y1, int x2, int y2, float gray);
-void RD_DrawNodeLine(node_t * node);
-void RD_DrawLineCheck(seg_t * line);
-void RD_DrawLine(seg_t * line);
-void RD_DrawBBox(fixed_t * bbox);
-
-
 //
 // R_data.c
 //

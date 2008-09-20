@@ -441,33 +441,13 @@ void D_CheckRecordFrom(void)
 // MAPDIR should be defined as the directory that holds development maps
 // for the -wart # # command
 
-#ifdef __NeXT__
-
-#define MAPDIR "/Novell/Heretic/data/"
-
-#define SHAREWAREWADNAME "/Novell/Heretic/source/heretic1.wad"
-
-char *wadfiles[MAXWADFILES] = {
-    "/Novell/Heretic/source/heretic.wad",
-    "/Novell/Heretic/data/texture1.lmp",
-    "/Novell/Heretic/data/texture2.lmp",
-    "/Novell/Heretic/data/pnames.lmp"
-};
-
-#else
-
 #define MAPDIR "\\data\\"
 
 #define SHAREWAREWADNAME "heretic1.wad"
 
 char *wadfiles[MAXWADFILES] = {
     "heretic.wad",
-    "texture1.lmp",
-    "texture2.lmp",
-    "pnames.lmp"
 };
-
-#endif
 
 char *basedefault = "heretic.cfg";
 
@@ -685,20 +665,12 @@ void blitStartup(void)
 char tmsg[300];
 void tprintf(char *msg, int initflag)
 {
-#if 0
 #ifdef __WATCOMC__
     char temp[80];
     int start;
     int add;
     int i;
-#endif
 
-    if (debugmode)
-    {
-        printf(msg);
-        return;
-    }
-#ifdef __WATCOMC__
     if (initflag)
         tmsg[0] = 0;
     strcat(tmsg, msg);
@@ -719,8 +691,7 @@ void tprintf(char *msg, int initflag)
     _settextposition(25, 1);
     drawstatus();
 #else
-    printf(msg);
-#endif
+    puts(msg);
 #endif
 }
 
