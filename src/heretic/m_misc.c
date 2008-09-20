@@ -174,7 +174,6 @@ typedef struct
     int untranslated;           // lousy hack
 } default_t;
 
-#ifndef __NeXT__
 extern int snd_Channels;
 extern int snd_DesiredMusicDevice, snd_DesiredSfxDevice;
 extern int snd_MusicDevice,     // current music card # (index to dmxCodes)
@@ -182,17 +181,13 @@ extern int snd_MusicDevice,     // current music card # (index to dmxCodes)
 
 extern int snd_SBport, snd_SBirq, snd_SBdma;    // sound blaster variables
 extern int snd_Mport;           // midi variables
-#endif
 
 default_t defaults[] = {
     {"mouse_sensitivity", &mouseSensitivity, 5},
 
-#ifndef __NeXT__
     {"sfx_volume", &snd_MaxVolume, 10},
     {"music_volume", &snd_MusicVolume, 10},
-#endif
 
-#ifdef __WATCOMC__
 #define SC_UPARROW              0x48
 #define SC_DOWNARROW            0x50
 #define SC_LEFTARROW            0x4b
@@ -231,30 +226,6 @@ default_t defaults[] = {
     {"key_use", &key_use, SC_SPACE, 1},
     {"key_strafe", &key_strafe, SC_RALT, 1},
     {"key_speed", &key_speed, SC_RSHIFT, 1},
-#endif
-
-#ifdef __NeXT__
-    {"key_right", &key_right, KEY_RIGHTARROW},
-    {"key_left", &key_left, KEY_LEFTARROW},
-    {"key_up", &key_up, KEY_UPARROW},
-    {"key_down", &key_down, KEY_DOWNARROW},
-    {"key_strafeleft", &key_strafeleft, ','},
-    {"key_straferight", &key_straferight, '.'},
-    {"key_flyup", &key_flyup, 'u'},
-    {"key_flydown", &key_flydown, 'j'},
-    {"key_flycenter", &key_flycenter, 'k'},
-    {"key_lookup", &key_lookup, 'm'},
-    {"key_lookdown", &key_lookdown, 'b'},
-    {"key_lookcenter", &key_lookcenter, 'n'},
-    {"key_invleft", &key_invleft, '['},
-    {"key_invright", &key_invright, ']'},
-    {"key_useartifact", &key_useartifact, 13},
-
-    {"key_fire", &key_fire, ' ', 1},
-    {"key_use", &key_use, 'x', 1},
-    {"key_strafe", &key_strafe, 'c', 1},
-    {"key_speed", &key_speed, 'z', 1},
-#endif
 
     {"use_mouse", &usemouse, 1},
     {"mouseb_fire", &mousebfire, 0},
@@ -269,7 +240,6 @@ default_t defaults[] = {
 
     {"screenblocks", &screenblocks, 10},
 
-#ifndef __NeXT__
     {"snd_channels", &snd_Channels, 3},
     {"snd_musicdevice", &snd_DesiredMusicDevice, 0},
     {"snd_sfxdevice", &snd_DesiredSfxDevice, 0},
@@ -277,7 +247,6 @@ default_t defaults[] = {
     {"snd_sbirq", &snd_SBirq, -1},
     {"snd_sbdma", &snd_SBdma, -1},
     {"snd_mport", &snd_Mport, -1},
-#endif
 
     {"usegamma", &usegamma, 0},
 

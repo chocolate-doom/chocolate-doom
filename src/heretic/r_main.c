@@ -822,12 +822,7 @@ void R_SetupFrame(player_t * player)
         UpdateState |= I_MESSAGES;
     }
 
-#ifdef __NeXT__
-    RD_ClearMapWindow();
-#endif
-#ifdef __WATCOMC__
     destview = destscreen + (viewwindowx >> 2) + viewwindowy * 80;
-#endif
 
 #if 0
     {
