@@ -544,12 +544,6 @@ extern doomdata_t *netbuffer;   // points inside doomcom
 
 #define TELEFOGHEIGHT (32*FRACUNIT)
 
-#define MAXEVENTS 64
-
-extern event_t events[MAXEVENTS];
-extern int eventhead;
-extern int eventtail;
-
 extern gameaction_t gameaction;
 
 extern boolean paused;
