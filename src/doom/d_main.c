@@ -416,6 +416,7 @@ void D_DoomLoop (void)
     I_SetGrabMouseCallback(D_GrabMouseCallback);
     I_SetWindowTitle(gamedescription);
 
+    V_RestoreBuffer();
     R_ExecuteSetViewSize();
 
     D_StartGameLoop();

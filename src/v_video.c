@@ -146,51 +146,44 @@ V_MarkRect
   int		height ) 
 { 
     M_AddToBox (dirtybox, x, y); 
-    M_AddToBox (dirtybox, x+width-1, y+height-1); 
+    M_AddToBox (dirtybox, x + width-1, y + height-1); 
 } 
  
 
 //
 // V_CopyRect 
 // 
-void
-V_CopyRect
-( int		srcx,
-  int		srcy,
-  int		srcscrn,
-  int		width,
-  int		height,
-  int		destx,
-  int		desty,
-  int		destscrn ) 
+void V_CopyRect(int srcx, int srcy, byte *source,
+                int width, int height,
+                int destx, int desty)
 { 
-    byte*	src;
-    byte*	dest; 
-	 
+    byte *src;
+    byte *dest; 
+ 
 #ifdef RANGECHECK 
-    if (srcx<0
-	||srcx+width >SCREENWIDTH
-	|| srcy<0
-	|| srcy+height>SCREENHEIGHT 
-	||destx<0||destx+width >SCREENWIDTH
-	|| desty<0
-	|| desty+height>SCREENHEIGHT 
-	|| (unsigned)srcscrn>4
-	|| (unsigned)destscrn>4)
+    if (srcx < 0
+     || srcx + width > SCREENWIDTH
+     || srcy < 0
+     || srcy + height > SCREENHEIGHT 
+     || destx < 0
+     || destx + width > SCREENWIDTH
+     || desty < 0
+     || desty + height > SCREENHEIGHT)
     {
-	I_Error ("Bad V_CopyRect");
+        I_Error ("Bad V_CopyRect");
     }
 #endif 
-    V_MarkRect (destx, desty, width, height); 
-	 
-    src = screens[srcscrn]+SCREENWIDTH*srcy+srcx; 
-    dest = screens[destscrn]+SCREENWIDTH*desty+destx; 
+
+    V_MarkRect(destx, desty, width, height); 
+ 
+    src = source + SCREENWIDTH * srcy + srcx; 
+    dest = I_VideoBuffer + SCREENWIDTH * desty + destx; 
 
     for ( ; height>0 ; height--) 
     { 
-	memcpy (dest, src, width); 
-	src += SCREENWIDTH; 
-	dest += SCREENWIDTH; 
+        memcpy(dest, src, width); 
+        src += SCREENWIDTH; 
+        dest += SCREENWIDTH; 
     } 
 } 
  
@@ -431,62 +424,29 @@ V_DrawBlock
 } 
  
 
-
-//
-// V_GetBlock
-// Gets a linear block of pixels from the view buffer.
-//
-void
-V_GetBlock
-( int		x,
-  int		y,
-  int		scrn,
-  int		width,
-  int		height,
-  byte*		dest ) 
-{ 
-    byte*	src; 
-	 
-#ifdef RANGECHECK 
-    if (x<0
-	||x+width >SCREENWIDTH
-	|| y<0
-	|| y+height>SCREENHEIGHT 
-	|| (unsigned)scrn>4 )
-    {
-	I_Error ("Bad V_DrawBlock");
-    }
-#endif 
- 
-    src = screens[scrn] + y*SCREENWIDTH+x; 
-
-    while (height--) 
-    { 
-	memcpy (dest, src, width); 
-	src += SCREENWIDTH; 
-	dest += width; 
-    } 
-} 
-
-
-
-
 //
 // V_Init
 // 
 void V_Init (void) 
 { 
-    int		i;
-    byte*	base;
+    int i;
+    byte *base;
 		
     // stick these in low dos memory on PCs
 
-    base = Z_Malloc(SCREENWIDTH * SCREENHEIGHT * 4, PU_STATIC, NULL);
+    base = Z_Malloc(SCREENWIDTH * SCREENHEIGHT * 3, PU_STATIC, NULL);
 
     for (i=0 ; i<4 ; i++)
     {
-	screens[i] = base + i*SCREENWIDTH*SCREENHEIGHT;
+	screens[i + 1] = base + i*SCREENWIDTH*SCREENHEIGHT;
     }
+}
+
+// Restore screen buffer to the i_video screen buffer.
+
+void V_RestoreBuffer(void)
+{
+    screens[0] = I_VideoBuffer;
 }
 
 //
