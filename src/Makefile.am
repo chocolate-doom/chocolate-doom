@@ -3,6 +3,7 @@ SUBDIRS=doom heretic hexen
 
 gamesdir = $(prefix)/games
 
+EXTRA_PROGRAMS = chocolate-heretic chocolate-hexen
 games_PROGRAMS = chocolate-doom chocolate-server
 
 AM_CFLAGS = -Idoom -I../textscreen -I../pcsound @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@ -Werror
@@ -102,19 +103,37 @@ SOURCE_FILES = $(MAIN_SOURCE_FILES)                \
                $(FEATURE_WAD_MERGE_SOURCE_FILES)   \
                $(FEATURE_SOUND_SOURCE_FILES)
 
+EXTRA_LIBS =                                       \
+	       ../textscreen/libtextscreen.a       \
+	       ../pcsound/libpcsound.a             \
+	       @LDFLAGS@                           \
+	       @SDL_LIBS@                          \
+	       @SDLMIXER_LIBS@                     \
+	       @SDLNET_LIBS@ 
+
 if HAVE_WINDRES
 chocolate_doom_SOURCES=$(SOURCE_FILES) resource.rc
 else
 chocolate_doom_SOURCES=$(SOURCE_FILES)
 endif
 
-chocolate_doom_LDADD = doom/libdoom.a                  \
-                       ../textscreen/libtextscreen.a   \
-		       ../pcsound/libpcsound.a         \
-		       @LDFLAGS@                       \
-		       @SDL_LIBS@                      \
-		       @SDLMIXER_LIBS@                 \
-		       @SDLNET_LIBS@ 
+chocolate_doom_LDADD = doom/libdoom.a $(EXTRA_LIBS)
+
+if HAVE_WINDRES
+chocolate_heretic_SOURCES=$(SOURCE_FILES) resource.rc
+else
+chocolate_heretic_SOURCES=$(SOURCE_FILES)
+endif
+
+chocolate_heretic_LDADD = heretic/libheretic.a $(EXTRA_LIBS)
+
+if HAVE_WINDRES
+chocolate_hexen_SOURCES=$(SOURCE_FILES) resource.rc
+else
+chocolate_hexen_SOURCES=$(SOURCE_FILES)
+endif
+
+chocolate_hexen_LDADD = hexen/libhexen.a $(EXTRA_LIBS)
 
 EXTRA_DIST =                        \
         icon.c                      \
