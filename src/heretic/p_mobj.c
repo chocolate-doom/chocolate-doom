@@ -24,6 +24,7 @@
 // P_mobj.c
 
 #include "doomdef.h"
+#include "m_random.h"
 #include "p_local.h"
 #include "sounds.h"
 #include "s_sound.h"

@@ -51,7 +51,6 @@ m_fixed.c            m_fixed.h             \
 m_misc.c             m_misc.h              \
 md5.c                md5.h                 \
 memio.c              memio.h               \
-m_random.c           m_random.h            \
 tables.c             tables.h              \
 v_video.c            v_video.h             \
                      v_patch.h             \

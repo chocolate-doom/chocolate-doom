@@ -21,6 +21,7 @@
 //
 //-----------------------------------------------------------------------------
 #include "doomdef.h"
+#include "m_random.h"
 #include "p_local.h"
 #include "v_video.h"
 

@@ -24,6 +24,7 @@
 #include <stdlib.h>
 
 #include "doomdef.h"
+#include "m_random.h"
 #include "sounds.h"
 #include "s_sound.h"
 #include "i_sound.h"
