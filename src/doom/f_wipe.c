@@ -230,6 +230,8 @@ wipe_exitMelt
   int	ticks )
 {
     Z_Free(y);
+    Z_Free(wipe_scr_start);
+    Z_Free(wipe_scr_end);
     return 0;
 }
 
@@ -240,7 +242,7 @@ wipe_StartScreen
   int	width,
   int	height )
 {
-    wipe_scr_start = screens[2];
+    wipe_scr_start = Z_Malloc(SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
     I_ReadScreen(wipe_scr_start);
     return 0;
 }
@@ -252,7 +254,7 @@ wipe_EndScreen
   int	width,
   int	height )
 {
-    wipe_scr_end = screens[3];
+    wipe_scr_end = Z_Malloc(SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
     I_ReadScreen(wipe_scr_end);
     V_DrawBlock(x, y, 0, width, height, wipe_scr_start); // restore start scr.
     return 0;
@@ -298,5 +300,5 @@ wipe_ScreenWipe
     }
 
     return !go;
-
 }
+
