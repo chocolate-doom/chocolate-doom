@@ -29,6 +29,7 @@
 #include "p_local.h"
 #include "r_local.h"
 #include "s_sound.h"
+#include "v_video.h"
 
 // Macros
 
@@ -116,6 +117,7 @@ void MN_LoadSlotText(void);
 
 // External Data
 
+extern int usegamma;
 extern int detailLevel;
 extern int screenblocks;
 

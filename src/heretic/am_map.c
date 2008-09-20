@@ -31,6 +31,7 @@
 #include "am_data.h"
 
 #include "doomkeys.h"
+#include "v_video.h"
 
 vertex_t KeyPoints[NUMKEYS];
 

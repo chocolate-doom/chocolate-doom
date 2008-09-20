@@ -1005,20 +1005,6 @@ int MN_TextAWidth(char *text);
 void MN_DrTextB(char *text, int x, int y);
 int MN_TextBWidth(char *text);
 
-//------
-// VIDEO
-//------
-
-extern int dirtybox[4];
-extern byte gammatable[5][256];
-extern int usegamma;
-
-void V_Init(void);              // Allocates buffer screens, call before R_Init
-void V_DrawPatch(int x, int y, patch_t * patch);
-void V_DrawFuzzPatch(int x, int y, patch_t * patch);
-void V_DrawShadowedPatch(int x, int y, patch_t * patch);
-void V_DrawRawScreen(byte * raw);
-
 #include "sounds.h"
 
 #endif // __DOOMDEF__

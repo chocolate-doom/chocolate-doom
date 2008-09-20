@@ -27,6 +27,7 @@
 #include "doomdef.h"
 #include "i_swap.h"
 #include "s_sound.h"
+#include "v_video.h"
 
 int finalestage;                // 0 = text, 1 = art screen
 int finalecount;

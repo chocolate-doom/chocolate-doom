@@ -57,6 +57,8 @@ void V_CopyRect(int srcx, int srcy, byte *source,
 
 void V_DrawPatch(int x, int y, patch_t *patch);
 void V_DrawPatchFlipped(int x, int y, patch_t *patch);
+void V_DrawFuzzPatch(int x, int y, patch_t *patch);
+void V_DrawShadowedPatch(int x, int y, patch_t *patch);
 
 void V_DrawPatchDirect(int x, int y, patch_t *patch);
 
@@ -65,6 +67,10 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch);
 void V_DrawBlock(int x, int y, int width, int height, byte *src);
 
 void V_MarkRect(int x, int y, int width, int height);
+
+// Draw a raw screen lump
+
+void V_DrawRawScreen(byte *raw);
 
 // Temporarily switch to using a different buffer to draw graphics, etc.
 

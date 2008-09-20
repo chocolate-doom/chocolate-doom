@@ -30,6 +30,7 @@
 
 #include "doomdef.h"
 #include "s_sound.h"
+#include "v_video.h"
 
 typedef enum
 {

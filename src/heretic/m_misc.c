@@ -365,6 +365,7 @@ void M_ForceUppercase(char *text)
 int usemouse;
 int usejoystick;
 
+extern int usegamma;
 extern int key_right, key_left, key_up, key_down;
 extern int key_strafeleft, key_straferight;
 extern int key_fire, key_use, key_strafe, key_speed;

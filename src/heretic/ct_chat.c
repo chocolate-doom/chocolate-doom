@@ -30,6 +30,7 @@
 #include "doomkeys.h"
 #include "p_local.h"
 #include "s_sound.h"
+#include "v_video.h"
 
 #define QUEUESIZE		128
 #define MESSAGESIZE	128

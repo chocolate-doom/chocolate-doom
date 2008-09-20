@@ -31,6 +31,7 @@
 #include "doomdef.h"
 #include "r_local.h"
 #include "dmx.h"
+#include "v_video.h"
 
 // Macros
 
