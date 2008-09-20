@@ -582,7 +582,7 @@ void WritePCXfile(char *filename, byte *data,
 // V_ScreenShot
 //
 
-void V_ScreenShot (void)
+void V_ScreenShot(char *format)
 {
     int i;
     char lbmname[12];
@@ -591,7 +591,7 @@ void V_ScreenShot (void)
 
     for (i=0; i<=99; i++)
     {
-        sprintf(lbmname, "DOOM%02i.pcx", i);
+        sprintf(lbmname, format, i);
 
         if (!M_FileExists(lbmname))
         {

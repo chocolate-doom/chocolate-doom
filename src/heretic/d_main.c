@@ -23,15 +23,11 @@
 
 // D_main.c
 
-#ifdef __WATCOMC__
-#include <dos.h>
-#include <graph.h>
-#include <sys\types.h>
-#include <direct.h>
-#endif
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "doomdef.h"
+#include "m_argv.h"
 #include "p_local.h"
 #include "s_sound.h"
 #include "v_video.h"

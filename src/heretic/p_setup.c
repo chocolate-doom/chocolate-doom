@@ -28,6 +28,7 @@
 
 #include "doomdef.h"
 #include "i_swap.h"
+#include "m_argv.h"
 #include "p_local.h"
 #include "s_sound.h"
 
