@@ -269,15 +269,14 @@
 #define ST_MAPTITLEY		0
 #define ST_MAPHEIGHT		1
 
+// graphics are drawn to a backing screen and blitted to the real screen
+byte                   *st_backing_screen;
 	    
 // main player in game
 static player_t*	plyr; 
 
 // ST_Start() has just been called
 static boolean		st_firsttime;
-
-// used to execute ST_Init() only once
-static int		veryfirsttime = 1;
 
 // lump number for PLAYPAL
 static int		lu_palette;
@@ -433,7 +432,7 @@ void ST_refreshBackground(void)
 
     if (st_statusbaron)
     {
-        V_UseBuffer(screens[BG]);
+        V_UseBuffer(st_backing_screen);
 
 	V_DrawPatch(ST_X, 0, sbar);
 
@@ -442,7 +441,7 @@ void ST_refreshBackground(void)
 
         V_RestoreBuffer();
 
-	V_CopyRect(ST_X, 0, screens[BG], ST_WIDTH, ST_HEIGHT, ST_X, ST_Y);
+	V_CopyRect(ST_X, 0, st_backing_screen, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y);
     }
 
 }
@@ -1407,7 +1406,7 @@ void ST_Stop (void)
 
 void ST_Init (void)
 {
-    veryfirsttime = 0;
     ST_loadData();
-    screens[4] = (byte *) Z_Malloc(ST_WIDTH*ST_HEIGHT, PU_STATIC, 0);
+    st_backing_screen = (byte *) Z_Malloc(ST_WIDTH * ST_HEIGHT, PU_STATIC, 0);
 }
+

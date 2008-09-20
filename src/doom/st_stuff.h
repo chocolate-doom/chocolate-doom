@@ -82,6 +82,7 @@ typedef enum
 
 boolean ST_Responder(event_t* ev);
 
+extern byte *st_backing_screen;
 extern cheatseq_t cheat_mus;
 extern cheatseq_t cheat_god;
 extern cheatseq_t cheat_ammo;

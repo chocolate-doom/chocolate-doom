@@ -77,7 +77,10 @@ int		columnofs[MAXWIDTH];
 //
 byte		translations[3][256];	
  
- 
+// Backing buffer containing the bezel drawn around the screen and 
+// surrounding background.
+
+static byte *background_buffer = NULL;
 
 
 //
@@ -815,20 +818,39 @@ void R_FillBackScreen (void)
     char       *name1 = DEH_String("FLOOR7_2");
 
     // DOOM II border patch.
-    char       *name2 = DEH_String("GRNROCK");
+    char *name2 = DEH_String("GRNROCK");
 
-    char*	name;
-	
-    if (scaledviewwidth == 320)
+    char *name;
+
+    // If we are running full screen, there is no need to do any of this,
+    // and the background buffer can be freed if it was previously in use.
+
+    if (scaledviewwidth == SCREENWIDTH)
+    {
+        if (background_buffer != NULL)
+        {
+            Z_Free(background_buffer);
+            background_buffer = NULL;
+        }
+
 	return;
+    }
+
+    // Allocate the background buffer if necessary
 	
-    if ( gamemode == commercial)
+    if (background_buffer == NULL)
+    {
+        background_buffer = Z_Malloc(SCREENWIDTH * (SCREENHEIGHT - SBARHEIGHT),
+                                     PU_STATIC, NULL);
+    }
+
+    if (gamemode == commercial)
 	name = name2;
     else
 	name = name1;
     
     src = W_CacheLumpName(name, PU_CACHE); 
-    dest = screens[1]; 
+    dest = background_buffer;
 	 
     for (y=0 ; y<SCREENHEIGHT-SBARHEIGHT ; y++) 
     { 
@@ -847,7 +869,7 @@ void R_FillBackScreen (void)
      
     // Draw screen and bezel; this is done to a separate screen buffer.
 
-    V_UseBuffer(screens[1]);
+    V_UseBuffer(background_buffer);
 
     patch = W_CacheLumpName(DEH_String("brdr_t"),PU_CACHE);
 
@@ -900,7 +922,11 @@ R_VideoErase
   //  is not optiomal, e.g. byte by byte on
   //  a 32bit CPU, as GNU GCC/Linux libc did
   //  at one point.
-    memcpy(I_VideoBuffer + ofs, screens[1] + ofs, count); 
+
+    if (background_buffer != NULL)
+    {
+        memcpy(I_VideoBuffer + ofs, background_buffer + ofs, count); 
+    }
 } 
 
 

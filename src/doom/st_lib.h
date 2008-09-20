@@ -35,7 +35,7 @@
 //
 // Background and foreground screen numbers
 //
-#define BG 4
+
 #define FG 0
 
 
