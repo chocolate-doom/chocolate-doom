@@ -47,11 +47,9 @@
 static byte *dest_screen = NULL;
 
 // Each screen is [SCREENWIDTH*SCREENHEIGHT]; 
-byte*				screens[5];	
+byte *screens[5];	
  
-int				dirtybox[4]; 
-
-
+int dirtybox[4]; 
 
 // Now where did these came from?
 const byte gammatable[5][256] =
@@ -366,7 +364,7 @@ void V_Init (void)
 
     for (i=0 ; i<4 ; i++)
     {
-	screens[i + 1] = base + i*SCREENWIDTH*SCREENHEIGHT;
+        screens[i + 1] = base + i*SCREENWIDTH*SCREENHEIGHT;
     }
 }
 
@@ -478,30 +476,31 @@ void WritePCXfile(char *filename, byte *data,
 
 void V_ScreenShot (void)
 {
-    int		i;
-    byte*	linear;
-    char	lbmname[12];
-    
-    // munge planar buffer to linear
-    linear = screens[2];
-    I_ReadScreen (linear);
+    int i;
+    char lbmname[12];
     
     // find a file name to save it to
-    strcpy(lbmname,"DOOM00.pcx");
-		
+
+    strcpy(lbmname, "DOOM00.pcx");
+
     for (i=0 ; i<=99 ; i++)
     {
-	lbmname[4] = i/10 + '0';
-	lbmname[5] = i%10 + '0';
-	if (!M_FileExists(lbmname))
-	    break;	// file doesn't exist
+        lbmname[4] = i / 10 + '0';
+        lbmname[5] = i % 10 + '0';
+        if (!M_FileExists(lbmname))
+        {
+            break;      // file doesn't exist
+        }
     }
-    if (i==100)
-	I_Error ("V_ScreenShot: Couldn't create a PCX");
-    
+
+    if (i == 100)
+    {
+        I_Error ("V_ScreenShot: Couldn't create a PCX");
+    }
+
     // save the pcx file
-    WritePCXfile (lbmname, linear,
-		  SCREENWIDTH, SCREENHEIGHT,
-		  W_CacheLumpName (DEH_String("PLAYPAL"), PU_CACHE));
+    WritePCXfile(lbmname, I_VideoBuffer,
+                 SCREENWIDTH, SCREENHEIGHT,
+                 W_CacheLumpName (DEH_String("PLAYPAL"), PU_CACHE));
 }
 

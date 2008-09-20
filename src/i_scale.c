@@ -38,7 +38,7 @@
 #define inline __inline
 #endif
 
-// Should be screens[0]
+// Should be I_VideoBuffer
 
 static byte *src_buffer;
 

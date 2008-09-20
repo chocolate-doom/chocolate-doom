@@ -283,7 +283,7 @@ wipe_ScreenWipe
     {
 	go = 1;
 	// wipe_scr = (byte *) Z_Malloc(width*height, PU_STATIC, 0); // DEBUG
-	wipe_scr = screens[0];
+	wipe_scr = I_VideoBuffer;
 	(*wipes[wipeno*3])(width, height, ticks);
     }
 
