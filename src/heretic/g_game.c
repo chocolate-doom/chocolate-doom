@@ -27,6 +27,7 @@
 #include <string.h>
 #include "doomdef.h"
 #include "doomkeys.h"
+#include "m_misc.h"
 #include "p_local.h"
 #include "s_sound.h"
 #include "v_video.h"
@@ -963,7 +964,7 @@ void G_Ticker(void)
                 G_DoPlayDemo();
                 break;
             case ga_screenshot:
-                M_ScreenShot();
+                V_ScreenShot("HTIC%02i.pcx");
                 gameaction = ga_nothing;
                 break;
             case ga_completed:

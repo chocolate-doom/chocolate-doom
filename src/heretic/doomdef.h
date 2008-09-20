@@ -909,10 +909,6 @@ int R_CheckTextureNumForName(char *name);
 //----
 //MISC
 //----
-extern int myargc;
-extern char **myargv;
-
-int M_CheckParm(char *check);
 // returns the position of the given parameter in the arg list (0 if not found)
 
 boolean M_ValidEpisodeMap(int episode, int map);
@@ -930,16 +926,9 @@ int P_Random(void);
 void M_ClearRandom(void);
 // fix randoms for demos
 
-void M_FindResponseFile(void);
-
 void M_ClearBox(fixed_t * box);
 void M_AddToBox(fixed_t * box, fixed_t x, fixed_t y);
 // bounding box functions
-
-boolean M_WriteFile(char const *name, void *source, int length);
-int M_ReadFile(char const *name, byte ** buffer);
-
-void M_ScreenShot(void);
 
 void M_LoadDefaults(void);
 
