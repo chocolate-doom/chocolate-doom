@@ -256,7 +256,7 @@ wipe_EndScreen
 {
     wipe_scr_end = Z_Malloc(SCREENWIDTH * SCREENHEIGHT, PU_STATIC, NULL);
     I_ReadScreen(wipe_scr_end);
-    V_DrawBlock(x, y, 0, width, height, wipe_scr_start); // restore start scr.
+    V_DrawBlock(x, y, width, height, wipe_scr_start); // restore start scr.
     return 0;
 }
 

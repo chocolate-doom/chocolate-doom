@@ -42,6 +42,10 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+// The screen buffer that the v_video.c code draws to.
+
+static byte *dest_screen = NULL;
+
 // Each screen is [SCREENWIDTH*SCREENHEIGHT]; 
 byte*				screens[5];	
  
@@ -321,66 +325,10 @@ V_DrawPatchFlipped
 // V_DrawPatchDirect
 // Draws directly to the screen on the pc. 
 //
-void
-V_DrawPatchDirect
-( int		x,
-  int		y,
-  int		scrn,
-  patch_t*	patch ) 
+
+void V_DrawPatchDirect(int x, int y, int scrn, patch_t *patch) 
 {
     V_DrawPatch (x,y,scrn, patch); 
-
-    /*
-    int		count;
-    int		col; 
-    column_t*	column; 
-    byte*	desttop;
-    byte*	dest;
-    byte*	source; 
-    int		w; 
-	 
-    y -= SHORT(patch->topoffset); 
-    x -= SHORT(patch->leftoffset); 
-
-#ifdef RANGECHECK 
-    if (x<0
-	||x+SHORT(patch->width) >SCREENWIDTH
-	|| y<0
-	|| y+SHORT(patch->height)>SCREENHEIGHT 
-	|| (unsigned)scrn>4)
-    {
-	I_Error ("Bad V_DrawPatchDirect");
-    }
-#endif 
- 
-    //	V_MarkRect (x, y, SHORT(patch->width), SHORT(patch->height)); 
-    desttop = destscreen + y*SCREENWIDTH/4 + (x>>2); 
-	 
-    w = SHORT(patch->width); 
-    for ( col = 0 ; col<w ; col++) 
-    { 
-	outp (SC_INDEX+1,1<<(x&3)); 
-	column = (column_t *)((byte *)patch + LONG(patch->columnofs[col])); 
- 
-	// step through the posts in a column 
-	 
-	while (column->topdelta != 0xff ) 
-	{ 
-	    source = (byte *)column + 3; 
-	    dest = desttop + column->topdelta*SCREENWIDTH/4; 
-	    count = column->length; 
- 
-	    while (count--) 
-	    { 
-		*dest = *source++; 
-		dest += SCREENWIDTH/4; 
-	    } 
-	    column = (column_t *)(  (byte *)column + column->length 
-				    + 4 ); 
-	} 
-	if ( ((++x)&3) == 0 ) 
-	    desttop++;	// go to next byte, not next plane 
-    }*/ 
 } 
  
 
@@ -389,23 +337,16 @@ V_DrawPatchDirect
 // V_DrawBlock
 // Draw a linear block of pixels into the view buffer.
 //
-void
-V_DrawBlock
-( int		x,
-  int		y,
-  int		scrn,
-  int		width,
-  int		height,
-  byte*		src ) 
+
+void V_DrawBlock(int x, int y, int width, int height, byte *src) 
 { 
-    byte*	dest; 
-	 
+    byte *dest; 
+ 
 #ifdef RANGECHECK 
-    if (x<0
-	||x+width >SCREENWIDTH
-	|| y<0
-	|| y+height>SCREENHEIGHT 
-	|| (unsigned)scrn>4 )
+    if (x < 0
+     || x + width >SCREENWIDTH
+     || y < 0
+     || y + height > SCREENHEIGHT)
     {
 	I_Error ("Bad V_DrawBlock");
     }
@@ -413,7 +354,7 @@ V_DrawBlock
  
     V_MarkRect (x, y, width, height); 
  
-    dest = screens[scrn] + y*SCREENWIDTH+x; 
+    dest = dest_screen + y * SCREENWIDTH + x; 
 
     while (height--) 
     { 
@@ -442,11 +383,18 @@ void V_Init (void)
     }
 }
 
+// Set the buffer that the code draws to.
+
+void V_UseBuffer(byte *buffer)
+{
+    dest_screen = buffer;
+}
+
 // Restore screen buffer to the i_video screen buffer.
 
 void V_RestoreBuffer(void)
 {
-    screens[0] = I_VideoBuffer;
+    dest_screen = I_VideoBuffer;
 }
 
 //

@@ -76,14 +76,8 @@ V_DrawPatchDirect
 
 
 // Draw a linear block of pixels into the view buffer.
-void
-V_DrawBlock
-( int		x,
-  int		y,
-  int		scrn,
-  int		width,
-  int		height,
-  byte*		src );
+
+void V_DrawBlock(int x, int y, int width, int height, byte *src);
 
 // Reads a linear block of pixels into the view buffer.
 void
@@ -105,6 +99,7 @@ V_MarkRect
 
 void V_ScreenShot(void);
 
+void V_UseBuffer(byte *buffer);
 void V_RestoreBuffer(void);
 
 #endif
