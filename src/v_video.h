@@ -79,27 +79,17 @@ V_DrawPatchDirect
 
 void V_DrawBlock(int x, int y, int width, int height, byte *src);
 
-// Reads a linear block of pixels into the view buffer.
-void
-V_GetBlock
-( int		x,
-  int		y,
-  int		scrn,
-  int		width,
-  int		height,
-  byte*		dest );
+void V_MarkRect(int x, int y, int width, int height);
 
+// Temporarily switch to using a different buffer to draw graphics, etc.
 
-void
-V_MarkRect
-( int		x,
-  int		y,
-  int		width,
-  int		height );
+void V_UseBuffer(byte *buffer);
+
+// Return to using the normal screen buffer to draw graphics.
+
+void V_RestoreBuffer(void);
 
 void V_ScreenShot(void);
 
-void V_UseBuffer(byte *buffer);
-void V_RestoreBuffer(void);
-
 #endif
+
