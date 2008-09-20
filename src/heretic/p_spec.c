@@ -25,6 +25,7 @@
 
 #include "doomdef.h"
 #include "i_system.h"
+#include "i_timer.h"
 #include "m_random.h"
 #include "p_local.h"
 #include "s_sound.h"
@@ -1207,7 +1208,7 @@ void P_InitAmbientSound(void)
 {
     AmbSfxCount = 0;
     AmbSfxVolume = 0;
-    AmbSfxTics = 10 * TICSPERSEC;
+    AmbSfxTics = 10 * TICRATE;
     AmbSfxPtr = AmbSndSeqInit;
 }
 
@@ -1287,7 +1288,7 @@ void P_AmbientSound(void)
                 done = true;
                 break;
             case afxcmd_end:
-                AmbSfxTics = 6 * TICSPERSEC + P_Random();
+                AmbSfxTics = 6 * TICRATE + P_Random();
                 AmbSfxPtr = LevelAmbientSfx[P_Random() % AmbSfxCount];
                 done = true;
                 break;
