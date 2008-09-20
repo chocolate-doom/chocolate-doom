@@ -24,6 +24,7 @@
 
 #include "doomdef.h"
 #include "r_local.h"
+#include "v_video.h"
 
 /*
 

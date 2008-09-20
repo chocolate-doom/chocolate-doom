@@ -26,6 +26,7 @@
 #include "doomdef.h"
 #include "p_local.h"
 #include "s_sound.h"
+#include "v_video.h"
 
 //----------------------------------------------------------------------------
 //

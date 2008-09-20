@@ -25,6 +25,7 @@
 
 #include "doomdef.h"
 #include "p_local.h"
+#include "v_video.h"
 
 int leveltime;
 int TimerGame;

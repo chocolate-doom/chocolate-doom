@@ -28,6 +28,7 @@
 #include "dmx.h"
 #include "sounds.h"
 #include "i_sound.h"
+#include "v_video.h"
 
 /*
 ===============
