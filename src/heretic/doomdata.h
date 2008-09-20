@@ -107,9 +107,6 @@ typedef struct
     short offset;
 } mapseg_t;
 
-enum
-{ BOXTOP, BOXBOTTOM, BOXLEFT, BOXRIGHT };       // bbox coordinates
-
 #define	NF_SUBSECTOR	0x8000
 typedef struct
 {

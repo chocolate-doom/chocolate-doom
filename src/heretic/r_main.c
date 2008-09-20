@@ -25,10 +25,9 @@
 #include <stdlib.h>
 #include <math.h>
 #include "doomdef.h"
+#include "m_bbox.h"
 #include "r_local.h"
-/*
-
-*/
+#include "tables.h"
 
 int viewangleoffset;
 
@@ -204,24 +203,6 @@ int R_PointOnSegSide(fixed_t x, fixed_t y, seg_t * line)
 =
 ===============================================================================
 */
-
-// to get a global angle from cartesian coordinates, the coordinates are
-// flipped until they are in the first octant of the coordinate system, then
-// the y (<=x) is scaled and divided by x to get a tangent (slope) value
-// which is looked up in the tantoangle[] table.  The +1 size is to handle
-// the case when x==y without additional checking.
-#define	SLOPERANGE	2048
-#define	SLOPEBITS	11
-#define	DBITS		(FRACBITS-SLOPEBITS)
-
-int SlopeDiv(unsigned num, unsigned den)
-{
-    unsigned ans;
-    if (den < 512)
-        return SLOPERANGE;
-    ans = (num << 3) / (den >> 8);
-    return ans <= SLOPERANGE ? ans : SLOPERANGE;
-}
 
 angle_t R_PointToAngle(fixed_t x, fixed_t y)
 {
