@@ -46,9 +46,6 @@
 
 static byte *dest_screen = NULL;
 
-// Each screen is [SCREENWIDTH*SCREENHEIGHT]; 
-byte *screens[5];	
- 
 int dirtybox[4]; 
 
 // Now where did these came from?
@@ -355,17 +352,9 @@ void V_DrawBlock(int x, int y, int width, int height, byte *src)
 // 
 void V_Init (void) 
 { 
-    int i;
-    byte *base;
-		
-    // stick these in low dos memory on PCs
-
-    base = Z_Malloc(SCREENWIDTH * SCREENHEIGHT * 3, PU_STATIC, NULL);
-
-    for (i=0 ; i<4 ; i++)
-    {
-        screens[i + 1] = base + i*SCREENWIDTH*SCREENHEIGHT;
-    }
+    // no-op!
+    // There used to be separate screens that could be drawn to; these are
+    // now handled in the upper layers.
 }
 
 // Set the buffer that the code draws to.

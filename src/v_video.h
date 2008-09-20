@@ -42,11 +42,6 @@
 #define CENTERY			(SCREENHEIGHT/2)
 
 
-// Screen 0 is the screen updated by I_Update screen.
-// Screen 1 is an extra buffer.
-
-extern byte *screens[5];
-
 extern int dirtybox[4];
 
 extern const byte gammatable[5][256];

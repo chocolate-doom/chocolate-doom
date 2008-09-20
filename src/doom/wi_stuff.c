@@ -400,18 +400,17 @@ static patch_t*		bp[MAXPLAYERS];
  // Name graphics of each level (centered)
 static patch_t**	lnames;
 
+// Buffer storing the backdrop
+static patch_t *background;
+
 //
 // CODE
 //
 
 // slam background
-// UNUSED static unsigned char *background=0;
-
-
 void WI_slamBackground(void)
 {
-    memcpy(I_VideoBuffer, screens[1], SCREENWIDTH * SCREENHEIGHT);
-    V_MarkRect (0, 0, SCREENWIDTH, SCREENHEIGHT);
+    V_DrawPatch(0, 0, background);
 }
 
 // The ticker is used to detect keys
@@ -1551,21 +1550,9 @@ typedef void (*load_callback_t)(char *lumpname, patch_t **variable);
 
 static void WI_loadUnloadData(load_callback_t callback)
 {
-    int		i;
-    int		j;
-    char	name[9];
-    anim_t*	a;
-
-    // UNUSED unsigned char *pic = screens[1];
-    // if (gamemode == commercial)
-    // {
-    // darken the background image
-    // while (pic != screens[1] + SCREENHEIGHT*SCREENWIDTH)
-    // {
-    //   *pic = colormaps[256*25 + *pic];
-    //   pic++;
-    // }
-    //}
+    int i, j;
+    char name[9];
+    anim_t *a;
 
     if (gamemode == commercial)
     {
@@ -1692,6 +1679,24 @@ static void WI_loadUnloadData(load_callback_t callback)
         callback(name, &bp[i]);
     }
 
+    // Background image
+
+    if (gamemode == commercial)
+    {
+	strcpy(name, DEH_String("INTERPIC"));
+    }
+    else if (gamemode == retail && wbs->epsd == 3)
+    {
+	strcpy(name, DEH_String("INTERPIC"));
+    }
+    else 
+    {
+	sprintf(name, DEH_String("WIMAP%d"), wbs->epsd);
+    }
+    
+    // Draw backdrop and save to a temporary buffer
+  
+    callback(name, &background);
 }
 
 static void WI_loadCallback(char *name, patch_t **variable)
@@ -1701,9 +1706,6 @@ static void WI_loadCallback(char *name, patch_t **variable)
 
 void WI_loadData(void)
 {
-    char bg_lumpname[9];
-    patch_t *bg;
-
     if (gamemode == commercial)
     {
 	NUMCMAPS = 32;								
@@ -1726,28 +1728,6 @@ void WI_loadData(void)
 
     // dead face
     bstar = W_CacheLumpName(DEH_String("STFDEAD0"), PU_STATIC);
-
-    // Background image
-
-    if (gamemode == commercial)
-    {
-	strcpy(bg_lumpname, DEH_String("INTERPIC"));
-    }
-    else if (gamemode == retail && wbs->epsd == 3)
-    {
-	strcpy(bg_lumpname, DEH_String("INTERPIC"));
-    }
-    else 
-    {
-	sprintf(bg_lumpname, DEH_String("WIMAP%d"), wbs->epsd);
-    }
-    
-    // Draw backdrop and save to a temporary buffer
-  
-    V_UseBuffer(screens[1]);
-    bg = W_CacheLumpName(bg_lumpname, PU_CACHE);
-    V_DrawPatch(0, 0, bg);
-    V_RestoreBuffer();
 }
 
 static void WI_unloadCallback(char *name, patch_t **variable)
