@@ -69,6 +69,10 @@ boolean deh_allow_long_strings = false;
 
 boolean deh_allow_long_cheats = false;
 
+// If false, dehacked cheat replacements are ignored.
+
+boolean deh_apply_cheats = true;
+
 //
 // List of section types:
 //
@@ -382,6 +386,17 @@ void DEH_Init(void)
     int p;
 
     InitialiseSections();
+
+    //!
+    // @category mod
+    //
+    // Ignore cheats in dehacked files.
+    //
+
+    if (M_CheckParm("-nocheats") > 0) 
+    {
+	deh_apply_cheats = false;
+    }
 
     //!
     // @arg <files>

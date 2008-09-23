@@ -13,10 +13,14 @@
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Option parameters="-iwad d:\russell\games\doom2\iwad\doom2.wad" />
+				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
 					<Add option="-W" />
-					<Add option="-g" />
+					<Add option="-gdwarf-2" />
 				</Compiler>
+				<Linker>
+					<Add option="-lpcsound-dbg -ltextscreen-dbg" />
+				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="..\bin\$(PROJECT_NAME).exe" prefix_auto="0" extension_auto="0" />
@@ -24,11 +28,13 @@
 				<Option object_output="..\obj\rel" />
 				<Option type="0" />
 				<Option compiler="gcc" />
+				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
 					<Add option="-O2" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add option="-lpcsound -ltextscreen" />
 				</Linker>
 			</Target>
 		</Build>
@@ -42,7 +48,7 @@
 			<Add directory="..\pcsound" />
 		</Compiler>
 		<Linker>
-			<Add option="-lpcsound -ltextscreen -lmingw32 -lSDLmain -lSDL -lSDL_mixer -lSDL_net -mwindows" />
+			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_mixer -lSDL_net -mwindows" />
 			<Add directory="..\lib" />
 		</Linker>
 		<Unit filename="config.h" />

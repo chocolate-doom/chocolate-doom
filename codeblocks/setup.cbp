@@ -12,10 +12,15 @@
 				<Option object_output="..\obj\dbg\" />
 				<Option type="0" />
 				<Option compiler="gcc" />
+				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
 					<Add option="-W" />
 					<Add option="-g" />
+					<Add option="-gdwarf-2" />
 				</Compiler>
+				<Linker>
+					<Add option="-ltextscreen-dbg" />
+				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="..\bin\$(PROJECT_NAME).exe" prefix_auto="0" extension_auto="0" />
@@ -23,11 +28,13 @@
 				<Option object_output="..\obj\rel\" />
 				<Option type="0" />
 				<Option compiler="gcc" />
+				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
 					<Add option="-O2" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
+					<Add option="-ltextscreen" />
 				</Linker>
 			</Target>
 		</Build>
@@ -45,7 +52,7 @@
 			<Add directory="..\setup" />
 		</ResourceCompiler>
 		<Linker>
-			<Add option="-ltextscreen -lmingw32 -lSDLmain -lSDL -mwindows" />
+			<Add option="-lmingw32 -lSDLmain -lSDL -mwindows" />
 			<Add directory="..\lib" />
 		</Linker>
 		<Unit filename="setup-res.rc">
