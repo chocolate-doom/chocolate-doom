@@ -41,7 +41,23 @@ int key_fire = KEY_RCTRL;
 int key_use = ' ';
 int key_strafe = KEY_RALT;
 int key_speed = KEY_RSHIFT; 
+
+// 
+// Heretic keyboard controls
+//
  
+int key_flyup = KEY_PGUP;
+int key_flydown = KEY_INS;
+int key_flycenter = KEY_HOME;
+
+int key_lookup = KEY_PGDN;
+int key_lookdown = KEY_DEL;
+int key_lookcenter = KEY_END;
+
+int key_invleft = '[';
+int key_invright = ']';
+int key_useartifact = KEY_ENTER;
+
 //
 // Mouse controls
 //
@@ -114,5 +130,20 @@ void M_BindBaseControls(void)
     M_BindVariable("mouseb_backward",    &mousebbackward);
     M_BindVariable("dclick_use",         &dclick_use);
     M_BindVariable("novert",             &novert);
+}
+
+void M_BindHereticControls(void)
+{
+    M_BindVariable("key_flyup",          &key_flyup);
+    M_BindVariable("key_flydown",        &key_flydown);
+    M_BindVariable("key_flycenter",      &key_flycenter);
+
+    M_BindVariable("key_lookup",         &key_lookup);
+    M_BindVariable("key_lookdown",       &key_lookdown);
+    M_BindVariable("key_lookcenter",     &key_lookcenter);
+
+    M_BindVariable("key_invleft",        &key_invleft);
+    M_BindVariable("key_invright",       &key_invright);
+    M_BindVariable("key_useartifact",    &key_useartifact);
 }
 

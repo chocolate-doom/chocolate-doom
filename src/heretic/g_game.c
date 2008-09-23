@@ -29,6 +29,7 @@
 #include "doomkeys.h"
 #include "i_timer.h"
 #include "i_system.h"
+#include "m_controls.h"
 #include "m_misc.h"
 #include "m_random.h"
 #include "p_local.h"
@@ -134,21 +135,6 @@ byte *savebuffer, *save_p;
 //
 // controls (have defaults)
 //
-int key_right, key_left, key_up, key_down;
-int key_strafeleft, key_straferight;
-int key_fire, key_use, key_strafe, key_speed;
-int key_flyup, key_flydown, key_flycenter;
-int key_lookup, key_lookdown, key_lookcenter;
-int key_invleft, key_invright, key_useartifact;
-
-int mousebfire;
-int mousebstrafe;
-int mousebforward;
-
-int joybfire;
-int joybstrafe;
-int joybuse;
-int joybspeed;
 
 
 

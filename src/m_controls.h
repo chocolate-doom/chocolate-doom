@@ -35,6 +35,16 @@ extern int key_fire;
 extern int key_use;
 extern int key_strafe;
 extern int key_speed;
+
+extern int key_flyup;
+extern int key_flydown;
+extern int key_flycenter;
+extern int key_lookup;
+extern int key_lookdown;
+extern int key_lookcenter;
+extern int key_invleft;
+extern int key_invright;
+extern int key_useartifact;
  
 extern int mousebfire;
 extern int mousebstrafe;
@@ -56,6 +66,7 @@ extern int dclick_use;
 extern int novert;
  
 void M_BindBaseControls(void);
+void M_BindHereticControls(void);
 
 #endif /* #ifndef __M_CONTROLS_H__ */
 

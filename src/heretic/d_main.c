@@ -26,9 +26,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "ct_chat.h"
 #include "doomdef.h"
+#include "i_system.h"
 #include "i_video.h"
 #include "m_argv.h"
+#include "m_config.h"
+#include "m_controls.h"
 #include "p_local.h"
 #include "s_sound.h"
 #include "v_video.h"
@@ -701,6 +705,35 @@ void CleanExit(void)
     exit(1);
 }
 #endif
+
+//
+// Add configuration file variable bindings.
+//
+
+void D_BindVariables(void)
+{
+    extern int screenblocks;
+    extern int snd_Channels;
+    int i;
+
+    I_BindVariables();
+    M_BindBaseControls();
+    M_BindHereticControls();
+
+    M_BindVariable("mouse_sensitivity",      &mouseSensitivity);
+    M_BindVariable("sfx_volume",             &snd_MaxVolume);
+    M_BindVariable("music_volume",           &snd_MusicVolume);
+    M_BindVariable("screenblocks",           &screenblocks);
+    M_BindVariable("snd_channels",           &snd_Channels);
+
+    for (i=0; i<10; ++i)
+    {
+        char buf[12];
+
+        sprintf(buf, "chatmacro%i", i);
+        M_BindVariable(buf, &chat_macros[i]);
+    }
+}
 
 //---------------------------------------------------------------------------
 //

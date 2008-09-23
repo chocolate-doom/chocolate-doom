@@ -174,6 +174,60 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_straferight),
 
     //!
+    // Keyboard key to fly upward.
+    //
+
+    CONFIG_VARIABLE_KEY(key_flyup),
+
+    //!
+    // Keyboard key to fly downwards.
+    //
+
+    CONFIG_VARIABLE_KEY(key_flydown),
+    
+    //!
+    // Keyboard key to center flying.
+    //
+
+    CONFIG_VARIABLE_KEY(key_flycenter),
+
+    //!
+    // Keyboard key to look up.
+    //
+
+    CONFIG_VARIABLE_KEY(key_lookup),
+
+    //!
+    // Keyboard key to look down.
+    //
+
+    CONFIG_VARIABLE_KEY(key_lookdown),
+
+    //!
+    // Keyboard key to center the view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_lookcenter),
+
+    //!
+    // Keyboard key to scroll left in the inventory.
+    //
+
+    CONFIG_VARIABLE_KEY(key_invleft),
+
+    //!
+    // Keyboard key to scroll right in the inventory.
+    //
+
+    CONFIG_VARIABLE_KEY(key_invright),
+
+    //!
+    // Keyboard key to use the current item in the inventory.
+    //
+
+    CONFIG_VARIABLE_KEY(key_useartifact),
+
+    //!
     // Keyboard key to fire the currently selected weapon.
     //
 
