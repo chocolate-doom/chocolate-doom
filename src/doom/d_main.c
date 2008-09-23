@@ -510,7 +510,7 @@ void D_DoAdvanceDemo (void)
     paused = false;
     gameaction = ga_nothing;
 
-    if ( gamemode == retail )
+    if (gamemode == retail && gameversion != exe_chex)
       demosequence = (demosequence+1)%7;
     else
       demosequence = (demosequence+1)%6;

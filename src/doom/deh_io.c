@@ -142,7 +142,7 @@ char *DEH_ReadLine(deh_context_t *context)
     int c;
     int pos;
 
-    for (pos=0; ; ++pos)
+    for (pos = 0;;)
     {
         c = DEH_GetChar(context);
 
@@ -150,11 +150,6 @@ char *DEH_ReadLine(deh_context_t *context)
         {
             // end of file
 
-            return NULL;
-        }
-
-        if (c == '\0')
-        {
             return NULL;
         }
 
@@ -172,9 +167,13 @@ char *DEH_ReadLine(deh_context_t *context)
             context->readbuffer[pos] = '\0';
             break;
         }
-        else
+        else if (c != '\0')
         {
+            // normal character; don't allow NUL characters to be
+            // added.
+
             context->readbuffer[pos] = (char) c;
+            ++pos;
         }
     }
     
