@@ -346,7 +346,9 @@ void D_BindVariables(void)
 
     I_BindVariables();
     M_BindBaseControls();
+#ifdef FEATURE_MULTIPLAYER
     NET_BindVariables();
+#endif
 
     M_BindVariable("mouse_sensitivity",      &mouseSensitivity);
     M_BindVariable("sfx_volume",             &sfxVolume);
