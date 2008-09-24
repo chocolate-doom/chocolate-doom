@@ -172,7 +172,9 @@ void HSendPacket(int node, int flags)
         fprintf(debugfile, "\n");
     }
 
+#ifdef I_NET
     I_NetCmd();
+#endif
 }
 
 /*
@@ -201,7 +203,9 @@ boolean HGetPacket(void)
         return false;
 
     doomcom->command = CMD_GET;
+#ifdef I_NET
     I_NetCmd();
+#endif
     if (doomcom->remotenode == -1)
         return false;
 
@@ -599,7 +603,9 @@ void D_CheckNetGame(void)
     }
 
 // I_InitNetwork sets doomcom and netgame
+#ifdef I_NET
     I_InitNetwork();
+#endif 
     if (doomcom->id != DOOMCOM_ID)
         I_Error("Doomcom buffer invalid!");
     netbuffer = &doomcom->data;
