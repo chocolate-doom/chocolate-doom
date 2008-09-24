@@ -112,6 +112,10 @@ void I_StartFrame (void);
 
 void I_StartTic (void);
 
+// Enable the loading disk image displayed when reading from disk.
+
+void I_EnableLoadingDisk(void);
+
 extern char *video_driver;
 extern boolean screenvisible;
 extern float mouse_acceleration;

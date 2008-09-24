@@ -412,7 +412,8 @@ void D_DoomLoop (void)
 
     TryRunTics();
 
-    I_InitGraphics ();
+    I_InitGraphics();
+    I_EnableLoadingDisk();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
     I_SetWindowTitle(gamedescription);
 
