@@ -665,7 +665,7 @@ void tprintf(char *msg, int initflag)
     _settextposition(25, 1);
     drawstatus();
 #else
-    puts(msg);
+    printf("%s", msg);
 #endif
 }
 
@@ -865,6 +865,8 @@ void D_DoomMain(void)
     printf("V_Init: allocate screens.\n");
     V_Init();
 
+    M_SetConfigDir();
+
     // Load defaults before initing other systems
     printf("M_LoadDefaults: Load system defaults.\n");
     M_LoadDefaults();
@@ -941,6 +943,11 @@ void D_DoomMain(void)
     tprintf("I_Init: Setting up machine state.\n", 1);
     I_Init();
     IncThermo();
+
+    tprintf("S_Init... ", 1);
+    S_Init();
+    //IO_StartupTimer();
+    S_Start();
 
     tprintf("D_CheckNetGame: Checking network game status.\n", 1);
     hgotoxy(17, 9);
