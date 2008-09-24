@@ -68,8 +68,6 @@
 // ticcmd_t
 #include "d_ticcmd.h"
 
-extern byte *destview, *destscreen;     // PC direct to screen pointers
-
 #define	SAVEGAMENAME "hticsav"
 #define SAVEGAMENAMECD "c:\\heretic.cd\\hticsav"
 

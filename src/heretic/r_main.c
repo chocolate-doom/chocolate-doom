@@ -802,16 +802,6 @@ void R_SetupFrame(player_t * player)
         BorderTopRefresh = false;
         UpdateState |= I_MESSAGES;
     }
-
-    destview = destscreen + (viewwindowx >> 2) + viewwindowy * 80;
-
-#if 0
-    {
-        static int frame;
-        memset(I_VideoBuffer, frame, SCREENWIDTH * SCREENHEIGHT);
-        frame++;
-    }
-#endif
 }
 
 /*
