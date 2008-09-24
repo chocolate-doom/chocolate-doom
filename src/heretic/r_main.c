@@ -662,7 +662,7 @@ void R_ExecuteSetViewSize(void)
 */
 
 int detailLevel;
-int screenblocks;
+int screenblocks = 10;
 
 void R_Init(void)
 {

@@ -55,14 +55,9 @@ byte *soundCurve;
 extern sfxinfo_t S_sfx[];
 extern musicinfo_t S_music[];
 
-extern int snd_DesiredMusicDevice;
-extern int snd_DesiredSfxDevice;
-int snd_MaxVolume;
-int snd_MusicVolume;
-int snd_Channels;
-
-extern int startepisode;
-extern int startmap;
+int snd_MaxVolume = 10;
+int snd_MusicVolume = 10;
+int snd_Channels = 16;
 
 int AmbChan;
 
