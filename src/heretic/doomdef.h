@@ -682,14 +682,6 @@ byte *I_ZoneBase(int *size);
 // asyncronous interrupt functions should maintain private ques that are
 // read by the syncronous functions to be converted into events
 
-void I_Init(void);
-// called by D_DoomMain
-// determines the hardware configuration and sets up the video mode
-
-void I_InitNetwork(void);
-void I_NetCmd(void);
-
-void I_Update(void);
 // Copy buffer to video
 
 byte *I_AllocLow(int length);
