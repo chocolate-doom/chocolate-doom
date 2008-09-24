@@ -580,6 +580,28 @@ void D_ArbitrateNetStart(void)
 }
 
 /*
+====================
+=
+= I_InitNetwork
+=
+====================
+*/
+
+static void I_InitNetwork(void)
+{
+    doomcom = malloc(sizeof(*doomcom));
+    memset(doomcom, 0, sizeof(*doomcom));
+    netgame = false;
+    doomcom->id = DOOMCOM_ID;
+    doomcom->numplayers = 1;
+    doomcom->numnodes = 1;
+    doomcom->deathmatch = false;
+    doomcom->consoleplayer = 0;
+    doomcom->ticdup = 1;
+    doomcom->extratics = 0;
+}
+
+/*
 ===================
 =
 = D_CheckNetGame
@@ -603,9 +625,7 @@ void D_CheckNetGame(void)
     }
 
 // I_InitNetwork sets doomcom and netgame
-#ifdef I_NET
     I_InitNetwork();
-#endif 
     if (doomcom->id != DOOMCOM_ID)
         I_Error("Doomcom buffer invalid!");
     netbuffer = &doomcom->data;
