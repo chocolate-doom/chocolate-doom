@@ -77,6 +77,8 @@ int curpos;
 int inv_ptr;
 int ArtifactFlash;
 
+static int DisplayTicker = 0;
+
 // Private Data
 
 static int HealthMarker;
@@ -1154,8 +1156,6 @@ static void CheatSoundFunc(player_t * player, Cheat_t * cheat)
 
 static void CheatTickerFunc(player_t * player, Cheat_t * cheat)
 {
-    extern int DisplayTicker;
-
     DisplayTicker = !DisplayTicker;
     if (DisplayTicker)
     {
@@ -1165,6 +1165,8 @@ static void CheatTickerFunc(player_t * player, Cheat_t * cheat)
     {
         P_SetMessage(player, TXT_CHEATTICKEROFF, false);
     }
+
+    I_DisplayFPSDots(DisplayTicker);
 }
 
 static void CheatArtifact1Func(player_t * player, Cheat_t * cheat)
