@@ -1234,10 +1234,6 @@ void I_Init(void)
 //      I_StartupJoystick();
 //      tprintf("I_StartupKeyboard ",1);
 //      I_StartupKeyboard();
-    tprintf("S_Init... ", 1);
-    S_Init();
-    //IO_StartupTimer();
-    S_Start();
 }
 
 
