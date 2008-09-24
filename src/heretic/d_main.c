@@ -743,6 +743,7 @@ void D_BindVariables(void)
 
 void D_DoomMain(void)
 {
+    int i;
     int p;
     int e;
     int m;
@@ -871,7 +872,11 @@ void D_DoomMain(void)
     Z_Init();
 
     printf("W_Init: Init WADfiles.\n");
-    W_InitMultipleFiles(wadfiles);
+
+    for (i=0; wadfiles[i] != NULL; ++i)
+    {
+        W_AddFile(wadfiles[i]);
+    }
 
     if (W_CheckNumForName("E2M1") == -1)
     {                           // Can't find episode 2 maps, must be the shareware WAD
