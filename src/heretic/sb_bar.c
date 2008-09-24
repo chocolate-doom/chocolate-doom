@@ -25,32 +25,18 @@
 
 #include "doomdef.h"
 #include "i_video.h"
+#include "m_cheat.h"
 #include "m_random.h"
 #include "p_local.h"
 #include "s_sound.h"
 #include "v_video.h"
-
-// Macros
-
-#define CHEAT_ENCRYPT(a) \
-	((((a)&1)<<5)+ \
-	(((a)&2)<<1)+ \
-	(((a)&4)<<4)+ \
-	(((a)&8)>>3)+ \
-	(((a)&16)>>3)+ \
-	(((a)&32)<<2)+ \
-	(((a)&64)>>2)+ \
-	(((a)&128)>>4))
 
 // Types
 
 typedef struct Cheat_s
 {
     void (*func) (player_t * player, struct Cheat_s * cheat);
-    byte *sequence;
-    byte *pos;
-    int args[2];
-    int currentArg;
+    cheatseq_t *seq;
 } Cheat_t;
 
 // Private Functions
@@ -65,7 +51,6 @@ static void DrawMainBar(void);
 static void DrawInventoryBar(void);
 static void DrawFullScreenStuff(void);
 static boolean HandleCheats(byte key);
-static boolean CheatAddKey(Cheat_t * cheat, byte key, boolean * eat);
 static void CheatGodFunc(player_t * player, Cheat_t * cheat);
 static void CheatNoClipFunc(player_t * player, Cheat_t * cheat);
 static void CheatWeaponsFunc(player_t * player, Cheat_t * cheat);
@@ -131,200 +116,69 @@ int FontBNumBase;
 int spinbooklump;
 int spinflylump;
 
-static byte CheatLookup[256];
-
 // Toggle god mode
-static byte CheatGodSeq[] = {
-    CHEAT_ENCRYPT('q'),
-    CHEAT_ENCRYPT('u'),
-    CHEAT_ENCRYPT('i'),
-    CHEAT_ENCRYPT('c'),
-    CHEAT_ENCRYPT('k'),
-    CHEAT_ENCRYPT('e'),
-    CHEAT_ENCRYPT('n'),
-    0xff
-};
+cheatseq_t CheatGodSeq = CHEAT("quicken", 0);
 
 // Toggle no clipping mode
-static byte CheatNoClipSeq[] = {
-    CHEAT_ENCRYPT('k'),
-    CHEAT_ENCRYPT('i'),
-    CHEAT_ENCRYPT('t'),
-    CHEAT_ENCRYPT('t'),
-    CHEAT_ENCRYPT('y'),
-    0xff
-};
+cheatseq_t CheatNoClipSeq = CHEAT("kitty", 0);
 
 // Get all weapons and ammo
-static byte CheatWeaponsSeq[] = {
-    CHEAT_ENCRYPT('r'),
-    CHEAT_ENCRYPT('a'),
-    CHEAT_ENCRYPT('m'),
-    CHEAT_ENCRYPT('b'),
-    CHEAT_ENCRYPT('o'),
-    0xff
-};
+cheatseq_t CheatWeaponsSeq = CHEAT("rambo", 0);
 
 // Toggle tome of power
-static byte CheatPowerSeq[] = {
-    CHEAT_ENCRYPT('s'),
-    CHEAT_ENCRYPT('h'),
-    CHEAT_ENCRYPT('a'),
-    CHEAT_ENCRYPT('z'),
-    CHEAT_ENCRYPT('a'),
-    CHEAT_ENCRYPT('m'),
-    0xff, 0
-};
+cheatseq_t CheatPowerSeq = CHEAT("shazam", 0);
 
 // Get full health
-static byte CheatHealthSeq[] = {
-    CHEAT_ENCRYPT('p'),
-    CHEAT_ENCRYPT('o'),
-    CHEAT_ENCRYPT('n'),
-    CHEAT_ENCRYPT('c'),
-    CHEAT_ENCRYPT('e'),
-    0xff
-};
+cheatseq_t CheatHealthSeq = CHEAT("ponce", 0);
 
 // Get all keys
-static byte CheatKeysSeq[] = {
-    CHEAT_ENCRYPT('s'),
-    CHEAT_ENCRYPT('k'),
-    CHEAT_ENCRYPT('e'),
-    CHEAT_ENCRYPT('l'),
-    0xff, 0
-};
+cheatseq_t CheatKeysSeq = CHEAT("skel", 0);
 
 // Toggle sound debug info
-static byte CheatSoundSeq[] = {
-    CHEAT_ENCRYPT('n'),
-    CHEAT_ENCRYPT('o'),
-    CHEAT_ENCRYPT('i'),
-    CHEAT_ENCRYPT('s'),
-    CHEAT_ENCRYPT('e'),
-    0xff
-};
+cheatseq_t CheatSoundSeq = CHEAT("noise", 0);
 
 // Toggle ticker
-static byte CheatTickerSeq[] = {
-    CHEAT_ENCRYPT('t'),
-    CHEAT_ENCRYPT('i'),
-    CHEAT_ENCRYPT('c'),
-    CHEAT_ENCRYPT('k'),
-    CHEAT_ENCRYPT('e'),
-    CHEAT_ENCRYPT('r'),
-    0xff, 0
-};
+cheatseq_t CheatTickerSeq = CHEAT("ticker", 0);
 
 // Get an artifact 1st stage (ask for type)
-static byte CheatArtifact1Seq[] = {
-    CHEAT_ENCRYPT('g'),
-    CHEAT_ENCRYPT('i'),
-    CHEAT_ENCRYPT('m'),
-    CHEAT_ENCRYPT('m'),
-    CHEAT_ENCRYPT('e'),
-    0xff
-};
+cheatseq_t CheatArtifact1Seq = CHEAT("gimme", 0);
 
 // Get an artifact 2nd stage (ask for count)
-static byte CheatArtifact2Seq[] = {
-    CHEAT_ENCRYPT('g'),
-    CHEAT_ENCRYPT('i'),
-    CHEAT_ENCRYPT('m'),
-    CHEAT_ENCRYPT('m'),
-    CHEAT_ENCRYPT('e'),
-    0, 0xff, 0
-};
+cheatseq_t CheatArtifact2Seq = CHEAT("gimme", 1);
 
 // Get an artifact final stage
-static byte CheatArtifact3Seq[] = {
-    CHEAT_ENCRYPT('g'),
-    CHEAT_ENCRYPT('i'),
-    CHEAT_ENCRYPT('m'),
-    CHEAT_ENCRYPT('m'),
-    CHEAT_ENCRYPT('e'),
-    0, 0, 0xff
-};
+cheatseq_t CheatArtifact3Seq = CHEAT("gimme", 2);
 
 // Warp to new level
-static byte CheatWarpSeq[] = {
-    CHEAT_ENCRYPT('e'),
-    CHEAT_ENCRYPT('n'),
-    CHEAT_ENCRYPT('g'),
-    CHEAT_ENCRYPT('a'),
-    CHEAT_ENCRYPT('g'),
-    CHEAT_ENCRYPT('e'),
-    0, 0, 0xff, 0
-};
+cheatseq_t CheatWarpSeq = CHEAT("engage", 2);
 
 // Save a screenshot
-static byte CheatChickenSeq[] = {
-    CHEAT_ENCRYPT('c'),
-    CHEAT_ENCRYPT('o'),
-    CHEAT_ENCRYPT('c'),
-    CHEAT_ENCRYPT('k'),
-    CHEAT_ENCRYPT('a'),
-    CHEAT_ENCRYPT('d'),
-    CHEAT_ENCRYPT('o'),
-    CHEAT_ENCRYPT('o'),
-    CHEAT_ENCRYPT('d'),
-    CHEAT_ENCRYPT('l'),
-    CHEAT_ENCRYPT('e'),
-    CHEAT_ENCRYPT('d'),
-    CHEAT_ENCRYPT('o'),
-    CHEAT_ENCRYPT('o'),
-    0xff, 0
-};
+cheatseq_t CheatChickenSeq = CHEAT("cockadoodledoo", 0);
 
 // Kill all monsters
-static byte CheatMassacreSeq[] = {
-    CHEAT_ENCRYPT('m'),
-    CHEAT_ENCRYPT('a'),
-    CHEAT_ENCRYPT('s'),
-    CHEAT_ENCRYPT('s'),
-    CHEAT_ENCRYPT('a'),
-    CHEAT_ENCRYPT('c'),
-    CHEAT_ENCRYPT('r'),
-    CHEAT_ENCRYPT('e'),
-    0xff, 0
-};
+cheatseq_t CheatMassacreSeq = CHEAT("massacre", 0);
 
-static byte CheatIDKFASeq[] = {
-    CHEAT_ENCRYPT('i'),
-    CHEAT_ENCRYPT('d'),
-    CHEAT_ENCRYPT('k'),
-    CHEAT_ENCRYPT('f'),
-    CHEAT_ENCRYPT('a'),
-    0xff, 0
-};
-
-static byte CheatIDDQDSeq[] = {
-    CHEAT_ENCRYPT('i'),
-    CHEAT_ENCRYPT('d'),
-    CHEAT_ENCRYPT('d'),
-    CHEAT_ENCRYPT('q'),
-    CHEAT_ENCRYPT('d'),
-    0xff, 0
-};
+cheatseq_t CheatIDKFASeq = CHEAT("idkfa", 0);
+cheatseq_t CheatIDDQDSeq = CHEAT("iddqd", 0);
 
 static Cheat_t Cheats[] = {
-    {CheatGodFunc, CheatGodSeq, NULL, 0, 0, 0},
-    {CheatNoClipFunc, CheatNoClipSeq, NULL, 0, 0, 0},
-    {CheatWeaponsFunc, CheatWeaponsSeq, NULL, 0, 0, 0},
-    {CheatPowerFunc, CheatPowerSeq, NULL, 0, 0, 0},
-    {CheatHealthFunc, CheatHealthSeq, NULL, 0, 0, 0},
-    {CheatKeysFunc, CheatKeysSeq, NULL, 0, 0, 0},
-    {CheatSoundFunc, CheatSoundSeq, NULL, 0, 0, 0},
-    {CheatTickerFunc, CheatTickerSeq, NULL, 0, 0, 0},
-    {CheatArtifact1Func, CheatArtifact1Seq, NULL, 0, 0, 0},
-    {CheatArtifact2Func, CheatArtifact2Seq, NULL, 0, 0, 0},
-    {CheatArtifact3Func, CheatArtifact3Seq, NULL, 0, 0, 0},
-    {CheatWarpFunc, CheatWarpSeq, NULL, 0, 0, 0},
-    {CheatChickenFunc, CheatChickenSeq, NULL, 0, 0, 0},
-    {CheatMassacreFunc, CheatMassacreSeq, NULL, 0, 0, 0},
-    {CheatIDKFAFunc, CheatIDKFASeq, NULL, 0, 0, 0},
-    {CheatIDDQDFunc, CheatIDDQDSeq, NULL, 0, 0, 0},
-    {NULL, NULL, NULL, 0, 0, 0} // Terminator
+    {CheatGodFunc,       &CheatGodSeq},
+    {CheatNoClipFunc,    &CheatNoClipSeq},
+    {CheatWeaponsFunc,   &CheatWeaponsSeq},
+    {CheatPowerFunc,     &CheatPowerSeq},
+    {CheatHealthFunc,    &CheatHealthSeq},
+    {CheatKeysFunc,      &CheatKeysSeq},
+    {CheatSoundFunc,     &CheatSoundSeq},
+    {CheatTickerFunc,    &CheatTickerSeq},
+    {CheatArtifact1Func, &CheatArtifact1Seq},
+    {CheatArtifact2Func, &CheatArtifact2Seq},
+    {CheatArtifact3Func, &CheatArtifact3Seq},
+    {CheatWarpFunc,      &CheatWarpSeq},
+    {CheatChickenFunc,   &CheatChickenSeq},
+    {CheatMassacreFunc,  &CheatMassacreSeq},
+    {CheatIDKFAFunc,     &CheatIDKFASeq},
+    {CheatIDDQDFunc,     &CheatIDDQDSeq},
+    {NULL,               NULL} 
 };
 
 //---------------------------------------------------------------------------
@@ -385,10 +239,6 @@ void SB_Init(void)
     playpalette = W_GetNumForName("PLAYPAL");
     spinbooklump = W_GetNumForName("SPINBK0");
     spinflylump = W_GetNumForName("SPFLY0");
-    for (i = 0; i < 256; i++)
-    {
-        CheatLookup[i] = CHEAT_ENCRYPT(i);
-    }
 }
 
 //---------------------------------------------------------------------------
@@ -1177,52 +1027,13 @@ static boolean HandleCheats(byte key)
     eat = false;
     for (i = 0; Cheats[i].func != NULL; i++)
     {
-        if (CheatAddKey(&Cheats[i], key, &eat))
+        if (cht_CheckCheat(Cheats[i].seq, key))
         {
             Cheats[i].func(&players[consoleplayer], &Cheats[i]);
             S_StartSound(NULL, sfx_dorcls);
         }
     }
     return (eat);
-}
-
-//--------------------------------------------------------------------------
-//
-// FUNC CheatAddkey
-//
-// Returns true if the added key completed the cheat, false otherwise.
-//
-//--------------------------------------------------------------------------
-
-static boolean CheatAddKey(Cheat_t * cheat, byte key, boolean * eat)
-{
-    if (!cheat->pos)
-    {
-        cheat->pos = cheat->sequence;
-        cheat->currentArg = 0;
-    }
-    if (*cheat->pos == 0)
-    {
-        *eat = true;
-        cheat->args[cheat->currentArg++] = key;
-        cheat->pos++;
-    }
-    else if (CheatLookup[key] == *cheat->pos)
-    {
-        cheat->pos++;
-    }
-    else
-    {
-        cheat->pos = cheat->sequence;
-        cheat->currentArg = 0;
-    }
-    if (*cheat->pos == 0xff)
-    {
-        cheat->pos = cheat->sequence;
-        cheat->currentArg = 0;
-        return (true);
-    }
-    return (false);
 }
 
 //--------------------------------------------------------------------------
@@ -1368,13 +1179,15 @@ static void CheatArtifact2Func(player_t * player, Cheat_t * cheat)
 
 static void CheatArtifact3Func(player_t * player, Cheat_t * cheat)
 {
+    char args[2];
     int i;
     int j;
     artitype_t type;
     int count;
 
-    type = cheat->args[0] - 'a' + 1;
-    count = cheat->args[1] - '0';
+    cht_GetParam(cheat->seq, args);
+    type = args[0] - 'a' + 1;
+    count = args[1] - '0';
     if (type == 26 && count == 0)
     {                           // All artifacts
         for (i = arti_none + 1; i < NUMARTIFACTS; i++)
@@ -1414,11 +1227,14 @@ static void CheatArtifact3Func(player_t * player, Cheat_t * cheat)
 
 static void CheatWarpFunc(player_t * player, Cheat_t * cheat)
 {
+    char args[2];
     int episode;
     int map;
 
-    episode = cheat->args[0] - '0';
-    map = cheat->args[1] - '0';
+    cht_GetParam(cheat->seq, args);
+
+    episode = args[0] - '0';
+    map = args[1] - '0';
     if (M_ValidEpisodeMap(episode, map))
     {
         G_DeferedInitNew(gameskill, episode, map);
