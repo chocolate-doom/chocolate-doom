@@ -52,6 +52,7 @@ boolean noartiskip;             // whether shift-enter skips an artifact
 skill_t startskill;
 int startepisode;
 int startmap;
+int UpdateState;
 boolean autostart;
 extern boolean automapactive;
 
@@ -184,7 +185,7 @@ void D_Display(void)
     NetUpdate();
 
     // Flush buffered stuff to screen
-    I_Update();
+    I_FinishUpdate();
 }
 
 //---------------------------------------------------------------------------

@@ -57,9 +57,9 @@ extern musicinfo_t S_music[];
 
 extern int snd_DesiredMusicDevice;
 extern int snd_DesiredSfxDevice;
-extern int snd_MaxVolume;
-extern int snd_MusicVolume;
-extern int snd_Channels;
+int snd_MaxVolume;
+int snd_MusicVolume;
+int snd_Channels;
 
 extern int startepisode;
 extern int startmap;
@@ -566,12 +566,8 @@ void S_SetMusicVolume(void)
 
 void S_ShutDown(void)
 {
-    extern int tsm_ID;
-    if (tsm_ID != -1)
-    {
-        I_StopSong();
-        I_UnRegisterSong(rs);
-        I_ShutdownSound();
-    }
+    I_StopSong();
+    I_UnRegisterSong(rs);
+    I_ShutdownSound();
 }
 
