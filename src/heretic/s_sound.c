@@ -241,7 +241,7 @@ void S_StartSound(mobj_t * origin, int sound_id)
     {
         angle = R_PointToAngle2(players[consoleplayer].mo->x,
                                 players[consoleplayer].mo->y,
-                                channel[i].mo->x, channel[i].mo->y);
+                                origin->x, origin->y);
         angle = (angle - viewangle) >> 24;
         sep = angle * 2 - 128;
         if (sep < 64)
