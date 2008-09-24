@@ -115,15 +115,15 @@ typedef struct sfxinfo_s
 typedef struct
 {
     mobj_t *mo;
-    long sound_id;
-    long handle;
-    long pitch;
+    int sound_id;
+    int handle;
+    int pitch;
     int priority;
 } channel_t;
 
 typedef struct
 {
-    long id;
+    int id;
     unsigned short priority;
     char *name;
     mobj_t *mo;
