@@ -273,7 +273,7 @@ static void UpdateFocus(void)
     screenvisible = (state & SDL_APPACTIVE) != 0;
 }
 
-static void LoadDiskImage(void)
+void I_EnableLoadingDisk(void)
 {
     patch_t *disk;
     char *disk_name;
@@ -1618,10 +1618,6 @@ void I_InitGraphics(void)
     }
 
     V_RestoreBuffer();
-
-    // "Loading from disk" icon
-
-    LoadDiskImage();
 
     // Clear the screen to black.
 
