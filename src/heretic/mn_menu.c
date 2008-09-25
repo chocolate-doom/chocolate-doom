@@ -303,7 +303,8 @@ void MN_Init(void)
     MenuActive = false;
     messageson = true;
     SkullBaseLump = W_GetNumForName("M_SKL00");
-    if (ExtendedWAD)
+
+    if (gamemode == retail)
     {                           // Add episodes 4 and 5 to the menu
         EpisodeMenu.itemCount = 5;
         EpisodeMenu.y -= ITEM_HEIGHT;

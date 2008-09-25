@@ -734,7 +734,7 @@ void IN_DrawSingleStats(void)
         sounds++;
     }
 
-    if (!ExtendedWAD || gameepisode < 4)
+    if (gamemode != retail || gameepisode <= 3)
     {
         IN_DrTextB("TIME", 85, 160);
         IN_DrawTime(155, 160, hours, minutes, seconds);

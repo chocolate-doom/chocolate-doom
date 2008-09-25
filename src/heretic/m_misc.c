@@ -48,42 +48,21 @@ boolean M_ValidEpisodeMap(int episode, int map)
     {
         return false;
     }
-    if (gamemode == shareware)
-    {                           // Shareware version checks
-        if (episode != 1)
-        {
+
+    switch (gamemode)
+    {
+        case shareware:
+            return episode == 1;
+
+        case retail:
+            return episode <= 5 || (episode == 6 && map <= 3);
+
+        case registered:
+            return episode <= 3 || (episode == 4 && map == 1);
+
+        default:
             return false;
-        }
     }
-    else if (ExtendedWAD)
-    {                           // Extended version checks
-        if (episode == 6)
-        {
-            if (map > 3)
-            {
-                return false;
-            }
-        }
-        else if (episode > 5)
-        {
-            return false;
-        }
-    }
-    else
-    {                           // Registered version checks
-        if (episode == 4)
-        {
-            if (map != 1)
-            {
-                return false;
-            }
-        }
-        else if (episode > 3)
-        {
-            return false;
-        }
-    }
-    return true;
 }
 
 //---------------------------------------------------------------------------
