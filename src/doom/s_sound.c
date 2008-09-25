@@ -122,7 +122,7 @@ void S_Init(int sfxVolume, int musicVolume)
 {  
     int i;
 
-    I_InitSound();
+    I_InitSound(true);
     I_InitMusic();
 
     I_PrecacheSounds(S_sfx, NUMSFX);

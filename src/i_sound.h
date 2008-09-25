@@ -114,7 +114,7 @@ typedef struct
     // Initialise sound module
     // Returns true if successfully initialised
 
-    boolean (*Init)(void);
+    boolean (*Init)(boolean use_sfx_prefix);
 
     // Shutdown sound module
 
@@ -151,7 +151,7 @@ typedef struct
 
 } sound_module_t;
 
-void I_InitSound(void);
+void I_InitSound(boolean use_sfx_prefix);
 void I_ShutdownSound(void);
 int I_GetSfxLumpNum(sfxinfo_t *sfxinfo);
 void I_UpdateSound(void);
