@@ -24,6 +24,7 @@
 #include <stdlib.h>
 
 #include "doomdef.h"
+#include "i_system.h"
 #include "m_random.h"
 #include "sounds.h"
 #include "s_sound.h"
@@ -42,6 +43,7 @@
 ===============================================================================
 */
 
+void S_ShutDown(void);
 boolean S_StopSoundID(int sound_id, int priority);
 
 static channel_t channel[MAX_CHANNELS];
@@ -500,6 +502,8 @@ void S_Init(void)
     }
     I_SetMusicVolume(snd_MusicVolume);
     S_SetMaxVolume(true);
+
+    I_AtExit(S_ShutDown, true);
 }
 
 void S_GetChannelInfo(SoundInfo_t * s)
