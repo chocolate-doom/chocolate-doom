@@ -132,6 +132,8 @@ boolean         storedemo;
 char		wadfile[1024];		// primary wad file
 char		mapdir[1024];           // directory of development maps
 
+int             show_endoom = 1;
+
 
 void D_CheckNetGame (void);
 void D_ProcessEvents (void);
@@ -359,6 +361,7 @@ void D_BindVariables(void)
     M_BindVariable("snd_channels",           &snd_channels);
     M_BindVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
     M_BindVariable("vanilla_demo_limit",     &vanilla_demo_limit);
+    M_BindVariable("show_endoom",            &show_endoom);
 
     // Multiplayer chat macros
 
@@ -805,6 +808,25 @@ static void LoadChexDeh(void)
     }
 }
 
+// Function called at exit to display the ENDOOM screen
+
+static void D_Endoom(void)
+{
+    byte *endoom;
+
+    // Don't show ENDOOM if we have it disabled, or we're running
+    // in screensaver or control test mode.
+
+    if (!show_endoom || screensaver_mode || M_CheckParm("-testcontrols") > 0)
+    {
+        return;
+    }
+
+    endoom = W_CacheLumpName(DEH_String("ENDOOM"), PU_STATIC);
+
+    I_Endoom(endoom);
+}
+
 //
 // D_DoomMain
 //
@@ -813,6 +835,8 @@ void D_DoomMain (void)
     int             p;
     char            file[256];
     char            demolumpname[9];
+
+    I_AtExit(D_Endoom, false);
 
     M_FindResponseFile ();
 

@@ -80,5 +80,10 @@ void I_AtExit(atexit_func_t func, boolean run_if_error);
 
 void I_BindVariables(void);
 
+// Display the Endoom screen on shutdown.  Pass a pointer to the 
+// ENDOOM lump.
+
+void I_Endoom(byte *data);
+
 #endif
 
