@@ -60,6 +60,8 @@ boolean advancedemo;
 
 FILE *debugfile;
 
+static int show_endoom = 1;
+
 void D_CheckNetGame(void);
 void D_ProcessEvents(void);
 void G_BuildTiccmd(ticcmd_t * cmd);
@@ -746,6 +748,7 @@ void D_BindVariables(void)
     M_BindVariable("music_volume",           &snd_MusicVolume);
     M_BindVariable("screenblocks",           &screenblocks);
     M_BindVariable("snd_channels",           &snd_Channels);
+    M_BindVariable("show_endoom",            &show_endoom);
 
     for (i=0; i<10; ++i)
     {
@@ -754,6 +757,26 @@ void D_BindVariables(void)
         sprintf(buf, "chatmacro%i", i);
         M_BindVariable(buf, &chat_macros[i]);
     }
+}
+
+// 
+// Called at exit to display the ENDOOM screen (ENDTEXT in Heretic)
+//
+
+static void D_Endoom(void)
+{
+    byte *endoom_data;
+
+    // Disable ENDOOM?
+
+    if (!show_endoom)
+    {
+        return;
+    }
+
+    endoom_data = W_CacheLumpName("ENDTEXT", PU_STATIC);
+
+    I_Endoom(endoom_data);
 }
 
 //---------------------------------------------------------------------------
@@ -771,7 +794,8 @@ void D_DoomMain(void)
     char file[256];
     FILE *fp;
     boolean devMap;
-    //char *screen;
+
+    I_AtExit(D_Endoom, false);
 
     M_FindResponseFile();
     setbuf(stdout, NULL);

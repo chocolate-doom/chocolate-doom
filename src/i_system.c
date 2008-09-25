@@ -55,7 +55,6 @@
 #include "z_zone.h"
 
 int mb_used = 16;
-int show_endoom = 1;
 
 typedef struct atexit_listentry_s atexit_listentry_t;
 
@@ -150,12 +149,9 @@ void I_Init (void)
 // Displays the text mode ending screen after the game quits
 //
 
-void I_Endoom(void)
+void I_Endoom(byte *endoom_data)
 {
-    unsigned char *endoom_data;
     unsigned char *screendata;
-
-    endoom_data = W_CacheLumpName(DEH_String("ENDOOM"), PU_STATIC);
 
     // Set up text mode screen
 
@@ -206,24 +202,6 @@ void I_Quit (void)
     {
         entry->func();
         entry = entry->next;
-    }
-
-/*
-    D_QuitNetGame ();
-    G_CheckDemoStatus();
-    S_Shutdown();
-
-    if (!screensaver_mode)
-    {
-        M_SaveDefaults ();
-    }
-
-    I_ShutdownGraphics();
-    */
-
-    if (show_endoom && !screensaver_mode && !M_CheckParm("-testcontrols"))
-    {
-        I_Endoom();
     }
 
     exit(0);
@@ -313,7 +291,5 @@ void I_BindVariables(void)
     I_BindVideoVariables();
     I_BindJoystickVariables();
     I_BindSoundVariables();
-
-    M_BindVariable("show_endoom", &show_endoom);
 }
 
