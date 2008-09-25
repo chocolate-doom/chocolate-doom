@@ -437,6 +437,28 @@ static boolean CacheSFX(sfxinfo_t *sfxinfo)
     return true;
 }
 
+static void GetSfxLumpName(sfxinfo_t *sfx, char *buf)
+{
+    // Linked sfx lumps? Get the lump number for the sound linked to.
+
+    if (sfx->link != NULL)
+    {
+        sfx = sfx->link;
+    }
+
+    // Doom adds a DS* prefix to sound lumps; Heretic and Hexen don't
+    // do this.
+
+    if (use_sfx_prefix)
+    {
+        sprintf(buf, "ds%s", DEH_String(sfx->name));
+    }
+    else
+    {
+        strcpy(buf, DEH_String(sfx->name));
+    }
+}
+
 #ifdef HAVE_LIBSAMPLERATE
 
 // Preload all the sound effects - stops nasty ingame freezes
@@ -511,28 +533,6 @@ static boolean LockSound(sfxinfo_t *sfxinfo)
     }
 
     return true;
-}
-
-static void GetSfxLumpName(sfxinfo_t *sfx, char *buf)
-{
-    // Linked sfx lumps? Get the lump number for the sound linked to.
-
-    if (sfx->link != NULL)
-    {
-        sfx = sfx->link;
-    }
-
-    // Doom adds a DS* prefix to sound lumps; Heretic and Hexen don't
-    // do this.
-
-    if (use_sfx_prefix)
-    {
-        sprintf(buf, "ds%s", DEH_String(sfx->name));
-    }
-    else
-    {
-        strcpy(buf, DEH_String(sfx->name));
-    }
 }
 
 //
