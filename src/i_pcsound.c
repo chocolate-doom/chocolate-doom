@@ -38,6 +38,7 @@
 static boolean pcs_initialised = false;
 
 static SDL_mutex *sound_lock;
+static boolean use_sfx_prefix;
 
 static uint8_t *current_sound_lump = NULL;
 static uint8_t *current_sound_pos = NULL;
@@ -241,8 +242,15 @@ static int I_PCS_GetSfxLumpNum(sfxinfo_t* sfx)
 {
     char namebuf[9];
 
-    sprintf(namebuf, "dp%s", DEH_String(sfx->name));
-    
+    if (use_sfx_prefix)
+    {
+        sprintf(namebuf, "dp%s", DEH_String(sfx->name));
+    }
+    else
+    {
+        strcpy(namebuf, DEH_String(sfx->name));
+    }
+
     return W_GetNumForName(namebuf);
 }
 
@@ -262,8 +270,10 @@ static boolean I_PCS_SoundIsPlaying(int handle)
     return current_sound_lump != NULL && current_sound_remaining > 0;
 }
 
-static boolean I_PCS_InitSound(void)
+static boolean I_PCS_InitSound(boolean _use_sfx_prefix)
 {
+    use_sfx_prefix = _use_sfx_prefix;
+
     // Use the sample rate from the configuration file
 
     PCSound_SetSampleRate(snd_samplerate);

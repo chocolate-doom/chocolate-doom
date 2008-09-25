@@ -112,7 +112,7 @@ static boolean SndDeviceInList(snddevice_t device, snddevice_t *list,
 // Find and initialise a sound_module_t appropriate for the setting
 // in snd_sfxdevice.
 
-static void InitSfxModule(void)
+static void InitSfxModule(boolean use_sfx_prefix)
 {
     int i;
 
@@ -129,7 +129,7 @@ static void InitSfxModule(void)
         {
             // Initialise the module
 
-            if (sound_modules[i]->Init())
+            if (sound_modules[i]->Init(use_sfx_prefix))
             {
                 sound_module = sound_modules[i];
                 return;
@@ -172,7 +172,7 @@ static void InitMusicModule(void)
 //  allocates channel buffer, sets S_sfx lookup.
 //
 
-void I_InitSound(void)
+void I_InitSound(boolean use_sfx_prefix)
 {  
     boolean nosound, nosfx, nomusic;
 
@@ -206,7 +206,7 @@ void I_InitSound(void)
     {
         if (!nosfx)
         {
-            InitSfxModule();
+            InitSfxModule(use_sfx_prefix);
         }
 
         if (!nomusic)

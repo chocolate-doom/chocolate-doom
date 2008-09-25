@@ -57,6 +57,7 @@ static sfxinfo_t *channels_playing[NUM_CHANNELS];
 static int mixer_freq;
 static Uint16 mixer_format;
 static int mixer_channels;
+static boolean use_sfx_prefix;
 static void (*ExpandSoundData)(sfxinfo_t *sfxinfo,
                                byte *data,
                                int samplerate,
@@ -462,7 +463,7 @@ static void I_SDL_PrecacheSounds(sfxinfo_t *sounds, int num_sounds)
             fflush(stdout);
         }
 
-        sprintf(namebuf, "ds%s", DEH_String(sounds[i].name));
+        GetSfxLumpName(&sounds[i], namebuf);
 
         sounds[i].lumpnum = W_CheckNumForName(namebuf);
 
@@ -512,18 +513,39 @@ static boolean LockSound(sfxinfo_t *sfxinfo)
     return true;
 }
 
+static void GetSfxLumpName(sfxinfo_t *sfx, char *buf)
+{
+    // Linked sfx lumps? Get the lump number for the sound linked to.
+
+    if (sfx->link != NULL)
+    {
+        sfx = sfx->link;
+    }
+
+    // Doom adds a DS* prefix to sound lumps; Heretic and Hexen don't
+    // do this.
+
+    if (use_sfx_prefix)
+    {
+        sprintf(buf, "ds%s", DEH_String(sfx->name));
+    }
+    else
+    {
+        strcpy(buf, DEH_String(sfx->name));
+    }
+}
 
 //
 // Retrieve the raw data lump index
 //  for a given SFX name.
 //
 
-static int I_SDL_GetSfxLumpNum(sfxinfo_t* sfx)
+static int I_SDL_GetSfxLumpNum(sfxinfo_t *sfx)
 {
     char namebuf[9];
 
-    sprintf(namebuf, "ds%s", DEH_String(sfx->name));
-    
+    GetSfxLumpName(sfx, namebuf);
+
     return W_GetNumForName(namebuf);
 }
 
@@ -654,10 +676,12 @@ static void I_SDL_ShutdownSound(void)
 }
 
 
-static boolean I_SDL_InitSound(void)
+static boolean I_SDL_InitSound(boolean _use_sfx_prefix)
 { 
     int i;
     
+    use_sfx_prefix = _use_sfx_prefix;
+
     // No sounds yet
 
     for (i=0; i<NUM_CHANNELS; ++i)
