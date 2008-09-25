@@ -39,7 +39,6 @@
 
 GameMission_t gamemission = heretic;
 GameMode_t gamemode = indetermined;
-boolean ExtendedWAD = false;    // true if episodes 4 and 5 present
 
 boolean nomonsters;             // checkparm of -nomonsters
 boolean respawnparm;            // checkparm of -respawn
@@ -926,18 +925,18 @@ void D_DoomMain(void)
     }
 
     if (W_CheckNumForName("E2M1") == -1)
-    {                           // Can't find episode 2 maps, must be the shareware WAD
+    {
         gamemode = shareware;
+    }
+    else if (W_CheckNumForName("EXTENDED") != -1)
+    {
+        // Presence of the EXTENDED lump indicates the retail version
+
+        gamemode = retail;
     }
     else
     {
         gamemode = registered;
-
-        // Is this the extended WAD?
-        if (W_CheckNumForName("EXTENDED") != -1)
-        {
-            ExtendedWAD = true;
-        }
     }
 
 #ifdef __WATCOMC__

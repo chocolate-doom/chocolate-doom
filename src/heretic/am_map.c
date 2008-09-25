@@ -1453,6 +1453,8 @@ void AM_drawCrosshair(int color)
 
 void AM_Drawer(void)
 {
+    int numepisodes;
+
     if (!automapactive)
         return;
 
@@ -1471,7 +1473,17 @@ void AM_Drawer(void)
     {
         AM_drawkeys();
     }
-    if ((gameepisode < (ExtendedWAD ? 6 : 4)) && gamemap < 10)
+
+    if (gamemode == retail)
+    {
+        numepisodes = 5;
+    }
+    else
+    {
+        numepisodes = 3;
+    }
+
+    if (gameepisode <= numepisodes && gamemap < 10)
     {
         MN_DrTextA(LevelNames[(gameepisode - 1) * 9 + gamemap - 1], 20, 145);
     }
