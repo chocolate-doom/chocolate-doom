@@ -327,7 +327,7 @@ void R_InitTextures(void)
         strncpy(name, name_p + i * 8, 8);
         patchlookup[i] = W_CheckNumForName(name);
     }
-    Z_Free(names);
+    W_ReleaseLumpName("PNAMES");
 
 //
 // load the map texture definitions from textures.lmp
@@ -420,9 +420,11 @@ void R_InitTextures(void)
         totalwidth += texture->width;
     }
 
-    Z_Free(maptex1);
+    W_ReleaseLumpName("TEXTURE1");
     if (maptex2)
-        Z_Free(maptex2);
+    {
+        W_ReleaseLumpName("TEXTURE2");
+    }
 
 //
 // precalculate whatever possible

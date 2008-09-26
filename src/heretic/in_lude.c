@@ -299,44 +299,67 @@ void IN_InitStats(void)
     }
 }
 
-//========================================================================
-//
-// IN_LoadPics
-//
-//========================================================================
-
-void IN_LoadPics(void)
+static void IN_LoadUnloadPics(void (*callback)(char *lumpname,
+                                               int lumpnum,
+                                               patch_t **ptr))
 {
     int i;
 
     switch (gameepisode)
     {
         case 1:
-            patchINTERPIC = W_CacheLumpName("MAPE1", PU_STATIC);
+            callback("MAPE1", 0, &patchINTERPIC);
             break;
         case 2:
-            patchINTERPIC = W_CacheLumpName("MAPE2", PU_STATIC);
+            callback("MAPE2", 0, &patchINTERPIC);
             break;
         case 3:
-            patchINTERPIC = W_CacheLumpName("MAPE3", PU_STATIC);
+            callback("MAPE3", 0, &patchINTERPIC);
             break;
         default:
             break;
     }
-    patchBEENTHERE = W_CacheLumpName("IN_X", PU_STATIC);
-    patchGOINGTHERE = W_CacheLumpName("IN_YAH", PU_STATIC);
+
+    callback("IN_X", 0, &patchBEENTHERE);
+    callback("IN_YAH", 0, &patchGOINGTHERE);
+    callback("FONTB13", 0, &FontBNegative);
+
+    callback("FONTB15", 0, &FontBSlash);
+    callback("FONTB05", 0, &FontBPercent);
+
     FontBLumpBase = W_GetNumForName("FONTB16");
+
     for (i = 0; i < 10; i++)
     {
-        FontBNumbers[i] = W_CacheLumpNum(FontBLumpBase + i, PU_STATIC);
+        callback(NULL, FontBLumpBase + i, &FontBNumbers[i]);
     }
-    FontBLump = W_GetNumForName("FONTB_S") + 1;
-    FontBNegative = W_CacheLumpName("FONTB13", PU_STATIC);
+}
 
-    FontBSlash = W_CacheLumpName("FONTB15", PU_STATIC);
-    FontBPercent = W_CacheLumpName("FONTB05", PU_STATIC);
+//========================================================================
+//
+// IN_LoadPics
+//
+//========================================================================
+
+static void LoadLumpCallback(char *lumpname, int lumpnum, patch_t **ptr)
+{
+    if (lumpname == NULL)
+    {
+        lumpnum = W_GetNumForName(lumpname);
+    }
+
+    // Cache the lump
+
+    *ptr = W_CacheLumpNum(lumpnum, PU_STATIC);
+}
+
+void IN_LoadPics(void)
+{
+    FontBLump = W_GetNumForName("FONTB_S") + 1;
     patchFaceOkayBase = W_GetNumForName("FACEA0");
     patchFaceDeadBase = W_GetNumForName("FACEB0");
+
+    IN_LoadUnloadPics(LoadLumpCallback);
 }
 
 //========================================================================
@@ -345,23 +368,21 @@ void IN_LoadPics(void)
 //
 //========================================================================
 
+static void UnloadLumpCallback(char *lumpname, int lumpnum, patch_t **ptr)
+{
+    if (lumpname != NULL)
+    {
+        W_ReleaseLumpName(lumpname);
+    }
+    else
+    {
+        W_ReleaseLumpNum(lumpnum);
+    }
+}
+
 void IN_UnloadPics(void)
 {
-    int i;
-
-    if (patchINTERPIC)
-    {
-        Z_ChangeTag(patchINTERPIC, PU_CACHE);
-    }
-    Z_ChangeTag(patchBEENTHERE, PU_CACHE);
-    Z_ChangeTag(patchGOINGTHERE, PU_CACHE);
-    for (i = 0; i < 10; i++)
-    {
-        Z_ChangeTag(FontBNumbers[i], PU_CACHE);
-    }
-    Z_ChangeTag(FontBNegative, PU_CACHE);
-    Z_ChangeTag(FontBSlash, PU_CACHE);
-    Z_ChangeTag(FontBPercent, PU_CACHE);
+    IN_LoadUnloadPics(UnloadLumpCallback);
 }
 
 //========================================================================
