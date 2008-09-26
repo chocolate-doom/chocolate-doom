@@ -379,6 +379,7 @@ void R_DrawPlanes(void)
     visplane_t *pl;
     int light;
     int x, stop;
+    int lumpnum;
     int angle;
     byte *tempSource;
 
@@ -454,8 +455,9 @@ void R_DrawPlanes(void)
         //
         // regular flat
         //
-        tempSource = W_CacheLumpNum(firstflat +
-                                    flattranslation[pl->picnum], PU_STATIC);
+        lumpnum = firstflat + flattranslation[pl->picnum];
+
+        tempSource = W_CacheLumpNum(lumpnum, PU_STATIC);
 
         switch (pl->special)
         {
@@ -512,6 +514,6 @@ void R_DrawPlanes(void)
             R_MakeSpans(x, pl->top[x - 1], pl->bottom[x - 1], pl->top[x],
                         pl->bottom[x]);
 
-        Z_ChangeTag(tempSource, PU_CACHE);
+        W_ReleaseLumpNum(lumpnum);
     }
 }

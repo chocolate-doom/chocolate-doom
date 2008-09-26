@@ -1797,7 +1797,7 @@ boolean G_CheckDemoStatus(void)
         if (singledemo)
             I_Quit();
 
-        Z_ChangeTag(demobuffer, PU_CACHE);
+        W_ReleaseLumpName(defdemoname);
         demoplayback = false;
         D_AdvanceDemo();
         return true;

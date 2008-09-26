@@ -95,7 +95,7 @@ void P_LoadVertexes(int lump)
         li->y = SHORT(ml->y) << FRACBITS;
     }
 
-    Z_Free(data);
+    W_ReleaseLumpNum(lump);
 }
 
 
@@ -142,7 +142,7 @@ void P_LoadSegs(int lump)
             li->backsector = 0;
     }
 
-    Z_Free(data);
+    W_ReleaseLumpNum(lump);
 }
 
 
@@ -174,7 +174,7 @@ void P_LoadSubsectors(int lump)
         ss->firstline = SHORT(ms->firstseg);
     }
 
-    Z_Free(data);
+    W_ReleaseLumpNum(lump);
 }
 
 
@@ -212,7 +212,7 @@ void P_LoadSectors(int lump)
         ss->thinglist = NULL;
     }
 
-    Z_Free(data);
+    W_ReleaseLumpNum(lump);
 }
 
 
@@ -251,7 +251,7 @@ void P_LoadNodes(int lump)
         }
     }
 
-    Z_Free(data);
+    W_ReleaseLumpNum(lump);
 }
 
 
@@ -285,7 +285,7 @@ void P_LoadThings(int lump)
         P_SpawnMapThing(mt);
     }
 
-    Z_Free(data);
+    W_ReleaseLumpNum(lump);
 }
 
 
@@ -367,7 +367,7 @@ void P_LoadLineDefs(int lump)
             ld->backsector = 0;
     }
 
-    Z_Free(data);
+    W_ReleaseLumpNum(lump);
 }
 
 
@@ -403,7 +403,7 @@ void P_LoadSideDefs(int lump)
         sd->sector = &sectors[SHORT(msd->sector)];
     }
 
-    Z_Free(data);
+    W_ReleaseLumpNum(lump);
 }
 
 
