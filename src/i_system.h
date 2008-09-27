@@ -85,5 +85,17 @@ void I_BindVariables(void);
 
 void I_Endoom(byte *data);
 
+// Print startup banner copyright message.
+
+void I_PrintStartupBanner(char *gamedescription);
+
+// Print a centered text banner displaying the given string.
+
+void I_PrintBanner(char *text);
+
+// Print a dividing line for startup banners.
+
+void I_PrintDivider(void);
+
 #endif
 
