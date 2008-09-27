@@ -107,8 +107,30 @@ void S_StartSong(int song, boolean loop)
     mus_song = song;
 }
 
+static mobj_t *GetSoundListener(void)
+{
+    static degenmobj_t dummy_listener;
+
+    // If we are at the title screen, the console player doesn't have an
+    // object yet, so return a pointer to a static dummy listener instead.
+
+    if (players[consoleplayer].mo != NULL)
+    {
+        return players[consoleplayer].mo;
+    }
+    else
+    {
+        dummy_listener.x = 0;
+        dummy_listener.y = 0;
+        dummy_listener.z = 0;
+
+        return (mobj_t *) &dummy_listener;
+    }
+}
+
 void S_StartSound(mobj_t * origin, int sound_id)
 {
+    mobj_t *listener;
     int dist, vol;
     int i;
     int priority;
@@ -120,17 +142,19 @@ void S_StartSound(mobj_t * origin, int sound_id)
     static int sndcount = 0;
     int chan;
 
+    listener = GetSoundListener();
+
     if (sound_id == 0 || snd_MaxVolume == 0)
         return;
     if (origin == NULL)
     {
-        origin = players[consoleplayer].mo;
+        origin = listener;
     }
 
 // calculate the distance before other stuff so that we can throw out
 // sounds that are beyond the hearing range.
-    absx = abs(origin->x - players[consoleplayer].mo->x);
-    absy = abs(origin->y - players[consoleplayer].mo->y);
+    absx = abs(origin->x - listener->x);
+    absy = abs(origin->y - listener->y);
     dist = absx + absy - (absx > absy ? absy >> 1 : absx >> 1);
     dist >>= FRACBITS;
 //  dist = P_AproxDistance(origin->x-viewx, origin->y-viewy)>>FRACBITS;
@@ -235,14 +259,13 @@ void S_StartSound(mobj_t * origin, int sound_id)
 //      vol = (snd_MaxVolume*16 + dist*(-snd_MaxVolume*16)/MAX_SND_DIST)>>9;
     vol = soundCurve[dist];
 
-    if (origin == players[consoleplayer].mo)
+    if (origin == listener)
     {
         sep = 128;
     }
     else
     {
-        angle = R_PointToAngle2(players[consoleplayer].mo->x,
-                                players[consoleplayer].mo->y,
+        angle = R_PointToAngle2(listener->x, listener->y,
                                 origin->x, origin->y);
         angle = (angle - viewangle) >> 24;
         sep = angle * 2 - 128;
@@ -275,13 +298,16 @@ void S_StartSound(mobj_t * origin, int sound_id)
 
 void S_StartSoundAtVolume(mobj_t * origin, int sound_id, int volume)
 {
+    mobj_t *listener;
     int i;
+
+    listener = GetSoundListener();
 
     if (sound_id == 0 || snd_MaxVolume == 0)
         return;
     if (origin == NULL)
     {
-        origin = players[consoleplayer].mo;
+        origin = listener;
     }
 
     if (volume == 0)
@@ -423,7 +449,7 @@ void S_UpdateSounds(mobj_t * listener)
     int absx;
     int absy;
 
-    listener = players[consoleplayer].mo;
+    listener = GetSoundListener();
     if (snd_MaxVolume == 0)
     {
         return;
@@ -450,14 +476,14 @@ void S_UpdateSounds(mobj_t * listener)
             }
         }
         if (channel[i].mo == NULL || channel[i].sound_id == 0
-            || channel[i].mo == players[consoleplayer].mo)
+         || channel[i].mo == listener)
         {
             continue;
         }
         else
         {
-            absx = abs(channel[i].mo->x - players[consoleplayer].mo->x);
-            absy = abs(channel[i].mo->y - players[consoleplayer].mo->y);
+            absx = abs(channel[i].mo->x - listener->x);
+            absy = abs(channel[i].mo->y - listener->y);
             dist = absx + absy - (absx > absy ? absy >> 1 : absx >> 1);
             dist >>= FRACBITS;
 //          dist = P_AproxDistance(channel[i].mo->x-listener->x, channel[i].mo->y-listener->y)>>FRACBITS;
@@ -474,8 +500,7 @@ void S_UpdateSounds(mobj_t * listener)
 //          vol = (*((byte *)W_CacheLumpName("SNDCURVE", PU_CACHE)+dist)*(snd_MaxVolume*8))>>7;
             vol = soundCurve[dist];
 
-            angle = R_PointToAngle2(players[consoleplayer].mo->x,
-                                    players[consoleplayer].mo->y,
+            angle = R_PointToAngle2(listener->x, listener->y,
                                     channel[i].mo->x, channel[i].mo->y);
             angle = (angle - viewangle) >> 24;
             sep = angle * 2 - 128;
