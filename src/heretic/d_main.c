@@ -938,12 +938,12 @@ void D_DoomMain(void)
         // Presence of the EXTENDED lump indicates the retail version
 
         gamemode = retail;
-        gamedescription = "Heretic (registered)";
+        gamedescription = "Heretic: Shadow of the Serpent Riders";
     }
     else
     {
         gamemode = registered;
-        gamedescription = "Heretic: Shadow of the Serpent Riders";
+        gamedescription = "Heretic (registered)";
     }
 
 #ifdef __WATCOMC__
