@@ -8,7 +8,6 @@
 Heretic:
  * Merge r_draw.c to common version and delete duplicate
  * Multiplayer code to use Chocolate Doom multiplayer code.
- * WAD code to use the new locking API
  * Save config file
  * Frequency shifted sounds.
  * Update input code to work properly with vanilla_keyboard_mapping
@@ -17,7 +16,6 @@ Heretic:
  * Savegame code to write structures predictably and endianness-correct
  * Remove NeXT and WATCOMC defines
  * Structure packing macros for structures read from disk
- * Title bar
 
 Hexen:
  * Merge v_video.c to common version and delete duplicate

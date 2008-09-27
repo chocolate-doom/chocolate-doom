@@ -39,6 +39,7 @@
 
 GameMission_t gamemission = heretic;
 GameMode_t gamemode = indetermined;
+char *gamedescription = "unknown";
 
 boolean nomonsters;             // checkparm of -nomonsters
 boolean respawnparm;            // checkparm of -respawn
@@ -222,6 +223,7 @@ void D_DoomLoop(void)
         debugfile = fopen(filename, "w");
     }
     I_InitGraphics();
+    I_SetWindowTitle(gamedescription);
     I_SetGrabMouseCallback(D_GrabMouseCallback);
 
     while (1)
@@ -914,6 +916,8 @@ void D_DoomMain(void)
     printf("M_LoadDefaults: Load system defaults.\n");
     M_LoadDefaults();
 
+    //I_AtExit(M_SaveDefaults, false);
+
     printf("Z_Init: Init zone memory allocation daemon.\n");
     Z_Init();
 
@@ -927,16 +931,19 @@ void D_DoomMain(void)
     if (W_CheckNumForName("E2M1") == -1)
     {
         gamemode = shareware;
+        gamedescription = "Heretic (shareware)";
     }
     else if (W_CheckNumForName("EXTENDED") != -1)
     {
         // Presence of the EXTENDED lump indicates the retail version
 
         gamemode = retail;
+        gamedescription = "Heretic (registered)";
     }
     else
     {
         gamemode = registered;
+        gamedescription = "Heretic: Shadow of the Serpent Riders";
     }
 
 #ifdef __WATCOMC__
