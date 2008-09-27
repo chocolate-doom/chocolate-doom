@@ -38,6 +38,8 @@
 #include <unistd.h>
 #endif
 
+#include "config.h"
+
 #include "deh_str.h"
 #include "doomtype.h"
 #include "m_argv.h"
@@ -117,6 +119,44 @@ byte *I_ZoneBase (int *size)
            zonemem, *size);
 
     return zonemem;
+}
+
+void I_PrintBanner(char *msg)
+{
+    int i;
+    int spaces = 35 - (strlen(msg) / 2);
+
+    for (i=0; i<spaces; ++i)
+        putchar(' ');
+
+    puts(msg);
+}
+
+void I_PrintDivider(void)
+{
+    int i;
+
+    for (i=0; i<75; ++i)
+    {
+        putchar('=');
+    }
+
+    putchar('\n');
+}
+
+void I_PrintStartupBanner(char *gamedescription)
+{
+    I_PrintDivider();
+    I_PrintBanner(gamedescription);
+    I_PrintDivider();
+    
+    printf(
+    " " PACKAGE_NAME " is free software, covered by the GNU General Public\n"
+    " License.  There is NO warranty; not even for MERCHANTABILITY or FITNESS\n"
+    " FOR A PARTICULAR PURPOSE. You are welcome to change and distribute\n"
+    " copies under certain conditions. See the source for more information.\n");
+
+    I_PrintDivider();
 }
 
 // 
@@ -215,7 +255,6 @@ void I_WaitVBL(int count)
 //
 // I_Error
 //
-extern boolean demorecording;
 
 static boolean already_quitting = false;
 
@@ -256,17 +295,6 @@ void I_Error (char *error, ...)
         entry = entry->next;
     }
   
-  /*
-    if (demorecording)
-    {
-	G_CheckDemoStatus();
-    }
-
-    D_QuitNetGame ();
-    I_ShutdownGraphics();
-    S_Shutdown();
-    */
-    
 #ifdef _WIN32
     // On Windows, pop up a dialog box with the error message.
     {

@@ -602,18 +602,6 @@ static boolean D_AddFile(char *filename)
 
     return handle != NULL;
 }
-// Startup banner
-
-void PrintBanner(char *msg)
-{
-    int i;
-    int spaces = 35 - (strlen(msg) / 2);
-
-    for (i=0; i<spaces; ++i)
-        putchar(' ');
-
-    puts(msg);
-}
 
 // Copyright message banners
 // Some dehacked mods replace these.  These are only displayed if they are 
@@ -850,7 +838,7 @@ void D_DoomMain (void)
 
     // print banner
 
-    PrintBanner(PACKAGE_STRING);
+    I_PrintBanner(PACKAGE_STRING);
 
     printf (DEH_String("Z_Init: Init zone memory allocation daemon. \n"));
     Z_Init ();
@@ -1457,27 +1445,13 @@ void D_DoomMain (void)
     if (W_CheckNumForName("SS_START") >= 0
      || W_CheckNumForName("FF_END") >= 0)
     {
-        printf ("===========================================================================\n");
+        I_PrintDivider();
         printf(" WARNING: The loaded WAD file contains modified sprites or\n"
                " floor textures.  You may want to use the '-merge' command\n"
                " line option instead of '-file'.\n");
     }
-    
-    printf ("===========================================================================\n");
 
-    PrintBanner(gamedescription);
-
-    
-    printf (
-	    "===========================================================================\n"
-	    " " PACKAGE_NAME " is free software, covered by the GNU General Public\n"
-            " License.  There is NO warranty; not even for MERCHANTABILITY or FITNESS\n"
-            " FOR A PARTICULAR PURPOSE. You are welcome to change and distribute\n"
-            " copies under certain conditions. See the source for more information.\n"
-
-	    "===========================================================================\n"
-	);
-
+    I_PrintStartupBanner(gamedescription);
     PrintDehackedBanners();
 
     printf (DEH_String("M_Init: Init miscellaneous info.\n"));

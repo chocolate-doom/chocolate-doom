@@ -797,6 +797,8 @@ void D_DoomMain(void)
     FILE *fp;
     boolean devMap;
 
+    I_PrintBanner(PACKAGE_STRING);
+
     I_AtExit(D_Endoom, false);
 
     M_FindResponseFile();
@@ -948,6 +950,8 @@ void D_DoomMain(void)
         gamemode = registered;
         gamedescription = "Heretic (registered)";
     }
+
+    I_PrintStartupBanner(gamedescription);
 
 #ifdef __WATCOMC__
     I_StartupKeyboard();
