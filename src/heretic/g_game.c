@@ -1487,7 +1487,7 @@ void G_DoLoadGame(void)
     save_p = savebuffer + SAVESTRINGSIZE;
     // Skip the description field
     memset(vcheck, 0, sizeof(vcheck));
-    sprintf(vcheck, "version %i", VERSION);
+    sprintf(vcheck, "version %i", HERETIC_VERSION);
     if (strcmp((char *) save_p, vcheck) != 0)
     {                           // Bad version
         return;
@@ -1861,7 +1861,7 @@ void G_DoSaveGame(void)
     SV_Open(name);
     SV_Write(description, SAVESTRINGSIZE);
     memset(verString, 0, sizeof(verString));
-    sprintf(verString, "version %i", VERSION);
+    sprintf(verString, "version %i", HERETIC_VERSION);
     SV_Write(verString, VERSIONSIZE);
     SV_WriteByte(gameskill);
     SV_WriteByte(gameepisode);

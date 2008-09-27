@@ -51,6 +51,11 @@
 
 char *configdir;
 
+// Default filenames for configuration files.
+
+static char *default_main_config;
+static char *default_extra_config;
+
 typedef enum 
 {
     DEFAULT_INT,
@@ -916,6 +921,14 @@ static void LoadDefaultCollection(default_collection_t *collection)
     fclose (f);
 }
 
+// Set the default filenames to use for configuration files.
+
+void M_SetConfigFilenames(char *main_config, char *extra_config)
+{
+    default_main_config = main_config;
+    default_extra_config = extra_config;
+}
+
 //
 // M_SaveDefaults
 //
@@ -940,8 +953,8 @@ void M_LoadDefaults (void)
     // @arg <file>
     // @vanilla
     //
-    // Load configuration from the specified file, instead of
-    // default.cfg.
+    // Load configuration from the specified file.  The default 
+    // configuration file (for Doom) is named default.cfg.
     //
 
     i = M_CheckParm ("-config");
@@ -953,8 +966,9 @@ void M_LoadDefaults (void)
     }
     else
     {
-        doom_defaults.filename = malloc(strlen(configdir) + 20);
-        sprintf(doom_defaults.filename, "%sdefault.cfg", configdir);
+        doom_defaults.filename
+            = malloc(strlen(configdir) + strlen(default_main_config) + 1);
+        sprintf(doom_defaults.filename, "%s%s", configdir, default_main_config);
     }
 
     printf("saving config in %s\n", doom_defaults.filename);
@@ -962,8 +976,8 @@ void M_LoadDefaults (void)
     //!
     // @arg <file>
     //
-    // Load extra configuration from the specified file, instead 
-    // of chocolate-doom.cfg.
+    // Load extra configuration from the specified file.  The default
+    // configuration file for Doom is named chocolate-doom.cfg.
     //
 
     i = M_CheckParm("-extraconfig");
@@ -977,9 +991,9 @@ void M_LoadDefaults (void)
     else
     {
         extra_defaults.filename 
-            = malloc(strlen(configdir) + strlen(PACKAGE_TARNAME) + 10);
-        sprintf(extra_defaults.filename, "%s%s.cfg", 
-                configdir, PACKAGE_TARNAME);
+            = malloc(strlen(configdir) + strlen(default_extra_config) + 1);
+        sprintf(extra_defaults.filename, "%s%s", 
+                configdir, default_extra_config);
     }
 
     LoadDefaultCollection(&doom_defaults);
