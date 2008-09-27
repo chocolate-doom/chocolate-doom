@@ -34,8 +34,8 @@
 #endif
 #include <limits.h>
 
-#define VERSION 130
-#define VERSION_TEXT "v1.3"
+#define HERETIC_VERSION 130
+#define HERETIC_VERSION_TEXT "v1.3"
 
 // if rangecheck is undefined, most parameter validation debugging code
 // will not be compiled

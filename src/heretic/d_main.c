@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "config.h"
 #include "ct_chat.h"
 #include "doomdef.h"
 #include "i_system.h"
@@ -652,7 +653,7 @@ void blitStartup(void)
     _setbkcolor(4);             // Red
     _settextcolor(14);          // Yellow
     _settextposition(3, 47);
-    _outtext(VERSION_TEXT);
+    _outtext(HERETIC_VERSION_TEXT);
 
     // Hide cursor
     _settextcursor(0x2000);
@@ -914,9 +915,11 @@ void D_DoomMain(void)
 
     // Load defaults before initing other systems
     printf("M_LoadDefaults: Load system defaults.\n");
+    D_BindVariables();
+    M_SetConfigFilenames("heretic.cfg", PROGRAM_PREFIX "heretic.cfg");
     M_LoadDefaults();
 
-    //I_AtExit(M_SaveDefaults, false);
+    I_AtExit(M_SaveDefaults, false);
 
     printf("Z_Init: Init zone memory allocation daemon.\n");
     Z_Init();
