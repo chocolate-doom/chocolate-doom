@@ -164,7 +164,7 @@ int dclicktime2, dclickstate2, dclicks2;
 #define MAX_JOY_BUTTONS 20
 
 int joyxmove, joyymove;         // joystick values are repeated
-boolean joyarray[5];
+boolean joyarray[MAX_JOY_BUTTONS + 1];
 boolean *joybuttons = &joyarray[1];     // allow [-1]
 
 int savegameslot;
@@ -774,6 +774,15 @@ void G_DoLoadLevel(void)
     memset(joybuttons, 0, sizeof(joybuttons));
 }
 
+static void SetJoyButtons(unsigned int buttons_mask)
+{
+    int i;
+
+    for (i=0; i<MAX_JOY_BUTTONS; ++i)
+    {
+        joybuttons[i] = (buttons_mask & (1 << i)) != 0;
+    }
+}
 
 /*
 ===============================================================================
@@ -911,10 +920,7 @@ boolean G_Responder(event_t * ev)
             return (true);      // eat events
 
         case ev_joystick:
-            joybuttons[0] = ev->data1 & 1;
-            joybuttons[1] = ev->data1 & 2;
-            joybuttons[2] = ev->data1 & 4;
-            joybuttons[3] = ev->data1 & 8;
+            SetJoyButtons(ev->data1);
             joyxmove = ev->data2;
             joyymove = ev->data3;
             return (true);      // eat events
