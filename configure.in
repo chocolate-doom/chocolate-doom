@@ -58,6 +58,9 @@ AM_INIT_AUTOMAKE([1.8.0])
 
 WINDOWS_RC_VERSION=`echo $PACKAGE_VERSION.0 | sed 's/\./, /g' `
 
+AC_DEFINE(PROGRAM_PREFIX, "chocolate-",
+          Change this when you create your awesome forked version)
+
 AM_CONFIG_HEADER(config.h:config.hin)
 
 AC_SUBST(WINDOWS_RC_VERSION)
