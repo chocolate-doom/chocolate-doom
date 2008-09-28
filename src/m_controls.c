@@ -88,12 +88,6 @@ int joybstraferight = -1;
 
 int dclick_use = 1;
  
-// Disallow mouse and joystick movement to cause forward/backward
-// motion.  Specified with the '-novert' command line parameter.
-// This is an int to allow saving to config file
-
-int novert = 0;
- 
 // 
 // Bind all of the common controls used by Doom and all other games.
 //
@@ -129,7 +123,6 @@ void M_BindBaseControls(void)
     M_BindVariable("mouseb_use",         &mousebuse);
     M_BindVariable("mouseb_backward",    &mousebbackward);
     M_BindVariable("dclick_use",         &dclick_use);
-    M_BindVariable("novert",             &novert);
 }
 
 void M_BindHereticControls(void)

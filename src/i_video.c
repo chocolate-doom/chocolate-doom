@@ -101,6 +101,12 @@ static boolean initialised = false;
 static boolean nomouse = false;
 int usemouse = 1;
 
+// Disallow mouse and joystick movement to cause forward/backward
+// motion.  Specified with the '-novert' command line parameter.
+// This is an int to allow saving to config file
+
+int novert = 0;
+
 // if true, I_VideoBuffer is screen->pixels
 
 static boolean native_surface;
@@ -607,7 +613,15 @@ static void I_ReadMouse(void)
         ev.type = ev_mouse;
         ev.data1 = MouseButtonState();
         ev.data2 = AccelerateMouse(x);
-        ev.data3 = -AccelerateMouse(y);
+
+        if (!novert)
+        {
+            ev.data3 = -AccelerateMouse(y);
+        }
+        else
+        {
+            ev.data3 = 0;
+        }
         
         D_PostEvent(&ev);
     }
@@ -1344,6 +1358,28 @@ static void CheckCommandLine(void)
     {
         SetScaleFactor(3);
     }
+
+    //!
+    // @category video
+    //
+    // Disable vertical mouse movement.
+    //
+
+    if (M_CheckParm("-novert"))
+    {
+        novert = true;
+    }
+
+    //!
+    // @category video
+    //
+    // Enable vertical mouse movement.
+    //
+
+    if (M_CheckParm("-nonovert"))
+    {
+        novert = false;
+    }
 }
 
 // Check if we have been invoked as a screensaver by xscreensaver.
@@ -1667,5 +1703,6 @@ void I_BindVideoVariables(void)
     M_BindVariable("video_driver",              &video_driver);
     M_BindVariable("usegamma",                  &usegamma);
     M_BindVariable("vanilla_keyboard_mapping",  &vanilla_keyboard_mapping);
+    M_BindVariable("novert",                    &novert);
 }
 

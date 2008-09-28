@@ -527,12 +527,7 @@ void G_BuildTiccmd (ticcmd_t* cmd)
         } 
     }
 
-    // fraggle: allow disabling mouse y movement
- 
-    if (!novert) 
-    {
-        forward += mousey; 
-    }
+    forward += mousey; 
 
     if (strafe) 
 	side += mousex*2; 
