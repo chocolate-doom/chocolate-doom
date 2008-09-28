@@ -314,9 +314,11 @@ void G_BuildTiccmd(ticcmd_t * cmd)
         forward += forwardmove[speed];
     if (joyymove > 0)
         forward -= forwardmove[speed];
-    if (gamekeydown[key_straferight])
+    if (gamekeydown[key_straferight] || mousebuttons[mousebstraferight]
+     || joybuttons[joybstraferight])
         side += sidemove[speed];
-    if (gamekeydown[key_strafeleft])
+    if (gamekeydown[key_strafeleft] || mousebuttons[mousebstrafeleft]
+     || joybuttons[joybstrafeleft])
         side -= sidemove[speed];
 
     // Look up/down/center keys
@@ -586,7 +588,7 @@ void G_BuildTiccmd(ticcmd_t * cmd)
         || joybuttons[joybfire])
         cmd->buttons |= BT_ATTACK;
 
-    if (gamekeydown[key_use] || joybuttons[joybuse])
+    if (gamekeydown[key_use] || joybuttons[joybuse] || mousebuttons[mousebuse])
     {
         cmd->buttons |= BT_USE;
         dclicks = 0;            // clear double clicks if hit use button
@@ -610,57 +612,68 @@ void G_BuildTiccmd(ticcmd_t * cmd)
         forward += forwardmove[speed];
     }
 
-//
-// forward double click
-//
-    if (mousebuttons[mousebforward] != dclickstate && dclicktime > 1)
+    if (mousebuttons[mousebbackward])
     {
-        dclickstate = mousebuttons[mousebforward];
-        if (dclickstate)
-            dclicks++;
-        if (dclicks == 2)
-        {
-            cmd->buttons |= BT_USE;
-            dclicks = 0;
-        }
-        else
-            dclicktime = 0;
-    }
-    else
-    {
-        dclicktime += ticdup;
-        if (dclicktime > 20)
-        {
-            dclicks = 0;
-            dclickstate = 0;
-        }
+	forward -= forwardmove[speed];
     }
 
-//
-// strafe double click
-//
-    bstrafe = mousebuttons[mousebstrafe] || joybuttons[joybstrafe];
-    if (bstrafe != dclickstate2 && dclicktime2 > 1)
+    // Double click to use can be disabled 
+   
+    if (dclick_use)
     {
-        dclickstate2 = bstrafe;
-        if (dclickstate2)
-            dclicks2++;
-        if (dclicks2 == 2)
-        {
-            cmd->buttons |= BT_USE;
-            dclicks2 = 0;
-        }
-        else
-            dclicktime2 = 0;
-    }
-    else
-    {
-        dclicktime2 += ticdup;
-        if (dclicktime2 > 20)
-        {
-            dclicks2 = 0;
-            dclickstate2 = 0;
-        }
+	//
+	// forward double click
+	//
+	if (mousebuttons[mousebforward] != dclickstate && dclicktime > 1)
+	{
+	    dclickstate = mousebuttons[mousebforward];
+	    if (dclickstate)
+		dclicks++;
+	    if (dclicks == 2)
+	    {
+		cmd->buttons |= BT_USE;
+		dclicks = 0;
+	    }
+	    else
+		dclicktime = 0;
+	}
+	else
+	{
+	    dclicktime += ticdup;
+	    if (dclicktime > 20)
+	    {
+		dclicks = 0;
+		dclickstate = 0;
+	    }
+	}
+
+	//
+	// strafe double click
+	//
+
+	bstrafe = mousebuttons[mousebstrafe] || joybuttons[joybstrafe];
+	if (bstrafe != dclickstate2 && dclicktime2 > 1)
+	{
+	    dclickstate2 = bstrafe;
+	    if (dclickstate2)
+		dclicks2++;
+	    if (dclicks2 == 2)
+	    {
+		cmd->buttons |= BT_USE;
+		dclicks2 = 0;
+	    }
+	    else
+		dclicktime2 = 0;
+	}
+	else
+	{
+	    dclicktime2 += ticdup;
+	    if (dclicktime2 > 20)
+	    {
+		dclicks2 = 0;
+		dclickstate2 = 0;
+	    }
+	}
     }
 
     if (strafe)
@@ -671,6 +684,7 @@ void G_BuildTiccmd(ticcmd_t * cmd)
     {
         cmd->angleturn -= mousex * 0x8;
     }
+
     forward += mousey;
     mousex = mousey = 0;
 
