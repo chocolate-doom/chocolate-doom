@@ -6,9 +6,8 @@
  * Update docgen to generate manpages for Heretic/Hexen.
 
 Heretic:
- * Merge r_draw.c to common version and delete duplicate
+ * Fix bug with SFX played at wrong volumes
  * Multiplayer code to use Chocolate Doom multiplayer code.
- * Save config file
  * Frequency shifted sounds.
  * Update input code to work properly with vanilla_keyboard_mapping
  * Check all command line parameters
@@ -16,6 +15,10 @@ Heretic:
  * Savegame code to write structures predictably and endianness-correct
  * Remove NeXT and WATCOMC defines
  * Structure packing macros for structures read from disk
+ * Merge r_draw.c to common version and delete duplicate
+ * Recreate text mode startup using textscreen code.
+ * v1.2 emulation (if possible)
+ * Screensaver mode
 
 Hexen:
  * Merge v_video.c to common version and delete duplicate
@@ -40,4 +43,5 @@ Hexen:
  * Savegame code to write structures predictably and endianness-correct
  * Remove NeXT and WATCOMC defines
  * Structure packing macros for structures read from disk
+ * Screensaver mode
 
