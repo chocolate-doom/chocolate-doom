@@ -63,7 +63,6 @@ extern int joybstrafeleft;
 extern int joybstraferight;
 
 extern int dclick_use;
-extern int novert;
  
 void M_BindBaseControls(void);
 void M_BindHereticControls(void);

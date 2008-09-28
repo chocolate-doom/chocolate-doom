@@ -94,9 +94,6 @@ extern  int		gamemap;
 // If non-zero, exit the level after this number of minutes
 extern  int             timelimit;
 
-// vertical movement from mouse/joystick disabled
-extern  int             novert;
-
 // Nightmare mode flag, single player.
 extern  boolean         respawnmonsters;
 
