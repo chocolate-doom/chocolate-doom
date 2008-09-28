@@ -990,8 +990,9 @@ void D_DoomMain(void)
     hgotoxy(17, 7);
     hprintf("Loading graphics", 0x3f);
     R_Init();
+    tprintf("\n", 0);
 
-    tprintf("P_Init: Init Playloop state.", 1);
+    tprintf("P_Init: Init Playloop state.\n", 1);
     hgotoxy(17, 8);
     hprintf("Init game engine.", 0x3f);
     P_Init();
@@ -1001,7 +1002,7 @@ void D_DoomMain(void)
     I_Init();
     IncThermo();
 
-    tprintf("S_Init... ", 1);
+    tprintf("S_Init: Setting up sound.\n", 1);
     S_Init();
     //IO_StartupTimer();
     S_Start();

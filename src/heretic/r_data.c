@@ -540,17 +540,17 @@ void R_InitColormaps(void)
 
 void R_InitData(void)
 {
-    tprintf("\nR_InitTextures ", 0);
+    //tprintf("\nR_InitTextures ", 0);
     R_InitTextures();
-//printf (".");
-    tprintf("R_InitFlats\n", 0);
+    printf (".");
+    //tprintf("R_InitFlats\n", 0);
     R_InitFlats();
     IncThermo();
-//printf (".");
-    tprintf("R_InitSpriteLumps ", 0);
+    printf (".");
+    //tprintf("R_InitSpriteLumps ", 0);
     R_InitSpriteLumps();
     IncThermo();
-//printf (".");
+    printf (".");
     R_InitColormaps();
 }
 

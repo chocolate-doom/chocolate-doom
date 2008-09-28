@@ -99,7 +99,6 @@ mus2mid.c            mus2mid.h
 
 SOURCE_FILES = $(MAIN_SOURCE_FILES)                \
                $(FEATURE_DEHACKED_SOURCE_FILES)    \
-               $(FEATURE_MULTIPLAYER_SOURCE_FILES) \
                $(FEATURE_WAD_MERGE_SOURCE_FILES)   \
                $(FEATURE_SOUND_SOURCE_FILES)
 
