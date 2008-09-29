@@ -46,6 +46,7 @@
 			<Add option="-D_WIN32" />
 			<Add directory="." />
 			<Add directory="..\src" />
+			<Add directory="..\src\doom" />
 			<Add directory="..\textscreen" />
 		</Compiler>
 		<ResourceCompiler>
