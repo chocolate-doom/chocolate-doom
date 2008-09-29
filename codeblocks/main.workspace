@@ -5,8 +5,14 @@
 			<Depends filename="textscreen.cbp" />
 			<Depends filename="libpcsound.cbp" />
 		</Project>
-		<Project filename="heretic.cbp" />
-		<Project filename="hexen.cbp" />
+		<Project filename="heretic.cbp">
+			<Depends filename="textscreen.cbp" />
+			<Depends filename="libpcsound.cbp" />
+		</Project>
+		<Project filename="hexen.cbp">
+			<Depends filename="textscreen.cbp" />
+			<Depends filename="libpcsound.cbp" />
+		</Project>
 		<Project filename="server.cbp" />
 		<Project filename="setup.cbp">
 			<Depends filename="textscreen.cbp" />
