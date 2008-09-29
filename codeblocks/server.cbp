@@ -45,6 +45,10 @@
 		<Unit filename="..\src\d_dedicated.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\src\d_mode.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\d_mode.h" />
 		<Unit filename="..\src\i_main.c">
 			<Option compilerVar="CC" />
 		</Unit>
