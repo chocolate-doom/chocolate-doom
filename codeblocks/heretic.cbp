@@ -12,7 +12,6 @@
 				<Option object_output="..\obj\chocolate-heretic\dbg" />
 				<Option type="0" />
 				<Option compiler="gcc" />
-				<Option parameters="-iwad d:\russell\games\doom2\iwad\doom2.wad" />
 				<Option projectLinkerOptionsRelation="2" />
 				<Compiler>
 					<Add option="-W" />
