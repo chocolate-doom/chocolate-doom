@@ -2,14 +2,14 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="chocolate-server" />
+		<Option title="Server" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="..\bin\$(PROJECT_NAME)-dbg.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="..\bin\chocolate-server-dbg.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="..\bin" />
-				<Option object_output="..\obj\dbg" />
+				<Option object_output="..\obj\chocolate-server\dbg" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -18,9 +18,9 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="..\bin\$(PROJECT_NAME).exe" prefix_auto="0" extension_auto="0" />
+				<Option output="..\bin\chocolate-server.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="..\bin" />
-				<Option object_output="..\obj\rel" />
+				<Option object_output="..\obj\chocolate-server\rel" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>

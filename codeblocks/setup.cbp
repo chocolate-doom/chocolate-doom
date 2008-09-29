@@ -2,14 +2,14 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="chocolate-setup" />
+		<Option title="Setup" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="..\bin\$(PROJECT_NAME)-dbg.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="..\bin\chocolate-setup-dbg.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="..\bin" />
-				<Option object_output="..\obj\dbg\" />
+				<Option object_output="..\obj\chocolate-setup\dbg" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Option projectLinkerOptionsRelation="2" />
@@ -23,9 +23,9 @@
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="..\bin\$(PROJECT_NAME).exe" prefix_auto="0" extension_auto="0" />
+				<Option output="..\bin\chocolate-setup.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="..\bin" />
-				<Option object_output="..\obj\rel\" />
+				<Option object_output="..\obj\chocolate-setup\rel" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Option projectLinkerOptionsRelation="2" />
