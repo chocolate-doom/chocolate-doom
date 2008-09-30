@@ -3,8 +3,8 @@ SUBDIRS=doom heretic hexen
 
 gamesdir = $(prefix)/games
 
-EXTRA_PROGRAMS = chocolate-heretic chocolate-hexen
-games_PROGRAMS = chocolate-doom chocolate-server
+EXTRA_PROGRAMS = chocolate-hexen
+games_PROGRAMS = chocolate-doom chocolate-heretic chocolate-server
 
 AM_CFLAGS = -Idoom -I../textscreen -I../pcsound @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@ -Werror
 
