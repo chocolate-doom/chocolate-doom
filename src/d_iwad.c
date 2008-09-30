@@ -157,6 +157,8 @@ static char *steam_install_subdirs[] =
     "steamapps\\common\\doom 2\\base",
     "steamapps\\common\\final doom\\base",
     "steamapps\\common\\ultimate doom\\base",
+    "steamapps\\common\\hexen\\base",
+    "steamapps\\common\\heretic shadow of the serpent riders"
 };
 
 static char *GetRegistryString(registry_value_t *reg_val)
