@@ -29,10 +29,9 @@
 #include <ctype.h>
 #include <string.h>
 
-#include "deh_main.h"
+#include "deh_str.h"
 #include "doomkeys.h"
-#include "doomdef.h"
-#include "doomstat.h"
+#include "d_iwad.h"
 #include "i_system.h"
 #include "m_argv.h"
 #include "m_config.h"
@@ -316,37 +315,15 @@ static void CheckDOSDefaults(void)
 
 #endif
 
-static struct 
-{
-    char *name;
-    GameMission_t mission;
-} iwads[] = {
-    {"doom2.wad",    doom2},
-    {"plutonia.wad", pack_plut},
-    {"tnt.wad",      pack_tnt},
-    {"doom.wad",     doom},
-    {"doom1.wad",    doom},
-    {"chex.wad",     doom},
-};
-            
-// Hack for chex quest mode
-
-static void CheckChex(char *iwad_name)
-{
-    if (!strcmp(iwad_name, "chex.wad")) 
-    {
-        gameversion = exe_chex;
-    }
-}
-
 // Search a directory to try to find an IWAD
 // Returns the location of the IWAD if found, otherwise NULL.
 
-static char *SearchDirectoryForIWAD(char *dir)
+static char *SearchDirectoryForIWAD(char *dir, iwad_t *iwads,
+                                    GameMission_t *mission)
 {
     size_t i;
 
-    for (i=0; i<arrlen(iwads); ++i) 
+    for (i=0; iwads[i].name != NULL; ++i) 
     {
         char *filename; 
         char *iwadname;
@@ -366,8 +343,7 @@ static char *SearchDirectoryForIWAD(char *dir)
 
         if (M_FileExists(filename))
         {
-            CheckChex(iwads[i].name);
-            gamemission = iwads[i].mission;
+            *mission = iwads[i].mission;
 
             return filename;
         }
@@ -381,13 +357,14 @@ static char *SearchDirectoryForIWAD(char *dir)
 // When given an IWAD with the '-iwad' parameter,
 // attempt to identify it by its name.
 
-static void IdentifyIWADByName(char *name)
+static GameMission_t IdentifyIWADByName(char *name, iwad_t *iwads)
 {
     size_t i;
+    GameMission_t mission;
 
-    gamemission = none;
+    mission = none;
     
-    for (i=0; i<arrlen(iwads); ++i)
+    for (i=0; iwads[i].name != NULL; ++i)
     {
         char *iwadname;
 
@@ -401,11 +378,12 @@ static void IdentifyIWADByName(char *name)
         if (!strcasecmp(name + strlen(name) - strlen(iwadname), 
                         iwadname))
         {
-            CheckChex(iwads[i].name);
-            gamemission = iwads[i].mission;
+            mission = iwads[i].mission;
             break;
         }
     }
+
+    return mission;
 }
 
 //
@@ -584,7 +562,7 @@ char *D_TryFindWADByName(char *filename)
 // should be executed (notably loading PWADs).
 //
 
-char *D_FindIWAD(void)
+char *D_FindIWAD(iwad_t *iwads, GameMission_t *mission)
 {
     char *result;
     char *iwadfile;
@@ -614,7 +592,7 @@ char *D_FindIWAD(void)
             I_Error("IWAD file '%s' not found!", iwadfile);
         }
         
-        IdentifyIWADByName(result);
+        *mission = IdentifyIWADByName(result, iwads);
     }
     else
     {
@@ -626,272 +604,18 @@ char *D_FindIWAD(void)
     
         for (i=0; result == NULL && i<num_iwad_dirs; ++i)
         {
-            result = SearchDirectoryForIWAD(iwad_dirs[i]);
+            result = SearchDirectoryForIWAD(iwad_dirs[i], iwads, mission);
         }
     }
 
     return result;
 }
 
-// 
-// Get the IWAD name used for savegames.
-//
-
-static char *SaveGameIWADName(void)
-{
-    size_t i;
-
-    // Chex quest hack
-
-    if (gameversion == exe_chex)
-    {
-        return "chex.wad";
-    }
-
-    // Find what subdirectory to use for savegames
-    //
-    // They should be stored in something like
-    //    ~/.chocolate-doom/savegames/doom.wad/
-    //
-    // The directory depends on the IWAD, so that savegames for
-    // different IWADs are kept separate.
-    //
-    // Note that we match on gamemission rather than on IWAD name.
-    // This ensures that doom1.wad and doom.wad saves are stored
-    // in the same place.
-
-    for (i=0; i<arrlen(iwads); ++i)
-    {
-        if (gamemission == iwads[i].mission)
-        {
-            return iwads[i].name;
-        }
-    }
-    
-    return NULL;
-}
-// 
-// SetSaveGameDir
-//
-// Chooses the directory used to store saved games.
-//
-
-void D_SetSaveGameDir(void)
-{
-    char *iwad_name;
-
-    if (!strcmp(configdir, ""))
-    {
-        // Use the current directory, just like configdir.
-
-        savegamedir = strdup("");
-    }
-    else
-    {
-        // Directory for savegames
-
-        iwad_name = SaveGameIWADName();
-
-        if (iwad_name == NULL) 
-        {
-            iwad_name = "unknown.wad";
-        }
-
-        savegamedir = Z_Malloc(strlen(configdir) + 30, PU_STATIC, 0);
-        sprintf(savegamedir, "%ssavegames%c%s%c", configdir,
-                             DIR_SEPARATOR, iwad_name, DIR_SEPARATOR);
-
-        M_MakeDirectory(savegamedir);
-    }
-}
-
-// Strings for dehacked replacements of the startup banner
-//
-// These are from the original source: some of them are perhaps
-// not used in any dehacked patches
-
-static char *banners[] = 
-{
-    // doom1.wad
-    "                            "
-    "DOOM Shareware Startup v%i.%i"
-    "                           ",
-    // doom.wad
-    "                            "
-    "DOOM Registered Startup v%i.%i"
-    "                           ",
-    // Registered DOOM uses this
-    "                          "
-    "DOOM System Startup v%i.%i"
-    "                          ",
-    // doom.wad (Ultimate DOOM)
-    "                         "
-    "The Ultimate DOOM Startup v%i.%i"
-    "                        ",
-    // doom2.wad
-    "                         "
-    "DOOM 2: Hell on Earth v%i.%i"
-    "                           ",
-    // tnt.wad
-    "                     "
-    "DOOM 2: TNT - Evilution v%i.%i"
-    "                           ",
-    // plutonia.wad
-    "                   "
-    "DOOM 2: Plutonia Experiment v%i.%i"
-    "                           ",
-};
-
-//
-// Get game name: if the startup banner has been replaced, use that.
-// Otherwise, use the name given
-// 
-
-static char *GetGameName(char *gamename)
-{
-    size_t i;
-    char *deh_sub;
-    
-    for (i=0; i<arrlen(banners); ++i)
-    {
-        // Has the banner been replaced?
-
-        deh_sub = DEH_String(banners[i]);
-        
-        if (deh_sub != banners[i])
-        {
-            // Has been replaced
-            // We need to expand via printf to include the Doom version 
-            // number
-            // We also need to cut off spaces to get the basic name
-
-            gamename = Z_Malloc(strlen(deh_sub) + 10, PU_STATIC, 0);
-            sprintf(gamename, deh_sub, DOOM_VERSION / 100, DOOM_VERSION % 100);
-
-            while (gamename[0] != '\0' && isspace(gamename[0]))
-                strcpy(gamename, gamename+1);
-
-            while (gamename[0] != '\0' && isspace(gamename[strlen(gamename)-1]))
-                gamename[strlen(gamename) - 1] = '\0';
-            
-            return gamename;
-        }
-    }
-
-    return gamename;
-}
-
-
-//
-// Find out what version of Doom is playing.
-//
-
-void D_IdentifyVersion(void)
-{
-    // gamemission is set up by the D_FindIWAD function.  But if 
-    // we specify '-iwad', we have to identify using 
-    // IdentifyIWADByName.  However, if the iwad does not match
-    // any known IWAD name, we may have a dilemma.  Try to 
-    // identify by its contents.
-
-    if (gamemission == none)
-    {
-        unsigned int i;
-
-        for (i=0; i<numlumps; ++i)
-        {
-            if (!strncasecmp(lumpinfo[i].name, "MAP01", 8))
-            {
-                gamemission = doom2;
-                break;
-            } 
-            else if (!strncasecmp(lumpinfo[i].name, "E1M1", 8))
-            {
-                gamemission = doom;
-                break;
-            }
-        }
-
-        if (gamemission == none)
-        {
-            // Still no idea.  I don't think this is going to work.
-
-            I_Error("Unknown or invalid IWAD file.");
-        }
-    }
-
-    // Make sure gamemode is set up correctly
-
-    if (gamemission == doom)
-    {
-        // Doom 1.  But which version?
-
-        if (W_CheckNumForName("E4M1") > 0)
-        {
-            // Ultimate Doom
-
-            gamemode = retail;
-        } 
-        else if (W_CheckNumForName("E3M1") > 0)
-        {
-            gamemode = registered;
-        }
-        else
-        {
-            gamemode = shareware;
-        }
-    }
-    else
-    {
-        // Doom 2 of some kind.
-
-        gamemode = commercial;
-    }
-}
-
-// Set the gamedescription string
-
-void D_SetGameDescription(void)
-{
-    gamedescription = "Unknown";
-
-    if (gamemission == doom)
-    {
-        // Doom 1.  But which version?
-
-        if (gamemode == retail)
-        {
-            // Ultimate Doom
-
-            gamedescription = GetGameName("The Ultimate DOOM");
-        } 
-        else if (gamemode == registered)
-        {
-            gamedescription = GetGameName("DOOM Registered");
-        }
-        else if (gamemode == shareware)
-        {
-            gamedescription = GetGameName("DOOM Shareware");
-        }
-    }
-    else
-    {
-        // Doom 2 of some kind.  But which mission?
-
-        if (gamemission == doom2)
-            gamedescription = GetGameName("DOOM 2: Hell on Earth");
-        else if (gamemission == pack_plut)
-            gamedescription = GetGameName("DOOM 2: Plutonia Experiment"); 
-        else if (gamemission == pack_tnt)
-            gamedescription = GetGameName("DOOM 2: TNT - Evilution");
-    }
-}
-
 // Clever hack: Setup can invoke Doom to determine which IWADs are installed.
 // Doom searches install paths and exits with the return code being a 
 // bitmask of the installed IWAD files.
 
-void D_FindInstalledIWADs(void)
+void D_FindInstalledIWADs(iwad_t *iwads)
 {
     unsigned int i;
     int result;

@@ -28,6 +28,8 @@
 #ifndef __D_MODE__
 #define __D_MODE__
 
+#include "doomtype.h"
+
 // The "mission" controls what game we are playing.
 
 typedef enum
