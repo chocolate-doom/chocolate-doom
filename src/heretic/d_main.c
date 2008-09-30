@@ -29,6 +29,7 @@
 #include "config.h"
 #include "ct_chat.h"
 #include "doomdef.h"
+#include "d_iwad.h"
 #include "i_system.h"
 #include "i_video.h"
 #include "m_argv.h"
@@ -434,8 +435,6 @@ void D_CheckRecordFrom(void)
 ===============
 */
 
-#define MAXWADFILES 20
-
 // MAPDIR should be defined as the directory that holds development maps
 // for the -wart # # command
 
@@ -443,14 +442,15 @@ void D_CheckRecordFrom(void)
 
 #define SHAREWAREWADNAME "heretic1.wad"
 
-char *wadfiles[MAXWADFILES] = {
-    "heretic.wad",
+static iwad_t iwads[] = {
+    { "heretic.wad",        heretic },
+    { "heretic1.wad",       heretic },
+    { NULL,                 none },
 };
 
-char *basedefault = "heretic.cfg";
+char *iwadfile;
 
-char exrnwads[80];
-char exrnwads2[80];
+char *basedefault = "heretic.cfg";
 
 void wadprintf(void)
 {
@@ -468,41 +468,15 @@ void wadprintf(void)
 #endif
 }
 
-void D_AddFile(char *file)
+boolean D_AddFile(char *file)
 {
-    int numwadfiles;
-    char *new;
-//      char text[256];
+    wad_file_t *handle;
 
-    for (numwadfiles = 0; wadfiles[numwadfiles]; numwadfiles++);
-    new = malloc(strlen(file) + 1);
-    strcpy(new, file);
-    if (strlen(exrnwads) + strlen(file) < 78)
-    {
-        if (strlen(exrnwads))
-        {
-            strcat(exrnwads, ", ");
-        }
-        else
-        {
-            strcpy(exrnwads, "External Wadfiles: ");
-        }
-        strcat(exrnwads, file);
-    }
-    else if (strlen(exrnwads2) + strlen(file) < 79)
-    {
-        if (strlen(exrnwads2))
-        {
-            strcat(exrnwads2, ", ");
-        }
-        else
-        {
-            strcpy(exrnwads2, "     ");
-            strcat(exrnwads, ",");
-        }
-        strcat(exrnwads2, file);
-    }
-    wadfiles[numwadfiles] = new;
+    printf("  adding %s\n", file);
+
+    handle = W_AddFile(file);
+
+    return handle != NULL;
 }
 
 //==========================================================
@@ -789,13 +763,8 @@ static void D_Endoom(void)
 
 void D_DoomMain(void)
 {
-    int i;
     int p;
-    int e;
-    int m;
     char file[256];
-    FILE *fp;
-    boolean devMap;
 
     I_PrintBanner(PACKAGE_STRING);
 
@@ -813,17 +782,6 @@ void D_DoomMain(void)
     startmap = 1;
     autostart = false;
 
-    // wadfiles[0] is a char * to the main wad
-    fp = fopen(wadfiles[0], "rb");
-    if (fp)
-    {
-        fclose(fp);
-    }
-    else
-    {                           // Change to look for shareware wad
-        wadfiles[0] = SHAREWAREWADNAME;
-    }
-
     // Check for -CDROM
     cdrom = false;
 #ifdef __WATCOMC__
@@ -833,48 +791,6 @@ void D_DoomMain(void)
         mkdir("c:\\heretic.cd");
     }
 #endif
-
-    // -FILE [filename] [filename] ...
-    // Add files to the wad list.
-    p = M_CheckParm("-file");
-    if (p)
-    {                           // the parms after p are wadfile/lump names, until end of parms
-        // or another - preceded parm
-        while (++p != myargc && myargv[p][0] != '-')
-        {
-            D_AddFile(myargv[p]);
-        }
-    }
-
-    // -DEVMAP <episode> <map>
-    // Adds a map wad from the development directory to the wad list,
-    // and sets the start episode and the start map.
-    devMap = false;
-    p = M_CheckParm("-devmap");
-    if (p && p < myargc - 2)
-    {
-        e = myargv[p + 1][0];
-        m = myargv[p + 2][0];
-        sprintf(file, MAPDIR "E%cM%c.wad", e, m);
-        D_AddFile(file);
-        printf("DEVMAP: Episode %c, Map %c.\n", e, m);
-        startepisode = e - '0';
-        startmap = m - '0';
-        autostart = true;
-        devMap = true;
-    }
-
-    p = M_CheckParm("-playdemo");
-    if (!p)
-    {
-        p = M_CheckParm("-timedemo");
-    }
-    if (p && p < myargc - 1)
-    {
-        sprintf(file, "%s.lmp", myargv[p + 1]);
-        D_AddFile(file);
-        printf("Playing demo %s.lmp.\n", myargv[p + 1]);
-    }
 
 //
 // get skill / episode / map from parms
@@ -928,9 +844,38 @@ void D_DoomMain(void)
 
     printf("W_Init: Init WADfiles.\n");
 
-    for (i=0; wadfiles[i] != NULL; ++i)
+    iwadfile = D_FindIWAD(iwads, &gamemission);
+
+    if (iwadfile == NULL)
     {
-        W_AddFile(wadfiles[i]);
+        I_Error("Game mode indeterminate. No IWAD was found. Try specifying\n"
+                "one with the '-iwad' command line parameter.");
+    }
+
+    D_AddFile(iwadfile);
+
+    // -FILE [filename] [filename] ...
+    // Add files to the wad list.
+    p = M_CheckParm("-file");
+    if (p)
+    {                           // the parms after p are wadfile/lump names, until end of parms
+        // or another - preceded parm
+        while (++p != myargc && myargv[p][0] != '-')
+        {
+            D_AddFile(myargv[p]);
+        }
+    }
+
+    p = M_CheckParm("-playdemo");
+    if (!p)
+    {
+        p = M_CheckParm("-timedemo");
+    }
+    if (p && p < myargc - 1)
+    {
+        sprintf(file, "%s.lmp", myargv[p + 1]);
+        D_AddFile(file);
+        printf("Playing demo %s.lmp.\n", myargv[p + 1]);
     }
 
     if (W_CheckNumForName("E2M1") == -1)
@@ -1064,7 +1009,7 @@ void D_DoomMain(void)
     }
 
     // Check valid episode and map
-    if ((autostart || netgame) && (devMap == false))
+    if (autostart || netgame)
     {
         if (M_ValidEpisodeMap(startepisode, startmap) == false)
         {

@@ -32,6 +32,7 @@ d_event.c            d_event.h             \
                      doomkeys.h            \
                      doomfeatures.h        \
                      doomtype.h            \
+d_iwad.c             d_iwad.h              \
 d_mode.c             d_mode.h              \
                      d_ticcmd.h            \
 i_cdmus.c            i_cdmus.h             \

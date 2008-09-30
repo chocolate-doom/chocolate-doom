@@ -27,13 +27,18 @@
 #ifndef __D_IWAD__
 #define __D_IWAD__
 
+#include "d_mode.h"
+
+typedef struct
+{
+    char *name;
+    GameMission_t mission;
+} iwad_t;
+
 char *D_FindWADByName(char *filename);
 char *D_TryFindWADByName(char *filename);
-char *D_FindIWAD(void);
-void D_SetSaveGameDir(void);
-void D_IdentifyVersion(void);
-void D_SetGameDescription(void);
-void D_FindInstalledIWADs(void);
+char *D_FindIWAD(iwad_t *iwads, GameMission_t *mission);
+void D_FindInstalledIWADs(iwad_t *iwads);
 
 #endif
 
