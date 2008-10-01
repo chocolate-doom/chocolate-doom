@@ -24,12 +24,14 @@
 
 #include <string.h>
 #include "h2def.h"
+#include "doomkeys.h"
 #include "i_video.h"
 #include "i_system.h"
 #include "i_timer.h"
 #include "m_misc.h"
 #include "p_local.h"
 #include "soundst.h"
+#include "v_video.h"
 
 #define AM_STARTKEY	9
 
@@ -596,41 +598,41 @@ void G_BuildTiccmd(ticcmd_t * cmd)
         gamekeydown[KEY_BACKSPACE] = false;     // Use one of each artifact
         cmd->arti = NUMARTIFACTS;
     }
-    else if (gamekeydown[KEY_BACKSLASH] && !cmd->arti
+    else if (gamekeydown['\\'] && !cmd->arti
              && (players[consoleplayer].mo->health < MAXHEALTH))
     {
-        gamekeydown[KEY_BACKSLASH] = false;
+        gamekeydown['\\'] = false;
         cmd->arti = arti_health;
     }
-    else if (gamekeydown[KEY_ZERO] && !cmd->arti)
+    else if (gamekeydown['0'] && !cmd->arti)
     {
-        gamekeydown[KEY_ZERO] = false;
+        gamekeydown['0'] = false;
         cmd->arti = arti_poisonbag;
     }
-    else if (gamekeydown[KEY_NINE] && !cmd->arti)
+    else if (gamekeydown['9'] && !cmd->arti)
     {
-        gamekeydown[KEY_NINE] = false;
+        gamekeydown['9'] = false;
         cmd->arti = arti_blastradius;
     }
-    else if (gamekeydown[KEY_EIGHT] && !cmd->arti)
+    else if (gamekeydown['8'] && !cmd->arti)
     {
-        gamekeydown[KEY_EIGHT] = false;
+        gamekeydown['8'] = false;
         cmd->arti = arti_teleport;
     }
-    else if (gamekeydown[KEY_SEVEN] && !cmd->arti)
+    else if (gamekeydown['7'] && !cmd->arti)
     {
-        gamekeydown[KEY_SEVEN] = false;
+        gamekeydown['7'] = false;
         cmd->arti = arti_teleportother;
     }
-    else if (gamekeydown[KEY_SIX] && !cmd->arti)
+    else if (gamekeydown['6'] && !cmd->arti)
     {
-        gamekeydown[KEY_SIX] = false;
+        gamekeydown['6'] = false;
         cmd->arti = arti_egg;
     }
-    else if (gamekeydown[KEY_FIVE] && !cmd->arti
+    else if (gamekeydown['5'] && !cmd->arti
              && !players[consoleplayer].powers[pw_invulnerability])
     {
-        gamekeydown[KEY_FIVE] = false;
+        gamekeydown['5'] = false;
         cmd->arti = arti_invulnerability;
     }
 

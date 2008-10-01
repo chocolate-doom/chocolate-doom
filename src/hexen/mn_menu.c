@@ -26,6 +26,7 @@
 
 #include <ctype.h>
 #include "h2def.h"
+#include "doomkeys.h"
 #include "i_system.h"
 #include "i_video.h"
 #include "p_local.h"

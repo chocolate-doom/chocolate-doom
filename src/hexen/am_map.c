@@ -23,6 +23,7 @@
 
 
 #include "h2def.h"
+#include "doomkeys.h"
 #include "i_video.h"
 #include "i_swap.h"
 #include "p_local.h"
