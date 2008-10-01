@@ -40,7 +40,6 @@ int viewwidth, scaledviewwidth, viewheight, viewwindowx, viewwindowy;
 byte *ylookup[MAXHEIGHT];
 int columnofs[MAXWIDTH];
 //byte translations[3][256]; // color tables for different players
-byte *tinttable;                // used for translucent sprites
 
 /*
 ==================
@@ -332,8 +331,7 @@ void R_InitTranslationTables(void)
     int i;
     byte *transLump;
 
-    // Load tint table
-    tinttable = W_CacheLumpName("TINTTAB", PU_STATIC);
+    V_LoadTintTable();
 
     // Allocate translation tables
     translationtables = Z_Malloc(256 * 3 * (MAXPLAYERS - 1) + 255,
