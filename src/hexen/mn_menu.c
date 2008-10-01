@@ -31,6 +31,7 @@
 #include "p_local.h"
 #include "r_local.h"
 #include "soundst.h"
+#include "v_video.h"
 
 // MACROS ------------------------------------------------------------------
 

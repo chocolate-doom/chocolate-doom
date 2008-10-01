@@ -26,6 +26,7 @@
 #include "i_system.h"
 #include "i_video.h"
 #include <ctype.h>
+#include "v_video.h"
 
 // MACROS ------------------------------------------------------------------
 

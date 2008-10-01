@@ -27,6 +27,7 @@
 #include "h2def.h"
 #include "p_local.h"
 #include "soundst.h"
+#include "v_video.h"
 
 #define NUMKEYS 256
 

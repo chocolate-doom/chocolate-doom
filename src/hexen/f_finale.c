@@ -30,6 +30,7 @@
 #include "soundst.h"
 #include "p_local.h"
 #include <ctype.h>
+#include "v_video.h"
 
 // MACROS ------------------------------------------------------------------
 
