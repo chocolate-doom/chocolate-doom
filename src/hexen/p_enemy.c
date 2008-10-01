@@ -23,6 +23,7 @@
 
 
 #include "h2def.h"
+#include "i_system.h"
 #include "i_swap.h"
 #include "p_local.h"
 #include "soundst.h"

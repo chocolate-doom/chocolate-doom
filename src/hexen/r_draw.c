@@ -23,6 +23,8 @@
 
 
 #include "h2def.h"
+#include "i_system.h"
+#include "i_video.h"
 #include "r_local.h"
 
 /*
@@ -470,7 +472,7 @@ void R_InitBuffer(int width, int height)
     else
         viewwindowy = (SCREENHEIGHT - SBARHEIGHT - height) >> 1;
     for (i = 0; i < height; i++)
-        ylookup[i] = screen + (i + viewwindowy) * SCREENWIDTH;
+        ylookup[i] = I_VideoBuffer + (i + viewwindowy) * SCREENWIDTH;
 }
 
 
@@ -494,7 +496,7 @@ void R_DrawViewBorder(void)
         return;
 
     src = W_CacheLumpName("F_022", PU_CACHE);
-    dest = screen;
+    dest = I_VideoBuffer;
 
     for (y = 0; y < SCREENHEIGHT - SBARHEIGHT; y++)
     {
@@ -560,7 +562,7 @@ void R_DrawTopBorder(void)
 	}
 */
     src = W_CacheLumpName("F_022", PU_CACHE);
-    dest = screen;
+    dest = I_VideoBuffer;
 
     for (y = 0; y < 34; y++)
     {

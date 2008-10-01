@@ -23,6 +23,8 @@
 
 
 #include "h2def.h"
+#include "i_system.h"
+#include "i_video.h"
 #include "i_swap.h"
 
 #define SC_INDEX 0x3c4

@@ -23,6 +23,7 @@
 
 
 #include "h2def.h"
+#include "i_system.h"
 #include "r_local.h"
 
 // OPTIMIZE: closed two sided lines as single sided

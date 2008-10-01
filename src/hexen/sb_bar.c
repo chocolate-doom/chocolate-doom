@@ -25,6 +25,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "h2def.h"
+#include "i_video.h"
 #include "m_bbox.h"
 #include "p_local.h"
 #include "soundst.h"
@@ -108,7 +109,6 @@ static void CheatTrackFunc2(player_t * player, Cheat_t * cheat);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern byte *screen;
 extern int ArmorIncrement[NUMCLASSES][NUMARMOR];
 extern int AutoArmorSave[NUMCLASSES];
 
@@ -838,7 +838,7 @@ static void ShadeLine(int x, int y, int height, int shade)
 	byte *shades;
 
 	shades = colormaps+9*256+shade*2*256;
-	dest = screen+y*SCREENWIDTH+x;
+	dest = I_VideoBuffer+y*SCREENWIDTH+x;
 	while(height--)
 	{
 		*(dest) = *(shades+*dest);
@@ -1421,16 +1421,16 @@ void DrawMainBar(void)
         V_DrawPatch(94, 164, manaVialPatch1);
         for (i = 165; i < 187 - (22 * CPlayer->mana[0]) / MAX_MANA; i++)
         {
-            screen[i * SCREENWIDTH + 95] = 0;
-            screen[i * SCREENWIDTH + 96] = 0;
-            screen[i * SCREENWIDTH + 97] = 0;
+            I_VideoBuffer[i * SCREENWIDTH + 95] = 0;
+            I_VideoBuffer[i * SCREENWIDTH + 96] = 0;
+            I_VideoBuffer[i * SCREENWIDTH + 97] = 0;
         }
         V_DrawPatch(102, 164, manaVialPatch2);
         for (i = 165; i < 187 - (22 * CPlayer->mana[1]) / MAX_MANA; i++)
         {
-            screen[i * SCREENWIDTH + 103] = 0;
-            screen[i * SCREENWIDTH + 104] = 0;
-            screen[i * SCREENWIDTH + 105] = 0;
+            I_VideoBuffer[i * SCREENWIDTH + 103] = 0;
+            I_VideoBuffer[i * SCREENWIDTH + 104] = 0;
+            I_VideoBuffer[i * SCREENWIDTH + 105] = 0;
         }
         oldweapon = CPlayer->readyweapon;
         UpdateState |= I_STATBAR;
@@ -1697,7 +1697,7 @@ void Draw_TeleportIcon(void)
     patch = W_CacheLumpNum(W_GetNumForName("teleicon"), PU_CACHE);
     V_DrawPatch(100, 68, patch);
     UpdateState |= I_FULLSCRN;
-    I_Update();
+    I_FinishUpdate();
     UpdateState |= I_FULLSCRN;
 }
 
@@ -1712,7 +1712,7 @@ void Draw_SaveIcon(void)
     patch = W_CacheLumpNum(W_GetNumForName("saveicon"), PU_CACHE);
     V_DrawPatch(100, 68, patch);
     UpdateState |= I_FULLSCRN;
-    I_Update();
+    I_FinishUpdate();
     UpdateState |= I_FULLSCRN;
 }
 
@@ -1727,7 +1727,7 @@ void Draw_LoadIcon(void)
     patch = W_CacheLumpNum(W_GetNumForName("loadicon"), PU_CACHE);
     V_DrawPatch(100, 68, patch);
     UpdateState |= I_FULLSCRN;
-    I_Update();
+    I_FinishUpdate();
     UpdateState |= I_FULLSCRN;
 }
 

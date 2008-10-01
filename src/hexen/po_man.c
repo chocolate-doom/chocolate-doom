@@ -25,6 +25,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "h2def.h"
+#include "i_system.h"
 #include "m_bbox.h"
 #include "i_swap.h"
 #include "p_local.h"

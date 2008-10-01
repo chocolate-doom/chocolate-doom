@@ -25,6 +25,8 @@
 #ifndef __R_LOCAL__
 #define __R_LOCAL__
 
+#include "i_video.h"
+
 #define ANGLETOSKYSHIFT         22      // sky map is 256*128*4 maps
 
 #define BASEYCENTER                     100
