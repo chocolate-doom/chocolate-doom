@@ -29,6 +29,7 @@
 #include "am_map.h"
 #include "am_data.h"
 #include <stdio.h>
+#include "v_video.h"
 
 #define NUMALIAS 3              // Number of antialiased lines.
 

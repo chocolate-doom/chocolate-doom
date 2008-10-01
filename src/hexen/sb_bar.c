@@ -29,6 +29,7 @@
 #include "m_bbox.h"
 #include "p_local.h"
 #include "soundst.h"
+#include "v_video.h"
 
 #ifdef __WATCOMC__
 #include "i_sound.h"            // For CD stuff
