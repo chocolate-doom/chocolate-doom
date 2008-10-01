@@ -1,0 +1,6 @@
+" Local vimrc configuration file.  Install the localvimrc.vim vim script.
+set expandtab
+set tabstop=8
+set softtabstop=4
+set shiftwidth=4
+
