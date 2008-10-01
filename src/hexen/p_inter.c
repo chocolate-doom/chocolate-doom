@@ -62,10 +62,6 @@ static void TryPickupWeapon(player_t * player, pclass_t weaponClass,
 static void TryPickupWeaponPiece(player_t * player, pclass_t matchClass,
                                  int pieceValue, mobj_t * pieceMobj);
 
-#ifdef __NeXT__
-extern void strupr(char *s);
-#endif
-
 //--------------------------------------------------------------------------
 //
 // PROC P_SetMessage

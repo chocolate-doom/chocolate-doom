@@ -344,9 +344,6 @@ void R_StoreWallRange(int start, int stop)
     if (start >= viewwidth || start > stop)
         I_Error("Bad R_RenderWallRange: %i to %i", start, stop);
 #endif
-#ifdef __NeXT__
-    RD_DrawLine(curline);
-#endif
 
     sidedef = curline->sidedef;
     linedef = curline->linedef;
