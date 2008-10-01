@@ -329,8 +329,8 @@ typedef struct
 #define	MF_TELEPORT		0x8000  // don't cross lines or look at heights
 #define MF_MISSILE		0x10000 // don't hit same species, explode on block
 
-#define	MF_ALTSHADOW	0x20000 // alternate fuzzy draw
-#define	MF_SHADOW		0x40000 // use fuzzy draw (shadow demons / invis)
+#define	MF_ALTSHADOW	0x20000 // alternate translucent draw
+#define	MF_SHADOW		0x40000 // use translucent draw (shadow demons / invis)
 #define	MF_NOBLOOD		0x80000 // don't bleed when shot (use puff)
 #define	MF_CORPSE		0x100000        // don't stop moving halfway off a step
 #define	MF_INFLOAT		0x200000        // floating to a height for a move, don't
@@ -1228,8 +1228,8 @@ extern int usegamma;
 
 void V_Init(void);              // Allocates buffer screens, call before R_Init
 void V_DrawPatch(int x, int y, patch_t * patch);
-void V_DrawFuzzPatch(int x, int y, patch_t * patch);
-void V_DrawAltFuzzPatch(int x, int y, patch_t * patch);
+void V_DrawTLPatch(int x, int y, patch_t * patch);
+void V_DrawAltTLPatch(int x, int y, patch_t * patch);
 void V_DrawShadowedPatch(int x, int y, patch_t * patch);
 void V_DrawRawScreen(byte * raw);
 

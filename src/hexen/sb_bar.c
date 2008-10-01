@@ -1545,16 +1545,16 @@ void DrawKeyBar(void)
             if (CPlayer->armorpoints[i] <=
                 (ArmorIncrement[CPlayer->class][i] >> 2))
             {
-                V_DrawFuzzPatch(150 + 31 * i, 164,
-                                W_CacheLumpNum(W_GetNumForName("armslot1") +
-                                               i, PU_CACHE));
+                V_DrawTLPatch(150 + 31 * i, 164,
+                              W_CacheLumpNum(W_GetNumForName("armslot1") +
+                                             i, PU_CACHE));
             }
             else if (CPlayer->armorpoints[i] <=
                      (ArmorIncrement[CPlayer->class][i] >> 1))
             {
-                V_DrawAltFuzzPatch(150 + 31 * i, 164,
-                                   W_CacheLumpNum(W_GetNumForName("armslot1")
-                                                  + i, PU_CACHE));
+                V_DrawAltTLPatch(150 + 31 * i, 164,
+                                 W_CacheLumpNum(W_GetNumForName("armslot1")
+                                                + i, PU_CACHE));
             }
             else
             {
@@ -1640,7 +1640,7 @@ void DrawFullScreenStuff(void)
     {
         if (CPlayer->readyArtifact > 0)
         {
-            V_DrawFuzzPatch(286, 170, W_CacheLumpName("ARTIBOX", PU_CACHE));
+            V_DrawTLPatch(286, 170, W_CacheLumpName("ARTIBOX", PU_CACHE));
             V_DrawPatch(284, 169,
                         W_CacheLumpName(patcharti[CPlayer->readyArtifact],
                                         PU_CACHE));
@@ -1655,8 +1655,8 @@ void DrawFullScreenStuff(void)
         x = inv_ptr - curpos;
         for (i = 0; i < 7; i++)
         {
-            V_DrawFuzzPatch(50 + i * 31, 168, W_CacheLumpName("ARTIBOX",
-                                                              PU_CACHE));
+            V_DrawTLPatch(50 + i * 31, 168, W_CacheLumpName("ARTIBOX",
+                                                            PU_CACHE));
             if (CPlayer->inventorySlotNum > x + i
                 && CPlayer->inventory[x + i].type != arti_none)
             {

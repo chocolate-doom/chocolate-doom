@@ -231,7 +231,7 @@ typedef struct
 #define MF_MISSILE		0x10000 // don't hit same species, explode on block
 
 #define	MF_DROPPED		0x20000 // dropped by a demon, not level spawned
-#define	MF_SHADOW		0x40000 // use fuzzy draw (shadow demons / invis)
+#define	MF_SHADOW		0x40000 // use translucent draw (shadow demons / invis)
 #define	MF_NOBLOOD		0x80000 // don't bleed when shot (use puff)
 #define	MF_CORPSE		0x100000        // don't stop moving halfway off a step
 #define	MF_INFLOAT		0x200000        // floating to a height for a move, don't

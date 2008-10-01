@@ -75,7 +75,7 @@ int extralight;                 // bumped light from gun blasts
 
 void (*colfunc) (void);
 void (*basecolfunc) (void);
-void (*fuzzcolfunc) (void);
+void (*tlcolfunc) (void);
 void (*transcolfunc) (void);
 void (*spanfunc) (void);
 
@@ -603,14 +603,14 @@ void R_ExecuteSetViewSize(void)
     if (!detailshift)
     {
         colfunc = basecolfunc = R_DrawColumn;
-        fuzzcolfunc = R_DrawFuzzColumn;
+        tlcolfunc = R_DrawTLColumn;
         transcolfunc = R_DrawTranslatedColumn;
         spanfunc = R_DrawSpan;
     }
     else
     {
         colfunc = basecolfunc = R_DrawColumnLow;
-        fuzzcolfunc = R_DrawFuzzColumn;
+        tlcolfunc = R_DrawTLColumn;
         transcolfunc = R_DrawTranslatedColumn;
         spanfunc = R_DrawSpanLow;
     }

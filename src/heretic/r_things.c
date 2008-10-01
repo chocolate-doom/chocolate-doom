@@ -29,7 +29,7 @@
 #include "r_local.h"
 
 void R_DrawColumn(void);
-void R_DrawFuzzColumn(void);
+void R_DrawTLColumn(void);
 
 typedef struct
 {
@@ -355,7 +355,7 @@ void R_DrawMaskedColumn(column_t * column, signed int baseclip)
             dc_source = (byte *) column + 3;
             dc_texturemid = basetexturemid - (column->topdelta << FRACBITS);
 //                      dc_source = (byte *)column + 3 - column->topdelta;
-            colfunc();          // either R_DrawColumn or R_DrawFuzzColumn
+            colfunc();          // either R_DrawColumn or R_DrawTLColumn
         }
         column = (column_t *) ((byte *) column + column->length + 4);
     }
@@ -387,19 +387,19 @@ void R_DrawVisSprite(vissprite_t * vis, int x1, int x2)
     dc_colormap = vis->colormap;
 
 //      if(!dc_colormap)
-//              colfunc = fuzzcolfunc;  // NULL colormap = shadow draw
+//              colfunc = tlcolfunc;  // NULL colormap = shadow draw
 
     if (vis->mobjflags & MF_SHADOW)
     {
         if (vis->mobjflags & MF_TRANSLATION)
         {
-            colfunc = R_DrawTranslatedFuzzColumn;
+            colfunc = R_DrawTranslatedTLColumn;
             dc_translation = translationtables - 256 +
                 ((vis->mobjflags & MF_TRANSLATION) >> (MF_TRANSSHIFT - 8));
         }
         else
         {                       // Draw using shadow column function
-            colfunc = fuzzcolfunc;
+            colfunc = tlcolfunc;
         }
     }
     else if (vis->mobjflags & MF_TRANSLATION)
