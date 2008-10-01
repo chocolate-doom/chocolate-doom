@@ -366,6 +366,56 @@ void V_DrawTLPatch(int x, int y, patch_t * patch)
 }
 
 //
+// V_DrawAltTLPatch
+//
+// Masks a column based translucent masked pic to the screen.
+//
+
+void V_DrawAltTLPatch(int x, int y, patch_t * patch)
+{
+    int count, col;
+    column_t *column;
+    byte *desttop, *dest, *source;
+    int w;
+
+    y -= SHORT(patch->topoffset);
+    x -= SHORT(patch->leftoffset);
+
+    if (x < 0
+     || x + SHORT(patch->width) > SCREENWIDTH
+     || y < 0
+     || y + SHORT(patch->height) > SCREENHEIGHT)
+    {
+        I_Error("Bad V_DrawAltTLPatch");
+    }
+
+    col = 0;
+    desttop = screen + y * SCREENWIDTH + x;
+
+    w = SHORT(patch->width);
+    for (; col < w; x++, col++, desttop++)
+    {
+        column = (column_t *) ((byte *) patch + LONG(patch->columnofs[col]));
+
+        // step through the posts in a column
+
+        while (column->topdelta != 0xff)
+        {
+            source = (byte *) column + 3;
+            dest = desttop + column->topdelta * SCREENWIDTH;
+            count = column->length;
+
+            while (count--)
+            {
+                *dest = tinttable[((*dest) << 8) + *source++];
+                dest += SCREENWIDTH;
+            }
+            column = (column_t *) ((byte *) column + column->length + 4);
+        }
+    }
+}
+
+//
 // V_DrawShadowedPatch
 //
 // Masks a column based masked pic to the screen.
