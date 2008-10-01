@@ -390,7 +390,7 @@ void V_DrawAltTLPatch(int x, int y, patch_t * patch)
     }
 
     col = 0;
-    desttop = screen + y * SCREENWIDTH + x;
+    desttop = dest_screen + y * SCREENWIDTH + x;
 
     w = SHORT(patch->width);
     for (; col < w; x++, col++, desttop++)
@@ -471,9 +471,14 @@ void V_DrawShadowedPatch(int x, int y, patch_t *patch)
     }
 }
 
+//
+// Load tint table from TINTTAB lump.
+//
 
- 
-
+void V_LoadTintTable(void)
+{
+    tinttable = W_CacheLumpName("TINTTAB", PU_STATIC);
+}
 
 //
 // V_DrawBlock
