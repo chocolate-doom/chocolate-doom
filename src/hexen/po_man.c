@@ -25,6 +25,8 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "h2def.h"
+#include "m_bbox.h"
+#include "i_swap.h"
 #include "p_local.h"
 #include "r_local.h"
 
@@ -153,14 +155,14 @@ boolean EV_RotatePoly(line_t * line, byte * args, int direction, boolean
         }
         else
         {
-            pe->dist = args[2] * (ANGLE_90 / 64);       // Angle
+            pe->dist = args[2] * (ANG90 / 64);       // Angle
         }
     }
     else
     {
-        pe->dist = ANGLE_MAX - 1;
+        pe->dist = ANG_MAX - 1;
     }
-    pe->speed = (args[1] * direction * (ANGLE_90 / 64)) >> 3;
+    pe->speed = (args[1] * direction * (ANG90 / 64)) >> 3;
     poly->specialdata = pe;
     SN_StartSequence((mobj_t *) & poly->startSpot, SEQ_DOOR_STONE +
                      poly->seqType);
@@ -185,12 +187,12 @@ boolean EV_RotatePoly(line_t * line, byte * args, int direction, boolean
             }
             else
             {
-                pe->dist = args[2] * (ANGLE_90 / 64);   // Angle
+                pe->dist = args[2] * (ANG90 / 64);   // Angle
             }
         }
         else
         {
-            pe->dist = ANGLE_MAX - 1;
+            pe->dist = ANG_MAX - 1;
         }
         poly = GetPolyobj(polyNum);
         if (poly != NULL)
@@ -202,7 +204,7 @@ boolean EV_RotatePoly(line_t * line, byte * args, int direction, boolean
             I_Error("EV_RotatePoly:  Invalid polyobj num: %d\n", polyNum);
         }
         direction = -direction;
-        pe->speed = (args[1] * direction * (ANGLE_90 / 64)) >> 3;
+        pe->speed = (args[1] * direction * (ANG90 / 64)) >> 3;
         polyNum = mirror;
         SN_StartSequence((mobj_t *) & poly->startSpot, SEQ_DOOR_STONE +
                          poly->seqType);
@@ -288,7 +290,7 @@ boolean EV_MovePoly(line_t * line, byte * args, boolean timesEight, boolean
     pe->speed = args[1] * (FRACUNIT / 8);
     poly->specialdata = pe;
 
-    an = args[2] * (ANGLE_90 / 64);
+    an = args[2] * (ANG90 / 64);
 
     pe->angle = an >> ANGLETOFINESHIFT;
     pe->xSpeed = FixedMul(pe->speed, finecosine[pe->angle]);
@@ -317,7 +319,7 @@ boolean EV_MovePoly(line_t * line, byte * args, boolean timesEight, boolean
             pe->dist = args[3] * FRACUNIT;      // Distance
         }
         pe->speed = args[1] * (FRACUNIT / 8);
-        an = an + ANGLE_180;    // reverse the angle
+        an = an + ANG180;    // reverse the angle
         pe->angle = an >> ANGLETOFINESHIFT;
         pe->xSpeed = FixedMul(pe->speed, finecosine[pe->angle]);
         pe->ySpeed = FixedMul(pe->speed, finesine[pe->angle]);
@@ -365,7 +367,7 @@ void T_PolyDoor(polydoor_t * pd)
                         pd->dist = pd->totalDist;
                         pd->close = true;
                         pd->tics = pd->waitTics;
-                        pd->direction = (ANGLE_MAX >> ANGLETOFINESHIFT) -
+                        pd->direction = (ANG_MAX >> ANGLETOFINESHIFT) -
                             pd->direction;
                         pd->xSpeed = -pd->xSpeed;
                         pd->ySpeed = -pd->ySpeed;
@@ -391,7 +393,7 @@ void T_PolyDoor(polydoor_t * pd)
                 else
                 {               // open back up
                     pd->dist = pd->totalDist - pd->dist;
-                    pd->direction = (ANGLE_MAX >> ANGLETOFINESHIFT) -
+                    pd->direction = (ANG_MAX >> ANGLETOFINESHIFT) -
                         pd->direction;
                     pd->xSpeed = -pd->xSpeed;
                     pd->ySpeed = -pd->ySpeed;
@@ -493,7 +495,7 @@ boolean EV_OpenPolyDoor(line_t * line, byte * args, podoortype_t type)
         pd->speed = args[1] * (FRACUNIT / 8);
         pd->totalDist = args[3] * FRACUNIT;     // Distance
         pd->dist = pd->totalDist;
-        an = args[2] * (ANGLE_90 / 64);
+        an = args[2] * (ANG90 / 64);
         pd->direction = an >> ANGLETOFINESHIFT;
         pd->xSpeed = FixedMul(pd->speed, finecosine[pd->direction]);
         pd->ySpeed = FixedMul(pd->speed, finesine[pd->direction]);
@@ -504,8 +506,8 @@ boolean EV_OpenPolyDoor(line_t * line, byte * args, podoortype_t type)
     {
         pd->waitTics = args[3];
         pd->direction = 1;      // ADD:  PODOOR_SWINGL, PODOOR_SWINGR
-        pd->speed = (args[1] * pd->direction * (ANGLE_90 / 64)) >> 3;
-        pd->totalDist = args[2] * (ANGLE_90 / 64);
+        pd->speed = (args[1] * pd->direction * (ANG90 / 64)) >> 3;
+        pd->totalDist = args[2] * (ANG90 / 64);
         pd->dist = pd->totalDist;
         SN_StartSequence((mobj_t *) & poly->startSpot, SEQ_DOOR_STONE +
                          poly->seqType);
@@ -533,7 +535,7 @@ boolean EV_OpenPolyDoor(line_t * line, byte * args, podoortype_t type)
             pd->speed = args[1] * (FRACUNIT / 8);
             pd->totalDist = args[3] * FRACUNIT; // Distance
             pd->dist = pd->totalDist;
-            an = an + ANGLE_180;        // reverse the angle
+            an = an + ANG180;        // reverse the angle
             pd->direction = an >> ANGLETOFINESHIFT;
             pd->xSpeed = FixedMul(pd->speed, finecosine[pd->direction]);
             pd->ySpeed = FixedMul(pd->speed, finesine[pd->direction]);
@@ -544,8 +546,8 @@ boolean EV_OpenPolyDoor(line_t * line, byte * args, podoortype_t type)
         {
             pd->waitTics = args[3];
             pd->direction = -1; // ADD:  same as above
-            pd->speed = (args[1] * pd->direction * (ANGLE_90 / 64)) >> 3;
-            pd->totalDist = args[2] * (ANGLE_90 / 64);
+            pd->speed = (args[1] * pd->direction * (ANG90 / 64)) >> 3;
+            pd->totalDist = args[2] * (ANG90 / 64);
             pd->dist = pd->totalDist;
             SN_StartSequence((mobj_t *) & poly->startSpot, SEQ_DOOR_STONE +
                              poly->seqType);
@@ -616,7 +618,7 @@ static void ThrustMobj(mobj_t * mobj, seg_t * seg, polyobj_t * po)
     {
         return;
     }
-    thrustAngle = (seg->angle - ANGLE_90) >> ANGLETOFINESHIFT;
+    thrustAngle = (seg->angle - ANG90) >> ANGLETOFINESHIFT;
 
     pe = po->specialdata;
     if (pe)

@@ -25,6 +25,7 @@
 
 #include <stdio.h>
 #include "h2def.h"
+#include "m_argv.h"
 #include "dmx.h"
 #include "sounds.h"
 #include "i_sound.h"

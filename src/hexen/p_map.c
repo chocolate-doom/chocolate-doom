@@ -23,6 +23,7 @@
 
 
 #include "h2def.h"
+#include "m_bbox.h"
 #include "p_local.h"
 #include "soundst.h"
 

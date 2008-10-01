@@ -24,6 +24,7 @@
 
 #include <math.h>
 #include "h2def.h"
+#include "m_bbox.h"
 #include "r_local.h"
 
 int viewangleoffset;
@@ -65,14 +66,6 @@ int viewangletox[FINEANGLES / 2];
 // The xtoviewangleangle[] table maps a screen pixel to the lowest viewangle
 // that maps back to x ranges from clipangle to -clipangle
 angle_t xtoviewangle[SCREENWIDTH + 1];
-
-// the finetangentgent[angle+FINEANGLES/4] table holds the fixed_t tangent
-// values for view angles, ranging from INT_MIN to 0 to INT_MAX.
-// fixed_t              finetangent[FINEANGLES/2];
-
-// fixed_t              finesine[5*FINEANGLES/4];
-fixed_t *finecosine = &finesine[FINEANGLES / 4];
-
 
 lighttable_t *scalelight[LIGHTLEVELS][MAXLIGHTSCALE];
 lighttable_t *scalelightfixed[MAXLIGHTSCALE];
@@ -219,8 +212,6 @@ int R_PointOnSegSide(fixed_t x, fixed_t y, seg_t * line)
 #define	SLOPEBITS	11
 #define	DBITS		(FRACBITS-SLOPEBITS)
 
-
-extern int tantoangle[SLOPERANGE + 1];  // get from tables.c
 
 // int  tantoangle[SLOPERANGE+1];
 

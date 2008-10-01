@@ -1245,7 +1245,7 @@ void A_MummyAttack2(mobj_t * actor)
 
 void A_MummyFX1Seek(mobj_t * actor)
 {
-    P_SeekerMissile(actor, ANG1 * 10, ANG1 * 20);
+    P_SeekerMissile(actor, ANG1_X * 10, ANG1_X * 20);
 }
 
 //----------------------------------------------------------------------------
@@ -1326,8 +1326,8 @@ void A_Srcr1Attack(mobj_t * actor)
         {
             momz = mo->momz;
             angle = mo->angle;
-            P_SpawnMissileAngle(actor, MT_SRCRFX1, angle - ANG1 * 3, momz);
-            P_SpawnMissileAngle(actor, MT_SRCRFX1, angle + ANG1 * 3, momz);
+            P_SpawnMissileAngle(actor, MT_SRCRFX1, angle - ANG1_X * 3, momz);
+            P_SpawnMissileAngle(actor, MT_SRCRFX1, angle + ANG1_X * 3, momz);
         }
         if (actor->health < actor->info->spawnhealth / 3)
         {                       // Maybe attack again
@@ -1892,7 +1892,7 @@ void A_WhirlwindSeek(mobj_t * actor)
     {
         return;
     }
-    P_SeekerMissile(actor, ANG1 * 10, ANG1 * 30);
+    P_SeekerMissile(actor, ANG1_X * 10, ANG1_X * 30);
 }
 
 //----------------------------------------------------------------------------

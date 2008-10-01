@@ -672,7 +672,7 @@ void P_BulletSlope (mobj_t *mo)
 //
 //============================================================================
 
-#define MAX_ANGLE_ADJUST (5*ANGLE_1)
+#define MAX_ANGADJUST (5*ANG1)
 
 void AdjustPlayerAngle(mobj_t * pmo)
 {
@@ -681,9 +681,9 @@ void AdjustPlayerAngle(mobj_t * pmo)
 
     angle = R_PointToAngle2(pmo->x, pmo->y, linetarget->x, linetarget->y);
     difference = (int) angle - (int) pmo->angle;
-    if (abs(difference) > MAX_ANGLE_ADJUST)
+    if (abs(difference) > MAX_ANGADJUST)
     {
-        pmo->angle += difference > 0 ? MAX_ANGLE_ADJUST : -MAX_ANGLE_ADJUST;
+        pmo->angle += difference > 0 ? MAX_ANGADJUST : -MAX_ANGADJUST;
     }
     else
     {
@@ -1182,8 +1182,8 @@ void A_MStaffAttack(player_t * player, pspdef_t * psp)
     angle = pmo->angle;
 
     MStaffSpawn(pmo, angle);
-    MStaffSpawn(pmo, angle - ANGLE_1 * 5);
-    MStaffSpawn(pmo, angle + ANGLE_1 * 5);
+    MStaffSpawn(pmo, angle - ANG1 * 5);
+    MStaffSpawn(pmo, angle + ANG1 * 5);
     S_StartSound(player->mo, SFX_MAGE_STAFF_FIRE);
     if (player == &players[consoleplayer])
     {
@@ -1263,7 +1263,7 @@ void A_MStaffTrack(mobj_t * actor)
     {
         actor->special1 = (int) P_RoughMonsterSearch(actor, 10);
     }
-    P_SeekerMissile(actor, ANGLE_1 * 2, ANGLE_1 * 10);
+    P_SeekerMissile(actor, ANG1 * 2, ANG1 * 10);
 }
 
 
@@ -1296,8 +1296,8 @@ void A_MStaffAttack2(mobj_t * actor)
     angle_t angle;
     angle = actor->angle;
     MStaffSpawn2(actor, angle);
-    MStaffSpawn2(actor, angle - ANGLE_1 * 5);
-    MStaffSpawn2(actor, angle + ANGLE_1 * 5);
+    MStaffSpawn2(actor, angle - ANG1 * 5);
+    MStaffSpawn2(actor, angle + ANG1 * 5);
     S_StartSound(actor, SFX_MAGE_STAFF_FIRE);
 }
 
@@ -1753,15 +1753,15 @@ void A_CFlameAttack(player_t *player, pspdef_t *psp)
 	P_AimLineAttack(pmo, angle, CFLAMERANGE); // Correctly set linetarget
 	if(!linetarget)
 	{
-		angle += ANGLE_1*2;
+		angle += ANG1*2;
 		P_AimLineAttack(pmo, angle, CFLAMERANGE);
 		if(!linetarget)
 		{
-			angle -= ANGLE_1*4;
+			angle -= ANG1*4;
 			P_AimLineAttack(pmo, angle, CFLAMERANGE);
 			if(!linetarget)
 			{
-				angle += ANGLE_1*2;
+				angle += ANG1*2;
 			}
 		}		
 	}
@@ -1885,7 +1885,7 @@ void A_CHolyAttack2(mobj_t * actor)
                 break;
         }
         mo->z = actor->z;
-        mo->angle = actor->angle + (ANGLE_45 + ANGLE_45 / 2) - ANGLE_45 * j;
+        mo->angle = actor->angle + (ANG45 + ANG45 / 2) - ANG45 * j;
         P_ThrustMobj(mo, mo->angle, mo->info->speed);
         mo->target = actor->target;
         mo->args[0] = 10;       // initial turn value
@@ -2106,8 +2106,8 @@ void A_CHolySeek(mobj_t * actor)
     }
     if (actor->special1)
     {
-        CHolySeekerMissile(actor, actor->args[0] * ANGLE_1,
-                           actor->args[0] * ANGLE_1 * 2);
+        CHolySeekerMissile(actor, actor->args[0] * ANG1,
+                           actor->args[0] * ANG1 * 2);
         if (!((leveltime + 7) & 15))
         {
             actor->args[0] = 5 + (P_Random() / 20);

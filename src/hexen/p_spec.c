@@ -680,7 +680,7 @@ boolean P_ExecuteLineSpecial(int special, byte * args, line_t * line,
         case 72:               // Thrust Mobj
             if (!side)          // Only thrust on side 0
             {
-                P_ThrustMobj(mo, args[0] * (ANGLE_90 / 64),
+                P_ThrustMobj(mo, args[0] * (ANG90 / 64),
                              args[1] << FRACBITS);
                 buttonSuccess = 1;
             }

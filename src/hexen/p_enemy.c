@@ -23,6 +23,7 @@
 
 
 #include "h2def.h"
+#include "i_swap.h"
 #include "p_local.h"
 #include "soundst.h"
 
@@ -2640,7 +2641,7 @@ void A_BishopMissileWeave(mobj_t * actor)
 
 void A_BishopMissileSeek(mobj_t * actor)
 {
-    P_SeekerMissile(actor, ANGLE_1 * 2, ANGLE_1 * 3);
+    P_SeekerMissile(actor, ANG1 * 2, ANG1 * 3);
 }
 
 //============================================================================
@@ -2838,7 +2839,7 @@ static void DragonSeek(mobj_t * actor, angle_t thresh, angle_t turnMax)
 
         if (abs(actor->angle - R_PointToAngle2(actor->x, actor->y,
                                                target->x,
-                                               target->y)) < ANGLE_45 / 2)
+                                               target->y)) < ANG45 / 2)
         {
             oldTarget = actor->target;
             actor->target = target;
@@ -2860,7 +2861,7 @@ static void DragonSeek(mobj_t * actor, angle_t thresh, angle_t turnMax)
         if (actor->target && P_Random() < 200)
         {
             bestArg = -1;
-            bestAngle = ANGLE_MAX;
+            bestAngle = ANG_MAX;
             angleToTarget = R_PointToAngle2(actor->x, actor->y,
                                             actor->target->x,
                                             actor->target->y);
@@ -2935,7 +2936,7 @@ void A_DragonFlight(mobj_t * actor)
 {
     angle_t angle;
 
-    DragonSeek(actor, 4 * ANGLE_1, 8 * ANGLE_1);
+    DragonSeek(actor, 4 * ANG1, 8 * ANG1);
     if (actor->target)
     {
         if (!(actor->target->flags & MF_SHOOTABLE))
@@ -2945,13 +2946,13 @@ void A_DragonFlight(mobj_t * actor)
         }
         angle = R_PointToAngle2(actor->x, actor->y, actor->target->x,
                                 actor->target->y);
-        if (abs(actor->angle - angle) < ANGLE_45 / 2
+        if (abs(actor->angle - angle) < ANG45 / 2
             && P_CheckMeleeRange(actor))
         {
             P_DamageMobj(actor->target, actor, actor, HITDICE(8));
             S_StartSound(actor, SFX_DRAGON_ATTACK);
         }
-        else if (abs(actor->angle - angle) <= ANGLE_1 * 20)
+        else if (abs(actor->angle - angle) <= ANG1 * 20)
         {
             P_SetMobjState(actor, actor->info->missilestate);
             S_StartSound(actor, SFX_DRAGON_ATTACK);
@@ -3646,9 +3647,9 @@ void A_FiredChase(mobj_t * actor)
                 ang =
                     R_PointToAngle2(actor->x, actor->y, target->x, target->y);
                 if (P_Random() < 128)
-                    ang += ANGLE_90;
+                    ang += ANG90;
                 else
-                    ang -= ANGLE_90;
+                    ang -= ANG90;
                 ang >>= ANGLETOFINESHIFT;
                 actor->momx = FixedMul(8 * FRACUNIT, finecosine[ang]);
                 actor->momy = FixedMul(8 * FRACUNIT, finesine[ang]);
@@ -3892,8 +3893,8 @@ void A_IceGuyMissileExplode(mobj_t * actor)
 #define SORC_FIRING_SPELL	6
 
 #define BALL1_ANGLEOFFSET	0
-#define BALL2_ANGLEOFFSET	(ANGLE_MAX/3)
-#define BALL3_ANGLEOFFSET	((ANGLE_MAX/3)*2)
+#define BALL2_ANGLEOFFSET	(ANG_MAX/3)
+#define BALL3_ANGLEOFFSET	((ANG_MAX/3)*2)
 
 void A_SorcBallOrbit(mobj_t * actor);
 void A_SorcSpinBalls(mobj_t * actor);
@@ -3922,7 +3923,7 @@ void A_SorcSpinBalls(mobj_t * actor)
     actor->args[0] = 0;         // Currently no defense
     actor->args[3] = SORC_NORMAL;
     actor->args[4] = SORCBALL_INITIAL_SPEED;    // Initial orbit speed
-    actor->special1 = ANGLE_1;
+    actor->special1 = ANG1;
     z = actor->z - actor->floorclip + actor->info->height;
 
     mo = P_SpawnMobj(actor->x, actor->y, z, MT_SORCBALL1);
@@ -4172,7 +4173,7 @@ void A_SorcUpdateBallAngle(mobj_t * actor)
 {
     if (actor->type == MT_SORCBALL1)
     {
-        actor->target->special1 += ANGLE_1 * actor->target->args[4];
+        actor->target->special1 += ANG1 * actor->target->args[4];
     }
 }
 
@@ -4207,8 +4208,8 @@ void A_CastSorcererSpell(mobj_t * actor)
                 mo->target = parent;
             break;
         case MT_SORCBALL3:     // Reinforcements
-            ang1 = actor->angle - ANGLE_45;
-            ang2 = actor->angle + ANGLE_45;
+            ang1 = actor->angle - ANG45;
+            ang2 = actor->angle + ANG45;
             if (actor->health < (actor->info->spawnhealth / 3))
             {                   // Spawn 2 at a time
                 mo = P_SpawnMissileAngle(parent, MT_SORCFX3, ang1,
@@ -4242,7 +4243,7 @@ void A_SpawnReinforcements(mobj_t *actor)
 	mobj_t *mo;
 	angle_t ang;
 
-	ang = ANGLE_1 * P_Random();
+	ang = ANG1 * P_Random();
 	mo = P_SpawnMissileAngle(actor, MT_SORCFX3, ang, 5*FRACUNIT);
 	if (mo) mo->target = parent;
 }
@@ -4255,8 +4256,8 @@ void A_SorcOffense1(mobj_t * actor)
     angle_t ang1, ang2;
     mobj_t *parent = (mobj_t *) actor->target;
 
-    ang1 = actor->angle + ANGLE_1 * 70;
-    ang2 = actor->angle - ANGLE_1 * 70;
+    ang1 = actor->angle + ANG1 * 70;
+    ang2 = actor->angle - ANG1 * 70;
     mo = P_SpawnMissileAngle(parent, MT_SORCFX1, ang1, 0);
     if (mo)
     {
@@ -4289,7 +4290,7 @@ void A_SorcOffense2(mobj_t * actor)
     index = actor->args[4] << 5;
     actor->args[4] += 15;
     delta = (finesine[index]) * SORCFX4_SPREAD_ANGLE;
-    delta = (delta >> FRACBITS) * ANGLE_1;
+    delta = (delta >> FRACBITS) * ANG1;
     ang1 = actor->angle + delta;
     mo = P_SpawnMissileAngle(parent, MT_SORCFX4, ang1, 0);
     if (mo)
@@ -4347,7 +4348,7 @@ void A_SpawnFizzle(mobj_t * actor)
 void A_SorcFX1Seek(mobj_t * actor)
 {
     A_BounceCheck(actor);
-    P_SeekerMissile(actor, ANGLE_1 * 2, ANGLE_1 * 6);
+    P_SeekerMissile(actor, ANG1 * 2, ANG1 * 6);
 }
 
 
@@ -4414,7 +4415,7 @@ void A_SorcFX2Orbit(mobj_t * actor)
     // Move to new position based on angle
     if (actor->args[0])         // Counter clock-wise
     {
-        actor->special1 += ANGLE_1 * 10;
+        actor->special1 += ANG1 * 10;
         angle = ((angle_t) actor->special1) >> ANGLETOFINESHIFT;
         x = parent->x + FixedMul(dist, finecosine[angle]);
         y = parent->y + FixedMul(dist, finesine[angle]);
@@ -4425,7 +4426,7 @@ void A_SorcFX2Orbit(mobj_t * actor)
     }
     else                        // Clock wise
     {
-        actor->special1 -= ANGLE_1 * 10;
+        actor->special1 -= ANG1 * 10;
         angle = ((angle_t) actor->special1) >> ANGLETOFINESHIFT;
         x = parent->x + FixedMul(dist, finecosine[angle]);
         y = parent->y + FixedMul(dist, finesine[angle]);
@@ -4629,9 +4630,9 @@ void A_FastChase(mobj_t * actor)
                 ang = R_PointToAngle2(actor->x, actor->y,
                                       target->x, target->y);
                 if (P_Random() < 128)
-                    ang += ANGLE_90;
+                    ang += ANG90;
                 else
-                    ang -= ANGLE_90;
+                    ang -= ANG90;
                 ang >>= ANGLETOFINESHIFT;
                 actor->momx = FixedMul(13 * FRACUNIT, finecosine[ang]);
                 actor->momy = FixedMul(13 * FRACUNIT, finesine[ang]);
@@ -4979,27 +4980,27 @@ void A_KoraxBonePop(mobj_t * actor)
     x = actor->x, y = actor->y, z = actor->z;
 
     // Spawn 6 spirits equalangularly
-    mo = P_SpawnMissileAngle(actor, MT_KORAX_SPIRIT1, ANGLE_60 * 0,
+    mo = P_SpawnMissileAngle(actor, MT_KORAX_SPIRIT1, ANG60 * 0,
                              5 * FRACUNIT);
     if (mo)
         KSpiritInit(mo, actor);
-    mo = P_SpawnMissileAngle(actor, MT_KORAX_SPIRIT2, ANGLE_60 * 1,
+    mo = P_SpawnMissileAngle(actor, MT_KORAX_SPIRIT2, ANG60 * 1,
                              5 * FRACUNIT);
     if (mo)
         KSpiritInit(mo, actor);
-    mo = P_SpawnMissileAngle(actor, MT_KORAX_SPIRIT3, ANGLE_60 * 2,
+    mo = P_SpawnMissileAngle(actor, MT_KORAX_SPIRIT3, ANG60 * 2,
                              5 * FRACUNIT);
     if (mo)
         KSpiritInit(mo, actor);
-    mo = P_SpawnMissileAngle(actor, MT_KORAX_SPIRIT4, ANGLE_60 * 3,
+    mo = P_SpawnMissileAngle(actor, MT_KORAX_SPIRIT4, ANG60 * 3,
                              5 * FRACUNIT);
     if (mo)
         KSpiritInit(mo, actor);
-    mo = P_SpawnMissileAngle(actor, MT_KORAX_SPIRIT5, ANGLE_60 * 4,
+    mo = P_SpawnMissileAngle(actor, MT_KORAX_SPIRIT5, ANG60 * 4,
                              5 * FRACUNIT);
     if (mo)
         KSpiritInit(mo, actor);
-    mo = P_SpawnMissileAngle(actor, MT_KORAX_SPIRIT6, ANGLE_60 * 5,
+    mo = P_SpawnMissileAngle(actor, MT_KORAX_SPIRIT6, ANG60 * 5,
                              5 * FRACUNIT);
     if (mo)
         KSpiritInit(mo, actor);
@@ -5101,7 +5102,7 @@ void A_KoraxCommand(mobj_t * actor)
     S_StartSound(actor, SFX_KORAX_COMMAND);
 
     // Shoot stream of lightning to ceiling
-    ang = (actor->angle - ANGLE_90) >> ANGLETOFINESHIFT;
+    ang = (actor->angle - ANG90) >> ANGLETOFINESHIFT;
     x = actor->x + FixedMul(KORAX_COMMAND_OFFSET, finecosine[ang]);
     y = actor->y + FixedMul(KORAX_COMMAND_OFFSET, finesine[ang]);
     z = actor->z + KORAX_COMMAND_HEIGHT;
@@ -5139,7 +5140,7 @@ void A_KoraxCommand(mobj_t * actor)
 }
 
 
-#define KORAX_DELTAANGLE			(85*ANGLE_1)
+#define KORAX_DELTAANGLE			(85*ANG1)
 #define KORAX_ARM_EXTENSION_SHORT	(40*FRACUNIT)
 #define KORAX_ARM_EXTENSION_LONG	(55*FRACUNIT)
 
@@ -5346,8 +5347,8 @@ void A_KSpiritRoam(mobj_t * actor)
     {
         if (actor->special1)
         {
-            A_KSpiritSeeker(actor, actor->args[0] * ANGLE_1,
-                            actor->args[0] * ANGLE_1 * 2);
+            A_KSpiritSeeker(actor, actor->args[0] * ANG1,
+                            actor->args[0] * ANG1 * 2);
         }
         A_KSpiritWeave(actor);
         if (P_Random() < 50)

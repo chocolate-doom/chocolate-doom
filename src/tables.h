@@ -64,13 +64,19 @@ extern const fixed_t finetangent[FINEANGLES/2];
 
 // Binary Angle Measument, BAM.
 
-#define ANG1            0x01000000
 #define ANG45           0x20000000
 #define ANG90           0x40000000
 #define ANG180          0x80000000
 #define ANG270          0xc0000000
 #define ANG_MAX         0xffffffff
 
+#define ANG1            (ANG45 / 45)
+#define ANG60           (ANG180 / 3)
+
+// Heretic code uses this definition as though it represents one 
+// degree, but it is not!  This is actually ~1.40 degrees.
+
+#define ANG1_X          0x01000000
 
 #define SLOPERANGE		2048
 #define SLOPEBITS		11

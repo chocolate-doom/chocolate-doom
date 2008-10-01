@@ -28,6 +28,7 @@
 #include <stdarg.h>
 #include <graph.h>
 #include "h2def.h"
+#include "m_argv.h"
 #include "r_local.h"
 #include "p_local.h"            // for P_AproxDistance
 #include "sounds.h"

@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "h2def.h"
+#include "m_argv.h"
 #include "p_local.h"
 #include "soundst.h"
 
@@ -833,22 +834,6 @@ void CleanExit(void)
 }
 */
 #endif
-
-//==========================================================================
-//
-// FixedDiv
-//
-//==========================================================================
-
-fixed_t FixedDiv(fixed_t a, fixed_t b)
-{
-    if ((abs(a) >> 14) >= abs(b))
-    {
-        return ((a ^ b) < 0 ? INT_MIN : INT_MAX);
-    }
-    return (FixedDiv2(a, b));
-}
-
 
 //==========================================================================
 //

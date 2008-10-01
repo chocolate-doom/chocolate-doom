@@ -23,6 +23,7 @@
 
 
 #include "h2def.h"
+#include "i_swap.h"
 #include "r_local.h"
 #include "p_local.h"
 

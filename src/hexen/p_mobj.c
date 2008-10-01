@@ -274,9 +274,9 @@ int P_FaceMobj(mobj_t * source, mobj_t * target, angle_t * delta)
     if (angle2 > angle1)
     {
         diff = angle2 - angle1;
-        if (diff > ANGLE_180)
+        if (diff > ANG180)
         {
-            *delta = ANGLE_MAX - diff;
+            *delta = ANG_MAX - diff;
             return (0);
         }
         else
@@ -288,9 +288,9 @@ int P_FaceMobj(mobj_t * source, mobj_t * target, angle_t * delta)
     else
     {
         diff = angle1 - angle2;
-        if (diff > ANGLE_180)
+        if (diff > ANG180)
         {
-            *delta = ANGLE_MAX - diff;
+            *delta = ANG_MAX - diff;
             return (1);
         }
         else
@@ -494,7 +494,7 @@ void P_XYMovement(mobj_t * mo)
                             angle = R_PointToAngle2(BlockingMobj->x,
                                                     BlockingMobj->y, mo->x,
                                                     mo->y) +
-                                ANGLE_1 * ((P_Random() % 16) - 8);
+                                ANG1 * ((P_Random() % 16) - 8);
                             speed = P_AproxDistance(mo->momx, mo->momy);
                             speed = FixedMul(speed, 0.75 * FRACUNIT);
                             mo->angle = angle;
@@ -550,13 +550,13 @@ void P_XYMovement(mobj_t * mo)
                         case MT_SORCBOSS:
                             // Deflection
                             if (P_Random() < 128)
-                                angle += ANGLE_45;
+                                angle += ANG45;
                             else
-                                angle -= ANGLE_45;
+                                angle -= ANG45;
                             break;
                         default:
                             // Reflection
-                            angle += ANGLE_1 * ((P_Random() % 16) - 8);
+                            angle += ANG1 * ((P_Random() % 16) - 8);
                             break;
                     }
 
