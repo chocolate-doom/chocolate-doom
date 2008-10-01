@@ -34,6 +34,7 @@
 #endif
 #include <ctype.h>
 #include "h2def.h"
+#include "doomkeys.h"
 #include "i_system.h"
 #include "m_argv.h"
 #include "p_local.h"

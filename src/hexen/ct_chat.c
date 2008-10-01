@@ -25,6 +25,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "h2def.h"
+#include "doomkeys.h"
 #include "p_local.h"
 #include "soundst.h"
 #include "v_video.h"
