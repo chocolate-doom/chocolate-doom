@@ -1276,14 +1276,6 @@ boolean MN_Responder(event_t * event)
                 BorderNeedRefresh = true;
                 UpdateState |= I_FULLSCRN;
                 return (true);
-#ifdef __NeXT__
-            case 'q':
-                MenuActive = false;
-                askforquit = true;
-                typeofask = 5;  // suicide
-                return true;
-#endif
-#ifndef __NeXT__
             case KEY_F1:       // help screen
                 SCInfo(0);      // start up info screens
                 MenuActive = true;
@@ -1448,7 +1440,6 @@ boolean MN_Responder(event_t * event)
                 G_DeferedInitNew(gameskill, gameepisode, gamemap);
                 P_SetMessage(&players[consoleplayer], TXT_CHEATWARP, false);
                 return true;
-#endif
         }
 
     }

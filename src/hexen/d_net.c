@@ -97,7 +97,7 @@ unsigned NetbufferChecksum(void)
 
     c = 0x1234567;
 
-#if defined(NeXT) || defined(NORMALUNIX)
+#if defined(NORMALUNIX)
     return 0;                   // byte order problems
 #endif
 
