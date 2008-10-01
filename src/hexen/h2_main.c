@@ -33,6 +33,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "h2def.h"
+#include "i_system.h"
 #include "m_argv.h"
 #include "p_local.h"
 #include "soundst.h"
@@ -118,9 +119,6 @@ int startmap;
 boolean autostart;
 boolean advancedemo;
 FILE *debugfile;
-event_t events[MAXEVENTS];
-int eventhead;
-int eventtail;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -536,10 +534,15 @@ void H2_ProcessEvents(void)
 {
     event_t *ev;
 
-    for (; eventtail != eventhead;
-         eventtail = (eventtail + 1) & (MAXEVENTS - 1))
+    for (;;)
     {
-        ev = &events[eventtail];
+        ev = D_PopEvent();
+
+        if (ev == NULL)
+        {
+            break;
+        }
+
         if (F_Responder(ev))
         {
             continue;
@@ -550,20 +553,6 @@ void H2_ProcessEvents(void)
         }
         G_Responder(ev);
     }
-}
-
-//==========================================================================
-//
-// H2_PostEvent
-//
-// Called by the I/O functions when input is detected.
-//
-//==========================================================================
-
-void H2_PostEvent(event_t * ev)
-{
-    events[eventhead] = *ev;
-    eventhead = (eventhead + 1) & (MAXEVENTS - 1);
 }
 
 //==========================================================================
@@ -634,7 +623,7 @@ static void DrawAndBlit(void)
     NetUpdate();
 
     // Flush buffered stuff to screen
-    I_Update();
+    I_FinishUpdate();
 }
 
 //==========================================================================

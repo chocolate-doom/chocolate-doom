@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "h2def.h"
+#include "i_system.h"
 #include "i_swap.h"
 #include "r_local.h"
 

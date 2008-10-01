@@ -23,6 +23,8 @@
 
 
 #include "h2def.h"
+#include "i_system.h"
+#include "i_video.h"
 #include <ctype.h>
 
 // MACROS ------------------------------------------------------------------
@@ -404,7 +406,7 @@ void IN_Drawer(void)
         return;
     }
     UpdateState |= I_FULLSCRN;
-    memcpy(screen, (byte *) patchINTERPIC, SCREENWIDTH * SCREENHEIGHT);
+    memcpy(I_VideoBuffer, (byte *) patchINTERPIC, SCREENWIDTH * SCREENHEIGHT);
 
     if (gametype == SINGLE)
     {

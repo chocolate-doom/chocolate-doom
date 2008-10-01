@@ -26,6 +26,8 @@
 
 #include <ctype.h>
 #include "h2def.h"
+#include "i_system.h"
+#include "i_video.h"
 #include "p_local.h"
 #include "r_local.h"
 #include "soundst.h"
@@ -1688,7 +1690,7 @@ void MN_DeactivateMenu(void)
 void MN_DrawInfo(void)
 {
     I_SetPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
-    memcpy(screen,
+    memcpy(I_VideoBuffer,
            (byte *) W_CacheLumpNum(W_GetNumForName("TITLE") + InfoType,
                                    PU_CACHE), SCREENWIDTH * SCREENHEIGHT);
 //      V_DrawPatch(0, 0, W_CacheLumpNum(W_GetNumForName("TITLE")+InfoType,

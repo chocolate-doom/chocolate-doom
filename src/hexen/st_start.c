@@ -33,6 +33,7 @@
 #endif
 
 #include "h2def.h"
+#include "i_system.h"
 #include "st_start.h"
 
 

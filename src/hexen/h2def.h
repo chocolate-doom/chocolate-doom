@@ -36,6 +36,14 @@
 #define	strncasecmp strnicmp
 #endif
 
+// ticcmd:
+
+#include "d_ticcmd.h"
+
+// events
+
+#include "d_event.h"
+
 // for fixed_t:
 
 #include "m_fixed.h"
@@ -158,34 +166,6 @@ typedef enum
     sk_hard,
     sk_nightmare
 } skill_t;
-
-typedef enum
-{
-    ev_keydown,
-    ev_keyup,
-    ev_mouse,
-    ev_joystick
-} evtype_t;
-
-typedef struct
-{
-    evtype_t type;
-    int data1;                  // keys / mouse/joystick buttons
-    int data2;                  // mouse/joystick x move
-    int data3;                  // mouse/joystick y move
-} event_t;
-
-typedef struct
-{
-    char forwardmove;           // *2048 for move
-    char sidemove;              // *2048 for move
-    short angleturn;            // <<16 for angle delta
-    short consistancy;          // checks for net game
-    byte chatchar;
-    byte buttons;
-    byte lookfly;               // look/fly up/down/centering
-    byte arti;                  // artitype_t to use
-} ticcmd_t;
 
 #define	BT_ATTACK		1
 #define	BT_USE			2
@@ -728,12 +708,6 @@ void NET_SendFrags(player_t * player);
 
 #define TELEFOGHEIGHT (32*FRACUNIT)
 
-#define MAXEVENTS 64
-
-extern event_t events[MAXEVENTS];
-extern int eventhead;
-extern int eventtail;
-
 extern gameaction_t gameaction;
 
 extern boolean paused;
@@ -864,9 +838,6 @@ void H2_GameLoop(void);
 // calls all ?_Responder, ?_Ticker, and ?_Drawer functions
 // calls I_GetTime, I_StartFrame, and I_StartTic
 
-void H2_PostEvent(event_t * ev);
-// called by IO functions when input is detected
-
 void NetUpdate(void);
 // create any new ticcmds and broadcast to other players
 
@@ -878,71 +849,6 @@ void TryRunTics(void);
 //---------
 //SYSTEM IO
 //---------
-#if 1
-#define	SCREENWIDTH		320
-#define	SCREENHEIGHT	200
-#else
-#define	SCREENWIDTH		560
-#define	SCREENHEIGHT	375
-#endif
-
-byte *I_ZoneBase(int *size);
-// called by startup code to get the ammount of memory to malloc
-// for the zone management
-
-int I_GetTime(void);
-// called by H2_GameLoop
-// returns current time in tics
-
-void I_StartFrame(void);
-// called by H2_GameLoop
-// called before processing any tics in a frame (just after displaying a frame)
-// time consuming syncronous operations are performed here (joystick reading)
-// can call H2_PostEvent
-
-void I_StartTic(void);
-// called by H2_GameLoop
-// called before processing each tic in a frame
-// quick syncronous operations are performed here
-// can call H2_PostEvent
-
-// asyncronous interrupt functions should maintain private ques that are
-// read by the syncronous functions to be converted into events
-
-void I_Init(void);
-// called by H2_Main
-// determines the hardware configuration and sets up the video mode
-
-void I_InitGraphics(void);
-
-void I_InitNetwork(void);
-void I_NetCmd(void);
-
-void I_CheckExternDriver(void);
-
-void I_Error(char *error, ...);
-// called by anything that can generate a terminal error
-// bad exit with diagnostic message
-
-void I_Quit(void);
-// called by M_Responder when quit is selected
-// clean exit, displays sell blurb
-
-void I_SetPalette(byte * palette);
-// takes full 8 bit values
-
-void I_Update(void);
-// Copy buffer to video
-
-void I_WipeUpdate(wipe_t wipe);
-// Copy buffer to video with wipe effect
-
-void I_WaitVBL(int count);
-// wait for vertical retrace or pause a bit
-
-void I_BeginRead(void);
-void I_EndRead(void);
-
 byte *I_AllocLow(int length);
 // allocates from low memory under dos, just mallocs under unix
 

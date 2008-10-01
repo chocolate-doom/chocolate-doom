@@ -23,6 +23,9 @@
 
 
 #include "h2def.h"
+#include "i_video.h"
+#include "i_system.h"
+#include "i_timer.h"
 #include "m_argv.h"
 #include "p_local.h"
 #include <stdlib.h>             // for atoi()
@@ -517,10 +520,15 @@ void CheckAbort(void)
         I_StartTic();
 
     I_StartTic();
-    for (; eventtail != eventhead;
-         eventtail = (eventtail + 1) & (MAXEVENTS - 1))
+    for (;;)
     {
-        ev = &events[eventtail];
+        ev = D_PopEvent();
+
+        if (ev == NULL)
+        {
+            break;
+        }
+
         if (ev->type == ev_keydown && ev->data1 == KEY_ESCAPE)
             I_Error("Network game synchronization aborted.");
     }

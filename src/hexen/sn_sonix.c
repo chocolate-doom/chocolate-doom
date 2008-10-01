@@ -26,6 +26,7 @@
 
 #include <string.h>
 #include "h2def.h"
+#include "i_system.h"
 #include "soundst.h"
 
 // MACROS ------------------------------------------------------------------
