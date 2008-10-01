@@ -60,6 +60,18 @@ int M_CheckParm (char *check)
     return 0;
 }
 
+//
+// M_ParmExists
+//
+// Returns true if the given parameter exists in the program's command
+// line arguments, false if not.
+//
+
+boolean M_ParmExists(char *check)
+{
+    return M_CheckParm(check) != 0;
+}
+
 #define MAXARGVS        100
 	
 static void LoadResponseFile(int argv_index)

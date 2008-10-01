@@ -1,3 +1,4 @@
+AM_CFLAGS=-I.. @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
 noinst_LIBRARIES=libhexen.a
 
@@ -64,4 +65,3 @@ i_ibm.c                               \
 i_sound.c           i_sound.h
 
 libhexen_a_SOURCES=$(SOURCE_FILES)
-libhexen_a_CFLAGS=-I..

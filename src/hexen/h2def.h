@@ -36,6 +36,14 @@
 #define	strncasecmp strnicmp
 #endif
 
+// for fixed_t:
+
+#include "m_fixed.h"
+
+// angle definitions:
+
+#include "tables.h"
+
 #define VERSION 110
 #define VERSION_TEXT "v1.1"
 
@@ -140,26 +148,7 @@ extern byte *destview, *destscreen;     // PC direct to screen pointers
 #define MINIMUM_HEAP_SIZE	0x800000        //  8 meg
 #define MAXIMUM_HEAP_SIZE	0x2000000       // 32 meg
 
-#define	FRACBITS		16
-#define	FRACUNIT		(1<<FRACBITS)
-typedef int fixed_t;
-
 typedef unsigned int uint;
-
-//#define ANGLE_1               0x01000000
-#define ANGLE_45	0x20000000
-#define ANGLE_90	0x40000000
-#define ANGLE_180	0x80000000
-#define ANGLE_MAX	0xffffffff
-#define ANGLE_1		(ANGLE_45/45)
-#define ANGLE_60	(ANGLE_180/3)
-
-#define	ANG45	0x20000000
-#define	ANG90	0x40000000
-#define	ANG180	0x80000000
-#define	ANG270	0xc0000000
-
-typedef unsigned angle_t;
 
 typedef enum
 {
@@ -745,9 +734,6 @@ extern event_t events[MAXEVENTS];
 extern int eventhead;
 extern int eventtail;
 
-extern fixed_t finesine[5 * FINEANGLES / 4];
-extern fixed_t *finecosine;
-
 extern gameaction_t gameaction;
 
 extern boolean paused;
@@ -858,40 +844,6 @@ extern boolean autostart;
 
 ===============================================================================
 */
-
-
-fixed_t FixedMul(fixed_t a, fixed_t b);
-fixed_t FixedDiv(fixed_t a, fixed_t b);
-fixed_t FixedDiv2(fixed_t a, fixed_t b);
-
-#ifdef __WATCOMC__
-#pragma aux FixedMul =	\
-	"imul ebx",			\
-	"shrd eax,edx,16"	\
-	parm	[eax] [ebx] \
-	value	[eax]		\
-	modify exact [eax edx]
-
-#pragma aux FixedDiv2 =	\
-	"cdq",				\
-	"shld edx,eax,16",	\
-	"sal eax,16",		\
-	"idiv ebx"			\
-	parm	[eax] [ebx] \
-	value	[eax]		\
-	modify exact [eax edx]
-#endif
-
-#ifdef __BIG_ENDIAN__
-short ShortSwap(short);
-long LongSwap(long);
-#define SHORT(x)	ShortSwap(x)
-#define LONG(x)		LongSwap(x)
-#else
-#define SHORT(x)	(x)
-#define LONG(x)		(x)
-#endif
-
 
 #include "w_wad.h"
 #include "z_zone.h"
@@ -1171,13 +1123,7 @@ int R_CheckTextureNumForName(char *name);
 //----
 //MISC
 //----
-extern int myargc;
-extern char **myargv;
 extern int localQuakeHappening[MAXPLAYERS];
-
-int M_CheckParm(char *check);
-// returns the position of the given parameter in the arg list (0 if not found)
-boolean M_ParmExists(char *check);
 
 void M_ExtractFileBase(char *path, char *dest);
 
@@ -1195,20 +1141,7 @@ extern int prndindex;
 void M_ClearRandom(void);
 // fix randoms for demos
 
-void M_FindResponseFile(void);
-
-void M_ClearBox(fixed_t * box);
-void M_AddToBox(fixed_t * box, fixed_t x, fixed_t y);
-// bounding box functions
-
-boolean M_WriteFile(char const *name, void *source, int length);
-int M_ReadFile(char const *name, byte ** buffer);
-int M_ReadFileCLib(char const *name, byte ** buffer);
-
-void M_ScreenShot(void);
-
 void M_LoadDefaults(char *fileName);
-
 void M_SaveDefaults(void);
 
 int M_DrawText(int x, int y, boolean direct, char *string);
@@ -1220,7 +1153,6 @@ int M_DrawText(int x, int y, boolean direct, char *string);
 void SC_Open(char *name);
 void SC_OpenLump(char *name);
 void SC_OpenFile(char *name);
-void SC_OpenFileCLib(char *name);
 void SC_Close(void);
 boolean SC_GetString(void);
 void SC_MustGetString(void);

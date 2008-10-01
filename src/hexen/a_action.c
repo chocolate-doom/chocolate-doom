@@ -206,7 +206,7 @@ void A_PotteryCheck(mobj_t * actor)
         if (P_CheckSight(actor, pmo) && (abs(R_PointToAngle2(pmo->x,
                                                              pmo->y, actor->x,
                                                              actor->y) -
-                                             pmo->angle) <= ANGLE_45))
+                                             pmo->angle) <= ANG45))
         {                       // Previous state (pottery bit waiting state)
             P_SetMobjState(actor, actor->state - &states[0] - 1);
         }
@@ -228,7 +228,7 @@ void A_PotteryCheck(mobj_t * actor)
                                                                  pmo->y,
                                                                  actor->x,
                                                                  actor->y) -
-                                                 pmo->angle) <= ANGLE_45))
+                                                 pmo->angle) <= ANG45))
             {                   // Previous state (pottery bit waiting state)
                 P_SetMobjState(actor, actor->state - &states[0] - 1);
                 return;
@@ -925,7 +925,7 @@ void A_Quake(mobj_t * actor)
                     P_DamageMobj(victim, NULL, NULL, HITDICE(1));
                 }
                 // Thrust player around
-                an = victim->angle + ANGLE_1 * P_Random();
+                an = victim->angle + ANG1 * P_Random();
                 P_ThrustMobj(victim, an, richters << (FRACBITS - 1));
             }
         }
@@ -1292,11 +1292,11 @@ void A_BatMove(mobj_t * actor)
 
     if (P_Random() < 128)
     {
-        newangle = actor->angle + ANGLE_1 * actor->args[4];
+        newangle = actor->angle + ANG1 * actor->args[4];
     }
     else
     {
-        newangle = actor->angle - ANGLE_1 * actor->args[4];
+        newangle = actor->angle - ANG1 * actor->args[4];
     }
 
     // Adjust momentum vector to new direction

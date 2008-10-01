@@ -23,6 +23,7 @@
 
 
 #include "h2def.h"
+#include "m_bbox.h"
 #include "r_local.h"
 
 seg_t *curline;

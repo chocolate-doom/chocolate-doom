@@ -384,7 +384,7 @@ void P_DeathThink(player_t * player)
     if (player->attacker && player->attacker != player->mo)
     {                           // Watch killer
         dir = P_FaceMobj(player->mo, player->attacker, &delta);
-        if (delta < ANGLE_1 * 10)
+        if (delta < ANG1 * 10)
         {                       // Looking at killer, so fade damage and poison counters
             if (player->damagecount)
             {
@@ -396,9 +396,9 @@ void P_DeathThink(player_t * player)
             }
         }
         delta = delta / 8;
-        if (delta > ANGLE_1 * 5)
+        if (delta > ANG1 * 5)
         {
-            delta = ANGLE_1 * 5;
+            delta = ANG1 * 5;
         }
         if (dir)
         {                       // Turn clockwise

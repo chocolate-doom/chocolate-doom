@@ -24,6 +24,7 @@
 
 #include <string.h>
 #include "h2def.h"
+#include "m_misc.h"
 #include "p_local.h"
 #include "soundst.h"
 
@@ -1024,7 +1025,8 @@ void G_Ticker(void)
                 G_DoPlayDemo();
                 break;
             case ga_screenshot:
-                M_ScreenShot();
+                V_ScreenShot("HEXEN%02i.pcx");
+                P_SetMessage(&players[consoleplayer], "SCREEN SHOT", false);
                 gameaction = ga_nothing;
                 break;
             case ga_leavemap:

@@ -27,6 +27,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "h2def.h"
+#include "m_misc.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -35,7 +36,6 @@
 #define ASCII_QUOTE (34)
 #define LUMP_SCRIPT 1
 #define FILE_ZONE_SCRIPT 2
-#define FILE_CLIB_SCRIPT 3
 
 // TYPES -------------------------------------------------------------------
 
@@ -124,20 +124,6 @@ void SC_OpenFile(char *name)
 
 //==========================================================================
 //
-// SC_OpenFileCLib
-//
-// Loads a script (from a file) and prepares it for parsing.  Uses C
-// library function calls for memory allocation and de-allocation.
-//
-//==========================================================================
-
-void SC_OpenFileCLib(char *name)
-{
-    OpenScript(name, FILE_CLIB_SCRIPT);
-}
-
-//==========================================================================
-//
 // OpenScript
 //
 //==========================================================================
@@ -157,12 +143,6 @@ static void OpenScript(char *name, int type)
         ScriptSize = M_ReadFile(name, (byte **) & ScriptBuffer);
         M_ExtractFileBase(name, ScriptName);
         ScriptFreeCLib = false; // De-allocate using Z_Free()
-    }
-    else
-    {                           // File script - clib
-        ScriptSize = M_ReadFileCLib(name, (byte **) & ScriptBuffer);
-        M_ExtractFileBase(name, ScriptName);
-        ScriptFreeCLib = true;  // De-allocate using free()
     }
     ScriptPtr = ScriptBuffer;
     ScriptEndPtr = ScriptPtr + ScriptSize;

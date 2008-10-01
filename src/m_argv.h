@@ -40,4 +40,8 @@ int M_CheckParm (char* check);
 
 void M_FindResponseFile(void);
 
+// Parameter has been specified?
+
+boolean M_ParmExists(char *check);
+
 #endif

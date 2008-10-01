@@ -23,6 +23,7 @@
 
 
 #include "h2def.h"
+#include "i_swap.h"
 #include "p_local.h"
 #include "am_map.h"
 #include "am_data.h"
