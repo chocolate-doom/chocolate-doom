@@ -178,7 +178,7 @@ void V_DrawPatch(int x, int y, patch_t * patch)
 /*
 ==================
 =
-= V_DrawFuzzPatch
+= V_DrawTLPatch
 =
 = Masks a column based translucent masked pic to the screen.
 =
@@ -186,7 +186,7 @@ void V_DrawPatch(int x, int y, patch_t * patch)
 */
 extern byte *tinttable;
 
-void V_DrawFuzzPatch(int x, int y, patch_t * patch)
+void V_DrawTLPatch(int x, int y, patch_t * patch)
 {
     int count, col;
     column_t *column;
@@ -229,7 +229,7 @@ void V_DrawFuzzPatch(int x, int y, patch_t * patch)
 /*
 ==================
 =
-= V_DrawAltFuzzPatch
+= V_DrawAltTLPatch
 =
 = Masks a column based translucent masked pic to the screen.
 =
@@ -237,7 +237,7 @@ void V_DrawFuzzPatch(int x, int y, patch_t * patch)
 */
 extern byte *tinttable;
 
-void V_DrawAltFuzzPatch(int x, int y, patch_t * patch)
+void V_DrawAltTLPatch(int x, int y, patch_t * patch)
 {
     int count, col;
     column_t *column;

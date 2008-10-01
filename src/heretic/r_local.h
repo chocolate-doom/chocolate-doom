@@ -302,7 +302,7 @@ extern int detailshift;         // 0 = high, 1 = low
 
 extern void (*colfunc) (void);
 extern void (*basecolfunc) (void);
-extern void (*fuzzcolfunc) (void);
+extern void (*tlcolfunc) (void);
 extern void (*spanfunc) (void);
 
 int R_PointOnSide(fixed_t x, fixed_t y, node_t * node);
@@ -455,10 +455,10 @@ extern byte *dc_source;         // first pixel in a column
 
 void R_DrawColumn(void);
 void R_DrawColumnLow(void);
-void R_DrawFuzzColumn(void);
-void R_DrawFuzzColumnLow(void);
+void R_DrawTLColumn(void);
+void R_DrawTLColumnLow(void);
 void R_DrawTranslatedColumn(void);
-void R_DrawTranslatedFuzzColumn(void);
+void R_DrawTranslatedTLColumn(void);
 void R_DrawTranslatedColumnLow(void);
 
 extern int ds_y;

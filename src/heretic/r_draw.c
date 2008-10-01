@@ -120,22 +120,9 @@ void R_DrawColumnLow(void)
     while (count--);
 }
 
+// Translucent column draw - blended with background using tinttable.
 
-#define FUZZTABLE	50
-
-#define FUZZOFF	(SCREENWIDTH)
-int fuzzoffset[FUZZTABLE] = {
-    FUZZOFF, -FUZZOFF, FUZZOFF, -FUZZOFF, FUZZOFF, FUZZOFF, -FUZZOFF, FUZZOFF,
-        FUZZOFF, -FUZZOFF, FUZZOFF, FUZZOFF, FUZZOFF, -FUZZOFF, FUZZOFF,
-        FUZZOFF, FUZZOFF, -FUZZOFF, -FUZZOFF, -FUZZOFF, -FUZZOFF, FUZZOFF,
-        -FUZZOFF, -FUZZOFF, FUZZOFF, FUZZOFF, FUZZOFF, FUZZOFF, -FUZZOFF,
-        FUZZOFF, -FUZZOFF, FUZZOFF, FUZZOFF, -FUZZOFF, -FUZZOFF, FUZZOFF,
-        FUZZOFF, -FUZZOFF, -FUZZOFF, -FUZZOFF, -FUZZOFF, FUZZOFF, FUZZOFF,
-        FUZZOFF, FUZZOFF, -FUZZOFF, FUZZOFF, FUZZOFF, -FUZZOFF, FUZZOFF
-};
-int fuzzpos = 0;
-
-void R_DrawFuzzColumn(void)
+void R_DrawTLColumn(void)
 {
     int count;
     byte *dest;
@@ -152,7 +139,7 @@ void R_DrawFuzzColumn(void)
 
 #ifdef RANGECHECK
     if ((unsigned) dc_x >= SCREENWIDTH || dc_yl < 0 || dc_yh >= SCREENHEIGHT)
-        I_Error("R_DrawFuzzColumn: %i to %i at %i", dc_yl, dc_yh, dc_x);
+        I_Error("R_DrawTLColumn: %i to %i at %i", dc_yl, dc_yh, dc_x);
 #endif
 
     dest = ylookup[dc_yl] + columnofs[dc_x];
@@ -160,28 +147,12 @@ void R_DrawFuzzColumn(void)
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
 
-// OLD FUZZY INVISO SPRITE STUFF
-/*	do
-	{
-		*dest = colormaps[6*256+dest[fuzzoffset[fuzzpos]]];
-		if (++fuzzpos == FUZZTABLE)
-			fuzzpos = 0;
-		dest += SCREENWIDTH;
-		frac += fracstep;
-	} while (count--);
-*/
-
     do
     {
         *dest =
             tinttable[((*dest) << 8) +
                       dc_colormap[dc_source[(frac >> FRACBITS) & 127]]];
 
-        //*dest = dest[SCREENWIDTH*10+5];
-
-//              *dest = //tinttable[((*dest)<<8)+colormaps[dc_source[(frac>>FRACBITS)&127]]];
-
-//              *dest = dc_colormap[dc_source[(frac>>FRACBITS)&127]];
         dest += SCREENWIDTH;
         frac += fracstep;
     }
@@ -228,7 +199,7 @@ void R_DrawTranslatedColumn(void)
     while (count--);
 }
 
-void R_DrawTranslatedFuzzColumn(void)
+void R_DrawTranslatedTLColumn(void)
 {
     int count;
     byte *dest;

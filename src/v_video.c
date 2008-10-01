@@ -316,12 +316,12 @@ void V_DrawPatchDirect(int x, int y, patch_t *patch)
 } 
 
 //
-// V_DrawFuzzPatch
+// V_DrawTLPatch
 //
 // Masks a column based translucent masked pic to the screen.
 //
 
-void V_DrawFuzzPatch(int x, int y, patch_t * patch)
+void V_DrawTLPatch(int x, int y, patch_t * patch)
 {
     int count, col;
     column_t *column;
@@ -336,7 +336,7 @@ void V_DrawFuzzPatch(int x, int y, patch_t * patch)
      || y < 0
      || y + SHORT(patch->height) > SCREENHEIGHT)
     {
-        I_Error("Bad V_DrawFuzzPatch");
+        I_Error("Bad V_DrawTLPatch");
     }
 
     col = 0;

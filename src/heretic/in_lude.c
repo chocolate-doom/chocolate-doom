@@ -896,12 +896,12 @@ void IN_DrawDMStats(void)
             }
             else
             {
-                V_DrawFuzzPatch(40, ypos,
-                                W_CacheLumpNum(patchFaceOkayBase + i,
-                                               PU_CACHE));
-                V_DrawFuzzPatch(xpos, 18,
-                                W_CacheLumpNum(patchFaceDeadBase + i,
-                                               PU_CACHE));
+                V_DrawTLPatch(40, ypos,
+                              W_CacheLumpNum(patchFaceOkayBase + i,
+                                             PU_CACHE));
+                V_DrawTLPatch(xpos, 18,
+                              W_CacheLumpNum(patchFaceDeadBase + i,
+                                             PU_CACHE));
             }
             kpos = 86;
             for (j = 0; j < MAXPLAYERS; j++)

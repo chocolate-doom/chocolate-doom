@@ -126,17 +126,8 @@ void R_DrawColumnLow(void)
     while (count--);
 }
 
-/*
-#define FUZZTABLE	50
-#define FUZZOFF	(SCREENWIDTH)
-int		fuzzoffset[FUZZTABLE] = {
-FUZZOFF,-FUZZOFF,FUZZOFF,-FUZZOFF,FUZZOFF,FUZZOFF,-FUZZOFF,FUZZOFF,FUZZOFF,-FUZZOFF,FUZZOFF,FUZZOFF,FUZZOFF,-FUZZOFF,FUZZOFF,FUZZOFF,FUZZOFF,-FUZZOFF,-FUZZOFF,-FUZZOFF,-FUZZOFF,FUZZOFF,-FUZZOFF,-FUZZOFF,FUZZOFF,FUZZOFF,FUZZOFF,FUZZOFF,-FUZZOFF,FUZZOFF,-FUZZOFF,FUZZOFF,FUZZOFF,-FUZZOFF,-FUZZOFF,FUZZOFF,FUZZOFF,-FUZZOFF,-FUZZOFF,-FUZZOFF,-FUZZOFF,FUZZOFF,FUZZOFF,FUZZOFF,FUZZOFF,-FUZZOFF,FUZZOFF,FUZZOFF,-FUZZOFF,FUZZOFF
-};
-int fuzzpos = 0;
-*/
-
 #ifndef __WATCOMC__
-void R_DrawFuzzColumn(void)
+void R_DrawTLColumn(void)
 {
     int count;
     byte *dest;
@@ -153,24 +144,13 @@ void R_DrawFuzzColumn(void)
 
 #ifdef RANGECHECK
     if ((unsigned) dc_x >= SCREENWIDTH || dc_yl < 0 || dc_yh >= SCREENHEIGHT)
-        I_Error("R_DrawFuzzColumn: %i to %i at %i", dc_yl, dc_yh, dc_x);
+        I_Error("R_DrawTLColumn: %i to %i at %i", dc_yl, dc_yh, dc_x);
 #endif
 
     dest = ylookup[dc_yl] + columnofs[dc_x];
 
     fracstep = dc_iscale;
     frac = dc_texturemid + (dc_yl - centery) * fracstep;
-
-// OLD FUZZY INVISO SPRITE STUFF
-/*	do
-	{
-		*dest = colormaps[6*256+dest[fuzzoffset[fuzzpos]]];
-		if (++fuzzpos == FUZZTABLE)
-			fuzzpos = 0;
-		dest += SCREENWIDTH;
-		frac += fracstep;
-	} while (count--);
-*/
 
     do
     {
@@ -186,11 +166,11 @@ void R_DrawFuzzColumn(void)
 
 //============================================================================
 //
-// R_DrawAltFuzzColumn
+// R_DrawAltTLColumn
 //
 //============================================================================
 
-void R_DrawAltFuzzColumn(void)
+void R_DrawAltTLColumn(void)
 {
     int count;
     byte *dest;
@@ -207,7 +187,7 @@ void R_DrawAltFuzzColumn(void)
 
 #ifdef RANGECHECK
     if ((unsigned) dc_x >= SCREENWIDTH || dc_yl < 0 || dc_yh >= SCREENHEIGHT)
-        I_Error("R_DrawFuzzColumn: %i to %i at %i", dc_yl, dc_yh, dc_x);
+        I_Error("R_DrawAltTLColumn: %i to %i at %i", dc_yl, dc_yh, dc_x);
 #endif
 
     dest = ylookup[dc_yl] + columnofs[dc_x];
@@ -267,11 +247,11 @@ void R_DrawTranslatedColumn(void)
 
 //============================================================================
 //
-// R_DrawTranslatedFuzzColumn
+// R_DrawTranslatedTLColumn
 //
 //============================================================================
 
-void R_DrawTranslatedFuzzColumn(void)
+void R_DrawTranslatedTLColumn(void)
 {
     int count;
     byte *dest;
@@ -305,12 +285,12 @@ void R_DrawTranslatedFuzzColumn(void)
 
 //============================================================================
 //
-// R_DrawTranslatedAltFuzzColumn
+// R_DrawTranslatedAltTLColumn
 //
 //============================================================================
 
 /*
-void R_DrawTranslatedAltFuzzColumn (void)
+void R_DrawTranslatedAltTLColumn (void)
 {
 	int			count;
 	byte		*dest;

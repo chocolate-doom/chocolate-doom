@@ -948,7 +948,7 @@ void DrawFullScreenStuff(void)
     {
         if (CPlayer->readyArtifact > 0)
         {
-            V_DrawFuzzPatch(286, 170, W_CacheLumpName("ARTIBOX", PU_CACHE));
+            V_DrawTLPatch(286, 170, W_CacheLumpName("ARTIBOX", PU_CACHE));
             V_DrawPatch(286, 170,
                         W_CacheLumpName(patcharti[CPlayer->readyArtifact],
                                         PU_CACHE));
@@ -960,8 +960,8 @@ void DrawFullScreenStuff(void)
         x = inv_ptr - curpos;
         for (i = 0; i < 7; i++)
         {
-            V_DrawFuzzPatch(50 + i * 31, 168, W_CacheLumpName("ARTIBOX",
-                                                              PU_CACHE));
+            V_DrawTLPatch(50 + i * 31, 168, W_CacheLumpName("ARTIBOX",
+                                                            PU_CACHE));
             if (CPlayer->inventorySlotNum > x + i
                 && CPlayer->inventory[x + i].type != arti_none)
             {
