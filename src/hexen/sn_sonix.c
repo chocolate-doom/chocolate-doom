@@ -27,7 +27,8 @@
 #include <string.h>
 #include "h2def.h"
 #include "i_system.h"
-#include "soundst.h"
+#include "i_sound.h"
+#include "s_sound.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -165,7 +166,7 @@ static int GetSoundOffset(char *name)
 
     for (i = 0; i < NUMSFX; i++)
     {
-        if (!strcasecmp(name, S_sfx[i].tagName))
+        if (!strcasecmp(name, S_sfx[i].tagname))
         {
             return i;
         }

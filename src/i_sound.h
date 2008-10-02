@@ -38,8 +38,13 @@ typedef struct sfxinfo_struct	sfxinfo_t;
 
 struct sfxinfo_struct
 {
-    // up to 6-character name
-    char *name;
+    // tag name, used for hexen.
+    char *tagname;
+    
+    // lump name.  If we are running with use_sfx_prefix=true, a
+    // 'DS' (or 'DP' for PC speaker sounds) is prepended to this.
+
+    char name[9];
 
     // Sfx priority
     int priority;

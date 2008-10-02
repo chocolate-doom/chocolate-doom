@@ -33,10 +33,10 @@
 #include <stdlib.h>
 #include <time.h>
 #include "h2def.h"
+#include "s_sound.h"
 #include "i_system.h"
 #include "m_argv.h"
 #include "p_local.h"
-#include "soundst.h"
 #include "v_video.h"
 
 // MACROS ------------------------------------------------------------------

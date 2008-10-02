@@ -24,13 +24,13 @@
 
 #include <string.h>
 #include "h2def.h"
+#include "s_sound.h"
 #include "doomkeys.h"
 #include "i_video.h"
 #include "i_system.h"
 #include "i_timer.h"
 #include "m_misc.h"
 #include "p_local.h"
-#include "soundst.h"
 #include "v_video.h"
 
 #define AM_STARTKEY	9

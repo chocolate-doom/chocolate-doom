@@ -98,7 +98,6 @@ static void DEH_SoundParseLine(deh_context_t *context, char *line, void *tag)
     // Set the field value
 
     DEH_SetMapping(context, &sound_mapping, sfx, variable_name, ivalue);
-
 }
 
 deh_section_t deh_section_sound =

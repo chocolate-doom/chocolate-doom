@@ -23,6 +23,7 @@
 
 
 #include "h2def.h"
+#include "s_sound.h"
 #include "doomkeys.h"
 #include "i_video.h"
 #include "i_system.h"
