@@ -49,11 +49,11 @@ r_main.c                              \
 r_plane.c                             \
 r_segs.c                              \
 r_things.c                            \
+s_sound.c           s_sound.h         \
 sb_bar.c                              \
 sc_man.c                              \
 sn_sonix.c                            \
 sounds.c            sounds.h          \
-                    soundst.h         \
 st_start.c          st_start.h        \
 sv_save.c                             \
                     textdefs.h        \
@@ -61,6 +61,6 @@ sv_save.c                             \
 
 EXTRA_DIST=                           \
 i_ibm.c                               \
-i_sound.c           i_sound.h
+i_sound.c           
 
 libhexen_a_SOURCES=$(SOURCE_FILES)

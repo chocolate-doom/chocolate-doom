@@ -66,496 +66,255 @@ musicinfo_t S_music[] =
 
 // Sound info
 
+#define SOUND(name, priority, numchannels, pitchshift) \
+    { name, "", priority, NULL, pitchshift, 0, -1, 0, numchannels, NULL }
+
 sfxinfo_t S_sfx[] = {
     // tagname, lumpname, priority, usefulness, snd_ptr, lumpnum, numchannels,
     //              pitchshift
-    {"", "", 0, -1, NULL, 0, 0, 0}
-    ,
-    {"PlayerFighterNormalDeath", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"PlayerFighterCrazyDeath", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"PlayerFighterExtreme1Death", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"PlayerFighterExtreme2Death", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"PlayerFighterExtreme3Death", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"PlayerFighterBurnDeath", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"PlayerClericNormalDeath", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"PlayerClericCrazyDeath", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"PlayerClericExtreme1Death", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"PlayerClericExtreme2Death", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"PlayerClericExtreme3Death", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"PlayerClericBurnDeath", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"PlayerMageNormalDeath", "", 256, -1, NULL, 0, 2, 0}
-    ,
-    {"PlayerMageCrazyDeath", "", 256, -1, NULL, 0, 2, 0}
-    ,
-    {"PlayerMageExtreme1Death", "", 256, -1, NULL, 0, 2, 0}
-    ,
-    {"PlayerMageExtreme2Death", "", 256, -1, NULL, 0, 2, 0}
-    ,
-    {"PlayerMageExtreme3Death", "", 256, -1, NULL, 0, 2, 0}
-    ,
-    {"PlayerMageBurnDeath", "", 256, -1, NULL, 0, 2, 0}
-    ,
-    {"PlayerFighterPain", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"PlayerClericPain", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"PlayerMagePain", "", 256, -1, NULL, 0, 2, 0}
-    ,
-    {"PlayerFighterGrunt", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"PlayerClericGrunt", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"PlayerMageGrunt", "", 256, -1, NULL, 0, 2, 0}
-    ,
-    {"PlayerLand", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"PlayerPoisonCough", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"PlayerFighterFallingScream", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"PlayerClericFallingScream", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"PlayerMageFallingScream", "", 256, -1, NULL, 0, 2, 0}
-    ,
-    {"PlayerFallingSplat", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"PlayerFighterFailedUse", "", 256, -1, NULL, 0, 1, 1}
-    ,
-    {"PlayerClericFailedUse", "", 256, -1, NULL, 0, 1, 1}
-    ,
-    {"PlayerMageFailedUse", "", 256, -1, NULL, 0, 1, 0}
-    ,
-    {"PlatformStart", "", 36, -1, NULL, 0, 2, 1}
-    ,
-    {"PlatformStartMetal", "", 36, -1, NULL, 0, 2, 1}
-    ,
-    {"PlatformStop", "", 40, -1, NULL, 0, 2, 1}
-    ,
-    {"StoneMove", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"MetalMove", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"DoorOpen", "", 36, -1, NULL, 0, 2, 1}
-    ,
-    {"DoorLocked", "", 36, -1, NULL, 0, 2, 1}
-    ,
-    {"DoorOpenMetal", "", 36, -1, NULL, 0, 2, 1}
-    ,
-    {"DoorCloseMetal", "", 36, -1, NULL, 0, 2, 1}
-    ,
-    {"DoorCloseLight", "", 36, -1, NULL, 0, 2, 1}
-    ,
-    {"DoorCloseHeavy", "", 36, -1, NULL, 0, 2, 1}
-    ,
-    {"DoorCreak", "", 36, -1, NULL, 0, 2, 1}
-    ,
-    {"PickupWeapon", "", 36, -1, NULL, 0, 2, 0}
-    ,
-    {"PickupArtifact", "", 36, -1, NULL, 0, 2, 1}
-    ,
-    {"PickupKey", "", 36, -1, NULL, 0, 2, 1}
-    ,
-    {"PickupItem", "", 36, -1, NULL, 0, 2, 1}
-    ,
-    {"PickupPiece", "", 36, -1, NULL, 0, 2, 0}
-    ,
-    {"WeaponBuild", "", 36, -1, NULL, 0, 2, 0}
-    ,
-    {"UseArtifact", "", 36, -1, NULL, 0, 2, 1}
-    ,
-    {"BlastRadius", "", 36, -1, NULL, 0, 2, 1}
-    ,
-    {"Teleport", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"ThunderCrash", "", 30, -1, NULL, 0, 2, 1}
-    ,
-    {"FighterPunchMiss", "", 80, -1, NULL, 0, 2, 1}
-    ,
-    {"FighterPunchHitThing", "", 80, -1, NULL, 0, 2, 1}
-    ,
-    {"FighterPunchHitWall", "", 80, -1, NULL, 0, 2, 1}
-    ,
-    {"FighterGrunt", "", 80, -1, NULL, 0, 2, 1}
-    ,
-    {"FighterAxeHitThing", "", 80, -1, NULL, 0, 2, 1}
-    ,
-    {"FighterHammerMiss", "", 80, -1, NULL, 0, 2, 1}
-    ,
-    {"FighterHammerHitThing", "", 80, -1, NULL, 0, 2, 1}
-    ,
-    {"FighterHammerHitWall", "", 80, -1, NULL, 0, 2, 1}
-    ,
-    {"FighterHammerContinuous", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"FighterHammerExplode", "", 80, -1, NULL, 0, 2, 1}
-    ,
-    {"FighterSwordFire", "", 80, -1, NULL, 0, 2, 1}
-    ,
-    {"FighterSwordExplode", "", 80, -1, NULL, 0, 2, 1}
-    ,
-    {"ClericCStaffFire", "", 80, -1, NULL, 0, 2, 1}
-    ,
-    {"ClericCStaffExplode", "", 40, -1, NULL, 0, 2, 1}
-    ,
-    {"ClericCStaffHitThing", "", 80, -1, NULL, 0, 2, 1}
-    ,
-    {"ClericFlameFire", "", 80, -1, NULL, 0, 2, 1}
-    ,
-    {"ClericFlameExplode", "", 80, -1, NULL, 0, 2, 1}
-    ,
-    {"ClericFlameCircle", "", 80, -1, NULL, 0, 2, 1}
-    ,
-    {"MageWandFire", "", 80, -1, NULL, 0, 2, 1}
-    ,
-    {"MageLightningFire", "", 80, -1, NULL, 0, 2, 1}
-    ,
-    {"MageLightningZap", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"MageLightningContinuous", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"MageLightningReady", "", 30, -1, NULL, 0, 2, 1}
-    ,
-    {"MageShardsFire", "", 80, -1, NULL, 0, 2, 1}
-    ,
-    {"MageShardsExplode", "", 36, -1, NULL, 0, 2, 1}
-    ,
-    {"MageStaffFire", "", 80, -1, NULL, 0, 2, 1}
-    ,
-    {"MageStaffExplode", "", 40, -1, NULL, 0, 2, 1}
-    ,
-    {"Switch1", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"Switch2", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"SerpentSight", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"SerpentActive", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"SerpentPain", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"SerpentAttack", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"SerpentMeleeHit", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"SerpentDeath", "", 40, -1, NULL, 0, 2, 1}
-    ,
-    {"SerpentBirth", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"SerpentFXContinuous", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"SerpentFXHit", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"PotteryExplode", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"Drip", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"CentaurSight", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"CentaurActive", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"CentaurPain", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"CentaurAttack", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"CentaurDeath", "", 40, -1, NULL, 0, 2, 1}
-    ,
-    {"CentaurLeaderAttack", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"CentaurMissileExplode", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"Wind", "", 1, -1, NULL, 0, 2, 1}
-    ,
-    {"BishopSight", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"BishopActive", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"BishopPain", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"BishopAttack", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"BishopDeath", "", 40, -1, NULL, 0, 2, 1}
-    ,
-    {"BishopMissileExplode", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"BishopBlur", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"DemonSight", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"DemonActive", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"DemonPain", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"DemonAttack", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"DemonMissileFire", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"DemonMissileExplode", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"DemonDeath", "", 40, -1, NULL, 0, 2, 1}
-    ,
-    {"WraithSight", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"WraithActive", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"WraithPain", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"WraithAttack", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"WraithMissileFire", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"WraithMissileExplode", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"WraithDeath", "", 40, -1, NULL, 0, 2, 1}
-    ,
-    {"PigActive1", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"PigActive2", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"PigPain", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"PigAttack", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"PigDeath", "", 40, -1, NULL, 0, 2, 1}
-    ,
-    {"MaulatorSight", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"MaulatorActive", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"MaulatorPain", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"MaulatorHamSwing", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"MaulatorHamHit", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"MaulatorMissileHit", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"MaulatorDeath", "", 40, -1, NULL, 0, 2, 1}
-    ,
-    {"FreezeDeath", "", 40, -1, NULL, 0, 2, 1}
-    ,
-    {"FreezeShatter", "", 40, -1, NULL, 0, 2, 1}
-    ,
-    {"EttinSight", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"EttinActive", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"EttinPain", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"EttinAttack", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"EttinDeath", "", 40, -1, NULL, 0, 2, 1}
-    ,
-    {"FireDemonSpawn", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"FireDemonActive", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"FireDemonPain", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"FireDemonAttack", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"FireDemonMissileHit", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"FireDemonDeath", "", 40, -1, NULL, 0, 2, 1}
-    ,
-    {"IceGuySight", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"IceGuyActive", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"IceGuyAttack", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"IceGuyMissileExplode", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"SorcererSight", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"SorcererActive", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"SorcererPain", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"SorcererSpellCast", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"SorcererBallWoosh", "", 256, -1, NULL, 0, 4, 1}
-    ,
-    {"SorcererDeathScream", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"SorcererBishopSpawn", "", 80, -1, NULL, 0, 2, 1}
-    ,
-    {"SorcererBallPop", "", 80, -1, NULL, 0, 2, 1}
-    ,
-    {"SorcererBallBounce", "", 80, -1, NULL, 0, 3, 1}
-    ,
-    {"SorcererBallExplode", "", 80, -1, NULL, 0, 3, 1}
-    ,
-    {"SorcererBigBallExplode", "", 80, -1, NULL, 0, 3, 1}
-    ,
-    {"SorcererHeadScream", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"DragonSight", "", 64, -1, NULL, 0, 2, 1}
-    ,
-    {"DragonActive", "", 64, -1, NULL, 0, 2, 1}
-    ,
-    {"DragonWingflap", "", 64, -1, NULL, 0, 2, 1}
-    ,
-    {"DragonAttack", "", 64, -1, NULL, 0, 2, 1}
-    ,
-    {"DragonPain", "", 64, -1, NULL, 0, 2, 1}
-    ,
-    {"DragonDeath", "", 64, -1, NULL, 0, 2, 1}
-    ,
-    {"DragonFireballExplode", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"KoraxSight", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"KoraxActive", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"KoraxPain", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"KoraxAttack", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"KoraxCommand", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"KoraxDeath", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"KoraxStep", "", 128, -1, NULL, 0, 2, 1}
-    ,
-    {"ThrustSpikeRaise", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"ThrustSpikeLower", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"GlassShatter", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"FlechetteBounce", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"FlechetteExplode", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"LavaMove", "", 36, -1, NULL, 0, 2, 1}
-    ,
-    {"WaterMove", "", 36, -1, NULL, 0, 2, 1}
-    ,
-    {"IceStartMove", "", 36, -1, NULL, 0, 2, 1}
-    ,
-    {"EarthStartMove", "", 36, -1, NULL, 0, 2, 1}
-    ,
-    {"WaterSplash", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"LavaSizzle", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"SludgeGloop", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"HolySymbolFire", "", 64, -1, NULL, 0, 2, 1}
-    ,
-    {"SpiritActive", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"SpiritAttack", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"SpiritDie", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"ValveTurn", "", 36, -1, NULL, 0, 2, 1}
-    ,
-    {"RopePull", "", 36, -1, NULL, 0, 2, 1}
-    ,
-    {"FlyBuzz", "", 20, -1, NULL, 0, 2, 1}
-    ,
-    {"Ignite", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"PuzzleSuccess", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"PuzzleFailFighter", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"PuzzleFailCleric", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"PuzzleFailMage", "", 256, -1, NULL, 0, 2, 1}
-    ,
-    {"Earthquake", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"BellRing", "", 32, -1, NULL, 0, 2, 0}
-    ,
-    {"TreeBreak", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"TreeExplode", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"SuitofArmorBreak", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"PoisonShroomPain", "", 20, -1, NULL, 0, 2, 1}
-    ,
-    {"PoisonShroomDeath", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"Ambient1", "", 1, -1, NULL, 0, 1, 1}
-    ,
-    {"Ambient2", "", 1, -1, NULL, 0, 1, 1}
-    ,
-    {"Ambient3", "", 1, -1, NULL, 0, 1, 1}
-    ,
-    {"Ambient4", "", 1, -1, NULL, 0, 1, 1}
-    ,
-    {"Ambient5", "", 1, -1, NULL, 0, 1, 1}
-    ,
-    {"Ambient6", "", 1, -1, NULL, 0, 1, 1}
-    ,
-    {"Ambient7", "", 1, -1, NULL, 0, 1, 1}
-    ,
-    {"Ambient8", "", 1, -1, NULL, 0, 1, 1}
-    ,
-    {"Ambient9", "", 1, -1, NULL, 0, 1, 1}
-    ,
-    {"Ambient10", "", 1, -1, NULL, 0, 1, 1}
-    ,
-    {"Ambient11", "", 1, -1, NULL, 0, 1, 1}
-    ,
-    {"Ambient12", "", 1, -1, NULL, 0, 1, 1}
-    ,
-    {"Ambient13", "", 1, -1, NULL, 0, 1, 1}
-    ,
-    {"Ambient14", "", 1, -1, NULL, 0, 1, 1}
-    ,
-    {"Ambient15", "", 1, -1, NULL, 0, 1, 1}
-    ,
-    {"StartupTick", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"SwitchOtherLevel", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"Respawn", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"KoraxVoiceGreetings", "", 512, -1, NULL, 0, 2, 1}
-    ,
-    {"KoraxVoiceReady", "", 512, -1, NULL, 0, 2, 1}
-    ,
-    {"KoraxVoiceBlood", "", 512, -1, NULL, 0, 2, 1}
-    ,
-    {"KoraxVoiceGame", "", 512, -1, NULL, 0, 2, 1}
-    ,
-    {"KoraxVoiceBoard", "", 512, -1, NULL, 0, 2, 1}
-    ,
-    {"KoraxVoiceWorship", "", 512, -1, NULL, 0, 2, 1}
-    ,
-    {"KoraxVoiceMaybe", "", 512, -1, NULL, 0, 2, 1}
-    ,
-    {"KoraxVoiceStrong", "", 512, -1, NULL, 0, 2, 1}
-    ,
-    {"KoraxVoiceFace", "", 512, -1, NULL, 0, 2, 1}
-    ,
-    {"BatScream", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"Chat", "", 512, -1, NULL, 0, 2, 1}
-    ,
-    {"MenuMove", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"ClockTick", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"Fireball", "", 32, -1, NULL, 0, 2, 1}
-    ,
-    {"PuppyBeat", "", 30, -1, NULL, 0, 2, 1}
-    ,
-    {"MysticIncant", "", 32, -1, NULL, 0, 4, 1}
+    SOUND("", 0, 0, 0),
+    SOUND("PlayerFighterNormalDeath", 256, 2, 1),
+    SOUND("PlayerFighterCrazyDeath", 256, 2, 1),
+    SOUND("PlayerFighterExtreme1Death", 256, 2, 1),
+    SOUND("PlayerFighterExtreme2Death", 256, 2, 1),
+    SOUND("PlayerFighterExtreme3Death", 256, 2, 1),
+    SOUND("PlayerFighterBurnDeath", 256, 2, 1),
+    SOUND("PlayerClericNormalDeath", 256, 2, 1),
+    SOUND("PlayerClericCrazyDeath", 256, 2, 1),
+    SOUND("PlayerClericExtreme1Death", 256, 2, 1),
+    SOUND("PlayerClericExtreme2Death", 256, 2, 1),
+    SOUND("PlayerClericExtreme3Death", 256, 2, 1),
+    SOUND("PlayerClericBurnDeath", 256, 2, 1),
+    SOUND("PlayerMageNormalDeath", 256, 2, 0),
+    SOUND("PlayerMageCrazyDeath", 256, 2, 0),
+    SOUND("PlayerMageExtreme1Death", 256, 2, 0),
+    SOUND("PlayerMageExtreme2Death", 256, 2, 0),
+    SOUND("PlayerMageExtreme3Death", 256, 2, 0),
+    SOUND("PlayerMageBurnDeath", 256, 2, 0),
+    SOUND("PlayerFighterPain", 256, 2, 1),
+    SOUND("PlayerClericPain", 256, 2, 1),
+    SOUND("PlayerMagePain", 256, 2, 0),
+    SOUND("PlayerFighterGrunt", 256, 2, 1),
+    SOUND("PlayerClericGrunt", 256, 2, 1),
+    SOUND("PlayerMageGrunt", 256, 2, 0),
+    SOUND("PlayerLand", 32, 2, 1),
+    SOUND("PlayerPoisonCough", 256, 2, 1),
+    SOUND("PlayerFighterFallingScream", 256, 2, 1),
+    SOUND("PlayerClericFallingScream", 256, 2, 1),
+    SOUND("PlayerMageFallingScream", 256, 2, 0),
+    SOUND("PlayerFallingSplat", 256, 2, 1),
+    SOUND("PlayerFighterFailedUse", 256, 1, 1),
+    SOUND("PlayerClericFailedUse", 256, 1, 1),
+    SOUND("PlayerMageFailedUse", 256, 1, 0),
+    SOUND("PlatformStart", 36, 2, 1),
+    SOUND("PlatformStartMetal", 36, 2, 1),
+    SOUND("PlatformStop", 40, 2, 1),
+    SOUND("StoneMove", 32, 2, 1),
+    SOUND("MetalMove", 32, 2, 1),
+    SOUND("DoorOpen", 36, 2, 1),
+    SOUND("DoorLocked", 36, 2, 1),
+    SOUND("DoorOpenMetal", 36, 2, 1),
+    SOUND("DoorCloseMetal", 36, 2, 1),
+    SOUND("DoorCloseLight", 36, 2, 1),
+    SOUND("DoorCloseHeavy", 36, 2, 1),
+    SOUND("DoorCreak", 36, 2, 1),
+    SOUND("PickupWeapon", 36, 2, 0),
+    SOUND("PickupArtifact", 36, 2, 1),
+    SOUND("PickupKey", 36, 2, 1),
+    SOUND("PickupItem", 36, 2, 1),
+    SOUND("PickupPiece", 36, 2, 0),
+    SOUND("WeaponBuild", 36, 2, 0),
+    SOUND("UseArtifact", 36, 2, 1),
+    SOUND("BlastRadius", 36, 2, 1),
+    SOUND("Teleport", 256, 2, 1),
+    SOUND("ThunderCrash", 30, 2, 1),
+    SOUND("FighterPunchMiss", 80, 2, 1),
+    SOUND("FighterPunchHitThing", 80, 2, 1),
+    SOUND("FighterPunchHitWall", 80, 2, 1),
+    SOUND("FighterGrunt", 80, 2, 1),
+    SOUND("FighterAxeHitThing", 80, 2, 1),
+    SOUND("FighterHammerMiss", 80, 2, 1),
+    SOUND("FighterHammerHitThing", 80, 2, 1),
+    SOUND("FighterHammerHitWall", 80, 2, 1),
+    SOUND("FighterHammerContinuous", 32, 2, 1),
+    SOUND("FighterHammerExplode", 80, 2, 1),
+    SOUND("FighterSwordFire", 80, 2, 1),
+    SOUND("FighterSwordExplode", 80, 2, 1),
+    SOUND("ClericCStaffFire", 80, 2, 1),
+    SOUND("ClericCStaffExplode", 40, 2, 1),
+    SOUND("ClericCStaffHitThing", 80, 2, 1),
+    SOUND("ClericFlameFire", 80, 2, 1),
+    SOUND("ClericFlameExplode", 80, 2, 1),
+    SOUND("ClericFlameCircle", 80, 2, 1),
+    SOUND("MageWandFire", 80, 2, 1),
+    SOUND("MageLightningFire", 80, 2, 1),
+    SOUND("MageLightningZap", 32, 2, 1),
+    SOUND("MageLightningContinuous", 32, 2, 1),
+    SOUND("MageLightningReady", 30, 2, 1),
+    SOUND("MageShardsFire", 80, 2, 1),
+    SOUND("MageShardsExplode", 36, 2, 1),
+    SOUND("MageStaffFire", 80, 2, 1),
+    SOUND("MageStaffExplode", 40, 2, 1),
+    SOUND("Switch1", 32, 2, 1),
+    SOUND("Switch2", 32, 2, 1),
+    SOUND("SerpentSight", 32, 2, 1),
+    SOUND("SerpentActive", 32, 2, 1),
+    SOUND("SerpentPain", 32, 2, 1),
+    SOUND("SerpentAttack", 32, 2, 1),
+    SOUND("SerpentMeleeHit", 32, 2, 1),
+    SOUND("SerpentDeath", 40, 2, 1),
+    SOUND("SerpentBirth", 32, 2, 1),
+    SOUND("SerpentFXContinuous", 32, 2, 1),
+    SOUND("SerpentFXHit", 32, 2, 1),
+    SOUND("PotteryExplode", 32, 2, 1),
+    SOUND("Drip", 32, 2, 1),
+    SOUND("CentaurSight", 32, 2, 1),
+    SOUND("CentaurActive", 32, 2, 1),
+    SOUND("CentaurPain", 32, 2, 1),
+    SOUND("CentaurAttack", 32, 2, 1),
+    SOUND("CentaurDeath", 40, 2, 1),
+    SOUND("CentaurLeaderAttack", 32, 2, 1),
+    SOUND("CentaurMissileExplode", 32, 2, 1),
+    SOUND("Wind", 1, 2, 1),
+    SOUND("BishopSight", 32, 2, 1),
+    SOUND("BishopActive", 32, 2, 1),
+    SOUND("BishopPain", 32, 2, 1),
+    SOUND("BishopAttack", 32, 2, 1),
+    SOUND("BishopDeath", 40, 2, 1),
+    SOUND("BishopMissileExplode", 32, 2, 1),
+    SOUND("BishopBlur", 32, 2, 1),
+    SOUND("DemonSight", 32, 2, 1),
+    SOUND("DemonActive", 32, 2, 1),
+    SOUND("DemonPain", 32, 2, 1),
+    SOUND("DemonAttack", 32, 2, 1),
+    SOUND("DemonMissileFire", 32, 2, 1),
+    SOUND("DemonMissileExplode", 32, 2, 1),
+    SOUND("DemonDeath", 40, 2, 1),
+    SOUND("WraithSight", 32, 2, 1),
+    SOUND("WraithActive", 32, 2, 1),
+    SOUND("WraithPain", 32, 2, 1),
+    SOUND("WraithAttack", 32, 2, 1),
+    SOUND("WraithMissileFire", 32, 2, 1),
+    SOUND("WraithMissileExplode", 32, 2, 1),
+    SOUND("WraithDeath", 40, 2, 1),
+    SOUND("PigActive1", 32, 2, 1),
+    SOUND("PigActive2", 32, 2, 1),
+    SOUND("PigPain", 32, 2, 1),
+    SOUND("PigAttack", 32, 2, 1),
+    SOUND("PigDeath", 40, 2, 1),
+    SOUND("MaulatorSight", 32, 2, 1),
+    SOUND("MaulatorActive", 32, 2, 1),
+    SOUND("MaulatorPain", 32, 2, 1),
+    SOUND("MaulatorHamSwing", 32, 2, 1),
+    SOUND("MaulatorHamHit", 32, 2, 1),
+    SOUND("MaulatorMissileHit", 32, 2, 1),
+    SOUND("MaulatorDeath", 40, 2, 1),
+    SOUND("FreezeDeath", 40, 2, 1),
+    SOUND("FreezeShatter", 40, 2, 1),
+    SOUND("EttinSight", 32, 2, 1),
+    SOUND("EttinActive", 32, 2, 1),
+    SOUND("EttinPain", 32, 2, 1),
+    SOUND("EttinAttack", 32, 2, 1),
+    SOUND("EttinDeath", 40, 2, 1),
+    SOUND("FireDemonSpawn", 32, 2, 1),
+    SOUND("FireDemonActive", 32, 2, 1),
+    SOUND("FireDemonPain", 32, 2, 1),
+    SOUND("FireDemonAttack", 32, 2, 1),
+    SOUND("FireDemonMissileHit", 32, 2, 1),
+    SOUND("FireDemonDeath", 40, 2, 1),
+    SOUND("IceGuySight", 32, 2, 1),
+    SOUND("IceGuyActive", 32, 2, 1),
+    SOUND("IceGuyAttack", 32, 2, 1),
+    SOUND("IceGuyMissileExplode", 32, 2, 1),
+    SOUND("SorcererSight", 256, 2, 1),
+    SOUND("SorcererActive", 256, 2, 1),
+    SOUND("SorcererPain", 256, 2, 1),
+    SOUND("SorcererSpellCast", 256, 2, 1),
+    SOUND("SorcererBallWoosh", 256, 4, 1),
+    SOUND("SorcererDeathScream", 256, 2, 1),
+    SOUND("SorcererBishopSpawn", 80, 2, 1),
+    SOUND("SorcererBallPop", 80, 2, 1),
+    SOUND("SorcererBallBounce", 80, 3, 1),
+    SOUND("SorcererBallExplode", 80, 3, 1),
+    SOUND("SorcererBigBallExplode", 80, 3, 1),
+    SOUND("SorcererHeadScream", 256, 2, 1),
+    SOUND("DragonSight", 64, 2, 1),
+    SOUND("DragonActive", 64, 2, 1),
+    SOUND("DragonWingflap", 64, 2, 1),
+    SOUND("DragonAttack", 64, 2, 1),
+    SOUND("DragonPain", 64, 2, 1),
+    SOUND("DragonDeath", 64, 2, 1),
+    SOUND("DragonFireballExplode", 32, 2, 1),
+    SOUND("KoraxSight", 256, 2, 1),
+    SOUND("KoraxActive", 256, 2, 1),
+    SOUND("KoraxPain", 256, 2, 1),
+    SOUND("KoraxAttack", 256, 2, 1),
+    SOUND("KoraxCommand", 256, 2, 1),
+    SOUND("KoraxDeath", 256, 2, 1),
+    SOUND("KoraxStep", 128, 2, 1),
+    SOUND("ThrustSpikeRaise", 32, 2, 1),
+    SOUND("ThrustSpikeLower", 32, 2, 1),
+    SOUND("GlassShatter", 32, 2, 1),
+    SOUND("FlechetteBounce", 32, 2, 1),
+    SOUND("FlechetteExplode", 32, 2, 1),
+    SOUND("LavaMove", 36, 2, 1),
+    SOUND("WaterMove", 36, 2, 1),
+    SOUND("IceStartMove", 36, 2, 1),
+    SOUND("EarthStartMove", 36, 2, 1),
+    SOUND("WaterSplash", 32, 2, 1),
+    SOUND("LavaSizzle", 32, 2, 1),
+    SOUND("SludgeGloop", 32, 2, 1),
+    SOUND("HolySymbolFire", 64, 2, 1),
+    SOUND("SpiritActive", 32, 2, 1),
+    SOUND("SpiritAttack", 32, 2, 1),
+    SOUND("SpiritDie", 32, 2, 1),
+    SOUND("ValveTurn", 36, 2, 1),
+    SOUND("RopePull", 36, 2, 1),
+    SOUND("FlyBuzz", 20, 2, 1),
+    SOUND("Ignite", 32, 2, 1),
+    SOUND("PuzzleSuccess", 256, 2, 1),
+    SOUND("PuzzleFailFighter", 256, 2, 1),
+    SOUND("PuzzleFailCleric", 256, 2, 1),
+    SOUND("PuzzleFailMage", 256, 2, 1),
+    SOUND("Earthquake", 32, 2, 1),
+    SOUND("BellRing", 32, 2, 0),
+    SOUND("TreeBreak", 32, 2, 1),
+    SOUND("TreeExplode", 32, 2, 1),
+    SOUND("SuitofArmorBreak", 32, 2, 1),
+    SOUND("PoisonShroomPain", 20, 2, 1),
+    SOUND("PoisonShroomDeath", 32, 2, 1),
+    SOUND("Ambient1", 1, 1, 1),
+    SOUND("Ambient2", 1, 1, 1),
+    SOUND("Ambient3", 1, 1, 1),
+    SOUND("Ambient4", 1, 1, 1),
+    SOUND("Ambient5", 1, 1, 1),
+    SOUND("Ambient6", 1, 1, 1),
+    SOUND("Ambient7", 1, 1, 1),
+    SOUND("Ambient8", 1, 1, 1),
+    SOUND("Ambient9", 1, 1, 1),
+    SOUND("Ambient10", 1, 1, 1),
+    SOUND("Ambient11", 1, 1, 1),
+    SOUND("Ambient12", 1, 1, 1),
+    SOUND("Ambient13", 1, 1, 1),
+    SOUND("Ambient14", 1, 1, 1),
+    SOUND("Ambient15", 1, 1, 1),
+    SOUND("StartupTick", 32, 2, 1),
+    SOUND("SwitchOtherLevel", 32, 2, 1),
+    SOUND("Respawn", 32, 2, 1),
+    SOUND("KoraxVoiceGreetings", 512, 2, 1),
+    SOUND("KoraxVoiceReady", 512, 2, 1),
+    SOUND("KoraxVoiceBlood", 512, 2, 1),
+    SOUND("KoraxVoiceGame", 512, 2, 1),
+    SOUND("KoraxVoiceBoard", 512, 2, 1),
+    SOUND("KoraxVoiceWorship", 512, 2, 1),
+    SOUND("KoraxVoiceMaybe", 512, 2, 1),
+    SOUND("KoraxVoiceStrong", 512, 2, 1),
+    SOUND("KoraxVoiceFace", 512, 2, 1),
+    SOUND("BatScream", 32, 2, 1),
+    SOUND("Chat", 512, 2, 1),
+    SOUND("MenuMove", 32, 2, 1),
+    SOUND("ClockTick", 32, 2, 1),
+    SOUND("Fireball", 32, 2, 1),
+    SOUND("PuppyBeat", 30, 2, 1),
+    SOUND("MysticIncant", 32, 4, 1),
 };

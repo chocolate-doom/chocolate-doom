@@ -25,7 +25,7 @@
 #ifndef __SOUNDSH__
 #define __SOUNDSH__
 
-#include "soundst.h"
+#include "i_sound.h"
 
 #define MAX_SND_DIST    2025
 #define MAX_CHANNELS    16

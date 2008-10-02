@@ -22,15 +22,18 @@
 //-----------------------------------------------------------------------------
 
 
-#ifndef __SOUNDSTH__
-#define __SOUNDSTH__
+#ifndef __S_SOUND__
+#define __S_SOUND__
 
+/*
 typedef struct
 {
     char name[8];
     int p1;
 } musicinfo_t;
+*/
 
+/*
 typedef struct sfxinfo_s
 {
     char tagName[32];
@@ -43,6 +46,7 @@ typedef struct sfxinfo_s
     int numchannels;            // total number of channels a sound type may occupy
     boolean changePitch;
 } sfxinfo_t;
+*/
 
 typedef struct
 {

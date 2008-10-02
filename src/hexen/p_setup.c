@@ -31,8 +31,8 @@
 #include "m_argv.h"
 #include "m_bbox.h"
 #include "i_swap.h"
+#include "s_sound.h"
 #include "p_local.h"
-#include "soundst.h"
 
 // MACROS ------------------------------------------------------------------
 

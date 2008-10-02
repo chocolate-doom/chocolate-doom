@@ -38,7 +38,7 @@
 #include "i_system.h"
 #include "m_argv.h"
 #include "p_local.h"
-#include "soundst.h"
+#include "s_sound.h"
 
 // MACROS ------------------------------------------------------------------
 
