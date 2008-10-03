@@ -119,6 +119,7 @@ int startmap;
 boolean autostart;
 boolean advancedemo;
 FILE *debugfile;
+int UpdateState;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
