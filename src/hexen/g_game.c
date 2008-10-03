@@ -199,7 +199,6 @@ extern boolean inventory;
 extern int curpos;
 extern int inv_ptr;
 
-extern int isCyberPresent;      // is CyberMan present?
 boolean usearti = true;
 void I_ReadCyberCmd(ticcmd_t * cmd);
 
@@ -231,8 +230,6 @@ void G_BuildTiccmd(ticcmd_t * cmd)
 //              consistancy[consoleplayer][(maketic*ticdup)%BACKUPTICS];
 
     cmd->consistancy = consistancy[consoleplayer][maketic % BACKUPTICS];
-    if (isCyberPresent)
-        I_ReadCyberCmd(cmd);
 
 //printf ("cons: %i\n",cmd->consistancy);
 
