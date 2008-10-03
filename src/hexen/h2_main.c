@@ -147,7 +147,7 @@ static execOpt_t ExecOptions[] = {
 //==========================================================================
 void InitMapMusicInfo(void);
 
-void H2_Main(void)
+void D_DoomMain(void)
 {
     int p;
 
