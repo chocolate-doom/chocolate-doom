@@ -408,29 +408,35 @@ fixed_t P_FindNextHighestFloor(sector_t * sec, int currentheight)
 {
     int i;
     int h;
-    int min;
+    fixed_t min;
     line_t *check;
     sector_t *other;
     fixed_t height = currentheight;
-    fixed_t heightlist[20];     // 20 adjoining sectors max!
+
+    min = INT_MAX;
 
     for (i = 0, h = 0; i < sec->linecount; i++)
     {
         check = sec->lines[i];
         other = getNextSector(check, sec);
-        if (!other)
-            continue;
-        if (other->floorheight > height)
-            heightlist[h++] = other->floorheight;
+
+        if (other != NULL && other->floorheight > height)
+        {
+            if (min < other->floorheight)
+            {
+                min = other->floorheight;
+            }
+
+            ++h;
+        }
     }
 
-    //
-    // Find lowest height in list
-    //
-    min = heightlist[0];
-    for (i = 1; i < h; i++)
-        if (heightlist[i] < min)
-            min = heightlist[i];
+    // Compatibility note, in case of demo desyncs.
+
+    if (h > 20)
+    {
+        fprintf(stderr, "P_FindNextHighestFloor: exceeded Vanilla limit\n");
+    }
 
     return min;
 }
