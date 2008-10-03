@@ -422,7 +422,7 @@ fixed_t P_FindNextHighestFloor(sector_t * sec, int currentheight)
 
         if (other != NULL && other->floorheight > height)
         {
-            if (min < other->floorheight)
+            if (other->floorheight < min)
             {
                 min = other->floorheight;
             }
