@@ -175,7 +175,9 @@ void HSendPacket(int node, int flags)
         fprintf(debugfile, "\n");
     }
 
+#ifdef I_NET
     I_NetCmd();
+#endif
 }
 
 //==========================================================================
@@ -209,7 +211,9 @@ void NET_SendFrags(player_t * player)
     doomcom->remotenode = frags;
     doomcom->datalength = NetbufferSize();
 
+#ifdef I_NET
     I_NetCmd();
+#endif
 }
 
 /*
@@ -238,7 +242,9 @@ boolean HGetPacket(void)
         return false;
 
     doomcom->command = CMD_GET;
+#ifdef I_NET
     I_NetCmd();
+#endif
     if (doomcom->remotenode == -1)
         return false;
 
@@ -700,6 +706,24 @@ void D_ArbitrateNetStart(void)
         }
         while (i < doomcom->numnodes);
     }
+}
+
+// Dummy version of I_InitNetwork; netgames are currently broken.
+
+void I_InitNetwork(void)
+{
+    //
+    // single player game
+    //
+    doomcom = malloc(sizeof(*doomcom));
+    memset(doomcom, 0, sizeof(*doomcom));
+    netgame = false;
+    doomcom->id = DOOMCOM_ID;
+    doomcom->numplayers = doomcom->numnodes = 1;
+    doomcom->deathmatch = false;
+    doomcom->consoleplayer = 0;
+    doomcom->ticdup = 1;
+    doomcom->extratics = 0;
 }
 
 /*
