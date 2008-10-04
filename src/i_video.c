@@ -282,6 +282,7 @@ static void UpdateFocus(void)
 void I_EnableLoadingDisk(void)
 {
     patch_t *disk;
+    byte *tmpbuf;
     char *disk_name;
     int y;
     char buf[20];
@@ -304,9 +305,16 @@ void I_EnableLoadingDisk(void)
 
     disk = W_CacheLumpName(disk_name, PU_STATIC);
 
-    V_DrawPatch(0, 0, disk);
+    // Draw the patch into a temporary buffer
+
+    tmpbuf = Z_Malloc(SCREENWIDTH * (disk->height + 1), PU_STATIC, NULL);
+    V_UseBuffer(tmpbuf);
+
     disk_image_w = SHORT(disk->width);
     disk_image_h = SHORT(disk->height);
+    V_DrawPatch(0, 0, disk);
+
+    // Copy the disk into the disk_image buffer.
 
     disk_image = Z_Malloc(disk_image_w * disk_image_h, PU_STATIC, NULL);
     saved_background = Z_Malloc(disk_image_w * disk_image_h, PU_STATIC, NULL);
@@ -314,12 +322,16 @@ void I_EnableLoadingDisk(void)
     for (y=0; y<disk_image_h; ++y) 
     {
         memcpy(disk_image + disk_image_w * y,
-               I_VideoBuffer + SCREENWIDTH * y,
+               tmpbuf + SCREENWIDTH * y,
                disk_image_w);
-        memset(I_VideoBuffer + SCREENWIDTH * y, 0, disk_image_w);
     }
 
+    // All done - free the screen buffer and restore the normal 
+    // video buffer.
+
     W_ReleaseLumpName(disk_name);
+    V_RestoreBuffer();
+    Z_Free(tmpbuf);
 }
 
 //
