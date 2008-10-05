@@ -61,6 +61,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\d_event.h" />
+		<Unit filename="..\src\d_iwad.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\d_iwad.h" />
 		<Unit filename="..\src\d_mode.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -99,7 +103,6 @@
 		</Unit>
 		<Unit filename="..\src\hexen\h2def.h" />
 		<Unit filename="..\src\hexen\i_header.h" />
-		<Unit filename="..\src\hexen\i_sound.h" />
 		<Unit filename="..\src\hexen\in_lude.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -203,6 +206,10 @@
 		<Unit filename="..\src\hexen\r_things.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\src\hexen\s_sound.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\hexen\s_sound.h" />
 		<Unit filename="..\src\hexen\sb_bar.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -216,7 +223,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\hexen\sounds.h" />
-		<Unit filename="..\src\hexen\soundst.h" />
 		<Unit filename="..\src\hexen\st_start.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -225,9 +231,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\hexen\textdefs.h" />
-		<Unit filename="..\src\hexen\v_video.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="..\src\hexen\xddefs.h" />
 		<Unit filename="..\src\i_cdmus.c">
 			<Option compilerVar="CC" />
@@ -281,6 +284,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\m_controls.h" />
+		<Unit filename="..\src\m_misc.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\m_misc.h" />
 		<Unit filename="..\src\md5.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -294,6 +301,10 @@
 		</Unit>
 		<Unit filename="..\src\mus2mid.h" />
 		<Unit filename="..\src\v_patch.h" />
+		<Unit filename="..\src\v_video.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\v_video.h" />
 		<Unit filename="..\src\w_checksum.c">
 			<Option compilerVar="CC" />
 		</Unit>
