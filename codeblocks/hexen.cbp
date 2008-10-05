@@ -276,6 +276,10 @@
 		<Unit filename="..\src\icon.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\src\m_argv.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\m_argv.h" />
 		<Unit filename="..\src\m_cheat.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -284,6 +288,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\m_controls.h" />
+		<Unit filename="..\src\m_fixed.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\m_fixed.h" />
 		<Unit filename="..\src\m_misc.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -300,6 +308,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\mus2mid.h" />
+		<Unit filename="..\src\tables.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\tables.h" />
 		<Unit filename="..\src\v_patch.h" />
 		<Unit filename="..\src\v_video.c">
 			<Option compilerVar="CC" />
