@@ -2,22 +2,22 @@
 <CodeBlocks_workspace_file>
 	<Workspace title="Chocolate">
 		<Project filename="doom.cbp" active="1">
-			<Depends filename="textscreen.cbp" />
+			<Depends filename="libtextscreen.cbp" />
 			<Depends filename="libpcsound.cbp" />
 		</Project>
 		<Project filename="heretic.cbp">
-			<Depends filename="textscreen.cbp" />
+			<Depends filename="libtextscreen.cbp" />
 			<Depends filename="libpcsound.cbp" />
 		</Project>
 		<Project filename="hexen.cbp">
-			<Depends filename="textscreen.cbp" />
+			<Depends filename="libtextscreen.cbp" />
 			<Depends filename="libpcsound.cbp" />
 		</Project>
 		<Project filename="server.cbp" />
 		<Project filename="setup.cbp">
-			<Depends filename="textscreen.cbp" />
+			<Depends filename="libtextscreen.cbp" />
 		</Project>
-		<Project filename="textscreen.cbp" />
+		<Project filename="libtextscreen.cbp" />
 		<Project filename="libpcsound.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
