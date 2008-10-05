@@ -61,6 +61,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\d_event.h" />
+		<Unit filename="..\src\d_iwad.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\d_iwad.h" />
 		<Unit filename="..\src\d_mode.c">
 			<Option compilerVar="CC" />
 		</Unit>
