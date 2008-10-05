@@ -249,10 +249,32 @@ void I_UpdateSound(void)
     }
 }
 
+static void CheckVolumeSeparation(int *sep, int *vol)
+{
+    if (*sep < 0)
+    {
+        *sep = 0;
+    }
+    else if (*sep > 254)
+    {
+        *sep = 254;
+    }
+
+    if (*vol < 0)
+    {
+        *vol = 0;
+    }
+    else if (*vol > 127)
+    {
+        *vol = 127;
+    }
+}
+
 void I_UpdateSoundParams(int channel, int vol, int sep)
 {
     if (sound_module != NULL)
     {
+        CheckVolumeSeparation(&vol, &sep);
         sound_module->UpdateSoundParams(channel, vol, sep);
     }
 }
@@ -261,6 +283,7 @@ int I_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
 {
     if (sound_module != NULL)
     {
+        CheckVolumeSeparation(&vol, &sep);
         return sound_module->StartSound(sfxinfo, channel, vol, sep);
     }
     else
