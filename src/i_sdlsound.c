@@ -561,6 +561,11 @@ static void I_SDL_UpdateSoundParams(int handle, int vol, int sep)
     left = ((254 - sep) * vol) / 127;
     right = ((sep) * vol) / 127;
 
+    if (left < 0) left = 0;
+    else if ( left > 255) left = 255;
+    if (right < 0) right = 0;
+    else if (right > 255) right = 255;
+
     Mix_SetPanning(handle, left, right);
 }
 

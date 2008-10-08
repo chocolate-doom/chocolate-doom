@@ -2099,7 +2099,7 @@ static void CheatClassFunc2(player_t * player, Cheat_t * cheat)
 
 static void CheatVersionFunc(player_t * player, Cheat_t * cheat)
 {
-    P_SetMessage(player, VERSIONTEXT, true);
+    P_SetMessage(player, HEXEN_VERSIONTEXT, true);
 }
 
 static void CheatDebugFunc(player_t * player, Cheat_t * cheat)

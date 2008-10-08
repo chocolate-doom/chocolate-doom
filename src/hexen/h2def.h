@@ -52,8 +52,8 @@
 
 #include "tables.h"
 
-#define VERSION 110
-#define VERSION_TEXT "v1.1"
+#define HEXEN_VERSION 110
+#define HEXEN_VERSION_TEXT "v1.1"
 
 // Uncomment, to enable all timebomb stuff
 //#define TIMEBOMB
@@ -71,15 +71,15 @@
 #ifndef VER_ID
 #define VER_ID "DVL"
 #endif
-//#define VERSIONTEXT "ID V1.2"
-//#define VERSIONTEXT "RETAIL STORE BETA"               // 9/26/95
-//#define VERSIONTEXT "DVL BETA 10 05 95" // Used for GT for testing
-//#define VERSIONTEXT "DVL BETA 10 07 95" // Just an update for Romero
-//#define VERSIONTEXT "FINAL 1.0 (10 13 95)" // Just an update for Romero
+//#define HEXEN_VERSIONTEXT "ID V1.2"
+//#define HEXEN_VERSIONTEXT "RETAIL STORE BETA"               // 9/26/95
+//#define HEXEN_VERSIONTEXT "DVL BETA 10 05 95" // Used for GT for testing
+//#define HEXEN_VERSIONTEXT "DVL BETA 10 07 95" // Just an update for Romero
+//#define HEXEN_VERSIONTEXT "FINAL 1.0 (10 13 95)" // Just an update for Romero
 #ifdef RANGECHECK
-#define VERSIONTEXT "Version 1.1 +R "__DATE__" ("VER_ID")"
+#define HEXEN_VERSIONTEXT "Version 1.1 +R "__DATE__" ("VER_ID")"
 #else
-#define VERSIONTEXT "Version 1.1 "__DATE__" ("VER_ID")"
+#define HEXEN_VERSIONTEXT "Version 1.1 "__DATE__" ("VER_ID")"
 #endif
 
 // all exterior data is defined here
@@ -886,6 +886,8 @@ void G_ScreenShot(void);
 #define HXS_VERSION_TEXT_LENGTH 16
 #define HXS_DESCRIPTION_LENGTH 24
 
+extern char *SavePath;
+
 void SV_SaveGame(int slot, char *description);
 void SV_SaveMap(boolean savePlayers);
 void SV_LoadGame(int slot);
@@ -992,9 +994,6 @@ extern int prndindex;
 
 void M_ClearRandom(void);
 // fix randoms for demos
-
-void M_LoadDefaults(char *fileName);
-void M_SaveDefaults(void);
 
 int M_DrawText(int x, int y, boolean direct, char *string);
 
@@ -1163,6 +1162,8 @@ void MN_DrTextAYellow(char *text, int x, int y);
 int MN_TextAWidth(char *text);
 void MN_DrTextB(char *text, int x, int y);
 int MN_TextBWidth(char *text);
+
+extern int messageson;
 
 #include "sounds.h"
 

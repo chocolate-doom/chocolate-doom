@@ -25,10 +25,10 @@
 #include "doomkeys.h"
 
 #include "m_config.h"
- 
-// 
-// Keyboard controls 
-// 
+
+//
+// Keyboard controls
+//
 
 int key_right = KEY_RIGHTARROW;
 int key_left = KEY_LEFTARROW;
@@ -59,12 +59,20 @@ int key_invright = ']';
 int key_useartifact = KEY_ENTER;
 
 //
+// Hexen key controls
+//
+
+int key_jump = '/';
+
+//
 // Mouse controls
 //
 
 int mousebfire = 0;
 int mousebstrafe = 1;
 int mousebforward = 2;
+
+int mousebjump = -1;
 
 int mousebstrafeleft = -1;
 int mousebstraferight = -1;
@@ -82,6 +90,8 @@ int joybspeed = 2;
 
 int joybstrafeleft = -1;
 int joybstraferight = -1;
+
+int joybjump = -1;
 
 // Control whether if a mouse button is double clicked, it acts like 
 // "use" has been pressed
@@ -138,5 +148,12 @@ void M_BindHereticControls(void)
     M_BindVariable("key_invleft",        &key_invleft);
     M_BindVariable("key_invright",       &key_invright);
     M_BindVariable("key_useartifact",    &key_useartifact);
+}
+
+void M_BindHexenControls(void)
+{
+    M_BindVariable("key_jump",           &key_jump);
+    M_BindVariable("mouseb_jump",        &mousebjump);
+    M_BindVariable("joyb_jump",          &joybjump);
 }
 

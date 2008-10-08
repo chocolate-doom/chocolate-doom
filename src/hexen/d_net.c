@@ -653,7 +653,7 @@ void D_ArbitrateNetStart(void)
                 continue;
             if (netbuffer->checksum & NCMD_SETUP && netbuffer->starttic < 64)
             {
-                if (netbuffer->player != VERSION)
+                if (netbuffer->player != HEXEN_VERSION)
                     I_Error
                         ("Different HEXEN versions cannot play a net game!");
                 startskill = netbuffer->retransmitfrom & 15;
@@ -682,7 +682,7 @@ void D_ArbitrateNetStart(void)
                 if (respawnparm)
                     netbuffer->retransmitfrom |= 0x10;
                 netbuffer->starttic = startmap & 0x3f;
-                netbuffer->player = VERSION;
+                netbuffer->player = HEXEN_VERSION;
                 netbuffer->numtics = 0;
                 HSendPacket(i, NCMD_SETUP);
             }

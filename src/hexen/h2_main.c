@@ -32,16 +32,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+
+#include "config.h"
+
 #include "h2def.h"
+#include "ct_chat.h"
 #include "s_sound.h"
 #include "i_system.h"
 #include "m_argv.h"
+#include "m_config.h"
+#include "m_controls.h"
 #include "p_local.h"
 #include "v_video.h"
 
 // MACROS ------------------------------------------------------------------
 
-#define CONFIG_FILE_NAME "hexen.cfg"
 #define MAXWADFILES 20
 
 // TYPES -------------------------------------------------------------------
@@ -141,6 +146,34 @@ static execOpt_t ExecOptions[] = {
 
 // CODE --------------------------------------------------------------------
 
+void D_BindVariables(void)
+{
+    int i;
+
+    I_BindVariables();
+    M_BindBaseControls();
+    M_BindHereticControls();
+    M_BindHexenControls();
+
+    M_BindVariable("mouse_sensitivity",      &mouseSensitivity);
+    M_BindVariable("sfx_volume",             &snd_MaxVolume);
+    M_BindVariable("music_volume",           &snd_MusicVolume);
+    M_BindVariable("messageson",             &messageson);
+    M_BindVariable("screenblocks",           &screenblocks);
+    M_BindVariable("snd_channels",           &snd_Channels);
+    M_BindVariable("savedir",                &SavePath);
+
+    // Multiplayer chat macros
+
+    for (i=0; i<10; ++i)
+    {
+        char buf[12];
+
+        sprintf(buf, "chatmacro%i", i);
+        M_BindVariable(buf, &chat_macros[i]);
+    }
+}
+
 //==========================================================================
 //
 // H2_Main
@@ -169,7 +202,9 @@ void D_DoomMain(void)
 
     // Load defaults before initing other systems
     ST_Message("M_LoadDefaults: Load system defaults.\n");
-    M_LoadDefaults(CONFIG_FILE_NAME);
+    D_BindVariables();
+    M_SetConfigFilenames("hexen.cfg", PROGRAM_PREFIX "hexen.cfg");
+    M_LoadDefaults();
 
     // Now that the savedir is loaded from .CFG, make sure it exists
     CreateSavePath();
@@ -217,8 +252,6 @@ void D_DoomMain(void)
     S_StartSongName("orb", true);
 
     // Show version message now, so it's visible during R_Init()
-    ST_Message("Executable: " VERSIONTEXT ".\n");
-
     ST_Message("R_Init: Init Hexen refresh daemon");
     R_Init();
     ST_Message("\n");

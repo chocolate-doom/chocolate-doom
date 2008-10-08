@@ -29,6 +29,7 @@
 #include "i_video.h"
 #include "i_system.h"
 #include "i_timer.h"
+#include "m_controls.h"
 #include "m_misc.h"
 #include "p_local.h"
 #include "v_video.h"
@@ -108,26 +109,7 @@ boolean precache = true;        // if true, load all graphics at start
 
 short consistancy[MAXPLAYERS][BACKUPTICS];
 
-//
-// controls (have defaults)
-//
-int key_right, key_left, key_up, key_down;
-int key_strafeleft, key_straferight, key_jump;
-int key_fire, key_use, key_strafe, key_speed;
-int key_flyup, key_flydown, key_flycenter;
-int key_lookup, key_lookdown, key_lookcenter;
-int key_invleft, key_invright, key_useartifact;
-
-int mousebfire;
-int mousebstrafe;
-int mousebforward;
-int mousebjump;
-
-int joybfire;
-int joybstrafe;
-int joybuse;
-int joybspeed;
-int joybjump;
+int mouseSensitivity = 5;
 
 int LeaveMap;
 static int LeavePosition;
