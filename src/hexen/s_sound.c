@@ -392,6 +392,8 @@ void S_StartSoundAtVolume(mobj_t * origin, int sound_id, int volume)
         }
     }
 
+    Channel[i].mo = origin;
+
     vol = (SoundCurve[dist] * (snd_MaxVolume * 8) * volume) >> 14;
     if (origin == players[displayplayer].mo)
     {
@@ -423,11 +425,15 @@ void S_StartSoundAtVolume(mobj_t * origin, int sound_id, int volume)
         Channel[i].pitch = 127;
     }
 #endif
+    if (S_sfx[sound_id].lumpnum == 0)
+    {
+        S_sfx[sound_id].lumpnum = I_GetSfxLumpNum(&S_sfx[sound_id]);
+    }
+
     Channel[i].handle = I_StartSound(&S_sfx[sound_id],
                                      i,
                                      vol,
                                      sep /* , Channel[i].pitch] */);
-    Channel[i].mo = origin;
     Channel[i].sound_id = sound_id;
     Channel[i].priority = priority;
     Channel[i].volume = volume;
