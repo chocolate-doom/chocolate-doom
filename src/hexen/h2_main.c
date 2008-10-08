@@ -37,6 +37,8 @@
 
 #include "h2def.h"
 #include "ct_chat.h"
+#include "d_iwad.h"
+#include "d_mode.h"
 #include "s_sound.h"
 #include "i_system.h"
 #include "m_argv.h"
@@ -85,7 +87,6 @@ static void DrawMessage(void);
 static void PageDrawer(void);
 static void HandleArgs(void);
 static void CheckRecordFrom(void);
-static void AddWADFile(char *file);
 static void DrawAndBlit(void);
 static void ExecOptionFILE(char **args, int tag);
 static void ExecOptionSCRIPTS(char **args, int tag);
@@ -107,7 +108,9 @@ extern char *SavePath;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-boolean shareware;              // true if only episode 1 present
+GameMode_t gamemode;
+GameMission_t gamemission;
+char *iwadfile;
 boolean nomonsters;             // checkparm of -nomonsters
 boolean respawnparm;            // checkparm of -respawn
 boolean randomclass;            // checkparm of -randclass
@@ -132,9 +135,12 @@ static int WarpMap;
 static int demosequence;
 static int pagetic;
 static char *pagename;
-static char *wadfiles[MAXWADFILES] = {
-    "hexen.wad"
+
+static iwad_t iwads[] = {
+    { "hexen.wad",        hexen },
+    { NULL,               none },
 };
+
 static execOpt_t ExecOptions[] = {
     {"-file", ExecOptionFILE, 1, 0},
     {"-scripts", ExecOptionSCRIPTS, 1, 0},
@@ -191,7 +197,7 @@ void D_DoomMain(void)
     autostart = false;
     startskill = sk_medium;
     startmap = 1;
-    shareware = false;          // Always false for Hexen
+    gamemode = commercial;
 
     // Initialize subsystems
 
@@ -212,8 +218,6 @@ void D_DoomMain(void)
     DoTimeBomb();
 #endif
 
-//    ST_Message("W_Init: Init WADfiles.\n");
-
     ST_Message("Z_Init: Init zone memory allocation daemon.\n");
     Z_Init();
 
@@ -221,6 +225,18 @@ void D_DoomMain(void)
     I_StartupKeyboard();
     I_StartupJoystick();
 #endif
+
+    ST_Message("W_Init: Init WADfiles.\n");
+
+    iwadfile = D_FindIWAD(iwads, &gamemission);
+
+    if (iwadfile == NULL)
+    {
+        I_Error("Game mode indeterminate. No IWAD was found. Try specifying\n"
+                "one with the '-iwad' command line parameter.");
+    }
+
+    W_AddFile(iwadfile);
 
     HandleArgs();
 
@@ -416,7 +432,7 @@ static void ExecOptionFILE(char **args, int tag)
     p = M_CheckParm("-file");
     while (++p != myargc && myargv[p][0] != '-')
     {
-        AddWADFile(myargv[p]);
+        W_AddFile(myargv[p]);
     }
 }
 
@@ -432,7 +448,7 @@ static void ExecOptionPLAYDEMO(char **args, int tag)
     char file[256];
 
     sprintf(file, "%s.lmp", args[1]);
-    AddWADFile(file);
+    W_AddFile(file);
     ST_Message("Playing demo %s.lmp.\n", args[1]);
 }
 
@@ -793,28 +809,6 @@ static void CheckRecordFrom(void)
     G_DoLoadGame();             // Load the gameskill etc info from savegame
     G_RecordDemo(gameskill, 1, gameepisode, gamemap, myargv[p + 2]);
     H2_GameLoop();              // Never returns
-}
-
-//==========================================================================
-//
-// AddWADFile
-//
-//==========================================================================
-
-static void AddWADFile(char *file)
-{
-    int i;
-    char *new;
-
-    ST_Message("Adding external file: %s\n", file);
-    i = 0;
-    while (wadfiles[i])
-    {
-        i++;
-    }
-    new = malloc(strlen(file) + 1);
-    strcpy(new, file);
-    wadfiles[i] = new;
 }
 
 #ifdef __WATCOMC__
