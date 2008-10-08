@@ -211,6 +211,9 @@ void D_DoomMain(void)
     M_SetConfigFilenames("hexen.cfg", PROGRAM_PREFIX "hexen.cfg");
     M_LoadDefaults();
 
+    I_AtExit(M_SaveDefaults, false);
+
+
     // Now that the savedir is loaded from .CFG, make sure it exists
     CreateSavePath();
 
@@ -248,15 +251,16 @@ void D_DoomMain(void)
 
     InitMapMusicInfo();         // Init music fields in mapinfo
 
-#ifdef __WATCOMC__
     ST_Message("S_InitScript\n");
     S_InitScript();
-#endif
 
     ST_Message("SN_InitSequenceScript: Registering sound sequences.\n");
     SN_InitSequenceScript();
     ST_Message("I_Init: Setting up machine state.\n");
     I_Init();
+
+    S_Init();
+    S_Start();
 
     ST_Message("ST_Init: Init startup screen.\n");
     ST_Init();
