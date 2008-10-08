@@ -135,6 +135,7 @@ boolean i_CDMusic;              // in Watcom, defined in i_ibm
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
+static int DisplayTicker = 0;
 static byte CheatLookup[256];
 static int HealthMarker;
 //static int ChainWiggle;
@@ -1929,8 +1930,6 @@ static void CheatSoundFunc(player_t * player, Cheat_t * cheat)
 
 static void CheatTickerFunc(player_t * player, Cheat_t * cheat)
 {
-    extern int DisplayTicker;
-
     DisplayTicker = !DisplayTicker;
     if (DisplayTicker)
     {
@@ -1940,6 +1939,8 @@ static void CheatTickerFunc(player_t * player, Cheat_t * cheat)
     {
         P_SetMessage(player, TXT_CHEATTICKEROFF, true);
     }
+
+    I_DisplayFPSDots(DisplayTicker);
 }
 
 static void CheatArtifactAllFunc(player_t * player, Cheat_t * cheat)
