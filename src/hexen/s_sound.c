@@ -822,13 +822,9 @@ void S_SetMusicVolume(void)
 
 void S_ShutDown(void)
 {
-    extern int tsm_ID;
-    if (tsm_ID != -1)
-    {
-        I_StopSong();
-        I_UnRegisterSong(RegisteredSong);
-        I_ShutdownSound();
-    }
+    I_StopSong();
+    I_UnRegisterSong(RegisteredSong);
+    I_ShutdownSound();
     if (i_CDMusic)
     {
         I_CDMusStop();
