@@ -1152,7 +1152,7 @@ boolean MN_Responder(event_t * event)
     key = event->data1;
     if (InfoType)
     {
-        if (shareware)
+        if (gamemode == shareware)
         {
             InfoType = (InfoType + 1) % 5;
         }

@@ -44,6 +44,10 @@
 
 #include "d_event.h"
 
+// gamemode/mission
+
+#include "d_mode.h"
+
 // for fixed_t:
 
 #include "m_fixed.h"
@@ -103,15 +107,6 @@
 #define MAXPLAYERS	8
 
 typedef unsigned int uint;
-
-typedef enum
-{
-    sk_baby,
-    sk_easy,
-    sk_medium,
-    sk_hard,
-    sk_nightmare
-} skill_t;
 
 #define	BT_ATTACK		1
 #define	BT_USE			2
@@ -654,11 +649,12 @@ void NET_SendFrags(player_t * player);
 
 #define TELEFOGHEIGHT (32*FRACUNIT)
 
+extern GameMode_t gamemode;         // Always commercial
+extern GameMission_t gamemission;   // Always hexen
+
 extern gameaction_t gameaction;
 
 extern boolean paused;
-
-extern boolean shareware;       // true if other episodes not present
 
 extern boolean DevMaps;         // true = map development mode
 extern char *DevMapsDir;        // development maps directory

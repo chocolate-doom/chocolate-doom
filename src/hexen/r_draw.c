@@ -517,7 +517,7 @@ void R_DrawTopBorder(void)
     if (scaledviewwidth == SCREENWIDTH)
         return;
 
-/*	if(shareware)
+/*	if(gamemode == shareware)
 	{
 		src = W_CacheLumpName ("FLOOR04", PU_CACHE);
 	}
