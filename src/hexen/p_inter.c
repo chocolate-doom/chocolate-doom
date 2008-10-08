@@ -83,7 +83,7 @@ void P_SetMessage(player_t * player, char *message, boolean ultmsg)
     {
         strcpy(player->message, message);
     }
-    strupr(player->message);
+//    strupr(player->message);
     player->messageTics = MESSAGETICS;
     player->yellowMessage = false;
     if (ultmsg)

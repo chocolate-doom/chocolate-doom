@@ -193,8 +193,6 @@ void D_DoomMain(void)
     startmap = 1;
     shareware = false;          // Always false for Hexen
 
-    HandleArgs();
-
     // Initialize subsystems
 
     ST_Message("V_Init: allocate screens.\n");
@@ -203,22 +201,18 @@ void D_DoomMain(void)
     // Load defaults before initing other systems
     ST_Message("M_LoadDefaults: Load system defaults.\n");
     D_BindVariables();
+    M_SetConfigDir();
     M_SetConfigFilenames("hexen.cfg", PROGRAM_PREFIX "hexen.cfg");
     M_LoadDefaults();
 
     // Now that the savedir is loaded from .CFG, make sure it exists
     CreateSavePath();
 
-    // HEXEN MODIFICATION:
-    // There is a realloc() in W_AddFile() that might fail if the zone
-    // heap has been previously allocated, so we need to initialize the
-    // WAD files BEFORE the zone memory initialization.
-    ST_Message("W_Init: Init WADfiles.\n");
-    W_InitMultipleFiles(wadfiles);
-
 #ifdef TIMEBOMB
     DoTimeBomb();
 #endif
+
+//    ST_Message("W_Init: Init WADfiles.\n");
 
     ST_Message("Z_Init: Init zone memory allocation daemon.\n");
     Z_Init();
@@ -227,6 +221,8 @@ void D_DoomMain(void)
     I_StartupKeyboard();
     I_StartupJoystick();
 #endif
+
+    HandleArgs();
 
     ST_Message("MN_Init: Init menu system.\n");
     MN_Init();
@@ -355,9 +351,6 @@ static void HandleArgs(void)
             opt->func(&myargv[p], opt->tag);
         }
     }
-
-    // Look for an external device driver
-    I_CheckExternDriver();
 }
 
 //==========================================================================
