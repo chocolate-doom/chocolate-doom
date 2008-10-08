@@ -45,10 +45,14 @@ extern int key_lookcenter;
 extern int key_invleft;
 extern int key_invright;
 extern int key_useartifact;
+
+extern int key_jump;
  
 extern int mousebfire;
 extern int mousebstrafe;
 extern int mousebforward;
+
+extern int mousebjump;
 
 extern int mousebstrafeleft;
 extern int mousebstraferight;
@@ -59,6 +63,9 @@ extern int joybfire;
 extern int joybstrafe;
 extern int joybuse;
 extern int joybspeed;
+
+extern int joybjump;
+
 extern int joybstrafeleft;
 extern int joybstraferight;
 
@@ -66,6 +73,7 @@ extern int dclick_use;
  
 void M_BindBaseControls(void);
 void M_BindHereticControls(void);
+void M_BindHexenControls(void);
 
 #endif /* #ifndef __M_CONTROLS_H__ */
 

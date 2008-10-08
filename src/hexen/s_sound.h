@@ -77,6 +77,7 @@ typedef struct
 
 extern int snd_MaxVolume;
 extern int snd_MusicVolume;
+extern int snd_Channels;
 
 void S_Start(void);
 void S_StartSound(mobj_t * origin, int sound_id);

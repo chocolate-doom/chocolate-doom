@@ -126,7 +126,6 @@ void MN_LoadSlotText(void);
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 extern int detailLevel;
-extern int screenblocks;
 extern char *SavePath;
 extern int key_speed, key_strafe;
 extern boolean gamekeydown[256];        // The NUMKEYS macro is local to g_game
@@ -135,7 +134,7 @@ extern boolean gamekeydown[256];        // The NUMKEYS macro is local to g_game
 
 boolean MenuActive;
 int InfoType;
-boolean messageson;
+int messageson = true;
 boolean mn_SuicideConsole;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------

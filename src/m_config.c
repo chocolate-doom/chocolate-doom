@@ -179,6 +179,12 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_straferight),
 
     //!
+    // Keyboard key to jump.
+    //
+
+    CONFIG_VARIABLE_KEY(key_jump),
+
+    //!
     // Keyboard key to fly upward.
     //
 
@@ -285,6 +291,12 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_INT(mouseb_forward),
 
     //!
+    // Mouse button to jump.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_jump),
+
+    //!
     // If non-zero, joystick input is enabled.
     //
 
@@ -315,6 +327,12 @@ static default_t	doom_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(joyb_speed),
+
+    //!
+    // Joystick button to jump.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_jump),
 
     //!
     // Screen size, range 3-11.
@@ -386,6 +404,20 @@ static default_t	doom_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(usegamma),
+
+    //!
+    // Directory in which to store savegames.
+    //
+
+    CONFIG_VARIABLE_STRING(savedir),
+
+    //!
+    // Controls whether messages are displayed in the heads-up display.
+    // If this has a non-zero value, messages are displayed.
+    //
+
+    CONFIG_VARIABLE_INT(messageson),
+
 
     //!
     // Multiplayer chat macro: message to send when alt+0 is pressed.

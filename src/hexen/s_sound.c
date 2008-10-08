@@ -71,11 +71,9 @@ static byte *SoundCurve;
 
 static char ArchivePath[128];
 
-extern int snd_MusicDevice;
-extern int snd_SfxDevice;
-extern int snd_MaxVolume;
-extern int snd_MusicVolume;
-extern int snd_Channels;
+int snd_MaxVolume;                // maximum volume for sound
+int snd_MusicVolume;              // maximum volume for music
+int snd_Channels = 3;
 
 extern int startepisode;
 extern int startmap;

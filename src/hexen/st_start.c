@@ -34,6 +34,7 @@
 
 #include "h2def.h"
 #include "i_system.h"
+#include "s_sound.h"
 #include "st_start.h"
 
 

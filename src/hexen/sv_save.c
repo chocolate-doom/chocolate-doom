@@ -150,7 +150,9 @@ extern acsInfo_t *ACSInfo;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
-char *SavePath;
+#define DEFAULT_SAVEPATH                "hexndata/"
+
+char *SavePath = DEFAULT_SAVEPATH;
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
