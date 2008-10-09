@@ -1477,7 +1477,7 @@ void PO_Init(int lump)
                                  mt->y << FRACBITS);
         }
     }
-    Z_Free(data);
+    W_ReleaseLumpNum(lump);
     // check for a startspot without an anchor point
     for (i = 0; i < po_NumPolyobjs; i++)
     {

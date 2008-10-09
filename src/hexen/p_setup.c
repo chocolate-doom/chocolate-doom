@@ -186,7 +186,7 @@ void P_LoadVertexes(int lump)
         li->y = SHORT(ml->y) << FRACBITS;
     }
 
-    Z_Free(data);
+    W_ReleaseLumpNum(lump);
 }
 
 
@@ -233,7 +233,7 @@ void P_LoadSegs(int lump)
             li->backsector = 0;
     }
 
-    Z_Free(data);
+    W_ReleaseLumpNum(lump);
 }
 
 
@@ -265,7 +265,7 @@ void P_LoadSubsectors(int lump)
         ss->firstline = SHORT(ms->firstseg);
     }
 
-    Z_Free(data);
+    W_ReleaseLumpNum(lump);
 }
 
 
@@ -304,7 +304,7 @@ void P_LoadSectors(int lump)
         ss->thinglist = NULL;
         ss->seqType = SEQTYPE_STONE;    // default seqType
     }
-    Z_Free(data);
+    W_ReleaseLumpNum(lump);
 }
 
 
@@ -342,7 +342,7 @@ void P_LoadNodes(int lump)
                 no->bbox[j][k] = SHORT(mn->bbox[j][k]) << FRACBITS;
         }
     }
-    Z_Free(data);
+    W_ReleaseLumpNum(lump);
 }
 
 //==========================================================================
@@ -377,7 +377,7 @@ void P_LoadThings(int lump)
     }
     P_CreateTIDList();
     P_InitCreatureCorpseQueue(false);   // false = do NOT scan for corpses
-    Z_Free(data);
+    W_ReleaseLumpNum(lump);
 
     if (!deathmatch)
     {                           // Don't need to check deathmatch spots
@@ -483,7 +483,7 @@ void P_LoadLineDefs(int lump)
             ld->backsector = 0;
     }
 
-    Z_Free(data);
+    W_ReleaseLumpNum(lump);
 }
 
 
@@ -519,7 +519,7 @@ void P_LoadSideDefs(int lump)
         sd->midtexture = R_TextureNumForName(msd->midtexture);
         sd->sector = &sectors[SHORT(msd->sector)];
     }
-    Z_Free(data);
+    W_ReleaseLumpNum(lump);
 }
 
 /*
