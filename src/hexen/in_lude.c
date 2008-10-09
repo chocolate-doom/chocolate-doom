@@ -290,14 +290,17 @@ static void UnloadPics(void)
 
     if (HubCount || gametype == DEATHMATCH)
     {
-        Z_ChangeTag(patchINTERPIC, PU_CACHE);
+        W_ReleaseLumpName("INTERPIC");
+
+        patchINTERPIC = W_CacheLumpName("INTERPIC", PU_STATIC);
+        FontBLumpBase = W_GetNumForName("FONTB16");
         for (i = 0; i < 10; i++)
         {
-            Z_ChangeTag(FontBNumbers[i], PU_CACHE);
+            W_ReleaseLumpNum(FontBLumpBase + i);
         }
-        Z_ChangeTag(FontBNegative, PU_CACHE);
-        Z_ChangeTag(FontBSlash, PU_CACHE);
-        Z_ChangeTag(FontBPercent, PU_CACHE);
+        W_ReleaseLumpName("FONTB13");
+        W_ReleaseLumpName("FONTB15");
+        W_ReleaseLumpName("FONTB05");
     }
 }
 

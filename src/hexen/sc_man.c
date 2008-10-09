@@ -68,8 +68,8 @@ static char *ScriptBuffer;
 static char *ScriptPtr;
 static char *ScriptEndPtr;
 static char StringBuffer[MAX_STRING_SIZE];
+static int ScriptLumpNum;
 static boolean ScriptOpen = false;
-static boolean ScriptFreeCLib;  // true = de-allocate using free()
 static int ScriptSize;
 static boolean AlreadyGot = false;
 
@@ -134,16 +134,16 @@ static void OpenScript(char *name, int type)
     SC_Close();
     if (type == LUMP_SCRIPT)
     {                           // Lump script
-        ScriptBuffer = (char *) W_CacheLumpName(name, PU_STATIC);
-        ScriptSize = W_LumpLength(W_GetNumForName(name));
+        ScriptLumpNum = W_GetNumForName(name);
+        ScriptBuffer = (char *) W_CacheLumpNum(ScriptLumpNum, PU_STATIC);
+        ScriptSize = W_LumpLength(ScriptLumpNum);
         strcpy(ScriptName, name);
-        ScriptFreeCLib = false; // De-allocate using Z_Free()
     }
     else if (type == FILE_ZONE_SCRIPT)
     {                           // File script - zone
+        ScriptLumpNum = -1;
         ScriptSize = M_ReadFile(name, (byte **) & ScriptBuffer);
         M_ExtractFileBase(name, ScriptName);
-        ScriptFreeCLib = false; // De-allocate using Z_Free()
     }
     ScriptPtr = ScriptBuffer;
     ScriptEndPtr = ScriptPtr + ScriptSize;
@@ -164,9 +164,9 @@ void SC_Close(void)
 {
     if (ScriptOpen)
     {
-        if (ScriptFreeCLib == true)
+        if (ScriptLumpNum >= 0)
         {
-            free(ScriptBuffer);
+            W_ReleaseLumpNum(ScriptLumpNum);
         }
         else
         {

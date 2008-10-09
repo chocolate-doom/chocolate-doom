@@ -322,6 +322,7 @@ void R_InitTranslationTables(void)
 {
     int i;
     byte *transLump;
+    int lumpnum;
 
     V_LoadTintTable();
 
@@ -332,10 +333,10 @@ void R_InitTranslationTables(void)
 
     for (i = 0; i < 3 * (MAXPLAYERS - 1); i++)
     {
-        transLump =
-            W_CacheLumpNum(W_GetNumForName("trantbl0") + i, PU_STATIC);
+        lumpnum = W_GetNumForName("trantbl0") + i;
+        transLump = W_CacheLumpNum(lumpnum, PU_STATIC);
         memcpy(translationtables + i * 256, transLump, 256);
-        Z_Free(transLump);
+        W_ReleaseLumpNum(lumpnum);
     }
 }
 

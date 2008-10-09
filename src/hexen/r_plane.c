@@ -584,6 +584,6 @@ void R_DrawPlanes(void)
             R_MakeSpans(x, pl->top[x - 1], pl->bottom[x - 1],
                         pl->top[x], pl->bottom[x]);
         }
-        Z_ChangeTag(tempSource, PU_CACHE);
+        W_ReleaseLumpNum(firstflat + flattranslation[pl->picnum]);
     }
 }
