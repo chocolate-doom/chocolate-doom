@@ -1446,11 +1446,18 @@ void P_SpawnMapThing(mapthing_t * mthing)
     // Check for player starts 5 to 8
     if (mthing->type >= 9100 && mthing->type <= 9103)
     {
-        mthing->type = 5 + mthing->type - 9100; // Translate to 5 - 8
-        playerstarts[mthing->arg1][mthing->type - 1] = *mthing;
-        if (!deathmatch && !mthing->arg1)
+        mapthing_t *player_start;
+        int player;
+
+        player = 4 + mthing->type - 9100;
+
+        player_start = &playerstarts[mthing->arg1][player];
+        memcpy(player_start, mthing, sizeof(mapthing_t));
+        player_start->type = player + 1;
+
+        if (!deathmatch && !player_start->arg1)
         {
-            P_SpawnPlayer(mthing);
+            P_SpawnPlayer(player_start);
         }
         return;
     }
