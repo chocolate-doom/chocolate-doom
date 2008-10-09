@@ -180,6 +180,24 @@ void D_BindVariables(void)
     }
 }
 
+//
+// D_GrabMouseCallback
+//
+// Called to determine whether to grab the mouse pointer
+//
+
+static boolean D_GrabMouseCallback(void)
+{
+    // when menu is active or game is paused, release the mouse 
+ 
+    if (MenuActive || paused)
+        return false;
+
+    // only grab mouse when playing levels (but not demos)
+
+    return (gamestate == GS_LEVEL) && !demoplayback;
+}
+
 //==========================================================================
 //
 // H2_Main
@@ -518,6 +536,8 @@ void H2_GameLoop(void)
         debugfile = fopen(filename, "w");
     }
     I_InitGraphics();
+    I_SetGrabMouseCallback(D_GrabMouseCallback);
+
     while (1)
     {
         // Frame syncronous IO operations
