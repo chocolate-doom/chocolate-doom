@@ -342,11 +342,13 @@ void P_LoadACScripts(int lump)
         }
     }
     ACStringCount = *buffer++;
-    ACStrings = (char **) buffer;
-    for (i = 0; i < ACStringCount; i++)
+    ACStrings = Z_Malloc(ACStringCount * sizeof(char *), PU_LEVEL, NULL);
+
+    for (i=0; i<ACStringCount; ++i)
     {
-        ACStrings[i] += (int) ActionCodeBase;
+        ACStrings[i] = (char *) ActionCodeBase + buffer[i];
     }
+
     memset(MapVars, 0, sizeof(MapVars));
 }
 
