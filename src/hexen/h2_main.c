@@ -39,6 +39,7 @@
 #include "ct_chat.h"
 #include "d_iwad.h"
 #include "d_mode.h"
+#include "m_misc.h"
 #include "s_sound.h"
 #include "i_system.h"
 #include "m_argv.h"
@@ -180,6 +181,14 @@ void D_BindVariables(void)
     }
 }
 
+// Set the default directory where hub savegames are saved.
+
+static void D_SetDefaultSavePath(void)
+{
+    SavePath = malloc(strlen(configdir) + 10);
+    sprintf(SavePath, "%shexndata%c", configdir, DIR_SEPARATOR);
+}
+
 //
 // D_GrabMouseCallback
 //
@@ -226,6 +235,7 @@ void D_DoomMain(void)
     ST_Message("M_LoadDefaults: Load system defaults.\n");
     D_BindVariables();
     M_SetConfigDir();
+    D_SetDefaultSavePath();
     M_SetConfigFilenames("hexen.cfg", PROGRAM_PREFIX "hexen.cfg");
     M_LoadDefaults();
 
@@ -858,21 +868,7 @@ void CleanExit(void)
 
 static void CreateSavePath(void)
 {
-    char creationPath[121];
-    int len;
-
-    if (cdrom == true)
-    {
-        SavePath = "c:\\hexndata\\";
-    }
-    len = strlen(SavePath);
-    if (len >= 120)
-        I_Error("Save path too long\n");
-    strcpy(creationPath, SavePath);
-#ifdef __WATCOMC__
-    creationPath[len - 1] = 0;
-    mkdir(creationPath);
-#endif
+    M_MakeDirectory(SavePath);
 }
 
 #ifdef TIMEBOMB
