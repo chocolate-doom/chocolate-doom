@@ -1030,6 +1030,7 @@ static boolean SCInfo(int option)
 
 boolean MN_Responder(event_t * event)
 {
+    int charTyped;
     int key;
     int i;
     MenuItem_t *item;
@@ -1048,6 +1049,8 @@ boolean MN_Responder(event_t * event)
         return (false);
     }
     key = event->data1;
+    charTyped = event->data2;
+
     if (InfoType)
     {
         if (gamemode == shareware)
@@ -1081,7 +1084,7 @@ boolean MN_Responder(event_t * event)
 
     if (askforquit)
     {
-        switch (key)
+        switch (charTyped)
         {
             case 'y':
                 if (askforquit)
@@ -1413,7 +1416,7 @@ boolean MN_Responder(event_t * event)
                 {
                     if (CurrentMenu->items[i].text)
                     {
-                        if (toupper(key)
+                        if (toupper(charTyped)
                             == toupper(CurrentMenu->items[i].text[0]))
                         {
                             CurrentItPos = i;
@@ -1463,24 +1466,18 @@ boolean MN_Responder(event_t * event)
         }
         if (slotptr < SLOTTEXTLEN && key != KEY_BACKSPACE)
         {
-            if ((key >= 'a' && key <= 'z'))
+            if (isalpha(charTyped))
             {
-                *textBuffer++ = key - 32;
+                *textBuffer++ = toupper(charTyped);
                 *textBuffer = ASCII_CURSOR;
                 slotptr++;
                 return (true);
             }
-            if (((key >= '0' && key <= '9') || key == ' '
-                 || key == ',' || key == '.' || key == '-') && !shiftdown)
+            if (isdigit(charTyped) || charTyped == ' '
+              || charTyped == ',' || charTyped == '.' || charTyped == '-'
+              || charTyped == '!')
             {
-                *textBuffer++ = key;
-                *textBuffer = ASCII_CURSOR;
-                slotptr++;
-                return (true);
-            }
-            if (shiftdown && key == '1')
-            {
-                *textBuffer++ = '!';
+                *textBuffer++ = charTyped;
                 *textBuffer = ASCII_CURSOR;
                 slotptr++;
                 return (true);
