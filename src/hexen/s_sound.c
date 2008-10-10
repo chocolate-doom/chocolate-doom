@@ -69,11 +69,9 @@ static int Mus_Song = -1;
 static byte *Mus_SndPtr;
 static byte *SoundCurve;
 
-static char ArchivePath[128];
-
-int snd_MaxVolume;                // maximum volume for sound
-int snd_MusicVolume;              // maximum volume for music
-int snd_Channels = 3;
+int snd_MaxVolume = 10;                // maximum volume for sound
+int snd_MusicVolume = 10;              // maximum volume for music
+int snd_Channels = 16;
 
 extern int startepisode;
 extern int startmap;
@@ -279,6 +277,27 @@ void S_StartSound(mobj_t * origin, int sound_id)
     S_StartSoundAtVolume(origin, sound_id, 127);
 }
 
+static mobj_t *GetSoundListener(void)
+{
+    static degenmobj_t dummy_listener;
+
+    // If we are at the title screen, the console player doesn't have an
+    // object yet, so return a pointer to a static dummy listener instead.
+
+    if (players[displayplayer].mo != NULL)
+    {
+        return players[displayplayer].mo;
+    }
+    else
+    {
+        dummy_listener.x = 0;
+        dummy_listener.y = 0;
+        dummy_listener.z = 0;
+
+        return (mobj_t *) &dummy_listener;
+    }
+}
+
 //==========================================================================
 //
 // S_StartSoundAtVolume
@@ -287,6 +306,7 @@ void S_StartSound(mobj_t * origin, int sound_id)
 
 void S_StartSoundAtVolume(mobj_t * origin, int sound_id, int volume)
 {
+    mobj_t *listener;
     int dist, vol;
     int i;
     int priority;
@@ -300,9 +320,12 @@ void S_StartSoundAtVolume(mobj_t * origin, int sound_id, int volume)
 
     if (sound_id == 0 || snd_MaxVolume == 0)
         return;
+
+    listener = GetSoundListener();
+
     if (origin == NULL)
     {
-        origin = players[displayplayer].mo;
+        origin = listener;
     }
     if (volume == 0)
     {
@@ -311,8 +334,8 @@ void S_StartSoundAtVolume(mobj_t * origin, int sound_id, int volume)
 
     // calculate the distance before other stuff so that we can throw out
     // sounds that are beyond the hearing range.
-    absx = abs(origin->x - players[displayplayer].mo->x);
-    absy = abs(origin->y - players[displayplayer].mo->y);
+    absx = abs(origin->x - listener->x);
+    absy = abs(origin->y - listener->y);
     dist = absx + absy - (absx > absy ? absy >> 1 : absx >> 1);
     dist >>= FRACBITS;
     if (dist >= MAX_SND_DIST)
@@ -395,15 +418,15 @@ void S_StartSoundAtVolume(mobj_t * origin, int sound_id, int volume)
     Channel[i].mo = origin;
 
     vol = (SoundCurve[dist] * (snd_MaxVolume * 8) * volume) >> 14;
-    if (origin == players[displayplayer].mo)
+    if (origin == listener)
     {
         sep = 128;
 //              vol = (volume*(snd_MaxVolume+1)*8)>>7;
     }
     else
     {
-        angle = R_PointToAngle2(players[displayplayer].mo->x,
-                                players[displayplayer].mo->y,
+        angle = R_PointToAngle2(listener->x,
+                                listener->y,
                                 Channel[i].mo->x, Channel[i].mo->y);
         angle = (angle - viewangle) >> 24;
         sep = angle * 2 - 128;
@@ -845,10 +868,7 @@ void S_ShutDown(void)
 
 void S_InitScript(void)
 {
-    int p;
     int i;
-
-    strcpy(ArchivePath, DEFAULT_ARCHIVEPATH);
 
     SC_OpenLump("sndinfo");
 
@@ -859,7 +879,6 @@ void S_InitScript(void)
             if (!strcasecmp(sc_String, "$ARCHIVEPATH"))
             {
                 SC_MustGetString();
-                strcpy(ArchivePath, sc_String);
             }
             else if (!strcasecmp(sc_String, "$MAP"))
             {
