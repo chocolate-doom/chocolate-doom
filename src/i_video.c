@@ -48,6 +48,49 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+// Lookup table for mapping ASCII characters to their equivalent when
+// shift is pressed on an American layout keyboard:
+
+static const char shiftxform[] =
+{
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+    11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+    21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+    31, ' ', '!', '"', '#', '$', '%', '&',
+    '"', // shift-'
+    '(', ')', '*', '+',
+    '<', // shift-,
+    '_', // shift--
+    '>', // shift-.
+    '?', // shift-/
+    ')', // shift-0
+    '!', // shift-1
+    '@', // shift-2
+    '#', // shift-3
+    '$', // shift-4
+    '%', // shift-5
+    '^', // shift-6
+    '&', // shift-7
+    '*', // shift-8
+    '(', // shift-9
+    ':',
+    ':', // shift-;
+    '<',
+    '+', // shift-=
+    '>', '?', '@',
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
+    'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+    '[', // shift-[
+    '!', // shift-backslash - OH MY GOD DOES WATCOM SUCK
+    ']', // shift-]
+    '"', '_',
+    '\'', // shift-`
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
+    'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+    '{', '|', '}', '~', 127
+};
+
+
 // Non aspect ratio-corrected modes (direct multiples of 320x200)
 
 static screen_mode_t *screen_modes[] = {
@@ -187,6 +230,10 @@ static screen_mode_t *screen_mode;
 // keyboard.
 
 int vanilla_keyboard_mapping = true;
+
+// Is the shift key currently down?
+
+static int shiftdown = 0;
 
 // Mouse acceleration
 //
@@ -476,6 +523,74 @@ static int AccelerateMouse(int val)
     }
 }
 
+// Get the equivalent ASCII (Unicode?) character for a keypress.
+
+static int GetTypedChar(SDL_Event *event)
+{
+    int key;
+
+    // If Vanilla keyboard mapping enabled, the keyboard
+    // scan code is used to give the character typed.
+    // This does not change depending on keyboard layout.
+    // If you have a German keyboard, pressing 'z' will
+    // give 'y', for example.  It is desirable to be able
+    // to fix this so that people with non-standard 
+    // keyboard mappings can type properly.  If vanilla
+    // mode is disabled, use the properly translated 
+    // version.
+
+    if (vanilla_keyboard_mapping)
+    {
+        key = TranslateKey(&event->key.keysym);
+
+        // Is shift held down?  If so, perform a translation.
+
+        if (shiftdown > 0)
+        {
+            if (key >= 0 && key < arrlen(shiftxform))
+            {
+                key = shiftxform[key];
+            }
+            else
+            {
+                key = 0;
+            }
+        }
+
+        return key;
+    }
+    else
+    {
+        // Unicode value, from key layout.
+
+        return event->key.keysym.unicode;
+    }
+}
+
+static void UpdateShiftStatus(SDL_Event *event)
+{
+    int change;
+
+    if (event->type == SDL_KEYDOWN)
+    {
+        change = 1;
+    }
+    else if (event->type == SDL_KEYUP)
+    {
+        change = -1;
+    }
+    else
+    {
+        return;
+    }
+
+    if (event->key.keysym.sym == SDLK_LSHIFT 
+     || event->key.keysym.sym == SDLK_RSHIFT)
+    {
+        shiftdown += change;
+    }
+}
+
 void I_GetEvent(void)
 {
     SDL_Event sdlevent;
@@ -504,32 +619,18 @@ void I_GetEvent(void)
             I_Quit();
         }
 
+        UpdateShiftStatus(&sdlevent);
+
         // process event
         
         switch (sdlevent.type)
         {
             case SDL_KEYDOWN:
+                // data1 has the key pressed, data2 has the character
+                // (shift-translated, etc)
                 event.type = ev_keydown;
                 event.data1 = TranslateKey(&sdlevent.key.keysym);
-
-                // If Vanilla keyboard mapping enabled, the keyboard
-                // scan code is used to give the character typed.
-                // This does not change depending on keyboard layout.
-                // If you have a German keyboard, pressing 'z' will
-                // give 'y', for example.  It is desirable to be able
-                // to fix this so that people with non-standard 
-                // keyboard mappings can type properly.  If vanilla
-                // mode is disabled, use the properly translated 
-                // version.
-
-                if (vanilla_keyboard_mapping)
-                {
-                    event.data2 = event.data1;
-                }
-                else
-                {
-                    event.data2 = sdlevent.key.keysym.unicode;
-                }
+                event.data2 = GetTypedChar(&sdlevent);
 
                 D_PostEvent(&event);
                 break;
