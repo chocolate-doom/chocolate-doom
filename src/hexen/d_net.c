@@ -941,6 +941,9 @@ void TryRunTics(void)
             MN_Ticker();
             return;
         }
+
+        // Don't hog the CPU
+        I_Sleep(1);
     }
 
 //
