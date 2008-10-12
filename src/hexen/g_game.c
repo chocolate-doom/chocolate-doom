@@ -148,8 +148,10 @@ int mousex, mousey;             // mouse values are used once
 int dclicktime, dclickstate, dclicks;
 int dclicktime2, dclickstate2, dclicks2;
 
+#define MAX_JOY_BUTTONS 20
+
 int joyxmove, joyymove;         // joystick values are repeated
-boolean joyarray[5];
+boolean joyarray[MAX_JOY_BUTTONS + 1];
 boolean *joybuttons = &joyarray[1];     // allow [-1]
 
 int savegameslot;
@@ -215,10 +217,17 @@ void G_BuildTiccmd(ticcmd_t * cmd)
 
 //printf ("cons: %i\n",cmd->consistancy);
 
-    strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe]
-        || joybuttons[joybstrafe];
-    speed = gamekeydown[key_speed] || joybuttons[joybspeed]
+    strafe = gamekeydown[key_strafe]
+          || mousebuttons[mousebstrafe]
+          || joybuttons[joybstrafe];
+
+    // Allow joybspeed hack.
+
+    speed = key_speed >= NUMKEYS
+        || joybspeed >= MAX_JOY_BUTTONS
+        || gamekeydown[key_speed]
         || joybuttons[joybspeed];
+
 #ifdef __WATCOMC__
     if (useexterndriver)
     {
