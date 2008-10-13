@@ -37,6 +37,8 @@
 
 #define DEFAULT_ARCHIVEPATH     "o:\\sound\\archive\\"
 
+void S_ShutDown(void);
+
 boolean i_CDMusic;
 int i_CDTrack;
 int i_CDCurrentTrack;
@@ -733,6 +735,8 @@ void S_Init(void)
         snd_Channels = 8;
     }
     I_SetMusicVolume(snd_MusicVolume);
+
+    I_AtExit(S_ShutDown, true);
 
 #ifdef CDMUSIC
 //TODO
