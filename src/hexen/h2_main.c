@@ -207,6 +207,13 @@ static boolean D_GrabMouseCallback(void)
     return (gamestate == GS_LEVEL) && !demoplayback;
 }
 
+// Message displayed when quitting Hexen
+
+static void D_HexenQuitMessage(void)
+{
+    printf("\nHexen: Beyond Heretic\n");
+}
+
 //==========================================================================
 //
 // H2_Main
@@ -218,6 +225,7 @@ void D_DoomMain(void)
 {
     int p;
 
+    I_AtExit(D_HexenQuitMessage, false);
     M_FindResponseFile();
     setbuf(stdout, NULL);
     startepisode = 1;
