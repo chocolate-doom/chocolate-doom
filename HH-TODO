@@ -21,6 +21,7 @@ Heretic:
  * Screensaver mode
 
 Hexen:
+ * CD-ROM music playback
  * Merge r_draw.c to common version and delete duplicate
  * Remove duplicates:
     - Skill levels
