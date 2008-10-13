@@ -555,6 +555,7 @@ void H2_GameLoop(void)
     }
     I_InitGraphics();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
+    I_SetWindowTitle("Hexen");
 
     while (1)
     {
