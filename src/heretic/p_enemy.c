@@ -434,7 +434,7 @@ void P_NewChaseDir(mobj_t * actor)
     }
     else
     {
-        for (tdir = DI_SOUTHEAST; tdir >= DI_EAST; tdir--)
+        for (tdir = DI_SOUTHEAST; tdir != DI_EAST-1; tdir--)
         {
             if (tdir != turnaround)
             {
