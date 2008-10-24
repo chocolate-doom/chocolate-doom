@@ -419,10 +419,16 @@ void P_LoadSideDefs(int lump)
 void P_LoadBlockMap(int lump)
 {
     int i, count;
+    int lumplen;
 
-    blockmaplump = W_CacheLumpNum(lump, PU_LEVEL);
+    lumplen = W_LumpLength(lump);
+
+    blockmaplump = Z_Malloc(lumplen, PU_LEVEL, NULL);
     blockmap = blockmaplump + 4;
-    count = W_LumpLength(lump) / 2;
+
+    // Swap all short integers to native byte ordering:
+
+    count = lumplen / 2;
     for (i = 0; i < count; i++)
         blockmaplump[i] = SHORT(blockmaplump[i]);
 
