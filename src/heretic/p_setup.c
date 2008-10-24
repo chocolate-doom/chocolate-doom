@@ -268,6 +268,7 @@ void P_LoadThings(int lump)
 {
     byte *data;
     int i;
+    mapthing_t spawnthing;
     mapthing_t *mt;
     int numthings;
 
@@ -277,12 +278,12 @@ void P_LoadThings(int lump)
     mt = (mapthing_t *) data;
     for (i = 0; i < numthings; i++, mt++)
     {
-        mt->x = SHORT(mt->x);
-        mt->y = SHORT(mt->y);
-        mt->angle = SHORT(mt->angle);
-        mt->type = SHORT(mt->type);
-        mt->options = SHORT(mt->options);
-        P_SpawnMapThing(mt);
+        spawnthing.x = SHORT(mt->x);
+        spawnthing.y = SHORT(mt->y);
+        spawnthing.angle = SHORT(mt->angle);
+        spawnthing.type = SHORT(mt->type);
+        spawnthing.options = SHORT(mt->options);
+        P_SpawnMapThing(&spawnthing);
     }
 
     W_ReleaseLumpNum(lump);
@@ -424,6 +425,7 @@ void P_LoadBlockMap(int lump)
     lumplen = W_LumpLength(lump);
 
     blockmaplump = Z_Malloc(lumplen, PU_LEVEL, NULL);
+    W_ReadLump(lump, blockmaplump);
     blockmap = blockmaplump + 4;
 
     // Swap all short integers to native byte ordering:
