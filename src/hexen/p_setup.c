@@ -533,10 +533,18 @@ void P_LoadSideDefs(int lump)
 void P_LoadBlockMap(int lump)
 {
     int i, count;
+    int lumplen;
 
-    blockmaplump = W_CacheLumpNum(lump, PU_LEVEL);
+    lumplen = W_LumpLength(lump);
+
+    blockmaplump = Z_Malloc(lumplen, PU_LEVEL, NULL);
+    W_ReadLump(lump, blockmaplump);
     blockmap = blockmaplump + 4;
-    count = W_LumpLength(lump) / 2;
+
+    // Swap all short integers to native byte ordering:
+
+    count = lumplen / 2;
+
     for (i = 0; i < count; i++)
         blockmaplump[i] = SHORT(blockmaplump[i]);
 
@@ -545,7 +553,8 @@ void P_LoadBlockMap(int lump)
     bmapwidth = blockmaplump[2];
     bmapheight = blockmaplump[3];
 
-// clear out mobj chains
+    // clear out mobj chains
+
     count = sizeof(*blocklinks) * bmapwidth * bmapheight;
     blocklinks = Z_Malloc(count, PU_LEVEL, 0);
     memset(blocklinks, 0, count);
