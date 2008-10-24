@@ -26,6 +26,7 @@
 
 #include "h2def.h"
 #include "s_sound.h"
+#include "i_swap.h"
 #include "i_system.h"
 #include "p_local.h"
 
@@ -317,19 +318,29 @@ void P_LoadACScripts(int lump)
 
     header = W_CacheLumpNum(lump, PU_LEVEL);
     ActionCodeBase = (byte *) header;
-    buffer = (int *) ((byte *) header + header->infoOffset);
-    ACScriptCount = *buffer++;
+    buffer = (int *) ((byte *) header + LONG(header->infoOffset));
+
+    ACScriptCount = LONG(*buffer); 
+    ++buffer;
+
     if (ACScriptCount == 0)
     {                           // Empty behavior lump
         return;
     }
+
     ACSInfo = Z_Malloc(ACScriptCount * sizeof(acsInfo_t), PU_LEVEL, 0);
     memset(ACSInfo, 0, ACScriptCount * sizeof(acsInfo_t));
     for (i = 0, info = ACSInfo; i < ACScriptCount; i++, info++)
     {
-        info->number = *buffer++;
-        info->address = (int *) ((byte *) ActionCodeBase + *buffer++);
-        info->argCount = *buffer++;
+        info->number = LONG(*buffer);
+        ++buffer;
+
+        info->address = (int *) ((byte *) ActionCodeBase + LONG(*buffer));
+        ++buffer;
+
+        info->argCount = LONG(*buffer);
+        ++buffer;
+
         if (info->number >= OPEN_SCRIPTS_BASE)
         {                       // Auto-activate
             info->number -= OPEN_SCRIPTS_BASE;
@@ -341,12 +352,14 @@ void P_LoadACScripts(int lump)
             info->state = ASTE_INACTIVE;
         }
     }
-    ACStringCount = *buffer++;
+    ACStringCount = LONG(*buffer);
+    ++buffer;
+
     ACStrings = Z_Malloc(ACStringCount * sizeof(char *), PU_LEVEL, NULL);
 
     for (i=0; i<ACStringCount; ++i)
     {
-        ACStrings[i] = (char *) ActionCodeBase + buffer[i];
+        ACStrings[i] = (char *) ActionCodeBase + LONG(buffer[i]);
     }
 
     memset(MapVars, 0, sizeof(MapVars));
@@ -628,13 +641,17 @@ void T_InterpretACS(acs_t * script)
     }
     ACScript = script;
     PCodePtr = ACScript->ip;
+
     do
     {
-        cmd = *PCodePtr++;
+        cmd = LONG(*PCodePtr);
+        ++PCodePtr;
+
         action = PCodeCmds[cmd] ();
-    }
-    while (action == SCRIPT_CONTINUE);
+    } while (action == SCRIPT_CONTINUE);
+
     ACScript->ip = PCodePtr;
+
     if (action == SCRIPT_TERMINATE)
     {
         ACSInfo[script->infoIndex].state = ASTE_INACTIVE;
@@ -823,7 +840,8 @@ static int CmdSuspend(void)
 
 static int CmdPushNumber(void)
 {
-    Push(*PCodePtr++);
+    Push(LONG(*PCodePtr));
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
@@ -831,7 +849,8 @@ static int CmdLSpec1(void)
 {
     int special;
 
-    special = *PCodePtr++;
+    special = LONG(*PCodePtr);
+    ++PCodePtr;
     SpecArgs[0] = Pop();
     P_ExecuteLineSpecial(special, SpecArgs, ACScript->line,
                          ACScript->side, ACScript->activator);
@@ -842,7 +861,8 @@ static int CmdLSpec2(void)
 {
     int special;
 
-    special = *PCodePtr++;
+    special = LONG(*PCodePtr);
+    ++PCodePtr;
     SpecArgs[1] = Pop();
     SpecArgs[0] = Pop();
     P_ExecuteLineSpecial(special, SpecArgs, ACScript->line,
@@ -854,7 +874,8 @@ static int CmdLSpec3(void)
 {
     int special;
 
-    special = *PCodePtr++;
+    special = LONG(*PCodePtr);
+    ++PCodePtr;
     SpecArgs[2] = Pop();
     SpecArgs[1] = Pop();
     SpecArgs[0] = Pop();
@@ -867,7 +888,8 @@ static int CmdLSpec4(void)
 {
     int special;
 
-    special = *PCodePtr++;
+    special = LONG(*PCodePtr);
+    ++PCodePtr;
     SpecArgs[3] = Pop();
     SpecArgs[2] = Pop();
     SpecArgs[1] = Pop();
@@ -881,7 +903,8 @@ static int CmdLSpec5(void)
 {
     int special;
 
-    special = *PCodePtr++;
+    special = LONG(*PCodePtr);
+    ++PCodePtr;
     SpecArgs[4] = Pop();
     SpecArgs[3] = Pop();
     SpecArgs[2] = Pop();
@@ -896,8 +919,10 @@ static int CmdLSpec1Direct(void)
 {
     int special;
 
-    special = *PCodePtr++;
-    SpecArgs[0] = *PCodePtr++;
+    special = LONG(*PCodePtr);
+    ++PCodePtr;
+    SpecArgs[0] = LONG(*PCodePtr);
+    ++PCodePtr;
     P_ExecuteLineSpecial(special, SpecArgs, ACScript->line,
                          ACScript->side, ACScript->activator);
     return SCRIPT_CONTINUE;
@@ -907,9 +932,12 @@ static int CmdLSpec2Direct(void)
 {
     int special;
 
-    special = *PCodePtr++;
-    SpecArgs[0] = *PCodePtr++;
-    SpecArgs[1] = *PCodePtr++;
+    special = LONG(*PCodePtr);
+    ++PCodePtr;
+    SpecArgs[0] = LONG(*PCodePtr);
+    ++PCodePtr;
+    SpecArgs[1] = LONG(*PCodePtr);
+    ++PCodePtr;
     P_ExecuteLineSpecial(special, SpecArgs, ACScript->line,
                          ACScript->side, ACScript->activator);
     return SCRIPT_CONTINUE;
@@ -919,10 +947,14 @@ static int CmdLSpec3Direct(void)
 {
     int special;
 
-    special = *PCodePtr++;
-    SpecArgs[0] = *PCodePtr++;
-    SpecArgs[1] = *PCodePtr++;
-    SpecArgs[2] = *PCodePtr++;
+    special = LONG(*PCodePtr);
+    ++PCodePtr;
+    SpecArgs[0] = LONG(*PCodePtr);
+    ++PCodePtr;
+    SpecArgs[1] = LONG(*PCodePtr);
+    ++PCodePtr;
+    SpecArgs[2] = LONG(*PCodePtr);
+    ++PCodePtr;
     P_ExecuteLineSpecial(special, SpecArgs, ACScript->line,
                          ACScript->side, ACScript->activator);
     return SCRIPT_CONTINUE;
@@ -932,11 +964,16 @@ static int CmdLSpec4Direct(void)
 {
     int special;
 
-    special = *PCodePtr++;
-    SpecArgs[0] = *PCodePtr++;
-    SpecArgs[1] = *PCodePtr++;
-    SpecArgs[2] = *PCodePtr++;
-    SpecArgs[3] = *PCodePtr++;
+    special = LONG(*PCodePtr);
+    ++PCodePtr;
+    SpecArgs[0] = LONG(*PCodePtr);
+    ++PCodePtr;
+    SpecArgs[1] = LONG(*PCodePtr);
+    ++PCodePtr;
+    SpecArgs[2] = LONG(*PCodePtr);
+    ++PCodePtr;
+    SpecArgs[3] = LONG(*PCodePtr);
+    ++PCodePtr;
     P_ExecuteLineSpecial(special, SpecArgs, ACScript->line,
                          ACScript->side, ACScript->activator);
     return SCRIPT_CONTINUE;
@@ -946,12 +983,18 @@ static int CmdLSpec5Direct(void)
 {
     int special;
 
-    special = *PCodePtr++;
-    SpecArgs[0] = *PCodePtr++;
-    SpecArgs[1] = *PCodePtr++;
-    SpecArgs[2] = *PCodePtr++;
-    SpecArgs[3] = *PCodePtr++;
-    SpecArgs[4] = *PCodePtr++;
+    special = LONG(*PCodePtr);
+    ++PCodePtr;
+    SpecArgs[0] = LONG(*PCodePtr);
+    ++PCodePtr;
+    SpecArgs[1] = LONG(*PCodePtr);
+    ++PCodePtr;
+    SpecArgs[2] = LONG(*PCodePtr);
+    ++PCodePtr;
+    SpecArgs[3] = LONG(*PCodePtr);
+    ++PCodePtr;
+    SpecArgs[4] = LONG(*PCodePtr);
+    ++PCodePtr;
     P_ExecuteLineSpecial(special, SpecArgs, ACScript->line,
                          ACScript->side, ACScript->activator);
     return SCRIPT_CONTINUE;
@@ -1046,163 +1089,190 @@ static int CmdGE(void)
 
 static int CmdAssignScriptVar(void)
 {
-    ACScript->vars[*PCodePtr++] = Pop();
+    ACScript->vars[LONG(*PCodePtr)] = Pop();
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdAssignMapVar(void)
 {
-    MapVars[*PCodePtr++] = Pop();
+    MapVars[LONG(*PCodePtr)] = Pop();
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdAssignWorldVar(void)
 {
-    WorldVars[*PCodePtr++] = Pop();
+    WorldVars[LONG(*PCodePtr)] = Pop();
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdPushScriptVar(void)
 {
-    Push(ACScript->vars[*PCodePtr++]);
+    Push(ACScript->vars[LONG(*PCodePtr)]);
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdPushMapVar(void)
 {
-    Push(MapVars[*PCodePtr++]);
+    Push(MapVars[LONG(*PCodePtr)]);
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdPushWorldVar(void)
 {
-    Push(WorldVars[*PCodePtr++]);
+    Push(WorldVars[LONG(*PCodePtr)]);
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdAddScriptVar(void)
 {
-    ACScript->vars[*PCodePtr++] += Pop();
+    ACScript->vars[LONG(*PCodePtr)] += Pop();
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdAddMapVar(void)
 {
-    MapVars[*PCodePtr++] += Pop();
+    MapVars[LONG(*PCodePtr)] += Pop();
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdAddWorldVar(void)
 {
-    WorldVars[*PCodePtr++] += Pop();
+    WorldVars[LONG(*PCodePtr)] += Pop();
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdSubScriptVar(void)
 {
-    ACScript->vars[*PCodePtr++] -= Pop();
+    ACScript->vars[LONG(*PCodePtr)] -= Pop();
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdSubMapVar(void)
 {
-    MapVars[*PCodePtr++] -= Pop();
+    MapVars[LONG(*PCodePtr)] -= Pop();
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdSubWorldVar(void)
 {
-    WorldVars[*PCodePtr++] -= Pop();
+    WorldVars[LONG(*PCodePtr)] -= Pop();
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdMulScriptVar(void)
 {
-    ACScript->vars[*PCodePtr++] *= Pop();
+    ACScript->vars[LONG(*PCodePtr)] *= Pop();
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdMulMapVar(void)
 {
-    MapVars[*PCodePtr++] *= Pop();
+    MapVars[LONG(*PCodePtr)] *= Pop();
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdMulWorldVar(void)
 {
-    WorldVars[*PCodePtr++] *= Pop();
+    WorldVars[LONG(*PCodePtr)] *= Pop();
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdDivScriptVar(void)
 {
-    ACScript->vars[*PCodePtr++] /= Pop();
+    ACScript->vars[LONG(*PCodePtr)] /= Pop();
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdDivMapVar(void)
 {
-    MapVars[*PCodePtr++] /= Pop();
+    MapVars[LONG(*PCodePtr)] /= Pop();
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdDivWorldVar(void)
 {
-    WorldVars[*PCodePtr++] /= Pop();
+    WorldVars[LONG(*PCodePtr)] /= Pop();
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdModScriptVar(void)
 {
-    ACScript->vars[*PCodePtr++] %= Pop();
+    ACScript->vars[LONG(*PCodePtr)] %= Pop();
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdModMapVar(void)
 {
-    MapVars[*PCodePtr++] %= Pop();
+    MapVars[LONG(*PCodePtr)] %= Pop();
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdModWorldVar(void)
 {
-    WorldVars[*PCodePtr++] %= Pop();
+    WorldVars[LONG(*PCodePtr)] %= Pop();
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdIncScriptVar(void)
 {
-    ACScript->vars[*PCodePtr++]++;
+    ++ACScript->vars[LONG(*PCodePtr)];
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdIncMapVar(void)
 {
-    MapVars[*PCodePtr++]++;
+    ++MapVars[LONG(*PCodePtr)];
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdIncWorldVar(void)
 {
-    WorldVars[*PCodePtr++]++;
+    ++WorldVars[LONG(*PCodePtr)];
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdDecScriptVar(void)
 {
-    ACScript->vars[*PCodePtr++]--;
+    --ACScript->vars[LONG(*PCodePtr)];
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdDecMapVar(void)
 {
-    MapVars[*PCodePtr++]--;
+    --MapVars[LONG(*PCodePtr)];
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
 static int CmdDecWorldVar(void)
 {
-    WorldVars[*PCodePtr++]--;
+    --WorldVars[LONG(*PCodePtr)];
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
@@ -1214,13 +1284,13 @@ static int CmdGoto(void)
 
 static int CmdIfGoto(void)
 {
-    if (Pop())
+    if (Pop() != 0)
     {
         PCodePtr = (int *) (ActionCodeBase + *PCodePtr);
     }
     else
     {
-        PCodePtr++;
+        ++PCodePtr;
     }
     return SCRIPT_CONTINUE;
 }
@@ -1239,7 +1309,8 @@ static int CmdDelay(void)
 
 static int CmdDelayDirect(void)
 {
-    ACScript->delayCount = *PCodePtr++;
+    ACScript->delayCount = LONG(*PCodePtr);
+    ++PCodePtr;
     return SCRIPT_STOP;
 }
 
@@ -1259,8 +1330,10 @@ static int CmdRandomDirect(void)
     int low;
     int high;
 
-    low = *PCodePtr++;
-    high = *PCodePtr++;
+    low = LONG(*PCodePtr);
+    ++PCodePtr;
+    high = LONG(*PCodePtr);
+    ++PCodePtr;
     Push(low + (P_Random() % (high - low + 1)));
     return SCRIPT_CONTINUE;
 }
@@ -1278,8 +1351,10 @@ static int CmdThingCountDirect(void)
 {
     int type;
 
-    type = *PCodePtr++;
-    ThingCount(type, *PCodePtr++);
+    type = LONG(*PCodePtr);
+    ++PCodePtr;
+    ThingCount(type, LONG(*PCodePtr));
+    ++PCodePtr;
     return SCRIPT_CONTINUE;
 }
 
@@ -1349,7 +1424,8 @@ static int CmdTagWait(void)
 
 static int CmdTagWaitDirect(void)
 {
-    ACSInfo[ACScript->infoIndex].waitValue = *PCodePtr++;
+    ACSInfo[ACScript->infoIndex].waitValue = LONG(*PCodePtr);
+    ++PCodePtr;
     ACSInfo[ACScript->infoIndex].state = ASTE_WAITINGFORTAG;
     return SCRIPT_STOP;
 }
@@ -1363,7 +1439,8 @@ static int CmdPolyWait(void)
 
 static int CmdPolyWaitDirect(void)
 {
-    ACSInfo[ACScript->infoIndex].waitValue = *PCodePtr++;
+    ACSInfo[ACScript->infoIndex].waitValue = LONG(*PCodePtr);
+    ++PCodePtr;
     ACSInfo[ACScript->infoIndex].state = ASTE_WAITINGFORPOLY;
     return SCRIPT_STOP;
 }
@@ -1390,8 +1467,10 @@ static int CmdChangeFloorDirect(void)
     int flat;
     int sectorIndex;
 
-    tag = *PCodePtr++;
-    flat = R_FlatNumForName(ACStrings[*PCodePtr++]);
+    tag = LONG(*PCodePtr);
+    ++PCodePtr;
+    flat = R_FlatNumForName(ACStrings[LONG(*PCodePtr)]);
+    ++PCodePtr;
     sectorIndex = -1;
     while ((sectorIndex = P_FindSectorFromTag(tag, sectorIndex)) >= 0)
     {
@@ -1422,8 +1501,10 @@ static int CmdChangeCeilingDirect(void)
     int flat;
     int sectorIndex;
 
-    tag = *PCodePtr++;
-    flat = R_FlatNumForName(ACStrings[*PCodePtr++]);
+    tag = LONG(*PCodePtr);
+    ++PCodePtr;
+    flat = R_FlatNumForName(ACStrings[LONG(*PCodePtr)]);
+    ++PCodePtr;
     sectorIndex = -1;
     while ((sectorIndex = P_FindSectorFromTag(tag, sectorIndex)) >= 0)
     {
@@ -1500,13 +1581,13 @@ static int CmdUnaryMinus(void)
 
 static int CmdIfNotGoto(void)
 {
-    if (Pop())
+    if (Pop() != 0)
     {
-        PCodePtr++;
+        ++PCodePtr;
     }
     else
     {
-        PCodePtr = (int *) (ActionCodeBase + *PCodePtr);
+        PCodePtr = (int *) (ActionCodeBase + LONG(*PCodePtr));
     }
     return SCRIPT_CONTINUE;
 }
@@ -1526,7 +1607,8 @@ static int CmdScriptWait(void)
 
 static int CmdScriptWaitDirect(void)
 {
-    ACSInfo[ACScript->infoIndex].waitValue = *PCodePtr++;
+    ACSInfo[ACScript->infoIndex].waitValue = LONG(*PCodePtr);
+    ++PCodePtr;
     ACSInfo[ACScript->infoIndex].state = ASTE_WAITINGFORSCRIPT;
     return SCRIPT_STOP;
 }
@@ -1542,15 +1624,21 @@ static int CmdClearLineSpecial(void)
 
 static int CmdCaseGoto(void)
 {
-    if (Top() == *PCodePtr++)
+    int value;
+
+    value = LONG(*PCodePtr);
+    ++PCodePtr;
+
+    if (Top() == value)
     {
-        PCodePtr = (int *) (ActionCodeBase + *PCodePtr);
+        PCodePtr = (int *) (ActionCodeBase + LONG(*PCodePtr));
         Drop();
     }
     else
     {
-        PCodePtr++;
+        ++PCodePtr;
     }
+
     return SCRIPT_CONTINUE;
 }
 
