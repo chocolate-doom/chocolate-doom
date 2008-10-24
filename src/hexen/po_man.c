@@ -1435,6 +1435,7 @@ void PO_Init(int lump)
 {
     byte *data;
     int i;
+    mapthing_t spawnthing;
     mapthing_t *mt;
     int numthings;
     int polyIndex;
@@ -1449,32 +1450,34 @@ void PO_Init(int lump)
     // Find the startSpot points, and spawn each polyobj
     for (i = 0; i < numthings; i++, mt++)
     {
-        mt->x = SHORT(mt->x);
-        mt->y = SHORT(mt->y);
-        mt->angle = SHORT(mt->angle);
-        mt->type = SHORT(mt->type);
+        spawnthing.x = SHORT(mt->x);
+        spawnthing.y = SHORT(mt->y);
+        spawnthing.angle = SHORT(mt->angle);
+        spawnthing.type = SHORT(mt->type);
 
         // 3001 = no crush, 3002 = crushing
-        if (mt->type == PO_SPAWN_TYPE || mt->type == PO_SPAWNCRUSH_TYPE)
+        if (spawnthing.type == PO_SPAWN_TYPE
+         || spawnthing.type == PO_SPAWNCRUSH_TYPE)
         {                       // Polyobj StartSpot Pt.
-            polyobjs[polyIndex].startSpot.x = mt->x << FRACBITS;
-            polyobjs[polyIndex].startSpot.y = mt->y << FRACBITS;
-            SpawnPolyobj(polyIndex, mt->angle,
-                         (mt->type == PO_SPAWNCRUSH_TYPE));
+            polyobjs[polyIndex].startSpot.x = spawnthing.x << FRACBITS;
+            polyobjs[polyIndex].startSpot.y = spawnthing.y << FRACBITS;
+            SpawnPolyobj(polyIndex, spawnthing.angle,
+                         (spawnthing.type == PO_SPAWNCRUSH_TYPE));
             polyIndex++;
         }
     }
     mt = (mapthing_t *) data;
     for (i = 0; i < numthings; i++, mt++)
     {
-        mt->x = SHORT(mt->x);
-        mt->y = SHORT(mt->y);
-        mt->angle = SHORT(mt->angle);
-        mt->type = SHORT(mt->type);
-        if (mt->type == PO_ANCHOR_TYPE)
+        spawnthing.x = SHORT(mt->x);
+        spawnthing.y = SHORT(mt->y);
+        spawnthing.angle = SHORT(mt->angle);
+        spawnthing.type = SHORT(mt->type);
+        if (spawnthing.type == PO_ANCHOR_TYPE)
         {                       // Polyobj Anchor Pt.
-            TranslateToStartSpot(mt->angle, mt->x << FRACBITS,
-                                 mt->y << FRACBITS);
+            TranslateToStartSpot(spawnthing.angle,
+                                 spawnthing.x << FRACBITS,
+                                 spawnthing.y << FRACBITS);
         }
     }
     W_ReleaseLumpNum(lump);

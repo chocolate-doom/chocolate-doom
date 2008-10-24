@@ -355,6 +355,7 @@ void P_LoadThings(int lump)
 {
     byte *data;
     int i;
+    mapthing_t spawnthing;
     mapthing_t *mt;
     int numthings;
     int playerCount;
@@ -366,14 +367,22 @@ void P_LoadThings(int lump)
     mt = (mapthing_t *) data;
     for (i = 0; i < numthings; i++, mt++)
     {
-        mt->tid = SHORT(mt->tid);
-        mt->x = SHORT(mt->x);
-        mt->y = SHORT(mt->y);
-        mt->height = SHORT(mt->height);
-        mt->angle = SHORT(mt->angle);
-        mt->type = SHORT(mt->type);
-        mt->options = SHORT(mt->options);
-        P_SpawnMapThing(mt);
+        spawnthing.tid = SHORT(mt->tid);
+        spawnthing.x = SHORT(mt->x);
+        spawnthing.y = SHORT(mt->y);
+        spawnthing.height = SHORT(mt->height);
+        spawnthing.angle = SHORT(mt->angle);
+        spawnthing.type = SHORT(mt->type);
+        spawnthing.options = SHORT(mt->options);
+
+        spawnthing.special = mt->special;
+        spawnthing.arg1 = mt->arg1;
+        spawnthing.arg2 = mt->arg2;
+        spawnthing.arg3 = mt->arg3;
+        spawnthing.arg4 = mt->arg4;
+        spawnthing.arg5 = mt->arg5;
+
+        P_SpawnMapThing(&spawnthing);
     }
     P_CreateTIDList();
     P_InitCreatureCorpseQueue(false);   // false = do NOT scan for corpses
