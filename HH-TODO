@@ -6,10 +6,8 @@
  * Update docgen to generate manpages for Heretic/Hexen.
 
 Heretic:
- * Fix bug with SFX played at wrong volumes
  * Multiplayer code to use Chocolate Doom multiplayer code.
  * Frequency shifted sounds.
- * Update input code to work properly with vanilla_keyboard_mapping
  * Check all command line parameters
  * Check for endianness assumptions
  * Savegame code to write structures predictably and endianness-correct
@@ -17,23 +15,21 @@ Heretic:
  * Structure packing macros for structures read from disk
  * Merge r_draw.c to common version and delete duplicate
  * Recreate text mode startup using textscreen code.
+ * HHE patch support
  * v1.2 emulation (if possible)
  * Screensaver mode
 
 Hexen:
  * CD-ROM music playback
- * Merge r_draw.c to common version and delete duplicate
- * Remove duplicates:
-    - Skill levels
  * Multiplayer code to use Chocolate Doom multiplayer code.
- * WAD code to use the new locking API
- * Config file code to use m_config.c (and add H/H-specific variables)
- * Use the common i_sound API.  Frequency shifting?
+ * Frequency shifted sounds.
  * Use the common cheats code
- * Update input code to work properly with vanilla_keyboard_mapping
- * Check for endianness assumptions (shouldn't be too bad if it was developed
-   on NeXT)
+ * Check for endianness assumptions - mostly done now
  * Savegame code to write structures predictably and endianness-correct
+ * Remove NeXT and WATCOMC defines
  * Structure packing macros for structures read from disk
+ * Merge r_draw.c to common version and delete duplicate
+ * Recreate graphical startup.
+ * v1.0 emulation (if possible/necessary)
  * Screensaver mode
 
