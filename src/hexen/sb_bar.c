@@ -27,35 +27,19 @@
 #include "h2def.h"
 #include "i_video.h"
 #include "m_bbox.h"
+#include "m_cheat.h"
 #include "p_local.h"
 #include "s_sound.h"
 #include "v_video.h"
 
-#ifdef __WATCOMC__
 #include "i_sound.h"            // For CD stuff
-#endif
-
-// MACROS ------------------------------------------------------------------
-
-#define CHEAT_ENCRYPT(a) \
-	((((a)&1)<<2)+ \
-	(((a)&2)>>1)+ \
-	(((a)&4)<<5)+ \
-	(((a)&8)<<2)+ \
-	(((a)&16)>>3)+ \
-	(((a)&32)<<1)+ \
-	(((a)&64)>>3)+ \
-	(((a)&128)>>3))
 
 // TYPES -------------------------------------------------------------------
 
 typedef struct Cheat_s
 {
     void (*func) (player_t * player, struct Cheat_s * cheat);
-    byte *sequence;
-    byte *pos;
-    int args[2];
-    int currentArg;
+    cheatseq_t *seq;
 } Cheat_t;
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
@@ -136,7 +120,6 @@ boolean i_CDMusic;              // in Watcom, defined in i_ibm
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
 static int DisplayTicker = 0;
-static byte CheatLookup[256];
 static int HealthMarker;
 //static int ChainWiggle;
 static player_t *CPlayer;
@@ -184,335 +167,100 @@ static patch_t *PatchINVRTGEM1;
 static patch_t *PatchINVRTGEM2;
 
 // Toggle god mode
-static byte CheatGodSeq[] = {
-    CHEAT_ENCRYPT('s'),
-    CHEAT_ENCRYPT('a'),
-    CHEAT_ENCRYPT('t'),
-    CHEAT_ENCRYPT('a'),
-    CHEAT_ENCRYPT('n'),
-    0xff
-};
+cheatseq_t CheatGodSeq = CHEAT("satan", 0);
 
 // Toggle no clipping mode
-static byte CheatNoClipSeq[] = {
-    CHEAT_ENCRYPT('c'),
-    CHEAT_ENCRYPT('a'),
-    CHEAT_ENCRYPT('s'),
-    CHEAT_ENCRYPT('p'),
-    CHEAT_ENCRYPT('e'),
-    CHEAT_ENCRYPT('r'),
-    0xff
-};
+cheatseq_t CheatNoClipSeq = CHEAT("casper", 0);
 
 // Get all weapons and mana
-static byte CheatWeaponsSeq[] = {
-    CHEAT_ENCRYPT('n'),
-    CHEAT_ENCRYPT('r'),
-    CHEAT_ENCRYPT('a'),
-    0xff
-};
+cheatseq_t CheatWeaponsSeq = CHEAT("nra", 0);
 
 // Get full health
-static byte CheatHealthSeq[] = {
-    CHEAT_ENCRYPT('c'),
-    CHEAT_ENCRYPT('l'),
-    CHEAT_ENCRYPT('u'),
-    CHEAT_ENCRYPT('b'),
-    CHEAT_ENCRYPT('m'),
-    CHEAT_ENCRYPT('e'),
-    CHEAT_ENCRYPT('d'),
-    0xff
-};
+cheatseq_t CheatHealthSeq =  CHEAT("clubmed", 0);
 
 // Get all keys
-static byte CheatKeysSeq[] = {
-    CHEAT_ENCRYPT('l'),
-    CHEAT_ENCRYPT('o'),
-    CHEAT_ENCRYPT('c'),
-    CHEAT_ENCRYPT('k'),
-    CHEAT_ENCRYPT('s'),
-    CHEAT_ENCRYPT('m'),
-    CHEAT_ENCRYPT('i'),
-    CHEAT_ENCRYPT('t'),
-    CHEAT_ENCRYPT('h'),
-    0xff, 0
-};
+cheatseq_t CheatKeysSeq = CHEAT("locksmith", 0);
 
 // Toggle sound debug info
-static byte CheatSoundSeq[] = {
-    CHEAT_ENCRYPT('n'),
-    CHEAT_ENCRYPT('o'),
-    CHEAT_ENCRYPT('i'),
-    CHEAT_ENCRYPT('s'),
-    CHEAT_ENCRYPT('e'),
-    0xff
-};
+cheatseq_t CheatSoundSeq = CHEAT("noise", 0);
 
 // Toggle ticker
-static byte CheatTickerSeq[] = {
-    CHEAT_ENCRYPT('t'),
-    CHEAT_ENCRYPT('i'),
-    CHEAT_ENCRYPT('c'),
-    CHEAT_ENCRYPT('k'),
-    CHEAT_ENCRYPT('e'),
-    CHEAT_ENCRYPT('r'),
-    0xff, 0
-};
+cheatseq_t CheatTickerSeq = CHEAT("ticker", 0);
 
 // Get all artifacts
-static byte CheatArtifactAllSeq[] = {
-    CHEAT_ENCRYPT('i'),
-    CHEAT_ENCRYPT('n'),
-    CHEAT_ENCRYPT('d'),
-    CHEAT_ENCRYPT('i'),
-    CHEAT_ENCRYPT('a'),
-    CHEAT_ENCRYPT('n'),
-    CHEAT_ENCRYPT('a'),
-    0xff, 0
-};
+cheatseq_t CheatArtifactAllSeq = CHEAT("indiana", 0);
 
 // Get all puzzle pieces
-static byte CheatPuzzleSeq[] = {
-    CHEAT_ENCRYPT('s'),
-    CHEAT_ENCRYPT('h'),
-    CHEAT_ENCRYPT('e'),
-    CHEAT_ENCRYPT('r'),
-    CHEAT_ENCRYPT('l'),
-    CHEAT_ENCRYPT('o'),
-    CHEAT_ENCRYPT('c'),
-    CHEAT_ENCRYPT('k'),
-    0xff, 0
-};
+cheatseq_t CheatPuzzleSeq = CHEAT("sherlock", 0);
 
 // Warp to new level
-static byte CheatWarpSeq[] = {
-    CHEAT_ENCRYPT('v'),
-    CHEAT_ENCRYPT('i'),
-    CHEAT_ENCRYPT('s'),
-    CHEAT_ENCRYPT('i'),
-    CHEAT_ENCRYPT('t'),
-    0, 0, 0xff, 0
-};
+cheatseq_t CheatWarpSeq = CHEAT("visit", 2);
 
 // Become a pig
-static byte CheatPigSeq[] = {
-    CHEAT_ENCRYPT('d'),
-    CHEAT_ENCRYPT('e'),
-    CHEAT_ENCRYPT('l'),
-    CHEAT_ENCRYPT('i'),
-    CHEAT_ENCRYPT('v'),
-    CHEAT_ENCRYPT('e'),
-    CHEAT_ENCRYPT('r'),
-    CHEAT_ENCRYPT('a'),
-    CHEAT_ENCRYPT('n'),
-    CHEAT_ENCRYPT('c'),
-    CHEAT_ENCRYPT('e'),
-    0xff, 0
-};
+cheatseq_t CheatPigSeq = CHEAT("deliverance", 0);
 
 // Kill all monsters
-static byte CheatMassacreSeq[] = {
-    CHEAT_ENCRYPT('b'),
-    CHEAT_ENCRYPT('u'),
-    CHEAT_ENCRYPT('t'),
-    CHEAT_ENCRYPT('c'),
-    CHEAT_ENCRYPT('h'),
-    CHEAT_ENCRYPT('e'),
-    CHEAT_ENCRYPT('r'),
-    0xff, 0
-};
+cheatseq_t CheatMassacreSeq = CHEAT("butcher", 0);
 
-static byte CheatIDKFASeq[] = {
-    CHEAT_ENCRYPT('c'),
-    CHEAT_ENCRYPT('o'),
-    CHEAT_ENCRYPT('n'),
-    CHEAT_ENCRYPT('a'),
-    CHEAT_ENCRYPT('n'),
-    0xff, 0
-};
+cheatseq_t CheatIDKFASeq = CHEAT("conan", 0);
 
-static byte CheatQuickenSeq1[] = {
-    CHEAT_ENCRYPT('m'),
-    CHEAT_ENCRYPT('a'),
-    CHEAT_ENCRYPT('r'),
-    CHEAT_ENCRYPT('t'),
-    CHEAT_ENCRYPT('e'),
-    CHEAT_ENCRYPT('k'),
-    0xff, 0
-};
+cheatseq_t CheatQuickenSeq1 = CHEAT("martek", 0);
 
-static byte CheatQuickenSeq2[] = {
-    CHEAT_ENCRYPT('m'),
-    CHEAT_ENCRYPT('a'),
-    CHEAT_ENCRYPT('r'),
-    CHEAT_ENCRYPT('t'),
-    CHEAT_ENCRYPT('e'),
-    CHEAT_ENCRYPT('k'),
-    CHEAT_ENCRYPT('m'),
-    CHEAT_ENCRYPT('a'),
-    CHEAT_ENCRYPT('r'),
-    CHEAT_ENCRYPT('t'),
-    CHEAT_ENCRYPT('e'),
-    CHEAT_ENCRYPT('k'),
-    0xff, 0
-};
+cheatseq_t CheatQuickenSeq2 = CHEAT("martekmartek", 0);
 
-static byte CheatQuickenSeq3[] = {
-    CHEAT_ENCRYPT('m'),
-    CHEAT_ENCRYPT('a'),
-    CHEAT_ENCRYPT('r'),
-    CHEAT_ENCRYPT('t'),
-    CHEAT_ENCRYPT('e'),
-    CHEAT_ENCRYPT('k'),
-    CHEAT_ENCRYPT('m'),
-    CHEAT_ENCRYPT('a'),
-    CHEAT_ENCRYPT('r'),
-    CHEAT_ENCRYPT('t'),
-    CHEAT_ENCRYPT('e'),
-    CHEAT_ENCRYPT('k'),
-    CHEAT_ENCRYPT('m'),
-    CHEAT_ENCRYPT('a'),
-    CHEAT_ENCRYPT('r'),
-    CHEAT_ENCRYPT('t'),
-    CHEAT_ENCRYPT('e'),
-    CHEAT_ENCRYPT('k'),
-    0xff, 0
-};
+cheatseq_t CheatQuickenSeq3 = CHEAT("martekmartekmartek", 0);
 
 // New class
-static byte CheatClass1Seq[] = {
-    CHEAT_ENCRYPT('s'),
-    CHEAT_ENCRYPT('h'),
-    CHEAT_ENCRYPT('a'),
-    CHEAT_ENCRYPT('d'),
-    CHEAT_ENCRYPT('o'),
-    CHEAT_ENCRYPT('w'),
-    CHEAT_ENCRYPT('c'),
-    CHEAT_ENCRYPT('a'),
-    CHEAT_ENCRYPT('s'),
-    CHEAT_ENCRYPT('t'),
-    CHEAT_ENCRYPT('e'),
-    CHEAT_ENCRYPT('r'),
-    0xff, 0
-};
+cheatseq_t CheatClass1Seq = CHEAT("shadowcaster", 0);
 
-static byte CheatClass2Seq[] = {
-    CHEAT_ENCRYPT('s'),
-    CHEAT_ENCRYPT('h'),
-    CHEAT_ENCRYPT('a'),
-    CHEAT_ENCRYPT('d'),
-    CHEAT_ENCRYPT('o'),
-    CHEAT_ENCRYPT('w'),
-    CHEAT_ENCRYPT('c'),
-    CHEAT_ENCRYPT('a'),
-    CHEAT_ENCRYPT('s'),
-    CHEAT_ENCRYPT('t'),
-    CHEAT_ENCRYPT('e'),
-    CHEAT_ENCRYPT('r'),
-    0, 0xff, 0
-};
+cheatseq_t CheatClass2Seq = CHEAT("shadowcaster", 1);
 
-static byte CheatInitSeq[] = {
-    CHEAT_ENCRYPT('i'),
-    CHEAT_ENCRYPT('n'),
-    CHEAT_ENCRYPT('i'),
-    CHEAT_ENCRYPT('t'),
-    0xff, 0
-};
+cheatseq_t CheatInitSeq = CHEAT("init", 0);
 
-static byte CheatVersionSeq[] = {
-    CHEAT_ENCRYPT('m'),
-    CHEAT_ENCRYPT('r'),
-    CHEAT_ENCRYPT('j'),
-    CHEAT_ENCRYPT('o'),
-    CHEAT_ENCRYPT('n'),
-    CHEAT_ENCRYPT('e'),
-    CHEAT_ENCRYPT('s'),
-    0xff, 0
-};
+cheatseq_t CheatVersionSeq = CHEAT("mrjones", 0);
 
-static byte CheatDebugSeq[] = {
-    CHEAT_ENCRYPT('w'),
-    CHEAT_ENCRYPT('h'),
-    CHEAT_ENCRYPT('e'),
-    CHEAT_ENCRYPT('r'),
-    CHEAT_ENCRYPT('e'),
-    0xff, 0
-};
+cheatseq_t CheatDebugSeq = CHEAT("where", 0);
 
-static byte CheatScriptSeq1[] = {
-    CHEAT_ENCRYPT('p'),
-    CHEAT_ENCRYPT('u'),
-    CHEAT_ENCRYPT('k'),
-    CHEAT_ENCRYPT('e'),
-    0xff, 0
-};
+cheatseq_t CheatScriptSeq1 = CHEAT("puke", 0);
 
-static byte CheatScriptSeq2[] = {
-    CHEAT_ENCRYPT('p'),
-    CHEAT_ENCRYPT('u'),
-    CHEAT_ENCRYPT('k'),
-    CHEAT_ENCRYPT('e'),
-    0, 0xff, 0
-};
+cheatseq_t CheatScriptSeq2 = CHEAT("puke", 1);
 
-static byte CheatScriptSeq3[] = {
-    CHEAT_ENCRYPT('p'),
-    CHEAT_ENCRYPT('u'),
-    CHEAT_ENCRYPT('k'),
-    CHEAT_ENCRYPT('e'),
-    0, 0, 0xff,
-};
+cheatseq_t CheatScriptSeq3 = CHEAT("puke", 2);
 
-static byte CheatRevealSeq[] = {
-    CHEAT_ENCRYPT('m'),
-    CHEAT_ENCRYPT('a'),
-    CHEAT_ENCRYPT('p'),
-    CHEAT_ENCRYPT('s'),
-    CHEAT_ENCRYPT('c'),
-    CHEAT_ENCRYPT('o'),
-    0xff, 0
-};
+cheatseq_t CheatRevealSeq = CHEAT("mapsco", 0);
 
-static byte CheatTrackSeq1[] = {
-    CHEAT_ENCRYPT('`'),
-    0xff, 0
-};
+cheatseq_t CheatTrackSeq1 = CHEAT("`", 0);
 
-static byte CheatTrackSeq2[] = {
-    CHEAT_ENCRYPT('`'),
-    0, 0, 0xff, 0
-};
+cheatseq_t CheatTrackSeq2 = CHEAT("`", 2);
 
 static Cheat_t Cheats[] = {
-    {CheatTrackFunc1, CheatTrackSeq1, NULL, 0, 0, 0},
-    {CheatTrackFunc2, CheatTrackSeq2, NULL, 0, 0, 0},
-    {CheatGodFunc, CheatGodSeq, NULL, 0, 0, 0},
-    {CheatNoClipFunc, CheatNoClipSeq, NULL, 0, 0, 0},
-    {CheatWeaponsFunc, CheatWeaponsSeq, NULL, 0, 0, 0},
-    {CheatHealthFunc, CheatHealthSeq, NULL, 0, 0, 0},
-    {CheatKeysFunc, CheatKeysSeq, NULL, 0, 0, 0},
-    {CheatSoundFunc, CheatSoundSeq, NULL, 0, 0, 0},
-    {CheatTickerFunc, CheatTickerSeq, NULL, 0, 0, 0},
-    {CheatArtifactAllFunc, CheatArtifactAllSeq, NULL, 0, 0, 0},
-    {CheatPuzzleFunc, CheatPuzzleSeq, NULL, 0, 0, 0},
-    {CheatWarpFunc, CheatWarpSeq, NULL, 0, 0, 0},
-    {CheatPigFunc, CheatPigSeq, NULL, 0, 0, 0},
-    {CheatMassacreFunc, CheatMassacreSeq, NULL, 0, 0, 0},
-    {CheatIDKFAFunc, CheatIDKFASeq, NULL, 0, 0, 0},
-    {CheatQuickenFunc1, CheatQuickenSeq1, NULL, 0, 0, 0},
-    {CheatQuickenFunc2, CheatQuickenSeq2, NULL, 0, 0, 0},
-    {CheatQuickenFunc3, CheatQuickenSeq3, NULL, 0, 0, 0},
-    {CheatClassFunc1, CheatClass1Seq, NULL, 0, 0, 0},
-    {CheatClassFunc2, CheatClass2Seq, NULL, 0, 0, 0},
-    {CheatInitFunc, CheatInitSeq, NULL, 0, 0, 0},
-    {CheatVersionFunc, CheatVersionSeq, NULL, 0, 0, 0},
-    {CheatDebugFunc, CheatDebugSeq, NULL, 0, 0, 0},
-    {CheatScriptFunc1, CheatScriptSeq1, NULL, 0, 0, 0},
-    {CheatScriptFunc2, CheatScriptSeq2, NULL, 0, 0, 0},
-    {CheatScriptFunc3, CheatScriptSeq3, NULL, 0, 0, 0},
-    {CheatRevealFunc, CheatRevealSeq, NULL, 0, 0, 0},
-    {NULL, NULL, NULL, 0, 0, 0} // Terminator
+    {CheatTrackFunc1, &CheatTrackSeq1},
+    {CheatTrackFunc2, &CheatTrackSeq2},
+    {CheatGodFunc, &CheatGodSeq},
+    {CheatNoClipFunc, &CheatNoClipSeq},
+    {CheatWeaponsFunc, &CheatWeaponsSeq},
+    {CheatHealthFunc, &CheatHealthSeq},
+    {CheatKeysFunc, &CheatKeysSeq},
+    {CheatSoundFunc, &CheatSoundSeq},
+    {CheatTickerFunc, &CheatTickerSeq},
+    {CheatArtifactAllFunc, &CheatArtifactAllSeq},
+    {CheatPuzzleFunc, &CheatPuzzleSeq},
+    {CheatWarpFunc, &CheatWarpSeq},
+    {CheatPigFunc, &CheatPigSeq},
+    {CheatMassacreFunc, &CheatMassacreSeq},
+    {CheatIDKFAFunc, &CheatIDKFASeq},
+    {CheatQuickenFunc1, &CheatQuickenSeq1},
+    {CheatQuickenFunc2, &CheatQuickenSeq2},
+    {CheatQuickenFunc3, &CheatQuickenSeq3},
+    {CheatClassFunc1, &CheatClass1Seq},
+    {CheatClassFunc2, &CheatClass2Seq},
+    {CheatInitFunc, &CheatInitSeq},
+    {CheatVersionFunc, &CheatVersionSeq},
+    {CheatDebugFunc, &CheatDebugSeq},
+    {CheatScriptFunc1, &CheatScriptSeq1},
+    {CheatScriptFunc2, &CheatScriptSeq2},
+    {CheatScriptFunc3, &CheatScriptSeq3},
+    {CheatRevealFunc, &CheatRevealSeq},
 };
 
 // CODE --------------------------------------------------------------------
@@ -570,11 +318,6 @@ void SB_Init(void)
     SpinMinotaurLump = W_GetNumForName("SPMINO0");
     SpinSpeedLump = W_GetNumForName("SPBOOT0");
     SpinDefenseLump = W_GetNumForName("SPSHLD0");
-
-    for (i = 0; i < 256; i++)
-    {
-        CheatLookup[i] = CHEAT_ENCRYPT(i);
-    }
 
     if (deathmatch)
     {
@@ -920,7 +663,7 @@ static void DrawSoundInfo(void)
         MN_DrTextA(text, xPos[x++], y);
         sprintf(text, "%d", c->mo->y >> FRACBITS);
         MN_DrTextA(text, xPos[x++], y);
-        sprintf(text, "%d", c->id);
+        sprintf(text, "%d", (int) c->id);
         MN_DrTextA(text, xPos[x++], y);
         sprintf(text, "%d", c->priority);
         MN_DrTextA(text, xPos[x++], y);
@@ -1793,7 +1536,7 @@ static boolean HandleCheats(byte key)
         return (false);
     }
     eat = false;
-    for (i = 0; Cheats[i].func != NULL; i++)
+    for (i = 0; i<arrlen(Cheats); ++i)
     {
         if (CheatAddKey(&Cheats[i], key, &eat))
         {
@@ -1814,6 +1557,7 @@ static boolean HandleCheats(byte key)
 
 static boolean CheatAddKey(Cheat_t * cheat, byte key, boolean * eat)
 {
+/*
     if (!cheat->pos)
     {
         cheat->pos = cheat->sequence;
@@ -1841,6 +1585,11 @@ static boolean CheatAddKey(Cheat_t * cheat, byte key, boolean * eat)
         return (true);
     }
     return (false);
+    */
+
+    *eat = cht_CheckCheat(cheat->seq, key);
+
+    return *eat;
 }
 
 //==========================================================================
@@ -1981,15 +1730,18 @@ static void CheatWarpFunc(player_t * player, Cheat_t * cheat)
     int ones;
     int map;
     char mapName[9];
+    char args[2];
 
-    tens = cheat->args[0] - '0';
-    ones = cheat->args[1] - '0';
+    cht_GetParam(cheat->seq, args);
+
+    tens = args[0] - '0';
+    ones = args[1] - '0';
     if (tens < 0 || tens > 9 || ones < 0 || ones > 9)
     {                           // Bad map
         P_SetMessage(player, TXT_CHEATBADINPUT, true);
         return;
     }
-    map = P_TranslateMap((cheat->args[0] - '0') * 10 + cheat->args[1] - '0');
+    map = P_TranslateMap((args[0] - '0') * 10 + args[1] - '0');
     if (map == -1)
     {                           // Not found
         P_SetMessage(player, TXT_CHEATNOMAP, true);
@@ -2075,12 +1827,15 @@ static void CheatClassFunc2(player_t * player, Cheat_t * cheat)
 {
     int i;
     int class;
+    char args[2];
+
+    cht_GetParam(cheat->seq, args);
 
     if (player->morphTics)
     {                           // don't change class if the player is morphed
         return;
     }
-    class = cheat->args[0] - '0';
+    class = args[0] - '0';
     if (class > 2 || class < 0)
     {
         P_SetMessage(player, "INVALID PLAYER CLASS", true);
@@ -2127,20 +1882,23 @@ static void CheatScriptFunc2(player_t * player, Cheat_t * cheat)
 static void CheatScriptFunc3(player_t * player, Cheat_t * cheat)
 {
     int script;
-    byte args[3];
+    byte script_args[3];
     int tens, ones;
     char textBuffer[40];
+    char args[2];
 
-    tens = cheat->args[0] - '0';
-    ones = cheat->args[1] - '0';
+    cht_GetParam(cheat->seq, args);
+
+    tens = args[0] - '0';
+    ones = args[1] - '0';
     script = tens * 10 + ones;
     if (script < 1)
         return;
     if (script > 99)
         return;
-    args[0] = args[1] = args[2] = 0;
+    script_args[0] = script_args[1] = script_args[2] = 0;
 
-    if (P_StartACS(script, 0, args, player->mo, NULL, 0))
+    if (P_StartACS(script, 0, script_args, player->mo, NULL, 0))
     {
         sprintf(textBuffer, "RUNNING SCRIPT %.2d", script);
         P_SetMessage(player, textBuffer, true);
@@ -2190,12 +1948,15 @@ static void CheatTrackFunc2(player_t * player, Cheat_t * cheat)
 #ifdef __WATCOMC__
     char buffer[80];
     int track;
+    char args[2];
+
+    cht_GetParam(cheat->seq, args);
 
     if (!i_CDMusic)
     {
         return;
     }
-    track = (cheat->args[0] - '0') * 10 + (cheat->args[1] - '0');
+    track = (args[0] - '0') * 10 + (args[1] - '0');
     if (track < I_CDMusFirstTrack() || track > I_CDMusLastTrack())
     {
         P_SetMessage(player, "INVALID TRACK NUMBER\n", true);
