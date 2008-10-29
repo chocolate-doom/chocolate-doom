@@ -1,6 +1,5 @@
  * Remove all dependencies of common code on doom/
     - net_client.c
- * Split d_iwad.c into common and use for Heretic/Hexen
  * Update netcode for new ticcmd_t fields
  * Chocolate Setup to allow configuration for H/H
  * Update docgen to generate manpages for Heretic/Hexen.
@@ -23,7 +22,6 @@ Hexen:
  * CD-ROM music playback
  * Multiplayer code to use Chocolate Doom multiplayer code.
  * Frequency shifted sounds.
- * Use the common cheats code
  * Check for endianness assumptions - mostly done now
  * Savegame code to write structures predictably and endianness-correct
  * Remove NeXT and WATCOMC defines
