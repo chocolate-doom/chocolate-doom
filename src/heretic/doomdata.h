@@ -40,15 +40,25 @@
 
 // lump order in a map wad
 enum
-{ ML_LABEL, ML_THINGS, ML_LINEDEFS, ML_SIDEDEFS, ML_VERTEXES, ML_SEGS,
-    ML_SSECTORS, ML_NODES, ML_SECTORS, ML_REJECT, ML_BLOCKMAP
+{
+    ML_LABEL,
+    ML_THINGS,
+    ML_LINEDEFS,
+    ML_SIDEDEFS,
+    ML_VERTEXES,
+    ML_SEGS,
+    ML_SSECTORS,
+    ML_NODES,
+    ML_SECTORS,
+    ML_REJECT,
+    ML_BLOCKMAP
 };
 
 
 typedef struct
 {
     short x, y;
-} mapvertex_t;
+} PACKEDATTR mapvertex_t;
 
 typedef struct
 {
@@ -56,7 +66,7 @@ typedef struct
     short rowoffset;
     char toptexture[8], bottomtexture[8], midtexture[8];
     short sector;               // on viewer's side
-} mapsidedef_t;
+} PACKEDATTR mapsidedef_t;
 
 typedef struct
 {
@@ -64,7 +74,7 @@ typedef struct
     short flags;
     short special, tag;
     short sidenum[2];           // sidenum[1] will be -1 if one sided
-} maplinedef_t;
+} PACKEDATTR maplinedef_t;
 
 #define	ML_BLOCKING			1
 #define	ML_BLOCKMONSTERS	2
@@ -91,13 +101,13 @@ typedef struct
     char floorpic[8], ceilingpic[8];
     short lightlevel;
     short special, tag;
-} mapsector_t;
+} PACKEDATTR mapsector_t;
 
 typedef struct
 {
     short numsegs;
     short firstseg;             // segs are stored sequentially
-} mapsubsector_t;
+} PACKEDATTR mapsubsector_t;
 
 typedef struct
 {
@@ -105,7 +115,7 @@ typedef struct
     short angle;
     short linedef, side;
     short offset;
-} mapseg_t;
+} PACKEDATTR mapseg_t;
 
 #define	NF_SUBSECTOR	0x8000
 typedef struct
@@ -113,7 +123,7 @@ typedef struct
     short x, y, dx, dy;         // partition line
     short bbox[2][4];           // bounding box for each child
     unsigned short children[2]; // if NF_SUBSECTOR its a subsector
-} mapnode_t;
+} PACKEDATTR mapnode_t;
 
 typedef struct
 {
@@ -121,7 +131,7 @@ typedef struct
     short angle;
     short type;
     short options;
-} mapthing_t;
+} PACKEDATTR mapthing_t;
 
 #define	MTF_EASY		1
 #define	MTF_NORMAL		2
@@ -143,7 +153,7 @@ typedef struct
     short patch;
     short stepdir;
     short colormap;
-} mappatch_t;
+} PACKEDATTR mappatch_t;
 
 typedef struct
 {
@@ -151,10 +161,10 @@ typedef struct
     boolean masked;
     short width;
     short height;
-    void **columndirectory;     // OBSOLETE
+    int obsolete;
     short patchcount;
     mappatch_t patches[1];
-} maptexture_t;
+} PACKEDATTR maptexture_t;
 
 
 /*
