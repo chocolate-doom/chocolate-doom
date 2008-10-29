@@ -55,7 +55,7 @@ typedef struct
 {
     short x;
     short y;
-} mapvertex_t;
+} PACKEDATTR mapvertex_t;
 
 typedef struct
 {
@@ -65,7 +65,7 @@ typedef struct
     char bottomtexture[8];
     char midtexture[8];
     short sector;               // on viewer's side
-} mapsidedef_t;
+} PACKEDATTR mapsidedef_t;
 
 typedef struct
 {
@@ -79,7 +79,7 @@ typedef struct
     byte arg4;
     byte arg5;
     short sidenum[2];           // sidenum[1] will be -1 if one sided
-} maplinedef_t;
+} PACKEDATTR maplinedef_t;
 
 #define	ML_BLOCKING			0x0001
 #define	ML_BLOCKMONSTERS	0x0002
@@ -112,13 +112,13 @@ typedef struct
     short lightlevel;
     short special;
     short tag;
-} mapsector_t;
+} PACKEDATTR mapsector_t;
 
 typedef struct
 {
     short numsegs;
     short firstseg;             // segs are stored sequentially
-} mapsubsector_t;
+} PACKEDATTR mapsubsector_t;
 
 typedef struct
 {
@@ -128,7 +128,7 @@ typedef struct
     short linedef;
     short side;
     short offset;
-} mapseg_t;
+} PACKEDATTR mapseg_t;
 
 #define	NF_SUBSECTOR	0x8000
 typedef struct
@@ -136,7 +136,7 @@ typedef struct
     short x, y, dx, dy;         // partition line
     short bbox[2][4];           // bounding box for each child
     unsigned short children[2]; // if NF_SUBSECTOR its a subsector
-} mapnode_t;
+} PACKEDATTR mapnode_t;
 
 typedef struct
 {
@@ -153,7 +153,7 @@ typedef struct
     byte arg3;
     byte arg4;
     byte arg5;
-} mapthing_t;
+} PACKEDATTR mapthing_t;
 
 #define MTF_EASY		1
 #define MTF_NORMAL		2
@@ -180,7 +180,7 @@ typedef struct
     short patch;
     short stepdir;
     short colormap;
-} mappatch_t;
+} PACKEDATTR mappatch_t;
 
 typedef struct
 {
@@ -191,7 +191,7 @@ typedef struct
     void **columndirectory;     // OBSOLETE
     short patchcount;
     mappatch_t patches[1];
-} maptexture_t;
+} PACKEDATTR maptexture_t;
 
 //--------------------------------------------------------------------------
 //

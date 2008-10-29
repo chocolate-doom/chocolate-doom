@@ -54,7 +54,7 @@ typedef struct
     int marker;
     int infoOffset;
     int code;
-} acsHeader_t;
+} PACKEDATTR acsHeader_t;
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
