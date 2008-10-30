@@ -833,17 +833,6 @@ int R_CheckTextureNumForName(char *name);
 //----
 // returns the position of the given parameter in the arg list (0 if not found)
 
-boolean M_ValidEpisodeMap(int episode, int map);
-// returns true if the episode/map combo is valid for the current
-// game configuration
-
-void M_ForceUppercase(char *text);
-// Changes a string to uppercase
-
-void M_LoadDefaults(void);
-
-void M_SaveDefaults(void);
-
 int M_DrawText(int x, int y, boolean direct, char *string);
 
 //----------------------

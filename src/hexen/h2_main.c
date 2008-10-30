@@ -214,6 +214,13 @@ static void D_HexenQuitMessage(void)
     printf("\nHexen: Beyond Heretic\n");
 }
 
+static void D_AddFile(char *filename)
+{
+    printf("  adding %s\n", filename);
+
+    W_AddFile(filename);
+}
+
 //==========================================================================
 //
 // H2_Main
@@ -275,7 +282,7 @@ void D_DoomMain(void)
                 "one with the '-iwad' command line parameter.");
     }
 
-    W_AddFile(iwadfile);
+    D_AddFile(iwadfile);
 
     HandleArgs();
 
@@ -467,12 +474,15 @@ static void ExecOptionSKILL(char **args, int tag)
 
 static void ExecOptionFILE(char **args, int tag)
 {
+    char *filename;
     int p;
 
     p = M_CheckParm("-file");
     while (++p != myargc && myargv[p][0] != '-')
     {
-        W_AddFile(myargv[p]);
+        filename = D_TryFindWADByName(myargv[p]);
+
+        D_AddFile(filename);
     }
 }
 
@@ -502,40 +512,6 @@ static void ExecOptionSCRIPTS(char **args, int tag)
 {
     sc_FileScripts = true;
     sc_ScriptsDir = args[1];
-}
-
-
-long superatol(char *s)
-{
-    long int n = 0, r = 10, x, mul = 1;
-    char *c = s;
-
-    for (; *c; c++)
-    {
-        x = (*c & 223) - 16;
-
-        if (x == -3)
-        {
-            mul = -mul;
-        }
-        else if (x == 72 && r == 10)
-        {
-            n -= (r = n);
-            if (!r)
-                r = 16;
-            if (r < 2 || r > 36)
-                return -1;
-        }
-        else
-        {
-            if (x > 10)
-                x -= 39;
-            if (x >= r)
-                return -1;
-            n = (n * r) + x;
-        }
-    }
-    return (mul * n);
 }
 
 

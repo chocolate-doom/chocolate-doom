@@ -71,32 +71,6 @@ unsigned int numlumps = 0;
 
 static lumpinfo_t **lumphash;
 
-static void ExtractFileBase(char *path, char *dest)
-{
-    char*	src;
-    int		length;
-
-    src = path + strlen(path) - 1;
-    
-    // back up until a \ or the start
-    while (src != path && *(src - 1) != DIR_SEPARATOR)
-    {
-	src--;
-    }
-    
-    // copy up to eight characters
-    memset (dest,0,8);
-    length = 0;
-    
-    while (*src && *src != '.')
-    {
-	if (++length == 9)
-	    I_Error ("Filename base of %s >8 chars",path);
-
-	*dest++ = toupper((int)*src++);
-    }
-}
-
 // Hash function used for lump names.
 
 unsigned int W_LumpNameHash(const char *s)
@@ -167,7 +141,7 @@ wad_file_t *W_AddFile (char *filename)
         // Name the lump after the base of the filename (without the
         // extension).
 
-	ExtractFileBase (filename, fileinfo->name);
+	M_ExtractFileBase (filename, fileinfo->name);
 	numlumps++;
     }
     else 

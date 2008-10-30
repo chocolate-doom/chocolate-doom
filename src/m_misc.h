@@ -39,6 +39,9 @@ void M_MakeDirectory(char *dir);
 char *M_TempFile(char *s);
 boolean M_FileExists(char *file);
 long M_FileLength(FILE *handle);
+void M_ExtractFileBase(char *path, char *dest);
+void M_ForceUppercase(char *text);
+
 
 #endif
 

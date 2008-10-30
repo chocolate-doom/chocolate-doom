@@ -23,6 +23,7 @@
 
 
 #include <string.h>
+#include "m_random.h"
 #include "h2def.h"
 #include "s_sound.h"
 #include "doomkeys.h"

@@ -193,17 +193,4 @@ typedef struct
     mappatch_t patches[1];
 } PACKEDATTR maptexture_t;
 
-//--------------------------------------------------------------------------
-//
-// Graphics
-//
-//--------------------------------------------------------------------------
-
-// a pic is an unmasked block of pixels
-typedef struct
-{
-    byte width, height;
-    byte data;
-} pic_t;
-
 #endif // __XDDEFS__

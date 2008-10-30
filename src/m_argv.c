@@ -106,7 +106,7 @@ static void LoadResponseFile(int argv_index)
     // needed.
 
     file = malloc(size + 1);
-    fread(file, size, 1, handle);
+    (void) fread(file, size, 1, handle);
     fclose(handle);
 
     // Create new arguments list array

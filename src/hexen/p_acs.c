@@ -25,6 +25,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "h2def.h"
+#include "m_random.h"
 #include "s_sound.h"
 #include "i_swap.h"
 #include "i_system.h"

@@ -22,6 +22,7 @@
 //-----------------------------------------------------------------------------
 
 #include "h2def.h"
+#include "m_random.h"
 #include "i_cdmus.h"
 #include "i_sound.h"
 #include "i_system.h"
