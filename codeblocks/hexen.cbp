@@ -110,9 +110,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\hexen\info.h" />
-		<Unit filename="..\src\hexen\m_misc.c">
+		<Unit filename="..\src\hexen\m_random.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\src\hexen\m_random.h" />
 		<Unit filename="..\src\hexen\mn_menu.c">
 			<Option compilerVar="CC" />
 		</Unit>
