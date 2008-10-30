@@ -108,9 +108,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\heretic\info.h" />
-		<Unit filename="..\src\heretic\m_misc.c">
-			<Option compilerVar="CC" />
-		</Unit>
 		<Unit filename="..\src\heretic\m_random.c">
 			<Option compilerVar="CC" />
 		</Unit>
