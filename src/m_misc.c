@@ -197,3 +197,51 @@ char *M_TempFile(char *s)
     return result;
 }
 
+void M_ExtractFileBase(char *path, char *dest)
+{
+    char*	src;
+    int		length;
+
+    src = path + strlen(path) - 1;
+
+    // back up until a \ or the start
+    while (src != path && *(src - 1) != DIR_SEPARATOR)
+    {
+	src--;
+    }
+
+    // copy up to eight characters
+    memset(dest, 0, 8);
+    length = 0;
+
+    while (*src != '\0' && *src != '.')
+    {
+        ++length;
+
+	if (length > 8)
+        {
+	    I_Error ("Filename base of %s >8 chars", path);
+        }
+
+	*dest++ = toupper((int)*src++);
+    }
+}
+
+//---------------------------------------------------------------------------
+//
+// PROC M_ForceUppercase
+//
+// Change string to uppercase.
+//
+//---------------------------------------------------------------------------
+
+void M_ForceUppercase(char *text)
+{
+    char *p;
+
+    for (p = text; *p != '\0'; ++p)
+    {
+        *p = toupper(*p);
+    }
+}
+

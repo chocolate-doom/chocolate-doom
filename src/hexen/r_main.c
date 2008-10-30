@@ -23,6 +23,7 @@
 
 
 #include <math.h>
+#include "m_random.h"
 #include "h2def.h"
 #include "m_bbox.h"
 #include "r_local.h"

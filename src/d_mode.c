@@ -25,21 +25,26 @@
 #include "doomtype.h"
 #include "d_mode.h"
 
-// Table of valid game modes
+// Valid game mode/mission combinations, with the number of
+// episodes/maps for each.
 
-static struct {
+static struct
+{
     GameMission_t mission;
     GameMode_t mode;
+    int episode;
+    int map;
 } valid_modes[] = {
-    { doom,        shareware },
-    { doom,        registered },
-    { doom,        retail },
-    { doom2,       commercial },
-    { pack_tnt,    commercial },
-    { pack_plut,   commercial },
-    { heretic,     shareware },
-    { heretic,     registered },
-    { hexen,       commercial },
+    { doom,      shareware,  1, 9 },
+    { doom,      registered, 3, 9 },
+    { doom,      retail,     4, 9 },
+    { doom2,     commercial, 1, 32 },
+    { pack_tnt,  commercial, 1, 32 },
+    { pack_plut, commercial, 1, 32 },
+    { heretic,   shareware,  1, 9 },
+    { heretic,   registered, 3, 9 },
+    { heretic,   retail,     5, 9 },
+    { hexen,     commercial, 1, 40 },
 };
 
 // Check that a gamemode+gamemission received over the network is valid.
@@ -55,6 +60,42 @@ boolean D_ValidGameMode(GameMission_t mission, GameMode_t mode)
             return true;
         }
     }
+
+    return false;
+}
+
+boolean D_ValidEpisodeMap(GameMission_t mission, GameMode_t mode,
+                          int episode, int map)
+{
+    int i;
+
+    // Hacks for Heretic secret episodes
+
+    if (mission == heretic)
+    {
+        if (mode == retail && episode == 6)
+        {
+            return map >= 1 && map <= 3;
+        }
+        else if (mode == registered && episode == 4)
+        {
+            return map == 1;
+        }
+    }
+
+    // Find the table entry for this mission/mode combination.
+
+    for (i=0; i<arrlen(valid_modes); ++i) 
+    {
+        if (mission == valid_modes[i].mission
+         && mode == valid_modes[i].mode)
+        {
+            return episode >= 1 && episode <= valid_modes[i].episode
+                && map >= 1 && map <= valid_modes[i].map;
+        }
+    }
+
+    // Unknown mode/mission combination
 
     return false;
 }

@@ -857,12 +857,18 @@ void D_DoomMain(void)
     // -FILE [filename] [filename] ...
     // Add files to the wad list.
     p = M_CheckParm("-file");
+
     if (p)
-    {                           // the parms after p are wadfile/lump names, until end of parms
+    {
+        char *filename;
+
+        // the parms after p are wadfile/lump names, until end of parms
         // or another - preceded parm
+
         while (++p != myargc && myargv[p][0] != '-')
         {
-            D_AddFile(myargv[p]);
+            filename = D_FindWADByName(myargv[p]);
+            D_AddFile(filename);
         }
     }
 
@@ -1011,7 +1017,7 @@ void D_DoomMain(void)
     // Check valid episode and map
     if (autostart || netgame)
     {
-        if (M_ValidEpisodeMap(startepisode, startmap) == false)
+        if (!D_ValidEpisodeMap(gamemission, gamemode, startepisode, startmap))
         {
             startepisode = 1;
             startmap = 1;
