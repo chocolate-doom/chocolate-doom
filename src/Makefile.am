@@ -8,7 +8,7 @@ games_PROGRAMS = chocolate-doom     \
                  chocolate-hexen    \
                  chocolate-server
 
-AM_CFLAGS = -Idoom -I../textscreen -I../pcsound @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@ -Werror
+AM_CFLAGS = -Idoom -I../textscreen -I../pcsound @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
 DEDSERV_FILES=\
 d_dedicated.c                              \
