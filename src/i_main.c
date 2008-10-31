@@ -66,7 +66,7 @@ int main(int argc, char **argv)
         fprintf(stderr, "Failed to set process affinity mask (%d)\n",
                 (int) GetLastError());
     }
-#else
+#elif !defined(__APPLE__)
     // POSIX version:
 
     {
