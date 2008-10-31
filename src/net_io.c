@@ -24,6 +24,8 @@
 //
 //-----------------------------------------------------------------------------
 
+#include <stdio.h>
+
 #include "i_system.h"
 #include "net_defs.h"
 #include "net_io.h"

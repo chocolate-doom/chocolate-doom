@@ -33,6 +33,7 @@
 
 #include "config.h"
 
+#include "d_englsh.h"
 #include "doomtype.h"
 #include "doomkeys.h"
 #include "doomfeatures.h"
