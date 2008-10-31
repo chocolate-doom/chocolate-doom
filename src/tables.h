@@ -41,7 +41,7 @@
 #ifndef __TABLES__
 #define __TABLES__
 
-
+#include "doomtype.h"
 
 #include "m_fixed.h"
 	
@@ -61,6 +61,9 @@ extern const fixed_t *finecosine;
 
 // Effective size is 4096.
 extern const fixed_t finetangent[FINEANGLES/2];
+
+// Gamma correction tables.
+extern const byte gammatable[5][256];
 
 // Binary Angle Measument, BAM.
 

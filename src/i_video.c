@@ -44,6 +44,7 @@
 #include "i_scale.h"
 #include "m_argv.h"
 #include "m_config.h"
+#include "tables.h"
 #include "v_video.h"
 #include "w_wad.h"
 #include "z_zone.h"

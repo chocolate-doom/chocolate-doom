@@ -44,8 +44,6 @@
 
 extern int dirtybox[4];
 
-extern const byte gammatable[5][256];
-
 extern byte *tinttable;
 
 // Allocates buffer screens, call before R_Init.
