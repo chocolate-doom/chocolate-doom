@@ -45,6 +45,7 @@
 			<Add option='-DD_CDROM=&quot;\&quot;CD-ROM Version: default.cfg from c:\\doomdata\n\&quot;&quot;' />
 			<Add directory="." />
 			<Add directory="..\src" />
+			<Add directory="..\src\doom" />
 			<Add directory="..\src\heretic" />
 			<Add directory="..\textscreen" />
 			<Add directory="..\pcsound" />
