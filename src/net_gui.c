@@ -24,6 +24,7 @@
 //    start the game.
 //   
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
 

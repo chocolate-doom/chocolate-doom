@@ -31,6 +31,8 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
+#include <stdio.h>
+
 #include "i_system.h"
 #include "w_file.h"
 #include "z_zone.h"

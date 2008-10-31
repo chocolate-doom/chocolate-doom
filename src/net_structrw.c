@@ -21,6 +21,7 @@
 // Reading and writing various structures into packets
 //
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 

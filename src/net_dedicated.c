@@ -23,6 +23,7 @@
 // Dedicated server code.
 // 
 
+#include <stdio.h>
 #include <stdlib.h>
 
 #include "doomtype.h"
