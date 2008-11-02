@@ -59,12 +59,6 @@
 #define HEXEN_VERSION 110
 #define HEXEN_VERSION_TEXT "v1.1"
 
-// Uncomment, to enable all timebomb stuff
-//#define TIMEBOMB
-#define TIMEBOMB_YEAR	95      // years since 1900
-#define TIMEBOMB_STARTDATE	268     // initial date (9/26)
-#define TIMEBOMB_ENDDATE	301     // end date (10/29)
-
 // if rangecheck is undefined, most parameter validation debugging code
 // will not be compiled
 #ifndef NORANGECHECKING

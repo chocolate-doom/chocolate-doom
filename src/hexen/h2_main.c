@@ -96,10 +96,6 @@ static void ExecOptionPLAYDEMO(char **args, int tag);
 static void CreateSavePath(void);
 static void WarpCheck(void);
 
-#ifdef TIMEBOMB
-static void DoTimeBomb(void);
-#endif
-
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 extern boolean automapactive;
@@ -259,10 +255,6 @@ void D_DoomMain(void)
 
     // Now that the savedir is loaded from .CFG, make sure it exists
     CreateSavePath();
-
-#ifdef TIMEBOMB
-    DoTimeBomb();
-#endif
 
     ST_Message("Z_Init: Init zone memory allocation daemon.\n");
     Z_Init();
@@ -856,38 +848,3 @@ static void CreateSavePath(void)
     M_MakeDirectory(SavePath);
 }
 
-#ifdef TIMEBOMB
-//==========================================================================
-//
-// DoTimeBomb
-//
-//==========================================================================
-
-static void DoTimeBomb(void)
-{
-#ifdef __WATCOMC__
-    time_t timeOfDay;
-    struct tm timeBuffer;
-
-    timeOfDay = time(NULL);
-    _localtime(&timeOfDay, &timeBuffer);
-    if (timeBuffer.tm_year != TIMEBOMB_YEAR
-        || timeBuffer.tm_yday < TIMEBOMB_STARTDATE
-        || timeBuffer.tm_yday > TIMEBOMB_ENDDATE)
-    {
-        I_Error("W_InitWadfiles:  Wad file doesn't have IWAD or PWAD id\n");
-    }
-
-    printf
-        ("\n===============================================================================\n");
-    printf("                             Hexen:  Beyond Heretic\n\n");
-    printf("                           Beta -- Do Not Distribute!\n");
-    printf("                           Press any key to continue.\n");
-    printf
-        ("===============================================================================\n");
-
-    getch();
-    printf("\n");
-#endif
-}
-#endif
