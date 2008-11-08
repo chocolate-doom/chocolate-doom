@@ -494,6 +494,13 @@ static default_collection_t doom_defaults =
 static default_t extra_defaults_list[] = 
 {
     //!
+    // If non-zero, use the graphical startup mode for Heretic and
+    // Hexen.
+    //
+
+    CONFIG_VARIABLE_INT(graphical_startup),
+
+    //!
     // If non-zero, video settings will be autoadjusted to a valid 
     // configuration when the screen_width and screen_height variables
     // do not match any valid configuration.

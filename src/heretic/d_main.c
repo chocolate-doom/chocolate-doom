@@ -27,6 +27,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "txt_main.h"
+#include "txt_io.h"
+
 #include "config.h"
 #include "ct_chat.h"
 #include "doomdef.h"
@@ -39,6 +42,9 @@
 #include "p_local.h"
 #include "s_sound.h"
 #include "v_video.h"
+
+#define STARTUP_WINDOW_X 17
+#define STARTUP_WINDOW_Y 7
 
 GameMission_t gamemission = heretic;
 GameMode_t gamemode = indetermined;
@@ -56,6 +62,8 @@ skill_t startskill;
 int startepisode;
 int startmap;
 int UpdateState;
+static int graphical_startup = 1;
+static boolean using_graphical_startup;
 boolean autostart;
 extern boolean automapactive;
 
@@ -486,64 +494,54 @@ boolean D_AddFile(char *file)
 //
 //==========================================================
 #define MSG_Y       9
-//#define THERM_X 15
-//#define THERM_Y 16
-//#define THERMCOLOR  3
 #define THERM_X     14
 #define THERM_Y     14
 
 int thermMax;
 int thermCurrent;
-char *startup;                  // * to text screen
 char smsg[80];                  // status bar line
 
 //
 //  Heretic startup screen shit
 //
 
-byte *hscreen;
+static int startup_line = STARTUP_WINDOW_Y;
 
-void hgotoxy(int x, int y)
+void hprintf(char *string)
 {
-    hscreen = (byte *) (0xb8000 + y * 160 + x * 2);
-}
+    if (using_graphical_startup)
+    {
+        TXT_BGColor(TXT_COLOR_CYAN, 0);
+        TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
 
-void hput(unsigned char c, unsigned char a)
-{
-    *hscreen++ = c;
-    *hscreen++ = a;
-}
+        TXT_GotoXY(STARTUP_WINDOW_X, startup_line);
+        ++startup_line;
+        TXT_Puts(string);
 
-void hprintf(char *string, unsigned char a)
-{
+        TXT_UpdateScreen();
+    }
+
 #ifdef __WATCOMC__
-    int i;
-
     if (debugmode)
     {
         puts(string);
         return;
-    }
-    for (i = 0; i < strlen(string); i++)
-    {
-        hput(string[i], a);
     }
 #endif
 }
 
 void drawstatus(void)
 {
-    if (debugmode)
+    int i;
+
+    TXT_GotoXY(1, 24);
+    TXT_BGColor(TXT_COLOR_BLUE, 0);
+    TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
+
+    for (i=0; smsg[i] != '\0'; ++i) 
     {
-        return;
+        TXT_PutChar(smsg[i]);
     }
-#ifdef __WATCOMC__
-    _settextposition(25, 2);
-    _setbkcolor(1);
-    _settextcolor(15);
-    _outtext(smsg);
-    _settextposition(25, 1);
-#endif
 }
 
 void status(char *string)
@@ -554,15 +552,15 @@ void status(char *string)
 
 void DrawThermo(void)
 {
-#ifdef __WATCOMC__
-    unsigned char *screen;
+    static int last_progress = -1;
     int progress;
     int i;
 
-    if (debugmode)
+    if (!using_graphical_startup)
     {
         return;
     }
+
 #if 0
     progress = (98 * thermCurrent) / thermMax;
     screen = (char *) 0xb8000 + (THERM_Y * 160 + THERM_X * 2);
@@ -597,43 +595,73 @@ void DrawThermo(void)
         *screen++ = 0x40 + THERMCOLOR;
     }
 #else
+
+    // No progress? Don't update the screen.
+
     progress = (50 * thermCurrent) / thermMax + 2;
-//  screen = (char *)0xb8000 + (THERM_Y*160 + THERM_X*2);
-    hgotoxy(THERM_X, THERM_Y);
-    for (i = 0; i < progress; i++)
-    {
-//      *screen++ = 0xdb;
-//      *screen++ = 0x2a;
-        hput(0xdb, 0x2a);
-    }
-#endif
-#endif
-}
 
-#ifdef __WATCOMC__
-void blitStartup(void)
-{
-    byte *textScreen;
-
-    if (debugmode)
+    if (last_progress == progress)
     {
         return;
     }
 
+    last_progress = progress;
+
+    TXT_GotoXY(THERM_X, THERM_Y);
+
+    TXT_FGColor(TXT_COLOR_BRIGHT_GREEN);
+    TXT_BGColor(TXT_COLOR_GREEN, 0);
+
+    for (i = 0; i < progress; i++)
+    {
+        TXT_PutChar(0xdb);
+    }
+
+    TXT_UpdateScreen();
+#endif
+}
+
+void initStartup(void)
+{
+    byte *textScreen;
+    byte *loading;
+
+    if (!graphical_startup || debugmode)
+    {
+        using_graphical_startup = false;
+        return;
+    }
+
+    if (!TXT_Init()) 
+    {
+        using_graphical_startup = false;
+        return;
+    }
+
     // Blit main screen
-    textScreen = (byte *) 0xb8000;
-    memcpy(textScreen, startup, 4000);
+    textScreen = TXT_GetScreenData();
+    loading = W_CacheLumpName("LOADING", PU_CACHE);
+    memcpy(textScreen, loading, 4000);
 
     // Print version string
-    _setbkcolor(4);             // Red
-    _settextcolor(14);          // Yellow
-    _settextposition(3, 47);
-    _outtext(HERETIC_VERSION_TEXT);
 
-    // Hide cursor
-    _settextcursor(0x2000);
+    TXT_BGColor(TXT_COLOR_RED, 0);
+    TXT_FGColor(TXT_COLOR_YELLOW);
+    TXT_GotoXY(46, 2);
+    TXT_Puts(HERETIC_VERSION_TEXT);
+
+    TXT_UpdateScreen();
+
+    using_graphical_startup = true;
 }
-#endif
+
+static void finishStartup(void)
+{
+    if (using_graphical_startup)
+    {
+        TXT_Shutdown();
+    }
+}
 
 char tmsg[300];
 void tprintf(char *msg, int initflag)
@@ -726,6 +754,7 @@ void D_BindVariables(void)
     M_BindVariable("screenblocks",           &screenblocks);
     M_BindVariable("snd_channels",           &snd_Channels);
     M_BindVariable("show_endoom",            &show_endoom);
+    M_BindVariable("graphical_startup",      &graphical_startup);
 
     for (i=0; i<10; ++i)
     {
@@ -909,10 +938,7 @@ void D_DoomMain(void)
     I_StartupKeyboard();
     I_StartupJoystick();
 #endif
-    startup = W_CacheLumpName("LOADING", PU_CACHE);
-#ifdef __WATCOMC__
-    blitStartup();
-#endif
+    initStartup();
 
     //
     //  Build status bar line!
@@ -939,14 +965,12 @@ void D_DoomMain(void)
     CT_Init();
 
     tprintf("R_Init: Init Heretic refresh daemon.", 1);
-    hgotoxy(17, 7);
-    hprintf("Loading graphics", 0x3f);
+    hprintf("Loading graphics");
     R_Init();
     tprintf("\n", 0);
 
     tprintf("P_Init: Init Playloop state.\n", 1);
-    hgotoxy(17, 8);
-    hprintf("Init game engine.", 0x3f);
+    hprintf("Init game engine.");
     P_Init();
     IncThermo();
 
@@ -960,8 +984,7 @@ void D_DoomMain(void)
     S_Start();
 
     tprintf("D_CheckNetGame: Checking network game status.\n", 1);
-    hgotoxy(17, 9);
-    hprintf("Checking network game status.", 0x3f);
+    hprintf("Checking network game status.");
     D_CheckNetGame();
     IncThermo();
 
@@ -1038,8 +1061,8 @@ void D_DoomMain(void)
             D_StartTitle();
         }
     }
-#ifdef __WATCOMC__
-    _settextcursor(0x0607);     // bring the cursor back
-#endif
+
+    finishStartup();
+
     D_DoomLoop();               // Never returns
 }
