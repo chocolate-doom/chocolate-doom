@@ -410,8 +410,10 @@ void R_InitTextures(void)
                 I_Error("R_InitTextures: Missing patch in texture %s",
                         texture->name);
         }
-        texturecolumnlump[i] = Z_Malloc(texture->width * 2, PU_STATIC, 0);
-        texturecolumnofs[i] = Z_Malloc(texture->width * 2, PU_STATIC, 0);
+        texturecolumnlump[i] = Z_Malloc(texture->width * sizeof(short),
+                                        PU_STATIC, 0);
+        texturecolumnofs[i] = Z_Malloc(texture->width * sizeof(short), 
+                                       PU_STATIC, 0);
         j = 1;
         while (j * 2 <= texture->width)
             j <<= 1;
