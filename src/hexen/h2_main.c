@@ -159,6 +159,7 @@ void D_BindVariables(void)
     M_BindHereticControls();
     M_BindHexenControls();
 
+    M_BindVariable("graphical_startup",      &graphical_startup);
     M_BindVariable("mouse_sensitivity",      &mouseSensitivity);
     M_BindVariable("sfx_volume",             &snd_MaxVolume);
     M_BindVariable("music_volume",           &snd_MusicVolume);
@@ -279,6 +280,8 @@ void D_DoomMain(void)
 
     HandleArgs();
 
+    I_PrintStartupBanner("Hexen");
+
     ST_Message("MN_Init: Init menu system.\n");
     MN_Init();
 
@@ -300,8 +303,6 @@ void D_DoomMain(void)
 
     ST_Message("ST_Init: Init startup screen.\n");
     ST_Init();
-
-    S_StartSongName("orb", true);
 
     // Show version message now, so it's visible during R_Init()
     ST_Message("R_Init: Init Hexen refresh daemon");
@@ -329,6 +330,8 @@ void D_DoomMain(void)
 
     ST_Message("SB_Init: Loading patches.\n");
     SB_Init();
+
+    ST_Done();
 
     CheckRecordFrom();
 
@@ -490,9 +493,15 @@ static void ExecOptionPLAYDEMO(char **args, int tag)
 {
     char file[256];
 
-    sprintf(file, "%s.lmp", args[1]);
+    strcpy(file, args[1]);
+
+    if (strcasecmp(file + strlen(file) - 4, ".lmp") != 0)
+    {
+        strcat(file, ".lmp");
+    }
+
     W_AddFile(file);
-    ST_Message("Playing demo %s.lmp.\n", args[1]);
+    ST_Message("Playing demo %s.\n", file);
 }
 
 //==========================================================================
@@ -820,6 +829,7 @@ static void CheckRecordFrom(void)
     G_LoadGame(atoi(myargv[p + 1]));
     G_DoLoadGame();             // Load the gameskill etc info from savegame
     G_RecordDemo(gameskill, 1, gameepisode, gamemap, myargv[p + 2]);
+
     H2_GameLoop();              // Never returns
 }
 
