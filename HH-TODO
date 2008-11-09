@@ -13,7 +13,6 @@ Heretic:
  * Remove NeXT and WATCOMC defines
  * Structure packing macros for structures read from disk
  * Merge r_draw.c to common version and delete duplicate
- * Recreate text mode startup using textscreen code.
  * HHE patch support
  * v1.2 emulation (if possible)
  * Screensaver mode
@@ -27,7 +26,6 @@ Hexen:
  * Remove NeXT and WATCOMC defines
  * Structure packing macros for structures read from disk
  * Merge r_draw.c to common version and delete duplicate
- * Recreate graphical startup.
  * v1.0 emulation (if possible/necessary)
  * Screensaver mode
 

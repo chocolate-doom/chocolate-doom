@@ -25,16 +25,14 @@
 
 
 // HEADER FILES ------------------------------------------------------------
-#include <ctype.h>
-#include <fcntl.h>
+
 #include <stdarg.h>
 
-#ifndef O_BINARY
-#define O_BINARY 0
-#endif
+#include "config.h"
 
 #include "h2def.h"
 #include "i_system.h"
+#include "i_videohr.h"
 #include "s_sound.h"
 #include "st_start.h"
 
@@ -52,36 +50,16 @@
 #define ST_NETNOTCH_HEIGHT		16
 #define ST_MAX_NETNOTCHES		8
 
-// TYPES -------------------------------------------------------------------
-
-// EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
-extern void SetVideoModeHR(void);
-extern void ClearScreenHR(void);
-extern void SlamHR(char *buffer);
-extern void SlamBlockHR(int x, int y, int w, int h, char *src);
-extern void InitPaletteHR(void);
-extern void SetPaletteHR(byte * palette);
-extern void GetPaletteHR(byte * palette);
-extern void FadeToPaletteHR(byte * palette);
-extern void FadeToBlackHR(void);
-extern void BlackPaletteHR(void);
-extern void I_StartupReadKeys(void);
-
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
-
-// PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
-char *ST_LoadScreen(void);
+byte *ST_LoadScreen(void);
 void ST_UpdateNotches(int notchPosition);
 void ST_UpdateNetNotches(int notchPosition);
 
-// EXTERNAL DATA DECLARATIONS ----------------------------------------------
-
-// PUBLIC DATA DEFINITIONS -------------------------------------------------
-
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
-char *bitmap = NULL;
+static const byte *bitmap = NULL;
+int graphical_startup = 1;
+static boolean using_graphical_startup;
 
-char notchTable[] = {
+static const byte notchTable[] = {
     // plane 0
     0x00, 0x80, 0x01, 0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x40,
     0x02, 0x40, 0x02, 0x40, 0x02, 0x40, 0x02, 0x40, 0x02, 0x40, 0x03, 0xC0,
@@ -109,7 +87,7 @@ char notchTable[] = {
 
 
 // Red Network Progress notches
-char netnotchTable[] = {
+static const byte netnotchTable[] = {
     // plane 0
     0x80, 0x50, 0xD0, 0xf0, 0xF0, 0xF0, 0xF0, 0xF0, 0xF0, 0xD0, 0xF0, 0xC0,
     0x70, 0x50, 0x80, 0x60,
@@ -146,36 +124,44 @@ char netnotchTable[] = {
 
 void ST_Init(void)
 {
-#ifdef __WATCOMC__
-    char *pal;
-    char *buffer;
+    byte *pal;
+    byte *buffer;
+    
+    using_graphical_startup = false;
 
-    if (!debugmode)
+    if (graphical_startup && !debugmode)
     {
         // Set 640x480x16 mode
-        SetVideoModeHR();
-        ClearScreenHR();
-        InitPaletteHR();
-        BlackPaletteHR();
+        if (I_SetVideoModeHR())
+        {
+            I_SetWindowTitleHR("Hexen startup - " PACKAGE_STRING);
+            using_graphical_startup = true;
 
-        // Load graphic
-        buffer = ST_LoadScreen();
-        pal = buffer;
-        bitmap = buffer + 16 * 3;
+            S_StartSongName("orb", true);
 
-        SlamHR(bitmap);
-        FadeToPaletteHR(pal);
-        Z_Free(buffer);
+            I_ClearScreenHR();
+            I_InitPaletteHR();
+            I_BlackPaletteHR();
+
+            // Load graphic
+            buffer = ST_LoadScreen();
+            pal = buffer;
+            bitmap = buffer + 16 * 3;
+
+            I_SlamHR(bitmap);
+            I_FadeToPaletteHR(pal);
+            Z_Free(buffer);
+        }
     }
-#endif
 }
-
 
 void ST_Done(void)
 {
-#ifdef __WATCOMC__
-    ClearScreenHR();
-#endif
+    if (using_graphical_startup)
+    {
+        I_ClearScreenHR();
+        I_UnsetVideoModeHR();
+    }
 }
 
 
@@ -187,11 +173,9 @@ void ST_Done(void)
 
 void ST_UpdateNotches(int notchPosition)
 {
-#ifdef __WATCOMC__
     int x = ST_PROGRESS_X + notchPosition * ST_NOTCH_WIDTH;
     int y = ST_PROGRESS_Y;
-    SlamBlockHR(x, y, ST_NOTCH_WIDTH, ST_NOTCH_HEIGHT, notchTable);
-#endif
+    I_SlamBlockHR(x, y, ST_NOTCH_WIDTH, ST_NOTCH_HEIGHT, notchTable);
 }
 
 
@@ -203,11 +187,9 @@ void ST_UpdateNotches(int notchPosition)
 
 void ST_UpdateNetNotches(int notchPosition)
 {
-#ifdef __WATCOMC__
     int x = ST_NETPROGRESS_X + notchPosition * ST_NETNOTCH_WIDTH;
     int y = ST_NETPROGRESS_Y;
-    SlamBlockHR(x, y, ST_NETNOTCH_WIDTH, ST_NETNOTCH_HEIGHT, netnotchTable);
-#endif
+    I_SlamBlockHR(x, y, ST_NETNOTCH_WIDTH, ST_NETNOTCH_HEIGHT, netnotchTable);
 }
 
 
@@ -220,27 +202,24 @@ void ST_UpdateNetNotches(int notchPosition)
 void ST_Progress(void)
 {
 #ifdef __WATCOMC__
-    static int notchPosition = 0;
-
     // Check for ESC press -- during startup all events eaten here
     I_StartupReadKeys();
+#endif
 
-    if (debugmode)
+    if (using_graphical_startup)
     {
-        printf(".");
-    }
-    else
-    {
+        static int notchPosition = 0;
+
         if (notchPosition < ST_MAX_NOTCHES)
         {
             ST_UpdateNotches(notchPosition);
             S_StartSound(NULL, SFX_STARTUP_TICK);
+            //I_Sleep(1000);
             notchPosition++;
         }
     }
-#else
+
     printf(".");
-#endif
 }
 
 
@@ -252,14 +231,12 @@ void ST_Progress(void)
 
 void ST_NetProgress(void)
 {
-#ifdef __WATCOMC__
-    static int netnotchPosition = 0;
-    if (debugmode)
+    printf("*");
+
+    if (using_graphical_startup)
     {
-        printf("*");
-    }
-    else
-    {
+        static int netnotchPosition = 0;
+
         if (netnotchPosition < ST_MAX_NETNOTCHES)
         {
             ST_UpdateNetNotches(netnotchPosition);
@@ -267,7 +244,6 @@ void ST_NetProgress(void)
             netnotchPosition++;
         }
     }
-#endif
 }
 
 
@@ -278,7 +254,10 @@ void ST_NetProgress(void)
 //==========================================================================
 void ST_NetDone(void)
 {
-    S_StartSound(NULL, SFX_PICKUP_WEAPON);
+    if (using_graphical_startup)
+    {
+        S_StartSound(NULL, SFX_PICKUP_WEAPON);
+    }
 }
 
 
@@ -344,14 +323,15 @@ void ST_RealMessage(char *message, ...)
 //==========================================================================
 
 
-char *ST_LoadScreen(void)
+byte *ST_LoadScreen(void)
 {
     int length, lump;
-    char *buffer;
+    byte *buffer;
 
     lump = W_GetNumForName("STARTUP");
     length = W_LumpLength(lump);
-    buffer = (char *) Z_Malloc(length, PU_STATIC, NULL);
+    buffer = (byte *) Z_Malloc(length, PU_STATIC, NULL);
     W_ReadLump(lump, buffer);
     return (buffer);
 }
+

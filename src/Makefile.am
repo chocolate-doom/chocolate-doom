@@ -46,6 +46,7 @@ i_sound.c            i_sound.h             \
 i_system.c           i_system.h            \
 i_timer.c            i_timer.h             \
 i_video.c            i_video.h             \
+i_videohr.c          i_videohr.h           \
 m_argv.c             m_argv.h              \
 m_bbox.c             m_bbox.h              \
 m_cheat.c            m_cheat.h             \

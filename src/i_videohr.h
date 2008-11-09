@@ -1,8 +1,6 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 1993-2008 Raven Software
 // Copyright(C) 2008 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
@@ -20,25 +18,25 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
+// DESCRIPTION:
+//     SDL emulation of VGA 640x480x4 planar video mode,
+//     for Hexen startup loading screen.
+//
 //-----------------------------------------------------------------------------
 
+#ifndef I_VIDEOHR_H
+#define I_VIDEOHR_H
 
-// HEADER FILES ------------------------------------------------------------
+boolean I_SetVideoModeHR(void);
+void I_UnsetVideoModeHR(void);
+void I_SetWindowTitleHR(char *title);
+void I_ClearScreenHR(void);
+void I_SlamBlockHR(int x, int y, int w, int h, const byte *src);
+void I_SlamHR(const byte *buffer);
+void I_InitPaletteHR(void);
+void I_SetPaletteHR(const byte *palette);
+void I_FadeToPaletteHR(const byte *palette);
+void I_BlackPaletteHR(void);
 
-// MACROS ------------------------------------------------------------------
-
-// TYPES -------------------------------------------------------------------
-
-// PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
-extern void ST_Init(void);
-extern void ST_Done(void);
-extern void ST_Message(char *message, ...);
-extern void ST_RealMessage(char *message, ...);
-extern void ST_Progress(void);
-extern void ST_NetProgress(void);
-extern void ST_NetDone(void);
-
-// PUBLIC DATA DECLARATIONS ------------------------------------------------
- 
-extern int graphical_startup;
+#endif /* #ifndef I_VIDEOHR_H */
 
