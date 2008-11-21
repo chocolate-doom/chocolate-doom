@@ -51,7 +51,6 @@
 #include "i_video.h"
 
 #include "i_system.h"
-#include "txt_main.h"
 
 #include "w_wad.h"
 #include "z_zone.h"
@@ -178,53 +177,21 @@ boolean I_ConsoleStdout(void)
 //
 // I_Init
 //
+/*
 void I_Init (void)
 {
     I_CheckIsScreensaver();
     I_InitTimer();
     I_InitJoystick();
 }
-
-// 
-// Displays the text mode ending screen after the game quits
-//
-
-void I_Endoom(byte *endoom_data)
+void I_BindVariables(void)
 {
-    unsigned char *screendata;
-
-    // Set up text mode screen
-
-    TXT_Init();
-
-    // Make sure the new window has the right title and icon
- 
-    I_SetWindowTitle("Exit screen");
-    I_SetWindowIcon();
-    
-    // Write the data to the screen memory
-  
-    screendata = TXT_GetScreenData();
-    memcpy(screendata, endoom_data, 4000);
-
-    // Wait for a keypress
-
-    while (true)
-    {
-        TXT_UpdateScreen();
-
-        if (TXT_GetChar() >= 0)
-        {
-            break;
-        }
-        
-        TXT_Sleep(0);
-    }
-    
-    // Shut down text mode screen
-
-    TXT_Shutdown();
+    I_BindVideoVariables();
+    I_BindJoystickVariables();
+    I_BindSoundVariables();
 }
+*/
+
 
 //
 // I_Quit
@@ -245,11 +212,6 @@ void I_Quit (void)
     }
 
     exit(0);
-}
-
-void I_WaitVBL(int count)
-{
-    I_Sleep((count * 1000) / 70);
 }
 
 //
@@ -312,12 +274,5 @@ void I_Error (char *error, ...)
     // abort();
 
     exit(-1);
-}
-
-void I_BindVariables(void)
-{
-    I_BindVideoVariables();
-    I_BindJoystickVariables();
-    I_BindSoundVariables();
 }
 

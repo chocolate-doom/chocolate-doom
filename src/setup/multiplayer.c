@@ -22,15 +22,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "d_englsh.h"
+#include "doom/d_englsh.h"
 #include "textscreen.h"
 #include "doomtype.h"
-
-#include "configfile.h"
 
 #include "execute.h"
 
 #include "multiplayer.h"
+#include "m_config.h"
 
 #define NUM_WADS 10
 #define NUM_EXTRA_PARAMS 10

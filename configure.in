@@ -79,15 +79,15 @@ AC_OUTPUT([
 Makefile
 textscreen/Makefile
 textscreen/examples/Makefile
-setup/Makefile
 man/Makefile
 src/Makefile
 src/doom/Makefile
 src/heretic/Makefile
 src/hexen/Makefile
+src/setup/Makefile
 pcsound/Makefile
 src/resource.rc
+src/setup-res.rc
 src/doom-screensaver.desktop
-setup/setup-res.rc
 ])
 

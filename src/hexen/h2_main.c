@@ -42,7 +42,9 @@
 #include "d_mode.h"
 #include "m_misc.h"
 #include "s_sound.h"
+#include "i_joystick.h"
 #include "i_system.h"
+#include "i_timer.h"
 #include "m_argv.h"
 #include "m_config.h"
 #include "m_controls.h"
@@ -154,7 +156,9 @@ void D_BindVariables(void)
 {
     int i;
 
-    I_BindVariables();
+    I_BindVideoVariables();
+    I_BindJoystickVariables();
+    I_BindSoundVariables();
     M_BindBaseControls();
     M_BindHereticControls();
     M_BindHexenControls();
@@ -296,7 +300,9 @@ void D_DoomMain(void)
     ST_Message("SN_InitSequenceScript: Registering sound sequences.\n");
     SN_InitSequenceScript();
     ST_Message("I_Init: Setting up machine state.\n");
-    I_Init();
+    I_CheckIsScreensaver();
+    I_InitTimer();
+    I_InitJoystick();
 
     S_Init();
     S_Start();

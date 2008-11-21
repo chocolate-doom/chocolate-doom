@@ -1,22 +1,30 @@
 
-SUBDIRS=doom heretic hexen
+SUBDIRS=doom heretic hexen setup
 
 gamesdir = $(prefix)/games
 
 games_PROGRAMS = chocolate-doom     \
                  chocolate-heretic  \
                  chocolate-hexen    \
-                 chocolate-server
+                 chocolate-server   \
+                 chocolate-setup
 
 AM_CFLAGS = -Idoom -I../textscreen -I../pcsound @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
+
+# Common source files used by absolutely everything:
+
+COMMON_SOURCE_FILES=\
+i_main.c                                   \
+i_system.c           i_system.h            \
+m_argv.c             m_argv.h              \
+m_misc.c             m_misc.h
+
+# Dedicated server (chocolate-server):
 
 DEDSERV_FILES=\
 d_dedicated.c                              \
 d_mode.c             d_mode.h              \
-i_main.c                                   \
 i_timer.c            i_timer.h             \
-m_argv.c             m_argv.h              \
-m_misc.c             m_misc.h              \
 net_common.c         net_common.h          \
 net_dedicated.c      net_dedicated.h       \
 net_io.c             net_io.h              \
@@ -26,10 +34,12 @@ net_server.c         net_server.h          \
 net_structrw.c       net_structrw.h        \
 z_native.c           z_zone.h
 
-chocolate_server_SOURCES=$(DEDSERV_FILES)
+chocolate_server_SOURCES=$(COMMON_SOURCE_FILES) $(DEDSERV_FILES)
 chocolate_server_LDADD = @LDFLAGS@ @SDL_LIBS@ @SDLNET_LIBS@ 
 
-MAIN_SOURCE_FILES=\
+# Source files used by the game binaries (chocolate-doom, etc.)
+
+GAME_SOURCE_FILES=\
 d_event.c            d_event.h             \
                      doomkeys.h            \
                      doomfeatures.h        \
@@ -38,22 +48,19 @@ d_iwad.c             d_iwad.h              \
 d_mode.c             d_mode.h              \
                      d_ticcmd.h            \
 i_cdmus.c            i_cdmus.h             \
-i_main.c                                   \
+i_endoom.c           i_endoom.h            \
 i_joystick.c         i_joystick.h          \
 i_scale.c            i_scale.h             \
                      i_swap.h              \
 i_sound.c            i_sound.h             \
-i_system.c           i_system.h            \
 i_timer.c            i_timer.h             \
 i_video.c            i_video.h             \
 i_videohr.c          i_videohr.h           \
-m_argv.c             m_argv.h              \
 m_bbox.c             m_bbox.h              \
 m_cheat.c            m_cheat.h             \
 m_config.c           m_config.h            \
 m_controls.c         m_controls.h          \
 m_fixed.c            m_fixed.h             \
-m_misc.c             m_misc.h              \
 md5.c                md5.h                 \
 memio.c              memio.h               \
 tables.c             tables.h              \
@@ -65,7 +72,7 @@ w_file.c             w_file.h              \
 w_file_stdc.c                              \
 w_file_posix.c                             \
 w_file_win32.c                             \
-z_zone.c             z_zone.h   
+z_zone.c             z_zone.h
 
 # source files needed for FEATURE_DEHACKED
 
@@ -101,7 +108,8 @@ i_sdlsound.c                               \
 i_sdlmusic.c                               \
 mus2mid.c            mus2mid.h
 
-SOURCE_FILES = $(MAIN_SOURCE_FILES)                \
+SOURCE_FILES = $(COMMON_SOURCE_FILES)              \
+               $(GAME_SOURCE_FILES)                \
                $(FEATURE_DEHACKED_SOURCE_FILES)    \
                $(FEATURE_WAD_MERGE_SOURCE_FILES)   \
                $(FEATURE_SOUND_SOURCE_FILES)
@@ -137,6 +145,17 @@ chocolate_hexen_SOURCES=$(SOURCE_FILES)
 endif
 
 chocolate_hexen_LDADD = hexen/libhexen.a $(EXTRA_LIBS)
+
+# Source files needed for chocolate-setup:
+
+SETUP_FILES=                               \
+m_config.c           m_config.h            \
+z_native.c           z_zone.h
+
+chocolate_setup_SOURCES=$(SETUP_FILES) $(COMMON_SOURCE_FILES)
+chocolate_setup_LDADD = setup/libsetup.a                     \
+                        ../textscreen/libtextscreen.a        \
+                        @LDFLAGS@ @SDL_LIBS@ @SDLNET_LIBS@ 
 
 EXTRA_DIST =                        \
         icon.c                      \

@@ -1,18 +1,13 @@
 
-gamesdir = $(prefix)/games
+AM_CFLAGS = @SDL_CFLAGS@ -I../../textscreen -I.. -DINSTALL_DIR="\"$(gamesdir)\""
 
-AM_CFLAGS = @SDL_CFLAGS@ -I../textscreen -I../src -DINSTALL_DIR="\"$(gamesdir)\""
+noinst_LIBRARIES = libsetup.a
 
-games_PROGRAMS = chocolate-setup
-
-chocolate_setup_LDADD = ../textscreen/libtextscreen.a @LDFLAGS@ @SDL_LIBS@
 SOURCE_FILES =                                  \
     compatibility.c   compatibility.h           \
-    configfile.c      configfile.h              \
     display.c         display.h                 \
     joystick.c        joystick.h                \
     keyboard.c        keyboard.h                \
-    m_argv.c          m_argv.h                  \
     mainmenu.c                                  \
     mouse.c           mouse.h                   \
     multiplayer.c     multiplayer.h             \
@@ -22,25 +17,9 @@ SOURCE_FILES =                                  \
     txt_keyinput.c    txt_keyinput.h            \
     txt_mouseinput.c  txt_mouseinput.h
 
+libsetup_a_SOURCES = $(SOURCE_FILES)
+
 EXTRA_DIST=                                     \
     setup_icon.c                                \
     setup-manifest.xml
-
-if HAVE_WINDRES
-chocolate_setup_SOURCES=$(SOURCE_FILES) setup-res.rc
-else
-chocolate_setup_SOURCES=$(SOURCE_FILES)
-endif
-
-.rc.o:
-	$(WINDRES) $^ -o $@
-%.o : %.rc
-	$(WINDRES) $^ -o $@
-
-if HAVE_PYTHON
-
-setup_icon.c : ../data/setup.ico
-	../data/convert-icon $^ $@
-
-endif
 

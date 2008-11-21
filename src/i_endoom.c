@@ -1,8 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-8 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -20,23 +19,53 @@
 // 02111-1307, USA.
 //
 // DESCRIPTION:
-//  Nil.
-//    
+//    Exit text-mode ENDOOM screen.
+//
 //-----------------------------------------------------------------------------
 
+#include "doomtype.h"
+#include "i_video.h"
 
-#ifndef __M_ARGV__
-#define __M_ARGV__
+#include "txt_main.h"
 
+// 
+// Displays the text mode ending screen after the game quits
 //
-// MISC
-//
-extern  int	myargc;
-extern  char**	myargv;
 
-// Returns the position of the given parameter
-// in the arg list (0 if not found).
-int M_CheckParm (char* check);
+void I_Endoom(byte *endoom_data)
+{
+    unsigned char *screendata;
 
+    // Set up text mode screen
 
-#endif
+    TXT_Init();
+
+    // Make sure the new window has the right title and icon
+ 
+    I_SetWindowTitle("Exit screen");
+    I_SetWindowIcon();
+    
+    // Write the data to the screen memory
+  
+    screendata = TXT_GetScreenData();
+    memcpy(screendata, endoom_data, 4000);
+
+    // Wait for a keypress
+
+    while (true)
+    {
+        TXT_UpdateScreen();
+
+        if (TXT_GetChar() >= 0)
+        {
+            break;
+        }
+
+        TXT_Sleep(0);
+    }
+
+    // Shut down text mode screen
+
+    TXT_Shutdown();
+}
+

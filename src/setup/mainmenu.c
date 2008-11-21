@@ -18,6 +18,7 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
+
 #include <stdlib.h>
 
 #include "config.h"
@@ -25,8 +26,8 @@
 
 #include "execute.h"
 
-#include "configfile.h"
 #include "m_argv.h"
+#include "m_config.h"
 
 #include "setup_icon.c"
 
@@ -42,7 +43,8 @@ static void DoQuit(void *widget, void *dosave)
 {
     if (dosave != NULL)
     {
-        M_SaveDefaults();
+        // DANGER: this is broken.  Do not save.
+//        M_SaveDefaults();
     }
 
     exit(0);
@@ -140,6 +142,7 @@ static void InitConfig(void)
     SetChatMacroDefaults();
     SetPlayerNameDefault();
 
+    M_SetConfigFilenames("default.cfg", "chocolate-doom.cfg");
     M_SetConfigDir();
     M_LoadDefaults();
 }
@@ -207,14 +210,9 @@ static void RunGUI(void)
     TXT_GUIMainLoop();
 }
 
-int main(int argc, char *argv[])
+void D_DoomMain(void)
 {
-    myargc = argc;
-    myargv = argv;
-
     InitConfig();
     RunGUI();
-
-    return 0;
 }
 

@@ -981,6 +981,31 @@ void M_SaveDefaults (void)
 }
 
 //
+// Save defaults to alternate filenames
+//
+
+void M_SaveDefaultsAlternate(char *main, char *extra)
+{
+    char *orig_main;
+    char *orig_extra;
+
+    // Temporarily change the filenames
+
+    orig_main = doom_defaults.filename;
+    orig_extra = extra_defaults.filename;
+
+    doom_defaults.filename = main;
+    extra_defaults.filename = extra;
+
+    M_SaveDefaults();
+
+    // Restore normal filenames
+
+    doom_defaults.filename = orig_main;
+    extra_defaults.filename = orig_extra;
+}
+
+//
 // M_LoadDefaults
 //
 
