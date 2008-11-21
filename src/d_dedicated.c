@@ -43,29 +43,6 @@ void NET_CL_Run(void)
     // In a standalone dedicated server, we don't have a client.
 }
 
-//
-// I_Error
-//
-// We have our own I_Error function for the dedicated server.  
-// The normal one does extra things like shutdown graphics, etc.
-
-void I_Error (char *error, ...)
-{
-    va_list	argptr;
-
-    // Message first.
-    va_start(argptr,error);
-    fprintf(stderr, "Error: ");
-    vfprintf(stderr,error,argptr);
-    fprintf(stderr, "\n");
-    va_end(argptr);
-
-    fflush(stderr);
-
-    exit(-1);
-}
-
-
 void D_DoomMain(void)
 {
     printf(PACKAGE_NAME " standalone dedicated server\n");

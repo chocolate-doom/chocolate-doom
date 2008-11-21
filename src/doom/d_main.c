@@ -60,6 +60,8 @@
 #include "m_menu.h"
 #include "p_saveg.h"
 
+#include "i_endoom.h"
+#include "i_joystick.h"
 #include "i_system.h"
 #include "i_timer.h"
 #include "i_video.h"
@@ -346,7 +348,10 @@ void D_BindVariables(void)
 {
     int i;
 
-    I_BindVariables();
+    I_BindVideoVariables();
+    I_BindJoystickVariables();
+    I_BindSoundVariables();
+
     M_BindBaseControls();
 #ifdef FEATURE_MULTIPLAYER
     NET_BindVariables();
@@ -1674,7 +1679,9 @@ void D_DoomMain (void)
     P_Init ();
 
     printf (DEH_String("I_Init: Setting up machine state.\n"));
-    I_Init ();
+    I_CheckIsScreensaver();
+    I_InitTimer();
+    I_InitJoystick();
 
 #ifdef FEATURE_MULTIPLAYER
     printf ("NET_Init: Initialise network subsystem.\n");

@@ -34,7 +34,11 @@
 #include "ct_chat.h"
 #include "doomdef.h"
 #include "d_iwad.h"
+#include "i_endoom.h"
+#include "i_joystick.h"
+#include "i_sound.h"
 #include "i_system.h"
+#include "i_timer.h"
 #include "i_video.h"
 #include "m_argv.h"
 #include "m_config.h"
@@ -744,7 +748,9 @@ void D_BindVariables(void)
     extern int snd_Channels;
     int i;
 
-    I_BindVariables();
+    I_BindVideoVariables();
+    I_BindJoystickVariables();
+    I_BindSoundVariables();
     M_BindBaseControls();
     M_BindHereticControls();
 
@@ -975,7 +981,9 @@ void D_DoomMain(void)
     IncThermo();
 
     tprintf("I_Init: Setting up machine state.\n", 1);
-    I_Init();
+    I_CheckIsScreensaver();
+    I_InitTimer();
+    I_InitJoystick();
     IncThermo();
 
     tprintf("S_Init: Setting up sound.\n", 1);

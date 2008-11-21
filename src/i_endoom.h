@@ -3,7 +3,6 @@
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2005 Simon Howard
-// Copyright(C) 2008 "GhostlyDeath" (ghostlydeath@gmail.com)
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -21,45 +20,18 @@
 // 02111-1307, USA.
 //
 // DESCRIPTION:
+//    Exit text-mode ENDOOM screen.
 //
 //-----------------------------------------------------------------------------
 
 
+#ifndef __I_ENDOOM__
+#define __I_ENDOOM__
 
-#include <string.h>
+// Display the Endoom screen on shutdown.  Pass a pointer to the
+// ENDOOM lump.
 
-int		myargc;
-char**		myargv;
+void I_Endoom(byte *data);
 
-// From doomdef.h -- no need to include it all!
-#ifdef _WIN32
-#define snprintf _snprintf
-#define vsnprintf _vsnprintf
-#define strcasecmp stricmp
-#define strncasecmp strnicmp
-#else
-#include <strings.h>
 #endif
-
-//
-// M_CheckParm
-// Checks for the given parameter
-// in the program's command line arguments.
-// Returns the argument number (1 to argc-1)
-// or 0 if not present
-int M_CheckParm (char *check)
-{
-    int		i;
-
-    for (i = 1;i<myargc;i++)
-    {
-	if ( !strcasecmp(check, myargv[i]) )
-	    return i;
-    }
-
-    return 0;
-}
-
-
-
 

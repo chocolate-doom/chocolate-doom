@@ -73,6 +73,11 @@ void I_Sleep(int ms)
     SDL_Delay(ms);
 }
 
+void I_WaitVBL(int count)
+{
+    I_Sleep((count * 1000) / 70);
+}
+
 
 void I_InitTimer(void)
 {

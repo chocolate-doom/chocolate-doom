@@ -38,9 +38,9 @@
 #include "textscreen.h"
 
 #include "config.h"
-#include "configfile.h"
 #include "execute.h"
 #include "m_argv.h"
+#include "m_config.h"
 
 #ifdef _WIN32
 #define DOOM_BINARY PACKAGE_TARNAME ".exe"
@@ -221,7 +221,7 @@ static void TestCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
     char *extra_cfg;
     txt_window_t *testwindow;
     txt_label_t *label;
-    
+
     testwindow = TXT_NewWindow("Starting Doom");
 
     label = TXT_NewLabel("Starting Doom to test the\n"
@@ -235,8 +235,7 @@ static void TestCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
     main_cfg = TempFile("tmp.cfg");
     extra_cfg = TempFile("extratmp.cfg");
 
-    M_SaveMainDefaults(main_cfg);
-    M_SaveExtraDefaults(extra_cfg);
+    M_SaveDefaultsAlternate(main_cfg, extra_cfg);
 
     // Run with the -testcontrols parameter
 
