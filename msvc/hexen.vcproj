@@ -234,6 +234,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\i_videohr.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\icon.c"
 				>
 			</File>
@@ -585,6 +589,10 @@
 			</File>
 			<File
 				RelativePath="..\src\i_video.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\i_videohr.h"
 				>
 			</File>
 			<File
