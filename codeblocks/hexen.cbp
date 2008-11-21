@@ -275,6 +275,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\i_video.h" />
+		<Unit filename="..\src\i_videohr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\i_videohr.h" />
 		<Unit filename="..\src\icon.c">
 			<Option compilerVar="CC" />
 		</Unit>
