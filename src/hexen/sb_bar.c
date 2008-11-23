@@ -29,6 +29,7 @@
 #include "i_video.h"
 #include "m_bbox.h"
 #include "m_cheat.h"
+#include "m_misc.h"
 #include "p_local.h"
 #include "s_sound.h"
 #include "v_video.h"
