@@ -196,7 +196,7 @@ void T_MoveFloor(floormove_t * floor)
                       floor->direction);
     if (!(leveltime & 7))
     {
-        S_StartSound((mobj_t *) & floor->sector->soundorg, sfx_dormov);
+        S_StartSound(&floor->sector->soundorg, sfx_dormov);
     }
 
     if (res == pastdest)
@@ -204,7 +204,7 @@ void T_MoveFloor(floormove_t * floor)
         floor->sector->specialdata = NULL;
         if (floor->type == raiseBuildStep)
         {
-            S_StartSound((mobj_t *) & floor->sector->soundorg, sfx_pstop);
+            S_StartSound(&floor->sector->soundorg, sfx_pstop);
         }
         if (floor->direction == 1)
             switch (floor->type)
