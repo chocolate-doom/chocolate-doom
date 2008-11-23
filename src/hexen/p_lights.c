@@ -124,6 +124,10 @@ boolean EV_SpawnLight(line_t * line, byte * arg, lighttype_t type)
     boolean think;
     boolean rtn;
 
+    /*
+    Original code; redundant considering that a byte value is always
+    in the range 0-255:
+
     arg1 = arg[1] > 255 ? 255 : arg[1];
     arg1 = arg1 < 0 ? 0 : arg1;
     arg2 = arg[2] > 255 ? 255 : arg[2];
@@ -132,6 +136,12 @@ boolean EV_SpawnLight(line_t * line, byte * arg, lighttype_t type)
     arg3 = arg3 < 0 ? 0 : arg3;
     arg4 = arg[4] > 255 ? 255 : arg[4];
     arg4 = arg4 < 0 ? 0 : arg4;
+    */
+
+    arg1 = arg[1];
+    arg2 = arg[2];
+    arg3 = arg[3];
+    arg4 = arg[4];
 
     secNum = -1;
     rtn = false;
