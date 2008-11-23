@@ -129,8 +129,9 @@ static mobj_t *GetSoundListener(void)
     }
 }
 
-void S_StartSound(mobj_t * origin, int sound_id)
+void S_StartSound(void *_origin, int sound_id)
 {
+    mobj_t *origin = _origin;
     mobj_t *listener;
     int dist, vol;
     int i;
@@ -297,8 +298,9 @@ void S_StartSound(mobj_t * origin, int sound_id)
     }
 }
 
-void S_StartSoundAtVolume(mobj_t * origin, int sound_id, int volume)
+void S_StartSoundAtVolume(void *_origin, int sound_id, int volume)
 {
+    mobj_t *origin = _origin;
     mobj_t *listener;
     int i;
 
@@ -397,8 +399,9 @@ boolean S_StopSoundID(int sound_id, int priority)
     return (true);
 }
 
-void S_StopSound(mobj_t * origin)
+void S_StopSound(void *_origin)
 {
+    mobj_t *origin = _origin;
     int i;
 
     for (i = 0; i < snd_Channels; i++)

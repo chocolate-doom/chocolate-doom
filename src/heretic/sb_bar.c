@@ -27,6 +27,7 @@
 #include "doomdef.h"
 #include "i_video.h"
 #include "m_cheat.h"
+#include "m_misc.h"
 #include "m_random.h"
 #include "p_local.h"
 #include "s_sound.h"

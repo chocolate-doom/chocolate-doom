@@ -49,14 +49,14 @@ void T_PlatRaise(plat_t * plat)
                               plat->high, plat->crush, 0, 1);
             if (!(leveltime & 31))
             {
-                S_StartSound((mobj_t *) & plat->sector->soundorg, sfx_stnmov);
+                S_StartSound(&plat->sector->soundorg, sfx_stnmov);
             }
             if (plat->type == raiseAndChange
                 || plat->type == raiseToNearestAndChange)
             {
                 if (!(leveltime & 7))
                 {
-                    S_StartSound((mobj_t *) & plat->sector->soundorg,
+                    S_StartSound(&plat->sector->soundorg,
                                  sfx_stnmov);
                 }
             }
@@ -64,13 +64,13 @@ void T_PlatRaise(plat_t * plat)
             {
                 plat->count = plat->wait;
                 plat->status = down;
-                S_StartSound((mobj_t *) & plat->sector->soundorg, sfx_pstart);
+                S_StartSound(&plat->sector->soundorg, sfx_pstart);
             }
             else if (res == pastdest)
             {
                 plat->count = plat->wait;
                 plat->status = waiting;
-                S_StartSound((mobj_t *) & plat->sector->soundorg, sfx_pstop);
+                S_StartSound(&plat->sector->soundorg, sfx_pstop);
                 switch (plat->type)
                 {
                     case downWaitUpStay:
@@ -92,13 +92,13 @@ void T_PlatRaise(plat_t * plat)
             {
                 plat->count = plat->wait;
                 plat->status = waiting;
-                S_StartSound((mobj_t *) & plat->sector->soundorg, sfx_pstop);
+                S_StartSound(&plat->sector->soundorg, sfx_pstop);
             }
             else
             {
                 if (!(leveltime & 31))
                 {
-                    S_StartSound((mobj_t *) & plat->sector->soundorg,
+                    S_StartSound(&plat->sector->soundorg,
                                  sfx_stnmov);
                 }
             }
@@ -110,7 +110,7 @@ void T_PlatRaise(plat_t * plat)
                     plat->status = up;
                 else
                     plat->status = down;
-                S_StartSound((mobj_t *) & plat->sector->soundorg, sfx_pstart);
+                S_StartSound(&plat->sector->soundorg, sfx_pstart);
             }
         case in_stasis:
             break;
@@ -173,7 +173,7 @@ int EV_DoPlat(line_t * line, plattype_e type, int amount)
                 plat->wait = 0;
                 plat->status = up;
                 sec->special = 0;       // NO MORE DAMAGE, IF APPLICABLE
-                S_StartSound((mobj_t *) & sec->soundorg, sfx_stnmov);
+                S_StartSound(&sec->soundorg, sfx_stnmov);
                 break;
             case raiseAndChange:
                 plat->speed = PLATSPEED / 2;
@@ -181,7 +181,7 @@ int EV_DoPlat(line_t * line, plattype_e type, int amount)
                 plat->high = sec->floorheight + amount * FRACUNIT;
                 plat->wait = 0;
                 plat->status = up;
-                S_StartSound((mobj_t *) & sec->soundorg, sfx_stnmov);
+                S_StartSound(&sec->soundorg, sfx_stnmov);
                 break;
             case downWaitUpStay:
                 plat->speed = PLATSPEED * 4;
@@ -191,7 +191,7 @@ int EV_DoPlat(line_t * line, plattype_e type, int amount)
                 plat->high = sec->floorheight;
                 plat->wait = 35 * PLATWAIT;
                 plat->status = down;
-                S_StartSound((mobj_t *) & sec->soundorg, sfx_pstart);
+                S_StartSound(&sec->soundorg, sfx_pstart);
                 break;
             case perpetualRaise:
                 plat->speed = PLATSPEED;
@@ -203,7 +203,7 @@ int EV_DoPlat(line_t * line, plattype_e type, int amount)
                     plat->high = sec->floorheight;
                 plat->wait = 35 * PLATWAIT;
                 plat->status = P_Random() & 1;
-                S_StartSound((mobj_t *) & sec->soundorg, sfx_pstart);
+                S_StartSound(&sec->soundorg, sfx_pstart);
                 break;
         }
         P_AddActivePlat(plat);

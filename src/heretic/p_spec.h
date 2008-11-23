@@ -188,7 +188,7 @@ typedef struct
     bwhere_e where;
     int btexture;
     int btimer;
-    mobj_t *soundorg;
+    void *soundorg;
 } button_t;
 
 #define	MAXSWITCHES	50      // max # of wall switches in a level
