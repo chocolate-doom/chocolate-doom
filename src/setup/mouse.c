@@ -23,29 +23,21 @@
 
 #include "textscreen.h"
 #include "doomtype.h"
+#include "m_config.h"
+#include "m_controls.h"
 
 #include "execute.h"
 #include "txt_mouseinput.h"
 
 #include "mouse.h"
 
-int usemouse = 1;
+static int usemouse = 1;
 
-int novert = 0;
-int mouseSensitivity = 5;
-float mouse_acceleration = 1.0;
-int mouse_threshold = 10;
-int grabmouse = 1;
-
-int mousebfire = 0;
-int mousebforward = 1;
-int mousebstrafe = 2;
-int mousebstrafeleft = -1;
-int mousebstraferight = -1;
-int mousebbackward = -1;
-int mousebuse = -1;
-
-int dclick_use = 1;
+static int novert = 0;
+static int mouseSensitivity = 5;
+static float mouse_acceleration = 1.0;
+static int mouse_threshold = 10;
+static int grabmouse = 1;
 
 static int *all_mouse_buttons[] = {
     &mousebfire,
@@ -153,5 +145,15 @@ void ConfigMouse(void)
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
 
     TXT_SignalConnect(more_buttons, "pressed", ConfigExtraButtons, NULL);
+}
+
+void BindMouseVariables(void)
+{
+    M_BindVariable("use_mouse",            &usemouse);
+    M_BindVariable("novert",               &novert);
+    M_BindVariable("mouse_sensitivity",    &mouseSensitivity);
+    M_BindVariable("mouse_acceleration",   &mouse_acceleration);
+    M_BindVariable("mouse_threshold",      &mouse_threshold);
+    M_BindVariable("grabmouse",            &grabmouse);
 }
 

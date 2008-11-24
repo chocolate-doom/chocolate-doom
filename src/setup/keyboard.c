@@ -20,6 +20,8 @@
 //
 #include "textscreen.h"
 #include "doomtype.h"
+#include "m_config.h"
+#include "m_controls.h"
 
 #include "execute.h"
 #include "txt_keyinput.h"
@@ -27,18 +29,7 @@
 #include "joystick.h"
 #include "keyboard.h"
 
-int key_left = KEY_LEFTARROW;
-int key_right = KEY_RIGHTARROW;
-int key_up = KEY_UPARROW;
-int key_down = KEY_DOWNARROW;
-int key_strafeleft = ',';
-int key_straferight = '.';
-int key_fire = KEY_RCTRL;
-int key_use = ' ';
-int key_strafe = KEY_RALT;
-int key_speed = KEY_RSHIFT;
-
-int vanilla_keyboard_mapping = 1;
+static int vanilla_keyboard_mapping = 1;
 
 static int always_run = 0;
 
@@ -139,5 +130,10 @@ void ConfigKeyboard(void)
     AddKeyControl(action_table, "Fire", &key_fire);
 
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
+}
+
+void BindKeyboardVariables(void)
+{
+    M_BindVariable("vanilla_keyboard_mapping", &vanilla_keyboard_mapping);
 }
 

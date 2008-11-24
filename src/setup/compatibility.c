@@ -23,6 +23,7 @@
 
 #include <stdlib.h>
 
+#include "m_config.h"
 #include "textscreen.h"
 
 #include "compatibility.h"
@@ -42,5 +43,11 @@ void CompatibilitySettings(void)
                    TXT_NewCheckBox("Vanilla demo limit",
                                    &vanilla_demo_limit),
                    NULL);
+}
+
+void BindCompatibilityVariables(void)
+{
+    M_BindVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
+    M_BindVariable("vanilla_demo_limit",     &vanilla_demo_limit);
 }
 

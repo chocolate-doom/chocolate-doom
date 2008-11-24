@@ -22,6 +22,7 @@
 #include <string.h>
 
 #include "textscreen.h"
+#include "m_config.h"
 
 #include "display.h"
 
@@ -65,14 +66,14 @@ static screen_mode_t *screen_modes_fullscreen = NULL;
 
 static int vidmode = 0;
 
-char *video_driver = "";
-int autoadjust_video_settings = 1;
-int aspect_ratio_correct = 1;
-int fullscreen = 1;
-int screen_width = 320;
-int screen_height = 200;
-int startup_delay = 1000;
-int show_endoom = 1;
+static char *video_driver = "";
+static int autoadjust_video_settings = 1;
+static int aspect_ratio_correct = 1;
+static int fullscreen = 1;
+static int screen_width = 320;
+static int screen_height = 200;
+static int startup_delay = 1000;
+static int show_endoom = 1;
 
 // These are the last screen width/height values that were chosen by the
 // user.  These are used when finding the "nearest" mode, so when 
@@ -434,5 +435,19 @@ void ConfigDisplay(void)
     TXT_SignalConnect(ar_checkbox, "changed", GenerateModesTable, modes_table);
 
     GenerateModesTable(NULL, modes_table);
+}
+
+void BindDisplayVariables(void)
+{
+    M_BindVariable("autoadjust_video_settings", &autoadjust_video_settings);
+    M_BindVariable("aspect_ratio_correct",      &aspect_ratio_correct);
+    M_BindVariable("fullscreen",                &fullscreen);
+    M_BindVariable("screen_width",              &screen_width);
+    M_BindVariable("screen_height",             &screen_height);
+    M_BindVariable("startup_delay",             &startup_delay);
+    M_BindVariable("video_driver",              &video_driver);
+
+    // doom, heretic only:
+    M_BindVariable("show_endoom",               &show_endoom);
 }
 

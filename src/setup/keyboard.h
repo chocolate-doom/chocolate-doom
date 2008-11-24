@@ -22,20 +22,8 @@
 #ifndef SETUP_KEYBOARD_H 
 #define SETUP_KEYBOARD_H 
 
-extern int key_left;
-extern int key_right;
-extern int key_up;
-extern int key_down;
-extern int key_strafeleft;
-extern int key_straferight;
-extern int key_fire;
-extern int key_use;
-extern int key_strafe;
-extern int key_speed;
-extern int joybspeed;
-extern int vanilla_keyboard_mapping;
-
 void ConfigKeyboard(void);
+void BindKeyboardVariables(void);
 
 #endif /* #ifndef SETUP_KEYBOARD_H */
 
