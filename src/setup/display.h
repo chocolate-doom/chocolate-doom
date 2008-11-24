@@ -22,16 +22,9 @@
 #ifndef SETUP_DISPLAY_H 
 #define SETUP_DISPLAY_H
 
-extern int autoadjust_video_settings;
-extern int aspect_ratio_correct;
-extern int fullscreen;
-extern int screen_width, screen_height;
-extern int startup_delay;
-extern int show_endoom;
-extern char *video_driver;
-
 void ConfigDisplay(void);
 void SetDisplayDriver(void);
+void BindDisplayVariables(void);
 
 #endif /* #ifndef SETUP_DISPLAY_H */
 
