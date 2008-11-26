@@ -28,6 +28,7 @@
 
 #include "m_argv.h"
 #include "m_config.h"
+#include "m_controls.h"
 
 #include "setup_icon.c"
 
@@ -39,12 +40,24 @@
 #include "multiplayer.h"
 #include "sound.h"
 
+// Miscellaneous variables that aren't used in setup.
+
+static int showMessages = 1;
+static int screenblocks = 9;
+static int detailLevel = 0;
+
+static void BindMiscVariables(void)
+{
+    M_BindVariable("show_messages",     &showMessages);
+    M_BindVariable("screenblocks",      &screenblocks);
+    M_BindVariable("detaillevel",       &detailLevel);
+}
+
 static void DoQuit(void *widget, void *dosave)
 {
     if (dosave != NULL)
     {
-        // DANGER: this is broken.  Do not save.
-//        M_SaveDefaults();
+        M_SaveDefaults();
     }
 
     exit(0);
@@ -141,6 +154,21 @@ static void InitConfig(void)
 {
     SetChatMacroDefaults();
     SetPlayerNameDefault();
+
+    // Keyboard, mouse, joystick controls
+
+    M_BindBaseControls();
+
+    // All other variables
+
+    BindCompatibilityVariables();
+    BindDisplayVariables();
+    BindJoystickVariables();
+    BindKeyboardVariables();
+    BindMouseVariables();
+    BindSoundVariables();
+    BindMiscVariables();
+    BindMultiplayerVariables();
 
     M_SetConfigFilenames("default.cfg", "chocolate-doom.cfg");
     M_SetConfigDir();

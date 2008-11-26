@@ -22,15 +22,14 @@
 #ifndef SETUP_MULTIPLAYER_H
 #define SETUP_MULTIPLAYER_H
 
-extern char *net_player_name;
-extern char *chat_macros[10];
-
 void StartMultiGame(void);
 void JoinMultiGame(void);
 void MultiplayerConfig(void);
 
 void SetChatMacroDefaults(void);
 void SetPlayerNameDefault(void);
+
+void BindMultiplayerVariables(void);
 
 #endif /* #ifndef SETUP_MULTIPLAYER_H */
 

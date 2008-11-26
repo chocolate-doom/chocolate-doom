@@ -22,18 +22,8 @@
 #ifndef SETUP_SOUND_H
 #define SETUP_SOUND_H
 
-extern int snd_sfxdevice;
-extern int numChannels;
-extern int sfxVolume;
-
-extern int snd_musicdevice;
-extern int musicVolume;
-
-extern int snd_samplerate;
-
-extern int use_libsamplerate;
-
 void ConfigSound(void);
+void BindSoundVariables(void);
 
 #endif /* #ifndef SETUP_SOUND_H */
 
