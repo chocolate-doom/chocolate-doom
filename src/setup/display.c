@@ -74,6 +74,7 @@ static int screen_width = 320;
 static int screen_height = 200;
 static int startup_delay = 1000;
 static int show_endoom = 1;
+static int usegamma = 0;
 
 // These are the last screen width/height values that were chosen by the
 // user.  These are used when finding the "nearest" mode, so when 
@@ -446,6 +447,7 @@ void BindDisplayVariables(void)
     M_BindVariable("screen_height",             &screen_height);
     M_BindVariable("startup_delay",             &startup_delay);
     M_BindVariable("video_driver",              &video_driver);
+    M_BindVariable("usegamma",                  &usegamma);
 
     // doom, heretic only:
     M_BindVariable("show_endoom",               &show_endoom);

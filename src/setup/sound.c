@@ -24,6 +24,7 @@
 #include <stdlib.h>
 
 #include "textscreen.h"
+#include "m_config.h"
 
 #include "sound.h"
 
@@ -65,19 +66,28 @@ static char *sfxmode_strings[] =
 #define DEFAULT_MUSIC_DEVICE SNDDEVICE_SB
 #endif
 
-int snd_sfxdevice = SNDDEVICE_SB;
-int numChannels = 8;
-int sfxVolume = 15;
+static int snd_sfxdevice = SNDDEVICE_SB;
+static int numChannels = 8;
+static int sfxVolume = 15;
 
-int snd_musicdevice = DEFAULT_MUSIC_DEVICE;
-int musicVolume = 15;
+static int snd_musicdevice = DEFAULT_MUSIC_DEVICE;
+static int musicVolume = 15;
 
-int snd_samplerate = 22050;
+static int snd_samplerate = 22050;
 
-int use_libsamplerate = 0;
+static int use_libsamplerate = 0;
 
 static int snd_sfxmode;
 static int snd_musicenabled;
+
+// DOS specific options: these are unused but should be maintained
+// so that the config file can be shared between chocolate
+// doom and doom.exe
+
+static int snd_sbport = 0;
+static int snd_sbirq = 0;
+static int snd_sbdma = 0;
+static int snd_mport = 0;
 
 static void UpdateSndDevices(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
 {
@@ -163,5 +173,21 @@ void ConfigSound(void)
     TXT_SignalConnect(music_enabled_control, "changed", 
                       UpdateSndDevices, NULL);
 
+}
+
+void BindSoundVariables(void)
+{
+    M_BindVariable("snd_sfxdevice",       &snd_sfxdevice);
+    M_BindVariable("snd_musicdevice",     &snd_musicdevice);
+    M_BindVariable("snd_channels",        &numChannels);
+    M_BindVariable("sfx_volume",          &sfxVolume);
+    M_BindVariable("music_volume",        &musicVolume);
+    M_BindVariable("snd_samplerate",      &snd_samplerate);
+    M_BindVariable("use_libsamplerate",   &use_libsamplerate);
+
+    M_BindVariable("snd_sbport",          &snd_sbport);
+    M_BindVariable("snd_sbirq",          &snd_sbirq);
+    M_BindVariable("snd_sbdma",          &snd_sbdma);
+    M_BindVariable("snd_mport",          &snd_mport);
 }
 

@@ -18,6 +18,7 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -94,8 +95,8 @@ static char *gamemodes[] =
     "Deathmatch 2.0",
 };
 
-char *net_player_name;
-char *chat_macros[10];
+static char *net_player_name;
+static char *chat_macros[10];
 
 static char *wads[NUM_WADS];
 static char *extra_params[NUM_EXTRA_PARAMS];
@@ -745,5 +746,21 @@ void MultiplayerConfig(void)
     }
     
     TXT_AddWidget(window, table);
+}
+
+void BindMultiplayerVariables(void)
+{
+    char buf[15];
+    int i;
+
+#ifdef FEATURE_MULTIPLAYER
+    M_BindVariable("player_name", &net_player_name);
+#endif
+
+    for (i=0; i<10; ++i)
+    {
+        sprintf(buf, "chatmacro%i", i);
+        M_BindVariable(buf, &chat_macros[i]);
+    }
 }
 
