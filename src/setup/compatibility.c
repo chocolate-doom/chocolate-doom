@@ -25,6 +25,7 @@
 
 #include "m_config.h"
 #include "textscreen.h"
+#include "mode.h"
 
 #include "compatibility.h"
 
@@ -47,7 +48,10 @@ void CompatibilitySettings(void)
 
 void BindCompatibilityVariables(void)
 {
-    M_BindVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
-    M_BindVariable("vanilla_demo_limit",     &vanilla_demo_limit);
+    if (gamemission == doom)
+    {
+        M_BindVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
+        M_BindVariable("vanilla_demo_limit",     &vanilla_demo_limit);
+    }
 }
 

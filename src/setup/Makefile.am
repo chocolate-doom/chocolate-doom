@@ -9,6 +9,7 @@ SOURCE_FILES =                                  \
     joystick.c        joystick.h                \
     keyboard.c        keyboard.h                \
     mainmenu.c                                  \
+    mode.c            mode.h                    \
     mouse.c           mouse.h                   \
     multiplayer.c     multiplayer.h             \
     sound.c           sound.h                   \
