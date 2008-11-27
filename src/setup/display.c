@@ -23,6 +23,7 @@
 
 #include "textscreen.h"
 #include "m_config.h"
+#include "mode.h"
 
 #include "display.h"
 
@@ -449,7 +450,16 @@ void BindDisplayVariables(void)
     M_BindVariable("video_driver",              &video_driver);
     M_BindVariable("usegamma",                  &usegamma);
 
-    // doom, heretic only:
-    M_BindVariable("show_endoom",               &show_endoom);
+
+    if (gamemission == doom || gamemission == heretic)
+    {
+        M_BindVariable("show_endoom",               &show_endoom);
+    }
+
+    if (gamemission == heretic || gamemission == hexen)
+    {
+        M_BindVariable("graphical_startup",        &show_endoom);
+    }
+
 }
 
