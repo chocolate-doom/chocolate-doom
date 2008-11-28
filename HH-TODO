@@ -1,7 +1,6 @@
  * Remove all dependencies of common code on doom/
     - net_client.c
  * Update netcode for new ticcmd_t fields
- * Chocolate Setup to allow configuration for H/H
  * Update docgen to generate manpages for Heretic/Hexen.
 
 Heretic:
