@@ -20,8 +20,8 @@
 // 02111-1307, USA.
 //
 // DESCRIPTION:
-//  Internally used data structures for virtually everything,
-//   lots of other stuff.
+//   Functions and definitions relating to the game type and operational
+//   mode.
 //
 //-----------------------------------------------------------------------------
 
@@ -87,6 +87,7 @@ boolean D_ValidGameMode(GameMission_t mission, GameMode_t mode);
 boolean D_ValidGameVersion(GameMission_t mission, GameVersion_t version);
 boolean D_ValidEpisodeMap(GameMission_t mission, GameMode_t mode,
                           int episode, int map);
+int D_GetNumEpisodes(GameMission_t mission, GameMode_t mode);
 
 #endif /* #ifndef __D_MODE__ */
 
