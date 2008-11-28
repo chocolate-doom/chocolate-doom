@@ -18,9 +18,12 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-// Common code shared between the client and server
+//-----------------------------------------------------------------------------
 //
-
+// DESCRIPTION:
+//   Functions and definitions relating to the game type and operational
+//   mode.
+//
 
 #include "doomtype.h"
 #include "d_mode.h"
@@ -98,6 +101,22 @@ boolean D_ValidEpisodeMap(GameMission_t mission, GameMode_t mode,
     // Unknown mode/mission combination
 
     return false;
+}
+
+// Get the number of valid episodes for the specified mission/mode.
+
+int D_GetNumEpisodes(GameMission_t mission, GameMode_t mode)
+{
+    int episode;
+
+    episode = 1;
+
+    while (D_ValidEpisodeMap(mission, mode, episode, 1))
+    {
+        ++episode;
+    }
+
+    return episode - 1;
 }
 
 // Table of valid versions
