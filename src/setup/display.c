@@ -74,6 +74,7 @@ static int fullscreen = 1;
 static int screen_width = 320;
 static int screen_height = 200;
 static int startup_delay = 1000;
+static int graphical_startup = 1;
 static int show_endoom = 1;
 static int usegamma = 0;
 
@@ -430,8 +431,19 @@ void ConfigDisplay(void)
                    TXT_NewSeparator("Screen mode"),
                    modes_table,
                    TXT_NewSeparator("Misc."),
-                   TXT_NewCheckBox("Show ENDOOM screen", &show_endoom),
                    NULL);
+
+    if (gamemission == heretic || gamemission == hexen)
+    {
+        TXT_AddWidget(window,
+                      TXT_NewCheckBox("Graphical startup", &graphical_startup));
+    }
+
+    if (gamemission == doom || gamemission == heretic)
+    {
+        TXT_AddWidget(window,
+                      TXT_NewCheckBox("Show ENDOOM screen", &show_endoom));
+    }
 
     TXT_SignalConnect(fs_checkbox, "changed", GenerateModesTable, modes_table);
     TXT_SignalConnect(ar_checkbox, "changed", GenerateModesTable, modes_table);
@@ -458,7 +470,7 @@ void BindDisplayVariables(void)
 
     if (gamemission == heretic || gamemission == hexen)
     {
-        M_BindVariable("graphical_startup",        &show_endoom);
+        M_BindVariable("graphical_startup",        &graphical_startup);
     }
 
 }

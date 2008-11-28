@@ -26,9 +26,10 @@
 #include "m_config.h"
 #include "m_controls.h"
 #include "textscreen.h"
-#include "txt_joybinput.h"
 
 #include "joystick.h"
+#include "mode.h"
+#include "txt_joybinput.h"
 
 typedef enum
 {
@@ -408,7 +409,7 @@ void ConfigJoystick(void)
 
     TXT_SetColumnWidths(button_table, 20, 15);
 
-    AddJoystickControl(button_table, "Fire", &joybfire);
+    AddJoystickControl(button_table, "Fire/Attack", &joybfire);
     AddJoystickControl(button_table, "Use", &joybuse);
 
     // High values of joybspeed are used to activate the "always run mode"
@@ -424,6 +425,11 @@ void ConfigJoystick(void)
 
     AddJoystickControl(button_table, "Strafe Left", &joybstrafeleft);
     AddJoystickControl(button_table, "Strafe Right", &joybstraferight);
+
+    if (gamemission == hexen)
+    {
+        AddJoystickControl(button_table, "Jump", &joybjump);
+    }
 
     TXT_SignalConnect(joystick_button, "pressed", CalibrateJoystick, NULL);
     TXT_SignalConnect(window, "closed", JoystickWindowClosed, NULL);

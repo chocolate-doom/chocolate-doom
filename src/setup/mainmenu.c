@@ -98,6 +98,29 @@ static void LaunchDoom(void *unused1, void *unused2)
     exit(0);
 }
 
+static txt_button_t *GetLaunchButton(void)
+{
+    char *label;
+
+    switch (gamemission)
+    {
+        case doom:
+            label = "Save parameters and launch DOOM";
+            break;
+        case heretic:
+            label = "Save parameters and launch Heretic";
+            break;
+        case hexen:
+            label = "Save parameters and launch Hexen";
+            break;
+        default:
+            label = "Save parameters and launch game";
+            break;
+    }
+
+    return TXT_NewButton2(label, LaunchDoom, NULL);
+}
+
 void MainMenu(void)
 {
     txt_window_t *window;
@@ -108,17 +131,31 @@ void MainMenu(void)
     TXT_AddWidgets(window,
           TXT_NewButton2("Configure Display", 
                          (TxtWidgetSignalFunc) ConfigDisplay, NULL),
-          TXT_NewButton2("Configure Joystick", 
-                         (TxtWidgetSignalFunc) ConfigJoystick, NULL),
           TXT_NewButton2("Configure Keyboard", 
                          (TxtWidgetSignalFunc) ConfigKeyboard, NULL),
           TXT_NewButton2("Configure Mouse", 
                          (TxtWidgetSignalFunc) ConfigMouse, NULL),
+          TXT_NewButton2("Configure Joystick", 
+                         (TxtWidgetSignalFunc) ConfigJoystick, NULL),
           TXT_NewButton2("Configure Sound", 
                          (TxtWidgetSignalFunc) ConfigSound, NULL),
-          TXT_NewButton2("Compatibility", 
-                         (TxtWidgetSignalFunc) CompatibilitySettings, NULL),
-          TXT_NewButton2("Save parameters and launch DOOM", LaunchDoom, NULL),
+          NULL);
+
+    // The compatibility window is only appropriate for Doom.
+
+    if (gamemission == doom)
+    {
+        txt_button_t *button;
+
+        button = TXT_NewButton2("Compatibility", 
+                                (TxtWidgetSignalFunc) CompatibilitySettings,
+                                NULL);
+
+        TXT_AddWidget(window, button);
+    }
+
+    TXT_AddWidgets(window,
+          GetLaunchButton(),
           TXT_NewStrut(0, 1),
           TXT_NewButton2("Start a Network Game", 
                          (TxtWidgetSignalFunc) StartMultiGame, NULL),

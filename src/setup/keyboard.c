@@ -26,6 +26,7 @@
 #include "execute.h"
 #include "txt_keyinput.h"
 
+#include "mode.h"
 #include "joystick.h"
 #include "keyboard.h"
 
@@ -87,6 +88,43 @@ static void AddKeyControl(txt_table_t *table, char *name, int *var)
     TXT_SignalConnect(key_input, "set", KeySetCallback, var);
 }
 
+static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
+{
+    txt_window_t *window;
+    txt_table_t *view_table;
+    txt_table_t *fly_table;
+    txt_table_t *inv_table;
+
+    window = TXT_NewWindow("Extra keyboard controls");
+
+    TXT_AddWidgets(window, 
+                   TXT_NewSeparator("View"),
+                   view_table = TXT_NewTable(2),
+                   TXT_NewSeparator("Flying"),
+                   fly_table = TXT_NewTable(2),
+                   TXT_NewSeparator("Inventory"),
+                   inv_table = TXT_NewTable(2),
+                   NULL);
+
+    TXT_SetColumnWidths(view_table, 25, 12);
+
+    AddKeyControl(view_table, "Look up", &key_lookup);
+    AddKeyControl(view_table, "Look down", &key_lookdown);
+    AddKeyControl(view_table, "Center view", &key_lookcenter);
+
+    TXT_SetColumnWidths(fly_table, 25, 12);
+
+    AddKeyControl(fly_table, "Fly up", &key_flyup);
+    AddKeyControl(fly_table, "Fly down", &key_flydown);
+    AddKeyControl(fly_table, "Fly center", &key_flycenter);
+
+    TXT_SetColumnWidths(inv_table, 25, 12);
+
+    AddKeyControl(inv_table, "Inventory left", &key_invleft);
+    AddKeyControl(inv_table, "Inventory right", &key_invright);
+    AddKeyControl(inv_table, "Use artifact", &key_useartifact);
+}
+
 void ConfigKeyboard(void)
 {
     txt_window_t *window;
@@ -100,34 +138,51 @@ void ConfigKeyboard(void)
 
     TXT_AddWidgets(window, 
                    TXT_NewSeparator("Movement"),
-                   movement_table = TXT_NewTable(2),
+                   movement_table = TXT_NewTable(4),
 
                    TXT_NewSeparator("Action"),
-                   action_table = TXT_NewTable(2),
+                   action_table = TXT_NewTable(4),
+                   NULL);
 
+    // Look up/down, inventory and flying controls are only in Heretic/Hexen
+    // and are kept in a separate window to conserve space.
+
+    if (gamemission == heretic || gamemission == hexen)
+    {
+        TXT_AddWidget(window, TXT_NewButton2("More controls...",
+                                             ConfigExtraKeys,
+                                             NULL));
+    }
+
+    TXT_AddWidgets(window,
                    TXT_NewSeparator("Misc."),
                    run_control = TXT_NewCheckBox("Always run", &always_run),
                    TXT_NewInvertedCheckBox("Use native keyboard mapping", 
                                            &vanilla_keyboard_mapping),
                    NULL);
 
-    TXT_SetColumnWidths(movement_table, 20, 8);
+    TXT_SetColumnWidths(movement_table, 15, 4, 15, 4);
 
     TXT_SignalConnect(run_control, "changed", UpdateJoybSpeed, NULL);
 
     AddKeyControl(movement_table, "Move Forward", &key_up);
+    AddKeyControl(movement_table, " Strafe Left", &key_strafeleft);
     AddKeyControl(movement_table, "Move Backward", &key_down);
+    AddKeyControl(movement_table, " Strafe Right", &key_straferight);
     AddKeyControl(movement_table, "Turn Left", &key_left);
+    AddKeyControl(movement_table, " Speed On", &key_speed);
     AddKeyControl(movement_table, "Turn Right", &key_right);
-    AddKeyControl(movement_table, "Strafe Left", &key_strafeleft);
-    AddKeyControl(movement_table, "Strafe Right", &key_straferight);
-    AddKeyControl(movement_table, "Speed On", &key_speed);
-    AddKeyControl(movement_table, "Strafe On", &key_strafe);
+    AddKeyControl(movement_table, " Strafe On", &key_strafe);
 
-    TXT_SetColumnWidths(action_table, 20, 8);
+    if (gamemission == hexen)
+    {
+        AddKeyControl(movement_table, "Jump", &key_jump);
+    }
 
-    AddKeyControl(action_table, "Use", &key_use);
-    AddKeyControl(action_table, "Fire", &key_fire);
+    TXT_SetColumnWidths(action_table, 15, 4, 15, 4);
+
+    AddKeyControl(action_table, "Fire/Attack", &key_fire);
+    AddKeyControl(action_table, " Use", &key_use);
 
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
 }

@@ -29,6 +29,7 @@
 #include "execute.h"
 #include "txt_mouseinput.h"
 
+#include "mode.h"
 #include "mouse.h"
 
 static int usemouse = 1;
@@ -96,6 +97,11 @@ static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddMouseControl(buttons_table, "Use", &mousebuse);
     AddMouseControl(buttons_table, "Strafe left", &mousebstrafeleft);
     AddMouseControl(buttons_table, "Strafe right", &mousebstraferight);
+
+    if (gamemission == hexen)
+    {
+        AddMouseControl(buttons_table, "Jump", &mousebjump);
+    }
 }
 
 void ConfigMouse(void)
@@ -103,7 +109,6 @@ void ConfigMouse(void)
     txt_window_t *window;
     txt_table_t *motion_table;
     txt_table_t *buttons_table;
-    txt_button_t *more_buttons;
 
     window = TXT_NewWindow("Mouse configuration");
 
@@ -121,8 +126,9 @@ void ConfigMouse(void)
     
                    TXT_NewSeparator("Buttons"),
                    buttons_table = TXT_NewTable(2),
-                   more_buttons = TXT_NewButton("More buttons..."),
-
+                   TXT_NewButton2("More controls...",
+                                  ConfigExtraButtons,
+                                  NULL),
                    NULL);
 
     TXT_SetColumnWidths(motion_table, 27, 5);
@@ -138,13 +144,11 @@ void ConfigMouse(void)
 
     TXT_SetColumnWidths(buttons_table, 27, 5);
 
+    AddMouseControl(buttons_table, "Fire/Attack", &mousebfire);
     AddMouseControl(buttons_table, "Move forward", &mousebforward);
     AddMouseControl(buttons_table, "Strafe on", &mousebstrafe);
-    AddMouseControl(buttons_table, "Fire weapon", &mousebfire);
     
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
-
-    TXT_SignalConnect(more_buttons, "pressed", ConfigExtraButtons, NULL);
 }
 
 void BindMouseVariables(void)
