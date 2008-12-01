@@ -29,6 +29,7 @@
 #include "h2def.h"
 #include "doomkeys.h"
 #include "i_system.h"
+#include "i_swap.h"
 #include "i_video.h"
 #include "p_local.h"
 #include "r_local.h"
@@ -359,7 +360,7 @@ void MN_DrTextA(char *text, int x, int y)
         {
             p = W_CacheLumpNum(FontABaseLump + c - 33, PU_CACHE);
             V_DrawPatch(x, y, p);
-            x += p->width - 1;
+            x += SHORT(p->width) - 1;
         }
     }
 }
@@ -414,7 +415,7 @@ int MN_TextAWidth(char *text)
         else
         {
             p = W_CacheLumpNum(FontABaseLump + c - 33, PU_CACHE);
-            width += p->width - 1;
+            width += SHORT(p->width) - 1;
         }
     }
     return (width);
@@ -443,7 +444,7 @@ void MN_DrTextB(char *text, int x, int y)
         {
             p = W_CacheLumpNum(FontBBaseLump + c - 33, PU_CACHE);
             V_DrawPatch(x, y, p);
-            x += p->width - 1;
+            x += SHORT(p->width) - 1;
         }
     }
 }
@@ -472,7 +473,7 @@ int MN_TextBWidth(char *text)
         else
         {
             p = W_CacheLumpNum(FontBBaseLump + c - 33, PU_CACHE);
-            width += p->width - 1;
+            width += SHORT(p->width) - 1;
         }
     }
     return (width);
