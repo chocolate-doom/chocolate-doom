@@ -24,8 +24,6 @@
 #ifndef __AMMAP_H__
 #define __AMMAP_H__
 
-#pragma once
-
 // For use if I do walls with outsides/insides
 #define REDS		12*8
 #define REDRANGE	1       //16
