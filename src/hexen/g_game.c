@@ -1249,7 +1249,7 @@ void G_PlayerReborn(int player)
     player_t *p;
     int frags[MAXPLAYERS];
     int killcount, itemcount, secretcount;
-    uint worldTimer;
+    unsigned int worldTimer;
 
     memcpy(frags, players[player].frags, sizeof(frags));
     killcount = players[player].killcount;
