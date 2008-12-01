@@ -50,7 +50,7 @@ sounds.c               sounds.h                      \
 s_sound.c              s_sound.h                     
 
 EXTRA_DIST=                                          \
-i_sound.c              i_sound.h                     \
+i_sound.c                                            \
 i_ibm.c   
 
 libheretic_a_SOURCES=$(SOURCE_FILES)
