@@ -101,8 +101,6 @@
 //#define NUMARTIFCTS   28
 #define MAXPLAYERS	8
 
-typedef unsigned int uint;
-
 #define	BT_ATTACK		1
 #define	BT_USE			2
 #define	BT_CHANGE		4       // if true, the next 3 bits hold weapon num
@@ -566,7 +564,7 @@ typedef struct player_s
     int colormap;               // 0-3 for which color to draw player
     pspdef_t psprites[NUMPSPRITES];     // view sprites (gun, etc)
     int morphTics;              // player is a pig if > 0
-    uint jumpTics;              // delay the next jump for a moment
+    unsigned int jumpTics;      // delay the next jump for a moment
     unsigned int worldTimer;    // total time the player's been playing
 } player_t;
 
