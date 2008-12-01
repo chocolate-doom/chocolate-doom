@@ -20,7 +20,7 @@
 // 02111-1307, USA.
 //
 // DESCRIPTION:
-//	DOOM graphics stuff for X11, UNIX.
+//	DOOM graphics stuff for SDL.
 //
 //-----------------------------------------------------------------------------
 
@@ -588,6 +588,11 @@ static void I_ReadMouse(void)
 //
 void I_StartTic (void)
 {
+    if (!initialised)
+    {
+        return;
+    }
+
     I_GetEvent();
 
     if (usemouse && !nomouse)
