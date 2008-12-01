@@ -25,6 +25,7 @@
 //-----------------------------------------------------------------------------
 
 #include "SDL.h"
+#include "string.h"
 
 #include "doomtype.h"
 #include "i_timer.h"
