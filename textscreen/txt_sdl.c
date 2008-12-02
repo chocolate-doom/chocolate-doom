@@ -115,9 +115,15 @@ static SDL_Color ega_colors[] =
 
 int TXT_Init(void)
 {
+    int flags;
+
     SDL_InitSubSystem(SDL_INIT_VIDEO);
-    
-    screen = SDL_SetVideoMode(TXT_SCREEN_W * CHAR_W, TXT_SCREEN_H * CHAR_H, 8, 0);
+
+    flags = SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF;
+
+    screen = SDL_SetVideoMode(TXT_SCREEN_W * CHAR_W,
+                              TXT_SCREEN_H * CHAR_H,
+                              8, flags);
 
     if (screen == NULL)
         return 0;

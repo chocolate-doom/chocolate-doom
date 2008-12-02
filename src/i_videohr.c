@@ -48,7 +48,7 @@ boolean I_SetVideoModeHR(void)
         return false;
     }
 
-    flags = SDL_SWSURFACE;
+    flags = SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF;
 
     hr_surface = SDL_SetVideoMode(HR_SCREENWIDTH, HR_SCREENHEIGHT, 8, flags);
 
