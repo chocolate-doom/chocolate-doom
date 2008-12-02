@@ -50,9 +50,9 @@ typedef struct
 
 static mission_config_t config_files[] =
 {
-    { doom,     "doom",    "default.cfg",       "chocolate-doom.cfg" },
-    { heretic,  "heretic", "heretic.cfg",       "chocolate-heretic.cfg" },
-    { hexen,    "hexen",   "hexen.cfg",         "chocolate-hexen.cfg" },
+    { doom,     "doom",    "default.cfg", PROGRAM_PREFIX "doom.cfg" },
+    { heretic,  "heretic", "heretic.cfg", PROGRAM_PREFIX "heretic.cfg" },
+    { hexen,    "hexen",   "hexen.cfg",   PROGRAM_PREFIX "hexen.cfg" },
 };
 
 // Miscellaneous variables that aren't used in setup.
