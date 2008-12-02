@@ -21,6 +21,8 @@
 
 #include <string.h>
 
+#include "config.h"
+
 #include "doomtype.h"
 #include "d_mode.h"
 #include "i_system.h"
