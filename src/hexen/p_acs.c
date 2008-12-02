@@ -1280,7 +1280,7 @@ static int CmdDecWorldVar(void)
 
 static int CmdGoto(void)
 {
-    PCodePtr = (int *) (ActionCodeBase + *PCodePtr);
+    PCodePtr = (int *) (ActionCodeBase + LONG(*PCodePtr));
     return SCRIPT_CONTINUE;
 }
 
@@ -1288,7 +1288,7 @@ static int CmdIfGoto(void)
 {
     if (Pop() != 0)
     {
-        PCodePtr = (int *) (ActionCodeBase + *PCodePtr);
+        PCodePtr = (int *) (ActionCodeBase + LONG(*PCodePtr));
     }
     else
     {
