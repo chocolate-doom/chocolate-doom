@@ -26,35 +26,38 @@
 #include "textscreen.h"
 #include "m_config.h"
 
+#include "i_sound.h"
+#include "mode.h"
 #include "sound.h"
-
-enum
-{
-    SNDDEVICE_NONE = 0,
-    SNDDEVICE_PCSPEAKER = 1,
-    SNDDEVICE_ADLIB = 2,
-    SNDDEVICE_SB = 3,
-    SNDDEVICE_PAS = 4,
-    SNDDEVICE_GUS = 5,
-    SNDDEVICE_WAVEBLASTER = 6,
-    SNDDEVICE_SOUNDCANVAS = 7,
-    SNDDEVICE_GENMIDI = 8,
-    SNDDEVICE_AWE32 = 9,
-};
 
 typedef enum
 {
     SFXMODE_DISABLED,
-    SFXMODE_PCSPEAKER,
     SFXMODE_DIGITAL,
+    SFXMODE_PCSPEAKER,
     NUM_SFXMODES
 } sfxmode_t;
 
 static char *sfxmode_strings[] = 
 {
     "Disabled",
-    "PC speaker",
     "Digital",
+    "PC speaker"
+};
+
+typedef enum 
+{
+    MUSICMODE_DISABLED,
+    MUSICMODE_MIDI,
+    MUSICMODE_CD,
+    NUM_MUSICMODES
+} musicmode_t;
+
+static char *musicmode_strings[] =
+{
+    "Disabled",
+    "MIDI",
+    "CD audio"
 };
 
 // Disable MIDI music on OSX: there are problems with the native
@@ -66,21 +69,18 @@ static char *sfxmode_strings[] =
 #define DEFAULT_MUSIC_DEVICE SNDDEVICE_SB
 #endif
 
-static int snd_sfxdevice = SNDDEVICE_SB;
+// Config file variables:
+
+int snd_sfxdevice = SNDDEVICE_SB;
+int snd_musicdevice = DEFAULT_MUSIC_DEVICE;
+int snd_samplerate = 22050;
+
 static int numChannels = 8;
 static int sfxVolume = 15;
-
-static int snd_musicdevice = DEFAULT_MUSIC_DEVICE;
 static int musicVolume = 15;
-
-static int snd_samplerate = 22050;
-
 static int use_libsamplerate = 0;
 
-static int snd_sfxmode;
-static int snd_musicenabled;
-
-// DOS specific options: these are unused but should be maintained
+// DOS specific variables: these are unused but should be maintained
 // so that the config file can be shared between chocolate
 // doom and doom.exe
 
@@ -88,6 +88,11 @@ static int snd_sbport = 0;
 static int snd_sbirq = 0;
 static int snd_sbdma = 0;
 static int snd_mport = 0;
+
+// GUI variables:
+
+static int snd_sfxmode;
+static int snd_musicmode;
 
 static void UpdateSndDevices(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
 {
@@ -103,14 +108,17 @@ static void UpdateSndDevices(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
             snd_sfxdevice = SNDDEVICE_SB;
             break;
     }
-    
-    if (snd_musicenabled)
+
+    switch (snd_musicmode)
     {
-        snd_musicdevice = SNDDEVICE_SB;
-    }
-    else
-    {
-        snd_musicdevice = SNDDEVICE_NONE;
+        case MUSICMODE_DISABLED:
+            snd_musicdevice = SNDDEVICE_NONE;
+            break;
+        case MUSICMODE_MIDI:
+            snd_musicdevice = SNDDEVICE_SB;
+            break;
+        case MUSICMODE_CD:
+            break;
     }
 }
 
@@ -120,7 +128,10 @@ void ConfigSound(void)
     txt_table_t *sfx_table;
     txt_table_t *music_table;
     txt_dropdown_list_t *sfx_mode_control;
-    txt_checkbox_t *music_enabled_control;
+    txt_dropdown_list_t *music_mode_control;
+    int num_sfx_modes, num_music_modes;
+
+    // Work out what sfx mode we are currently using:
 
     if (snd_sfxdevice == SNDDEVICE_PCSPEAKER)
     {
@@ -135,7 +146,44 @@ void ConfigSound(void)
         snd_sfxmode = SFXMODE_DISABLED;
     }
     
-    snd_musicenabled = snd_musicdevice != SNDDEVICE_NONE;
+    // Is music enabled?
+
+    if (snd_musicdevice == SNDDEVICE_NONE)
+    {
+        snd_musicmode = MUSICMODE_DISABLED;
+    }
+    else if (snd_musicmode == SNDDEVICE_CD)
+    {
+        snd_musicmode = MUSICMODE_CD;
+    }
+    else
+    {
+        snd_musicmode = MUSICMODE_MIDI;
+    }
+
+    // Doom has PC speaker sound effects, but others do not:
+
+    if (gamemission == doom)
+    {
+        num_sfx_modes = NUM_SFXMODES;
+    }
+    else
+    {
+        num_sfx_modes = NUM_SFXMODES - 1;
+    }
+
+    // Hexen has CD audio; others do not.
+
+    if (gamemission == hexen)
+    {
+        num_music_modes = NUM_MUSICMODES;
+    }
+    else
+    {
+        num_music_modes = NUM_MUSICMODES - 1;
+    }
+
+    // Build the window
 
     window = TXT_NewWindow("Sound configuration");
 
@@ -143,8 +191,6 @@ void ConfigSound(void)
                TXT_NewSeparator("Sound effects"),
                sfx_table = TXT_NewTable(2),
                TXT_NewSeparator("Music"),
-               music_enabled_control = TXT_NewCheckBox("Music enabled", 
-                                                       &snd_musicenabled),
                music_table = TXT_NewTable(2),
                NULL);
 
@@ -154,7 +200,7 @@ void ConfigSound(void)
                    TXT_NewLabel("Sound effects"),
                    sfx_mode_control = TXT_NewDropdownList(&snd_sfxmode,
                                                           sfxmode_strings,
-                                                          NUM_SFXMODES),
+                                                          num_sfx_modes),
                    TXT_NewLabel("Sound channels"),
                    TXT_NewSpinControl(&numChannels, 1, 8),
                    TXT_NewLabel("SFX volume"),
@@ -164,14 +210,16 @@ void ConfigSound(void)
     TXT_SetColumnWidths(music_table, 20, 5);
 
     TXT_AddWidgets(music_table,
+                   TXT_NewLabel("Music"),
+                   music_mode_control = TXT_NewDropdownList(&snd_musicmode,
+                                                            musicmode_strings,
+                                                            num_music_modes),
                    TXT_NewLabel("Music volume"),
                    TXT_NewSpinControl(&musicVolume, 0, 15),
                    NULL);
 
-    TXT_SignalConnect(sfx_mode_control, "changed", 
-                      UpdateSndDevices, NULL);
-    TXT_SignalConnect(music_enabled_control, "changed", 
-                      UpdateSndDevices, NULL);
+    TXT_SignalConnect(sfx_mode_control, "changed", UpdateSndDevices, NULL);
+    TXT_SignalConnect(music_mode_control, "changed", UpdateSndDevices, NULL);
 
 }
 
