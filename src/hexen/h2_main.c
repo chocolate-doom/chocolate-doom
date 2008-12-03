@@ -136,11 +136,6 @@ static int demosequence;
 static int pagetic;
 static char *pagename;
 
-static iwad_t iwads[] = {
-    { "hexen.wad",        hexen },
-    { NULL,               none },
-};
-
 static execOpt_t ExecOptions[] = {
     {"-file", ExecOptionFILE, 1, 0},
     {"-scripts", ExecOptionSCRIPTS, 1, 0},
@@ -272,7 +267,7 @@ void D_DoomMain(void)
 
     ST_Message("W_Init: Init WADfiles.\n");
 
-    iwadfile = D_FindIWAD(iwads, &gamemission);
+    iwadfile = D_FindIWAD(IWAD_MASK_HEXEN, &gamemission);
 
     if (iwadfile == NULL)
     {
