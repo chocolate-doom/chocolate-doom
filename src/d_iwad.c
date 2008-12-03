@@ -342,7 +342,7 @@ static char *SearchDirectoryForIWAD(char *dir, int mask, GameMission_t *mission)
         char *filename; 
         char *iwadname;
 
-        if ((iwads[i].mission & mask) == 0)
+        if (((1 << iwads[i].mission) & mask) == 0)
         {
             continue;
         }
@@ -389,7 +389,7 @@ static GameMission_t IdentifyIWADByName(char *name, int mask)
 
         // Only use supported missions:
 
-        if ((iwads[i].mission & mask) == 0)
+        if (((1 << iwads[i].mission) & mask) == 0)
             continue;
 
         iwadname = DEH_String(iwads[i].name);
