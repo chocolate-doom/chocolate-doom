@@ -455,12 +455,6 @@ void D_CheckRecordFrom(void)
 
 #define SHAREWAREWADNAME "heretic1.wad"
 
-static iwad_t iwads[] = {
-    { "heretic.wad",        heretic },
-    { "heretic1.wad",       heretic },
-    { NULL,                 none },
-};
-
 char *iwadfile;
 
 char *basedefault = "heretic.cfg";
@@ -880,7 +874,7 @@ void D_DoomMain(void)
 
     printf("W_Init: Init WADfiles.\n");
 
-    iwadfile = D_FindIWAD(iwads, &gamemission);
+    iwadfile = D_FindIWAD(IWAD_MASK_HERETIC, &gamemission);
 
     if (iwadfile == NULL)
     {

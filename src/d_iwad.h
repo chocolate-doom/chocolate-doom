@@ -29,6 +29,13 @@
 
 #include "d_mode.h"
 
+#define IWAD_MASK_DOOM    ((1 << doom)           \
+                         | (1 << doom2)          \
+                         | (1 << pack_tnt)       \
+                         | (1 << pack_plut))
+#define IWAD_MASK_HERETIC (1 << heretic)
+#define IWAD_MASK_HEXEN   (1 << hexen)
+
 typedef struct
 {
     char *name;
@@ -37,8 +44,7 @@ typedef struct
 
 char *D_FindWADByName(char *filename);
 char *D_TryFindWADByName(char *filename);
-char *D_FindIWAD(iwad_t *iwads, GameMission_t *mission);
-void D_FindInstalledIWADs(iwad_t *iwads);
+char *D_FindIWAD(int mask, GameMission_t *mission);
 
 #endif
 

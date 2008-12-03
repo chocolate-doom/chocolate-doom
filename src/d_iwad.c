@@ -39,6 +39,19 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+static iwad_t iwads[] =
+{
+    { "doom2.wad",        doom2 },
+    { "plutonia.wad",     pack_plut },
+    { "tnt.wad",          pack_tnt },
+    { "doom.wad",         doom },
+    { "doom1.wad",        doom },
+    { "chex.wad",         doom },
+    { "heretic.wad",      heretic },
+    { "heretic1.wad",     heretic },
+    { "hexen.wad",        hexen },
+};
+
 // Array of locations to search for IWAD files
 //
 // "128 IWAD search directories should be enough for anybody".
@@ -320,15 +333,19 @@ static void CheckDOSDefaults(void)
 // Search a directory to try to find an IWAD
 // Returns the location of the IWAD if found, otherwise NULL.
 
-static char *SearchDirectoryForIWAD(char *dir, iwad_t *iwads,
-                                    GameMission_t *mission)
+static char *SearchDirectoryForIWAD(char *dir, int mask, GameMission_t *mission)
 {
     size_t i;
 
-    for (i=0; iwads[i].name != NULL; ++i) 
+    for (i=0; i<arrlen(iwads); ++i) 
     {
         char *filename; 
         char *iwadname;
+
+        if ((iwads[i].mission & mask) == 0)
+        {
+            continue;
+        }
 
         iwadname = DEH_String(iwads[i].name);
         
@@ -359,16 +376,21 @@ static char *SearchDirectoryForIWAD(char *dir, iwad_t *iwads,
 // When given an IWAD with the '-iwad' parameter,
 // attempt to identify it by its name.
 
-static GameMission_t IdentifyIWADByName(char *name, iwad_t *iwads)
+static GameMission_t IdentifyIWADByName(char *name, int mask)
 {
     size_t i;
     GameMission_t mission;
 
     mission = none;
-    
-    for (i=0; iwads[i].name != NULL; ++i)
+
+    for (i=0; i<arrlen(iwads); ++i)
     {
         char *iwadname;
+
+        // Only use supported missions:
+
+        if ((iwads[i].mission & mask) == 0)
+            continue;
 
         iwadname = DEH_String(iwads[i].name);
 
@@ -390,7 +412,7 @@ static GameMission_t IdentifyIWADByName(char *name, iwad_t *iwads)
 
 //
 // Add directories from the list in the DOOMWADPATH environment variable.
-// 
+//
 
 static void AddDoomWadPath(void)
 {
@@ -564,7 +586,7 @@ char *D_TryFindWADByName(char *filename)
 // should be executed (notably loading PWADs).
 //
 
-char *D_FindIWAD(iwad_t *iwads, GameMission_t *mission)
+char *D_FindIWAD(int mask, GameMission_t *mission)
 {
     char *result;
     char *iwadfile;
@@ -594,7 +616,7 @@ char *D_FindIWAD(iwad_t *iwads, GameMission_t *mission)
             I_Error("IWAD file '%s' not found!", iwadfile);
         }
         
-        *mission = IdentifyIWADByName(result, iwads);
+        *mission = IdentifyIWADByName(result, mask);
     }
     else
     {
@@ -606,34 +628,10 @@ char *D_FindIWAD(iwad_t *iwads, GameMission_t *mission)
     
         for (i=0; result == NULL && i<num_iwad_dirs; ++i)
         {
-            result = SearchDirectoryForIWAD(iwad_dirs[i], iwads, mission);
+            result = SearchDirectoryForIWAD(iwad_dirs[i], mask, mission);
         }
     }
 
     return result;
-}
-
-// Clever hack: Setup can invoke Doom to determine which IWADs are installed.
-// Doom searches install paths and exits with the return code being a 
-// bitmask of the installed IWAD files.
-
-void D_FindInstalledIWADs(iwad_t *iwads)
-{
-    unsigned int i;
-    int result;
-
-    BuildIWADDirList();
-
-    result = 0;
-
-    for (i=0; i<arrlen(iwads); ++i)
-    {
-        if (D_FindWADByName(iwads[i].name) != NULL)
-        {
-            result |= 1 << i;
-        }
-    }
-
-    exit(result);
 }
 

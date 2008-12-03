@@ -591,17 +591,6 @@ void D_StartTitle (void)
     D_AdvanceDemo ();
 }
 
-static iwad_t iwads[] =
-{
-    {"doom2.wad",    doom2},
-    {"plutonia.wad", pack_plut},
-    {"tnt.wad",      pack_tnt},
-    {"doom.wad",     doom},
-    {"doom1.wad",    doom},
-    {"chex.wad",     doom},
-    {NULL,           none},
-};
-        
 // Strings for dehacked replacements of the startup banner
 //
 // These are from the original source: some of them are perhaps
@@ -1061,14 +1050,6 @@ void D_DoomMain (void)
 
     M_FindResponseFile ();
 
-    // Undocumented "search for IWADs" parameter used by the setup
-    // tool.
-
-    if (M_CheckParm("-findiwads") > 0)
-    {
-        D_FindInstalledIWADs(iwads);
-    }
-
     // print banner
 
     I_PrintBanner(PACKAGE_STRING);
@@ -1123,7 +1104,7 @@ void D_DoomMain (void)
     DEH_Init();
 #endif
 
-    iwadfile = D_FindIWAD(iwads, &gamemission);
+    iwadfile = D_FindIWAD(IWAD_MASK_DOOM, &gamemission);
 
     // None found?
 
