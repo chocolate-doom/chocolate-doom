@@ -52,6 +52,10 @@
 		<Unit filename="..\src\i_main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\src\i_system.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\i_system.h" />
 		<Unit filename="..\src\i_timer.c">
 			<Option compilerVar="CC" />
 		</Unit>

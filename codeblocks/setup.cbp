@@ -44,13 +44,14 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-D_WIN32" />
+			<Add option='-DPROGRAM_PREFIX=&quot;\&quot;chocolate-\&quot;&quot;' />
 			<Add directory="." />
 			<Add directory="..\src" />
 			<Add directory="..\src\doom" />
 			<Add directory="..\textscreen" />
 		</Compiler>
 		<ResourceCompiler>
-			<Add directory="..\setup" />
+			<Add directory="..\src\setup" />
 		</ResourceCompiler>
 		<Linker>
 			<Add option="-lmingw32 -lSDLmain -lSDL -mwindows" />
@@ -59,61 +60,99 @@
 		<Unit filename="setup-res.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>
-		<Unit filename="..\setup\compatibility.c">
+		<Unit filename="..\src\d_iwad.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\setup\compatibility.h" />
-		<Unit filename="..\setup\configfile.c">
+		<Unit filename="..\src\d_iwad.h" />
+		<Unit filename="..\src\d_mode.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\setup\configfile.h" />
-		<Unit filename="..\setup\display.c">
+		<Unit filename="..\src\d_mode.h" />
+		<Unit filename="..\src\deh_str.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\setup\display.h" />
-		<Unit filename="..\setup\execute.c">
+		<Unit filename="..\src\deh_str.h" />
+		<Unit filename="..\src\i_main.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\setup\execute.h" />
-		<Unit filename="..\setup\joystick.c">
+		<Unit filename="..\src\i_system.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\setup\joystick.h" />
-		<Unit filename="..\setup\keyboard.c">
+		<Unit filename="..\src\i_system.h" />
+		<Unit filename="..\src\m_argv.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\setup\keyboard.h" />
-		<Unit filename="..\setup\m_argv.c">
+		<Unit filename="..\src\m_argv.h" />
+		<Unit filename="..\src\m_config.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\setup\m_argv.h" />
-		<Unit filename="..\setup\mainmenu.c">
+		<Unit filename="..\src\m_config.h" />
+		<Unit filename="..\src\m_controls.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\setup\mouse.c">
+		<Unit filename="..\src\m_controls.h" />
+		<Unit filename="..\src\m_misc.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\setup\mouse.h" />
-		<Unit filename="..\setup\multiplayer.c">
+		<Unit filename="..\src\m_misc.h" />
+		<Unit filename="..\src\setup\compatibility.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\setup\multiplayer.h" />
-		<Unit filename="..\setup\sound.c">
+		<Unit filename="..\src\setup\compatibility.h" />
+		<Unit filename="..\src\setup\display.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\setup\sound.h" />
-		<Unit filename="..\setup\txt_joybinput.c">
+		<Unit filename="..\src\setup\display.h" />
+		<Unit filename="..\src\setup\execute.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\setup\txt_joybinput.h" />
-		<Unit filename="..\setup\txt_keyinput.c">
+		<Unit filename="..\src\setup\execute.h" />
+		<Unit filename="..\src\setup\joystick.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\setup\txt_keyinput.h" />
-		<Unit filename="..\setup\txt_mouseinput.c">
+		<Unit filename="..\src\setup\joystick.h" />
+		<Unit filename="..\src\setup\keyboard.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\setup\txt_mouseinput.h" />
+		<Unit filename="..\src\setup\keyboard.h" />
+		<Unit filename="..\src\setup\mainmenu.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\setup\mode.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\setup\mode.h" />
+		<Unit filename="..\src\setup\mouse.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\setup\mouse.h" />
+		<Unit filename="..\src\setup\multiplayer.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\setup\multiplayer.h" />
+		<Unit filename="..\src\setup\setup_icon.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\setup\sound.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\setup\sound.h" />
+		<Unit filename="..\src\setup\txt_joybinput.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\setup\txt_joybinput.h" />
+		<Unit filename="..\src\setup\txt_keyinput.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\setup\txt_keyinput.h" />
+		<Unit filename="..\src\setup\txt_mouseinput.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\setup\txt_mouseinput.h" />
+		<Unit filename="..\src\z_native.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\z_zone.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

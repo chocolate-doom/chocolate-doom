@@ -238,6 +238,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\i_cdmus.h" />
+		<Unit filename="..\src\i_endoom.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\i_endoom.h" />
 		<Unit filename="..\src\i_joystick.c">
 			<Option compilerVar="CC" />
 		</Unit>
