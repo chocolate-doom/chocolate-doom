@@ -173,7 +173,6 @@ void MainMenu(void)
 
 static void InitConfig(void)
 {
-    SetupMission();
     InitBindings();
 
     SetChatMacroDefaults();
@@ -240,15 +239,19 @@ static void RunGUI(void)
 
     TXT_SetDesktopTitle(PACKAGE_NAME " Setup ver " PACKAGE_VERSION);
     SetIcon();
-    
-    MainMenu();
 
     TXT_GUIMainLoop();
 }
 
-void D_DoomMain(void)
+static void MissionSet(void)
 {
     InitConfig();
+    MainMenu();
+}
+
+void D_DoomMain(void)
+{
+    SetupMission(MissionSet);
     RunGUI();
 }
 

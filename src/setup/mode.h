@@ -24,9 +24,10 @@
 
 #include "d_mode.h"
 
+typedef void (*GameSelectCallback)(void);
 extern GameMission_t gamemission;
 
-void SetupMission(void);
+void SetupMission(GameSelectCallback callback);
 void InitBindings(void);
 
 #endif /* #ifndef SETUP_MODE_H */

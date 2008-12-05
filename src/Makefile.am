@@ -149,7 +149,9 @@ chocolate_hexen_LDADD = hexen/libhexen.a $(EXTRA_LIBS)
 # Source files needed for chocolate-setup:
 
 SETUP_FILES=                               \
+deh_str.c            deh_str.h             \
 d_mode.c             d_mode.h              \
+d_iwad.c             d_iwad.h              \
 m_config.c           m_config.h            \
 m_controls.c         m_controls.h          \
 z_native.c           z_zone.h
