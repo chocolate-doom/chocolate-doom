@@ -45,6 +45,7 @@ typedef struct
 char *D_FindWADByName(char *filename);
 char *D_TryFindWADByName(char *filename);
 char *D_FindIWAD(int mask, GameMission_t *mission);
+iwad_t **D_FindAllIWADs(int mask);
 
 #endif
 
