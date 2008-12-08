@@ -34,9 +34,14 @@ static int vanilla_keyboard_mapping = 1;
 
 static int always_run = 0;
 
-static int *allkeys[] = {&key_left, &key_right, &key_up, &key_down, 
-                         &key_strafeleft, &key_straferight, &key_fire, 
-                         &key_use, &key_strafe, &key_speed};
+static int *allkeys[] = {
+    &key_left, &key_right, &key_up, &key_down,
+    &key_strafeleft, &key_straferight, &key_strafe,
+    &key_jump, &key_fire, &key_use, &key_speed,
+    &key_flyup, &key_flydown, &key_flycenter,
+    &key_lookup, &key_lookdown, &key_lookcenter,
+    &key_invleft, &key_invright, &key_useartifact
+};
 
 static void UpdateJoybSpeed(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(var))
 {

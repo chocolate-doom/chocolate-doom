@@ -48,6 +48,7 @@ static int *all_mouse_buttons[] = {
     &mousebstraferight,
     &mousebbackward,
     &mousebuse,
+    &mousebjump
 };
 
 static void MouseSetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))
