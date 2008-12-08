@@ -196,6 +196,7 @@ void I_FadeToPaletteHR(const byte *palette)
         }
 
         I_SetPaletteHR(tmppal);
+        SDL_Flip(hr_surface);
 
         // Sleep a bit
 
