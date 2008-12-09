@@ -25,6 +25,8 @@
 //-----------------------------------------------------------------------------
 
 
+#include "config.h"
+
 #include "SDL.h"
 
 #include <signal.h>
@@ -32,7 +34,9 @@
 #ifdef _WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#else
+#endif
+
+#ifdef HAVE_SCHED_SETAFFINITY
 #include <unistd.h>
 #include <sched.h>
 #endif
@@ -42,25 +46,35 @@
 #include "m_argv.h"
 #include "d_main.h"
 
-int main(int argc, char **argv) 
-{ 
+#if !defined(_WIN32) && !defined(HAVE_SCHED_SETAFFINITY)
+#warning No known way to set processor affinity on this platform.
+#warning You may experience crashes due to SDL_mixer.
+#endif
+
+int main(int argc, char **argv)
+{
     // save arguments
 
-    myargc = argc; 
-    myargv = argv; 
-
-    // Set the process affinity mask so that all threads
-    // run on the same processor.  This is a workaround for a bug in 
-    // SDL_mixer that causes occasional crashes.
+    myargc = argc;
+    myargv = argv;
 
 #ifdef _WIN32
+
+    // Set the process affinity mask so that all threads
+    // run on the same processor.  This is a workaround for a bug in
+    // SDL_mixer that causes occasional crashes.
+
     if (!SetProcessAffinityMask(GetCurrentProcess(), 1))
     {
         fprintf(stderr, "Failed to set process affinity mask (%d)\n",
                 (int) GetLastError());
     }
-#else
-    // POSIX version:
+
+#endif
+
+#ifdef HAVE_SCHED_SETAFFINITY
+
+    // Linux version:
 
     {
         cpu_set_t set;
@@ -70,12 +84,13 @@ int main(int argc, char **argv)
 
         sched_setaffinity(getpid(), sizeof(set), &set);
     }
+
 #endif
 
     // start doom
- 
-    D_DoomMain (); 
+
+    D_DoomMain ();
 
     return 0;
-} 
+}
 
