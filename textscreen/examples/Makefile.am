@@ -1,5 +1,5 @@
 
-AM_CFLAGS = @SDL_CFLAGS@ -I.. -I../../src
+AM_CFLAGS = -I.. -I../../src
 
 noinst_PROGRAMS=guitest calculator
 
