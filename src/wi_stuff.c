@@ -427,13 +427,32 @@ void WI_drawLF(void)
 {
     int y = WI_TITLEY;
 
-    // draw <LevelName> 
-    V_DrawPatch((SCREENWIDTH - SHORT(lnames[wbs->last]->width))/2,
-		y, FB, lnames[wbs->last]);
+    if (wbs->last < NUMCMAPS)
+    {
+        // draw <LevelName> 
+        V_DrawPatch((SCREENWIDTH - SHORT(lnames[wbs->last]->width))/2,
+                    y, FB, lnames[wbs->last]);
 
-    // draw "Finished!"
-    y += (5*SHORT(lnames[wbs->last]->height))/4;
-    
+        // draw "Finished!"
+        y += (5*SHORT(lnames[wbs->last]->height))/4;
+    }
+    else if (wbs->last == NUMCMAPS)
+    {
+        // MAP33 - nothing is displayed!
+    }
+    else if (wbs->last > NUMCMAPS)
+    {
+        // > MAP33.  Doom bombs out here with a Bad V_DrawPatch error.
+        // I'm pretty sure that doom2.exe is just reading into random
+        // bits of memory at this point, but let's try to be accurate
+        // anyway.  This deliberately triggers a V_DrawPatch error.
+
+        patch_t tmp = { SCREENWIDTH, SCREENHEIGHT, 1, 1, 
+                        { 0, 0, 0, 0, 0, 0, 0, 0 } };
+
+        V_DrawPatch(0, y, FB, &tmp);
+    }
+
     V_DrawPatch((SCREENWIDTH - SHORT(finished->width))/2,
 		y, FB, finished);
 }
