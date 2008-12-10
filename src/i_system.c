@@ -139,15 +139,15 @@ void I_Endoom(void)
 
     endoom_data = W_CacheLumpName(DEH_String("ENDOOM"), PU_STATIC);
 
-    // Set up text mode screen
-
-    TXT_Init();
-
     // Make sure the new window has the right title and icon
  
     I_SetWindowCaption();
     I_SetWindowIcon();
     
+    // Set up text mode screen
+
+    TXT_Init();
+
     // Write the data to the screen memory
   
     screendata = TXT_GetScreenData();

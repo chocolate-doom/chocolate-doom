@@ -193,15 +193,15 @@ static void RunGUI(void)
 {
     SetDisplayDriver();
 
+    TXT_SetDesktopTitle(PACKAGE_NAME " Setup ver " PACKAGE_VERSION);
+    SetIcon();
+    
     if (!TXT_Init())
     {
         fprintf(stderr, "Failed to initialise GUI\n");
         exit(-1);
     }
 
-    TXT_SetDesktopTitle(PACKAGE_NAME " Setup ver " PACKAGE_VERSION);
-    SetIcon();
-    
     MainMenu();
 
     TXT_GUIMainLoop();
