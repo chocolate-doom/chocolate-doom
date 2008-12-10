@@ -1481,6 +1481,12 @@ void I_InitGraphics(void)
         }
     }
 
+    // Set up title and icon.  Windows cares about the ordering; this
+    // has to be done before the call to SDL_SetVideoMode.
+
+    I_SetWindowCaption();
+    I_SetWindowIcon();
+
     // Set the video mode.
 
     flags |= SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF;
@@ -1517,11 +1523,6 @@ void I_InitGraphics(void)
 
     I_SetPalette(doompal);
     SDL_SetColors(screen, palette, 0, 256);
-
-    // Setup title and icon
-
-    I_SetWindowCaption();
-    I_SetWindowIcon();
 
     CreateCursors();
 
