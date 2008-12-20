@@ -1,3 +1,45 @@
+1.2.1 (2008-12-10):
+
+    This version just fixes a crash at the intermission screen when
+    playing Doom 1 levels.
+
+1.2.0 (2008-12-10):
+
+    Happy 15th Birthday, Doom!
+
+     * Chocolate Doom now has an icon that is not based on the proprietary
+       Doom artwork.
+     * There is now memory-mapped WAD I/O support, which should be useful
+       on some embedded systems.
+     * Chex quest emulation support is now included, although an
+       auxiliary dehacked patch is needed (chexdeh.zip in the idgames
+       archive).
+
+    Compatibility:
+     * The armor class is always set to 2 when picking up a megasphere
+       (thanks entryway).
+     * The quit screen prompts to quit "to dos" instead of just to quit
+       (thanks MikeRS)
+     * The "dimensional shambler" quit message was fixed.
+     * Fix crash related to A_BFGSpray with NULL target when using
+       dehacked patches - discovered with insaned2.deh
+       (thanks CSonicGo)
+     * NUL characters are stripped from dehacked files, to ensure correct
+       behavior with some dehacked patches (eg. the one with portal.wad).
+
+    Bugs fixed:
+     * "Python Image Library" should have been "Python Imaging Library"
+       (thanks exp(x)).
+     * The setup tool should no longer ask for elevated permissions
+       on Windows Vista (this fix possibly may not work).
+     * The application icon is set properly when running under Windows
+       XP with the "Luna" theme.
+     * Fix compilation under Cygwin to detect libraries and headers from
+       the correct environment.
+     * The video code does not try to read SDL events before SDL has
+       been properly initialised - this was causing problems with some
+       older versions of SDL.
+
 1.1.1 (2008-04-20):
 
     The previous release (v1.1.0) included a bug that broke compilation

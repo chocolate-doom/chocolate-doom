@@ -1,5 +1,5 @@
 
-AM_CFLAGS = @SDL_CFLAGS@ -I../src
+AM_CFLAGS = -I../src
 
 # build this directory before the examples directory.
 

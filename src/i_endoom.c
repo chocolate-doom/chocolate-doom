@@ -40,11 +40,6 @@ void I_Endoom(byte *endoom_data)
 
     TXT_Init();
 
-    // Make sure the new window has the right title and icon
- 
-    I_SetWindowTitle("Exit screen");
-    I_SetWindowIcon();
-    
     // Write the data to the screen memory
   
     screendata = TXT_GetScreenData();

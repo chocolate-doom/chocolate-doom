@@ -9,7 +9,7 @@ games_PROGRAMS = chocolate-doom     \
                  chocolate-server   \
                  chocolate-setup
 
-AM_CFLAGS = -Idoom -I../textscreen -I../pcsound @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
+AM_CFLAGS = -I../textscreen -I../pcsound @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
 # Common source files used by absolutely everything:
 
@@ -35,7 +35,7 @@ net_structrw.c       net_structrw.h        \
 z_native.c           z_zone.h
 
 chocolate_server_SOURCES=$(COMMON_SOURCE_FILES) $(DEDSERV_FILES)
-chocolate_server_LDADD = @LDFLAGS@ @SDL_LIBS@ @SDLNET_LIBS@ 
+chocolate_server_LDADD = @LDFLAGS@ @SDLNET_LIBS@ 
 
 # Source files used by the game binaries (chocolate-doom, etc.)
 

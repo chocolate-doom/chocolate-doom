@@ -237,8 +237,8 @@ void D_DoomLoop(void)
         sprintf(filename, "debug%i.txt", consoleplayer);
         debugfile = fopen(filename, "w");
     }
-    I_InitGraphics();
     I_SetWindowTitle(gamedescription);
+    I_InitGraphics();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
 
     while (1)
