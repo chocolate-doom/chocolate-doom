@@ -38,6 +38,7 @@
 #define HR_SCREENHEIGHT 480
 
 static SDL_Surface *hr_surface = NULL;
+static char *window_title = "";
 
 boolean I_SetVideoModeHR(void)
 {
@@ -47,6 +48,8 @@ boolean I_SetVideoModeHR(void)
     {
         return false;
     }
+
+    SDL_WM_SetCaption(window_title,  NULL);
 
     flags = SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF;
 
@@ -63,7 +66,7 @@ boolean I_SetVideoModeHR(void)
 
 void I_SetWindowTitleHR(char *title)
 {
-    SDL_WM_SetCaption(title,  NULL);
+    window_title = title;
 }
 
 void I_UnsetVideoModeHR(void)

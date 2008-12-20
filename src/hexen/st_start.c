@@ -131,10 +131,11 @@ void ST_Init(void)
 
     if (graphical_startup && !debugmode)
     {
+        I_SetWindowTitleHR("Hexen startup - " PACKAGE_STRING);
+
         // Set 640x480x16 mode
         if (I_SetVideoModeHR())
         {
-            I_SetWindowTitleHR("Hexen startup - " PACKAGE_STRING);
             using_graphical_startup = true;
 
             S_StartSongName("orb", true);
