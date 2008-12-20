@@ -532,9 +532,9 @@ void H2_GameLoop(void)
         sprintf(filename, "debug%i.txt", consoleplayer);
         debugfile = fopen(filename, "w");
     }
+    I_SetWindowTitle("Hexen");
     I_InitGraphics();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
-    I_SetWindowTitle("Hexen");
 
     while (1)
     {

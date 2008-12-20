@@ -20,7 +20,7 @@
 // 02111-1307, USA.
 //
 // DESCRIPTION:
-//     Low level graphics code using SDL.
+//	DOOM graphics stuff for SDL.
 //
 //-----------------------------------------------------------------------------
 
@@ -128,7 +128,13 @@ static screen_mode_t *screen_modes_corrected[] = {
 
 char *video_driver = "";
 
+// SDL surface for the screen.
+
 static SDL_Surface *screen;
+
+// Window title
+
+static char *window_title = "";
 
 // palette
 
@@ -752,6 +758,11 @@ static void I_ReadMouse(void)
 //
 void I_StartTic (void)
 {
+    if (!initialised)
+    {
+        return;
+    }
+
     I_GetEvent();
 
     if (usemouse && !nomouse)
@@ -999,11 +1010,21 @@ void I_SetPalette (byte *doompalette)
 
 void I_SetWindowTitle(char *title)
 {
+    window_title = title;
+}
+
+//
+// Call the SDL function to set the window title, based on 
+// the title set with I_SetWindowTitle.
+//
+
+static void I_InitWindowTitle(void)
+{
     char *buf;
 
-    buf = Z_Malloc(strlen(title) + strlen(PACKAGE_STRING) + 5, 
+    buf = Z_Malloc(strlen(window_title) + strlen(PACKAGE_STRING) + 5, 
                    PU_STATIC, NULL);
-    sprintf(buf, "%s - %s", title, PACKAGE_STRING);
+    sprintf(buf, "%s - %s", window_title, PACKAGE_STRING);
 
     SDL_WM_SetCaption(buf, NULL);
 
@@ -1012,7 +1033,7 @@ void I_SetWindowTitle(char *title)
 
 // Set the application icon
 
-void I_SetWindowIcon(void)
+static void I_InitWindowIcon(void)
 {
     SDL_Surface *surface;
     Uint8 *mask;
@@ -1669,6 +1690,12 @@ void I_InitGraphics(void)
         }
     }
 
+    // Set up title and icon.  Windows cares about the ordering; this
+    // has to be done before the call to SDL_SetVideoMode.
+
+    I_InitWindowTitle();
+    I_InitWindowIcon();
+
     // Set the video mode.
 
     flags |= SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF;
@@ -1705,8 +1732,6 @@ void I_InitGraphics(void)
 
     I_SetPalette(doompal);
     SDL_SetColors(screen, palette, 0, 256);
-
-    I_SetWindowIcon();
 
     CreateCursors();
 
