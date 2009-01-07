@@ -697,8 +697,13 @@ void D_SetSaveGameDir(void)
         }
 
         savegamedir = Z_Malloc(strlen(configdir) + 30, PU_STATIC, 0);
-        sprintf(savegamedir, "%ssavegames%c%s%c", configdir,
-                             DIR_SEPARATOR, iwad_name, DIR_SEPARATOR);
+        sprintf(savegamedir, "%ssavegames%c", configdir,
+                             DIR_SEPARATOR);
+
+        M_MakeDirectory(savegamedir);
+
+        sprintf(savegamedir + strlen(savegamedir), "%s%c",
+                iwad_name, DIR_SEPARATOR);
 
         M_MakeDirectory(savegamedir);
     }
