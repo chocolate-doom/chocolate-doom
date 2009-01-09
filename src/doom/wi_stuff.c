@@ -432,6 +432,8 @@ void WI_drawLF(void)
 
         // draw "Finished!"
         y += (5*SHORT(lnames[wbs->last]->height))/4;
+
+        V_DrawPatch((SCREENWIDTH - SHORT(finished->width)) / 2, y, finished);
     }
     else if (wbs->last == NUMCMAPS)
     {
