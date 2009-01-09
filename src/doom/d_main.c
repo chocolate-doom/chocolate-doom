@@ -790,11 +790,20 @@ static void SetSaveGameDir(char *iwad_filename)
         basefile = sep + 1;
     }
 
+    // ~/.chocolate-doom/savegames/
+
+    savegamedir = Z_Malloc(strlen(configdir) + 30, PU_STATIC, 0);
+    sprintf(savegamedir, "%ssavegames%c", configdir,
+                         DIR_SEPARATOR);
+
+    M_MakeDirectory(savegamedir);
+
     // eg. ~/.chocolate-doom/savegames/doom2.wad/
 
-    savegamedir = malloc(strlen(configdir) + strlen(basefile) + 10);
-    sprintf(savegamedir, "%ssavegames%c%s%c",
-            configdir, DIR_SEPARATOR, basefile, DIR_SEPARATOR);
+    sprintf(savegamedir + strlen(savegamedir), "%s%c",
+            basefile, DIR_SEPARATOR);
+
+    M_MakeDirectory(savegamedir);
 }
 
 // Check if the IWAD file is the Chex Quest IWAD.  
