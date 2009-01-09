@@ -60,11 +60,11 @@ wad_file_t *W_OpenFile(char *path)
     int i;
 
     //!
-    // Do not use the OS's virtual memory subsystem to map WAD files 
+    // Use the OS's virtual memory subsystem to map WAD files
     // directly into memory.
     //
 
-    if (M_CheckParm("-nommap") > 0) 
+    if (M_CheckParm("-mmap") < 0)
     {
         return stdc_wad_file.OpenFile(path);
     }
@@ -73,7 +73,7 @@ wad_file_t *W_OpenFile(char *path)
 
     result = NULL;
 
-    for (i=0; i<arrlen(wad_file_classes); ++i) 
+    for (i=0; i<arrlen(wad_file_classes); ++i)
     {
         result = wad_file_classes[i]->OpenFile(path);
 
