@@ -586,7 +586,7 @@ typedef struct
 
 typedef struct
 {
-    long id;
+    int id;
     short intnum;               // DOOM executes an int to execute commands
 
 // communication between DOOM and the driver
