@@ -189,7 +189,7 @@ typedef struct
     boolean masked;
     short width;
     short height;
-    void **columndirectory;     // OBSOLETE
+    int obsolete;
     short patchcount;
     mappatch_t patches[1];
 } PACKEDATTR maptexture_t;
