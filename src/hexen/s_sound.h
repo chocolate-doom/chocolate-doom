@@ -61,7 +61,7 @@ typedef struct
 
 typedef struct
 {
-    long id;
+    int id;
     unsigned short priority;
     char *name;
     mobj_t *mo;
