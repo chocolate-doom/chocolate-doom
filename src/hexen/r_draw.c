@@ -328,9 +328,7 @@ void R_InitTranslationTables(void)
     V_LoadTintTable();
 
     // Allocate translation tables
-    translationtables = Z_Malloc(256 * 3 * (MAXPLAYERS - 1) + 255,
-                                 PU_STATIC, 0);
-    translationtables = (byte *) (((int) translationtables + 255) & ~255);
+    translationtables = Z_Malloc(256 * 3 * (MAXPLAYERS - 1), PU_STATIC, 0);
 
     for (i = 0; i < 3 * (MAXPLAYERS - 1); i++)
     {
