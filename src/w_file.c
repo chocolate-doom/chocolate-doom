@@ -64,7 +64,7 @@ wad_file_t *W_OpenFile(char *path)
     // directly into memory.
     //
 
-    if (M_CheckParm("-mmap") < 0)
+    if (!M_CheckParm("-mmap"))
     {
         return stdc_wad_file.OpenFile(path);
     }
