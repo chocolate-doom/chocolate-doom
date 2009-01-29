@@ -151,7 +151,7 @@ void Window2(void)
     table = TXT_NewTable(2);
     TXT_AddWidget(window, table);
     TXT_AddWidget(table, TXT_NewLabel("String: "));
-    TXT_AddWidget(table, TXT_NewInputBox(&textbox_value, 30));
+    TXT_AddWidget(table, TXT_NewInputBox(&textbox_value, 20));
     TXT_AddWidget(table, TXT_NewLabel("Int: "));
     TXT_AddWidget(table, TXT_NewIntInputBox(&numbox_value, 10));
     TXT_AddWidget(table, TXT_NewLabel("Spin control:"));
