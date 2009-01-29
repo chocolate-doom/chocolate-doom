@@ -251,6 +251,12 @@ static void TXT_ScrollPaneMousePress(TXT_UNCAST_ARG(scrollpane),
         {
             ++scrollpane->x;
         }
+        else
+        {
+            int range = FullWidth(scrollpane) - scrollpane->w;
+
+            scrollpane->x = ((rel_x - 1) * range) / (scrollpane->w - 3);
+        }
 
         return;
     }
@@ -265,6 +271,12 @@ static void TXT_ScrollPaneMousePress(TXT_UNCAST_ARG(scrollpane),
         else if (rel_y == scrollpane->h - 1)
         {
             ++scrollpane->y;
+        }
+        else
+        {
+            int range = FullHeight(scrollpane) - scrollpane->h;
+
+            scrollpane->y = ((rel_y - 1) * range) / (scrollpane->h - 3);
         }
 
         return;
