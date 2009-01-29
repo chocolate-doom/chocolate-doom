@@ -119,7 +119,7 @@ void SetupWindow(void)
     }
 
     UpdateLabel(NULL, NULL);
-                                     
+
     TXT_AddWidget(window, TXT_NewButton2("Close Window", CloseWindow, NULL));
 
     pwn = TXT_NewWindowAction(KEY_F1, "PWN!");
@@ -133,8 +133,9 @@ void Window2(void)
 {
     txt_window_t *window;
     txt_table_t *table;
+    txt_scrollpane_t *scrollpane;
     int i;
-    
+
     window = TXT_NewWindow("Another test");
     TXT_SetWindowPosition(window, 
                           TXT_HORIZ_RIGHT, 
@@ -155,6 +156,22 @@ void Window2(void)
     TXT_AddWidget(table, TXT_NewIntInputBox(&numbox_value, 10));
     TXT_AddWidget(table, TXT_NewLabel("Spin control:"));
     TXT_AddWidget(table, TXT_NewSpinControl(&numbox_value, 0, 15));
+
+    TXT_AddWidget(window, TXT_NewSeparator("Scroll pane test"));
+    scrollpane = TXT_NewScrollPane(40, 5, TXT_NewLabel(
+        "This is a scrollable pane. The contents\n"
+        "of this box are larger than the box\n"
+        "itself, but it can be scrolled around\n"
+        "to explore the full contents.\n"
+        "\n"
+        "Scrollable panes can be scrolled both\n"
+        "vertically and horizontally. They\n"
+        "can contain any widget. The scroll bars\n"
+        "appear automatically as needed.\n"
+        "\n"
+        "This is a very long line of text that forces a horizontal scrollbar"
+    ));
+    TXT_AddWidget(window, scrollpane);
 }
 
 int main(int argc, char *argv[])

@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// Copyright(C) 2005,2006 Simon Howard
+// Copyright(C) 2009 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -18,26 +18,25 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-//-----------------------------------------------------------------------------
-//
-// Text mode emulation in SDL
-//
-//-----------------------------------------------------------------------------
 
-#ifndef TXT_GUI_H
-#define TXT_GUI_H
+#ifndef TXT_SCROLLPANE_H
+#define TXT_SCROLLPANE_H
 
-void TXT_DrawDesktopBackground(char *title);
-void TXT_DrawWindowFrame(char *title, int x, int y, int w, int h);
-void TXT_DrawSeparator(int x, int y, int w);
-void TXT_DrawString(char *s);
+typedef struct txt_scrollpane_s txt_scrollpane_t;
 
-void TXT_DrawHorizScrollbar(int x, int y, int w, int cursor, int range);
-void TXT_DrawVertScrollbar(int x, int y, int h, int cursor, int range);
+#include "txt_widget.h"
 
-void TXT_InitClipArea(void);
-void TXT_PushClipArea(int x1, int x2, int y1, int y2);
-void TXT_PopClipArea(void);
+struct txt_scrollpane_s
+{
+    txt_widget_t widget;
+    int w, h;
+    int x, y;
+    int expand_w, expand_h;
+    txt_widget_t *child;
+};
 
-#endif /* #ifndef TXT_GUI_H */
+txt_scrollpane_t *TXT_NewScrollPane(int w, int h, TXT_UNCAST_ARG(target));
+
+#endif /* #ifndef TXT_SCROLLPANE_H */
+
 
