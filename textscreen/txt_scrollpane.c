@@ -29,6 +29,9 @@
 #include "txt_gui.h"
 #include "txt_io.h"
 #include "txt_main.h"
+#include "txt_table.h"
+
+#include "doomkeys.h"
 
 #define SCROLLBAR_VERTICAL   (1 << 0)
 #define SCROLLBAR_HORIZONTAL (1 << 1)
@@ -214,18 +217,120 @@ static void TXT_ScrollPaneDestructor(TXT_UNCAST_ARG(scrollpane))
     }
 }
 
+// Hack for tables - when browsing a table inside a scroll pane,
+// automatically scroll the window to show the newly-selected
+// item.
+
+static void ShowSelectedWidget(txt_scrollpane_t *scrollpane)
+{
+    txt_widget_t *selected;
+
+    selected = TXT_GetSelectedWidget(scrollpane->child);
+
+    // Scroll up or down?
+
+    if (selected->y <= scrollpane->widget.y)
+    {
+        scrollpane->y -= scrollpane->widget.y - selected->y;
+    }
+    else if (selected->y + selected->h >
+             scrollpane->widget.y + scrollpane->h)
+    {
+        scrollpane->y += (selected->y + selected->h)
+                       - (scrollpane->widget.y + scrollpane->h);
+    }
+
+    // Scroll left or right?
+
+    if (selected->x <= scrollpane->widget.x)
+    {
+        scrollpane->x -= scrollpane->widget.x - selected->x;
+    }
+    else if (selected->x + selected->w >
+             scrollpane->widget.x + scrollpane->w)
+    {
+        scrollpane->x += (selected->x + selected->w)
+                       - (scrollpane->widget.x + scrollpane->w);
+    }
+}
+
+// Interpret arrow key presses as scroll commands
+
+static int InterpretScrollKey(txt_scrollpane_t *scrollpane, int key)
+{
+    switch (key)
+    {
+        case KEY_UPARROW:
+            if (scrollpane->y > 0)
+            {
+                --scrollpane->y;
+                return 1;
+            }
+            break;
+
+        case KEY_DOWNARROW:
+            if (scrollpane->y < FullHeight(scrollpane) - scrollpane->h)
+            {
+                ++scrollpane->y;
+                return 1;
+            }
+            break;
+
+        case KEY_LEFTARROW:
+            if (scrollpane->x > 0)
+            {
+                --scrollpane->x;
+                return 1;
+            }
+            break;
+
+        case KEY_RIGHTARROW:
+            if (scrollpane->x < FullWidth(scrollpane) - scrollpane->w)
+            {
+                ++scrollpane->x;
+                return 1;
+            }
+            break;
+
+        default:
+            break;
+    }
+
+    return 0;
+}
+
 static int TXT_ScrollPaneKeyPress(TXT_UNCAST_ARG(scrollpane), int key)
 {
     TXT_CAST_ARG(txt_scrollpane_t, scrollpane);
+    int result;
+
+    result = 0;
 
     if (scrollpane->child != NULL)
     {
-        return TXT_WidgetKeyPress(scrollpane->child, key);
+        result = TXT_WidgetKeyPress(scrollpane->child, key);
+
+        // Gross hack - if we're scrolling in a menu with the keyboard,
+        // automatically move the scroll pane to show the new
+        // selected item.
+
+        if (scrollpane->child->widget_class == &txt_table_class
+         && (key == KEY_UPARROW || key == KEY_DOWNARROW
+          || key == KEY_LEFTARROW || key == KEY_RIGHTARROW))
+        {
+            ShowSelectedWidget(scrollpane);
+        }
+
+        // If the child widget didn't use the keypress, we can see 
+        // if it can be interpreted as a scrolling command.
+
+        if (result == 0)
+        {
+            result = InterpretScrollKey(scrollpane, key);
+        }
     }
-    else
-    {
-        return 0;
-    }
+
+    return result;
 }
 
 static void TXT_ScrollPaneMousePress(TXT_UNCAST_ARG(scrollpane),
@@ -284,10 +389,7 @@ static void TXT_ScrollPaneMousePress(TXT_UNCAST_ARG(scrollpane),
 
     if (scrollpane->child != NULL)
     {
-        TXT_WidgetMousePress(scrollpane->child,
-                             x - scrollpane->x,
-                             y - scrollpane->y,
-                             b);
+        TXT_WidgetMousePress(scrollpane->child, x, y, b);
     }
 
 }
@@ -305,6 +407,8 @@ static void TXT_ScrollPaneLayout(TXT_UNCAST_ARG(scrollpane))
     {
         scrollpane->child->x = scrollpane->widget.x - scrollpane->x;
         scrollpane->child->y = scrollpane->widget.y - scrollpane->y;
+
+        TXT_LayoutWidget(scrollpane->child);
     }
 }
 
