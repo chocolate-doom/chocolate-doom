@@ -271,25 +271,10 @@ void ST_NetDone(void)
 void ST_Message(char *message, ...)
 {
     va_list argptr;
-    char buffer[80];
 
     va_start(argptr, message);
-    vsprintf(buffer, message, argptr);
+    vprintf(message, argptr);
     va_end(argptr);
-
-    if (strlen(buffer) >= 80)
-    {
-        I_Error("Long debug message has overwritten memory");
-    }
-
-#ifdef __WATCOMC__
-    if (debugmode)
-    {
-        printf(buffer);
-    }
-#else
-    printf(buffer);
-#endif
 }
 
 //==========================================================================
@@ -301,18 +286,10 @@ void ST_Message(char *message, ...)
 void ST_RealMessage(char *message, ...)
 {
     va_list argptr;
-    char buffer[80];
 
     va_start(argptr, message);
-    vsprintf(buffer, message, argptr);
+    vprintf(message, argptr);
     va_end(argptr);
-
-    if (strlen(buffer) >= 80)
-    {
-        I_Error("Long debug message has overwritten memory\n");
-    }
-
-    printf(buffer);             // Always print these messages
 }
 
 

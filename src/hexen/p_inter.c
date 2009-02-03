@@ -78,8 +78,8 @@ void P_SetMessage(player_t * player, char *message, boolean ultmsg)
     }
     if (strlen(message) > 79)
     {
-        memcpy(player->message, message, 80);
-        player->message[80] = 0;
+        strncpy(player->message, message, 80);
+        player->message[79] = 0;
     }
     else
     {
@@ -112,8 +112,8 @@ void P_SetYellowMessage(player_t * player, char *message, boolean ultmsg)
     }
     if (strlen(message) > 79)
     {
-        memcpy(player->message, message, 80);
-        player->message[80] = 0;
+        strncpy(player->message, message, 80);
+        player->message[79] = 0;
     }
     else
     {

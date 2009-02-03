@@ -73,7 +73,7 @@ boolean M_ParmExists(char *check)
 }
 
 #define MAXARGVS        100
-	
+
 static void LoadResponseFile(int argv_index)
 {
     FILE *handle;
@@ -86,7 +86,7 @@ static void LoadResponseFile(int argv_index)
     int i, k;
 
     response_filename = myargv[argv_index] + 1;
-		
+
     // Read the response file into memory
     handle = fopen(response_filename, "r");
 
@@ -102,11 +102,25 @@ static void LoadResponseFile(int argv_index)
 
     // Read in the entire file
     // Allocate one byte extra - this is incase there is an argument
-    // at the end of the response file, in which case a '\0' will be 
+    // at the end of the response file, in which case a '\0' will be
     // needed.
 
     file = malloc(size + 1);
-    (void) fread(file, size, 1, handle);
+
+    i = 0;
+
+    while (i < size)
+    {
+        k = fread(file + i, 1, size - i, handle);
+
+        if (k < 0)
+        {
+            I_Error("Failed to read full contents of '%s'", response_filename);
+        }
+
+        i += k;
+    }
+
     fclose(handle);
 
     // Create new arguments list array
@@ -122,7 +136,7 @@ static void LoadResponseFile(int argv_index)
         newargv[i] = myargv[i];
         ++newargc;
     }
-    
+
     infile = file;
     k = 0;
 
@@ -133,7 +147,7 @@ static void LoadResponseFile(int argv_index)
         while(k < size && isspace(infile[k]))
         {
             ++k;
-        } 
+        }
 
         if (k >= size)
         {
@@ -144,7 +158,7 @@ static void LoadResponseFile(int argv_index)
         // the contents as a single argument.  This allows long filenames
         // to be specified.
 
-        if (infile[k] == '\"') 
+        if (infile[k] == '\"')
         {
             // Skip the first character(")
             ++k;
@@ -158,9 +172,9 @@ static void LoadResponseFile(int argv_index)
                 ++k;
             }
 
-            if (k >= size || infile[k] == '\n') 
+            if (k >= size || infile[k] == '\n')
             {
-                I_Error("Quotes unclosed in response file '%s'", 
+                I_Error("Quotes unclosed in response file '%s'",
                         response_filename);
             }
 
@@ -186,7 +200,7 @@ static void LoadResponseFile(int argv_index)
 
             ++k;
         }
-    } 
+    }
 
     // Add arguments following the response file argument
 
