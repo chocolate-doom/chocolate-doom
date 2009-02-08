@@ -32,6 +32,7 @@
 #include "txt_inputbox.h"
 #include "txt_label.h"
 #include "txt_radiobutton.h"
+#include "txt_scrollpane.h"
 #include "txt_separator.h"
 #include "txt_spinctrl.h"
 #include "txt_strut.h"

@@ -674,6 +674,32 @@ txt_table_t *TXT_NewHorizBox(TXT_UNCAST_ARG(first_widget), ...)
     return result;
 }
 
+// Get the currently-selected widget in a table, recursively searching
+// through sub-tables if necessary.
+
+txt_widget_t *TXT_GetSelectedWidget(TXT_UNCAST_ARG(table))
+{
+    TXT_CAST_ARG(txt_table_t, table);
+    txt_widget_t *result;
+    int index;
+
+    index = table->selected_y * table->columns + table->selected_x;
+
+    result = NULL;
+
+    if (index >= 0 && index < table->num_widgets)
+    {
+        result = table->widgets[index];
+    }
+
+    if (result != NULL && result->widget_class == &txt_table_class)
+    {
+        result = TXT_GetSelectedWidget(result);
+    }
+
+    return result;
+}
+
 // Selects a given widget in a table, recursively searching any tables
 // within this table.  Returns 1 if successful, 0 if unsuccessful.
 

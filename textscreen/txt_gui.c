@@ -252,6 +252,101 @@ void TXT_DrawString(char *s)
     TXT_GotoXY(x + strlen(s), y);
 }
 
+void TXT_DrawHorizScrollbar(int x, int y, int w, int cursor, int range)
+{
+    int x1;
+    int cursor_x;
+
+    if (!VALID_Y(y))
+    {
+        return;
+    }
+
+    TXT_FGColor(TXT_COLOR_BLACK);
+    TXT_BGColor(TXT_COLOR_GREY, 0);
+
+    TXT_GotoXY(x, y);
+    TXT_PutChar('\x1b');
+
+    cursor_x = x + 1;
+
+    if (range > 1)
+    {
+        cursor_x += (cursor * (w - 3)) / (range - 1);
+    }
+
+    if (cursor_x > x + w - 2)
+    {
+        cursor_x = x + w - 2;
+    }
+
+    for (x1=x+1; x1<x+w-1; ++x1)
+    {
+        if (VALID_X(x1))
+        {
+            if (x1 == cursor_x)
+            {
+                TXT_PutChar('\xdb');
+            }
+            else
+            {
+                TXT_PutChar('\xb1');
+            }
+        }
+    }
+
+    TXT_PutChar('\x1a');
+}
+
+void TXT_DrawVertScrollbar(int x, int y, int h, int cursor, int range)
+{
+    int y1;
+    int cursor_y;
+
+    if (!VALID_X(x))
+    {
+        return;
+    }
+
+    TXT_FGColor(TXT_COLOR_BLACK);
+    TXT_BGColor(TXT_COLOR_GREY, 0);
+
+    TXT_GotoXY(x, y);
+    TXT_PutChar('\x18');
+
+    cursor_y = y + 1;
+
+    if (cursor_y > y + h - 2)
+    {
+        cursor_y = y + h - 2;
+    }
+
+    if (range > 1)
+    {
+        cursor_y += (cursor * (h - 3)) / (range - 1);
+    }
+
+    for (y1=y+1; y1<y+h-1; ++y1)
+    {
+        if (VALID_Y(y1))
+        {
+            TXT_GotoXY(x, y1);
+
+            if (y1 == cursor_y)
+            {
+                TXT_PutChar('\xdb');
+            }
+            else
+            {
+                TXT_PutChar('\xb1');
+            }
+        }
+    }
+
+    TXT_GotoXY(x, y + h - 1);
+    TXT_PutChar('\x19');
+}
+
 void TXT_InitClipArea(void)
 {
     if (cliparea == NULL)
@@ -283,13 +378,17 @@ void TXT_PushClipArea(int x1, int x2, int y1, int y2)
         newarea->x1 = x1;
     if (x2 < newarea->x2)
         newarea->x2 = x2;
-    if (y1 > newarea->x1)
+    if (y1 > newarea->y1)
         newarea->y1 = y1;
     if (y2 < newarea->y2)
         newarea->y2 = y2;
 
+#if 0
+    printf("New scrollable area: %i,%i-%i,%i\n", x1, y1, x2, y2);
+#endif
+
     // Hook into the list
-    
+
     newarea->next = cliparea;
     cliparea = newarea;
 }
