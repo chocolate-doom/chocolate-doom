@@ -155,6 +155,7 @@ FEATURE_SOUND_SOURCE_FILES =               \
 i_pcsound.c                                \
 i_sdlsound.c                               \
 i_sdlmusic.c                               \
+i_oplmusic.c                               \
 mus2mid.c            mus2mid.h
 
 SOURCE_FILES = $(MAIN_SOURCE_FILES)                \
@@ -172,6 +173,7 @@ endif
 chocolate_doom_LDADD =                               \
                        ../textscreen/libtextscreen.a \
                        ../pcsound/libpcsound.a       \
+                       ../opl/libopl.a               \
                        @LDFLAGS@                     \
                        @SDLMIXER_LIBS@               \
                        @SDLNET_LIBS@
