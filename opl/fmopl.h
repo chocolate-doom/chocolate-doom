@@ -1,4 +1,4 @@
-/* ScummVM - Graphic Adventure Engine
+/* This file is derived from fmopl.h from ScummVM.
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -18,19 +18,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: http://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/sound/fmopl.h $
- * $Id: fmopl.h 38211 2009-02-15 10:07:50Z sev $
- *
  * LGPL licensed version of MAMEs fmopl (V0.37a modified) by
  * Tatsuyuki Satoh. Included from LGPL'ed AdPlug.
  */
 
 
-#ifndef SOUND_FMOPL_H
-#define SOUND_FMOPL_H
+#ifndef OPL_FMOPL_H
+#define OPL_FMOPL_H
 
-#include "common/scummsys.h"
-#include "common/util.h"
+#include "inttypes.h"
 
 enum {
 	FMOPL_ENV_BITS_HQ = 16,
@@ -40,7 +36,6 @@ enum {
 	FMOPL_EG_ENT_MQ = 1024,
 	FMOPL_EG_ENT_LQ = 128
 };
-
 
 typedef void (*OPL_TIMERHANDLER)(int channel,double interval_Sec);
 typedef void (*OPL_IRQHANDLER)(int param,int irq);
@@ -53,20 +48,20 @@ typedef void (*OPL_UPDATEHANDLER)(int param,int min_interval_us);
 typedef struct fm_opl_slot {
 	int TL;		/* total level     :TL << 8				*/
 	int TLL;	/* adjusted now TL						*/
-	uint8 KSR;	/* key scale rate  :(shift down bit)	*/
+	uint8_t KSR;	/* key scale rate  :(shift down bit)	*/
 	int *AR;	/* attack rate     :&AR_TABLE[AR<<2]	*/
 	int *DR;	/* decay rate      :&DR_TABLE[DR<<2]	*/
 	int SL;		/* sustain level   :SL_TABLE[SL]		*/
 	int *RR;	/* release rate    :&DR_TABLE[RR<<2]	*/
-	uint8 ksl;	/* keyscale level  :(shift down bits)	*/
-	uint8 ksr;	/* key scale rate  :kcode>>KSR			*/
-	uint mul;	/* multiple        :ML_TABLE[ML]		*/
-	uint Cnt;	/* frequency count						*/
-	uint Incr;	/* frequency step						*/
+	uint8_t ksl;	/* keyscale level  :(shift down bits)	*/
+	uint8_t ksr;	/* key scale rate  :kcode>>KSR			*/
+	unsigned int mul;	/* multiple        :ML_TABLE[ML]		*/
+	unsigned int Cnt;	/* frequency count						*/
+	unsigned int Incr;	/* frequency step						*/
 
 	/* envelope generator state */
-	uint8 eg_typ;/* envelope type flag					*/
-	uint8 evm;	/* envelope phase						*/
+	uint8_t eg_typ;/* envelope type flag					*/
+	uint8_t evm;	/* envelope phase						*/
 	int evc;	/* envelope counter						*/
 	int eve;	/* envelope counter end point			*/
 	int evs;	/* envelope counter step				*/
@@ -75,8 +70,8 @@ typedef struct fm_opl_slot {
 	int evsr;	/* envelope step for RR :RR[ksr]		*/
 
 	/* LFO */
-	uint8 ams;		/* ams flag                            */
-	uint8 vib;		/* vibrate flag                        */
+	uint8_t ams;		/* ams flag                            */
+	uint8_t vib;		/* vibrate flag                        */
 	/* wave selector */
 	int **wavetable;
 } OPL_SLOT;
@@ -84,47 +79,47 @@ typedef struct fm_opl_slot {
 /* ---------- OPL one of channel  ---------- */
 typedef struct fm_opl_channel {
 	OPL_SLOT SLOT[2];
-	uint8 CON;			/* connection type					*/
-	uint8 FB;			/* feed back       :(shift down bit)*/
+	uint8_t CON;			/* connection type					*/
+	uint8_t FB;			/* feed back       :(shift down bit)*/
 	int *connect1;		/* slot1 output pointer				*/
 	int *connect2;		/* slot2 output pointer				*/
 	int op1_out[2];		/* slot1 output for selfeedback		*/
 
 	/* phase generator state */
-	uint block_fnum;	/* block+fnum						*/
-	uint8 kcode;		/* key code        : KeyScaleCode	*/
-	uint fc;			/* Freq. Increment base				*/
-	uint ksl_base;		/* KeyScaleLevel Base step			*/
-	uint8 keyon;		/* key on/off flag					*/
+	unsigned int block_fnum;	/* block+fnum						*/
+	uint8_t kcode;		/* key code        : KeyScaleCode	*/
+	unsigned int fc;			/* Freq. Increment base				*/
+	unsigned int ksl_base;		/* KeyScaleLevel Base step			*/
+	uint8_t keyon;		/* key on/off flag					*/
 } OPL_CH;
 
 /* OPL state */
 typedef struct fm_opl_f {
-	uint8 type;			/* chip type                         */
+	uint8_t type;			/* chip type                         */
 	int clock;			/* master clock  (Hz)                */
 	int rate;			/* sampling rate (Hz)                */
 	double freqbase;	/* frequency base                    */
 	double TimerBase;	/* Timer base time (==sampling time) */
-	uint8 address;		/* address register                  */
-	uint8 status;		/* status flag                       */
-	uint8 statusmask;	/* status mask                       */
-	uint mode;			/* Reg.08 : CSM , notesel,etc.       */
+	uint8_t address;		/* address register                  */
+	uint8_t status;		/* status flag                       */
+	uint8_t statusmask;	/* status mask                       */
+	unsigned int mode;			/* Reg.08 : CSM , notesel,etc.       */
 
 	/* Timer */
 	int T[2];			/* timer counter                     */
-	uint8 st[2];		/* timer enable                      */
+	uint8_t st[2];		/* timer enable                      */
 
 	/* FM channel slots */
 	OPL_CH *P_CH;		/* pointer of CH                     */
 	int	max_ch;			/* maximum channel                   */
 
 	/* Rythm sention */
-	uint8 rythm;		/* Rythm mode , key flag */
+	uint8_t rythm;		/* Rythm mode , key flag */
 
 	/* time tables */
 	int AR_TABLE[76];	/* atttack rate tables				*/
 	int DR_TABLE[76];	/* decay rate tables				*/
-	uint FN_TABLE[1024];/* fnumber -> increment counter		*/
+	unsigned int FN_TABLE[1024];/* fnumber -> increment counter		*/
 
 	/* LFO */
 	int *ams_table;
@@ -135,7 +130,7 @@ typedef struct fm_opl_f {
 	int vibIncr;
 
 	/* wave selector enable flag */
-	uint8 wavesel;
+	uint8_t wavesel;
 
 	/* external event callback handler */
 	OPL_TIMERHANDLER  TimerHandler;		/* TIMER handler   */
@@ -144,8 +139,6 @@ typedef struct fm_opl_f {
 	int IRQParam;						/* IRQ parameter  */
 	OPL_UPDATEHANDLER UpdateHandler;	/* stream update handler   */
 	int UpdateParam;					/* stream update parameter */
-
-	Common::RandomSource rnd;
 } FM_OPL;
 
 /* ---------- Generic interface section ---------- */
@@ -165,9 +158,10 @@ int OPLWrite(FM_OPL *OPL, int a, int v);
 unsigned char OPLRead(FM_OPL *OPL, int a);
 int OPLTimerOver(FM_OPL *OPL, int c);
 void OPLWriteReg(FM_OPL *OPL, int r, int v);
-void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length, int interleave = 0);
+void YM3812UpdateOne(FM_OPL *OPL, int16_t *buffer, int length, int interleave);
 
 // Factory method
 FM_OPL *makeAdlibOPL(int rate);
 
 #endif
+

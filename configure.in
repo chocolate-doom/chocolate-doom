@@ -91,6 +91,7 @@ textscreen/examples/Makefile
 setup/Makefile
 man/Makefile
 src/Makefile
+opl/Makefile
 pcsound/Makefile
 src/resource.rc
 src/doom-screensaver.desktop
