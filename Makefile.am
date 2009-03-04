@@ -44,7 +44,7 @@ EXTRA_DIST=                             \
 MAINTAINERCLEANFILES =  $(AUX_DIST_GEN)
 
 docdir=$(prefix)/share/doc/@PACKAGE@
-SUBDIRS=textscreen pcsound src man setup
+SUBDIRS=textscreen opl pcsound src man setup
 
 if HAVE_PYTHON
 

@@ -1,4 +1,4 @@
-/* ScummVM - Graphic Adventure Engine
+/* This file is derived from fmopl.cpp from ScummVM.
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -18,9 +18,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: http://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/sound/fmopl.cpp $
- * $Id: fmopl.cpp 38211 2009-02-15 10:07:50Z sev $
- *
  * LGPL licensed version of MAMEs fmopl (V0.37a modified) by
  * Tatsuyuki Satoh. Included from LGPL'ed AdPlug.
  */
@@ -31,11 +28,13 @@
 #include <stdarg.h>
 #include <math.h>
 
-#include "sound/fmopl.h"
+#include "fmopl.h"
 
-#if defined (_WIN32_WCE) || defined (__SYMBIAN32__) || defined(PALMOS_MODE) || defined(__GP32__) || defined(GP2X) || defined (__MAEMO__) || defined(__DS__) || defined (__MINT__)
-#include "common/config-manager.h"
-#endif
+#define PI 3.1415926539
+
+#define CLIP(value, min, max)                      \
+    ( (value) < (min) ? (min) :                    \
+      (value) > (max) ? (max) : (value) )
 
 /* -------------------- preliminary define section --------------------- */
 /* attack/decay rate time rate */
@@ -57,12 +56,7 @@
 
 /* sinwave entries */
 /* used static memory = SIN_ENT * 4 (byte) */
-#ifdef __DS__
-#include "dsmain.h"
-#define SIN_ENT_SHIFT 8
-#else
 #define SIN_ENT_SHIFT 11
-#endif
 #define SIN_ENT (1<<SIN_ENT_SHIFT)
 
 /* output level entries (envelope,sinwave) */
@@ -207,19 +201,20 @@ static void *cur_chip = NULL;	/* current chip point */
 /* static OPLSAMPLE  *bufL,*bufR; */
 static OPL_CH *S_CH;
 static OPL_CH *E_CH;
-OPL_SLOT *SLOT7_1, *SLOT7_2, *SLOT8_1, *SLOT8_2;
+static OPL_SLOT *SLOT7_1, *SLOT7_2, *SLOT8_1, *SLOT8_2;
 
 static int outd[1];
 static int ams;
 static int vib;
-int *ams_table;
-int *vib_table;
+static int *ams_table;
+static int *vib_table;
 static int amsIncr;
 static int vibIncr;
 static int feedback2;		/* connect for SLOT 2 */
 
 /* --------------------- rebuild tables ------------------- */
 
+#define ARRAYSIZE(x) (sizeof(x) / sizeof(*x))
 #define SC_KSL(mydb) ((uint) (mydb / (EG_STEP / 2)))
 #define SC_SL(db) (int)(db * ((3 / EG_STEP) * (1 << ENV_BITS))) + EG_DST
 
@@ -247,7 +242,7 @@ void OPLBuildTables(int ENV_BITS_PARAM, int EG_ENT_PARAM) {
 /* --------------------- subroutines  --------------------- */
 
 /* status set and IRQ handling */
-inline void OPL_STATUS_SET(FM_OPL *OPL, int flag) {
+static inline void OPL_STATUS_SET(FM_OPL *OPL, int flag) {
 	/* set status flag */
 	OPL->status |= flag;
 	if(!(OPL->status & 0x80)) {
@@ -261,7 +256,7 @@ inline void OPL_STATUS_SET(FM_OPL *OPL, int flag) {
 }
 
 /* status reset and IRQ handling */
-inline void OPL_STATUS_RESET(FM_OPL *OPL, int flag) {
+static inline void OPL_STATUS_RESET(FM_OPL *OPL, int flag) {
 	/* reset status flag */
 	OPL->status &= ~flag;
 	if((OPL->status & 0x80)) {
@@ -274,7 +269,7 @@ inline void OPL_STATUS_RESET(FM_OPL *OPL, int flag) {
 }
 
 /* IRQ mask set */
-inline void OPL_STATUSMASK_SET(FM_OPL *OPL, int flag) {
+static inline void OPL_STATUSMASK_SET(FM_OPL *OPL, int flag) {
 	OPL->statusmask = flag;
 	/* IRQ handling check */
 	OPL_STATUS_SET(OPL,0);
@@ -282,7 +277,7 @@ inline void OPL_STATUSMASK_SET(FM_OPL *OPL, int flag) {
 }
 
 /* ----- key on  ----- */
-inline void OPL_KEYON(OPL_SLOT *SLOT) {
+static inline void OPL_KEYON(OPL_SLOT *SLOT) {
 	/* sin wave restart */
 	SLOT->Cnt = 0;
 	/* set attack */
@@ -293,7 +288,7 @@ inline void OPL_KEYON(OPL_SLOT *SLOT) {
 }
 
 /* ----- key off ----- */
-inline void OPL_KEYOFF(OPL_SLOT *SLOT) {
+static inline void OPL_KEYOFF(OPL_SLOT *SLOT) {
 	if( SLOT->evm > ENV_MOD_RR) {
 		/* set envelope counter from envleope output */
 
@@ -337,7 +332,7 @@ inline void OPL_KEYOFF(OPL_SLOT *SLOT) {
 /* ---------- calcrate Envelope Generator & Phase Generator ---------- */
 
 /* return : envelope output */
-inline uint OPL_CALC_SLOT(OPL_SLOT *SLOT) {
+static inline uint OPL_CALC_SLOT(OPL_SLOT *SLOT) {
 	/* calcrate envelope generator */
 	if((SLOT->evc += SLOT->evs) >= SLOT->eve) {
 		switch( SLOT->evm ) {
@@ -377,7 +372,7 @@ static void set_algorythm(OPL_CH *CH) {
 }
 
 /* ---------- frequency counter for operater update ---------- */
-inline void CALC_FCSLOT(OPL_CH *CH, OPL_SLOT *SLOT) {
+static inline void CALC_FCSLOT(OPL_CH *CH, OPL_SLOT *SLOT) {
 	int ksr;
 
 	/* frequency step counter */
@@ -395,7 +390,7 @@ inline void CALC_FCSLOT(OPL_CH *CH, OPL_SLOT *SLOT) {
 }
 
 /* set multi,am,vib,EG-TYP,KSR,mul */
-inline void set_mul(FM_OPL *OPL, int slot, int v) {
+static inline void set_mul(FM_OPL *OPL, int slot, int v) {
 	OPL_CH   *CH   = &OPL->P_CH[slot>>1];
 	OPL_SLOT *SLOT = &CH->SLOT[slot & 1];
 
@@ -408,7 +403,7 @@ inline void set_mul(FM_OPL *OPL, int slot, int v) {
 }
 
 /* set ksl & tl */
-inline void set_ksl_tl(FM_OPL *OPL, int slot, int v) {
+static inline void set_ksl_tl(FM_OPL *OPL, int slot, int v) {
 	OPL_CH   *CH   = &OPL->P_CH[slot>>1];
 	OPL_SLOT *SLOT = &CH->SLOT[slot & 1];
 	int ksl = v >> 6; /* 0 / 1.5 / 3 / 6 db/OCT */
@@ -422,7 +417,7 @@ inline void set_ksl_tl(FM_OPL *OPL, int slot, int v) {
 }
 
 /* set attack rate & decay rate  */
-inline void set_ar_dr(FM_OPL *OPL, int slot, int v) {
+static inline void set_ar_dr(FM_OPL *OPL, int slot, int v) {
 	OPL_CH   *CH   = &OPL->P_CH[slot>>1];
 	OPL_SLOT *SLOT = &CH->SLOT[slot & 1];
 	int ar = v >> 4;
@@ -440,7 +435,7 @@ inline void set_ar_dr(FM_OPL *OPL, int slot, int v) {
 }
 
 /* set sustain level & release rate */
-inline void set_sl_rr(FM_OPL *OPL, int slot, int v) {
+static inline void set_sl_rr(FM_OPL *OPL, int slot, int v) {
 	OPL_CH   *CH   = &OPL->P_CH[slot>>1];
 	OPL_SLOT *SLOT = &CH->SLOT[slot & 1];
 	int sl = v >> 4;
@@ -459,7 +454,7 @@ inline void set_sl_rr(FM_OPL *OPL, int slot, int v) {
 
 #define OP_OUT(slot,env,con)   slot->wavetable[((slot->Cnt + con)>>(24-SIN_ENT_SHIFT)) & (SIN_ENT-1)][env]
 /* ---------- calcrate one of channel ---------- */
-inline void OPL_CALC_CH(OPL_CH *CH) {
+static inline void OPL_CALC_CH(OPL_CH *CH) {
 	uint env_out;
 	OPL_SLOT *SLOT;
 
@@ -501,13 +496,13 @@ inline void OPL_CALC_CH(OPL_CH *CH) {
 
 /* ---------- calcrate rythm block ---------- */
 #define WHITE_NOISE_db 6.0
-inline void OPL_CALC_RH(FM_OPL *OPL, OPL_CH *CH) {
+static inline void OPL_CALC_RH(FM_OPL *OPL, OPL_CH *CH) {
 	uint env_tam, env_sd, env_top, env_hh;
 	// This code used to do int(OPL->rnd.getRandomBit() * (WHITE_NOISE_db / EG_STEP)),
 	// but EG_STEP = 96.0/EG_ENT, and WHITE_NOISE_db=6.0. So, that's equivalent to
 	// int(OPL->rnd.getRandomBit() * EG_ENT/16). We know that EG_ENT is 4096, or 1024,
 	// or 128, so we can safely avoid any FP ops.
-	int whitenoise = OPL->rnd.getRandomBit() * (EG_ENT>>4);
+	int whitenoise = (rand() & 1) * (EG_ENT>>4);
 
 	int tone8;
 
@@ -625,13 +620,6 @@ static int OPLOpenTable(void) {
 	int i,j;
 	double pom;
 
-#ifdef __DS__
-	DS::fastRamReset();
-
-	TL_TABLE = (int *) DS::fastRamAlloc(TL_MAX * 2 * sizeof(int *));
-	SIN_TABLE = (int **) DS::fastRamAlloc(SIN_ENT * 4 * sizeof(int *));
-#else
-
 	/* allocate dynamic tables */
 	if((TL_TABLE = (int *)malloc(TL_MAX * 2 * sizeof(int))) == NULL)
 		return 0;
@@ -640,7 +628,6 @@ static int OPLOpenTable(void) {
 		free(TL_TABLE);
 		return 0;
 	}
-#endif
 
 	if((AMS_TABLE = (int *)malloc(AMS_ENT * 2 * sizeof(int))) == NULL) {
 		free(TL_TABLE);
@@ -671,7 +658,7 @@ static int OPLOpenTable(void) {
 	for (s = 1;s <= SIN_ENT / 4; s++) {
 		pom = sin(2 * PI * s / SIN_ENT); /* sin     */
 		pom = 20 * log10(1 / pom);	   /* decibel */
-		j = int(pom / EG_STEP);         /* TL_TABLE steps */
+		j = (int) (pom / EG_STEP);         /* TL_TABLE steps */
 
 		/* degree 0   -  90    , degree 180 -  90 : plus section */
 		SIN_TABLE[          s] = SIN_TABLE[SIN_ENT / 2 - s] = &TL_TABLE[j];
@@ -723,7 +710,7 @@ static void OPLCloseTable(void) {
 }
 
 /* CSM Key Controll */
-inline void CSMKeyControll(OPL_CH *CH) {
+static inline void CSMKeyControll(OPL_CH *CH) {
 	OPL_SLOT *slot1 = &CH->SLOT[SLOT1];
 	OPL_SLOT *slot2 = &CH->SLOT[SLOT2];
 	/* all key off */
@@ -790,8 +777,8 @@ void OPLWriteReg(FM_OPL *OPL, int r, int v) {
 			if(v & 0x80) {	/* IRQ flag clear */
 				OPL_STATUS_RESET(OPL, 0x7f);
 			} else {	/* set IRQ mask ,timer enable*/
-				uint8 st1 = v & 1;
-				uint8 st2 = (v >> 1) & 1;
+				uint8_t st1 = v & 1;
+				uint8_t st2 = (v >> 1) & 1;
 				/* IRQRST,T1MSK,t2MSK,EOSMSK,BRMSK,x,ST2,ST1 */
 				OPL_STATUS_RESET(OPL, v & 0x78);
 				OPL_STATUSMASK_SET(OPL,((~v) & 0x78) | 0x01);
@@ -840,7 +827,7 @@ void OPLWriteReg(FM_OPL *OPL, int r, int v) {
 		case 0xbd:
 			/* amsep,vibdep,r,bd,sd,tom,tc,hh */
 			{
-			uint8 rkey = OPL->rythm ^ v;
+			uint8_t rkey = OPL->rythm ^ v;
 			OPL->ams_table = &AMS_TABLE[v & 0x80 ? AMS_ENT : 0];
 			OPL->vib_table = &VIB_TABLE[v & 0x40 ? VIB_ENT : 0];
 			OPL->rythm  = v & 0x3f;
@@ -978,13 +965,13 @@ static void OPL_UnLockTable(void) {
 /*******************************************************************************/
 
 /* ---------- update one of chip ----------- */
-void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length, int interleave) {
+void YM3812UpdateOne(FM_OPL *OPL, int16_t *buffer, int length, int interleave) {
 	int i;
 	int data;
-	int16 *buf = buffer;
+	int16_t *buf = buffer;
 	uint amsCnt = OPL->amsCnt;
 	uint vibCnt = OPL->vibCnt;
-	uint8 rythm = OPL->rythm & 0x20;
+	uint8_t rythm = OPL->rythm & 0x20;
 	OPL_CH *CH, *R_CH;
 
 
@@ -1133,19 +1120,7 @@ unsigned char OPLRead(FM_OPL *OPL,int a) {
 	if(!(a & 1)) {	/* status port */
 		return OPL->status & (OPL->statusmask | 0x80);
 	}
-	/* data port */
-	switch(OPL->address) {
-	case 0x05: /* KeyBoard IN */
-		warning("OPL:read unmapped KEYBOARD port\n");
-		return 0;
-	case 0x19: /* I/O DATA    */
-		warning("OPL:read unmapped I/O port\n");
-		return 0;
-	case 0x1a: /* PCM-DATA    */
-		return 0;
-	default:
-		break;
-	}
+
 	return 0;
 }
 
@@ -1173,19 +1148,8 @@ FM_OPL *makeAdlibOPL(int rate) {
 	// We need to emulate one YM3812 chip
 	int env_bits = FMOPL_ENV_BITS_HQ;
 	int eg_ent = FMOPL_EG_ENT_HQ;
-#if defined (_WIN32_WCE) || defined(__SYMBIAN32__) || defined(PALMOS_MODE) || defined(__GP32__) || defined (GP2X) || defined(__MAEMO__) || defined(__DS__) || defined (__MINT__)
-	if (ConfMan.hasKey("FM_high_quality") && ConfMan.getBool("FM_high_quality")) {
-		env_bits = FMOPL_ENV_BITS_HQ;
-		eg_ent = FMOPL_EG_ENT_HQ;
-	} else if (ConfMan.hasKey("FM_medium_quality") && ConfMan.getBool("FM_medium_quality")) {
-		env_bits = FMOPL_ENV_BITS_MQ;
-		eg_ent = FMOPL_EG_ENT_MQ;
-	} else {
-		env_bits = FMOPL_ENV_BITS_LQ;
-		eg_ent = FMOPL_EG_ENT_LQ;
-	}
-#endif
 
 	OPLBuildTables(env_bits, eg_ent);
 	return OPLCreate(OPL_TYPE_YM3812, 3579545, rate);
 }
+
