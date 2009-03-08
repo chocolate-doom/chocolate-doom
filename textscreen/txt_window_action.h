@@ -23,6 +23,12 @@
 #define TXT_WINDOW_ACTION_H
 
 /**
+ * @file txt_window_action.h
+ *
+ * Window action widget.
+ */
+
+/**
  * Window action widget.
  *
  * A window action is attached to a window and corresponds to a

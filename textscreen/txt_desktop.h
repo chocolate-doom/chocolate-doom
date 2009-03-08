@@ -22,6 +22,12 @@
 #ifndef TXT_DESKTOP_H
 #define TXT_DESKTOP_H
 
+/**
+ * @file txt_desktop.h
+ *
+ * Textscreen desktop.
+ */
+
 #include "txt_window.h"
 
 void TXT_AddDesktopWindow(txt_window_t *win);

@@ -23,6 +23,12 @@
 #define TXT_CHECKBOX_H
 
 /**
+ * @file txt_checkbox.h
+ *
+ * Checkbox widget.
+ */
+
+/**
  * Checkbox widget.
  *
  * A checkbox is used to control boolean values that may be either on

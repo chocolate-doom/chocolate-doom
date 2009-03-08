@@ -23,6 +23,12 @@
 #define TXT_SCROLLPANE_H
 
 /**
+ * @file txt_scrollpane.h
+ *
+ * Scrollable pane widget.
+ */
+
+/**
  * Scrollable pane widget.
  *
  * A scrollable pane widget is a widget that contains another widget

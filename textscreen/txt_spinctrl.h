@@ -23,6 +23,12 @@
 #define TXT_SPINCONTROL_H
 
 /**
+ * @file txt_spinctrl.h
+ *
+ * Spin control widget.
+ */
+
+/**
  * Spin control widget.
  *
  * A spin control widget works as an input box that can be used to

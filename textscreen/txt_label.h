@@ -23,6 +23,12 @@
 #define TXT_LABEL_H
 
 /**
+ * @file txt_label.h
+ *
+ * Text label widget.
+ */
+
+/**
  * Label widget.
  *
  * A label widget does nothing except show a text label.

@@ -30,3 +30,6 @@ libtextscreen_a_SOURCES =                                 \
 	txt_window_action.c      txt_window_action.h      \
 	txt_font.h
 
+doc:
+	doxygen
+
