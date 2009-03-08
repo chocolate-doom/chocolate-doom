@@ -178,7 +178,7 @@ static void InitConfig(void)
     SetChatMacroDefaults();
     SetPlayerNameDefault();
 
-    M_SetConfigDir();
+    M_SetConfigDir(NULL);
     M_LoadDefaults();
 }
 
