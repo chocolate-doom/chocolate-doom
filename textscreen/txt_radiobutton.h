@@ -23,6 +23,12 @@
 #define TXT_RADIOBUTTON_H
 
 /**
+ * @file txt_radiobutton.h
+ *
+ * Radio button widget.
+ */
+
+/**
  * A radio button widget.
  *
  * Radio buttons are typically used in groups, to allow a value to be

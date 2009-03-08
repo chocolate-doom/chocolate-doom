@@ -23,6 +23,12 @@
 #define TXT_SEPARATOR_H
 
 /**
+ * @file txt_separator.h
+ *
+ * Horizontal separator widget.
+ */
+
+/**
  * Horizontal separator.
  *
  * A horizontal separator appears as a horizontal line divider across

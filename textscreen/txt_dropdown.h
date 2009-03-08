@@ -23,6 +23,12 @@
 #define TXT_DROPDOWN_H
 
 /**
+ * @file txt_dropdown.h
+ *
+ * Dropdown list widget.
+ */
+
+/**
  * Dropdown list widget.
  *
  * A dropdown list allows the user to select from a list of values,

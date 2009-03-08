@@ -23,6 +23,12 @@
 #define TXT_INPUTBOX_H
 
 /**
+ * @file txt_inputbox.h
+ *
+ * Input box widget.
+ */
+
+/**
  * Input box widget.
  *
  * An input box is a widget that displays a value, which can be

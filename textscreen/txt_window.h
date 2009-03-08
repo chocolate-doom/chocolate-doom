@@ -23,10 +23,16 @@
 #define TXT_WINDOW_H
 
 /**
+ * @file txt_window.h
+ *
+ * Windows.
+ */
+
+/**
  * A window.
  *
  * A window contains widgets, and may also be treated as a table
- * containing a single column.
+ * (@ref txt_table_t) containing a single column.
  *
  * Windows can be created using @ref TXT_NewWindow and closed using
  * @ref TXT_CloseWindow.  When a window is closed, it emits the

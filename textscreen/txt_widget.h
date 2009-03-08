@@ -19,14 +19,26 @@
 // 02111-1307, USA.
 //
 
-// Base GUI "widget" class that all widgets inherit from.
-
 #ifndef TXT_WIDGET_H
 #define TXT_WIDGET_H
+
+/**
+ * @file txt_widget.h
+ *
+ * Base "widget" GUI component class.
+ */
+
+#ifndef DOXYGEN
 
 #define TXT_UNCAST_ARG_NAME(name) uncast_ ## name
 #define TXT_UNCAST_ARG(name)   void * TXT_UNCAST_ARG_NAME(name)
 #define TXT_CAST_ARG(type, name)  type *name = (type *) uncast_ ## name
+
+#else
+
+#define TXT_UNCAST_ARG(name) txt_widget_t *name
+
+#endif
 
 typedef enum
 {

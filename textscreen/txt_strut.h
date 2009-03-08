@@ -23,6 +23,12 @@
 #define TXT_STRUT_H
 
 /**
+ * @file txt_strut.h
+ *
+ * Strut widget.
+ */
+
+/**
  * Strut widget.
  *
  * A strut is a widget that takes up a fixed amount of space.  It can

@@ -23,6 +23,12 @@
 #define TXT_BUTTON_H
 
 /**
+ * @file txt_button.h
+ *
+ * Button widget.
+ */
+
+/**
  * Button widget.
  *
  * A button is a widget that can be selected to perform some action.

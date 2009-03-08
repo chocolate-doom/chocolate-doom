@@ -23,6 +23,12 @@
 #define TXT_TABLE_H
 
 /**
+ * @file txt_table.h
+ *
+ * Table widget.
+ */
+
+/**
  * Table widget.
  *
  * A table is a widget that contains other widgets.  It may have
