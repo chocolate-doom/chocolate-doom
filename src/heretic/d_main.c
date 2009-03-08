@@ -812,16 +812,6 @@ void D_DoomMain(void)
     startmap = 1;
     autostart = false;
 
-    // Check for -CDROM
-    cdrom = false;
-#ifdef __WATCOMC__
-    if (M_CheckParm("-cdrom"))
-    {
-        cdrom = true;
-        mkdir("c:\\heretic.cd");
-    }
-#endif
-
 //
 // get skill / episode / map from parms
 //
@@ -859,7 +849,34 @@ void D_DoomMain(void)
     printf("V_Init: allocate screens.\n");
     V_Init();
 
-    M_SetConfigDir();
+    // Check for -CDROM
+
+    cdrom = false;
+
+#ifdef _WIN32
+
+    //!
+    // @platform windows
+    // @vanilla
+    //
+    // Save configuration data and savegames in c:\heretic.cd,
+    // allowing play from CD.
+    //
+
+    if (M_CheckParm("-cdrom"))
+    {
+        cdrom = true;
+    }
+#endif
+
+    if (cdrom)
+    {
+        M_SetConfigDir("c:\\heretic.cd\\");
+    }
+    else
+    {
+        M_SetConfigDir(NULL);
+    }
 
     // Load defaults before initing other systems
     printf("M_LoadDefaults: Load system defaults.\n");

@@ -1104,20 +1104,17 @@ void M_BindVariable(char *name, void *location)
     variable->bound = true;
 }
 
-// 
-// SetConfigDir:
-//
-// Sets the location of the configuration directory, where configuration
-// files are stored - default.cfg, chocolate-doom.cfg, savegames, etc.
-//
+// Get the path to the default configuration dir to use, if NULL
+// is passed to M_SetConfigDir.
 
-void M_SetConfigDir(void)
+static char *GetDefaultConfigDir(void)
 {
 #ifndef _WIN32
-    // Ignore the HOME environment variable on Windows - just behave
-    // like Vanilla Doom.
+    // On Unix systems we put configuration into ~/.chocolate-doom, but
+    // on Windows we just use the current directory, like Vanilla.
 
     char *homedir;
+    char *result;
 
     homedir = getenv("HOME");
 
@@ -1126,39 +1123,44 @@ void M_SetConfigDir(void)
         // put all configuration in a config directory off the
         // homedir
 
-        configdir = malloc(strlen(homedir) + strlen(PACKAGE_TARNAME) + 5);
+        result = malloc(strlen(homedir) + strlen(PACKAGE_TARNAME) + 5);
 
-        sprintf(configdir, "%s%c.%s%c", homedir, DIR_SEPARATOR,
-			                PACKAGE_TARNAME, DIR_SEPARATOR);
-
-        // make the directory if it doesnt already exist
-
-        M_MakeDirectory(configdir);
+        sprintf(result, "%s%c.%s%c", homedir, DIR_SEPARATOR,
+                                     PACKAGE_TARNAME, DIR_SEPARATOR);
     }
     else
 #endif /* #ifndef _WIN32 */
     {
-#ifdef _WIN32
-        //!
-        // @platform windows
-        // @vanilla
-        //
-        // Save configuration data and savegames in c:\doomdata,
-        // allowing play from CD.
-        //
+        // On Windows, we just use the current directory.
 
-        if (M_CheckParm("-cdrom") > 0)
-        {
-            printf(D_CDROM);
-            configdir = strdup("c:\\doomdata\\");
-
-            M_MakeDirectory(configdir);
-        }
-        else
-#endif
-        {
-            configdir = strdup("");
-        }
+        return strdup("");
     }
+}
+
+// 
+// SetConfigDir:
+//
+// Sets the location of the configuration directory, where configuration
+// files are stored - default.cfg, chocolate-doom.cfg, savegames, etc.
+//
+
+void M_SetConfigDir(char *dir)
+{
+    // Use the directory that was passed, or find the default.
+
+    if (dir != NULL)
+    {
+        configdir = dir;
+    }
+    else
+    {
+        configdir = GetDefaultConfigDir();
+    }
+
+    printf("Using %s for configuration and saves\n", configdir);
+
+    // Make the directory if it doesn't already exist:
+
+    M_MakeDirectory(configdir);
 }
 

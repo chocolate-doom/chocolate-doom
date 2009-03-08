@@ -116,7 +116,7 @@ boolean respawnparm;            // checkparm of -respawn
 boolean randomclass;            // checkparm of -randclass
 boolean debugmode;              // checkparm of -debug
 boolean ravpic;                 // checkparm of -ravpic
-boolean cdrom;                  // true if cd-rom mode active
+boolean cdrom = false;          // true if cd-rom mode active
 boolean cmdfrag;                // true if a CMD_FRAG packet should be sent out
 boolean singletics;             // debug flag to cancel adaptiveness
 boolean artiskip;               // whether shift-enter skips an artifact
@@ -246,7 +246,29 @@ void D_DoomMain(void)
     // Load defaults before initing other systems
     ST_Message("M_LoadDefaults: Load system defaults.\n");
     D_BindVariables();
-    M_SetConfigDir();
+
+#ifdef _WIN32
+
+    //!
+    // @platform windows
+    // @vanilla
+    //
+    // Save configuration data and savegames in c:\hexndata,
+    // allowing play from CD.
+    //
+
+    cdrom = M_ParmExists("-cdrom");
+#endif
+
+    if (cdrom)
+    {
+        M_SetConfigDir("c:\\hexndata\\");
+    }
+    else
+    {
+        M_SetConfigDir(NULL);
+    }
+
     D_SetDefaultSavePath();
     M_SetConfigFilenames("hexen.cfg", PROGRAM_PREFIX "hexen.cfg");
     M_LoadDefaults();
@@ -399,7 +421,7 @@ static void HandleArgs(void)
     artiskip = M_ParmExists("-artiskip");
     debugmode = M_ParmExists("-debug");
     deathmatch = M_ParmExists("-deathmatch");
-    cdrom = M_ParmExists("-cdrom");
+
     cmdfrag = M_ParmExists("-cmdfrag");
 
     // Process command line options

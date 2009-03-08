@@ -31,7 +31,7 @@
 void M_LoadDefaults(void);
 void M_SaveDefaults(void);
 void M_SaveDefaultsAlternate(char *main, char *extra);
-void M_SetConfigDir(void);
+void M_SetConfigDir(char *dir);
 void M_BindVariable(char *name, void *variable);
 void M_SetConfigFilenames(char *main_config, char *extra_config);
 
