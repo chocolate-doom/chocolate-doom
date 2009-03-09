@@ -61,16 +61,16 @@
 
 /* output level entries (envelope,sinwave) */
 /* envelope counter lower bits */
-int ENV_BITS;
+static int ENV_BITS;
 /* envelope output entries */
-int EG_ENT;
+static int EG_ENT;
 
 /* used dynamic memory = EG_ENT*4*4(byte)or EG_ENT*6*4(byte) */
 /* used static  memory = EG_ENT*4 (byte)                     */
-int EG_OFF;								 /* OFF */
-int EG_DED;
-int EG_DST;								 /* DECAY START */
-int EG_AED;
+static int EG_OFF;								 /* OFF */
+static int EG_DED;
+static int EG_DST;								 /* DECAY START */
+static int EG_AED;
 #define EG_AST   0                       /* ATTACK START */
 
 #define EG_STEP (96.0/EG_ENT) /* OPL is 0.1875 dB step  */
@@ -103,7 +103,7 @@ static const int slot_array[32] = {
 	-1,-1,-1,-1,-1,-1,-1,-1
 };
 
-static uint KSL_TABLE[8 * 16];
+static uint32_t KSL_TABLE[8 * 16];
 
 static const double KSL_TABLE_SEED[8 * 16] = {
 	/* OCT 0 */
@@ -153,7 +153,7 @@ static const double KSL_TABLE_SEED[8 * 16] = {
 
 static int SL_TABLE[16];
 
-static const uint SL_TABLE_SEED[16] = {
+static const uint32_t SL_TABLE_SEED[16] = {
 	0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 31
 };
 
@@ -179,7 +179,7 @@ static int *ENV_CURVE;
 
 /* multiple table */
 #define ML(a) (int)(a * 2)
-static const uint MUL_TABLE[16]= {
+static const uint32_t MUL_TABLE[16]= {
 /* 1/2, 1, 2, 3, 4, 5, 6, 7, 8, 9,10,11,12,13,14,15 */
 	ML(0.50), ML(1.00), ML(2.00),  ML(3.00), ML(4.00), ML(5.00), ML(6.00), ML(7.00),
 	ML(8.00), ML(9.00), ML(10.00), ML(10.00),ML(12.00),ML(12.00),ML(15.00),ML(15.00)
@@ -215,7 +215,7 @@ static int feedback2;		/* connect for SLOT 2 */
 /* --------------------- rebuild tables ------------------- */
 
 #define ARRAYSIZE(x) (sizeof(x) / sizeof(*x))
-#define SC_KSL(mydb) ((uint) (mydb / (EG_STEP / 2)))
+#define SC_KSL(mydb) ((uint32_t) (mydb / (EG_STEP / 2)))
 #define SC_SL(db) (int)(db * ((3 / EG_STEP) * (1 << ENV_BITS))) + EG_DST
 
 void OPLBuildTables(int ENV_BITS_PARAM, int EG_ENT_PARAM) {
@@ -332,7 +332,7 @@ static inline void OPL_KEYOFF(OPL_SLOT *SLOT) {
 /* ---------- calcrate Envelope Generator & Phase Generator ---------- */
 
 /* return : envelope output */
-static inline uint OPL_CALC_SLOT(OPL_SLOT *SLOT) {
+static inline uint32_t OPL_CALC_SLOT(OPL_SLOT *SLOT) {
 	/* calcrate envelope generator */
 	if((SLOT->evc += SLOT->evs) >= SLOT->eve) {
 		switch( SLOT->evm ) {
@@ -455,14 +455,14 @@ static inline void set_sl_rr(FM_OPL *OPL, int slot, int v) {
 #define OP_OUT(slot,env,con)   slot->wavetable[((slot->Cnt + con)>>(24-SIN_ENT_SHIFT)) & (SIN_ENT-1)][env]
 /* ---------- calcrate one of channel ---------- */
 static inline void OPL_CALC_CH(OPL_CH *CH) {
-	uint env_out;
+	uint32_t env_out;
 	OPL_SLOT *SLOT;
 
 	feedback2 = 0;
 	/* SLOT 1 */
 	SLOT = &CH->SLOT[SLOT1];
 	env_out=OPL_CALC_SLOT(SLOT);
-	if(env_out < (uint)(EG_ENT - 1)) {
+	if(env_out < (uint32_t)(EG_ENT - 1)) {
 		/* PG */
 		if(SLOT->vib)
 			SLOT->Cnt += (SLOT->Incr * vib) >> VIB_RATE_SHIFT;
@@ -483,7 +483,7 @@ static inline void OPL_CALC_CH(OPL_CH *CH) {
 	/* SLOT 2 */
 	SLOT = &CH->SLOT[SLOT2];
 	env_out=OPL_CALC_SLOT(SLOT);
-	if(env_out < (uint)(EG_ENT - 1)) {
+	if(env_out < (uint32_t)(EG_ENT - 1)) {
 		/* PG */
 		if(SLOT->vib)
 			SLOT->Cnt += (SLOT->Incr * vib) >> VIB_RATE_SHIFT;
@@ -497,7 +497,7 @@ static inline void OPL_CALC_CH(OPL_CH *CH) {
 /* ---------- calcrate rythm block ---------- */
 #define WHITE_NOISE_db 6.0
 static inline void OPL_CALC_RH(FM_OPL *OPL, OPL_CH *CH) {
-	uint env_tam, env_sd, env_top, env_hh;
+	uint32_t env_tam, env_sd, env_top, env_hh;
 	// This code used to do int(OPL->rnd.getRandomBit() * (WHITE_NOISE_db / EG_STEP)),
 	// but EG_STEP = 96.0/EG_ENT, and WHITE_NOISE_db=6.0. So, that's equivalent to
 	// int(OPL->rnd.getRandomBit() * EG_ENT/16). We know that EG_ENT is 4096, or 1024,
@@ -577,16 +577,16 @@ static inline void OPL_CALC_RH(FM_OPL *OPL, OPL_CH *CH) {
 	tone8 = OP_OUT(SLOT8_2,whitenoise,0 );
 
 	/* SD */
-	if(env_sd < (uint)(EG_ENT - 1))
+	if(env_sd < (uint32_t)(EG_ENT - 1))
 		outd[0] += OP_OUT(SLOT7_1, env_sd, 0) * 8;
 	/* TAM */
-	if(env_tam < (uint)(EG_ENT - 1))
+	if(env_tam < (uint32_t)(EG_ENT - 1))
 		outd[0] += OP_OUT(SLOT8_1, env_tam, 0) * 2;
 	/* TOP-CY */
-	if(env_top < (uint)(EG_ENT - 1))
+	if(env_top < (uint32_t)(EG_ENT - 1))
 		outd[0] += OP_OUT(SLOT7_2, env_top, tone8) * 2;
 	/* HH */
-	if(env_hh  < (uint)(EG_ENT-1))
+	if(env_hh  < (uint32_t)(EG_ENT-1))
 		outd[0] += OP_OUT(SLOT7_2, env_hh, tone8) * 2;
 }
 
@@ -737,7 +737,7 @@ static void OPL_initalize(FM_OPL *OPL) {
 	init_timetables(OPL, OPL_ARRATE, OPL_DRRATE);
 	/* make fnumber -> increment counter table */
 	for( fn=0; fn < 1024; fn++) {
-		OPL->FN_TABLE[fn] = (uint)(OPL->freqbase * fn * FREQ_RATE * (1<<7) / 2);
+		OPL->FN_TABLE[fn] = (uint32_t)(OPL->freqbase * fn * FREQ_RATE * (1<<7) / 2);
 	}
 	/* LFO freq.table */
 	OPL->amsIncr = (int)(OPL->rate ? (double)AMS_ENT * (1 << AMS_SHIFT) / OPL->rate * 3.7 * ((double)OPL->clock/3600000) : 0);
@@ -748,7 +748,7 @@ static void OPL_initalize(FM_OPL *OPL) {
 void OPLWriteReg(FM_OPL *OPL, int r, int v) {
 	OPL_CH *CH;
 	int slot;
-	uint block_fnum;
+	uint32_t block_fnum;
 
 	switch(r & 0xe0) {
 	case 0x00: /* 00-1f:controll */
@@ -969,8 +969,8 @@ void YM3812UpdateOne(FM_OPL *OPL, int16_t *buffer, int length, int interleave) {
 	int i;
 	int data;
 	int16_t *buf = buffer;
-	uint amsCnt = OPL->amsCnt;
-	uint vibCnt = OPL->vibCnt;
+	uint32_t amsCnt = OPL->amsCnt;
+	uint32_t vibCnt = OPL->vibCnt;
 	uint8_t rythm = OPL->rythm & 0x20;
 	OPL_CH *CH, *R_CH;
 
