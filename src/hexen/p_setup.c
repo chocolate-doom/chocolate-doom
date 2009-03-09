@@ -671,6 +671,7 @@ void P_GroupLines(void)
 =================
 */
 
+// haleyjd FIXME: CDMUSIC
 #ifdef __WATCOMC__
 extern boolean i_CDMusic;
 #endif
@@ -689,7 +690,9 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
             = players[i].itemcount = 0;
     }
     players[consoleplayer].viewz = 1;   // will be set by player think
-
+ 
+    
+    // haleyjd FIXME: CDMUSIC
 #ifdef __WATCOMC__
     if (i_CDMusic == false)
     {

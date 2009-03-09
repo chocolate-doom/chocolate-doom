@@ -173,9 +173,7 @@ char savedescription[32];
 
 int inventoryTics;
 
-#ifdef __WATCOMC__
-extern externdata_t *i_ExternData;
-#endif
+// haleyjd: removed WATCOMC
 
 //=============================================================================
 // Not used - ripped out for Heretic
@@ -222,15 +220,7 @@ void G_BuildTiccmd(ticcmd_t * cmd)
 
     extern boolean noartiskip;
 
-#ifdef __WATCOMC__
-    int angleDelta;
-    static int oldAngle;
-    extern int newViewAngleOff;
-    static int externInvKey;
-    extern boolean automapactive;
-    event_t ev;
-#endif
-
+    // haleyjd: removed externdriver crap
 
     memset(cmd, 0, sizeof(*cmd));
     //cmd->consistancy =
@@ -244,14 +234,9 @@ void G_BuildTiccmd(ticcmd_t * cmd)
     speed = joybspeed >= MAX_JOY_BUTTONS
          || gamekeydown[key_speed]
          || joybuttons[joybspeed];
-#ifdef __WATCOMC__
-    if (useexterndriver)
-    {
-        speed |= (i_ExternData->buttons & EBT_SPEED);
-        strafe |= (i_ExternData->buttons & EBT_STRAFE);
-    }
-#endif
 
+    // haleyjd: removed externdriver crap
+    
     forward = side = look = arti = flyheight = 0;
 
 //
@@ -334,198 +319,14 @@ void G_BuildTiccmd(ticcmd_t * cmd)
     {
         look = -lspeed;
     }
-#ifdef __WATCOMC__
-    if (gamekeydown[key_lookcenter] && !useexterndriver)
-    {
-        look = TOCENTER;
-    }
-#else
+    // haleyjd: removed externdriver crap
     if (gamekeydown[key_lookcenter])
     {
         look = TOCENTER;
     }
-#endif
 
-#ifdef __WATCOMC__
-    if (useexterndriver && look != TOCENTER && (gamestate == GS_LEVEL ||
-                                                gamestate == GS_INTERMISSION))
-    {
-        if (i_ExternData->moveForward)
-        {
-            forward += i_ExternData->moveForward;
-            if (speed)
-            {
-                forward <<= 1;
-            }
-        }
-        if (i_ExternData->angleTurn)
-        {
-            if (strafe)
-            {
-                side += i_ExternData->angleTurn;
-            }
-            else
-            {
-                cmd->angleturn += i_ExternData->angleTurn;
-            }
-        }
-        if (i_ExternData->moveSideways)
-        {
-            side += i_ExternData->moveSideways;
-            if (speed)
-            {
-                side <<= 1;
-            }
-        }
-        if (i_ExternData->buttons & EBT_CENTERVIEW)
-        {
-            look = TOCENTER;
-            oldAngle = 0;
-        }
-        else if (i_ExternData->pitch)
-        {
-            angleDelta = i_ExternData->pitch - oldAngle;
-            if (abs(angleDelta) < 35)
-            {
-                look = angleDelta / 5;
-            }
-            else
-            {
-                look = 7 * (angleDelta > 0 ? 1 : -1);
-            }
-            if (look == TOCENTER)
-            {
-                look++;
-            }
-            oldAngle += look * 5;
-        }
-        if (i_ExternData->flyDirection)
-        {
-            if (i_ExternData->flyDirection > 0)
-            {
-                flyheight = 5;
-            }
-            else
-            {
-                flyheight = -5;
-            }
-        }
-        if (abs(newViewAngleOff - i_ExternData->angleHead) < 3000)
-        {
-            newViewAngleOff = i_ExternData->angleHead;
-        }
-        if (i_ExternData->buttons & EBT_FIRE)
-        {
-            cmd->buttons |= BT_ATTACK;
-        }
-        if (i_ExternData->buttons & EBT_OPENDOOR)
-        {
-            cmd->buttons |= BT_USE;
-        }
-        if (i_ExternData->buttons & EBT_PAUSE)
-        {
-            cmd->buttons = BT_SPECIAL | BTS_PAUSE;
-            i_ExternData->buttons &= ~EBT_PAUSE;
-        }
-        if (externInvKey & EBT_USEARTIFACT)
-        {
-            ev.type = ev_keyup;
-            ev.data1 = key_useartifact;
-            D_PostEvent(&ev);
-            externInvKey &= ~EBT_USEARTIFACT;
-        }
-        else if (i_ExternData->buttons & EBT_USEARTIFACT)
-        {
-            externInvKey |= EBT_USEARTIFACT;
-            ev.type = ev_keydown;
-            ev.data1 = key_useartifact;
-            D_PostEvent(&ev);
-        }
-        if (externInvKey & EBT_INVENTORYRIGHT)
-        {
-            ev.type = ev_keyup;
-            ev.data1 = key_invright;
-            D_PostEvent(&ev);
-            externInvKey &= ~EBT_INVENTORYRIGHT;
-        }
-        else if (i_ExternData->buttons & EBT_INVENTORYRIGHT)
-        {
-            externInvKey |= EBT_INVENTORYRIGHT;
-            ev.type = ev_keydown;
-            ev.data1 = key_invright;
-            D_PostEvent(&ev);
-        }
-        if (externInvKey & EBT_INVENTORYLEFT)
-        {
-            ev.type = ev_keyup;
-            ev.data1 = key_invleft;
-            D_PostEvent(&ev);
-            externInvKey &= ~EBT_INVENTORYLEFT;
-        }
-        else if (i_ExternData->buttons & EBT_INVENTORYLEFT)
-        {
-            externInvKey |= EBT_INVENTORYLEFT;
-            ev.type = ev_keydown;
-            ev.data1 = key_invleft;
-            D_PostEvent(&ev);
-        }
-        if (i_ExternData->buttons & EBT_FLYDROP)
-        {
-            flyheight = TOCENTER;
-        }
-        if (gamestate == GS_LEVEL)
-        {
-            if (externInvKey & EBT_MAP)
-            {                   // AutoMap
-                ev.type = ev_keyup;
-                ev.data1 = AM_STARTKEY;
-                D_PostEvent(&ev);
-                externInvKey &= ~EBT_MAP;
-            }
-            else if (i_ExternData->buttons & EBT_MAP)
-            {
-                externInvKey |= EBT_MAP;
-                ev.type = ev_keydown;
-                ev.data1 = AM_STARTKEY;
-                D_PostEvent(&ev);
-            }
-        }
-#if 0
-        if ((i =
-             (i_ExternData->buttons >> EBT_WEAPONSHIFT) & EBT_WEAPONMASK) !=
-            0)
-        {
-            cmd->buttons |= BT_CHANGE;
-            cmd->buttons |= (i - 1) << BT_WEAPONSHIFT;
-        }
-#endif
-        if (i_ExternData->buttons & EBT_WEAPONCYCLE)
-        {
-            int curWeapon;
-            player_t *pl;
-
-            pl = &players[consoleplayer];
-            curWeapon = pl->readyweapon;
-            for (curWeapon = (curWeapon + 1) & 7;
-                 curWeapon != pl->readyweapon;
-                 curWeapon = (curWeapon + 1) & 7)
-            {
-                if (pl->weaponowned[curWeapon])
-                {
-                    if (curWeapon >= wp_goldwand && curWeapon <= wp_mace &&
-                        !pl->ammo[wpnlev1info[curWeapon].ammo])
-                    {           // weapon that requires ammo is empty
-                        continue;
-                    }
-                    break;
-                }
-            }
-            cmd->buttons |= BT_CHANGE;
-            cmd->buttons |= curWeapon << BT_WEAPONSHIFT;
-        }
-    }
-#endif
-
+    // haleyjd: removed externdriver crap
+    
     // Fly up/down/drop keys
     if (gamekeydown[key_flyup])
     {
@@ -538,14 +339,8 @@ void G_BuildTiccmd(ticcmd_t * cmd)
     if (gamekeydown[key_flycenter])
     {
         flyheight = TOCENTER;
-#ifdef __WATCOMC__
-        if (!useexterndriver)
-        {
-            look = TOCENTER;
-        }
-#else
+        // haleyjd: removed externdriver crap
         look = TOCENTER;
-#endif
     }
 
     // Use artifact key

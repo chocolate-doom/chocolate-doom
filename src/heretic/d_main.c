@@ -465,6 +465,7 @@ void wadprintf(void)
     {
         return;
     }
+    // haleyjd FIXME: convert to textscreen code?
 #ifdef __WATCOMC__
     _settextposition(23, 2);
     _setbkcolor(1);
@@ -519,13 +520,9 @@ void hprintf(char *string)
         TXT_UpdateScreen();
     }
 
-#ifdef __WATCOMC__
+    // haleyjd: shouldn't be WATCOMC-only
     if (debugmode)
-    {
         puts(string);
-        return;
-    }
-#endif
 }
 
 void drawstatus(void)
@@ -664,6 +661,7 @@ static void finishStartup(void)
 char tmsg[300];
 void tprintf(char *msg, int initflag)
 {
+    // haleyjd FIXME: convert to textscreen code?
 #ifdef __WATCOMC__
     char temp[80];
     int start;
@@ -694,16 +692,23 @@ void tprintf(char *msg, int initflag)
 #endif
 }
 
+// haleyjd: moved up, removed WATCOMC code
+void CleanExit(void)
+{
+    printf("Exited from HERETIC.\n");
+    exit(1);
+}
+
 void CheckAbortStartup(void)
 {
-#ifdef __WATCOMC__
-    extern int lastpress;
-
-    if (lastpress == 1)
-    {                           // Abort if escape pressed
-        CleanExit();
+    // haleyjd: removed WATCOMC
+    // haleyjd FIXME: this should actually work in text mode too, but how to
+    // get input before SDL video init?
+    if(using_graphical_startup)
+    {
+        if(TXT_GetChar() == 27)
+            CleanExit();
     }
-#endif
 }
 
 void IncThermo(void)
@@ -718,19 +723,6 @@ void InitThermo(int max)
     thermMax = max;
     thermCurrent = 0;
 }
-
-#ifdef __WATCOMC__
-void CleanExit(void)
-{
-    union REGS regs;
-
-    I_ShutdownKeyboard();
-    regs.x.eax = 0x3;
-    int386(0x10, &regs, &regs);
-    printf("Exited from HERETIC.\n");
-    exit(1);
-}
-#endif
 
 //
 // Add configuration file variable bindings.
@@ -951,10 +943,7 @@ void D_DoomMain(void)
 
     I_PrintStartupBanner(gamedescription);
 
-#ifdef __WATCOMC__
-    I_StartupKeyboard();
-    I_StartupJoystick();
-#endif
+    // haleyjd: removed WATCOMC
     initStartup();
 
     //
@@ -1007,9 +996,7 @@ void D_DoomMain(void)
     D_CheckNetGame();
     IncThermo();
 
-#ifdef __WATCOMC__
-    I_CheckExternDriver();      // Check for an external device driver
-#endif
+    // haleyjd: removed WATCOMC
 
     tprintf("SB_Init: Loading patches.\n", 1);
     SB_Init();

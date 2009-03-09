@@ -99,6 +99,7 @@ static void CheatTrackFunc2(player_t * player, Cheat_t * cheat);
 extern int ArmorIncrement[NUMCLASSES][NUMARMOR];
 extern int AutoArmorSave[NUMCLASSES];
 
+// haleyjd FIXME: CDMUSIC
 #ifdef __WATCOMC__
 extern boolean i_CDMusic;
 extern int i_CDMusicLength;
@@ -115,6 +116,7 @@ int curpos;
 int inv_ptr;
 int ArtifactFlash;
 
+// haleyjd FIXME: CDMUSIC
 #ifndef __WATCOMC__
 boolean i_CDMusic;              // in Watcom, defined in i_ibm
 #endif
@@ -1922,6 +1924,7 @@ static void CheatRevealFunc(player_t * player, Cheat_t * cheat)
 
 static void CheatTrackFunc1(player_t * player, Cheat_t * cheat)
 {
+    // haleyjd FIXME: CDMUSIC
 #ifdef __WATCOMC__
     char buffer[80];
 
@@ -1947,6 +1950,7 @@ static void CheatTrackFunc1(player_t * player, Cheat_t * cheat)
 
 static void CheatTrackFunc2(player_t * player, Cheat_t * cheat)
 {
+    // haleyjd FIXME: CDMUSIC
 #ifdef __WATCOMC__
     char buffer[80];
     int track;

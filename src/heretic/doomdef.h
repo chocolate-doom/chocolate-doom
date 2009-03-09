@@ -28,11 +28,7 @@
 #define __DOOMDEF__
 #include <stdio.h>
 #include <string.h>
-#ifdef __WATCOMC__
-#include <malloc.h>
-#define	strcasecmp strcmpi
-#define	strncasecmp strnicmp
-#endif
+//haleyjd: removed WATCOMC
 #include <limits.h>
 
 #define HERETIC_VERSION 130
@@ -688,7 +684,9 @@ byte *I_ZoneBase(int *size);
 byte *I_AllocLow(int length);
 // allocates from low memory under dos, just mallocs under unix
 
-#ifdef __WATCOMC__
+// haleyjd: was WATCOMC, preserved for historical interest.
+// This is similar to the -control structure in DOOM v1.4 and Strife.
+#if 0
 extern boolean useexterndriver;
 
 #define EBT_FIRE			1
