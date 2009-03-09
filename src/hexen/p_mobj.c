@@ -832,14 +832,8 @@ void P_ZMovement(mobj_t * mo)
                     {
                         S_StartSound(mo, SFX_PLAYER_LAND);
                     }
-#ifdef __WATCOMC__
-                    if (!useexterndriver)
-                    {
-                        mo->player->centering = true;
-                    }
-#else
+                    // haleyjd: removed externdriver crap
                     mo->player->centering = true;
-#endif
                 }
             }
             else if (mo->type >= MT_POTTERY1 && mo->type <= MT_POTTERY3)
@@ -1056,14 +1050,8 @@ static void PlayerLandedOnThing(mobj_t * mo, mobj_t * onmobj)
     {
         S_StartSound(mo, SFX_PLAYER_LAND);
     }
-#ifdef __WATCOMC__
-    if (!useexterndriver)
-    {
-        mo->player->centering = true;
-    }
-#else
+    // haleyjd: removed externdriver crap
     mo->player->centering = true;
-#endif
 }
 
 //----------------------------------------------------------------------------

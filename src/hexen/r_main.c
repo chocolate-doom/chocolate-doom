@@ -31,9 +31,7 @@
 
 int viewangleoffset;
 
-#ifdef __WATCOMC__
-int newViewAngleOff;
-#endif
+// haleyjd: removed WATCOMC
 
 int validcount = 1;             // increment every time a check is made
 
@@ -725,12 +723,8 @@ void R_SetupFrame(player_t * player)
 
     //drawbsp = 1;
     viewplayer = player;
-#ifdef __WATCOMC__
-    if (newViewAngleOff)
-    {
-        viewangleoffset = newViewAngleOff << ANGLETOFINESHIFT;
-    }
-#endif
+    // haleyjd: removed WATCOMC
+    // haleyjd FIXME: viewangleoffset handling?
     viewangle = player->mo->angle + viewangleoffset;
     tableAngle = viewangle >> ANGLETOFINESHIFT;
     viewx = player->mo->x;

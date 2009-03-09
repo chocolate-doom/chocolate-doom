@@ -553,14 +553,8 @@ void P_ZMovement(mobj_t * mo)
             {
                 mo->player->deltaviewheight = mo->momz >> 3;
                 S_StartSound(mo, sfx_plroof);
-#ifdef __WATCOMC__
-                if (!useexterndriver)
-                {
-                    mo->player->centering = true;
-                }
-#else
+                // haleyjd: removed externdriver crap
                 mo->player->centering = true;
-#endif
             }
             mo->momz = 0;
         }

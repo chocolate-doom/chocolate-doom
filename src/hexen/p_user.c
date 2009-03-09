@@ -881,14 +881,8 @@ void P_PlayerThink(player_t * player)
         {
             if (player->mo->z != player->mo->floorz)
             {
-#ifdef __WATCOMC__
-                if (!useexterndriver)
-                {
-                    player->centering = true;
-                }
-#else
+                // haleyjd: removed externdriver crap
                 player->centering = true;
-#endif
             }
             player->mo->flags2 &= ~MF2_FLY;
             player->mo->flags &= ~MF_NOGRAVITY;

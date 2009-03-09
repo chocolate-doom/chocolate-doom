@@ -31,11 +31,7 @@
 //#include <values.h>
 
 #include "st_start.h"
-#ifdef __WATCOMC__
-#include <malloc.h>
-#define	strcasecmp strcmpi
-#define	strncasecmp strnicmp
-#endif
+// haleyjd: removed WATCOMC
 
 // ticcmd:
 
@@ -786,7 +782,8 @@ byte *I_AllocLow(int length);
 
 void I_Tactile(int on, int off, int total);
 
-#ifdef __WATCOMC__
+// haleyjd: was WATCOMC, again preserved for historical interest as in Heretic
+#if 0
 extern boolean useexterndriver;
 
 #define EBT_FIRE			1

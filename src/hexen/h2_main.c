@@ -25,11 +25,7 @@
 
 // HEADER FILES ------------------------------------------------------------
 
-#ifdef __WATCOMC__
-#include <dos.h>
-#include <sys\types.h>
-#include <direct.h>
-#endif
+// haleyjd: removed WATCOMC
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -282,10 +278,7 @@ void D_DoomMain(void)
     ST_Message("Z_Init: Init zone memory allocation daemon.\n");
     Z_Init();
 
-#ifdef __WATCOMC__
-    I_StartupKeyboard();
-    I_StartupJoystick();
-#endif
+    // haleyjd: removed WATCOMC
 
     ST_Message("W_Init: Init WADfiles.\n");
 
@@ -856,7 +849,7 @@ static void CheckRecordFrom(void)
     H2_GameLoop();              // Never returns
 }
 
-#ifdef __WATCOMC__
+// haleyjd: removed WATCOMC
 /*
 void CleanExit(void)
 {
@@ -869,7 +862,6 @@ void CleanExit(void)
 	exit(1);
 }
 */
-#endif
 
 //==========================================================================
 //

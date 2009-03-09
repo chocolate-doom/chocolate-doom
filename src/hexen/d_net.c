@@ -556,6 +556,7 @@ void D_ArbitrateNetStart(void)
     int i;
     boolean gotinfo[MAXNETNODES];
     boolean gotClass[MAXNETNODES];
+    // haleyjd FIXME: important somehow?
 #ifdef __WATCOMC__
     int nextTic;
     extern volatile int ticcount;
@@ -591,6 +592,7 @@ void D_ArbitrateNetStart(void)
                 }
             }
         }
+        // haleyjd FIXME: important somehow?
 #ifdef __WATCOMC__
         if (ticcount <= nextTic)
         {                       // only send packets every half second
