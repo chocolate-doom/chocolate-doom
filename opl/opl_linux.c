@@ -27,6 +27,9 @@
 
 #ifdef HAVE_IOPERM
 
+#include <stdio.h>
+#include <string.h>
+#include <errno.h>
 #include <unistd.h>
 #include <sys/io.h>
 
@@ -35,12 +38,14 @@
 
 static unsigned int opl_port_base;
 
-static void OPL_Linux_Init(unsigned int port_base)
+static int OPL_Linux_Init(unsigned int port_base)
 {
     // Try to get permissions:
 
     if (ioperm(port_base, 2, 1) < 0)
     {
+        fprintf(stderr, "Failed to get I/O port permissions for 0x%x: %s\n",
+                        port_base, strerror(errno));
         return 0;
     }
 
@@ -63,7 +68,7 @@ static unsigned int OPL_Linux_PortRead(opl_port_t port)
 
 static void OPL_Linux_PortWrite(opl_port_t port, unsigned int value)
 {
-    outb(opl_port_base + port, value);
+    outb(value, opl_port_base + port);
 }
 
 opl_driver_t opl_linux_driver =
