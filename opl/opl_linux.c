@@ -19,75 +19,61 @@
 // 02111-1307, USA.
 //
 // DESCRIPTION:
-//     OPL interface.
+//     OPL Linux interface.
 //
 //-----------------------------------------------------------------------------
 
 #include "config.h"
 
-#include <stdlib.h>
+#ifdef HAVE_IOPERM
+
+#include <unistd.h>
+#include <sys/io.h>
 
 #include "opl.h"
 #include "opl_internal.h"
 
-#ifdef HAVE_IOPERM
-extern opl_driver_t opl_linux_driver;
-#endif
+static unsigned int opl_port_base;
 
-static opl_driver_t *drivers[] =
+static void OPL_Linux_Init(unsigned int port_base)
 {
-#ifdef HAVE_IOPERM
-    &opl_linux_driver,
-#endif
-    NULL
-};
+    // Try to get permissions:
 
-static opl_driver_t *driver = NULL;
-
-int OPL_Init(unsigned int port_base)
-{
-    int i;
-
-    // Try drivers until we find a working one:
-
-    for (i=0; drivers[i] != NULL; ++i)
-    {
-        if (drivers[i]->init_func(port_base))
-        {
-            driver = drivers[i];
-            return 1;
-        }
-    }
-
-    return 0;
-}
-
-void OPL_Shutdown(void)
-{
-    if (driver != NULL)
-    {
-        driver->shutdown_func();
-        driver = NULL;
-    }
-}
-
-void OPL_WritePort(opl_port_t port, unsigned int value)
-{
-    if (driver != NULL)
-    {
-        driver->write_port_func(port, value);
-    }
-}
-
-unsigned int OPL_ReadPort(opl_port_t port)
-{
-    if (driver != NULL)
-    {
-        return driver->read_port_func(port);
-    }
-    else
+    if (ioperm(port_base, 2, 1) < 0)
     {
         return 0;
     }
+
+    opl_port_base = port_base;
+
+    return 1;
 }
+
+static void OPL_Linux_Shutdown(void)
+{
+    // Release permissions
+
+    ioperm(opl_port_base, 2, 0);
+}
+
+static unsigned int OPL_Linux_PortRead(opl_port_t port)
+{
+    return inb(opl_port_base + port);
+}
+
+static void OPL_Linux_PortWrite(opl_port_t port, unsigned int value)
+{
+    outb(opl_port_base + port, value);
+}
+
+opl_driver_t opl_linux_driver =
+{
+    "Linux",
+    OPL_Linux_Init,
+    OPL_Linux_Shutdown,
+    OPL_Linux_PortRead,
+    OPL_Linux_PortWrite
+};
+
+#endif /* #ifdef HAVE_IOPERM */
 

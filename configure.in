@@ -54,7 +54,7 @@ AC_CHECK_LIB(SDL_net,SDLNet_UDP_Send,[
 ])
 
 AC_CHECK_HEADERS([linux/kd.h dev/isa/spkrio.h dev/speaker/speaker.h])
-AC_CHECK_FUNCS(mmap sched_setaffinity)
+AC_CHECK_FUNCS(mmap sched_setaffinity ioperm)
 
 # DWF 2008-02-10:  FIXME
 AC_CHECK_LIB(samplerate, src_new)
