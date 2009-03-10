@@ -175,6 +175,7 @@ static boolean DetectOPL(void)
     WriteRegister(OPL_REG_TIMER_CTRL, 0x21);
 
     // Wait for 80 microseconds
+    SDL_Delay(1);
 
     // Read status
     result2 = GetStatus();
