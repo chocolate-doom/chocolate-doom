@@ -77,13 +77,44 @@ typedef struct
     genmidi_voice_t opl3_voice;
 } PACKEDATTR genmidi_instr_t;
 
+typedef struct opl_voice_s opl_voice_t;
+
+struct opl_voice_s
+{
+    // Index of this voice:
+    int index;
+
+    // The operators used by this voice:
+    int op1, op2;
+
+    // Currently-loaded instrument data
+    genmidi_instr_t *current_instr;
+
+    // Next in freelist
+    opl_voice_t *next;
+};
+
+// Operators used by the different voices.
+
+static const int voice_operators[2][OPL_NUM_VOICES] = {
+    { 0x00, 0x01, 0x02, 0x08, 0x09, 0x0a, 0x10, 0x11, 0x12 },
+    { 0x03, 0x04, 0x05, 0x0b, 0x0c, 0x0d, 0x13, 0x14, 0x15 }
+};
+
 static boolean music_initialised = false;
 
 //static boolean musicpaused = false;
 static int current_music_volume;
 
+// GENMIDI lump instrument data:
+
 static genmidi_instr_t *main_instrs;
 static genmidi_instr_t *percussion_instrs;
+
+// Voices:
+
+static opl_voice_t voices[OPL_NUM_VOICES];
+static opl_voice_t *voice_free_list;
 
 // Configuration file variable, containing the port number for the
 // adlib chip.
@@ -158,6 +189,47 @@ static boolean DetectOPL(void)
         && (result2 & 0xe0) == 0xc0;
 }
 
+// Initialise registers on startup
+
+static void InitRegisters(void)
+{
+    int r;
+
+    // Initialise level registers
+
+    for (r=OPL_REGS_LEVEL; r < OPL_REGS_LEVEL + OPL_NUM_OPERATORS; ++r)
+    {
+        WriteRegister(r, 0x3f);
+    }
+
+    // Initialise other registers
+    // These two loops write to registers that actually don't exist,
+    // but this is what Doom does ...
+
+    for (r=OPL_REGS_ATTACK; r < OPL_REGS_WAVEFORM + OPL_NUM_OPERATORS; ++r)
+    {
+        WriteRegister(r, 0x00);
+    }
+
+    // More registers ...
+
+    for (r=0; r < OPL_REGS_LEVEL; ++r)
+    {
+        WriteRegister(r, 0x00);
+    }
+
+    // Re-initialise the low registers:
+
+    // Reset both timers and enable interrupts:
+    WriteRegister(OPL_REG_TIMER_CTRL,      0x60);
+    WriteRegister(OPL_REG_TIMER_CTRL,      0x80);
+
+    // "Allow FM chips to control the waveform of each operator":
+    WriteRegister(OPL_REG_WAVEFORM_ENABLE, 0x20);
+
+    // Keyboard split point on (?)
+    WriteRegister(OPL_REG_FM_MODE,         0x40);
+}
 
 // Load instrument table from GENMIDI lump:
 
@@ -180,6 +252,109 @@ static boolean LoadInstrumentTable(void)
     percussion_instrs = main_instrs + GENMIDI_NUM_INSTRS;
 
     return true;
+}
+
+// Get the next available voice from the freelist.
+
+static opl_voice_t *GetFreeVoice(void)
+{
+    opl_voice_t *result;
+
+    // None available?
+
+    if (voice_free_list == NULL)
+    {
+        return NULL;
+    }
+
+    result = voice_free_list;
+    voice_free_list = voice_free_list->next;
+
+    return result;
+}
+
+// Release a voice back to the freelist.
+
+static void ReleaseVoice(opl_voice_t *voice)
+{
+    opl_voice_t **rover;
+
+    // Search to the end of the freelist (This is how Doom behaves!)
+
+    rover = &voice_free_list;
+
+    while (*rover != NULL)
+    {
+        rover = &(*rover)->next;
+    }
+
+    *rover = voice;
+}
+
+// Load data to the specified operator
+
+static void LoadOperatorData(int operator, genmidi_op_t *data,
+                             boolean max_level)
+{
+    int level;
+
+    // The scale and level fields must be combined for the level register.
+    // For the carrier wave we always set the maximum level.
+
+    level = (data->scale & 0xc0) | (data->level & 0x3f);
+
+    if (max_level)
+    {
+        level |= 0x3f;
+    }
+
+    WriteRegister(OPL_REGS_LEVEL + operator, level);
+    WriteRegister(OPL_REGS_TREMOLO + operator, data->tremolo);
+    WriteRegister(OPL_REGS_ATTACK + operator, data->attack);
+    WriteRegister(OPL_REGS_SUSTAIN + operator, data->sustain);
+    WriteRegister(OPL_REGS_WAVEFORM + operator, data->waveform);
+}
+
+// Set the instrument for a particular voice.
+
+static void SetVoiceInstrument(opl_voice_t *voice, genmidi_voice_t *data)
+{
+    // Doom loads the second operator first, then the first.
+
+    LoadOperatorData(voice->op2, &data->carrier, true);
+    LoadOperatorData(voice->op1, &data->modulator, false);
+
+    // Set feedback register that control the connection between the
+    // two operators.  Turn on bits in the upper nybble; I think this
+    // is for OPL3, where it turns on channel A/B.
+
+    WriteRegister(OPL_REGS_FEEDBACK + voice->index,
+                  data->feedback | 0x30);
+}
+
+// Initialise the voice table and freelist
+
+static void InitVoices(void)
+{
+    int i;
+
+    // Start with an empty free list.
+
+    voice_free_list = NULL;
+
+    // Initialise each voice.
+
+    for (i=0; i<OPL_NUM_VOICES; ++i)
+    {
+        voices[i].index = i;
+        voices[i].op1 = voice_operators[0][i];
+        voices[i].op2 = voice_operators[1][i];
+        voices[i].current_instr = NULL;
+
+        // Add this voice to the freelist.
+
+        ReleaseVoice(&voices[i]);
+    }
 }
 
 // Shutdown music
@@ -223,6 +398,9 @@ static boolean I_OPL_InitMusic(void)
         OPL_Shutdown();
         return false;
     }
+
+    InitRegisters();
+    InitVoices();
 
     music_initialised = true;
 
