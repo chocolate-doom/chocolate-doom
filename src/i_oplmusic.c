@@ -27,6 +27,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "doomdef.h"
 #include "memio.h"
@@ -38,23 +39,191 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+#include "opl.h"
+
 #define MAXMIDLENGTH (96 * 1024)
+#define GENMIDI_NUM_INSTRS  128
+
+#define GENMIDI_HEADER          "#OPL_II#"
+#define GENMIDI_FLAG_FIXED      0x0000         /* fixed pitch */
+#define GENMIDI_FLAG_2VOICE     0x0002         /* double voice (OPL3) */
+
+typedef struct
+{
+    byte tremolo;
+    byte attack;
+    byte sustain;
+    byte waveform;
+    byte scale;
+    byte level;
+} PACKEDATTR genmidi_op_t;
+
+typedef struct
+{
+    genmidi_op_t modulator;
+    byte feedback;
+    genmidi_op_t carrier;
+    byte unused;
+    byte base_note_offset;
+} PACKEDATTR genmidi_voice_t;
+
+typedef struct
+{
+    unsigned short flags;
+    byte fine_tuning;
+    byte fixed_note;
+
+    genmidi_voice_t opl2_voice;
+    genmidi_voice_t opl3_voice;
+} PACKEDATTR genmidi_instr_t;
 
 static boolean music_initialised = false;
 
 //static boolean musicpaused = false;
 static int current_music_volume;
 
+static genmidi_instr_t *main_instrs;
+static genmidi_instr_t *percussion_instrs;
+
+// Configuration file variable, containing the port number for the
+// adlib chip.
+
+int snd_mport = 0x388;
+
+static unsigned int GetStatus(void)
+{
+    return OPL_ReadPort(OPL_REGISTER_PORT);
+}
+
+// Write an OPL register value
+
+static void WriteRegister(int reg, int value)
+{
+    int i;
+
+    OPL_WritePort(OPL_REGISTER_PORT, reg);
+
+    // For timing, read the register port six times after writing the
+    // register number to cause the appropriate delay
+
+    for (i=0; i<6; ++i)
+    {
+        GetStatus();
+    }
+
+    OPL_WritePort(OPL_DATA_PORT, value);
+
+    // Read the register port 25 times after writing the value to
+    // cause the appropriate delay
+
+    for (i=0; i<25; ++i)
+    {
+        GetStatus();
+    }
+}
+
+// Detect the presence of an OPL chip
+
+static boolean DetectOPL(void)
+{
+    int result1, result2;
+
+    // Reset both timers:
+    WriteRegister(OPL_REG_TIMER_CTRL, 0x60);
+
+    // Enable interrupts:
+    WriteRegister(OPL_REG_TIMER_CTRL, 0x80);
+
+    // Read status
+    result1 = GetStatus();
+
+    // Set timer:
+    WriteRegister(OPL_REG_TIMER1, 0xff);
+
+    // Start timer 1:
+    WriteRegister(OPL_REG_TIMER_CTRL, 0x21);
+
+    // Wait for 80 microseconds
+
+    // Read status
+    result2 = GetStatus();
+
+    // Reset both timers:
+    WriteRegister(OPL_REG_TIMER_CTRL, 0x60);
+
+    // Enable interrupts:
+    WriteRegister(OPL_REG_TIMER_CTRL, 0x80);
+
+    return (result1 & 0xe0) == 0x00
+        && (result2 & 0xe0) == 0xc0;
+}
+
+
+// Load instrument table from GENMIDI lump:
+
+static boolean LoadInstrumentTable(void)
+{
+    byte *lump;
+
+    lump = W_CacheLumpName("GENMIDI", PU_STATIC);
+
+    // Check header
+
+    if (strncmp((char *) lump, GENMIDI_HEADER, strlen(GENMIDI_HEADER)) != 0)
+    {
+        W_ReleaseLumpName("GENMIDI");
+
+        return false;
+    }
+
+    main_instrs = (genmidi_instr_t *) (lump + strlen(GENMIDI_HEADER));
+    percussion_instrs = main_instrs + GENMIDI_NUM_INSTRS;
+
+    return true;
+}
+
 // Shutdown music
 
 static void I_OPL_ShutdownMusic(void)
 {
+    if (music_initialised)
+    {
+        OPL_Shutdown();
+
+        // Release GENMIDI lump
+
+        W_ReleaseLumpName("GENMIDI");
+
+        music_initialised = false;
+    }
 }
 
 // Initialise music subsystem
 
 static boolean I_OPL_InitMusic(void)
-{ 
+{
+    if (!OPL_Init(snd_mport))
+    {
+        return false;
+    }
+
+    // Doom does the detection sequence twice, for some reason:
+
+    if (!DetectOPL() || !DetectOPL())
+    {
+        printf("Dude.  The Adlib isn't responding.\n");
+        OPL_Shutdown();
+        return false;
+    }
+
+    // Load instruments from GENMIDI lump:
+
+    if (!LoadInstrumentTable())
+    {
+        OPL_Shutdown();
+        return false;
+    }
+
     music_initialised = true;
 
     return true;
