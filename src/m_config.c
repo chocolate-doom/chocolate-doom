@@ -124,6 +124,7 @@ extern int      vanilla_demo_limit;
 extern int snd_musicdevice;
 extern int snd_sfxdevice;
 extern int snd_samplerate;
+extern int snd_mport;
 
 // controls whether to use libsamplerate for sample rate conversions
 
@@ -136,7 +137,6 @@ extern int use_libsamplerate;
 static int snd_sbport = 0;
 static int snd_sbirq = 0;
 static int snd_sbdma = 0;
-static int snd_mport = 0;
 
 typedef enum 
 {

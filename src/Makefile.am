@@ -3,7 +3,7 @@ gamesdir = $(prefix)/games
 
 games_PROGRAMS = chocolate-doom chocolate-server
 
-AM_CFLAGS = -I../textscreen -I../pcsound @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
+AM_CFLAGS = -I../opl -I../textscreen -I../pcsound @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
 DEDSERV_FILES=\
 d_dedicated.c                              \
