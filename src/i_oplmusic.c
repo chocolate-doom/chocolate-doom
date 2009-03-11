@@ -147,7 +147,7 @@ static void WriteRegister(int reg, int value)
     // Read the register port 25 times after writing the value to
     // cause the appropriate delay
 
-    for (i=0; i<25; ++i)
+    for (i=0; i<24; ++i)
     {
         GetStatus();
     }
@@ -158,6 +158,7 @@ static void WriteRegister(int reg, int value)
 static boolean DetectOPL(void)
 {
     int result1, result2;
+    int i;
 
     // Reset both timers:
     WriteRegister(OPL_REG_TIMER_CTRL, 0x60);
@@ -175,7 +176,12 @@ static boolean DetectOPL(void)
     WriteRegister(OPL_REG_TIMER_CTRL, 0x21);
 
     // Wait for 80 microseconds
-    SDL_Delay(1);
+    // This is how Doom does it:
+
+    for (i=0; i<200; ++i)
+    {
+        GetStatus();
+    }
 
     // Read status
     result2 = GetStatus();
@@ -198,7 +204,7 @@ static void InitRegisters(void)
 
     // Initialise level registers
 
-    for (r=OPL_REGS_LEVEL; r < OPL_REGS_LEVEL + OPL_NUM_OPERATORS; ++r)
+    for (r=OPL_REGS_LEVEL; r <= OPL_REGS_LEVEL + OPL_NUM_OPERATORS; ++r)
     {
         WriteRegister(r, 0x3f);
     }
@@ -206,15 +212,16 @@ static void InitRegisters(void)
     // Initialise other registers
     // These two loops write to registers that actually don't exist,
     // but this is what Doom does ...
+    // Similarly, the <= is also intenational.
 
-    for (r=OPL_REGS_ATTACK; r < OPL_REGS_WAVEFORM + OPL_NUM_OPERATORS; ++r)
+    for (r=OPL_REGS_ATTACK; r <= OPL_REGS_WAVEFORM + OPL_NUM_OPERATORS; ++r)
     {
         WriteRegister(r, 0x00);
     }
 
     // More registers ...
 
-    for (r=0; r < OPL_REGS_LEVEL; ++r)
+    for (r=1; r < OPL_REGS_LEVEL; ++r)
     {
         WriteRegister(r, 0x00);
     }
@@ -364,6 +371,9 @@ static void I_OPL_ShutdownMusic(void)
 {
     if (music_initialised)
     {
+#ifdef TEST
+        InitRegisters();
+#endif
         OPL_Shutdown();
 
         // Release GENMIDI lump
@@ -402,6 +412,22 @@ static boolean I_OPL_InitMusic(void)
 
     InitRegisters();
     InitVoices();
+
+#ifdef TEST
+    {
+        opl_voice_t *voice;
+
+        voice = GetFreeVoice();
+        SetVoiceInstrument(voice, &main_instrs[34].opl2_voice);
+
+        // Set level:
+        WriteRegister(OPL_REGS_LEVEL + voice->op2, 0x94);
+
+        // Note on:
+        WriteRegister(OPL_REGS_FREQ_1 + voice->index, 0x65);
+        WriteRegister(OPL_REGS_FREQ_2 + voice->index, 0x2b);
+    }
+#endif
 
     music_initialised = true;
 
