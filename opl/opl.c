@@ -30,6 +30,8 @@
 #include "opl.h"
 #include "opl_internal.h"
 
+#define OPL_DEBUG_TRACE
+
 #ifdef HAVE_IOPERM
 extern opl_driver_t opl_linux_driver;
 #endif
@@ -75,6 +77,9 @@ void OPL_WritePort(opl_port_t port, unsigned int value)
 {
     if (driver != NULL)
     {
+#ifdef OPL_DEBUG_TRACE
+        printf("OPL_write: %i, %x\n", port, value);
+#endif
         driver->write_port_func(port, value);
     }
 }
@@ -83,7 +88,15 @@ unsigned int OPL_ReadPort(opl_port_t port)
 {
     if (driver != NULL)
     {
-        return driver->read_port_func(port);
+        unsigned int result;
+
+        result = driver->read_port_func(port);
+
+#ifdef OPL_DEBUG_TRACE
+        printf("OPL_read: %i -> %x\n", port, result);
+#endif
+
+        return result;
     }
     else
     {
