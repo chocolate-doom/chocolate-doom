@@ -116,6 +116,13 @@ static genmidi_instr_t *percussion_instrs;
 static opl_voice_t voices[OPL_NUM_VOICES];
 static opl_voice_t *voice_free_list;
 
+// In the initialisation stage, register writes are spaced by reading
+// from the register port (0).  After initialisation, spacing is
+// peformed by reading from the data port instead.  I have no idea
+// why.
+
+static boolean init_stage_reg_writes = false;
+
 // Configuration file variable, containing the port number for the
 // adlib chip.
 
@@ -139,7 +146,18 @@ static void WriteRegister(int reg, int value)
 
     for (i=0; i<6; ++i)
     {
-        GetStatus();
+        // An oddity of the Doom OPL code: at startup initialisation,
+        // the spacing here is performed by reading from the register
+        // port; after initialisation, the data port is read, instead.
+
+        if (init_stage_reg_writes)
+        {
+            OPL_ReadPort(OPL_REGISTER_PORT);
+        }
+        else
+        {
+            OPL_ReadPort(OPL_DATA_PORT);
+        }
     }
 
     OPL_WritePort(OPL_DATA_PORT, value);
@@ -393,6 +411,8 @@ static boolean I_OPL_InitMusic(void)
         return false;
     }
 
+    init_stage_reg_writes = true;
+
     // Doom does the detection sequence twice, for some reason:
 
     if (!DetectOPL() || !DetectOPL())
@@ -412,6 +432,11 @@ static boolean I_OPL_InitMusic(void)
 
     InitRegisters();
     InitVoices();
+
+    // Now that initialisation has finished, switch the
+    // register writing mode:
+
+    init_stage_reg_writes = false;
 
 #ifdef TEST
     {
