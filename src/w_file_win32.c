@@ -35,6 +35,12 @@
 #include "w_file.h"
 #include "z_zone.h"
 
+// This constant doesn't exist in VC6:
+
+#ifndef INVALID_SET_FILE_POINTER
+#define INVALID_SET_FILE_POINTER 0xffffffff
+#endif
+
 typedef struct
 {
     wad_file_t wad;
