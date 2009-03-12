@@ -64,7 +64,7 @@ typedef struct
     byte feedback;
     genmidi_op_t carrier;
     byte unused;
-    byte base_note_offset;
+    short base_note_offset;
 } PACKEDATTR genmidi_voice_t;
 
 typedef struct
