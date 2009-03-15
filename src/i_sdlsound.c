@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <math.h>
 #include "SDL.h"
 #include "SDL_mixer.h"
 
@@ -58,10 +59,11 @@ static int channels_playing[NUM_CHANNELS];
 static int mixer_freq;
 static Uint16 mixer_format;
 static int mixer_channels;
-static uint32_t (*ExpandSoundData)(byte *data, int samplerate, int length,
-                                   Mix_Chunk *destination) = NULL;
 
 int use_libsamplerate = 0;
+
+extern int mb_used;
+
 
 // When a sound stops, check if it is still playing.  If it is not, 
 // we can mark the sound data as CACHE to be freed back for other
@@ -79,6 +81,12 @@ static void ReleaseSoundOnChannel(int channel)
 
     channels_playing[channel] = sfx_None;
     
+#ifdef HAVE_LIBSAMPLERATE
+    // Don't allow precached sounds to be swapped out.
+    if (use_libsamplerate)
+        return;
+#endif
+
     for (i=0; i<NUM_CHANNELS; ++i)
     {
         // Playing on this channel? if so, don't release.
@@ -91,6 +99,7 @@ static void ReleaseSoundOnChannel(int channel)
     
     Z_ChangeTag(sound_chunks[id].abuf, PU_CACHE);
 }
+
 
 #ifdef HAVE_LIBSAMPLERATE
 
@@ -119,101 +128,6 @@ static int SRC_ConversionMode(void)
         case 5:
             return SRC_SINC_BEST_QUALITY;
     }
-}
-
-// libsamplerate-based generic sound expansion function for any sample rate
-//   unsigned 8 bits --> signed 16 bits
-//   mono --> stereo
-//   samplerate --> mixer_freq
-// Returns number of clipped samples.
-// DWF 2008-02-10 with cleanups by Simon Howard.
-
-static uint32_t ExpandSoundData_SRC(byte *data,
-                                    int samplerate,
-                                    int length,
-                                    Mix_Chunk *destination)
-{
-    SRC_DATA src_data;
-    uint32_t i, abuf_index=0, clipped=0;
-    int retn;
-    int16_t *expanded;
-
-    src_data.input_frames = length;
-    src_data.data_in = malloc(length * sizeof(float));
-    src_data.src_ratio = (double)mixer_freq / samplerate;
-
-    // We include some extra space here in case of rounding-up.
-    src_data.output_frames = src_data.src_ratio * length + (mixer_freq / 4);
-    src_data.data_out = malloc(src_data.output_frames * sizeof(float));
-
-    assert(src_data.data_in != NULL && src_data.data_out != NULL);
-
-    // Convert input data to floats
-
-    for (i=0; i<length; ++i)
-    {
-        // Unclear whether 128 should be interpreted as "zero" or whether a
-        // symmetrical range should be assumed.  The following assumes a
-        // symmetrical range.
-        src_data.data_in[i] = data[i] / 127.5 - 1;
-    }
-
-    // Do the sound conversion
-
-    retn = src_simple(&src_data, SRC_ConversionMode(), 1);
-    assert(retn == 0);
-
-    // Convert the result back into 16-bit integers.
-
-    destination->alen = src_data.output_frames_gen * 4;
-    destination->abuf = Z_Malloc(destination->alen, PU_STATIC, 
-                                 &destination->abuf);
-    expanded = (int16_t *) destination->abuf;
-
-    for (i=0; i<src_data.output_frames_gen; ++i)
-    {
-        // libsamplerate does not limit itself to the -1.0 .. 1.0 range on
-        // output, so a multiplier less than INT16_MAX (32767) is required
-        // to avoid overflows or clipping.  However, the smaller the
-        // multiplier, the quieter the sound effects get, and the more you
-        // have to turn down the music to keep it in balance.
-
-        // 22265 is the largest multiplier that can be used to resample all
-        // of the Vanilla DOOM sound effects to 48 kHz without clipping
-        // using SRC_SINC_BEST_QUALITY.  It is close enough (only slightly
-        // too conservative) for SRC_SINC_MEDIUM_QUALITY and
-        // SRC_SINC_FASTEST.  PWADs with interestingly different sound
-        // effects or target rates other than 48 kHz might still result in
-        // clipping--I don't know if there's a limit to it.
-
-        // As the number of clipped samples increases, the signal is
-        // gradually overtaken by noise, with the loudest parts going first.
-        // However, a moderate amount of clipping is often tolerated in the
-        // quest for the loudest possible sound overall.  The results of
-        // using INT16_MAX as the multiplier are not all that bad, but
-        // artifacts are noticeable during the loudest parts.
-
-        float   cvtval_f = src_data.data_out[i] * 22265;
-        int32_t cvtval_i = cvtval_f + (cvtval_f < 0 ? -0.5 : 0.5);
-
-        // Asymmetrical sound worries me, so we won't use -32768.
-        if (cvtval_i < -INT16_MAX) {
-          cvtval_i = -INT16_MAX;
-          ++clipped;
-        } else if (cvtval_i > INT16_MAX) {
-          cvtval_i = INT16_MAX;
-          ++clipped;
-        }
-
-        // Left and right channels
-
-        expanded[abuf_index++] = cvtval_i;
-        expanded[abuf_index++] = cvtval_i;
-    }
-
-    free(src_data.data_in);
-    free(src_data.data_out);
-    return clipped;
 }
 
 #endif
@@ -248,12 +162,11 @@ static boolean ConvertibleRatio(int freq1, int freq2)
 }
 
 // Generic sound expansion function for any sample rate.
-// Returns number of clipped samples (always 0).
 
-static uint32_t ExpandSoundData_SDL(byte *data,
-                                    int samplerate,
-                                    int length,
-                                    Mix_Chunk *destination)
+static void ExpandSoundData_SDL(byte *data,
+				int samplerate,
+				uint32_t length,
+				Mix_Chunk *destination)
 {
     SDL_AudioCVT convertor;
     uint32_t expanded_length;
@@ -265,7 +178,6 @@ static uint32_t ExpandSoundData_SDL(byte *data,
     // Double up twice: 8 -> 16 bit and mono -> stereo
 
     expanded_length *= 4;
-
     destination->alen = expanded_length;
     destination->abuf 
         = Z_Malloc(expanded_length, PU_STATIC, &destination->abuf);
@@ -344,69 +256,92 @@ static uint32_t ExpandSoundData_SDL(byte *data,
         }
 #endif /* #ifdef LOW_PASS_FILTER */
     }
-
-    return 0;
 }
 
-// Load and convert a sound effect
-// Returns true if successful
 
-static boolean CacheSFX(int sound)
+// Load and validate a sound effect lump.
+// Preconditions:
+//     S_sfx[sound].lumpnum has been set
+// Postconditions if sound is valid:
+//     returns true
+//     starred parameters are set, with data_ref pointing to start of sound
+//     caller is responsible for releasing the identified lump
+// Postconditions if sound is invalid:
+//     returns false
+//     starred parameters are garbage
+//     lump already released
+
+static boolean LoadSoundLump(int sound,
+			     int *lumpnum,
+			     int *samplerate,
+			     uint32_t *length,
+			     byte **data_ref)
 {
-    int lumpnum;
-    unsigned int lumplen;
-    int samplerate;
-    int clipped;
-    unsigned int length;
-    byte *data;
+    // Load the sound
 
-    // need to load the sound
+    *lumpnum    = S_sfx[sound].lumpnum;
+    *data_ref   = W_CacheLumpNum(*lumpnum, PU_STATIC);
+    int lumplen = W_LumpLength(*lumpnum);
+    byte *data  = *data_ref;
 
-    lumpnum = S_sfx[sound].lumpnum;
-    data = W_CacheLumpNum(lumpnum, PU_STATIC);
-    lumplen = W_LumpLength(lumpnum);
+    // Ensure this is a valid sound
 
-    // Check the header, and ensure this is a valid sound
-
-    if (lumplen < 8
-     || data[0] != 0x03 || data[1] != 0x00)
+    if (lumplen < 8 || data[0] != 0x03 || data[1] != 0x00)
     {
-        // Invalid sound
-
-        return false;
+	// Invalid sound
+	W_ReleaseLumpNum(*lumpnum);
+	return false;
     }
 
     // 16 bit sample rate field, 32 bit length field
 
-    samplerate = (data[3] << 8) | data[2];
-    length = (data[7] << 24) | (data[6] << 16) | (data[5] << 8) | data[4];
+    *samplerate = (data[3] << 8) | data[2];
+    *length = (data[7] << 24) | (data[6] << 16) | (data[5] << 8) | data[4];
 
-    // If the header specifies that the length of the sound is greater than
-    // the length of the lump itself, this is an invalid sound lump
+    // If the header specifies that the length of the sound is
+    // greater than the length of the lump itself, this is an invalid
+    // sound lump.
 
-    if (length > lumplen - 8)
+    if (*length > lumplen - 8)
     {
-        return false;
+	W_ReleaseLumpNum(*lumpnum);
+	return false;
     }
 
+    // Prune header
+    *data_ref += 8;
+
+    return true;
+}
+
+
+// Load and convert a sound effect
+// Returns true if successful
+
+static boolean CacheSFX_SDL(int sound)
+{
+    int lumpnum;
+    int samplerate;
+    uint32_t length;
+    byte *data;
+
+#ifdef HAVE_LIBSAMPLERATE
+    assert(!use_libsamplerate); // Should be using I_PrecacheSounds_SRC instead
+#endif
+
+    if (!LoadSoundLump(sound, &lumpnum, &samplerate, &length, &data))
+        return false;
+
     // Sample rate conversion
-    // DWF 2008-02-10:  sound_chunks[sound].alen and abuf are determined
-    // by ExpandSoundData.
+    // sound_chunks[sound].alen and abuf are determined by ExpandSoundData.
 
     sound_chunks[sound].allocated = 1;
     sound_chunks[sound].volume = MIX_MAX_VOLUME;
 
-    clipped = ExpandSoundData(data + 8, 
-                              samplerate, 
-                              length, 
-                              &sound_chunks[sound]);
-
-    if (clipped)
-    {
-        fprintf(stderr, "Sound %d: clipped %u samples (%0.2f %%)\n", 
-                        sound, clipped,
-                        400.0 * clipped / sound_chunks[sound].alen);
-    }
+    ExpandSoundData_SDL(data,
+			samplerate, 
+			length, 
+			&sound_chunks[sound]);
 
     // don't need the original lump any more
   
@@ -415,50 +350,169 @@ static boolean CacheSFX(int sound)
     return true;
 }
 
+
 #ifdef HAVE_LIBSAMPLERATE
 
-// Preload all the sound effects - stops nasty ingame freezes
+// Preload and resample all sound effects with libsamplerate.
 
-static void I_PrecacheSounds(void)
+static void I_PrecacheSounds_SRC(void)
 {
     char namebuf[9];
-    int i;
+    uint32_t sound_i, sample_i;
+    boolean good_sound[NUMSFX];
+    float *resampled_sound[NUMSFX];
+    uint32_t resampled_sound_length[NUMSFX];
+    float norm_factor;
+    float max_amp = 0;
 
-    printf("I_PrecacheSounds: Precaching all sound effects..");
+    assert(use_libsamplerate);
 
-    for (i=sfx_pistol; i<NUMSFX; ++i)
+    if (mb_used < 32)
     {
-        if ((i % 6) == 0)
+        fprintf(stderr,
+                "WARNING: low memory.  Heap size is only %d MiB.\n"
+                "WARNING: use_libsamplerate needs more heap!\n"
+                "WARNING: put -mb 64 on the command line to avoid "
+                "\"Error: Z_Malloc: failed on allocation of X bytes\" !\n",
+                mb_used);
+    }
+
+    printf("I_PrecacheSounds_SRC: Precaching all sound effects..");
+
+    // Pass 1:  resample all sounds and determine maximum amplitude.
+
+    for (sound_i=sfx_pistol; sound_i<NUMSFX; ++sound_i)
+    {
+        good_sound[sound_i] = false;
+
+        if ((sound_i % 6) == 0)
         {
             printf(".");
             fflush(stdout);
         }
 
-        sprintf(namebuf, "ds%s", DEH_String(S_sfx[i].name));
-
-        S_sfx[i].lumpnum = W_CheckNumForName(namebuf);
-
-        if (S_sfx[i].lumpnum != -1)
+        sprintf(namebuf, "ds%s", DEH_String(S_sfx[sound_i].name));
+        S_sfx[sound_i].lumpnum = W_CheckNumForName(namebuf);
+        if (S_sfx[sound_i].lumpnum != -1)
         {
-            CacheSFX(i);
+	    int lumpnum;
+	    int samplerate;
+	    uint32_t length;
+	    byte *data;
+            double of_temp;
+            int retn;
+            float *rsound;
+            uint32_t rlen;
+	    SRC_DATA src_data;
 
-            if (sound_chunks[i].abuf != NULL)
-            {
-                Z_ChangeTag(sound_chunks[i].abuf, PU_CACHE);
+	    if (!LoadSoundLump(sound_i, &lumpnum, &samplerate, &length, &data))
+		continue;
+
+            assert(length <= LONG_MAX);
+	    src_data.input_frames = length;
+	    src_data.data_in = malloc(length * sizeof(float));
+	    src_data.src_ratio = (double)mixer_freq / samplerate;
+
+	    // mixer_freq / 4 adds a quarter-second safety margin.
+
+            of_temp = src_data.src_ratio * length + (mixer_freq / 4);
+            assert(of_temp <= LONG_MAX);
+	    src_data.output_frames = of_temp;
+	    src_data.data_out = malloc(src_data.output_frames * sizeof(float));
+	    assert(src_data.data_in != NULL && src_data.data_out != NULL);
+
+	    // Convert input data to floats
+
+	    for (sample_i=0; sample_i<length; ++sample_i)
+	    {
+		// Unclear whether 128 should be interpreted as "zero" or
+		// whether a symmetrical range should be assumed.  The
+		// following assumes a symmetrical range.
+
+		src_data.data_in[sample_i] = data[sample_i] / 127.5 - 1;
+	    }
+
+            // don't need the original lump any more
+
+            W_ReleaseLumpNum(lumpnum);
+
+	    // Resample
+
+	    retn = src_simple(&src_data, SRC_ConversionMode(), 1);
+	    assert(retn == 0);
+            assert(src_data.output_frames_gen > 0);
+            resampled_sound[sound_i] = src_data.data_out;
+            resampled_sound_length[sound_i] = src_data.output_frames_gen;
+            free(src_data.data_in);
+            good_sound[sound_i] = true;
+
+            // Track maximum amplitude for later normalization
+
+            rsound = resampled_sound[sound_i];
+            rlen = resampled_sound_length[sound_i];
+	    for (sample_i=0; sample_i<rlen; ++sample_i)
+	    {
+	        float fabs_amp = fabsf(rsound[sample_i]);
+                if (fabs_amp > max_amp)
+  		    max_amp = fabs_amp;
             }
         }
     }
 
-    printf("\n");
+    // Pass 2:  normalize and convert to signed 16-bit stereo.
+
+    if (max_amp <= 0)
+        max_amp = 1;
+    norm_factor = INT16_MAX / max_amp;
+
+    for (sound_i=sfx_pistol; sound_i<NUMSFX; ++sound_i)
+    {
+        if (good_sound[sound_i])
+        {
+            uint32_t rlen = resampled_sound_length[sound_i];
+            int16_t *expanded;
+            uint32_t abuf_index;
+            float *rsound;
+
+            sound_chunks[sound_i].allocated = 1;
+            sound_chunks[sound_i].volume = MIX_MAX_VOLUME;
+            sound_chunks[sound_i].alen = rlen * 4;
+            sound_chunks[sound_i].abuf = Z_Malloc(sound_chunks[sound_i].alen,
+                                                  PU_STATIC,
+                                                  &sound_chunks[sound_i].abuf);
+            expanded = (int16_t *) sound_chunks[sound_i].abuf;
+            abuf_index=0;
+
+            rsound = resampled_sound[sound_i];
+            for (sample_i=0; sample_i<rlen; ++sample_i)
+            {
+                float   cvtval_f = norm_factor * rsound[sample_i];
+                int16_t cvtval_i = cvtval_f + (cvtval_f < 0 ? -0.5 : 0.5);
+
+                // Left and right channels
+
+                expanded[abuf_index++] = cvtval_i;
+                expanded[abuf_index++] = cvtval_i;
+            }
+            free(rsound);
+        }
+    }
+
+    printf(" norm factor = %f\n", norm_factor);
 }
 
 #endif
+
 
 static Mix_Chunk *GetSFXChunk(int sound_id)
 {
     if (sound_chunks[sound_id].abuf == NULL)
     {
-        if (!CacheSFX(sound_id))
+#ifdef HAVE_LIBSAMPLERATE
+        if (use_libsamplerate != 0)
+            return NULL;   /* If valid, it should have been precached */
+#endif
+        if (!CacheSFX_SDL(sound_id))
             return NULL;
     }
     else
@@ -641,8 +695,6 @@ static boolean I_SDL_InitSound(void)
         return false;
     }
 
-    ExpandSoundData = ExpandSoundData_SDL;
-
     Mix_QuerySpec(&mixer_freq, &mixer_format, &mixer_channels);
 
 #ifdef HAVE_LIBSAMPLERATE
@@ -654,9 +706,7 @@ static boolean I_SDL_InitSound(void)
                     use_libsamplerate);
         }
 
-        ExpandSoundData = ExpandSoundData_SRC;
-
-        I_PrecacheSounds();
+        I_PrecacheSounds_SRC();
     }
 #else
     if (use_libsamplerate != 0)
