@@ -19,14 +19,26 @@
 // 02111-1307, USA.
 //
 
-// Base GUI "widget" class that all widgets inherit from.
-
 #ifndef TXT_WIDGET_H
 #define TXT_WIDGET_H
+
+/**
+ * @file txt_widget.h
+ *
+ * Base "widget" GUI component class.
+ */
+
+#ifndef DOXYGEN
 
 #define TXT_UNCAST_ARG_NAME(name) uncast_ ## name
 #define TXT_UNCAST_ARG(name)   void * TXT_UNCAST_ARG_NAME(name)
 #define TXT_CAST_ARG(type, name)  type *name = (type *) uncast_ ## name
+
+#else
+
+#define TXT_UNCAST_ARG(name) txt_widget_t *name
+
+#endif
 
 typedef enum
 {
@@ -42,8 +54,20 @@ typedef enum
     TXT_HORIZ_RIGHT,
 } txt_horiz_align_t;
 
-typedef struct txt_widget_class_s txt_widget_class_t;
+/**
+ * A GUI widget.
+ *
+ * A widget is an individual component of a GUI.  Various different widget
+ * types exist.
+ *
+ * Widgets may emit signals.  The types of signal emitted by a widget
+ * depend on the type of the widget.  It is possible to be notified
+ * when a signal occurs using the @ref TXT_SignalConnect function.
+ */
+
 typedef struct txt_widget_s txt_widget_t;
+
+typedef struct txt_widget_class_s txt_widget_class_t;
 typedef struct txt_callback_table_s txt_callback_table_t;
 
 typedef void (*TxtWidgetSizeCalc)(TXT_UNCAST_ARG(widget));
@@ -82,14 +106,33 @@ struct txt_widget_s
 void TXT_InitWidget(TXT_UNCAST_ARG(widget), txt_widget_class_t *widget_class);
 void TXT_CalcWidgetSize(TXT_UNCAST_ARG(widget));
 void TXT_DrawWidget(TXT_UNCAST_ARG(widget), int selected);
-void TXT_SignalConnect(TXT_UNCAST_ARG(widget), char *signal_name,
-                       TxtWidgetSignalFunc func, void *user_data);
 void TXT_EmitSignal(TXT_UNCAST_ARG(widget), char *signal_name);
 int TXT_WidgetKeyPress(TXT_UNCAST_ARG(widget), int key);
 void TXT_WidgetMousePress(TXT_UNCAST_ARG(widget), int x, int y, int b);
 void TXT_DestroyWidget(TXT_UNCAST_ARG(widget));
-void TXT_SetWidgetAlign(TXT_UNCAST_ARG(widget), txt_horiz_align_t horiz_align);
 void TXT_LayoutWidget(TXT_UNCAST_ARG(widget));
+
+/**
+ * Set a callback function to be invoked when a signal occurs.
+ *
+ * @param widget       The widget to watch.
+ * @param signal_name  The signal to watch.
+ * @param func         The callback function to invoke.
+ * @param user_data    User-specified pointer to pass to the callback function.
+ */
+
+void TXT_SignalConnect(TXT_UNCAST_ARG(widget), char *signal_name,
+                       TxtWidgetSignalFunc func, void *user_data);
+
+/**
+ * Set the policy for how a widget should be aligned within a table.
+ * By default, widgets are aligned to the left of the column.
+ *
+ * @param widget       The widget.
+ * @param horiz_align  The alignment to use.
+ */
+
+void TXT_SetWidgetAlign(TXT_UNCAST_ARG(widget), txt_horiz_align_t horiz_align);
 
 #endif /* #ifndef TXT_WIDGET_H */
 

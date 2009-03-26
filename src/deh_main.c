@@ -59,6 +59,18 @@ extern deh_section_t deh_section_thing;
 // deh_weapon.c: 
 extern deh_section_t deh_section_weapon;
 
+// If true, we can do long string replacements.
+
+boolean deh_allow_long_strings = false;
+
+// If true, we can do cheat replacements longer than the originals.
+
+boolean deh_allow_long_cheats = false;
+
+// If false, dehacked cheat replacements are ignored.
+
+boolean deh_apply_cheats = true;
+
 //
 // List of section types:
 //
@@ -226,6 +238,33 @@ static boolean CheckSignatures(deh_context_t *context)
     return false;
 }
 
+// Parses a comment string in a dehacked file.
+
+static void DEH_ParseComment(char *comment)
+{
+    // Allow comments containing this special value to allow string
+    // replacements longer than those permitted by DOS dehacked.
+    // This allows us to use a dehacked patch for doing string 
+    // replacements for emulating Chex Quest.
+    //
+    // If you use this, your dehacked patch may not work in Vanilla
+    // Doom.
+
+    if (strstr(comment, "*allow-long-strings*") != NULL)
+    {
+        deh_allow_long_strings = true;
+    }
+
+    // Allow magic comments to allow longer cheat replacements than
+    // those permitted by DOS dehacked.  This is also for Chex
+    // Quest.
+
+    if (strstr(comment, "*allow-long-cheats*") != NULL)
+    {
+        deh_allow_long_cheats = true;
+    }
+}
+
 // Parses a dehacked file by reading from the context
 
 static void DEH_ParseContext(deh_context_t *context)
@@ -241,6 +280,9 @@ static void DEH_ParseContext(deh_context_t *context)
     {
         DEH_Error(context, "This is not a valid dehacked patch file!");
     }
+
+    deh_allow_long_strings = false;
+    deh_allow_long_cheats = false;
     
     // Read the file
     
@@ -262,6 +304,7 @@ static void DEH_ParseContext(deh_context_t *context)
         {
             // comment
 
+            DEH_ParseComment(line);
             continue;
         }
 
@@ -312,21 +355,25 @@ static void DEH_ParseContext(deh_context_t *context)
 
 // Parses a dehacked file
 
-static void DEH_ParseFile(char *filename)
+int DEH_LoadFile(char *filename)
 {
     deh_context_t *context;
+
+    printf(" loading %s\n", filename);
 
     context = DEH_OpenFile(filename);
 
     if (context == NULL)
     {
-        fprintf(stderr, "DEH_ParseFile: Unable to open %s\n", filename);
-        return;
+        fprintf(stderr, "DEH_LoadFile: Unable to open %s\n", filename);
+        return 0;
     }
     
     DEH_ParseContext(context);
     
     DEH_CloseFile(context);
+
+    return 1;
 }
 
 // Checks the command line for -deh argument
@@ -337,6 +384,17 @@ void DEH_Init(void)
     int p;
 
     InitialiseSections();
+
+    //!
+    // @category mod
+    //
+    // Ignore cheats in dehacked files.
+    //
+
+    if (M_CheckParm("-nocheats") > 0) 
+    {
+	deh_apply_cheats = false;
+    }
 
     //!
     // @arg <files>
@@ -354,8 +412,7 @@ void DEH_Init(void)
         while (p < myargc && myargv[p][0] != '-')
         {
             filename = D_TryFindWADByName(myargv[p]);
-            printf(" loading %s\n", filename);
-            DEH_ParseFile(filename);
+            DEH_LoadFile(filename);
             ++p;
         }
     }

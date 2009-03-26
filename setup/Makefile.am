@@ -1,11 +1,10 @@
 
 gamesdir = $(prefix)/games
 
-AM_CFLAGS = @SDL_CFLAGS@ -I../textscreen -I../src -DINSTALL_DIR="\"$(gamesdir)\""
+AM_CFLAGS = -I../textscreen -I../src -DINSTALL_DIR="\"$(gamesdir)\""
 
 games_PROGRAMS = chocolate-setup
 
-chocolate_setup_LDADD = ../textscreen/libtextscreen.a @LDFLAGS@ @SDL_LIBS@
 SOURCE_FILES =                                  \
     compatibility.c   compatibility.h           \
     configfile.c      configfile.h              \
@@ -31,6 +30,8 @@ chocolate_setup_SOURCES=$(SOURCE_FILES) setup-res.rc
 else
 chocolate_setup_SOURCES=$(SOURCE_FILES)
 endif
+
+chocolate_setup_LDADD = ../textscreen/libtextscreen.a @LDFLAGS@
 
 .rc.o:
 	$(WINDRES) $^ -o $@

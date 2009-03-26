@@ -1,4 +1,4 @@
-1 ICON "..\\data\\doom.ico"
+1 ICON "../data/doom.ico"
 
 1 VERSIONINFO
 PRODUCTVERSION @WINDOWS_RC_VERSION@

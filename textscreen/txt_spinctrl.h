@@ -22,7 +22,22 @@
 #ifndef TXT_SPINCONTROL_H
 #define TXT_SPINCONTROL_H
 
+/**
+ * @file txt_spinctrl.h
+ *
+ * Spin control widget.
+ */
+
+/**
+ * Spin control widget.
+ *
+ * A spin control widget works as an input box that can be used to
+ * set numeric values, but also has buttons that allow its value
+ * to be increased or decreased.
+ */
+
 typedef struct txt_spincontrol_s txt_spincontrol_t;
+
 typedef enum
 {
     TXT_SPINCONTROL_INT,
@@ -40,7 +55,28 @@ struct txt_spincontrol_s
     char *buffer;
 };
 
+/**
+ * Create a new spin control widget tracking an integer value.
+ *
+ * @param value        Pointer to the variable containing the value
+ *                     displayed in the widget.
+ * @param min          Minimum value that may be set.
+ * @param max          Maximum value that may be set.
+ * @return             Pointer to the new spin control widget.
+ */
+
 txt_spincontrol_t *TXT_NewSpinControl(int *value, int min, int max);
+
+/**
+ * Create a new spin control widget tracking a float value.
+ *
+ * @param value        Pointer to the variable containing the value
+ *                     displayed in the widget.
+ * @param min          Minimum value that may be set.
+ * @param max          Maximum value that may be set.
+ * @return             Pointer to the new spin control widget.
+ */
+
 txt_spincontrol_t *TXT_NewFloatSpinControl(float *value, float min, float max);
 
 #endif /* #ifndef TXT_SPINCONTROL_H */

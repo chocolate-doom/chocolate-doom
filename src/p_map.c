@@ -1072,6 +1072,8 @@ P_AimLineAttack
 {
     fixed_t	x2;
     fixed_t	y2;
+
+    t1 = P_SubstNullMobj(t1);
 	
     angle >>= ANGLETOFINESHIFT;
     shootthing = t1;

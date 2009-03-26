@@ -302,12 +302,13 @@ void P_LoadNodes (int lump)
 //
 void P_LoadThings (int lump)
 {
-    byte*		data;
+    byte               *data;
     int			i;
-    mapthing_t*		mt;
+    mapthing_t         *mt;
+    mapthing_t          spawnthing;
     int			numthings;
     boolean		spawn;
-	
+
     data = W_CacheLumpNum (lump,PU_STATIC);
     numthings = W_LumpLength (lump) / sizeof(mapthing_t);
 	
@@ -317,9 +318,9 @@ void P_LoadThings (int lump)
 	spawn = true;
 
 	// Do not spawn cool, new monsters if !commercial
-	if ( gamemode != commercial)
+	if (gamemode != commercial)
 	{
-	    switch(mt->type)
+	    switch (SHORT(mt->type))
 	    {
 	      case 68:	// Arachnotron
 	      case 64:	// Archvile
@@ -339,15 +340,15 @@ void P_LoadThings (int lump)
 	    break;
 
 	// Do spawn all other stuff. 
-	mt->x = SHORT(mt->x);
-	mt->y = SHORT(mt->y);
-	mt->angle = SHORT(mt->angle);
-	mt->type = SHORT(mt->type);
-	mt->options = SHORT(mt->options);
+	spawnthing.x = SHORT(mt->x);
+	spawnthing.y = SHORT(mt->y);
+	spawnthing.angle = SHORT(mt->angle);
+	spawnthing.type = SHORT(mt->type);
+	spawnthing.options = SHORT(mt->options);
 	
-	P_SpawnMapThing (mt);
+	P_SpawnMapThing(&spawnthing);
     }
-	
+
     W_ReleaseLumpNum(lump);
 }
 
@@ -470,25 +471,36 @@ void P_LoadSideDefs (int lump)
 //
 void P_LoadBlockMap (int lump)
 {
-    int		i;
-    int		count;
-	
-    blockmaplump = W_CacheLumpNum (lump,PU_LEVEL);
-    blockmap = blockmaplump+4;
-    count = W_LumpLength (lump)/2;
+    int i;
+    int count;
+    int lumplen;
 
-    for (i=0 ; i<count ; i++)
+    lumplen = W_LumpLength(lump);
+    count = lumplen / 2;
+	
+    blockmaplump = Z_Malloc(lumplen, PU_LEVEL, NULL);
+    W_ReadLump(lump, blockmaplump);
+    blockmap = blockmaplump + 4;
+
+    // Swap all short integers to native byte ordering.
+  
+    for (i=0; i<count; i++)
+    {
 	blockmaplump[i] = SHORT(blockmaplump[i]);
+    }
 		
+    // Read the header
+
     bmaporgx = blockmaplump[0]<<FRACBITS;
     bmaporgy = blockmaplump[1]<<FRACBITS;
     bmapwidth = blockmaplump[2];
     bmapheight = blockmaplump[3];
 	
-    // clear out mobj chains
-    count = sizeof(*blocklinks)* bmapwidth*bmapheight;
-    blocklinks = Z_Malloc (count,PU_LEVEL, 0);
-    memset (blocklinks, 0, count);
+    // Clear out mobj chains
+
+    count = sizeof(*blocklinks) * bmapwidth * bmapheight;
+    blocklinks = Z_Malloc(count, PU_LEVEL, 0);
+    memset(blocklinks, 0, count);
 }
 
 

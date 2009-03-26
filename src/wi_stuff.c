@@ -347,10 +347,10 @@ static int		NUMCMAPS;
 //
 
 // You Are Here graphic
-static patch_t*		yah[2]; 
+static patch_t*		yah[3] = { NULL, NULL, NULL }; 
 
 // splat
-static patch_t*		splat;
+static patch_t*		splat[2] = { NULL, NULL };
 
 // %, : graphics
 static patch_t*		percent;
@@ -427,13 +427,32 @@ void WI_drawLF(void)
 {
     int y = WI_TITLEY;
 
-    // draw <LevelName> 
-    V_DrawPatch((SCREENWIDTH - SHORT(lnames[wbs->last]->width))/2,
-		y, FB, lnames[wbs->last]);
+    if (gamemode != commercial || wbs->last < NUMCMAPS)
+    {
+        // draw <LevelName> 
+        V_DrawPatch((SCREENWIDTH - SHORT(lnames[wbs->last]->width))/2,
+                    y, FB, lnames[wbs->last]);
 
-    // draw "Finished!"
-    y += (5*SHORT(lnames[wbs->last]->height))/4;
-    
+        // draw "Finished!"
+        y += (5*SHORT(lnames[wbs->last]->height))/4;
+    }
+    else if (wbs->last == NUMCMAPS)
+    {
+        // MAP33 - nothing is displayed!
+    }
+    else if (wbs->last > NUMCMAPS)
+    {
+        // > MAP33.  Doom bombs out here with a Bad V_DrawPatch error.
+        // I'm pretty sure that doom2.exe is just reading into random
+        // bits of memory at this point, but let's try to be accurate
+        // anyway.  This deliberately triggers a V_DrawPatch error.
+
+        patch_t tmp = { SCREENWIDTH, SCREENHEIGHT, 1, 1, 
+                        { 0, 0, 0, 0, 0, 0, 0, 0 } };
+
+        V_DrawPatch(0, y, FB, &tmp);
+    }
+
     V_DrawPatch((SCREENWIDTH - SHORT(finished->width))/2,
 		y, FB, finished);
 }
@@ -489,7 +508,7 @@ WI_drawOnLnode
 	{
 	    i++;
 	}
-    } while (!fits && i!=2);
+    } while (!fits && i!=2 && c[i] != NULL);
 
     if (fits && i<2)
     {
@@ -800,11 +819,11 @@ void WI_drawShowNextLoc(void)
 
 	// draw a splat on taken cities.
 	for (i=0 ; i<=last ; i++)
-	    WI_drawOnLnode(i, &splat);
+	    WI_drawOnLnode(i, splat);
 
 	// splat the secret level?
 	if (wbs->didsecret)
-	    WI_drawOnLnode(8, &splat);
+	    WI_drawOnLnode(8, splat);
 
 	// draw flashing ptr
 	if (snl_pointeron)
@@ -1590,7 +1609,7 @@ static void WI_loadUnloadData(load_callback_t callback)
         callback(DEH_String("WIURH1"), &yah[1]);
 
 	// splat
-        callback(DEH_String("WISPLAT"), &splat);
+        callback(DEH_String("WISPLAT"), &splat[0]);
 	
 	if (wbs->epsd < 3)
 	{

@@ -1,3 +1,276 @@
+2008-12-10 20:20:10 fraggle
+	
+	Fix crash when playing Doom 1 levels.
+
+2008-12-10 01:06:08 fraggle
+	
+	Bump version to 1.2.0, update NEWS and ChangeLog.
+
+2008-12-10 01:01:19 fraggle
+	
+	Undo previous change.
+
+2008-12-10 00:42:49 fraggle
+	
+	Set icon before calling TXT_Init, for setup and ENDOOM screens.
+
+2008-12-10 00:00:55 fraggle
+	
+	Fix window icon/title under Windows XP Luna theme.
+
+2008-12-09 23:32:19 fraggle
+	
+	Make intermission screen work on MAP33, to be consistent with Vanilla
+	Doom.  Also, make levels after MAP33 trigger a V_DrawPatch error.
+
+2008-12-09 20:35:17 fraggle
+	
+	Add check for sched_setaffinity to configure and only use it if it is
+	found.  Display a message if we don't have any way to set processor
+	affinity.
+
+2008-12-09 19:56:43 fraggle
+	
+	Add SDL_CFLAGS, SDL_LDFLAGS to default compile flags, and check for
+	SDL in configure before checking for libraries and headers, to fix
+	Windows.
+
+2008-12-03 22:09:22 fraggle
+	
+	Use FILE_MAP_COPY instead of FILE_MAP_ALL_ACCESS for mapping files
+	(thanks to Christian Chech).
+
+2008-12-01 21:08:23 fraggle
+	
+	Don't try to read SDL events until initialised.
+
+2008-10-01 21:22:09 fraggle
+	
+	Add .lvimrc local vim project settings.
+
+2008-09-21 19:20:32 fraggle
+	
+	Don't play DEMO4 if gameversion is emulating chex.exe - it only plays
+	demos 1-3.
+
+2008-09-20 19:18:06 fraggle
+	
+	Set processor affinity under non-Windows platforms using the POSIX
+	API.
+
+2008-09-16 01:17:20 rtc_marine
+	
+	- Force use of dwarf-2 debugging information - Fix an age-old problem
+	of not being able to find -lpcsound, the debug target was looking for
+	it rather than -lpcsound-dbg
+
+2008-09-14 19:14:46 fraggle
+	
+	Add -nocheat command line parameter to disable applying cheats from
+	dehacked files.
+
+2008-09-07 18:47:08 fraggle
+	
+	Strip out NUL characters from dehacked files; this makes the dehacked
+	patch with portal.wad load properly.
+
+2008-08-29 00:31:53 fraggle
+	
+	Update TODO.
+
+2008-08-24 03:06:26 fraggle
+	
+	Update INSTALL to include some notes about Chex Quest.
+
+2008-08-24 02:58:57 fraggle
+	
+	Update missing chex.deh to reference its location in the idgames
+	repository.
+
+2008-08-20 19:27:56 fraggle
+	
+	Use / as a path separator, to allow cross-compiling of resource files
+	(thanks Anonymous bug reporter)
+
+2008-08-19 20:51:41 fraggle
+	
+	Fix crash related to A_BFGSpray with NULL target when using dehacked
+	patches - discovered with insaned2.deh (thanks CSonicGo)
+
+2008-08-09 18:09:23 fraggle
+	
+	Don't modify level lumps when loading levels.
+
+2008-08-08 23:38:25 fraggle
+	
+	Use FILE_MAP_ALL_ACCESS rather than FILE_MAP_READ when mmapping files
+	under Windows (thanks entryway)
+
+2008-08-02 14:29:37 fraggle
+	
+	Search for chex.deh in WAD path.
+
+2008-07-31 23:01:38 fraggle
+	
+	Update netcode to allow chex quest gameversion.
+
+2008-07-31 22:29:20 fraggle
+	
+	Update Chocolate Setup to support chex.wad.
+
+2008-07-31 21:21:58 fraggle
+	
+	Fix crash on Chex Quest intermission screen (thanks entryway)
+
+2008-07-31 21:06:42 fraggle
+	
+	Automatically load chex.deh on startup if playing in chex mode.
+
+2008-07-31 20:43:45 fraggle
+	
+	Fix mistake in exit confirmation string that was breaking dehacked
+	patches that replace it.
+
+2008-07-31 12:55:35 rtc_marine
+	
+	Update codeblocks project to locate setup manifest
+
+2008-07-29 19:06:04 fraggle
+	
+	Don't do the Final Doom teleport quirk with Chex Quest, as chex.exe
+	doesn't do it.
+
+2008-07-29 19:05:16 fraggle
+	
+	Monsters don't drop ammo in Chex Quest.
+
+2008-07-29 01:50:56 fraggle
+	
+	Add magic dehacked comment to enable long cheat sequences (also for
+	Chex Quest support)
+
+2008-07-27 00:51:25 fraggle
+	
+	In chex mode, always warp to an episode 1 level, and display the level
+	title in the automap for the equivalent episode 1 level.
+
+2008-07-26 16:45:52 fraggle
+	
+	Allow magic comments in dehacked files that disable the DOS dehacked
+	text replacement limit, so that we can use a dehacked patch to emulate
+	chex.exe.
+
+2008-07-26 16:29:08 fraggle
+	
+	Chex Quest's chex.exe is based on the Final Doom exe, not the Ultimate
+	Doom exe.
+
+2008-07-26 16:23:06 fraggle
+	
+	Fix "dimensional shambler waiting at the dos prompt" quit message to
+	match the one in doom2.exe precisely.
+
+2008-07-25 20:56:39 fraggle
+	
+	Initial chex.exe emulation.
+
+2008-07-10 00:22:34 fraggle
+	
+	Fix dehacked replacements for the "press y to quit to dos" string.
+
+2008-07-07 10:10:26 fraggle
+	
+	Fix quit screen confirm message to say "quit to dos" rather than just
+	"quit" (thanks MikeRS)
+
+2008-06-14 18:42:06 fraggle
+	
+	Add a helpful message for people trying to play with the wrong IWAD.
+
+2008-06-11 01:14:07 fraggle
+	
+	Only apply dehacked green armor class to the green armor shirt, not
+	the armor helmets as well.
+
+2008-06-09 19:11:24 fraggle
+	
+	Always set armor class to 2 when picking up a megasphere (thanks
+	entryway).
+
+2008-05-05 04:52:08 GhostlyDeath
+	
+	Updated Code::Blocks project for new files
+
+2008-05-05 04:48:45 fraggle
+	
+	Add setup-manifest.xml to dist.
+
+2008-05-05 04:44:28 GhostlyDeath
+	
+	Updated VC++ Project for added files; Manifest should have version
+	1.1.1.0 not 1.0.0.0; the rc files in the codeblocks folder have been
+	updated
+
+2008-05-05 04:11:29 fraggle
+	
+	(Hopefully) fix for Windows Vista asking for security elevation when
+	running chocolate-setup.
+
+2008-05-04 22:43:38 fraggle
+	
+	Remove Vanilla Doom reload hack.
+
+2008-05-04 18:09:51 fraggle
+	
+	Add command line option to disable mmapped WAD I/O.
+
+2008-05-04 17:45:10 fraggle
+	
+	Fix win32 mmap driver and add to build.
+
+2008-05-02 23:52:00 fraggle
+	
+	Add Windows memory mapping backend.
+
+2008-05-02 20:19:38 fraggle
+	
+	Memory-mapped WAD access.
+
+2008-05-02 20:18:52 fraggle
+	
+	Fix up some more code calling Z_Free instead of W_ReleaseLumpNum.
+
+2008-05-02 19:48:43 fraggle
+	
+	Add W_CacheLumpNum,Name API to WAD code for releasing a lump back to
+	cache when it is no longer needed.  Switch existing code to use the
+	new API instead of Z_ChangeTag.
+
+2008-05-02 18:32:09 fraggle
+	
+	Add WAD I/O abstraction layer - first step for mmapped WAD access.
+
+2008-04-26 17:31:47 fraggle
+	
+	"Python Image Library" -> "Python Imaging Library" (thanks exp(x)).
+
+2008-04-26 15:33:14 fraggle
+	
+	Add new Chocolate Doom icon.
+
+2008-04-26 00:33:00 fraggle
+	
+	Generate transparency mask for the application icon from black parts
+	of the image.
+
+2008-04-23 08:44:17 GhostlyDeath
+	
+	VC++ Project now builds
+
+2008-04-20 02:00:11 fraggle
+	
+	Bump version to 1.1.1, update ChangeLog and NEWS.
+
 2008-04-19 17:41:58 fraggle
 	
 	Fix build problem when libsamplerate support is enabled.

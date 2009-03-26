@@ -107,8 +107,11 @@ EV_Teleport
 		
                 // fraggle: this was changed in final doom, 
                 // problem between normal doom2 1.9 and final doom
+                //
+                // Note that although chex.exe is based on Final Doom,
+                // it does not have this quirk.
 
-                if (gameversion < exe_final)
+                if (gameversion < exe_final || gameversion == exe_chex)
 		    thing->z = thing->floorz;
                 
 		if (thing->player)

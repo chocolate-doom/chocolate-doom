@@ -39,6 +39,7 @@
 #define DEH_VANILLA_NUMSFX 107
 
 void DEH_Init(void);
+int DEH_LoadFile(char *filename);
 
 boolean DEH_ParseAssignment(char *line, char **variable_name, char **value);
 
@@ -57,6 +58,10 @@ char *DEH_String(char *s);
 #define DEH_String(x) (x)
 
 #endif
+
+extern boolean deh_allow_long_strings;
+extern boolean deh_allow_long_cheats;
+extern boolean deh_apply_cheats;
 
 #endif /* #ifndef DEH_MAIN_H */
 

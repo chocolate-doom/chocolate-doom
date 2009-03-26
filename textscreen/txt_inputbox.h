@@ -22,6 +22,21 @@
 #ifndef TXT_INPUTBOX_H
 #define TXT_INPUTBOX_H
 
+/**
+ * @file txt_inputbox.h
+ *
+ * Input box widget.
+ */
+
+/**
+ * Input box widget.
+ *
+ * An input box is a widget that displays a value, which can be
+ * selected to enter a new value.
+ *
+ * Input box widgets can be of an integer or string type.
+ */
+
 typedef struct txt_inputbox_s txt_inputbox_t;
 
 #include "txt_widget.h"
@@ -35,7 +50,30 @@ struct txt_inputbox_s
     void *value;
 };
 
+/**
+ * Create a new input box widget for controlling a string value.
+ *
+ * @param value         Pointer to a string variable that contains
+ *                      a pointer to the current value of the
+ *                      input box.  The value should be allocated
+ *                      dynamically; when the string is changed it
+ *                      will be freed and the variable set to point
+ *                      to the new string value.
+ * @param size          Width of the input box, in characters.
+ * @return              Pointer to the new input box widget.
+ */
+
 txt_inputbox_t *TXT_NewInputBox(char **value, int size);
+
+/**
+ * Create a new input box widget for controlling an integer value.
+ *
+ * @param value         Pointer to an integer variable containing
+ *                      the value of the input box.
+ * @param size          Width of the input box, in characters.
+ * @return              Pointer to the new input box widget.
+ */
+
 txt_inputbox_t *TXT_NewIntInputBox(int *value, int size);
 
 #endif /* #ifndef TXT_INPUTBOX_H */

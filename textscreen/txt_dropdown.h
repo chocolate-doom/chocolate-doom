@@ -22,6 +22,22 @@
 #ifndef TXT_DROPDOWN_H
 #define TXT_DROPDOWN_H
 
+/**
+ * @file txt_dropdown.h
+ *
+ * Dropdown list widget.
+ */
+
+/**
+ * Dropdown list widget.
+ *
+ * A dropdown list allows the user to select from a list of values,
+ * which appears when the list is selected.
+ *
+ * When the value of a dropdown list is changed, the "changed" signal
+ * is emitted.
+ */
+
 typedef struct txt_dropdown_list_s txt_dropdown_list_t;
 
 #include "txt_widget.h"
@@ -37,6 +53,20 @@ struct txt_dropdown_list_s
     char **values;
     int num_values;
 };
+
+/**
+ * Create a new dropdown list widget.
+ *
+ * The parameters specify a list of string labels, and a pointer to an
+ * integer variable.  The variable contains the current "value" of the
+ * list, as an index within the list of labels.
+ *
+ * @param variable        Pointer to the variable containing the
+ *                        list's value.
+ * @param values          Pointer to an array of strings containing
+ *                        the labels to use for the list.
+ * @param num_values      The number of variables in the list.
+ */
 
 txt_dropdown_list_t *TXT_NewDropdownList(int *variable, 
                                          char **values, int num_values);

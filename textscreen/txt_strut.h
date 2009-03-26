@@ -22,14 +22,23 @@
 #ifndef TXT_STRUT_H
 #define TXT_STRUT_H
 
+/**
+ * @file txt_strut.h
+ *
+ * Strut widget.
+ */
+
+/**
+ * Strut widget.
+ *
+ * A strut is a widget that takes up a fixed amount of space.  It can
+ * be visualised as a transparent box.  Struts are used to provide
+ * spacing between widgets.
+ */
+
 typedef struct txt_strut_s txt_strut_t;
 
 #include "txt_widget.h"
-
-//
-// A strut is used to force a table to a minimum width/height.  It is not
-// visible but it takes up space.
-// 
 
 struct txt_strut_s
 {
@@ -37,6 +46,13 @@ struct txt_strut_s
     int width;
     int height;
 };
+
+/**
+ * Create a new strut.
+ *
+ * @param width      Width of the strut, in characters.
+ * @param height     Height of the strut, in characters.
+ */
 
 txt_strut_t *TXT_NewStrut(int width, int height);
 

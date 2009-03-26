@@ -25,43 +25,115 @@
 //-----------------------------------------------------------------------------
 
 
+#include "config.h"
+
 #include "SDL.h"
-
-#include <signal.h>
-
-#ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
 
 #include "doomdef.h"
 #include "i_system.h"
 #include "m_argv.h"
 #include "d_main.h"
 
-int main(int argc, char **argv) 
-{ 
-    // save arguments
+#if defined(_WIN32)
 
-    myargc = argc; 
-    myargv = argv; 
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 
-#ifdef _WIN32
-    // Set the process affinity mask to 1 on Windows, so that all threads
-    // run on the same processor.  This is a workaround for a bug in 
-    // SDL_mixer that causes occasional crashes.
+typedef BOOL WINAPI (*SetAffinityFunc)(HANDLE hProcess, DWORD_PTR mask);
 
-    if (!SetProcessAffinityMask(GetCurrentProcess(), 1))
+// This is a bit more complicated than it really needs to be.  We really
+// just need to call the SetProcessAffinityMask function, but that
+// function doesn't exist on systems before Windows 2000.  Instead,
+// dynamically look up the function and call the pointer to it.  This
+// way, the program will run on older versions of Windows (Win9x, etc.)
+
+static void LockCPUAffinity(void)
+{
+    HMODULE kernel32_dll;
+    SetAffinityFunc SetAffinity;
+
+    // Find the kernel interface DLL.
+
+    kernel32_dll = LoadLibrary("kernel32.dll");
+
+    if (kernel32_dll == NULL)
     {
-        fprintf(stderr, "Failed to set process affinity mask (%d)\n",
-                (int) GetLastError());
+        // This should never happen...
+
+        fprintf(stderr, "Failed to load kernel32.dll\n");
+        return;
     }
+
+    // Find the SetProcessAffinityMask function.
+
+    SetAffinity = GetProcAddress(kernel32_dll, "SetProcessAffinityMask");
+
+    // If the function was not found, we are on an old (Win9x) system
+    // that doesn't have this function.  That's no problem, because
+    // those systems don't support SMP anyway.
+
+    if (SetAffinity != NULL)
+    {
+        if (!SetAffinity(GetCurrentProcess(), 1))
+        {
+            fprintf(stderr, "Failed to set process affinity (%d)\n",
+                            (int) GetLastError());
+        }
+    }
+}
+
+#elif defined(HAVE_SCHED_SETAFFINITY)
+
+#include <unistd.h>
+#include <sched.h>
+
+// Unix (Linux) version:
+
+static void LockCPUAffinity(void)
+{
+#ifdef CPU_SET
+    cpu_set_t set;
+
+    CPU_ZERO(&set);
+    CPU_SET(0, &set);
+
+    sched_setaffinity(getpid(), sizeof(set), &set);
+#else
+    unsigned long mask = 1;
+    sched_setaffinity(getpid(), sizeof(mask), &mask);
+#endif
+}
+
+#else
+
+#warning No known way to set processor affinity on this platform.
+#warning You may experience crashes due to SDL_mixer.
+
+static void LockCPUAffinity(void)
+{
+    fprintf(stderr, 
+    "WARNING: No known way to set processor affinity on this platform.\n"
+    "         You may experience crashes due to SDL_mixer.\n");
+}
+
 #endif
 
+int main(int argc, char **argv)
+{
+    // save arguments
+
+    myargc = argc;
+    myargv = argv;
+
+    // Only schedule on a single core, if we have multiple
+    // cores.  This is to work around a bug in SDL_mixer.
+
+    LockCPUAffinity();
+
     // start doom
- 
-    D_DoomMain (); 
+
+    D_DoomMain ();
 
     return 0;
-} 
+}
 
