@@ -382,14 +382,14 @@ void D_Display (void)
 					nwtest,
 					nwfactor);
 					//((unsigned)(players[displayplayer].mo->angle) >> FRACBITS) / 4);
-				M_DrawText(0,200 - 60,true,VISCheck);
+				M_WriteText(0,200 - 60,VISCheck);
 			}
 			
 			// opening
 			for (z = 0; z < 128; z++)
 				VISCheck[z] = 0;
 			sprintf(VISCheck, "PLT: %i/%i", numplats, MAXPLATS);
-			M_DrawText(0,200 - 50,true,VISCheck);
+			M_WriteText(0,200 - 50,VISCheck);
 		
 			if ((int)(lastvisplane - visplanes) < 128)
 			{
@@ -397,7 +397,7 @@ void D_Display (void)
 		 		for (z = 0; z < 128; z++)
 					VISCheck[z] = 0;
 				sprintf(VISCheck, "PLN: %i/%i (Doom = 128)", lastvisplane - visplanes, MAXVISPLANES);
-				M_DrawText(0,200 - 10,true,VISCheck);
+				M_WriteText(0,200 - 10,VISCheck);
 			}
 			else if ((int)(lastvisplane - visplanes) == 128)
 			{
@@ -409,7 +409,7 @@ void D_Display (void)
 		 		for (z = 0; z < 128; z++)
 					VISCheck[z] = 0;
 				sprintf(VISCheck, "PLN: %i/%i (Doom = 128) ===", lastvisplane - visplanes, MAXVISPLANES);
-				M_DrawText(0,200 - 10,true,VISCheck);
+				M_WriteText(0,200 - 10,VISCheck);
 			}
 			else
 			{
@@ -421,7 +421,7 @@ void D_Display (void)
 		 		for (z = 0; z < 128; z++)
 					VISCheck[z] = 0;
 				sprintf(VISCheck, "PLN: %i/%i (Doom = 128) !!!", lastvisplane - visplanes, MAXVISPLANES);
-				M_DrawText(0,200 - 10,true,VISCheck);
+				M_WriteText(0,200 - 10,VISCheck);
 			}
 			
 			// drawsegs
@@ -434,27 +434,27 @@ void D_Display (void)
 				for (z = 0; z < 128; z++)
 					VISCheck[z] = 0;
 				sprintf(VISCheck, "SEG: %i/%i HOM", ds_p - drawsegs, MAXDRAWSEGS);
-				M_DrawText(0,200 - 20,true,VISCheck);
+				M_WriteText(0,200 - 20,VISCheck);
 			}
 			else
 			{
 		 		for (z = 0; z < 128; z++)
 					VISCheck[z] = 0;
 				sprintf(VISCheck, "SEG: %i/%i", ds_p - drawsegs, MAXDRAWSEGS);
-				M_DrawText(0,200 - 20,true,VISCheck);
+				M_WriteText(0,200 - 20,VISCheck);
 			}
 			
 			// opening
 			for (z = 0; z < 128; z++)
 				VISCheck[z] = 0;
 			sprintf(VISCheck, "OPN: %i/%i", lastopening - openings, MAXOPENINGS);
-			M_DrawText(0,200 - 30,true,VISCheck);
+			M_WriteText(0,200 - 30,VISCheck);
 			
 			// vissprites
 			for (z = 0; z < 128; z++)
 				VISCheck[z] = 0;
 			sprintf(VISCheck, "SPR: %i/%i", (vissprite_p - vissprites) + 1, MAXVISSPRITES);
-			M_DrawText(0,200 - 40,true,VISCheck);
+			M_WriteText(0,200 - 40,VISCheck);
 		//}
     	
 		I_FinishUpdate ();              // page flip or blit buffer

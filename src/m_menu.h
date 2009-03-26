@@ -59,6 +59,7 @@ void M_Init (void);
 // does nothing if menu is already up.
 void M_StartControlPanel (void);
 
+void M_WriteText(int x, int y, char *s);
 
 
 extern int detailLevel;
