@@ -2,7 +2,7 @@
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
   <!-- The "name" field in this tag should be the same as the executable's
        name -->
-  <assemblyIdentity version="1.1.1.0" processorArchitecture="*"
+  <assemblyIdentity version="1.2.1.0" processorArchitecture="*"
                     name="chocolate-setup" type="win32"/>
   <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
     <security>

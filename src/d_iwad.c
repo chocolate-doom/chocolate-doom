@@ -325,7 +325,18 @@ static struct
     {"tnt.wad",      pack_tnt},
     {"doom.wad",     doom},
     {"doom1.wad",    doom},
+    {"chex.wad",     doom},
 };
+            
+// Hack for chex quest mode
+
+static void CheckChex(char *iwad_name)
+{
+    if (!strcmp(iwad_name, "chex.wad")) 
+    {
+        gameversion = exe_chex;
+    }
+}
 
 // Search a directory to try to find an IWAD
 // Returns the location of the IWAD if found, otherwise NULL.
@@ -354,7 +365,9 @@ static char *SearchDirectoryForIWAD(char *dir)
 
         if (M_FileExists(filename))
         {
+            CheckChex(iwads[i].name);
             gamemission = iwads[i].mission;
+
             return filename;
         }
 
@@ -387,6 +400,7 @@ static void IdentifyIWADByName(char *name)
         if (!strcasecmp(name + strlen(name) - strlen(iwadname), 
                         iwadname))
         {
+            CheckChex(iwads[i].name);
             gamemission = iwads[i].mission;
             break;
         }
@@ -619,6 +633,43 @@ char *D_FindIWAD(void)
 }
 
 // 
+// Get the IWAD name used for savegames.
+//
+
+static char *SaveGameIWADName(void)
+{
+    size_t i;
+
+    // Chex quest hack
+
+    if (gameversion == exe_chex)
+    {
+        return "chex.wad";
+    }
+
+    // Find what subdirectory to use for savegames
+    //
+    // They should be stored in something like
+    //    ~/.chocolate-doom/savegames/doom.wad/
+    //
+    // The directory depends on the IWAD, so that savegames for
+    // different IWADs are kept separate.
+    //
+    // Note that we match on gamemission rather than on IWAD name.
+    // This ensures that doom1.wad and doom.wad saves are stored
+    // in the same place.
+
+    for (i=0; i<arrlen(iwads); ++i)
+    {
+        if (gamemission == iwads[i].mission)
+        {
+            return iwads[i].name;
+        }
+    }
+    
+    return NULL;
+}
+// 
 // SetSaveGameDir
 //
 // Chooses the directory used to store saved games.
@@ -626,7 +677,7 @@ char *D_FindIWAD(void)
 
 void D_SetSaveGameDir(void)
 {
-    size_t i;
+    char *iwad_name;
 
     if (!strcmp(configdir, ""))
     {
@@ -638,34 +689,23 @@ void D_SetSaveGameDir(void)
     {
         // Directory for savegames
 
+        iwad_name = SaveGameIWADName();
+
+        if (iwad_name == NULL) 
+        {
+            iwad_name = "unknown.wad";
+        }
+
         savegamedir = Z_Malloc(strlen(configdir) + 30, PU_STATIC, 0);
-        sprintf(savegamedir, "%ssavegames", configdir);
+        sprintf(savegamedir, "%ssavegames%c", configdir,
+                             DIR_SEPARATOR);
 
         M_MakeDirectory(savegamedir);
 
-        // Find what subdirectory to use for savegames
-        //
-        // They should be stored in something like
-        //    ~/.chocolate-doom/savegames/doom.wad/
-        //
-        // The directory depends on the IWAD, so that savegames for
-        // different IWADs are kept separate.
-        //
-        // Note that we match on gamemission rather than on IWAD name.
-        // This ensures that doom1.wad and doom.wad saves are stored
-        // in the same place.
+        sprintf(savegamedir + strlen(savegamedir), "%s%c",
+                iwad_name, DIR_SEPARATOR);
 
-        for (i=0; i<arrlen(iwads); ++i)
-        {
-            if (gamemission == iwads[i].mission)
-            {
-                sprintf(savegamedir + strlen(savegamedir), 
-                        "%c%s%c", 
-                        DIR_SEPARATOR, iwads[i].name, DIR_SEPARATOR);
-                M_MakeDirectory(savegamedir);
-                break;
-            }
-        }
+        M_MakeDirectory(savegamedir);
     }
 }
 

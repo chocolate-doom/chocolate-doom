@@ -108,13 +108,37 @@ static void DEH_CheatParseLine(deh_context_t *context, char *line, void *tag)
 
     i = 0;
 
-    while (i<cheat->seq->sequence_len && unsvalue[i] != 0 && unsvalue[i] != 0xff)
+    while (unsvalue[i] != 0 && unsvalue[i] != 0xff)
     {
-        cheat->seq->sequence[i] = unsvalue[i];
+        // If the cheat length exceeds the Vanilla limit, stop.  This
+        // does not apply if we have the limit turned off.
+
+        if (!deh_allow_long_cheats && i >= cheat->seq->sequence_len)
+        {
+            DEH_Warning(context, "Cheat sequence longer than supported by "
+                                 "Vanilla dehacked");
+            break;
+        }
+
+	if (deh_apply_cheats)
+	{
+	    cheat->seq->sequence[i] = unsvalue[i];
+	}
         ++i;
+
+        // Absolute limit - don't exceed
+
+        if (i >= MAX_CHEAT_LEN - cheat->seq->parameter_chars)
+        {
+            DEH_Error(context, "Cheat sequence too long!");
+            return;
+        }
     }
 
-    cheat->seq->sequence[i] = '\0';
+    if (deh_apply_cheats)
+    {
+        cheat->seq->sequence[i] = '\0';
+    }
 }
 
 deh_section_t deh_section_cheat =

@@ -53,6 +53,7 @@
 #define HU_TITLE2	(mapnames2[gamemap-1])
 #define HU_TITLEP	(mapnamesp[gamemap-1])
 #define HU_TITLET	(mapnamest[gamemap-1])
+#define HU_TITLE_CHEX   (mapnames[gamemap - 1])
 #define HU_TITLEHEIGHT	1
 #define HU_TITLEX	0
 #define HU_TITLEY	(167 - SHORT(hu_font[0]->height))
@@ -395,7 +396,15 @@ void HU_Start(void)
          s = "Unknown level";
          break;
     }
-    
+
+    // Chex.exe always uses the episode 1 level title
+    // eg. E2M1 gives the title for E1M1
+
+    if (gameversion == exe_chex)
+    {
+        s = HU_TITLE_CHEX;
+    }
+
     // dehacked substitution to get modified level name
 
     s = DEH_String(s);

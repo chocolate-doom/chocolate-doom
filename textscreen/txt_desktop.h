@@ -22,18 +22,47 @@
 #ifndef TXT_DESKTOP_H
 #define TXT_DESKTOP_H
 
+/**
+ * @file txt_desktop.h
+ *
+ * Textscreen desktop.
+ */
+
 #include "txt_window.h"
 
 void TXT_AddDesktopWindow(txt_window_t *win);
 void TXT_RemoveDesktopWindow(txt_window_t *win);
-void TXT_SetDesktopTitle(char *title);
 void TXT_DrawDesktop(void);
-void TXT_GUIMainLoop(void);
 void TXT_DispatchEvents(void);
-void TXT_ExitMainLoop(void);
 void TXT_DrawWindow(txt_window_t *window, int selected);
 void TXT_WindowKeyPress(txt_window_t *window, int c);
 
-#endif /* #ifndef TXT_DESKTOP_T */
+/**
+ * Set the title displayed at the top of the screen.
+ *
+ * @param title         The title to display.
+ */
+
+void TXT_SetDesktopTitle(char *title);
+
+/**
+ * Exit the currently-running main loop and return from the
+ * @ref TXT_GUIMainLoop function.
+ */
+
+void TXT_ExitMainLoop(void);
+
+/**
+ * Start the main event loop.  At least one window must have been
+ * opened prior to running this function.  When no windows are left
+ * open, the event loop exits.
+ *
+ * It is possible to trigger an exit from this function using the
+ * @ref TXT_ExitMainLoop function.
+ */
+
+void TXT_GUIMainLoop(void);
+
+#endif /* #ifndef TXT_DESKTOP_H */
 
 

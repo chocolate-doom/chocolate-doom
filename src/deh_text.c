@@ -31,6 +31,7 @@
 
 #include "deh_defs.h"
 #include "deh_io.h"
+#include "deh_main.h"
 
 typedef struct 
 {
@@ -194,7 +195,7 @@ static void *DEH_TextStart(deh_context_t *context, char *line)
     // Only allow string replacements that are possible in Vanilla Doom.  
     // Chocolate Doom is unforgiving!
 
-    if (tolen > TXT_MaxStringLength(fromlen))
+    if (!deh_allow_long_strings && tolen > TXT_MaxStringLength(fromlen))
     {
         DEH_Error(context, "Replacement string is longer than the maximum "
                            "possible in doom.exe");

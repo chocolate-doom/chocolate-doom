@@ -225,7 +225,7 @@ void I_Error (char *error, ...)
     
     // Message first.
     va_start(argptr, error);
-    fprintf(stderr, "Error: ");
+    fprintf(stderr, "\nError: ");
     vfprintf(stderr, error, argptr);
     fprintf(stderr, "\n");
     va_end(argptr);

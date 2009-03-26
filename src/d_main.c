@@ -602,7 +602,7 @@ void D_DoAdvanceDemo (void)
     paused = false;
     gameaction = ga_nothing;
 
-    if ( gamemode == retail )
+    if (gamemode == retail && gameversion != exe_chex)
       demosequence = (demosequence+1)%7;
     else
       demosequence = (demosequence+1)%6;
@@ -760,6 +760,7 @@ static struct
     {"Doom 1.9",             "1.9",        exe_doom_1_9},
     {"Ultimate Doom",        "ultimate",   exe_ultimate},
     {"Final Doom",           "final",      exe_final},
+    {"Chex Quest",           "chex",       exe_chex},
     { NULL,                  NULL,         0},
 };
 
@@ -808,7 +809,11 @@ static void InitGameVersion(void)
     {
         // Determine automatically
 
-        if (gamemode == shareware || gamemode == registered)
+        if (gameversion == exe_chex) 
+        {
+            // Already determined
+        }
+        else if (gamemode == shareware || gamemode == registered)
         {
             // original
 
@@ -859,6 +864,32 @@ void PrintGameVersion(void)
             printf("Emulating the behavior of the "
                    "'%s' executable.\n", gameversions[i].description);
             break;
+        }
+    }
+}
+
+// Load the Chex Quest dehacked file, if we are in Chex mode.
+
+static void LoadChexDeh(void)
+{
+    char *chex_deh;
+
+    if (gameversion == exe_chex)
+    {
+        chex_deh = D_FindWADByName("chex.deh");
+
+        if (chex_deh == NULL)
+        {
+            I_Error("Unable to find Chex Quest dehacked file (chex.deh).\n"
+                    "The dehacked file is required in order to emulate\n"
+                    "chex.exe correctly.  It can be found in your nearest\n"
+                    "/idgames repository mirror at:\n\n"
+                    "   utils/exe_edit/patches/chexdeh.zip");
+        }
+
+        if (!DEH_LoadFile(chex_deh))
+        {
+            I_Error("Failed to load chex.deh needed for emulating chex.exe.");
         }
     }
 }
@@ -1293,6 +1324,7 @@ void D_DoomMain (void)
     
     D_IdentifyVersion();
     InitGameVersion();
+    LoadChexDeh();
     D_SetGameDescription();
     D_SetSaveGameDir();
 

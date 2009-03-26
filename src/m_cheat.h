@@ -37,7 +37,7 @@
 #define CHEAT(value, parameters) \
     { value, sizeof(value) - 1, parameters, 0, 0, "" }
 
-#define MAX_CHEAT_LEN 15
+#define MAX_CHEAT_LEN 25
 #define MAX_CHEAT_PARAMS 5
 
 typedef struct

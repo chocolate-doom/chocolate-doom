@@ -35,6 +35,12 @@
 #include "w_file.h"
 #include "z_zone.h"
 
+// This constant doesn't exist in VC6:
+
+#ifndef INVALID_SET_FILE_POINTER
+#define INVALID_SET_FILE_POINTER 0xffffffff
+#endif
+
 typedef struct
 {
     wad_file_t wad;
@@ -60,7 +66,9 @@ static void MapFile(win32_wad_file_t *wad, char *filename)
         return;
     }
 
-    wad->wad.mapped = MapViewOfFile(wad->handle_map, FILE_MAP_READ, 0, 0, 0);
+    wad->wad.mapped = MapViewOfFile(wad->handle_map,
+                                    FILE_MAP_COPY,
+                                    0, 0, 0);
 
     if (wad->wad.mapped == NULL)
     {

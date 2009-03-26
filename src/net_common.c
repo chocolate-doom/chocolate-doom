@@ -566,7 +566,7 @@ boolean NET_ValidGameSettings(GameMode_t mode, GameMission_t mission,
     if (settings->skill < sk_noitems || settings->skill > sk_nightmare)
         return false;
 
-    if (settings->gameversion < exe_doom_1_9 || settings->gameversion > exe_final)
+    if (settings->gameversion < exe_doom_1_9 || settings->gameversion > exe_chex)
         return false;
 
     if (mode == shareware || mode == retail || mode == registered)

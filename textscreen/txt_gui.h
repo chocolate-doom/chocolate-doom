@@ -32,6 +32,9 @@ void TXT_DrawWindowFrame(char *title, int x, int y, int w, int h);
 void TXT_DrawSeparator(int x, int y, int w);
 void TXT_DrawString(char *s);
 
+void TXT_DrawHorizScrollbar(int x, int y, int w, int cursor, int range);
+void TXT_DrawVertScrollbar(int x, int y, int h, int cursor, int range);
+
 void TXT_InitClipArea(void);
 void TXT_PushClipArea(int x1, int x2, int y1, int y2);
 void TXT_PopClipArea(void);

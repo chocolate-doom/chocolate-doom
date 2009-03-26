@@ -15,7 +15,7 @@
 				<Option createDefFile="1" />
 				<Compiler>
 					<Add option="-W" />
-					<Add option="-g" />
+					<Add option="-gdwarf-2" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -116,6 +116,7 @@
 		<Extensions>
 			<code_completion />
 			<envvars />
+			<debugger />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

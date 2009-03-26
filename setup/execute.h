@@ -31,6 +31,7 @@ typedef struct execute_context_s execute_context_t;
 #define IWAD_TNT      (1 << 2)       /* tnt.wad */
 #define IWAD_DOOM     (1 << 3)       /* doom.wad */
 #define IWAD_DOOM1    (1 << 4)       /* doom1.wad */
+#define IWAD_CHEX     (1 << 5)       /* chex.wad */
 
 execute_context_t *NewExecuteContext(void);
 void AddCmdLineParameter(execute_context_t *context, char *s, ...);

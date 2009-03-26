@@ -22,6 +22,18 @@
 #ifndef TXT_LABEL_H
 #define TXT_LABEL_H
 
+/**
+ * @file txt_label.h
+ *
+ * Text label widget.
+ */
+
+/**
+ * Label widget.
+ *
+ * A label widget does nothing except show a text label.
+ */
+
 typedef struct txt_label_s txt_label_t;
 
 #include "txt_main.h"
@@ -37,9 +49,40 @@ struct txt_label_s
     txt_color_t bgcolor;
 };
 
+/**
+ * Create a new label widget.
+ *
+ * @param label         String to display in the widget.
+ * @return              Pointer to the new label widget.
+ */
+
 txt_label_t *TXT_NewLabel(char *label);
+
+/**
+ * Set the string displayed in a label widget.
+ *
+ * @param label         The widget.
+ * @param value         The string to display.
+ */
+
 void TXT_SetLabel(txt_label_t *label, char *value);
+
+/**
+ * Set the background color of a label widget.
+ *
+ * @param label         The widget.
+ * @param color         The background color to use.
+ */
+
 void TXT_SetBGColor(txt_label_t *label, txt_color_t color);
+
+/**
+ * Set the foreground color of a label widget.
+ *
+ * @param label         The widget.
+ * @param color         The foreground color to use.
+ */
+
 void TXT_SetFGColor(txt_label_t *label, txt_color_t color);
 
 #endif /* #ifndef TXT_LABEL_H */
