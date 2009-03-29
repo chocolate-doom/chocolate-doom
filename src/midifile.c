@@ -33,6 +33,7 @@
 
 #define HEADER_CHUNK_ID "MThd"
 #define TRACK_CHUNK_ID  "MTrk"
+#define MAX_BUFFER_SIZE 0x10000
 
 typedef struct
 {
@@ -68,7 +69,7 @@ static boolean CheckChunkHeader(chunk_header_t *chunk,
 
     if (!result)
     {
-        fprintf(stderr, "CheckChunkHeader: Expected '%s' chunk header!\n",
+        fprintf(stderr, "CheckChunkHeader: Expected '%s' chunk header\n",
                         expected_id);
     }
 
@@ -150,7 +151,7 @@ midi_file_t *MIDI_OpenFile(char *filename)
 
     if (file->stream == NULL)
     {
-        fprintf(stderr, "Failed to open '%s'\n", filename);
+        fprintf(stderr, "MIDI_OpenFile: Failed to open '%s'\n", filename);
         free(file);
         return NULL;
     }
@@ -193,6 +194,7 @@ static boolean ReadByte(midi_file_t *file, byte *result)
 
     if (c == EOF)
     {
+        fprintf(stderr, "ReadByte: Unexpected end of file\n");
         return false;
     }
     else
@@ -216,7 +218,8 @@ static boolean ReadVariableLength(midi_file_t *file, unsigned int *result)
     {
         if (!ReadByte(file, &b))
         {
-            fprintf(stderr, "Error while reading variable-length value\n");
+            fprintf(stderr, "ReadVariableLength: Error while reading "
+                            "variable-length value\n");
             return false;
         }
 
@@ -233,7 +236,8 @@ static boolean ReadVariableLength(midi_file_t *file, unsigned int *result)
         }
     }
 
-    fprintf(stderr, "Variable-length value too long: maximum of four bytes!\n");;
+    fprintf(stderr, "ReadVariableLength: Variable-length value too "
+                    "long: maximum of four bytes\n");
     return false;
 }
 
@@ -242,6 +246,13 @@ static boolean ReadVariableLength(midi_file_t *file, unsigned int *result)
 static boolean ExpandBuffer(midi_file_t *file, unsigned int new_size)
 {
     byte *new_buffer;
+
+    if (new_size > MAX_BUFFER_SIZE)
+    {
+        fprintf(stderr, "ExpandBuffer: Tried to expand buffer to %u bytes\n",
+                        new_size);
+        return false;
+    }
 
     if (file->buffer_size < new_size)
     {
@@ -294,7 +305,7 @@ static boolean ReadByteSequence(midi_file_t *file, unsigned int num_bytes)
 // (three byte) otherwise it is single parameter (two byte)
 
 static boolean ReadChannelEvent(midi_file_t *file, midi_event_t *event,
-                                int event_type, boolean two_param)
+                                byte event_type, boolean two_param)
 {
     byte b;
 
@@ -307,6 +318,8 @@ static boolean ReadChannelEvent(midi_file_t *file, midi_event_t *event,
 
     if (!ReadByte(file, &b))
     {
+        fprintf(stderr, "ReadChannelEvent: Error while reading channel "
+                        "event parameters\n");
         return false;
     }
 
@@ -318,6 +331,8 @@ static boolean ReadChannelEvent(midi_file_t *file, midi_event_t *event,
     {
         if (!ReadByte(file, &b))
         {
+            fprintf(stderr, "ReadChannelEvent: Error while reading channel "
+                            "event parameters\n");
             return false;
         }
 
@@ -389,7 +404,7 @@ static boolean ReadMetaEvent(midi_file_t *file, midi_event_t *event)
 
     event->data.meta.data = file->buffer;
 
-    return false;
+    return true;
 }
 
 boolean MIDI_ReadEvent(midi_file_t *file, midi_event_t *event)
