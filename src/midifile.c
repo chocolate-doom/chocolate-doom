@@ -53,6 +53,10 @@ struct midi_file_s
     FILE *stream;
     midi_header_t header;
     unsigned int data_len;
+
+    // Data buffer used to store data read for SysEx or meta events:
+    byte *buffer;
+    unsigned int buffer_size;
 };
 
 static boolean CheckChunkHeader(chunk_header_t *chunk,
@@ -137,6 +141,9 @@ midi_file_t *MIDI_OpenFile(char *filename)
         return NULL;
     }
 
+    file->buffer = NULL;
+    file->buffer_size = 0;
+
     // Open file
 
     file->stream = fopen(filename, "rb");
@@ -172,7 +179,114 @@ midi_file_t *MIDI_OpenFile(char *filename)
 void MIDI_CloseFile(midi_file_t *file)
 {
     fclose(file->stream);
+    free(file->buffer);
     free(file);
+}
+
+// Read a single byte.  Returns false on error.
+
+static boolean ReadByte(midi_file_t *file, byte *result)
+{
+    int c;
+
+    c = fgetc(file->stream);
+
+    if (c == EOF)
+    {
+        return false;
+    }
+    else
+    {
+        *result = (byte) c;
+
+        return true;
+    }
+}
+
+// Read a variable-length value.
+
+static boolean ReadVariableLength(midi_file_t *file, unsigned int *result)
+{
+    int i;
+    byte b;
+
+    *result = 0;
+
+    for (i=0; i<4; ++i)
+    {
+        if (!ReadByte(file, &b))
+        {
+            fprintf(stderr, "Error while reading variable-length value\n");
+            return false;
+        }
+
+        // Insert the bottom seven bits from this byte.
+
+        *result <<= 7;
+        *result |= b & 0x7f;
+
+        // If the top bit is not set, this is the end.
+
+        if ((b & 0x80) == 0)
+        {
+            return true;
+        }
+    }
+
+    fprintf(stderr, "Variable-length value too long: maximum of four bytes!\n");;
+    return false;
+}
+
+// Expand the size of the buffer used for SysEx/Meta events:
+
+static boolean ExpandBuffer(midi_file_t *file, unsigned int new_size)
+{
+    byte *new_buffer;
+
+    if (file->buffer_size < new_size)
+    {
+        // Reallocate to a larger size:
+
+        new_buffer = realloc(file->buffer, new_size);
+
+        if (new_buffer == NULL)
+        {
+            fprintf(stderr, "ExpandBuffer: Failed to expand buffer to %u "
+                            "bytes\n", new_size);
+            return false;
+        }
+
+        file->buffer = new_buffer;
+        file->buffer_size = new_size;
+    }
+
+    return true;
+}
+
+// Read a byte sequence into the data buffer.
+
+static boolean ReadByteSequence(midi_file_t *file, unsigned int num_bytes)
+{
+    unsigned int i;
+
+    // Check that we have enough space:
+
+    if (!ExpandBuffer(file, num_bytes))
+    {
+        return false;
+    }
+
+    for (i=0; i<num_bytes; ++i)
+    {
+        if (!ReadByte(file, &file->buffer[i]))
+        {
+            fprintf(stderr, "ReadByteSequence: Error while reading byte %u\n",
+                            i);
+            return false;
+        }
+    }
+
+    return true;
 }
 
 // Read a MIDI channel event.
@@ -182,7 +296,7 @@ void MIDI_CloseFile(midi_file_t *file)
 static boolean ReadChannelEvent(midi_file_t *file, midi_event_t *event,
                                 int event_type, boolean two_param)
 {
-    int c;
+    byte b;
 
     // Set basics:
 
@@ -191,27 +305,23 @@ static boolean ReadChannelEvent(midi_file_t *file, midi_event_t *event,
 
     // Read parameters:
 
-    c = fgetc(file->stream);
-
-    if (c == EOF)
+    if (!ReadByte(file, &b))
     {
         return false;
     }
 
-    event->data.channel.param1 = c;
+    event->data.channel.param1 = b;
 
     // Second parameter:
 
     if (two_param)
     {
-        c = fgetc(file->stream);
-
-        if (c == EOF)
+        if (!ReadByte(file, &b))
         {
             return false;
         }
 
-        event->data.channel.param2 = c;
+        event->data.channel.param2 = b;
     }
 
     return true;
@@ -222,26 +332,79 @@ static boolean ReadChannelEvent(midi_file_t *file, midi_event_t *event,
 static boolean ReadSysExEvent(midi_file_t *file, midi_event_t *event,
                               int event_type)
 {
-    // TODO
-    return false;
+    event->event_type = event_type;
+
+    if (!ReadVariableLength(file, &event->data.sysex.length))
+    {
+        fprintf(stderr, "ReadSysExEvent: Failed to read length of "
+                                        "SysEx block\n");
+        return false;
+    }
+
+    // Read the byte sequence:
+
+    if (!ReadByteSequence(file, event->data.sysex.length))
+    {
+        fprintf(stderr, "ReadSysExEvent: Failed while reading SysEx event\n");
+        return false;
+    }
+
+    event->data.sysex.data = file->buffer;
+
+    return true;
 }
 
 // Read meta event:
 
 static boolean ReadMetaEvent(midi_file_t *file, midi_event_t *event)
 {
-    // TODO
+    byte b;
+
+    // Read meta event type:
+
+    if (!ReadByte(file, &b))
+    {
+        fprintf(stderr, "ReadMetaEvent: Failed to read meta event type\n");
+        return false;
+    }
+
+    event->data.meta.type = b;
+
+    // Read length of meta event data:
+
+    if (!ReadVariableLength(file, &event->data.meta.length))
+    {
+        fprintf(stderr, "ReadSysExEvent: Failed to read length of "
+                                        "SysEx block\n");
+        return false;
+    }
+
+    // Read the byte sequence:
+
+    if (!ReadByteSequence(file, event->data.meta.length))
+    {
+        fprintf(stderr, "ReadSysExEvent: Failed while reading SysEx event\n");
+        return false;
+    }
+
+    event->data.meta.data = file->buffer;
+
     return false;
 }
 
 boolean MIDI_ReadEvent(midi_file_t *file, midi_event_t *event)
 {
-    int event_type;
+    byte event_type;
 
-    event_type = fgetc(file->stream);
-
-    if (event_type == EOF)
+    if (!ReadVariableLength(file, &event->delta_time))
     {
+        fprintf(stderr, "MIDI_ReadEvent: Failed to read event timestamp\n");
+        return false;
+    }
+
+    if (!ReadByte(file, &event_type))
+    {
+        fprintf(stderr, "MIDI_ReadEvent: Failed to read event type\n");
         return false;
     }
 
@@ -277,7 +440,8 @@ boolean MIDI_ReadEvent(midi_file_t *file, midi_event_t *event)
                 return ReadMetaEvent(file, event);
             }
 
-        // Fall-through deliberate -
+        // --- Fall-through deliberate ---
+        // Other 0xfx event types are unknown
 
         default:
             fprintf(stderr, "Unknown MIDI event type: 0x%x\n", event_type);
