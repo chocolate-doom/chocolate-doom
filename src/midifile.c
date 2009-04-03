@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "doomdef.h"
 #include "doomtype.h"
 #include "i_swap.h"
 #include "midifile.h"
@@ -39,15 +40,15 @@ typedef struct
 {
     byte chunk_id[4];
     unsigned int chunk_size;
-} chunk_header_t;
+} PACKEDATTR chunk_header_t;
 
 typedef struct
 {
     chunk_header_t chunk_header;
     unsigned short format_type;
     unsigned short num_tracks;
-    unsigned int time_division;
-} midi_header_t;
+    unsigned short time_division;
+} PACKEDATTR midi_header_t;
 
 struct midi_file_s
 {
@@ -65,12 +66,15 @@ static boolean CheckChunkHeader(chunk_header_t *chunk,
 {
     boolean result;
     
-    result = (strcmp((char *) chunk->chunk_id, expected_id) == 0);
+    result = (memcmp((char *) chunk->chunk_id, expected_id, 4) == 0);
 
     if (!result)
     {
-        fprintf(stderr, "CheckChunkHeader: Expected '%s' chunk header\n",
-                        expected_id);
+        fprintf(stderr, "CheckChunkHeader: Expected '%s' chunk header, "
+                        "got '%c%c%c%c'\n",
+                        expected_id,
+                        chunk->chunk_id[0], chunk->chunk_id[1],
+                        chunk->chunk_id[2], chunk->chunk_id[3]);
     }
 
     return result;
@@ -80,24 +84,26 @@ static boolean CheckChunkHeader(chunk_header_t *chunk,
 
 static boolean ReadHeaderChunk(midi_file_t *file)
 {
-    size_t bytes_read;
+    size_t records_read;
 
-    bytes_read = fread(&file->header, sizeof(midi_header_t), 1, file->stream);
+    records_read = fread(&file->header, sizeof(midi_header_t), 1, file->stream);
 
-    if (bytes_read < sizeof(midi_header_t))
+    if (records_read < 1)
     {
         return false;
     }
 
     if (!CheckChunkHeader(&file->header.chunk_header, HEADER_CHUNK_ID)
-     || LONG(file->header.chunk_header.chunk_size) != 6)
+     || SDL_SwapBE32(file->header.chunk_header.chunk_size) != 6)
     {
-        fprintf(stderr, "ReadHeaderChunk: Invalid MIDI chunk header!\n");
+        fprintf(stderr, "ReadHeaderChunk: Invalid MIDI chunk header! "
+                        "chunk_size=%i\n",
+                        SDL_SwapBE32(file->header.chunk_header.chunk_size));
         return false;
     }
 
-    if (SHORT(file->header.format_type) != 0
-     || SHORT(file->header.num_tracks) != 1)
+    if (SDL_SwapBE16(file->header.format_type) != 0
+     || SDL_SwapBE16(file->header.num_tracks) != 1)
     {
         fprintf(stderr, "ReadHeaderChunk: Only single track, "
                                         "type 0 MIDI files supported!\n");
@@ -111,12 +117,12 @@ static boolean ReadHeaderChunk(midi_file_t *file)
 
 static boolean ReadTrackChunk(midi_file_t *file)
 {
-    size_t bytes_read;
+    size_t records_read;
     chunk_header_t chunk_header;
 
-    bytes_read = fread(&chunk_header, sizeof(chunk_header_t), 1, file->stream);
+    records_read = fread(&chunk_header, sizeof(chunk_header_t), 1, file->stream);
 
-    if (bytes_read < sizeof(chunk_header))
+    if (records_read < 1)
     {
         return false;
     }
@@ -126,7 +132,7 @@ static boolean ReadTrackChunk(midi_file_t *file)
         return false;
     }
 
-    file->data_len = LONG(chunk_header.chunk_size);
+    file->data_len = SDL_SwapBE32(chunk_header.chunk_size);
 
     return true;
 }
@@ -375,6 +381,8 @@ static boolean ReadMetaEvent(midi_file_t *file, midi_event_t *event)
 {
     byte b;
 
+    event->event_type = MIDI_EVENT_META;
+
     // Read meta event type:
 
     if (!ReadByte(file, &b))
@@ -463,4 +471,66 @@ boolean MIDI_ReadEvent(midi_file_t *file, midi_event_t *event)
             return false;
     }
 }
+
+#ifdef TEST
+
+int main(int argc, char *argv[])
+{
+    midi_file_t *file;
+    midi_event_t event;
+
+    if (argc < 2)
+    {
+        printf("Usage: %s <filename>\n", argv[0]);
+        exit(1);
+    }
+
+    file = MIDI_OpenFile(argv[1]);
+
+    if (file == NULL)
+    {
+        fprintf(stderr, "Failed to open %s\n", argv[1]);
+        exit(1);
+    }
+
+    while (MIDI_ReadEvent(file, &event))
+    {
+        printf("Event type: %i\n", event.event_type);
+
+        switch(event.event_type)
+        {
+            case MIDI_EVENT_NOTE_OFF:
+            case MIDI_EVENT_NOTE_ON:
+            case MIDI_EVENT_AFTERTOUCH:
+            case MIDI_EVENT_CONTROLLER:
+            case MIDI_EVENT_PROGRAM_CHANGE:
+            case MIDI_EVENT_CHAN_AFTERTOUCH:
+            case MIDI_EVENT_PITCH_BEND:
+                printf("\tChannel: %i\n", event.data.channel.channel);
+                printf("\tParameter 1: %i\n", event.data.channel.param1);
+                printf("\tParameter 2: %i\n", event.data.channel.param2);
+                break;
+
+            case MIDI_EVENT_SYSEX:
+            case MIDI_EVENT_SYSEX_SPLIT:
+                printf("\tLength: %i\n", event.data.sysex.length);
+                break;
+
+            case MIDI_EVENT_META:
+                printf("\tMeta type: %i\n", event.data.meta.type);
+                printf("\tLength: %i\n", event.data.meta.length);
+                break;
+        }
+
+        if (event.event_type == MIDI_EVENT_META
+         && event.data.meta.type == MIDI_META_END_OF_TRACK)
+        {
+            break;
+        }
+    }
+
+    return 0;
+}
+
+#endif
 
