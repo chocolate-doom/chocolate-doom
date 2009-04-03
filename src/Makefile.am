@@ -195,3 +195,6 @@ icon.c : ../data/doom.ico
 
 endif
 
+midiread : midifile.c
+	$(CC) -DTEST $(CFLAGS) @LDFLAGS@ $^ -o $@
+

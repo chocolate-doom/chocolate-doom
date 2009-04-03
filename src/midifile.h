@@ -65,13 +65,14 @@ typedef enum
     MIDI_META_MARKER                = 0x6,
     MIDI_META_CUE_POINT             = 0x7,
 
-    MIDI_META_CHANNEL_PREFIX        = 0x8,
-    MIDI_META_END_OF_TRACK          = 0x9,
-    MIDI_META_SET_TEMPO             = 0xa,
-    MIDI_META_SMPTE_OFFSET          = 0xb,
-    MIDI_META_TIME_SIGNATURE        = 0xc,
-    MIDI_META_KEY_SIGNATURE         = 0xd,
-    MIDI_META_SEQUENCER_SPECIFIC    = 0xe,
+    MIDI_META_CHANNEL_PREFIX        = 0x20,
+    MIDI_META_END_OF_TRACK          = 0x2f,
+
+    MIDI_META_SET_TEMPO             = 0x51,
+    MIDI_META_SMPTE_OFFSET          = 0x54,
+    MIDI_META_TIME_SIGNATURE        = 0x58,
+    MIDI_META_KEY_SIGNATURE         = 0x59,
+    MIDI_META_SEQUENCER_SPECIFIC    = 0x7f,
 } midi_meta_event_type_t;
 
 typedef struct
