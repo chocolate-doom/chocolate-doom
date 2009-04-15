@@ -198,8 +198,8 @@ static boolean ReadChannelEvent(midi_event_t *event,
 
     // Set basics:
 
-    event->event_type = event_type >> 4;
-    event->data.channel.channel = event_type & 0xf;
+    event->event_type = event_type & 0xf0;
+    event->data.channel.channel = event_type & 0x0f;
 
     // Read parameters:
 
@@ -296,7 +296,8 @@ static boolean ReadMetaEvent(midi_event_t *event, FILE *stream)
     return true;
 }
 
-static boolean ReadEvent(midi_event_t *event, FILE *stream)
+static boolean ReadEvent(midi_event_t *event, unsigned int *last_event_type,
+                         FILE *stream)
 {
     byte event_type;
 
@@ -312,9 +313,29 @@ static boolean ReadEvent(midi_event_t *event, FILE *stream)
         return false;
     }
 
+    // All event types have their top bit set.  Therefore, if 
+    // the top bit is not set, it is because we are using the "same
+    // as previous event type" shortcut to save a byte.  Skip back
+    // a byte so that we read this byte again.
+
+    if ((event_type & 0x80) == 0)
+    {
+        event_type = *last_event_type;
+
+        if (fseek(stream, -1, SEEK_CUR) < 0)
+        {
+            fprintf(stderr, "ReadEvent: Unable to seek in stream\n");
+            return false;
+        }
+    }
+    else
+    {
+        *last_event_type = event_type;
+    }
+
     // Check event type:
 
-    switch (event_type >> 4)
+    switch (event_type & 0xf0)
     {
         // Two parameter channel events:
 
@@ -331,26 +352,27 @@ static boolean ReadEvent(midi_event_t *event, FILE *stream)
         case MIDI_EVENT_CHAN_AFTERTOUCH:
             return ReadChannelEvent(event, event_type, false, stream);
 
-        // Other event types:
+        default:
+            break;
+    }
 
-        case 0xf:
-            if (event_type == MIDI_EVENT_SYSEX
-             || event_type == MIDI_EVENT_SYSEX_SPLIT)
-            {
-                return ReadSysExEvent(event, event_type, stream);
-            }
-            else if (event_type == MIDI_EVENT_META)
-            {
-                return ReadMetaEvent(event, stream);
-            }
+    // Specific value?
 
-        // --- Fall-through deliberate ---
-        // Other 0xfx event types are unknown
+    switch (event_type)
+    {
+        case MIDI_EVENT_SYSEX:
+        case MIDI_EVENT_SYSEX_SPLIT:
+            return ReadSysExEvent(event, event_type, stream);
+
+        case MIDI_EVENT_META:
+            return ReadMetaEvent(event, stream);
 
         default:
-            fprintf(stderr, "Unknown MIDI event type: 0x%x\n", event_type);
-            return false;
+            break;
     }
+
+    fprintf(stderr, "ReadEvent: Unknown MIDI event type: 0x%x\n", event_type);
+    return false;
 }
 
 // Free an event:
@@ -405,6 +427,7 @@ static boolean ReadTrack(midi_track_t *track, FILE *stream)
 {
     midi_event_t *new_events;
     midi_event_t *event;
+    unsigned int last_event_type;
 
     track->num_events = 0;
     track->events = NULL;
@@ -417,6 +440,8 @@ static boolean ReadTrack(midi_track_t *track, FILE *stream)
     }
 
     // Then the events:
+
+    last_event_type = 0;
 
     for (;;)
     {
@@ -435,7 +460,7 @@ static boolean ReadTrack(midi_track_t *track, FILE *stream)
         // Read the next event:
 
         event = &track->events[track->num_events];
-        if (!ReadEvent(event, stream))
+        if (!ReadEvent(event, &last_event_type, stream))
         {
             return false;
         }
@@ -641,6 +666,11 @@ void PrintTrack(midi_track_t *track)
     for (i=0; i<track->num_events; ++i)
     {
         event = &track->events[i];
+
+        if (event->delta_time > 0)
+        {
+            printf("Delay: %i ticks\n", event->delta_time);
+        }
 
         printf("Event type: %s (%i)\n",
                MIDI_EventTypeToString(event->event_type),

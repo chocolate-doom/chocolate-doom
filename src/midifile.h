@@ -30,13 +30,13 @@ typedef struct midi_file_s midi_file_t;
 
 typedef enum
 {
-    MIDI_EVENT_NOTE_OFF        = 0x8,
-    MIDI_EVENT_NOTE_ON         = 0x9,
-    MIDI_EVENT_AFTERTOUCH      = 0xa,
-    MIDI_EVENT_CONTROLLER      = 0xb,
-    MIDI_EVENT_PROGRAM_CHANGE  = 0xc,
-    MIDI_EVENT_CHAN_AFTERTOUCH = 0xd,
-    MIDI_EVENT_PITCH_BEND      = 0xe,
+    MIDI_EVENT_NOTE_OFF        = 0x80,
+    MIDI_EVENT_NOTE_ON         = 0x90,
+    MIDI_EVENT_AFTERTOUCH      = 0xa0,
+    MIDI_EVENT_CONTROLLER      = 0xb0,
+    MIDI_EVENT_PROGRAM_CHANGE  = 0xc0,
+    MIDI_EVENT_CHAN_AFTERTOUCH = 0xd0,
+    MIDI_EVENT_PITCH_BEND      = 0xe0,
 
     MIDI_EVENT_SYSEX           = 0xf0,
     MIDI_EVENT_SYSEX_SPLIT     = 0xf7,
