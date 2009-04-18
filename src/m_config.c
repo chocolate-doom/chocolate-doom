@@ -1127,6 +1127,8 @@ static char *GetDefaultConfigDir(void)
 
         sprintf(result, "%s%c.%s%c", homedir, DIR_SEPARATOR,
                                      PACKAGE_TARNAME, DIR_SEPARATOR);
+
+        return result;
     }
     else
 #endif /* #ifndef _WIN32 */
