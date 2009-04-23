@@ -35,14 +35,22 @@
 
 #include "txt_main.h"
 #include "txt_sdl.h"
-#include "txt_font.h"
-
-#define CHAR_W 8
-#define CHAR_H 16
 
 #if defined(_MSC_VER) && !defined(__cplusplus)
 #define inline __inline
 #endif
+
+typedef struct
+{
+    unsigned char *data;
+    unsigned int w;
+    unsigned int h;
+} txt_font_t;
+
+// Fonts:
+
+#include "txt_font.h"
+#include "txt_smallfont.h"
 
 // Time between character blinks in ms
 
@@ -54,6 +62,10 @@ static int key_mapping = 1;
 
 static TxtSDLEventCallbackFunc event_callback;
 static void *event_callback_data;
+
+// Font we are using:
+
+static txt_font_t *font;
 
 //#define TANGO
 
@@ -108,6 +120,45 @@ static SDL_Color ega_colors[] =
 #endif
 
 //
+// Select the font to use, based on screen resolution
+//
+// If the highest screen resolution available is less than
+// 640x480, use the small font.
+//
+
+static void ChooseFont(void)
+{
+    SDL_Rect **modes;
+    int i;
+
+    font = &main_font;
+
+    // Check all modes
+
+    modes = SDL_ListModes(NULL, SDL_FULLSCREEN);
+
+    // If in doubt and we can't get a list, always prefer to
+    // fall back to the normal font:
+
+    if (modes == NULL || modes == (SDL_Rect **) -1 || *modes == NULL)
+    {
+        return;
+    }
+
+    for (i=0; modes[i] != NULL; ++i)
+    {
+        if (0 && modes[i]->w >= 640 && modes[i]->h >= 480)
+        {
+            return;
+        }
+    }
+
+    // No large mode found.
+
+    font = &small_font;
+}
+
+//
 // Initialise text mode screen
 //
 // Returns 1 if successful, 0 if an error occurred
@@ -116,8 +167,11 @@ static SDL_Color ega_colors[] =
 int TXT_Init(void)
 {
     SDL_InitSubSystem(SDL_INIT_VIDEO);
-    
-    screen = SDL_SetVideoMode(TXT_SCREEN_W * CHAR_W, TXT_SCREEN_H * CHAR_H, 8, 0);
+
+    ChooseFont();
+
+    screen = SDL_SetVideoMode(TXT_SCREEN_W * font->w,
+                              TXT_SCREEN_H * font->h, 8, 0);
 
     if (screen == NULL)
         return 0;
@@ -177,16 +231,16 @@ static inline void UpdateCharacter(int x, int y)
         }
     }
 
-    p = &int10_font_16[character * CHAR_H];
+    p = &font->data[character * font->h];
 
     s = ((unsigned char *) screen->pixels) 
-          + (y * CHAR_H * screen->pitch) + (x * CHAR_W);
+          + (y * font->h * screen->pitch) + (x * font->w);
 
-    for (y1=0; y1<CHAR_H; ++y1)
+    for (y1=0; y1<font->h; ++y1)
     {
         s1 = s;
 
-        for (x1=0; x1<CHAR_W; ++x1)
+        for (x1=0; x1<font->w; ++x1)
         {
             if (*p & (1 << (7-x1)))
             {
@@ -215,7 +269,7 @@ void TXT_UpdateScreenArea(int x, int y, int w, int h)
         }
     }
 
-    SDL_UpdateRect(screen, x * CHAR_W, y * CHAR_H, w * CHAR_W, h * CHAR_H);
+    SDL_UpdateRect(screen, x * font->w, y * font->h, w * font->w, h * font->h);
 }
 
 void TXT_UpdateScreen(void)
@@ -227,8 +281,8 @@ void TXT_GetMousePosition(int *x, int *y)
 {
     SDL_GetMouseState(x, y);
 
-    *x /= CHAR_W;
-    *y /= CHAR_H;
+    *x /= font->w;
+    *y /= font->h;
 }
 
 //
