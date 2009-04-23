@@ -147,7 +147,7 @@ static void ChooseFont(void)
 
     for (i=0; modes[i] != NULL; ++i)
     {
-        if (0 && modes[i]->w >= 640 && modes[i]->h >= 480)
+        if (modes[i]->w >= 640 && modes[i]->h >= 480)
         {
             return;
         }
