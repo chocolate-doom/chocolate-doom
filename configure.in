@@ -100,6 +100,7 @@ src/setup/Makefile
 pcsound/Makefile
 src/resource.rc
 src/setup-res.rc
+src/setup/setup-manifest.xml
 src/doom-screensaver.desktop
 ])
 

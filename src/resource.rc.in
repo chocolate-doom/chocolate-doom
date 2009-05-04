@@ -9,7 +9,7 @@ FILETYPE 1
  {
   BLOCK "040904E4"
   {
-   VALUE "FileVersion", "@PACKAGE_VERSION@"
+   VALUE "FileVersion", "@PACKAGE_VERSION@.0"
    VALUE "FileDescription", "@PACKAGE_STRING@"
    VALUE "InternalName", "@PACKAGE_TARNAME@"
    VALUE "CompanyName", "@PACKAGE_BUGREPORT@"

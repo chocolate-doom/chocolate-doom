@@ -21,6 +21,5 @@ SOURCE_FILES =                                  \
 libsetup_a_SOURCES = $(SOURCE_FILES)
 
 EXTRA_DIST=                                     \
-    setup_icon.c                                \
-    setup-manifest.xml
+    setup_icon.c
 
