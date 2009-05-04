@@ -1132,6 +1132,14 @@ boolean MN_Responder(event_t * event)
     extern void G_CheckDemoStatus(void);
     char *textBuffer;
 
+    // "close" button pressed on window?
+    if (event->type == ev_quit)
+    {
+        SCQuitGame(0);
+        S_StartSound(NULL, SFX_CHAT);
+        return true;
+    }
+
     if (event->data1 == KEY_RSHIFT)
     {
         shiftdown = (event->type == ev_keydown);

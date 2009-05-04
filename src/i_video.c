@@ -679,13 +679,10 @@ void I_GetEvent(void)
 		}
                 break;
 
-/* TODO
             case SDL_QUIT:
-                // bring up the "quit doom?" prompt
-                S_StartSound(NULL,sfx_swtchn);
-                M_QuitDOOM(0);
+                event.type = ev_quit;
+                D_PostEvent(&event);
                 break;
-                */
 
             case SDL_ACTIVEEVENT:
                 // need to update our focus state
