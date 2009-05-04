@@ -1423,7 +1423,15 @@ boolean M_Responder (event_t* ev)
     static  int     lasty = 0;
     static  int     mousex = 0;
     static  int     lastx = 0;
-	
+
+    // "close" button pressed on window?
+    if (ev->type == ev_quit)
+    {
+        S_StartSound(NULL,sfx_swtchn);
+        M_QuitDOOM(0);
+        return true;
+    }
+
     // key is the key pressed, ch is the actual character typed
   
     ch = 0;
