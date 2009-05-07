@@ -78,7 +78,6 @@ static gametype_t gametype;
 
 static int cnt;
 
-static int time;
 static int hours;
 static int minutes;
 static int seconds;
@@ -218,17 +217,17 @@ void IN_InitStats(void)
     int posnum;
     int slaughtercount;
     int playercount;
-
+    int count;
 
     if (!netgame)
     {
         gametype = SINGLE;
-        time = leveltime / 35;
-        hours = time / 3600;
-        time -= hours * 3600;
-        minutes = time / 60;
-        time -= minutes * 60;
-        seconds = time;
+        count = leveltime / 35;
+        hours = count / 3600;
+        count -= hours * 3600;
+        minutes = count / 60;
+        count -= minutes * 60;
+        seconds = count;
     }
     else if (netgame && !deathmatch)
     {
