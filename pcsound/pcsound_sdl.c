@@ -32,6 +32,7 @@
 #include "pcsound.h"
 #include "pcsound_internal.h"
 
+#define SOUND_SLICE_TIME 100 /* ms */
 #define SQUARE_WAVE_AMP 0x2000
 
 // If true, we initialised SDL and have the responsibility to shut it 
@@ -165,6 +166,8 @@ static void PCSound_SDL_Shutdown(void)
 
 static int PCSound_SDL_Init(pcsound_callback_func callback_func)
 {
+    int slicesize;
+
     // Check if SDL_mixer has been opened already
     // If not, we must initialise it now
 
@@ -176,7 +179,9 @@ static int PCSound_SDL_Init(pcsound_callback_func callback_func)
             return 0;
         }
 
-        if (Mix_OpenAudio(pcsound_sample_rate, AUDIO_S16SYS, 2, 1024) < 0)
+        slicesize = (SOUND_SLICE_TIME * pcsound_sample_rate) / 1000;
+
+        if (Mix_OpenAudio(pcsound_sample_rate, AUDIO_S16SYS, 2, slicesize) < 0)
         {
             fprintf(stderr, "Error initialising SDL_mixer: %s\n", Mix_GetError());
 

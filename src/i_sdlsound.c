@@ -49,6 +49,7 @@
 #include "doomdef.h"
 
 #define LOW_PASS_FILTER
+#define SOUND_SLICE_TIME 100 /* ms */
 #define NUM_CHANNELS 16
 
 static boolean sound_initialised = false;
@@ -666,10 +667,10 @@ static void I_SDL_ShutdownSound(void)
     sound_initialised = false;
 }
 
-
 static boolean I_SDL_InitSound(void)
 { 
     int i;
+    int slicesize;
     
     // No sounds yet
 
@@ -689,7 +690,9 @@ static boolean I_SDL_InitSound(void)
         return false;
     }
 
-    if (Mix_OpenAudio(snd_samplerate, AUDIO_S16SYS, 2, 1024) < 0)
+    slicesize = (snd_samplerate * SOUND_SLICE_TIME) / 1000;
+
+    if (Mix_OpenAudio(snd_samplerate, AUDIO_S16SYS, 2, slicesize) < 0)
     {
         fprintf(stderr, "Error initialising SDL_mixer: %s\n", Mix_GetError());
         return false;
