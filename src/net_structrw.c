@@ -132,6 +132,10 @@ void NET_WriteTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff,
         NET_WriteInt8(packet, diff->cmd.consistancy);
     if (diff->diff & NET_TICDIFF_CHATCHAR)
         NET_WriteInt8(packet, diff->cmd.chatchar);
+    if (diff->diff & NET_TICDIFF_LOOKFLY)
+        NET_WriteInt8(packet, diff->cmd.lookfly);
+    if (diff->diff & NET_TICDIFF_ARTIFACT)
+        NET_WriteInt8(packet, diff->cmd.arti);
 }
 
 boolean NET_ReadTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff,
@@ -198,6 +202,20 @@ boolean NET_ReadTiccmdDiff(net_packet_t *packet, net_ticdiff_t *diff,
         diff->cmd.chatchar = val;
     }
 
+    if (diff->diff & NET_TICDIFF_LOOKFLY)
+    {
+        if (!NET_ReadInt8(packet, &val))
+            return false;
+        diff->cmd.lookfly = val;
+    }
+
+    if (diff->diff & NET_TICDIFF_ARTIFACT)
+    {
+        if (!NET_ReadInt8(packet, &val))
+            return false;
+        diff->cmd.arti = val;
+    }
+
     return true;
 }
 
@@ -218,6 +236,13 @@ void NET_TiccmdDiff(ticcmd_t *tic1, ticcmd_t *tic2, net_ticdiff_t *diff)
         diff->diff |= NET_TICDIFF_CONSISTANCY;
     if (tic2->chatchar != 0)
         diff->diff |= NET_TICDIFF_CHATCHAR;
+
+    // Hexen-specific:
+
+    if (tic1->lookfly != tic2->lookfly)
+        diff->diff |= NET_TICDIFF_LOOKFLY;
+    if (tic2->arti != 0)
+        diff->diff |= NET_TICDIFF_ARTIFACT;
 }
 
 void NET_TiccmdPatch(ticcmd_t *src, net_ticdiff_t *diff, ticcmd_t *dest)
@@ -241,6 +266,17 @@ void NET_TiccmdPatch(ticcmd_t *src, net_ticdiff_t *diff, ticcmd_t *dest)
         dest->chatchar = diff->cmd.chatchar;
     else
         dest->chatchar = 0;
+
+    // Heretic/Hexen specific:
+
+    if (diff->diff & NET_TICDIFF_LOOKFLY)
+        dest->lookfly = diff->cmd.lookfly;
+
+    if (diff->diff & NET_TICDIFF_ARTIFACT)
+        dest->arti = diff->cmd.arti;
+    else
+        dest->arti = 0;
+
 }
 
 // 
