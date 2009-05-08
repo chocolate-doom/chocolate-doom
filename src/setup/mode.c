@@ -19,7 +19,10 @@
 // 02111-1307, USA.
 //
 
+#include <stdlib.h>
 #include <string.h>
+
+#include "doomtype.h"
 
 #include "config.h"
 #include "textscreen.h"
@@ -52,6 +55,7 @@ typedef struct
     char *name;
     char *config_file;
     char *extra_config_file;
+    char *executable;
 } mission_config_t;
 
 // Default mission to fall back on, if no IWADs are found at all:
@@ -66,7 +70,8 @@ static mission_config_t mission_configs[] =
         IWAD_MASK_DOOM,
         "doom",
         "default.cfg",
-        PROGRAM_PREFIX "doom.cfg"
+        PROGRAM_PREFIX "doom.cfg",
+        PROGRAM_PREFIX "doom"
     },
     {
         "Heretic",
@@ -74,7 +79,8 @@ static mission_config_t mission_configs[] =
         IWAD_MASK_HERETIC,
         "heretic",
         "heretic.cfg",
-        PROGRAM_PREFIX "heretic.cfg"
+        PROGRAM_PREFIX "heretic.cfg",
+        PROGRAM_PREFIX "heretic"
     },
     {
         "Hexen",
@@ -82,7 +88,8 @@ static mission_config_t mission_configs[] =
         IWAD_MASK_HEXEN,
         "hexen",
         "hexen.cfg",
-        PROGRAM_PREFIX "hexen.cfg"
+        PROGRAM_PREFIX "hexen.cfg",
+        PROGRAM_PREFIX "hexen"
     }
 };
 
@@ -94,6 +101,7 @@ static int showMessages = 1;
 static int screenblocks = 9;
 static int detailLevel = 0;
 static char *savedir = NULL;
+static char *executable = NULL;
 
 static void BindMiscVariables(void)
 {
@@ -144,9 +152,28 @@ void InitBindings(void)
     BindMultiplayerVariables();
 }
 
+// Set the name of the executable program to run the game:
+
+static void SetExecutable(mission_config_t *config)
+{
+    free(executable);
+
+#ifdef _WIN32
+    executable = malloc(strlen(config->executable) + 5);
+    sprintf(executable, "%s.exe", config->executable);
+#else
+    executable = malloc(strlen(INSTALL_DIR) + strlen(config->executable) + 2);
+    sprintf(executable, "%s%c%s", INSTALL_DIR, DIR_SEPARATOR,
+                                  config->executable);
+#endif
+
+puts(executable);
+}
+
 static void SetMission(mission_config_t *config)
 {
     gamemission = config->mission;
+    SetExecutable(config);
     M_SetConfigFilenames(config->config_file, config->extra_config_file);
 }
 
@@ -175,7 +202,7 @@ static void GameSelected(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(config))
 
 static void OpenGameSelectDialog(GameSelectCallback callback)
 {
-    mission_config_t *mission;
+    mission_config_t *mission = NULL;
     txt_window_t *window;
     iwad_t **iwads;
     int num_games;
@@ -265,5 +292,10 @@ void SetupMission(GameSelectCallback callback)
     {
         OpenGameSelectDialog(callback);
     }
+}
+
+char *GetExecutableName(void)
+{
+    return executable;
 }
 

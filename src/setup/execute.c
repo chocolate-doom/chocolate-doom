@@ -39,22 +39,9 @@
 
 #include "config.h"
 #include "execute.h"
+#include "mode.h"
 #include "m_argv.h"
 #include "m_config.h"
-
-#ifdef _WIN32
-#define DOOM_BINARY PACKAGE_TARNAME ".exe"
-#else
-#define DOOM_BINARY INSTALL_DIR "/" PACKAGE_TARNAME
-#endif
-
-#ifdef _WIN32
-#define DIR_SEPARATOR '\\'
-#define PATH_SEPARATOR ';'
-#else
-#define DIR_SEPARATOR '/'
-#define PATH_SEPARATOR ':'
-#endif
 
 struct execute_context_s
 {
@@ -196,7 +183,7 @@ int ExecuteDoom(execute_context_t *context)
     response_file_arg = malloc(strlen(context->response_file) + 2);
     sprintf(response_file_arg, "@%s", context->response_file);
 
-    argv[0] = DOOM_BINARY;
+    argv[0] = GetExecutableName();
     argv[1] = response_file_arg;
     argv[2] = NULL;
 
