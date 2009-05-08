@@ -1,4 +1,6 @@
 
+gamesdir = $(prefix)/games
+
 AM_CFLAGS = @SDL_CFLAGS@ -I../../textscreen -I.. -DINSTALL_DIR="\"$(gamesdir)\""
 
 noinst_LIBRARIES = libsetup.a
