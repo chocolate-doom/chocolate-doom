@@ -430,12 +430,13 @@ static boolean PlayersInGame(void)
 
 static int GetLowTic(void)
 {
-    int i;
     int lowtic;
 
 #ifdef FEATURE_MULTIPLAYER
     if (net_client_connected)
     {
+        int i;
+
         lowtic = INT_MAX;
     
         for (i=0; i<MAXPLAYERS; ++i)

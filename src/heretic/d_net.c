@@ -25,6 +25,8 @@
 // d_net.c
 // This version has the fixed ticdup code
 
+#include <stdlib.h>
+
 #include "doomdef.h"
 #include "doomkeys.h"
 
