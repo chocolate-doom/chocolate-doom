@@ -167,8 +167,6 @@ static void SetExecutable(mission_config_t *config)
     sprintf(executable, "%s%c%s", INSTALL_DIR, DIR_SEPARATOR,
                                   config->executable);
 #endif
-
-puts(executable);
 }
 
 static void SetMission(mission_config_t *config)
