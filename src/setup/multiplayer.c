@@ -23,44 +23,35 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "doom/d_englsh.h"
-#include "textscreen.h"
 #include "doomtype.h"
+#include "textscreen.h"
 
-#include "execute.h"
+#include "d_iwad.h"
+#include "m_config.h"
+#include "doom/d_englsh.h"
 
 #include "multiplayer.h"
-#include "m_config.h"
+#include "mode.h"
+#include "execute.h"
 
 #define NUM_WADS 10
 #define NUM_EXTRA_PARAMS 10
 
-typedef struct
-{
-    char *filename;
-    char *description;
-    int mask;
-} iwad_t;
-
 typedef enum
 {
-    WARP_DOOM1,
-    WARP_DOOM2,
+    WARP_ExMy,
+    WARP_MAPxy,
 } warptype_t;
 
-static iwad_t iwads[] = 
-{
-    { "doom.wad",     "Doom",                                IWAD_DOOM },
-    { "doom2.wad",    "Doom 2",                              IWAD_DOOM2 },
-    { "tnt.wad",      "Final Doom: TNT: Evilution",          IWAD_TNT },
-    { "plutonia.wad", "Final Doom: The Plutonia Experiment", IWAD_PLUTONIA },
-    { "doom1.wad",    "Doom shareware",                      IWAD_DOOM1 },
-    { "chex.wad",     "Chex Quest",                          IWAD_CHEX },
-};
+// Fallback IWAD if none are found to be installed
+
+static iwad_t fallback_iwad = { "doom2.wad", doom2, commercial, "Doom II" };
+static iwad_t *fallback_iwad_list[2] = { &fallback_iwad, NULL };
 
 // Array of IWADs found to be installed
 
-static char *found_iwads[6];
+static iwad_t **found_iwads;
+static char *iwad_labels[8];
 
 // Index of the currently selected IWAD
 
@@ -110,7 +101,7 @@ static int timer = 0;
 
 static txt_dropdown_list_t *skillbutton;
 static txt_button_t *warpbutton;
-static warptype_t warptype = WARP_DOOM2;
+static warptype_t warptype = WARP_MAPxy;
 static int warpepisode = 1;
 static int warpmap = 1;
 
@@ -120,26 +111,17 @@ static char *connect_address = NULL;
 
 // Find an IWAD from its description
 
-static iwad_t *GetIWADForDescription(char *description)
-{
-    unsigned int i;
-
-    for (i=0; i<arrlen(iwads); ++i)
-    {
-        if (!strcmp(iwads[i].description, description))
-        {
-            return &iwads[i];
-        }
-    }
-
-    return NULL;
-}
-
 static iwad_t *GetCurrentIWAD(void)
 {
-    return GetIWADForDescription(found_iwads[found_iwad_selected]);
+    return found_iwads[found_iwad_selected];
 }
 
+// Is the currently selected IWAD the Chex Quest chex.wad?
+
+static boolean IsChexQuest(iwad_t *iwad)
+{
+    return !strcmp(iwad->name, "chex.wad");
+}
 
 static void AddWADs(execute_context_t *exec)
 {
@@ -225,12 +207,12 @@ static void StartGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
         AddCmdLineParameter(exec, "-timer %i", timer);
     }
 
-    if (warptype == WARP_DOOM1)
+    if (warptype == WARP_ExMy)
     {
         // TODO: select IWAD based on warp type
         AddCmdLineParameter(exec, "-warp %i %i", warpepisode, warpmap);
     }
-    else if (warptype == WARP_DOOM2)
+    else if (warptype == WARP_MAPxy)
     {
         AddCmdLineParameter(exec, "-warp %i", warpmap);
     }
@@ -253,11 +235,11 @@ static void UpdateWarpButton(void)
 {
     char buf[10];
 
-    if (warptype == WARP_DOOM1)
+    if (warptype == WARP_ExMy)
     {
         sprintf(buf, "E%iM%i", warpepisode, warpmap);
     }
-    else if (warptype == WARP_DOOM2)
+    else if (warptype == WARP_MAPxy)
     {
         sprintf(buf, "MAP%02i", warpmap);
     }
@@ -269,7 +251,7 @@ static void UpdateSkillButton(void)
 {
     iwad_t *iwad = GetCurrentIWAD();
 
-    if (iwad->mask == IWAD_CHEX)
+    if (IsChexQuest(iwad))
     {
         skillbutton->values = chex_skills;
     }
@@ -279,7 +261,7 @@ static void UpdateSkillButton(void)
     }
 }
 
-static void SetDoom1Warp(TXT_UNCAST_ARG(widget), void *val)
+static void SetExMyWarp(TXT_UNCAST_ARG(widget), void *val)
 {
     int l;
 
@@ -291,7 +273,7 @@ static void SetDoom1Warp(TXT_UNCAST_ARG(widget), void *val)
     UpdateWarpButton();
 }
 
-static void SetDoom2Warp(TXT_UNCAST_ARG(widget), void *val)
+static void SetMAPxyWarp(TXT_UNCAST_ARG(widget), void *val)
 {
     int l;
 
@@ -306,7 +288,7 @@ static void CloseLevelSelectDialog(TXT_UNCAST_ARG(button), TXT_UNCAST_ARG(window
 {
     TXT_CAST_ARG(txt_window_t, window);
 
-    TXT_CloseWindow(window);            
+    TXT_CloseWindow(window);
 }
 
 static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
@@ -316,68 +298,72 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
     txt_button_t *button;
     iwad_t *iwad;
     char buf[10];
+    int episodes;
     int x, y;
     int l;
     int i;
 
     window = TXT_NewWindow("Select level");
+    iwad = GetCurrentIWAD();
 
-    table = TXT_NewTable(4);
-
-    TXT_AddWidget(window, table);
-
-    if (warptype == WARP_DOOM1)
+    if (warptype == WARP_ExMy)
     {
+        episodes = D_GetNumEpisodes(iwad->mission, iwad->mode);
+        table = TXT_NewTable(episodes);
+
         // ExMy levels
-        
-        iwad = GetCurrentIWAD();
 
-        for (i=0; i<4 * 9; ++i)
+        for (y=1; y<10; ++y)
         {
-            x = (i % 4) + 1;
-            y = (i / 4) + 1;
-
-            // chex.wad only has E1M1-E1M5.
-
-            if (iwad->mask == IWAD_CHEX && (x > 1 || y > 5))
+            for (x=1; x<=episodes; ++x)
             {
-                continue;
-            }
+                if (IsChexQuest(iwad) && (x > 1 || y > 5))
+                {
+                    continue;
+                }
 
-            // doom1.wad only has E1
+                if (!D_ValidEpisodeMap(iwad->mission, iwad->mode, x, y))
+                {
+                    TXT_AddWidget(table, NULL);
+                    continue;
+                }
 
-            if (iwad->mask == IWAD_DOOM1 && x > 1)
-            {
-                continue;
-            }
+                sprintf(buf, " E%iM%i ", x, y);
+                button = TXT_NewButton(buf);
+                TXT_SignalConnect(button, "pressed",
+                                  SetExMyWarp, (void *) (x * 10 + y));
+                TXT_SignalConnect(button, "pressed",
+                                  CloseLevelSelectDialog, window);
+                TXT_AddWidget(table, button);
 
-            sprintf(buf, " E%iM%i ", x, y);
-            button = TXT_NewButton(buf);
-            TXT_SignalConnect(button, "pressed",
-                              SetDoom1Warp, (void *) (x * 10 + y));
-            TXT_SignalConnect(button, "pressed",
-                              CloseLevelSelectDialog, window);
-            TXT_AddWidget(table, button);
-
-            if (warpepisode == x && warpmap == y)
-            {
-                TXT_SelectWidget(table, button);
+                if (warpepisode == x && warpmap == y)
+                {
+                    TXT_SelectWidget(table, button);
+                }
             }
         }
     }
     else
     {
-        for (i=0; i<32; ++i)
+        table = TXT_NewTable(4);
+
+        for (i=0; i<40; ++i)
         {
             x = i % 4;
             y = i / 4;
 
-            l = x * 8 + y + 1;
-          
+            l = x * 10 + y + 1;
+
+            if (!D_ValidEpisodeMap(iwad->mission, iwad->mode, 1, l))
+            {
+                TXT_AddWidget(table, NULL);
+                continue;
+            }
+
             sprintf(buf, " MAP%02i ", l);
             button = TXT_NewButton(buf);
             TXT_SignalConnect(button, "pressed", 
-                              SetDoom2Warp, (void *) l);
+                              SetMAPxyWarp, (void *) l);
             TXT_SignalConnect(button, "pressed",
                               CloseLevelSelectDialog, window);
             TXT_AddWidget(table, button);
@@ -388,6 +374,8 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
             }
         }
     }
+
+    TXT_AddWidget(window, table);
 }
 
 static void IWADSelected(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
@@ -400,7 +388,7 @@ static void IWADSelected(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
     // Update iwadfile
 
-    iwadfile = iwad->filename;
+    iwadfile = iwad->name;
 }
 
 // Called when the IWAD button is changed, to update warptype.
@@ -409,20 +397,20 @@ static void UpdateWarpType(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 {
     warptype_t new_warptype;
     iwad_t *iwad;
-    
+
     // Get the selected IWAD
 
-    iwad = GetIWADForDescription(found_iwads[found_iwad_selected]);
+    iwad = GetCurrentIWAD();
 
     // Find the new warp type
 
-    if (iwad->mask & (IWAD_DOOM | IWAD_DOOM1 | IWAD_CHEX))
+    if (D_IsEpisodeMap(iwad->mission))
     {
-        new_warptype = WARP_DOOM1;
+        new_warptype = WARP_ExMy;
     }
     else
     {
-        new_warptype = WARP_DOOM2;
+        new_warptype = WARP_MAPxy;
     }
 
     // Reset to E1M1 / MAP01 when the warp type is changed.
@@ -443,25 +431,21 @@ static txt_widget_t *IWADSelector(void)
 {
     txt_dropdown_list_t *dropdown;
     txt_widget_t *result;
-    int installed_iwads;
     int num_iwads;
     unsigned int i;
 
     // Find out what WADs are installed
     
-    installed_iwads = FindInstalledIWADs();
+    found_iwads = GetIwads();
 
     // Build a list of the descriptions for all installed IWADs
 
     num_iwads = 0;
 
-    for (i=0; i<arrlen(iwads); ++i)
+    for (i=0; found_iwads[i] != NULL; ++i)
     {
-        if (installed_iwads & iwads[i].mask)
-        {
-            found_iwads[num_iwads] = iwads[i].description;
-            ++num_iwads;
-        }
+        iwad_labels[i] = found_iwads[i]->description;
+         ++num_iwads;
     }
 
     // If no IWADs are found, provide Doom 2 as an option, but
@@ -469,7 +453,7 @@ static txt_widget_t *IWADSelector(void)
 
     if (num_iwads == 0)
     {
-        found_iwads[0] = "Doom 2";
+        found_iwads = fallback_iwad_list;
         num_iwads = 1;
     }
 
@@ -479,14 +463,14 @@ static txt_widget_t *IWADSelector(void)
     {
         // We have only one IWAD.  Show as a label.
 
-        result = (txt_widget_t *) TXT_NewLabel(found_iwads[0]);
+        result = (txt_widget_t *) TXT_NewLabel(found_iwads[0]->description);
     }
     else
     {
         // Dropdown list allowing IWAD to be selected.
 
         dropdown = TXT_NewDropdownList(&found_iwad_selected, 
-                                       found_iwads, num_iwads);
+                                       iwad_labels, num_iwads);
 
         TXT_SignalConnect(dropdown, "changed", IWADSelected, NULL);
 

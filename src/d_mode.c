@@ -156,3 +156,22 @@ boolean D_ValidGameVersion(GameMission_t mission, GameVersion_t version)
     return false;
 }
 
+// Does this mission type use ExMy form, rather than MAPxy form?
+
+boolean D_IsEpisodeMap(GameMission_t mission)
+{
+    switch (mission)
+    {
+        case doom:
+        case heretic:
+            return true;
+
+        case none:
+        case hexen:
+        case doom2:
+        case pack_tnt:
+        case pack_plut:
+            return false;
+    }
+}
+

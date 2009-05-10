@@ -23,6 +23,7 @@
 #define SETUP_MODE_H
 
 #include "d_mode.h"
+#include "d_iwad.h"
 
 typedef void (*GameSelectCallback)(void);
 extern GameMission_t gamemission;
@@ -30,6 +31,7 @@ extern GameMission_t gamemission;
 void SetupMission(GameSelectCallback callback);
 void InitBindings(void);
 char *GetExecutableName(void);
+iwad_t **GetIwads(void);
 
 #endif /* #ifndef SETUP_MODE_H */
 
