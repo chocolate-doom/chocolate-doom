@@ -40,6 +40,8 @@ typedef struct
 {
     char *name;
     GameMission_t mission;
+    GameMode_t mode;
+    char *description;
 } iwad_t;
 
 char *D_FindWADByName(char *filename);

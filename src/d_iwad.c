@@ -41,15 +41,15 @@
 
 static iwad_t iwads[] =
 {
-    { "doom2.wad",        doom2 },
-    { "plutonia.wad",     pack_plut },
-    { "tnt.wad",          pack_tnt },
-    { "doom.wad",         doom },
-    { "doom1.wad",        doom },
-    { "chex.wad",         doom },
-    { "heretic.wad",      heretic },
-    { "heretic1.wad",     heretic },
-    { "hexen.wad",        hexen },
+    { "doom2.wad",    doom2,     commercial, "Doom II" },
+    { "plutonia.wad", pack_plut, commercial, "Final Doom: Plutonia Experiment" },
+    { "tnt.wad",      pack_tnt,  commercial, "Final Doom: TNT: Evilution" },
+    { "doom.wad",     doom,      retail,     "Doom" },
+    { "doom1.wad",    doom,      shareware,  "Doom Shareware" },
+    { "chex.wad",     doom,      shareware,  "Chex Quest" },
+    { "heretic.wad",  heretic,   retail,     "Heretic" },
+    { "heretic1.wad", heretic,   shareware,  "Heretic Shareware" },
+    { "hexen.wad",    hexen,     commercial, "Hexen" },
 };
 
 // Array of locations to search for IWAD files

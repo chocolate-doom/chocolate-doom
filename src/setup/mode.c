@@ -46,6 +46,7 @@
 #include "mode.h"
 
 GameMission_t gamemission;
+static iwad_t **iwads;
 
 typedef struct
 {
@@ -172,6 +173,7 @@ puts(executable);
 
 static void SetMission(mission_config_t *config)
 {
+    iwads = D_FindAllIWADs(config->mask);
     gamemission = config->mission;
     SetExecutable(config);
     M_SetConfigFilenames(config->config_file, config->extra_config_file);
@@ -297,5 +299,10 @@ void SetupMission(GameSelectCallback callback)
 char *GetExecutableName(void)
 {
     return executable;
+}
+
+iwad_t **GetIwads(void)
+{
+    return iwads;
 }
 

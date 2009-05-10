@@ -252,26 +252,3 @@ txt_window_action_t *TestConfigAction(void)
     return test_action;
 }
 
-// Invokes Doom to find which IWADs are installed.
-// This is a cheap hack to avoid duplication of the complicated install
-// path searching code inside Doom.
-
-int FindInstalledIWADs(void)
-{
-    execute_context_t *context;
-    int result;
-
-    context = NewExecuteContext();
-    AddCmdLineParameter(context, "-findiwads");
-    result = ExecuteDoom(context);
-
-    if (result < 0)
-    {
-        return 0;
-    }
-    else
-    {
-        return result;
-    }
-}
-
