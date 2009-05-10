@@ -61,7 +61,7 @@ static int found_iwad_selected;
 
 static char *iwadfile;
 
-static char *skills[] = 
+static char *doom_skills[] = 
 {
     "I'm too young to die!",
     "Hey, not too rough.",
@@ -77,6 +77,35 @@ static char *chex_skills[] =
     "Gobs of goo",
     "Extreme ooze",
     "SUPER SLIMEY!"
+};
+
+static char *heretic_skills[] =
+{
+    "Thou needeth a wet-nurse",
+    "Yellowbellies-R-us",
+    "Bringest them oneth",
+    "Thou art a smite-meister",
+    "Black plague possesses thee"
+};
+
+static char *hexen_skills[] =
+{
+    "Squire/Altar boy/Apprentice",
+    "Knight/Acolyte/Enchanter",
+    "Warrior/Priest/Sorceror",
+    "Berserker/Cardinal/Warlock",
+    "Titan/Pope/Archimage"
+};
+
+static struct
+{
+    GameMission_t mission;
+    char **strings;
+} skills[] =
+{
+    { doom,    doom_skills },
+    { heretic, heretic_skills },
+    { hexen,   hexen_skills }
 };
 
 static char *gamemodes[] = 
@@ -250,6 +279,7 @@ static void UpdateWarpButton(void)
 static void UpdateSkillButton(void)
 {
     iwad_t *iwad = GetCurrentIWAD();
+    int i;
 
     if (IsChexQuest(iwad))
     {
@@ -257,7 +287,14 @@ static void UpdateSkillButton(void)
     }
     else
     {
-        skillbutton->values = skills;
+        for (i=0; i<arrlen(skills); ++i)
+        {
+            if (gamemission == skills[i].mission)
+            {
+                skillbutton->values = skills[i].strings;
+                break;
+            }
+        }
     }
 }
 
@@ -562,7 +599,7 @@ void StartMultiGame(void)
            TXT_NewLabel("Game"),
            iwad_selector = IWADSelector(),
            TXT_NewLabel("Skill"),
-           skillbutton = TXT_NewDropdownList(&skill, skills, 5),
+           skillbutton = TXT_NewDropdownList(&skill, doom_skills, 5),
            TXT_NewLabel("Game type"),
            TXT_NewDropdownList(&deathmatch, gamemodes, 3),
            TXT_NewLabel("Level warp"),
