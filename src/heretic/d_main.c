@@ -541,8 +541,11 @@ void drawstatus(void)
 
 void status(char *string)
 {
-    strcat(smsg, string);
-    drawstatus();
+    if (using_graphical_startup)
+    {
+        strcat(smsg, string);
+        drawstatus();
+    }
 }
 
 void DrawThermo(void)
