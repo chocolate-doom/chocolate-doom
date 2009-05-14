@@ -43,6 +43,12 @@ typedef enum
     WARP_MAPxy,
 } warptype_t;
 
+typedef enum
+{
+    JOIN_AUTO_LAN,
+    JOIN_ADDRESS,
+} jointype_t;
+
 // Fallback IWAD if none are found to be installed
 
 static iwad_t fallback_iwad = { "doom2.wad", doom2, commercial, "Doom II" };
@@ -117,6 +123,8 @@ static char *gamemodes[] =
 
 static char *net_player_name;
 static char *chat_macros[10];
+
+static int jointype = JOIN_ADDRESS;
 
 static char *wads[NUM_WADS];
 static char *extra_params[NUM_EXTRA_PARAMS];
@@ -629,7 +637,14 @@ static void DoJoinGame(void *unused1, void *unused2)
 
     exec = NewExecuteContext();
 
-    AddCmdLineParameter(exec, "-connect %s", connect_address);
+    if (jointype == JOIN_ADDRESS)
+    {
+        AddCmdLineParameter(exec, "-connect %s", connect_address);
+    }
+    else if (jointype == JOIN_AUTO_LAN)
+    {
+        AddCmdLineParameter(exec, "-autojoin");
+    }
 
     // Extra parameters come first, so that they can be used to override
     // the other parameters.
@@ -659,18 +674,28 @@ static txt_window_action_t *JoinGameAction(void)
     return action;
 }
 
+// When an address is entered, select "address" mode.
+
+static void SelectAddressJoin(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
+{
+    jointype = JOIN_ADDRESS;
+}
+
 void JoinMultiGame(void)
 {
     txt_window_t *window;
     txt_table_t *gameopt_table;
+    txt_table_t *serveropt_table;
+    txt_inputbox_t *address_box;
 
     window = TXT_NewWindow("Join multiplayer game");
 
     TXT_AddWidgets(window, 
         gameopt_table = TXT_NewTable(2),
+        TXT_NewSeparator("Server"),
+        serveropt_table = TXT_NewTable(2),
         TXT_NewStrut(0, 1),
         TXT_NewButton2("Add extra parameters...", OpenExtraParamsWindow, NULL),
-    //    TXT_NewButton2("Add WADs...", OpenWadsWindow, NULL),
         NULL);
 
     TXT_SetColumnWidths(gameopt_table, 12, 12);
@@ -678,9 +703,18 @@ void JoinMultiGame(void)
     TXT_AddWidgets(gameopt_table,
                    TXT_NewLabel("Game"),
                    IWADSelector(),
-                   TXT_NewLabel("Server address "),
-                   TXT_NewInputBox(&connect_address, 40),
                    NULL);
+
+    TXT_AddWidgets(serveropt_table,
+                   TXT_NewRadioButton("Connect to address:",
+                                      &jointype, JOIN_ADDRESS),
+                   address_box = TXT_NewInputBox(&connect_address, 30),
+                   TXT_NewRadioButton("Auto-join LAN game",
+                                      &jointype, JOIN_AUTO_LAN),
+                   NULL);
+
+    TXT_SignalConnect(address_box, "changed", SelectAddressJoin, NULL);
+    TXT_SelectWidget(window, address_box);
 
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, WadWindowAction());
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, JoinGameAction());

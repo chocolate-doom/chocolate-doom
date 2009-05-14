@@ -23,12 +23,13 @@ libtextscreen_a_SOURCES =                                 \
 	txt_separator.c          txt_separator.h          \
 	txt_spinctrl.c           txt_spinctrl.h           \
 	txt_sdl.c                txt_sdl.h                \
+                                 txt_smallfont.h          \
 	txt_strut.c              txt_strut.h              \
 	txt_table.c              txt_table.h              \
 	txt_widget.c             txt_widget.h             \
 	txt_window.c             txt_window.h             \
 	txt_window_action.c      txt_window_action.h      \
-	txt_font.h
+	                         txt_font.h
 
 doc:
 	doxygen
