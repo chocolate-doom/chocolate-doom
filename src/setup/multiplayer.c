@@ -103,6 +103,13 @@ static char *hexen_skills[] =
     "Titan/Pope/Archimage"
 };
 
+static char *character_classes[] =
+{
+    "Fighter",
+    "Cleric",
+    "Mage"
+};
+
 static struct
 {
     GameMission_t mission;
@@ -114,7 +121,7 @@ static struct
     { hexen,   hexen_skills }
 };
 
-static char *gamemodes[] = 
+static char *gamemodes[] =
 {
     "Co-operative",
     "Deathmatch",
@@ -128,6 +135,7 @@ static int jointype = JOIN_ADDRESS;
 
 static char *wads[NUM_WADS];
 static char *extra_params[NUM_EXTRA_PARAMS];
+static int character_class = 0;
 static int skill = 2;
 static int nomonsters = 0;
 static int deathmatch = 0;
@@ -214,6 +222,11 @@ static void StartGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
     AddIWADParameter(exec);
     AddCmdLineParameter(exec, "-server");
     AddCmdLineParameter(exec, "-skill %i", skill + 1);
+
+    if (gamemission == hexen)
+    {
+        AddCmdLineParameter(exec, "-class %i", character_class);
+    }
 
     if (nomonsters)
     {
@@ -618,6 +631,15 @@ void StartMultiGame(void)
                            NULL),
            NULL);
 
+    if (gamemission == hexen)
+    {
+        TXT_AddWidgets(gameopt_table,
+                       TXT_NewLabel("Character class "),
+                       TXT_NewDropdownList(&character_class,
+                                           character_classes, 3),
+                       NULL);
+    }
+
     TXT_SetColumnWidths(advanced_table, 12, 12);
 
     TXT_SignalConnect(iwad_selector, "changed", UpdateWarpType, NULL);
@@ -644,6 +666,11 @@ static void DoJoinGame(void *unused1, void *unused2)
     else if (jointype == JOIN_AUTO_LAN)
     {
         AddCmdLineParameter(exec, "-autojoin");
+    }
+
+    if (gamemission == hexen)
+    {
+        AddCmdLineParameter(exec, "-class %i", character_class);
     }
 
     // Extra parameters come first, so that they can be used to override
@@ -704,6 +731,15 @@ void JoinMultiGame(void)
                    TXT_NewLabel("Game"),
                    IWADSelector(),
                    NULL);
+
+    if (gamemission == hexen)
+    {
+        TXT_AddWidgets(gameopt_table,
+                       TXT_NewLabel("Character class "),
+                       TXT_NewDropdownList(&character_class,
+                                           character_classes, 3),
+                       NULL);
+    }
 
     TXT_AddWidgets(serveropt_table,
                    TXT_NewRadioButton("Connect to address:",
