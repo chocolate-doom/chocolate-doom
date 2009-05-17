@@ -49,7 +49,7 @@
 #include "doomdef.h"
 
 #define LOW_PASS_FILTER
-#define SOUND_SLICE_TIME 100 /* ms */
+#define MAX_SOUND_SLICE_TIME 70 /* ms */
 #define NUM_CHANNELS 16
 
 static boolean sound_initialised = false;
@@ -64,7 +64,6 @@ static int mixer_channels;
 int use_libsamplerate = 0;
 
 extern int mb_used;
-
 
 // When a sound stops, check if it is still playing.  If it is not, 
 // we can mark the sound data as CACHE to be freed back for other
@@ -667,10 +666,36 @@ static void I_SDL_ShutdownSound(void)
     sound_initialised = false;
 }
 
+// Calculate slice size, based on MAX_SOUND_SLICE_TIME.
+// The result must be a power of two.
+
+static int GetSliceSize(void)
+{
+    int limit;
+    int n;
+
+    limit = (snd_samplerate * MAX_SOUND_SLICE_TIME) / 1000;
+
+    // Try all powers of two, not exceeding the limit.
+
+    for (n=0;; ++n)
+    {
+        // 2^n <= limit < 2^n+1 ?
+
+        if ((1 << (n + 1)) > limit)
+        {
+            return (1 << n);
+        }
+    }
+
+    // Should never happen?
+
+    return 1024;
+}
+
 static boolean I_SDL_InitSound(void)
 { 
     int i;
-    int slicesize;
     
     // No sounds yet
 
@@ -690,9 +715,7 @@ static boolean I_SDL_InitSound(void)
         return false;
     }
 
-    slicesize = (snd_samplerate * SOUND_SLICE_TIME) / 1000;
-
-    if (Mix_OpenAudio(snd_samplerate, AUDIO_S16SYS, 2, slicesize) < 0)
+    if (Mix_OpenAudio(snd_samplerate, AUDIO_S16SYS, 2, GetSliceSize()) < 0)
     {
         fprintf(stderr, "Error initialising SDL_mixer: %s\n", Mix_GetError());
         return false;
