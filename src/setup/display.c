@@ -389,7 +389,8 @@ void ConfigDisplay(void)
     
     window = TXT_NewWindow("Display Configuration");
 
-    TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_TOP, 40, 5);
+    TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_TOP, 
+                                  TXT_SCREEN_W / 2, 5);
 
     TXT_AddWidgets(window, 
                    fs_checkbox = TXT_NewCheckBox("Fullscreen", &fullscreen),
