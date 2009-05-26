@@ -1,6 +1,8 @@
 
 AM_CFLAGS = -I../src
 
+CTAGS_ARGS=-I TXT_UNCAST_ARG+
+
 # build this directory before the examples directory.
 
 SUBDIRS= . examples
