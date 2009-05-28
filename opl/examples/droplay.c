@@ -39,6 +39,15 @@ void WriteReg(unsigned int reg, unsigned int val)
 {
     int i;
 
+    // This was recorded from an OPL2, but we are probably playing
+    // back on an OPL3, so we need to enable the original OPL2
+    // channels.  Doom does this already, but other games don't.
+
+    if ((reg & 0xf0) == OPL_REGS_FEEDBACK)
+    {
+        val |= 0x30;
+    }
+
     OPL_WritePort(OPL_REGISTER_PORT, reg);
 
     for (i=0; i<6; ++i)
