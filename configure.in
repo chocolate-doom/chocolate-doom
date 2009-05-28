@@ -90,8 +90,9 @@ textscreen/Makefile
 textscreen/examples/Makefile
 setup/Makefile
 man/Makefile
-src/Makefile
 opl/Makefile
+opl/examples/Makefile
+src/Makefile
 pcsound/Makefile
 src/resource.rc
 src/doom-screensaver.desktop
