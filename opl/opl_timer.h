@@ -19,38 +19,22 @@
 // 02111-1307, USA.
 //
 // DESCRIPTION:
-//     OPL internal interface.
+//     OPL timer thread.
 //
 //-----------------------------------------------------------------------------
 
-
-#ifndef OPL_INTERNAL_H
-#define OPL_INTERNAL_H
+#ifndef OPL_TIMER_H
+#define OPL_TIMER_H
 
 #include "opl.h"
 
-typedef int (*opl_init_func)(unsigned int port_base);
-typedef void (*opl_shutdown_func)(void);
-typedef unsigned int (*opl_read_port_func)(opl_port_t port);
-typedef void (*opl_write_port_func)(opl_port_t port, unsigned int value);
-typedef void (*opl_set_callback_func)(unsigned int ms,
-                                      opl_callback_t callback,
-                                      void *data);
-typedef void (*opl_lock_func)(void);
-typedef void (*opl_unlock_func)(void);
+int OPL_Timer_StartThread(void);
+void OPL_Timer_StopThread(void);
+void OPL_Timer_SetCallback(unsigned int ms,
+                           opl_callback_t callback,
+                           void *data);
+void OPL_Timer_Lock(void);
+void OPL_Timer_Unlock(void);
 
-typedef struct
-{
-    char *name;
-
-    opl_init_func init_func;
-    opl_shutdown_func shutdown_func;
-    opl_read_port_func read_port_func;
-    opl_write_port_func write_port_func;
-    opl_set_callback_func set_callback_func;
-    opl_lock_func lock_func;
-    opl_unlock_func unlock_func;
-} opl_driver_t;
-
-#endif /* #ifndef OPL_INTERNAL_H */
+#endif /* #ifndef OPL_TIMER_H */
 

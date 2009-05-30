@@ -116,14 +116,72 @@ void Shutdown(void)
     OPL_Shutdown();
 }
 
+struct timer_data
+{
+    int running;
+    FILE *fstream;
+};
+
+void TimerCallback(void *data)
+{
+    struct timer_data *timer_data = data;
+    int delay;
+
+    if (!timer_data->running)
+    {
+        return;
+    }
+
+    // Read data until we must make a delay.
+
+    for (;;)
+    {
+        int reg, val;
+
+        // End of file?
+
+        if (feof(timer_data->fstream))
+        {
+            timer_data->running = 0;
+            return;
+        }
+
+        reg = fgetc(timer_data->fstream);
+        val = fgetc(timer_data->fstream);
+
+        // Register value of 0 or 1 indicates a delay.
+
+        if (reg == 0x00)
+        {
+            delay = val;
+            break;
+        }
+        else if (reg == 0x01)
+        {
+            val |= (fgetc(timer_data->fstream) << 8);
+            delay = val;
+            break;
+        }
+        else
+        {
+            WriteReg(reg, val);
+        }
+    }
+
+    // Schedule the next timer callback.
+
+    OPL_SetCallback(delay, TimerCallback, timer_data);
+}
+
 void PlayFile(char *filename)
 {
-    FILE *stream;
+    struct timer_data timer_data;
+    int running;
     char buf[8];
 
-    stream = fopen(filename, "rb");
+    timer_data.fstream = fopen(filename, "rb");
 
-    if (fread(buf, 1, 8, stream) < 8)
+    if (fread(buf, 1, 8, timer_data.fstream) < 8)
     {
         fprintf(stderr, "failed to read raw OPL header\n");
         exit(-1);
@@ -135,33 +193,25 @@ void PlayFile(char *filename)
         exit(-1);
     }
 
-    fseek(stream, 28, SEEK_SET);
+    fseek(timer_data.fstream, 28, SEEK_SET);
+    timer_data.running = 1;
 
-    while (!feof(stream))
+    // Start callback loop sequence.
+
+    OPL_SetCallback(0, TimerCallback, &timer_data);
+
+    // Sleep until the playback finishes.
+
+    do
     {
-        int reg, val;
+        OPL_Lock();
+        running = timer_data.running;
+        OPL_Unlock();
 
-        reg = fgetc(stream);
-        val = fgetc(stream);
+        SDL_Delay(100);
+    } while (running);
 
-        // Delay?
-
-        if (reg == 0x00)
-        {
-            SDL_Delay(val);
-        }
-        else if (reg == 0x01)
-        {
-            val |= (fgetc(stream) << 8);
-            SDL_Delay(val);
-        }
-        else
-        {
-            WriteReg(reg, val);
-        }
-    }
-
-    fclose(stream);
+    fclose(timer_data.fstream);
 }
 
 int main(int argc, char *argv[])

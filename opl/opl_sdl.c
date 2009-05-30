@@ -37,9 +37,12 @@
 #include "opl.h"
 #include "opl_internal.h"
 
+#include "opl_queue.h"
+
 // TODO:
 #define opl_sample_rate 22050
 
+static opl_callback_queue_t *callback_queue;
 static FM_OPL *opl_emulator = NULL;
 static int sdl_was_initialised = 0;
 static int mixing_freq, mixing_channels;
@@ -65,6 +68,7 @@ static void OPL_SDL_Shutdown(void)
     {
         Mix_CloseAudio();
         SDL_QuitSubSystem(SDL_INIT_AUDIO);
+        OPL_Queue_Destroy(callback_queue);
         sdl_was_initialised = 0;
     }
 
@@ -82,6 +86,8 @@ static int OPL_SDL_Init(unsigned int port_base)
 
     if (!SDLIsInitialised())
     {
+        callback_queue = OPL_Queue_Create();
+
         if (SDL_Init(SDL_INIT_AUDIO) < 0)
         {
             fprintf(stderr, "Unable to set up sound.\n");
@@ -161,12 +167,29 @@ static void OPL_SDL_PortWrite(opl_port_t port, unsigned int value)
     }
 }
 
+static void OPL_SDL_SetCallback(unsigned int ms,
+                                opl_callback_t callback,
+                                void *data)
+{
+}
+
+static void OPL_SDL_Lock(void)
+{
+}
+
+static void OPL_SDL_Unlock(void)
+{
+}
+
 opl_driver_t opl_sdl_driver =
 {
     "SDL",
     OPL_SDL_Init,
     OPL_SDL_Shutdown,
     OPL_SDL_PortRead,
-    OPL_SDL_PortWrite
+    OPL_SDL_PortWrite,
+    OPL_SDL_SetCallback,
+    OPL_SDL_Lock,
+    OPL_SDL_Unlock
 };
 

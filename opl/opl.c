@@ -105,3 +105,27 @@ unsigned int OPL_ReadPort(opl_port_t port)
     }
 }
 
+void OPL_SetCallback(unsigned int ms, opl_callback_t callback, void *data)
+{
+    if (driver != NULL)
+    {
+        driver->set_callback_func(ms, callback, data);
+    }
+}
+
+void OPL_Lock(void)
+{
+    if (driver != NULL)
+    {
+        driver->lock_func();
+    }
+}
+
+void OPL_Unlock(void)
+{
+    if (driver != NULL)
+    {
+        driver->unlock_func();
+    }
+}
+

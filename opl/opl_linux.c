@@ -35,6 +35,7 @@
 
 #include "opl.h"
 #include "opl_internal.h"
+#include "opl_timer.h"
 
 static unsigned int opl_port_base;
 
@@ -51,11 +52,23 @@ static int OPL_Linux_Init(unsigned int port_base)
 
     opl_port_base = port_base;
 
+    // Start callback thread
+
+    if (!OPL_Timer_StartThread())
+    {
+        ioperm(port_base, 2, 0);
+        return 0;
+    }
+
     return 1;
 }
 
 static void OPL_Linux_Shutdown(void)
 {
+    // Stop callback thread
+
+    OPL_Timer_StopThread();
+
     // Release permissions
 
     ioperm(opl_port_base, 2, 0);
@@ -77,7 +90,10 @@ opl_driver_t opl_linux_driver =
     OPL_Linux_Init,
     OPL_Linux_Shutdown,
     OPL_Linux_PortRead,
-    OPL_Linux_PortWrite
+    OPL_Linux_PortWrite,
+    OPL_Timer_SetCallback,
+    OPL_Timer_Lock,
+    OPL_Timer_Unlock
 };
 
 #endif /* #ifdef HAVE_IOPERM */
