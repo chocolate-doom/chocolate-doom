@@ -27,6 +27,8 @@
 #ifndef OPL_OPL_H
 #define OPL_OPL_H
 
+typedef void (*opl_callback_t)(void *data);
+
 typedef enum
 {
     OPL_REGISTER_PORT = 0,
@@ -71,6 +73,20 @@ void OPL_WritePort(opl_port_t port, unsigned int value);
 // Read from one of the OPL I/O ports:
 
 unsigned int OPL_ReadPort(opl_port_t port);
+
+// Set a timer callback.  After the specified number of milliseconds
+// have elapsed, the callback will be invoked.
+
+void OPL_SetCallback(unsigned int ms, opl_callback_t callback, void *data);
+
+// Begin critical section, during which, OPL callbacks will not be
+// invoked.
+
+void OPL_Lock(void);
+
+// End critical section.
+
+void OPL_Unlock(void);
 
 #endif
 
