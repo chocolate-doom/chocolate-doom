@@ -70,6 +70,7 @@ void OPL_Queue_Push(opl_callback_queue_t *queue,
                     unsigned int time)
 {
     int entry_id;
+    int parent_id;
 
     if (queue->num_entries >= MAX_OPL_QUEUE)
     {
@@ -84,13 +85,26 @@ void OPL_Queue_Push(opl_callback_queue_t *queue,
 
     // Shift existing entries down in the heap.
 
-    while (entry_id > 0 && time < queue->entries[entry_id / 2].time)
+    while (entry_id > 0)
     {
+        parent_id = (entry_id - 1) / 2;
+
+        // Is the heap condition satisfied?
+
+        if (time >= queue->entries[parent_id].time)
+        {
+            break;
+        }
+
+        // Move the existing entry down in the heap.
+
         memcpy(&queue->entries[entry_id],
-               &queue->entries[entry_id / 2],
+               &queue->entries[parent_id],
                sizeof(opl_queue_entry_t));
 
-        entry_id /= 2;
+        // Advance to the parent.
+
+        entry_id = parent_id;
     }
 
     // Insert new callback data.
@@ -189,4 +203,73 @@ unsigned int OPL_Queue_Peek(opl_callback_queue_t *queue)
         return 0;
     }
 }
+
+#ifdef TEST
+
+#include <assert.h>
+
+static void PrintQueueNode(opl_callback_queue_t *queue, int node, int depth)
+{
+    int i;
+
+    if (node >= queue->num_entries)
+    {
+        return;
+    }
+
+    for (i=0; i<depth * 3; ++i)
+    {
+        printf(" ");
+    }
+
+    printf("%i\n", queue->entries[node].time);
+
+    PrintQueueNode(queue, node * 2 + 1, depth + 1);
+    PrintQueueNode(queue, node * 2 + 2, depth + 1);
+}
+
+static void PrintQueue(opl_callback_queue_t *queue)
+{
+    PrintQueueNode(queue, 0, 0);
+}
+
+int main()
+{
+    opl_callback_queue_t *queue;
+    int iteration;
+
+    queue = OPL_Queue_Create();
+
+    for (iteration=0; iteration<5000; ++iteration)
+    {
+        opl_callback_t callback;
+        void *data;
+        unsigned int time;
+        unsigned int newtime;
+        int i;
+
+        for (i=0; i<MAX_OPL_QUEUE; ++i)
+        {
+            time = rand() % 0x10000;
+            OPL_Queue_Push(queue, NULL, NULL, time);
+        }
+
+        time = 0;
+
+        for (i=0; i<MAX_OPL_QUEUE; ++i)
+        {
+            assert(!OPL_Queue_IsEmpty(queue));
+            newtime = OPL_Queue_Peek(queue);
+            assert(OPL_Queue_Pop(queue, &callback, &data));
+
+            assert(newtime >= time);
+            time = newtime;
+        }
+
+        assert(OPL_Queue_IsEmpty(queue));
+        assert(!OPL_Queue_Pop(queue, &callback, &data));
+    }
+}
+
+#endif
 
