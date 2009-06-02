@@ -149,19 +149,34 @@ static int ThreadFunction(void *unused)
     return 0;
 }
 
+static void InitResources(void)
+{
+    callback_queue = OPL_Queue_Create();
+    timer_mutex = SDL_CreateMutex();
+    callback_queue_mutex = SDL_CreateMutex();
+}
+
+static void FreeResources(void)
+{
+    OPL_Queue_Destroy(callback_queue);
+    SDL_DestroyMutex(callback_queue_mutex);
+    SDL_DestroyMutex(timer_mutex);
+}
+
 int OPL_Timer_StartThread(void)
 {
-    timer_thread_state = THREAD_STATE_RUNNING;
-    timer_thread = SDL_CreateThread(ThreadFunction, NULL);
-    timer_mutex = SDL_CreateMutex();
+    InitResources();
 
-    callback_queue = OPL_Queue_Create();
-    callback_queue_mutex = SDL_CreateMutex();
+    timer_thread_state = THREAD_STATE_RUNNING;
     current_time = SDL_GetTicks();
+
+    timer_thread = SDL_CreateThread(ThreadFunction, NULL);
 
     if (timer_thread == NULL)
     {
         timer_thread_state = THREAD_STATE_STOPPED;
+        FreeResources();
+
         return 0;
     }
 
@@ -176,6 +191,8 @@ void OPL_Timer_StopThread(void)
     {
         SDL_Delay(1);
     }
+
+    FreeResources();
 }
 
 void OPL_Timer_SetCallback(unsigned int ms, opl_callback_t callback, void *data)
