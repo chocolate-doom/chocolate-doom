@@ -1605,8 +1605,8 @@ boolean M_Responder (event_t* ev)
     {
 	if (messageNeedsInput)
         {
-            if (ch != ' ' && ch != KEY_ESCAPE
-             && ch != key_menu_confirm && ch != key_menu_abort)
+            if (key != ' ' && key != KEY_ESCAPE
+             && key != key_menu_confirm && key != key_menu_abort)
             {
                 return false;
             }
@@ -1615,7 +1615,7 @@ boolean M_Responder (event_t* ev)
 	menuactive = messageLastMenuActive;
 	messageToPrint = 0;
 	if (messageRoutine)
-	    messageRoutine(ch);
+	    messageRoutine(key);
 
 	menuactive = false;
 	S_StartSound(NULL,sfx_swtchx);
