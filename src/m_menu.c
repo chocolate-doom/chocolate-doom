@@ -1839,7 +1839,7 @@ boolean M_Responder (event_t* ev)
 	}
 	return true;
     }
-    else
+    else if (ch != 0)
     {
         // Keyboard shortcut?
 
