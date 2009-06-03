@@ -224,37 +224,39 @@ void ConfigKeyboard(void)
 
     window = TXT_NewWindow("Keyboard configuration");
 
-    TXT_AddWidgets(window, 
+    TXT_AddWidgets(window,
                    TXT_NewSeparator("Movement"),
-                   movement_table = TXT_NewTable(2),
+                   movement_table = TXT_NewTable(4),
 
                    TXT_NewSeparator("Action"),
-                   action_table = TXT_NewTable(2),
+                   action_table = TXT_NewTable(4),
                    TXT_NewButton2("Menu keys...", MenuKeysDialog, NULL),
+                   NULL);
 
+    TXT_AddWidgets(window,
                    TXT_NewSeparator("Misc."),
                    run_control = TXT_NewCheckBox("Always run", &always_run),
                    TXT_NewInvertedCheckBox("Use native keyboard mapping", 
                                            &vanilla_keyboard_mapping),
                    NULL);
 
-    TXT_SetColumnWidths(movement_table, 20, 8);
+    TXT_SetColumnWidths(movement_table, 15, 4, 15, 4);
 
     TXT_SignalConnect(run_control, "changed", UpdateJoybSpeed, NULL);
 
-    AddKeyControl(movement_table, "Move Forward",  &key_up);
+    AddKeyControl(movement_table, "Move Forward", &key_up);
+    AddKeyControl(movement_table, " Strafe Left", &key_strafeleft);
     AddKeyControl(movement_table, "Move Backward", &key_down);
-    AddKeyControl(movement_table, "Turn Left",     &key_left);
-    AddKeyControl(movement_table, "Turn Right",    &key_right);
-    AddKeyControl(movement_table, "Strafe Left",   &key_strafeleft);
-    AddKeyControl(movement_table, "Strafe Right",  &key_straferight);
-    AddKeyControl(movement_table, "Speed On",      &key_speed);
-    AddKeyControl(movement_table, "Strafe On",     &key_strafe);
+    AddKeyControl(movement_table, " Strafe Right", &key_straferight);
+    AddKeyControl(movement_table, "Turn Left", &key_left);
+    AddKeyControl(movement_table, " Speed On", &key_speed);
+    AddKeyControl(movement_table, "Turn Right", &key_right);
+    AddKeyControl(movement_table, " Strafe On", &key_strafe);
 
-    TXT_SetColumnWidths(action_table, 20, 8);
+    TXT_SetColumnWidths(action_table, 15, 4, 15, 4);
 
-    AddKeyControl(action_table, "Use",  &key_use);
-    AddKeyControl(action_table, "Fire", &key_fire);
+    AddKeyControl(action_table, "Fire/Attack", &key_fire);
+    AddKeyControl(action_table, " Use", &key_use);
 
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
 }
