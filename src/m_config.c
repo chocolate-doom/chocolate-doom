@@ -858,6 +858,18 @@ static default_t extra_defaults_list[] =
 
     CONFIG_VARIABLE_KEY(key_menu_gamma,            key_menu_gamma),
 
+    //!
+    // Keyboard shortcut to increase the screen size.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_incscreen,        key_menu_incscreen),
+
+    //!
+    // Keyboard shortcut to decrease the screen size.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_decscreen,        key_menu_decscreen),
+
 };
 
 static default_collection_t extra_defaults =
