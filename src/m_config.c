@@ -87,6 +87,33 @@ extern int	key_use;
 extern int	key_strafe;
 extern int	key_speed;
 
+// Menu control keys:
+
+extern int key_menu_activate;
+extern int key_menu_up;
+extern int key_menu_down;
+extern int key_menu_left;
+extern int key_menu_right;
+extern int key_menu_back;
+extern int key_menu_forward;
+extern int key_menu_confirm;
+extern int key_menu_abort;
+
+extern int key_menu_help;
+extern int key_menu_save;
+extern int key_menu_load;
+extern int key_menu_volume;
+extern int key_menu_detail;
+extern int key_menu_qsave;
+extern int key_menu_endgame;
+extern int key_menu_messages;
+extern int key_menu_qload;
+extern int key_menu_quit;
+extern int key_menu_gamma;
+
+extern int key_menu_incscreen;
+extern int key_menu_decscreen;
+
 extern int	mousebfire;
 extern int	mousebstrafe;
 extern int	mousebforward;
@@ -710,6 +737,127 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(use_libsamplerate,         use_libsamplerate),
+
+    //!
+    // Key that activates the menu when pressed.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_activate,         key_menu_activate),
+
+    //!
+    // Key that moves the cursor up on the menu.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_up,               key_menu_up),
+
+    //!
+    // Key that moves the cursor down on the menu.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_down,             key_menu_down),
+
+    //!
+    // Key that moves the currently selected slider on the menu left.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_left,             key_menu_left),
+
+    //!
+    // Key that moves the currently selected slider on the menu right.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_right,            key_menu_right),
+
+    //!
+    // Key to go back to the previous menu.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_back,             key_menu_back),
+
+    //!
+    // Key to activate the currently selected menu item.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_forward,          key_menu_forward),
+
+    //!
+    // Key to answer 'yes' to a question in the menu.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_confirm,          key_menu_confirm),
+
+    //!
+    // Key to answer 'no' to a question in the menu.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_abort,            key_menu_abort),
+
+    //!
+    // Keyboard shortcut to bring up the help screen.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_help,             key_menu_help),
+
+    //!
+    // Keyboard shortcut to bring up the save game menu.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_save,             key_menu_save),
+
+    //!
+    // Keyboard shortcut to bring up the load game menu.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_load,             key_menu_load),
+
+    //!
+    // Keyboard shortcut to bring up the sound volume menu.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_volume,           key_menu_volume),
+
+    //!
+    // Keyboard shortcut to toggle the detail level.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_detail,           key_menu_detail),
+
+    //!
+    // Keyboard shortcut to quicksave the current game.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_qsave,            key_menu_qsave),
+
+    //!
+    // Keyboard shortcut to end the game.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_endgame,          key_menu_endgame),
+
+    //!
+    // Keyboard shortcut to toggle heads-up messages.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_messages,         key_menu_messages),
+
+    //!
+    // Keyboard shortcut to load the last quicksave.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_qload,            key_menu_qload),
+
+    //!
+    // Keyboard shortcut to quit the game.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_quit,             key_menu_quit),
+
+    //!
+    // Keyboard shortcut to toggle the gamma correction level.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_gamma,            key_menu_gamma),
+
 };
 
 static default_collection_t extra_defaults =
