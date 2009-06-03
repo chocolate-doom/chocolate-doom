@@ -70,9 +70,21 @@ int vanilla_keyboard_mapping = 1;
 
 static int always_run = 0;
 
-static int *allkeys[] = {&key_left, &key_right, &key_up, &key_down, 
-                         &key_strafeleft, &key_straferight, &key_fire, 
-                         &key_use, &key_strafe, &key_speed};
+// Keys within these groups cannot have the same value.
+
+static int *controls[] = { &key_left, &key_right, &key_up, &key_down,
+                           &key_strafeleft, &key_straferight, &key_fire,
+                           &key_use, &key_strafe, &key_speed, NULL };
+
+static int *menu_nav[] = { &key_menu_activate, &key_menu_up, &key_menu_down,
+                           &key_menu_left, &key_menu_right, &key_menu_back,
+                           &key_menu_forward, NULL };
+
+static int *shortcuts[] = { &key_menu_help, &key_menu_save, &key_menu_load,
+                            &key_menu_volume, &key_menu_detail, &key_menu_qsave,
+                            &key_menu_endgame, &key_menu_messages,
+                            &key_menu_qload, &key_menu_quit, &key_menu_gamma,
+                            &key_menu_incscreen, &key_menu_decscreen, NULL };
 
 static void UpdateJoybSpeed(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(var))
 {
@@ -94,29 +106,61 @@ static void UpdateJoybSpeed(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(var))
     }
 }
 
-// Callback invoked when a key control is set
-
-static void KeySetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))
+static int VarInGroup(int *variable, int **group)
 {
-    TXT_CAST_ARG(int, variable);
     unsigned int i;
 
-    for (i=0; i<arrlen(allkeys); ++i)
+    for (i=0; group[i] != NULL; ++i)
     {
-        if (*variable == *allkeys[i] && allkeys[i] != variable)
+        if (group[i] == variable)
+        {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+static void CheckKeyGroup(int *variable, int **group)
+{
+    unsigned int i;
+
+    // Don't check unless the variable is in this group.
+
+    if (!VarInGroup(variable, group))
+    {
+        return;
+    }
+
+    // If another variable has the same value as the new value, reset it.
+
+    for (i=0; group[i] != NULL; ++i)
+    {
+        if (*variable == *group[i] && group[i] != variable)
         {
             // A different key has the same value.  Clear the existing
             // value. This ensures that no two keys can have the same
             // value.
 
-            *allkeys[i] = 0;
+            *group[i] = 0;
         }
     }
 }
 
+// Callback invoked when a key control is set
+
+static void KeySetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))
+{
+    TXT_CAST_ARG(int, variable);
+
+    CheckKeyGroup(variable, controls);
+    CheckKeyGroup(variable, menu_nav);
+    CheckKeyGroup(variable, shortcuts);
+}
+
 // Add a label and keyboard input to the specified table.
 
-static txt_key_input_t *AddKeyInput(txt_table_t *table, char *name, int *var)
+static void AddKeyControl(txt_table_t *table, char *name, int *var)
 {
     txt_key_input_t *key_input;
 
@@ -124,17 +168,6 @@ static txt_key_input_t *AddKeyInput(txt_table_t *table, char *name, int *var)
     key_input = TXT_NewKeyInput(var);
     TXT_AddWidget(table, key_input);
 
-    return key_input;
-}
-
-// Add a keyboard input for a game control.  Each key can only be bound
-// to one game control at a time.
-
-static void AddKeyControl(txt_table_t *table, char *name, int *var)
-{
-    txt_key_input_t *key_input;
-
-    key_input = AddKeyInput(table, name, var);
     TXT_SignalConnect(key_input, "set", KeySetCallback, var);
 }
 
@@ -150,30 +183,30 @@ static void MenuKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
     TXT_SetColumnWidths(table, 25, 10);
 
-    AddKeyInput(table, "Activate menu",         &key_menu_activate);
-    AddKeyInput(table, "Move cursor up",        &key_menu_up);
-    AddKeyInput(table, "Move cursor down",      &key_menu_down);
-    AddKeyInput(table, "Move slider left",      &key_menu_left);
-    AddKeyInput(table, "Move slider right",     &key_menu_right);
-    AddKeyInput(table, "Go to previous menu",   &key_menu_back);
-    AddKeyInput(table, "Activate menu item",    &key_menu_forward);
-    AddKeyInput(table, "Confirm action",        &key_menu_confirm);
-    AddKeyInput(table, "Cancel action",         &key_menu_abort);
+    AddKeyControl(table, "Activate menu",         &key_menu_activate);
+    AddKeyControl(table, "Move cursor up",        &key_menu_up);
+    AddKeyControl(table, "Move cursor down",      &key_menu_down);
+    AddKeyControl(table, "Move slider left",      &key_menu_left);
+    AddKeyControl(table, "Move slider right",     &key_menu_right);
+    AddKeyControl(table, "Go to previous menu",   &key_menu_back);
+    AddKeyControl(table, "Activate menu item",    &key_menu_forward);
+    AddKeyControl(table, "Confirm action",        &key_menu_confirm);
+    AddKeyControl(table, "Cancel action",         &key_menu_abort);
 
-    AddKeyInput(table, "Help screen",           &key_menu_help);
-    AddKeyInput(table, "Save game",             &key_menu_save);
-    AddKeyInput(table, "Load game",             &key_menu_load);
-    AddKeyInput(table, "Sound volume",          &key_menu_volume);
-    AddKeyInput(table, "Toggle detail",         &key_menu_detail);
-    AddKeyInput(table, "Quick save",            &key_menu_qsave);
-    AddKeyInput(table, "End game",              &key_menu_endgame);
-    AddKeyInput(table, "Toggle messages",       &key_menu_messages);
-    AddKeyInput(table, "Quick load",            &key_menu_qload);
-    AddKeyInput(table, "Quit game",             &key_menu_quit);
-    AddKeyInput(table, "Toggle gamma",          &key_menu_gamma);
+    AddKeyControl(table, "Help screen",           &key_menu_help);
+    AddKeyControl(table, "Save game",             &key_menu_save);
+    AddKeyControl(table, "Load game",             &key_menu_load);
+    AddKeyControl(table, "Sound volume",          &key_menu_volume);
+    AddKeyControl(table, "Toggle detail",         &key_menu_detail);
+    AddKeyControl(table, "Quick save",            &key_menu_qsave);
+    AddKeyControl(table, "End game",              &key_menu_endgame);
+    AddKeyControl(table, "Toggle messages",       &key_menu_messages);
+    AddKeyControl(table, "Quick load",            &key_menu_qload);
+    AddKeyControl(table, "Quit game",             &key_menu_quit);
+    AddKeyControl(table, "Toggle gamma",          &key_menu_gamma);
 
-    AddKeyInput(table, "Increase screen size",  &key_menu_incscreen);
-    AddKeyInput(table, "Decrease screen size",  &key_menu_decscreen);
+    AddKeyControl(table, "Increase screen size",  &key_menu_incscreen);
+    AddKeyControl(table, "Decrease screen size",  &key_menu_decscreen);
 
     scrollpane = TXT_NewScrollPane(0, 10, table);
 
@@ -209,18 +242,18 @@ void ConfigKeyboard(void)
 
     TXT_SignalConnect(run_control, "changed", UpdateJoybSpeed, NULL);
 
-    AddKeyControl(movement_table, "Move Forward", &key_up);
+    AddKeyControl(movement_table, "Move Forward",  &key_up);
     AddKeyControl(movement_table, "Move Backward", &key_down);
-    AddKeyControl(movement_table, "Turn Left", &key_left);
-    AddKeyControl(movement_table, "Turn Right", &key_right);
-    AddKeyControl(movement_table, "Strafe Left", &key_strafeleft);
-    AddKeyControl(movement_table, "Strafe Right", &key_straferight);
-    AddKeyControl(movement_table, "Speed On", &key_speed);
-    AddKeyControl(movement_table, "Strafe On", &key_strafe);
+    AddKeyControl(movement_table, "Turn Left",     &key_left);
+    AddKeyControl(movement_table, "Turn Right",    &key_right);
+    AddKeyControl(movement_table, "Strafe Left",   &key_strafeleft);
+    AddKeyControl(movement_table, "Strafe Right",  &key_straferight);
+    AddKeyControl(movement_table, "Speed On",      &key_speed);
+    AddKeyControl(movement_table, "Strafe On",     &key_strafe);
 
     TXT_SetColumnWidths(action_table, 20, 8);
 
-    AddKeyControl(action_table, "Use", &key_use);
+    AddKeyControl(action_table, "Use",  &key_use);
     AddKeyControl(action_table, "Fire", &key_fire);
 
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
