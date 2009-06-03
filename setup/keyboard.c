@@ -208,7 +208,7 @@ static void MenuKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddKeyControl(table, "Increase screen size",  &key_menu_incscreen);
     AddKeyControl(table, "Decrease screen size",  &key_menu_decscreen);
 
-    scrollpane = TXT_NewScrollPane(0, 10, table);
+    scrollpane = TXT_NewScrollPane(0, 12, table);
 
     TXT_AddWidget(window, scrollpane);
 }
