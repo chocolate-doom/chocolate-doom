@@ -35,6 +35,31 @@ extern int key_speed;
 extern int joybspeed;
 extern int vanilla_keyboard_mapping;
 
+extern int key_menu_activate;
+extern int key_menu_up;
+extern int key_menu_down;
+extern int key_menu_left;
+extern int key_menu_right;
+extern int key_menu_back;
+extern int key_menu_forward;
+extern int key_menu_confirm;
+extern int key_menu_abort;
+
+extern int key_menu_help;
+extern int key_menu_save;
+extern int key_menu_load;
+extern int key_menu_volume;
+extern int key_menu_detail;
+extern int key_menu_qsave;
+extern int key_menu_endgame;
+extern int key_menu_messages;
+extern int key_menu_qload;
+extern int key_menu_quit;
+extern int key_menu_gamma;
+
+extern int key_menu_incscreen;
+extern int key_menu_decscreen;
+
 void ConfigKeyboard(void);
 
 #endif /* #ifndef SETUP_KEYBOARD_H */

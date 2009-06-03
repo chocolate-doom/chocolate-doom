@@ -239,6 +239,7 @@ static default_t doom_defaults_list[] =
     {"chatmacro7", &chat_macros[7], DEFAULT_STRING, 0, 0 },
     {"chatmacro8", &chat_macros[8], DEFAULT_STRING, 0, 0 },
     {"chatmacro9", &chat_macros[9], DEFAULT_STRING, 0, 0 },
+
 };
 
 static default_collection_t doom_defaults = 
@@ -282,6 +283,28 @@ static default_t extra_defaults_list[] =
     {"mouseb_use",                  &mousebuse, DEFAULT_INT, 0, 0},
     {"mouseb_backward",             &mousebbackward, DEFAULT_INT, 0, 0},
     {"use_libsamplerate",           &use_libsamplerate, DEFAULT_INT, 0, 0},
+    {"key_menu_activate",           &key_menu_activate, DEFAULT_KEY, 0, 0},
+    {"key_menu_up",                 &key_menu_up, DEFAULT_KEY, 0, 0},
+    {"key_menu_down",               &key_menu_down, DEFAULT_KEY, 0, 0},
+    {"key_menu_left",               &key_menu_left, DEFAULT_KEY, 0, 0},
+    {"key_menu_right",              &key_menu_right, DEFAULT_KEY, 0, 0},
+    {"key_menu_back",               &key_menu_back, DEFAULT_KEY, 0, 0},
+    {"key_menu_forward",            &key_menu_forward, DEFAULT_KEY, 0, 0},
+    {"key_menu_confirm",            &key_menu_confirm, DEFAULT_KEY, 0, 0},
+    {"key_menu_abort",              &key_menu_abort, DEFAULT_KEY, 0, 0},
+    {"key_menu_help",               &key_menu_help, DEFAULT_KEY, 0, 0},
+    {"key_menu_save",               &key_menu_save, DEFAULT_KEY, 0, 0},
+    {"key_menu_load",               &key_menu_load, DEFAULT_KEY, 0, 0},
+    {"key_menu_volume",             &key_menu_volume, DEFAULT_KEY, 0, 0},
+    {"key_menu_detail",             &key_menu_detail, DEFAULT_KEY, 0, 0},
+    {"key_menu_qsave",              &key_menu_qsave, DEFAULT_KEY, 0, 0},
+    {"key_menu_endgame",            &key_menu_endgame, DEFAULT_KEY, 0, 0},
+    {"key_menu_messages",           &key_menu_messages, DEFAULT_KEY, 0, 0},
+    {"key_menu_qload",              &key_menu_qload, DEFAULT_KEY, 0, 0},
+    {"key_menu_quit",               &key_menu_quit, DEFAULT_KEY, 0, 0},
+    {"key_menu_gamma",              &key_menu_gamma, DEFAULT_KEY, 0, 0},
+    {"key_menu_incscreen",          &key_menu_incscreen, DEFAULT_KEY, 0, 0},
+    {"key_menu_decscreen",          &key_menu_decscreen, DEFAULT_KEY, 0, 0},
 };
 
 static default_collection_t extra_defaults =
