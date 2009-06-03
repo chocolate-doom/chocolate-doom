@@ -18,6 +18,7 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
+
 #include "textscreen.h"
 #include "doomtype.h"
 
@@ -37,6 +38,33 @@ int key_fire = KEY_RCTRL;
 int key_use = ' ';
 int key_strafe = KEY_RALT;
 int key_speed = KEY_RSHIFT;
+
+// Menu keys:
+
+int key_menu_activate  = KEY_ESCAPE;
+int key_menu_up        = KEY_UPARROW;
+int key_menu_down      = KEY_DOWNARROW;
+int key_menu_left      = KEY_LEFTARROW;
+int key_menu_right     = KEY_RIGHTARROW;
+int key_menu_back      = KEY_BACKSPACE;
+int key_menu_forward   = KEY_ENTER;
+int key_menu_confirm   = 'y';
+int key_menu_abort     = 'n';
+
+int key_menu_help      = KEY_F1;
+int key_menu_save      = KEY_F2;
+int key_menu_load      = KEY_F3;
+int key_menu_volume    = KEY_F4;
+int key_menu_detail    = KEY_F5;
+int key_menu_qsave     = KEY_F6;
+int key_menu_endgame   = KEY_F7;
+int key_menu_messages  = KEY_F8;
+int key_menu_qload     = KEY_F9;
+int key_menu_quit      = KEY_F10;
+int key_menu_gamma     = KEY_F11;
+
+int key_menu_incscreen = KEY_EQUALS;
+int key_menu_decscreen = KEY_MINUS;
 
 int vanilla_keyboard_mapping = 1;
 
@@ -86,14 +114,70 @@ static void KeySetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))
     }
 }
 
-static void AddKeyControl(txt_table_t *table, char *name, int *var)
+// Add a label and keyboard input to the specified table.
+
+static txt_key_input_t *AddKeyInput(txt_table_t *table, char *name, int *var)
 {
     txt_key_input_t *key_input;
 
     TXT_AddWidget(table, TXT_NewLabel(name));
     key_input = TXT_NewKeyInput(var);
     TXT_AddWidget(table, key_input);
+
+    return key_input;
+}
+
+// Add a keyboard input for a game control.  Each key can only be bound
+// to one game control at a time.
+
+static void AddKeyControl(txt_table_t *table, char *name, int *var)
+{
+    txt_key_input_t *key_input;
+
+    key_input = AddKeyInput(table, name, var);
     TXT_SignalConnect(key_input, "set", KeySetCallback, var);
+}
+
+static void MenuKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
+{
+    txt_window_t *window;
+    txt_table_t *table;
+    txt_scrollpane_t *scrollpane;
+
+    window = TXT_NewWindow("Menu keys");
+
+    table = TXT_NewTable(2);
+
+    TXT_SetColumnWidths(table, 25, 10);
+
+    AddKeyInput(table, "Activate menu",         &key_menu_activate);
+    AddKeyInput(table, "Move cursor up",        &key_menu_up);
+    AddKeyInput(table, "Move cursor down",      &key_menu_down);
+    AddKeyInput(table, "Move slider left",      &key_menu_left);
+    AddKeyInput(table, "Move slider right",     &key_menu_right);
+    AddKeyInput(table, "Go to previous menu",   &key_menu_back);
+    AddKeyInput(table, "Activate menu item",    &key_menu_forward);
+    AddKeyInput(table, "Confirm action",        &key_menu_confirm);
+    AddKeyInput(table, "Cancel action",         &key_menu_abort);
+
+    AddKeyInput(table, "Help screen",           &key_menu_help);
+    AddKeyInput(table, "Save game",             &key_menu_save);
+    AddKeyInput(table, "Load game",             &key_menu_load);
+    AddKeyInput(table, "Sound volume",          &key_menu_volume);
+    AddKeyInput(table, "Toggle detail",         &key_menu_detail);
+    AddKeyInput(table, "Quick save",            &key_menu_qsave);
+    AddKeyInput(table, "End game",              &key_menu_endgame);
+    AddKeyInput(table, "Toggle messages",       &key_menu_messages);
+    AddKeyInput(table, "Quick load",            &key_menu_qload);
+    AddKeyInput(table, "Quit game",             &key_menu_quit);
+    AddKeyInput(table, "Toggle gamma",          &key_menu_gamma);
+
+    AddKeyInput(table, "Increase screen size",  &key_menu_incscreen);
+    AddKeyInput(table, "Decrease screen size",  &key_menu_decscreen);
+
+    scrollpane = TXT_NewScrollPane(0, 10, table);
+
+    TXT_AddWidget(window, scrollpane);
 }
 
 void ConfigKeyboard(void)
@@ -113,6 +197,7 @@ void ConfigKeyboard(void)
 
                    TXT_NewSeparator("Action"),
                    action_table = TXT_NewTable(2),
+                   TXT_NewButton2("Menu keys...", MenuKeysDialog, NULL),
 
                    TXT_NewSeparator("Misc."),
                    run_control = TXT_NewCheckBox("Always run", &always_run),
