@@ -90,19 +90,18 @@
 // drawing stuff
 #define	FB		0
 
-#define AM_PANDOWNKEY	KEY_DOWNARROW
-#define AM_PANUPKEY	KEY_UPARROW
-#define AM_PANRIGHTKEY	KEY_RIGHTARROW
-#define AM_PANLEFTKEY	KEY_LEFTARROW
-#define AM_ZOOMINKEY	'='
-#define AM_ZOOMOUTKEY	'-'
-#define AM_STARTKEY	KEY_TAB
-#define AM_ENDKEY	KEY_TAB
-#define AM_GOBIGKEY	'0'
-#define AM_FOLLOWKEY	'f'
-#define AM_GRIDKEY	'g'
-#define AM_MARKKEY	'm'
-#define AM_CLEARMARKKEY	'c'
+int key_map_north     = KEY_UPARROW;
+int key_map_south     = KEY_DOWNARROW;
+int key_map_east      = KEY_RIGHTARROW;
+int key_map_west      = KEY_LEFTARROW;
+int key_map_zoomin    = '=';
+int key_map_zoomout   = '-';
+int key_map_toggle    = KEY_TAB;
+int key_map_maxzoom   = '0';
+int key_map_follow    = 'f';
+int key_map_grid      = 'g';
+int key_map_mark      = 'm';
+int key_map_clearmark = 'c';
 
 #define AM_NUMMARKPOINTS 10
 
@@ -632,121 +631,136 @@ AM_Responder
     static int cheatstate=0;
     static int bigstate=0;
     static char buffer[20];
+    int key;
 
     rc = false;
 
     if (!automapactive)
     {
-	if (ev->type == ev_keydown && ev->data1 == AM_STARTKEY)
+	if (ev->type == ev_keydown && ev->data1 == key_map_toggle)
 	{
 	    AM_Start ();
 	    viewactive = false;
 	    rc = true;
 	}
     }
-
     else if (ev->type == ev_keydown)
     {
-
 	rc = true;
-	switch(ev->data1)
-	{
-	  case AM_PANRIGHTKEY: // pan right
-	    if (!followplayer) m_paninc.x = FTOM(F_PANINC);
-	    else rc = false;
-	    break;
-	  case AM_PANLEFTKEY: // pan left
-	    if (!followplayer) m_paninc.x = -FTOM(F_PANINC);
-	    else rc = false;
-	    break;
-	  case AM_PANUPKEY: // pan up
-	    if (!followplayer) m_paninc.y = FTOM(F_PANINC);
-	    else rc = false;
-	    break;
-	  case AM_PANDOWNKEY: // pan down
-	    if (!followplayer) m_paninc.y = -FTOM(F_PANINC);
-	    else rc = false;
-	    break;
-	  case AM_ZOOMOUTKEY: // zoom out
-	    mtof_zoommul = M_ZOOMOUT;
-	    ftom_zoommul = M_ZOOMIN;
-	    break;
-	  case AM_ZOOMINKEY: // zoom in
-	    mtof_zoommul = M_ZOOMIN;
-	    ftom_zoommul = M_ZOOMOUT;
-	    break;
-	  case AM_ENDKEY:
-	    bigstate = 0;
-	    viewactive = true;
-	    AM_Stop ();
-	    break;
-	  case AM_GOBIGKEY:
-	    bigstate = !bigstate;
-	    if (bigstate)
-	    {
-		AM_saveScaleAndLoc();
-		AM_minOutWindowScale();
-	    }
-	    else AM_restoreScaleAndLoc();
-	    break;
-	  case AM_FOLLOWKEY:
-	    followplayer = !followplayer;
-	    f_oldloc.x = INT_MAX;
+        key = ev->data1;
+
+        if (key == key_map_east)          // pan right
+        {
+            if (!followplayer) m_paninc.x = FTOM(F_PANINC);
+            else rc = false;
+        }
+        else if (key == key_map_west)     // pan left
+        {
+            if (!followplayer) m_paninc.x = -FTOM(F_PANINC);
+            else rc = false;
+        }
+        else if (key == key_map_north)    // pan up
+        {
+            if (!followplayer) m_paninc.y = FTOM(F_PANINC);
+            else rc = false;
+        }
+        else if (key == key_map_south)    // pan down
+        {
+            if (!followplayer) m_paninc.y = -FTOM(F_PANINC);
+            else rc = false;
+        }
+        else if (key == key_map_zoomout)  // zoom out
+        {
+            mtof_zoommul = M_ZOOMOUT;
+            ftom_zoommul = M_ZOOMIN;
+        }
+        else if (key == key_map_zoomin)   // zoom in
+        {
+            mtof_zoommul = M_ZOOMIN;
+            ftom_zoommul = M_ZOOMOUT;
+        }
+        else if (key == key_map_toggle)
+        {
+            bigstate = 0;
+            viewactive = true;
+            AM_Stop ();
+        }
+        else if (key == key_map_maxzoom)
+        {
+            bigstate = !bigstate;
+            if (bigstate)
+            {
+                AM_saveScaleAndLoc();
+                AM_minOutWindowScale();
+            }
+            else AM_restoreScaleAndLoc();
+        }
+        else if (key == key_map_follow)
+        {
+            followplayer = !followplayer;
+            f_oldloc.x = INT_MAX;
             if (followplayer)
                 plr->message = DEH_String(AMSTR_FOLLOWON);
             else
                 plr->message = DEH_String(AMSTR_FOLLOWOFF);
-	    break;
-	  case AM_GRIDKEY:
-	    grid = !grid;
+        }
+        else if (key == key_map_grid)
+        {
+            grid = !grid;
             if (grid)
                 plr->message = DEH_String(AMSTR_GRIDON);
             else
                 plr->message = DEH_String(AMSTR_GRIDOFF);
-	    break;
-	  case AM_MARKKEY:
-	    sprintf(buffer, "%s %d", DEH_String(AMSTR_MARKEDSPOT), markpointnum);
-	    plr->message = buffer;
-	    AM_addMark();
-	    break;
-	  case AM_CLEARMARKKEY:
-	    AM_clearMarks();
-	    plr->message = DEH_String(AMSTR_MARKSCLEARED);
-	    break;
-	  default:
-	    cheatstate=0;
-	    rc = false;
-	}
+        }
+        else if (key == key_map_mark)
+        {
+            sprintf(buffer, "%s %d", DEH_String(AMSTR_MARKEDSPOT), markpointnum);
+            plr->message = buffer;
+            AM_addMark();
+        }
+        else if (key == key_map_clearmark)
+        {
+            AM_clearMarks();
+            plr->message = DEH_String(AMSTR_MARKSCLEARED);
+        }
+        else
+        {
+            cheatstate=0;
+            rc = false;
+        }
+
 	if (!deathmatch && cht_CheckCheat(&cheat_amap, ev->data2))
 	{
 	    rc = false;
 	    cheating = (cheating+1) % 3;
 	}
     }
-
     else if (ev->type == ev_keyup)
     {
-	rc = false;
-	switch (ev->data1)
-	{
-	  case AM_PANRIGHTKEY:
-	    if (!followplayer) m_paninc.x = 0;
-	    break;
-	  case AM_PANLEFTKEY:
-	    if (!followplayer) m_paninc.x = 0;
-	    break;
-	  case AM_PANUPKEY:
-	    if (!followplayer) m_paninc.y = 0;
-	    break;
-	  case AM_PANDOWNKEY:
-	    if (!followplayer) m_paninc.y = 0;
-	    break;
-	  case AM_ZOOMOUTKEY:
-	  case AM_ZOOMINKEY:
-	    mtof_zoommul = FRACUNIT;
-	    ftom_zoommul = FRACUNIT;
-	    break;
-	}
+        rc = false;
+        key = ev->data1;
+
+        if (key == key_map_east)
+        {
+            if (!followplayer) m_paninc.x = 0;
+        }
+        else if (key == key_map_west)
+        {
+            if (!followplayer) m_paninc.x = 0;
+        }
+        else if (key == key_map_north)
+        {
+            if (!followplayer) m_paninc.y = 0;
+        }
+        else if (key == key_map_south)
+        {
+            if (!followplayer) m_paninc.y = 0;
+        }
+        else if (key == key_map_zoomout || key == key_map_zoomin)
+        {
+            mtof_zoommul = FRACUNIT;
+            ftom_zoommul = FRACUNIT;
+        }
     }
 
     return rc;

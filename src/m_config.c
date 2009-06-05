@@ -99,6 +99,8 @@ extern int key_menu_forward;
 extern int key_menu_confirm;
 extern int key_menu_abort;
 
+// Keyboard shortcuts:
+
 extern int key_menu_help;
 extern int key_menu_save;
 extern int key_menu_load;
@@ -114,6 +116,28 @@ extern int key_menu_gamma;
 extern int key_menu_incscreen;
 extern int key_menu_decscreen;
 
+extern int key_map_north;
+extern int key_map_south;
+extern int key_map_east;
+extern int key_map_west;
+extern int key_map_zoomin;
+extern int key_map_zoomout;
+extern int key_map_toggle;
+extern int key_map_maxzoom;
+extern int key_map_follow;
+extern int key_map_grid;
+extern int key_map_mark;
+extern int key_map_clearmark;
+
+extern int key_weapon1;
+extern int key_weapon2;
+extern int key_weapon3;
+extern int key_weapon4;
+extern int key_weapon5;
+extern int key_weapon6;
+extern int key_weapon7;
+extern int key_weapon8;
+ 
 extern int	mousebfire;
 extern int	mousebstrafe;
 extern int	mousebforward;
@@ -870,6 +894,125 @@ static default_t extra_defaults_list[] =
 
     CONFIG_VARIABLE_KEY(key_menu_decscreen,        key_menu_decscreen),
 
+    //!
+    // Key to toggle the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_toggle,            key_map_toggle),
+
+    //!
+    // Key to pan north when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_north,             key_map_north),
+
+    //!
+    // Key to pan south when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_south,             key_map_south),
+
+    //!
+    // Key to pan east when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_east,              key_map_east),
+
+    //!
+    // Key to pan west when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_west,              key_map_west),
+
+    //!
+    // Key to zoom in when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_zoomin,            key_map_zoomin),
+
+    //!
+    // Key to zoom out when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_zoomout,           key_map_zoomout),
+
+    //!
+    // Key to zoom out the maximum amount when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_maxzoom,           key_map_maxzoom),
+
+    //!
+    // Key to toggle follow mode when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_follow,            key_map_follow),
+
+    //!
+    // Key to toggle the grid display when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_grid,              key_map_grid),
+
+    //!
+    // Key to set a mark when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_mark,              key_map_mark),
+
+    //!
+    // Key to clear all marks when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_clearmark,         key_map_clearmark),
+
+    //!
+    // Key to select weapon 1.
+    //
+
+    CONFIG_VARIABLE_KEY(key_weapon1,               key_weapon1),
+
+    //!
+    // Key to select weapon 2.
+    //
+
+    CONFIG_VARIABLE_KEY(key_weapon2,               key_weapon2),
+
+    //!
+    // Key to select weapon 3.
+    //
+
+    CONFIG_VARIABLE_KEY(key_weapon3,               key_weapon3),
+
+    //!
+    // Key to select weapon 4.
+    //
+
+    CONFIG_VARIABLE_KEY(key_weapon4,               key_weapon4),
+
+    //!
+    // Key to select weapon 5.
+    //
+
+    CONFIG_VARIABLE_KEY(key_weapon5,               key_weapon5),
+
+    //!
+    // Key to select weapon 6.
+    //
+
+    CONFIG_VARIABLE_KEY(key_weapon6,               key_weapon6),
+
+    //!
+    // Key to select weapon 7.
+    //
+
+    CONFIG_VARIABLE_KEY(key_weapon7,               key_weapon7),
+
+    //!
+    // Key to select weapon 8.
+    //
+
+    CONFIG_VARIABLE_KEY(key_weapon8,               key_weapon8),
 };
 
 static default_collection_t extra_defaults =

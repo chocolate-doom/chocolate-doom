@@ -35,6 +35,8 @@ extern int key_speed;
 extern int joybspeed;
 extern int vanilla_keyboard_mapping;
 
+// Menu keys:
+
 extern int key_menu_activate;
 extern int key_menu_up;
 extern int key_menu_down;
@@ -59,6 +61,32 @@ extern int key_menu_gamma;
 
 extern int key_menu_incscreen;
 extern int key_menu_decscreen;
+
+// Automap keys:
+
+extern int key_map_north;
+extern int key_map_south;
+extern int key_map_east;
+extern int key_map_west;
+extern int key_map_zoomin;
+extern int key_map_zoomout;
+extern int key_map_toggle;
+extern int key_map_maxzoom;
+extern int key_map_follow;
+extern int key_map_grid;
+extern int key_map_mark;
+extern int key_map_clearmark;
+
+// Weapon keys:
+
+extern int key_weapon1;
+extern int key_weapon2;
+extern int key_weapon3;
+extern int key_weapon4;
+extern int key_weapon5;
+extern int key_weapon6;
+extern int key_weapon7;
+extern int key_weapon8;
 
 void ConfigKeyboard(void);
 
