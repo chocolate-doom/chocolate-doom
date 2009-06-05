@@ -173,6 +173,15 @@ int             key_fire = KEY_RCTRL;
 int		key_use = ' ';
 int		key_strafe = KEY_RALT;
 int		key_speed = KEY_RSHIFT; 
+
+int             key_weapon1 = '1';
+int             key_weapon2 = '2';
+int             key_weapon3 = '3';
+int             key_weapon4 = '4';
+int             key_weapon5 = '5';
+int             key_weapon6 = '6';
+int             key_weapon7 = '7';
+int             key_weapon8 = '8';
  
 int             mousebfire = 0;
 int             mousebstrafe = 1;
@@ -210,6 +219,17 @@ int             novert = 0;
 fixed_t         forwardmove[2] = {0x19, 0x32}; 
 fixed_t         sidemove[2] = {0x18, 0x28}; 
 fixed_t         angleturn[3] = {640, 1280, 320};    // + slow turn 
+
+static int *weapon_keys[] = {
+    &key_weapon1,
+    &key_weapon2,
+    &key_weapon3,
+    &key_weapon4,
+    &key_weapon5,
+    &key_weapon6,
+    &key_weapon7,
+    &key_weapon8
+};
 
 #define SLOWTURNTICS	6 
  
@@ -501,13 +521,18 @@ void G_BuildTiccmd (ticcmd_t* cmd)
     } 
 
     // chainsaw overrides 
-    for (i=0 ; i<NUMWEAPONS-1 ; i++)        
-	if (gamekeydown['1'+i]) 
-	{ 
+
+    for (i=0; i<arrlen(weapon_keys); ++i)
+    {
+        int key = *weapon_keys[i];
+
+        if (gamekeydown[key])
+        {
 	    cmd->buttons |= BT_CHANGE; 
 	    cmd->buttons |= i<<BT_WEAPONSHIFT; 
 	    break; 
-	}
+        }
+    }
     
     // mouse
     if (mousebuttons[mousebforward]) 

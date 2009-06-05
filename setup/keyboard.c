@@ -66,6 +66,28 @@ int key_menu_gamma     = KEY_F11;
 int key_menu_incscreen = KEY_EQUALS;
 int key_menu_decscreen = KEY_MINUS;
 
+int key_map_north      = KEY_UPARROW;
+int key_map_south      = KEY_DOWNARROW;
+int key_map_east       = KEY_RIGHTARROW;
+int key_map_west       = KEY_LEFTARROW;
+int key_map_zoomin     = '=';
+int key_map_zoomout    = '-';
+int key_map_toggle     = KEY_TAB;
+int key_map_maxzoom    = '0';
+int key_map_follow     = 'f';
+int key_map_grid       = 'g';
+int key_map_mark       = 'm';
+int key_map_clearmark  = 'c';
+
+int key_weapon1        = '1';
+int key_weapon2        = '2';
+int key_weapon3        = '3';
+int key_weapon4        = '4';
+int key_weapon5        = '5';
+int key_weapon6        = '6';
+int key_weapon7        = '7';
+int key_weapon8        = '8';
+
 int vanilla_keyboard_mapping = 1;
 
 static int always_run = 0;
@@ -74,7 +96,10 @@ static int always_run = 0;
 
 static int *controls[] = { &key_left, &key_right, &key_up, &key_down,
                            &key_strafeleft, &key_straferight, &key_fire,
-                           &key_use, &key_strafe, &key_speed, NULL };
+                           &key_use, &key_strafe, &key_speed, 
+                           &key_weapon1, &key_weapon2, &key_weapon3,
+                           &key_weapon4, &key_weapon5, &key_weapon6,
+                           &key_weapon7, &key_weapon8, NULL };
 
 static int *menu_nav[] = { &key_menu_activate, &key_menu_up, &key_menu_down,
                            &key_menu_left, &key_menu_right, &key_menu_back,
@@ -85,6 +110,12 @@ static int *shortcuts[] = { &key_menu_help, &key_menu_save, &key_menu_load,
                             &key_menu_endgame, &key_menu_messages,
                             &key_menu_qload, &key_menu_quit, &key_menu_gamma,
                             &key_menu_incscreen, &key_menu_decscreen, NULL };
+
+static int *map_keys[] = { &key_map_north, &key_map_south, &key_map_east,
+                           &key_map_west, &key_map_zoomin, &key_map_zoomout,
+                           &key_map_toggle, &key_map_maxzoom, &key_map_follow,
+                           &key_map_grid, &key_map_mark, &key_map_clearmark,
+                           NULL };
 
 static void UpdateJoybSpeed(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(var))
 {
@@ -156,6 +187,7 @@ static void KeySetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))
     CheckKeyGroup(variable, controls);
     CheckKeyGroup(variable, menu_nav);
     CheckKeyGroup(variable, shortcuts);
+    CheckKeyGroup(variable, map_keys);
 }
 
 // Add a label and keyboard input to the specified table.
@@ -171,17 +203,36 @@ static void AddKeyControl(txt_table_t *table, char *name, int *var)
     TXT_SignalConnect(key_input, "set", KeySetCallback, var);
 }
 
-static void MenuKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
+static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 {
     txt_window_t *window;
     txt_table_t *table;
     txt_scrollpane_t *scrollpane;
 
-    window = TXT_NewWindow("Menu keys");
+    window = TXT_NewWindow("Other keys");
 
     table = TXT_NewTable(2);
 
     TXT_SetColumnWidths(table, 25, 10);
+
+    TXT_AddWidgets(table, TXT_NewLabel(" - Weapons - "),
+                          TXT_NewStrut(0, 0),
+                          NULL);
+
+    AddKeyControl(table, "Weapon 1",              &key_weapon1);
+    AddKeyControl(table, "Weapon 2",              &key_weapon2);
+    AddKeyControl(table, "Weapon 3",              &key_weapon3);
+    AddKeyControl(table, "Weapon 4",              &key_weapon4);
+    AddKeyControl(table, "Weapon 5",              &key_weapon5);
+    AddKeyControl(table, "Weapon 6",              &key_weapon6);
+    AddKeyControl(table, "Weapon 7",              &key_weapon7);
+    AddKeyControl(table, "Weapon 8",              &key_weapon8);
+
+    TXT_AddWidgets(table, TXT_NewStrut(0, 1),
+                          TXT_NewStrut(0, 1),
+                          TXT_NewLabel(" - Menu navigation - "),
+                          TXT_NewStrut(0, 0),
+                          NULL);
 
     AddKeyControl(table, "Activate menu",         &key_menu_activate);
     AddKeyControl(table, "Move cursor up",        &key_menu_up);
@@ -192,6 +243,12 @@ static void MenuKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddKeyControl(table, "Activate menu item",    &key_menu_forward);
     AddKeyControl(table, "Confirm action",        &key_menu_confirm);
     AddKeyControl(table, "Cancel action",         &key_menu_abort);
+
+    TXT_AddWidgets(table, TXT_NewStrut(0, 1),
+                          TXT_NewStrut(0, 1),
+                          TXT_NewLabel(" - Shortcut keys - "),
+                          TXT_NewStrut(0, 0),
+                          NULL);
 
     AddKeyControl(table, "Help screen",           &key_menu_help);
     AddKeyControl(table, "Save game",             &key_menu_save);
@@ -207,6 +264,25 @@ static void MenuKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
     AddKeyControl(table, "Increase screen size",  &key_menu_incscreen);
     AddKeyControl(table, "Decrease screen size",  &key_menu_decscreen);
+
+    TXT_AddWidgets(table, TXT_NewStrut(0, 1),
+                          TXT_NewStrut(0, 1),
+                          TXT_NewLabel(" - Map - "),
+                          TXT_NewStrut(0, 0),
+                          NULL);
+
+    AddKeyControl(table, "Toggle map",            &key_map_toggle);
+    AddKeyControl(table, "Zoom in",               &key_map_zoomin);
+    AddKeyControl(table, "Zoom out",              &key_map_zoomout);
+    AddKeyControl(table, "Maximum zoom out",      &key_map_maxzoom);
+    AddKeyControl(table, "Follow mode",           &key_map_follow);
+    AddKeyControl(table, "Pan north",             &key_map_north);
+    AddKeyControl(table, "Pan south",             &key_map_south);
+    AddKeyControl(table, "Pan east",              &key_map_east);
+    AddKeyControl(table, "Pan west",              &key_map_west);
+    AddKeyControl(table, "Toggle grid",           &key_map_grid);
+    AddKeyControl(table, "Mark location",         &key_map_mark);
+    AddKeyControl(table, "Clear all marks",       &key_map_clearmark);
 
     scrollpane = TXT_NewScrollPane(0, 12, table);
 
@@ -230,7 +306,7 @@ void ConfigKeyboard(void)
 
                    TXT_NewSeparator("Action"),
                    action_table = TXT_NewTable(4),
-                   TXT_NewButton2("Menu keys...", MenuKeysDialog, NULL),
+                   TXT_NewButton2("Other keys...", OtherKeysDialog, NULL),
                    NULL);
 
     TXT_AddWidgets(window,

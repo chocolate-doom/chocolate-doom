@@ -283,6 +283,7 @@ static default_t extra_defaults_list[] =
     {"mouseb_use",                  &mousebuse, DEFAULT_INT, 0, 0},
     {"mouseb_backward",             &mousebbackward, DEFAULT_INT, 0, 0},
     {"use_libsamplerate",           &use_libsamplerate, DEFAULT_INT, 0, 0},
+
     {"key_menu_activate",           &key_menu_activate, DEFAULT_KEY, 0, 0},
     {"key_menu_up",                 &key_menu_up, DEFAULT_KEY, 0, 0},
     {"key_menu_down",               &key_menu_down, DEFAULT_KEY, 0, 0},
@@ -305,6 +306,27 @@ static default_t extra_defaults_list[] =
     {"key_menu_gamma",              &key_menu_gamma, DEFAULT_KEY, 0, 0},
     {"key_menu_incscreen",          &key_menu_incscreen, DEFAULT_KEY, 0, 0},
     {"key_menu_decscreen",          &key_menu_decscreen, DEFAULT_KEY, 0, 0},
+
+    {"key_map_toggle",              &key_map_toggle, DEFAULT_KEY, 0, 0},
+    {"key_map_north",               &key_map_north, DEFAULT_KEY, 0, 0},
+    {"key_map_south",               &key_map_south, DEFAULT_KEY, 0, 0},
+    {"key_map_east",                &key_map_east, DEFAULT_KEY, 0, 0},
+    {"key_map_west",                &key_map_west, DEFAULT_KEY, 0, 0},
+    {"key_map_zoomin",              &key_map_zoomin, DEFAULT_KEY, 0, 0},
+    {"key_map_zoomout",             &key_map_zoomout, DEFAULT_KEY, 0, 0},
+    {"key_map_maxzoom",             &key_map_maxzoom, DEFAULT_KEY, 0, 0},
+    {"key_map_follow",              &key_map_follow, DEFAULT_KEY, 0, 0},
+    {"key_map_grid",                &key_map_grid, DEFAULT_KEY, 0, 0},
+    {"key_map_mark",                &key_map_mark, DEFAULT_KEY, 0, 0},
+    {"key_map_clearmark",           &key_map_clearmark, DEFAULT_KEY, 0, 0},
+    {"key_weapon1",                 &key_weapon1, DEFAULT_KEY, 0, 0},
+    {"key_weapon2",                 &key_weapon2, DEFAULT_KEY, 0, 0},
+    {"key_weapon3",                 &key_weapon3, DEFAULT_KEY, 0, 0},
+    {"key_weapon4",                 &key_weapon4, DEFAULT_KEY, 0, 0},
+    {"key_weapon5",                 &key_weapon5, DEFAULT_KEY, 0, 0},
+    {"key_weapon6",                 &key_weapon6, DEFAULT_KEY, 0, 0},
+    {"key_weapon7",                 &key_weapon7, DEFAULT_KEY, 0, 0},
+    {"key_weapon8",                 &key_weapon8, DEFAULT_KEY, 0, 0},
 };
 
 static default_collection_t extra_defaults =
