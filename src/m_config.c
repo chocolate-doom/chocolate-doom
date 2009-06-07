@@ -1313,9 +1313,11 @@ void M_LoadDefaults (void)
 
 void M_SetConfigDir(void)
 {
-#ifndef _WIN32
-    // Ignore the HOME environment variable on Windows - just behave
-    // like Vanilla Doom.
+#if !defined(_WIN32) || defined(_WIN32_WCE)
+
+    // Configuration settings are stored in ~/.chocolate-doom/,
+    // except on Windows, where we behave like Vanilla Doom and
+    // save in the current directory.
 
     char *homedir;
 
@@ -1338,7 +1340,7 @@ void M_SetConfigDir(void)
     else
 #endif /* #ifndef _WIN32 */
     {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(_WIN32_WCE)
         //!
         // @platform windows
         // @vanilla
