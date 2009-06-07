@@ -9,6 +9,7 @@
 
 #include <windows.h>
 #include <lmcons.h>
+#include <secext.h>
 #include <shlobj.h>
 
 #include "env.h"
@@ -35,7 +36,7 @@ static void LoadBuffers(void)
     // Username:
 
     buf_len = UNLEN;
-    GetUserNameW(temp, &buf_len);
+    GetUserNameExW(NameDisplay, temp, &buf_len);
     WCharToChar(temp, temp_buf, MAX_PATH);
 
     // Temp dir:
