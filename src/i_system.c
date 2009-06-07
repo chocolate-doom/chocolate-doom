@@ -246,13 +246,18 @@ void I_Error (char *error, ...)
     // On Windows, pop up a dialog box with the error message.
     {
         char msgbuf[512];
+        wchar_t wmsgbuf[512];
 
         va_start(argptr, error);
         memset(msgbuf, 0, sizeof(msgbuf));
         vsnprintf(msgbuf, sizeof(msgbuf) - 1, error, argptr);
         va_end(argptr);
 
-        MessageBox(NULL, msgbuf, "Error", MB_OK);
+        MultiByteToWideChar(CP_ACP, 0,
+                            msgbuf, strlen(msgbuf) + 1,
+                            wmsgbuf, sizeof(wmsgbuf));
+
+        MessageBoxW(NULL, wmsgbuf, L"Error", MB_OK);
     }
 #endif
 
