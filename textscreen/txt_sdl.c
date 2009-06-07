@@ -142,6 +142,9 @@ static void ChooseFont(void)
 
     if (modes == NULL || modes == (SDL_Rect **) -1 || *modes == NULL)
     {
+#ifdef _WIN32_WCE
+        font = &small_font;
+#endif
         return;
     }
 
@@ -166,7 +169,10 @@ static void ChooseFont(void)
 
 int TXT_Init(void)
 {
-    SDL_InitSubSystem(SDL_INIT_VIDEO);
+    if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
+    {
+        return 0;
+    }
 
     ChooseFont();
 
