@@ -28,11 +28,19 @@
 
 #include <sys/types.h>
 
-#ifndef _WIN32
-    #include <sys/wait.h>
-    #include <unistd.h>
+#if defined(_WIN32_WCE)
+
+#include "libc_wince.h"
+
+#elif defined(_WIN32)
+
+#include <sys/wait.h>
+#include <unistd.h>
+
 #else
-    #include <process.h>
+
+#include <process.h>
+
 #endif
 
 #include "textscreen.h"
@@ -139,7 +147,16 @@ void AddCmdLineParameter(execute_context_t *context, char *s, ...)
     fprintf(context->stream, "\n");
 }
 
-#ifdef _WIN32
+#if defined(_WIN32_WCE)
+
+static int ExecuteCommand(const char **argv)
+{
+    // Windows CE version.
+    // TODO
+    return 0;
+}
+
+#elif defined(_WIN32)
 
 static int ExecuteCommand(const char **argv)
 {
