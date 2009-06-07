@@ -116,7 +116,7 @@ void SetDisplayDriver(void)
     }
     else
     {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(_WIN32_WCE)
         // On Windows, use DirectX over windib by default.
 
         putenv("SDL_VIDEODRIVER=directx");
