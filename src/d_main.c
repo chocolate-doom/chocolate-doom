@@ -878,8 +878,7 @@ void D_DoomMain (void)
         I_Error("Game mode indeterminate.  No IWAD file was found.  Try\n"
                 "specifying one with the '-iwad' command line parameter.\n");
     }
-	
-    setbuf (stdout, NULL);
+
     modifiedgame = false;
 
     //!
