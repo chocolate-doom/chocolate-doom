@@ -170,6 +170,7 @@ chocolate_doom_SOURCES=$(SOURCE_FILES)
 endif
 
 chocolate_doom_LDADD =                               \
+                       ../wince/libc_wince.a         \
                        ../textscreen/libtextscreen.a \
                        ../pcsound/libpcsound.a       \
                        @LDFLAGS@                     \
