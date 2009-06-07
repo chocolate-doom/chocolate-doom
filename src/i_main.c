@@ -34,7 +34,15 @@
 #include "m_argv.h"
 #include "d_main.h"
 
-#if defined(_WIN32)
+#if defined(_WIN32_WCE)
+
+// Windows CE?  I doubt it even supports SMP..
+
+static void LockCPUAffinity(void)
+{
+}
+
+#elif defined(_WIN32)
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
