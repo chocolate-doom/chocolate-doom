@@ -747,6 +747,8 @@ static default_t extra_defaults_list[] =
 
     CONFIG_VARIABLE_INT(dclick_use,                dclick_use),
 
+#ifdef FEATURE_SOUND
+
     //!
     // Controls whether libsamplerate support is used for performing
     // sample rate conversions of sound effects.  Support for this
@@ -761,6 +763,8 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(use_libsamplerate,         use_libsamplerate),
+
+#endif
 
     //!
     // Key that activates the menu when pressed.
