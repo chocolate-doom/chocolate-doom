@@ -312,7 +312,7 @@ static void GenerateModesTable(TXT_UNCAST_ARG(widget),
     screen_height = modes[vidmode].h;
 }
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(_WIN32_WCE)
 
 static int win32_video_driver = 0;
 
@@ -405,7 +405,7 @@ void ConfigDisplay(void)
     // On Windows, there is an extra control to change between 
     // the Windows GDI and DirectX video drivers.
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(_WIN32_WCE)
     {
         txt_table_t *driver_table;
         txt_dropdown_list_t *driver_list;
