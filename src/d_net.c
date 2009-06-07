@@ -429,6 +429,7 @@ static int GetLowTic(void)
     int i;
     int lowtic;
 
+#ifdef FEATURE_MULTIPLAYER
     if (net_client_connected)
     {
         lowtic = INT_MAX;
@@ -443,6 +444,7 @@ static int GetLowTic(void)
         }
     }
     else
+#endif
     {
         lowtic = maketic;
     }
