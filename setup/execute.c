@@ -34,12 +34,12 @@
 
 #elif defined(_WIN32)
 
-#include <sys/wait.h>
-#include <unistd.h>
+#include <process.h>
 
 #else
 
-#include <process.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 #endif
 
