@@ -1,0 +1,8 @@
+Windows CE is a horribly crippled operating system.  The poor thing doesn't
+even include a complete implementation of the ANSI standard C library.  This
+is a mini-library called libc_wince that implements some of the missing
+library functions.  I've only implemented those necessary to get Chocolate
+Doom to compile.
+
+On non-Windows CE platforms it is just built as an empty library.
+
