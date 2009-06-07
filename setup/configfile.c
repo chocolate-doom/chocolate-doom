@@ -74,7 +74,7 @@ void M_MakeDirectory(char *path)
 
 
 // 
-// SetConfigDir:
+// M_SetConfigDir:
 //
 // Sets the location of the configuration directory, where configuration
 // files are stored - default.cfg, chocolate-doom.cfg, savegames, etc.
@@ -82,9 +82,11 @@ void M_MakeDirectory(char *path)
 
 void M_SetConfigDir(void)
 {
-#ifndef _WIN32
-    // Ignore the HOME environment variable on Windows - just behave
-    // like Vanilla Doom.
+#if !defined(_WIN32) || defined(_WIN32_WCE)
+
+    // Configuration settings are stored in ~/.chocolate-doom/,
+    // except on Windows, where we behave like Vanilla Doom and
+    // save in the current directory.
 
     char *homedir;
 
@@ -97,7 +99,8 @@ void M_SetConfigDir(void)
 
         configdir = malloc(strlen(homedir) + strlen(PACKAGE_TARNAME) + 5);
 
-        sprintf(configdir, "%s/.%s/", homedir, PACKAGE_TARNAME);
+        sprintf(configdir, "%s%c.%s%c", homedir, DIR_SEPARATOR,
+			                PACKAGE_TARNAME, DIR_SEPARATOR);
 
         // make the directory if it doesnt already exist
 
@@ -106,7 +109,7 @@ void M_SetConfigDir(void)
     else
 #endif /* #ifndef _WIN32 */
     {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(_WIN32_WCE)
         // when given the -cdrom option, save config+savegames in 
         // c:\doomdata.  This only applies under Windows.
 
