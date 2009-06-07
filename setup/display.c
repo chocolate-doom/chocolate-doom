@@ -187,7 +187,14 @@ static void BuildFullscreenModesList(void)
 
     modes = SDL_ListModes(NULL, SDL_FULLSCREEN);
 
-    for (num_modes=0; modes[num_modes] != NULL; ++num_modes);
+    if (modes == NULL || modes == (SDL_Rect **) -1)
+    {
+        num_modes = 0;
+    }
+    else
+    {
+        for (num_modes=0; modes[num_modes] != NULL; ++num_modes);
+    }
 
     // Build the screen_modes_fullscreen array
 
