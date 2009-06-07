@@ -95,6 +95,11 @@ byte *I_ZoneBase (int *size)
     *size = I_GetHeapSize();
 
     zonemem = malloc(*size);
+
+    if (zonemem == NULL)
+    {
+        I_Error("Failed to allocate %i bytes for zone memory", *size);
+    }
     
     printf("zone memory: %p, %x allocated for zone\n", 
            zonemem, *size);
