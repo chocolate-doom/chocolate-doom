@@ -487,7 +487,14 @@ static void BuildIWADDirList(void)
 
     AddDoomWadPath();
 
-#if defined(_WIN32) && !defined(_WIN32_WCE)
+#if defined(_WIN32_WCE)
+
+    // Windows CE locations:
+
+    AddIWADDir("\\Storage Card");
+    AddIWADDir(getenv("HOME"));
+
+#elif defined(_WIN32) 
 
     // Search the registry and find where IWADs have been installed.
 
