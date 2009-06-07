@@ -1353,7 +1353,7 @@ static void SetSDLVideoDriver(void)
         free(env_string);
     }
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(_WIN32_WCE)
 
     // Allow -gdi as a shortcut for using the windib driver.
 
