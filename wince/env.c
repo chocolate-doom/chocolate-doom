@@ -61,14 +61,5 @@ void PopulateEnvironment(void)
 
     SHGetSpecialFolderPath(NULL, temp, CSIDL_PERSONAL, 0);
     SetEnvironment("HOME=", temp);
-
-    {
-        char *home = getenv("HOME");
-
-        MultiByteToWideChar(CP_ACP, 0,
-                            home, strlen(home) + 1,
-                            temp, sizeof(temp));
-        MessageBoxW(NULL, temp, L"Home", MB_OK);
-    }
 }
 
