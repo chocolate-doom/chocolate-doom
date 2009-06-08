@@ -22,6 +22,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef _WIN32_WCE
+#include "libc_wince.h"
+#endif
+
 #include "config.h"
 #include "textscreen.h"
 
@@ -213,6 +217,15 @@ int main(int argc, char *argv[])
 {
     myargc = argc;
     myargv = argv;
+
+#ifdef _WIN32_WCE
+
+    // Windows CE has no environment, but SDL provides an implementation.
+    // Populate the environment with the values we normally find.
+
+    PopulateEnvironment();
+
+#endif
 
     InitConfig();
     RunGUI();

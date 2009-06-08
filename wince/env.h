@@ -7,7 +7,11 @@
 #ifndef WINCE_ENV_H
 #define WINCE_ENV_H
 
-extern char *getenv(const char *name);
+// SDL provides an implementation of getenv/putenv:
+
+#include "SDL_getenv.h"
+
+extern void PopulateEnvironment(void);
 
 #endif /* #ifndef WINCE_ENV_H */
 
