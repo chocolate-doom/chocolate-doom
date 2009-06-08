@@ -14,21 +14,33 @@
 
 #include "env.h"
 
-static int buffers_loaded = 0;
-static char username_buf[UNLEN + 1];
-static char temp_buf[MAX_PATH + 1];
-static char home_buf[MAX_PATH + 1];
-
 static void WCharToChar(wchar_t *src, char *dest, int buf_len)
 {
     unsigned int len;
 
-    len = wcslen(src);
+    len = wcslen(src) + 1;
 
     WideCharToMultiByte(CP_OEMCP, 0, src, len, dest, buf_len, NULL, NULL);
 }
 
-static void LoadBuffers(void)
+static void SetEnvironment(char *env_string, wchar_t *wvalue)
+{
+    char value[MAX_PATH + 10];
+    int env_len;
+
+    // Construct the string for putenv: NAME=value
+
+    env_len = strlen(env_string);
+    strcpy(value, env_string);
+
+    WCharToChar(wvalue, value + env_len, sizeof(value) - env_len);
+
+    // Set the environment variable:
+
+    putenv(value);
+}
+
+void PopulateEnvironment(void)
 {
     wchar_t temp[MAX_PATH];
     DWORD buf_len;
@@ -37,42 +49,26 @@ static void LoadBuffers(void)
 
     buf_len = UNLEN;
     GetUserNameExW(NameDisplay, temp, &buf_len);
-    WCharToChar(temp, temp_buf, MAX_PATH);
+    SetEnvironment("USER=", temp);
+    SetEnvironment("USERNAME=", temp);
 
     // Temp dir:
 
     GetTempPathW(MAX_PATH, temp);
-    WCharToChar(temp, temp_buf, MAX_PATH);
+    SetEnvironment("TEMP=", temp);
 
     // Use My Documents dir as home:
 
     SHGetSpecialFolderPath(NULL, temp, CSIDL_PERSONAL, 0);
-    WCharToChar(temp, home_buf, MAX_PATH);
-}
+    SetEnvironment("HOME=", temp);
 
-char *getenv(const char *name)
-{
-    if (!buffers_loaded)
     {
-        LoadBuffers();
-        buffers_loaded = 1;
-    }
+        char *home = getenv("HOME");
 
-    if (!strcmp(name, "USER") || !strcmp(name, "USERNAME"))
-    {
-        return username_buf;
-    }
-    else if (!strcmp(name, "TEMP"))
-    {
-        return temp_buf;
-    }
-    else if (!strcmp(name, "HOME"))
-    {
-        return home_buf;
-    }
-    else
-    {
-        return NULL;
+        MultiByteToWideChar(CP_ACP, 0,
+                            home, strlen(home) + 1,
+                            temp, sizeof(temp));
+        MessageBoxW(NULL, temp, L"Home", MB_OK);
     }
 }
 
