@@ -29,6 +29,7 @@
 #include "doomkeys.h"
 #include "i_system.h"
 #include "i_swap.h"
+#include "m_controls.h"
 #include "p_local.h"
 #include "r_local.h"
 #include "s_sound.h"
@@ -1094,96 +1095,156 @@ boolean MN_Responder(event_t * event)
 
     if (askforquit)
     {
-        switch (charTyped)
+        if (key == key_menu_confirm)
         {
-            case 'y':
-                if (askforquit)
-                {
-                    switch (typeofask)
-                    {
-                        case 1:
-                            G_CheckDemoStatus();
-                            I_Quit();
-                            break;
-                        case 2:
-                            players[consoleplayer].messageTics = 0;
-                            //set the msg to be cleared
-                            players[consoleplayer].message = NULL;
-                            typeofask = 0;
-                            askforquit = false;
-                            paused = false;
-                            I_SetPalette(W_CacheLumpName
-                                         ("PLAYPAL", PU_CACHE));
-                            D_StartTitle();     // go to intro/demo mode.
-                            break;
-                        case 3:
-                            P_SetMessage(&players[consoleplayer],
-                                         "QUICKSAVING....", false);
-                            FileMenuKeySteal = true;
-                            SCSaveGame(quicksave - 1);
-                            askforquit = false;
-                            typeofask = 0;
-                            BorderNeedRefresh = true;
-                            return true;
-                        case 4:
-                            P_SetMessage(&players[consoleplayer],
-                                         "QUICKLOADING....", false);
-                            SCLoadGame(quickload - 1);
-                            askforquit = false;
-                            typeofask = 0;
-                            BorderNeedRefresh = true;
-                            return true;
-                        default:
-                            return true;        // eat the 'y' keypress
-                    }
-                }
-                return false;
-            case 'n':
-            case KEY_ESCAPE:
-                if (askforquit)
-                {
-                    players[consoleplayer].messageTics = 1;     //set the msg to be cleared
-                    askforquit = false;
-                    typeofask = 0;
+            switch (typeofask)
+            {
+                case 1:
+                    G_CheckDemoStatus();
+                    I_Quit();
+                    return false;
+
+                case 2:
+                    players[consoleplayer].messageTics = 0;
+                    //set the msg to be cleared
+                    players[consoleplayer].message = NULL;
                     paused = false;
-                    UpdateState |= I_FULLSCRN;
+                    I_SetPalette(W_CacheLumpName
+                                 ("PLAYPAL", PU_CACHE));
+                    D_StartTitle();     // go to intro/demo mode.
+                    break;
+
+                case 3:
+                    P_SetMessage(&players[consoleplayer],
+                                 "QUICKSAVING....", false);
+                    FileMenuKeySteal = true;
+                    SCSaveGame(quicksave - 1);
                     BorderNeedRefresh = true;
-                    return true;
-                }
-                return false;
+                    break;
+
+                case 4:
+                    P_SetMessage(&players[consoleplayer],
+                                 "QUICKLOADING....", false);
+                    SCLoadGame(quickload - 1);
+                    BorderNeedRefresh = true;
+                    break;
+
+                default:
+                    break;
+            }
+
+            askforquit = false;
+            typeofask = 0;
+
+            return true;
         }
+        else if (key == key_menu_abort || key == KEY_ESCAPE)
+        {
+            players[consoleplayer].messageTics = 1;  //set the msg to be cleared
+            askforquit = false;
+            typeofask = 0;
+            paused = false;
+            UpdateState |= I_FULLSCRN;
+            BorderNeedRefresh = true;
+            return true;
+        }
+
         return false;           // don't let the keys filter thru
     }
-    if (MenuActive == false && !chatmodeon)
+
+    if (!MenuActive && !chatmodeon)
     {
-        switch (key)
+        if (key == key_menu_decscreen)
         {
-            case KEY_MINUS:
-                if (automapactive)
-                {               // Don't screen size in automap
-                    return (false);
-                }
-                SCScreenSize(LEFT_DIR);
-                S_StartSound(NULL, sfx_keyup);
-                BorderNeedRefresh = true;
-                UpdateState |= I_FULLSCRN;
-                return (true);
-            case KEY_EQUALS:
-                if (automapactive)
-                {               // Don't screen size in automap
-                    return (false);
-                }
-                SCScreenSize(RIGHT_DIR);
-                S_StartSound(NULL, sfx_keyup);
-                BorderNeedRefresh = true;
-                UpdateState |= I_FULLSCRN;
-                return (true);
-            case KEY_F1:       // help screen
-                SCInfo(0);      // start up info screens
+            if (automapactive)
+            {               // Don't screen size in automap
+                return (false);
+            }
+            SCScreenSize(LEFT_DIR);
+            S_StartSound(NULL, sfx_keyup);
+            BorderNeedRefresh = true;
+            UpdateState |= I_FULLSCRN;
+            return (true);
+        }
+        else if (key == key_menu_incscreen)
+        {
+            if (automapactive)
+            {               // Don't screen size in automap
+                return (false);
+            }
+            SCScreenSize(RIGHT_DIR);
+            S_StartSound(NULL, sfx_keyup);
+            BorderNeedRefresh = true;
+            UpdateState |= I_FULLSCRN;
+            return (true);
+        }
+        else if (key == key_menu_help)           // F1
+        {
+            SCInfo(0);      // start up info screens
+            MenuActive = true;
+            return (true);
+        }
+        else if (key == key_menu_save)           // F2 (save game)
+        {
+            if (gamestate == GS_LEVEL && !demoplayback)
+            {
                 MenuActive = true;
-                return (true);
-            case KEY_F2:       // save game
-                if (gamestate == GS_LEVEL && !demoplayback)
+                FileMenuKeySteal = false;
+                MenuTime = 0;
+                CurrentMenu = &SaveMenu;
+                CurrentItPos = CurrentMenu->oldItPos;
+                if (!netgame && !demoplayback)
+                {
+                    paused = true;
+                }
+                S_StartSound(NULL, sfx_dorcls);
+                slottextloaded = false;     //reload the slot text, when needed
+            }
+            return true;
+        }
+        else if (key == key_menu_load)           // F3 (load game)
+        {
+            if (SCNetCheck(2))
+            {
+                MenuActive = true;
+                FileMenuKeySteal = false;
+                MenuTime = 0;
+                CurrentMenu = &LoadMenu;
+                CurrentItPos = CurrentMenu->oldItPos;
+                if (!netgame && !demoplayback)
+                {
+                    paused = true;
+                }
+                S_StartSound(NULL, sfx_dorcls);
+                slottextloaded = false;     //reload the slot text, when needed
+            }
+            return true;
+        }
+        else if (key == key_menu_volume)         // F4 (volume)
+        {
+            MenuActive = true;
+            FileMenuKeySteal = false;
+            MenuTime = 0;
+            CurrentMenu = &Options2Menu;
+            CurrentItPos = CurrentMenu->oldItPos;
+            if (!netgame && !demoplayback)
+            {
+                paused = true;
+            }
+            S_StartSound(NULL, sfx_dorcls);
+            slottextloaded = false; //reload the slot text, when needed
+            return true;
+        }
+        else if (key == key_menu_detail)          // F5 (detail)
+        {
+            // F5 isn't used in Heretic. (detail level)
+            return true;
+        }
+        else if (key == key_menu_qsave)           // F6 (quicksave)
+        {
+            if (gamestate == GS_LEVEL && !demoplayback)
+            {
+                if (!quicksave || quicksave == -1)
                 {
                     MenuActive = true;
                     FileMenuKeySteal = false;
@@ -1195,133 +1256,94 @@ boolean MN_Responder(event_t * event)
                         paused = true;
                     }
                     S_StartSound(NULL, sfx_dorcls);
-                    slottextloaded = false;     //reload the slot text, when needed
+                    slottextloaded = false; //reload the slot text, when needed
+                    quicksave = -1;
+                    P_SetMessage(&players[consoleplayer],
+                                 "CHOOSE A QUICKSAVE SLOT", true);
                 }
-                return true;
-            case KEY_F3:       // load game
-                if (SCNetCheck(2))
+                else
                 {
-                    MenuActive = true;
-                    FileMenuKeySteal = false;
-                    MenuTime = 0;
-                    CurrentMenu = &LoadMenu;
-                    CurrentItPos = CurrentMenu->oldItPos;
+                    askforquit = true;
+                    typeofask = 3;
                     if (!netgame && !demoplayback)
                     {
                         paused = true;
                     }
-                    S_StartSound(NULL, sfx_dorcls);
-                    slottextloaded = false;     //reload the slot text, when needed
+                    S_StartSound(NULL, sfx_chat);
                 }
-                return true;
-            case KEY_F4:       // volume
+            }
+            return true;
+        }
+        else if (key == key_menu_endgame)         // F7 (end game)
+        {
+            if (gamestate == GS_LEVEL && !demoplayback)
+            {
+                S_StartSound(NULL, sfx_chat);
+                SCEndGame(0);
+            }
+            return true;
+        }
+        else if (key == key_menu_messages)        // F8 (toggle messages)
+        {
+            SCMessages(0);
+            return true;
+        }
+        else if (key == key_menu_qload)           // F9 (quickload)
+        {
+            if (!quickload || quickload == -1)
+            {
                 MenuActive = true;
                 FileMenuKeySteal = false;
                 MenuTime = 0;
-                CurrentMenu = &Options2Menu;
+                CurrentMenu = &LoadMenu;
                 CurrentItPos = CurrentMenu->oldItPos;
                 if (!netgame && !demoplayback)
                 {
                     paused = true;
                 }
                 S_StartSound(NULL, sfx_dorcls);
-                slottextloaded = false; //reload the slot text, when needed
-                return true;
-            case KEY_F5:       // F5 isn't used in Heretic. (detail level)
-                return true;
-            case KEY_F6:       // quicksave
-                if (gamestate == GS_LEVEL && !demoplayback)
+                slottextloaded = false;     //reload the slot text, when needed
+                quickload = -1;
+                P_SetMessage(&players[consoleplayer],
+                             "CHOOSE A QUICKLOAD SLOT", true);
+            }
+            else
+            {
+                askforquit = true;
+                if (!netgame && !demoplayback)
                 {
-                    if (!quicksave || quicksave == -1)
-                    {
-                        MenuActive = true;
-                        FileMenuKeySteal = false;
-                        MenuTime = 0;
-                        CurrentMenu = &SaveMenu;
-                        CurrentItPos = CurrentMenu->oldItPos;
-                        if (!netgame && !demoplayback)
-                        {
-                            paused = true;
-                        }
-                        S_StartSound(NULL, sfx_dorcls);
-                        slottextloaded = false; //reload the slot text, when needed
-                        quicksave = -1;
-                        P_SetMessage(&players[consoleplayer],
-                                     "CHOOSE A QUICKSAVE SLOT", true);
-                    }
-                    else
-                    {
-                        askforquit = true;
-                        typeofask = 3;
-                        if (!netgame && !demoplayback)
-                        {
-                            paused = true;
-                        }
-                        S_StartSound(NULL, sfx_chat);
-                    }
+                    paused = true;
                 }
-                return true;
-            case KEY_F7:       // endgame
-                if (gamestate == GS_LEVEL && !demoplayback)
-                {
-                    S_StartSound(NULL, sfx_chat);
-                    SCEndGame(0);
-                }
-                return true;
-            case KEY_F8:       // toggle messages
-                SCMessages(0);
-                return true;
-            case KEY_F9:       // quickload
-                if (!quickload || quickload == -1)
-                {
-                    MenuActive = true;
-                    FileMenuKeySteal = false;
-                    MenuTime = 0;
-                    CurrentMenu = &LoadMenu;
-                    CurrentItPos = CurrentMenu->oldItPos;
-                    if (!netgame && !demoplayback)
-                    {
-                        paused = true;
-                    }
-                    S_StartSound(NULL, sfx_dorcls);
-                    slottextloaded = false;     //reload the slot text, when needed
-                    quickload = -1;
-                    P_SetMessage(&players[consoleplayer],
-                                 "CHOOSE A QUICKLOAD SLOT", true);
-                }
-                else
-                {
-                    askforquit = true;
-                    if (!netgame && !demoplayback)
-                    {
-                        paused = true;
-                    }
-                    typeofask = 4;
-                    S_StartSound(NULL, sfx_chat);
-                }
-                return true;
-            case KEY_F10:      // quit
-                if (gamestate == GS_LEVEL)
-                {
-                    SCQuitGame(0);
-                    S_StartSound(NULL, sfx_chat);
-                }
-                return true;
-            case KEY_F11:      // F11 - gamma mode correction
-                usegamma++;
-                if (usegamma > 4)
-                {
-                    usegamma = 0;
-                }
-                I_SetPalette((byte *) W_CacheLumpName("PLAYPAL", PU_CACHE));
-                return true;
+                typeofask = 4;
+                S_StartSound(NULL, sfx_chat);
+            }
+            return true;
+        }
+        else if (key == key_menu_quit)            // F10 (quit)
+        {
+            if (gamestate == GS_LEVEL)
+            {
+                SCQuitGame(0);
+                S_StartSound(NULL, sfx_chat);
+            }
+            return true;
+        }
+        else if (key == key_menu_gamma)           // F11 (gamma correction)
+        {
+            usegamma++;
+            if (usegamma > 4)
+            {
+                usegamma = 0;
+            }
+            I_SetPalette((byte *) W_CacheLumpName("PLAYPAL", PU_CACHE));
+            return true;
         }
 
     }
 
-    if (MenuActive == false)
+    if (!MenuActive)
     {
-        if (key == KEY_ESCAPE || gamestate == GS_DEMOSCREEN || demoplayback)
+        if (key == key_menu_activate || gamestate == GS_DEMOSCREEN || demoplayback)
         {
             MN_ActivateMenu();
             return (true);
@@ -1331,111 +1353,122 @@ boolean MN_Responder(event_t * event)
     if (!FileMenuKeySteal)
     {
         item = &CurrentMenu->items[CurrentItPos];
-        switch (key)
+
+        if (key == key_menu_down)            // Next menu item
         {
-            case KEY_DOWNARROW:
-                do
+            do
+            {
+                if (CurrentItPos + 1 > CurrentMenu->itemCount - 1)
                 {
-                    if (CurrentItPos + 1 > CurrentMenu->itemCount - 1)
-                    {
-                        CurrentItPos = 0;
-                    }
-                    else
-                    {
-                        CurrentItPos++;
-                    }
-                }
-                while (CurrentMenu->items[CurrentItPos].type == ITT_EMPTY);
-                S_StartSound(NULL, sfx_switch);
-                return (true);
-                break;
-            case KEY_UPARROW:
-                do
-                {
-                    if (CurrentItPos == 0)
-                    {
-                        CurrentItPos = CurrentMenu->itemCount - 1;
-                    }
-                    else
-                    {
-                        CurrentItPos--;
-                    }
-                }
-                while (CurrentMenu->items[CurrentItPos].type == ITT_EMPTY);
-                S_StartSound(NULL, sfx_switch);
-                return (true);
-                break;
-            case KEY_LEFTARROW:
-                if (item->type == ITT_LRFUNC && item->func != NULL)
-                {
-                    item->func(LEFT_DIR);
-                    S_StartSound(NULL, sfx_keyup);
-                }
-                return (true);
-                break;
-            case KEY_RIGHTARROW:
-                if (item->type == ITT_LRFUNC && item->func != NULL)
-                {
-                    item->func(RIGHT_DIR);
-                    S_StartSound(NULL, sfx_keyup);
-                }
-                return (true);
-                break;
-            case KEY_ENTER:
-                if (item->type == ITT_SETMENU)
-                {
-                    SetMenu(item->menu);
-                }
-                else if (item->func != NULL)
-                {
-                    CurrentMenu->oldItPos = CurrentItPos;
-                    if (item->type == ITT_LRFUNC)
-                    {
-                        item->func(RIGHT_DIR);
-                    }
-                    else if (item->type == ITT_EFUNC)
-                    {
-                        if (item->func(item->option))
-                        {
-                            if (item->menu != MENU_NONE)
-                            {
-                                SetMenu(item->menu);
-                            }
-                        }
-                    }
-                }
-                S_StartSound(NULL, sfx_dorcls);
-                return (true);
-                break;
-            case KEY_ESCAPE:
-                MN_DeactivateMenu();
-                return (true);
-            case KEY_BACKSPACE:
-                S_StartSound(NULL, sfx_switch);
-                if (CurrentMenu->prevMenu == MENU_NONE)
-                {
-                    MN_DeactivateMenu();
+                    CurrentItPos = 0;
                 }
                 else
                 {
-                    SetMenu(CurrentMenu->prevMenu);
+                    CurrentItPos++;
                 }
-                return (true);
-            default:
-                for (i = 0; i < CurrentMenu->itemCount; i++)
+            }
+            while (CurrentMenu->items[CurrentItPos].type == ITT_EMPTY);
+            S_StartSound(NULL, sfx_switch);
+            return (true);
+        }
+        else if (key == key_menu_up)         // Previous menu item
+        {
+            do
+            {
+                if (CurrentItPos == 0)
                 {
-                    if (CurrentMenu->items[i].text)
+                    CurrentItPos = CurrentMenu->itemCount - 1;
+                }
+                else
+                {
+                    CurrentItPos--;
+                }
+            }
+            while (CurrentMenu->items[CurrentItPos].type == ITT_EMPTY);
+            S_StartSound(NULL, sfx_switch);
+            return (true);
+        }
+        else if (key == key_menu_left)       // Slider left
+        {
+            if (item->type == ITT_LRFUNC && item->func != NULL)
+            {
+                item->func(LEFT_DIR);
+                S_StartSound(NULL, sfx_keyup);
+            }
+            return (true);
+        }
+        else if (key == key_menu_right)      // Slider right
+        {
+            if (item->type == ITT_LRFUNC && item->func != NULL)
+            {
+                item->func(RIGHT_DIR);
+                S_StartSound(NULL, sfx_keyup);
+            }
+            return (true);
+        }
+        else if (key == key_menu_forward)    // Activate item (enter)
+        {
+            if (item->type == ITT_SETMENU)
+            {
+                SetMenu(item->menu);
+            }
+            else if (item->func != NULL)
+            {
+                CurrentMenu->oldItPos = CurrentItPos;
+                if (item->type == ITT_LRFUNC)
+                {
+                    item->func(RIGHT_DIR);
+                }
+                else if (item->type == ITT_EFUNC)
+                {
+                    if (item->func(item->option))
                     {
-                        if (toupper(charTyped)
-                            == toupper(CurrentMenu->items[i].text[0]))
+                        if (item->menu != MENU_NONE)
                         {
-                            CurrentItPos = i;
-                            return (true);
+                            SetMenu(item->menu);
                         }
                     }
                 }
-                break;
+            }
+            S_StartSound(NULL, sfx_dorcls);
+            return (true);
         }
+        else if (key == key_menu_activate)     // Toggle menu
+        {
+            MN_DeactivateMenu();
+            return (true);
+        }
+        else if (key == key_menu_back)         // Go back to previous menu
+        {
+            S_StartSound(NULL, sfx_switch);
+            if (CurrentMenu->prevMenu == MENU_NONE)
+            {
+                MN_DeactivateMenu();
+            }
+            else
+            {
+                SetMenu(CurrentMenu->prevMenu);
+            }
+            return (true);
+        }
+        else if (charTyped != 0)
+        {
+            // Jump to menu item based on first letter:
+
+            for (i = 0; i < CurrentMenu->itemCount; i++)
+            {
+                if (CurrentMenu->items[i].text)
+                {
+                    if (toupper(charTyped)
+                        == toupper(CurrentMenu->items[i].text[0]))
+                    {
+                        CurrentItPos = i;
+                        return (true);
+                    }
+                }
+            }
+        }
+
         return (false);
     }
     else
