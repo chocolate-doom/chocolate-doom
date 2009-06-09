@@ -37,6 +37,7 @@
 #include "w_wad.h"
 
 #include "m_cheat.h"
+#include "m_controls.h"
 #include "i_system.h"
 
 // Needs access to LFB.
@@ -89,19 +90,6 @@
 #define XHAIRCOLORS	GRAYS
 
 // drawing stuff
-
-int key_map_north     = KEY_UPARROW;
-int key_map_south     = KEY_DOWNARROW;
-int key_map_east      = KEY_RIGHTARROW;
-int key_map_west      = KEY_LEFTARROW;
-int key_map_zoomin    = '=';
-int key_map_zoomout   = '-';
-int key_map_toggle    = KEY_TAB;
-int key_map_maxzoom   = '0';
-int key_map_follow    = 'f';
-int key_map_grid      = 'g';
-int key_map_mark      = 'm';
-int key_map_clearmark = 'c';
 
 #define AM_NUMMARKPOINTS 10
 

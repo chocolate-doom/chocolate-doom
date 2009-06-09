@@ -53,6 +53,7 @@
 #include "g_game.h"
 
 #include "m_argv.h"
+#include "m_controls.h"
 #include "p_saveg.h"
 
 #include "s_sound.h"
@@ -71,35 +72,6 @@ extern patch_t*		hu_font[HU_FONTSIZE];
 extern boolean		message_dontfuckwithme;
 
 extern boolean		chat_on;		// in heads-up code
-
-//
-// menu keys:
-//
-
-int key_menu_activate  = KEY_ESCAPE;
-int key_menu_up        = KEY_UPARROW;
-int key_menu_down      = KEY_DOWNARROW;
-int key_menu_left      = KEY_LEFTARROW;
-int key_menu_right     = KEY_RIGHTARROW;
-int key_menu_back      = KEY_BACKSPACE;
-int key_menu_forward   = KEY_ENTER;
-int key_menu_confirm   = 'y';
-int key_menu_abort     = 'n';
-
-int key_menu_help      = KEY_F1;
-int key_menu_save      = KEY_F2;
-int key_menu_load      = KEY_F3;
-int key_menu_volume    = KEY_F4;
-int key_menu_detail    = KEY_F5;
-int key_menu_qsave     = KEY_F6;
-int key_menu_endgame   = KEY_F7;
-int key_menu_messages  = KEY_F8;
-int key_menu_qload     = KEY_F9;
-int key_menu_quit      = KEY_F10;
-int key_menu_gamma     = KEY_F11;
-
-int key_menu_incscreen = KEY_EQUALS;
-int key_menu_decscreen = KEY_MINUS;
 
 //
 // defaulted values

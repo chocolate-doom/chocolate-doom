@@ -130,6 +130,9 @@ void InitBindings(void)
     // Keyboard, mouse, joystick controls
 
     M_BindBaseControls();
+    M_BindWeaponControls();
+    M_BindMapControls();
+    M_BindMenuControls();
 
     if (gamemission == heretic || gamemission == hexen)
     {
