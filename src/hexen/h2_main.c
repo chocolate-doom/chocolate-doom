@@ -150,7 +150,9 @@ void D_BindVariables(void)
     I_BindVideoVariables();
     I_BindJoystickVariables();
     I_BindSoundVariables();
+
     M_BindBaseControls();
+    M_BindMenuControls();
     M_BindHereticControls();
     M_BindHexenControls();
 
