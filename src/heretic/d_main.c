@@ -745,6 +745,7 @@ void D_BindVariables(void)
     M_BindHereticControls();
 
     M_BindMenuControls();
+    M_BindMapControls();
 
     M_BindVariable("mouse_sensitivity",      &mouseSensitivity);
     M_BindVariable("sfx_volume",             &snd_MaxVolume);
