@@ -199,41 +199,74 @@ static void AddKeyControl(txt_table_t *table, char *name, int *var)
     TXT_SignalConnect(key_input, "set", KeySetCallback, var);
 }
 
+static void AddSectionLabel(txt_table_t *table, char *title, boolean add_space)
+{
+    char buf[64];
+
+    if (add_space)
+    {
+        TXT_AddWidgets(table, TXT_NewStrut(0, 1), TXT_NewStrut(0, 1),
+                              NULL);
+    }
+
+    sprintf(buf, " - %s - ", title);
+
+    TXT_AddWidgets(table, TXT_NewLabel(buf),  TXT_NewStrut(0, 0),
+                          NULL);
+}
 static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 {
     txt_window_t *window;
-    txt_table_t *view_table;
-    txt_table_t *fly_table;
-    txt_table_t *inv_table;
+    txt_scrollpane_t *scrollpane;
+    txt_table_t *table;
+    boolean extra_keys = gamemission == heretic || gamemission == hexen;
 
     window = TXT_NewWindow("Extra keyboard controls");
 
-    TXT_AddWidgets(window, 
-                   TXT_NewSeparator("View"),
-                   view_table = TXT_NewTable(2),
-                   TXT_NewSeparator("Flying"),
-                   fly_table = TXT_NewTable(2),
-                   TXT_NewSeparator("Inventory"),
-                   inv_table = TXT_NewTable(2),
-                   NULL);
+    table = TXT_NewTable(2);
 
-    TXT_SetColumnWidths(view_table, 25, 12);
+    TXT_SetColumnWidths(table, 20, 9);
 
-    AddKeyControl(view_table, "Look up", &key_lookup);
-    AddKeyControl(view_table, "Look down", &key_lookdown);
-    AddKeyControl(view_table, "Center view", &key_lookcenter);
+    if (extra_keys)
+    {
+        // When we have extra controls, a scrollable pane must be used.
 
-    TXT_SetColumnWidths(fly_table, 25, 12);
+        scrollpane = TXT_NewScrollPane(0, 13, table);
+        TXT_AddWidget(window, scrollpane);
 
-    AddKeyControl(fly_table, "Fly up", &key_flyup);
-    AddKeyControl(fly_table, "Fly down", &key_flydown);
-    AddKeyControl(fly_table, "Fly center", &key_flycenter);
+        AddSectionLabel(table, "View", false);
 
-    TXT_SetColumnWidths(inv_table, 25, 12);
+        AddKeyControl(table, "Look up", &key_lookup);
+        AddKeyControl(table, "Look down", &key_lookdown);
+        AddKeyControl(table, "Center view", &key_lookcenter);
 
-    AddKeyControl(inv_table, "Inventory left", &key_invleft);
-    AddKeyControl(inv_table, "Inventory right", &key_invright);
-    AddKeyControl(inv_table, "Use artifact", &key_useartifact);
+        AddSectionLabel(table, "Flying", true);
+
+        AddKeyControl(table, "Fly up", &key_flyup);
+        AddKeyControl(table, "Fly down", &key_flydown);
+        AddKeyControl(table, "Fly center", &key_flycenter);
+
+        AddSectionLabel(table, "Inventory", true);
+
+        AddKeyControl(table, "Inventory left", &key_invleft);
+        AddKeyControl(table, "Inventory right", &key_invright);
+        AddKeyControl(table, "Use artifact", &key_useartifact);
+    }
+    else
+    {
+        TXT_AddWidget(window, table);
+    }
+
+    AddSectionLabel(table, "Weapons", extra_keys);
+
+    AddKeyControl(table, "Weapon 1", &key_weapon1);
+    AddKeyControl(table, "Weapon 2", &key_weapon2);
+    AddKeyControl(table, "Weapon 3", &key_weapon3);
+    AddKeyControl(table, "Weapon 4", &key_weapon4);
+    AddKeyControl(table, "Weapon 5", &key_weapon5);
+    AddKeyControl(table, "Weapon 6", &key_weapon6);
+    AddKeyControl(table, "Weapon 7", &key_weapon7);
+    AddKeyControl(table, "Weapon 8", &key_weapon8);
 }
 
 static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
@@ -246,26 +279,9 @@ static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
     table = TXT_NewTable(2);
 
-    TXT_SetColumnWidths(table, 25, 10);
+    TXT_SetColumnWidths(table, 25, 9);
 
-    TXT_AddWidgets(table, TXT_NewLabel(" - Weapons - "),
-                          TXT_NewStrut(0, 0),
-                          NULL);
-
-    AddKeyControl(table, "Weapon 1",              &key_weapon1);
-    AddKeyControl(table, "Weapon 2",              &key_weapon2);
-    AddKeyControl(table, "Weapon 3",              &key_weapon3);
-    AddKeyControl(table, "Weapon 4",              &key_weapon4);
-    AddKeyControl(table, "Weapon 5",              &key_weapon5);
-    AddKeyControl(table, "Weapon 6",              &key_weapon6);
-    AddKeyControl(table, "Weapon 7",              &key_weapon7);
-    AddKeyControl(table, "Weapon 8",              &key_weapon8);
-
-    TXT_AddWidgets(table, TXT_NewStrut(0, 1),
-                          TXT_NewStrut(0, 1),
-                          TXT_NewLabel(" - Menu navigation - "),
-                          TXT_NewStrut(0, 0),
-                          NULL);
+    AddSectionLabel(table, "Menu navigation", false);
 
     AddKeyControl(table, "Activate menu",         &key_menu_activate);
     AddKeyControl(table, "Move cursor up",        &key_menu_up);
@@ -277,11 +293,7 @@ static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddKeyControl(table, "Confirm action",        &key_menu_confirm);
     AddKeyControl(table, "Cancel action",         &key_menu_abort);
 
-    TXT_AddWidgets(table, TXT_NewStrut(0, 1),
-                          TXT_NewStrut(0, 1),
-                          TXT_NewLabel(" - Shortcut keys - "),
-                          TXT_NewStrut(0, 0),
-                          NULL);
+    AddSectionLabel(table, "Shortcut keys", true);
 
     AddKeyControl(table, "Help screen",           &key_menu_help);
     AddKeyControl(table, "Save game",             &key_menu_save);
@@ -298,11 +310,7 @@ static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddKeyControl(table, "Increase screen size",  &key_menu_incscreen);
     AddKeyControl(table, "Decrease screen size",  &key_menu_decscreen);
 
-    TXT_AddWidgets(table, TXT_NewStrut(0, 1),
-                          TXT_NewStrut(0, 1),
-                          TXT_NewLabel(" - Map - "),
-                          TXT_NewStrut(0, 0),
-                          NULL);
+    AddSectionLabel(table, "Map", true);
 
     AddKeyControl(table, "Toggle map",            &key_map_toggle);
     AddKeyControl(table, "Zoom in",               &key_map_zoomin);
@@ -317,7 +325,7 @@ static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddKeyControl(table, "Mark location",         &key_map_mark);
     AddKeyControl(table, "Clear all marks",       &key_map_clearmark);
 
-    scrollpane = TXT_NewScrollPane(0, 12, table);
+    scrollpane = TXT_NewScrollPane(0, 13, table);
 
     TXT_AddWidget(window, scrollpane);
 }
@@ -327,6 +335,7 @@ void ConfigKeyboard(void)
     txt_window_t *window;
     txt_table_t *movement_table;
     txt_table_t *action_table;
+    txt_table_t *dialogs_table;
     txt_checkbox_t *run_control;
 
     always_run = joybspeed >= 20;
@@ -339,27 +348,15 @@ void ConfigKeyboard(void)
 
                    TXT_NewSeparator("Action"),
                    action_table = TXT_NewTable(4),
-                   TXT_NewButton2("Other keys...", OtherKeysDialog, NULL),
-                   NULL);
+                   dialogs_table = TXT_NewTable(2),
 
-    // Look up/down, inventory and flying controls are only in Heretic/Hexen
-    // and are kept in a separate window to conserve space.
-
-    if (gamemission == heretic || gamemission == hexen)
-    {
-        TXT_AddWidget(window, TXT_NewButton2("More controls...",
-                                             ConfigExtraKeys,
-                                             NULL));
-    }
-
-    TXT_AddWidgets(window,
                    TXT_NewSeparator("Misc."),
                    run_control = TXT_NewCheckBox("Always run", &always_run),
                    TXT_NewInvertedCheckBox("Use native keyboard mapping", 
                                            &vanilla_keyboard_mapping),
                    NULL);
 
-    TXT_SetColumnWidths(movement_table, 15, 4, 15, 4);
+    TXT_SetColumnWidths(movement_table, 15, 8, 15, 8);
 
     TXT_SignalConnect(run_control, "changed", UpdateJoybSpeed, NULL);
 
@@ -377,12 +374,22 @@ void ConfigKeyboard(void)
         AddKeyControl(movement_table, "Jump", &key_jump);
     }
 
-    TXT_SetColumnWidths(action_table, 15, 4, 15, 4);
+    TXT_SetColumnWidths(action_table, 15, 8, 15, 8);
 
     AddKeyControl(action_table, "Fire/Attack", &key_fire);
     AddKeyControl(action_table, " Use", &key_use);
 
+    // Other key bindings are stored in separate sub-dialogs:
+
+    TXT_SetColumnWidths(dialogs_table, 24, 24);
+
+    TXT_AddWidgets(dialogs_table,
+                   TXT_NewButton2("More controls...", ConfigExtraKeys, NULL),
+                   TXT_NewButton2("Other keys...", OtherKeysDialog, NULL),
+                   NULL);
+
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
+
 }
 
 void BindKeyboardVariables(void)
