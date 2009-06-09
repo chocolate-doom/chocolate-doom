@@ -353,6 +353,10 @@ void D_BindVariables(void)
     I_BindSoundVariables();
 
     M_BindBaseControls();
+    M_BindWeaponControls();
+    M_BindMapControls();
+    M_BindMenuControls();
+
 #ifdef FEATURE_MULTIPLAYER
     NET_BindVariables();
 #endif

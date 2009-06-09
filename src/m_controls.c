@@ -80,6 +80,59 @@ int mousebstraferight = -1;
 int mousebbackward = -1;
 int mousebuse = -1;
 
+// Weapon selection keys:
+
+int key_weapon1 = '1';
+int key_weapon2 = '2';
+int key_weapon3 = '3';
+int key_weapon4 = '4';
+int key_weapon5 = '5';
+int key_weapon6 = '6';
+int key_weapon7 = '7';
+int key_weapon8 = '8';
+
+// Map cotnrols keys:
+
+int key_map_north     = KEY_UPARROW;
+int key_map_south     = KEY_DOWNARROW;
+int key_map_east      = KEY_RIGHTARROW;
+int key_map_west      = KEY_LEFTARROW;
+int key_map_zoomin    = '=';
+int key_map_zoomout   = '-';
+int key_map_toggle    = KEY_TAB;
+int key_map_maxzoom   = '0';
+int key_map_follow    = 'f';
+int key_map_grid      = 'g';
+int key_map_mark      = 'm';
+int key_map_clearmark = 'c';
+
+// menu keys:
+
+int key_menu_activate  = KEY_ESCAPE;
+int key_menu_up        = KEY_UPARROW;
+int key_menu_down      = KEY_DOWNARROW;
+int key_menu_left      = KEY_LEFTARROW;
+int key_menu_right     = KEY_RIGHTARROW;
+int key_menu_back      = KEY_BACKSPACE;
+int key_menu_forward   = KEY_ENTER;
+int key_menu_confirm   = 'y';
+int key_menu_abort     = 'n';
+
+int key_menu_help      = KEY_F1;
+int key_menu_save      = KEY_F2;
+int key_menu_load      = KEY_F3;
+int key_menu_volume    = KEY_F4;
+int key_menu_detail    = KEY_F5;
+int key_menu_qsave     = KEY_F6;
+int key_menu_endgame   = KEY_F7;
+int key_menu_messages  = KEY_F8;
+int key_menu_qload     = KEY_F9;
+int key_menu_quit      = KEY_F10;
+int key_menu_gamma     = KEY_F11;
+
+int key_menu_incscreen = KEY_EQUALS;
+int key_menu_decscreen = KEY_MINUS;
+
 //
 // Joystick controls
 //
@@ -156,5 +209,61 @@ void M_BindHexenControls(void)
     M_BindVariable("key_jump",           &key_jump);
     M_BindVariable("mouseb_jump",        &mousebjump);
     M_BindVariable("joyb_jump",          &joybjump);
+}
+
+void M_BindWeaponControls(void)
+{
+    M_BindVariable("key_weapon1",        &key_weapon1);
+    M_BindVariable("key_weapon2",        &key_weapon2);
+    M_BindVariable("key_weapon3",        &key_weapon3);
+    M_BindVariable("key_weapon4",        &key_weapon4);
+    M_BindVariable("key_weapon5",        &key_weapon5);
+    M_BindVariable("key_weapon6",        &key_weapon6);
+    M_BindVariable("key_weapon7",        &key_weapon7);
+    M_BindVariable("key_weapon8",        &key_weapon8);
+}
+
+void M_BindMapControls(void)
+{
+    M_BindVariable("key_map_north",      &key_map_north);
+    M_BindVariable("key_map_south",      &key_map_south);
+    M_BindVariable("key_map_east",       &key_map_east);
+    M_BindVariable("key_map_west",       &key_map_west);
+    M_BindVariable("key_map_zoomin",     &key_map_zoomin);
+    M_BindVariable("key_map_zoomout",    &key_map_zoomout);
+    M_BindVariable("key_map_toggle",     &key_map_toggle);
+    M_BindVariable("key_map_maxzoom",    &key_map_maxzoom);
+    M_BindVariable("key_map_follow",     &key_map_follow);
+    M_BindVariable("key_map_grid",       &key_map_grid);
+    M_BindVariable("key_map_mark",       &key_map_mark);
+    M_BindVariable("key_map_clearmark",  &key_map_clearmark);
+}
+
+void M_BindMenuControls(void)
+{
+    M_BindVariable("key_menu_activate",  &key_menu_activate);
+    M_BindVariable("key_menu_up",        &key_menu_up);
+    M_BindVariable("key_menu_down",      &key_menu_down);
+    M_BindVariable("key_menu_left",      &key_menu_left);
+    M_BindVariable("key_menu_right",     &key_menu_right);
+    M_BindVariable("key_menu_back",      &key_menu_back);
+    M_BindVariable("key_menu_forward",   &key_menu_forward);
+    M_BindVariable("key_menu_confirm",   &key_menu_confirm);
+    M_BindVariable("key_menu_abort",     &key_menu_abort);
+
+    M_BindVariable("key_menu_help",             &key_menu_help);
+    M_BindVariable("key_menu_save",             &key_menu_save);
+    M_BindVariable("key_menu_load",             &key_menu_load);
+    M_BindVariable("key_menu_volume",        &key_menu_volume);
+    M_BindVariable("key_menu_detail",        &key_menu_detail);
+    M_BindVariable("key_menu_qsave",        &key_menu_qsave);
+    M_BindVariable("key_menu_endgame",        &key_menu_endgame);
+    M_BindVariable("key_menu_messages",        &key_menu_messages);
+    M_BindVariable("key_menu_qload",        &key_menu_qload);
+    M_BindVariable("key_menu_quit",             &key_menu_quit);
+    M_BindVariable("key_menu_gamma",        &key_menu_gamma);
+
+    M_BindVariable("key_menu_incscreen",        &key_menu_incscreen);
+    M_BindVariable("key_menu_decscreen",        &key_menu_decscreen);
 }
 

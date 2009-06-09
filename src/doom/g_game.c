@@ -157,15 +157,6 @@ wbstartstruct_t wminfo;               	// parms for world map / intermission
  
 byte		consistancy[MAXPLAYERS][BACKUPTICS]; 
  
-int             key_weapon1 = '1';
-int             key_weapon2 = '2';
-int             key_weapon3 = '3';
-int             key_weapon4 = '4';
-int             key_weapon5 = '5';
-int             key_weapon6 = '6';
-int             key_weapon7 = '7';
-int             key_weapon8 = '8';
- 
 #define MAXPLMOVE		(forwardmove[1]) 
  
 #define TURBOTHRESHOLD	0x32

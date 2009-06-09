@@ -33,55 +33,6 @@
 
 static int vanilla_keyboard_mapping = 1;
 
-// Menu keys:
-
-int key_menu_activate  = KEY_ESCAPE;
-int key_menu_up        = KEY_UPARROW;
-int key_menu_down      = KEY_DOWNARROW;
-int key_menu_left      = KEY_LEFTARROW;
-int key_menu_right     = KEY_RIGHTARROW;
-int key_menu_back      = KEY_BACKSPACE;
-int key_menu_forward   = KEY_ENTER;
-int key_menu_confirm   = 'y';
-int key_menu_abort     = 'n';
-
-int key_menu_help      = KEY_F1;
-int key_menu_save      = KEY_F2;
-int key_menu_load      = KEY_F3;
-int key_menu_volume    = KEY_F4;
-int key_menu_detail    = KEY_F5;
-int key_menu_qsave     = KEY_F6;
-int key_menu_endgame   = KEY_F7;
-int key_menu_messages  = KEY_F8;
-int key_menu_qload     = KEY_F9;
-int key_menu_quit      = KEY_F10;
-int key_menu_gamma     = KEY_F11;
-
-int key_menu_incscreen = KEY_EQUALS;
-int key_menu_decscreen = KEY_MINUS;
-
-int key_map_north      = KEY_UPARROW;
-int key_map_south      = KEY_DOWNARROW;
-int key_map_east       = KEY_RIGHTARROW;
-int key_map_west       = KEY_LEFTARROW;
-int key_map_zoomin     = '=';
-int key_map_zoomout    = '-';
-int key_map_toggle     = KEY_TAB;
-int key_map_maxzoom    = '0';
-int key_map_follow     = 'f';
-int key_map_grid       = 'g';
-int key_map_mark       = 'm';
-int key_map_clearmark  = 'c';
-
-int key_weapon1        = '1';
-int key_weapon2        = '2';
-int key_weapon3        = '3';
-int key_weapon4        = '4';
-int key_weapon5        = '5';
-int key_weapon6        = '6';
-int key_weapon7        = '7';
-int key_weapon8        = '8';
-
 static int always_run = 0;
 
 // Keys within these groups cannot have the same value.
