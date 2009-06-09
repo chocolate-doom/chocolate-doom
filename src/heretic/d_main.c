@@ -740,8 +740,11 @@ void D_BindVariables(void)
     I_BindVideoVariables();
     I_BindJoystickVariables();
     I_BindSoundVariables();
+
     M_BindBaseControls();
     M_BindHereticControls();
+
+    M_BindMenuControls();
 
     M_BindVariable("mouse_sensitivity",      &mouseSensitivity);
     M_BindVariable("sfx_volume",             &snd_MaxVolume);
