@@ -712,6 +712,8 @@ static default_t extra_defaults_list[] =
 
     CONFIG_VARIABLE_INT(dclick_use),
 
+#ifdef FEATURE_SOUND
+
     //!
     // Controls whether libsamplerate support is used for performing
     // sample rate conversions of sound effects.  Support for this
@@ -726,6 +728,260 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(use_libsamplerate),
+
+#endif
+
+    //!
+    // Key that activates the menu when pressed.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_activate),
+
+    //!
+    // Key that moves the cursor up on the menu.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_up),
+
+    //!
+    // Key that moves the cursor down on the menu.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_down),
+
+    //!
+    // Key that moves the currently selected slider on the menu left.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_left),
+
+    //!
+    // Key that moves the currently selected slider on the menu right.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_right),
+
+    //!
+    // Key to go back to the previous menu.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_back),
+
+    //!
+    // Key to activate the currently selected menu item.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_forward),
+
+    //!
+    // Key to answer 'yes' to a question in the menu.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_confirm),
+
+    //!
+    // Key to answer 'no' to a question in the menu.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_abort),
+
+    //!
+    // Keyboard shortcut to bring up the help screen.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_help),
+
+    //!
+    // Keyboard shortcut to bring up the save game menu.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_save),
+
+    //!
+    // Keyboard shortcut to bring up the load game menu.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_load),
+
+    //!
+    // Keyboard shortcut to bring up the sound volume menu.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_volume),
+
+    //!
+    // Keyboard shortcut to toggle the detail level.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_detail),
+
+    //!
+    // Keyboard shortcut to quicksave the current game.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_qsave),
+
+    //!
+    // Keyboard shortcut to end the game.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_endgame),
+
+    //!
+    // Keyboard shortcut to toggle heads-up messages.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_messages),
+
+    //!
+    // Keyboard shortcut to load the last quicksave.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_qload),
+
+    //!
+    // Keyboard shortcut to quit the game.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_quit),
+
+    //!
+    // Keyboard shortcut to toggle the gamma correction level.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_gamma),
+
+    //!
+    // Keyboard shortcut to increase the screen size.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_incscreen),
+
+    //!
+    // Keyboard shortcut to decrease the screen size.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_decscreen),
+
+    //!
+    // Key to toggle the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_toggle),
+
+    //!
+    // Key to pan north when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_north),
+
+    //!
+    // Key to pan south when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_south),
+
+    //!
+    // Key to pan east when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_east),
+
+    //!
+    // Key to pan west when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_west),
+
+    //!
+    // Key to zoom in when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_zoomin),
+
+    //!
+    // Key to zoom out when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_zoomout),
+
+    //!
+    // Key to zoom out the maximum amount when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_maxzoom),
+
+    //!
+    // Key to toggle follow mode when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_follow),
+
+    //!
+    // Key to toggle the grid display when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_grid),
+
+    //!
+    // Key to set a mark when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_mark),
+
+    //!
+    // Key to clear all marks when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_clearmark),
+
+    //!
+    // Key to select weapon 1.
+    //
+
+    CONFIG_VARIABLE_KEY(key_weapon1),
+
+    //!
+    // Key to select weapon 2.
+    //
+
+    CONFIG_VARIABLE_KEY(key_weapon2),
+
+    //!
+    // Key to select weapon 3.
+    //
+
+    CONFIG_VARIABLE_KEY(key_weapon3),
+
+    //!
+    // Key to select weapon 4.
+    //
+
+    CONFIG_VARIABLE_KEY(key_weapon4),
+
+    //!
+    // Key to select weapon 5.
+    //
+
+    CONFIG_VARIABLE_KEY(key_weapon5),
+
+    //!
+    // Key to select weapon 6.
+    //
+
+    CONFIG_VARIABLE_KEY(key_weapon6),
+
+    //!
+    // Key to select weapon 7.
+    //
+
+    CONFIG_VARIABLE_KEY(key_weapon7),
+
+    //!
+    // Key to select weapon 8.
+    //
+
+    CONFIG_VARIABLE_KEY(key_weapon8),
 };
 
 static default_collection_t extra_defaults =
@@ -1109,9 +1365,11 @@ void M_BindVariable(char *name, void *location)
 
 static char *GetDefaultConfigDir(void)
 {
-#ifndef _WIN32
-    // On Unix systems we put configuration into ~/.chocolate-doom, but
-    // on Windows we just use the current directory, like Vanilla.
+#if !defined(_WIN32) || defined(_WIN32_WCE)
+
+    // Configuration settings are stored in ~/.chocolate-doom/,
+    // except on Windows, where we behave like Vanilla Doom and
+    // save in the current directory.
 
     char *homedir;
     char *result;
@@ -1133,8 +1391,6 @@ static char *GetDefaultConfigDir(void)
     else
 #endif /* #ifndef _WIN32 */
     {
-        // On Windows, we just use the current directory.
-
         return strdup("");
     }
 }

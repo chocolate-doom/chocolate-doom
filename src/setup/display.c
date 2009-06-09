@@ -121,7 +121,7 @@ void SetDisplayDriver(void)
     }
     else
     {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(_WIN32_WCE)
         // On Windows, use DirectX over windib by default.
 
         putenv("SDL_VIDEODRIVER=directx");
@@ -192,7 +192,14 @@ static void BuildFullscreenModesList(void)
 
     modes = SDL_ListModes(NULL, SDL_FULLSCREEN);
 
-    for (num_modes=0; modes[num_modes] != NULL; ++num_modes);
+    if (modes == NULL || modes == (SDL_Rect **) -1)
+    {
+        num_modes = 0;
+    }
+    else
+    {
+        for (num_modes=0; modes[num_modes] != NULL; ++num_modes);
+    }
 
     // Build the screen_modes_fullscreen array
 
@@ -310,7 +317,7 @@ static void GenerateModesTable(TXT_UNCAST_ARG(widget),
     screen_height = modes[vidmode].h;
 }
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(_WIN32_WCE)
 
 static int win32_video_driver = 0;
 
@@ -403,7 +410,7 @@ void ConfigDisplay(void)
     // On Windows, there is an extra control to change between 
     // the Windows GDI and DirectX video drivers.
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(_WIN32_WCE)
     {
         txt_table_t *driver_table;
         txt_dropdown_list_t *driver_list;

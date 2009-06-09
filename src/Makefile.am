@@ -115,6 +115,7 @@ SOURCE_FILES = $(COMMON_SOURCE_FILES)              \
                $(FEATURE_SOUND_SOURCE_FILES)
 
 EXTRA_LIBS =                                       \
+               ../wince/libc_wince.a               \
 	       ../textscreen/libtextscreen.a       \
 	       ../pcsound/libpcsound.a             \
 	       @LDFLAGS@                           \

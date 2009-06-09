@@ -40,7 +40,15 @@
 
 void D_DoomMain (void);
 
-#if defined(_WIN32)
+#if defined(_WIN32_WCE)
+
+// Windows CE?  I doubt it even supports SMP..
+
+static void LockCPUAffinity(void)
+{
+}
+
+#elif defined(_WIN32)
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -129,6 +137,15 @@ int main(int argc, char **argv)
 
     myargc = argc;
     myargv = argv;
+
+#ifdef _WIN32_WCE
+
+    // Windows CE has no environment, but SDL provides an implementation.
+    // Populate the environment with the values we normally find.
+
+    PopulateEnvironment();
+
+#endif
 
     // Only schedule on a single core, if we have multiple
     // cores.  This is to work around a bug in SDL_mixer.
