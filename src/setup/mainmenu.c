@@ -22,6 +22,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef _WIN32_WCE
+#include "libc_wince.h"
+#endif
+
 #include "config.h"
 #include "textscreen.h"
 
@@ -252,6 +256,7 @@ static void MissionSet(void)
 void D_DoomMain(void)
 {
     SetupMission(MissionSet);
+
     RunGUI();
 }
 

@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "SDL_getenv.h"
 #include "config.h"
 #include "pcsound.h"
 #include "pcsound_internal.h"

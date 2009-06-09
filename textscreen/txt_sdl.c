@@ -142,6 +142,9 @@ static void ChooseFont(void)
 
     if (modes == NULL || modes == (SDL_Rect **) -1 || *modes == NULL)
     {
+#ifdef _WIN32_WCE
+        font = &small_font;
+#endif
         return;
     }
 
@@ -168,7 +171,10 @@ int TXT_Init(void)
 {
     int flags;
 
-    SDL_InitSubSystem(SDL_INIT_VIDEO);
+    if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
+    {
+        return 0;
+    }
 
     flags = SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF;
 
