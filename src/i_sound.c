@@ -413,6 +413,8 @@ void I_BindSoundVariables(void)
     M_BindVariable("snd_sbdma",         &snd_sbdma);
     M_BindVariable("snd_mport",         &snd_mport);
     M_BindVariable("snd_samplerate",    &snd_samplerate);
+#ifdef FEATURE_SOUND
     M_BindVariable("use_libsamplerate", &use_libsamplerate);
+#endif
 }
 
