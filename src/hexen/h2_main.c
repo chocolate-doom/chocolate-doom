@@ -231,7 +231,6 @@ void D_DoomMain(void)
 
     I_AtExit(D_HexenQuitMessage, false);
     M_FindResponseFile();
-    setbuf(stdout, NULL);
     startepisode = 1;
     autostart = false;
     startskill = sk_medium;
