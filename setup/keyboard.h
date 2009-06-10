@@ -35,6 +35,8 @@ extern int key_speed;
 extern int joybspeed;
 extern int vanilla_keyboard_mapping;
 
+extern int key_pause;
+
 // Menu keys:
 
 extern int key_menu_activate;
@@ -87,6 +89,8 @@ extern int key_weapon5;
 extern int key_weapon6;
 extern int key_weapon7;
 extern int key_weapon8;
+
+extern int key_message_refresh;
 
 void ConfigKeyboard(void);
 

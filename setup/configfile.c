@@ -287,6 +287,7 @@ static default_t extra_defaults_list[] =
     {"mouseb_backward",             &mousebbackward, DEFAULT_INT, 0, 0},
     {"use_libsamplerate",           &use_libsamplerate, DEFAULT_INT, 0, 0},
 
+    {"key_pause",                   &key_pause, DEFAULT_KEY, 0, 0},
     {"key_menu_activate",           &key_menu_activate, DEFAULT_KEY, 0, 0},
     {"key_menu_up",                 &key_menu_up, DEFAULT_KEY, 0, 0},
     {"key_menu_down",               &key_menu_down, DEFAULT_KEY, 0, 0},
@@ -330,6 +331,7 @@ static default_t extra_defaults_list[] =
     {"key_weapon6",                 &key_weapon6, DEFAULT_KEY, 0, 0},
     {"key_weapon7",                 &key_weapon7, DEFAULT_KEY, 0, 0},
     {"key_weapon8",                 &key_weapon8, DEFAULT_KEY, 0, 0},
+    {"key_message_refresh",         &key_message_refresh, DEFAULT_KEY, 0, 0},
 };
 
 static default_collection_t extra_defaults =
