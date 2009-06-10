@@ -801,7 +801,6 @@ void D_DoomMain(void)
     I_AtExit(D_Endoom, false);
 
     M_FindResponseFile();
-    setbuf(stdout, NULL);
     nomonsters = M_CheckParm("-nomonsters");
     respawnparm = M_CheckParm("-respawn");
     ravpic = M_CheckParm("-ravpic");
