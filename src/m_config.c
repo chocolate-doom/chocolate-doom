@@ -87,6 +87,8 @@ extern int	key_use;
 extern int	key_strafe;
 extern int	key_speed;
 
+extern int key_pause;
+
 // Menu control keys:
 
 extern int key_menu_activate;
@@ -137,6 +139,8 @@ extern int key_weapon5;
 extern int key_weapon6;
 extern int key_weapon7;
 extern int key_weapon8;
+
+extern int key_message_refresh;
  
 extern int	mousebfire;
 extern int	mousebstrafe;
@@ -767,6 +771,12 @@ static default_t extra_defaults_list[] =
 #endif
 
     //!
+    // Key to pause or unpause the game.
+    //
+
+    CONFIG_VARIABLE_KEY(key_pause,                 key_pause),
+
+    //!
     // Key that activates the menu when pressed.
     //
 
@@ -1017,6 +1027,12 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_KEY(key_weapon8,               key_weapon8),
+
+    //!
+    // Key to re-display last message.
+    //
+
+    CONFIG_VARIABLE_KEY(key_message_refresh,       key_message_refresh),
 };
 
 static default_collection_t extra_defaults =

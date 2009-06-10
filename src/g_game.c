@@ -182,6 +182,8 @@ int             key_weapon5 = '5';
 int             key_weapon6 = '6';
 int             key_weapon7 = '7';
 int             key_weapon8 = '8';
+
+int             key_pause = KEY_PAUSE;
  
 int             mousebfire = 0;
 int             mousebstrafe = 1;
@@ -790,13 +792,15 @@ boolean G_Responder (event_t* ev)
     switch (ev->type) 
     { 
       case ev_keydown: 
-	if (ev->data1 == KEY_PAUSE) 
+	if (ev->data1 == key_pause) 
 	{ 
 	    sendpause = true; 
-	    return true; 
-	} 
-	if (ev->data1 <NUMKEYS) 
+	}
+        else if (ev->data1 <NUMKEYS) 
+        {
 	    gamekeydown[ev->data1] = true; 
+        }
+
 	return true;    // eat key down events 
  
       case ev_keyup: 

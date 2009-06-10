@@ -39,6 +39,8 @@ int key_use = ' ';
 int key_strafe = KEY_RALT;
 int key_speed = KEY_RSHIFT;
 
+int key_pause = KEY_PAUSE;
+
 // Menu keys:
 
 int key_menu_activate  = KEY_ESCAPE;
@@ -88,6 +90,8 @@ int key_weapon6        = '6';
 int key_weapon7        = '7';
 int key_weapon8        = '8';
 
+int key_message_refresh = KEY_ENTER;
+
 int vanilla_keyboard_mapping = 1;
 
 static int always_run = 0;
@@ -97,6 +101,7 @@ static int always_run = 0;
 static int *controls[] = { &key_left, &key_right, &key_up, &key_down,
                            &key_strafeleft, &key_straferight, &key_fire,
                            &key_use, &key_strafe, &key_speed, 
+                           &key_pause,
                            &key_weapon1, &key_weapon2, &key_weapon3,
                            &key_weapon4, &key_weapon5, &key_weapon6,
                            &key_weapon7, &key_weapon8, NULL };
@@ -109,7 +114,8 @@ static int *shortcuts[] = { &key_menu_help, &key_menu_save, &key_menu_load,
                             &key_menu_volume, &key_menu_detail, &key_menu_qsave,
                             &key_menu_endgame, &key_menu_messages,
                             &key_menu_qload, &key_menu_quit, &key_menu_gamma,
-                            &key_menu_incscreen, &key_menu_decscreen, NULL };
+                            &key_menu_incscreen, &key_menu_decscreen, 
+                            &key_message_refresh, NULL };
 
 static int *map_keys[] = { &key_map_north, &key_map_south, &key_map_east,
                            &key_map_west, &key_map_zoomin, &key_map_zoomout,
@@ -250,6 +256,7 @@ static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
                           TXT_NewStrut(0, 0),
                           NULL);
 
+    AddKeyControl(table, "Pause game",            &key_pause);
     AddKeyControl(table, "Help screen",           &key_menu_help);
     AddKeyControl(table, "Save game",             &key_menu_save);
     AddKeyControl(table, "Load game",             &key_menu_load);
@@ -264,6 +271,8 @@ static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
     AddKeyControl(table, "Increase screen size",  &key_menu_incscreen);
     AddKeyControl(table, "Decrease screen size",  &key_menu_decscreen);
+
+    AddKeyControl(table, "Display last message",  &key_message_refresh);
 
     TXT_AddWidgets(table, TXT_NewStrut(0, 1),
                           TXT_NewStrut(0, 1),
