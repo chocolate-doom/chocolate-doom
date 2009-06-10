@@ -152,7 +152,9 @@ void D_BindVariables(void)
     I_BindSoundVariables();
 
     M_BindBaseControls();
+    M_BindMapControls();
     M_BindMenuControls();
+    M_BindWeaponControls();
     M_BindHereticControls();
     M_BindHexenControls();
 

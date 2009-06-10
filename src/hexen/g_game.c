@@ -135,6 +135,14 @@ fixed_t sidemove[NUMCLASSES][2] = {
 
 fixed_t angleturn[3] = { 640, 1280, 320 };      // + slow turn
 
+static int *weapon_keys[] =
+{
+    &key_weapon1,
+    &key_weapon2,
+    &key_weapon3,
+    &key_weapon4,
+};
+
 #define SLOWTURNTICS    6
 
 #define NUMKEYS 256
@@ -446,13 +454,15 @@ void G_BuildTiccmd(ticcmd_t * cmd)
         dclicks = 0;            // clear double clicks if hit use button
     }
 
-    for (i = 0; i < NUMWEAPONS; i++)
+    for (i=0; i<arrlen(weapon_keys); ++i)
     {
-        if (gamekeydown['1' + i])
+        int key = *weapon_keys[i];
+
+        if (gamekeydown[key])
         {
-            cmd->buttons |= BT_CHANGE;
-            cmd->buttons |= i << BT_WEAPONSHIFT;
-            break;
+	    cmd->buttons |= BT_CHANGE; 
+	    cmd->buttons |= i<<BT_WEAPONSHIFT; 
+	    break; 
         }
     }
 
