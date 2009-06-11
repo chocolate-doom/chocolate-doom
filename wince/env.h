@@ -11,6 +11,13 @@
 
 #include "SDL_getenv.h"
 
+#ifndef getenv
+#define getenv SDL_getenv
+#endif
+#ifndef putenv
+#define putenv SDL_putenv
+#endif
+
 extern void PopulateEnvironment(void);
 
 #endif /* #ifndef WINCE_ENV_H */
