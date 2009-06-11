@@ -59,7 +59,7 @@ WINDOWS_CE=false
 
 case "$host" in
     *mingw32ce*|*cegcc*|*wince*)
-        CFLAGS="-I../wince $CFLAGS"
+        CFLAGS="-I\$(top_builddir)/wince $CFLAGS"
         WINDOWS_CE=true
         ;;
     *)
