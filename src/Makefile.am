@@ -9,7 +9,9 @@ games_PROGRAMS = chocolate-doom     \
                  chocolate-server   \
                  chocolate-setup
 
-AM_CFLAGS = -I../textscreen -I../pcsound @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
+AM_CFLAGS = -I$(top_builddir)/textscreen            \
+            -I$(top_builddir)/pcsound               \
+            @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
 # Common source files used by absolutely everything:
 
@@ -114,14 +116,15 @@ SOURCE_FILES = $(COMMON_SOURCE_FILES)              \
                $(FEATURE_WAD_MERGE_SOURCE_FILES)   \
                $(FEATURE_SOUND_SOURCE_FILES)
 
-EXTRA_LIBS =                                       \
-               ../wince/libc_wince.a               \
-	       ../textscreen/libtextscreen.a       \
-	       ../pcsound/libpcsound.a             \
-	       @LDFLAGS@                           \
-	       @SDL_LIBS@                          \
-	       @SDLMIXER_LIBS@                     \
-	       @SDLNET_LIBS@ 
+
+EXTRA_LIBS =                                               \
+               $(top_builddir)/wince/libc_wince.a          \
+               $(top_builddir)/textscreen/libtextscreen.a  \
+               $(top_builddir)/pcsound/libpcsound.a        \
+               @LDFLAGS@                                   \
+               @SDL_LIBS@                                  \
+               @SDLMIXER_LIBS@                             \
+               @SDLNET_LIBS@ 
 
 if HAVE_WINDRES
 chocolate_doom_SOURCES=$(SOURCE_FILES) resource.rc
@@ -158,8 +161,8 @@ m_controls.c         m_controls.h          \
 z_native.c           z_zone.h
 
 chocolate_setup_SOURCES=$(SETUP_FILES) $(COMMON_SOURCE_FILES)
-chocolate_setup_LDADD = setup/libsetup.a                     \
-                        ../textscreen/libtextscreen.a        \
+chocolate_setup_LDADD = setup/libsetup.a                             \
+                        $(top_builddir)/textscreen/libtextscreen.a   \
                         @LDFLAGS@ @SDL_LIBS@ @SDLNET_LIBS@ 
 
 EXTRA_DIST =                        \
@@ -173,8 +176,8 @@ EXTRA_DIST =                        \
 
 if HAVE_PYTHON
 
-icon.c : ../data/doom.ico
-	../data/convert-icon $^ $@
+icon.c : $(top_builddir)/data/doom.ico
+	$(top_builddir)/data/convert-icon $^ $@
 
 endif
 

@@ -1,5 +1,7 @@
 
-AM_CFLAGS=-I.. -I../../textscreen @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
+AM_CFLAGS=-I..                                            \
+          -I$(top_builddir)/textscreen                    \
+          @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
 noinst_LIBRARIES=libheretic.a
 
