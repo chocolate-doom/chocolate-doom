@@ -21,7 +21,7 @@ net_structrw.c       net_structrw.h        \
 z_native.c           z_zone.h
 
 chocolate_server_SOURCES=$(DEDSERV_FILES)
-chocolate_server_LDADD = @LDFLAGS@ @SDLNET_LIBS@ 
+chocolate_server_LDADD = ../wince/libc_wince.a @LDFLAGS@ @SDLNET_LIBS@ 
 
 MAIN_SOURCE_FILES=\
 am_map.c             am_map.h              \
