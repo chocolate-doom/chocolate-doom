@@ -21,6 +21,10 @@
 
 #include <string.h>
 
+#ifdef _WIN32_WCE
+#include "libc_wince.h"
+#endif
+
 #include "textscreen.h"
 
 #include "display.h"
