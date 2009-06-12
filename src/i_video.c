@@ -182,7 +182,7 @@ static boolean MouseShouldBeGrabbed()
     if (screensaver_mode)
         return false;
 
-    // if the window doesnt have focus, never grab it
+    // if the window doesn't have focus, never grab it
 
     if (!window_focused)
         return false;
@@ -192,6 +192,17 @@ static boolean MouseShouldBeGrabbed()
 
     if (fullscreen)
         return true;
+
+#ifdef _WIN32_WCE
+
+    // On Windows CE, always grab input.  This is because hardware
+    // button events are only acquired by SDL when the input is grabbed.
+    // Almost all Windows CE devices should have touch screens anyway,
+    // so this shouldn't affect mouse grabbing behavior.
+
+    return true;
+
+#else
 
     // Don't grab the mouse if mouse input is disabled
 
@@ -204,18 +215,20 @@ static boolean MouseShouldBeGrabbed()
         return false;
 
     // if we specify not to grab the mouse, never grab
- 
+
     if (!grabmouse)
         return false;
 
     // when menu is active or game is paused, release the mouse 
- 
+
     if (menuactive || paused)
         return false;
 
     // only grab mouse when playing levels (but not demos)
 
     return (gamestate == GS_LEVEL) && !demoplayback;
+
+#endif /* #ifndef _WIN32_WCE */
 }
 
 // Update the value of window_focused when we get a focus event
