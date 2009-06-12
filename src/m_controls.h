@@ -49,6 +49,9 @@ extern int key_invleft;
 extern int key_invright;
 extern int key_useartifact;
 
+extern int key_message_refresh;
+extern int key_pause;
+
 extern int key_weapon1;
 extern int key_weapon2;
 extern int key_weapon3;

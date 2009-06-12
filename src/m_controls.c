@@ -80,6 +80,9 @@ int mousebstraferight = -1;
 int mousebbackward = -1;
 int mousebuse = -1;
 
+int key_message_refresh = KEY_ENTER;
+int key_pause = KEY_PAUSE;
+
 // Weapon selection keys:
 
 int key_weapon1 = '1';
@@ -187,6 +190,8 @@ void M_BindBaseControls(void)
     M_BindVariable("mouseb_use",         &mousebuse);
     M_BindVariable("mouseb_backward",    &mousebbackward);
     M_BindVariable("dclick_use",         &dclick_use);
+    M_BindVariable("key_pause",          &key_pause);
+    M_BindVariable("key_message_refresh", &key_message_refresh);
 }
 
 void M_BindHereticControls(void)
@@ -251,19 +256,19 @@ void M_BindMenuControls(void)
     M_BindVariable("key_menu_confirm",   &key_menu_confirm);
     M_BindVariable("key_menu_abort",     &key_menu_abort);
 
-    M_BindVariable("key_menu_help",             &key_menu_help);
-    M_BindVariable("key_menu_save",             &key_menu_save);
-    M_BindVariable("key_menu_load",             &key_menu_load);
-    M_BindVariable("key_menu_volume",        &key_menu_volume);
-    M_BindVariable("key_menu_detail",        &key_menu_detail);
-    M_BindVariable("key_menu_qsave",        &key_menu_qsave);
-    M_BindVariable("key_menu_endgame",        &key_menu_endgame);
-    M_BindVariable("key_menu_messages",        &key_menu_messages);
-    M_BindVariable("key_menu_qload",        &key_menu_qload);
-    M_BindVariable("key_menu_quit",             &key_menu_quit);
-    M_BindVariable("key_menu_gamma",        &key_menu_gamma);
+    M_BindVariable("key_menu_help",      &key_menu_help);
+    M_BindVariable("key_menu_save",      &key_menu_save);
+    M_BindVariable("key_menu_load",      &key_menu_load);
+    M_BindVariable("key_menu_volume",    &key_menu_volume);
+    M_BindVariable("key_menu_detail",    &key_menu_detail);
+    M_BindVariable("key_menu_qsave",     &key_menu_qsave);
+    M_BindVariable("key_menu_endgame",   &key_menu_endgame);
+    M_BindVariable("key_menu_messages",  &key_menu_messages);
+    M_BindVariable("key_menu_qload",     &key_menu_qload);
+    M_BindVariable("key_menu_quit",      &key_menu_quit);
+    M_BindVariable("key_menu_gamma",     &key_menu_gamma);
 
-    M_BindVariable("key_menu_incscreen",        &key_menu_incscreen);
-    M_BindVariable("key_menu_decscreen",        &key_menu_decscreen);
+    M_BindVariable("key_menu_incscreen", &key_menu_incscreen);
+    M_BindVariable("key_menu_decscreen", &key_menu_decscreen);
 }
 

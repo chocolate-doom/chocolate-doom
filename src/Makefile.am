@@ -37,7 +37,8 @@ net_structrw.c       net_structrw.h        \
 z_native.c           z_zone.h
 
 chocolate_server_SOURCES=$(COMMON_SOURCE_FILES) $(DEDSERV_FILES)
-chocolate_server_LDADD = @LDFLAGS@ @SDLNET_LIBS@ 
+chocolate_server_LDADD = $(top_builddir)/wince/libc_wince.a           \
+                         @LDFLAGS@ @SDLNET_LIBS@
 
 # Source files used by the game binaries (chocolate-doom, etc.)
 
@@ -162,6 +163,7 @@ z_native.c           z_zone.h
 
 chocolate_setup_SOURCES=$(SETUP_FILES) $(COMMON_SOURCE_FILES)
 chocolate_setup_LDADD = setup/libsetup.a                             \
+                        $(top_builddir)/wince/libc_wince.a           \
                         $(top_builddir)/textscreen/libtextscreen.a   \
                         @LDFLAGS@ @SDL_LIBS@ @SDLNET_LIBS@ 
 

@@ -730,13 +730,15 @@ boolean G_Responder (event_t* ev)
     switch (ev->type) 
     { 
       case ev_keydown: 
-	if (ev->data1 == KEY_PAUSE) 
+	if (ev->data1 == key_pause) 
 	{ 
 	    sendpause = true; 
-	    return true; 
-	} 
-	if (ev->data1 <NUMKEYS) 
+	}
+        else if (ev->data1 <NUMKEYS) 
+        {
 	    gamekeydown[ev->data1] = true; 
+        }
+
 	return true;    // eat key down events 
  
       case ev_keyup: 

@@ -22,6 +22,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef _WIN32_WCE
+#include "libc_wince.h"
+#endif
+
 #include "textscreen.h"
 #include "m_config.h"
 #include "mode.h"

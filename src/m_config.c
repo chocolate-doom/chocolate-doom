@@ -732,6 +732,12 @@ static default_t extra_defaults_list[] =
 #endif
 
     //!
+    // Key to pause or unpause the game.
+    //
+
+    CONFIG_VARIABLE_KEY(key_pause),
+
+    //!
     // Key that activates the menu when pressed.
     //
 
@@ -982,6 +988,12 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_KEY(key_weapon8),
+
+    //!
+    // Key to re-display last message.
+    //
+
+    CONFIG_VARIABLE_KEY(key_message_refresh),
 };
 
 static default_collection_t extra_defaults =

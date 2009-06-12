@@ -43,6 +43,7 @@ static int *controls[] = { &key_left, &key_right, &key_up, &key_down,
                            &key_flyup, &key_flydown, &key_flycenter,
                            &key_lookup, &key_lookdown, &key_lookcenter,
                            &key_invleft, &key_invright, &key_useartifact,
+                           &key_pause,
                            &key_weapon1, &key_weapon2, &key_weapon3,
                            &key_weapon4, &key_weapon5, &key_weapon6,
                            &key_weapon7, &key_weapon8,
@@ -56,7 +57,8 @@ static int *shortcuts[] = { &key_menu_help, &key_menu_save, &key_menu_load,
                             &key_menu_volume, &key_menu_detail, &key_menu_qsave,
                             &key_menu_endgame, &key_menu_messages,
                             &key_menu_qload, &key_menu_quit, &key_menu_gamma,
-                            &key_menu_incscreen, &key_menu_decscreen, NULL };
+                            &key_menu_incscreen, &key_menu_decscreen, 
+                            &key_message_refresh, NULL };
 
 static int *map_keys[] = { &key_map_north, &key_map_south, &key_map_east,
                            &key_map_west, &key_map_zoomin, &key_map_zoomout,
@@ -246,6 +248,7 @@ static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
     AddSectionLabel(table, "Shortcut keys", true);
 
+    AddKeyControl(table, "Pause game",            &key_pause);
     AddKeyControl(table, "Help screen",           &key_menu_help);
     AddKeyControl(table, "Save game",             &key_menu_save);
     AddKeyControl(table, "Load game",             &key_menu_load);
@@ -260,6 +263,8 @@ static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
     AddKeyControl(table, "Increase screen size",  &key_menu_incscreen);
     AddKeyControl(table, "Decrease screen size",  &key_menu_decscreen);
+
+    AddKeyControl(table, "Display last message",  &key_message_refresh);
 
     AddSectionLabel(table, "Map", true);
 

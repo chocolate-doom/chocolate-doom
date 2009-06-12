@@ -372,6 +372,15 @@ static int TranslateKey(SDL_keysym *sym)
         case SDLK_PAGEUP:      return KEY_PGUP;
         case SDLK_PAGEDOWN:    return KEY_PGDN;
 
+#ifdef SDL_HAVE_APP_KEYS
+        case SDLK_APP1:        return KEY_F1;
+        case SDLK_APP2:        return KEY_F2;
+        case SDLK_APP3:        return KEY_F3;
+        case SDLK_APP4:        return KEY_F4;
+        case SDLK_APP5:        return KEY_F5;
+        case SDLK_APP6:        return KEY_F6;
+#endif
+
         default:               break;
     }
 
@@ -512,6 +521,7 @@ static char *SpecialKeyName(int key)
         case KEYP_MINUS:      return "PAD-";
         case KEYP_DIVIDE:     return "PAD/";
                    */
+
         default:              return NULL;
     }
 }
