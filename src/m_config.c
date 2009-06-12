@@ -31,6 +31,11 @@
 #include <ctype.h>
 #include <errno.h>
 
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
+
 #include "config.h"
 #include "deh_main.h"
 #include "doomdef.h"
@@ -1378,5 +1383,78 @@ void M_SetConfigDir(void)
             configdir = strdup("");
         }
     }
+}
+
+#ifdef _WIN32_WCE
+
+static int SystemHasKeyboard(void)
+{
+    HKEY key;
+    DWORD valtype;
+    DWORD valsize;
+    DWORD result;
+
+    if (RegOpenKeyExW(HKEY_CURRENT_USER,
+                      L"\\Software\\Microsoft\\Shell", 0,
+                      KEY_READ, &key) != ERROR_SUCCESS)
+    {
+        return 0;
+    }
+
+    valtype = REG_SZ;
+    valsize = sizeof(DWORD);
+
+    if (RegQueryValueExW(key, L"HasKeyboard", NULL, &valtype,
+                         (LPBYTE) &result, &valsize) != ERROR_SUCCESS)
+    {
+        result = 0;
+    }
+
+    // Close the key
+
+    RegCloseKey(key);
+
+    return result;
+}
+
+//
+// Apply custom defaults for Windows CE.
+//
+
+static void M_ApplyWindowsCEDefaults(void)
+{
+    // If the system doesn't have a keyboard, patch the default
+    // configuration to use the hardware keys.
+
+    if (!SystemHasKeyboard())
+    {
+        key_use = KEY_F1;
+        key_fire = KEY_F2;
+        key_menu_activate = KEY_F3;
+        key_map_toggle = KEY_F4;
+
+        key_menu_help = 0;
+        key_menu_save = 0;
+        key_menu_load = 0;
+        key_menu_volume = 0;
+
+        key_menu_confirm = KEY_ENTER;
+        key_menu_back = KEY_F2;
+        key_menu_abort = KEY_F2;
+    }
+}
+
+#endif
+
+//
+// Apply custom patches to the default values depending on the
+// platform we are running on.
+//
+
+void M_ApplyPlatformDefaults(void)
+{
+#ifdef _WIN32_WCE
+    M_ApplyWindowsCEDefaults();
+#endif
 }
 

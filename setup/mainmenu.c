@@ -143,6 +143,8 @@ void MainMenu(void)
 
 static void InitConfig(void)
 {
+    M_ApplyPlatformDefaults();
+
     SetChatMacroDefaults();
     SetPlayerNameDefault();
 
