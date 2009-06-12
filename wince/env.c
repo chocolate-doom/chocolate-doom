@@ -49,7 +49,6 @@ static int ReadOwnerName(wchar_t *value, DWORD len)
                       L"\\ControlPanel\\Owner", 0,
                       KEY_READ, &key) != ERROR_SUCCESS)
     {
-        MessageBoxW(NULL, L"Can't open owner", L"Error", MB_OK);
         return 0;
     }
 
@@ -58,11 +57,8 @@ static int ReadOwnerName(wchar_t *value, DWORD len)
     if (RegQueryValueExW(key, L"Name", NULL, &valtype,
                          (LPBYTE) value, &len) != ERROR_SUCCESS)
     {
-        MessageBoxW(NULL, L"Can't read owner", L"Error", MB_OK);
         return 0;
     }
-
-    MessageBoxW(NULL, value, L"Error", MB_OK);
 
     // Close the key
 
