@@ -974,6 +974,7 @@ void D_DoomMain (void)
     V_Init ();
 
     printf (DEH_String("M_LoadDefaults: Load system defaults.\n"));
+    M_ApplyPlatformDefaults();
     M_LoadDefaults ();              // load before initing other systems
 
     printf (DEH_String("W_Init: Init WADfiles.\n"));
