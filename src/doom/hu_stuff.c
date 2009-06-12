@@ -37,6 +37,7 @@
 
 #include "hu_stuff.h"
 #include "hu_lib.h"
+#include "m_controls.h"
 #include "w_wad.h"
 
 #include "s_sound.h"
@@ -88,7 +89,6 @@ char*	player_names[] =
     HUSTR_PLRBROWN,
     HUSTR_PLRRED
 };
-
 
 char			chat_char; // remove later.
 static player_t*	plr;
@@ -555,7 +555,7 @@ boolean HU_Responder(event_t *ev)
 
     if (!chat_on)
     {
-	if (ev->data1 == HU_MSGREFRESH)
+	if (ev->data1 == key_message_refresh)
 	{
 	    message_on = true;
 	    message_counter = HU_MSGTIMEOUT;
