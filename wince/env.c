@@ -40,17 +40,48 @@ static void SetEnvironment(char *env_string, wchar_t *wvalue)
     putenv(value);
 }
 
+static int ReadOwnerName(wchar_t *value, DWORD len)
+{
+    HKEY key;
+    DWORD valtype;
+
+    if (RegOpenKeyExW(HKEY_CURRENT_USER,
+                      L"\\ControlPanel\\Owner", 0,
+                      KEY_READ, &key) != ERROR_SUCCESS)
+    {
+        MessageBoxW(NULL, L"Can't open owner", L"Error", MB_OK);
+        return 0;
+    }
+
+    valtype = REG_SZ;
+
+    if (RegQueryValueExW(key, L"Name", NULL, &valtype,
+                         (LPBYTE) value, &len) != ERROR_SUCCESS)
+    {
+        MessageBoxW(NULL, L"Can't read owner", L"Error", MB_OK);
+        return 0;
+    }
+
+    MessageBoxW(NULL, value, L"Error", MB_OK);
+
+    // Close the key
+
+    RegCloseKey(key);
+
+    return 1;
+}
+
 void PopulateEnvironment(void)
 {
     wchar_t temp[MAX_PATH];
-    DWORD buf_len;
 
     // Username:
 
-    buf_len = UNLEN;
-    GetUserNameExW(NameDisplay, temp, &buf_len);
-    SetEnvironment("USER=", temp);
-    SetEnvironment("USERNAME=", temp);
+    if (ReadOwnerName(temp, MAX_PATH))
+    {
+        SetEnvironment("USER=", temp);
+        SetEnvironment("USERNAME=", temp);
+    }
 
     // Temp dir:
 
