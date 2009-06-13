@@ -127,6 +127,8 @@ static void BindMiscVariables(void)
 
 void InitBindings(void)
 {
+    M_ApplyPlatformDefaults();
+
     // Keyboard, mouse, joystick controls
 
     M_BindBaseControls();
