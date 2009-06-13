@@ -502,13 +502,20 @@ void I_GetEvent(void)
                     event.data2 = sdlevent.key.keysym.unicode;
                 }
 
-                D_PostEvent(&event);
+                if (event.data1 != 0)
+                {
+                    D_PostEvent(&event);
+                }
                 break;
 
             case SDL_KEYUP:
                 event.type = ev_keyup;
                 event.data1 = TranslateKey(&sdlevent.key.keysym);
-                D_PostEvent(&event);
+
+                if (event.data1 != 0)
+                {
+                    D_PostEvent(&event);
+                }
                 break;
 
                 /*
