@@ -40,17 +40,44 @@ static void SetEnvironment(char *env_string, wchar_t *wvalue)
     putenv(value);
 }
 
+static int ReadOwnerName(wchar_t *value, DWORD len)
+{
+    HKEY key;
+    DWORD valtype;
+
+    if (RegOpenKeyExW(HKEY_CURRENT_USER,
+                      L"\\ControlPanel\\Owner", 0,
+                      KEY_READ, &key) != ERROR_SUCCESS)
+    {
+        return 0;
+    }
+
+    valtype = REG_SZ;
+
+    if (RegQueryValueExW(key, L"Name", NULL, &valtype,
+                         (LPBYTE) value, &len) != ERROR_SUCCESS)
+    {
+        return 0;
+    }
+
+    // Close the key
+
+    RegCloseKey(key);
+
+    return 1;
+}
+
 void PopulateEnvironment(void)
 {
     wchar_t temp[MAX_PATH];
-    DWORD buf_len;
 
     // Username:
 
-    buf_len = UNLEN;
-    GetUserNameExW(NameDisplay, temp, &buf_len);
-    SetEnvironment("USER=", temp);
-    SetEnvironment("USERNAME=", temp);
+    if (ReadOwnerName(temp, MAX_PATH))
+    {
+        SetEnvironment("USER=", temp);
+        SetEnvironment("USERNAME=", temp);
+    }
 
     // Temp dir:
 
