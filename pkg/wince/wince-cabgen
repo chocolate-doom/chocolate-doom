@@ -648,12 +648,25 @@ def read_config_file(filename):
 
     return result
 
+# List the files that the output CAB depends on.
+
+def print_dependencies(filename):
+    config = read_config_file(filename)
+
+    files_list = config["files"]
+
+    for dest, source_file in files_list.items():
+        print source_file
+
 if len(sys.argv) < 3:
     print "Usage: %s <config file> <output file>" % sys.argv[0]
     sys.exit(0)
 
-config = read_config_file(sys.argv[1])
+if sys.argv[1] == "-d":
+    print_dependencies(sys.argv[2])
+else:
+    config = read_config_file(sys.argv[1])
 
-cab_file = CabFile(config)
-cab_file.write(sys.argv[2])
+    cab_file = CabFile(config)
+    cab_file.write(sys.argv[2])
 
