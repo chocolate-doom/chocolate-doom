@@ -107,6 +107,7 @@ setup/Makefile
 man/Makefile
 src/Makefile
 pcsound/Makefile
+pkg/wince/Makefile
 src/resource.rc
 src/doom-screensaver.desktop
 setup/setup-res.rc
