@@ -610,6 +610,12 @@ class CabFile:
 
         os.spawnlp(os.P_WAIT, "lcab", *args)
 
+        # Clean up:
+
+        for tmpfile in header + files:
+            os.remove(tmpfile)
+        os.rmdir(temp_dir)
+
 def expand_path(filename):
 
     # Replace Unix-style / path separators with DOS-style \
