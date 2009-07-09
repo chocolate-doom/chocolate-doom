@@ -197,6 +197,32 @@ static mission_config_t *GetMissionForName(char *name)
     return NULL;
 }
 
+// Check the name of the executable.  If it contains one of the game
+// names (eg. chocolate-hexen-setup.exe) then use that game.
+
+static boolean CheckExecutableName(GameSelectCallback callback)
+{
+    mission_config_t *config;
+    char *exe_name;
+    int i;
+
+    exe_name = M_GetExecutableName();
+
+    for (i=0; i<arrlen(mission_configs); ++i)
+    {
+        config = &mission_configs[i];
+
+        if (strstr(exe_name, config->name) != NULL)
+        {
+            SetMission(config);
+            callback();
+            return true;
+        }
+    }
+
+    return false;
+}
+
 static void GameSelected(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(config))
 {
     TXT_CAST_ARG(mission_config_t, config);
@@ -293,7 +319,7 @@ void SetupMission(GameSelectCallback callback)
         SetMission(config);
         callback();
     }
-    else
+    else if (!CheckExecutableName(callback))
     {
         OpenGameSelectDialog(callback);
     }
