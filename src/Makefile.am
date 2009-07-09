@@ -161,7 +161,11 @@ m_config.c           m_config.h            \
 m_controls.c         m_controls.h          \
 z_native.c           z_zone.h
 
+if HAVE_WINDRES
+chocolate_setup_SOURCES=$(SETUP_FILES) $(COMMON_SOURCE_FILES) setup-res.rc
+else
 chocolate_setup_SOURCES=$(SETUP_FILES) $(COMMON_SOURCE_FILES)
+endif
 chocolate_setup_LDADD = setup/libsetup.a                             \
                         $(top_builddir)/wince/libc_wince.a           \
                         $(top_builddir)/textscreen/libtextscreen.a   \
