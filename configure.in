@@ -113,6 +113,7 @@ src/heretic/Makefile
 src/hexen/Makefile
 src/setup/Makefile
 pcsound/Makefile
+pkg/wince/Makefile
 src/resource.rc
 src/setup-res.rc
 src/setup/setup-manifest.xml

@@ -55,6 +55,8 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+#define MIN_RAM  4 /* MiB */
+
 int mb_used = 16;
 
 typedef struct atexit_listentry_s atexit_listentry_t;
@@ -86,8 +88,10 @@ void I_Tactile(int on, int off, int total)
 {
 }
 
-int  I_GetHeapSize (void)
+byte *I_ZoneBase (int *size)
 {
+    byte *zonemem;
+    int min_ram = MIN_RAM;
     int p;
 
     //!
@@ -97,28 +101,46 @@ int  I_GetHeapSize (void)
     //
 
     p = M_CheckParm("-mb");
-    
+
     if (p > 0)
     {
         mb_used = atoi(myargv[p+1]);
+        min_ram = mb_used;
     }
-    
-    return mb_used*1024*1024;
-}
 
-byte *I_ZoneBase (int *size)
-{
-    byte *zonemem;
+    // Allocate the zone memory.  This loop tries progressively smaller
+    // zone sizes until a size is found that can be allocated.
+    // If we used the -mb command line parameter, only the parameter
+    // provided is accepted.
 
-    *size = I_GetHeapSize();
+    zonemem = NULL;
 
-    zonemem = malloc(*size);
-
-    if (zonemem == NULL)
+    while (zonemem == NULL)
     {
-        I_Error("Failed to allocate %i bytes for zone memory", *size);
+        // We need a reasonable minimum amount of RAM to start.
+
+        if (mb_used < min_ram)
+        {
+            I_Error("Unable to allocate %i MiB of RAM for zone", mb_used);
+        }
+
+        // Try to allocate the zone memory.
+
+        *size = mb_used * 1024 * 1024;
+
+        zonemem = malloc(*size);
+
+        // Failed to allocate?  Reduce zone size until we reach a size
+        // that is acceptable.  We decrease by 2 MiB at a time to ensure
+        // that there is 1-2 MiB still free on the system (my Windows
+        // Mobile PDA becomes unstable if very low on memory)
+
+        if (zonemem == NULL)
+        {
+            mb_used -= 2;
+        }
     }
-    
+
     printf("zone memory: %p, %x allocated for zone\n", 
            zonemem, *size);
 
