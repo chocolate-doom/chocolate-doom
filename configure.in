@@ -84,8 +84,15 @@ AM_INIT_AUTOMAKE([1.8.0])
 
 WINDOWS_RC_VERSION=`echo $PACKAGE_VERSION.0 | sed 's/\./, /g' `
 
-AC_DEFINE(PROGRAM_PREFIX, "chocolate-",
-          Change this when you create your awesome forked version)
+# This controls the prefix added to the start of program names.  For example,
+# if this is changed to "lemon-", the programs generated will be named
+# lemon-doom, lemon-heretic, etc.
+
+PROGRAM_PREFIX=chocolate-
+
+AC_SUBST(PROGRAM_PREFIX)
+AC_DEFINE_UNQUOTED(PROGRAM_PREFIX, "$PROGRAM_PREFIX",
+                   Change this when you create your awesome forked version)
 
 AM_CONFIG_HEADER(config.h:config.hin)
 

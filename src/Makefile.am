@@ -3,11 +3,11 @@ SUBDIRS=doom heretic hexen setup
 
 gamesdir = $(prefix)/games
 
-games_PROGRAMS = chocolate-doom     \
-                 chocolate-heretic  \
-                 chocolate-hexen    \
-                 chocolate-server   \
-                 chocolate-setup
+games_PROGRAMS = @PROGRAM_PREFIX@doom     \
+                 @PROGRAM_PREFIX@heretic  \
+                 @PROGRAM_PREFIX@hexen    \
+                 @PROGRAM_PREFIX@server   \
+                 @PROGRAM_PREFIX@setup
 
 AM_CFLAGS = -I$(top_builddir)/textscreen            \
             -I$(top_builddir)/pcsound               \
@@ -36,8 +36,8 @@ net_server.c         net_server.h          \
 net_structrw.c       net_structrw.h        \
 z_native.c           z_zone.h
 
-chocolate_server_SOURCES=$(COMMON_SOURCE_FILES) $(DEDSERV_FILES)
-chocolate_server_LDADD = $(top_builddir)/wince/libc_wince.a           \
+@PROGRAM_PREFIX@server_SOURCES=$(COMMON_SOURCE_FILES) $(DEDSERV_FILES)
+@PROGRAM_PREFIX@server_LDADD = $(top_builddir)/wince/libc_wince.a           \
                          @LDFLAGS@ @SDLNET_LIBS@
 
 # Source files used by the game binaries (chocolate-doom, etc.)
@@ -128,28 +128,28 @@ EXTRA_LIBS =                                               \
                @SDLNET_LIBS@ 
 
 if HAVE_WINDRES
-chocolate_doom_SOURCES=$(SOURCE_FILES) resource.rc
+@PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES) resource.rc
 else
-chocolate_doom_SOURCES=$(SOURCE_FILES)
+@PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES)
 endif
 
-chocolate_doom_LDADD = doom/libdoom.a $(EXTRA_LIBS)
+@PROGRAM_PREFIX@doom_LDADD = doom/libdoom.a $(EXTRA_LIBS)
 
 if HAVE_WINDRES
-chocolate_heretic_SOURCES=$(SOURCE_FILES) resource.rc
+@PROGRAM_PREFIX@heretic_SOURCES=$(SOURCE_FILES) resource.rc
 else
-chocolate_heretic_SOURCES=$(SOURCE_FILES)
+@PROGRAM_PREFIX@heretic_SOURCES=$(SOURCE_FILES)
 endif
 
-chocolate_heretic_LDADD = heretic/libheretic.a $(EXTRA_LIBS)
+@PROGRAM_PREFIX@heretic_LDADD = heretic/libheretic.a $(EXTRA_LIBS)
 
 if HAVE_WINDRES
-chocolate_hexen_SOURCES=$(SOURCE_FILES) resource.rc
+@PROGRAM_PREFIX@hexen_SOURCES=$(SOURCE_FILES) resource.rc
 else
-chocolate_hexen_SOURCES=$(SOURCE_FILES)
+@PROGRAM_PREFIX@hexen_SOURCES=$(SOURCE_FILES)
 endif
 
-chocolate_hexen_LDADD = hexen/libhexen.a $(EXTRA_LIBS)
+@PROGRAM_PREFIX@hexen_LDADD = hexen/libhexen.a $(EXTRA_LIBS)
 
 # Source files needed for chocolate-setup:
 
@@ -162,11 +162,11 @@ m_controls.c         m_controls.h          \
 z_native.c           z_zone.h
 
 if HAVE_WINDRES
-chocolate_setup_SOURCES=$(SETUP_FILES) $(COMMON_SOURCE_FILES) setup-res.rc
+@PROGRAM_PREFIX@setup_SOURCES=$(SETUP_FILES) $(COMMON_SOURCE_FILES) setup-res.rc
 else
-chocolate_setup_SOURCES=$(SETUP_FILES) $(COMMON_SOURCE_FILES)
+@PROGRAM_PREFIX@setup_SOURCES=$(SETUP_FILES) $(COMMON_SOURCE_FILES)
 endif
-chocolate_setup_LDADD = setup/libsetup.a                             \
+@PROGRAM_PREFIX@setup_LDADD = setup/libsetup.a                             \
                         $(top_builddir)/wince/libc_wince.a           \
                         $(top_builddir)/textscreen/libtextscreen.a   \
                         @LDFLAGS@ @SDL_LIBS@ @SDLNET_LIBS@ 
