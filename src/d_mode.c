@@ -171,6 +171,7 @@ boolean D_IsEpisodeMap(GameMission_t mission)
         case doom2:
         case pack_tnt:
         case pack_plut:
+        default:
             return false;
     }
 }
