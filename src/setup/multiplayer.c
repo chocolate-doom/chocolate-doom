@@ -596,6 +596,7 @@ void StartMultiGame(void)
     txt_table_t *gameopt_table;
     txt_table_t *advanced_table;
     txt_widget_t *iwad_selector;
+    int num_mult_types = 2;
 
     window = TXT_NewWindow("Start multiplayer game");
 
@@ -616,13 +617,22 @@ void StartMultiGame(void)
     
     TXT_SetColumnWidths(gameopt_table, 12, 12);
 
+    if (gamemission == doom)
+    {
+        num_mult_types = 3;
+    }
+    else
+    {
+        num_mult_types = 2;
+    }
+
     TXT_AddWidgets(gameopt_table,
            TXT_NewLabel("Game"),
            iwad_selector = IWADSelector(),
            TXT_NewLabel("Skill"),
            skillbutton = TXT_NewDropdownList(&skill, doom_skills, 5),
            TXT_NewLabel("Game type"),
-           TXT_NewDropdownList(&deathmatch, gamemodes, 3),
+           TXT_NewDropdownList(&deathmatch, gamemodes, num_mult_types),
            TXT_NewLabel("Level warp"),
            warpbutton = TXT_NewButton2("????", LevelSelectDialog, NULL),
            TXT_NewLabel("Time limit"),
