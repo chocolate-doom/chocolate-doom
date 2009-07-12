@@ -473,3 +473,8 @@ int Z_FreeMemory (void)
     return free;
 }
 
+unsigned int Z_ZoneSize(void)
+{
+    return mainzone->size;
+}
+

@@ -63,8 +63,6 @@ static int mixer_channels;
 
 int use_libsamplerate = 0;
 
-extern int mb_used;
-
 // When a sound stops, check if it is still playing.  If it is not, 
 // we can mark the sound data as CACHE to be freed back for other
 // means.
@@ -364,17 +362,20 @@ static void I_PrecacheSounds_SRC(void)
     uint32_t resampled_sound_length[NUMSFX];
     float norm_factor;
     float max_amp = 0;
+    unsigned int zone_size;
 
     assert(use_libsamplerate);
 
-    if (mb_used < 32)
+    zone_size = Z_ZoneSize();
+
+    if (zone_size < 32 * 1024 * 1024)
     {
         fprintf(stderr,
                 "WARNING: low memory.  Heap size is only %d MiB.\n"
                 "WARNING: use_libsamplerate needs more heap!\n"
                 "WARNING: put -mb 64 on the command line to avoid "
                 "\"Error: Z_Malloc: failed on allocation of X bytes\" !\n",
-                mb_used);
+                zone_size / (1024 * 1024));
     }
 
     printf("I_PrecacheSounds_SRC: Precaching all sound effects..");
