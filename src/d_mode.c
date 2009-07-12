@@ -48,6 +48,7 @@ static struct
     { heretic,   registered, 3, 9 },
     { heretic,   retail,     5, 9 },
     { hexen,     commercial, 1, 40 },
+    { strife,    commercial, 1, 34 },
 };
 
 // Check that a gamemode+gamemission received over the network is valid.
@@ -131,6 +132,7 @@ static struct {
     { doom,     exe_final },
     { heretic,  exe_heretic_1_3 },
     { hexen,    exe_hexen_1_1 },
+    { strife,   exe_strife_1_31 },
 };
 
 boolean D_ValidGameVersion(GameMission_t mission, GameVersion_t version)
@@ -171,6 +173,7 @@ boolean D_IsEpisodeMap(GameMission_t mission)
         case doom2:
         case pack_tnt:
         case pack_plut:
+        case strife:
         default:
             return false;
     }

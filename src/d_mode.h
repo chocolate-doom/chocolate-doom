@@ -40,6 +40,7 @@ typedef enum
     pack_plut,       // Final Doom: The Plutonia Experiment
     heretic,         // Heretic 
     hexen,           // Hexen
+    strife,          // Strife
 
     none
 } GameMission_t;
@@ -68,7 +69,8 @@ typedef enum
 
     exe_heretic_1_3, // Heretic 1.3
 
-    exe_hexen_1_1    // Hexen 1.1
+    exe_hexen_1_1,   // Hexen 1.1
+    exe_strife_1_31, // Strife v1.31
 } GameVersion_t;
 
 // Skill level.
