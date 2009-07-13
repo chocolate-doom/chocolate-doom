@@ -29,24 +29,23 @@
 
 #include "SDL.h"
 
-#include <signal.h>
-
-#ifdef _WIN32
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
-
-#ifdef HAVE_SCHED_SETAFFINITY
-#include <unistd.h>
-#include <sched.h>
-#endif
-
 #include "doomdef.h"
 #include "i_system.h"
 #include "m_argv.h"
 #include "d_main.h"
 
-#if defined(_WIN32)
+#if defined(_WIN32_WCE)
+
+// Windows CE?  I doubt it even supports SMP..
+
+static void LockCPUAffinity(void)
+{
+}
+
+#elif defined(_WIN32)
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 
 typedef BOOL WINAPI (*SetAffinityFunc)(HANDLE hProcess, DWORD_PTR mask);
 
@@ -93,16 +92,24 @@ static void LockCPUAffinity(void)
 
 #elif defined(HAVE_SCHED_SETAFFINITY)
 
+#include <unistd.h>
+#include <sched.h>
+
 // Unix (Linux) version:
 
 static void LockCPUAffinity(void)
 {
+#ifdef CPU_SET
     cpu_set_t set;
 
     CPU_ZERO(&set);
     CPU_SET(0, &set);
 
     sched_setaffinity(getpid(), sizeof(set), &set);
+#else
+    unsigned long mask = 1;
+    sched_setaffinity(getpid(), sizeof(mask), &mask);
+#endif
 }
 
 #else
@@ -125,6 +132,15 @@ int main(int argc, char **argv)
 
     myargc = argc;
     myargv = argv;
+
+#ifdef _WIN32_WCE
+
+    // Windows CE has no environment, but SDL provides an implementation.
+    // Populate the environment with the values we normally find.
+
+    PopulateEnvironment();
+
+#endif
 
     // Only schedule on a single core, if we have multiple
     // cores.  This is to work around a bug in SDL_mixer.

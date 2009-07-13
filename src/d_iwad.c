@@ -63,7 +63,7 @@ static void AddIWADDir(char *dir)
 // keys installed by the Windows installers for various CD versions
 // of Doom.  From these keys we can deduce where to find an IWAD.
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(_WIN32_WCE)
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -487,7 +487,14 @@ static void BuildIWADDirList(void)
 
     AddDoomWadPath();
 
-#ifdef _WIN32
+#if defined(_WIN32_WCE)
+
+    // Windows CE locations:
+
+    AddIWADDir("\\Storage Card");
+    AddIWADDir(getenv("HOME"));
+
+#elif defined(_WIN32) 
 
     // Search the registry and find where IWADs have been installed.
 

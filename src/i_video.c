@@ -182,7 +182,7 @@ static boolean MouseShouldBeGrabbed()
     if (screensaver_mode)
         return false;
 
-    // if the window doesnt have focus, never grab it
+    // if the window doesn't have focus, never grab it
 
     if (!window_focused)
         return false;
@@ -192,6 +192,17 @@ static boolean MouseShouldBeGrabbed()
 
     if (fullscreen)
         return true;
+
+#ifdef _WIN32_WCE
+
+    // On Windows CE, always grab input.  This is because hardware
+    // button events are only acquired by SDL when the input is grabbed.
+    // Almost all Windows CE devices should have touch screens anyway,
+    // so this shouldn't affect mouse grabbing behavior.
+
+    return true;
+
+#else
 
     // Don't grab the mouse if mouse input is disabled
 
@@ -204,18 +215,20 @@ static boolean MouseShouldBeGrabbed()
         return false;
 
     // if we specify not to grab the mouse, never grab
- 
+
     if (!grabmouse)
         return false;
 
     // when menu is active or game is paused, release the mouse 
- 
+
     if (menuactive || paused)
         return false;
 
     // only grab mouse when playing levels (but not demos)
 
     return (gamestate == GS_LEVEL) && !demoplayback;
+
+#endif /* #ifndef _WIN32_WCE */
 }
 
 // Update the value of window_focused when we get a focus event
@@ -362,6 +375,15 @@ static int TranslateKey(SDL_keysym *sym)
       case SDLK_PAGEUP: return KEY_PGUP;
       case SDLK_PAGEDOWN: return KEY_PGDN;
 
+#ifdef SDL_HAVE_APP_KEYS
+        case SDLK_APP1:        return KEY_F1;
+        case SDLK_APP2:        return KEY_F2;
+        case SDLK_APP3:        return KEY_F3;
+        case SDLK_APP4:        return KEY_F4;
+        case SDLK_APP5:        return KEY_F5;
+        case SDLK_APP6:        return KEY_F6;
+#endif
+
       default:
         return tolower(sym->sym);
     }
@@ -480,13 +502,20 @@ void I_GetEvent(void)
                     event.data2 = sdlevent.key.keysym.unicode;
                 }
 
-                D_PostEvent(&event);
+                if (event.data1 != 0)
+                {
+                    D_PostEvent(&event);
+                }
                 break;
 
             case SDL_KEYUP:
                 event.type = ev_keyup;
                 event.data1 = TranslateKey(&sdlevent.key.keysym);
-                D_PostEvent(&event);
+
+                if (event.data1 != 0)
+                {
+                    D_PostEvent(&event);
+                }
                 break;
 
                 /*
@@ -964,125 +993,155 @@ static screen_mode_t *I_FindScreenMode(int w, int h)
     return best_mode;
 }
 
-// If the video mode set in the configuration file is not available,
-// try to choose a different mode.
+// Adjust to an appropriate fullscreen mode.
+// Returns true if successful.
 
-static void I_AutoAdjustSettings(void)
+static boolean AutoAdjustFullscreen(void)
 {
-    if (fullscreen)
+    SDL_Rect **modes;
+    SDL_Rect *best_mode;
+    screen_mode_t *screen_mode;
+    int target_pixels, diff, best_diff;
+    int i;
+
+    modes = SDL_ListModes(NULL, SDL_FULLSCREEN);
+
+    // No fullscreen modes available at all?
+
+    if (modes == NULL || modes == (SDL_Rect **) -1 || *modes == NULL)
     {
-        SDL_Rect **modes;
-        SDL_Rect *best_mode;
-        screen_mode_t *screen_mode;
-        int target_pixels, diff, best_diff;
-        int i;
-
-        modes = SDL_ListModes(NULL, SDL_FULLSCREEN);
-
-        // Find the best mode that matches the mode specified in the
-        // configuration file
-
-        best_mode = NULL;
-        best_diff = INT_MAX;
-        target_pixels = screen_width * screen_height;
-
-        for (i=0; modes[i] != NULL; ++i) 
-        {
-            //printf("%ix%i?\n", modes[i]->w, modes[i]->h);
-
-            // What screen_mode_t would be used for this video mode?
-
-            screen_mode = I_FindScreenMode(modes[i]->w, modes[i]->h);
-
-            // Never choose a screen mode that we cannot run in, or
-            // is poor quality for fullscreen
-
-            if (screen_mode == NULL || screen_mode->poor_quality)
-            {
-            //    printf("\tUnsupported / poor quality\n");
-                continue;
-            }
-
-            // Do we have the exact mode?
-            // If so, no autoadjust needed
-
-            if (screen_width == modes[i]->w && screen_height == modes[i]->h)
-            {
-            //    printf("\tExact mode!\n");
-                return;
-            }
-
-            // Is this mode better than the current mode?
-
-            diff = (screen_width - modes[i]->w) 
-                     * (screen_width - modes[i]->w)
-                 + (screen_height - modes[i]->h)
-                     * (screen_height - modes[i]->h);
-
-            if (diff < best_diff)
-            {
-            //    printf("\tA valid mode\n");
-                best_mode = modes[i];
-                best_diff = diff;
-            }
-        }
-
-        if (best_mode == NULL)
-        {
-            // Unable to find a valid mode!
-
-            I_Error("Unable to find any valid video mode at all!");
-        }
-
-        printf("I_InitGraphics: %ix%i mode not supported on this machine.\n",
-               screen_width, screen_height);
-
-        screen_width = best_mode->w;
-        screen_height = best_mode->h;
-
+        return false;
     }
-    else
+
+    // Find the best mode that matches the mode specified in the
+    // configuration file
+
+    best_mode = NULL;
+    best_diff = INT_MAX;
+    target_pixels = screen_width * screen_height;
+
+    for (i=0; modes[i] != NULL; ++i) 
     {
-        screen_mode_t *best_mode;
+        //printf("%ix%i?\n", modes[i]->w, modes[i]->h);
 
-        //
-        // Windowed mode.
-        //
-        // Find a screen_mode_t to fit within the current settings
-        //
+        // What screen_mode_t would be used for this video mode?
 
-        best_mode = I_FindScreenMode(screen_width, screen_height);
+        screen_mode = I_FindScreenMode(modes[i]->w, modes[i]->h);
 
-        if (best_mode == NULL) 
+        // Never choose a screen mode that we cannot run in, or
+        // is poor quality for fullscreen
+
+        if (screen_mode == NULL || screen_mode->poor_quality)
         {
-            // Nothing fits within the current settings.
-            // Pick the closest to 320x200 possible.
-
-            best_mode = I_FindScreenMode(SCREENWIDTH, SCREENHEIGHT_4_3);
+        //    printf("\tUnsupported / poor quality\n");
+            continue;
         }
 
-        // Do we have the exact mode already?
+        // Do we have the exact mode?
+        // If so, no autoadjust needed
 
-        if (best_mode->width == screen_width 
-         && best_mode->height == screen_height)
+        if (screen_width == modes[i]->w && screen_height == modes[i]->h)
         {
-            return;
+        //    printf("\tExact mode!\n");
+            return true;
         }
 
+        // Is this mode better than the current mode?
+
+        diff = (screen_width - modes[i]->w) * (screen_width - modes[i]->w)
+             + (screen_height - modes[i]->h) * (screen_height - modes[i]->h);
+
+        if (diff < best_diff)
+        {
+        //    printf("\tA valid mode\n");
+            best_mode = modes[i];
+            best_diff = diff;
+        }
+    }
+
+    if (best_mode == NULL)
+    {
+        // Unable to find a valid mode!
+
+        return false;
+    }
+
+    printf("I_InitGraphics: %ix%i mode not supported on this machine.\n",
+           screen_width, screen_height);
+
+    screen_width = best_mode->w;
+    screen_height = best_mode->h;
+
+    return true;
+}
+
+// Auto-adjust to a valid windowed mode.
+
+static void AutoAdjustWindowed(void)
+{
+    screen_mode_t *best_mode;
+
+    // Find a screen_mode_t to fit within the current settings
+
+    best_mode = I_FindScreenMode(screen_width, screen_height);
+
+    if (best_mode == NULL)
+    {
+        // Nothing fits within the current settings.
+        // Pick the closest to 320x200 possible.
+
+        best_mode = I_FindScreenMode(SCREENWIDTH, SCREENHEIGHT_4_3);
+    }
+
+    // Switch to the best mode if necessary.
+
+    if (best_mode->width != screen_width || best_mode->height != screen_height)
+    {
         printf("I_InitGraphics: Cannot run at specified mode: %ix%i\n",
                screen_width, screen_height);
 
         screen_width = best_mode->width;
         screen_height = best_mode->height;
     }
+}
 
-    printf("I_InitGraphics: Auto-adjusted to %ix%i.\n",
-           screen_width, screen_height);
+// If the video mode set in the configuration file is not available,
+// try to choose a different mode.
 
-    printf("NOTE: Your video settings have been adjusted.  "
-           "To disable this behavior,\n"
-           "set autoadjust_video_settings to 0 in your "
-           "configuration file.\n");
+static void I_AutoAdjustSettings(void)
+{
+    int old_screen_w, old_screen_h;
+
+    old_screen_w = screen_width;
+    old_screen_h = screen_height;
+
+    // If we are running fullscreen, try to autoadjust to a valid fullscreen
+    // mode.  If this is impossible, switch to windowed.
+
+    if (fullscreen && !AutoAdjustFullscreen())
+    {
+        fullscreen = 0;
+    }
+
+    // If we are running windowed, pick a valid window size.
+
+    if (!fullscreen)
+    {
+        AutoAdjustWindowed();
+    }
+
+    // Have the settings changed?  Show a message.
+
+    if (screen_width != old_screen_w || screen_height != old_screen_h)
+    {
+        printf("I_InitGraphics: Auto-adjusted to %ix%i.\n",
+               screen_width, screen_height);
+
+        printf("NOTE: Your video settings have been adjusted.  "
+               "To disable this behavior,\n"
+               "set autoadjust_video_settings to 0 in your "
+               "configuration file.\n");
+    }
 }
 
 // Set video size to a particular scale factor (1x, 2x, 3x, etc.)
@@ -1353,7 +1412,7 @@ static void SetSDLVideoDriver(void)
         free(env_string);
     }
 
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(_WIN32_WCE)
 
     // Allow -gdi as a shortcut for using the windib driver.
 

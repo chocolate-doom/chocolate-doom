@@ -35,6 +35,12 @@
 #include "w_file.h"
 #include "z_zone.h"
 
+// This constant doesn't exist in VC6:
+
+#ifndef INVALID_SET_FILE_POINTER
+#define INVALID_SET_FILE_POINTER 0xffffffff
+#endif
+
 typedef struct
 {
     wad_file_t wad;
@@ -88,12 +94,24 @@ unsigned int GetFileLength(HANDLE handle)
 static wad_file_t *W_Win32_OpenFile(char *path)
 {
     win32_wad_file_t *result;
+    wchar_t wpath[MAX_PATH + 1];
     HANDLE handle;
-    OFSTRUCT fileinfo;
 
-    handle = (HANDLE) OpenFile(path, &fileinfo, OF_READ);
+    // Open the file:
 
-    if (handle == (HANDLE) HFILE_ERROR)
+    MultiByteToWideChar(CP_OEMCP, 0,
+                        path, strlen(path) + 1,
+                        wpath, sizeof(wpath));
+
+    handle = CreateFileW(wpath,
+                         GENERIC_READ,
+                         FILE_SHARE_READ,
+                         NULL,
+                         OPEN_EXISTING,
+                         FILE_ATTRIBUTE_NORMAL,
+                         NULL);
+
+    if (handle == INVALID_HANDLE_VALUE)
     {
         return NULL;
     }

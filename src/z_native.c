@@ -483,3 +483,8 @@ int Z_FreeMemory(void)
     return -1;
 }
 
+unsigned int Z_ZoneSize(void)
+{
+    return 0;
+}
+

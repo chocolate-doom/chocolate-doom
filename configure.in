@@ -53,6 +53,19 @@ AC_CHECK_LIB(SDL_net,SDLNet_UDP_Send,[
     exit -1
 ])
 
+# Windows CE build?
+
+WINDOWS_CE=false
+
+case "$host" in
+    *mingw32ce*|*cegcc*|*wince*)
+        CFLAGS="-I../wince $CFLAGS"
+        WINDOWS_CE=true
+        ;;
+    *)
+        ;;
+esac
+
 AC_CHECK_HEADERS([linux/kd.h dev/isa/spkrio.h dev/speaker/speaker.h])
 AC_CHECK_FUNCS(mmap sched_setaffinity ioperm)
 
@@ -61,6 +74,7 @@ AC_CHECK_LIB(samplerate, src_new)
 
 AC_CHECK_TOOL(WINDRES, windres, )
 
+AM_CONDITIONAL(WINDOWS_CE, $WINDOWS_CE)
 AM_CONDITIONAL(HAVE_WINDRES, test "$WINDRES" != "")
 AM_CONDITIONAL(HAVE_PYTHON, $HAVE_PYTHON)
 
@@ -86,6 +100,7 @@ AC_DEFUN([AC_DATAROOTDIR_CHECKED])
 
 AC_OUTPUT([
 Makefile
+wince/Makefile
 textscreen/Makefile
 textscreen/examples/Makefile
 setup/Makefile
@@ -94,6 +109,7 @@ opl/Makefile
 opl/examples/Makefile
 src/Makefile
 pcsound/Makefile
+pkg/wince/Makefile
 src/resource.rc
 src/doom-screensaver.desktop
 setup/setup-res.rc

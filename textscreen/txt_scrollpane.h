@@ -22,6 +22,20 @@
 #ifndef TXT_SCROLLPANE_H
 #define TXT_SCROLLPANE_H
 
+/**
+ * @file txt_scrollpane.h
+ *
+ * Scrollable pane widget.
+ */
+
+/**
+ * Scrollable pane widget.
+ *
+ * A scrollable pane widget is a widget that contains another widget
+ * that is larger than it.  Scroll bars appear on the side to allow
+ * different areas of the contained widget to be seen.
+ */
+
 typedef struct txt_scrollpane_s txt_scrollpane_t;
 
 #include "txt_widget.h"
@@ -34,6 +48,16 @@ struct txt_scrollpane_s
     int expand_w, expand_h;
     txt_widget_t *child;
 };
+
+/**
+ * Create a new scroll pane widget.
+ *
+ * @param w               Width of the scroll pane, in characters.
+ * @param h               Height of the scroll pane, in lines.
+ * @param target          The target widget that the scroll pane will
+ *                        contain.
+ * @return                Pointer to the new scroll pane widget.
+ */
 
 txt_scrollpane_t *TXT_NewScrollPane(int w, int h, TXT_UNCAST_ARG(target));
 
