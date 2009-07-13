@@ -18,6 +18,8 @@
        devices (eg. PDAs/embedded devices)
      * The textscreen library now has a scrollable pane widget.
      * Doxygen documentation was added for the textscreen library.
+     * The "join game" window in the setup tool now has an option
+       to automatically join a game on the local network.
 
     Compatibility:
      * The A_BossDeath behavior in v1.9 emulation mode was fixed
