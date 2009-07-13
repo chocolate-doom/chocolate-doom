@@ -55,9 +55,9 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
-#define MIN_RAM  4 /* MiB */
+#define DEFAULT_RAM 16 /* MiB */
+#define MIN_RAM     4  /* MiB */
 
-int mb_used = 16;
 
 typedef struct atexit_listentry_s atexit_listentry_t;
 
@@ -88,25 +88,58 @@ void I_Tactile(int on, int off, int total)
 {
 }
 
-byte *I_ZoneBase (int *size)
+#ifdef _WIN32_WCE
+
+// Windows CE-specific auto-allocation function that allocates the zone
+// size based on the amount of memory reported free by the OS.
+
+static byte *AutoAllocMemory(int *size, int default_ram, int min_ram)
+{
+    MEMORYSTATUS memory_status;
+    byte *zonemem;
+    size_t available;
+
+    // Get available physical RAM.  We leave one megabyte extra free
+    // for the OS to keep running (my PDA becomes unstable if too
+    // much RAM is allocated)
+
+    GlobalMemoryStatus(&memory_status);
+    available = memory_status.dwAvailPhys - 2 * 1024 * 1024;
+
+    // Limit to default_ram if we have more than that available:
+
+    if (available > default_ram * 1024 * 1024)
+    {
+        available = default_ram * 1024 * 1024;
+    }
+
+    if (available < min_ram * 1024 * 1024)
+    {
+        I_Error("Unable to allocate %i MiB of RAM for zone", min_ram);
+    }
+
+    // Allocate zone:
+
+    *size = available;
+    zonemem = malloc(*size);
+
+    if (zonemem == NULL)
+    {
+        I_Error("Failed when allocating %i bytes", *size);
+    }
+
+    return zonemem;
+}
+
+#else
+
+// Zone memory auto-allocation function that allocates the zone size
+// by trying progressively smaller zone sizes until one is found that
+// works.
+
+static byte *AutoAllocMemory(int *size, int default_ram, int min_ram)
 {
     byte *zonemem;
-    int min_ram = MIN_RAM;
-    int p;
-
-    //!
-    // @arg <mb>
-    //
-    // Specify the heap size, in MiB (default 16).
-    //
-
-    p = M_CheckParm("-mb");
-
-    if (p > 0)
-    {
-        mb_used = atoi(myargv[p+1]);
-        min_ram = mb_used;
-    }
 
     // Allocate the zone memory.  This loop tries progressively smaller
     // zone sizes until a size is found that can be allocated.
@@ -119,27 +152,57 @@ byte *I_ZoneBase (int *size)
     {
         // We need a reasonable minimum amount of RAM to start.
 
-        if (mb_used < min_ram)
+        if (default_ram < min_ram)
         {
-            I_Error("Unable to allocate %i MiB of RAM for zone", mb_used);
+            I_Error("Unable to allocate %i MiB of RAM for zone", default_ram);
         }
 
         // Try to allocate the zone memory.
 
-        *size = mb_used * 1024 * 1024;
+        *size = default_ram * 1024 * 1024;
 
         zonemem = malloc(*size);
 
         // Failed to allocate?  Reduce zone size until we reach a size
-        // that is acceptable.  We decrease by 2 MiB at a time to ensure
-        // that there is 1-2 MiB still free on the system (my Windows
-        // Mobile PDA becomes unstable if very low on memory)
+        // that is acceptable.
 
         if (zonemem == NULL)
         {
-            mb_used -= 2;
+            default_ram -= 1;
         }
     }
+
+    return zonemem;
+}
+
+#endif
+
+byte *I_ZoneBase (int *size)
+{
+    byte *zonemem;
+    int min_ram, default_ram;
+    int p;
+
+    //!
+    // @arg <mb>
+    //
+    // Specify the heap size, in MiB (default 16).
+    //
+
+    p = M_CheckParm("-mb");
+
+    if (p > 0)
+    {
+        default_ram = atoi(myargv[p+1]);
+        min_ram = default_ram;
+    }
+    else
+    {
+        default_ram = DEFAULT_RAM;
+        min_ram = MIN_RAM;
+    }
+
+    zonemem = AutoAllocMemory(size, default_ram, min_ram);
 
     printf("zone memory: %p, %x allocated for zone\n", 
            zonemem, *size);
