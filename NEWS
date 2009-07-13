@@ -1,3 +1,49 @@
+...
+
+     * Chocolate Doom now runs on Windows Mobile/Windows CE!
+     * It is possible to rebind most/all of the keys that control
+       the menu, shortcuts, automap and weapon switching.  The
+       main reason for this is to support the Windows CE port
+       and other platforms where a full keyboard may not be present.
+     * Memory-mapped WAD I/O is disabled by default, as it caused
+       various issues, including a slowdown/crash with Plutonia 2
+       MAP23.  It can be explicitly re-enabled using the '-mmap'
+       command line parameter.
+     * The video mode auto-adjust code will automatically choose
+       windowed mode if no fullscreen video modes are available.
+     * The zone memory size is automatically reduced on systems
+       with a small amount of memory.
+     * There is now a second, small textscreen font, so that the
+       ENDOOM screen and setup tool can be used on low resolution
+       devices (eg. PDAs/embedded devices)
+     * The textscreen library now has a scrollable pane widget.
+     * Doxygen documentation was added for the textscreen library.
+     * The "join game" window in the setup tool now has an option
+       to automatically join a game on the local network.
+
+    Compatibility:
+     * The A_BossDeath behavior in v1.9 emulation mode was fixed
+       (thanks entryway)
+
+    Bugs fixed:
+     * Crash when saving games due to the ~/.chocolate-doom/savegames
+       directory not being created (thanks to everyone who reported
+       this).
+     * Chocolate Doom will now under Win95/98, as the
+       SetProcessAffinityMask function is looked up dynamically.
+     * Compilation under Linux with older versions of libc will now
+       work (the semantics for sched_setaffinity were different in
+       older versions)
+     * Sound clipping when using libsamplerate was improved (thanks
+       David Flater)
+     * The audio buffer size is now calculated based on the sample rate,
+       so there is not a noticeable delay when using a lower sample
+       rate.
+     * The manpage documentation for the DOOMWADPATH variable was fixed
+       (thanks MikeRS).
+     * Compilation with FEATURE_MULTIPLAYER and FEATURE_SOUND disabled
+       was fixed.
+
 1.2.1 (2008-12-10):
 
     This version just fixes a crash at the intermission screen when

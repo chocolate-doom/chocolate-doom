@@ -144,6 +144,8 @@ static int TXT_InputBoxKeyPress(TXT_UNCAST_ARG(inputbox), int key)
         free(*((char **)inputbox->value));
         *((char **) inputbox->value) = strdup(inputbox->buffer);
 
+        TXT_EmitSignal(&inputbox->widget, "changed");
+
         inputbox->editing = 0;
     }
 

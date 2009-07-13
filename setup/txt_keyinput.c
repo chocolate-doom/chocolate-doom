@@ -57,6 +57,11 @@ static int KeyPressCallback(txt_window_t *window, int key,
     }
 }
 
+static void ReleaseGrab(TXT_UNCAST_ARG(window), TXT_UNCAST_ARG(unused))
+{
+    SDL_WM_GrabInput(SDL_GRAB_OFF);
+}
+
 static void OpenPromptWindow(txt_key_input_t *key_input)
 {
     txt_window_t *window;
@@ -78,6 +83,13 @@ static void OpenPromptWindow(txt_key_input_t *key_input)
     // Disable key mappings while we prompt for the key press
 
     TXT_EnableKeyMapping(0);
+
+    // Grab input while reading the key.  On Windows Mobile
+    // handheld devices, the hardware keypresses are only
+    // detected when input is grabbed.
+
+    SDL_WM_GrabInput(SDL_GRAB_ON);
+    TXT_SignalConnect(window, "closed", ReleaseGrab, NULL);
 }
 
 static void TXT_KeyInputSizeCalc(TXT_UNCAST_ARG(key_input))

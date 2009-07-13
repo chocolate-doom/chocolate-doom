@@ -31,6 +31,11 @@
 #include <ctype.h>
 #include <errno.h>
 
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
+
 #include "config.h"
 #include "deh_main.h"
 #include "doomdef.h"
@@ -87,6 +92,61 @@ extern int	key_use;
 extern int	key_strafe;
 extern int	key_speed;
 
+extern int key_pause;
+
+// Menu control keys:
+
+extern int key_menu_activate;
+extern int key_menu_up;
+extern int key_menu_down;
+extern int key_menu_left;
+extern int key_menu_right;
+extern int key_menu_back;
+extern int key_menu_forward;
+extern int key_menu_confirm;
+extern int key_menu_abort;
+
+// Keyboard shortcuts:
+
+extern int key_menu_help;
+extern int key_menu_save;
+extern int key_menu_load;
+extern int key_menu_volume;
+extern int key_menu_detail;
+extern int key_menu_qsave;
+extern int key_menu_endgame;
+extern int key_menu_messages;
+extern int key_menu_qload;
+extern int key_menu_quit;
+extern int key_menu_gamma;
+
+extern int key_menu_incscreen;
+extern int key_menu_decscreen;
+
+extern int key_map_north;
+extern int key_map_south;
+extern int key_map_east;
+extern int key_map_west;
+extern int key_map_zoomin;
+extern int key_map_zoomout;
+extern int key_map_toggle;
+extern int key_map_maxzoom;
+extern int key_map_follow;
+extern int key_map_grid;
+extern int key_map_mark;
+extern int key_map_clearmark;
+
+extern int key_weapon1;
+extern int key_weapon2;
+extern int key_weapon3;
+extern int key_weapon4;
+extern int key_weapon5;
+extern int key_weapon6;
+extern int key_weapon7;
+extern int key_weapon8;
+
+extern int key_message_refresh;
+ 
 extern int	mousebfire;
 extern int	mousebstrafe;
 extern int	mousebforward;
@@ -696,6 +756,8 @@ static default_t extra_defaults_list[] =
 
     CONFIG_VARIABLE_INT(dclick_use,                dclick_use),
 
+#ifdef FEATURE_SOUND
+
     //!
     // Controls whether libsamplerate support is used for performing
     // sample rate conversions of sound effects.  Support for this
@@ -710,6 +772,272 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(use_libsamplerate,         use_libsamplerate),
+
+#endif
+
+    //!
+    // Key to pause or unpause the game.
+    //
+
+    CONFIG_VARIABLE_KEY(key_pause,                 key_pause),
+
+    //!
+    // Key that activates the menu when pressed.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_activate,         key_menu_activate),
+
+    //!
+    // Key that moves the cursor up on the menu.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_up,               key_menu_up),
+
+    //!
+    // Key that moves the cursor down on the menu.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_down,             key_menu_down),
+
+    //!
+    // Key that moves the currently selected slider on the menu left.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_left,             key_menu_left),
+
+    //!
+    // Key that moves the currently selected slider on the menu right.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_right,            key_menu_right),
+
+    //!
+    // Key to go back to the previous menu.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_back,             key_menu_back),
+
+    //!
+    // Key to activate the currently selected menu item.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_forward,          key_menu_forward),
+
+    //!
+    // Key to answer 'yes' to a question in the menu.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_confirm,          key_menu_confirm),
+
+    //!
+    // Key to answer 'no' to a question in the menu.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_abort,            key_menu_abort),
+
+    //!
+    // Keyboard shortcut to bring up the help screen.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_help,             key_menu_help),
+
+    //!
+    // Keyboard shortcut to bring up the save game menu.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_save,             key_menu_save),
+
+    //!
+    // Keyboard shortcut to bring up the load game menu.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_load,             key_menu_load),
+
+    //!
+    // Keyboard shortcut to bring up the sound volume menu.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_volume,           key_menu_volume),
+
+    //!
+    // Keyboard shortcut to toggle the detail level.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_detail,           key_menu_detail),
+
+    //!
+    // Keyboard shortcut to quicksave the current game.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_qsave,            key_menu_qsave),
+
+    //!
+    // Keyboard shortcut to end the game.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_endgame,          key_menu_endgame),
+
+    //!
+    // Keyboard shortcut to toggle heads-up messages.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_messages,         key_menu_messages),
+
+    //!
+    // Keyboard shortcut to load the last quicksave.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_qload,            key_menu_qload),
+
+    //!
+    // Keyboard shortcut to quit the game.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_quit,             key_menu_quit),
+
+    //!
+    // Keyboard shortcut to toggle the gamma correction level.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_gamma,            key_menu_gamma),
+
+    //!
+    // Keyboard shortcut to increase the screen size.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_incscreen,        key_menu_incscreen),
+
+    //!
+    // Keyboard shortcut to decrease the screen size.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_decscreen,        key_menu_decscreen),
+
+    //!
+    // Key to toggle the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_toggle,            key_map_toggle),
+
+    //!
+    // Key to pan north when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_north,             key_map_north),
+
+    //!
+    // Key to pan south when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_south,             key_map_south),
+
+    //!
+    // Key to pan east when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_east,              key_map_east),
+
+    //!
+    // Key to pan west when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_west,              key_map_west),
+
+    //!
+    // Key to zoom in when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_zoomin,            key_map_zoomin),
+
+    //!
+    // Key to zoom out when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_zoomout,           key_map_zoomout),
+
+    //!
+    // Key to zoom out the maximum amount when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_maxzoom,           key_map_maxzoom),
+
+    //!
+    // Key to toggle follow mode when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_follow,            key_map_follow),
+
+    //!
+    // Key to toggle the grid display when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_grid,              key_map_grid),
+
+    //!
+    // Key to set a mark when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_mark,              key_map_mark),
+
+    //!
+    // Key to clear all marks when in the map view.
+    //
+
+    CONFIG_VARIABLE_KEY(key_map_clearmark,         key_map_clearmark),
+
+    //!
+    // Key to select weapon 1.
+    //
+
+    CONFIG_VARIABLE_KEY(key_weapon1,               key_weapon1),
+
+    //!
+    // Key to select weapon 2.
+    //
+
+    CONFIG_VARIABLE_KEY(key_weapon2,               key_weapon2),
+
+    //!
+    // Key to select weapon 3.
+    //
+
+    CONFIG_VARIABLE_KEY(key_weapon3,               key_weapon3),
+
+    //!
+    // Key to select weapon 4.
+    //
+
+    CONFIG_VARIABLE_KEY(key_weapon4,               key_weapon4),
+
+    //!
+    // Key to select weapon 5.
+    //
+
+    CONFIG_VARIABLE_KEY(key_weapon5,               key_weapon5),
+
+    //!
+    // Key to select weapon 6.
+    //
+
+    CONFIG_VARIABLE_KEY(key_weapon6,               key_weapon6),
+
+    //!
+    // Key to select weapon 7.
+    //
+
+    CONFIG_VARIABLE_KEY(key_weapon7,               key_weapon7),
+
+    //!
+    // Key to select weapon 8.
+    //
+
+    CONFIG_VARIABLE_KEY(key_weapon8,               key_weapon8),
+
+    //!
+    // Key to re-display last message.
+    //
+
+    CONFIG_VARIABLE_KEY(key_message_refresh,       key_message_refresh),
 };
 
 static default_collection_t extra_defaults =
@@ -1006,9 +1334,11 @@ void M_LoadDefaults (void)
 
 void M_SetConfigDir(void)
 {
-#ifndef _WIN32
-    // Ignore the HOME environment variable on Windows - just behave
-    // like Vanilla Doom.
+#if !defined(_WIN32) || defined(_WIN32_WCE)
+
+    // Configuration settings are stored in ~/.chocolate-doom/,
+    // except on Windows, where we behave like Vanilla Doom and
+    // save in the current directory.
 
     char *homedir;
 
@@ -1031,7 +1361,7 @@ void M_SetConfigDir(void)
     else
 #endif /* #ifndef _WIN32 */
     {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(_WIN32_WCE)
         //!
         // @platform windows
         // @vanilla
@@ -1053,5 +1383,78 @@ void M_SetConfigDir(void)
             configdir = strdup("");
         }
     }
+}
+
+#ifdef _WIN32_WCE
+
+static int SystemHasKeyboard(void)
+{
+    HKEY key;
+    DWORD valtype;
+    DWORD valsize;
+    DWORD result;
+
+    if (RegOpenKeyExW(HKEY_CURRENT_USER,
+                      L"\\Software\\Microsoft\\Shell", 0,
+                      KEY_READ, &key) != ERROR_SUCCESS)
+    {
+        return 0;
+    }
+
+    valtype = REG_SZ;
+    valsize = sizeof(DWORD);
+
+    if (RegQueryValueExW(key, L"HasKeyboard", NULL, &valtype,
+                         (LPBYTE) &result, &valsize) != ERROR_SUCCESS)
+    {
+        result = 0;
+    }
+
+    // Close the key
+
+    RegCloseKey(key);
+
+    return result;
+}
+
+//
+// Apply custom defaults for Windows CE.
+//
+
+static void M_ApplyWindowsCEDefaults(void)
+{
+    // If the system doesn't have a keyboard, patch the default
+    // configuration to use the hardware keys.
+
+    if (!SystemHasKeyboard())
+    {
+        key_use = KEY_F1;
+        key_fire = KEY_F2;
+        key_menu_activate = KEY_F3;
+        key_map_toggle = KEY_F4;
+
+        key_menu_help = 0;
+        key_menu_save = 0;
+        key_menu_load = 0;
+        key_menu_volume = 0;
+
+        key_menu_confirm = KEY_ENTER;
+        key_menu_back = KEY_F2;
+        key_menu_abort = KEY_F2;
+    }
+}
+
+#endif
+
+//
+// Apply custom patches to the default values depending on the
+// platform we are running on.
+//
+
+void M_ApplyPlatformDefaults(void)
+{
+#ifdef _WIN32_WCE
+    M_ApplyWindowsCEDefaults();
+#endif
 }
 

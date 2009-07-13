@@ -35,6 +35,8 @@
 
 #ifdef _WIN32
 #include <io.h>
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 #else
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -74,7 +76,7 @@ void M_MakeDirectory(char *path)
 
 
 // 
-// SetConfigDir:
+// M_SetConfigDir:
 //
 // Sets the location of the configuration directory, where configuration
 // files are stored - default.cfg, chocolate-doom.cfg, savegames, etc.
@@ -82,9 +84,11 @@ void M_MakeDirectory(char *path)
 
 void M_SetConfigDir(void)
 {
-#ifndef _WIN32
-    // Ignore the HOME environment variable on Windows - just behave
-    // like Vanilla Doom.
+#if !defined(_WIN32) || defined(_WIN32_WCE)
+
+    // Configuration settings are stored in ~/.chocolate-doom/,
+    // except on Windows, where we behave like Vanilla Doom and
+    // save in the current directory.
 
     char *homedir;
 
@@ -97,7 +101,8 @@ void M_SetConfigDir(void)
 
         configdir = malloc(strlen(homedir) + strlen(PACKAGE_TARNAME) + 5);
 
-        sprintf(configdir, "%s/.%s/", homedir, PACKAGE_TARNAME);
+        sprintf(configdir, "%s%c.%s%c", homedir, DIR_SEPARATOR,
+			                PACKAGE_TARNAME, DIR_SEPARATOR);
 
         // make the directory if it doesnt already exist
 
@@ -106,7 +111,7 @@ void M_SetConfigDir(void)
     else
 #endif /* #ifndef _WIN32 */
     {
-#ifdef _WIN32
+#if defined(_WIN32) && !defined(_WIN32_WCE)
         // when given the -cdrom option, save config+savegames in 
         // c:\doomdata.  This only applies under Windows.
 
@@ -239,6 +244,7 @@ static default_t doom_defaults_list[] =
     {"chatmacro7", &chat_macros[7], DEFAULT_STRING, 0, 0 },
     {"chatmacro8", &chat_macros[8], DEFAULT_STRING, 0, 0 },
     {"chatmacro9", &chat_macros[9], DEFAULT_STRING, 0, 0 },
+
 };
 
 static default_collection_t doom_defaults = 
@@ -282,6 +288,52 @@ static default_t extra_defaults_list[] =
     {"mouseb_use",                  &mousebuse, DEFAULT_INT, 0, 0},
     {"mouseb_backward",             &mousebbackward, DEFAULT_INT, 0, 0},
     {"use_libsamplerate",           &use_libsamplerate, DEFAULT_INT, 0, 0},
+
+    {"key_pause",                   &key_pause, DEFAULT_KEY, 0, 0},
+    {"key_menu_activate",           &key_menu_activate, DEFAULT_KEY, 0, 0},
+    {"key_menu_up",                 &key_menu_up, DEFAULT_KEY, 0, 0},
+    {"key_menu_down",               &key_menu_down, DEFAULT_KEY, 0, 0},
+    {"key_menu_left",               &key_menu_left, DEFAULT_KEY, 0, 0},
+    {"key_menu_right",              &key_menu_right, DEFAULT_KEY, 0, 0},
+    {"key_menu_back",               &key_menu_back, DEFAULT_KEY, 0, 0},
+    {"key_menu_forward",            &key_menu_forward, DEFAULT_KEY, 0, 0},
+    {"key_menu_confirm",            &key_menu_confirm, DEFAULT_KEY, 0, 0},
+    {"key_menu_abort",              &key_menu_abort, DEFAULT_KEY, 0, 0},
+    {"key_menu_help",               &key_menu_help, DEFAULT_KEY, 0, 0},
+    {"key_menu_save",               &key_menu_save, DEFAULT_KEY, 0, 0},
+    {"key_menu_load",               &key_menu_load, DEFAULT_KEY, 0, 0},
+    {"key_menu_volume",             &key_menu_volume, DEFAULT_KEY, 0, 0},
+    {"key_menu_detail",             &key_menu_detail, DEFAULT_KEY, 0, 0},
+    {"key_menu_qsave",              &key_menu_qsave, DEFAULT_KEY, 0, 0},
+    {"key_menu_endgame",            &key_menu_endgame, DEFAULT_KEY, 0, 0},
+    {"key_menu_messages",           &key_menu_messages, DEFAULT_KEY, 0, 0},
+    {"key_menu_qload",              &key_menu_qload, DEFAULT_KEY, 0, 0},
+    {"key_menu_quit",               &key_menu_quit, DEFAULT_KEY, 0, 0},
+    {"key_menu_gamma",              &key_menu_gamma, DEFAULT_KEY, 0, 0},
+    {"key_menu_incscreen",          &key_menu_incscreen, DEFAULT_KEY, 0, 0},
+    {"key_menu_decscreen",          &key_menu_decscreen, DEFAULT_KEY, 0, 0},
+
+    {"key_map_toggle",              &key_map_toggle, DEFAULT_KEY, 0, 0},
+    {"key_map_north",               &key_map_north, DEFAULT_KEY, 0, 0},
+    {"key_map_south",               &key_map_south, DEFAULT_KEY, 0, 0},
+    {"key_map_east",                &key_map_east, DEFAULT_KEY, 0, 0},
+    {"key_map_west",                &key_map_west, DEFAULT_KEY, 0, 0},
+    {"key_map_zoomin",              &key_map_zoomin, DEFAULT_KEY, 0, 0},
+    {"key_map_zoomout",             &key_map_zoomout, DEFAULT_KEY, 0, 0},
+    {"key_map_maxzoom",             &key_map_maxzoom, DEFAULT_KEY, 0, 0},
+    {"key_map_follow",              &key_map_follow, DEFAULT_KEY, 0, 0},
+    {"key_map_grid",                &key_map_grid, DEFAULT_KEY, 0, 0},
+    {"key_map_mark",                &key_map_mark, DEFAULT_KEY, 0, 0},
+    {"key_map_clearmark",           &key_map_clearmark, DEFAULT_KEY, 0, 0},
+    {"key_weapon1",                 &key_weapon1, DEFAULT_KEY, 0, 0},
+    {"key_weapon2",                 &key_weapon2, DEFAULT_KEY, 0, 0},
+    {"key_weapon3",                 &key_weapon3, DEFAULT_KEY, 0, 0},
+    {"key_weapon4",                 &key_weapon4, DEFAULT_KEY, 0, 0},
+    {"key_weapon5",                 &key_weapon5, DEFAULT_KEY, 0, 0},
+    {"key_weapon6",                 &key_weapon6, DEFAULT_KEY, 0, 0},
+    {"key_weapon7",                 &key_weapon7, DEFAULT_KEY, 0, 0},
+    {"key_weapon8",                 &key_weapon8, DEFAULT_KEY, 0, 0},
+    {"key_message_refresh",         &key_message_refresh, DEFAULT_KEY, 0, 0},
 };
 
 static default_collection_t extra_defaults =
@@ -595,5 +647,79 @@ void M_SaveExtraDefaults(char *filename)
     // Restore the normal filename
 
     extra_defaults.filename = main_filename;
+}
+
+#ifdef _WIN32_WCE
+
+static int SystemHasKeyboard(void)
+{
+    HKEY key;
+    DWORD valtype;
+    DWORD valsize;
+    DWORD result;
+
+    if (RegOpenKeyExW(HKEY_CURRENT_USER,
+                      L"\\Software\\Microsoft\\Shell", 0,
+                      KEY_READ, &key) != ERROR_SUCCESS)
+    {
+        return 0;
+    }
+
+    valtype = REG_SZ;
+    valsize = sizeof(DWORD);
+
+    if (RegQueryValueExW(key, L"HasKeyboard", NULL, &valtype,
+                         (LPBYTE) &result, &valsize) != ERROR_SUCCESS)
+    {
+        result = 0;
+    }
+
+    // Close the key
+
+    RegCloseKey(key);
+
+    return result;
+}
+
+//
+// Apply custom defaults for Windows CE.
+//
+
+static void M_ApplyWindowsCEDefaults(void)
+{
+    // If the system doesn't have a keyboard, patch the default
+    // configuration to use the hardware keys.
+
+    if (!SystemHasKeyboard())
+    {
+        key_use = KEY_F1;
+        key_fire = KEY_F2;
+        key_menu_activate = KEY_F3;
+        key_map_toggle = KEY_F4;
+
+        key_menu_help = 0;
+        key_menu_save = 0;
+        key_menu_load = 0;
+        key_menu_volume = 0;
+
+        key_menu_confirm = KEY_ENTER;
+        key_menu_back = KEY_F2;
+        key_menu_abort = KEY_F2;
+    }
+}
+
+
+#endif
+
+//
+// Apply custom patches to the default values depending on the
+// platform we are running on.
+//
+
+void M_ApplyPlatformDefaults(void)
+{
+#ifdef _WIN32_WCE
+    M_ApplyWindowsCEDefaults();
+#endif
 }
 

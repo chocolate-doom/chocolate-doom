@@ -88,6 +88,7 @@ char*	player_names[] =
     HUSTR_PLRRED
 };
 
+int key_message_refresh = KEY_ENTER;
 
 char			chat_char; // remove later.
 static player_t*	plr;
@@ -597,7 +598,7 @@ boolean HU_Responder(event_t *ev)
 
     if (!chat_on)
     {
-	if (ev->data1 == HU_MSGREFRESH)
+	if (ev->data1 == key_message_refresh)
 	{
 	    message_on = true;
 	    message_counter = HU_MSGTIMEOUT;

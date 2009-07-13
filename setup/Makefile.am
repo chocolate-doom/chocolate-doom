@@ -31,7 +31,10 @@ else
 chocolate_setup_SOURCES=$(SOURCE_FILES)
 endif
 
-chocolate_setup_LDADD = ../textscreen/libtextscreen.a @LDFLAGS@
+chocolate_setup_LDADD =                              \
+                       ../wince/libc_wince.a         \
+                       ../textscreen/libtextscreen.a \
+                       @LDFLAGS@
 
 .rc.o:
 	$(WINDRES) $^ -o $@

@@ -38,5 +38,7 @@ void M_SetConfigDir(void);
 void M_SaveMainDefaults(char *filename);
 void M_SaveExtraDefaults(char *filename);
 
+void M_ApplyPlatformDefaults(void);
+
 #endif
 
