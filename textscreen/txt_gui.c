@@ -234,7 +234,6 @@ void TXT_DrawString(char *s)
 
     if (VALID_Y(y))
     {
-        p = s;
         x1 = x;
 
         for (p = s; *p != '\0'; ++p)
