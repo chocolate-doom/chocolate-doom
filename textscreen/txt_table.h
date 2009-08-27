@@ -178,6 +178,19 @@ void TXT_SetColumnWidths(TXT_UNCAST_ARG(table), ...);
 
 void TXT_ClearTable(TXT_UNCAST_ARG(table));
 
+/**
+ * Hack to move the selection in a table by a 'page', triggered by the
+ * scrollpane. This acts as per the keyboard events for the arrows, but moves
+ * the selection by at least the specified number of characters.
+ *
+ * @param table    The table.
+ * @param pagex    Minimum distance to move the selection horizontally.
+ * @param pagey    Minimum distance to move the selection vertically.
+ * @return         Non-zero if the selection has been changed.
+ */
+
+int TXT_PageTable(TXT_UNCAST_ARG(table), int pagex, int pagey);
+
 #endif /* #ifndef TXT_TABLE_T */
 
 
