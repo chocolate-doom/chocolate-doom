@@ -770,3 +770,85 @@ void TXT_SetColumnWidths(TXT_UNCAST_ARG(table), ...)
     va_end(args);
 }
 
+// Moves the select by at least the given number of characters.
+// Currently quietly ignores pagex, as we don't use it.
+
+int TXT_PageTable(TXT_UNCAST_ARG(table), int pagex, int pagey)
+{
+    TXT_CAST_ARG(txt_table_t, table);
+    unsigned int *column_widths;
+    unsigned int *row_heights;
+    int rows;
+    int changed = 0;
+
+    rows = TableRows(table);
+
+    row_heights = malloc(sizeof(int) * rows);
+    column_widths = malloc(sizeof(int) * table->columns);
+
+    CalcRowColSizes(table, row_heights, column_widths);
+
+    if (pagex)
+    {
+        // @todo Jump selection to the left or right as needed
+    }
+
+    if (pagey)
+    {
+        int new_x, new_y;
+        int distance = 0;
+        int dir;
+
+        // What direction are we moving?
+
+        if (pagey > 0)
+        {
+            dir = 1;
+        }
+        else
+        {
+            dir = -1;
+        }
+
+        // Move the cursor until the desired distance is reached.
+
+        new_y = table->selected_y;
+
+        while (new_y >= 0 && new_y < rows)
+        {
+            // We are about to travel a distance equal to the height of the row
+            // we are about to leave.
+
+            distance += row_heights[new_y];
+
+            // *Now* increment the loop.
+
+            new_y += dir;
+
+            new_x = FindSelectableColumn(table, new_y, table->selected_x);
+
+            if (new_x >= 0)
+            {
+                // Found a selectable widget in this column!
+                // Select it anyway in case we don't find something better.
+
+                table->selected_x = new_x;
+                table->selected_y = new_y;
+                changed = 1;
+
+                // ...but is it far enough away?
+
+                if (distance >= abs(pagey))
+                {
+                    break;
+                }
+            }
+        }
+    }
+
+    free(row_heights);
+    free(column_widths);
+
+    return changed;
+}
+
