@@ -88,5 +88,9 @@ void OPL_Lock(void);
 
 void OPL_Unlock(void);
 
+// Block until the specified number of milliseconds have elapsed.
+
+void OPL_Delay(unsigned int ms);
+
 #endif
 

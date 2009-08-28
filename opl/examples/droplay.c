@@ -77,16 +77,20 @@ void ClearAllRegs(void)
 
 int DetectOPL(void)
 {
+    int val1, val2;
+
     WriteReg(OPL_REG_TIMER_CTRL, 0x60);
     WriteReg(OPL_REG_TIMER_CTRL, 0x80);
-    int val1 = OPL_ReadPort(OPL_REGISTER_PORT) & 0xe0;
+    val1 = OPL_ReadPort(OPL_REGISTER_PORT) & 0xe0;
     WriteReg(OPL_REG_TIMER1, 0xff);
     WriteReg(OPL_REG_TIMER_CTRL, 0x21);
-    SDL_Delay(50);
-    int val2 = OPL_ReadPort(OPL_REGISTER_PORT) & 0xe0;
+    OPL_Delay(50);
+    val2 = OPL_ReadPort(OPL_REGISTER_PORT) & 0xe0;
     WriteReg(OPL_REG_TIMER_CTRL, 0x60);
     WriteReg(OPL_REG_TIMER_CTRL, 0x80);
 
+// Temporary hack for SDL driver.
+return 1;
     return val1 == 0 && val2 == 0xc0;
 }
 
