@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+#include <assert.h>
 
 #include "SDL.h"
 #include "SDL_mixer.h"
@@ -42,8 +43,33 @@
 // TODO:
 #define opl_sample_rate 22050
 
+// When the callback mutex is locked using OPL_Lock, callback functions
+// are not invoked.
+
+static SDL_mutex *callback_mutex = NULL;
+
+// Queue of callbacks waiting to be invoked.
+
 static opl_callback_queue_t *callback_queue;
+
+// Mutex used to control access to the callback queue.
+
+static SDL_mutex *callback_queue_mutex = NULL;
+
+// Current time, in number of samples since startup:
+
+static int current_time;
+
+// OPL software emulator structure.
+
 static FM_OPL *opl_emulator = NULL;
+
+// Temporary mixing buffer used by the mixing callback.
+
+static int16_t *mix_buffer = NULL;
+
+// SDL parameters.
+
 static int sdl_was_initialised = 0;
 static int mixing_freq, mixing_channels;
 static Uint16 mixing_format;
@@ -56,10 +82,131 @@ static int SDLIsInitialised(void)
     return Mix_QuerySpec(&freq, &format, &channels);
 }
 
+// Advance time by the specified number of samples, invoking any
+// callback functions as appropriate.
+
+static void AdvanceTime(unsigned int nsamples)
+{
+    opl_callback_t callback;
+    void *callback_data;
+
+    SDL_LockMutex(callback_queue_mutex);
+
+    // Advance time.
+
+    current_time += nsamples;
+
+    // Are there callbacks to invoke now?  Keep invoking them
+    // until there are none more left.
+
+    while (!OPL_Queue_IsEmpty(callback_queue)
+        && current_time >= OPL_Queue_Peek(callback_queue))
+    {
+        // Pop the callback from the queue to invoke it.
+
+        if (!OPL_Queue_Pop(callback_queue, &callback, &callback_data))
+        {
+            break;
+        }
+
+        // The mutex stuff here is a bit complicated.  We must
+        // hold callback_mutex when we invoke the callback (so that
+        // the control thread can use OPL_Lock() to prevent callbacks
+        // from being invoked), but we must not be holding
+        // callback_queue_mutex, as the callback must be able to
+        // call OPL_SetCallback to schedule new callbacks.
+
+        SDL_UnlockMutex(callback_queue_mutex);
+
+        SDL_LockMutex(callback_mutex);
+        callback(callback_data);
+        SDL_UnlockMutex(callback_mutex);
+
+        SDL_LockMutex(callback_queue_mutex);
+    }
+
+    SDL_UnlockMutex(callback_queue_mutex);
+}
+
+// Call the OPL emulator code to fill the specified buffer.
+
+static void FillBuffer(int16_t *buffer, unsigned int nsamples)
+{
+    unsigned int i;
+
+    // This seems like a reasonable assumption.  mix_buffer is
+    // 1 second long, which should always be much longer than the
+    // SDL mix buffer.
+
+    assert(nsamples < mixing_freq);
+
+    YM3812UpdateOne(opl_emulator, mix_buffer, nsamples, 0);
+
+    // Mix into the destination buffer, doubling up into stereo.
+
+    for (i=0; i<nsamples; ++i)
+    {
+        buffer[i * 2] += mix_buffer[i] / 2;
+        buffer[i * 2 + 1] += mix_buffer[i] / 2;
+    }
+}
+
 // Callback function to fill a new sound buffer:
 
-static void OPL_Mix_Callback(void *udata, Uint8 *stream, int len)
+static void OPL_Mix_Callback(void *udata,
+                             Uint8 *byte_buffer,
+                             int buffer_bytes)
 {
+    int16_t *buffer;
+    unsigned int buffer_len;
+    unsigned int filled = 0;
+
+    // Buffer length in samples (quadrupled, because of 16-bit and stereo)
+
+    buffer = (int16_t *) byte_buffer;
+    buffer_len = buffer_bytes / 4;
+
+    // Repeatedly call the FMOPL update function until the buffer is
+    // full.
+
+    while (filled < buffer_len)
+    {
+        unsigned int next_callback_time;
+        unsigned int nsamples;
+
+        SDL_LockMutex(callback_queue_mutex);
+
+        // Work out the time until the next callback waiting in
+        // the callback queue must be invoked.  We can then fill the
+        // buffer with this many samples.
+
+        if (OPL_Queue_IsEmpty(callback_queue))
+        {
+            nsamples = buffer_len - filled;
+        }
+        else
+        {
+            next_callback_time = OPL_Queue_Peek(callback_queue);
+
+            nsamples = next_callback_time - current_time;
+
+            if (nsamples > buffer_len - filled)
+            {
+                nsamples = buffer_len - filled;
+            }
+        }
+
+        SDL_UnlockMutex(callback_queue_mutex);
+
+        // Add emulator output to buffer.
+
+        FillBuffer(buffer + filled * 2, nsamples);
+        filled += nsamples;
+
+        // Invoke callbacks for this point in time.
+
+        AdvanceTime(nsamples);
+    }
 }
 
 static void OPL_SDL_Shutdown(void)
@@ -69,6 +216,7 @@ static void OPL_SDL_Shutdown(void)
         Mix_CloseAudio();
         SDL_QuitSubSystem(SDL_INIT_AUDIO);
         OPL_Queue_Destroy(callback_queue);
+        free(mix_buffer);
         sdl_was_initialised = 0;
     }
 
@@ -76,6 +224,18 @@ static void OPL_SDL_Shutdown(void)
     {
         OPLDestroy(opl_emulator);
         opl_emulator = NULL;
+    }
+
+    if (callback_mutex != NULL)
+    {
+        SDL_DestroyMutex(callback_mutex);
+        callback_mutex = NULL;
+    }
+
+    if (callback_queue_mutex != NULL)
+    {
+        SDL_DestroyMutex(callback_queue_mutex);
+        callback_queue_mutex = NULL;
     }
 }
 
@@ -86,8 +246,6 @@ static int OPL_SDL_Init(unsigned int port_base)
 
     if (!SDLIsInitialised())
     {
-        callback_queue = OPL_Queue_Create();
-
         if (SDL_Init(SDL_INIT_AUDIO) < 0)
         {
             fprintf(stderr, "Unable to set up sound.\n");
@@ -114,6 +272,11 @@ static int OPL_SDL_Init(unsigned int port_base)
         sdl_was_initialised = 0;
     }
 
+    // Queue structure of callbacks to invoke.
+
+    callback_queue = OPL_Queue_Create();
+    current_time = 0;
+
     // Get the mixer frequency, format and number of channels.
 
     Mix_QuerySpec(&mixing_freq, &mixing_format, &mixing_channels);
@@ -130,6 +293,10 @@ static int OPL_SDL_Init(unsigned int port_base)
         return 0;
     }
 
+    // Mix buffer:
+
+    mix_buffer = malloc(mixing_freq * 2);
+
     // Create the emulator structure:
 
     opl_emulator = makeAdlibOPL(mixing_freq);
@@ -140,6 +307,9 @@ static int OPL_SDL_Init(unsigned int port_base)
         OPL_SDL_Shutdown();
         return 0;
     }
+
+    callback_mutex = SDL_CreateMutex();
+    callback_queue_mutex = SDL_CreateMutex();
 
     // TODO: This should be music callback? or-?
     Mix_SetPostMix(OPL_Mix_Callback, NULL);
@@ -171,14 +341,20 @@ static void OPL_SDL_SetCallback(unsigned int ms,
                                 opl_callback_t callback,
                                 void *data)
 {
+    SDL_LockMutex(callback_queue_mutex);
+    OPL_Queue_Push(callback_queue, callback, data,
+                   current_time + (ms * mixing_freq) / 1000);
+    SDL_UnlockMutex(callback_queue_mutex);
 }
 
 static void OPL_SDL_Lock(void)
 {
+    SDL_LockMutex(callback_mutex);
 }
 
 static void OPL_SDL_Unlock(void)
 {
+    SDL_UnlockMutex(callback_mutex);
 }
 
 opl_driver_t opl_sdl_driver =
