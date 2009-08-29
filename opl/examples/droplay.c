@@ -183,6 +183,12 @@ void PlayFile(char *filename)
 
     timer_data.fstream = fopen(filename, "rb");
 
+    if (timer_data.fstream == NULL)
+    {
+        fprintf(stderr, "Failed to open %s\n", filename);
+        exit(-1);
+    }
+
     if (fread(buf, 1, 8, timer_data.fstream) < 8)
     {
         fprintf(stderr, "failed to read raw OPL header\n");
@@ -226,7 +232,6 @@ int main(int argc, char *argv[])
 
     Init();
     ClearAllRegs();
-    SDL_Delay(1000);
 
     PlayFile(argv[1]);
 
