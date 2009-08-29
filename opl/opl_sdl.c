@@ -211,6 +211,8 @@ static void OPL_Mix_Callback(void *udata,
 
 static void OPL_SDL_Shutdown(void)
 {
+    Mix_SetPostMix(NULL, NULL);
+
     if (sdl_was_initialised)
     {
         Mix_CloseAudio();
