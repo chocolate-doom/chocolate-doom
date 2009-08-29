@@ -202,6 +202,8 @@ static boolean DetectOPL(void)
         GetStatus();
     }
 
+    OPL_Delay(1);
+
     // Read status
     result2 = GetStatus();
 
