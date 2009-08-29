@@ -40,6 +40,7 @@
 #include "z_zone.h"
 
 #include "opl.h"
+#include "midifile.h"
 
 #define MAXMIDLENGTH (96 * 1024)
 #define GENMIDI_NUM_INSTRS  128
@@ -507,6 +508,11 @@ static void I_OPL_UnRegisterSong(void *handle)
     {
         return;
     }
+
+    if (handle != NULL)
+    {
+        MIDI_FreeFile(handle);
+    }
 }
 
 // Determine whether memory block is a .mid file 
@@ -544,6 +550,7 @@ static boolean ConvertMus(byte *musdata, int len, char *filename)
 
 static void *I_OPL_RegisterSong(void *data, int len)
 {
+    midi_file_t *result;
     char *filename;
 
     if (!music_initialised)
@@ -567,7 +574,12 @@ static void *I_OPL_RegisterSong(void *data, int len)
         ConvertMus(data, len, filename);
     }
 
-    // ....
+    result = MIDI_LoadFile(filename);
+
+    if (result == NULL)
+    {
+        fprintf(stderr, "I_OPL_RegisterSong: Failed to load MID.\n");
+    }
 
     // remove file now
 
@@ -575,7 +587,7 @@ static void *I_OPL_RegisterSong(void *data, int len)
 
     Z_Free(filename);
 
-    return NULL;
+    return result;
 }
 
 // Is the song playing?
