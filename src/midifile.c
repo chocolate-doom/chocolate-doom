@@ -60,7 +60,7 @@ typedef struct
 
     midi_event_t *events;
     int num_events;
-} PACKEDATTR midi_track_t;
+} midi_track_t;
 
 struct midi_file_s
 {
@@ -575,7 +575,7 @@ void MIDI_FreeFile(midi_file_t *file)
     free(file);
 }
 
-midi_file_t *MIDI_OpenFile(char *filename)
+midi_file_t *MIDI_LoadFile(char *filename)
 {
     midi_file_t *file;
     FILE *stream;

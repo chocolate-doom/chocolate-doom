@@ -129,7 +129,7 @@ typedef struct
     } data;
 } midi_event_t;
 
-midi_file_t *MIDI_OpenFile(char *filename);
+midi_file_t *MIDI_LoadFile(char *filename);
 void MIDI_FreeFile(midi_file_t *file);
 
 #endif /* #ifndef MIDIFILE_H */
