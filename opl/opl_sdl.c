@@ -239,6 +239,29 @@ static void OPL_SDL_Shutdown(void)
     }
 }
 
+// Callback when a timer expires.
+
+static void TimerOver(void *data)
+{
+    int channel = (int) data;
+
+    OPLTimerOver(opl_emulator, channel);
+}
+
+// Callback invoked when the emulator code wants to set a timer.
+
+static void TimerHandler(int channel, double interval_seconds)
+{
+    unsigned int interval_samples;
+
+    interval_samples = (int) (interval_seconds * mixing_freq);
+
+    SDL_LockMutex(callback_queue_mutex);
+    OPL_Queue_Push(callback_queue, TimerOver, (void *) channel,
+                   current_time + interval_samples);
+    SDL_UnlockMutex(callback_queue_mutex);
+}
+
 static int OPL_SDL_Init(unsigned int port_base)
 {
     // Check if SDL_mixer has been opened already
@@ -307,6 +330,8 @@ static int OPL_SDL_Init(unsigned int port_base)
         OPL_SDL_Shutdown();
         return 0;
     }
+
+    OPLSetTimerHandler(opl_emulator, TimerHandler, 0);
 
     callback_mutex = SDL_CreateMutex();
     callback_queue_mutex = SDL_CreateMutex();

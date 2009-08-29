@@ -89,8 +89,6 @@ int DetectOPL(void)
     WriteReg(OPL_REG_TIMER_CTRL, 0x60);
     WriteReg(OPL_REG_TIMER_CTRL, 0x80);
 
-// Temporary hack for SDL driver.
-return 1;
     return val1 == 0 && val2 == 0xc0;
 }
 
