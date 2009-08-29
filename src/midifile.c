@@ -598,7 +598,7 @@ midi_file_t *MIDI_LoadFile(char *filename)
 
     if (stream == NULL)
     {
-        fprintf(stderr, "MIDI_OpenFile: Failed to open '%s'\n", filename);
+        fprintf(stderr, "MIDI_LoadFile: Failed to open '%s'\n", filename);
         MIDI_FreeFile(file);
         return NULL;
     }
@@ -714,7 +714,7 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
-    file = MIDI_OpenFile(argv[1]);
+    file = MIDI_LoadFile(argv[1]);
 
     if (file == NULL)
     {
