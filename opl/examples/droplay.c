@@ -81,11 +81,16 @@ int DetectOPL(void)
 
     WriteReg(OPL_REG_TIMER_CTRL, 0x60);
     WriteReg(OPL_REG_TIMER_CTRL, 0x80);
+
     val1 = OPL_ReadPort(OPL_REGISTER_PORT) & 0xe0;
+
     WriteReg(OPL_REG_TIMER1, 0xff);
     WriteReg(OPL_REG_TIMER_CTRL, 0x21);
-    OPL_Delay(50);
+
+    OPL_Delay(1);
+
     val2 = OPL_ReadPort(OPL_REGISTER_PORT) & 0xe0;
+
     WriteReg(OPL_REG_TIMER_CTRL, 0x60);
     WriteReg(OPL_REG_TIMER_CTRL, 0x80);
 
