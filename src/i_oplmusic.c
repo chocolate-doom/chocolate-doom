@@ -598,6 +598,11 @@ static opl_voice_t *FindVoiceForNote(opl_channel_data_t *channel, int note)
     return NULL;
 }
 
+static void VoiceNoteOff(opl_voice_t *voice)
+{
+    WriteRegister(OPL_REGS_FREQ_2 + voice->index, voice->freq >> 8);
+}
+
 static void NoteOffEvent(opl_track_data_t *track, midi_event_t *event)
 {
     opl_voice_t *voice;
@@ -619,9 +624,7 @@ static void NoteOffEvent(opl_track_data_t *track, midi_event_t *event)
         return;
     }
 
-    // Note off.
-
-    WriteRegister(OPL_REGS_FREQ_2 + voice->index, voice->freq >> 8);
+    VoiceNoteOff(voice);
 
     // Finished with this voice now.
 
@@ -913,9 +916,26 @@ static void I_OPL_ResumeSong(void)
 
 static void I_OPL_StopSong(void)
 {
+    unsigned int i;
+
     if (!music_initialised)
     {
         return;
+    }
+
+    // Stop all playback.
+
+    OPL_ClearCallbacks();
+
+    // Free all voices.
+
+    for (i=0; i<OPL_NUM_VOICES; ++i)
+    {
+        if (voices[i].channel != NULL)
+        {
+            VoiceNoteOff(&voices[i]);
+            ReleaseVoice(&voices[i]);
+        }
     }
 }
 
