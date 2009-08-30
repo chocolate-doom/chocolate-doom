@@ -48,7 +48,7 @@
 #define GENMIDI_NUM_INSTRS  128
 
 #define GENMIDI_HEADER          "#OPL_II#"
-#define GENMIDI_FLAG_FIXED      0x0000         /* fixed pitch */
+#define GENMIDI_FLAG_FIXED      0x0001         /* fixed pitch */
 #define GENMIDI_FLAG_2VOICE     0x0002         /* double voice (OPL3) */
 
 typedef struct
@@ -701,6 +701,9 @@ static void NoteOnEvent(opl_track_data_t *track, midi_event_t *event)
         return;
     }
 
+    voice->channel = channel;
+    voice->note = note;
+
     // Program the voice with the instrument data:
 
     SetVoiceInstrument(voice, &instrument->opl2_voice);
@@ -710,14 +713,16 @@ static void NoteOnEvent(opl_track_data_t *track, midi_event_t *event)
     WriteRegister(OPL_REGS_LEVEL + voice->op2,
                   volume_mapping_table[volume]);
 
-    // Play the note.
+    // Fixed pitch?
 
-    voice->channel = channel;
-    voice->note = note;
+    if ((instrument->flags & GENMIDI_FLAG_FIXED) != 0)
+    {
+        note = instrument->fixed_note;
+    }
 
     // Write the frequency value to turn the note on.
 
-    voice->freq = FrequencyForNote(voice->note);
+    voice->freq = FrequencyForNote(note);
 
     WriteRegister(OPL_REGS_FREQ_1 + voice->index, voice->freq & 0xff);
     WriteRegister(OPL_REGS_FREQ_2 + voice->index, (voice->freq >> 8) | 0x20);
