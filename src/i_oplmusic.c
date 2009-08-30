@@ -660,6 +660,7 @@ static void NoteOnEvent(opl_track_data_t *track, midi_event_t *event)
     opl_voice_t *voice;
     opl_channel_data_t *channel;
     unsigned int note;
+    unsigned int volume;
 
     printf("note on: channel %i, %i, %i\n",
            event->data.channel.channel,
@@ -670,6 +671,7 @@ static void NoteOnEvent(opl_track_data_t *track, midi_event_t *event)
 
     channel = &track->channels[event->data.channel.channel];
     note = event->data.channel.param1;
+    volume = event->data.channel.param2;
 
     // Percussion channel (10) is treated differently to normal notes.
 
@@ -703,7 +705,7 @@ static void NoteOnEvent(opl_track_data_t *track, midi_event_t *event)
     // TODO: Set the volume level.
 
     WriteRegister(OPL_REGS_LEVEL + voice->op2,
-                  volume_mapping_table[channel->volume]);
+                  volume_mapping_table[volume]);
 
     // Play the note.
 
