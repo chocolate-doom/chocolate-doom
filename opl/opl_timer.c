@@ -202,6 +202,13 @@ void OPL_Timer_SetCallback(unsigned int ms, opl_callback_t callback, void *data)
     SDL_UnlockMutex(callback_queue_mutex);
 }
 
+void OPL_Timer_ClearCallbacks(void)
+{
+    SDL_LockMutex(callback_queue_mutex);
+    OPL_Queue_Clear(callback_queue);
+    SDL_UnlockMutex(callback_queue_mutex);
+}
+
 void OPL_Timer_Lock(void)
 {
     SDL_LockMutex(timer_mutex);

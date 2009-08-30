@@ -65,6 +65,11 @@ int OPL_Queue_IsEmpty(opl_callback_queue_t *queue)
     return queue->num_entries == 0;
 }
 
+void OPL_Queue_Clear(opl_callback_queue_t *queue)
+{
+    queue->num_entries = 0;
+}
+
 void OPL_Queue_Push(opl_callback_queue_t *queue,
                     opl_callback_t callback, void *data,
                     unsigned int time)

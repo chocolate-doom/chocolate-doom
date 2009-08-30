@@ -79,6 +79,10 @@ unsigned int OPL_ReadPort(opl_port_t port);
 
 void OPL_SetCallback(unsigned int ms, opl_callback_t callback, void *data);
 
+// Clear all OPL callbacks that have been set.
+
+void OPL_ClearCallbacks(void);
+
 // Begin critical section, during which, OPL callbacks will not be
 // invoked.
 

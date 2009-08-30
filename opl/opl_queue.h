@@ -32,6 +32,7 @@ typedef struct opl_callback_queue_s opl_callback_queue_t;
 
 opl_callback_queue_t *OPL_Queue_Create(void);
 int OPL_Queue_IsEmpty(opl_callback_queue_t *queue);
+void OPL_Queue_Clear(opl_callback_queue_t *queue);
 void OPL_Queue_Destroy(opl_callback_queue_t *queue);
 void OPL_Queue_Push(opl_callback_queue_t *queue,
                     opl_callback_t callback, void *data,

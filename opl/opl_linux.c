@@ -92,6 +92,7 @@ opl_driver_t opl_linux_driver =
     OPL_Linux_PortRead,
     OPL_Linux_PortWrite,
     OPL_Timer_SetCallback,
+    OPL_Timer_ClearCallbacks,
     OPL_Timer_Lock,
     OPL_Timer_Unlock
 };
