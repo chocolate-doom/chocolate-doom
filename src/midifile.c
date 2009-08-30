@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 #include "doomdef.h"
 #include "doomtype.h"
@@ -61,6 +62,12 @@ typedef struct
     midi_event_t *events;
     int num_events;
 } midi_track_t;
+
+struct midi_track_iter_s
+{
+    midi_track_t *track;
+    unsigned int position;
+};
 
 struct midi_file_s
 {
@@ -624,6 +631,68 @@ midi_file_t *MIDI_LoadFile(char *filename)
     fclose(stream);
 
     return file;
+}
+
+// Get the number of tracks in a MIDI file.
+
+unsigned int MIDI_NumTracks(midi_file_t *file)
+{
+    return file->num_tracks;
+}
+
+// Start iterating over the events in a track.
+
+midi_track_iter_t *MIDI_IterateTrack(midi_file_t *file, unsigned int track)
+{
+    midi_track_iter_t *iter;
+
+    assert(track < file->num_tracks);
+
+    iter = malloc(sizeof(*iter));
+    iter->track = &file->tracks[track];
+    iter->position = 0;
+
+    return iter;
+}
+
+// Get the time until the next MIDI event in a track.
+
+unsigned int MIDI_GetDeltaTime(midi_track_iter_t *iter)
+{
+    if (iter->position < iter->track->num_events)
+    {
+        midi_event_t *next_event;
+
+        next_event = &iter->track->events[iter->position];
+
+        return next_event->delta_time;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+// Get a pointer to the next MIDI event.
+
+int MIDI_GetNextEvent(midi_track_iter_t *iter, midi_event_t **event)
+{
+    if (iter->position < iter->track->num_events)
+    {
+        *event = &iter->track->events[iter->position];
+        ++iter->position;
+
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+unsigned int MIDI_GetFileTimeDivision(midi_file_t *file)
+{
+    return file->header.time_division;
 }
 
 #ifdef TEST

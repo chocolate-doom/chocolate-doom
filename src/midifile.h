@@ -27,6 +27,9 @@
 #define MIDIFILE_H
 
 typedef struct midi_file_s midi_file_t;
+typedef struct midi_track_iter_s midi_track_iter_t;
+
+#define MIDI_CHANNELS_PER_TRACK 16
 
 typedef enum
 {
@@ -129,8 +132,33 @@ typedef struct
     } data;
 } midi_event_t;
 
+// Load a MIDI file.
+
 midi_file_t *MIDI_LoadFile(char *filename);
+
+// Free a MIDI file.
+
 void MIDI_FreeFile(midi_file_t *file);
+
+// Get the time division value from the MIDI header.
+
+unsigned int MIDI_GetFileTimeDivision(midi_file_t *file);
+
+// Get the number of tracks in a MIDI file.
+
+unsigned int MIDI_NumTracks(midi_file_t *file);
+
+// Start iterating over the events in a track.
+
+midi_track_iter_t *MIDI_IterateTrack(midi_file_t *file, unsigned int track_num);
+
+// Get the time until the next MIDI event in a track.
+
+unsigned int MIDI_GetDeltaTime(midi_track_iter_t *iter);
+
+// Get a pointer to the next MIDI event.
+
+int MIDI_GetNextEvent(midi_track_iter_t *iter, midi_event_t **event);
 
 #endif /* #ifndef MIDIFILE_H */
 
