@@ -42,7 +42,7 @@
 #include "opl.h"
 #include "midifile.h"
 
-#define TEST
+//#define TEST
 
 #define MAXMIDLENGTH (96 * 1024)
 #define GENMIDI_NUM_INSTRS  128
@@ -80,6 +80,37 @@ typedef struct
     genmidi_voice_t opl3_voice;
 } PACKEDATTR genmidi_instr_t;
 
+// Data associated with a channel of a track that is currently playing.
+
+typedef struct
+{
+    // The instrument currently used for this track.
+
+    genmidi_instr_t *instrument;
+
+    // Volume level
+
+    int volume;
+} opl_channel_data_t;
+
+// Data associated with a track that is currently playing.
+
+typedef struct
+{
+    // Data for each channel.
+
+    opl_channel_data_t channels[MIDI_CHANNELS_PER_TRACK];
+
+    // Track iterator used to read new events.
+
+    midi_track_iter_t *iter;
+
+    // Tempo control variables
+
+    unsigned int ticks_per_beat;
+    unsigned int us_per_beat;
+} opl_track_data_t;
+
 typedef struct opl_voice_s opl_voice_t;
 
 struct opl_voice_s
@@ -93,6 +124,15 @@ struct opl_voice_s
     // Currently-loaded instrument data
     genmidi_instr_t *current_instr;
 
+    // The channel currently using this voice.
+    opl_channel_data_t *channel;
+
+    // The note that this voice is playing.
+    unsigned int note;
+
+    // The frequency value being used.
+    unsigned int freq;
+
     // Next in freelist
     opl_voice_t *next;
 };
@@ -102,6 +142,22 @@ struct opl_voice_s
 static const int voice_operators[2][OPL_NUM_VOICES] = {
     { 0x00, 0x01, 0x02, 0x08, 0x09, 0x0a, 0x10, 0x11, 0x12 },
     { 0x03, 0x04, 0x05, 0x0b, 0x0c, 0x0d, 0x13, 0x14, 0x15 }
+};
+
+// Frequency values to use for each note.
+
+static const unsigned int note_frequencies[] = {
+
+    // These frequencies are only used for the first seven
+    // MIDI note values:
+
+    0x158, 0x16d, 0x183, 0x19a, 0x1b2, 0x1cc, 0x1e7, 
+
+    // These frequencies are used repeatedly, cycling around
+    // for each octave:
+
+    0x204, 0x223, 0x244, 0x266, 0x28b, 0x2b1,
+    0x2da, 0x306, 0x334, 0x365, 0x398, 0x3cf,
 };
 
 static boolean music_initialised = false;
@@ -118,6 +174,10 @@ static genmidi_instr_t *percussion_instrs;
 
 static opl_voice_t voices[OPL_NUM_VOICES];
 static opl_voice_t *voice_free_list;
+
+// Track data for playing tracks:
+
+static opl_track_data_t *tracks;
 
 // In the initialisation stage, register writes are spaced by reading
 // from the register port (0).  After initialisation, spacing is
@@ -310,6 +370,9 @@ static void ReleaseVoice(opl_voice_t *voice)
 {
     opl_voice_t **rover;
 
+    voice->channel = NULL;
+    voice->note = 0;
+
     // Search to the end of the freelist (This is how Doom behaves!)
 
     rover = &voice_free_list;
@@ -320,6 +383,7 @@ static void ReleaseVoice(opl_voice_t *voice)
     }
 
     *rover = voice;
+    voice->next = NULL;
 }
 
 // Load data to the specified operator
@@ -498,13 +562,273 @@ static void I_OPL_SetMusicVolume(int volume)
     current_music_volume = volume;
 }
 
+static opl_voice_t *FindVoiceForNote(opl_channel_data_t *channel, int note)
+{
+    unsigned int i;
+
+    for (i=0; i<OPL_NUM_VOICES; ++i)
+    {
+        if (voices[i].channel == channel && voices[i].note == note)
+        {
+            return &voices[i];
+        }
+    }
+
+    return NULL;
+}
+
+static void NoteOffEvent(opl_track_data_t *track, midi_event_t *event)
+{
+    opl_voice_t *voice;
+    opl_channel_data_t *channel;
+
+    printf("note off: channel %i, %i, %i\n",
+           event->data.channel.channel,
+           event->data.channel.param1,
+           event->data.channel.param2);
+
+    channel = &track->channels[event->data.channel.channel];
+
+    // Find the voice being used to play the note.
+
+    voice = FindVoiceForNote(channel, event->data.channel.param1);
+
+    if (voice == NULL)
+    {
+        return;
+    }
+
+    // Note off.
+
+    WriteRegister(OPL_REGS_FREQ_2 + voice->index, voice->freq >> 8);
+
+    // Finished with this voice now.
+
+    ReleaseVoice(voice);
+}
+
+// Given a MIDI note number, get the corresponding OPL
+// frequency value to use.
+
+static unsigned int FrequencyForNote(unsigned int note)
+{
+    unsigned int octave;
+    unsigned int key_num;
+
+    // The first seven frequencies in the frequencies array are used
+    // only for the first seven MIDI notes.  After this, the frequency
+    // value loops around the same twelve notes, increasing the
+    // octave.
+
+    if (note < 7)
+    {
+        return note_frequencies[note];
+    }
+    else
+    {
+        octave = (note - 7) / 12;
+        key_num = (note - 7) % 12;
+
+        return note_frequencies[key_num + 7] | (octave << 10);
+    }
+}
+
+static void NoteOnEvent(opl_track_data_t *track, midi_event_t *event)
+{
+    opl_voice_t *voice;
+    opl_channel_data_t *channel;
+
+    printf("note on: channel %i, %i, %i\n",
+           event->data.channel.channel,
+           event->data.channel.param1,
+           event->data.channel.param2);
+
+    // The channel.
+
+    channel = &track->channels[event->data.channel.channel];
+
+    // Find a voice to use for this new note.
+
+    voice = GetFreeVoice();
+
+    if (voice == NULL)
+    {
+        return;
+    }
+
+    // Program the voice with the instrument data:
+
+    SetVoiceInstrument(voice, &channel->instrument->opl2_voice);
+
+    // TODO: Set the volume level.
+
+    WriteRegister(OPL_REGS_LEVEL + voice->op2, 0);
+
+    // Play the note.
+
+    voice->channel = channel;
+    voice->note = event->data.channel.param1;
+
+    // Write the frequency value to turn the note on.
+
+    voice->freq = FrequencyForNote(voice->note);
+
+    WriteRegister(OPL_REGS_FREQ_1 + voice->index, voice->freq & 0xff);
+    WriteRegister(OPL_REGS_FREQ_2 + voice->index, (voice->freq >> 8) | 0x20);
+}
+
+static void ProgramChangeEvent(opl_track_data_t *track, midi_event_t *event)
+{
+    int channel;
+    int instrument;
+
+    // Set the instrument used on this channel.
+
+    channel = event->data.channel.channel;
+    instrument = event->data.channel.param1;
+    track->channels[channel].instrument = &main_instrs[instrument];
+
+    // TODO: Look through existing voices that are turned on on this
+    // channel, and change the instrument.
+}
+
+static void ControllerEvent(opl_track_data_t *track, midi_event_t *event)
+{
+    printf("change controller: channel %i, %i, %i\n",
+           event->data.channel.channel,
+           event->data.channel.param1,
+           event->data.channel.param2);
+
+    // TODO: Volume, pan.
+}
+
+// Process a MIDI event from a track.
+
+static void ProcessEvent(opl_track_data_t *track, midi_event_t *event)
+{
+    switch (event->event_type)
+    {
+        case MIDI_EVENT_NOTE_OFF:
+            NoteOffEvent(track, event);
+            break;
+
+        case MIDI_EVENT_NOTE_ON:
+            NoteOnEvent(track, event);
+            break;
+
+        case MIDI_EVENT_CONTROLLER:
+            ControllerEvent(track, event);
+            break;
+
+        case MIDI_EVENT_PROGRAM_CHANGE:
+            ProgramChangeEvent(track, event);
+            break;
+
+        default:
+            fprintf(stderr, "Unknown MIDI event type %i\n", event->event_type);
+            break;
+    }
+}
+
+static void ScheduleTrack(opl_track_data_t *track);
+
+// Callback function invoked when another event needs to be read from
+// a track.
+
+static void TrackTimerCallback(void *arg)
+{
+    opl_track_data_t *track = arg;
+    midi_event_t *event;
+
+    // Get the next event and process it.
+
+    if (!MIDI_GetNextEvent(track->iter, &event))
+    {
+        return;
+    }
+
+    ProcessEvent(track, event);
+
+    // Reschedule the callback for the next event in the track.
+
+    ScheduleTrack(track);
+}
+
+static void ScheduleTrack(opl_track_data_t *track)
+{
+    unsigned int nticks;
+    unsigned int us;
+    static int total = 0;
+
+    // Get the number of microseconds until the next event.
+
+    nticks = MIDI_GetDeltaTime(track->iter);
+    us = (nticks * track->us_per_beat) / track->ticks_per_beat;
+    total += us;
+
+    // Set a timer to be invoked when the next event is
+    // ready to play.
+
+    OPL_SetCallback(us / 1000, TrackTimerCallback, track);
+}
+
+// Initialise a channel.
+
+static void InitChannel(opl_track_data_t *track, opl_channel_data_t *channel)
+{
+    // TODO: Work out sensible defaults?
+
+    channel->instrument = &main_instrs[0];
+    channel->volume = 127;
+}
+
+// Start a MIDI track playing:
+
+static void StartTrack(midi_file_t *file, unsigned int track_num)
+{
+    opl_track_data_t *track;
+    unsigned int i;
+
+    track = &tracks[track_num];
+    track->iter = MIDI_IterateTrack(file, track_num);
+    track->ticks_per_beat = MIDI_GetFileTimeDivision(file);
+
+    // Default is 120 bpm.
+    // TODO: this is wrong
+
+    track->us_per_beat = 500 * 1000 * 200;
+
+    for (i=0; i<MIDI_CHANNELS_PER_TRACK; ++i)
+    {
+        InitChannel(track, &track->channels[i]);
+    }
+
+    // Schedule the first event.
+
+    ScheduleTrack(track);
+}
+
 // Start playing a mid
 
 static void I_OPL_PlaySong(void *handle, int looping)
 {
-    if (!music_initialised)
+    midi_file_t *file;
+    unsigned int i;
+
+    if (!music_initialised || handle == NULL)
     {
         return;
+    }
+
+    file = handle;
+
+    // Allocate track data.
+
+    tracks = malloc(MIDI_NumTracks(file) * sizeof(opl_track_data_t));
+
+    for (i=0; i<MIDI_NumTracks(file); ++i)
+    {
+        StartTrack(file, i);
     }
 }
 
