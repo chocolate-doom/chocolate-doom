@@ -108,7 +108,7 @@ typedef struct
     // Tempo control variables
 
     unsigned int ticks_per_beat;
-    unsigned int us_per_beat;
+    unsigned int ms_per_beat;
 } opl_track_data_t;
 
 typedef struct opl_voice_s opl_voice_t;
@@ -823,19 +823,19 @@ static void TrackTimerCallback(void *arg)
 static void ScheduleTrack(opl_track_data_t *track)
 {
     unsigned int nticks;
-    unsigned int us;
+    unsigned int ms;
     static int total = 0;
 
-    // Get the number of microseconds until the next event.
+    // Get the number of milliseconds until the next event.
 
     nticks = MIDI_GetDeltaTime(track->iter);
-    us = (nticks * track->us_per_beat) / track->ticks_per_beat;
-    total += us;
+    ms = (nticks * track->ms_per_beat) / track->ticks_per_beat;
+    total += ms;
 
     // Set a timer to be invoked when the next event is
     // ready to play.
 
-    OPL_SetCallback(us / 1000, TrackTimerCallback, track);
+    OPL_SetCallback(ms, TrackTimerCallback, track);
 }
 
 // Initialise a channel.
@@ -862,7 +862,7 @@ static void StartTrack(midi_file_t *file, unsigned int track_num)
     // Default is 120 bpm.
     // TODO: this is wrong
 
-    track->us_per_beat = 500 * 1000 * 260;
+    track->ms_per_beat = 500 * 260;
 
     for (i=0; i<MIDI_CHANNELS_PER_TRACK; ++i)
     {
