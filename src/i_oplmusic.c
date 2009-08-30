@@ -656,8 +656,10 @@ static unsigned int FrequencyForNote(unsigned int note)
 
 static void NoteOnEvent(opl_track_data_t *track, midi_event_t *event)
 {
+    genmidi_instr_t *instrument;
     opl_voice_t *voice;
     opl_channel_data_t *channel;
+    unsigned int note;
 
     printf("note on: channel %i, %i, %i\n",
            event->data.channel.channel,
@@ -667,6 +669,23 @@ static void NoteOnEvent(opl_track_data_t *track, midi_event_t *event)
     // The channel.
 
     channel = &track->channels[event->data.channel.channel];
+    note = event->data.channel.param1;
+
+    // Percussion channel (10) is treated differently to normal notes.
+
+    if (event->data.channel.channel == 9)
+    {
+        if (note < 35 || note > 81)
+        {
+            return;
+        }
+
+        instrument = &percussion_instrs[note - 35];
+    }
+    else
+    {
+        instrument = channel->instrument;
+    }
 
     // Find a voice to use for this new note.
 
@@ -679,19 +698,17 @@ static void NoteOnEvent(opl_track_data_t *track, midi_event_t *event)
 
     // Program the voice with the instrument data:
 
-    SetVoiceInstrument(voice, &channel->instrument->opl2_voice);
+    SetVoiceInstrument(voice, &instrument->opl2_voice);
 
     // TODO: Set the volume level.
 
     WriteRegister(OPL_REGS_LEVEL + voice->op2,
                   volume_mapping_table[channel->volume]);
 
-    printf("volume = %i\n", channel->volume);
-
     // Play the note.
 
     voice->channel = channel;
-    voice->note = event->data.channel.param1;
+    voice->note = note;
 
     // Write the frequency value to turn the note on.
 
@@ -840,7 +857,7 @@ static void StartTrack(midi_file_t *file, unsigned int track_num)
     // Default is 120 bpm.
     // TODO: this is wrong
 
-    track->us_per_beat = 500 * 1000 * 200;
+    track->us_per_beat = 500 * 1000 * 260;
 
     for (i=0; i<MIDI_CHANNELS_PER_TRACK; ++i)
     {
