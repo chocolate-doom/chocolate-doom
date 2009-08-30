@@ -54,6 +54,9 @@ typedef enum
     MIDI_CONTROLLER_FOOT_CONTROL    = 0x3,
     MIDI_CONTROLLER_PORTAMENTO      = 0x4,
     MIDI_CONTROLLER_DATA_ENTRY      = 0x5,
+
+    MIDI_CONTROLLER_MAIN_VOLUME     = 0x7,
+    MIDI_CONTROLLER_PAN             = 0xa
 } midi_controller_t;
 
 typedef enum
