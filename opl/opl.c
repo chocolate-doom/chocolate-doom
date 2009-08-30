@@ -117,6 +117,14 @@ void OPL_SetCallback(unsigned int ms, opl_callback_t callback, void *data)
     }
 }
 
+void OPL_ClearCallbacks(void)
+{
+    if (driver != NULL)
+    {
+        driver->clear_callbacks_func();
+    }
+}
+
 void OPL_Lock(void)
 {
     if (driver != NULL)
