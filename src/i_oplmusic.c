@@ -42,6 +42,8 @@
 #include "opl.h"
 #include "midifile.h"
 
+#define TEST
+
 #define MAXMIDLENGTH (96 * 1024)
 #define GENMIDI_NUM_INSTRS  128
 
@@ -405,6 +407,30 @@ static void I_OPL_ShutdownMusic(void)
     }
 }
 
+#ifdef TEST
+static void TestCallback(void *arg)
+{
+    opl_voice_t *voice = arg;
+    int note;
+    int wait_time;
+
+    // Set level:
+    WriteRegister(OPL_REGS_LEVEL + voice->op2, 0);
+
+    // Note off:
+
+    WriteRegister(OPL_REGS_FREQ_2 + voice->index, 0x00);
+    // Note on:
+
+    note = (rand() % (0x2ae - 0x16b)) + 0x16b;
+    WriteRegister(OPL_REGS_FREQ_1 + voice->index, note & 0xff);
+    WriteRegister(OPL_REGS_FREQ_2 + voice->index, 0x30 + (note >> 8));
+
+    wait_time = (rand() % 700) + 50;
+    OPL_SetCallback(wait_time, TestCallback, arg);
+}
+#endif
+
 // Initialise music subsystem
 
 static boolean I_OPL_InitMusic(void)
@@ -443,17 +469,19 @@ static boolean I_OPL_InitMusic(void)
 
 #ifdef TEST
     {
+        int i;
         opl_voice_t *voice;
+        int instr_num;
 
-        voice = GetFreeVoice();
-        SetVoiceInstrument(voice, &main_instrs[34].opl2_voice);
+        for (i=0; i<3; ++i)
+        {
+            voice = GetFreeVoice();
+            instr_num = rand() % 100;
 
-        // Set level:
-        WriteRegister(OPL_REGS_LEVEL + voice->op2, 0x94);
+            SetVoiceInstrument(voice, &main_instrs[instr_num].opl2_voice);
 
-        // Note on:
-        WriteRegister(OPL_REGS_FREQ_1 + voice->index, 0x65);
-        WriteRegister(OPL_REGS_FREQ_2 + voice->index, 0x2b);
+            OPL_SetCallback(0, TestCallback, voice);
+        }
     }
 #endif
 
