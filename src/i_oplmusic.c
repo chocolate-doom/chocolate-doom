@@ -133,6 +133,12 @@ struct opl_voice_s
     // The frequency value being used.
     unsigned int freq;
 
+    // The volume of the note being played on this channel.
+    unsigned int note_volume;
+
+    // The current volume that has been set for this channel.
+    unsigned int volume;
+
     // Next in freelist
     opl_voice_t *next;
 };
@@ -163,22 +169,22 @@ static const unsigned int note_frequencies[] = {
 // Mapping from MIDI volume level to OPL level value.
 
 static const unsigned int volume_mapping_table[] = {
-    0x3f, 0x3f, 0x3e, 0x3d, 0x3c, 0x3b, 0x3a, 0x3a,
-    0x39, 0x38, 0x37, 0x37, 0x36, 0x35, 0x34, 0x34,
-    0x33, 0x32, 0x32, 0x31, 0x30, 0x2f, 0x2f, 0x2e,
-    0x2d, 0x2d, 0x2c, 0x2b, 0x2a, 0x29, 0x28, 0x27,
-    0x27, 0x26, 0x25, 0x24, 0x23, 0x22, 0x22, 0x21,
-    0x20, 0x20, 0x1f, 0x1e, 0x1e, 0x1d, 0x1c, 0x1c,
-    0x1b, 0x1b, 0x1a, 0x1a, 0x19, 0x18, 0x18, 0x17,
-    0x17, 0x16, 0x16, 0x16, 0x16, 0x15, 0x15, 0x14,
-    0x14, 0x13, 0x13, 0x12, 0x12, 0x12, 0x11, 0x11,
-    0x10, 0x10, 0x10, 0x0f, 0x0f, 0x0f, 0x0e, 0x0e,
-    0x0e, 0x0d, 0x0d, 0x0d, 0x0c, 0x0c, 0x0c, 0x0b,
-    0x0b, 0x0b, 0x0a, 0x0a, 0x0a, 0x09, 0x09, 0x09,
-    0x08, 0x08, 0x08, 0x08, 0x07, 0x07, 0x07, 0x07,
-    0x06, 0x06, 0x06, 0x05, 0x05, 0x05, 0x05, 0x04,
-    0x04, 0x04, 0x04, 0x03, 0x03, 0x03, 0x03, 0x03,
-    0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02,
+    0, 1, 3, 5, 6, 8, 10, 11,
+    13, 14, 16, 17, 19, 20, 22, 23,
+    25, 26, 27, 29, 30, 32, 33, 34,
+    36, 37, 39, 41, 43, 45, 47, 49,
+    50, 52, 54, 55, 57, 59, 60, 61,
+    63, 64, 66, 67, 68, 69, 71, 72,
+    73, 74, 75, 76, 77, 79, 80, 81,
+    82, 83, 84, 84, 85, 86, 87, 88,
+    89, 90, 91, 92, 92, 93, 94, 95,
+    96, 96, 97, 98, 99, 99, 100, 101,
+    101, 102, 103, 103, 104, 105, 105, 106,
+    107, 107, 108, 109, 109, 110, 110, 111,
+    112, 112, 113, 113, 114, 114, 115, 115,
+    116, 117, 117, 118, 118, 119, 119, 120,
+    120, 121, 121, 122, 122, 123, 123, 123,
+    124, 124, 125, 125, 126, 126, 127, 127
 };
 
 static boolean music_initialised = false;
@@ -433,8 +439,13 @@ static void LoadOperatorData(int operator, genmidi_op_t *data,
 
 // Set the instrument for a particular voice.
 
-static void SetVoiceInstrument(opl_voice_t *voice, genmidi_voice_t *data)
+static void SetVoiceInstrument(opl_voice_t *voice, genmidi_instr_t *instr)
 {
+    genmidi_voice_t *data;
+
+    voice->current_instr = instr;
+    data = &instr->opl2_voice;
+
     // Doom loads the second operator first, then the first.
 
     LoadOperatorData(voice->op2, &data->carrier, true);
@@ -446,6 +457,42 @@ static void SetVoiceInstrument(opl_voice_t *voice, genmidi_voice_t *data)
 
     WriteRegister(OPL_REGS_FEEDBACK + voice->index,
                   data->feedback | 0x30);
+
+    // Hack to force a volume update.
+
+    voice->volume = 999;
+}
+
+static void SetVoiceVolume(opl_voice_t *voice, unsigned int volume)
+{
+    unsigned int full_volume;
+    unsigned int instr_volume;
+    unsigned int reg_volume;
+
+    voice->note_volume = volume;
+
+    // Multiply note volume and channel volume to get the actual volume.
+
+    full_volume = (voice->note_volume * voice->channel->volume) / 127;
+
+    // The volume of each instrument can be controlled via GENMIDI:
+
+    instr_volume = 0x3f - voice->current_instr->opl2_voice.carrier.level;
+
+    // The volume value to use in the register:
+
+    reg_volume = ((instr_volume * volume_mapping_table[full_volume]) / 128);
+    reg_volume = (0x3f - reg_volume)
+               | voice->current_instr->opl2_voice.carrier.scale;
+
+    // Update the register, if necessary:
+
+    if (voice->volume != reg_volume)
+    {
+        voice->volume = reg_volume;
+
+        WriteRegister(OPL_REGS_LEVEL + voice->op2, reg_volume);
+    }
 }
 
 // Initialise the voice table and freelist
@@ -698,6 +745,7 @@ static void NoteOnEvent(opl_track_data_t *track, midi_event_t *event)
 
     if (voice == NULL)
     {
+        printf("\tno free voice\n");
         return;
     }
 
@@ -706,12 +754,11 @@ static void NoteOnEvent(opl_track_data_t *track, midi_event_t *event)
 
     // Program the voice with the instrument data:
 
-    SetVoiceInstrument(voice, &instrument->opl2_voice);
+    SetVoiceInstrument(voice, instrument);
 
-    // TODO: Set the volume level.
+    // Set the volume level.
 
-    WriteRegister(OPL_REGS_LEVEL + voice->op2,
-                  volume_mapping_table[volume]);
+    SetVoiceVolume(voice, volume);
 
     // Fixed pitch?
 
@@ -743,6 +790,23 @@ static void ProgramChangeEvent(opl_track_data_t *track, midi_event_t *event)
     // channel, and change the instrument.
 }
 
+static void SetChannelVolume(opl_channel_data_t *channel, unsigned int volume)
+{
+    unsigned int i;
+
+    channel->volume = volume;
+
+    // Update all voices that this channel is using.
+
+    for (i=0; i<OPL_NUM_VOICES; ++i)
+    {
+        if (voices[i].channel == channel)
+        {
+            SetVoiceVolume(&voices[i], voices[i].note_volume);
+        }
+    }
+}
+
 static void ControllerEvent(opl_track_data_t *track, midi_event_t *event)
 {
     unsigned int controller;
@@ -761,7 +825,7 @@ static void ControllerEvent(opl_track_data_t *track, midi_event_t *event)
     switch (controller)
     {
         case MIDI_CONTROLLER_MAIN_VOLUME:
-            channel->volume = param;
+            SetChannelVolume(channel, param);
             break;
 
         case MIDI_CONTROLLER_PAN:
