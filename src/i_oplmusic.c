@@ -137,7 +137,8 @@ struct opl_voice_s
     unsigned int note_volume;
 
     // The current volume that has been set for this channel.
-    unsigned int volume;
+    unsigned int carrier_volume;
+    unsigned int modulator_volume;
 
     // Next in freelist
     opl_voice_t *next;
@@ -442,14 +443,22 @@ static void LoadOperatorData(int operator, genmidi_op_t *data,
 static void SetVoiceInstrument(opl_voice_t *voice, genmidi_instr_t *instr)
 {
     genmidi_voice_t *data;
+    unsigned int modulating;
 
     voice->current_instr = instr;
     data = &instr->opl2_voice;
 
+    // Are we usind modulated feedback mode?
+
+    modulating = (data->feedback & 0x01) == 0;
+
     // Doom loads the second operator first, then the first.
+    // The carrier is set to minimum volume until the voice volume
+    // is set in SetVoiceVolume (below).  If we are not using
+    // modulating mode, we must set both to minimum volume.
 
     LoadOperatorData(voice->op2, &data->carrier, true);
-    LoadOperatorData(voice->op1, &data->modulator, false);
+    LoadOperatorData(voice->op1, &data->modulator, !modulating);
 
     // Set feedback register that control the connection between the
     // two operators.  Turn on bits in the upper nybble; I think this
@@ -460,38 +469,61 @@ static void SetVoiceInstrument(opl_voice_t *voice, genmidi_instr_t *instr)
 
     // Hack to force a volume update.
 
-    voice->volume = 999;
+    voice->carrier_volume = 999;
+    voice->modulator_volume = 999;
+}
+
+// Calculate the volume level to use for a given operator.
+
+static void SetOperatorVolume(genmidi_op_t *op, unsigned int volume,
+                              unsigned int opnum,
+                              unsigned int *current_volume)
+{
+    unsigned int op_volume;
+    unsigned int reg_volume;
+
+    // The volume of each instrument can be controlled via GENMIDI:
+
+    op_volume = 0x3f - op->level;
+
+    // The volume value to use in the register:
+
+    reg_volume = ((op_volume * volume_mapping_table[volume]) / 128);
+    reg_volume = (0x3f - reg_volume) | op->scale;
+
+    // Update the register, if necessary:
+
+    if (*current_volume != reg_volume)
+    {
+        *current_volume = reg_volume;
+
+        WriteRegister(OPL_REGS_LEVEL + opnum, reg_volume);
+    }
 }
 
 static void SetVoiceVolume(opl_voice_t *voice, unsigned int volume)
 {
+    genmidi_voice_t *opl_voice;
     unsigned int full_volume;
-    unsigned int instr_volume;
-    unsigned int reg_volume;
 
     voice->note_volume = volume;
+
+    opl_voice = &voice->current_instr->opl2_voice;
 
     // Multiply note volume and channel volume to get the actual volume.
 
     full_volume = (voice->note_volume * voice->channel->volume) / 127;
 
-    // The volume of each instrument can be controlled via GENMIDI:
+    SetOperatorVolume(&opl_voice->carrier, full_volume,
+                      voice->op2, &voice->carrier_volume);
 
-    instr_volume = 0x3f - voice->current_instr->opl2_voice.carrier.level;
+    // If we are using non-modulated feedback mode, we must set the
+    // volume for both voices.
 
-    // The volume value to use in the register:
-
-    reg_volume = ((instr_volume * volume_mapping_table[full_volume]) / 128);
-    reg_volume = (0x3f - reg_volume)
-               | voice->current_instr->opl2_voice.carrier.scale;
-
-    // Update the register, if necessary:
-
-    if (voice->volume != reg_volume)
+    if ((opl_voice->feedback & 0x01) != 0)
     {
-        voice->volume = reg_volume;
-
-        WriteRegister(OPL_REGS_LEVEL + voice->op2, reg_volume);
+        SetOperatorVolume(&opl_voice->modulator, full_volume,
+                          voice->op1, &voice->modulator_volume);
     }
 }
 
