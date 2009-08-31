@@ -445,6 +445,13 @@ static void SetVoiceInstrument(opl_voice_t *voice, genmidi_instr_t *instr)
     genmidi_voice_t *data;
     unsigned int modulating;
 
+    // Instrument already set for this channel?
+
+    if (voice->current_instr == instr)
+    {
+        return;
+    }
+
     voice->current_instr = instr;
     data = &instr->opl2_voice;
 
