@@ -495,7 +495,7 @@ static void SetOperatorVolume(genmidi_op_t *op, unsigned int volume,
 
     // The volume value to use in the register:
 
-    reg_volume = ((op_volume * volume_mapping_table[volume]) / 128);
+    reg_volume = (op_volume * volume) / 128;
     reg_volume = (0x3f - reg_volume) | op->scale;
 
     // Update the register, if necessary:
@@ -519,7 +519,8 @@ static void SetVoiceVolume(opl_voice_t *voice, unsigned int volume)
 
     // Multiply note volume and channel volume to get the actual volume.
 
-    full_volume = (voice->note_volume * voice->channel->volume) / 127;
+    full_volume = (volume_mapping_table[voice->note_volume]
+                   * volume_mapping_table[voice->channel->volume]) / 127;
 
     SetOperatorVolume(&opl_voice->carrier, full_volume,
                       voice->op2, &voice->carrier_volume);
