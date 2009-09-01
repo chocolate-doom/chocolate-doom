@@ -655,6 +655,11 @@ midi_track_iter_t *MIDI_IterateTrack(midi_file_t *file, unsigned int track)
     return iter;
 }
 
+void MIDI_FreeIterator(midi_track_iter_t *iter)
+{
+    free(iter);
+}
+
 // Get the time until the next MIDI event in a track.
 
 unsigned int MIDI_GetDeltaTime(midi_track_iter_t *iter)
@@ -693,6 +698,11 @@ int MIDI_GetNextEvent(midi_track_iter_t *iter, midi_event_t **event)
 unsigned int MIDI_GetFileTimeDivision(midi_file_t *file)
 {
     return file->header.time_division;
+}
+
+void MIDI_RestartIterator(midi_track_iter_t *iter)
+{
+    iter->position = 0;
 }
 
 #ifdef TEST

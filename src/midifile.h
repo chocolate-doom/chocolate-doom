@@ -155,6 +155,10 @@ unsigned int MIDI_NumTracks(midi_file_t *file);
 
 midi_track_iter_t *MIDI_IterateTrack(midi_file_t *file, unsigned int track_num);
 
+// Free an iterator.
+
+void MIDI_FreeIterator(midi_track_iter_t *iter);
+
 // Get the time until the next MIDI event in a track.
 
 unsigned int MIDI_GetDeltaTime(midi_track_iter_t *iter);
@@ -162,6 +166,10 @@ unsigned int MIDI_GetDeltaTime(midi_track_iter_t *iter);
 // Get a pointer to the next MIDI event.
 
 int MIDI_GetNextEvent(midi_track_iter_t *iter, midi_event_t **event);
+
+// Reset an iterator to the beginning of a track.
+
+void MIDI_RestartIterator(midi_track_iter_t *iter);
 
 #endif /* #ifndef MIDIFILE_H */
 
