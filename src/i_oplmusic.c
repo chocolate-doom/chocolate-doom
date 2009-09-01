@@ -206,6 +206,9 @@ static opl_voice_t *voice_free_list;
 // Track data for playing tracks:
 
 static opl_track_data_t *tracks;
+static unsigned int num_tracks;
+static unsigned int running_tracks = 0;
+static boolean song_looping;
 
 // In the initialisation stage, register writes are spaced by reading
 // from the register port (0).  After initialisation, spacing is
@@ -868,11 +871,40 @@ static void ControllerEvent(opl_track_data_t *track, midi_event_t *event)
             SetChannelVolume(channel, param);
             break;
 
-        case MIDI_CONTROLLER_PAN:
+        default:
+            fprintf(stderr, "Unknown MIDI controller type: %i\n", controller);
+            break;
+    }
+}
+
+// Process a meta event.
+
+static void MetaEvent(opl_track_data_t *track, midi_event_t *event)
+{
+    switch (event->data.meta.type)
+    {
+        // Things we can just ignore.
+
+        case MIDI_META_SEQUENCE_NUMBER:
+        case MIDI_META_TEXT:
+        case MIDI_META_COPYRIGHT:
+        case MIDI_META_TRACK_NAME:
+        case MIDI_META_INSTR_NAME:
+        case MIDI_META_LYRICS:
+        case MIDI_META_MARKER:
+        case MIDI_META_CUE_POINT:
+        case MIDI_META_SEQUENCER_SPECIFIC:
+            break;
+
+        // End of track - actually handled when we run out of events
+        // in the track, see below.
+
+        case MIDI_META_END_OF_TRACK:
             break;
 
         default:
-            fprintf(stderr, "Unknown MIDI controller type: %i\n", controller);
+            fprintf(stderr, "Unknown MIDI meta event type: %i\n",
+                            event->data.meta.type);
             break;
     }
 }
@@ -899,6 +931,16 @@ static void ProcessEvent(opl_track_data_t *track, midi_event_t *event)
             ProgramChangeEvent(track, event);
             break;
 
+        case MIDI_EVENT_META:
+            MetaEvent(track, event);
+            break;
+
+        // SysEx events can be ignored.
+
+        case MIDI_EVENT_SYSEX:
+        case MIDI_EVENT_SYSEX_SPLIT:
+            break;
+
         default:
             fprintf(stderr, "Unknown MIDI event type %i\n", event->event_type);
             break;
@@ -906,6 +948,21 @@ static void ProcessEvent(opl_track_data_t *track, midi_event_t *event)
 }
 
 static void ScheduleTrack(opl_track_data_t *track);
+
+// Restart a song from the beginning.
+
+static void RestartSong(void)
+{
+    unsigned int i;
+
+    running_tracks = num_tracks;
+
+    for (i=0; i<num_tracks; ++i)
+    {
+        MIDI_RestartIterator(tracks[i].iter);
+        ScheduleTrack(&tracks[i]);
+    }
+}
 
 // Callback function invoked when another event needs to be read from
 // a track.
@@ -923,6 +980,23 @@ static void TrackTimerCallback(void *arg)
     }
 
     ProcessEvent(track, event);
+
+    // End of track?
+
+    if (event->event_type == MIDI_EVENT_META
+     && event->data.meta.type == MIDI_META_END_OF_TRACK)
+    {
+        --running_tracks;
+
+        // When all tracks have finished, restart the song.
+
+        if (running_tracks <= 0 && song_looping)
+        {
+            RestartSong();
+        }
+
+        return;
+    }
 
     // Reschedule the callback for the next event in the track.
 
@@ -1001,7 +1075,11 @@ static void I_OPL_PlaySong(void *handle, int looping)
 
     tracks = malloc(MIDI_NumTracks(file) * sizeof(opl_track_data_t));
 
-    for (i=0; i<MIDI_NumTracks(file); ++i)
+    num_tracks = MIDI_NumTracks(file);
+    running_tracks = num_tracks;
+    song_looping = looping;
+
+    for (i=0; i<num_tracks; ++i)
     {
         StartTrack(file, i);
     }
@@ -1046,6 +1124,15 @@ static void I_OPL_StopSong(void)
             ReleaseVoice(&voices[i]);
         }
     }
+
+    // Free all track data.
+
+    for (i=0; i<num_tracks; ++i)
+    {
+        MIDI_FreeIterator(tracks[i].iter);
+    }
+
+    free(tracks);
 }
 
 static void I_OPL_UnRegisterSong(void *handle)
