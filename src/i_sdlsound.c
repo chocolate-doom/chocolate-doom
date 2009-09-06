@@ -275,12 +275,15 @@ static boolean LoadSoundLump(int sound,
 			     uint32_t *length,
 			     byte **data_ref)
 {
+    int lumplen;
+    byte *data;
+
     // Load the sound
 
     *lumpnum    = S_sfx[sound].lumpnum;
     *data_ref   = W_CacheLumpNum(*lumpnum, PU_STATIC);
-    int lumplen = W_LumpLength(*lumpnum);
-    byte *data  = *data_ref;
+    lumplen = W_LumpLength(*lumpnum);
+    data  = *data_ref;
 
     // Ensure this is a valid sound
 
