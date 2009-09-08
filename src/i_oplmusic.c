@@ -49,7 +49,7 @@
 
 #define GENMIDI_HEADER          "#OPL_II#"
 #define GENMIDI_FLAG_FIXED      0x0001         /* fixed pitch */
-#define GENMIDI_FLAG_2VOICE     0x0002         /* double voice (OPL3) */
+#define GENMIDI_FLAG_2VOICE     0x0004         /* double voice (OPL3) */
 
 typedef struct
 {
@@ -76,8 +76,7 @@ typedef struct
     byte fine_tuning;
     byte fixed_note;
 
-    genmidi_voice_t opl2_voice;
-    genmidi_voice_t opl3_voice;
+    genmidi_voice_t voices[2];
 } PACKEDATTR genmidi_instr_t;
 
 // Data associated with a channel of a track that is currently playing.
@@ -128,6 +127,11 @@ struct opl_voice_s
 
     // Currently-loaded instrument data
     genmidi_instr_t *current_instr;
+
+    // The voice number in the instrument to use.
+    // This is normally set to zero; if this is a double voice
+    // instrument, it may be one.
+    unsigned int current_instr_voice;
 
     // The channel currently using this voice.
     opl_channel_data_t *channel;
@@ -555,20 +559,25 @@ static void LoadOperatorData(int operator, genmidi_op_t *data,
 
 // Set the instrument for a particular voice.
 
-static void SetVoiceInstrument(opl_voice_t *voice, genmidi_instr_t *instr)
+static void SetVoiceInstrument(opl_voice_t *voice,
+                               genmidi_instr_t *instr,
+                               unsigned int instr_voice)
 {
     genmidi_voice_t *data;
     unsigned int modulating;
 
     // Instrument already set for this channel?
 
-    if (voice->current_instr == instr)
+    if (voice->current_instr == instr
+     && voice->current_instr_voice == instr_voice)
     {
         return;
     }
 
     voice->current_instr = instr;
-    data = &instr->opl2_voice;
+    voice->current_instr_voice = instr_voice;
+
+    data = &instr->voices[instr_voice];
 
     // Are we usind modulated feedback mode?
 
@@ -630,7 +639,7 @@ static void SetVoiceVolume(opl_voice_t *voice, unsigned int volume)
 
     voice->note_volume = volume;
 
-    opl_voice = &voice->current_instr->opl2_voice;
+    opl_voice = &voice->current_instr->voices[voice->current_instr_voice];
 
     // Multiply note volume and channel volume to get the actual volume.
 
@@ -765,7 +774,7 @@ static boolean I_OPL_InitMusic(void)
             voice = GetFreeVoice();
             instr_num = rand() % 100;
 
-            SetVoiceInstrument(voice, &main_instrs[instr_num].opl2_voice);
+            SetVoiceInstrument(voice, &main_instrs[instr_num], 0);
 
             OPL_SetCallback(0, TestCallback, voice);
         }
@@ -785,32 +794,18 @@ static void I_OPL_SetMusicVolume(int volume)
     current_music_volume = volume;
 }
 
-static opl_voice_t *FindVoiceForKey(opl_channel_data_t *channel, int key)
-{
-    unsigned int i;
-
-    for (i=0; i<OPL_NUM_VOICES; ++i)
-    {
-        if (voices[i].channel == channel && voices[i].key == key)
-        {
-            return &voices[i];
-        }
-    }
-
-    return NULL;
-}
-
-static void VoiceNoteOff(opl_voice_t *voice)
+static void VoiceKeyOff(opl_voice_t *voice)
 {
     WriteRegister(OPL_REGS_FREQ_2 + voice->index, voice->freq >> 8);
 }
 
 // Get the frequency that we should be using for a voice.
 
-static void NoteOffEvent(opl_track_data_t *track, midi_event_t *event)
+static void KeyOffEvent(opl_track_data_t *track, midi_event_t *event)
 {
-    opl_voice_t *voice;
     opl_channel_data_t *channel;
+    unsigned int key;
+    unsigned int i;
 
     printf("note off: channel %i, %i, %i\n",
            event->data.channel.channel,
@@ -818,21 +813,22 @@ static void NoteOffEvent(opl_track_data_t *track, midi_event_t *event)
            event->data.channel.param2);
 
     channel = &track->channels[event->data.channel.channel];
+    key = event->data.channel.param1;
 
-    // Find the voice being used to play the note.
+    // Turn off voices being used to play this key.
+    // If it is a double voice instrument there will be two.
 
-    voice = FindVoiceForKey(channel, event->data.channel.param1);
-
-    if (voice == NULL)
+    for (i=0; i<OPL_NUM_VOICES; ++i)
     {
-        return;
+        if (voices[i].channel == channel && voices[i].key == key)
+        {
+            VoiceKeyOff(&voices[i]);
+
+            // Finished with this voice now.
+
+            ReleaseVoice(&voices[i]);
+        }
     }
-
-    VoiceNoteOff(voice);
-
-    // Finished with this voice now.
-
-    ReleaseVoice(voice);
 }
 
 static unsigned int FrequencyForVoice(opl_voice_t *voice)
@@ -879,10 +875,60 @@ static void UpdateVoiceFrequency(opl_voice_t *voice)
     }
 }
 
-static void NoteOnEvent(opl_track_data_t *track, midi_event_t *event)
+// Program a single voice for an instrument.  For a double voice 
+// instrument (GENMIDI_FLAG_2VOICE), this is called twice for each
+// key on event.
+
+static void VoiceKeyOn(opl_channel_data_t *channel,
+                       genmidi_instr_t *instrument,
+                       unsigned int instrument_voice,
+                       unsigned int key,
+                       unsigned int volume)
+{
+    opl_voice_t *voice;
+
+    // Find a voice to use for this new note.
+
+    voice = GetFreeVoice();
+
+    if (voice == NULL)
+    {
+        printf("\tno free voice for voice %i of instrument\n", instrument_voice);
+        return;
+    }
+
+    voice->channel = channel;
+    voice->key = key;
+
+    // Work out the note to use.  This is normally the same as
+    // the key, unless it is a fixed pitch instrument.
+
+    if ((instrument->flags & GENMIDI_FLAG_FIXED) != 0)
+    {
+        voice->note = instrument->fixed_note;
+    }
+    else
+    {
+        voice->note = key;
+    }
+
+    // Program the voice with the instrument data:
+
+    SetVoiceInstrument(voice, instrument, 0);
+
+    // Set the volume level.
+
+    SetVoiceVolume(voice, volume);
+
+    // Write the frequency value to turn the note on.
+
+    voice->freq = 0;
+    UpdateVoiceFrequency(voice);
+}
+
+static void KeyOnEvent(opl_track_data_t *track, midi_event_t *event)
 {
     genmidi_instr_t *instrument;
-    opl_voice_t *voice;
     opl_channel_data_t *channel;
     unsigned int key;
     unsigned int volume;
@@ -914,43 +960,15 @@ static void NoteOnEvent(opl_track_data_t *track, midi_event_t *event)
         instrument = channel->instrument;
     }
 
-    // Find a voice to use for this new note.
+    // Find and program a voice for this instrument.  If this
+    // is a double voice instrument, we must do this twice.
 
-    voice = GetFreeVoice();
+    VoiceKeyOn(channel, instrument, 0, key, volume);
 
-    if (voice == NULL)
+    if ((instrument->flags & GENMIDI_FLAG_2VOICE) != 0)
     {
-        printf("\tno free voice\n");
-        return;
+        VoiceKeyOn(channel, instrument, 1, key, volume);
     }
-
-    voice->channel = channel;
-    voice->key = key;
-
-    // Work out the note to use.  This is normally the same as
-    // the key, unless it is a fixed pitch instrument.
-
-    if ((instrument->flags & GENMIDI_FLAG_FIXED) != 0)
-    {
-        voice->note = instrument->fixed_note;
-    }
-    else
-    {
-        voice->note = key;
-    }
-
-    // Program the voice with the instrument data:
-
-    SetVoiceInstrument(voice, instrument);
-
-    // Set the volume level.
-
-    SetVoiceVolume(voice, volume);
-
-    // Write the frequency value to turn the note on.
-
-    voice->freq = 0;
-    UpdateVoiceFrequency(voice);
 }
 
 static void ProgramChangeEvent(opl_track_data_t *track, midi_event_t *event)
@@ -1075,11 +1093,11 @@ static void ProcessEvent(opl_track_data_t *track, midi_event_t *event)
     switch (event->event_type)
     {
         case MIDI_EVENT_NOTE_OFF:
-            NoteOffEvent(track, event);
+            KeyOffEvent(track, event);
             break;
 
         case MIDI_EVENT_NOTE_ON:
-            NoteOnEvent(track, event);
+            KeyOnEvent(track, event);
             break;
 
         case MIDI_EVENT_CONTROLLER:
@@ -1284,7 +1302,7 @@ static void I_OPL_StopSong(void)
     {
         if (voices[i].channel != NULL)
         {
-            VoiceNoteOff(&voices[i]);
+            VoiceKeyOff(&voices[i]);
             ReleaseVoice(&voices[i]);
         }
     }
