@@ -914,7 +914,7 @@ static void VoiceKeyOn(opl_channel_data_t *channel,
 
     // Program the voice with the instrument data:
 
-    SetVoiceInstrument(voice, instrument, 0);
+    SetVoiceInstrument(voice, instrument, instrument_voice);
 
     // Set the volume level.
 
