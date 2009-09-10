@@ -47,7 +47,7 @@ static void LockCPUAffinity(void)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-typedef BOOL WINAPI (*SetAffinityFunc)(HANDLE hProcess, DWORD_PTR mask);
+typedef BOOL (WINAPI *SetAffinityFunc)(HANDLE hProcess, DWORD mask);
 
 // This is a bit more complicated than it really needs to be.  We really
 // just need to call the SetProcessAffinityMask function, but that
@@ -74,7 +74,7 @@ static void LockCPUAffinity(void)
 
     // Find the SetProcessAffinityMask function.
 
-    SetAffinity = GetProcAddress(kernel32_dll, "SetProcessAffinityMask");
+    SetAffinity = (SetAffinityFunc)GetProcAddress(kernel32_dll, "SetProcessAffinityMask");
 
     // If the function was not found, we are on an old (Win9x) system
     // that doesn't have this function.  That's no problem, because
