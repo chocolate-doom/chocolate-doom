@@ -50,6 +50,9 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+#define LOADING_DISK_W 16
+#define LOADING_DISK_H 16
+
 // Non aspect ratio-corrected modes (direct multiples of 320x200)
 
 static screen_mode_t *screen_modes[] = {
@@ -145,7 +148,6 @@ boolean screenvisible;
 // restored by EndRead
 
 static byte *disk_image = NULL;
-static int disk_image_w, disk_image_h;
 static byte *saved_background;
 static boolean window_focused;
 
@@ -258,6 +260,8 @@ static void LoadDiskImage(void)
     patch_t *disk;
     char *disk_name;
     int y;
+    int xoffset = SCREENWIDTH - LOADING_DISK_W;
+    int yoffset = SCREENHEIGHT - LOADING_DISK_H;
     char buf[20];
 
     SDL_VideoDriverName(buf, 15);
@@ -278,19 +282,20 @@ static void LoadDiskImage(void)
 
     disk = W_CacheLumpName(disk_name, PU_STATIC);
 
-    V_DrawPatch(0, 0, 0, disk);
-    disk_image_w = SHORT(disk->width);
-    disk_image_h = SHORT(disk->height);
+    // Draw the disk to the screen:
 
-    disk_image = Z_Malloc(disk_image_w * disk_image_h, PU_STATIC, NULL);
-    saved_background = Z_Malloc(disk_image_w * disk_image_h, PU_STATIC, NULL);
+    V_DrawPatch(SCREENWIDTH - LOADING_DISK_W,
+                SCREENHEIGHT - LOADING_DISK_H,
+                0, disk);
 
-    for (y=0; y<disk_image_h; ++y) 
+    disk_image = Z_Malloc(LOADING_DISK_W * LOADING_DISK_H, PU_STATIC, NULL);
+    saved_background = Z_Malloc(LOADING_DISK_W * LOADING_DISK_H, PU_STATIC, NULL);
+
+    for (y=0; y<LOADING_DISK_H; ++y) 
     {
-        memcpy(disk_image + disk_image_w * y,
-               screens[0] + SCREENWIDTH * y,
-               disk_image_w);
-        memset(screens[0] + SCREENWIDTH * y, 0, disk_image_w);
+        memcpy(disk_image + LOADING_DISK_W * y,
+               screens[0] + SCREENWIDTH * (y + yoffset) + xoffset,
+               LOADING_DISK_W);
     }
 
     W_ReleaseLumpName(disk_name);
@@ -731,6 +736,9 @@ static void UpdateRect(int x1, int y1, int x2, int y2)
 
 void I_BeginRead(void)
 {
+    byte *screenloc = screens[0]
+                    + (SCREENHEIGHT - LOADING_DISK_H) * SCREENWIDTH
+                    + (SCREENWIDTH - LOADING_DISK_W);
     int y;
 
     if (!initialised || disk_image == NULL)
@@ -738,25 +746,27 @@ void I_BeginRead(void)
 
     // save background and copy the disk image in
 
-    for (y=0; y<disk_image_h; ++y)
+    for (y=0; y<LOADING_DISK_H; ++y)
     {
-        byte *screenloc = 
-               screens[0] 
-                 + (SCREENHEIGHT - 1 - disk_image_h + y) * SCREENWIDTH
-                 + (SCREENWIDTH - 1 - disk_image_w);
-
-        memcpy(saved_background + y * disk_image_w,
+        memcpy(saved_background + y * LOADING_DISK_W,
                screenloc,
-               disk_image_w);
-        memcpy(screenloc, disk_image + y * disk_image_w, disk_image_w);
+               LOADING_DISK_W);
+        memcpy(screenloc,
+               disk_image + y * LOADING_DISK_W,
+               LOADING_DISK_W);
+
+        screenloc += SCREENWIDTH;
     }
 
-    UpdateRect(SCREENWIDTH - disk_image_w, SCREENHEIGHT - disk_image_h,
+    UpdateRect(SCREENWIDTH - LOADING_DISK_W, SCREENHEIGHT - LOADING_DISK_H,
                SCREENWIDTH, SCREENHEIGHT);
 }
 
 void I_EndRead(void)
 {
+    byte *screenloc = screens[0]
+                    + (SCREENHEIGHT - LOADING_DISK_H) * SCREENWIDTH
+                    + (SCREENWIDTH - LOADING_DISK_W);
     int y;
 
     if (!initialised || disk_image == NULL)
@@ -764,17 +774,16 @@ void I_EndRead(void)
 
     // save background and copy the disk image in
 
-    for (y=0; y<disk_image_h; ++y)
+    for (y=0; y<LOADING_DISK_H; ++y)
     {
-        byte *screenloc = 
-               screens[0] 
-                 + (SCREENHEIGHT - 1 - disk_image_h + y) * SCREENWIDTH
-                 + (SCREENWIDTH - 1 - disk_image_w);
+        memcpy(screenloc,
+               saved_background + y * LOADING_DISK_W,
+               LOADING_DISK_W);
 
-        memcpy(screenloc, saved_background + y * disk_image_w, disk_image_w);
+        screenloc += SCREENWIDTH;
     }
 
-    UpdateRect(SCREENWIDTH - disk_image_w, SCREENHEIGHT - disk_image_h,
+    UpdateRect(SCREENWIDTH - LOADING_DISK_W, SCREENHEIGHT - LOADING_DISK_H,
                SCREENWIDTH, SCREENHEIGHT);
 }
 
