@@ -839,6 +839,14 @@ static unsigned int FrequencyForVoice(opl_voice_t *voice)
 
     freq_index = 64 + 32 * voice->note + voice->channel->bend;
 
+    // If this is the second voice of a double voice instrument, the
+    // frequency index can be adjusted by the fine tuning field.
+
+    if (voice->current_instr_voice != 0)
+    {
+        freq_index += (voice->current_instr->fine_tuning / 2) - 64;
+    }
+
     // The first 7 notes use the start of the table, while
     // consecutive notes loop around the latter part.
 
