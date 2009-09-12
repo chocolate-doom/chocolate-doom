@@ -521,7 +521,7 @@ void D_DoAdvanceDemo (void)
 	if ( gamemode == commercial )
 	  S_StartMusic(mus_dm2ttl);
 	else
-	  S_StartMusic (mus_intro);
+	  S_StartMusic (mus_introa);
 	break;
       case 1:
 	G_DeferedPlayDemo(DEH_String("demo1"));

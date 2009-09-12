@@ -1513,7 +1513,7 @@ static void *I_OPL_RegisterSong(void *data, int len)
 
     // remove file now
 
-    remove(filename);
+//    remove(filename);
 
     Z_Free(filename);
 
