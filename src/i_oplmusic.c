@@ -154,7 +154,8 @@ struct opl_voice_s
     unsigned int carrier_volume;
     unsigned int modulator_volume;
 
-    // Next in freelist
+    // Next in linked list; a voice is always either in the
+    // free list or the allocated list.
     opl_voice_t *next;
 };
 
@@ -318,6 +319,7 @@ static genmidi_instr_t *percussion_instrs;
 
 static opl_voice_t voices[OPL_NUM_VOICES];
 static opl_voice_t *voice_free_list;
+static opl_voice_t *voice_alloced_list;
 
 // Track data for playing tracks:
 
@@ -505,10 +507,40 @@ static opl_voice_t *GetFreeVoice(void)
         return NULL;
     }
 
+    // Remove from free list
+
     result = voice_free_list;
     voice_free_list = voice_free_list->next;
 
+    // Add to allocated list
+
+    result->next = voice_alloced_list;
+    voice_alloced_list = result;
+
     return result;
+}
+
+// Remove a voice from the allocated voices list.
+
+static void RemoveVoiceFromAllocedList(opl_voice_t *voice)
+{
+    opl_voice_t **rover;
+
+    rover = &voice_alloced_list;
+
+    // Search the list until we find the voice, then remove it.
+
+    while (*rover != NULL)
+    {
+        if (*rover == voice)
+        {
+            *rover = voice->next;
+            voice->next = NULL;
+            break;
+        }
+
+        rover = &(*rover)->next;
+    }
 }
 
 // Release a voice back to the freelist.
@@ -519,6 +551,10 @@ static void ReleaseVoice(opl_voice_t *voice)
 
     voice->channel = NULL;
     voice->note = 0;
+
+    // Remove from alloced list.
+
+    RemoveVoiceFromAllocedList(voice);
 
     // Search to the end of the freelist (This is how Doom behaves!)
 
@@ -831,6 +867,66 @@ static void KeyOffEvent(opl_track_data_t *track, midi_event_t *event)
     }
 }
 
+// When all voices are in use, we must discard an existing voice to
+// play a new note.  Find and free an existing voice.  The channel
+// passed to the function is the channel for the new note to be
+// played.
+
+static opl_voice_t *ReplaceExistingVoice(opl_channel_data_t *channel)
+{
+    opl_voice_t *rover;
+    opl_voice_t *result;
+
+    // Check the allocated voices, if we find an instrument that is
+    // of a lower priority to the new instrument, discard it.
+    // Priority is determined by MIDI instrument number; old
+
+    result = NULL;
+
+    for (rover = voice_alloced_list; rover != NULL; rover = rover->next)
+    {
+        if (rover->current_instr > channel->instrument)
+        {
+            result = rover;
+            break;
+        }
+    }
+
+    // If we didn't find a voice, find an existing voice being used to
+    // play a note on the same channel, and use that.
+
+    if (result == NULL)
+    {
+        for (rover = voice_alloced_list; rover != NULL; rover = rover->next)
+        {
+            if (rover->channel == channel)
+            {
+                result = rover;
+                break;
+            }
+        }
+    }
+
+    // Still nothing found?  Give up and just use the first voice in
+    // the list.
+
+    if (result == NULL)
+    {
+        result = voice_alloced_list;
+    }
+
+    // Stop playing this voice playing and release it back to the free
+    // list.
+
+    VoiceKeyOff(result);
+    ReleaseVoice(result);
+
+    // Re-allocate the voice again and return it.
+
+    return GetFreeVoice();
+}
+
+
 static unsigned int FrequencyForVoice(opl_voice_t *voice)
 {
     unsigned int freq_index;
@@ -899,10 +995,21 @@ static void VoiceKeyOn(opl_channel_data_t *channel,
 
     voice = GetFreeVoice();
 
+    // If there are no more voices left, we must decide what to do.
+    // If this is the first voice of the instrument, free an existing
+    // voice and use that.  Otherwise, if this is the second voice,
+    // it isn't as important; just discard it.
+
     if (voice == NULL)
     {
-        printf("\tno free voice for voice %i of instrument\n", instrument_voice);
-        return;
+        if (instrument_voice == 0)
+        {
+            voice = ReplaceExistingVoice(channel);
+        }
+        else
+        {
+            return;
+        }
     }
 
     voice->channel = channel;
