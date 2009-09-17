@@ -1,0 +1,22 @@
+
+opl-branch TODO list
+
+Needs research:
+
+ * Some instruments have pitch offset down by one octave (eg. #36)
+   - what determines this?
+ * Strategy when no more voices are available is still wrong
+ * Scale levels don't exactly match Vanilla (off-by-one)
+
+Bad MIDIs:
+
+ * deca.wad MAP01
+ * gothicdm MAP05
+ * Hell Revealed
+
+Other tasks:
+
+ * Menu volume control
+ * Pause music
+ * Add option to select MIDI type in setup tool
+
