@@ -304,6 +304,31 @@ static const unsigned int volume_mapping_table[] = {
     124, 124, 125, 125, 126, 126, 127, 127
 };
 
+// For octave offset table:
+
+static const unsigned int octave_offset_table[2][128] = {
+    {
+        0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0,     // 0-15
+        0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,     // 16-31
+        0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0,     // 32-47
+        0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,     // 48-63
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0,     // 64-79
+        0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0,     // 80-95
+        0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,     // 96-111
+        1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1,     // 112-127
+    },
+    {
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,     // 0-15
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,     // 16-31
+        0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,     // 32-47
+        0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,     // 48-63
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,     // 64-79
+        0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     // 80-95
+        0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,     // 96-111
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,     // 112-127
+    }
+};
+
 static boolean music_initialised = false;
 
 //static boolean musicpaused = false;
@@ -832,10 +857,12 @@ static void KeyOffEvent(opl_track_data_t *track, midi_event_t *event)
     unsigned int key;
     unsigned int i;
 
+/*
     printf("note off: channel %i, %i, %i\n",
            event->data.channel.channel,
            event->data.channel.param1,
            event->data.channel.param2);
+*/
 
     channel = &track->channels[event->data.channel.channel];
     key = event->data.channel.param1;
@@ -921,8 +948,25 @@ static unsigned int FrequencyForVoice(opl_voice_t *voice)
     unsigned int freq_index;
     unsigned int octave;
     unsigned int sub_index;
+    unsigned int instr_num;
+    unsigned int note;
 
-    freq_index = 64 + 32 * voice->note + voice->channel->bend;
+    note = voice->note;
+
+    // What instrument number is this?
+    // Certain instruments have all notes offset down by one octave.
+    // Use the octave offset table to work out if this voice should
+    // be offset.
+
+    instr_num = voice->current_instr - main_instrs;
+
+    if (instr_num < 128 && note >= 12
+     && octave_offset_table[voice->current_instr_voice][instr_num])
+    {
+        note -= 12;
+    }
+
+    freq_index = 64 + 32 * note + voice->channel->bend;
 
     // If this is the second voice of a double voice instrument, the
     // frequency index can be adjusted by the fine tuning field.
@@ -1037,10 +1081,12 @@ static void KeyOnEvent(opl_track_data_t *track, midi_event_t *event)
     unsigned int key;
     unsigned int volume;
 
+/*
     printf("note on: channel %i, %i, %i\n",
            event->data.channel.channel,
            event->data.channel.param1,
            event->data.channel.param2);
+*/
 
     // The channel.
 
@@ -1113,10 +1159,12 @@ static void ControllerEvent(opl_track_data_t *track, midi_event_t *event)
     unsigned int param;
     opl_channel_data_t *channel;
 
+/*
     printf("change controller: channel %i, %i, %i\n",
            event->data.channel.channel,
            event->data.channel.param1,
            event->data.channel.param2);
+*/
 
     channel = &track->channels[event->data.channel.channel];
     controller = event->data.channel.param1;
