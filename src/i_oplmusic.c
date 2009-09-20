@@ -651,7 +651,8 @@ static void SetVoiceVolume(opl_voice_t *voice, unsigned int volume)
     // Multiply note volume and channel volume to get the actual volume.
 
     full_volume = (volume_mapping_table[voice->note_volume]
-                   * volume_mapping_table[voice->channel->volume]) / 127;
+                   * volume_mapping_table[voice->channel->volume]
+                   * volume_mapping_table[current_music_volume]) / (127 * 127);
 
     // The volume of each instrument can be controlled via GENMIDI:
 
@@ -769,8 +770,21 @@ static boolean I_OPL_InitMusic(void)
 
 static void I_OPL_SetMusicVolume(int volume)
 {
+    unsigned int i;
+
     // Internal state variable.
+
     current_music_volume = volume;
+
+    // Update the volume of all voices.
+
+    for (i=0; i<OPL_NUM_VOICES; ++i)
+    {
+        if (voices[i].channel != NULL)
+        {
+            SetVoiceVolume(&voices[i], voices[i].note_volume);
+        }
+    }
 }
 
 static void VoiceKeyOff(opl_voice_t *voice)
