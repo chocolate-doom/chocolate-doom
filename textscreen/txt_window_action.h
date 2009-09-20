@@ -59,7 +59,7 @@ struct txt_window_action_s
  * @return              Pointer to the new window action widget.
  */
 
-txt_window_action_t *TXT_NewWindowAction(int key, char *label);
+txt_window_action_t *TXT_NewWindowAction(int key, const char *label);
 
 /**
  * Create a new window action that closes the window when the

@@ -217,7 +217,7 @@ static inline void UpdateCharacter(int x, int y)
     unsigned char *p;
     unsigned char *s, *s1;
     int bg, fg;
-    int x1, y1;
+    unsigned int x1, y1;
 
     p = &screendata[(y * TXT_SCREEN_W + x) * 2];
     character = p[0];
@@ -458,7 +458,7 @@ signed int TXT_GetChar(void)
     return -1;
 }
 
-static char *SpecialKeyName(int key)
+static const char *SpecialKeyName(int key)
 {
     switch (key)
     {
@@ -524,7 +524,7 @@ static char *SpecialKeyName(int key)
 
 void TXT_GetKeyDescription(int key, char *buf)
 {
-    char *keyname;
+    const char *keyname;
 
     keyname = SpecialKeyName(key);
 
