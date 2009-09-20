@@ -43,8 +43,6 @@
 #include "opl.h"
 #include "midifile.h"
 
-//#define TEST
-
 #define MAXMIDLENGTH (96 * 1024)
 #define GENMIDI_NUM_INSTRS  128
 
@@ -716,9 +714,6 @@ static void I_OPL_ShutdownMusic(void)
 {
     if (music_initialised)
     {
-#ifdef TEST
-        InitRegisters();
-#endif
         OPL_Shutdown();
 
         // Release GENMIDI lump
@@ -728,30 +723,6 @@ static void I_OPL_ShutdownMusic(void)
         music_initialised = false;
     }
 }
-
-#ifdef TEST
-static void TestCallback(void *arg)
-{
-    opl_voice_t *voice = arg;
-    int note;
-    int wait_time;
-
-    // Set level:
-    WriteRegister(OPL_REGS_LEVEL + voice->op2, 0);
-
-    // Note off:
-
-    WriteRegister(OPL_REGS_FREQ_2 + voice->index, 0x00);
-    // Note on:
-
-    note = (rand() % (0x2ae - 0x16b)) + 0x16b;
-    WriteRegister(OPL_REGS_FREQ_1 + voice->index, note & 0xff);
-    WriteRegister(OPL_REGS_FREQ_2 + voice->index, 0x30 + (note >> 8));
-
-    wait_time = (rand() % 700) + 50;
-    OPL_SetCallback(wait_time, TestCallback, arg);
-}
-#endif
 
 // Initialise music subsystem
 
@@ -788,24 +759,6 @@ static boolean I_OPL_InitMusic(void)
     // register writing mode:
 
     init_stage_reg_writes = false;
-
-#ifdef TEST
-    {
-        int i;
-        opl_voice_t *voice;
-        int instr_num;
-
-        for (i=0; i<3; ++i)
-        {
-            voice = GetFreeVoice();
-            instr_num = rand() % 100;
-
-            SetVoiceInstrument(voice, &main_instrs[instr_num], 0);
-
-            OPL_SetCallback(0, TestCallback, voice);
-        }
-    }
-#endif
 
     music_initialised = true;
 
