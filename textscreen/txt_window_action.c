@@ -101,7 +101,7 @@ txt_widget_class_t txt_window_action_class =
     NULL,
 };
 
-txt_window_action_t *TXT_NewWindowAction(int key, char *label)
+txt_window_action_t *TXT_NewWindowAction(int key, const char *label)
 {
     txt_window_action_t *action;
 
