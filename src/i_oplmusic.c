@@ -34,6 +34,7 @@
 #include "mus2mid.h"
 
 #include "deh_main.h"
+#include "i_swap.h"
 #include "m_misc.h"
 #include "s_sound.h"
 #include "w_wad.h"
@@ -302,31 +303,6 @@ static const unsigned int volume_mapping_table[] = {
     116, 117, 117, 118, 118, 119, 119, 120,
     120, 121, 121, 122, 122, 123, 123, 123,
     124, 124, 125, 125, 126, 126, 127, 127
-};
-
-// For octave offset table:
-
-static const unsigned int octave_offset_table[2][128] = {
-    {
-        0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0,     // 0-15
-        0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,     // 16-31
-        0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0,     // 32-47
-        0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,     // 48-63
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0,     // 64-79
-        0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0,     // 80-95
-        0, 1, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0,     // 96-111
-        1, 0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1,     // 112-127
-    },
-    {
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,     // 0-15
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,     // 16-31
-        0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,     // 32-47
-        0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0,     // 48-63
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,     // 64-79
-        0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,     // 80-95
-        0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,     // 96-111
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,     // 112-127
-    }
 };
 
 static boolean music_initialised = false;
@@ -945,26 +921,18 @@ static opl_voice_t *ReplaceExistingVoice(opl_channel_data_t *channel)
 
 static unsigned int FrequencyForVoice(opl_voice_t *voice)
 {
+    genmidi_voice_t *gm_voice;
     unsigned int freq_index;
     unsigned int octave;
     unsigned int sub_index;
-    unsigned int instr_num;
     unsigned int note;
 
     note = voice->note;
 
-    // What instrument number is this?
-    // Certain instruments have all notes offset down by one octave.
-    // Use the octave offset table to work out if this voice should
-    // be offset.
+    // Apply note offset:
 
-    instr_num = voice->current_instr - main_instrs;
-
-    if (instr_num < 128 && note >= 12
-     && octave_offset_table[voice->current_instr_voice][instr_num])
-    {
-        note -= 12;
-    }
+    gm_voice = &voice->current_instr->voices[voice->current_instr_voice];
+    note += (signed short) SHORT(gm_voice->base_note_offset);
 
     freq_index = 64 + 32 * note + voice->channel->bend;
 
