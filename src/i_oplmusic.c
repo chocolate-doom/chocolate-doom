@@ -934,6 +934,13 @@ static unsigned int FrequencyForVoice(opl_voice_t *voice)
     gm_voice = &voice->current_instr->voices[voice->current_instr_voice];
     note += (signed short) SHORT(gm_voice->base_note_offset);
 
+    // Avoid possible overflow due to base note offset:
+
+    if (note > 0x7f)
+    {
+        note = voice->note;
+    }
+
     freq_index = 64 + 32 * note + voice->channel->bend;
 
     // If this is the second voice of a double voice instrument, the
