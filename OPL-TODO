@@ -4,7 +4,7 @@ opl-branch TODO list
 Needs research:
 
  * Strategy when no more voices are available is still wrong
- * Scale levels don't exactly match Vanilla (off-by-one)
+ * Scale levels don't exactly match Vanilla (off-by-one?)
 
 Bad MIDIs:
 
@@ -17,4 +17,5 @@ Other tasks:
 
  * Pause music
  * Add option to select MIDI type in setup tool
+ * DMXOPTIONS opl3/phase option support.
 
