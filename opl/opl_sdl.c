@@ -60,6 +60,15 @@ static SDL_mutex *callback_queue_mutex = NULL;
 
 static int current_time;
 
+// If non-zero, playback is currently paused.
+
+static int opl_sdl_paused;
+
+// Time offset (in samples) due to the fact that callbacks
+// were previously paused.
+
+static unsigned int pause_offset;
+
 // OPL software emulator structure.
 
 static FM_OPL *opl_emulator = NULL;
@@ -96,11 +105,16 @@ static void AdvanceTime(unsigned int nsamples)
 
     current_time += nsamples;
 
+    if (opl_sdl_paused)
+    {
+        pause_offset += nsamples;
+    }
+
     // Are there callbacks to invoke now?  Keep invoking them
     // until there are none more left.
 
     while (!OPL_Queue_IsEmpty(callback_queue)
-        && current_time >= OPL_Queue_Peek(callback_queue))
+        && current_time >= OPL_Queue_Peek(callback_queue) + pause_offset)
     {
         // Pop the callback from the queue to invoke it.
 
@@ -180,13 +194,13 @@ static void OPL_Mix_Callback(void *udata,
         // the callback queue must be invoked.  We can then fill the
         // buffer with this many samples.
 
-        if (OPL_Queue_IsEmpty(callback_queue))
+        if (opl_sdl_paused || OPL_Queue_IsEmpty(callback_queue))
         {
             nsamples = buffer_len - filled;
         }
         else
         {
-            next_callback_time = OPL_Queue_Peek(callback_queue);
+            next_callback_time = OPL_Queue_Peek(callback_queue) + pause_offset;
 
             nsamples = next_callback_time - current_time;
 
@@ -260,7 +274,7 @@ static void TimerHandler(int channel, double interval_seconds)
 
     SDL_LockMutex(callback_queue_mutex);
     OPL_Queue_Push(callback_queue, TimerOver, (void *) channel,
-                   current_time + interval_samples);
+                   current_time - pause_offset + interval_samples);
     SDL_UnlockMutex(callback_queue_mutex);
 }
 
@@ -296,6 +310,9 @@ static int OPL_SDL_Init(unsigned int port_base)
     {
         sdl_was_initialised = 0;
     }
+
+    opl_sdl_paused = 0;
+    pause_offset = 0;
 
     // Queue structure of callbacks to invoke.
 
@@ -370,7 +387,7 @@ static void OPL_SDL_SetCallback(unsigned int ms,
 {
     SDL_LockMutex(callback_queue_mutex);
     OPL_Queue_Push(callback_queue, callback, data,
-                   current_time + (ms * mixing_freq) / 1000);
+                   current_time - pause_offset + (ms * mixing_freq) / 1000);
     SDL_UnlockMutex(callback_queue_mutex);
 }
 
@@ -391,6 +408,11 @@ static void OPL_SDL_Unlock(void)
     SDL_UnlockMutex(callback_mutex);
 }
 
+static void OPL_SDL_SetPaused(int paused)
+{
+    opl_sdl_paused = paused;
+}
+
 opl_driver_t opl_sdl_driver =
 {
     "SDL",
@@ -401,6 +423,7 @@ opl_driver_t opl_sdl_driver =
     OPL_SDL_SetCallback,
     OPL_SDL_ClearCallbacks,
     OPL_SDL_Lock,
-    OPL_SDL_Unlock
+    OPL_SDL_Unlock,
+    OPL_SDL_SetPaused
 };
 
