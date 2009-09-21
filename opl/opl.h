@@ -96,5 +96,9 @@ void OPL_Unlock(void);
 
 void OPL_Delay(unsigned int ms);
 
+// Pause the OPL callbacks.
+
+void OPL_SetPaused(int paused);
+
 #endif
 

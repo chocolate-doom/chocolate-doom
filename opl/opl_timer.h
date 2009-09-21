@@ -36,6 +36,7 @@ void OPL_Timer_SetCallback(unsigned int ms,
 void OPL_Timer_ClearCallbacks(void);
 void OPL_Timer_Lock(void);
 void OPL_Timer_Unlock(void);
+void OPL_Timer_SetPaused(int paused);
 
 #endif /* #ifndef OPL_TIMER_H */
 

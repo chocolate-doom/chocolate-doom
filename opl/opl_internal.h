@@ -39,6 +39,7 @@ typedef void (*opl_set_callback_func)(unsigned int ms,
 typedef void (*opl_clear_callbacks_func)(void);
 typedef void (*opl_lock_func)(void);
 typedef void (*opl_unlock_func)(void);
+typedef void (*opl_set_paused_func)(int paused);
 
 typedef struct
 {
@@ -52,6 +53,7 @@ typedef struct
     opl_clear_callbacks_func clear_callbacks_func;
     opl_lock_func lock_func;
     opl_unlock_func unlock_func;
+    opl_set_paused_func set_paused_func;
 } opl_driver_t;
 
 #endif /* #ifndef OPL_INTERNAL_H */

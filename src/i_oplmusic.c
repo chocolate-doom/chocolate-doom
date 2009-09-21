@@ -1363,9 +1363,27 @@ static void I_OPL_PlaySong(void *handle, int looping)
 
 static void I_OPL_PauseSong(void)
 {
+    unsigned int i;
+
     if (!music_initialised)
     {
         return;
+    }
+
+    // Pause OPL callbacks.
+
+    OPL_SetPaused(1);
+
+    // Turn off all main instrument voices (not percussion).
+    // This is what Vanilla does.
+
+    for (i=0; i<OPL_NUM_VOICES; ++i)
+    {
+        if (voices[i].channel != NULL
+         && voices[i].current_instr < percussion_instrs)
+        {
+            VoiceKeyOff(&voices[i]);
+        }
     }
 }
 
@@ -1375,6 +1393,8 @@ static void I_OPL_ResumeSong(void)
     {
         return;
     }
+
+    OPL_SetPaused(0);
 }
 
 static void I_OPL_StopSong(void)

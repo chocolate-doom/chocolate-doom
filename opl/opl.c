@@ -33,7 +33,7 @@
 #include "opl.h"
 #include "opl_internal.h"
 
-//#define OPL_DEBUG_TRACE
+#define OPL_DEBUG_TRACE
 
 #ifdef HAVE_IOPERM
 extern opl_driver_t opl_linux_driver;
@@ -193,5 +193,13 @@ void OPL_Delay(unsigned int ms)
 
     SDL_DestroyMutex(delay_data.mutex);
     SDL_DestroyCond(delay_data.cond);
+}
+
+void OPL_SetPaused(int paused)
+{
+    if (driver != NULL)
+    {
+        driver->set_paused_func(paused);
+    }
 }
 
