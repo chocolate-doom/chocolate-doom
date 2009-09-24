@@ -33,7 +33,7 @@
 #include "opl.h"
 #include "opl_internal.h"
 
-#define OPL_DEBUG_TRACE
+//#define OPL_DEBUG_TRACE
 
 #ifdef HAVE_IOPERM
 extern opl_driver_t opl_linux_driver;
