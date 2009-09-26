@@ -1,4 +1,4 @@
-// Emacs style mode select   -*- C++ -*- 
+// Emacs style mode select   -*- C++ -*-
 //-----------------------------------------------------------------------------
 //
 // Copyright(C) 2009 Simon Howard
@@ -28,6 +28,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef _WIN32_WCE
+#include "libc_wince.h"
+#endif
+
 #include "SDL.h"
 
 #include "opl.h"
@@ -56,24 +60,112 @@ static opl_driver_t *drivers[] =
 };
 
 static opl_driver_t *driver = NULL;
+static int init_stage_reg_writes = 1;
 
-int OPL_Init(unsigned int port_base)
+//
+// Init/shutdown code.
+//
+
+// Initialize the specified driver and detect an OPL chip.  Returns
+// true if an OPL is detected.
+
+static int InitDriver(opl_driver_t *_driver, unsigned int port_base)
+{
+    // Initialize the driver.
+
+    if (!_driver->init_func(port_base))
+    {
+        return 0;
+    }
+
+    // The driver was initialized okay, so we now have somewhere
+    // to write to.  It doesn't mean there's an OPL chip there,
+    // though.  Perform the detection sequence to make sure.
+    // (it's done twice, like how Doom does it).
+
+    driver = _driver;
+    init_stage_reg_writes = 1;
+
+    if (!OPL_Detect() || !OPL_Detect())
+    {
+        printf("OPL_Init: No OPL detected using '%s' driver.\n", _driver->name);
+        _driver->shutdown_func();
+        driver = NULL;
+        return 0;
+    }
+
+    // Initialize all registers.
+
+    OPL_InitRegisters();
+
+    init_stage_reg_writes = 0;
+
+    printf("OPL_Init: Using driver '%s'.\n", driver->name);
+
+    return 1;
+}
+
+// Find a driver automatically by trying each in the list.
+
+static int AutoSelectDriver(unsigned int port_base)
 {
     int i;
 
-    // Try drivers until we find a working one:
-
     for (i=0; drivers[i] != NULL; ++i)
     {
-        if (drivers[i]->init_func(port_base))
+        if (InitDriver(drivers[i], port_base))
         {
-            driver = drivers[i];
             return 1;
         }
     }
 
+    printf("OPL_Init: Failed to find a working driver.\n");
+
     return 0;
 }
+
+// Initialize the OPL library.  Returns true if initialized
+// successfully.
+
+int OPL_Init(unsigned int port_base)
+{
+    char *driver_name;
+    int i;
+
+    driver_name = getenv("OPL_DRIVER");
+
+    if (driver_name != NULL)
+    {
+        // Search the list until we find the driver with this name.
+
+        for (i=0; drivers[i] != NULL; ++i)
+        {
+            if (!strcmp(driver_name, drivers[i]->name))
+            {
+                if (InitDriver(drivers[i], port_base))
+                {
+                    return 1;
+                }
+                else
+                {
+                    printf("OPL_Init: Failed to initialize "
+                           "driver: '%s'.\n", driver_name);
+                    return 0;
+                }
+            }
+        }
+
+        printf("OPL_Init: unknown driver: '%s'.\n", driver_name);
+
+        return 0;
+    }
+    else
+    {
+        return AutoSelectDriver(port_base);
+    }
+}
+
+// Shut down the OPL library.
 
 void OPL_Shutdown(void)
 {
@@ -114,6 +206,146 @@ unsigned int OPL_ReadPort(opl_port_t port)
         return 0;
     }
 }
+
+//
+// Higher-level functions, based on the lower-level functions above
+// (register write, etc).
+//
+
+unsigned int OPL_ReadStatus(void)
+{
+    return OPL_ReadPort(OPL_REGISTER_PORT);
+}
+
+// Write an OPL register value
+
+void OPL_WriteRegister(int reg, int value)
+{
+    int i;
+
+    OPL_WritePort(OPL_REGISTER_PORT, reg);
+
+    // For timing, read the register port six times after writing the
+    // register number to cause the appropriate delay
+
+    for (i=0; i<6; ++i)
+    {
+        // An oddity of the Doom OPL code: at startup initialisation,
+        // the spacing here is performed by reading from the register
+        // port; after initialisation, the data port is read, instead.
+
+        if (init_stage_reg_writes)
+        {
+            OPL_ReadPort(OPL_REGISTER_PORT);
+        }
+        else
+        {
+            OPL_ReadPort(OPL_DATA_PORT);
+        }
+    }
+
+    OPL_WritePort(OPL_DATA_PORT, value);
+
+    // Read the register port 24 times after writing the value to
+    // cause the appropriate delay
+
+    for (i=0; i<24; ++i)
+    {
+        OPL_ReadStatus();
+    }
+}
+
+// Detect the presence of an OPL chip
+
+int OPL_Detect(void)
+{
+    int result1, result2;
+    int i;
+
+    // Reset both timers:
+    OPL_WriteRegister(OPL_REG_TIMER_CTRL, 0x60);
+
+    // Enable interrupts:
+    OPL_WriteRegister(OPL_REG_TIMER_CTRL, 0x80);
+
+    // Read status
+    result1 = OPL_ReadStatus();
+
+    // Set timer:
+    OPL_WriteRegister(OPL_REG_TIMER1, 0xff);
+
+    // Start timer 1:
+    OPL_WriteRegister(OPL_REG_TIMER_CTRL, 0x21);
+
+    // Wait for 80 microseconds
+    // This is how Doom does it:
+
+    for (i=0; i<200; ++i)
+    {
+        OPL_ReadStatus();
+    }
+
+    OPL_Delay(1);
+
+    // Read status
+    result2 = OPL_ReadStatus();
+
+    // Reset both timers:
+    OPL_WriteRegister(OPL_REG_TIMER_CTRL, 0x60);
+
+    // Enable interrupts:
+    OPL_WriteRegister(OPL_REG_TIMER_CTRL, 0x80);
+
+    return (result1 & 0xe0) == 0x00
+        && (result2 & 0xe0) == 0xc0;
+}
+
+// Initialize registers on startup
+
+void OPL_InitRegisters(void)
+{
+    int r;
+
+    // Initialize level registers
+
+    for (r=OPL_REGS_LEVEL; r <= OPL_REGS_LEVEL + OPL_NUM_OPERATORS; ++r)
+    {
+        OPL_WriteRegister(r, 0x3f);
+    }
+
+    // Initialize other registers
+    // These two loops write to registers that actually don't exist,
+    // but this is what Doom does ...
+    // Similarly, the <= is also intenational.
+
+    for (r=OPL_REGS_ATTACK; r <= OPL_REGS_WAVEFORM + OPL_NUM_OPERATORS; ++r)
+    {
+        OPL_WriteRegister(r, 0x00);
+    }
+
+    // More registers ...
+
+    for (r=1; r < OPL_REGS_LEVEL; ++r)
+    {
+        OPL_WriteRegister(r, 0x00);
+    }
+
+    // Re-initialize the low registers:
+
+    // Reset both timers and enable interrupts:
+    OPL_WriteRegister(OPL_REG_TIMER_CTRL,      0x60);
+    OPL_WriteRegister(OPL_REG_TIMER_CTRL,      0x80);
+
+    // "Allow FM chips to control the waveform of each operator":
+    OPL_WriteRegister(OPL_REG_WAVEFORM_ENABLE, 0x20);
+
+    // Keyboard split point on (?)
+    OPL_WriteRegister(OPL_REG_FM_MODE,         0x40);
+}
+
+//
+// Timer functions.
+//
 
 void OPL_SetCallback(unsigned int ms, opl_callback_t callback, void *data)
 {

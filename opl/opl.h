@@ -58,7 +58,11 @@ typedef enum
 #define OPL_REGS_FREQ_2           0xB0
 #define OPL_REGS_FEEDBACK         0xC0
 
-// Initialise the OPL subsystem.
+//
+// Low-level functions.
+//
+
+// Initialize the OPL subsystem.
 
 int OPL_Init(unsigned int port_base);
 
@@ -73,6 +77,31 @@ void OPL_WritePort(opl_port_t port, unsigned int value);
 // Read from one of the OPL I/O ports:
 
 unsigned int OPL_ReadPort(opl_port_t port);
+
+//
+// Higher-level functions.
+//
+
+// Read the cuurrent status byte of the OPL chip.
+
+unsigned int OPL_ReadStatus(void);
+
+// Write to an OPL register.
+
+void OPL_WriteRegister(int reg, int value);
+
+// Perform a detection sequence to determine that an
+// OPL chip is present.
+
+int OPL_Detect(void);
+
+// Initialize all registers, performed on startup.
+
+void OPL_InitRegisters(void);
+
+//
+// Timer callback functions.
+//
 
 // Set a timer callback.  After the specified number of milliseconds
 // have elapsed, the callback will be invoked.

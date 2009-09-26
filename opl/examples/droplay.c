@@ -73,30 +73,6 @@ void ClearAllRegs(void)
     }
 }
 
-// Detect an OPL chip.
-
-int DetectOPL(void)
-{
-    int val1, val2;
-
-    WriteReg(OPL_REG_TIMER_CTRL, 0x60);
-    WriteReg(OPL_REG_TIMER_CTRL, 0x80);
-
-    val1 = OPL_ReadPort(OPL_REGISTER_PORT) & 0xe0;
-
-    WriteReg(OPL_REG_TIMER1, 0xff);
-    WriteReg(OPL_REG_TIMER_CTRL, 0x21);
-
-    OPL_Delay(1);
-
-    val2 = OPL_ReadPort(OPL_REGISTER_PORT) & 0xe0;
-
-    WriteReg(OPL_REG_TIMER_CTRL, 0x60);
-    WriteReg(OPL_REG_TIMER_CTRL, 0x80);
-
-    return val1 == 0 && val2 == 0xc0;
-}
-
 void Init(void)
 {
     if (SDL_Init(SDL_INIT_TIMER) < 0)
@@ -108,12 +84,6 @@ void Init(void)
     if (!OPL_Init(ADLIB_PORT))
     {
         fprintf(stderr, "Unable to initialise OPL layer\n");
-        exit(-1);
-    }
-
-    if (!DetectOPL())
-    {
-        fprintf(stderr, "Adlib not detected\n");
         exit(-1);
     }
 }
@@ -236,7 +206,6 @@ int main(int argc, char *argv[])
     }
 
     Init();
-    ClearAllRegs();
 
     PlayFile(argv[1]);
 

@@ -326,148 +326,10 @@ static unsigned int num_tracks;
 static unsigned int running_tracks = 0;
 static boolean song_looping;
 
-// In the initialisation stage, register writes are spaced by reading
-// from the register port (0).  After initialisation, spacing is
-// peformed by reading from the data port instead.  I have no idea
-// why.
-
-static boolean init_stage_reg_writes = false;
-
 // Configuration file variable, containing the port number for the
 // adlib chip.
 
 int opl_io_port = 0x388;
-
-static unsigned int GetStatus(void)
-{
-    return OPL_ReadPort(OPL_REGISTER_PORT);
-}
-
-// Write an OPL register value
-
-static void WriteRegister(int reg, int value)
-{
-    int i;
-
-    OPL_WritePort(OPL_REGISTER_PORT, reg);
-
-    // For timing, read the register port six times after writing the
-    // register number to cause the appropriate delay
-
-    for (i=0; i<6; ++i)
-    {
-        // An oddity of the Doom OPL code: at startup initialisation,
-        // the spacing here is performed by reading from the register
-        // port; after initialisation, the data port is read, instead.
-
-        if (init_stage_reg_writes)
-        {
-            OPL_ReadPort(OPL_REGISTER_PORT);
-        }
-        else
-        {
-            OPL_ReadPort(OPL_DATA_PORT);
-        }
-    }
-
-    OPL_WritePort(OPL_DATA_PORT, value);
-
-    // Read the register port 25 times after writing the value to
-    // cause the appropriate delay
-
-    for (i=0; i<24; ++i)
-    {
-        GetStatus();
-    }
-}
-
-// Detect the presence of an OPL chip
-
-static boolean DetectOPL(void)
-{
-    int result1, result2;
-    int i;
-
-    // Reset both timers:
-    WriteRegister(OPL_REG_TIMER_CTRL, 0x60);
-
-    // Enable interrupts:
-    WriteRegister(OPL_REG_TIMER_CTRL, 0x80);
-
-    // Read status
-    result1 = GetStatus();
-
-    // Set timer:
-    WriteRegister(OPL_REG_TIMER1, 0xff);
-
-    // Start timer 1:
-    WriteRegister(OPL_REG_TIMER_CTRL, 0x21);
-
-    // Wait for 80 microseconds
-    // This is how Doom does it:
-
-    for (i=0; i<200; ++i)
-    {
-        GetStatus();
-    }
-
-    OPL_Delay(1);
-
-    // Read status
-    result2 = GetStatus();
-
-    // Reset both timers:
-    WriteRegister(OPL_REG_TIMER_CTRL, 0x60);
-
-    // Enable interrupts:
-    WriteRegister(OPL_REG_TIMER_CTRL, 0x80);
-
-    return (result1 & 0xe0) == 0x00
-        && (result2 & 0xe0) == 0xc0;
-}
-
-// Initialise registers on startup
-
-static void InitRegisters(void)
-{
-    int r;
-
-    // Initialise level registers
-
-    for (r=OPL_REGS_LEVEL; r <= OPL_REGS_LEVEL + OPL_NUM_OPERATORS; ++r)
-    {
-        WriteRegister(r, 0x3f);
-    }
-
-    // Initialise other registers
-    // These two loops write to registers that actually don't exist,
-    // but this is what Doom does ...
-    // Similarly, the <= is also intenational.
-
-    for (r=OPL_REGS_ATTACK; r <= OPL_REGS_WAVEFORM + OPL_NUM_OPERATORS; ++r)
-    {
-        WriteRegister(r, 0x00);
-    }
-
-    // More registers ...
-
-    for (r=1; r < OPL_REGS_LEVEL; ++r)
-    {
-        WriteRegister(r, 0x00);
-    }
-
-    // Re-initialise the low registers:
-
-    // Reset both timers and enable interrupts:
-    WriteRegister(OPL_REG_TIMER_CTRL,      0x60);
-    WriteRegister(OPL_REG_TIMER_CTRL,      0x80);
-
-    // "Allow FM chips to control the waveform of each operator":
-    WriteRegister(OPL_REG_WAVEFORM_ENABLE, 0x20);
-
-    // Keyboard split point on (?)
-    WriteRegister(OPL_REG_FM_MODE,         0x40);
-}
 
 // Load instrument table from GENMIDI lump:
 
@@ -584,11 +446,11 @@ static void LoadOperatorData(int operator, genmidi_op_t *data,
         level |= 0x3f;
     }
 
-    WriteRegister(OPL_REGS_LEVEL + operator, level);
-    WriteRegister(OPL_REGS_TREMOLO + operator, data->tremolo);
-    WriteRegister(OPL_REGS_ATTACK + operator, data->attack);
-    WriteRegister(OPL_REGS_SUSTAIN + operator, data->sustain);
-    WriteRegister(OPL_REGS_WAVEFORM + operator, data->waveform);
+    OPL_WriteRegister(OPL_REGS_LEVEL + operator, level);
+    OPL_WriteRegister(OPL_REGS_TREMOLO + operator, data->tremolo);
+    OPL_WriteRegister(OPL_REGS_ATTACK + operator, data->attack);
+    OPL_WriteRegister(OPL_REGS_SUSTAIN + operator, data->sustain);
+    OPL_WriteRegister(OPL_REGS_WAVEFORM + operator, data->waveform);
 }
 
 // Set the instrument for a particular voice.
@@ -629,8 +491,8 @@ static void SetVoiceInstrument(opl_voice_t *voice,
     // two operators.  Turn on bits in the upper nybble; I think this
     // is for OPL3, where it turns on channel A/B.
 
-    WriteRegister(OPL_REGS_FEEDBACK + voice->index,
-                  data->feedback | 0x30);
+    OPL_WriteRegister(OPL_REGS_FEEDBACK + voice->index,
+                      data->feedback | 0x30);
 
     // Hack to force a volume update.
 
@@ -669,7 +531,7 @@ static void SetVoiceVolume(opl_voice_t *voice, unsigned int volume)
     {
         voice->reg_volume = reg_volume;
 
-        WriteRegister(OPL_REGS_LEVEL + voice->op2, reg_volume);
+        OPL_WriteRegister(OPL_REGS_LEVEL + voice->op2, reg_volume);
 
         // If we are using non-modulated feedback mode, we must set the
         // volume for both voices.
@@ -679,7 +541,7 @@ static void SetVoiceVolume(opl_voice_t *voice, unsigned int volume)
 
         if ((opl_voice->feedback & 0x01) != 0)
         {
-            WriteRegister(OPL_REGS_LEVEL + voice->op1, reg_volume);
+            OPL_WriteRegister(OPL_REGS_LEVEL + voice->op1, reg_volume);
         }
     }
 }
@@ -731,17 +593,7 @@ static boolean I_OPL_InitMusic(void)
 {
     if (!OPL_Init(opl_io_port))
     {
-        return false;
-    }
-
-    init_stage_reg_writes = true;
-
-    // Doom does the detection sequence twice, for some reason:
-
-    if (!DetectOPL() || !DetectOPL())
-    {
         printf("Dude.  The Adlib isn't responding.\n");
-        OPL_Shutdown();
         return false;
     }
 
@@ -753,13 +605,7 @@ static boolean I_OPL_InitMusic(void)
         return false;
     }
 
-    InitRegisters();
     InitVoices();
-
-    // Now that initialisation has finished, switch the
-    // register writing mode:
-
-    init_stage_reg_writes = false;
 
     music_initialised = true;
 
@@ -789,7 +635,7 @@ static void I_OPL_SetMusicVolume(int volume)
 
 static void VoiceKeyOff(opl_voice_t *voice)
 {
-    WriteRegister(OPL_REGS_FREQ_2 + voice->index, voice->freq >> 8);
+    OPL_WriteRegister(OPL_REGS_FREQ_2 + voice->index, voice->freq >> 8);
 }
 
 // Get the frequency that we should be using for a voice.
@@ -947,8 +793,8 @@ static void UpdateVoiceFrequency(opl_voice_t *voice)
 
     if (voice->freq != freq)
     {
-        WriteRegister(OPL_REGS_FREQ_1 + voice->index, freq & 0xff);
-        WriteRegister(OPL_REGS_FREQ_2 + voice->index, (freq >> 8) | 0x20);
+        OPL_WriteRegister(OPL_REGS_FREQ_1 + voice->index, freq & 0xff);
+        OPL_WriteRegister(OPL_REGS_FREQ_2 + voice->index, (freq >> 8) | 0x20);
 
         voice->freq = freq;
     }
