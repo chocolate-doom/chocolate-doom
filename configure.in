@@ -71,6 +71,10 @@ AC_SDL_MAIN_WORKAROUND([
 
     AC_CHECK_HEADERS([linux/kd.h dev/isa/spkrio.h dev/speaker/speaker.h])
     AC_CHECK_FUNCS(mmap sched_setaffinity)
+
+    # OpenBSD I/O i386 library for I/O port access.
+
+    AC_CHECK_LIB(i386, i386_iopl)
 ])
 
 AC_CHECK_TOOL(WINDRES, windres, )
