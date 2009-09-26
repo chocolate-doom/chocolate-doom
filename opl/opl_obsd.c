@@ -101,5 +101,5 @@ opl_driver_t opl_openbsd_driver =
     OPL_Timer_SetPaused
 };
 
-#endif /* #ifdef HAVE_IOPERM */
+#endif /* #ifdef HAVE_LIBI386 */
 
