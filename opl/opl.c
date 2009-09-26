@@ -38,12 +38,18 @@
 #ifdef HAVE_IOPERM
 extern opl_driver_t opl_linux_driver;
 #endif
+#ifdef HAVE_LIBI386
+extern opl_driver_t opl_openbsd_driver;
+#endif
 extern opl_driver_t opl_sdl_driver;
 
 static opl_driver_t *drivers[] =
 {
 #ifdef HAVE_IOPERM
     &opl_linux_driver,
+#endif
+#ifdef HAVE_LIBI386
+    &opl_openbsd_driver,
 #endif
     &opl_sdl_driver,
     NULL

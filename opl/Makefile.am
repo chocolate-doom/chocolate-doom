@@ -8,6 +8,7 @@ noinst_LIBRARIES=libopl.a
 libopl_a_SOURCES =                                \
                             opl_internal.h        \
         opl.c               opl.h                 \
+        opl_obsd.c          opl_obsd.h            \
         opl_linux.c                               \
         opl_sdl.c                                 \
         opl_queue.c         opl_queue.h           \
