@@ -336,7 +336,7 @@ static boolean init_stage_reg_writes = false;
 // Configuration file variable, containing the port number for the
 // adlib chip.
 
-int snd_mport = 0x388;
+int opl_io_port = 0x388;
 
 static unsigned int GetStatus(void)
 {
@@ -729,7 +729,7 @@ static void I_OPL_ShutdownMusic(void)
 
 static boolean I_OPL_InitMusic(void)
 {
-    if (!OPL_Init(snd_mport))
+    if (!OPL_Init(opl_io_port))
     {
         return false;
     }
