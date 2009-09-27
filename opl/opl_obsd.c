@@ -46,7 +46,7 @@ static int OPL_OpenBSD_Init(unsigned int port_base)
 {
     // Try to get permissions:
 
-    if (i386_iopl(1) < 0)
+    if (i386_iopl(3) < 0)
     {
         fprintf(stderr, "Failed to get raise I/O privilege level: "
                         "check that you are running as root.\n");
