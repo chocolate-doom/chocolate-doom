@@ -49,6 +49,14 @@ typedef enum
     NUM_SFXMODES
 } sfxmode_t;
 
+typedef enum
+{
+    MUSMODE_DISABLED,
+    MUSMODE_OPL,
+    MUSMODE_NATIVE,
+    NUM_MUSMODES
+} musmode_t;
+
 static char *sfxmode_strings[] = 
 {
     "Disabled",
@@ -56,14 +64,14 @@ static char *sfxmode_strings[] =
     "Digital",
 };
 
-// Disable MIDI music on OSX: there are problems with the native
-// MIDI code in SDL_mixer.
+static char *musmode_strings[] =
+{
+    "Disabled",
+    "OPL (Adlib/SB)",
+    "Native MIDI"
+};
 
-#ifdef __MACOSX__
-#define DEFAULT_MUSIC_DEVICE SNDDEVICE_NONE
-#else
 #define DEFAULT_MUSIC_DEVICE SNDDEVICE_SB
-#endif
 
 int snd_sfxdevice = SNDDEVICE_SB;
 int numChannels = 8;
@@ -77,7 +85,7 @@ int snd_samplerate = 22050;
 int use_libsamplerate = 0;
 
 static int snd_sfxmode;
-static int snd_musicenabled;
+static int snd_musmode;
 
 static void UpdateSndDevices(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
 {
@@ -93,14 +101,18 @@ static void UpdateSndDevices(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
             snd_sfxdevice = SNDDEVICE_SB;
             break;
     }
-    
-    if (snd_musicenabled)
+
+    switch (snd_musmode)
     {
-        snd_musicdevice = SNDDEVICE_SB;
-    }
-    else
-    {
-        snd_musicdevice = SNDDEVICE_NONE;
+        case MUSMODE_DISABLED:
+            snd_musicdevice = SNDDEVICE_NONE;
+            break;
+        case MUSMODE_OPL:
+            snd_musicdevice = SNDDEVICE_SB;
+            break;
+        case MUSMODE_NATIVE:
+            snd_musicdevice = SNDDEVICE_GENMIDI;
+            break;
     }
 }
 
@@ -110,7 +122,7 @@ void ConfigSound(void)
     txt_table_t *sfx_table;
     txt_table_t *music_table;
     txt_dropdown_list_t *sfx_mode_control;
-    txt_checkbox_t *music_enabled_control;
+    txt_dropdown_list_t *mus_mode_control;
 
     if (snd_sfxdevice == SNDDEVICE_PCSPEAKER)
     {
@@ -124,8 +136,21 @@ void ConfigSound(void)
     {
         snd_sfxmode = SFXMODE_DISABLED;
     }
-    
-    snd_musicenabled = snd_musicdevice != SNDDEVICE_NONE;
+
+    if (snd_musicdevice == SNDDEVICE_GENMIDI)
+    {
+        snd_musmode = MUSMODE_NATIVE;
+    }
+    else if (snd_musicdevice == SNDDEVICE_SB
+          || snd_musicdevice == SNDDEVICE_ADLIB
+          || snd_musicdevice == SNDDEVICE_AWE32)
+    {
+        snd_musmode = MUSMODE_OPL;
+    }
+    else
+    {
+        snd_musmode = MUSMODE_DISABLED;
+    }
 
     window = TXT_NewWindow("Sound configuration");
 
@@ -133,12 +158,10 @@ void ConfigSound(void)
                TXT_NewSeparator("Sound effects"),
                sfx_table = TXT_NewTable(2),
                TXT_NewSeparator("Music"),
-               music_enabled_control = TXT_NewCheckBox("Music enabled", 
-                                                       &snd_musicenabled),
                music_table = TXT_NewTable(2),
                NULL);
 
-    TXT_SetColumnWidths(sfx_table, 20, 5);
+    TXT_SetColumnWidths(sfx_table, 20, 14);
 
     TXT_AddWidgets(sfx_table, 
                    TXT_NewLabel("Sound effects"),
@@ -151,17 +174,20 @@ void ConfigSound(void)
                    TXT_NewSpinControl(&sfxVolume, 0, 15),
                    NULL);
 
-    TXT_SetColumnWidths(music_table, 20, 5);
+    TXT_SetColumnWidths(music_table, 20, 14);
 
     TXT_AddWidgets(music_table,
+                   TXT_NewLabel("Music playback"),
+                   mus_mode_control = TXT_NewDropdownList(&snd_musmode,
+                                                          musmode_strings,
+                                                          NUM_MUSMODES),
                    TXT_NewLabel("Music volume"),
                    TXT_NewSpinControl(&musicVolume, 0, 15),
                    NULL);
 
-    TXT_SignalConnect(sfx_mode_control, "changed", 
+    TXT_SignalConnect(sfx_mode_control, "changed",
                       UpdateSndDevices, NULL);
-    TXT_SignalConnect(music_enabled_control, "changed", 
+    TXT_SignalConnect(mus_mode_control, "changed",
                       UpdateSndDevices, NULL);
-
 }
 
