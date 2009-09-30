@@ -96,6 +96,9 @@ static int OPL_Win9x_Init(unsigned int port_base)
 
     // Check that this is a Windows 9x series OS:
 
+    memset(&version_info, 0, sizeof(version_info));
+    version_info.dwOSVersionInfoSize = sizeof(version_info);
+
     GetVersionEx(&version_info);
 
     if (version_info.dwPlatformId == 1)
