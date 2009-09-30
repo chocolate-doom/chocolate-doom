@@ -138,7 +138,7 @@ void MainMenu(void)
 }
 
 //
-// Initialise all configuration variables, load config file, etc
+// Initialize all configuration variables, load config file, etc
 //
 
 static void InitConfig(void)
@@ -194,7 +194,7 @@ static void SetIcon(void)
 }
 
 // 
-// Initialise and run the textscreen GUI.
+// Initialize and run the textscreen GUI.
 //
 
 static void RunGUI(void)
@@ -203,7 +203,7 @@ static void RunGUI(void)
 
     if (!TXT_Init())
     {
-        fprintf(stderr, "Failed to initialise GUI\n");
+        fprintf(stderr, "Failed to initialize GUI\n");
         exit(-1);
     }
 

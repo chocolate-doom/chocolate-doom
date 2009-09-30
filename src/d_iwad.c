@@ -19,7 +19,7 @@
 // 02111-1307, USA.
 //
 // DESCRIPTION:
-//     Search for and locate an IWAD file, and initialise according
+//     Search for and locate an IWAD file, and initialize according
 //     to the IWAD type.
 //
 //-----------------------------------------------------------------------------

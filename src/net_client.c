@@ -1152,7 +1152,7 @@ boolean NET_CL_Connect(net_addr_t *addr)
 
     client_context = NET_NewContext();
     
-    // initialise module for client mode
+    // initialize module for client mode
 
     if (!addr->module->InitClient())
     {
@@ -1164,7 +1164,7 @@ boolean NET_CL_Connect(net_addr_t *addr)
     net_client_connected = true;
     net_client_received_wait_data = false;
 
-    // Initialise connection
+    // Initialize connection
 
     NET_Conn_InitClient(&client_connection, addr);
 

@@ -24,7 +24,7 @@
 #ifndef NET_SERVER_H
 #define NET_SERVER_H
 
-// initialise server and wait for connections
+// initialize server and wait for connections
 
 void NET_SV_Init(void);
 
