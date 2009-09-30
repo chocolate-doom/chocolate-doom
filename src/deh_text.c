@@ -66,7 +66,7 @@ char *DEH_String(char *s)
 {
     int entry;
 
-    // Fallback if we have not initialised the hash table yet
+    // Fallback if we have not initialized the hash table yet
 
     if (hash_table_length < 0)
 	return s;

@@ -143,7 +143,7 @@ static void SetupLists(void)
     SetupList(&pwad_sprites, &pwad, "S_START", "S_END", "SS_START", "SS_END");
 }
 
-// Initialise the replace list
+// Initialize the replace list
 
 static void InitSpriteList(void)
 {

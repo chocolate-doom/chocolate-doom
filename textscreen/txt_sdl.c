@@ -162,7 +162,7 @@ static void ChooseFont(void)
 }
 
 //
-// Initialise text mode screen
+// Initialize text mode screen
 //
 // Returns 1 if successful, 0 if an error occurred
 //

@@ -176,7 +176,7 @@ static boolean SndDeviceInList(snddevice_t device, snddevice_t *list,
     return false;
 }
 
-// Find and initialise a sound_module_t appropriate for the setting
+// Find and initialize a sound_module_t appropriate for the setting
 // in snd_sfxdevice.
 
 static void InitSfxModule(void)
@@ -194,7 +194,7 @@ static void InitSfxModule(void)
                             sound_modules[i]->sound_devices,
                             sound_modules[i]->num_sound_devices))
         {
-            // Initialise the module
+            // Initialize the module
 
             if (sound_modules[i]->Init())
             {
@@ -205,7 +205,7 @@ static void InitSfxModule(void)
     }
 }
 
-// Initialise music according to snd_musicdevice.
+// Initialize music according to snd_musicdevice.
 
 static void InitMusicModule(void)
 {
@@ -222,7 +222,7 @@ static void InitMusicModule(void)
                             music_modules[i]->sound_devices,
                             music_modules[i]->num_sound_devices))
         {
-            // Initialise the module
+            // Initialize the module
 
             if (music_modules[i]->Init())
             {
@@ -268,7 +268,7 @@ void S_Init(int sfxVolume, int musicVolume)
 
     nomusic = M_CheckParm("-nomusic") > 0;
 
-    // Initialise the sound and music subsystems.
+    // Initialize the sound and music subsystems.
 
     if (!nosound && !screensaver_mode)
     {
