@@ -45,6 +45,9 @@ extern opl_driver_t opl_linux_driver;
 #ifdef HAVE_LIBI386
 extern opl_driver_t opl_openbsd_driver;
 #endif
+#ifdef _WIN32
+extern opl_driver_t opl_win9x_driver;
+#endif
 extern opl_driver_t opl_sdl_driver;
 
 static opl_driver_t *drivers[] =
@@ -54,6 +57,9 @@ static opl_driver_t *drivers[] =
 #endif
 #ifdef HAVE_LIBI386
     &opl_openbsd_driver,
+#endif
+#ifdef _WIN32
+    &opl_win9x_driver,
 #endif
     &opl_sdl_driver,
     NULL
