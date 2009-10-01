@@ -322,7 +322,7 @@ static opl_voice_t *voice_alloced_list;
 // Track data for playing tracks:
 
 static opl_track_data_t *tracks;
-static unsigned int num_tracks;
+static unsigned int num_tracks = 0;
 static unsigned int running_tracks = 0;
 static boolean song_looping;
 
@@ -569,47 +569,6 @@ static void InitVoices(void)
 
         ReleaseVoice(&voices[i]);
     }
-}
-
-// Shutdown music
-
-static void I_OPL_ShutdownMusic(void)
-{
-    if (music_initialized)
-    {
-        OPL_Shutdown();
-
-        // Release GENMIDI lump
-
-        W_ReleaseLumpName("GENMIDI");
-
-        music_initialized = false;
-    }
-}
-
-// Initialize music subsystem
-
-static boolean I_OPL_InitMusic(void)
-{
-    if (!OPL_Init(opl_io_port))
-    {
-        printf("Dude.  The Adlib isn't responding.\n");
-        return false;
-    }
-
-    // Load instruments from GENMIDI lump:
-
-    if (!LoadInstrumentTable())
-    {
-        OPL_Shutdown();
-        return false;
-    }
-
-    InitVoices();
-
-    music_initialized = true;
-
-    return true;
 }
 
 // Set music volume (0 - 127)
@@ -1252,6 +1211,8 @@ static void I_OPL_StopSong(void)
         return;
     }
 
+    OPL_Lock();
+
     // Stop all playback.
 
     OPL_ClearCallbacks();
@@ -1275,6 +1236,11 @@ static void I_OPL_StopSong(void)
     }
 
     free(tracks);
+
+    tracks = NULL;
+    num_tracks = 0;
+
+    OPL_Unlock();
 }
 
 static void I_OPL_UnRegisterSong(void *handle)
@@ -1358,7 +1324,7 @@ static void *I_OPL_RegisterSong(void *data, int len)
 
     // remove file now
 
-//    remove(filename);
+    remove(filename);
 
     Z_Free(filename);
 
@@ -1366,6 +1332,7 @@ static void *I_OPL_RegisterSong(void *data, int len)
 }
 
 // Is the song playing?
+
 static boolean I_OPL_MusicIsPlaying(void)
 {
     if (!music_initialized)
@@ -1373,7 +1340,54 @@ static boolean I_OPL_MusicIsPlaying(void)
         return false;
     }
 
-    return false;
+    return num_tracks > 0;
+}
+
+// Shutdown music
+
+static void I_OPL_ShutdownMusic(void)
+{
+    if (music_initialized)
+    {
+        // Stop currently-playing track, if there is one:
+
+        I_OPL_StopSong();
+
+        OPL_Shutdown();
+
+        // Release GENMIDI lump
+
+        W_ReleaseLumpName("GENMIDI");
+
+        music_initialized = false;
+    }
+}
+
+// Initialize music subsystem
+
+static boolean I_OPL_InitMusic(void)
+{
+    if (!OPL_Init(opl_io_port))
+    {
+        printf("Dude.  The Adlib isn't responding.\n");
+        return false;
+    }
+
+    // Load instruments from GENMIDI lump:
+
+    if (!LoadInstrumentTable())
+    {
+        OPL_Shutdown();
+        return false;
+    }
+
+    InitVoices();
+
+    tracks = NULL;
+    num_tracks = 0;
+    music_initialized = true;
+
+    return true;
 }
 
 static snddevice_t music_opl_devices[] =
