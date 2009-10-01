@@ -236,9 +236,9 @@ void OPL_WriteRegister(int reg, int value)
 
     for (i=0; i<6; ++i)
     {
-        // An oddity of the Doom OPL code: at startup initialisation,
+        // An oddity of the Doom OPL code: at startup initialization,
         // the spacing here is performed by reading from the register
-        // port; after initialisation, the data port is read, instead.
+        // port; after initialization, the data port is read, instead.
 
         if (init_stage_reg_writes)
         {

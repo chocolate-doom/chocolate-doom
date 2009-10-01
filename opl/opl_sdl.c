@@ -79,11 +79,11 @@ static int16_t *mix_buffer = NULL;
 
 // SDL parameters.
 
-static int sdl_was_initialised = 0;
+static int sdl_was_initialized = 0;
 static int mixing_freq, mixing_channels;
 static Uint16 mixing_format;
 
-static int SDLIsInitialised(void)
+static int SDLIsInitialized(void)
 {
     int freq, channels;
     Uint16 format;
@@ -227,13 +227,13 @@ static void OPL_SDL_Shutdown(void)
 {
     Mix_SetPostMix(NULL, NULL);
 
-    if (sdl_was_initialised)
+    if (sdl_was_initialized)
     {
         Mix_CloseAudio();
         SDL_QuitSubSystem(SDL_INIT_AUDIO);
         OPL_Queue_Destroy(callback_queue);
         free(mix_buffer);
-        sdl_was_initialised = 0;
+        sdl_was_initialized = 0;
     }
 
     if (opl_emulator != NULL)
@@ -281,9 +281,9 @@ static void TimerHandler(int channel, double interval_seconds)
 static int OPL_SDL_Init(unsigned int port_base)
 {
     // Check if SDL_mixer has been opened already
-    // If not, we must initialise it now
+    // If not, we must initialize it now
 
-    if (!SDLIsInitialised())
+    if (!SDLIsInitialized())
     {
         if (SDL_Init(SDL_INIT_AUDIO) < 0)
         {
@@ -304,11 +304,11 @@ static int OPL_SDL_Init(unsigned int port_base)
         // When this module shuts down, it has the responsibility to 
         // shut down SDL.
 
-        sdl_was_initialised = 1;
+        sdl_was_initialized = 1;
     }
     else
     {
-        sdl_was_initialised = 0;
+        sdl_was_initialized = 0;
     }
 
     opl_sdl_paused = 0;
@@ -345,7 +345,7 @@ static int OPL_SDL_Init(unsigned int port_base)
 
     if (opl_emulator == NULL)
     {
-        fprintf(stderr, "Failed to initialise software OPL emulator!\n");
+        fprintf(stderr, "Failed to initialize software OPL emulator!\n");
         OPL_SDL_Shutdown();
         return 0;
     }

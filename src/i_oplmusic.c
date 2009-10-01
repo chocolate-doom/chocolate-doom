@@ -303,7 +303,7 @@ static const unsigned int volume_mapping_table[] = {
     124, 124, 125, 125, 126, 126, 127, 127
 };
 
-static boolean music_initialised = false;
+static boolean music_initialized = false;
 
 //static boolean musicpaused = false;
 static int current_music_volume;
@@ -546,7 +546,7 @@ static void SetVoiceVolume(opl_voice_t *voice, unsigned int volume)
     }
 }
 
-// Initialise the voice table and freelist
+// Initialize the voice table and freelist
 
 static void InitVoices(void)
 {
@@ -556,7 +556,7 @@ static void InitVoices(void)
 
     voice_free_list = NULL;
 
-    // Initialise each voice.
+    // Initialize each voice.
 
     for (i=0; i<OPL_NUM_VOICES; ++i)
     {
@@ -575,7 +575,7 @@ static void InitVoices(void)
 
 static void I_OPL_ShutdownMusic(void)
 {
-    if (music_initialised)
+    if (music_initialized)
     {
         OPL_Shutdown();
 
@@ -583,11 +583,11 @@ static void I_OPL_ShutdownMusic(void)
 
         W_ReleaseLumpName("GENMIDI");
 
-        music_initialised = false;
+        music_initialized = false;
     }
 }
 
-// Initialise music subsystem
+// Initialize music subsystem
 
 static boolean I_OPL_InitMusic(void)
 {
@@ -607,7 +607,7 @@ static boolean I_OPL_InitMusic(void)
 
     InitVoices();
 
-    music_initialised = true;
+    music_initialized = true;
 
     return true;
 }
@@ -1142,7 +1142,7 @@ static void ScheduleTrack(opl_track_data_t *track)
     OPL_SetCallback(ms, TrackTimerCallback, track);
 }
 
-// Initialise a channel.
+// Initialize a channel.
 
 static void InitChannel(opl_track_data_t *track, opl_channel_data_t *channel)
 {
@@ -1186,7 +1186,7 @@ static void I_OPL_PlaySong(void *handle, int looping)
     midi_file_t *file;
     unsigned int i;
 
-    if (!music_initialised || handle == NULL)
+    if (!music_initialized || handle == NULL)
     {
         return;
     }
@@ -1211,7 +1211,7 @@ static void I_OPL_PauseSong(void)
 {
     unsigned int i;
 
-    if (!music_initialised)
+    if (!music_initialized)
     {
         return;
     }
@@ -1235,7 +1235,7 @@ static void I_OPL_PauseSong(void)
 
 static void I_OPL_ResumeSong(void)
 {
-    if (!music_initialised)
+    if (!music_initialized)
     {
         return;
     }
@@ -1247,7 +1247,7 @@ static void I_OPL_StopSong(void)
 {
     unsigned int i;
 
-    if (!music_initialised)
+    if (!music_initialized)
     {
         return;
     }
@@ -1279,7 +1279,7 @@ static void I_OPL_StopSong(void)
 
 static void I_OPL_UnRegisterSong(void *handle)
 {
-    if (!music_initialised)
+    if (!music_initialized)
     {
         return;
     }
@@ -1328,7 +1328,7 @@ static void *I_OPL_RegisterSong(void *data, int len)
     midi_file_t *result;
     char *filename;
 
-    if (!music_initialised)
+    if (!music_initialized)
     {
         return NULL;
     }
@@ -1368,7 +1368,7 @@ static void *I_OPL_RegisterSong(void *data, int len)
 // Is the song playing?
 static boolean I_OPL_MusicIsPlaying(void)
 {
-    if (!music_initialised)
+    if (!music_initialized)
     {
         return false;
     }
