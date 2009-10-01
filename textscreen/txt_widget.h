@@ -106,7 +106,7 @@ struct txt_widget_s
 void TXT_InitWidget(TXT_UNCAST_ARG(widget), txt_widget_class_t *widget_class);
 void TXT_CalcWidgetSize(TXT_UNCAST_ARG(widget));
 void TXT_DrawWidget(TXT_UNCAST_ARG(widget), int selected);
-void TXT_EmitSignal(TXT_UNCAST_ARG(widget), char *signal_name);
+void TXT_EmitSignal(TXT_UNCAST_ARG(widget), const char *signal_name);
 int TXT_WidgetKeyPress(TXT_UNCAST_ARG(widget), int key);
 void TXT_WidgetMousePress(TXT_UNCAST_ARG(widget), int x, int y, int b);
 void TXT_DestroyWidget(TXT_UNCAST_ARG(widget));
@@ -121,7 +121,7 @@ void TXT_LayoutWidget(TXT_UNCAST_ARG(widget));
  * @param user_data    User-specified pointer to pass to the callback function.
  */
 
-void TXT_SignalConnect(TXT_UNCAST_ARG(widget), char *signal_name,
+void TXT_SignalConnect(TXT_UNCAST_ARG(widget), const char *signal_name,
                        TxtWidgetSignalFunc func, void *user_data);
 
 /**

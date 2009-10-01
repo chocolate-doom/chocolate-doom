@@ -52,7 +52,7 @@
 #define MAX_SOUND_SLICE_TIME 70 /* ms */
 #define NUM_CHANNELS 16
 
-static boolean sound_initialised = false;
+static boolean sound_initialized = false;
 
 static Mix_Chunk sound_chunks[NUMSFX];
 static int channels_playing[NUM_CHANNELS];
@@ -180,7 +180,7 @@ static void ExpandSoundData_SDL(byte *data,
     destination->abuf 
         = Z_Malloc(expanded_length, PU_STATIC, &destination->abuf);
 
-    // If we can, use the standard / optimised SDL conversion routines.
+    // If we can, use the standard / optimized SDL conversion routines.
     
     if (samplerate <= mixer_freq
      && ConvertibleRatio(samplerate, mixer_freq)
@@ -548,7 +548,7 @@ static void I_SDL_UpdateSoundParams(int handle, int vol, int sep)
 {
     int left, right;
 
-    if (!sound_initialised)
+    if (!sound_initialized)
     {
         return;
     }
@@ -577,7 +577,7 @@ static int I_SDL_StartSound(int id, int channel, int vol, int sep)
 {
     Mix_Chunk *chunk;
 
-    if (!sound_initialised)
+    if (!sound_initialized)
     {
         return -1;
     }
@@ -611,7 +611,7 @@ static int I_SDL_StartSound(int id, int channel, int vol, int sep)
 
 static void I_SDL_StopSound (int handle)
 {
-    if (!sound_initialised)
+    if (!sound_initialized)
     {
         return;
     }
@@ -659,7 +659,7 @@ static void I_SDL_UpdateSound(void)
 
 static void I_SDL_ShutdownSound(void)
 {    
-    if (!sound_initialised)
+    if (!sound_initialized)
     {
         return;
     }
@@ -667,7 +667,7 @@ static void I_SDL_ShutdownSound(void)
     Mix_CloseAudio();
     SDL_QuitSubSystem(SDL_INIT_AUDIO);
 
-    sound_initialised = false;
+    sound_initialized = false;
 }
 
 // Calculate slice size, based on MAX_SOUND_SLICE_TIME.
@@ -721,7 +721,7 @@ static boolean I_SDL_InitSound(void)
 
     if (Mix_OpenAudio(snd_samplerate, AUDIO_S16SYS, 2, GetSliceSize()) < 0)
     {
-        fprintf(stderr, "Error initialising SDL_mixer: %s\n", Mix_GetError());
+        fprintf(stderr, "Error initializing SDL_mixer: %s\n", Mix_GetError());
         return false;
     }
 
@@ -751,7 +751,7 @@ static boolean I_SDL_InitSound(void)
     
     SDL_PauseAudio(0);
 
-    sound_initialised = true;
+    sound_initialized = true;
 
     return true;
 }

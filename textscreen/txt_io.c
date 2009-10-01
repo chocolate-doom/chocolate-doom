@@ -33,7 +33,7 @@
 static struct 
 {
     txt_color_t color;
-    char *name;
+    const char *name;
 } colors[] = {
     {TXT_COLOR_BLACK,           "black"},
     {TXT_COLOR_BLUE,            "blue"},
@@ -147,11 +147,11 @@ void TXT_PutChar(int c)
     PutChar(screen, c);
 }
 
-void TXT_Puts(char *s)
+void TXT_Puts(const char *s)
 {
     int previous_color = TXT_COLOR_BLACK;
     unsigned char *screen;
-    char *p;
+    const char *p;
     char colorname_buf[20];
     char *ending;
     int col;

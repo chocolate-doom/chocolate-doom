@@ -67,7 +67,7 @@ typedef enum
     TXT_COLOR_BRIGHT_WHITE,
 } txt_color_t;
 
-// Initialise the screen
+// Initialize the screen
 // Returns 1 if successful, 0 if failed.
 
 int TXT_Init(void);

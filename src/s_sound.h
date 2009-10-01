@@ -54,8 +54,8 @@ typedef struct
     snddevice_t *sound_devices;
     int num_sound_devices;
 
-    // Initialise sound module
-    // Returns true if successfully initialised
+    // Initialize sound module
+    // Returns true if successfully initialized
 
     boolean (*Init)(void);
 
@@ -99,7 +99,7 @@ typedef struct
     snddevice_t *sound_devices;
     int num_sound_devices;
 
-    // Initialise the music subsystem
+    // Initialize the music subsystem
 
     boolean (*Init)(void);
 

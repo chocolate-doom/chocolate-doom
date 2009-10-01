@@ -55,7 +55,7 @@ static txt_cliparea_t *cliparea = NULL;
 #define VALID_X(x) ((x) >= cliparea->x1 && (x) < cliparea->x2)
 #define VALID_Y(y) ((y) >= cliparea->y1 && (y) < cliparea->y2)
 
-void TXT_DrawDesktopBackground(char *title)
+void TXT_DrawDesktopBackground(const char *title)
 {
     int i;
     unsigned char *screendata;
@@ -125,7 +125,7 @@ void TXT_DrawShadow(int x, int y, int w, int h)
     }
 }
 
-void TXT_DrawWindowFrame(char *title, int x, int y, int w, int h)
+void TXT_DrawWindowFrame(const char *title, int x, int y, int w, int h)
 {
     int x1, y1;
     int bx, by;
@@ -224,11 +224,11 @@ void TXT_DrawSeparator(int x, int y, int w)
     }
 }
 
-void TXT_DrawString(char *s)
+void TXT_DrawString(const char *s)
 {
     int x, y;
     int x1;
-    char *p;
+    const char *p;
 
     TXT_GetXY(&x, &y);
 
