@@ -1564,8 +1564,6 @@ void I_InitGraphics(void)
         flags |= SDL_FULLSCREEN;
     }
 
-    flags |= SDL_NOFRAME;
-
     screen = SDL_SetVideoMode(windowwidth, windowheight, 8, flags);
 
     if (screen == NULL)
