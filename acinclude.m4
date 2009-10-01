@@ -1,4 +1,9 @@
 
+dnl
+dnl SDL workaround autoconf macros, by Simon Howard.
+dnl I release the contents of this file to the public domain.
+dnl
+
 dnl Macro to check if autoconf's compile tests have been broken by
 dnl SDL.  Tries to build the simplest possible program, and if it
 dnl fails, calls the given block.

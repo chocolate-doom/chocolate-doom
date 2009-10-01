@@ -119,7 +119,7 @@ typedef struct
 } net_client_recv_t;
 
 static net_server_state_t server_state;
-static boolean server_initialised = false;
+static boolean server_initialized = false;
 static net_client_t clients[MAXNETNODES];
 static net_client_t *sv_players[MAXPLAYERS];
 static net_context_t *server_context;
@@ -612,7 +612,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
             return;
         }
         
-        // Activate, initialise connection
+        // Activate, initialize connection
 
         NET_SV_InitNewClient(client, addr, player_name);
 
@@ -1489,13 +1489,13 @@ void NET_SV_AddModule(net_module_t *module)
     NET_AddModule(server_context, module);
 }
 
-// Initialise server and wait for connections
+// Initialize server and wait for connections
 
 void NET_SV_Init(void)
 {
     int i;
 
-    // initialise send/receive context
+    // initialize send/receive context
 
     server_context = NET_NewContext();
 
@@ -1510,7 +1510,7 @@ void NET_SV_Init(void)
 
     server_state = SERVER_WAITING_START;
     sv_gamemode = indetermined;
-    server_initialised = true;
+    server_initialized = true;
 }
 
 // Run server code to check for new packets/send packets as the server
@@ -1522,7 +1522,7 @@ void NET_SV_Run(void)
     net_packet_t *packet;
     int i;
 
-    if (!server_initialised)
+    if (!server_initialized)
     {
         return;
     }
@@ -1564,7 +1564,7 @@ void NET_SV_Shutdown(void)
     boolean running;
     int start_time;
 
-    if (!server_initialised)
+    if (!server_initialized)
     {
         return;
     }

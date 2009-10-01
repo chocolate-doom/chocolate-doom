@@ -115,7 +115,7 @@ void I_InitJoystick(void)
 
     SDL_JoystickEventState(SDL_ENABLE);
 
-    // Initialised okay!
+    // Initialized okay!
 
     printf("I_InitJoystick: %s\n", SDL_JoystickName(joystick_index));
 }

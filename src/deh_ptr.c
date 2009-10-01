@@ -56,7 +56,7 @@ static void DEH_PointerInit(void)
 {
     int i;
     
-    // Initialise list of dehacked pointers
+    // Initialize list of dehacked pointers
 
     for (i=0; i<NUMSTATES; ++i)
         codeptrs[i] = states[i].action;

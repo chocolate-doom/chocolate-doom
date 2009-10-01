@@ -61,7 +61,7 @@ void TXT_RemoveDesktopWindow(txt_window_t *win)
     num_windows = to;
 }
 
-static void DrawDesktopBackground(char *title)
+static void DrawDesktopBackground(const char *title)
 {
     int i;
     unsigned char *screendata;
@@ -117,7 +117,7 @@ void TXT_SetDesktopTitle(char *title)
 void TXT_DrawDesktop(void)
 {
     int i;
-    char *title;
+    const char *title;
 
     TXT_InitClipArea();
 

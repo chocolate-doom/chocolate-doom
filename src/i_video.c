@@ -101,7 +101,7 @@ static int windowwidth, windowheight;
 
 // display has been set up?
 
-static boolean initialised = false;
+static boolean initialized = false;
 
 // disable mouse?
 
@@ -246,7 +246,7 @@ static void UpdateFocus(void)
     state = SDL_GetAppState();
 
     // We should have input (keyboard) focus and be visible 
-    // (not minimised)
+    // (not minimized)
 
     window_focused = (state & SDL_APPINPUTFOCUS) && (state & SDL_APPACTIVE);
 
@@ -396,14 +396,14 @@ static int TranslateKey(SDL_keysym *sym)
 
 void I_ShutdownGraphics(void)
 {
-    if (initialised)
+    if (initialized)
     {
         SDL_ShowCursor(1);
         SDL_WM_GrabInput(SDL_GRAB_OFF);
 
         SDL_QuitSubSystem(SDL_INIT_VIDEO);
     
-        initialised = false;
+        initialized = false;
     }
 }
 
@@ -622,7 +622,7 @@ static void I_ReadMouse(void)
 //
 void I_StartTic (void)
 {
-    if (!initialised)
+    if (!initialized)
     {
         return;
     }
@@ -741,7 +741,7 @@ void I_BeginRead(void)
                     + (SCREENWIDTH - LOADING_DISK_W);
     int y;
 
-    if (!initialised || disk_image == NULL)
+    if (!initialized || disk_image == NULL)
         return;
 
     // save background and copy the disk image in
@@ -769,7 +769,7 @@ void I_EndRead(void)
                     + (SCREENWIDTH - LOADING_DISK_W);
     int y;
 
-    if (!initialised || disk_image == NULL)
+    if (!initialized || disk_image == NULL)
         return;
 
     // save background and copy the disk image in
@@ -797,7 +797,7 @@ void I_FinishUpdate (void)
     int		i;
     // UNUSED static unsigned char *bigscreen=0;
 
-    if (!initialised)
+    if (!initialized)
         return;
 
     if (noblit)
@@ -1500,7 +1500,7 @@ void I_InitGraphics(void)
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) 
     {
-        I_Error("Failed to initialise video: %s", SDL_GetError());
+        I_Error("Failed to initialize video: %s", SDL_GetError());
     }
 
     // Check for command-line video-related parameters.
@@ -1563,6 +1563,8 @@ void I_InitGraphics(void)
     {
         flags |= SDL_FULLSCREEN;
     }
+
+    flags |= SDL_NOFRAME;
 
     screen = SDL_SetVideoMode(windowwidth, windowheight, 8, flags);
 
@@ -1679,6 +1681,6 @@ void I_InitGraphics(void)
         CenterMouse();
     }
 
-    initialised = true;
+    initialized = true;
 }
 
