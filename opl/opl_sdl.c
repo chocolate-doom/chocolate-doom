@@ -160,8 +160,8 @@ static void FillBuffer(int16_t *buffer, unsigned int nsamples)
 
     for (i=0; i<nsamples; ++i)
     {
-        buffer[i * 2] += mix_buffer[i] / 2;
-        buffer[i * 2 + 1] += mix_buffer[i] / 2;
+        buffer[i * 2] = mix_buffer[i];
+        buffer[i * 2 + 1] = mix_buffer[i];
     }
 }
 
@@ -225,7 +225,7 @@ static void OPL_Mix_Callback(void *udata,
 
 static void OPL_SDL_Shutdown(void)
 {
-    Mix_SetPostMix(NULL, NULL);
+    Mix_HookMusic(NULL, NULL);
 
     if (sdl_was_initialized)
     {
@@ -356,7 +356,7 @@ static int OPL_SDL_Init(unsigned int port_base)
     callback_queue_mutex = SDL_CreateMutex();
 
     // TODO: This should be music callback? or-?
-    Mix_SetPostMix(OPL_Mix_Callback, NULL);
+    Mix_HookMusic(OPL_Mix_Callback, NULL);
 
     return 1;
 }
