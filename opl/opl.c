@@ -42,7 +42,7 @@
 #ifdef HAVE_IOPERM
 extern opl_driver_t opl_linux_driver;
 #endif
-#ifdef HAVE_LIBI386
+#if defined(HAVE_LIBI386) || defined(HAVE_LIBAMD64)
 extern opl_driver_t opl_openbsd_driver;
 #endif
 #ifdef _WIN32
@@ -55,7 +55,7 @@ static opl_driver_t *drivers[] =
 #ifdef HAVE_IOPERM
     &opl_linux_driver,
 #endif
-#ifdef HAVE_LIBI386
+#if defined(HAVE_LIBI386) || defined(HAVE_LIBAMD64)
     &opl_openbsd_driver,
 #endif
 #ifdef _WIN32

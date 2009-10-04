@@ -25,16 +25,36 @@
 
 #include "config.h"
 
-#ifdef HAVE_LIBI386
+// OpenBSD has a i386_iopl on i386 and amd64_iopl on x86_64,
+// even though they do the same thing.  Take care of this
+// here, and map set_iopl to point to the appropriate name.
+
+#if defined(HAVE_LIBI386)
+
+#include <sys/types.h>
+#include <machine/sysarch.h>
+#include <i386/pio.h>
+#define set_iopl i386_iopl
+
+#elif defined(HAVE_LIBAMD64)
+
+#include <sys/types.h>
+#include <machine/sysarch.h>
+#include <amd64/pio.h>
+#define set_iopl amd64_iopl
+
+#else
+#define NO_OBSD_DRIVER
+#endif
+
+// If the above succeeded, proceed with the rest.
+
+#ifndef NO_OBSD_DRIVER
 
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
-
-#include <sys/types.h>
-#include <machine/sysarch.h>
-#include <i386/pio.h>
 
 #include "opl.h"
 #include "opl_internal.h"
@@ -46,7 +66,7 @@ static int OPL_OpenBSD_Init(unsigned int port_base)
 {
     // Try to get permissions:
 
-    if (i386_iopl(3) < 0)
+    if (set_iopl(3) < 0)
     {
         fprintf(stderr, "Failed to get raise I/O privilege level: "
                         "check that you are running as root.\n");
@@ -59,7 +79,7 @@ static int OPL_OpenBSD_Init(unsigned int port_base)
 
     if (!OPL_Timer_StartThread())
     {
-        i386_iopl(0);
+        set_iopl(0);
         return 0;
     }
 
@@ -74,7 +94,7 @@ static void OPL_OpenBSD_Shutdown(void)
 
     // Release I/O port permissions:
 
-    i386_iopl(0);
+    set_iopl(0);
 }
 
 static unsigned int OPL_OpenBSD_PortRead(opl_port_t port)
@@ -101,5 +121,5 @@ opl_driver_t opl_openbsd_driver =
     OPL_Timer_SetPaused
 };
 
-#endif /* #ifdef HAVE_LIBI386 */
+#endif /* #ifndef NO_OBSD_DRIVER */
 
