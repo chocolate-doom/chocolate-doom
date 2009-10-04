@@ -232,6 +232,7 @@ static wchar_t *GetPaddedWideArg(const char *arg)
 
 static int ExecuteCommand(const char *program, const char *arg)
 {
+    STARTUPINFOW startup_info;
     PROCESS_INFORMATION proc_info;
     wchar_t *exe_path;
     wchar_t *warg;
@@ -245,8 +246,8 @@ static int ExecuteCommand(const char *program, const char *arg)
     memset(&proc_info, 0, sizeof(proc_info));
 
     if (!CreateProcessW(exe_path, warg,
-                        NULL, NULL, FALSE, 0, NULL, NULL, NULL,
-                        &proc_info))
+                        NULL, NULL, FALSE, 0, NULL, NULL,
+                        &startup_info, &proc_info))
     {
         result = -1;
     }
