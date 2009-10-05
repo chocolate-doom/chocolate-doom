@@ -420,8 +420,41 @@ EV_VerticalDoor
 	    {
 		if (!thing->player)
 		    return;		// JDC: bad guys never close doors
-		
-		door->direction = -1;	// start going down immediately
+
+                // When is a door not a door?
+                // In Vanilla, door->direction is set, even though
+                // "specialdata" might not actually point at a door.
+
+                if (door->thinker.function.acp1 == (actionf_p1) T_VerticalDoor)
+                {
+                    door->direction = -1;	// start going down immediately
+                }
+                else if (door->thinker.function.acp1 == (actionf_p1) T_PlatRaise)
+                {
+                    // Erm, this is a plat, not a door.
+                    // This notably causes a problem in ep1-0500.lmp where
+                    // a plat and a door are cross-referenced; the door
+                    // doesn't open on 64-bit.
+                    // The direction field in vldoor_t corresponds to the wait
+                    // field in plat_t.  Let's set that to -1 instead.
+
+                    plat_t *plat;
+
+                    plat = (plat_t *) door;
+                    plat->wait = -1;
+                }
+                else
+                {
+                    // This isn't a door OR a plat.  Now we're in trouble.
+
+                    fprintf(stderr, "EV_VerticalDoor: Tried to close "
+                                    "something that wasn't a door.\n");
+
+                    // Try closing it anyway. At least it will work on 32-bit
+                    // machines.
+
+                    door->direction = -1;
+                }
 	    }
 	    return;
 	}
