@@ -38,6 +38,7 @@ EXTRA_DIST=                             \
         config.h                        \
         CMDLINE                         \
         HACKING                         \
+        README.OPL                      \
         TODO                            \
         BUGS
 
