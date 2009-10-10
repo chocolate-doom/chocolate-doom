@@ -1199,6 +1199,24 @@ int EV_DoDonut(line_t*	line)
 			
 	rtn = 1;
 	s2 = getNextSector(s1->lines[0],s1);
+
+        // Vanilla Doom does not check if the linedef is one sided.  The
+        // game does not crash, but reads invalid memory and causes the
+        // sector floor to move "down" to some unknown height.
+        // DOSbox prints a warning about an invalid memory access.
+        //
+        // I'm not sure exactly what invalid memory is being read.  This
+        // isn't something that should be done, anyway.
+        // Just print a warning and return.
+
+        if (s2 == NULL)
+        {
+            fprintf(stderr,
+                    "EV_DoDonut: linedef had no second sidedef! "
+                    "Unexpected behavior may occur in Vanilla Doom. \n");
+	    break;
+        }
+
 	for (i = 0;i < s2->linecount;i++)
 	{
 	    if ((!s2->lines[i]->flags & ML_TWOSIDED) ||
