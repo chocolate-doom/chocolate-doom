@@ -122,7 +122,7 @@ man/Makefile
 src/Makefile
 pcsound/Makefile
 pkg/Makefile
-pkg/wince/Makefile
+pkg/wince/GNUmakefile
 src/resource.rc
 src/doom-screensaver.desktop
 setup/setup-res.rc
