@@ -45,6 +45,7 @@ MAINTAINERCLEANFILES =  $(AUX_DIST_GEN)
 
 docdir=$(prefix)/share/doc/@PACKAGE@
 SUBDIRS=wince textscreen pcsound src man setup
+DIST_SUBDIRS=pkg $(SUBDIRS)
 
 if HAVE_PYTHON
 
