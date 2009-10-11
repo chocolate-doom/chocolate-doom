@@ -701,10 +701,15 @@ static unsigned int FrequencyForVoice(opl_voice_t *voice)
 
     note = voice->note;
 
-    // Apply note offset:
+    // Apply note offset.
+    // Don't apply offset if the instrument is a fixed note instrument.
 
     gm_voice = &voice->current_instr->voices[voice->current_instr_voice];
-    note += (signed short) SHORT(gm_voice->base_note_offset);
+
+    if ((voice->current_instr->flags & GENMIDI_FLAG_FIXED) == 0)
+    {
+        note += (signed short) SHORT(gm_voice->base_note_offset);
+    }
 
     // Avoid possible overflow due to base note offset:
 
