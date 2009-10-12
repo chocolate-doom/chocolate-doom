@@ -79,6 +79,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\opl\opl_timer.h" />
+		<Unit filename="..\opl\opl_win9x.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="..\src\am_map.c">
 			<Option compilerVar="CC" />
 		</Unit>
