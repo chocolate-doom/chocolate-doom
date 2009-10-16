@@ -70,7 +70,7 @@ boolean P_SetMobjState(mobj_t * mobj, statenum_t state)
 
     if (state == S_NULL)
     {                           // Remove mobj
-        mobj->state = S_NULL;
+        mobj->state = (state_t *) S_NULL;
         P_RemoveMobj(mobj);
         return (false);
     }
@@ -100,7 +100,7 @@ boolean P_SetMobjStateNF(mobj_t * mobj, statenum_t state)
 
     if (state == S_NULL)
     {                           // Remove mobj
-        mobj->state = S_NULL;
+        mobj->state = (state_t *) S_NULL;
         P_RemoveMobj(mobj);
         return (false);
     }
@@ -1214,7 +1214,7 @@ void P_SpawnPuff(fixed_t x, fixed_t y, fixed_t z)
             break;
         case MT_GAUNTLETPUFF1:
         case MT_GAUNTLETPUFF2:
-            puff->momz = .8 * FRACUNIT;
+            puff->momz = (fixed_t)(.8 * FRACUNIT);
         default:
             break;
     }

@@ -36,7 +36,9 @@
 #ifdef _WIN32
 
 #define snprintf _snprintf
+#if _MSC_VER < 1400 /* not needed for Visual Studio 2008 */
 #define vsnprintf _vsnprintf
+#endif
 #define strcasecmp stricmp
 #define strncasecmp strnicmp
 

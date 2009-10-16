@@ -1639,14 +1639,14 @@ void A_PhoenixPuff(mobj_t * actor)
     puff = P_SpawnMobj(actor->x, actor->y, actor->z, MT_PHOENIXPUFF);
     angle = actor->angle + ANG90;
     angle >>= ANGLETOFINESHIFT;
-    puff->momx = FixedMul(FRACUNIT * 1.3, finecosine[angle]);
-    puff->momy = FixedMul(FRACUNIT * 1.3, finesine[angle]);
+    puff->momx = FixedMul((fixed_t)(FRACUNIT * 1.3), finecosine[angle]);
+    puff->momy = FixedMul((fixed_t)(FRACUNIT * 1.3), finesine[angle]);
     puff->momz = 0;
     puff = P_SpawnMobj(actor->x, actor->y, actor->z, MT_PHOENIXPUFF);
     angle = actor->angle - ANG90;
     angle >>= ANGLETOFINESHIFT;
-    puff->momx = FixedMul(FRACUNIT * 1.3, finecosine[angle]);
-    puff->momy = FixedMul(FRACUNIT * 1.3, finesine[angle]);
+    puff->momx = FixedMul((fixed_t)(FRACUNIT * 1.3), finecosine[angle]);
+    puff->momy = FixedMul((fixed_t)(FRACUNIT * 1.3), finesine[angle]);
     puff->momz = 0;
 }
 
@@ -1727,7 +1727,7 @@ void A_ShutdownPhoenixPL2(player_t * player, pspdef_t * psp)
 
 void A_FlameEnd(mobj_t * actor)
 {
-    actor->momz += 1.5 * FRACUNIT;
+    actor->momz += (fixed_t)(1.5 * FRACUNIT);
 }
 
 //----------------------------------------------------------------------------
@@ -1738,7 +1738,7 @@ void A_FlameEnd(mobj_t * actor)
 
 void A_FloatPuff(mobj_t * puff)
 {
-    puff->momz += 1.8 * FRACUNIT;
+    puff->momz += (fixed_t)(1.8 * FRACUNIT);
 }
 
 //---------------------------------------------------------------------------

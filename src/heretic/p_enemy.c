@@ -1917,7 +1917,7 @@ void A_HeadIceImpact(mobj_t * ice)
         angle >>= ANGLETOFINESHIFT;
         shard->momx = FixedMul(shard->info->speed, finecosine[angle]);
         shard->momy = FixedMul(shard->info->speed, finesine[angle]);
-        shard->momz = -.6 * FRACUNIT;
+        shard->momz = (fixed_t)(-.6 * FRACUNIT);
         P_CheckMissileSpawn(shard);
     }
 }
@@ -2507,7 +2507,7 @@ void A_VolcanoBlast(mobj_t * volcano)
         angle >>= ANGLETOFINESHIFT;
         blast->momx = FixedMul(1 * FRACUNIT, finecosine[angle]);
         blast->momy = FixedMul(1 * FRACUNIT, finesine[angle]);
-        blast->momz = (2.5 * FRACUNIT) + (P_Random() << 10);
+        blast->momz = (fixed_t)(2.5 * FRACUNIT) + (P_Random() << 10);
         S_StartSound(blast, sfx_volsht);
         P_CheckMissileSpawn(blast);
     }
@@ -2540,8 +2540,8 @@ void A_VolcBallImpact(mobj_t * ball)
         angle = i * ANG90;
         tiny->angle = angle;
         angle >>= ANGLETOFINESHIFT;
-        tiny->momx = FixedMul(FRACUNIT * .7, finecosine[angle]);
-        tiny->momy = FixedMul(FRACUNIT * .7, finesine[angle]);
+        tiny->momx = FixedMul((fixed_t)(FRACUNIT * .7), finecosine[angle]);
+        tiny->momy = FixedMul((fixed_t)(FRACUNIT * .7), finesine[angle]);
         tiny->momz = FRACUNIT + (P_Random() << 9);
         P_CheckMissileSpawn(tiny);
     }
