@@ -1413,7 +1413,7 @@ static void SpechitOverrun(line_t *ld)
         
         if (p > 0)
         {
-            M_StrToInt(atoi(myargv[p+1]), &baseaddr);
+            M_StrToInt(myargv[p+1], (int *) &baseaddr);
         }
         else
         {
