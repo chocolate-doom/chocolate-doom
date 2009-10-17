@@ -40,6 +40,8 @@
 
 #include "opl_queue.h"
 
+#define MAX_SOUND_SLICE_TIME 100 /* ms */
+
 // When the callback mutex is locked using OPL_Lock, callback functions
 // are not invoked.
 
@@ -277,16 +279,26 @@ static void TimerHandler(int channel, double interval_seconds)
 
 static unsigned int GetSliceSize(void)
 {
-    unsigned int slicesize;
+    int limit;
+    int n;
 
-    slicesize = 1024 * (opl_sample_rate / 11025);
+    limit = (opl_sample_rate * MAX_SOUND_SLICE_TIME) / 1000;
 
-    if (slicesize <= 1024)
+    // Try all powers of two, not exceeding the limit.
+
+    for (n=0;; ++n)
     {
-        slicesize = 1024;
+        // 2^n <= limit < 2^n+1 ?
+
+        if ((1 << (n + 1)) > limit)
+        {
+            return (1 << n);
+        }
     }
 
-    return slicesize;
+    // Should never happen?
+
+    return 1024;
 }
 
 static int OPL_SDL_Init(unsigned int port_base)
