@@ -1372,6 +1372,8 @@ static void I_OPL_ShutdownMusic(void)
 
 static boolean I_OPL_InitMusic(void)
 {
+    OPL_SetSampleRate(snd_samplerate);
+
     if (!OPL_Init(opl_io_port))
     {
         printf("Dude.  The Adlib isn't responding.\n");

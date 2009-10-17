@@ -40,9 +40,6 @@
 
 #include "opl_queue.h"
 
-// TODO:
-#define opl_sample_rate 22050
-
 // When the callback mutex is locked using OPL_Lock, callback functions
 // are not invoked.
 
@@ -278,6 +275,20 @@ static void TimerHandler(int channel, double interval_seconds)
     SDL_UnlockMutex(callback_queue_mutex);
 }
 
+static unsigned int GetSliceSize(void)
+{
+    unsigned int slicesize;
+
+    slicesize = 1024 * (opl_sample_rate / 11025);
+
+    if (slicesize <= 1024)
+    {
+        slicesize = 1024;
+    }
+
+    return slicesize;
+}
+
 static int OPL_SDL_Init(unsigned int port_base)
 {
     // Check if SDL_mixer has been opened already
@@ -291,7 +302,7 @@ static int OPL_SDL_Init(unsigned int port_base)
             return 0;
         }
 
-        if (Mix_OpenAudio(opl_sample_rate, AUDIO_S16SYS, 2, 1024) < 0)
+        if (Mix_OpenAudio(opl_sample_rate, AUDIO_S16SYS, 2, GetSliceSize()) < 0)
         {
             fprintf(stderr, "Error initialising SDL_mixer: %s\n", Mix_GetError());
 
