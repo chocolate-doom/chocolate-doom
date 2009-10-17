@@ -38,6 +38,7 @@
 #include "i_system.h"
 #include "z_zone.h"
 #include "m_argv.h"
+#include "m_misc.h"
 #include "m_random.h"
 #include "w_wad.h"
 
@@ -1169,9 +1170,93 @@ void P_UpdateSpecials (void)
 		memset(&buttonlist[i],0,sizeof(button_t));
 	    }
 	}
-	
 }
 
+
+//
+// Donut overrun emulation
+//
+// Derived from the code from PrBoom+.  Thanks go to Andrey Budko (entryway)
+// as usual :-)
+//
+
+#define DONUT_FLOORHEIGHT_DEFAULT 0x00000000
+#define DONUT_FLOORPIC_DEFAULT 0x16
+
+static void DonutOverrun(fixed_t *s3_floorheight, short *s3_floorpic,
+                         line_t *line, sector_t *pillar_sector)
+{
+    static int first = 1;
+    static int tmp_s3_floorheight;
+    static int tmp_s3_floorpic;
+
+    extern int numflats;
+
+    if (first)
+    {
+        int p;
+
+        // This is the first time we have had an overrun.
+        first = 0;
+
+        // Default values
+        tmp_s3_floorheight = DONUT_FLOORHEIGHT_DEFAULT;
+        tmp_s3_floorpic = DONUT_FLOORPIC_DEFAULT;
+
+        //!
+        // @category compat
+        // @arg <x> <y>
+        //
+        // Use the specified magic values when emulating behavior caused
+        // by memory overruns from improperly constructed donuts.
+        // In Vanilla Doom this can differ depending on the operating
+        // system.  The default (if this option is not specified) is to
+        // emulate the behavior when running under Windows 98.
+
+        p = M_CheckParm("-donut");
+
+        if (p > 0 && p < myargc - 2)
+        {
+            // Dump of needed memory: (fixed_t)0000:0000 and (short)0000:0008
+            //
+            // C:\>debug
+            // -d 0:0
+            //
+            // DOS 6.22:
+            // 0000:0000    (57 92 19 00) F4 06 70 00-(16 00)
+            // DOS 7.1:
+            // 0000:0000    (9E 0F C9 00) 65 04 70 00-(16 00)
+            // Win98:
+            // 0000:0000    (00 00 00 00) 65 04 70 00-(16 00)
+            // DOSBox under XP:
+            // 0000:0000    (00 00 00 F1) ?? ?? ?? 00-(07 00)
+
+            M_StrToInt(myargv[p + 1], &tmp_s3_floorheight);
+            M_StrToInt(myargv[p + 2], &tmp_s3_floorpic);
+
+            if (tmp_s3_floorpic >= numflats)
+            {
+                fprintf(stderr,
+                        "DonutOverrun: The second parameter for \"-donut\" "
+                        "switch should be greater than 0 and less than number "
+                        "of flats (%d). Using default value (%d) instead. \n",
+                        numflats, DONUT_FLOORPIC_DEFAULT);
+                tmp_s3_floorpic = DONUT_FLOORPIC_DEFAULT;
+            }
+        }
+    }
+
+    /*
+    fprintf(stderr,
+            "Linedef: %d; Sector: %d; "
+            "New floor height: %d; New floor pic: %d\n",
+            line->iLineID, pillar_sector->iSectorID,
+            tmp_s3_floorheight >> 16, tmp_s3_floorpic);
+     */
+
+    *s3_floorheight = (fixed_t) tmp_s3_floorheight;
+    *s3_floorpic = (short) tmp_s3_floorpic;
+}
 
 
 //
@@ -1186,17 +1271,19 @@ int EV_DoDonut(line_t*	line)
     int			rtn;
     int			i;
     floormove_t*	floor;
-	
+    fixed_t s3_floorheight;
+    short s3_floorpic;
+
     secnum = -1;
     rtn = 0;
     while ((secnum = P_FindSectorFromLineTag(line,secnum)) >= 0)
     {
 	s1 = &sectors[secnum];
-		
+
 	// ALREADY MOVING?  IF SO, KEEP GOING...
 	if (s1->specialdata)
 	    continue;
-			
+
 	rtn = 1;
 	s2 = getNextSector(s1->lines[0],s1);
 
@@ -1217,13 +1304,34 @@ int EV_DoDonut(line_t*	line)
 	    break;
         }
 
-	for (i = 0;i < s2->linecount;i++)
+	for (i = 0; i < s2->linecount; i++)
 	{
-	    if ((!s2->lines[i]->flags & ML_TWOSIDED) ||
-		(s2->lines[i]->backsector == s1))
-		continue;
 	    s3 = s2->lines[i]->backsector;
-	    
+
+	    if (s3 == s1)
+		continue;
+
+            if (s3 == NULL)
+            {
+                // e6y
+                // s3 is NULL, so
+                // s3->floorheight is an int at 0000:0000
+                // s3->floorpic is a short at 0000:0008
+                // Trying to emulate
+
+                fprintf(stderr,
+                        "EV_DoDonut: WARNING: emulating buffer overrun due to "
+                        "NULL back sector. "
+                        "Unexpected behavior may occur in Vanilla Doom.\n");
+
+                DonutOverrun(&s3_floorheight, &s3_floorpic, line, s1);
+            }
+            else
+            {
+                s3_floorheight = s3->floorheight;
+                s3_floorpic = s3->floorpic;
+            }
+
 	    //	Spawn rising slime
 	    floor = Z_Malloc (sizeof(*floor), PU_LEVSPEC, 0);
 	    P_AddThinker (&floor->thinker);
@@ -1234,9 +1342,9 @@ int EV_DoDonut(line_t*	line)
 	    floor->direction = 1;
 	    floor->sector = s2;
 	    floor->speed = FLOORSPEED / 2;
-	    floor->texture = s3->floorpic;
+	    floor->texture = s3_floorpic;
 	    floor->newspecial = 0;
-	    floor->floordestheight = s3->floorheight;
+	    floor->floordestheight = s3_floorheight;
 	    
 	    //	Spawn lowering donut-hole
 	    floor = Z_Malloc (sizeof(*floor), PU_LEVSPEC, 0);
@@ -1248,7 +1356,7 @@ int EV_DoDonut(line_t*	line)
 	    floor->direction = -1;
 	    floor->sector = s1;
 	    floor->speed = FLOORSPEED / 2;
-	    floor->floordestheight = s3->floorheight;
+	    floor->floordestheight = s3_floorheight;
 	    break;
 	}
     }
