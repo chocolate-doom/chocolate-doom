@@ -739,6 +739,26 @@ static unsigned int FrequencyForVoice(opl_voice_t *voice)
     sub_index = (freq_index - 284) % (12 * 32);
     octave = (freq_index - 284) / (12 * 32);
 
+    // Once the seventh octave is reached, things break down.
+    // We can only go up to octave 7 as a maximum anyway (the OPL
+    // register only has three bits for octave number), but for the
+    // notes in octave 7, the first five bits have octave=7, the
+    // following notes have octave=6.  This 7/6 pattern repeats in
+    // following octaves (which are technically impossible to
+    // represent anyway).
+
+    if (octave >= 7)
+    {
+        if (sub_index < 5)
+        {
+            octave = 7;
+        }
+        else
+        {
+            octave = 6;
+        }
+    }
+
     // Calculate the resulting register value to use for the frequency.
 
     return frequency_curve[sub_index + 284] | (octave << 10);
