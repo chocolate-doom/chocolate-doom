@@ -285,7 +285,11 @@ void TXT_UpdateScreen(void)
 
 void TXT_GetMousePosition(int *x, int *y)
 {
+#if SDL_VERSION_ATLEAST(1, 3, 0)
+    SDL_GetMouseState(0, x, y);
+#else
     SDL_GetMouseState(x, y);
+#endif
 
     *x /= font->w;
     *y /= font->h;
@@ -324,7 +328,9 @@ static int TranslateKey(SDL_keysym *sym)
 
         case SDLK_PAUSE:       return KEY_PAUSE;
 
+#if !SDL_VERSION_ATLEAST(1, 3, 0)
         case SDLK_EQUALS:      return KEY_EQUALS;
+#endif
 
         case SDLK_LSHIFT:
         case SDLK_RSHIFT:
@@ -335,9 +341,11 @@ static int TranslateKey(SDL_keysym *sym)
                                return KEY_RCTRL;
 
         case SDLK_LALT:
-        case SDLK_LMETA:
         case SDLK_RALT:
+#if !SDL_VERSION_ATLEAST(1, 3, 0)
+        case SDLK_LMETA:
         case SDLK_RMETA:
+#endif
                                return KEY_RALT;
 
         case SDLK_CAPSLOCK:    return KEY_CAPSLOCK;

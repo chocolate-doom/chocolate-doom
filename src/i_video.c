@@ -334,7 +334,9 @@ static int TranslateKey(SDL_keysym *sym)
 
       case SDLK_PAUSE:	return KEY_PAUSE;
 
+#if !SDL_VERSION_ATLEAST(1, 3, 0)
       case SDLK_EQUALS: return KEY_EQUALS;
+#endif
 
       case SDLK_MINUS:          return KEY_MINUS;
 
@@ -347,9 +349,11 @@ static int TranslateKey(SDL_keysym *sym)
 	return KEY_RCTRL;
 	
       case SDLK_LALT:
-      case SDLK_LMETA:
       case SDLK_RALT:
+#if !SDL_VERSION_ATLEAST(1, 3, 0)
+      case SDLK_LMETA:
       case SDLK_RMETA:
+#endif
         return KEY_RALT;
 
       case SDLK_CAPSLOCK: return KEY_CAPSLOCK;
@@ -420,8 +424,14 @@ void I_StartFrame (void)
 
 static int MouseButtonState(void)
 {
-    Uint8 state = SDL_GetMouseState(NULL, NULL);
+    Uint8 state;
     int result = 0;
+
+#if SDL_VERSION_ATLEAST(1, 3, 0)
+    state = SDL_GetMouseState(0, NULL, NULL);
+#else
+    state = SDL_GetMouseState(NULL, NULL);
+#endif
 
     // Note: button "0" is left, button "1" is right,
     // button "2" is middle for Doom.  This is different
@@ -585,7 +595,11 @@ static void CenterMouse(void)
     // Clear any relative movement caused by warping
 
     SDL_PumpEvents();
+#if SDL_VERSION_ATLEAST(1, 3, 0)
+    SDL_GetRelativeMouseState(0, NULL, NULL);
+#else
     SDL_GetRelativeMouseState(NULL, NULL);
+#endif
 }
 
 //
@@ -599,7 +613,11 @@ static void I_ReadMouse(void)
     int x, y;
     event_t ev;
 
+#if SDL_VERSION_ATLEAST(1, 3, 0)
+    SDL_GetRelativeMouseState(0, &x, &y);
+#else
     SDL_GetRelativeMouseState(&x, &y);
+#endif
 
     if (x != 0 || y != 0) 
     {
@@ -1553,7 +1571,9 @@ void I_InitGraphics(void)
     // has to be done before the call to SDL_SetVideoMode.
 
     I_SetWindowCaption();
+#if !SDL_VERSION_ATLEAST(1, 3, 0)
     I_SetWindowIcon();
+#endif
 
     // Set the video mode.
 
