@@ -631,6 +631,16 @@ static void KeyOffEvent(opl_track_data_t *track, midi_event_t *event)
     }
 }
 
+// Compare the priorities of channels, returning either -1, 0 or 1.
+
+static int CompareChannelPriorities(opl_channel_data_t *chan1,
+                                    opl_channel_data_t *chan2)
+{
+    // TODO ...
+
+    return 1;
+}
+
 // When all voices are in use, we must discard an existing voice to
 // play a new note.  Find and free an existing voice.  The channel
 // passed to the function is the channel for the new note to be
@@ -643,13 +653,19 @@ static opl_voice_t *ReplaceExistingVoice(opl_channel_data_t *channel)
 
     // Check the allocated voices, if we find an instrument that is
     // of a lower priority to the new instrument, discard it.
-    // Priority is determined by MIDI instrument number; old
+    // If a voice is being used to play the second voice of an instrument,
+    // use that, as second voices are non-essential.
+    // Lower numbered MIDI channels implicitly have a higher priority
+    // than higher-numbered channels, eg. MIDI channel 1 is never
+    // discarded for MIDI channel 2.
 
     result = NULL;
 
     for (rover = voice_alloced_list; rover != NULL; rover = rover->next)
     {
-        if (rover->current_instr > channel->instrument)
+        if (rover->current_instr_voice != 0
+         || (rover->channel > channel
+             && CompareChannelPriorities(channel, rover->channel) > 0))
         {
             result = rover;
             break;
