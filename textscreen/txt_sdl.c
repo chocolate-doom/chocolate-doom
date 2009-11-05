@@ -263,19 +263,44 @@ static inline void UpdateCharacter(int x, int y)
     }
 }
 
+static int LimitToRange(int val, int min, int max)
+{
+    if (val < min)
+    {
+        return min;
+    }
+    else if (val > max)
+    {
+        return max;
+    }
+    else
+    {
+        return val;
+    }
+}
+
 void TXT_UpdateScreenArea(int x, int y, int w, int h)
 {
     int x1, y1;
+    int x_end;
+    int y_end;
 
-    for (y1=y; y1<y+h; ++y1)
+    x_end = LimitToRange(x + w, 0, TXT_SCREEN_W - 1);
+    y_end = LimitToRange(y + h, 0, TXT_SCREEN_H - 1);
+    x = LimitToRange(x, 0, TXT_SCREEN_W - 1);
+    y = LimitToRange(y, 0, TXT_SCREEN_H - 1);
+
+    for (y1=y; y1<y_end; ++y1)
     {
-        for (x1=x; x1<x+w; ++x1)
+        for (x1=x; x1<x_end; ++x1)
         {
             UpdateCharacter(x1, y1);
         }
     }
 
-    SDL_UpdateRect(screen, x * font->w, y * font->h, w * font->w, h * font->h);
+    SDL_UpdateRect(screen,
+                   x * font->w, y * font->h,
+                   (x_end - x) * font->w, (y_end - y) * font->h);
 }
 
 void TXT_UpdateScreen(void)
