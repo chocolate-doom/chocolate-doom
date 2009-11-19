@@ -1,7 +1,7 @@
 
 gamesdir = $(prefix)/games
 
-AM_CFLAGS = -I../textscreen -I../src -DINSTALL_DIR="\"$(gamesdir)\""
+AM_CFLAGS = -I../textscreen -I../src
 
 games_PROGRAMS = chocolate-setup
 

@@ -55,7 +55,7 @@
 #ifdef _WIN32
 #define DOOM_BINARY PACKAGE_TARNAME ".exe"
 #else
-#define DOOM_BINARY INSTALL_DIR "/" PACKAGE_TARNAME
+#define DOOM_BINARY PACKAGE_TARNAME
 #endif
 
 #ifdef _WIN32
@@ -269,17 +269,51 @@ static int ExecuteCommand(const char *program, const char *arg)
 
 #else
 
+// Given the specified program name, get the full path to the program,
+// assuming that it is in the same directory as this program is.
+
+static char *GetFullExePath(const char *program)
+{
+    char *result;
+    char *sep;
+    unsigned int path_len;
+
+    sep = strrchr(myargv[0], DIR_SEPARATOR);
+
+    if (sep == NULL)
+    {
+        result = strdup(program);
+    }
+    else
+    {
+        path_len = sep - myargv[0] + 1;
+
+        result = malloc(strlen(program) + path_len + 1);
+
+        strncpy(result, myargv[0], path_len);
+        result[path_len] = '\0';
+
+        strcat(result, program);
+    }
+
+    return result;
+}
+
 static int ExecuteCommand(const char *program, const char *arg)
 {
     pid_t childpid;
     int result;
-    const char *argv[] = { program, arg, NULL };
+    const char *argv[3];
 
     childpid = fork();
 
     if (childpid == 0) 
     {
         // This is the child.  Execute the command.
+
+        argv[0] = GetFullExePath(program);
+        argv[1] = arg;
+        argv[2] = NULL;
 
         execv(argv[0], (char **) argv);
 
