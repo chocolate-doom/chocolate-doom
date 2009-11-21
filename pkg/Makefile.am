@@ -1,3 +1,3 @@
 
-DIST_SUBDIRS=wince
+DIST_SUBDIRS=wince win32
 

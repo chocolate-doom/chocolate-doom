@@ -74,6 +74,7 @@ AC_SDL_MAIN_WORKAROUND([
 ])
 
 AC_CHECK_TOOL(WINDRES, windres, )
+AC_CHECK_TOOL(STRIP, strip, )
 
 # Windows CE build?
 
@@ -123,6 +124,7 @@ src/Makefile
 pcsound/Makefile
 pkg/Makefile
 pkg/wince/GNUmakefile
+pkg/win32/GNUmakefile
 src/resource.rc
 src/doom-screensaver.desktop
 setup/setup-res.rc
