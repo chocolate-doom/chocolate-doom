@@ -532,7 +532,15 @@ static void LoadDefaultCollection(default_collection_t *collection)
 
                     intparm = ParseIntParameter(strparm);
                     defaults[i].untranslated = intparm;
-                    intparm = scantokey[intparm];
+
+                    if (intparm >= 0 && intparm < 128)
+                    {
+                        intparm = scantokey[intparm];
+                    }
+                    else
+                    {
+                        intparm = 0;
+                    }
 
                     defaults[i].original_translated = intparm;
                     * (int *) def->location = intparm;
