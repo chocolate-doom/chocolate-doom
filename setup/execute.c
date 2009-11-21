@@ -301,7 +301,7 @@ static int ExecuteCommand(const char *program, const char *arg)
         argv[1] = arg;
         argv[2] = NULL;
 
-        execv(argv[0], (char **) argv);
+        execvp(argv[0], (char **) argv);
 
         exit(-1);
     }
