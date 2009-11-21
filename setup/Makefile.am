@@ -1,7 +1,7 @@
 
 gamesdir = $(prefix)/games
 
-AM_CFLAGS = -I../textscreen -I../src -DINSTALL_DIR="\"$(gamesdir)\""
+AM_CFLAGS = -I../textscreen -I../src @SDLMIXER_CFLAGS@
 
 games_PROGRAMS = chocolate-setup
 
@@ -34,6 +34,7 @@ endif
 chocolate_setup_LDADD =                              \
                        ../wince/libc_wince.a         \
                        ../textscreen/libtextscreen.a \
+                       @SDLMIXER_LIBS@               \
                        @LDFLAGS@
 
 .rc.o:

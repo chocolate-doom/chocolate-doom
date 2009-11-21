@@ -129,7 +129,8 @@ opl/Makefile
 opl/examples/Makefile
 src/Makefile
 pcsound/Makefile
-pkg/wince/Makefile
+pkg/Makefile
+pkg/wince/GNUmakefile
 src/resource.rc
 src/doom-screensaver.desktop
 setup/setup-res.rc

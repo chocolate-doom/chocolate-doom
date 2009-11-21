@@ -69,14 +69,6 @@
 #define NORM_PRIORITY 64
 #define NORM_SEP 128
 
-// Disable music on OSX by default; there are problems with SDL_mixer.
-
-#ifndef __APPLE__
-#define DEFAULT_MUSIC_DEVICE SNDDEVICE_SB
-#else
-#define DEFAULT_MUSIC_DEVICE SNDDEVICE_NONE
-#endif
-
 typedef struct
 {
     // sound information (if null, channel avail.)
@@ -128,7 +120,7 @@ static musicinfo_t *mus_playing = NULL;
 
 int numChannels = 8;
 
-int snd_musicdevice = DEFAULT_MUSIC_DEVICE;
+int snd_musicdevice = SNDDEVICE_SB;
 int snd_sfxdevice = SNDDEVICE_SB;
 
 // Sound modules

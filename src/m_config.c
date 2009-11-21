@@ -36,6 +36,8 @@
 #include <windows.h>
 #endif
 
+#include "SDL_mixer.h"
+
 #include "config.h"
 #include "deh_main.h"
 #include "doomdef.h"
@@ -53,6 +55,7 @@
 #include "i_swap.h"
 #include "i_system.h"
 #include "i_video.h"
+#include "s_sound.h"
 #include "v_video.h"
 
 #include "hu_stuff.h"
@@ -1234,7 +1237,14 @@ static void LoadDefaultCollection(default_collection_t *collection)
 
                     intparm = ParseIntParameter(strparm);
                     defaults[i].untranslated = intparm;
-                    intparm = scantokey[intparm];
+                    if (intparm >= 0 && intparm < 128)
+                    {
+                        intparm = scantokey[intparm];
+                    }
+                    else
+                    {
+                        intparm = 0;
+                    }
 
                     defaults[i].original_translated = intparm;
                     * (int *) def->location = intparm;
@@ -1455,6 +1465,22 @@ void M_ApplyPlatformDefaults(void)
 {
 #ifdef _WIN32_WCE
     M_ApplyWindowsCEDefaults();
+#endif
+
+    // Before SDL_mixer version 1.2.11, MIDI music caused the game
+    // to crash when it looped.  If this is an old SDL_mixer version,
+    // disable MIDI.
+
+#ifdef __MACOSX__
+    {
+        const SDL_version *v = Mix_Linked_Version();
+
+        if (SDL_VERSIONNUM(v->major, v->minor, v->patch)
+          < SDL_VERSIONNUM(1, 2, 11))
+        {
+            snd_musicdevice = SNDDEVICE_NONE;
+        }
+    }
 #endif
 }
 

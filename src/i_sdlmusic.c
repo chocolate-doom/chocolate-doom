@@ -81,18 +81,28 @@ static boolean SDLIsInitialized(void)
 // Initialize music subsystem
 
 static boolean I_SDL_InitMusic(void)
-{ 
-    // When trying to run with music enabled on OSX, display
-    // a warning message.
+{
+    // SDL_mixer prior to v1.2.11 has a bug that causes crashes
+    // with MIDI playback.  Print a warning message if we are
+    // using an old version.
 
-#ifdef __APPLE__
-    printf("\n"
-           "                   *** WARNING ***\n"
-           "      Music playback on OSX may cause crashes and\n"
-           "      is disabled by default.\n"
-           "\n");
+#ifdef __MACOSX__
+    {
+        const SDL_version *v = Mix_Linked_Version();
+
+        if (SDL_VERSIONNUM(v->major, v->minor, v->patch)
+          < SDL_VERSIONNUM(1, 2, 11))
+        {
+            printf("\n"
+               "                   *** WARNING ***\n"
+               "      You are using an old version of SDL_mixer.\n"
+               "      Music playback on this version may cause crashes\n"
+               "      under OS X and is disabled by default.\n"
+               "\n");
+        }
+    }
 #endif
-    
+
     // If SDL_mixer is not initialized, we have to initialize it
     // and have the responsibility to shut it down later on.
 

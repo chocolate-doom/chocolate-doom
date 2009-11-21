@@ -55,7 +55,7 @@
 #ifdef _WIN32
 #define DOOM_BINARY PACKAGE_TARNAME ".exe"
 #else
-#define DOOM_BINARY INSTALL_DIR "/" PACKAGE_TARNAME
+#define DOOM_BINARY PACKAGE_TARNAME
 #endif
 
 #ifdef _WIN32
@@ -172,81 +172,69 @@ static unsigned int WaitForProcessExit(HANDLE subprocess)
     }
 }
 
-static wchar_t *GetFullExePath(const char *program)
+static void ConcatWCString(wchar_t *buf, const char *value)
+{
+    MultiByteToWideChar(CP_OEMCP, 0,
+                        value, strlen(value) + 1,
+                        buf + wcslen(buf), strlen(value) + 1);
+}
+
+// Build the command line string, a wide character string of the form:
+//
+// "program" "arg"
+
+static wchar_t *BuildCommandLine(const char *program, const char *arg)
 {
     wchar_t *result;
-    unsigned int path_len;
     char *sep;
 
-    // Find the full path to the EXE to execute, by taking the path
-    // to this program and concatenating the EXE name:
+    result = calloc(strlen(myargv[0]) + strlen(program) + strlen(arg) + 6,
+                    sizeof(wchar_t));
+
+    wcscpy(result, L"\"");
 
     sep = strrchr(myargv[0], DIR_SEPARATOR);
 
-    if (sep == NULL)
+    if (sep != NULL)
     {
-        path_len = 0;
-        result = calloc(strlen(program) + 1, sizeof(wchar_t));
-    }
-    else
-    {
-        path_len = sep - myargv[0] + 1;
+        ConcatWCString(result, myargv[0]);
 
-        result = calloc(path_len + strlen(program) + 1,
-                        sizeof(wchar_t));
-        MultiByteToWideChar(CP_OEMCP, 0,
-                            myargv[0], path_len,
-                            result, path_len);
+        // Cut off the string after the last directory separator,
+        // before appending the actual program.
+
+        result[sep - myargv[0] + 2] = '\0';
+        
     }
 
-    MultiByteToWideChar(CP_OEMCP, 0,
-                        program, strlen(program) + 1,
-                        result + path_len, strlen(program) + 1);
+    ConcatWCString(result, program);
 
-    return result;
-}
+    wcscat(result, L"\" \"");
 
-// Convert command line argument to wchar_t string and add surrounding
-// "" quotes:
+    ConcatWCString(result, arg);
 
-static wchar_t *GetPaddedWideArg(const char *arg)
-{
-    wchar_t *result;
-    unsigned int len = strlen(arg);
-
-    // Convert the command line arg to a wide char string:
-
-    result = calloc(len + 3, sizeof(wchar_t));
-    MultiByteToWideChar(CP_OEMCP, 0,
-                        arg, len + 1,
-                        result + 1, len + 1);
-
-    // Surrounding quotes:
-
-    result[0] = '"';
-    result[len + 1] = '"';
-    result[len + 2] = 0;
+    wcscat(result, L"\"");
 
     return result;
 }
 
 static int ExecuteCommand(const char *program, const char *arg)
 {
+    STARTUPINFOW startup_info;
     PROCESS_INFORMATION proc_info;
-    wchar_t *exe_path;
-    wchar_t *warg;
+    wchar_t *command;
     int result = 0;
 
-    exe_path = GetFullExePath(program);
-    warg = GetPaddedWideArg(arg);
+    command = BuildCommandLine(program, arg);
 
     // Invoke the program:
 
     memset(&proc_info, 0, sizeof(proc_info));
+    memset(&startup_info, 0, sizeof(startup_info));
+    startup_info.cb = sizeof(startup_info);
 
-    if (!CreateProcessW(exe_path, warg,
-                        NULL, NULL, FALSE, 0, NULL, NULL, NULL,
-                        &proc_info))
+    if (!CreateProcessW(NULL, command,
+                        NULL, NULL, FALSE, 0, NULL, NULL,
+                        &startup_info, &proc_info))
     {
         result = -1;
     }
@@ -260,25 +248,58 @@ static int ExecuteCommand(const char *program, const char *arg)
         CloseHandle(proc_info.hThread);
     }
 
-    free(exe_path);
-    free(warg);
+    free(command);
 
     return result;
 }
 
 #else
 
+// Given the specified program name, get the full path to the program,
+// assuming that it is in the same directory as this program is.
+
+static char *GetFullExePath(const char *program)
+{
+    char *result;
+    char *sep;
+    unsigned int path_len;
+
+    sep = strrchr(myargv[0], DIR_SEPARATOR);
+
+    if (sep == NULL)
+    {
+        result = strdup(program);
+    }
+    else
+    {
+        path_len = sep - myargv[0] + 1;
+
+        result = malloc(strlen(program) + path_len + 1);
+
+        strncpy(result, myargv[0], path_len);
+        result[path_len] = '\0';
+
+        strcat(result, program);
+    }
+
+    return result;
+}
+
 static int ExecuteCommand(const char *program, const char *arg)
 {
     pid_t childpid;
     int result;
-    const char *argv[] = { program, arg, NULL };
+    const char *argv[3];
 
     childpid = fork();
 
     if (childpid == 0) 
     {
         // This is the child.  Execute the command.
+
+        argv[0] = GetFullExePath(program);
+        argv[1] = arg;
+        argv[2] = NULL;
 
         execv(argv[0], (char **) argv);
 

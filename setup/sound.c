@@ -27,20 +27,6 @@
 
 #include "sound.h"
 
-enum
-{
-    SNDDEVICE_NONE = 0,
-    SNDDEVICE_PCSPEAKER = 1,
-    SNDDEVICE_ADLIB = 2,
-    SNDDEVICE_SB = 3,
-    SNDDEVICE_PAS = 4,
-    SNDDEVICE_GUS = 5,
-    SNDDEVICE_WAVEBLASTER = 6,
-    SNDDEVICE_SOUNDCANVAS = 7,
-    SNDDEVICE_GENMIDI = 8,
-    SNDDEVICE_AWE32 = 9,
-};
-
 typedef enum
 {
     SFXMODE_DISABLED,
@@ -71,13 +57,11 @@ static char *musmode_strings[] =
     "Native MIDI"
 };
 
-#define DEFAULT_MUSIC_DEVICE SNDDEVICE_SB
-
 int snd_sfxdevice = SNDDEVICE_SB;
 int numChannels = 8;
 int sfxVolume = 15;
 
-int snd_musicdevice = DEFAULT_MUSIC_DEVICE;
+int snd_musicdevice = SNDDEVICE_SB;
 int musicVolume = 15;
 
 int snd_samplerate = 22050;
