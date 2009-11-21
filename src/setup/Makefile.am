@@ -3,8 +3,7 @@ gamesdir = $(prefix)/games
 
 AM_CFLAGS = @SDL_CFLAGS@                                           \
             @SDLMIXER_CFLAGS@                                      \
-            -I$(top_builddir)/textscreen -I..                      \
-            -DINSTALL_DIR="\"$(gamesdir)\""
+            -I$(top_builddir)/textscreen -I..
 
 noinst_LIBRARIES = libsetup.a
 
