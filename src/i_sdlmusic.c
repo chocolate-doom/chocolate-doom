@@ -43,12 +43,12 @@
 
 #define MAXMIDLENGTH (96 * 1024)
 
-static boolean music_initialised = false;
+static boolean music_initialized = false;
 
-// If this is true, this module initialised SDL sound and has the 
+// If this is true, this module initialized SDL sound and has the 
 // responsibility to shut it down
 
-static boolean sdl_was_initialised = false;
+static boolean sdl_was_initialized = false;
 
 static boolean musicpaused = false;
 static int current_music_volume;
@@ -57,21 +57,21 @@ static int current_music_volume;
 
 static void I_SDL_ShutdownMusic(void)
 {    
-    if (music_initialised)
+    if (music_initialized)
     {
         Mix_HaltMusic();
-        music_initialised = false;
+        music_initialized = false;
 
-        if (sdl_was_initialised)
+        if (sdl_was_initialized)
         {
             Mix_CloseAudio();
             SDL_QuitSubSystem(SDL_INIT_AUDIO);
-            sdl_was_initialised = false;
+            sdl_was_initialized = false;
         }
     }
 }
 
-static boolean SDLIsInitialised(void)
+static boolean SDLIsInitialized(void)
 {
     int freq, channels;
     Uint16 format;
@@ -79,25 +79,35 @@ static boolean SDLIsInitialised(void)
     return Mix_QuerySpec(&freq, &format, &channels) != 0;
 }
 
-// Initialise music subsystem
+// Initialize music subsystem
 
 static boolean I_SDL_InitMusic(void)
-{ 
-    // When trying to run with music enabled on OSX, display
-    // a warning message.
+{
+    // SDL_mixer prior to v1.2.11 has a bug that causes crashes
+    // with MIDI playback.  Print a warning message if we are
+    // using an old version.
 
-#ifdef __APPLE__
-    printf("\n"
-           "                   *** WARNING ***\n"
-           "      Music playback on OSX may cause crashes and\n"
-           "      is disabled by default.\n"
-           "\n");
+#ifdef __MACOSX__
+    {
+        const SDL_version *v = Mix_Linked_Version();
+
+        if (SDL_VERSIONNUM(v->major, v->minor, v->patch)
+          < SDL_VERSIONNUM(1, 2, 11))
+        {
+            printf("\n"
+               "                   *** WARNING ***\n"
+               "      You are using an old version of SDL_mixer.\n"
+               "      Music playback on this version may cause crashes\n"
+               "      under OS X and is disabled by default.\n"
+               "\n");
+        }
+    }
 #endif
-    
-    // If SDL_mixer is not initialised, we have to initialise it 
+
+    // If SDL_mixer is not initialized, we have to initialize it
     // and have the responsibility to shut it down later on.
 
-    if (!SDLIsInitialised())
+    if (!SDLIsInitialized())
     {
         if (SDL_Init(SDL_INIT_AUDIO) < 0)
         {
@@ -107,17 +117,17 @@ static boolean I_SDL_InitMusic(void)
 
         if (Mix_OpenAudio(snd_samplerate, AUDIO_S16SYS, 2, 1024) < 0)
         {
-            fprintf(stderr, "Error initialising SDL_mixer: %s\n", Mix_GetError());
+            fprintf(stderr, "Error initializing SDL_mixer: %s\n", Mix_GetError());
             SDL_QuitSubSystem(SDL_INIT_AUDIO);
             return false;
         }
 
         SDL_PauseAudio(0);
 
-        sdl_was_initialised = true;
+        sdl_was_initialized = true;
     }
 
-    music_initialised = true;
+    music_initialized = true;
 
     return true;
 }
@@ -160,7 +170,7 @@ static void I_SDL_PlaySong(void *handle, boolean looping)
     Mix_Music *music = (Mix_Music *) handle;
     int loops;
 
-    if (!music_initialised)
+    if (!music_initialized)
     {
         return;
     }
@@ -184,7 +194,7 @@ static void I_SDL_PlaySong(void *handle, boolean looping)
 
 static void I_SDL_PauseSong(void)
 {
-    if (!music_initialised)
+    if (!music_initialized)
     {
         return;
     }
@@ -196,7 +206,7 @@ static void I_SDL_PauseSong(void)
 
 static void I_SDL_ResumeSong(void)
 {
-    if (!music_initialised)
+    if (!music_initialized)
     {
         return;
     }
@@ -208,7 +218,7 @@ static void I_SDL_ResumeSong(void)
 
 static void I_SDL_StopSong(void)
 {
-    if (!music_initialised)
+    if (!music_initialized)
     {
         return;
     }
@@ -220,7 +230,7 @@ static void I_SDL_UnRegisterSong(void *handle)
 {
     Mix_Music *music = (Mix_Music *) handle;
 
-    if (!music_initialised)
+    if (!music_initialized)
     {
         return;
     }
@@ -271,7 +281,7 @@ static void *I_SDL_RegisterSong(void *data, int len)
     char *filename;
     Mix_Music *music;
 
-    if (!music_initialised)
+    if (!music_initialized)
     {
         return NULL;
     }
@@ -315,7 +325,7 @@ static void *I_SDL_RegisterSong(void *data, int len)
 // Is the song playing?
 static boolean I_SDL_MusicIsPlaying(void)
 {
-    if (!music_initialised)
+    if (!music_initialized)
     {
         return false;
     }

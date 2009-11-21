@@ -26,6 +26,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "SDL_mixer.h"
+
 #include "config.h"
 #include "doomfeatures.h"
 #include "doomtype.h"
@@ -34,14 +36,6 @@
 #include "i_video.h"
 #include "m_argv.h"
 #include "m_config.h"
-
-// Disable music on OSX by default; there are problems with SDL_mixer.
-
-#ifndef __APPLE__
-#define DEFAULT_MUSIC_DEVICE SNDDEVICE_SB
-#else
-#define DEFAULT_MUSIC_DEVICE SNDDEVICE_NONE
-#endif
 
 // Sound sample rate to use for digital output (Hz)
 
@@ -52,7 +46,7 @@ int snd_samplerate = 44100;
 static sound_module_t *sound_module;
 static music_module_t *music_module;
 
-int snd_musicdevice = DEFAULT_MUSIC_DEVICE;
+int snd_musicdevice = SNDDEVICE_SB;
 int snd_sfxdevice = SNDDEVICE_SB;
 
 // Sound modules
@@ -109,7 +103,7 @@ static boolean SndDeviceInList(snddevice_t device, snddevice_t *list,
     return false;
 }
 
-// Find and initialise a sound_module_t appropriate for the setting
+// Find and initialize a sound_module_t appropriate for the setting
 // in snd_sfxdevice.
 
 static void InitSfxModule(boolean use_sfx_prefix)
@@ -127,7 +121,7 @@ static void InitSfxModule(boolean use_sfx_prefix)
                             sound_modules[i]->sound_devices,
                             sound_modules[i]->num_sound_devices))
         {
-            // Initialise the module
+            // Initialize the module
 
             if (sound_modules[i]->Init(use_sfx_prefix))
             {
@@ -138,7 +132,7 @@ static void InitSfxModule(boolean use_sfx_prefix)
     }
 }
 
-// Initialise music according to snd_musicdevice.
+// Initialize music according to snd_musicdevice.
 
 static void InitMusicModule(void)
 {
@@ -155,7 +149,7 @@ static void InitMusicModule(void)
                             music_modules[i]->sound_devices,
                             music_modules[i]->num_sound_devices))
         {
-            // Initialise the module
+            // Initialize the module
 
             if (music_modules[i]->Init())
             {
@@ -200,7 +194,7 @@ void I_InitSound(boolean use_sfx_prefix)
 
     nomusic = M_CheckParm("-nomusic") > 0;
 
-    // Initialise the sound and music subsystems.
+    // Initialize the sound and music subsystems.
 
     if (!nosound && !screensaver_mode)
     {
@@ -415,6 +409,22 @@ void I_BindSoundVariables(void)
     M_BindVariable("snd_samplerate",    &snd_samplerate);
 #ifdef FEATURE_SOUND
     M_BindVariable("use_libsamplerate", &use_libsamplerate);
+#endif
+
+    // Before SDL_mixer version 1.2.11, MIDI music caused the game
+    // to crash when it looped.  If this is an old SDL_mixer version,
+    // disable MIDI.
+
+#ifdef __MACOSX__
+    {
+        const SDL_version *v = Mix_Linked_Version();
+
+        if (SDL_VERSIONNUM(v->major, v->minor, v->patch)
+          < SDL_VERSIONNUM(1, 2, 11))
+        {
+            snd_musicdevice = SNDDEVICE_NONE;
+        }
+    }
 #endif
 }
 

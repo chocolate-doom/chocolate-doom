@@ -901,7 +901,7 @@ static struct
     { NULL,                  NULL,         0},
 };
 
-// Initialise the game version
+// Initialize the game version
 
 static void InitGameVersion(void)
 {
@@ -1701,7 +1701,7 @@ void D_DoomMain (void)
     I_InitJoystick();
 
 #ifdef FEATURE_MULTIPLAYER
-    printf ("NET_Init: Initialise network subsystem.\n");
+    printf ("NET_Init: Init network subsystem.\n");
     NET_Init ();
 #endif
 

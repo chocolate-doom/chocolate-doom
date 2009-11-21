@@ -61,7 +61,7 @@ static void NET_Conn_Init(net_connection_t *conn, net_addr_t *addr)
     conn->reliable_recv_seq = 0;
 }
 
-// Initialise as a client connection
+// Initialize as a client connection
 
 void NET_Conn_InitClient(net_connection_t *conn, net_addr_t *addr)
 {
@@ -69,7 +69,7 @@ void NET_Conn_InitClient(net_connection_t *conn, net_addr_t *addr)
     conn->state = NET_CONN_STATE_CONNECTING;
 }
 
-// Initialise as a server connection
+// Initialize as a server connection
 
 void NET_Conn_InitServer(net_connection_t *conn, net_addr_t *addr)
 {

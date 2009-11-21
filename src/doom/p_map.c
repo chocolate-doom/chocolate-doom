@@ -36,6 +36,7 @@
 
 #include "doomdef.h"
 #include "m_argv.h"
+#include "m_misc.h"
 #include "p_local.h"
 
 #include "s_sound.h"
@@ -1412,7 +1413,7 @@ static void SpechitOverrun(line_t *ld)
         
         if (p > 0)
         {
-            baseaddr = atoi(myargv[p+1]);
+            M_StrToInt(myargv[p+1], (int *) &baseaddr);
         }
         else
         {

@@ -23,6 +23,8 @@
 
 #include <stdlib.h>
 
+#include "SDL_mixer.h"
+
 #include "textscreen.h"
 #include "m_config.h"
 
@@ -60,19 +62,10 @@ static char *musicmode_strings[] =
     "CD audio"
 };
 
-// Disable MIDI music on OSX: there are problems with the native
-// MIDI code in SDL_mixer.
-
-#ifdef __MACOSX__
-#define DEFAULT_MUSIC_DEVICE SNDDEVICE_NONE
-#else
-#define DEFAULT_MUSIC_DEVICE SNDDEVICE_SB
-#endif
-
 // Config file variables:
 
 int snd_sfxdevice = SNDDEVICE_SB;
-int snd_musicdevice = DEFAULT_MUSIC_DEVICE;
+int snd_musicdevice = SNDDEVICE_SB;
 int snd_samplerate = 22050;
 
 static int numChannels = 8;
@@ -237,5 +230,21 @@ void BindSoundVariables(void)
     M_BindVariable("snd_sbirq",          &snd_sbirq);
     M_BindVariable("snd_sbdma",          &snd_sbdma);
     M_BindVariable("snd_mport",          &snd_mport);
+
+    // Before SDL_mixer version 1.2.11, MIDI music caused the game
+    // to crash when it looped.  If this is an old SDL_mixer version,
+    // disable MIDI.
+
+#ifdef __MACOSX__
+    {
+        const SDL_version *v = Mix_Linked_Version();
+
+        if (SDL_VERSIONNUM(v->major, v->minor, v->patch)
+          < SDL_VERSIONNUM(1, 2, 11))
+        {
+            snd_musicdevice = SNDDEVICE_NONE;
+        }
+    }
+#endif
 }
 

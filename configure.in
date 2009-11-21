@@ -39,19 +39,42 @@ AM_PATH_SDL(1.1.3)
 CFLAGS="$CFLAGS $SDL_CFLAGS"
 LDFLAGS="$LDFLAGS $SDL_LIBS"
 
-AC_CHECK_LIB(SDL_mixer,Mix_LoadMUS,[
-    SDLMIXER_LIBS="$SDLMIXER_LIBS -lSDL_mixer"
-],[
-    echo "*** Could not find SDL_mixer.  Please install it."
-    exit -1
+# On some platforms, SDL renames main() to SDL_main() using a #define,
+# so that its own main, stored in the SDLmain library, can be run first.
+# Unfortunately, this causes problems for autoconf, which builds
+# test programs to probe the system.  All library/header/symbol checks
+# must be run in this block, that performs a workaround for the problem.
+
+AC_SDL_MAIN_WORKAROUND([
+
+    # Check for SDL_mixer.
+
+    AC_CHECK_LIB(SDL_mixer,Mix_LoadMUS,[
+        SDLMIXER_LIBS="$SDLMIXER_LIBS -lSDL_mixer"
+    ],[
+        echo "*** Could not find SDL_mixer.  Please install it."
+        exit -1
+    ])
+
+    # Check for SDL_net.
+
+    AC_CHECK_LIB(SDL_net,SDLNet_UDP_Send,[
+        SDLNET_LIBS="$SDLNET_LIBS -lSDL_net"
+    ],[
+        echo "*** Could not find SDL_net.  Please install it."
+        exit -1
+    ])
+
+    # Check for libsamplerate.
+
+    AC_CHECK_LIB(samplerate, src_new)
+
+    AC_CHECK_HEADERS([linux/kd.h dev/isa/spkrio.h dev/speaker/speaker.h])
+    AC_CHECK_FUNCS(mmap sched_setaffinity)
 ])
 
-AC_CHECK_LIB(SDL_net,SDLNet_UDP_Send,[
-    SDLNET_LIBS="$SDLNET_LIBS -lSDL_net"
-],[
-    echo "*** Could not find SDL_net.  Please install it."
-    exit -1
-])
+AC_CHECK_TOOL(WINDRES, windres, )
+AC_CHECK_TOOL(STRIP, strip, )
 
 # Windows CE build?
 
@@ -65,14 +88,6 @@ case "$host" in
     *)
         ;;
 esac
-
-AC_CHECK_HEADERS([linux/kd.h dev/isa/spkrio.h dev/speaker/speaker.h])
-AC_CHECK_FUNCS(mmap sched_setaffinity)
-
-# DWF 2008-02-10:  FIXME
-AC_CHECK_LIB(samplerate, src_new)
-
-AC_CHECK_TOOL(WINDRES, windres, )
 
 AM_CONDITIONAL(WINDOWS_CE, $WINDOWS_CE)
 AM_CONDITIONAL(HAVE_WINDRES, test "$WINDRES" != "")
@@ -120,7 +135,9 @@ src/heretic/Makefile
 src/hexen/Makefile
 src/setup/Makefile
 pcsound/Makefile
-pkg/wince/Makefile
+pkg/Makefile
+pkg/wince/GNUmakefile
+pkg/win32/GNUmakefile
 src/resource.rc
 src/setup-res.rc
 src/setup/setup-manifest.xml

@@ -193,7 +193,7 @@ static void TXT_DropdownListDrawer(TXT_UNCAST_ARG(list), int selected)
 {
     TXT_CAST_ARG(txt_dropdown_list_t, list);
     unsigned int i;
-    char *str;
+    const char *str;
 
     // Set bg/fg text colors.
 

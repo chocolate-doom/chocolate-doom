@@ -51,7 +51,7 @@
 #define LOW_PASS_FILTER
 #define NUM_CHANNELS 16
 
-static boolean sound_initialised = false;
+static boolean sound_initialized = false;
 
 static sfxinfo_t *channels_playing[NUM_CHANNELS];
 
@@ -311,7 +311,7 @@ static void ExpandSoundData_SDL(sfxinfo_t *sfxinfo,
 
     chunk = AllocateChunk(sfxinfo, expanded_length);
 
-    // If we can, use the standard / optimised SDL conversion routines.
+    // If we can, use the standard / optimized SDL conversion routines.
     
     if (samplerate <= mixer_freq
      && ConvertibleRatio(samplerate, mixer_freq)
@@ -554,7 +554,7 @@ static void I_SDL_UpdateSoundParams(int handle, int vol, int sep)
 {
     int left, right;
 
-    if (!sound_initialised)
+    if (!sound_initialized)
     {
         return;
     }
@@ -588,7 +588,7 @@ static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
 {
     Mix_Chunk *chunk;
 
-    if (!sound_initialised)
+    if (!sound_initialized)
     {
         return -1;
     }
@@ -622,7 +622,7 @@ static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
 
 static void I_SDL_StopSound (int handle)
 {
-    if (!sound_initialised)
+    if (!sound_initialized)
     {
         return;
     }
@@ -670,7 +670,7 @@ static void I_SDL_UpdateSound(void)
 
 static void I_SDL_ShutdownSound(void)
 {    
-    if (!sound_initialised)
+    if (!sound_initialized)
     {
         return;
     }
@@ -678,7 +678,7 @@ static void I_SDL_ShutdownSound(void)
     Mix_CloseAudio();
     SDL_QuitSubSystem(SDL_INIT_AUDIO);
 
-    sound_initialised = false;
+    sound_initialized = false;
 }
 
 
@@ -735,7 +735,7 @@ static boolean I_SDL_InitSound(boolean _use_sfx_prefix)
     
     SDL_PauseAudio(0);
 
-    sound_initialised = true;
+    sound_initialized = true;
 
     return true;
 }

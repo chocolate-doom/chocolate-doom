@@ -263,7 +263,7 @@ void NET_WaitForStart(void)
 {
     if (!TXT_Init())
     {
-        fprintf(stderr, "Failed to initialise GUI\n");
+        fprintf(stderr, "Failed to initialize GUI\n");
         exit(-1);
     }
 

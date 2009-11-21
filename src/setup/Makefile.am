@@ -2,6 +2,7 @@
 gamesdir = $(prefix)/games
 
 AM_CFLAGS = @SDL_CFLAGS@                                           \
+            @SDLMIXER_CFLAGS@                                      \
             -I$(top_builddir)/textscreen -I..                      \
             -DINSTALL_DIR="\"$(gamesdir)\""
 
