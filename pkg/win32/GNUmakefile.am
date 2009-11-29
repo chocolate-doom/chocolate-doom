@@ -17,6 +17,7 @@ DOC_FILES=README       \
           CMDLINE      \
           TODO
 
+EXTRA_DIST=README
 noinst_DATA=@PACKAGE_TARNAME@-@PACKAGE_VERSION@-win32.zip
 
 @PACKAGE_TARNAME@-@PACKAGE_VERSION@-win32.zip : staging

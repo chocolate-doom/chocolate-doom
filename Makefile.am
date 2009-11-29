@@ -24,6 +24,7 @@ CODEBLOCKS_FILES=                              \
 	codeblocks/textscreen.cbp
 
 DATA_FILES=                   \
+        data/README           \
         data/doom.ico         \
         data/doom.png         \
         data/setup.ico        \
