@@ -35,6 +35,7 @@ EXTRA_DIST=                             \
         $(MSVC_FILES)                   \
         $(CODEBLOCKS_FILES)             \
         $(DATA_FILES)                   \
+        .lvimrc                         \
         config.h                        \
         CMDLINE                         \
         HACKING                         \
