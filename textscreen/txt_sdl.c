@@ -285,10 +285,10 @@ void TXT_UpdateScreenArea(int x, int y, int w, int h)
     int x_end;
     int y_end;
 
-    x_end = LimitToRange(x + w, 0, TXT_SCREEN_W - 1);
-    y_end = LimitToRange(y + h, 0, TXT_SCREEN_H - 1);
-    x = LimitToRange(x, 0, TXT_SCREEN_W - 1);
-    y = LimitToRange(y, 0, TXT_SCREEN_H - 1);
+    x_end = LimitToRange(x + w, 0, TXT_SCREEN_W);
+    y_end = LimitToRange(y + h, 0, TXT_SCREEN_H);
+    x = LimitToRange(x, 0, TXT_SCREEN_W);
+    y = LimitToRange(y, 0, TXT_SCREEN_H);
 
     for (y1=y; y1<y_end; ++y1)
     {
