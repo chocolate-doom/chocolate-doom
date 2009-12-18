@@ -44,7 +44,7 @@ chocolate_setup_LDADD =                              \
 
 if HAVE_PYTHON
 
-setup_icon.c : ../data/setup.ico
+setup_icon.c : ../data/setup8.ico
 	../data/convert-icon $^ $@
 
 endif

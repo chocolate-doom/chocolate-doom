@@ -26,8 +26,10 @@ CODEBLOCKS_FILES=                              \
 DATA_FILES=                   \
         data/README           \
         data/doom.ico         \
+        data/doom8.ico        \
         data/doom.png         \
         data/setup.ico        \
+        data/setup8.ico       \
         data/setup.png        \
         data/convert-icon
 
