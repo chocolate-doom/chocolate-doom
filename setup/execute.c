@@ -312,7 +312,7 @@ static int ExecuteCommand(const char *program, const char *arg)
 
         execvp(argv[0], (char **) argv);
 
-        exit(-1);
+        exit(0x80);
     }
     else
     {
@@ -321,7 +321,7 @@ static int ExecuteCommand(const char *program, const char *arg)
 
         waitpid(childpid, &result, 0);
 
-        if (WIFEXITED(result)) 
+        if (WIFEXITED(result) && WEXITSTATUS(result) != 0x80) 
         {
             return WEXITSTATUS(result);
         }
