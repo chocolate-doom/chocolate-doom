@@ -346,8 +346,6 @@ static boolean DirIsFile(char *path, char *filename)
     size_t path_len;
     size_t filename_len;
 
-    printf("%s, %s\n", path, filename);
-
     path_len = strlen(path);
     filename_len = strlen(filename);
 
