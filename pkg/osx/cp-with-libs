@@ -10,7 +10,7 @@ cp "$BINARY" "$DEST"
 
 # Copy libraries; only those with libSDL in the name
 
-otool -L "$BINARY" | grep libSDL | sed 's/^.//; s/(.*//' | while read; do
+otool -L "$BINARY" | grep libSDL | sed 's/^.//; s/ (.*//' | while read; do
         cp "$REPLY" "$DEST"
 done
 
