@@ -30,7 +30,7 @@ $(STAGING_DIR): launcher
 
 # Launcher build:
 
-CFLAGS=-Wall
+CFLAGS=-Wall -I../..
 LDFLAGS=-framework Cocoa
 
 LAUNCHER_OBJS= \

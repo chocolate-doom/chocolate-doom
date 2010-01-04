@@ -125,6 +125,8 @@ pcsound/Makefile
 pkg/Makefile
 pkg/wince/GNUmakefile
 pkg/win32/GNUmakefile
+pkg/osx/config.make
+pkg/osx/Info.plist
 src/resource.rc
 src/doom-screensaver.desktop
 setup/setup-res.rc
