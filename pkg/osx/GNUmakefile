@@ -3,6 +3,14 @@ include config.make
 
 STAGING_DIR=staging
 DMG=$(PACKAGE_TARNAME)-$(PACKAGE_VERSION).dmg
+DOC_FILES=\
+        README       \
+        COPYING      \
+        ChangeLog    \
+        NEWS         \
+        BUGS         \
+        CMDLINE      \
+        TODO
 
 ifndef GNUSTEP_MAKEFILES
 
@@ -25,7 +33,7 @@ $(STAGING_DIR): launcher
 	cp Info.plist "$(APP_DIR)/Contents/"
 	cp launcher "$(APP_DIR)/Contents/MacOS/"
 	# TODO: copy Doom and setup binaries into app dir
-	# TODO: copy other documentation into staging dir
+	for d in $(DOC_FILES); do cp ../../$$d $(STAGING_DIR)/; done
 	find $(STAGING_DIR) -name .svn -delete -exec rm -rf {} \; || true
 
 clean : launcher_clean
