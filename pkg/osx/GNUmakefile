@@ -1,6 +1,9 @@
 
 include config.make
 
+CC=gcc
+STRIP=strip
+
 STAGING_DIR=staging
 DMG=$(PACKAGE_TARNAME)-$(PACKAGE_VERSION).dmg
 DOC_FILES=\
@@ -25,15 +28,23 @@ endif
 # Staging dir build for package:
 
 APP_DIR=$(STAGING_DIR)/$(PACKAGE_NAME).app
+APP_BIN_DIR=$(APP_DIR)/Contents/MacOS/
 
 $(STAGING_DIR): launcher
 	rm -rf $(STAGING_DIR)
 	mkdir $(STAGING_DIR)
+
 	cp -R app-skeleton "$(APP_DIR)"
 	cp Info.plist "$(APP_DIR)/Contents/"
-	cp launcher "$(APP_DIR)/Contents/MacOS/"
-	# TODO: copy Doom and setup binaries into app dir
+	cp launcher "$(APP_BIN_DIR)/"
+
+	./cp-with-libs ../../src/chocolate-doom "$(APP_BIN_DIR)"
+	$(STRIP) "$(APP_BIN_DIR)/chocolate-doom"
+	./cp-with-libs ../../setup/chocolate-setup "$(APP_BIN_DIR)"
+	$(STRIP) "$(APP_BIN_DIR)/chocolate-setup"
+
 	for d in $(DOC_FILES); do cp ../../$$d $(STAGING_DIR)/; done
+
 	find $(STAGING_DIR) -name .svn -delete -exec rm -rf {} \; || true
 
 clean : launcher_clean

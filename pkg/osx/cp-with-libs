@@ -1,0 +1,16 @@
+#!/bin/sh
+#
+# Copy a program to the specified destination, along
+# with SDL libraries it depends upon.
+
+BINARY=$1
+DEST=$2
+
+cp "$BINARY" "$DEST"
+
+# Copy libraries; only those with libSDL in the name
+
+otool -L "$BINARY" | grep libSDL | sed 's/^.//; s/(.*//' | while read; do
+        cp "$REPLY" "$DEST"
+done
+
