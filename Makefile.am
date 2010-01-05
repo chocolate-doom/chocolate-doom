@@ -53,6 +53,8 @@ DIST_SUBDIRS=pkg $(SUBDIRS)
 
 if HAVE_PYTHON
 
+noinst_DATA=CMDLINE
+
 CMDLINE : src/
 	./man/docgen -p man/CMDLINE.template src/ > $@
 

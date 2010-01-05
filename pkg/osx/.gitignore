@@ -1,0 +1,5 @@
+Info.plist
+launcher
+*.o
+*.d
+staging

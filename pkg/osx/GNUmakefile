@@ -1,19 +1,14 @@
 
-include config.make
+include ../config.make
 
 CC=gcc
 STRIP=strip
 
 STAGING_DIR=staging
 DMG=$(PACKAGE_TARNAME)-$(PACKAGE_VERSION).dmg
-DOC_FILES=\
-        README       \
-        COPYING      \
-        ChangeLog    \
-        NEWS         \
-        BUGS         \
-        CMDLINE      \
-        TODO
+
+TOPLEVEL=../..
+TOPLEVEL_DOCS=$(patsubst %,../../%,$(DOC_FILES))
 
 ifndef GNUSTEP_MAKEFILES
 
@@ -30,20 +25,21 @@ endif
 APP_DIR=$(STAGING_DIR)/$(PACKAGE_NAME).app
 APP_BIN_DIR=$(APP_DIR)/Contents/MacOS/
 
-$(STAGING_DIR): launcher
+$(STAGING_DIR): launcher $(TOPLEVEL_DOCS)
 	rm -rf $(STAGING_DIR)
 	mkdir $(STAGING_DIR)
 
 	cp -R app-skeleton "$(APP_DIR)"
+	mkdir "$(APP_BIN_DIR)"
 	cp Info.plist "$(APP_DIR)/Contents/"
 	cp launcher "$(APP_BIN_DIR)/"
 
-	./cp-with-libs ../../src/chocolate-doom "$(APP_BIN_DIR)"
+	./cp-with-libs $(TOPLEVEL)/src/chocolate-doom "$(APP_BIN_DIR)"
 	$(STRIP) "$(APP_BIN_DIR)/chocolate-doom"
-	./cp-with-libs ../../setup/chocolate-setup "$(APP_BIN_DIR)"
+	./cp-with-libs $(TOPLEVEL)/setup/chocolate-setup "$(APP_BIN_DIR)"
 	$(STRIP) "$(APP_BIN_DIR)/chocolate-setup"
 
-	for d in $(DOC_FILES); do cp ../../$$d $(STAGING_DIR)/; done
+	for d in $(DOC_FILES); do cp $(TOPLEVEL)/$$d $(STAGING_DIR)/; done
 
 	find $(STAGING_DIR) -name .svn -delete -exec rm -rf {} \; || true
 
@@ -53,7 +49,7 @@ clean : launcher_clean
 
 # Launcher build:
 
-CFLAGS = -Wall -I../..
+CFLAGS = -Wall -I$(TOPLEVEL)
 
 # Are we building using gs_make?
 

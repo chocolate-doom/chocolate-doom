@@ -1,7 +1,9 @@
 
+include ../config.make
+
 TOPLEVEL=../..
 
-EXE_FILES=$(TOPLEVEL)/src/@PACKAGE_TARNAME@.exe        \
+EXE_FILES=$(TOPLEVEL)/src/$(PACKAGE_TARNAME).exe       \
           $(TOPLEVEL)/src/chocolate-server.exe         \
           $(TOPLEVEL)/setup/chocolate-setup.exe
 
@@ -9,18 +11,7 @@ DLL_FILES=$(TOPLEVEL)/src/SDL.dll                      \
           $(TOPLEVEL)/src/SDL_mixer.dll                \
           $(TOPLEVEL)/src/SDL_net.dll
 
-DOC_FILES=README       \
-          COPYING      \
-          ChangeLog    \
-          NEWS         \
-          BUGS         \
-          CMDLINE      \
-          TODO
-
-EXTRA_DIST=README
-noinst_DATA=@PACKAGE_TARNAME@-@PACKAGE_VERSION@-win32.zip
-
-@PACKAGE_TARNAME@-@PACKAGE_VERSION@-win32.zip : staging
+$(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-win32.zip : staging
 	zip -j -r $@ staging/
 
 staging: $(EXE_FILES) $(DLL_FILES) $(patsubst %,../../%,$(DOC_FILES))
