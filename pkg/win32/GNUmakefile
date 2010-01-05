@@ -11,7 +11,9 @@ DLL_FILES=$(TOPLEVEL)/src/SDL.dll                      \
           $(TOPLEVEL)/src/SDL_mixer.dll                \
           $(TOPLEVEL)/src/SDL_net.dll
 
-$(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-win32.zip : staging
+ZIP=$(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-win32.zip
+
+$(ZIP) : staging
 	zip -j -r $@ staging/
 
 staging: $(EXE_FILES) $(DLL_FILES) $(patsubst %,../../%,$(DOC_FILES))
@@ -23,4 +25,8 @@ staging: $(EXE_FILES) $(DLL_FILES) $(patsubst %,../../%,$(DOC_FILES))
 		cp $(TOPLEVEL)/$$f staging/$$f.txt;  \
 		unix2dos staging/$$f.txt;            \
 	done
+
+clean:
+	rm -f $(ZIP)
+	rm -rf staging
 
