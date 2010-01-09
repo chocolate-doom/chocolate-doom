@@ -64,7 +64,17 @@
 - (void) addFileToCommandLine: (NSString *) fileName
          forArgument: (NSString *) args
 {
-    // TODO
+    NSString *newCommandLine;
+printf("Add file: %s %s\n", [args UTF8String], [fileName UTF8String]);
+
+    newCommandLine = [self->commandLineArguments stringValue];
+    newCommandLine = [newCommandLine stringByAppendingString: @" "];
+    newCommandLine = [newCommandLine stringByAppendingString: args];
+    newCommandLine = [newCommandLine stringByAppendingString: @" \""];
+    newCommandLine = [newCommandLine stringByAppendingString: fileName];
+    newCommandLine = [newCommandLine stringByAppendingString: @"\""];
+
+    [self->commandLineArguments setStringValue: newCommandLine];
 }
 
 - (void) launch: (id)sender
