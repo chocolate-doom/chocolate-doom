@@ -26,5 +26,35 @@
 	<string>NSApplication</string>
 	<key>NSMainNibFile</key>
 	<string>launcher</string>
+
+        <!-- file associations: -->
+
+        <key>CFBundleDocumentTypes</key>
+        <array>
+                <dict>
+                        <key>CFBundleTypeName</key>
+                        <string>Doom WAD file</string>
+                        <key>CFBundleTypeIconFile</key>
+                        <string>app.icns</string>
+                        <key>CFBundleTypeRole</key>
+                        <string>Viewer</string>
+                        <key>CFBundleTypeExtensions</key>
+                        <array>
+                                <string>wad</string>
+                        </array>
+                </dict>
+                <dict>
+                        <key>CFBundleTypeName</key>
+                        <string>Dehacked patch</string>
+                        <key>CFBundleTypeIconFile</key>
+                        <string>app.icns</string>
+                        <key>CFBundleTypeRole</key>
+                        <string>Viewer</string>
+                        <key>CFBundleTypeExtensions</key>
+                        <array>
+                                <string>deh</string>
+                        </array>
+                </dict>
+        </array>
 </dict>
 </plist>

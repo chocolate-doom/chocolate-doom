@@ -76,6 +76,7 @@
 
 - (BOOL)application:(NSApplication *)application openFile:(NSString *)fileName
 {
+    printf("File selected to open: '%s'\n", [fileName UTF8String]);
     return NO;
 }
 
