@@ -61,6 +61,12 @@
     }
 }
 
+- (void) addFileToCommandLine: (NSString *) fileName
+         forArgument: (NSString *) args
+{
+    // TODO
+}
+
 - (void) launch: (id)sender
 {
     NSString *iwad;

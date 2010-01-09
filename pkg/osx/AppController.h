@@ -24,11 +24,12 @@
 #define LAUNCHER_APPCONTROLLER_H
 
 #include <AppKit/AppKit.h>
-// Uncomment if your application is Renaissance-based
-//#include <Renaissance/Renaissance.h>
+
+#include "LauncherManager.h"
 
 @interface AppController : NSObject
 {
+    LauncherManager *launcherManager;
 }
 
 + (void)initialize;

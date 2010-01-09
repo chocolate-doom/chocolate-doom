@@ -74,10 +74,29 @@
 {
 }
 
-- (BOOL)application:(NSApplication *)application openFile:(NSString *)fileName
+- (BOOL) application:(NSApplication *) application
+         openFile:(NSString *) fileName
 {
-    printf("File selected to open: '%s'\n", [fileName UTF8String]);
-    return NO;
+    NSString *extension;
+
+    extension = [fileName pathExtension];
+
+    if (![extension caseInsensitiveCompare: @"wad"])
+    {
+        [self->launcherManager addFileToCommandLine: fileName
+                               forArgument: @"-merge"];
+    }
+    else if (![extension caseInsensitiveCompare: @"deh"])
+    {
+        [self->launcherManager addFileToCommandLine: fileName
+                               forArgument: @"-deh"];
+    }
+    else
+    {
+        return NO;
+    }
+
+    return YES;
 }
 
 - (void)showPrefPanel:(id)sender
