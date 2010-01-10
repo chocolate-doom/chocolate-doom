@@ -83,14 +83,14 @@ install_with_deps() {
 		# copy inside the package:
 
 		lib_name=$(basename "$REPLY")
-		install_name_tool -change "$REPLY" "@executable_path@/$lib_name" \
+		install_name_tool -change "$REPLY" "@executable_path/$lib_name" \
 		                  "$dest_file"
 	done
 
 	# If this is a library that we have installed, change its id:
 
 	if is_dylib "$dest_file"; then
-		install_name_tool -id "@executable_path@/$bin_name" "$dest_file"
+		install_name_tool -id "@executable_path/$bin_name" "$dest_file"
 	fi
 }
 
