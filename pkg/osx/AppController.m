@@ -46,6 +46,8 @@
     {
     }
 
+    self->filesAdded = NO;
+
     return self;
 }
 
@@ -79,6 +81,17 @@
 {
     NSString *extension;
 
+    // If this is the first file added, clear out the existing
+    // command line.  This allows us to select multiple files
+    // in the finder and open them all together (for TCs, etc).
+
+    if (!self->filesAdded)
+    {
+        [self->launcherManager clearCommandLine];
+    }
+
+    // Add file with appropriate command line option based on extension:
+
     extension = [fileName pathExtension];
 
     if (![extension caseInsensitiveCompare: @"wad"])
@@ -95,6 +108,8 @@
     {
         return NO;
     }
+
+    self->filesAdded = YES;
 
     return YES;
 }

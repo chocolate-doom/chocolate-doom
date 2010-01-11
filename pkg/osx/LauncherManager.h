@@ -40,6 +40,7 @@
 - (void) launch: (id)sender;
 - (void) runSetup: (id)sender;
 - (void) awakeFromNib;
+- (void) clearCommandLine;
 - (void) addFileToCommandLine: (NSString *) fileName
          forArgument: (NSString *) args;
 

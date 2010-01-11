@@ -79,6 +79,7 @@ static NSString *GetNextArgument(NSString *commandLine, int *pos, int *arg_pos)
 
     if (*pos >= [commandLine length])
     {
+        *arg_pos = *pos;
         return nil;
     }
 
@@ -193,6 +194,42 @@ static int GetFileInsertIndex(NSString *commandLine, NSString *needle)
     return arg_pos;
 }
 
+// Given the specified string, append a filename, quoted if necessary.
+
+static NSString *AppendQuotedFilename(NSString *str, NSString *fileName)
+{
+    int i;
+
+    // Search the filename for spaces, and quote if necessary.
+
+    for (i=0; i<[fileName length]; ++i)
+    {
+        if (isspace([fileName characterAtIndex: i]))
+        {
+            str = [str stringByAppendingString: @" \""];
+            str = [str stringByAppendingString: fileName];
+            str = [str stringByAppendingString: @"\" "];
+
+            return str;
+        }
+    }
+
+    str = [str stringByAppendingString: @" "];
+    str = [str stringByAppendingString: fileName];
+
+    return str;
+}
+
+// Clear out the existing command line options.
+// Invoked before the first file is added.
+
+- (void) clearCommandLine
+{
+    [self->commandLineArguments setStringValue: @""];
+}
+
+// Add a file to the command line to load with the game.
+
 - (void) addFileToCommandLine: (NSString *) fileName
          forArgument: (NSString *) arg
 {
@@ -215,10 +252,7 @@ static int GetFileInsertIndex(NSString *commandLine, NSString *needle)
     {
         commandLine = [commandLine stringByAppendingString: @" "];
         commandLine = [commandLine stringByAppendingString: arg];
-
-        commandLine = [commandLine stringByAppendingString: @" \""];
-        commandLine = [commandLine stringByAppendingString: fileName];
-        commandLine = [commandLine stringByAppendingString: @"\""];
+        commandLine = AppendQuotedFilename(commandLine, fileName);
     }
     else
     {
@@ -232,9 +266,8 @@ static int GetFileInsertIndex(NSString *commandLine, NSString *needle)
 
         // Construct new command line:
 
-        commandLine = [start stringByAppendingString: @" \""];
-        commandLine = [commandLine stringByAppendingString: fileName];
-        commandLine = [commandLine stringByAppendingString: @"\" "];
+        commandLine = AppendQuotedFilename(start, fileName);
+        commandLine = [commandLine stringByAppendingString: @" "];
         commandLine = [commandLine stringByAppendingString: end];
     }
 

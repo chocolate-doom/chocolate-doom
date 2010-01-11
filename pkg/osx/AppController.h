@@ -30,6 +30,7 @@
 @interface AppController : NSObject
 {
     LauncherManager *launcherManager;
+    BOOL filesAdded;
 }
 
 + (void)initialize;
