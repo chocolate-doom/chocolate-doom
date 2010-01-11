@@ -61,16 +61,184 @@
     }
 }
 
+// Get the next command line argument from the command line.
+// The position counter used to iterate over arguments is in 'pos'.
+// The index of the argument that was found is saved in arg_pos.
+
+static NSString *GetNextArgument(NSString *commandLine, int *pos, int *arg_pos)
+{
+    NSRange arg_range;
+
+    // Skip past any whitespace
+
+    while (*pos < [commandLine length]
+        && isspace([commandLine characterAtIndex: *pos]))
+    {
+        ++*pos;
+    }
+
+    if (*pos >= [commandLine length])
+    {
+        return nil;
+    }
+
+    // We are at the start of the argument.  This may be a quoted
+    // string argument, or a "normal" one.
+
+    if ([commandLine characterAtIndex: *pos] == '\"')
+    {
+        // Quoted string, skip past first quote
+
+        ++*pos;
+
+        // Save start position:
+
+        *arg_pos = *pos;
+
+        while (*pos < [commandLine length]
+            && [commandLine characterAtIndex: *pos] != '\"')
+        {
+            ++*pos;
+        }
+
+        // Unexpected end of string?
+
+        if (*pos >= [commandLine length])
+        {
+            return nil;
+        }
+
+        arg_range = NSMakeRange(*arg_pos, *pos - *arg_pos);
+
+        // Skip past last quote
+
+        ++*pos;
+    }
+    else
+    {
+        // Normal argument
+
+        // Save position:
+
+        *arg_pos = *pos;
+
+        // Read until end:
+
+        while (*pos < [commandLine length]
+            && !isspace([commandLine characterAtIndex: *pos]))
+        {
+            ++*pos;
+        }
+
+        arg_range = NSMakeRange(*arg_pos, *pos - *arg_pos);
+    }
+
+    return [commandLine substringWithRange: arg_range];
+}
+
+// Given the specified command line argument, find the index
+// to insert the new file within the command line.  Returns -1 if the 
+// argument is not already within the arguments string.
+
+static int GetFileInsertIndex(NSString *commandLine, NSString *needle)
+{
+    NSString *arg;
+    int arg_pos;
+    int pos;
+
+    pos = 0;
+
+    // Find the command line parameter we are searching
+    // for (-merge, -deh, etc)
+
+    for (;;)
+    {
+        arg = GetNextArgument(commandLine, &pos, &arg_pos);
+
+        // Searched to end of string and never found?
+
+        if (arg == nil)
+        {
+            return -1;
+        }
+
+        if (![arg caseInsensitiveCompare: needle])
+        {
+            break;
+        }
+    }
+
+    // Now skip over existing files.  For example, if we
+    // have -file foo.wad bar.wad, the new file should be appended
+    // to the end of the list.
+
+    for (;;)
+    {
+        arg = GetNextArgument(commandLine, &pos, &arg_pos);
+
+        // If we search to the end of the string now, it is fine;
+        // the new string should be added to the end of the command
+        // line.  Otherwise, if we find an argument that begins
+        // with '-', it is a new command line parameter and the end
+        // of the list.
+
+        if (arg == nil || [arg characterAtIndex: 0] == '-')
+        {
+            break;
+        }
+    }
+
+    // arg_pos should now contain the offset to insert the new filename.
+
+    return arg_pos;
+}
+
 - (void) addFileToCommandLine: (NSString *) fileName
          forArgument: (NSString *) arg
 {
-    NSString *newCommandLine;
+    NSString *commandLine;
+    int insert_pos;
 
-    newCommandLine = [arg stringByAppendingString: @" \""];
-    newCommandLine = [newCommandLine stringByAppendingString: fileName];
-    newCommandLine = [newCommandLine stringByAppendingString: @"\""];
+    // Get the current command line
 
-    [self->commandLineArguments setStringValue: newCommandLine];
+    commandLine = [self->commandLineArguments stringValue];
+
+    // Find the location to insert the new filename:
+
+    insert_pos = GetFileInsertIndex(commandLine, arg);
+
+    // If position < 0, we should add the new argument and filename
+    // to the end.  Otherwise, append the new filename to the existing
+    // list of files.
+
+    if (insert_pos < 0)
+    {
+        commandLine = [commandLine stringByAppendingString: @" "];
+        commandLine = [commandLine stringByAppendingString: arg];
+
+        commandLine = [commandLine stringByAppendingString: @" \""];
+        commandLine = [commandLine stringByAppendingString: fileName];
+        commandLine = [commandLine stringByAppendingString: @"\""];
+    }
+    else
+    {
+        NSString *start;
+        NSString *end;
+
+        // Divide existing command line in half:
+
+        start = [commandLine substringToIndex: insert_pos];
+        end = [commandLine substringFromIndex: insert_pos];
+
+        // Construct new command line:
+
+        commandLine = [start stringByAppendingString: @" \""];
+        commandLine = [commandLine stringByAppendingString: fileName];
+        commandLine = [commandLine stringByAppendingString: @"\" "];
+        commandLine = [commandLine stringByAppendingString: end];
+    }
+
+    [self->commandLineArguments setStringValue: commandLine];
 }
 
 - (void) launch: (id)sender
