@@ -115,18 +115,18 @@ AC_DEFUN([AC_DATAROOTDIR_CHECKED])
 
 AC_OUTPUT([
 Makefile
-wince/Makefile
-textscreen/Makefile
-textscreen/examples/Makefile
-setup/Makefile
 man/Makefile
-src/Makefile
 pcsound/Makefile
 pkg/Makefile
 pkg/config.make
 pkg/osx/Info.plist
-src/resource.rc
+src/Makefile
 src/doom-screensaver.desktop
+src/resource.rc
+setup/Makefile
 setup/setup-res.rc
+textscreen/Makefile
+textscreen/examples/Makefile
+wince/Makefile
 ])
 
