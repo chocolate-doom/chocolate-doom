@@ -3,6 +3,7 @@ OSX_FILES=                                                              \
 osx/app-skeleton/Contents/PkgInfo                                       \
 osx/app-skeleton/Contents/Resources/128x128.png                         \
 osx/app-skeleton/Contents/Resources/app.icns                            \
+osx/app-skeleton/Contents/Resources/wadfile.icns                        \
 osx/app-skeleton/Contents/Resources/launcher.nib/classes.nib            \
 osx/app-skeleton/Contents/Resources/launcher.nib/info.nib               \
 osx/app-skeleton/Contents/Resources/launcher.nib/keyedobjects.nib       \

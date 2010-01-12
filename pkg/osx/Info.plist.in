@@ -35,7 +35,7 @@
                         <key>CFBundleTypeName</key>
                         <string>Doom WAD file</string>
                         <key>CFBundleTypeIconFile</key>
-                        <string>app.icns</string>
+                        <string>wadfile.icns</string>
                         <key>CFBundleTypeRole</key>
                         <string>Viewer</string>
                         <key>CFBundleTypeExtensions</key>
@@ -47,7 +47,7 @@
                         <key>CFBundleTypeName</key>
                         <string>Dehacked patch</string>
                         <key>CFBundleTypeIconFile</key>
-                        <string>app.icns</string>
+                        <string>wadfile.icns</string>
                         <key>CFBundleTypeRole</key>
                         <string>Viewer</string>
                         <key>CFBundleTypeExtensions</key>
