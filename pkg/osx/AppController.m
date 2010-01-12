@@ -22,6 +22,8 @@
 
 #include "AppController.h"
 
+#include "config.h"
+
 @implementation AppController
 
 + (void)initialize
@@ -58,7 +60,7 @@
 
 - (void)awakeFromNib
 {
-    [[NSApp mainMenu] setTitle:@"ChocolateDoom"];
+    [[NSApp mainMenu] setTitle:@PACKAGE_NAME];
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotif
