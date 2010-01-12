@@ -120,11 +120,11 @@ pcsound/Makefile
 pkg/Makefile
 pkg/config.make
 pkg/osx/Info.plist
+setup/Makefile
+setup/setup-res.rc
 src/Makefile
 src/doom-screensaver.desktop
 src/resource.rc
-setup/Makefile
-setup/setup-res.rc
 textscreen/Makefile
 textscreen/examples/Makefile
 wince/Makefile
