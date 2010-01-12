@@ -1,9 +1,6 @@
 
 include ../config.make
 
-CC=gcc
-STRIP=strip
-
 STAGING_DIR=staging
 DMG=$(PACKAGE_TARNAME)-$(PACKAGE_VERSION).dmg
 
@@ -32,10 +29,12 @@ $(STAGING_DIR): launcher $(TOPLEVEL_DOCS)
 	cp -R app-skeleton "$(APP_DIR)"
 	mkdir "$(APP_BIN_DIR)"
 	cp Info.plist "$(APP_DIR)/Contents/"
-	cp launcher "$(APP_BIN_DIR)/"
 
-	./cp-with-libs $(TOPLEVEL)/src/chocolate-doom "$(APP_BIN_DIR)"
-	$(STRIP) "$(APP_BIN_DIR)/chocolate-doom"
+	cp launcher "$(APP_BIN_DIR)/"
+	$(STRIP) "$(APP_BIN_DIR)/launcher"
+
+	./cp-with-libs $(TOPLEVEL)/src/$(PACKAGE_TARNAME) "$(APP_BIN_DIR)"
+	$(STRIP) "$(APP_BIN_DIR)/$(PACKAGE_TARNAME)"
 	./cp-with-libs $(TOPLEVEL)/setup/chocolate-setup "$(APP_BIN_DIR)"
 	$(STRIP) "$(APP_BIN_DIR)/chocolate-setup"
 
