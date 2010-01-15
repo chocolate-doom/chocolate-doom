@@ -256,16 +256,11 @@ static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
 
     [self setIWADConfig];
 
-    // Populate the dropdown IWAD list, and open the configuration
-    // dialog if not yet configured.
+    // Populate the dropdown IWAD list.
 
     if ([self setDropdownList])
     {
         [self setDropdownSelection];
-    }
-    else
-    {
-        [self openConfigWindow: nil];
     }
 }
 

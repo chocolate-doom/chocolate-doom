@@ -284,12 +284,19 @@ static NSString *AppendQuotedFilename(NSString *str, NSString *fileName)
     iwad = [self->iwadController getIWADLocation];
     args = [self->commandLineArguments stringValue];
 
-    if (iwad != nil)
+    if (iwad == nil)
     {
-        ExecuteProgram(PACKAGE_TARNAME, [iwad UTF8String],
-                                        [args UTF8String]);
-        [NSApp terminate:sender];
+        NSRunAlertPanel(@"No IWAD selected",
+                        @"You have not selected an IWAD (game) file.\n\n"
+                         "You must configure and select a valid IWAD file "
+                         "in order to launch the game.",
+                        @"OK", nil, nil);
+        return;
     }
+
+    ExecuteProgram(PACKAGE_TARNAME, [iwad UTF8String],
+                                    [args UTF8String]);
+    [NSApp terminate:sender];
 }
 
 - (void) runSetup: (id)sender
