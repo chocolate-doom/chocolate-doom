@@ -20,6 +20,7 @@
             NSMimeTypes = (
                 "application/x-doom"
             );
+            NSIcon = "wadfile.png";
         },
         {
             NSHumanReadableName = "Dehacked patch";
