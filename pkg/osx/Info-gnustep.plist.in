@@ -1,7 +1,7 @@
 {
-    ApplicationDescription = "@PACKAGE_NAME@";
-    ApplicationIcon = app.png;
     ApplicationName = "@PACKAGE_NAME@";
+    ApplicationDescription = "Doom source port";
+    ApplicationIcon = app.png;
     ApplicationRelease = @PACKAGE_VERSION@;
     Copyright = "Copyright (C) 2009-2010";
     CopyrightDescription = "GNU General Public License, version 2";

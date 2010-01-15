@@ -120,7 +120,7 @@ pcsound/Makefile
 pkg/Makefile
 pkg/config.make
 pkg/osx/Info.plist
-pkg/osx/Info-GNUstep.plist
+pkg/osx/Info-gnustep.plist
 setup/Makefile
 setup/setup-res.rc
 src/Makefile

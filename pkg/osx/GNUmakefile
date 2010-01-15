@@ -35,7 +35,7 @@ APP_DIR=$(STAGING_DIR)/$(PACKAGE_NAME).app
 ifdef GNUSTEP_MAKEFILES
 APP_TOP_DIR=$(APP_DIR)
 APP_BIN_DIR=$(APP_DIR)
-SRC_INFO_PLIST=Info-GNUstep.plist
+SRC_INFO_PLIST=Info-gnustep.plist
 else
 APP_TOP_DIR=$(APP_DIR)/Contents
 APP_BIN_DIR=$(APP_DIR)/Contents/MacOS
@@ -51,7 +51,7 @@ $(STAGING_DIR): launcher $(TOPLEVEL_DOCS)
 	mkdir -p "$(APP_TOP_DIR)"
 	cp -R Resources "$(APP_TOP_DIR)"
 	cp PkgInfo "$(APP_TOP_DIR)"
-	cp $(SRC_INFO_PLIST) "$(APP_TOP_DIR)/Info.plist"
+	cp $(SRC_INFO_PLIST) "$(APP_TOP_DIR)"
 
 	mkdir -p "$(APP_BIN_DIR)"
 

@@ -9,7 +9,7 @@ osx/Resources/launcher.nib/classes.nib                                  \
 osx/Resources/launcher.nib/info.nib                                     \
 osx/Resources/launcher.nib/keyedobjects.nib                             \
 osx/GNUmakefile                                                         \
-osx/Info.plist.in       osx/Info-GNUstep.plist.in                       \
+osx/Info.plist.in       osx/Info-gnustep.plist.in                       \
 osx/PkgInfo                                                             \
 osx/cp-with-libs                                                        \
 osx/main.m                                                              \
