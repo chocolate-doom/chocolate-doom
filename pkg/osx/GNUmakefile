@@ -1,4 +1,9 @@
 
+# Makefile for building the OS X launcher program and DMG package.
+# It is also possible to build and run the launcher under Unix
+# systems using GNUstep, although this is only here for development
+# and debugging purposes.
+
 include ../config.make
 
 STAGING_DIR=staging
@@ -20,25 +25,43 @@ endif
 # Staging dir build for package:
 
 APP_DIR=$(STAGING_DIR)/$(PACKAGE_NAME).app
-APP_BIN_DIR=$(APP_DIR)/Contents/MacOS/
+
+# OS X and GNUstep apps have a slightly different internal structure:
+# OS X apps have their files within a containing "Contents" directory
+# that does not exist in GNUstep apps.  Similarly, the binaries are
+# installed at the top level, rather than in a "MacOS" directory.
+# Finally, we must install a different Info.plist file.
+
+ifdef GNUSTEP_MAKEFILES
+APP_TOP_DIR=$(APP_DIR)
+APP_BIN_DIR=$(APP_DIR)
+SRC_INFO_PLIST=Info-GNUstep.plist
+else
+APP_TOP_DIR=$(APP_DIR)/Contents
+APP_BIN_DIR=$(APP_DIR)/Contents/MacOS
+SRC_INFO_PLIST=Info.plist
+endif
 
 $(STAGING_DIR): launcher $(TOPLEVEL_DOCS)
 	rm -rf $(STAGING_DIR)
 	mkdir $(STAGING_DIR)
 
-	cp -R app-skeleton "$(APP_DIR)"
-	mkdir "$(APP_BIN_DIR)"
-	cp Info.plist "$(APP_DIR)/Contents/"
+	cp $(TOPLEVEL_DOCS) "$(STAGING_DIR)"
 
-	cp launcher "$(APP_BIN_DIR)/"
+	mkdir -p "$(APP_TOP_DIR)"
+	cp -R Resources "$(APP_TOP_DIR)"
+	cp PkgInfo "$(APP_TOP_DIR)"
+	cp $(SRC_INFO_PLIST) "$(APP_TOP_DIR)/Info.plist"
+
+	mkdir -p "$(APP_BIN_DIR)"
+
+	cp launcher "$(APP_BIN_DIR)"
 	$(STRIP) "$(APP_BIN_DIR)/launcher"
 
 	./cp-with-libs $(TOPLEVEL)/src/$(PACKAGE_TARNAME) "$(APP_BIN_DIR)"
 	$(STRIP) "$(APP_BIN_DIR)/$(PACKAGE_TARNAME)"
 	./cp-with-libs $(TOPLEVEL)/setup/chocolate-setup "$(APP_BIN_DIR)"
 	$(STRIP) "$(APP_BIN_DIR)/chocolate-setup"
-
-	cp $(TOPLEVEL_DOCS) "$(STAGING_DIR)"
 
 	find $(STAGING_DIR) -name .svn -delete -exec rm -rf {} \; || true
 
