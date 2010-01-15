@@ -250,6 +250,8 @@ static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
 
 - (void) awakeFromNib
 {
+    [self->configWindow center];
+
     // Set configuration for all IWADs from configuration file.
 
     [self setIWADConfig];

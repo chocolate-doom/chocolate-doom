@@ -304,6 +304,7 @@ static NSString *AppendQuotedFilename(NSString *str, NSString *fileName)
 {
     [self->packageLabel setStringValue: @PACKAGE_STRING];
     [self->launcherWindow setTitle: @PACKAGE_NAME " Launcher"];
+    [self->launcherWindow center];
     [self setConfig];
 }
 
