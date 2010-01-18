@@ -14,8 +14,8 @@ Autoreq: 0
 Requires: libSDL-1.2.so.0, libSDL_mixer-1.2.so.0, libSDL_net-1.2.so.0
 
 %description
-@PACKAGE_NAME@ - @PACKAGE_SHORTDESC@.
 %(sed -n "/==/ q; p " < README)
+
 See @PACKAGE_URL@ for more information.
 
 %prep
