@@ -1,10 +1,14 @@
 {
     ApplicationName = "@PACKAGE_NAME@";
-    ApplicationDescription = "Doom source port";
+    ApplicationDescription = "@PACKAGE_SHORTDESC@";
     ApplicationIcon = app.png;
     ApplicationRelease = @PACKAGE_VERSION@;
-    Copyright = "Copyright (C) 2009-2010";
-    CopyrightDescription = "GNU General Public License, version 2";
+    ApplicationURL = "@PACKAGE_URL@";
+    Authors = (
+        "@PACKAGE_MAINTAINER@ <@PACKAGE_BUGREPORT@>"
+    );
+    Copyright = "@PACKAGE_COPYRIGHT@";
+    CopyrightDescription = "@PACKAGE_LICENSE@";
     FullVersionID = @PACKAGE_VERSION@;
     GSMainMarkupFile = "";
     NSExecutable = "launcher";
