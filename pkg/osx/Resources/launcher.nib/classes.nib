@@ -30,7 +30,7 @@
             SUPERCLASS = NSObject; 
         }, 
         {
-            ACTIONS = {launch = id; runSetup = id; }; 
+            ACTIONS = {launch = id; openTerminal = id; runSetup = id; }; 
             CLASS = LauncherManager; 
             LANGUAGE = ObjC; 
             OUTLETS = {

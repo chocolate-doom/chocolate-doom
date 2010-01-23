@@ -43,7 +43,7 @@
 - (void) clearCommandLine;
 - (void) addFileToCommandLine: (NSString *) fileName
          forArgument: (NSString *) args;
-
+- (void) openTerminal: (id) sender;
 
 @end
 

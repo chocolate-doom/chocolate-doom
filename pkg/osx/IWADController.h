@@ -45,6 +45,7 @@
 - (BOOL) setDropdownList;
 - (void) setDropdownSelection;
 - (void) saveConfig;
+- (char *) doomWadPath;
 - (void) setEnvironment;
 
 @end

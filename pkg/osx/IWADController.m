@@ -264,10 +264,10 @@ static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
     }
 }
 
-// Set the DOOMWADPATH environment variable to contain the path to each
-// of the configured IWAD files.
+// Generate a value to set for the DOOMWADPATH environment variable
+// that contains each of the configured IWAD files.
 
-- (void) setEnvironment
+- (char *) doomWadPath
 {
     IWADLocation *iwadList[NUM_IWAD_TYPES];
     NSString *location;
@@ -280,7 +280,7 @@ static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
 
     // Calculate length of environment string.
 
-    len = 30;
+    len = 0;
 
     for (i=0; i<NUM_IWAD_TYPES; ++i)
     {
@@ -295,7 +295,7 @@ static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
     // Build string.
 
     env = malloc(len);
-    strcpy(env, "DOOMWADPATH=");
+    strcpy(env, "");
 
     first = YES;
 
@@ -314,6 +314,27 @@ static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
             first = NO;
         }
     }
+
+    return env;
+}
+
+// Set the DOOMWADPATH environment variable to contain the path to each
+// of the configured IWAD files.
+
+- (void) setEnvironment
+{
+    char *doomwadpath;
+    char *env;
+
+    // Get the value for the path.
+
+    doomwadpath = [self doomWadPath];
+
+    env = malloc(strlen(doomwadpath) + 15);
+
+    sprintf(env, "DOOMWADPATH=%s", doomwadpath);
+
+    free(doomwadpath);
 
     // Load into environment:
 

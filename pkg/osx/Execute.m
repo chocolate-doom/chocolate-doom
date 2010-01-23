@@ -24,10 +24,16 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 
+#include <AppKit/AppKit.h>
+
+#include "config.h"
+
 #define RESPONSE_FILE "/tmp/launcher.rsp"
+#define TEMP_SCRIPT "/tmp/tempscript.sh"
 
 static char *executable_path;
 
@@ -107,5 +113,85 @@ void ExecuteProgram(const char *executable, const char *iwad, const char *args)
     {
         signal(SIGCHLD, SIG_IGN);
     }
+}
+
+// Write a sequence of commands that will display the specified message
+// via shell commands.
+
+static void WriteMessage(FILE *script, char *msg)
+{
+    char *p;
+
+    fprintf(script, "echo \"");
+
+    for (p=msg; *p != '\0'; ++p)
+    {
+        // Start new line?
+
+        if (*p == '\n')
+        {
+            fprintf(script, "\"\necho \"");
+            continue;
+        }
+
+        // Escaped character?
+
+        if (*p == '\\' || *p == '\"')
+        {
+            fprintf(script, "\\");
+        }
+
+        fprintf(script, "%c", *p);
+    }
+
+    fprintf(script, "\"\n");
+}
+
+// Open a terminal window with the PATH set appropriately, and DOOMWADPATH
+// set to the specified value.
+
+void OpenTerminalWindow(const char *doomwadpath)
+{
+    FILE *stream;
+
+    // Generate a shell script that sets the PATH to include the location
+    // where the Doom binaries are, and DOOMWADPATH to include the
+    // IWAD files that have been configured in the launcher interface.
+    // The script then deletes itself and starts a shell.
+
+    stream = fopen(TEMP_SCRIPT, "w");
+
+    fprintf(stream, "#!/bin/sh\n");
+    //fprintf(stream, "set -x\n");
+    fprintf(stream, "PATH=\"%s:$PATH\"\n", executable_path);
+    fprintf(stream, "DOOMWADPATH=\"%s\"\n", doomwadpath);
+    fprintf(stream, "export DOOMWADPATH\n");
+    fprintf(stream, "rm -f \"%s\"\n", TEMP_SCRIPT);
+
+    // Display a useful message:
+
+    fprintf(stream, "clear\n");
+    WriteMessage(stream,
+        "\n"
+        "This command line has the PATH variable configured so that you may\n"
+        "launch the game with whatever parameters you desire.\n"
+        "\n"
+        "For example:\n"
+        "\n"
+        "   " PACKAGE_TARNAME " -iwad doom2.wad -file sid.wad -warp 1\n"
+        "\n"
+        "Type 'exit' to exit.\n");
+
+    fprintf(stream, "exec $SHELL\n");
+    fprintf(stream, "\n");
+
+    fclose(stream);
+
+    chmod(TEMP_SCRIPT, 0755);
+
+    // Tell the terminal to open a window to run the script.
+
+    [[NSWorkspace sharedWorkspace] openFile: @TEMP_SCRIPT
+                                   withApplication: @"Terminal"];
 }
 

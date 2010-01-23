@@ -299,12 +299,30 @@ static NSString *AppendQuotedFilename(NSString *str, NSString *fileName)
     [NSApp terminate:sender];
 }
 
+// Invoked when the "Setup Tool" button is clicked, to run the setup tool:
+
 - (void) runSetup: (id)sender
 {
     [self saveConfig];
 
     [self->iwadController setEnvironment];
     ExecuteProgram("chocolate-setup", NULL, NULL);
+}
+
+// Invoked when the "Terminal" option is selected from the menu, to open
+// a terminal window.
+
+- (void) openTerminal: (id) sender
+{
+    char *doomwadpath;
+
+    [self saveConfig];
+
+    doomwadpath = [self->iwadController doomWadPath];
+
+    OpenTerminalWindow(doomwadpath);
+
+    free(doomwadpath);
 }
 
 - (void) awakeFromNib
