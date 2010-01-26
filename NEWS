@@ -50,6 +50,8 @@
        instead of the red colormaps normally used when taking damage
        or using the berserk pack.  This matches Vanilla chex.exe
        behavior (thanks Fuzztooth).
+     * Impassible glass now displays and works the same as in Vanilla,
+       fixing wads such as OTTAWAU.WAD (thanks Never_Again).
 
     Bugs fixed:
      * Memory-mapped WAD I/O is disabled by default, as it caused
