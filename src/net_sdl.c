@@ -57,7 +57,7 @@ typedef struct
 static addrpair_t **addr_table;
 static int addr_table_size = -1;
 
-// Initialises the address table
+// Initializes the address table
 
 static void NET_SDL_InitAddrTable(void)
 {

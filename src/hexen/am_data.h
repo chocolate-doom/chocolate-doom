@@ -22,7 +22,6 @@
 //
 //-----------------------------------------------------------------------------
 
-
 #ifndef __AMDATA_H__
 #define __AMDATA_H__
 
@@ -108,9 +107,9 @@ mline_t triangle_guy[] = {
 
 #define R (FRACUNIT)
 mline_t thintriangle_guy[] = {
-  { { -.5*R, -.7*R }, { R, 0 } },
-  { { R, 0 }, { -.5*R, .7*R } },
-  { { -.5*R, .7*R }, { -.5*R, -.7*R } }
+  { { (fixed_t)(-.5*R), (fixed_t)(-.7*R) }, { (fixed_t)(R    ), (fixed_t)(0    ) } },
+  { { (fixed_t)(R    ), (fixed_t)(0    ) }, { (fixed_t)(-.5*R), (fixed_t)(.7*R ) } },
+  { { (fixed_t)(-.5*R), (fixed_t)(.7*R ) }, { (fixed_t)(-.5*R), (fixed_t)(-.7*R) } }
   };
 #undef R
 #define NUMTHINTRIANGLEGUYLINES (sizeof(thintriangle_guy)/sizeof(mline_t))

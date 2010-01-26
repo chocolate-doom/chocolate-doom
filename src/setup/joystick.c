@@ -38,7 +38,7 @@ typedef enum
     CALIBRATE_UP,
 } calibration_stage_t;
 
-// SDL joystick successfully initialised?
+// SDL joystick successfully initialized?
 
 static int joystick_initted = 0;
 

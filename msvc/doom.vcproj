@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories=".;..\src;..\src\doom;..\textscreen;..\pcsound"
-				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;PROGRAM_PREFIX=&quot;\&quot;chocolate-\&quot;&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;PROGRAM_PREFIX=&quot;\&quot;chocolate-\&quot;&quot;"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="3"
@@ -218,6 +218,10 @@
 			</File>
 			<File
 				RelativePath="..\src\i_cdmus.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\i_endoom.h"
 				>
 			</File>
 			<File
@@ -590,6 +594,10 @@
 			</File>
 			<File
 				RelativePath="..\src\i_cdmus.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\i_endoom.c"
 				>
 			</File>
 			<File

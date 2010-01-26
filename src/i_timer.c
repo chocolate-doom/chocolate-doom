@@ -81,7 +81,7 @@ void I_WaitVBL(int count)
 
 void I_InitTimer(void)
 {
-    // initialise timer
+    // initialize timer
 
     SDL_Init(SDL_INIT_TIMER);
 }

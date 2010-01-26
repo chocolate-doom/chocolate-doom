@@ -49,9 +49,10 @@
 #include "doomtype.h"
 
 #define LOW_PASS_FILTER
+#define MAX_SOUND_SLICE_TIME 70 /* ms */
 #define NUM_CHANNELS 16
 
-static boolean sound_initialised = false;
+static boolean sound_initialized = false;
 
 static sfxinfo_t *channels_playing[NUM_CHANNELS];
 
@@ -311,7 +312,7 @@ static void ExpandSoundData_SDL(sfxinfo_t *sfxinfo,
 
     chunk = AllocateChunk(sfxinfo, expanded_length);
 
-    // If we can, use the standard / optimised SDL conversion routines.
+    // If we can, use the standard / optimized SDL conversion routines.
     
     if (samplerate <= mixer_freq
      && ConvertibleRatio(samplerate, mixer_freq)
@@ -554,7 +555,7 @@ static void I_SDL_UpdateSoundParams(int handle, int vol, int sep)
 {
     int left, right;
 
-    if (!sound_initialised)
+    if (!sound_initialized)
     {
         return;
     }
@@ -588,7 +589,7 @@ static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
 {
     Mix_Chunk *chunk;
 
-    if (!sound_initialised)
+    if (!sound_initialized)
     {
         return -1;
     }
@@ -622,7 +623,7 @@ static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
 
 static void I_SDL_StopSound (int handle)
 {
-    if (!sound_initialised)
+    if (!sound_initialized)
     {
         return;
     }
@@ -670,7 +671,7 @@ static void I_SDL_UpdateSound(void)
 
 static void I_SDL_ShutdownSound(void)
 {    
-    if (!sound_initialised)
+    if (!sound_initialized)
     {
         return;
     }
@@ -678,14 +679,40 @@ static void I_SDL_ShutdownSound(void)
     Mix_CloseAudio();
     SDL_QuitSubSystem(SDL_INIT_AUDIO);
 
-    sound_initialised = false;
+    sound_initialized = false;
 }
 
+// Calculate slice size, based on MAX_SOUND_SLICE_TIME.
+// The result must be a power of two.
+
+static int GetSliceSize(void)
+{
+    int limit;
+    int n;
+
+    limit = (snd_samplerate * MAX_SOUND_SLICE_TIME) / 1000;
+
+    // Try all powers of two, not exceeding the limit.
+
+    for (n=0;; ++n)
+    {
+        // 2^n <= limit < 2^n+1 ?
+
+        if ((1 << (n + 1)) > limit)
+        {
+            return (1 << n);
+        }
+    }
+
+    // Should never happen?
+
+    return 1024;
+}
 
 static boolean I_SDL_InitSound(boolean _use_sfx_prefix)
-{ 
+{
     int i;
-    
+
     use_sfx_prefix = _use_sfx_prefix;
 
     // No sounds yet
@@ -701,7 +728,7 @@ static boolean I_SDL_InitSound(boolean _use_sfx_prefix)
         return false;
     }
 
-    if (Mix_OpenAudio(snd_samplerate, AUDIO_S16SYS, 2, 1024) < 0)
+    if (Mix_OpenAudio(snd_samplerate, AUDIO_S16SYS, 2, GetSliceSize()) < 0)
     {
         fprintf(stderr, "Error initialising SDL_mixer: %s\n", Mix_GetError());
         return false;
@@ -735,7 +762,7 @@ static boolean I_SDL_InitSound(boolean _use_sfx_prefix)
     
     SDL_PauseAudio(0);
 
-    sound_initialised = true;
+    sound_initialized = true;
 
     return true;
 }

@@ -41,7 +41,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories=".;..\src;..\textscreen"
-				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEDICATEDSERVER"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;DEDICATEDSERVER"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -190,6 +190,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\i_system.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\i_timer.c"
 				>
 			</File>
@@ -241,6 +245,10 @@
 			>
 			<File
 				RelativePath="..\src\d_mode.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\i_system.h"
 				>
 			</File>
 			<File

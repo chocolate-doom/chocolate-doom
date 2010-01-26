@@ -162,16 +162,18 @@ void InitBindings(void)
 
 static void SetExecutable(mission_config_t *config)
 {
+    char *extension;
+
     free(executable);
 
 #ifdef _WIN32
-    executable = malloc(strlen(config->executable) + 5);
-    sprintf(executable, "%s.exe", config->executable);
+    extension = ".exe";
 #else
-    executable = malloc(strlen(INSTALL_DIR) + strlen(config->executable) + 2);
-    sprintf(executable, "%s%c%s", INSTALL_DIR, DIR_SEPARATOR,
-                                  config->executable);
+    extension = "";
 #endif
+
+    executable = malloc(strlen(config->executable) + 5);
+    sprintf(executable, "%s%s", config->executable, extension);
 }
 
 static void SetMission(mission_config_t *config)

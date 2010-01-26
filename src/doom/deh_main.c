@@ -110,7 +110,7 @@ void DEH_Checksum(md5_digest_t digest)
 
 // Called on startup to call the Init functions
 
-static void InitialiseSections(void)
+static void InitializeSections(void)
 {
     unsigned int i;
 
@@ -385,7 +385,7 @@ void DEH_Init(void)
     char *filename;
     int p;
 
-    InitialiseSections();
+    InitializeSections();
 
     //!
     // @category mod

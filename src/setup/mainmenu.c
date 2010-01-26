@@ -19,6 +19,7 @@
 // 02111-1307, USA.
 //
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -175,6 +176,10 @@ void MainMenu(void)
     TXT_SetWindowAction(window, TXT_HORIZ_LEFT, quit_action);
 }
 
+//
+// Initialize all configuration variables, load config file, etc
+//
+
 static void InitConfig(void)
 {
     InitBindings();
@@ -228,7 +233,7 @@ static void SetIcon(void)
 }
 
 // 
-// Initialise and run the textscreen GUI.
+// Initialize and run the textscreen GUI.
 //
 
 static void RunGUI(void)
@@ -237,7 +242,7 @@ static void RunGUI(void)
 
     if (!TXT_Init())
     {
-        fprintf(stderr, "Failed to initialise GUI\n");
+        fprintf(stderr, "Failed to initialize GUI\n");
         exit(-1);
     }
 

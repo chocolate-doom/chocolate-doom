@@ -36,7 +36,7 @@
 
 #include "pcsound.h"
 
-static boolean pcs_initialised = false;
+static boolean pcs_initialized = false;
 
 static SDL_mutex *sound_lock;
 static boolean use_sfx_prefix;
@@ -178,7 +178,7 @@ static int I_PCS_StartSound(sfxinfo_t *sfxinfo,
 {
     int result;
 
-    if (!pcs_initialised)
+    if (!pcs_initialized)
     {
         return -1;
     }
@@ -214,7 +214,7 @@ static int I_PCS_StartSound(sfxinfo_t *sfxinfo,
 
 static void I_PCS_StopSound(int handle)
 {
-    if (!pcs_initialised)
+    if (!pcs_initialized)
     {
         return;
     }
@@ -258,7 +258,7 @@ static int I_PCS_GetSfxLumpNum(sfxinfo_t* sfx)
 
 static boolean I_PCS_SoundIsPlaying(int handle)
 {
-    if (!pcs_initialised)
+    if (!pcs_initialized)
     {
         return false;
     }
@@ -279,21 +279,21 @@ static boolean I_PCS_InitSound(boolean _use_sfx_prefix)
 
     PCSound_SetSampleRate(snd_samplerate);
 
-    // Initialise the PC speaker subsystem.
+    // Initialize the PC speaker subsystem.
 
-    pcs_initialised = PCSound_Init(PCSCallbackFunc);
+    pcs_initialized = PCSound_Init(PCSCallbackFunc);
 
-    if (pcs_initialised)
+    if (pcs_initialized)
     {
         sound_lock = SDL_CreateMutex();
     }
 
-    return pcs_initialised;
+    return pcs_initialized;
 }
 
 static void I_PCS_ShutdownSound(void)
 {
-    if (pcs_initialised)
+    if (pcs_initialized)
     {
         PCSound_Shutdown();
     }

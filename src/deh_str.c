@@ -66,7 +66,7 @@ char *DEH_String(char *s)
 {
     int entry;
 
-    // Fallback if we have not initialised the hash table yet
+    // Fallback if we have not initialized the hash table yet
 
     if (hash_table_length < 0)
 	return s;
@@ -164,7 +164,7 @@ void DEH_AddStringReplacement(char *from_text, char *to_text)
 {
     deh_substitution_t *sub;
 
-    // Initialise the hash table if this is the first time
+    // Initialize the hash table if this is the first time
 
     if (hash_table_length < 0)
     {

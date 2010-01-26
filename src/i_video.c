@@ -93,6 +93,9 @@ static const char shiftxform[] =
 };
 
 
+#define LOADING_DISK_W 16
+#define LOADING_DISK_H 16
+
 // Non aspect ratio-corrected modes (direct multiples of 320x200)
 
 static screen_mode_t *screen_modes[] = {
@@ -145,7 +148,7 @@ static int windowwidth, windowheight;
 
 // display has been set up?
 
-static boolean initialised = false;
+static boolean initialized = false;
 
 // disable mouse?
 
@@ -221,7 +224,6 @@ static grabmouse_callback_t grabmouse_callback = NULL;
 // restored by EndRead
 
 static byte *disk_image = NULL;
-static int disk_image_w, disk_image_h;
 static byte *saved_background;
 static boolean window_focused;
 
@@ -338,7 +340,7 @@ static void UpdateFocus(void)
     state = SDL_GetAppState();
 
     // We should have input (keyboard) focus and be visible 
-    // (not minimised)
+    // (not minimized)
 
     window_focused = (state & SDL_APPINPUTFOCUS) && (state & SDL_APPACTIVE);
 
@@ -378,20 +380,18 @@ void I_EnableLoadingDisk(void)
     tmpbuf = Z_Malloc(SCREENWIDTH * (disk->height + 1), PU_STATIC, NULL);
     V_UseBuffer(tmpbuf);
 
-    disk_image_w = SHORT(disk->width);
-    disk_image_h = SHORT(disk->height);
+    // Draw the disk to the screen:
+
     V_DrawPatch(0, 0, disk);
 
-    // Copy the disk into the disk_image buffer.
+    disk_image = Z_Malloc(LOADING_DISK_W * LOADING_DISK_H, PU_STATIC, NULL);
+    saved_background = Z_Malloc(LOADING_DISK_W * LOADING_DISK_H, PU_STATIC, NULL);
 
-    disk_image = Z_Malloc(disk_image_w * disk_image_h, PU_STATIC, NULL);
-    saved_background = Z_Malloc(disk_image_w * disk_image_h, PU_STATIC, NULL);
-
-    for (y=0; y<disk_image_h; ++y) 
+    for (y=0; y<LOADING_DISK_H; ++y) 
     {
-        memcpy(disk_image + disk_image_w * y,
+        memcpy(disk_image + LOADING_DISK_W * y,
                tmpbuf + SCREENWIDTH * y,
-               disk_image_w);
+               LOADING_DISK_W);
     }
 
     // All done - free the screen buffer and restore the normal 
@@ -435,7 +435,9 @@ static int TranslateKey(SDL_keysym *sym)
 
       case SDLK_PAUSE:	return KEY_PAUSE;
 
+#if !SDL_VERSION_ATLEAST(1, 3, 0)
       case SDLK_EQUALS: return KEY_EQUALS;
+#endif
 
       case SDLK_MINUS:          return KEY_MINUS;
 
@@ -448,9 +450,11 @@ static int TranslateKey(SDL_keysym *sym)
 	return KEY_RCTRL;
 	
       case SDLK_LALT:
-      case SDLK_LMETA:
       case SDLK_RALT:
+#if !SDL_VERSION_ATLEAST(1, 3, 0)
+      case SDLK_LMETA:
       case SDLK_RMETA:
+#endif
         return KEY_RALT;
 
       case SDLK_CAPSLOCK: return KEY_CAPSLOCK;
@@ -497,14 +501,14 @@ static int TranslateKey(SDL_keysym *sym)
 
 void I_ShutdownGraphics(void)
 {
-    if (initialised)
+    if (initialized)
     {
         SDL_ShowCursor(1);
         SDL_WM_GrabInput(SDL_GRAB_OFF);
 
         SDL_QuitSubSystem(SDL_INIT_VIDEO);
     
-        initialised = false;
+        initialized = false;
     }
 }
 
@@ -521,8 +525,14 @@ void I_StartFrame (void)
 
 static int MouseButtonState(void)
 {
-    Uint8 state = SDL_GetMouseState(NULL, NULL);
+    Uint8 state;
     int result = 0;
+
+#if SDL_VERSION_ATLEAST(1, 3, 0)
+    state = SDL_GetMouseState(0, NULL, NULL);
+#else
+    state = SDL_GetMouseState(NULL, NULL);
+#endif
 
     // Note: button "0" is left, button "1" is right,
     // button "2" is middle for Doom.  This is different
@@ -739,7 +749,11 @@ static void CenterMouse(void)
     // Clear any relative movement caused by warping
 
     SDL_PumpEvents();
+#if SDL_VERSION_ATLEAST(1, 3, 0)
+    SDL_GetRelativeMouseState(0, NULL, NULL);
+#else
     SDL_GetRelativeMouseState(NULL, NULL);
+#endif
 }
 
 //
@@ -753,7 +767,11 @@ static void I_ReadMouse(void)
     int x, y;
     event_t ev;
 
+#if SDL_VERSION_ATLEAST(1, 3, 0)
+    SDL_GetRelativeMouseState(0, &x, &y);
+#else
     SDL_GetRelativeMouseState(&x, &y);
+#endif
 
     if (x != 0 || y != 0) 
     {
@@ -784,7 +802,7 @@ static void I_ReadMouse(void)
 //
 void I_StartTic (void)
 {
-    if (!initialised)
+    if (!initialized)
     {
         return;
     }
@@ -898,50 +916,54 @@ static void UpdateRect(int x1, int y1, int x2, int y2)
 
 void I_BeginRead(void)
 {
+    byte *screenloc = I_VideoBuffer
+                    + (SCREENHEIGHT - LOADING_DISK_H) * SCREENWIDTH
+                    + (SCREENWIDTH - LOADING_DISK_W);
     int y;
 
-    if (!initialised || disk_image == NULL)
+    if (!initialized || disk_image == NULL)
         return;
 
     // save background and copy the disk image in
 
-    for (y=0; y<disk_image_h; ++y)
+    for (y=0; y<LOADING_DISK_H; ++y)
     {
-        byte *screenloc = 
-               I_VideoBuffer
-                 + (SCREENHEIGHT - 1 - disk_image_h + y) * SCREENWIDTH
-                 + (SCREENWIDTH - 1 - disk_image_w);
-
-        memcpy(saved_background + y * disk_image_w,
+        memcpy(saved_background + y * LOADING_DISK_W,
                screenloc,
-               disk_image_w);
-        memcpy(screenloc, disk_image + y * disk_image_w, disk_image_w);
+               LOADING_DISK_W);
+        memcpy(screenloc,
+               disk_image + y * LOADING_DISK_W,
+               LOADING_DISK_W);
+
+        screenloc += SCREENWIDTH;
     }
 
-    UpdateRect(SCREENWIDTH - disk_image_w, SCREENHEIGHT - disk_image_h,
+    UpdateRect(SCREENWIDTH - LOADING_DISK_W, SCREENHEIGHT - LOADING_DISK_H,
                SCREENWIDTH, SCREENHEIGHT);
 }
 
 void I_EndRead(void)
 {
+    byte *screenloc = I_VideoBuffer
+                    + (SCREENHEIGHT - LOADING_DISK_H) * SCREENWIDTH
+                    + (SCREENWIDTH - LOADING_DISK_W);
     int y;
 
-    if (!initialised || disk_image == NULL)
+    if (!initialized || disk_image == NULL)
         return;
 
     // save background and copy the disk image in
 
-    for (y=0; y<disk_image_h; ++y)
+    for (y=0; y<LOADING_DISK_H; ++y)
     {
-        byte *screenloc = 
-               I_VideoBuffer
-                 + (SCREENHEIGHT - 1 - disk_image_h + y) * SCREENWIDTH
-                 + (SCREENWIDTH - 1 - disk_image_w);
+        memcpy(screenloc,
+               saved_background + y * LOADING_DISK_W,
+               LOADING_DISK_W);
 
-        memcpy(screenloc, saved_background + y * disk_image_w, disk_image_w);
+        screenloc += SCREENWIDTH;
     }
 
-    UpdateRect(SCREENWIDTH - disk_image_w, SCREENHEIGHT - disk_image_h,
+    UpdateRect(SCREENWIDTH - LOADING_DISK_W, SCREENHEIGHT - LOADING_DISK_H,
                SCREENWIDTH, SCREENHEIGHT);
 }
 
@@ -955,7 +977,7 @@ void I_FinishUpdate (void)
     int		i;
     // UNUSED static unsigned char *bigscreen=0;
 
-    if (!initialised)
+    if (!initialized)
         return;
 
     if (noblit)
@@ -1697,7 +1719,7 @@ void I_InitGraphics(void)
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) 
     {
-        I_Error("Failed to initialise video: %s", SDL_GetError());
+        I_Error("Failed to initialize video: %s", SDL_GetError());
     }
 
     // Check for command-line video-related parameters.
@@ -1750,7 +1772,9 @@ void I_InitGraphics(void)
     // has to be done before the call to SDL_SetVideoMode.
 
     I_InitWindowTitle();
+#if !SDL_VERSION_ATLEAST(1, 3, 0)
     I_InitWindowIcon();
+#endif
 
     // Set the video mode.
 
@@ -1874,7 +1898,7 @@ void I_InitGraphics(void)
         CenterMouse();
     }
 
-    initialised = true;
+    initialized = true;
 
     // Call I_ShutdownGraphics on quit
 

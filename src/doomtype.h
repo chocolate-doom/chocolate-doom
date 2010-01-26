@@ -36,7 +36,9 @@
 #ifdef _WIN32
 
 #define snprintf _snprintf
+#if _MSC_VER < 1400 /* not needed for Visual Studio 2008 */
 #define vsnprintf _vsnprintf
+#endif
 #define strcasecmp stricmp
 #define strncasecmp strnicmp
 
@@ -50,7 +52,7 @@
 //
 // The packed attribute forces structures to be packed into the minimum 
 // space necessary.  If this is not done, the compiler may align structure
-// fields differently to optimise memory access, inflating the overall
+// fields differently to optimize memory access, inflating the overall
 // structure size.  It is important to use the packed attribute on certain
 // structures where alignment is important, particularly data read/written
 // to disk.

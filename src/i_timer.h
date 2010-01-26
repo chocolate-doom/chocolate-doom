@@ -40,7 +40,7 @@ int I_GetTimeMS (void);
 // Pause for a specified number of ms
 void I_Sleep(int ms);
 
-// Initialise timer
+// Initialize timer
 void I_InitTimer(void);
 
 // Wait for vertical retrace or pause a bit.

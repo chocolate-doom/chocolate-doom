@@ -10,7 +10,7 @@ libc_wince_a_SOURCES =                            \
 
 else
 
-libc_wince_a_SOURCES =
+libc_wince_a_SOURCES = dummy.c
 
 endif
 

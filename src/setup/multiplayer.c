@@ -783,7 +783,7 @@ void SetChatMacroDefaults(void)
         HUSTR_CHATMACRO0,
     };
     
-    // If the chat macros have not been set, initialise with defaults.
+    // If the chat macros have not been set, initialize with defaults.
 
     for (i=0; i<10; ++i)
     {

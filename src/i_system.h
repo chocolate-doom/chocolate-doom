@@ -60,6 +60,7 @@ ticcmd_t* I_BaseTiccmd (void);
 // Clean exit, displays sell blurb.
 void I_Quit (void);
 
+void I_Error (char *error, ...);
 
 // Allocates from low memory under dos,
 // just mallocs under unix
