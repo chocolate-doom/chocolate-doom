@@ -259,9 +259,6 @@
  // Height, in lines. 
 #define ST_OUTHEIGHT		1
 
-#define ST_MAPWIDTH	\
-    (strlen(mapnames[(gameepisode-1)*9+(gamemap-1)]))
-
 #define ST_MAPTITLEX \
     (SCREENWIDTH - ST_MAPWIDTH * ST_CHATFONTWIDTH)
 
@@ -416,10 +413,6 @@ cheatseq_t	cheat_powerup[7] =
 cheatseq_t cheat_choppers = CHEAT("idchoppers", 0);
 cheatseq_t cheat_clev = CHEAT("idclev", 2);
 cheatseq_t cheat_mypos = CHEAT("idmypos", 0);
-
-
-// 
-extern char*	mapnames[];
 
 
 //
@@ -980,6 +973,17 @@ void ST_doPaletteStuff(void)
 	palette = RADIATIONPAL;
     else
 	palette = 0;
+
+    // In Chex Quest, the player never sees red.  Instead, the
+    // radiation suit palette is used to tint the screen green,
+    // as though the player is being covered in goo by an
+    // attacking flemoid.
+
+    if (gameversion == exe_chex
+     && palette >= STARTREDPALS && palette < STARTREDPALS + NUMREDPALS)
+    {
+        palette = RADIATIONPAL;
+    }
 
     if (palette != st_palette)
     {

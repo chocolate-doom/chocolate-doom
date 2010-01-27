@@ -1,48 +1,93 @@
 ...
 
      * Chocolate Doom now runs on Windows Mobile/Windows CE!
-     * It is possible to rebind most/all of the keys that control
-       the menu, shortcuts, automap and weapon switching.  The
-       main reason for this is to support the Windows CE port
-       and other platforms where a full keyboard may not be present.
-     * Memory-mapped WAD I/O is disabled by default, as it caused
-       various issues, including a slowdown/crash with Plutonia 2
-       MAP23.  It can be explicitly re-enabled using the '-mmap'
-       command line parameter.
+     * It is possible to rebind most/all of the keys that control the
+       menu, shortcuts, automap and weapon switching.  The main
+       reason for this is to support the Windows CE port and other
+       platforms where a full keyboard may not be present.
+     * Chocolate Doom now includes a proper Mac OS X package; it is
+       no longer necessary to compile binaries for this system by
+       hand.  The package includes a simple graphical launcher
+       program and can be installed simply by dragging the "Chocolate
+       Doom" icon to the Applications folder.
      * The video mode auto-adjust code will automatically choose
        windowed mode if no fullscreen video modes are available.
-     * The zone memory size is automatically reduced on systems
-       with a small amount of memory.
-     * There is now a second, small textscreen font, so that the
-       ENDOOM screen and setup tool can be used on low resolution
-       devices (eg. PDAs/embedded devices)
-     * The textscreen library now has a scrollable pane widget.
-     * Doxygen documentation was added for the textscreen library.
-     * The "join game" window in the setup tool now has an option
-       to automatically join a game on the local network.
+     * The zone memory size is automatically reduced on systems with
+       a small amount of memory.
+     * The "join game" window in the setup tool now has an option to
+       automatically join a game on the local network.
+     * Chocolate Doom includes some initial hacks for compiling under
+       SDL 1.3.
+     * Recent versions of SDL_mixer include rewritten MIDI code on Mac
+       OS X.  If you are using a version of SDL_mixer with the new
+       code, music will now be enabled by default.
+     * Windows Vista and Windows 7 no longer prompt for elevated
+       privileges when running the setup tool (thanks hobbs and
+       MikeRS).
+     * The Windows binaries now have better looking icons (thanks
+       MikeRS).
+     * Magic values specified using the -spechit command line
+       parameter can now be hexadecimal.
+     * DOOMWADDIR/DOOMWADPATH can now specify the complete path to
+       IWAD files, rather than the path to the directory that contains
+       them.
+     * When recording shorttics demos, errors caused by the reduced
+       turning resolution are carried forward, possibly making turning
+       smoother.
 
     Compatibility:
      * The A_BossDeath behavior in v1.9 emulation mode was fixed
        (thanks entryway)
+     * The "loading" disk icon is drawn more like how it is drawn in
+       Vanilla Doom, also fixing a bug with chook3.wad.
+     * Desync on 64-bit systems with ep1-0500.lmp has (at long last)
+       been fixed (thanks exp(x)).
+     * Donut overrun emulation code imported from Prboom+ (thanks
+       entryway).
+     * The correct level name should now be shown in the automap for
+       pl2.wad MAP33 (thanks Janizdreg).
+     * In Chex Quest, the green radiation suit colormap is now used
+       instead of the red colormaps normally used when taking damage
+       or using the berserk pack.  This matches Vanilla chex.exe
+       behavior (thanks Fuzztooth).
+     * Impassible glass now displays and works the same as in Vanilla,
+       fixing wads such as OTTAWAU.WAD (thanks Never_Again).
 
     Bugs fixed:
+     * Memory-mapped WAD I/O is disabled by default, as it caused
+       various issues, including a slowdown/crash with Plutonia 2
+       MAP23.  It can be explicitly re-enabled using the '-mmap'
+       command line parameter.
      * Crash when saving games due to the ~/.chocolate-doom/savegames
        directory not being created (thanks to everyone who reported
        this).
-     * Chocolate Doom will now under Win95/98, as the
+     * Chocolate Doom will now run under Win95/98, as the
        SetProcessAffinityMask function is looked up dynamically.
      * Compilation under Linux with older versions of libc will now
        work (the semantics for sched_setaffinity were different in
        older versions)
      * Sound clipping when using libsamplerate was improved (thanks
        David Flater)
-     * The audio buffer size is now calculated based on the sample rate,
-       so there is not a noticeable delay when using a lower sample
-       rate.
-     * The manpage documentation for the DOOMWADPATH variable was fixed
-       (thanks MikeRS).
-     * Compilation with FEATURE_MULTIPLAYER and FEATURE_SOUND disabled
-       was fixed.
+     * The audio buffer size is now calculated based on the sample
+       rate, so there is not a noticeable delay when using a lower
+       sample rate.
+     * The manpage documentation for the DOOMWADPATH variable was
+       fixed (thanks MikeRS).
+     * Compilation with FEATURE_MULTIPLAYER and FEATURE_SOUND
+       disabled was fixed.
+     * Fixed crash when using the donut special type and the joining
+       linedef is one sided (thanks Alexander Waldmann).
+     * Key settings in a configuration file that are out of range
+       do not cause a crash (thanks entryway).
+
+    libtextscreen:
+     * There is now a second, small textscreen font, so that the
+       ENDOOM screen and setup tool can be used on low resolution
+       devices (eg. PDAs/embedded devices)
+     * The textscreen library now has a scrollable pane widget. Thanks
+       to LionsPhil for contributing code to scroll up and down using
+       the keyboard.
+     * Doxygen documentation was added for the textscreen library.
 
 1.2.1 (2008-12-10):
 

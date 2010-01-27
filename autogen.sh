@@ -8,5 +8,5 @@ automake -a -c
 autoconf
 automake
 
-./configure $@
+./configure "$@"
 

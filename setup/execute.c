@@ -185,28 +185,37 @@ static void ConcatWCString(wchar_t *buf, const char *value)
 
 static wchar_t *BuildCommandLine(const char *program, const char *arg)
 {
+    wchar_t exe_path[MAX_PATH];
     wchar_t *result;
-    char *sep;
+    wchar_t *sep;
 
-    result = calloc(strlen(myargv[0]) + strlen(program) + strlen(arg) + 6,
+    // Get the path to this .exe file.
+
+    GetModuleFileNameW(NULL, exe_path, MAX_PATH);
+
+    // Allocate buffer to contain result string.
+
+    result = calloc(wcslen(exe_path) + strlen(program) + strlen(arg) + 6,
                     sizeof(wchar_t));
 
     wcscpy(result, L"\"");
 
-    sep = strrchr(myargv[0], DIR_SEPARATOR);
+    // Copy the path part of the filename (including ending \)
+    // into the result buffer:
+
+    sep = wcsrchr(exe_path, DIR_SEPARATOR);
 
     if (sep != NULL)
     {
-        ConcatWCString(result, myargv[0]);
-
-        // Cut off the string after the last directory separator,
-        // before appending the actual program.
-
-        result[sep - myargv[0] + 2] = '\0';
-        
+        wcsncpy(result + 1, exe_path, sep - exe_path + 1);
+        result[sep - exe_path + 2] = '\0';
     }
 
+    // Concatenate the name of the program:
+
     ConcatWCString(result, program);
+
+    // End of program name, start of argument:
 
     wcscat(result, L"\" \"");
 
@@ -301,9 +310,9 @@ static int ExecuteCommand(const char *program, const char *arg)
         argv[1] = arg;
         argv[2] = NULL;
 
-        execv(argv[0], (char **) argv);
+        execvp(argv[0], (char **) argv);
 
-        exit(-1);
+        exit(0x80);
     }
     else
     {
@@ -312,7 +321,7 @@ static int ExecuteCommand(const char *program, const char *arg)
 
         waitpid(childpid, &result, 0);
 
-        if (WIFEXITED(result)) 
+        if (WIFEXITED(result) && WEXITSTATUS(result) != 0x80) 
         {
             return WEXITSTATUS(result);
         }

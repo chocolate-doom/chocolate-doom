@@ -402,6 +402,7 @@ void I_ShutdownGraphics(void)
 {
     if (initialized)
     {
+        SDL_SetCursor(cursors[1]);
         SDL_ShowCursor(1);
         SDL_WM_GrabInput(SDL_GRAB_OFF);
 

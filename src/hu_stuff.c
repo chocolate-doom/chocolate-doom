@@ -50,9 +50,9 @@
 // Locally used constants, shortcuts.
 //
 #define HU_TITLE	(mapnames[(gameepisode-1)*9+gamemap-1])
-#define HU_TITLE2	(mapnames2[gamemap-1])
-#define HU_TITLEP	(mapnamesp[gamemap-1])
-#define HU_TITLET	(mapnamest[gamemap-1])
+#define HU_TITLE2	(mapnames_commercial[gamemap-1])
+#define HU_TITLEP	(mapnames_commercial[gamemap-1 + 32])
+#define HU_TITLET	(mapnames_commercial[gamemap-1 + 64])
 #define HU_TITLE_CHEX   (mapnames[gamemap - 1])
 #define HU_TITLEHEIGHT	1
 #define HU_TITLEX	0
@@ -171,8 +171,16 @@ char*	mapnames[] =	// DOOM shareware/registered/retail (Ultimate) names.
     "NEWLEVEL"
 };
 
-char*	mapnames2[] =	// DOOM 2 map names.
+// List of names for levels in commercial IWADs
+// (doom2.wad, plutonia.wad, tnt.wad).  These are stored in a
+// single large array; WADs like pl2.wad have a MAP33, and rely on
+// the layout in the Vanilla executable, where it is possible to
+// overflow the end of one array into the next.
+
+char *mapnames_commercial[] =
 {
+    // DOOM 2 map names.
+
     HUSTR_1,
     HUSTR_2,
     HUSTR_3,
@@ -206,12 +214,10 @@ char*	mapnames2[] =	// DOOM 2 map names.
     HUSTR_29,
     HUSTR_30,
     HUSTR_31,
-    HUSTR_32
-};
+    HUSTR_32,
 
+    // Plutonia WAD map names.
 
-char*	mapnamesp[] =	// Plutonia WAD map names.
-{
     PHUSTR_1,
     PHUSTR_2,
     PHUSTR_3,
@@ -245,12 +251,10 @@ char*	mapnamesp[] =	// Plutonia WAD map names.
     PHUSTR_29,
     PHUSTR_30,
     PHUSTR_31,
-    PHUSTR_32
-};
+    PHUSTR_32,
+    
+    // TNT WAD map names.
 
-
-char *mapnamest[] =	// TNT WAD map names.
-{
     THUSTR_1,
     THUSTR_2,
     THUSTR_3,
