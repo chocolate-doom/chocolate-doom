@@ -32,6 +32,11 @@
 #include "memio.h"
 #include "mus2mid.h"
 
+#define NUM_CHANNELS 16
+
+#define MIDI_PERCUSSION_CHAN 9
+#define MUS_PERCUSSION_CHAN 15
+
 // MUS event codes
 typedef enum
 {
@@ -99,6 +104,8 @@ static byte mus2midi_translation[] =
     0x00, 0x20, 0x01, 0x07, 0x0A, 0x0B, 0x5B, 0x5D,
     0x40, 0x43, 0x78, 0x7B, 0x7E, 0x7F, 0x79
 };
+
+static int channel_map[NUM_CHANNELS];
 
 // Write timestamp to a MIDI file.
 
@@ -346,6 +353,68 @@ static boolean midi_writechangecontroller_valueless(byte channel,
                                              midioutput);
 }
 
+// Allocate a free MIDI channel.
+
+static int midi_allocate_channel(void)
+{
+    int result;
+    int max;
+    int i;
+
+    // Find the current highest-allocated channel.
+
+    max = -1;
+
+    for (i=0; i<NUM_CHANNELS; ++i)
+    {
+        if (channel_map[i] > max)
+        {
+            max = channel_map[i];
+        }
+    }
+
+    // max is now equal to the highest-allocated MIDI channel.  We can
+    // now allocate the next available channel.  This also works if
+    // no channels are currently allocated (max=-1)
+
+    result = max + 1;
+
+    // Don't allocate the MIDI percussion channel!
+
+    if (result == MIDI_PERCUSSION_CHAN)
+    {
+        ++result;
+    }
+
+    return result;
+}
+
+// Given a MUS channel number, get the MIDI channel number to use
+// in the outputted file.
+
+static int midi_get_channel(int mus_channel)
+{
+    // Find the MIDI channel to use for this MUS channel.
+    // MUS channel 15 is the percusssion channel.
+
+    if (mus_channel == MUS_PERCUSSION_CHAN)
+    {
+        return MIDI_PERCUSSION_CHAN;
+    }
+    else
+    {
+        // If a MIDI channel hasn't been allocated for this MUS channel
+        // yet, allocate the next free MIDI channel.
+
+        if (channel_map[mus_channel] == -1)
+        {
+            channel_map[mus_channel] = midi_allocate_channel();
+        }
+
+        return channel_map[mus_channel];
+    }
+}
+
 static boolean read_musheader(MEMFILE *file, musheader *header)
 {
     boolean result;
@@ -402,6 +471,13 @@ boolean mus2mid(MEMFILE *musinput, MEMFILE *midioutput)
     // Used in building up time delays
     unsigned int timedelay;
 
+    // Initialise channel map to mark all channels as unused.
+
+    for (channel=0; channel<NUM_CHANNELS; ++channel)
+    {
+        channel_map[channel] = -1;
+    }
+
     // Grab the header
 
     if (!read_musheader(musinput, &musfileheader))
@@ -447,21 +523,8 @@ boolean mus2mid(MEMFILE *musinput, MEMFILE *midioutput)
                 return true;
             }
 
-            channel = eventdescriptor & 0x0F;
+            channel = midi_get_channel(eventdescriptor & 0x0F);
             event = eventdescriptor & 0x70;
-
-            // Swap channels 15 and 9.
-            // MIDI channel 9 = percussion.
-            // MUS channel 15 = percussion.
-
-            if (channel == 15)
-            {
-                channel = 9;
-            }
-            else if (channel == 9)
-            {
-                channel = 15;
-            }
 
             switch (event)
             {

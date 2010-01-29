@@ -79,6 +79,8 @@
        linedef is one sided (thanks Alexander Waldmann).
      * Key settings in a configuration file that are out of range
        do not cause a crash (thanks entryway).
+     * Fix ear-piercing whistle when playing the MAP05 MIDI music
+       using timidity with EAWPATS (thanks entryway / HackNeyed).
 
     libtextscreen:
      * There is now a second, small textscreen font, so that the
