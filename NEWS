@@ -9,7 +9,8 @@
        no longer necessary to compile binaries for this system by
        hand.  The package includes a simple graphical launcher
        program and can be installed simply by dragging the "Chocolate
-       Doom" icon to the Applications folder.
+       Doom" icon to the Applications folder. (thanks to Rikard Lang
+       for extensive testing and feedback)
      * The video mode auto-adjust code will automatically choose
        windowed mode if no fullscreen video modes are available.
      * The zone memory size is automatically reduced on systems with

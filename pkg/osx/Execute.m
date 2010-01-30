@@ -100,12 +100,23 @@ static void DoExec(const char *executable, const char *iwad, const char *args)
 void ExecuteProgram(const char *executable, const char *iwad, const char *args)
 {
     pid_t childpid;
+    char *homedir;
 
     childpid = fork();
 
     if (childpid == 0)
     {
         signal(SIGCHLD, SIG_DFL);
+
+        // Change directory to home dir before launch, so that any demos
+        // are saved somewhere sensible.
+
+        homedir = getenv("HOME");
+
+        if (homedir != NULL)
+        {
+            chdir(homedir);
+        }
 
         DoExec(executable, iwad, args);
     }
