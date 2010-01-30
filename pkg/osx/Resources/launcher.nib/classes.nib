@@ -36,6 +36,7 @@
             OUTLETS = {
                 commandLineArguments = id; 
                 iwadController = id; 
+                launchButton = id; 
                 launcherWindow = id; 
                 packageLabel = id; 
             }; 

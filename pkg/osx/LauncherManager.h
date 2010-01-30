@@ -32,6 +32,7 @@
     IWADController *iwadController;
 
     id launcherWindow;
+    id launchButton;
 
     id commandLineArguments;
     id packageLabel;
