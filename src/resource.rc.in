@@ -13,7 +13,7 @@ FILETYPE 1
    VALUE "FileDescription", "@PACKAGE_STRING@"
    VALUE "InternalName", "@PACKAGE_TARNAME@"
    VALUE "CompanyName", "@PACKAGE_BUGREPORT@"
-   VALUE "LegalCopyright", "GNU General Public License"
+   VALUE "LegalCopyright", "@PACKAGE_COPYRIGHT@.  Licensed under @PACKAGE_LICENSE@"
    VALUE "ProductName", "@PACKAGE_NAME@"
    VALUE "ProductVersion", "@PACKAGE_VERSION@"
   }
