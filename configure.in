@@ -134,6 +134,7 @@ src/doom/Makefile
 src/heretic/Makefile
 src/hexen/Makefile
 src/setup/Makefile
+src/strife/Makefile
 pcsound/Makefile
 pkg/Makefile
 pkg/wince/GNUmakefile
