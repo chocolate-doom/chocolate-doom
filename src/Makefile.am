@@ -50,6 +50,7 @@ d_event.c            d_event.h             \
 d_iwad.c             d_iwad.h              \
 d_mode.c             d_mode.h              \
                      d_ticcmd.h            \
+deh_str.c            deh_str.h             \
 i_cdmus.c            i_cdmus.h             \
 i_endoom.c           i_endoom.h            \
 i_joystick.c         i_joystick.h          \
@@ -79,8 +80,12 @@ z_zone.c             z_zone.h
 
 # source files needed for FEATURE_DEHACKED
 
-FEATURE_DEHACKED_SOURCE_FILES=             \
-deh_str.c            deh_str.h
+FEATURE_DEHACKED_SOURCE_FILES =            \
+deh_defs.h                                 \
+deh_io.c             deh_io.h              \
+deh_main.c           deh_main.h            \
+deh_mapping.c        deh_mapping.h         \
+deh_text.c
 
 # source files needed for FEATURE_MULTIPLAYER
 
@@ -111,12 +116,15 @@ i_sdlsound.c                               \
 i_sdlmusic.c                               \
 mus2mid.c            mus2mid.h
 
+# Some games support dehacked patches, some don't:
+
 SOURCE_FILES = $(COMMON_SOURCE_FILES)              \
                $(GAME_SOURCE_FILES)                \
-               $(FEATURE_DEHACKED_SOURCE_FILES)    \
                $(FEATURE_WAD_MERGE_SOURCE_FILES)   \
                $(FEATURE_SOUND_SOURCE_FILES)
 
+SOURCE_FILES_WITH_DEH = $(SOURCE_FILES)                    \
+                        $(FEATURE_DEHACKED_SOURCE_FILES)
 
 EXTRA_LIBS =                                               \
                $(top_builddir)/wince/libc_wince.a          \
@@ -128,9 +136,9 @@ EXTRA_LIBS =                                               \
                @SDLNET_LIBS@ 
 
 if HAVE_WINDRES
-@PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES) resource.rc
+@PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc
 else
-@PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES)
+@PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES_WITH_DEH)
 endif
 
 @PROGRAM_PREFIX@doom_LDADD = doom/libdoom.a $(EXTRA_LIBS)

@@ -63,15 +63,11 @@ wi_stuff.c         wi_stuff.h
 FEATURE_DEHACKED_SOURCE_FILES =            \
 deh_ammo.c                                 \
 deh_cheat.c                                \
-deh_defs.h                                 \
+deh_doom.c                                 \
 deh_frame.c                                \
-deh_io.c             deh_io.h              \
-deh_main.c           deh_main.h            \
-deh_mapping.c        deh_mapping.h         \
 deh_misc.c           deh_misc.h            \
 deh_ptr.c                                  \
 deh_sound.c                                \
-deh_text.c                                 \
 deh_thing.c                                \
 deh_weapon.c
 

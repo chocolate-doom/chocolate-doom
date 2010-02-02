@@ -36,30 +36,8 @@
 #include "deh_defs.h"
 #include "deh_io.h"
 
-static char *deh_signatures[] = 
-{
-    "Patch File for DeHackEd v2.3",
-    "Patch File for DeHackEd v3.0",
-};
-
-// deh_ammo.c:
-extern deh_section_t deh_section_ammo;
-// deh_cheat.c:
-extern deh_section_t deh_section_cheat;
-// deh_frame.c:
-extern deh_section_t deh_section_frame;
-// deh_misc.c:
-extern deh_section_t deh_section_misc;
-// deh_ptr.c:
-extern deh_section_t deh_section_pointer;
-// deh_sound.c
-extern deh_section_t deh_section_sound;
-// deh_text.c:
-extern deh_section_t deh_section_text;
-// deh_thing.c: 
-extern deh_section_t deh_section_thing;
-// deh_weapon.c: 
-extern deh_section_t deh_section_weapon;
+extern deh_section_t *deh_section_types[];
+extern char *deh_signatures[];
 
 // If true, we can do long string replacements.
 
@@ -73,23 +51,6 @@ boolean deh_allow_long_cheats = false;
 
 boolean deh_apply_cheats = true;
 
-//
-// List of section types:
-//
-
-static deh_section_t *section_types[] =
-{
-    &deh_section_ammo,
-    &deh_section_cheat,
-    &deh_section_frame,
-    &deh_section_misc,
-    &deh_section_pointer,
-    &deh_section_sound,
-    &deh_section_text,
-    &deh_section_thing,
-    &deh_section_weapon,
-};
-
 void DEH_Checksum(md5_digest_t digest)
 {
     md5_context_t md5_context;
@@ -97,11 +58,11 @@ void DEH_Checksum(md5_digest_t digest)
 
     MD5_Init(&md5_context);
 
-    for (i=0; i<arrlen(section_types); ++i)
+    for (i=0; deh_section_types[i] != NULL; ++i)
     {
-        if (section_types[i]->md5_hash != NULL)
+        if (deh_section_types[i]->md5_hash != NULL)
         {
-            section_types[i]->md5_hash(&md5_context);
+            deh_section_types[i]->md5_hash(&md5_context);
         }
     }
 
@@ -114,11 +75,11 @@ static void InitializeSections(void)
 {
     unsigned int i;
 
-    for (i=0; i<arrlen(section_types); ++i)
+    for (i=0; deh_section_types[i] != NULL; ++i)
     {
-        if (section_types[i]->init != NULL)
+        if (deh_section_types[i]->init != NULL)
         {
-            section_types[i]->init();
+            deh_section_types[i]->init();
         }
     }
 }
@@ -129,11 +90,11 @@ static deh_section_t *GetSectionByName(char *name)
 {
     unsigned int i;
 
-    for (i=0; i<arrlen(section_types); ++i)
+    for (i=0; deh_section_types[i] != NULL; ++i)
     {
-        if (!strcasecmp(section_types[i]->name, name))
+        if (!strcasecmp(deh_section_types[i]->name, name))
         {
-            return section_types[i];
+            return deh_section_types[i];
         }
     }
 
@@ -229,7 +190,7 @@ static boolean CheckSignatures(deh_context_t *context)
 
     // Check all signatures to see if one matches
 
-    for (i=0; i<arrlen(deh_signatures); ++i)
+    for (i=0; deh_signatures[i] != NULL; ++i)
     {
         if (!strcmp(deh_signatures[i], line))
         {
