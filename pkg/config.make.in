@@ -19,6 +19,7 @@ PACKAGE_VERSION = @PACKAGE_VERSION@
 # Documentation files to distribute with packages.
 
 DOC_FILES = README       \
+            README.OPL   \
             COPYING      \
             ChangeLog    \
             NEWS         \
