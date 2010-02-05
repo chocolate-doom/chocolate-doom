@@ -3,3 +3,10 @@ The Chocolate Doom icon is based on an image by Chris Metcalf
 
     http://www.flickr.com/photos/laffy4k/448920776/
 
+The "foo8.ico" files are 8-bit depth only, while the "foo.ico" files
+contain full 32-bit versions, scaled to different sizes and with proper
+alpha masks (as well as the 8-bit versions).  The 8-bit versions are
+used when setting the icon within SDL, as SDL under Windows displays
+full color icons in a very poor quality.  The full-color versions are
+used in the resource files.
+

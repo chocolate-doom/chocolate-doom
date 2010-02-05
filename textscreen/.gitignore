@@ -2,3 +2,5 @@ Makefile
 Makefile.in
 .deps
 *.a
+tags
+TAGS

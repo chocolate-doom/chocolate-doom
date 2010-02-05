@@ -190,7 +190,7 @@ EXTRA_DIST =                        \
 
 if HAVE_PYTHON
 
-icon.c : $(top_builddir)/data/doom.ico
+icon.c : $(top_builddir)/data/doom8.ico
 	$(top_builddir)/data/convert-icon $^ $@
 
 endif

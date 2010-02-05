@@ -1,0 +1,36 @@
+{
+    ApplicationName = "@PACKAGE_NAME@";
+    ApplicationDescription = "@PACKAGE_SHORTDESC@";
+    ApplicationIcon = app.png;
+    ApplicationRelease = @PACKAGE_VERSION@;
+    ApplicationURL = "@PACKAGE_URL@";
+    Authors = (
+        "@PACKAGE_MAINTAINER@ <@PACKAGE_BUGREPORT@>"
+    );
+    Copyright = "@PACKAGE_COPYRIGHT@";
+    CopyrightDescription = "@PACKAGE_LICENSE@";
+    FullVersionID = @PACKAGE_VERSION@;
+    GSMainMarkupFile = "";
+    NSExecutable = "launcher";
+    NSIcon = app.png;
+    NSMainNibFile = launcher.nib;
+    NSPrincipalClass = NSApplication;
+    NSRole = Application;
+    NSTypes = (
+        {
+            NSHumanReadableName = "Doom WAD file";
+            NSUnixExtensions = ( wad );
+            NSRole = Viewer;
+            NSMimeTypes = (
+                "application/x-doom"
+            );
+            NSIcon = "wadfile.png";
+        },
+        {
+            NSHumanReadableName = "Dehacked patch";
+            NSUnixExtensions = ( deh );
+            NSRole = Viewer;
+            NSIcon = "wadfile.png";
+        }
+    );
+}
