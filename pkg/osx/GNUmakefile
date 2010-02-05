@@ -58,10 +58,14 @@ $(STAGING_DIR): launcher $(TOPLEVEL_DOCS)
 	cp launcher "$(APP_BIN_DIR)"
 	$(STRIP) "$(APP_BIN_DIR)/launcher"
 
-	./cp-with-libs $(TOPLEVEL)/src/$(PACKAGE_TARNAME) "$(APP_BIN_DIR)"
-	$(STRIP) "$(APP_BIN_DIR)/$(PACKAGE_TARNAME)"
-	./cp-with-libs $(TOPLEVEL)/setup/chocolate-setup "$(APP_BIN_DIR)"
-	$(STRIP) "$(APP_BIN_DIR)/chocolate-setup"
+	./cp-with-libs $(TOPLEVEL)/src/$(PROGRAM_PREFIX)doom "$(APP_BIN_DIR)"
+	$(STRIP) "$(APP_BIN_DIR)/$(PROGRAM_PREFIX)doom"
+	./cp-with-libs $(TOPLEVEL)/src/$(PROGRAM_PREFIX)heretic "$(APP_BIN_DIR)"
+	$(STRIP) "$(APP_BIN_DIR)/$(PROGRAM_PREFIX)heretic"
+	./cp-with-libs $(TOPLEVEL)/src/$(PROGRAM_PREFIX)hexen "$(APP_BIN_DIR)"
+	$(STRIP) "$(APP_BIN_DIR)/$(PROGRAM_PREFIX)hexen"
+	./cp-with-libs $(TOPLEVEL)/src/$(PROGRAM_PREFIX)setup "$(APP_BIN_DIR)"
+	$(STRIP) "$(APP_BIN_DIR)/$(PROGRAM_PREFIX)setup"
 
 	find $(STAGING_DIR) -name .svn -delete -exec rm -rf {} \; || true
 
