@@ -27,3 +27,10 @@ libsetup_a_SOURCES = $(SOURCE_FILES)
 EXTRA_DIST=                                     \
     setup_icon.c
 
+if HAVE_PYTHON
+
+setup_icon.c : $(top_builddir)/data/setup8.ico
+	$(top_builddir)/data/convert-icon $^ $@
+
+endif
+

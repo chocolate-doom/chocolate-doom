@@ -3,4 +3,6 @@ Makefile
 .deps
 libpcsound.a
 *.rc
+tags
+TAGS
 

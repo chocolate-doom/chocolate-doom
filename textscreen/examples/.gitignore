@@ -4,3 +4,5 @@ Makefile
 guitest
 calculator
 *.exe
+tags
+TAGS

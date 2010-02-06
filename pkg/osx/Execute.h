@@ -1,7 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
+/* ... */
 //-----------------------------------------------------------------------------
 //
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2009 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -19,22 +19,13 @@
 // 02111-1307, USA.
 //
 //-----------------------------------------------------------------------------
-//
-// Dehacked I/O code (does all reads from dehacked files)
-//
-//-----------------------------------------------------------------------------
 
-#ifndef DEH_IO_H
-#define DEH_IO_H
+#ifndef LAUNCHER_EXECUTE_H
+#define LAUNCHER_EXECUTE_H
 
-#include "deh_defs.h"
+void SetProgramLocation(const char *path);
+void ExecuteProgram(const char *executable, const char *iwad, const char *args);
+void OpenTerminalWindow(const char *doomwadpath);
 
-deh_context_t *DEH_OpenFile(char *filename);
-void DEH_CloseFile(deh_context_t *context);
-int DEH_GetChar(deh_context_t *context);
-char *DEH_ReadLine(deh_context_t *context);
-void DEH_Error(deh_context_t *context, char *msg, ...);
-void DEH_Warning(deh_context_t *context, char *msg, ...);
-
-#endif /* #ifndef DEH_IO_H */
+#endif /* #ifndef LAUNCHER_EXECUTE_H */
 

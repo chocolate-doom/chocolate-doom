@@ -331,44 +331,85 @@ static void CheckDOSDefaults(void)
 
 #endif
 
+// Returns true if the specified path is a path to a file
+// of the specified name.
+
+static boolean DirIsFile(char *path, char *filename)
+{
+    size_t path_len;
+    size_t filename_len;
+
+    path_len = strlen(path);
+    filename_len = strlen(filename);
+
+    return path_len >= filename_len + 1
+        && path[path_len - filename_len - 1] == DIR_SEPARATOR
+        && !strcasecmp(&path[path_len - filename_len], filename);
+}
+
+// Check if the specified directory contains the specified IWAD
+// file, returning the full path to the IWAD if found, or NULL
+// if not found.
+
+static char *CheckDirectoryHasIWAD(char *dir, char *iwadname)
+{
+    char *filename; 
+
+    // As a special case, the "directory" may refer directly to an
+    // IWAD file if the path comes from DOOMWADDIR or DOOMWADPATH.
+    
+    if (DirIsFile(dir, iwadname) && M_FileExists(dir))
+    {
+        return strdup(dir);
+    }
+
+    // Construct the full path to the IWAD if it is located in
+    // this directory, and check if it exists.
+
+    filename = malloc(strlen(dir) + strlen(iwadname) + 3);
+
+    if (!strcmp(dir, "."))
+    {
+        strcpy(filename, iwadname);
+    }
+    else
+    {
+        sprintf(filename, "%s%c%s", dir, DIR_SEPARATOR, iwadname);
+    }
+
+    if (M_FileExists(filename))
+    {
+        return filename;
+    }
+
+    free(filename);
+
+    return NULL;
+}
+
 // Search a directory to try to find an IWAD
 // Returns the location of the IWAD if found, otherwise NULL.
 
 static char *SearchDirectoryForIWAD(char *dir, int mask, GameMission_t *mission)
 {
+    char *filename;
     size_t i;
 
     for (i=0; i<arrlen(iwads); ++i) 
     {
-        char *filename; 
-        char *iwadname;
-
         if (((1 << iwads[i].mission) & mask) == 0)
         {
             continue;
         }
 
-        iwadname = DEH_String(iwads[i].name);
-        
-        filename = malloc(strlen(dir) + strlen(iwadname) + 3);
+        filename = CheckDirectoryHasIWAD(dir, DEH_String(iwads[i].name));
 
-        if (!strcmp(dir, "."))
-        {
-            strcpy(filename, iwadname);
-        }
-        else
-        {
-            sprintf(filename, "%s%c%s", dir, DIR_SEPARATOR, iwadname);
-        }
-
-        if (M_FileExists(filename))
+        if (filename != NULL)
         {
             *mission = iwads[i].mission;
 
             return filename;
         }
-
-        free(filename);
     }
 
     return NULL;
@@ -529,7 +570,6 @@ char *D_FindWADByName(char *name)
 {
     char *buf;
     int i;
-    boolean exists;
     
     // Absolute path?
 
@@ -544,14 +584,21 @@ char *D_FindWADByName(char *name)
 
     for (i=0; i<num_iwad_dirs; ++i)
     {
+        // As a special case, if this is in DOOMWADDIR or DOOMWADPATH,
+        // the "directory" may actually refer directly to an IWAD
+        // file.
+
+        if (DirIsFile(iwad_dirs[i], name) && M_FileExists(iwad_dirs[i]))
+        {
+            return strdup(iwad_dirs[i]);
+        }
+
         // Construct a string for the full path
 
         buf = malloc(strlen(iwad_dirs[i]) + strlen(name) + 5);
         sprintf(buf, "%s%c%s", iwad_dirs[i], DIR_SEPARATOR, name);
 
-        exists = M_FileExists(buf);
-
-        if (exists)
+        if (M_FileExists(buf))
         {
             return buf;
         }

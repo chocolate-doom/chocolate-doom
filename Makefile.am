@@ -32,9 +32,12 @@ CODEBLOCKS_FILES=                              \
         codeblocks/setup-res.rc
 
 DATA_FILES=                   \
+        data/README           \
         data/doom.ico         \
+        data/doom8.ico        \
         data/doom.png         \
         data/setup.ico        \
+        data/setup8.ico       \
         data/setup.png        \
         data/convert-icon
 
@@ -43,11 +46,13 @@ EXTRA_DIST=                             \
         $(MSVC_FILES)                   \
         $(CODEBLOCKS_FILES)             \
         $(DATA_FILES)                   \
+        .lvimrc                         \
         config.h                        \
         CMDLINE                         \
         HACKING                         \
         TODO                            \
-        BUGS
+        BUGS                            \
+        rpm.spec
 
 MAINTAINERCLEANFILES =  $(AUX_DIST_GEN)
 
@@ -56,6 +61,8 @@ SUBDIRS=wince textscreen pcsound src man
 DIST_SUBDIRS=pkg $(SUBDIRS)
 
 if HAVE_PYTHON
+
+noinst_DATA=CMDLINE
 
 CMDLINE : src/
 	./man/docgen -p man/CMDLINE.template src/ > $@

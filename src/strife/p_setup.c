@@ -167,6 +167,7 @@ void P_LoadSegs (int lump)
     line_t*		ldef;
     int			linedef;
     int			side;
+    int                 sidenum;
 	
     numsegs = W_LumpLength (lump) / sizeof(mapseg_t);
     segs = Z_Malloc (numsegs*sizeof(seg_t),PU_LEVEL,0);	
@@ -179,7 +180,7 @@ void P_LoadSegs (int lump)
     {
 	li->v1 = &vertexes[SHORT(ml->v1)];
 	li->v2 = &vertexes[SHORT(ml->v2)];
-					
+
 	li->angle = (SHORT(ml->angle))<<16;
 	li->offset = (SHORT(ml->offset))<<16;
 	linedef = SHORT(ml->linedef);
@@ -188,10 +189,28 @@ void P_LoadSegs (int lump)
 	side = SHORT(ml->side);
 	li->sidedef = &sides[ldef->sidenum[side]];
 	li->frontsector = sides[ldef->sidenum[side]].sector;
-	if (ldef-> flags & ML_TWOSIDED)
-	    li->backsector = sides[ldef->sidenum[side^1]].sector;
-	else
+
+        if (ldef-> flags & ML_TWOSIDED)
+        {
+            sidenum = ldef->sidenum[side ^ 1];
+
+            // If the sidenum is out of range, this may be a "glass hack"
+            // impassible window.  Point at side #0 (this may not be
+            // the correct Vanilla behavior; however, it seems to work for
+            // OTTAWAU.WAD, which is the one place I've seen this trick
+            // used).
+
+            if (sidenum < 0 || sidenum >= numsides)
+            {
+                sidenum = 0;
+            }
+
+            li->backsector = sides[sidenum].sector;
+        }
+        else
+        {
 	    li->backsector = 0;
+        }
     }
 	
     W_ReleaseLumpNum(lump);

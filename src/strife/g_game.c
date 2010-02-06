@@ -588,10 +588,20 @@ void G_BuildTiccmd (ticcmd_t* cmd)
 
     if (lowres_turn)
     {
-        // round angleturn to the nearest 256 boundary
+        static signed short carry = 0;
+        signed short desired_angleturn;
+
+        desired_angleturn = cmd->angleturn + carry;
+
+        // round angleturn to the nearest 256 unit boundary
         // for recording demos with single byte values for turn
 
-        cmd->angleturn = (cmd->angleturn + 128) & 0xff00;
+        cmd->angleturn = (desired_angleturn + 128) & 0xff00;
+
+        // Carry forward the error from the reduced resolution to the
+        // next tic, so that successive small movements can accumulate.
+
+        carry = desired_angleturn - cmd->angleturn;
     }
 } 
  
