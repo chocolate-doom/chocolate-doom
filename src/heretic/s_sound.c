@@ -550,8 +550,16 @@ void S_GetChannelInfo(SoundInfo_t * s)
         c->priority = channel[i].priority;
         c->name = S_sfx[c->id].name;
         c->mo = channel[i].mo;
-        c->distance = P_AproxDistance(c->mo->x - viewx, c->mo->y - viewy)
-            >> FRACBITS;
+
+        if (c->mo != NULL)
+        {
+            c->distance = P_AproxDistance(c->mo->x - viewx, c->mo->y - viewy)
+                >> FRACBITS;
+        }
+        else
+        {
+            c->distance = 0;
+        }
     }
 }
 
