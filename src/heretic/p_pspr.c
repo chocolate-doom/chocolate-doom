@@ -1650,6 +1650,17 @@ void A_PhoenixPuff(mobj_t * actor)
     puff->momz = 0;
 }
 
+//
+// This function was present in the Heretic 1.0 executable for the
+// removed "secondary phoenix flash" object (MT_PHOENIXFX_REMOVED).
+// The purpose of this object is unknown, as is this function.
+//
+
+void A_RemovedPhoenixFunc(mobj_t *actor)
+{
+    I_Error("Action function invoked for removed Phoenix action!");
+}
+
 //----------------------------------------------------------------------------
 //
 // PROC A_InitPhoenixPL2

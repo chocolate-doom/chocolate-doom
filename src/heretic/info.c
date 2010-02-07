@@ -95,6 +95,7 @@ void A_InitPhoenixPL2();
 void A_FirePhoenixPL2();
 void A_ShutdownPhoenixPL2();
 void A_PhoenixPuff();
+void A_RemovedPhoenixPuff();
 void A_FlameEnd();
 void A_FloatPuff();
 void A_FireCrossbowPL1();
@@ -663,6 +664,9 @@ state_t states[NUMSTATES] = {
     {SPR_FX08, 32773, 4, NULL, S_PHOENIXFXI1_7, 0, 0},  // S_PHOENIXFXI1_6
     {SPR_FX08, 32774, 4, NULL, S_PHOENIXFXI1_8, 0, 0},  // S_PHOENIXFXI1_7
     {SPR_FX08, 32775, 4, NULL, S_NULL, 0, 0},   // S_PHOENIXFXI1_8
+    {SPR_FX08, 32776, 8, NULL, S_PHOENIXFXIX_1, 0, 0 }, // S_PHOENIXFXIX_1
+    {SPR_FX08, 32777, 8, A_RemovedPhoenixFunc, S_PHOENIXFXIX_2, 0, 0 },  // S_PHOENIXFXIX_2
+    {SPR_FX08, 32778, 8, NULL, S_NULL, 0, 0 },          // S_PHOENIXFXIX_3
     {SPR_FX04, 1, 4, NULL, S_PHOENIXPUFF2, 0, 0},       // S_PHOENIXPUFF1
     {SPR_FX04, 2, 4, NULL, S_PHOENIXPUFF3, 0, 0},       // S_PHOENIXPUFF2
     {SPR_FX04, 3, 4, NULL, S_PHOENIXPUFF4, 0, 0},       // S_PHOENIXPUFF3
@@ -3725,6 +3729,37 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] = {
      sfx_None,                  // activesound
      MF_NOBLOCKMAP | MF_MISSILE | MF_DROPOFF | MF_NOGRAVITY,    // flags
      MF2_THRUGHOST | MF2_NOTELEPORT     // flags2
+     },
+
+    // The following thing is present in the mobjinfo table from Heretic 1.0,
+    // but not in Heretic 1.3 (ie. it was removed).  It has been re-inserted
+    // here to support HHE patches.
+
+    {                           // MT_PHOENIXFX_REMOVED
+     -1,                        // doomednum
+     S_PHOENIXFXIX_1,           // spawnstate
+     1000,                      // spawnhealth
+     S_NULL,                    // seestate
+     sfx_None,                // seesound
+     8,                         // reactiontime
+     sfx_None,                  // attacksound
+     S_NULL,                    // painstate
+     0,                         // painchance
+     sfx_None,                  // painsound
+     S_NULL,                    // meleestate
+     S_NULL,                    // missilestate
+     S_NULL,                    // crashstate
+     S_PHOENIXFXIX_3,           // deathstate
+     S_NULL,                    // xdeathstate
+     sfx_None,                  // deathsound
+     0,                         // speed
+     2 * FRACUNIT,              // radius
+     4 * FRACUNIT,              // height
+     100,                       // mass
+     0,                         // damage
+     sfx_None,                  // activesound
+     MF_NOBLOCKMAP | MF_MISSILE | MF_DROPOFF | MF_NOGRAVITY,    // flags
+     MF2_NOTELEPORT     // flags2
      },
 
     {                           // MT_PHOENIXPUFF
