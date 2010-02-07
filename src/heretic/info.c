@@ -95,7 +95,7 @@ void A_InitPhoenixPL2();
 void A_FirePhoenixPL2();
 void A_ShutdownPhoenixPL2();
 void A_PhoenixPuff();
-void A_RemovedPhoenixPuff();
+void A_RemovedPhoenixFunc();
 void A_FlameEnd();
 void A_FloatPuff();
 void A_FireCrossbowPL1();
