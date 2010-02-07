@@ -33,6 +33,8 @@
 #include "r_local.h"
 #include "p_local.h"
 
+#include "sounds.h"
+
 #include "w_wad.h"
 #include "z_zone.h"
 
@@ -54,9 +56,6 @@ int mus_song = -1;
 int mus_lumpnum;
 void *mus_sndptr;
 byte *soundCurve;
-
-extern sfxinfo_t S_sfx[];
-extern musicinfo_t S_music[];
 
 int snd_MaxVolume = 10;
 int snd_MusicVolume = 10;

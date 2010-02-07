@@ -54,7 +54,7 @@ int maxammo[NUMAMMO] = {
     150                         // mace
 };
 
-static int GetWeaponAmmo[NUMWEAPONS] = {
+int GetWeaponAmmo[NUMWEAPONS] = {
     0,                          // staff
     25,                         // gold wand
     10,                         // crossbow
