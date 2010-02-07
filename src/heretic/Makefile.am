@@ -55,5 +55,14 @@ EXTRA_DIST=                                          \
 i_sound.c                                            \
 i_ibm.c   
 
-libheretic_a_SOURCES=$(SOURCE_FILES)
+FEATURE_DEHACKED_SOURCE_FILES =            \
+deh_ammo.c                                 \
+deh_frame.c                                \
+deh_htic.c                                 \
+deh_sound.c                                \
+deh_thing.c                                \
+deh_weapon.c
+
+libheretic_a_SOURCES=$(SOURCE_FILES)                  \
+                     $(FEATURE_DEHACKED_SOURCE_FILES)
 
