@@ -33,6 +33,7 @@
 #include "config.h"
 #include "ct_chat.h"
 #include "doomdef.h"
+#include "deh_main.h"
 #include "d_iwad.h"
 #include "i_endoom.h"
 #include "i_joystick.h"
@@ -889,6 +890,11 @@ void D_DoomMain(void)
 
     printf("Z_Init: Init zone memory allocation daemon.\n");
     Z_Init();
+
+#ifdef FEATURE_DEHACKED
+    printf("DEH_Init: Init Dehacked support.\n");
+    DEH_Init();
+#endif
 
     printf("W_Init: Init WADfiles.\n");
 
