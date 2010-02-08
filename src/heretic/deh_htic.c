@@ -31,6 +31,7 @@
 
 char *deh_signatures[] =
 {
+    "Patch File for HHE v1.0",
     "Patch File for HHE v1.1",
     NULL
 };
