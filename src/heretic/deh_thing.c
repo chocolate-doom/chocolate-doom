@@ -28,6 +28,7 @@
 #include <stdlib.h>
 
 #include "doomtype.h"
+#include "m_misc.h"
 
 #include "deh_defs.h"
 #include "deh_main.h"
@@ -117,7 +118,7 @@ static void DEH_ThingParseLine(deh_context_t *context, char *line, void *tag)
     // undergo transformation from a Heretic 1.0 index to a
     // Heretic 1.3 index.
 
-    if (strstr(variable_name, "frame") != NULL)
+    if (M_StrCaseStr(variable_name, "frame") != NULL)
     {
         ivalue = DEH_MapHereticFrameNumber(ivalue);
     }

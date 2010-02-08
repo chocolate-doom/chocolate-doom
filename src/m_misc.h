@@ -42,7 +42,7 @@ long M_FileLength(FILE *handle);
 boolean M_StrToInt(const char *str, int *result);
 void M_ExtractFileBase(char *path, char *dest);
 void M_ForceUppercase(char *text);
-
+char *M_StrCaseStr(char *haystack, char *needle);
 
 #endif
 
