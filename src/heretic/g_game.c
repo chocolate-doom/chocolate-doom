@@ -28,6 +28,7 @@
 #include <string.h>
 #include "doomdef.h"
 #include "doomkeys.h"
+#include "deh_str.h"
 #include "i_timer.h"
 #include "i_system.h"
 #include "m_controls.h"
@@ -862,11 +863,11 @@ void G_Ticker(void)
                         {
                             if (netgame)
                             {
-                                strcpy(savedescription, "NET GAME");
+                                strcpy(savedescription, DEH_String("NET GAME"));
                             }
                             else
                             {
-                                strcpy(savedescription, "SAVE GAME");
+                                strcpy(savedescription, DEH_String("SAVE GAME"));
                             }
                         }
                         savegameslot =
@@ -1320,7 +1321,7 @@ void G_DoLoadGame(void)
     save_p = savebuffer + SAVESTRINGSIZE;
     // Skip the description field
     memset(vcheck, 0, sizeof(vcheck));
-    sprintf(vcheck, "version %i", HERETIC_VERSION);
+    sprintf(vcheck, DEH_String("version %i"), HERETIC_VERSION);
     if (strcmp((char *) save_p, vcheck) != 0)
     {                           // Bad version
         return;
@@ -1449,11 +1450,11 @@ void G_InitNew(skill_t skill, int episode, int map)
     // Set the sky map
     if (episode > 5)
     {
-        skytexture = R_TextureNumForName("SKY1");
+        skytexture = R_TextureNumForName(DEH_String("SKY1"));
     }
     else
     {
-        skytexture = R_TextureNumForName(skyLumpNames[episode - 1]);
+        skytexture = R_TextureNumForName(DEH_String(skyLumpNames[episode - 1]));
     }
 
 //
@@ -1694,7 +1695,7 @@ void G_DoSaveGame(void)
     SV_Open(name);
     SV_Write(description, SAVESTRINGSIZE);
     memset(verString, 0, sizeof(verString));
-    sprintf(verString, "version %i", HERETIC_VERSION);
+    sprintf(verString, DEH_String("version %i"), HERETIC_VERSION);
     SV_Write(verString, VERSIONSIZE);
     SV_WriteByte(gameskill);
     SV_WriteByte(gameepisode);

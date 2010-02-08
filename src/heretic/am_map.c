@@ -27,6 +27,7 @@
 #include <stdio.h>
 
 #include "doomdef.h"
+#include "deh_str.h"
 #include "i_video.h"
 #include "m_controls.h"
 #include "p_local.h"
@@ -408,7 +409,7 @@ void AM_loadPics(void)
     sprintf(namebuf, "AMMNUM%d", i);
     marknums[i] = W_CacheLumpName(namebuf, PU_STATIC);
   }*/
-    maplump = W_CacheLumpName("AUTOPAGE", PU_STATIC);
+    maplump = W_CacheLumpName(DEH_String("AUTOPAGE"), PU_STATIC);
 }
 
 /*void AM_unloadPics(void)
@@ -1473,6 +1474,7 @@ void AM_drawCrosshair(int color)
 
 void AM_Drawer(void)
 {
+    char *level_name;
     int numepisodes;
 
     if (!automapactive)
@@ -1505,7 +1507,8 @@ void AM_Drawer(void)
 
     if (gameepisode <= numepisodes && gamemap < 10)
     {
-        MN_DrTextA(LevelNames[(gameepisode - 1) * 9 + gamemap - 1], 20, 145);
+        level_name = LevelNames[(gameepisode - 1) * 9 + gamemap - 1];
+        MN_DrTextA(DEH_String(level_name), 20, 145);
     }
 //  I_Update();
 //  V_MarkRect(f_x, f_y, f_w, f_h);

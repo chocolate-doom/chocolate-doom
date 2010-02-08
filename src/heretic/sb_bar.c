@@ -25,6 +25,7 @@
 // SB_bar.c
 
 #include "doomdef.h"
+#include "deh_str.h"
 #include "i_video.h"
 #include "m_cheat.h"
 #include "m_misc.h"
@@ -196,53 +197,53 @@ void SB_Init(void)
     int i;
     int startLump;
 
-    PatchLTFACE = W_CacheLumpName("LTFACE", PU_STATIC);
-    PatchRTFACE = W_CacheLumpName("RTFACE", PU_STATIC);
-    PatchBARBACK = W_CacheLumpName("BARBACK", PU_STATIC);
-    PatchINVBAR = W_CacheLumpName("INVBAR", PU_STATIC);
-    PatchCHAIN = W_CacheLumpName("CHAIN", PU_STATIC);
+    PatchLTFACE = W_CacheLumpName(DEH_String("LTFACE"), PU_STATIC);
+    PatchRTFACE = W_CacheLumpName(DEH_String("RTFACE"), PU_STATIC);
+    PatchBARBACK = W_CacheLumpName(DEH_String("BARBACK"), PU_STATIC);
+    PatchINVBAR = W_CacheLumpName(DEH_String("INVBAR"), PU_STATIC);
+    PatchCHAIN = W_CacheLumpName(DEH_String("CHAIN"), PU_STATIC);
     if (deathmatch)
     {
-        PatchSTATBAR = W_CacheLumpName("STATBAR", PU_STATIC);
+        PatchSTATBAR = W_CacheLumpName(DEH_String("STATBAR"), PU_STATIC);
     }
     else
     {
-        PatchSTATBAR = W_CacheLumpName("LIFEBAR", PU_STATIC);
+        PatchSTATBAR = W_CacheLumpName(DEH_String("LIFEBAR"), PU_STATIC);
     }
     if (!netgame)
     {                           // single player game uses red life gem
-        PatchLIFEGEM = W_CacheLumpName("LIFEGEM2", PU_STATIC);
+        PatchLIFEGEM = W_CacheLumpName(DEH_String("LIFEGEM2"), PU_STATIC);
     }
     else
     {
-        PatchLIFEGEM = W_CacheLumpNum(W_GetNumForName("LIFEGEM0")
+        PatchLIFEGEM = W_CacheLumpNum(W_GetNumForName(DEH_String("LIFEGEM0"))
                                       + consoleplayer, PU_STATIC);
     }
-    PatchLTFCTOP = W_CacheLumpName("LTFCTOP", PU_STATIC);
-    PatchRTFCTOP = W_CacheLumpName("RTFCTOP", PU_STATIC);
-    PatchSELECTBOX = W_CacheLumpName("SELECTBOX", PU_STATIC);
-    PatchINVLFGEM1 = W_CacheLumpName("INVGEML1", PU_STATIC);
-    PatchINVLFGEM2 = W_CacheLumpName("INVGEML2", PU_STATIC);
-    PatchINVRTGEM1 = W_CacheLumpName("INVGEMR1", PU_STATIC);
-    PatchINVRTGEM2 = W_CacheLumpName("INVGEMR2", PU_STATIC);
-    PatchBLACKSQ = W_CacheLumpName("BLACKSQ", PU_STATIC);
-    PatchARMCLEAR = W_CacheLumpName("ARMCLEAR", PU_STATIC);
-    PatchCHAINBACK = W_CacheLumpName("CHAINBACK", PU_STATIC);
-    startLump = W_GetNumForName("IN0");
+    PatchLTFCTOP = W_CacheLumpName(DEH_String("LTFCTOP"), PU_STATIC);
+    PatchRTFCTOP = W_CacheLumpName(DEH_String("RTFCTOP"), PU_STATIC);
+    PatchSELECTBOX = W_CacheLumpName(DEH_String("SELECTBOX"), PU_STATIC);
+    PatchINVLFGEM1 = W_CacheLumpName(DEH_String("INVGEML1"), PU_STATIC);
+    PatchINVLFGEM2 = W_CacheLumpName(DEH_String("INVGEML2"), PU_STATIC);
+    PatchINVRTGEM1 = W_CacheLumpName(DEH_String("INVGEMR1"), PU_STATIC);
+    PatchINVRTGEM2 = W_CacheLumpName(DEH_String("INVGEMR2"), PU_STATIC);
+    PatchBLACKSQ = W_CacheLumpName(DEH_String("BLACKSQ"), PU_STATIC);
+    PatchARMCLEAR = W_CacheLumpName(DEH_String("ARMCLEAR"), PU_STATIC);
+    PatchCHAINBACK = W_CacheLumpName(DEH_String("CHAINBACK"), PU_STATIC);
+    startLump = W_GetNumForName(DEH_String("IN0"));
     for (i = 0; i < 10; i++)
     {
         PatchINumbers[i] = W_CacheLumpNum(startLump + i, PU_STATIC);
     }
-    PatchNEGATIVE = W_CacheLumpName("NEGNUM", PU_STATIC);
-    FontBNumBase = W_GetNumForName("FONTB16");
-    startLump = W_GetNumForName("SMALLIN0");
+    PatchNEGATIVE = W_CacheLumpName(DEH_String("NEGNUM"), PU_STATIC);
+    FontBNumBase = W_GetNumForName(DEH_String("FONTB16"));
+    startLump = W_GetNumForName(DEH_String("SMALLIN0"));
     for (i = 0; i < 10; i++)
     {
         PatchSmNumbers[i] = W_CacheLumpNum(startLump + i, PU_STATIC);
     }
-    playpalette = W_GetNumForName("PLAYPAL");
-    spinbooklump = W_GetNumForName("SPINBK0");
-    spinflylump = W_GetNumForName("SPFLY0");
+    playpalette = W_GetNumForName(DEH_String("PLAYPAL"));
+    spinbooklump = W_GetNumForName(DEH_String("SPINBK0"));
+    spinflylump = W_GetNumForName(DEH_String("SPFLY0"));
 }
 
 //---------------------------------------------------------------------------
@@ -311,7 +312,7 @@ static void DrINumber(signed int val, int x, int y)
     {
         if (val < -9)
         {
-            V_DrawPatch(x + 1, y + 1, W_CacheLumpName("LAME", PU_CACHE));
+            V_DrawPatch(x + 1, y + 1, W_CacheLumpName(DEH_String("LAME"), PU_CACHE));
         }
         else
         {
@@ -458,7 +459,7 @@ static void DrawSoundInfo(void)
 
     if (leveltime & 16)
     {
-        MN_DrTextA("*** SOUND DEBUG INFO ***", xPos[0], 20);
+        MN_DrTextA(DEH_String("*** SOUND DEBUG INFO ***"), xPos[0], 20);
     }
     S_GetChannelInfo(&s);
     if (s.channelCount == 0)
@@ -466,13 +467,13 @@ static void DrawSoundInfo(void)
         return;
     }
     x = 0;
-    MN_DrTextA("NAME", xPos[x++], 30);
-    MN_DrTextA("MO.T", xPos[x++], 30);
-    MN_DrTextA("MO.X", xPos[x++], 30);
-    MN_DrTextA("MO.Y", xPos[x++], 30);
-    MN_DrTextA("ID", xPos[x++], 30);
-    MN_DrTextA("PRI", xPos[x++], 30);
-    MN_DrTextA("DIST", xPos[x++], 30);
+    MN_DrTextA(DEH_String("NAME"), xPos[x++], 30);
+    MN_DrTextA(DEH_String("MO.T"), xPos[x++], 30);
+    MN_DrTextA(DEH_String("MO.X"), xPos[x++], 30);
+    MN_DrTextA(DEH_String("MO.Y"), xPos[x++], 30);
+    MN_DrTextA(DEH_String("ID"), xPos[x++], 30);
+    MN_DrTextA(DEH_String("PRI"), xPos[x++], 30);
+    MN_DrTextA(DEH_String("DIST"), xPos[x++], 30);
     for (i = 0; i < s.channelCount; i++)
     {
         c = &s.chan[i];
@@ -480,7 +481,7 @@ static void DrawSoundInfo(void)
         y = 40 + i * 10;
         if (c->mo == NULL)
         {                       // Channel is unused
-            MN_DrTextA("------", xPos[0], y);
+            MN_DrTextA(DEH_String("------"), xPos[0], y);
             continue;
         }
         sprintf(text, "%s", c->name);
@@ -570,8 +571,10 @@ void SB_Drawer(void)
             V_DrawPatch(0, 158, PatchBARBACK);
             if (players[consoleplayer].cheats & CF_GODMODE)
             {
-                V_DrawPatch(16, 167, W_CacheLumpName("GOD1", PU_CACHE));
-                V_DrawPatch(287, 167, W_CacheLumpName("GOD2", PU_CACHE));
+                V_DrawPatch(16, 167,
+                            W_CacheLumpName(DEH_String("GOD1"), PU_CACHE));
+                V_DrawPatch(287, 167,
+                            W_CacheLumpName(DEH_String("GOD2"), PU_CACHE));
             }
             oldhealth = -1;
         }
@@ -776,8 +779,10 @@ void DrawMainBar(void)
     if (ArtifactFlash)
     {
         V_DrawPatch(180, 161, PatchBLACKSQ);
-        V_DrawPatch(182, 161, W_CacheLumpNum(W_GetNumForName("useartia")
-                                             + ArtifactFlash - 1, PU_CACHE));
+
+        temp = W_GetNumForName(DEH_String("useartia")) + ArtifactFlash - 1;
+
+        V_DrawPatch(182, 161, W_CacheLumpNum(temp, PU_CACHE));
         ArtifactFlash--;
         oldarti = -1;           // so that the correct artifact fills in after the flash
         UpdateState |= I_STATBAR;
@@ -789,7 +794,7 @@ void DrawMainBar(void)
         if (CPlayer->readyArtifact > 0)
         {
             V_DrawPatch(179, 160,
-                        W_CacheLumpName(patcharti[CPlayer->readyArtifact],
+                        W_CacheLumpName(DEH_String(patcharti[CPlayer->readyArtifact]),
                                         PU_CACHE));
             DrSmallNumber(CPlayer->inventory[inv_ptr].count, 201, 182);
         }
@@ -839,15 +844,15 @@ void DrawMainBar(void)
     {
         if (CPlayer->keys[key_yellow])
         {
-            V_DrawPatch(153, 164, W_CacheLumpName("ykeyicon", PU_CACHE));
+            V_DrawPatch(153, 164, W_CacheLumpName(DEH_String("ykeyicon"), PU_CACHE));
         }
         if (CPlayer->keys[key_green])
         {
-            V_DrawPatch(153, 172, W_CacheLumpName("gkeyicon", PU_CACHE));
+            V_DrawPatch(153, 172, W_CacheLumpName(DEH_String("gkeyicon"), PU_CACHE));
         }
         if (CPlayer->keys[key_blue])
         {
-            V_DrawPatch(153, 180, W_CacheLumpName("bkeyicon", PU_CACHE));
+            V_DrawPatch(153, 180, W_CacheLumpName(DEH_String("bkeyicon"), PU_CACHE));
         }
         oldkeys = playerkeys;
         UpdateState |= I_STATBAR;
@@ -861,7 +866,7 @@ void DrawMainBar(void)
         {
             DrINumber(temp, 109, 162);
             V_DrawPatch(111, 172,
-                        W_CacheLumpName(ammopic[CPlayer->readyweapon - 1],
+                        W_CacheLumpName(DEH_String(ammopic[CPlayer->readyweapon - 1]),
                                         PU_CACHE));
         }
         oldammo = temp;
@@ -887,6 +892,7 @@ void DrawMainBar(void)
 
 void DrawInventoryBar(void)
 {
+    char *patch;
     int i;
     int x;
 
@@ -899,10 +905,9 @@ void DrawInventoryBar(void)
         if (CPlayer->inventorySlotNum > x + i
             && CPlayer->inventory[x + i].type != arti_none)
         {
-            V_DrawPatch(50 + i * 31, 160,
-                        W_CacheLumpName(patcharti
-                                        [CPlayer->inventory[x + i].type],
-                                        PU_CACHE));
+            patch = DEH_String(patcharti[CPlayer->inventory[x + i].type]);
+
+            V_DrawPatch(50 + i * 31, 160, W_CacheLumpName(patch, PU_CACHE));
             DrSmallNumber(CPlayer->inventory[x + i].count, 69 + i * 31, 182);
         }
     }
@@ -921,6 +926,7 @@ void DrawInventoryBar(void)
 
 void DrawFullScreenStuff(void)
 {
+    char *patch;
     int i;
     int x;
     int temp;
@@ -950,10 +956,9 @@ void DrawFullScreenStuff(void)
     {
         if (CPlayer->readyArtifact > 0)
         {
-            V_DrawTLPatch(286, 170, W_CacheLumpName("ARTIBOX", PU_CACHE));
-            V_DrawPatch(286, 170,
-                        W_CacheLumpName(patcharti[CPlayer->readyArtifact],
-                                        PU_CACHE));
+            patch = DEH_String(patcharti[CPlayer->readyArtifact]);
+            V_DrawTLPatch(286, 170, W_CacheLumpName(DEH_String("ARTIBOX"), PU_CACHE));
+            V_DrawPatch(286, 170, W_CacheLumpName(patch, PU_CACHE));
             DrSmallNumber(CPlayer->inventory[inv_ptr].count, 307, 192);
         }
     }
@@ -962,15 +967,14 @@ void DrawFullScreenStuff(void)
         x = inv_ptr - curpos;
         for (i = 0; i < 7; i++)
         {
-            V_DrawTLPatch(50 + i * 31, 168, W_CacheLumpName("ARTIBOX",
-                                                            PU_CACHE));
+            V_DrawTLPatch(50 + i * 31, 168,
+                          W_CacheLumpName(DEH_String("ARTIBOX"), PU_CACHE));
             if (CPlayer->inventorySlotNum > x + i
                 && CPlayer->inventory[x + i].type != arti_none)
             {
+                patch = DEH_String(patcharti[CPlayer->inventory[x + i].type]);
                 V_DrawPatch(50 + i * 31, 168,
-                            W_CacheLumpName(patcharti
-                                            [CPlayer->inventory[x + i].type],
-                                            PU_CACHE));
+                            W_CacheLumpName(patch, PU_CACHE));
                 DrSmallNumber(CPlayer->inventory[x + i].count, 69 + i * 31,
                               190);
             }

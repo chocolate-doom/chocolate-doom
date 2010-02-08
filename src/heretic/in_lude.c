@@ -30,6 +30,7 @@
 */
 
 #include "doomdef.h"
+#include "deh_str.h"
 #include "s_sound.h"
 #include "i_system.h"
 #include "i_video.h"
@@ -161,7 +162,7 @@ extern void AM_Stop(void);
 
 void IN_Start(void)
 {
-    I_SetPalette(W_CacheLumpName("PLAYPAL", PU_CACHE));
+    I_SetPalette(W_CacheLumpName(DEH_String("PLAYPAL"), PU_CACHE));
     IN_LoadPics();
     IN_InitStats();
     intermission = true;
@@ -308,26 +309,26 @@ static void IN_LoadUnloadPics(void (*callback)(char *lumpname,
     switch (gameepisode)
     {
         case 1:
-            callback("MAPE1", 0, &patchINTERPIC);
+            callback(DEH_String("MAPE1"), 0, &patchINTERPIC);
             break;
         case 2:
-            callback("MAPE2", 0, &patchINTERPIC);
+            callback(DEH_String("MAPE2"), 0, &patchINTERPIC);
             break;
         case 3:
-            callback("MAPE3", 0, &patchINTERPIC);
+            callback(DEH_String("MAPE3"), 0, &patchINTERPIC);
             break;
         default:
             break;
     }
 
-    callback("IN_X", 0, &patchBEENTHERE);
-    callback("IN_YAH", 0, &patchGOINGTHERE);
-    callback("FONTB13", 0, &FontBNegative);
+    callback(DEH_String("IN_X"), 0, &patchBEENTHERE);
+    callback(DEH_String("IN_YAH"), 0, &patchGOINGTHERE);
+    callback(DEH_String("FONTB13"), 0, &FontBNegative);
 
-    callback("FONTB15", 0, &FontBSlash);
-    callback("FONTB05", 0, &FontBPercent);
+    callback(DEH_String("FONTB15"), 0, &FontBSlash);
+    callback(DEH_String("FONTB05"), 0, &FontBPercent);
 
-    FontBLumpBase = W_GetNumForName("FONTB16");
+    FontBLumpBase = W_GetNumForName(DEH_String("FONTB16"));
 
     for (i = 0; i < 10; i++)
     {
@@ -355,9 +356,9 @@ static void LoadLumpCallback(char *lumpname, int lumpnum, patch_t **ptr)
 
 void IN_LoadPics(void)
 {
-    FontBLump = W_GetNumForName("FONTB_S") + 1;
-    patchFaceOkayBase = W_GetNumForName("FACEA0");
-    patchFaceDeadBase = W_GetNumForName("FACEB0");
+    FontBLump = W_GetNumForName(DEH_String("FONTB_S")) + 1;
+    patchFaceOkayBase = W_GetNumForName(DEH_String("FACEA0"));
+    patchFaceDeadBase = W_GetNumForName(DEH_String("FACEB0"));
 
     IN_LoadUnloadPics(LoadLumpCallback);
 }
@@ -580,7 +581,7 @@ void IN_DrawStatBack(void)
     byte *src;
     byte *dest;
 
-    src = W_CacheLumpName("FLOOR16", PU_CACHE);
+    src = W_CacheLumpName(DEH_String("FLOOR16"), PU_CACHE);
     dest = I_VideoBuffer;
 
     for (y = 0; y < SCREENHEIGHT; y++)
@@ -612,8 +613,8 @@ void IN_DrawOldLevel(void)
     x = 160 - MN_TextBWidth(LevelNames[(gameepisode - 1) * 9 + prevmap - 1] +
                             7) / 2;
     IN_DrTextB(LevelNames[(gameepisode - 1) * 9 + prevmap - 1] + 7, x, 3);
-    x = 160 - MN_TextAWidth("FINISHED") / 2;
-    MN_DrTextA("FINISHED", x, 25);
+    x = 160 - MN_TextAWidth(DEH_String("FINISHED")) / 2;
+    MN_DrTextA(DEH_String("FINISHED"), x, 25);
 
     if (prevmap == 9)
     {
@@ -660,8 +661,8 @@ void IN_DrawYAH(void)
     int i;
     int x;
 
-    x = 160 - MN_TextAWidth("NOW ENTERING:") / 2;
-    MN_DrTextA("NOW ENTERING:", x, 10);
+    x = 160 - MN_TextAWidth(DEH_String("NOW ENTERING:")) / 2;
+    MN_DrTextA(DEH_String("NOW ENTERING:"), x, 10);
     x = 160 - MN_TextBWidth(LevelNames[(gameepisode - 1) * 9 + gamemap - 1] +
                             7) / 2;
     IN_DrTextB(LevelNames[(gameepisode - 1) * 9 + gamemap - 1] + 7, x, 20);
@@ -698,15 +699,15 @@ void IN_DrawSingleStats(void)
     int x;
     static int sounds;
 
-    IN_DrTextB("KILLS", 50, 65);
-    IN_DrTextB("ITEMS", 50, 90);
-    IN_DrTextB("SECRETS", 50, 115);
+    IN_DrTextB(DEH_String("KILLS"), 50, 65);
+    IN_DrTextB(DEH_String("ITEMS"), 50, 90);
+    IN_DrTextB(DEH_String("SECRETS"), 50, 115);
 
     x = 160 - MN_TextBWidth(LevelNames[(gameepisode - 1) * 9 + prevmap - 1] +
                             7) / 2;
     IN_DrTextB(LevelNames[(gameepisode - 1) * 9 + prevmap - 1] + 7, x, 3);
-    x = 160 - MN_TextAWidth("FINISHED") / 2;
-    MN_DrTextA("FINISHED", x, 25);
+    x = 160 - MN_TextAWidth(DEH_String("FINISHED")) / 2;
+    MN_DrTextA(DEH_String("FINISHED"), x, 25);
 
     if (intertime < 30)
     {
@@ -757,13 +758,13 @@ void IN_DrawSingleStats(void)
 
     if (gamemode != retail || gameepisode <= 3)
     {
-        IN_DrTextB("TIME", 85, 160);
+        IN_DrTextB(DEH_String("TIME"), 85, 160);
         IN_DrawTime(155, 160, hours, minutes, seconds);
     }
     else
     {
-        x = 160 - MN_TextAWidth("NOW ENTERING:") / 2;
-        MN_DrTextA("NOW ENTERING:", x, 160);
+        x = 160 - MN_TextAWidth(DEH_String("NOW ENTERING:")) / 2;
+        MN_DrTextA(DEH_String("NOW ENTERING:"), x, 160);
         x = 160 -
             MN_TextBWidth(LevelNames[(gameepisode - 1) * 9 + gamemap - 1] +
                           7) / 2;
@@ -787,14 +788,14 @@ void IN_DrawCoopStats(void)
 
     static int sounds;
 
-    IN_DrTextB("KILLS", 95, 35);
-    IN_DrTextB("BONUS", 155, 35);
-    IN_DrTextB("SECRET", 232, 35);
+    IN_DrTextB(DEH_String("KILLS"), 95, 35);
+    IN_DrTextB(DEH_String("BONUS"), 155, 35);
+    IN_DrTextB(DEH_String("SECRET"), 232, 35);
     x = 160 - MN_TextBWidth(LevelNames[(gameepisode - 1) * 9 + prevmap - 1] +
                             7) / 2;
     IN_DrTextB(LevelNames[(gameepisode - 1) * 9 + prevmap - 1] + 7, x, 3);
-    x = 160 - MN_TextAWidth("FINISHED") / 2;
-    MN_DrTextA("FINISHED", x, 25);
+    x = 160 - MN_TextAWidth(DEH_String("FINISHED")) / 2;
+    MN_DrTextA(DEH_String("FINISHED"), x, 25);
 
     ypos = 50;
     for (i = 0; i < MAXPLAYERS; i++)
@@ -845,8 +846,8 @@ void IN_DrawDMStats(void)
     xpos = 90;
     ypos = 55;
 
-    IN_DrTextB("TOTAL", 265, 30);
-    MN_DrTextA("VICTIMS", 140, 8);
+    IN_DrTextB(DEH_String("TOTAL"), 265, 30);
+    MN_DrTextA(DEH_String("VICTIMS"), 140, 8);
     for (i = 0; i < 7; i++)
     {
         MN_DrTextA(KillersText[i], 10, 80 + 9 * i);

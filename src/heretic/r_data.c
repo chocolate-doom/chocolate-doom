@@ -316,12 +316,17 @@ void R_InitTextures(void)
     int offset, maxoff, maxoff2;
     int numtextures1, numtextures2;
     int *directory;
+    char *texture1, *texture2, *pnames;
+
+    texture1 = DEH_String("TEXTURE1");
+    texture2 = DEH_String("TEXTURE2");
+    pnames = DEH_String("PNAMES");
 
 //
 // load the patch names from pnames.lmp
 //
     name[8] = 0;
-    names = W_CacheLumpName("PNAMES", PU_STATIC);
+    names = W_CacheLumpName(pnames, PU_STATIC);
     nummappatches = LONG(*((int *) names));
     name_p = names + 4;
     patchlookup = Z_Malloc(nummappatches * sizeof(*patchlookup), PU_STATIC, NULL);
@@ -330,21 +335,21 @@ void R_InitTextures(void)
         strncpy(name, name_p + i * 8, 8);
         patchlookup[i] = W_CheckNumForName(name);
     }
-    W_ReleaseLumpName("PNAMES");
+    W_ReleaseLumpName(pnames);
 
 //
 // load the map texture definitions from textures.lmp
 //
-    maptex = maptex1 = W_CacheLumpName("TEXTURE1", PU_STATIC);
+    maptex = maptex1 = W_CacheLumpName(texture1, PU_STATIC);
     numtextures1 = LONG(*maptex);
-    maxoff = W_LumpLength(W_GetNumForName("TEXTURE1"));
+    maxoff = W_LumpLength(W_GetNumForName(texture1));
     directory = maptex + 1;
 
-    if (W_CheckNumForName("TEXTURE2") != -1)
+    if (W_CheckNumForName(texture2) != -1)
     {
-        maptex2 = W_CacheLumpName("TEXTURE2", PU_STATIC);
+        maptex2 = W_CacheLumpName(texture2, PU_STATIC);
         numtextures2 = LONG(*maptex2);
-        maxoff2 = W_LumpLength(W_GetNumForName("TEXTURE2"));
+        maxoff2 = W_LumpLength(W_GetNumForName(texture2));
     }
     else
     {
@@ -358,8 +363,11 @@ void R_InitTextures(void)
     //      Init the startup thermometer at this point...
     //
     {
+        int start, end;
         int spramount;
-        spramount = W_GetNumForName("S_END") - W_GetNumForName("S_START") + 1;
+        start = W_GetNumForName(DEH_String("S_START"));
+        end = W_GetNumForName(DEH_String("S_END"));
+        spramount = end - start + 1;
         InitThermo(spramount + numtextures + 6);
     }
 
@@ -427,10 +435,10 @@ void R_InitTextures(void)
 
     Z_Free(patchlookup);
 
-    W_ReleaseLumpName("TEXTURE1");
+    W_ReleaseLumpName(texture1);
     if (maptex2)
     {
-        W_ReleaseLumpName("TEXTURE2");
+        W_ReleaseLumpName(texture2);
     }
 
 //
@@ -463,8 +471,8 @@ void R_InitFlats(void)
 {
     int i;
 
-    firstflat = W_GetNumForName("F_START") + 1;
-    lastflat = W_GetNumForName("F_END") - 1;
+    firstflat = W_GetNumForName(DEH_String("F_START")) + 1;
+    lastflat = W_GetNumForName(DEH_String("F_END")) - 1;
     numflats = lastflat - firstflat + 1;
 
 // translation table for global animation
@@ -489,8 +497,8 @@ void R_InitSpriteLumps(void)
     int i;
     patch_t *patch;
 
-    firstspritelump = W_GetNumForName("S_START") + 1;
-    lastspritelump = W_GetNumForName("S_END") - 1;
+    firstspritelump = W_GetNumForName(DEH_String("S_START")) + 1;
+    lastspritelump = W_GetNumForName(DEH_String("S_END")) - 1;
     numspritelumps = lastspritelump - firstspritelump + 1;
     spritewidth = Z_Malloc(numspritelumps * sizeof(fixed_t), PU_STATIC, 0);
     spriteoffset = Z_Malloc(numspritelumps * sizeof(fixed_t), PU_STATIC, 0);
@@ -527,7 +535,7 @@ void R_InitColormaps(void)
 // load in the light tables
 // 256 byte align tables
 //
-    lump = W_GetNumForName("COLORMAP");
+    lump = W_GetNumForName(DEH_String("COLORMAP"));
     length = W_LumpLength(lump);
     colormaps = Z_Malloc(length, PU_STATIC, 0);
     W_ReadLump(lump, colormaps);

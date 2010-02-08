@@ -23,6 +23,7 @@
 //-----------------------------------------------------------------------------
 
 #include "doomdef.h"
+#include "deh_str.h"
 #include "i_system.h"
 #include "p_local.h"
 #include "s_sound.h"
@@ -129,9 +130,9 @@ void P_InitSwitchList(void)
         if (alphSwitchList[i].episode <= episode)
         {
             switchlist[index++] =
-                R_TextureNumForName(alphSwitchList[i].name1);
+                R_TextureNumForName(DEH_String(alphSwitchList[i].name1));
             switchlist[index++] =
-                R_TextureNumForName(alphSwitchList[i].name2);
+                R_TextureNumForName(DEH_String(alphSwitchList[i].name2));
         }
     }
 }

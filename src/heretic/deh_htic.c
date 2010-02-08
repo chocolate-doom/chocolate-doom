@@ -44,8 +44,8 @@ extern deh_section_t deh_section_frame;
 extern deh_section_t deh_section_pointer;
 // deh_sound.c
 extern deh_section_t deh_section_sound;
-// deh_text.c:
-extern deh_section_t deh_section_text;
+// deh_htext.c:
+extern deh_section_t deh_section_heretic_text;
 // deh_thing.c:
 extern deh_section_t deh_section_thing;
 // deh_weapon.c:
@@ -61,7 +61,7 @@ deh_section_t *deh_section_types[] =
     &deh_section_frame,
 //    &deh_section_pointer, TODO
     &deh_section_sound,
-//    &deh_section_text, TODO
+    &deh_section_heretic_text,
     &deh_section_thing,
     &deh_section_weapon,
     NULL

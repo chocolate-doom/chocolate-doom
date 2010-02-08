@@ -24,6 +24,7 @@
 // R_draw.c
 
 #include "doomdef.h"
+#include "deh_str.h"
 #include "r_local.h"
 #include "i_video.h"
 #include "v_video.h"
@@ -386,11 +387,11 @@ void R_DrawViewBorder(void)
 
     if (gamemode == shareware)
     {
-        src = W_CacheLumpName("FLOOR04", PU_CACHE);
+        src = W_CacheLumpName(DEH_String("FLOOR04"), PU_CACHE);
     }
     else
     {
-        src = W_CacheLumpName("FLAT513", PU_CACHE);
+        src = W_CacheLumpName(DEH_String("FLAT513"), PU_CACHE);
     }
     dest = I_VideoBuffer;
 
@@ -409,24 +410,26 @@ void R_DrawViewBorder(void)
     }
     for (x = viewwindowx; x < viewwindowx + viewwidth; x += 16)
     {
-        V_DrawPatch(x, viewwindowy - 4, W_CacheLumpName("bordt", PU_CACHE));
-        V_DrawPatch(x, viewwindowy + viewheight, W_CacheLumpName("bordb",
-                                                                 PU_CACHE));
+        V_DrawPatch(x, viewwindowy - 4,
+                    W_CacheLumpName(DEH_String("bordt"), PU_CACHE));
+        V_DrawPatch(x, viewwindowy + viewheight,
+                    W_CacheLumpName(DEH_String("bordb"), PU_CACHE));
     }
     for (y = viewwindowy; y < viewwindowy + viewheight; y += 16)
     {
-        V_DrawPatch(viewwindowx - 4, y, W_CacheLumpName("bordl", PU_CACHE));
-        V_DrawPatch(viewwindowx + viewwidth, y, W_CacheLumpName("bordr",
-                                                                PU_CACHE));
+        V_DrawPatch(viewwindowx - 4, y,
+                    W_CacheLumpName(DEH_String("bordl"), PU_CACHE));
+        V_DrawPatch(viewwindowx + viewwidth, y,
+                    W_CacheLumpName(DEH_String("bordr"), PU_CACHE));
     }
-    V_DrawPatch(viewwindowx - 4, viewwindowy - 4, W_CacheLumpName("bordtl",
-                                                                  PU_CACHE));
+    V_DrawPatch(viewwindowx - 4, viewwindowy - 4,
+                W_CacheLumpName(DEH_String("bordtl"), PU_CACHE));
     V_DrawPatch(viewwindowx + viewwidth, viewwindowy - 4,
-                W_CacheLumpName("bordtr", PU_CACHE));
+                W_CacheLumpName(DEH_String("bordtr"), PU_CACHE));
     V_DrawPatch(viewwindowx + viewwidth, viewwindowy + viewheight,
-                W_CacheLumpName("bordbr", PU_CACHE));
+                W_CacheLumpName(DEH_String("bordbr"), PU_CACHE));
     V_DrawPatch(viewwindowx - 4, viewwindowy + viewheight,
-                W_CacheLumpName("bordbl", PU_CACHE));
+                W_CacheLumpName(DEH_String("bordbl"), PU_CACHE));
 }
 
 /*
@@ -450,11 +453,11 @@ void R_DrawTopBorder(void)
 
     if (gamemode == shareware)
     {
-        src = W_CacheLumpName("FLOOR04", PU_CACHE);
+        src = W_CacheLumpName(DEH_String("FLOOR04"), PU_CACHE);
     }
     else
     {
-        src = W_CacheLumpName("FLAT513", PU_CACHE);
+        src = W_CacheLumpName(DEH_String("FLAT513"), PU_CACHE);
     }
     dest = I_VideoBuffer;
 
@@ -476,20 +479,20 @@ void R_DrawTopBorder(void)
         for (x = viewwindowx; x < viewwindowx + viewwidth; x += 16)
         {
             V_DrawPatch(x, viewwindowy - 4,
-                        W_CacheLumpName("bordt", PU_CACHE));
+                        W_CacheLumpName(DEH_String("bordt"), PU_CACHE));
         }
-        V_DrawPatch(viewwindowx - 4, viewwindowy, W_CacheLumpName("bordl",
-                                                                  PU_CACHE));
+        V_DrawPatch(viewwindowx - 4, viewwindowy,
+                    W_CacheLumpName(DEH_String("bordl"), PU_CACHE));
         V_DrawPatch(viewwindowx + viewwidth, viewwindowy,
-                    W_CacheLumpName("bordr", PU_CACHE));
+                    W_CacheLumpName(DEH_String("bordr"), PU_CACHE));
         V_DrawPatch(viewwindowx - 4, viewwindowy + 16,
-                    W_CacheLumpName("bordl", PU_CACHE));
+                    W_CacheLumpName(DEH_String("bordl"), PU_CACHE));
         V_DrawPatch(viewwindowx + viewwidth, viewwindowy + 16,
-                    W_CacheLumpName("bordr", PU_CACHE));
+                    W_CacheLumpName(DEH_String("bordr"), PU_CACHE));
 
         V_DrawPatch(viewwindowx - 4, viewwindowy - 4,
-                    W_CacheLumpName("bordtl", PU_CACHE));
+                    W_CacheLumpName(DEH_String("bordtl"), PU_CACHE));
         V_DrawPatch(viewwindowx + viewwidth, viewwindowy - 4,
-                    W_CacheLumpName("bordtr", PU_CACHE));
+                    W_CacheLumpName(DEH_String("bordtr"), PU_CACHE));
     }
 }

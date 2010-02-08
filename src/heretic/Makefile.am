@@ -59,6 +59,7 @@ i_ibm.c
 FEATURE_DEHACKED_SOURCE_FILES =            \
 deh_ammo.c                                 \
 deh_frame.c                                \
+deh_htext.c                                \
 deh_htic.c                                 \
 deh_sound.c                                \
 deh_thing.c                                \

@@ -25,6 +25,7 @@
 // P_Spec.c
 
 #include "doomdef.h"
+#include "deh_str.h"
 #include "i_system.h"
 #include "i_timer.h"
 #include "m_random.h"
@@ -204,18 +205,12 @@ struct
     int type;
 } TerrainTypeDefs[] =
 {
-    {
-    "FLTWAWA1", FLOOR_WATER},
-    {
-    "FLTFLWW1", FLOOR_WATER},
-    {
-    "FLTLAVA1", FLOOR_LAVA},
-    {
-    "FLATHUH1", FLOOR_LAVA},
-    {
-    "FLTSLUD1", FLOOR_SLUDGE},
-    {
-    "END", -1}
+    { "FLTWAWA1", FLOOR_WATER },
+    { "FLTFLWW1", FLOOR_WATER },
+    { "FLTLAVA1", FLOOR_LAVA },
+    { "FLATHUH1", FLOOR_LAVA },
+    { "FLTSLUD1", FLOOR_SLUDGE },
+    { "END", -1 }
 };
 
 mobj_t LavaInflictor;
@@ -266,35 +261,40 @@ void P_InitTerrainTypes(void)
 
 void P_InitPicAnims(void)
 {
+    char *startname;
+    char *endname;
     int i;
 
     lastanim = anims;
     for (i = 0; animdefs[i].istexture != -1; i++)
     {
+        startname = DEH_String(animdefs[i].startname);
+        endname = DEH_String(animdefs[i].endname);
+
         if (animdefs[i].istexture)
         {                       // Texture animation
-            if (R_CheckTextureNumForName(animdefs[i].startname) == -1)
+            if (R_CheckTextureNumForName(startname) == -1)
             {                   // Texture doesn't exist
                 continue;
             }
-            lastanim->picnum = R_TextureNumForName(animdefs[i].endname);
-            lastanim->basepic = R_TextureNumForName(animdefs[i].startname);
+            lastanim->picnum = R_TextureNumForName(endname);
+            lastanim->basepic = R_TextureNumForName(startname);
         }
         else
         {                       // Flat animation
-            if (W_CheckNumForName(animdefs[i].startname) == -1)
+            if (W_CheckNumForName(startname) == -1)
             {                   // Flat doesn't exist
                 continue;
             }
-            lastanim->picnum = R_FlatNumForName(animdefs[i].endname);
-            lastanim->basepic = R_FlatNumForName(animdefs[i].startname);
+            lastanim->picnum = R_FlatNumForName(endname);
+            lastanim->basepic = R_FlatNumForName(startname);
         }
         lastanim->istexture = animdefs[i].istexture;
         lastanim->numpics = lastanim->picnum - lastanim->basepic + 1;
         if (lastanim->numpics < 2)
         {
             I_Error("P_InitPicAnims: bad cycle from %s to %s",
-                    animdefs[i].startname, animdefs[i].endname);
+                    startname, endname);
         }
         lastanim->speed = animdefs[i].speed;
         lastanim++;
@@ -1132,7 +1132,7 @@ void P_SpawnSpecials(void)
     int episode;
 
     episode = 1;
-    if (W_CheckNumForName("texture2") >= 0)
+    if (W_CheckNumForName(DEH_String("texture2")) >= 0)
         episode = 2;
 
     //
