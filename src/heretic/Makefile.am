@@ -20,6 +20,7 @@ info.c                 info.h                        \
 in_lude.c                                            \
 m_random.c             m_random.h                    \
 mn_menu.c                                            \
+                       p_action.h                    \
 p_ceilng.c                                           \
 p_doors.c                                            \
 p_enemy.c                                            \
