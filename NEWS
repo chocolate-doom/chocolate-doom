@@ -1,4 +1,4 @@
-...
+1.3.0 (2010-02-10):
 
      * Chocolate Doom now runs on Windows Mobile/Windows CE!
      * It is possible to rebind most/all of the keys that control the
@@ -35,6 +35,8 @@
      * When recording shorttics demos, errors caused by the reduced
        turning resolution are carried forward, possibly making turning
        smoother.
+     * The source tarball can now be used to build an RPM package:
+         rpmbuild -tb chocolate-doom-VER.tar.gz
 
     Compatibility:
      * The A_BossDeath behavior in v1.9 emulation mode was fixed
