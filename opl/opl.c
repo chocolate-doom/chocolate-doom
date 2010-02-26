@@ -46,7 +46,7 @@ extern opl_driver_t opl_linux_driver;
 extern opl_driver_t opl_openbsd_driver;
 #endif
 #ifdef _WIN32
-extern opl_driver_t opl_win9x_driver;
+extern opl_driver_t opl_win32_driver;
 #endif
 extern opl_driver_t opl_sdl_driver;
 
@@ -59,7 +59,7 @@ static opl_driver_t *drivers[] =
     &opl_openbsd_driver,
 #endif
 #ifdef _WIN32
-    &opl_win9x_driver,
+    &opl_win32_driver,
 #endif
     &opl_sdl_driver,
     NULL
@@ -197,6 +197,7 @@ void OPL_WritePort(opl_port_t port, unsigned int value)
     {
 #ifdef OPL_DEBUG_TRACE
         printf("OPL_write: %i, %x\n", port, value);
+        fflush(stdout);
 #endif
         driver->write_port_func(port, value);
     }
@@ -208,10 +209,16 @@ unsigned int OPL_ReadPort(opl_port_t port)
     {
         unsigned int result;
 
+#ifdef OPL_DEBUG_TRACE
+        printf("OPL_read: %i...\n", port);
+        fflush(stdout);
+#endif
+
         result = driver->read_port_func(port);
 
 #ifdef OPL_DEBUG_TRACE
         printf("OPL_read: %i -> %x\n", port, result);
+        fflush(stdout);
 #endif
 
         return result;

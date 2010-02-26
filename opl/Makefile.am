@@ -13,6 +13,7 @@ libopl_a_SOURCES =                                \
         opl_queue.c         opl_queue.h           \
         opl_sdl.c                                 \
         opl_timer.c         opl_timer.h           \
-        opl_win9x.c                               \
+        opl_win32.c                               \
+        ioperm_sys.c        ioperm_sys.h          \
         fmopl.c             fmopl.h
 

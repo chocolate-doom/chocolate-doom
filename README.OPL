@@ -64,11 +64,13 @@ stdout.txt:
 
 If you're running an NT-based system, it is not possible to directly
 access the OPL chip, even when running as Administrator.  Fortunately,
-it is possible to use the third-party "PortTalk" driver:
+it is possible to use the "ioperm.sys" driver developed for Cygwin:
 
-    http://www.beyondlogic.org/porttalk/porttalk.htm
+    http://openwince.sourceforge.net/ioperm/
 
-TODO - the NT driver hasn't actually been written yet..
+It is not necessary to have Cygwin installed to use this.  Copy the
+ioperm.sys file into the same directory as the Chocolate Doom
+executable and it should be automatically loaded.
 
 === Linux ===
 

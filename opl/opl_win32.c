@@ -19,13 +19,15 @@
 // 02111-1307, USA.
 //
 // DESCRIPTION:
-//     OPL Win9x native interface.
+//     OPL Win32 native interface.
 //
 //-----------------------------------------------------------------------------
 
 #include "config.h"
 
 #ifdef _WIN32
+
+#include <stdio.h>
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -34,13 +36,15 @@
 #include "opl_internal.h"
 #include "opl_timer.h"
 
+#include "ioperm_sys.h"
+
 static unsigned int opl_port_base;
 
 // MingW?
 
 #if defined(__GNUC__) && defined(__i386__)
 
-static unsigned int OPL_Win9x_PortRead(opl_port_t port)
+static unsigned int OPL_Win32_PortRead(opl_port_t port)
 {
     unsigned char result;
 
@@ -56,7 +60,7 @@ static unsigned int OPL_Win9x_PortRead(opl_port_t port)
     return result;
 }
 
-static void OPL_Win9x_PortWrite(opl_port_t port, unsigned int value)
+static void OPL_Win32_PortWrite(opl_port_t port, unsigned int value)
 {
     __asm__ volatile (
        "movl %0, %%edx\n"
@@ -77,58 +81,86 @@ static void OPL_Win9x_PortWrite(opl_port_t port, unsigned int value)
 
 #define NO_PORT_RW
 
-static unsigned int OPL_Win9x_PortRead(opl_port_t port)
+static unsigned int OPL_Win32_PortRead(opl_port_t port)
 {
     return 0;
 }
 
-static void OPL_Win9x_PortWrite(opl_port_t port, unsigned int value)
+static void OPL_Win32_PortWrite(opl_port_t port, unsigned int value)
 {
 }
 
 #endif
 
-static int OPL_Win9x_Init(unsigned int port_base)
+static int OPL_Win32_Init(unsigned int port_base)
 {
 #ifndef NO_PORT_RW
 
     OSVERSIONINFO version_info;
 
-    // Check that this is a Windows 9x series OS:
+    opl_port_base = port_base;
+
+    // Check the OS version.
 
     memset(&version_info, 0, sizeof(version_info));
     version_info.dwOSVersionInfoSize = sizeof(version_info);
 
     GetVersionEx(&version_info);
 
-    if (version_info.dwPlatformId == 1)
+    // On NT-based systems, we must acquire I/O port permissions
+    // using the ioperm.sys driver.
+
+    if (version_info.dwPlatformId == VER_PLATFORM_WIN32_NT)
     {
-        opl_port_base = port_base;
+        // Install driver.
 
-        // Start callback thread
+        if (!IOperm_InstallDriver())
+        {
+            return 0;
+        }
 
-        return OPL_Timer_StartThread();
+        // Open port range.
+
+        if (!IOperm_EnablePortRange(opl_port_base, 2, 1))
+        {
+            IOperm_UninstallDriver();
+            return 0;
+        }
     }
+
+    // Start callback thread
+
+    if (!OPL_Timer_StartThread())
+    {
+        IOperm_UninstallDriver();
+        return 0;
+    }
+
+    return 1;
 
 #endif
 
     return 0;
 }
 
-static void OPL_Win9x_Shutdown(void)
+static void OPL_Win32_Shutdown(void)
 {
     // Stop callback thread
 
     OPL_Timer_StopThread();
+
+    // Unload IOperm library.
+
+    IOperm_UninstallDriver();
 }
 
-opl_driver_t opl_win9x_driver =
+opl_driver_t opl_win32_driver =
 {
-    "Win9x",
-    OPL_Win9x_Init,
-    OPL_Win9x_Shutdown,
-    OPL_Win9x_PortRead,
-    OPL_Win9x_PortWrite,
+    "Win32",
+    OPL_Win32_Init,
+    OPL_Win32_Shutdown,
+    OPL_Win32_PortRead,
+    OPL_Win32_PortWrite,
     OPL_Timer_SetCallback,
     OPL_Timer_ClearCallbacks,
     OPL_Timer_Lock,
