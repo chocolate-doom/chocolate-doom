@@ -35,7 +35,9 @@
 
 #include <errno.h>
 
-#define IOPERM_FILE "\\\\.\\ioperm"
+#include "ioperm_sys.h"
+
+#define IOPERM_FILE L"\\\\.\\ioperm"
 
 #define IOCTL_IOPERM               \
     CTL_CODE(FILE_DEVICE_UNKNOWN, 0xA00, METHOD_BUFFERED, FILE_ANY_ACCESS)
@@ -59,8 +61,8 @@ int IOperm_EnablePortRange(unsigned int from, unsigned int num, int turn_on)
     DWORD BytesReturned;
     BOOL r;
 
-    h = CreateFile(IOPERM_FILE, GENERIC_READ, 0, NULL,
-                   OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+    h = CreateFileW(IOPERM_FILE, GENERIC_READ, 0, NULL,
+                    OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
 
     if (h == INVALID_HANDLE_VALUE)
     {
@@ -97,12 +99,12 @@ int IOperm_InstallDriver(void)
     int error;
     int result = 1;
 
-    scm = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
+    scm = OpenSCManagerW(NULL, NULL, SC_MANAGER_ALL_ACCESS);
 
     if (scm == NULL)
     {
         error = GetLastError();
-        fprintf(stderr, "IOperm_InstallDriver: OpenSCManager failed (%i)\n",
+        fprintf(stderr, "IOperm_InstallDriver: OpenSCManager failed (%i).\n",
                         error);
         return 0;
     }
@@ -134,19 +136,19 @@ int IOperm_InstallDriver(void)
         if (error != ERROR_SERVICE_EXISTS)
         {
             fprintf(stderr,
-                    "IOperm_InstallDriver: Failed to create service (%i)\n",
+                    "IOperm_InstallDriver: Failed to create service (%i).\n",
                     error);
         }
         else
         {
-            svc = OpenService(scm, TEXT("ioperm"), SERVICE_ALL_ACCESS);
+            svc = OpenServiceW(scm, L"ioperm", SERVICE_ALL_ACCESS);
 
             if (svc == NULL)
             {
                 error = GetLastError();
 
                 fprintf(stderr,
-                        "IOperm_InstallDriver: Failed to open service (%i)\n",
+                        "IOperm_InstallDriver: Failed to open service (%i).\n",
                         error);
             }
         }
@@ -162,31 +164,37 @@ int IOperm_InstallDriver(void)
         service_was_created = 1;
     }
 
-    if (!StartService(svc, 0, NULL))
+    // Start the service.  If the service already existed, it might have
+    // already been running as well.
+
+    if (!StartServiceW(svc, 0, NULL))
     {
         error = GetLastError();
 
         if (error != ERROR_SERVICE_ALREADY_RUNNING)
         {
-            fprintf(stderr, "IOperm_InstallDriver: Failed to start service (%i)\n",
+            fprintf(stderr, "IOperm_InstallDriver: Failed to start service (%i).\n",
                             error);
+
             result = 0;
         }
         else
         {
-            printf("IOperm_InstallDriver: ioperm driver already running\n");
+            printf("IOperm_InstallDriver: ioperm driver already running.\n");
         }
     }
     else
     {
-        printf("IOperm_InstallDriver: ioperm driver installed\n");
+        printf("IOperm_InstallDriver: ioperm driver installed.\n");
         service_was_started = 1;
     }
 
+    // If we failed to start the driver running, we need to clean up
+    // before finishing.
+
     if (result == 0)
     {
-        CloseServiceHandle(svc);
-        CloseServiceHandle(scm);
+        IOperm_UninstallDriver();
     }
 
     return result;
@@ -215,7 +223,7 @@ int IOperm_UninstallDriver(void)
             else
             {
                 fprintf(stderr,
-                        "IOperm_UninstallDriver: Failed to stop service (%i)\n",
+                        "IOperm_UninstallDriver: Failed to stop service (%i).\n",
                         error);
                 result = 0;
             }
@@ -231,14 +239,14 @@ int IOperm_UninstallDriver(void)
             error = GetLastError();
 
             fprintf(stderr,
-                    "IOperm_UninstallDriver: DeleteService failed (%i)\n",
+                    "IOperm_UninstallDriver: DeleteService failed (%i).\n",
                     error);
 
             result = 0;
         }
-        else
+        else if (service_was_started)
         {
-            printf("IOperm_InstallDriver: ioperm driver uninstalled.\n");
+            printf("IOperm_UnInstallDriver: ioperm driver uninstalled.\n");
         }
     }
 
