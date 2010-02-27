@@ -415,9 +415,10 @@ static void DelayCallback(void *_delay_data)
 
     SDL_LockMutex(delay_data->mutex);
     delay_data->finished = 1;
-    SDL_UnlockMutex(delay_data->mutex);
 
     SDL_CondSignal(delay_data->cond);
+
+    SDL_UnlockMutex(delay_data->mutex);
 }
 
 void OPL_Delay(unsigned int ms)
