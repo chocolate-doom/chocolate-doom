@@ -93,6 +93,7 @@ int IOperm_EnablePortRange(unsigned int from, unsigned int num, int turn_on)
 
 int IOperm_InstallDriver(void)
 {
+    wchar_t driver_path[MAX_PATH];
     int error;
     int result = 1;
 
@@ -106,19 +107,25 @@ int IOperm_InstallDriver(void)
         return 0;
     }
 
-    svc = CreateService(scm,
-                        TEXT("ioperm"),
-                        TEXT("I/O port access driver"),
-                        SERVICE_ALL_ACCESS,
-                        SERVICE_KERNEL_DRIVER,
-                        SERVICE_AUTO_START,
-                        SERVICE_ERROR_NORMAL,
-                        "ioperm.sys",
-                        NULL,
-                        NULL,
-                        NULL,
-                        NULL,
-                        NULL);
+    // Get the full path to the driver file.
+
+    GetFullPathNameW(L"ioperm.sys", MAX_PATH, driver_path, NULL);
+
+    // Create the service.
+
+    svc = CreateServiceW(scm,
+                         L"ioperm",
+                         L"ioperm support for Cygwin driver",
+                         SERVICE_ALL_ACCESS,
+                         SERVICE_KERNEL_DRIVER,
+                         SERVICE_AUTO_START,
+                         SERVICE_ERROR_NORMAL,
+                         driver_path,
+                         NULL,
+                         NULL,
+                         NULL,
+                         NULL,
+                         NULL);
 
     if (svc == NULL)
     {
@@ -228,6 +235,10 @@ int IOperm_UninstallDriver(void)
                     error);
 
             result = 0;
+        }
+        else
+        {
+            printf("IOperm_InstallDriver: ioperm driver uninstalled.\n");
         }
     }
 
