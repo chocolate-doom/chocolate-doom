@@ -60,6 +60,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\opl\fmopl.h" />
+		<Unit filename="..\opl\ioperm_sys.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\opl\ioperm_sys.h" />
 		<Unit filename="..\opl\opl.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -79,7 +83,7 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\opl\opl_timer.h" />
-		<Unit filename="..\opl\opl_win9x.c">
+		<Unit filename="..\opl\opl_win32.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\am_map.c">
