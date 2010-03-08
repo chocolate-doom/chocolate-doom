@@ -120,7 +120,7 @@ static musicinfo_t *mus_playing = NULL;
 
 int numChannels = 8;
 
-int snd_musicdevice = SNDDEVICE_SB;
+int snd_musicdevice = SNDDEVICE_GENMIDI;
 int snd_sfxdevice = SNDDEVICE_SB;
 
 // Sound modules

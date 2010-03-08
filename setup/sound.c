@@ -61,7 +61,7 @@ int snd_sfxdevice = SNDDEVICE_SB;
 int numChannels = 8;
 int sfxVolume = 15;
 
-int snd_musicdevice = SNDDEVICE_SB;
+int snd_musicdevice = SNDDEVICE_GENMIDI;
 int musicVolume = 15;
 
 int snd_samplerate = 22050;
