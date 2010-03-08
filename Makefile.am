@@ -42,6 +42,7 @@ EXTRA_DIST=                             \
         config.h                        \
         CMDLINE                         \
         HACKING                         \
+        README.OPL                      \
         TODO                            \
         BUGS                            \
         rpm.spec
@@ -49,7 +50,7 @@ EXTRA_DIST=                             \
 MAINTAINERCLEANFILES =  $(AUX_DIST_GEN)
 
 docdir=$(prefix)/share/doc/@PACKAGE@
-SUBDIRS=wince textscreen pcsound src man setup
+SUBDIRS=wince textscreen opl pcsound src man setup
 DIST_SUBDIRS=pkg $(SUBDIRS)
 
 if HAVE_PYTHON

@@ -52,6 +52,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc NEWS
 %doc AUTHORS
 %doc README
+%doc README.OPL
 %doc COPYING
 %doc CMDLINE
 %doc BUGS

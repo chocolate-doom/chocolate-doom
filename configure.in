@@ -76,7 +76,13 @@ AC_SDL_MAIN_WORKAROUND([
     AC_CHECK_LIB(samplerate, src_new)
 
     AC_CHECK_HEADERS([linux/kd.h dev/isa/spkrio.h dev/speaker/speaker.h])
-    AC_CHECK_FUNCS(mmap sched_setaffinity)
+    AC_CHECK_FUNCS(mmap sched_setaffinity ioperm)
+
+    # OpenBSD I/O i386 library for I/O port access.
+    # (64 bit has the same thing with a different name!)
+
+    AC_CHECK_LIB(i386, i386_iopl)
+    AC_CHECK_LIB(amd64, amd64_iopl)
 ])
 
 AC_CHECK_TOOL(WINDRES, windres, )
@@ -129,6 +135,8 @@ AC_OUTPUT([
 Makefile
 rpm.spec
 man/Makefile
+opl/Makefile
+opl/examples/Makefile
 pcsound/Makefile
 pkg/Makefile
 pkg/config.make

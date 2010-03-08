@@ -128,6 +128,7 @@ int snd_sfxdevice = SNDDEVICE_SB;
 extern sound_module_t sound_sdl_module;
 extern sound_module_t sound_pcsound_module;
 extern music_module_t music_sdl_module;
+extern music_module_t music_opl_module;
 
 // Compiled-in sound modules:
 
@@ -146,6 +147,7 @@ static music_module_t *music_modules[] =
 {
 #ifdef FEATURE_SOUND
     &music_sdl_module,
+    &music_opl_module,
 #endif
     NULL,
 };
@@ -793,6 +795,15 @@ void S_ChangeMusic(int musicnum, int looping)
     musicinfo_t *music = NULL;
     char namebuf[9];
     void *handle;
+
+    // The Doom IWAD file has two versions of the intro music: d_intro
+    // and d_introa.  The latter is used for OPL playback.
+
+    if (musicnum == mus_intro && (snd_musicdevice == SNDDEVICE_ADLIB
+                               || snd_musicdevice == SNDDEVICE_SB))
+    {
+        musicnum = mus_introa;
+    }
 
     if (musicnum <= mus_None || musicnum >= NUMMUSIC)
     {

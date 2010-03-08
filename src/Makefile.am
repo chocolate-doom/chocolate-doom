@@ -3,7 +3,7 @@ gamesdir = $(prefix)/games
 
 games_PROGRAMS = chocolate-doom chocolate-server
 
-AM_CFLAGS = -I../textscreen -I../pcsound @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
+AM_CFLAGS = -I../opl -I../textscreen -I../pcsound @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
 DEDSERV_FILES=\
 d_dedicated.c                              \
@@ -155,6 +155,8 @@ FEATURE_SOUND_SOURCE_FILES =               \
 i_pcsound.c                                \
 i_sdlsound.c                               \
 i_sdlmusic.c                               \
+i_oplmusic.c                               \
+midifile.c           midifile.h            \
 mus2mid.c            mus2mid.h
 
 SOURCE_FILES = $(MAIN_SOURCE_FILES)                \
@@ -173,6 +175,7 @@ chocolate_doom_LDADD =                               \
                        ../wince/libc_wince.a         \
                        ../textscreen/libtextscreen.a \
                        ../pcsound/libpcsound.a       \
+                       ../opl/libopl.a               \
                        @LDFLAGS@                     \
                        @SDLMIXER_LIBS@               \
                        @SDLNET_LIBS@
@@ -192,4 +195,7 @@ icon.c : ../data/doom8.ico
 	../data/convert-icon $^ $@
 
 endif
+
+midiread : midifile.c
+	$(CC) -DTEST $(CFLAGS) @LDFLAGS@ $^ -o $@
 
