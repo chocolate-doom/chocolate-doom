@@ -3,3 +3,5 @@ Makefile
 .deps
 libopl.a
 *.rc
+tags
+TAGS
