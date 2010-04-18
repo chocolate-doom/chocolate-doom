@@ -850,7 +850,7 @@ void IN_DrawDMStats(void)
     MN_DrTextA(DEH_String("VICTIMS"), 140, 8);
     for (i = 0; i < 7; i++)
     {
-        MN_DrTextA(KillersText[i], 10, 80 + 9 * i);
+        MN_DrTextA(DEH_String(KillersText[i]), 10, 80 + 9 * i);
     }
     if (intertime < 20)
     {
@@ -941,7 +941,7 @@ void IN_DrawTime(int x, int y, int h, int m, int s)
     if (h)
     {
         IN_DrawNumber(h, x, y, 2);
-        IN_DrTextB(":", x + 26, y);
+        IN_DrTextB(DEH_String(":"), x + 26, y);
     }
     x += 34;
     if (m || h)
@@ -951,7 +951,7 @@ void IN_DrawTime(int x, int y, int h, int m, int s)
     x += 34;
     if (s)
     {
-        IN_DrTextB(":", x - 8, y);
+        IN_DrTextB(DEH_String(":"), x - 8, y);
         IN_DrawNumber(s, x, y, 2);
     }
 }

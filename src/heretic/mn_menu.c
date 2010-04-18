@@ -492,14 +492,14 @@ void MN_Drawer(void)
             {
                 MN_DrTextA(SlotText[quicksave - 1], 160 -
                            MN_TextAWidth(SlotText[quicksave - 1]) / 2, 90);
-                MN_DrTextA("?", 160 +
+                MN_DrTextA(DEH_String("?"), 160 +
                            MN_TextAWidth(SlotText[quicksave - 1]) / 2, 90);
             }
             if (typeofask == 4)
             {
                 MN_DrTextA(SlotText[quickload - 1], 160 -
                            MN_TextAWidth(SlotText[quickload - 1]) / 2, 90);
-                MN_DrTextA("?", 160 +
+                MN_DrTextA(DEH_String("?"), 160 +
                            MN_TextAWidth(SlotText[quickload - 1]) / 2, 90);
             }
             UpdateState |= I_FULLSCRN;
@@ -706,11 +706,11 @@ static void DrawOptionsMenu(void)
 {
     if (messageson)
     {
-        MN_DrTextB("ON", 196, 50);
+        MN_DrTextB(DEH_String("ON"), 196, 50);
     }
     else
     {
-        MN_DrTextB("OFF", 196, 50);
+        MN_DrTextB(DEH_String("OFF"), 196, 50);
     }
     DrawSlider(&OptionsMenu, 3, 10, mouseSensitivity);
 }
