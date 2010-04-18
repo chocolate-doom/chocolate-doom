@@ -71,6 +71,7 @@ tables.c             tables.h              \
 v_video.c            v_video.h             \
                      v_patch.h             \
 w_checksum.c         w_checksum.h          \
+w_main.c             w_main.h              \
 w_wad.c              w_wad.h               \
 w_file.c             w_file.h              \
 w_file_stdc.c                              \

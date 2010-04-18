@@ -46,6 +46,7 @@
 #include "m_controls.h"
 #include "p_local.h"
 #include "v_video.h"
+#include "w_main.h"
 
 // MACROS ------------------------------------------------------------------
 
@@ -88,7 +89,6 @@ static void PageDrawer(void);
 static void HandleArgs(void);
 static void CheckRecordFrom(void);
 static void DrawAndBlit(void);
-static void ExecOptionFILE(char **args, int tag);
 static void ExecOptionSCRIPTS(char **args, int tag);
 static void ExecOptionSKILL(char **args, int tag);
 static void ExecOptionPLAYDEMO(char **args, int tag);
@@ -133,7 +133,6 @@ static int pagetic;
 static char *pagename;
 
 static execOpt_t ExecOptions[] = {
-    {"-file", ExecOptionFILE, 1, 0},
     {"-scripts", ExecOptionSCRIPTS, 1, 0},
     {"-skill", ExecOptionSKILL, 1, 0},
     {"-playdemo", ExecOptionPLAYDEMO, 1, 0},
@@ -422,6 +421,9 @@ static void HandleArgs(void)
 
     cmdfrag = M_ParmExists("-cmdfrag");
 
+    // Check WAD file command line options
+    W_ParseCommandLine();
+
     // Process command line options
     for (opt = ExecOptions; opt->name != NULL; opt++)
     {
@@ -482,27 +484,6 @@ static void ExecOptionSKILL(char **args, int tag)
     startskill = args[1][0] - '1';
     autostart = true;
 }
-
-//==========================================================================
-//
-// ExecOptionFILE
-//
-//==========================================================================
-
-static void ExecOptionFILE(char **args, int tag)
-{
-    char *filename;
-    int p;
-
-    p = M_CheckParm("-file");
-    while (++p != myargc && myargv[p][0] != '-')
-    {
-        filename = D_TryFindWADByName(myargv[p]);
-
-        D_AddFile(filename);
-    }
-}
-
 
 //==========================================================================
 //
