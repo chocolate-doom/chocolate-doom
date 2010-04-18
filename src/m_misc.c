@@ -263,12 +263,20 @@ void M_ForceUppercase(char *text)
 
 char *M_StrCaseStr(char *haystack, char *needle)
 {
+    unsigned int haystack_len;
     unsigned int needle_len;
     unsigned int len;
     unsigned int i;
 
+    haystack_len = strlen(haystack);
     needle_len = strlen(needle);
-    len = strlen(haystack) - needle_len;
+
+    if (haystack_len < needle_len)
+    {
+        return NULL;
+    }
+
+    len = haystack_len - needle_len;
 
     for (i = 0; i <= len; ++i)
     {
