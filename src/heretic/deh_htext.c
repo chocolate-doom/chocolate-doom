@@ -52,7 +52,8 @@ typedef struct
 //     Offsets                 String
 //       v1.0   v1.2   v1.3
 
-static hhe_string_t strings[] = {
+static const hhe_string_t strings[] =
+{
     { {   228,   228,   228 }, "PLAYPAL" },
     { {  1240,  1252,  1252 }, "E1M1:  THE DOCKS" },
     { {  1260,  1272,  1272 }, "E1M2:  THE DUNGEONS" },
@@ -537,7 +538,8 @@ static hhe_string_t strings[] = {
 
 // String offsets that are valid but we don't support.
 
-static int unsupported_strings_1_0[] = {
+static const int unsupported_strings_1_0[] =
+{
         0,     4,    64,   104,   160,   200,   220,   236,
       244,   252,   272,   288,   296,   316,   332,   372,
       436,   500,   504,   536,   544,   560,   576,   584,
@@ -583,7 +585,8 @@ static int unsupported_strings_1_0[] = {
        -1,
 };
 
-static int unsupported_strings_1_2[] = {
+static const int unsupported_strings_1_2[] =
+{
         0,     4,    64,   104,   160,   200,   220,   236,
       244,   252,   272,   288,   296,   316,   332,   372,
       436,   500,   504,   536,   544,   560,   576,   584,
@@ -625,7 +628,8 @@ static int unsupported_strings_1_2[] = {
     15936,    -1,
 };
 
-static int unsupported_strings_1_3[] = {
+static const int unsupported_strings_1_3[] =
+{
         0,     4,    64,   104,   160,   200,   220,   236,
       244,   252,   272,   288,   296,   316,   332,   372,
       436,   500,   504,   536,   544,   560,   576,   584,
@@ -667,7 +671,7 @@ static int unsupported_strings_1_3[] = {
     15936,    -1,
 };
 
-static int *unsupported_strings[] =
+static const int *unsupported_strings[] =
 {
     unsupported_strings_1_0,
     unsupported_strings_1_2,
@@ -676,7 +680,7 @@ static int *unsupported_strings[] =
 
 static boolean StringIsUnsupported(unsigned int offset)
 {
-    int *string_list;
+    const int *string_list;
     int i;
 
     string_list = unsupported_strings[deh_hhe_version];

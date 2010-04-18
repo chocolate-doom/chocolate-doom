@@ -44,11 +44,16 @@ typedef struct
     void (*func)();
 } hhe_action_pointer_t;
 
-// Offsets of action pointers within the Heretic 1.0 executable.
+// Offsets of action pointers within the Heretic executables.
+// Different versions have different offsets.
 // (Seriously Greg, was this really necessary?  What was wrong with the
 // "copying action pointer from another frame" technique used in dehacked?)
 
-static hhe_action_pointer_t action_pointers[] = {
+//    Offset                      Action function
+//        v1.0    v1.2    v1.3
+
+static const hhe_action_pointer_t action_pointers[] =
+{
     { {  77680,  80144,  80208 }, A_AccTeleGlitter },
     { {  78608,  81104,  81168 }, A_AddPlayerCorpse },
     { { 115808, 118000, 118240 }, A_AddPlayerRain },
