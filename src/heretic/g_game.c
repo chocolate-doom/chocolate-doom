@@ -1715,7 +1715,7 @@ void G_DoSaveGame(void)
 
     gameaction = ga_nothing;
     savedescription[0] = 0;
-    P_SetMessage(&players[consoleplayer], TXT_GAMESAVED, true);
+    P_SetMessage(&players[consoleplayer], DEH_String(TXT_GAMESAVED), true);
 }
 
 //==========================================================================
