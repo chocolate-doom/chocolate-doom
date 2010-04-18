@@ -38,11 +38,6 @@ int finalecount;
 #define TEXTSPEED       3
 #define TEXTWAIT        250
 
-char *e1text = E1TEXT;
-char *e2text = E2TEXT;
-char *e3text = E3TEXT;
-char *e4text = E4TEXT;
-char *e5text = E5TEXT;
 char *finaletext;
 char *finaleflat;
 
@@ -74,23 +69,23 @@ void F_StartFinale(void)
     {
         case 1:
             finaleflat = DEH_String("FLOOR25");
-            finaletext = e1text;
+            finaletext = DEH_String(E1TEXT);
             break;
         case 2:
             finaleflat = DEH_String("FLATHUH1");
-            finaletext = e2text;
+            finaletext = DEH_String(E2TEXT);
             break;
         case 3:
             finaleflat = DEH_String("FLTWAWA2");
-            finaletext = e3text;
+            finaletext = DEH_String(E3TEXT);
             break;
         case 4:
             finaleflat = DEH_String("FLOOR28");
-            finaletext = e4text;
+            finaletext = DEH_String(E4TEXT);
             break;
         case 5:
             finaleflat = DEH_String("FLOOR08");
-            finaletext = e5text;
+            finaletext = DEH_String(E5TEXT);
             break;
     }
 
