@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include "deh_defs.h"
 #include "deh_main.h"
+#include "deh_htic.h"
 #include "info.h"
 
 char *deh_signatures[] =
@@ -35,6 +36,10 @@ char *deh_signatures[] =
     "Patch File for HHE v1.1",
     NULL
 };
+
+// Version number for patches.
+
+deh_hhe_version_t deh_hhe_version = deh_hhe_1_0;
 
 // deh_ammo.c:
 extern deh_section_t deh_section_ammo;
@@ -67,18 +72,33 @@ deh_section_t *deh_section_types[] =
     NULL
 };
 
-// HHE only worked with Heretic 1.0 and unfortunately was never updated
-// to support Heretic 1.3.  Between Heretic 1.0 and 1.3, two new frames
-// were added to the "states" table, to extend the "flame death"
-// animation displayed when the player is killed by fire.  Therefore,
-// we must map the HHE frame numbers (which assume a Heretic 1.0 frame
-// table) to corresponding indexes for the Heretic 1.3 frame table.
-
 int DEH_MapHereticFrameNumber(int frame)
 {
-    if (frame >= S_PLAY_FDTH19)
+    if (deh_hhe_version < deh_hhe_1_0)
     {
-        frame = (frame - S_PLAY_FDTH19) + S_BLOODYSKULL1;
+        // Between Heretic 1.0 and 1.2, two new frames
+        // were added to the "states" table, to extend the "flame death"
+        // animation displayed when the player is killed by fire.  Therefore,
+        // we must map Heretic 1.0 frame numbers to corresponding indexes
+        // for our state table.
+
+        if (frame >= S_PLAY_FDTH19)
+        {
+            frame = (frame - S_PLAY_FDTH19) + S_BLOODYSKULL1;
+        }
+    }
+    else
+    {
+        // After Heretic 1.2, three unused frames were removed from the
+        // states table, unused phoenix rod frames.  Our state table includes
+        // these missing states for backwards compatibility.  We must therefore
+        // adjust frame numbers for v1.2/v1.3 to corresponding indexes for
+        // our state table.
+
+        if (frame >= S_PHOENIXFXIX_1)
+        {
+            frame = (frame - S_PHOENIXFXIX_1) + S_PHOENIXPUFF1;
+        }
     }
 
     return frame;
