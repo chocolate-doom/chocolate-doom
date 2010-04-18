@@ -732,6 +732,46 @@ static int MaxStringLength(int len)
     return len - 1;
 }
 
+// If a string offset does not match any string, it may be because
+// we are running in the wrong version mode, and the patch was generated
+// for a different Heretic version.  Search the lookup tables to find
+// versiosn that match.
+
+static void SuggestOtherVersions(unsigned int offset)
+{
+    const int *string_list;
+    unsigned int i;
+    unsigned int v;
+
+    // Check main string table.
+
+    for (i=0; i<arrlen(strings); ++i)
+    {
+        for (v=0; v<deh_hhe_num_versions; ++v)
+        {
+            if (strings[i].offsets[v] == offset)
+            {
+                DEH_SuggestHereticVersion(v);
+            }
+        }
+    }
+
+    // Check unsupported string tables.
+
+    for (v=0; v<deh_hhe_num_versions; ++v)
+    {
+        string_list = unsupported_strings[v];
+
+        for (i=0; string_list[i] >= 0; ++i)
+        {
+            if (string_list[i] == offset)
+            {
+                DEH_SuggestHereticVersion(v);
+            }
+        }
+    }
+}
+
 static void *DEH_TextStart(deh_context_t *context, char *line)
 {
     char *repl_text;
@@ -770,6 +810,7 @@ static void *DEH_TextStart(deh_context_t *context, char *line)
 
     else if (!GetStringByOffset(orig_offset, &orig_text))
     {
+        SuggestOtherVersions(orig_offset);
         DEH_Error(context, "Unknown string offset: %i", orig_offset);
     }
 

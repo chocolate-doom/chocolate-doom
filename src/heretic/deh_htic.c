@@ -169,3 +169,18 @@ int DEH_MapHereticFrameNumber(int frame)
     return frame;
 }
 
+void DEH_SuggestHereticVersion(deh_hhe_version_t version)
+{
+    fprintf(stderr,
+    "\n"
+    "This patch may be for version %s. You are currently running in\n"
+    "Heretic %s mode. For %s mode, this mode, add this to your command line:\n"
+    "\n"
+    "\t-hhever %s\n"
+    "\n",
+    hhe_versions[version],
+    hhe_versions[deh_hhe_version],
+    hhe_versions[version],
+    hhe_versions[version]);
+}
+

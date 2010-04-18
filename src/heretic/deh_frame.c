@@ -229,6 +229,14 @@ static boolean GetActionPointerForOffset(int offset, void **result)
 {
     int i;
 
+    // Special case.
+
+    if (offset == 0)
+    {
+        *result = NULL;
+        return true;
+    }
+
     for (i=0; i<arrlen(action_pointers); ++i)
     {
         if (action_pointers[i].offsets[deh_hhe_version] == offset)
@@ -239,6 +247,26 @@ static boolean GetActionPointerForOffset(int offset, void **result)
     }
 
     return false;
+}
+
+// If an invalid action pointer is specified, the patch may be for a
+// different version from the version we are currently set to.  Try to
+// suggest a different version to use.
+
+static void SuggestOtherVersions(unsigned int offset)
+{
+    unsigned int i, v;
+
+    for (i=0; i<arrlen(action_pointers); ++i)
+    {
+        for (v=0; v<deh_hhe_num_versions; ++v)
+        {
+            if (action_pointers[i].offsets[v] == offset)
+            {
+                DEH_SuggestHereticVersion(v);
+            }
+        }
+    }
 }
 
 static void DEH_FrameParseLine(deh_context_t *context, char *line, void *tag)
@@ -274,7 +302,8 @@ static void DEH_FrameParseLine(deh_context_t *context, char *line, void *tag)
 
         if (!GetActionPointerForOffset(ivalue, &func))
         {
-            DEH_Warning(context, "Unknown action pointer: %i", ivalue);
+            SuggestOtherVersions(ivalue);
+            DEH_Error(context, "Unknown action pointer: %i", ivalue);
             return;
         }
 
