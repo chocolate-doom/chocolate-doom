@@ -186,17 +186,10 @@ DEH_BEGIN_MAPPING(state_mapping, state_t)
   DEH_MAPPING("Unknown 2",        misc2)
 DEH_END_MAPPING
 
-// When a HHE patch is first loaded, we must apply a small change
-// to the states[] table.  The table was changed between 1.0 and
-// 1.3 to add two extra frames to the player "burning death"
-// animation.
-// If we are using an HHE patch, the table must behave like the
-// Heretic 1.0 table.  We must therefore change the table to cut
-// these out again.
-
 static void DEH_FrameInit(void)
 {
-    states[S_PLAY_FDTH18].nextstate = S_NULL;
+    // Bit of a hack here:
+    DEH_HereticInit();
 }
 
 static void *DEH_FrameStart(deh_context_t *context, char *line)

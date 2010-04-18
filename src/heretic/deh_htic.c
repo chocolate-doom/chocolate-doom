@@ -24,17 +24,26 @@
 //
 //-----------------------------------------------------------------------------
 
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
 #include "deh_defs.h"
 #include "deh_main.h"
 #include "deh_htic.h"
 #include "info.h"
+#include "m_argv.h"
 
 char *deh_signatures[] =
 {
     "Patch File for HHE v1.0",
     "Patch File for HHE v1.1",
     NULL
+};
+
+static char *hhe_versions[] =
+{
+    "1.0", "1.2", "1.3"
 };
 
 // Version number for patches.
@@ -72,9 +81,65 @@ deh_section_t *deh_section_types[] =
     NULL
 };
 
+static void SetHHEVersionByName(char *name)
+{
+    int i;
+
+    for (i=0; i<arrlen(hhe_versions); ++i)
+    {
+        if (!strcmp(hhe_versions[i], name))
+        {
+            deh_hhe_version = i;
+            return;
+        }
+    }
+
+    fprintf(stderr, "Unknown Heretic version: %s\n", name);
+    fprintf(stderr, "Valid versions:\n");
+
+    for (i=0; i<arrlen(hhe_versions); ++i)
+    {
+        fprintf(stderr, "\t%s\n", hhe_versions[i]);
+    }
+}
+
+// Initialize Heretic(HHE)-specific dehacked bits.
+
+void DEH_HereticInit(void)
+{
+    int i;
+
+    //!
+    // @arg <version>
+    //
+    // Select the Heretic version number that was used to generate the
+    // HHE patch to be loaded.  Patches for each of the Vanilla
+    // Heretic versions (1.0, 1.2, 1.3) can be loaded, but the correct
+    // version number must be specified.
+
+    i = M_CheckParm("-hhever");
+
+    if (i > 0)
+    {
+        SetHHEVersionByName(myargv[i + 1]);
+    }
+
+    // For v1.0 patches, we must apply a slight change to the states[]
+    // table.  The table was changed between 1.0 and 1.3 to add two extra
+    // frames to the player "burning death" animation.
+    //
+    // If we are using a v1.0 patch, we must change the table to cut
+    // these out again.
+
+    if (deh_hhe_version < deh_hhe_1_2)
+    {
+        states[S_PLAY_FDTH18].nextstate = S_NULL;
+    }
+}
+
 int DEH_MapHereticFrameNumber(int frame)
 {
-    if (deh_hhe_version < deh_hhe_1_0)
+    if (deh_hhe_version < deh_hhe_1_2)
     {
         // Between Heretic 1.0 and 1.2, two new frames
         // were added to the "states" table, to extend the "flame death"

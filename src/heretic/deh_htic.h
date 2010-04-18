@@ -50,6 +50,7 @@ typedef enum
 
 #define DEH_HERETIC_NUMMOBJTYPES (NUMMOBJTYPES - 2)
 
+void DEH_HereticInit(void);
 int DEH_MapHereticFrameNumber(int frame);
 
 extern deh_hhe_version_t deh_hhe_version;
