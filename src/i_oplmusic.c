@@ -43,6 +43,8 @@
 #include "opl.h"
 #include "midifile.h"
 
+// #define OPL_MIDI_DEBUG
+
 #define MAXMIDLENGTH (96 * 1024)
 #define GENMIDI_NUM_INSTRS  128
 
@@ -965,7 +967,9 @@ static void ControllerEvent(opl_track_data_t *track, midi_event_t *event)
             break;
 
         default:
+#ifdef OPL_MIDI_DEBUG
             fprintf(stderr, "Unknown MIDI controller type: %i\n", controller);
+#endif
             break;
     }
 }
@@ -1020,8 +1024,10 @@ static void MetaEvent(opl_track_data_t *track, midi_event_t *event)
             break;
 
         default:
+#ifdef OPL_MIDI_DEBUG
             fprintf(stderr, "Unknown MIDI meta event type: %i\n",
                             event->data.meta.type);
+#endif
             break;
     }
 }
@@ -1063,7 +1069,9 @@ static void ProcessEvent(opl_track_data_t *track, midi_event_t *event)
             break;
 
         default:
+#ifdef OPL_MIDI_DEBUG
             fprintf(stderr, "Unknown MIDI event type %i\n", event->event_type);
+#endif
             break;
     }
 }
