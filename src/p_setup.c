@@ -33,6 +33,7 @@
 
 #include "deh_main.h"
 #include "i_swap.h"
+#include "m_argv.h"
 #include "m_bbox.h"
 
 #include "g_game.h"
@@ -651,6 +652,7 @@ static void PadRejectArray(byte *array, unsigned int len)
     unsigned int i;
     unsigned int byte_num;
     byte *dest;
+    unsigned int padvalue;
 
     // Values to pad the REJECT array with:
 
@@ -681,9 +683,18 @@ static void PadRejectArray(byte *array, unsigned int len)
         fprintf(stderr, "PadRejectArray: REJECT lump too short to pad! (%i > %i)\n",
                         len, sizeof(rejectpad));
 
-        // Pad remaining space with 0xff.
+        // Pad remaining space with 0 (or 0xff, if specified on command line).
 
-        memset(array + sizeof(rejectpad), 0x00, len - sizeof(rejectpad));
+        if (M_CheckParm("-reject_pad_with_ff"))
+        {
+            padvalue = 0xff;
+        }
+        else
+        {
+            padvalue = 0xf00;
+        }
+
+        memset(array + sizeof(rejectpad), padvalue, len - sizeof(rejectpad));
     }
 }
 
