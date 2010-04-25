@@ -478,17 +478,17 @@ V_GetBlock
 // GhostlyDeath -- draws a rectangle! woo
 void V_DrawRect(int x, int y, int width, int height, int color)
 {
-	byte *temp;
-	
-	if ((width < 1) || (height < 1))
-		return;	// fail
-	
-	temp = Z_Malloc((width * height)+1, PU_STATIC , NULL);
-	
-	memset(temp, color, width * height);
-	V_DrawBlock(x, y, 0, width, height, temp);
-	
-	Z_Free(temp);	// that was fun
+    byte *temp;
+    
+    if ((width < 1) || (height < 1))
+        return;    // fail
+    
+    temp = Z_Malloc((width * height)+1, PU_STATIC , NULL);
+    
+    memset(temp, color, width * height);
+    V_DrawBlock(x, y, 0, width, height, temp);
+    
+    Z_Free(temp);    // that was fun
 }
 
 

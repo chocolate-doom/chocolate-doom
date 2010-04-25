@@ -1,4 +1,4 @@
-	// Emacs style mode select   -*- C++ -*- 
+// Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
@@ -243,15 +243,15 @@ R_FindPlane
 			
     if (check < lastvisplane)
 	return check;
-		
+
     if (lastvisplane - visplanes == MAXVISPLANES)
-	{
-		automapactive = 1;
-		AM_Start();
-		automapactive = 1;
-		return NULL;
-	}//I_Error ("R_FindPlane: no more visplanes");
-		
+    {
+        automapactive = 1;
+        AM_Start();
+        automapactive = 1;
+        return NULL;
+    }//I_Error ("R_FindPlane: no more visplanes");
+
     lastvisplane++;
 
     check->height = height;
@@ -382,28 +382,28 @@ void R_DrawPlanes (void)
 				
 #ifdef RANGECHECK
     if (ds_p - drawsegs > MAXDRAWSEGS)
-	{
-		automapactive = 1;
-		AM_Start();
-		automapactive = 1;
-		return;
-	}//I_Error ("R_DrawPlanes: drawsegs overflow (%i)", ds_p - drawsegs);
+    {
+        automapactive = 1;
+        AM_Start();
+        automapactive = 1;
+        return;
+    }//I_Error ("R_DrawPlanes: drawsegs overflow (%i)", ds_p - drawsegs);
     
     if (lastvisplane - visplanes > MAXVISPLANES)
-	{
-		automapactive = 1;
-		AM_Start();
-		automapactive = 1;
-		return;
-	}//I_Error ("R_DrawPlanes: visplane overflow (%i)", lastvisplane - visplanes);
+    {
+        automapactive = 1;
+        AM_Start();
+        automapactive = 1;
+        return;
+    }//I_Error ("R_DrawPlanes: visplane overflow (%i)", lastvisplane - visplanes);
     
     if (lastopening - openings > MAXOPENINGS)
-	{
-		automapactive = 1;
-		AM_Start();
-		automapactive = 1;
-		return;
-	}//I_Error ("R_DrawPlanes: opening overflow (%i)", lastopening - openings);
+    {
+        automapactive = 1;
+        AM_Start();
+        automapactive = 1;
+        return;
+    }//I_Error ("R_DrawPlanes: opening overflow (%i)", lastopening - openings);
 #endif
 
     for (pl = visplanes ; pl < lastvisplane ; pl++)

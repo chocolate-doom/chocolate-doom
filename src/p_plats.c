@@ -293,7 +293,7 @@ void P_AddActivePlat(plat_t* plat)
 	if (activeplats[i] == NULL)
 	{
 	    activeplats[i] = plat;
-	    numplats++;
+            numplats++;
 	    return;
 	}
     I_Error ("P_AddActivePlat: no more plats!");
