@@ -36,6 +36,7 @@
 
 #include "doomdef.h"
 #include "m_argv.h"
+#include "m_misc.h"
 #include "p_local.h"
 
 #include "s_sound.h"
@@ -884,7 +885,17 @@ PTR_AimTraverse (intercept_t* in)
 	
 	dist = FixedMul (attackrange, in->frac);
 
-	if (li->frontsector->floorheight != li->backsector->floorheight)
+        // Return false if there is no back sector.  This should never
+        // be the case if the line is two-sided; however, some WADs
+        // (eg. ottawau.wad) use this as an "impassible glass" trick
+        // and rely on Vanilla Doom's (unintentional) support for this.
+
+        if (li->backsector == NULL)
+        {
+            return false;
+        }
+
+        if (li->frontsector->floorheight != li->backsector->floorheight)
 	{
 	    slope = FixedDiv (openbottom - shootz , dist);
 	    if (slope > bottomslope)
@@ -972,7 +983,14 @@ boolean PTR_ShootTraverse (intercept_t* in)
 		
 	dist = FixedMul (attackrange, in->frac);
 
-	if (li->frontsector->floorheight != li->backsector->floorheight)
+        // Check if backsector is NULL.  See comment in PTR_AimTraverse.
+
+	if (li->backsector == NULL)
+        {
+            goto hitline;
+        }
+
+        if (li->frontsector->floorheight != li->backsector->floorheight)
 	{
 	    slope = FixedDiv (openbottom - shootz , dist);
 	    if (slope > aimslope)
@@ -1412,7 +1430,7 @@ static void SpechitOverrun(line_t *ld)
         
         if (p > 0)
         {
-            baseaddr = atoi(myargv[p+1]);
+            M_StrToInt(myargv[p+1], (int *) &baseaddr);
         }
         else
         {

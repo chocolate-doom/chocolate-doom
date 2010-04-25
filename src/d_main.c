@@ -766,7 +766,7 @@ static struct
     { NULL,                  NULL,         0},
 };
 
-// Initialise the game version
+// Initialize the game version
 
 static void InitGameVersion(void)
 {
@@ -978,8 +978,7 @@ void D_DoomMain (void)
         I_Error("Game mode indeterminate.  No IWAD file was found.  Try\n"
                 "specifying one with the '-iwad' command line parameter.\n");
     }
-	
-    setbuf (stdout, NULL);
+
     modifiedgame = false;
 
     //!
@@ -1075,6 +1074,7 @@ void D_DoomMain (void)
     V_Init ();
 
     printf (DEH_String("M_LoadDefaults: Load system defaults.\n"));
+    M_ApplyPlatformDefaults();
     M_LoadDefaults ();              // load before initing other systems
 
     printf (DEH_String("W_Init: Init WADfiles.\n"));
@@ -1550,7 +1550,7 @@ void D_DoomMain (void)
     I_Init ();
 
 #ifdef FEATURE_MULTIPLAYER
-    printf ("NET_Init: Initialise network subsystem.\n");
+    printf ("NET_Init: Init network subsystem.\n");
     NET_Init ();
 #endif
 

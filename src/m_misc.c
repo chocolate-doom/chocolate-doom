@@ -198,3 +198,11 @@ char *M_TempFile(char *s)
     return result;
 }
 
+boolean M_StrToInt(const char *str, int *result)
+{
+    return sscanf(str, " 0x%x", result) == 1
+        || sscanf(str, " 0X%x", result) == 1
+        || sscanf(str, " 0%o", result) == 1
+        || sscanf(str, " %d", result) == 1;
+}
+

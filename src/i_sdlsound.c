@@ -49,9 +49,10 @@
 #include "doomdef.h"
 
 #define LOW_PASS_FILTER
+#define MAX_SOUND_SLICE_TIME 70 /* ms */
 #define NUM_CHANNELS 16
 
-static boolean sound_initialised = false;
+static boolean sound_initialized = false;
 
 static Mix_Chunk sound_chunks[NUMSFX];
 static int channels_playing[NUM_CHANNELS];
@@ -61,9 +62,6 @@ static Uint16 mixer_format;
 static int mixer_channels;
 
 int use_libsamplerate = 0;
-
-extern int mb_used;
-
 
 // When a sound stops, check if it is still playing.  If it is not, 
 // we can mark the sound data as CACHE to be freed back for other
@@ -182,7 +180,7 @@ static void ExpandSoundData_SDL(byte *data,
     destination->abuf 
         = Z_Malloc(expanded_length, PU_STATIC, &destination->abuf);
 
-    // If we can, use the standard / optimised SDL conversion routines.
+    // If we can, use the standard / optimized SDL conversion routines.
     
     if (samplerate <= mixer_freq
      && ConvertibleRatio(samplerate, mixer_freq)
@@ -277,12 +275,15 @@ static boolean LoadSoundLump(int sound,
 			     uint32_t *length,
 			     byte **data_ref)
 {
+    int lumplen;
+    byte *data;
+
     // Load the sound
 
     *lumpnum    = S_sfx[sound].lumpnum;
     *data_ref   = W_CacheLumpNum(*lumpnum, PU_STATIC);
-    int lumplen = W_LumpLength(*lumpnum);
-    byte *data  = *data_ref;
+    lumplen = W_LumpLength(*lumpnum);
+    data  = *data_ref;
 
     // Ensure this is a valid sound
 
@@ -364,17 +365,20 @@ static void I_PrecacheSounds_SRC(void)
     uint32_t resampled_sound_length[NUMSFX];
     float norm_factor;
     float max_amp = 0;
+    unsigned int zone_size;
 
     assert(use_libsamplerate);
 
-    if (mb_used < 32)
+    zone_size = Z_ZoneSize();
+
+    if (zone_size < 32 * 1024 * 1024)
     {
         fprintf(stderr,
                 "WARNING: low memory.  Heap size is only %d MiB.\n"
                 "WARNING: use_libsamplerate needs more heap!\n"
                 "WARNING: put -mb 64 on the command line to avoid "
                 "\"Error: Z_Malloc: failed on allocation of X bytes\" !\n",
-                mb_used);
+                zone_size / (1024 * 1024));
     }
 
     printf("I_PrecacheSounds_SRC: Precaching all sound effects..");
@@ -544,7 +548,7 @@ static void I_SDL_UpdateSoundParams(int handle, int vol, int sep)
 {
     int left, right;
 
-    if (!sound_initialised)
+    if (!sound_initialized)
     {
         return;
     }
@@ -573,7 +577,7 @@ static int I_SDL_StartSound(int id, int channel, int vol, int sep)
 {
     Mix_Chunk *chunk;
 
-    if (!sound_initialised)
+    if (!sound_initialized)
     {
         return -1;
     }
@@ -607,7 +611,7 @@ static int I_SDL_StartSound(int id, int channel, int vol, int sep)
 
 static void I_SDL_StopSound (int handle)
 {
-    if (!sound_initialised)
+    if (!sound_initialized)
     {
         return;
     }
@@ -655,7 +659,7 @@ static void I_SDL_UpdateSound(void)
 
 static void I_SDL_ShutdownSound(void)
 {    
-    if (!sound_initialised)
+    if (!sound_initialized)
     {
         return;
     }
@@ -663,9 +667,35 @@ static void I_SDL_ShutdownSound(void)
     Mix_CloseAudio();
     SDL_QuitSubSystem(SDL_INIT_AUDIO);
 
-    sound_initialised = false;
+    sound_initialized = false;
 }
 
+// Calculate slice size, based on MAX_SOUND_SLICE_TIME.
+// The result must be a power of two.
+
+static int GetSliceSize(void)
+{
+    int limit;
+    int n;
+
+    limit = (snd_samplerate * MAX_SOUND_SLICE_TIME) / 1000;
+
+    // Try all powers of two, not exceeding the limit.
+
+    for (n=0;; ++n)
+    {
+        // 2^n <= limit < 2^n+1 ?
+
+        if ((1 << (n + 1)) > limit)
+        {
+            return (1 << n);
+        }
+    }
+
+    // Should never happen?
+
+    return 1024;
+}
 
 static boolean I_SDL_InitSound(void)
 { 
@@ -689,9 +719,9 @@ static boolean I_SDL_InitSound(void)
         return false;
     }
 
-    if (Mix_OpenAudio(snd_samplerate, AUDIO_S16SYS, 2, 1024) < 0)
+    if (Mix_OpenAudio(snd_samplerate, AUDIO_S16SYS, 2, GetSliceSize()) < 0)
     {
-        fprintf(stderr, "Error initialising SDL_mixer: %s\n", Mix_GetError());
+        fprintf(stderr, "Error initializing SDL_mixer: %s\n", Mix_GetError());
         return false;
     }
 
@@ -721,7 +751,7 @@ static boolean I_SDL_InitSound(void)
     
     SDL_PauseAudio(0);
 
-    sound_initialised = true;
+    sound_initialized = true;
 
     return true;
 }

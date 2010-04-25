@@ -1612,6 +1612,57 @@ void A_Explode (mobj_t* thingy)
     P_RadiusAttack(thingy, thingy->target, 128);
 }
 
+// Check whether the death of the specified monster type is allowed
+// to trigger the end of episode special action.
+//
+// This behavior changed in v1.9, the most notable effect of which
+// was to break uac_dead.wad
+
+static boolean CheckBossEnd(mobjtype_t motype)
+{
+    if (gameversion < exe_ultimate)
+    {
+        if (gamemap != 8)
+        {
+            return false;
+        }
+
+        // Baron death on later episodes is nothing special.
+
+        if (motype == MT_BRUISER && gameepisode != 1)
+        {
+            return false;
+        }
+
+        return true;
+    }
+    else
+    {
+        // New logic that appeared in Ultimate Doom.
+        // Looks like the logic was overhauled while adding in the
+        // episode 4 support.  Now bosses only trigger on their
+        // specific episode.
+
+	switch(gameepisode)
+	{
+            case 1:
+                return gamemap == 8 && motype == MT_BRUISER;
+
+            case 2:
+                return gamemap == 8 && motype == MT_CYBORG;
+
+            case 3:
+                return gamemap == 8 && motype == MT_SPIDER;
+
+	    case 4:
+                return (gamemap == 6 && motype == MT_CYBORG)
+                    || (gamemap == 8 && motype == MT_SPIDER);
+
+            default:
+                return gamemap == 8;
+	}
+    }
+}
 
 //
 // A_BossDeath
@@ -1636,75 +1687,12 @@ void A_BossDeath (mobj_t* mo)
     }
     else
     {
-	switch(gameepisode)
-	{
-	  case 1:
-	    if (gamemap != 8)
-		return;
-
-            // fraggle: disable this as it breaks uac_dead.wad.
-            // There is at least one version of Doom 1.9 which it is
-            // possible to play uac_dead through on.  I think this was
-            // added here for Ultimate Doom.
-            //
-            // See lmps/doom/ultimate/uac_dead.zip in idgames for
-            // an example of a demo which goes out of sync if this
-            // is left in here.
-            //
-            // For the time being, I'm making the assumption that 
-            // doing this is not going to break anything else.
-            //
-            // 2005/10/24: Modify this to test the gameversion setting
-
-            if (gameversion >= exe_ultimate && mo->type != MT_BRUISER)
-                return;
-	    break;
-	    
-	  case 2:
-	    if (gamemap != 8)
-		return;
-
-	    if (mo->type != MT_CYBORG)
-		return;
-	    break;
-	    
-	  case 3:
-	    if (gamemap != 8)
-		return;
-	    
-	    if (mo->type != MT_SPIDER)
-		return;
-	    
-	    break;
-	    
-	  case 4:
-	    switch(gamemap)
-	    {
-	      case 6:
-		if (mo->type != MT_CYBORG)
-		    return;
-		break;
-		
-	      case 8: 
-		if (mo->type != MT_SPIDER)
-		    return;
-		break;
-		
-	      default:
-		return;
-		break;
-	    }
-	    break;
-	    
-	  default:
-	    if (gamemap != 8)
-		return;
-	    break;
-	}
-		
+        if (!CheckBossEnd(mo->type))
+        {
+            return;
+        }
     }
 
-    
     // make sure there is a player alive for victory
     for (i=0 ; i<MAXPLAYERS ; i++)
 	if (playeringame[i] && players[i].health > 0)

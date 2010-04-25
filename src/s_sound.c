@@ -69,14 +69,6 @@
 #define NORM_PRIORITY 64
 #define NORM_SEP 128
 
-// Disable music on OSX by default; there are problems with SDL_mixer.
-
-#ifndef __APPLE__
-#define DEFAULT_MUSIC_DEVICE SNDDEVICE_SB
-#else
-#define DEFAULT_MUSIC_DEVICE SNDDEVICE_NONE
-#endif
-
 typedef struct
 {
     // sound information (if null, channel avail.)
@@ -128,7 +120,7 @@ static musicinfo_t *mus_playing = NULL;
 
 int numChannels = 8;
 
-int snd_musicdevice = DEFAULT_MUSIC_DEVICE;
+int snd_musicdevice = SNDDEVICE_GENMIDI;
 int snd_sfxdevice = SNDDEVICE_SB;
 
 // Sound modules
@@ -136,6 +128,7 @@ int snd_sfxdevice = SNDDEVICE_SB;
 extern sound_module_t sound_sdl_module;
 extern sound_module_t sound_pcsound_module;
 extern music_module_t music_sdl_module;
+extern music_module_t music_opl_module;
 
 // Compiled-in sound modules:
 
@@ -154,6 +147,7 @@ static music_module_t *music_modules[] =
 {
 #ifdef FEATURE_SOUND
     &music_sdl_module,
+    &music_opl_module,
 #endif
     NULL,
 };
@@ -176,7 +170,7 @@ static boolean SndDeviceInList(snddevice_t device, snddevice_t *list,
     return false;
 }
 
-// Find and initialise a sound_module_t appropriate for the setting
+// Find and initialize a sound_module_t appropriate for the setting
 // in snd_sfxdevice.
 
 static void InitSfxModule(void)
@@ -194,7 +188,7 @@ static void InitSfxModule(void)
                             sound_modules[i]->sound_devices,
                             sound_modules[i]->num_sound_devices))
         {
-            // Initialise the module
+            // Initialize the module
 
             if (sound_modules[i]->Init())
             {
@@ -205,7 +199,7 @@ static void InitSfxModule(void)
     }
 }
 
-// Initialise music according to snd_musicdevice.
+// Initialize music according to snd_musicdevice.
 
 static void InitMusicModule(void)
 {
@@ -222,7 +216,7 @@ static void InitMusicModule(void)
                             music_modules[i]->sound_devices,
                             music_modules[i]->num_sound_devices))
         {
-            // Initialise the module
+            // Initialize the module
 
             if (music_modules[i]->Init())
             {
@@ -268,7 +262,7 @@ void S_Init(int sfxVolume, int musicVolume)
 
     nomusic = M_CheckParm("-nomusic") > 0;
 
-    // Initialise the sound and music subsystems.
+    // Initialize the sound and music subsystems.
 
     if (!nosound && !screensaver_mode)
     {
@@ -801,6 +795,15 @@ void S_ChangeMusic(int musicnum, int looping)
     musicinfo_t *music = NULL;
     char namebuf[9];
     void *handle;
+
+    // The Doom IWAD file has two versions of the intro music: d_intro
+    // and d_introa.  The latter is used for OPL playback.
+
+    if (musicnum == mus_intro && (snd_musicdevice == SNDDEVICE_ADLIB
+                               || snd_musicdevice == SNDDEVICE_SB))
+    {
+        musicnum = mus_introa;
+    }
 
     if (musicnum <= mus_None || musicnum >= NUMMUSIC)
     {

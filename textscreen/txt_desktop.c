@@ -61,7 +61,7 @@ void TXT_RemoveDesktopWindow(txt_window_t *win)
     num_windows = to;
 }
 
-static void DrawDesktopBackground(char *title)
+static void DrawDesktopBackground(const char *title)
 {
     int i;
     unsigned char *screendata;
@@ -117,7 +117,7 @@ void TXT_SetDesktopTitle(char *title)
 void TXT_DrawDesktop(void)
 {
     int i;
-    char *title;
+    const char *title;
 
     TXT_InitClipArea();
 
@@ -158,9 +158,12 @@ void TXT_ExitMainLoop(void)
 
 void TXT_DrawASCIITable(void)
 {
+    unsigned char *screendata;
     char buf[10];
     int x, y;
     int n;
+
+    screendata = TXT_GetScreenData();
 
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
     TXT_BGColor(TXT_COLOR_BLACK, 0);
@@ -172,11 +175,15 @@ void TXT_DrawASCIITable(void)
             n = y * 16 + x;
 
             TXT_GotoXY(x * 5, y);
-            sprintf(buf, "%02x %c ", n, n);
+            sprintf(buf, "%02x   ", n);
             TXT_Puts(buf);
+
+            // Write the character directly to the screen memory buffer:
+
+            screendata[(y * TXT_SCREEN_W + x * 5 + 3) * 2] = n;
         }
     }
-    
+
     TXT_UpdateScreen();
 }
 

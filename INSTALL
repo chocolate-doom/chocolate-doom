@@ -23,7 +23,7 @@ Building Chocolate Doom
 On a Unix system, follow the standard instructions for installing an 
 autotools-based package:
 
- 1. Run './configure' to initialise the package.
+ 1. Run './configure' to initialize the package.
  2. Run 'make' to compile the package.
  3. Run 'make install' to install the package.
 

@@ -41,7 +41,7 @@ struct deh_section_s
 {
     char *name;
 
-    // Called on startup to initialise code
+    // Called on startup to initialize code
 
     deh_section_init_t init;
     

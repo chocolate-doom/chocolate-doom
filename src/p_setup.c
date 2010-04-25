@@ -33,6 +33,7 @@
 
 #include "deh_main.h"
 #include "i_swap.h"
+#include "m_argv.h"
 #include "m_bbox.h"
 
 #include "g_game.h"
@@ -76,6 +77,7 @@ line_t*		lines;
 int		numsides;
 side_t*		sides;
 
+static int      totallines;
 
 // BLOCKMAP
 // Created from axis aligned bounding box
@@ -167,6 +169,7 @@ void P_LoadSegs (int lump)
     line_t*		ldef;
     int			linedef;
     int			side;
+    int                 sidenum;
 	
     numsegs = W_LumpLength (lump) / sizeof(mapseg_t);
     segs = Z_Malloc (numsegs*sizeof(seg_t),PU_LEVEL,0);	
@@ -179,7 +182,7 @@ void P_LoadSegs (int lump)
     {
 	li->v1 = &vertexes[SHORT(ml->v1)];
 	li->v2 = &vertexes[SHORT(ml->v2)];
-					
+
 	li->angle = (SHORT(ml->angle))<<16;
 	li->offset = (SHORT(ml->offset))<<16;
 	linedef = SHORT(ml->linedef);
@@ -188,10 +191,28 @@ void P_LoadSegs (int lump)
 	side = SHORT(ml->side);
 	li->sidedef = &sides[ldef->sidenum[side]];
 	li->frontsector = sides[ldef->sidenum[side]].sector;
-	if (ldef-> flags & ML_TWOSIDED)
-	    li->backsector = sides[ldef->sidenum[side^1]].sector;
-	else
+
+        if (ldef-> flags & ML_TWOSIDED)
+        {
+            sidenum = ldef->sidenum[side ^ 1];
+
+            // If the sidenum is out of range, this may be a "glass hack"
+            // impassible window.  Point at side #0 (this may not be
+            // the correct Vanilla behavior; however, it seems to work for
+            // OTTAWAU.WAD, which is the one place I've seen this trick
+            // used).
+
+            if (sidenum < 0 || sidenum >= numsides)
+            {
+                sidenum = 0;
+            }
+
+            li->backsector = sides[sidenum].sector;
+        }
+        else
+        {
 	    li->backsector = 0;
+        }
     }
 	
     W_ReleaseLumpNum(lump);
@@ -515,7 +536,6 @@ void P_GroupLines (void)
     line_t**		linebuffer;
     int			i;
     int			j;
-    int			total;
     line_t*		li;
     sector_t*		sector;
     subsector_t*	ss;
@@ -533,21 +553,21 @@ void P_GroupLines (void)
 
     // count number of lines in each sector
     li = lines;
-    total = 0;
+    totallines = 0;
     for (i=0 ; i<numlines ; i++, li++)
     {
-	total++;
+	totallines++;
 	li->frontsector->linecount++;
 
 	if (li->backsector && li->backsector != li->frontsector)
 	{
 	    li->backsector->linecount++;
-	    total++;
+	    totallines++;
 	}
     }
 
     // build line tables for each sector	
-    linebuffer = Z_Malloc (total*sizeof(line_t *), PU_LEVEL, 0);
+    linebuffer = Z_Malloc (totallines*sizeof(line_t *), PU_LEVEL, 0);
 
     for (i=0; i<numsectors; ++i)
     {
@@ -624,6 +644,87 @@ void P_GroupLines (void)
 	
 }
 
+// Pad the REJECT lump with extra data when the lump is too small,
+// to simulate a REJECT buffer overflow in Vanilla Doom.
+
+static void PadRejectArray(byte *array, unsigned int len)
+{
+    unsigned int i;
+    unsigned int byte_num;
+    byte *dest;
+    unsigned int padvalue;
+
+    // Values to pad the REJECT array with:
+
+    unsigned int rejectpad[4] =
+    {
+        ((totallines * 4 + 3) & ~3) + 24,     // Size
+        0,                                    // Part of z_zone block header
+        50,                                   // PU_LEVEL
+        0x1d4a11                              // DOOM_CONST_ZONEID
+    };
+
+    // Copy values from rejectpad into the destination array.
+
+    dest = array;
+
+    for (i=0; i<len && i<sizeof(rejectpad); ++i)
+    {
+        byte_num = i % 4;
+        *dest = (rejectpad[i / 4] >> (byte_num * 8)) & 0xff;
+        ++dest;
+    }
+
+    // We only have a limited pad size.  Print a warning if the
+    // REJECT lump is too small.
+
+    if (len > sizeof(rejectpad))
+    {
+        fprintf(stderr, "PadRejectArray: REJECT lump too short to pad! (%i > %i)\n",
+                        len, sizeof(rejectpad));
+
+        // Pad remaining space with 0 (or 0xff, if specified on command line).
+
+        if (M_CheckParm("-reject_pad_with_ff"))
+        {
+            padvalue = 0xff;
+        }
+        else
+        {
+            padvalue = 0xf00;
+        }
+
+        memset(array + sizeof(rejectpad), padvalue, len - sizeof(rejectpad));
+    }
+}
+
+static void P_LoadReject(int lumpnum)
+{
+    int minlength;
+    int lumplen;
+
+    // Calculate the size that the REJECT lump *should* be.
+
+    minlength = (numsectors * numsectors + 7) / 8;
+
+    // If the lump meets the minimum length, it can be loaded directly.
+    // Otherwise, we need to allocate a buffer of the correct size
+    // and pad it with appropriate data.
+
+    lumplen = W_LumpLength(lumpnum);
+
+    if (lumplen >= minlength)
+    {
+        rejectmatrix = W_CacheLumpNum(lumpnum, PU_LEVEL);
+    }
+    else
+    {
+        rejectmatrix = Z_Malloc(minlength, PU_LEVEL, &rejectmatrix);
+        W_ReadLump(lumpnum, rejectmatrix);
+
+        PadRejectArray(rejectmatrix + lumplen, minlength - lumplen);
+    }
+}
 
 //
 // P_SetupLevel
@@ -700,9 +801,9 @@ P_SetupLevel
     P_LoadSubsectors (lumpnum+ML_SSECTORS);
     P_LoadNodes (lumpnum+ML_NODES);
     P_LoadSegs (lumpnum+ML_SEGS);
-	
-    rejectmatrix = W_CacheLumpNum (lumpnum+ML_REJECT,PU_LEVEL);
+
     P_GroupLines ();
+    P_LoadReject (lumpnum+ML_REJECT);
 
     bodyqueslot = 0;
     deathmatch_p = deathmatchstarts;

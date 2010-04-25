@@ -94,7 +94,7 @@ void TXT_InitWidget(TXT_UNCAST_ARG(widget), txt_widget_class_t *widget_class)
 }
 
 void TXT_SignalConnect(TXT_UNCAST_ARG(widget),
-                       char *signal_name,
+                       const char *signal_name,
                        TxtWidgetSignalFunc func, 
                        void *user_data)
 {
@@ -117,7 +117,7 @@ void TXT_SignalConnect(TXT_UNCAST_ARG(widget),
     callback->user_data = user_data;
 }
 
-void TXT_EmitSignal(TXT_UNCAST_ARG(widget), char *signal_name)
+void TXT_EmitSignal(TXT_UNCAST_ARG(widget), const char *signal_name)
 {
     TXT_CAST_ARG(txt_widget_t, widget);
     txt_callback_table_t *table;

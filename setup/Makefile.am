@@ -1,7 +1,7 @@
 
 gamesdir = $(prefix)/games
 
-AM_CFLAGS = -I../textscreen -I../src -DINSTALL_DIR="\"$(gamesdir)\""
+AM_CFLAGS = -I../textscreen -I../src @SDLMIXER_CFLAGS@
 
 games_PROGRAMS = chocolate-setup
 
@@ -31,7 +31,11 @@ else
 chocolate_setup_SOURCES=$(SOURCE_FILES)
 endif
 
-chocolate_setup_LDADD = ../textscreen/libtextscreen.a @LDFLAGS@
+chocolate_setup_LDADD =                              \
+                       ../wince/libc_wince.a         \
+                       ../textscreen/libtextscreen.a \
+                       @SDLMIXER_LIBS@               \
+                       @LDFLAGS@
 
 .rc.o:
 	$(WINDRES) $^ -o $@
@@ -40,7 +44,7 @@ chocolate_setup_LDADD = ../textscreen/libtextscreen.a @LDFLAGS@
 
 if HAVE_PYTHON
 
-setup_icon.c : ../data/setup.ico
+setup_icon.c : ../data/setup8.ico
 	../data/convert-icon $^ $@
 
 endif

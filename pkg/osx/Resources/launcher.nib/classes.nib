@@ -1,0 +1,47 @@
+{
+    IBClasses = (
+        {
+            CLASS = AppController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {launcherManager = id; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {closeConfigWindow = id; openConfigWindow = id; }; 
+            CLASS = IWADController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                chex = id; 
+                configWindow = id; 
+                doom1 = id; 
+                doom2 = id; 
+                iwadSelector = id; 
+                plutonia = id; 
+                tnt = id; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {setButtonClicked = id; }; 
+            CLASS = IWADLocation; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {locationConfigBox = id; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {launch = id; openTerminal = id; runSetup = id; }; 
+            CLASS = LauncherManager; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                commandLineArguments = id; 
+                iwadController = id; 
+                launchButton = id; 
+                launcherWindow = id; 
+                packageLabel = id; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}

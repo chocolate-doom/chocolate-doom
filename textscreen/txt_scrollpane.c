@@ -254,10 +254,53 @@ static void ShowSelectedWidget(txt_scrollpane_t *scrollpane)
     }
 }
 
+// Another hack for tables - when scrolling in 'pages', the normal key press
+// event does not provide children with enough information to know how far
+// to move their selection to reach a new page. This function does so.
+// Note that it *only* affects scrolling in pages, not with arrows!
+// A side-effect of this, rather than 'pulling' the selection to fit within
+// the new page, is that we will jump straight over ranges of unselectable
+// items longer than a page, but that is also true of arrow-key scrolling.
+// The other unfortunate effect of doing things this way is that page keys
+// have no effect on tables _not_ in scrollpanes: not even home/end.
+
+static int PageSelectedWidget(txt_scrollpane_t *scrollpane, int key)
+{
+    int pagex = 0; // No page left/right yet, but some keyboards have them
+    int pagey = 0;
+
+    // Subtract one from the absolute page distance as this is slightly more
+    // intuitive: a page down first jumps to the bottom of the current page,
+    // then proceeds to scroll onwards.
+
+    switch (key)
+    {
+        case KEY_PGUP:
+            pagey = 1 - scrollpane->h;
+            break;
+
+        case KEY_PGDN:
+            pagey = scrollpane->h - 1;
+            break;
+
+        default: // We shouldn't even be in this function
+            return 0;
+    }
+
+    if (scrollpane->child->widget_class == &txt_table_class)
+    {
+        return TXT_PageTable(scrollpane->child, pagex, pagey);
+    }
+
+    return 0;
+}
+
 // Interpret arrow key presses as scroll commands
 
 static int InterpretScrollKey(txt_scrollpane_t *scrollpane, int key)
 {
+    int maxy;
+
     switch (key)
     {
         case KEY_UPARROW:
@@ -292,6 +335,31 @@ static int InterpretScrollKey(txt_scrollpane_t *scrollpane, int key)
             }
             break;
 
+        case KEY_PGUP:
+            if (scrollpane->y > 0)
+            {
+                scrollpane->y -= scrollpane->h;
+                if (scrollpane->y < 0)
+                {
+                    scrollpane->y = 0;
+                }
+                return 1;
+            }
+            break;
+
+        case KEY_PGDN:
+            maxy = FullHeight(scrollpane) - scrollpane->h;
+            if (scrollpane->y < maxy)
+            {
+                scrollpane->y += scrollpane->h;
+                if (scrollpane->y > maxy)
+                {
+                    scrollpane->y = maxy;
+                }
+                return 1;
+            }
+            break;
+
         default:
             break;
     }
@@ -316,8 +384,14 @@ static int TXT_ScrollPaneKeyPress(TXT_UNCAST_ARG(scrollpane), int key)
 
         if (scrollpane->child->widget_class == &txt_table_class
          && (key == KEY_UPARROW || key == KEY_DOWNARROW
-          || key == KEY_LEFTARROW || key == KEY_RIGHTARROW))
+          || key == KEY_LEFTARROW || key == KEY_RIGHTARROW
+          || key == KEY_PGUP || key == KEY_PGDN))
         {
+            if (PageSelectedWidget(scrollpane, key))
+            {
+                result = 1;
+            }
+
             ShowSelectedWidget(scrollpane);
         }
 

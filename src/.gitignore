@@ -5,3 +5,5 @@ Makefile.in
 chocolate-doom
 chocolate-server
 *.exe
+tags
+TAGS

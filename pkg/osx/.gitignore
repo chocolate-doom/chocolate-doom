@@ -1,0 +1,7 @@
+Info.plist
+Info-gnustep.plist
+launcher
+*.o
+*.d
+*.dmg
+staging

@@ -4,3 +4,5 @@ Makefile
 chocolate-setup
 *.rc
 *.exe
+tags
+TAGS

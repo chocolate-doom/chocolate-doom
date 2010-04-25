@@ -53,7 +53,7 @@ static void TXT_InputBoxDrawer(TXT_UNCAST_ARG(inputbox), int selected)
 
     w = inputbox->widget.w;
 
-    // Select the background colour based on whether we are currently
+    // Select the background color based on whether we are currently
     // editing, and if not, whether the widget is selected.
 
     if (inputbox->editing && selected)
@@ -143,6 +143,8 @@ static int TXT_InputBoxKeyPress(TXT_UNCAST_ARG(inputbox), int key)
     {
         free(*((char **)inputbox->value));
         *((char **) inputbox->value) = strdup(inputbox->buffer);
+
+        TXT_EmitSignal(&inputbox->widget, "changed");
 
         inputbox->editing = 0;
     }

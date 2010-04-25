@@ -32,12 +32,13 @@
 #include "pcsound.h"
 #include "pcsound_internal.h"
 
+#define MAX_SOUND_SLICE_TIME 70 /* ms */
 #define SQUARE_WAVE_AMP 0x2000
 
-// If true, we initialised SDL and have the responsibility to shut it 
+// If true, we initialized SDL and have the responsibility to shut it 
 // down
 
-static int sdl_was_initialised = 0;
+static int sdl_was_initialized = 0;
 
 // Callback function to invoke when we want new sound data
 
@@ -145,7 +146,7 @@ static void PCSound_Mix_Callback(void *udata, Uint8 *stream, int len)
     }
 }
 
-static int SDLIsInitialised(void)
+static int SDLIsInitialized(void)
 {
     int freq, channels;
     Uint16 format;
@@ -155,20 +156,49 @@ static int SDLIsInitialised(void)
 
 static void PCSound_SDL_Shutdown(void)
 {
-    if (sdl_was_initialised)
+    if (sdl_was_initialized)
     {
         Mix_CloseAudio();
         SDL_QuitSubSystem(SDL_INIT_AUDIO);
-        sdl_was_initialised = 0;
+        sdl_was_initialized = 0;
     }
+}
+
+// Calculate slice size, based on MAX_SOUND_SLICE_TIME.
+// The result must be a power of two.
+
+static int GetSliceSize(void)
+{
+    int limit;
+    int n;
+
+    limit = (pcsound_sample_rate * MAX_SOUND_SLICE_TIME) / 1000;
+
+    // Try all powers of two, not exceeding the limit.
+
+    for (n=0;; ++n)
+    {
+        // 2^n <= limit < 2^n+1 ?
+
+        if ((1 << (n + 1)) > limit)
+        {
+            return (1 << n);
+        }
+    }
+
+    // Should never happen?
+
+    return 1024;
 }
 
 static int PCSound_SDL_Init(pcsound_callback_func callback_func)
 {
-    // Check if SDL_mixer has been opened already
-    // If not, we must initialise it now
+    int slicesize;
 
-    if (!SDLIsInitialised())
+    // Check if SDL_mixer has been opened already
+    // If not, we must initialize it now
+
+    if (!SDLIsInitialized())
     {
         if (SDL_Init(SDL_INIT_AUDIO) < 0)
         {
@@ -176,9 +206,11 @@ static int PCSound_SDL_Init(pcsound_callback_func callback_func)
             return 0;
         }
 
-        if (Mix_OpenAudio(pcsound_sample_rate, AUDIO_S16SYS, 2, 1024) < 0)
+        slicesize = GetSliceSize();
+
+        if (Mix_OpenAudio(pcsound_sample_rate, AUDIO_S16SYS, 2, slicesize) < 0)
         {
-            fprintf(stderr, "Error initialising SDL_mixer: %s\n", Mix_GetError());
+            fprintf(stderr, "Error initializing SDL_mixer: %s\n", Mix_GetError());
 
             SDL_QuitSubSystem(SDL_INIT_AUDIO);
             return 0;
@@ -189,7 +221,7 @@ static int PCSound_SDL_Init(pcsound_callback_func callback_func)
         // When this module shuts down, it has the responsibility to 
         // shut down SDL.
 
-        sdl_was_initialised = 1;
+        sdl_was_initialized = 1;
     }
 
     // Get the mixer frequency, format and number of channels.

@@ -18,7 +18,14 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
+
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+
+#ifdef _WIN32_WCE
+#include "libc_wince.h"
+#endif
 
 #include "config.h"
 #include "textscreen.h"
@@ -132,11 +139,13 @@ void MainMenu(void)
 }
 
 //
-// Initialise all configuration variables, load config file, etc
+// Initialize all configuration variables, load config file, etc
 //
 
 static void InitConfig(void)
 {
+    M_ApplyPlatformDefaults();
+
     SetChatMacroDefaults();
     SetPlayerNameDefault();
 
@@ -186,7 +195,7 @@ static void SetIcon(void)
 }
 
 // 
-// Initialise and run the textscreen GUI.
+// Initialize and run the textscreen GUI.
 //
 
 static void RunGUI(void)
@@ -195,7 +204,7 @@ static void RunGUI(void)
 
     if (!TXT_Init())
     {
-        fprintf(stderr, "Failed to initialise GUI\n");
+        fprintf(stderr, "Failed to initialize GUI\n");
         exit(-1);
     }
 
@@ -211,6 +220,15 @@ int main(int argc, char *argv[])
 {
     myargc = argc;
     myargv = argv;
+
+#ifdef _WIN32_WCE
+
+    // Windows CE has no environment, but SDL provides an implementation.
+    // Populate the environment with the values we normally find.
+
+    PopulateEnvironment();
+
+#endif
 
     InitConfig();
     RunGUI();

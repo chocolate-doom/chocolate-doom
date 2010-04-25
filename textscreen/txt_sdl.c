@@ -35,14 +35,22 @@
 
 #include "txt_main.h"
 #include "txt_sdl.h"
-#include "txt_font.h"
-
-#define CHAR_W 8
-#define CHAR_H 16
 
 #if defined(_MSC_VER) && !defined(__cplusplus)
 #define inline __inline
 #endif
+
+typedef struct
+{
+    unsigned char *data;
+    unsigned int w;
+    unsigned int h;
+} txt_font_t;
+
+// Fonts:
+
+#include "txt_font.h"
+#include "txt_smallfont.h"
 
 // Time between character blinks in ms
 
@@ -54,6 +62,10 @@ static int key_mapping = 1;
 
 static TxtSDLEventCallbackFunc event_callback;
 static void *event_callback_data;
+
+// Font we are using:
+
+static txt_font_t *font;
 
 //#define TANGO
 
@@ -108,16 +120,64 @@ static SDL_Color ega_colors[] =
 #endif
 
 //
-// Initialise text mode screen
+// Select the font to use, based on screen resolution
+//
+// If the highest screen resolution available is less than
+// 640x480, use the small font.
+//
+
+static void ChooseFont(void)
+{
+    SDL_Rect **modes;
+    int i;
+
+    font = &main_font;
+
+    // Check all modes
+
+    modes = SDL_ListModes(NULL, SDL_FULLSCREEN);
+
+    // If in doubt and we can't get a list, always prefer to
+    // fall back to the normal font:
+
+    if (modes == NULL || modes == (SDL_Rect **) -1 || *modes == NULL)
+    {
+#ifdef _WIN32_WCE
+        font = &small_font;
+#endif
+        return;
+    }
+
+    for (i=0; modes[i] != NULL; ++i)
+    {
+        if (modes[i]->w >= 640 && modes[i]->h >= 480)
+        {
+            return;
+        }
+    }
+
+    // No large mode found.
+
+    font = &small_font;
+}
+
+//
+// Initialize text mode screen
 //
 // Returns 1 if successful, 0 if an error occurred
 //
 
 int TXT_Init(void)
 {
-    SDL_InitSubSystem(SDL_INIT_VIDEO);
-    
-    screen = SDL_SetVideoMode(TXT_SCREEN_W * CHAR_W, TXT_SCREEN_H * CHAR_H, 8, 0);
+    if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
+    {
+        return 0;
+    }
+
+    ChooseFont();
+
+    screen = SDL_SetVideoMode(TXT_SCREEN_W * font->w,
+                              TXT_SCREEN_H * font->h, 8, 0);
 
     if (screen == NULL)
         return 0;
@@ -157,7 +217,7 @@ static inline void UpdateCharacter(int x, int y)
     unsigned char *p;
     unsigned char *s, *s1;
     int bg, fg;
-    int x1, y1;
+    unsigned int x1, y1;
 
     p = &screendata[(y * TXT_SCREEN_W + x) * 2];
     character = p[0];
@@ -177,16 +237,16 @@ static inline void UpdateCharacter(int x, int y)
         }
     }
 
-    p = &int10_font_16[character * CHAR_H];
+    p = &font->data[character * font->h];
 
     s = ((unsigned char *) screen->pixels) 
-          + (y * CHAR_H * screen->pitch) + (x * CHAR_W);
+          + (y * font->h * screen->pitch) + (x * font->w);
 
-    for (y1=0; y1<CHAR_H; ++y1)
+    for (y1=0; y1<font->h; ++y1)
     {
         s1 = s;
 
-        for (x1=0; x1<CHAR_W; ++x1)
+        for (x1=0; x1<font->w; ++x1)
         {
             if (*p & (1 << (7-x1)))
             {
@@ -203,19 +263,44 @@ static inline void UpdateCharacter(int x, int y)
     }
 }
 
+static int LimitToRange(int val, int min, int max)
+{
+    if (val < min)
+    {
+        return min;
+    }
+    else if (val > max)
+    {
+        return max;
+    }
+    else
+    {
+        return val;
+    }
+}
+
 void TXT_UpdateScreenArea(int x, int y, int w, int h)
 {
     int x1, y1;
+    int x_end;
+    int y_end;
 
-    for (y1=y; y1<y+h; ++y1)
+    x_end = LimitToRange(x + w, 0, TXT_SCREEN_W);
+    y_end = LimitToRange(y + h, 0, TXT_SCREEN_H);
+    x = LimitToRange(x, 0, TXT_SCREEN_W);
+    y = LimitToRange(y, 0, TXT_SCREEN_H);
+
+    for (y1=y; y1<y_end; ++y1)
     {
-        for (x1=x; x1<x+w; ++x1)
+        for (x1=x; x1<x_end; ++x1)
         {
             UpdateCharacter(x1, y1);
         }
     }
 
-    SDL_UpdateRect(screen, x * CHAR_W, y * CHAR_H, w * CHAR_W, h * CHAR_H);
+    SDL_UpdateRect(screen,
+                   x * font->w, y * font->h,
+                   (x_end - x) * font->w, (y_end - y) * font->h);
 }
 
 void TXT_UpdateScreen(void)
@@ -225,10 +310,14 @@ void TXT_UpdateScreen(void)
 
 void TXT_GetMousePosition(int *x, int *y)
 {
+#if SDL_VERSION_ATLEAST(1, 3, 0)
+    SDL_GetMouseState(0, x, y);
+#else
     SDL_GetMouseState(x, y);
+#endif
 
-    *x /= CHAR_W;
-    *y /= CHAR_H;
+    *x /= font->w;
+    *y /= font->h;
 }
 
 //
@@ -264,7 +353,9 @@ static int TranslateKey(SDL_keysym *sym)
 
         case SDLK_PAUSE:       return KEY_PAUSE;
 
+#if !SDL_VERSION_ATLEAST(1, 3, 0)
         case SDLK_EQUALS:      return KEY_EQUALS;
+#endif
 
         case SDLK_LSHIFT:
         case SDLK_RSHIFT:
@@ -275,9 +366,11 @@ static int TranslateKey(SDL_keysym *sym)
                                return KEY_RCTRL;
 
         case SDLK_LALT:
-        case SDLK_LMETA:
         case SDLK_RALT:
+#if !SDL_VERSION_ATLEAST(1, 3, 0)
+        case SDLK_LMETA:
         case SDLK_RMETA:
+#endif
                                return KEY_RALT;
 
         case SDLK_CAPSLOCK:    return KEY_CAPSLOCK;
@@ -307,6 +400,15 @@ static int TranslateKey(SDL_keysym *sym)
         case SDLK_END:         return KEY_END;
         case SDLK_PAGEUP:      return KEY_PGUP;
         case SDLK_PAGEDOWN:    return KEY_PGDN;
+
+#ifdef SDL_HAVE_APP_KEYS
+        case SDLK_APP1:        return KEY_F1;
+        case SDLK_APP2:        return KEY_F2;
+        case SDLK_APP3:        return KEY_F3;
+        case SDLK_APP4:        return KEY_F4;
+        case SDLK_APP5:        return KEY_F5;
+        case SDLK_APP6:        return KEY_F6;
+#endif
 
         default:               break;
     }
@@ -389,7 +491,7 @@ signed int TXT_GetChar(void)
     return -1;
 }
 
-static char *SpecialKeyName(int key)
+static const char *SpecialKeyName(int key)
 {
     switch (key)
     {
@@ -448,13 +550,14 @@ static char *SpecialKeyName(int key)
         case KEYP_MINUS:      return "PAD-";
         case KEYP_DIVIDE:     return "PAD/";
                    */
+
         default:              return NULL;
     }
 }
 
 void TXT_GetKeyDescription(int key, char *buf)
 {
-    char *keyname;
+    const char *keyname;
 
     keyname = SpecialKeyName(key);
 

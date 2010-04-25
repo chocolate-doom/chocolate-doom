@@ -28,11 +28,21 @@
 
 #include <sys/types.h>
 
-#ifndef _WIN32
-    #include <sys/wait.h>
-    #include <unistd.h>
+#if defined(_WIN32_WCE)
+#include "libc_wince.h"
+#endif
+
+#ifdef _WIN32
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <process.h>
+
 #else
-    #include <process.h>
+
+#include <sys/wait.h>
+#include <unistd.h>
+
 #endif
 
 #include "textscreen.h"
@@ -45,7 +55,7 @@
 #ifdef _WIN32
 #define DOOM_BINARY PACKAGE_TARNAME ".exe"
 #else
-#define DOOM_BINARY INSTALL_DIR "/" PACKAGE_TARNAME
+#define DOOM_BINARY PACKAGE_TARNAME
 #endif
 
 #ifdef _WIN32
@@ -71,7 +81,6 @@ static char *TempFile(char *s)
     char *tempdir;
 
 #ifdef _WIN32
-
     // Check the TEMP environment variable to find the location.
 
     tempdir = getenv("TEMP");
@@ -139,19 +148,157 @@ void AddCmdLineParameter(execute_context_t *context, char *s, ...)
     fprintf(context->stream, "\n");
 }
 
-#ifdef _WIN32
+#if defined(_WIN32)
 
-static int ExecuteCommand(const char **argv)
+// Wait for the specified process to exit.  Returns the exit code.
+
+static unsigned int WaitForProcessExit(HANDLE subprocess)
 {
-    return _spawnv(_P_WAIT, argv[0], argv);
+    DWORD exit_code;
+
+    for (;;)
+    {
+        WaitForSingleObject(subprocess, INFINITE);
+
+        if (!GetExitCodeProcess(subprocess, &exit_code))
+        {
+            return -1;
+        }
+
+        if (exit_code != STILL_ACTIVE)
+        {
+            return exit_code;
+        }
+    }
+}
+
+static void ConcatWCString(wchar_t *buf, const char *value)
+{
+    MultiByteToWideChar(CP_OEMCP, 0,
+                        value, strlen(value) + 1,
+                        buf + wcslen(buf), strlen(value) + 1);
+}
+
+// Build the command line string, a wide character string of the form:
+//
+// "program" "arg"
+
+static wchar_t *BuildCommandLine(const char *program, const char *arg)
+{
+    wchar_t exe_path[MAX_PATH];
+    wchar_t *result;
+    wchar_t *sep;
+
+    // Get the path to this .exe file.
+
+    GetModuleFileNameW(NULL, exe_path, MAX_PATH);
+
+    // Allocate buffer to contain result string.
+
+    result = calloc(wcslen(exe_path) + strlen(program) + strlen(arg) + 6,
+                    sizeof(wchar_t));
+
+    wcscpy(result, L"\"");
+
+    // Copy the path part of the filename (including ending \)
+    // into the result buffer:
+
+    sep = wcsrchr(exe_path, DIR_SEPARATOR);
+
+    if (sep != NULL)
+    {
+        wcsncpy(result + 1, exe_path, sep - exe_path + 1);
+        result[sep - exe_path + 2] = '\0';
+    }
+
+    // Concatenate the name of the program:
+
+    ConcatWCString(result, program);
+
+    // End of program name, start of argument:
+
+    wcscat(result, L"\" \"");
+
+    ConcatWCString(result, arg);
+
+    wcscat(result, L"\"");
+
+    return result;
+}
+
+static int ExecuteCommand(const char *program, const char *arg)
+{
+    STARTUPINFOW startup_info;
+    PROCESS_INFORMATION proc_info;
+    wchar_t *command;
+    int result = 0;
+
+    command = BuildCommandLine(program, arg);
+
+    // Invoke the program:
+
+    memset(&proc_info, 0, sizeof(proc_info));
+    memset(&startup_info, 0, sizeof(startup_info));
+    startup_info.cb = sizeof(startup_info);
+
+    if (!CreateProcessW(NULL, command,
+                        NULL, NULL, FALSE, 0, NULL, NULL,
+                        &startup_info, &proc_info))
+    {
+        result = -1;
+    }
+    else
+    {
+        // Wait for the process to finish, and save the exit code.
+
+        result = WaitForProcessExit(proc_info.hProcess);
+
+        CloseHandle(proc_info.hProcess);
+        CloseHandle(proc_info.hThread);
+    }
+
+    free(command);
+
+    return result;
 }
 
 #else
 
-static int ExecuteCommand(const char **argv)
+// Given the specified program name, get the full path to the program,
+// assuming that it is in the same directory as this program is.
+
+static char *GetFullExePath(const char *program)
+{
+    char *result;
+    char *sep;
+    unsigned int path_len;
+
+    sep = strrchr(myargv[0], DIR_SEPARATOR);
+
+    if (sep == NULL)
+    {
+        result = strdup(program);
+    }
+    else
+    {
+        path_len = sep - myargv[0] + 1;
+
+        result = malloc(strlen(program) + path_len + 1);
+
+        strncpy(result, myargv[0], path_len);
+        result[path_len] = '\0';
+
+        strcat(result, program);
+    }
+
+    return result;
+}
+
+static int ExecuteCommand(const char *program, const char *arg)
 {
     pid_t childpid;
     int result;
+    const char *argv[3];
 
     childpid = fork();
 
@@ -159,9 +306,13 @@ static int ExecuteCommand(const char **argv)
     {
         // This is the child.  Execute the command.
 
-        execv(argv[0], (char **) argv);
+        argv[0] = GetFullExePath(program);
+        argv[1] = arg;
+        argv[2] = NULL;
 
-        exit(-1);
+        execvp(argv[0], (char **) argv);
+
+        exit(0x80);
     }
     else
     {
@@ -170,7 +321,7 @@ static int ExecuteCommand(const char **argv)
 
         waitpid(childpid, &result, 0);
 
-        if (WIFEXITED(result)) 
+        if (WIFEXITED(result) && WEXITSTATUS(result) != 0x80) 
         {
             return WEXITSTATUS(result);
         }
@@ -185,7 +336,6 @@ static int ExecuteCommand(const char **argv)
 
 int ExecuteDoom(execute_context_t *context)
 {
-    const char *argv[3];
     char *response_file_arg;
     int result;
     
@@ -196,17 +346,13 @@ int ExecuteDoom(execute_context_t *context)
     response_file_arg = malloc(strlen(context->response_file) + 2);
     sprintf(response_file_arg, "@%s", context->response_file);
 
-    argv[0] = DOOM_BINARY;
-    argv[1] = response_file_arg;
-    argv[2] = NULL;
-
     // Run Doom
 
-    result = ExecuteCommand(argv);
+    result = ExecuteCommand(DOOM_BINARY, response_file_arg);
 
     free(response_file_arg);
-    
-    // Destroy context 
+
+    // Destroy context
     remove(context->response_file);
     free(context->response_file);
     free(context);
@@ -242,8 +388,8 @@ static void TestCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
 
     exec = NewExecuteContext();
     AddCmdLineParameter(exec, "-testcontrols");
-    AddCmdLineParameter(exec, "-config %s", main_cfg);
-    AddCmdLineParameter(exec, "-extraconfig %s", extra_cfg);
+    AddCmdLineParameter(exec, "-config \"%s\"", main_cfg);
+    AddCmdLineParameter(exec, "-extraconfig \"%s\"", extra_cfg);
     ExecuteDoom(exec);
 
     TXT_CloseWindow(testwindow);

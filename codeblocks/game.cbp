@@ -46,6 +46,7 @@
 			<Add directory="..\src" />
 			<Add directory="..\textscreen" />
 			<Add directory="..\pcsound" />
+			<Add directory="..\opl" />
 		</Compiler>
 		<Linker>
 			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_mixer -lSDL_net -mwindows" />
@@ -54,6 +55,36 @@
 		<Unit filename="config.h" />
 		<Unit filename="game-res.rc">
 			<Option compilerVar="WINDRES" />
+		</Unit>
+		<Unit filename="..\opl\fmopl.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\opl\fmopl.h" />
+		<Unit filename="..\opl\ioperm_sys.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\opl\ioperm_sys.h" />
+		<Unit filename="..\opl\opl.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\opl\opl.h" />
+		<Unit filename="..\opl\opl_internal.h" />
+		<Unit filename="..\opl\opl_linux.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\opl\opl_queue.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\opl\opl_queue.h" />
+		<Unit filename="..\opl\opl_sdl.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\opl\opl_timer.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\opl\opl_timer.h" />
+		<Unit filename="..\opl\opl_win32.c">
+			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\am_map.c">
 			<Option compilerVar="CC" />
@@ -165,6 +196,9 @@
 		<Unit filename="..\src\i_main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\src\i_oplmusic.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="..\src\i_pcsound.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -235,6 +269,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\memio.h" />
+		<Unit filename="..\src\midifile.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\midifile.h" />
 		<Unit filename="..\src\mus2mid.c">
 			<Option compilerVar="CC" />
 		</Unit>

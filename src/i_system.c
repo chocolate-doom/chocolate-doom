@@ -59,7 +59,9 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
-int mb_used = 16;
+#define DEFAULT_RAM 16 /* MiB */
+#define MIN_RAM     4  /* MiB */
+
 int show_endoom = 1;
 
 // Tactile feedback function, probably used for the Logitech Cyberman
@@ -68,8 +70,99 @@ void I_Tactile(int on, int off, int total)
 {
 }
 
-int  I_GetHeapSize (void)
+#ifdef _WIN32_WCE
+
+// Windows CE-specific auto-allocation function that allocates the zone
+// size based on the amount of memory reported free by the OS.
+
+static byte *AutoAllocMemory(int *size, int default_ram, int min_ram)
 {
+    MEMORYSTATUS memory_status;
+    byte *zonemem;
+    size_t available;
+
+    // Get available physical RAM.  We leave one megabyte extra free
+    // for the OS to keep running (my PDA becomes unstable if too
+    // much RAM is allocated)
+
+    GlobalMemoryStatus(&memory_status);
+    available = memory_status.dwAvailPhys - 2 * 1024 * 1024;
+
+    // Limit to default_ram if we have more than that available:
+
+    if (available > default_ram * 1024 * 1024)
+    {
+        available = default_ram * 1024 * 1024;
+    }
+
+    if (available < min_ram * 1024 * 1024)
+    {
+        I_Error("Unable to allocate %i MiB of RAM for zone", min_ram);
+    }
+
+    // Allocate zone:
+
+    *size = available;
+    zonemem = malloc(*size);
+
+    if (zonemem == NULL)
+    {
+        I_Error("Failed when allocating %i bytes", *size);
+    }
+
+    return zonemem;
+}
+
+#else
+
+// Zone memory auto-allocation function that allocates the zone size
+// by trying progressively smaller zone sizes until one is found that
+// works.
+
+static byte *AutoAllocMemory(int *size, int default_ram, int min_ram)
+{
+    byte *zonemem;
+
+    // Allocate the zone memory.  This loop tries progressively smaller
+    // zone sizes until a size is found that can be allocated.
+    // If we used the -mb command line parameter, only the parameter
+    // provided is accepted.
+
+    zonemem = NULL;
+
+    while (zonemem == NULL)
+    {
+        // We need a reasonable minimum amount of RAM to start.
+
+        if (default_ram < min_ram)
+        {
+            I_Error("Unable to allocate %i MiB of RAM for zone", default_ram);
+        }
+
+        // Try to allocate the zone memory.
+
+        *size = default_ram * 1024 * 1024;
+
+        zonemem = malloc(*size);
+
+        // Failed to allocate?  Reduce zone size until we reach a size
+        // that is acceptable.
+
+        if (zonemem == NULL)
+        {
+            default_ram -= 1;
+        }
+    }
+
+    return zonemem;
+}
+
+#endif
+
+byte *I_ZoneBase (int *size)
+{
+    byte *zonemem;
+    int min_ram, default_ram;
     int p;
 
     //!
@@ -79,30 +172,27 @@ int  I_GetHeapSize (void)
     //
 
     p = M_CheckParm("-mb");
-    
+
     if (p > 0)
     {
-        mb_used = atoi(myargv[p+1]);
+        default_ram = atoi(myargv[p+1]);
+        min_ram = default_ram;
     }
-    
-    return mb_used*1024*1024;
-}
+    else
+    {
+        default_ram = DEFAULT_RAM;
+        min_ram = MIN_RAM;
+    }
 
-byte *I_ZoneBase (int *size)
-{
-    byte *zonemem;
+    zonemem = AutoAllocMemory(size, default_ram, min_ram);
 
-    *size = I_GetHeapSize();
-
-    zonemem = malloc(*size);
-    
     printf("zone memory: %p, %x allocated for zone\n", 
            zonemem, *size);
 
     return zonemem;
 }
 
-// 
+//
 // I_ConsoleStdout
 //
 // Returns true if stdout is a real console, false if it is a file
@@ -128,6 +218,9 @@ void I_Init (void)
     I_InitJoystick();
 }
 
+#define ENDOOM_W 80
+#define ENDOOM_H 25
+
 // 
 // Displays the text mode ending screen after the game quits
 //
@@ -136,6 +229,8 @@ void I_Endoom(void)
 {
     unsigned char *endoom_data;
     unsigned char *screendata;
+    int y;
+    int indent;
 
     endoom_data = W_CacheLumpName(DEH_String("ENDOOM"), PU_STATIC);
 
@@ -151,7 +246,15 @@ void I_Endoom(void)
     // Write the data to the screen memory
   
     screendata = TXT_GetScreenData();
-    memcpy(screendata, endoom_data, 4000);
+
+    indent = (ENDOOM_W - TXT_SCREEN_W) / 2;
+
+    for (y=0; y<TXT_SCREEN_H; ++y)
+    {
+        memcpy(screendata + (y * TXT_SCREEN_W * 2),
+               endoom_data + (y * ENDOOM_W + indent) * 2,
+               TXT_SCREEN_W * 2);
+    }
 
     // Wait for a keypress
 
@@ -246,13 +349,18 @@ void I_Error (char *error, ...)
     // On Windows, pop up a dialog box with the error message.
     {
         char msgbuf[512];
+        wchar_t wmsgbuf[512];
 
         va_start(argptr, error);
         memset(msgbuf, 0, sizeof(msgbuf));
         vsnprintf(msgbuf, sizeof(msgbuf) - 1, error, argptr);
         va_end(argptr);
 
-        MessageBox(NULL, msgbuf, "Error", MB_OK);
+        MultiByteToWideChar(CP_ACP, 0,
+                            msgbuf, strlen(msgbuf) + 1,
+                            wmsgbuf, sizeof(wmsgbuf));
+
+        MessageBoxW(NULL, wmsgbuf, L"Error", MB_OK);
     }
 #endif
 

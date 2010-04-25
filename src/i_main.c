@@ -34,12 +34,20 @@
 #include "m_argv.h"
 #include "d_main.h"
 
-#if defined(_WIN32)
+#if defined(_WIN32_WCE)
+
+// Windows CE?  I doubt it even supports SMP..
+
+static void LockCPUAffinity(void)
+{
+}
+
+#elif defined(_WIN32)
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-typedef BOOL WINAPI (*SetAffinityFunc)(HANDLE hProcess, DWORD_PTR mask);
+typedef BOOL (WINAPI *SetAffinityFunc)(HANDLE hProcess, DWORD mask);
 
 // This is a bit more complicated than it really needs to be.  We really
 // just need to call the SetProcessAffinityMask function, but that
@@ -66,7 +74,7 @@ static void LockCPUAffinity(void)
 
     // Find the SetProcessAffinityMask function.
 
-    SetAffinity = GetProcAddress(kernel32_dll, "SetProcessAffinityMask");
+    SetAffinity = (SetAffinityFunc)GetProcAddress(kernel32_dll, "SetProcessAffinityMask");
 
     // If the function was not found, we are on an old (Win9x) system
     // that doesn't have this function.  That's no problem, because
@@ -124,6 +132,15 @@ int main(int argc, char **argv)
 
     myargc = argc;
     myargv = argv;
+
+#ifdef _WIN32_WCE
+
+    // Windows CE has no environment, but SDL provides an implementation.
+    // Populate the environment with the values we normally find.
+
+    PopulateEnvironment();
+
+#endif
 
     // Only schedule on a single core, if we have multiple
     // cores.  This is to work around a bug in SDL_mixer.
