@@ -211,7 +211,102 @@ void D_ProcessEvents (void)
     }
 }
 
+static void DrawRenderLimits(void)
+{
+    unsigned int nwfactor;
+    unsigned int nwtest;
+    char buffer[128];
+    char *status;
+    int rl_pos;
+    int flash_color, flash_color2;
 
+    // Draw the text at the bottom of the screen when full screen, or
+    // just above the status bar when not.
+
+    rl_pos = SCREENHEIGHT;
+
+    if (viewheight < SCREENHEIGHT)
+    {
+        rl_pos -= 32;
+    }
+
+    if ((gametic % 2) == 0)
+    {
+        flash_color = 176;
+        flash_color2 = 231;
+    }
+    else
+    {
+        flash_color = 191;
+        flash_color2 = 215;
+    }
+    if (players[displayplayer].mo)
+    {
+        // what direction kinda?
+        nwtest = (unsigned)(players[displayplayer].mo->angle) >> FRACBITS;
+        nwfactor = nwtest / 180;
+        // display player
+        sprintf(buffer, "Play x=%i y=%i vz=%i a=%i am=%i",
+            (int)(players[displayplayer].mo->x) >> FRACBITS,
+            (int)(players[displayplayer].mo->y) >> FRACBITS,
+            (int)(players[displayplayer].viewz) >> FRACBITS,
+            nwtest,
+            nwfactor);
+            //((unsigned)(players[displayplayer].mo->angle) >> FRACBITS) / 4);
+        M_WriteText(0, rl_pos - 60, buffer);
+    }
+
+    // openings:
+
+    sprintf(buffer, "PLT: %i/%i", numplats, MAXPLATS);
+    M_WriteText(0, rl_pos - 50, buffer);
+
+    // visplanes:
+
+    if ((int)(lastvisplane - visplanes) < 128)
+    {
+        status = "";
+    }
+    else if ((int)(lastvisplane - visplanes) == 128)
+    {
+        V_DrawRect(0, rl_pos-10, 200, 8, flash_color2);
+        // visplane
+        status = "===";
+    }
+    else
+    {
+        V_DrawRect(0, rl_pos-10, 200, 8, flash_color);
+        status = "!!!";
+    }
+
+    sprintf(buffer, "PLN: %i/%i (Doom = 128) %s",
+            lastvisplane - visplanes, MAXVISPLANES, status);
+
+    M_WriteText(0, rl_pos - 10, buffer);
+
+    // drawsegs
+    if (ds_p - drawsegs >= MAXDRAWSEGS)
+    {
+        V_DrawRect(0, rl_pos-20, 200, 8, flash_color);
+        status = "HOM";
+    }
+    else
+    {
+        status = "";
+    }
+
+    sprintf(buffer, "SEG: %i/%i %s",
+                    ds_p - drawsegs, MAXDRAWSEGS, status);
+    M_WriteText(0, rl_pos - 20, buffer);
+
+    // opening
+    sprintf(buffer, "OPN: %i/%i", lastopening - openings, MAXOPENINGS);
+    M_WriteText(0, rl_pos - 30, buffer);
+
+    // vissprites
+    sprintf(buffer, "SPR: %i/%i", (vissprite_p - vissprites) + 1, MAXVISSPRITES);
+    M_WriteText(0, rl_pos - 40, buffer);
+}
 
 
 //
@@ -240,9 +335,6 @@ void D_Display (void)
     boolean			done;
     boolean			wipe;
     boolean			redrawsbar;
-    unsigned int nwfactor;
-    unsigned int nwtest;
-    char VISCheck[128];
 
     if (nodrawers)
 	return;                    // for comparative timing / profiling
@@ -281,7 +373,6 @@ void D_Display (void)
 	    redrawsbar = true;
 	if (inhelpscreensstate && !inhelpscreens)
 	    redrawsbar = true;              // just put away the help screen
-        ST_Start();
 	ST_Drawer (viewheight == 200, redrawsbar );
 	fullscreen = viewheight == 200;
 	break;
@@ -356,6 +447,10 @@ void D_Display (void)
 			  y,0,W_CacheLumpName (DEH_String("M_PAUSE"), PU_CACHE));
     }
 
+    if (gamestate == GS_LEVEL)
+    {
+        DrawRenderLimits();
+    }
 
     // menus go directly to the screen
     M_Drawer ();          // menu is drawn even on top of everything
@@ -365,80 +460,6 @@ void D_Display (void)
     // normal update
     if (!wipe)
     {
-    	//if (gametic % 2 == 0)
-    	//{
-            if (players[displayplayer].mo)
-            {
-                // what direction kinda?
-                nwtest = (unsigned)(players[displayplayer].mo->angle) >> FRACBITS;
-                nwfactor = nwtest / 180;
-                // display player
-                sprintf(VISCheck, "Play x=%i y=%i vz=%i a=%i am=%i", 
-                    (int)(players[displayplayer].mo->x) >> FRACBITS,
-                    (int)(players[displayplayer].mo->y) >> FRACBITS,
-                    (int)(players[displayplayer].viewz) >> FRACBITS,
-                    nwtest,
-                    nwfactor);
-                    //((unsigned)(players[displayplayer].mo->angle) >> FRACBITS) / 4);
-                M_WriteText(0, SCREENHEIGHT - 60, VISCheck);
-            }
-            
-            // opening
-            sprintf(VISCheck, "PLT: %i/%i", numplats, MAXPLATS);
-            M_WriteText(0,SCREENHEIGHT - 50,VISCheck);
-        
-            if ((int)(lastvisplane - visplanes) < 128)
-            {
-                // visplane
-                sprintf(VISCheck, "PLN: %i/%i (Doom = 128)", lastvisplane - visplanes, MAXVISPLANES);
-                M_WriteText(0,SCREENHEIGHT - 10,VISCheck);
-            }
-            else if ((int)(lastvisplane - visplanes) == 128)
-            {
-                if (gametic % 2 == 0)
-                    V_DrawRect(0,SCREENHEIGHT-10,200,8,231);
-                else
-                    V_DrawRect(0,SCREENHEIGHT-10,200,8,215);
-                // visplane
-                sprintf(VISCheck, "PLN: %i/%i (Doom = 128) ===", lastvisplane - visplanes, MAXVISPLANES);
-                M_WriteText(0,SCREENHEIGHT - 10,VISCheck);
-            }
-            else
-            {
-                if (gametic % 2 == 0)
-                    V_DrawRect(0,SCREENHEIGHT-10,200,8,176);
-                else
-                    V_DrawRect(0,SCREENHEIGHT-10,200,8,191);
-                // visplane
-                sprintf(VISCheck, "PLN: %i/%i (Doom = 128) !!!", lastvisplane - visplanes, MAXVISPLANES);
-                M_WriteText(0,SCREENHEIGHT - 10,VISCheck);
-            }
-            
-            // drawsegs
-            if ((ds_p - drawsegs) >= MAXDRAWSEGS)
-            {
-                if (gametic % 2 == 0)
-                    V_DrawRect(0,SCREENHEIGHT-20,200,8,176);
-                else
-                    V_DrawRect(0,SCREENHEIGHT-20,200,8,191);
-                sprintf(VISCheck, "SEG: %i/%i HOM", ds_p - drawsegs, MAXDRAWSEGS);
-                M_WriteText(0,SCREENHEIGHT - 20,VISCheck);
-            }
-            else
-            {
-                sprintf(VISCheck, "SEG: %i/%i", ds_p - drawsegs, MAXDRAWSEGS);
-                M_WriteText(0,SCREENHEIGHT - 20,VISCheck);
-            }
-            
-            // opening
-            sprintf(VISCheck, "OPN: %i/%i", lastopening - openings, MAXOPENINGS);
-            M_WriteText(0,SCREENHEIGHT - 30,VISCheck);
-            
-            // vissprites
-            sprintf(VISCheck, "SPR: %i/%i", (vissprite_p - vissprites) + 1, MAXVISSPRITES);
-            M_WriteText(0,SCREENHEIGHT - 40,VISCheck);
-        //}
-        
         I_FinishUpdate ();              // page flip or blit buffer
         return;
     }
