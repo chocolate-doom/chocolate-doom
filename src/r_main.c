@@ -874,14 +874,25 @@ void R_SetupFrame (player_t* player)
     validcount++;
 }
 
+static void DrawHOMBox(void)
+{
+    int color;
+
+    // Draw flashing box over the window where rendering takes place.
+    // This will highlight any HOM areas.
+
+    color = 250 + (framecount % 5);
+    V_DrawRect(viewwindowx, viewwindowy, viewwidth, viewheight, color);
+}
 
 
 //
 // R_RenderView
 //
 void R_RenderPlayerView (player_t* player)
-{	
+{
     R_SetupFrame (player);
+    DrawHOMBox();
 
     // Clear buffers.
     R_ClearClipSegs ();
