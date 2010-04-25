@@ -30,6 +30,7 @@
 
 #include <stdlib.h>
 
+#include "am_map.h"
 #include "i_system.h"
 #include "z_zone.h"
 #include "w_wad.h"
@@ -248,7 +249,7 @@ R_FindPlane
 		automapactive = 1;
 		AM_Start();
 		automapactive = 1;
-		return;
+		return NULL;
 	}//I_Error ("R_FindPlane: no more visplanes");
 		
     lastvisplane++;

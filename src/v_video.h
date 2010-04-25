@@ -117,5 +117,6 @@ V_MarkRect
   int		height );
 
 void V_ScreenShot(void);
+void V_DrawRect(int x, int y, int width, int height, int color);
 
 #endif

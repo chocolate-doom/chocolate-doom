@@ -243,7 +243,6 @@ void D_Display (void)
     unsigned int	nwfactor;
     unsigned int	nwtest;
     char VISCheck[128];
-    int z;
 
     if (nodrawers)
 	return;                    // for comparative timing / profiling
@@ -373,8 +372,6 @@ void D_Display (void)
 				nwtest = (unsigned)(players[displayplayer].mo->angle) >> FRACBITS;
 				nwfactor = nwtest / 180;
 				// display player
-				for (z = 0; z < 128; z++)
-						VISCheck[z] = 0;
 				sprintf(VISCheck, "Play x=%i y=%i vz=%i a=%i am=%i", 
 					(int)(players[displayplayer].mo->x) >> FRACBITS,
 					(int)(players[displayplayer].mo->y) >> FRACBITS,
@@ -386,16 +383,12 @@ void D_Display (void)
 			}
 			
 			// opening
-			for (z = 0; z < 128; z++)
-				VISCheck[z] = 0;
 			sprintf(VISCheck, "PLT: %i/%i", numplats, MAXPLATS);
 			M_WriteText(0,200 - 50,VISCheck);
 		
 			if ((int)(lastvisplane - visplanes) < 128)
 			{
 				// visplane
-		 		for (z = 0; z < 128; z++)
-					VISCheck[z] = 0;
 				sprintf(VISCheck, "PLN: %i/%i (Doom = 128)", lastvisplane - visplanes, MAXVISPLANES);
 				M_WriteText(0,200 - 10,VISCheck);
 			}
@@ -406,8 +399,6 @@ void D_Display (void)
 				else
 					V_DrawRect(0,200-10,200,8,215);
 				// visplane
-		 		for (z = 0; z < 128; z++)
-					VISCheck[z] = 0;
 				sprintf(VISCheck, "PLN: %i/%i (Doom = 128) ===", lastvisplane - visplanes, MAXVISPLANES);
 				M_WriteText(0,200 - 10,VISCheck);
 			}
@@ -418,8 +409,6 @@ void D_Display (void)
 				else
 					V_DrawRect(0,200-10,200,8,191);
 				// visplane
-		 		for (z = 0; z < 128; z++)
-					VISCheck[z] = 0;
 				sprintf(VISCheck, "PLN: %i/%i (Doom = 128) !!!", lastvisplane - visplanes, MAXVISPLANES);
 				M_WriteText(0,200 - 10,VISCheck);
 			}
@@ -431,28 +420,20 @@ void D_Display (void)
 					V_DrawRect(0,200-20,200,8,176);
 				else
 					V_DrawRect(0,200-20,200,8,191);
-				for (z = 0; z < 128; z++)
-					VISCheck[z] = 0;
 				sprintf(VISCheck, "SEG: %i/%i HOM", ds_p - drawsegs, MAXDRAWSEGS);
 				M_WriteText(0,200 - 20,VISCheck);
 			}
 			else
 			{
-		 		for (z = 0; z < 128; z++)
-					VISCheck[z] = 0;
 				sprintf(VISCheck, "SEG: %i/%i", ds_p - drawsegs, MAXDRAWSEGS);
 				M_WriteText(0,200 - 20,VISCheck);
 			}
 			
 			// opening
-			for (z = 0; z < 128; z++)
-				VISCheck[z] = 0;
 			sprintf(VISCheck, "OPN: %i/%i", lastopening - openings, MAXOPENINGS);
 			M_WriteText(0,200 - 30,VISCheck);
 			
 			// vissprites
-			for (z = 0; z < 128; z++)
-				VISCheck[z] = 0;
 			sprintf(VISCheck, "SPR: %i/%i", (vissprite_p - vissprites) + 1, MAXVISSPRITES);
 			M_WriteText(0,200 - 40,VISCheck);
 		//}
@@ -470,7 +451,6 @@ void D_Display (void)
     {
 	do
 	{
-		char VISCheck[32];
 	    nowtime = I_GetTime ();
 	    tics = nowtime - wipestart;
             I_Sleep(1);
