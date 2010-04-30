@@ -43,7 +43,6 @@ EXTRA_DIST=                             \
         CMDLINE                         \
         HACKING                         \
         README.OPL                      \
-        OPL-TODO                        \
         TODO                            \
         BUGS                            \
         rpm.spec
