@@ -247,7 +247,6 @@ void I_UpdateSound(void)
 
 static void CheckVolumeSeparation(int *sep, int *vol)
 {
-return;
     if (*sep < 0)
     {
         *sep = 0;

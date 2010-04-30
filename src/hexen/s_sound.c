@@ -736,7 +736,7 @@ void S_Init(void)
     {
         snd_Channels = 8;
     }
-    I_SetMusicVolume(snd_MusicVolume);
+    I_SetMusicVolume(snd_MusicVolume * 8);
 
     I_AtExit(S_ShutDown, true);
 
@@ -837,7 +837,7 @@ void S_SetMusicVolume(void)
     }
     else
     {
-        I_SetMusicVolume(snd_MusicVolume);
+        I_SetMusicVolume(snd_MusicVolume * 8);
     }
     if (snd_MusicVolume == 0)
     {
