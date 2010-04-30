@@ -618,6 +618,15 @@ void S_ChangeMusic(int musicnum, int looping)
     char namebuf[9];
     void *handle;
 
+    // The Doom IWAD file has two versions of the intro music: d_intro
+    // and d_introa.  The latter is used for OPL playback.
+
+    if (musicnum == mus_intro && (snd_musicdevice == SNDDEVICE_ADLIB
+                               || snd_musicdevice == SNDDEVICE_SB))
+    {
+        musicnum = mus_introa;
+    }
+
     if (musicnum <= mus_None || musicnum >= NUMMUSIC)
     {
         I_Error("Bad music number %d", musicnum);

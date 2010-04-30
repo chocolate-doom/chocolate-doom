@@ -13,6 +13,8 @@ DLL_FILES=$(TOPLEVEL)/src/SDL.dll                      \
           $(TOPLEVEL)/src/SDL_mixer.dll                \
           $(TOPLEVEL)/src/SDL_net.dll
 
+DOC_FILES += README.OPL
+
 ZIP=$(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-win32.zip
 
 $(ZIP) : staging

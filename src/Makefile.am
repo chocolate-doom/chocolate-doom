@@ -10,6 +10,7 @@ games_PROGRAMS = @PROGRAM_PREFIX@doom     \
                  @PROGRAM_PREFIX@setup
 
 AM_CFLAGS = -I$(top_builddir)/textscreen            \
+            -I$(top_builddir)/opl                   \
             -I$(top_builddir)/pcsound               \
             @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
@@ -115,6 +116,8 @@ FEATURE_SOUND_SOURCE_FILES =               \
 i_pcsound.c                                \
 i_sdlsound.c                               \
 i_sdlmusic.c                               \
+i_oplmusic.c                               \
+midifile.c           midifile.h            \
 mus2mid.c            mus2mid.h
 
 # Some games support dehacked patches, some don't:
@@ -131,10 +134,11 @@ EXTRA_LIBS =                                               \
                $(top_builddir)/wince/libc_wince.a          \
                $(top_builddir)/textscreen/libtextscreen.a  \
                $(top_builddir)/pcsound/libpcsound.a        \
+               $(top_builddir)/opl/libopl.a                \
                @LDFLAGS@                                   \
                @SDL_LIBS@                                  \
                @SDLMIXER_LIBS@                             \
-               @SDLNET_LIBS@ 
+               @SDLNET_LIBS@
 
 if HAVE_WINDRES
 @PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc
@@ -195,4 +199,7 @@ icon.c : $(top_builddir)/data/doom8.ico
 	$(top_builddir)/data/convert-icon $^ $@
 
 endif
+
+midiread : midifile.c
+	$(CC) -DTEST $(CFLAGS) @LDFLAGS@ $^ -o $@
 

@@ -335,8 +335,6 @@ static boolean I_SDL_MusicIsPlaying(void)
 
 static snddevice_t music_sdl_devices[] =
 {
-    SNDDEVICE_ADLIB,
-    SNDDEVICE_SB,
     SNDDEVICE_PAS,
     SNDDEVICE_GUS,
     SNDDEVICE_WAVEBLASTER,

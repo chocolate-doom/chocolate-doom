@@ -16,8 +16,9 @@ set tags+=tags
 let tagfiles = findfile("tags", ".;", -1)
 
 " Add tag files for libraries:
-call add(tagfiles, topdir . "textscreen/tags")
+call add(tagfiles, topdir . "opl/tags")
 call add(tagfiles, topdir . "pcsound/tags")
+call add(tagfiles, topdir . "textscreen/tags")
 
 for tagfile in tagfiles
     " Don't go beyond the project top level when adding parent dirs:
