@@ -24,6 +24,8 @@
 //
 //-----------------------------------------------------------------------------
 
+#include <stdarg.h>
+
 #include "doomdef.h"
 #include "doomtype.h"
 
@@ -250,4 +252,230 @@ deh_section_t deh_section_text =
     NULL,
     NULL,
 };
+
+typedef enum
+{
+    FORMAT_ARG_INVALID,
+    FORMAT_ARG_INT,
+    FORMAT_ARG_FLOAT,
+    FORMAT_ARG_CHAR,
+    FORMAT_ARG_STRING,
+    FORMAT_ARG_PTR,
+    FORMAT_ARG_SAVE_POS
+} format_arg_t;
+
+// Get the type of a format argument.
+// We can mix-and-match different format arguments as long as they
+// are for the same data type.
+
+static format_arg_t FormatArgumentType(char c)
+{
+    switch (c)
+    {
+        case 'd': case 'i': case 'o': case 'u': case 'x': case 'X':
+            return FORMAT_ARG_INT;
+
+        case 'e': case 'E': case 'f': case 'F': case 'g': case 'G':
+        case 'a': case 'A':
+            return FORMAT_ARG_FLOAT;
+
+        case 'c': case 'C':
+            return FORMAT_ARG_CHAR;
+
+        case 's': case 'S':
+            return FORMAT_ARG_STRING;
+
+        case 'p':
+            return FORMAT_ARG_PTR;
+
+        case 'n':
+            return FORMAT_ARG_SAVE_POS;
+
+        default:
+            return FORMAT_ARG_INVALID;
+    }
+}
+
+// Given the specified string, get the type of the first format
+// string encountered.
+
+static format_arg_t NextFormatArgument(char **str)
+{
+    format_arg_t argtype;
+
+    // Search for the '%' starting the next string.
+
+    while (**str != '\0')
+    {
+        if (**str == '%')
+        {
+            ++*str;
+
+            // Don't stop for double-%s.
+
+            if (**str != '%')
+            {
+                break;
+            }
+        }
+
+        ++*str;
+    }
+
+    // Find the type of the format string.
+
+    while (**str != '\0')
+    {
+        argtype = FormatArgumentType(**str);
+
+        if (argtype != FORMAT_ARG_INVALID)
+        {
+            ++*str;
+
+            return argtype;
+        }
+
+        ++*str;
+    }
+
+    // Stop searching, we have reached the end.
+
+    *str = NULL;
+
+    return FORMAT_ARG_INVALID;
+}
+
+// Check if the specified argument type is a valid replacement for
+// the original.
+
+static boolean ValidArgumentReplacement(format_arg_t original,
+                                        format_arg_t replacement)
+{
+    // In general, the original and replacement types should be
+    // identical.  However, there are some cases where the replacement
+    // is valid and the types don't match.
+
+    // Characters can be represented as ints.
+
+    if (original == FORMAT_ARG_CHAR && replacement == FORMAT_ARG_INT)
+    {
+        return true;
+    }
+
+    // Strings are pointers.
+
+    if (original == FORMAT_ARG_STRING && replacement == FORMAT_ARG_PTR)
+    {
+        return true;
+    }
+
+    return original == replacement;
+}
+
+// Return true if the specified string contains no format arguments.
+
+static boolean ValidFormatReplacement(char *original, char *replacement)
+{
+    char *rover1;
+    char *rover2;
+    int argtype1, argtype2;
+
+    // Check each argument in turn and compare types.
+
+    rover1 = original; rover2 = replacement;
+
+    for (;;)
+    {
+        argtype1 = NextFormatArgument(&rover1);
+        argtype2 = NextFormatArgument(&rover2);
+
+        if (argtype2 == FORMAT_ARG_INVALID)
+        {
+            // No more arguments left to read from the replacement string.
+
+            break;
+        }
+        else if (argtype1 == FORMAT_ARG_INVALID)
+        {
+            // Replacement string has more arguments than the original.
+
+            return false;
+        }
+        else if (!ValidArgumentReplacement(argtype1, argtype2))
+        {
+            // Not a valid replacement argument.
+
+            return false;
+        }
+    }
+
+    return true;
+}
+
+// Get replacement format string, checking arguments.
+
+static char *FormatStringReplacement(char *s)
+{
+    char *repl;
+
+    repl = DEH_String(s);
+
+    if (!ValidFormatReplacement(s, repl))
+    {
+        printf("WARNING: Unsafe dehacked replacement provided for "
+               "printf format string: %s\n", s);
+
+        return s;
+    }
+
+    return repl;
+}
+
+// printf(), performing a replacement on the format string.
+
+void DEH_printf(char *fmt, ...)
+{
+    va_list args;
+    char *repl;
+
+    repl = FormatStringReplacement(fmt);
+
+    va_start(args, fmt);
+
+    vprintf(repl, args);
+
+    va_end(args);
+}
+
+// fprintf(), performing a replacement on the format string.
+
+void DEH_fprintf(FILE *fstream, char *fmt, ...)
+{
+    va_list args;
+    char *repl;
+
+    repl = FormatStringReplacement(fmt);
+
+    va_start(args, fmt);
+
+    vfprintf(fstream, repl, args);
+
+    va_end(args);
+}
+
+// snprintf(), performing a replacement on the format string.
+
+void DEH_snprintf(char *buffer, size_t len, char *fmt, ...)
+{
+    va_list args;
+    char *repl;
+
+    repl = FormatStringReplacement(fmt);
+
+    va_start(args, fmt);
+
+    vsnprintf(buffer, len, repl, args);
+
+    va_end(args);
+}
 

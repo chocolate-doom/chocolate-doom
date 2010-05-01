@@ -76,7 +76,7 @@ char *P_SaveGameFile(int slot)
         filename = malloc(strlen(savegamedir) + 32);
     }
 
-    sprintf(basename, DEH_String(SAVEGAMENAME "%d.dsg"), slot);
+    DEH_snprintf(basename, 32, SAVEGAMENAME "%d.dsg", slot);
 
     sprintf(filename, "%s%s", savegamedir, basename);
 

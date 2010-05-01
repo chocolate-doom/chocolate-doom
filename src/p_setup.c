@@ -774,9 +774,9 @@ P_SetupLevel
     if ( gamemode == commercial)
     {
 	if (map<10)
-	    sprintf (lumpname, DEH_String("map0%i"), map);
+	    DEH_snprintf(lumpname, 9, "map0%i", map);
 	else
-	    sprintf (lumpname, DEH_String("map%i"), map);
+	    DEH_snprintf(lumpname, 9, "map%i", map);
     }
     else
     {
