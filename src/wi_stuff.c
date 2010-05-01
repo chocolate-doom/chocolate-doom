@@ -1749,11 +1749,13 @@ void WI_loadData(void)
 
     if (gamemode == commercial)
     {
-	strcpy(bg_lumpname, DEH_String("INTERPIC"));
+	strncpy(bg_lumpname, 9, DEH_String("INTERPIC"));
+        bg_lumpname[8] = '\0';
     }
     else if (gamemode == retail && wbs->epsd == 3)
     {
-	strcpy(bg_lumpname, DEH_String("INTERPIC"));
+	strncpy(bg_lumpname, 9, DEH_String("INTERPIC"));
+        bg_lumpname[8] = '\0';
     }
     else
     {
