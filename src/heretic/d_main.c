@@ -700,7 +700,7 @@ void tprintf(char *msg, int initflag)
 // haleyjd: moved up, removed WATCOMC code
 void CleanExit(void)
 {
-    printf(DEH_String("Exited from HERETIC.\n"));
+    DEH_printf("Exited from HERETIC.\n");
     exit(1);
 }
 
@@ -849,7 +849,7 @@ void D_DoomMain(void)
 //
 // init subsystems
 //
-    printf(DEH_String("V_Init: allocate screens.\n"));
+    DEH_printf("V_Init: allocate screens.\n");
     V_Init();
 
     // Check for -CDROM
@@ -882,14 +882,14 @@ void D_DoomMain(void)
     }
 
     // Load defaults before initing other systems
-    printf(DEH_String("M_LoadDefaults: Load system defaults.\n"));
+    DEH_printf("M_LoadDefaults: Load system defaults.\n");
     D_BindVariables();
     M_SetConfigFilenames("heretic.cfg", PROGRAM_PREFIX "heretic.cfg");
     M_LoadDefaults();
 
     I_AtExit(M_SaveDefaults, false);
 
-    printf(DEH_String("Z_Init: Init zone memory allocation daemon.\n"));
+    DEH_printf("Z_Init: Init zone memory allocation daemon.\n");
     Z_Init();
 
 #ifdef FEATURE_DEHACKED
@@ -897,7 +897,7 @@ void D_DoomMain(void)
     DEH_Init();
 #endif
 
-    printf(DEH_String("W_Init: Init WADfiles.\n"));
+    DEH_printf("W_Init: Init WADfiles.\n");
 
     iwadfile = D_FindIWAD(IWAD_MASK_HERETIC, &gamemission);
 
@@ -917,9 +917,9 @@ void D_DoomMain(void)
     }
     if (p && p < myargc - 1)
     {
-        sprintf(file, DEH_String("%s.lmp"), myargv[p + 1]);
+        DEH_snprintf(file, sizeof(file), "%s.lmp", myargv[p + 1]);
         D_AddFile(file);
-        printf(DEH_String("Playing demo %s.lmp.\n"), myargv[p + 1]);
+        DEH_printf("Playing demo %s.lmp.\n", myargv[p + 1]);
     }
 
     if (W_CheckNumForName(DEH_String("E2M1")) == -1)
@@ -958,8 +958,9 @@ void D_DoomMain(void)
     if (autostart)
     {
         char temp[64];
-        sprintf(temp, DEH_String("Warp to Episode %d, Map %d, Skill %d "),
-                startepisode, startmap, startskill + 1);
+        DEH_snprintf(temp, sizeof(temp),
+                     "Warp to Episode %d, Map %d, Skill %d ",
+                     startepisode, startmap, startskill + 1);
         status(temp);
     }
     wadprintf();                // print the added wadfiles

@@ -863,12 +863,16 @@ void G_Ticker(void)
                         {
                             if (netgame)
                             {
-                                strcpy(savedescription, DEH_String("NET GAME"));
+                                strncpy(savedescription, DEH_String("NET GAME"),
+                                        sizeof(savedescription));
                             }
                             else
                             {
-                                strcpy(savedescription, DEH_String("SAVE GAME"));
+                                strncpy(savedescription, DEH_String("SAVE GAME"),
+                                        sizeof(savedescription));
                             }
+
+                            savedescription[sizeof(savedescription) - 1] = '\0';
                         }
                         savegameslot =
                             (players[i].cmd.
@@ -1321,7 +1325,9 @@ void G_DoLoadGame(void)
     save_p = savebuffer + SAVESTRINGSIZE;
     // Skip the description field
     memset(vcheck, 0, sizeof(vcheck));
-    sprintf(vcheck, DEH_String("version %i"), HERETIC_VERSION);
+
+    DEH_snprintf(vcheck, VERSIONSIZE, "version %i", HERETIC_VERSION);
+
     if (strcmp((char *) save_p, vcheck) != 0)
     {                           // Bad version
         return;
@@ -1695,7 +1701,7 @@ void G_DoSaveGame(void)
     SV_Open(name);
     SV_Write(description, SAVESTRINGSIZE);
     memset(verString, 0, sizeof(verString));
-    sprintf(verString, DEH_String("version %i"), HERETIC_VERSION);
+    DEH_snprintf(verString, VERSIONSIZE, "version %i", HERETIC_VERSION);
     SV_Write(verString, VERSIONSIZE);
     SV_WriteByte(gameskill);
     SV_WriteByte(gameepisode);

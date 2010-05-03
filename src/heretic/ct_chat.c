@@ -301,7 +301,9 @@ void CT_Ticker(void)
                 CT_AddChar(i, 0);       // set the end of message character
                 if (numplayers > 2)
                 {
-                    strcpy(plr_lastmsg[i], DEH_String(CT_FromPlrText[i]));
+                    strncpy(plr_lastmsg[i], DEH_String(CT_FromPlrText[i]),
+                            MESSAGESIZE + 9);
+                    plr_lastmsg[i][MESSAGESIZE + 8] = '\0';
                     strcat(plr_lastmsg[i], chat_msg[i]);
                 }
                 else
