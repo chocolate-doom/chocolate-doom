@@ -1,3 +1,27 @@
+1.4.0 (2010-??-??):
+
+     The biggest change in this version is the addition of OPL
+     emulation.  This emulates Vanilla Doom's MIDI playback when
+     using a Yamaha OPL synthesizer chip, as was found on
+     SoundBlaster compatible cards.
+
+     A software OPL emulator is included as most modern computers do
+     not have a hardware OPL chip any more.  If you do have one, you
+     can configure Chocolate Doom to use it; see README.OPL.
+
+     The OPL playback feature is not yet perfect or 100% complete,
+     but is judged to be good enough for general use.  If you find
+     music that does not play back properly, please report it as a
+     bug.
+
+     Other changes:
+     * The REJECT overflow emulation code from PrBoom+ has been
+       imported.  This fixes demo desync on some demos, although
+       others will still desync.
+     * Warnings are now generated for invalid dehacked replacements of
+       printf format strings.  Some potential buffer overflows are
+       also checked.
+
 1.3.0 (2010-02-10):
 
      * Chocolate Doom now runs on Windows Mobile/Windows CE!

@@ -101,7 +101,7 @@ static void LoadResponseFile(int argv_index)
     size = M_FileLength(handle);
 
     // Read in the entire file
-    // Allocate one byte extra - this is incase there is an argument
+    // Allocate one byte extra - this is in case there is an argument
     // at the end of the response file, in which case a '\0' will be
     // needed.
 

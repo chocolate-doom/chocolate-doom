@@ -1068,7 +1068,7 @@ void D_DoomMain (void)
 
     I_PrintBanner(PACKAGE_STRING);
 
-    printf (DEH_String("Z_Init: Init zone memory allocation daemon. \n"));
+    DEH_printf("Z_Init: Init zone memory allocation daemon. \n");
     Z_Init ();
 
 #ifdef FEATURE_MULTIPLAYER
@@ -1187,7 +1187,7 @@ void D_DoomMain (void)
 	deathmatch = 2;
 
     if (devparm)
-	printf(DEH_String(D_DEVSTR));
+	DEH_printf(D_DEVSTR);
     
     // find which dir to use for config files
 
@@ -1235,7 +1235,7 @@ void D_DoomMain (void)
 	    scale = 10;
 	if (scale > 400)
 	    scale = 400;
-	printf (DEH_String("turbo scale: %i%%\n"),scale);
+        DEH_printf("turbo scale: %i%%\n", scale);
 	forwardmove[0] = forwardmove[0]*scale/100;
 	forwardmove[1] = forwardmove[1]*scale/100;
 	sidemove[0] = sidemove[0]*scale/100;
@@ -1243,11 +1243,11 @@ void D_DoomMain (void)
     }
     
     // init subsystems
-    printf(DEH_String("V_Init: allocate screens.\n"));
-    V_Init();
+    DEH_printf("V_Init: allocate screens.\n");
+    V_Init ();
 
     // Load configuration files before initialising other subsystems.
-    printf(DEH_String("M_LoadDefaults: Load system defaults.\n"));
+    DEH_printf("M_LoadDefaults: Load system defaults.\n");
     M_SetConfigFilenames("default.cfg", PROGRAM_PREFIX "doom.cfg");
     D_BindVariables();
     M_LoadDefaults();
@@ -1255,7 +1255,7 @@ void D_DoomMain (void)
     // Save configuration at exit.
     I_AtExit(M_SaveDefaults, false);
 
-    printf (DEH_String("W_Init: Init WADfiles.\n"));
+    DEH_printf("W_Init: Init WADfiles.\n");
     D_AddFile(iwadfile);
     modifiedgame = W_ParseCommandLine();
 
@@ -1451,8 +1451,8 @@ void D_DoomMain (void)
 
     if (p && p < myargc-1 && deathmatch)
     {
-	printf(DEH_String("Austin Virtual Gaming: Levels will end "
-			  "after 20 minutes\n"));
+        DEH_printf("Austin Virtual Gaming: Levels will end "
+                       "after 20 minutes\n");
 	timelimit = 20;
     }
 
@@ -1534,16 +1534,16 @@ void D_DoomMain (void)
     I_PrintStartupBanner(gamedescription);
     PrintDehackedBanners();
 
-    printf (DEH_String("M_Init: Init miscellaneous info.\n"));
+    DEH_printf("M_Init: Init miscellaneous info.\n");
     M_Init ();
 
-    printf (DEH_String("R_Init: Init DOOM refresh daemon - "));
+    DEH_printf("R_Init: Init DOOM refresh daemon - ");
     R_Init ();
 
-    printf (DEH_String("\nP_Init: Init Playloop state.\n"));
+    DEH_printf("\nP_Init: Init Playloop state.\n");
     P_Init ();
 
-    printf (DEH_String("I_Init: Setting up machine state.\n"));
+    DEH_printf("I_Init: Setting up machine state.\n");
     I_CheckIsScreensaver();
     I_InitTimer();
     I_InitJoystick();
@@ -1553,18 +1553,18 @@ void D_DoomMain (void)
     NET_Init ();
 #endif
 
-    printf (DEH_String("S_Init: Setting up sound.\n"));
+    DEH_printf("S_Init: Setting up sound.\n");
     S_Init (sfxVolume * 8, musicVolume * 8);
 
-    printf (DEH_String("D_CheckNetGame: Checking network game status.\n"));
+    DEH_printf("D_CheckNetGame: Checking network game status.\n");
     D_CheckNetGame ();
 
     PrintGameVersion();
 
-    printf (DEH_String("HU_Init: Setting up heads up display.\n"));
+    DEH_printf("HU_Init: Setting up heads up display.\n");
     HU_Init ();
 
-    printf (DEH_String("ST_Init: Init status bar.\n"));
+    DEH_printf("ST_Init: Init status bar.\n");
     ST_Init ();
 
     // If Doom II without a MAP01 lump, this is a store demo.  
