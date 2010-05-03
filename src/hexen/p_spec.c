@@ -245,6 +245,8 @@ fixed_t P_FindNextHighestFloor(sector_t * sec, int currentheight)
     fixed_t height = currentheight;
     fixed_t heightlist[20];     // 20 adjoining sectors max!
 
+    heightlist[0] = 0;
+
     for (i = 0, h = 0; i < sec->linecount; i++)
     {
         check = sec->lines[i];

@@ -158,7 +158,7 @@ void R_InstallSpriteLump(int lump, unsigned frame, unsigned rotation,
 void R_InitSpriteDefs(char **namelist)
 {
     char **check;
-    int i, l, intname, frame, rotation;
+    int i, l, frame, rotation;
     int start, end;
 
 // count the number of sprite names
@@ -184,13 +184,12 @@ void R_InitSpriteDefs(char **namelist)
         memset(sprtemp, -1, sizeof(sprtemp));
 
         maxframe = -1;
-        intname = *(int *) namelist[i];
 
         //
         // scan the lumps, filling in the frames for whatever is found
         //
         for (l = start + 1; l < end; l++)
-            if (*(int *) lumpinfo[l].name == intname)
+            if (!strncmp(lumpinfo[l].name, namelist[i], 4))
             {
                 frame = lumpinfo[l].name[4] - 'A';
                 rotation = lumpinfo[l].name[5] - '0';
