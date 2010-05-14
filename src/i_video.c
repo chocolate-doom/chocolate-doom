@@ -85,6 +85,7 @@ static screen_mode_t *screen_modes_corrected[] = {
 };
 
 extern void M_QuitDOOM();
+extern boolean advancedemo;
 
 // SDL video driver name
 
@@ -228,7 +229,7 @@ static boolean MouseShouldBeGrabbed()
 
     // only grab mouse when playing levels (but not demos)
 
-    return (gamestate == GS_LEVEL) && !demoplayback;
+    return (gamestate == GS_LEVEL) && !demoplayback && !advancedemo;
 
 #endif /* #ifndef _WIN32_WCE */
 }
