@@ -337,6 +337,11 @@ static default_t extra_defaults_list[] =
     {"key_weapon8",                 &key_weapon8, DEFAULT_KEY, 0, 0},
     {"key_message_refresh",         &key_message_refresh, DEFAULT_KEY, 0, 0},
     {"key_demo_quit",               &key_demo_quit, DEFAULT_KEY, 0, 0},
+    {"key_multi_msg",               &key_multi_msg, DEFAULT_KEY, 0, 0},
+    {"key_multi_msgplayer1",        &key_multi_msgplayer[0], DEFAULT_KEY, 0, 0},
+    {"key_multi_msgplayer2",        &key_multi_msgplayer[1], DEFAULT_KEY, 0, 0},
+    {"key_multi_msgplayer3",        &key_multi_msgplayer[2], DEFAULT_KEY, 0, 0},
+    {"key_multi_msgplayer4",        &key_multi_msgplayer[3], DEFAULT_KEY, 0, 0},
 };
 
 static default_collection_t extra_defaults =

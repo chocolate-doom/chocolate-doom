@@ -37,6 +37,11 @@ extern int vanilla_keyboard_mapping;
 
 extern int key_pause;
 
+// Multiplayer messages:
+
+extern int key_multi_msg;
+extern int key_multi_msgplayer[];
+
 // Menu keys:
 
 extern int key_menu_activate;

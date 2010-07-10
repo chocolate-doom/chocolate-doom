@@ -150,7 +150,10 @@ extern int key_weapon8;
 
 extern int key_message_refresh;
 extern int key_demo_quit;
- 
+
+extern int key_multi_msg;
+extern int key_multi_msgplayer[];
+
 extern int	mousebfire;
 extern int	mousebstrafe;
 extern int	mousebforward;
@@ -1048,6 +1051,36 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_KEY(key_demo_quit,             key_demo_quit),
+
+    //!
+    // Key to send a message during multiplayer games.
+    //
+
+    CONFIG_VARIABLE_KEY(key_multi_msg,             key_multi_msg),
+
+    //!
+    // Key to send a message to the green player during multiplayer games.
+    //
+
+    CONFIG_VARIABLE_KEY(key_multi_msgplayer1,      key_multi_msgplayer[0]),
+
+    //!
+    // Key to send a message to the indigo player during multiplayer games.
+    //
+
+    CONFIG_VARIABLE_KEY(key_multi_msgplayer2,      key_multi_msgplayer[1]),
+
+    //!
+    // Key to send a message to the brown player during multiplayer games.
+    //
+
+    CONFIG_VARIABLE_KEY(key_multi_msgplayer3,      key_multi_msgplayer[2]),
+
+    //!
+    // Key to send a message to the red player during multiplayer games.
+    //
+
+    CONFIG_VARIABLE_KEY(key_multi_msgplayer4,      key_multi_msgplayer[3]),
 };
 
 static default_collection_t extra_defaults =

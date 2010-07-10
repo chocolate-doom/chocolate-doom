@@ -93,6 +93,9 @@ int key_weapon8        = '8';
 int key_message_refresh = KEY_ENTER;
 int key_demo_quit      = 'q';
 
+int key_multi_msg      = 't';
+int key_multi_msgplayer[] = { 'g', 'i', 'b', 'r' };
+
 int vanilla_keyboard_mapping = 1;
 
 static int always_run = 0;
@@ -116,7 +119,9 @@ static int *shortcuts[] = { &key_menu_help, &key_menu_save, &key_menu_load,
                             &key_menu_endgame, &key_menu_messages,
                             &key_menu_qload, &key_menu_quit, &key_menu_gamma,
                             &key_menu_incscreen, &key_menu_decscreen, 
-                            &key_message_refresh, NULL };
+                            &key_message_refresh, &key_multi_msg,
+                            &key_multi_msgplayer[0], &key_multi_msgplayer[1],
+                            &key_multi_msgplayer[2], &key_multi_msgplayer[3] };
 
 static int *map_keys[] = { &key_map_north, &key_map_south, &key_map_east,
                            &key_map_west, &key_map_zoomin, &key_map_zoomout,
@@ -275,6 +280,18 @@ static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
     AddKeyControl(table, "Display last message",  &key_message_refresh);
     AddKeyControl(table, "Finish recording demo", &key_demo_quit);
+
+    TXT_AddWidgets(table, TXT_NewStrut(0, 1),
+                          TXT_NewStrut(0, 1),
+                          TXT_NewLabel(" - Multiplayer - "),
+                          TXT_NewStrut(0, 0),
+                          NULL);
+
+    AddKeyControl(table, "Send message",          &key_multi_msg);
+    AddKeyControl(table, "- to green",            &key_multi_msgplayer[0]);
+    AddKeyControl(table, "- to indigo",           &key_multi_msgplayer[1]);
+    AddKeyControl(table, "- to brown",            &key_multi_msgplayer[2]);
+    AddKeyControl(table, "- to red",              &key_multi_msgplayer[3]);
 
     TXT_AddWidgets(table, TXT_NewStrut(0, 1),
                           TXT_NewStrut(0, 1),
