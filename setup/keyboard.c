@@ -91,6 +91,7 @@ int key_weapon7        = '7';
 int key_weapon8        = '8';
 
 int key_message_refresh = KEY_ENTER;
+int key_demo_quit      = 'q';
 
 int vanilla_keyboard_mapping = 1;
 
@@ -273,6 +274,7 @@ static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddKeyControl(table, "Decrease screen size",  &key_menu_decscreen);
 
     AddKeyControl(table, "Display last message",  &key_message_refresh);
+    AddKeyControl(table, "Finish recording demo", &key_demo_quit);
 
     TXT_AddWidgets(table, TXT_NewStrut(0, 1),
                           TXT_NewStrut(0, 1),

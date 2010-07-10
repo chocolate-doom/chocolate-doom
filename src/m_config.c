@@ -149,6 +149,7 @@ extern int key_weapon7;
 extern int key_weapon8;
 
 extern int key_message_refresh;
+extern int key_demo_quit;
  
 extern int	mousebfire;
 extern int	mousebstrafe;
@@ -1041,6 +1042,12 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_KEY(key_message_refresh,       key_message_refresh),
+
+    //!
+    // Key to quit the game when recording a demo.
+    //
+
+    CONFIG_VARIABLE_KEY(key_demo_quit,             key_demo_quit),
 };
 
 static default_collection_t extra_defaults =

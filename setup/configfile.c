@@ -336,6 +336,7 @@ static default_t extra_defaults_list[] =
     {"key_weapon7",                 &key_weapon7, DEFAULT_KEY, 0, 0},
     {"key_weapon8",                 &key_weapon8, DEFAULT_KEY, 0, 0},
     {"key_message_refresh",         &key_message_refresh, DEFAULT_KEY, 0, 0},
+    {"key_demo_quit",               &key_demo_quit, DEFAULT_KEY, 0, 0},
 };
 
 static default_collection_t extra_defaults =

@@ -184,6 +184,7 @@ int             key_weapon7 = '7';
 int             key_weapon8 = '8';
 
 int             key_pause = KEY_PAUSE;
+int             key_demo_quit = 'q';
  
 int             mousebfire = 0;
 int             mousebstrafe = 1;
@@ -1846,7 +1847,7 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
 { 
     byte *demo_start;
 
-    if (gamekeydown['q'])           // press q to end demo recording 
+    if (gamekeydown[key_demo_quit])           // press q to end demo recording 
 	G_CheckDemoStatus (); 
 
     demo_start = demo_p;
