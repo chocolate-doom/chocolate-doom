@@ -1,3 +1,81 @@
+2010-05-30 04:03:44 fraggle
+	
+	Add INSTALL to all distribution packages, add note in README.
+
+2010-05-30 03:56:58 fraggle
+	
+	Clarify/update install instructions.
+
+2010-05-14 19:42:32 fraggle
+	
+	Don't grab the mouse when the demo sequence advances.
+
+2010-05-03 17:47:25 fraggle
+	
+	Oops.
+
+2010-05-03 16:58:52 fraggle
+	
+	Update NEWS.
+
+2010-05-01 22:47:26 fraggle
+	
+	Further sanity checking on use of strcpy() with dehacked string
+	replacements.
+
+2010-05-01 22:20:30 fraggle
+	
+	Silence printf(DEH_String(...)) warnings, by providing a DEH_printf
+	function that checks the format string is a valid replacement.  Also
+	add DEH_fprintf and DEH_snprintf functions to use throughout the code
+	to do similar checking.
+
+2010-05-01 20:22:52 fraggle
+	
+	Fix compiler warnings with savegame and response file code.
+
+2010-04-30 20:58:30 fraggle
+	
+	Merge contents of OPL-TODO into TODO file.
+
+2010-04-30 20:38:24 fraggle
+	
+	Add textscreen Doxyfile to dist.  Add .desktop file to svn:ignore.  Add
+	opl ctags file to localvimrc.
+
+2010-04-25 00:53:03 fraggle
+	
+	Add -reject_pad_with_ff parameter to allow padding value to be
+	specified.
+
+2010-04-23 21:46:29 fraggle
+	
+	Add REJECT buffer overflow emulation, based on code from PrBoom+
+	(thanks entryway).  Fixes YDFEAR25.LMP.
+
+2010-04-22 22:38:51 fraggle
+	
+	Disable OPL debugging messages.
+
+2010-03-08 18:52:59 fraggle
+	
+	Add OPL-TODO to dist, set svn:ignore properties.
+
+2010-03-08 18:50:29 fraggle
+	
+	Use native MIDI music by default.
+
+2010-03-08 01:14:23 fraggle
+	
+	Merge opl-branch to trunk.
+	
+	OPL support still isn't perfect, and it certainly isn't complete.
+	However, for now, it's good enough.
+
+2010-02-10 20:21:21 fraggle
+	
+	Bump version number, update ChangeLog and NEWS.
+
 2010-01-31 18:21:50 fraggle
 	
 	Change Windows resource file to use PACKAGE_COPYRIGHT and
