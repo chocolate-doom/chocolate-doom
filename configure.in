@@ -74,6 +74,7 @@ AC_SDL_MAIN_WORKAROUND([
     # Check for libsamplerate.
 
     AC_CHECK_LIB(samplerate, src_new)
+    AC_CHECK_LIB(m, log)
 
     AC_CHECK_HEADERS([linux/kd.h dev/isa/spkrio.h dev/speaker/speaker.h])
     AC_CHECK_FUNCS(mmap sched_setaffinity ioperm)
