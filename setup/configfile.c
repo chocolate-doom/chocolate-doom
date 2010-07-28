@@ -154,9 +154,10 @@ static int snd_sbirq = 0;
 static int snd_sbdma = 0;
 static int snd_mport = 0;
 
-typedef enum 
+typedef enum
 {
     DEFAULT_INT,
+    DEFAULT_INT_HEX,
     DEFAULT_STRING,
     DEFAULT_FLOAT,
     DEFAULT_KEY,
@@ -269,6 +270,7 @@ static default_t extra_defaults_list[] =
     {"mouse_acceleration",          &mouse_acceleration, DEFAULT_FLOAT, 0, 0},
     {"mouse_threshold",             &mouse_threshold, DEFAULT_INT, 0, 0},
     {"snd_samplerate",              &snd_samplerate, DEFAULT_INT, 0, 0},
+    {"opl_io_port",                 &opl_io_port, DEFAULT_INT_HEX, 0, 0},
     {"show_endoom",                 &show_endoom, DEFAULT_INT, 0, 0},
     {"vanilla_savegame_limit",      &vanilla_savegame_limit, DEFAULT_INT, 0, 0},
     {"vanilla_demo_limit",          &vanilla_demo_limit, DEFAULT_INT, 0, 0},
@@ -435,6 +437,10 @@ static void SaveDefaultCollection(default_collection_t *collection)
 	        fprintf(f, "%i", v);
                 break;
 
+            case DEFAULT_INT_HEX:
+	        fprintf(f, "0x%x", * (int *) defaults[i].location);
+                break;
+
             case DEFAULT_INT:
 	        fprintf(f, "%i", * (int *) defaults[i].location);
                 break;
@@ -528,6 +534,7 @@ static void LoadDefaultCollection(default_collection_t *collection)
                     break;
 
                 case DEFAULT_INT:
+                case DEFAULT_INT_HEX:
                     * (int *) def->location = ParseIntParameter(strparm);
                     break;
 

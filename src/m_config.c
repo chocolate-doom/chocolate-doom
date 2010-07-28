@@ -191,6 +191,7 @@ extern int      vanilla_demo_limit;
 extern int snd_musicdevice;
 extern int snd_sfxdevice;
 extern int snd_samplerate;
+extern int opl_io_port;
 
 // controls whether to use libsamplerate for sample rate conversions
 
@@ -208,6 +209,7 @@ static int snd_mport = 0;
 typedef enum 
 {
     DEFAULT_INT,
+    DEFAULT_INT_HEX,
     DEFAULT_STRING,
     DEFAULT_FLOAT,
     DEFAULT_KEY,
@@ -243,14 +245,19 @@ typedef struct
     char      *filename;
 } default_collection_t;
 
+#define CONFIG_VARIABLE_GENERIC(name, variable, type) \
+    { #name, &variable, type, 0, 0 }
+
 #define CONFIG_VARIABLE_KEY(name, variable) \
-    { #name, &variable, DEFAULT_KEY, 0, 0 }
+    CONFIG_VARIABLE_GENERIC(name, variable, DEFAULT_KEY)
 #define CONFIG_VARIABLE_INT(name, variable) \
-    { #name, &variable, DEFAULT_INT, 0, 0 }
+    CONFIG_VARIABLE_GENERIC(name, variable, DEFAULT_INT)
+#define CONFIG_VARIABLE_INT_HEX(name, variable) \
+    CONFIG_VARIABLE_GENERIC(name, variable, DEFAULT_INT_HEX)
 #define CONFIG_VARIABLE_FLOAT(name, variable) \
-    { #name, &variable, DEFAULT_FLOAT, 0, 0 }
+    CONFIG_VARIABLE_GENERIC(name, variable, DEFAULT_FLOAT)
 #define CONFIG_VARIABLE_STRING(name, variable) \
-    { #name, &variable, DEFAULT_STRING, 0, 0 }
+    CONFIG_VARIABLE_GENERIC(name, variable, DEFAULT_STRING)
 
 //! @begin_config_file default.cfg
 
@@ -625,18 +632,25 @@ static default_t extra_defaults_list[] =
 
     //!
     // Mouse acceleration threshold.  When the speed of mouse movement
-    // exceeds this threshold value, the speed is multiplied by an 
+    // exceeds this threshold value, the speed is multiplied by an
     // acceleration factor (mouse_acceleration).
     //
 
     CONFIG_VARIABLE_INT(mouse_threshold,           mouse_threshold),
 
     //!
-    // Sound output sample rate, in Hz.  Typical values to use are 
+    // Sound output sample rate, in Hz.  Typical values to use are
     // 11025, 22050, 44100 and 48000.
     //
 
     CONFIG_VARIABLE_INT(snd_samplerate,            snd_samplerate),
+
+    //!
+    // The I/O port to use to access the OPL chip.  Only relevant when
+    // using native OPL music playback.
+    //
+
+    CONFIG_VARIABLE_INT_HEX(opl_io_port,           opl_io_port),
 
     //!
     // If non-zero, the ENDOOM screen is displayed when exiting the
@@ -1178,6 +1192,10 @@ static void SaveDefaultCollection(default_collection_t *collection)
 	        fprintf(f, "%i", * (int *) defaults[i].location);
                 break;
 
+            case DEFAULT_INT_HEX:
+	        fprintf(f, "0x%x", * (int *) defaults[i].location);
+                break;
+
             case DEFAULT_FLOAT:
                 fprintf(f, "%f", * (float *) defaults[i].location);
                 break;
@@ -1267,6 +1285,7 @@ static void LoadDefaultCollection(default_collection_t *collection)
                     break;
 
                 case DEFAULT_INT:
+                case DEFAULT_INT_HEX:
                     * (int *) def->location = ParseIntParameter(strparm);
                     break;
 
