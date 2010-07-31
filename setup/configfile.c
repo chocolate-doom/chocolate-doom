@@ -314,6 +314,7 @@ static default_t extra_defaults_list[] =
     {"key_menu_qload",              &key_menu_qload, DEFAULT_KEY, 0, 0},
     {"key_menu_quit",               &key_menu_quit, DEFAULT_KEY, 0, 0},
     {"key_menu_gamma",              &key_menu_gamma, DEFAULT_KEY, 0, 0},
+    {"key_spy",                     &key_spy, DEFAULT_KEY, 0, 0},
     {"key_menu_incscreen",          &key_menu_incscreen, DEFAULT_KEY, 0, 0},
     {"key_menu_decscreen",          &key_menu_decscreen, DEFAULT_KEY, 0, 0},
 

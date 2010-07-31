@@ -185,6 +185,7 @@ int             key_weapon8 = '8';
 
 int             key_pause = KEY_PAUSE;
 int             key_demo_quit = 'q';
+int             key_spy = KEY_F12;
  
 int             mousebfire = 0;
 int             mousebstrafe = 1;
@@ -740,7 +741,7 @@ boolean G_Responder (event_t* ev)
 { 
     // allow spy mode changes even during the demo
     if (gamestate == GS_LEVEL && ev->type == ev_keydown 
-     && ev->data1 == KEY_F12 && (singledemo || !deathmatch) )
+     && ev->data1 == key_spy && (singledemo || !deathmatch) )
     {
 	// spy mode 
 	do 

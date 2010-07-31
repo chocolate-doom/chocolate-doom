@@ -64,6 +64,7 @@ int key_menu_messages  = KEY_F8;
 int key_menu_qload     = KEY_F9;
 int key_menu_quit      = KEY_F10;
 int key_menu_gamma     = KEY_F11;
+int key_spy            = KEY_F12;
 
 int key_menu_incscreen = KEY_EQUALS;
 int key_menu_decscreen = KEY_MINUS;
@@ -116,7 +117,7 @@ static int *menu_nav[] = { &key_menu_activate, &key_menu_up, &key_menu_down,
 
 static int *shortcuts[] = { &key_menu_help, &key_menu_save, &key_menu_load,
                             &key_menu_volume, &key_menu_detail, &key_menu_qsave,
-                            &key_menu_endgame, &key_menu_messages,
+                            &key_menu_endgame, &key_menu_messages, &key_spy,
                             &key_menu_qload, &key_menu_quit, &key_menu_gamma,
                             &key_menu_incscreen, &key_menu_decscreen, 
                             &key_message_refresh, &key_multi_msg,
@@ -274,6 +275,7 @@ static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddKeyControl(table, "Quick load",            &key_menu_qload);
     AddKeyControl(table, "Quit game",             &key_menu_quit);
     AddKeyControl(table, "Toggle gamma",          &key_menu_gamma);
+    AddKeyControl(table, "Multiplayer spy",       &key_spy);
 
     AddKeyControl(table, "Increase screen size",  &key_menu_incscreen);
     AddKeyControl(table, "Decrease screen size",  &key_menu_decscreen);
