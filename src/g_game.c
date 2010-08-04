@@ -182,6 +182,8 @@ int             key_weapon5 = '5';
 int             key_weapon6 = '6';
 int             key_weapon7 = '7';
 int             key_weapon8 = '8';
+int             key_prevweapon = 0;
+int             key_nextweapon = 0;
 
 int             key_pause = KEY_PAUSE;
 int             key_demo_quit = 'q';
@@ -233,6 +235,28 @@ static int *weapon_keys[] = {
     &key_weapon6,
     &key_weapon7,
     &key_weapon8
+};
+
+// Set to -1 or +1 to switch to the previous or next weapon.
+
+static int next_weapon = 0;
+
+// Used for prev/next weapon keys.
+
+static const struct
+{
+    weapontype_t weapon;
+    weapontype_t weapon_num;
+} weapon_order_table[] = {
+    { wp_fist,            wp_fist },
+    { wp_chainsaw,        wp_fist },
+    { wp_pistol,          wp_pistol },
+    { wp_shotgun,         wp_shotgun },
+    { wp_supershotgun,    wp_shotgun },
+    { wp_chaingun,        wp_chaingun },
+    { wp_missile,         wp_missile },
+    { wp_plasma,          wp_plasma },
+    { wp_bfg,             wp_bfg }
 };
 
 #define SLOWTURNTICS	6 
@@ -396,7 +420,63 @@ int G_CmdChecksum (ticcmd_t* cmd)
 		 
     return sum; 
 } 
- 
+
+static boolean WeaponSelectable(weapontype_t weapon)
+{
+    // Can't select a weapon if we don't own it.
+
+    if (!players[consoleplayer].weaponowned[weapon])
+    {
+        return false;
+    }
+
+    // Can't select the fist if we have the chainsaw, unless
+    // we also have the berserk pack.
+
+    if (weapon == wp_fist
+     && players[consoleplayer].weaponowned[wp_chainsaw]
+     && !players[consoleplayer].powers[pw_strength])
+    {
+        return false;
+    }
+
+    return true;
+}
+
+static int G_NextWeapon(int direction)
+{
+    weapontype_t weapon;
+    int i;
+
+    // Find index in the table.
+
+    if (players[consoleplayer].pendingweapon == wp_nochange)
+    {
+        weapon = players[consoleplayer].readyweapon;
+    }
+    else
+    {
+        weapon = players[consoleplayer].pendingweapon;
+    }
+
+    for (i=0; i<arrlen(weapon_order_table); ++i)
+    {
+        if (weapon_order_table[i].weapon == weapon)
+        {
+            break;
+        }
+    }
+
+    // Switch weapon.
+
+    do
+    {
+        i += direction;
+        i = (i + arrlen(weapon_order_table)) % arrlen(weapon_order_table);
+    } while (!WeaponSelectable(weapon_order_table[i].weapon));
+
+    return weapon_order_table[i].weapon_num;
+}
 
 //
 // G_BuildTiccmd
@@ -524,20 +604,34 @@ void G_BuildTiccmd (ticcmd_t* cmd)
 	dclicks = 0;                   
     } 
 
-    // chainsaw overrides 
+    // If the previous or next weapon button is pressed, the
+    // next_weapon variable is set to change weapons when
+    // we generate a ticcmd.  Choose a new weapon.
 
-    for (i=0; i<arrlen(weapon_keys); ++i)
+    if (next_weapon != 0)
     {
-        int key = *weapon_keys[i];
+        i = G_NextWeapon(next_weapon);
+        cmd->buttons |= BT_CHANGE;
+        cmd->buttons |= i << BT_WEAPONSHIFT;
+        next_weapon = 0;
+    }
+    else
+    {
+        // Check weapon keys.
 
-        if (gamekeydown[key])
+        for (i=0; i<arrlen(weapon_keys); ++i)
         {
-	    cmd->buttons |= BT_CHANGE; 
-	    cmd->buttons |= i<<BT_WEAPONSHIFT; 
-	    break; 
+            int key = *weapon_keys[i];
+
+            if (gamekeydown[key])
+            {
+                cmd->buttons |= BT_CHANGE;
+                cmd->buttons |= i<<BT_WEAPONSHIFT;
+                break;
+            }
         }
     }
-    
+
     // mouse
     if (mousebuttons[mousebforward]) 
     {
@@ -799,6 +893,18 @@ boolean G_Responder (event_t* ev)
         // appears to move smoothly.
 
         testcontrols_mousespeed = abs(ev->data2);
+    }
+
+    // If the next/previous weapon keys are pressed, set the next_weapon
+    // variable to change weapons when the next ticcmd is generated.
+
+    if (ev->type == ev_keydown && ev->data1 == key_prevweapon)
+    {
+        next_weapon = -1;
+    }
+    else if (ev->type == ev_keydown && ev->data1 == key_nextweapon)
+    {
+        next_weapon = 1;
     }
 
     switch (ev->type) 
