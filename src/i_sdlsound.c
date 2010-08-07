@@ -244,12 +244,15 @@ static void ExpandSoundData_SDL(byte *data,
             // (maximum frequency, by nyquist)
 
             dt = 1.0f / mixer_freq;
-            rc = 1.0f / (3.14f * samplerate);
+            rc = 1.0f / (2 * 3.14f * samplerate);
             alpha = dt / (rc + dt);
 
-            for (i=1; i<expanded_length; ++i) 
+            // Both channels are processed in parallel, hence [i-2]:
+
+            for (i=2; i<expanded_length * 2; ++i)
             {
-                expanded[i] = (Sint16) (alpha * expanded[i] + (1 - alpha) * expanded[i-1]);
+                expanded[i] = (Sint16) (alpha * expanded[i]
+                                      + (1 - alpha) * expanded[i-2]);
             }
         }
 #endif /* #ifdef LOW_PASS_FILTER */
