@@ -25,7 +25,6 @@
 //
 //-----------------------------------------------------------------------------
 
-
 #include "config.h"
 
 #include <stdio.h>
@@ -41,6 +40,7 @@
 
 #include "deh_main.h"
 #include "i_system.h"
+#include "i_swap.h"
 #include "s_sound.h"
 #include "m_argv.h"
 #include "w_wad.h"
@@ -49,6 +49,7 @@
 #include "doomdef.h"
 
 #define LOW_PASS_FILTER
+//#define DEBUG_DUMP_WAVS
 #define MAX_SOUND_SLICE_TIME 70 /* ms */
 #define NUM_CHANNELS 16
 
@@ -159,12 +160,62 @@ static boolean ConvertibleRatio(int freq1, int freq2)
     }
 }
 
+#ifdef DEBUG_DUMP_WAVS
+
+// Debug code to dump resampled sound effects to WAV files for analysis.
+
+static void WriteWAV(char *filename, byte *data,
+                     uint32_t length, int samplerate)
+{
+    FILE *wav;
+    unsigned int i;
+    unsigned short s;
+
+    wav = fopen(filename, "wb");
+
+    // Header
+
+    fwrite("RIFF", 1, 4, wav);
+    i = LONG(36 + samplerate);
+    fwrite(&i, 4, 1, wav);
+    fwrite("WAVE", 1, 4, wav);
+
+    // Subchunk 1
+
+    fwrite("fmt ", 1, 4, wav);
+    i = LONG(16);
+    fwrite(&i, 4, 1, wav);           // Length
+    s = SHORT(1);
+    fwrite(&s, 2, 1, wav);           // Format (PCM)
+    s = SHORT(2);
+    fwrite(&s, 2, 1, wav);           // Channels (2=stereo)
+    i = LONG(samplerate);
+    fwrite(&i, 4, 1, wav);           // Sample rate
+    i = LONG(samplerate * 2 * 2);
+    fwrite(&i, 4, 1, wav);           // Byte rate (samplerate * stereo * 16 bit)
+    s = SHORT(2 * 2);
+    fwrite(&s, 2, 1, wav);           // Block align (stereo * 16 bit)
+    s = SHORT(16);
+    fwrite(&s, 2, 1, wav);           // Bits per sample (16 bit)
+
+    // Data subchunk
+
+    fwrite("data", 1, 4, wav);
+    i = LONG(length);
+    fwrite(&i, 4, 1, wav);           // Data length
+    fwrite(data, 1, length, wav);    // Data
+
+    fclose(wav);
+}
+
+#endif
+
 // Generic sound expansion function for any sample rate.
 
 static void ExpandSoundData_SDL(byte *data,
-				int samplerate,
-				uint32_t length,
-				Mix_Chunk *destination)
+                                int samplerate,
+                                uint32_t length,
+                                Mix_Chunk *destination)
 {
     SDL_AudioCVT convertor;
     uint32_t expanded_length;
@@ -181,7 +232,7 @@ static void ExpandSoundData_SDL(byte *data,
         = Z_Malloc(expanded_length, PU_STATIC, &destination->abuf);
 
     // If we can, use the standard / optimized SDL conversion routines.
-    
+
     if (samplerate <= mixer_freq
      && ConvertibleRatio(samplerate, mixer_freq)
      && SDL_BuildAudioCVT(&convertor,
@@ -244,7 +295,7 @@ static void ExpandSoundData_SDL(byte *data,
             // (maximum frequency, by nyquist)
 
             dt = 1.0f / mixer_freq;
-            rc = 1.0f / (2 * 3.14f * samplerate);
+            rc = 1.0f / (3.14f * samplerate);
             alpha = dt / (rc + dt);
 
             // Both channels are processed in parallel, hence [i-2]:
@@ -346,6 +397,16 @@ static boolean CacheSFX_SDL(int sound)
 			samplerate, 
 			length, 
 			&sound_chunks[sound]);
+
+#ifdef DEBUG_DUMP_WAVS
+    {
+        char filename[16];
+
+        sprintf(filename, "%s.wav", DEH_String(S_sfx[sound].name));
+        WriteWAV(filename, sound_chunks[sound].abuf,
+                 sound_chunks[sound].alen, mixer_freq);
+    }
+#endif
 
     // don't need the original lump any more
   
