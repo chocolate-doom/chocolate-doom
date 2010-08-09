@@ -95,6 +95,8 @@ extern int key_weapon5;
 extern int key_weapon6;
 extern int key_weapon7;
 extern int key_weapon8;
+extern int key_prevweapon;
+extern int key_nextweapon;
 
 extern int key_message_refresh;
 extern int key_demo_quit;

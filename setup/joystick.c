@@ -50,6 +50,8 @@ int joybuse = 2;
 int joybspeed = 3;
 int joybstrafeleft = -1;
 int joybstraferight = -1;
+int joybprevweapon = -1;
+int joybnextweapon = -1;
 
 // Joystick to use, as an SDL joystick index:
 
@@ -430,6 +432,8 @@ void ConfigJoystick(void)
 
     AddJoystickControl(button_table, "Strafe Left", &joybstrafeleft);
     AddJoystickControl(button_table, "Strafe Right", &joybstraferight);
+    AddJoystickControl(button_table, "Previous weapon", &joybprevweapon);
+    AddJoystickControl(button_table, "Next weapon", &joybnextweapon);
 
     TXT_SignalConnect(joystick_button, "pressed", CalibrateJoystick, NULL);
     TXT_SignalConnect(window, "closed", JoystickWindowClosed, NULL);

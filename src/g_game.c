@@ -198,6 +198,9 @@ int             mousebstraferight = -1;
 int             mousebbackward = -1;
 int             mousebuse = -1;
 
+int             mousebprevweapon = -1;
+int             mousebnextweapon = -1;
+
 // Control whether if a mouse button is double clicked, it acts like 
 // "use" has been pressed
 
@@ -209,6 +212,9 @@ int             joybuse = 3;
 int             joybspeed = 2; 
 int             joybstrafeleft = -1;
 int             joybstraferight = -1;
+
+int             joybprevweapon = -1;
+int             joybnextweapon = -1;
 
 // fraggle: Disallow mouse and joystick movement to cause forward/backward
 // motion.  Specified with the '-novert' command line parameter.
@@ -262,11 +268,13 @@ static const struct
 #define SLOWTURNTICS	6 
  
 #define NUMKEYS		256 
+#define MAX_JOY_BUTTONS 20
+#define MAX_MOUSE_BUTTONS 3
 
 static boolean  gamekeydown[NUMKEYS]; 
 static int      turnheld;		// for accelerative turning 
  
-static boolean  mousearray[4]; 
+static boolean  mousearray[MAX_MOUSE_BUTTONS + 1];
 static boolean *mousebuttons = &mousearray[1];  // allow [-1]
 
 // mouse values are used once 
@@ -279,8 +287,6 @@ static int      dclicks;
 static int      dclicktime2;
 static boolean  dclickstate2;
 static int      dclicks2;
-
-#define MAX_JOY_BUTTONS 20
 
 // joystick values are repeated 
 static int      joyxmove;
@@ -815,7 +821,6 @@ void G_DoLoadLevel (void)
         players[consoleplayer].message = "Press escape to quit.";
     }
 } 
- 
 
 static void SetJoyButtons(unsigned int buttons_mask)
 {
@@ -823,10 +828,54 @@ static void SetJoyButtons(unsigned int buttons_mask)
 
     for (i=0; i<MAX_JOY_BUTTONS; ++i)
     {
-        joybuttons[i] = (buttons_mask & (1 << i)) != 0;
+        int button_on = (buttons_mask & (1 << i)) != 0;
+
+        // Detect button press:
+
+        if (!joybuttons[i] && button_on)
+        {
+            // Weapon cycling:
+
+            if (i == joybprevweapon)
+            {
+                next_weapon = -1;
+            }
+            else if (i == joybnextweapon)
+            {
+                next_weapon = 1;
+            }
+        }
+
+        joybuttons[i] = button_on;
     }
 }
- 
+
+static void SetMouseButtons(unsigned int buttons_mask)
+{
+    int i;
+
+    for (i=0; i<MAX_MOUSE_BUTTONS; ++i)
+    {
+        unsigned int button_on = (buttons_mask & (1 << i)) != 0;
+
+        // Detect button press:
+
+        if (!mousebuttons[i] && button_on)
+        {
+            if (i == mousebprevweapon)
+            {
+                next_weapon = -1;
+            }
+            else if (i == mousebnextweapon)
+            {
+                next_weapon = 1;
+            }
+        }
+
+	mousebuttons[i] = button_on;
+    }
+}
+
 //
 // G_Responder  
 // Get info needed to make ticcmd_ts for the players.
@@ -927,9 +976,7 @@ boolean G_Responder (event_t* ev)
 	return false;   // always let key up events filter down 
 		 
       case ev_mouse: 
-	mousebuttons[0] = ev->data1 & 1; 
-	mousebuttons[1] = ev->data1 & 2; 
-	mousebuttons[2] = ev->data1 & 4; 
+        SetMouseButtons(ev->data1);
 	mousex = ev->data2*(mouseSensitivity+5)/10; 
 	mousey = ev->data3*(mouseSensitivity+5)/10; 
 	return true;    // eat events 

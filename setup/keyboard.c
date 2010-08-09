@@ -90,6 +90,8 @@ int key_weapon5        = '5';
 int key_weapon6        = '6';
 int key_weapon7        = '7';
 int key_weapon8        = '8';
+int key_prevweapon     = 0;
+int key_nextweapon     = 0;
 
 int key_message_refresh = KEY_ENTER;
 int key_demo_quit      = 'q';
@@ -109,7 +111,8 @@ static int *controls[] = { &key_left, &key_right, &key_up, &key_down,
                            &key_pause,
                            &key_weapon1, &key_weapon2, &key_weapon3,
                            &key_weapon4, &key_weapon5, &key_weapon6,
-                           &key_weapon7, &key_weapon8, NULL };
+                           &key_weapon7, &key_weapon8,
+                           &key_prevweapon, &key_nextweapon, NULL };
 
 static int *menu_nav[] = { &key_menu_activate, &key_menu_up, &key_menu_down,
                            &key_menu_left, &key_menu_right, &key_menu_back,
@@ -240,6 +243,8 @@ static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddKeyControl(table, "Weapon 6",              &key_weapon6);
     AddKeyControl(table, "Weapon 7",              &key_weapon7);
     AddKeyControl(table, "Weapon 8",              &key_weapon8);
+    AddKeyControl(table, "Previous weapon",       &key_prevweapon);
+    AddKeyControl(table, "Next weapon",           &key_nextweapon);
 
     TXT_AddWidgets(table, TXT_NewStrut(0, 1),
                           TXT_NewStrut(0, 1),

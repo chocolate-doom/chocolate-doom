@@ -148,6 +148,8 @@ extern int key_weapon5;
 extern int key_weapon6;
 extern int key_weapon7;
 extern int key_weapon8;
+extern int key_prevweapon;
+extern int key_nextweapon;
 
 extern int key_message_refresh;
 extern int key_demo_quit;
@@ -164,6 +166,9 @@ extern int      mousebstraferight;
 extern int      mousebbackward;
 extern int      mousebuse;
 
+extern int      mousebprevweapon;
+extern int      mousebnextweapon;
+
 extern int      dclick_use;
 
 extern int	joybfire;
@@ -172,6 +177,9 @@ extern int	joybuse;
 extern int	joybspeed;
 extern int      joybstrafeleft;
 extern int      joybstraferight;
+
+extern int      joybprevweapon;
+extern int      joybnextweapon;
 
 extern int	viewwidth;
 extern int	viewheight;
@@ -748,6 +756,18 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joyb_straferight,          joybstraferight),
 
     //!
+    // Joystick button to cycle to the previous weapon.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_prevweapon,           joybprevweapon),
+
+    //!
+    // Joystick button to cycle to the next weapon.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_nextweapon,          joybnextweapon),
+
+    //!
     // Mouse button to strafe left.
     //
 
@@ -770,6 +790,18 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(mouseb_backward,           mousebbackward),
+
+    //!
+    // Mouse button to cycle to the previous weapon.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_prevweapon,         mousebprevweapon),
+
+    //!
+    // Mouse button to cycle to the next weapon.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_nextweapon,         mousebnextweapon),
 
     //!
     // If non-zero, double-clicking a mouse button acts like pressing
@@ -1060,6 +1092,18 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_KEY(key_weapon8,               key_weapon8),
+
+    //!
+    // Key to cycle to the previous weapon.
+    //
+
+    CONFIG_VARIABLE_KEY(key_prevweapon,            key_prevweapon),
+
+    //!
+    // Key to cycle to the next weapon.
+    //
+
+    CONFIG_VARIABLE_KEY(key_nextweapon,            key_nextweapon),
 
     //!
     // Key to re-display last message.

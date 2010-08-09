@@ -29,6 +29,8 @@ extern int joybuse;
 extern int joybspeed;
 extern int joybstrafeleft;
 extern int joybstraferight;
+extern int joybprevweapon;
+extern int joybnextweapon;
 
 extern int joystick_index;
 extern int joystick_x_axis;
