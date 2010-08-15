@@ -324,7 +324,7 @@ static const WaveHandler WaveHandlerTable[8] = {
 */
 
 //We zero out when rate == 0
-inline void Operator__UpdateAttack(Operator *self, const Chip* chip ) {
+static inline void Operator__UpdateAttack(Operator *self, const Chip* chip ) {
 	Bit8u rate = self->reg60 >> 4;
 	if ( rate ) {
 		Bit8u val = (rate << 2) + self->ksr;
@@ -335,7 +335,7 @@ inline void Operator__UpdateAttack(Operator *self, const Chip* chip ) {
 		self->rateZero |= (1 << ATTACK);
 	}
 }
-inline void Operator__UpdateDecay(Operator *self, const Chip* chip ) {
+static inline void Operator__UpdateDecay(Operator *self, const Chip* chip ) {
 	Bit8u rate = self->reg60 & 0xf;
 	if ( rate ) {
 		Bit8u val = (rate << 2) + self->ksr;
@@ -346,7 +346,7 @@ inline void Operator__UpdateDecay(Operator *self, const Chip* chip ) {
 		self->rateZero |= (1 << DECAY);
 	}
 }
-inline void Operator__UpdateRelease(Operator *self, const Chip* chip ) {
+static inline void Operator__UpdateRelease(Operator *self, const Chip* chip ) {
 	Bit8u rate = self->reg80 & 0xf;
 	if ( rate ) {
 		Bit8u val = (rate << 2) + self->ksr;
@@ -364,7 +364,7 @@ inline void Operator__UpdateRelease(Operator *self, const Chip* chip ) {
 	}
 }
 
-inline void Operator__UpdateAttenuation(Operator *self) {
+static inline void Operator__UpdateAttenuation(Operator *self) {
 	Bit8u kslBase = (Bit8u)((self->chanData >> SHIFT_KSLBASE) & 0xff);
 	Bit32u tl = self->reg40 & 0x3f;
 	Bit8u kslShift = KslShiftTable[ self->reg40 >> 6 ];
@@ -373,7 +373,7 @@ inline void Operator__UpdateAttenuation(Operator *self) {
 	self->totalLevel += ( kslBase << ENV_EXTRA ) >> kslShift;
 }
 
-void Operator__UpdateFrequency(Operator *self) {
+static void Operator__UpdateFrequency(Operator *self) {
 	Bit32u freq = self->chanData & (( 1 << 10 ) - 1);
 	Bit32u block = (self->chanData >> 10) & 0xff;
 #ifdef WAVE_PRECISION
@@ -396,7 +396,7 @@ void Operator__UpdateFrequency(Operator *self) {
 	}
 }
 
-void Operator__UpdateRates(Operator *self, const Chip* chip ) {
+static void Operator__UpdateRates(Operator *self, const Chip* chip ) {
 	//Mame seems to reverse this where enabling ksr actually lowers
 	//the rate, but pdf manuals says otherwise?
 	Bit8u newKsr = (Bit8u)((self->chanData >> SHIFT_KEYCODE) & 0xff);
@@ -489,7 +489,7 @@ static const VolumeHandler VolumeHandlerTable[5] = {
 };
 
 static inline Bitu Operator__ForwardVolume(Operator *self) {
-	return self->currentLevel + (self->volHandler)();
+	return self->currentLevel + (self->volHandler)(self);
 }
 
 
@@ -498,7 +498,7 @@ static inline Bitu Operator__ForwardWave(Operator *self) {
 	return self->waveIndex >> WAVE_SH;
 }
 
-void Operator__Write20(Operator *self, const Chip* chip, Bit8u val ) {
+static void Operator__Write20(Operator *self, const Chip* chip, Bit8u val ) {
 	Bit8u change = (self->reg20 ^ val );
 	if ( !change ) 
 		return;
@@ -523,14 +523,14 @@ void Operator__Write20(Operator *self, const Chip* chip, Bit8u val ) {
 	}
 }
 
-void Operator__Write40(Operator *self, const Chip *chip, Bit8u val ) {
+static void Operator__Write40(Operator *self, const Chip *chip, Bit8u val ) {
 	if (!(self->reg40 ^ val )) 
 		return;
 	self->reg40 = val;
 	Operator__UpdateAttenuation( self );
 }
 
-void Operator__Write60(Operator *self, const Chip* chip, Bit8u val ) {
+static void Operator__Write60(Operator *self, const Chip* chip, Bit8u val ) {
 	Bit8u change = self->reg60 ^ val;
 	self->reg60 = val;
 	if ( change & 0x0f ) {
@@ -541,7 +541,7 @@ void Operator__Write60(Operator *self, const Chip* chip, Bit8u val ) {
 	}
 }
 
-void Operator__Write80(Operator *self, const Chip* chip, Bit8u val ) {
+static void Operator__Write80(Operator *self, const Chip* chip, Bit8u val ) {
 	Bit8u change = (self->reg80 ^ val );
 	if ( !change ) 
 		return;
@@ -555,7 +555,7 @@ void Operator__Write80(Operator *self, const Chip* chip, Bit8u val ) {
 	}
 }
 
-void Operator__WriteE0(Operator *self, const Chip* chip, Bit8u val ) {
+static void Operator__WriteE0(Operator *self, const Chip* chip, Bit8u val ) {
 	if ( !(self->regE0 ^ val) ) 
 		return;
 	//in opl3 mode you can always selet 7 waveforms regardless of waveformselect
@@ -596,7 +596,7 @@ static inline void Operator__Prepare(Operator *self, const Chip* chip )  {
 	}
 }
 
-void Operator__KeyOn(Operator *self, Bit8u mask ) {
+static void Operator__KeyOn(Operator *self, Bit8u mask ) {
 	if ( !self->keyOn ) {
 		//Restart the frequency generator
 #if( DBOPL_WAVE > WAVE_HANDLER )
@@ -610,7 +610,7 @@ void Operator__KeyOn(Operator *self, Bit8u mask ) {
 	self->keyOn |= mask;
 }
 
-void Operator__KeyOff(Operator *self, Bit8u mask ) {
+static void Operator__KeyOff(Operator *self, Bit8u mask ) {
 	self->keyOn &= ~mask;
 	if ( !self->keyOn ) {
 		if ( self->state != OFF ) {
@@ -649,7 +649,7 @@ static inline Bits Operator__GetSample(Operator *self, Bits modulation ) {
 	}
 }
 
-void Operator__Operator(Operator *self) {
+static void Operator__Operator(Operator *self) {
 	self->chanData = 0;
 	self->freqMul = 0;
 	self->waveIndex = 0;
@@ -675,7 +675,7 @@ void Operator__Operator(Operator *self) {
 	Channel
 */
 
-void Channel__Channel(Channel *self) {
+static void Channel__Channel(Channel *self) {
         Operator__Operator(&self->op[0]);
         Operator__Operator(&self->op[1]);
 	self->old[0] = self->old[1] = 0;
@@ -693,7 +693,7 @@ static inline Operator* Channel__Op( Channel *self, Bitu index ) {
         return &( ( self + (index >> 1) )->op[ index & 1 ]);
 }
 
-void Channel__SetChanData(Channel *self, const Chip* chip, Bit32u data ) {
+static void Channel__SetChanData(Channel *self, const Chip* chip, Bit32u data ) {
 	Bit32u change = self->chanData ^ data;
 	self->chanData = data;
 	Channel__Op( self, 0 )->chanData = data;
@@ -711,7 +711,7 @@ void Channel__SetChanData(Channel *self, const Chip* chip, Bit32u data ) {
 	}
 }
 
-void Channel__UpdateFrequency(Channel *self, const Chip* chip, Bit8u fourOp ) {
+static void Channel__UpdateFrequency(Channel *self, const Chip* chip, Bit8u fourOp ) {
 	//Extrace the frequency bits
 	Bit32u data = self->chanData & 0xffff;
 	Bit32u kslBase = KslTable[ data >> 6 ];
@@ -729,7 +729,7 @@ void Channel__UpdateFrequency(Channel *self, const Chip* chip, Bit8u fourOp ) {
 	}
 }
 
-void Channel__WriteA0(Channel *self, const Chip* chip, Bit8u val ) {
+static void Channel__WriteA0(Channel *self, const Chip* chip, Bit8u val ) {
 	Bit8u fourOp = chip->reg104 & chip->opl3Active & self->fourMask;
 	//Don't handle writes to silent fourop channels
 	if ( fourOp > 0x80 )
@@ -741,7 +741,7 @@ void Channel__WriteA0(Channel *self, const Chip* chip, Bit8u val ) {
 	}
 }
 
-void Channel__WriteB0(Channel *self, const Chip* chip, Bit8u val ) {
+static void Channel__WriteB0(Channel *self, const Chip* chip, Bit8u val ) {
 	Bit8u fourOp = chip->reg104 & chip->opl3Active & self->fourMask;
 	//Don't handle writes to silent fourop channels
 	if ( fourOp > 0x80 )
@@ -772,7 +772,7 @@ void Channel__WriteB0(Channel *self, const Chip* chip, Bit8u val ) {
 	}
 }
 
-void Channel__WriteC0(Channel *self, const Chip* chip, Bit8u val ) {
+static void Channel__WriteC0(Channel *self, const Chip* chip, Bit8u val ) {
 	Bit8u change = val ^ self->regC0;
 	if ( !change )
 		return;
@@ -838,7 +838,7 @@ void Channel__WriteC0(Channel *self, const Chip* chip, Bit8u val ) {
 	}
 }
 
-void Channel__ResetC0(Channel *self, const Chip* chip ) {
+static void Channel__ResetC0(Channel *self, const Chip* chip ) {
 	Bit8u val = self->regC0;
 	self->regC0 ^= 0xff;
 	Channel__WriteC0( self, chip, val );
@@ -975,7 +975,7 @@ Channel* Channel__BlockTemplate(Channel *self, Chip* chip,
 		Bit32s mod = (Bit32u)((self->old[0] + self->old[1])) >> self->feedback;
 		self->old[0] = self->old[1];
 		self->old[1] = Operator__GetSample( Channel__Op(self, 0), mod );
-		Bit32s sample;
+		Bit32s sample = 0;
 		Bit32s out0 = self->old[0];
 		if ( mode == sm2AM || mode == sm3AM ) {
 			sample = out0 + Operator__GetSample( Channel__Op(self, 1), 0 );
@@ -1095,7 +1095,7 @@ static inline Bit32u Chip__ForwardLFO(Chip *self, Bit32u samples ) {
 }
 
 
-void Chip__WriteBD(Chip *self, Bit8u val ) {
+static void Chip__WriteBD(Chip *self, Bit8u val ) {
 	Bit8u change = self->regBD ^ val;
 	if ( !change )
 		return;
@@ -1240,7 +1240,7 @@ void Chip__WriteReg(Chip *self, Bit32u reg, Bit8u val ) {
 }
 
 
-Bit32u Chip__WriteAddr(Chip *self, Bit32u port, Bit8u val ) {
+static Bit32u Chip__WriteAddr(Chip *self, Bit32u port, Bit8u val ) {
 	switch ( port & 3 ) {
 	case 0:
 		return val;
@@ -1415,7 +1415,7 @@ void Chip__Setup(Chip *self, Bit32u rate ) {
 }
 
 static int doneTables = FALSE;
-void InitTables( void ) {
+void DBOPL_InitTables( void ) {
         int i, oct;
 
 	if ( doneTables )

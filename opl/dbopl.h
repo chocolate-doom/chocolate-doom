@@ -47,7 +47,7 @@ typedef Bits ( DB_FASTCALL *WaveHandler) ( Bitu i, Bitu volume );
 
 #define DB_FASTCALL
 
-typedef Bits (*VolumeHandler)();
+typedef Bits (*VolumeHandler)(Operator *self);
 typedef Channel* (*SynthHandler)(Channel *self, Chip* chip, Bit32u samples, Bit32s* output );
 
 //Different synth modes that can generate blocks of data
@@ -192,5 +192,12 @@ struct Handler : public Adlib::Handler {
 	virtual void Init( Bitu rate );
 };
 */
+
+
+void Chip__Setup(Chip *self, Bit32u rate );
+void DBOPL_InitTables( void );
+void Chip__Chip(Chip *self);
+void Chip__WriteReg(Chip *self, Bit32u reg, Bit8u val );
+void Chip__GenerateBlock2(Chip *self, Bitu total, Bit32s* output );
 
 
