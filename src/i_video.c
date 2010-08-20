@@ -467,8 +467,6 @@ static void UpdateMouseButtonState(unsigned int button, boolean on)
             break;
     }
 
-    printf("button %i -> %s\n", button, on ? "on" : "off");
-
     // Turn bit representing this button on or off.
 
     if (on)
