@@ -107,6 +107,10 @@ static boolean initialized = false;
 static boolean nomouse = false;
 extern int usemouse;
 
+// Bit mask of mouse button state.
+
+static unsigned int mouse_button_state = 0;
+
 // if true, screens[0] is screen->pixel
 
 static boolean native_surface;
@@ -430,29 +434,58 @@ void I_StartFrame (void)
 
 }
 
-static int MouseButtonState(void)
+static void UpdateMouseButtonState(unsigned int button, boolean on)
 {
-    Uint8 state;
-    int result = 0;
+    event_t event;
 
-#if SDL_VERSION_ATLEAST(1, 3, 0)
-    state = SDL_GetMouseState(0, NULL, NULL);
-#else
-    state = SDL_GetMouseState(NULL, NULL);
-#endif
+    if (button < SDL_BUTTON_LEFT || button > MAX_MOUSE_BUTTONS)
+    {
+        return;
+    }
 
     // Note: button "0" is left, button "1" is right,
     // button "2" is middle for Doom.  This is different
     // to how SDL sees things.
 
-    if (state & SDL_BUTTON(1))
-        result |= 1;
-    if (state & SDL_BUTTON(3))
-        result |= 2;
-    if (state & SDL_BUTTON(2))
-        result |= 4;
+    switch (button)
+    {
+        case SDL_BUTTON_LEFT:
+            button = 0;
+            break;
 
-    return result;
+        case SDL_BUTTON_RIGHT:
+            button = 1;
+            break;
+
+        case SDL_BUTTON_MIDDLE:
+            button = 2;
+            break;
+
+        default:
+            // SDL buttons are indexed from 1.
+            --button;
+            break;
+    }
+
+    printf("button %i -> %s\n", button, on ? "on" : "off");
+
+    // Turn bit representing this button on or off.
+
+    if (on)
+    {
+        mouse_button_state |= (1 << button);
+    }
+    else
+    {
+        mouse_button_state &= ~(1 << button);
+    }
+
+    // Post an event with the new button state.
+
+    event.type = ev_mouse;
+    event.data1 = mouse_button_state;
+    event.data2 = event.data3 = 0;
+    D_PostEvent(&event);
 }
 
 static int AccelerateMouse(int val)
@@ -544,7 +577,7 @@ void I_GetEvent(void)
                 /*
             case SDL_MOUSEMOTION:
                 event.type = ev_mouse;
-                event.data1 = MouseButtonState();
+                event.data1 = mouse_button_state;
                 event.data2 = AccelerateMouse(sdlevent.motion.xrel);
                 event.data3 = -AccelerateMouse(sdlevent.motion.yrel);
                 D_PostEvent(&event);
@@ -554,20 +587,14 @@ void I_GetEvent(void)
             case SDL_MOUSEBUTTONDOWN:
 		if (usemouse && !nomouse)
 		{
-                    event.type = ev_mouse;
-                    event.data1 = MouseButtonState();
-                    event.data2 = event.data3 = 0;
-                    D_PostEvent(&event);
+                    UpdateMouseButtonState(sdlevent.button.button, true);
 		}
                 break;
 
             case SDL_MOUSEBUTTONUP:
 		if (usemouse && !nomouse)
 		{
-                    event.type = ev_mouse;
-                    event.data1 = MouseButtonState();
-                    event.data2 = event.data3 = 0;
-                    D_PostEvent(&event);
+                    UpdateMouseButtonState(sdlevent.button.button, false);
 		}
                 break;
 
@@ -637,7 +664,7 @@ static void I_ReadMouse(void)
     if (x != 0 || y != 0) 
     {
         ev.type = ev_mouse;
-        ev.data1 = MouseButtonState();
+        ev.data1 = mouse_button_state;
         ev.data2 = AccelerateMouse(x);
         ev.data3 = -AccelerateMouse(y);
         
