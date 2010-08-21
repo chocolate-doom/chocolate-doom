@@ -33,7 +33,7 @@ int usemouse = 1;
 
 int novert = 0;
 int mouseSensitivity = 5;
-float mouse_acceleration = 1.0;
+float mouse_acceleration = 2.0;
 int mouse_threshold = 10;
 int grabmouse = 1;
 
