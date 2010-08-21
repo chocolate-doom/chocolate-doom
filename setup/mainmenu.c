@@ -45,6 +45,61 @@
 #include "multiplayer.h"
 #include "sound.h"
 
+static const int cheat_sequence[] =
+{
+    KEY_UPARROW, KEY_UPARROW, KEY_DOWNARROW, KEY_DOWNARROW,
+    KEY_LEFTARROW, KEY_RIGHTARROW, KEY_LEFTARROW, KEY_RIGHTARROW,
+    'b', 'a', KEY_ENTER, 0
+};
+
+static unsigned int cheat_sequence_index = 0;
+
+// I think these are good "sensible" defaults:
+
+static void SensibleDefaults(void)
+{
+    key_up = 'w';
+    key_down = 's';
+    key_strafeleft = 'a';
+    key_straferight = 'd';
+    mousebprevweapon = 4;
+    mousebnextweapon = 3;
+    snd_musicdevice = 3;
+    joybspeed = 29;
+    vanilla_savegame_limit = 0;
+    vanilla_keyboard_mapping = 0;
+    vanilla_demo_limit = 0;
+    show_endoom = 0;
+    dclick_use = 0;
+    novert = 1;
+}
+
+static int MainMenuKeyPress(txt_window_t *window, int key, void *user_data)
+{
+    if (key == cheat_sequence[cheat_sequence_index])
+    {
+        ++cheat_sequence_index;
+
+        if (cheat_sequence[cheat_sequence_index] == 0)
+        {
+            SensibleDefaults();
+            cheat_sequence_index = 0;
+
+            window = TXT_NewWindow(NULL);
+            TXT_AddWidget(window, TXT_NewLabel("    \x01    "));
+            TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, NULL);
+
+            return 1;
+        }
+    }
+    else
+    {
+        cheat_sequence_index = 0;
+    }
+
+    return 0;
+}
+
 static void DoQuit(void *widget, void *dosave)
 {
     if (dosave != NULL)
@@ -136,6 +191,8 @@ void MainMenu(void)
     quit_action = TXT_NewWindowAction(KEY_ESCAPE, "Quit");
     TXT_SignalConnect(quit_action, "pressed", QuitConfirm, NULL);
     TXT_SetWindowAction(window, TXT_HORIZ_LEFT, quit_action);
+
+    TXT_SetKeyListener(window, MainMenuKeyPress, NULL);
 }
 
 //
