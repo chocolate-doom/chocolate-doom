@@ -1239,15 +1239,14 @@ void Chip__WriteReg(Chip *self, Bit32u reg, Bit8u val ) {
 	}
 }
 
-
-static Bit32u Chip__WriteAddr(Chip *self, Bit32u port, Bit8u val ) {
+Bit32u Chip__WriteAddr(Chip *self, Bit32u port, Bit8u val ) {
 	switch ( port & 3 ) {
 	case 0:
 		return val;
 	case 2:
 		if ( self->opl3Active || (val == 0x05) )
 			return 0x100 | val;
-		else 
+		else
 			return val;
 	}
 	return 0;
