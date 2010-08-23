@@ -150,10 +150,13 @@ void D_DoAdvanceDemo (void);
 void D_ProcessEvents (void)
 {
     event_t*	ev;
+
+    // haleyjd 08/22/2010: [STRIFE] there is no such thing as a "store demo" 
+    // version of Strife
 	
     // IF STORE DEMO, DO NOT ACCEPT INPUT
-    if (storedemo)
-        return;
+    //if (storedemo)
+    //    return;
 	
     while ((ev = D_PopEvent()) != NULL)
     {
@@ -488,6 +491,8 @@ char                    *pagename;
 // D_PageTicker
 // Handles timing for warped projection
 //
+// haleyjd 08/22/2010: [STRIFE] verified unmodified
+//
 void D_PageTicker (void)
 {
     if (--pagetic < 0)
@@ -508,6 +513,8 @@ void D_PageDrawer (void)
 //
 // D_AdvanceDemo
 // Called after each demo or intro demosequence finishes
+//
+// haleyjd 08/22/2010: [STRIFE] verified unmodified
 //
 void D_AdvanceDemo (void)
 {
@@ -841,18 +848,16 @@ static boolean D_AddFile(char *filename)
 // Copyright message banners
 // Some dehacked mods replace these.  These are only displayed if they are 
 // replaced by dehacked.
-
+// haleyjd 08/22/2010: [STRIFE] altered to match strings from binary
 static char *copyright_banners[] =
 {
     "===========================================================================\n"
-    "ATTENTION:  This version of DOOM has been modified.  If you would like to\n"
-    "get a copy of the original game, call 1-800-IDGAMES or see the readme file.\n"
+    "ATTENTION:  This version of STRIFE has extra files added to it.\n"
     "        You will not receive technical support for modified games.\n"
-    "                      press enter to continue\n"
     "===========================================================================\n",
 
     "===========================================================================\n"
-    "                 Commercial product - do not distribute!\n"
+    "             This version is NOT SHAREWARE, do not distribute!\n"
     "         Please report software piracy to the SPA: 1-800-388-PIR8\n"
     "===========================================================================\n",
 
@@ -1206,7 +1211,8 @@ void D_DoomMain (void)
     {
         printf(D_CDROM);
 
-        M_SetConfigDir("c:\\doomdata\\");
+        // haleyjd 08/22/2010: [STRIFE] Use strife.cd folder for -cdrom
+        M_SetConfigDir("c:\\strife.cd\\");
     }
     else
 #endif
@@ -1248,8 +1254,9 @@ void D_DoomMain (void)
     V_Init();
 
     // Load configuration files before initialising other subsystems.
+    // haleyjd 08/22/2010: [STRIFE] - use strife.cfg
     printf(DEH_String("M_LoadDefaults: Load system defaults.\n"));
-    M_SetConfigFilenames("default.cfg", PROGRAM_PREFIX "doom.cfg");
+    M_SetConfigFilenames("default.cfg", PROGRAM_PREFIX "strife.cfg");
     D_BindVariables();
     M_LoadDefaults();
 
@@ -1516,22 +1523,24 @@ void D_DoomMain (void)
     {
 	// These are the lumps that will be checked in IWAD,
 	// if any one is not present, execution will be aborted.
-	char name[23][8]=
+        // haleyjd 08/22/2010: [STRIFE] Check for Strife lumps.
+	char name[3][8]=
 	{
-	    "e2m1","e2m2","e2m3","e2m4","e2m5","e2m6","e2m7","e2m8","e2m9",
-	    "e3m1","e3m3","e3m3","e3m4","e3m5","e3m6","e3m7","e3m8","e3m9",
-	    "dphoof","bfgga0","heada1","cybra1","spida1d1"
+           "map23", "map30", "ROB3E1"
 	};
 	int i;
 	
+        // haleyjd 08/22/2010: [STRIFE] Changed string to match binary
+        // STRIFE-FIXME: Needs to test isdemoversion variable
 	if ( gamemode == shareware)
-	    I_Error(DEH_String("\nYou cannot -file with the shareware "
-			       "version. Register!"));
+	    I_Error(DEH_String("\nYou cannot -file with the demo "
+			       "version. You must buy the real game!"));
 
 	// Check for fake IWAD with right name,
 	// but w/o all the lumps of the registered version. 
+        // STRIFE-FIXME: Needs to test isregistered variable
 	if (gamemode == registered)
-	    for (i = 0;i < 23; i++)
+	    for (i = 0; i < 3; i++)
 		if (W_CheckNumForName(name[i])<0)
 		    I_Error(DEH_String("\nThis is not the registered version."));
     }
@@ -1689,7 +1698,8 @@ void D_DoomMain (void)
     printf (DEH_String("M_Init: Init miscellaneous info.\n"));
     M_Init ();
 
-    printf (DEH_String("R_Init: Init DOOM refresh daemon - "));
+    // haleyjd 08/22/2010: [STRIFE] Modified string to match binary
+    printf (DEH_String("R_Init: Loading Graphics - "));
     R_Init ();
 
     printf (DEH_String("\nP_Init: Init Playloop state.\n"));

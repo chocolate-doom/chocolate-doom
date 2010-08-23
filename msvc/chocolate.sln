@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual C++ Express 2008
+# Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Doom", "doom.vcproj", "{8B744A3B-8F18-41A0-85A3-293816E85B6E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{66CD7F50-73B9-482F-8B69-1AF54983F845} = {66CD7F50-73B9-482F-8B69-1AF54983F845}
@@ -29,6 +29,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libpcsound", "libpcsound.vcproj", "{66CD7F50-73B9-482F-8B69-1AF54983F845}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtextscreen", "libtextscreen.vcproj", "{35F435DB-AC4A-4F28-BA2D-812E638FB01A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Strife", "strife.vcproj", "{FC4DACBA-2A3E-4AF0-804A-AF5FFFD13B08}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -64,6 +66,10 @@ Global
 		{35F435DB-AC4A-4F28-BA2D-812E638FB01A}.Debug|Win32.Build.0 = Debug|Win32
 		{35F435DB-AC4A-4F28-BA2D-812E638FB01A}.Release|Win32.ActiveCfg = Release|Win32
 		{35F435DB-AC4A-4F28-BA2D-812E638FB01A}.Release|Win32.Build.0 = Release|Win32
+		{FC4DACBA-2A3E-4AF0-804A-AF5FFFD13B08}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FC4DACBA-2A3E-4AF0-804A-AF5FFFD13B08}.Debug|Win32.Build.0 = Debug|Win32
+		{FC4DACBA-2A3E-4AF0-804A-AF5FFFD13B08}.Release|Win32.ActiveCfg = Release|Win32
+		{FC4DACBA-2A3E-4AF0-804A-AF5FFFD13B08}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
