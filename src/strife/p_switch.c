@@ -433,7 +433,7 @@ P_UseSpecialLine
       case 51:
 	// Secret EXIT
 	P_ChangeSwitchTexture(line,0);
-	G_SecretExitLevel ();
+	//G_SecretExitLevel ();
 	break;
 	
       case 55:

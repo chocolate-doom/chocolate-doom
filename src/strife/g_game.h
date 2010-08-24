@@ -66,7 +66,7 @@ void G_TimeDemo (char* name);
 boolean G_CheckDemoStatus (void);
 
 void G_ExitLevel (void);
-void G_SecretExitLevel (void);
+//void G_SecretExitLevel (void);
 
 void G_WorldDone (void);
 

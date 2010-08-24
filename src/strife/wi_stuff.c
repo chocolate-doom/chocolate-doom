@@ -24,7 +24,8 @@
 //
 //-----------------------------------------------------------------------------
 
-
+// haleyjd 08/23/2010: There is no intermission in Strife
+#if 0
 #include <stdio.h>
 
 #include "z_zone.h"
@@ -1839,3 +1840,4 @@ void WI_Start(wbstartstruct_t* wbstartstruct)
     else
 	WI_initStats();
 }
+#endif

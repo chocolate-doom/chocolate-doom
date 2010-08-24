@@ -921,34 +921,40 @@ void G_Ticker (void)
 
     // Have we just finished displaying an intermission screen?
 
+    // haleyjd 08/23/10: [STRIFE] No intermission.
+    /*
     if (oldgamestate == GS_INTERMISSION && gamestate != GS_INTERMISSION)
     {
         WI_End();
     }
+    */
 
     oldgamestate = gamestate;
-    
+
     // do main actions
     switch (gamestate) 
     { 
-      case GS_LEVEL: 
-	P_Ticker (); 
-	ST_Ticker (); 
-	AM_Ticker (); 
-	HU_Ticker ();            
-	break; 
-	 
-      case GS_INTERMISSION: 
-	WI_Ticker (); 
-	break; 
-			 
-      case GS_FINALE: 
-	F_Ticker (); 
-	break; 
- 
-      case GS_DEMOSCREEN: 
-	D_PageTicker (); 
-	break;
+    case GS_LEVEL: 
+        P_Ticker (); 
+        ST_Ticker (); 
+        AM_Ticker (); 
+        HU_Ticker ();            
+        break; 
+
+        // haleyjd 08/23/10: [STRIFE] No intermission.
+        /*
+    case GS_INTERMISSION: 
+        WI_Ticker (); 
+        break; 
+        */
+
+    case GS_FINALE: 
+        F_Ticker (); 
+        break; 
+
+    case GS_DEMOSCREEN: 
+        D_PageTicker (); 
+        break;
     }        
 } 
  
@@ -1176,27 +1182,8 @@ void G_ScreenShot (void)
 { 
     gameaction = ga_screenshot; 
 } 
- 
 
-
-// DOOM Par Times
-int pars[4][10] = 
-{ 
-    {0}, 
-    {0,30,75,120,90,165,180,180,30,165}, 
-    {0,90,90,90,120,90,360,240,30,170}, 
-    {0,90,45,90,150,90,90,165,30,135} 
-}; 
-
-// DOOM II Par Times
-int cpars[32] =
-{
-    30,90,120,120,90,150,120,120,270,90,	//  1-10
-    210,150,150,150,210,150,420,150,210,150,	// 11-20
-    240,150,180,150,150,300,330,420,300,180,	// 21-30
-    120,30					// 31-32
-};
- 
+// haleyjd 08/23/2010: [STRIFE] Removed par times.
 
 //
 // G_DoCompleted 
@@ -1210,151 +1197,42 @@ void G_ExitLevel (void)
     gameaction = ga_completed; 
 } 
 
+/*
+// haleyjd 08/23/2010: [STRIFE] No secret exits in Strife.
 // Here's for the german edition.
 void G_SecretExitLevel (void) 
-{ 
+{
     // IF NO WOLF3D LEVELS, NO SECRET EXIT!
     if ( (gamemode == commercial)
-      && (W_CheckNumForName("map31")<0))
-	secretexit = false;
+        && (W_CheckNumForName("map31")<0))
+        secretexit = false;
     else
-	secretexit = true; 
+        secretexit = true; 
     gameaction = ga_completed; 
-} 
- 
+}
+*/
+
+//
+// G_DoCompleted
+//
+// haleyjd 08/23/10: [STRIFE]:
+// * Removed G_PlayerFinishLevel call for now... STRIFE-TODO
+// * Removed Chex, as not relevant to Strife.
+// * Removed DOOM level transfer logic 
+// * Removed intermission code.
+// * Added setting gameaction to ga_worlddone.
+//
 void G_DoCompleted (void) 
-{ 
-    int             i; 
-	 
-    gameaction = ga_nothing; 
- 
-    for (i=0 ; i<MAXPLAYERS ; i++) 
-	if (playeringame[i]) 
-	    G_PlayerFinishLevel (i);        // take away cards and stuff 
-	 
+{
+    // STRIFE-TODO: save automap powerup state (possibly inlined from G_PlayerFinishLevel)
+    // set destmap, stonecold
+
     if (automapactive) 
-	AM_Stop (); 
-	
-    if (gamemode != commercial)
-    {
-        // Chex Quest ends after 5 levels, rather than 8.
+        AM_Stop (); 
 
-        if (gameversion == exe_chex)
-        {
-            if (gamemap == 5)
-            {
-                gameaction = ga_victory;
-                return;
-            }
-        }
-        else
-        {
-            switch(gamemap)
-            {
-              case 8:
-                gameaction = ga_victory;
-                return;
-              case 9: 
-                for (i=0 ; i<MAXPLAYERS ; i++) 
-                    players[i].didsecret = true; 
-                break;
-            }
-        }
-    }
-
-//#if 0  Hmmm - why?
-    if ( (gamemap == 8)
-	 && (gamemode != commercial) ) 
-    {
-	// victory 
-	gameaction = ga_victory; 
-	return; 
-    } 
-	 
-    if ( (gamemap == 9)
-	 && (gamemode != commercial) ) 
-    {
-	// exit secret level 
-	for (i=0 ; i<MAXPLAYERS ; i++) 
-	    players[i].didsecret = true; 
-    } 
-//#endif
+    // STRIFE-TODO: needs call to G_DoSaveGame for hubs
     
-	 
-    wminfo.didsecret = players[consoleplayer].didsecret; 
-    wminfo.epsd = gameepisode -1; 
-    wminfo.last = gamemap -1;
-    
-    // wminfo.next is 0 biased, unlike gamemap
-    if ( gamemode == commercial)
-    {
-	if (secretexit)
-	    switch(gamemap)
-	    {
-	      case 15: wminfo.next = 30; break;
-	      case 31: wminfo.next = 31; break;
-	    }
-	else
-	    switch(gamemap)
-	    {
-	      case 31:
-	      case 32: wminfo.next = 15; break;
-	      default: wminfo.next = gamemap;
-	    }
-    }
-    else
-    {
-	if (secretexit) 
-	    wminfo.next = 8; 	// go to secret level 
-	else if (gamemap == 9) 
-	{
-	    // returning from secret level 
-	    switch (gameepisode) 
-	    { 
-	      case 1: 
-		wminfo.next = 3; 
-		break; 
-	      case 2: 
-		wminfo.next = 5; 
-		break; 
-	      case 3: 
-		wminfo.next = 6; 
-		break; 
-	      case 4:
-		wminfo.next = 2;
-		break;
-	    }                
-	} 
-	else 
-	    wminfo.next = gamemap;          // go to next level 
-    }
-		 
-    wminfo.maxkills = totalkills; 
-    wminfo.maxitems = totalitems; 
-    wminfo.maxsecret = totalsecret; 
-    wminfo.maxfrags = 0; 
-    if ( gamemode == commercial )
-	wminfo.partime = TICRATE*cpars[gamemap-1]; 
-    else
-	wminfo.partime = TICRATE*pars[gameepisode][gamemap]; 
-    wminfo.pnum = consoleplayer; 
- 
-    for (i=0 ; i<MAXPLAYERS ; i++) 
-    { 
-	wminfo.plyr[i].in = playeringame[i]; 
-	wminfo.plyr[i].skills = players[i].killcount; 
-	wminfo.plyr[i].sitems = players[i].itemcount; 
-	wminfo.plyr[i].ssecret = players[i].secretcount; 
-	wminfo.plyr[i].stime = leveltime; 
-	memcpy (wminfo.plyr[i].frags, players[i].frags 
-		, sizeof(wminfo.plyr[i].frags)); 
-    } 
- 
-    gamestate = GS_INTERMISSION; 
-    viewactive = false; 
-    automapactive = false; 
- 
-    WI_Start (&wminfo); 
+    gameaction = ga_worlddone;
 } 
 
 

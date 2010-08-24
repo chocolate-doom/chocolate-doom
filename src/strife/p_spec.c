@@ -777,7 +777,7 @@ P_CrossSpecialLine
 	
       case 124:
 	// Secret EXIT
-	G_SecretExitLevel ();
+	//G_SecretExitLevel ();
 	break;
 		
       case 125:

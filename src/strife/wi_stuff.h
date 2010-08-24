@@ -27,6 +27,8 @@
 #ifndef __WI_STUFF__
 #define __WI_STUFF__
 
+// haleyjd 08/23/2010: Strife does not have an intermission
+#if 0
 //#include "v_video.h"
 
 #include "doomdef.h"
@@ -53,4 +55,5 @@ void WI_Start(wbstartstruct_t*	 wbstartstruct);
 // Shut down the intermission screen
 void WI_End(void);
 
+#endif
 #endif

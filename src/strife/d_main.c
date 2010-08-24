@@ -153,16 +153,16 @@ void D_ProcessEvents (void)
 
     // haleyjd 08/22/2010: [STRIFE] there is no such thing as a "store demo" 
     // version of Strife
-	
+
     // IF STORE DEMO, DO NOT ACCEPT INPUT
     //if (storedemo)
     //    return;
-	
+
     while ((ev = D_PopEvent()) != NULL)
     {
-	if (M_Responder (ev))
-	    continue;               // menu ate the event
-	G_Responder (ev);
+        if (M_Responder (ev))
+            continue;               // menu ate the event
+        G_Responder (ev);
     }
 }
 
@@ -173,8 +173,11 @@ void D_ProcessEvents (void)
 // D_Display
 //  draw current display, possibly wiping it from the previous
 //
-
 // wipegamestate can be set to -1 to force a wipe on the next draw
+//
+// haleyjd 08/23/10: [STRIFE]:
+// * Changes to eliminate intermission and change timing of screenwipe
+//
 gamestate_t     wipegamestate = GS_DEMOSCREEN;
 extern  boolean setsizeneeded;
 extern  int             showMessages;
@@ -182,105 +185,111 @@ void R_ExecuteSetViewSize (void);
 
 void D_Display (void)
 {
-    static  boolean		viewactivestate = false;
-    static  boolean		menuactivestate = false;
-    static  boolean		inhelpscreensstate = false;
-    static  boolean		fullscreen = false;
-    static  gamestate_t		oldgamestate = -1;
-    static  int			borderdrawcount;
-    int				nowtime;
-    int				tics;
-    int				wipestart;
-    int				y;
-    boolean			done;
-    boolean			wipe;
-    boolean			redrawsbar;
+    static  boolean             viewactivestate = false;
+    static  boolean             menuactivestate = false;
+    static  boolean             inhelpscreensstate = false;
+    static  boolean             fullscreen = false;
+    static  gamestate_t         oldgamestate = -1;
+    static  int                 borderdrawcount;
+    int                         nowtime;
+    int                         tics;
+    int                         wipestart;
+    int                         y;
+    boolean                     done;
+    boolean                     wipe;
+    boolean                     redrawsbar;
 
     if (nodrawers)
-	return;                    // for comparative timing / profiling
-		
+        return;                    // for comparative timing / profiling
+
     redrawsbar = false;
     
     // change the view size if needed
     if (setsizeneeded)
     {
-	R_ExecuteSetViewSize ();
-	oldgamestate = -1;                      // force background redraw
-	borderdrawcount = 3;
+        R_ExecuteSetViewSize ();
+        oldgamestate = -1;                      // force background redraw
+        borderdrawcount = 3;
     }
 
     // save the current screen if about to wipe
     if (gamestate != wipegamestate)
     {
-	wipe = true;
-	wipe_StartScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
+        wipe = true;
+        wipe_StartScreen(0, 0, SCREENWIDTH, SCREENHEIGHT);
     }
     else
-	wipe = false;
+        wipe = false;
 
     if (gamestate == GS_LEVEL && gametic)
-	HU_Erase();
-    
+        HU_Erase();
+
     // do buffered drawing
     switch (gamestate)
     {
-      case GS_LEVEL:
-	if (!gametic)
-	    break;
-	if (automapactive)
-	    AM_Drawer ();
-	if (wipe || (viewheight != 200 && fullscreen) )
-	    redrawsbar = true;
-	if (inhelpscreensstate && !inhelpscreens)
-	    redrawsbar = true;              // just put away the help screen
-	ST_Drawer (viewheight == 200, redrawsbar );
-	fullscreen = viewheight == 200;
-	break;
+    case GS_LEVEL:
+        if (!gametic)
+            break;
+        if (automapactive)
+            AM_Drawer ();
+        if (wipe || (viewheight != 200 && fullscreen) )
+            redrawsbar = true;
+        if (inhelpscreensstate && !inhelpscreens)
+            redrawsbar = true;              // just put away the help screen
+        ST_Drawer (viewheight == 200, redrawsbar );
+        fullscreen = viewheight == 200;
+        break;
+      
+     // haleyjd 08/23/2010: [STRIFE] No intermission
+     /*
+     case GS_INTERMISSION:
+         WI_Drawer ();
+         break;
+     */
+    case GS_FINALE:
+        F_Drawer ();
+        break;
 
-      case GS_INTERMISSION:
-	WI_Drawer ();
-	break;
-
-      case GS_FINALE:
-	F_Drawer ();
-	break;
-
-      case GS_DEMOSCREEN:
-	D_PageDrawer ();
-	break;
+    case GS_DEMOSCREEN:
+        D_PageDrawer ();
+        break;
     }
     
     // draw buffered stuff to screen
     I_UpdateNoBlit ();
-    
+
     // draw the view directly
     if (gamestate == GS_LEVEL && !automapactive && gametic)
-	R_RenderPlayerView (&players[displayplayer]);
+        R_RenderPlayerView (&players[displayplayer]);
 
     if (gamestate == GS_LEVEL && gametic)
-	HU_Drawer ();
-    
+        HU_Drawer ();
+
     // clean up border stuff
     if (gamestate != oldgamestate && gamestate != GS_LEVEL)
-	I_SetPalette (W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE));
+        I_SetPalette (W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE));
 
     // see if the border needs to be initially drawn
     if (gamestate == GS_LEVEL && oldgamestate != GS_LEVEL)
     {
-	viewactivestate = false;        // view was not active
-	R_FillBackScreen ();    // draw the pattern into the back screen
+        viewactivestate = false;        // view was not active
+        R_FillBackScreen ();    // draw the pattern into the back screen
     }
 
     // see if the border needs to be updated to the screen
     if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != 320)
     {
-	if (menuactive || menuactivestate || !viewactivestate)
-	    borderdrawcount = 3;
-	if (borderdrawcount)
-	{
-	    R_DrawViewBorder ();    // erase old menu stuff
-	    borderdrawcount--;
-	}
+        if (menuactive || menuactivestate || !viewactivestate)
+        {
+            borderdrawcount = 3;
+            // STRIFE-FIXME / TODO: Unknown variable
+            // dword_861C8 = 0; 
+        }
+        if (borderdrawcount)
+        {
+            R_DrawViewBorder ();    // erase old menu stuff
+            borderdrawcount--;
+        }
 
     }
 
@@ -295,15 +304,15 @@ void D_Display (void)
     viewactivestate = viewactive;
     inhelpscreensstate = inhelpscreens;
     oldgamestate = wipegamestate = gamestate;
-    
+
     // draw pause pic
     if (paused)
     {
-	if (automapactive)
-	    y = 4;
-	else
-	    y = viewwindowy+4;
-	V_DrawPatchDirect(viewwindowx + (scaledviewwidth - 68) / 2, y,
+        if (automapactive)
+            y = 4;
+        else
+            y = viewwindowy+4;
+        V_DrawPatchDirect(viewwindowx + (scaledviewwidth - 68) / 2, y,
                           W_CacheLumpName (DEH_String("M_PAUSE"), PU_CACHE));
     }
 
@@ -316,8 +325,8 @@ void D_Display (void)
     // normal update
     if (!wipe)
     {
-	I_FinishUpdate ();              // page flip or blit buffer
-	return;
+        I_FinishUpdate ();              // page flip or blit buffer
+        return;
     }
     
     // wipe update
@@ -327,19 +336,19 @@ void D_Display (void)
 
     do
     {
-	do
-	{
-	    nowtime = I_GetTime ();
-	    tics = nowtime - wipestart;
+        do
+        {
+            nowtime = I_GetTime ();
+            tics = nowtime - wipestart;
             I_Sleep(1);
-	} while (tics <= 0);
-        
-	wipestart = nowtime;
-	done = wipe_ScreenWipe(wipe_Melt
-			       , 0, 0, SCREENWIDTH, SCREENHEIGHT, tics);
-	I_UpdateNoBlit ();
-	M_Drawer ();                            // menu is drawn even on top of wipes
-	I_FinishUpdate ();                      // page flip or blit buffer
+        } while (tics < 3); // haleyjd 08/23/2010: [STRIFE] Changed from == 0 to < 3
+
+        wipestart = nowtime;
+        done = wipe_ScreenWipe(wipe_Melt
+                               , 0, 0, SCREENWIDTH, SCREENHEIGHT, tics);
+        I_UpdateNoBlit ();
+        M_Drawer ();                            // menu is drawn even on top of wipes
+        I_FinishUpdate ();                      // page flip or blit buffer
     } while (!done);
 }
 
@@ -413,6 +422,8 @@ boolean D_GrabMouseCallback(void)
 
 //
 //  D_DoomLoop
+//
+//  haleyjd 08/23/10: [STRIFE] Verified unmodified.
 //
 extern  boolean         demorecording;
 
@@ -503,6 +514,8 @@ void D_PageTicker (void)
 
 //
 // D_PageDrawer
+//
+// haleyjd 08/22/2010: [STRIFE] verified unmodified
 //
 void D_PageDrawer (void)
 {
@@ -599,6 +612,7 @@ void D_DoAdvanceDemo (void)
 //
 void D_StartTitle (void)
 {
+    // STRIFE-FIXME: some poorly understood changes are pending here
     gameaction = ga_nothing;
     demosequence = -1;
     D_AdvanceDemo ();
@@ -747,6 +761,39 @@ void D_IdentifyVersion(void)
     }
 }
 
+#if 0
+//
+// DoTimeBomb
+//
+// haleyjd 08/23/2010: [STRIFE] New function
+// Code with no xrefs; probably left over from a private alpha or beta.
+// Translated here because it explains what the SERIAL lump was meant to do.
+//
+void DoTimeBomb(void)
+{
+    dosdate_t date;
+    char *serial;
+    int serialnum;
+    int serial_year;
+    int serial_month;
+
+    serial = W_CacheLumpName("serial", PU_CACHE);
+    serialnum = atoi(serial);
+
+    // Rogue, much like Governor Mourel, were lousy liars. These deceptive
+    // error messages are pretty low :P
+    dos_getdate(&date);
+    if(date.year > 1996 || date.day > 15 && date.month > 4)
+        I_Error("Data error! Corrupted WAD File!");
+    serial_year = serialnum / 10000;
+    serial_month = serialnum / 100 - 100 * serial_year;
+    if(date.year < serial_year || 
+       date.day < serialnum - 100 * serial_month - 10000 * serial_year &&
+       date.month < serial_month)
+       I_Error("Bad wadfile");
+}
+#endif
+
 // Set the gamedescription string
 
 void D_SetGameDescription(void)
@@ -821,7 +868,9 @@ static void SetSaveGameDir(char *iwad_filename)
 
 // Check if the IWAD file is the Chex Quest IWAD.  
 // Returns true if this is chex.wad.
-
+// haleyjd 08/23/10: there is no Chex Quest based on Strife,
+// though I must admit that makes an intriguing idea....
+/*
 static boolean CheckChex(char *iwadname)
 {
     char *chex_iwadname = "chex.wad";
@@ -830,6 +879,7 @@ static boolean CheckChex(char *iwadname)
      && !strcasecmp(iwadname + strlen(iwadname) - strlen(chex_iwadname),
                     chex_iwadname));
 }
+*/
 
 //      print title for every printed line
 char            title[128];
@@ -951,13 +1001,8 @@ static void InitGameVersion(void)
     {
         // Determine automatically
 
-        if (CheckChex(iwadfile))
-        {
-            // chex.exe - identified by iwad filename
-
-            gameversion = exe_chex;
-        }
-        else if (gamemode == shareware || gamemode == registered)
+        // haleyjd 08/23/10: Removed Chex mode, as it is irrelevant to Strife
+        if (gamemode == shareware || gamemode == registered)
         {
             // original
 
@@ -1013,7 +1058,8 @@ void PrintGameVersion(void)
 }
 
 // Load the Chex Quest dehacked file, if we are in Chex mode.
-
+// haleyjd 08/23/2010: Removed, as irrelevant to Strife.
+/*
 static void LoadChexDeh(void)
 {
     char *chex_deh;
@@ -1037,6 +1083,7 @@ static void LoadChexDeh(void)
         }
     }
 }
+*/
 
 // Function called at exit to display the ENDOOM screen
 
@@ -1052,6 +1099,7 @@ static void D_Endoom(void)
         return;
     }
 
+    // STRIFE-TODO: ENDOOM -> ENDSTRF
     endoom = W_CacheLumpName(DEH_String("ENDOOM"), PU_STATIC);
 
     I_Endoom(endoom);
@@ -1514,35 +1562,35 @@ void D_DoomMain (void)
     
     D_IdentifyVersion();
     InitGameVersion();
-    LoadChexDeh();
+    //LoadChexDeh(); - haleyjd: removed, as irrelevant to Strife
     D_SetGameDescription();
     SetSaveGameDir(iwadfile);
 
     // Check for -file in shareware
     if (modifiedgame)
     {
-	// These are the lumps that will be checked in IWAD,
-	// if any one is not present, execution will be aborted.
+        // These are the lumps that will be checked in IWAD,
+        // if any one is not present, execution will be aborted.
         // haleyjd 08/22/2010: [STRIFE] Check for Strife lumps.
-	char name[3][8]=
-	{
-           "map23", "map30", "ROB3E1"
-	};
-	int i;
-	
+        char name[3][8]=
+        {
+            "map23", "map30", "ROB3E1"
+        };
+        int i;
+
         // haleyjd 08/22/2010: [STRIFE] Changed string to match binary
         // STRIFE-FIXME: Needs to test isdemoversion variable
-	if ( gamemode == shareware)
-	    I_Error(DEH_String("\nYou cannot -file with the demo "
-			       "version. You must buy the real game!"));
+        if ( gamemode == shareware)
+            I_Error(DEH_String("\nYou cannot -file with the demo "
+                               "version. You must buy the real game!"));
 
-	// Check for fake IWAD with right name,
-	// but w/o all the lumps of the registered version. 
+        // Check for fake IWAD with right name,
+        // but w/o all the lumps of the registered version. 
         // STRIFE-FIXME: Needs to test isregistered variable
-	if (gamemode == registered)
-	    for (i = 0; i < 3; i++)
-		if (W_CheckNumForName(name[i])<0)
-		    I_Error(DEH_String("\nThis is not the registered version."));
+        if (gamemode == registered)
+            for (i = 0; i < 3; i++)
+                if (W_CheckNumForName(name[i])<0)
+                    I_Error(DEH_String("\nThis is not the registered version."));
     }
     
     // get skill / episode / map from parms
@@ -1732,9 +1780,11 @@ void D_DoomMain (void)
     // If Doom II without a MAP01 lump, this is a store demo.  
     // Moved this here so that MAP01 isn't constantly looked up
     // in the main loop.
-
+    // haleyjd 08/23/2010: [STRIFE] There is no storedemo version of Strife
+    /*
     if (gamemode == commercial && W_CheckNumForName("map01") < 0)
         storedemo = true;
+    */
 
     //!
     // @arg <x>
