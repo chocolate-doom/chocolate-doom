@@ -694,7 +694,7 @@ P_CrossSpecialLine
 	
       case 52:
 	// EXIT!
-	G_ExitLevel ();
+	G_ExitLevel (0);
 	break;
 	
       case 53:
@@ -1077,7 +1077,7 @@ void P_PlayerInSpecialSector (player_t* player)
 	    P_DamageMobj (player->mo, NULL, NULL, 20);
 
 	if (player->health <= 10)
-	    G_ExitLevel();
+	    G_ExitLevel(0);
 	break;
 			
       default:
@@ -1111,7 +1111,7 @@ void P_UpdateSpecials (void)
     {
 	levelTimeCount--;
 	if (!levelTimeCount)
-	    G_ExitLevel();
+	    G_ExitLevel(0);
     }
     
     //	ANIMATE FLATS AND TEXTURES GLOBALLY

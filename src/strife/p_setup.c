@@ -114,6 +114,8 @@ mapthing_t	deathmatchstarts[MAX_DEATHMATCH_STARTS];
 mapthing_t*	deathmatch_p;
 mapthing_t	playerstarts[MAXPLAYERS];
 
+// haleyjd 08/24/10: [STRIFE] rift spots for player spawning
+mapthing_t      riftSpots[MAXRIFTSPOTS];
 
 
 
@@ -319,6 +321,8 @@ void P_LoadNodes (int lump)
 //
 // P_LoadThings
 //
+// haleyjd 08/24/10: [STRIFE]:
+// * Added code to record rift spots
 void P_LoadThings (int lump)
 {
     byte               *data;
@@ -330,42 +334,56 @@ void P_LoadThings (int lump)
 
     data = W_CacheLumpNum (lump,PU_STATIC);
     numthings = W_LumpLength (lump) / sizeof(mapthing_t);
-	
+
     mt = (mapthing_t *)data;
     for (i=0 ; i<numthings ; i++, mt++)
     {
-	spawn = true;
+        spawn = true;
 
-	// Do not spawn cool, new monsters if !commercial
-	if (gamemode != commercial)
-	{
-	    switch (SHORT(mt->type))
-	    {
-	      case 68:	// Arachnotron
-	      case 64:	// Archvile
-	      case 88:	// Boss Brain
-	      case 89:	// Boss Shooter
-	      case 69:	// Hell Knight
-	      case 67:	// Mancubus
-	      case 71:	// Pain Elemental
-	      case 65:	// Former Human Commando
-	      case 66:	// Revenant
-	      case 84:	// Wolf SS
-		spawn = false;
-		break;
-	    }
-	}
-	if (spawn == false)
-	    break;
+        // Do not spawn cool, new monsters if !commercial
+        // STRIFE-TODO: replace with isregistered stuff
+        if (gamemode != commercial)
+        {
+            switch (SHORT(mt->type))
+            {
+            case 68:	// Arachnotron
+            case 64:	// Archvile
+            case 88:	// Boss Brain
+            case 89:	// Boss Shooter
+            case 69:	// Hell Knight
+            case 67:	// Mancubus
+            case 71:	// Pain Elemental
+            case 65:	// Former Human Commando
+            case 66:	// Revenant
+            case 84:	// Wolf SS
+                spawn = false;
+                break;
+            }
+        }
+        if (spawn == false)
+            break;
 
-	// Do spawn all other stuff. 
-	spawnthing.x = SHORT(mt->x);
-	spawnthing.y = SHORT(mt->y);
-	spawnthing.angle = SHORT(mt->angle);
-	spawnthing.type = SHORT(mt->type);
-	spawnthing.options = SHORT(mt->options);
-	
-	P_SpawnMapThing(&spawnthing);
+        // Do spawn all other stuff. 
+        spawnthing.x = SHORT(mt->x);
+        spawnthing.y = SHORT(mt->y);
+        spawnthing.angle = SHORT(mt->angle);
+        spawnthing.type = SHORT(mt->type);
+        spawnthing.options = SHORT(mt->options);
+
+        // haleyjd 08/24/2010: Special Strife checks
+        if(spawnthing.type >= 118 && spawnthing.type < 128)
+        {
+            // initialize riftSpots
+            int riftSpotNum = spawnthing.type - 118;
+            riftSpots[riftSpotNum] = spawnthing;
+            riftSpots[riftSpotNum].type = 1;
+        }
+        else if(spawnthing.type >= 9001 && spawnthing.type < 9011)
+        {
+            // STRIFE-TODO: mystery array of 90xx objects
+        }
+        else
+            P_SpawnMapThing(&spawnthing);
     }
 
     W_ReleaseLumpNum(lump);

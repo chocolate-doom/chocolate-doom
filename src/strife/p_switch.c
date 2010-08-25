@@ -361,7 +361,7 @@ P_UseSpecialLine
       case 11:
 	// Exit level
 	P_ChangeSwitchTexture(line,0);
-	G_ExitLevel ();
+	G_ExitLevel (0);
 	break;
 	
       case 14:

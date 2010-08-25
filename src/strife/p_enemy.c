@@ -1766,7 +1766,7 @@ void A_BossDeath (mobj_t* mo)
 	}
     }
 	
-    G_ExitLevel ();
+    G_ExitLevel (0);
 }
 
 
@@ -1909,7 +1909,7 @@ void A_BrainExplode (mobj_t* mo)
 
 void A_BrainDie (mobj_t*	mo)
 {
-    G_ExitLevel ();
+    G_ExitLevel (0);
 }
 
 void A_BrainSpit (mobj_t*	mo)

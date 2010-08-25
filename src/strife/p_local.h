@@ -262,7 +262,6 @@ extern fixed_t		bmaporgy;	// origin of block map
 extern mobj_t**		blocklinks;	// for thing chains
 
 
-
 //
 // P_INTER
 //

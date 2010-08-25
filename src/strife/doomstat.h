@@ -235,6 +235,10 @@ extern  mapthing_t*	deathmatch_p;
 // Player spawn spots.
 extern  mapthing_t      playerstarts[MAXPLAYERS];
 
+// haleyjd 08/24/10: [STRIFE] rift spots
+#define MAXRIFTSPOTS 16
+extern  mapthing_t      riftSpots[MAXRIFTSPOTS];
+
 // Intermission stats.
 // Parameters for world map / intermission.
 extern  wbstartstruct_t		wminfo;	

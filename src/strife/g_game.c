@@ -108,7 +108,12 @@ gamestate_t     gamestate;
 skill_t         gameskill; 
 boolean		respawnmonsters;
 int             gameepisode; 
-int             gamemap; 
+int             gamemap;
+
+// haleyjd 08/24/10: [STRIFE] New variables
+int             destmap;   // current destination map when exiting
+int             riftdest;  // destination spot for player
+angle_t         riftangle; // player angle saved during exit
 
 // If non-zero, exit the level after this number of minutes.
 
@@ -920,7 +925,6 @@ void G_Ticker (void)
     }
 
     // Have we just finished displaying an intermission screen?
-
     // haleyjd 08/23/10: [STRIFE] No intermission.
     /*
     if (oldgamestate == GS_INTERMISSION && gamestate != GS_INTERMISSION)
@@ -938,7 +942,7 @@ void G_Ticker (void)
         P_Ticker (); 
         ST_Ticker (); 
         AM_Ticker (); 
-        HU_Ticker ();            
+        HU_Ticker ();
         break; 
 
         // haleyjd 08/23/10: [STRIFE] No intermission.
@@ -1188,12 +1192,49 @@ void G_ScreenShot (void)
 //
 // G_DoCompleted 
 //
-boolean		secretexit; 
+//boolean         secretexit; 
 extern char*	pagename; 
- 
-void G_ExitLevel (void) 
-{ 
-    secretexit = false; 
+
+//
+// G_RiftExitLevel
+//
+// haleyjd 08/24/10: [STRIFE] New function
+// * Called from some exit linedefs to exit to a specific riftspot in the 
+//   given destination map.
+//
+void G_RiftExitLevel(int map, int spot, angle_t angle)
+{
+    gameaction = ga_completed;
+    // STRIFE-TODO: special handling for post-Sigil map changes
+    /*
+    if(players[0].weaponowned[wp_sigil])
+    {
+        if(map == 3) // Front Base -> Abandoned Front Base
+            map = 30;
+        if(map == 7) // Castle -> New Front Base
+            map = 10;
+    }
+    */
+    // no rifting in deathmatch games
+    if(deathmatch)
+        spot = 0;
+    riftangle = angle;
+    riftdest  = spot;
+    destmap   = map;
+}
+
+//
+// G_ExitLevel
+//
+// haleyjd 08/24/10: [STRIFE]:
+// * Default to next map in numeric order; init destmap and riftdest.
+//
+void G_ExitLevel (int dest) 
+{
+    if(dest == 0)
+        dest = gamemap + 1;
+    destmap = dest;
+    riftdest = 0;
     gameaction = ga_completed; 
 } 
 
@@ -1224,18 +1265,22 @@ void G_SecretExitLevel (void)
 //
 void G_DoCompleted (void) 
 {
-    // STRIFE-TODO: save automap powerup state (possibly inlined from G_PlayerFinishLevel)
-    // set destmap, stonecold
+    // STRIFE-TODO: save automap powerup state (possibly inlined from G_PlayerFinishLevel);
+    // set stonecold to 0
 
     if (automapactive) 
         AM_Stop (); 
 
     // STRIFE-TODO: needs call to G_DoSaveGame for hubs
+    // if(!deathmatch)
+    //     G_DoSaveGame(savepath2);
     
     gameaction = ga_worlddone;
 } 
 
 
+// haleyjd 08/24/10: [STRIFE] No secret exits.
+/*
 //
 // G_WorldDone 
 //
@@ -1244,7 +1289,7 @@ void G_WorldDone (void)
     gameaction = ga_worlddone; 
 
     if (secretexit) 
-	players[consoleplayer].didsecret = true; 
+        players[consoleplayer].didsecret = true; 
 
     if ( gamemode == commercial )
     {
@@ -1263,16 +1308,54 @@ void G_WorldDone (void)
 	}
     }
 } 
- 
+*/
+
+//
+// G_RiftPlayer
+//
+// haleyjd 08/24/10: [STRIFE] New function
+// Teleports the player to the appropriate rift spot.
+//
+void G_RiftPlayer(void)
+{
+    if(riftdest)
+    {
+        P_TeleportMove(players[0].mo, 
+                       riftSpots[riftdest - 1].x << FRACBITS, 
+                       riftSpots[riftdest - 1].y << FRACBITS);
+        players[0].mo->angle  = riftangle;
+        players[0].mo->health = players[0].health;
+    }
+}
+
+//
+// G_RiftCheat
+//
+// haleyjd 08/24/10: [STRIFE] New function
+// Called from the cheat code to jump to a rift spot.
+//
+boolean G_RiftCheat(int riftSpotNum)
+{
+    return P_TeleportMove(players[0].mo,
+                          riftSpots[riftSpotNum - 1].x << FRACBITS,
+                          riftSpots[riftSpotNum - 1].y << FRACBITS);
+}
+
+//
+// G_DoWorldDone
+//
+// haleyjd 08/24/10: [STRIFE] Added destmap -> gamemap set.
+// STRIFE-TODO: Load hub save and other changes.
+//
 void G_DoWorldDone (void) 
 {        
     gamestate = GS_LEVEL; 
-    gamemap = wminfo.next+1; 
+    gamemap = destmap;
     G_DoLoadLevel (); 
     gameaction = ga_nothing; 
     viewactive = true; 
 } 
- 
+
 
 
 //
@@ -1450,7 +1533,12 @@ void G_DoNewGame (void)
 // The sky texture to be used instead of the F_SKY1 dummy.
 extern  int	skytexture; 
 
-
+//
+// G_InitNew
+//
+// haleyjd 08/24/10: [STRIFE]:
+// * Added riftdest initialization
+//
 void
 G_InitNew
 ( skill_t	skill,
@@ -1508,7 +1596,8 @@ G_InitNew
 	respawnmonsters = true;
     else
 	respawnmonsters = false;
-		
+
+    // STRIFE-TODO: (broken) Strife skill level mobjinfo/states tweaking
     if (fastparm || (skill == sk_nightmare && gameskill != sk_nightmare) )
     { 
 	for (i=S_SARG_RUN1 ; i<=S_SARG_PAIN2 ; i++) 
@@ -1539,6 +1628,7 @@ G_InitNew
     gameepisode = episode; 
     gamemap = map; 
     gameskill = skill; 
+    riftdest = 0; // haleyjd 08/24/10: [STRIFE] init riftdest to zero on new game
  
     viewactive = true;
 
@@ -1552,6 +1642,7 @@ G_InitNew
     // restore from a saved game.  This was fixed before the Doom
     // source release, but this IS the way Vanilla DOS Doom behaves.
 
+    // STRIFE-TODO: Strife skies (of which there are but two)
     if (gamemode == commercial)
     {
         if (gamemap < 12)
@@ -1585,7 +1676,8 @@ G_InitNew
 
     skytexture = R_TextureNumForName(skytexturename);
 
-    
+    // STRIFE-TODO:
+    // G_LoadPath(gamemap)
     G_DoLoadLevel (); 
 } 
  
