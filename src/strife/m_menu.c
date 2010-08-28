@@ -126,8 +126,9 @@ char			saveOldString[SAVESTRINGSIZE];
 boolean			inhelpscreens;
 boolean			menuactive;
 
-#define SKULLXOFF		-32
-#define LINEHEIGHT		16
+// haleyjd 08/27/10: [STRIFE] SKULLXOFF == -28, LINEHEIGHT == 19
+#define CURSORXOFF		-28
+#define LINEHEIGHT		19
 
 extern boolean		sendpause;
 char			savegamestrings[10][SAVESTRINGSIZE];
@@ -167,13 +168,15 @@ typedef struct menu_s
     short		lastOn;		// last item user was on in menu
 } menu_t;
 
+// haleyjd 08/27/10: [STRIFE] skull* stuff changed to cursor* stuff
 short		itemOn;			// menu item skull is on
-short		skullAnimCounter;	// skull animation counter
-short		whichSkull;		// which skull to draw
+short		cursorAnimCounter;	// skull animation counter
+short		whichCursor;		// which skull to draw
 
-// graphic name of skulls
-// warning: initializer-string for array of chars is too long
-char    *skullName[2] = {"M_SKULL1","M_SKULL2"};
+// graphic name of cursors
+// haleyjd 08/27/10: [STRIFE] M_SKULL* -> M_CURS*
+char    *cursorName[8] = {"M_CURS1", "M_CURS2", "M_CURS3", "M_CURS4", 
+                          "M_CURS5", "M_CURS6", "M_CURS7", "M_CURS8" };
 
 // current menudef
 menu_t*	currentMenu;                          
@@ -255,7 +258,7 @@ menuitem_t MainMenu[]=
     {1,"M_LOADG",M_LoadGame,'l'},
     {1,"M_SAVEG",M_SaveGame,'s'},
     // Another hickup with Special edition.
-    {1,"M_RDTHIS",M_ReadThis,'r'},
+    {1,"M_RDTHIS",M_ReadThis,'h'}, // haleyjd 08/28/10: 'r' -> 'h'
     {1,"M_QUITG",M_QuitDOOM,'q'}
 };
 
@@ -265,7 +268,7 @@ menu_t  MainDef =
     NULL,
     MainMenu,
     M_DrawMainMenu,
-    97,64,
+    97,45, // haleyjd 08/28/10: [STRIFE] changed y coord
     0
 };
 
@@ -315,21 +318,22 @@ enum
 
 menuitem_t NewGameMenu[]=
 {
-    {1,"M_JKILL",	M_ChooseSkill, 'i'},
-    {1,"M_ROUGH",	M_ChooseSkill, 'h'},
-    {1,"M_HURT",	M_ChooseSkill, 'h'},
-    {1,"M_ULTRA",	M_ChooseSkill, 'u'},
-    {1,"M_NMARE",	M_ChooseSkill, 'n'}
+    // haleyjd 08/28/10: [STRIFE] changed all shortcut letters
+    {1,"M_JKILL",	M_ChooseSkill, 't'},
+    {1,"M_ROUGH",	M_ChooseSkill, 'r'},
+    {1,"M_HURT",	M_ChooseSkill, 'v'},
+    {1,"M_ULTRA",	M_ChooseSkill, 'e'},
+    {1,"M_NMARE",	M_ChooseSkill, 'b'}
 };
 
 menu_t  NewDef =
 {
-    newg_end,		// # of menu items
-    &EpiDef,		// previous menu
-    NewGameMenu,	// menuitem_t ->
-    M_DrawNewGame,	// drawing routine ->
+    newg_end,           // # of menu items
+    &EpiDef,            // previous menu - STRIFE-FIXME: should be MainDef
+    NewGameMenu,        // menuitem_t ->
+    M_DrawNewGame,      // drawing routine ->
     48,63,              // x,y
-    hurtme		// lastOn
+    toorough            // lastOn - haleyjd [STRIFE]: default to skill 1
 };
 
 
@@ -339,25 +343,19 @@ menu_t  NewDef =
 //
 enum
 {
+    // haleyjd 08/28/10: [STRIFE] Removed messages, mouse sens., detail.
     endgame,
-    messages,
-    detail,
     scrnsize,
     option_empty1,
-    mousesens,
-    option_empty2,
     soundvol,
     opt_end
 } options_e;
 
 menuitem_t OptionsMenu[]=
 {
+    // haleyjd 08/28/10: [STRIFE] Removed messages, mouse sens., detail.
     {1,"M_ENDGAM",	M_EndGame,'e'},
-    {1,"M_MESSG",	M_ChangeMessages,'m'},
-    {1,"M_DETAIL",	M_ChangeDetail,'g'},
     {2,"M_SCRNSZ",	M_SizeDisplay,'s'},
-    {-1,"",0,'\0'},
-    {2,"M_MSENS",	M_ChangeSensitivity,'m'},
     {-1,"",0,'\0'},
     {1,"M_SVOL",	M_Sound,'s'}
 };
@@ -891,10 +889,12 @@ void M_MusicVol(int choice)
 //
 // M_DrawMainMenu
 //
+// haleyjd 08/27/10: [STRIFE] Changed x coordinate; M_DOOM -> M_STRIFE
+//
 void M_DrawMainMenu(void)
 {
-    V_DrawPatchDirect(94, 2,
-                      W_CacheLumpName(DEH_String("M_DOOM"), PU_CACHE));
+    V_DrawPatchDirect(84, 2,
+                      W_CacheLumpName(DEH_String("M_STRIFE"), PU_CACHE));
 }
 
 
@@ -902,6 +902,8 @@ void M_DrawMainMenu(void)
 
 //
 // M_NewGame
+//
+// haleyjd 08/27/10: [STRIFE] Verified unmodified.
 //
 void M_DrawNewGame(void)
 {
@@ -991,19 +993,11 @@ char	msgNames[2][9]		= {"M_MSGOFF","M_MSGON"};
 
 void M_DrawOptions(void)
 {
-    V_DrawPatchDirect(108, 15, W_CacheLumpName(DEH_String("M_OPTTTL"),
+    // haleyjd 08/27/10: [STRIFE] M_OPTTTL -> M_OPTION
+    V_DrawPatchDirect(108, 15, W_CacheLumpName(DEH_String("M_OPTION"),
                                                PU_CACHE));
-	
-    V_DrawPatchDirect(OptionsDef.x + 175, OptionsDef.y + LINEHEIGHT * detail,
-		      W_CacheLumpName(DEH_String(detailNames[detailLevel]),
-			              PU_CACHE));
 
-    V_DrawPatchDirect(OptionsDef.x + 120, OptionsDef.y + LINEHEIGHT * messages,
-                      W_CacheLumpName(DEH_String(msgNames[showMessages]),
-                                      PU_CACHE));
-
-    M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (mousesens + 1),
-		 10, mouseSensitivity);
+    // haleyjd 08/26/10: [STRIFE] Removed messages, sensitivity, detail.
 
     M_DrawThermo(OptionsDef.x,OptionsDef.y+LINEHEIGHT*(scrnsize+1),
 		 9,screenSize);
@@ -1949,10 +1943,11 @@ void M_Drawer (void)
     }
 
     
-    // DRAW SKULL
-    V_DrawPatchDirect(x + SKULLXOFF, currentMenu->y - 5 + itemOn*LINEHEIGHT,
-		      W_CacheLumpName(DEH_String(skullName[whichSkull]),
-				      PU_CACHE));
+    // haleyjd 08/27/10: [STRIFE] Adjust to draw spinning Sigil
+    // DRAW SIGIL
+    V_DrawPatchDirect(x + CURSORXOFF, currentMenu->y - 5 + itemOn*LINEHEIGHT,
+                      W_CacheLumpName(DEH_String(cursorName[whichCursor]),
+                                      PU_CACHE));
 
 }
 
@@ -1983,12 +1978,14 @@ void M_SetupNextMenu(menu_t *menudef)
 //
 // M_Ticker
 //
+// haleyjd 08/27/10: [STRIFE] Rewritten for Sigil cursor
+//
 void M_Ticker (void)
 {
-    if (--skullAnimCounter <= 0)
+    if (--cursorAnimCounter <= 0)
     {
-	whichSkull ^= 1;
-	skullAnimCounter = 8;
+        whichCursor = (whichCursor + 1) % 8;
+        cursorAnimCounter = 5;
     }
 }
 
@@ -1996,44 +1993,22 @@ void M_Ticker (void)
 //
 // M_Init
 //
+// haleyjd 08/27/10: [STRIFE] Removed DOOM gamemode stuff
+//
 void M_Init (void)
 {
     currentMenu = &MainDef;
     menuactive = 0;
     itemOn = currentMenu->lastOn;
-    whichSkull = 0;
-    skullAnimCounter = 10;
+    whichCursor = 0;
+    cursorAnimCounter = 10;
     screenSize = screenblocks - 3;
     messageToPrint = 0;
     messageString = NULL;
-    messageLastMenuActive = menuactive;
+    messageLastMenuActive = menuactive; // STRIFE-FIXME: assigns 0 here...
     quickSaveSlot = -1;
 
     // Here we could catch other version dependencies,
     //  like HELP1/2, and four episodes.
-
-  
-    switch ( gamemode )
-    {
-      case commercial:
-        // Commercial has no "read this" entry.
-	MainMenu[readthis] = MainMenu[quitdoom];
-	MainDef.numitems--;
-	MainDef.y += 8;
-	NewDef.prevMenu = &MainDef;
-	break;
-      case shareware:
-	// Episode 2 and 3 are handled,
-	//  branching to an ad screen.
-      case registered:
-	// We need to remove the fourth episode.
-	EpiDef.numitems--;
-	break;
-      case retail:
-	// We are fine.
-      default:
-	break;
-    }
-    
 }
 

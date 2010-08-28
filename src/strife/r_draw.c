@@ -526,7 +526,9 @@ void R_DrawTranslatedColumnLow (void)
 } 
 
 
-
+// haleyjd 08/26/10: [STRIFE] - Rogue's translucency lookup table
+// This is functionally equivalent to Raven's TINTTAB and BOOM's TRANMAPs.
+byte *xlatab;
 
 //
 // R_InitTranslationTables
@@ -535,28 +537,47 @@ void R_DrawTranslatedColumnLow (void)
 // Assumes a given structure of the PLAYPAL.
 // Could be read from a lump instead.
 //
+// haleyjd 08/26/10: [STRIFE]
+// * Added loading of XLATAB
+//
 void R_InitTranslationTables (void)
 {
-    int		i;
-	
+    int         i;
+
+    // [STRIFE] Load xlatab. Here's how Rogue did it:
+    //   v7 = W_CacheLumpName("XLATAB", PU_CACHE); // note potential cache bug...
+    //   HIWORD(v8) = (Z_Malloc(131072, PU_STATIC, NULL) + 65535) >> 16;
+    //   LOWORD(v8) = 0; // aligning to a 64K boundary, as if this is Wolf3D.
+    //   xlatab = v8;
+    //   memcpy(v8, v7, 65536);
+    //   memcpy(v8+65536, v7+65536, 0); // 0 bytes, does nothing!
+    // As you can see, they copypasta'd id's unnecessary 64K boundary alignment
+    // from the colormap code, and then evidently at some point dropped the high
+    // side of the presumably 128KB lump (because it is redundant data), but 
+    // just set the 2nd memset call's length to 0 bytes... Terrible. Since none
+    // of this accomplishes anything, and isn't strictly portable, all we need
+    // to do is this:
+    xlatab = W_CacheLumpName("XLATAB", PU_STATIC);
+
     translationtables = Z_Malloc (256*3, PU_STATIC, 0);
-    
+
+    // STRIFE-TODO: Strife has many more (and more varied) translations
     // translate just the 16 green colors
     for (i=0 ; i<256 ; i++)
     {
-	if (i >= 0x70 && i<= 0x7f)
-	{
-	    // map green ramp to gray, brown, red
-	    translationtables[i] = 0x60 + (i&0xf);
-	    translationtables [i+256] = 0x40 + (i&0xf);
-	    translationtables [i+512] = 0x20 + (i&0xf);
-	}
-	else
-	{
-	    // Keep all other colors as is.
-	    translationtables[i] = translationtables[i+256] 
-		= translationtables[i+512] = i;
-	}
+        if (i >= 0x70 && i<= 0x7f)
+        {
+            // map green ramp to gray, brown, red
+            translationtables[i] = 0x60 + (i&0xf);
+            translationtables [i+256] = 0x40 + (i&0xf);
+            translationtables [i+512] = 0x20 + (i&0xf);
+        }
+        else
+        {
+            // Keep all other colors as is.
+            translationtables[i] = translationtables[i+256] 
+            = translationtables[i+512] = i;
+        }
     }
 }
 

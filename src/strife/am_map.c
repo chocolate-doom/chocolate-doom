@@ -491,7 +491,9 @@ void AM_initVariables(void)
 }
 
 //
-// 
+// AM_loadPics
+//
+// haleyjd 08/27/10: [STRIFE] Changed marknums to PLMNUM%d
 //
 void AM_loadPics(void)
 {
@@ -500,8 +502,8 @@ void AM_loadPics(void)
   
     for (i=0;i<10;i++)
     {
-	sprintf(namebuf, DEH_String("AMMNUM%d"), i);
-	marknums[i] = W_CacheLumpName(namebuf, PU_STATIC);
+        sprintf(namebuf, DEH_String("PLMNUM%d"), i); 
+        marknums[i] = W_CacheLumpName(namebuf, PU_STATIC);
     }
 
 }
@@ -513,8 +515,8 @@ void AM_unloadPics(void)
   
     for (i=0;i<10;i++)
     {
-	sprintf(namebuf, DEH_String("AMMNUM%d"), i);
-	W_ReleaseLumpName(namebuf);
+        sprintf(namebuf, DEH_String("PLMNUM%d"), i); // haleyjd: Choco change.
+        W_ReleaseLumpName(namebuf);
     }
 }
 

@@ -343,8 +343,9 @@ void D_Display (void)
             I_Sleep(1);
         } while (tics < 3); // haleyjd 08/23/2010: [STRIFE] Changed from == 0 to < 3
 
+        // haleyjd 08/26/10: [STRIFE] Changed to use ColorXForm wipe.
         wipestart = nowtime;
-        done = wipe_ScreenWipe(wipe_Melt
+        done = wipe_ScreenWipe(wipe_ColorXForm
                                , 0, 0, SCREENWIDTH, SCREENHEIGHT, tics);
         I_UpdateNoBlit ();
         M_Drawer ();                            // menu is drawn even on top of wipes
@@ -1099,8 +1100,8 @@ static void D_Endoom(void)
         return;
     }
 
-    // STRIFE-TODO: ENDOOM -> ENDSTRF
-    endoom = W_CacheLumpName(DEH_String("ENDOOM"), PU_STATIC);
+    // haleyjd 08/27/10: [STRIFE] ENDOOM -> ENDSTRF
+    endoom = W_CacheLumpName(DEH_String("ENDSTRF"), PU_STATIC);
 
     I_Endoom(endoom);
 }
@@ -1567,7 +1568,7 @@ void D_DoomMain (void)
     SetSaveGameDir(iwadfile);
 
     // Check for -file in shareware
-    if (modifiedgame)
+    if (0 /*modifiedgame*/) // TEST
     {
         // These are the lumps that will be checked in IWAD,
         // if any one is not present, execution will be aborted.

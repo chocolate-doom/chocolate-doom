@@ -34,7 +34,7 @@
 
 enum
 {
-    // simple gradual pixel change for 8-bit only
+    // [STRIFE]: ColorXForm reimplemented as a proper crossfade
     wipe_ColorXForm,
     
     // weird screen melt

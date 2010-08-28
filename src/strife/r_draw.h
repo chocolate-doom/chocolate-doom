@@ -79,6 +79,7 @@ extern byte*		ds_source;
 
 extern byte*		translationtables;
 extern byte*		dc_translation;
+extern byte*		xlatab;            // haleyjd 08/26/10: [STRIFE]
 
 
 // Span blitting for rows, floor/ceiling.

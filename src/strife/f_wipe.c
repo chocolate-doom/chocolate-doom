@@ -33,6 +33,9 @@
 
 #include "doomtype.h"
 
+#include "r_defs.h"   // haleyjd [STRIFE]
+#include "r_draw.h"
+
 #include "f_wipe.h"
 
 //
@@ -69,6 +72,7 @@ wipe_shittyColMajorXform
 
 }
 
+// haleyjd 08/26/10: [STRIFE] Verified unmodified.
 int
 wipe_initColorXForm
 ( int	width,
@@ -79,52 +83,40 @@ wipe_initColorXForm
     return 0;
 }
 
+//
+// wipe_doColorXForm
+//
+// haleyjd 08/26/10: [STRIFE]
+// * Rogue modified the unused ColorXForm wipe in-place in order to implement 
+//   their distinctive crossfade wipe.
+//
 int
 wipe_doColorXForm
 ( int	width,
   int	height,
   int	ticks )
 {
-    boolean	changed;
-    byte*	w;
-    byte*	e;
-    int		newval;
+    byte *cur_screen = wipe_scr;
+    byte *end_screen = wipe_scr_end;
+    int   pix = width*height;
+    int   i;
+    boolean changed = false;
 
-    changed = false;
-    w = wipe_scr;
-    e = wipe_scr_end;
-    
-    while (w!=wipe_scr+width*height)
+    for(i = pix; i > 0; i--)
     {
-	if (*w != *e)
-	{
-	    if (*w > *e)
-	    {
-		newval = *w - ticks;
-		if (newval < *e)
-		    *w = *e;
-		else
-		    *w = newval;
-		changed = true;
-	    }
-	    else if (*w < *e)
-	    {
-		newval = *w + ticks;
-		if (newval > *e)
-		    *w = *e;
-		else
-		    *w = newval;
-		changed = true;
-	    }
-	}
-	w++;
-	e++;
+        if(*cur_screen != *end_screen)
+        {
+            changed = true;
+            *cur_screen = xlatab[(*cur_screen << 8) + *end_screen];
+        }
+        ++cur_screen;
+        ++end_screen;
     }
 
     return !changed;
-
 }
 
+// haleyjd 08/26/10: [STRIFE] Verified unmodified.
 int
 wipe_exitColorXForm
 ( int	width,
@@ -235,6 +227,7 @@ wipe_exitMelt
     return 0;
 }
 
+// haleyjd 08/26/10: [STRIFE] Verified unmodified.
 int
 wipe_StartScreen
 ( int	x,
@@ -247,6 +240,7 @@ wipe_StartScreen
     return 0;
 }
 
+// haleyjd 08/26/10: [STRIFE] Verified unmodified.
 int
 wipe_EndScreen
 ( int	x,
@@ -260,6 +254,7 @@ wipe_EndScreen
     return 0;
 }
 
+// haleyjd 08/26/10: [STRIFE] Verified unmodified.
 int
 wipe_ScreenWipe
 ( int	wipeno,
