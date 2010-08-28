@@ -193,6 +193,7 @@ void M_Options(int choice);
 void M_EndGame(int choice);
 void M_ReadThis(int choice);
 void M_ReadThis2(int choice);
+void M_ReadThis3(int choice); // [STRIFE]
 void M_QuitDOOM(int choice);
 
 void M_ChangeMessages(int choice);
@@ -204,7 +205,7 @@ void M_SizeDisplay(int choice);
 void M_StartGame(int choice);
 void M_Sound(int choice);
 
-void M_FinishReadThis(int choice);
+//void M_FinishReadThis(int choice); - [STRIFE] unused
 void M_LoadSelect(int choice);
 void M_SaveSelect(int choice);
 void M_ReadSaveStrings(void);
@@ -214,6 +215,7 @@ void M_QuickLoad(void);
 void M_DrawMainMenu(void);
 void M_DrawReadThis1(void);
 void M_DrawReadThis2(void);
+void M_DrawReadThis3(void); // [STRIFE]
 void M_DrawNewGame(void);
 void M_DrawEpisode(void);
 void M_DrawOptions(void);
@@ -232,7 +234,7 @@ int  M_StringHeight(char *string);
 void M_StartControlPanel(void);
 void M_StartMessage(char *string,void *routine,boolean input);
 void M_StopMessage(void);
-void M_ClearMenus (void);
+void M_ClearMenus (int choice);
 
 
 
@@ -371,7 +373,7 @@ menu_t  OptionsDef =
 };
 
 //
-// Read This! MENU 1 & 2
+// Read This! MENU 1 & 2 & [STRIFE] 3
 //
 enum
 {
@@ -402,7 +404,7 @@ enum
 
 menuitem_t ReadMenu2[]=
 {
-    {1,"",M_FinishReadThis,0}
+    {1,"",M_ReadThis3,0} // haleyjd 08/28/10: [STRIFE] Go to ReadThis3
 };
 
 menu_t  ReadDef2 =
@@ -411,7 +413,29 @@ menu_t  ReadDef2 =
     &ReadDef1,
     ReadMenu2,
     M_DrawReadThis2,
-    330,175,
+    250,185, // haleyjd 08/28/10: [STRIFE] changed coords
+    0
+};
+
+// haleyjd 08/28/10: Added Read This! menu 3
+enum
+{
+    rdthsempty3,
+    read3_end
+} read_e3;
+
+menuitem_t ReadMenu3[]=
+{
+    {1,"",M_ClearMenus,0}
+};
+
+menu_t  ReadDef3 =
+{
+    read3_end,
+    &ReadDef2,
+    ReadMenu3,
+    M_DrawReadThis3,
+    250, 185,
     0
 };
 
@@ -584,7 +608,7 @@ void M_LoadSelect(int choice)
     strcpy(name, P_SaveGameFile(choice));
 
     G_LoadGame (name);
-    M_ClearMenus ();
+    M_ClearMenus (0);
 }
 
 //
@@ -630,7 +654,7 @@ void M_DrawSave(void)
 void M_DoSave(int slot)
 {
     G_SaveGame (slot,savegamestrings[slot]);
-    M_ClearMenus ();
+    M_ClearMenus (0);
 
     // PICK QUICKSAVE SLOT YET?
     if (quickSaveSlot == -2)
@@ -747,88 +771,39 @@ void M_QuickLoad(void)
 //
 // Read This Menus
 // Had a "quick hack to fix romero bug"
+// haleyjd 08/28/10: [STRIFE] Draw HELP1, unconditionally.
 //
 void M_DrawReadThis1(void)
 {
-    char *lumpname = "CREDIT";
-    int skullx = 330, skully = 175;
-
     inhelpscreens = true;
-    
-    // Different versions of Doom 1.9 work differently
 
-    switch (gameversion)
-    {
-        case exe_doom_1_9:
-            if (gamemode == commercial)
-            {
-                // Doom 2
-
-                lumpname = "HELP";
-
-                skullx = 330;
-                skully = 165;
-            }
-            else
-            {
-                // Doom 1
-                // HELP2 is the first screen shown in Doom 1
-                
-                lumpname = "HELP2";
-
-                skullx = 280;
-                skully = 185;
-            }
-            break;
-
-        case exe_ultimate:
-        case exe_chex:
-
-            // Ultimate Doom always displays "HELP1".
-
-            // Chex Quest version also uses "HELP1", even though it is based
-            // on Final Doom.
-
-            lumpname = "HELP1";
-
-            break;
-
-        case exe_final:
-
-            // Final Doom always displays "HELP".
-
-            lumpname = "HELP";
-
-            break;
-
-        default:
-            I_Error("Unhandled game version");
-            break;
-    }
-
-    lumpname = DEH_String(lumpname);
-    
-    V_DrawPatchDirect (0, 0, W_CacheLumpName(lumpname, PU_CACHE));
-
-    ReadDef1.x = skullx;
-    ReadDef1.y = skully;
+    V_DrawPatchDirect (0, 0, W_CacheLumpName(DEH_String("HELP1"), PU_CACHE));
 }
 
 
 
 //
-// Read This Menus - optional second page.
+// Read This Menus
+// haleyjd 08/28/10: [STRIFE] Not optional, draws HELP2
 //
 void M_DrawReadThis2(void)
 {
     inhelpscreens = true;
 
-    // We only ever draw the second page if this is 
-    // gameversion == exe_doom_1_9 and gamemode == registered
-
-    V_DrawPatchDirect(0, 0, W_CacheLumpName(DEH_String("HELP1"), PU_CACHE));
+    V_DrawPatchDirect(0, 0, W_CacheLumpName(DEH_String("HELP2"), PU_CACHE));
 }
 
+
+//
+// Read This Menus
+// haleyjd 08/28/10: [STRIFE] New function to draw HELP3.
+//
+void M_DrawReadThis3(void)
+{
+    inhelpscreens = true;
+    
+    V_DrawPatchDirect(0, 0, W_CacheLumpName(DEH_String("HELP3"), PU_CACHE));
+}
 
 //
 // Change Sfx & Music volumes
@@ -944,7 +919,7 @@ void M_VerifyNightmare(int key)
 	return;
 		
     G_DeferedInitNew(nightmare,epi+1,1);
-    M_ClearMenus ();
+    M_ClearMenus (0);
 }
 
 void M_ChooseSkill(int choice)
@@ -956,7 +931,7 @@ void M_ChooseSkill(int choice)
     }
 	
     G_DeferedInitNew(choice,epi+1,1);
-    M_ClearMenus ();
+    M_ClearMenus (0);
 }
 
 void M_Episode(int choice)
@@ -1037,7 +1012,7 @@ void M_EndGameResponse(int key)
 	return;
 		
     currentMenu->lastOn = itemOn;
-    M_ClearMenus ();
+    M_ClearMenus (0);
     D_StartTitle ();
 }
 
@@ -1071,30 +1046,36 @@ void M_ReadThis(int choice)
     M_SetupNextMenu(&ReadDef1);
 }
 
+//
+// M_ReadThis2
+//
+// haleyjd 08/28/10: [STRIFE] Eliminated DOOM stuff.
+//
 void M_ReadThis2(int choice)
 {
-    // Doom 1.9 had two menus when playing Doom 1
-    // All others had only one
-
-    if (gameversion == exe_doom_1_9 && gamemode != commercial)
-    {
-        choice = 0;
-        M_SetupNextMenu(&ReadDef2);
-    }
-    else
-    {
-        // Close the menu
-
-        M_FinishReadThis(0);
-    }
+    choice = 0;
+    M_SetupNextMenu(&ReadDef2);
 }
 
+//
+// M_ReadThis3
+//
+// haleyjd 08/28/10: [STRIFE] New function.
+//
+void M_ReadThis3(int choice)
+{
+    choice = 0;
+    M_SetupNextMenu(&ReadDef3);
+}
+
+/*
+// haleyjd 08/28/10: [STRIFE] Not used.
 void M_FinishReadThis(int choice)
 {
     choice = 0;
     M_SetupNextMenu(&MainDef);
 }
-
+*/
 
 
 
@@ -1240,6 +1221,12 @@ void M_SizeDisplay(int choice)
 //
 //      Menu Functions
 //
+
+//
+// M_DrawThermo
+//
+// haleyjd 08/28/10: [STRIFE] Changes to some patch coordinates.
+//
 void
 M_DrawThermo
 ( int	x,
@@ -1247,21 +1234,24 @@ M_DrawThermo
   int	thermWidth,
   int	thermDot )
 {
-    int		xx;
-    int		i;
+    int         xx;
+    int         yy; // [STRIFE] Needs a temp y coordinate variable
+    int         i;
 
     xx = x;
-    V_DrawPatchDirect(xx, y, W_CacheLumpName(DEH_String("M_THERML"), PU_CACHE));
+    yy = y + 6; // [STRIFE] +6 to y coordinate
+    V_DrawPatchDirect(xx, yy, W_CacheLumpName(DEH_String("M_THERML"), PU_CACHE));
     xx += 8;
     for (i=0;i<thermWidth;i++)
     {
-	V_DrawPatchDirect(xx, y, W_CacheLumpName(DEH_String("M_THERMM"), PU_CACHE));
-	xx += 8;
+        V_DrawPatchDirect(xx, yy, W_CacheLumpName(DEH_String("M_THERMM"), PU_CACHE));
+        xx += 8;
     }
-    V_DrawPatchDirect(xx, y, W_CacheLumpName(DEH_String("M_THERMR"), PU_CACHE));
+    V_DrawPatchDirect(xx, yy, W_CacheLumpName(DEH_String("M_THERMR"), PU_CACHE));
 
-    V_DrawPatchDirect((x + 8) + thermDot * 8, y,
-		      W_CacheLumpName(DEH_String("M_THERMO"), PU_CACHE));
+    // [STRIFE] +2 to initial y coordinate
+    V_DrawPatchDirect((x + 8) + thermDot * 8, y + 2,
+                      W_CacheLumpName(DEH_String("M_THERMO"), PU_CACHE));
 }
 
 
@@ -1808,7 +1798,7 @@ boolean M_Responder (event_t* ev)
         // Deactivate menu
 
 	currentMenu->lastOn = itemOn;
-	M_ClearMenus ();
+	M_ClearMenus (0);
 	S_StartSound(NULL,sfx_swtchx);
 	return true;
     }
@@ -1955,11 +1945,14 @@ void M_Drawer (void)
 //
 // M_ClearMenus
 //
-void M_ClearMenus (void)
+// haleyjd 08/28/10: [STRIFE] Added an int param so this can be called by menus.
+//
+void M_ClearMenus (int choice)
 {
+    choice = 0;     // haleyjd: for no warning; not from decompilation.
     menuactive = 0;
-    // if (!netgame && usergame && paused)
-    //       sendpause = true;
+    // STRIFE-TODO:
+    // menupause = 0;
 }
 
 
