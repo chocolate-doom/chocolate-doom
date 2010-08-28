@@ -1,3 +1,34 @@
+1.5.0 (2010-??-??):
+
+    Big changes in this version:
+     * The DOSbox OPL emulator (DBOPL) has been imported to replace
+       the older FMOPL code.  The quality of OPL emulation is now
+       therefore much better.
+     * When running in windowed mode, it is now possible to
+       dynamically resize the window by dragging the window borders.
+     * There are now keyboard, mouse and joystick bindings to cycle
+       through available weapons, making play with joypads or mobile
+       devices (ie. without a proper keyboard) much more practical.
+     * There is now a key binding to change the multiplayer spy key
+       (usually F12).
+     * There is now a configuration file parameter to set the OPL I/O
+       port, for cards that don't use port 0x388.
+     * Up to 8 mouse buttons are now supported (including the
+       mousewheel).
+
+    Bugs fixed:
+     * It is now possible to use OPL emulation at 11025Hz sound
+       sampling rate (thanks to the new OPL emulator).
+     * The span renderer function (used for drawing floors and
+       ceilings) now behaves the same as Vanilla Doom, so screenshots
+       are pixel-perfect identical to Vanilla Doom (thanks Porsche
+       Monty).
+     * The zone memory system now aligns allocated memory to 8-byte
+       boundaries on 64-bit systems, which may fix crashes on systems
+       such as sparc64.
+     * The configure script now checks for libm, fixing compile
+       problems on Fedora Linux.
+
 1.4.0 (2010-07-10):
 
      The biggest change in this version is the addition of OPL
