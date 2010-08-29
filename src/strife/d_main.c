@@ -65,6 +65,7 @@
 #include "i_system.h"
 #include "i_timer.h"
 #include "i_video.h"
+#include "i_swap.h"
 
 #include "g_game.h"
 
@@ -1106,6 +1107,45 @@ static void D_Endoom(void)
     I_Endoom(endoom);
 }
 
+//=============================================================================
+//
+// haleyjd: Chocolate Strife Specifics
+//
+// None of the code in here is from the original executable, but is needed for
+// other reasons.
+
+//
+// D_PatchClipCallback
+//
+// haleyjd 08/28/10: Clip patches to the framebuffer without errors.
+// Returns false if V_DrawPatch should return without drawing.
+//
+static boolean D_PatchClipCallback(patch_t *patch, int x, int y)
+{
+    // note that offsets were already accounted for in V_DrawPatch
+    return (x >= 0 && y >= 0 
+            && x + SHORT(patch->width) <= SCREENWIDTH 
+            && y + SHORT(patch->height) <= SCREENHEIGHT);
+}
+
+//
+// D_InitChocoStrife
+//
+// haleyjd 08/28/10: Take care of some Strife-specific initialization
+// that is necessitated by Chocolate Doom issues, such as setting global 
+// callbacks.
+//
+static void D_InitChocoStrife(void)
+{
+    // set the V_DrawPatch clipping callback
+    V_SetPatchClipCallback(D_PatchClipCallback);
+}
+
+//
+// End Chocolate Strife Specifics
+//
+//=============================================================================
+
 //
 // D_DoomMain
 //
@@ -1568,7 +1608,7 @@ void D_DoomMain (void)
     SetSaveGameDir(iwadfile);
 
     // Check for -file in shareware
-    if (0 /*modifiedgame*/) // TEST
+    if (0 /*modifiedgame*/) // STRIFE-FIXME: DISABLED FOR TESTING
     {
         // These are the lumps that will be checked in IWAD,
         // if any one is not present, execution will be aborted.
@@ -1743,6 +1783,9 @@ void D_DoomMain (void)
 
     I_PrintStartupBanner(gamedescription);
     PrintDehackedBanners();
+
+    // haleyjd 08/28/10: Init Choco Strife stuff.
+    D_InitChocoStrife();
 
     printf (DEH_String("M_Init: Init miscellaneous info.\n"));
     M_Init ();

@@ -54,6 +54,9 @@ static byte *dest_screen = NULL;
 
 int dirtybox[4]; 
 
+// haleyjd 08/28/10: clipping callback function for patches.
+// This is needed for Chocolate Strife, which clips patches to the screen.
+static vpatchclipfunc_t patchclip_callback = NULL;
 
 //
 // V_MarkRect 
@@ -108,6 +111,20 @@ void V_CopyRect(int srcx, int srcy, byte *source,
     } 
 } 
  
+//
+// V_SetPatchClipCallback
+//
+// haleyjd 08/28/10: Added for Strife support.
+// By calling this function, you can setup runtime error checking for patch 
+// clipping. Strife never caused errors by drawing patches partway off-screen.
+// Some versions of vanilla DOOM also behaved differently than the default
+// implementation, so this could possibly be extended to those as well for
+// accurate emulation.
+//
+void V_SetPatchClipCallback(vpatchclipfunc_t func)
+{
+    patchclip_callback = func;
+}
 
 //
 // V_DrawPatch
@@ -126,6 +143,13 @@ void V_DrawPatch(int x, int y, patch_t *patch)
 
     y -= SHORT(patch->topoffset);
     x -= SHORT(patch->leftoffset);
+
+    // haleyjd 08/28/10: Strife needs silent error checking here.
+    if(patchclip_callback)
+    {
+        if(!patchclip_callback(patch, x, y))
+            return;
+    }
 
 #ifdef RANGECHECK
     if (x < 0
@@ -183,6 +207,13 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
  
     y -= SHORT(patch->topoffset); 
     x -= SHORT(patch->leftoffset); 
+
+    // haleyjd 08/28/10: Strife needs silent error checking here.
+    if(patchclip_callback)
+    {
+        if(!patchclip_callback(patch, x, y))
+            return;
+    }
 
 #ifdef RANGECHECK 
     if (x < 0
