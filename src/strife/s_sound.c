@@ -96,6 +96,11 @@ int sfxVolume = 8;
 
 int musicVolume = 8;
 
+// haleyjd 08/29/10: [STRIFE] New global variable
+// Maximum volume of voice channel.
+
+int voiceVolume = 15;
+
 // Internal volume level, ranging from 0-127
 
 static int snd_SfxVolume;

@@ -128,8 +128,8 @@ FILE*		debugfile;
 boolean		advancedemo;
 
 // Store demo, do not accept any inputs
-
-boolean         storedemo;
+// haleyjd [STRIFE] Unused.
+//boolean         storedemo;
 
 
 char		wadfile[1024];		// primary wad file
@@ -235,7 +235,8 @@ void D_Display (void)
             AM_Drawer ();
         if (wipe || (viewheight != 200 && fullscreen) )
             redrawsbar = true;
-        if (inhelpscreensstate && !inhelpscreens)
+        // haleyjd 08/29/10: [STRIFE] Always redraw sbar if menu is/was active
+        if (menuactivestate || (inhelpscreensstate && !inhelpscreens))
             redrawsbar = true;              // just put away the help screen
         ST_Drawer (viewheight == 200, redrawsbar );
         fullscreen = viewheight == 200;
@@ -264,7 +265,19 @@ void D_Display (void)
         R_RenderPlayerView (&players[displayplayer]);
 
     if (gamestate == GS_LEVEL && gametic)
+    {
         HU_Drawer ();
+        // STRIFE-TODO: ST_DrawMore, unknown variable dword_861C8
+        /*
+        if(ST_DrawMore()) 
+            dword_861C8 = 1;
+        else if(dword_861C8)
+        {
+            dword_861C8 = 0;
+            menuactivestate = 1;
+        }
+        */
+    }
 
     // clean up border stuff
     if (gamestate != oldgamestate && gamestate != GS_LEVEL)
@@ -377,9 +390,13 @@ void D_BindVariables(void)
     NET_BindVariables();
 #endif
 
+    // haleyjd 08/29/10: [STRIFE]
+    // * Added voice volume
+    // * Added back flat
     M_BindVariable("mouse_sensitivity",      &mouseSensitivity);
     M_BindVariable("sfx_volume",             &sfxVolume);
     M_BindVariable("music_volume",           &musicVolume);
+    M_BindVariable("voice_volume",           &voiceVolume); 
     M_BindVariable("show_messages",          &showMessages);
     M_BindVariable("screenblocks",           &screenblocks);
     M_BindVariable("detaillevel",            &detailLevel);
@@ -387,6 +404,7 @@ void D_BindVariables(void)
     M_BindVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
     M_BindVariable("vanilla_demo_limit",     &vanilla_demo_limit);
     M_BindVariable("show_endoom",            &show_endoom);
+    M_BindVariable("back_flat",              &back_flat);
 
     // Multiplayer chat macros
 

@@ -136,6 +136,12 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_INT(music_volume),
 
     //!
+    // Volume of voice sound effects, range 0-15. Strife only.
+    //
+
+    CONFIG_VARIABLE_INT(voice_volume),
+
+    //!
     // If non-zero, messages are displayed on the heads-up display
     // in the game ("picked up a clip", etc).  If zero, these messages
     // are not displayed.
@@ -479,6 +485,12 @@ static default_t	doom_defaults_list[] =
     //
 
     CONFIG_VARIABLE_STRING(chatmacro9),
+
+    //!
+    // Name of background flat used by view border. Strife only.
+    //
+
+    CONFIG_VARIABLE_STRING(back_flat),
 };
 
 static default_collection_t doom_defaults = 

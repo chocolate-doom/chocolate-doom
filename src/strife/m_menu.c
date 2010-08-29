@@ -199,6 +199,7 @@ void M_QuitDOOM(int choice);
 void M_ChangeMessages(int choice);
 void M_ChangeSensitivity(int choice);
 void M_SfxVol(int choice);
+void M_VoiceVol(int choice); // [STRIFE]
 void M_MusicVol(int choice);
 void M_ChangeDetail(int choice);
 void M_SizeDisplay(int choice);
@@ -448,14 +449,26 @@ enum
     sfx_empty1,
     music_vol,
     sfx_empty2,
+    voice_vol,
+    sfx_empty3,
+    sfx_mouse,
+    sfx_empty4,
     sound_end
 } sound_e;
 
+// haleyjd 08/29/10:
+// [STRIFE] 
+// * Added voice volume
+// * Moved mouse sensitivity here (who knows why...)
 menuitem_t SoundMenu[]=
 {
     {2,"M_SFXVOL",M_SfxVol,'s'},
     {-1,"",0,'\0'},
     {2,"M_MUSVOL",M_MusicVol,'m'},
+    {-1,"",0,'\0'},
+    {2,"M_VOIVOL",M_VoiceVol,'v'}, 
+    {-1,"",0,'\0'},
+    {2,"M_MSENS",M_ChangeSensitivity,'m'},
     {-1,"",0,'\0'}
 };
 
@@ -465,7 +478,7 @@ menu_t  SoundDef =
     &OptionsDef,
     SoundMenu,
     M_DrawSound,
-    80,64,
+    80,35,       // [STRIFE] changed y coord 64 -> 35
     0
 };
 
@@ -808,15 +821,25 @@ void M_DrawReadThis3(void)
 //
 // Change Sfx & Music volumes
 //
+// haleyjd 08/29/10: [STRIFE]
+// * Changed title graphic coordinates
+// * Added voice volume and sensitivity sliders
+//
 void M_DrawSound(void)
 {
-    V_DrawPatchDirect (60, 38, W_CacheLumpName(DEH_String("M_SVOL"), PU_CACHE));
+    V_DrawPatchDirect (100, 10, W_CacheLumpName(DEH_String("M_SVOL"), PU_CACHE));
 
     M_DrawThermo(SoundDef.x,SoundDef.y+LINEHEIGHT*(sfx_vol+1),
-		 16,sfxVolume);
+                 16,sfxVolume);
 
     M_DrawThermo(SoundDef.x,SoundDef.y+LINEHEIGHT*(music_vol+1),
-		 16,musicVolume);
+                 16,musicVolume);
+
+    M_DrawThermo(SoundDef.x,SoundDef.y+LINEHEIGHT*(voice_vol+1),
+                 16,voiceVolume);
+
+    M_DrawThermo(SoundDef.x,SoundDef.y+LINEHEIGHT*(sfx_mouse+1),
+                 16,mouseSensitivity);
 }
 
 void M_Sound(int choice)
@@ -839,6 +862,30 @@ void M_SfxVol(int choice)
     }
 	
     S_SetSfxVolume(sfxVolume * 8);
+}
+
+//
+// M_VoiceVol
+//
+// haleyjd 08/29/10: [STRIFE] New function
+// Sets voice volume level.
+//
+void M_VoiceVol(int choice)
+{
+    switch(choice)
+    {
+    case 0:
+        if (voiceVolume)
+            voiceVolume--;
+        break;
+    case 1:
+        if (voiceVolume < 15)
+            voiceVolume++;
+        break;
+    }
+
+    // STRIFE-TODO: Voice volume setting
+    //S_SetVoiceVolume(voiceVolume * 8);
 }
 
 void M_MusicVol(int choice)

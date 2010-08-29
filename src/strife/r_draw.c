@@ -82,6 +82,9 @@ byte		translations[3][256];
 
 static byte *background_buffer = NULL;
 
+// haleyjd 08/29/10: [STRIFE] Rogue added the ability to customize the view
+// border flat by storing it in the configuration file.
+char *back_flat = "F_PAVE01";
 
 //
 // R_DrawColumn
@@ -827,6 +830,8 @@ R_InitBuffer
 //  for variable screen sizes
 // Also draws a beveled edge.
 //
+// haleyjd 08/29/10: [STRIFE] Added support for configurable back_flat.
+//
 void R_FillBackScreen (void) 
 { 
     byte*	src;
@@ -834,12 +839,6 @@ void R_FillBackScreen (void)
     int		x;
     int		y; 
     patch_t*	patch;
-
-    // DOOM border patch.
-    char       *name1 = DEH_String("FLOOR7_2");
-
-    // DOOM II border patch.
-    char *name2 = DEH_String("GRNROCK");
 
     char *name;
 
@@ -865,10 +864,8 @@ void R_FillBackScreen (void)
                                      PU_STATIC, NULL);
     }
 
-    if (gamemode == commercial)
-	name = name2;
-    else
-	name = name1;
+    // haleyjd 08/29/10: [STRIFE] Use configurable back_flat
+    name = back_flat;
     
     src = W_CacheLumpName(name, PU_CACHE); 
     dest = background_buffer;

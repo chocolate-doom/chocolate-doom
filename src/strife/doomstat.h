@@ -116,6 +116,7 @@ extern  boolean	deathmatch;
 // These are multiplied by 8.
 extern int sfxVolume;
 extern int musicVolume;
+extern int voiceVolume; // haleyjd 08/29/10: [STRIFE]
 
 // Current music/sfx card - index useless
 //  w/o a reference LUT in a sound module.
