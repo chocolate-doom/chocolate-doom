@@ -42,6 +42,7 @@
 // State.
 #include "doomstat.h"
 #include "r_state.h"
+#include "m_bbox.h"     // villsa [STRIFE]
 
 
 //
@@ -264,7 +265,77 @@ P_ChangeSwitchTexture
     }
 }
 
+//
+// P_MoveWall
+//
+// villsa [STRIFE]
+// Dynamically move a solid line. Unused in Strife
+//
 
+static void P_MoveWall(line_t *line, mobj_t *thing)
+{
+    vertex_t *v2;
+    vertex_t *v1;
+    fixed_t x;
+    fixed_t y;
+
+    v1 = line->v1;
+    v2 = line->v2;
+    //S_StartSound(thing, sfx_stnmov);  [STRIFE] TODO - add sound
+
+    if (line->dx)
+    {
+        if (thing->x >= v1->x)
+        {
+            v1->y -= (8 * FRACUNIT);
+            v2->y -= (8 * FRACUNIT);
+        }
+        else
+        {
+            v1->y += (8 * FRACUNIT);
+            v2->y += (8 * FRACUNIT);
+        }
+    }
+    else
+    {
+        if (thing->y >= v1->y)
+        {
+            v1->x -= (8 * FRACUNIT);
+            v2->x -= (8 * FRACUNIT);
+        }
+        else
+        {
+            v1->x += (8 * FRACUNIT);
+            v2->x += (8 * FRACUNIT);
+        }
+    }
+
+    if (v1->x >= v2->x)
+    {
+        line->bbox[BOXLEFT] = v2->x;
+        x = v1->x;
+    }
+    else
+    {
+        line->bbox[BOXLEFT] = v1->x;
+        x = v2->x;
+    }
+
+    line->bbox[BOXRIGHT] = x;
+
+    if (v1->y >= v2->y)
+    {
+        line->bbox[BOXBOTTOM] = v2->y;
+        y = v1->y;
+    }
+    else
+    {
+        line->bbox[BOXBOTTOM] = v1->y;
+        y = v2->y;
+    }
+
+    line->bbox[BOXTOP] = y;
+}
 
 
 
@@ -648,6 +719,11 @@ P_UseSpecialLine
 	EV_LightTurnOn(line,35);
 	P_ChangeSwitchTexture(line,1);
 	break;
+
+      case 666:     // villsa [STRIFE]
+          // Move wall
+          P_MoveWall(line, thing);
+          break;
 			
     }
 	
