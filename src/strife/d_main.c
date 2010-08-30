@@ -1626,7 +1626,7 @@ void D_DoomMain (void)
     SetSaveGameDir(iwadfile);
 
     // Check for -file in shareware
-    if (0 /*modifiedgame*/) // STRIFE-FIXME: DISABLED FOR TESTING
+    if (modifiedgame)
     {
         // These are the lumps that will be checked in IWAD,
         // if any one is not present, execution will be aborted.

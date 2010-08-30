@@ -101,6 +101,8 @@ extern anim_t*	lastanim;
 //  and end entry, in the order found in
 //  the WAD file.
 //
+// haleyjd 08/29/10: [STRIFE] Changed animdefs.
+//
 animdef_t               animdefs[] =
 {
     { false, "F_SCANR8", "F_SCANR5",  4},
@@ -146,10 +148,11 @@ anim_t*		lastanim;
 //
 //      Animating line specials
 //
-#define MAXLINEANIMS            64
+// haleyjd 08/29/10: [STRIFE] MAXLINEANIMS raised from 64 to 96
+#define MAXLINEANIMS            96
 
-extern  short	numlinespecials;
-extern  line_t*	linespeciallist[MAXLINEANIMS];
+extern  short   numlinespecials;
+extern  line_t* linespeciallist[MAXLINEANIMS];
 
 
 
