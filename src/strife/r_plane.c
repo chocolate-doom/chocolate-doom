@@ -50,7 +50,8 @@ planefunction_t		ceilingfunc;
 //
 
 // Here comes the obnoxious "visplane".
-#define MAXVISPLANES	128
+// haleyjd 08/29/10: [STRIFE] MAXVISPLANES increased to 200
+#define MAXVISPLANES	200
 visplane_t		visplanes[MAXVISPLANES];
 visplane_t*		lastvisplane;
 visplane_t*		floorplane;

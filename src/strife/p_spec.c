@@ -101,37 +101,42 @@ extern anim_t*	lastanim;
 //  and end entry, in the order found in
 //  the WAD file.
 //
-animdef_t		animdefs[] =
+animdef_t               animdefs[] =
 {
-/*    {false,	"NUKAGE3",	"NUKAGE1",	8},
-    {false,	"FWATER4",	"FWATER1",	8},
-    {false,	"SWATER4",	"SWATER1", 	8},
-    {false,	"LAVA4",	"LAVA1",	8},
-    {false,	"BLOOD3",	"BLOOD1",	8},
-
-    // DOOM II flat animations.
-    {false,	"RROCK08",	"RROCK05",	8},		
-    {false,	"SLIME04",	"SLIME01",	8},
-    {false,	"SLIME08",	"SLIME05",	8},
-    {false,	"SLIME12",	"SLIME09",	8},
-
-    {true,	"BLODGR4",	"BLODGR1",	8},
-    {true,	"SLADRIP3",	"SLADRIP1",	8},
-
-    {true,	"BLODRIP4",	"BLODRIP1",	8},
-    {true,	"FIREWALL",	"FIREWALA",	8},
-    {true,	"GSTFONT3",	"GSTFONT1",	8},
-    {true,	"FIRELAVA",	"FIRELAV3",	8},
-    {true,	"FIREMAG3",	"FIREMAG1",	8},
-    {true,	"FIREBLU2",	"FIREBLU1",	8},
-    {true,	"ROCKRED3",	"ROCKRED1",	8},
-
-    {true,	"BFALL4",	"BFALL1",	8},
-    {true,	"SFALL4",	"SFALL1",	8},
-    {true,	"WFALL4",	"WFALL1",	8},
-    {true,	"DBRAIN4",	"DBRAIN1",	8},*/
-	
-    {-1,        "",             "",             0},
+    { false, "F_SCANR8", "F_SCANR5",  4},
+    { false, "F_WATR03", "F_WATR01",  8},
+    { false, "F_PWATR3", "F_PWATR1", 11},
+    { false, "F_SCANR4", "F_SCANR1",  4},
+    { true,  "SCAN08",   "SCAN05",    4},
+    { true,  "SWTRMG03", "SWTRMG01",  4},
+    { true,  "SCAN04",   "SCAN01",    4},
+    { true,  "COMP04",   "COMP01",    4},
+    { true,  "COMP08",   "COMP05",    6},
+    { true,  "COMP12",   "COMP09",   11},
+    { true,  "COMP16",   "COMP13",   12},
+    { true,  "COMP20",   "COMP17",   12},
+    { true,  "COMP24",   "COMP21",   12},
+    { true,  "COMP28",   "COMP25",   12},
+    { true,  "COMP32",   "COMP29",   12},
+    { true,  "COMP37",   "COMP33",   12},
+    { true,  "COMP41",   "COMP38",   12},
+    { true,  "COMP49",   "COMP42",   10},
+    { true,  "BRKGRY16", "BRKGRY13", 10},
+    { true,  "BRNSCN04", "BRNSCN01", 10},
+    { true,  "CONCRT12", "CONCRT09", 11},
+    { true,  "CONCRT25", "CONCRT22", 11},
+    { true,  "WALPMP02", "WALPMP01", 16},
+    { true,  "WALTEK17", "WALTEK16",  8},
+    { true,  "FORCE04",  "FORCE01",   4},
+    { true,  "FORCE08",  "FORCE05",   4},
+    { true,  "FAN02",    "FAN01",     4},
+    { false, "F_VWATR3", "P_VWATR1",  4},
+    { false, "F_HWATR3", "F_HWATR1",  4},
+    { false, "F_TELE2",  "F_TELE1",   4},
+    { false, "F_FAN2",   "F_FAN1",    4},
+    { false, "F_CONVY2", "F_CONVY1",  4},
+    { false, "F_RDALN4", "F_RDALN1",  4},
+    { -1,    NULL,       NULL,        0},
 };
 
 anim_t		anims[MAXANIMS];
