@@ -268,10 +268,9 @@ P_ChangeSwitchTexture
 //
 // P_MoveWall
 //
-// villsa [STRIFE]
+// villsa [STRIFE] New function.
 // Dynamically move a solid line. Unused in Strife
 //
-
 static void P_MoveWall(line_t *line, mobj_t *thing)
 {
     vertex_t *v2;
@@ -281,7 +280,7 @@ static void P_MoveWall(line_t *line, mobj_t *thing)
 
     v1 = line->v1;
     v2 = line->v2;
-    //S_StartSound(thing, sfx_stnmov);  [STRIFE] TODO - add sound
+    S_StartSound(thing, sfx_stnmov);
 
     if (line->dx)
     {

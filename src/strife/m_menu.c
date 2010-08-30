@@ -123,8 +123,9 @@ int			saveCharIndex;	// which char we're editing
 // old save description before edit
 char			saveOldString[SAVESTRINGSIZE];  
 
-boolean			inhelpscreens;
-boolean			menuactive;
+boolean                 inhelpscreens;
+boolean                 menuactive;
+boolean                 menupause; // haleyjd 08/29/10: [STRIFE] New global
 
 // haleyjd 08/27/10: [STRIFE] SKULLXOFF == -28, LINEHEIGHT == 19
 #define CURSORXOFF		-28
@@ -1673,11 +1674,8 @@ boolean M_Responder (event_t* ev)
         else if (key == key_menu_help)     // Help key
         {
 	    M_StartControlPanel ();
-
-	    if ( gamemode == retail )
-	      currentMenu = &ReadDef2;
-	    else
-	      currentMenu = &ReadDef1;
+	    // haleyjd 08/29/10: [STRIFE] always ReadDef1
+	    currentMenu = &ReadDef1; 
 
 	    itemOn = 0;
 	    S_StartSound(NULL,sfx_swtchn);
