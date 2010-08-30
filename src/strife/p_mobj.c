@@ -801,11 +801,16 @@ void P_SpawnMapThing (mapthing_t* mthing)
     for (i=0 ; i< NUMMOBJTYPES ; i++)
 	if (mthing->type == mobjinfo[i].doomednum)
 	    break;
-	
+
+    /*
     if (i==NUMMOBJTYPES)
-	I_Error ("P_SpawnMapThing: Unknown type %i at (%i, %i)",
-		 mthing->type,
-		 mthing->x, mthing->y);
+        I_Error ("P_SpawnMapThing: Unknown type %i at (%i, %i)",
+                 mthing->type,
+                 mthing->x, mthing->y);
+    */
+    // haleyjd 08/29/10: STRIFE-FIXME: Temporarily disabled I_Error for testing purposes
+    if (i == NUMMOBJTYPES)
+        return;
 		
     // don't spawn keycards and players in deathmatch
     if (deathmatch && mobjinfo[i].flags & MF_NOTDMATCH)
