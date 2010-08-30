@@ -68,8 +68,8 @@ typedef struct
     short	originx;
     short	originy;
     short	patch;
-    short	stepdir;
-    short	colormap;
+    //short	stepdir;    // villsa [STRIFE] removed
+    //short	colormap;   // villsa [STRIFE] removed
 } PACKEDATTR mappatch_t;
 
 
@@ -84,7 +84,7 @@ typedef struct
     int			masked;	
     short		width;
     short		height;
-    int                 obsolete;
+    //int               obsolete;   // villsa [STRIFE] removed
     short		patchcount;
     mappatch_t	patches[1];
 } PACKEDATTR maptexture_t;

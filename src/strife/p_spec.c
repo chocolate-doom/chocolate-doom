@@ -103,7 +103,7 @@ extern anim_t*	lastanim;
 //
 animdef_t		animdefs[] =
 {
-    {false,	"NUKAGE3",	"NUKAGE1",	8},
+/*    {false,	"NUKAGE3",	"NUKAGE1",	8},
     {false,	"FWATER4",	"FWATER1",	8},
     {false,	"SWATER4",	"SWATER1", 	8},
     {false,	"LAVA4",	"LAVA1",	8},
@@ -129,7 +129,7 @@ animdef_t		animdefs[] =
     {true,	"BFALL4",	"BFALL1",	8},
     {true,	"SFALL4",	"SFALL1",	8},
     {true,	"WFALL4",	"WFALL1",	8},
-    {true,	"DBRAIN4",	"DBRAIN1",	8},
+    {true,	"DBRAIN4",	"DBRAIN1",	8},*/
 	
     {-1,        "",             "",             0},
 };

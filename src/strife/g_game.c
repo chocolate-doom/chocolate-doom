@@ -1643,14 +1643,15 @@ G_InitNew
     // source release, but this IS the way Vanilla DOS Doom behaves.
 
     // STRIFE-TODO: Strife skies (of which there are but two)
+    // villsa [STRIFE] setting all skies to SKY03 as a placeholder
     if (gamemode == commercial)
     {
         if (gamemap < 12)
-            skytexturename = "SKY1";
+            skytexturename = "SKY03";
         else if (gamemap < 21)
-            skytexturename = "SKY2";
+            skytexturename = "SKY03";
         else
-            skytexturename = "SKY3";
+            skytexturename = "SKY03";
     }
     else
     {
@@ -1658,16 +1659,16 @@ G_InitNew
         { 
           default:
           case 1: 
-            skytexturename = "SKY1"; 
+            skytexturename = "SKY03"; 
             break; 
           case 2: 
-            skytexturename = "SKY2"; 
+            skytexturename = "SKY03"; 
             break; 
           case 3: 
-            skytexturename = "SKY3"; 
+            skytexturename = "SKY03"; 
             break; 
           case 4:        // Special Edition sky
-            skytexturename = "SKY4";
+            skytexturename = "SKY03";
             break;
         } 
     }

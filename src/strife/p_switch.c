@@ -51,7 +51,7 @@
 switchlist_t alphSwitchList[] =
 {
     // Doom shareware episode 1 switches
-    {"SW1BRCOM",	"SW2BRCOM",	1},
+/*    {"SW1BRCOM",	"SW2BRCOM",	1},
     {"SW1BRN1",	"SW2BRN1",	1},
     {"SW1BRN2",	"SW2BRN2",	1},
     {"SW1BRNGN",	"SW2BRNGN",	1},
@@ -94,7 +94,7 @@ switchlist_t alphSwitchList[] =
     {"SW1STON6",	"SW2STON6",	3},
     {"SW1TEK",		"SW2TEK",	3},
     {"SW1MARB",	"SW2MARB",	3},
-    {"SW1SKULL",	"SW2SKULL",	3},
+    {"SW1SKULL",	"SW2SKULL",	3},*/
 	
     {"\0",		"\0",		0}
 };
