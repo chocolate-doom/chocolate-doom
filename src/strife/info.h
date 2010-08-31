@@ -1843,144 +1843,352 @@ typedef struct
 extern state_t	states[NUMSTATES];
 extern char *sprnames[];
 
-typedef enum {
-    MT_PLAYER,
-    MT_POSSESSED,
-    MT_SHOTGUY,
-    MT_VILE,
-    MT_FIRE,
-    MT_UNDEAD,
-    MT_TRACER,
-    MT_SMOKE,
-    MT_FATSO,
-    MT_FATSHOT,
-    MT_CHAINGUY,
-    MT_TROOP,
-    MT_SERGEANT,
-    MT_SHADOWS,
-    MT_HEAD,
-    MT_BRUISER,
-    MT_BRUISERSHOT,
-    MT_KNIGHT,
-    MT_SKULL,
-    MT_SPIDER,
-    MT_BABY,
-    MT_CYBORG,
-    MT_PAIN,
-    MT_WOLFSS,
-    MT_KEEN,
-    MT_BOSSBRAIN,
-    MT_BOSSSPIT,
-    MT_BOSSTARGET,
-    MT_SPAWNSHOT,
-    MT_SPAWNFIRE,
-    MT_BARREL,
-    MT_TROOPSHOT,
-    MT_HEADSHOT,
-    MT_ROCKET,
-    MT_PLASMA,
-    MT_BFG,
-    MT_ARACHPLAZ,
-    MT_PUFF,
-    MT_BLOOD,
-    MT_TFOG,
-    MT_IFOG,
-    MT_TELEPORTMAN,
-    MT_EXTRABFG,
-    MT_MISC0,
-    MT_MISC1,
-    MT_MISC2,
-    MT_MISC3,
-    MT_MISC4,
-    MT_MISC5,
-    MT_MISC6,
-    MT_MISC7,
-    MT_MISC8,
-    MT_MISC9,
-    MT_MISC10,
-    MT_MISC11,
-    MT_MISC12,
-    MT_INV,
-    MT_MISC13,
-    MT_INS,
-    MT_MISC14,
-    MT_MISC15,
-    MT_MISC16,
-    MT_MEGA,
-    MT_CLIP,
-    MT_MISC17,
-    MT_MISC18,
-    MT_MISC19,
-    MT_MISC20,
-    MT_MISC21,
-    MT_MISC22,
-    MT_MISC23,
-    MT_MISC24,
-    MT_MISC25,
-    MT_CHAINGUN,
-    MT_MISC26,
-    MT_MISC27,
-    MT_MISC28,
-    MT_SHOTGUN,
-    MT_SUPERSHOTGUN,
-    MT_MISC29,
-    MT_MISC30,
-    MT_MISC31,
-    MT_MISC32,
-    MT_MISC33,
-    MT_MISC34,
-    MT_MISC35,
-    MT_MISC36,
-    MT_MISC37,
-    MT_MISC38,
-    MT_MISC39,
-    MT_MISC40,
-    MT_MISC41,
-    MT_MISC42,
-    MT_MISC43,
-    MT_MISC44,
-    MT_MISC45,
-    MT_MISC46,
-    MT_MISC47,
-    MT_MISC48,
-    MT_MISC49,
-    MT_MISC50,
-    MT_MISC51,
-    MT_MISC52,
-    MT_MISC53,
-    MT_MISC54,
-    MT_MISC55,
-    MT_MISC56,
-    MT_MISC57,
-    MT_MISC58,
-    MT_MISC59,
-    MT_MISC60,
-    MT_MISC61,
-    MT_MISC62,
-    MT_MISC63,
-    MT_MISC64,
-    MT_MISC65,
-    MT_MISC66,
-    MT_MISC67,
-    MT_MISC68,
-    MT_MISC69,
-    MT_MISC70,
-    MT_MISC71,
-    MT_MISC72,
-    MT_MISC73,
-    MT_MISC74,
-    MT_MISC75,
-    MT_MISC76,
-    MT_MISC77,
-    MT_MISC78,
-    MT_MISC79,
-    MT_MISC80,
-    MT_MISC81,
-    MT_MISC82,
-    MT_MISC83,
-    MT_MISC84,
-    MT_MISC85,
-    MT_MISC86,
+typedef enum
+{
+    MT_FIELDGUARD,      //000
+    MT_PLAYER,      //001
+    MT_SHOPKEEPER_W,        //002
+    MT_SHOPKEEPER_B,        //003
+    MT_SHOPKEEPER_A,        //004
+    MT_SHOPKEEPER_M,        //005
+    MT_PEASANT2_A,      //006
+    MT_PEASANT2_B,      //007
+    MT_PEASANT2_C,      //008
+    MT_PEASANT5_A,      //009
+    MT_PEASANT5_B,      //010
+    MT_PEASANT5_C,      //011
+    MT_PEASANT4_A,      //012
+    MT_PEASANT4_B,      //013
+    MT_PEASANT4_C,      //014
+    MT_PEASANT6_A,      //015
+    MT_PEASANT6_B,      //016
+    MT_PEASANT6_C,      //017
+    MT_PEASANT3_A,      //018
+    MT_PEASANT3_B,      //019
+    MT_PEASANT3_C,      //020
+    MT_PEASANT8_A,      //021
+    MT_PEASANT8_B,      //022
+    MT_PEASANT8_C,      //023
+    MT_PEASANT7_A,      //024
+    MT_PEASANT7_B,      //025
+    MT_PEASANT7_C,      //026
+    MT_PEASANT1,        //027
+    MT_ZOMBIE,      //028
+    MT_BECOMING,        //029
+    MT_ZOMBIESPAWNER,       //030
+    MT_HUGE_TANK_1,     //031
+    MT_HUGE_TANK_2,     //032
+    MT_HUGE_TANK_3,     //033
+    MT_TANK_4,      //034
+    MT_TANK_5,      //035
+    MT_TANK_6,      //036
+    MT_KNEELING_GUY,        //037
+    MT_BEGGAR1,     //038
+    MT_BEGGAR2,     //039
+    MT_BEGGAR3,     //040
+    MT_BEGGAR4,     //041
+    MT_BEGGAR5,     //042
+    MT_REBEL1,      //043
+    MT_REBEL2,      //044
+    MT_REBEL3,      //045
+    MT_REBEL4,      //046
+    MT_REBEL5,      //047
+    MT_REBEL6,      //048
+    MT_RLEADER,     //049
+    MT_RLEADER2,        //050
+    MT_MISSILESMOKE,        //051
+    MT_REAVER,      //052
+    MT_GUARD1,      //053
+    MT_GUARD2,      //054
+    MT_GUARD3,      //055
+    MT_GUARD4,      //056
+    MT_GUARD5,      //057
+    MT_GUARD6,      //058
+    MT_GUARD7,      //059
+    MT_GUARD8,      //060
+    MT_SHADOWGUARD,     //061
+    MT_PGUARD,      //062
+    MT_CRUSADER,        //063
+    MT_BISHOP,      //064
+    MT_ORACLE,      //065
+    MT_PRIEST,      //066
+    MT_SPECTURE_A,      //067
+    MT_NODE,        //068
+    MT_SPECTUREHEAD,        //069
+    MT_SPECTURE_B,      //070
+    MT_SPECTURE_C,      //071
+    MT_SPECTURE_D,      //072
+    MT_SPECTURE_E,      //073
+    MT_ENTITY,      //074
+    MT_SUBENTITY,       //075
+    MT_NEST,        //076
+    MT_POD,     //077
+    MT_SIGIL_B_SHOT,        //078
+    MT_SIGIL_SB_SHOT,       //079
+    MT_SIGIL_C_SHOT,        //080
+    MT_SIGIL_SC_SHOT,       //081
+    MT_SIGIL_E_OFFSHOOT,        //082
+    MT_SIGIL_TRAIL,     //083
+    MT_SIGIL_E_SHOT,        //084
+    MT_SIGIL_SE_SHOT,       //085
+    MT_SIGIL_A_ZAP_LEFT,        //086
+    MT_SIGIL_A_ZAP_RIGHT,       //087
+    MT_SIGIL_A_GROUND,      //088
+    MT_SIGIL_D_SHOT,        //089
+    MT_SIGIL_SD_SHOT,       //090
+    MT_SENTINEL,        //091
+    MT_STALKER,     //092
+    MT_INQUISITOR,      //093
+    MT_INQARM,      //094
+    MT_PROGRAMMER,      //095
+    MT_PROGRAMMERBASE,      //096
+    MT_HOOKSHOT,        //097
+    MT_CHAINSHOT,       //098
+    MT_MINIMISSLE,      //099
+    MT_C_MISSILE,       //100
+    MT_SEEKMISSILE,     //101
+    MT_ELECARROW,       //102
+    MT_POISARROW,       //103
+    MT_R_LASER,     //104
+    MT_L_LASER,     //105
+    MT_HEGRENADE,       //106
+    MT_PGRENADE,        //107
+    MT_INQGRENADE,      //108
+    MT_PFLAME,      //109
+    MT_TORPEDO,     //110
+    MT_TORPEDOSPREAD,       //111
+    MT_SFIREBALL,       //112
+    MT_C_FLAME,     //113
+    MT_STRIFEPUFF3,     //114
+    MT_STRIFEPUFF,      //115
+    MT_SPARKPUFF,       //116
+    MT_BLOOD_DEATH,     //117
+    MT_TFOG,        //118
+    MT_IFOG,        //119
+    MT_TELEPORTMAN,     //120
+    MT_MISC_01,     //121
+    MT_TURRET,      //122
+    MT_GATE,        //123
+    MT_COMPUTER,        //124
+    MT_INV_MED1,        //125
+    MT_INV_MED2,        //126
+    MT_INV_MED3,        //127
+    MT_DEGNINORE,       //128
+    MT_INV_ARMOR2,      //129
+    MT_INV_ARMOR1,      //130
+    MT_MISC_22,     //131
+    MT_MISC_11,     //132
+    MT_KEY_BASE,        //133
+    MT_GOVSKEY,     //134
+    MT_KEY_TRAVEL,      //135
+    MT_KEY_ID_BLUE,     //136
+    MT_PRISONKEY,       //137
+    MT_KEY_HAND,        //138
+    MT_POWER1KEY,       //139
+    MT_POWER2KEY,       //140
+    MT_POWER3KEY,       //141
+    MT_KEY_GOLD,        //142
+    MT_KEY_ID_GOLD,     //143
+    MT_KEY_SILVER,      //144
+    MT_KEY_ORACLE,      //145
+    MT_MILITARYID,      //146
+    MT_KEY_ORDER,       //147
+    MT_KEY_WAREHOUSE,       //148
+    MT_KEY_BRASS,       //149
+    MT_KEY_RED_CRYSTAL,     //150
+    MT_KEY_BLUE_CRYSTAL,        //151
+    MT_KEY_CHAPEL,      //152
+    MT_CATACOMBKEY,     //153
+    MT_SECURITYKEY,     //154
+    MT_KEY_CORE,        //155
+    MT_KEY_MAULER,      //156
+    MT_KEY_FACTORY,     //157
+    MT_KEY_MINE,        //158
+    MT_NEWKEY5,     //159
+    MT_INV_SHADOWARMOR,     //160
+    MT_INV_SUIT,        //161
+    MT_QUEST_UNIFORM,       //162
+    MT_QUEST_GUARD_UNIFORM,     //163
+    MT_INV_SUPERMAP,        //164
+    MT_INV_RADAR,       //165
+    MT_BEACON,      //166
+    MT_INV_TARGETER,        //167
+    MT_MONY_1,      //168
+    MT_MONY_10,     //169
+    MT_MONY_25,     //170
+    MT_MONY_50,     //171
+    MT_MONY_300,        //172
+    MT_TOKEN_RING,      //173
+    MT_INV_CHALICE,     //174
+    MT_TOKEN_EAR,       //175
+    MT_INV_COMMUNICATOR,        //176
+    MT_AGREN,       //177
+    MT_APGREN,      //178
+    MT_ACLIP,       //179
+    MT_AAMMOBOX,        //180
+    MT_AMINI,       //181
+    MT_AMINIBOX,        //182
+    MT_ACELL,       //183
+    MT_APCELL,      //184
+    MT_APAROW,      //185
+    MT_AAROW,       //186
+    MT_INV_SATCHEL,     //187
+    MT_PULSE,       //188
+    MT_RIFLESTAND,      //189
+    MT_FLAMETHROWER,        //190
+    MT_TOKEN_FLAME_THROWER_PARTS,       //191
+    MT_MINIMISSILE,     //192
+    MT_BLASTER,     //193
+    MT_CROSSBOW,        //194
+    MT_GRENADELAUNCHER,     //195
+    MT_SIGIL_A,     //196
+    MT_SIGIL_B,     //197
+    MT_SIGIL_C,     //198
+    MT_SIGIL_D,     //199
+    MT_SIGIL_E,     //200
+    MT_POWER_CRYSTAL,       //201
+    MT_RAT,     //202
+    MT_MISC_05,     //203
+    MT_MISC_06,     //204
+    MT_MISC_15,     //205
+    MT_LIGHT14,     //206
+    MT_LIGHT13,     //207
+    MT_LIGHT12,     //208
+    MT_LIGHT18,     //209
+    MT_PILLAR2,     //210
+    MT_PILLAR3,     //211
+    MT_PILLAR4,     //212
+    MT_PILLAR5,     //213
+    MT_PILLAR6,     //214
+    MT_PILLAR7,     //215
+    MT_CAVE2,       //216
+    MT_CAVE3,       //217
+    MT_CAVE4,       //218
+    MT_CAVE6,       //219
+    MT_CAVE7,       //220
+    MT_CAVE5,       //221
+    MT_LIGHT2,      //222
+    MT_LIGHT3,      //223
+    MT_MISC_03,     //224
+    MT_MISC_13,     //225
+    MT_MISC_02,     //226
+    MT_MISC_07,     //227
+    MT_BIO2,        //228
+    MT_TELEPORTSTAND,       //229
+    MT_DEADTHING1,      //230
+    MT_DEADTHING2,      //231
+    MT_DEADTHING3,      //232
+    MT_DEADTHING4,      //233
+    MT_DEADTHING5,      //234
+    MT_DEADTHING6,      //235
+    MT_BIO1,        //236
+    MT_GIBS,        //237
+    MT_MISC_04,     //238
+    MT_LIGHT11,     //239
+    MT_LIGHT10,     //240
+    MT_LIGHT9,      //241
+    MT_LIGHT8,      //242
+    MT_MISC_14,     //243
+    MT_LIGHT1,      //244
+    MT_PILLAR8,     //245
+    MT_PILLAR9,     //246
+    MT_LIGHT15,     //247
+    MT_LIGHT4,      //248
+    MT_LIGHT5,      //249
+    MT_ROCK1,       //250
+    MT_ROCK2,       //251
+    MT_ROCK3,       //252
+    MT_ROCK4,       //253
+    MT_TREE7,       //254
+    MT_RUBBLE1,     //255
+    MT_RUBBLE2,     //256
+    MT_RUBBLE3,     //257
+    MT_RUBBLE4,     //258
+    MT_RUBBLE5,     //259
+    MT_RUBBLE6,     //260
+    MT_RUBBLE7,     //261
+    MT_RUBBLE8,     //262
+    MT_MISC_08,     //263
+    MT_LIGHT6,      //264
+    MT_LIGHT7,      //265
+    MT_TREE2,       //266
+    MT_TREE3,       //267
+    MT_TREE4,       //268
+    MT_TREE1,       //269
+    MT_TREE6,       //270
+    MT_TREE5,       //271
+    MT_CAVE1,       //272
+    MT_PILLAR1,     //273
+    MT_MISC_10,     //274
+    MT_MISC_09,     //275
+    MT_MISC_17,     //276
+    MT_MISC_18,     //277
+    MT_MISC_19,     //278
+    MT_MISC_20,     //279
+    MT_LIGHT16,     //280
+    MT_LIGHT17,     //281
+    MT_MISC_21,     //282
+    MT_MISC_12,     //283
+    MT_MISC_26,     //284
+    MT_MISC_23,     //285
+    MT_MISC_24,     //286
+    MT_MISC_25,     //287
+    MT_COUPLING,        //288
+    MT_COUPLING_BROKEN,     //289
+    MT_PILLAR10,        //290
+    MT_PILLAR11,        //291
+    MT_PILLAR12,        //292
+    MT_PILLAR13,        //293
+    MT_LIGHT19,     //294
+    MT_MEAT,        //295
+    MT_JUNK,        //296
+    MT_BURNDROP,        //297
+    MT_TOKEN_AMMO,      //298
+    MT_TOKEN_HEALTH,        //299
+    MT_TOKEN,       //300
+    MT_TOKEN_ALARM,     //301
+    MT_TOKEN_DOOR1,     //302
+    MT_TOKEN_SHOPCLOSE,     //303
+    MT_TOKEN_PRISON_PASS,       //304
+    MT_TOKEN_DOOR3,     //305
+    MT_TOKEN_STAMINA,       //306
+    MT_TOKEN_NEW_ACCURACY,      //307
+    MT_TOKEN_REPORT,        //308
+    MT_TOKEN_TOUGHNESS,     //309
+    MT_TOKEN_ACCURACY,      //310
+    MT_TOKEN_ORACLE_PASS,       //311
+    MT_TOKEN_QUEST1,        //312
+    MT_TOKEN_QUEST2,        //313
+    MT_TOKEN_QUEST3,        //314
+    MT_TOKEN_QUEST4,        //315
+    MT_TOKEN_QUEST5,        //316
+    MT_TOKEN_QUEST6,        //317
+    MT_TOKEN_QUEST7,        //318
+    MT_TOKEN_QUEST8,        //319
+    MT_TOKEN_QUEST9,        //320
+    MT_TOKEN_QUEST10,       //321
+    MT_TOKEN_QUEST11,       //322
+    MT_TOKEN_QUEST12,       //323
+    MT_TOKEN_QUEST13,       //324
+    MT_TOKEN_CRYSTAL,       //325
+    MT_TOKEN_QUEST15,       //326
+    MT_GATEQUEST,       //327
+    MT_TOKEN_QUEST17,       //328
+    MT_TOKEN_QUEST18,       //329
+    MT_TOKEN_QUEST19,       //330
+    MT_TOKEN_QUEST20,       //331
+    MT_TOKEN_BISHOP,        //332
+    MT_TOKEN_QUEST22,       //333
+    MT_TOKEN_ORACLE,        //334
+    MT_TOKEN_MACIL,     //335
+    MT_TOKEN_QUEST25,       //336
+    MT_TOKEN_LOREMASTER,        //337
+    MT_SECRQUEST,       //338
+    MT_TOKEN_QUEST28,       //339
+    MT_TOKEN_QUEST29,       //340
+    MT_TOKEN_QUEST30,       //341
+    MT_TOKEN_QUEST31,       //342
+    MT_SLIDESHOW,       //343
     NUMMOBJTYPES
 
 } mobjtype_t;

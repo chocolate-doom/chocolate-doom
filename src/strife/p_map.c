@@ -338,10 +338,11 @@ boolean PIT_CheckThing (mobj_t* thing)
 	if (tmthing->z+tmthing->height < thing->z)
 	    return true;		// underneath
 		
+        // villsa [STRIFE] TODO - update to strife version
 	if (tmthing->target 
-         && (tmthing->target->type == thing->type || 
+         && (tmthing->target->type == thing->type /*|| 
 	    (tmthing->target->type == MT_KNIGHT && thing->type == MT_BRUISER)||
-	    (tmthing->target->type == MT_BRUISER && thing->type == MT_KNIGHT) ) )
+	    (tmthing->target->type == MT_BRUISER && thing->type == MT_KNIGHT)*/ ) )
 	{
 	    // Don't hit same species as originator.
 	    if (thing == tmthing->target)
@@ -377,11 +378,11 @@ boolean PIT_CheckThing (mobj_t* thing)
     if (thing->flags & MF_SPECIAL)
     {
 	solid = thing->flags&MF_SOLID;
-	if (tmflags&MF_PICKUP)
-	{
+	//if (tmflags&MF_PICKUP) // villsa [STRIFE] TODO - verify
+	//{
 	    // can remove thing
 	    P_TouchSpecialThing (thing, tmthing);
-	}
+	//}
 	return !solid;
     }
 	
@@ -516,12 +517,12 @@ P_TryMove
 
 	floatok = true;
 	
-	if ( !(thing->flags&MF_TELEPORT) 
-	     &&tmceilingz - thing->z < thing->height)
+	if ( /*!(thing->flags&MF_TELEPORT)  // villsa [STRIFE] unused
+	     &&*/tmceilingz - thing->z < thing->height)
 	    return false;	// mobj must lower itself to fit
 
-	if ( !(thing->flags&MF_TELEPORT)
-	     && tmfloorz - thing->z > 24*FRACUNIT )
+	if ( /*!(thing->flags&MF_TELEPORT) // villsa [STRIFE] unused
+	     &&*/ tmfloorz - thing->z > 24*FRACUNIT )
 	    return false;	// too big a step up
 
 	if ( !(thing->flags&(MF_DROPOFF|MF_FLOAT))
@@ -543,7 +544,7 @@ P_TryMove
     P_SetThingPosition (thing);
     
     // if any special lines were hit, do the effect
-    if (! (thing->flags&(MF_TELEPORT|MF_NOCLIP)) )
+    if (! (thing->flags&(/*MF_TELEPORT|*/MF_NOCLIP)) ) // villsa [STRIFE] MF_TELEPORT not used
     {
 	while (numspechit--)
 	{
@@ -1237,9 +1238,10 @@ boolean PIT_RadiusAttack (mobj_t* thing)
 
     // Boss spider and cyborg
     // take no damage from concussion.
-    if (thing->type == MT_CYBORG
+    // villsa [STRIFE] unused
+    /*if (thing->type == MT_CYBORG
 	|| thing->type == MT_SPIDER)
-	return true;	
+	return true;	*/
 		
     dx = abs(thing->x - bombspot->x);
     dy = abs(thing->y - bombspot->y);
@@ -1365,9 +1367,10 @@ boolean PIT_ChangeSector (mobj_t*	thing)
 	P_DamageMobj(thing,NULL,NULL,10);
 
 	// spray blood in a random direction
+        // villsa [STRIFE] TODO - verify
 	mo = P_SpawnMobj (thing->x,
 			  thing->y,
-			  thing->z + thing->height/2, MT_BLOOD);
+			  thing->z + thing->height/2, MT_BLOOD_DEATH);
 	
 	mo->momx = (P_Random() - P_Random ())<<12;
 	mo->momy = (P_Random() - P_Random ())<<12;

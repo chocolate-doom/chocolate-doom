@@ -222,7 +222,8 @@ boolean P_CheckMissileRange (mobj_t* actor)
 
     dist >>= 16;
 
-    if (actor->type == MT_VILE)
+    // villsa [STRIFE] unused
+    /*if (actor->type == MT_VILE)
     {
 	if (dist > 14*64)	
 	    return false;	// too far away
@@ -234,21 +235,23 @@ boolean P_CheckMissileRange (mobj_t* actor)
 	if (dist < 196)	
 	    return false;	// close for fist attack
 	dist >>= 1;
-    }
+    }*/
 	
 
-    if (actor->type == MT_CYBORG
+    // villsa [STRIFE] unused
+    /*if (actor->type == MT_CYBORG
 	|| actor->type == MT_SPIDER
 	|| actor->type == MT_SKULL)
     {
 	dist >>= 1;
-    }
+    }*/
     
     if (dist > 200)
 	dist = 200;
 		
-    if (actor->type == MT_CYBORG && dist > 160)
-	dist = 160;
+    // villsa [STRIFE] unused
+    /*if (actor->type == MT_CYBORG && dist > 160)
+	dist = 160;*/
 		
     if (P_Random () < dist)
 	return false;
@@ -651,13 +654,14 @@ void A_Look (mobj_t* actor)
 	    break;
 	}
 
-	if (actor->type==MT_SPIDER
+        // villsa [STRIFE] TODO replace with proper strife bosses
+	/*if (actor->type==MT_SPIDER
 	    || actor->type == MT_CYBORG)
 	{
 	    // full volume
 	    S_StartSound (NULL, sound);
 	}
-	else
+	else*/
 	    S_StartSound (actor, sound);
     }
 
@@ -904,7 +908,8 @@ void A_BspiAttack (mobj_t *actor)
     A_FaceTarget (actor);
 
     // launch a missile
-    P_SpawnMissile (actor, actor->target, MT_ARACHPLAZ);
+    // villsa [STRIFE] unused
+    //P_SpawnMissile (actor, actor->target, MT_ARACHPLAZ);
 }
 
 
@@ -929,7 +934,8 @@ void A_TroopAttack (mobj_t* actor)
 
     
     // launch a missile
-    P_SpawnMissile (actor, actor->target, MT_TROOPSHOT);
+    // villsa [STRIFE] unused
+    //P_SpawnMissile (actor, actor->target, MT_TROOPSHOT);
 }
 
 
@@ -964,7 +970,8 @@ void A_HeadAttack (mobj_t* actor)
     }
     
     // launch a missile
-    P_SpawnMissile (actor, actor->target, MT_HEADSHOT);
+    // villsa [STRIFE] unused
+    //P_SpawnMissile (actor, actor->target, MT_HEADSHOT);
 }
 
 void A_CyberAttack (mobj_t* actor)
@@ -973,7 +980,8 @@ void A_CyberAttack (mobj_t* actor)
 	return;
 		
     A_FaceTarget (actor);
-    P_SpawnMissile (actor, actor->target, MT_ROCKET);
+    // villsa [STRIFE] unused
+    //P_SpawnMissile (actor, actor->target, MT_ROCKET);
 }
 
 
@@ -993,7 +1001,8 @@ void A_BruisAttack (mobj_t* actor)
     }
     
     // launch a missile
-    P_SpawnMissile (actor, actor->target, MT_BRUISERSHOT);
+    // villsa [STRIFE] unused
+    //P_SpawnMissile (actor, actor->target, MT_BRUISERSHOT);
 }
 
 
@@ -1002,7 +1011,8 @@ void A_BruisAttack (mobj_t* actor)
 //
 void A_SkelMissile (mobj_t* actor)
 {	
-    mobj_t*	mo;
+    // villsa [STRIFE] unused
+   /* mobj_t*	mo;
 	
     if (!actor->target)
 	return;
@@ -1014,14 +1024,15 @@ void A_SkelMissile (mobj_t* actor)
 
     mo->x += mo->momx;
     mo->y += mo->momy;
-    mo->tracer = actor->target;
+    mo->tracer = actor->target;*/
 }
 
 int	TRACEANGLE = 0xc000000;
 
 void A_Tracer (mobj_t* actor)
 {
-    angle_t	exact;
+    // villsa [STRIFE] TODO - update with strife version
+/*    angle_t	exact;
     fixed_t	dist;
     fixed_t	slope;
     mobj_t*	dest;
@@ -1087,7 +1098,7 @@ void A_Tracer (mobj_t* actor)
     if (slope < actor->momz)
 	actor->momz -= FRACUNIT/8;
     else
-	actor->momz += FRACUNIT/8;
+	actor->momz += FRACUNIT/8;*/
 }
 
 
@@ -1129,7 +1140,8 @@ fixed_t		viletryy;
 
 boolean PIT_VileCheck (mobj_t*	thing)
 {
-    int		maxdist;
+    // villsa [STRIFE] unused
+/*    int		maxdist;
     boolean	check;
 	
     if (!(thing->flags & MF_CORPSE) )
@@ -1155,7 +1167,7 @@ boolean PIT_VileCheck (mobj_t*	thing)
     corpsehit->height >>= 2;
 
     if (!check)
-	return true;		// doesn't fit here
+	return true;		// doesn't fit here*/
 		
     return false;		// got one, so stop checking
 }
@@ -1290,7 +1302,8 @@ void A_Fire (mobj_t* actor)
 //
 void A_VileTarget (mobj_t*	actor)
 {
-    mobj_t*	fog;
+    // villsa [STRIFE] unused
+ /*   mobj_t*	fog;
 	
     if (!actor->target)
 	return;
@@ -1304,7 +1317,7 @@ void A_VileTarget (mobj_t*	actor)
     actor->tracer = fog;
     fog->target = actor;
     fog->tracer = actor->target;
-    A_Fire (fog);
+    A_Fire (fog);*/
 }
 
 
@@ -1363,7 +1376,8 @@ void A_FatRaise (mobj_t *actor)
 
 void A_FatAttack1 (mobj_t* actor)
 {
-    mobj_t*	mo;
+    // villsa [STRIFE] unused
+/*    mobj_t*	mo;
     mobj_t*     target;
     int		an;
 
@@ -1378,12 +1392,13 @@ void A_FatAttack1 (mobj_t* actor)
     mo->angle += FATSPREAD;
     an = mo->angle >> ANGLETOFINESHIFT;
     mo->momx = FixedMul (mo->info->speed, finecosine[an]);
-    mo->momy = FixedMul (mo->info->speed, finesine[an]);
+    mo->momy = FixedMul (mo->info->speed, finesine[an]);*/
 }
 
 void A_FatAttack2 (mobj_t* actor)
 {
-    mobj_t*	mo;
+    // villsa [STRIFE] unused
+/*    mobj_t*	mo;
     mobj_t*     target;
     int		an;
 
@@ -1397,12 +1412,13 @@ void A_FatAttack2 (mobj_t* actor)
     mo->angle -= FATSPREAD*2;
     an = mo->angle >> ANGLETOFINESHIFT;
     mo->momx = FixedMul (mo->info->speed, finecosine[an]);
-    mo->momy = FixedMul (mo->info->speed, finesine[an]);
+    mo->momy = FixedMul (mo->info->speed, finesine[an]);*/
 }
 
 void A_FatAttack3 (mobj_t*	actor)
 {
-    mobj_t*	mo;
+    // villsa [STRIFE] unused
+ /*   mobj_t*	mo;
     mobj_t*     target;
     int		an;
 
@@ -1420,7 +1436,7 @@ void A_FatAttack3 (mobj_t*	actor)
     mo->angle += FATSPREAD/2;
     an = mo->angle >> ANGLETOFINESHIFT;
     mo->momx = FixedMul (mo->info->speed, finecosine[an]);
-    mo->momy = FixedMul (mo->info->speed, finesine[an]);
+    mo->momy = FixedMul (mo->info->speed, finesine[an]);*/
 }
 
 
@@ -1465,7 +1481,8 @@ A_PainShootSkull
 ( mobj_t*	actor,
   angle_t	angle )
 {
-    fixed_t	x;
+    // villsa [STRIFE] unused
+ /*   fixed_t	x;
     fixed_t	y;
     fixed_t	z;
     
@@ -1515,7 +1532,7 @@ A_PainShootSkull
     }
 		
     newmobj->target = actor->target;
-    A_SkullAttack (newmobj);
+    A_SkullAttack (newmobj);*/
 }
 
 
@@ -1567,13 +1584,14 @@ void A_Scream (mobj_t* actor)
     }
 
     // Check for bosses.
-    if (actor->type==MT_SPIDER
+    // villsa [STRIFE] TODO - replace with strife bosses
+    /*if (actor->type==MT_SPIDER
 	|| actor->type == MT_CYBORG)
     {
 	// full volume
 	S_StartSound (NULL, sound);
     }
-    else
+    else*/
 	S_StartSound (actor, sound);
 }
 
@@ -1617,7 +1635,9 @@ void A_Explode (mobj_t* thingy)
 
 static boolean CheckBossEnd(mobjtype_t motype)
 {
-    if (gameversion < exe_ultimate)
+    // villsa [STRIFE] TODO - update to strife version
+    return 0;
+ /*   if (gameversion < exe_ultimate)
     {
         if (gamemap != 8)
         {
@@ -1658,7 +1678,7 @@ static boolean CheckBossEnd(mobjtype_t motype)
             default:
                 return gamemap == 8;
 	}
-    }
+    }*/
 }
 
 //
@@ -1673,7 +1693,8 @@ void A_BossDeath (mobj_t* mo)
     line_t	junk;
     int		i;
 		
-    if ( gamemode == commercial)
+    // villsa [STRIFE] TODO - update to strife version
+ /*   if ( gamemode == commercial)
     {
 	if (gamemap != 7)
 	    return;
@@ -1763,7 +1784,7 @@ void A_BossDeath (mobj_t* mo)
 	}
     }
 	
-    G_ExitLevel (0);
+    G_ExitLevel (0);*/
 }
 
 
@@ -1823,7 +1844,8 @@ int		braintargeton = 0;
 
 void A_BrainAwake (mobj_t* mo)
 {
-    thinker_t*	thinker;
+    // villsa [STRIFE] unused
+ /*   thinker_t*	thinker;
     mobj_t*	m;
 	
     // find all the target spots
@@ -1847,7 +1869,7 @@ void A_BrainAwake (mobj_t* mo)
 	}
     }
 	
-    S_StartSound (NULL,sfx_swish);  // villsa [STRIFE] TODO - fix sounds
+    S_StartSound (NULL,sfx_swish);  // villsa [STRIFE] TODO - fix sounds*/
 }
 
 
@@ -1912,7 +1934,8 @@ void A_BrainDie (mobj_t*	mo)
 
 void A_BrainSpit (mobj_t*	mo)
 {
-    mobj_t*	targ;
+    // villsa [STRIFE] unused
+ /*   mobj_t*	targ;
     mobj_t*	newmobj;
     
     static int	easy = 0;
@@ -1931,7 +1954,7 @@ void A_BrainSpit (mobj_t*	mo)
     newmobj->reactiontime =
 	((targ->y - mo->y)/newmobj->momy) / newmobj->state->tics;
 
-    S_StartSound(NULL, sfx_swish);  // villsa [STRIFE] TODO - fix sounds
+    S_StartSound(NULL, sfx_swish);  // villsa [STRIFE] TODO - fix sounds*/
 }
 
 
@@ -1947,7 +1970,8 @@ void A_SpawnSound (mobj_t* mo)
 
 void A_SpawnFly (mobj_t* mo)
 {
-    mobj_t*	newmobj;
+    // villsa [STRIFE] unused
+/*    mobj_t*	newmobj;
     mobj_t*	fog;
     mobj_t*	targ;
     int		r;
@@ -1998,7 +2022,7 @@ void A_SpawnFly (mobj_t* mo)
     P_TeleportMove (newmobj, newmobj->x, newmobj->y);
 
     // remove self (i.e., cube).
-    P_RemoveMobj (mo);
+    P_RemoveMobj (mo);*/
 }
 
 

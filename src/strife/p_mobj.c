@@ -582,8 +582,8 @@ void P_RemoveMobj (mobj_t* mobj)
 {
     if ((mobj->flags & MF_SPECIAL)
 	&& !(mobj->flags & MF_DROPPED)
-	&& (mobj->type != MT_INV)
-	&& (mobj->type != MT_INS))
+	/*&& (mobj->type != MT_INV) // villsa [STRIFE] unused
+	&& (mobj->type != MT_INS)*/)
     {
 	itemrespawnque[iquehead] = mobj->spawnpoint;
 	itemrespawntime[iquehead] = leveltime;
@@ -819,8 +819,8 @@ void P_SpawnMapThing (mapthing_t* mthing)
 		
     // don't spawn any monsters if -nomonsters
     if (nomonsters
-	&& ( i == MT_SKULL
-	     || (mobjinfo[i].flags & MF_COUNTKILL)) )
+	&& ( /*i == MT_SKULL    // villsa [STRIFE] unused
+	     ||*/ (mobjinfo[i].flags & MF_COUNTKILL)) )
     {
 	return;
     }
@@ -841,8 +841,10 @@ void P_SpawnMapThing (mapthing_t* mthing)
 	mobj->tics = 1 + (P_Random () % mobj->tics);
     if (mobj->flags & MF_COUNTKILL)
 	totalkills++;
-    if (mobj->flags & MF_COUNTITEM)
-	totalitems++;
+
+    // villsa [STRIFE] unused
+    /*if (mobj->flags & MF_COUNTITEM)
+	totalitems++;*/
 		
     mobj->angle = ANG45 * (mthing->angle/45);
     if (mthing->options & MTF_AMBUSH)
@@ -871,7 +873,8 @@ P_SpawnPuff
 	
     z += ((P_Random()-P_Random())<<10);
 
-    th = P_SpawnMobj (x,y,z, MT_PUFF);
+    // villsa [STRIFE] TODO - update
+    th = P_SpawnMobj (x,y,z, MT_STRIFEPUFF);
     th->momz = FRACUNIT;
     th->tics -= P_Random()&3;
 
@@ -896,7 +899,8 @@ P_SpawnBlood
   fixed_t	z,
   int		damage )
 {
-    mobj_t*	th;
+    // villsa [STRIFE] TODO - update to strife version
+/*    mobj_t*	th;
 	
     z += ((P_Random()-P_Random())<<10);
     th = P_SpawnMobj (x,y,z, MT_BLOOD);
@@ -904,7 +908,7 @@ P_SpawnBlood
     th->tics -= P_Random()&3;
 
     if (th->tics < 1)
-	th->tics = 1;
+	th->tics = 1;*/
 		
     // villsa [STRIFE] TODO - proper blood states
     /*if (damage <= 12 && damage >= 9)

@@ -578,7 +578,8 @@ A_FireMissile
   pspdef_t*	psp ) 
 {
     DecreaseAmmo(player, weaponinfo[player->readyweapon].ammo, 1);
-    P_SpawnPlayerMissile (player->mo, MT_ROCKET);
+    // villsa [STRIFE] TODO - update
+//    P_SpawnPlayerMissile (player->mo, MT_ROCKET);
 }
 
 
@@ -592,7 +593,8 @@ A_FireBFG
 {
     DecreaseAmmo(player, weaponinfo[player->readyweapon].ammo, 
                  deh_bfg_cells_per_shot);
-    P_SpawnPlayerMissile (player->mo, MT_BFG);
+    // villsa [STRIFE] unused
+//    P_SpawnPlayerMissile (player->mo, MT_BFG);
 }
 
 
@@ -611,7 +613,8 @@ A_FirePlasma
 		  ps_flash,
 		  weaponinfo[player->readyweapon].flashstate+(P_Random ()&1) );
 
-    P_SpawnPlayerMissile (player->mo, MT_PLASMA);
+    // villsa [STRIFE] TODO - update
+//    P_SpawnPlayerMissile (player->mo, MT_PLASMA);
 }
 
 
@@ -806,7 +809,8 @@ void A_Light2 (player_t *player, pspdef_t *psp)
 //
 void A_BFGSpray (mobj_t* mo) 
 {
-    int			i;
+    // villsa [STRIFE] unused
+/*    int			i;
     int			j;
     int			damage;
     angle_t		an;
@@ -833,7 +837,7 @@ void A_BFGSpray (mobj_t* mo)
 	    damage += (P_Random()&7) + 1;
 
 	P_DamageMobj (linetarget, mo->target,mo->target, damage);
-    }
+    }*/
 }
 
 

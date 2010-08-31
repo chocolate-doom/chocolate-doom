@@ -656,7 +656,9 @@ P_TouchSpecialThing
 	break;*/
 		
       default:
-	I_Error ("P_SpecialThing: Unknown gettable thing");
+          // villsa [STRIFE] TODO - disabled for now until all things are filled
+          return;
+	//I_Error ("P_SpecialThing: Unknown gettable thing");
     }
 
     // haleyjd 08/30/10: [STRIFE] No itemcount
@@ -682,8 +684,9 @@ P_KillMobj
 	
     target->flags &= ~(MF_SHOOTABLE|MF_FLOAT|MF_SKULLFLY);
 
-    if (target->type != MT_SKULL)
-	target->flags &= ~MF_NOGRAVITY;
+    // villsa [STRIFE] unused
+    /*if (target->type != MT_SKULL)
+	target->flags &= ~MF_NOGRAVITY;*/
 
     target->flags |= MF_CORPSE|MF_DROPOFF;
     target->height >>= 2;
@@ -750,7 +753,8 @@ P_KillMobj
     // during the death frame of a thing.
     switch (target->type)
     {
-      case MT_WOLFSS:
+        // villsa [STRIFE] TODO - fix me
+      /*case MT_WOLFSS:
       case MT_POSSESSED:
 	item = MT_CLIP;
 	break;
@@ -761,7 +765,7 @@ P_KillMobj
 	
       case MT_CHAINGUY:
 	item = MT_CHAINGUN;
-	break;
+	break;*/
 	
       default:
 	return;
@@ -915,9 +919,10 @@ P_DamageMobj
 			
     target->reactiontime = 0;		// we're awake now...	
 
-    if ( (!target->threshold || target->type == MT_VILE)
+    // villsa [STRIFE] TODO - update to strife version
+    if ( (!target->threshold /*|| target->type == MT_VILE*/)
 	 && source && source != target
-	 && source->type != MT_VILE)
+	 /*&& source->type != MT_VILE*/)
     {
 	// if not intent on another player,
 	// chase after this one

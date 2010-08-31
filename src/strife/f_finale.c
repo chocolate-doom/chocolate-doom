@@ -311,23 +311,24 @@ typedef struct
     mobjtype_t	type;
 } castinfo_t;
 
+// villsa [STRIFE] TODO - proper cast fix
 castinfo_t	castorder[] = {
-    {CC_ZOMBIE, MT_POSSESSED},
-    {CC_SHOTGUN, MT_SHOTGUY},
-    {CC_HEAVY, MT_CHAINGUY},
-    {CC_IMP, MT_TROOP},
-    {CC_DEMON, MT_SERGEANT},
-    {CC_LOST, MT_SKULL},
-    {CC_CACO, MT_HEAD},
-    {CC_HELL, MT_KNIGHT},
-    {CC_BARON, MT_BRUISER},
-    {CC_ARACH, MT_BABY},
-    {CC_PAIN, MT_PAIN},
-    {CC_REVEN, MT_UNDEAD},
-    {CC_MANCU, MT_FATSO},
-    {CC_ARCH, MT_VILE},
-    {CC_SPIDER, MT_SPIDER},
-    {CC_CYBER, MT_CYBORG},
+    {CC_ZOMBIE, MT_PLAYER},
+    {CC_SHOTGUN, MT_PLAYER},
+    {CC_HEAVY, MT_PLAYER},
+    {CC_IMP, MT_PLAYER},
+    {CC_DEMON, MT_PLAYER},
+    {CC_LOST, MT_PLAYER},
+    {CC_CACO, MT_PLAYER},
+    {CC_HELL, MT_PLAYER},
+    {CC_BARON, MT_PLAYER},
+    {CC_ARACH, MT_PLAYER},
+    {CC_PAIN, MT_PLAYER},
+    {CC_REVEN, MT_PLAYER},
+    {CC_MANCU, MT_PLAYER},
+    {CC_ARCH, MT_PLAYER},
+    {CC_SPIDER, MT_PLAYER},
+    {CC_CYBER, MT_PLAYER},
     {CC_HERO, MT_PLAYER},
 
     {NULL,0}
