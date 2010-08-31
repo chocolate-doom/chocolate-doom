@@ -222,7 +222,7 @@ P_ChangeSwitchTexture
 
     // EXIT SWITCH?
     if (line->special == 11)                
-	sound = sfx_swtchx;
+	sound = sfx_swish;  // villsa [STRIFE] TODO - fix sounds
 	
     for (i = 0;i < numswitches*2;i++)
     {

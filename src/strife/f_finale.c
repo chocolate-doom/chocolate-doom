@@ -124,11 +124,11 @@ void F_StartFinale (void)
 
     if (gamemission == doom)
     {
-        S_ChangeMusic(mus_victor, true);
+        S_ChangeMusic(mus_logo, true);  // villsa [STRIFE] TODO - fix music
     }
     else
     {
-        S_ChangeMusic(mus_read_m, true);
+        S_ChangeMusic(mus_logo, true);  // villsa [STRIFE] TODO - fix music
     }
 
     // Find the right screen and set the text and background
@@ -218,7 +218,7 @@ void F_Ticker (void)
 	finalestage = F_STAGE_ARTSCREEN;
 	wipegamestate = -1;		// force a wipe
 	if (gameepisode == 3)
-	    S_StartMusic (mus_bunny);
+	    S_StartMusic (mus_logo);    // villsa [STRIFE] TODO - fix music
     }
 }
 
@@ -359,7 +359,7 @@ void F_StartCast (void)
     castframes = 0;
     castonmelee = 0;
     castattacking = false;
-    S_ChangeMusic(mus_evil, true);
+    S_ChangeMusic(mus_logo, true);  // villsa [STRIFE] TODO - fix music
 }
 
 
@@ -398,32 +398,33 @@ void F_CastTicker (void)
 	// sound hacks....
 	switch (st)
 	{
-	  case S_PLAY_ATK1:	sfx = sfx_dshtgn; break;
-	  case S_POSS_ATK2:	sfx = sfx_pistol; break;
-	  case S_SPOS_ATK2:	sfx = sfx_shotgn; break;
-	  case S_VILE_ATK2:	sfx = sfx_vilatk; break;
-	  case S_SKEL_FIST2:	sfx = sfx_skeswg; break;
-	  case S_SKEL_FIST4:	sfx = sfx_skepch; break;
-	  case S_SKEL_MISS2:	sfx = sfx_skeatk; break;
+            // villsa [STRIFE] TODO - fix sounds
+	  case S_PLAY_ATK1:	sfx = sfx_swish; break;
+	  case S_POSS_ATK2:	sfx = sfx_swish; break;
+	  case S_SPOS_ATK2:	sfx = sfx_swish; break;
+	  case S_VILE_ATK2:	sfx = sfx_swish; break;
+	  case S_SKEL_FIST2:	sfx = sfx_swish; break;
+	  case S_SKEL_FIST4:	sfx = sfx_swish; break;
+	  case S_SKEL_MISS2:	sfx = sfx_swish; break;
 	  case S_FATT_ATK8:
 	  case S_FATT_ATK5:
-	  case S_FATT_ATK2:	sfx = sfx_firsht; break;
+	  case S_FATT_ATK2:	sfx = sfx_swish; break;
 	  case S_CPOS_ATK2:
 	  case S_CPOS_ATK3:
-	  case S_CPOS_ATK4:	sfx = sfx_shotgn; break;
-	  case S_TROO_ATK3:	sfx = sfx_claw; break;
-	  case S_SARG_ATK2:	sfx = sfx_sgtatk; break;
+	  case S_CPOS_ATK4:	sfx = sfx_swish; break;
+	  case S_TROO_ATK3:	sfx = sfx_swish; break;
+	  case S_SARG_ATK2:	sfx = sfx_swish; break;
 	  case S_BOSS_ATK2:
 	  case S_BOS2_ATK2:
-	  case S_HEAD_ATK2:	sfx = sfx_firsht; break;
-	  case S_SKULL_ATK2:	sfx = sfx_sklatk; break;
+	  case S_HEAD_ATK2:	sfx = sfx_swish; break;
+	  case S_SKULL_ATK2:	sfx = sfx_swish; break;
 	  case S_SPID_ATK2:
-	  case S_SPID_ATK3:	sfx = sfx_shotgn; break;
+	  case S_SPID_ATK3:	sfx = sfx_swish; break;
 	  case S_BSPI_ATK2:	sfx = sfx_plasma; break;
 	  case S_CYBER_ATK2:
 	  case S_CYBER_ATK4:
 	  case S_CYBER_ATK6:	sfx = sfx_rlaunc; break;
-	  case S_PAIN_ATK3:	sfx = sfx_sklatk; break;
+	  case S_PAIN_ATK3:	sfx = sfx_swish; break;
 	  default: sfx = 0; break;
 	}
 		
@@ -659,7 +660,7 @@ void F_BunnyScroll (void)
 	stage = 6;
     if (stage > laststage)
     {
-	S_StartSound (NULL, sfx_pistol);
+	S_StartSound (NULL, sfx_swish); // villsa [STRIFE] TODO - fix sounds
 	laststage = stage;
     }
 	

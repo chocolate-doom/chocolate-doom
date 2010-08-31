@@ -720,7 +720,7 @@ void M_QuickSaveResponse(int key)
     if (key == key_menu_confirm)
     {
 	M_DoSave(quickSaveSlot);
-	S_StartSound(NULL,sfx_swtchx);
+	S_StartSound(NULL,sfx_swish);   // villsa [STRIFE] TODO - fix sounds
     }
 }
 
@@ -757,7 +757,7 @@ void M_QuickLoadResponse(int key)
     if (key == key_menu_confirm)
     {
 	M_LoadSelect(quickSaveSlot);
-	S_StartSound(NULL,sfx_swtchx);
+	S_StartSound(NULL,sfx_swish);   // villsa [STRIFE] TODO - fix sounds
     }
 }
 
@@ -1130,28 +1130,29 @@ void M_FinishReadThis(int choice)
 //
 // M_QuitDOOM
 //
+// villsa [STRIFE] TODO - fix sounds
 int     quitsounds[8] =
 {
-    sfx_pldeth,
-    sfx_dmpain,
-    sfx_popain,
-    sfx_slop,
-    sfx_telept,
-    sfx_posit1,
-    sfx_posit3,
-    sfx_sgtatk
+    sfx_swish,
+    sfx_swish,
+    sfx_swish,
+    sfx_swish,
+    sfx_swish,
+    sfx_swish,
+    sfx_swish,
+    sfx_swish
 };
 
 int     quitsounds2[8] =
 {
-    sfx_vilact,
-    sfx_getpow,
-    sfx_boscub,
-    sfx_slop,
-    sfx_skeswg,
-    sfx_kntdth,
-    sfx_bspact,
-    sfx_sgtatk
+    sfx_swish,
+    sfx_swish,
+    sfx_swish,
+    sfx_swish,
+    sfx_swish,
+    sfx_swish,
+    sfx_swish,
+    sfx_swish
 };
 
 
@@ -1642,7 +1643,7 @@ boolean M_Responder (event_t* ev)
 	    messageRoutine(key);
 
 	menuactive = false;
-	S_StartSound(NULL,sfx_swtchx);
+	S_StartSound(NULL,sfx_swish);   // villsa [STRIFE] TODO - fix sounds
 	return true;
     }
 
@@ -1833,7 +1834,7 @@ boolean M_Responder (event_t* ev)
 	    else
 	    {
 		currentMenu->menuitems[itemOn].routine(itemOn);
-		S_StartSound(NULL,sfx_pistol);
+		S_StartSound(NULL,sfx_swish);   // villsa [STRIFE] TODO - fix sounds
 	    }
 	}
 	return true;
@@ -1844,7 +1845,7 @@ boolean M_Responder (event_t* ev)
 
 	currentMenu->lastOn = itemOn;
 	M_ClearMenus (0);
-	S_StartSound(NULL,sfx_swtchx);
+	S_StartSound(NULL,sfx_swish);   // villsa [STRIFE] TODO - fix sounds
 	return true;
     }
     else if (key == key_menu_back)

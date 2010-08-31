@@ -81,12 +81,12 @@ void T_VerticalDoor (vldoor_t* door)
 		
 	      case normal:
 		door->direction = -1; // time to go back down
-		S_StartSound(&door->sector->soundorg, sfx_dorcls);
+		S_StartSound(&door->sector->soundorg, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
 		break;
 		
 	      case close30ThenOpen:
 		door->direction = 1;
-		S_StartSound(&door->sector->soundorg, sfx_doropn);
+		S_StartSound(&door->sector->soundorg, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
 		break;
 		
 	      default:
@@ -104,7 +104,7 @@ void T_VerticalDoor (vldoor_t* door)
 	      case raiseIn5Mins:
 		door->direction = 1;
 		door->type = normal;
-		S_StartSound(&door->sector->soundorg, sfx_doropn);
+		S_StartSound(&door->sector->soundorg, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
 		break;
 		
 	      default:
@@ -155,7 +155,7 @@ void T_VerticalDoor (vldoor_t* door)
 		
 	      default:
 		door->direction = 1;
-		S_StartSound(&door->sector->soundorg, sfx_doropn);
+		S_StartSound(&door->sector->soundorg, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
 		break;
 	    }
 	}
@@ -301,13 +301,13 @@ EV_DoDoor
 	    door->topheight = P_FindLowestCeilingSurrounding(sec);
 	    door->topheight -= 4*FRACUNIT;
 	    door->direction = -1;
-	    S_StartSound(&door->sector->soundorg, sfx_dorcls);
+	    S_StartSound(&door->sector->soundorg, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
 	    break;
 	    
 	  case close30ThenOpen:
 	    door->topheight = sec->ceilingheight;
 	    door->direction = -1;
-	    S_StartSound(&door->sector->soundorg, sfx_dorcls);
+	    S_StartSound(&door->sector->soundorg, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
 	    break;
 	    
 	  case blazeRaise:
@@ -326,7 +326,7 @@ EV_DoDoor
 	    door->topheight = P_FindLowestCeilingSurrounding(sec);
 	    door->topheight -= 4*FRACUNIT;
 	    if (door->topheight != sec->ceilingheight)
-		S_StartSound(&door->sector->soundorg, sfx_doropn);
+		S_StartSound(&door->sector->soundorg, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
 	    break;
 	    
 	  default:
@@ -470,11 +470,11 @@ EV_VerticalDoor
 	
       case 1:	// NORMAL DOOR SOUND
       case 31:
-	S_StartSound(&sec->soundorg,sfx_doropn);
+	S_StartSound(&sec->soundorg,sfx_swish); // villsa [STRIFE] TODO - fix sounds
 	break;
 	
       default:	// LOCKED DOOR SOUND
-	S_StartSound(&sec->soundorg,sfx_doropn);
+	S_StartSound(&sec->soundorg,sfx_swish); // villsa [STRIFE] TODO - fix sounds
 	break;
     }
 	

@@ -582,7 +582,7 @@ void D_DoAdvanceDemo (void)
 	gamestate = GS_DEMOSCREEN;
 	pagename = DEH_String("TITLEPIC");
 	if ( gamemode == commercial )
-	  S_StartMusic(mus_dm2ttl);
+	  S_StartMusic(mus_logo);   // villsa [STRIFE] TODO - fix music
 	else
 	  S_StartMusic (mus_intro);
 	break;
@@ -603,7 +603,7 @@ void D_DoAdvanceDemo (void)
 	{
 	    pagetic = TICRATE * 11;
 	    pagename = DEH_String("TITLEPIC");
-	    S_StartMusic(mus_dm2ttl);
+	    S_StartMusic(mus_logo); // villsa [STRIFE] TODO - fix music
 	}
 	else
 	{

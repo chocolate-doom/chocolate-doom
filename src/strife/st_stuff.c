@@ -528,7 +528,7 @@ ST_Responder (event_t* ev)
 	
 	if (gamemode == commercial)
 	{
-	  musnum = mus_runnin + (buf[0]-'0')*10 + buf[1]-'0' - 1;
+	  musnum = mus_logo + (buf[0]-'0')*10 + buf[1]-'0' - 1; // villsa [STRIFE] TODO - fix music
 	  
 	  if (((buf[0]-'0')*10 + buf[1]-'0') > 35)
 	    plyr->message = DEH_String(STSTR_NOMUS);
@@ -537,7 +537,7 @@ ST_Responder (event_t* ev)
 	}
 	else
 	{
-	  musnum = mus_e1m1 + (buf[0]-'1')*9 + (buf[1]-'1');
+	  musnum = mus_logo + (buf[0]-'1')*9 + (buf[1]-'1');    // villsa [STRIFE] TODO - fix music
 	  
 	  if (((buf[0]-'1')*9 + buf[1]-'1') > 31)
 	    plyr->message = DEH_String(STSTR_NOMUS);

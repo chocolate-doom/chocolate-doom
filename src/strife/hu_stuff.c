@@ -468,7 +468,7 @@ void HU_Ticker(void)
 			    if ( gamemode == commercial )
 			      S_StartSound(0, sfx_radio);
 			    else
-			      S_StartSound(0, sfx_tink);
+			      S_StartSound(0, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
 			}
 			HUlib_resetIText(&w_inputbuffer[i]);
 		    }
