@@ -79,9 +79,20 @@ typedef enum
 
 } cheat_t;
 
+// haleyjd 08/30/10: [STRIFE]
+// Player Inventory Item Structure
+typedef struct inventory_s
+{
+    int sprite; // a sprite number
+    int type;   // a thing type
+    int amount; // amount being carried
+} inventory_t;
 
 //
 // Extended player object info: player_t
+//
+// haleyjd 08/30/10: [STRIFE]
+// * Transformed to match binary structure layout.
 //
 typedef struct player_s
 {
@@ -103,14 +114,33 @@ typedef struct player_s
     // This is only used between levels,
     // mo->health is used during levels.
     int			health;	
-    int			armorpoints;
+    short		armorpoints; // [STRIFE] Changed to short
     // Armor type is 0-2.
-    int			armortype;	
+    short		armortype;   // [STRIFE] Changed to short
 
     // Power ups. invinc and invis are tic counters.
     int			powers[NUMPOWERS];
+
+    // [STRIFE] Additions:
+    int			sigiltype;       // Type of Sigil carried
+    int			nukagecount;     // Nukage exposure counter
+    int			questflags;      // Quest bit flags
+    int			pitch;           // Up/down look angle
+    boolean		centerview;      // True if view should be centered
+    inventory_t		inventory[32];   // Player inventory items
+    boolean		st_update;       // If true, update status bar
+    short		numinventory;    // Num. active inventory items
+    short		inventorycursor; // Selected inventory item
+    short		accuracy;        // Accuracy stat
+    short		stamina;         // Stamina stat
+    
     boolean		cards[NUMCARDS];
     boolean		backpack;
+
+    // True if button down last tic.
+    int			attackdown;
+    int			usedown;
+    int			inventorydown;   // [STRIFE] Use inventory item
     
     // Frags, kills of other players.
     int			frags[MAXPLAYERS];
@@ -123,21 +153,17 @@ typedef struct player_s
     int			ammo[NUMAMMO];
     int			maxammo[NUMAMMO];
 
-    // True if button down last tic.
-    int			attackdown;
-    int			usedown;
-
     // Bit flags, for cheats and debug.
     // See cheat_t, above.
-    int			cheats;		
+    int			cheats;
 
     // Refired shots are less accurate.
-    int			refire;		
+    int			refire;
 
      // For intermission stats.
-    int			killcount;
-    int			itemcount;
-    int			secretcount;
+    short		killcount;    // [STRIFE] Changed to short
+    //int		itemcount;    // [STRIFE] Eliminated these.
+    //int		secretcount;
 
     // Hint messages.
     char*		message;	
@@ -160,11 +186,17 @@ typedef struct player_s
     //  0-3 for which color to draw player.
     int			colormap;	
 
+    // [STRIFE] For use of teleport beacons
+    short		allegiance;  
+
     // Overlay view sprites (gun, etc).
     pspdef_t		psprites[NUMPSPRITES];
 
+    // [STRIFE] Inefficient means of tracking automap state on all maps
+    boolean		mapstate[40];
+
     // True if secret level has been done.
-    boolean		didsecret;	
+    //boolean		didsecret;   [STRIFE] Removed this.
 
 } player_t;
 

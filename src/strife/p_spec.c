@@ -1035,64 +1035,86 @@ P_ShootSpecialLine
 void P_PlayerInSpecialSector (player_t* player)
 {
     sector_t*	sector;
-	
+
     sector = player->mo->subsector->sector;
 
     // Falling, not all the way down yet?
     if (player->mo->z != sector->floorheight)
-	return;	
+        return;	
 
     // Has hitten ground.
     switch (sector->special)
     {
-      case 5:
-	// HELLSLIME DAMAGE
-	if (!player->powers[pw_ironfeet])
-	    if (!(leveltime&0x1f))
-		P_DamageMobj (player->mo, NULL, NULL, 10);
-	break;
-	
-      case 7:
-	// NUKAGE DAMAGE
-	if (!player->powers[pw_ironfeet])
-	    if (!(leveltime&0x1f))
-		P_DamageMobj (player->mo, NULL, NULL, 5);
-	break;
-	
-      case 16:
-	// SUPER HELLSLIME DAMAGE
-      case 4:
-	// STROBE HURT
-	if (!player->powers[pw_ironfeet]
-	    || (P_Random()<5) )
-	{
-	    if (!(leveltime&0x1f))
-		P_DamageMobj (player->mo, NULL, NULL, 20);
-	}
-	break;
-			
-      case 9:
-	// SECRET SECTOR
-	player->secretcount++;
-	sector->special = 0;
-	break;
-			
-      case 11:
-	// EXIT SUPER DAMAGE! (for E1M8 finale)
-	player->cheats &= ~CF_GODMODE;
+    case 5:
+        // HELLSLIME DAMAGE
+        // [STRIFE] +2 to nukagecount
+        if(!player->powers[pw_ironfeet])
+            player->nukagecount += 2;
+        break;
+    
+    case 16:
+        // [STRIFE] +4 to nukagecount
+        if(!player->powers[pw_ironfeet])
+            player->nukagecount += 4;
+        break;
 
-	if (!(leveltime&0x1f))
-	    P_DamageMobj (player->mo, NULL, NULL, 20);
+    case 4:
+    case 7:
+        // [STRIFE] Immediate 5 damage every 31 tics
+        if(!player->powers[pw_ironfeet])
+            if(!(leveltime & 0x1f))
+                P_DamageMobj(player->mo, NULL, NULL, 5);
+        break;
 
-	if (player->health <= 10)
-	    G_ExitLevel(0);
-	break;
-			
-      default:
-	I_Error ("P_PlayerInSpecialSector: "
-		 "unknown special %i",
-		 sector->special);
-	break;
+    case 9:
+        // SECRET SECTOR
+        //player->secretcount++; [STRIFE] Don't have a secret count.
+        sector->special = 0;
+        // STRIFE-TODO: sfx_yeah when secret is found
+        //if(player - players == consoleplayer)
+        //    S_StartSound(NULL, sfx_yeah);
+        break;
+
+    case 11:
+        // EXIT SUPER DAMAGE! (for E1M8 finale)
+        player->cheats &= ~CF_GODMODE;
+
+        if (!(leveltime&0x1f))
+            P_DamageMobj (player->mo, NULL, NULL, 20);
+
+        if (player->health <= 10)
+            G_ExitLevel(0);
+        break;
+
+    case 15:
+        // haleyjd 08/30/10: [STRIFE] "Instant" Death sector
+        P_DamageMobj(player->mo, NULL, NULL, 999);
+        break;
+
+
+    case 18:
+        // haleyjd 08/30/10: [STRIFE] Water current
+        // STRIFE-TODO: Verify this works as the ASM is shifty
+        {
+            int tagval = sector->tag - 100;
+            fixed_t force;
+            angle_t angle;
+
+            if(player->cheats & CF_NOCLIP)
+                return;
+
+            force = (tagval % 10) << 12;
+            angle = (tagval / 10) << 29;
+
+            P_Thrust(player, angle, force);
+        }
+        break;
+
+    default:
+        I_Error ("P_PlayerInSpecialSector: "
+                 "unknown special %i",
+                 sector->special);
+        break;
     };
 }
 

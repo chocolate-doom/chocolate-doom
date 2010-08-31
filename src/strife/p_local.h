@@ -91,7 +91,9 @@ void P_DropWeapon (player_t* player);
 //
 // P_USER
 //
-void	P_PlayerThink (player_t* player);
+void    P_PlayerThink (player_t* player);
+// haleyjd 08/30/10: [STRIFE] Needed externally
+void    P_Thrust (player_t* player, angle_t angle, fixed_t move);
 
 
 //

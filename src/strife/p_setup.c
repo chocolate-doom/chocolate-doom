@@ -680,8 +680,8 @@ P_SetupLevel
     wminfo.partime = 180;
     for (i=0 ; i<MAXPLAYERS ; i++)
     {
-	players[i].killcount = players[i].secretcount 
-	    = players[i].itemcount = 0;
+        // haleyjd 08/30/10: [STRIFE] Removed secretcount, itemcount
+	players[i].killcount = 0;
     }
 
     // Initial height of PointOfView

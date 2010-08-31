@@ -1018,21 +1018,15 @@ void G_PlayerReborn (int player)
     int		i; 
     int		frags[MAXPLAYERS]; 
     int		killcount;
-    int		itemcount;
-    int		secretcount; 
 	 
     memcpy (frags,players[player].frags,sizeof(frags)); 
     killcount = players[player].killcount; 
-    itemcount = players[player].itemcount; 
-    secretcount = players[player].secretcount; 
 	 
     p = &players[player]; 
     memset (p, 0, sizeof(*p)); 
  
     memcpy (players[player].frags, frags, sizeof(players[player].frags)); 
     players[player].killcount = killcount; 
-    players[player].itemcount = itemcount; 
-    players[player].secretcount = secretcount; 
  
     p->usedown = p->attackdown = true;	// don't do anything immediately 
     p->playerstate = PST_LIVE;       

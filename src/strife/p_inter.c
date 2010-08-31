@@ -655,9 +655,10 @@ P_TouchSpecialThing
       default:
 	I_Error ("P_SpecialThing: Unknown gettable thing");
     }
-	
-    if (special->flags & MF_COUNTITEM)
-	player->itemcount++;
+
+    // haleyjd 08/30/10: [STRIFE] No itemcount
+    //if (special->flags & MF_COUNTITEM)
+    //    player->itemcount++;
     P_RemoveMobj (special);
     player->bonuscount += BONUSADD;
     if (player == &players[consoleplayer])

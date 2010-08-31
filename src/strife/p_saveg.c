@@ -721,11 +721,13 @@ static void saveg_read_player_t(player_t *str)
     // int killcount;
     str->killcount = saveg_read32();
 
+    // haleyjd 08/30/10 [STRIFE] No itemcount.
     // int itemcount;
-    str->itemcount = saveg_read32();
+    //str->itemcount = saveg_read32();
 
+    // haleyjd 08/30/10 [STRIFE] No secretcount.
     // int secretcount;
-    str->secretcount = saveg_read32();
+    //str->secretcount = saveg_read32();
 
     // char* message;
     str->message = saveg_readp();
@@ -754,8 +756,9 @@ static void saveg_read_player_t(player_t *str)
         saveg_read_pspdef_t(&str->psprites[i]);
     }
 
+    // haleyjd 08/30/10: [STRIFE] No intermission, no didsecret.
     // boolean didsecret;
-    str->didsecret = saveg_read32();
+    //str->didsecret = saveg_read32();
 }
 
 static void saveg_write_player_t(player_t *str)
@@ -852,11 +855,13 @@ static void saveg_write_player_t(player_t *str)
     // int killcount;
     saveg_write32(str->killcount);
 
+    // haleyjd 08/30/10 [STRIFE] No itemcount
     // int itemcount;
-    saveg_write32(str->itemcount);
+    //saveg_write32(str->itemcount);
 
+    // haleyjd 08/30/10 [STRIFE] No secretcount
     // int secretcount;
-    saveg_write32(str->secretcount);
+    //saveg_write32(str->secretcount);
 
     // char* message;
     saveg_writep(str->message);
@@ -885,8 +890,9 @@ static void saveg_write_player_t(player_t *str)
         saveg_write_pspdef_t(&str->psprites[i]);
     }
 
+    // haleyjd 08/30/10: [STRIFE] No intermission, no secret.
     // boolean didsecret;
-    saveg_write32(str->didsecret);
+    //saveg_write32(str->didsecret);
 }
 
 

@@ -336,6 +336,18 @@ void P_PlayerThink (player_t* player)
     
     // Counters, time dependend power ups.
 
+    // haleyjd 08/30/10: [STRIFE]
+    // Nukage count keeps track of exposure to hazardous conditions over time.
+    // After accumulating 16 total seconds or more of exposure, you will take
+    // 5 damage roughly once per second until the count drops back under 560
+    // tics.
+    if (player->nukagecount)
+    {
+        player->nukagecount--;
+        if (!(leveltime & 0x1f) && player->nukagecount > 16*TICRATE)
+            P_DamageMobj(player->mo, NULL, NULL, 5);
+    }
+
     // Strength counts up to diminish fade.
     if (player->powers[pw_strength])
 	player->powers[pw_strength]++;	

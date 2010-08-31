@@ -90,6 +90,7 @@ typedef enum
 //
 // Key cards.
 //
+// STRIFE-TODO: A hell of a bunch of keys.
 typedef enum
 {
     it_bluecard,
