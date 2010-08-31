@@ -1055,18 +1055,19 @@ void ST_diffDraw(void)
 
 void ST_Drawer (boolean fullscreen, boolean refresh)
 {
-  
     st_statusbaron = (!fullscreen) || automapactive;
     st_firsttime = st_firsttime || refresh;
 
     // Do red-/gold-shifts from damage/items
     ST_doPaletteStuff();
 
+    // haleyjd 08/31/10: STRIFE-TODO: disabled statbar drawing
+    /*
     // If just after ST_Start(), refresh all
     if (st_firsttime) ST_doRefresh();
     // Otherwise, update as little as possible
     else ST_diffDraw();
-
+    */
 }
 
 typedef void (*load_callback_t)(char *lumpname, patch_t **variable); 
@@ -1083,6 +1084,8 @@ static void ST_loadUnloadGraphics(load_callback_t callback)
     
     char	namebuf[9];
 
+    // haleyjd 08/31/10: STRIFE-TODO: Disabled statbar resource loading
+    /*
     // Load the numbers, tall and short
     for (i=0;i<10;i++)
     {
@@ -1158,6 +1161,7 @@ static void ST_loadUnloadGraphics(load_callback_t callback)
     ++facenum;
     callback(DEH_String("STFDEAD0"), &faces[facenum]);
     ++facenum;
+    */
 }
 
 static void ST_loadCallback(char *lumpname, patch_t **variable)

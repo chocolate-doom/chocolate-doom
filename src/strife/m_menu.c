@@ -926,11 +926,11 @@ void M_DrawMainMenu(void)
 //
 // M_NewGame
 //
-// haleyjd 08/27/10: [STRIFE] Verified unmodified.
+// haleyjd 08/31/10: [STRIFE] Changed M_NEWG -> M_NGAME
 //
 void M_DrawNewGame(void)
 {
-    V_DrawPatchDirect(96, 14, W_CacheLumpName(DEH_String("M_NEWG"), PU_CACHE));
+    V_DrawPatchDirect(96, 14, W_CacheLumpName(DEH_String("M_NGAME"), PU_CACHE));
     V_DrawPatchDirect(54, 38, W_CacheLumpName(DEH_String("M_SKILL"), PU_CACHE));
 }
 

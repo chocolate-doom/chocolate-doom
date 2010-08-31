@@ -202,7 +202,9 @@ static void S_StopChannel(int cnum)
 // Kills playing sounds at start of level,
 //  determines music if any, changes music.
 //
-
+// haleyjd 08/31/10: [STRIFE]
+// * Removed DOOM music handling and replaced with Strife code.
+//
 void S_Start(void)
 {
     int cnum;
@@ -221,40 +223,14 @@ void S_Start(void)
     // start new music for the level
     mus_paused = 0;
 
-    if (gamemode == commercial)
-    {
-        mnum = mus_logo + gamemap - 1;  // villsa [STRIFE] TODO - fix music
-    }
+    // [STRIFE] Some interesting math here ;)
+    if(gamemap <= 31)
+        mnum = 1;
     else
-    {
-        // villsa [STRIFE] TODO - fix music
-        int spmus[]=
-        {
-            // Song - Who? - Where?
+        mnum = -30;
 
-            mus_logo,        // American     e4m1
-            mus_logo,        // Romero       e4m2
-            mus_logo,        // Shawn        e4m3
-            mus_logo,        // American     e4m4
-            mus_logo,        // Tim          e4m5
-            mus_logo,        // Romero       e4m6
-            mus_logo,        // J.Anderson   e4m7 CHIRON.WAD
-            mus_logo,        // Shawn        e4m8
-            mus_logo,        // Tim          e4m9
-        };
-
-        if (gameepisode < 4)
-        {
-            mnum = mus_logo + (gameepisode-1)*9 + gamemap-1;    // villsa [STRIFE] TODO - fix music
-        }
-        else
-        {
-            mnum = spmus[gamemap-1];
-        }
-    }        
-
-    S_ChangeMusic(mnum, true);
-}        
+    S_ChangeMusic(gamemap + mnum, true);
+}
 
 void S_StopSound(mobj_t *origin)
 {
