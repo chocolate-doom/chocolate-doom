@@ -164,10 +164,11 @@ void P_MovePlayer (player_t* player)
     if (cmd->sidemove && onground)
 	P_Thrust (player, player->mo->angle-ANG90, cmd->sidemove*2048);
 
+    // villsa [STRIFE] TODO - verify
     if ( (cmd->forwardmove || cmd->sidemove) 
-	 && player->mo->state == &states[S_PLAY] )
+	 && player->mo->state == &states[S_PLAY_00] )
     {
-	P_SetMobjState (player->mo, S_PLAY_RUN1);
+	P_SetMobjState (player->mo, S_PLAY_01);
     }
 }	
 
@@ -287,8 +288,16 @@ void P_PlayerThink (player_t* player)
 	//  when the weapon psprite can do it
 	//  (read: not in the middle of an attack).
 	newweapon = (cmd->buttons&BT_WEAPONMASK)>>BT_WEAPONSHIFT;
+
+        // villsa [STRIFE] TODO - placeholder
+        if (player->weaponowned[newweapon]
+	    && newweapon != player->readyweapon)
+	{
+            player->pendingweapon = newweapon;
+	}
 	
-	if (newweapon == wp_fist
+        // villsa [STRIFE] TODO - MUST FIX!!!
+	/*if (newweapon == wp_fist
 	    && player->weaponowned[wp_chainsaw]
 	    && !(player->readyweapon == wp_chainsaw
 		 && player->powers[pw_strength]))
@@ -316,7 +325,7 @@ void P_PlayerThink (player_t* player)
 	    {
 		player->pendingweapon = newweapon;
 	    }
-	}
+	}*/
     }
     
     // check for use

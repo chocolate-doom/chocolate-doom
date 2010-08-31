@@ -58,7 +58,7 @@ DEH_BEGIN_MAPPING(thing_mapping, mobjinfo_t)
   DEH_MAPPING("Missile damage",      damage)
   DEH_MAPPING("Action sound",        activesound)
   DEH_MAPPING("Bits",                flags)
-  DEH_MAPPING("Respawn frame",       raisestate)
+  //DEH_MAPPING("Respawn frame",       raisestate)  // villsa [STRIFE] unused
 DEH_END_MAPPING
 
 static void *DEH_ThingStart(deh_context_t *context, char *line)

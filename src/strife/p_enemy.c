@@ -1138,8 +1138,9 @@ boolean PIT_VileCheck (mobj_t*	thing)
     if (thing->tics != -1)
 	return true;	// not lying still yet
     
-    if (thing->info->raisestate == S_NULL)
-	return true;	// monster doesn't have a raise state
+    // villsa [STRIFE] unused
+    //if (thing->info->raisestate == S_NULL)
+	//return true;	// monster doesn't have a raise state
     
     maxdist = thing->info->radius + mobjinfo[MT_VILE].radius;
 	
@@ -1165,9 +1166,10 @@ boolean PIT_VileCheck (mobj_t*	thing)
 // A_VileChase
 // Check for ressurecting a body
 //
+// villsa [STRIFE] TODO depcricate this later
 void A_VileChase (mobj_t* actor)
 {
-    int			xl;
+/*    int			xl;
     int			xh;
     int			yl;
     int			yh;
@@ -1224,7 +1226,7 @@ void A_VileChase (mobj_t* actor)
     }
 
     // Return to normal attack.
-    A_Chase (actor);
+    A_Chase (actor);*/
 }
 
 
@@ -1855,9 +1857,10 @@ void A_BrainPain (mobj_t*	mo)
 }
 
 
+// villsa [STRIFE] TODO - depcricate this later
 void A_BrainScream (mobj_t*	mo)
 {
-    int		x;
+/*    int		x;
     int		y;
     int		z;
     mobj_t*	th;
@@ -1876,14 +1879,14 @@ void A_BrainScream (mobj_t*	mo)
 	    th->tics = 1;
     }
 	
-    S_StartSound (NULL,sfx_swish);  // villsa [STRIFE] TODO - fix sounds
+    S_StartSound (NULL,sfx_swish);  // villsa [STRIFE] TODO - fix sounds*/
 }
 
 
-
+// villsa [STRIFE] TODO - depcricate this later
 void A_BrainExplode (mobj_t* mo)
 {
-    int		x;
+/*    int		x;
     int		y;
     int		z;
     mobj_t*	th;
@@ -1898,7 +1901,7 @@ void A_BrainExplode (mobj_t* mo)
 
     th->tics -= P_Random()&7;
     if (th->tics < 1)
-	th->tics = 1;
+	th->tics = 1;*/
 }
 
 
@@ -2014,4 +2017,474 @@ void A_PlayerScream (mobj_t* mo)
     }
     
     S_StartSound (mo, sound);
+}
+
+void A_RandomWalk(mobj_t* actor)
+{
+
+}
+
+void A_FriendLook(mobj_t* actor)
+{
+
+}
+
+void A_Listen(mobj_t* actor)
+{
+
+}
+
+void A_PeasantPunch(mobj_t* actor)
+{
+
+}
+
+void A_ReavShoot(mobj_t* actor)
+{
+
+}
+
+void A_BulletAttack(mobj_t* actor)
+{
+
+}
+
+void A_CheckTargetVisible(mobj_t* actor)
+{
+
+}
+
+void A_SentinelAttack(mobj_t* actor)
+{
+
+}
+
+void A_StalkerThink(mobj_t* actor)
+{
+
+}
+
+void A_StalkerSetLook(mobj_t* actor)
+{
+
+}
+
+void A_StalkerDrop(mobj_t* actor)
+{
+
+}
+
+void A_StalkerScratch(mobj_t* actor)
+{
+
+}
+
+void A_FloatWeave(mobj_t* actor)
+{
+
+}
+
+void A_ReavAttack(mobj_t* actor)
+{
+
+}
+
+void A_TemplarMauler(mobj_t* actor)
+{
+
+}
+
+void A_CrusaderAttack(mobj_t* actor)
+{
+
+}
+
+void A_CrusaderLeft(mobj_t* actor)
+{
+
+}
+
+void A_CrusaderRight(mobj_t* actor)
+{
+
+}
+
+void A_CheckTargetVisible2(mobj_t* actor)
+{
+
+}
+
+void A_InqFlyCheck(mobj_t* actor)
+{
+
+}
+
+void A_InqGrenade(mobj_t* actor)
+{
+
+}
+
+void A_InqTakeOff(mobj_t* actor)
+{
+
+}
+
+void A_InqFly(mobj_t* actor)
+{
+
+}
+
+void A_FireSigilWeapon(mobj_t* actor)
+{
+
+}
+
+void A_ProgrammerAttack(mobj_t* actor)
+{
+
+}
+
+void A_Sigil_A_Action(mobj_t* actor)
+{
+
+}
+
+void A_SpectreEAttack(mobj_t* actor)
+{
+
+}
+
+void A_SpectreCAttack(mobj_t* actor)
+{
+
+}
+
+void A_AlertSpectreC(mobj_t* actor)
+{
+
+}
+
+void A_Sigil_E_Action(mobj_t* actor)
+{
+
+}
+
+void A_SigilTrail(mobj_t* actor)
+{
+
+}
+
+void A_SpectreDAttack(mobj_t* actor)
+{
+
+}
+
+void A_FireSigilEOffshoot(mobj_t* actor)
+{
+
+}
+
+void A_ShadowOff(mobj_t* actor)
+{
+
+}
+
+void A_ModifyVisibility(mobj_t* actor)
+{
+
+}
+
+void A_ShadowOn(mobj_t* actor)
+{
+
+}
+
+void A_SetTLOptions(mobj_t* actor)
+{
+
+}
+
+void A_BossMeleeAtk(mobj_t* actor)
+{
+
+}
+
+void A_BishopAttack(mobj_t* actor)
+{
+
+}
+
+void A_FireHookShot(mobj_t* actor)
+{
+
+}
+
+void A_FireChainShot(mobj_t* actor)
+{
+
+}
+
+void A_MissileSmoke(mobj_t* actor)
+{
+
+}
+
+void A_SpawnSparkPuff(mobj_t* actor)
+{
+
+}
+
+void A_ProgrammerMelee(mobj_t* actor)
+{
+
+}
+
+void A_PeasantCrash(mobj_t* actor)
+{
+
+}
+
+void A_HideZombie(mobj_t* actor)
+{
+
+}
+
+void A_MerchantPain(mobj_t* actor)
+{
+
+}
+
+void A_ProgrammerDie(mobj_t* actor)
+{
+
+}
+
+void A_InqTossArm(mobj_t* actor)
+{
+
+}
+
+void A_SpawnSpectreB(mobj_t* actor)
+{
+
+}
+
+void A_SpawnSpectreD(mobj_t* actor)
+{
+
+}
+
+void A_SpawnSpectreE(mobj_t* actor)
+{
+
+}
+
+void A_SpawnEntity(mobj_t* actor)
+{
+
+}
+
+void A_EntityDeath(mobj_t* actor)
+{
+
+}
+
+void A_SpawnZombie(mobj_t* actor)
+{
+
+}
+
+void A_ZombieInSpecialSector(mobj_t* actor)
+{
+
+}
+
+void A_CrystalExplode(mobj_t* actor)
+{
+
+}
+
+void A_DeathMsg(mobj_t* actor)
+{
+
+}
+
+void A_ExtraLightOff(mobj_t* actor)
+{
+
+}
+
+void A_DeathExplode4(mobj_t* actor)
+{
+
+}
+
+void A_DeathExplode5(mobj_t* actor)
+{
+
+}
+
+void A_DeathExplode1(mobj_t* actor)
+{
+
+}
+
+void A_DeathExplode2(mobj_t* actor)
+{
+
+}
+
+void A_DeathExplode3(mobj_t* actor)
+{
+
+}
+
+void A_RaiseAlarm(mobj_t* actor)
+{
+
+}
+
+void A_MissileTick(mobj_t* actor)
+{
+
+}
+
+void A_SpawnGrenadeFire(mobj_t* actor)
+{
+
+}
+
+void A_NodeChunk(mobj_t* actor)
+{
+
+}
+
+void A_HeadChunk(mobj_t* actor)
+{
+
+}
+
+void A_BurnSpread(mobj_t* actor)
+{
+
+}
+
+void A_AcolyteSpecial(mobj_t* actor)
+{
+
+}
+
+void A_InqChase(mobj_t* actor)
+{
+
+}
+
+void A_StalkerChase(mobj_t* actor)
+{
+
+}
+
+void A_TeleportBeacon(mobj_t* actor)
+{
+
+}
+
+void A_BodyParts(mobj_t* actor)
+{
+
+}
+
+void A_ClaxonBlare(mobj_t* actor)
+{
+
+}
+
+void A_ActiveSound(mobj_t* actor)
+{
+
+}
+
+void A_ClearSoundTarget(mobj_t* actor)
+{
+
+}
+
+void A_DropBurnFlesh(mobj_t* actor)
+{
+
+}
+
+void A_FlameDeath(mobj_t* actor)
+{
+
+}
+
+void A_ClearForceField(mobj_t* actor)
+{
+
+}
+
+void A_FireFlameThrower(mobj_t* actor)
+{
+
+}
+
+void A_FireMauler2(mobj_t* actor)
+{
+
+}
+
+void A_FireGrenade(mobj_t* actor)
+{
+
+}
+
+void A_FireElectricBolt(mobj_t* actor)
+{
+
+}
+
+void A_FirePoisonBolt(mobj_t* actor)
+{
+
+}
+
+void A_FireRifle(mobj_t* actor)
+{
+
+}
+
+void A_FireMauler1(mobj_t* actor)
+{
+
+}
+
+void A_SigilSound(mobj_t* actor)
+{
+
+}
+
+void A_FireSigil(mobj_t* actor)
+{
+
+}
+
+void A_GunFlashThinker(mobj_t* actor)
+{
+
+}
+
+void A_SigilShock(mobj_t* actor)
+{
+
+}
+
+void A_TorpedoExplode(mobj_t* actor)
+{
+
+}
+
+void A_MaulerSound(mobj_t* actor)
+{
+
 }

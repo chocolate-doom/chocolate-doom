@@ -1333,7 +1333,7 @@ boolean PIT_ChangeSector (mobj_t*	thing)
     // crunch bodies to giblets
     if (thing->health <= 0)
     {
-	P_SetMobjState (thing, S_GIBS);
+	//P_SetMobjState (thing, S_GIBS);   // villsa [STRIFE] TODO - update proper gib state
 
 	thing->flags &= ~MF_SOLID;
 	thing->height = 0;

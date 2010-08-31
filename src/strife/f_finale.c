@@ -369,7 +369,7 @@ void F_StartCast (void)
 void F_CastTicker (void)
 {
     int		st;
-    int		sfx;
+    int		sfx = sfx_swish;    // villsa [STRIFE] TODO - fix me!
 	
     if (--casttics > 0)
 	return;			// not time to change state yet
@@ -389,14 +389,14 @@ void F_CastTicker (void)
     else
     {
 	// just advance to next state in animation
-	if (caststate == &states[S_PLAY_ATK1])
+	if (caststate == &states[S_PLAY_05])    // villsa [STRIFE] TODO - update later
 	    goto stopattack;	// Oh, gross hack!
 	st = caststate->nextstate;
 	caststate = &states[st];
 	castframes++;
 	
 	// sound hacks....
-	switch (st)
+	/*switch (st)
 	{
             // villsa [STRIFE] TODO - fix sounds
 	  case S_PLAY_ATK1:	sfx = sfx_swish; break;
@@ -426,7 +426,7 @@ void F_CastTicker (void)
 	  case S_CYBER_ATK6:	sfx = sfx_rlaunc; break;
 	  case S_PAIN_ATK3:	sfx = sfx_swish; break;
 	  default: sfx = 0; break;
-	}
+	}*/
 		
 	if (sfx)
 	    S_StartSound (NULL, sfx);

@@ -41,6 +41,7 @@ typedef struct
     int		readystate;
     int		atkstate;
     int		flashstate;
+    boolean     unknown;    // villsa [STRIFE] TODO - identify unknown variable
 
 } weaponinfo_t;
 

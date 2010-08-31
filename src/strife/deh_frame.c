@@ -41,8 +41,8 @@ DEH_BEGIN_MAPPING(state_mapping, state_t)
   DEH_MAPPING("Sprite subnumber", frame)
   DEH_MAPPING("Duration",         tics)
   DEH_MAPPING("Next frame",       nextstate)
-  DEH_MAPPING("Unknown 1",        misc1)
-  DEH_MAPPING("Unknown 2",        misc2)
+  //DEH_MAPPING("Unknown 1",        misc1)  // villsa [STRIFE] unused
+  //DEH_MAPPING("Unknown 2",        misc2)  // villsa [STRIFE] unused
   DEH_UNSUPPORTED_MAPPING("Codep frame")
 DEH_END_MAPPING
 

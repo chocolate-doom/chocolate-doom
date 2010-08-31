@@ -116,7 +116,9 @@ P_GiveAmmo
     // We were down to zero,
     // so select a new weapon.
     // Preferences are not user selectable.
-    switch (ammo)
+
+    // villsa [STRIFE] TODO - BEWARE! NO WEAPON PREFERENCE MUST FIX
+    /*switch (ammo)
     {
       case am_clip:
 	if (player->readyweapon == wp_fist)
@@ -154,7 +156,7 @@ P_GiveAmmo
 	}
       default:
 	break;
-    }
+    }*/
 	
     return true;
 }
@@ -366,7 +368,8 @@ P_TouchSpecialThing
     // Identify by sprite.
     switch (special->sprite)
     {
-	// armor
+        // villsa [STRIFE] TODO - update actual strife sprite pickups
+/*	// armor
       case SPR_ARM1:
 	if (!P_GiveArmor (player, deh_green_armor_class))
 	    return;
@@ -650,7 +653,7 @@ P_TouchSpecialThing
 	    return;
 	player->message = DEH_String(GOTSHOTGUN2);
 	sound = sfx_wpnup;	
-	break;
+	break;*/
 		
       default:
 	I_Error ("P_SpecialThing: Unknown gettable thing");
@@ -818,7 +821,7 @@ P_DamageMobj
 	&& !(target->flags & MF_NOCLIP)
 	&& (!source
 	    || !source->player
-	    || source->player->readyweapon != wp_chainsaw))
+	    /*|| source->player->readyweapon != wp_chainsaw*/)) // villsa [STRIFE] unused
     {
 	ang = R_PointToAngle2 ( inflictor->x,
 				inflictor->y,

@@ -78,12 +78,13 @@ P_SetPsprite
 	psp->state = state;
 	psp->tics = state->tics;	// could be 0
 
-	if (state->misc1)
+        // villsa [STRIFE] unused
+	/*if (state->misc1)
 	{
 	    // coordinate set
 	    psp->sx = state->misc1 << FRACBITS;
 	    psp->sy = state->misc2 << FRACBITS;
-	}
+	}*/
 	
 	// Call action routine.
 	// Modified handling.
@@ -141,8 +142,9 @@ void P_BringUpWeapon (player_t* player)
     if (player->pendingweapon == wp_nochange)
 	player->pendingweapon = player->readyweapon;
 		
-    if (player->pendingweapon == wp_chainsaw)
-	S_StartSound (player->mo, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
+    // villsa [STRIFE] unused
+    /*if (player->pendingweapon == wp_chainsaw)
+	S_StartSound (player->mo, sfx_swish);   // villsa [STRIFE] TODO - fix sounds*/
 		
     newstate = weaponinfo[player->pendingweapon].upstate;
 
@@ -165,11 +167,12 @@ boolean P_CheckAmmo (player_t* player)
     ammo = weaponinfo[player->readyweapon].ammo;
 
     // Minimal amount for one shot varies.
-    if (player->readyweapon == wp_bfg)
+    // villsa [STRIFE] unused
+    /*if (player->readyweapon == wp_bfg)
 	count = deh_bfg_cells_per_shot;
     else if (player->readyweapon == wp_supershotgun)
 	count = 2;	// Double barrel.
-    else
+    else*/
 	count = 1;	// Regular.
 
     // Some do not need ammunition anyway.
@@ -179,7 +182,8 @@ boolean P_CheckAmmo (player_t* player)
 		
     // Out of ammo, pick a weapon to change to.
     // Preferences are set here.
-    do
+    // villsa [STRIFE] TODO - BEWARE, NO WEAPON PREFERENCE, MUST FIX!
+    /*do
     {
 	if (player->weaponowned[wp_plasma]
 	    && player->ammo[am_cell]
@@ -228,7 +232,7 @@ boolean P_CheckAmmo (player_t* player)
 	    player->pendingweapon = wp_fist;
 	}
 	
-    } while (player->pendingweapon == wp_nochange);
+    } while (player->pendingweapon == wp_nochange);*/
 
     // Now set appropriate weapon overlay.
     P_SetPsprite (player,
@@ -249,7 +253,8 @@ void P_FireWeapon (player_t* player)
     if (!P_CheckAmmo (player))
 	return;
 	
-    P_SetMobjState (player->mo, S_PLAY_ATK1);
+    // villsa [STRIFE] TODO - verify
+    P_SetMobjState (player->mo, S_PLAY_05);
     newstate = weaponinfo[player->readyweapon].atkstate;
     P_SetPsprite (player, ps_weapon, newstate);
     P_NoiseAlert (player->mo, player->mo);
@@ -286,17 +291,19 @@ A_WeaponReady
     int		angle;
     
     // get out of attack state
-    if (player->mo->state == &states[S_PLAY_ATK1]
-	|| player->mo->state == &states[S_PLAY_ATK2] )
+    // villsa [STRIFE] TODO - verify
+    if (player->mo->state == &states[S_PLAY_05]
+	|| player->mo->state == &states[S_PLAY_06] )
     {
-	P_SetMobjState (player->mo, S_PLAY);
+	P_SetMobjState (player->mo, S_PLAY_00);
     }
     
-    if (player->readyweapon == wp_chainsaw
+        // villsa [STRIFE] unused
+    /*if (player->readyweapon == wp_chainsaw
 	&& psp->state == &states[S_SAW])
     {
 	S_StartSound (player->mo, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
-    }
+    }*/
     
     // check for change
     //  if player is dead, put the weapon away
@@ -313,9 +320,10 @@ A_WeaponReady
     //  the missile launcher and bfg do not auto fire
     if (player->cmd.buttons & BT_ATTACK)
     {
+        
 	if ( !player->attackdown
-	     || (player->readyweapon != wp_missile
-		 && player->readyweapon != wp_bfg) )
+	     /*|| (player->readyweapon != wp_missile    // villsa [STRIFE] unused?
+		 && player->readyweapon != wp_bfg)*/ )
 	{
 	    player->attackdown = true;
 	    P_FireWeapon (player);		
@@ -449,7 +457,8 @@ A_GunFlash
 ( player_t*	player,
   pspdef_t*	psp ) 
 {
-    P_SetMobjState (player->mo, S_PLAY_ATK2);
+    // villsa [STRIFE] TODO - verify
+    P_SetMobjState (player->mo, S_PLAY_06);
     P_SetPsprite (player,ps_flash,weaponinfo[player->readyweapon].flashstate);
 }
 
@@ -667,7 +676,7 @@ A_FirePistol
 {
     S_StartSound (player->mo, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
 
-    P_SetMobjState (player->mo, S_PLAY_ATK2);
+    P_SetMobjState (player->mo, S_PLAY_06); // villsa [STRIFE] TODO - verify
     DecreaseAmmo(player, weaponinfo[player->readyweapon].ammo, 1);
 
     P_SetPsprite (player,
@@ -690,7 +699,7 @@ A_FireShotgun
     int		i;
 	
     S_StartSound (player->mo, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
-    P_SetMobjState (player->mo, S_PLAY_ATK2);
+    P_SetMobjState (player->mo, S_PLAY_06); // villsa [STRIFE] TODO - verify
 
     DecreaseAmmo(player, weaponinfo[player->readyweapon].ammo, 1);
 
@@ -720,7 +729,7 @@ A_FireShotgun2
 		
 	
     S_StartSound (player->mo, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
-    P_SetMobjState (player->mo, S_PLAY_ATK2);
+    P_SetMobjState (player->mo, S_PLAY_06); // villsa [STRIFE] TODO - verify
 
     DecreaseAmmo(player, weaponinfo[player->readyweapon].ammo, 2);
 
@@ -756,14 +765,14 @@ A_FireCGun
     if (!player->ammo[weaponinfo[player->readyweapon].ammo])
 	return;
 		
-    P_SetMobjState (player->mo, S_PLAY_ATK2);
+    P_SetMobjState (player->mo, S_PLAY_06); // villsa [STRIFE] TODO - verify
     DecreaseAmmo(player, weaponinfo[player->readyweapon].ammo, 1);
 
-    P_SetPsprite (player,
+    /*P_SetPsprite (player,
 		  ps_flash,
 		  weaponinfo[player->readyweapon].flashstate
 		  + psp->state
-		  - &states[S_CHAIN1] );
+		  - &states[S_CHAIN1] );*/
 
     P_BulletSlope (player->mo);
 	

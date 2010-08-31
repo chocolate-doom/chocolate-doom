@@ -109,17 +109,20 @@ typedef enum
 // The defined weapons,
 //  including a marker indicating
 //  user has not changed weapon.
+// villsa [STRIFE]
 typedef enum
 {
     wp_fist,
-    wp_pistol,
-    wp_shotgun,
-    wp_chaingun,
+    wp_elecbow,
+    wp_rifle,
     wp_missile,
-    wp_plasma,
-    wp_bfg,
-    wp_chainsaw,
-    wp_supershotgun,
+    wp_hegrenade,
+    wp_flame,
+    wp_mauler,
+    wp_sigil,
+    wp_poisonbow,
+    wp_wpgrenade,
+    wp_torpedo,
 
     NUMWEAPONS,
     

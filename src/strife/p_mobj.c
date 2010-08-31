@@ -229,8 +229,9 @@ void P_XYMovement (mobj_t* mo)
 		&& player->cmd.sidemove == 0 ) ) )
     {
 	// if in a walking frame, stop moving
-	if ( player&&(unsigned)((player->mo->state - states)- S_PLAY_RUN1) < 4)
-	    P_SetMobjState (player->mo, S_PLAY);
+        // villsa [STRIFE] TODO - verify
+	if ( player&&(unsigned)((player->mo->state - states)- S_PLAY_01) < 4)
+	    P_SetMobjState (player->mo, S_PLAY_00);
 	
 	mo->momx = 0;
 	mo->momy = 0;
@@ -878,8 +879,9 @@ P_SpawnPuff
 	th->tics = 1;
 	
     // don't make punches spark on the wall
-    if (attackrange == MELEERANGE)
-	P_SetMobjState (th, S_PUFF3);
+    // villsa [STRIFE] TODO - proper puff state
+    //if (attackrange == MELEERANGE)
+	//P_SetMobjState (th, S_PUFF3);
 }
 
 
@@ -904,10 +906,11 @@ P_SpawnBlood
     if (th->tics < 1)
 	th->tics = 1;
 		
-    if (damage <= 12 && damage >= 9)
+    // villsa [STRIFE] TODO - proper blood states
+    /*if (damage <= 12 && damage >= 9)
 	P_SetMobjState (th,S_BLOOD2);
     else if (damage < 9)
-	P_SetMobjState (th,S_BLOOD3);
+	P_SetMobjState (th,S_BLOOD3);*/
 }
 
 

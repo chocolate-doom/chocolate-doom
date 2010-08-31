@@ -1031,9 +1031,9 @@ void G_PlayerReborn (int player)
     p->usedown = p->attackdown = true;	// don't do anything immediately 
     p->playerstate = PST_LIVE;       
     p->health = deh_initial_health;     // Use dehacked value
-    p->readyweapon = p->pendingweapon = wp_pistol; 
+    p->readyweapon = p->pendingweapon = wp_fist; // villsa [STRIFE] default to fists
     p->weaponowned[wp_fist] = true; 
-    p->weaponowned[wp_pistol] = true; 
+    //p->weaponowned[wp_pistol] = true; // villsa [STRIFE]
     p->ammo[am_clip] = deh_initial_bullets; 
 	 
     for (i=0 ; i<NUMAMMO ; i++) 
@@ -1592,7 +1592,7 @@ G_InitNew
 	respawnmonsters = false;
 
     // STRIFE-TODO: (broken) Strife skill level mobjinfo/states tweaking
-    if (fastparm || (skill == sk_nightmare && gameskill != sk_nightmare) )
+    /*if (fastparm || (skill == sk_nightmare && gameskill != sk_nightmare) )
     { 
 	for (i=S_SARG_RUN1 ; i<=S_SARG_PAIN2 ; i++) 
 	    states[i].tics >>= 1; 
@@ -1607,7 +1607,7 @@ G_InitNew
 	mobjinfo[MT_BRUISERSHOT].speed = 15*FRACUNIT; 
 	mobjinfo[MT_HEADSHOT].speed = 10*FRACUNIT; 
 	mobjinfo[MT_TROOPSHOT].speed = 10*FRACUNIT; 
-    } 
+    } */
 	 
 			 
     // force players to be initialized upon first level load         
