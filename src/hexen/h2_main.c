@@ -156,6 +156,7 @@ void D_BindVariables(void)
     M_BindMapControls();
     M_BindMenuControls();
     M_BindWeaponControls();
+    M_BindChatControls(MAXPLAYERS);
     M_BindHereticControls();
     M_BindHexenControls();
 

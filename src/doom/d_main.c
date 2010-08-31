@@ -358,6 +358,12 @@ void D_BindVariables(void)
     M_BindWeaponControls();
     M_BindMapControls();
     M_BindMenuControls();
+    M_BindChatControls(MAXPLAYERS);
+
+    key_multi_msgplayer[0] = HUSTR_KEYGREEN;
+    key_multi_msgplayer[1] = HUSTR_KEYINDIGO;
+    key_multi_msgplayer[2] = HUSTR_KEYBROWN;
+    key_multi_msgplayer[3] = HUSTR_KEYRED;
 
 #ifdef FEATURE_MULTIPLAYER
     NET_BindVariables();

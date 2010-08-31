@@ -33,7 +33,7 @@
 #include "SDL.h"
 #include "SDL_mixer.h"
 
-#include "fmopl.h"
+#include "dbopl.h"
 
 #include "opl.h"
 #include "opl_internal.h"
@@ -41,6 +41,14 @@
 #include "opl_queue.h"
 
 #define MAX_SOUND_SLICE_TIME 100 /* ms */
+
+typedef struct
+{
+    unsigned int rate;        // Number of times the timer is advanced per sec.
+    unsigned int enabled;     // Non-zero if timer is enabled.
+    unsigned int value;       // Last value that was set.
+    unsigned int expire_time; // Calculated time that timer will expire.
+} opl_timer_t;
 
 // When the callback mutex is locked using OPL_Lock, callback functions
 // are not invoked.
@@ -70,11 +78,20 @@ static unsigned int pause_offset;
 
 // OPL software emulator structure.
 
-static FM_OPL *opl_emulator = NULL;
+static Chip opl_chip;
 
 // Temporary mixing buffer used by the mixing callback.
 
-static int16_t *mix_buffer = NULL;
+static int32_t *mix_buffer = NULL;
+
+// Register number that was written.
+
+static int register_num = 0;
+
+// Timers; DBOPL does not do timer stuff itself.
+
+static opl_timer_t timer1 = { 12500, 0, 0, 0 };
+static opl_timer_t timer2 = { 3125, 0, 0, 0 };
 
 // SDL parameters.
 
@@ -153,14 +170,14 @@ static void FillBuffer(int16_t *buffer, unsigned int nsamples)
 
     assert(nsamples < mixing_freq);
 
-    YM3812UpdateOne(opl_emulator, mix_buffer, nsamples, 0);
+    Chip__GenerateBlock2(&opl_chip, nsamples, mix_buffer);
 
     // Mix into the destination buffer, doubling up into stereo.
 
     for (i=0; i<nsamples; ++i)
     {
-        buffer[i * 2] = mix_buffer[i];
-        buffer[i * 2 + 1] = mix_buffer[i];
+        buffer[i * 2] = (int16_t) (mix_buffer[i] * 2);
+        buffer[i * 2 + 1] = (int16_t) (mix_buffer[i] * 2);
     }
 }
 
@@ -179,7 +196,7 @@ static void OPL_Mix_Callback(void *udata,
     buffer = (int16_t *) byte_buffer;
     buffer_len = buffer_bytes / 4;
 
-    // Repeatedly call the FMOPL update function until the buffer is
+    // Repeatedly call the OPL emulator update function until the buffer is
     // full.
 
     while (filled < buffer_len)
@@ -235,11 +252,13 @@ static void OPL_SDL_Shutdown(void)
         sdl_was_initialized = 0;
     }
 
-    if (opl_emulator != NULL)
+/*
+    if (opl_chip != NULL)
     {
-        OPLDestroy(opl_emulator);
-        opl_emulator = NULL;
+        OPLDestroy(opl_chip);
+        opl_chip = NULL;
     }
+    */
 
     if (callback_mutex != NULL)
     {
@@ -252,29 +271,6 @@ static void OPL_SDL_Shutdown(void)
         SDL_DestroyMutex(callback_queue_mutex);
         callback_queue_mutex = NULL;
     }
-}
-
-// Callback when a timer expires.
-
-static void TimerOver(void *data)
-{
-    int channel = (int) data;
-
-    OPLTimerOver(opl_emulator, channel);
-}
-
-// Callback invoked when the emulator code wants to set a timer.
-
-static void TimerHandler(int channel, double interval_seconds)
-{
-    unsigned int interval_samples;
-
-    interval_samples = (int) (interval_seconds * mixing_freq);
-
-    SDL_LockMutex(callback_queue_mutex);
-    OPL_Queue_Push(callback_queue, TimerOver, (void *) channel,
-                   current_time - pause_offset + interval_samples);
-    SDL_UnlockMutex(callback_queue_mutex);
 }
 
 static unsigned int GetSliceSize(void)
@@ -360,20 +356,13 @@ static int OPL_SDL_Init(unsigned int port_base)
 
     // Mix buffer:
 
-    mix_buffer = malloc(mixing_freq * 2);
+    mix_buffer = malloc(mixing_freq * sizeof(uint32_t));
 
     // Create the emulator structure:
 
-    opl_emulator = makeAdlibOPL(mixing_freq);
-
-    if (opl_emulator == NULL)
-    {
-        fprintf(stderr, "Failed to initialize software OPL emulator!\n");
-        OPL_SDL_Shutdown();
-        return 0;
-    }
-
-    OPLSetTimerHandler(opl_emulator, TimerHandler, 0);
+    DBOPL_InitTables();
+    Chip__Chip(&opl_chip);
+    Chip__Setup(&opl_chip, mixing_freq);
 
     callback_mutex = SDL_CreateMutex();
     callback_queue_mutex = SDL_CreateMutex();
@@ -386,21 +375,90 @@ static int OPL_SDL_Init(unsigned int port_base)
 
 static unsigned int OPL_SDL_PortRead(opl_port_t port)
 {
-    if (opl_emulator != NULL)
+    unsigned int result = 0;
+
+    if (timer1.enabled && current_time > timer1.expire_time)
     {
-        return OPLRead(opl_emulator, port);
+        result |= 0x80;   // Either have expired
+        result |= 0x40;   // Timer 1 has expired
     }
-    else
+
+    if (timer2.enabled && current_time > timer2.expire_time)
     {
-        return 0;
+        result |= 0x80;   // Either have expired
+        result |= 0x20;   // Timer 2 has expired
+    }
+
+    return result;
+}
+
+static void OPLTimer_CalculateEndTime(opl_timer_t *timer)
+{
+    int tics;
+
+    // If the timer is enabled, calculate the time when the timer
+    // will expire.
+
+    if (timer->enabled)
+    {
+        tics = 0x100 - timer->value;
+        timer->expire_time = current_time
+                           + (tics * opl_sample_rate) / timer->rate;
+    }
+}
+
+static void WriteRegister(unsigned int reg_num, unsigned int value)
+{
+    switch (reg_num)
+    {
+        case OPL_REG_TIMER1:
+            timer1.value = value;
+            OPLTimer_CalculateEndTime(&timer1);
+            break;
+
+        case OPL_REG_TIMER2:
+            timer2.value = value;
+            OPLTimer_CalculateEndTime(&timer2);
+            break;
+
+        case OPL_REG_TIMER_CTRL:
+            if (value & 0x80)
+            {
+                timer1.enabled = 0;
+                timer2.enabled = 0;
+            }
+            else
+            {
+                if ((value & 0x40) == 0)
+                {
+                    timer1.enabled = (value & 0x01) != 0;
+                    OPLTimer_CalculateEndTime(&timer1);
+                }
+
+                if ((value & 0x20) == 0)
+                {
+                    timer1.enabled = (value & 0x02) != 0;
+                    OPLTimer_CalculateEndTime(&timer2);
+                }
+            }
+
+            break;
+
+        default:
+            Chip__WriteReg(&opl_chip, reg_num, value);
+            break;
     }
 }
 
 static void OPL_SDL_PortWrite(opl_port_t port, unsigned int value)
 {
-    if (opl_emulator != NULL)
+    if (port == OPL_REGISTER_PORT)
     {
-        OPLWrite(opl_emulator, port, value);
+        register_num = value;
+    }
+    else if (port == OPL_DATA_PORT)
+    {
+        WriteRegister(register_num, value);
     }
 }
 

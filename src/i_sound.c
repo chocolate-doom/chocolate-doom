@@ -56,6 +56,10 @@ extern sound_module_t sound_pcsound_module;
 extern music_module_t music_sdl_module;
 extern music_module_t music_opl_module;
 
+// For OPL module:
+
+extern int opl_io_port;
+
 // DOS-specific options: These are unused but should be maintained
 // so that the config file can be shared between chocolate
 // doom and doom.exe
@@ -408,6 +412,7 @@ void I_BindSoundVariables(void)
     M_BindVariable("snd_sbdma",         &snd_sbdma);
     M_BindVariable("snd_mport",         &snd_mport);
     M_BindVariable("snd_samplerate",    &snd_samplerate);
+    M_BindVariable("opl_io_port",       &opl_io_port);
 #ifdef FEATURE_SOUND
     M_BindVariable("use_libsamplerate", &use_libsamplerate);
 #endif

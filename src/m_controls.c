@@ -22,6 +22,8 @@
 //
 //-----------------------------------------------------------------------------
 
+#include <stdio.h>
+
 #include "doomtype.h"
 #include "doomkeys.h"
 
@@ -80,8 +82,19 @@ int mousebstraferight = -1;
 int mousebbackward = -1;
 int mousebuse = -1;
 
+int mousebprevweapon = -1;
+int mousebnextweapon = -1;
+
+
 int key_message_refresh = KEY_ENTER;
 int key_pause = KEY_PAUSE;
+int key_demo_quit = 'q';
+int key_spy = KEY_F12;
+
+// Multiplayer chat keys:
+
+int key_multi_msg = 't';
+int key_multi_msgplayer[8];
 
 // Weapon selection keys:
 
@@ -93,8 +106,10 @@ int key_weapon5 = '5';
 int key_weapon6 = '6';
 int key_weapon7 = '7';
 int key_weapon8 = '8';
+int key_prevweapon = 0;
+int key_nextweapon = 0;
 
-// Map cotnrols keys:
+// Map control keys:
 
 int key_map_north     = KEY_UPARROW;
 int key_map_south     = KEY_DOWNARROW;
@@ -150,6 +165,9 @@ int joybstraferight = -1;
 
 int joybjump = -1;
 
+int joybprevweapon = -1;
+int joybnextweapon = -1;
+
 // Control whether if a mouse button is double clicked, it acts like 
 // "use" has been pressed
 
@@ -182,7 +200,7 @@ void M_BindBaseControls(void)
     M_BindVariable("joyb_speed",         &joybspeed),
 
     // Extra controls that are not in the Vanilla versions:
-  
+
     M_BindVariable("joyb_strafeleft",    &joybstrafeleft);
     M_BindVariable("joyb_straferight",   &joybstraferight);
     M_BindVariable("mouseb_strafeleft",  &mousebstrafeleft);
@@ -226,6 +244,15 @@ void M_BindWeaponControls(void)
     M_BindVariable("key_weapon6",        &key_weapon6);
     M_BindVariable("key_weapon7",        &key_weapon7);
     M_BindVariable("key_weapon8",        &key_weapon8);
+
+    M_BindVariable("key_prevweapon",     &key_prevweapon);
+    M_BindVariable("key_nextweapon",     &key_nextweapon);
+
+    M_BindVariable("joyb_prevweapon",    &joybprevweapon);
+    M_BindVariable("joyb_nextweapon",    &joybnextweapon);
+
+    M_BindVariable("mouseb_prevweapon",  &mousebprevweapon);
+    M_BindVariable("mouseb_nextweapon",  &mousebnextweapon);
 }
 
 void M_BindMapControls(void)
@@ -270,6 +297,22 @@ void M_BindMenuControls(void)
 
     M_BindVariable("key_menu_incscreen", &key_menu_incscreen);
     M_BindVariable("key_menu_decscreen", &key_menu_decscreen);
+    M_BindVariable("key_demo_quit",      &key_demo_quit);
+    M_BindVariable("key_spy",            &key_spy);
+}
+
+void M_BindChatControls(unsigned int num_players)
+{
+    char name[20];
+    int i;
+
+    M_BindVariable("key_multi_msg",     &key_multi_msg);
+
+    for (i=0; i<num_players; ++i)
+    {
+        sprintf(name, "key_multi_msgplayer%i", i + 1);
+        M_BindVariable(name, &key_multi_msgplayer[i]);
+    }
 }
 
 #ifdef _WIN32_WCE

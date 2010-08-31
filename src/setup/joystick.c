@@ -425,6 +425,8 @@ void ConfigJoystick(void)
 
     AddJoystickControl(button_table, "Strafe Left", &joybstrafeleft);
     AddJoystickControl(button_table, "Strafe Right", &joybstraferight);
+    AddJoystickControl(button_table, "Previous weapon", &joybprevweapon);
+    AddJoystickControl(button_table, "Next weapon", &joybnextweapon);
 
     if (gamemission == hexen)
     {

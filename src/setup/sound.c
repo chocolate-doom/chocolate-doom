@@ -69,6 +69,7 @@ static char *musicmode_strings[] =
 int snd_sfxdevice = SNDDEVICE_SB;
 int snd_musicdevice = SNDDEVICE_GENMIDI;
 int snd_samplerate = 22050;
+int opl_io_port = 0x388;
 
 static int numChannels = 8;
 static int sfxVolume = 15;

@@ -9,19 +9,19 @@
 #define PACKAGE_NAME "Chocolate Doom"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Chocolate Doom 1.3.0"
+#define PACKAGE_STRING "Chocolate Doom 1.4.0"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "chocolate-doom"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "1.3.0"
+#define PACKAGE_VERSION "1.4.0"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "1.3.0"
+#define VERSION "1.4.0"
 
 /* Define to 1 if your processor stores words with the most significant byte
    first (like Motorola and SPARC, unlike Intel and VAX). */

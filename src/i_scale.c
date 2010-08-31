@@ -56,11 +56,11 @@ static int dest_pitch;
 // stretch_tables[1] : 40% / 60%
 // All other combinations can be reached from these two tables.
 
-static byte *stretch_tables[2];
+static byte *stretch_tables[2] = { NULL, NULL };
 
 // 50%/50% stretch table, for 800x600 squash mode
 
-static byte *half_stretch_table;
+static byte *half_stretch_table = NULL;
 
 // Called to set the source and destination buffers before doing the
 // scale.
@@ -367,6 +367,11 @@ static byte *GenerateStretchTable(byte *palette, int pct)
 
 static void I_InitStretchTables(byte *palette)
 {
+    if (stretch_tables[0] != NULL)
+    {
+        return;
+    }
+
     // We only actually need two lookup tables:
     //
     // mix 0%   =  just write line 1
@@ -388,6 +393,11 @@ static void I_InitStretchTables(byte *palette)
 
 static void I_InitSquashTable(byte *palette)
 {
+    if (half_stretch_table != NULL)
+    {
+        return;
+    }
+
     printf("I_InitSquashTable: Generating lookup table..");
     fflush(stdout);
     half_stretch_table = GenerateStretchTable(palette, 50);

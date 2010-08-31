@@ -41,6 +41,7 @@
 //  because it will get overwritten automatically if needed.
 // 
  
+#define MEM_ALIGN sizeof(void *)
 #define ZONEID	0x1d4a11
 
 typedef struct memblock_s
@@ -201,7 +202,7 @@ Z_Malloc
     memblock_t*	base;
     void *result;
 
-    size = (size + 3) & ~3;
+    size = (size + MEM_ALIGN - 1) & ~(MEM_ALIGN - 1);
     
     // scan through the block list,
     // looking for the first free block

@@ -43,7 +43,9 @@
 
 #define SCREENHEIGHT_4_3 240
 
-typedef struct 
+#define MAX_MOUSE_BUTTONS 8
+
+typedef struct
 {
     // Screen width and height
 
