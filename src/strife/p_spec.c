@@ -82,11 +82,8 @@ typedef struct
 } animdef_t;
 
 
-
-#define MAXANIMS                32
-
-extern anim_t	anims[MAXANIMS];
-extern anim_t*	lastanim;
+// haleyjd 08/30/10: [STRIFE] MAXANIMS raised from 32 to 40
+#define MAXANIMS                40
 
 //
 // P_InitPicAnims
@@ -141,9 +138,8 @@ animdef_t               animdefs[] =
     { -1,    NULL,       NULL,        0},
 };
 
-anim_t		anims[MAXANIMS];
-anim_t*		lastanim;
-
+anim_t  anims[MAXANIMS];
+anim_t* lastanim;
 
 //
 //      Animating line specials
@@ -1070,9 +1066,8 @@ void P_PlayerInSpecialSector (player_t* player)
         // SECRET SECTOR
         //player->secretcount++; [STRIFE] Don't have a secret count.
         sector->special = 0;
-        // STRIFE-TODO: sfx_yeah when secret is found
-        //if(player - players == consoleplayer)
-        //    S_StartSound(NULL, sfx_yeah);
+        if(player - players == consoleplayer)
+            S_StartSound(NULL, sfx_yeah);
         break;
 
     case 11:
