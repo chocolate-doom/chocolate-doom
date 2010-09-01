@@ -553,7 +553,14 @@ void R_ProjectSprite (mobj_t* thing)
     vis->gx = thing->x;
     vis->gy = thing->y;
     vis->gz = thing->z;
-    vis->gzt = thing->z + spritetopoffset[lump];
+
+    // villsa [STRIFE]
+    if(thing->flags & MF_FEETCLIPPED)
+        vis->gz -= (10*FRACUNIT);
+
+    // villsa [STRIFE]
+    vis->gzt = vis->gz + spritetopoffset[lump];
+
     vis->texturemid = vis->gzt - viewz;
     vis->x1 = x1 < 0 ? 0 : x1;
     vis->x2 = x2 >= viewwidth ? viewwidth-1 : x2;	

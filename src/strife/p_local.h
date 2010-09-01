@@ -32,7 +32,7 @@
 #include "r_local.h"
 #endif
 
-#define FLOATSPEED		(FRACUNIT*4)
+#define FLOATSPEED		(FRACUNIT*5)    // villsa [STRIFE] change to 5 (was 4)
 
 
 #define MAXHEALTH		100

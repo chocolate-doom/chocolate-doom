@@ -46,6 +46,18 @@ extern	int	levelTimeCount;
 // at game start
 void    P_InitPicAnims (void);
 
+// villsa [STRIFE]
+typedef enum
+{
+    FLOOR_WATER = 0,
+    FLOOR_SLIME = 1,
+    FLOOR_SOLID = 2,
+    FLOOR_END   = -1
+} terraintype_e;
+
+void P_InitTerrainTypes(void);                  // villsa [STRIFE]
+terraintype_e P_GetTerrainType(mobj_t* mobj);   // villsa [STRIFE]
+
 // at map load
 void    P_SpawnSpecials (void);
 

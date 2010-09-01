@@ -329,12 +329,18 @@ boolean P_Move (mobj_t*	actor)
     }
     else
     {
-	actor->flags &= ~MF_INFLOAT;
+	actor->flags &= ~(MF_INFLOAT|MF_FEETCLIPPED);   // villsa [STRIFE]
+
+        // villsa [STRIFE]
+        if(P_GetTerrainType(actor) != FLOOR_SOLID)
+            actor->flags |= MF_FEETCLIPPED;
     }
 	
-	
-    if (! (actor->flags & MF_FLOAT) )	
-	actor->z = actor->floorz;
+
+    // villsa [STRIFE] TODO - verify
+    /*if (! (actor->flags & MF_FLOAT) )	
+	actor->z = actor->floorz;*/
+
     return true; 
 }
 

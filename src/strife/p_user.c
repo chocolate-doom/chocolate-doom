@@ -137,6 +137,10 @@ void P_CalcHeight (player_t* player)
     }
     player->viewz = player->mo->z + player->viewheight + bob;
 
+    // villsa [STRIFE] TODO - verify
+    if(player->mo->flags & MF_FEETCLIPPED)
+        player->viewz -= (13*FRACUNIT);
+
     if (player->viewz > player->mo->ceilingz-4*FRACUNIT)
 	player->viewz = player->mo->ceilingz-4*FRACUNIT;
 }

@@ -452,15 +452,22 @@ void P_MobjThinker (mobj_t* mobj)
     // momentum movement
     if (mobj->momx
 	|| mobj->momy
-	|| (mobj->flags&MF_SKULLFLY) )
+	/*|| (mobj->flags&MF_SKULLFLY)*/ )  // villsa [STRIFE] unused
     {
 	P_XYMovement (mobj);
 
 	// FIXME: decent NOP/NULL/Nil function pointer please.
 	if (mobj->thinker.function.acv == (actionf_v) (-1))
 	    return;		// mobj was removed
+
+        // villsa [STRIFE]
+        if(P_GetTerrainType(mobj) == FLOOR_SOLID)
+            mobj->flags &= ~MF_FEETCLIPPED;
+        else
+            mobj->flags |= MF_FEETCLIPPED;
+
     }
-    if ( (mobj->z != mobj->floorz)
+    if ( (mobj->z != mobj->floorz && !(mobj->flags & MF_NOGRAVITY)) // villsa [STRIFE]
 	 || mobj->momz )
     {
 	P_ZMovement (mobj);
@@ -468,6 +475,16 @@ void P_MobjThinker (mobj_t* mobj)
 	// FIXME: decent NOP/NULL/Nil function pointer please.
 	if (mobj->thinker.function.acv == (actionf_v) (-1))
 	    return;		// mobj was removed
+
+        // villsa [STRIFE]
+        if(P_GetTerrainType(mobj) == FLOOR_SOLID)
+             mobj->flags &= ~MF_FEETCLIPPED;
+         else
+         {
+             S_StartSound(mobj, sfx_wsplsh);
+             mobj->flags |= MF_FEETCLIPPED;
+         }
+
     }
 
     
@@ -555,7 +572,19 @@ P_SpawnMobj
     mobj->ceilingz = mobj->subsector->sector->ceilingheight;
 
     if (z == ONFLOORZ)
+    {
 	mobj->z = mobj->floorz;
+
+        if(mobj->type == MT_TREE7)
+        {
+            mobj->type = mobj->type;
+        }
+
+        // villsa [STRIFE]
+        if(P_GetTerrainType(mobj) != FLOOR_SOLID)
+            mobj->flags |= MF_FEETCLIPPED;
+
+    }
     else if (z == ONCEILINGZ)
 	mobj->z = mobj->ceilingz - mobj->info->height;
     else 

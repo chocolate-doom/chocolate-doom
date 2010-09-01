@@ -197,6 +197,79 @@ void P_InitPicAnims (void)
 	
 }
 
+// villsa [STRIFE] terrain type definitions
+typedef struct
+{
+    char*   flat;
+    int     type;
+    int     num;
+} terraintype_t;
+
+terraintype_t   terraintypes[] =
+{
+    {   "F_WATR03", FLOOR_WATER,    -1  },
+    {   "F_WATR02", FLOOR_WATER,    -1  },
+    {   "F_WATR01", FLOOR_WATER,    -1  },
+    {   "F_VWATR3", FLOOR_WATER,    -1  },
+    {   "F_VWATR2", FLOOR_WATER,    -1  },
+    {   "P_VWATR1", FLOOR_WATER,    -1  },
+    {   "F_HWATR3", FLOOR_WATER,    -1  },
+    {   "F_HWATR2", FLOOR_WATER,    -1  },
+    {   "F_HWATR1", FLOOR_WATER,    -1  },
+    {   "F_PWATR3", FLOOR_SLIME,    -1  },
+    {   "F_PWATR2", FLOOR_SLIME,    -1  },
+    {   "F_PWATR1", FLOOR_SLIME,    -1  },
+    {   "END",      FLOOR_END,      -1  },
+};
+
+//
+// P_GetTerrainType
+// villsa [STRIFE] new function
+//
+
+terraintype_e P_GetTerrainType(mobj_t* mobj)
+{
+    int i = 0;
+    subsector_t* ss = mobj->subsector;
+
+    if(mobj->z <= ss->sector->floorheight &&
+        terraintypes[0].type != FLOOR_END)
+    {
+        while(ss->sector->floorpic != terraintypes[i].num)
+        {
+            if(terraintypes[i+1].type == FLOOR_END)
+                return FLOOR_SOLID;
+
+            i++;
+        }
+
+        return terraintypes[i].type;
+    }
+
+    return FLOOR_SOLID;
+}
+
+//
+// P_InitTerrainTypes
+// villsa [STRIFE] new function
+// Initialize terrain types
+//
+
+void P_InitTerrainTypes(void)
+{
+    int pic = 0;
+    int i = 0;
+
+    if(terraintypes[0].type != FLOOR_END)
+    {
+        while(terraintypes[i].type != FLOOR_END)
+        {
+            terraintypes[i].num = R_FlatNumForName(terraintypes[i].flat);
+            i++;
+        }
+    }
+}
+
 
 
 //

@@ -781,9 +781,10 @@ P_SetupLevel
 //
 void P_Init (void)
 {
-    P_InitSwitchList ();
-    P_InitPicAnims ();
-    R_InitSprites (sprnames);
+    P_InitSwitchList();
+    P_InitPicAnims();
+    P_InitTerrainTypes();   // villsa [STRIFE]
+    R_InitSprites(sprnames);
 }
 
 
