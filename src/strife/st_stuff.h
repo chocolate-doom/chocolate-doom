@@ -53,6 +53,11 @@ void ST_Ticker (void);
 // Called by main loop.
 void ST_Drawer (boolean fullscreen, boolean refresh);
 
+// haleyjd 09/01/10: [STRIFE] New function.
+// Called by main loop to draw external status bar bits.
+// Returns true if a popup is drawing.
+boolean ST_DrawExternal(void);
+
 // Called when the console player is spawned on each level.
 void ST_Start (void);
 

@@ -178,6 +178,7 @@ void D_ProcessEvents (void)
 //
 // haleyjd 08/23/10: [STRIFE]:
 // * Changes to eliminate intermission and change timing of screenwipe
+// * 9/01/10: Added ST_DrawExternal and popupactivestate static variable
 //
 gamestate_t     wipegamestate = GS_DEMOSCREEN;
 extern  boolean setsizeneeded;
@@ -189,6 +190,7 @@ void D_Display (void)
     static  boolean             viewactivestate = false;
     static  boolean             menuactivestate = false;
     static  boolean             inhelpscreensstate = false;
+    static  boolean             popupactivestate = false; // [STRIFE]
     static  boolean             fullscreen = false;
     static  gamestate_t         oldgamestate = -1;
     static  int                 borderdrawcount;
@@ -267,16 +269,13 @@ void D_Display (void)
     if (gamestate == GS_LEVEL && gametic)
     {
         HU_Drawer ();
-        // STRIFE-TODO: ST_DrawMore, unknown variable dword_861C8
-        /*
-        if(ST_DrawMore()) 
-            dword_861C8 = 1;
-        else if(dword_861C8)
+        if(ST_DrawExternal()) 
+            popupactivestate = true;
+        else if(popupactivestate)
         {
-            dword_861C8 = 0;
+            popupactivestate = false;
             menuactivestate = 1;
         }
-        */
     }
 
     // clean up border stuff
@@ -296,8 +295,7 @@ void D_Display (void)
         if (menuactive || menuactivestate || !viewactivestate)
         {
             borderdrawcount = 3;
-            // STRIFE-FIXME / TODO: Unknown variable
-            // dword_861C8 = 0; 
+            popupactivestate = false;
         }
         if (borderdrawcount)
         {

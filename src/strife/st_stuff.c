@@ -72,63 +72,17 @@
 
 // Palette indices.
 // For damage/bonus red-/gold-shifts
-#define STARTREDPALS		1
-#define STARTBONUSPALS		9
-#define NUMREDPALS			8
-#define NUMBONUSPALS		4
+#define STARTREDPALS            1
+#define STARTBONUSPALS          9
+#define NUMREDPALS              8
+#define NUMBONUSPALS            4
 // Radiation suit, green shift.
-#define RADIATIONPAL		13
-
-// N/256*100% probability
-//  that the normal face state will change
-#define ST_FACEPROBABILITY		96
-
-// For Responder
-#define ST_TOGGLECHAT		KEY_ENTER
+#define RADIATIONPAL            13
 
 // Location of status bar
-#define ST_X				0
-#define ST_X2				104
+#define ST_X                    0
 
-#define ST_FX  			143
-#define ST_FY  			169
-
-// Should be set to patch width
-//  for tall numbers later on
-#define ST_TALLNUMWIDTH		(tallnum[0]->width)
-
-// Number of status faces.
-#define ST_NUMPAINFACES		5
-#define ST_NUMSTRAIGHTFACES	3
-#define ST_NUMTURNFACES		2
-#define ST_NUMSPECIALFACES		3
-
-#define ST_FACESTRIDE \
-          (ST_NUMSTRAIGHTFACES+ST_NUMTURNFACES+ST_NUMSPECIALFACES)
-
-#define ST_NUMEXTRAFACES		2
-
-#define ST_NUMFACES \
-          (ST_FACESTRIDE*ST_NUMPAINFACES+ST_NUMEXTRAFACES)
-
-#define ST_TURNOFFSET		(ST_NUMSTRAIGHTFACES)
-#define ST_OUCHOFFSET		(ST_TURNOFFSET + ST_NUMTURNFACES)
-#define ST_EVILGRINOFFSET		(ST_OUCHOFFSET + 1)
-#define ST_RAMPAGEOFFSET		(ST_EVILGRINOFFSET + 1)
-#define ST_GODFACE			(ST_NUMPAINFACES*ST_FACESTRIDE)
-#define ST_DEADFACE			(ST_GODFACE+1)
-
-#define ST_FACESX			143
-#define ST_FACESY			168
-
-#define ST_EVILGRINCOUNT		(2*TICRATE)
-#define ST_STRAIGHTFACECOUNT	(TICRATE/2)
-#define ST_TURNCOUNT		(1*TICRATE)
-#define ST_OUCHCOUNT		(1*TICRATE)
-#define ST_RAMPAGEDELAY		(2*TICRATE)
-
-#define ST_MUCHPAIN			20
-
+#define ST_FX                   143
 
 // Location and size of statistics,
 //  justified according to widget type.
@@ -241,78 +195,66 @@
 #define ST_DETHX			109
 #define ST_DETHY			191
 
-//Incoming messages window location
-//UNUSED
-// #define ST_MSGTEXTX	   (viewwindowx)
-// #define ST_MSGTEXTY	   (viewwindowy+viewheight-18)
-#define ST_MSGTEXTX			0
-#define ST_MSGTEXTY			0
 // Dimensions given in characters.
 #define ST_MSGWIDTH			52
-// Or shall I say, in lines?
-#define ST_MSGHEIGHT		1
-
-#define ST_OUTTEXTX			0
-#define ST_OUTTEXTY			6
-
-// Width, in characters again.
-#define ST_OUTWIDTH			52 
- // Height, in lines. 
-#define ST_OUTHEIGHT		1
-
-#define ST_MAPTITLEX \
-    (SCREENWIDTH - ST_MAPWIDTH * ST_CHATFONTWIDTH)
-
-#define ST_MAPTITLEY		0
-#define ST_MAPHEIGHT		1
 
 // graphics are drawn to a backing screen and blitted to the real screen
 byte                   *st_backing_screen;
 	    
 // main player in game
-static player_t*	plyr; 
+static player_t*        plyr; 
 
 // ST_Start() has just been called
-static boolean		st_firsttime;
+static boolean          st_firsttime;
 
 // lump number for PLAYPAL
-static int		lu_palette;
+static int              lu_palette;
 
 // used for timing
-static unsigned int	st_clock;
+static unsigned int     st_clock;
 
 // used for making messages go away
-static int		st_msgcounter=0;
+static int              st_msgcounter=0;
 
 // used when in chat 
-static st_chatstateenum_t	st_chatstate;
+static st_chatstateenum_t   st_chatstate;
 
 // whether in automap or first-person
-static st_stateenum_t	st_gamestate;
+static st_stateenum_t   st_gamestate;
 
 // whether left-side main status bar is active
-static boolean		st_statusbaron;
+static boolean          st_statusbaron;
 
 // whether status bar chat is active
-static boolean		st_chat;
+static boolean          st_chat;
 
 // value of st_chat before message popped up
-static boolean		st_oldchat;
+static boolean          st_oldchat;
 
 // whether chat window has the cursor on
-static boolean		st_cursoron;
+static boolean          st_cursoron;
 
 // !deathmatch
-static boolean		st_notdeathmatch; 
+static boolean          st_notdeathmatch; 
 
 // !deathmatch && st_statusbaron
-static boolean		st_armson;
+static boolean          st_armson;
 
 // !deathmatch
-static boolean		st_fragson; 
+static boolean          st_fragson; 
 
-// main bar left
-static patch_t*		sbar;
+// haleyjd 09/01/10: [STRIFE]
+// Whether or not a popup is currently displayed
+static boolean          st_displaypopup;
+
+// haleyjd 09/01/10: [STRIFE] sbar -> invback
+// main inventory background and other bits
+static patch_t*         invback;  // main bar
+static patch_t*         invtop;   // top bit
+static patch_t*         invpop;   // popup frame with text
+static patch_t*         invpop2;  // plain popup frame
+static patch_t*         invpbak;  // popup background w/details
+static patch_t*         invpbak2; // plain popup background
 
 // 0-9, tall numbers
 static patch_t*		tallnum[10];
@@ -327,7 +269,8 @@ static patch_t*		shortnum[10];
 static patch_t*		keys[NUMCARDS]; 
 
 // face status patches
-static patch_t*		faces[ST_NUMFACES];
+// haleyjd 08/31/10: [STRIFE] Removed faces
+//static patch_t*		faces[ST_NUMFACES];
 
 // face background
 static patch_t*		faceback;
@@ -380,8 +323,8 @@ static int	st_oldhealth = -1;
 // used for evil grin
 static boolean	oldweaponsowned[NUMWEAPONS]; 
 
- // count until face changes
-static int	st_facecount = 0;
+// count until face changes
+//static int	st_facecount = 0;
 
 // current face index, used by w_faces
 static int	st_faceindex = 0;
@@ -390,7 +333,7 @@ static int	st_faceindex = 0;
 static int	keyboxes[3]; 
 
 // a random number per tick
-static int	st_randomnumber;  
+static int	st_randomnumber;
 
 cheatseq_t cheat_mus = CHEAT("idmus", 2);
 cheatseq_t cheat_god = CHEAT("iddqd", 0);
@@ -422,21 +365,21 @@ void ST_Stop(void);
 
 void ST_refreshBackground(void)
 {
-
     if (st_statusbaron)
     {
         V_UseBuffer(st_backing_screen);
 
-	V_DrawPatch(ST_X, 0, sbar);
+        V_DrawPatch(ST_X, 0, invback);
 
-	if (netgame)
-	    V_DrawPatch(ST_FX, 0, faceback);
-
+        // haleyjd 09/01/10: STRIFE-TODO: status bar stuff
+        /*
+        if (netgame)
+            V_DrawPatch(ST_FX, 0, faceback);
+        */
         V_RestoreBuffer();
 
-	V_CopyRect(ST_X, 0, st_backing_screen, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y);
+        V_CopyRect(ST_X, 0, st_backing_screen, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y);
     }
-
 }
 
 
@@ -662,23 +605,12 @@ ST_Responder (event_t* ev)
 }
 
 
-
+/*
 int ST_calcPainOffset(void)
 {
-    int		health;
-    static int	lastcalc;
-    static int	oldhealth = -1;
-    
-    health = plyr->health > 100 ? 100 : plyr->health;
-
-    if (health != oldhealth)
-    {
-	lastcalc = ST_FACESTRIDE * (((100 - health) * ST_NUMPAINFACES) / 101);
-	oldhealth = health;
-    }
-    return lastcalc;
+    // haleyjd 08/31/10: [STRIFE] Removed.
 }
-
+*/
 
 //
 // This is a not-very-pretty routine which handles
@@ -686,177 +618,12 @@ int ST_calcPainOffset(void)
 // the precedence of expressions is:
 //  dead > evil grin > turned head > straight ahead
 //
+/*
 void ST_updateFaceWidget(void)
 {
-    int		i;
-    angle_t	badguyangle;
-    angle_t	diffang;
-    static int	lastattackdown = -1;
-    static int	priority = 0;
-    boolean	doevilgrin;
-
-    if (priority < 10)
-    {
-	// dead
-	if (!plyr->health)
-	{
-	    priority = 9;
-	    st_faceindex = ST_DEADFACE;
-	    st_facecount = 1;
-	}
-    }
-
-    if (priority < 9)
-    {
-	if (plyr->bonuscount)
-	{
-	    // picking up bonus
-	    doevilgrin = false;
-
-	    for (i=0;i<NUMWEAPONS;i++)
-	    {
-		if (oldweaponsowned[i] != plyr->weaponowned[i])
-		{
-		    doevilgrin = true;
-		    oldweaponsowned[i] = plyr->weaponowned[i];
-		}
-	    }
-	    if (doevilgrin) 
-	    {
-		// evil grin if just picked up weapon
-		priority = 8;
-		st_facecount = ST_EVILGRINCOUNT;
-		st_faceindex = ST_calcPainOffset() + ST_EVILGRINOFFSET;
-	    }
-	}
-
-    }
-  
-    if (priority < 8)
-    {
-	if (plyr->damagecount
-	    && plyr->attacker
-	    && plyr->attacker != plyr->mo)
-	{
-	    // being attacked
-	    priority = 7;
-	    
-	    if (plyr->health - st_oldhealth > ST_MUCHPAIN)
-	    {
-		st_facecount = ST_TURNCOUNT;
-		st_faceindex = ST_calcPainOffset() + ST_OUCHOFFSET;
-	    }
-	    else
-	    {
-		badguyangle = R_PointToAngle2(plyr->mo->x,
-					      plyr->mo->y,
-					      plyr->attacker->x,
-					      plyr->attacker->y);
-		
-		if (badguyangle > plyr->mo->angle)
-		{
-		    // whether right or left
-		    diffang = badguyangle - plyr->mo->angle;
-		    i = diffang > ANG180; 
-		}
-		else
-		{
-		    // whether left or right
-		    diffang = plyr->mo->angle - badguyangle;
-		    i = diffang <= ANG180; 
-		} // confusing, aint it?
-
-		
-		st_facecount = ST_TURNCOUNT;
-		st_faceindex = ST_calcPainOffset();
-		
-		if (diffang < ANG45)
-		{
-		    // head-on    
-		    st_faceindex += ST_RAMPAGEOFFSET;
-		}
-		else if (i)
-		{
-		    // turn face right
-		    st_faceindex += ST_TURNOFFSET;
-		}
-		else
-		{
-		    // turn face left
-		    st_faceindex += ST_TURNOFFSET+1;
-		}
-	    }
-	}
-    }
-  
-    if (priority < 7)
-    {
-	// getting hurt because of your own damn stupidity
-	if (plyr->damagecount)
-	{
-	    if (plyr->health - st_oldhealth > ST_MUCHPAIN)
-	    {
-		priority = 7;
-		st_facecount = ST_TURNCOUNT;
-		st_faceindex = ST_calcPainOffset() + ST_OUCHOFFSET;
-	    }
-	    else
-	    {
-		priority = 6;
-		st_facecount = ST_TURNCOUNT;
-		st_faceindex = ST_calcPainOffset() + ST_RAMPAGEOFFSET;
-	    }
-
-	}
-
-    }
-  
-    if (priority < 6)
-    {
-	// rapid firing
-	if (plyr->attackdown)
-	{
-	    if (lastattackdown==-1)
-		lastattackdown = ST_RAMPAGEDELAY;
-	    else if (!--lastattackdown)
-	    {
-		priority = 5;
-		st_faceindex = ST_calcPainOffset() + ST_RAMPAGEOFFSET;
-		st_facecount = 1;
-		lastattackdown = 1;
-	    }
-	}
-	else
-	    lastattackdown = -1;
-
-    }
-  
-    if (priority < 5)
-    {
-	// invulnerability
-	if ((plyr->cheats & CF_GODMODE)
-	    || plyr->powers[pw_invulnerability])
-	{
-	    priority = 4;
-
-	    st_faceindex = ST_GODFACE;
-	    st_facecount = 1;
-
-	}
-
-    }
-
-    // look left or look right if the facecount has timed out
-    if (!st_facecount)
-    {
-	st_faceindex = ST_calcPainOffset() + (st_randomnumber % 3);
-	st_facecount = ST_STRAIGHTFACECOUNT;
-	priority = 0;
-    }
-
-    st_facecount--;
-
+    // haleyjd 08/31/10: [STRIFE] Removed.
 }
+*/
 
 void ST_updateWidgets(void)
 {
@@ -896,7 +663,9 @@ void ST_updateWidgets(void)
     }
 
     // refresh everything if this is him coming back to life
-    ST_updateFaceWidget();
+
+    // haleyjd 08/31/10: [STRIFE] No face widget
+    //ST_updateFaceWidget();
 
     // used by the w_armsbg widget
     st_notdeathmatch = !deathmatch;
@@ -1036,21 +805,21 @@ void ST_drawWidgets(boolean refresh)
 
 void ST_doRefresh(void)
 {
-
     st_firsttime = false;
 
     // draw status bar background to off-screen buff
     ST_refreshBackground();
 
+    // haleyjd 09/01/10: STRIFE-TODO: widgets!
     // and refresh all widgets
-    ST_drawWidgets(true);
-
+    //ST_drawWidgets(true);
 }
 
 void ST_diffDraw(void)
 {
+    // haleyjd 09/01/10: STRIFE-TODO: widgets!
     // update all widgets
-    ST_drawWidgets(false);
+    //ST_drawWidgets(false);
 }
 
 void ST_Drawer (boolean fullscreen, boolean refresh)
@@ -1061,13 +830,48 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
     // Do red-/gold-shifts from damage/items
     ST_doPaletteStuff();
 
-    // haleyjd 08/31/10: STRIFE-TODO: disabled statbar drawing
-    /*
+    // haleyjd 09/01/10: STRIFE-TODO: work out statbar details
+
     // If just after ST_Start(), refresh all
     if (st_firsttime) ST_doRefresh();
     // Otherwise, update as little as possible
     else ST_diffDraw();
-    */
+}
+
+//
+// ST_DrawExternal
+//
+// haleyjd 09/01/10: [STRIFE] New function.
+// * Draws external portions of the status bar such the top bar and popups.
+//
+boolean ST_DrawExternal(void)
+{
+    if (st_statusbaron)
+    {
+        V_DrawPatchDirect(0, 160, invtop);
+        // STRIFE-TODO:
+        // STlib_drawNum2(&stru_DC750); // still unknown!
+        // STlib_drawNum2(&w_ready);
+    }
+    else
+    {
+        // STRIFE-TODO:
+        // ST_drawNumFontY2(15, 194, plyr->health);
+        // v5 = weaponinfo[plyr->readyweapon].ammo;
+        // if (v5 != am_noammo)
+        //     ST_drawNumFontY2(310, 194, plyr->ammo[v5]);
+    }
+
+    if(!st_displaypopup)
+        return false;
+
+    // STRIFE-TODO: Shitloads more stuff:
+    // * showobjective shit
+    // * keys/frags popup
+    // * weapons/ammo/stats popup
+    // * etc etc etc
+
+    return true;
 }
 
 typedef void (*load_callback_t)(char *lumpname, patch_t **variable); 
@@ -1124,44 +928,20 @@ static void ST_loadUnloadGraphics(load_callback_t callback)
     }
 
     // face backgrounds for different color players
-    sprintf(namebuf, DEH_String("STFB%d"), consoleplayer);
-    callback(namebuf, &faceback);
+    // haleyjd 08/31/10: [STRIFE] No face - STRIFE-TODO: but there are similar 
+    // color patches, which appear behind the armor in deathmatch...
 
-    // status bar background bits
-    callback(DEH_String("STBAR"), &sbar);
-
-    // face states
-    facenum = 0;
-    for (i=0; i<ST_NUMPAINFACES; i++)
-    {
-	for (j=0; j<ST_NUMSTRAIGHTFACES; j++)
-	{
-	    sprintf(namebuf, DEH_String("STFST%d%d"), i, j);
-            callback(namebuf, &faces[facenum]);
-            ++facenum;
-	}
-	sprintf(namebuf, DEH_String("STFTR%d0"), i);	// turn right
-        callback(namebuf, &faces[facenum]);
-        ++facenum;
-	sprintf(namebuf, DEH_String("STFTL%d0"), i);	// turn left
-        callback(namebuf, &faces[facenum]);
-        ++facenum;
-	sprintf(namebuf, DEH_String("STFOUCH%d"), i);	// ouch!
-        callback(namebuf, &faces[facenum]);
-        ++facenum;
-	sprintf(namebuf, DEH_String("STFEVL%d"), i);	// evil grin ;)
-        callback(namebuf, &faces[facenum]);
-        ++facenum;
-	sprintf(namebuf, DEH_String("STFKILL%d"), i);	// pissed off
-        callback(namebuf, &faces[facenum]);
-        ++facenum;
-    }
-
-    callback(DEH_String("STFGOD0"), &faces[facenum]);
-    ++facenum;
-    callback(DEH_String("STFDEAD0"), &faces[facenum]);
-    ++facenum;
     */
+    // haleyjd 09/01/10: [STRIFE] sbar -> invback
+    // status bar background bits
+    callback(DEH_String("INVBACK"),  &invback);
+    callback(DEH_String("INVTOP"),   &invtop);
+    callback(DEH_String("INVPOP"),   &invpop);
+    callback(DEH_String("INVPOP2"),  &invpop2);
+    callback(DEH_String("INVPBAK"),  &invpbak);
+    callback(DEH_String("INVPBAK2"), &invpbak2);
+
+    // haleyjd 08/31/10: [STRIFE] No face.
 }
 
 static void ST_loadCallback(char *lumpname, patch_t **variable)
@@ -1283,12 +1063,7 @@ void ST_createWidgets(void)
 		  ST_FRAGSWIDTH);
 
     // faces
-    STlib_initMultIcon(&w_faces,
-		       ST_FACESX,
-		       ST_FACESY,
-		       faces,
-		       &st_faceindex,
-		       &st_statusbaron);
+    // haleyjd 08/31/10: [STRIFE] No face.
 
     // armor percentage - should be colored later
     STlib_initPercent(&w_armor,
@@ -1393,14 +1168,12 @@ static boolean	st_stopped = true;
 
 void ST_Start (void)
 {
-
     if (!st_stopped)
-	ST_Stop();
+        ST_Stop();
 
     ST_initData();
     ST_createWidgets();
     st_stopped = false;
-
 }
 
 void ST_Stop (void)
