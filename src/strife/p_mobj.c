@@ -575,11 +575,6 @@ P_SpawnMobj
     {
 	mobj->z = mobj->floorz;
 
-        if(mobj->type == MT_TREE7)
-        {
-            mobj->type = mobj->type;
-        }
-
         // villsa [STRIFE]
         if(P_GetTerrainType(mobj) != FLOOR_SOLID)
             mobj->flags |= MF_FEETCLIPPED;
