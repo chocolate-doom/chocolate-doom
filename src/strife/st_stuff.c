@@ -934,6 +934,13 @@ void ST_Ticker (void)
 
 static int st_palette = 0;
 
+//
+// ST_doPaletteStuff
+//
+// haleyjd 08/31/10: [STRIFE]
+// * Changed radsuit palette handling for Strife nukagecount.
+// * All other logic verified to be unmodified.
+//
 void ST_doPaletteStuff(void)
 {
 
@@ -946,55 +953,48 @@ void ST_doPaletteStuff(void)
 
     if (plyr->powers[pw_strength])
     {
-	// slowly fade the berzerk out
-  	bzc = 12 - (plyr->powers[pw_strength]>>6);
+        // slowly fade the berzerk out
+        bzc = 12 - (plyr->powers[pw_strength]>>6);
 
-	if (bzc > cnt)
-	    cnt = bzc;
+        if (bzc > cnt)
+            cnt = bzc;
     }
-	
+
     if (cnt)
     {
-	palette = (cnt+7)>>3;
-	
-	if (palette >= NUMREDPALS)
-	    palette = NUMREDPALS-1;
+        palette = (cnt+7)>>3;
 
-	palette += STARTREDPALS;
+        if (palette >= NUMREDPALS)
+            palette = NUMREDPALS-1;
+
+        palette += STARTREDPALS;
     }
 
     else if (plyr->bonuscount)
     {
-	palette = (plyr->bonuscount+7)>>3;
+        palette = (plyr->bonuscount+7)>>3;
 
-	if (palette >= NUMBONUSPALS)
-	    palette = NUMBONUSPALS-1;
+        if (palette >= NUMBONUSPALS)
+            palette = NUMBONUSPALS-1;
 
-	palette += STARTBONUSPALS;
+        palette += STARTBONUSPALS;
     }
-
-    else if ( plyr->powers[pw_ironfeet] > 4*32
-	      || plyr->powers[pw_ironfeet]&8)
-	palette = RADIATIONPAL;
-    else
-	palette = 0;
-
-    // In Chex Quest, the player never sees red.  Instead, the
-    // radiation suit palette is used to tint the screen green,
-    // as though the player is being covered in goo by an
-    // attacking flemoid.
-
-    if (gameversion == exe_chex
-     && palette >= STARTREDPALS && palette < STARTREDPALS + NUMREDPALS)
-    {
+    // haleyjd 08/31/10: [STRIFE] Flash green when in nukage, not when has
+    // an environment suit (a breathing sound is played to indicate that
+    // instead).
+    else if ( plyr->nukagecount > 16*TICRATE || 
+              (plyr->nukagecount & 8))
         palette = RADIATIONPAL;
-    }
+    else
+        palette = 0;
+
+    // haleyjd 08/31/10: Removed Chex Quest
 
     if (palette != st_palette)
     {
-	st_palette = palette;
-	pal = (byte *) W_CacheLumpNum (lu_palette, PU_CACHE)+palette*768;
-	I_SetPalette (pal);
+        st_palette = palette;
+        pal = (byte *) W_CacheLumpNum (lu_palette, PU_CACHE)+palette*768;
+        I_SetPalette (pal);
     }
 
 }
