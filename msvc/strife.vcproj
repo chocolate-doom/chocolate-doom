@@ -489,6 +489,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\src\strife\p_dialog.h"
+					>
+				</File>
+				<File
 					RelativePath="..\src\strife\p_inter.h"
 					>
 				</File>
@@ -882,6 +886,10 @@
 				</File>
 				<File
 					RelativePath="..\src\strife\p_ceilng.c"
+					>
+				</File>
+				<File
+					RelativePath="..\src\strife\p_dialog.c"
 					>
 				</File>
 				<File
