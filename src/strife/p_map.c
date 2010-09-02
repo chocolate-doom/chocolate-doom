@@ -293,25 +293,25 @@ boolean PIT_CheckLine (line_t* ld)
 //
 boolean PIT_CheckThing (mobj_t* thing)
 {
-    fixed_t		blockdist;
-    boolean		solid;
-    int			damage;
-		
+    fixed_t             blockdist;
+    boolean             solid;
+    int                 damage;
+
     if (!(thing->flags & (MF_SOLID|MF_SPECIAL|MF_SHOOTABLE) ))
-	return true;
-    
+        return true;
+
+    // don't clip against self
+    if (thing == tmthing)
+        return true;
+
     blockdist = thing->radius + tmthing->radius;
 
     if ( abs(thing->x - tmx) >= blockdist
-	 || abs(thing->y - tmy) >= blockdist )
+        || abs(thing->y - tmy) >= blockdist )
     {
-	// didn't hit it
-	return true;	
+        // didn't hit it
+        return true;	
     }
-    
-    // don't clip against self
-    if (thing == tmthing)
-	return true;
 
     // villsa [STRIFE] see if it went over / under
     if(thing->height + thing->z < tmthing->z)
@@ -320,83 +320,81 @@ boolean PIT_CheckThing (mobj_t* thing)
     // villsa [STRIFE] see if it went over / under
     if (tmthing->z + tmthing->height < thing->z)
         return true;    // underneath
-    
+
     // villsa [STRIFE] unused
     // check for skulls slamming into things
     /*if (tmthing->flags & MF_SKULLFLY)
     {
-	damage = ((P_Random()%8)+1)*tmthing->info->damage;
-	
-	P_DamageMobj (thing, tmthing, tmthing, damage);
-	
-	tmthing->flags &= ~MF_SKULLFLY;
-	tmthing->momx = tmthing->momy = tmthing->momz = 0;
-	
-	P_SetMobjState (tmthing, tmthing->info->spawnstate);
-	
-	return false;		// stop moving
+        damage = ((P_Random()%8)+1)*tmthing->info->damage;
+
+        P_DamageMobj (thing, tmthing, tmthing, damage);
+
+        tmthing->flags &= ~MF_SKULLFLY;
+        tmthing->momx = tmthing->momy = tmthing->momz = 0;
+
+        P_SetMobjState (tmthing, tmthing->info->spawnstate);
+
+        return false;           // stop moving
     }*/
 
-    
     // missiles can hit other things
     if (tmthing->flags & MF_MISSILE)
     {
-        // villsa [STRIFE] this code here has been moved at the beginning of this function
-        // TODO - verify
-	// see if it went over / under
-	/*if (tmthing->z > thing->z + thing->height)
-	    return true;		// overhead
-	if (tmthing->z+tmthing->height < thing->z)
-	    return true;		// underneath*/
-		
-        // villsa [STRIFE] TODO - update to strife version
-	if (tmthing->target 
-         && (tmthing->target->type == thing->type /*|| 
-	    (tmthing->target->type == MT_KNIGHT && thing->type == MT_BRUISER)||
-	    (tmthing->target->type == MT_BRUISER && thing->type == MT_KNIGHT)*/ ) )
-	{
-	    // Don't hit same species as originator.
-	    if (thing == tmthing->target)
-		return true;
+        // villsa [STRIFE] code to check over/under clipping moved to the beginning of the 
+        // function, so that it applies to everything.
+
+        // villsa [STRIFE] updated to strife version
+        if (tmthing->target && (tmthing->target->type == thing->type))
+        {
+            // Don't hit same species as originator.
+            if (thing == tmthing->target)
+                return true;
 
             // sdh: Add deh_species_infighting here.  We can override the
             // "monsters of the same species cant hurt each other" behavior
             // through dehacked patches
 
-	    if (thing->type != MT_PLAYER && !deh_species_infighting)
-	    {
-		// Explode, but do no damage.
-		// Let players missile other players.
-		return false;
-	    }
-	}
-	
-	if (! (thing->flags & MF_SHOOTABLE) )
-	{
-	    // didn't do any damage
-	    return !(thing->flags & MF_SOLID);	
-	}
-	
-	// damage / explode
-	damage = ((P_Random()%8)+1)*tmthing->info->damage;
-	P_DamageMobj (thing, tmthing, tmthing->target, damage);
+            if (thing->type != MT_PLAYER && !deh_species_infighting)
+            {
+                // Explode, but do no damage.
+                // Let players missile other players.
+                return false;
+            }
+        }
 
-	// don't traverse any more
-	return false;				
+        if (!(thing->flags & MF_SHOOTABLE))
+        {
+            // didn't do any damage
+            return !(thing->flags & MF_SOLID);
+        }
+
+        // haleyjd 09/01/10: [STRIFE] Spectral check:
+        // Missiles cannot hit SPECTRAL entities unless the missiles are also
+        // flagged as SPECTRAL.
+        if (thing->flags & MF_SPECTRAL && !(tmthing->flags & MF_SPECTRAL))
+            return true; // keep going
+
+        // damage / explode
+        // haleyjd 09/01/10: [STRIFE] Modified missile damage formula
+        damage = ((P_Random()&3)+1)*tmthing->info->damage;
+        P_DamageMobj (thing, tmthing, tmthing->target, damage);
+
+        // don't traverse any more
+        return false;
     }
     
     // check for special pickup
     if (thing->flags & MF_SPECIAL)
     {
-	solid = thing->flags&MF_SOLID;
+        solid = thing->flags&MF_SOLID;
         if (tmthing->player) // villsa [STRIFE] no longer checks MF_PICKUP flag
-	{
-	    // can remove thing
-	    P_TouchSpecialThing (thing, tmthing);
-	}
-	return !solid;
+        {
+            // can remove thing
+            P_TouchSpecialThing (thing, tmthing);
+        }
+        return !solid;
     }
-	
+
     return !(thing->flags & MF_SOLID);
 }
 

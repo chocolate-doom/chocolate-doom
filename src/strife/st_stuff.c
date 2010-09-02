@@ -93,20 +93,22 @@
 //       or into the frame buffer?
 
 // AMMO number pos.
-#define ST_AMMOWIDTH		3	
-#define ST_AMMOX			44
-#define ST_AMMOY			171
+// haleyjd 09/01/10: [STRIFE] Adjusted.
+#define ST_AMMOWIDTH            3
+#define ST_AMMOX                311
+#define ST_AMMOY                162
 
 // HEALTH number pos.
-#define ST_HEALTHWIDTH		3	
-#define ST_HEALTHX			90
-#define ST_HEALTHY			171
+// haleyjd 09/01/10: [STRIFE] Adjusted.
+#define ST_HEALTHWIDTH          3
+#define ST_HEALTHX              79
+#define ST_HEALTHY              162
 
 // Weapon pos.
-#define ST_ARMSX			111
-#define ST_ARMSY			172
-#define ST_ARMSBGX			104
-#define ST_ARMSBGY			168
+#define ST_ARMSX		111
+#define ST_ARMSY		172
+#define ST_ARMSBGX		104
+#define ST_ARMSBGY		168
 #define ST_ARMSXSPACE		12
 #define ST_ARMSYSPACE		10
 
@@ -198,6 +200,15 @@
 // Dimensions given in characters.
 #define ST_MSGWIDTH			52
 
+// haleyjd 08/31/10: [STRIFE] 
+// * Removed faces.
+// haleyjd 09/01/10:
+// * Removed DOOM pre-beta cruft.
+// * Removed deathmatch frags/arms-related stuff.
+// * Removed arms panel stuff.
+// * Removed unused widgets.
+// * Removed more faces, keyboxes, st_randomnumber
+
 // graphics are drawn to a backing screen and blitted to the real screen
 byte                   *st_backing_screen;
 	    
@@ -210,38 +221,11 @@ static boolean          st_firsttime;
 // lump number for PLAYPAL
 static int              lu_palette;
 
-// used for timing
-static unsigned int     st_clock;
-
-// used for making messages go away
-static int              st_msgcounter=0;
-
-// used when in chat 
-static st_chatstateenum_t   st_chatstate;
-
 // whether in automap or first-person
 static st_stateenum_t   st_gamestate;
 
 // whether left-side main status bar is active
 static boolean          st_statusbaron;
-
-// whether status bar chat is active
-static boolean          st_chat;
-
-// value of st_chat before message popped up
-static boolean          st_oldchat;
-
-// whether chat window has the cursor on
-static boolean          st_cursoron;
-
-// !deathmatch
-static boolean          st_notdeathmatch; 
-
-// !deathmatch && st_statusbaron
-static boolean          st_armson;
-
-// !deathmatch
-static boolean          st_fragson; 
 
 // haleyjd 09/01/10: [STRIFE]
 // Whether or not a popup is currently displayed
@@ -256,84 +240,32 @@ static patch_t*         invpop2;  // plain popup frame
 static patch_t*         invpbak;  // popup background w/details
 static patch_t*         invpbak2; // plain popup background
 
-// 0-9, tall numbers
-static patch_t*		tallnum[10];
+// haleyjd 09/01/10: [STRIFE] Replaced tallnum, shortnum w/inv fonts
+// 0-9, green numbers
+static patch_t*         invfontg[10];
 
-// tall % sign
-static patch_t*		tallpercent;
+// 0-9, yellow numbers
+static patch_t*         invfonty[10];
 
-// 0-9, short, yellow (,different!) numbers
-static patch_t*		shortnum[10];
-
-// 3 key-cards, 3 skulls
-static patch_t*		keys[NUMCARDS]; 
-
-// face status patches
-// haleyjd 08/31/10: [STRIFE] Removed faces
-//static patch_t*		faces[ST_NUMFACES];
-
-// face background
-static patch_t*		faceback;
-
- // main bar right
-static patch_t*		armsbg;
-
-// weapon ownership patches
-static patch_t*		arms[6][2]; 
+// 3 key-cards, 3 skulls -- STRIFE-TODO: This is handled differently
+static patch_t*         keys[NUMCARDS]; 
 
 // ready-weapon widget
-static st_number_t	w_ready;
+static st_number_t      w_ready; // haleyjd [STRIFE]: This is still used.
 
- // in deathmatch only, summary of frags stats
-static st_number_t	w_frags;
-
+// haleyjd: [STRIFE] This is still used but was changed to a st_number_t.
 // health widget
-static st_percent_t	w_health;
-
-// arms background
-static st_binicon_t	w_armsbg; 
-
-
-// weapon ownership widgets
-static st_multicon_t	w_arms[6];
-
-// face status widget
-static st_multicon_t	w_faces; 
-
-// keycard widgets
-static st_multicon_t	w_keyboxes[3];
-
-// armor widget
-static st_percent_t	w_armor;
+static st_number_t      w_health;
 
 // ammo widgets
-static st_number_t	w_ammo[4];
+static st_number_t      w_ammo[NUMAMMO];     // haleyjd [STRIFE]: Still used.
 
 // max ammo widgets
-static st_number_t	w_maxammo[4]; 
+static st_number_t      w_maxammo[NUMAMMO];  // haleyjd [STRIFE]: Still used.
 
+// number of frags so far in deathmatch
+static int              st_fragscount;
 
-
- // number of frags so far in deathmatch
-static int	st_fragscount;
-
-// used to use appopriately pained face
-static int	st_oldhealth = -1;
-
-// used for evil grin
-static boolean	oldweaponsowned[NUMWEAPONS]; 
-
-// count until face changes
-//static int	st_facecount = 0;
-
-// current face index, used by w_faces
-static int	st_faceindex = 0;
-
-// holds key-type for each key box on bar
-static int	keyboxes[3]; 
-
-// a random number per tick
-static int	st_randomnumber;
 
 cheatseq_t cheat_mus = CHEAT("idmus", 2);
 cheatseq_t cheat_god = CHEAT("iddqd", 0);
@@ -565,12 +497,7 @@ ST_Responder (event_t* ev)
 	map = buf[1] - '0';
       }
 
-      // Chex.exe always warps to episode 1.
-
-      if (gameversion == exe_chex)
-      {
-        epsd = 1;
-      }
+      // haleyjd 09/01/10: Removed Chex Quest stuff.
 
       // Catch invalid maps.
       if (epsd < 1)
@@ -625,80 +552,63 @@ void ST_updateFaceWidget(void)
 }
 */
 
+/*
 void ST_updateWidgets(void)
 {
-    static int	largeammo = 1994; // means "n/a"
-    int		i;
-
-    // must redirect the pointer if the ready weapon has changed.
-    //  if (w_ready.data != plyr->readyweapon)
-    //  {
-    if (weaponinfo[plyr->readyweapon].ammo == am_noammo)
-	w_ready.num = &largeammo;
-    else
-	w_ready.num = &plyr->ammo[weaponinfo[plyr->readyweapon].ammo];
-    //{
-    // static int tic=0;
-    // static int dir=-1;
-    // if (!(tic&15))
-    //   plyr->ammo[weaponinfo[plyr->readyweapon].ammo]+=dir;
-    // if (plyr->ammo[weaponinfo[plyr->readyweapon].ammo] == -100)
-    //   dir = 1;
-    // tic++;
-    // }
-    w_ready.data = plyr->readyweapon;
-
-    // if (*w_ready.on)
-    //  STlib_updateNum(&w_ready, true);
-    // refresh weapon change
-    //  }
-
-    // update keycard multiple widgets
-    for (i=0;i<3;i++)
-    {
-	keyboxes[i] = plyr->cards[i] ? i : -1;
-
-	if (plyr->cards[i+3])
-	    keyboxes[i] = i+3;
-    }
-
-    // refresh everything if this is him coming back to life
-
-    // haleyjd 08/31/10: [STRIFE] No face widget
-    //ST_updateFaceWidget();
-
-    // used by the w_armsbg widget
-    st_notdeathmatch = !deathmatch;
-    
-    // used by w_arms[] widgets
-    st_armson = st_statusbaron && !deathmatch; 
-
-    // used by w_frags widget
-    st_fragson = deathmatch && st_statusbaron; 
-    st_fragscount = 0;
-
-    for (i=0 ; i<MAXPLAYERS ; i++)
-    {
-	if (i != consoleplayer)
-	    st_fragscount += plyr->frags[i];
-	else
-	    st_fragscount -= plyr->frags[i];
-    }
-
-    // get rid of chat window if up because of message
-    if (!--st_msgcounter)
-	st_chat = st_oldchat;
-
+    // haleyjd 09/01/10: [STRIFE] Rogue merged this into ST_Ticker below.
 }
+*/
 
+//
+// ST_Ticker
+//
+// haleyjd 09/01/10: [STRIFE]
+// * Removed st_clock and st_randomnumber.
+// * Merged ST_updateWidgets here. Wasn't inlined, as doesn't exist separately 
+//   in the binary as inlined functions normally do.
+//
 void ST_Ticker (void)
 {
+    static int  largeammo = 1994; // means "n/a"
+    int         i;
 
-    st_clock++;
-    st_randomnumber = M_Random();
-    ST_updateWidgets();
-    st_oldhealth = plyr->health;
+    // must redirect the pointer if the ready weapon has changed.
+    if (weaponinfo[plyr->readyweapon].ammo == am_noammo)
+        w_ready.num = &largeammo;
+    else
+        w_ready.num = &plyr->ammo[weaponinfo[plyr->readyweapon].ammo];
 
+    w_ready.data = plyr->readyweapon;
+
+    // STRIFE-TODO: Gobbledeegunk.
+    /*
+    v2 = dword_88490-- == 1; // no clue yet...
+    if(v2)
+        dword_DC7F4 = dword_DC7F0;
+    v1 = st_popupdisplaytics;
+    if(st_popupdisplaytics)
+    {
+        --st_popupdisplaytics;
+        if(v1 == 1)
+        {
+            st_displaypopup = false;
+            st_showkeys = false;
+            dword_88484 = -1;     // unknown var
+            if(st_dosizedisplay)
+                M_SizeDisplay();  // mondo hack?
+            st_dosizedisplay = false;
+        }
+    }
+    */
+
+    // haleyjd 09/01/10: [STRIFE] Keys are handled on a popup
+    // haleyjd 08/31/10: [STRIFE] No face widget
+    // haleyjd 09/01/10: [STRIFE] Armor, weapons, frags, etc. handled elsewhere
+
+    // haleyjd: This is from the PRE-BETA! Left here because it amuses me ;)
+    // get rid of chat window if up because of message
+    //if (!--st_msgcounter)
+    //    st_chat = st_oldchat;
 }
 
 static int st_palette = 0;
@@ -768,40 +678,12 @@ void ST_doPaletteStuff(void)
 
 }
 
+/* 
 void ST_drawWidgets(boolean refresh)
 {
-    int		i;
-
-    // used by w_arms[] widgets
-    st_armson = st_statusbaron && !deathmatch;
-
-    // used by w_frags widget
-    st_fragson = deathmatch && st_statusbaron; 
-
-    STlib_updateNum(&w_ready, refresh);
-
-    for (i=0;i<4;i++)
-    {
-	STlib_updateNum(&w_ammo[i], refresh);
-	STlib_updateNum(&w_maxammo[i], refresh);
-    }
-
-    STlib_updatePercent(&w_health, refresh);
-    STlib_updatePercent(&w_armor, refresh);
-
-    STlib_updateBinIcon(&w_armsbg, refresh);
-
-    for (i=0;i<6;i++)
-	STlib_updateMultIcon(&w_arms[i], refresh);
-
-    STlib_updateMultIcon(&w_faces, refresh);
-
-    for (i=0;i<3;i++)
-	STlib_updateMultIcon(&w_keyboxes[i], refresh);
-
-    STlib_updateNum(&w_frags, refresh);
-
+    haleyjd 09/01/10: [STRIFE] Removed
 }
+*/
 
 void ST_doRefresh(void)
 {
@@ -809,17 +691,11 @@ void ST_doRefresh(void)
 
     // draw status bar background to off-screen buff
     ST_refreshBackground();
-
-    // haleyjd 09/01/10: STRIFE-TODO: widgets!
-    // and refresh all widgets
-    //ST_drawWidgets(true);
 }
 
 void ST_diffDraw(void)
 {
-    // haleyjd 09/01/10: STRIFE-TODO: widgets!
-    // update all widgets
-    //ST_drawWidgets(false);
+    // haleyjd: STRIFE-TODO: Needed?
 }
 
 void ST_Drawer (boolean fullscreen, boolean refresh)
@@ -849,9 +725,8 @@ boolean ST_DrawExternal(void)
     if (st_statusbaron)
     {
         V_DrawPatchDirect(0, 160, invtop);
-        // STRIFE-TODO:
-        // STlib_drawNum2(&stru_DC750); // still unknown!
-        // STlib_drawNum2(&w_ready);
+        STlib_drawNumPositive(&w_health);
+        STlib_drawNumPositive(&w_ready);
     }
     else
     {
@@ -888,51 +763,23 @@ static void ST_loadUnloadGraphics(load_callback_t callback)
     
     char	namebuf[9];
 
-    // haleyjd 08/31/10: STRIFE-TODO: Disabled statbar resource loading
-    /*
-    // Load the numbers, tall and short
+    // haleyjd 09/01/10: [STRIFE]
+    // Load the numbers, green and yellow
     for (i=0;i<10;i++)
     {
-	sprintf(namebuf, DEH_String("STTNUM%d"), i);
-        callback(namebuf, &tallnum[i]);
+	sprintf(namebuf, DEH_String("INVFONG%d"), i);
+        callback(namebuf, &invfontg[i]);
 
-	sprintf(namebuf, DEH_String("STYSNUM%d"), i);
-        callback(namebuf, &shortnum[i]);
+	sprintf(namebuf, DEH_String("INVFONY%d"), i);
+        callback(namebuf, &invfonty[i]);
     }
 
-    // Load percent key.
-    //Note: why not load STMINUS here, too?
+    // haleyjd 08/31/10: [STRIFE] 
+    // * No face - STRIFE-TODO: but there are similar color patches, which appear behind the armor in deathmatch...
+    // 09/01/10:
+    // * Removed all unused DOOM stuff (arms, numbers, %, etc).
 
-    callback(DEH_String("STTPRCNT"), &tallpercent);
-
-    // key cards
-    for (i=0;i<NUMCARDS;i++)
-    {
-	sprintf(namebuf, DEH_String("STKEYS%d"), i);
-        callback(namebuf, &keys[i]);
-    }
-
-    // arms background
-    callback(DEH_String("STARMS"), &armsbg);
-
-    // arms ownership widgets
-    for (i=0; i<6; i++)
-    {
-	sprintf(namebuf, DEH_String("STGNUM%d"), i+2);
-
-	// gray #
-        callback(namebuf, &arms[i][0]);
-
-	// yellow #
-	arms[i][1] = shortnum[i+2]; 
-    }
-
-    // face backgrounds for different color players
-    // haleyjd 08/31/10: [STRIFE] No face - STRIFE-TODO: but there are similar 
-    // color patches, which appear behind the armor in deathmatch...
-
-    */
-    // haleyjd 09/01/10: [STRIFE] sbar -> invback
+    // haleyjd 09/01/10: [STRIFE]: stbar -> invback, added new patches
     // status bar background bits
     callback(DEH_String("INVBACK"),  &invback);
     callback(DEH_String("INVTOP"),   &invtop);
@@ -940,8 +787,6 @@ static void ST_loadUnloadGraphics(load_callback_t callback)
     callback(DEH_String("INVPOP2"),  &invpop2);
     callback(DEH_String("INVPBAK"),  &invpbak);
     callback(DEH_String("INVPBAK2"), &invpbak2);
-
-    // haleyjd 08/31/10: [STRIFE] No face.
 }
 
 static void ST_loadCallback(char *lumpname, patch_t **variable)
@@ -976,125 +821,58 @@ void ST_unloadData(void)
     ST_unloadGraphics();
 }
 
+//
+// ST_initData
+//
+// haleyjd 09/01/10: [STRIFE]
+// * Removed prebeta cruft, face stuff, keyboxes, and oldwe
+//
 void ST_initData(void)
 {
-
-    int		i;
-
     st_firsttime = true;
     plyr = &players[consoleplayer];
 
-    st_clock = 0;
-    st_chatstate = StartChatState;
     st_gamestate = FirstPersonState;
 
     st_statusbaron = true;
-    st_oldchat = st_chat = false;
-    st_cursoron = false;
 
-    st_faceindex = 0;
     st_palette = -1;
 
-    st_oldhealth = -1;
-
-    for (i=0;i<NUMWEAPONS;i++)
-	oldweaponsowned[i] = plyr->weaponowned[i];
-
-    for (i=0;i<3;i++)
-	keyboxes[i] = -1;
-
     STlib_init();
-
 }
 
 
 
 void ST_createWidgets(void)
 {
-
     int i;
 
     // ready weapon ammo
     STlib_initNum(&w_ready,
-		  ST_AMMOX,
-		  ST_AMMOY,
-		  tallnum,
-		  &plyr->ammo[weaponinfo[plyr->readyweapon].ammo],
-		  &st_statusbaron,
-		  ST_AMMOWIDTH );
+                  ST_AMMOX,
+                  ST_AMMOY,
+                  invfontg,
+                  &plyr->ammo[weaponinfo[plyr->readyweapon].ammo],
+                  ST_AMMOWIDTH);
 
     // the last weapon type
     w_ready.data = plyr->readyweapon; 
 
     // health percentage
-    STlib_initPercent(&w_health,
-		      ST_HEALTHX,
-		      ST_HEALTHY,
-		      tallnum,
-		      &plyr->health,
-		      &st_statusbaron,
-		      tallpercent);
+    STlib_initNum(&w_health,
+                  ST_HEALTHX,
+                  ST_HEALTHY,
+                  invfontg,
+                  &plyr->health,
+                  ST_HEALTHWIDTH);
 
-    // arms background
-    STlib_initBinIcon(&w_armsbg,
-		      ST_ARMSBGX,
-		      ST_ARMSBGY,
-		      armsbg,
-		      &st_notdeathmatch,
-		      &st_statusbaron);
+    // haleyjd 08/31/10: [STRIFE] 
+    // * No face.
+    // 09/01/10:
+    // * No arms, weaponsowned, frags, armor, keyboxes
 
-    // weapons owned
-    for(i=0;i<6;i++)
-    {
-	STlib_initMultIcon(&w_arms[i],
-			   ST_ARMSX+(i%3)*ST_ARMSXSPACE,
-			   ST_ARMSY+(i/3)*ST_ARMSYSPACE,
-			   arms[i], (int *) &plyr->weaponowned[i+1],
-			   &st_armson);
-    }
-
-    // frags sum
-    STlib_initNum(&w_frags,
-		  ST_FRAGSX,
-		  ST_FRAGSY,
-		  tallnum,
-		  &st_fragscount,
-		  &st_fragson,
-		  ST_FRAGSWIDTH);
-
-    // faces
-    // haleyjd 08/31/10: [STRIFE] No face.
-
-    // armor percentage - should be colored later
-    STlib_initPercent(&w_armor,
-		      ST_ARMORX,
-		      ST_ARMORY,
-		      tallnum,
-		      &plyr->armorpoints,
-		      &st_statusbaron, tallpercent);
-
-    // keyboxes 0-2
-    STlib_initMultIcon(&w_keyboxes[0],
-		       ST_KEY0X,
-		       ST_KEY0Y,
-		       keys,
-		       &keyboxes[0],
-		       &st_statusbaron);
-    
-    STlib_initMultIcon(&w_keyboxes[1],
-		       ST_KEY1X,
-		       ST_KEY1Y,
-		       keys,
-		       &keyboxes[1],
-		       &st_statusbaron);
-
-    STlib_initMultIcon(&w_keyboxes[2],
-		       ST_KEY2X,
-		       ST_KEY2Y,
-		       keys,
-		       &keyboxes[2],
-		       &st_statusbaron);
-
+    // haleyjd 09/01/10: STRIFE-TODO: Ammo Widgets!!!
+    /*
     // ammo count (all four kinds)
     STlib_initNum(&w_ammo[0],
 		  ST_AMMO0X,
@@ -1160,7 +938,7 @@ void ST_createWidgets(void)
 		  &plyr->maxammo[3],
 		  &st_statusbaron,
 		  ST_MAXAMMO3WIDTH);
-
+  */
 }
 
 static boolean	st_stopped = true;

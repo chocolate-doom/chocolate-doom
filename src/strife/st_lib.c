@@ -63,7 +63,11 @@ void STlib_init(void)
 }
 
 
-// ?
+// 
+// STlib_initNum
+//
+// haleyjd 09/01/10: [STRIFE]
+// * Rogue removed the "on" member of st_number_t.
 void
 STlib_initNum
 ( st_number_t*		n,
@@ -71,86 +75,126 @@ STlib_initNum
   int			y,
   patch_t**		pl,
   int*			num,
-  boolean*		on,
   int			width )
 {
     n->x	= x;
     n->y	= y;
-    n->oldnum	= 0;
     n->width	= width;
     n->num	= num;
-    n->on	= on;
     n->p	= pl;
 }
 
 
 // 
+// STlib_drawNum
+//
 // A fairly efficient way to draw a number
 //  based on differences from the old number.
 // Note: worth the trouble?
 //
+// haleyjd 09/01/10: [STRIFE]
+// * Rogue removed the "refresh" parameter and caching code
+//
 void
 STlib_drawNum
-( st_number_t*	n,
-  boolean	refresh )
+( st_number_t*  n)
 {
+    int         numdigits = n->width;
+    int         num = *n->num;
 
-    int		numdigits = n->width;
-    int		num = *n->num;
-    
-    int		w = SHORT(n->p[0]->width);
-    int		h = SHORT(n->p[0]->height);
-    int		x = n->x;
-    
-    int		neg;
+    int         w = SHORT(n->p[0]->width) + 1; // [STRIFE] +1
+    int         x = n->x;
 
-    n->oldnum = *n->num;
+    int         neg;
 
     neg = num < 0;
 
     if (neg)
     {
-	if (numdigits == 2 && num < -9)
-	    num = -9;
-	else if (numdigits == 3 && num < -99)
-	    num = -99;
-	
-	num = -num;
+        if (numdigits == 2 && num < -9)
+            num = -9;
+        else if (numdigits == 3 && num < -99)
+            num = -99;
+
+        num = -num;
     }
 
+    /* haleyjd 09/01/10: [STRIFE] Widget caching system removed by Rogue
     // clear the area
     x = n->x - numdigits*w;
 
     if (n->y - ST_Y < 0)
-	I_Error("drawNum: n->y - ST_Y < 0");
+        I_Error("drawNum: n->y - ST_Y < 0");
 
     V_CopyRect(x, n->y - ST_Y, st_backing_screen, w*numdigits, h, x, n->y);
+    */
 
     // if non-number, do not draw it
     if (num == 1994)
-	return;
+        return;
 
     x = n->x;
 
     // in the special case of 0, you draw 0
     if (!num)
-	V_DrawPatch(x - w, n->y, n->p[ 0 ]);
+        V_DrawPatch(x - w, n->y, n->p[ 0 ]);
 
     // draw the new number
     while (num && numdigits--)
     {
-	x -= w;
-	V_DrawPatch(x, n->y, n->p[ num % 10 ]);
-	num /= 10;
+        x -= w;
+        V_DrawPatch(x, n->y, n->p[ num % 10 ]);
+        num /= 10;
     }
 
     // draw a minus sign if necessary
     if (neg)
-	V_DrawPatch(x - 8, n->y, sttminus);
+        V_DrawPatch(x - 8, n->y, sttminus);
 }
 
 
+// 
+// STlib_drawNumPositive
 //
+// haleyjd 09/01/10: [STRIFE] New function.
+// * Mostly the same as STlib_drawNum, except doesn't draw negatives.
+//
+void
+STlib_drawNumPositive
+( st_number_t*  n)
+{
+    int         numdigits = n->width;
+    int         num = *n->num;
+
+    int         w = SHORT(n->p[0]->width) + 1; // [STRIFE] +1
+    int         x = n->x;
+
+    // Don't draw negative values.
+    if (num < 0)
+        num = 0;
+
+    // if non-number, do not draw it
+    if (num == 1994)
+        return;
+
+    x = n->x;
+
+    // in the special case of 0, you draw 0
+    if (!num)
+        V_DrawPatch(x - w, n->y, n->p[ 0 ]);
+
+    // draw the new number
+    while (num && numdigits--)
+    {
+        x -= w;
+        V_DrawPatch(x, n->y, n->p[ num % 10 ]);
+        num /= 10;
+    }
+}
+
+
+// haleyjd 09/01/10: [STRIFE] All other functions were removed.
+/*
 void
 STlib_updateNum
 ( st_number_t*		n,
@@ -292,4 +336,5 @@ STlib_updateBinIcon
     }
 
 }
+*/
 

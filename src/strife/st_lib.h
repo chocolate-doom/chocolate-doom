@@ -41,24 +41,23 @@ typedef struct
 {
     // upper right-hand corner
     //  of the number (right-justified)
-    int		x;
-    int		y;
+    int         x;
+    int         y;
 
     // max # of digits in number
-    int width;    
+    int width;
 
-    // last number value
-    int		oldnum;
+    // haleyjd 09/01/10: [STRIFE] Removed "oldnum" member
+    //int         oldnum;
     
     // pointer to current value
-    int*	num;
+    int*        num;
 
-    // pointer to boolean stating
-    //  whether to update number
-    boolean*	on;
+    // haleyjd 09/01/10: [STRIFE] Removed "on" member
+    // boolean*    on;
 
     // list of patches for 0-9
-    patch_t**	p;
+    patch_t**   p;
 
     // user data
     int data;
@@ -148,16 +147,28 @@ void STlib_init(void);
 
 
 // Number widget routines
+
+// haleyjd 09/01/10: [STRIFE] Removed "on" parameter.
 void
 STlib_initNum
-( st_number_t*		n,
-  int			x,
-  int			y,
-  patch_t**		pl,
-  int*			num,
-  boolean*		on,
-  int			width );
+( st_number_t*          n,
+  int                   x,
+  int                   y,
+  patch_t**             pl,
+  int*                  num,
+  int                   width );
 
+// haleyjd 09/01/10: [STRIFE] Made globally visible.
+void
+STlib_drawNum
+( st_number_t*  n);
+
+// haleyjd 09/01/10: [STRIFE] New function
+void
+STlib_drawNumPositive
+( st_number_t*  n);
+
+/* haleyjd 09/01/10: [STRIFE] All the below were removed
 void
 STlib_updateNum
 ( st_number_t*		n,
@@ -213,5 +224,6 @@ void
 STlib_updateBinIcon
 ( st_binicon_t*		bi,
   boolean		refresh );
+*/
 
 #endif
