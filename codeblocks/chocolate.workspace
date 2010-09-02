@@ -13,6 +13,10 @@
 			<Depends filename="libtextscreen.cbp" />
 			<Depends filename="libpcsound.cbp" />
 		</Project>
+		<Project filename="strife.cbp">
+			<Depends filename="libtextscreen.cbp" />
+			<Depends filename="libpcsound.cbp" />
+		</Project>
 		<Project filename="server.cbp" />
 		<Project filename="setup.cbp">
 			<Depends filename="libtextscreen.cbp" />
