@@ -682,7 +682,8 @@ P_KillMobj
     mobjtype_t	item;
     mobj_t*	mo;
 	
-    target->flags &= ~(MF_SHOOTABLE|MF_FLOAT|MF_SKULLFLY);
+    // villsa [STRIFE] MF_SPECIAL is added in the check
+    target->flags &= ~(MF_SHOOTABLE|MF_FLOAT|MF_BOUNCE|MF_SPECIAL);
 
     // villsa [STRIFE] unused
     /*if (target->type != MT_SKULL)
@@ -808,10 +809,11 @@ P_DamageMobj
     if (target->health <= 0)
 	return;
 
-    if ( target->flags & MF_SKULLFLY )
+    // villsa [STRIFE] unused
+    /*if ( target->flags & MF_SKULLFLY )
     {
 	target->momx = target->momy = target->momz = 0;
-    }
+    }*/
 	
     player = target->player;
     if (player && gameskill == sk_baby)
@@ -910,7 +912,7 @@ P_DamageMobj
     }
 
     if ( (P_Random () < target->info->painchance)
-	 && !(target->flags&MF_SKULLFLY) )
+	 /*&& !(target->flags&MF_SKULLFLY)*/ )  // villsa [STRIFE] unused flag
     {
 	target->flags |= MF_JUSTHIT;	// fight back!
 	

@@ -1454,7 +1454,7 @@ void A_FatAttack3 (mobj_t*	actor)
 
 void A_SkullAttack (mobj_t* actor)
 {
-    mobj_t*		dest;
+/*    mobj_t*		dest;
     angle_t		an;
     int			dist;
 
@@ -1474,7 +1474,7 @@ void A_SkullAttack (mobj_t* actor)
     
     if (dist < 1)
 	dist = 1;
-    actor->momz = (dest->z+(dest->height>>1) - actor->z) / dist;
+    actor->momz = (dest->z+(dest->height>>1) - actor->z) / dist;*/
 }
 
 

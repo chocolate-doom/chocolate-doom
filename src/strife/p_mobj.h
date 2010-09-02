@@ -203,9 +203,8 @@ typedef enum
     // Not to be activated by sound, deaf monster.
     MF_AMBUSH		= 0x800000,
 
-    // Special handling: skull in flight.
-    // Neither a cacodemon nor a missile.
-    MF_SKULLFLY		= 0x1000000,
+    // villsa [STRIFE] flag used for bouncing projectiles
+    MF_BOUNCE		= 0x1000000,
 
     // Don't spawn this object
     //  in death match mode (e.g. key cards).

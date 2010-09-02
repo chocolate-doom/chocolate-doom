@@ -95,10 +95,11 @@ void P_ExplodeMissile (mobj_t* mo)
 
     P_SetMobjState (mo, mobjinfo[mo->type].deathstate);
 
-    mo->tics -= P_Random()&3;
+    // villsa [STRIFE] unused
+    /*mo->tics -= P_Random()&3;
 
     if (mo->tics < 1)
-	mo->tics = 1;
+	mo->tics = 1;*/
 
     mo->flags &= ~MF_MISSILE;
 
@@ -120,8 +121,9 @@ void P_XYMovement (mobj_t* mo)
     player_t*	player;
     fixed_t	xmove;
     fixed_t	ymove;
-			
-    if (!mo->momx && !mo->momy)
+
+    // villsa [STRIFE] unused
+    /*if (!mo->momx && !mo->momy)
     {
 	if (mo->flags & MF_SKULLFLY)
 	{
@@ -132,7 +134,7 @@ void P_XYMovement (mobj_t* mo)
 	    P_SetMobjState (mo, mo->info->spawnstate);
 	}
 	return;
-    }
+    }*/
 	
     player = mo->player;
 		
@@ -200,7 +202,7 @@ void P_XYMovement (mobj_t* mo)
 	return;
     }
 
-    if (mo->flags & (MF_MISSILE | MF_SKULLFLY) )
+    if (mo->flags & (MF_MISSILE | MF_BOUNCE) )  // villsa [STRIFE] replace skullfly flag with MF_BOUNCE
 	return; 	// no friction for missiles ever
 		
     if (mo->z > mo->floorz)
@@ -261,14 +263,24 @@ void P_ZMovement (mobj_t* mo)
     }
     
     // adjust height
-    mo->z += mo->momz;
+    // villsa [STRIFE] check for things standing on top of other things
+    if(!P_CheckPositionZ(mo, mo->z + mo->momz))
+    {
+        if(mo->momz >= 0)
+            mo->ceilingz = mo->height + mo->z;
+        else
+            mo->floorz = mo->z;
+
+    }
+
+    //mo->z += mo->momz; // villsa [STRIFE] unused
 	
     if ( mo->flags & MF_FLOAT
 	 && mo->target)
     {
 	// float down towards target if too close
-	if ( !(mo->flags & MF_SKULLFLY)
-	     && !(mo->flags & MF_INFLOAT) )
+	if ( /*!(mo->flags & MF_SKULLFLY)   // villsa [STRIFE] unused
+	     &&*/ !(mo->flags & MF_INFLOAT) )
 	{
 	    dist = P_AproxDistance (mo->x - mo->target->x,
 				    mo->y - mo->target->y);
@@ -311,12 +323,19 @@ void P_ZMovement (mobj_t* mo)
         // So we need to check that this is either retail or commercial
         // (but not doom2)
 	
-	int correct_lost_soul_bounce = gameversion >= exe_ultimate;
+	//int correct_lost_soul_bounce = gameversion >= exe_ultimate;
 
-	if (correct_lost_soul_bounce && mo->flags & MF_SKULLFLY)
+	if (/*correct_lost_soul_bounce &&*/ mo->flags & MF_BOUNCE)
 	{
 	    // the skull slammed into something
-	    mo->momz = -mo->momz;
+            // villsa [STRIFE] affect reactiontime
+            // momz is also shifted by 1
+	    mo->momz = -mo->momz >> 1;
+            mo->reactiontime >>= 1;
+
+            // villsa [STRIFE] get terrain type
+            if(P_GetTerrainType(mo) != FLOOR_SOLID)
+                mo->flags &= ~MF_FEETCLIPPED;
 	}
 	
 	if (mo->momz < 0)
@@ -329,6 +348,14 @@ void P_ZMovement (mobj_t* mo)
 		// after hitting the ground (hard),
 		// and utter appropriate sound.
 		mo->player->deltaviewheight = mo->momz>>3;
+
+                // villsa [STRIFE] fall damage
+                if(mo->momz < -(20*FRACUNIT))
+                {
+                    P_DamageMobj(mo, NULL, mo, (mo->momz >> 32) / -25000);
+                    mo->player->centerview = 1;
+                }
+
 		S_StartSound (mo, sfx_oof);
 	    }
 	    mo->momz = 0;
@@ -342,13 +369,20 @@ void P_ZMovement (mobj_t* mo)
 	// hit by a raising floor this incorrectly reverses its Y momentum.
 	//
 
-        if (!correct_lost_soul_bounce && mo->flags & MF_SKULLFLY)
-            mo->momz = -mo->momz;
+        // villsa [STRIFE] unused
+        /*if (!correct_lost_soul_bounce && mo->flags & MF_SKULLFLY)
+            mo->momz = -mo->momz;*/
 
+        // villsa [STRIFE] also check for MF_BOUNCE
 	if ( (mo->flags & MF_MISSILE)
-	     && !(mo->flags & MF_NOCLIP) )
+	     && !(mo->flags & (MF_NOCLIP|MF_BOUNCE)) )
 	{
-	    P_ExplodeMissile (mo);
+            // villsa [STRIFE] check against skies
+	    if(mo->subsector->sector->ceilingpic == skyflatnum)
+                P_RemoveMobj(mo);
+            else
+                P_ExplodeMissile (mo);
+
 	    return;
 	}
     }
@@ -362,22 +396,32 @@ void P_ZMovement (mobj_t* mo)
 	
     if (mo->z + mo->height > mo->ceilingz)
     {
+        // villsa [STRIFE] replace skullfly flag with MF_BOUNCE
+        if (mo->flags & MF_BOUNCE)
+        {
+	    // villsa [STRIFE] affect reactiontime
+            // momz is also shifted by 1
+	    mo->momz = -mo->momz >> 1;
+            mo->reactiontime >>= 1;
+        }
+
 	// hit the ceiling
 	if (mo->momz > 0)
 	    mo->momz = 0;
 	{
 	    mo->z = mo->ceilingz - mo->height;
 	}
-
-	if (mo->flags & MF_SKULLFLY)
-	{	// the skull slammed into something
-	    mo->momz = -mo->momz;
-	}
 	
+        // villsa [STRIFE] also check for MF_BOUNCE
 	if ( (mo->flags & MF_MISSILE)
-	     && !(mo->flags & MF_NOCLIP) )
+	     && !(mo->flags & (MF_NOCLIP|MF_BOUNCE)) )
 	{
-	    P_ExplodeMissile (mo);
+            // villsa [STRIFE] check against skies
+            if(mo->subsector->sector->ceilingpic == skyflatnum)
+                P_RemoveMobj(mo);
+            else
+                P_ExplodeMissile (mo);
+
 	    return;
 	}
     }

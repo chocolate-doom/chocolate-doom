@@ -312,9 +312,18 @@ boolean PIT_CheckThing (mobj_t* thing)
     // don't clip against self
     if (thing == tmthing)
 	return true;
+
+    // villsa [STRIFE] check thing z/height against tmthing's z
+    if(thing->height + thing->z < tmthing->z)
+        return true;
+
+    // villsa [STRIFE] check tmthing z/height against thing's z
+    if (tmthing->z + tmthing->height < thing->z)
+        return true;
     
+    // villsa [STRIFE] unused
     // check for skulls slamming into things
-    if (tmthing->flags & MF_SKULLFLY)
+    /*if (tmthing->flags & MF_SKULLFLY)
     {
 	damage = ((P_Random()%8)+1)*tmthing->info->damage;
 	
@@ -326,7 +335,7 @@ boolean PIT_CheckThing (mobj_t* thing)
 	P_SetMobjState (tmthing, tmthing->info->spawnstate);
 	
 	return false;		// stop moving
-    }
+    }*/
 
     
     // missiles can hit other things
@@ -378,11 +387,11 @@ boolean PIT_CheckThing (mobj_t* thing)
     if (thing->flags & MF_SPECIAL)
     {
 	solid = thing->flags&MF_SOLID;
-	//if (tmflags&MF_PICKUP) // villsa [STRIFE] TODO - verify
-	//{
+        if (tmthing->player) // villsa [STRIFE] no longer checks MF_PICKUP flag
+	{
 	    // can remove thing
 	    P_TouchSpecialThing (thing, tmthing);
-	//}
+	}
 	return !solid;
     }
 	
@@ -558,6 +567,81 @@ P_TryMove
 		    P_CrossSpecialLine (ld-lines, oldside, thing);
 	    }
 	}
+    }
+
+    return true;
+}
+
+//
+// P_CheckPositionZ
+// villsa [STRIFE] new function
+// Check colliding things on top of one another
+//
+
+boolean P_CheckPositionZ(mobj_t* thing, fixed_t height)
+{
+    fixed_t         x;
+    fixed_t         y;
+    fixed_t         z;
+    int             xl;
+    int             xh;
+    int             yl;
+    int             yh;
+    int             bx;
+    int             by;
+    subsector_t*    newsubsec;
+
+    x = thing->x;
+    y = thing->y;
+    z = thing->z;
+
+    thing->z = height;
+
+    tmthing = thing;
+    tmflags = thing->flags;
+    tmx = x;
+    tmy = y;
+
+    tmbbox[BOXTOP] = y + tmthing->radius;
+    tmbbox[BOXBOTTOM] = y - tmthing->radius;
+    tmbbox[BOXRIGHT] = x + tmthing->radius;
+    tmbbox[BOXLEFT] = x - tmthing->radius;
+
+    ceilingline = 0;
+    newsubsec = thing->subsector;
+
+    // The base floor / ceiling is from the subsector
+    // that contains the point.
+    // Any contacted lines the step closer together
+    // will adjust them.
+
+    tmfloorz = tmdropoffz = newsubsec->sector->floorheight;
+    tmceilingz = newsubsec->sector->ceilingheight;
+
+    if(tmflags & MF_NOCLIP)
+        return true;
+
+    // Check things first, possibly picking things up.
+    // The bounding box is extended by MAXRADIUS
+    // because mobj_ts are grouped into mapblocks
+    // based on their origin point, and can overlap
+    // into adjacent blocks by up to MAXRADIUS units.
+
+    xl = (tmbbox[BOXLEFT] - bmaporgx - MAXRADIUS)>>MAPBLOCKSHIFT;
+    xh = (tmbbox[BOXRIGHT] - bmaporgx + MAXRADIUS)>>MAPBLOCKSHIFT;
+    yl = (tmbbox[BOXBOTTOM] - bmaporgy - MAXRADIUS)>>MAPBLOCKSHIFT;
+    yh = (tmbbox[BOXTOP] - bmaporgy + MAXRADIUS)>>MAPBLOCKSHIFT;
+
+    for(bx = xl; bx <= xh; bx++)
+    {
+	for(by = yl; by <= yh; by++)
+        {
+	    if(!P_BlockThingsIterator(bx, by,PIT_CheckThing))
+            {
+                tmthing->z = z;
+		return false;
+            }
+        }
     }
 
     return true;
