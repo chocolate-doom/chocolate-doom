@@ -313,13 +313,13 @@ boolean PIT_CheckThing (mobj_t* thing)
     if (thing == tmthing)
 	return true;
 
-    // villsa [STRIFE] check thing z/height against tmthing's z
+    // villsa [STRIFE] see if it went over / under
     if(thing->height + thing->z < tmthing->z)
-        return true;
+        return true;    // overhead
 
-    // villsa [STRIFE] check tmthing z/height against thing's z
+    // villsa [STRIFE] see if it went over / under
     if (tmthing->z + tmthing->height < thing->z)
-        return true;
+        return true;    // underneath
     
     // villsa [STRIFE] unused
     // check for skulls slamming into things
@@ -341,11 +341,13 @@ boolean PIT_CheckThing (mobj_t* thing)
     // missiles can hit other things
     if (tmthing->flags & MF_MISSILE)
     {
+        // villsa [STRIFE] this code here has been moved at the beginning of this function
+        // TODO - verify
 	// see if it went over / under
-	if (tmthing->z > thing->z + thing->height)
+	/*if (tmthing->z > thing->z + thing->height)
 	    return true;		// overhead
 	if (tmthing->z+tmthing->height < thing->z)
-	    return true;		// underneath
+	    return true;		// underneath*/
 		
         // villsa [STRIFE] TODO - update to strife version
 	if (tmthing->target 
