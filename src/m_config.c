@@ -186,6 +186,12 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_straferight),
 
     //!
+    // Keyboard key to use health. (Strife only)
+    //
+
+    CONFIG_VARIABLE_KEY(key_useHealth),
+
+    //!
     // Keyboard key to jump.
     //
 
@@ -228,6 +234,42 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_lookcenter),
 
     //!
+    // Keyboard key to query inventory. (Strife only)
+    //
+
+    CONFIG_VARIABLE_KEY(key_invquery),
+
+    //!
+    // Keyboard key to display mission objective. (Strife only)
+    //
+
+    CONFIG_VARIABLE_KEY(key_mission),
+
+    //!
+    // Keyboard key to display inventory popup. (Strife only)
+    //
+
+    CONFIG_VARIABLE_KEY(key_invPop),
+
+    //!
+    // Keyboard key to display keys popup. (Strife only)
+    //
+
+    CONFIG_VARIABLE_KEY(key_invKey),
+
+    //!
+    // Keyboard key to jump to start of inventory. (Strife only)
+    //
+
+    CONFIG_VARIABLE_KEY(key_invHome),
+
+    //!
+    // Keyboard key to jump to end of inventory. (Strife only)
+    //
+
+    CONFIG_VARIABLE_KEY(key_invEnd),
+
+    //!
     // Keyboard key to scroll left in the inventory.
     //
 
@@ -240,10 +282,46 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_invright),
 
     //!
+    // Keyboard key to scroll left in the inventory. (Strife)
+    //
+    
+    CONFIG_VARIABLE_KEY(key_invLeft),
+
+    //!
+    // Keyboard key to scroll right in the inventory. (Strife)
+    //
+
+    CONFIG_VARIABLE_KEY(key_invRight),
+
+    //!
     // Keyboard key to use the current item in the inventory.
     //
 
     CONFIG_VARIABLE_KEY(key_useartifact),
+
+    //!
+    // Keyboard key to use inventory item. (Strife)
+    //
+    
+    CONFIG_VARIABLE_KEY(key_invUse),
+
+    //!
+    // Keyboard key to drop an inventory item. (Strife only)
+    //
+
+    CONFIG_VARIABLE_KEY(key_invDrop),
+
+    //!
+    // Keyboard key to look up. (Strife)
+    //
+
+    CONFIG_VARIABLE_KEY(key_lookUp),
+
+    //!
+    // Keyboard key to look down. (Strife)
+    //
+
+    CONFIG_VARIABLE_KEY(key_lookDown),
 
     //!
     // Keyboard key to fire the currently selected weapon.
@@ -425,6 +503,12 @@ static default_t	doom_defaults_list[] =
 
     CONFIG_VARIABLE_INT(messageson),
 
+    //!
+    // Name of background flat used by view border. (Strife only)
+    //
+
+    CONFIG_VARIABLE_STRING(back_flat),
+
 
     //!
     // Multiplayer chat macro: message to send when alt+0 is pressed.
@@ -485,12 +569,6 @@ static default_t	doom_defaults_list[] =
     //
 
     CONFIG_VARIABLE_STRING(chatmacro9),
-
-    //!
-    // Name of background flat used by view border. Strife only.
-    //
-
-    CONFIG_VARIABLE_STRING(back_flat),
 };
 
 static default_collection_t doom_defaults = 

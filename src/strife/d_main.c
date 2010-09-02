@@ -383,6 +383,7 @@ void D_BindVariables(void)
     M_BindWeaponControls();
     M_BindMapControls();
     M_BindMenuControls();
+    M_BindStrifeControls(); // haleyjd 09/01/10: [STRIFE]
 
 #ifdef FEATURE_MULTIPLAYER
     NET_BindVariables();
