@@ -35,6 +35,7 @@
                          | (1 << pack_plut))
 #define IWAD_MASK_HERETIC (1 << heretic)
 #define IWAD_MASK_HEXEN   (1 << hexen)
+#define IWAD_MASK_STRIFE  (1 << strife)
 
 typedef struct
 {

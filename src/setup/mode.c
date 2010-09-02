@@ -91,6 +91,15 @@ static mission_config_t mission_configs[] =
         "hexen.cfg",
         PROGRAM_PREFIX "hexen.cfg",
         PROGRAM_PREFIX "hexen"
+    },
+    {
+        "Strife",
+        strife,
+        IWAD_MASK_STRIFE,
+        "strife",
+        "strife.cfg",
+        PROGRAM_PREFIX "strife.cfg",
+        PROGRAM_PREFIX "strife"
     }
 };
 
