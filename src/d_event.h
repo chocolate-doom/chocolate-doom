@@ -89,6 +89,21 @@ typedef enum
   
 } buttoncode_t;
 
+// villsa [STRIFE] Strife specific buttons
+// TODO - not finished
+typedef enum
+{
+    // Player view look up
+    BT_LOOKUP           = 1,
+    // Player view look down
+    BT_LOOKDOWN         = 2,
+    // Center player's view
+    BT_CENTERVIEW       = 4,
+    // Jump up and down
+    BT_JUMP             = 32,
+  
+} buttoncode2_t;
+
 
 
 

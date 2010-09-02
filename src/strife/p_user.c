@@ -40,6 +40,10 @@
 
 // Index of the special effects (INVUL inverse) map.
 #define INVERSECOLORMAP		32
+#define LOOKPITCHAMOUNT         6       // villsa [STRIFE]
+#define CENTERVIEWAMOUNT        (LOOKPITCHAMOUNT + 2)   // villsa [STRIFE]
+#define LOOKUPMAX               90      // villsa [STRIFE]
+#define LOOKDOWNMAX             -110    // villsa [STRIFE]
 
 
 //
@@ -161,6 +165,13 @@ void P_MovePlayer (player_t* player)
     // Do not let the player control movement
     //  if not onground.
     onground = (player->mo->z <= player->mo->floorz);
+
+    // villsa [STRIFE] jump button
+    if (onground && cmd->buttons2 & BT_JUMP)
+    {
+        if(!player->deltaviewheight)
+            player->mo->momz += (8*FRACUNIT);
+    }
 	
     if (cmd->forwardmove && onground)
 	P_Thrust (player, player->mo->angle, cmd->forwardmove*2048);
@@ -174,6 +185,50 @@ void P_MovePlayer (player_t* player)
     {
 	P_SetMobjState (player->mo, S_PLAY_01);
     }
+
+    // villsa [STRIFE] centerview button
+    if (cmd->buttons2 & BT_CENTERVIEW)
+        player->centerview = 1;
+
+    // villsa [STRIFE] adjust player's pitch when centerviewing
+    if (player->centerview)
+    {
+        if (player->pitch <= 0)
+        {
+            if (player->pitch < 0)
+                player->pitch = player->pitch + CENTERVIEWAMOUNT;
+        }
+        else
+        {
+            player->pitch = player->pitch - CENTERVIEWAMOUNT;
+        }
+        if (abs(player->pitch) < CENTERVIEWAMOUNT)
+        {
+            player->pitch = 0;
+            player->centerview = 0;
+        }
+    }
+    
+    // villsa [STRIFE] look up action
+    if (cmd->buttons2 & BT_LOOKUP)
+    {
+        player->pitch += LOOKPITCHAMOUNT;
+        if ((player->pitch + LOOKPITCHAMOUNT) > LOOKUPMAX ||
+            (player->pitch + LOOKPITCHAMOUNT) < LOOKDOWNMAX)
+            player->pitch -= LOOKPITCHAMOUNT;
+    }
+    else
+    {
+        // villsa [STRIFE] look down action
+        if (cmd->buttons2 & BT_LOOKDOWN)
+        {
+            player->pitch -= LOOKPITCHAMOUNT;
+            if ((player->pitch - LOOKPITCHAMOUNT) > LOOKUPMAX ||
+                (player->pitch - LOOKPITCHAMOUNT) < LOOKDOWNMAX)
+                player->pitch += LOOKPITCHAMOUNT;
+        }
+    }
+
 }	
 
 
