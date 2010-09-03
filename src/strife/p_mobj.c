@@ -941,18 +941,32 @@ P_SpawnPuff
 	
     z += ((P_Random()-P_Random())<<10);
 
-    // villsa [STRIFE] TODO - update
     th = P_SpawnMobj (x,y,z, MT_STRIFEPUFF);
     th->momz = FRACUNIT;
     th->tics -= P_Random()&3;
 
-    if (th->tics < 1)
-	th->tics = 1;
+    // villsa [STRIFE] TODO - verify and update
+    /*if(shootdist == (80*FRACUNIT))
+        P_SetMobjState(th, S_POW2_00);*/
+
+    // villsa [STRIFE] unused
+    /*if (th->tics < 1)
+	th->tics = 1;*/
 	
     // don't make punches spark on the wall
     // villsa [STRIFE] TODO - proper puff state
     //if (attackrange == MELEERANGE)
 	//P_SetMobjState (th, S_PUFF3);
+}
+
+//
+// P_SpawnSparkPuff
+// villsa [STRIFE] new function
+//
+
+mobj_t* P_SpawnSparkPuff(fixed_t x, fixed_t y, fixed_t z)
+{
+    return P_SpawnMobj(x, y, ((P_Random() - P_Random()) << 10) + z, MT_SPARKPUFF);
 }
 
 
@@ -967,22 +981,22 @@ P_SpawnBlood
   fixed_t	z,
   int		damage )
 {
-    // villsa [STRIFE] TODO - update to strife version
-/*    mobj_t*	th;
+    mobj_t*	th;
 	
     z += ((P_Random()-P_Random())<<10);
-    th = P_SpawnMobj (x,y,z, MT_BLOOD);
+    th = P_SpawnMobj (x,y,z, MT_BLOOD_DEATH);
     th->momz = FRACUNIT*2;
     th->tics -= P_Random()&3;
 
-    if (th->tics < 1)
+    // villsa [STRIFE] unused
+    /*if (th->tics < 1)
 	th->tics = 1;*/
 		
-    // villsa [STRIFE] TODO - proper blood states
-    /*if (damage <= 12 && damage >= 9)
-	P_SetMobjState (th,S_BLOOD2);
-    else if (damage < 9)
-	P_SetMobjState (th,S_BLOOD3);*/
+    // villsa [STRIFE] different checks for damage range
+    if (damage >= 10 && damage <= 13)
+	P_SetMobjState (th,S_BLOD_00);
+    else if (damage < 7)
+	P_SetMobjState (th,S_BLOD_02);
 }
 
 
@@ -1056,7 +1070,10 @@ P_SpawnMissile
 
     // fuzzy player
     if (dest->flags & MF_SHADOW)
-	an += (P_Random()-P_Random())<<20;	
+	an += (P_Random()-P_Random())<<21;	
+    // villsa [STRIFE] check for heavily transparent things
+    else if(dest->flags & MF_MOREVISIBLE)
+        an += (P_Random()-P_Random())<<22;
 
     th->angle = an;
     an >>= ANGLETOFINESHIFT;
@@ -1073,6 +1090,52 @@ P_SpawnMissile
     P_CheckMissileSpawn (th);
 	
     return th;
+}
+
+//
+// P_SpawnSubMissile
+// villsa [STRIFE] new function (TODO - add description)
+//
+
+mobj_t* P_SpawnSubMissile(mobj_t* source, mobj_t* target, mobjtype_t type, fixed_t radius)
+{
+    mobj_t* th;
+    angle_t an;
+    fixed_t dist;
+
+    th = P_SpawnMobj(source->x, source->y, source->z + (32*FRACUNIT), type);
+
+    if(th->info->seesound)
+        S_StartSound(th, th->info->seesound);
+
+    th->target = source;    // where it came from
+    an = th->angle;
+
+    // fuzzy player
+    if (target->flags & MF_SHADOW)
+	an += (P_Random()-P_Random())<<21;	
+    // villsa [STRIFE] check for heavily transparent things
+    else if(target->flags & MF_MOREVISIBLE)
+        an += (P_Random()-P_Random())<<22;
+
+    th->angle = an;
+    an >>= ANGLETOFINESHIFT;
+    th->momx = FixedMul (th->info->speed, finecosine[an]);
+    th->momy = FixedMul (th->info->speed, finesine[an]);
+
+    dist = P_AproxDistance (target->x - source->x, target->y - source->y);
+    dist = dist / th->info->speed;
+
+    if(dist < 1)
+        dist = 1;
+
+    th->momz = (target->z - source->z) / dist;
+    th->x += (th->momx >> 1);
+    th->y += (th->momy >> 1);
+    th->z += (th->momz >> 1);
+
+    if(!P_TryMove (th, th->x, th->y))
+        P_ExplodeMissile(th);
 }
 
 
