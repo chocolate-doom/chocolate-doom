@@ -1542,6 +1542,7 @@ boolean M_Responder (event_t* ev)
 	    {
 		key = key_menu_forward;
 		mousewait = I_GetTime() + 15;
+                mouse_fire_countdown = 5;   // villsa [STRIFE]
 	    }
 			
 	    if (ev->data1&2)

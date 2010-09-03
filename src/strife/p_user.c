@@ -167,7 +167,7 @@ void P_MovePlayer (player_t* player)
     onground = (player->mo->z <= player->mo->floorz);
 
     // villsa [STRIFE] jump button
-    if (onground && cmd->buttons2 & BT_JUMP)
+    if (onground && cmd->buttons2 & BT2_JUMP)
     {
         if(!player->deltaviewheight)
             player->mo->momz += (8*FRACUNIT);
@@ -187,7 +187,7 @@ void P_MovePlayer (player_t* player)
     }
 
     // villsa [STRIFE] centerview button
-    if (cmd->buttons2 & BT_CENTERVIEW)
+    if (cmd->buttons2 & BT2_CENTERVIEW)
         player->centerview = 1;
 
     // villsa [STRIFE] adjust player's pitch when centerviewing
@@ -210,7 +210,7 @@ void P_MovePlayer (player_t* player)
     }
     
     // villsa [STRIFE] look up action
-    if (cmd->buttons2 & BT_LOOKUP)
+    if (cmd->buttons2 & BT2_LOOKUP)
     {
         player->pitch += LOOKPITCHAMOUNT;
         if ((player->pitch + LOOKPITCHAMOUNT) > LOOKUPMAX ||
@@ -220,7 +220,7 @@ void P_MovePlayer (player_t* player)
     else
     {
         // villsa [STRIFE] look down action
-        if (cmd->buttons2 & BT_LOOKDOWN)
+        if (cmd->buttons2 & BT2_LOOKDOWN)
         {
             player->pitch -= LOOKPITCHAMOUNT;
             if ((player->pitch - LOOKPITCHAMOUNT) > LOOKUPMAX ||

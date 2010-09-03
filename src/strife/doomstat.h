@@ -191,6 +191,7 @@ extern  boolean	usergame;
 //?
 extern  boolean	demoplayback;
 extern  boolean	demorecording;
+extern  int     mouse_fire_countdown;   // villsa [STRIFE]
 
 // Round angleturn in ticcmds to the nearest 256.  This is used when
 // recording Vanilla demos in netgames.

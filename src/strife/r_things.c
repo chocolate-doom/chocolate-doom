@@ -699,7 +699,6 @@ void R_DrawPSprite (pspdef_t* psp)
     // store information in a vissprite
     vis = &avis;
     vis->mobjflags = 0;
-    vis->texturemid = (BASEYCENTER<<FRACBITS)+FRACUNIT/2-(psp->sy-spritetopoffset[lump]);
     vis->x1 = x1 < 0 ? 0 : x1;
     vis->x2 = x2 >= viewwidth ? viewwidth-1 : x2;	
     vis->scale = pspritescale<<detailshift;
@@ -714,6 +713,10 @@ void R_DrawPSprite (pspdef_t* psp)
 	vis->xiscale = pspriteiscale;
 	vis->startfrac = 0;
     }
+
+    // villsa [STRIFE] calculate y offset with view pitch
+    vis->texturemid = ((BASEYCENTER<<FRACBITS)+FRACUNIT/2)-(psp->sy-spritetopoffset[lump])
+        + FixedMul(vis->xiscale, (centery-viewheight/2)<<FRACBITS);
     
     if (vis->x1 > x1)
 	vis->startfrac += vis->xiscale*(vis->x1-x1);

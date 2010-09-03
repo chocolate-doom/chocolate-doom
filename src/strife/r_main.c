@@ -35,6 +35,7 @@
 
 
 #include "doomdef.h"
+#include "doomstat.h"   // villsa [STRIFE]
 #include "d_net.h"
 
 #include "m_bbox.h"
@@ -78,6 +79,8 @@ int			loopcount;
 fixed_t			viewx;
 fixed_t			viewy;
 fixed_t			viewz;
+
+int                     viewpitch;  // villsa [STRIFE]
 
 angle_t			viewangle;
 
@@ -697,7 +700,10 @@ void R_ExecuteSetViewSize (void)
     detailshift = setdetail;
     viewwidth = scaledviewwidth>>detailshift;
 	
-    centery = viewheight/2;
+    // villsa [STRIFE] calculate centery from player's pitch
+    centery = (setblocks*players[consoleplayer].pitch);
+    centery = (unsigned int)(centery/10)+viewheight/2;
+
     centerx = viewwidth/2;
     centerxfrac = centerx<<FRACBITS;
     centeryfrac = centery<<FRACBITS;
@@ -823,6 +829,34 @@ R_PointInSubsector
     return &subsectors[nodenum & ~NF_SUBSECTOR];
 }
 
+//
+// R_SetupPitch
+// villsa [STRIFE] new function
+// Calculate centery/centeryfrac for player viewpitch
+//
+
+void R_SetupPitch(player_t* player)
+{
+    fixed_t pitchfrac;
+    int i = 0;
+
+    if(viewpitch != player->pitch)
+    {
+        viewpitch   = player->pitch;
+        pitchfrac   = ((setblocks*player->pitch)/10);
+        centery     = (pitchfrac+viewheight)/2;
+        centeryfrac = centery<<FRACBITS;
+
+        if(viewheight > 0)
+        {
+            for(i = 0; i < viewheight; i++)
+            {
+                yslope[i] = FixedDiv(viewwidth/2*FRACUNIT,
+                    abs(((i-centery)<<FRACBITS)+(FRACUNIT/2)));
+            }
+        }
+    }
+}
 
 
 //
@@ -832,6 +866,8 @@ void R_SetupFrame (player_t* player)
 {		
     int		i;
     
+    R_SetupPitch(player);  // villsa [STRIFE]
+
     viewplayer = player;
     viewx = player->mo->x;
     viewy = player->mo->y;

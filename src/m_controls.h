@@ -49,6 +49,17 @@ extern int key_invleft;
 extern int key_invright;
 extern int key_useartifact;
 
+// villsa [STRIFE] strife keys
+extern int key_usehealth;
+extern int key_invquery;
+extern int key_mission;
+extern int key_invpop;
+extern int key_invkey;
+extern int key_invhome;
+extern int key_invend;
+extern int key_invuse;
+extern int key_invdrop;
+
 extern int key_message_refresh;
 extern int key_pause;
 

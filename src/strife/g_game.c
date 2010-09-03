@@ -170,6 +170,8 @@ fixed_t         forwardmove[2] = {0x19, 0x32};
 fixed_t         sidemove[2] = {0x18, 0x28}; 
 fixed_t         angleturn[3] = {640, 1280, 320};    // + slow turn 
 
+int mouse_fire_countdown = 0;    // villsa [STRIFE]
+
 static int *weapon_keys[] = {
     &key_weapon1,
     &key_weapon2,
@@ -364,6 +366,16 @@ void G_BuildTiccmd (ticcmd_t* cmd)
 
     cmd->consistancy = 
 	consistancy[consoleplayer][maketic%BACKUPTICS]; 
+
+    // villsa [STRIFE]
+    if(gamekeydown[key_lookup])
+        cmd->buttons2 |= BT2_LOOKUP;
+    if (gamekeydown[key_lookdown])
+        cmd->buttons2 |= BT2_LOOKDOWN;
+    if (gamekeydown[key_usehealth])
+        cmd->buttons2 |= BT2_HEALTH;
+
+
  
     strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe] 
 	|| joybuttons[joybstrafe]; 
@@ -377,6 +389,14 @@ void G_BuildTiccmd (ticcmd_t* cmd)
          || joybuttons[joybspeed];
  
     forward = side = 0;
+
+    // villsa [STRIFE] running causes centerview to occur
+    if(speed)
+        cmd->buttons2 |= BT2_CENTERVIEW;
+
+    // villsa [STRIFE] disable running if low on health
+    if (players[consoleplayer].health <= 15)
+        speed = 0;
     
     // use two stage accelerative turning
     // on the keyboard and joystick
@@ -456,10 +476,25 @@ void G_BuildTiccmd (ticcmd_t* cmd)
 
     // buttons
     cmd->chatchar = HU_dequeueChatChar(); 
+
+    // villsa [STRIFE] TODO - add mouse button support for jump
+    if(gamekeydown[key_jump] /*|| mousebuttons[mousebjump]*/)
+        cmd->buttons2 |= BT2_JUMP;
  
-    if (gamekeydown[key_fire] || mousebuttons[mousebfire] 
+    // villsa [STRIFE]
+    if (gamekeydown[key_fire] /*|| mousebuttons[mousebfire]*/ 
 	|| joybuttons[joybfire]) 
-	cmd->buttons |= BT_ATTACK; 
+	cmd->buttons |= BT_ATTACK;
+
+    // villsa [STRIFE]
+    if(mousebuttons[mousebfire])
+    {
+         if(mouse_fire_countdown <= 0)
+             cmd->buttons |= BT_ATTACK;
+         else
+             --mouse_fire_countdown;
+
+    }
  
     if (gamekeydown[key_use]
      || joybuttons[joybuse]
