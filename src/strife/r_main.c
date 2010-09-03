@@ -844,7 +844,7 @@ void R_SetupPitch(player_t* player)
     {
         viewpitch   = player->pitch;
         pitchfrac   = ((setblocks*player->pitch)/10);
-        centery     = (pitchfrac+viewheight)/2;
+        centery     = pitchfrac+viewheight/2;
         centeryfrac = centery<<FRACBITS;
 
         if(viewheight > 0)
