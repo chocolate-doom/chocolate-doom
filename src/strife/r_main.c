@@ -837,23 +837,20 @@ R_PointInSubsector
 
 void R_SetupPitch(player_t* player)
 {
-    fixed_t pitchfrac;
+    int pitchfrac;
     int i = 0;
 
     if(viewpitch != player->pitch)
     {
         viewpitch   = player->pitch;
-        pitchfrac   = ((setblocks*player->pitch)/10);
-        centery     = pitchfrac+viewheight/2;
-        centeryfrac = centery<<FRACBITS;
+        pitchfrac   = (setblocks * player->pitch) / 10;
+        centery     = pitchfrac + viewheight / 2;
+        centeryfrac = centery << FRACBITS;
 
-        if(viewheight > 0)
+        for(i = 0; i < viewheight; i++)
         {
-            for(i = 0; i < viewheight; i++)
-            {
-                yslope[i] = FixedDiv(viewwidth/2*FRACUNIT,
-                    abs(((i-centery)<<FRACBITS)+(FRACUNIT/2)));
-            }
+            yslope[i] = FixedDiv(viewwidth / 2 * FRACUNIT,
+                                 abs(((i - centery) << FRACBITS) + (FRACUNIT/2)));
         }
     }
 }
