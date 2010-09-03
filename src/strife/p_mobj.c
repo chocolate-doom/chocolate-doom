@@ -1008,9 +1008,10 @@ P_SpawnBlood
 //
 void P_CheckMissileSpawn (mobj_t* th)
 {
-    th->tics -= P_Random()&3;
+    // villsa [STRIFE] unused
+    /*th->tics -= P_Random()&3;
     if (th->tics < 1)
-	th->tics = 1;
+	th->tics = 1;*/
     
     // move a little forward so an angle can
     // be computed if it immediately explodes
@@ -1130,12 +1131,7 @@ mobj_t* P_SpawnSubMissile(mobj_t* source, mobj_t* target, mobjtype_t type, fixed
         dist = 1;
 
     th->momz = (target->z - source->z) / dist;
-    th->x += (th->momx >> 1);
-    th->y += (th->momy >> 1);
-    th->z += (th->momz >> 1);
-
-    if(!P_TryMove (th, th->x, th->y))
-        P_ExplodeMissile(th);
+    P_CheckMissileSpawn (th);
 }
 
 
