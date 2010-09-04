@@ -58,7 +58,7 @@ weaponinfo_t	weaponinfo[NUMWEAPONS] =
     },	
     {
 	// electric bow
-	am_clip,
+	am_elecbolts,
 	S_XBOW_02,
 	S_XBOW_01,
 	S_XBOW_00,
@@ -68,7 +68,7 @@ weaponinfo_t	weaponinfo[NUMWEAPONS] =
     },	
     {
 	// rifle
-	am_shell,
+	am_bullets,
 	S_RIFG_02,
 	S_RIFG_01,
 	S_RIFG_00,
@@ -78,7 +78,7 @@ weaponinfo_t	weaponinfo[NUMWEAPONS] =
     },
     {
 	// missile launcher
-	am_clip,
+	am_missiles,
 	S_MMIS_02,
 	S_MMIS_01,
 	S_MMIS_00,
@@ -88,12 +88,12 @@ weaponinfo_t	weaponinfo[NUMWEAPONS] =
     },
     {
 	// grenade launcher
-	am_misl,
+	am_hegrenades,
 	S_GREN_02,
 	S_GREN_01,
 	S_GREN_00,
 	S_GREN_03,
-	103,
+	S_GREF_00,
         0
     },
     {
@@ -128,7 +128,7 @@ weaponinfo_t	weaponinfo[NUMWEAPONS] =
     },
     {
 	// poison bow
-	am_shell,
+	am_poisonbolts,
 	S_XBOW_15,
 	S_XBOW_14,
 	S_XBOW_13,
@@ -138,7 +138,7 @@ weaponinfo_t	weaponinfo[NUMWEAPONS] =
     },
     {
 	// wp grenade launcher
-	am_shell,
+	am_wpgrenades,
 	S_GREN_10,
 	S_GREN_09,
 	S_GREN_08,
@@ -148,7 +148,7 @@ weaponinfo_t	weaponinfo[NUMWEAPONS] =
     },
     {
 	// torpedo
-	am_shell,
+	am_cell,
 	S_BLST_18,
 	S_BLST_17,
 	S_BLST_13,

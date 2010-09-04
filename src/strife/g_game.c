@@ -1068,8 +1068,8 @@ void G_PlayerReborn (int player)
     p->health = deh_initial_health;     // Use dehacked value
     p->readyweapon = p->pendingweapon = wp_fist; // villsa [STRIFE] default to fists
     p->weaponowned[wp_fist] = true; 
-    //p->weaponowned[wp_pistol] = true; // villsa [STRIFE]
-    p->ammo[am_clip] = deh_initial_bullets; 
+    //p->weaponowned[wp_pistol] = true; // villsa [STRIFE] unused
+    //p->ammo[am_clip] = deh_initial_bullets;   // villsa [STRIFE] unused
 	 
     for (i=0 ; i<NUMAMMO ; i++) 
 	p->maxammo[i] = maxammo[i]; 

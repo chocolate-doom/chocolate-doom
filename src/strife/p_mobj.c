@@ -174,6 +174,21 @@ void P_XYMovement (mobj_t* mo)
 	    {	// try to slide along it
 		P_SlideMove (mo);
 	    }
+            // villsa [STRIFE] check for bouncy missiles
+            else if(mo->flags & MF_BOUNCE)
+            {
+                mo->momx >>= 3;
+                mo->momy >>= 3;
+
+                if (P_TryMove(mo, mo->x - xmove, ymove + mo->y))
+                    mo->momy = -mo->momy;
+                else
+                    mo->momx = -mo->momx;
+
+
+                xmove = 0;
+                ymove = 0;
+            }
 	    else if (mo->flags & MF_MISSILE)
 	    {
 		// explode a missile
@@ -986,7 +1001,7 @@ P_SpawnBlood
     z += ((P_Random()-P_Random())<<10);
     th = P_SpawnMobj (x,y,z, MT_BLOOD_DEATH);
     th->momz = FRACUNIT*2;
-    th->tics -= P_Random()&3;
+    //th->tics -= P_Random()&3; // villsa [STRIFE] unused
 
     // villsa [STRIFE] unused
     /*if (th->tics < 1)
@@ -995,6 +1010,8 @@ P_SpawnBlood
     // villsa [STRIFE] different checks for damage range
     if (damage >= 10 && damage <= 13)
 	P_SetMobjState (th,S_BLOD_00);
+    else if (damage < 10 && damage >= 7)
+        P_SetMobjState (th,S_BLOD_01);
     else if (damage < 7)
 	P_SetMobjState (th,S_BLOD_02);
 }
@@ -1094,11 +1111,12 @@ P_SpawnMissile
 }
 
 //
-// P_SpawnSubMissile
-// villsa [STRIFE] new function (TODO - add description)
+// P_SpawnFacingMissile
+// villsa [STRIFE] new function
+// Spawn a missile based on source's angle
 //
 
-mobj_t* P_SpawnSubMissile(mobj_t* source, mobj_t* target, mobjtype_t type, fixed_t radius)
+mobj_t* P_SpawnFacingMissile(mobj_t* source, mobj_t* target, mobjtype_t type)
 {
     mobj_t* th;
     angle_t an;
@@ -1173,10 +1191,19 @@ P_SpawnPlayerMissile
 	    slope = 0;
 	}
     }
+
+    // villsa [STRIFE]
+    if(linetarget)
+        source->target = linetarget;
 		
     x = source->x;
     y = source->y;
-    z = source->z + 4*8*FRACUNIT;
+    
+    // villsa [STRIFE]
+    if(!(source->flags & MF_FEETCLIPPED))
+        z = source->z + 32*FRACUNIT;
+    else
+        z = source->z + 22*FRACUNIT;
 	
     th = P_SpawnMobj (x,y,z, type);
 
@@ -1194,3 +1221,32 @@ P_SpawnPlayerMissile
     P_CheckMissileSpawn (th);
 }
 
+//
+// P_SpawnMortar
+// villsa [STRIFE] new function
+// Spawn a high-arcing ballistic projectile
+//
+
+mobj_t* P_SpawnMortar(mobj_t *source, mobjtype_t type)
+{
+    mobj_t* th;
+    angle_t an;
+    fixed_t slope;
+
+    an = source->angle;
+
+    th = P_SpawnMobj(source->x, source->y, source->z, type);
+    th->target = source;
+    th->angle = an;
+    an >>= ANGLETOFINESHIFT;
+
+    slope = P_AimLineAttack(source, source->angle, 1024*FRACUNIT);
+
+    th->momx = FixedMul (th->info->speed, finecosine[an]);
+    th->momy = FixedMul (th->info->speed, finesine[an]);
+    th->momz = FixedMul(th->info->speed, slope);
+
+    P_CheckMissileSpawn(th);
+
+    return th;
+}

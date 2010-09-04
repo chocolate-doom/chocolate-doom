@@ -2374,9 +2374,20 @@ void A_RaiseAlarm(mobj_t* actor)
 
 }
 
+//
+// A_MissileTick
+// villsa [STRIFE] - new codepointer
+//
+
 void A_MissileTick(mobj_t* actor)
 {
+    int r = actor->reactiontime--;
 
+    if(r - 1 <= 0)
+    {
+        P_ExplodeMissile(actor);
+        actor->flags &= ~MF_MISSILE;
+    }
 }
 
 void A_SpawnGrenadeFire(mobj_t* actor)
@@ -2460,11 +2471,6 @@ void A_FireFlameThrower(mobj_t* actor)
 }
 
 void A_FireMauler2(mobj_t* actor)
-{
-
-}
-
-void A_FireGrenade(mobj_t* actor)
 {
 
 }

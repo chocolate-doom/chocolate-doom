@@ -164,6 +164,9 @@ boolean P_CheckAmmo (player_t* player)
     ammotype_t		ammo;
     int			count;
 
+    // villsa [STRIFE] TODO - temp until this function is cleaned up
+    return true;
+
     ammo = weaponinfo[player->readyweapon].ammo;
 
     // Minimal amount for one shot varies.
@@ -850,6 +853,63 @@ A_BFGsound
   pspdef_t*	psp )
 {
     S_StartSound (player->mo, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
+}
+
+//
+// A_FireGrenade
+// villsa [STRIFE] - new codepointer
+//
+
+void A_FireGrenade(player_t* player, pspdef_t* pspr)
+{
+    mobjtype_t type;
+    mobj_t* mo;
+    state_t* st1;
+    state_t* st2;
+    angle_t an;
+    fixed_t radius;
+
+    // decide on what type of grenade to spawn
+    if(player->readyweapon == wp_hegrenade)
+        type = MT_HEGRENADE;
+    else
+    {
+        if(player->readyweapon == wp_wpgrenade)
+            type = MT_PGRENADE;
+    }
+
+    player->ammo[weaponinfo[player->readyweapon].ammo]--;
+
+    // set flash frame
+    st1 = &states[(pspr->state - states) + weaponinfo[player->readyweapon].flashstate];
+    st2 = &states[weaponinfo[player->readyweapon].atkstate];
+    P_SetPsprite(player, ps_flash, st1 - st2);
+
+    player->mo->z += (32*FRACUNIT); // ugh
+    mo = P_SpawnMortar(player->mo, type);
+    player->mo->z -= (32*FRACUNIT); // ugh
+
+    // change momz based on player's pitch
+    mo->momz = FixedMul((player->pitch<<FRACBITS) / 160, mo->info->speed) + (8*FRACUNIT);
+    S_StartSound(mo, mo->info->seesound);
+
+    radius = mobjinfo[type].radius + player->mo->info->radius;
+    an = (player->mo->angle >> ANGLETOFINESHIFT);
+
+    mo->x += FixedMul(finecosine[an], radius + (4*FRACUNIT));
+    mo->y += FixedMul(finesine[an], radius + (4*FRACUNIT));
+
+    // shoot grenade from left or right side?
+    if(&states[weaponinfo[player->readyweapon].atkstate] == pspr->state)
+        an = (player->mo->angle - ANG90) >> ANGLETOFINESHIFT;
+    else
+        an = (player->mo->angle + ANG90) >> ANGLETOFINESHIFT;
+
+    mo->x += FixedMul((15*FRACUNIT), finecosine[an]);
+    mo->y += FixedMul((15*FRACUNIT), finesine[an]);
+
+    // set bounce flag
+    mo->flags |= MF_BOUNCE;
 }
 
 

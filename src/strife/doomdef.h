@@ -82,9 +82,23 @@ typedef enum
 #define	MTF_EASY		1
 #define	MTF_NORMAL		2
 #define	MTF_HARD		4
-
+// villsa [STRIFE] standing monsters
+#define MTF_STAND               8
+// villsa [STRIFE] don't spawn in single player
+#define MTF_NOTSINGLE           16
 // Deaf monsters/do not react to sound.
-#define	MTF_AMBUSH		8
+#define MTF_AMBUSH              32
+// villsa [STRIFE] friendly to players
+#define MTF_FRIEND              64
+// villsa [STRIFE] TODO - identify
+#define MTF_UNKNOWN             128
+// villsa [STRIFE] thing is translucent
+#define MTF_TRANSLUCENT         256
+// villsa [STRIFE] TODO - identify
+#define MTF_MVIS                512
+// villsa [STRIFE] TODO - identify
+#define MTF_RESERVED            1024
+
 
 
 //
@@ -135,12 +149,17 @@ typedef enum
 // Ammunition types defined.
 typedef enum
 {
-    am_clip,	// Pistol / chaingun ammo.
-    am_shell,	// Shotgun / double barreled shotgun.
-    am_cell,	// Plasma rifle, BFG.
-    am_misl,	// Missile launcher.
+    am_bullets,
+    am_elecbolts,
+    am_poisonbolts,
+    am_cell,
+    am_missiles,
+    am_hegrenades,
+    am_wpgrenades,
+
     NUMAMMO,
-    am_noammo	// Unlimited for chainsaw / fist.	
+
+    am_noammo   // unlimited ammo
 
 } ammotype_t;
 

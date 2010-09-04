@@ -166,18 +166,27 @@ void P_MovePlayer (player_t* player)
     //  if not onground.
     onground = (player->mo->z <= player->mo->floorz);
 
-    // villsa [STRIFE] jump button
-    if (onground && cmd->buttons2 & BT2_JUMP)
+    // villsa [STRIFE] allows player to climb over things by jumping
+    if(!onground)
     {
-        if(!player->deltaviewheight)
-            player->mo->momz += (8*FRACUNIT);
+        if(cmd->forwardmove)
+            P_Thrust (player, player->mo->angle, cmd->forwardmove);
     }
+    else
+    {
+        // villsa [STRIFE] jump button
+        if (cmd->buttons2 & BT2_JUMP)
+        {
+            if(!player->deltaviewheight)
+                player->mo->momz += (8*FRACUNIT);
+        }
 	
-    if (cmd->forwardmove && onground)
-	P_Thrust (player, player->mo->angle, cmd->forwardmove*2048);
+        if (cmd->forwardmove && onground)
+	    P_Thrust (player, player->mo->angle, cmd->forwardmove*2048);
     
-    if (cmd->sidemove && onground)
-	P_Thrust (player, player->mo->angle-ANG90, cmd->sidemove*2048);
+        if (cmd->sidemove && onground)
+	    P_Thrust (player, player->mo->angle-ANG90, cmd->sidemove*2048);
+    }
 
     // villsa [STRIFE] TODO - verify
     if ( (cmd->forwardmove || cmd->sidemove) 

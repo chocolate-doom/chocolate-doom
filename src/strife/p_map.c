@@ -530,9 +530,14 @@ P_TryMove
 	     &&*/tmceilingz - thing->z < thing->height)
 	    return false;	// mobj must lower itself to fit
 
-	if ( /*!(thing->flags&MF_TELEPORT) // villsa [STRIFE] unused
-	     &&*/ tmfloorz - thing->z > 24*FRACUNIT )
-	    return false;	// too big a step up
+        // villsa [STRIFE] non-robots are limited to 16 unit step height
+        if(!(thing->flags & MF_NOBLOOD) && tmfloorz - thing->z > (16*FRACUNIT) ||
+            tmfloorz - thing->z > 24*FRACUNIT)
+            return false;       // too big a step up
+
+        // villsa [STRIFE] special case for missiles
+        if(thing->flags & MF_MISSILE && tmfloorz - thing->z > (4*FRACUNIT))
+            return false;
 
 	if ( !(thing->flags&(MF_DROPOFF|MF_FLOAT))
 	     && tmfloorz - tmdropoffz > 24*FRACUNIT )
@@ -792,7 +797,8 @@ boolean PTR_SlideTraverse (intercept_t* in)
     if (opentop - slidemo->z < slidemo->height)
 	goto isblocking;		// mobj is too high
 
-    if (openbottom - slidemo->z > 24*FRACUNIT )
+    // villsa [STRIFE] change from 24 to 16
+    if (openbottom - slidemo->z > 16*FRACUNIT )
 	goto isblocking;		// too big a step up
 
     // this line doesn't block movement
