@@ -506,53 +506,6 @@ A_Punch
 }
 
 
-//
-// A_Saw
-//
-void
-A_Saw
-( player_t*	player,
-  pspdef_t*	psp ) 
-{
-    angle_t	angle;
-    int		damage;
-    int		slope;
-
-    damage = 2*(P_Random ()%10+1);
-    angle = player->mo->angle;
-    angle += (P_Random()-P_Random())<<18;
-    
-    // use meleerange + 1 se the puff doesn't skip the flash
-    slope = P_AimLineAttack (player->mo, angle, MELEERANGE+1);
-    P_LineAttack (player->mo, angle, MELEERANGE+1, slope, damage);
-
-    if (!linetarget)
-    {
-	S_StartSound (player->mo, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
-	return;
-    }
-    S_StartSound (player->mo, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
-	
-    // turn to face target
-    angle = R_PointToAngle2 (player->mo->x, player->mo->y,
-			     linetarget->x, linetarget->y);
-    if (angle - player->mo->angle > ANG180)
-    {
-	if ((signed int) (angle - player->mo->angle) < -ANG90/20)
-	    player->mo->angle = angle + ANG90/21;
-	else
-	    player->mo->angle -= ANG90/20;
-    }
-    else
-    {
-	if (angle - player->mo->angle > ANG90/20)
-	    player->mo->angle = angle - ANG90/21;
-	else
-	    player->mo->angle += ANG90/20;
-    }
-    player->mo->flags |= MF_JUSTATTACKED;
-}
-
 // Doom does not check the bounds of the ammo array.  As a result,
 // it is possible to use an ammo type > 4 that overflows into the
 // maxammo array and affects that instead.  Through dehacked, for
@@ -573,286 +526,52 @@ static void DecreaseAmmo(player_t *player, int ammonum, int amount)
 
 
 //
+// A_FireFlameThrower
+// villsa [STRIFE] completly new compared to the original
+//
+
+void A_FireFlameThrower(player_t* player, pspdef_t* psp) 
+{
+    mobj_t* mo;
+
+    P_SetMobjState(player->mo, S_PLAY_06);
+    player->ammo[weaponinfo[player->readyweapon].ammo]--;
+    player->mo->angle += (P_Random() - P_Random()) << 18;
+
+    mo = P_SpawnPlayerMissile(player->mo, MT_SFIREBALL);
+    mo->momz += (5*FRACUNIT);
+}
+
+//
 // A_FireMissile
+// villsa [STRIFE] completly new compared to the original
 //
-void
-A_FireMissile
-( player_t*	player,
-  pspdef_t*	psp ) 
+
+void A_FireMissile(player_t* player, pspdef_t* psp) 
 {
-    DecreaseAmmo(player, weaponinfo[player->readyweapon].ammo, 1);
-    // villsa [STRIFE] TODO - update
-//    P_SpawnPlayerMissile (player->mo, MT_ROCKET);
+    angle_t an;
+    mobj_t* mo;
+
+    an = player->mo->angle;
+    player->mo->angle += (P_Random() - P_Random())<<(19 - (player->accuracy * 4 / 100));
+    P_SetMobjState(player->mo, S_PLAY_06);
+    player->ammo[weaponinfo[player->readyweapon].ammo]--;
+    P_SpawnPlayerMissile(player->mo, MT_MINIMISSLE);
+    player->mo->angle = an;
 }
 
+//
+// A_FireMauler2
+// villsa [STRIFE] - new codepointer
+//
 
-//
-// A_FireBFG
-//
-void
-A_FireBFG
-( player_t*	player,
-  pspdef_t*	psp ) 
+void A_FireMauler2(player_t* player, pspdef_t* pspr)
 {
-    DecreaseAmmo(player, weaponinfo[player->readyweapon].ammo, 
-                 deh_bfg_cells_per_shot);
-    // villsa [STRIFE] unused
-//    P_SpawnPlayerMissile (player->mo, MT_BFG);
-}
-
-
-
-//
-// A_FirePlasma
-//
-void
-A_FirePlasma
-( player_t*	player,
-  pspdef_t*	psp ) 
-{
-    DecreaseAmmo(player, weaponinfo[player->readyweapon].ammo, 1);
-
-    P_SetPsprite (player,
-		  ps_flash,
-		  weaponinfo[player->readyweapon].flashstate+(P_Random ()&1) );
-
-    // villsa [STRIFE] TODO - update
-//    P_SpawnPlayerMissile (player->mo, MT_PLASMA);
-}
-
-
-
-//
-// P_BulletSlope
-// Sets a slope so a near miss is at aproximately
-// the height of the intended target
-//
-fixed_t		bulletslope;
-
-
-void P_BulletSlope (mobj_t*	mo)
-{
-    angle_t	an;
-    
-    // see which target is to be aimed at
-    an = mo->angle;
-    bulletslope = P_AimLineAttack (mo, an, 16*64*FRACUNIT);
-
-    if (!linetarget)
-    {
-	an += 1<<26;
-	bulletslope = P_AimLineAttack (mo, an, 16*64*FRACUNIT);
-	if (!linetarget)
-	{
-	    an -= 2<<26;
-	    bulletslope = P_AimLineAttack (mo, an, 16*64*FRACUNIT);
-	}
-    }
-}
-
-
-//
-// P_GunShot
-//
-void
-P_GunShot
-( mobj_t*	mo,
-  boolean	accurate )
-{
-    angle_t	angle;
-    int		damage;
-	
-    damage = 5*(P_Random ()%3+1);
-    angle = mo->angle;
-
-    if (!accurate)
-	angle += (P_Random()-P_Random())<<18;
-
-    P_LineAttack (mo, angle, MISSILERANGE, bulletslope, damage);
-}
-
-
-//
-// A_FirePistol
-//
-void
-A_FirePistol
-( player_t*	player,
-  pspdef_t*	psp ) 
-{
-    S_StartSound (player->mo, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
-
-    P_SetMobjState (player->mo, S_PLAY_06); // villsa [STRIFE] TODO - verify
-    DecreaseAmmo(player, weaponinfo[player->readyweapon].ammo, 1);
-
-    P_SetPsprite (player,
-		  ps_flash,
-		  weaponinfo[player->readyweapon].flashstate);
-
-    P_BulletSlope (player->mo);
-    P_GunShot (player->mo, !player->refire);
-}
-
-
-//
-// A_FireShotgun
-//
-void
-A_FireShotgun
-( player_t*	player,
-  pspdef_t*	psp ) 
-{
-    int		i;
-	
-    S_StartSound (player->mo, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
-    P_SetMobjState (player->mo, S_PLAY_06); // villsa [STRIFE] TODO - verify
-
-    DecreaseAmmo(player, weaponinfo[player->readyweapon].ammo, 1);
-
-    P_SetPsprite (player,
-		  ps_flash,
-		  weaponinfo[player->readyweapon].flashstate);
-
-    P_BulletSlope (player->mo);
-	
-    for (i=0 ; i<7 ; i++)
-	P_GunShot (player->mo, false);
-}
-
-
-
-//
-// A_FireShotgun2
-//
-void
-A_FireShotgun2
-( player_t*	player,
-  pspdef_t*	psp ) 
-{
-    int		i;
-    angle_t	angle;
-    int		damage;
-		
-	
-    S_StartSound (player->mo, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
-    P_SetMobjState (player->mo, S_PLAY_06); // villsa [STRIFE] TODO - verify
-
-    DecreaseAmmo(player, weaponinfo[player->readyweapon].ammo, 2);
-
-    P_SetPsprite (player,
-		  ps_flash,
-		  weaponinfo[player->readyweapon].flashstate);
-
-    P_BulletSlope (player->mo);
-	
-    for (i=0 ; i<20 ; i++)
-    {
-	damage = 5*(P_Random ()%3+1);
-	angle = player->mo->angle;
-	angle += (P_Random()-P_Random())<<19;
-	P_LineAttack (player->mo,
-		      angle,
-		      MISSILERANGE,
-		      bulletslope + ((P_Random()-P_Random())<<5), damage);
-    }
-}
-
-
-//
-// A_FireCGun
-//
-void
-A_FireCGun
-( player_t*	player,
-  pspdef_t*	psp ) 
-{
-    S_StartSound (player->mo, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
-
-    if (!player->ammo[weaponinfo[player->readyweapon].ammo])
-	return;
-		
-    P_SetMobjState (player->mo, S_PLAY_06); // villsa [STRIFE] TODO - verify
-    DecreaseAmmo(player, weaponinfo[player->readyweapon].ammo, 1);
-
-    /*P_SetPsprite (player,
-		  ps_flash,
-		  weaponinfo[player->readyweapon].flashstate
-		  + psp->state
-		  - &states[S_CHAIN1] );*/
-
-    P_BulletSlope (player->mo);
-	
-    P_GunShot (player->mo, !player->refire);
-}
-
-
-
-//
-// ?
-//
-void A_Light0 (player_t *player, pspdef_t *psp)
-{
-    player->extralight = 0;
-}
-
-void A_Light1 (player_t *player, pspdef_t *psp)
-{
-    player->extralight = 1;
-}
-
-void A_Light2 (player_t *player, pspdef_t *psp)
-{
-    player->extralight = 2;
-}
-
-
-//
-// A_BFGSpray
-// Spawn a BFG explosion on every monster in view
-//
-void A_BFGSpray (mobj_t* mo) 
-{
-    // villsa [STRIFE] unused
-/*    int			i;
-    int			j;
-    int			damage;
-    angle_t		an;
-	
-    // offset angles from its attack angle
-    for (i=0 ; i<40 ; i++)
-    {
-	an = mo->angle - ANG90/2 + ANG90/40*i;
-
-	// mo->target is the originator (player)
-	//  of the missile
-	P_AimLineAttack (mo->target, an, 16*64*FRACUNIT);
-
-	if (!linetarget)
-	    continue;
-
-	P_SpawnMobj (linetarget->x,
-		     linetarget->y,
-		     linetarget->z + (linetarget->height>>2),
-		     MT_EXTRABFG);
-	
-	damage = 0;
-	for (j=0;j<15;j++)
-	    damage += (P_Random()&7) + 1;
-
-	P_DamageMobj (linetarget, mo->target,mo->target, damage);
-    }*/
-}
-
-
-//
-// A_BFGsound
-//
-void
-A_BFGsound
-( player_t*	player,
-  pspdef_t*	psp )
-{
-    S_StartSound (player->mo, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
+    P_SetMobjState(player->mo, S_PLAY_06);
+    P_DamageMobj(player->mo, player->mo, NULL, 20);
+    player->ammo[weaponinfo[player->readyweapon].ammo] -= 30;
+    P_SpawnPlayerMissile(player->mo, MT_TORPEDO);
+    P_Thrust(player, player->mo->angle + ANG180, 512000);
 }
 
 //
@@ -912,6 +631,164 @@ void A_FireGrenade(player_t* player, pspdef_t* pspr)
     mo->flags |= MF_BOUNCE;
 }
 
+//
+// A_FireElectricBolt
+// villsa [STRIFE] - new codepointer
+//
+
+void A_FireElectricBolt(player_t* player, pspdef_t* pspr)
+{
+    angle_t an = player->mo->angle;
+
+    player->mo->angle += (P_Random() - P_Random()) << (18 - (player->accuracy * 4 / 100));
+    player->ammo[weaponinfo[player->readyweapon].ammo]--;
+    P_SpawnPlayerMissile(player->mo, MT_ELECARROW);
+    player->mo->angle = an;
+    S_StartSound(player->mo, sfx_xbow);
+}
+
+//
+// A_FirePoisonBolt
+// villsa [STRIFE] - new codepointer
+//
+
+void A_FirePoisonBolt(player_t* player, pspdef_t* pspr)
+{
+    angle_t an = player->mo->angle;
+
+    player->mo->angle += (P_Random() - P_Random())<<(18 - (player->accuracy * 4 / 100));
+    player->ammo[weaponinfo[player->readyweapon].ammo]--;
+    P_SpawnPlayerMissile(player->mo, MT_POISARROW);
+    player->mo->angle = an;
+    S_StartSound(player->mo, sfx_xbow);
+}
+
+//
+// P_BulletSlope
+// Sets a slope so a near miss is at aproximately
+// the height of the intended target
+//
+fixed_t		bulletslope;
+
+
+void P_BulletSlope (mobj_t*	mo)
+{
+    angle_t	an;
+    
+    // see which target is to be aimed at
+    an = mo->angle;
+    bulletslope = P_AimLineAttack (mo, an, 16*64*FRACUNIT);
+
+    if (!linetarget)
+    {
+	an += 1<<26;
+	bulletslope = P_AimLineAttack (mo, an, 16*64*FRACUNIT);
+	if (!linetarget)
+	{
+	    an -= 2<<26;
+	    bulletslope = P_AimLineAttack (mo, an, 16*64*FRACUNIT);
+	}
+    }
+}
+
+
+//
+// P_GunShot
+//
+void
+P_GunShot
+( mobj_t*	mo,
+  boolean	accurate )
+{
+    angle_t	angle;
+    int		damage;
+	
+    damage = 4*(P_Random ()%3+4);   // villsa [STRIFE] different damage formula
+    angle = mo->angle;
+
+    // villsa [STRIFE] apply player accuracy
+    if (!accurate)
+	angle += (P_Random()-P_Random())<<(20 - (mo->player->accuracy * 4 / 100));
+
+    P_LineAttack (mo, angle, MISSILERANGE, bulletslope, damage);
+}
+
+//
+// A_FireRifle
+// villsa [STRIFE] - new codepointer
+//
+
+void A_FireRifle(player_t* player, pspdef_t* pspr)
+{
+    S_StartSound(player->mo, sfx_rifle);
+
+    if(player->ammo[weaponinfo[player->readyweapon].ammo])
+    {
+        P_SetMobjState(player->mo, S_PLAY_06);
+        player->ammo[weaponinfo[player->readyweapon].ammo]--;
+        P_BulletSlope(player->mo);
+        P_GunShot(player->mo, !player->refire);
+    }
+}
+
+//
+// A_FireMauler1
+// villsa [STRIFE] - new codepointer
+//
+
+void A_FireMauler1(player_t* player, pspdef_t* pspr)
+{
+    int i;
+    angle_t angle;
+    int damage;
+
+    if(player->ammo[weaponinfo[player->readyweapon].ammo] > 20)
+    {
+        player->ammo[weaponinfo[player->readyweapon].ammo] -= 20;
+        P_BulletSlope(player->mo);
+        S_StartSound(player->mo, sfx_pgrdat);
+
+        for(i = 0; i < 20; i++)
+        {
+            damage = 5*(P_Random ()%3+1);
+            angle = player->mo->angle;
+            angle += (P_Random()-P_Random())<<19;
+            P_LineAttack(player->mo, angle, MISSILERANGE,
+                bulletslope + ((P_Random()-P_Random())<<5), damage);
+        }
+    }
+}
+
+//
+// A_SigilSound
+// villsa [STRIFE] - new codepointer
+//
+
+void A_SigilSound(player_t* player, pspdef_t* pspr)
+{
+    S_StartSound(player->mo, sfx_siglup);
+    player->extralight = 2;
+
+}
+
+
+//
+// ?
+//
+void A_Light0 (player_t *player, pspdef_t *psp)
+{
+    player->extralight = 0;
+}
+
+void A_Light1 (player_t *player, pspdef_t *psp)
+{
+    player->extralight = 1;
+}
+
+void A_Light2 (player_t *player, pspdef_t *psp)
+{
+    player->extralight = 2;
+}
 
 
 //

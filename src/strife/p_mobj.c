@@ -1156,11 +1156,9 @@ mobj_t* P_SpawnFacingMissile(mobj_t* source, mobj_t* target, mobjtype_t type)
 //
 // P_SpawnPlayerMissile
 // Tries to aim at a nearby monster
+// villsa [STRIFE] now returns a mobj
 //
-void
-P_SpawnPlayerMissile
-( mobj_t*	source,
-  mobjtype_t	type )
+mobj_t* P_SpawnPlayerMissile(mobj_t* source, mobjtype_t type)
 {
     mobj_t*	th;
     angle_t	an;
@@ -1219,6 +1217,8 @@ P_SpawnPlayerMissile
     th->momz = FixedMul( th->info->speed, slope);
 
     P_CheckMissileSpawn (th);
+
+    return th;
 }
 
 //

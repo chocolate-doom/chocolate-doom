@@ -166,6 +166,75 @@ P_NoiseAlert
     P_RecursiveSound (emmiter->subsector->sector, 0);
 }
 
+//
+// P_WakeUpThing
+// villsa [STRIFE] new function
+//
+
+static void P_WakeUpThing(mobj_t* puncher, mobj_t* rover)
+{
+    if(!(rover->flags & MF_INCOMBAT))
+    {
+        rover->target = puncher;
+        if(rover->info->seesound)
+            S_StartSound(rover, rover->info->seesound);
+        P_SetMobjState(rover, rover->info->seestate);
+    }
+}
+
+//
+// P_DoPunchAlert
+// villsa [STRIFE] - new function
+// Wake up buddies nearby when the player thinks he's gotten too clever
+// with the punch dagger. Walks sector links.
+//
+void P_DoPunchAlert(mobj_t *puncher, mobj_t *punchee)
+{   
+   mobj_t *rover;
+   
+   // don't bother with this crap if we're already on alert
+   if(punchee->subsector->sector->soundtarget)
+      return;
+      
+   // gotta still be alive to call for help
+   if(punchee->health <= 0)
+      return;
+      
+   // has to be something you can wake up and kill too
+   if(!(punchee->flags & MF_COUNTKILL) || punchee->flags & MF_INCOMBAT)
+      return;
+   
+   // wake up punchee
+   punchee->target = puncher;
+   P_SetMobjState(punchee, punchee->info->seestate);
+   
+   // wake up everybody nearby
+   
+   // scan forward on sector list
+   for(rover = punchee->snext; rover; rover = rover->snext)
+   {
+      // we only wake up certain thing types (Acolytes and Templars?)
+      if(rover->health > 0 && rover->type >= MT_GUARD1 && rover->type <= MT_PGUARD &&
+         (P_CheckSight(rover, puncher) || P_CheckSight(rover, punchee)))
+      {
+         P_WakeUpThing(puncher, rover);
+         rover->flags |= MF_INCOMBAT; // huh? why?
+      }
+   }
+
+   // scan backward on sector list
+   for(rover = punchee->sprev; rover; rover = rover->sprev)
+   {
+      // we only wake up certain thing types (Acolytes and Templars?)
+      if(rover->health > 0 && rover->type >= MT_GUARD1 && rover->type <= MT_PGUARD &&
+         (P_CheckSight(rover, puncher) || P_CheckSight(rover, punchee)))
+      {
+         P_WakeUpThing(puncher, rover);
+         rover->flags |= MF_INCOMBAT; // huh? why?
+      }
+   }
+}
+
 
 
 
@@ -2465,40 +2534,6 @@ void A_ClearForceField(mobj_t* actor)
 
 }
 
-void A_FireFlameThrower(mobj_t* actor)
-{
-
-}
-
-void A_FireMauler2(mobj_t* actor)
-{
-
-}
-
-void A_FireElectricBolt(mobj_t* actor)
-{
-
-}
-
-void A_FirePoisonBolt(mobj_t* actor)
-{
-
-}
-
-void A_FireRifle(mobj_t* actor)
-{
-
-}
-
-void A_FireMauler1(mobj_t* actor)
-{
-
-}
-
-void A_SigilSound(mobj_t* actor)
-{
-
-}
 
 void A_FireSigil(mobj_t* actor)
 {

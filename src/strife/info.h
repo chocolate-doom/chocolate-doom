@@ -2037,7 +2037,7 @@ typedef enum
     MT_RIFLESTAND,      //189
     MT_FLAMETHROWER,        //190
     MT_TOKEN_FLAME_THROWER_PARTS,       //191
-    MT_MINIMISSILE,     //192
+    MT_MISSILELAUNCHER,     //192
     MT_BLASTER,     //193
     MT_CROSSBOW,        //194
     MT_GRENADELAUNCHER,     //195

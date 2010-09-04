@@ -130,7 +130,7 @@ mobj_t* P_SpawnSparkPuff(fixed_t x, fixed_t y, fixed_t z);  // villsa [STRIFE]
 void 	P_SpawnBlood (fixed_t x, fixed_t y, fixed_t z, int damage);
 mobj_t* P_SpawnMissile (mobj_t* source, mobj_t* dest, mobjtype_t type);
 mobj_t* P_SpawnFacingMissile(mobj_t* source, mobj_t* target, mobjtype_t type);  // villsa [STRIFE]
-void	P_SpawnPlayerMissile (mobj_t* source, mobjtype_t type);
+mobj_t* P_SpawnPlayerMissile(mobj_t* source, mobjtype_t type);
 mobj_t* P_SpawnMortar(mobj_t *source, mobjtype_t type); // villsa [STRIFE]
 void    P_ExplodeMissile (mobj_t* mo); // villsa [STRIFE]
 
@@ -139,6 +139,7 @@ void    P_ExplodeMissile (mobj_t* mo); // villsa [STRIFE]
 // P_ENEMY
 //
 void P_NoiseAlert (mobj_t* target, mobj_t* emmiter);
+void P_DoPunchAlert(mobj_t *puncher, mobj_t *punchee);  // villsa [STRIFE]
 
 
 //

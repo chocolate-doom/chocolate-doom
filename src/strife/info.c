@@ -6938,7 +6938,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         "flame thrower parts",      //namepointer
     },
 
-    {       /*MT_MINIMISSILE*/
+    {       /*MT_MISSILELAUNCHER*/
         2003,       //doomednum
         S_MMSL_00,      //spawnstate
         1000,       //spawnhealth
