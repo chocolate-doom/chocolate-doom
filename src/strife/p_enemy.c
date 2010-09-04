@@ -2533,29 +2533,3 @@ void A_ClearForceField(mobj_t* actor)
 {
 
 }
-
-
-void A_FireSigil(mobj_t* actor)
-{
-
-}
-
-void A_GunFlashThinker(mobj_t* actor)
-{
-
-}
-
-void A_SigilShock(mobj_t* actor)
-{
-
-}
-
-void A_TorpedoExplode(mobj_t* actor)
-{
-
-}
-
-void A_MaulerSound(mobj_t* actor)
-{
-
-}

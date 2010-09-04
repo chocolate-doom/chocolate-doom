@@ -143,15 +143,23 @@ void P_BringUpWeapon (player_t* player)
 	player->pendingweapon = player->readyweapon;
 		
     // villsa [STRIFE] unused
-    /*if (player->pendingweapon == wp_chainsaw)
-	S_StartSound (player->mo, sfx_swish);   // villsa [STRIFE] TODO - fix sounds*/
+    if (player->pendingweapon == wp_flame)
+	S_StartSound (player->mo, sfx_flidl);   // villsa [STRIFE] flame sounds
 		
     newstate = weaponinfo[player->pendingweapon].upstate;
 
-    player->pendingweapon = wp_nochange;
     player->psprites[ps_weapon].sy = WEAPONBOTTOM;
-
     P_SetPsprite (player, ps_weapon, newstate);
+
+    // villsa [STRIFE] set various flash states
+    if(player->pendingweapon == wp_elecbow)
+        P_SetPsprite(player, ps_flash, S_XBOW_10);
+    else if(player->pendingweapon == wp_sigil && player->sigiltype)
+        P_SetPsprite(player, ps_flash, S_SIGH_00 + player->sigiltype);
+    else
+        P_SetPsprite(player, ps_flash, S_NULL);
+
+    player->pendingweapon = wp_nochange;
 }
 
 //
@@ -164,18 +172,14 @@ boolean P_CheckAmmo (player_t* player)
     ammotype_t		ammo;
     int			count;
 
-    // villsa [STRIFE] TODO - temp until this function is cleaned up
-    return true;
-
     ammo = weaponinfo[player->readyweapon].ammo;
 
     // Minimal amount for one shot varies.
-    // villsa [STRIFE] unused
-    /*if (player->readyweapon == wp_bfg)
-	count = deh_bfg_cells_per_shot;
-    else if (player->readyweapon == wp_supershotgun)
-	count = 2;	// Double barrel.
-    else*/
+    if (player->readyweapon == wp_torpedo)
+	count = 30;
+    else if (player->readyweapon == wp_mauler)
+	count = 20;
+    else
 	count = 1;	// Regular.
 
     // Some do not need ammunition anyway.
@@ -185,62 +189,41 @@ boolean P_CheckAmmo (player_t* player)
 		
     // Out of ammo, pick a weapon to change to.
     // Preferences are set here.
-    // villsa [STRIFE] TODO - BEWARE, NO WEAPON PREFERENCE, MUST FIX!
-    /*do
-    {
-	if (player->weaponowned[wp_plasma]
-	    && player->ammo[am_cell]
-	    && (gamemode != shareware) )
-	{
-	    player->pendingweapon = wp_plasma;
-	}
-	else if (player->weaponowned[wp_supershotgun] 
-		 && player->ammo[am_shell]>2
-		 && (gamemode == commercial) )
-	{
-	    player->pendingweapon = wp_supershotgun;
-	}
-	else if (player->weaponowned[wp_chaingun]
-		 && player->ammo[am_clip])
-	{
-	    player->pendingweapon = wp_chaingun;
-	}
-	else if (player->weaponowned[wp_shotgun]
-		 && player->ammo[am_shell])
-	{
-	    player->pendingweapon = wp_shotgun;
-	}
-	else if (player->ammo[am_clip])
-	{
-	    player->pendingweapon = wp_pistol;
-	}
-	else if (player->weaponowned[wp_chainsaw])
-	{
-	    player->pendingweapon = wp_chainsaw;
-	}
-	else if (player->weaponowned[wp_missile]
-		 && player->ammo[am_misl])
-	{
-	    player->pendingweapon = wp_missile;
-	}
-	else if (player->weaponowned[wp_bfg]
-		 && player->ammo[am_cell]>40
-		 && (gamemode != shareware) )
-	{
-	    player->pendingweapon = wp_bfg;
-	}
-	else
-	{
-	    // If everything fails.
-	    player->pendingweapon = wp_fist;
-	}
-	
-    } while (player->pendingweapon == wp_nochange);*/
+
+    // villsa [STRIFE] new weapon preferences
+     if (player->weaponowned[wp_mauler] && player->ammo[am_cell] >= 20)
+         player->pendingweapon = wp_mauler;
+
+     else if(player->weaponowned[wp_rifle] && player->ammo[am_bullets])
+         player->pendingweapon = wp_rifle;
+
+     else if (player->weaponowned[wp_elecbow] && player->ammo[am_elecbolts])
+         player->pendingweapon = wp_elecbow;
+
+     else if (player->weaponowned[wp_missile] && player->ammo[am_missiles])
+         player->pendingweapon = wp_missile;
+
+     else if (player->weaponowned[wp_flame] && player->ammo[am_cell])
+         player->pendingweapon = wp_flame;
+
+     else if (player->weaponowned[wp_hegrenade] && player->ammo[am_hegrenades])
+         player->pendingweapon = wp_hegrenade;
+     
+     else if (player->weaponowned[wp_poisonbow] && player->ammo[am_poisonbolts])
+         player->pendingweapon = wp_poisonbow;
+
+     else if (player->weaponowned[wp_wpgrenade] && player->ammo[am_wpgrenades])
+         player->pendingweapon = wp_wpgrenade;
+
+     else if (player->weaponowned[wp_torpedo] && player->ammo[am_cell] >= 30)
+         player->pendingweapon = wp_torpedo;
+
+     else
+         player->pendingweapon = wp_fist;
+
 
     // Now set appropriate weapon overlay.
-    P_SetPsprite (player,
-		  ps_weapon,
-		  weaponinfo[player->readyweapon].downstate);
+    P_SetPsprite(player, ps_weapon, weaponinfo[player->readyweapon].downstate);
 
     return false;	
 }
@@ -256,11 +239,13 @@ void P_FireWeapon (player_t* player)
     if (!P_CheckAmmo (player))
 	return;
 	
-    // villsa [STRIFE] TODO - verify
     P_SetMobjState (player->mo, S_PLAY_05);
     newstate = weaponinfo[player->readyweapon].atkstate;
     P_SetPsprite (player, ps_weapon, newstate);
-    P_NoiseAlert (player->mo, player->mo);
+    
+    // villsa [STRIFE] exclude these weapons from causing noise
+    if(player->readyweapon > wp_elecbow && player->readyweapon != wp_poisonbow)
+        P_NoiseAlert (player->mo, player->mo);
 }
 
 
@@ -285,28 +270,24 @@ void P_DropWeapon (player_t* player)
 // Follows after getting weapon up,
 // or after previous attack/fire sequence.
 //
-void
-A_WeaponReady
-( player_t*	player,
-  pspdef_t*	psp )
+void A_WeaponReady( player_t* player, pspdef_t* psp)
 {	
     statenum_t	newstate;
     int		angle;
     
     // get out of attack state
-    // villsa [STRIFE] TODO - verify
     if (player->mo->state == &states[S_PLAY_05]
-	|| player->mo->state == &states[S_PLAY_06] )
+	|| player->mo->state == &states[S_PLAY_06])
     {
 	P_SetMobjState (player->mo, S_PLAY_00);
     }
     
-        // villsa [STRIFE] unused
-    /*if (player->readyweapon == wp_chainsaw
-	&& psp->state == &states[S_SAW])
+        // villsa [STRIFE] check for wp_flame instead of chainsaw
+    if (player->readyweapon == wp_flame
+	&& psp->state == &states[S_FLMT_01])
     {
-	S_StartSound (player->mo, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
-    }*/
+        S_StartSound (player->mo, sfx_flidl);
+    }
     
     // check for change
     //  if player is dead, put the weapon away
@@ -325,8 +306,8 @@ A_WeaponReady
     {
         
 	if ( !player->attackdown
-	     /*|| (player->readyweapon != wp_missile    // villsa [STRIFE] unused?
-		 && player->readyweapon != wp_bfg)*/ )
+	     || (player->readyweapon != wp_missile
+		 && player->readyweapon != wp_torpedo)) // villsa [STRIFE] replace bfg with torpedo
 	{
 	    player->attackdown = true;
 	    P_FireWeapon (player);		
@@ -371,17 +352,16 @@ void A_ReFire
     }
 }
 
-
-void
-A_CheckReload
-( player_t*	player,
-  pspdef_t*	psp )
+//
+// A_CheckReload
+//
+void A_CheckReload(player_t* player, pspdef_t* psp)
 {
-    P_CheckAmmo (player);
-#if 0
-    if (player->ammo[am_shell]<2)
-	P_SetPsprite (player, ps_weapon, S_DSNR1);
-#endif
+    P_CheckAmmo(player);
+
+    // villsa [STRIFE] set animating sprite for crossbow
+    if(player->readyweapon == wp_elecbow)
+        P_SetPsprite(player, player->readyweapon, S_XBOW_10);
 }
 
 
@@ -460,7 +440,6 @@ A_GunFlash
 ( player_t*	player,
   pspdef_t*	psp ) 
 {
-    // villsa [STRIFE] TODO - verify
     P_SetMobjState (player->mo, S_PLAY_06);
     P_SetPsprite (player,ps_flash,weaponinfo[player->readyweapon].flashstate);
 }
@@ -475,18 +454,18 @@ A_GunFlash
 //
 // A_Punch
 //
-void
-A_Punch
-( player_t*	player,
-  pspdef_t*	psp ) 
-{
-    angle_t	angle;
-    int		damage;
-    int		slope;
-	
-    damage = (P_Random ()%10+1)<<1;
 
-    if (player->powers[pw_strength])	
+void A_Punch(player_t* player, pspdef_t* psp) 
+{
+    angle_t     angle;
+    int         damage;
+    int         slope;
+    int         sound;
+	
+    // villsa [STRIFE] new damage formula
+    damage = ((player->stamina / 10) + 2) * (psp->tics + 3) & P_Random();
+
+    if(player->powers[pw_strength])	
 	damage *= 10;
 
     angle = player->mo->angle;
@@ -495,14 +474,27 @@ A_Punch
     P_LineAttack (player->mo, angle, MELEERANGE, slope, damage);
 
     // turn to face target
-    if (linetarget)
+    if(linetarget)
     {
-	S_StartSound (player->mo, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
+        // villsa [STRIFE] check for non-flesh types
+        if(linetarget->flags & MF_NOBLOOD)
+            sound = sfx_mtalht;
+        else
+            sound = sfx_meatht;
+
+	S_StartSound (player->mo, sound);
 	player->mo->angle = R_PointToAngle2 (player->mo->x,
 					     player->mo->y,
 					     linetarget->x,
 					     linetarget->y);
+
+        // villsa [STRIFE] apply flag
+        player->mo->flags |= MF_JUSTATTACKED;
+        // villsa [STRIFE] do punch alert routine
+        P_DoPunchAlert(player->mo, linetarget);
     }
+    else
+        S_StartSound (player->mo, sfx_swish);
 }
 
 
@@ -527,7 +519,7 @@ static void DecreaseAmmo(player_t *player, int ammonum, int amount)
 
 //
 // A_FireFlameThrower
-// villsa [STRIFE] completly new compared to the original
+// villsa [STRIFE] new codepointer
 //
 
 void A_FireFlameThrower(player_t* player, pspdef_t* psp) 
@@ -771,6 +763,30 @@ void A_SigilSound(player_t* player, pspdef_t* pspr)
 
 }
 
+//
+// A_FireSigil
+// villsa [STRIFE] - new codepointer
+//
+
+void A_FireSigil(player_t* player, pspdef_t* pspr)
+{
+
+}
+
+//
+// A_GunFlashThinker
+// villsa [STRIFE] - new codepointer
+//
+
+void A_GunFlashThinker(player_t* player, pspdef_t* pspr)
+{
+    if(player->readyweapon == wp_sigil && player->sigiltype)
+        P_SetPsprite(player, ps_flash, S_SIGH_00 + player->sigiltype);
+    else
+        P_SetPsprite(player, ps_flash, S_NULL);
+
+}
+
 
 //
 // ?
@@ -790,22 +806,63 @@ void A_Light2 (player_t *player, pspdef_t *psp)
     player->extralight = 2;
 }
 
+//
+// A_SigilShock
+// villsa [STRIFE] - new codepointer
+//
+
+void A_SigilShock (player_t *player, pspdef_t *psp)
+{
+    player->extralight = -3;
+}
+
+//
+// A_TorpedoExplode
+// villsa [STRIFE] - new codepointer
+//
+
+void A_TorpedoExplode(mobj_t* actor)
+{
+    int i = 0;
+
+    actor->angle -= ANG180;
+
+    for(i = 0; i < 80; i++)
+    {
+        actor->angle += 0x3333333;
+        P_SpawnMortar(actor, MT_TORPEDOSPREAD)->target = actor->target;
+    }
+}
+
+//
+// A_MaulerSound
+// villsa [STRIFE] - new codepointer
+//
+
+void A_MaulerSound(player_t *player, pspdef_t *psp)
+{
+    S_StartSound(player->mo, sfx_proton);
+    psp->sx += (P_Random() - P_Random()) << 10;
+    psp->sy += (P_Random() - P_Random()) << 10;
+
+}
+
 
 //
 // P_SetupPsprites
 // Called at start of level for each player.
 //
-void P_SetupPsprites (player_t* player) 
+void P_SetupPsprites(player_t* player) 
 {
     int	i;
 	
     // remove all psprites
-    for (i=0 ; i<NUMPSPRITES ; i++)
+    for(i = 0; i < NUMPSPRITES; i++)
 	player->psprites[i].state = NULL;
 		
     // spawn the gun
     player->pendingweapon = player->readyweapon;
-    P_BringUpWeapon (player);
+    P_BringUpWeapon(player);
 }
 
 
@@ -822,18 +879,18 @@ void P_MovePsprites (player_t* player)
     state_t*	state;
 	
     psp = &player->psprites[0];
-    for (i=0 ; i<NUMPSPRITES ; i++, psp++)
+    for(i = 0; i < NUMPSPRITES; i++, psp++)
     {
 	// a null state means not active
-	if ( (state = psp->state) )	
+	if((state = psp->state))	
 	{
 	    // drop tic count and possibly change state
 
 	    // a -1 tic count never changes
-	    if (psp->tics != -1)	
+	    if(psp->tics != -1)	
 	    {
 		psp->tics--;
-		if (!psp->tics)
+		if(!psp->tics)
 		    P_SetPsprite (player, i, psp->state->nextstate);
 	    }				
 	}
@@ -841,6 +898,10 @@ void P_MovePsprites (player_t* player)
     
     player->psprites[ps_flash].sx = player->psprites[ps_weapon].sx;
     player->psprites[ps_flash].sy = player->psprites[ps_weapon].sy;
+
+    // villsa [STRIFE] extra stuff for targeter
+    player->psprites[ps_targleft].sx    = (100 - player->accuracy) - (160*FRACUNIT);
+    player->psprites[ps_targright].sx   = (100 - player->accuracy) + (160*FRACUNIT);
 }
 
 
