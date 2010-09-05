@@ -654,13 +654,13 @@ void P_BulletSlope (mobj_t*	mo)
 
     if (!linetarget)
     {
-	an += 1<<26;
-	bulletslope = P_AimLineAttack (mo, an, 16*64*FRACUNIT);
-	if (!linetarget)
-	{
-	    an -= 2<<26;
-	    bulletslope = P_AimLineAttack (mo, an, 16*64*FRACUNIT);
-	}
+        an += 1<<26;
+        bulletslope = P_AimLineAttack (mo, an, 16*64*FRACUNIT);
+        if (!linetarget)
+        {
+            an -= 2<<26;
+            bulletslope = P_AimLineAttack (mo, an, 16*64*FRACUNIT);
+        }
     }
 }
 
@@ -668,20 +668,26 @@ void P_BulletSlope (mobj_t*	mo)
 //
 // P_GunShot
 //
+// [STRIFE] Modifications to support accuracy.
+//
 void
 P_GunShot
 ( mobj_t*	mo,
   boolean	accurate )
 {
-    angle_t	angle;
-    int		damage;
-	
+    angle_t     angle;
+    int         damage;
+    int         t;
+
     damage = 4*(P_Random ()%3+4);   // villsa [STRIFE] different damage formula
     angle = mo->angle;
 
     // villsa [STRIFE] apply player accuracy
     if (!accurate)
-	angle += (P_Random()-P_Random())<<(20 - (mo->player->accuracy * 4 / 100));
+    {
+        t = P_Random();
+        angle += (t - P_Random())<<(20 - (mo->player->accuracy * 4 / 100));
+    }
 
     P_LineAttack (mo, angle, MISSILERANGE, bulletslope, damage);
 }
