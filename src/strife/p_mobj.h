@@ -235,7 +235,8 @@ typedef enum
     MF_TRANSLATION  	= 0xc000000,
 
     // Hmm ???.
-    MF_TRANSSHIFT	= 26
+    // villsa [STRIFE] change from 26 to 28
+    MF_TRANSSHIFT	= 28
 
 } mobjflag_t;
 

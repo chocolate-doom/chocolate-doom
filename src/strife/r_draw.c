@@ -546,7 +546,8 @@ byte *xlatab;
 //
 void R_InitTranslationTables (void)
 {
-    int         i;
+    int i;
+    int j;
 
     // [STRIFE] Load xlatab. Here's how Rogue did it:
     //   v7 = W_CacheLumpName("XLATAB", PU_CACHE); // note potential cache bug...
@@ -563,24 +564,92 @@ void R_InitTranslationTables (void)
     // to do is this:
     xlatab = W_CacheLumpName("XLATAB", PU_STATIC);
 
-    translationtables = Z_Malloc (256*3, PU_STATIC, 0);
+    // villsa [STRIFE] allocate a larger size for translation tables
+    translationtables = Z_Malloc (256*8, PU_STATIC, 0);
 
-    // STRIFE-TODO: Strife has many more (and more varied) translations
-    // translate just the 16 green colors
-    for (i=0 ; i<256 ; i++)
+    // villsa [STRIFE] setup all translation tables
+    for(i = 0, j = -6; i < 256; i++, j++)
     {
-        if (i >= 0x70 && i<= 0x7f)
+        if(i >= 0x80 && i<= 0x8f)
         {
-            // map green ramp to gray, brown, red
-            translationtables[i] = 0x60 + (i&0xf);
-            translationtables [i+256] = 0x40 + (i&0xf);
-            translationtables [i+512] = 0x20 + (i&0xf);
+            translationtables [i      ] = (i & 0xf) + 64;
+            translationtables [i+  256] = (i & 0xf) - 80;
+            translationtables [i+2*256] = (i & 0xf) + 16;
+            translationtables [i+3*256] = (i & 0xf) + 48;
+            translationtables [i+4*256] = (i & 0xf) + 80;
+            translationtables [i+5*256] = (i & 0xf) + 96;
+            translationtables [i+6*256] = (i & 0xf) - 112;
         }
-        else
+
+        else if(i >= 0x50 && i<= 0x5f)
         {
-            // Keep all other colors as is.
-            translationtables[i] = translationtables[i+256] 
-            = translationtables[i+512] = i;
+            translationtables [i      ] = i;
+            translationtables [i+  256] = i;
+            translationtables [i+2*256] = i;
+            translationtables [i+3*256] = i;
+            translationtables [i+4*256] = (i & 0xf) + -128;
+            translationtables [i+5*256] = (i & 0xf) + 16;
+            translationtables [i+6*256] = (i & 0xf) + 64;
+        }
+        else if(i >= 0xd0 && i<= 0xdf)
+        {
+            translationtables [i      ] = i;
+            translationtables [i+  256] = i;
+            translationtables [i+2*256] = i;
+            translationtables [i+3*256] = i;
+            translationtables [i+4*256] = (i & 0xf) - 80;
+            translationtables [i+5*256] = (i & 0xf) + 48;
+            translationtables [i+6*256] = (i & 0xf) + 16;
+        }
+        else if(i >= 0xc0 && i<= 0xcf)
+        {
+            translationtables [i      ] = i;
+            translationtables [i+  256] = i;
+            translationtables [i+2*256] = i;
+            translationtables [i+3*256] = i;
+            translationtables [i+4*256] = (i & 0xf) - 96;
+            translationtables [i+5*256] = (i & 0xf) + 32;
+            translationtables [i+6*256] = (i & 0xf);
+        }
+        else if(i >= 0xf7 && i<= 0xfb)
+        {
+            translationtables [i      ] = j;
+            translationtables [i+  256] = i;
+            translationtables [i+2*256] = i;
+            translationtables [i+3*256] = i;
+            translationtables [i+4*256] = i;
+            translationtables [i+5*256] = i;
+            translationtables [i+6*256] = i;
+        }
+        else if(i >= 0xf1 && i<= 0xf6)
+        {
+            translationtables [i      ] = (i & 0xf) - 33;
+            translationtables [i+  256] = i;
+            translationtables [i+2*256] = i;
+            translationtables [i+3*256] = i;
+            translationtables [i+4*256] = i;
+            translationtables [i+5*256] = i;
+            translationtables [i+6*256] = i;
+        }
+        else if(i >= 0x20 && i<= 0x40)
+        {
+            translationtables [i      ] = i;
+            translationtables [i+  256] = i;
+            translationtables [i+2*256] = (i & 0xf) - 48;
+            translationtables [i+3*256] = (i & 0xf) - 48;
+            translationtables [i+4*256] = i;
+            translationtables [i+5*256] = i;
+            translationtables [i+6*256] = i;
+        }
+        else  // Keep all other colors as is.
+        {
+            translationtables[i]=
+            translationtables[i+256]=
+            translationtables[i+2*256]=
+            translationtables[i+3*256]=
+            translationtables[i+4*256]=
+            translationtables[i+5*256]=
+            translationtables[i+6*256]=i;
         }
     }
 }

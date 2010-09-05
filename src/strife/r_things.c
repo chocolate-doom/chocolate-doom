@@ -414,11 +414,12 @@ R_DrawVisSprite
 	// NULL colormap = shadow draw
 	colfunc = fuzzcolfunc;
     }
-    else if (vis->mobjflags & MF_TRANSLATION)
+    // villsa [STRIFE] new translation tables
+    else if (vis->mobjflags & (MF_COLORSWAP1|MF_COLORSWAP2|MF_COLORSWAP3))
     {
 	colfunc = transcolfunc;
 	dc_translation = translationtables - 256 +
-	    ( (vis->mobjflags & MF_TRANSLATION) >> (MF_TRANSSHIFT-8) );
+	    ((vis->mobjflags & (MF_COLORSWAP1|MF_COLORSWAP2|MF_COLORSWAP3))>>20);
     }
 	
     dc_iscale = abs(vis->xiscale)>>detailshift;
