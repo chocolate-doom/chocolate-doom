@@ -213,8 +213,8 @@ typedef enum
     // villsa [STRIFE] friendly towards player with matching flag
     MF_ALLY             = 0x4000000,
 
-    // villsa [STRIFE] 75% transparency?
-    MF_MOREVISIBLE      = 0x8000000,
+    // villsa [STRIFE] 75% transparency? -- NEEDS VERIFICATION
+    MF_MVIS             = 0x8000000,
 
     // villsa [STRIFE] color translation
     MF_COLORSWAP1       = 0x10000000,
@@ -242,84 +242,92 @@ typedef enum
 
 
 // Map Object definition.
+//
+// [STRIFE]: Amazingly, only one modification was made to mobj_t over DOOM 
+// 1.666, and that was the addition of the single-byte allegiance field for
+// tracking with which player friendly monsters are allied.
+//
 typedef struct mobj_s
 {
     // List: thinker links.
-    thinker_t		thinker;
+    thinker_t           thinker;
 
     // Info for drawing: position.
-    fixed_t		x;
-    fixed_t		y;
-    fixed_t		z;
+    fixed_t             x;
+    fixed_t             y;
+    fixed_t             z;
 
     // More list: links in sector (if needed)
-    struct mobj_s*	snext;
-    struct mobj_s*	sprev;
+    struct mobj_s*      snext;
+    struct mobj_s*      sprev;
 
     //More drawing info: to determine current sprite.
-    angle_t		angle;	// orientation
-    spritenum_t		sprite;	// used to find patch_t and flip value
-    int			frame;	// might be ORed with FF_FULLBRIGHT
+    angle_t             angle;  // orientation
+    spritenum_t         sprite; // used to find patch_t and flip value
+    int                 frame;  // might be ORed with FF_FULLBRIGHT
 
     // Interaction info, by BLOCKMAP.
     // Links in blocks (if needed).
-    struct mobj_s*	bnext;
-    struct mobj_s*	bprev;
+    struct mobj_s*      bnext;
+    struct mobj_s*      bprev;
     
-    struct subsector_s*	subsector;
+    struct subsector_s* subsector;
 
     // The closest interval over all contacted Sectors.
-    fixed_t		floorz;
-    fixed_t		ceilingz;
+    fixed_t             floorz;
+    fixed_t             ceilingz;
 
     // For movement checking.
-    fixed_t		radius;
-    fixed_t		height;	
+    fixed_t             radius;
+    fixed_t             height;
 
     // Momentums, used to update position.
-    fixed_t		momx;
-    fixed_t		momy;
-    fixed_t		momz;
+    fixed_t             momx;
+    fixed_t             momy;
+    fixed_t             momz;
 
     // If == validcount, already checked.
-    int			validcount;
+    int                 validcount;
 
-    mobjtype_t		type;
-    mobjinfo_t*		info;	// &mobjinfo[mobj->type]
+    mobjtype_t          type;
+    mobjinfo_t*         info;   // &mobjinfo[mobj->type]
     
-    int			tics;	// state tic counter
-    state_t*		state;
-    int			flags;
-    int			health;
+    int                 tics;   // state tic counter
+    state_t*            state;
+    int                 flags;
+    int                 health;
 
     // Movement direction, movement generation (zig-zagging).
-    int			movedir;	// 0-7
-    int			movecount;	// when 0, select a new dir
+    int                 movedir;        // 0-7
+    int                 movecount;      // when 0, select a new dir
 
     // Thing being chased/attacked (or NULL),
     // also the originator for missiles.
-    struct mobj_s*	target;
+    struct mobj_s*      target;
 
     // Reaction time: if non 0, don't attack yet.
     // Used by player to freeze a bit after teleporting.
-    int			reactiontime;   
+    int                 reactiontime;   
 
     // If >0, the target will be chased
     // no matter what (even if shot)
-    int			threshold;
+    int                 threshold;
 
     // Additional info record for player avatars only.
     // Only valid if type == MT_PLAYER
-    struct player_s*	player;
+    struct player_s*    player;
 
     // Player number last looked for.
-    int			lastlook;	
+    int                 lastlook;
 
     // For nightmare respawn.
-    mapthing_t		spawnpoint;	
+    mapthing_t          spawnpoint;
 
     // Thing being chased/attacked for tracers.
-    struct mobj_s*	tracer;	
+    struct mobj_s*      tracer;
+
+    // [STRIFE] haleyjd 09/05/10: allegiance, for friends and teleport beacons
+    byte                allegiance;
     
 } mobj_t;
 

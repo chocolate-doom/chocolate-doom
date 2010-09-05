@@ -125,7 +125,9 @@ char			saveOldString[SAVESTRINGSIZE];
 
 boolean                 inhelpscreens;
 boolean                 menuactive;
-boolean                 menupause; // haleyjd 08/29/10: [STRIFE] New global
+boolean                 menupause;     // haleyjd 08/29/10: [STRIFE] New global
+int                     menupausetime; // haleyjd 09/04/10: [STRIFE] New global
+boolean                 menuindialog;  // haleyjd 09/04/10: ditto
 
 // haleyjd 08/27/10: [STRIFE] SKULLXOFF == -28, LINEHEIGHT == 19
 #define CURSORXOFF		-28
@@ -136,38 +138,8 @@ char			savegamestrings[10][SAVESTRINGSIZE];
 
 char	endstring[160];
 
-
-//
-// MENU TYPEDEFS
-//
-typedef struct
-{
-    // 0 = no cursor here, 1 = ok, 2 = arrows ok
-    short	status;
-    
-    char	name[10];
-    
-    // choice = menu item #.
-    // if status = 2,
-    //   choice=0:leftarrow,1:rightarrow
-    void	(*routine)(int choice);
-    
-    // hotkey in menu
-    char	alphaKey;			
-} menuitem_t;
-
-
-
-typedef struct menu_s
-{
-    short		numitems;	// # of menu items
-    struct menu_s*	prevMenu;	// previous menu
-    menuitem_t*		menuitems;	// menu items
-    void		(*routine)();	// draw routine
-    short		x;
-    short		y;		// x,y of menu
-    short		lastOn;		// last item user was on in menu
-} menu_t;
+// haleyjd 09/04/10: [STRIFE] Moved menuitem / menu structures into header
+// because they are needed externally by the dialog engine.
 
 // haleyjd 08/27/10: [STRIFE] skull* stuff changed to cursor* stuff
 short		itemOn;			// menu item skull is on
@@ -230,7 +202,6 @@ void M_SetupNextMenu(menu_t *menudef);
 void M_DrawThermo(int x,int y,int thermWidth,int thermDot);
 void M_DrawEmptyCell(menu_t *menu,int item);
 void M_DrawSelCell(menu_t *menu,int item);
-void M_WriteText(int x, int y, char *string);
 int  M_StringWidth(char *string);
 int  M_StringHeight(char *string);
 void M_StartControlPanel(void);
@@ -1391,9 +1362,13 @@ int M_StringHeight(char* string)
 
 
 //
-//      Write a string using the hu_font
+// M_WriteText
 //
-void
+// Write a string using the hu_font
+// haleyjd 09/04/10: [STRIFE]
+// * Rogue made a lot of changes to this for the dialog system.
+//
+int
 M_WriteText
 ( int		x,
   int		y,
@@ -1404,39 +1379,142 @@ M_WriteText
     int		c;
     int		cx;
     int		cy;
-		
 
     ch = string;
     cx = x;
     cy = y;
-	
+
     while(1)
     {
-	c = *ch++;
-	if (!c)
-	    break;
-	if (c == '\n')
-	{
-	    cx = x;
-	    cy += 12;
-	    continue;
-	}
-		
-	c = toupper(c) - HU_FONTSTART;
-	if (c < 0 || c>= HU_FONTSIZE)
-	{
-	    cx += 4;
-	    continue;
-	}
-		
-	w = SHORT (hu_font[c]->width);
-	if (cx+w > SCREENWIDTH)
-	    break;
-	V_DrawPatchDirect(cx, cy, hu_font[c]);
-	cx+=w;
+        c = *ch++;
+        if (!c)
+            break;
+
+        // haleyjd 09/04/10: [STRIFE] Don't draw spaces at the start of lines.
+        if(c == ' ' && cx == x)
+            continue;
+
+        if (c == '\n')
+        {
+            cx = x;
+            cy += 11; // haleyjd 09/04/10: [STRIFE]: Changed 12 -> 11
+            continue;
+        }
+
+        c = toupper(c) - HU_FONTSTART;
+        if (c < 0 || c>= HU_FONTSIZE)
+        {
+            cx += 4;
+            continue;
+        }
+
+        w = SHORT (hu_font[c]->width);
+
+        // haleyjd 09/04/10: [STRIFE] Different linebreak handling
+        if (cx + w > SCREENWIDTH - 20)
+        {
+            cx = x;
+            cy += 11;
+            --ch;
+        }
+        else
+        {
+            V_DrawPatchDirect(cx, cy, hu_font[c]);
+            cx += w;
+        }
     }
+
+    // [STRIFE] Return final y coordinate.
+    return cy + 12;
 }
 
+//
+// M_DialogDimMsg
+//
+// [STRIFE] New function
+// haleyjd 09/04/10: Painstakingly transformed from the assembly code, as the
+// decompiler could not touch it. Redimensions a string to fit on screen, leaving
+// at least a 20 pixel margin on the right side. The string passed in must be
+// writable.
+//
+void M_DialogDimMsg(int x, int y, char *str, boolean useyfont)
+{
+    int rightbound = (SCREENWIDTH - 20) - x;
+    patch_t **fontarray;  // ebp
+    int linewidth = 0;    // esi
+    int i = 0;            // edx
+    char *message = str;  // edi
+    char  bl;             // bl
+
+    /*
+    STRIFE-TODO:
+    if(useyfont)
+       fontarray = yfont;
+    else
+       fontarray = hu_font;
+    */
+    fontarray = hu_font;
+
+    bl = toupper(*message);
+
+    if(!bl)
+        return;
+
+    // outer loop - run to end of string
+    do
+    {
+        if(bl != '\n')
+        {
+            int charwidth; // eax
+            int tempwidth; // ecx
+
+            if(bl < HU_FONTSTART || bl > HU_FONTEND)
+                charwidth = 4;
+            else
+                charwidth = SHORT(fontarray[bl - HU_FONTSTART]->width);
+
+            tempwidth = linewidth + charwidth;
+
+            // Test if the line still fits within the boundary...
+            if(tempwidth >= rightbound)
+            {
+                // Doesn't fit...
+                char *tempptr = &message[i]; // ebx
+                char  al;                    // al
+
+                // inner loop - run backward til a space (or the start of the
+                // string) is found, subtracting width off the current line.
+                // BUG: shouldn't we stop at a previous '\n' too?
+                while(*tempptr != ' ' && i > 0)
+                {
+                    tempptr--;
+                    // BUG: they didn't add the first char to linewidth yet...
+                    linewidth -= charwidth; 
+                    i--;
+                    al = toupper(*tempptr);
+                    if(al < HU_FONTSTART || al > HU_FONTEND)
+                        charwidth = 4;
+                    else
+                        charwidth = SHORT(fontarray[al - HU_FONTSTART]->width);
+                }
+                // Replace the space with a linebreak.
+                // BUG: what if i is zero? ... infinite loop time!
+                message[i] = '\n';
+                linewidth = 0;
+            }
+            else
+            {
+                // The line does fit.
+                // Spaces at the start of a line don't count though.
+                if(!(bl == ' ' && linewidth == 0))
+                    linewidth += charwidth;
+            }
+        }
+        else
+            linewidth = 0; // '\n' seen, so reset the line width
+    }
+    while((bl = toupper(message[++i])) != 0); // step to the next character
+}
 
 
 //
@@ -1461,7 +1539,7 @@ boolean M_Responder (event_t* ev)
     // "close" button pressed on window?
     if (ev->type == ev_quit)
     {
-        S_StartSound(NULL,sfx_swtchn);
+        S_StartSound(NULL, sfx_swtchn);
         M_QuitDOOM(0);
         return true;
     }
@@ -1899,7 +1977,7 @@ void M_StartControlPanel (void)
 {
     // intro might call this repeatedly
     if (menuactive)
-	return;
+        return;
     
     menuactive = 1;
     currentMenu = &MainDef;         // JDC

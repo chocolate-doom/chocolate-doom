@@ -547,7 +547,7 @@ byte *xlatab;
 void R_InitTranslationTables (void)
 {
     int i;
-    int j;
+    byte col1, col2;
 
     // [STRIFE] Load xlatab. Here's how Rogue did it:
     //   v7 = W_CacheLumpName("XLATAB", PU_CACHE); // note potential cache bug...
@@ -567,18 +567,21 @@ void R_InitTranslationTables (void)
     // villsa [STRIFE] allocate a larger size for translation tables
     translationtables = Z_Malloc (256*8, PU_STATIC, 0);
 
+    col1 = 0xFA;
+    col2 = 0xE0;
+
     // villsa [STRIFE] setup all translation tables
-    for(i = 0, j = -6; i < 256; i++, j++)
+    for(i = 0; i < 256; i++)
     {
-        if(i >= 0x80 && i<= 0x8f)
+        if(i >= 0x80 && i <= 0x8f)
         {
-            translationtables [i      ] = (i & 0xf) + 64;
-            translationtables [i+  256] = (i & 0xf) - 80;
-            translationtables [i+2*256] = (i & 0xf) + 16;
-            translationtables [i+3*256] = (i & 0xf) + 48;
-            translationtables [i+4*256] = (i & 0xf) + 80;
-            translationtables [i+5*256] = (i & 0xf) + 96;
-            translationtables [i+6*256] = (i & 0xf) - 112;
+            translationtables [i      ] = (i & 0x0f) + 64;
+            translationtables [i+  256] = (i & 0x0f) - 80;
+            translationtables [i+2*256] = (i & 0x0f) + 16;
+            translationtables [i+3*256] = (i & 0x0f) + 48;
+            translationtables [i+4*256] = (i & 0x0f) + 80;
+            translationtables [i+5*256] = (i & 0x0f) + 96;
+            translationtables [i+6*256] = (i & 0x0f) - 112;
         }
 
         else if(i >= 0x50 && i<= 0x5f)
@@ -587,9 +590,9 @@ void R_InitTranslationTables (void)
             translationtables [i+  256] = i;
             translationtables [i+2*256] = i;
             translationtables [i+3*256] = i;
-            translationtables [i+4*256] = (i & 0xf) + -128;
-            translationtables [i+5*256] = (i & 0xf) + 16;
-            translationtables [i+6*256] = (i & 0xf) + 64;
+            translationtables [i+4*256] = (i & 0x0f) + -128;
+            translationtables [i+5*256] = (i & 0x0f) + 16;
+            translationtables [i+6*256] = (i & 0x0f) + 64;
         }
         else if(i >= 0xd0 && i<= 0xdf)
         {
@@ -597,9 +600,9 @@ void R_InitTranslationTables (void)
             translationtables [i+  256] = i;
             translationtables [i+2*256] = i;
             translationtables [i+3*256] = i;
-            translationtables [i+4*256] = (i & 0xf) - 80;
-            translationtables [i+5*256] = (i & 0xf) + 48;
-            translationtables [i+6*256] = (i & 0xf) + 16;
+            translationtables [i+4*256] = (i & 0x0f) - 80;
+            translationtables [i+5*256] = (i & 0x0f) + 48;
+            translationtables [i+6*256] = (i & 0x0f) + 16;
         }
         else if(i >= 0xc0 && i<= 0xcf)
         {
@@ -607,13 +610,13 @@ void R_InitTranslationTables (void)
             translationtables [i+  256] = i;
             translationtables [i+2*256] = i;
             translationtables [i+3*256] = i;
-            translationtables [i+4*256] = (i & 0xf) - 96;
-            translationtables [i+5*256] = (i & 0xf) + 32;
-            translationtables [i+6*256] = (i & 0xf);
+            translationtables [i+4*256] = (i & 0x0f) - 96;
+            translationtables [i+5*256] = (i & 0x0f) + 32;
+            translationtables [i+6*256] = (i & 0x0f);
         }
         else if(i >= 0xf7 && i<= 0xfb)
         {
-            translationtables [i      ] = j;
+            translationtables [i      ] = col1;
             translationtables [i+  256] = i;
             translationtables [i+2*256] = i;
             translationtables [i+3*256] = i;
@@ -623,7 +626,7 @@ void R_InitTranslationTables (void)
         }
         else if(i >= 0xf1 && i<= 0xf6)
         {
-            translationtables [i      ] = (i & 0xf) - 33;
+            translationtables [i      ] = (i & 0x0f) - 33;
             translationtables [i+  256] = i;
             translationtables [i+2*256] = i;
             translationtables [i+3*256] = i;
@@ -633,13 +636,13 @@ void R_InitTranslationTables (void)
         }
         else if(i >= 0x20 && i<= 0x40)
         {
-            translationtables [i      ] = i;
-            translationtables [i+  256] = i;
-            translationtables [i+2*256] = (i & 0xf) - 48;
-            translationtables [i+3*256] = (i & 0xf) - 48;
-            translationtables [i+4*256] = i;
-            translationtables [i+5*256] = i;
-            translationtables [i+6*256] = i;
+            translationtables [i      ] = col2;
+            translationtables [i+  256] = col2;
+            translationtables [i+2*256] = (i & 0x0f) - 48;
+            translationtables [i+3*256] = (i & 0x0f) - 48;
+            translationtables [i+4*256] = col2;
+            translationtables [i+5*256] = col2;
+            translationtables [i+6*256] = col2;
         }
         else  // Keep all other colors as is.
         {
@@ -651,6 +654,9 @@ void R_InitTranslationTables (void)
             translationtables[i+5*256]=
             translationtables[i+6*256]=i;
         }
+
+        ++col1;
+        ++col2;
     }
 }
 

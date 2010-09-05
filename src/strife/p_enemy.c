@@ -47,6 +47,8 @@
 #include "sounds.h"
 
 
+// Forward Declarations:
+void A_RandomWalk(mobj_t *);
 
 
 typedef enum
@@ -99,6 +101,8 @@ void A_Fall (mobj_t *actor);
 // Called by P_NoiseAlert.
 // Recursively traverse adjacent sectors,
 // sound blocking lines cut off traversal.
+//
+// haleyjd 09/05/10: [STRIFE] Verified unmodified
 //
 
 mobj_t*		soundtarget;
@@ -156,6 +160,8 @@ P_RecursiveSound
 // If a monster yells at a player,
 // it will alert other monsters to the player.
 //
+// haleyjd 09/05/10: [STRIFE] Verified unmodified
+//
 void
 P_NoiseAlert
 ( mobj_t*	target,
@@ -168,23 +174,25 @@ P_NoiseAlert
 
 //
 // P_WakeUpThing
-// villsa [STRIFE] new function
 //
-
-static void P_WakeUpThing(mobj_t* puncher, mobj_t* rover)
+// villsa [STRIFE] New function
+// Wakes up an mobj.nearby when somebody has been punched.
+//
+static void P_WakeUpThing(mobj_t* puncher, mobj_t* bystander)
 {
-    if(!(rover->flags & MF_INCOMBAT))
+    if(!(bystander->flags & MF_INCOMBAT))
     {
-        rover->target = puncher;
-        if(rover->info->seesound)
-            S_StartSound(rover, rover->info->seesound);
-        P_SetMobjState(rover, rover->info->seestate);
+        bystander->target = puncher;
+        if(bystander->info->seesound)
+            S_StartSound(bystander, bystander->info->seesound);
+        P_SetMobjState(bystander, bystander->info->seestate);
     }
 }
 
 //
 // P_DoPunchAlert
-// villsa [STRIFE] - new function
+//
+// villsa [STRIFE] New function (by Quasar ;)
 // Wake up buddies nearby when the player thinks he's gotten too clever
 // with the punch dagger. Walks sector links.
 //
@@ -204,9 +212,9 @@ void P_DoPunchAlert(mobj_t *puncher, mobj_t *punchee)
    if(!(punchee->flags & MF_COUNTKILL) || punchee->flags & MF_INCOMBAT)
       return;
    
-   // wake up punchee
+   // make the punchee hurt - haleyjd 09/05/10: Fixed to use painstate.
    punchee->target = puncher;
-   P_SetMobjState(punchee, punchee->info->seestate);
+   P_SetMobjState(punchee, punchee->info->painstate); 
    
    // wake up everybody nearby
    
@@ -218,7 +226,7 @@ void P_DoPunchAlert(mobj_t *puncher, mobj_t *punchee)
          (P_CheckSight(rover, puncher) || P_CheckSight(rover, punchee)))
       {
          P_WakeUpThing(puncher, rover);
-         rover->flags |= MF_INCOMBAT; // huh? why?
+         rover->flags |= MF_INCOMBAT;
       }
    }
 
@@ -230,7 +238,7 @@ void P_DoPunchAlert(mobj_t *puncher, mobj_t *punchee)
          (P_CheckSight(rover, puncher) || P_CheckSight(rover, punchee)))
       {
          P_WakeUpThing(puncher, rover);
-         rover->flags |= MF_INCOMBAT; // huh? why?
+         rover->flags |= MF_INCOMBAT;
       }
    }
 }
@@ -241,14 +249,16 @@ void P_DoPunchAlert(mobj_t *puncher, mobj_t *punchee)
 //
 // P_CheckMeleeRange
 //
+// [STRIFE] Minor change to meleerange.
+//
 boolean P_CheckMeleeRange(mobj_t* actor)
 {
     mobj_t*	pl;
     fixed_t	dist;
-	
+
     if(!actor->target)
-	return false;
-		
+        return false;
+
     pl = actor->target;
     if(actor->z + 3 * actor->height / 2 < pl->z) // villsa [STRIFE]
         return false;
@@ -257,81 +267,101 @@ boolean P_CheckMeleeRange(mobj_t* actor)
 
     // villsa [STRIFE] change to 36
     if(dist >= MELEERANGE - 36*FRACUNIT + pl->info->radius)
-	return false;
-	
+        return false;
+
     if(!P_CheckSight (actor, actor->target))
-	return false;
-							
-    return true;		
+        return false;
+
+    return true;
 }
 
 //
 // P_CheckMissileRange
 //
+// [STRIFE]
+// Changes to eliminate DOOM-specific code and to allow for
+// varying attack ranges for Strife monsters, as well as a general tweak
+// to considered distance for all monsters.
+//
 boolean P_CheckMissileRange(mobj_t* actor)
 {
     fixed_t dist;
-	
+
     if(!P_CheckSight(actor, actor->target))
-	return false;
-	
+        return false;
+
     if(actor->flags & MF_JUSTHIT)
     {
-	// the target just hit the enemy,
-	// so fight back!
-	actor->flags &= ~MF_JUSTHIT;
-	return true;
+        // the target just hit the enemy,
+        // so fight back!
+        actor->flags &= ~MF_JUSTHIT;
+        return true;
     }
-	
+
     if(actor->reactiontime)
-	return false;	// do not attack yet
-		
+        return false;	// do not attack yet
+
     // OPTIMIZE: get this from a global checksight
     dist = P_AproxDistance(actor->x-actor->target->x,
-			     actor->y-actor->target->y) - 64*FRACUNIT;
+                           actor->y-actor->target->y) - 64*FRACUNIT;
     
     if (!actor->info->meleestate)
-	dist -= 128*FRACUNIT;	// no melee attack, so fire more
+        dist -= 128*FRACUNIT;	// no melee attack, so fire more
 
     dist >>= 16;
 
     // villsa [STRIFE] checks for acolytes
-    if(actor->type == MT_SHADOWGUARD ||
-        (actor->type >= MT_GUARD1 && actor->type <= MT_GUARD6))
+    //  haleyjd 09/05/10: Repaired to match disassembly: Was including 
+    //  SHADOWGUARD in the wrong case, was missing MT_SENTINEL entirely.
+    //  Structure of ASM also indicates this was probably a switch 
+    //  statement turned into a cascading if/else by the compiler.
+    switch(actor->type)
     {
+    case MT_GUARD1:
+    case MT_GUARD2:
+    case MT_GUARD3:
+    case MT_GUARD4:
+    case MT_GUARD5:
+    case MT_GUARD6:
+        // oddly, not all Acolytes are included here...
         dist >>= 4;
-    }
-    // villsa [STRIFE] check for Crusader
-    else if(actor->type == MT_CRUSADER)
+        break;
+    case MT_SHADOWGUARD:
+    case MT_CRUSADER:
+    case MT_SENTINEL:
         dist >>= 1;
+        break;
+    default:
+        break;
+    }
     
     // villsa [STRIFE] changed to 150
     if (dist > 150)
-	dist = 150;
-		
+        dist = 150;
+
     if (P_Random () < dist)
-	return false;
-		
+        return false;
+
     return true;
 }
 
 //
 // P_CheckRobotRange
-// villsa [STRIFE] new function
 //
-
+// villsa [STRIFE] New function
+//
 boolean P_CheckRobotRange(mobj_t *actor)
 {
     fixed_t dist;
 
     if(!P_CheckSight(actor, actor->target))
-	return false;
+        return false;
 
     if(actor->reactiontime)
-	return false;	// do not attack yet
+        return false;    // do not attack yet
 
     dist = (P_AproxDistance(actor->x-actor->target->x,
-			     actor->y-actor->target->y) - 64*FRACUNIT) >> FRACBITS;
+                            actor->y-actor->target->y) - 64*FRACUNIT) >> FRACBITS;
 
     return (dist < 200);
 }
@@ -341,6 +371,10 @@ boolean P_CheckRobotRange(mobj_t *actor)
 // P_Move
 // Move in the current direction,
 // returns false if the move is blocked.
+//
+// [STRIFE]
+// villsa/haleyjd 09/05/10: Modified for terrain types and 3D object 
+// clipping. Below constants are verified to be unmodified:
 //
 fixed_t	xspeed[8] = {FRACUNIT,47000,0,-47000,-FRACUNIT,-47000,0,47000};
 fixed_t yspeed[8] = {0,47000,FRACUNIT,47000,0,-47000,-FRACUNIT,-47000};
@@ -354,20 +388,20 @@ boolean P_Move (mobj_t*	actor)
 {
     fixed_t	tryx;
     fixed_t	tryy;
-    
+
     line_t*	ld;
-    
+
     // warning: 'catch', 'throw', and 'try'
     // are all C++ reserved words
     boolean	try_ok;
     boolean	good;
-		
+
     if (actor->movedir == DI_NODIR)
-	return false;
-		
+        return false;
+
     if ((unsigned)actor->movedir >= 8)
-	I_Error ("Weird actor->movedir!");
-		
+        I_Error ("Weird actor->movedir!");
+
     tryx = actor->x + actor->info->speed*xspeed[actor->movedir];
     tryy = actor->y + actor->info->speed*yspeed[actor->movedir];
 
@@ -375,48 +409,49 @@ boolean P_Move (mobj_t*	actor)
 
     if (!try_ok)
     {
-	// open any specials
-	if (actor->flags & MF_FLOAT && floatok)
-	{
-	    // must adjust height
-	    if (actor->z < tmfloorz)
-		actor->z += FLOATSPEED;
-	    else
-		actor->z -= FLOATSPEED;
+        // open any specials
+        if (actor->flags & MF_FLOAT && floatok)
+        {
+            // must adjust height
+            if (actor->z < tmfloorz)
+                actor->z += FLOATSPEED; // [STRIFE] Note FLOATSPEED == 5*FRACUNIT
+            else
+                actor->z -= FLOATSPEED;
 
-	    actor->flags |= MF_INFLOAT;
-	    return true;
-	}
-		
-	if (!numspechit)
-	    return false;
-			
-	actor->movedir = DI_NODIR;
-	good = false;
-	while (numspechit--)
-	{
-	    ld = spechit[numspechit];
-	    // if the special is not a door
-	    // that can be opened,
-	    // return false
-	    if (P_UseSpecialLine (actor, ld,0))
-		good = true;
-	}
-	return good;
+            actor->flags |= MF_INFLOAT;
+            return true;
+        }
+
+        if (!numspechit)
+            return false;
+
+        actor->movedir = DI_NODIR;
+        good = false;
+        while (numspechit--)
+        {
+            ld = spechit[numspechit];
+            // if the special is not a door
+            // that can be opened,
+            // return false
+            if (P_UseSpecialLine (actor, ld,0))
+                good = true;
+        }
+        return good;
     }
     else
     {
-	actor->flags &= ~(MF_INFLOAT|MF_FEETCLIPPED);   // villsa [STRIFE]
+        actor->flags &= ~(MF_INFLOAT|MF_FEETCLIPPED);   // villsa [STRIFE]
 
         // villsa [STRIFE]
         if(P_GetTerrainType(actor) != FLOOR_SOLID)
             actor->flags |= MF_FEETCLIPPED;
     }
-	
 
-    // villsa [STRIFE] TODO - verify
+
+    // villsa [STRIFE] Removed pulling non-floating actors down to the ground.
+    //  (haleyjd 09/05/10: Verified)
     /*if (! (actor->flags & MF_FLOAT) )	
-	actor->z = actor->floorz;*/
+          actor->z = actor->floorz;*/
 
     return true; 
 }
@@ -433,11 +468,13 @@ boolean P_Move (mobj_t*	actor)
 // If a door is in the way,
 // an OpenDoor call is made to start it opening.
 //
+// haleyjd 09/05/10: [STRIFE] Verified unmodified.
+//
 boolean P_TryWalk (mobj_t* actor)
-{	
+{
     if (!P_Move (actor))
     {
-	return false;
+        return false;
     }
 
     actor->movecount = P_Random()&15;
@@ -469,7 +506,7 @@ void P_NewChaseDir(mobj_t* actor)
         P_SetMobjState(actor, actor->info->spawnstate);
         return;
     }
-		
+
     olddir = actor->movedir;
     turnaround=opposite[olddir];
 
@@ -477,107 +514,107 @@ void P_NewChaseDir(mobj_t* actor)
     deltay = actor->target->y - actor->y;
 
     if (deltax>10*FRACUNIT)
-	d[1]= DI_EAST;
+        d[1]= DI_EAST;
     else if (deltax<-10*FRACUNIT)
-	d[1]= DI_WEST;
+        d[1]= DI_WEST;
     else
-	d[1]=DI_NODIR;
+        d[1]=DI_NODIR;
 
     if (deltay<-10*FRACUNIT)
-	d[2]= DI_SOUTH;
+        d[2]= DI_SOUTH;
     else if (deltay>10*FRACUNIT)
-	d[2]= DI_NORTH;
+        d[2]= DI_NORTH;
     else
-	d[2]=DI_NODIR;
+        d[2]=DI_NODIR;
 
     // try direct route
     if (d[1] != DI_NODIR
-	&& d[2] != DI_NODIR)
+        && d[2] != DI_NODIR)
     {
-	actor->movedir = diags[((deltay<0)<<1)+(deltax>0)];
-	if (actor->movedir != (int) turnaround && P_TryWalk(actor))
-	    return;
+        actor->movedir = diags[((deltay<0)<<1)+(deltax>0)];
+        if (actor->movedir != (int) turnaround && P_TryWalk(actor))
+            return;
     }
 
     // try other directions
     if (P_Random() > 200
-	||  abs(deltay)>abs(deltax))
+        ||  abs(deltay)>abs(deltax))
     {
-	tdir=d[1];
-	d[1]=d[2];
-	d[2]=tdir;
+        tdir=d[1];
+        d[1]=d[2];
+        d[2]=tdir;
     }
 
     if (d[1]==turnaround)
-	d[1]=DI_NODIR;
+        d[1]=DI_NODIR;
     if (d[2]==turnaround)
-	d[2]=DI_NODIR;
-	
+        d[2]=DI_NODIR;
+
     if (d[1]!=DI_NODIR)
     {
-	actor->movedir = d[1];
-	if (P_TryWalk(actor))
-	{
-	    // either moved forward or attacked
-	    return;
-	}
+        actor->movedir = d[1];
+        if (P_TryWalk(actor))
+        {
+            // either moved forward or attacked
+            return;
+        }
     }
 
     if (d[2]!=DI_NODIR)
     {
-	actor->movedir =d[2];
+        actor->movedir =d[2];
 
-	if (P_TryWalk(actor))
-	    return;
+        if (P_TryWalk(actor))
+            return;
     }
 
     // there is no direct path to the player,
     // so pick another direction.
     if (olddir!=DI_NODIR)
     {
-	actor->movedir =olddir;
+        actor->movedir =olddir;
 
-	if (P_TryWalk(actor))
-	    return;
+        if (P_TryWalk(actor))
+            return;
     }
 
     // randomly determine direction of search
     if (P_Random()&1) 	
     {
-	for ( tdir=DI_EAST;
-	      tdir<=DI_SOUTHEAST;
-	      tdir++ )
-	{
-	    if (tdir != (int) turnaround)
-	    {
-		actor->movedir =tdir;
-		
-		if ( P_TryWalk(actor) )
-		    return;
-	    }
-	}
+        for ( tdir=DI_EAST;
+              tdir<=DI_SOUTHEAST;
+              tdir++ )
+        {
+            if (tdir != (int) turnaround)
+            {
+                actor->movedir =tdir;
+
+                if ( P_TryWalk(actor) )
+                    return;
+            }
+        }
     }
     else
     {
-	for ( tdir=DI_SOUTHEAST;
-	      tdir != (DI_EAST-1);
-	      tdir-- )
-	{
-	    if (tdir != (int) turnaround)
-	    {
-		actor->movedir = tdir;
-		
-		if ( P_TryWalk(actor) )
-		    return;
-	    }
-	}
+        for ( tdir=DI_SOUTHEAST;
+              tdir != (DI_EAST-1);
+              tdir-- )
+        {
+            if (tdir != (int) turnaround)
+            {
+                actor->movedir = tdir;
+
+                if ( P_TryWalk(actor) )
+                    return;
+            }
+        }
     }
 
     if (turnaround !=  DI_NODIR)
     {
-	actor->movedir =turnaround;
-	if ( P_TryWalk(actor) )
-	    return;
+        actor->movedir =turnaround;
+        if ( P_TryWalk(actor) )
+            return;
     }
 
     actor->movedir = DI_NODIR;	// can not move
@@ -585,13 +622,20 @@ void P_NewChaseDir(mobj_t* actor)
 
 //
 // P_NewRandomDir
+//
 // villsa [STRIFE] new function
 //
-
+// haleyjd: Almost identical to the tail-end of P_NewChaseDir, this function 
+// finds a purely random direction for an object to walk. Called from 
+// A_RandomWalk.
+//
+// Shockingly similar to the RandomWalk pointer in Eternity :)
+//
 void P_NewRandomDir(mobj_t* actor)
 {
     int dir = 0;
 
+    // randomly determine direction of search
     if(P_Random() & 1)
     {
         for(dir = 0; dir < DI_NODIR; dir++)
@@ -612,11 +656,16 @@ void P_NewRandomDir(mobj_t* actor)
         dir = DI_SOUTHEAST;
         while(1)
         {
+            // haleyjd 09/05/10: P_TryWalk -> P_Move, missing random code.
             if(dir != opposite[actor->movedir])
             {
                 actor->movedir = dir;
-                if(P_TryWalk(actor))
-                    break;
+
+                if(P_Move(actor))
+                {
+                    actor->movecount = P_Random() & 15;
+                    return;
+                }
             }
 
             if(--dir == -1)
@@ -628,120 +677,150 @@ void P_NewRandomDir(mobj_t* actor)
                 }
 
                 actor->movedir = opposite[actor->movedir];
-                if(!P_TryWalk(actor))
+                if(P_Move(actor))
+                {
+                    actor->movecount = P_Random() & 15;
+                    return;
+                }
+                else
                 {
                     actor->movedir = DI_NODIR;
                     return;
                 }
-            }
-        }
-    }
+            } // end if(--dir == -1)
+        } // end while(1)
+    } // end else
 }
 
+// haleyjd 09/05/10: Needed below.
+extern void P_BulletSlope (mobj_t *mo);
 
+#define LOCAL_MELEERANGE 64*FRACUNIT
 
 //
 // P_LookForPlayers
+//
 // If allaround is false, only look 180 degrees in front.
 // Returns true if a player is targeted.
+//
+// [STRIFE]
+// haleyjd 09/05/10: Modifications to support friendly units.
 //
 boolean
 P_LookForPlayers
 ( mobj_t*	actor,
   boolean	allaround )
 {
-    int		c;
-    int		stop;
-    player_t*	player;
-    sector_t*	sector;
-    angle_t	an;
-    fixed_t	dist;
-		
+    int         c;
+    int         stop;
+    player_t*   player;
+    sector_t*   sector;
+    angle_t     an;
+    fixed_t     dist;
+    mobj_t  *   master = players[actor->allegiance].mo;
+
+    // haleyjd 09/05/10: handle Allies
+    if(actor->flags & MF_ALLY)
+    {
+        // Deathmatch: support team behavior for Rebels.
+        if(netgame)
+        {
+            // Rebels adopt the allied player's target if it is not of the same
+            // allegiance. Other allies do it unconditionally.
+            if(master && master->target && 
+               (master->target->type != MT_REBEL1 ||
+                master->target->allegiance != actor->allegiance))
+            {
+                actor->target = master->target;
+            }
+            else
+            {
+                P_BulletSlope(actor);
+
+                // Clear target if nothing is visible, or if the target is a
+                // friendly Rebel or the allied player.
+                if(!linetarget ||
+                    actor->target->target == MT_REBEL1 &&
+                    actor->target->allegiance == actor->allegiance ||
+                    actor->target == master)
+                {
+                    actor->target = NULL;
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            // Single-player: Adopt any non-allied player target.
+            if(master && master->target && !(master->target->flags & MF_ALLY))
+            {
+                actor->target = master->target;
+                return true;
+            }
+
+            P_BulletSlope(actor);
+
+            // Clear target if nothing is visible, or if the target is an ally.
+            if(!linetarget || actor->target->flags & MF_ALLY)
+            {
+                actor->target = NULL;
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     sector = actor->subsector->sector;
-	
+
     c = 0;
     stop = (actor->lastlook-1)&3;
-	
+
     for ( ; ; actor->lastlook = (actor->lastlook+1)&3 )
     {
-	if (!playeringame[actor->lastlook])
-	    continue;
-			
-	if (c++ == 2
-	    || actor->lastlook == stop)
-	{
-	    // done looking
-	    return false;	
-	}
-	
-	player = &players[actor->lastlook];
+        if (!playeringame[actor->lastlook])
+            continue;
 
-	if (player->health <= 0)
-	    continue;		// dead
+        if (c++ == 2
+            || actor->lastlook == stop)
+        {
+            // done looking
+            return false;	
+        }
 
-	if (!P_CheckSight (actor, player->mo))
-	    continue;		// out of sight
-			
-	if (!allaround)
-	{
-	    an = R_PointToAngle2 (actor->x,
-				  actor->y, 
-				  player->mo->x,
-				  player->mo->y)
-		- actor->angle;
-	    
-	    if (an > ANG90 && an < ANG270)
-	    {
-		dist = P_AproxDistance (player->mo->x - actor->x,
-					player->mo->y - actor->y);
-		// if real close, react anyway
-		if (dist > MELEERANGE)
-		    continue;	// behind back
-	    }
-	}
-		
-	actor->target = player->mo;
-	return true;
+        player = &players[actor->lastlook];
+
+        if (player->health <= 0)
+            continue;           // dead
+
+        if (!P_CheckSight (actor, player->mo))
+            continue;           // out of sight
+
+        if (!allaround)
+        {
+            an = R_PointToAngle2(actor->x,
+                                 actor->y, 
+                                 player->mo->x,
+                                 player->mo->y) - actor->angle;
+
+            if (an > ANG90 && an < ANG270)
+            {
+                dist = P_AproxDistance (player->mo->x - actor->x,
+                    player->mo->y - actor->y);
+                // if real close, react anyway
+                if (dist > LOCAL_MELEERANGE) // haleyjd: ......
+                    continue;       // behind back
+            }
+        }
+
+        actor->target = player->mo;
+        return true;
     }
 
     return false;
 }
 
-
-//
-// A_KeenDie
-// DOOM II special, map 32.
-// Uses special tag 666.
-//
-void A_KeenDie (mobj_t* mo)
-{
-    thinker_t*	th;
-    mobj_t*	mo2;
-    line_t	junk;
-
-    A_Fall (mo);
-    
-    // scan the remaining thinkers
-    // to see if all Keens are dead
-    for (th = thinkercap.next ; th != &thinkercap ; th=th->next)
-    {
-	if (th->function.acp1 != (actionf_p1)P_MobjThinker)
-	    continue;
-
-	mo2 = (mobj_t *)th;
-	if (mo2 != mo
-	    && mo2->type == mo->type
-	    && mo2->health > 0)
-	{
-	    // other Keen not dead
-	    return;		
-	}
-    }
-
-    junk.tag = 666;
-    EV_DoDoor(&junk,open);
-}
-
+// haleyjd 09/05/10: [STRIFE] Removed A_KeenDie
 
 //
 // ACTION ROUTINES
@@ -751,67 +830,184 @@ void A_KeenDie (mobj_t* mo)
 // A_Look
 // Stay in state until a player is sighted.
 //
+// [STRIFE]
+// haleyjd 09/05/10: Adjusted for allies, Inquisitors, etc.
+//
 void A_Look (mobj_t* actor)
 {
-    mobj_t*	targ;
-	
-    actor->threshold = 0;	// any shot will wake up
+    mobj_t*         targ;
+
+    actor->threshold = 0;       // any shot will wake up
     targ = actor->subsector->sector->soundtarget;
 
     if (targ
-	&& (targ->flags & MF_SHOOTABLE) )
+        && (targ->flags & MF_SHOOTABLE) )
     {
-	actor->target = targ;
+        // [STRIFE] Allies wander when they call this.
+        if(actor->flags & MF_ALLY)
+            A_RandomWalk(actor);
+        else
+        {
+            actor->target = targ;
 
-	if ( actor->flags & MF_AMBUSH )
-	{
-	    if (P_CheckSight (actor, actor->target))
-		goto seeyou;
-	}
-	else
-	    goto seeyou;
+            if ( actor->flags & MF_AMBUSH )
+            {
+                if (P_CheckSight (actor, actor->target))
+                    goto seeyou;
+            }
+            else
+                goto seeyou;
+        }
     }
-	
-	
-    if (!P_LookForPlayers (actor, false) )
-	return;
-		
+
+    // haleyjd 09/05/10: This is bizarre, as Rogue keeps using the GIVEQUEST flag
+    // as a parameter to control allaround look behavior. Did they just run out of
+    // flags, or what? 
+    // STRIFE-TODO: Needs serious verification.
+    if (!P_LookForPlayers (actor, actor->flags & MF_GIVEQUEST) )
+        return;
+
     // go into chase state
-  seeyou:
+seeyou:
     if (actor->info->seesound)
     {
-	int		sound;
-		
-	switch (actor->info->seesound)
-	{
-	  case sfx_pespna:   // villsa [STRIFE] TODO - fix sounds
-	  case sfx_pespnb:  // villsa [STRIFE] TODO - fix sounds
-	  case sfx_pespnc:  // villsa [STRIFE] TODO - fix sounds
-	    sound = sfx_pespna+P_Random()%3;    // villsa [STRIFE] TODO - fix sounds
-	    break;
+        int         sound   = actor->info->seesound;
+        mobj_t *    emitter = actor;
 
-	  case sfx_agrac1:  // villsa [STRIFE] TODO - fix sounds
-	  case sfx_agrac2:  // villsa [STRIFE] TODO - fix sounds
-	    sound = sfx_agrac1+P_Random()%2;    // villsa [STRIFE] TODO - fix sounds
-	    break;
+        // [STRIFE] Removed DOOM random sounds.
 
-	  default:
-	    sound = actor->info->seesound;
-	    break;
-	}
+        // [STRIFE] Only Inquisitors roar loudly here.
+        if (actor->type == MT_INQUISITOR)
+            emitter = NULL;
 
-        // villsa [STRIFE] TODO replace with proper strife bosses
-	/*if (actor->type==MT_SPIDER
-	    || actor->type == MT_CYBORG)
-	{
-	    // full volume
-	    S_StartSound (NULL, sound);
-	}
-	else*/
-	    S_StartSound (actor, sound);
+        S_StartSound (emitter, sound);
     }
 
+    // [STRIFE] Set threshold (kinda odd as it's still set to 0 above...)
+    actor->threshold = 20;
+
     P_SetMobjState (actor, actor->info->seestate);
+}
+
+//
+// A_RandomWalk
+//
+// [STRIFE] New function.
+// haleyjd 09/05/10: Action routine used to meander about.
+//
+void A_RandomWalk(mobj_t* actor)
+{
+    // Standing actors do not wander.
+    if(actor->flags & MF_STAND)
+        return;
+
+    if(actor->reactiontime)
+        actor->reactiontime--; // count down reaction time
+    else
+    {
+        // turn to a new angle
+        if(actor->movedir < DI_NODIR)
+        {
+            int delta;
+
+            actor->angle &= (7 << 29);
+            delta = actor->angle - (actor->movedir << 29);
+
+            if(delta < 0)
+                actor->angle += ANG90/2;
+            else if(delta > 0)
+                actor->angle -= ANG90/2;
+        }
+
+        // try moving
+        if(--actor->movecount < 0 || !P_Move(actor))
+        {
+            P_NewRandomDir(actor);
+            actor->movecount += 5;
+        }
+    }
+}
+
+//
+// A_FriendLook
+//
+// [STRIFE] New function
+// haleyjd 09/05/10: Action function used mostly by mundane characters such as
+// peasants.
+//
+void A_FriendLook(mobj_t* actor)
+{
+    mobj_t *soundtarget = actor->subsector->sector->soundtarget;
+
+    actor->threshold = 0;
+
+    if(soundtarget && soundtarget->flags & MF_SHOOTABLE)
+    {
+        // Handle allies, except on maps 3 and 34 (Front Base/Movement Base)
+        if((actor->flags & MF_ALLY) == (soundtarget->flags & MF_ALLY) &&
+            gamemap != 3 && gamemap != 34)
+        {
+            // STRIFE-TODO: Needs serious verification.
+            if(P_LookForPlayers(actor, actor->flags & MF_GIVEQUEST))
+            {
+                P_SetMobjState(actor, actor->info->seestate);
+                actor->flags |= MF_INCOMBAT;
+                return;
+            }
+        }
+        else
+        {
+            actor->target = soundtarget;
+
+            if(!(actor->flags & MF_AMBUSH) || P_CheckSight(actor, actor->target))
+            {
+                actor->threshold = 10;
+                P_SetMobjState(actor, actor->info->seestate);
+                return;
+            }
+        }
+    }
+
+    // do some idle animation
+    if(P_Random() < 30)
+        P_SetMobjState(actor, actor->info->spawnstate + 1 + (P_Random() & 1));
+
+    // wander around a bit
+    if(!(actor->flags & MF_STAND) && P_Random() < 40)
+        P_SetMobjState(actor, actor->info->spawnstate + 3);
+}
+
+//
+// A_Listen
+//
+// [STRIFE] New function
+// haleyjd 09/05/10: Action routine used to strictly listen for a target.
+//
+void A_Listen(mobj_t* actor)
+{
+    mobj_t *soundtarget;
+
+    actor->threshold = 0;
+
+    soundtarget = actor->subsector->sector->soundtarget;
+
+    if(soundtarget && soundtarget->flags & MF_SHOOTABLE)
+    {
+        if(actor->flags & MF_ALLY != soundtarget->flags & MF_ALLY)
+        {
+            actor->target = soundtarget;
+
+            if(!(actor->flags & MF_AMBUSH) || P_CheckSight(actor, actor->target))
+            {
+                if(actor->info->seesound)
+                    S_StartSound(actor, actor->info->seesound);
+
+                actor->threshold = 10;
+
+                P_SetMobjState(actor, actor->info->seestate);
+            }
+        }
+    }
 }
 
 
@@ -820,109 +1016,122 @@ void A_Look (mobj_t* actor)
 // Actor has a melee attack,
 // so it tries to close as fast as possible
 //
+// haleyjd 09/05/10: [STRIFE] Various minor changes
+//
 void A_Chase (mobj_t*	actor)
 {
-    int		delta;
+    int         delta;
 
     if (actor->reactiontime)
-	actor->reactiontime--;
-				
+        actor->reactiontime--;
 
     // modify target threshold
     if  (actor->threshold)
     {
-	if (!actor->target
-	    || actor->target->health <= 0)
-	{
-	    actor->threshold = 0;
-	}
-	else
-	    actor->threshold--;
+        if (!actor->target
+            || actor->target->health <= 0)
+        {
+            actor->threshold = 0;
+        }
+        else
+            actor->threshold--;
     }
     
     // turn towards movement direction if not there yet
     if (actor->movedir < 8)
     {
-	actor->angle &= (7<<29);
-	delta = actor->angle - (actor->movedir << 29);
-	
-	if (delta > 0)
-	    actor->angle -= ANG90/2;
-	else if (delta < 0)
-	    actor->angle += ANG90/2;
+        actor->angle &= (7<<29);
+        delta = actor->angle - (actor->movedir << 29);
+
+        if (delta > 0)
+            actor->angle -= ANG90/2;
+        else if (delta < 0)
+            actor->angle += ANG90/2;
     }
 
     if (!actor->target
-	|| !(actor->target->flags&MF_SHOOTABLE))
+        || !(actor->target->flags&MF_SHOOTABLE))
     {
-	// look for a new target
-	if (P_LookForPlayers(actor,true))
-	    return; 	// got a new target
-	
-	P_SetMobjState (actor, actor->info->spawnstate);
-	return;
+        // look for a new target
+        if (P_LookForPlayers(actor,true))
+            return; 	// got a new target
+
+        P_SetMobjState (actor, actor->info->spawnstate);
+        return;
     }
     
     // do not attack twice in a row
     if (actor->flags & MF_JUSTATTACKED)
     {
-	actor->flags &= ~MF_JUSTATTACKED;
-	if (gameskill != sk_nightmare && !fastparm)
-	    P_NewChaseDir (actor);
-	return;
+        actor->flags &= ~MF_JUSTATTACKED;
+        // [STRIFE] Checks only against fastparm, not gameskill == 5
+        if (!fastparm)
+            P_NewChaseDir (actor);
+        return;
     }
     
     // check for melee attack
     if (actor->info->meleestate
-	&& P_CheckMeleeRange (actor))
+        && P_CheckMeleeRange (actor))
     {
-	if (actor->info->attacksound)
-	    S_StartSound (actor, actor->info->attacksound);
+        if (actor->info->attacksound)
+            S_StartSound (actor, actor->info->attacksound);
 
-	P_SetMobjState (actor, actor->info->meleestate);
-	return;
+        P_SetMobjState (actor, actor->info->meleestate);
+        return;
     }
     
     // check for missile attack
     if (actor->info->missilestate)
     {
-	if (gameskill < sk_nightmare
-	    && !fastparm && actor->movecount)
-	{
-	    goto nomissile;
-	}
-	
-	if (!P_CheckMissileRange (actor))
-	    goto nomissile;
-	
-	P_SetMobjState (actor, actor->info->missilestate);
-	actor->flags |= MF_JUSTATTACKED;
-	return;
+        // [STRIFE] Checks only fastparm.
+        if (!fastparm && actor->movecount)
+        {
+            goto nomissile;
+        }
+
+        if (!P_CheckMissileRange (actor))
+            goto nomissile;
+
+        P_SetMobjState (actor, actor->info->missilestate);
+
+        // [STRIFE] Add INCOMBAT flag to disable dialog
+        actor->flags |= (MF_INCOMBAT|MF_JUSTATTACKED);
+        return;
     }
 
     // ?
-  nomissile:
+nomissile:
     // possibly choose another target
     if (netgame
-	&& !actor->threshold
-	&& !P_CheckSight (actor, actor->target) )
+        && !actor->threshold
+        && !P_CheckSight (actor, actor->target) )
     {
-	if (P_LookForPlayers(actor,true))
-	    return;	// got a new target
+        if (P_LookForPlayers(actor,true))
+            return;	// got a new target
     }
     
     // chase towards player
     if (--actor->movecount<0
-	|| !P_Move (actor))
+        || !P_Move (actor))
     {
-	P_NewChaseDir (actor);
+        P_NewChaseDir (actor);
     }
-    
+
+    // [STRIFE] Changes to active sound behavior:
+    // * Significantly more frequent
+    // * Acolytes have randomized wandering sounds
+
     // make active sound
-    if (actor->info->activesound
-	&& P_Random () < 3)
+    if (actor->info->activesound && P_Random () < 38)
     {
-	S_StartSound (actor, actor->info->activesound);
+        if(actor->info->activesound >= sfx_agrac1 &&
+           actor->info->activesound <= sfx_agrac4)
+        {
+            S_StartSound(actor, sfx_agrac1 + P_Random() % 4);
+        }
+        else
+            S_StartSound (actor, actor->info->activesound);
     }
 }
 
@@ -930,20 +1139,34 @@ void A_Chase (mobj_t*	actor)
 //
 // A_FaceTarget
 //
+// [STRIFE]
+// haleyjd 09/05/10: Modified handling for various visibility
+// modifying flags.
+//
 void A_FaceTarget (mobj_t* actor)
 {	
     if (!actor->target)
-	return;
-    
+        return;
+
     actor->flags &= ~MF_AMBUSH;
-	
+
     actor->angle = R_PointToAngle2 (actor->x,
-				    actor->y,
-				    actor->target->x,
-				    actor->target->y);
-    
-    if (actor->target->flags & MF_SHADOW)
-	actor->angle += (P_Random()-P_Random())<<21;
+                                    actor->y,
+                                    actor->target->x,
+                                    actor->target->y);
+
+    if(actor->target->flags & MF_SHADOW)
+    {
+        // [STRIFE] increased SHADOW inaccuracy by a power of 2
+        int t = P_Random();
+        actor->angle += (t - P_Random()) << 22;
+    }
+    else if(actor->target->flags & MF_MVIS)
+    {
+        // [STRIFE] MVIS gives even worse aiming!
+        int t = P_Random();
+        actor->angle += (t - P_Random()) << 23;
+    }
 }
 
 
@@ -2189,20 +2412,6 @@ void A_PlayerScream (mobj_t* mo)
     S_StartSound (mo, sound);
 }
 
-void A_RandomWalk(mobj_t* actor)
-{
-
-}
-
-void A_FriendLook(mobj_t* actor)
-{
-
-}
-
-void A_Listen(mobj_t* actor)
-{
-
-}
 
 void A_PeasantPunch(mobj_t* actor)
 {

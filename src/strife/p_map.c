@@ -1234,11 +1234,11 @@ P_LineAttack
     shootz = t1->z + (t1->height>>1) + 8*FRACUNIT;
     attackrange = distance;
     aimslope = slope;
-		
-    P_PathTraverse ( t1->x, t1->y,
-		     x2, y2,
-		     PT_ADDLINES|PT_ADDTHINGS,
-		     PTR_ShootTraverse );
+
+    P_PathTraverse(t1->x, t1->y,
+                   x2, y2,
+                   PT_ADDLINES|PT_ADDTHINGS,
+                   PTR_ShootTraverse);
 }
  
 

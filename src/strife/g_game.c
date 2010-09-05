@@ -493,7 +493,6 @@ void G_BuildTiccmd (ticcmd_t* cmd)
              cmd->buttons |= BT_ATTACK;
          else
              --mouse_fire_countdown;
-
     }
  
     if (gamekeydown[key_use]
@@ -816,9 +815,7 @@ boolean G_Responder (event_t* ev)
  
     return false; 
 } 
- 
- 
- 
+
 //
 // G_Ticker
 // Make ticcmd_ts for the players.
@@ -828,7 +825,7 @@ void G_Ticker (void)
     int		i;
     int		buf; 
     ticcmd_t*	cmd;
-    
+
     // do player reborns if needed
     for (i=0 ; i<MAXPLAYERS ; i++) 
 	if (playeringame[i] && players[i].playerstate == PST_REBORN) 
@@ -885,9 +882,9 @@ void G_Ticker (void)
  
 	    memcpy (cmd, &netcmds[i][buf], sizeof(ticcmd_t)); 
  
-	    if (demoplayback) 
+	    if (demoplayback)
 		G_ReadDemoTiccmd (cmd); 
-	    if (demorecording) 
+	    if (demorecording)
 		G_WriteDemoTiccmd (cmd);
 	    
 	    // check for turbo cheats

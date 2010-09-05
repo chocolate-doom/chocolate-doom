@@ -141,6 +141,8 @@ extern  boolean statusbaractive;
 extern  boolean automapactive;  // In AutoMap mode?
 extern  boolean	menuactive;     // Menu overlayed?
 extern  boolean menupause;      // haleyjd 08/29/10: [STRIFE]
+extern  int     menupausetime;  // haleyjd 09/04/10: [STRIFE]
+extern  boolean menuindialog;   // haleyjd: ditto
 extern  boolean	paused;         // Game Pause?
 
 

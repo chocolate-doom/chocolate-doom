@@ -604,6 +604,7 @@ void TryRunTics (void)
 	    G_Ticker ();
 	    gametic++;
 	    
+
 	    // modify command for duplicated tics
 	    if (i != ticdup-1)
 	    {

@@ -94,8 +94,6 @@ void P_AllocateThinker (thinker_t*	thinker)
 {
 }
 
-
-
 //
 // P_RunThinkers
 //
@@ -121,8 +119,6 @@ void P_RunThinkers (void)
 	currentthinker = currentthinker->next;
     }
 }
-
-
 
 //
 // P_Ticker

@@ -40,28 +40,28 @@
 
 typedef struct mapdlgchoice_s
 {
-    int giveitem;    // item given when successful
-    int needitem1;   // first item needed for success
-    int needitem2;   // second item needed for success, if any
-    int needitem3;   // third item needed for success, if any
-    int needamount1; // amount of first item needed
-    int needamount2; // amount of second item needed
-    int needamount3; // amount of third item needed
+    int  giveitem;             // item given when successful
+    int  needitem1;            // first item needed for success
+    int  needitem2;            // second item needed for success, if any
+    int  needitem3;            // third item needed for success, if any
+    int  needamount1;          // amount of first item needed
+    int  needamount2;          // amount of second item needed
+    int  needamount3;          // amount of third item needed
     char text[MDLG_CHOICELEN]; // normal text
     char textok[MDLG_MSGLEN];  // message given on success
-    int next;        // next dialog?
-    int objective;   // ???
-    char textno[MDLG_MSGLEN]; // message given on failure
+    int next;                  // next dialog?
+    int objective;             // ???
+    char textno[MDLG_MSGLEN];  // message given on failure
 } mapdlgchoice_t;
 
 typedef struct mapdialog_s
 {
-    int speakerid;   // script ID# for thingtype that will use this dialog
-    int dropitem;    // item to drop if that thingtype is killed
-    int checkitem1;  // first item needed to see this dialog
-    int checkitem2;  // second item needed to see this dialog, if any
-    int checkitem3;  // third item needed to see this dialog, if any
-    int jumptoconv;  // conversation to jump to when... ?
+    int speakerid;  // script ID# for mobjtype that will use this dialog
+    int dropitem;   // item to drop if that thingtype is killed
+    int checkitem1; // first item needed to see this dialog
+    int checkitem2; // second item needed to see this dialog, if any
+    int checkitem3; // third item needed to see this dialog, if any
+    int jumptoconv; // conversation to jump to when... ?
     char name[MDLG_NAMELEN];    // name of speaker
     char voice[MDLG_LUMPLEN];   // voice file to play
     char backpic[MDLG_LUMPLEN]; // backdrop pic for character, if any

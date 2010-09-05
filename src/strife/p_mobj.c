@@ -836,16 +836,16 @@ void P_SpawnMapThing (mapthing_t* mthing)
     fixed_t		x;
     fixed_t		y;
     fixed_t		z;
-		
+
     // count deathmatch start positions
     if (mthing->type == 11)
     {
-	if (deathmatch_p < &deathmatchstarts[10])
-	{
-	    memcpy (deathmatch_p, mthing, sizeof(*mthing));
-	    deathmatch_p++;
-	}
-	return;
+        if (deathmatch_p < &deathmatchstarts[10])
+        {
+            memcpy (deathmatch_p, mthing, sizeof(*mthing));
+            deathmatch_p++;
+        }
+        return;
     }
 
     if (mthing->type <= 0)
@@ -855,36 +855,37 @@ void P_SpawnMapThing (mapthing_t* mthing)
 
         return;
     }
-	
+
     // check for players specially
+    // STRIFE-TODO: Need 8 player starts
     if (mthing->type <= 4)
     {
-	// save spots for respawning in network games
-	playerstarts[mthing->type-1] = *mthing;
-	if (!deathmatch)
-	    P_SpawnPlayer (mthing);
+        // save spots for respawning in network games
+        playerstarts[mthing->type-1] = *mthing;
+        if (!deathmatch)
+            P_SpawnPlayer (mthing);
 
-	return;
+        return;
     }
 
     // check for apropriate skill level
     if (!netgame && (mthing->options & 16) )
-	return;
-		
+        return;
+
     if (gameskill == sk_baby)
-	bit = 1;
+        bit = 1;
     else if (gameskill == sk_nightmare)
-	bit = 4;
+        bit = 4;
     else
-	bit = 1<<(gameskill-1);
+        bit = 1<<(gameskill-1);
 
     if (!(mthing->options & bit) )
 	return;
 	
     // find which type to spawn
     for (i=0 ; i< NUMMOBJTYPES ; i++)
-	if (mthing->type == mobjinfo[i].doomednum)
-	    break;
+        if (mthing->type == mobjinfo[i].doomednum)
+            break;
 
     /*
     if (i==NUMMOBJTYPES)
@@ -895,43 +896,48 @@ void P_SpawnMapThing (mapthing_t* mthing)
     // haleyjd 08/29/10: STRIFE-FIXME: Temporarily disabled I_Error for testing purposes
     if (i == NUMMOBJTYPES)
         return;
-		
+
     // don't spawn keycards and players in deathmatch
     if (deathmatch && mobjinfo[i].flags & MF_NOTDMATCH)
-	return;
+        return;
 		
     // don't spawn any monsters if -nomonsters
-    if (nomonsters
-	&& ( /*i == MT_SKULL    // villsa [STRIFE] unused
-	     ||*/ (mobjinfo[i].flags & MF_COUNTKILL)) )
-    {
-	return;
-    }
+    // villsa [STRIFE] Removed MT_SKULL
+    if (nomonsters && (mobjinfo[i].flags & MF_COUNTKILL))
+        return;
     
     // spawn it
     x = mthing->x << FRACBITS;
     y = mthing->y << FRACBITS;
 
     if (mobjinfo[i].flags & MF_SPAWNCEILING)
-	z = ONCEILINGZ;
+        z = ONCEILINGZ;
     else
-	z = ONFLOORZ;
+        z = ONFLOORZ;
     
     mobj = P_SpawnMobj (x,y,z, i);
     mobj->spawnpoint = *mthing;
 
     if (mobj->tics > 0)
-	mobj->tics = 1 + (P_Random () % mobj->tics);
+        mobj->tics = 1 + (P_Random () % mobj->tics);
     if (mobj->flags & MF_COUNTKILL)
-	totalkills++;
+        totalkills++;
 
     // villsa [STRIFE] unused
     /*if (mobj->flags & MF_COUNTITEM)
-	totalitems++;*/
-		
+          totalitems++;*/
+
     mobj->angle = ANG45 * (mthing->angle/45);
     if (mthing->options & MTF_AMBUSH)
-	mobj->flags |= MF_AMBUSH;
+        mobj->flags |= MF_AMBUSH;
+    if (mthing->options & MTF_STAND)       // [STRIFE] Standing mode, for NPCs
+        mobj->flags |= MF_STAND;
+    if (mthing->options & MTF_FRIEND)      // [STRIFE] Allies
+        mobj->flags |= MF_ALLY;
+    if (mthing->options & MTF_TRANSLUCENT) // [STRIFE] Translucent object
+        mobj->flags |= MF_SHADOW;
+    if (mthing->options & MTF_MVIS)        // [STRIFE] Alt. Translucency
+        mobj->flags |= MF_MVIS;
 }
 
 
@@ -1090,7 +1096,7 @@ P_SpawnMissile
     if (dest->flags & MF_SHADOW)
 	an += (P_Random()-P_Random())<<21;	
     // villsa [STRIFE] check for heavily transparent things
-    else if(dest->flags & MF_MOREVISIBLE)
+    else if(dest->flags & MF_MVIS)
         an += (P_Random()-P_Random())<<22;
 
     th->angle = an;
@@ -1134,7 +1140,7 @@ mobj_t* P_SpawnFacingMissile(mobj_t* source, mobj_t* target, mobjtype_t type)
     if (target->flags & MF_SHADOW)
 	an += (P_Random()-P_Random())<<21;	
     // villsa [STRIFE] check for heavily transparent things
-    else if(target->flags & MF_MOREVISIBLE)
+    else if(target->flags & MF_MVIS)
         an += (P_Random()-P_Random())<<22;
 
     th->angle = an;

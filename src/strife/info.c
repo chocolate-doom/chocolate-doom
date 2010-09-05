@@ -3570,7 +3570,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         sfx_alnact,     //activesound
         MF_SPECIAL|MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_GIVEQUEST
         |MF_FLOAT|MF_INCOMBAT|MF_SHADOW|MF_COUNTKILL|MF_NOTDMATCH
-        |MF_MOREVISIBLE|MF_SPECTRAL,        //flags
+        |MF_MVIS|MF_SPECTRAL,        //flags
         NULL,       //namepointer
     },
 
@@ -3653,7 +3653,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         sfx_alnact,     //activesound
         MF_SPECIAL|MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_GIVEQUEST
         |MF_FLOAT|MF_INCOMBAT|MF_SHADOW|MF_COUNTKILL|MF_NOTDMATCH
-        |MF_MOREVISIBLE|MF_SPECTRAL,        //flags
+        |MF_MVIS|MF_SPECTRAL,        //flags
         NULL,       //namepointer
     },
 
@@ -3682,7 +3682,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         sfx_alnact,     //activesound
         MF_SPECIAL|MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_GIVEQUEST
         |MF_FLOAT|MF_INCOMBAT|MF_SHADOW|MF_COUNTKILL|MF_NOTDMATCH
-        |MF_MOREVISIBLE|MF_SPECTRAL,        //flags
+        |MF_MVIS|MF_SPECTRAL,        //flags
         NULL,       //namepointer
     },
 
@@ -3711,7 +3711,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         sfx_alnact,     //activesound
         MF_SPECIAL|MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_GIVEQUEST
         |MF_FLOAT|MF_INCOMBAT|MF_SHADOW|MF_COUNTKILL|MF_NOTDMATCH
-        |MF_MOREVISIBLE|MF_SPECTRAL,        //flags
+        |MF_MVIS|MF_SPECTRAL,        //flags
         NULL,       //namepointer
     },
 
@@ -3740,7 +3740,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         sfx_alnact,     //activesound
         MF_SPECIAL|MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_GIVEQUEST
         |MF_FLOAT|MF_INCOMBAT|MF_SHADOW|MF_COUNTKILL|MF_NOTDMATCH
-        |MF_MOREVISIBLE|MF_SPECTRAL,        //flags
+        |MF_MVIS|MF_SPECTRAL,        //flags
         NULL,       //namepointer
     },
 
@@ -3769,7 +3769,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         sfx_alnact,     //activesound
         MF_SPECIAL|MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_GIVEQUEST
         |MF_FLOAT|MF_INCOMBAT|MF_SHADOW|MF_COUNTKILL|MF_NOTDMATCH
-        |MF_MOREVISIBLE|MF_SPECTRAL,        //flags
+        |MF_MVIS|MF_SPECTRAL,        //flags
         NULL,       //namepointer
     },
 
@@ -3798,7 +3798,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         sfx_alnact,     //activesound
         MF_SPECIAL|MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_GIVEQUEST
         |MF_FLOAT|MF_INCOMBAT|MF_SHADOW|MF_COUNTKILL|MF_NOTDMATCH
-        |MF_MOREVISIBLE|MF_SPECTRAL,        //flags
+        |MF_MVIS|MF_SPECTRAL,        //flags
         NULL,       //namepointer
     },
 

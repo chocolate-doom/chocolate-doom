@@ -342,6 +342,7 @@ void P_LoadThings (int lump)
 
         // Do not spawn cool, new monsters if !commercial
         // STRIFE-TODO: replace with isregistered stuff
+        /*
         if (gamemode != commercial)
         {
             switch (SHORT(mt->type))
@@ -362,6 +363,7 @@ void P_LoadThings (int lump)
         }
         if (spawn == false)
             break;
+        */
 
         // Do spawn all other stuff. 
         spawnthing.x = SHORT(mt->x);

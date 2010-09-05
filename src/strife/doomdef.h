@@ -79,9 +79,9 @@ typedef enum
 //
 
 // Skill flags.
-#define	MTF_EASY		1
-#define	MTF_NORMAL		2
-#define	MTF_HARD		4
+#define	MTF_EASY                1
+#define	MTF_NORMAL              2
+#define	MTF_HARD                4
 // villsa [STRIFE] standing monsters
 #define MTF_STAND               8
 // villsa [STRIFE] don't spawn in single player
@@ -91,13 +91,13 @@ typedef enum
 // villsa [STRIFE] friendly to players
 #define MTF_FRIEND              64
 // villsa [STRIFE] TODO - identify
-#define MTF_UNKNOWN             128
-// villsa [STRIFE] thing is translucent
+#define MTF_UNKNOWN1            128
+// villsa [STRIFE] thing is translucent - STRIFE-TODO: But how much?
 #define MTF_TRANSLUCENT         256
-// villsa [STRIFE] TODO - identify
+// villsa [STRIFE] thing is more - or less? - translucent - STRIFE-TODO
 #define MTF_MVIS                512
 // villsa [STRIFE] TODO - identify
-#define MTF_RESERVED            1024
+#define MTF_UNKNOWN2            1024
 
 
 

@@ -644,7 +644,7 @@ void A_FirePoisonBolt(player_t* player, pspdef_t* pspr)
 fixed_t		bulletslope;
 
 
-void P_BulletSlope (mobj_t*	mo)
+void P_BulletSlope (mobj_t *mo)
 {
     angle_t	an;
     
