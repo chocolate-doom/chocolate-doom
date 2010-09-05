@@ -241,21 +241,25 @@ void P_DoPunchAlert(mobj_t *puncher, mobj_t *punchee)
 //
 // P_CheckMeleeRange
 //
-boolean P_CheckMeleeRange (mobj_t*	actor)
+boolean P_CheckMeleeRange(mobj_t* actor)
 {
     mobj_t*	pl;
     fixed_t	dist;
 	
-    if (!actor->target)
+    if(!actor->target)
 	return false;
 		
     pl = actor->target;
-    dist = P_AproxDistance (pl->x-actor->x, pl->y-actor->y);
+    if(actor->z + 3 * actor->height / 2 < pl->z) // villsa [STRIFE]
+        return false;
 
-    if (dist >= MELEERANGE-20*FRACUNIT+pl->info->radius)
+    dist = P_AproxDistance(pl->x - actor->x, pl->y - actor->y);
+
+    // villsa [STRIFE] change to 36
+    if(dist >= MELEERANGE - 36*FRACUNIT + pl->info->radius)
 	return false;
 	
-    if (! P_CheckSight (actor, actor->target) )
+    if(!P_CheckSight (actor, actor->target))
 	return false;
 							
     return true;		
@@ -264,14 +268,14 @@ boolean P_CheckMeleeRange (mobj_t*	actor)
 //
 // P_CheckMissileRange
 //
-boolean P_CheckMissileRange (mobj_t* actor)
+boolean P_CheckMissileRange(mobj_t* actor)
 {
-    fixed_t	dist;
+    fixed_t dist;
 	
-    if (! P_CheckSight (actor, actor->target) )
+    if(!P_CheckSight(actor, actor->target))
 	return false;
 	
-    if ( actor->flags & MF_JUSTHIT )
+    if(actor->flags & MF_JUSTHIT)
     {
 	// the target just hit the enemy,
 	// so fight back!
@@ -279,11 +283,11 @@ boolean P_CheckMissileRange (mobj_t* actor)
 	return true;
     }
 	
-    if (actor->reactiontime)
+    if(actor->reactiontime)
 	return false;	// do not attack yet
 		
     // OPTIMIZE: get this from a global checksight
-    dist = P_AproxDistance ( actor->x-actor->target->x,
+    dist = P_AproxDistance(actor->x-actor->target->x,
 			     actor->y-actor->target->y) - 64*FRACUNIT;
     
     if (!actor->info->meleestate)
@@ -291,41 +295,45 @@ boolean P_CheckMissileRange (mobj_t* actor)
 
     dist >>= 16;
 
-    // villsa [STRIFE] unused
-    /*if (actor->type == MT_VILE)
+    // villsa [STRIFE] checks for acolytes
+    if(actor->type == MT_SHADOWGUARD ||
+        (actor->type >= MT_GUARD1 && actor->type <= MT_GUARD6))
     {
-	if (dist > 14*64)	
-	    return false;	// too far away
+        dist >>= 4;
     }
-	
-
-    if (actor->type == MT_UNDEAD)
-    {
-	if (dist < 196)	
-	    return false;	// close for fist attack
-	dist >>= 1;
-    }*/
-	
-
-    // villsa [STRIFE] unused
-    /*if (actor->type == MT_CYBORG
-	|| actor->type == MT_SPIDER
-	|| actor->type == MT_SKULL)
-    {
-	dist >>= 1;
-    }*/
+    // villsa [STRIFE] check for Crusader
+    else if(actor->type == MT_CRUSADER)
+        dist >>= 1;
     
-    if (dist > 200)
-	dist = 200;
-		
-    // villsa [STRIFE] unused
-    /*if (actor->type == MT_CYBORG && dist > 160)
-	dist = 160;*/
+    // villsa [STRIFE] changed to 150
+    if (dist > 150)
+	dist = 150;
 		
     if (P_Random () < dist)
 	return false;
 		
     return true;
+}
+
+//
+// P_CheckRobotRange
+// villsa [STRIFE] new function
+//
+
+boolean P_CheckRobotRange(mobj_t *actor)
+{
+    fixed_t dist;
+
+    if(!P_CheckSight(actor, actor->target))
+	return false;
+
+    if(actor->reactiontime)
+	return false;	// do not attack yet
+
+    dist = (P_AproxDistance(actor->x-actor->target->x,
+			     actor->y-actor->target->y) - 64*FRACUNIT) >> FRACBITS;
+
+    return (dist < 200);
 }
 
 
@@ -438,8 +446,11 @@ boolean P_TryWalk (mobj_t* actor)
 
 
 
+//
+// P_NewChaseDir
+//
 
-void P_NewChaseDir (mobj_t*	actor)
+void P_NewChaseDir(mobj_t* actor)
 {
     fixed_t	deltax;
     fixed_t	deltay;
@@ -451,8 +462,13 @@ void P_NewChaseDir (mobj_t*	actor)
     
     dirtype_t	turnaround;
 
-    if (!actor->target)
-	I_Error ("P_NewChaseDir: called with no target");
+    // villsa [STRIFE] don't bomb out and instead set spawnstate
+    if(!actor->target)
+    {
+        //I_Error("P_NewChaseDir: called with no target");
+        P_SetMobjState(actor, actor->info->spawnstate);
+        return;
+    }
 		
     olddir = actor->movedir;
     turnaround=opposite[olddir];
@@ -565,6 +581,61 @@ void P_NewChaseDir (mobj_t*	actor)
     }
 
     actor->movedir = DI_NODIR;	// can not move
+}
+
+//
+// P_NewRandomDir
+// villsa [STRIFE] new function
+//
+
+void P_NewRandomDir(mobj_t* actor)
+{
+    int dir = 0;
+
+    if(P_Random() & 1)
+    {
+        for(dir = 0; dir < DI_NODIR; dir++)
+        {
+            if(dir != opposite[actor->movedir])
+            {
+                actor->movedir = dir;
+                if(P_Random() & 1)
+                {
+                    if(P_TryWalk(actor))
+                        break;
+                }
+            }
+        }
+    }
+    else
+    {
+        dir = DI_SOUTHEAST;
+        while(1)
+        {
+            if(dir != opposite[actor->movedir])
+            {
+                actor->movedir = dir;
+                if(P_TryWalk(actor))
+                    break;
+            }
+
+            if(--dir == -1)
+            {
+                if(opposite[actor->movedir] == DI_NODIR)
+                {
+                    actor->movedir = DI_NODIR;
+                    return;
+                }
+
+                actor->movedir = opposite[actor->movedir];
+                if(!P_TryWalk(actor))
+                {
+                    actor->movedir = DI_NODIR;
+                    return;
+                }
+            }
+        }
+    }
 }
 
 
