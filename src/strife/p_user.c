@@ -448,9 +448,21 @@ void P_PlayerThink (player_t* player)
     if (player->bonuscount)
 	player->bonuscount--;
 
+    // villsa [STRIFE] checks for extralight
+    if(player->extralight >= 0)
+    {
+        if(player->cheats & CF_ONFIRE)
+            player->fixedcolormap = 1;
+        else
+            player->fixedcolormap = 0;
+    }
+    else
+        player->fixedcolormap = INVERSECOLORMAP;
+
     
+    // villsa [STRIFE] unused
     // Handling colormaps.
-    if (player->powers[pw_invulnerability])
+    /*if (player->powers[pw_invulnerability])
     {
 	if (player->powers[pw_invulnerability] > 4*32
 	    || (player->powers[pw_invulnerability]&8) )
@@ -470,7 +482,7 @@ void P_PlayerThink (player_t* player)
 	    player->fixedcolormap = 0;
     }
     else
-	player->fixedcolormap = 0;
+	player->fixedcolormap = 0;*/
 }
 
 

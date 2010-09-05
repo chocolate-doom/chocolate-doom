@@ -498,25 +498,6 @@ void A_Punch(player_t* player, pspdef_t* psp)
 }
 
 
-// Doom does not check the bounds of the ammo array.  As a result,
-// it is possible to use an ammo type > 4 that overflows into the
-// maxammo array and affects that instead.  Through dehacked, for
-// example, it is possible to make a weapon that decreases the max
-// number of ammo for another weapon.  Emulate this.
-
-static void DecreaseAmmo(player_t *player, int ammonum, int amount)
-{
-    if (ammonum < NUMAMMO)
-    {
-        player->ammo[ammonum] -= amount;
-    }
-    else
-    {
-        player->maxammo[ammonum - NUMAMMO] -= amount;
-    }
-}
-
-
 //
 // A_FireFlameThrower
 // villsa [STRIFE] new codepointer
@@ -770,7 +751,91 @@ void A_SigilSound(player_t* player, pspdef_t* pspr)
 
 void A_FireSigil(player_t* player, pspdef_t* pspr)
 {
+    mobj_t* mo;
+    angle_t an;
+    int i;
 
+    // keep info on armor because sigil does piercing damage
+    i = player->armortype;
+    player->armortype = 0;
+    P_DamageMobj(player->mo, player->mo, 0, 4 * player->sigiltype + 1);
+
+    // restore armor
+    player->armortype = i;
+
+    S_StartSound(player->mo, sfx_siglup);
+
+    switch(player->sigiltype)
+    {
+        // falling lightning bolts from the sky
+    case 0:
+        P_BulletSlope(player->mo);
+        if(linetarget)
+        {
+            mo = P_SpawnMobj(linetarget->x, linetarget->y, -ONFLOORZ, MT_SIGIL_A_GROUND);
+            mo->tracer = linetarget;
+        }
+        else
+        {
+            an = player->mo->angle>>ANGLETOFINESHIFT;
+            mo = P_SpawnMobj(player->mo->x, player->mo->y, player->mo->z, MT_SIGIL_A_GROUND);
+            mo->momx += FixedMul((28*FRACUNIT), finecosine[an]);
+            mo->momy += FixedMul((28*FRACUNIT), finesine[an]);
+        }
+        mo->health = -1;
+        mo->target = player->mo;
+        break;
+
+        // simple projectile
+    case 1:
+        P_SpawnPlayerMissile(player->mo, MT_SIGIL_B_SHOT)->health = -1;
+        break;
+
+        // spread shot
+    case 2:
+        player->mo->angle -= ANG90;
+        for(i = 0; i < 20; i++)
+        {
+            player->mo->angle += (ANG90 / 10);
+            mo = P_SpawnMortar(player->mo, MT_SIGIL_C_SHOT);
+            mo->health = -1;
+            mo->z = player->mo->z + (32*FRACUNIT);
+        }
+        player->mo->angle -= ANG90;
+        break;
+
+        // tracer attack
+    case 3:
+        P_BulletSlope(player->mo);
+        if(linetarget)
+        {
+            mo = P_SpawnPlayerMissile(player->mo, MT_SIGIL_D_SHOT);
+            mo->tracer = linetarget;
+        }
+        else
+        {
+            an = player->mo->angle>>ANGLETOFINESHIFT;
+            mo = P_SpawnPlayerMissile(player->mo, MT_SIGIL_D_SHOT);
+            mo->momx += FixedMul(mo->info->speed, finecosine[an]);
+            mo->momy += FixedMul(mo->info->speed, finesine[an]);
+        }
+        mo->health = -1;
+        break;
+
+        // mega blast
+    case 4:
+        mo = P_SpawnPlayerMissile(player->mo, MT_SIGIL_E_SHOT);
+        mo->health = -1;
+        if(!linetarget)
+        {
+            an = player->pitch>>ANGLETOFINESHIFT;
+            mo->momz += FixedMul(finesine[an], mo->info->speed); 
+        }
+        break;
+
+    default:
+        break;
+    }
 }
 
 //
@@ -829,7 +894,7 @@ void A_TorpedoExplode(mobj_t* actor)
 
     for(i = 0; i < 80; i++)
     {
-        actor->angle += 0x3333333;
+        actor->angle += (ANG90 / 20);
         P_SpawnMortar(actor, MT_TORPEDOSPREAD)->target = actor->target;
     }
 }

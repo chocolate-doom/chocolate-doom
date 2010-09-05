@@ -75,7 +75,13 @@ typedef enum
     // No damage, no health loss.
     CF_GODMODE		= 2,
     // Not really a cheat, just a debug aid.
-    CF_NOMOMENTUM	= 4
+    CF_NOMOMENTUM	= 4,
+    // villsa [STRIFE] new cheat
+    // set when on fire and disable inventory
+    CF_ONFIRE           = 8,
+    // villsa [STRIFE] new cheat
+    // auto-use medkits
+    CF_AUTOHEALTH       = 16
 
 } cheat_t;
 
