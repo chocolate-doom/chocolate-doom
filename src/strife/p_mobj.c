@@ -350,7 +350,7 @@ void P_ZMovement (mobj_t* mo)
 
             // villsa [STRIFE] get terrain type
             if(P_GetTerrainType(mo) != FLOOR_SOLID)
-                mo->flags &= ~MF_FEETCLIPPED;
+                mo->flags &= ~MF_BOUNCE;
 	}
 	
 	if (mo->momz < 0)
@@ -392,12 +392,7 @@ void P_ZMovement (mobj_t* mo)
 	if ( (mo->flags & MF_MISSILE)
 	     && !(mo->flags & (MF_NOCLIP|MF_BOUNCE)) )
 	{
-            // villsa [STRIFE] check against skies
-	    if(mo->subsector->sector->ceilingpic == skyflatnum)
-                P_RemoveMobj(mo);
-            else
-                P_ExplodeMissile (mo);
-
+            P_ExplodeMissile (mo);
 	    return;
 	}
     }
