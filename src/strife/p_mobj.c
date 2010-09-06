@@ -1118,10 +1118,10 @@ P_SpawnMissile
 
 //
 // P_SpawnFacingMissile
+//
 // villsa [STRIFE] new function
 // Spawn a missile based on source's angle
 //
-
 mobj_t* P_SpawnFacingMissile(mobj_t* source, mobj_t* target, mobjtype_t type)
 {
     mobj_t* th;
@@ -1156,11 +1156,13 @@ mobj_t* P_SpawnFacingMissile(mobj_t* source, mobj_t* target, mobjtype_t type)
 
     th->momz = (target->z - source->z) / dist;
     P_CheckMissileSpawn (th);
-}
 
+    return th;
+}
 
 //
 // P_SpawnPlayerMissile
+//
 // Tries to aim at a nearby monster
 // villsa [STRIFE] now returns a mobj
 //
@@ -1180,26 +1182,26 @@ mobj_t* P_SpawnPlayerMissile(mobj_t* source, mobjtype_t type)
     
     if (!linetarget)
     {
-	an += 1<<26;
-	slope = P_AimLineAttack (source, an, 16*64*FRACUNIT);
+        an += 1<<26;
+        slope = P_AimLineAttack (source, an, 16*64*FRACUNIT);
 
-	if (!linetarget)
-	{
-	    an -= 2<<26;
-	    slope = P_AimLineAttack (source, an, 16*64*FRACUNIT);
-	}
+        if (!linetarget)
+        {
+            an -= 2<<26;
+            slope = P_AimLineAttack (source, an, 16*64*FRACUNIT);
+        }
 
-	if (!linetarget)
-	{
-	    an = source->angle;
-	    slope = 0;
-	}
+        if (!linetarget)
+        {
+            an = source->angle;
+            slope = 0;
+        }
     }
 
     // villsa [STRIFE]
     if(linetarget)
         source->target = linetarget;
-		
+
     x = source->x;
     y = source->y;
     
@@ -1208,18 +1210,18 @@ mobj_t* P_SpawnPlayerMissile(mobj_t* source, mobjtype_t type)
         z = source->z + 32*FRACUNIT;
     else
         z = source->z + 22*FRACUNIT;
-	
+
     th = P_SpawnMobj (x,y,z, type);
 
     if (th->info->seesound)
-	S_StartSound (th, th->info->seesound);
+        S_StartSound (th, th->info->seesound);
 
     th->target = source;
     th->angle = an;
     th->momx = FixedMul( th->info->speed,
-			 finecosine[an>>ANGLETOFINESHIFT]);
+                         finecosine[an>>ANGLETOFINESHIFT]);
     th->momy = FixedMul( th->info->speed,
-			 finesine[an>>ANGLETOFINESHIFT]);
+                         finesine[an>>ANGLETOFINESHIFT]);
     th->momz = FixedMul( th->info->speed, slope);
 
     P_CheckMissileSpawn (th);

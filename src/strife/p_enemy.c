@@ -1489,9 +1489,12 @@ void A_TemplarMauler(mobj_t* actor)
 
 //
 // A_CrusaderAttack
-// villsa [STRIFE] new codepointer
 //
-
+// villsa [STRIFE] new codepointer
+// 09/06/10: Action function for the Crusader's Flamethrower.
+// Very similar to the player's flamethrower, seeing how it was ripped
+// off a Crusader by the Rat People ;)
+//
 void A_CrusaderAttack(mobj_t* actor)
 {
     if(!actor->target)
@@ -1530,9 +1533,9 @@ void A_CrusaderAttack(mobj_t* actor)
 
 //
 // A_CrusaderLeft
+//
 // villsa [STRIFE] new codepointer
 //
-
 void A_CrusaderLeft(mobj_t* actor)
 {
     mobj_t* mo;
@@ -1546,9 +1549,9 @@ void A_CrusaderLeft(mobj_t* actor)
 
 //
 // A_CrusaderRight
+//
 // villsa [STRIFE] new codepointer
 //
-
 void A_CrusaderRight(mobj_t* actor)
 {
     mobj_t* mo;
@@ -1603,9 +1606,10 @@ void A_InqFlyCheck(mobj_t* actor)
 
 //
 // A_InqGrenade
-// villsa [STRIFE] new codepointer
 //
-
+// villsa [STRIFE] new codepointer
+// 09/06/10: Inquisitor grenade attack action routine.
+//
 void A_InqGrenade(mobj_t* actor)
 {
     mobj_t* mo;
@@ -1805,9 +1809,11 @@ void A_SpectreEAttack(mobj_t* actor)
 
 //
 // A_SpectreCAttack
-// villsa [STRIFE] new codepointer
 //
-
+// villsa [STRIFE] new codepointer
+// 09/06/10: Action routine for the Oracle's Spectre. Equivalent to the player's
+// third Sigil attack.
+//
 void A_SpectreCAttack(mobj_t* actor)
 {
     mobj_t* mo;
@@ -1862,9 +1868,11 @@ void A_AlertSpectreC(mobj_t* actor)
 
 //
 // A_Sigil_E_Action
-// villsa [STRIFE] new codepointer
 //
-
+// villsa [STRIFE] new codepointer
+// 09/06/10: Action routine for Sigil "E" shots. Spawns the room-filling
+// lightning bolts that seem to often do almost nothing.
+//
 void A_Sigil_E_Action(mobj_t* actor)
 {
     actor->angle += ANG90;
@@ -1880,16 +1888,16 @@ void A_Sigil_E_Action(mobj_t* actor)
 
 //
 // A_SigilTrail
+//
 // villsa [STRIFE] new codepointer
 //
-
 void A_SigilTrail(mobj_t* actor)
 {
     mobj_t* mo;
 
     mo = P_SpawnMobj(actor->x - actor->momx,
-        actor->y - actor->momy,
-        actor->z, MT_SIGIL_TRAIL);
+                     actor->y - actor->momy,
+                     actor->z, MT_SIGIL_TRAIL);
 
     mo->angle = actor->angle;
     mo->health = actor->health;
@@ -1935,9 +1943,10 @@ void A_FireSigilEOffshoot(mobj_t* actor)
 
 //
 // A_ShadowOff
-// villsa [STRIFE] new codepointer
 //
-
+// villsa [STRIFE] new codepointer
+// 09/06/10: Disables SHADOW and MVIS flags.
+//
 void A_ShadowOff(mobj_t* actor)
 {
     actor->flags &= ~(MF_SHADOW|MF_MVIS);
@@ -1945,10 +1954,10 @@ void A_ShadowOff(mobj_t* actor)
 
 //
 // A_ModifyVisibility
-// villsa [STRIFE] new codepointer
 //
-
-
+// villsa [STRIFE] new codepointer
+// 09/06/10: Turns on SHADOW, and turns off MVIS.
+//
 void A_ModifyVisibility(mobj_t* actor)
 {
     actor->flags |= MF_SHADOW;
@@ -1957,9 +1966,10 @@ void A_ModifyVisibility(mobj_t* actor)
 
 //
 // A_ShadowOn
-// villsa [STRIFE] new codepointer
 //
-
+// villsa [STRIFE] new codepointer
+// 09/06/10: Turns on SHADOW and MVIS.
+//
 void A_ShadowOn(mobj_t* actor)
 {
     actor->flags |= (MF_SHADOW|MF_MVIS);
@@ -1967,9 +1977,10 @@ void A_ShadowOn(mobj_t* actor)
 
 //
 // A_SetTLOptions
-// villsa [STRIFE] new codepointer
 //
-
+// villsa [STRIFE] new codepointer
+// 09/06/10: Sets SHADOW and/or MVIS based on the thing's spawnpoint options.
+//
 void A_SetTLOptions(mobj_t* actor)
 {
     if(actor->spawnpoint.options & MTF_TRANSLUCENT)
@@ -1981,9 +1992,12 @@ void A_SetTLOptions(mobj_t* actor)
 
 //
 // A_BossMeleeAtk
-// villsa [STRIFE] new codepointer
 //
-
+// villsa [STRIFE] new codepointer
+// 09/06/10: Gratuitous melee attack used by multiple boss characters,
+// just for the sake of having one. It's not like anybody in their right
+// mind would get close to any of the maniacs that use this ;)
+//
 void A_BossMeleeAtk(mobj_t* actor)
 {
     int r;
@@ -1997,9 +2011,10 @@ void A_BossMeleeAtk(mobj_t* actor)
 
 //
 // A_BishopAttack
-// villsa [STRIFE] new codepointer
 //
-
+// villsa [STRIFE] new codepointer
+// 09/06/10: Bishop's homing missile attack.
+//
 void A_BishopAttack(mobj_t* actor)
 {
     mobj_t* mo;
@@ -2017,9 +2032,10 @@ void A_BishopAttack(mobj_t* actor)
 
 //
 // A_FireHookShot
-// villsa [STRIFE] new codepointer
 //
-
+// villsa [STRIFE] new codepointer
+// 09/06/10: Action function for the Loremaster's hookshot attack.
+//
 void A_FireHookShot(mobj_t* actor)
 {
     if(!actor->target)
@@ -2030,9 +2046,10 @@ void A_FireHookShot(mobj_t* actor)
 
 //
 // A_FireChainShot
-// villsa [STRIFE] new codepointer
 //
-
+// villsa [STRIFE] new codepointer
+// 09/06/10: Action function for the hookshot.
+//
 void A_FireChainShot(mobj_t* actor)
 {
     S_StartSound(actor, sfx_tend);
@@ -2051,9 +2068,9 @@ void A_FireChainShot(mobj_t* actor)
 
 //
 // A_MissileSmoke
+//
 // villsa [STRIFE] new codepointer
 //
-
 void A_MissileSmoke(mobj_t* actor)
 {
     mobj_t* mo;
@@ -2070,9 +2087,9 @@ void A_MissileSmoke(mobj_t* actor)
 
 //
 // A_SpawnSparkPuff
+//
 // villsa [STRIFE] new codepointer
 //
-
 void A_SpawnSparkPuff(mobj_t* actor)
 {
     int r;
