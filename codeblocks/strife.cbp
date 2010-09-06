@@ -279,6 +279,10 @@
 		<Unit filename="..\src\strife\p_ceilng.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\src\strife\p_dialog.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\strife\p_dialog.h" />
 		<Unit filename="..\src\strife\p_doors.c">
 			<Option compilerVar="CC" />
 		</Unit>
