@@ -182,7 +182,6 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\mus2mid.h" />
-		<Unit filename="..\src\strife\Makefile.am" />
 		<Unit filename="..\src\strife\am_map.c">
 			<Option compilerVar="CC" />
 		</Unit>
