@@ -2054,7 +2054,7 @@ void A_FireChainShot(mobj_t* actor)
 {
     S_StartSound(actor, sfx_tend);
 
-    P_SpawnMobj(actor->x, actor->y, actor->z, actor->z);
+    P_SpawnMobj(actor->x, actor->y, actor->z, MT_CHAINSHOT); // haleyjd: fixed type
 
     P_SpawnMobj(actor->x - (actor->momx >> 1),
         actor->y - (actor->momy >> 1),

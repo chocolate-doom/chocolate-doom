@@ -1134,16 +1134,22 @@ mobj_t* P_SpawnFacingMissile(mobj_t* source, mobj_t* target, mobjtype_t type)
         S_StartSound(th, th->info->seesound);
 
     th->target = source;    // where it came from
+    th->angle = source->angle; // haleyjd 09/06/10: fix0red
     an = th->angle;
 
     // fuzzy player
     if (target->flags & MF_SHADOW)
-	an += (P_Random()-P_Random())<<21;	
+    {
+        int t = P_Random();
+        an += (t - P_Random()) << 21;
+    }
     // villsa [STRIFE] check for heavily transparent things
     else if(target->flags & MF_MVIS)
-        an += (P_Random()-P_Random())<<22;
+    {
+        int t = P_Random();
+        an += (t - P_Random()) << 22;
+    }
 
-    th->angle = an;
     an >>= ANGLETOFINESHIFT;
     th->momx = FixedMul (th->info->speed, finecosine[an]);
     th->momy = FixedMul (th->info->speed, finesine[an]);
@@ -1250,8 +1256,8 @@ mobj_t* P_SpawnMortar(mobj_t *source, mobjtype_t type)
 
     slope = P_AimLineAttack(source, source->angle, 1024*FRACUNIT);
 
-    th->momx = FixedMul (th->info->speed, finecosine[an]);
-    th->momy = FixedMul (th->info->speed, finesine[an]);
+    th->momx = FixedMul(th->info->speed, finecosine[an]);
+    th->momy = FixedMul(th->info->speed, finesine[an]);
     th->momz = FixedMul(th->info->speed, slope);
 
     P_CheckMissileSpawn(th);
