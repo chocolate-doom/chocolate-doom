@@ -1912,13 +1912,13 @@ typedef enum
     MT_BISHOP,      //064
     MT_ORACLE,      //065
     MT_PRIEST,      //066
-    MT_SPECTURE_A,      //067
+    MT_SPECTRE_A,      //067
     MT_NODE,        //068
-    MT_SPECTUREHEAD,        //069
-    MT_SPECTURE_B,      //070
-    MT_SPECTURE_C,      //071
-    MT_SPECTURE_D,      //072
-    MT_SPECTURE_E,      //073
+    MT_SPECTREHEAD,        //069
+    MT_SPECTRE_B,      //070
+    MT_SPECTRE_C,      //071
+    MT_SPECTRE_D,      //072
+    MT_SPECTRE_E,      //073
     MT_ENTITY,      //074
     MT_SUBENTITY,       //075
     MT_NEST,        //076

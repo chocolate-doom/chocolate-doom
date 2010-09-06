@@ -54,6 +54,9 @@
 //
 // P_SetPsprite
 //
+// [STRIFE]
+// villsa: Removed psprite sx, sy modification via misc1/2
+//
 void
 P_SetPsprite
 ( player_t*	player,
@@ -62,72 +65,46 @@ P_SetPsprite
 {
     pspdef_t*	psp;
     state_t*	state;
-	
+
     psp = &player->psprites[position];
-	
+
     do
     {
-	if (!stnum)
-	{
-	    // object removed itself
-	    psp->state = NULL;
-	    break;	
-	}
-	
-	state = &states[stnum];
-	psp->state = state;
-	psp->tics = state->tics;	// could be 0
+        if (!stnum)
+        {
+            // object removed itself
+            psp->state = NULL;
+            break;	
+        }
+
+        state = &states[stnum];
+        psp->state = state;
+        psp->tics = state->tics;        // could be 0
 
         // villsa [STRIFE] unused
-	/*if (state->misc1)
-	{
-	    // coordinate set
-	    psp->sx = state->misc1 << FRACBITS;
-	    psp->sy = state->misc2 << FRACBITS;
-	}*/
-	
-	// Call action routine.
-	// Modified handling.
-	if (state->action.acp2)
-	{
-	    state->action.acp2(player, psp);
-	    if (!psp->state)
-		break;
-	}
-	
-	stnum = psp->state->nextstate;
-	
+        /*if (state->misc1)
+        {
+            // coordinate set
+            psp->sx = state->misc1 << FRACBITS;
+            psp->sy = state->misc2 << FRACBITS;
+        }*/
+
+        // Call action routine.
+        // Modified handling.
+        if (state->action.acp2)
+        {
+            state->action.acp2(player, psp);
+            if (!psp->state)
+                break;
+        }
+
+        stnum = psp->state->nextstate;
+
     } while (!psp->tics);
     // an initial state of 0 could cycle through
 }
 
-
-
-//
-// P_CalcSwing
-//	
-fixed_t		swingx;
-fixed_t		swingy;
-
-void P_CalcSwing (player_t*	player)
-{
-    fixed_t	swing;
-    int		angle;
-	
-    // OPTIMIZE: tablify this.
-    // A LUT would allow for different modes,
-    //  and add flexibility.
-
-    swing = player->bob;
-
-    angle = (FINEANGLES/70*leveltime)&FINEMASK;
-    swingx = FixedMul ( swing, finesine[angle]);
-
-    angle = (FINEANGLES/70*leveltime+FINEANGLES/2)&FINEMASK;
-    swingy = -FixedMul ( swingx, finesine[angle]);
-}
-
-
+// haleyjd 09/06/10: [STRIFE] Removed P_CalcSwing
 
 //
 // P_BringUpWeapon
@@ -135,17 +112,18 @@ void P_CalcSwing (player_t*	player)
 // from the bottom of the screen.
 // Uses player
 //
+// villsa [STRIFE] Modifications for Strife weapons
+//
 void P_BringUpWeapon (player_t* player)
 {
     statenum_t	newstate;
-	
+
     if (player->pendingweapon == wp_nochange)
-	player->pendingweapon = player->readyweapon;
-		
-    // villsa [STRIFE] unused
+        player->pendingweapon = player->readyweapon;
+
     if (player->pendingweapon == wp_flame)
-	S_StartSound (player->mo, sfx_flidl);   // villsa [STRIFE] flame sounds
-		
+        S_StartSound (player->mo, sfx_flidl);   // villsa [STRIFE] flame sounds
+
     newstate = weaponinfo[player->pendingweapon].upstate;
 
     player->psprites[ps_weapon].sy = WEAPONBOTTOM;
@@ -153,9 +131,9 @@ void P_BringUpWeapon (player_t* player)
 
     // villsa [STRIFE] set various flash states
     if(player->pendingweapon == wp_elecbow)
-        P_SetPsprite(player, ps_flash, S_XBOW_10);
+        P_SetPsprite(player, ps_flash, S_XBOW_10); // 31
     else if(player->pendingweapon == wp_sigil && player->sigiltype)
-        P_SetPsprite(player, ps_flash, S_SIGH_00 + player->sigiltype);
+        P_SetPsprite(player, ps_flash, S_SIGH_00 + player->sigiltype); // 117
     else
         P_SetPsprite(player, ps_flash, S_NULL);
 
@@ -167,59 +145,63 @@ void P_BringUpWeapon (player_t* player)
 // Returns true if there is enough ammo to shoot.
 // If not, selects the next weapon to use.
 //
+// villsa [STRIFE] Changes to handle Strife weapons
+//
 boolean P_CheckAmmo (player_t* player)
 {
-    ammotype_t		ammo;
-    int			count;
+    ammotype_t          ammo;
+    int                 count;
 
     ammo = weaponinfo[player->readyweapon].ammo;
 
     // Minimal amount for one shot varies.
     if (player->readyweapon == wp_torpedo)
-	count = 30;
+        count = 30;
     else if (player->readyweapon == wp_mauler)
-	count = 20;
+        count = 20;
     else
-	count = 1;	// Regular.
+        count = 1;      // Regular.
 
     // Some do not need ammunition anyway.
     // Return if current ammunition sufficient.
     if (ammo == am_noammo || player->ammo[ammo] >= count)
-	return true;
-		
+        return true;
+
     // Out of ammo, pick a weapon to change to.
     // Preferences are set here.
 
     // villsa [STRIFE] new weapon preferences
-     if (player->weaponowned[wp_mauler] && player->ammo[am_cell] >= 20)
-         player->pendingweapon = wp_mauler;
+    if (player->weaponowned[wp_mauler] && player->ammo[am_cell] >= 20)
+        player->pendingweapon = wp_mauler;
 
-     else if(player->weaponowned[wp_rifle] && player->ammo[am_bullets])
-         player->pendingweapon = wp_rifle;
+    else if(player->weaponowned[wp_rifle] && player->ammo[am_bullets])
+        player->pendingweapon = wp_rifle;
 
-     else if (player->weaponowned[wp_elecbow] && player->ammo[am_elecbolts])
-         player->pendingweapon = wp_elecbow;
+    else if (player->weaponowned[wp_elecbow] && player->ammo[am_elecbolts])
+        player->pendingweapon = wp_elecbow;
 
-     else if (player->weaponowned[wp_missile] && player->ammo[am_missiles])
-         player->pendingweapon = wp_missile;
+    else if (player->weaponowned[wp_missile] && player->ammo[am_missiles])
+        player->pendingweapon = wp_missile;
 
-     else if (player->weaponowned[wp_flame] && player->ammo[am_cell])
-         player->pendingweapon = wp_flame;
+    else if (player->weaponowned[wp_flame] && player->ammo[am_cell])
+        player->pendingweapon = wp_flame;
 
-     else if (player->weaponowned[wp_hegrenade] && player->ammo[am_hegrenades])
-         player->pendingweapon = wp_hegrenade;
-     
-     else if (player->weaponowned[wp_poisonbow] && player->ammo[am_poisonbolts])
-         player->pendingweapon = wp_poisonbow;
+    else if (player->weaponowned[wp_hegrenade] && player->ammo[am_hegrenades])
+        player->pendingweapon = wp_hegrenade;
 
-     else if (player->weaponowned[wp_wpgrenade] && player->ammo[am_wpgrenades])
-         player->pendingweapon = wp_wpgrenade;
+    else if (player->weaponowned[wp_poisonbow] && player->ammo[am_poisonbolts])
+        player->pendingweapon = wp_poisonbow;
 
-     else if (player->weaponowned[wp_torpedo] && player->ammo[am_cell] >= 30)
-         player->pendingweapon = wp_torpedo;
+    else if (player->weaponowned[wp_wpgrenade] && player->ammo[am_wpgrenades])
+        player->pendingweapon = wp_wpgrenade;
 
-     else
-         player->pendingweapon = wp_fist;
+    // BUG: This will *never* be selected for an automatic switch because the 
+    // normal Mauler is higher priority and uses less ammo.
+    else if (player->weaponowned[wp_torpedo] && player->ammo[am_cell] >= 30)
+        player->pendingweapon = wp_torpedo; 
+
+    else
+        player->pendingweapon = wp_fist;
 
 
     // Now set appropriate weapon overlay.
@@ -232,14 +214,16 @@ boolean P_CheckAmmo (player_t* player)
 //
 // P_FireWeapon.
 //
+// villsa [STRIFE] Changes for player state and weapons
+//
 void P_FireWeapon (player_t* player)
 {
-    statenum_t	newstate;
-	
+    statenum_t  newstate;
+
     if (!P_CheckAmmo (player))
-	return;
-	
-    P_SetMobjState (player->mo, S_PLAY_05);
+        return;
+
+    P_SetMobjState (player->mo, S_PLAY_05); // 292
     newstate = weaponinfo[player->readyweapon].atkstate;
     P_SetPsprite (player, ps_weapon, newstate);
     
@@ -276,15 +260,16 @@ void A_WeaponReady( player_t* player, pspdef_t* psp)
     int		angle;
     
     // get out of attack state
-    if (player->mo->state == &states[S_PLAY_05]
-	|| player->mo->state == &states[S_PLAY_06])
+    if (player->mo->state == &states[S_PLAY_05] || // 292
+        player->mo->state == &states[S_PLAY_06])   // 293
     {
-	P_SetMobjState (player->mo, S_PLAY_00);
+        P_SetMobjState (player->mo, S_PLAY_00); // 287
     }
     
-        // villsa [STRIFE] check for wp_flame instead of chainsaw
+    // villsa [STRIFE] check for wp_flame instead of chainsaw
+    // haleyjd 09/06/10: fixed state (00 rather than 01)
     if (player->readyweapon == wp_flame
-	&& psp->state == &states[S_FLMT_01])
+        && psp->state == &states[S_FLMT_00]) // 62
     {
         S_StartSound (player->mo, sfx_flidl);
     }
@@ -293,29 +278,29 @@ void A_WeaponReady( player_t* player, pspdef_t* psp)
     //  if player is dead, put the weapon away
     if (player->pendingweapon != wp_nochange || !player->health)
     {
-	// change weapon
-	//  (pending weapon should allready be validated)
-	newstate = weaponinfo[player->readyweapon].downstate;
-	P_SetPsprite (player, ps_weapon, newstate);
-	return;	
+        // change weapon
+        //  (pending weapon should allready be validated)
+        newstate = weaponinfo[player->readyweapon].downstate;
+        P_SetPsprite (player, ps_weapon, newstate);
+        return;	
     }
     
     // check for fire
-    //  the missile launcher and bfg do not auto fire
+    //  the missile launcher and torpedo do not auto fire
     if (player->cmd.buttons & BT_ATTACK)
     {
-        
-	if ( !player->attackdown
-	     || (player->readyweapon != wp_missile
-		 && player->readyweapon != wp_torpedo)) // villsa [STRIFE] replace bfg with torpedo
-	{
-	    player->attackdown = true;
-	    P_FireWeapon (player);		
-	    return;
-	}
+
+        if ( !player->attackdown
+            || (player->readyweapon != wp_missile
+            && player->readyweapon != wp_torpedo)) // villsa [STRIFE] replace bfg with torpedo
+        {
+            player->attackdown = true;
+            P_FireWeapon (player);
+            return;
+        }
     }
     else
-	player->attackdown = false;
+        player->attackdown = false;
     
     // bob the weapon based on movement speed
     angle = (128*leveltime)&FINEMASK;
@@ -641,6 +626,8 @@ void A_FirePoisonBolt(player_t* player, pspdef_t* pspr)
 // Sets a slope so a near miss is at aproximately
 // the height of the intended target
 //
+// haleyjd 09/06/10 [STRIFE] Modified with a little target hack...
+//
 fixed_t		bulletslope;
 
 
@@ -662,6 +649,11 @@ void P_BulletSlope (mobj_t *mo)
             bulletslope = P_AimLineAttack (mo, an, 16*64*FRACUNIT);
         }
     }
+
+    // haleyjd 09/06/10: [STRIFE] Somebody added this here, and without it, you
+    // will get spurious crashing in routines such as P_LookForPlayers!
+    if(linetarget)
+        mo->target = linetarget;
 }
 
 

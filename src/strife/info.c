@@ -85,7 +85,7 @@ void A_Listen();
 void A_Chase();
 void A_FaceTarget();
 void A_PeasantPunch();
-void A_ReavShoot();
+void A_ReaverAttack();
 void A_BulletAttack();
 void A_CheckTargetVisible();
 void A_SentinelAttack();
@@ -94,7 +94,7 @@ void A_StalkerSetLook();
 void A_StalkerDrop();
 void A_StalkerScratch();
 void A_FloatWeave();
-void A_ReavAttack();
+void A_RobotMelee();
 void A_TemplarMauler();
 void A_CrusaderAttack();
 void A_CrusaderLeft();
@@ -776,10 +776,10 @@ state_t states[NUMSTATES] =
 /*S_ROB1_08*/       { SPR_ROB1, 4, 3, { A_Chase }, S_ROB1_09 },     //575
 /*S_ROB1_09*/       { SPR_ROB1, 4, 3, { A_Chase }, S_ROB1_02 },     //576
 /*S_ROB1_10*/       { SPR_ROB1, 7, 6, { A_FaceTarget }, S_ROB1_11 },        //577
-/*S_ROB1_11*/       { SPR_ROB1, 8, 8, { A_ReavAttack }, S_ROB1_12 },        //578
+/*S_ROB1_11*/       { SPR_ROB1, 8, 8, { A_RobotMelee }, S_ROB1_12 },        //578
 /*S_ROB1_12*/       { SPR_ROB1, 7, 6, { NULL }, S_ROB1_02 },        //579
 /*S_ROB1_13*/       { SPR_ROB1, 5, 8, { A_FaceTarget }, S_ROB1_14 },        //580
-/*S_ROB1_14*/       { SPR_ROB1, 32774, 11, { A_ReavShoot }, S_ROB1_02 },        //581
+/*S_ROB1_14*/       { SPR_ROB1, 32774, 11, { A_ReaverAttack }, S_ROB1_02 },        //581
 /*S_ROB1_15*/       { SPR_ROB1, 0, 2, { NULL }, S_ROB1_16 },        //582
 /*S_ROB1_16*/       { SPR_ROB1, 0, 2, { A_Pain }, S_ROB1_02 },      //583
 /*S_ROB1_17*/       { SPR_ROB1, 32777, 6, { NULL }, S_ROB1_18 },        //584
@@ -854,7 +854,7 @@ state_t states[NUMSTATES] =
 /*S_PGRD_10*/       { SPR_PGRD, 3, 3, { A_Chase }, S_PGRD_11 },     //653
 /*S_PGRD_11*/       { SPR_PGRD, 3, 3, { A_Chase }, S_PGRD_04 },     //654
 /*S_PGRD_12*/       { SPR_PGRD, 4, 8, { A_FaceTarget }, S_PGRD_13 },        //655
-/*S_PGRD_13*/       { SPR_PGRD, 5, 8, { A_ReavAttack }, S_PGRD_04 },        //656
+/*S_PGRD_13*/       { SPR_PGRD, 5, 8, { A_RobotMelee }, S_PGRD_04 },        //656
 /*S_PGRD_14*/       { SPR_PGRD, 32774, 8, { A_FaceTarget }, S_PGRD_15 },        //657
 /*S_PGRD_15*/       { SPR_PGRD, 32775, 8, { A_TemplarMauler }, S_PGRD_04 },     //658
 /*S_PGRD_16*/       { SPR_PGRD, 0, 2, { NULL }, S_PGRD_17 },        //659
@@ -1257,8 +1257,8 @@ state_t states[NUMSTATES] =
 /*S_ROB3_09*/       { SPR_ROB3, 4, 3, { A_InqFlyCheck }, S_ROB3_02 },       //1056
 /*S_ROB3_10*/       { SPR_ROB3, 0, 2, { A_InqFlyCheck }, S_ROB3_11 },       //1057
 /*S_ROB3_11*/       { SPR_ROB3, 5, 6, { A_FaceTarget }, S_ROB3_12 },        //1058
-/*S_ROB3_12*/       { SPR_ROB3, 32774, 8, { A_ReavShoot }, S_ROB3_13 },     //1059
-/*S_ROB3_13*/       { SPR_ROB3, 6, 8, { A_ReavShoot }, S_ROB3_02 },     //1060
+/*S_ROB3_12*/       { SPR_ROB3, 32774, 8, { A_ReaverAttack }, S_ROB3_13 },     //1059
+/*S_ROB3_13*/       { SPR_ROB3, 6, 8, { A_ReaverAttack }, S_ROB3_02 },     //1060
 /*S_ROB3_14*/       { SPR_ROB3, 10, 12, { A_FaceTarget }, S_ROB3_15 },      //1061
 /*S_ROB3_15*/       { SPR_ROB3, 32777, 6, { A_InqGrenade }, S_ROB3_16 },        //1062
 /*S_ROB3_16*/       { SPR_ROB3, 10, 12, { NULL }, S_ROB3_02 },      //1063
@@ -3545,7 +3545,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         "priest",       //namepointer
     },
 
-    {       /*MT_SPECTURE_A*/
+    {       /*MT_SPECTRE_A*/
         129,        //doomednum
         S_ALN1_00,      //spawnstate
         1000,       //spawnhealth
@@ -3601,7 +3601,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         NULL,       //namepointer
     },
 
-    {       /*MT_SPECTUREHEAD*/
+    {       /*MT_SPECTREHEAD*/
         -1,     //doomednum
         S_MTHD_00,      //spawnstate
         1000,       //spawnhealth
@@ -3628,7 +3628,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         NULL,       //namepointer
     },
 
-    {       /*MT_SPECTURE_B*/
+    {       /*MT_SPECTRE_B*/
         75,     //doomednum
         S_ALN1_00,      //spawnstate
         1200,       //spawnhealth
@@ -3657,7 +3657,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         NULL,       //namepointer
     },
 
-    {       /*MT_SPECTURE_C*/
+    {       /*MT_SPECTRE_C*/
         76,     //doomednum
         S_ALN1_23,      //spawnstate
         1500,       //spawnhealth
@@ -3686,7 +3686,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         NULL,       //namepointer
     },
 
-    {       /*MT_SPECTURE_D*/
+    {       /*MT_SPECTRE_D*/
         167,        //doomednum
         S_ALN1_00,      //spawnstate
         1700,       //spawnhealth
@@ -3715,7 +3715,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         NULL,       //namepointer
     },
 
-    {       /*MT_SPECTURE_E*/
+    {       /*MT_SPECTRE_E*/
         168,        //doomednum
         S_ALN1_00,      //spawnstate
         2000,       //spawnhealth

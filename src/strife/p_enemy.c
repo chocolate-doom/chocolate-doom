@@ -46,10 +46,13 @@
 // Data.
 #include "sounds.h"
 
-
 // Forward Declarations:
 void A_RandomWalk(mobj_t *);
-
+void A_ProgrammerAttack(mobj_t* actor);
+void A_FireSigilEOffshoot(mobj_t *actor);
+void A_SpectreCAttack(mobj_t *actor);
+void A_SpectreDAttack(mobj_t *actor);
+void A_SpectreEAttack(mobj_t *actor);
 
 typedef enum
 {
@@ -735,12 +738,13 @@ P_LookForPlayers
             }
             else
             {
+                // haleyjd 09/06/10: Note that this sets actor->target in Strife!
                 P_BulletSlope(actor);
 
                 // Clear target if nothing is visible, or if the target is a
                 // friendly Rebel or the allied player.
                 if(!linetarget ||
-                    actor->target->target == MT_REBEL1 &&
+                    actor->target->type == MT_REBEL1 &&
                     actor->target->allegiance == actor->allegiance ||
                     actor->target == master)
                 {
@@ -758,6 +762,7 @@ P_LookForPlayers
                 return true;
             }
 
+            // haleyjd 09/06/10: Note that this sets actor->target in Strife!
             P_BulletSlope(actor);
 
             // Clear target if nothing is visible, or if the target is an ally.
@@ -1131,7 +1136,7 @@ nomissile:
             S_StartSound(actor, sfx_agrac1 + P_Random() % 4);
         }
         else
-            S_StartSound (actor, actor->info->activesound);
+            S_StartSound(actor, actor->info->activesound);
     }
 }
 
@@ -1140,8 +1145,7 @@ nomissile:
 // A_FaceTarget
 //
 // [STRIFE]
-// haleyjd 09/05/10: Modified handling for various visibility
-// modifying flags.
+// haleyjd 09/05/10: Handling for visibility-modifying flags.
 //
 void A_FaceTarget (mobj_t* actor)
 {	
@@ -1169,232 +1173,632 @@ void A_FaceTarget (mobj_t* actor)
     }
 }
 
-
 //
-// A_PosAttack
+// A_PeasantPunch
 //
-void A_PosAttack (mobj_t* actor)
+// [STRIFE] New function
+// haleyjd 09/05/10: Attack used by Peasants as a one-time retaliation
+// when the player or a monster injures them. Weak doesn't begin to
+// describe it :P
+//
+void A_PeasantPunch(mobj_t* actor)
 {
-    int		angle;
-    int		damage;
-    int		slope;
-	
-    if (!actor->target)
-	return;
-		
-    A_FaceTarget (actor);
-    angle = actor->angle;
-    slope = P_AimLineAttack (actor, angle, MISSILERANGE);
+    if(!actor->target)
+        return;
 
-    S_StartSound (actor, sfx_swish);    // villsa [STRIFE] TODO - fix sounds
-    angle += (P_Random()-P_Random())<<20;
-    damage = ((P_Random()%5)+1)*3;
-    P_LineAttack (actor, angle, MISSILERANGE, slope, damage);
+    A_FaceTarget(actor);
+    if(P_CheckMeleeRange(actor))
+        P_DamageMobj(actor->target, actor, actor, 2 * (P_Random() % 5) + 2);
 }
 
-void A_SPosAttack (mobj_t* actor)
+//
+// A_ReaverAttack
+//
+// [STRIFE] New function
+// haleyjd 09/06/10: Action routine used by Reavers to fire bullets.
+// Also apparently used by Inquistors, though they don't seem to use
+// it too often, as they're content to blow your face off with their
+// HE grenades instead.
+//
+void A_ReaverAttack(mobj_t* actor)
 {
-    int		i;
-    int		angle;
-    int		bangle;
-    int		damage;
-    int		slope;
-	
-    if (!actor->target)
-	return;
+    int i = 0;
+    fixed_t slope;
 
-    S_StartSound (actor, sfx_swish);    // villsa [STRIFE] TODO - fix sounds
-    A_FaceTarget (actor);
+    if(!actor->target)
+        return;
+
+    S_StartSound(actor, sfx_reavat);
+    A_FaceTarget(actor);
+
+    slope = P_AimLineAttack(actor, actor->angle, 2048*FRACUNIT);
+
+    do
+    {
+        int     t          = P_Random();
+        angle_t shootangle = actor->angle + ((t - P_Random()) << 20);
+        int     damage     = (P_Random() & 7) + 1;
+
+        P_LineAttack(actor, shootangle, 2048*FRACUNIT, slope, damage);
+        ++i;
+    }
+    while(i < 3);
+}
+
+//
+// A_BulletAttack
+//
+// [STRIFE] New function
+// haleyjd 09/06/10: Action function for generic bullet attacks. Used by
+// a lot of different characters, including Acolytes, Rebels, and Macil.
+//
+void A_BulletAttack(mobj_t* actor)
+{
+    int t, damage;
+    fixed_t slope;
+    angle_t shootangle;
+
+    if(!actor->target)
+        return;
+
+    S_StartSound(actor, sfx_rifle);
+    A_FaceTarget(actor);
+    
+    slope = P_AimLineAttack(actor, actor->angle, 2048*FRACUNIT);
+    t = P_Random();
+    shootangle = ((t - P_Random()) << 19) + actor->angle;
+    damage = 3 * (P_Random() % 5 + 1);
+
+    P_LineAttack(actor, shootangle, 2048*FRACUNIT, slope, damage);
+}
+
+//
+// A_CheckTargetVisible
+//
+// [STRIFE] New function
+// haleyjd 09/06/10: Action routine which sets a thing back to its
+// seestate at random, or if it cannot see its target, or its target
+// is dead. Used by diverse actors.
+//
+void A_CheckTargetVisible(mobj_t* actor)
+{
+    A_FaceTarget(actor);
+
+    if(P_Random() >= 30)
+    {
+        mobj_t *target = actor->target;
+        
+        if(!target || target->health <= 0 || !P_CheckSight(actor, target) ||
+            P_Random() < 40)
+        {
+            P_SetMobjState(actor, actor->info->seestate);
+        }
+    }
+}
+
+//
+// A_SentinelAttack
+//
+// [STRIFE] New function
+// haleyjd 09/06/10: Action function implementing the Sentinel's laser attack
+//
+void A_SentinelAttack(mobj_t* actor)
+{
+    // STRIFE-TODO
+}
+
+//
+// A_StalkerThink
+//
+// [STRIFE] New function
+// haleyjd 09/06/10: Action function to drive Stalker logic.
+//
+void A_StalkerThink(mobj_t* actor)
+{
+    statenum_t statenum;
+
+    if(actor->flags & MF_NOGRAVITY)
+    {
+        if(actor->ceilingz - actor->info->height <= actor->z)
+            return;
+        statenum = S_SPID_11; // 1020
+    }
+    else
+        statenum = S_SPID_18; // 1027
+
+    P_SetMobjState(actor, statenum);
+}
+
+//
+// A_StalkerSetLook
+//
+// [STRIFE] New function
+// haleyjd 09/06/10: Action function to marshall transitions to the
+// Sentinel's spawnstate.
+//
+void A_StalkerSetLook(mobj_t* actor)
+{
+    statenum_t statenum;
+
+    if(!actor) // weird; totally unnecessary.
+        return;
+
+    if(actor->flags & MF_NOGRAVITY)
+    {
+        if(actor->state->nextstate == S_SPID_01) // 1010
+            return;
+        statenum = S_SPID_01; // 1010
+    }
+    else
+    {
+        if(actor->state->nextstate == S_SPID_02) // 1011
+            return;
+        statenum = S_SPID_02; // 1011
+    }
+
+    P_SetMobjState(actor, statenum);
+}
+
+//
+// A_StalkerDrop
+//
+// [STRIFE] New function
+// haleyjd 09/06/10: Dead simple: removes NOGRAVITY status.
+//
+void A_StalkerDrop(mobj_t* actor)
+{
+    actor->flags &= ~MF_NOGRAVITY;
+}
+
+//
+// A_StalkerScratch
+//
+// [STRIFE] New function
+// haleyjd 09/06/10: Action function for Stalker's attack.
+//
+void A_StalkerScratch(mobj_t* actor)
+{
+    if(actor->flags & MF_NOGRAVITY)
+    {
+        // Drop him down before he can attack
+        P_SetMobjState(actor, S_SPID_11); // 1020
+        return;
+    }
+
+    if(!actor->target)
+        return;
+
+    A_FaceTarget(actor);
+    if(P_CheckMeleeRange(actor))
+        P_DamageMobj(actor->target, actor, actor, 2 * (P_Random() % 8) + 2);
+}
+
+//
+// A_FloatWeave
+//
+// [STRIFE] New function
+// haleyjd 09/06/10: Action function which is responsible for floating
+// actors' constant upward and downward movement. Probably a really bad
+// idea in retrospect given how dodgy the 3D clipping implementation is.
+//
+void A_FloatWeave(mobj_t* actor)
+{
+    fixed_t height;
+    fixed_t z;
+
+    if(actor->threshold)
+        return;
+
+    if(actor->flags & MF_INFLOAT)
+        return;
+
+    height = actor->info->height;         // v2
+    z      = actor->floorz + 96*FRACUNIT; // v1
+
+    if ( z > actor->ceilingz - height - 16*FRACUNIT )
+        z = actor->ceilingz - height - 16*FRACUNIT;
+
+    if ( z >= actor->z )
+        actor->momz += FRACUNIT;
+    else
+        actor->momz -= FRACUNIT;
+
+    if ( z == actor->z )
+        actor->threshold = 4;
+    else
+        actor->threshold = 8;
+}
+
+//
+// A_RobotMelee
+//
+// [STRIFE] New function
+// haleyjd 09/06/10: Action function for Reaver and Templar melee attacks.
+//
+void A_RobotMelee(mobj_t* actor)
+{
+    if(!actor->target)
+        return;
+
+    A_FaceTarget(actor);
+    if(P_CheckMeleeRange(actor))
+    {
+        S_StartSound(actor, sfx_revbld);
+        P_DamageMobj(actor->target, actor, actor, 3 * (P_Random() % 8 + 1));
+    }
+}
+
+//
+// A_TemplarMauler
+//
+// [STRIFE] New function
+// haleyjd 09/06/10: Exactly what it sounds like. Kicks your ass.
+//
+void A_TemplarMauler(mobj_t* actor)
+{
+    int i, t;
+    int angle;
+    int bangle;
+    int damage;
+    int slope;
+
+    if(!actor->target)
+        return;
+
+    S_StartSound(actor, sfx_pgrdat);
+    A_FaceTarget(actor);
     bangle = actor->angle;
-    slope = P_AimLineAttack (actor, bangle, MISSILERANGE);
+    slope = P_AimLineAttack(actor, bangle, 2048*FRACUNIT);
 
-    for (i=0 ; i<3 ; i++)
+    for(i = 0; i < 10; i++)
     {
-	angle = bangle + ((P_Random()-P_Random())<<20);
-	damage = ((P_Random()%5)+1)*3;
-	P_LineAttack (actor, angle, MISSILERANGE, slope, damage);
+        // haleyjd 09/06/10: Very carefully preserved order of P_Random calls
+        damage = (P_Random() & 4) * 2;
+        t = P_Random();
+        angle = bangle + ((t - P_Random()) << 19);
+        t = P_Random();
+        slope = ((t - P_Random()) << 5) + slope;
+        P_LineAttack(actor, angle, 2112*FRACUNIT, slope, damage);
     }
 }
 
-void A_CPosAttack (mobj_t* actor)
+void A_CrusaderAttack(mobj_t* actor)
 {
-    int		angle;
-    int		bangle;
-    int		damage;
-    int		slope;
-	
-    if (!actor->target)
-	return;
-
-    S_StartSound (actor, sfx_swish);    // villsa [STRIFE] TODO - fix sounds
-    A_FaceTarget (actor);
-    bangle = actor->angle;
-    slope = P_AimLineAttack (actor, bangle, MISSILERANGE);
-
-    angle = bangle + ((P_Random()-P_Random())<<20);
-    damage = ((P_Random()%5)+1)*3;
-    P_LineAttack (actor, angle, MISSILERANGE, slope, damage);
+    // STRIFE-TODO
 }
 
-void A_CPosRefire (mobj_t* actor)
-{	
-    // keep firing unless target got out of sight
-    A_FaceTarget (actor);
-
-    if (P_Random () < 40)
-	return;
-
-    if (!actor->target
-	|| actor->target->health <= 0
-	|| !P_CheckSight (actor, actor->target) )
-    {
-	P_SetMobjState (actor, actor->info->seestate);
-    }
+void A_CrusaderLeft(mobj_t* actor)
+{
+    // STRIFE-TODO
 }
 
-
-void A_SpidRefire (mobj_t* actor)
-{	
-    // keep firing unless target got out of sight
-    A_FaceTarget (actor);
-
-    if (P_Random () < 10)
-	return;
-
-    if (!actor->target
-	|| actor->target->health <= 0
-	|| !P_CheckSight (actor, actor->target) )
-    {
-	P_SetMobjState (actor, actor->info->seestate);
-    }
+void A_CrusaderRight(mobj_t* actor)
+{
+    // STRIFE-TODO
 }
-
-void A_BspiAttack (mobj_t *actor)
-{	
-    if (!actor->target)
-	return;
-		
-    A_FaceTarget (actor);
-
-    // launch a missile
-    // villsa [STRIFE] unused
-    //P_SpawnMissile (actor, actor->target, MT_ARACHPLAZ);
-}
-
 
 //
-// A_TroopAttack
+// A_CheckTargetVisible2
 //
-void A_TroopAttack (mobj_t* actor)
+// [STRIFE] New function
+// haleyjd 09/06/10: Mostly the same as CheckTargetVisible, except without
+// the randomness.
+//
+void A_CheckTargetVisible2(mobj_t* actor)
 {
-    int		damage;
-	
-    if (!actor->target)
-	return;
-		
-    A_FaceTarget (actor);
-    if (P_CheckMeleeRange (actor))
+    if(!actor->target || actor->target->health <= 0 || 
+        !P_CheckSight(actor, actor->target))
     {
-	S_StartSound (actor, sfx_swish);    // villsa [STRIFE] TODO - fix sounds
-	damage = (P_Random()%8+1)*3;
-	P_DamageMobj (actor->target, actor, actor, damage);
-	return;
+        P_SetMobjState(actor, actor->info->seestate);
     }
+}
 
+//
+// A_InqFlyCheck
+//
+// [STRIFE] New function
+// haleyjd 09/06/10: Action function to check if an Inquisitor wishes
+// to take to flight.
+//
+void A_InqFlyCheck(mobj_t* actor)
+{
+    if(!actor->target)
+        return;
+
+    A_FaceTarget(actor);
+
+    // if not in "robot" range, shoot grenades.
+    if(!P_CheckRobotRange(actor))
+        P_SetMobjState(actor, S_ROB3_14); // 1061
+
+    if(actor->z != actor->target->z)
+    {
+        // Take off all zig!
+        if(actor->z + actor->height + 54*FRACUNIT < actor->ceilingz)
+            P_SetMobjState(actor, S_ROB3_17); // 1064
+    }
+}
+
+//
+// A_InqGrenade
+//
+void A_InqGrenade(mobj_t* actor)
+{
+    // STRIFE-TODO
+}
+
+//
+// A_InqTakeOff
+//
+// [STRIFE] New function
+// haleyjd 09/06/10: Makes an Inquisitor start flying.
+//
+void A_InqTakeOff(mobj_t* actor)
+{
+    angle_t an;
+    fixed_t speed = actor->info->speed * (2 * FRACUNIT / 3);
+    fixed_t dist;
+
+    if(!actor->target)
+        return;
+
+    S_StartSound(actor, sfx_inqjmp);
+
+    actor->z += 64 * FRACUNIT;
+
+    A_FaceTarget(actor);
+
+    an = actor->angle >> ANGLETOFINESHIFT;
+
+    actor->momx = FixedMul(finecosine[an], speed);
+    actor->momy = FixedMul(finesine[an],   speed);
+
+    dist = P_AproxDistance(actor->target->x - actor->x,
+                           actor->target->y - actor->y);
+
+    dist /= speed;
+    if(dist < 1)
+        dist = 1;
+
+    actor->momz = (actor->target->z - actor->z) / dist;
+    actor->reactiontime = 60;
+    actor->flags |= MF_NOGRAVITY;
+}
+
+//
+// A_InqFly
+//
+// [STRIFE] New function
+// haleyjd 09/06/10: Handles an Inquisitor in flight.
+//
+void A_InqFly(mobj_t* actor)
+{
+    if(!(leveltime & 7))
+        S_StartSound(actor, sfx_inqjmp);
+
+    if(--actor->reactiontime < 0 || !actor->momx || !actor->momy ||
+        actor->z <= actor->floorz)
+    {
+        // Come in for a landing.
+        P_SetMobjState(actor, actor->info->seestate);
+        actor->reactiontime = 0;
+        actor->flags &= ~MF_NOGRAVITY;
+    }
+}
+
+//
+// A_FireSigilWeapon
+//
+// [STRIFE] New function
+// haleyjd 09/06/10: Action function for the Entity's attack.
+//
+void A_FireSigilWeapon(mobj_t* actor)
+{
+    int choice = P_Random() % 5;
+
+    // STRIFE-TODO: Needs verification. This switch is just weird.
+    switch(choice)
+    {
+    case 0:
+        A_ProgrammerAttack(actor);
+        break;
+    // ain't not seen no case 1, bub...
+    case 2:
+        A_FireSigilEOffshoot(actor);
+        break;
+    case 3:
+        A_SpectreCAttack(actor);
+        break;
+    case 4:
+        A_SpectreDAttack(actor);
+        break;
+    case 5: // BUG: never used? wtf were they thinking?
+        A_SpectreEAttack(actor);
+        break;
+    default:
+        break;
+    }
+}
+
+//
+// A_ProgrammerAttack
+//
+// [STRIFE] New function
+// haleyjd 09/06/10: Action function for the Programmer's main
+// attack; equivalent to the player's first Sigil.
+//
+void A_ProgrammerAttack(mobj_t* actor)
+{
+    mobj_t *mo;
+
+    if(!actor->target)
+        return;
+
+    mo = P_SpawnMobj(actor->x, actor->y, ONFLOORZ, MT_SIGIL_A_GROUND);
+    mo->threshold = 25;
+    mo->target = actor;
+    mo->health = -2;
+    mo->tracer = actor->target;
+}
+
+//
+// A_Sigil_A_Action
+//
+// [STRIFE] New function
+// haleyjd 09/06/10: Called by MT_SIGIL_A_GROUND to zot anyone nearby with
+// corny looking lightning bolts.
+//
+void A_Sigil_A_Action(mobj_t* actor)
+{
+    int t, x, y, type;
+    mobj_t *mo;
+
+    if(actor->threshold)
+        actor->threshold--;
+
+    t = P_Random();
+    actor->momx += ((t & 3) - (P_Random() & 3)) << FRACBITS;
+    t = P_Random();
+    actor->momy += ((t & 3) - (P_Random() & 3)) << FRACBITS;
+
+    t = P_Random();
+    x = 50*FRACUNIT * ((t & 3) - (P_Random() & 3)) + actor->x;
+    t = P_Random();
+    y = 50*FRACUNIT * ((t & 3) - (P_Random() & 3)) + actor->y;
+
+    if(actor->threshold <= 25)
+        type = MT_SIGIL_A_ZAP_LEFT;
+    else
+        type = MT_SIGIL_A_ZAP_RIGHT;
+
+    mo = P_SpawnMobj(x, y, ONCEILINGZ, type);
+    mo->momz = -18 * FRACUNIT;
+    mo->target = actor->target;
+    mo->health = actor->health;
+
+    mo = P_SpawnMobj(actor->x, actor->y,  ONCEILINGZ, MT_SIGIL_A_ZAP_RIGHT);
+    mo->momz = -18 * FRACUNIT;
+    mo->target = actor->target;
+    mo->health = actor->health;
+}
+
+//
+// A_SpectreEAttack
+//
+// [STRIFE] New function
+// haleyjd 09/06/10: Action function for the Loremaster's Spectre.
+// Equivalent to the player's final Sigil attack.
+//
+void A_SpectreEAttack(mobj_t* actor)
+{
+    mobj_t *mo;
+
+    if(!actor->target)
+        return;
     
-    // launch a missile
-    // villsa [STRIFE] unused
-    //P_SpawnMissile (actor, actor->target, MT_TROOPSHOT);
+    mo = P_SpawnMissile(actor, actor->target, MT_SIGIL_SE_SHOT);
+    mo->health = -2;
 }
 
-
-void A_SargAttack (mobj_t* actor)
+void A_SpectreCAttack(mobj_t* actor)
 {
-    int		damage;
-
-    if (!actor->target)
-	return;
-		
-    A_FaceTarget (actor);
-    if (P_CheckMeleeRange (actor))
-    {
-	damage = ((P_Random()%10)+1)*4;
-	P_DamageMobj (actor->target, actor, actor, damage);
-    }
+    // STRIFE-TODO
 }
-
-void A_HeadAttack (mobj_t* actor)
-{
-    int		damage;
-	
-    if (!actor->target)
-	return;
-		
-    A_FaceTarget (actor);
-    if (P_CheckMeleeRange (actor))
-    {
-	damage = (P_Random()%6+1)*10;
-	P_DamageMobj (actor->target, actor, actor, damage);
-	return;
-    }
-    
-    // launch a missile
-    // villsa [STRIFE] unused
-    //P_SpawnMissile (actor, actor->target, MT_HEADSHOT);
-}
-
-void A_CyberAttack (mobj_t* actor)
-{	
-    if (!actor->target)
-	return;
-		
-    A_FaceTarget (actor);
-    // villsa [STRIFE] unused
-    //P_SpawnMissile (actor, actor->target, MT_ROCKET);
-}
-
-
-void A_BruisAttack (mobj_t* actor)
-{
-    int		damage;
-	
-    if (!actor->target)
-	return;
-		
-    if (P_CheckMeleeRange (actor))
-    {
-	S_StartSound (actor, sfx_swish);    // villsa [STRIFE] TODO - fix sounds
-	damage = (P_Random()%8+1)*10;
-	P_DamageMobj (actor->target, actor, actor, damage);
-	return;
-    }
-    
-    // launch a missile
-    // villsa [STRIFE] unused
-    //P_SpawnMissile (actor, actor->target, MT_BRUISERSHOT);
-}
-
 
 //
-// A_SkelMissile
+// A_AlertSpectreC
 //
-void A_SkelMissile (mobj_t* actor)
-{	
-    // villsa [STRIFE] unused
-   /* mobj_t*	mo;
-	
-    if (!actor->target)
-	return;
-		
-    A_FaceTarget (actor);
-    actor->z += 16*FRACUNIT;	// so missile spawns higher
-    mo = P_SpawnMissile (actor, actor->target, MT_TRACER);
-    actor->z -= 16*FRACUNIT;	// back to normal
+// [STRIFE] New function
+// haleyjd 09/06/10: Action function called by the Oracle when it is
+// killed. Finds an MT_SPECTRE_C anywhere on the map and awakens it.
+//
+void A_AlertSpectreC(mobj_t* actor)
+{
+    thinker_t *th;
 
-    mo->x += mo->momx;
-    mo->y += mo->momy;
-    mo->tracer = actor->target;*/
+    for(th = thinkercap.next; th != &thinkercap; th = th->next)
+    {
+        if(th->function.acp1 == (actionf_p1)P_MobjThinker)
+        {
+            mobj_t *mo = (mobj_t *)th;
+
+            if(mo->type == MT_SPECTRE_C)
+            {
+                P_SetMobjState(mo, mo->info->seestate);
+                mo->target = actor->target;
+                return;
+            }
+        }
+    }
 }
+
+void A_Sigil_E_Action(mobj_t* actor)
+{
+
+}
+
+void A_SigilTrail(mobj_t* actor)
+{
+
+}
+
+//
+// A_SpectreDAttack
+//
+// [STRIFE] New function
+// haleyjd 09/06/10: Action function for Macil's Spectre.
+// Equivalent of the player's fourth Sigil attack.
+//
+void A_SpectreDAttack(mobj_t* actor)
+{
+    mobj_t *mo;
+
+    if(!actor->target)
+        return;
+
+    mo = P_SpawnMissile(actor, actor->target, MT_SIGIL_SD_SHOT);
+    mo->health = -2;
+    mo->tracer = actor->target;
+}
+
+//
+// A_FireSigilEOffshoot
+//
+// [STRIFE] New function
+// haleyjd 09/06/10: Action function to fire part of a Sigil E
+// attack. Used at least by the Entity.
+//
+void A_FireSigilEOffshoot(mobj_t* actor)
+{
+    mobj_t *mo;
+
+    if(!actor->target)
+        return;
+
+    mo = P_SpawnMissile(actor, actor->target, MT_SIGIL_E_OFFSHOOT);
+    mo->health = -2;
+}
+
+void A_ShadowOff(mobj_t* actor)
+{
+
+}
+
+void A_ModifyVisibility(mobj_t* actor)
+{
+
+}
+
+void A_ShadowOn(mobj_t* actor)
+{
+
+}
+
+
+// haleyjd 09/05/10: [STRIFE] Removed:
+// A_PosAttack, A_SPosAttack, A_CPosAttack, A_CPosRefire, A_SpidRefire, 
+// A_BspiAttack, A_TroopAttack, A_SargAttack, A_HeadAttack, A_CyberAttack,
+// A_BruisAttack, A_SkelMissile
 
 int	TRACEANGLE = 0xc000000;
 
@@ -1470,467 +1874,11 @@ void A_Tracer (mobj_t* actor)
 	actor->momz += FRACUNIT/8;*/
 }
 
-
-void A_SkelWhoosh (mobj_t*	actor)
-{
-    if (!actor->target)
-	return;
-    A_FaceTarget (actor);
-    S_StartSound (actor,sfx_swish); // villsa [STRIFE] TODO - fix sounds
-}
-
-void A_SkelFist (mobj_t*	actor)
-{
-    int		damage;
-
-    if (!actor->target)
-	return;
-		
-    A_FaceTarget (actor);
-	
-    if (P_CheckMeleeRange (actor))
-    {
-	damage = ((P_Random()%10)+1)*6;
-	S_StartSound (actor, sfx_swish);    // villsa [STRIFE] TODO - fix sounds
-	P_DamageMobj (actor->target, actor, actor, damage);
-    }
-}
-
-
-
-//
-// PIT_VileCheck
-// Detect a corpse that could be raised.
-//
-mobj_t*		corpsehit;
-mobj_t*		vileobj;
-fixed_t		viletryx;
-fixed_t		viletryy;
-
-boolean PIT_VileCheck (mobj_t*	thing)
-{
-    // villsa [STRIFE] unused
-/*    int		maxdist;
-    boolean	check;
-	
-    if (!(thing->flags & MF_CORPSE) )
-	return true;	// not a monster
-    
-    if (thing->tics != -1)
-	return true;	// not lying still yet
-    
-    // villsa [STRIFE] unused
-    //if (thing->info->raisestate == S_NULL)
-	//return true;	// monster doesn't have a raise state
-    
-    maxdist = thing->info->radius + mobjinfo[MT_VILE].radius;
-	
-    if ( abs(thing->x - viletryx) > maxdist
-	 || abs(thing->y - viletryy) > maxdist )
-	return true;		// not actually touching
-		
-    corpsehit = thing;
-    corpsehit->momx = corpsehit->momy = 0;
-    corpsehit->height <<= 2;
-    check = P_CheckPosition (corpsehit, corpsehit->x, corpsehit->y);
-    corpsehit->height >>= 2;
-
-    if (!check)
-	return true;		// doesn't fit here*/
-		
-    return false;		// got one, so stop checking
-}
-
-
-
-//
-// A_VileChase
-// Check for ressurecting a body
-//
-// villsa [STRIFE] TODO depcricate this later
-void A_VileChase (mobj_t* actor)
-{
-/*    int			xl;
-    int			xh;
-    int			yl;
-    int			yh;
-    
-    int			bx;
-    int			by;
-
-    mobjinfo_t*		info;
-    mobj_t*		temp;
-	
-    if (actor->movedir != DI_NODIR)
-    {
-	// check for corpses to raise
-	viletryx =
-	    actor->x + actor->info->speed*xspeed[actor->movedir];
-	viletryy =
-	    actor->y + actor->info->speed*yspeed[actor->movedir];
-
-	xl = (viletryx - bmaporgx - MAXRADIUS*2)>>MAPBLOCKSHIFT;
-	xh = (viletryx - bmaporgx + MAXRADIUS*2)>>MAPBLOCKSHIFT;
-	yl = (viletryy - bmaporgy - MAXRADIUS*2)>>MAPBLOCKSHIFT;
-	yh = (viletryy - bmaporgy + MAXRADIUS*2)>>MAPBLOCKSHIFT;
-	
-	vileobj = actor;
-	for (bx=xl ; bx<=xh ; bx++)
-	{
-	    for (by=yl ; by<=yh ; by++)
-	    {
-		// Call PIT_VileCheck to check
-		// whether object is a corpse
-		// that canbe raised.
-		if (!P_BlockThingsIterator(bx,by,PIT_VileCheck))
-		{
-		    // got one!
-		    temp = actor->target;
-		    actor->target = corpsehit;
-		    A_FaceTarget (actor);
-		    actor->target = temp;
-					
-		    P_SetMobjState (actor, S_VILE_HEAL1);
-		    S_StartSound (corpsehit, sfx_slop);
-		    info = corpsehit->info;
-		    
-		    P_SetMobjState (corpsehit,info->raisestate);
-		    corpsehit->height <<= 2;
-		    corpsehit->flags = info->flags;
-		    corpsehit->health = info->spawnhealth;
-		    corpsehit->target = NULL;
-
-		    return;
-		}
-	    }
-	}
-    }
-
-    // Return to normal attack.
-    A_Chase (actor);*/
-}
-
-
-//
-// A_VileStart
-//
-void A_VileStart (mobj_t* actor)
-{
-    S_StartSound (actor, sfx_swish);    // villsa [STRIFE] TODO - fix sounds
-}
-
-
-//
-// A_Fire
-// Keep fire in front of player unless out of sight
-//
-void A_Fire (mobj_t* actor);
-
-void A_StartFire (mobj_t* actor)
-{
-    S_StartSound(actor,sfx_swish);  // villsa [STRIFE] TODO - fix sounds
-    A_Fire(actor);
-}
-
-void A_FireCrackle (mobj_t* actor)
-{
-    S_StartSound(actor,sfx_swish);  // villsa [STRIFE] TODO - fix sounds
-    A_Fire(actor);
-}
-
-void A_Fire (mobj_t* actor)
-{
-    mobj_t*	dest;
-    mobj_t*     target;
-    unsigned	an;
-		
-    dest = actor->tracer;
-    if (!dest)
-	return;
-
-    target = P_SubstNullMobj(actor->target);
-		
-    // don't move it if the vile lost sight
-    if (!P_CheckSight (target, dest) )
-	return;
-
-    an = dest->angle >> ANGLETOFINESHIFT;
-
-    P_UnsetThingPosition (actor);
-    actor->x = dest->x + FixedMul (24*FRACUNIT, finecosine[an]);
-    actor->y = dest->y + FixedMul (24*FRACUNIT, finesine[an]);
-    actor->z = dest->z;
-    P_SetThingPosition (actor);
-}
-
-
-
-//
-// A_VileTarget
-// Spawn the hellfire
-//
-void A_VileTarget (mobj_t*	actor)
-{
-    // villsa [STRIFE] unused
- /*   mobj_t*	fog;
-	
-    if (!actor->target)
-	return;
-
-    A_FaceTarget (actor);
-
-    fog = P_SpawnMobj (actor->target->x,
-		       actor->target->x,
-		       actor->target->z, MT_FIRE);
-    
-    actor->tracer = fog;
-    fog->target = actor;
-    fog->tracer = actor->target;
-    A_Fire (fog);*/
-}
-
-
-
-
-//
-// A_VileAttack
-//
-void A_VileAttack (mobj_t* actor)
-{	
-    mobj_t*	fire;
-    int		an;
-	
-    if (!actor->target)
-	return;
-    
-    A_FaceTarget (actor);
-
-    if (!P_CheckSight (actor, actor->target) )
-	return;
-
-    S_StartSound (actor, sfx_barexp);
-    P_DamageMobj (actor->target, actor, actor, 20);
-    actor->target->momz = 1000*FRACUNIT/actor->target->info->mass;
-	
-    an = actor->angle >> ANGLETOFINESHIFT;
-
-    fire = actor->tracer;
-
-    if (!fire)
-	return;
-		
-    // move the fire between the vile and the player
-    fire->x = actor->target->x - FixedMul (24*FRACUNIT, finecosine[an]);
-    fire->y = actor->target->y - FixedMul (24*FRACUNIT, finesine[an]);	
-    P_RadiusAttack (fire, actor, 70 );
-}
-
-
-
-
-//
-// Mancubus attack,
-// firing three missiles (bruisers)
-// in three different directions?
-// Doesn't look like it. 
-//
-#define	FATSPREAD	(ANG90/8)
-
-void A_FatRaise (mobj_t *actor)
-{
-    A_FaceTarget (actor);
-    S_StartSound (actor, sfx_swish);    // villsa [STRIFE] TODO - fix sounds
-}
-
-
-void A_FatAttack1 (mobj_t* actor)
-{
-    // villsa [STRIFE] unused
-/*    mobj_t*	mo;
-    mobj_t*     target;
-    int		an;
-
-    A_FaceTarget (actor);
-
-    // Change direction  to ...
-    actor->angle += FATSPREAD;
-    target = P_SubstNullMobj(actor->target);
-    P_SpawnMissile (actor, target, MT_FATSHOT);
-
-    mo = P_SpawnMissile (actor, target, MT_FATSHOT);
-    mo->angle += FATSPREAD;
-    an = mo->angle >> ANGLETOFINESHIFT;
-    mo->momx = FixedMul (mo->info->speed, finecosine[an]);
-    mo->momy = FixedMul (mo->info->speed, finesine[an]);*/
-}
-
-void A_FatAttack2 (mobj_t* actor)
-{
-    // villsa [STRIFE] unused
-/*    mobj_t*	mo;
-    mobj_t*     target;
-    int		an;
-
-    A_FaceTarget (actor);
-    // Now here choose opposite deviation.
-    actor->angle -= FATSPREAD;
-    target = P_SubstNullMobj(actor->target);
-    P_SpawnMissile (actor, target, MT_FATSHOT);
-
-    mo = P_SpawnMissile (actor, target, MT_FATSHOT);
-    mo->angle -= FATSPREAD*2;
-    an = mo->angle >> ANGLETOFINESHIFT;
-    mo->momx = FixedMul (mo->info->speed, finecosine[an]);
-    mo->momy = FixedMul (mo->info->speed, finesine[an]);*/
-}
-
-void A_FatAttack3 (mobj_t*	actor)
-{
-    // villsa [STRIFE] unused
- /*   mobj_t*	mo;
-    mobj_t*     target;
-    int		an;
-
-    A_FaceTarget (actor);
-
-    target = P_SubstNullMobj(actor->target);
-    
-    mo = P_SpawnMissile (actor, target, MT_FATSHOT);
-    mo->angle -= FATSPREAD/2;
-    an = mo->angle >> ANGLETOFINESHIFT;
-    mo->momx = FixedMul (mo->info->speed, finecosine[an]);
-    mo->momy = FixedMul (mo->info->speed, finesine[an]);
-
-    mo = P_SpawnMissile (actor, target, MT_FATSHOT);
-    mo->angle += FATSPREAD/2;
-    an = mo->angle >> ANGLETOFINESHIFT;
-    mo->momx = FixedMul (mo->info->speed, finecosine[an]);
-    mo->momy = FixedMul (mo->info->speed, finesine[an]);*/
-}
-
-
-//
-// SkullAttack
-// Fly at the player like a missile.
-//
-#define	SKULLSPEED		(20*FRACUNIT)
-
-void A_SkullAttack (mobj_t* actor)
-{
-/*    mobj_t*		dest;
-    angle_t		an;
-    int			dist;
-
-    if (!actor->target)
-	return;
-		
-    dest = actor->target;	
-    actor->flags |= MF_SKULLFLY;
-
-    S_StartSound (actor, actor->info->attacksound);
-    A_FaceTarget (actor);
-    an = actor->angle >> ANGLETOFINESHIFT;
-    actor->momx = FixedMul (SKULLSPEED, finecosine[an]);
-    actor->momy = FixedMul (SKULLSPEED, finesine[an]);
-    dist = P_AproxDistance (dest->x - actor->x, dest->y - actor->y);
-    dist = dist / SKULLSPEED;
-    
-    if (dist < 1)
-	dist = 1;
-    actor->momz = (dest->z+(dest->height>>1) - actor->z) / dist;*/
-}
-
-
-//
-// A_PainShootSkull
-// Spawn a lost soul and launch it at the target
-//
-void
-A_PainShootSkull
-( mobj_t*	actor,
-  angle_t	angle )
-{
-    // villsa [STRIFE] unused
- /*   fixed_t	x;
-    fixed_t	y;
-    fixed_t	z;
-    
-    mobj_t*	newmobj;
-    angle_t	an;
-    int		prestep;
-    int		count;
-    thinker_t*	currentthinker;
-
-    // count total number of skull currently on the level
-    count = 0;
-
-    currentthinker = thinkercap.next;
-    while (currentthinker != &thinkercap)
-    {
-	if (   (currentthinker->function.acp1 == (actionf_p1)P_MobjThinker)
-	    && ((mobj_t *)currentthinker)->type == MT_SKULL)
-	    count++;
-	currentthinker = currentthinker->next;
-    }
-
-    // if there are allready 20 skulls on the level,
-    // don't spit another one
-    if (count > 20)
-	return;
-
-
-    // okay, there's playe for another one
-    an = angle >> ANGLETOFINESHIFT;
-    
-    prestep =
-	4*FRACUNIT
-	+ 3*(actor->info->radius + mobjinfo[MT_SKULL].radius)/2;
-    
-    x = actor->x + FixedMul (prestep, finecosine[an]);
-    y = actor->y + FixedMul (prestep, finesine[an]);
-    z = actor->z + 8*FRACUNIT;
-		
-    newmobj = P_SpawnMobj (x , y, z, MT_SKULL);
-
-    // Check for movements.
-    if (!P_TryMove (newmobj, newmobj->x, newmobj->y))
-    {
-	// kill it immediately
-	P_DamageMobj (newmobj,actor,actor,10000);	
-	return;
-    }
-		
-    newmobj->target = actor->target;
-    A_SkullAttack (newmobj);*/
-}
-
-
-//
-// A_PainAttack
-// Spawn a lost soul and launch it at the target
-// 
-void A_PainAttack (mobj_t* actor)
-{
-    if (!actor->target)
-	return;
-
-    A_FaceTarget (actor);
-    A_PainShootSkull (actor, actor->angle);
-}
-
-
-void A_PainDie (mobj_t* actor)
-{
-    A_Fall (actor);
-    A_PainShootSkull (actor, actor->angle+ANG90);
-    A_PainShootSkull (actor, actor->angle+ANG180);
-    A_PainShootSkull (actor, actor->angle+ANG270);
-}
-
-
-
-
-
+// haleyjd 09/05/10: [STRIFE] Removed:
+// A_SkelWhoosh, A_SkelFist, PIT_VileCheck, A_VileChase, A_VileStart, 
+// A_StartFire, A_FireCrackle, A_Fire, A_VileTarget, A_VileAttack
+// A_FatRaise, A_FatAttack1, A_FatAttack2, A_FatAttack3, A_SkullAttack, 
+// A_PainShootSkull, A_PainAttack, A_PainDie
 
 void A_Scream (mobj_t* actor)
 {
@@ -1964,7 +1912,6 @@ void A_Scream (mobj_t* actor)
 	S_StartSound (actor, sound);
 }
 
-
 void A_XScream (mobj_t* actor)
 {
     S_StartSound (actor, sfx_slop);	
@@ -1976,8 +1923,6 @@ void A_Pain (mobj_t* actor)
 	S_StartSound (actor, actor->info->painsound);	
 }
 
-
-
 void A_Fall (mobj_t *actor)
 {
     // actor is on ground, it can be walked over
@@ -1987,7 +1932,6 @@ void A_Fall (mobj_t *actor)
     // are meant to be obstacles.
 }
 
-
 //
 // A_Explode
 //
@@ -1996,59 +1940,7 @@ void A_Explode (mobj_t* thingy)
     P_RadiusAttack(thingy, thingy->target, 128);
 }
 
-// Check whether the death of the specified monster type is allowed
-// to trigger the end of episode special action.
-//
-// This behavior changed in v1.9, the most notable effect of which
-// was to break uac_dead.wad
-
-static boolean CheckBossEnd(mobjtype_t motype)
-{
-    // villsa [STRIFE] TODO - update to strife version
-    return 0;
- /*   if (gameversion < exe_ultimate)
-    {
-        if (gamemap != 8)
-        {
-            return false;
-        }
-
-        // Baron death on later episodes is nothing special.
-
-        if (motype == MT_BRUISER && gameepisode != 1)
-        {
-            return false;
-        }
-
-        return true;
-    }
-    else
-    {
-        // New logic that appeared in Ultimate Doom.
-        // Looks like the logic was overhauled while adding in the
-        // episode 4 support.  Now bosses only trigger on their
-        // specific episode.
-
-	switch(gameepisode)
-	{
-            case 1:
-                return gamemap == 8 && motype == MT_BRUISER;
-
-            case 2:
-                return gamemap == 8 && motype == MT_CYBORG;
-
-            case 3:
-                return gamemap == 8 && motype == MT_SPIDER;
-
-	    case 4:
-                return (gamemap == 6 && motype == MT_CYBORG)
-                    || (gamemap == 8 && motype == MT_SPIDER);
-
-            default:
-                return gamemap == 8;
-	}
-    }*/
-}
+// haleyjd 09/05/10: Removed unused CheckBossEnd Choco routine.
 
 //
 // A_BossDeath
@@ -2057,344 +1949,13 @@ static boolean CheckBossEnd(mobjtype_t motype)
 //
 void A_BossDeath (mobj_t* mo)
 {
-    thinker_t*	th;
-    mobj_t*	mo2;
-    line_t	junk;
-    int		i;
-		
     // villsa [STRIFE] TODO - update to strife version
- /*   if ( gamemode == commercial)
-    {
-	if (gamemap != 7)
-	    return;
-		
-	if ((mo->type != MT_FATSO)
-	    && (mo->type != MT_BABY))
-	    return;
-    }
-    else
-    {
-        if (!CheckBossEnd(mo->type))
-        {
-            return;
-        }
-    }
-
-    // make sure there is a player alive for victory
-    for (i=0 ; i<MAXPLAYERS ; i++)
-	if (playeringame[i] && players[i].health > 0)
-	    break;
-    
-    if (i==MAXPLAYERS)
-	return;	// no one left alive, so do not end game
-    
-    // scan the remaining thinkers to see
-    // if all bosses are dead
-    for (th = thinkercap.next ; th != &thinkercap ; th=th->next)
-    {
-	if (th->function.acp1 != (actionf_p1)P_MobjThinker)
-	    continue;
-	
-	mo2 = (mobj_t *)th;
-	if (mo2 != mo
-	    && mo2->type == mo->type
-	    && mo2->health > 0)
-	{
-	    // other boss not dead
-	    return;
-	}
-    }
-	
-    // victory!
-    if ( gamemode == commercial)
-    {
-	if (gamemap == 7)
-	{
-	    if (mo->type == MT_FATSO)
-	    {
-		junk.tag = 666;
-		EV_DoFloor(&junk,lowerFloorToLowest);
-		return;
-	    }
-	    
-	    if (mo->type == MT_BABY)
-	    {
-		junk.tag = 667;
-		EV_DoFloor(&junk,raiseToTexture);
-		return;
-	    }
-	}
-    }
-    else
-    {
-	switch(gameepisode)
-	{
-	  case 1:
-	    junk.tag = 666;
-	    EV_DoFloor (&junk, lowerFloorToLowest);
-	    return;
-	    break;
-	    
-	  case 4:
-	    switch(gamemap)
-	    {
-	      case 6:
-		junk.tag = 666;
-		EV_DoDoor (&junk, blazeOpen);
-		return;
-		break;
-		
-	      case 8:
-		junk.tag = 666;
-		EV_DoFloor (&junk, lowerFloorToLowest);
-		return;
-		break;
-	    }
-	}
-    }
-	
-    G_ExitLevel (0);*/
 }
 
-
-void A_Hoof (mobj_t* mo)
-{
-    S_StartSound (mo, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
-    A_Chase (mo);
-}
-
-void A_Metal (mobj_t* mo)
-{
-    S_StartSound (mo, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
-    A_Chase (mo);
-}
-
-void A_BabyMetal (mobj_t* mo)
-{
-    S_StartSound (mo, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
-    A_Chase (mo);
-}
-
-void
-A_OpenShotgun2
-( player_t*	player,
-  pspdef_t*	psp )
-{
-    S_StartSound (player->mo, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
-}
-
-void
-A_LoadShotgun2
-( player_t*	player,
-  pspdef_t*	psp )
-{
-    S_StartSound (player->mo, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
-}
-
-void
-A_ReFire
-( player_t*	player,
-  pspdef_t*	psp );
-
-void
-A_CloseShotgun2
-( player_t*	player,
-  pspdef_t*	psp )
-{
-    S_StartSound (player->mo, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
-    A_ReFire(player,psp);
-}
-
-
-
-mobj_t*		braintargets[32];
-int		numbraintargets;
-int		braintargeton = 0;
-
-void A_BrainAwake (mobj_t* mo)
-{
-    // villsa [STRIFE] unused
- /*   thinker_t*	thinker;
-    mobj_t*	m;
-	
-    // find all the target spots
-    numbraintargets = 0;
-    braintargeton = 0;
-	
-    thinker = thinkercap.next;
-    for (thinker = thinkercap.next ;
-	 thinker != &thinkercap ;
-	 thinker = thinker->next)
-    {
-	if (thinker->function.acp1 != (actionf_p1)P_MobjThinker)
-	    continue;	// not a mobj
-
-	m = (mobj_t *)thinker;
-
-	if (m->type == MT_BOSSTARGET )
-	{
-	    braintargets[numbraintargets] = m;
-	    numbraintargets++;
-	}
-    }
-	
-    S_StartSound (NULL,sfx_swish);  // villsa [STRIFE] TODO - fix sounds*/
-}
-
-
-void A_BrainPain (mobj_t*	mo)
-{
-    S_StartSound (NULL,sfx_swish);  // villsa [STRIFE] TODO - fix sounds
-}
-
-
-// villsa [STRIFE] TODO - depcricate this later
-void A_BrainScream (mobj_t*	mo)
-{
-/*    int		x;
-    int		y;
-    int		z;
-    mobj_t*	th;
-	
-    for (x=mo->x - 196*FRACUNIT ; x< mo->x + 320*FRACUNIT ; x+= FRACUNIT*8)
-    {
-	y = mo->y - 320*FRACUNIT;
-	z = 128 + P_Random()*2*FRACUNIT;
-	th = P_SpawnMobj (x,y,z, MT_ROCKET);
-	th->momz = P_Random()*512;
-
-	P_SetMobjState (th, S_BRAINEXPLODE1);
-
-	th->tics -= P_Random()&7;
-	if (th->tics < 1)
-	    th->tics = 1;
-    }
-	
-    S_StartSound (NULL,sfx_swish);  // villsa [STRIFE] TODO - fix sounds*/
-}
-
-
-// villsa [STRIFE] TODO - depcricate this later
-void A_BrainExplode (mobj_t* mo)
-{
-/*    int		x;
-    int		y;
-    int		z;
-    mobj_t*	th;
-	
-    x = mo->x + (P_Random () - P_Random ())*2048;
-    y = mo->y;
-    z = 128 + P_Random()*2*FRACUNIT;
-    th = P_SpawnMobj (x,y,z, MT_ROCKET);
-    th->momz = P_Random()*512;
-
-    P_SetMobjState (th, S_BRAINEXPLODE1);
-
-    th->tics -= P_Random()&7;
-    if (th->tics < 1)
-	th->tics = 1;*/
-}
-
-
-void A_BrainDie (mobj_t*	mo)
-{
-    G_ExitLevel (0);
-}
-
-void A_BrainSpit (mobj_t*	mo)
-{
-    // villsa [STRIFE] unused
- /*   mobj_t*	targ;
-    mobj_t*	newmobj;
-    
-    static int	easy = 0;
-	
-    easy ^= 1;
-    if (gameskill <= sk_easy && (!easy))
-	return;
-		
-    // shoot a cube at current target
-    targ = braintargets[braintargeton];
-    braintargeton = (braintargeton+1)%numbraintargets;
-
-    // spawn brain missile
-    newmobj = P_SpawnMissile (mo, targ, MT_SPAWNSHOT);
-    newmobj->target = targ;
-    newmobj->reactiontime =
-	((targ->y - mo->y)/newmobj->momy) / newmobj->state->tics;
-
-    S_StartSound(NULL, sfx_swish);  // villsa [STRIFE] TODO - fix sounds*/
-}
-
-
-
-void A_SpawnFly (mobj_t* mo);
-
-// travelling cube sound
-void A_SpawnSound (mobj_t* mo)	
-{
-    S_StartSound (mo,sfx_swish);    // villsa [STRIFE] TODO - fix sounds
-    A_SpawnFly(mo);
-}
-
-void A_SpawnFly (mobj_t* mo)
-{
-    // villsa [STRIFE] unused
-/*    mobj_t*	newmobj;
-    mobj_t*	fog;
-    mobj_t*	targ;
-    int		r;
-    mobjtype_t	type;
-	
-    if (--mo->reactiontime)
-	return;	// still flying
-	
-    targ = P_SubstNullMobj(mo->target);
-
-    // First spawn teleport fog.
-    fog = P_SpawnMobj (targ->x, targ->y, targ->z, MT_SPAWNFIRE);
-    S_StartSound (fog, sfx_telept);
-
-    // Randomly select monster to spawn.
-    r = P_Random ();
-
-    // Probability distribution (kind of :),
-    // decreasing likelihood.
-    if ( r<50 )
-	type = MT_TROOP;
-    else if (r<90)
-	type = MT_SERGEANT;
-    else if (r<120)
-	type = MT_SHADOWS;
-    else if (r<130)
-	type = MT_PAIN;
-    else if (r<160)
-	type = MT_HEAD;
-    else if (r<162)
-	type = MT_VILE;
-    else if (r<172)
-	type = MT_UNDEAD;
-    else if (r<192)
-	type = MT_BABY;
-    else if (r<222)
-	type = MT_FATSO;
-    else if (r<246)
-	type = MT_KNIGHT;
-    else
-	type = MT_BRUISER;		
-
-    newmobj	= P_SpawnMobj (targ->x, targ->y, targ->z, type);
-    if (P_LookForPlayers (newmobj, true) )
-	P_SetMobjState (newmobj, newmobj->info->seestate);
-	
-    // telefrag anything in this spot
-    P_TeleportMove (newmobj, newmobj->x, newmobj->y);
-
-    // remove self (i.e., cube).
-    P_RemoveMobj (mo);*/
-}
-
-
+// haleyjd 09/05/10: [STRIFE] Removed:
+// A_Hoof, A_Metal, A_BabyMetal, A_OpenShotgun2, A_LoadShotgun2, 
+// A_CloseShotgun2, A_BrainAwake, A_BrainPain, A_BrainScream, A_BrainExplode,
+// A_BrainDie, A_BrainSpit, A_SpawnSound, A_SpawnFly
 
 void A_PlayerScream (mobj_t* mo)
 {
@@ -2413,170 +1974,6 @@ void A_PlayerScream (mobj_t* mo)
 }
 
 
-void A_PeasantPunch(mobj_t* actor)
-{
-
-}
-
-void A_ReavShoot(mobj_t* actor)
-{
-
-}
-
-void A_BulletAttack(mobj_t* actor)
-{
-
-}
-
-void A_CheckTargetVisible(mobj_t* actor)
-{
-
-}
-
-void A_SentinelAttack(mobj_t* actor)
-{
-
-}
-
-void A_StalkerThink(mobj_t* actor)
-{
-
-}
-
-void A_StalkerSetLook(mobj_t* actor)
-{
-
-}
-
-void A_StalkerDrop(mobj_t* actor)
-{
-
-}
-
-void A_StalkerScratch(mobj_t* actor)
-{
-
-}
-
-void A_FloatWeave(mobj_t* actor)
-{
-
-}
-
-void A_ReavAttack(mobj_t* actor)
-{
-
-}
-
-void A_TemplarMauler(mobj_t* actor)
-{
-
-}
-
-void A_CrusaderAttack(mobj_t* actor)
-{
-
-}
-
-void A_CrusaderLeft(mobj_t* actor)
-{
-
-}
-
-void A_CrusaderRight(mobj_t* actor)
-{
-
-}
-
-void A_CheckTargetVisible2(mobj_t* actor)
-{
-
-}
-
-void A_InqFlyCheck(mobj_t* actor)
-{
-
-}
-
-void A_InqGrenade(mobj_t* actor)
-{
-
-}
-
-void A_InqTakeOff(mobj_t* actor)
-{
-
-}
-
-void A_InqFly(mobj_t* actor)
-{
-
-}
-
-void A_FireSigilWeapon(mobj_t* actor)
-{
-
-}
-
-void A_ProgrammerAttack(mobj_t* actor)
-{
-
-}
-
-void A_Sigil_A_Action(mobj_t* actor)
-{
-
-}
-
-void A_SpectreEAttack(mobj_t* actor)
-{
-
-}
-
-void A_SpectreCAttack(mobj_t* actor)
-{
-
-}
-
-void A_AlertSpectreC(mobj_t* actor)
-{
-
-}
-
-void A_Sigil_E_Action(mobj_t* actor)
-{
-
-}
-
-void A_SigilTrail(mobj_t* actor)
-{
-
-}
-
-void A_SpectreDAttack(mobj_t* actor)
-{
-
-}
-
-void A_FireSigilEOffshoot(mobj_t* actor)
-{
-
-}
-
-void A_ShadowOff(mobj_t* actor)
-{
-
-}
-
-void A_ModifyVisibility(mobj_t* actor)
-{
-
-}
-
-void A_ShadowOn(mobj_t* actor)
-{
-
-}
 
 void A_SetTLOptions(mobj_t* actor)
 {
@@ -2813,3 +2210,4 @@ void A_ClearForceField(mobj_t* actor)
 {
 
 }
+
