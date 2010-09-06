@@ -2336,6 +2336,20 @@ void A_SpawnEntity(mobj_t* actor)
 
 }
 
+//
+// P_ThrustMobj
+// villsa [STRIFE] new function
+// Thrusts an thing in a specified force/direction
+// Beware! This is inlined everywhere in the asm
+//
+
+void P_ThrustMobj(mobj_t *actor, angle_t angle, fixed_t force)
+{
+    angle_t an = angle >> ANGLETOFINESHIFT;
+    actor->momx += FixedMul(finecosine[an], force);
+    actor->momy += FixedMul(finesine[an], force);
+}
+
 void A_EntityDeath(mobj_t* actor)
 {
 
