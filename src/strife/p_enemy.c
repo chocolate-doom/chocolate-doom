@@ -1293,7 +1293,7 @@ void A_SentinelAttack(mobj_t* actor)
     mo = P_SpawnFacingMissile(actor, actor->target, MT_L_LASER);
     an = actor->angle >> ANGLETOFINESHIFT;
 
-    if(mo->momy || mo->momx)
+    if(mo->momy | mo->momx) // villsa - fixed typo (yes, they actually used '|' instead of'||')
     {
         for(i = 8; i > 1; i--)
         {
