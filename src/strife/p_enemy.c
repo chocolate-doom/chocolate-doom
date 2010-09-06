@@ -664,11 +664,9 @@ void P_NewRandomDir(mobj_t* actor)
             {
                 actor->movedir = dir;
 
-                if(P_Move(actor))
-                {
-                    actor->movecount = P_Random() & 15;
+                // villsa 09/06/10: un-inlined code
+                if(P_TryWalk(actor))
                     return;
-                }
             }
 
             if(--dir == -1)
@@ -680,11 +678,10 @@ void P_NewRandomDir(mobj_t* actor)
                 }
 
                 actor->movedir = opposite[actor->movedir];
-                if(P_Move(actor))
-                {
-                    actor->movecount = P_Random() & 15;
+
+                // villsa 09/06/10: un-inlined code
+                if(P_TryWalk(actor))
                     return;
-                }
                 else
                 {
                     actor->movedir = DI_NODIR;
@@ -1281,10 +1278,38 @@ void A_CheckTargetVisible(mobj_t* actor)
 //
 // [STRIFE] New function
 // haleyjd 09/06/10: Action function implementing the Sentinel's laser attack
+// villsa 09/06/10 implemented
 //
 void A_SentinelAttack(mobj_t* actor)
 {
-    // STRIFE-TODO
+    mobj_t* mo;
+    mobj_t* mo2;
+    fixed_t x;
+    fixed_t y;
+    fixed_t z;
+    angle_t an;
+    int i;
+
+    mo = P_SpawnFacingMissile(actor, actor->target, MT_L_LASER);
+    an = actor->angle >> ANGLETOFINESHIFT;
+
+    if(mo->momy || mo->momx)
+    {
+        for(i = 8; i > 1; i--)
+        {
+            x = mo->x + FixedMul(mobjinfo[MT_L_LASER].radius * i, finecosine[an]);
+            y = mo->y + FixedMul(mobjinfo[MT_L_LASER].radius * i, finesine[an]);
+            z = mo->z + i * (mo->momz >> 2);
+            mo2 = P_SpawnMobj(x, y, z, MT_R_LASER);
+            mo2->target = actor;
+            mo2->momx = mo->momx;
+            mo2->momy = mo->momy;
+            mo2->momz = mo->momz;
+            P_CheckMissileSpawn(mo2);
+        }
+    }
+
+    mo->z += mo->momz >> 2;
 }
 
 //
@@ -1462,19 +1487,76 @@ void A_TemplarMauler(mobj_t* actor)
     }
 }
 
+//
+// A_CrusaderAttack
+// villsa [STRIFE] new codepointer
+//
+
 void A_CrusaderAttack(mobj_t* actor)
 {
-    // STRIFE-TODO
+    if(!actor->target)
+        return;
+
+    actor->z += (8*FRACUNIT);
+
+    if(P_CheckRobotRange(actor))
+    {
+        A_FaceTarget(actor);
+        actor->angle -= (ANG90 / 8);
+        P_SpawnFacingMissile(actor, actor->target, MT_C_FLAME);
+    }
+    else
+    {
+        if(P_CheckMissileRange(actor))
+        {
+            A_FaceTarget(actor);
+            actor->z += (16*FRACUNIT);
+            P_SpawnFacingMissile(actor, actor->target, MT_C_MISSILE);
+
+            actor->angle -= (ANG45 / 32);
+            actor->z -= (16*FRACUNIT);
+            P_SpawnFacingMissile(actor, actor->target, MT_C_MISSILE);
+
+            actor->angle += (ANG45 / 16);
+            P_SpawnFacingMissile(actor, actor->target, MT_C_MISSILE);
+
+            actor->reactiontime += 15;
+        }
+    }
+
+    P_SetMobjState(actor, actor->info->seestate);
+    actor->z -= (8*FRACUNIT);
 }
+
+//
+// A_CrusaderLeft
+// villsa [STRIFE] new codepointer
+//
 
 void A_CrusaderLeft(mobj_t* actor)
 {
-    // STRIFE-TODO
+    mobj_t* mo;
+
+    actor->angle += (ANG90 / 16);
+    mo = P_SpawnFacingMissile(actor, actor->target, MT_C_FLAME);
+    mo->momz = FRACUNIT;
+    mo->z += (16*FRACUNIT);
+
 }
+
+//
+// A_CrusaderRight
+// villsa [STRIFE] new codepointer
+//
 
 void A_CrusaderRight(mobj_t* actor)
 {
-    // STRIFE-TODO
+    mobj_t* mo;
+
+    actor->angle -= (ANG90 / 16);
+    mo = P_SpawnFacingMissile(actor, actor->target, MT_C_FLAME);
+    mo->momz = FRACUNIT;
+    mo->z += (16*FRACUNIT);
 }
 
 //
