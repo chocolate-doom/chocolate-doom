@@ -182,7 +182,8 @@ R_RenderMaskedSegRange
 	    col = (column_t *)( 
 		(byte *)R_GetColumn(texnum,maskedtexturecol[dc_x]) -3);
 			
-	    R_DrawMaskedColumn (col);
+            // villsa [STRIFE] added 0 argument
+	    R_DrawMaskedColumn (col, 0);
 	    maskedtexturecol[dc_x] = SHRT_MAX;
 	}
 	spryscale += rw_scalestep;

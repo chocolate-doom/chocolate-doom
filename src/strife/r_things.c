@@ -289,6 +289,7 @@ void R_InitSpriteDefs (char** namelist)
 vissprite_t	vissprites[MAXVISSPRITES];
 vissprite_t*	vissprite_p;
 int		newvissprite;
+int             sprbotscreen;       // villsa [STRIFE]
 
 
 
@@ -348,7 +349,8 @@ short*		mceilingclip;
 fixed_t		spryscale;
 fixed_t		sprtopscreen;
 
-void R_DrawMaskedColumn (column_t* column)
+// villsa [STRIFE] new baseclip argument
+void R_DrawMaskedColumn (column_t *column, int baseclip)
 {
     int		topscreen;
     int 	bottomscreen;
@@ -370,6 +372,13 @@ void R_DrawMaskedColumn (column_t* column)
 	    dc_yh = mfloorclip[dc_x]-1;
 	if (dc_yl <= mceilingclip[dc_x])
 	    dc_yl = mceilingclip[dc_x]+1;
+
+        // villsa [STRIFE] checks for clipping
+        if(baseclip)
+        {
+            if(dc_yh > baseclip)
+                dc_yh = baseclip;
+        }
 
 	if (dc_yl <= dc_yh)
 	{
@@ -403,6 +412,7 @@ R_DrawVisSprite
     int			texturecolumn;
     fixed_t		frac;
     patch_t*		patch;
+    int                 clip;   // villsa [STRIFE]
 	
 	
     patch = W_CacheLumpNum (vis->patch+firstspritelump, PU_CACHE);
@@ -427,6 +437,15 @@ R_DrawVisSprite
     frac = vis->startfrac;
     spryscale = vis->scale;
     sprtopscreen = centeryfrac - FixedMul(dc_texturemid,spryscale);
+
+    // villsa [STRIFE] clip sprite's feet if needed
+    if(vis->mobjflags & MF_FEETCLIPPED)
+    {
+        sprbotscreen = sprtopscreen + FixedMul(spryscale, patch->height<<FRACBITS);
+        clip = (sprbotscreen - FixedMul(10*FRACUNIT, spryscale)) >> FRACBITS;
+    }
+    else
+        clip = 0;
 	
     for (dc_x=vis->x1 ; dc_x<=vis->x2 ; dc_x++, frac += vis->xiscale)
     {
@@ -437,7 +456,7 @@ R_DrawVisSprite
 #endif
 	column = (column_t *) ((byte *)patch +
 			       LONG(patch->columnofs[texturecolumn]));
-	R_DrawMaskedColumn (column);
+	R_DrawMaskedColumn (column, clip);  // villsa [STRIFE] clip argument
     }
 
     colfunc = basecolfunc;

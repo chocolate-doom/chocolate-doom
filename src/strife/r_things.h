@@ -51,7 +51,8 @@ extern fixed_t		pspritescale;
 extern fixed_t		pspriteiscale;
 
 
-void R_DrawMaskedColumn (column_t* column);
+// villsa [STIFE] new argument
+void R_DrawMaskedColumn (column_t *column, int baseclip);
 
 
 void R_SortVisSprites (void);
