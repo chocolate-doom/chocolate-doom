@@ -1339,7 +1339,7 @@ void A_StalkerThink(mobj_t* actor)
 //
 // [STRIFE] New function
 // haleyjd 09/06/10: Action function to marshall transitions to the
-// Sentinel's spawnstate.
+// Stalker's spawnstate.
 //
 void A_StalkerSetLook(mobj_t* actor)
 {
@@ -2042,16 +2042,16 @@ void A_BossDeath (mobj_t* mo)
 void A_PlayerScream (mobj_t* mo)
 {
     // Default death sound.
-    int		sound = sfx_pldeth;
-	
+    int         sound = sfx_pldeth;
+
     if ( (gamemode == commercial)
-	&& 	(mo->health < -50))
+        &&      (mo->health < -50))
     {
-	// IF THE PLAYER DIES
-	// LESS THAN -50% WITHOUT GIBBING
-	sound = sfx_swish;  // villsa [STRIFE] TODO - fix sounds
+        // IF THE PLAYER DIES
+        // LESS THAN -50% WITHOUT GIBBING
+        sound = sfx_plxdth;  // villsa [STRIFE] different sound
     }
-    
+
     S_StartSound (mo, sound);
 }
 
