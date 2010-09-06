@@ -1603,10 +1603,31 @@ void A_InqFlyCheck(mobj_t* actor)
 
 //
 // A_InqGrenade
+// villsa [STRIFE] new codepointer
 //
+
 void A_InqGrenade(mobj_t* actor)
 {
-    // STRIFE-TODO
+    mobj_t* mo;
+
+    if(!actor->target)
+        return;
+
+    A_FaceTarget(actor);
+
+    actor->z += (32*FRACUNIT);
+
+    // grenade 1
+    actor->angle -= (ANG45 / 32);
+    mo = P_SpawnFacingMissile(actor, actor->target, MT_INQGRENADE);
+    mo->momz += (9*FRACUNIT);
+
+    // grenade 2
+    actor->angle += (ANG45 / 16);
+    mo = P_SpawnFacingMissile(actor, actor->target, MT_INQGRENADE);
+    mo->momz += (16*FRACUNIT);
+
+    actor->z -= (32*FRACUNIT);
 }
 
 //
@@ -1782,9 +1803,34 @@ void A_SpectreEAttack(mobj_t* actor)
     mo->health = -2;
 }
 
+//
+// A_SpectreCAttack
+// villsa [STRIFE] new codepointer
+//
+
 void A_SpectreCAttack(mobj_t* actor)
 {
-    // STRIFE-TODO
+    mobj_t* mo;
+    int i;
+
+    if(!actor->target)
+        return;
+
+    mo = P_SpawnMobj(actor->x, actor->y, actor->z + (32*FRACUNIT), MT_SIGIL_A_ZAP_RIGHT);
+    mo->momz = -(18*FRACUNIT);
+    mo->target = actor;
+    mo->health = -2;
+    mo->tracer = actor->target;
+    
+    actor->angle -= ANG90;
+    for(i = 0; i < 20; i++)
+    {
+        actor->angle += (ANG90 / 10);
+        mo = P_SpawnMortar(actor, MT_SIGIL_C_SHOT);
+        mo->health = -2;
+        mo->z = actor->z + (32*FRACUNIT);
+    }
+    actor->angle -= ANG90;
 }
 
 //
@@ -1814,13 +1860,39 @@ void A_AlertSpectreC(mobj_t* actor)
     }
 }
 
+//
+// A_Sigil_E_Action
+// villsa [STRIFE] new codepointer
+//
+
 void A_Sigil_E_Action(mobj_t* actor)
 {
+    actor->angle += ANG90;
+    P_SpawnMortar(actor, MT_SIGIL_E_OFFSHOOT);
+
+    actor->angle -= ANG180;
+    P_SpawnMortar(actor, MT_SIGIL_E_OFFSHOOT);
+
+    actor->angle += ANG90;
+    P_SpawnMortar(actor, MT_SIGIL_E_OFFSHOOT);
 
 }
 
+//
+// A_SigilTrail
+// villsa [STRIFE] new codepointer
+//
+
 void A_SigilTrail(mobj_t* actor)
 {
+    mobj_t* mo;
+
+    mo = P_SpawnMobj(actor->x - actor->momx,
+        actor->y - actor->momy,
+        actor->z, MT_SIGIL_TRAIL);
+
+    mo->angle = actor->angle;
+    mo->health = actor->health;
 
 }
 
@@ -1861,19 +1933,161 @@ void A_FireSigilEOffshoot(mobj_t* actor)
     mo->health = -2;
 }
 
+//
+// A_ShadowOff
+// villsa [STRIFE] new codepointer
+//
+
 void A_ShadowOff(mobj_t* actor)
 {
-
+    actor->flags &= ~(MF_SHADOW|MF_MVIS);
 }
+
+//
+// A_ModifyVisibility
+// villsa [STRIFE] new codepointer
+//
+
 
 void A_ModifyVisibility(mobj_t* actor)
 {
-
+    actor->flags |= MF_SHADOW;
+    actor->flags &= ~MF_MVIS;
 }
+
+//
+// A_ShadowOn
+// villsa [STRIFE] new codepointer
+//
 
 void A_ShadowOn(mobj_t* actor)
 {
+    actor->flags |= (MF_SHADOW|MF_MVIS);
+}
 
+//
+// A_SetTLOptions
+// villsa [STRIFE] new codepointer
+//
+
+void A_SetTLOptions(mobj_t* actor)
+{
+    if(actor->spawnpoint.options & MTF_TRANSLUCENT)
+        actor->flags |= MF_SHADOW;
+    if(actor->spawnpoint.options & MTF_MVIS)
+        actor->flags |= MF_MVIS;
+
+}
+
+//
+// A_BossMeleeAtk
+// villsa [STRIFE] new codepointer
+//
+
+void A_BossMeleeAtk(mobj_t* actor)
+{
+    int r;
+
+    if(!actor->target)
+        return;
+
+    r = P_Random();
+    P_DamageMobj(actor->target, actor, actor, 10 * (r & 9));
+}
+
+//
+// A_BishopAttack
+// villsa [STRIFE] new codepointer
+//
+
+void A_BishopAttack(mobj_t* actor)
+{
+    mobj_t* mo;
+
+    if(!actor->target)
+        return;
+
+    actor->z += (32*FRACUNIT);
+
+    mo = P_SpawnMissile(actor, actor->target, MT_SEEKMISSILE);
+    mo->tracer = actor->target;
+
+    actor->z -= (32*FRACUNIT);
+}
+
+//
+// A_FireHookShot
+// villsa [STRIFE] new codepointer
+//
+
+void A_FireHookShot(mobj_t* actor)
+{
+    if(!actor->target)
+        return;
+
+    P_SpawnMissile(actor, actor->target, MT_HOOKSHOT);
+}
+
+//
+// A_FireChainShot
+// villsa [STRIFE] new codepointer
+//
+
+void A_FireChainShot(mobj_t* actor)
+{
+    S_StartSound(actor, sfx_tend);
+
+    P_SpawnMobj(actor->x, actor->y, actor->z, actor->z);
+
+    P_SpawnMobj(actor->x - (actor->momx >> 1),
+        actor->y - (actor->momy >> 1),
+        actor->z, MT_CHAINSHOT);
+
+    P_SpawnMobj(actor->x - actor->momx,
+        actor->y - actor->momy,
+        actor->z, MT_CHAINSHOT);
+
+}
+
+//
+// A_MissileSmoke
+// villsa [STRIFE] new codepointer
+//
+
+void A_MissileSmoke(mobj_t* actor)
+{
+    mobj_t* mo;
+
+    S_StartSound(actor, sfx_rflite);
+    P_SpawnPuff(actor->x, actor->y, actor->z);
+    mo = P_SpawnMobj(actor->x - actor->momx,
+        actor->y - actor->momy,
+        actor->z, MT_MISSILESMOKE);
+
+    mo->momz = FRACUNIT;
+
+}
+
+//
+// A_SpawnSparkPuff
+// villsa [STRIFE] new codepointer
+//
+
+void A_SpawnSparkPuff(mobj_t* actor)
+{
+    int r;
+    mobj_t* mo;
+    fixed_t x;
+    fixed_t y;
+
+    r = P_Random();
+    x = (10*FRACUNIT) * ((r & 3) - (P_Random() & 3)) + actor->x;
+    r = P_Random();
+    y = (10*FRACUNIT) * ((r & 3) - (P_Random() & 3)) + actor->y;
+
+    mo = P_SpawnMobj(x, y, actor->z, MT_SPARKPUFF);
+    P_SetMobjState(mo, S_BNG4_01);
+    mo->momz = FRACUNIT;
 }
 
 
@@ -2053,43 +2267,6 @@ void A_PlayerScream (mobj_t* mo)
     }
 
     S_StartSound (mo, sound);
-}
-
-
-
-void A_SetTLOptions(mobj_t* actor)
-{
-
-}
-
-void A_BossMeleeAtk(mobj_t* actor)
-{
-
-}
-
-void A_BishopAttack(mobj_t* actor)
-{
-
-}
-
-void A_FireHookShot(mobj_t* actor)
-{
-
-}
-
-void A_FireChainShot(mobj_t* actor)
-{
-
-}
-
-void A_MissileSmoke(mobj_t* actor)
-{
-
-}
-
-void A_SpawnSparkPuff(mobj_t* actor)
-{
-
 }
 
 void A_ProgrammerMelee(mobj_t* actor)
