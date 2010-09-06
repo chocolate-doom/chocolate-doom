@@ -2466,8 +2466,31 @@ void A_TeleportBeacon(mobj_t* actor)
 
 }
 
+//
+// A_BodyParts
+//
+// villsa [STRIFE] new codepointer
+//
 void A_BodyParts(mobj_t* actor)
 {
+    mobjtype_t type;
+    mobj_t* mo;
+    angle_t an;
+    if(actor->flags & MF_NOBLOOD)
+        type = MT_JUNK;
+    else
+        type = MT_MEAT;
+
+    mo = P_SpawnMobj(actor->x, actor->y, actor->z + (24*FRACUNIT), type);
+    P_SetMobjState(mo, mo->info->spawnstate + (P_Random()%19));
+
+    an = ((P_Random() << 13) / 255);
+    mo->angle = an << ANGLETOFINESHIFT;
+
+    mo->momx += FixedMul(finecosine[an], (P_Random() & 0xf)<<FRACBITS);
+    mo->momy += FixedMul(finesine[an], (P_Random() & 0xf)<<FRACBITS);
+    mo->momz += (P_Random() & 0xf)<<FRACBITS;
+
 
 }
 
@@ -2476,14 +2499,28 @@ void A_ClaxonBlare(mobj_t* actor)
 
 }
 
+//
+// A_ActiveSound
+//
+// villsa [STRIFE] new codepointer
+//
 void A_ActiveSound(mobj_t* actor)
 {
-
+    if(actor->info->activesound)
+    {
+        if(!leveltime & 7)
+            S_StartSound(actor, actor->info->activesound);
+    }
 }
 
+//
+// A_ClearSoundTarget
+//
+// villsa [STRIFE] new codepointer
+//
 void A_ClearSoundTarget(mobj_t* actor)
 {
-
+    actor->subsector->sector->soundtarget = NULL;
 }
 
 void A_DropBurnFlesh(mobj_t* actor)
@@ -2491,9 +2528,15 @@ void A_DropBurnFlesh(mobj_t* actor)
 
 }
 
+//
+// A_FlameDeath
+//
+// villsa [STRIFE] new codepointer
+//
 void A_FlameDeath(mobj_t* actor)
 {
-
+    actor->flags |= MF_NOGRAVITY;
+    actor->momz = (P_Random() & 3) << FRACBITS;
 }
 
 void A_ClearForceField(mobj_t* actor)
