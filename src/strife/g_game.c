@@ -695,6 +695,8 @@ void G_DoLoadLevel (void)
     {
         players[consoleplayer].message = "Press escape to quit.";
     }
+
+    P_DialogLoad(); // villsa [STRIFE]
 } 
  
 

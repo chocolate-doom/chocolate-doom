@@ -63,6 +63,9 @@ typedef struct menu_s
     short		lastOn;		// last item user was on in menu
 } menu_t;
 
+extern menu_t*	currentMenu;    // villsa [STRIFE] made external
+extern short itemOn;
+
 //
 // MENUS
 //

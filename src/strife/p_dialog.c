@@ -59,6 +59,9 @@
     memcpy(field, ptr, len);        \
     ptr += len;
 
+#define MAXITEMREQUIREMENTS 3
+#define MAXCHOICES          5
+
 //
 // Globals
 //
@@ -101,6 +104,9 @@ angle_t dialogtalkerangle;
 // The currently active mapdialog object.
 static mapdialog_t *currentdialog;
 
+// Text at the end of the choices
+char dialoglastmsgbuffer[48];
+
 //=============================================================================
 //
 // Dialog State Sets
@@ -128,6 +134,9 @@ static dialogstateset_t dialogstatesets[] =
 
 // Rogue stored this in a static global rather than making it a define...
 static int numdialogstatesets = arrlen(dialogstatesets);
+
+// Current dialog talker state
+static dialogstateset_t *dialogtalkerstates;
 
 //=============================================================================
 //
@@ -504,7 +513,7 @@ int P_PlayerHasItem(player_t *player, mobjtype_t type)
 // haleyjd 09/03/10: Looks for a dialog definition matching the given 
 // Script ID # for an mobj.
 //
-mapdialog_t *P_DialogFind(int type)
+mapdialog_t *P_DialogFind(mobjtype_t type)
 {
     int i;
 
@@ -761,6 +770,13 @@ static void P_DialogDoChoice(int choice)
 //
 void P_DialogStart(player_t *player)
 {
+    int i = 0;
+    int j = 0;
+    int pic;
+    int rnd = 0;
+    mapdialog_t* dialog;
+    char* byetext;
+
     if(menuactive || netgame)
         return;
 
@@ -801,5 +817,92 @@ void P_DialogStart(player_t *player)
         dialogplayer = player;
     }
 
-    //**[STRIFE] TODO**
+    // check item requirements
+    for(i = 0; i < MAXITEMREQUIREMENTS; i++)
+    {
+        currentdialog = P_DialogFind(linetarget->type);
+
+        // dialog's jumptoconv equal to 0?
+        if(currentdialog[0].jumptoconv == 0)
+            break;
+
+        for(j = 0; j < MAXITEMREQUIREMENTS; j++)
+        {
+            dialog = &currentdialog[j];
+            if(dialog->checkitem1 != 0 &&
+                P_PlayerHasItem(dialogtalker, dialog->checkitem1) < 1)
+            {
+                currentdialog = dialog;
+                break;
+            }
+        }
+    }
+
+    M_DialogDimMsg(20, 28, currentdialog->text, 0);
+    dialogtext = P_DialogGetMsg(currentdialog->text);
+    dialogtalkerstates = P_DialogGetStates(linetarget->type);
+
+    // have talker greet the player
+    if(dialogtalkerstates->greet)
+        P_SetMobjState(dialogtalker, dialogtalkerstates->greet);
+
+    // get talker's name
+    if(currentdialog->name[0])
+        dialogname = currentdialog->name;
+    else
+    {
+        if(mobjinfo[linetarget->type].name)
+            dialogname = mobjinfo[linetarget->type].name;
+        else
+            dialogname = "Person";  // default name
+    }
+
+    // setup number of choices to choose from
+    for(i = 0; i < MAXCHOICES; i++)
+    {
+        if(!currentdialog->choices[i].giveitem)
+            break;
+    }
+
+    // set number of choices to menu
+    dialogmenu.numitems = i + 1;
+
+    rnd = M_Random() % 3;
+
+    // setup dialog menu
+    M_StartControlPanel();
+    menupause = 0;
+    menuindialog = 1;
+    menupausetime = gametic + 17;
+    currentMenu = &dialogmenu;
+
+    if(i >= dialogmenu.lastOn)
+        itemOn = dialogmenu.lastOn;
+    else
+        itemOn = 0;
+
+    // get backdrop
+    pic = W_CheckNumForName(currentdialog->backpic);
+    dialogbgpiclumpnum = pic;
+    if(pic != -1)
+        V_DrawPatchDirect(0, 0, W_CacheLumpNum(pic, PU_CACHE));
+
+    // get voice
+    //I_StartVoice(currentdialog->voice);
+
+    // get bye text
+    switch(rnd)
+    {
+    case 2:
+        byetext = "BYE!";
+        break;
+    case 1:
+        byetext = "Thanks, Bye!";
+        break;
+    case 0:
+        byetext = "See you later!";
+        break;
+    }
+
+    sprintf(dialoglastmsgbuffer, "%d) %s", i + 1, byetext);
 }
