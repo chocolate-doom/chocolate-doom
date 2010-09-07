@@ -349,29 +349,33 @@ short*		mceilingclip;
 fixed_t		spryscale;
 fixed_t		sprtopscreen;
 
+//
+// R_DrawMaskedColumn
+//
 // villsa [STRIFE] new baseclip argument
+//
 void R_DrawMaskedColumn (column_t *column, int baseclip)
 {
     int		topscreen;
     int 	bottomscreen;
     fixed_t	basetexturemid;
-	
+
     basetexturemid = dc_texturemid;
-	
+
     for ( ; column->topdelta != 0xff ; ) 
     {
-	// calculate unclipped screen coordinates
-	//  for post
-	topscreen = sprtopscreen + spryscale*column->topdelta;
-	bottomscreen = topscreen + spryscale*column->length;
+        // calculate unclipped screen coordinates
+        //  for post
+        topscreen = sprtopscreen + spryscale*column->topdelta;
+        bottomscreen = topscreen + spryscale*column->length;
 
-	dc_yl = (topscreen+FRACUNIT-1)>>FRACBITS;
-	dc_yh = (bottomscreen-1)>>FRACBITS;
-		
-	if (dc_yh >= mfloorclip[dc_x])
-	    dc_yh = mfloorclip[dc_x]-1;
-	if (dc_yl <= mceilingclip[dc_x])
-	    dc_yl = mceilingclip[dc_x]+1;
+        dc_yl = (topscreen+FRACUNIT-1)>>FRACBITS;
+        dc_yh = (bottomscreen-1)>>FRACBITS;
+
+        if (dc_yh >= mfloorclip[dc_x])
+            dc_yh = mfloorclip[dc_x]-1;
+        if (dc_yl <= mceilingclip[dc_x])
+            dc_yl = mceilingclip[dc_x]+1;
 
         // villsa [STRIFE] checks for clipping
         if(baseclip)
@@ -380,19 +384,19 @@ void R_DrawMaskedColumn (column_t *column, int baseclip)
                 dc_yh = baseclip;
         }
 
-	if (dc_yl <= dc_yh)
-	{
-	    dc_source = (byte *)column + 3;
-	    dc_texturemid = basetexturemid - (column->topdelta<<FRACBITS);
-	    // dc_source = (byte *)column + 3 - column->topdelta;
+        if (dc_yl <= dc_yh)
+        {
+            dc_source = (byte *)column + 3;
+            dc_texturemid = basetexturemid - (column->topdelta<<FRACBITS);
+            // dc_source = (byte *)column + 3 - column->topdelta;
 
-	    // Drawn by either R_DrawColumn
-	    //  or (SHADOW) R_DrawFuzzColumn.
-	    colfunc ();	
-	}
-	column = (column_t *)(  (byte *)column + column->length + 4);
+            // Drawn by either R_DrawColumn
+            //  or (SHADOW) R_DrawFuzzColumn.
+            colfunc ();	
+        }
+        column = (column_t *)(  (byte *)column + column->length + 4);
     }
-	
+
     dc_texturemid = basetexturemid;
 }
 
@@ -404,32 +408,33 @@ void R_DrawMaskedColumn (column_t *column, int baseclip)
 //
 void
 R_DrawVisSprite
-( vissprite_t*		vis,
-  int			x1,
-  int			x2 )
+( vissprite_t*          vis,
+  int                   x1,
+  int                   x2 )
 {
-    column_t*		column;
-    int			texturecolumn;
-    fixed_t		frac;
-    patch_t*		patch;
+    column_t*           column;
+    int                 texturecolumn;
+    fixed_t             frac;
+    patch_t*            patch;
     int                 clip;   // villsa [STRIFE]
     int                 translation;    // villsa [STRIFE]
-	
-	
+
     patch = W_CacheLumpNum (vis->patch+firstspritelump, PU_CACHE);
 
     dc_colormap = vis->colormap;
 
     // villsa [STRIFE]
-    translation = vis->mobjflags & (MF_COLORSWAP1|MF_COLORSWAP2|MF_COLORSWAP3);
+    // haleyjd 09/06/10: updated MF_TRANSLATION for Strife
+    translation = vis->mobjflags & MF_TRANSLATION;
     
     // villsa [STRIFE] unused
     /*if (!dc_colormap)
     {
-	// NULL colormap = shadow draw
-	colfunc = fuzzcolfunc;
+        // NULL colormap = shadow draw
+        colfunc = fuzzcolfunc;
     }*/
-    // villsa [STRIFE]
+
+    // villsa [STRIFE] Handle the two types of translucency
     if(vis->mobjflags & MF_SHADOW)
     {
         if(!translation)
@@ -442,16 +447,15 @@ R_DrawVisSprite
         else
         {
             colfunc = R_DrawTRTLColumn;
-	    dc_translation = translationtables - 256 + (translation>>20);
+            dc_translation = translationtables - 256 + (translation >> (MF_TRANSSHIFT - 8));
         }
     }
-    // villsa [STRIFE] new translation tables
-    else if (translation)
+    else if (translation)     // villsa [STRIFE] new translation tables
     {
-	colfunc = transcolfunc;
-	dc_translation = translationtables - 256 + (translation>>20);
+        colfunc = transcolfunc;
+        dc_translation = translationtables - 256 + (translation >> (MF_TRANSSHIFT - 8));
     }
-	
+
     dc_iscale = abs(vis->xiscale)>>detailshift;
     dc_texturemid = vis->texturemid;
     frac = vis->startfrac;
@@ -461,22 +465,22 @@ R_DrawVisSprite
     // villsa [STRIFE] clip sprite's feet if needed
     if(vis->mobjflags & MF_FEETCLIPPED)
     {
-        sprbotscreen = sprtopscreen + FixedMul(spryscale, patch->height<<FRACBITS);
+        sprbotscreen = sprtopscreen + FixedMul(spryscale, patch->height << FRACBITS);
         clip = (sprbotscreen - FixedMul(10*FRACUNIT, spryscale)) >> FRACBITS;
     }
     else
         clip = 0;
-	
+
     for (dc_x=vis->x1 ; dc_x<=vis->x2 ; dc_x++, frac += vis->xiscale)
     {
-	texturecolumn = frac>>FRACBITS;
+        texturecolumn = frac>>FRACBITS;
 #ifdef RANGECHECK
-	if (texturecolumn < 0 || texturecolumn >= SHORT(patch->width))
-	    I_Error ("R_DrawSpriteRange: bad texturecolumn");
+        if (texturecolumn < 0 || texturecolumn >= SHORT(patch->width))
+            I_Error ("R_DrawSpriteRange: bad texturecolumn");
 #endif
-	column = (column_t *) ((byte *)patch +
-			       LONG(patch->columnofs[texturecolumn]));
-	R_DrawMaskedColumn (column, clip);  // villsa [STRIFE] clip argument
+        column = (column_t *) ((byte *)patch +
+                               LONG(patch->columnofs[texturecolumn]));
+        R_DrawMaskedColumn (column, clip);  // villsa [STRIFE] clip argument
     }
 
     colfunc = basecolfunc;

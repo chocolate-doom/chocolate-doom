@@ -2000,13 +2000,10 @@ void A_SetTLOptions(mobj_t* actor)
 //
 void A_BossMeleeAtk(mobj_t* actor)
 {
-    int r;
-
     if(!actor->target)
         return;
 
-    r = P_Random();
-    P_DamageMobj(actor->target, actor, actor, 10 * (r & 9));
+    P_DamageMobj(actor->target, actor, actor, 10 * (P_Random() & 9));
 }
 
 //
@@ -2048,7 +2045,8 @@ void A_FireHookShot(mobj_t* actor)
 // A_FireChainShot
 //
 // villsa [STRIFE] new codepointer
-// 09/06/10: Action function for the hookshot.
+// 09/06/10: Action function for the hookshot projectile. Spawns echoes
+// to create a chain-like appearance.
 //
 void A_FireChainShot(mobj_t* actor)
 {
@@ -2057,12 +2055,12 @@ void A_FireChainShot(mobj_t* actor)
     P_SpawnMobj(actor->x, actor->y, actor->z, MT_CHAINSHOT); // haleyjd: fixed type
 
     P_SpawnMobj(actor->x - (actor->momx >> 1),
-        actor->y - (actor->momy >> 1),
-        actor->z, MT_CHAINSHOT);
+                actor->y - (actor->momy >> 1),
+                actor->z, MT_CHAINSHOT);
 
     P_SpawnMobj(actor->x - actor->momx,
-        actor->y - actor->momy,
-        actor->z, MT_CHAINSHOT);
+                actor->y - actor->momy,
+                actor->z, MT_CHAINSHOT);
 
 }
 
@@ -2078,8 +2076,8 @@ void A_MissileSmoke(mobj_t* actor)
     S_StartSound(actor, sfx_rflite);
     P_SpawnPuff(actor->x, actor->y, actor->z);
     mo = P_SpawnMobj(actor->x - actor->momx,
-        actor->y - actor->momy,
-        actor->z, MT_MISSILESMOKE);
+                     actor->y - actor->momy,
+                     actor->z, MT_MISSILESMOKE);
 
     mo->momz = FRACUNIT;
 
@@ -2103,7 +2101,7 @@ void A_SpawnSparkPuff(mobj_t* actor)
     y = (10*FRACUNIT) * ((r & 3) - (P_Random() & 3)) + actor->y;
 
     mo = P_SpawnMobj(x, y, actor->z, MT_SPARKPUFF);
-    P_SetMobjState(mo, S_BNG4_01);
+    P_SetMobjState(mo, S_BNG4_01); // 199
     mo->momz = FRACUNIT;
 }
 
@@ -2470,28 +2468,29 @@ void A_TeleportBeacon(mobj_t* actor)
 // A_BodyParts
 //
 // villsa [STRIFE] new codepointer
+// 09/06/10: Spawns gibs when organic actors get splattered, or junk
+// when robots explode.
 //
 void A_BodyParts(mobj_t* actor)
 {
     mobjtype_t type;
     mobj_t* mo;
     angle_t an;
-    if(actor->flags & MF_NOBLOOD)
+
+    if(actor->flags & MF_NOBLOOD) // Robots are flagged NOBLOOD
         type = MT_JUNK;
     else
         type = MT_MEAT;
 
     mo = P_SpawnMobj(actor->x, actor->y, actor->z + (24*FRACUNIT), type);
-    P_SetMobjState(mo, mo->info->spawnstate + (P_Random()%19));
+    P_SetMobjState(mo, mo->info->spawnstate + (P_Random() % 19));
 
-    an = ((P_Random() << 13) / 255);
+    an = (P_Random() << 13) / 255;
     mo->angle = an << ANGLETOFINESHIFT;
 
-    mo->momx += FixedMul(finecosine[an], (P_Random() & 0xf)<<FRACBITS);
-    mo->momy += FixedMul(finesine[an], (P_Random() & 0xf)<<FRACBITS);
-    mo->momz += (P_Random() & 0xf)<<FRACBITS;
-
-
+    mo->momx += FixedMul(finecosine[an], (P_Random() & 0x0f) << FRACBITS);
+    mo->momy += FixedMul(finesine[an], (P_Random() & 0x0f) << FRACBITS);
+    mo->momz += (P_Random() & 0x0f) << FRACBITS;
 }
 
 void A_ClaxonBlare(mobj_t* actor)
@@ -2503,12 +2502,13 @@ void A_ClaxonBlare(mobj_t* actor)
 // A_ActiveSound
 //
 // villsa [STRIFE] new codepointer
+// 09/06/10: Plays an object's active sound periodically.
 //
 void A_ActiveSound(mobj_t* actor)
 {
     if(actor->info->activesound)
     {
-        if(!leveltime & 7)
+        if(!(leveltime & 7)) // haleyjd: added parens
             S_StartSound(actor, actor->info->activesound);
     }
 }
@@ -2517,6 +2517,9 @@ void A_ActiveSound(mobj_t* actor)
 // A_ClearSoundTarget
 //
 // villsa [STRIFE] new codepointer
+// 09/06/10: Clears the actor's sector soundtarget, so that the actor
+// will not be continually alerted/awakened ad infinitum. Used by
+// shopkeepers.
 //
 void A_ClearSoundTarget(mobj_t* actor)
 {
@@ -2532,6 +2535,7 @@ void A_DropBurnFlesh(mobj_t* actor)
 // A_FlameDeath
 //
 // villsa [STRIFE] new codepointer
+// 09/06/10: Death animation for flamethrower fireballs.
 //
 void A_FlameDeath(mobj_t* actor)
 {

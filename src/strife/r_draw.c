@@ -51,7 +51,7 @@
 
 // status bar height at bottom of screen
 // haleyjd 08/31/10: Verified unmodified.
-#define SBARHEIGHT		32
+#define SBARHEIGHT              32
 
 //
 // All drawing to the view buffer is accomplished in this file.
@@ -76,7 +76,8 @@ int		columnofs[MAXWIDTH];
 //  translate a limited part to another
 //  (color ramps used for  suit colors).
 //
-byte		translations[3][256];	
+// [STRIFE] Unused.
+//byte          translations[3][256];	
  
 // Backing buffer containing the bezel drawn around the screen and 
 // surrounding background.
@@ -216,109 +217,47 @@ void R_DrawColumn (void)
 }
 #endif
 
-
-void R_DrawColumnLow (void) 
-{ 
-    int			count; 
-    byte*		dest; 
-    byte*		dest2;
-    fixed_t		frac;
-    fixed_t		fracstep;	 
-    int                 x;
- 
-    count = dc_yh - dc_yl; 
-
-    // Zero length.
-    if (count < 0) 
-	return; 
-				 
-#ifdef RANGECHECK 
-    if ((unsigned)dc_x >= SCREENWIDTH
-	|| dc_yl < 0
-	|| dc_yh >= SCREENHEIGHT)
-    {
-	
-	I_Error ("R_DrawColumn: %i to %i at %i", dc_yl, dc_yh, dc_x);
-    }
-    //	dccount++; 
-#endif 
-    // Blocky mode, need to multiply by 2.
-    x = dc_x << 1;
-    
-    dest = ylookup[dc_yl] + columnofs[x];
-    dest2 = ylookup[dc_yl] + columnofs[x+1];
-    
-    fracstep = dc_iscale; 
-    frac = dc_texturemid + (dc_yl-centery)*fracstep;
-    
-    do 
-    {
-	// Hack. Does not work corretly.
-	*dest2 = *dest = dc_colormap[dc_source[(frac>>FRACBITS)&127]];
-	dest += SCREENWIDTH;
-	dest2 += SCREENWIDTH;
-	frac += fracstep; 
-
-    } while (count--);
-}
-
+// haleyjd 09/06/10 [STRIFE] Removed low detail
 
 //
 // Spectre/Invisibility.
 //
-#define FUZZTABLE		50 
-#define FUZZOFF	(SCREENWIDTH)
 
+// haleyjd 09/06/10: ]STRIFE] replaced fuzzdraw with translucency.
 
-int	fuzzoffset[FUZZTABLE] =
+//
+// R_DrawMVisTLColumn
+//
+// villsa [STRIFE] new function
+// Replacement for R_DrawFuzzColumn
+//
+void R_DrawMVisTLColumn(void)
 {
-    FUZZOFF,-FUZZOFF,FUZZOFF,-FUZZOFF,FUZZOFF,FUZZOFF,-FUZZOFF,
-    FUZZOFF,FUZZOFF,-FUZZOFF,FUZZOFF,FUZZOFF,FUZZOFF,-FUZZOFF,
-    FUZZOFF,FUZZOFF,FUZZOFF,-FUZZOFF,-FUZZOFF,-FUZZOFF,-FUZZOFF,
-    FUZZOFF,-FUZZOFF,-FUZZOFF,FUZZOFF,FUZZOFF,FUZZOFF,FUZZOFF,-FUZZOFF,
-    FUZZOFF,-FUZZOFF,FUZZOFF,FUZZOFF,-FUZZOFF,-FUZZOFF,FUZZOFF,
-    FUZZOFF,-FUZZOFF,-FUZZOFF,-FUZZOFF,-FUZZOFF,FUZZOFF,FUZZOFF,
-    FUZZOFF,FUZZOFF,-FUZZOFF,FUZZOFF,FUZZOFF,-FUZZOFF,FUZZOFF 
-}; 
-
-int	fuzzpos = 0; 
-
-
-//
-// Framebuffer postprocessing.
-// Creates a fuzzy image by copying pixels
-//  from adjacent ones to left and right.
-// Used with an all black colormap, this
-//  could create the SHADOW effect,
-//  i.e. spectres and invisible players.
-//
-void R_DrawFuzzColumn (void) 
-{ 
-    int			count; 
-    byte*		dest; 
-    fixed_t		frac;
-    fixed_t		fracstep;	 
+    int                 count; 
+    byte*               dest; 
+    fixed_t             frac;
+    fixed_t             fracstep;
 
     // Adjust borders. Low... 
     if (!dc_yl) 
-	dc_yl = 1;
+        dc_yl = 1;
 
     // .. and high.
     if (dc_yh == viewheight-1) 
-	dc_yh = viewheight - 2; 
-		 
+        dc_yh = viewheight - 2; 
+
     count = dc_yh - dc_yl; 
 
     // Zero length.
     if (count < 0) 
-	return; 
+        return; 
 
 #ifdef RANGECHECK 
     if ((unsigned)dc_x >= SCREENWIDTH
-	|| dc_yl < 0 || dc_yh >= SCREENHEIGHT)
+        || dc_yl < 0 || dc_yh >= SCREENHEIGHT)
     {
-	I_Error ("R_DrawFuzzColumn: %i to %i at %i",
-		 dc_yl, dc_yh, dc_x);
+        I_Error ("R_DrawFuzzColumn: %i to %i at %i",
+                 dc_yl, dc_yh, dc_x);
     }
 #endif
     
@@ -328,128 +267,50 @@ void R_DrawFuzzColumn (void)
     fracstep = dc_iscale; 
     frac = dc_texturemid + (dc_yl-centery)*fracstep; 
 
-    // Looks like an attempt at dithering,
-    //  using the colormap #6 (of 0-31, a bit
-    //  brighter than average).
-    do 
+    do
     {
-	// Lookup framebuffer, and retrieve
-	//  a pixel that is either one column
-	//  left or right of the current one.
-	// Add index from colormap to index.
-	*dest = colormaps[6*256+dest[fuzzoffset[fuzzpos]]]; 
-
-	// Clamp table lookup index.
-	if (++fuzzpos == FUZZTABLE) 
-	    fuzzpos = 0;
-	
-	dest += SCREENWIDTH;
-
-	frac += fracstep; 
-    } while (count--); 
-} 
-
-// low detail mode version
- 
-void R_DrawFuzzColumnLow (void) 
-{ 
-    int			count; 
-    byte*		dest; 
-    byte*		dest2; 
-    fixed_t		frac;
-    fixed_t		fracstep;	 
-    int x;
-
-    // Adjust borders. Low... 
-    if (!dc_yl) 
-	dc_yl = 1;
-
-    // .. and high.
-    if (dc_yh == viewheight-1) 
-	dc_yh = viewheight - 2; 
-		 
-    count = dc_yh - dc_yl; 
-
-    // Zero length.
-    if (count < 0) 
-	return; 
-
-    // low detail mode, need to multiply by 2
-    
-    x = dc_x << 1;
-    
-#ifdef RANGECHECK 
-    if ((unsigned)x >= SCREENWIDTH
-	|| dc_yl < 0 || dc_yh >= SCREENHEIGHT)
-    {
-	I_Error ("R_DrawFuzzColumn: %i to %i at %i",
-		 dc_yl, dc_yh, dc_x);
-    }
-#endif
-    
-    dest = ylookup[dc_yl] + columnofs[x];
-    dest2 = ylookup[dc_yl] + columnofs[x+1];
-
-    // Looks familiar.
-    fracstep = dc_iscale; 
-    frac = dc_texturemid + (dc_yl-centery)*fracstep; 
-
-    // Looks like an attempt at dithering,
-    //  using the colormap #6 (of 0-31, a bit
-    //  brighter than average).
-    do 
-    {
-	// Lookup framebuffer, and retrieve
-	//  a pixel that is either one column
-	//  left or right of the current one.
-	// Add index from colormap to index.
-	*dest = colormaps[6*256+dest[fuzzoffset[fuzzpos]]]; 
-	*dest2 = colormaps[6*256+dest2[fuzzoffset[fuzzpos]]]; 
-
-	// Clamp table lookup index.
-	if (++fuzzpos == FUZZTABLE) 
-	    fuzzpos = 0;
-	
-	dest += SCREENWIDTH;
-	dest2 += SCREENWIDTH;
-
-	frac += fracstep; 
-    } while (count--); 
+        byte src = dc_colormap[dc_source[(frac>>FRACBITS)&127]];
+        byte col = xlatab[*dest + (src << 8)];
+        *dest = col;
+        dest += SCREENWIDTH;
+        frac += fracstep;
+    } while(count--);
 }
 
 //
 // R_DrawTLColumn
 //
 // villsa [STRIFE] new function
-// Replacement for R_DrawFuzzColumn
+// Achieves a second translucency level using the same lookup table,
+// via inversion of the colors in the index computation.
 //
 void R_DrawTLColumn(void)
 {
-     int			count; 
-    byte*		dest; 
-    fixed_t		frac;
-    fixed_t		fracstep;	 
+    int                 count; 
+    byte*               dest; 
+    fixed_t             frac;
+    fixed_t             fracstep;	 
 
     // Adjust borders. Low... 
     if (!dc_yl) 
-	dc_yl = 1;
+        dc_yl = 1;
 
     // .. and high.
     if (dc_yh == viewheight-1) 
-	dc_yh = viewheight - 2; 
-		 
+        dc_yh = viewheight - 2; 
+
     count = dc_yh - dc_yl; 
 
     // Zero length.
     if (count < 0) 
-	return; 
+        return; 
 
 #ifdef RANGECHECK 
     if ((unsigned)dc_x >= SCREENWIDTH
-	|| dc_yl < 0 || dc_yh >= SCREENHEIGHT)
+        || dc_yl < 0 || dc_yh >= SCREENHEIGHT)
     {
-	I_Error ("R_DrawFuzzColumn: %i to %i at %i",
-		 dc_yl, dc_yh, dc_x);
+        I_Error ("R_DrawFuzzColumn2: %i to %i at %i",
+                 dc_yl, dc_yh, dc_x);
     }
 #endif
     
@@ -461,59 +322,9 @@ void R_DrawTLColumn(void)
 
     do
     {
-        *dest = xlatab[*dest+
-            (dc_colormap[dc_source[(frac>>FRACBITS)&127]]<<8)];
-        dest += SCREENWIDTH;
-        frac += fracstep;
-    } while(count--);
-}
- 
-
-//
-// R_DrawMVisTLColumn
-//
-// villsa [STRIFE] new function
-//
-void R_DrawMVisTLColumn(void)
-{
-     int			count; 
-    byte*		dest; 
-    fixed_t		frac;
-    fixed_t		fracstep;	 
-
-    // Adjust borders. Low... 
-    if (!dc_yl) 
-	dc_yl = 1;
-
-    // .. and high.
-    if (dc_yh == viewheight-1) 
-	dc_yh = viewheight - 2; 
-		 
-    count = dc_yh - dc_yl; 
-
-    // Zero length.
-    if (count < 0) 
-	return; 
-
-#ifdef RANGECHECK 
-    if ((unsigned)dc_x >= SCREENWIDTH
-	|| dc_yl < 0 || dc_yh >= SCREENHEIGHT)
-    {
-	I_Error ("R_DrawFuzzColumn: %i to %i at %i",
-		 dc_yl, dc_yh, dc_x);
-    }
-#endif
-    
-    dest = ylookup[dc_yl] + columnofs[dc_x];
-
-    // Looks familiar.
-    fracstep = dc_iscale; 
-    frac = dc_texturemid + (dc_yl-centery)*fracstep; 
-
-    do
-    {
-        *dest = xlatab[((*dest)<<8)
-            + dc_colormap[dc_source[(frac>>FRACBITS)&127]]];
+        byte src = dc_colormap[dc_source[(frac>>FRACBITS)&127]];
+        byte col = xlatab[(*dest << 8) + src];
+        *dest = col;
         dest += SCREENWIDTH;
         frac += fracstep;
     } while(count--);
@@ -535,26 +346,25 @@ byte*	translationtables;
 
 void R_DrawTranslatedColumn (void) 
 { 
-    int			count; 
-    byte*		dest; 
-    fixed_t		frac;
-    fixed_t		fracstep;	 
- 
+    int                 count; 
+    byte*               dest; 
+    fixed_t             frac;
+    fixed_t             fracstep;
+
     count = dc_yh - dc_yl; 
     if (count < 0) 
-	return; 
-				 
+        return; 
+
 #ifdef RANGECHECK 
     if ((unsigned)dc_x >= SCREENWIDTH
-	|| dc_yl < 0
-	|| dc_yh >= SCREENHEIGHT)
+        || dc_yl < 0
+        || dc_yh >= SCREENHEIGHT)
     {
-	I_Error ( "R_DrawColumn: %i to %i at %i",
-		  dc_yl, dc_yh, dc_x);
+        I_Error ( "R_DrawColumn: %i to %i at %i",
+                 dc_yl, dc_yh, dc_x);
     }
-    
-#endif 
 
+#endif 
 
     dest = ylookup[dc_yl] + columnofs[dc_x]; 
 
@@ -565,97 +375,45 @@ void R_DrawTranslatedColumn (void)
     // Here we do an additional index re-mapping.
     do 
     {
-	// Translation tables are used
-	//  to map certain colorramps to other ones,
-	//  used with PLAY sprites.
-	// Thus the "green" ramp of the player 0 sprite
-	//  is mapped to gray, red, black/indigo. 
-	*dest = dc_colormap[dc_translation[dc_source[frac>>FRACBITS]]];
-	dest += SCREENWIDTH;
-	
-	frac += fracstep; 
+        // Translation tables are used
+        //  to map certain colorramps to other ones,
+        //  used with PLAY sprites.
+        // Thus the "green" ramp of the player 0 sprite
+        //  is mapped to gray, red, black/indigo. 
+        *dest = dc_colormap[dc_translation[dc_source[frac>>FRACBITS]]];
+        dest += SCREENWIDTH;
+        frac += fracstep; 
     } while (count--); 
 } 
 
-void R_DrawTranslatedColumnLow (void) 
-{ 
-    int			count; 
-    byte*		dest; 
-    byte*		dest2; 
-    fixed_t		frac;
-    fixed_t		fracstep;	 
-    int                 x;
- 
-    count = dc_yh - dc_yl; 
-    if (count < 0) 
-	return; 
-
-    // low detail, need to scale by 2
-    x = dc_x << 1;
-				 
-#ifdef RANGECHECK 
-    if ((unsigned)x >= SCREENWIDTH
-	|| dc_yl < 0
-	|| dc_yh >= SCREENHEIGHT)
-    {
-	I_Error ( "R_DrawColumn: %i to %i at %i",
-		  dc_yl, dc_yh, x);
-    }
-    
-#endif 
-
-
-    dest = ylookup[dc_yl] + columnofs[x]; 
-    dest2 = ylookup[dc_yl] + columnofs[x+1]; 
-
-    // Looks familiar.
-    fracstep = dc_iscale; 
-    frac = dc_texturemid + (dc_yl-centery)*fracstep; 
-
-    // Here we do an additional index re-mapping.
-    do 
-    {
-	// Translation tables are used
-	//  to map certain colorramps to other ones,
-	//  used with PLAY sprites.
-	// Thus the "green" ramp of the player 0 sprite
-	//  is mapped to gray, red, black/indigo. 
-	*dest = dc_colormap[dc_translation[dc_source[frac>>FRACBITS]]];
-	*dest2 = dc_colormap[dc_translation[dc_source[frac>>FRACBITS]]];
-	dest += SCREENWIDTH;
-	dest2 += SCREENWIDTH;
-	
-	frac += fracstep; 
-    } while (count--); 
-}
+// haleyjd 09/06/10 [STRIFE] Removed low detail
 
 //
 // R_DrawTRTLColumn
 //
 // villsa [STRIFE] new function
+// Combines translucency and color translation.
 //
 void R_DrawTRTLColumn(void)
 {
-    int			count; 
-    byte*		dest; 
-    fixed_t		frac;
-    fixed_t		fracstep;	 
- 
+    int                 count; 
+    byte*               dest; 
+    fixed_t             frac;
+    fixed_t             fracstep;
+
     count = dc_yh - dc_yl; 
     if (count < 0) 
-	return; 
-				 
+        return; 
+
 #ifdef RANGECHECK 
     if ((unsigned)dc_x >= SCREENWIDTH
-	|| dc_yl < 0
-	|| dc_yh >= SCREENHEIGHT)
+        || dc_yl < 0
+        || dc_yh >= SCREENHEIGHT)
     {
-	I_Error ( "R_DrawColumn: %i to %i at %i",
-		  dc_yl, dc_yh, dc_x);
+        I_Error ( "R_DrawColumn: %i to %i at %i",
+                 dc_yl, dc_yh, dc_x);
     }
-    
 #endif 
-
 
     dest = ylookup[dc_yl] + columnofs[dc_x]; 
 
@@ -666,11 +424,11 @@ void R_DrawTRTLColumn(void)
     // Here we do an additional index re-mapping.
     do 
     {
-        *dest = xlatab[((*dest)<<8)
-            + dc_colormap[dc_translation[dc_source[frac>>FRACBITS]]]];
-	dest += SCREENWIDTH;
-	
-	frac += fracstep; 
+        byte src = dc_colormap[dc_translation[dc_source[frac>>FRACBITS&127]]];
+        byte col = xlatab[(*dest << 8) + src];
+        *dest = col;
+        dest += SCREENWIDTH;
+        frac += fracstep; 
     } while (count--); 
 }
 
