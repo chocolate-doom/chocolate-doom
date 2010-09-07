@@ -24,6 +24,7 @@ info.c             info.h       \
 m_menu.c           m_menu.h     \
 m_random.c         m_random.h   \
 p_ceilng.c                      \
+p_dialog.c         p_dialog.h   \
 p_doors.c                       \
 p_enemy.c                       \
 p_floor.c                       \
