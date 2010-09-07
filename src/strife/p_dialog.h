@@ -71,6 +71,8 @@ typedef struct mapdialog_s
     mapdlgchoice_t choices[MDLG_MAXCHOICES];
 } mapdialog_t;
 
+void P_DialogStart(player_t *player);
+
 
 #endif
 

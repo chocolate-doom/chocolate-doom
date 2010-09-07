@@ -33,7 +33,7 @@
 #include "d_event.h"
 
 #include "p_local.h"
-
+#include "p_dialog.h"   // villsa [STRIFE]
 #include "doomstat.h"
 
 
@@ -401,6 +401,7 @@ void P_PlayerThink (player_t* player)
     {
 	if (!player->usedown)
 	{
+            P_DialogStart(player);  // villsa [STRIFE]
 	    P_UseLines (player);
 	    player->usedown = true;
 	}

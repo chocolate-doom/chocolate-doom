@@ -37,7 +37,8 @@
 #include "m_menu.h"
 #include "r_main.h"
 #include "v_video.h"
-
+#include "p_local.h"
+#include "sounds.h"
 #include "p_dialog.h"
 
 //
@@ -93,6 +94,9 @@ player_t *dialogplayer;
 
 // The object to which the player is speaking.
 mobj_t   *dialogtalker;
+
+// The talker's current angle
+angle_t dialogtalkerangle;
 
 // The currently active mapdialog object.
 static mapdialog_t *currentdialog;
@@ -748,4 +752,54 @@ static void P_DialogDrawer(void)
 static void P_DialogDoChoice(int choice)
 {
     // STRIFE-TODO
+}
+
+//
+// P_DialogStart
+//
+// villsa [STRIFE] New function
+//
+void P_DialogStart(player_t *player)
+{
+    if(menuactive || netgame)
+        return;
+
+    // are we facing towards our NPC?
+    P_AimLineAttack(player->mo, player->mo->angle, (128*FRACUNIT));
+    if(!linetarget)
+    {
+        P_AimLineAttack(player->mo, player->mo->angle + (ANG90/16), (128*FRACUNIT));
+        if(!linetarget)
+            P_AimLineAttack(player->mo, player->mo->angle - (ANG90/16), (128*FRACUNIT));
+    }
+
+    if(linetarget)
+    {
+        // already in combat, can't talk to it
+        if(linetarget->flags & MF_INCOMBAT)
+            return;
+
+        dialogtalker = linetarget;
+
+        // play a sound
+        if(player = &players[consoleplayer])
+            S_StartSound(0, sfx_radio);
+
+        linetarget->target = player->mo;
+        dialogtalker->reactiontime = 2;
+        dialogtalkerangle = dialogtalker->angle;
+
+        // face towards player
+        A_FaceTarget(linetarget);
+        // face towards NPC's direction
+        player->mo->angle = R_PointToAngle2(
+                            player->mo->x,
+                            player->mo->y,
+                            dialogtalker->x,
+                            dialogtalker->y);
+
+        dialogplayer = player;
+    }
+
+    //**[STRIFE] TODO**
 }
