@@ -139,6 +139,18 @@ typedef struct
 // Set if already seen, thus drawn in automap.
 #define ML_MAPPED		256
 
+// villsa [STRIFE] jump over rails?
+#define ML_JUMPOVER             512
+
+// villsa [STRIFE] block flying things
+#define ML_BLOCKFLOATERS        1024
+
+// villsa [STRIFE] TODO - 25% or 75% transcluency?
+#define ML_TRANSPARENT1         2048
+
+// villsa [STRIFE] TODO - 25% or 75% transcluency?
+#define ML_TRANSPARENT2         4096
+
 
 
 

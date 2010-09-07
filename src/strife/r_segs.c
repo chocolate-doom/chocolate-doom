@@ -158,6 +158,14 @@ R_RenderMaskedSegRange
 			
     if (fixedcolormap)
 	dc_colormap = fixedcolormap;
+
+    // villsa [STRIFE] render as transparent (25% or 75%?)
+    if(curline->linedef->flags & ML_TRANSPARENT1)
+        colfunc = fuzzcolfunc;
+
+    // villsa [STRIFE] render as transparent (25% or 75%?)
+    if(curline->linedef->flags & ML_TRANSPARENT2)
+        colfunc = R_DrawMVisTLColumn;
     
     // draw the columns
     for (dc_x = x1 ; dc_x <= x2 ; dc_x++)
@@ -188,6 +196,8 @@ R_RenderMaskedSegRange
 	}
 	spryscale += rw_scalestep;
     }
+
+    colfunc = basecolfunc;  // villsa [STRIFE] reset draw routines
 	
 }
 

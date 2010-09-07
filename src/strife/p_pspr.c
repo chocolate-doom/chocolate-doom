@@ -562,9 +562,9 @@ void A_FireGrenade(player_t* player, pspdef_t* pspr)
     st2 = &states[weaponinfo[player->readyweapon].atkstate];
     P_SetPsprite(player, ps_flash, st1 - st2);
 
-    player->mo->z += (32*FRACUNIT); // ugh
+    player->mo->z += MAXRADIUS; // ugh
     mo = P_SpawnMortar(player->mo, type);
-    player->mo->z -= (32*FRACUNIT); // ugh
+    player->mo->z -= MAXRADIUS; // ugh
 
     // change momz based on player's pitch
     mo->momz = FixedMul((player->pitch<<FRACBITS) / 160, mo->info->speed) + (8*FRACUNIT);

@@ -1619,7 +1619,7 @@ void A_InqGrenade(mobj_t* actor)
 
     A_FaceTarget(actor);
 
-    actor->z += (32*FRACUNIT);
+    actor->z += MAXRADIUS;
 
     // grenade 1
     actor->angle -= (ANG45 / 32);
@@ -1631,7 +1631,7 @@ void A_InqGrenade(mobj_t* actor)
     mo = P_SpawnFacingMissile(actor, actor->target, MT_INQGRENADE);
     mo->momz += (16*FRACUNIT);
 
-    actor->z -= (32*FRACUNIT);
+    actor->z -= MAXRADIUS;
 }
 
 //
@@ -2022,12 +2022,12 @@ void A_BishopAttack(mobj_t* actor)
     if(!actor->target)
         return;
 
-    actor->z += (32*FRACUNIT);
+    actor->z += MAXRADIUS;
 
     mo = P_SpawnMissile(actor, actor->target, MT_SEEKMISSILE);
     mo->tracer = actor->target;
 
-    actor->z -= (32*FRACUNIT);
+    actor->z -= MAXRADIUS;
 }
 
 //

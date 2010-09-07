@@ -249,11 +249,19 @@ boolean PIT_CheckLine (line_t* ld)
 		
     if (!(tmthing->flags & MF_MISSILE) )
     {
-	if ( ld->flags & ML_BLOCKING )
+        // villsa [STRIFE] include jumpover flag
+	if ( ld->flags & ML_BLOCKING &&
+            (!(ld->flags & ML_JUMPOVER) || tmfloorz + (32*FRACUNIT) > tmthing->z) )
 	    return false;	// explicitly blocking everything
 
-	if ( !tmthing->player && ld->flags & ML_BLOCKMONSTERS )
+        // villsa [STRIFE] exclude floaters from blockmonster lines
+	if ( !tmthing->player && ld->flags & ML_BLOCKMONSTERS &&
+            !(tmthing->flags & MF_FLOAT))
 	    return false;	// block monsters only
+
+        // villsa [STRIFE]
+        if ( ld->flags & ML_BLOCKFLOATERS && tmthing->flags & MF_FLOAT )
+            return false;   // block floaters only
     }
 
     // set openrange, opentop, openbottom
@@ -1053,6 +1061,7 @@ boolean PTR_ShootTraverse (intercept_t* in)
     line_t*		li;
     
     mobj_t*		th;
+    mobj_t*             th2;    // villsa [STRIFE]
 
     fixed_t		slope;
     fixed_t		dist;
@@ -1118,11 +1127,18 @@ boolean PTR_ShootTraverse (intercept_t* in)
 		return false;		
 	}
 
-	// Spawn bullet puffs.
-	P_SpawnPuff (x,y,z);
+        // villsa [STRIFE]
+        if(la_damage > 0)
+        {
+            // villsa [STRIFE] TODO - verify on whats the purpose with this
+            if(attackrange != (2112*FRACUNIT))
+                P_SpawnPuff(x, y, z); // Spawn bullet puffs.
+            else
+                P_SpawnMobj(x, y, z, MT_STRIFEPUFF3);
 	
-	// don't go any farther
-	return false;	
+	    // don't go any farther
+	    return false;	
+        }
     }
     
     // shoot a thing
@@ -1132,6 +1148,10 @@ boolean PTR_ShootTraverse (intercept_t* in)
     
     if (!(th->flags&MF_SHOOTABLE))
 	return true;		// corpse or something
+
+    // villsa [STRIFE] skip mvis flagged things?
+    if(th->flags & MF_MVIS)
+        return true;
 		
     // check angles to see if the thing can be aimed at
     dist = FixedMul (attackrange, in->frac);
@@ -1154,15 +1174,25 @@ boolean PTR_ShootTraverse (intercept_t* in)
     y = trace.y + FixedMul (trace.dy, frac);
     z = shootz + FixedMul (aimslope, FixedMul(frac, attackrange));
 
+    // villsa [STRIFE] TODO - verify purpose of this
+    if(attackrange == (2112*FRACUNIT))
+    {
+        th2 = P_SpawnMobj(x, y, z, MT_STRIFEPUFF3);
+        th2->momz = -FRACUNIT;
+        P_DamageMobj(th, th2, shootthing, la_damage);
+        return false;
+    }
+
+    // villsa [STRIFE] TODO - verify disabled check for damage?
+    //if (la_damage)
+	P_DamageMobj (th, shootthing, shootthing, la_damage);
+
     // Spawn bullet puffs or blod spots,
     // depending on target type.
     if (in->d.thing->flags & MF_NOBLOOD)
-	P_SpawnPuff (x,y,z);
+	P_SpawnSparkPuff(x, y, z);  // villsa [STRIFE] call spark puff function instead
     else
 	P_SpawnBlood (x,y,z, la_damage);
-
-    if (la_damage)
-	P_DamageMobj (th, shootthing, shootthing, la_damage);
 
     // don't go any farther
     return false;
@@ -1205,6 +1235,11 @@ P_AimLineAttack
 		
     if (linetarget)
 	return aimslope;
+    else    // villsa [STRIFE] checks for player pitch
+    {
+        if(t1->player)
+            return (t1->player->pitch << FRACBITS) / 160;
+    }
 
     return 0;
 }
@@ -1225,6 +1260,7 @@ P_LineAttack
 {
     fixed_t	x2;
     fixed_t	y2;
+    int         traverseflags;
 	
     angle >>= ANGLETOFINESHIFT;
     shootthing = t1;
@@ -1235,9 +1271,15 @@ P_LineAttack
     attackrange = distance;
     aimslope = slope;
 
+    // villsa [STRIFE] test lines only if damage is <= 0
+    if(damage >= 1)
+        traverseflags = (PT_ADDLINES|PT_ADDTHINGS);
+    else
+        traverseflags = PT_ADDLINES;
+
     P_PathTraverse(t1->x, t1->y,
                    x2, y2,
-                   PT_ADDLINES|PT_ADDTHINGS,
+                   traverseflags,
                    PTR_ShootTraverse);
 }
  
@@ -1387,6 +1429,14 @@ P_RadiusAttack
     for (y=yl ; y<=yh ; y++)
 	for (x=xl ; x<=xh ; x++)
 	    P_BlockThingsIterator (x, y, PIT_RadiusAttack );
+
+    // villsa [STRIFE] TODO - verify. what on earth is it trying to do here?
+    spot->z += MAXRADIUS;
+    P_LineAttack(spot, 0, dist, 1, 0);
+    P_LineAttack(spot, ANG90, dist, 1, 0);
+    P_LineAttack(spot, ANG180, dist, 1, 0);
+    P_LineAttack(spot, ANG270, dist, 1, 0);
+    spot->z -= MAXRADIUS;
 }
 
 
@@ -1425,8 +1475,15 @@ boolean PIT_ChangeSector (mobj_t*	thing)
     // crunch bodies to giblets
     if (thing->health <= 0)
     {
-	//P_SetMobjState (thing, S_GIBS);   // villsa [STRIFE] TODO - update proper gib state
+        // villsa [STRIFE] do something with the player
+        if(thing->player && thing->subsector->sector->specialdata)
+        {
+            nofit = true;
+            return false;
+        }
+	//P_SetMobjState (thing, S_GIBS);   // villsa [STRIFE] unused
 
+        A_BodyParts(thing); // villsa [STRIFE] spit out meat/junk stuff
 	thing->flags &= ~MF_SOLID;
 	thing->height = 0;
 	thing->radius = 0;
@@ -1454,10 +1511,10 @@ boolean PIT_ChangeSector (mobj_t*	thing)
 
     if (crushchange && !(leveltime&3) )
     {
+        S_StartSound(thing, sfx_pcrush);   // villsa [STRIFE]
 	P_DamageMobj(thing,NULL,NULL,10);
 
 	// spray blood in a random direction
-        // villsa [STRIFE] TODO - verify
 	mo = P_SpawnMobj (thing->x,
 			  thing->y,
 			  thing->z + thing->height/2, MT_BLOOD_DEATH);

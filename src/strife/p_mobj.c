@@ -961,18 +961,13 @@ P_SpawnPuff
     th->momz = FRACUNIT;
     th->tics -= P_Random()&3;
 
-    // villsa [STRIFE] TODO - verify and update
-    /*if(shootdist == (80*FRACUNIT))
-        P_SetMobjState(th, S_POW2_00);*/
+    // don't make punches spark on the wall
+    if(attackrange == MELEERANGE)
+        P_SetMobjState(th, S_POW2_00);
 
     // villsa [STRIFE] unused
     /*if (th->tics < 1)
 	th->tics = 1;*/
-	
-    // don't make punches spark on the wall
-    // villsa [STRIFE] TODO - proper puff state
-    //if (attackrange == MELEERANGE)
-	//P_SetMobjState (th, S_PUFF3);
 }
 
 //
