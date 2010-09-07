@@ -49,14 +49,19 @@ void 	R_DrawColumn (void);
 void 	R_DrawColumnLow (void);
 
 // The Spectre/Invisibility effect.
-void 	R_DrawFuzzColumn (void);
-void 	R_DrawFuzzColumnLow (void);
+//void 	R_DrawFuzzColumn (void);
+//void 	R_DrawFuzzColumnLow (void);
 
 // Draw with color translation tables,
 //  for player sprite rendering,
 //  Green/Red/Blue/Indigo shirts.
 void	R_DrawTranslatedColumn (void);
 void	R_DrawTranslatedColumnLow (void);
+
+// villsa [STRIFE] - transclucent rendering
+void    R_DrawTLColumn (void);
+void    R_DrawMVisTLColumn (void);
+void    R_DrawTRTLColumn (void);
 
 void
 R_VideoErase

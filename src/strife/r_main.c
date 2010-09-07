@@ -709,20 +709,21 @@ void R_ExecuteSetViewSize (void)
     centeryfrac = centery<<FRACBITS;
     projection = centerxfrac;
 
-    if (!detailshift)
+    //if (!detailshift) // villsa [STRIFE]
     {
 	colfunc = basecolfunc = R_DrawColumn;
-	fuzzcolfunc = R_DrawFuzzColumn;
+	fuzzcolfunc = R_DrawTLColumn;   // villsa [STRIFE]
 	transcolfunc = R_DrawTranslatedColumn;
 	spanfunc = R_DrawSpan;
     }
-    else
+    // villsa [STRIFE] unused detail stuff
+    /*else
     {
 	colfunc = basecolfunc = R_DrawColumnLow;
 	fuzzcolfunc = R_DrawFuzzColumnLow;
 	transcolfunc = R_DrawTranslatedColumnLow;
 	spanfunc = R_DrawSpanLow;
-    }
+    }*/
 
     R_InitBuffer (scaledviewwidth, viewheight);
 	
@@ -930,3 +931,4 @@ void R_RenderPlayerView (player_t* player)
     // Check for new console commands.
     NetUpdate ();				
 }
+

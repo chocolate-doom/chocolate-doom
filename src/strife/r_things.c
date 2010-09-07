@@ -413,23 +413,43 @@ R_DrawVisSprite
     fixed_t		frac;
     patch_t*		patch;
     int                 clip;   // villsa [STRIFE]
+    int                 translation;    // villsa [STRIFE]
 	
 	
     patch = W_CacheLumpNum (vis->patch+firstspritelump, PU_CACHE);
 
     dc_colormap = vis->colormap;
+
+    // villsa [STRIFE]
+    translation = vis->mobjflags & (MF_COLORSWAP1|MF_COLORSWAP2|MF_COLORSWAP3);
     
-    if (!dc_colormap)
+    // villsa [STRIFE] unused
+    /*if (!dc_colormap)
     {
 	// NULL colormap = shadow draw
 	colfunc = fuzzcolfunc;
+    }*/
+    // villsa [STRIFE]
+    if(vis->mobjflags & MF_SHADOW)
+    {
+        if(!translation)
+        {
+            if(vis->mobjflags & MF_MVIS)
+                colfunc = R_DrawMVisTLColumn;
+            else
+                colfunc = fuzzcolfunc;
+        }
+        else
+        {
+            colfunc = R_DrawTRTLColumn;
+	    dc_translation = translationtables - 256 + (translation>>20);
+        }
     }
     // villsa [STRIFE] new translation tables
-    else if (vis->mobjflags & (MF_COLORSWAP1|MF_COLORSWAP2|MF_COLORSWAP3))
+    else if (translation)
     {
 	colfunc = transcolfunc;
-	dc_translation = translationtables - 256 +
-	    ((vis->mobjflags & (MF_COLORSWAP1|MF_COLORSWAP2|MF_COLORSWAP3))>>20);
+	dc_translation = translationtables - 256 + (translation>>20);
     }
 	
     dc_iscale = abs(vis->xiscale)>>detailshift;
@@ -602,12 +622,13 @@ void R_ProjectSprite (mobj_t* thing)
     vis->patch = lump;
     
     // get light level
-    if (thing->flags & MF_SHADOW)
+    // villsa [STRIFE] unused
+    /*if (thing->flags & MF_SHADOW)
     {
 	// shadow draw
 	vis->colormap = NULL;
     }
-    else if (fixedcolormap)
+    else */if (fixedcolormap)
     {
 	// fixed map
 	vis->colormap = fixedcolormap;

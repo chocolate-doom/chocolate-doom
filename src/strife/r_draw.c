@@ -415,9 +415,109 @@ void R_DrawFuzzColumnLow (void)
 
 	frac += fracstep; 
     } while (count--); 
-} 
+}
+
+//
+// R_DrawTLColumn
+//
+// villsa [STRIFE] new function
+// Replacement for R_DrawFuzzColumn
+//
+void R_DrawTLColumn(void)
+{
+     int			count; 
+    byte*		dest; 
+    fixed_t		frac;
+    fixed_t		fracstep;	 
+
+    // Adjust borders. Low... 
+    if (!dc_yl) 
+	dc_yl = 1;
+
+    // .. and high.
+    if (dc_yh == viewheight-1) 
+	dc_yh = viewheight - 2; 
+		 
+    count = dc_yh - dc_yl; 
+
+    // Zero length.
+    if (count < 0) 
+	return; 
+
+#ifdef RANGECHECK 
+    if ((unsigned)dc_x >= SCREENWIDTH
+	|| dc_yl < 0 || dc_yh >= SCREENHEIGHT)
+    {
+	I_Error ("R_DrawFuzzColumn: %i to %i at %i",
+		 dc_yl, dc_yh, dc_x);
+    }
+#endif
+    
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    // Looks familiar.
+    fracstep = dc_iscale; 
+    frac = dc_texturemid + (dc_yl-centery)*fracstep; 
+
+    do
+    {
+        *dest = xlatab[*dest+
+            (dc_colormap[dc_source[(frac>>FRACBITS)&127]]<<8)];
+        dest += SCREENWIDTH;
+        frac += fracstep;
+    } while(count--);
+}
  
-  
+
+//
+// R_DrawMVisTLColumn
+//
+// villsa [STRIFE] new function
+//
+void R_DrawMVisTLColumn(void)
+{
+     int			count; 
+    byte*		dest; 
+    fixed_t		frac;
+    fixed_t		fracstep;	 
+
+    // Adjust borders. Low... 
+    if (!dc_yl) 
+	dc_yl = 1;
+
+    // .. and high.
+    if (dc_yh == viewheight-1) 
+	dc_yh = viewheight - 2; 
+		 
+    count = dc_yh - dc_yl; 
+
+    // Zero length.
+    if (count < 0) 
+	return; 
+
+#ifdef RANGECHECK 
+    if ((unsigned)dc_x >= SCREENWIDTH
+	|| dc_yl < 0 || dc_yh >= SCREENHEIGHT)
+    {
+	I_Error ("R_DrawFuzzColumn: %i to %i at %i",
+		 dc_yl, dc_yh, dc_x);
+    }
+#endif
+    
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    // Looks familiar.
+    fracstep = dc_iscale; 
+    frac = dc_texturemid + (dc_yl-centery)*fracstep; 
+
+    do
+    {
+        *dest = xlatab[((*dest)<<8)
+            + dc_colormap[dc_source[(frac>>FRACBITS)&127]]];
+        dest += SCREENWIDTH;
+        frac += fracstep;
+    } while(count--);
+}
   
  
 
@@ -527,7 +627,52 @@ void R_DrawTranslatedColumnLow (void)
 	
 	frac += fracstep; 
     } while (count--); 
-} 
+}
+
+//
+// R_DrawTRTLColumn
+//
+// villsa [STRIFE] new function
+//
+void R_DrawTRTLColumn(void)
+{
+    int			count; 
+    byte*		dest; 
+    fixed_t		frac;
+    fixed_t		fracstep;	 
+ 
+    count = dc_yh - dc_yl; 
+    if (count < 0) 
+	return; 
+				 
+#ifdef RANGECHECK 
+    if ((unsigned)dc_x >= SCREENWIDTH
+	|| dc_yl < 0
+	|| dc_yh >= SCREENHEIGHT)
+    {
+	I_Error ( "R_DrawColumn: %i to %i at %i",
+		  dc_yl, dc_yh, dc_x);
+    }
+    
+#endif 
+
+
+    dest = ylookup[dc_yl] + columnofs[dc_x]; 
+
+    // Looks familiar.
+    fracstep = dc_iscale; 
+    frac = dc_texturemid + (dc_yl-centery)*fracstep; 
+
+    // Here we do an additional index re-mapping.
+    do 
+    {
+        *dest = xlatab[((*dest)<<8)
+            + dc_colormap[dc_translation[dc_source[frac>>FRACBITS]]]];
+	dest += SCREENWIDTH;
+	
+	frac += fracstep; 
+    } while (count--); 
+}
 
 
 // haleyjd 08/26/10: [STRIFE] - Rogue's translucency lookup table
