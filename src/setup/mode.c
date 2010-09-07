@@ -112,6 +112,7 @@ static int screenblocks = 9;
 static int detailLevel = 0;
 static char *savedir = NULL;
 static char *executable = NULL;
+static char *back_flat = "F_PAVE01";
 
 static void BindMiscVariables(void)
 {
@@ -127,6 +128,11 @@ static void BindMiscVariables(void)
     {
         M_BindVariable("savedir",           &savedir);
         M_BindVariable("messageson",        &showMessages);
+    }
+
+    if (gamemission == strife)
+    {
+        M_BindVariable("back_flat",         &back_flat);
     }
 }
 
@@ -153,6 +159,11 @@ void InitBindings(void)
     if (gamemission == hexen)
     {
         M_BindHexenControls();
+    }
+
+    if (gamemission == strife)
+    {
+        M_BindStrifeControls();
     }
 
     // All other variables

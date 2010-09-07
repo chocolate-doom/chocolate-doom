@@ -71,6 +71,7 @@ int snd_samplerate = 22050;
 static int numChannels = 8;
 static int sfxVolume = 15;
 static int musicVolume = 15;
+static int voiceVolume = 15;
 static int use_libsamplerate = 0;
 
 // DOS specific variables: these are unused but should be maintained
@@ -200,6 +201,14 @@ void ConfigSound(void)
                    TXT_NewSpinControl(&sfxVolume, 0, 15),
                    NULL);
 
+    if (gamemission == strife)
+    {
+        TXT_AddWidgets(sfx_table,
+                       TXT_NewLabel("Voice volume"),
+                       TXT_NewSpinControl(&voiceVolume, 0, 15),
+                       NULL);
+    }
+
     TXT_SetColumnWidths(music_table, 20, 5);
 
     TXT_AddWidgets(music_table,
@@ -227,9 +236,14 @@ void BindSoundVariables(void)
     M_BindVariable("use_libsamplerate",   &use_libsamplerate);
 
     M_BindVariable("snd_sbport",          &snd_sbport);
-    M_BindVariable("snd_sbirq",          &snd_sbirq);
-    M_BindVariable("snd_sbdma",          &snd_sbdma);
-    M_BindVariable("snd_mport",          &snd_mport);
+    M_BindVariable("snd_sbirq",           &snd_sbirq);
+    M_BindVariable("snd_sbdma",           &snd_sbdma);
+    M_BindVariable("snd_mport",           &snd_mport);
+
+    if (gamemission == strife)
+    {
+        M_BindVariable("voice_volume",   &voiceVolume);
+    }
 
     // Before SDL_mixer version 1.2.11, MIDI music caused the game
     // to crash when it looped.  If this is an old SDL_mixer version,

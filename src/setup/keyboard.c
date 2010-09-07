@@ -39,11 +39,13 @@ static int always_run = 0;
 
 static int *controls[] = { &key_left, &key_right, &key_up, &key_down,
                            &key_strafeleft, &key_straferight, &key_fire,
-                           &key_use, &key_strafe, &key_speed, &key_jump, 
+                           &key_use, &key_strafe, &key_speed, &key_jump,
                            &key_flyup, &key_flydown, &key_flycenter,
                            &key_lookup, &key_lookdown, &key_lookcenter,
-                           &key_invleft, &key_invright, &key_useartifact,
-                           &key_pause,
+                           &key_invleft, &key_invright, &key_invquery,
+                           &key_invuse, &key_invpop, &key_invkey,
+                           &key_invhome, &key_invend, &key_invdrop,
+                           &key_useartifact, &key_pause, &key_usehealth,
                            &key_weapon1, &key_weapon2, &key_weapon3,
                            &key_weapon4, &key_weapon5, &key_weapon6,
                            &key_weapon7, &key_weapon8,
@@ -172,7 +174,9 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     txt_window_t *window;
     txt_scrollpane_t *scrollpane;
     txt_table_t *table;
-    boolean extra_keys = gamemission == heretic || gamemission == hexen;
+    boolean extra_keys = gamemission == heretic
+                      || gamemission == hexen
+                      || gamemission == strife;
 
     window = TXT_NewWindow("Extra keyboard controls");
 
@@ -203,7 +207,23 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
         AddKeyControl(table, "Inventory left", &key_invleft);
         AddKeyControl(table, "Inventory right", &key_invright);
-        AddKeyControl(table, "Use artifact", &key_useartifact);
+
+        if (gamemission == strife)
+        {
+            AddKeyControl(table, "Home", &key_invhome);
+            AddKeyControl(table, "End", &key_invend);
+            AddKeyControl(table, "Query", &key_invquery);
+            AddKeyControl(table, "Drop", &key_invdrop);
+            AddKeyControl(table, "PopWeap", &key_invpop);
+            AddKeyControl(table, "PopMiss", &key_mission);
+            AddKeyControl(table, "PopKey", &key_invkey);
+            AddKeyControl(table, "Use", &key_invuse);
+            AddKeyControl(table, "Use health", &key_usehealth);
+        }
+        else
+        {
+            AddKeyControl(table, "Use artifact", &key_useartifact);
+        }
     }
     else
     {
