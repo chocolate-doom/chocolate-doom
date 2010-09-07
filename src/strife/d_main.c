@@ -644,34 +644,11 @@ void D_StartTitle (void)
 
 static char *banners[] = 
 {
-    // doom1.wad
-    "                            "
-    "DOOM Shareware Startup v%i.%i"
-    "                           ",
-    // doom.wad
-    "                            "
-    "DOOM Registered Startup v%i.%i"
-    "                           ",
-    // Registered DOOM uses this
-    "                          "
-    "DOOM System Startup v%i.%i"
-    "                          ",
-    // doom.wad (Ultimate DOOM)
-    "                         "
-    "The Ultimate DOOM Startup v%i.%i"
-    "                        ",
-    // doom2.wad
-    "                         "
-    "DOOM 2: Hell on Earth v%i.%i"
-    "                           ",
-    // tnt.wad
-    "                     "
-    "DOOM 2: TNT - Evilution v%i.%i"
-    "                           ",
-    // plutonia.wad
-    "                   "
-    "DOOM 2: Plutonia Experiment v%i.%i"
-    "                           ",
+    // strife1.wad:
+
+    "                      "
+    "STRIFE:  Quest for the Sigil v1.31"
+    "                                 "
 };
 
 //
@@ -817,38 +794,7 @@ void DoTimeBomb(void)
 
 void D_SetGameDescription(void)
 {
-    gamedescription = "Unknown";
-
-    if (gamemission == doom)
-    {
-        // Doom 1.  But which version?
-
-        if (gamemode == retail)
-        {
-            // Ultimate Doom
-
-            gamedescription = GetGameName("The Ultimate DOOM");
-        } 
-        else if (gamemode == registered)
-        {
-            gamedescription = GetGameName("DOOM Registered");
-        }
-        else if (gamemode == shareware)
-        {
-            gamedescription = GetGameName("DOOM Shareware");
-        }
-    }
-    else
-    {
-        // Doom 2 of some kind.  But which mission?
-
-        if (gamemission == doom2)
-            gamedescription = GetGameName("DOOM 2: Hell on Earth");
-        else if (gamemission == pack_plut)
-            gamedescription = GetGameName("DOOM 2: Plutonia Experiment"); 
-        else if (gamemission == pack_tnt)
-            gamedescription = GetGameName("DOOM 2: TNT - Evilution");
-    }
+    gamedescription = GetGameName("Strife: Quest for the Sigil");
 }
 
 static void SetSaveGameDir(char *iwad_filename)
@@ -1230,7 +1176,7 @@ void D_DoomMain (void)
     DEH_Init();
 #endif
 
-    iwadfile = D_FindIWAD(IWAD_MASK_DOOM, &gamemission);
+    iwadfile = D_FindIWAD(IWAD_MASK_STRIFE, &gamemission);
 
     // None found?
 
@@ -1362,7 +1308,7 @@ void D_DoomMain (void)
     // Load configuration files before initialising other subsystems.
     // haleyjd 08/22/2010: [STRIFE] - use strife.cfg
     printf(DEH_String("M_LoadDefaults: Load system defaults.\n"));
-    M_SetConfigFilenames("default.cfg", PROGRAM_PREFIX "strife.cfg");
+    M_SetConfigFilenames("strife.cfg", PROGRAM_PREFIX "strife.cfg");
     D_BindVariables();
     M_LoadDefaults();
 
