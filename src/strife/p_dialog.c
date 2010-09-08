@@ -510,7 +510,7 @@ int P_PlayerHasItem(player_t *player, mobjtype_t type)
 // haleyjd 09/03/10: Looks for a dialog definition matching the given 
 // Script ID # for an mobj.
 //
-mapdialog_t *P_DialogFind(mobjtype_t type)
+mapdialog_t *P_DialogFind(mobjtype_t type, int jumptoconv)
 {
     int i;
 
@@ -518,7 +518,12 @@ mapdialog_t *P_DialogFind(mobjtype_t type)
     for(i = 0; i < numleveldialogs; i++)
     {
         if(type == leveldialogs[i].speakerid)
-            return &leveldialogs[i];
+        {
+            if(jumptoconv <= 1)
+                return &leveldialogs[i];
+            else
+                --jumptoconv;
+        }
     }
 
     // check SCRIPT00 dialogs next
@@ -773,6 +778,7 @@ void P_DialogStart(player_t *player)
     int rnd = 0;
     mapdialog_t* dialog;
     char* byetext;
+    int jumptoconv;
 
     if(menuactive || netgame)
         return;
@@ -786,59 +792,71 @@ void P_DialogStart(player_t *player)
             P_AimLineAttack(player->mo, player->mo->angle - (ANG90/16), (128*FRACUNIT));
     }
 
-    if(linetarget)
-    {
-        // already in combat, can't talk to it
-        if(linetarget->flags & MF_INCOMBAT)
-            return;
+    if(!linetarget)
+       return;
 
-        dialogtalker = linetarget;
+    // already in combat, can't talk to it
+    if(linetarget->flags & MF_INCOMBAT)
+       return;
 
-        // play a sound
-        if(player = &players[consoleplayer])
-            S_StartSound(0, sfx_radio);
+    // set pointer to the character talking
+    dialogtalker = linetarget;
 
-        linetarget->target = player->mo;
-        dialogtalker->reactiontime = 2;
-        dialogtalkerangle = dialogtalker->angle;
+    // play a sound
+    if(player == &players[consoleplayer])
+       S_StartSound(0, sfx_radio);
 
-        // face towards player
-        A_FaceTarget(linetarget);
-        // face towards NPC's direction
-        player->mo->angle = R_PointToAngle2(
-                            player->mo->x,
-                            player->mo->y,
-                            dialogtalker->x,
-                            dialogtalker->y);
+    linetarget->target = player->mo;         // target the player
+    dialogtalker->reactiontime = 2;          // set reactiontime
+    dialogtalkerangle = dialogtalker->angle; // remember original angle
 
-        dialogplayer = player;
-    }
-    else
-        return;
+    // face talker towards player
+    A_FaceTarget(dialogtalker);
+
+    // face towards NPC's direction
+    player->mo->angle = R_PointToAngle2(player->mo->x,
+                                        player->mo->y,
+                                        dialogtalker->x,
+                                        dialogtalker->y);
+    // set pointer to player talking
+    dialogplayer = player;
+
+    // haleyjd: This seems to be an artifact of early development where they
+    // meant to make all this work in multiplayer. By doing this, a thing
+    // could have given different initial dialogs to each player.
+    jumptoconv = linetarget->allegiance;
 
     // check item requirements
-    for(i = 0; i < MDLG_MAXITEMS; i++)
+    while(1)
     {
-        currentdialog = P_DialogFind(linetarget->type);
+        int i = 0;
+        currentdialog = P_DialogFind(linetarget->type, jumptoconv);
 
-        // dialog's jumptoconv equal to 0?
-        if(currentdialog[i].jumptoconv == 0)
+        // dialog's jumptoconv equal to 0? There's nothing to jump to.
+        if(currentdialog->jumptoconv == 0)
             break;
 
-        for(j = 0; j < MDLG_MAXITEMS; j++)
+        do
         {
-            dialog = &currentdialog[j];
-            if(dialog->checkitem[j] != 0 &&
-                P_PlayerHasItem(dialogtalker, dialog->checkitem[j]) < 1)
-            {
-                currentdialog = dialog;
+            // if the item is non-zero, the player must have at least one in his
+            // or her inventory
+            if(currentdialog->checkitem[i] != 0 &&
+                P_PlayerHasItem(dialogplayer, currentdialog->checkitem[i]) < 1)
                 break;
-            }
+            ++i;
         }
+        while(i < MDLG_MAXITEMS);
+
+        if(i < MDLG_MAXITEMS) // didn't find them all? this is our dialog!
+            break;
+
+        jumptoconv = currentdialog->jumptoconv;
     }
 
     M_DialogDimMsg(20, 28, currentdialog->text, 0);
     dialogtext = P_DialogGetMsg(currentdialog->text);
+
+    // get states
     dialogtalkerstates = P_DialogGetStates(linetarget->type);
 
     // have talker greet the player
@@ -850,8 +868,9 @@ void P_DialogStart(player_t *player)
         dialogname = currentdialog->name;
     else
     {
+        // use a fallback:
         if(mobjinfo[linetarget->type].name)
-            dialogname = mobjinfo[linetarget->type].name;
+            dialogname = mobjinfo[linetarget->type].name; // mobjtype name
         else
             dialogname = "Person";  // default name
     }
