@@ -31,41 +31,40 @@
 #ifndef P_DIALOG_H__
 #define P_DIALOG_H__
 
-#define MDLG_CHOICELEN   32
-#define MDLG_MSGLEN      80
-#define MDLG_NAMELEN     16
-#define MDLG_LUMPLEN      8
-#define MDLG_TEXTLEN    320
-#define MDLG_MAXCHOICES   5
+#define MDLG_CHOICELEN      32
+#define MDLG_MSGLEN         80
+#define MDLG_NAMELEN        16
+#define MDLG_LUMPLEN        8
+#define MDLG_TEXTLEN        320
+#define MDLG_MAXCHOICES     5
+#define MDLG_MAXITEMS       3
 
 typedef struct mapdlgchoice_s
 {
-    int  giveitem;             // item given when successful
-    int  needitem1;            // first item needed for success
-    int  needitem2;            // second item needed for success, if any
-    int  needitem3;            // third item needed for success, if any
-    int  needamount1;          // amount of first item needed
-    int  needamount2;          // amount of second item needed
-    int  needamount3;          // amount of third item needed
-    char text[MDLG_CHOICELEN]; // normal text
-    char textok[MDLG_MSGLEN];  // message given on success
-    int next;                  // next dialog?
-    int objective;             // ???
-    char textno[MDLG_MSGLEN];  // message given on failure
+    int  giveitem;                  // item given when successful
+    int  needitem1;                 // first item needed for success
+    int  needitem2;                 // second item needed for success, if any
+    int  needitem3;                 // third item needed for success, if any
+    int  needamount1;               // amount of first item needed
+    int  needamount2;               // amount of second item needed
+    int  needamount3;               // amount of third item needed
+    char text[MDLG_CHOICELEN];      // normal text
+    char textok[MDLG_MSGLEN];       // message given on success
+    int next;                       // next dialog?
+    int objective;                  // ???
+    char textno[MDLG_MSGLEN];       // message given on failure
 } mapdlgchoice_t;
 
 typedef struct mapdialog_s
 {
-    int speakerid;  // script ID# for mobjtype that will use this dialog
-    int dropitem;   // item to drop if that thingtype is killed
-    int checkitem1; // first item needed to see this dialog
-    int checkitem2; // second item needed to see this dialog, if any
-    int checkitem3; // third item needed to see this dialog, if any
-    int jumptoconv; // conversation to jump to when... ?
-    char name[MDLG_NAMELEN];    // name of speaker
-    char voice[MDLG_LUMPLEN];   // voice file to play
-    char backpic[MDLG_LUMPLEN]; // backdrop pic for character, if any
-    char text[MDLG_TEXTLEN];    // main message text
+    int speakerid;                  // script ID# for mobjtype that will use this dialog
+    int dropitem;                   // item to drop if that thingtype is killed
+    int checkitem[MDLG_MAXITEMS];   // item(s) needed to see this dialog
+    int jumptoconv;                 // conversation to jump to when... ?
+    char name[MDLG_NAMELEN];        // name of speaker
+    char voice[MDLG_LUMPLEN];       // voice file to play
+    char backpic[MDLG_LUMPLEN];     // backdrop pic for character, if any
+    char text[MDLG_TEXTLEN];        // main message text
     
     // options that this dialog gives the player
     mapdlgchoice_t choices[MDLG_MAXCHOICES];

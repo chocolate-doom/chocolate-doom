@@ -59,9 +59,6 @@
     memcpy(field, ptr, len);        \
     ptr += len;
 
-#define MAXITEMREQUIREMENTS 3
-#define MAXCHOICES          5
-
 //
 // Globals
 //
@@ -399,16 +396,16 @@ static void P_ParseDialogLump(byte *lump, mapdialog_t **dialogs,
         int j;
         mapdialog_t *curdialog = &((*dialogs)[i]);
 
-        DIALOG_INT(curdialog->speakerid,  rover);
-        DIALOG_INT(curdialog->dropitem,   rover);
-        DIALOG_INT(curdialog->checkitem1, rover);
-        DIALOG_INT(curdialog->checkitem2, rover);
-        DIALOG_INT(curdialog->checkitem3, rover);
-        DIALOG_INT(curdialog->jumptoconv, rover);
-        DIALOG_STR(curdialog->name,       rover, MDLG_NAMELEN);
-        DIALOG_STR(curdialog->voice,      rover, MDLG_LUMPLEN);
-        DIALOG_STR(curdialog->backpic,    rover, MDLG_LUMPLEN);
-        DIALOG_STR(curdialog->text,       rover, MDLG_TEXTLEN);
+        DIALOG_INT(curdialog->speakerid,    rover);
+        DIALOG_INT(curdialog->dropitem,     rover);
+        DIALOG_INT(curdialog->checkitem[0], rover);
+        DIALOG_INT(curdialog->checkitem[1], rover);
+        DIALOG_INT(curdialog->checkitem[2], rover);
+        DIALOG_INT(curdialog->jumptoconv,   rover);
+        DIALOG_STR(curdialog->name,         rover, MDLG_NAMELEN);
+        DIALOG_STR(curdialog->voice,        rover, MDLG_LUMPLEN);
+        DIALOG_STR(curdialog->backpic,      rover, MDLG_LUMPLEN);
+        DIALOG_STR(curdialog->text,         rover, MDLG_TEXTLEN);
 
         // copy choices
         for(j = 0; j < 5; j++)
@@ -820,19 +817,19 @@ void P_DialogStart(player_t *player)
         return;
 
     // check item requirements
-    for(i = 0; i < MAXITEMREQUIREMENTS; i++)
+    for(i = 0; i < MDLG_MAXITEMS; i++)
     {
         currentdialog = P_DialogFind(linetarget->type);
 
         // dialog's jumptoconv equal to 0?
-        if(currentdialog[0].jumptoconv == 0)
+        if(currentdialog[i].jumptoconv == 0)
             break;
 
-        for(j = 0; j < MAXITEMREQUIREMENTS; j++)
+        for(j = 0; j < MDLG_MAXITEMS; j++)
         {
             dialog = &currentdialog[j];
-            if(dialog->checkitem1 != 0 &&
-                P_PlayerHasItem(dialogtalker, dialog->checkitem1) < 1)
+            if(dialog->checkitem[j] != 0 &&
+                P_PlayerHasItem(dialogtalker, dialog->checkitem[j]) < 1)
             {
                 currentdialog = dialog;
                 break;
@@ -860,7 +857,7 @@ void P_DialogStart(player_t *player)
     }
 
     // setup number of choices to choose from
-    for(i = 0; i < MAXCHOICES; i++)
+    for(i = 0; i < MDLG_MAXCHOICES; i++)
     {
         if(!currentdialog->choices[i].giveitem)
             break;
