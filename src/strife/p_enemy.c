@@ -2269,7 +2269,7 @@ void A_Pain(mobj_t* actor)
 }
 
 //
-// A_Pain
+// A_PeasantCrash
 //
 // villsa [STRIFE] new codepointer
 //
@@ -2289,7 +2289,7 @@ void A_PeasantCrash(mobj_t* actor)
 }
 
 //
-// A_Pain
+// A_Fall
 //
 void A_Fall (mobj_t *actor)
 {
