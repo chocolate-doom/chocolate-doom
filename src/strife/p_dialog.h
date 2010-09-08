@@ -68,7 +68,7 @@ typedef struct mapdialog_s
 
 void P_DialogLoad(void);
 void P_DialogStart(player_t *player);
-
+void P_DialogDoChoice(int choice);
 
 #endif
 

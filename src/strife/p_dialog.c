@@ -728,7 +728,7 @@ static void P_DialogDrawer(void)
         V_DrawPatchDirect(0, 0, patch);
     }
 
-    if(menupausetime <= gametic)
+    if(dialogbgpiclumpnum == -1 || menupausetime <= gametic)
     {
         if(menuindialog)
         {
@@ -778,7 +778,7 @@ static void P_DialogDrawer(void)
 // haleyjd 09/05/10: Handles making a choice in a dialog. Installed as the
 // callback for all items in the dialogmenu structure.
 //
-static void P_DialogDoChoice(int choice)
+void P_DialogDoChoice(int choice)
 {
     // STRIFE-TODO
 }
@@ -942,3 +942,4 @@ void P_DialogStart(player_t *player)
 
     sprintf(dialoglastmsgbuffer, "%d) %s", i + 1, byetext);
 }
+

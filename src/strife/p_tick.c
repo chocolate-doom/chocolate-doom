@@ -130,22 +130,23 @@ void P_Ticker (void)
     
     // run the tic
     if (paused)
-	return;
+        return;
 		
     // pause if in menu and at least one tic has been run
-    if ( !netgame
-	 && menuactive
-	 && !demoplayback
-	 && players[consoleplayer].viewz != 1)
+    // haleyjd 09/08/10: menuactive -> menupause
+    if (!netgame 
+        && menupause 
+        && !demoplayback 
+        && players[consoleplayer].viewz != 1)
     {
-	return;
+        return;
     }
     
-		
+
     for (i=0 ; i<MAXPLAYERS ; i++)
-	if (playeringame[i])
-	    P_PlayerThink (&players[i]);
-			
+        if (playeringame[i])
+            P_PlayerThink (&players[i]);
+
     P_RunThinkers ();
     P_UpdateSpecials ();
     P_RespawnSpecials ();

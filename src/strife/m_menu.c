@@ -174,7 +174,6 @@ void M_ChangeSensitivity(int choice);
 void M_SfxVol(int choice);
 void M_VoiceVol(int choice); // [STRIFE]
 void M_MusicVol(int choice);
-void M_ChangeDetail(int choice);
 void M_SizeDisplay(int choice);
 void M_StartGame(int choice);
 void M_Sound(int choice);
@@ -251,6 +250,7 @@ menu_t  MainDef =
 //
 // EPISODE SELECT
 //
+/*
 enum
 {
     ep1,
@@ -277,6 +277,7 @@ menu_t  EpiDef =
     48,63,              // x,y
     ep1			// lastOn
 };
+*/
 
 //
 // NEW GAME
@@ -304,7 +305,7 @@ menuitem_t NewGameMenu[]=
 menu_t  NewDef =
 {
     newg_end,           // # of menu items
-    &EpiDef,            // previous menu - STRIFE-FIXME: should be MainDef
+    &MainDef,           // previous menu - haleyjd [STRIFE] changed to MainDef
     NewGameMenu,        // menuitem_t ->
     M_DrawNewGame,      // drawing routine ->
     48,63,              // x,y
@@ -909,16 +910,11 @@ void M_NewGame(int choice)
 {
     if (netgame && !demoplayback)
     {
-	M_StartMessage(DEH_String(NEWGAME),NULL,false);
-	return;
+        M_StartMessage(DEH_String(NEWGAME),NULL,false);
+        return;
     }
-	
-    // Chex Quest disabled the episode select screen, as did Doom II.
-
-    if (gamemode == commercial || gameversion == exe_chex)
-	M_SetupNextMenu(&NewDef);
-    else
-	M_SetupNextMenu(&EpiDef);
+    // haleyjd 09/07/10: [STRIFE] Removed Chex Quest and DOOM gamemodes
+    M_SetupNextMenu(&NewDef);
 }
 
 
@@ -932,27 +928,27 @@ void M_DrawEpisode(void)
     V_DrawPatchDirect(54, 38, W_CacheLumpName(DEH_String("M_EPISOD"), PU_CACHE));
 }
 
+/*
+// haleyjd: [STRIFE] Unused
 void M_VerifyNightmare(int key)
 {
     if (key != key_menu_confirm)
-	return;
-		
+        return;
+
     G_DeferedInitNew(nightmare,epi+1,1);
     M_ClearMenus (0);
 }
+*/
 
 void M_ChooseSkill(int choice)
 {
-    if (choice == nightmare)
-    {
-	M_StartMessage(DEH_String(NIGHTMARE),M_VerifyNightmare,true);
-	return;
-    }
-	
+    // haleyjd 09/07/10: Removed nightmare confirmation
     G_DeferedInitNew(choice,epi+1,1);
     M_ClearMenus (0);
 }
 
+/*
+// haleyjd [STRIFE] Unused
 void M_Episode(int choice)
 {
     if ( (gamemode == shareware)
@@ -975,7 +971,7 @@ void M_Episode(int choice)
     epi = choice;
     M_SetupNextMenu(&NewDef);
 }
-
+*/
 
 
 //
@@ -988,13 +984,13 @@ char	msgNames[2][9]		= {"M_MSGOFF","M_MSGON"};
 void M_DrawOptions(void)
 {
     // haleyjd 08/27/10: [STRIFE] M_OPTTTL -> M_OPTION
-    V_DrawPatchDirect(108, 15, W_CacheLumpName(DEH_String("M_OPTION"),
-                                               PU_CACHE));
+    V_DrawPatchDirect(108, 15, 
+                      W_CacheLumpName(DEH_String("M_OPTION"), PU_CACHE));
 
     // haleyjd 08/26/10: [STRIFE] Removed messages, sensitivity, detail.
 
     M_DrawThermo(OptionsDef.x,OptionsDef.y+LINEHEIGHT*(scrnsize+1),
-		 9,screenSize);
+                 9,screenSize);
 }
 
 void M_Options(int choice)
@@ -1192,9 +1188,8 @@ void M_ChangeSensitivity(int choice)
     }
 }
 
-
-
-
+/*
+// haleyjd [STRIFE] Unused
 void M_ChangeDetail(int choice)
 {
     choice = 0;
@@ -1207,9 +1202,7 @@ void M_ChangeDetail(int choice)
     else
 	players[consoleplayer].message = DEH_String(DETAILLO);
 }
-
-
-
+*/
 
 void M_SizeDisplay(int choice)
 {
@@ -1783,12 +1776,14 @@ boolean M_Responder (event_t* ev)
 	    S_StartSound(NULL,sfx_swtchn);
 	    return true;
 	}
+        /*
         else if (key == key_menu_detail)   // Detail toggle
         {
-	    M_ChangeDetail(0);
-	    S_StartSound(NULL,sfx_swtchn);
-	    return true;
+            M_ChangeDetail(0);
+            S_StartSound(NULL,sfx_swtchn);
+            return true;
         }
+        */
         else if (key == key_menu_qsave)    // Quicksave
         {
 	    S_StartSound(NULL,sfx_swtchn);
@@ -1833,13 +1828,13 @@ boolean M_Responder (event_t* ev)
     // Pop-up menu?
     if (!menuactive)
     {
-	if (key == key_menu_activate)
-	{
-	    M_StartControlPanel ();
-	    S_StartSound(NULL,sfx_swtchn);
-	    return true;
-	}
-	return false;
+        if (key == key_menu_activate)
+        {
+            M_StartControlPanel ();
+            S_StartSound(NULL,sfx_swtchn);
+            return true;
+        }
+        return false;
     }
 
     
@@ -1980,6 +1975,7 @@ void M_StartControlPanel (void)
         return;
     
     menuactive = 1;
+    menupause = true;
     currentMenu = &MainDef;         // JDC
     itemOn = currentMenu->lastOn;   // JDC
 }
@@ -2005,41 +2001,41 @@ void M_Drawer (void)
     // Horiz. & Vertically center string and print it.
     if (messageToPrint)
     {
-	start = 0;
-	y = 100 - M_StringHeight(messageString) / 2;
-	while (messageString[start] != '\0')
-	{
-	    int foundnewline = 0;
+        start = 0;
+        y = 100 - M_StringHeight(messageString) / 2;
+        while (messageString[start] != '\0')
+        {
+            int foundnewline = 0;
 
-	    for (i = 0; i < strlen(messageString + start); i++)
-		if (messageString[start + i] == '\n')
-		{
-		    memset(string, 0, sizeof(string));
-		    strncpy(string, messageString + start, i);
-		    foundnewline = 1;
-		    start += i + 1;
-		    break;
-		}
-				
-	    if (!foundnewline)
-	    {
-		strcpy(string, messageString + start);
-		start += strlen(string);
-	    }
+            for (i = 0; i < strlen(messageString + start); i++)
+                if (messageString[start + i] == '\n')
+                {
+                    memset(string, 0, sizeof(string));
+                    strncpy(string, messageString + start, i);
+                    foundnewline = 1;
+                    start += i + 1;
+                    break;
+                }
 
-	    x = 160 - M_StringWidth(string) / 2;
-	    M_WriteText(x, y, string);
-	    y += SHORT(hu_font[0]->height);
-	}
+                if (!foundnewline)
+                {
+                    strcpy(string, messageString + start);
+                    start += strlen(string);
+                }
 
-	return;
+                x = 160 - M_StringWidth(string) / 2;
+                M_WriteText(x, y, string);
+                y += SHORT(hu_font[0]->height);
+        }
+
+        return;
     }
 
     if (!menuactive)
-	return;
+        return;
 
     if (currentMenu->routine)
-	currentMenu->routine();         // call Draw routine
+        currentMenu->routine();         // call Draw routine
     
     // DRAW MENU
     x = currentMenu->x;
@@ -2050,11 +2046,11 @@ void M_Drawer (void)
     {
         name = DEH_String(currentMenu->menuitems[i].name);
 
-	if (name[0])
-	{
-	    V_DrawPatchDirect (x, y, W_CacheLumpName(name, PU_CACHE));
-	}
-	y += LINEHEIGHT;
+        if (name[0])
+        {
+            V_DrawPatchDirect (x, y, W_CacheLumpName(name, PU_CACHE));
+        }
+        y += LINEHEIGHT;
     }
 
     
@@ -2071,13 +2067,13 @@ void M_Drawer (void)
 // M_ClearMenus
 //
 // haleyjd 08/28/10: [STRIFE] Added an int param so this can be called by menus.
+//         09/08/10: Added menupause.
 //
 void M_ClearMenus (int choice)
 {
     choice = 0;     // haleyjd: for no warning; not from decompilation.
     menuactive = 0;
-    // STRIFE-TODO:
-    // menupause = 0;
+    menupause = 0;
 }
 
 
