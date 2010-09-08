@@ -721,22 +721,29 @@ static void P_DialogDrawer(void)
 
     dialogtalker->reactiontime = 2;
 
+    // draw background
     if(dialogbgpiclumpnum != -1)
     {
         patch_t *patch = W_CacheLumpNum(dialogbgpiclumpnum, PU_CACHE);
         V_DrawPatchDirect(0, 0, patch);
     }
 
+    // if there's a valid background pic, delay drawing the rest of the menu 
+    // for a while; otherwise, it will appear immediately
     if(dialogbgpiclumpnum == -1 || menupausetime <= gametic)
     {
         if(menuindialog)
         {
+            // time to pause the game?
             if(menupausetime + 3 < gametic)
                 menupause = true;
         }
+
+        // draw character name
         M_WriteText(12, 18, dialogname);
         y = 28;
 
+        // show text (optional for dialogs with voices)
         if(dialogshowtext || currentdialog->voice[0] == '\0')
             y = M_WriteText(20, 28, dialogtext);
 
@@ -746,15 +753,13 @@ static void P_DialogDrawer(void)
         if(y > finaly)
             finaly = 199 - height; // height it will bump down to if necessary.
 
+        // draw divider
         M_WriteText(42, finaly - 6, "______________________________");
-
-        /*
-        dialogmenu // villsa [STRIFE] added 09/08/10
-        */
 
         dialogmenu.y = finaly + 6;
         y = 0;
 
+        // draw the menu items
         for(i = 0; i < dialogmenu.numitems - 1; i++)
         {
             sprintf(choicetext, "%d) %s", i + 1, currentdialog->choices[i].text);
@@ -765,8 +770,8 @@ static void P_DialogDrawer(void)
             y += 19;
         }
 
+        // draw the final item for dismissing the dialog
         M_WriteText(dialogmenu.x, 19 * i + dialogmenu.y + 3, dialoglastmsgbuffer);
-
     }
 }
 
@@ -779,7 +784,80 @@ static void P_DialogDrawer(void)
 //
 void P_DialogDoChoice(int choice)
 {
-    // STRIFE-TODO
+#if 0
+    int i = 0;
+    boolean candochoice = true;
+    char *message;
+
+    if(choice == -1)
+        choice = dialogmenu.numitems - 1;
+
+    // I_StartVoice(0); -- verify (should stop previous voice I believe)
+    do
+    {
+        if(P_PlayerHasItem(dialogplayer, currentdialog->choices[choice].needitems[i]) <
+            currentdialog->choices[choice].needamounts[i])
+        {
+            candochoice = false; // nope, missing something
+        }
+        ++i;
+    }
+    while(i < 3);
+
+    if(choice != dialogmenu.numitems - 1 && candochoice)
+    {
+        int item;
+
+        message = currentdialog->choices[choice].textok;
+        if(dialogtalkerstates->yes)
+            P_SetMobjState(dialogtalker, dialogtalkerstates->yes);
+
+        item = currentdialog->choices[choice].giveitem;
+        if(item < 0 || 
+           P_GiveItemToPlayer(dialogplayer, 
+                              states[mobjinfo[item].spawnstate].sprite, 
+                              item))
+        {
+            // if successful, take needed items
+            int count = 0;
+            do
+            {
+                P_TakeDialogItem(dialogplayer, 
+                    currentdialog->choices[choice].needitems[count],
+                    currentdialog->choices[choice].needamounts[count]);
+                ++count;
+            }
+            while(count < 3);
+        }
+        else
+            message = "You seem to have enough!";
+
+        // TODO: more....
+    }
+    else
+    {
+        // not successful
+        message = currentdialog->choices[choice].textno;
+        if(dialogtalkerstates->no)
+            P_SetMobjState(dialogtalker, dialogtalkerstates->no);
+    }
+    
+    if(choice != dialogmenu.numitems - 1)
+    {
+        // TODO: ...
+    }
+
+    dialogtalker->angle = dialogtalkerangle;
+    dialogplayer->st_update = true;
+    M_ClearMenus();
+    /*
+    if(v15 >= 0 || gameaction == ga_victory) // Macil hack
+        menuindialog = false;
+    else
+    */
+        P_DialogStart(dialogplayer);
+    // TODO: ...
+#endif
 }
 
 //
