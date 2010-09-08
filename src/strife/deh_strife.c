@@ -30,8 +30,8 @@
 
 char *deh_signatures[] =
 {
-    "Patch File for DeHackEd v2.3",
-    "Patch File for DeHackEd v3.0",
+    "Patch File for SeHackEd v0.4",
+    "Patch File for SeHackEd v0.3",
     NULL
 };
 

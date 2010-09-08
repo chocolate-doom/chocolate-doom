@@ -44,22 +44,22 @@ typedef struct
 static deh_cheat_t allcheats[] =
 {
     {"Change music",        &cheat_mus },
-    {"Chainsaw",            &cheat_choppers },
+    {"Level Warp",          &cheat_clev },
+    {"Stealth Boots",       NULL }, // STRIFE-TODO
+    {"Sigil piece",         NULL }, // STRIFE-TODO
+    {"FPS",                 NULL }, // STRIFE-TODO
+    {"TeleportMapSpot",     NULL }, // STRIFE-TODO
+    {"Gold&StatTokens",     NULL }, // STRIFE-TODO
     {"God mode",            &cheat_god },
-    {"Ammo & Keys",         &cheat_ammo },
-    {"Ammo",                &cheat_ammonokey },
-    {"No Clipping 1",       &cheat_noclip },
-    {"No Clipping 2",       &cheat_commercial_noclip },
-    {"Invincibility",       &cheat_powerup[0] },
+    {"Keys",                NULL }, // STRIFE-TODO
+    {"Weapons & Ammo",      NULL }, // STRIFE-TODO
+    {"Massacre",            NULL }, // STRIFE-TODO
+    {"No Clipping",         &cheat_noclip },
     {"Berserk",             &cheat_powerup[1] },
     {"Invisibility",        &cheat_powerup[2] },
-    {"Radiation Suit",      &cheat_powerup[3] },
-    {"Auto-map",            &cheat_powerup[4] },
-    {"Lite-Amp Goggles",    &cheat_powerup[5] },
-    {"BEHOLD menu",         &cheat_powerup[6] },
-    {"Level Warp",          &cheat_clev },
-    {"Player Position",     &cheat_mypos },
-    {"Map cheat",           &cheat_amap },
+    {"Enviro Suit",         &cheat_powerup[3] },
+    {"Health",              NULL }, // STRIFE-TODO
+    {"Backpack",            NULL }, // STRIFE-TODO
 };
 
 static deh_cheat_t *FindCheatByName(char *name)

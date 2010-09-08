@@ -48,6 +48,7 @@ DEH_BEGIN_MAPPING(thing_mapping, mobjinfo_t)
   DEH_MAPPING("Pain sound",          painsound)
   DEH_MAPPING("Close attack frame",  meleestate)
   DEH_MAPPING("Far attack frame",    missilestate)
+  DEH_MAPPING("Crash frame",         crashstate)
   DEH_MAPPING("Death frame",         deathstate)
   DEH_MAPPING("Exploding frame",     xdeathstate)
   DEH_MAPPING("Death sound",         deathsound)
@@ -58,7 +59,7 @@ DEH_BEGIN_MAPPING(thing_mapping, mobjinfo_t)
   DEH_MAPPING("Missile damage",      damage)
   DEH_MAPPING("Action sound",        activesound)
   DEH_MAPPING("Bits",                flags)
-  //DEH_MAPPING("Respawn frame",       raisestate)  // villsa [STRIFE] unused
+  DEH_UNSUPPORTED_MAPPING("Name pointer")
 DEH_END_MAPPING
 
 static void *DEH_ThingStart(deh_context_t *context, char *line)

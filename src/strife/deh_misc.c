@@ -148,8 +148,8 @@ static struct
     {"Initial Bullets",     &deh_initial_bullets},
     {"Max Health",          &deh_max_health},
     {"Max Armor",           &deh_max_armor},
-    {"Green Armor Class",   &deh_green_armor_class},
-    {"Blue Armor Class",    &deh_blue_armor_class},
+    {"LeatherArmorClass",   &deh_green_armor_class},
+    {"Metal Armor Class",   &deh_blue_armor_class},
     {"Max Soulsphere",      &deh_max_soulsphere},
     {"Soulsphere Health",   &deh_soulsphere_health},
     {"Megasphere Health",   &deh_megasphere_health},
@@ -158,7 +158,7 @@ static struct
     {"IDFA Armor Class",    &deh_idfa_armor_class},
     {"IDKFA Armor",         &deh_idkfa_armor},
     {"IDKFA Armor Class",   &deh_idkfa_armor_class},
-    {"BFG Cells/Shot",      &deh_bfg_cells_per_shot},
+    {"Mauler Cells/Shot",   &deh_bfg_cells_per_shot},
 };
 
 static void *DEH_MiscStart(deh_context_t *context, char *line)
@@ -199,7 +199,7 @@ static void DEH_MiscParseLine(deh_context_t *context, char *line, void *tag)
             DEH_Warning(context, 
                         "Invalid value for 'Monsters Infight': %i", ivalue);
         }
-        
+
         return;
     }
 
