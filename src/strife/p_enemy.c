@@ -46,6 +46,9 @@
 // Data.
 #include "sounds.h"
 
+// [STRIFE] Dialog / Inventory
+#include "p_dialog.h"
+
 // Forward Declarations:
 void A_RandomWalk(mobj_t *);
 void A_ProgrammerAttack(mobj_t* actor);
@@ -995,9 +998,9 @@ void A_Listen(mobj_t* actor)
 
     soundtarget = actor->subsector->sector->soundtarget;
 
-    if(soundtarget && soundtarget->flags & MF_SHOOTABLE)
+    if(soundtarget && (soundtarget->flags & MF_SHOOTABLE))
     {
-        if(actor->flags & MF_ALLY != soundtarget->flags & MF_ALLY)
+        if((actor->flags & MF_ALLY) != (soundtarget->flags & MF_ALLY))
         {
             actor->target = soundtarget;
 
@@ -2191,6 +2194,8 @@ void A_Tracer (mobj_t* actor)
 // A_ProgrammerMelee
 //
 // villsa [STRIFE] new codepointer
+// 09/08/10: Melee attack for the Programmer.
+// haleyjd - fixed damage formula
 //
 void A_ProgrammerMelee(mobj_t* actor)
 {
@@ -2201,7 +2206,7 @@ void A_ProgrammerMelee(mobj_t* actor)
     if(P_CheckMeleeRange(actor))
     {
         S_StartSound(actor, sfx_mtalht);
-        P_DamageMobj(actor->target, actor, actor, 2 * P_Random());
+        P_DamageMobj(actor->target, actor, actor, 8 * (P_Random() % 10 + 1));
     }
 
 }
@@ -2215,8 +2220,9 @@ void A_ProgrammerMelee(mobj_t* actor)
 //
 // A_Scream
 //
-// villsa [STRIFE] has no random death sounds, so play
-// deathsound directly
+// villsa [STRIFE] 
+// * Has no random death sounds, so play deathsound directly
+// * Full-volume roars for the Entity and Inquisitor.
 //
 void A_Scream(mobj_t* actor)
 {
@@ -2225,16 +2231,16 @@ void A_Scream(mobj_t* actor)
 
     // Check for bosses.
     if(actor->type == MT_ENTITY || actor->type == MT_INQUISITOR)
-	S_StartSound(NULL, actor->info->deathsound);   // full volume
+        S_StartSound(NULL, actor->info->deathsound);   // full volume
     else
-	S_StartSound(actor, actor->info->deathsound);
+        S_StartSound(actor, actor->info->deathsound);
 }
 
 //
 // A_XScream
 //
-// villsa [STRIFE] robots will play deathsound
-// while non-robots play the slop sfx
+// villsa [STRIFE]
+// * Robots will play deathsound while non-robots play the slop sfx
 //
 void A_XScream(mobj_t* actor)
 {
@@ -2246,14 +2252,13 @@ void A_XScream(mobj_t* actor)
         sound = sfx_slop;
 
     S_StartSound(actor, sound);
-	
 }
 
 //
 // A_Pain
 //
-// villsa [STRIFE] play random peasant sounds
-// otherwise play painsound directly
+// villsa [STRIFE] 
+// * Play random peasant sounds; otherwise play painsound directly
 //
 void A_Pain(mobj_t* actor)
 {
@@ -2261,7 +2266,7 @@ void A_Pain(mobj_t* actor)
 
     if(sound)
     {
-	if(sound >= sfx_pespna && sound <= sfx_pespnd)
+        if(sound >= sfx_pespna && sound <= sfx_pespnd)
             sound = sfx_pespna + (P_Random() % 4);
         
         S_StartSound(actor, sound);
@@ -2272,9 +2277,15 @@ void A_Pain(mobj_t* actor)
 // A_PeasantCrash
 //
 // villsa [STRIFE] new codepointer
+// 09/08/10: Called from Peasant's "crash" state (not to be confused with
+// Heretic crash states), which is invoked when the Peasant has taken
+// critical but sub-fatal damage. It will "bleed out" the rest of its
+// health by calling this function repeatedly.
 //
 void A_PeasantCrash(mobj_t* actor)
 {
+    // Set INCOMBAT, because you probably wouldn't feel like talking either
+    // if somebody just stabbed you in the gut with a punch dagger...
     actor->flags |= MF_INCOMBAT;
 
     if(!(P_Random() % 5))
@@ -2285,16 +2296,19 @@ void A_PeasantCrash(mobj_t* actor)
 
     if(actor->health <= 0)
         P_KillMobj(actor->target, actor);
-
 }
 
 //
 // A_Fall
 //
+// [STRIFE]
+// * Set INCOMBAT, and clear NOGRAVITY and SHADOW
+//
 void A_Fall (mobj_t *actor)
 {
-    // villsa [STRIFE] set incombat flag
+    // villsa [STRIFE] set incombat flag to stop dialog
     actor->flags |= MF_INCOMBAT;
+
     // actor is on ground, it can be walked over
     // villsa [STRIFE] remove nogravity/shadow flags as well
     actor->flags &= ~(MF_SOLID|MF_NOGRAVITY|MF_SHADOW);
@@ -2320,6 +2334,8 @@ void A_HideZombie(mobj_t* actor)
 // A_MerchantPain
 //
 // villsa [STRIFE] new codepointer
+// 09/08/10: Pain pointer for merchant characters. They close up shop for
+// a while and set off the alarm.
 //
 void A_MerchantPain(mobj_t* actor)
 {
@@ -2343,6 +2359,9 @@ void A_MerchantPain(mobj_t* actor)
 // A_ProgrammerDie
 //
 // villsa [STRIFE] new codepointer
+// 09/08/10: Action routine for the Programmer's grisly death. Spawns the 
+// separate mechanical base object and sends it flying off in some random 
+// direction.
 //
 void A_ProgrammerDie(mobj_t* actor)
 {
@@ -2365,6 +2384,7 @@ void A_ProgrammerDie(mobj_t* actor)
 // A_InqTossArm
 //
 // villsa [STRIFE] new codepointer
+// 09/08/10: Inquisitor death action. Spawns an arm and tosses it.
 //
 void A_InqTossArm(mobj_t* actor)
 {
@@ -2386,7 +2406,11 @@ void A_InqTossArm(mobj_t* actor)
 //
 // A_SpawnSpectreA
 //
-// villsa [STRIFE] new codepointer
+// villsa [STRIFE] new codepointer (unused)
+// 09/08/10: Spawns Spectre A. Or would, if anything actually used this.
+// This is evidence that the Programmer's spectre, which appears in the 
+// catacombs in the final version, was originally meant to be spawned
+// after his death.
 //
 void A_SpawnSpectreA(mobj_t* actor)
 {
@@ -2400,6 +2424,7 @@ void A_SpawnSpectreA(mobj_t* actor)
 // A_SpawnSpectreB
 //
 // villsa [STRIFE] new codepointer
+// 09/08/10: Action function to spawn the Bishop's spectre.
 //
 void A_SpawnSpectreB(mobj_t* actor)
 {
@@ -2412,7 +2437,11 @@ void A_SpawnSpectreB(mobj_t* actor)
 //
 // A_SpawnSpectreC
 //
-// villsa [STRIFE] new codepointer
+// villsa [STRIFE] new codepointer (unused)
+// 09/08/10: Action function to spawn the Oracle's spectre. Also
+// unused, because the Oracle's spectre is already present on the
+// map and is awakened on his death. Also left over from the 
+// unreleased beta (and demo) versions.
 //
 void A_SpawnSpectreC(mobj_t* actor)
 {
@@ -2426,6 +2455,7 @@ void A_SpawnSpectreC(mobj_t* actor)
 // A_SpawnSpectreD
 //
 // villsa [STRIFE] new codepointer
+// 09/08/10: Action function to spawn Macil's Spectre.
 //
 void A_SpawnSpectreD(mobj_t* actor)
 {
@@ -2439,6 +2469,7 @@ void A_SpawnSpectreD(mobj_t* actor)
 // A_SpawnSpectreE
 //
 // villsa [STRIFE] new codepointer
+// 09/08/10: Action function to spawn the Loremaster's Spectre.
 //
 void A_SpawnSpectreE(mobj_t* actor)
 {
@@ -2448,15 +2479,18 @@ void A_SpawnSpectreE(mobj_t* actor)
     mo->momz = P_Random() << 9;
 }
 
-//
-// A_SpawnEntity
-//
-// villsa [STRIFE] new codepointer
-//
+// [STRIFE] New statics - Remember the Entity's spawning position.
 static fixed_t entity_pos_x = 0;
 static fixed_t entity_pos_y = 0;
 static fixed_t entity_pos_z = 0;
 
+//
+// A_SpawnEntity
+//
+// villsa [STRIFE] new codepointer
+// 09/08/10: You will fall on your knees before the True God, the
+// One Light.
+//
 void A_SpawnEntity(mobj_t* actor)
 {
     mobj_t* mo;
@@ -2471,11 +2505,11 @@ void A_SpawnEntity(mobj_t* actor)
 
 //
 // P_ThrustMobj
+//
 // villsa [STRIFE] new function
 // Thrusts an thing in a specified force/direction
 // Beware! This is inlined everywhere in the asm
 //
-
 void P_ThrustMobj(mobj_t *actor, angle_t angle, fixed_t force)
 {
     angle_t an = angle >> ANGLETOFINESHIFT;
@@ -2483,9 +2517,17 @@ void P_ThrustMobj(mobj_t *actor, angle_t angle, fixed_t force)
     actor->momy += FixedMul(finesine[an], force);
 }
 
+//
+// A_EntityDeath
+//
+// [STRIFE]
+// haleyjd 09/08/10: The death of the Entity's spectre brings forth
+// three subentities, which are significantly less dangerous on their
+// own but threatening together.
+//
 void A_EntityDeath(mobj_t* actor)
 {
-
+    // STRIFE-TODO
 }
 
 //
@@ -2500,23 +2542,70 @@ void A_SpawnZombie(mobj_t* actor)
 
 void A_ZombieInSpecialSector(mobj_t* actor)
 {
-
+    // STRIFE-TODO
 }
 
 void A_CrystalExplode(mobj_t* actor)
 {
+    // STRIFE-TODO
+}
 
+// [STRIFE] New static global - buffer used for various player messages.
+static char pmsgbuffer[80];
+
+// 
+// P_FreePrisoners
+//
+// haleyjd 09/08/10: [STRIFE] New function
+// * Called when the prisoners get freed, obviously. Gives a
+//   message and awards quest token 13.
+//
+void P_FreePrisoners(void)
+{
+    int i;
+
+    sprintf(pmsgbuffer, "You've freed the prisoners!");
+
+    for(i = 0; i < MAXPLAYERS; i++)
+    {
+        P_GiveItemToPlayer(&players[i], SPR_TOKN, MT_TOKEN_QUEST13);
+        players[i].message = pmsgbuffer;
+    }
+}
+
+//
+// P_DestroyConverter
+//
+// haleyjd 09/08/10: [STRIFE] New function
+// * Called when the converter is shut down in the factory.
+//   Gives several items and a message.
+//
+void P_DestroyConverter(void)
+{
+    int i;
+
+    sprintf(pmsgbuffer, "You've destroyed the Converter!");
+
+    for(i = 0; i < MAXPLAYERS; i++)
+    {
+        P_GiveItemToPlayer(&players[i], SPR_TOKN, MT_TOKEN_QUEST25);
+        P_GiveItemToPlayer(&players[i], SPR_TOKN, MT_TOKEN_STAMINA);
+        P_GiveItemToPlayer(&players[i], SPR_TOKN, MT_TOKEN_NEW_ACCURACY);
+        players[i].message = pmsgbuffer;
+    }
 }
 
 void A_DeathMsg(mobj_t* actor)
 {
-
+    // STRIFE-TODO
 }
 
 //
 // A_ExtraLightOff
 //
 // villsa [STRIFE] new codepointer
+// 09/08/10: Called by the Power Crystal to turn off the extended
+// flash of light caused by its explosion.
 //
 void A_ExtraLightOff(mobj_t* actor)
 {
@@ -2530,20 +2619,19 @@ void A_ExtraLightOff(mobj_t* actor)
 }
 
 //
-// A_DeathExplode4
+// A_CrystalRadiusAtk
 //
 // villsa [STRIFE] new codepointer
+// 09/08/10: Called by the power crystal when it dies.
 //
-void A_DeathExplode4(mobj_t* actor)
+void A_CrystalRadiusAtk(mobj_t* actor)
 {
     P_RadiusAttack(actor, actor->target, 512);
 
-    if(!actor->target)
+    if(!(actor->target && actor->target->player))
         return;
 
-    if(!actor->target->player)
-        return;
-
+    // set extralight to 5 for near full-bright
     actor->target->player->extralight = 5;
 }
 
@@ -2599,6 +2687,7 @@ void A_DeathExplode3(mobj_t* actor)
 // A_RaiseAlarm
 //
 // villsa [STRIFE] new codepointer
+// 09/08/10: Set off the infamous alarm. This is just a noise alert.
 //
 void A_RaiseAlarm(mobj_t* actor)
 {
@@ -2681,7 +2770,7 @@ void A_BossDeath (mobj_t* mo)
 
 void A_AcolyteSpecial(mobj_t* actor)
 {
-
+   // STRIFE-TODO
 }
 
 //
@@ -2705,15 +2794,18 @@ void A_StalkerChase(mobj_t* actor)
 }
 
 //
-// A_StalkerChase
+// A_PlayerScream
+//
+// [STRIFE]
+// * Modified to eliminate gamemode check and to use Strife sound.
 //
 void A_PlayerScream (mobj_t* mo)
 {
     // Default death sound.
     int sound = sfx_pldeth;
 
-    if(/*(gamemode == commercial)   // villsa [STRIFE] don't check for gamemode
-        &&      */(mo->health < -50))
+    // villsa [STRIFE] don't check for gamemode
+    if(mo->health < -50)
     {
         // IF THE PLAYER DIES
         // LESS THAN -50% WITHOUT GIBBING
@@ -2725,7 +2817,7 @@ void A_PlayerScream (mobj_t* mo)
 
 void A_TeleportBeacon(mobj_t* actor)
 {
-
+    // STRIFE-TODO
 }
 
 //
@@ -2757,9 +2849,39 @@ void A_BodyParts(mobj_t* actor)
     mo->momz += (P_Random() & 0x0f) << FRACBITS;
 }
 
+//
+// A_ClaxonBlare
+//
+// [STRIFE] New function
+// haleyjd 09/08/10: The ever-dreadful Strife alarm!
+//
 void A_ClaxonBlare(mobj_t* actor)
 {
+    // Timer ran down?
+    if(--actor->reactiontime < 0)
+    {
+        // reset to initial state
+        actor->target = NULL;
+        actor->reactiontime = actor->info->reactiontime;
 
+        // listen for more noise
+        A_Listen(actor);
+        
+        // If we heard something, stay on for a while,
+        // otherwise return to spawnstate.
+        if(actor->target)
+            actor->reactiontime = 50;
+        else
+            P_SetMobjState(actor, actor->info->spawnstate);
+    }
+
+    // When almost ran down, clear the soundtarget so it doesn't
+    // retrigger the alarm.
+    // Also, play the harsh, grating claxon.
+    if(actor->reactiontime == 2)
+        actor->subsector->sector->soundtarget = NULL;
+    else if(actor->reactiontime > 50)
+        S_StartSound(actor, sfx_alarm);
 }
 
 //
@@ -2792,7 +2914,7 @@ void A_ClearSoundTarget(mobj_t* actor)
 
 void A_DropBurnFlesh(mobj_t* actor)
 {
-
+    // STRIFE-TODO
 }
 
 //
@@ -2809,6 +2931,6 @@ void A_FlameDeath(mobj_t* actor)
 
 void A_ClearForceField(mobj_t* actor)
 {
-
+    // STRIFE-TODO
 }
 

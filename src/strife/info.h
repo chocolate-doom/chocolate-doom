@@ -35,269 +35,269 @@
 // villsa [STRIFE]
 typedef enum
 {
-    SPR_PLAY,
-    SPR_PNCH,
-    SPR_WAVE,
-    SPR_RBPY,
-    SPR_TRGT,
-    SPR_XBOW,
-    SPR_MMIS,
-    SPR_RIFG,
-    SPR_RIFF,
-    SPR_FLMT,
-    SPR_FLMF,
-    SPR_BLST,
-    SPR_BLSF,
-    SPR_GREN,
-    SPR_GREF,
-    SPR_SIGH,
-    SPR_SIGF,
-    SPR_POW1,
-    SPR_POW2,
-    SPR_POW3,
-    SPR_ZAP1,
-    SPR_SPRY,
-    SPR_BLOD,
-    SPR_PUFY,
-    SPR_SHT1,
-    SPR_SHT2,
-    SPR_GRIN,
-    SPR_GRAP,
-    SPR_UBAM,
-    SPR_BNG2,
-    SPR_BNG4,
-    SPR_BNG3,
-    SPR_FLBE,
-    SPR_XPRK,
-    SPR_OCLW,
-    SPR_CCLW,
-    SPR_TEND,
-    SPR_MICR,
-    SPR_MISS,
-    SPR_AROW,
-    SPR_ARWP,
-    SPR_TORP,
-    SPR_THIT,
-    SPR_TWAV,
-    SPR_MISL,
-    SPR_TFOG,
-    SPR_IFOG,
-    SPR_SHRD,
-    SPR_RGIB,
-    SPR_MRYS,
-    SPR_MRNO,
-    SPR_MRST,
-    SPR_MRLK,
-    SPR_MRBD,
-    SPR_MRPN,
-    SPR_MRGT,
-    SPR_BURN,
-    SPR_DISR,
-    SPR_PEAS,
-    SPR_GIBS,
-    SPR_AGRD,
-    SPR_ARMR,
-    SPR_SACR,
-    SPR_TNK1,
-    SPR_TNK2,
-    SPR_TNK3,
-    SPR_TNK4,
-    SPR_TNK5,
-    SPR_TNK6,
-    SPR_NEAL,
-    SPR_BEGR,
-    SPR_HMN1,
-    SPR_LEDR,
-    SPR_LEAD,
-    SPR_ROB1,
-    SPR_PGRD,
-    SPR_ROB2,
-    SPR_MLDR,
-    SPR_ORCL,
-    SPR_PRST,
-    SPR_PDED,
-    SPR_ALN1,
-    SPR_AL1P,
-    SPR_NODE,
-    SPR_MTHD,
-    SPR_MNAM,
-    SPR_MNAL,
-    SPR_MDTH,
-    SPR_NEST,
-    SPR_PODD,
-    SPR_ZAP6,
-    SPR_ZOT3,
-    SPR_ZAP7,
-    SPR_ZOT1,
-    SPR_ZAP5,
-    SPR_ZOT2,
-    SPR_SEWR,
-    SPR_SPID,
-    SPR_ROB3,
-    SPR_RBB3,
-    SPR_PRGR,
-    SPR_BASE,
-    SPR_FRBL,
-    SPR_KLAX,
-    SPR_TURT,
-    SPR_BALL,
-    SPR_PSTN,
-    SPR_SECR,
-    SPR_TARG,
-    SPR_RING,
-    SPR_EARS,
-    SPR_COMM,
-    SPR_BOOM,
-    SPR_RATT,
-    SPR_HOGN,
-    SPR_DEAD,
-    SPR_SBAN,
-    SPR_BOTR,
-    SPR_HATR,
-    SPR_TOPR,
-    SPR_COUP,
-    SPR_BUBB,
-    SPR_BUBF,
-    SPR_BUBC,
-    SPR_ASPR,
-    SPR_SPDL,
-    SPR_TOKN,
-    SPR_OTOK,
-    SPR_HELT,
-    SPR_GUNT,
-    SPR_FULL,
-    SPR_MEAT,
-    SPR_JUNK,
-    SPR_FFOT,
-    SPR_DIE1,
-    SPR_BEAC,
-    SPR_ARM1,
-    SPR_ARM2,
-    SPR_BARW,
-    SPR_BART,
-    SPR_LAMP,
-    SPR_LANT,
-    SPR_BARL,
-    SPR_BOWL,
-    SPR_BRAZ,
-    SPR_TRCH,
-    SPR_LTRH,
-    SPR_LMPC,
-    SPR_LOGS,
-    SPR_TRHO,
-    SPR_WATR,
-    SPR_MUGG,
-    SPR_FUSL,
-    SPR_CRD1,
-    SPR_CRD2,
-    SPR_TPAS,
-    SPR_KY1G,
-    SPR_KY2S,
-    SPR_KY3B,
-    SPR_HAND,
-    SPR_CRYS,
-    SPR_PRIS,
-    SPR_PWR1,
-    SPR_PWR2,
-    SPR_PWR3,
-    SPR_ORAC,
-    SPR_GYID,
-    SPR_FUBR,
-    SPR_WARE,
-    SPR_RCRY,
-    SPR_BCRY,
-    SPR_CHAP,
-    SPR_TUNL,
-    SPR_BLTK,
-    SPR_SECK,
-    SPR_MINE,
-    SPR_REBL,
-    SPR_PROC,
-    SPR_ANKH,
-    SPR_GOID,
-    SPR_STMP,
-    SPR_MDKT,
-    SPR_COIN,
-    SPR_CRED,
-    SPR_SACK,
-    SPR_CHST,
-    SPR_SHD1,
-    SPR_MASK,
-    SPR_UNIF,
-    SPR_OFIC,
-    SPR_PMAP,
-    SPR_PMUP,
-    SPR_BLIT,
-    SPR_BBOX,
-    SPR_MSSL,
-    SPR_ROKT,
-    SPR_BRY1,
-    SPR_CPAC,
-    SPR_PQRL,
-    SPR_XQRL,
-    SPR_GRN1,
-    SPR_GRN2,
-    SPR_BKPK,
-    SPR_RELC,
-    SPR_RIFL,
-    SPR_FLAM,
-    SPR_BFLM,
-    SPR_MMSL,
-    SPR_TRPD,
-    SPR_GRND,
-    SPR_CBOW,
-    SPR_SIGL,
-    SPR_LITE,
-    SPR_CNDL,
-    SPR_CLBR,
-    SPR_LITS,
-    SPR_LITB,
-    SPR_LITG,
-    SPR_ROK1,
-    SPR_ROK2,
-    SPR_ROK3,
-    SPR_ROK4,
-    SPR_LOGG,
-    SPR_RUB1,
-    SPR_RUB2,
-    SPR_RUB3,
-    SPR_RUB4,
-    SPR_RUB5,
-    SPR_RUB6,
-    SPR_RUB7,
-    SPR_RUB8,
-    SPR_CHAN,
-    SPR_STAT,
-    SPR_DSTA,
-    SPR_CRAB,
-    SPR_CAGE,
-    SPR_TREE,
-    SPR_TRE1,
-    SPR_BUSH,
-    SPR_SHRB,
-    SPR_STAK,
-    SPR_BAR1,
-    SPR_VASE,
-    SPR_STOL,
-    SPR_POT1,
-    SPR_TUB1,
-    SPR_ANVL,
-    SPR_TLMP,
-    SPR_TRAY,
-    SPR_APOW,
-    SPR_AFED,
-    SPR_DRIP,
-    SPR_CDRP,
-    SPR_SPLH,
-    SPR_WTFT,
-    SPR_HERT,
-    SPR_TELP,
-    SPR_MONI,
-    SPR_STEL,
-    SPR_STLA,
-    SPR_STLE,
-    SPR_HUGE,
-    SPR_STLG,
+    SPR_PLAY, // 0
+    SPR_PNCH, // 1
+    SPR_WAVE, // 2
+    SPR_RBPY, // 3
+    SPR_TRGT, // 4
+    SPR_XBOW, // 5
+    SPR_MMIS, // 6
+    SPR_RIFG, // 7
+    SPR_RIFF, // 8
+    SPR_FLMT, // 9
+    SPR_FLMF, // 10
+    SPR_BLST, // 11
+    SPR_BLSF, // 12
+    SPR_GREN, // 13
+    SPR_GREF, // 14
+    SPR_SIGH, // 15
+    SPR_SIGF, // 16
+    SPR_POW1, // 17
+    SPR_POW2, // 18
+    SPR_POW3, // 19
+    SPR_ZAP1, // 20
+    SPR_SPRY, // 21
+    SPR_BLOD, // 22
+    SPR_PUFY, // 23
+    SPR_SHT1, // 24
+    SPR_SHT2, // 25
+    SPR_GRIN, // 26
+    SPR_GRAP, // 27
+    SPR_UBAM, // 28
+    SPR_BNG2, // 29
+    SPR_BNG4, // 30
+    SPR_BNG3, // 31
+    SPR_FLBE, // 32
+    SPR_XPRK, // 33
+    SPR_OCLW, // 34
+    SPR_CCLW, // 35
+    SPR_TEND, // 36
+    SPR_MICR, // 37
+    SPR_MISS, // 38
+    SPR_AROW, // 39
+    SPR_ARWP, // 40
+    SPR_TORP, // 41
+    SPR_THIT, // 42
+    SPR_TWAV, // 43
+    SPR_MISL, // 44
+    SPR_TFOG, // 45
+    SPR_IFOG, // 46
+    SPR_SHRD, // 47
+    SPR_RGIB, // 48
+    SPR_MRYS, // 49
+    SPR_MRNO, // 50
+    SPR_MRST, // 51
+    SPR_MRLK, // 52
+    SPR_MRBD, // 53
+    SPR_MRPN, // 54
+    SPR_MRGT, // 55
+    SPR_BURN, // 56
+    SPR_DISR, // 57
+    SPR_PEAS, // 58
+    SPR_GIBS, // 59
+    SPR_AGRD, // 60
+    SPR_ARMR, // 61
+    SPR_SACR, // 62
+    SPR_TNK1, // 63
+    SPR_TNK2, // 64
+    SPR_TNK3, // 65
+    SPR_TNK4, // 66
+    SPR_TNK5, // 67
+    SPR_TNK6, // 68
+    SPR_NEAL, // 69
+    SPR_BEGR, // 70
+    SPR_HMN1, // 71
+    SPR_LEDR, // 72
+    SPR_LEAD, // 73
+    SPR_ROB1, // 74
+    SPR_PGRD, // 75
+    SPR_ROB2, // 76
+    SPR_MLDR, // 77
+    SPR_ORCL, // 78
+    SPR_PRST, // 79
+    SPR_PDED, // 80
+    SPR_ALN1, // 81
+    SPR_AL1P, // 82
+    SPR_NODE, // 83
+    SPR_MTHD, // 84
+    SPR_MNAM, // 85
+    SPR_MNAL, // 86
+    SPR_MDTH, // 87
+    SPR_NEST, // 88
+    SPR_PODD, // 89
+    SPR_ZAP6, // 90
+    SPR_ZOT3, // 91
+    SPR_ZAP7, // 92
+    SPR_ZOT1, // 93
+    SPR_ZAP5, // 94
+    SPR_ZOT2, // 95
+    SPR_SEWR, // 96
+    SPR_SPID, // 97
+    SPR_ROB3, // 98
+    SPR_RBB3, // 99
+    SPR_PRGR, // 100
+    SPR_BASE, // 
+    SPR_FRBL, // 
+    SPR_KLAX, // 
+    SPR_TURT, // 
+    SPR_BALL, // 105
+    SPR_PSTN, // 
+    SPR_SECR, // 
+    SPR_TARG, // 
+    SPR_RING, // 
+    SPR_EARS, // 110
+    SPR_COMM, // 
+    SPR_BOOM, // 
+    SPR_RATT, // 
+    SPR_HOGN, // 
+    SPR_DEAD, // 115
+    SPR_SBAN, // 
+    SPR_BOTR, // 
+    SPR_HATR, // 
+    SPR_TOPR, // 
+    SPR_COUP, // 120
+    SPR_BUBB, // 
+    SPR_BUBF, // 
+    SPR_BUBC, // 
+    SPR_ASPR, // 
+    SPR_SPDL, // 125
+    SPR_TOKN, // 
+    SPR_OTOK, // 
+    SPR_HELT, // 
+    SPR_GUNT, // 
+    SPR_FULL, // 130
+    SPR_MEAT, // 
+    SPR_JUNK, // 
+    SPR_FFOT, // 
+    SPR_DIE1, // 
+    SPR_BEAC, // 135
+    SPR_ARM1, // 
+    SPR_ARM2, // 
+    SPR_BARW, // 
+    SPR_BART, // 
+    SPR_LAMP, // 140
+    SPR_LANT, // 
+    SPR_BARL, // 
+    SPR_BOWL, // 
+    SPR_BRAZ, // 
+    SPR_TRCH, // 145
+    SPR_LTRH, // 
+    SPR_LMPC, // 
+    SPR_LOGS, // 
+    SPR_TRHO, // 
+    SPR_WATR, // 150
+    SPR_MUGG, // 
+    SPR_FUSL, // 
+    SPR_CRD1, // 
+    SPR_CRD2, // 
+    SPR_TPAS, // 155
+    SPR_KY1G, // 
+    SPR_KY2S, // 
+    SPR_KY3B, // 
+    SPR_HAND, // 
+    SPR_CRYS, // 160
+    SPR_PRIS, // 
+    SPR_PWR1, // 
+    SPR_PWR2, // 
+    SPR_PWR3, // 
+    SPR_ORAC, // 165
+    SPR_GYID, // 
+    SPR_FUBR, // 
+    SPR_WARE, // 
+    SPR_RCRY, // 
+    SPR_BCRY, // 170
+    SPR_CHAP, // 
+    SPR_TUNL, // 
+    SPR_BLTK, // 
+    SPR_SECK, // 
+    SPR_MINE, // 175
+    SPR_REBL, // 
+    SPR_PROC, // 
+    SPR_ANKH, // 
+    SPR_GOID, // 
+    SPR_STMP, // 180
+    SPR_MDKT, // 
+    SPR_COIN, // 
+    SPR_CRED, // 
+    SPR_SACK, // 
+    SPR_CHST, // 185
+    SPR_SHD1, // 
+    SPR_MASK, // 
+    SPR_UNIF, // 
+    SPR_OFIC, // 
+    SPR_PMAP, // 190
+    SPR_PMUP, // 
+    SPR_BLIT, // 
+    SPR_BBOX, // 
+    SPR_MSSL, // 
+    SPR_ROKT, // 195
+    SPR_BRY1, // 
+    SPR_CPAC, // 
+    SPR_PQRL, // 
+    SPR_XQRL, // 
+    SPR_GRN1, // 200
+    SPR_GRN2, // 
+    SPR_BKPK, // 
+    SPR_RELC, // 
+    SPR_RIFL, // 
+    SPR_FLAM, // 205
+    SPR_BFLM, // 
+    SPR_MMSL, // 
+    SPR_TRPD, // 
+    SPR_GRND, // 
+    SPR_CBOW, // 210
+    SPR_SIGL, // 
+    SPR_LITE, // 
+    SPR_CNDL, // 
+    SPR_CLBR, // 
+    SPR_LITS, // 215
+    SPR_LITB, // 
+    SPR_LITG, // 
+    SPR_ROK1, // 
+    SPR_ROK2, // 
+    SPR_ROK3, // 220
+    SPR_ROK4, // 
+    SPR_LOGG, // 
+    SPR_RUB1, // 
+    SPR_RUB2, // 
+    SPR_RUB3, // 225
+    SPR_RUB4, // 
+    SPR_RUB5, // 
+    SPR_RUB6, // 
+    SPR_RUB7, // 
+    SPR_RUB8, // 230
+    SPR_CHAN, // 
+    SPR_STAT, // 
+    SPR_DSTA, // 
+    SPR_CRAB, // 
+    SPR_CAGE, // 235
+    SPR_TREE, // 
+    SPR_TRE1, // 
+    SPR_BUSH, // 
+    SPR_SHRB, // 
+    SPR_STAK, // 240
+    SPR_BAR1, // 
+    SPR_VASE, // 
+    SPR_STOL, // 
+    SPR_POT1, // 
+    SPR_TUB1, // 245
+    SPR_ANVL, // 
+    SPR_TLMP, // 
+    SPR_TRAY, // 
+    SPR_APOW, // 
+    SPR_AFED, // 250
+    SPR_DRIP, // 
+    SPR_CDRP, // 
+    SPR_SPLH, // 
+    SPR_WTFT, // 
+    SPR_HERT, // 
+    SPR_TELP, // 
+    SPR_MONI, // 
+    SPR_STEL, // 
+    SPR_STLA, // 
+    SPR_STLE, // 260
+    SPR_HUGE, // 261
+    SPR_STLG, // 262
     NUMSPRITES
 
 } spritenum_t;

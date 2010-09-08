@@ -145,7 +145,7 @@ void A_ZombieInSpecialSector();
 void A_CrystalExplode();
 void A_DeathMsg();
 void A_ExtraLightOff();
-void A_DeathExplode4();
+void A_CrystalRadiusAtk();
 void A_DeathExplode5();
 void A_DeathExplode1();
 void A_DeathExplode2();
@@ -1389,14 +1389,14 @@ state_t states[NUMSTATES] =
 /*S_RING_00*/       { SPR_RING, 0, -1, { NULL }, S_NULL },      //1188
 /*S_EARS_00*/       { SPR_EARS, 0, -1, { NULL }, S_NULL },      //1189
 /*S_COMM_00*/       { SPR_COMM, 0, -1, { NULL }, S_NULL },      //1190
-/*S_BOOM_00*/       { SPR_BOOM, 32768, 1, { A_DeathExplode4 }, S_BOOM_01 },     //1191
+/*S_BOOM_00*/       { SPR_BOOM, 32768, 1, { A_CrystalRadiusAtk }, S_BOOM_01 },     //1191
 /*S_BOOM_01*/       { SPR_BOOM, 32769, 3, { A_DeathMsg }, S_BOOM_02 },      //1192
 /*S_BOOM_02*/       { SPR_BOOM, 32770, 2, { A_CrystalExplode }, S_BOOM_03 },        //1193
 /*S_BOOM_03*/       { SPR_BOOM, 32771, 3, { A_SpawnSparkPuff }, S_BOOM_04 },        //1194
 /*S_BOOM_04*/       { SPR_BOOM, 32772, 3, { NULL }, S_BOOM_05 },        //1195
 /*S_BOOM_05*/       { SPR_BOOM, 32773, 3, { NULL }, S_BOOM_06 },        //1196
 /*S_BOOM_06*/       { SPR_BOOM, 32774, 3, { A_SpawnSparkPuff }, S_BOOM_07 },        //1197
-/*S_BOOM_07*/       { SPR_BOOM, 32775, 1, { A_DeathExplode4 }, S_BOOM_08 },     //1198
+/*S_BOOM_07*/       { SPR_BOOM, 32775, 1, { A_CrystalRadiusAtk }, S_BOOM_08 },     //1198
 /*S_BOOM_08*/       { SPR_BOOM, 32776, 3, { NULL }, S_BOOM_09 },        //1199
 /*S_BOOM_09*/       { SPR_BOOM, 32777, 3, { A_SpawnSparkPuff }, S_BOOM_10 },        //1200
 /*S_BOOM_10*/       { SPR_BOOM, 32778, 3, { A_SpawnSparkPuff }, S_BOOM_11 },        //1201
