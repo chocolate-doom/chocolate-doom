@@ -339,7 +339,6 @@ static int numrndmessages = arrlen(rndMessages);
 #define NUMDIALOGMENUITEMS 6
 
 static void P_DialogDrawer(void);
-static void P_DialogDoChoice(int choice);
 
 static menuitem_t dialogmenuitems[] =
 {
