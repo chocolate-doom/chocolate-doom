@@ -54,6 +54,8 @@ void A_SpectreCAttack(mobj_t *actor);
 void A_SpectreDAttack(mobj_t *actor);
 void A_SpectreEAttack(mobj_t *actor);
 
+void P_ThrustMobj(mobj_t *actor, angle_t angle, fixed_t force);
+
 typedef enum
 {
     DI_EAST,
@@ -2185,153 +2187,286 @@ void A_Tracer (mobj_t* actor)
 	actor->momz += FRACUNIT/8;*/
 }
 
+//
+// A_ProgrammerMelee
+//
+// villsa [STRIFE] new codepointer
+//
+void A_ProgrammerMelee(mobj_t* actor)
+{
+    if(!actor->target)
+        return;
+
+    A_FaceTarget(actor);
+    if(P_CheckMeleeRange(actor))
+    {
+        S_StartSound(actor, sfx_mtalht);
+        P_DamageMobj(actor->target, actor, actor, 2 * P_Random());
+    }
+
+}
+
 // haleyjd 09/05/10: [STRIFE] Removed:
 // A_SkelWhoosh, A_SkelFist, PIT_VileCheck, A_VileChase, A_VileStart, 
 // A_StartFire, A_FireCrackle, A_Fire, A_VileTarget, A_VileAttack
 // A_FatRaise, A_FatAttack1, A_FatAttack2, A_FatAttack3, A_SkullAttack, 
 // A_PainShootSkull, A_PainAttack, A_PainDie
 
-void A_Scream (mobj_t* actor)
+//
+// A_Scream
+//
+// villsa [STRIFE] has no random death sounds, so play
+// deathsound directly
+//
+void A_Scream(mobj_t* actor)
 {
-    int		sound;
-	
-    switch (actor->info->deathsound)
-    {
-      case 0:
-	return;
-		
-      case sfx_agrac1:  // villsa [STRIFE] TODO - fix sounds
-      case sfx_agrac2:  // villsa [STRIFE] TODO - fix sounds
-      case sfx_agrac3:  // villsa [STRIFE] TODO - fix sounds
-	sound = sfx_agrac1 + P_Random ()%3; // villsa [STRIFE] TODO - fix sounds
-	break;
-	
-      default:
-	sound = actor->info->deathsound;
-	break;
-    }
+    if(!actor->info->deathsound)
+        return;
 
     // Check for bosses.
-    // villsa [STRIFE] TODO - replace with strife bosses
-    /*if (actor->type==MT_SPIDER
-	|| actor->type == MT_CYBORG)
+    if(actor->type == MT_ENTITY || actor->type == MT_INQUISITOR)
+	S_StartSound(NULL, actor->info->deathsound);   // full volume
+    else
+	S_StartSound(actor, actor->info->deathsound);
+}
+
+//
+// A_XScream
+//
+// villsa [STRIFE] robots will play deathsound
+// while non-robots play the slop sfx
+//
+void A_XScream(mobj_t* actor)
+{
+    int sound;
+
+    if(actor->flags & MF_NOBLOOD && actor->info->deathsound)
+        sound = actor->info->deathsound;
+    else
+        sound = sfx_slop;
+
+    S_StartSound(actor, sound);
+	
+}
+
+//
+// A_Pain
+//
+// villsa [STRIFE] play random peasant sounds
+// otherwise play painsound directly
+//
+void A_Pain(mobj_t* actor)
+{
+    int sound = actor->info->painsound;
+
+    if(sound)
     {
-	// full volume
-	S_StartSound (NULL, sound);
+	if(sound >= sfx_pespna && sound <= sfx_pespnd)
+            sound = sfx_pespna + (P_Random() % 4);
+        
+        S_StartSound(actor, sound);
     }
-    else*/
-	S_StartSound (actor, sound);
 }
 
-void A_XScream (mobj_t* actor)
+//
+// A_Pain
+//
+// villsa [STRIFE] new codepointer
+//
+void A_PeasantCrash(mobj_t* actor)
 {
-    S_StartSound (actor, sfx_slop);	
+    actor->flags |= MF_INCOMBAT;
+
+    if(!(P_Random() % 5))
+    {
+        A_Pain(actor);  // inlined in asm
+        actor->health--;
+    }
+
+    if(actor->health <= 0)
+        P_KillMobj(actor->target, actor);
+
 }
 
-void A_Pain (mobj_t* actor)
-{
-    if (actor->info->painsound)
-	S_StartSound (actor, actor->info->painsound);	
-}
-
+//
+// A_Pain
+//
 void A_Fall (mobj_t *actor)
 {
+    // villsa [STRIFE] set incombat flag
+    actor->flags |= MF_INCOMBAT;
     // actor is on ground, it can be walked over
-    actor->flags &= ~MF_SOLID;
-
-    // So change this if corpse objects
-    // are meant to be obstacles.
+    // villsa [STRIFE] remove nogravity/shadow flags as well
+    actor->flags &= ~(MF_SOLID|MF_NOGRAVITY|MF_SHADOW);
 }
 
 //
-// A_Explode
+// A_HideZombie
 //
-void A_Explode (mobj_t* thingy)
+// villsa [STRIFE] new codepointer
+//
+void A_HideZombie(mobj_t* actor)
 {
-    P_RadiusAttack(thingy, thingy->target, 128);
+    line_t junk;
+
+    junk.tag = 999;
+    EV_DoDoor(&junk, blazeClose);
+
+    if(actor->target && actor->target->player)
+        P_NoiseAlert(actor->target, actor); // inlined in asm
+}
+
+//
+// A_MerchantPain
+//
+// villsa [STRIFE] new codepointer
+//
+void A_MerchantPain(mobj_t* actor)
+{
+    line_t junk;
+
+    junk.tag = 999;
+    //EV_DoDoor(&junk, 8);  // villsa [STRIFE] TODO - identify vldoor_e enum
+
+    if(actor->target && actor->target->player)
+        P_NoiseAlert(actor->target, actor); // inlined in asm
 }
 
 // haleyjd 09/05/10: Removed unused CheckBossEnd Choco routine.
-
-//
-// A_BossDeath
-// Possibly trigger special effects
-// if on first boss level
-//
-void A_BossDeath (mobj_t* mo)
-{
-    // villsa [STRIFE] TODO - update to strife version
-}
 
 // haleyjd 09/05/10: [STRIFE] Removed:
 // A_Hoof, A_Metal, A_BabyMetal, A_OpenShotgun2, A_LoadShotgun2, 
 // A_CloseShotgun2, A_BrainAwake, A_BrainPain, A_BrainScream, A_BrainExplode,
 // A_BrainDie, A_BrainSpit, A_SpawnSound, A_SpawnFly
 
-void A_PlayerScream (mobj_t* mo)
-{
-    // Default death sound.
-    int         sound = sfx_pldeth;
-
-    if ( (gamemode == commercial)
-        &&      (mo->health < -50))
-    {
-        // IF THE PLAYER DIES
-        // LESS THAN -50% WITHOUT GIBBING
-        sound = sfx_plxdth;  // villsa [STRIFE] different sound
-    }
-
-    S_StartSound (mo, sound);
-}
-
-void A_ProgrammerMelee(mobj_t* actor)
-{
-
-}
-
-void A_PeasantCrash(mobj_t* actor)
-{
-
-}
-
-void A_HideZombie(mobj_t* actor)
-{
-
-}
-
-void A_MerchantPain(mobj_t* actor)
-{
-
-}
-
+//
+// A_ProgrammerDie
+//
+// villsa [STRIFE] new codepointer
+//
 void A_ProgrammerDie(mobj_t* actor)
 {
+    int r;
+    angle_t an;
+    mobj_t* mo;
 
+    mo = P_SpawnMobj(actor->x, actor->y, actor->z + (24*FRACUNIT), MT_PROGRAMMERBASE);
+
+    r = P_Random();
+    an = ((r - P_Random()) << 22) + actor->angle - ANG180;
+    mo->angle = an;
+
+    P_ThrustMobj(mo, an, mo->info->speed);  // inlined in asm
+
+    mo->momz = P_Random() << 9;
 }
 
+//
+// A_InqTossArm
+//
+// villsa [STRIFE] new codepointer
+//
 void A_InqTossArm(mobj_t* actor)
 {
+    int r;
+    angle_t an;
+    mobj_t* mo;
 
+    mo = P_SpawnMobj(actor->x, actor->y, actor->z + (24*FRACUNIT), MT_INQARM);
+
+    r = P_Random();
+    an = ((r - P_Random()) << 22) + actor->angle - ANG90;
+    mo->angle = an;
+
+    P_ThrustMobj(mo, an, mo->info->speed);  // inlined in asm
+
+    mo->momz = P_Random() << 10;
 }
 
+//
+// A_SpawnSpectreA
+//
+// villsa [STRIFE] new codepointer
+//
+void A_SpawnSpectreA(mobj_t* actor)
+{
+    mobj_t* mo;
+
+    mo = P_SpawnMobj(actor->x, actor->y, actor->z, MT_SPECTRE_A);
+    mo->momz = P_Random() << 9;
+}
+
+//
+// A_SpawnSpectreB
+//
+// villsa [STRIFE] new codepointer
+//
 void A_SpawnSpectreB(mobj_t* actor)
 {
+    mobj_t* mo;
 
+    mo = P_SpawnMobj(actor->x, actor->y, actor->z, MT_SPECTRE_B);
+    mo->momz = P_Random() << 9;
 }
 
+//
+// A_SpawnSpectreC
+//
+// villsa [STRIFE] new codepointer
+//
+void A_SpawnSpectreC(mobj_t* actor)
+{
+    mobj_t* mo;
+
+    mo = P_SpawnMobj(actor->x, actor->y, actor->z, MT_SPECTRE_C);
+    mo->momz = P_Random() << 9;
+}
+
+//
+// A_SpawnSpectreD
+//
+// villsa [STRIFE] new codepointer
+//
 void A_SpawnSpectreD(mobj_t* actor)
 {
+    mobj_t* mo;
 
+    mo = P_SpawnMobj(actor->x, actor->y, actor->z, MT_SPECTRE_D);
+    mo->momz = P_Random() << 9;
 }
 
+//
+// A_SpawnSpectreE
+//
+// villsa [STRIFE] new codepointer
+//
 void A_SpawnSpectreE(mobj_t* actor)
 {
+    mobj_t* mo;
 
+    mo = P_SpawnMobj(actor->x, actor->y, actor->z, MT_SPECTRE_E);
+    mo->momz = P_Random() << 9;
 }
+
+//
+// A_SpawnEntity
+//
+// villsa [STRIFE] new codepointer
+//
+static fixed_t entity_pos_x = 0;
+static fixed_t entity_pos_y = 0;
+static fixed_t entity_pos_z = 0;
 
 void A_SpawnEntity(mobj_t* actor)
 {
+    mobj_t* mo;
 
+    mo = P_SpawnMobj(actor->x, actor->y, actor->z + (70*FRACUNIT), MT_ENTITY);
+    mo->momz = (5*FRACUNIT);
+
+    entity_pos_x = mo->x;
+    entity_pos_y = mo->y;
+    entity_pos_z = mo->z;
 }
 
 //
@@ -2353,9 +2488,14 @@ void A_EntityDeath(mobj_t* actor)
 
 }
 
+//
+// A_SpawnZombie
+//
+// villsa [STRIFE] new codepointer
+//
 void A_SpawnZombie(mobj_t* actor)
 {
-
+    P_SpawnMobj(actor->x, actor->y, actor->z, MT_ZOMBIE);
 }
 
 void A_ZombieInSpecialSector(mobj_t* actor)
@@ -2373,46 +2513,103 @@ void A_DeathMsg(mobj_t* actor)
 
 }
 
+//
+// A_ExtraLightOff
+//
+// villsa [STRIFE] new codepointer
+//
 void A_ExtraLightOff(mobj_t* actor)
 {
+    if(!actor->target)
+        return;
 
+    if(!actor->target->player)
+        return;
+
+    actor->target->player->extralight = 0;
 }
 
+//
+// A_DeathExplode4
+//
+// villsa [STRIFE] new codepointer
+//
 void A_DeathExplode4(mobj_t* actor)
 {
+    P_RadiusAttack(actor, actor->target, 512);
 
+    if(!actor->target)
+        return;
+
+    if(!actor->target->player)
+        return;
+
+    actor->target->player->extralight = 5;
 }
 
+//
+// A_DeathExplode5
+//
+// villsa [STRIFE] new codepointer
+//
 void A_DeathExplode5(mobj_t* actor)
 {
-
+    P_RadiusAttack(actor, actor->target, 192);
+    if(actor->target && actor->target->player)
+        P_NoiseAlert(actor->target, actor); // inlined in asm
 }
 
+//
+// A_DeathExplode1
+//
+// villsa [STRIFE] new codepointer
+//
 void A_DeathExplode1(mobj_t* actor)
 {
-
+    P_RadiusAttack(actor, actor->target, 128);
+    if(actor->target && actor->target->player)
+        P_NoiseAlert(actor->target, actor); // inlined in asm
 }
 
+//
+// A_DeathExplode2
+//
+// villsa [STRIFE] new codepointer
+//
 void A_DeathExplode2(mobj_t* actor)
 {
-
+    P_RadiusAttack(actor, actor->target, 64);
+    if(actor->target && actor->target->player)
+        P_NoiseAlert(actor->target, actor); // inlined in asm
 }
 
+//
+// A_DeathExplode3
+//
+// villsa [STRIFE] new codepointer
+//
 void A_DeathExplode3(mobj_t* actor)
 {
-
+    P_RadiusAttack(actor, actor->target, 32);
+    if(actor->target && actor->target->player)
+        P_NoiseAlert(actor->target, actor); // inlined in asm
 }
 
+//
+// A_RaiseAlarm
+//
+// villsa [STRIFE] new codepointer
+//
 void A_RaiseAlarm(mobj_t* actor)
 {
-
+    if(actor->target && actor->target->player)
+        P_NoiseAlert(actor->target, actor); // inlined in asm
 }
 
 //
 // A_MissileTick
 // villsa [STRIFE] - new codepointer
 //
-
 void A_MissileTick(mobj_t* actor)
 {
     int r = actor->reactiontime--;
@@ -2424,19 +2621,47 @@ void A_MissileTick(mobj_t* actor)
     }
 }
 
+//
+// A_SpawnGrenadeFire
+// villsa [STRIFE] - new codepointer
+//
 void A_SpawnGrenadeFire(mobj_t* actor)
 {
-
+    P_SpawnMobj(actor->x, actor->y, actor->z, MT_PFLAME);
 }
 
+//
+// A_NodeChunk
+// villsa [STRIFE] - new codepointer
+//
 void A_NodeChunk(mobj_t* actor)
 {
+    int r;
+    mobj_t* mo;
 
+    mo = P_SpawnMobj(actor->x, actor->y, actor->z + (10*FRACUNIT), MT_NODE);
+    r = P_Random();
+    mo->momx = ((r & 0x0f) - (P_Random() & 7)) << FRACBITS;
+    r = P_Random();
+    mo->momy = ((r & 7) - (P_Random() & 0x0f)) << FRACBITS;
+    mo->momz = (P_Random() & 0x0f) << FRACBITS;
 }
 
+//
+// A_HeadChunk
+// villsa [STRIFE] - new codepointer
+//
 void A_HeadChunk(mobj_t* actor)
 {
+    int r;
+    mobj_t* mo;
 
+    mo = P_SpawnMobj(actor->x, actor->y, actor->z + (10*FRACUNIT), MT_SPECTREHEAD);
+    r = P_Random();
+    mo->momx = ((r & 7) - (P_Random() & 0x0f)) << FRACBITS;
+    r = P_Random();
+    mo->momy = ((r & 0x0f) - (P_Random() & 7)) << FRACBITS;
+    mo->momz = (P_Random() & 7) << FRACBITS;
 }
 
 void A_BurnSpread(mobj_t* actor)
@@ -2444,19 +2669,58 @@ void A_BurnSpread(mobj_t* actor)
 
 }
 
+//
+// A_BossDeath
+// Possibly trigger special effects
+// if on first boss level
+//
+void A_BossDeath (mobj_t* mo)
+{
+    // villsa [STRIFE] TODO - update to strife version
+}
+
 void A_AcolyteSpecial(mobj_t* actor)
 {
 
 }
 
+//
+// A_InqChase
+// villsa [STRIFE] - new codepointer
+//
 void A_InqChase(mobj_t* actor)
 {
-
+    S_StartSound(actor, sfx_inqact);
+    A_Chase(actor);
 }
 
+//
+// A_StalkerChase
+// villsa [STRIFE] - new codepointer
+//
 void A_StalkerChase(mobj_t* actor)
 {
+    S_StartSound(actor, sfx_spdwlk);
+    A_Chase(actor);
+}
 
+//
+// A_StalkerChase
+//
+void A_PlayerScream (mobj_t* mo)
+{
+    // Default death sound.
+    int sound = sfx_pldeth;
+
+    if(/*(gamemode == commercial)   // villsa [STRIFE] don't check for gamemode
+        &&      */(mo->health < -50))
+    {
+        // IF THE PLAYER DIES
+        // LESS THAN -50% WITHOUT GIBBING
+        sound = sfx_plxdth;  // villsa [STRIFE] different sound
+    }
+
+    S_StartSound (mo, sound);
 }
 
 void A_TeleportBeacon(mobj_t* actor)

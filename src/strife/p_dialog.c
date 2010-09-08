@@ -816,6 +816,8 @@ void P_DialogStart(player_t *player)
 
         dialogplayer = player;
     }
+    else
+        return;
 
     // check item requirements
     for(i = 0; i < MAXITEMREQUIREMENTS; i++)
