@@ -481,10 +481,9 @@ void G_BuildTiccmd (ticcmd_t* cmd)
     if(gamekeydown[key_jump] /*|| mousebuttons[mousebjump]*/)
         cmd->buttons2 |= BT2_JUMP;
  
-    // villsa [STRIFE]
-    if (gamekeydown[key_fire] /*|| mousebuttons[mousebfire]*/ 
-	|| joybuttons[joybfire]) 
-	cmd->buttons |= BT_ATTACK;
+    // villsa [STRIFE]: Moved mousebuttons[mousebfire] to below
+    if (gamekeydown[key_fire] || joybuttons[joybfire]) 
+        cmd->buttons |= BT_ATTACK;
 
     // villsa [STRIFE]
     if(mousebuttons[mousebfire])
