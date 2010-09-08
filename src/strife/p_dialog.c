@@ -411,18 +411,18 @@ static void P_ParseDialogLump(byte *lump, mapdialog_t **dialogs,
         for(j = 0; j < 5; j++)
         {
             mapdlgchoice_t *curchoice = &(curdialog->choices[j]);
-            DIALOG_INT(curchoice->giveitem,    rover);
-            DIALOG_INT(curchoice->needitem1,   rover);
-            DIALOG_INT(curchoice->needitem2,   rover);
-            DIALOG_INT(curchoice->needitem3,   rover);
-            DIALOG_INT(curchoice->needamount1, rover);
-            DIALOG_INT(curchoice->needamount2, rover);
-            DIALOG_INT(curchoice->needamount3, rover);
-            DIALOG_STR(curchoice->text,        rover, MDLG_CHOICELEN);
-            DIALOG_STR(curchoice->textok,      rover, MDLG_MSGLEN);
-            DIALOG_INT(curchoice->next,        rover);
-            DIALOG_INT(curchoice->objective,   rover);
-            DIALOG_STR(curchoice->textno,      rover, MDLG_MSGLEN);
+            DIALOG_INT(curchoice->giveitem,         rover);
+            DIALOG_INT(curchoice->needitems[0],     rover);
+            DIALOG_INT(curchoice->needitems[1],     rover);
+            DIALOG_INT(curchoice->needitems[2],     rover);
+            DIALOG_INT(curchoice->needamounts[0],   rover);
+            DIALOG_INT(curchoice->needamounts[1],   rover);
+            DIALOG_INT(curchoice->needamounts[2],   rover);
+            DIALOG_STR(curchoice->text,             rover, MDLG_CHOICELEN);
+            DIALOG_STR(curchoice->textok,           rover, MDLG_MSGLEN);
+            DIALOG_INT(curchoice->next,             rover);
+            DIALOG_INT(curchoice->objective,        rover);
+            DIALOG_STR(curchoice->textno,           rover, MDLG_MSGLEN);
         }
     }
 }
@@ -695,8 +695,10 @@ static void P_DialogDrawer(void)
 {
     angle_t angle;
     int y;
+    int i;
     int height;
     int finaly;
+    char choicetext[64];
 
     // Run down bonuscount faster than usual so that flashes from being given
     // items are less obvious.
@@ -715,7 +717,7 @@ static void P_DialogDrawer(void)
 
     // Dismiss the dialog if the player is out of alignment, or the thing he was
     // talking to is now engaged in battle.
-    if(angle > 0x20000000 && angle < 0xE0000000 || dialogtalker->flags & MF_INCOMBAT)
+    if(angle > ANG45 && angle < (ANG270+ANG45) || dialogtalker->flags & MF_INCOMBAT)
         P_DialogDoChoice(dialogmenu.numitems - 1);
 
     dialogtalker->reactiontime = 2;
@@ -748,8 +750,24 @@ static void P_DialogDrawer(void)
         M_WriteText(42, finaly - 6, "______________________________");
 
         /*
-        dialogmenu
+        dialogmenu // villsa [STRIFE] added 09/08/10
         */
+
+        dialogmenu.y = finaly + 6;
+        y = 0;
+
+        for(i = 0; i < dialogmenu.numitems - 1; i++)
+        {
+            sprintf(choicetext, "%d) %s", i + 1, currentdialog->choices[i].text);
+            if(currentdialog->choices[i].needamounts[0] > 0)
+                sprintf(choicetext, "%s for %d", choicetext, currentdialog->choices[i].needamounts[0]);
+
+            M_WriteText(dialogmenu.x, dialogmenu.y + 3 + y, choicetext);
+            y += 19;
+        }
+
+        M_WriteText(dialogmenu.x, 19 * i + dialogmenu.y + 3, dialoglastmsgbuffer);
+
     }
 }
 

@@ -41,18 +41,14 @@
 
 typedef struct mapdlgchoice_s
 {
-    int  giveitem;                  // item given when successful
-    int  needitem1;                 // first item needed for success
-    int  needitem2;                 // second item needed for success, if any
-    int  needitem3;                 // third item needed for success, if any
-    int  needamount1;               // amount of first item needed
-    int  needamount2;               // amount of second item needed
-    int  needamount3;               // amount of third item needed
-    char text[MDLG_CHOICELEN];      // normal text
-    char textok[MDLG_MSGLEN];       // message given on success
-    int next;                       // next dialog?
-    int objective;                  // ???
-    char textno[MDLG_MSGLEN];       // message given on failure
+    int  giveitem;                      // item given when successful
+    int  needitems[MDLG_MAXITEMS];      // item needed for success
+    int  needamounts[MDLG_MAXITEMS];    // amount of items needed
+    char text[MDLG_CHOICELEN];          // normal text
+    char textok[MDLG_MSGLEN];           // message given on success
+    int next;                           // next dialog?
+    int objective;                      // ???
+    char textno[MDLG_MSGLEN];           // message given on failure
 } mapdlgchoice_t;
 
 typedef struct mapdialog_s
