@@ -1,24 +1,21 @@
-CMDLINE
-INSTALL
-Makefile
 Makefile.in
-TAGS
-aclocal.m4
-autom4te.cache
+Makefile
+INSTALL
+CMDLINE
 autotools
-bin
-config.h
+aclocal.m4
+configure
 config.hin
 config.log
 config.status
-configure
-lib
-obj
+config.h
+autom4te.cache
 rpm.spec
 stamp-h
 stamp-h.in
 stamp-h1
 tags
+TAGS
 
 # These are the default patterns globally ignored by Subversion:
 *.o

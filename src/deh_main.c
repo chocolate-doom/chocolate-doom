@@ -39,6 +39,8 @@
 extern deh_section_t *deh_section_types[];
 extern char *deh_signatures[];
 
+static boolean deh_initialized = false;
+
 // If true, we can do long string replacements.
 
 boolean deh_allow_long_strings = false;
@@ -322,6 +324,12 @@ int DEH_LoadFile(char *filename)
 {
     deh_context_t *context;
 
+    if (!deh_initialized)
+    {
+        InitializeSections();
+        deh_initialized = true;
+    }
+
     printf(" loading %s\n", filename);
 
     context = DEH_OpenFile(filename);
@@ -345,8 +353,6 @@ void DEH_Init(void)
 {
     char *filename;
     int p;
-
-    InitializeSections();
 
     //!
     // @category mod

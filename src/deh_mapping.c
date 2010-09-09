@@ -34,12 +34,9 @@
 #include "i_system.h"
 #include "deh_mapping.h"
 
-//
-// Set the value of a particular field in a structure by name
-//
-
-boolean DEH_SetMapping(deh_context_t *context, deh_mapping_t *mapping, 
-                       void *structptr, char *name, int value)
+static deh_mapping_entry_t *GetMappingEntryByName(deh_context_t *context,
+                                                  deh_mapping_t *mapping,
+                                                  char *name)
 {
     int i;
 
@@ -49,44 +46,121 @@ boolean DEH_SetMapping(deh_context_t *context, deh_mapping_t *mapping,
 
         if (!strcasecmp(entry->name, name))
         {
-            void *location;
-
             if (entry->location == NULL)
             {
                 DEH_Warning(context, "Field '%s' is unsupported", name);
-                return false;
+                return NULL;
             }
 
-            location = (uint8_t *)structptr + ((uint8_t *)entry->location - (uint8_t *)mapping->base);
-
-     //       printf("Setting %p::%s to %i (%i bytes)\n",
-     //               structptr, name, value, entry->size);
-                
-            switch (entry->size)
-            {
-                case 1:
-                    * ((uint8_t *) location) = value;
-                    break;
-                case 2:
-                    * ((uint16_t *) location) = value;
-                    break;
-                case 4:
-                    * ((uint32_t *) location) = value;
-                    break;
-                default:
-                    DEH_Error(context, "Unknown field type for '%s' (BUG)", name);
-                    return false;
-            }
-
-            return true;
+            return entry;
         }
     }
 
-    // field with this name not found
+    // Not found.
 
     DEH_Warning(context, "Field named '%s' not found", name);
 
-    return false;
+    return NULL;
+}
+
+//
+// Get the location of the specified field in the specified structure.
+//
+
+static void *GetStructField(void *structptr,
+                            deh_mapping_t *mapping,
+                            deh_mapping_entry_t *entry)
+{
+    unsigned int offset;
+
+    offset = (uint8_t *)entry->location - (uint8_t *)mapping->base;
+
+    return (uint8_t *)structptr + offset;
+}
+
+//
+// Set the value of a particular field in a structure by name
+//
+
+boolean DEH_SetMapping(deh_context_t *context, deh_mapping_t *mapping,
+                       void *structptr, char *name, int value)
+{
+    deh_mapping_entry_t *entry;
+    void *location;
+
+    entry = GetMappingEntryByName(context, mapping, name);
+
+    if (entry == NULL)
+    {
+        return false;
+    }
+
+    // Sanity check:
+
+    if (entry->is_string)
+    {
+        DEH_Error(context, "Tried to set '%s' as integer (BUG)", name);
+        return false;
+    }
+
+    location = GetStructField(structptr, mapping, entry);
+
+    //       printf("Setting %p::%s to %i (%i bytes)\n",
+    //               structptr, name, value, entry->size);
+
+    // Set field content based on its type:
+
+    switch (entry->size)
+    {
+        case 1:
+            * ((uint8_t *) location) = value;
+            break;
+        case 2:
+            * ((uint16_t *) location) = value;
+            break;
+        case 4:
+            * ((uint32_t *) location) = value;
+            break;
+        default:
+            DEH_Error(context, "Unknown field type for '%s' (BUG)", name);
+            return false;
+    }
+
+    return true;
+}
+
+//
+// Set the value of a string field in a structure by name
+//
+
+boolean DEH_SetStringMapping(deh_context_t *context, deh_mapping_t *mapping,
+                             void *structptr, char *name, char *value)
+{
+    deh_mapping_entry_t *entry;
+    void *location;
+
+    entry = GetMappingEntryByName(context, mapping, name);
+
+    if (entry == NULL)
+    {
+        return false;
+    }
+
+    // Sanity check:
+
+    if (!entry->is_string)
+    {
+        DEH_Error(context, "Tried to set '%s' as string (BUG)", name);
+        return false;
+    }
+
+    location = GetStructField(structptr, mapping, entry);
+
+    // Copy value into field:
+
+    strncpy(location, value, entry->size);
+
+    return true;
 }
 
 void DEH_StructMD5Sum(md5_context_t *context, deh_mapping_t *mapping,

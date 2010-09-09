@@ -60,6 +60,7 @@ static char *default_extra_config;
 typedef enum 
 {
     DEFAULT_INT,
+    DEFAULT_INT_HEX,
     DEFAULT_STRING,
     DEFAULT_FLOAT,
     DEFAULT_KEY,
@@ -99,14 +100,19 @@ typedef struct
     char *filename;
 } default_collection_t;
 
+#define CONFIG_VARIABLE_GENERIC(name, type) \
+    { #name, NULL, type, 0, 0, false }
+
 #define CONFIG_VARIABLE_KEY(name) \
-    { #name, NULL, DEFAULT_KEY, 0, 0, false }
+    CONFIG_VARIABLE_GENERIC(name, DEFAULT_KEY)
 #define CONFIG_VARIABLE_INT(name) \
-    { #name, NULL, DEFAULT_INT, 0, 0, false }
+    CONFIG_VARIABLE_GENERIC(name, DEFAULT_INT)
+#define CONFIG_VARIABLE_INT_HEX(name) \
+    CONFIG_VARIABLE_GENERIC(name, DEFAULT_INT_HEX)
 #define CONFIG_VARIABLE_FLOAT(name) \
-    { #name, NULL, DEFAULT_FLOAT, 0, 0, false }
+    CONFIG_VARIABLE_GENERIC(name, DEFAULT_FLOAT)
 #define CONFIG_VARIABLE_STRING(name) \
-    { #name, NULL, DEFAULT_STRING, 0, 0, false }
+    CONFIG_VARIABLE_GENERIC(name, DEFAULT_STRING)
 
 //! @begin_config_file default.cfg
 
@@ -664,18 +670,25 @@ static default_t extra_defaults_list[] =
 
     //!
     // Mouse acceleration threshold.  When the speed of mouse movement
-    // exceeds this threshold value, the speed is multiplied by an 
+    // exceeds this threshold value, the speed is multiplied by an
     // acceleration factor (mouse_acceleration).
     //
 
     CONFIG_VARIABLE_INT(mouse_threshold),
 
     //!
-    // Sound output sample rate, in Hz.  Typical values to use are 
+    // Sound output sample rate, in Hz.  Typical values to use are
     // 11025, 22050, 44100 and 48000.
     //
 
     CONFIG_VARIABLE_INT(snd_samplerate),
+
+    //!
+    // The I/O port to use to access the OPL chip.  Only relevant when
+    // using native OPL music playback.
+    //
+
+    CONFIG_VARIABLE_INT_HEX(opl_io_port),
 
     //!
     // If non-zero, the ENDOOM screen is displayed when exiting the
@@ -772,6 +785,18 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joyb_straferight),
 
     //!
+    // Joystick button to cycle to the previous weapon.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_prevweapon),
+
+    //!
+    // Joystick button to cycle to the next weapon.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_nextweapon),
+
+    //!
     // Mouse button to strafe left.
     //
 
@@ -794,6 +819,18 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(mouseb_backward),
+
+    //!
+    // Mouse button to cycle to the previous weapon.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_prevweapon),
+
+    //!
+    // Mouse button to cycle to the next weapon.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_nextweapon),
 
     //!
     // If non-zero, double-clicking a mouse button acts like pressing
@@ -948,6 +985,12 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_menu_gamma),
 
     //!
+    // Keyboard shortcut to switch view in multiplayer.
+    //
+
+    CONFIG_VARIABLE_KEY(key_spy),
+
+    //!
     // Keyboard shortcut to increase the screen size.
     //
 
@@ -1080,10 +1123,82 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_weapon8),
 
     //!
+    // Key to cycle to the previous weapon.
+    //
+
+    CONFIG_VARIABLE_KEY(key_prevweapon),
+
+    //!
+    // Key to cycle to the next weapon.
+    //
+
+    CONFIG_VARIABLE_KEY(key_nextweapon),
+
+    //!
     // Key to re-display last message.
     //
 
     CONFIG_VARIABLE_KEY(key_message_refresh),
+
+    //!
+    // Key to quit the game when recording a demo.
+    //
+
+    CONFIG_VARIABLE_KEY(key_demo_quit),
+
+    //!
+    // Key to send a message during multiplayer games.
+    //
+
+    CONFIG_VARIABLE_KEY(key_multi_msg),
+
+    //!
+    // Key to send a message to player 1 during multiplayer games.
+    //
+
+    CONFIG_VARIABLE_KEY(key_multi_msgplayer1),
+
+    //!
+    // Key to send a message to player 2 during multiplayer games.
+    //
+
+    CONFIG_VARIABLE_KEY(key_multi_msgplayer2),
+
+    //!
+    // Key to send a message to player 3 during multiplayer games.
+    //
+
+    CONFIG_VARIABLE_KEY(key_multi_msgplayer3),
+
+    //!
+    // Key to send a message to player 4 during multiplayer games.
+    //
+
+    CONFIG_VARIABLE_KEY(key_multi_msgplayer4),
+
+    //!
+    // Key to send a message to player 5 during multiplayer games.
+    //
+
+    CONFIG_VARIABLE_KEY(key_multi_msgplayer5),
+
+    //!
+    // Key to send a message to player 6 during multiplayer games.
+    //
+
+    CONFIG_VARIABLE_KEY(key_multi_msgplayer6),
+
+    //!
+    // Key to send a message to player 7 during multiplayer games.
+    //
+
+    CONFIG_VARIABLE_KEY(key_multi_msgplayer7),
+
+    //!
+    // Key to send a message to player 8 during multiplayer games.
+    //
+
+    CONFIG_VARIABLE_KEY(key_multi_msgplayer8)
 };
 
 static default_collection_t extra_defaults =
@@ -1205,6 +1320,10 @@ static void SaveDefaultCollection(default_collection_t *collection)
 	        fprintf(f, "%i", * (int *) defaults[i].location);
                 break;
 
+            case DEFAULT_INT_HEX:
+	        fprintf(f, "0x%x", * (int *) defaults[i].location);
+                break;
+
             case DEFAULT_FLOAT:
                 fprintf(f, "%f", * (float *) defaults[i].location);
                 break;
@@ -1294,6 +1413,7 @@ static void LoadDefaultCollection(default_collection_t *collection)
                 break;
 
             case DEFAULT_INT:
+            case DEFAULT_INT_HEX:
                 * (int *) def->location = ParseIntParameter(strparm);
                 break;
 

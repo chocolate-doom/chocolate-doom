@@ -42,17 +42,23 @@
 
 #define DEH_MAPPING(deh_name, fieldname)                      \
              {deh_name, &deh_mapping_base.fieldname,          \
-                 sizeof(deh_mapping_base.fieldname)},
+                 sizeof(deh_mapping_base.fieldname),          \
+                 false},
+
+#define DEH_MAPPING_STRING(deh_name, fieldname)               \
+             {deh_name, &deh_mapping_base.fieldname,          \
+                 sizeof(deh_mapping_base.fieldname),          \
+                 true},
 
 #define DEH_UNSUPPORTED_MAPPING(deh_name)                     \
-             {deh_name, NULL, -1},
-            
+             {deh_name, NULL, -1, false},
+
 #define DEH_END_MAPPING                                       \
              {NULL, NULL, -1}                                 \
         }                                                     \
     };
 
-    
+
 
 #define MAX_MAPPING_ENTRIES 32
 
@@ -73,6 +79,10 @@ struct deh_mapping_entry_s
     // field size
 
     int size;
+
+    // if true, this is a string value.
+
+    boolean is_string;
 };
 
 struct deh_mapping_s
@@ -81,8 +91,10 @@ struct deh_mapping_s
     deh_mapping_entry_t entries[MAX_MAPPING_ENTRIES];
 };
 
-boolean DEH_SetMapping(deh_context_t *context, deh_mapping_t *mapping, 
+boolean DEH_SetMapping(deh_context_t *context, deh_mapping_t *mapping,
                        void *structptr, char *name, int value);
+boolean DEH_SetStringMapping(deh_context_t *context, deh_mapping_t *mapping,
+                             void *structptr, char *name, char *value);
 void DEH_StructMD5Sum(md5_context_t *context, deh_mapping_t *mapping,
                       void *structptr);
 

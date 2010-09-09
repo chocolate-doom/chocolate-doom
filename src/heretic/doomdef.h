@@ -581,6 +581,7 @@ extern boolean singletics;      // debug flag to cancel adaptiveness
 extern boolean DebugSound;      // debug flag for displaying sound info
 
 extern int maxammo[NUMAMMO];
+extern int GetWeaponAmmo[NUMWEAPONS];
 
 extern boolean demoplayback;
 extern int skytexture;

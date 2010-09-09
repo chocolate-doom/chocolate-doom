@@ -25,6 +25,8 @@
 // MN_menu.c
 
 #include <ctype.h>
+
+#include "deh_str.h"
 #include "doomdef.h"
 #include "doomkeys.h"
 #include "i_system.h"
@@ -73,7 +75,7 @@ typedef struct
 {
     ItemType_t type;
     char *text;
-      boolean(*func) (int option);
+    boolean(*func) (int option);
     int option;
     MenuType_t menu;
 } MenuItem_t;
@@ -305,7 +307,7 @@ void MN_Init(void)
     InitFonts();
     MenuActive = false;
     messageson = true;
-    SkullBaseLump = W_GetNumForName("M_SKL00");
+    SkullBaseLump = W_GetNumForName(DEH_String("M_SKL00"));
 
     if (gamemode == retail)
     {                           // Add episodes 4 and 5 to the menu
@@ -322,8 +324,8 @@ void MN_Init(void)
 
 static void InitFonts(void)
 {
-    FontABaseLump = W_GetNumForName("FONTA_S") + 1;
-    FontBBaseLump = W_GetNumForName("FONTB_S") + 1;
+    FontABaseLump = W_GetNumForName(DEH_String("FONTA_S")) + 1;
+    FontBBaseLump = W_GetNumForName(DEH_String("FONTB_S")) + 1;
 }
 
 //---------------------------------------------------------------------------
@@ -476,26 +478,28 @@ void MN_Drawer(void)
     int x;
     int y;
     MenuItem_t *item;
+    char *message;
     char *selName;
 
     if (MenuActive == false)
     {
         if (askforquit)
         {
-            MN_DrTextA(QuitEndMsg[typeofask - 1], 160 -
-                       MN_TextAWidth(QuitEndMsg[typeofask - 1]) / 2, 80);
+            message = DEH_String(QuitEndMsg[typeofask - 1]);
+
+            MN_DrTextA(message, 160 - MN_TextAWidth(message) / 2, 80);
             if (typeofask == 3)
             {
                 MN_DrTextA(SlotText[quicksave - 1], 160 -
                            MN_TextAWidth(SlotText[quicksave - 1]) / 2, 90);
-                MN_DrTextA("?", 160 +
+                MN_DrTextA(DEH_String("?"), 160 +
                            MN_TextAWidth(SlotText[quicksave - 1]) / 2, 90);
             }
             if (typeofask == 4)
             {
                 MN_DrTextA(SlotText[quickload - 1], 160 -
                            MN_TextAWidth(SlotText[quickload - 1]) / 2, 90);
-                MN_DrTextA("?", 160 +
+                MN_DrTextA(DEH_String("?"), 160 +
                            MN_TextAWidth(SlotText[quickload - 1]) / 2, 90);
             }
             UpdateState |= I_FULLSCRN;
@@ -525,13 +529,13 @@ void MN_Drawer(void)
         {
             if (item->type != ITT_EMPTY && item->text)
             {
-                MN_DrTextB(item->text, x, y);
+                MN_DrTextB(DEH_String(item->text), x, y);
             }
             y += ITEM_HEIGHT;
             item++;
         }
         y = CurrentMenu->y + (CurrentItPos * ITEM_HEIGHT) + SELECTOR_YOFFSET;
-        selName = MenuTime & 16 ? "M_SLCTR1" : "M_SLCTR2";
+        selName = DEH_String(MenuTime & 16 ? "M_SLCTR1" : "M_SLCTR2");
         V_DrawPatch(x + SELECTOR_XOFFSET, y,
                     W_CacheLumpName(selName, PU_CACHE));
     }
@@ -548,7 +552,7 @@ static void DrawMainMenu(void)
     int frame;
 
     frame = (MenuTime / 3) % 18;
-    V_DrawPatch(88, 0, W_CacheLumpName("M_HTIC", PU_CACHE));
+    V_DrawPatch(88, 0, W_CacheLumpName(DEH_String("M_HTIC"), PU_CACHE));
     V_DrawPatch(40, 10, W_CacheLumpNum(SkullBaseLump + (17 - frame),
                                        PU_CACHE));
     V_DrawPatch(232, 10, W_CacheLumpNum(SkullBaseLump + frame, PU_CACHE));
@@ -597,7 +601,11 @@ static void DrawFilesMenu(void)
 
 static void DrawLoadMenu(void)
 {
-    MN_DrTextB("LOAD GAME", 160 - MN_TextBWidth("LOAD GAME") / 2, 10);
+    char *title;
+
+    title = DEH_String("LOAD GAME");
+
+    MN_DrTextB(title, 160 - MN_TextBWidth(title) / 2, 10);
     if (!slottextloaded)
     {
         MN_LoadSlotText();
@@ -613,7 +621,11 @@ static void DrawLoadMenu(void)
 
 static void DrawSaveMenu(void)
 {
-    MN_DrTextB("SAVE GAME", 160 - MN_TextBWidth("SAVE GAME") / 2, 10);
+    char *title;
+
+    title = DEH_String("SAVE GAME");
+
+    MN_DrTextB(title, 160 - MN_TextBWidth(title) / 2, 10);
     if (!slottextloaded)
     {
         MN_LoadSlotText();
@@ -675,7 +687,7 @@ static void DrawFileSlots(Menu_t * menu)
     y = menu->y;
     for (i = 0; i < 6; i++)
     {
-        V_DrawPatch(x, y, W_CacheLumpName("M_FSLOT", PU_CACHE));
+        V_DrawPatch(x, y, W_CacheLumpName(DEH_String("M_FSLOT"), PU_CACHE));
         if (SlotStatus[i])
         {
             MN_DrTextA(SlotText[i], x + 5, y + 5);
@@ -694,11 +706,11 @@ static void DrawOptionsMenu(void)
 {
     if (messageson)
     {
-        MN_DrTextB("ON", 196, 50);
+        MN_DrTextB(DEH_String("ON"), 196, 50);
     }
     else
     {
-        MN_DrTextB("OFF", 196, 50);
+        MN_DrTextB(DEH_String("OFF"), 196, 50);
     }
     DrawSlider(&OptionsMenu, 3, 10, mouseSensitivity);
 }
@@ -796,11 +808,11 @@ static boolean SCMessages(int option)
     messageson ^= 1;
     if (messageson)
     {
-        P_SetMessage(&players[consoleplayer], "MESSAGES ON", true);
+        P_SetMessage(&players[consoleplayer], DEH_String("MESSAGES ON"), true);
     }
     else
     {
-        P_SetMessage(&players[consoleplayer], "MESSAGES OFF", true);
+        P_SetMessage(&players[consoleplayer], DEH_String("MESSAGES OFF"), true);
     }
     S_StartSound(NULL, sfx_chat);
     return true;
@@ -1460,7 +1472,7 @@ boolean MN_Responder(event_t * event)
                 if (CurrentMenu->items[i].text)
                 {
                     if (toupper(charTyped)
-                        == toupper(CurrentMenu->items[i].text[0]))
+                        == toupper(DEH_String(CurrentMenu->items[i].text)[0]))
                     {
                         CurrentItPos = i;
                         return (true);
@@ -1628,13 +1640,13 @@ static void DrawSlider(Menu_t * menu, int item, int width, int slot)
 
     x = menu->x + 24;
     y = menu->y + 2 + (item * ITEM_HEIGHT);
-    V_DrawPatch(x - 32, y, W_CacheLumpName("M_SLDLT", PU_CACHE));
+    V_DrawPatch(x - 32, y, W_CacheLumpName(DEH_String("M_SLDLT"), PU_CACHE));
     for (x2 = x, count = width; count--; x2 += 8)
     {
-        V_DrawPatch(x2, y, W_CacheLumpName(count & 1 ? "M_SLDMD1"
-                                           : "M_SLDMD2", PU_CACHE));
+        V_DrawPatch(x2, y, W_CacheLumpName(DEH_String(count & 1 ? "M_SLDMD1"
+                                           : "M_SLDMD2"), PU_CACHE));
     }
-    V_DrawPatch(x2, y, W_CacheLumpName("M_SLDRT", PU_CACHE));
+    V_DrawPatch(x2, y, W_CacheLumpName(DEH_String("M_SLDRT"), PU_CACHE));
     V_DrawPatch(x + 4 + slot * 8, y + 7,
-                W_CacheLumpName("M_SLDKB", PU_CACHE));
+                W_CacheLumpName(DEH_String("M_SLDKB"), PU_CACHE));
 }

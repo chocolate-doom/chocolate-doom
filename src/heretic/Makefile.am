@@ -20,6 +20,7 @@ info.c                 info.h                        \
 in_lude.c                                            \
 m_random.c             m_random.h                    \
 mn_menu.c                                            \
+                       p_action.h                    \
 p_ceilng.c                                           \
 p_doors.c                                            \
 p_enemy.c                                            \
@@ -55,5 +56,15 @@ EXTRA_DIST=                                          \
 i_sound.c                                            \
 i_ibm.c   
 
-libheretic_a_SOURCES=$(SOURCE_FILES)
+FEATURE_DEHACKED_SOURCE_FILES =            \
+deh_ammo.c                                 \
+deh_frame.c                                \
+deh_htext.c                                \
+deh_htic.c                                 \
+deh_sound.c                                \
+deh_thing.c                                \
+deh_weapon.c
+
+libheretic_a_SOURCES=$(SOURCE_FILES)                  \
+                     $(FEATURE_DEHACKED_SOURCE_FILES)
 

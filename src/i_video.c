@@ -144,8 +144,6 @@ static char *window_title = "";
 static SDL_Color palette[256];
 static boolean palette_to_set;
 
-static int windowwidth, windowheight;
-
 // display has been set up?
 
 static boolean initialized = false;
@@ -154,6 +152,10 @@ static boolean initialized = false;
 
 static boolean nomouse = false;
 int usemouse = 1;
+
+// Bit mask of mouse button state.
+
+static unsigned int mouse_button_state = 0;
 
 // Disallow mouse and joystick movement to cause forward/backward
 // motion.  Specified with the '-novert' command line parameter.
@@ -235,6 +237,12 @@ static SDL_Cursor *cursors[2];
 
 static screen_mode_t *screen_mode;
 
+// Window resize state.
+
+static boolean need_resize = false;
+static unsigned int resize_w, resize_h;
+static unsigned int last_resize_time;
+
 // If true, keyboard mapping is ignored, like in Vanilla Doom.
 // The sensible thing to do is to disable this if you have a non-US
 // keyboard.
@@ -260,6 +268,8 @@ int mouse_threshold = 10;
 // Gamma correction level to use
 
 int usegamma = 0;
+
+static void ApplyWindowResize(unsigned int w, unsigned int h);
 
 static boolean MouseShouldBeGrabbed()
 {
@@ -524,29 +534,56 @@ void I_StartFrame (void)
 
 }
 
-static int MouseButtonState(void)
+static void UpdateMouseButtonState(unsigned int button, boolean on)
 {
-    Uint8 state;
-    int result = 0;
+    event_t event;
 
-#if SDL_VERSION_ATLEAST(1, 3, 0)
-    state = SDL_GetMouseState(0, NULL, NULL);
-#else
-    state = SDL_GetMouseState(NULL, NULL);
-#endif
+    if (button < SDL_BUTTON_LEFT || button > MAX_MOUSE_BUTTONS)
+    {
+        return;
+    }
 
     // Note: button "0" is left, button "1" is right,
     // button "2" is middle for Doom.  This is different
     // to how SDL sees things.
 
-    if (state & SDL_BUTTON(1))
-        result |= 1;
-    if (state & SDL_BUTTON(3))
-        result |= 2;
-    if (state & SDL_BUTTON(2))
-        result |= 4;
+    switch (button)
+    {
+        case SDL_BUTTON_LEFT:
+            button = 0;
+            break;
 
-    return result;
+        case SDL_BUTTON_RIGHT:
+            button = 1;
+            break;
+
+        case SDL_BUTTON_MIDDLE:
+            button = 2;
+            break;
+
+        default:
+            // SDL buttons are indexed from 1.
+            --button;
+            break;
+    }
+
+    // Turn bit representing this button on or off.
+
+    if (on)
+    {
+        mouse_button_state |= (1 << button);
+    }
+    else
+    {
+        mouse_button_state &= ~(1 << button);
+    }
+
+    // Post an event with the new button state.
+
+    event.type = ev_mouse;
+    event.data1 = mouse_button_state;
+    event.data2 = event.data3 = 0;
+    D_PostEvent(&event);
 }
 
 static int AccelerateMouse(int val)
@@ -692,7 +729,7 @@ void I_GetEvent(void)
                 /*
             case SDL_MOUSEMOTION:
                 event.type = ev_mouse;
-                event.data1 = MouseButtonState();
+                event.data1 = mouse_button_state;
                 event.data2 = AccelerateMouse(sdlevent.motion.xrel);
                 event.data3 = -AccelerateMouse(sdlevent.motion.yrel);
                 D_PostEvent(&event);
@@ -702,20 +739,14 @@ void I_GetEvent(void)
             case SDL_MOUSEBUTTONDOWN:
 		if (usemouse && !nomouse)
 		{
-                    event.type = ev_mouse;
-                    event.data1 = MouseButtonState();
-                    event.data2 = event.data3 = 0;
-                    D_PostEvent(&event);
+                    UpdateMouseButtonState(sdlevent.button.button, true);
 		}
                 break;
 
             case SDL_MOUSEBUTTONUP:
 		if (usemouse && !nomouse)
 		{
-                    event.type = ev_mouse;
-                    event.data1 = MouseButtonState();
-                    event.data2 = event.data3 = 0;
-                    D_PostEvent(&event);
+                    UpdateMouseButtonState(sdlevent.button.button, false);
 		}
                 break;
 
@@ -731,6 +762,13 @@ void I_GetEvent(void)
 
             case SDL_VIDEOEXPOSE:
                 palette_to_set = true;
+                break;
+
+            case SDL_RESIZABLE:
+                need_resize = true;
+                resize_w = sdlevent.resize.w;
+                resize_h = sdlevent.resize.h;
+                last_resize_time = SDL_GetTicks();
                 break;
 
             default:
@@ -777,7 +815,7 @@ static void I_ReadMouse(void)
     if (x != 0 || y != 0) 
     {
         ev.type = ev_mouse;
-        ev.data1 = MouseButtonState();
+        ev.data1 = mouse_button_state;
         ev.data2 = AccelerateMouse(x);
 
         if (!novert)
@@ -976,14 +1014,20 @@ void I_FinishUpdate (void)
     static int	lasttic;
     int		tics;
     int		i;
-    // UNUSED static unsigned char *bigscreen=0;
 
     if (!initialized)
         return;
 
     if (noblit)
         return;
-    
+
+    if (need_resize && SDL_GetTicks() > last_resize_time + 500)
+    {
+        ApplyWindowResize(resize_w, resize_h);
+        need_resize = false;
+        palette_to_set = true;
+    }
+
     UpdateGrab();
 
     // Don't update the screen if the window isn't visible.
@@ -1692,11 +1736,96 @@ static char *WindowBoxType(screen_mode_t *mode, int w, int h)
     }
 }
 
+static void SetVideoMode(screen_mode_t *mode, int w, int h)
+{
+    byte *doompal;
+    int flags = 0;
+
+    doompal = W_CacheLumpName(DEH_String("PLAYPAL"), PU_CACHE);
+
+    // Generate lookup tables before setting the video mode.
+
+    if (mode != NULL && mode->InitMode != NULL)
+    {
+        mode->InitMode(doompal);
+    }
+
+    // Set the video mode.
+
+    flags |= SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF;
+
+    if (fullscreen)
+    {
+        flags |= SDL_FULLSCREEN;
+    }
+    else
+    {
+        flags |= SDL_RESIZABLE;
+    }
+
+    screen = SDL_SetVideoMode(w, h, 8, flags);
+
+    if (screen == NULL)
+    {
+        I_Error("Error setting video mode: %s\n", SDL_GetError());
+    }
+
+    // If mode was not set, it must be set now that we know the
+    // screen size.
+
+    if (mode == NULL)
+    {
+        mode = I_FindScreenMode(screen->w, screen->h);
+
+        if (mode == NULL)
+        {
+            I_Error("I_InitGraphics: Unable to find a screen mode small "
+                    "enough for %ix%i", screen->w, screen->h);
+        }
+
+        // Generate lookup tables before setting the video mode.
+
+        if (mode->InitMode != NULL)
+        {
+            mode->InitMode(doompal);
+        }
+    }
+
+    // Save screen mode.
+
+    screen_mode = mode;
+}
+
+static void ApplyWindowResize(unsigned int w, unsigned int h)
+{
+    screen_mode_t *mode;
+
+    // Find the biggest screen mode that will fall within these
+    // dimensions, falling back to the smallest mode possible if
+    // none is found.
+
+    mode = I_FindScreenMode(w, h);
+
+    if (mode == NULL)
+    {
+        mode = I_FindScreenMode(SCREENWIDTH, SCREENHEIGHT);
+    }
+
+    // Reset mode to resize window.
+
+    printf("Resize to %ix%i\n", mode->width, mode->height);
+    SetVideoMode(mode, mode->width, mode->height);
+
+    // Save settings.
+
+    screen_width = mode->width;
+    screen_height = mode->height;
+}
+
 void I_InitGraphics(void)
 {
     SDL_Event dummy;
     byte *doompal;
-    int flags = 0;
     char *env;
 
     // Pass through the XSCREENSAVER_WINDOW environment variable to 
@@ -1727,48 +1856,6 @@ void I_InitGraphics(void)
 
     CheckCommandLine();
 
-    doompal = W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE);
-
-    if (screensaver_mode)
-    {
-        windowwidth = 0;
-        windowheight = 0;
-    }
-    else
-    {
-        if (autoadjust_video_settings)
-        {
-            I_AutoAdjustSettings();
-        }
-
-        windowwidth = screen_width;
-        windowheight = screen_height;
-
-        screen_mode = I_FindScreenMode(windowwidth, windowheight);
-
-        if (screen_mode == NULL)
-        {
-            I_Error("I_InitGraphics: Unable to find a screen mode small "
-                    "enough for %ix%i", windowwidth, windowheight);
-        }
-
-        if (windowwidth != screen_mode->width
-         || windowheight != screen_mode->height)
-        {
-            printf("I_InitGraphics: %s (%ix%i within %ix%i)\n",
-                   WindowBoxType(screen_mode, windowwidth, windowheight),
-                   screen_mode->width, screen_mode->height,
-                   windowwidth, windowheight);
-        }
-
-        // Generate lookup tables before setting the video mode.
-
-        if (screen_mode->InitMode != NULL)
-        {
-            screen_mode->InitMode(doompal);
-        }
-    }
-
     // Set up title and icon.  Windows cares about the ordering; this
     // has to be done before the call to SDL_SetVideoMode.
 
@@ -1777,20 +1864,45 @@ void I_InitGraphics(void)
     I_InitWindowIcon();
 #endif
 
-    // Set the video mode.
+    //
+    // Enter into graphics mode.
+    //
+    // When in screensaver mode, run full screen and auto detect
+    // screen dimensions (don't change video mode)
+    //
 
-    flags |= SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF;
-
-    if (fullscreen)
+    if (screensaver_mode)
     {
-        flags |= SDL_FULLSCREEN;
+        SetVideoMode(NULL, 0, 0);
     }
-
-    screen = SDL_SetVideoMode(windowwidth, windowheight, 8, flags);
-
-    if (screen == NULL)
+    else
     {
-        I_Error("Error setting video mode: %s\n", SDL_GetError());
+        int w, h;
+
+        if (autoadjust_video_settings)
+        {
+            I_AutoAdjustSettings();
+        }
+
+        w = screen_width;
+        h = screen_height;
+
+        screen_mode = I_FindScreenMode(w, h);
+
+        if (screen_mode == NULL)
+        {
+            I_Error("I_InitGraphics: Unable to find a screen mode small "
+                    "enough for %ix%i", w, h);
+        }
+
+        if (w != screen_mode->width || h != screen_mode->height)
+        {
+            printf("I_InitGraphics: %s (%ix%i within %ix%i)\n",
+                   WindowBoxType(screen_mode, w, h),
+                   screen_mode->width, screen_mode->height, w, h);
+        }
+
+        SetVideoMode(screen_mode, w, h);
     }
 
     // Start with a clear black screen
@@ -1811,6 +1923,7 @@ void I_InitGraphics(void)
 
     // Set the palette
 
+    doompal = W_CacheLumpName(DEH_String("PLAYPAL"), PU_CACHE);
     I_SetPalette(doompal);
     SDL_SetColors(screen, palette, 0, 256);
 
@@ -1819,26 +1932,6 @@ void I_InitGraphics(void)
     UpdateFocus();
     UpdateGrab();
 
-    // In screensaver mode, now find a screen_mode to use.
-
-    if (screensaver_mode)
-    {
-        screen_mode = I_FindScreenMode(screen->w, screen->h);
-
-        if (screen_mode == NULL)
-        {
-            I_Error("I_InitGraphics: Unable to find a screen mode small "
-                    "enough for %ix%i", screen->w, screen->h);
-        }
-
-        // Generate lookup tables before setting the video mode.
-
-        if (screen_mode->InitMode != NULL)
-        {
-            screen_mode->InitMode(doompal);
-        }
-    }
-    
     // On some systems, it takes a second or so for the screen to settle
     // after changing modes.  We include the option to add a delay when
     // setting the screen mode, so that the game doesn't start immediately
@@ -1854,12 +1947,12 @@ void I_InitGraphics(void)
     // Likewise if the screen pitch is not the same as the width
     // If we have to multiply, drawing is done to a separate 320x200 buf
 
-    native_surface = !SDL_MUSTLOCK(screen) 
+    native_surface = !SDL_MUSTLOCK(screen)
                   && screen_mode == &mode_scale_1x
                   && screen->pitch == SCREENWIDTH
                   && aspect_ratio_correct;
 
-    // If not, allocate a buffer and copy from that buffer to the 
+    // If not, allocate a buffer and copy from that buffer to the
     // screen when we do an update
 
     if (native_surface)

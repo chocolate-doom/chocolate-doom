@@ -767,10 +767,10 @@ static void ST_loadUnloadGraphics(load_callback_t callback)
     // Load the numbers, green and yellow
     for (i=0;i<10;i++)
     {
-	sprintf(namebuf, DEH_String("INVFONG%d"), i);
+        DEH_snprintf(namebuf, 9, "INVFONG%d", i);
         callback(namebuf, &invfontg[i]);
 
-	sprintf(namebuf, DEH_String("INVFONY%d"), i);
+        DEH_snprintf(namebuf, 9, "INVFONY%d", i);
         callback(namebuf, &invfonty[i]);
     }
 

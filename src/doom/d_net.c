@@ -374,17 +374,17 @@ void D_CheckNetGame (void)
             ++num_players;
     }
 
-    printf (DEH_String("startskill %i  deathmatch: %i  startmap: %i  startepisode: %i\n"),
-	    startskill, deathmatch, startmap, startepisode);
+    DEH_printf("startskill %i  deathmatch: %i  startmap: %i  startepisode: %i\n",
+               startskill, deathmatch, startmap, startepisode);
 	
-    printf(DEH_String("player %i of %i (%i nodes)\n"),
-	    consoleplayer+1, num_players, num_players);
+    DEH_printf("player %i of %i (%i nodes)\n",
+               consoleplayer+1, num_players, num_players);
 
     // Show players here; the server might have specified a time limit
 
     if (timelimit > 0)
     {
-	printf(DEH_String("Levels will end after %d minute"),timelimit);
+	DEH_printf("Levels will end after %d minute", timelimit);
 	if (timelimit > 1)
 	    printf("s");
 	printf(".\n");

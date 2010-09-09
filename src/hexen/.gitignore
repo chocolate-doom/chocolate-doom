@@ -1,7 +1,5 @@
 Makefile
 Makefile.in
 .deps
-*.rc
-chocolate-doom
-chocolate-server
-*.exe
+tags
+TAGS

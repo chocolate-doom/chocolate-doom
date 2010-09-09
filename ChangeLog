@@ -1,3 +1,890 @@
+2010-05-30 04:03:44 fraggle
+	
+	Add INSTALL to all distribution packages, add note in README.
+
+2010-05-30 03:56:58 fraggle
+	
+	Clarify/update install instructions.
+
+2010-05-14 19:42:32 fraggle
+	
+	Don't grab the mouse when the demo sequence advances.
+
+2010-05-03 17:47:25 fraggle
+	
+	Oops.
+
+2010-05-03 16:58:52 fraggle
+	
+	Update NEWS.
+
+2010-05-01 22:47:26 fraggle
+	
+	Further sanity checking on use of strcpy() with dehacked string
+	replacements.
+
+2010-05-01 22:20:30 fraggle
+	
+	Silence printf(DEH_String(...)) warnings, by providing a DEH_printf
+	function that checks the format string is a valid replacement.  Also
+	add DEH_fprintf and DEH_snprintf functions to use throughout the code
+	to do similar checking.
+
+2010-05-01 20:22:52 fraggle
+	
+	Fix compiler warnings with savegame and response file code.
+
+2010-04-30 20:58:30 fraggle
+	
+	Merge contents of OPL-TODO into TODO file.
+
+2010-04-30 20:38:24 fraggle
+	
+	Add textscreen Doxyfile to dist.  Add .desktop file to svn:ignore.  Add
+	opl ctags file to localvimrc.
+
+2010-04-25 00:53:03 fraggle
+	
+	Add -reject_pad_with_ff parameter to allow padding value to be
+	specified.
+
+2010-04-23 21:46:29 fraggle
+	
+	Add REJECT buffer overflow emulation, based on code from PrBoom+
+	(thanks entryway).  Fixes YDFEAR25.LMP.
+
+2010-04-22 22:38:51 fraggle
+	
+	Disable OPL debugging messages.
+
+2010-03-08 18:52:59 fraggle
+	
+	Add OPL-TODO to dist, set svn:ignore properties.
+
+2010-03-08 18:50:29 fraggle
+	
+	Use native MIDI music by default.
+
+2010-03-08 01:14:23 fraggle
+	
+	Merge opl-branch to trunk.
+	
+	OPL support still isn't perfect, and it certainly isn't complete.
+	However, for now, it's good enough.
+
+2010-02-10 20:21:21 fraggle
+	
+	Bump version number, update ChangeLog and NEWS.
+
+2010-01-31 18:21:50 fraggle
+	
+	Change Windows resource file to use PACKAGE_COPYRIGHT and
+	PACKAGE_LICENSE macros.
+
+2010-01-30 16:14:04 fraggle
+	
+	Change directory to home directory before launching the game, so that
+	recorded demos go somewhere sensible.
+
+2010-01-30 16:04:24 fraggle
+	
+	Set launch button as default button, so that it is possible to launch
+	the game by pressing return.
+
+2010-01-30 00:37:17 fraggle
+	
+	Rename mus2mid functions to be consistent with coding standard.
+
+2010-01-29 23:28:35 fraggle
+	
+	Remove unused PACKAGE_LONGDESC.
+
+2010-01-29 19:17:56 fraggle
+	
+	When doing a MUS to MID conversion, allocate MIDI channels so that the
+	lowest-numbered MIDI channels are used before higher-numbered ones.
+	Fixes ear-piercing whistle sound in the MAP05 music when playing with
+	timidity and EAWPATS (thanks entryway / HackNeyed).
+
+2010-01-29 03:55:20 fraggle
+	
+	Fix indentation/style etc.  in mus2mid.c.
+
+2010-01-27 19:16:26 fraggle
+	
+	Add tags files to svn:ignore properties.
+
+2010-01-26 19:21:18 fraggle
+	
+	Minor fix of British spelling -> American.
+
+2010-01-26 19:18:18 fraggle
+	
+	Fix glass hack windows where a linedef is flagged as two sided but has
+	only one side.  Fixes WADs such as OTTAWAU.WAD (thanks Never_Again).
+
+2010-01-23 23:06:45 fraggle
+	
+	Add menu item to launcher to open a terminal window that can be used
+	to start the game.  Add missing 'edit' menu.  Set svn:ignore property
+	for osx directory.
+
+2010-01-18 19:40:50 fraggle
+	
+	Fix package source URL.
+
+2010-01-18 19:29:48 fraggle
+	
+	Tweak package description slightly.
+
+2010-01-18 19:14:54 fraggle
+	
+	Define project short description, copyright, maintainer and URL in
+	configure.in.  Use these for the Info-gnustep.plist file.  Add
+	generated .spec file for building RPM packages.
+
+2010-01-17 16:58:37 fraggle
+	
+	Update NEWS.
+
+2010-01-17 16:31:03 fraggle
+	
+	Restore the original cursor when shutting down video code, this should
+	hopefully fix the problem with the mouse cursor disappearing when
+	exiting on Win9x (thanks Janizdreg).
+
+2010-01-16 19:20:11 fraggle
+	
+	Update TODO file.
+
+2010-01-15 19:29:28 fraggle
+	
+	Don't open the configuration window when the launcher is first run;
+	display an error message if the user tries to launch the game without
+	an IWAD selected.
+
+2010-01-15 19:14:02 fraggle
+	
+	Fix GNUstep info panel.
+
+2010-01-15 18:51:35 fraggle
+	
+	Center the launcher window and config window on startup.
+
+2010-01-15 18:40:37 fraggle
+	
+	Add wadfile.png for GNUstep build.
+
+2010-01-15 18:13:05 fraggle
+	
+	Extend osx makefile to allow building of a working GNUstep
+	application, for testing purposes.  Add GNUstep version of Info.plist,
+	remove app-skeleton directory and move contents up.
+
+2010-01-14 18:47:03 fraggle
+	
+	In Chex Quest, use the radiation suit colormap instead of the red
+	colormaps that are usually used when taking damage (or using the
+	berserk pack).  This matches the Vanilla chex.exe behavior (thanks
+	Fuzztooth).
+
+2010-01-12 20:16:25 fraggle
+	
+	Oops.
+
+2010-01-12 20:15:34 fraggle
+	
+	Strip executables when building Windows CE packages.
+
+2010-01-12 20:14:11 fraggle
+	
+	Rearrange order of Makefile generation to alphabetical order.
+
+2010-01-12 20:12:56 fraggle
+	
+	Move Makefile definitions for CC and STRIP into config.make, use
+	versions from autoconf.
+
+2010-01-12 20:09:54 fraggle
+	
+	Set main menu title based on package name, not fixed string.
+
+2010-01-12 20:09:01 fraggle
+	
+	Place commercial level name strings consecutively in the same array,
+	so that overflowing the end of one list accesses the start of the
+	next.  This trick is used by pl2.wad for its MAP33 secret level.
+
+2010-01-12 01:32:24 fraggle
+	
+	Add missing connection for plutonia.wad set button.
+
+2010-01-12 01:20:48 fraggle
+	
+	Add document icon file and use for file associations.
+
+2010-01-11 19:10:42 fraggle
+	
+	Insert new files into the command line at the correct location,
+	allowing multiple files to be opened at once.
+
+2010-01-11 01:35:04 fraggle
+	
+	When launching a file from the finder, add the new file into the
+	command line at the appropriate position in the command line string.
+
+2010-01-10 20:46:15 fraggle
+	
+	Change "@executable_path@" to "@executable_path"
+
+2010-01-10 18:48:21 fraggle
+	
+	Install docs with a single cp, rather than using a for loop.
+
+2010-01-10 18:42:35 fraggle
+	
+	Recursively copy library dependencies into destination package.
+	Identify libraries to be installed based on the path in which they are
+	located, rather than whether there is "libSDL" in the name.  Use
+	install_name_tool to change the search path so that the system looks
+	for libraries in @executable_path@ rather than their location on the
+	machine upon which the program was built.
+
+2010-01-09 21:06:31 fraggle
+	
+	Clear existing arguments when adding a file.
+
+2010-01-09 20:42:30 fraggle
+	
+	Add file to command line when opened; add link from AppController to
+	LauncherManager.
+
+2010-01-09 18:54:04 fraggle
+	
+	Initial code to identify file type by extension and add file to
+	command line.
+
+2010-01-09 18:38:48 fraggle
+	
+	Hook in AppController as delegate for application, add file
+	associations to property list file.
+
+2010-01-05 17:20:58 fraggle
+	
+	Add "clean" target to package makefiles.
+
+2010-01-05 15:52:12 fraggle
+	
+	Move config.make up to pkg/ directory.  Use static makefiles to
+	generate all packages, rather than dynamically generated makefiles.
+	Add pkg/osx to dist.  Make OS X staging directory depend on top level
+	documentation files.  Generate CMDLINE as part of standard build if it
+	is not already present.  Set svn:ignore properties.
+
+2010-01-04 22:53:44 fraggle
+	
+	Fix single space error when listing libraries.
+
+2010-01-04 22:45:45 fraggle
+	
+	Copy binaries into app dir along with libraries.
+
+2010-01-04 22:24:48 fraggle
+	
+	Include documentation files in package.
+
+2010-01-04 22:19:53 fraggle
+	
+	Fix GNUstep build.
+
+2010-01-04 22:11:11 fraggle
+	
+	Generate Info.plist and config.make in configure and remove temporary
+	versions.  Include config.h from top level.
+
+2010-01-04 22:01:32 fraggle
+	
+	Import OS X launcher code to trunk.
+
+2010-01-03 03:49:11 fraggle
+	
+	Add quotes around $@ in autogen script (thanks exp[x])
+
+2009-12-28 20:57:20 fraggle
+	
+	When recording low resolution (non-longtics) Vanilla demos, carry
+	forward the error from angleturn caused by the reduced resolution, so
+	that consecutive errors can accumulate, possibly making turning
+	slightly smoother.
+
+2009-12-27 01:42:13 fraggle
+	
+	Oops.
+
+2009-12-27 00:11:18 fraggle
+	
+	Allow DOOMWADDIR/DOOMWADPATH to contain the complete path to IWAD
+	files, as well as directories in which to search for IWAD files.
+
+2009-12-18 22:11:06 fraggle
+	
+	Fix poor quality application icons seen when the game is running.  Add
+	back 8-bit icon files alongside files including both 8-bit and high
+	quality 32-bit versions.  Use the high quality icon files for resource
+	files includes, and the low quality ones for in-game SDL.
+
+2009-12-18 21:11:32 fraggle
+	
+	Update generated source files containing icon data.
+
+2009-12-18 21:10:35 fraggle
+	
+	Make ExecuteCommand() under Unix return a failure when the executable
+	cannot be executed.
+
+2009-12-14 20:57:04 fraggle
+	
+	Use GetModuleFileNameW to get the (Unicode) path to the Doom
+	executable.  This hopefully fixes problems with Unicode directory
+	names.
+
+2009-12-14 18:54:25 fraggle
+	
+	Add Chocolate Doom/setup icons with scaled versions for various
+	different icon sizes (thanks MikeRS).
+
+2009-12-12 01:20:49 fraggle
+	
+	Fix textscreen black border bug.
+
+2009-12-09 02:40:39 fraggle
+	
+	Fix the setup tool on Windows Vista/7 to not prompt for elevated
+	permissions and to disable the "Program Compatibility Assistant"
+	(thanks hobbs and MikeRS).
+
+2009-11-29 22:50:17 fraggle
+	
+	Add other missing files to dist.
+
+2009-11-29 22:25:51 fraggle
+	
+	Include .lvimrc in dist.
+
+2009-11-21 03:56:59 fraggle
+	
+	Add Makefile to build Win32 packages.
+
+2009-11-21 02:05:56 fraggle
+	
+	Use execvp() rather than execv(), to look up Doom binary in the PATH
+	if necessary.
+
+2009-11-21 00:40:58 fraggle
+	
+	Apply configuration file invalid key setting fix to setup code.
+
+2009-11-21 00:38:16 fraggle
+	
+	Don't crash if key settings are set in a configuration file that are
+	out of range (thanks entryway).
+
+2009-11-21 00:24:59 fraggle
+	
+	Fix crash with chocolate-setup under Windows (thanks Janizdreg).
+
+2009-11-19 21:49:13 fraggle
+	
+	Rework the OS X MIDI disabling code, as SDL_mixer 1.2.11 fixes the
+	crash.  Check and disable MIDI by default if using an older version of
+	SDL on OS X.
+
+2009-11-19 21:07:31 fraggle
+	
+	Make chocolate-setup use its own location in the filesystem to find
+	the location of the chocolate-doom executable.  Remove INSTALL_DIR
+	define.
+
+2009-11-05 19:57:55 fraggle
+	
+	Perform bounds checking on values passed to TXT_UpdateScreenArea() to
+	avoid crashes.
+
+2009-10-26 19:28:12 fraggle
+	
+	Initial hacks for compiling under SDL 1.3.
+
+2009-10-17 21:13:54 fraggle
+	
+	Fix error in last change.
+
+2009-10-17 20:39:37 fraggle
+	
+	Use M_StrToInt() when processing values passed with -spechit, so that
+	hex values can be specified.
+
+2009-10-17 20:29:46 fraggle
+	
+	Import donut overrun emulation code from PrBoom+ (Thanks entryway).
+
+2009-10-16 19:10:30 fraggle
+	
+	Fix compilation under MSVC (thanks entryway).
+
+2009-10-10 23:58:25 fraggle
+	
+	Rename pkg/wince/Makefile to pkg/wince/GNUmakefile (it uses GNU
+	extensions).
+
+2009-10-10 22:46:14 fraggle
+	
+	Add pkg directory to make dist.
+
+2009-10-10 02:02:58 fraggle
+	
+	Don't crash when using the donut special type and the joining linedef
+	is one sided (thanks Alexander Waldmann).
+
+2009-10-05 21:25:53 fraggle
+	
+	Fix desync in ep1-0500.lmp on 64-bit (thanks exp(x)).
+
+2009-10-05 00:38:14 fraggle
+	
+	Provide pointer to STARTUPINFO structure when calling CreateProcessW,
+	to stop crash under normal Windows (not CE) when launching Doom from
+	the setup tools (thanks Janizdreg).
+
+2009-10-01 20:08:21 fraggle
+	
+	Oops.
+
+2009-10-01 02:04:00 fraggle
+	
+	Oops.
+
+2009-10-01 00:07:03 fraggle
+	
+	Change British English spellings to American English, for consistency.
+
+2009-09-20 16:27:40 fraggle
+	
+	Use "const char" in libtextscreen where appropriate (thanks entryway).
+
+2009-09-11 22:56:47 fraggle
+	
+	Add (lack of) copyright notice for SDL workaround.
+
+2009-09-07 20:43:04 fraggle
+	
+	Fix compilation under MacOS X.
+
+2009-09-06 19:15:52 fraggle
+	
+	Fixes for MSVC compile (thanks entryway).
+
+2009-08-28 00:27:47 fraggle
+	
+	Allow PGUP/PGDN to scroll up and down in scroll panes (thanks
+	LionsPhil).
+
+2009-07-20 23:27:59 fraggle
+	
+	Remove redundant variable assignment (thanks Quasar/Yagisan)
+
+2009-07-20 01:37:41 fraggle
+	
+	Save and display the loading disk icon as a fixed 16x16 square, from
+	an image drawn at the bottom right corner of the screen.  This seems
+	to be the same as how Vanilla behaves, and fixes chook3.wad, that uses
+	an STDISK replacement with an offset that pushes the image to the
+	left.
+
+2009-07-13 23:43:06 fraggle
+	
+	Add stdio.h include to fix MSVC build (thanks Kaiser)
+
+2009-07-12 17:47:12 fraggle
+	
+	Fix compile with libsamplerate.
+
+2009-07-12 15:00:50 fraggle
+	
+	On Windows CE, use the Windows API to find the amount of available
+	memory, so that at least two megabytes are always left available to
+	the OS.
+
+2009-07-11 12:15:32 fraggle
+	
+	Add missing item to NEWS.
+
+2009-07-07 20:46:55 fraggle
+	
+	Update NEWS.
+
+2009-07-07 20:38:00 fraggle
+	
+	Fix launching of the game from the setup tool in Windows CE.
+
+2009-06-21 20:33:35 fraggle
+	
+	Add Makefile for building CAB files, dependency calculation.
+
+2009-06-21 20:19:43 fraggle
+	
+	Use correct filename for SDL_net DLL.
+
+2009-06-21 20:03:38 fraggle
+	
+	Remove temporary files after generating CAB file.
+
+2009-06-20 23:13:44 fraggle
+	
+	Add script to generate Windows CE install package.
+
+2009-06-16 20:47:13 fraggle
+	
+	Automatically allocate a smaller zone size if it was not possible to
+	allocate the default 16 MiB.
+
+2009-06-13 18:10:18 fraggle
+	
+	Don't post zero key events.
+
+2009-06-12 20:07:55 fraggle
+	
+	On Windows CE systems without a keyboard, patch the default settings
+	to use hardware keys.
+
+2009-06-12 18:58:42 fraggle
+	
+	Remove debug messages.
+
+2009-06-12 18:35:39 fraggle
+	
+	Set the USER environment variable based on the owner information from
+	the registry.
+
+2009-06-12 18:34:27 fraggle
+	
+	Always grab input on Windows CE.
+
+2009-06-11 22:34:36 fraggle
+	
+	Include libc_wince.a in chocolate-server build.
+
+2009-06-11 20:41:20 fraggle
+	
+	Grab the input in setup when reading a new key binding, so that
+	Windows CE buttons are read properly.  Map buttons to PC function
+	keys.
+
+2009-06-11 19:19:05 fraggle
+	
+	Include libc_wince.h on Windows CE.
+
+2009-06-11 19:18:12 fraggle
+	
+	Declare getenv/putenv on Windows CE for recent SDL versions that do
+	not declare it.
+
+2009-06-10 20:03:08 fraggle
+	
+	Add key bindings for pause, message refresh.
+
+2009-06-08 20:26:29 fraggle
+	
+	Remove debugging code.
+
+2009-06-08 19:15:57 fraggle
+	
+	Use SDL's getenv/putenv implementation, and populate at startup.
+
+2009-06-08 00:41:10 fraggle
+	
+	Use CreateFileW instead of OpenFile (doesn't exist on Windows CE)
+
+2009-06-07 20:08:08 fraggle
+	
+	Fix header includes (thanks exp[x])
+
+2009-06-07 19:18:02 fraggle
+	
+	Don't add DirectX/Windib selector on Windows CE.
+
+2009-06-07 18:53:25 fraggle
+	
+	Use home dir to store configuration and savegames under Windows CE.
+
+2009-06-07 18:33:19 fraggle
+	
+	Fix setup tool display configuration dialog when fullscreen is not
+	supported.
+
+2009-06-07 18:10:05 fraggle
+	
+	Make auto-adjust code switch to windowed mode if no fullscreen modes
+	are available.
+
+2009-06-07 17:41:46 fraggle
+	
+	Catch errors when initialising SDL.  Use the small textscreen font by
+	default on Windows CE if no fullscreen modes are available.
+
+2009-06-07 17:39:08 fraggle
+	
+	Add missing SDL_thread include.
+
+2009-06-07 17:35:43 fraggle
+	
+	Don't try to use the SDL DirectX driver under Windows CE.
+
+2009-06-07 16:21:41 fraggle
+	
+	Fix setup tool compile on Windows CE.
+
+2009-06-07 16:15:40 fraggle
+	
+	Remove call to setbuf.
+
+2009-06-07 15:35:27 fraggle
+	
+	Add IWAD search dirs for Windows CE.
+
+2009-06-07 15:20:46 fraggle
+	
+	Exit with an error on failure to allocate zone memory.
+
+2009-06-07 03:10:21 fraggle
+	
+	Use MessageBoxW instead of MessageBox (doesn't exist on Windows CE)
+
+2009-06-07 02:59:49 fraggle
+	
+	Add README file for Windows CE library.
+
+2009-06-07 02:56:21 fraggle
+	
+	Detect Windows CE target and build/include libc_wince files as
+	necessary.
+
+2009-06-07 02:50:47 rtc_marine
+	
+	- Update textscreen codeblocks project to include txt_scrollpane.* and
+	txt_smallfont.h
+
+2009-06-07 02:33:58 fraggle
+	
+	Include libc_wince.h when on Windows CE.
+
+2009-06-07 02:32:15 fraggle
+	
+	Add CPU affinity function for Windows CE.
+
+2009-06-07 02:27:58 fraggle
+	
+	Add libc_wince.h header, and EISDIR error value.
+
+2009-06-07 02:27:30 fraggle
+	
+	Use GetUserNameExW, not GetUserName (doesn't exist on WinCE)
+
+2009-06-07 02:26:45 fraggle
+	
+	Fix compile with FEATURE_MULTIPLAYER disabled.
+
+2009-06-07 02:24:40 fraggle
+	
+	Fix compile with FEATURE_SOUND disabled.
+
+2009-06-07 01:56:23 fraggle
+	
+	Add Windows CE implementations of some ANSI C functions that are
+	missing.
+
+2009-06-06 22:13:44 fraggle
+	
+	Don't check for Steam/CD installer versions on Windows CE.
+
+2009-06-05 17:58:48 fraggle
+	
+	Add key binding variables for automap and weapon keys.
+
+2009-06-04 00:37:02 fraggle
+	
+	Increase height of menu bindings dialog.
+
+2009-06-04 00:35:05 fraggle
+	
+	Use newer keyboard bindings dialog layout from raven-branch.
+
+2009-06-04 00:20:37 fraggle
+	
+	Add unique key groups for menu navigation and shortcuts.
+
+2009-06-04 00:20:06 fraggle
+	
+	Use key for confirming menu messages, not typed char.
+
+2009-06-03 21:45:54 fraggle
+	
+	Add dialog to setup tool for editing menu shortcuts.
+
+2009-06-03 21:18:04 fraggle
+	
+	Add config file variables to increase/decrease screen size.
+
+2009-06-03 20:59:26 fraggle
+	
+	Fix shortcut keys for menu items.
+
+2009-06-03 20:55:50 fraggle
+	
+	Add configuration file entries for menu key bindings.
+
+2009-06-03 20:37:19 fraggle
+	
+	Add key_ variables for the keys used to control the menu.
+
+2009-05-26 23:14:24 fraggle
+	
+	Fix tags for functions using TXT_UNCAST_ARG.
+
+2009-05-26 22:13:18 fraggle
+	
+	Set appropriate vim 'tags' variable for ctags files.
+
+2009-05-21 20:18:38 fraggle
+	
+	Set display settings window position based on screen dimensions,
+	rather than hard coding position.
+
+2009-05-19 18:07:49 fraggle
+	
+	Fix manpage documentation for DOOMWADPATH (thanks MikeRS)
+
+2009-05-18 19:30:49 fraggle
+	
+	Fix A_BossDeath behavior in v1.9 emulation mode (thanks entryway)
+
+2009-05-17 14:54:19 fraggle
+	
+	Always use an SDL buffer size that is a power of two.  Reduce buffer
+	size to 70ms.
+
+2009-05-12 19:03:20 fraggle
+	
+	Add option to "join game" dialog in setup tool to autojoin a LAN game.
+
+2009-05-12 19:01:27 fraggle
+	
+	Make txt_inputboxes emit a "changed" signal when their value is
+	changed.
+
+2009-05-07 22:59:38 fraggle
+	
+	Calculate SDL buffer size automatically based on sample rate.
+
+2009-05-05 01:00:53 fraggle
+	
+	Better ASCII chart.
+
+2009-05-05 00:46:27 fraggle
+	
+	Minor smallfont fixups.
+
+2009-05-01 22:05:57 fraggle
+	
+	Add copyright headers to textscreen examples.
+
+2009-04-26 17:59:08 fraggle
+	
+	More smallfont fixups.
+
+2009-04-23 20:58:11 fraggle
+	
+	Fix up some extended ASCII characters.
+
+2009-04-23 19:19:52 fraggle
+	
+	Oops.
+
+2009-04-23 19:18:43 fraggle
+	
+	Add small textscreen font for low resolution displays, based on the
+	Atari-Small font by Tom Fine.
+
+2009-03-15 14:44:23 fraggle
+	
+	Fix clipped sounds when using libsamplerate (thanks David Flater)
+
+2009-03-14 15:28:41 fraggle
+	
+	Add check to allow sched_setaffinity code to work on older versions of
+	libc.
+
+2009-03-12 18:55:27 fraggle
+	
+	Define INVALID_SET_FILE_POINTER if it is not defined, to fix
+	compilation under MSVC6 (thanks Quasar)
+
+2009-03-08 22:51:25 fraggle
+	
+	Add "make doc" target to run Doxygen, and add a Doxyfile.  Add @file
+	tags to start of header files so that Doxygen will process them.
+
+2009-03-07 00:35:08 fraggle
+	
+	Add documentation for high-level txt_desktop.h functions.
+
+2009-03-07 00:24:45 fraggle
+	
+	Add documentation for high-level textscreen functions.
+
+2009-03-06 20:01:32 fraggle
+	
+	Fix signed/unsigned conversion warning.
+
+2009-03-03 19:26:20 fraggle
+	
+	Look up SetProcessAffinityMask function at runtime, so that the
+	program should work under Win9x again.
+
+2009-01-30 23:53:47 fraggle
+	
+	Fix layout of widgets within scroll panes.  Scroll scroll panes in
+	response to keyboard events.
+
+2009-01-29 23:26:03 fraggle
+	
+	Shrink text box slightly.
+
+2009-01-29 23:00:14 fraggle
+	
+	Allow clicking within scroll bars to set position.
+
+2009-01-29 22:54:13 fraggle
+	
+	Add scrollable pane widget to textscreen library.
+
+2009-01-17 14:05:31 fraggle
+	
+	Fix '-mmap' command line parameter.
+
+2009-01-07 22:05:13 fraggle
+	
+	Create the ~/.chocolate-doom/savegames directory on startup if it does
+	not exist.
+
+2009-01-07 21:51:37 fraggle
+	
+	Replace -nommap with -mmap; do not use mmap()ed file access by
+	default.  Fixes Plutonia 2, and several other minor things.
+
+2008-12-10 20:25:05 fraggle
+	
+	Bump version to 1.2.1, update NEWS and ChangeLog.
+
 2008-12-10 20:20:10 fraggle
 	
 	Fix crash when playing Doom 1 levels.

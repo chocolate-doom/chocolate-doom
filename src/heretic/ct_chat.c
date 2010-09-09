@@ -29,6 +29,7 @@
 #include <ctype.h>
 #include "doomdef.h"
 #include "doomkeys.h"
+#include "deh_str.h"
 #include "p_local.h"
 #include "s_sound.h"
 #include "v_video.h"
@@ -115,7 +116,7 @@ void CT_Init(void)
         memset(plr_lastmsg[i], 0, MESSAGESIZE);
         memset(chat_msg[i], 0, MESSAGESIZE);
     }
-    FontABaseLump = W_GetNumForName("FONTA_S") + 1;
+    FontABaseLump = W_GetNumForName(DEH_String("FONTA_S")) + 1;
     return;
 }
 
@@ -300,7 +301,9 @@ void CT_Ticker(void)
                 CT_AddChar(i, 0);       // set the end of message character
                 if (numplayers > 2)
                 {
-                    strcpy(plr_lastmsg[i], CT_FromPlrText[i]);
+                    strncpy(plr_lastmsg[i], DEH_String(CT_FromPlrText[i]),
+                            MESSAGESIZE + 9);
+                    plr_lastmsg[i][MESSAGESIZE + 8] = '\0';
                     strcat(plr_lastmsg[i], chat_msg[i]);
                 }
                 else
@@ -320,13 +323,13 @@ void CT_Ticker(void)
                     if (numplayers > 1)
                     {
                         P_SetMessage(&players[consoleplayer],
-                                     "-MESSAGE SENT-", true);
+                                     DEH_String("-MESSAGE SENT-"), true);
                         S_StartSound(NULL, sfx_chat);
                     }
                     else
                     {
                         P_SetMessage(&players[consoleplayer],
-                                     "THERE ARE NO OTHER PLAYERS IN THE GAME!",
+                                     DEH_String("THERE ARE NO OTHER PLAYERS IN THE GAME!"),
                                      true);
                         S_StartSound(NULL, sfx_chat);
                     }
@@ -376,7 +379,7 @@ void CT_Drawer(void)
                 x += patch->width;
             }
         }
-        V_DrawPatch(x, 10, W_CacheLumpName("FONTA59", PU_CACHE));
+        V_DrawPatch(x, 10, W_CacheLumpName(DEH_String("FONTA59"), PU_CACHE));
         BorderTopRefresh = true;
         UpdateState |= I_MESSAGES;
     }

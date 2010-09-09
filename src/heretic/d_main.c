@@ -33,6 +33,7 @@
 #include "config.h"
 #include "ct_chat.h"
 #include "doomdef.h"
+#include "deh_main.h"
 #include "d_iwad.h"
 #include "i_endoom.h"
 #include "i_joystick.h"
@@ -45,6 +46,7 @@
 #include "m_controls.h"
 #include "p_local.h"
 #include "s_sound.h"
+#include "w_main.h"
 #include "v_video.h"
 
 #define STARTUP_WINDOW_X 17
@@ -184,12 +186,12 @@ void D_Display(void)
     {
         if (!netgame)
         {
-            V_DrawPatch(160, viewwindowy + 5, W_CacheLumpName("PAUSED",
+            V_DrawPatch(160, viewwindowy + 5, W_CacheLumpName(DEH_String("PAUSED"),
                                                               PU_CACHE));
         }
         else
         {
-            V_DrawPatch(160, 70, W_CacheLumpName("PAUSED", PU_CACHE));
+            V_DrawPatch(160, 70, W_CacheLumpName(DEH_String("PAUSED"), PU_CACHE));
         }
     }
     // Handle player messages
@@ -315,7 +317,7 @@ void D_PageDrawer(void)
     V_DrawRawScreen(W_CacheLumpName(pagename, PU_CACHE));
     if (demosequence == 1)
     {
-        V_DrawPatch(4, 160, W_CacheLumpName("ADVISOR", PU_CACHE));
+        V_DrawPatch(4, 160, W_CacheLumpName(DEH_String("ADVISOR"), PU_CACHE));
     }
     UpdateState |= I_FULLSCRN;
 }
@@ -347,45 +349,45 @@ void D_DoAdvanceDemo(void)
         case 0:
             pagetic = 210;
             gamestate = GS_DEMOSCREEN;
-            pagename = "TITLE";
+            pagename = DEH_String("TITLE");
             S_StartSong(mus_titl, false);
             break;
         case 1:
             pagetic = 140;
             gamestate = GS_DEMOSCREEN;
-            pagename = "TITLE";
+            pagename = DEH_String("TITLE");
             break;
         case 2:
             BorderNeedRefresh = true;
             UpdateState |= I_FULLSCRN;
-            G_DeferedPlayDemo("demo1");
+            G_DeferedPlayDemo(DEH_String("demo1"));
             break;
         case 3:
             pagetic = 200;
             gamestate = GS_DEMOSCREEN;
-            pagename = "CREDIT";
+            pagename = DEH_String("CREDIT");
             break;
         case 4:
             BorderNeedRefresh = true;
             UpdateState |= I_FULLSCRN;
-            G_DeferedPlayDemo("demo2");
+            G_DeferedPlayDemo(DEH_String("demo2"));
             break;
         case 5:
             pagetic = 200;
             gamestate = GS_DEMOSCREEN;
             if (gamemode == shareware)
             {
-                pagename = "ORDER";
+                pagename = DEH_String("ORDER");
             }
             else
             {
-                pagename = "CREDIT";
+                pagename = DEH_String("CREDIT");
             }
             break;
         case 6:
             BorderNeedRefresh = true;
             UpdateState |= I_FULLSCRN;
-            G_DeferedPlayDemo("demo3");
+            G_DeferedPlayDemo(DEH_String("demo3"));
             break;
     }
 }
@@ -638,7 +640,7 @@ void initStartup(void)
 
     // Blit main screen
     textScreen = TXT_GetScreenData();
-    loading = W_CacheLumpName("LOADING", PU_CACHE);
+    loading = W_CacheLumpName(DEH_String("LOADING"), PU_CACHE);
     memcpy(textScreen, loading, 4000);
 
     // Print version string
@@ -698,7 +700,7 @@ void tprintf(char *msg, int initflag)
 // haleyjd: moved up, removed WATCOMC code
 void CleanExit(void)
 {
-    printf("Exited from HERETIC.\n");
+    DEH_printf("Exited from HERETIC.\n");
     exit(1);
 }
 
@@ -746,6 +748,7 @@ void D_BindVariables(void)
     M_BindBaseControls();
     M_BindHereticControls();
     M_BindWeaponControls();
+    M_BindChatControls(MAXPLAYERS);
 
     M_BindMenuControls();
     M_BindMapControls();
@@ -782,7 +785,7 @@ static void D_Endoom(void)
         return;
     }
 
-    endoom_data = W_CacheLumpName("ENDTEXT", PU_STATIC);
+    endoom_data = W_CacheLumpName(DEH_String("ENDTEXT"), PU_STATIC);
 
     I_Endoom(endoom_data);
 }
@@ -847,7 +850,7 @@ void D_DoomMain(void)
 //
 // init subsystems
 //
-    printf("V_Init: allocate screens.\n");
+    DEH_printf("V_Init: allocate screens.\n");
     V_Init();
 
     // Check for -CDROM
@@ -872,7 +875,7 @@ void D_DoomMain(void)
 
     if (cdrom)
     {
-        M_SetConfigDir("c:\\heretic.cd\\");
+        M_SetConfigDir(DEH_String("c:\\heretic.cd"));
     }
     else
     {
@@ -880,17 +883,22 @@ void D_DoomMain(void)
     }
 
     // Load defaults before initing other systems
-    printf("M_LoadDefaults: Load system defaults.\n");
+    DEH_printf("M_LoadDefaults: Load system defaults.\n");
     D_BindVariables();
     M_SetConfigFilenames("heretic.cfg", PROGRAM_PREFIX "heretic.cfg");
     M_LoadDefaults();
 
     I_AtExit(M_SaveDefaults, false);
 
-    printf("Z_Init: Init zone memory allocation daemon.\n");
+    DEH_printf("Z_Init: Init zone memory allocation daemon.\n");
     Z_Init();
 
-    printf("W_Init: Init WADfiles.\n");
+#ifdef FEATURE_DEHACKED
+    printf("DEH_Init: Init Dehacked support.\n");
+    DEH_Init();
+#endif
+
+    DEH_printf("W_Init: Init WADfiles.\n");
 
     iwadfile = D_FindIWAD(IWAD_MASK_HERETIC, &gamemission);
 
@@ -901,24 +909,7 @@ void D_DoomMain(void)
     }
 
     D_AddFile(iwadfile);
-
-    // -FILE [filename] [filename] ...
-    // Add files to the wad list.
-    p = M_CheckParm("-file");
-
-    if (p)
-    {
-        char *filename;
-
-        // the parms after p are wadfile/lump names, until end of parms
-        // or another - preceded parm
-
-        while (++p != myargc && myargv[p][0] != '-')
-        {
-            filename = D_FindWADByName(myargv[p]);
-            D_AddFile(filename);
-        }
-    }
+    W_ParseCommandLine();
 
     p = M_CheckParm("-playdemo");
     if (!p)
@@ -927,12 +918,12 @@ void D_DoomMain(void)
     }
     if (p && p < myargc - 1)
     {
-        sprintf(file, "%s.lmp", myargv[p + 1]);
+        DEH_snprintf(file, sizeof(file), "%s.lmp", myargv[p + 1]);
         D_AddFile(file);
-        printf("Playing demo %s.lmp.\n", myargv[p + 1]);
+        DEH_printf("Playing demo %s.lmp.\n", myargv[p + 1]);
     }
 
-    if (W_CheckNumForName("E2M1") == -1)
+    if (W_CheckNumForName(DEH_String("E2M1")) == -1)
     {
         gamemode = shareware;
         gamedescription = "Heretic (shareware)";
@@ -960,54 +951,55 @@ void D_DoomMain(void)
     //
     smsg[0] = 0;
     if (deathmatch)
-        status("DeathMatch...");
+        status(DEH_String("DeathMatch..."));
     if (nomonsters)
-        status("No Monsters...");
+        status(DEH_String("No Monsters..."));
     if (respawnparm)
-        status("Respawning...");
+        status(DEH_String("Respawning..."));
     if (autostart)
     {
         char temp[64];
-        sprintf(temp, "Warp to Episode %d, Map %d, Skill %d ",
-                startepisode, startmap, startskill + 1);
+        DEH_snprintf(temp, sizeof(temp),
+                     "Warp to Episode %d, Map %d, Skill %d ",
+                     startepisode, startmap, startskill + 1);
         status(temp);
     }
     wadprintf();                // print the added wadfiles
 
-    tprintf("MN_Init: Init menu system.\n", 1);
+    tprintf(DEH_String("MN_Init: Init menu system.\n"), 1);
     MN_Init();
 
     CT_Init();
 
-    tprintf("R_Init: Init Heretic refresh daemon.", 1);
-    hprintf("Loading graphics");
+    tprintf(DEH_String("R_Init: Init Heretic refresh daemon."), 1);
+    hprintf(DEH_String("Loading graphics"));
     R_Init();
     tprintf("\n", 0);
 
-    tprintf("P_Init: Init Playloop state.\n", 1);
-    hprintf("Init game engine.");
+    tprintf(DEH_String("P_Init: Init Playloop state.\n"), 1);
+    hprintf(DEH_String("Init game engine."));
     P_Init();
     IncThermo();
 
-    tprintf("I_Init: Setting up machine state.\n", 1);
+    tprintf(DEH_String("I_Init: Setting up machine state.\n"), 1);
     I_CheckIsScreensaver();
     I_InitTimer();
     I_InitJoystick();
     IncThermo();
 
-    tprintf("S_Init: Setting up sound.\n", 1);
+    tprintf(DEH_String("S_Init: Setting up sound.\n"), 1);
     S_Init();
     //IO_StartupTimer();
     S_Start();
 
-    tprintf("D_CheckNetGame: Checking network game status.\n", 1);
-    hprintf("Checking network game status.");
+    tprintf(DEH_String("D_CheckNetGame: Checking network game status.\n"), 1);
+    hprintf(DEH_String("Checking network game status."));
     D_CheckNetGame();
     IncThermo();
 
     // haleyjd: removed WATCOMC
 
-    tprintf("SB_Init: Loading patches.\n", 1);
+    tprintf(DEH_String("SB_Init: Loading patches.\n"), 1);
     SB_Init();
     IncThermo();
 

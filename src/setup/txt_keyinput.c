@@ -111,7 +111,7 @@ static void TXT_KeyInputDrawer(TXT_UNCAST_ARG(key_input), int selected)
 
     if (*key_input->variable == 0)
     {
-        strcpy(buf, "");
+        strcpy(buf, "(none)");
     }
     else
     {

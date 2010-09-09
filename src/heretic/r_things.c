@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "doomdef.h"
+#include "deh_str.h"
 #include "i_swap.h"
 #include "i_system.h"
 #include "r_local.h"
@@ -154,7 +155,7 @@ void R_InstallSpriteLump(int lump, unsigned frame, unsigned rotation,
 void R_InitSpriteDefs(char **namelist)
 {
     char **check;
-    int i, l, intname, frame, rotation;
+    int i, l, frame, rotation;
     int start, end;
 
 // count the number of sprite names
@@ -176,17 +177,16 @@ void R_InitSpriteDefs(char **namelist)
 // Just compare 4 characters as ints
     for (i = 0; i < numsprites; i++)
     {
-        spritename = namelist[i];
+        spritename = DEH_String(namelist[i]);
         memset(sprtemp, -1, sizeof(sprtemp));
 
         maxframe = -1;
-        intname = *(int *) namelist[i];
 
         //
         // scan the lumps, filling in the frames for whatever is found
         //
         for (l = start + 1; l < end; l++)
-            if (*(int *) lumpinfo[l].name == intname)
+            if (!strncasecmp(lumpinfo[l].name, spritename, 4))
             {
                 frame = lumpinfo[l].name[4] - 'A';
                 rotation = lumpinfo[l].name[5] - '0';
@@ -209,7 +209,7 @@ void R_InitSpriteDefs(char **namelist)
             if (gamemode == shareware)
                 continue;
             I_Error("R_InitSprites: No lumps found for sprite %s",
-                    namelist[i]);
+                    spritename);
         }
 
         maxframe++;
@@ -219,7 +219,7 @@ void R_InitSpriteDefs(char **namelist)
             {
                 case -1:       // no rotations were found for that frame at all
                     I_Error("R_InitSprites: No patches found for %s frame %c",
-                            namelist[i], frame + 'A');
+                            spritename, frame + 'A');
                 case 0:        // only the first rotation is needed
                     break;
 
@@ -228,7 +228,7 @@ void R_InitSpriteDefs(char **namelist)
                         if (sprtemp[frame].lump[rotation] == -1)
                             I_Error
                                 ("R_InitSprites: Sprite %s frame %c is missing rotations",
-                                 namelist[i], frame + 'A');
+                                 spritename, frame + 'A');
             }
         }
 

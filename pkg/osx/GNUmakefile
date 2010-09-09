@@ -6,6 +6,10 @@
 
 include ../config.make
 
+# Build so that the package will work on older versions.
+
+export MACOSX_DEPLOYMENT_TARGET=10.4
+
 STAGING_DIR=staging
 DMG=$(PACKAGE_TARNAME)-$(PACKAGE_VERSION).dmg
 

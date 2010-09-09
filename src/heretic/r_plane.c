@@ -25,6 +25,7 @@
 
 #include <stdlib.h>
 #include "doomdef.h"
+#include "deh_str.h"
 #include "i_system.h"
 #include "r_local.h"
 
@@ -90,7 +91,7 @@ fixed_t cachedystep[SCREENHEIGHT];
 
 void R_InitSkyMap(void)
 {
-    skyflatnum = R_FlatNumForName("F_SKY1");
+    skyflatnum = R_FlatNumForName(DEH_String("F_SKY1"));
     skytexturemid = 200 * FRACUNIT;
     skyiscale = FRACUNIT;
 }

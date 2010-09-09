@@ -600,48 +600,54 @@ int			dscount;
 // Draws the actual span.
 void R_DrawSpan (void) 
 { 
-    fixed_t		xfrac;
-    fixed_t		yfrac; 
-    byte*		dest; 
-    int			count;
-    int			spot; 
-	 
-#ifdef RANGECHECK 
+    unsigned int position, step;
+    byte *dest;
+    int count;
+    int spot;
+    unsigned int xtemp, ytemp;
+
+#ifdef RANGECHECK
     if (ds_x2 < ds_x1
 	|| ds_x1<0
-	|| ds_x2>=SCREENWIDTH  
+	|| ds_x2>=SCREENWIDTH
 	|| (unsigned)ds_y>SCREENHEIGHT)
     {
 	I_Error( "R_DrawSpan: %i to %i at %i",
 		 ds_x1,ds_x2,ds_y);
     }
-//	dscount++; 
-#endif 
+//	dscount++;
+#endif
 
-    
-    xfrac = ds_xfrac; 
-    yfrac = ds_yfrac; 
-	 
+    // Pack position and step variables into a single 32-bit integer,
+    // with x in the top 16 bits and y in the bottom 16 bits.  For
+    // each 16-bit part, the top 6 bits are the integer part and the
+    // bottom 10 bits are the fractional part of the pixel position.
+
+    position = ((ds_xfrac << 10) & 0xffff0000)
+             | ((ds_yfrac >> 6)  & 0x0000ffff);
+    step = ((ds_xstep << 10) & 0xffff0000)
+         | ((ds_ystep >> 6)  & 0x0000ffff);
+
     dest = ylookup[ds_y] + columnofs[ds_x1];
 
     // We do not check for zero spans here?
-    count = ds_x2 - ds_x1; 
+    count = ds_x2 - ds_x1;
 
-    do 
+    do
     {
-	// Current texture index in u,v.
-	spot = ((yfrac>>(16-6))&(63*64)) + ((xfrac>>16)&63);
+	// Calculate current texture index in u,v.
+        ytemp = (position >> 4) & 0x0fc0;
+        xtemp = (position >> 26);
+        spot = xtemp | ytemp;
 
 	// Lookup pixel from flat texture tile,
 	//  re-index using light/colormap.
 	*dest++ = ds_colormap[ds_source[spot]];
 
-	// Next step in u,v.
-	xfrac += ds_xstep; 
-	yfrac += ds_ystep;
-	
-    } while (count--); 
-} 
+        position += step;
+
+    } while (count--);
+}
 
 
 
@@ -721,49 +727,54 @@ void R_DrawSpan (void)
 //
 // Again..
 //
-void R_DrawSpanLow (void) 
-{ 
-    fixed_t		xfrac;
-    fixed_t		yfrac; 
-    byte*		dest; 
-    int			count;
-    int			spot; 
-	 
-#ifdef RANGECHECK 
+void R_DrawSpanLow (void)
+{
+    unsigned int position, step;
+    unsigned int xtemp, ytemp;
+    byte *dest;
+    int count;
+    int spot;
+
+#ifdef RANGECHECK
     if (ds_x2 < ds_x1
 	|| ds_x1<0
-	|| ds_x2>=SCREENWIDTH  
+	|| ds_x2>=SCREENWIDTH
 	|| (unsigned)ds_y>SCREENHEIGHT)
     {
 	I_Error( "R_DrawSpan: %i to %i at %i",
 		 ds_x1,ds_x2,ds_y);
     }
 //	dscount++; 
-#endif 
-	 
-    xfrac = ds_xfrac; 
-    yfrac = ds_yfrac; 
-    
-    count = (ds_x2 - ds_x1); 
+#endif
+
+    position = ((ds_xfrac << 10) & 0xffff0000)
+             | ((ds_yfrac >> 6)  & 0x0000ffff);
+    step = ((ds_xstep << 10) & 0xffff0000)
+         | ((ds_ystep >> 6)  & 0x0000ffff);
+
+    count = (ds_x2 - ds_x1);
 
     // Blocky mode, need to multiply by 2.
     ds_x1 <<= 1;
     ds_x2 <<= 1;
-    
+
     dest = ylookup[ds_y] + columnofs[ds_x1];
-  
-    do 
-    { 
-	spot = ((yfrac>>(16-6))&(63*64)) + ((xfrac>>16)&63);
+
+    do
+    {
+	// Calculate current texture index in u,v.
+        ytemp = (position >> 4) & 0x0fc0;
+        xtemp = (position >> 26);
+        spot = xtemp | ytemp;
+
 	// Lowres/blocky mode does it twice,
 	//  while scale is adjusted appropriately.
-	*dest++ = ds_colormap[ds_source[spot]]; 
 	*dest++ = ds_colormap[ds_source[spot]];
-	
-	xfrac += ds_xstep; 
-	yfrac += ds_ystep; 
+	*dest++ = ds_colormap[ds_source[spot]];
 
-    } while (count--); 
+	position += step;
+
+    } while (count--);
 }
 
 //

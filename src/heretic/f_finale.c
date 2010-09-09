@@ -26,6 +26,7 @@
 #include <ctype.h>
 
 #include "doomdef.h"
+#include "deh_str.h"
 #include "i_swap.h"
 #include "i_video.h"
 #include "s_sound.h"
@@ -37,11 +38,6 @@ int finalecount;
 #define TEXTSPEED       3
 #define TEXTWAIT        250
 
-char *e1text = E1TEXT;
-char *e2text = E2TEXT;
-char *e3text = E3TEXT;
-char *e4text = E4TEXT;
-char *e5text = E5TEXT;
 char *finaletext;
 char *finaleflat;
 
@@ -72,30 +68,30 @@ void F_StartFinale(void)
     switch (gameepisode)
     {
         case 1:
-            finaleflat = "FLOOR25";
-            finaletext = e1text;
+            finaleflat = DEH_String("FLOOR25");
+            finaletext = DEH_String(E1TEXT);
             break;
         case 2:
-            finaleflat = "FLATHUH1";
-            finaletext = e2text;
+            finaleflat = DEH_String("FLATHUH1");
+            finaletext = DEH_String(E2TEXT);
             break;
         case 3:
-            finaleflat = "FLTWAWA2";
-            finaletext = e3text;
+            finaleflat = DEH_String("FLTWAWA2");
+            finaletext = DEH_String(E3TEXT);
             break;
         case 4:
-            finaleflat = "FLOOR28";
-            finaletext = e4text;
+            finaleflat = DEH_String("FLOOR28");
+            finaletext = DEH_String(E4TEXT);
             break;
         case 5:
-            finaleflat = "FLOOR08";
-            finaletext = e5text;
+            finaleflat = DEH_String("FLOOR08");
+            finaletext = DEH_String(E5TEXT);
             break;
     }
 
     finalestage = 0;
     finalecount = 0;
-    FontABaseLump = W_GetNumForName("FONTA_S") + 1;
+    FontABaseLump = W_GetNumForName(DEH_String("FONTA_S")) + 1;
 
 //      S_ChangeMusic(mus_victor, true);
     S_StartSong(mus_cptd, true);
@@ -277,8 +273,8 @@ void F_DemonScroll(void)
     {
         return;
     }
-    p1 = W_CacheLumpName("FINAL1", PU_LEVEL);
-    p2 = W_CacheLumpName("FINAL2", PU_LEVEL);
+    p1 = W_CacheLumpName(DEH_String("FINAL1"), PU_LEVEL);
+    p2 = W_CacheLumpName(DEH_String("FINAL2"), PU_LEVEL);
     if (finalecount < 70)
     {
         memcpy(I_VideoBuffer, p1, SCREENHEIGHT * SCREENWIDTH);
@@ -319,8 +315,8 @@ void F_DrawUnderwater(void)
             {
                 underwawa = true;
                 memset((byte *) 0xa0000, 0, SCREENWIDTH * SCREENHEIGHT);
-                I_SetPalette(W_CacheLumpName("E2PAL", PU_CACHE));
-                V_DrawRawScreen(W_CacheLumpName("E2END", PU_CACHE));
+                I_SetPalette(W_CacheLumpName(DEH_String("E2PAL"), PU_CACHE));
+                V_DrawRawScreen(W_CacheLumpName(DEH_String("E2END"), PU_CACHE));
             }
             paused = false;
             MenuActive = false;
@@ -328,7 +324,7 @@ void F_DrawUnderwater(void)
 
             break;
         case 2:
-            V_DrawRawScreen(W_CacheLumpName("TITLE", PU_CACHE));
+            V_DrawRawScreen(W_CacheLumpName(DEH_String("TITLE"), PU_CACHE));
             //D_StartTitle(); // go to intro/demo mode.
     }
 }

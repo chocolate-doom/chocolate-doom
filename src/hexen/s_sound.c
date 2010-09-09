@@ -736,7 +736,7 @@ void S_Init(void)
     {
         snd_Channels = 8;
     }
-    I_SetMusicVolume(snd_MusicVolume);
+    I_SetMusicVolume(snd_MusicVolume * 8);
 
     I_AtExit(S_ShutDown, true);
 
@@ -787,8 +787,16 @@ void S_GetChannelInfo(SoundInfo_t * s)
         c->priority = Channel[i].priority;
         c->name = S_sfx[c->id].name;
         c->mo = Channel[i].mo;
-        c->distance = P_AproxDistance(c->mo->x - viewx, c->mo->y - viewy)
-            >> FRACBITS;
+
+        if (c->mo != NULL)
+        {
+            c->distance = P_AproxDistance(c->mo->x - viewx, c->mo->y - viewy)
+                >> FRACBITS;
+        }
+        else
+        {
+            c->distance = 0;
+        }
     }
 }
 
@@ -829,7 +837,7 @@ void S_SetMusicVolume(void)
     }
     else
     {
-        I_SetMusicVolume(snd_MusicVolume);
+        I_SetMusicVolume(snd_MusicVolume * 8);
     }
     if (snd_MusicVolume == 0)
     {

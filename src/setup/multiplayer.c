@@ -29,6 +29,7 @@
 #include "d_iwad.h"
 #include "m_config.h"
 #include "doom/d_englsh.h"
+#include "m_controls.h"
 
 #include "multiplayer.h"
 #include "mode.h"
@@ -862,6 +863,40 @@ void BindMultiplayerVariables(void)
     {
         sprintf(buf, "chatmacro%i", i);
         M_BindVariable(buf, &chat_macros[i]);
+    }
+
+    switch (gamemission)
+    {
+        case doom:
+            M_BindChatControls(4);
+            key_multi_msgplayer[0] = 'g';
+            key_multi_msgplayer[1] = 'i';
+            key_multi_msgplayer[2] = 'b';
+            key_multi_msgplayer[3] = 'r';
+            break;
+
+        case heretic:
+            M_BindChatControls(4);
+            key_multi_msgplayer[0] = 'g';
+            key_multi_msgplayer[1] = 'y';
+            key_multi_msgplayer[2] = 'r';
+            key_multi_msgplayer[3] = 'b';
+            break;
+
+        case hexen:
+            M_BindChatControls(8);
+            key_multi_msgplayer[0] = 'b';
+            key_multi_msgplayer[1] = 'r';
+            key_multi_msgplayer[2] = 'y';
+            key_multi_msgplayer[3] = 'g';
+            key_multi_msgplayer[4] = 'j';
+            key_multi_msgplayer[5] = 'w';
+            key_multi_msgplayer[6] = 'h';
+            key_multi_msgplayer[7] = 'p';
+            break;
+
+        default:
+            break;
     }
 }
 

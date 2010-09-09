@@ -302,7 +302,7 @@ void HU_Init(void)
     j = HU_FONTSTART;
     for (i=0;i<HU_FONTSIZE;i++)
     {
-	sprintf(buffer, DEH_String("STCFN%.3d"), j++);
+	DEH_snprintf(buffer, 9, "STCFN%.3d", j++);
 	hu_font[i] = (patch_t *) W_CacheLumpName(buffer, PU_STATIC);
     }
 
@@ -529,14 +529,6 @@ boolean HU_Responder(event_t *ev)
     int			i;
     int			numplayers;
     
-    static char		destination_keys[MAXPLAYERS] =
-    {
-	HUSTR_KEYGREEN,
-	HUSTR_KEYINDIGO,
-	HUSTR_KEYBROWN,
-	HUSTR_KEYRED
-    };
-    
     static int		num_nobrainers = 0;
 
     numplayers = 0;
@@ -565,7 +557,7 @@ boolean HU_Responder(event_t *ev)
 	    message_counter = HU_MSGTIMEOUT;
 	    eatkey = true;
 	}
-	else if (netgame && ev->data2 == HU_INPUTTOGGLE)
+	else if (netgame && ev->data2 == key_multi_msg)
 	{
 	    eatkey = chat_on = true;
 	    HUlib_resetIText(&w_chat);
@@ -575,7 +567,7 @@ boolean HU_Responder(event_t *ev)
 	{
 	    for (i=0; i<MAXPLAYERS ; i++)
 	    {
-		if (ev->data2 == destination_keys[i])
+		if (ev->data2 == key_multi_msgplayer[i])
 		{
 		    if (playeringame[i] && i!=consoleplayer)
 		    {

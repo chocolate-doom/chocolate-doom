@@ -509,7 +509,7 @@ static boolean AddToACSStore(int map, int number, byte * args)
     }
     ACSStore[index].map = map;
     ACSStore[index].script = number;
-    *((int *) ACSStore[index].args) = *((int *) args);
+    memcpy(ACSStore[index].args, args, sizeof(int));
     return true;
 }
 

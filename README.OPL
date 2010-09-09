@@ -1,0 +1,107 @@
+== Chocolate Doom hardware OPL support notes ==
+
+Chocolate Doom is able to play MIDI music as it sounds in Vanilla Doom
+with an OPL chip (as found in the Yamaha Adlib card, the Sound Blaster
+and its clones).  Most modern computers do not include an OPL chip any
+more, as CPUs are fast enough to do decent software MIDI synthesis.
+For this reason, a software OPL emulator is included as a substitute.
+
+However, no software emulator sounds exactly like a real (hardware)
+OPL chip, so if you do have a sound card with hardware OPL, here's how
+to configure Chocolate Doom to use it.
+
+=== Sound cards with OPL chips ===
+
+If you have an ISA sound card, it almost certainly includes an OPL
+chip.  Modern computers don't have slots for ISA cards though, so you
+must be running a pretty old machine.
+
+If you have a PCI sound card, you probably don't have an OPL chip.
+However, there are some exceptions to this. The following cards are
+known to include "legacy" OPL support:
+
+    * C-Media CMI8738 (*)
+    * Forte Media FM801
+    * Cards based on the Yamaha YMF724 (*)
+
+Other cards that apparently have OPL support but have not been tested:
+
+    * S3 SonicVibes
+    * AZTech PCI 168 (AZT 3328 chipset)
+    * ESS Solo-1 sound cards (ES1938, ES1946, ES1969 chipset)
+    * Conexant Riptide Audio/Modem combo cards
+    * Cards based on the Crystal Semiconductors CS4281
+    * Cards based on the Avance Logic ALS300
+    * Cards based on the Avance Logic ALS4000
+
+If you desperately want hardware OPL music, you may be able to find
+one of these cards for sale cheap on eBay.
+
+For the cards listed above with (*) next to them, OPL support is
+disabled by default and must be explictly enabled in software.
+
+If your machine is not a PC, you don't have an OPL chip, and you will
+have to use the software OPL.
+
+=== Operating System support ===
+
+If you're certain that you have a sound card with hardware OPL, you
+may need to take extra steps to configure your operating system to
+allow access to it.  To do hardware OPL, Chocolate Doom must access
+the chip directly, which is usually not possible in modern operating
+systems unless you are running as the superuser (root/Administrator).
+
+=== Windows 9x ===
+
+If you're running Windows 95, 98 or Me, there is no need to configure
+anything.  Windows allows direct access to the OPL chip.  You can
+confirm that hardware OPL is working by checking for this message in
+stdout.txt:
+
+    OPL_Init: Using driver 'Win32'.
+
+=== Windows NT (including 2000, XP and later) ===
+
+If you're running an NT-based system, it is not possible to directly
+access the OPL chip, even when running as Administrator.  Fortunately,
+it is possible to use the "ioperm.sys" driver developed for Cygwin:
+
+    http://openwince.sourceforge.net/ioperm/
+
+It is not necessary to have Cygwin installed to use this.  Copy the
+ioperm.sys file into the same directory as the Chocolate Doom
+executable and it should be automatically loaded.
+
+You can confirm that hardware OPL is working by checking for this
+message in stdout.txt:
+
+    OPL_Init: Using driver 'Win32'.
+
+=== Linux ===
+
+If you are using a system based on the Linux kernel, you can access
+the OPL chip directly, but you must be running as root.  You can
+confirm that hardware OPL is working, by checking for this message on
+startup:
+
+    OPL_Init: Using driver 'Linux'.
+
+If you are using one of the PCI cards in the list above with a (*)
+next to it, you may need to manually enable FM legacy support.  Add
+the following to your /etc/modprobe.conf file to do this:
+
+    options snd-ymfpci fm_port=0x388
+    options snd-cmipci fm_port=0x388
+
+=== OpenBSD/NetBSD ===
+
+You must be running as root to access the hardware OPL directly. You
+can confirm that hadware OPL is working by checking for this message
+on startup:
+
+    OPL_Init: Using driver 'OpenBSD'.
+
+=== FreeBSD ===
+
+There is no native OPL backend for FreeBSD yet.  Sorry!
+

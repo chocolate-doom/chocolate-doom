@@ -255,3 +255,37 @@ void M_ForceUppercase(char *text)
     }
 }
 
+//
+// M_StrCaseStr
+//
+// Case-insensitive version of strstr()
+//
+
+char *M_StrCaseStr(char *haystack, char *needle)
+{
+    unsigned int haystack_len;
+    unsigned int needle_len;
+    unsigned int len;
+    unsigned int i;
+
+    haystack_len = strlen(haystack);
+    needle_len = strlen(needle);
+
+    if (haystack_len < needle_len)
+    {
+        return NULL;
+    }
+
+    len = haystack_len - needle_len;
+
+    for (i = 0; i <= len; ++i)
+    {
+        if (!strncasecmp(haystack + i, needle, needle_len))
+        {
+            return haystack + i;
+        }
+    }
+
+    return NULL;
+}
+

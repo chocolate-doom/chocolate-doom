@@ -40,17 +40,18 @@ typedef enum
     NUM_SFXMODES
 } sfxmode_t;
 
-static char *sfxmode_strings[] = 
+static char *sfxmode_strings[] =
 {
     "Disabled",
     "Digital",
     "PC speaker"
 };
 
-typedef enum 
+typedef enum
 {
     MUSICMODE_DISABLED,
-    MUSICMODE_MIDI,
+    MUSICMODE_OPL,
+    MUSICMODE_NATIVE,
     MUSICMODE_CD,
     NUM_MUSICMODES
 } musicmode_t;
@@ -58,15 +59,17 @@ typedef enum
 static char *musicmode_strings[] =
 {
     "Disabled",
-    "MIDI",
+    "OPL (Adlib/SB)",
+    "Native MIDI",
     "CD audio"
 };
 
 // Config file variables:
 
 int snd_sfxdevice = SNDDEVICE_SB;
-int snd_musicdevice = SNDDEVICE_SB;
+int snd_musicdevice = SNDDEVICE_GENMIDI;
 int snd_samplerate = 22050;
+int opl_io_port = 0x388;
 
 static int numChannels = 8;
 static int sfxVolume = 15;
@@ -108,7 +111,10 @@ static void UpdateSndDevices(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
         case MUSICMODE_DISABLED:
             snd_musicdevice = SNDDEVICE_NONE;
             break;
-        case MUSICMODE_MIDI:
+        case MUSICMODE_NATIVE:
+            snd_musicdevice = SNDDEVICE_GENMIDI;
+            break;
+        case MUSICMODE_OPL:
             snd_musicdevice = SNDDEVICE_SB;
             break;
         case MUSICMODE_CD:
@@ -139,20 +145,26 @@ void ConfigSound(void)
     {
         snd_sfxmode = SFXMODE_DISABLED;
     }
-    
+
     // Is music enabled?
 
-    if (snd_musicdevice == SNDDEVICE_NONE)
+    if (snd_musicdevice == SNDDEVICE_GENMIDI)
     {
-        snd_musicmode = MUSICMODE_DISABLED;
+        snd_musicmode = MUSICMODE_NATIVE;
     }
     else if (snd_musicmode == SNDDEVICE_CD)
     {
         snd_musicmode = MUSICMODE_CD;
     }
+    else if (snd_musicdevice == SNDDEVICE_SB
+          || snd_musicdevice == SNDDEVICE_ADLIB
+          || snd_musicdevice == SNDDEVICE_AWE32)
+    {
+        snd_musicmode = MUSICMODE_OPL;
+    }
     else
     {
-        snd_musicmode = MUSICMODE_MIDI;
+        snd_musicmode = MUSICMODE_DISABLED;
     }
 
     // Doom has PC speaker sound effects, but others do not:
@@ -188,7 +200,7 @@ void ConfigSound(void)
                music_table = TXT_NewTable(2),
                NULL);
 
-    TXT_SetColumnWidths(sfx_table, 20, 5);
+    TXT_SetColumnWidths(sfx_table, 20, 14);
 
     TXT_AddWidgets(sfx_table, 
                    TXT_NewLabel("Sound effects"),
@@ -209,7 +221,7 @@ void ConfigSound(void)
                        NULL);
     }
 
-    TXT_SetColumnWidths(music_table, 20, 5);
+    TXT_SetColumnWidths(music_table, 20, 14);
 
     TXT_AddWidgets(music_table,
                    TXT_NewLabel("Music"),
@@ -222,7 +234,6 @@ void ConfigSound(void)
 
     TXT_SignalConnect(sfx_mode_control, "changed", UpdateSndDevices, NULL);
     TXT_SignalConnect(music_mode_control, "changed", UpdateSndDevices, NULL);
-
 }
 
 void BindSoundVariables(void)

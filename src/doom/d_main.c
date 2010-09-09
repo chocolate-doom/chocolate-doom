@@ -45,8 +45,8 @@
 #include "d_iwad.h"
 
 #include "z_zone.h"
+#include "w_main.h"
 #include "w_wad.h"
-#include "w_merge.h"
 #include "s_sound.h"
 #include "v_video.h"
 
@@ -358,6 +358,12 @@ void D_BindVariables(void)
     M_BindWeaponControls();
     M_BindMapControls();
     M_BindMenuControls();
+    M_BindChatControls(MAXPLAYERS);
+
+    key_multi_msgplayer[0] = HUSTR_KEYGREEN;
+    key_multi_msgplayer[1] = HUSTR_KEYINDIGO;
+    key_multi_msgplayer[2] = HUSTR_KEYBROWN;
+    key_multi_msgplayer[3] = HUSTR_KEYRED;
 
 #ifdef FEATURE_MULTIPLAYER
     NET_BindVariables();
@@ -827,7 +833,6 @@ static boolean CheckChex(char *iwadname)
 //      print title for every printed line
 char            title[128];
 
-
 static boolean D_AddFile(char *filename)
 {
     wad_file_t *handle;
@@ -1069,7 +1074,7 @@ void D_DoomMain (void)
 
     I_PrintBanner(PACKAGE_STRING);
 
-    printf (DEH_String("Z_Init: Init zone memory allocation daemon. \n"));
+    DEH_printf("Z_Init: Init zone memory allocation daemon. \n");
     Z_Init ();
 
 #ifdef FEATURE_MULTIPLAYER
@@ -1188,7 +1193,7 @@ void D_DoomMain (void)
 	deathmatch = 2;
 
     if (devparm)
-	printf(DEH_String(D_DEVSTR));
+	DEH_printf(D_DEVSTR);
     
     // find which dir to use for config files
 
@@ -1236,7 +1241,7 @@ void D_DoomMain (void)
 	    scale = 10;
 	if (scale > 400)
 	    scale = 400;
-	printf (DEH_String("turbo scale: %i%%\n"),scale);
+        DEH_printf("turbo scale: %i%%\n", scale);
 	forwardmove[0] = forwardmove[0]*scale/100;
 	forwardmove[1] = forwardmove[1]*scale/100;
 	sidemove[0] = sidemove[0]*scale/100;
@@ -1244,11 +1249,11 @@ void D_DoomMain (void)
     }
     
     // init subsystems
-    printf(DEH_String("V_Init: allocate screens.\n"));
-    V_Init();
+    DEH_printf("V_Init: allocate screens.\n");
+    V_Init ();
 
     // Load configuration files before initialising other subsystems.
-    printf(DEH_String("M_LoadDefaults: Load system defaults.\n"));
+    DEH_printf("M_LoadDefaults: Load system defaults.\n");
     M_SetConfigFilenames("default.cfg", PROGRAM_PREFIX "doom.cfg");
     D_BindVariables();
     M_LoadDefaults();
@@ -1256,160 +1261,9 @@ void D_DoomMain (void)
     // Save configuration at exit.
     I_AtExit(M_SaveDefaults, false);
 
-    printf (DEH_String("W_Init: Init WADfiles.\n"));
+    DEH_printf("W_Init: Init WADfiles.\n");
     D_AddFile(iwadfile);
-
-#ifdef FEATURE_WAD_MERGE
-
-    // Merged PWADs are loaded first, because they are supposed to be 
-    // modified IWADs.
-
-    //!
-    // @arg <files>
-    // @category mod
-    //
-    // Simulates the behavior of deutex's -merge option, merging a PWAD
-    // into the main IWAD.  Multiple files may be specified.
-    //
-
-    p = M_CheckParm("-merge");
-
-    if (p > 0)
-    {
-        for (p = p + 1; p<myargc && myargv[p][0] != '-'; ++p)
-        {
-            char *filename;
-
-            filename = D_TryFindWADByName(myargv[p]);
-
-            printf(" merging %s\n", filename);
-            W_MergeFile(filename);
-        }
-    }
-
-    // NWT-style merging:
-
-    // NWT's -merge option:
-
-    //!
-    // @arg <files>
-    // @category mod
-    //
-    // Simulates the behavior of NWT's -merge option.  Multiple files
-    // may be specified.
-
-    p = M_CheckParm("-nwtmerge");
-
-    if (p > 0)
-    {
-        for (p = p + 1; p<myargc && myargv[p][0] != '-'; ++p)
-        {
-            char *filename;
-
-            filename = D_TryFindWADByName(myargv[p]);
-
-            printf(" performing NWT-style merge of %s\n", filename);
-            W_NWTDashMerge(filename);
-        }
-    }
-    
-    // Add flats
-
-    //!
-    // @arg <files>
-    // @category mod
-    //
-    // Simulates the behavior of NWT's -af option, merging flats into
-    // the main IWAD directory.  Multiple files may be specified.
-    //
-
-    p = M_CheckParm("-af");
-
-    if (p > 0)
-    {
-        for (p = p + 1; p<myargc && myargv[p][0] != '-'; ++p)
-        {
-            char *filename;
-
-            filename = D_TryFindWADByName(myargv[p]);
-
-            printf(" merging flats from %s\n", filename);
-            W_NWTMergeFile(filename, W_NWT_MERGE_FLATS);
-        }
-    }
-
-    //!
-    // @arg <files>
-    // @category mod
-    //
-    // Simulates the behavior of NWT's -as option, merging sprites
-    // into the main IWAD directory.  Multiple files may be specified.
-    //
-
-    p = M_CheckParm("-as");
-
-    if (p > 0)
-    {
-        for (p = p + 1; p<myargc && myargv[p][0] != '-'; ++p)
-        {
-            char *filename;
-
-            filename = D_TryFindWADByName(myargv[p]);
-
-            printf(" merging sprites from %s\n", filename);
-            W_NWTMergeFile(filename, W_NWT_MERGE_SPRITES);
-        }
-    }
-
-    //!
-    // @arg <files>
-    // @category mod
-    //
-    // Equivalent to "-af <files> -as <files>".
-    //
-
-    p = M_CheckParm("-aa");
-
-    if (p > 0)
-    {
-        for (p = p + 1; p<myargc && myargv[p][0] != '-'; ++p)
-        {
-            char *filename;
-
-            filename = D_TryFindWADByName(myargv[p]);
-
-            printf(" merging sprites and flats from %s\n", filename);
-            W_NWTMergeFile(filename, W_NWT_MERGE_SPRITES | W_NWT_MERGE_FLATS);
-        }
-    }
-
-#endif
-
-    //!
-    // @arg <files>
-    // @vanilla
-    //
-    // Load the specified PWAD files.
-    //
-
-    p = M_CheckParm ("-file");
-    if (p)
-    {
-	// the parms after p are wadfile/lump names,
-	// until end of parms or another - preceded parm
-	modifiedgame = true;            // homebrew levels
-	while (++p != myargc && myargv[p][0] != '-')
-        {
-            char *filename;
-
-            filename = D_TryFindWADByName(myargv[p]);
-
-	    D_AddFile(filename);
-        }
-    }
-
-    // Debug:
-//    W_PrintDirectory();
+    modifiedgame = W_ParseCommandLine();
 
     // add any files specified on the command line with -file wadfile
     // to the wad list
@@ -1603,8 +1457,8 @@ void D_DoomMain (void)
 
     if (p && p < myargc-1 && deathmatch)
     {
-	printf(DEH_String("Austin Virtual Gaming: Levels will end "
-			  "after 20 minutes\n"));
+        DEH_printf("Austin Virtual Gaming: Levels will end "
+                       "after 20 minutes\n");
 	timelimit = 20;
     }
 
@@ -1686,16 +1540,16 @@ void D_DoomMain (void)
     I_PrintStartupBanner(gamedescription);
     PrintDehackedBanners();
 
-    printf (DEH_String("M_Init: Init miscellaneous info.\n"));
+    DEH_printf("M_Init: Init miscellaneous info.\n");
     M_Init ();
 
-    printf (DEH_String("R_Init: Init DOOM refresh daemon - "));
+    DEH_printf("R_Init: Init DOOM refresh daemon - ");
     R_Init ();
 
-    printf (DEH_String("\nP_Init: Init Playloop state.\n"));
+    DEH_printf("\nP_Init: Init Playloop state.\n");
     P_Init ();
 
-    printf (DEH_String("I_Init: Setting up machine state.\n"));
+    DEH_printf("I_Init: Setting up machine state.\n");
     I_CheckIsScreensaver();
     I_InitTimer();
     I_InitJoystick();
@@ -1705,18 +1559,18 @@ void D_DoomMain (void)
     NET_Init ();
 #endif
 
-    printf (DEH_String("S_Init: Setting up sound.\n"));
+    DEH_printf("S_Init: Setting up sound.\n");
     S_Init (sfxVolume * 8, musicVolume * 8);
 
-    printf (DEH_String("D_CheckNetGame: Checking network game status.\n"));
+    DEH_printf("D_CheckNetGame: Checking network game status.\n");
     D_CheckNetGame ();
 
     PrintGameVersion();
 
-    printf (DEH_String("HU_Init: Setting up heads up display.\n"));
+    DEH_printf("HU_Init: Setting up heads up display.\n");
     HU_Init ();
 
-    printf (DEH_String("ST_Init: Init status bar.\n"));
+    DEH_printf("ST_Init: Init status bar.\n");
     ST_Init ();
 
     // If Doom II without a MAP01 lump, this is a store demo.  

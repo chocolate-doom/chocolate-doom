@@ -11,6 +11,7 @@ games_PROGRAMS = @PROGRAM_PREFIX@doom     \
                  @PROGRAM_PREFIX@setup
 
 AM_CFLAGS = -I$(top_builddir)/textscreen            \
+            -I$(top_builddir)/opl                   \
             -I$(top_builddir)/pcsound               \
             @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 
@@ -72,6 +73,7 @@ tables.c             tables.h              \
 v_video.c            v_video.h             \
                      v_patch.h             \
 w_checksum.c         w_checksum.h          \
+w_main.c             w_main.h              \
 w_wad.c              w_wad.h               \
 w_file.c             w_file.h              \
 w_file_stdc.c                              \
@@ -115,6 +117,8 @@ FEATURE_SOUND_SOURCE_FILES =               \
 i_pcsound.c                                \
 i_sdlsound.c                               \
 i_sdlmusic.c                               \
+i_oplmusic.c                               \
+midifile.c           midifile.h            \
 mus2mid.c            mus2mid.h
 
 # Some games support dehacked patches, some don't:
@@ -131,10 +135,11 @@ EXTRA_LIBS =                                               \
                $(top_builddir)/wince/libc_wince.a          \
                $(top_builddir)/textscreen/libtextscreen.a  \
                $(top_builddir)/pcsound/libpcsound.a        \
+               $(top_builddir)/opl/libopl.a                \
                @LDFLAGS@                                   \
                @SDL_LIBS@                                  \
                @SDLMIXER_LIBS@                             \
-               @SDLNET_LIBS@ 
+               @SDLNET_LIBS@
 
 if HAVE_WINDRES
 @PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc
@@ -145,9 +150,9 @@ endif
 @PROGRAM_PREFIX@doom_LDADD = doom/libdoom.a $(EXTRA_LIBS)
 
 if HAVE_WINDRES
-@PROGRAM_PREFIX@heretic_SOURCES=$(SOURCE_FILES) resource.rc
+@PROGRAM_PREFIX@heretic_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc
 else
-@PROGRAM_PREFIX@heretic_SOURCES=$(SOURCE_FILES)
+@PROGRAM_PREFIX@heretic_SOURCES=$(SOURCE_FILES_WITH_DEH)
 endif
 
 @PROGRAM_PREFIX@heretic_LDADD = heretic/libheretic.a $(EXTRA_LIBS)
@@ -203,4 +208,7 @@ icon.c : $(top_builddir)/data/doom8.ico
 	$(top_builddir)/data/convert-icon $^ $@
 
 endif
+
+midiread : midifile.c
+	$(CC) -DTEST $(CFLAGS) @LDFLAGS@ $^ -o $@
 

@@ -33,6 +33,8 @@
 #include "r_local.h"
 #include "p_local.h"
 
+#include "sounds.h"
+
 #include "w_wad.h"
 #include "z_zone.h"
 
@@ -54,9 +56,6 @@ int mus_song = -1;
 int mus_lumpnum;
 void *mus_sndptr;
 byte *soundCurve;
-
-extern sfxinfo_t S_sfx[];
-extern musicinfo_t S_music[];
 
 int snd_MaxVolume = 10;
 int snd_MusicVolume = 10;
@@ -529,7 +528,7 @@ void S_Init(void)
     {
         snd_Channels = 8;
     }
-    I_SetMusicVolume(snd_MusicVolume);
+    I_SetMusicVolume(snd_MusicVolume * 8);
     S_SetMaxVolume(true);
 
     I_AtExit(S_ShutDown, true);
@@ -550,8 +549,16 @@ void S_GetChannelInfo(SoundInfo_t * s)
         c->priority = channel[i].priority;
         c->name = S_sfx[c->id].name;
         c->mo = channel[i].mo;
-        c->distance = P_AproxDistance(c->mo->x - viewx, c->mo->y - viewy)
-            >> FRACBITS;
+
+        if (c->mo != NULL)
+        {
+            c->distance = P_AproxDistance(c->mo->x - viewx, c->mo->y - viewy)
+                >> FRACBITS;
+        }
+        else
+        {
+            c->distance = 0;
+        }
     }
 }
 
@@ -579,7 +586,7 @@ void S_SetMaxVolume(boolean fullprocess)
 static boolean musicPaused;
 void S_SetMusicVolume(void)
 {
-    I_SetMusicVolume(snd_MusicVolume);
+    I_SetMusicVolume(snd_MusicVolume * 8);
     if (snd_MusicVolume == 0)
     {
         I_PauseSong();

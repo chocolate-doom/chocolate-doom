@@ -679,6 +679,32 @@ static void DrawSaveMenu(void)
     DrawFileSlots(&SaveMenu);
 }
 
+static boolean ReadDescriptionForSlot(int slot, char *description)
+{
+    FILE *fp;
+    boolean found;
+    char name[100];
+    char versionText[HXS_VERSION_TEXT_LENGTH];
+
+    sprintf(name, "%shex%d.hxs", SavePath, slot);
+
+    fp = fopen(name, "rb");
+
+    if (fp == NULL)
+    {
+        return false;
+    }
+
+    found = fread(description, HXS_DESCRIPTION_LENGTH, 1, fp) == 1
+         && fread(versionText, HXS_VERSION_TEXT_LENGTH, 1, fp) == 1;
+
+    found = found && strcmp(versionText, HXS_VERSION_TEXT) == 0;
+
+    fclose(fp);
+
+    return found;
+}
+
 //===========================================================================
 //
 // MN_LoadSlotText
@@ -689,29 +715,12 @@ static void DrawSaveMenu(void)
 
 void MN_LoadSlotText(void)
 {
-    int slot;
-    FILE *fp;
-    char name[100];
-    char versionText[HXS_VERSION_TEXT_LENGTH];
     char description[HXS_DESCRIPTION_LENGTH];
-    boolean found;
+    int slot;
 
     for (slot = 0; slot < 6; slot++)
     {
-        found = false;
-        sprintf(name, "%shex%d.hxs", SavePath, slot);
-        fp = fopen(name, "rb");
-        if (fp)
-        {
-            fread(description, HXS_DESCRIPTION_LENGTH, 1, fp);
-            fread(versionText, HXS_VERSION_TEXT_LENGTH, 1, fp);
-            fclose(fp);
-            if (!strcmp(versionText, HXS_VERSION_TEXT))
-            {
-                found = true;
-            }
-        }
-        if (found)
+        if (ReadDescriptionForSlot(slot, description))
         {
             memcpy(SlotText[slot], description, SLOTTEXTLEN);
             SlotStatus[slot] = 1;

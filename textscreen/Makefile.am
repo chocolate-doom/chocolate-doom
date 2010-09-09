@@ -9,6 +9,8 @@ SUBDIRS= . examples
 
 noinst_LIBRARIES=libtextscreen.a
 
+EXTRA_DIST=Doxyfile
+
 libtextscreen_a_SOURCES =                                 \
 	textscreen.h                                      \
 	txt_checkbox.c           txt_checkbox.h           \
@@ -21,11 +23,11 @@ libtextscreen_a_SOURCES =                                 \
 	txt_button.c             txt_button.h             \
 	txt_label.c              txt_label.h              \
 	txt_radiobutton.c        txt_radiobutton.h        \
-        txt_scrollpane.c         txt_scrollpane.h         \
+	txt_scrollpane.c         txt_scrollpane.h         \
 	txt_separator.c          txt_separator.h          \
 	txt_spinctrl.c           txt_spinctrl.h           \
 	txt_sdl.c                txt_sdl.h                \
-                                 txt_smallfont.h          \
+	                         txt_smallfont.h          \
 	txt_strut.c              txt_strut.h              \
 	txt_table.c              txt_table.h              \
 	txt_widget.c             txt_widget.h             \

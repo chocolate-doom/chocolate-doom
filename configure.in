@@ -1,4 +1,4 @@
-AC_INIT(Chocolate Doom, 1.2.1, fraggle@gmail.com, chocolate-doom)
+AC_INIT(Chocolate Doom, 1.4.0, fraggle@gmail.com, chocolate-doom)
 
 PACKAGE_SHORTDESC="Conservative Doom source port"
 PACKAGE_COPYRIGHT="Copyright (C) 1993-2010"
@@ -74,9 +74,16 @@ AC_SDL_MAIN_WORKAROUND([
     # Check for libsamplerate.
 
     AC_CHECK_LIB(samplerate, src_new)
+    AC_CHECK_LIB(m, log)
 
     AC_CHECK_HEADERS([linux/kd.h dev/isa/spkrio.h dev/speaker/speaker.h])
-    AC_CHECK_FUNCS(mmap sched_setaffinity)
+    AC_CHECK_FUNCS(mmap sched_setaffinity ioperm)
+
+    # OpenBSD I/O i386 library for I/O port access.
+    # (64 bit has the same thing with a different name!)
+
+    AC_CHECK_LIB(i386, i386_iopl)
+    AC_CHECK_LIB(amd64, amd64_iopl)
 ])
 
 AC_CHECK_TOOL(WINDRES, windres, )
@@ -138,6 +145,8 @@ AC_DEFUN([AC_DATAROOTDIR_CHECKED])
 AC_OUTPUT([
 Makefile
 man/Makefile
+opl/Makefile
+opl/examples/Makefile
 pcsound/Makefile
 pkg/Makefile
 pkg/config.make

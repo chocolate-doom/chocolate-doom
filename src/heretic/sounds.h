@@ -27,6 +27,8 @@
 #ifndef __SOUNDSH__
 #define __SOUNDSH__
 
+#include "i_sound.h"
+
 #define MAX_SND_DIST 	1600
 #define MAX_CHANNELS	16
 
@@ -290,5 +292,8 @@ typedef enum
     sfx_amb11,
     NUMSFX
 } sfxenum_t;
+
+extern sfxinfo_t S_sfx[];
+extern musicinfo_t S_music[];
 
 #endif

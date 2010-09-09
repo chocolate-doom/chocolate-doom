@@ -44,6 +44,7 @@
 
 FILE *save_stream;
 int savegamelength;
+boolean savegame_error;
 
 // Get the filename of a temporary file to write the savegame to.  After
 // the file has been successfully saved, it will be renamed to the 
@@ -75,7 +76,7 @@ char *P_SaveGameFile(int slot)
         filename = malloc(strlen(savegamedir) + 32);
     }
 
-    sprintf(basename, DEH_String(SAVEGAMENAME "%d.dsg"), slot);
+    DEH_snprintf(basename, 32, SAVEGAMENAME "%d.dsg", slot);
 
     sprintf(filename, "%s%s", savegamedir, basename);
 
@@ -88,14 +89,31 @@ static byte saveg_read8(void)
 {
     byte result;
 
-    fread(&result, 1, 1, save_stream);
+    if (fread(&result, 1, 1, save_stream) < 1)
+    {
+        if (!savegame_error)
+        {
+            fprintf(stderr, "saveg_read8: Unexpected end of file while "
+                            "reading save game\n");
+
+            savegame_error = true;
+        }
+    }
 
     return result;
 }
 
 static void saveg_write8(byte value)
 {
-    fwrite(&value, 1, 1, save_stream);
+    if (fwrite(&value, 1, 1, save_stream) < 1)
+    {
+        if (!savegame_error)
+        {
+            fprintf(stderr, "saveg_write8: Error while writing save game\n");
+
+            savegame_error = true;
+        }
+    }
 }
 
 static short saveg_read16(void)

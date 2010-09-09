@@ -27,6 +27,7 @@
 #include <stdlib.h>
 
 #include "doomdef.h"
+#include "deh_str.h"
 #include "m_random.h"
 #include "p_local.h"
 #include "s_sound.h"
@@ -394,7 +395,7 @@ void P_DeathThink(player_t * player)
     {
         if (player == &players[consoleplayer])
         {
-            I_SetPalette((byte *) W_CacheLumpName("PLAYPAL", PU_CACHE));
+            I_SetPalette(W_CacheLumpName(DEH_String("PLAYPAL"), PU_CACHE));
             inv_ptr = 0;
             curpos = 0;
             newtorch = 0;

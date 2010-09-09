@@ -63,6 +63,9 @@ extern int key_invdrop;
 extern int key_message_refresh;
 extern int key_pause;
 
+extern int key_multi_msg;
+extern int key_multi_msgplayer[8];
+
 extern int key_weapon1;
 extern int key_weapon2;
 extern int key_weapon3;
@@ -71,6 +74,11 @@ extern int key_weapon5;
 extern int key_weapon6;
 extern int key_weapon7;
 extern int key_weapon8;
+
+extern int key_demo_quit;
+extern int key_spy;
+extern int key_prevweapon;
+extern int key_nextweapon;
 
 extern int key_map_north;
 extern int key_map_south;
@@ -136,6 +144,9 @@ extern int mousebstraferight;
 extern int mousebbackward;
 extern int mousebuse;
 
+extern int mousebprevweapon;
+extern int mousebnextweapon;
+
 extern int joybfire;
 extern int joybstrafe;
 extern int joybuse;
@@ -146,8 +157,11 @@ extern int joybjump;
 extern int joybstrafeleft;
 extern int joybstraferight;
 
+extern int joybprevweapon;
+extern int joybnextweapon;
+
 extern int dclick_use;
- 
+
 void M_BindBaseControls(void);
 void M_BindHereticControls(void);
 void M_BindHexenControls(void);
@@ -155,6 +169,7 @@ void M_BindStrifeControls(void);
 void M_BindWeaponControls(void);
 void M_BindMapControls(void);
 void M_BindMenuControls(void);
+void M_BindChatControls(unsigned int num_players);
 
 void M_ApplyPlatformDefaults(void);
 
