@@ -48,55 +48,79 @@
 //
 // CHANGE THE TEXTURE OF A WALL SWITCH TO ITS OPPOSITE
 //
+// villsa [STRIFE] new switch list
 switchlist_t alphSwitchList[] =
 {
-    // Doom shareware episode 1 switches
-/*    {"SW1BRCOM",	"SW2BRCOM",	1},
-    {"SW1BRN1",	"SW2BRN1",	1},
-    {"SW1BRN2",	"SW2BRN2",	1},
-    {"SW1BRNGN",	"SW2BRNGN",	1},
-    {"SW1BROWN",	"SW2BROWN",	1},
-    {"SW1COMM",	"SW2COMM",	1},
-    {"SW1COMP",	"SW2COMP",	1},
-    {"SW1DIRT",	"SW2DIRT",	1},
-    {"SW1EXIT",	"SW2EXIT",	1},
-    {"SW1GRAY",	"SW2GRAY",	1},
-    {"SW1GRAY1",	"SW2GRAY1",	1},
-    {"SW1METAL",	"SW2METAL",	1},
-    {"SW1PIPE",	"SW2PIPE",	1},
-    {"SW1SLAD",	"SW2SLAD",	1},
-    {"SW1STARG",	"SW2STARG",	1},
-    {"SW1STON1",	"SW2STON1",	1},
-    {"SW1STON2",	"SW2STON2",	1},
-    {"SW1STONE",	"SW2STONE",	1},
-    {"SW1STRTN",	"SW2STRTN",	1},
-    
-    // Doom registered episodes 2&3 switches
-    {"SW1BLUE",	"SW2BLUE",	2},
-    {"SW1CMT",		"SW2CMT",	2},
-    {"SW1GARG",	"SW2GARG",	2},
-    {"SW1GSTON",	"SW2GSTON",	2},
-    {"SW1HOT",		"SW2HOT",	2},
-    {"SW1LION",	"SW2LION",	2},
-    {"SW1SATYR",	"SW2SATYR",	2},
-    {"SW1SKIN",	"SW2SKIN",	2},
-    {"SW1VINE",	"SW2VINE",	2},
-    {"SW1WOOD",	"SW2WOOD",	2},
-    
-    // Doom II switches
-    {"SW1PANEL",	"SW2PANEL",	3},
-    {"SW1ROCK",	"SW2ROCK",	3},
-    {"SW1MET2",	"SW2MET2",	3},
-    {"SW1WDMET",	"SW2WDMET",	3},
-    {"SW1BRIK",	"SW2BRIK",	3},
-    {"SW1MOD1",	"SW2MOD1",	3},
-    {"SW1ZIM",		"SW2ZIM",	3},
-    {"SW1STON6",	"SW2STON6",	3},
-    {"SW1TEK",		"SW2TEK",	3},
-    {"SW1MARB",	"SW2MARB",	3},
-    {"SW1SKULL",	"SW2SKULL",	3},*/
-	
-    {"\0",		"\0",		0}
+    { "GLASS01",    "GLASS02",      1,  sfx_bglass  },
+    { "GLASS03",    "GLASS04",      1,  sfx_bglass  },
+    { "GLASS05",    "GLASS06",      1,  sfx_bglass  },
+    { "GLASS07",    "GLASS08",      1,  sfx_bglass  },
+    { "GLASS17",    "GLASS18",      1,  sfx_bglass  },
+    { "GLASS19",    "GLASS20",      1,  sfx_bglass  },
+    { "SWKNOB01",   "SWKNOB02",     1,  sfx_swknob  },
+    { "SWLITE01",   "SWLITE02",     1,  sfx_None    },
+    { "SWCHN01",    "SWCHN02",      1,  sfx_pulchn  },
+    { "COMP01",     "COMP04B",      1,  sfx_bglass  },
+    { "COMP05",     "COMP12B",      1,  sfx_bglass  },
+    { "COMP09",     "COMP12B",      1,  sfx_bglass  },
+    { "COMP12",     "COMP04B",      1,  sfx_bglass  },
+    { "COMP13",     "COMP12B",      1,  sfx_bglass  },
+    { "COMP17",     "COMP20B",      1,  sfx_bglass  },
+    { "COMP21",     "COMP28B",      1,  sfx_bglass  },
+    { "WALTEK09",   "WALTEKB1",     1,  sfx_None    },
+    { "WALTEK10",   "WALTEKB1",     1,  sfx_None    },
+    { "WALTEK15",   "WALTEKB1",     1,  sfx_None    },
+    { "SWFORC01",   "SWFORC02",     1,  sfx_None    },
+    { "SWEXIT01",   "SWEXIT02",     1,  sfx_None    },
+    { "DORSBK01",   "DORSBK02",     1,  sfx_swston  },
+    { "SWSLD01",    "SWSLD02",      1,  sfx_None    },
+    { "DORWS04",    "DORWS05",      1,  sfx_swbolt  },
+    { "SWIRON01",   "SWIRON02",     1,  sfx_None    },
+    { "GLASS09",    "GLASS10",      2,  sfx_bglass  },
+    { "GLASS11",    "GLASS12",      2,  sfx_bglass  },
+    { "GLASS13",    "GLASS14",      2,  sfx_bglass  },
+    { "GLASS15",    "GLASS16",      2,  sfx_bglass  },
+    { "SWFORC03",   "SWFORC04",     2,  sfx_None    },
+    { "SWCIT01",    "SWCIT02",      2,  sfx_None    },
+    { "SWTRMG01",   "SWTRMG04",     2,  sfx_None    },
+    { "SWMETL01",   "SWMETL02",     2,  sfx_None    },
+    { "SWWOOD01",   "SWWOOD02",     2,  sfx_None    },
+    { "SWTKBL01",   "SWTKBL02",     2,  sfx_None    },
+    { "AZWAL21",    "AZWAL22",      2,  sfx_None    },
+    { "SWINDT01",   "SWINDT02",     2,  sfx_None    },
+    { "SWRUST01",   "SWRUST02",     2,  sfx_None    },
+    { "SWCHAP01",   "SWCHAP02",     2,  sfx_None    },
+    { "SWALIN01",   "SWALIN02",     2,  sfx_None    },
+    { "SWWALG01",   "SWWALG02",     2,  sfx_None    },
+    { "SWWALG03",   "SWWALG04",     2,  sfx_None    },
+    { "SWTRAM01",   "SWTRAM02",     2,  sfx_None    },
+    { "SWTRAM03",   "SWTRAM04",     2,  sfx_None    },
+    { "SWORC01",    "SWORC02",      2,  sfx_None    },
+    { "SWBRIK01",   "SWBRIK02",     2,  sfx_None    },
+    { "SWIRON03",   "SWIRON04",     2,  sfx_None    },
+    { "SWIRON05",   "SWIRON06",     2,  sfx_None    },
+    { "SWIRON07",   "SWIRON08",     2,  sfx_None    },
+    { "SWCARD01",   "SWCARD02",     2,  sfx_keycrd  },
+    { "SWSIGN01",   "SWSIGN02",     2,  sfx_None    },
+    { "SWLEV01",    "SWLEV02",      2,  sfx_None    },
+    { "SWLEV03",    "SWLEV04",      2,  sfx_None    },
+    { "SWLEV05",    "SWLEV06",      2,  sfx_None    },
+    { "SWBRN01",    "SWBRN02",      2,  sfx_keycrd  },
+    { "SWPIP01",    "SWPIP02",      2,  sfx_valve   },
+    { "SWPALM01",   "SWPALM02",     2,  sfx_swscan  },
+    { "SWKNOB03",   "SWKNOB04",     2,  sfx_swknob  },
+    { "ALTSW01",    "ALTSW02",      2,  sfx_None    },
+    { "COMP25",     "COMP28B",      2,  sfx_bglass  },
+    { "COMP29",     "COMP20B",      2,  sfx_bglass  },
+    { "COMP33",     "COMP50",       2,  sfx_bglass  },
+    { "COMP42",     "COMP51",       2,  sfx_bglass  },
+    { "GODSCRN1",   "GODSCRN2",     2,  sfx_difool  },
+    { "ALIEN04",    "ALIEN05",      2,  sfx_None    },
+    { "CITADL04",   "CITADL05",     2,  sfx_None    },
+    { "SWITE03",    "SWITE04",      2,  sfx_None    },
+    { "SWTELP01",   "SWTELP02",     2,  sfx_None    },
+    { "BRNSCN01",   "BRNSCN05",     2,  sfx_firxpl  },
+    { "\0",         "\0",           0,  sfx_None    }
 };
 
 int		switchlist[MAXSWITCHES * 2];
@@ -115,15 +139,17 @@ void P_InitSwitchList(void)
 	
     episode = 1;
 
-    if (gamemode == registered || gamemode == retail)
-	episode = 2;
-    else
+    // STRIFE-FIXME: Needs to test isregistered variable
+    if(gamemode == registered)
+            episode = 2;
+    // villsa [STRIFE] unused
+    /*else
 	if ( gamemode == commercial )
-	    episode = 3;
+	    episode = 3;*/
 		
-    for (index = 0,i = 0;i < MAXSWITCHES;i++)
+    for(index = 0, i = 0; i < MAXSWITCHES; i++)
     {
-	if (!alphSwitchList[i].episode)
+	if(!alphSwitchList[i].episode)
 	{
 	    numswitches = index/2;
 	    switchlist[index] = -1;
@@ -132,18 +158,6 @@ void P_InitSwitchList(void)
 		
 	if (alphSwitchList[i].episode <= episode)
 	{
-#if 0	// UNUSED - debug?
-	    int		value;
-			
-	    if (R_CheckTextureNumForName(alphSwitchList[i].name1) < 0)
-	    {
-		I_Error("Can't find switch texture '%s'!",
-			alphSwitchList[i].name1);
-		continue;
-	    }
-	    
-	    value = R_TextureNumForName(alphSwitchList[i].name1);
-#endif
 	    switchlist[index++] = R_TextureNumForName(DEH_String(alphSwitchList[i].name1));
 	    switchlist[index++] = R_TextureNumForName(DEH_String(alphSwitchList[i].name2));
 	}
@@ -152,33 +166,25 @@ void P_InitSwitchList(void)
 
 
 //
+// P_StartButton
 // Start a button counting down till it turns off.
 //
-void
-P_StartButton
-( line_t*	line,
-  bwhere_e	w,
-  int		texture,
-  int		time )
+void P_StartButton(line_t* line, bwhere_e w, int texture, int time)
 {
     int		i;
     
     // See if button is already pressed
-    for (i = 0;i < MAXBUTTONS;i++)
+    for(i = 0; i < MAXBUTTONS; i++)
     {
-	if (buttonlist[i].btimer
-	    && buttonlist[i].line == line)
-	{
-	    
-	    return;
-	}
+	if(buttonlist[i].btimer && buttonlist[i].line == line)
+            return;
     }
     
 
     
-    for (i = 0;i < MAXBUTTONS;i++)
+    for(i = 0; i < MAXBUTTONS; i++)
     {
-	if (!buttonlist[i].btimer)
+	if(!buttonlist[i].btimer)
 	{
 	    buttonlist[i].line = line;
 	    buttonlist[i].where = w;
@@ -193,26 +199,59 @@ P_StartButton
 }
 
 
+//
+// P_SpawnBrokenGlass
+// villsa [STRIFE] new function
+//
+static void P_SpawnBrokenGlass(line_t* line)
+{
+    fixed_t x1;
+    fixed_t x2;
+    fixed_t y1;
+    fixed_t y2;
+    int i;
+    mobj_t* glass;
+    angle_t an;
 
+    x1 = (line->v2->x + line->v1->x) / 2;
+    y1 = (line->v2->y + line->v1->y) / 2;
+    x2 = ((line->frontsector->soundorg.x - x1) / 5) + x1;
+    y2 = ((line->frontsector->soundorg.y - y1) / 5) + y1;
+
+    for(i = 0; i < 7; i++)
+    {
+        glass = P_SpawnMobj(x2, y2, ONCEILINGZ, MT_JUNK);
+        glass->z += (24*FRACUNIT);
+        glass->flags |= (MF_SHADOW|MF_MVIS);
+
+        P_SetMobjState(glass, P_Random() % 3 + S_SHRD_03); // 284
+
+        an = ((P_Random() << 13) / 255);
+
+        glass->angle = (an << ANGLETOFINESHIFT);
+        glass->momx = FixedMul(finecosine[an], (P_Random() & 3) << FRACBITS);
+        glass->momy = FixedMul(finesine[an], (P_Random() & 3) << FRACBITS);
+        glass->momz = (P_Random() & 7) << FRACBITS;
+        glass->tics += (P_Random() + 7) & 7;
+    }
+}
 
 
 //
 // Function that changes wall texture.
 // Tell it if switch is ok to use again (1=yes, it's a button).
 //
-void
-P_ChangeSwitchTexture
-( line_t*	line,
-  int 		useAgain )
+void P_ChangeSwitchTexture(line_t* line, int useAgain)
 {
     int     texTop;
     int     texMid;
     int     texBot;
     int     i;
     int     sound;
-	
-    if (!useAgain)
-	line->special = 0;
+    boolean breakglass; // villsa [STRIFE]
+    switchlist_t* sl;   // villsa [STRIFE]
+
+    breakglass = false; // villsa [STRIFE]
 
     texTop = sides[line->sidenum[0]].toptexture;
     texMid = sides[line->sidenum[0]].midtexture;
@@ -221,42 +260,101 @@ P_ChangeSwitchTexture
     sound = sfx_swtchn;
 
     // EXIT SWITCH?
-    if (line->special == 11)                
-	sound = sfx_swish;  // villsa [STRIFE] TODO - fix sounds
-	
-    for (i = 0;i < numswitches*2;i++)
+    // villsa [STRIFE] check for linetype 182 (break glass)
+    if(line->special == 182)
     {
-	if (switchlist[i] == texTop)
+        line->flags &= ~ML_BLOCKMONSTERS;
+        breakglass = true;
+
+        if(useAgain)
+        {
+            texMid = 0;
+            texTop = 0;
+        }
+
+        if(texBot)
+            useAgain = 0;
+
+        sound = sfx_bglass;
+    }
+
+    if(!useAgain)
+	line->special = 0;
+	
+    for(i = 0; i < numswitches*2; i++)
+    {
+        sl = &alphSwitchList[i / 2]; // villsa [STRIFE]
+
+	if(switchlist[i] == texTop)
 	{
+            // villsa [STRIFE] set sound
+            if(sl->sound)
+                sound = sl->sound;
+
 	    S_StartSound(buttonlist->soundorg,sound);
 	    sides[line->sidenum[0]].toptexture = switchlist[i^1];
 
-	    if (useAgain)
+	    if(useAgain)
 		P_StartButton(line,top,switchlist[i],BUTTONTIME);
+
+            if(breakglass)
+                P_SpawnBrokenGlass(line);
 
 	    return;
 	}
 	else
 	{
-	    if (switchlist[i] == texMid)
+	    if(switchlist[i] == texMid)
 	    {
+                // villsa [STRIFE] set sound
+                if(sl->sound)
+                    sound = sl->sound;
+
 		S_StartSound(buttonlist->soundorg,sound);
 		sides[line->sidenum[0]].midtexture = switchlist[i^1];
 
-		if (useAgain)
+		if(useAgain)
 		    P_StartButton(line, middle,switchlist[i],BUTTONTIME);
+
+                // villsa [STRIFE]
+                if(sound == sfx_firxpl)
+                {
+                    breakglass = true;
+
+                    // give quest token #28 to player
+                    players[0].questflags |= (1 << ((MT_TOKEN_QUEST28 - MT_TOKEN_QUEST1) + 1));
+
+                    // give stamina/accuracy items
+                    if(!netgame)
+                    {
+                        P_GiveItemToPlayer(players, SPR_TOKN, MT_TOKEN_STAMINA);
+                        P_GiveItemToPlayer(players, SPR_TOKN, MT_TOKEN_NEW_ACCURACY);
+                    }
+
+                }
+
+                // villsa [STRIFE]
+                if(breakglass || sound == sfx_bglass)
+                    P_SpawnBrokenGlass(line);
 
 		return;
 	    }
 	    else
 	    {
-		if (switchlist[i] == texBot)
+		if(switchlist[i] == texBot)
 		{
+                    // villsa [STRIFE] set sound
+                    if(sl->sound)
+                        sound = sl->sound;
+
 		    S_StartSound(buttonlist->soundorg,sound);
 		    sides[line->sidenum[0]].bottomtexture = switchlist[i^1];
 
-		    if (useAgain)
+		    if(useAgain)
 			P_StartButton(line, bottom,switchlist[i],BUTTONTIME);
+
+                    if(breakglass)
+                        P_SpawnBrokenGlass(line);
 
 		    return;
 		}

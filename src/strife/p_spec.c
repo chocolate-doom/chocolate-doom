@@ -1065,6 +1065,7 @@ P_ShootSpecialLine
 	switch(line->special)
 	{
 	  case 46:
+          case 182: // villsa [STRIFE] for windows
 	    // OPEN DOOR IMPACT
 	    ok = 1;
 	    break;
@@ -1092,6 +1093,11 @@ P_ShootSpecialLine
 	EV_DoPlat(line,raiseToNearestAndChange,0);
 	P_ChangeSwitchTexture(line,0);
 	break;
+
+      case 182:
+          // villsa [STRIFE] break glass
+          P_ChangeSwitchTexture(line, 0);
+        break;
     }
 }
 

@@ -228,7 +228,8 @@ typedef struct
     char	name1[9];
     char	name2[9];
     short	episode;
-    
+    int         sound;  // villsa [STRIFE]
+
 } switchlist_t;
 
 
@@ -255,7 +256,7 @@ typedef struct
 
 
  // max # of wall switches in a level
-#define MAXSWITCHES		50
+#define MAXSWITCHES		80  // villsa [STRIFE] changed from 50 to 80
 
  // 4 players, 4 buttons each at once, max.
 #define MAXBUTTONS		16
