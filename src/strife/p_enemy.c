@@ -722,7 +722,7 @@ P_LookForPlayers
     sector_t*   sector;
     angle_t     an;
     fixed_t     dist;
-    mobj_t  *   master = players[actor->allegiance].mo;
+    mobj_t  *   master = players[actor->miscdata].mo;
 
     // haleyjd 09/05/10: handle Allies
     if(actor->flags & MF_ALLY)
@@ -734,7 +734,7 @@ P_LookForPlayers
             // allegiance. Other allies do it unconditionally.
             if(master && master->target && 
                (master->target->type != MT_REBEL1 ||
-                master->target->allegiance != actor->allegiance))
+                master->target->miscdata != actor->miscdata))
             {
                 actor->target = master->target;
             }
@@ -747,7 +747,7 @@ P_LookForPlayers
                 // friendly Rebel or the allied player.
                 if(!linetarget ||
                     actor->target->type == MT_REBEL1 &&
-                    actor->target->allegiance == actor->allegiance ||
+                    actor->target->miscdata == actor->miscdata ||
                     actor->target == master)
                 {
                     actor->target = NULL;

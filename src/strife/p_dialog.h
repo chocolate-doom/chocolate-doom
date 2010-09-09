@@ -31,6 +31,8 @@
 #ifndef P_DIALOG_H__
 #define P_DIALOG_H__
 
+#define OBJECTIVE_LEN       300
+
 #define MDLG_CHOICELEN      32
 #define MDLG_MSGLEN         80
 #define MDLG_NAMELEN        16

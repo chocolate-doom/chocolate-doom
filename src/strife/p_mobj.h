@@ -325,8 +325,10 @@ typedef struct mobj_s
     // Thing being chased/attacked for tracers.
     struct mobj_s*      tracer;
 
-    // [STRIFE] haleyjd 09/05/10: allegiance, for friends and teleport beacons
-    byte                allegiance;
+    // [STRIFE] haleyjd 09/05/10: 
+    // * In multiplayer this stores allegiance, for friends and teleport beacons
+    // * In single-player this tracks dialog state.
+    byte                miscdata;
     
 } mobj_t;
 

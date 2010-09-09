@@ -31,6 +31,7 @@
 #include "z_zone.h"
 #include "w_wad.h"
 #include "deh_str.h"
+#include "d_main.h"
 #include "d_player.h"
 #include "doomstat.h"
 #include "m_random.h"
@@ -66,6 +67,10 @@
 // This can be toggled at runtime to determine if the full dialog messages
 // are subtitled on screen or not. Defaults to off.
 boolean dialogshowtext = false;
+
+// The global mission objective buffer. This gets written to and read from file,
+// and is set by dialogs and line actions.
+char mission_objective[OBJECTIVE_LEN];
 
 //
 // Static Globals
@@ -784,19 +789,21 @@ static void P_DialogDrawer(void)
 //
 void P_DialogDoChoice(int choice)
 {
-#if 0
-    int i = 0;
+    int i = 0, nextdialog = 0;
     boolean candochoice = true;
-    char *message;
+    char *message = NULL;
+    mapdlgchoice_t *currentchoice;
 
     if(choice == -1)
         choice = dialogmenu.numitems - 1;
 
+    currentchoice = &(currentdialog->choices[choice]);
+
     // I_StartVoice(0); -- verify (should stop previous voice I believe)
     do
     {
-        if(P_PlayerHasItem(dialogplayer, currentdialog->choices[choice].needitems[i]) <
-            currentdialog->choices[choice].needamounts[i])
+        if(P_PlayerHasItem(dialogplayer, currentchoice->needitems[i]) <
+                                         currentchoice->needamounts[i])
         {
             candochoice = false; // nope, missing something
         }
@@ -808,11 +815,11 @@ void P_DialogDoChoice(int choice)
     {
         int item;
 
-        message = currentdialog->choices[choice].textok;
+        message = currentchoice->textok;
         if(dialogtalkerstates->yes)
             P_SetMobjState(dialogtalker, dialogtalkerstates->yes);
 
-        item = currentdialog->choices[choice].giveitem;
+        item = currentchoice->giveitem;
         if(item < 0 || 
            P_GiveItemToPlayer(dialogplayer, 
                               states[mobjinfo[item].spawnstate].sprite, 
@@ -823,8 +830,8 @@ void P_DialogDoChoice(int choice)
             do
             {
                 P_TakeDialogItem(dialogplayer, 
-                    currentdialog->choices[choice].needitems[count],
-                    currentdialog->choices[choice].needamounts[count]);
+                                 currentchoice->needitems[count],
+                                 currentchoice->needamounts[count]);
                 ++count;
             }
             while(count < 3);
@@ -832,32 +839,41 @@ void P_DialogDoChoice(int choice)
         else
             message = "You seem to have enough!";
 
-        // TODO: more....
+        // store next dialog into the talking actor
+        nextdialog = currentchoice->next;
+        if(nextdialog != 0)
+            dialogtalker->miscdata = (byte)(abs(nextdialog));
     }
     else
     {
         // not successful
-        message = currentdialog->choices[choice].textno;
+        message = currentchoice->textno;
         if(dialogtalkerstates->no)
             P_SetMobjState(dialogtalker, dialogtalkerstates->no);
     }
     
     if(choice != dialogmenu.numitems - 1)
     {
-        // TODO: ...
+        int objective;
+        char *objlump;
+
+        if((objective = currentchoice->objective))
+        {
+            sprintf(mission_objective, "log%i", objective);
+            objlump = W_CacheLumpName(mission_objective, PU_CACHE);
+            strncpy(mission_objective, objlump, 300);
+        }
+        dialogplayer->message = message;
     }
 
     dialogtalker->angle = dialogtalkerangle;
     dialogplayer->st_update = true;
     M_ClearMenus();
-    /*
-    if(v15 >= 0 || gameaction == ga_victory) // Macil hack
+
+    if(nextdialog >= 0 || gameaction == ga_victory) // Macil hack
         menuindialog = false;
     else
-    */
         P_DialogStart(dialogplayer);
-    // TODO: ...
-#endif
 }
 
 //
@@ -916,10 +932,8 @@ void P_DialogStart(player_t *player)
     // set pointer to player talking
     dialogplayer = player;
 
-    // haleyjd: This seems to be an artifact of early development where they
-    // meant to make all this work in multiplayer. By doing this, a thing
-    // could have given different initial dialogs to each player.
-    jumptoconv = linetarget->allegiance;
+    // haleyjd 09/08/10: get any stored dialog state from this object
+    jumptoconv = linetarget->miscdata;
 
     // check item requirements
     while(1)
