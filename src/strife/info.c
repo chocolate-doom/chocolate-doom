@@ -143,7 +143,7 @@ void A_EntityDeath();
 void A_SpawnZombie();
 void A_ZombieInSpecialSector();
 void A_CrystalExplode();
-void A_DeathMsg();
+void A_QuestMsg();
 void A_ExtraLightOff();
 void A_CrystalRadiusAtk();
 void A_DeathExplode5();
@@ -1360,7 +1360,7 @@ state_t states[NUMSTATES] =
 /*S_PSTN_01*/       { SPR_PSTN, 1, 8, { NULL }, S_PSTN_00 },        //1159
 /*S_PSTN_02*/       { SPR_PSTN, 32768, 4, { A_Scream }, S_PSTN_03 },        //1160
 /*S_PSTN_03*/       { SPR_PSTN, 32769, 4, { A_Fall }, S_PSTN_04 },      //1161
-/*S_PSTN_04*/       { SPR_PSTN, 32770, 4, { A_DeathMsg }, S_PSTN_05 },      //1162
+/*S_PSTN_04*/       { SPR_PSTN, 32770, 4, { A_QuestMsg }, S_PSTN_05 },      //1162
 /*S_PSTN_05*/       { SPR_PSTN, 32771, 4, { A_SpawnSparkPuff }, S_PSTN_06 },        //1163
 /*S_PSTN_06*/       { SPR_PSTN, 32772, 4, { A_BodyParts }, S_PSTN_07 },     //1164
 /*S_PSTN_07*/       { SPR_PSTN, 32773, 4, { NULL }, S_PSTN_08 },        //1165
@@ -1373,7 +1373,7 @@ state_t states[NUMSTATES] =
 /*S_SECR_03*/       { SPR_SECR, 32771, 4, { NULL }, S_SECR_00 },        //1172
 /*S_SECR_04*/       { SPR_SECR, 32772, 5, { A_SpawnSparkPuff }, S_SECR_05 },        //1173
 /*S_SECR_05*/       { SPR_SECR, 32773, 5, { A_Fall }, S_SECR_06 },      //1174
-/*S_SECR_06*/       { SPR_SECR, 32774, 5, { A_DeathMsg }, S_SECR_07 },      //1175
+/*S_SECR_06*/       { SPR_SECR, 32774, 5, { A_QuestMsg }, S_SECR_07 },      //1175
 /*S_SECR_07*/       { SPR_SECR, 32775, 5, { A_BodyParts }, S_SECR_08 },     //1176
 /*S_SECR_08*/       { SPR_SECR, 32776, 5, { A_SpawnSparkPuff }, S_SECR_09 },        //1177
 /*S_SECR_09*/       { SPR_SECR, 9, 5, { NULL }, S_SECR_10 },        //1178
@@ -1390,7 +1390,7 @@ state_t states[NUMSTATES] =
 /*S_EARS_00*/       { SPR_EARS, 0, -1, { NULL }, S_NULL },      //1189
 /*S_COMM_00*/       { SPR_COMM, 0, -1, { NULL }, S_NULL },      //1190
 /*S_BOOM_00*/       { SPR_BOOM, 32768, 1, { A_CrystalRadiusAtk }, S_BOOM_01 },     //1191
-/*S_BOOM_01*/       { SPR_BOOM, 32769, 3, { A_DeathMsg }, S_BOOM_02 },      //1192
+/*S_BOOM_01*/       { SPR_BOOM, 32769, 3, { A_QuestMsg }, S_BOOM_02 },      //1192
 /*S_BOOM_02*/       { SPR_BOOM, 32770, 2, { A_CrystalExplode }, S_BOOM_03 },        //1193
 /*S_BOOM_03*/       { SPR_BOOM, 32771, 3, { A_SpawnSparkPuff }, S_BOOM_04 },        //1194
 /*S_BOOM_04*/       { SPR_BOOM, 32772, 3, { NULL }, S_BOOM_05 },        //1195

@@ -800,16 +800,15 @@ void P_DialogDoChoice(int choice)
     currentchoice = &(currentdialog->choices[choice]);
 
     // I_StartVoice(0); -- verify (should stop previous voice I believe)
-    do
+    // villsa 09/08/10: converted into for loop
+    for(i = 0; i < MDLG_MAXITEMS; i++)
     {
         if(P_PlayerHasItem(dialogplayer, currentchoice->needitems[i]) <
                                          currentchoice->needamounts[i])
         {
             candochoice = false; // nope, missing something
         }
-        ++i;
     }
-    while(i < 3);
 
     if(choice != dialogmenu.numitems - 1 && candochoice)
     {
@@ -827,14 +826,13 @@ void P_DialogDoChoice(int choice)
         {
             // if successful, take needed items
             int count = 0;
-            do
+            // villsa 09/08/10: converted into for loop
+            for(count = 0; count < MDLG_MAXITEMS; count++)
             {
                 P_TakeDialogItem(dialogplayer, 
                                  currentchoice->needitems[count],
                                  currentchoice->needamounts[count]);
-                ++count;
             }
-            while(count < 3);
         }
         else
             message = "You seem to have enough!";
@@ -945,16 +943,15 @@ void P_DialogStart(player_t *player)
         if(currentdialog->jumptoconv == 0)
             break;
 
-        do
+        // villsa 09/08/10: converted into for loop
+        for(i = 0; i < MDLG_MAXITEMS; i++)
         {
             // if the item is non-zero, the player must have at least one in his
             // or her inventory
             if(currentdialog->checkitem[i] != 0 &&
                 P_PlayerHasItem(dialogplayer, currentdialog->checkitem[i]) < 1)
                 break;
-            ++i;
         }
-        while(i < MDLG_MAXITEMS);
 
         if(i < MDLG_MAXITEMS) // didn't find them all? this is our dialog!
             break;

@@ -2540,14 +2540,60 @@ void A_SpawnZombie(mobj_t* actor)
     P_SpawnMobj(actor->x, actor->y, actor->z, MT_ZOMBIE);
 }
 
+//
+// A_ZombieInSpecialSector
+//
+// villsa [STRIFE] new codepointer
+//
 void A_ZombieInSpecialSector(mobj_t* actor)
 {
-    // STRIFE-TODO
+    sector_t* sector;
+    fixed_t force;
+    angle_t angle;
+    int tagval;
+
+    sector = actor->subsector->sector;
+    if(actor->z != sector->floorheight) // [STRIFE] TODO - verify
+        return;
+
+    if(sector->special <= 15)
+        P_DamageMobj(actor, NULL, NULL, 999);
+    else if(sector->special == 18)
+    {
+        tagval = sector->tag - 100;
+        force = (tagval % 10) << 12;
+        angle = (tagval / 10) << 29;
+        P_ThrustMobj(actor, angle, force);  // inlined in asm
+    }
 }
 
+//
+// A_CrystalExplode
+//
+// villsa [STRIFE] new codepointer
+//
 void A_CrystalExplode(mobj_t* actor)
 {
-    // STRIFE-TODO
+    sector_t* sector;
+    mobj_t* rubble;
+    int i;
+    int r;
+
+    sector = actor->subsector->sector;
+    sector->lightlevel = 0;
+    sector->floorheight = P_FindLowestFloorSurrounding(sector);
+
+    // spawn rubble
+    for(i = 0; i < 8; i++)
+    {
+        rubble = P_SpawnMobj(actor->x, actor->y, actor->z, MT_RUBBLE1 + i);
+        r = P_Random();
+        rubble->momx = ((r & 0x0f) - (P_Random() & 7)) << FRACBITS;
+        r = P_Random();
+        rubble->momy = ((r & 7) - (P_Random() & 7)) << FRACBITS;
+        rubble->momz = ((P_Random() & 3) << FRACBITS) + (7*FRACUNIT);
+
+    }
 }
 
 // [STRIFE] New static global - buffer used for various player messages.
@@ -2595,9 +2641,30 @@ void P_DestroyConverter(void)
     }
 }
 
-void A_DeathMsg(mobj_t* actor)
+//
+// A_QuestMsg
+//
+// villsa [STRIFE] new codepointer
+// Displays text based on quest item's name
+// Quest item is based on actor's speed
+//
+void A_QuestMsg(mobj_t* actor)
 {
-    // STRIFE-TODO
+    char* name;
+    int quest;
+    int i;
+
+    // get name
+    name = mobjinfo[(MT_TOKEN_QUEST1 - 1) + actor->info->speed].name;
+    strcpy(pmsgbuffer, name);   // inlined in asm
+
+    // give quest and display message to players
+    for(i = 0; i < MAXPLAYERS; i++)
+    {
+        quest = 1 << ((actor->info->speed) - 1);
+        players[i].message = pmsgbuffer;
+        players[i].questflags |= quest;
+    }
 }
 
 //
@@ -2912,9 +2979,24 @@ void A_ClearSoundTarget(mobj_t* actor)
     actor->subsector->sector->soundtarget = NULL;
 }
 
+//
+// A_DropBurnFlesh
+//
+// villsa [STRIFE] new codepointer
+//
 void A_DropBurnFlesh(mobj_t* actor)
 {
-    // STRIFE-TODO
+    mobj_t* mo;
+    mobjtype_t type;
+
+    type = actor->type;
+
+    mo = P_SpawnMobj(actor->x, actor->y, actor->z + (24*FRACUNIT), MT_BURNDROP);
+    mo->momz = -FRACUNIT;
+
+    actor->type = MT_SFIREBALL;
+    P_RadiusAttack(actor, actor, 64);
+    actor->type = type;
 }
 
 //
@@ -2929,8 +3011,37 @@ void A_FlameDeath(mobj_t* actor)
     actor->momz = (P_Random() & 3) << FRACBITS;
 }
 
+//
+// A_ClearForceField
+//
+// villsa [STRIFE] new codepointer
+// check for all matching lines in the sector
+// and disable blocking/midtextures
+//
 void A_ClearForceField(mobj_t* actor)
 {
-    // STRIFE-TODO
+    int i;
+    sector_t *sec;
+    line_t *secline;
+
+    actor->flags &= ~(MF_SOLID|MF_SPECIAL);
+    sec = actor->subsector->sector;
+
+    if(!sec->linecount)
+        return;
+
+    for(i = 0; i < sec->linecount; i++)
+    {
+        secline = sec->lines[i];
+        if(!(secline->flags & ML_TWOSIDED))
+            continue;
+        if(secline->special != 148)
+            continue;
+
+        secline->flags &= ~ML_BLOCKING;
+        secline->special = 0;
+        sides[secline->sidenum[0]].midtexture = 0;
+        sides[secline->sidenum[1]].midtexture = 0;
+    }
 }
 
