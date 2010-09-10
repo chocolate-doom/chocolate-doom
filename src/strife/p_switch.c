@@ -220,7 +220,7 @@ static void P_SpawnBrokenGlass(line_t* line)
 
     for(i = 0; i < 7; i++)
     {
-        glass = P_SpawnMobj(x2, y2, ONCEILINGZ, MT_JUNK);
+        glass = P_SpawnMobj(x2, y2, ONFLOORZ, MT_JUNK);
         glass->z += (24*FRACUNIT);
         glass->flags |= (MF_SHADOW|MF_MVIS);
 
@@ -312,6 +312,10 @@ void P_ChangeSwitchTexture(line_t* line, int useAgain)
 
 		S_StartSound(buttonlist->soundorg,sound);
 		sides[line->sidenum[0]].midtexture = switchlist[i^1];
+
+                // villsa [STRIFE] affect second side of line
+                if(line->flags & ML_TWOSIDED)
+                    sides[line->sidenum[1]].midtexture = switchlist[i^1];
 
 		if(useAgain)
 		    P_StartButton(line, middle,switchlist[i],BUTTONTIME);

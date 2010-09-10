@@ -360,20 +360,26 @@ typedef enum
 
 typedef struct
 {
-    thinker_t	thinker;
-    vldoor_e	type;
-    sector_t*	sector;
-    fixed_t	topheight;
-    fixed_t	speed;
+    thinker_t   thinker;
+    vldoor_e    type;
+    sector_t*   sector;
+    fixed_t     topheight;
+    fixed_t     speed;
 
     // 1 = up, 0 = waiting at top, -1 = down
-    int             direction;
+    int         direction;
     
     // tics to wait at the top
-    int             topwait;
+    int         topwait;
     // (keep in case a door going down is reset)
     // when it reaches 0, start going down
-    int             topcountdown;
+    int         topcountdown;
+
+    // villsa [STRIFE] new field - sound to play when opening
+    int         opensound;
+
+    // villsa [STRIFE] new field - sound to play when closing
+    int         closesound;
     
 } vldoor_t;
 

@@ -31,19 +31,14 @@
 #include "i_swap.h"
 #include "i_system.h"
 #include "z_zone.h"
-
-
 #include "w_wad.h"
-
 #include "doomdef.h"
 #include "r_local.h"
 #include "p_local.h"
-
 #include "doomstat.h"
 #include "r_sky.h"
-
-
 #include "r_data.h"
+#include "sounds.h" // villsa [STRIFE]
 
 //
 // Graphics.
@@ -781,6 +776,91 @@ int	R_TextureNumForName (char* name)
 		 name);
     }
     return i;
+}
+
+//
+// R_SoundNumForDoor
+//
+// villsa [STRIFE] - new function
+// Set sounds associated with door though why
+// on earth is this function placed here?
+//
+void R_SoundNumForDoor(vldoor_t* door)
+{
+    int         i;
+    sector_t    *sector;
+    line_t      *line;
+    texture_t   *texture;
+    char        name[8];
+    char        c1;
+    char        c2;
+
+    // set default sounds
+    door->opensound = sfx_drsmto;
+    door->closesound = sfx_drsmtc;
+
+    for(sector = door->sector, i = 0; i < sector->linecount; i++)
+    {
+        line = sector->lines[i];
+
+        if(!(line->flags & ML_TWOSIDED))
+            continue;
+
+        texture = textures[sides[line->sidenum[0]].toptexture];
+        memcpy(name, texture->name, 8);
+        //memcpy(&v6, texture->index, 0);   // [STRIFE] todo - WHAT?!
+
+        if(strncmp(name, "DOR", 3))
+            continue;
+
+        c1 = name[3];
+        c2 = name[4];
+
+        // S type
+        if(c1 == 'S')
+        {
+            door->opensound = sfx_drston;
+            door->closesound = sfx_drston;
+            return;
+        }
+
+        // M type
+        if(c1 == 'M')
+        {
+            // L subtype
+            if(c2 == 'L')
+            {
+                door->opensound = sfx_drlmto;
+                door->closesound = sfx_drlmtc;
+            }
+            // S subtype
+            else if(c2 == 'S')
+            {
+                door->opensound = sfx_drsmto;
+                door->closesound = sfx_drsmtc;
+            }
+            return;
+        }
+        // W type
+        else if(c1 == 'W')
+        {
+            // L subtype
+            if(c2 == 'L')
+            {
+                door->opensound = sfx_drlwud;
+                door->closesound = sfx_drlwud;
+
+            }
+            // S subtype
+            else if(c2 == 'S')
+            {
+                door->opensound = sfx_drswud;
+                door->closesound = sfx_drswud;
+
+            }
+            return;
+        }
+    }
 }
 
 

@@ -31,6 +31,7 @@
 
 #include "r_defs.h"
 #include "r_state.h"
+#include "p_spec.h"    // villsa [STRIFE]
 
 
 // Retrieve column data for span blitting.
@@ -55,5 +56,6 @@ int R_FlatNumForName (char* name);
 // returns the texture number for the texture name.
 int R_TextureNumForName (char *name);
 int R_CheckTextureNumForName (char *name);
+void R_SoundNumForDoor(vldoor_t* door); // villsa [STRIFE]
 
 #endif
