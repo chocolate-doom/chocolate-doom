@@ -346,6 +346,10 @@ boolean P_CheckMissileRange(mobj_t* actor)
     if (dist > 150)
         dist = 150;
 
+    // haleyjd 09/10/10: Hex-Rays was leaving this out completely:
+    if (actor->type == MT_CRUSADER && dist > 120)
+        dist = 120;
+
     if (P_Random () < dist)
         return false;
 

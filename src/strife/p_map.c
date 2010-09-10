@@ -525,18 +525,18 @@ P_TryMove
 
     floatok = false;
     if (!P_CheckPosition (thing, x, y))
-	return false;		// solid wall or thing
-    
+        return false;		// solid wall or thing
+
     if ( !(thing->flags & MF_NOCLIP) )
     {
-	if (tmceilingz - tmfloorz < thing->height)
-	    return false;	// doesn't fit
+        if (tmceilingz - tmfloorz < thing->height)
+            return false;	// doesn't fit
 
-	floatok = true;
-	
-	if ( /*!(thing->flags&MF_TELEPORT)  // villsa [STRIFE] unused
-	     &&*/tmceilingz - thing->z < thing->height)
-	    return false;	// mobj must lower itself to fit
+        floatok = true;
+
+        // villsa [STRIFE] Removed MF_TELEPORT
+        if (tmceilingz - thing->z < thing->height)
+            return false;	// mobj must lower itself to fit
 
         // villsa [STRIFE] non-robots are limited to 16 unit step height
         if(!(thing->flags & MF_NOBLOOD) && tmfloorz - thing->z > (16*FRACUNIT) ||
@@ -547,9 +547,9 @@ P_TryMove
         if(thing->flags & MF_MISSILE && tmfloorz - thing->z > (4*FRACUNIT))
             return false;
 
-	if ( !(thing->flags&(MF_DROPOFF|MF_FLOAT))
-	     && tmfloorz - tmdropoffz > 24*FRACUNIT )
-	    return false;	// don't stand over a dropoff
+        if ( !(thing->flags&(MF_DROPOFF|MF_FLOAT))
+            && tmfloorz - tmdropoffz > 24*FRACUNIT )
+            return false;	// don't stand over a dropoff
     }
     
     // the move is ok,
@@ -566,20 +566,20 @@ P_TryMove
     P_SetThingPosition (thing);
     
     // if any special lines were hit, do the effect
-    if (! (thing->flags&(/*MF_TELEPORT|*/MF_NOCLIP)) ) // villsa [STRIFE] MF_TELEPORT not used
+    if (! (thing->flags&MF_NOCLIP) ) // villsa [STRIFE] MF_TELEPORT not used
     {
-	while (numspechit--)
-	{
-	    // see if the line was crossed
-	    ld = spechit[numspechit];
-	    side = P_PointOnLineSide (thing->x, thing->y, ld);
-	    oldside = P_PointOnLineSide (oldx, oldy, ld);
-	    if (side != oldside)
-	    {
-		if (ld->special)
-		    P_CrossSpecialLine (ld-lines, oldside, thing);
-	    }
-	}
+        while (numspechit--)
+        {
+            // see if the line was crossed
+            ld = spechit[numspechit];
+            side = P_PointOnLineSide (thing->x, thing->y, ld);
+            oldside = P_PointOnLineSide (oldx, oldy, ld);
+            if (side != oldside)
+            {
+                if (ld->special)
+                    P_CrossSpecialLine (ld-lines, oldside, thing);
+            }
+        }
     }
 
     return true;
