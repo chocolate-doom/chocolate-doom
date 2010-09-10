@@ -104,18 +104,38 @@ typedef enum
 //
 // Key cards.
 //
-// STRIFE-TODO: A hell of a bunch of keys.
+// villsa [STRIFE]
 typedef enum
 {
-    it_bluecard,
-    it_yellowcard,
-    it_redcard,
-    it_blueskull,
-    it_yellowskull,
-    it_redskull,
-    
+    key_BaseKey,
+    key_GovsKey,
+    key_Passcard,
+    key_IDBadge,
+    key_PrisonKey,
+    key_SeveredHand,
+    key_Power1Key,
+    key_Power2Key,
+    key_Power3Key,
+    key_GoldKey,
+    key_IDCard,
+    key_SilverKey,
+    key_OracleKey,
+    key_MilitaryID,
+    key_OrderKey,
+    key_WarehouseKey,
+    key_BrassKey,
+    key_RedCrystalKey,
+    key_BlueCrystalKey,
+    key_ChapelKey,
+    key_CatacombKey,
+    key_SecurityKey,
+    key_CoreKey,
+    key_MaulerKey,
+    key_FactoryKey,
+    key_MineKey,
+    key_NewKey5,
+
     NUMCARDS
-    
 } card_t;
 
 

@@ -212,7 +212,7 @@ EV_DoLockedDoor
     if (!p)
 	return 0;
 		
-    switch(line->special)
+/*    switch(line->special)
     {
       case 99:	// Blue Lock
       case 133:
@@ -250,7 +250,7 @@ EV_DoLockedDoor
 	    return 0;
 	}
 	break;	
-    }
+    }*/
 
     return EV_DoDoor(line,type);
 }
@@ -357,7 +357,7 @@ EV_VerticalDoor
     //	Check for locks
     player = thing->player;
 		
-    switch(line->special)
+/*    switch(line->special)
     {
       case 26: // Blue Lock
       case 32:
@@ -398,7 +398,7 @@ EV_VerticalDoor
 	    return;
 	}
 	break;
-    }
+    }*/
 	
     // if the sector has an active thinker, use it
     sec = sides[ line->sidenum[side^1]] .sector;

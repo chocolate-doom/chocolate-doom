@@ -33,6 +33,8 @@
 
 #define OBJECTIVE_LEN       300
 
+#define MAXINVENTORYSLOTS   30
+
 #define MDLG_CHOICELEN      32
 #define MDLG_MSGLEN         80
 #define MDLG_NAMELEN        16
