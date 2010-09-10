@@ -18,7 +18,7 @@
 					<Add option="-gdwarf-2" />
 				</Compiler>
 				<Linker>
-					<Add option="-lpcsound-dbg -ltextscreen-dbg" />
+					<Add option="-lopl-dbg -lpcsound-dbg -ltextscreen-dbg" />
 				</Linker>
 			</Target>
 			<Target title="Release">
@@ -33,7 +33,7 @@
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
-					<Add option="-lpcsound -ltextscreen" />
+					<Add option="-lopl -lpcsound -ltextscreen" />
 				</Linker>
 			</Target>
 		</Build>
@@ -49,6 +49,7 @@
 			<Add directory="..\src\heretic" />
 			<Add directory="..\textscreen" />
 			<Add directory="..\pcsound" />
+			<Add directory="..\opl" />
 		</Compiler>
 		<Linker>
 			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_mixer -lSDL_net -mwindows" />
@@ -71,10 +72,26 @@
 		</Unit>
 		<Unit filename="..\src\d_mode.h" />
 		<Unit filename="..\src\d_ticcmd.h" />
+		<Unit filename="..\src\deh_defs.h" />
+		<Unit filename="..\src\deh_io.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\deh_io.h" />
+		<Unit filename="..\src\deh_main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\deh_main.h" />
+		<Unit filename="..\src\deh_mapping.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\deh_mapping.h" />
 		<Unit filename="..\src\deh_str.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\deh_str.h" />
+		<Unit filename="..\src\deh_text.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="..\src\doomfeatures.h" />
 		<Unit filename="..\src\doomkeys.h" />
 		<Unit filename="..\src\doomtype.h" />
@@ -91,6 +108,28 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\heretic\d_net.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\heretic\deh_ammo.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\heretic\deh_frame.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\heretic\deh_htext.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\heretic\deh_htic.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\heretic\deh_htic.h" />
+		<Unit filename="..\src\heretic\deh_sound.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\heretic\deh_thing.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\heretic\deh_weapon.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\heretic\doomdata.h" />
@@ -116,6 +155,7 @@
 		<Unit filename="..\src\heretic\mn_menu.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\src\heretic\p_action.h" />
 		<Unit filename="..\src\heretic\p_ceilng.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -220,6 +260,9 @@
 		<Unit filename="..\src\i_main.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\src\i_oplmusic.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="..\src\i_pcsound.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -289,6 +332,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\memio.h" />
+		<Unit filename="..\src\midifile.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\midifile.h" />
 		<Unit filename="..\src\mus2mid.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -319,6 +366,10 @@
 		<Unit filename="..\src\w_file_win32.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="..\src\w_main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\w_main.h" />
 		<Unit filename="..\src\w_merge.c">
 			<Option compilerVar="CC" />
 		</Unit>

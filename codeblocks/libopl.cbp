@@ -2,14 +2,14 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="libpcsound" />
+		<Option title="libopl" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="..\lib\libpcsound-dbg" prefix_auto="1" extension_auto="1" />
+				<Option output="..\lib\libopl-dbg" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
-				<Option object_output="..\obj\libpcsound\dbg" />
+				<Option object_output="..\obj\libopl\dbg" />
 				<Option type="2" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -17,9 +17,9 @@
 				</Compiler>
 			</Target>
 			<Target title="Release">
-				<Option output="..\lib\libpcsound" prefix_auto="1" extension_auto="1" />
+				<Option output="..\lib\libopl" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
-				<Option object_output="..\obj\libpcsound\rel" />
+				<Option object_output="..\obj\libopl\rel" />
 				<Option type="2" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -41,18 +41,37 @@
 		<Linker>
 			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_mixer -mwindows" />
 		</Linker>
-		<Unit filename="..\pcsound\pcsound.c">
+		<Unit filename="..\opl\dbopl.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\pcsound\pcsound.h" />
-		<Unit filename="..\pcsound\pcsound_internal.h" />
-		<Unit filename="..\pcsound\pcsound_linux.c">
+		<Unit filename="..\opl\dbopl.h" />
+		<Unit filename="..\opl\ioperm_sys.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\pcsound\pcsound_sdl.c">
+		<Unit filename="..\opl\ioperm_sys.h" />
+		<Unit filename="..\opl\opl.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\pcsound\pcsound_win32.c">
+		<Unit filename="..\opl\opl.h" />
+		<Unit filename="..\opl\opl_internal.h" />
+		<Unit filename="..\opl\opl_linux.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\opl\opl_obsd.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\opl\opl_queue.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\opl\opl_queue.h" />
+		<Unit filename="..\opl\opl_sdl.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\opl\opl_timer.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\opl\opl_timer.h" />
+		<Unit filename="..\opl\opl_win32.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Extensions>
