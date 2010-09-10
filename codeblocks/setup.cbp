@@ -59,6 +59,8 @@
 		</Linker>
 		<Unit filename="setup-res.rc">
 			<Option compilerVar="WINDRES" />
+			<Option compile="0" />
+			<Option link="0" />
 		</Unit>
 		<Unit filename="..\src\d_iwad.c">
 			<Option compilerVar="CC" />

@@ -81,6 +81,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\textscreen\txt_radiobutton.h" />
+		<Unit filename="..\textscreen\txt_scrollpane.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\textscreen\txt_scrollpane.h" />
 		<Unit filename="..\textscreen\txt_sdl.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -89,6 +93,7 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\textscreen\txt_separator.h" />
+		<Unit filename="..\textscreen\txt_smallfont.h" />
 		<Unit filename="..\textscreen\txt_spinctrl.c">
 			<Option compilerVar="CC" />
 		</Unit>
