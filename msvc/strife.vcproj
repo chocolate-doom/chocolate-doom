@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;..\src;..\src\strife;..\src\doom;..\textscreen;..\pcsound"
+				AdditionalIncludeDirectories=".;..\src;..\src\strife;..\src\doom;..\textscreen;..\pcsound;..\opl"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;PROGRAM_PREFIX=&quot;\&quot;chocolate-\&quot;&quot;"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -66,7 +66,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib ..\lib\libpcsound.lib ..\lib\libtextscreen.lib"
+				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib ..\lib\libpcsound.lib ..\lib\libtextscreen.lib ..\lib\libopl.lib"
 				OutputFile="$(OutDir)\chocolate-strife-dbg.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="msvcrtd.lib"
@@ -302,6 +302,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\midifile.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\mus2mid.h"
 				>
 			</File>
@@ -371,6 +375,10 @@
 			</File>
 			<File
 				RelativePath="..\src\w_file.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\w_main.h"
 				>
 			</File>
 			<File
@@ -642,6 +650,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\i_oplmusic.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\i_pcsound.c"
 				>
 			</File>
@@ -714,6 +726,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\midifile.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\mus2mid.c"
 				>
 			</File>
@@ -771,6 +787,10 @@
 			</File>
 			<File
 				RelativePath="..\src\w_file_win32.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\w_main.c"
 				>
 			</File>
 			<File

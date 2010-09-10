@@ -32,6 +32,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libtextscreen", "libtextscr
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Strife", "strife.vcproj", "{FC4DACBA-2A3E-4AF0-804A-AF5FFFD13B08}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libopl", "libopl.vcproj", "{FC8D0610-1507-4F36-99BC-6F5A422B6AD3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -70,6 +72,10 @@ Global
 		{FC4DACBA-2A3E-4AF0-804A-AF5FFFD13B08}.Debug|Win32.Build.0 = Debug|Win32
 		{FC4DACBA-2A3E-4AF0-804A-AF5FFFD13B08}.Release|Win32.ActiveCfg = Release|Win32
 		{FC4DACBA-2A3E-4AF0-804A-AF5FFFD13B08}.Release|Win32.Build.0 = Release|Win32
+		{FC8D0610-1507-4F36-99BC-6F5A422B6AD3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FC8D0610-1507-4F36-99BC-6F5A422B6AD3}.Debug|Win32.Build.0 = Debug|Win32
+		{FC8D0610-1507-4F36-99BC-6F5A422B6AD3}.Release|Win32.ActiveCfg = Release|Win32
+		{FC8D0610-1507-4F36-99BC-6F5A422B6AD3}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

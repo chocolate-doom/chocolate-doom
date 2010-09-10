@@ -52,10 +52,12 @@ struct ioperm_data
 // Function pointers for advapi32.dll.  This DLL does not exist on
 // Windows 9x, so they are dynamically loaded from the DLL at runtime.
 
-static SC_HANDLE WINAPI (*MyOpenSCManagerW)(wchar_t *lpMachineName,
+// haleyjd 09/09/10: Moved calling conventions into ()'s
+
+static SC_HANDLE (WINAPI *MyOpenSCManagerW)(wchar_t *lpMachineName,
                                             wchar_t *lpDatabaseName,
                                             DWORD dwDesiredAccess) = NULL;
-static SC_HANDLE WINAPI (*MyCreateServiceW)(SC_HANDLE hSCManager,
+static SC_HANDLE (WINAPI *MyCreateServiceW)(SC_HANDLE hSCManager,
                                             wchar_t *lpServiceName,
                                             wchar_t *lpDisplayName,
                                             DWORD dwDesiredAccess,
@@ -68,17 +70,17 @@ static SC_HANDLE WINAPI (*MyCreateServiceW)(SC_HANDLE hSCManager,
                                             wchar_t *lpDependencies,
                                             wchar_t *lpServiceStartName,
                                             wchar_t *lpPassword);
-static SC_HANDLE WINAPI (*MyOpenServiceW)(SC_HANDLE hSCManager,
+static SC_HANDLE (WINAPI *MyOpenServiceW)(SC_HANDLE hSCManager,
                                           wchar_t *lpServiceName,
                                           DWORD dwDesiredAccess);
-static BOOL WINAPI (*MyStartServiceW)(SC_HANDLE hService,
+static BOOL (WINAPI *MyStartServiceW)(SC_HANDLE hService,
                                       DWORD dwNumServiceArgs,
                                       wchar_t **lpServiceArgVectors);
-static BOOL WINAPI (*MyControlService)(SC_HANDLE hService,
+static BOOL (WINAPI *MyControlService)(SC_HANDLE hService,
                                        DWORD dwControl,
                                        LPSERVICE_STATUS lpServiceStatus);
-static BOOL WINAPI (*MyCloseServiceHandle)(SC_HANDLE hSCObject);
-static BOOL WINAPI (*MyDeleteService)(SC_HANDLE hService);
+static BOOL (WINAPI *MyCloseServiceHandle)(SC_HANDLE hSCObject);
+static BOOL (WINAPI *MyDeleteService)(SC_HANDLE hService);
 
 static struct
 {
