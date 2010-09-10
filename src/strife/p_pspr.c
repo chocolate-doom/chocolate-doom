@@ -446,17 +446,19 @@ void A_Punch(player_t* player, pspdef_t* psp)
     int         damage;
     int         slope;
     int         sound;
-	
+    int         t;
+
     // villsa [STRIFE] new damage formula
     damage = ((player->stamina / 10) + 2) * (psp->tics + 3) & P_Random();
 
     if(player->powers[pw_strength])	
-	damage *= 10;
+        damage *= 10;
 
     angle = player->mo->angle;
-    angle += (P_Random()-P_Random())<<18;
-    slope = P_AimLineAttack (player->mo, angle, MELEERANGE);
-    P_LineAttack (player->mo, angle, MELEERANGE, slope, damage);
+    t = P_Random();
+    angle += (t - P_Random()) << 18;
+    slope = P_AimLineAttack (player->mo, angle, PLAYERMELEERANGE);
+    P_LineAttack (player->mo, angle, PLAYERMELEERANGE, slope, damage);
 
     // turn to face target
     if(linetarget)
@@ -467,14 +469,15 @@ void A_Punch(player_t* player, pspdef_t* psp)
         else
             sound = sfx_meatht;
 
-	S_StartSound (player->mo, sound);
-	player->mo->angle = R_PointToAngle2 (player->mo->x,
-					     player->mo->y,
-					     linetarget->x,
-					     linetarget->y);
+        S_StartSound (player->mo, sound);
+        player->mo->angle = R_PointToAngle2 (player->mo->x,
+                                             player->mo->y,
+                                             linetarget->x,
+                                             linetarget->y);
 
         // villsa [STRIFE] apply flag
         player->mo->flags |= MF_JUSTATTACKED;
+
         // villsa [STRIFE] do punch alert routine
         P_DoPunchAlert(player->mo, linetarget);
     }

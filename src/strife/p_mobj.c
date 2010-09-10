@@ -954,16 +954,20 @@ P_SpawnPuff
   fixed_t	z )
 {
     mobj_t*	th;
-	
-    z += ((P_Random()-P_Random())<<10);
+    int t = P_Random();
 
-    th = P_SpawnMobj (x,y,z, MT_STRIFEPUFF);
-    th->momz = FRACUNIT;
-    th->tics -= P_Random()&3;
+    z += ((t - P_Random())<<10);
+
+    // [STRIFE] Unused
+    //th->momz = FRACUNIT;
+    //th->tics -= P_Random()&3;
+
+    th = P_SpawnMobj (x,y,z, MT_STRIFEPUFF); // [STRIFE]: new type
 
     // don't make punches spark on the wall
-    if(attackrange == MELEERANGE)
-        P_SetMobjState(th, S_POW2_00);
+    // [STRIFE] Use a separate melee attack range for the player
+    if(attackrange == PLAYERMELEERANGE)
+        P_SetMobjState(th, S_POW2_00); // 141
 
     // villsa [STRIFE] unused
     /*if (th->tics < 1)
@@ -993,23 +997,24 @@ P_SpawnBlood
   int		damage )
 {
     mobj_t*	th;
-	
+
     z += ((P_Random()-P_Random())<<10);
     th = P_SpawnMobj (x,y,z, MT_BLOOD_DEATH);
     th->momz = FRACUNIT*2;
+    
     //th->tics -= P_Random()&3; // villsa [STRIFE] unused
 
     // villsa [STRIFE] unused
     /*if (th->tics < 1)
-	th->tics = 1;*/
-		
+        th->tics = 1;*/
+
     // villsa [STRIFE] different checks for damage range
     if (damage >= 10 && damage <= 13)
-	P_SetMobjState (th,S_BLOD_00);
+        P_SetMobjState (th,S_BLOD_00);
     else if (damage < 10 && damage >= 7)
         P_SetMobjState (th,S_BLOD_01);
     else if (damage < 7)
-	P_SetMobjState (th,S_BLOD_02);
+        P_SetMobjState (th,S_BLOD_02);
 }
 
 
@@ -1073,18 +1078,18 @@ P_SpawnMissile
     int		dist;
 
     th = P_SpawnMobj (source->x,
-		      source->y,
-		      source->z + 4*8*FRACUNIT, type);
-    
+                      source->y,
+                      source->z + 4*8*FRACUNIT, type);
+
     if (th->info->seesound)
-	S_StartSound (th, th->info->seesound);
+        S_StartSound (th, th->info->seesound);
 
     th->target = source;	// where it came from
     an = R_PointToAngle2 (source->x, source->y, dest->x, dest->y);
 
     // fuzzy player
     if (dest->flags & MF_SHADOW)
-	an += (P_Random()-P_Random())<<21;	
+        an += (P_Random()-P_Random())<<21;
     // villsa [STRIFE] check for heavily transparent things
     else if(dest->flags & MF_MVIS)
         an += (P_Random()-P_Random())<<22;
@@ -1093,16 +1098,16 @@ P_SpawnMissile
     an >>= ANGLETOFINESHIFT;
     th->momx = FixedMul (th->info->speed, finecosine[an]);
     th->momy = FixedMul (th->info->speed, finesine[an]);
-	
+
     dist = P_AproxDistance (dest->x - source->x, dest->y - source->y);
     dist = dist / th->info->speed;
 
     if (dist < 1)
-	dist = 1;
+        dist = 1;
 
     th->momz = (dest->z - source->z) / dist;
     P_CheckMissileSpawn (th);
-	
+
     return th;
 }
 

@@ -273,8 +273,7 @@ boolean P_CheckMeleeRange(mobj_t* actor)
 
     dist = P_AproxDistance(pl->x - actor->x, pl->y - actor->y);
 
-    // villsa [STRIFE] change to 36
-    if(dist >= MELEERANGE - 36*FRACUNIT + pl->info->radius)
+    if(dist >= MELEERANGE - 20*FRACUNIT + pl->info->radius)
         return false;
 
     if(!P_CheckSight (actor, actor->target))
@@ -700,8 +699,6 @@ void P_NewRandomDir(mobj_t* actor)
 // haleyjd 09/05/10: Needed below.
 extern void P_BulletSlope (mobj_t *mo);
 
-#define LOCAL_MELEERANGE 64*FRACUNIT
-
 //
 // P_LookForPlayers
 //
@@ -815,7 +812,7 @@ P_LookForPlayers
                 dist = P_AproxDistance (player->mo->x - actor->x,
                     player->mo->y - actor->y);
                 // if real close, react anyway
-                if (dist > LOCAL_MELEERANGE) // haleyjd: ......
+                if (dist > MELEERANGE)
                     continue;       // behind back
             }
         }
@@ -1513,26 +1510,24 @@ void A_CrusaderAttack(mobj_t* actor)
         actor->angle -= (ANG90 / 8);
         P_SpawnFacingMissile(actor, actor->target, MT_C_FLAME);
     }
-    else
+    else if(P_CheckMissileRange(actor))
     {
-        if(P_CheckMissileRange(actor))
-        {
-            A_FaceTarget(actor);
-            actor->z += (16*FRACUNIT);
-            P_SpawnFacingMissile(actor, actor->target, MT_C_MISSILE);
+        A_FaceTarget(actor);
+        actor->z += (16*FRACUNIT);
+        P_SpawnFacingMissile(actor, actor->target, MT_C_MISSILE);
 
-            actor->angle -= (ANG45 / 32);
-            actor->z -= (16*FRACUNIT);
-            P_SpawnFacingMissile(actor, actor->target, MT_C_MISSILE);
+        actor->angle -= (ANG45 / 32);
+        actor->z -= (16*FRACUNIT);
+        P_SpawnFacingMissile(actor, actor->target, MT_C_MISSILE);
 
-            actor->angle += (ANG45 / 16);
-            P_SpawnFacingMissile(actor, actor->target, MT_C_MISSILE);
+        actor->angle += (ANG45 / 16);
+        P_SpawnFacingMissile(actor, actor->target, MT_C_MISSILE);
 
-            actor->reactiontime += 15;
-        }
+        actor->reactiontime += 15;
     }
-
-    P_SetMobjState(actor, actor->info->seestate);
+    else
+        P_SetMobjState(actor, actor->info->seestate);
+    
     actor->z -= (8*FRACUNIT);
 }
 
