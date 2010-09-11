@@ -537,8 +537,12 @@ void P_PlayerThink (player_t* player)
 //
 char* P_RemoveInventoryItem(player_t *player, int slot, int amount)
 {
+    mobjtype_t type;
+
     player->inventory[slot].amount -= amount;
     player->st_update = true;
+
+    type = player->inventory[slot].type;
 
     if(!player->inventory[slot].amount)
     {
@@ -566,7 +570,7 @@ char* P_RemoveInventoryItem(player_t *player, int slot, int amount)
         }
     }
 
-    return mobjinfo[player->inventory[slot].type].name;
+    return mobjinfo[type].name;
 }
 
 //
