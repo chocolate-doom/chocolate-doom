@@ -46,6 +46,7 @@
 #define LOOKDOWNMAX             -110                    // villsa [STRIFE]
 
 
+boolean P_UseInventoryItem(player_t* player, int item); // fraggle [STRIFE]
 void P_DropInventoryItem(player_t* player, int sprite); // villsa [STRIFE]
 boolean P_ItemBehavior(player_t* player, int item);     // villsa [STRIFE]
 static char useinventorymsg[44];    // villsa [STRIFE]
