@@ -185,14 +185,15 @@ typedef enum
 
 
 // Power up artifacts.
+// villsa [STRIFE]
 typedef enum
 {
-    pw_invulnerability,
     pw_strength,
     pw_invisibility,
     pw_ironfeet,
     pw_allmap,
-    pw_infrared,
+    pw_communicator,
+    pw_targeter,
     NUMPOWERS
     
 } powertype_t;
@@ -206,10 +207,10 @@ typedef enum
 //
 typedef enum
 {
-    INVULNTICS	= (30*TICRATE),
-    INVISTICS	= (60*TICRATE),
-    INFRATICS	= (120*TICRATE),
-    IRONTICS	= (60*TICRATE)
+    INVISTICS	= (55*TICRATE), // villsa [STRIFE] changed from 60 to 55
+    IRONTICS	= (80*TICRATE), // villsa [STRIFE] changed from 60 to 80
+    PMUPTICS    = (80*TICRATE), // villsa [STRIFE]
+    TARGTICS    = (160*TICRATE),// villsa [STRIFE]
     
 } powerduration_t;
 

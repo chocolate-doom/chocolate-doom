@@ -31,8 +31,8 @@
 
 #include "doomdef.h"
 #include "d_event.h"
-
 #include "p_local.h"
+#include "sounds.h"     // villsa [STRIFE]
 #include "p_dialog.h"   // villsa [STRIFE]
 #include "doomstat.h"
 
@@ -47,6 +47,8 @@
 
 
 void P_DropInventoryItem(player_t* player, int sprite); // villsa [STRIFE]
+boolean P_ItemBehavior(player_t* player, int item);     // villsa [STRIFE]
+static char useinventorymsg[44];    // villsa [STRIFE]
 
 //
 // Movement.
@@ -469,15 +471,17 @@ void P_PlayerThink (player_t* player)
     if (player->powers[pw_strength])
 	player->powers[pw_strength]++;	
 		
-    if (player->powers[pw_invulnerability])
-	player->powers[pw_invulnerability]--;
+    // villsa [STRIFE] unused
+    /*if (player->powers[pw_invulnerability])
+	player->powers[pw_invulnerability]--;*/
 
     if (player->powers[pw_invisibility])
 	if (! --player->powers[pw_invisibility] )
 	    player->mo->flags &= ~MF_SHADOW;
 			
-    if (player->powers[pw_infrared])
-	player->powers[pw_infrared]--;
+    // villsa [STRIFE] unused
+    /*if (player->powers[pw_infrared])
+	player->powers[pw_infrared]--;*/
 		
     if (player->powers[pw_ironfeet])
 	player->powers[pw_ironfeet]--;
@@ -657,9 +661,201 @@ void P_DropInventoryItem(player_t* player, int sprite)
 }
 
 //
+// P_TossDegninOre
+// villsa [STRIFE] new function
+//
+boolean P_TossDegninOre(player_t* player)
+{
+    angle_t angle;
+    mobj_t* mo;
+    mobj_t* ore;
+    fixed_t x;
+    fixed_t y;
+    fixed_t z;
+    fixed_t dist;
+
+    angle = player->mo->angle >> ANGLETOFINESHIFT;
+
+    if(angle < 7618 && angle >= 6718)
+        angle = 7618;
+
+    else if(angle < 5570 && angle >= 4670)
+        angle = 5570;
+
+    else if(angle < 3522 && angle >= 2622)
+        angle = 3522;
+
+    else if(angle < 1474 && angle >= 574)
+        angle = 1474;
+
+    mo = player->mo;
+    dist = mobjinfo[MT_DEGNINORE].radius + mo->info->radius + (4*FRACUNIT);
+
+    x = mo->x + FixedMul(finecosine[angle], dist);
+    y = mo->y + FixedMul(finesine[angle], dist);
+    z = mo->z + (10*FRACUNIT);
+    ore = P_SpawnMobj(x, y, z, MT_DEGNINORE);
+
+    if(P_CheckPosition(ore, x, y))
+    {
+        ore->target = mo;
+        ore->angle = (angle << ANGLETOFINESHIFT);
+        ore->momx = FixedMul(finecosine[angle], (5*FRACUNIT));
+        ore->momy = FixedMul(finesine[angle], (5*FRACUNIT));
+        ore->momz = FRACUNIT;
+        return true;
+    }
+    else
+        P_RemoveMobj(ore);
+
+    return false;
+}
+
+//
+// P_SpawnTeleportBeacon
+// villsa [STRIFE] new function
+//
+boolean P_SpawnTeleportBeacon(player_t* player)
+{
+    angle_t angle;
+    int r;
+    mobj_t* mo;
+    mobj_t* beacon;
+    fixed_t x;
+    fixed_t y;
+    fixed_t z;
+    fixed_t dist;
+
+    angle = player->mo->angle;
+    r = P_Random();
+    angle = (angle + ((r - P_Random()) << 18)) >> ANGLETOFINESHIFT;
+
+    if(angle < 7618 && angle >= 6718)
+        angle = 7618;
+
+    else if(angle < 5570 && angle >= 4670)
+        angle = 5570;
+
+    else if(angle < 3522 && angle >= 2622)
+        angle = 3522;
+
+    else if(angle < 1474 && angle >= 574)
+        angle = 1474;
+
+    mo = player->mo;
+    dist = mobjinfo[MT_BEACON].radius + mo->info->radius + (4*FRACUNIT);
+
+    x = mo->x + FixedMul(finecosine[angle], dist);
+    y = mo->y + FixedMul(finesine[angle], dist);
+    z = mo->z + (10*FRACUNIT);
+    beacon = P_SpawnMobj(x, y, z, MT_BEACON);
+
+    if(P_CheckPosition(beacon, x, y))
+    {
+        beacon->target = mo;
+        beacon->miscdata = mo->miscdata;
+        beacon->angle = (angle << ANGLETOFINESHIFT);
+        beacon->momx = FixedMul(finecosine[angle], (5*FRACUNIT));
+        beacon->momy = FixedMul(finesine[angle], (5*FRACUNIT));
+        beacon->momz = FRACUNIT;
+        P_SetMobjState(beacon, beacon->info->seestate);
+        return true;
+    }
+    else
+        P_RemoveMobj(beacon);
+
+    return false;
+}
+
+//
 // P_UseInventoryItem
 // villsa [STRIFE] new function
 //
 boolean P_UseInventoryItem(player_t* player, int item)
 {
+    int i;
+    char* name;
+
+    if(player->cheats & CF_ONFIRE)
+        return false;
+
+    for(i = 0; i < player->numinventory; i++)
+    {
+        if(item != player->inventory[i].sprite)
+            continue;
+
+        if(!P_ItemBehavior(player, item))
+            return false;
+
+        name = P_RemoveInventoryItem(player, i, 1);
+        if(name == NULL)
+            name = "Item";
+
+        sprintf(useinventorymsg, "You used the %s.", name);
+        player->message = useinventorymsg;
+
+        if(player == &players[consoleplayer])
+            S_StartSound(NULL, sfx_itemup);
+
+        return true;
+    }
+    
+    return false;
+}
+
+//
+// P_ItemBehavior
+// villsa [STRIFE] new function
+//
+boolean P_ItemBehavior(player_t* player, int item)
+{
+    switch(item)
+    {
+    case SPR_ARM1:  // 136
+        return P_GiveArmor(player, 2);
+        break;
+
+    case SPR_ARM2:  // 137
+        return P_GiveArmor(player, 1);
+        break;
+
+    case SPR_SHD1:  // 186
+        return P_GivePower(player, pw_invisibility);
+        break;
+
+    case SPR_MASK:  // 187
+        return P_GivePower(player, pw_ironfeet);
+        break;
+
+    case SPR_PMUP:  // 191
+        if(!player->powers[pw_allmap])
+        {
+            player->message = "The scanner won't work without a map!";
+            return false;
+        }
+        player->powers[pw_allmap] = PMUPTICS;
+        break;
+
+    case SPR_STMP:  // 180
+        return P_GiveBody(player, 10);
+        break;
+
+    case SPR_MDKT:  // 181
+        return P_GiveBody(player, 25);
+        break;
+
+    case SPR_FULL:  // 130
+        return P_GiveBody(player, 200);
+        break;
+
+    case SPR_BEAC:  // 135
+        return P_SpawnTeleportBeacon(player);
+        break;
+
+    case SPR_TARG:  // 108
+        return P_GivePower(player, pw_targeter);
+        break;
+    }
+
+    return true;
 }

@@ -63,9 +63,9 @@ typedef enum
 {
     ps_weapon,
     ps_flash,
+    ps_targcenter,  // villsa [STRIFE]
     ps_targleft,    // villsa [STRIFE]
     ps_targright,   // villsa [STRIFE]
-    ps_targcenter,  // villsa [STRIFE]
     NUMPSPRITES
 
 } psprnum_t;

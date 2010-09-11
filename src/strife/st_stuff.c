@@ -462,7 +462,7 @@ ST_Responder (event_t* ev)
       {
           // villsa [STRIFE] unused
 	//plyr->weaponowned[wp_chainsaw] = true;
-	plyr->powers[pw_invulnerability] = true;
+	//plyr->powers[pw_invulnerability] = true;
 	plyr->message = DEH_String(STSTR_CHOPPERS);
       }
       // 'mypos' for player position

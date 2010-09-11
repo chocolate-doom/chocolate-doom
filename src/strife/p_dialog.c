@@ -915,14 +915,14 @@ boolean P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type)
 
         // communicator
         case SPR_COMM:
-            //if(!P_GivePower(player)) // [STRIFE] TODO
-            //  return false;
+            if(!P_GivePower(player, pw_communicator))
+                return false;
         break;
 
         // map
         case SPR_PMAP:
-            //if(!P_GivePower(player)) // [STRIFE] TODO
-            //  return false;
+            if(!P_GivePower(player, pw_allmap))
+                return false;
         break;
 
         // rifle

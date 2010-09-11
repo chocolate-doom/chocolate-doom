@@ -273,62 +273,80 @@ P_GiveArmor
 //
 // P_GiveCard
 //
-void
-P_GiveCard
-( player_t*	player,
-  card_t	card )
+boolean P_GiveCard(player_t* player, card_t card)
 {
     if (player->cards[card])
-	return;
+	return false;
     
-    player->bonuscount = BONUSADD;
+    // villsa [STRIFE] multiply by 2
+    player->bonuscount = BONUSADD * 2;
     player->cards[card] = 1;
+
+    return true;
 }
 
 
 //
 // P_GivePower
 //
-boolean
-P_GivePower
-( player_t*	player,
-  int /*powertype_t*/	power )
+boolean P_GivePower(player_t* player, powertype_t power)
 {
-    if (power == pw_invulnerability)
+    // villsa [STRIFE]
+    if(power == pw_targeter)
     {
-	player->powers[power] = INVULNTICS;
-	return true;
+        player->powers[power] = TARGTICS;
+        P_SetPsprite(player, ps_targcenter, S_TRGT_00); // 10
+        P_SetPsprite(player, ps_targleft, S_TRGT_01); // 11
+        P_SetPsprite(player, ps_targright, S_TRGT_02); // 12
+
+        player->psprites[ps_targcenter].sx  = (160*FRACUNIT);
+        player->psprites[ps_targleft].sy    = (100*FRACUNIT);
+        player->psprites[ps_targcenter].sy  = (100*FRACUNIT);
+        player->psprites[ps_targright].sy   = (100*FRACUNIT);
+        return true;
     }
-    
-    if (power == pw_invisibility)
+
+    if(power == pw_invisibility)
     {
-	player->powers[power] = INVISTICS;
-	player->mo->flags |= MF_SHADOW;
-	return true;
+        player->powers[power] = INVISTICS;
+        player->mo->flags |= MF_SHADOW;
+        return true;
     }
-    
-    if (power == pw_infrared)
+
+    if(power == pw_ironfeet)
     {
-	player->powers[power] = INFRATICS;
-	return true;
+        player->powers[power] = IRONTICS;
+        return true;
     }
-    
-    if (power == pw_ironfeet)
+
+    if(power == pw_strength)
     {
-	player->powers[power] = IRONTICS;
-	return true;
+        P_GiveBody(player, 100);
+        player->powers[power] = 1;
+        return true;
     }
-    
-    if (power == pw_strength)
+
+    // villsa [STRIFE]
+    if(power == pw_allmap)
     {
-	P_GiveBody (player, 100);
-	player->powers[power] = 1;
-	return true;
+        if(gamemap < 40)
+            player->mapstate[gamemap] = 1;
+
+        player->powers[power] = 1;
+        return true;
     }
-	
+
+    // villsa [STRIFE]
+    if(power == pw_communicator)
+    {
+        player->powers[power] = 1;
+        return true;
+    }
+
+
     if (player->powers[power])
-	return false;	// already got it
-		
+        return false;	// already got it
+
     player->powers[power] = 1;
     return true;
 }
@@ -864,13 +882,10 @@ P_DamageMobj
 	
 
 	// Below certain threshold,
-	// ignore damage in GOD mode, or with INVUL power.
-	if ( damage < 1000
-	     && ( (player->cheats&CF_GODMODE)
-		  || player->powers[pw_invulnerability] ) )
-	{
-	    return;
-	}
+	// ignore damage in GOD mode.
+        // villsa [STRIFE] removed pw_invulnerability check
+	if(damage < 1000 && (player->cheats & CF_GODMODE))
+            return;
 	
 	if (player->armortype)
 	{
