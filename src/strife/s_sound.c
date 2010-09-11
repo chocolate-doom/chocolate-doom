@@ -97,13 +97,17 @@ int sfxVolume = 8;
 int musicVolume = 8;
 
 // haleyjd 08/29/10: [STRIFE] New global variable
-// Maximum volume of voice channel.
+// Volume of voice channel.
 
 int voiceVolume = 15;
 
 // Internal volume level, ranging from 0-127
 
 static int snd_SfxVolume;
+
+// haleyjd 09/11/10: [STRIFE] Internal voice volume level
+
+static int snd_VoiceVolume;
 
 // Whether songs are mus_paused
 
@@ -116,6 +120,17 @@ static musicinfo_t *mus_playing = NULL;
 // Number of channels to use
 
 int snd_channels = 8;
+
+// haleyjd 09/11/10: [STRIFE] Handle of current voice channel.
+// This has been implemented at a higher level than it was implemented
+// in strife1.exe, as there it relied on a priority system which was
+// implicit in the SFX_PlayPatch API of DMX. Here we'll just ignore
+// the current voice channel when doing normal sound playing.
+
+static int i_voicehandle = -1;
+
+// haleyjd 09/11/10: [STRIFE] whether to play voices or not
+int disable_voices = 0;
 
 //
 // Initializes sound stuff, including volume
@@ -170,6 +185,10 @@ static void S_StopChannel(int cnum)
     channel_t *c;
 
     c = &channels[cnum];
+
+    // haleyjd: [STRIFE] If stopping the voice channel, set i_voicehandle to -1
+    if (cnum == i_voicehandle)
+        i_voicehandle = -1;
 
     if (c->sfxinfo)
     {
@@ -250,8 +269,10 @@ void S_StopSound(mobj_t *origin)
 // S_GetChannel :
 //   If none available, return -1.  Otherwise channel #.
 //
-
-static int S_GetChannel(mobj_t *origin, sfxinfo_t *sfxinfo)
+// haleyjd 09/11/10: [STRIFE] Added an "isvoice" parameter for supporting
+// voice playing.
+//
+static int S_GetChannel(mobj_t *origin, sfxinfo_t *sfxinfo, boolean isvoice)
 {
     // channel number to use
     int                cnum;
@@ -264,8 +285,9 @@ static int S_GetChannel(mobj_t *origin, sfxinfo_t *sfxinfo)
         if (!channels[cnum].sfxinfo)
         {
             break;
-        }
-        else if (origin && channels[cnum].origin == origin)
+        } 
+        else if (origin && channels[cnum].origin == origin &&
+                 (isvoice || cnum != i_voicehandle)) // haleyjd
         {
             S_StopChannel(cnum);
             break;
@@ -280,7 +302,9 @@ static int S_GetChannel(mobj_t *origin, sfxinfo_t *sfxinfo)
         {
             if (channels[cnum].sfxinfo->priority >= sfxinfo->priority)
             {
-                break;
+                // haleyjd 09/11/10: [STRIFE] voice has absolute priority
+                if (isvoice || cnum != i_voicehandle)
+                    break;
             }
         }
 
@@ -452,7 +476,7 @@ void S_StartSound(void *origin_p, int sfx_id)
     S_StopSound(origin);
 
     // try to find a channel
-    cnum = S_GetChannel(origin, sfx);
+    cnum = S_GetChannel(origin, sfx, false); // haleyjd: not a voice.
 
     if (cnum < 0)
     {
@@ -472,6 +496,54 @@ void S_StartSound(void *origin_p, int sfx_id)
 
     channels[cnum].handle = I_StartSound(sfx, cnum, volume, sep);
 }        
+
+//
+// I_StartVoice
+//
+// haleyjd 09/11/10: [STRIFE] New function
+// Note this was in i_sound.c in Strife itself, but relied on DMX-specific
+// features to ensure voice channels had absolute priority. Here we must
+// populate a fake sfxinfo_t and send the sound through some of the normal
+// routines. But in the end, it still works the same.
+//
+void I_StartVoice(const char *lumpname)
+{
+    static sfxinfo_t voicesfx; // a static "fake" sfxinfo for voices.
+    int lumpnum;
+
+    // no voices in deathmatch mode.
+    if(netgame)
+        return;
+
+    // TODO: checks if sfx_SndDevice == 83
+    // This is probably turning off voice if using PC speaker...
+
+    // user has disabled voices?
+    if(disable_voices)
+        return;
+
+    // have a voice playing already? stop it.
+    if (i_voicehandle > 0)
+        S_StopChannel(i_voicehandle);
+
+    // haleyjd: Choco-specific: initialize the voicesfx structure
+    memset(&voicesfx, 0, sizeof(sfxinfo_t));
+    strncpy(voicesfx.name, lumpname, 8);
+    voicesfx.priority = INT_MIN; // make highest possible priority
+    voicesfx.pitch = -1;
+    voicesfx.volume = -1;
+    voicesfx.numchannels = -1;
+    voicesfx.usefulness = -1;
+
+    if((lumpnum = W_CheckNumForName(lumpname)) != -1)
+    {
+        // get a channel for the voice
+        i_voicehandle = S_GetChannel(NULL, &voicesfx, true);
+        voicesfx.lumpnum = lumpnum;
+        channels[i_voicehandle].handle 
+            = I_StartSound(&voicesfx, i_voicehandle, snd_VoiceVolume, NORM_SEP);
+    }
+}
 
 //
 // Stop and resume music, during game PAUSE.
@@ -583,6 +655,22 @@ void S_SetSfxVolume(int volume)
     }
 
     snd_SfxVolume = volume;
+}
+
+//
+// S_SetVoiceVolume
+//
+// haleyjd 09/11/10: [STRIFE]
+// Set the internal voice volume level.
+//
+void S_SetVoiceVolume(int volume)
+{
+    if (volume < 0 || volume > 127)
+    {
+        I_Error("Attempt to set voice volume at %d", volume);
+    }
+
+    snd_VoiceVolume = volume;
 }
 
 //

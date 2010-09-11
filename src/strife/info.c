@@ -198,7 +198,7 @@ void A_MaulerSound();
 state_t states[NUMSTATES] =
 {
 
-/*S_NULL*/      { SPR_PLAY, 0, -1, { NULL }, S_NULL },      //00
+/*S_NULL*/          { SPR_PLAY, 0, -1, { NULL }, S_NULL },      //00
 /*S_PNCH_00*/       { SPR_PNCH, 0, 0, { A_Light0 }, S_NULL },       //01
 /*S_WAVE_00*/       { SPR_WAVE, 32768, 3, { NULL }, S_WAVE_01 },        //02
 /*S_WAVE_01*/       { SPR_WAVE, 32769, 3, { NULL }, S_WAVE_02 },        //03

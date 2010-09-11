@@ -61,6 +61,9 @@ void S_Start(void);
 
 void S_StartSound(void *origin, int sound_id);
 
+// haleyjd 09/11/10: [STRIFE] Start a voice.
+void I_StartVoice(const char *lumpname);
+
 // Stop sound for thing at <origin>
 void S_StopSound(mobj_t *origin);
 
@@ -90,6 +93,7 @@ void S_UpdateSounds(mobj_t *listener);
 
 void S_SetMusicVolume(int volume);
 void S_SetSfxVolume(int volume);
+void S_SetVoiceVolume(int volume); // haleyjd 09/11/10: [STRIFE]
 
 extern int snd_channels;
 
