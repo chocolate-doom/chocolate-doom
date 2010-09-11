@@ -695,15 +695,18 @@ boolean P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type)
     line_t junk;
     boolean ok = true;
 
+    // set quest if mf_givequest flag is set
     if(mobjinfo[type].flags & MF_GIVEQUEST)
         player->questflags |= 1 << (mobjinfo[type].speed - 1);
 
+    // check for keys
     if(type >= MT_KEY_BASE && type <= MT_NEWKEY5)
     {
         P_GiveCard(player, type - MT_KEY_BASE);
         return true;
     }
 
+    // check for quest tokens
     if(type >= MT_TOKEN_QUEST1 && type <= MT_TOKEN_QUEST31)
     {
         if(mobjinfo[type].name)
@@ -713,17 +716,21 @@ boolean P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type)
         }
         player->questflags |= 1 << (type - MT_TOKEN_QUEST1);
     }
+    // check for other types
     else switch(type)
     {
+    // severed hand
     case MT_KEY_HAND:
         P_GiveCard(player, key_SeveredHand);
         break;
 
+    // 300 gold
     case MT_MONY_300:
         for(i = 0; i < 300; i++)
             P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
         break;
 
+    // ammo refill (at training)
     case MT_TOKEN_AMMO:
         if(player->ammo[am_bullets] >= 50)
             return false;
@@ -731,22 +738,26 @@ boolean P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type)
         player->ammo[am_bullets] = 50;
         break;
 
+    // health refill (at front HQ)
     case MT_TOKEN_HEALTH:
         // [STRIFE] TODO - add healthamounts array
         //if(!P_GiveBody(player, healthamounts[gameskill]))
         //    return false;
         break;
 
+    // alarm
     case MT_TOKEN_ALARM:
         P_NoiseAlert(player->mo, player->mo);
         A_AlertSpectreC(dialogtalker);
         break;
 
+    // door special 1
     case MT_TOKEN_DOOR1:
         junk.tag = 222;
         EV_DoDoor(&junk, open);
         break;
 
+    // door special 2
     case MT_TOKEN_PRISON_PASS:
         junk.tag = 223;
         EV_DoDoor(&junk, open);
@@ -754,16 +765,19 @@ boolean P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type)
             P_GiveInventoryItem(player, sprnum, type);
         break;
 
+    // door special 3
     case MT_TOKEN_SHOPCLOSE:
         junk.tag = 222;
         EV_DoDoor(&junk, close);
         break;
 
+    // door special 4
     case MT_TOKEN_DOOR3:
         junk.tag = 224;
         EV_DoDoor(&junk, close);
         break;
 
+    // stamina upgrade
     case MT_TOKEN_STAMINA:
         if(player->stamina >= 100)
             return false;
@@ -772,6 +786,7 @@ boolean P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type)
         P_GiveBody(player, 200);
         break;
 
+    // accuracy upgrade
     case MT_TOKEN_NEW_ACCURACY:
         if(player->accuracy >= 100)
             return false;
@@ -779,158 +794,189 @@ boolean P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type)
         player->accuracy += 10;
         break;
 
+    // slideshow
     case MT_SLIDESHOW:
         gameaction = ga_victory;
         if(gamemap == 10)
             P_GiveItemToPlayer(player, SPR_TOKN, MT_TOKEN_QUEST17);
         break;
-    }
-    
-    switch(sprnum)
-    {
-    case SPR_BLIT:
-        ok = P_GiveAmmo(player, am_bullets, 1);
-        break;
-
-    case SPR_BBOX:
-        ok = P_GiveAmmo(player, am_bullets, 5);
-        break;
-
-    case SPR_MSSL:
-        ok = P_GiveAmmo(player, am_missiles, 1);
-        break;
-
-    case SPR_ROKT:
-        ok = P_GiveAmmo(player, am_missiles, 5);
-        break;
-
-    case SPR_BRY1:
-        ok = P_GiveAmmo(player, am_cell, 1);
-        break;
-
-    case SPR_CPAC:
-        ok = P_GiveAmmo(player, am_cell, 5);
-        break;
-
-    case SPR_PQRL:
-        ok = P_GiveAmmo(player, am_poisonbolts, 5);
-        break;
-
-    case SPR_XQRL:
-        ok = P_GiveAmmo(player, am_elecbolts, 5);
-        break;
-
-    case SPR_GRN1:
-        ok = P_GiveAmmo(player, am_hegrenades, 1);
-        break;
-
-    case SPR_GRN2:
-        ok = P_GiveAmmo(player, am_wpgrenades, 1);
-        break;
-
-    case SPR_BKPK:
-        if(!player->backpack)
-        {
-            for(i = 0; i < NUMAMMO; i++)
-                player->maxammo[i] *= 2;
-
-            player->backpack = true;
-        }
-        for(i = 0; i < NUMAMMO; i++)
-	    P_GiveAmmo(player, i, 1);
-        break;
-
-    case SPR_COIN:
-        P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
-        break;
-
-    case SPR_CRED:
-        for(i = 0; i < 10; i++)
-            P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
-        break;
-
-    case SPR_SACK:
-        for(i = 0; i < 25; i++)
-            P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
-        break;
-
-    case SPR_CHST:
-        for(i = 0; i < 50; i++)
-            P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
-        break;
-
-    case SPR_HELT:
-        P_GiveInventoryItem(player, SPR_HELT, MT_TOKEN_TOUGHNESS);
-        P_GiveInventoryItem(player, SPR_GUNT, MT_TOKEN_ACCURACY);
-
-        // [STRIFE] TODO - verify
-        for(i = 0; i < 5 * player->numinventory + 300; i++)
-            P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
-        break;
-
-    case SPR_ARM1:
-        if(!P_GiveArmor(player, -2))
-            P_GiveInventoryItem(player, sprnum, type);
-        break;
-
-    case SPR_ARM2:
-        if(!P_GiveArmor(player, -1))
-            P_GiveInventoryItem(player, sprnum, type);
-        break;
-
-    case SPR_COMM:
-        //if(!P_GivePower(player)) // [STRIFE] TODO
-        //  return false;
-        break;
-
-    case SPR_PMAP:
-        //if(!P_GivePower(player)) // [STRIFE] TODO
-        //  return false;
-        break;
-
-    case SPR_RIFL:
-        if(player->weaponowned[wp_rifle])
-            return false;
-
-        if(!P_GiveWeapon(player, wp_rifle, false))
-            return false;
-      break;
-
-    case SPR_FLAM:
-        if(player->weaponowned[wp_flame])
-            return false;
-
-        if(!P_GiveWeapon(player, wp_flame, false))
-            return false;
-      break;
-
-    case SPR_MMSL:
-        if(player->weaponowned[wp_missile])
-            return false;
-
-        if(!P_GiveWeapon(player, wp_missile, false))
-            return false;
-      break;
-
-    case SPR_TRPD:
-        if(player->weaponowned[wp_mauler])
-            return false;
-
-        if(!P_GiveWeapon(player, wp_mauler, false))
-            return false;
-      break;
-
-    case SPR_CBOW:
-        if(player->weaponowned[wp_elecbow])
-            return false;
-
-        if(!P_GiveWeapon(player, wp_elecbow, false))
-            return false;
-      break;
 
     default:
-        if(!P_GiveInventoryItem(player, sprnum, type))
-            return false;
+        // check for sprites if no specific type is found
+        switch(sprnum)
+        {
+        // bullets
+        case SPR_BLIT:
+            ok = P_GiveAmmo(player, am_bullets, 1);
+        break;
+
+        // box of bullets
+        case SPR_BBOX:
+            ok = P_GiveAmmo(player, am_bullets, 5);
+        break;
+
+        // missile
+        case SPR_MSSL:
+            ok = P_GiveAmmo(player, am_missiles, 1);
+        break;
+
+        // box of missiles
+        case SPR_ROKT:
+            ok = P_GiveAmmo(player, am_missiles, 5);
+        break;
+
+        // battery
+        case SPR_BRY1:
+            ok = P_GiveAmmo(player, am_cell, 1);
+        break;
+
+        // cell pack
+        case SPR_CPAC:
+            ok = P_GiveAmmo(player, am_cell, 5);
+        break;
+
+        // poison bolts
+        case SPR_PQRL:
+            ok = P_GiveAmmo(player, am_poisonbolts, 5);
+        break;
+
+        // electric bolts
+        case SPR_XQRL:
+            ok = P_GiveAmmo(player, am_elecbolts, 5);
+        break;
+
+        // he grenades
+        case SPR_GRN1:
+            ok = P_GiveAmmo(player, am_hegrenades, 1);
+        break;
+
+        // wp grenades
+        case SPR_GRN2:
+            ok = P_GiveAmmo(player, am_wpgrenades, 1);
+        break;
+
+        // backpack
+        case SPR_BKPK:
+            if(!player->backpack)
+            {
+                for(i = 0; i < NUMAMMO; i++)
+                    player->maxammo[i] *= 2;
+
+                player->backpack = true;
+            }
+            for(i = 0; i < NUMAMMO; i++)
+	        P_GiveAmmo(player, i, 1);
+        break;
+
+        // coin
+        case SPR_COIN:
+            P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
+        break;
+
+        // gold 10
+        case SPR_CRED:
+            for(i = 0; i < 10; i++)
+                P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
+        break;
+
+        // gold 25
+        case SPR_SACK:
+            for(i = 0; i < 25; i++)
+                P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
+        break;
+
+        // gold 50
+        case SPR_CHST:
+            for(i = 0; i < 50; i++)
+                P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
+        break;
+
+        // ???
+        case SPR_HELT:
+            P_GiveInventoryItem(player, SPR_HELT, MT_TOKEN_TOUGHNESS);
+            P_GiveInventoryItem(player, SPR_GUNT, MT_TOKEN_ACCURACY);
+
+            // [STRIFE] TODO - verify
+            for(i = 0; i < 5 * player->numinventory + 300; i++)
+                P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
+        break;
+
+        // metal armor
+        case SPR_ARM1:
+           if(!P_GiveArmor(player, -2))
+               P_GiveInventoryItem(player, sprnum, type);
+        break;
+
+        // leather armor
+        case SPR_ARM2:
+            if(!P_GiveArmor(player, -1))
+                P_GiveInventoryItem(player, sprnum, type);
+        break;
+
+        // communicator
+        case SPR_COMM:
+            //if(!P_GivePower(player)) // [STRIFE] TODO
+            //  return false;
+        break;
+
+        // map
+        case SPR_PMAP:
+            //if(!P_GivePower(player)) // [STRIFE] TODO
+            //  return false;
+        break;
+
+        // rifle
+        case SPR_RIFL:
+            if(player->weaponowned[wp_rifle])
+                return false;
+
+            if(!P_GiveWeapon(player, wp_rifle, false))
+                return false;
+        break;
+
+        // flame thrower
+        case SPR_FLAM:
+            if(player->weaponowned[wp_flame])
+                return false;
+
+            if(!P_GiveWeapon(player, wp_flame, false))
+                return false;
+        break;
+
+        // missile launcher
+        case SPR_MMSL:
+            if(player->weaponowned[wp_missile])
+                return false;
+
+            if(!P_GiveWeapon(player, wp_missile, false))
+                return false;
+        break;
+
+        // mauler
+        case SPR_TRPD:
+            if(player->weaponowned[wp_mauler])
+                return false;
+
+            if(!P_GiveWeapon(player, wp_mauler, false))
+                return false;
+        break;
+
+        // crossbow
+        case SPR_CBOW:
+            if(player->weaponowned[wp_elecbow])
+                return false;
+
+            if(!P_GiveWeapon(player, wp_elecbow, false))
+                return false;
+        break;
+
+        // misc item
+        default:
+            if(!P_GiveInventoryItem(player, sprnum, type))
+                return false;
+        break;
+        }
+        break;
     }
 
     S_StartSound(player->mo, sfx_itemup);
