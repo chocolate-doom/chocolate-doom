@@ -127,6 +127,10 @@ FILE*		debugfile;
 
 boolean		advancedemo;
 
+// haleyjd 09/11/10: [STRIFE] Game type variables
+boolean         isregistered;
+boolean         isdemoversion;
+
 // Store demo, do not accept any inputs
 // haleyjd [STRIFE] Unused.
 //boolean         storedemo;
@@ -696,6 +700,53 @@ static char *GetGameName(char *gamename)
     return gamename;
 }
 
+// 
+// haleyjd: STRIFE-FIXME: Temporary?
+// Code borrowed from Eternity, and modified to return separator char
+//
+char M_GetFilePath(const char *fn, char *dest, size_t len)
+{
+   boolean found_slash = false;
+   char *p;
+   char sepchar = '\0';
+
+   memset(dest, 0, len);
+
+   p = dest + len - 1;
+
+   strncpy(dest, fn, len);
+   
+   while(p >= dest)
+   {
+      if(*p == '/' || *p == '\\')
+      {
+         sepchar = *p;
+         found_slash = true; // mark that the path ended with a slash
+         *p = '\0';
+         break;
+      }
+      *p = '\0';
+      p--;
+   }
+
+   // haleyjd: in the case that no slash was ever found, yet the
+   // path string is empty, we are dealing with a file local to the
+   // working directory. The proper path to return for such a string is
+   // not "", but ".", since the format strings add a slash now. When
+   // the string is empty but a slash WAS found, we really do want to
+   // return the empty string, since the path is relative to the root.
+   if(!found_slash && *dest == '\0')
+      *dest = '.';
+
+   // if a separator is not found, default to forward, because Windows 
+   // supports that too.
+   if(sepchar == '\0') 
+       sepchar = '/';
+
+   return sepchar;
+}
+
+
 //
 // Find out what version of Doom is playing.
 //
@@ -707,59 +758,59 @@ void D_IdentifyVersion(void)
     // IdentifyIWADByName.  However, if the iwad does not match
     // any known IWAD name, we may have a dilemma.  Try to 
     // identify by its contents.
-
-    if (gamemission == none)
-    {
-        unsigned int i;
-
-        for (i=0; i<numlumps; ++i)
-        {
-            if (!strncasecmp(lumpinfo[i].name, "MAP01", 8))
-            {
-                gamemission = doom2;
-                break;
-            } 
-            else if (!strncasecmp(lumpinfo[i].name, "E1M1", 8))
-            {
-                gamemission = doom;
-                break;
-            }
-        }
-
-        if (gamemission == none)
-        {
-            // Still no idea.  I don't think this is going to work.
-
-            I_Error("Unknown or invalid IWAD file.");
-        }
-    }
+    
+    // STRIFE-TODO: some elaborate checks? for now we assume...
+    // The logic in strife1.exe is simple:
+    // * if strife1.wad is found, set isregistered = true
+    // * if strife0.wad is found, set isdemoversion = true
 
     // Make sure gamemode is set up correctly
+    gamemode = commercial;
+    gamemission = strife;
+    isregistered = true;
 
-    if (gamemission == doom)
+    // Load voices.wad 
+    if(isregistered)
     {
-        // Doom 1.  But which version?
+        char *name = D_FindWADByName("voices.wad");
 
-        if (W_CheckNumForName("E4M1") > 0)
+        if(!name) // not found?
         {
-            // Ultimate Doom
+            int p;
 
-            gamemode = retail;
-        } 
-        else if (W_CheckNumForName("E3M1") > 0)
-        {
-            gamemode = registered;
+            // haleyjd STRIFE-FIXME: Temporary?
+            // If -iwad was used, check and see if voices.wad exists on the
+            // same filepath.
+            if((p = M_CheckParm("-iwad")) && p < myargc - 1)
+            {
+                char   *iwad     = myargv[p + 1];
+                size_t  len      = strlen(iwad) + 24;
+                char   *filename = malloc(len);
+                char    sepchar;
+
+                // how the heck is Choco surviving without this routine?
+                sepchar = M_GetFilePath(iwad, filename, len);
+                filename[strlen(filename)] = sepchar;
+                strcat(filename, "voices.wad");
+
+                if(!M_FileExists(filename))
+                    disable_voices = 1;
+                else
+                    name = filename; // STRIFE-FIXME: memory leak!!
+            }
+            else
+                disable_voices = 1;
         }
-        else
-        {
-            gamemode = shareware;
-        }
-    }
-    else
-    {
-        // Doom 2 of some kind.
 
-        gamemode = commercial;
+        if(disable_voices) // voices disabled?
+        {
+            // STRIFE-FIXME:
+            // if(debugmode)
+                 printf("Voices disabled\n");
+            return;
+        }
+
+        D_AddFile(name);
     }
 }
 
@@ -1625,7 +1676,7 @@ void D_DoomMain (void)
 #endif
 
     DEH_printf("S_Init: Setting up sound.\n");
-    S_Init (sfxVolume * 8, musicVolume * 8);
+    S_Init (sfxVolume * 8, musicVolume * 8, voiceVolume * 8); // [STRIFE]: voice
 
     DEH_printf("D_CheckNetGame: Checking network game status.\n");
     D_CheckNetGame ();

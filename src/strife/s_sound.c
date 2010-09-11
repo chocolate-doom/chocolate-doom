@@ -137,8 +137,9 @@ int disable_voices = 0;
 // Sets channels, SFX and music volume,
 //  allocates channel buffer, sets S_sfx lookup.
 //
-
-void S_Init(int sfxVolume, int musicVolume)
+// haleyjd 09/11/10: Added voice volume
+//
+void S_Init(int sfxVolume, int musicVolume, int voiceVolume)
 {  
     int i;
 
@@ -149,6 +150,7 @@ void S_Init(int sfxVolume, int musicVolume)
 
     S_SetSfxVolume(sfxVolume);
     S_SetMusicVolume(musicVolume);
+    S_SetVoiceVolume(voiceVolume);
 
     // Allocating the internal channels for mixing
     // (the maximum numer of sounds rendered
@@ -257,6 +259,10 @@ void S_StopSound(mobj_t *origin)
 
     for (cnum=0 ; cnum<snd_channels ; cnum++)
     {
+        // haleyjd: do not stop voice here.
+        if(cnum == i_voicehandle)
+            continue;
+
         if (channels[cnum].sfxinfo && channels[cnum].origin == origin)
         {
             S_StopChannel(cnum);
@@ -280,7 +286,7 @@ static int S_GetChannel(mobj_t *origin, sfxinfo_t *sfxinfo, boolean isvoice)
     channel_t*        c;
 
     // Find an open channel
-    for (cnum=0 ; cnum<snd_channels ; cnum++)
+     for (cnum=0 ; cnum<snd_channels ; cnum++)
     {
         if (!channels[cnum].sfxinfo)
         {
@@ -495,7 +501,81 @@ void S_StartSound(void *origin_p, int sfx_id)
     }
 
     channels[cnum].handle = I_StartSound(sfx, cnum, volume, sep);
-}        
+}
+
+
+// haleyjd 09/11/10: [STRIFE]
+// None of this was necessary in the vanilla EXE but Choco's low-level code
+// won't play nice with a temporary sfxinfo because it insists that the
+// "driver_data" member remain valid from the last time the sound was used,
+// even if it has already stopped playing. Thanks to this cuteness I get
+// to maintain a dynamic cache of sfxinfo objects!
+
+typedef struct voiceinfo_s
+{
+    sfxinfo_t sfx;
+    struct voiceinfo_s *next; // next on hash chain
+} voiceinfo_t;
+
+#define NUMVOICECHAINS 257
+
+//
+// Ripped from Eternity.
+//
+static unsigned int S_voiceHash(const char *str)
+{
+   const char *c = str;
+   unsigned int h = 0;
+
+   if(!str)
+      I_Error("S_voiceHash: cannot hash NULL string!\n");
+
+   // note: this needs to be case insensitive for lump names
+   while(*c)
+   {
+      h = 5 * h + toupper(*c);
+      ++c;
+   }
+
+   return h;}
+
+static voiceinfo_t *voices[NUMVOICECHAINS];
+
+//
+// S_getVoice
+//
+// Gets an entry from the voice table, if it exists. If it does not, one will be
+// created.
+//
+static voiceinfo_t *S_getVoice(const char *name, int lumpnum)
+{
+    voiceinfo_t *voice;
+    int hashkey = S_voiceHash(name) % NUMVOICECHAINS;
+
+    voice = voices[hashkey];
+
+    while(voice && strcasecmp(voice->sfx.name, name))
+        voice = voice->next;
+
+    if(!voice)
+    {
+        voice = calloc(1, sizeof(voiceinfo_t));
+
+        strncpy(voice->sfx.name, name, 8);
+        voice->sfx.priority = INT_MIN; // make highest possible priority
+        voice->sfx.pitch = -1;
+        voice->sfx.volume = -1;
+        voice->sfx.numchannels = -1;
+        voice->sfx.usefulness = -1;
+        voice->sfx.lumpnum = lumpnum;
+
+        // throw it onto the table.
+        voice->next = voices[hashkey];
+        voices[hashkey] = voice;
+    }
+
+    return voice;
+}
 
 //
 // I_StartVoice
@@ -508,14 +588,14 @@ void S_StartSound(void *origin_p, int sfx_id)
 //
 void I_StartVoice(const char *lumpname)
 {
-    static sfxinfo_t voicesfx; // a static "fake" sfxinfo for voices.
     int lumpnum;
+    voiceinfo_t *voice; // choco-specific
 
     // no voices in deathmatch mode.
     if(netgame)
         return;
 
-    // TODO: checks if sfx_SndDevice == 83
+    // STRIFE-TODO: checks if snd_SfxDevice == 83
     // This is probably turning off voice if using PC speaker...
 
     // user has disabled voices?
@@ -523,25 +603,26 @@ void I_StartVoice(const char *lumpname)
         return;
 
     // have a voice playing already? stop it.
-    if (i_voicehandle > 0)
+    if (i_voicehandle >= 0)
         S_StopChannel(i_voicehandle);
 
-    // haleyjd: Choco-specific: initialize the voicesfx structure
-    memset(&voicesfx, 0, sizeof(sfxinfo_t));
-    strncpy(voicesfx.name, lumpname, 8);
-    voicesfx.priority = INT_MIN; // make highest possible priority
-    voicesfx.pitch = -1;
-    voicesfx.volume = -1;
-    voicesfx.numchannels = -1;
-    voicesfx.usefulness = -1;
+    // Vanilla STRIFE appears to have stopped any current voice without
+    // starting a new one if NULL was passed in here, though I cannot 
+    // find an explicit check for NULL in the assembly. Either way, it 
+    // didn't crash, so do a check now:
+    if(lumpname == NULL)
+        return;
 
     if((lumpnum = W_CheckNumForName(lumpname)) != -1)
     {
+        // haleyjd: Choco-specific: get a voice structure
+        voice = S_getVoice(lumpname, lumpnum);
+
         // get a channel for the voice
-        i_voicehandle = S_GetChannel(NULL, &voicesfx, true);
-        voicesfx.lumpnum = lumpnum;
+        i_voicehandle = S_GetChannel(NULL, &voice->sfx, true);
+        
         channels[i_voicehandle].handle 
-            = I_StartSound(&voicesfx, i_voicehandle, snd_VoiceVolume, NORM_SEP);
+            = I_StartSound(&voice->sfx, i_voicehandle, snd_VoiceVolume, NORM_SEP);
     }
 }
 

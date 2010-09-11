@@ -1151,7 +1151,8 @@ void P_DialogDoChoice(int choice)
 
     currentchoice = &(currentdialog->choices[choice]);
 
-    // I_StartVoice(0); -- verify (should stop previous voice I believe)
+    I_StartVoice(NULL); // STRIFE-TODO: verify (should stop previous voice I believe)
+
     // villsa 09/08/10: converted into for loop
     for(i = 0; i < MDLG_MAXITEMS; i++)
     {
@@ -1364,7 +1365,7 @@ void P_DialogStart(player_t *player)
         V_DrawPatchDirect(0, 0, W_CacheLumpNum(pic, PU_CACHE));
 
     // get voice
-    //I_StartVoice(currentdialog->voice);
+    I_StartVoice(currentdialog->voice);
 
     // get bye text
     switch(rnd)
