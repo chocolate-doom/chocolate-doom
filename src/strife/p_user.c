@@ -40,11 +40,13 @@
 
 // Index of the special effects (INVUL inverse) map.
 #define INVERSECOLORMAP		32
-#define LOOKPITCHAMOUNT         6       // villsa [STRIFE]
+#define LOOKPITCHAMOUNT         6                       // villsa [STRIFE]
 #define CENTERVIEWAMOUNT        (LOOKPITCHAMOUNT + 2)   // villsa [STRIFE]
-#define LOOKUPMAX               90      // villsa [STRIFE]
-#define LOOKDOWNMAX             -110    // villsa [STRIFE]
+#define LOOKUPMAX               90                      // villsa [STRIFE]
+#define LOOKDOWNMAX             -110                    // villsa [STRIFE]
 
+
+void P_DropInventoryItem(player_t* player, int sprite); // villsa [STRIFE]
 
 //
 // Movement.
@@ -309,6 +311,7 @@ void P_PlayerThink (player_t* player)
     weapontype_t	newweapon;
 	
     // fixme: do this in the cheat code
+    // villsa [STRIFE] TODO - verify if unused
     if (player->cheats & CF_NOCLIP)
 	player->mo->flags |= MF_NOCLIP;
     else
@@ -343,6 +346,42 @@ void P_PlayerThink (player_t* player)
 
     if (player->mo->subsector->sector->special)
 	P_PlayerInSpecialSector (player);
+
+    // villsa [STRIFE] handle inventory input
+    if(!player->inventorydown)
+    {
+        if(cmd->buttons2 & BT2_HEALTH)
+            P_UseInventoryItem(player, SPR_FULL);
+        else if(cmd->buttons2 & BT2_INVUSE)
+            P_UseInventoryItem(player, cmd->inventory);
+        else if(cmd->buttons2 & BT2_INVDROP)
+            P_DropInventoryItem(player, cmd->inventory);
+        else
+        {
+            // villsa [STRIFE] TODO - add workparm variable
+            /*if(workparm)
+            {
+                int cheat = player->cheats ^ 1;
+                player->cheats ^= CF_NOCLIP;
+
+                if(cheat & CF_NOCLIP)
+                {
+                    player->message = "No Clipping Mode ON";
+                    player->mo->flags |= MF_NOCLIP;
+                }
+                else
+                {
+                    player->mo->flags &= ~MF_NOCLIP;
+                    player->message = "No Clipping Mode OFF";
+                }
+            }*/
+
+        }
+
+        player->inventorydown = true;
+    }
+    else
+        player->inventorydown = false;
     
     // Check for weapon change.
 
@@ -487,3 +526,140 @@ void P_PlayerThink (player_t* player)
 }
 
 
+//
+// P_RemoveInventoryItem
+// villsa [STRIFE] new function
+//
+char* P_RemoveInventoryItem(player_t *player, int slot, int amount)
+{
+    player->inventory[slot].amount -= amount;
+    player->st_update = true;
+
+    if(!player->inventory[slot].amount)
+    {
+        // shift everything above it down
+        // see P_TakeDialogItem for notes on possible bugs
+        int j;
+
+        for(j = slot + 1; j <= player->numinventory; j++)
+        {
+            inventory_t *item1 = &(player->inventory[j - 1]);
+            inventory_t *item2 = &(player->inventory[j]);
+
+            *item1 = *item2;
+        }
+
+        player->inventory[player->numinventory].type = NUMMOBJTYPES;
+        player->inventory[player->numinventory].sprite = -1;
+        player->numinventory--;
+
+        // update cursor position
+        if(player->inventorycursor >= player->numinventory)
+        {
+            if(player->inventorycursor)
+                player->inventorycursor--;
+        }
+    }
+
+    return mobjinfo[player->inventory[slot].type].name;
+}
+
+//
+// P_DropInventoryItem
+// villsa [STRIFE] new function
+//
+void P_DropInventoryItem(player_t* player, int sprite)
+{
+    int invslot;
+    inventory_t *item;
+    mobjtype_t type;
+    int amount;
+
+    invslot = 0;
+    amount = 1;
+
+    while(invslot < player->numinventory && sprite != player->inventory[invslot].sprite)
+        invslot++;
+
+    item = &(player->inventory[invslot]);
+    type = item->type;
+
+    if(item->amount)
+    {
+        angle_t angle;
+        fixed_t dist;
+        mobj_t* mo;
+        mobj_t* mobjitem;
+        fixed_t x;
+        fixed_t y;
+        fixed_t z;
+        int r;
+
+        if(item->type == MT_MONY_1)
+        {
+            if(item->amount >= 50)
+            {
+                type = MT_MONY_50;
+                amount = 50;
+            }
+            else if(item->amount >= 25)
+            {
+                type = MT_MONY_25;
+                amount = 25;
+            }
+            else if(item->amount >= 10)
+            {
+                type = MT_MONY_10;
+                amount = 10;
+            }
+        }
+
+        if(type >= NUMMOBJTYPES)
+            return;
+
+        angle = player->mo->angle;
+        r = P_Random();
+        angle = (angle + ((r - P_Random()) << 18)) >> ANGLETOFINESHIFT;
+
+        if(angle < 7618 && angle >= 6718)
+            angle = 7618;
+
+        else if(angle < 5570 && angle >= 4670)
+            angle = 5570;
+
+        else if(angle < 3522 && angle >= 2622)
+            angle = 3522;
+
+        else if(angle < 1474 && angle >= 574)
+            angle = 1474;
+
+        mo = player->mo;
+        dist = mobjinfo[type].radius + mo->info->radius + (4*FRACUNIT);
+
+        x = mo->x + FixedMul(finecosine[angle], dist);
+        y = mo->y + FixedMul(finesine[angle], dist);
+        z = mo->z + (10*FRACUNIT);
+        mobjitem = P_SpawnMobj(x, y, z, type);
+        mobjitem->flags |= (MF_SPECIAL|MF_DROPPED);
+
+        if(P_CheckPosition(mobjitem, x, y))
+        {
+            mobjitem->angle = (angle << ANGLETOFINESHIFT);
+            mobjitem->momx = FixedMul(finecosine[angle], (5*FRACUNIT)) + mo->momx;
+            mobjitem->momy = FixedMul(finesine[angle], (5*FRACUNIT)) + mo->momy;
+            mobjitem->momz = FRACUNIT;
+
+            P_RemoveInventoryItem(player, invslot, amount);
+        }
+        else
+            P_RemoveMobj(mobjitem);
+    }
+}
+
+//
+// P_UseInventoryItem
+// villsa [STRIFE] new function
+//
+boolean P_UseInventoryItem(player_t* player, int item)
+{
+}

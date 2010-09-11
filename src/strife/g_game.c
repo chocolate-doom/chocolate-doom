@@ -439,12 +439,38 @@ void G_BuildTiccmd (ticcmd_t* cmd)
     cmd->consistancy = 
 	consistancy[consoleplayer][maketic%BACKUPTICS]; 
 
-    // villsa [STRIFE]
+    // villsa [STRIFE] look up key
     if(gamekeydown[key_lookup])
         cmd->buttons2 |= BT2_LOOKUP;
-    if (gamekeydown[key_lookdown])
+
+    // villsa [STRIFE] look down key
+    if(gamekeydown[key_lookdown])
         cmd->buttons2 |= BT2_LOOKDOWN;
-    if (gamekeydown[key_usehealth])
+
+    // villsa [STRIFE] inventory use key
+    if(gamekeydown[key_invuse])
+    {
+        player_t* player = &players[consoleplayer];
+        if(player->numinventory > 0)
+        {
+            cmd->buttons2 |= BT2_INVUSE;
+            cmd->inventory = player->inventory[player->inventorycursor].sprite;
+        }
+    }
+
+    // villsa [STRIFE] inventory drop key
+    if(gamekeydown[key_invdrop])
+    {
+        player_t* player = &players[consoleplayer];
+        if(player->numinventory > 0)
+        {
+            cmd->buttons2 |= BT2_INVDROP;
+            cmd->inventory = player->inventory[player->inventorycursor].sprite;
+        }
+    }
+
+    // villsa [STRIFE] use medkit
+    if(gamekeydown[key_usehealth])
         cmd->buttons2 |= BT2_HEALTH;
 
 
@@ -1210,6 +1236,13 @@ void G_PlayerReborn (int player)
 	 
     for (i=0 ; i<NUMAMMO ; i++) 
 	p->maxammo[i] = maxammo[i]; 
+
+    // villsa [STRIFE] TODO - verify
+    for(i = 0; i < 32; i++)
+    {
+        p->inventory[i].sprite = -1;
+        p->inventory[i].type = NUMMOBJTYPES;
+    }
 		 
 }
 
