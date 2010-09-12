@@ -713,7 +713,7 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
 			
 	target->flags &= ~MF_SOLID;
 	target->player->playerstate = PST_DEAD;
-        target->player->pitch += (5 << 8);
+        target->player->mo->momz = (5*FRACUNIT);
 	P_DropWeapon(target->player);
 
 	if(target->player == &players[consoleplayer]
