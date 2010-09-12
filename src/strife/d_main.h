@@ -52,6 +52,7 @@ void D_StartTitle (void);
 //
 
 extern  gameaction_t    gameaction;
+extern  boolean         isregistered;   // villsa [STRIFE]
 
 
 #endif

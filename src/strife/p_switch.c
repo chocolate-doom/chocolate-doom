@@ -33,7 +33,7 @@
 #include "p_local.h"
 
 #include "g_game.h"
-
+#include "d_main.h" // villsa [STRIFE]
 #include "s_sound.h"
 
 // Data.
@@ -139,9 +139,8 @@ void P_InitSwitchList(void)
 	
     episode = 1;
 
-    // STRIFE-FIXME: Needs to test isregistered variable
-    if(gamemode == registered)
-            episode = 2;
+    if(isregistered)
+        episode = 2;
     // villsa [STRIFE] unused
     /*else
 	if ( gamemode == commercial )
