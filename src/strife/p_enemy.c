@@ -1527,6 +1527,7 @@ void A_CrusaderAttack(mobj_t* actor)
         actor->angle += (ANG45 / 16);
         P_SpawnFacingMissile(actor, actor->target, MT_C_MISSILE);
 
+        P_SetMobjState(actor, actor->info->seestate);
         actor->reactiontime += 15;
     }
     else

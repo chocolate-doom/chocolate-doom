@@ -1172,6 +1172,7 @@ void M_ChangeDetail(int choice)
 }
 */
 
+// [STRIFE] Verified unmodified
 void M_SizeDisplay(int choice)
 {
     switch(choice)
@@ -1236,7 +1237,8 @@ M_DrawThermo
 }
 
 
-
+// haleyjd: These are from DOOM v0.5 and the prebeta! They drew those ugly red &
+// blue checkboxes... preserved for historical interest, as not in Strife.
 void
 M_DrawEmptyCell
 ( menu_t*	menu,
