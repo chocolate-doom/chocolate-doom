@@ -94,6 +94,8 @@
 //
 void D_DoomLoop (void);
 
+static boolean D_AddFile(char *filename);
+
 // Location where savegames are stored
 
 char *          savegamedir;
