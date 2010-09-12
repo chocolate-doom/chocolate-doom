@@ -262,7 +262,7 @@ void P_ChangeSwitchTexture(line_t* line, int useAgain)
     // villsa [STRIFE] check for linetype 182 (break glass)
     if(line->special == 182)
     {
-        line->flags &= ~ML_BLOCKMONSTERS;
+        line->flags &= ~ML_BLOCKING;
         breakglass = true;
 
         if(useAgain)
