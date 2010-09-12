@@ -38,8 +38,11 @@
 #include "i_system.h"
 #include "am_map.h"
 #include "p_local.h"
+#include "p_dialog.h"   // villsa [STRIFE]
 #include "s_sound.h"
 #include "p_inter.h"
+#include "hu_stuff.h"   // villsa [STRIFE]
+#include "z_zone.h"     // villsa [STRIFE]
 
 
 #define BONUSADD	6
@@ -608,55 +611,112 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
         S_StartSound(NULL, sound);
 }
 
+// villsa [STRIFE]
+static char plrkilledmsg[76];
 
 //
 // KillMobj
 //
-void
-P_KillMobj
-( mobj_t*	source,
-  mobj_t*	target )
+void P_KillMobj(mobj_t* source, mobj_t* target)
 {
-    mobjtype_t	item;
-    mobj_t*	mo;
+    mobjtype_t  item;
+    mobj_t*     mo;
+    line_t      junk;
+    int         i;
 	
-    // villsa [STRIFE] MF_SPECIAL is added in the check
-    target->flags &= ~(MF_SHOOTABLE|MF_FLOAT|MF_BOUNCE|MF_SPECIAL);
+    // villsa [STRIFE] corpse and dropoff are removed, but why when these two flags
+    // are set a few lines later? watcom nonsense perhaps?
+    target->flags &= ~(MF_SHOOTABLE|MF_FLOAT|MF_BOUNCE|MF_CORPSE|MF_DROPOFF);
 
     // villsa [STRIFE] unused
     /*if (target->type != MT_SKULL)
 	target->flags &= ~MF_NOGRAVITY;*/
 
     target->flags |= MF_CORPSE|MF_DROPOFF;
-    target->height >>= 2;
+    target->height = FRACUNIT;  // villsa [STRIFE] set to fracunit instead of >>= 2
 
-    if (source && source->player)
+    if(source && source->player)
     {
 	// count for intermission
-	if (target->flags & MF_COUNTKILL)
+	if(target->flags & MF_COUNTKILL)
 	    source->player->killcount++;	
 
-	if (target->player)
+	if(target->player)
+        {
 	    source->player->frags[target->player-players]++;
+
+            // villsa [STRIFE] new messages when fragging players
+            sprintf(plrkilledmsg, "%s killed %s",
+                pnameprefixes[source->player->mo->miscdata],
+                pnameprefixes[target->player->mo->miscdata]);
+
+            if(netgame)
+                players[consoleplayer].message = plrkilledmsg;
+        }
     }
-    else if (!netgame && (target->flags & MF_COUNTKILL) )
+    else if(!netgame && (target->flags & MF_COUNTKILL))
     {
 	// count all monster deaths,
 	// even those caused by other monsters
 	players[0].killcount++;
     }
     
-    if (target->player)
+    if(target->player)
     {
 	// count environment kills against you
-	if (!source)	
+	if(!source)	
 	    target->player->frags[target->player-players]++;
+
+        if(gamemap == 29 && !netgame)
+        {
+            // villsa [STRIFE] TODO
+            //F_StartSlideShow();
+            //return;
+        }
+
+        // villsa [STRIFE] spit out inventory items when killed
+        if(netgame)
+        {
+            int amount = 0;
+            mobj_t* loot;
+            int r = 0;
+
+            while(1)
+            {
+                if(target->player->inventory[0].amount <= 0)
+                    break;
+
+                item = target->player->inventory[0].type;
+                if(item == MT_MONY_1)
+                {
+                    loot = P_SpawnMobj(target->x, target->y, target->z + (24*FRACUNIT), MT_MONY_25);
+
+                    // [STRIFE] TODO - what the hell is it doing here?
+                    loot->health = target->player->inventory[0].amount;
+                    loot->health = -target->player->inventory[0].amount;
+
+                    amount = target->player->inventory[0].amount;
+                }
+                else
+                {
+                    loot = P_SpawnMobj(target->x, target->y, target->z + (24*FRACUNIT), item);
+                    amount = 1;
+                }
+
+                P_RemoveInventoryItem(target->player, 0, amount);
+                r = P_Random();
+                loot->momx += ((r & 7) - (P_Random() & 7)) << FRACBITS;
+                loot->momy += ((P_Random() & 7) + 1) << FRACBITS;
+                loot->flags |= MF_DROPPED;
+            }
+        }
 			
 	target->flags &= ~MF_SOLID;
 	target->player->playerstate = PST_DEAD;
-	P_DropWeapon (target->player);
+        target->player->pitch += (5 << 8);
+	P_DropWeapon(target->player);
 
-	if (target->player == &players[consoleplayer]
+	if(target->player == &players[consoleplayer]
 	    && automapactive)
 	{
 	    // don't die in auto map,
@@ -666,52 +726,186 @@ P_KillMobj
 	
     }
 
-    if (target->health < -target->info->spawnhealth 
-	&& target->info->xdeathstate)
+    // villsa [STRIFE] some modifications to setting states
+    if(target->state != &states[S_BLST_23]) // 1860 / 20
     {
-	P_SetMobjState (target, target->info->xdeathstate);
+        if(target->health == -6666)
+            P_SetMobjState(target, S_DISR_00);  // 373
+        else
+        {
+            if(target->health < -target->info->spawnhealth 
+                && target->info->xdeathstate)
+                P_SetMobjState(target, target->info->xdeathstate);
+            else
+                P_SetMobjState(target, target->info->deathstate);
+        }
     }
-    else
-	P_SetMobjState (target, target->info->deathstate);
-    target->tics -= P_Random()&3;
 
+    // villsa [STRIFE] unused
+    /*target->tics -= P_Random()&3;
     if (target->tics < 1)
-	target->tics = 1;
-		
-    //	I_StartSound (&actor->r, actor->info->deathsound);
+	target->tics = 1;*/
 
-    // In Chex Quest, monsters don't drop items.
+    // Drop stuff.
+    // villsa [STRIFE] get item from dialog target
+    item = P_DialogFind(target->type, target->miscdata)->dropitem;
 
-    if (gameversion == exe_chex)
+    if(!item)
     {
+        // villsa [STRIFE] drop default items
+        switch(target->type)
+        {
+        case MT_ORACLE:
+            item = MT_MEAT;
+            break;
+
+        case MT_PROGRAMMER:
+            item = MT_SIGIL_A;
+            break;
+
+        case MT_PRIEST:
+            item = MT_JUNK;
+            break;
+
+        case MT_BISHOP:
+            item = MT_AMINIBOX;
+            break;
+
+        case MT_PGUARD:
+        case MT_CRUSADER:
+            item = MT_ACELL;
+            break;
+
+        case MT_RLEADER:
+            item = MT_AAMMOBOX;
+            break;
+
+        case MT_GUARD1:
+        case MT_REBEL1:
+        case MT_SHADOWGUARD:
+            item = MT_ACLIP;
+            break;
+
+        case MT_SPECTRE_B:
+            item = MT_SIGIL_B;
+            break;
+
+        case MT_SPECTRE_C:
+            item = MT_SIGIL_C;
+            break;
+
+        case MT_SPECTRE_D:
+            item = MT_SIGIL_D;
+            break;
+
+        case MT_SPECTRE_E:
+            item = MT_SIGIL_E;
+            break;
+
+        case MT_COUPLING:
+            junk.tag = 225;
+            EV_DoDoor(&junk, close);
+
+            junk.tag = 44;
+            EV_DoFloor(&junk, lowerFloor);
+
+            I_StartVoice("VOC13");
+            if(W_CheckNumForName("LOG13"))
+            {
+                strncpy(mission_objective,
+                    W_CacheLumpNum("LOG13", PU_CACHE), OBJECTIVE_LEN);
+            }
+            item = MT_COUPLING_BROKEN;
+            players[0].questflags |= (1 << (mobjinfo[MT_COUPLING].speed - 1));
+            break;
+
+        default:
+            return;
+        }
+    }
+
+    // handle special case for scripted target's dropped item
+    switch(item)
+    {
+    case MT_TOKEN_SHOPCLOSE:
+        junk.tag = 222;
+        EV_DoDoor(&junk, close);
+        P_NoiseAlert(players[0].mo, players[0].mo);
+
+        sprintf(plrkilledmsg, "You're dead!  You set off the alarm.");
+        if(!deathmatch)
+            players[consoleplayer].message = plrkilledmsg;
+
+        return;
+
+    case MT_TOKEN_PRISON_PASS:
+        junk.tag = 223;
+        EV_DoDoor(&junk, open);
+        return;
+
+    case MT_TOKEN_DOOR3:
+        junk.tag = 224;
+        EV_DoDoor(&junk, open);
+        return;
+
+    case MT_SIGIL_A:
+    case MT_SIGIL_B:
+    case MT_SIGIL_C:
+    case MT_SIGIL_D:
+    case MT_SIGIL_E:
+        for(i = 0; i < MAXPLAYERS; i++)
+        {
+            if(!P_GiveWeapon(&players[i], wp_sigil, false))
+            {
+                if(players[i].sigiltype++ > 4)
+                    players[i].sigiltype = 4;
+            }
+
+            players[i].weaponowned[wp_sigil] = true;
+            players[i].readyweapon = wp_sigil;
+        }
+        return;
+
+    case MT_TOKEN_ALARM:
+        P_NoiseAlert(players[0].mo, players[0].mo);
+
+        sprintf(plrkilledmsg, "You Fool!  You've set off the alarm");
+        if(!deathmatch)
+            players[consoleplayer].message = plrkilledmsg;
         return;
     }
 
-    // Drop stuff.
-    // This determines the kind of object spawned
-    // during the death frame of a thing.
-    switch (target->type)
+    // villsa [STRIFE] toss out item
+    if(!deathmatch || !(mobjinfo[item].flags & MF_NOTDMATCH))
     {
-        // villsa [STRIFE] TODO - fix me
-      /*case MT_WOLFSS:
-      case MT_POSSESSED:
-	item = MT_CLIP;
-	break;
-	
-      case MT_SHOTGUY:
-	item = MT_SHOTGUN;
-	break;
-	
-      case MT_CHAINGUY:
-	item = MT_CHAINGUN;
-	break;*/
-	
-      default:
-	return;
+        int r;
+
+        mo = P_SpawnMobj(target->x, target->y, target->z + (24*FRACUNIT), item);
+        r = P_Random();
+        mo->momx += ((r & 7) - (P_Random() & 7)) << FRACBITS;
+        r = P_Random();
+        mo->momy += ((r & 7) - (P_Random() & 7)) << FRACBITS;
+        mo->flags |= (MF_SPECIAL|MF_DROPPED);   // special versions of items
+    }
+}
+
+//
+// P_IsMobjBoss
+// villsa [STRIFE] new function
+//
+static boolean P_IsMobjBoss(mobjtype_t type)
+{
+    switch(type)
+    {
+    case MT_PROGRAMMER:
+    case MT_BISHOP:
+    case MT_RLEADER:
+    case MT_ORACLE:
+    case MT_PRIEST:
+        return true;
     }
 
-    mo = P_SpawnMobj (target->x,target->y,ONFLOORZ, item);
-    mo->flags |= MF_DROPPED;	// special versions of items
+    return false;
 }
 
 

@@ -43,6 +43,8 @@
 #define MDLG_MAXCHOICES     5
 #define MDLG_MAXITEMS       3
 
+extern char mission_objective[OBJECTIVE_LEN];
+
 typedef struct mapdlgchoice_s
 {
     int  giveitem;                      // item given when successful
@@ -70,10 +72,11 @@ typedef struct mapdialog_s
     mapdlgchoice_t choices[MDLG_MAXCHOICES];
 } mapdialog_t;
 
-void P_DialogLoad(void);
-void P_DialogStart(player_t *player);
-void P_DialogDoChoice(int choice);
-boolean P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type);
+void            P_DialogLoad(void);
+void            P_DialogStart(player_t *player);
+void            P_DialogDoChoice(int choice);
+boolean         P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type);
+mapdialog_t*    P_DialogFind(mobjtype_t type, int jumptoconv);
 
 #endif
 

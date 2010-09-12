@@ -80,6 +80,19 @@ char *chat_macros[10] =
     HUSTR_CHATMACRO9
 };
 
+// villsa [STRIFE]
+char* pnameprefixes[][16] =
+{
+    "1: ",
+    "2: ",
+    "3: ",
+    "4: ",
+    "5: ",
+    "6: ",
+    "7: ",
+    "8: "
+};
+
 char*	player_names[] =
 {
     HUSTR_PLRGREEN,
