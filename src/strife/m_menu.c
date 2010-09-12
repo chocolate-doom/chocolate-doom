@@ -66,7 +66,7 @@
 #include "m_menu.h"
 
 
-extern void M_QuitDOOM(int);
+extern void M_QuitStrife(int);
 
 extern patch_t*		hu_font[HU_FONTSIZE];
 extern boolean		message_dontfuckwithme;
@@ -167,7 +167,7 @@ void M_EndGame(int choice);
 void M_ReadThis(int choice);
 void M_ReadThis2(int choice);
 void M_ReadThis3(int choice); // [STRIFE]
-void M_QuitDOOM(int choice);
+void M_QuitStrife(int choice);
 
 void M_ChangeMessages(int choice);
 void M_ChangeSensitivity(int choice);
@@ -233,7 +233,7 @@ menuitem_t MainMenu[]=
     {1,"M_SAVEG",M_SaveGame,'s'},
     // Another hickup with Special edition.
     {1,"M_RDTHIS",M_ReadThis,'h'}, // haleyjd 08/28/10: 'r' -> 'h'
-    {1,"M_QUITG",M_QuitDOOM,'q'}
+    {1,"M_QUITG",M_QuitStrife,'q'}
 };
 
 menu_t  MainDef =
@@ -1093,81 +1093,49 @@ void M_FinishReadThis(int choice)
 */
 
 
-
 //
-// M_QuitDOOM
+// M_QuitResponse
 //
-// villsa [STRIFE] TODO - fix sounds
-int     quitsounds[8] =
-{
-    sfx_swish,
-    sfx_swish,
-    sfx_swish,
-    sfx_swish,
-    sfx_swish,
-    sfx_swish,
-    sfx_swish,
-    sfx_swish
-};
-
-int     quitsounds2[8] =
-{
-    sfx_swish,
-    sfx_swish,
-    sfx_swish,
-    sfx_swish,
-    sfx_swish,
-    sfx_swish,
-    sfx_swish,
-    sfx_swish
-};
-
-
-
+// haleyjd 09/11/10: [STRIFE] Modifications to start up endgame
+// demosequence.
+//
 void M_QuitResponse(int key)
 {
+    char buffer[20];
+
     if (key != key_menu_confirm)
-	return;
-    if (!netgame)
-    {
-	if (gamemode == commercial)
-	    S_StartSound(NULL,quitsounds2[(gametic>>2)&7]);
-	else
-	    S_StartSound(NULL,quitsounds[(gametic>>2)&7]);
-	I_WaitVBL(105);
-    }
-    I_Quit ();
-}
+        return;
 
-
-static char *M_SelectEndMessage(void)
-{
-    char **endmsg;
-
-    if (gamemission == doom)
-    {
-        // Doom 1
-
-        endmsg = doom1_endmsg;
-    }
+    if(netgame)
+        I_Quit();
     else
     {
-        // Doom 2
-        
-        endmsg = doom2_endmsg;
+        sprintf(buffer, DEH_String("qfmrm%i"), gametic % 8 + 1);
+        I_StartVoice(buffer);
+        D_QuitGame();
     }
-
-    return endmsg[gametic % NUM_QUITMESSAGES];
 }
 
+/*
+// haleyjd 09/11/10: [STRIFE] Unused
+static char *M_SelectEndMessage(void)
+{
+}
+*/
 
-void M_QuitDOOM(int choice)
+//
+// M_QuitStrife
+//
+// [STRIFE] Renamed from M_QuitDOOM
+// haleyjd 09/11/10: No randomized text message; that's taken care of
+// by the randomized voice message after confirmation.
+//
+void M_QuitStrife(int choice)
 {
     sprintf(endstring,
-            DEH_String("%s\n\n" DOSY),
-            DEH_String(M_SelectEndMessage()));
+            DEH_String("Do you really want to leave?\n\n" DOSY));
   
-    M_StartMessage(endstring,M_QuitResponse,true);
+    M_StartMessage(endstring, M_QuitResponse, true);
 }
 
 
@@ -1533,7 +1501,7 @@ boolean M_Responder (event_t* ev)
     if (ev->type == ev_quit)
     {
         S_StartSound(NULL, sfx_swtchn);
-        M_QuitDOOM(0);
+        M_QuitStrife(0);
         return true;
     }
 
@@ -1811,7 +1779,7 @@ boolean M_Responder (event_t* ev)
         else if (key == key_menu_quit)     // Quit DOOM
         {
             S_StartSound(NULL,sfx_swtchn);
-            M_QuitDOOM(0);
+            M_QuitStrife(0);
             return true;
         }
         else if (key == key_menu_gamma)    // gamma toggle

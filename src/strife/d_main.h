@@ -46,6 +46,7 @@ void D_PageDrawer (void);
 void D_AdvanceDemo (void);
 void D_DoAdvanceDemo (void);
 void D_StartTitle (void);
+void D_QuitGame (void); // [STRIFE]
  
 //
 // GLOBAL VARIABLES

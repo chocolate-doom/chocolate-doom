@@ -575,63 +575,119 @@ void D_DoAdvanceDemo (void)
     usergame = false;               // no save / end game here
     paused = false;
     gameaction = ga_nothing;
-
-    if (gamemode == retail && gameversion != exe_chex)
-      demosequence = (demosequence+1)%7;
-    else
-      demosequence = (demosequence+1)%6;
     
     switch (demosequence)
     {
-      case 0:
-	if ( gamemode == commercial )
-	    pagetic = TICRATE * 11;
-	else
-	    pagetic = 170;
-	gamestate = GS_DEMOSCREEN;
-	pagename = DEH_String("TITLEPIC");
-	if ( gamemode == commercial )
-	  S_StartMusic(mus_logo);   // villsa [STRIFE] TODO - fix music
-	else
-	  S_StartMusic (mus_intro);
-	break;
-      case 1:
-	G_DeferedPlayDemo(DEH_String("demo1"));
-	break;
-      case 2:
-	pagetic = 200;
-	gamestate = GS_DEMOSCREEN;
-	pagename = DEH_String("CREDIT");
-	break;
-      case 3:
-	G_DeferedPlayDemo(DEH_String("demo2"));
-	break;
-      case 4:
-	gamestate = GS_DEMOSCREEN;
-	if ( gamemode == commercial)
-	{
-	    pagetic = TICRATE * 11;
-	    pagename = DEH_String("TITLEPIC");
-	    S_StartMusic(mus_logo); // villsa [STRIFE] TODO - fix music
-	}
-	else
-	{
-	    pagetic = 200;
-
-	    if ( gamemode == retail )
-	      pagename = DEH_String("CREDIT");
-	    else
-	      pagename = DEH_String("HELP2");
-	}
-	break;
-      case 5:
-	G_DeferedPlayDemo(DEH_String("demo3"));
-	break;
-        // THE DEFINITIVE DOOM Special Edition demo
-      case 6:
-	G_DeferedPlayDemo(DEH_String("demo4"));
-	break;
+    case -5: // exit the game
+        I_Quit();
+        return;
+    case -4: // show exit screen
+        menuactive = false;
+        pagetic = 105;
+        gamestate = GS_DEMOSCREEN;
+        pagename = DEH_String("PANEL7");
+        S_StartMusic(mus_fast);
+        if(isdemoversion)
+            demosequence = -3; // show Velocity logo
+        else
+            demosequence = -5; // exit
+        return;
+    case -3: // show Velocity logo for demo version
+        pagetic = 210;
+        gamestate = GS_DEMOSCREEN;
+        pagename = DEH_String("vellogo");
+        demosequence = -5; // exit
+        return;
+    case -2: // title screen
+        pagetic = 210;
+        gamestate = GS_DEMOSCREEN;
+        pagename = DEH_String("TITLEPIC");
+        S_StartMusic(mus_logo);
+        demosequence = -1; // start intro cinematic
+        return;
+    case -1: // start of intro cinematic
+        pagetic = 10;
+        gamestate = GS_DEMOSCREEN;
+        pagename = DEH_String("PANEL0");
+        S_StartSound(NULL, sfx_rb2act);
+        wipegamestate = -1;
+        break;
+    case 0: // Rogue logo
+        pagetic = 140;
+        gamestate = GS_DEMOSCREEN;
+        pagename = DEH_String("RGELOGO");
+        wipegamestate = -1;
+        break;
+    case 1:
+        pagetic = 245;                    // The comet struck our planet without
+        gamestate = GS_DEMOSCREEN;        // warning.We lost our paradise in a 
+        pagename = DEH_String("PANEL1");  // single, violent stroke.
+        I_StartVoice(DEH_String("pro1")); 
+        S_StartMusic(mus_intro);
+        break;
+    case 2:
+        pagetic = 315;                    // The impact released a virus which 
+        gamestate = GS_DEMOSCREEN;        // swept through the land and killed 
+        pagename = DEH_String("PANEL2");  // millions. They turned out to be 
+        I_StartVoice(DEH_String("pro2")); // the lucky ones...
+        break;
+    case 3:
+        pagetic = 420;                    // For those that did not die became 
+        gamestate = GS_DEMOSCREEN;        // mutations of humanity. Some became
+        pagename = DEH_String("PANEL3");  // fanatics who heard the voice of a
+        I_StartVoice(DEH_String("pro3")); // malignant God in their heads, and 
+        break;                            // called themselves the Order.
+    case 4:
+        pagetic = 385;                    // Those of us who were deaf to this
+        pagename = DEH_String("PANEL4");  // voice suffer horribly and are 
+        gamestate = GS_DEMOSCREEN;        // forced to serve these ruthless
+        I_StartVoice(DEH_String("pro4")); // psychotics, who wield weapons more
+        break;                            // powerful than anything we can muster.
+    case 5:
+        pagetic = 350;                    // They destroy our women and children,
+        gamestate = GS_DEMOSCREEN;        // so that we must hide them underground,
+        pagename = DEH_String("PANEL5");  // and live like animals in constant
+        I_StartVoice(DEH_String("pro5")); // fear for our lives.
+        break;
+    case 6:                               // But there are whispers of discontent.
+        pagetic = 560;                    // If we organize, can we defeat our
+        gamestate = GS_DEMOSCREEN;        // masters? Weapons are being stolen,
+        pagename = DEH_String("PANEL6");  // soldiers are being trained. A 
+        I_StartVoice(DEH_String("pro6")); // Movement is born! Born of lifelong 
+        break;                            // STRIFE!
+    case 7: // titlepic again - unused...
+        pagetic = 315;
+        gamestate = GS_DEMOSCREEN;
+        pagename = DEH_String("TITLEPIC");
+        wipegamestate = -1;
+        break;
+    case 8: // demo
+        //ClearTmp();  STRIFE-TODO
+        pagetic = 315;
+        G_DeferedPlayDemo(DEH_String("demo1"));
+        break;
+    case 9: // velocity logo? - unused...
+        pagetic = 210;
+        gamestate = GS_DEMOSCREEN;
+        pagename = DEH_String("vellogo");
+        wipegamestate = -1;
+        break;
+    case 10: // credits
+        gamestate = GS_DEMOSCREEN;
+        pagetic = 420;
+        pagename = DEH_String("CREDIT");
+        wipegamestate = -1;
+        break;
+    default:
+        break;
     }
+
+    ++demosequence;
+
+    if(demosequence > 11)
+        demosequence = -2;
+    if(demosequence == 7 || demosequence == 9)
+        ++demosequence;
 }
 
 
@@ -639,12 +695,29 @@ void D_DoAdvanceDemo (void)
 //
 // D_StartTitle
 //
+// [STRIFE]
+// haleyjd 09/11/10: Small modifications for new demo sequence.
+//
 void D_StartTitle (void)
 {
-    // STRIFE-FIXME: some poorly understood changes are pending here
+    gamestate = GS_DEMOSCREEN;
     gameaction = ga_nothing;
-    demosequence = -1;
+    demosequence = -2;
     D_AdvanceDemo ();
+}
+
+//
+// D_QuitGame
+//
+// [STRIFE] New function
+// haleyjd 09/11/10: Sets up the quit game snippet powered by the
+// demo sequence.
+//
+void D_QuitGame(void)
+{
+    gameaction = ga_nothing;
+    demosequence = -4;
+    D_AdvanceDemo();
 }
 
 // Strings for dehacked replacements of the startup banner

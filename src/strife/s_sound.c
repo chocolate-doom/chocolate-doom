@@ -550,7 +550,7 @@ static voiceinfo_t *voices[NUMVOICECHAINS];
 static voiceinfo_t *S_getVoice(const char *name, int lumpnum)
 {
     voiceinfo_t *voice;
-    int hashkey = S_voiceHash(name) % NUMVOICECHAINS;
+    unsigned int hashkey = S_voiceHash(name) % NUMVOICECHAINS;
 
     voice = voices[hashkey];
 
@@ -603,7 +603,7 @@ void I_StartVoice(const char *lumpname)
         return;
 
     // have a voice playing already? stop it.
-    if (i_voicehandle >= 0)
+    if(i_voicehandle >= 0)
         S_StopChannel(i_voicehandle);
 
     // Vanilla STRIFE appears to have stopped any current voice without

@@ -68,7 +68,8 @@
 #define NETEND	"you can't end a netgame!\n\n"PRESSKEY
 #define ENDGAME	"are you sure you want to end the game?\n\n"PRESSYN
 
-#define DOSY		"(press y to quit to dos.)"
+// haleyjd 09/11/10: [STRIFE] No "to dos." on this
+#define DOSY		"(press y to quit)" 
 
 #define DETAILHI	"High detail"
 #define DETAILLO	"Low detail"
