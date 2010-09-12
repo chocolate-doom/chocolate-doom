@@ -862,5 +862,5 @@ boolean P_ItemBehavior(player_t* player, int item)
         break;
     }
 
-    return true;
+    return false;
 }
