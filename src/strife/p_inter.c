@@ -594,7 +594,7 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
         // [STRIFE] TODO - verify this. Seems that questflag isn't
         // applied if the special's speed is equal to 8 or if
         // the player has recieved a specific quest token
-        if(special->info->speed != 8 || !(player->questflags & 32))
+        if(special->info->speed != 8 || !(player->questflags & QF_QUEST6))
             player->questflags |= 1 << (special->info->speed - 1);
     }
 
@@ -623,32 +623,32 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
     mobj_t*     mo;
     line_t      junk;
     int         i;
-	
+
     // villsa [STRIFE] corpse and dropoff are removed, but why when these two flags
     // are set a few lines later? watcom nonsense perhaps?
     target->flags &= ~(MF_SHOOTABLE|MF_FLOAT|MF_BOUNCE|MF_CORPSE|MF_DROPOFF);
 
     // villsa [STRIFE] unused
     /*if (target->type != MT_SKULL)
-	target->flags &= ~MF_NOGRAVITY;*/
+        target->flags &= ~MF_NOGRAVITY;*/
 
     target->flags |= MF_CORPSE|MF_DROPOFF;
     target->height = FRACUNIT;  // villsa [STRIFE] set to fracunit instead of >>= 2
 
     if(source && source->player)
     {
-	// count for intermission
-	if(target->flags & MF_COUNTKILL)
-	    source->player->killcount++;	
+        // count for intermission
+        if(target->flags & MF_COUNTKILL)
+            source->player->killcount++;	
 
-	if(target->player)
+        if(target->player)
         {
-	    source->player->frags[target->player-players]++;
+            source->player->frags[target->player-players]++;
 
             // villsa [STRIFE] new messages when fragging players
-            sprintf(plrkilledmsg, "%s killed %s",
-                pnameprefixes[source->player->mo->miscdata],
-                pnameprefixes[target->player->mo->miscdata]);
+            sprintf(plrkilledmsg, DEH_String("%s killed %s"),
+                    pnameprefixes[source->player->mo->miscdata],
+                    pnameprefixes[target->player->mo->miscdata]);
 
             if(netgame)
                 players[consoleplayer].message = plrkilledmsg;
@@ -656,16 +656,16 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
     }
     else if(!netgame && (target->flags & MF_COUNTKILL))
     {
-	// count all monster deaths,
-	// even those caused by other monsters
-	players[0].killcount++;
+        // count all monster deaths,
+        // even those caused by other monsters
+        players[0].killcount++;
     }
     
     if(target->player)
     {
-	// count environment kills against you
-	if(!source)	
-	    target->player->frags[target->player-players]++;
+        // count environment kills against you
+        if(!source)
+            target->player->frags[target->player-players]++;
 
         if(gamemap == 29 && !netgame)
         {
@@ -689,7 +689,8 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
                 item = target->player->inventory[0].type;
                 if(item == MT_MONY_1)
                 {
-                    loot = P_SpawnMobj(target->x, target->y, target->z + (24*FRACUNIT), MT_MONY_25);
+                    loot = P_SpawnMobj(target->x, target->y, 
+                                       target->z + (24*FRACUNIT), MT_MONY_25);
 
                     // [STRIFE] TODO - what the hell is it doing here?
                     loot->health = target->player->inventory[0].amount;
@@ -699,7 +700,8 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
                 }
                 else
                 {
-                    loot = P_SpawnMobj(target->x, target->y, target->z + (24*FRACUNIT), item);
+                    loot = P_SpawnMobj(target->x, target->y, 
+                                       target->z + (24*FRACUNIT), item);
                     amount = 1;
                 }
 
@@ -710,20 +712,20 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
                 loot->flags |= MF_DROPPED;
             }
         }
-			
-	target->flags &= ~MF_SOLID;
-	target->player->playerstate = PST_DEAD;
-        target->player->mo->momz = (5*FRACUNIT);
-	P_DropWeapon(target->player);
 
-	if(target->player == &players[consoleplayer]
-	    && automapactive)
-	{
-	    // don't die in auto map,
-	    // switch view prior to dying
-	    AM_Stop ();
-	}
-	
+        target->flags &= ~MF_SOLID;
+        target->player->playerstate = PST_DEAD;
+        target->player->mo->momz = (5*FRACUNIT);
+        P_DropWeapon(target->player);
+
+        if(target->player == &players[consoleplayer]
+           && automapactive)
+        {
+            // don't die in auto map,
+            // switch view prior to dying
+            AM_Stop ();
+        }
+
     }
 
     // villsa [STRIFE] some modifications to setting states
@@ -744,7 +746,7 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
     // villsa [STRIFE] unused
     /*target->tics -= P_Random()&3;
     if (target->tics < 1)
-	target->tics = 1;*/
+        target->tics = 1;*/
 
     // Drop stuff.
     // villsa [STRIFE] get item from dialog target
@@ -809,11 +811,11 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
             junk.tag = 44;
             EV_DoFloor(&junk, lowerFloor);
 
-            I_StartVoice("VOC13");
-            if(W_CheckNumForName("LOG13") != -1)
+            I_StartVoice(DEH_String("VOC13"));
+            if(W_CheckNumForName(DEH_String("LOG13")) != -1)
             {
                 strncpy(mission_objective,
-                    W_CacheLumpName("LOG13", PU_CACHE), OBJECTIVE_LEN);
+                    W_CacheLumpName(DEH_String("LOG13"), PU_CACHE), OBJECTIVE_LEN);
             }
             item = MT_COUPLING_BROKEN;
             players[0].questflags |= (1 << (mobjinfo[MT_COUPLING].speed - 1));
@@ -832,7 +834,7 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
         EV_DoDoor(&junk, close);
         P_NoiseAlert(players[0].mo, players[0].mo);
 
-        sprintf(plrkilledmsg, "You're dead!  You set off the alarm.");
+        sprintf(plrkilledmsg, "%s", DEH_String("You're dead!  You set off the alarm."));
         if(!deathmatch)
             players[consoleplayer].message = plrkilledmsg;
 
@@ -869,7 +871,7 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
     case MT_TOKEN_ALARM:
         P_NoiseAlert(players[0].mo, players[0].mo);
 
-        sprintf(plrkilledmsg, "You Fool!  You've set off the alarm");
+        sprintf(plrkilledmsg, "%s", DEH_String("You Fool!  You've set off the alarm"));
         if(!deathmatch)
             players[consoleplayer].message = plrkilledmsg;
         return;

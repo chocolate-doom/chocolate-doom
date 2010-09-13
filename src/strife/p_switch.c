@@ -255,7 +255,7 @@ void P_ChangeSwitchTexture(line_t* line, int useAgain)
     texTop = sides[line->sidenum[0]].toptexture;
     texMid = sides[line->sidenum[0]].midtexture;
     texBot = sides[line->sidenum[0]].bottomtexture;
-	
+
     sound = sfx_swtchn;
 
     // EXIT SWITCH?
@@ -278,54 +278,54 @@ void P_ChangeSwitchTexture(line_t* line, int useAgain)
     }
 
     if(!useAgain)
-	line->special = 0;
-	
+        line->special = 0;
+
     for(i = 0; i < numswitches*2; i++)
     {
         sl = &alphSwitchList[i / 2]; // villsa [STRIFE]
 
-	if(switchlist[i] == texTop)
-	{
+        if(switchlist[i] == texTop)
+        {
             // villsa [STRIFE] set sound
             if(sl->sound)
                 sound = sl->sound;
 
-	    S_StartSound(buttonlist->soundorg,sound);
-	    sides[line->sidenum[0]].toptexture = switchlist[i^1];
+            S_StartSound(buttonlist->soundorg,sound);
+            sides[line->sidenum[0]].toptexture = switchlist[i^1];
 
-	    if(useAgain)
-		P_StartButton(line,top,switchlist[i],BUTTONTIME);
+            if(useAgain)
+                P_StartButton(line,top,switchlist[i],BUTTONTIME);
 
             if(breakglass)
                 P_SpawnBrokenGlass(line);
 
-	    return;
-	}
-	else
-	{
-	    if(switchlist[i] == texMid)
-	    {
+            return;
+        }
+        else
+        {
+            if(switchlist[i] == texMid)
+            {
                 // villsa [STRIFE] set sound
                 if(sl->sound)
                     sound = sl->sound;
 
-		S_StartSound(buttonlist->soundorg,sound);
-		sides[line->sidenum[0]].midtexture = switchlist[i^1];
+                S_StartSound(buttonlist->soundorg,sound);
+                sides[line->sidenum[0]].midtexture = switchlist[i^1];
 
                 // villsa [STRIFE] affect second side of line
                 if(line->flags & ML_TWOSIDED)
                     sides[line->sidenum[1]].midtexture = switchlist[i^1];
 
-		if(useAgain)
-		    P_StartButton(line, middle,switchlist[i],BUTTONTIME);
+                if(useAgain)
+                    P_StartButton(line, middle,switchlist[i],BUTTONTIME);
 
                 // villsa [STRIFE]
                 if(sound == sfx_firxpl)
                 {
                     breakglass = true;
 
-                    // give quest token #28 to player
-                    players[0].questflags |= (1 << tk_quest28);
+                    // give quest flag 29 to player
+                    players[0].questflags |= QF_QUEST29;
 
                     // give stamina/accuracy items
                     if(!netgame)
@@ -340,29 +340,29 @@ void P_ChangeSwitchTexture(line_t* line, int useAgain)
                 if(breakglass || sound == sfx_bglass)
                     P_SpawnBrokenGlass(line);
 
-		return;
-	    }
-	    else
-	    {
-		if(switchlist[i] == texBot)
-		{
+                return;
+            }
+            else
+            {
+                if(switchlist[i] == texBot)
+                {
                     // villsa [STRIFE] set sound
                     if(sl->sound)
                         sound = sl->sound;
 
-		    S_StartSound(buttonlist->soundorg,sound);
-		    sides[line->sidenum[0]].bottomtexture = switchlist[i^1];
+                    S_StartSound(buttonlist->soundorg,sound);
+                    sides[line->sidenum[0]].bottomtexture = switchlist[i^1];
 
-		    if(useAgain)
-			P_StartButton(line, bottom,switchlist[i],BUTTONTIME);
+                    if(useAgain)
+                        P_StartButton(line, bottom,switchlist[i],BUTTONTIME);
 
                     if(breakglass)
                         P_SpawnBrokenGlass(line);
 
-		    return;
-		}
-	    }
-	}
+                    return;
+                }
+            }
+        }
     }
 }
 

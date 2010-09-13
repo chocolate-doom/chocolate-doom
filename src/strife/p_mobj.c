@@ -809,7 +809,7 @@ void P_SpawnPlayer(mapthing_t* mthing)
     if(deathmatch)
     {
         p->accuracy = 50;
-        p->questflags = tk_allquests;
+        p->questflags = QF_ALLQUESTS; // 0x7fffffff
 
         /*for(i = 0; i < NUMCARDS; i++)
             p->cards[i] = true;*/

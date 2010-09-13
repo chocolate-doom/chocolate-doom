@@ -312,43 +312,43 @@ void P_PlayerThink (player_t* player)
 {
     ticcmd_t*		cmd;
     weapontype_t	newweapon;
-	
+
     // fixme: do this in the cheat code
     // villsa [STRIFE] TODO - verify if unused
     if (player->cheats & CF_NOCLIP)
-	player->mo->flags |= MF_NOCLIP;
+        player->mo->flags |= MF_NOCLIP;
     else
-	player->mo->flags &= ~MF_NOCLIP;
-    
+        player->mo->flags &= ~MF_NOCLIP;
+
     // chain saw run forward
     cmd = &player->cmd;
     if (player->mo->flags & MF_JUSTATTACKED)
     {
-	cmd->angleturn = 0;
-	cmd->forwardmove = 0xc800/512;
-	cmd->sidemove = 0;
-	player->mo->flags &= ~MF_JUSTATTACKED;
+        cmd->angleturn = 0;
+        cmd->forwardmove = 0xc800/512;
+        cmd->sidemove = 0;
+        player->mo->flags &= ~MF_JUSTATTACKED;
     }
-			
-	
+
+
     if (player->playerstate == PST_DEAD)
     {
-	P_DeathThink (player);
-	return;
+        P_DeathThink (player);
+        return;
     }
-    
+
     // Move around.
     // Reactiontime is used to prevent movement
     //  for a bit after a teleport.
     if (player->mo->reactiontime)
-	player->mo->reactiontime--;
+        player->mo->reactiontime--;
     else
-	P_MovePlayer (player);
-    
+        P_MovePlayer (player);
+
     P_CalcHeight (player);
 
     if (player->mo->subsector->sector->special)
-	P_PlayerInSpecialSector (player);
+        P_PlayerInSpecialSector (player);
 
     // villsa [STRIFE] handle inventory input
     if(!player->inventorydown)
@@ -364,19 +364,19 @@ void P_PlayerThink (player_t* player)
             // villsa [STRIFE] TODO - add workparm variable
             /*if(workparm)
             {
-                int cheat = player->cheats ^ 1;
-                player->cheats ^= CF_NOCLIP;
+            int cheat = player->cheats ^ 1;
+            player->cheats ^= CF_NOCLIP;
 
-                if(cheat & CF_NOCLIP)
-                {
-                    player->message = "No Clipping Mode ON";
-                    player->mo->flags |= MF_NOCLIP;
-                }
-                else
-                {
-                    player->mo->flags &= ~MF_NOCLIP;
-                    player->message = "No Clipping Mode OFF";
-                }
+            if(cheat & CF_NOCLIP)
+            {
+            player->message = "No Clipping Mode ON";
+            player->mo->flags |= MF_NOCLIP;
+            }
+            else
+            {
+            player->mo->flags &= ~MF_NOCLIP;
+            player->message = "No Clipping Mode OFF";
+            }
             }*/
 
         }
@@ -385,75 +385,75 @@ void P_PlayerThink (player_t* player)
     }
     else
         player->inventorydown = false;
-    
+
     // Check for weapon change.
 
     // A special event has no other buttons.
     if (cmd->buttons & BT_SPECIAL)
-	cmd->buttons = 0;			
-		
+        cmd->buttons = 0;			
+
     if (cmd->buttons & BT_CHANGE)
     {
-	// The actual changing of the weapon is done
-	//  when the weapon psprite can do it
-	//  (read: not in the middle of an attack).
-	newweapon = (cmd->buttons&BT_WEAPONMASK)>>BT_WEAPONSHIFT;
+        // The actual changing of the weapon is done
+        //  when the weapon psprite can do it
+        //  (read: not in the middle of an attack).
+        newweapon = (cmd->buttons&BT_WEAPONMASK)>>BT_WEAPONSHIFT;
 
         // villsa [STRIFE] TODO - placeholder
         if (player->weaponowned[newweapon]
-	    && newweapon != player->readyweapon)
-	{
+        && newweapon != player->readyweapon)
+        {
             player->pendingweapon = newweapon;
-	}
-	
-        // villsa [STRIFE] TODO - MUST FIX!!!
-	/*if (newweapon == wp_fist
-	    && player->weaponowned[wp_chainsaw]
-	    && !(player->readyweapon == wp_chainsaw
-		 && player->powers[pw_strength]))
-	{
-	    newweapon = wp_chainsaw;
-	}
-	
-	if ( (gamemode == commercial)
-	    && newweapon == wp_shotgun 
-	    && player->weaponowned[wp_supershotgun]
-	    && player->readyweapon != wp_supershotgun)
-	{
-	    newweapon = wp_supershotgun;
-	}
-	
+        }
 
-	if (player->weaponowned[newweapon]
-	    && newweapon != player->readyweapon)
-	{
-	    // Do not go to plasma or BFG in shareware,
-	    //  even if cheated.
-	    if ((newweapon != wp_plasma
-		 && newweapon != wp_bfg)
-		|| (gamemode != shareware) )
-	    {
-		player->pendingweapon = newweapon;
-	    }
-	}*/
+        // villsa [STRIFE] TODO - MUST FIX!!!
+        /*if (newweapon == wp_fist
+        && player->weaponowned[wp_chainsaw]
+        && !(player->readyweapon == wp_chainsaw
+        && player->powers[pw_strength]))
+        {
+        newweapon = wp_chainsaw;
+        }
+
+        if ( (gamemode == commercial)
+        && newweapon == wp_shotgun 
+        && player->weaponowned[wp_supershotgun]
+        && player->readyweapon != wp_supershotgun)
+        {
+        newweapon = wp_supershotgun;
+        }
+
+
+        if (player->weaponowned[newweapon]
+        && newweapon != player->readyweapon)
+        {
+        // Do not go to plasma or BFG in shareware,
+        //  even if cheated.
+        if ((newweapon != wp_plasma
+        && newweapon != wp_bfg)
+        || (gamemode != shareware) )
+        {
+        player->pendingweapon = newweapon;
+        }
+        }*/
     }
-    
+
     // check for use
     if (cmd->buttons & BT_USE)
     {
-	if (!player->usedown)
-	{
+        if (!player->usedown)
+        {
             P_DialogStart(player);  // villsa [STRIFE]
-	    P_UseLines (player);
-	    player->usedown = true;
-	}
+            P_UseLines (player);
+            player->usedown = true;
+        }
     }
     else
-	player->usedown = false;
-    
+        player->usedown = false;
+
     // cycle psprites
     P_MovePsprites (player);
-    
+
     // Counters, time dependend power ups.
 
     // haleyjd 08/30/10: [STRIFE]
@@ -470,28 +470,28 @@ void P_PlayerThink (player_t* player)
 
     // Strength counts up to diminish fade.
     if (player->powers[pw_strength])
-	player->powers[pw_strength]++;	
-		
+        player->powers[pw_strength]++;	
+
     // villsa [STRIFE] unused
     /*if (player->powers[pw_invulnerability])
-	player->powers[pw_invulnerability]--;*/
+    player->powers[pw_invulnerability]--;*/
 
     if (player->powers[pw_invisibility])
-	if (! --player->powers[pw_invisibility] )
-	    player->mo->flags &= ~MF_SHADOW;
-			
+        if (! --player->powers[pw_invisibility] )
+            player->mo->flags &= ~MF_SHADOW;
+
     // villsa [STRIFE] unused
     /*if (player->powers[pw_infrared])
-	player->powers[pw_infrared]--;*/
-		
+    player->powers[pw_infrared]--;*/
+
     if (player->powers[pw_ironfeet])
-	player->powers[pw_ironfeet]--;
-		
+        player->powers[pw_ironfeet]--;
+
     if (player->damagecount)
-	player->damagecount--;
-		
+        player->damagecount--;
+
     if (player->bonuscount)
-	player->bonuscount--;
+        player->bonuscount--;
 
     // villsa [STRIFE] checks for extralight
     if(player->extralight >= 0)
@@ -501,33 +501,33 @@ void P_PlayerThink (player_t* player)
         else
             player->fixedcolormap = 0;
     }
-    else
+    else // Sigil shock:
         player->fixedcolormap = INVERSECOLORMAP;
 
-    
+
     // villsa [STRIFE] unused
     // Handling colormaps.
     /*if (player->powers[pw_invulnerability])
     {
-	if (player->powers[pw_invulnerability] > 4*32
-	    || (player->powers[pw_invulnerability]&8) )
-	    player->fixedcolormap = INVERSECOLORMAP;
-	else
-	    player->fixedcolormap = 0;
+        if (player->powers[pw_invulnerability] > 4*32
+            || (player->powers[pw_invulnerability]&8) )
+            player->fixedcolormap = INVERSECOLORMAP;
+        else
+            player->fixedcolormap = 0;
     }
     else if (player->powers[pw_infrared])	
     {
-	if (player->powers[pw_infrared] > 4*32
-	    || (player->powers[pw_infrared]&8) )
-	{
-	    // almost full bright
-	    player->fixedcolormap = 1;
-	}
-	else
-	    player->fixedcolormap = 0;
+        if (player->powers[pw_infrared] > 4*32
+            || (player->powers[pw_infrared]&8) )
+        {
+            // almost full bright
+            player->fixedcolormap = 1;
+        }
+        else
+            player->fixedcolormap = 0;
     }
     else
-	player->fixedcolormap = 0;*/
+        player->fixedcolormap = 0;*/
 }
 
 

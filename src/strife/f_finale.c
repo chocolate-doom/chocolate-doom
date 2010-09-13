@@ -62,6 +62,11 @@ finalestage_t finalestage;
 
 unsigned int finalecount;
 
+// haleyjd 09/12/10: [STRIFE] Slideshow variables
+char *slideshow_panel;
+int   slideshow_tics;
+int   slideshow_state;
+
 #define	TEXTSPEED	3
 #define	TEXTWAIT	250
 
@@ -115,21 +120,45 @@ void	F_CastDrawer (void);
 //
 void F_StartFinale (void)
 {
+    patch_t *panel;
     size_t i;
 
     gameaction = ga_nothing;
     gamestate = GS_FINALE;
     viewactive = false;
     automapactive = false;
+    wipegamestate = -1; // [STRIFE]
 
-    if (gamemission == doom)
+    // [STRIFE] Setup the slide show
+    slideshow_panel = DEH_String("PANEL0");
+
+    panel = (patch_t *)W_CacheLumpName(slideshow_panel, PU_CACHE);
+    V_DrawPatch(0, 0, panel);
+
+    // haleyjd: NOT FINISHED
+#if 0
+    switch(gamemap)
     {
-        S_ChangeMusic(mus_logo, true);  // villsa [STRIFE] TODO - fix music
+    case 3:
+        slideshow_state = 1;
+        break;
+    case 9:
+        slideshow_state = -99;
+        break;
+    case 10:
+        slideshow_state = 5;
+        break;
+    case 29:
+        if(!netgame)
+        {
+            if(players[0].health < 0)
+                slideshow_state = 17;
+            else
+            {
+            }
+        }
     }
-    else
-    {
-        S_ChangeMusic(mus_logo, true);  // villsa [STRIFE] TODO - fix music
-    }
+#endif
 
     // Find the right screen and set the text and background
 
