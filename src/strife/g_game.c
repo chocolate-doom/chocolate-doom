@@ -1215,7 +1215,7 @@ void G_PlayerReborn (int player)
     int         allegiance;
 	 
     killcount = players[player].killcount;
-    allegiance = players[player].mo->miscdata;
+    allegiance = players[player].allegiance;
 
     memcpy(frags,players[player].frags,sizeof(frags));
 	 
@@ -1234,7 +1234,7 @@ void G_PlayerReborn (int player)
     p->weaponowned[wp_fist] = true;                 // villsa [STRIFE] default to fists
     p->cheats               |= CF_AUTOHEALTH;       // villsa [STRIFE]
     p->killcount            = killcount;
-    p->mo->miscdata         = allegiance;           // villsa [STRIFE]
+    p->allegiance           = allegiance;           // villsa [STRIFE]
     p->centerview           = true;                 // villsa [STRIFE]
 	 
     for(i = 0; i < NUMAMMO; i++) 
