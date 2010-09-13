@@ -447,7 +447,7 @@ void P_DialogLoad(void)
     int  lumpnum;
 
     // load the SCRIPTxy lump corresponding to MAPxy, if it exists.
-    sprintf(lumpname, DEH_String("script%02d"), gamemap);
+    DEH_snprintf(lumpname, sizeof(lumpname), "script%02d", gamemap);
     if((lumpnum = W_CheckNumForName(lumpname)) == -1)
         numleveldialogs = 0;
     else

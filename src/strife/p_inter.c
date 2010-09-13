@@ -646,9 +646,10 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
             source->player->frags[target->player-players]++;
 
             // villsa [STRIFE] new messages when fragging players
-            sprintf(plrkilledmsg, DEH_String("%s killed %s"),
-                    pnameprefixes[source->player->mo->miscdata],
-                    pnameprefixes[target->player->mo->miscdata]);
+            DEH_snprintf(plrkilledmsg, sizeof(plrkilledmsg),
+                         "%s killed %s",
+                         pnameprefixes[source->player->mo->miscdata],
+                         pnameprefixes[target->player->mo->miscdata]);
 
             if(netgame)
                 players[consoleplayer].message = plrkilledmsg;

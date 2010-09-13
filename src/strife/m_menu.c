@@ -1110,7 +1110,7 @@ void M_QuitResponse(int key)
         I_Quit();
     else
     {
-        sprintf(buffer, DEH_String("qfmrm%i"), gametic % 8 + 1);
+        DEH_snprintf(buffer, sizeof(buffer), "qfmrm%i", gametic % 8 + 1);
         I_StartVoice(buffer);
         D_QuitGame();
     }
@@ -1132,8 +1132,8 @@ static char *M_SelectEndMessage(void)
 //
 void M_QuitStrife(int choice)
 {
-    sprintf(endstring,
-            DEH_String("Do you really want to leave?\n\n" DOSY));
+    DEH_snprintf(endstring, sizeof(endstring),
+                 "Do you really want to leave?\n\n" DOSY);
   
     M_StartMessage(endstring, M_QuitResponse, true);
 }
