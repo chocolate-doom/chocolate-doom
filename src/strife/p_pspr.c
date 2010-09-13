@@ -727,7 +727,7 @@ void A_FireMauler1(player_t* player, pspdef_t* pspr)
             damage = 5*(P_Random ()%3+1);
             angle = player->mo->angle;
             angle += (P_Random()-P_Random())<<19;
-            P_LineAttack(player->mo, angle, MISSILERANGE,
+            P_LineAttack(player->mo, angle, (2112*FRACUNIT),
                 bulletslope + ((P_Random()-P_Random())<<5), damage);
         }
     }

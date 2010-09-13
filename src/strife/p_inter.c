@@ -727,7 +727,7 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
     }
 
     // villsa [STRIFE] some modifications to setting states
-    if(target->state != &states[S_BLST_23]) // 1860 / 20
+    if(target->state != &states[S_BURN_23])
     {
         if(target->health == -6666)
             P_SetMobjState(target, S_DISR_00);  // 373
