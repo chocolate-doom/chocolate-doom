@@ -29,17 +29,14 @@
 #include "i_system.h"
 #include "z_zone.h"
 #include "m_random.h"
-
 #include "doomdef.h"
 #include "p_local.h"
 #include "sounds.h"
-
 #include "st_stuff.h"
 #include "hu_stuff.h"
-
 #include "s_sound.h"
-
 #include "doomstat.h"
+#include "d_main.h"     // villsa [STRIFE]
 
 
 void G_PlayerReborn (int player);
@@ -752,68 +749,82 @@ void P_RespawnSpecials (void)
 // Most of the player structure stays unchanged
 //  between levels.
 //
-void P_SpawnPlayer (mapthing_t* mthing)
+void P_SpawnPlayer(mapthing_t* mthing)
 {
-    player_t*		p;
-    fixed_t		x;
-    fixed_t		y;
-    fixed_t		z;
+    player_t*   p;
+    fixed_t     x;
+    fixed_t     y;
+    fixed_t     z;
+    mobj_t*     mobj;
+    int         i;
 
-    mobj_t*		mobj;
-
-    int			i;
-
-    if (mthing->type == 0)
-    {
+    if(mthing->type == 0)
         return;
-    }
 
     // not playing?
-    if (!playeringame[mthing->type-1])
-	return;					
-		
+    if(!playeringame[mthing->type-1])
+        return;					
+
     p = &players[mthing->type-1];
 
     if (p->playerstate == PST_REBORN)
-	G_PlayerReborn (mthing->type-1);
+        G_PlayerReborn (mthing->type-1);
 
-    x 		= mthing->x << FRACBITS;
-    y 		= mthing->y << FRACBITS;
-    z		= ONFLOORZ;
-    mobj	= P_SpawnMobj (x,y,z, MT_PLAYER);
+    x       = mthing->x << FRACBITS;
+    y       = mthing->y << FRACBITS;
+    z       = ONFLOORZ;
+    mobj    = P_SpawnMobj (x,y,z, MT_PLAYER);
 
     // set color translations for player sprites
-    if (mthing->type > 1)		
-	mobj->flags |= (mthing->type-1)<<MF_TRANSSHIFT;
-		
+    if(mthing->type > 1)		
+        mobj->flags |= (mthing->type-1)<<MF_TRANSSHIFT;
+
     mobj->angle	= ANG45 * (mthing->angle/45);
     mobj->player = p;
     mobj->health = p->health;
 
-    p->mo = mobj;
-    p->playerstate = PST_LIVE;	
-    p->refire = 0;
-    p->message = NULL;
-    p->damagecount = 0;
-    p->bonuscount = 0;
-    p->extralight = 0;
-    p->fixedcolormap = 0;
-    p->viewheight = VIEWHEIGHT;
+    p->mo               = mobj;
+    p->playerstate      = PST_LIVE;	
+    p->refire           = 0;
+    p->message          = NULL;
+    p->damagecount      = 0;
+    p->bonuscount       = 0;
+    p->extralight       = 0;
+    p->fixedcolormap    = 0;
+    p->viewheight       = VIEWHEIGHT;
 
     // setup gun psprite
-    P_SetupPsprites (p);
-    
-    // give all cards in death match mode
-    if (deathmatch)
-	for (i=0 ; i<NUMCARDS ; i++)
-	    p->cards[i] = true;
-			
-    if (mthing->type-1 == consoleplayer)
+    P_SetupPsprites(p);
+
+    // villsa [STRIFE]
+    stonecold = false;
+
+    // villsa [STRIFE] what a nasty hack...
+    if(gamemap == 10)
+      p->weaponowned[wp_sigil] = true;
+
+
+    // villsa [STRIFE] instead of giving cards in deathmatch mode, set
+    // accuracy to 50 and give all quest flags
+    if(deathmatch)
     {
-	// wake up the status bar
-	ST_Start ();
-	// wake up the heads up text
-	HU_Start ();		
+        p->accuracy = 50;
+        p->questflags = tk_allquests;
+
+        /*for(i = 0; i < NUMCARDS; i++)
+            p->cards[i] = true;*/
+    }
+
+    // villsa [STRIFE] set godmode?
+    if(workparm)
+        p->cheats |= CF_GODMODE;
+
+    if(mthing->type - 1 == consoleplayer)
+    {
+        // wake up the status bar
+        ST_Start ();
+        // wake up the heads up text
+        HU_Start ();		
     }
 }
 

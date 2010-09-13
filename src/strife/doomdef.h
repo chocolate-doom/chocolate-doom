@@ -198,7 +198,45 @@ typedef enum
     
 } powertype_t;
 
-
+// villsa [STRIFE]
+// quest flags
+typedef enum
+{
+    tk_quest1 = 1,
+    tk_quest2,
+    tk_quest3,
+    tk_quest4,
+    tk_quest5,
+    tk_quest6,
+    tk_quest7,
+    tk_quest8,
+    tk_quest9,
+    tk_quest10,
+    tk_quest11,
+    tk_quest12,
+    tk_quest13,
+    tk_quest14,
+    tk_quest15,
+    tk_quest16,
+    tk_quest17,
+    tk_quest18,
+    tk_quest19,
+    tk_quest20,
+    tk_quest21,
+    tk_quest22,
+    tk_quest23,
+    tk_quest24,
+    tk_quest25,
+    tk_quest26,
+    tk_quest27,
+    tk_quest28,
+    tk_quest29,
+    tk_quest30,
+    tk_quest31,
+    tk_quest32,
+    NUMQUESTS,
+    tk_allquests = 0x7fffffff
+} questtype_t;
 
 //
 // Power up durations,

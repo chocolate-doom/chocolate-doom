@@ -35,7 +35,6 @@
 
 #include "deh_main.h"
 #include "deh_misc.h"
-
 #include "z_zone.h"
 #include "f_finale.h"
 #include "m_argv.h"
@@ -46,13 +45,10 @@
 #include "i_system.h"
 #include "i_timer.h"
 #include "i_video.h"
-
 #include "p_setup.h"
 #include "p_saveg.h"
 #include "p_tick.h"
-
 #include "d_main.h"
-
 #include "wi_stuff.h"
 #include "hu_stuff.h"
 #include "st_stuff.h"
@@ -75,7 +71,7 @@
 #include "r_data.h"
 #include "r_sky.h"
 
-
+#include "p_dialog.h"   // villsa [STRIFE]
 
 #include "g_game.h"
 
@@ -1212,37 +1208,43 @@ void G_PlayerFinishLevel (int player)
 //
 void G_PlayerReborn (int player) 
 { 
-    player_t*	p; 
-    int		i; 
-    int		frags[MAXPLAYERS]; 
-    int		killcount;
+    player_t*   p; 
+    int         i; 
+    int         frags[MAXPLAYERS]; 
+    int         killcount;
+    int         allegiance;
 	 
-    memcpy (frags,players[player].frags,sizeof(frags)); 
-    killcount = players[player].killcount; 
+    killcount = players[player].killcount;
+    allegiance = players[player].mo->miscdata;
+
+    memcpy(frags,players[player].frags,sizeof(frags));
 	 
     p = &players[player]; 
     memset (p, 0, sizeof(*p)); 
- 
-    memcpy (players[player].frags, frags, sizeof(players[player].frags)); 
-    players[player].killcount = killcount; 
- 
-    p->usedown = p->attackdown = true;	// don't do anything immediately 
-    p->playerstate = PST_LIVE;       
-    p->health = deh_initial_health;     // Use dehacked value
-    p->readyweapon = p->pendingweapon = wp_fist; // villsa [STRIFE] default to fists
-    p->weaponowned[wp_fist] = true; 
-    //p->weaponowned[wp_pistol] = true; // villsa [STRIFE] unused
-    //p->ammo[am_clip] = deh_initial_bullets;   // villsa [STRIFE] unused
+
+    memcpy(p->frags, frags, sizeof(p->frags));
+
+    p->usedown              = true;                 // don't do anything immediately
+    p->attackdown           = true;
+    p->inventorydown        = true;                 // villsa [STRIFE]
+    p->playerstate          = PST_LIVE;       
+    p->health               = deh_initial_health;   // Use dehacked value
+    p->readyweapon          = wp_fist;              // villsa [STRIFE] default to fists
+    p->pendingweapon        = wp_fist;              // villsa [STRIFE] default to fists
+    p->weaponowned[wp_fist] = true;                 // villsa [STRIFE] default to fists
+    p->cheats               |= CF_AUTOHEALTH;       // villsa [STRIFE]
+    p->killcount            = killcount;
+    p->mo->miscdata         = allegiance;           // villsa [STRIFE]
+    p->centerview           = true;                 // villsa [STRIFE]
 	 
-    for (i=0 ; i<NUMAMMO ; i++) 
+    for(i = 0; i < NUMAMMO; i++) 
 	p->maxammo[i] = maxammo[i]; 
 
-    // villsa [STRIFE] TODO - verify
     for(i = 0; i < 32; i++)
-    {
-        p->inventory[i].sprite = -1;
         p->inventory[i].type = NUMMOBJTYPES;
-    }
+
+    // villsa [STRIFE]
+    strncpy(mission_objective, "Find help", OBJECTIVE_LEN);
 		 
 }
 

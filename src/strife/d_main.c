@@ -129,6 +129,12 @@ FILE*		debugfile;
 
 boolean		advancedemo;
 
+// villsa [STRIFE] workparm variable (similar to devparm?)
+boolean         workparm = false;
+
+// villsa [STRIFE] stonecold cheat variable
+boolean         stonecold = false;
+
 // haleyjd 09/11/10: [STRIFE] Game type variables
 boolean         isregistered;
 boolean         isdemoversion;

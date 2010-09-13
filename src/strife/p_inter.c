@@ -594,7 +594,7 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
         // [STRIFE] TODO - verify this. Seems that questflag isn't
         // applied if the special's speed is equal to 8 or if
         // the player has recieved the SLIDESHOW token
-        if(special->info->speed != 8 || !(player->questflags & 32))
+        if(special->info->speed != 8 || !(player->questflags & tk_quest32))
             player->questflags |= 1 << (special->info->speed - 1);
     }
 
@@ -909,8 +909,6 @@ static boolean P_IsMobjBoss(mobjtype_t type)
 }
 
 
-
-
 //
 // P_DamageMobj
 // Damages both enemies and players
@@ -922,147 +920,216 @@ static boolean P_IsMobjBoss(mobjtype_t type)
 // Source can be NULL for slime, barrel explosions
 // and other environmental stuff.
 //
-void
-P_DamageMobj
-( mobj_t*	target,
-  mobj_t*	inflictor,
-  mobj_t*	source,
-  int 		damage )
+void P_DamageMobj(mobj_t* target, mobj_t* inflictor, mobj_t* source, int damage)
 {
-    unsigned	ang;
-    int		saved;
-    player_t*	player;
-    fixed_t	thrust;
-    int		temp;
-	
-    if ( !(target->flags & MF_SHOOTABLE) )
-	return;	// shouldn't happen...
-		
-    if (target->health <= 0)
-	return;
+    angle_t     ang;
+    int         saved;
+    player_t*   player;
+    fixed_t     thrust;
+    int         temp;
 
-    // villsa [STRIFE] unused
-    /*if ( target->flags & MF_SKULLFLY )
+    if(!(target->flags & MF_SHOOTABLE) )
+        return;	// shouldn't happen...
+
+    if(target->health <= 0)
+        return;
+
+    // villsa [STRIFE] unused - skullfly check
+    // villsa [STRIFE] unused - take half damage in trainer mode
+
+    if(!inflictor
+        || !(inflictor->flags & MF_SPECTRAL)
+        || (target->type != MT_PLAYER || inflictor->health != -1)
+        && (!(target->flags & MF_SPECTRAL) || inflictor->health != -2)
+        && target->type != MT_RLEADER2 && target->type != MT_ORACLE && target->type != MT_SPECTRE_C
+        || source->player->sigiltype >= 1)
     {
-	target->momx = target->momy = target->momz = 0;
-    }*/
-	
-    player = target->player;
-    if (player && gameskill == sk_baby)
-	damage >>= 1; 	// take half damage in trainer mode
-		
+        if(inflictor)
+        {
+            if(inflictor->type != MT_SFIREBALL
+                && inflictor->type != MT_C_FLAME
+                && inflictor->type != MT_PFLAME)
+            {
+                switch(inflictor->type)
+                {
+                case MT_HOOKSHOT:
+                    ang = R_PointToAngle2(
+                        target->x,
+                        target->y,
+                        inflictor->x,
+                        inflictor->y) >> ANGLETOFINESHIFT;
+
+                    target->momx += FixedMul(finecosine[ang], (12750*FRACUNIT) / target->info->mass);
+                    target->momy += FixedMul(finesine[ang], (12750*FRACUNIT) / target->info->mass);
+                    target->reactiontime += 10;
+
+                    temp = P_AproxDistance(target->x - source->x, target->y - source->y);
+                    temp /= target->info->mass;
+
+                    if(temp < 1)
+                        temp = 1;
+
+                    target->momz = (source->z - target->z) / temp;
+                    break;
+
+                case MT_POISARROW:
+                    // don't affect robots
+                    if(target->flags & MF_NOBLOOD)
+                        return;
+
+                    // instant kill
+                    damage = target->health + 10;
+                    break;
+
+                default:
+                    if(target->flags & MF_SPECTRAL
+                        && !(inflictor->flags & MF_SPECTRAL))
+                    {
+                        P_SetMobjState(target, target->info->missilestate);
+                        return;
+                    }
+                    break;
+                }
+            }
+            else
+            {
+                temp = damage / 2;
+
+                if(P_IsMobjBoss(target->type))
+                    damage /= 2;
+                else if(inflictor->type == MT_PFLAME)
+                {
+                    damage /= 2;
+                    // robots deal very little damage
+                    if(target->flags & MF_NOBLOOD)
+                        damage = temp / 2;
+                }
+            }
+        }
+
+        if((target->type >= MT_SHOPKEEPER_W && target->type <= MT_SHOPKEEPER_M)
+            || target->type == MT_RLEADER)
+        {
+            if(source)
+                target->target = source;
+
+            P_SetMobjState(target, target->info->painstate);
+            return;
+        }
+    }
+
 
     // Some close combat weapons should not
     // inflict thrust and push the victim out of reach,
     // thus kick away unless using the chainsaw.
     if (inflictor
-	&& !(target->flags & MF_NOCLIP)
-	&& (!source
-	    || !source->player
-	    /*|| source->player->readyweapon != wp_chainsaw*/)) // villsa [STRIFE] unused
+        && !(target->flags & MF_NOCLIP)
+        && (!source
+        || !source->player
+        /*|| source->player->readyweapon != wp_chainsaw*/)) // villsa [STRIFE] unused
     {
-	ang = R_PointToAngle2 ( inflictor->x,
-				inflictor->y,
-				target->x,
-				target->y);
-		
-	thrust = damage*(FRACUNIT>>3)*100/target->info->mass;
+        ang = R_PointToAngle2 ( inflictor->x,
+            inflictor->y,
+            target->x,
+            target->y);
 
-	// make fall forwards sometimes
-	if ( damage < 40
-	     && damage > target->health
-	     && target->z - inflictor->z > 64*FRACUNIT
-	     && (P_Random ()&1) )
-	{
-	    ang += ANG180;
-	    thrust *= 4;
-	}
-		
-	ang >>= ANGLETOFINESHIFT;
-	target->momx += FixedMul (thrust, finecosine[ang]);
-	target->momy += FixedMul (thrust, finesine[ang]);
+        thrust = damage*(FRACUNIT>>3)*100/target->info->mass;
+
+        // make fall forwards sometimes
+        if ( damage < 40
+            && damage > target->health
+            && target->z - inflictor->z > 64*FRACUNIT
+            && (P_Random ()&1) )
+        {
+            ang += ANG180;
+            thrust *= 4;
+        }
+
+        ang >>= ANGLETOFINESHIFT;
+        target->momx += FixedMul (thrust, finecosine[ang]);
+        target->momy += FixedMul (thrust, finesine[ang]);
     }
-    
+
     // player specific
     if (player)
     {
-	// end of game hell hack
-	if (target->subsector->sector->special == 11
-	    && damage >= target->health)
-	{
-	    damage = target->health - 1;
-	}
-	
+        // end of game hell hack
+        if (target->subsector->sector->special == 11
+            && damage >= target->health)
+        {
+            damage = target->health - 1;
+        }
 
-	// Below certain threshold,
-	// ignore damage in GOD mode.
+
+        // Below certain threshold,
+        // ignore damage in GOD mode.
         // villsa [STRIFE] removed pw_invulnerability check
-	if(damage < 1000 && (player->cheats & CF_GODMODE))
+        if(damage < 1000 && (player->cheats & CF_GODMODE))
             return;
-	
-	if (player->armortype)
-	{
-	    if (player->armortype == 1)
-		saved = damage/3;
-	    else
-		saved = damage/2;
-	    
-	    if (player->armorpoints <= saved)
-	    {
-		// armor is used up
-		saved = player->armorpoints;
-		player->armortype = 0;
-	    }
-	    player->armorpoints -= saved;
-	    damage -= saved;
-	}
-	player->health -= damage; 	// mirror mobj health here for Dave
-	if (player->health < 0)
-	    player->health = 0;
-	
-	player->attacker = source;
-	player->damagecount += damage;	// add damage after armor / invuln
 
-	if (player->damagecount > 100)
-	    player->damagecount = 100;	// teleport stomp does 10k points...
-	
-	temp = damage < 100 ? damage : 100;
+        if (player->armortype)
+        {
+            if (player->armortype == 1)
+                saved = damage/3;
+            else
+                saved = damage/2;
 
-	if (player == &players[consoleplayer])
-	    I_Tactile (40,10,40+temp*2);
+            if (player->armorpoints <= saved)
+            {
+                // armor is used up
+                saved = player->armorpoints;
+                player->armortype = 0;
+            }
+            player->armorpoints -= saved;
+            damage -= saved;
+        }
+        player->health -= damage; 	// mirror mobj health here for Dave
+        if (player->health < 0)
+            player->health = 0;
+
+        player->attacker = source;
+        player->damagecount += damage;	// add damage after armor / invuln
+
+        if (player->damagecount > 100)
+            player->damagecount = 100;	// teleport stomp does 10k points...
+
+        temp = damage < 100 ? damage : 100;
+
+        if (player == &players[consoleplayer])
+            I_Tactile (40,10,40+temp*2);
     }
-    
+
     // do the damage	
     target->health -= damage;	
     if (target->health <= 0)
     {
-	P_KillMobj (source, target);
-	return;
+        P_KillMobj (source, target);
+        return;
     }
 
     if ( (P_Random () < target->info->painchance)
-	 /*&& !(target->flags&MF_SKULLFLY)*/ )  // villsa [STRIFE] unused flag
+        /*&& !(target->flags&MF_SKULLFLY)*/ )  // villsa [STRIFE] unused flag
     {
-	target->flags |= MF_JUSTHIT;	// fight back!
-	
-	P_SetMobjState (target, target->info->painstate);
+        target->flags |= MF_JUSTHIT;	// fight back!
+
+        P_SetMobjState (target, target->info->painstate);
     }
-			
+
     target->reactiontime = 0;		// we're awake now...	
 
     // villsa [STRIFE] TODO - update to strife version
     if ( (!target->threshold /*|| target->type == MT_VILE*/)
-	 && source && source != target
-	 /*&& source->type != MT_VILE*/)
+        && source && source != target
+        /*&& source->type != MT_VILE*/)
     {
-	// if not intent on another player,
-	// chase after this one
-	target->target = source;
-	target->threshold = BASETHRESHOLD;
-	if (target->state == &states[target->info->spawnstate]
-	    && target->info->seestate != S_NULL)
-	    P_SetMobjState (target, target->info->seestate);
+        // if not intent on another player,
+        // chase after this one
+        target->target = source;
+        target->threshold = BASETHRESHOLD;
+        if (target->state == &states[target->info->spawnstate]
+        && target->info->seestate != S_NULL)
+            P_SetMobjState (target, target->info->seestate);
     }
-			
+
 }
 

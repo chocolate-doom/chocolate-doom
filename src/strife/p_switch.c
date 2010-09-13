@@ -325,7 +325,7 @@ void P_ChangeSwitchTexture(line_t* line, int useAgain)
                     breakglass = true;
 
                     // give quest token #28 to player
-                    players[0].questflags |= (1 << ((MT_TOKEN_QUEST28 - MT_TOKEN_QUEST1) + 1));
+                    players[0].questflags |= (1 << tk_quest28);
 
                     // give stamina/accuracy items
                     if(!netgame)
