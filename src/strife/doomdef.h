@@ -55,7 +55,7 @@
 typedef enum
 {
     GS_LEVEL,
-    GS_INTERMISSION,
+    GS_UNKNOWN,
     GS_FINALE,
     GS_DEMOSCREEN,
 } gamestate_t;
@@ -234,19 +234,19 @@ typedef enum
     tk_quest30,
     tk_quest31,
     tk_quest32,   // most likely unused
-    tk_numquests,
+    tk_numquests
 } questtype_t;
 
 // haleyjd 09/12/10: [STRIFE]
 // flag values for each quest.
 enum
-{
+{ //  Name      Flag from bitnum    Purpose, if known
     QF_QUEST1  = (1 << tk_quest1),
     QF_QUEST2  = (1 << tk_quest2),
     QF_QUEST3  = (1 << tk_quest3), 
     QF_QUEST4  = (1 << tk_quest4),
     QF_QUEST5  = (1 << tk_quest5),
-    QF_QUEST6  = (1 << tk_quest6),
+    QF_QUEST6  = (1 << tk_quest6),  // Destroyed the Power Coupling
     QF_QUEST7  = (1 << tk_quest7),
     QF_QUEST8  = (1 << tk_quest8),
     QF_QUEST9  = (1 << tk_quest9),
@@ -265,14 +265,14 @@ enum
     QF_QUEST22 = (1 << tk_quest22),
     QF_QUEST23 = (1 << tk_quest23),
     QF_QUEST24 = (1 << tk_quest24),
-    QF_QUEST25 = (1 << tk_quest25),
+    QF_QUEST25 = (1 << tk_quest25), // Destroyed the Converter
     QF_QUEST26 = (1 << tk_quest26),
     QF_QUEST27 = (1 << tk_quest27),
     QF_QUEST28 = (1 << tk_quest28),
-    QF_QUEST29 = (1 << tk_quest29),
+    QF_QUEST29 = (1 << tk_quest29), // Destroyed the Mines Transmitter
     QF_QUEST30 = (1 << tk_quest30),
     QF_QUEST31 = (1 << tk_quest31),
-    QF_QUEST32 = (1 << tk_quest32), // note seems to be unused
+    QF_QUEST32 = (1 << tk_quest32), // Note: seems to be unused
     
     QF_ALLQUESTS  = (QF_QUEST31 + (QF_QUEST31 - 1)) // does not include bit 32!
 };

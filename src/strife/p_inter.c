@@ -670,9 +670,9 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
 
         if(gamemap == 29 && !netgame)
         {
-            // villsa [STRIFE] TODO
-            //F_StartSlideShow();
-            //return;
+            // haleyjd 09/13/10: [STRIFE] Give player the bad ending.
+            F_StartFinale();
+            return;
         }
 
         // villsa [STRIFE] spit out inventory items when killed

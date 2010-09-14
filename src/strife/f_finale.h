@@ -41,6 +41,9 @@ boolean F_Responder (event_t* ev);
 // Called by main loop.
 void F_Ticker (void);
 
+// haleyjd: [STRIFE] Called from G_Ticker as well...
+void F_WaitTicker(void);
+
 // Called by main loop.
 void F_Drawer (void);
 

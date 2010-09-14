@@ -262,12 +262,16 @@ void D_Display (void)
          WI_Drawer ();
          break;
      */
+
     case GS_FINALE:
         F_Drawer ();
         break;
 
     case GS_DEMOSCREEN:
         D_PageDrawer ();
+        break;
+    
+    default:
         break;
     }
     

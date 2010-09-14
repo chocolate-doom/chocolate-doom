@@ -1228,6 +1228,17 @@ void P_DialogDoChoice(int choice)
 }
 
 //
+// P_DialogStartP1
+//
+// [STRIFE] New function
+// haleyjd 09/13/10: This is a hack used by the finale system.
+//
+void P_DialogStartP1(void)
+{
+    P_DialogStart(&players[0]);
+}
+
+//
 // P_DialogStart
 //
 // villsa [STRIFE] New function
