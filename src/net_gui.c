@@ -268,7 +268,7 @@ void NET_WaitForStart(void)
     }
 
     I_SetWindowTitle("Waiting for game start");
-    I_SetWindowIcon();
+    //I_SetWindowIcon();
 
     BuildGUI();
 

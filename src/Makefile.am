@@ -141,9 +141,11 @@ EXTRA_LIBS =                                               \
                @SDLNET_LIBS@
 
 if HAVE_WINDRES
-@PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc
+@PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc \
+               $(FEATURE_MULTIPLAYER_SOURCE_FILES)
 else
-@PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES_WITH_DEH)
+@PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES_WITH_DEH) \
+               $(FEATURE_MULTIPLAYER_SOURCE_FILES)
 endif
 
 @PROGRAM_PREFIX@doom_LDADD = doom/libdoom.a $(EXTRA_LIBS)

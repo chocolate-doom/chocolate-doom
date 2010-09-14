@@ -28,10 +28,8 @@
 
 #include "config.h"
 #include "doomtype.h"
-#include "doomstat.h"
 #include "deh_main.h"
 #include "deh_str.h"
-#include "g_game.h"
 #include "i_system.h"
 #include "i_timer.h"
 #include "m_argv.h"
@@ -46,6 +44,9 @@
 #include "net_structrw.h"
 #include "w_checksum.h"
 #include "w_wad.h"
+
+#include "doom/doomstat.h"
+#include "doom/g_game.h"
 
 typedef enum
 {
