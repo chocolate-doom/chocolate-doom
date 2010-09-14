@@ -737,7 +737,7 @@ int P_FindSlidingDoorType(line_t* line)
     int i;
     int val;
 	
-    for(i = 0; i < MAXSLIDEDOORS; i++)
+    for(i = 0; i < MAXSLIDEDOORS-1; i++)
     {
         val = sides[line->sidenum[0]].toptexture;
 	if(val == slideFrames[i].frames[0])
@@ -805,13 +805,12 @@ void T_SlidingDoor(slidedoor_t* door)
         if(!door->timer--)
         {
             fixed_t speed;
-            boolean thinglist;
+            fixed_t cheight;
 
             sec = door->frontsector;
-            thinglist = (sec->thinglist != NULL);
 
             // CAN DOOR CLOSE?
-            if(thinglist)
+            if(sec->thinglist != NULL)
             {
                 door->timer = SDOORWAIT;
                 return;
@@ -819,12 +818,11 @@ void T_SlidingDoor(slidedoor_t* door)
             else
             {
 
-                speed = sec->ceilingheight -
-                    sec->floorheight - (10*FRACUNIT);
+                cheight = sec->ceilingheight;
+                speed = cheight - sec->floorheight - (10*FRACUNIT);
 
                 // something blocking it?
-                // [STRIFE] TODO this function here is causing some abnormalites when closing
-                if(T_MovePlane(sec, speed, sec->floorheight, thinglist, 1, -1) == 1)
+                if(T_MovePlane(sec, speed, sec->floorheight, 0, 1, -1) == crushed)
                 {
                     door->timer = SDOORWAIT;
                     return;
@@ -832,7 +830,7 @@ void T_SlidingDoor(slidedoor_t* door)
                 else
                 {
                     // Instantly move plane
-                    T_MovePlane(sec, (128*FRACUNIT), sec->ceilingheight, 0, 1, 1);
+                    T_MovePlane(sec, (128*FRACUNIT), cheight, 0, 1, 1);
 
                     // turn line blocking back on
                     door->line1->flags |= ML_BLOCKING;
@@ -886,10 +884,39 @@ void T_SlidingDoor(slidedoor_t* door)
 //
 // EV_RemoteSlidingDoor
 //
-// villsa [STRIFE] TODO
+// villsa [STRIFE] new function
 //
-void EV_RemoteSlidingDoor(line_t* line, mobj_t* thing)
+int EV_RemoteSlidingDoor(line_t* line, mobj_t* thing)
 {
+    int		    secnum;
+    sector_t*       sec;
+    slidedoor_t*    door;
+    int             i;
+    int             rtn;
+    line_t*         secline;
+	
+    secnum = -1;
+    rtn = 0;
+    
+    while((secnum = P_FindSectorFromLineTag(line,secnum)) >= 0)
+    {
+        sec = &sectors[secnum];
+        if(sec->specialdata)
+            continue;
+
+        for(i = 0; i < 4; i++)
+        {
+            secline = sec->lines[i];
+
+            if(P_FindSlidingDoorType(secline) < 0)
+                continue;
+
+            EV_SlidingDoor(secline, thing);
+            rtn = 1;
+        }
+    }
+
+    return rtn;
 }
 
 
@@ -918,7 +945,6 @@ void EV_SlidingDoor(line_t* line, mobj_t* thing)
         {
             if(door->status == sd_waiting)
             {
-                // [STRIFE] TODO lines are still passable when closed manually by player
                 door->status = sd_closing;
                 door->timer = SWAITTICS;    // villsa [STRIFE]
             }

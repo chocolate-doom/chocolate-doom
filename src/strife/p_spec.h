@@ -488,6 +488,7 @@ typedef struct
 
 void P_InitSlidingDoorFrames(void);
 void EV_SlidingDoor(line_t* line, mobj_t* thing);
+int EV_RemoteSlidingDoor(line_t* line, mobj_t* thing);
 
 
 

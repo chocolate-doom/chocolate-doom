@@ -820,6 +820,19 @@ P_UseSpecialLine
           EV_SlidingDoor(line, thing);
           break;
 
+      case 207:
+          // villsa [STRIFE] remote sliding door
+          if(EV_RemoteSlidingDoor(line, thing))
+              P_ChangeSwitchTexture(line, 1);
+
+      case 229:
+          // villsa [STRIFE] sigil sliding door
+          if(thing->player && thing->player->sigiltype == 4)
+          {
+              if(EV_RemoteSlidingDoor(line, thing))
+                  P_ChangeSwitchTexture(line, 1);
+          }
+
       case 666:
           // villsa [STRIFE] Move wall
           P_MoveWall(line, thing);
