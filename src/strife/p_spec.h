@@ -414,7 +414,7 @@ P_SpawnDoorRaiseIn5Mins
 
 
 
-#if 0 // UNUSED
+// villsa [STRIFE] resurrected sliding doors
 //
 //      Sliding doors...
 //
@@ -438,63 +438,56 @@ typedef enum
 
 
 
-
+// villsa [STRIFE] Rogue added a second line_t in the struct
+// backsector is removed
 typedef struct
 {
-    thinker_t	thinker;
-    sdt_e	type;
-    line_t*	line;
-    int		frame;
-    int		whichDoorIndex;
-    int		timer;
-    sector_t*	frontsector;
-    sector_t*	backsector;
-    sd_e	 status;
+    thinker_t   thinker;
+    sdt_e       type;
+    line_t*     line1;
+    line_t*     line2;
+    int         frame;
+    int         whichDoorIndex;
+    int         timer;
+    sector_t*   frontsector;
+    sd_e        status;
 
 } slidedoor_t;
 
-
-
+// villsa [STRIFE] no front/back frames
 typedef struct
 {
-    char	frontFrame1[9];
-    char	frontFrame2[9];
-    char	frontFrame3[9];
-    char	frontFrame4[9];
-    char	backFrame1[9];
-    char	backFrame2[9];
-    char	backFrame3[9];
-    char	backFrame4[9];
+    char    frame1[9];
+    char    frame2[9];
+    char    frame3[9];
+    char    frame4[9];
+    char    frame5[9];
+    char    frame6[9];
+    char    frame7[9];
+    char    frame8[9];
     
 } slidename_t;
 
-
-
+// villsa [STRIFE] no front/back frames
 typedef struct
 {
-    int             frontFrames[4];
-    int             backFrames[4];
+    int frames[8];
 
 } slideframe_t;
 
 
 
 // how many frames of animation
-#define SNUMFRAMES		4
+#define SNUMFRAMES      8       // villsa [STRIFE] changed from 4 to 8
 
-#define SDOORWAIT		35*3
-#define SWAITTICS		4
+#define SDOORWAIT       TICRATE*3
+#define SWAITTICS       4
 
 // how many diff. types of anims
-#define MAXSLIDEDOORS	5                            
+#define MAXSLIDEDOORS	8       // villsa [STRIFE] changed from 5 to 8                     
 
 void P_InitSlidingDoorFrames(void);
-
-void
-EV_SlidingDoor
-( line_t*	line,
-  mobj_t*	thing );
-#endif
+void EV_SlidingDoor(line_t* line, mobj_t* thing);
 
 
 

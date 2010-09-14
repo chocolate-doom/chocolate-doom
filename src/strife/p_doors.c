@@ -41,19 +41,6 @@
 #include "dstrings.h"
 #include "sounds.h"
 
-#if 0
-//
-// Sliding door frame information
-//
-slidename_t	slideFrameNames[MAXSLIDEDOORS] =
-{
-    {"GDOORF1","GDOORF2","GDOORF3","GDOORF4",	// front
-     "GDOORB1","GDOORB2","GDOORB3","GDOORB4"},	// back
-	 
-    {"\0","\0","\0","\0"}
-};
-#endif
-
 
 //
 // VERTICAL DOORS
@@ -574,215 +561,432 @@ P_SpawnDoorRaiseIn5Mins
 }
 
 
-
-// UNUSED
-// Separate into p_slidoor.c?
-
-#if 0		// ABANDONED TO THE MISTS OF TIME!!!
-//
-// EV_SlidingDoor : slide a door horizontally
-// (animate midtexture, then set noblocking line)
+// villsa [STRIFE] resurrected sliding doors
 //
 
+//
+// villsa [STRIFE]
+//
+// Sliding door name information
+//
+static slidename_t slideFrameNames[MAXSLIDEDOORS] =
+{
+    // SIGLDR
+    {
+        { "SIGLDR01" },  // frame1
+        { "SIGLDR02" },  // frame2
+        { "SIGLDR03" },  // frame3
+        { "SIGLDR04" },  // frame4
+        { "SIGLDR05" },  // frame5
+        { "SIGLDR06" },  // frame6
+        { "SIGLDR07" },  // frame7
+        { "SIGLDR08" }   // frame8
+    },
+    // DORSTN
+    {
+        { "DORSTN01" },  // frame1
+        { "DORSTN02" },  // frame2
+        { "DORSTN03" },  // frame3
+        { "DORSTN04" },  // frame4
+        { "DORSTN05" },  // frame5
+        { "DORSTN06" },  // frame6
+        { "DORSTN07" },  // frame7
+        { "DORSTN08" }   // frame8
+    },
+
+    // DORQTR
+    {
+        { "DORQTR01" },  // frame1
+        { "DORQTR02" },  // frame2
+        { "DORQTR03" },  // frame3
+        { "DORQTR04" },  // frame4
+        { "DORQTR05" },  // frame5
+        { "DORQTR06" },  // frame6
+        { "DORQTR07" },  // frame7
+        { "DORQTR08" }   // frame8
+    },
+
+    // DORCRG
+    {
+        { "DORCRG01" },  // frame1
+        { "DORCRG02" },  // frame2
+        { "DORCRG03" },  // frame3
+        { "DORCRG04" },  // frame4
+        { "DORCRG05" },  // frame5
+        { "DORCRG06" },  // frame6
+        { "DORCRG07" },  // frame7
+        { "DORCRG08" }   // frame8
+    },
+
+    // DORCHN
+    {
+        { "DORCHN01" },  // frame1
+        { "DORCHN02" },  // frame2
+        { "DORCHN03" },  // frame3
+        { "DORCHN04" },  // frame4
+        { "DORCHN05" },  // frame5
+        { "DORCHN06" },  // frame6
+        { "DORCHN07" },  // frame7
+        { "DORCHN08" }   // frame8
+    },
+
+    // DORIRS
+    {
+        { "DORIRS01" },  // frame1
+        { "DORIRS02" },  // frame2
+        { "DORIRS03" },  // frame3
+        { "DORIRS04" },  // frame4
+        { "DORIRS05" },  // frame5
+        { "DORIRS06" },  // frame6
+        { "DORIRS07" },  // frame7
+        { "DORIRS08" }   // frame8
+    },
+
+    // DORALN
+    {
+        { "DORALN01" },  // frame1
+        { "DORALN02" },  // frame2
+        { "DORALN03" },  // frame3
+        { "DORALN04" },  // frame4
+        { "DORALN05" },  // frame5
+        { "DORALN06" },  // frame6
+        { "DORALN07" },  // frame7
+        { "DORALN08" }   // frame8
+    },
+
+    {"\0","\0","\0","\0","\0","\0","\0","\0"}
+};
+
+//
+// villsa [STRIFE]
+//
+// Sliding door open sounds
+//
+static sfxenum_t slideOpenSounds[MAXSLIDEDOORS] =
+{
+    sfx_drlmto, sfx_drston, sfx_airlck, sfx_drsmto,
+    sfx_drchno, sfx_airlck, sfx_airlck, sfx_None
+};
+
+//
+// villsa [STRIFE]
+//
+// Sliding door close sounds
+//
+static sfxenum_t slideCloseSounds[MAXSLIDEDOORS] =
+{
+    sfx_drlmtc, sfx_drston, sfx_airlck, sfx_drsmtc,
+    sfx_drchnc, sfx_airlck, sfx_airlck, sfx_None
+};
 
 slideframe_t slideFrames[MAXSLIDEDOORS];
 
+//
+// P_InitSlidingDoorFrames
+//
+// villsa [STRIFE] resurrected
+//
 void P_InitSlidingDoorFrames(void)
 {
-    int		i;
-    int		f1;
-    int		f2;
-    int		f3;
-    int		f4;
+    int i;
+    int f1;
+    int f2;
+    int f3;
+    int f4;
+
+    memset(slideFrames, 0, sizeof(slideframe_t) * MAXSLIDEDOORS);
 	
-    // DOOM II ONLY...
-    if ( gamemode != commercial)
-	return;
-	
-    for (i = 0;i < MAXSLIDEDOORS; i++)
+    for(i = 0; i < MAXSLIDEDOORS; i++)
     {
-	if (!slideFrameNames[i].frontFrame1[0])
+	if(!slideFrameNames[i].frame1[0])
 	    break;
 			
-	f1 = R_TextureNumForName(slideFrameNames[i].frontFrame1);
-	f2 = R_TextureNumForName(slideFrameNames[i].frontFrame2);
-	f3 = R_TextureNumForName(slideFrameNames[i].frontFrame3);
-	f4 = R_TextureNumForName(slideFrameNames[i].frontFrame4);
+	f1 = R_TextureNumForName(DEH_String(slideFrameNames[i].frame1));
+	f2 = R_TextureNumForName(DEH_String(slideFrameNames[i].frame2));
+	f3 = R_TextureNumForName(DEH_String(slideFrameNames[i].frame3));
+	f4 = R_TextureNumForName(DEH_String(slideFrameNames[i].frame4));
 
-	slideFrames[i].frontFrames[0] = f1;
-	slideFrames[i].frontFrames[1] = f2;
-	slideFrames[i].frontFrames[2] = f3;
-	slideFrames[i].frontFrames[3] = f4;
+	slideFrames[i].frames[0] = f1;
+	slideFrames[i].frames[1] = f2;
+	slideFrames[i].frames[2] = f3;
+	slideFrames[i].frames[3] = f4;
 		
-	f1 = R_TextureNumForName(slideFrameNames[i].backFrame1);
-	f2 = R_TextureNumForName(slideFrameNames[i].backFrame2);
-	f3 = R_TextureNumForName(slideFrameNames[i].backFrame3);
-	f4 = R_TextureNumForName(slideFrameNames[i].backFrame4);
+	f1 = R_TextureNumForName(DEH_String(slideFrameNames[i].frame5));
+	f2 = R_TextureNumForName(DEH_String(slideFrameNames[i].frame6));
+	f3 = R_TextureNumForName(DEH_String(slideFrameNames[i].frame7));
+	f4 = R_TextureNumForName(DEH_String(slideFrameNames[i].frame8));
 
-	slideFrames[i].backFrames[0] = f1;
-	slideFrames[i].backFrames[1] = f2;
-	slideFrames[i].backFrames[2] = f3;
-	slideFrames[i].backFrames[3] = f4;
+	slideFrames[i].frames[4] = f1;
+	slideFrames[i].frames[5] = f2;
+	slideFrames[i].frames[6] = f3;
+	slideFrames[i].frames[7] = f4;
     }
 }
 
 
 //
+// P_FindSlidingDoorType
+//
 // Return index into "slideFrames" array
 // for which door type to use
 //
-int P_FindSlidingDoorType(line_t*	line)
+// villsa [STRIFE] resurrected
+//
+int P_FindSlidingDoorType(line_t* line)
 {
-    int		i;
-    int		val;
+    int i;
+    int val;
 	
-    for (i = 0;i < MAXSLIDEDOORS;i++)
+    for(i = 0; i < MAXSLIDEDOORS; i++)
     {
-	val = sides[line->sidenum[0]].midtexture;
-	if (val == slideFrames[i].frontFrames[0])
+        val = sides[line->sidenum[0]].toptexture;
+	if(val == slideFrames[i].frames[0])
 	    return i;
     }
 	
     return -1;
 }
 
-void T_SlidingDoor (slidedoor_t*	door)
+//
+// T_SlidingDoor
+//
+// villsa [STRIFE] resurrected
+//
+void T_SlidingDoor(slidedoor_t* door)
 {
+    sector_t* sec;
+
+    sec = door->frontsector;
+
     switch(door->status)
     {
-      case sd_opening:
-	if (!door->timer--)
-	{
-	    if (++door->frame == SNUMFRAMES)
-	    {
-		// IF DOOR IS DONE OPENING...
-		sides[door->line->sidenum[0]].midtexture = 0;
-		sides[door->line->sidenum[1]].midtexture = 0;
-		door->line->flags &= ML_BLOCKING^0xff;
-					
-		if (door->type == sdt_openOnly)
-		{
-		    door->frontsector->specialdata = NULL;
-		    P_RemoveThinker (&door->thinker);
-		    break;
-		}
-					
-		door->timer = SDOORWAIT;
-		door->status = sd_waiting;
-	    }
-	    else
-	    {
-		// IF DOOR NEEDS TO ANIMATE TO NEXT FRAME...
-		door->timer = SWAITTICS;
-					
-		sides[door->line->sidenum[0]].midtexture =
-		    slideFrames[door->whichDoorIndex].
-		    frontFrames[door->frame];
-		sides[door->line->sidenum[1]].midtexture =
-		    slideFrames[door->whichDoorIndex].
-		    backFrames[door->frame];
-	    }
-	}
-	break;
-			
-      case sd_waiting:
-	// IF DOOR IS DONE WAITING...
-	if (!door->timer--)
-	{
-	    // CAN DOOR CLOSE?
-	    if (door->frontsector->thinglist != NULL ||
-		door->backsector->thinglist != NULL)
-	    {
-		door->timer = SDOORWAIT;
-		break;
-	    }
+    case sd_opening:
+        if(!door->timer--)
+        {
+            if(++door->frame == SNUMFRAMES)
+            {
+                // IF DOOR IS DONE OPENING...
+                door->line1->flags &= ~ML_BLOCKING;
+                door->line2->flags &= ~ML_BLOCKING;
 
-	    //door->frame = SNUMFRAMES-1;
-	    door->status = sd_closing;
-	    door->timer = SWAITTICS;
-	}
-	break;
-			
-      case sd_closing:
-	if (!door->timer--)
-	{
-	    if (--door->frame < 0)
-	    {
-		// IF DOOR IS DONE CLOSING...
-		door->line->flags |= ML_BLOCKING;
-		door->frontsector->specialdata = NULL;
-		P_RemoveThinker (&door->thinker);
-		break;
-	    }
-	    else
-	    {
-		// IF DOOR NEEDS TO ANIMATE TO NEXT FRAME...
-		door->timer = SWAITTICS;
-					
-		sides[door->line->sidenum[0]].midtexture =
-		    slideFrames[door->whichDoorIndex].
-		    frontFrames[door->frame];
-		sides[door->line->sidenum[1]].midtexture =
-		    slideFrames[door->whichDoorIndex].
-		    backFrames[door->frame];
-	    }
-	}
-	break;
+                if(door->type == sdt_openOnly)
+                {
+                    door->frontsector->specialdata = NULL;
+                    P_RemoveThinker (&door->thinker);
+                    return;
+                }
+
+                door->timer = SDOORWAIT;
+                door->status = sd_waiting;
+            }
+            else
+            {
+                // IF DOOR NEEDS TO ANIMATE TO NEXT FRAME...
+                door->timer = SWAITTICS;
+
+                sides[door->line2->sidenum[0]].midtexture =
+                    slideFrames[door->whichDoorIndex].frames[door->frame];
+
+                sides[door->line2->sidenum[1]].midtexture =
+                    slideFrames[door->whichDoorIndex].frames[door->frame];
+
+                sides[door->line1->sidenum[0]].midtexture =
+                    slideFrames[door->whichDoorIndex].frames[door->frame];
+
+                sides[door->line1->sidenum[1]].midtexture =
+                    slideFrames[door->whichDoorIndex].frames[door->frame];
+            }
+        }
+
+        return;
+
+    case sd_waiting:
+        // IF DOOR IS DONE WAITING...
+        if(!door->timer--)
+        {
+            fixed_t speed;
+            boolean thinglist;
+
+            sec = door->frontsector;
+            thinglist = (sec->thinglist != NULL);
+
+            // CAN DOOR CLOSE?
+            if(thinglist)
+            {
+                door->timer = SDOORWAIT;
+                return;
+            }
+            else
+            {
+
+                speed = sec->ceilingheight -
+                    sec->floorheight - (10*FRACUNIT);
+
+                // something blocking it?
+                // [STRIFE] TODO this function here is causing some abnormalites when closing
+                if(T_MovePlane(sec, speed, sec->floorheight, thinglist, 1, -1) == 1)
+                {
+                    door->timer = SDOORWAIT;
+                    return;
+                }
+                else
+                {
+                    // Instantly move plane
+                    T_MovePlane(sec, (128*FRACUNIT), sec->ceilingheight, 0, 1, 1);
+
+                    // turn line blocking back on
+                    door->line1->flags |= ML_BLOCKING;
+                    door->line2->flags |= ML_BLOCKING;
+
+                    // play close sound
+                    S_StartSound(&sec->soundorg, slideCloseSounds[door->whichDoorIndex]);
+
+                    door->status = sd_closing;
+                    door->timer = SWAITTICS;
+                }
+            }
+        }
+
+        return;
+
+    case sd_closing:
+        if (!door->timer--)
+        {
+            if(--door->frame < 0)
+            {
+                // IF DOOR IS DONE CLOSING...
+                T_MovePlane(sec, (128*FRACUNIT), sec->floorheight, 0, 1, -1);
+                door->frontsector->specialdata = NULL;
+                P_RemoveThinker (&door->thinker);
+                return;
+            }
+            else
+            {
+                // IF DOOR NEEDS TO ANIMATE TO NEXT FRAME...
+                door->timer = SWAITTICS;
+
+                sides[door->line2->sidenum[0]].midtexture =
+                    slideFrames[door->whichDoorIndex].frames[door->frame];
+
+                sides[door->line2->sidenum[1]].midtexture =
+                    slideFrames[door->whichDoorIndex].frames[door->frame];
+
+                sides[door->line1->sidenum[0]].midtexture =
+                    slideFrames[door->whichDoorIndex].frames[door->frame];
+
+                sides[door->line1->sidenum[1]].midtexture =
+                    slideFrames[door->whichDoorIndex].frames[door->frame];
+            }
+        }
+
+        return;
     }
 }
 
-
-
-void
-EV_SlidingDoor
-( line_t*	line,
-  mobj_t*	thing )
+//
+// EV_RemoteSlidingDoor
+//
+// villsa [STRIFE] TODO
+//
+void EV_RemoteSlidingDoor(line_t* line, mobj_t* thing)
 {
-    sector_t*		sec;
-    slidedoor_t*	door;
-	
-    // DOOM II ONLY...
-    if (gamemode != commercial)
-	return;
-    
-    // Make sure door isn't already being animated
-    sec = line->frontsector;
-    door = NULL;
-    if (sec->specialdata)
-    {
-	if (!thing->player)
-	    return;
-			
-	door = sec->specialdata;
-	if (door->type == sdt_openAndClose)
-	{
-	    if (door->status == sd_waiting)
-		door->status = sd_closing;
-	}
-	else
-	    return;
-    }
-    
-    // Init sliding door vars
-    if (!door)
-    {
-	door = Z_Malloc (sizeof(*door), PU_LEVSPEC, 0);
-	P_AddThinker (&door->thinker);
-	sec->specialdata = door;
-		
-	door->type = sdt_openAndClose;
-	door->status = sd_opening;
-	door->whichDoorIndex = P_FindSlidingDoorType(line);
+}
 
-	if (door->whichDoorIndex < 0)
-	    I_Error("EV_SlidingDoor: Can't use texture for sliding door!");
-			
-	door->frontsector = sec;
-	door->backsector = line->backsector;
-	door->thinker.function = T_SlidingDoor;
-	door->timer = SWAITTICS;
-	door->frame = 0;
-	door->line = line;
+
+//
+// EV_SlidingDoor
+//
+// villsa [STRIFE]
+//
+void EV_SlidingDoor(line_t* line, mobj_t* thing)
+{
+    sector_t*       sec;
+    slidedoor_t*    door;
+    int             i;
+    line_t*         secline;
+
+    // Make sure door isn't already being animated
+    sec = sides[line->sidenum[1]].sector;
+    door = NULL;
+    if(sec->specialdata)
+    {
+        if (!thing->player)
+            return;
+
+        door = sec->specialdata;
+        if(door->type == sdt_openAndClose)
+        {
+            if(door->status == sd_waiting)
+            {
+                // [STRIFE] TODO lines are still passable when closed manually by player
+                door->status = sd_closing;
+                door->timer = SWAITTICS;    // villsa [STRIFE]
+            }
+        }
+        else
+            return;
+    }
+
+    // Init sliding door vars
+    if(!door)
+    {
+        door = Z_Malloc (sizeof(*door), PU_LEVSPEC, 0);
+        P_AddThinker (&door->thinker);
+
+        sec->specialdata = door;
+
+        door->type = sdt_openAndClose;
+        door->status = sd_opening;
+        door->whichDoorIndex = P_FindSlidingDoorType(line);
+
+        // villsa [STRIFE] different error message
+        if(door->whichDoorIndex < 0)
+            I_Error(DEH_String("EV_SlidingDoor: Textures are not defined for sliding door!"));
+
+        sides[line->sidenum[0]].midtexture = sides[line->sidenum[0]].toptexture;
+
+        // villsa [STRIFE]
+        door->line1 = line;
+        door->line2 = line;
+
+        // villsa [STRIFE] this loop assumes that the sliding door is made up
+        // of only four linedefs!
+        for(i = 0; i < 4; i++)
+        {
+            secline = sec->lines[i];
+            if(secline != line)
+            {
+                side_t* side1;
+                side_t* side2;
+
+                side1 = &sides[secline->sidenum[0]];
+                side2 = &sides[line->sidenum[0]];
+
+                if(side1->toptexture == side2->toptexture)
+                    door->line2 = secline;
+            }
+        }
+
+        door->thinker.function.acp1 = (actionf_p1)T_SlidingDoor;
+        door->timer = SWAITTICS;
+        door->frontsector = sec;
+        door->frame = 0;
+
+        // villsa [STRIFE] preset flags
+        door->line1->flags |= ML_BLOCKING;
+        door->line2->flags |= ML_BLOCKING;
+
+        // villsa [STRIFE] set the closing sector
+        T_MovePlane(
+            door->frontsector,
+            (128*FRACUNIT),
+            P_FindLowestCeilingSurrounding(door->frontsector),
+            0,
+            1,
+            1);
+
+        // villsa [STRIFE] play open sound
+        S_StartSound(&door->frontsector->soundorg, slideOpenSounds[door->whichDoorIndex]);
     }
 }
-#endif
+

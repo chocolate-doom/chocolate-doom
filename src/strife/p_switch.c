@@ -510,11 +510,6 @@ P_UseSpecialLine
       case 118:		// Blazing door open
 	EV_VerticalDoor (line, thing);
 	break;
-	
-	//UNUSED - Door Slide Open&Close
-	// case 124:
-	// EV_SlidingDoor (line, thing);
-	// break;
 
 	// SWITCHES
       case 7:
@@ -820,8 +815,13 @@ P_UseSpecialLine
 	P_ChangeSwitchTexture(line,1);
 	break;
 
-      case 666:     // villsa [STRIFE]
-          // Move wall
+      case 144:
+          // villsa [STRIFE] manual sliding door
+          EV_SlidingDoor(line, thing);
+          break;
+
+      case 666:
+          // villsa [STRIFE] Move wall
           P_MoveWall(line, thing);
           break;
 			
