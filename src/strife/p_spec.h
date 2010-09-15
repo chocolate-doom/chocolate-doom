@@ -132,7 +132,7 @@ getNextSector
 // SPECIAL
 //
 int EV_DoDonut(line_t* line);
-
+int EV_ClearForceFields(line_t* line);  // villsa [STRIFE]
 
 
 //
@@ -352,7 +352,10 @@ typedef enum
     raiseIn5Mins,
     blazeRaise,
     blazeOpen,
-    blazeClose
+    blazeClose,
+    shopClose,          // villsa [STRIFE]
+    splitRaiseNearest,  // villsa [STRIFE]
+    splitOpen           // villsa [STRIFE]
 
 } vldoor_e;
 

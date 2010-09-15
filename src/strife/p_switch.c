@@ -571,6 +571,11 @@ P_UseSpecialLine
 	if (EV_DoDoor(line,normal))
 	    P_ChangeSwitchTexture(line,0);
 	break;
+
+      case 40:
+      // villsa [STRIFE] Split Open Door
+        if(EV_DoDoor(line, splitOpen))
+            P_ChangeSwitchTexture(line, 0);
 	
       case 41:
 	// Lower Ceiling to Floor

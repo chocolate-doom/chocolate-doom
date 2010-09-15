@@ -2342,7 +2342,7 @@ void A_MerchantPain(mobj_t* actor)
     line_t junk;
 
     junk.tag = 999;
-    //EV_DoDoor(&junk, 8);  // villsa [STRIFE] TODO - identify vldoor_e enum
+    EV_DoDoor(&junk, shopClose);
 
     if(actor->target && actor->target->player)
         P_NoiseAlert(actor->target, actor); // inlined in asm

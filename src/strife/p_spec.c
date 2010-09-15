@@ -757,12 +757,12 @@ P_CrossSpecialLine
 	line->special = 0;
 	break;
 
-      case 40:
+      /*case 40:
 	// RaiseCeilingLowerFloor
 	EV_DoCeiling( line, raiseToHighest );
 	EV_DoFloor( line, lowerFloorToLowest );
 	line->special = 0;
-	break;
+	break;*/
 	
       case 44:
 	// Ceiling Crush
@@ -1042,6 +1042,18 @@ P_CrossSpecialLine
 	// Raise Floor Turbo
 	EV_DoFloor(line,raiseFloorTurbo);
 	break;
+
+      case 174:
+          // villsa [STRIFE] Split Open
+        EV_DoDoor(line, splitOpen);
+        line->special = 0;
+        break;
+
+      case 183:
+        // villsa [STRIFE] Split Raise Nearest
+        EV_DoDoor(line, splitRaiseNearest);
+        line->special = 0;
+        break;
     }
 }
 

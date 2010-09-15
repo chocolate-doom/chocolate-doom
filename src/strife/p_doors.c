@@ -49,134 +49,163 @@
 //
 // T_VerticalDoor
 //
-void T_VerticalDoor (vldoor_t* door)
+void T_VerticalDoor(vldoor_t* door)
 {
-    result_e	res;
-	
+    result_e res1;
+    result_e res2;
+
     switch(door->direction)
     {
-      case 0:
-	// WAITING
-	if (!--door->topcountdown)
-	{
-	    switch(door->type)
-	    {
-	      case blazeRaise:
-		door->direction = -1; // time to go back down
-		S_StartSound(&door->sector->soundorg, sfx_bdcls);
-		break;
-		
-	      case normal:
-		door->direction = -1; // time to go back down
-		S_StartSound(&door->sector->soundorg, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
-		break;
-		
-	      case close30ThenOpen:
-		door->direction = 1;
-		S_StartSound(&door->sector->soundorg, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
-		break;
-		
-	      default:
-		break;
-	    }
-	}
-	break;
-	
-      case 2:
-	//  INITIAL WAIT
-	if (!--door->topcountdown)
-	{
-	    switch(door->type)
-	    {
-	      case raiseIn5Mins:
-		door->direction = 1;
-		door->type = normal;
-		S_StartSound(&door->sector->soundorg, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
-		break;
-		
-	      default:
-		break;
-	    }
-	}
-	break;
-	
-      case -1:
-	// DOWN
-	res = T_MovePlane(door->sector,
-			  door->speed,
-			  door->sector->floorheight,
-			  false,1,door->direction);
-	if (res == pastdest)
-	{
-	    switch(door->type)
-	    {
-	      case blazeRaise:
-	      case blazeClose:
-		door->sector->specialdata = NULL;
-		P_RemoveThinker (&door->thinker);  // unlink and free
-		S_StartSound(&door->sector->soundorg, sfx_bdcls);
-		break;
-		
-	      case normal:
-	      case close:
-		door->sector->specialdata = NULL;
-		P_RemoveThinker (&door->thinker);  // unlink and free
-		break;
-		
-	      case close30ThenOpen:
-		door->direction = 0;
-		door->topcountdown = TICRATE*30;
-		break;
-		
-	      default:
-		break;
-	    }
-	}
-	else if (res == crushed)
-	{
-	    switch(door->type)
-	    {
-	      case blazeClose:
-	      case close:		// DO NOT GO BACK UP!
-		break;
-		
-	      default:
-		door->direction = 1;
-		S_StartSound(&door->sector->soundorg, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
-		break;
-	    }
-	}
-	break;
-	
-      case 1:
-	// UP
-	res = T_MovePlane(door->sector,
-			  door->speed,
-			  door->topheight,
-			  false,1,door->direction);
-	
-	if (res == pastdest)
-	{
-	    switch(door->type)
-	    {
-	      case blazeRaise:
-	      case normal:
-		door->direction = 0; // wait at top
-		door->topcountdown = door->topwait;
-		break;
-		
-	      case close30ThenOpen:
-	      case blazeOpen:
-	      case open:
-		door->sector->specialdata = NULL;
-		P_RemoveThinker (&door->thinker);  // unlink and free
-		break;
-		
-	      default:
-		break;
-	    }
-	}
-	break;
+    case 0:
+        // WAITING
+        if (!--door->topcountdown)
+        {
+            switch(door->type)
+            {
+            case blazeRaise:
+                door->direction = -1; // time to go back down
+                S_StartSound(&door->sector->soundorg, sfx_bdcls);
+                break;
+
+            case normal:
+                door->direction = -1; // time to go back down
+                // villsa [STRIFE] closesound added
+                S_StartSound(&door->sector->soundorg, door->closesound);
+                break;
+
+                // villsa [STRIFE]
+            case shopClose:
+                door->direction = 1;
+                door->speed = (2*FRACUNIT);
+                S_StartSound(&door->sector->soundorg, door->opensound);
+                break;
+
+            case close30ThenOpen:
+                door->direction = 1;
+
+                // villsa [STRIFE] opensound added
+                S_StartSound(&door->sector->soundorg, door->opensound);
+                break;
+
+            default:
+                break;
+            }
+        }
+        break;
+
+    case 2:
+        //  INITIAL WAIT
+        if (!--door->topcountdown)
+        {
+            switch(door->type)
+            {
+            case raiseIn5Mins:
+                door->direction = 1;
+                door->type = normal;
+
+                // villsa [STRIFE] opensound added
+                S_StartSound(&door->sector->soundorg, door->opensound);
+                break;
+
+            default:
+                break;
+            }
+        }
+        break;
+
+        // villsa [STRIFE]
+    case -2:
+        // SPLIT
+        res1 = T_MovePlane(door->sector, door->speed, door->topheight, 0, 1, 1);
+        res2 = T_MovePlane(door->sector, door->speed, door->topwait, 0, 0, -1);
+
+        if(res1 == pastdest && res2 == pastdest)
+        {
+            door->sector->specialdata = NULL;
+            P_RemoveThinker(&door->thinker);  // unlink and free
+        }
+
+        break;
+
+    case -1:
+        // DOWN
+        res1 = T_MovePlane(door->sector, door->speed, door->sector->floorheight, false, 1, door->direction);
+        if(res1 == pastdest)
+        {
+            switch(door->type)
+            {
+            case normal:
+            case close:
+            case blazeRaise:
+            case blazeClose:
+                door->sector->specialdata = NULL;
+                P_RemoveThinker (&door->thinker);  // unlink and free
+                // villsa [STRIFE] no sounds
+                break;
+
+            case close30ThenOpen:
+                door->direction = 0;
+                door->topcountdown = TICRATE*30;
+                break;
+
+                // villsa [STRIFE]
+            case shopClose:
+                door->direction = 0;
+                door->topcountdown = TICRATE*120;
+                break;
+
+            default:
+                break;
+            }
+        }
+        else if(res1 == crushed)
+        {
+            switch(door->type)
+            {
+            case blazeClose:
+            case close:		// DO NOT GO BACK UP!
+            case shopClose:     // villsa [STRIFE]
+                break;
+
+            default:
+                door->direction = 1;
+                // villsa [STRIFE] opensound added
+                S_StartSound(&door->sector->soundorg, door->opensound);
+                break;
+            }
+        }
+        break;
+
+    case 1:
+        // UP
+        res1 = T_MovePlane(door->sector,
+            door->speed,
+            door->topheight,
+            false,1,door->direction);
+
+        if(res1 == pastdest)
+        {
+            switch(door->type)
+            {
+            case blazeRaise:
+            case normal:
+                door->direction = 0; // wait at top
+                door->topcountdown = door->topwait;
+                break;
+
+            case close30ThenOpen:
+            case blazeOpen:
+            case open:
+            case shopClose:     // villsa [STRIFE]
+                door->sector->specialdata = NULL;
+                P_RemoveThinker (&door->thinker);  // unlink and free
+                break;
+
+            default:
+                break;
+            }
+        }
+        break;
     }
 }
 
@@ -243,101 +272,172 @@ EV_DoLockedDoor
 }
 
 
-int
-EV_DoDoor
-( line_t*	line,
-  vldoor_e	type )
+int EV_DoDoor(line_t* line, vldoor_e type)
 {
-    int		secnum,rtn;
-    sector_t*	sec;
-    vldoor_t*	door;
-	
+    int         secnum, rtn;
+    sector_t*   sec;
+    vldoor_t*   door;
+
     secnum = -1;
     rtn = 0;
-    
-    while ((secnum = P_FindSectorFromLineTag(line,secnum)) >= 0)
-    {
-	sec = &sectors[secnum];
-	if (sec->specialdata)
-	    continue;
-		
-	
-	// new door thinker
-	rtn = 1;
-	door = Z_Malloc (sizeof(*door), PU_LEVSPEC, 0);
-	P_AddThinker (&door->thinker);
-	sec->specialdata = door;
 
-	door->thinker.function.acp1 = (actionf_p1) T_VerticalDoor;
-	door->sector = sec;
-	door->type = type;
-	door->topwait = VDOORWAIT;
-	door->speed = VDOORSPEED;
-		
-	switch(type)
-	{
-	  case blazeClose:
-	    door->topheight = P_FindLowestCeilingSurrounding(sec);
-	    door->topheight -= 4*FRACUNIT;
-	    door->direction = -1;
-	    door->speed = VDOORSPEED * 4;
-	    S_StartSound(&door->sector->soundorg, sfx_bdcls);
-	    break;
-	    
-	  case close:
-	    door->topheight = P_FindLowestCeilingSurrounding(sec);
-	    door->topheight -= 4*FRACUNIT;
-	    door->direction = -1;
-	    S_StartSound(&door->sector->soundorg, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
-	    break;
-	    
-	  case close30ThenOpen:
-	    door->topheight = sec->ceilingheight;
-	    door->direction = -1;
-	    S_StartSound(&door->sector->soundorg, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
-	    break;
-	    
-	  case blazeRaise:
-	  case blazeOpen:
-	    door->direction = 1;
-	    door->topheight = P_FindLowestCeilingSurrounding(sec);
-	    door->topheight -= 4*FRACUNIT;
-	    door->speed = VDOORSPEED * 4;
-	    if (door->topheight != sec->ceilingheight)
-		S_StartSound(&door->sector->soundorg, sfx_bdopn);
-	    break;
-	    
-	  case normal:
-	  case open:
-	    door->direction = 1;
-	    door->topheight = P_FindLowestCeilingSurrounding(sec);
-	    door->topheight -= 4*FRACUNIT;
-	    if (door->topheight != sec->ceilingheight)
-		S_StartSound(&door->sector->soundorg, sfx_swish);   // villsa [STRIFE] TODO - fix sounds
-	    break;
-	    
-	  default:
-	    break;
-	}
-		
+    while((secnum = P_FindSectorFromLineTag(line,secnum)) >= 0)
+    {
+        sec = &sectors[secnum];
+        if(sec->specialdata)
+            continue;
+
+
+        // new door thinker
+        rtn = 1;
+        door = Z_Malloc (sizeof(*door), PU_LEVSPEC, 0);
+        P_AddThinker (&door->thinker);
+        sec->specialdata = door;
+
+        door->thinker.function.acp1 = (actionf_p1)T_VerticalDoor;
+        door->sector = sec;
+        door->type = type;
+        door->topwait = VDOORWAIT;
+        door->speed = VDOORSPEED;
+        R_SoundNumForDoor(door);    // villsa [STRIFE] set door sounds
+
+        switch(type)
+        {
+            // villsa [STRIFE] new door type
+        case splitOpen:
+            door->direction = -2;
+            door->topheight = P_FindLowestCeilingSurrounding(sec);
+            door->topheight -= 4*FRACUNIT;
+            door->speed = FRACUNIT;
+            // yes, it using topwait to get the floor height
+            door->topwait = P_FindLowestFloorSurrounding(sec);
+            if(door->topheight == sec->ceilingheight)
+                continue;
+
+            S_StartSound(&sec->soundorg, door->opensound);
+            break;
+
+            // villsa [STRIFE] new door type
+        case splitRaiseNearest:
+            door->direction = -2;
+            door->topheight = P_FindLowestCeilingSurrounding(sec);
+            door->topheight -= 4*FRACUNIT;
+            door->speed = FRACUNIT;
+            // yes, it using topwait to get the floor height
+            door->topwait = P_FindHighestFloorSurrounding(sec);
+            if(door->topheight == sec->ceilingheight)
+                continue;
+
+            S_StartSound(&sec->soundorg, door->opensound);
+            break;
+
+        case blazeClose:
+        case shopClose:     // villsa [STRIFE]
+            door->topheight = P_FindLowestCeilingSurrounding(sec);
+            door->topheight -= 4*FRACUNIT;
+            door->direction = -1;
+            door->speed = VDOORSPEED * 4;
+            S_StartSound(&door->sector->soundorg, sfx_bdcls);
+            break;
+
+        case close:
+            door->topheight = P_FindLowestCeilingSurrounding(sec);
+            door->topheight -= 4*FRACUNIT;
+            door->direction = -1;
+
+            // villsa [STRIFE] set door sounds
+            S_StartSound(&door->sector->soundorg, door->opensound);
+            break;
+
+        case close30ThenOpen:
+            door->topheight = sec->ceilingheight;
+            door->direction = -1;
+
+            // villsa [STRIFE] set door sounds
+            S_StartSound(&door->sector->soundorg, door->closesound);
+            break;
+
+        case blazeRaise:
+        case blazeOpen:
+            door->direction = 1;
+            door->topheight = P_FindLowestCeilingSurrounding(sec);
+            door->topheight -= 4*FRACUNIT;
+            door->speed = VDOORSPEED * 4;
+            if (door->topheight != sec->ceilingheight)
+                S_StartSound(&door->sector->soundorg, sfx_bdopn);
+            break;
+
+        case normal:
+        case open:
+            door->direction = 1;
+            door->topheight = P_FindLowestCeilingSurrounding(sec);
+            door->topheight -= 4*FRACUNIT;
+
+            if(door->topheight != sec->ceilingheight)
+                S_StartSound(&door->sector->soundorg, door->opensound);
+            break;
+
+        default:
+            break;
+        }
+
     }
     return rtn;
+}
+
+//
+// EV_ClearForceFields
+//
+// villsa [STRIFE] new function
+//
+int EV_ClearForceFields(line_t* line)
+{
+    int         secnum;
+    int         rtn;
+    sector_t*   sec;
+    int         i;
+    line_t*     secline;
+
+    secnum = -1;
+    rtn = 0;
+
+    while((secnum = P_FindSectorFromLineTag(line,secnum)) >= 0)
+    {
+        sec = &sectors[secnum];
+        rtn = 1;
+
+        line->special = 0;
+
+        if(!sec->linecount)
+            return;
+
+        for(i = 0; i < sec->linecount; i++)
+        {
+            secline = sec->lines[i];
+            if(!(secline->flags & ML_TWOSIDED))
+                continue;
+            if(secline->special != 148)
+                continue;
+
+            secline->flags &= ~ML_BLOCKING;
+            secline->special = 0;
+            sides[secline->sidenum[0]].midtexture = 0;
+            sides[secline->sidenum[1]].midtexture = 0;
+        }
+    }
 }
 
 
 //
 // EV_VerticalDoor : open a door manually, no tag value
 //
-void
-EV_VerticalDoor
-( line_t*	line,
-  mobj_t*	thing )
+void EV_VerticalDoor(line_t* line, mobj_t* thing)
 {
-    player_t*	player;
-    int		secnum;
-    sector_t*	sec;
-    vldoor_t*	door;
-    int		side;
+    player_t*   player;
+    int         secnum;
+    sector_t*   sec;
+    vldoor_t*   door;
+    int         side;
 	
     side = 0;	// only front sides can be used
 
@@ -573,85 +673,85 @@ static slidename_t slideFrameNames[MAXSLIDEDOORS] =
 {
     // SIGLDR
     {
-        { "SIGLDR01" },  // frame1
-        { "SIGLDR02" },  // frame2
-        { "SIGLDR03" },  // frame3
-        { "SIGLDR04" },  // frame4
-        { "SIGLDR05" },  // frame5
-        { "SIGLDR06" },  // frame6
-        { "SIGLDR07" },  // frame7
-        { "SIGLDR08" }   // frame8
+        "SIGLDR01",  // frame1
+        "SIGLDR02",  // frame2
+        "SIGLDR03",  // frame3
+        "SIGLDR04",  // frame4
+        "SIGLDR05",  // frame5
+        "SIGLDR06",  // frame6
+        "SIGLDR07",  // frame7
+        "SIGLDR08"   // frame8
     },
     // DORSTN
     {
-        { "DORSTN01" },  // frame1
-        { "DORSTN02" },  // frame2
-        { "DORSTN03" },  // frame3
-        { "DORSTN04" },  // frame4
-        { "DORSTN05" },  // frame5
-        { "DORSTN06" },  // frame6
-        { "DORSTN07" },  // frame7
-        { "DORSTN08" }   // frame8
+        "DORSTN01",  // frame1
+        "DORSTN02",  // frame2
+        "DORSTN03",  // frame3
+        "DORSTN04",  // frame4
+        "DORSTN05",  // frame5
+        "DORSTN06",  // frame6
+        "DORSTN07",  // frame7
+        "DORSTN08"   // frame8
     },
 
     // DORQTR
     {
-        { "DORQTR01" },  // frame1
-        { "DORQTR02" },  // frame2
-        { "DORQTR03" },  // frame3
-        { "DORQTR04" },  // frame4
-        { "DORQTR05" },  // frame5
-        { "DORQTR06" },  // frame6
-        { "DORQTR07" },  // frame7
-        { "DORQTR08" }   // frame8
+        "DORQTR01",  // frame1
+        "DORQTR02",  // frame2
+        "DORQTR03",  // frame3
+        "DORQTR04",  // frame4
+        "DORQTR05",  // frame5
+        "DORQTR06",  // frame6
+        "DORQTR07",  // frame7
+        "DORQTR08"   // frame8
     },
 
     // DORCRG
     {
-        { "DORCRG01" },  // frame1
-        { "DORCRG02" },  // frame2
-        { "DORCRG03" },  // frame3
-        { "DORCRG04" },  // frame4
-        { "DORCRG05" },  // frame5
-        { "DORCRG06" },  // frame6
-        { "DORCRG07" },  // frame7
-        { "DORCRG08" }   // frame8
+        "DORCRG01",  // frame1
+        "DORCRG02",  // frame2
+        "DORCRG03",  // frame3
+        "DORCRG04",  // frame4
+        "DORCRG05",  // frame5
+        "DORCRG06",  // frame6
+        "DORCRG07",  // frame7
+        "DORCRG08"   // frame8
     },
 
     // DORCHN
     {
-        { "DORCHN01" },  // frame1
-        { "DORCHN02" },  // frame2
-        { "DORCHN03" },  // frame3
-        { "DORCHN04" },  // frame4
-        { "DORCHN05" },  // frame5
-        { "DORCHN06" },  // frame6
-        { "DORCHN07" },  // frame7
-        { "DORCHN08" }   // frame8
+        "DORCHN01",  // frame1
+        "DORCHN02",  // frame2
+        "DORCHN03",  // frame3
+        "DORCHN04",  // frame4
+        "DORCHN05",  // frame5
+        "DORCHN06",  // frame6
+        "DORCHN07",  // frame7
+        "DORCHN08"   // frame8
     },
 
     // DORIRS
     {
-        { "DORIRS01" },  // frame1
-        { "DORIRS02" },  // frame2
-        { "DORIRS03" },  // frame3
-        { "DORIRS04" },  // frame4
-        { "DORIRS05" },  // frame5
-        { "DORIRS06" },  // frame6
-        { "DORIRS07" },  // frame7
-        { "DORIRS08" }   // frame8
+        "DORIRS01",  // frame1
+        "DORIRS02",  // frame2
+        "DORIRS03",  // frame3
+        "DORIRS04",  // frame4
+        "DORIRS05",  // frame5
+        "DORIRS06",  // frame6
+        "DORIRS07",  // frame7
+        "DORIRS08"   // frame8
     },
 
     // DORALN
     {
-        { "DORALN01" },  // frame1
-        { "DORALN02" },  // frame2
-        { "DORALN03" },  // frame3
-        { "DORALN04" },  // frame4
-        { "DORALN05" },  // frame5
-        { "DORALN06" },  // frame6
-        { "DORALN07" },  // frame7
-        { "DORALN08" }   // frame8
+        "DORALN01",  // frame1
+        "DORALN02",  // frame2
+        "DORALN03",  // frame3
+        "DORALN04",  // frame4
+        "DORALN05",  // frame5
+        "DORALN06",  // frame6
+        "DORALN07",  // frame7
+        "DORALN08"   // frame8
     },
 
     {"\0","\0","\0","\0","\0","\0","\0","\0"}
