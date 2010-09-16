@@ -543,75 +543,203 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
     sector_t*   sec;
     vldoor_t*   door;
     int         side;
-	
+
     side = 0;	// only front sides can be used
 
     //	Check for locks
     player = thing->player;
-		
-/*    switch(line->special)
+
+    // villsa [STRIFE] new key types
+    switch(line->special)
     {
-      case 26: // Blue Lock
-      case 32:
-	if ( !player )
-	    return;
-	
-	if (!player->cards[it_bluecard] && !player->cards[it_blueskull])
-	{
-	    player->message = DEH_String(PD_BLUEK);
-	    S_StartSound(NULL,sfx_oof);
-	    return;
-	}
-	break;
-	
-      case 27: // Yellow Lock
-      case 34:
-	if ( !player )
-	    return;
-	
-	if (!player->cards[it_yellowcard] &&
-	    !player->cards[it_yellowskull])
-	{
-	    player->message = DEH_String(PD_YELLOWK);
-	    S_StartSound(NULL,sfx_oof);
-	    return;
-	}
-	break;
-	
-      case 28: // Red Lock
-      case 33:
-	if ( !player )
-	    return;
-	
-	if (!player->cards[it_redcard] && !player->cards[it_redskull])
-	{
-	    player->message = DEH_String(PD_REDK);
-	    S_StartSound(NULL,sfx_oof);
-	    return;
-	}
-	break;
-    }*/
-	
+    case 26:
+    case 32:
+        if(!player->cards[key_IDBadge])
+        {
+            player->message = DEH_String("You need an id badge to open this door");
+            S_StartSound(NULL, sfx_oof);
+            return;
+        }
+        break;
+
+    case 28:
+    case 33:
+        if(!player->cards[key_IDCard])
+        {
+            player->message = DEH_String("You need an id card to open this door");
+            S_StartSound(NULL, sfx_oof);
+            return;
+        }
+        break;
+
+    case 27:
+    case 34:
+        if(!player->cards[key_Passcard])
+        {
+            player->message = DEH_String("You need a pass card key to open this door");
+            S_StartSound(NULL, sfx_oof);
+            return;
+        }
+        break;
+
+    case 156:
+        if(!player->cards[key_BrassKey])
+        {
+            player->message = DEH_String("You need a brass key");
+            S_StartSound(NULL, sfx_oof);
+            return;
+        }
+        break;
+
+    case 158:
+    case 159:
+        if(!player->cards[key_GoldKey])
+        {
+            player->message = DEH_String("You need a gold key");
+            S_StartSound(NULL, sfx_oof);
+            return;
+        }
+        break;
+
+    case 157:
+    case 160:
+        if(!player->cards[key_SilverKey])
+        {
+            player->message = DEH_String("You need a silver key");
+            S_StartSound(NULL, sfx_oof);
+            return;
+        }
+        break;
+
+    case 165:
+        player->message = DEH_String("That doesn't seem to work");
+        S_StartSound(NULL, sfx_oof);
+        return;
+
+    case 166:
+        if(!player->cards[key_SeveredHand])
+        {
+            player->message = DEH_String("Hand print not on file");
+            S_StartSound(NULL, sfx_oof);
+            return;
+        }
+        break;
+
+    case 169:
+        if(!player->cards[key_BaseKey])
+        {
+            player->message = DEH_String("You don't have the key");
+            S_StartSound(NULL, sfx_oof);
+            return;
+        }
+        break;
+
+    case 170:
+        if(!player->cards[key_GovsKey])
+        {
+            player->message = DEH_String("You don't have the key");
+            S_StartSound(NULL, sfx_oof);
+            return;
+        }
+        break;
+
+    case 190:
+        if(!player->cards[key_OrderKey])
+        {
+            player->message = DEH_String("You don't have the key");
+            S_StartSound(NULL, sfx_oof);
+            return;
+        }
+        break;
+
+    case 205:
+        player->message = DEH_String("THIS AREA IS ONLY AVAILABLE IN THE RETAIL VERSION OF STRIFE");
+        S_StartSound(NULL, sfx_oof);
+        return;
+
+    case 213:
+        if(!P_PlayerHasItem(player, MT_INV_CHALICE))
+        {
+            player->message = DEH_String("You need the chalice!");
+            S_StartSound(NULL, sfx_oof);
+            return;
+        }
+        break;
+
+    case 217:
+        if(!player->cards[key_CoreKey])
+        {
+            player->message = DEH_String("You don't have the key");
+            S_StartSound(NULL, sfx_oof);
+            return;
+        }
+        break;
+
+    case 221:
+        if(!player->cards[key_MaulerKey])
+        {
+            player->message = DEH_String("You don't have the key");
+            S_StartSound(NULL, sfx_oof);
+            return;
+        }
+        break;
+
+    case 224:
+        if(!player->cards[key_ChapelKey])
+        {
+            player->message = DEH_String("You don't have the key");
+            S_StartSound(NULL, sfx_oof);
+            return;
+        }
+        break;
+
+    case 225:
+        if(!player->cards[key_CatacombKey])
+        {
+            player->message = DEH_String("You don't have the key");
+            S_StartSound(NULL, sfx_oof);
+            return;
+        }
+        break;
+
+    case 232:
+        if(!player->questflags & QF_QUEST2)
+        {
+            player->message = DEH_String("You need the Oracle Pass!");
+            S_StartSound(NULL, sfx_oof);
+            return;
+        }
+        break;
+    }
+
     // if the sector has an active thinker, use it
     sec = sides[ line->sidenum[side^1]] .sector;
     secnum = sec-sectors;
 
     if (sec->specialdata)
     {
-	door = sec->specialdata;
-	switch(line->special)
-	{
-	  case	1: // ONLY FOR "RAISE" DOORS, NOT "OPEN"s
-	  case	26:
-	  case	27:
-	  case	28:
-	  case	117:
-	    if (door->direction == -1)
-		door->direction = 1;	// go back up
-	    else
-	    {
-		if (!thing->player)
-		    return;		// JDC: bad guys never close doors
+        door = sec->specialdata;
+        switch(line->special)
+        {
+        case 1:         // ONLY FOR "RAISE" DOORS, NOT "OPEN"s
+        case 26:
+        case 27:
+        case 28:
+        case 117:
+        case 159:       // villsa [STRIFE]
+        case 161:       // villsa [STRIFE]
+        case 166:       // villsa [STRIFE]
+        case 169:       // villsa [STRIFE]
+        case 170:       // villsa [STRIFE]
+        case 190:       // villsa [STRIFE]
+        case 213:       // villsa [STRIFE]
+        case 232:       // villsa [STRIFE]
+            if(door->direction == -1)
+                door->direction = 1;	// go back up
+            else
+            {
+                if (!thing->player)
+                    return;
 
                 // When is a door not a door?
                 // In Vanilla, door->direction is set, even though
@@ -640,37 +768,18 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
                     // This isn't a door OR a plat.  Now we're in trouble.
 
                     fprintf(stderr, "EV_VerticalDoor: Tried to close "
-                                    "something that wasn't a door.\n");
+                        "something that wasn't a door.\n");
 
                     // Try closing it anyway. At least it will work on 32-bit
                     // machines.
 
                     door->direction = -1;
                 }
-	    }
-	    return;
-	}
+            }
+            return;
+        }
     }
-	
-    // for proper sound
-    switch(line->special)
-    {
-      case 117:	// BLAZING DOOR RAISE
-      case 118:	// BLAZING DOOR OPEN
-	S_StartSound(&sec->soundorg,sfx_bdopn);
-	break;
-	
-      case 1:	// NORMAL DOOR SOUND
-      case 31:
-	S_StartSound(&sec->soundorg,sfx_swish); // villsa [STRIFE] TODO - fix sounds
-	break;
-	
-      default:	// LOCKED DOOR SOUND
-	S_StartSound(&sec->soundorg,sfx_swish); // villsa [STRIFE] TODO - fix sounds
-	break;
-    }
-	
-    
+
     // new door thinker
     door = Z_Malloc (sizeof(*door), PU_LEVSPEC, 0);
     P_AddThinker (&door->thinker);
@@ -680,35 +789,52 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
     door->direction = 1;
     door->speed = VDOORSPEED;
     door->topwait = VDOORWAIT;
+    R_SoundNumForDoor(door);    // villsa [STRIFE] set door sounds
+
+    // for proper sound
+    switch(line->special)
+    {
+    case 117:   // BLAZING DOOR RAISE
+    case 118:   // BLAZING DOOR OPEN
+        S_StartSound(&sec->soundorg, sfx_bdopn);
+        break;
+
+    default:	// NORMAL DOOR SOUND
+        S_StartSound(&sec->soundorg, door->opensound);
+        break;
+    }
 
     switch(line->special)
     {
-      case 1:
-      case 26:
-      case 27:
-      case 28:
-	door->type = normal;
-	break;
-	
-      case 31:
-      case 32:
-      case 33:
-      case 34:
-	door->type = open;
-	line->special = 0;
-	break;
-	
-      case 117:	// blazing door raise
-	door->type = blazeRaise;
-	door->speed = VDOORSPEED*4;
-	break;
-      case 118:	// blazing door open
-	door->type = blazeOpen;
-	line->special = 0;
-	door->speed = VDOORSPEED*4;
-	break;
+    case 1:
+    case 26:
+    case 27:
+    case 28:
+        door->type = normal;
+        break;
+
+
+        // villsa [STRIFE] 31 through 33 are removed
+    case 34:
+    case 156:   // villsa [STRIFE]
+    case 157:   // villsa [STRIFE]
+    case 158:   // villsa [STRIFE]
+        door->type = open;
+        line->special = 0;
+        break;
+
+    case 117:	// blazing door raise
+        door->type = blazeRaise;
+        door->speed = VDOORSPEED*4;
+        break;
+
+    case 118:	// blazing door open
+        door->type = blazeOpen;
+        line->special = 0;
+        door->speed = VDOORSPEED*4;
+        break;
     }
-    
+
     // find the top and bottom of the movement range
     door->topheight = P_FindLowestCeilingSurrounding(sec);
     door->topheight -= 4*FRACUNIT;
