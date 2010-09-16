@@ -107,35 +107,35 @@ typedef enum
 // villsa [STRIFE]
 typedef enum
 {
-    key_BaseKey,
-    key_GovsKey,
-    key_Passcard,
-    key_IDBadge,
-    key_PrisonKey,
-    key_SeveredHand,
-    key_Power1Key,
-    key_Power2Key,
-    key_Power3Key,
-    key_GoldKey,
-    key_IDCard,
-    key_SilverKey,
-    key_OracleKey,
-    key_MilitaryID,
-    key_OrderKey,
-    key_WarehouseKey,
-    key_BrassKey,
-    key_RedCrystalKey,
-    key_BlueCrystalKey,
-    key_ChapelKey,
-    key_CatacombKey,
-    key_SecurityKey,
-    key_CoreKey,
-    key_MaulerKey,
-    key_FactoryKey,
-    key_MineKey,
-    key_NewKey5,
+    key_BaseKey,        // 0
+    key_GovsKey,        // 1
+    key_Passcard,       // 2
+    key_IDCard,         // 3
+    key_PrisonKey,      // 4
+    key_SeveredHand,    // 5
+    key_Power1Key,      // 6
+    key_Power2Key,      // 7
+    key_Power3Key,      // 8
+    key_GoldKey,        // 9
+    key_IDBadge,        // 10
+    key_SilverKey,      // 11
+    key_OracleKey,      // 12
+    key_MilitaryID,     // 13
+    key_OrderKey,       // 14
+    key_WarehouseKey,   // 15
+    key_BrassKey,       // 16
+    key_RedCrystalKey,  // 17
+    key_BlueCrystalKey, // 18
+    key_ChapelKey,      // 19
+    key_CatacombKey,    // 20
+    key_SecurityKey,    // 21
+    key_CoreKey,        // 22
+    key_MaulerKey,      // 23
+    key_FactoryKey,     // 24
+    key_MineKey,        // 25
+    key_NewKey5,        // 26
 
-    NUMCARDS
+    NUMCARDS            // 27
 } card_t;
 
 

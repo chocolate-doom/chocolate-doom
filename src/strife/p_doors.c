@@ -215,62 +215,167 @@ void T_VerticalDoor(vldoor_t* door)
 // Move a locked door up/down
 //
 
-int
-EV_DoLockedDoor
-( line_t*	line,
-  vldoor_e	type,
-  mobj_t*	thing )
+int EV_DoLockedDoor(line_t* line, vldoor_e type, mobj_t* thing)
 {
-    player_t*	p;
-	
+    player_t* p;
+
     p = thing->player;
-	
-    if (!p)
-	return 0;
-		
-/*    switch(line->special)
+
+    if(!p)
+        return 0;
+
+    switch(line->special)
     {
-      case 99:	// Blue Lock
-      case 133:
-	if ( !p )
-	    return 0;
-	if (!p->cards[it_bluecard] && !p->cards[it_blueskull])
-	{
-	    p->message = DEH_String(PD_BLUEO);
-	    S_StartSound(NULL,sfx_oof);
-	    return 0;
-	}
-	break;
-	
-      case 134: // Red Lock
-      case 135:
-	if ( !p )
-	    return 0;
-	if (!p->cards[it_redcard] && !p->cards[it_redskull])
-	{
-	    p->message = DEH_String(PD_REDO);
-	    S_StartSound(NULL,sfx_oof);
-	    return 0;
-	}
-	break;
-	
-      case 136:	// Yellow Lock
-      case 137:
-	if ( !p )
-	    return 0;
-	if (!p->cards[it_yellowcard] &&
-	    !p->cards[it_yellowskull])
-	{
-	    p->message = DEH_String(PD_YELLOWO);
-	    S_StartSound(NULL,sfx_oof);
-	    return 0;
-	}
-	break;	
-    }*/
+    case 99:
+    case 133:
+        if(!p->cards[key_IDCard])
+        {
+            p->message = DEH_String("You need an id card");
+            S_StartSound(NULL, sfx_oof);
+            return 0;
+        }
+        break;
+
+    case 134:
+    case 135:
+        if(!p->cards[key_IDBadge])
+        {
+            p->message = DEH_String("You need an id badge");
+            S_StartSound(NULL, sfx_oof);
+            return 0;
+        }
+        break;
+
+    case 136:
+    case 137:
+        if(!p->cards[key_Passcard])
+        {
+            p->message = DEH_String("You need a pass card");
+            S_StartSound(NULL, sfx_oof);
+            return 0;
+        }
+        break;
+
+    case 151:
+    case 164:
+        if(!p->cards[key_GoldKey])
+        {
+            p->message = DEH_String("You need a gold key");
+            S_StartSound(NULL, sfx_oof);
+            return 0;
+        }
+        break;
+
+    case 153:
+    case 163:
+        if(!p->cards[key_SilverKey])
+        {
+            p->message = DEH_String("You need a silver key");
+            S_StartSound(NULL, sfx_oof);
+            return 0;
+        }
+        break;
+
+    case 152:
+    case 162:
+        if(!p->cards[key_BrassKey])
+        {
+            p->message = DEH_String("You need a brass key");
+            S_StartSound(NULL, sfx_oof);
+            return 0;
+        }
+        break;
+
+    case 167:
+    case 168:
+        if(!p->cards[key_SeveredHand])
+        {
+            p->message = DEH_String("Hand print not on file");
+            S_StartSound(NULL, sfx_oof);
+            return 0;
+        }
+        break;
+
+    case 171:
+        if(!p->cards[key_PrisonKey])
+        {
+            p->message = DEH_String("You don't have the key to the prison");
+            S_StartSound(NULL, sfx_oof);
+            return 0;
+        }
+        break;
+
+    case 172:
+        if(!p->cards[key_Power1Key])
+        {
+            p->message = DEH_String("You don't have the key");
+            S_StartSound(NULL, sfx_oof);
+            return 0;
+        }
+        break;
+
+    case 173:
+        if(!p->cards[key_Power2Key])
+        {
+            p->message = DEH_String("You don't have the key");
+            S_StartSound(NULL, sfx_oof);
+            return 0;
+        }
+        break;
+
+    case 176:
+        if(!p->cards[key_Power3Key])
+        {
+            p->message = DEH_String("You don't have the key");
+            S_StartSound(NULL, sfx_oof);
+            return 0;
+        }
+        break;
+
+    case 189:
+        if(!p->cards[key_OracleKey])
+        {
+            p->message = DEH_String("You don't have the key");
+            S_StartSound(NULL, sfx_oof);
+            return 0;
+        }
+        break;
+
+    case 191:
+        if(!p->cards[key_MilitaryID])
+        {
+            p->message = DEH_String("You don't have the key");
+            S_StartSound(NULL, sfx_oof);
+            return 0;
+        }
+        break;
+
+    case 192:
+        if(!p->cards[key_WarehouseKey])
+        {
+            p->message = DEH_String("You don't have the key");
+            S_StartSound(NULL, sfx_oof);
+            return 0;
+        }
+        break;
+
+    case 223:
+        if(!p->cards[key_MineKey])
+        {
+            p->message = DEH_String("You don't have the key");
+            S_StartSound(NULL, sfx_oof);
+            return 0;
+        }
+        break;
+    }
 
     return EV_DoDoor(line,type);
 }
 
+
+//
+// EV_DoDoor
+//
 
 int EV_DoDoor(line_t* line, vldoor_e type)
 {
