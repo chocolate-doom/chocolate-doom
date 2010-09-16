@@ -28,7 +28,6 @@
 
 #include "d_event.h"
 
-
 //
 // Globally visible constants.
 //
@@ -63,6 +62,9 @@ void HU_Erase(void);
 
 extern char *chat_macros[10];
 extern char* pnameprefixes[][16];   // villsa [STRIFE]
+
+// haleyjd [STRIFE] externalized:
+extern char *mapnames[];
 
 #endif
 
