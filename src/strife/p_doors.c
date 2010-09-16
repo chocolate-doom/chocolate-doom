@@ -41,6 +41,9 @@
 #include "dstrings.h"
 #include "sounds.h"
 
+// [STRIFE]
+#include "p_dialog.h"
+
 
 //
 // VERTICAL DOORS
@@ -549,21 +552,11 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
     //	Check for locks
     player = thing->player;
 
-    // villsa [STRIFE] new key types
+    // haleyjd 09/15/10: [STRIFE] myriad checks here...
     switch(line->special)
     {
-    case 26:
-    case 32:
-        if(!player->cards[key_IDBadge])
-        {
-            player->message = DEH_String("You need an id badge to open this door");
-            S_StartSound(NULL, sfx_oof);
-            return;
-        }
-        break;
-
-    case 28:
-    case 33:
+    case 26:  // DR ID Card door
+    case 32:  // D1 ID Card door
         if(!player->cards[key_IDCard])
         {
             player->message = DEH_String("You need an id card to open this door");
@@ -572,8 +565,8 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
         }
         break;
 
-    case 27:
-    case 34:
+    case 27:  // DR Pass Card door
+    case 34:  // D1 Pass Card door
         if(!player->cards[key_Passcard])
         {
             player->message = DEH_String("You need a pass card key to open this door");
@@ -582,7 +575,18 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
         }
         break;
 
-    case 156:
+    case 28:  // DR ID Badge door
+    case 33:  // D1 ID Badge door
+        if(!player->cards[key_IDBadge])
+        {
+            player->message = DEH_String("You need an id badge to open this door");
+            S_StartSound(NULL, sfx_oof);
+            return;
+        }
+        break;
+
+    case 156: // D1 brass key door
+    case 161: // DR brass key door
         if(!player->cards[key_BrassKey])
         {
             player->message = DEH_String("You need a brass key");
@@ -591,18 +595,8 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
         }
         break;
 
-    case 158:
-    case 159:
-        if(!player->cards[key_GoldKey])
-        {
-            player->message = DEH_String("You need a gold key");
-            S_StartSound(NULL, sfx_oof);
-            return;
-        }
-        break;
-
-    case 157:
-    case 160:
+    case 157: // D1 silver key door
+    case 160: // DR silver key door
         if(!player->cards[key_SilverKey])
         {
             player->message = DEH_String("You need a silver key");
@@ -611,12 +605,17 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
         }
         break;
 
-    case 165:
-        player->message = DEH_String("That doesn't seem to work");
-        S_StartSound(NULL, sfx_oof);
-        return;
+    case 158: // D1 gold key door
+    case 159: // DR gold key door
+        if(!player->cards[key_GoldKey])
+        {
+            player->message = DEH_String("You need a gold key");
+            S_StartSound(NULL, sfx_oof);
+            return;
+        }
+        break;
 
-    case 166:
+    case 166: // DR Hand Print door
         if(!player->cards[key_SeveredHand])
         {
             player->message = DEH_String("Hand print not on file");
@@ -625,7 +624,7 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
         }
         break;
 
-    case 169:
+    case 169: // DR Base key door
         if(!player->cards[key_BaseKey])
         {
             player->message = DEH_String("You don't have the key");
@@ -634,7 +633,7 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
         }
         break;
 
-    case 170:
+    case 170: // DR Gov's Key door
         if(!player->cards[key_GovsKey])
         {
             player->message = DEH_String("You don't have the key");
@@ -643,7 +642,7 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
         }
         break;
 
-    case 190:
+    case 190: // DR Order Key door
         if(!player->cards[key_OrderKey])
         {
             player->message = DEH_String("You don't have the key");
@@ -652,12 +651,13 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
         }
         break;
 
-    case 205:
-        player->message = DEH_String("THIS AREA IS ONLY AVAILABLE IN THE RETAIL VERSION OF STRIFE");
+    case 205: // DR "Only in retail"
+        player->message = DEH_String("THIS AREA IS ONLY AVAILABLE IN THE "
+                                     "RETAIL VERSION OF STRIFE");
         S_StartSound(NULL, sfx_oof);
         return;
 
-    case 213:
+    case 213: // DR Chalice door
         if(!P_PlayerHasItem(player, MT_INV_CHALICE))
         {
             player->message = DEH_String("You need the chalice!");
@@ -666,7 +666,7 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
         }
         break;
 
-    case 217:
+    case 217: // DR Core Key door
         if(!player->cards[key_CoreKey])
         {
             player->message = DEH_String("You don't have the key");
@@ -675,7 +675,7 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
         }
         break;
 
-    case 221:
+    case 221: // DR Mauler Key door
         if(!player->cards[key_MaulerKey])
         {
             player->message = DEH_String("You don't have the key");
@@ -684,7 +684,7 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
         }
         break;
 
-    case 224:
+    case 224: // DR Chapel Key door
         if(!player->cards[key_ChapelKey])
         {
             player->message = DEH_String("You don't have the key");
@@ -693,7 +693,7 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
         }
         break;
 
-    case 225:
+    case 225: // DR Catacomb Key door
         if(!player->cards[key_CatacombKey])
         {
             player->message = DEH_String("You don't have the key");
@@ -702,19 +702,27 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
         }
         break;
 
-    case 232:
-        if(!player->questflags & QF_QUEST2)
+    case 232: // DR Oracle Pass door
+        if(!(player->questflags & QF_QUEST18))
         {
             player->message = DEH_String("You need the Oracle Pass!");
             S_StartSound(NULL, sfx_oof);
             return;
         }
         break;
+
+    default:
+        break;
     }
 
     // if the sector has an active thinker, use it
     sec = sides[ line->sidenum[side^1]] .sector;
     secnum = sec-sectors;
+
+
+    // STRIFE-TODO: retriggering logic was modified, and has a serious bug in that
+    // some linetypes are allowed to fall through and start multiple thinkers on a
+    // single sector - this must be carefully replicated
 
     if (sec->specialdata)
     {
@@ -726,7 +734,7 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
         case 27:
         case 28:
         case 117:
-        case 159:       // villsa [STRIFE]
+        case 159:       // villsa [STRIFE] -- haleyjd 09/16/10: STRIFE-TODO: verify all this
         case 161:       // villsa [STRIFE]
         case 166:       // villsa [STRIFE]
         case 169:       // villsa [STRIFE]
@@ -780,6 +788,8 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
         }
     }
 
+    // haleyjd 09/15/10: [STRIFE] Removed DOOM door sounds
+
     // new door thinker
     door = Z_Malloc (sizeof(*door), PU_LEVSPEC, 0);
     P_AddThinker (&door->thinker);
@@ -789,7 +799,9 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
     door->direction = 1;
     door->speed = VDOORSPEED;
     door->topwait = VDOORWAIT;
-    R_SoundNumForDoor(door);    // villsa [STRIFE] set door sounds
+    R_SoundNumForDoor(door);   // haleyjd 09/15/10: [STRIFE] Get door sounds
+
+    // STRIFE-TODO: handle all door types, old and new.
 
     // for proper sound
     switch(line->special)
@@ -804,6 +816,7 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
         break;
     }
 
+    // haleyjd: STRIFE-TODO: verify all of this.
     switch(line->special)
     {
     case 1:

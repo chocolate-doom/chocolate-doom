@@ -240,7 +240,7 @@ typedef enum
 // haleyjd 09/12/10: [STRIFE]
 // flag values for each quest.
 enum
-{ //  Name      Flag from bitnum    Purpose, if known
+{ //  Name       Flag from bitnum      Purpose, if known
     QF_QUEST1  = (1 << tk_quest1),
     QF_QUEST2  = (1 << tk_quest2),
     QF_QUEST3  = (1 << tk_quest3), 
@@ -258,7 +258,7 @@ enum
     QF_QUEST15 = (1 << tk_quest15),
     QF_QUEST16 = (1 << tk_quest16),
     QF_QUEST17 = (1 << tk_quest17),
-    QF_QUEST18 = (1 << tk_quest18),
+    QF_QUEST18 = (1 << tk_quest18), // Obtained Oracle Pass
     QF_QUEST19 = (1 << tk_quest19),
     QF_QUEST20 = (1 << tk_quest20),
     QF_QUEST21 = (1 << tk_quest21),
