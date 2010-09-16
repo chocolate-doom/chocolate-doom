@@ -1409,8 +1409,8 @@ extern char*	pagename;
 void G_RiftExitLevel(int map, int spot, angle_t angle)
 {
     gameaction = ga_completed;
-    // STRIFE-TODO: special handling for post-Sigil map changes
-    /*
+    
+    // special handling for post-Sigil map changes
     if(players[0].weaponowned[wp_sigil])
     {
         if(map == 3) // Front Base -> Abandoned Front Base
@@ -1418,10 +1418,11 @@ void G_RiftExitLevel(int map, int spot, angle_t angle)
         if(map == 7) // Castle -> New Front Base
             map = 10;
     }
-    */
+
     // no rifting in deathmatch games
     if(deathmatch)
         spot = 0;
+
     riftangle = angle;
     riftdest  = spot;
     destmap   = map;

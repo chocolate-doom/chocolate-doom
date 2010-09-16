@@ -31,7 +31,7 @@
 #include "doomdef.h"
 #include "d_event.h"
 #include "d_ticcmd.h"
-
+#include "tables.h"
 
 //
 // GAME
@@ -65,10 +65,13 @@ void G_PlayDemo (char* name);
 void G_TimeDemo (char* name);
 boolean G_CheckDemoStatus (void);
 
+void G_RiftExitLevel(int map, int spot, angle_t angle); // [STRIFE]
 void G_ExitLevel (int dest);
 //void G_SecretExitLevel (void);
 
 //void G_WorldDone (void);
+
+boolean G_RiftCheat(int riftSpotNum); // [STRIFE]
 
 // Read current data from inputs and build a player movement command.
 

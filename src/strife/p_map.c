@@ -113,32 +113,37 @@ int		numspechit;
 //
 // PIT_StompThing
 //
+// [STRIFE] haleyjd 09/15/10: Modified so monsters can telestomp.
+//
 boolean PIT_StompThing (mobj_t* thing)
 {
     fixed_t	blockdist;
-		
+
     if (!(thing->flags & MF_SHOOTABLE) )
-	return true;
-		
+        return true;
+
     blockdist = thing->radius + tmthing->radius;
-    
+
     if ( abs(thing->x - tmx) >= blockdist
-	 || abs(thing->y - tmy) >= blockdist )
+        || abs(thing->y - tmy) >= blockdist )
     {
-	// didn't hit it
-	return true;
+        // didn't hit it
+        return true;
     }
-    
+
     // don't clip against self
     if (thing == tmthing)
-	return true;
-    
-    // monsters don't stomp things except on boss level
-    if ( !tmthing->player && gamemap != 30)
-	return false;	
-		
+        return true;
+
+    // [STRIFE] monsters DO stomp things, on all levels
+    // Basically, one thing involved must be a player.
+    // Monsters can telefrag players, and players can telefrag monsters, but
+    // monsters cannot telefrag other monsters.
+    if (!(tmthing->player || thing->player))
+        return false;	
+
     P_DamageMobj (thing, tmthing, tmthing, 10000);
-	
+
     return true;
 }
 
@@ -146,28 +151,27 @@ boolean PIT_StompThing (mobj_t* thing)
 //
 // P_TeleportMove
 //
-boolean
-P_TeleportMove
-( mobj_t*	thing,
-  fixed_t	x,
-  fixed_t	y )
+// [STRIFE]
+// haleyjd 09/15/10: Modified to set thing z position.
+//
+boolean P_TeleportMove(mobj_t*  thing, fixed_t  x, fixed_t  y)
 {
-    int			xl;
-    int			xh;
-    int			yl;
-    int			yh;
-    int			bx;
-    int			by;
+    int                 xl;
+    int                 xh;
+    int                 yl;
+    int                 yh;
+    int                 bx;
+    int                 by;
     
-    subsector_t*	newsubsec;
+    subsector_t*        newsubsec;
     
     // kill anything occupying the position
     tmthing = thing;
     tmflags = thing->flags;
-	
+
     tmx = x;
     tmy = y;
-	
+
     tmbbox[BOXTOP] = y + tmthing->radius;
     tmbbox[BOXBOTTOM] = y - tmthing->radius;
     tmbbox[BOXRIGHT] = x + tmthing->radius;
@@ -182,7 +186,7 @@ P_TeleportMove
     // will adjust them.
     tmfloorz = tmdropoffz = newsubsec->sector->floorheight;
     tmceilingz = newsubsec->sector->ceilingheight;
-			
+
     validcount++;
     numspechit = 0;
     
@@ -193,9 +197,9 @@ P_TeleportMove
     yh = (tmbbox[BOXTOP] - bmaporgy + MAXRADIUS)>>MAPBLOCKSHIFT;
 
     for (bx=xl ; bx<=xh ; bx++)
-	for (by=yl ; by<=yh ; by++)
-	    if (!P_BlockThingsIterator(bx,by,PIT_StompThing))
-		return false;
+        for (by=yl ; by<=yh ; by++)
+            if (!P_BlockThingsIterator(bx,by,PIT_StompThing))
+                return false;
     
     // the move is ok,
     // so link the thing into its new position
@@ -205,9 +209,10 @@ P_TeleportMove
     thing->ceilingz = tmceilingz;	
     thing->x = x;
     thing->y = y;
+    thing->z = tmfloorz; // haleyjd 09/15/10: [STRIFE] Rogue added a z-set here
 
     P_SetThingPosition (thing);
-	
+
     return true;
 }
 

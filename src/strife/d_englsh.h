@@ -228,29 +228,29 @@
 #define AMSTR_GRIDON	"Grid ON"
 #define AMSTR_GRIDOFF	"Grid OFF"
 
-#define AMSTR_MARKEDSPOT	"Marked Spot"
-#define AMSTR_MARKSCLEARED	"All Marks Cleared"
+#define AMSTR_MARKEDSPOT        "Marked Spot"
+#define AMSTR_MARKSCLEARED      "All Marks Cleared"
 
 //
 //	ST_stuff.C
 //
 
-#define STSTR_MUS		"Music Change"
-#define STSTR_NOMUS		"IMPOSSIBLE SELECTION"
-#define STSTR_DQDON		"Degreelessness Mode On"
-#define STSTR_DQDOFF	"Degreelessness Mode Off"
+#define STSTR_MUS               "Music Change"
+#define STSTR_NOMUS             "IMPOSSIBLE SELECTION"
+#define STSTR_DQDON             "You're invincible!"   // [STRIFE]
+#define STSTR_DQDOFF            "You're a looney!"     // [STRIFE]
 
-#define STSTR_KFAADDED	"Very Happy Ammo Added"
-#define STSTR_FAADDED	"Ammo (no keys) Added"
+#define STSTR_KFAADDED          "Very Happy Ammo Added"
+#define STSTR_FAADDED           "Ammo (no keys) Added"
 
-#define STSTR_NCON		"No Clipping Mode ON"
-#define STSTR_NCOFF		"No Clipping Mode OFF"
+#define STSTR_NCON              "No Clipping Mode ON"
+#define STSTR_NCOFF             "No Clipping Mode OFF"
 
-#define STSTR_BEHOLD	"inVuln, Str, Inviso, Rad, Allmap, or Lite-amp"
-#define STSTR_BEHOLDX	"Power-up Toggled"
+#define STSTR_BEHOLD            "inVuln, Str, Inviso, Rad, Allmap, or Lite-amp"
+#define STSTR_BEHOLDX           "Power-up Toggled"
 
-#define STSTR_CHOPPERS	"... doesn't suck - GM"
-#define STSTR_CLEV		"Changing Level..."
+#define STSTR_CHOPPERS          "... doesn't suck - GM"
+#define STSTR_CLEV              "Changing Level..."
 
 //
 //	F_Finale.C
