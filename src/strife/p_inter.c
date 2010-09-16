@@ -71,48 +71,47 @@ int clipammo[NUMAMMO]   = { 10, 4, 2, 20, 4, 6, 4 };
 boolean P_GiveAmmo(player_t* player, ammotype_t ammo, int num)
 {
     int		oldammo;
-	
+
     if(ammo == am_noammo)
-	return false;
-		
+        return false;
+
     if(ammo > NUMAMMO)
-	I_Error ("P_GiveAmmo: bad type %i", ammo);
-		
+        I_Error ("P_GiveAmmo: bad type %i", ammo);
+
     if(player->ammo[ammo] == player->maxammo[ammo])
-	return false;
-		
+        return false;
+
     if(num)
-	num *= clipammo[ammo];
+        num *= clipammo[ammo];
     else
-	num = clipammo[ammo]/2;
-    
+        num = clipammo[ammo]/2;
+
     if(gameskill == sk_baby
-	|| gameskill == sk_nightmare)
+        || gameskill == sk_nightmare)
     {
-	// give double ammo in trainer mode,
-	// you'll need in nightmare
-	num <<= 1;
+        // give double ammo in trainer mode,
+        // you'll need in nightmare
+        num <<= 1;
     }
-    
-		
+
     oldammo = player->ammo[ammo];
     player->ammo[ammo] += num;
 
     if(player->ammo[ammo] > player->maxammo[ammo])
-	player->ammo[ammo] = player->maxammo[ammo];
+        player->ammo[ammo] = player->maxammo[ammo];
 
     // If non zero ammo, 
     // don't change up weapons,
     // player was lower on purpose.
     if(oldammo)
-	return true;	
+        return true;
 
     // We were down to zero,
     // so select a new weapon.
     // Preferences are not user selectable.
 
     // villsa [STRIFE] ammo update
-    // [STRIFE] TODO - where's the check for grenades?
+    // where's the check for grenades? - haleyjd: verified no switch to grenades
     switch(ammo && !player->readyweapon)
     {
     case am_bullets:
@@ -139,7 +138,7 @@ boolean P_GiveAmmo(player_t* player, ammotype_t ammo, int num)
     default:
         break;
     }
-	
+
     return true;
 }
 
@@ -253,7 +252,7 @@ boolean P_GiveBody(player_t* player, int num)
 
         player->health = health;
     }
-	
+
     return true;
 }
 
@@ -295,11 +294,11 @@ boolean P_GiveArmor(player_t* player, int armortype)
 boolean P_GiveCard(player_t* player, card_t card)
 {
     if (player->cards[card])
-	return false;
+        return false;
     
     // villsa [STRIFE] multiply by 2
     player->bonuscount = BONUSADD * 2;
-    player->cards[card] = 1;
+    player->cards[card] = true;
 
     return true;
 }
@@ -309,26 +308,46 @@ boolean P_GiveCard(player_t* player, card_t card)
 // P_GivePower
 //
 boolean P_GivePower(player_t* player, powertype_t power)
-{
+{    
+    
+    // haleyjd 09/14/10: [STRIFE] moved to top, exception for Shadow Armor
+    if(player->powers[power] && power != pw_invisibility)
+        return false;	// already got it
+
+    // if giving pw_invisibility and player already has MVIS, no can do.
+    if(power == pw_invisibility && (player->mo->flags & MF_MVIS))
+        return false;
+
     // villsa [STRIFE]
     if(power == pw_targeter)
     {
         player->powers[power] = TARGTICS;
         P_SetPsprite(player, ps_targcenter, S_TRGT_00); // 10
-        P_SetPsprite(player, ps_targleft, S_TRGT_01); // 11
-        P_SetPsprite(player, ps_targright, S_TRGT_02); // 12
+        P_SetPsprite(player, ps_targleft,   S_TRGT_01); // 11
+        P_SetPsprite(player, ps_targright,  S_TRGT_02); // 12
 
         player->psprites[ps_targcenter].sx  = (160*FRACUNIT);
-        player->psprites[ps_targleft].sy    = (100*FRACUNIT);
+        player->psprites[ps_targleft  ].sy  = (100*FRACUNIT);
         player->psprites[ps_targcenter].sy  = (100*FRACUNIT);
-        player->psprites[ps_targright].sy   = (100*FRACUNIT);
+        player->psprites[ps_targright ].sy  = (100*FRACUNIT);
         return true;
     }
 
     if(power == pw_invisibility)
     {
+        // if player already had this power...
+        if(player->powers[power])
+        {
+            // remove SHADOW, give MVIS.
+            player->mo->flags &= ~MF_SHADOW;
+            player->mo->flags |= MF_MVIS;
+        }
+        else // give SHADOW
+            player->mo->flags |= MF_SHADOW;
+
+        // set tics if giving shadow, or renew them if MVIS.
         player->powers[power] = INVISTICS;
-        player->mo->flags |= MF_SHADOW;
+
         return true;
     }
 
@@ -348,8 +367,9 @@ boolean P_GivePower(player_t* player, powertype_t power)
     // villsa [STRIFE]
     if(power == pw_allmap)
     {
+        // remember in mapstate
         if(gamemap < 40)
-            player->mapstate[gamemap] = 1;
+            player->mapstate[gamemap] = true;
 
         player->powers[power] = 1;
         return true;
@@ -362,11 +382,7 @@ boolean P_GivePower(player_t* player, powertype_t power)
         return true;
     }
 
-
-    if(player->powers[power])
-        return false;	// already got it
-
-
+    // default behavior:
     player->powers[power] = 1;
     return true;
 }
@@ -512,7 +528,7 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
             player->backpack = true;
         }
         for(i = 0; i < NUMAMMO; i++)
-	    P_GiveAmmo(player, i, 1);
+            P_GiveAmmo(player, i, 1);
         break;
 
     case SPR_COIN:
@@ -577,14 +593,17 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
     if(!pickupmsg[0])
     {
         if(special->info->name)
-            sprintf(pickupmsg, "You picked up the %s.", special->info->name);
+        {
+            DEH_snprintf(pickupmsg, sizeof(pickupmsg), 
+                         "You picked up the %s.", DEH_String(special->info->name));
+        }
         else
-            sprintf(pickupmsg, "You picked up the item.");
+            DEH_snprintf(pickupmsg, sizeof(pickupmsg), "You picked up the item.");
     }
     // use the first character to indicate that the player is full on items
     else if(pickupmsg[0] == '!')
     {
-        sprintf(pickupmsg, "You cannot hold any more.");
+        DEH_snprintf(pickupmsg, sizeof(pickupmsg), "You cannot hold any more.");
         player->message = pickupmsg;
         return;
     }

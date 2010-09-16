@@ -43,6 +43,9 @@
 
 #include "doomstat.h"
 
+// haleyjd
+#include "p_local.h"
+
 
 
 #define MINZ				(FRACUNIT*4)
@@ -710,14 +713,14 @@ void R_DrawPSprite (pspdef_t* psp)
     // decide which patch to use
 #ifdef RANGECHECK
     if ( (unsigned)psp->state->sprite >= (unsigned int) numsprites)
-	I_Error ("R_ProjectSprite: invalid sprite number %i ",
-		 psp->state->sprite);
+        I_Error ("R_ProjectSprite: invalid sprite number %i ",
+                 psp->state->sprite);
 #endif
     sprdef = &sprites[psp->state->sprite];
 #ifdef RANGECHECK
     if ( (psp->state->frame & FF_FRAMEMASK)  >= sprdef->numframes)
-	I_Error ("R_ProjectSprite: invalid sprite frame %i : %i ",
-		 psp->state->sprite, psp->state->frame);
+        I_Error ("R_ProjectSprite: invalid sprite frame %i : %i ",
+                 psp->state->sprite, psp->state->frame);
 #endif
     sprframe = &sprdef->spriteframes[ psp->state->frame & FF_FRAMEMASK ];
 
@@ -726,20 +729,20 @@ void R_DrawPSprite (pspdef_t* psp)
     
     // calculate edges of the shape
     tx = psp->sx-160*FRACUNIT;
-	
+
     tx -= spriteoffset[lump];	
     x1 = (centerxfrac + FixedMul (tx,pspritescale) ) >>FRACBITS;
 
     // off the right side
     if (x1 > viewwidth)
-	return;		
+        return;
 
     tx +=  spritewidth[lump];
     x2 = ((centerxfrac + FixedMul (tx, pspritescale) ) >>FRACBITS) - 1;
 
     // off the left side
     if (x2 < 0)
-	return;
+        return;
     
     // store information in a vissprite
     vis = &avis;
@@ -750,46 +753,61 @@ void R_DrawPSprite (pspdef_t* psp)
     
     if (flip)
     {
-	vis->xiscale = -pspriteiscale;
-	vis->startfrac = spritewidth[lump]-1;
+        vis->xiscale = -pspriteiscale;
+        vis->startfrac = spritewidth[lump]-1;
     }
     else
     {
-	vis->xiscale = pspriteiscale;
-	vis->startfrac = 0;
+        vis->xiscale = pspriteiscale;
+        vis->startfrac = 0;
     }
 
     // villsa [STRIFE] calculate y offset with view pitch
     vis->texturemid = ((BASEYCENTER<<FRACBITS)+FRACUNIT/2)-(psp->sy-spritetopoffset[lump])
         + FixedMul(vis->xiscale, (centery-viewheight/2)<<FRACBITS);
-    
+
     if (vis->x1 > x1)
-	vis->startfrac += vis->xiscale*(vis->x1-x1);
+        vis->startfrac += vis->xiscale*(vis->x1-x1);
 
     vis->patch = lump;
 
     if (viewplayer->powers[pw_invisibility] > 4*32
-	|| viewplayer->powers[pw_invisibility] & 8)
+        || viewplayer->powers[pw_invisibility] & 8)
     {
-	// shadow draw
-	vis->colormap = NULL;
+        // shadow draw
+        vis->colormap   = spritelights[MAXLIGHTSCALE-1];
+        vis->mobjflags |= MF_SHADOW;
     }
-    else if (fixedcolormap)
+    else if(viewplayer->powers[pw_invisibility] & 4)
     {
-	// fixed color
-	vis->colormap = fixedcolormap;
+        vis->mobjflags |= (MF_SHADOW|MF_MVIS);
     }
-    else if (psp->state->frame & FF_FULLBRIGHT)
+
+    // When not MVIS, or if SHADOW, behave normally:
+    if(!(viewplayer->mo->flags & MF_MVIS) || (viewplayer->mo->flags & MF_SHADOW))
     {
-	// full bright
-	vis->colormap = colormaps;
+        if (fixedcolormap)
+        {
+            // fixed color
+            vis->colormap = fixedcolormap;
+        }
+        else if (psp->state->frame & FF_FULLBRIGHT)
+        {
+            // full bright
+            vis->colormap = colormaps;
+        }
+        else
+        {
+            // local light
+            vis->colormap = spritelights[MAXLIGHTSCALE-1];
+        }
     }
     else
     {
-	// local light
-	vis->colormap = spritelights[MAXLIGHTSCALE-1];
+        // When MVIS, use invulnerability colormap
+        vis->colormap = colormaps + INVERSECOLORMAP * 256 * sizeof(lighttable_t);
     }
-	
+
     R_DrawVisSprite (vis, vis->x1, vis->x2);
 }
 

@@ -39,7 +39,6 @@
 
 
 // Index of the special effects (INVUL inverse) map.
-#define INVERSECOLORMAP		32
 #define LOOKPITCHAMOUNT         6                       // villsa [STRIFE]
 #define CENTERVIEWAMOUNT        (LOOKPITCHAMOUNT + 2)   // villsa [STRIFE]
 #define LOOKUPMAX               90                      // villsa [STRIFE]
