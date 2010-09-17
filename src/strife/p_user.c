@@ -34,6 +34,7 @@
 #include "p_local.h"
 #include "sounds.h"     // villsa [STRIFE]
 #include "p_dialog.h"   // villsa [STRIFE]
+#include "d_main.h"     // villsa [STRIFE]
 #include "doomstat.h"
 
 
@@ -253,53 +254,58 @@ void P_MovePlayer (player_t* player)
 //
 #define ANG5   	(ANG90/18)
 
-void P_DeathThink (player_t* player)
+void P_DeathThink(player_t* player)
 {
-    angle_t		angle;
-    angle_t		delta;
+    angle_t angle;
+    angle_t delta;
 
-    P_MovePsprites (player);
-	
+    P_MovePsprites(player);
+
     // fall to the ground
     if (player->viewheight > 6*FRACUNIT)
-	player->viewheight -= FRACUNIT;
+        player->viewheight -= FRACUNIT;
 
     if (player->viewheight < 6*FRACUNIT)
-	player->viewheight = 6*FRACUNIT;
+        player->viewheight = 6*FRACUNIT;
 
     player->deltaviewheight = 0;
     onground = (player->mo->z <= player->mo->floorz);
-    P_CalcHeight (player);
-	
-    if (player->attacker && player->attacker != player->mo)
-    {
-	angle = R_PointToAngle2 (player->mo->x,
-				 player->mo->y,
-				 player->attacker->x,
-				 player->attacker->y);
-	
-	delta = angle - player->mo->angle;
-	
-	if (delta < ANG5 || delta > (unsigned)-ANG5)
-	{
-	    // Looking at killer,
-	    //  so fade damage flash down.
-	    player->mo->angle = angle;
+    P_CalcHeight(player);
 
-	    if (player->damagecount)
-		player->damagecount--;
-	}
-	else if (delta < ANG180)
-	    player->mo->angle += ANG5;
-	else
-	    player->mo->angle -= ANG5;
+    if(player->attacker && player->attacker != player->mo)
+    {
+        angle = R_PointToAngle2 (player->mo->x,
+            player->mo->y,
+            player->attacker->x,
+            player->attacker->y);
+
+        delta = angle - player->mo->angle;
+
+        if (delta < ANG5 || delta > (unsigned)-ANG5)
+        {
+            // Looking at killer,
+            //  so fade damage flash down.
+            player->mo->angle = angle;
+
+            if (player->damagecount)
+                player->damagecount--;
+        }
+        else if (delta < ANG180)
+            player->mo->angle += ANG5;
+        else
+            player->mo->angle -= ANG5;
     }
     else if (player->damagecount)
-	player->damagecount--;
-	
+        player->damagecount--;
 
-    if (player->cmd.buttons & BT_USE)
-	player->playerstate = PST_REBORN;
+    // villsa [STRIFE]
+    if(player->pitch <= 90)
+        player->pitch = player->pitch + 3;
+
+
+
+    if(player->cmd.buttons & BT_USE)
+        player->playerstate = PST_REBORN;
 }
 
 
@@ -360,23 +366,23 @@ void P_PlayerThink (player_t* player)
             P_DropInventoryItem(player, cmd->inventory);
         else
         {
-            // villsa [STRIFE] TODO - add workparm variable
-            /*if(workparm)
+            // villsa [STRIFE]
+            if(workparm)
             {
-            int cheat = player->cheats ^ 1;
-            player->cheats ^= CF_NOCLIP;
+                int cheat = player->cheats ^ 1;
+                player->cheats ^= CF_NOCLIP;
 
-            if(cheat & CF_NOCLIP)
-            {
-            player->message = "No Clipping Mode ON";
-            player->mo->flags |= MF_NOCLIP;
+                if(cheat & CF_NOCLIP)
+                {
+                    player->message = DEH_String("No Clipping Mode ON");
+                    player->mo->flags |= MF_NOCLIP;
+                }
+                else
+                {
+                    player->mo->flags &= ~MF_NOCLIP;
+                    player->message = DEH_String("No Clipping Mode OFF");
+                }
             }
-            else
-            {
-            player->mo->flags &= ~MF_NOCLIP;
-            player->message = "No Clipping Mode OFF";
-            }
-            }*/
 
         }
 
@@ -388,59 +394,80 @@ void P_PlayerThink (player_t* player)
     // Check for weapon change.
 
     // A special event has no other buttons.
-    if (cmd->buttons & BT_SPECIAL)
+    if(cmd->buttons & BT_SPECIAL)
         cmd->buttons = 0;			
 
-    if (cmd->buttons & BT_CHANGE)
+    if(cmd->buttons & BT_CHANGE)
     {
         // The actual changing of the weapon is done
         //  when the weapon psprite can do it
         //  (read: not in the middle of an attack).
-        newweapon = (cmd->buttons&BT_WEAPONMASK)>>BT_WEAPONSHIFT;
+        newweapon = (cmd->buttons & BT_WEAPONMASK) >> BT_WEAPONSHIFT;
 
-        // villsa [STRIFE] TODO - placeholder
-        if (player->weaponowned[newweapon]
-        && newweapon != player->readyweapon)
+        // villsa [STRIFE] select poison bow
+        if(newweapon == wp_elecbow)
         {
-            player->pendingweapon = newweapon;
+            if(player->weaponowned[wp_poisonbow] && player->readyweapon == wp_elecbow)
+            {
+                if(player->ammo[weaponinfo[wp_poisonbow].ammo])
+                    newweapon = wp_poisonbow;
+            }
         }
 
-        // villsa [STRIFE] TODO - MUST FIX!!!
-        /*if (newweapon == wp_fist
-        && player->weaponowned[wp_chainsaw]
-        && !(player->readyweapon == wp_chainsaw
-        && player->powers[pw_strength]))
+        // villsa [STRIFE] select wp grenade launcher
+        if(newweapon == wp_hegrenade)
         {
-        newweapon = wp_chainsaw;
+            if(player->weaponowned[wp_wpgrenade] && player->readyweapon == wp_hegrenade)
+            {
+                if(player->ammo[weaponinfo[wp_wpgrenade].ammo])
+                    newweapon = wp_wpgrenade;
+            }
         }
 
-        if ( (gamemode == commercial)
-        && newweapon == wp_shotgun 
-        && player->weaponowned[wp_supershotgun]
-        && player->readyweapon != wp_supershotgun)
+        // villsa [STRIFE] select torpedo
+        if(newweapon == wp_mauler)
         {
-        newweapon = wp_supershotgun;
+            if(player->weaponowned[wp_torpedo] && player->readyweapon == wp_mauler)
+            {
+                if(player->ammo[weaponinfo[am_cell].ammo] >= 30)
+                    newweapon = wp_torpedo;
+            }
         }
 
+        if(player->weaponowned[newweapon] && newweapon != player->readyweapon)
+        {
+            // villsa [STRIFE] check weapon if in demo mode or not
+            if(weaponinfo[newweapon].availabledemo || !isdemoversion)
+            {
+                if(player->ammo[weaponinfo[newweapon].ammo])
+                    player->pendingweapon = newweapon;
+                else
+                {
+                    // decide between electric bow or poison arrow
+                    if(newweapon == wp_elecbow &&
+                        player->ammo[am_poisonbolts] &&
+                        player->readyweapon != wp_poisonbow)
+                    {
+                        player->pendingweapon = wp_poisonbow;
+                    }
+                    // decide between hp grenade launcher or wp grenade launcher
+                    else if(newweapon == wp_hegrenade &&
+                        player->ammo[am_wpgrenades] &&
+                        player->readyweapon != wp_wpgrenade)
+                    {
+                        player->pendingweapon = wp_wpgrenade;
+                    }
 
-        if (player->weaponowned[newweapon]
-        && newweapon != player->readyweapon)
-        {
-        // Do not go to plasma or BFG in shareware,
-        //  even if cheated.
-        if ((newweapon != wp_plasma
-        && newweapon != wp_bfg)
-        || (gamemode != shareware) )
-        {
-        player->pendingweapon = newweapon;
+                    // villsa [STRIFE] TODO - no check for mauler/torpedo??
+                }
+            }
         }
-        }*/
     }
 
     // check for use
-    if (cmd->buttons & BT_USE)
+    if(cmd->buttons & BT_USE)
     {
-        if (!player->usedown)
+        if(!player->usedown)
         {
             P_DialogStart(player);  // villsa [STRIFE]
             P_UseLines (player);
@@ -455,41 +482,71 @@ void P_PlayerThink (player_t* player)
 
     // Counters, time dependend power ups.
 
+    // Strength counts up to diminish fade.
+    if (player->powers[pw_strength])
+        player->powers[pw_strength]++;	
+
+    // villsa [STRIFE] targeter powerup
+    if(player->powers[pw_targeter])
+    {
+        player->powers[pw_targeter]--;
+        if(player->powers[pw_targeter] == 1)
+        {
+            P_SetPsprite(player, ps_targcenter, S_NULL);
+            P_SetPsprite(player, ps_targleft, S_NULL);
+            P_SetPsprite(player, ps_targright, S_NULL);
+        }
+        else if(player->powers[pw_targeter] - 1 < 175)
+        {
+            if(player->powers[pw_targeter] & 32)
+            {
+                P_SetPsprite(player, ps_targright, S_NULL);
+                P_SetPsprite(player, ps_targleft, S_TRGT_01);   // 11
+            }
+
+            if(player->powers[pw_targeter] & 16)
+            {
+                P_SetPsprite(player, ps_targright, S_TRGT_02);  // 12
+                P_SetPsprite(player, ps_targleft, S_NULL);
+            }
+        }
+    }
+
+    if(player->powers[pw_invisibility])
+    {
+        // villsa [STRIFE] remove mvis flag as well
+        if(!--player->powers[pw_invisibility])
+            player->mo->flags &= ~(MF_SHADOW|MF_MVIS);
+    }
+
+    if(player->powers[pw_ironfeet])
+    {
+        player->powers[pw_ironfeet]--;
+
+        // villsa [STRIFE] gasmask sound
+        if(!(leveltime & 0x3f))
+            S_StartSound(player->mo, sfx_mask);
+    }
+
+    if(player->powers[pw_allmap] > 1)
+        player->powers[pw_allmap]--;
+
     // haleyjd 08/30/10: [STRIFE]
     // Nukage count keeps track of exposure to hazardous conditions over time.
     // After accumulating 16 total seconds or more of exposure, you will take
     // 5 damage roughly once per second until the count drops back under 560
     // tics.
-    if (player->nukagecount)
+    if(player->nukagecount)
     {
         player->nukagecount--;
-        if (!(leveltime & 0x1f) && player->nukagecount > 16*TICRATE)
+        if(!(leveltime & 0x1f) && player->nukagecount > 16*TICRATE)
             P_DamageMobj(player->mo, NULL, NULL, 5);
     }
 
-    // Strength counts up to diminish fade.
-    if (player->powers[pw_strength])
-        player->powers[pw_strength]++;	
-
-    // villsa [STRIFE] unused
-    /*if (player->powers[pw_invulnerability])
-    player->powers[pw_invulnerability]--;*/
-
-    if (player->powers[pw_invisibility])
-        if (! --player->powers[pw_invisibility] )
-            player->mo->flags &= ~MF_SHADOW;
-
-    // villsa [STRIFE] unused
-    /*if (player->powers[pw_infrared])
-    player->powers[pw_infrared]--;*/
-
-    if (player->powers[pw_ironfeet])
-        player->powers[pw_ironfeet]--;
-
-    if (player->damagecount)
+    if(player->damagecount)
         player->damagecount--;
 
-    if (player->bonuscount)
+    if(player->bonuscount)
         player->bonuscount--;
 
     // villsa [STRIFE] checks for extralight
@@ -502,31 +559,6 @@ void P_PlayerThink (player_t* player)
     }
     else // Sigil shock:
         player->fixedcolormap = INVERSECOLORMAP;
-
-
-    // villsa [STRIFE] unused
-    // Handling colormaps.
-    /*if (player->powers[pw_invulnerability])
-    {
-        if (player->powers[pw_invulnerability] > 4*32
-            || (player->powers[pw_invulnerability]&8) )
-            player->fixedcolormap = INVERSECOLORMAP;
-        else
-            player->fixedcolormap = 0;
-    }
-    else if (player->powers[pw_infrared])	
-    {
-        if (player->powers[pw_infrared] > 4*32
-            || (player->powers[pw_infrared]&8) )
-        {
-            // almost full bright
-            player->fixedcolormap = 1;
-        }
-        else
-            player->fixedcolormap = 0;
-    }
-    else
-        player->fixedcolormap = 0;*/
 }
 
 
