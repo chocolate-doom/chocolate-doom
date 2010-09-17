@@ -809,8 +809,9 @@ P_CrossSpecialLine
         break;
 
     case 58:
-        // Raise Floor 24
-        EV_DoFloor(line,raiseFloor24);
+        // [STRIFE] raiseFloor24 was modified into raiseFloor64
+        // Raise Floor 64 
+        EV_DoFloor(line,raiseFloor64);
         line->special = 0;
         break;
 
@@ -980,8 +981,9 @@ P_CrossSpecialLine
         break;
 
     case 92:
-        // Raise Floor 24
-        EV_DoFloor(line,raiseFloor24);
+        // [STRIFE] raiseFloor24 changed to raiseFloor64
+        // Raise Floor 64
+        EV_DoFloor(line,raiseFloor64);
         break;
 
     case 93:
@@ -1056,9 +1058,9 @@ P_CrossSpecialLine
         // haleyjd [STRIFE] Exit Level to Spot
         thing->momx = thing->momy = thing->momz = 0;
         {
-            int map  = line->tag / 100; // seems to be wrong, double-check later...
+            int map  = line->tag / 100;
             int spot = line->tag % 100;
-            char msgbuf[90];
+            static char msgbuf[90];
 
             if(thing->player->weaponowned[wp_sigil])
             {
@@ -1068,7 +1070,8 @@ P_CrossSpecialLine
                     map = 10;
             }
 
-            DEH_snprintf(msgbuf, sizeof(msgbuf), "Entering%s", mapnames[map] + 8);
+            DEH_snprintf(msgbuf, sizeof(msgbuf), "Entering%s", 
+                         mapnames[map - 1] + 8);
             thing->player->message = msgbuf;
 
             if(netgame && deathmatch)
@@ -1079,11 +1082,22 @@ P_CrossSpecialLine
                                  (levelTimeCount/TICRATE)/60);
                     return;
                 }
-                // TODO: raise switch from floor.
+
+                // raise switch from floor
+                EV_DoFloor(line, raiseFloor64);
             }
             else
             {
-                // TODO: normal single player exit
+                // normal single-player exit
+
+                // BUG: Here is the opening for a flaming player to cross past
+                // the exit line and hit a deathmatch switch ;) It's not so much
+                // that this is incorrect, as that they forgot to add such a 
+                // check to the other kind of exit lines too ;)
+                if(thing->player->health <= 0)
+                    return;
+
+                G_RiftExitLevel(map, spot, thing->angle);
             }
         }
         break;

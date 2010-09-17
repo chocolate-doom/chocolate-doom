@@ -579,14 +579,17 @@ typedef enum
     //  and change floorpic
     lowerAndChange,
   
-    raiseFloor24,
+    raiseFloor64,          // [STRIFE] changed from 24 to 64
     raiseFloor24AndChange,
     raiseFloorCrush,
 
      // raise to next highest floor, turbo-speed
     raiseFloorTurbo,       
     donutRaise,
-    raiseFloor512
+    raiseFloor512,
+
+    // [STRIFE] New floor type - used for the coolant reactor pit
+    raiseFloor512AndChange
     
 } floor_e;
 

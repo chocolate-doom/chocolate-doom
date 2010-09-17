@@ -1556,7 +1556,22 @@ void G_DoWorldDone (void)
 {        
     gamestate = GS_LEVEL; 
     gamemap = destmap;
+    
+    // STRIFE-TODO: hubs bullshit
+    
     G_DoLoadLevel (); 
+
+    if(!deathmatch)
+    {
+        // STRIFE-TODO: powerup transfers etc
+
+        G_RiftPlayer();
+
+        // STRIFE-TODO:
+        // G_DoSaveGame(...);
+        // M_SaveMisObj();
+    }
+
     gameaction = ga_nothing; 
     viewactive = true; 
 } 
