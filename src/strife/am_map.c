@@ -73,13 +73,15 @@
 #define BACKGROUND	BLACK
 #define YOURCOLORS	WHITE
 #define YOURRANGE	0
-#define WALLCOLORS	REDS
+#define WALLCOLORS	5           // villsa [STRIFE]
 #define WALLRANGE	REDRANGE
-#define TSWALLCOLORS	GRAYS
+#define TSWALLCOLORS	16
 #define TSWALLRANGE	GRAYSRANGE
-#define FDWALLCOLORS	BROWNS
+#define FDWALLCOLORS	122         // villsa [STRIFE]
 #define FDWALLRANGE	BROWNRANGE
-#define CDWALLCOLORS	YELLOWS
+#define CDWALLCOLORS	116
+#define CTWALLCOLORS    19          // villsa [STRIFE]
+#define SPWALLCOLORS    243         // villsa [STRIFE]
 #define CDWALLRANGE	YELLOWRANGE
 #define THINGCOLORS	GREENS
 #define THINGRANGE	GREENRANGE
@@ -1093,7 +1095,7 @@ AM_drawMline
 //
 // Draws flat (floor/ceiling tile) aligned grid lines.
 //
-void AM_drawGrid(int color)
+/*void AM_drawGrid(int color)
 {
     fixed_t x, y;
     fixed_t start, end;
@@ -1133,7 +1135,7 @@ void AM_drawGrid(int color)
 	AM_drawMline(&ml, color);
     }
 
-}
+}*/
 
 //
 // Determines visible lines, draws them.
@@ -1142,50 +1144,69 @@ void AM_drawGrid(int color)
 void AM_drawWalls(void)
 {
     int i;
+    line_t* line;
     static mline_t l;
 
-    for (i=0;i<numlines;i++)
+    for(i = 0; i < numlines; i++)
     {
-	l.a.x = lines[i].v1->x;
-	l.a.y = lines[i].v1->y;
-	l.b.x = lines[i].v2->x;
-	l.b.y = lines[i].v2->y;
-	if (cheating || (lines[i].flags & ML_MAPPED))
-	{
-	    if ((lines[i].flags & LINE_NEVERSEE) && !cheating)
-		continue;
-	    if (!lines[i].backsector)
-	    {
-		AM_drawMline(&l, WALLCOLORS+lightlev);
-	    }
-	    else
-	    {
-		if (lines[i].special == 39)
-		{ // teleporters
-		    AM_drawMline(&l, WALLCOLORS+WALLRANGE/2);
-		}
-		else if (lines[i].flags & ML_SECRET) // secret door
-		{
-		    if (cheating) AM_drawMline(&l, SECRETWALLCOLORS + lightlev);
-		    else AM_drawMline(&l, WALLCOLORS+lightlev);
-		}
-		else if (lines[i].backsector->floorheight
-			   != lines[i].frontsector->floorheight) {
-		    AM_drawMline(&l, FDWALLCOLORS + lightlev); // floor level change
-		}
-		else if (lines[i].backsector->ceilingheight
-			   != lines[i].frontsector->ceilingheight) {
-		    AM_drawMline(&l, CDWALLCOLORS+lightlev); // ceiling level change
-		}
-		else if (cheating) {
-		    AM_drawMline(&l, TSWALLCOLORS+lightlev);
-		}
-	    }
-	}
-	else if (plr->powers[pw_allmap])
-	{
-	    if (!(lines[i].flags & LINE_NEVERSEE)) AM_drawMline(&l, GRAYS+3);
-	}
+        line = &lines[i];
+
+        l.a.x = line->v1->x;
+        l.a.y = line->v1->y;
+        l.b.x = line->v2->x;
+        l.b.y = line->v2->y;
+
+        if(cheating || (line->flags & ML_MAPPED))
+        {
+            if((line->flags & LINE_NEVERSEE) && !cheating)
+                continue;
+
+            // villsa [STRIFE]
+            if(line->special == 145)
+            {
+                AM_drawMline(&l, SPWALLCOLORS);
+            }
+            // villsa [STRIFE]
+            else if(line->special == 186)
+            {
+                AM_drawMline(&l, SPWALLCOLORS);
+            }
+            // villsa [STRIFE] lightlev is unused here
+            else if(!line->backsector)
+            {
+                AM_drawMline(&l, WALLCOLORS);
+            }
+            else
+            {
+                if(line->special == 39)
+                { // teleporters
+                    AM_drawMline(&l, WALLCOLORS+WALLRANGE/2);
+                }
+                else if (line->flags & ML_SECRET) // secret door
+                {
+                    // villsa [STRIFE] just draw the wall as is!
+                    AM_drawMline(&l, WALLCOLORS);
+                }
+                else if(line->backsector->floorheight != line->frontsector->floorheight)
+                {
+                    AM_drawMline(&l, FDWALLCOLORS); // floor level change
+                }
+                else if(line->backsector->ceilingheight != line->frontsector->ceilingheight)
+                {
+                        AM_drawMline(&l, CDWALLCOLORS); // ceiling level change
+                }
+                else if (cheating)
+                {
+                    AM_drawMline(&l, TSWALLCOLORS);
+                }
+            }
+        }
+        // villsa [STRIFE] show all of the map on map 15
+        else if(plr->powers[pw_allmap] || gamemap == 15)
+        {
+            if(!(line->flags & LINE_NEVERSEE))
+                AM_drawMline(&l, CTWALLCOLORS);
+        }
     }
 }
 
@@ -1359,8 +1380,11 @@ void AM_Drawer (void)
     if (!automapactive) return;
 
     AM_clearFB(BACKGROUND);
-    if (grid)
-	AM_drawGrid(GRIDCOLORS);
+
+    // villsa [STRIFE] not used
+    /*if(grid)
+	AM_drawGrid(GRIDCOLORS);*/
+
     AM_drawWalls();
     AM_drawPlayers();
     if (cheating==2)
