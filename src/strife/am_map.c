@@ -64,7 +64,7 @@
 #define GRAYSRANGE	16
 #define BROWNS		(4*16)
 #define BROWNRANGE	16
-#define YELLOWS		(256-32+7)
+#define YELLOWS		(256-32)
 #define YELLOWRANGE	1
 #define BLACK		0
 #define WHITE		(256-47)
@@ -83,13 +83,15 @@
 #define CTWALLCOLORS    19          // villsa [STRIFE]
 #define SPWALLCOLORS    243         // villsa [STRIFE]
 #define CDWALLRANGE	YELLOWRANGE
-#define THINGCOLORS	GREENS
 #define THINGRANGE	GREENRANGE
 #define SECRETWALLCOLORS WALLCOLORS
 #define SECRETWALLRANGE WALLRANGE
 #define GRIDCOLORS	(GRAYS + GRAYSRANGE/2)
 #define GRIDRANGE	0
 #define XHAIRCOLORS	GRAYS
+#define THINGCOLORS     233         // villsa [STRIFE]
+#define MISSILECOLORS   227         // villsa [STRIFE]
+#define SHOOTABLECOLORS 235         // villsa [STRIFE]
 
 // drawing stuff
 
@@ -1293,30 +1295,29 @@ void AM_drawPlayers(void)
 
     if (!netgame)
     {
-	if (cheating)
-	    AM_drawLineCharacter
-		(cheat_player_arrow, arrlen(cheat_player_arrow), 0,
-		 plr->mo->angle, WHITE, plr->mo->x, plr->mo->y);
-	else
-	    AM_drawLineCharacter
+        // villsa [STRIFE] don't draw cheating player arrow.
+        // Player arrow is yellow instead of white
+        AM_drawLineCharacter
 		(player_arrow, arrlen(player_arrow), 0, plr->mo->angle,
-		 WHITE, plr->mo->x, plr->mo->y);
+		 YELLOWS, plr->mo->x, plr->mo->y);
 	return;
     }
 
-    for (i=0;i<MAXPLAYERS;i++)
+    for(i = 0; i < MAXPLAYERS; i++)
     {
 	their_color++;
 	p = &players[i];
 
-	if ( (deathmatch && !singledemo) && p != plr)
+        // villsa [STRIFE] check for gameskill??
+	if((gameskill && deathmatch && !singledemo) && p != plr)
 	    continue;
 
-	if (!playeringame[i])
+	if(!playeringame[i])
 	    continue;
 
-	if (p->powers[pw_invisibility])
-	    color = 246; // *close* to black
+        // villsa [STRIFE] change to 27
+	if(p->powers[pw_invisibility])
+	    color = 27; // *close* to black
 	else
 	    color = their_colors[their_color];
 	
@@ -1327,24 +1328,46 @@ void AM_drawPlayers(void)
 
 }
 
-void
-AM_drawThings
-( int	colors,
-  int 	colorrange)
+//
+// AM_drawThings
+//
+// villsa [STRIFE] no arguments
+//
+void AM_drawThings(void)
 {
-    int		i;
-    mobj_t*	t;
+    int         i;
+    mobj_t*     t;
+    int         colors;
+    fixed_t     radius;
 
-    for (i=0;i<numsectors;i++)
+    // villsa [STRIFE] almost re-written
+    // specific things can have different radius, color and appearence
+    for(i = 0; i < numsectors; i++)
     {
-	t = sectors[i].thinglist;
-	while (t)
-	{
-	    AM_drawLineCharacter
-		(thintriangle_guy, arrlen(thintriangle_guy),
-		 16<<FRACBITS, t->angle, colors+lightlev, t->x, t->y);
-	    t = t->snext;
-	}
+        t = sectors[i].thinglist;
+        while(t)
+        {
+            radius = t->radius;
+
+            if(t->flags & (MF_MISSILE|MF_SPECIAL))
+            {
+                colors = MISSILECOLORS;
+            }
+            else if(t->flags & MF_COUNTKILL)
+            {
+                colors = SHOOTABLECOLORS;
+            }
+            else
+            {
+                colors = THINGCOLORS;
+                radius = (16<<FRACBITS);
+            }
+
+            AM_drawLineCharacter (thintriangle_guy, arrlen(thintriangle_guy),
+                radius, t->angle, colors, t->x, t->y);
+
+            t = t->snext;
+        }
     }
 }
 
@@ -1387,12 +1410,15 @@ void AM_Drawer (void)
 
     AM_drawWalls();
     AM_drawPlayers();
-    if (cheating==2)
-	AM_drawThings(THINGCOLORS, THINGRANGE);
-    AM_drawCrosshair(XHAIRCOLORS);
+
+    // villsa [STRIFE] draw things when map powerup is enabled
+    if(cheating == 2 || plr->powers[pw_allmap] > 1)
+	AM_drawThings();
+
+    // villsa [STRIFE] not used
+    //AM_drawCrosshair(XHAIRCOLORS);
 
     AM_drawMarks();
-
     V_MarkRect(f_x, f_y, f_w, f_h);
 
 }
