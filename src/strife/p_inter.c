@@ -412,8 +412,15 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
 
     // Dead thing touching.
     // Can happen with a sliding player corpse.
-    if (toucher->health <= 0)
+    if(toucher->health <= 0)
         return;
+
+    // villsa [STRIFE] damage toucher if special has spectral flag
+    if(special->flags & MF_SPECTRAL)
+    {
+        P_DamageMobj(toucher, NULL, NULL, 5);
+        return;
+    }
 
     // villsa [STRIFE]
     pickupmsg[0] = 0;
@@ -961,37 +968,14 @@ void P_DamageMobj(mobj_t* target, mobj_t* inflictor, mobj_t* source, int damage)
     // notes on projectile health:
     // -2 == enemy spectral projectile
     // -1 == player spectral projectile
-    if(target->flags & MF_SPECTRAL) // target is spectral
-    {
-        // check for these specific actors
-        // seems a bit redundant since they already got the spectral flag
-        // to check for this stuff
-        if(target->type == MT_RLEADER2
-            || target->type == MT_ORACLE
-            || target->type == MT_SPECTRE_C)
-        {
-            // don't do damage if player has no sigil type
-            if(source->player->sigiltype < 1)
-                return;
-        }
 
-        if(inflictor)
-        {
-            // only spectral inflictors can damage other spectral actors
-            if(!(inflictor->flags & MF_SPECTRAL))
-                return;
-
-            if(inflictor->health == -2) // don't damage itself
-                return;
-        }
-    }
-
-    // villsa [STRIFE] handle player's spectral projectile
-    if(target->type == MT_PLAYER)   // target is a player
-    {
-        if(inflictor && inflictor->flags & MF_SPECTRAL && inflictor->health == -1)
-            return; // don't damage itself
-    }
+    if(!(!inflictor ||
+        !(inflictor->flags & MF_SPECTRAL) ||
+        (target->type != MT_PLAYER || inflictor->health != -1) &&
+        (!(target->flags & MF_SPECTRAL) || inflictor->health != -2) &&
+        (target->type != MT_RLEADER2 && target->type != MT_ORACLE && target->type != MT_SPECTRE_C ||
+        (source->player->sigiltype) >= 1)))
+        return;
 
     // villsa [STRIFE] new checks for various actors
     if(inflictor)
@@ -1277,6 +1261,5 @@ void P_DamageMobj(mobj_t* target, mobj_t* inflictor, mobj_t* source, int damage)
         && target->info->seestate != S_NULL)
             P_SetMobjState (target, target->info->seestate);
     }
-
 }
 
