@@ -3004,8 +3004,8 @@ void A_TeleportBeacon(mobj_t* actor)
     P_SetMobjState(mobj, mobj->info->seestate);
     mobj->angle = actor->angle;
 
-    fog_x = FixedMul(20*FRACUNIT, finecosine[actor->angle>>ANGLETOFINESHIFT] + mobj->x);
-    fog_y = FixedMul(20*FRACUNIT, finesine[actor->angle>>ANGLETOFINESHIFT] + mobj->y);
+    fog_x = mobj->x + FixedMul(20*FRACUNIT, finecosine[actor->angle>>ANGLETOFINESHIFT]);
+    fog_y = mobj->y + FixedMul(20*FRACUNIT, finesine[actor->angle>>ANGLETOFINESHIFT]);
 
     fog = P_SpawnMobj(fog_x, fog_y, mobj->z, MT_TFOG);
     S_StartSound(fog, sfx_telept);
