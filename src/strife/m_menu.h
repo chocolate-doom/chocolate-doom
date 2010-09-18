@@ -94,7 +94,7 @@ void M_Init (void);
 void M_StartControlPanel (void);
 
 // haleyjd 09/04/10: Externalized. Draws menu text.
-int M_WriteText(int x, int y, char *string);
+int M_WriteText(int x, int y, const char *string);
 
 // haleyjd 09/04/10: [STRIFE] New function.
 void M_DialogDimMsg(int x, int y, char *str, boolean useyfont);

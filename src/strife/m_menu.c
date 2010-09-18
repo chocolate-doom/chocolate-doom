@@ -1333,15 +1333,15 @@ int M_StringHeight(char* string)
 //
 int
 M_WriteText
-( int		x,
-  int		y,
-  char*		string)
+( int           x,
+  int           y,
+  const char*   string) // haleyjd: made const for safety w/dialog engine
 {
-    int		w;
-    char*	ch;
-    int		c;
-    int		cx;
-    int		cy;
+    int	        w;
+    const char* ch;
+    int         c;
+    int         cx;
+    int         cy;
 
     ch = string;
     cx = x;

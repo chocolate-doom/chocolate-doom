@@ -379,7 +379,7 @@ static int dialogbgpiclumpnum;
 static char *dialogname;
 
 // Current dialog text.
-static char *dialogtext;
+static const char *dialogtext;
 
 //=============================================================================
 //

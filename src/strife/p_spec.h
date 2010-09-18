@@ -131,8 +131,8 @@ getNextSector
 //
 // SPECIAL
 //
-int EV_DoDonut(line_t* line);
-int EV_ClearForceFields(line_t* line);  // villsa [STRIFE]
+int     EV_DoDonut(line_t* line);
+boolean EV_ClearForceFields(line_t* line);  // villsa [STRIFE]
 
 
 //

@@ -51,7 +51,7 @@
 				UsePrecompiledHeader="0"
 				ExpandAttributedSource="true"
 				AssemblerOutput="2"
-				WarningLevel="0"
+				WarningLevel="2"
 				DebugInformationFormat="4"
 				CompileAs="1"
 			/>

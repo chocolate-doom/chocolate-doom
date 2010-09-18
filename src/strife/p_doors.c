@@ -498,13 +498,14 @@ int EV_DoDoor(line_t* line, vldoor_e type)
 //
 // villsa [STRIFE] new function
 //
-int EV_ClearForceFields(line_t* line)
+boolean EV_ClearForceFields(line_t* line)
 {
     int         secnum;
     int         rtn;
     sector_t*   sec;
     int         i;
     line_t*     secline;
+    boolean     ret = false;
 
     secnum = -1;
     rtn = 0;
@@ -515,10 +516,9 @@ int EV_ClearForceFields(line_t* line)
         rtn = 1;
 
         line->special = 0;
+        ret = true;
 
-        if(!sec->linecount)
-            return;
-
+        // haleyjd 09/18/10: fixed to continue w/linecount == 0, not return
         for(i = 0; i < sec->linecount; i++)
         {
             secline = sec->lines[i];
@@ -533,6 +533,8 @@ int EV_ClearForceFields(line_t* line)
             sides[secline->sidenum[1]].midtexture = 0;
         }
     }
+
+    return ret;
 }
 
 
