@@ -2956,9 +2956,62 @@ void A_PlayerScream (mobj_t* mo)
     S_StartSound (mo, sound);
 }
 
+//
+// A_TeleportBeacon
+// villsa [STRIFE] - new codepointer
+//
 void A_TeleportBeacon(mobj_t* actor)
 {
-    // STRIFE-TODO
+    mobj_t* mobj;
+    mobj_t* fog;
+    fixed_t fog_x;
+    fixed_t fog_y;
+
+    if(actor->target != players[actor->miscdata].mo)
+        actor->target = players[actor->miscdata].mo;
+
+    mobj = P_SpawnMobj(actor->x, actor->y, ONFLOORZ, MT_REBEL1);
+
+    if(!P_TryMove(mobj, mobj->x, mobj->y))
+    {
+        // Rebel is probably stuck in something.. too bad
+        P_RemoveMobj(mobj);
+        return;
+    }
+
+    // beacon no longer solid
+    actor->flags &= ~MF_SOLID;
+
+    // set color and flags
+    mobj->flags |= ((actor->miscdata << MF_TRANSSHIFT) | MF_INCOMBAT);
+    mobj->target = NULL;
+
+    // double Rebel's health in deathmatch mode
+    if(deathmatch)
+        mobj->health <<= 1;
+
+    if(actor->target)
+    {
+        mobj_t* targ = actor->target->target;
+
+        if(targ)
+        {
+            if(targ->type != MT_REBEL1 || targ->miscdata != mobj->miscdata)
+                mobj->target = targ;
+        }
+    }
+
+    P_SetMobjState(mobj, mobj->info->seestate);
+    mobj->angle = actor->angle;
+
+    fog_x = FixedMul(20*FRACUNIT, finecosine[actor->angle>>ANGLETOFINESHIFT] + mobj->x);
+    fog_y = FixedMul(20*FRACUNIT, finesine[actor->angle>>ANGLETOFINESHIFT] + mobj->y);
+
+    fog = P_SpawnMobj(fog_x, fog_y, mobj->z, MT_TFOG);
+    S_StartSound(fog, sfx_telept);
+
+    if((actor->health--) - 1 < 0)
+        P_RemoveMobj(actor);
 }
 
 //
