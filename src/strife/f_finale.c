@@ -69,9 +69,9 @@ finalestage_t finalestage;
 unsigned int finalecount;
 
 // haleyjd 09/12/10: [STRIFE] Slideshow variables
-char *slideshow_panel;
-int   slideshow_tics;
-int   slideshow_state;
+char         *slideshow_panel;
+unsigned int  slideshow_tics;
+int           slideshow_state;
 
 // haleyjd 09/13/10: [STRIFE] All this is unused.
 /*
@@ -174,7 +174,6 @@ enum
 void F_StartFinale (void)
 {
     patch_t *panel;
-    size_t i;
 
     gameaction = ga_nothing;
     gamestate = GS_FINALE;
@@ -903,8 +902,6 @@ void F_DrawMap34End (void)
     int         x;
     patch_t*    p1;
     patch_t*    p2;
-    char        name[10];
-    int         stage;
     static int  laststage;
 
     p1 = W_CacheLumpName (DEH_String("credit"),  PU_LEVEL);

@@ -43,6 +43,7 @@
 
 // [STRIFE]
 #include "p_dialog.h"
+#include "i_system.h"
 
 
 //
@@ -1236,7 +1237,6 @@ int EV_RemoteSlidingDoor(line_t* line, mobj_t* thing)
 {
     int		    secnum;
     sector_t*       sec;
-    slidedoor_t*    door;
     int             i;
     int             rtn;
     line_t*         secline;

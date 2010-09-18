@@ -147,7 +147,9 @@ void    P_ExplodeMissile (mobj_t* mo); // villsa [STRIFE]
 //
 void P_NoiseAlert (mobj_t* target, mobj_t* emmiter);
 void P_DoPunchAlert(mobj_t *puncher, mobj_t *punchee);  // villsa [STRIFE]
-
+void A_BodyParts(mobj_t *actor);                        // haleyjd: [STRIFE]
+void A_AlertSpectreC(mobj_t* actor);
+void A_FaceTarget (mobj_t* actor);
 
 //
 // P_MAPUTL

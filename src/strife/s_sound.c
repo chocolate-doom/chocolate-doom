@@ -25,6 +25,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 
 #include "i_sound.h"
 #include "i_system.h"
@@ -590,6 +591,7 @@ void I_StartVoice(const char *lumpname)
 {
     int lumpnum;
     voiceinfo_t *voice; // choco-specific
+    char lumpnamedup[9];
 
     // no voices in deathmatch mode.
     if(netgame)
@@ -613,10 +615,15 @@ void I_StartVoice(const char *lumpname)
     if(lumpname == NULL)
         return;
 
-    if((lumpnum = W_CheckNumForName(lumpname)) != -1)
+    // Because of constness problems...
+    strncpy(lumpnamedup, lumpname, 9);
+    lumpnamedup[8] = '\0';
+
+
+    if((lumpnum = W_CheckNumForName(lumpnamedup)) != -1)
     {
         // haleyjd: Choco-specific: get a voice structure
-        voice = S_getVoice(lumpname, lumpnum);
+        voice = S_getVoice(lumpnamedup, lumpnum);
 
         // get a channel for the voice
         i_voicehandle = S_GetChannel(NULL, &voice->sfx, true);

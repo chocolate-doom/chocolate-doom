@@ -511,7 +511,6 @@ void A_FireFlameThrower(player_t* player, pspdef_t* psp)
 void A_FireMissile(player_t* player, pspdef_t* psp) 
 {
     angle_t an;
-    mobj_t* mo;
 
     an = player->mo->angle;
     player->mo->angle += (P_Random() - P_Random())<<(19 - (player->accuracy * 4 / 100));

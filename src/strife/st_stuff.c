@@ -621,7 +621,6 @@ void ST_updateWidgets(void)
 void ST_Ticker (void)
 {
     static int  largeammo = 1994; // means "n/a"
-    int         i;
 
     // must redirect the pointer if the ready weapon has changed.
     if (weaponinfo[plyr->readyweapon].ammo == am_noammo)
@@ -809,8 +808,6 @@ static void ST_loadUnloadGraphics(load_callback_t callback)
 {
 
     int		i;
-    int		j;
-    int		facenum;
     
     char	namebuf[9];
 
@@ -896,8 +893,6 @@ void ST_initData(void)
 
 void ST_createWidgets(void)
 {
-    int i;
-
     // ready weapon ammo
     STlib_initNum(&w_ready,
                   ST_AMMOX,

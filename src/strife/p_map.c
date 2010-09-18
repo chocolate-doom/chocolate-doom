@@ -1469,13 +1469,13 @@ boolean		nofit;
 boolean PIT_ChangeSector (mobj_t*	thing)
 {
     mobj_t*	mo;
-	
+
     if (P_ThingHeightClip (thing))
     {
-	// keep checking
-	return true;
+        // keep checking
+        return true;
     }
-    
+
 
     // crunch bodies to giblets
     if (thing->health <= 0)
@@ -1486,30 +1486,30 @@ boolean PIT_ChangeSector (mobj_t*	thing)
             nofit = true;
             return false;
         }
-	//P_SetMobjState (thing, S_GIBS);   // villsa [STRIFE] unused
+        //P_SetMobjState (thing, S_GIBS);   // villsa [STRIFE] unused
 
         A_BodyParts(thing); // villsa [STRIFE] spit out meat/junk stuff
-	thing->flags &= ~MF_SOLID;
-	thing->height = 0;
-	thing->radius = 0;
+        thing->flags &= ~MF_SOLID;
+        thing->height = 0;
+        thing->radius = 0;
 
-	// keep checking
-	return true;		
+        // keep checking
+        return true;
     }
 
     // crunch dropped items
     if (thing->flags & MF_DROPPED)
     {
-	P_RemoveMobj (thing);
-	
-	// keep checking
-	return true;		
+        P_RemoveMobj (thing);
+
+        // keep checking
+        return true;		
     }
 
     if (! (thing->flags & MF_SHOOTABLE) )
     {
-	// assume it is bloody gibs or something
-	return true;			
+        // assume it is bloody gibs or something
+        return true;
     }
     
     nofit = true;
@@ -1517,19 +1517,19 @@ boolean PIT_ChangeSector (mobj_t*	thing)
     if (crushchange && !(leveltime&3) )
     {
         S_StartSound(thing, sfx_pcrush);   // villsa [STRIFE]
-	P_DamageMobj(thing,NULL,NULL,10);
+        P_DamageMobj(thing,NULL,NULL,10);
 
-	// spray blood in a random direction
-	mo = P_SpawnMobj (thing->x,
-			  thing->y,
-			  thing->z + thing->height/2, MT_BLOOD_DEATH);
-	
-	mo->momx = (P_Random() - P_Random ())<<12;
-	mo->momy = (P_Random() - P_Random ())<<12;
+        // spray blood in a random direction
+        mo = P_SpawnMobj (thing->x,
+                          thing->y,
+                          thing->z + thing->height/2, MT_BLOOD_DEATH);
+
+        mo->momx = (P_Random() - P_Random ())<<12;
+        mo->momy = (P_Random() - P_Random ())<<12;
     }
 
     // keep checking (crush other things)	
-    return true;	
+    return true;
 }
 
 

@@ -79,4 +79,9 @@ typedef struct
 
 } pspdef_t;
 
+typedef struct player_s *playerptr;
+
+// haleyjd [STRIFE] Exported
+void P_SetPsprite(playerptr player, int position, statenum_t stnum);
+
 #endif

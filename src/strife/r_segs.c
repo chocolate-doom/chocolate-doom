@@ -637,7 +637,7 @@ R_StoreWallRange
 	offsetangle = rw_normalangle-rw_angle1;
 	
 	if (offsetangle > ANG180)
-	    offsetangle = -offsetangle;
+	    offsetangle = 0 - offsetangle;
 
 	if (offsetangle > ANG90)
 	    offsetangle = ANG90;

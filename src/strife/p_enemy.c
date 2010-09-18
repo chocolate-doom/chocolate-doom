@@ -47,6 +47,9 @@
 // [STRIFE] Dialog / Inventory
 #include "p_dialog.h"
 #include "deh_str.h"
+#include "w_wad.h"
+#include "f_finale.h"
+#include "p_inter.h"
 
 // Forward Declarations:
 void A_RandomWalk(mobj_t *);
@@ -2531,7 +2534,6 @@ void A_EntityDeath(mobj_t* actor)
     mobj_t *subentity;
     angle_t an;
     fixed_t dist;
-    fixed_t momx, momy;
 
     dist = 2 * mobjinfo[MT_SUBENTITY].radius;
 

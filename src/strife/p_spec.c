@@ -138,7 +138,7 @@ animdef_t               animdefs[] =
     { false, "F_FAN2",   "F_FAN1",    4},
     { false, "F_CONVY2", "F_CONVY1",  4},
     { false, "F_RDALN4", "F_RDALN1",  4},
-    { -1,    NULL,       NULL,        0},
+    { -1,    "",         "",          0},
 };
 
 anim_t  anims[MAXANIMS];
@@ -169,35 +169,35 @@ void P_InitPicAnims (void)
         startname = DEH_String(animdefs[i].startname);
         endname = DEH_String(animdefs[i].endname);
 
-	if (animdefs[i].istexture)
-	{
-	    // different episode ?
-	    if (R_CheckTextureNumForName(startname) == -1)
-		continue;	
+        if (animdefs[i].istexture)
+        {
+            // different episode ?
+            if (R_CheckTextureNumForName(startname) == -1)
+                continue;	
 
-	    lastanim->picnum = R_TextureNumForName(endname);
-	    lastanim->basepic = R_TextureNumForName(startname);
-	}
-	else
-	{
-	    if (W_CheckNumForName(startname) == -1)
-		continue;
+            lastanim->picnum = R_TextureNumForName(endname);
+            lastanim->basepic = R_TextureNumForName(startname);
+        }
+        else
+        {
+            if (W_CheckNumForName(startname) == -1)
+                continue;
 
-	    lastanim->picnum = R_FlatNumForName(endname);
-	    lastanim->basepic = R_FlatNumForName(startname);
-	}
+            lastanim->picnum = R_FlatNumForName(endname);
+            lastanim->basepic = R_FlatNumForName(startname);
+        }
 
-	lastanim->istexture = animdefs[i].istexture;
-	lastanim->numpics = lastanim->picnum - lastanim->basepic + 1;
+        lastanim->istexture = animdefs[i].istexture;
+        lastanim->numpics = lastanim->picnum - lastanim->basepic + 1;
 
-	if (lastanim->numpics < 2)
-	    I_Error ("P_InitPicAnims: bad cycle from %s to %s",
-		     startname, endname);
-	
-	lastanim->speed = animdefs[i].speed;
-	lastanim++;
+        if (lastanim->numpics < 2)
+            I_Error ("P_InitPicAnims: bad cycle from %s to %s",
+            startname, endname);
+
+        lastanim->speed = animdefs[i].speed;
+        lastanim++;
     }
-	
+
 }
 
 // villsa [STRIFE] terrain type definitions

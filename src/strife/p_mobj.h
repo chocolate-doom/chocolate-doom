@@ -332,6 +332,7 @@ typedef struct mobj_s
     
 } mobj_t;
 
-
+// haleyjd [STRIFE] Exported
+void P_CheckMissileSpawn (mobj_t* th);
 
 #endif

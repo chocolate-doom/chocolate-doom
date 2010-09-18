@@ -26,8 +26,7 @@
 //
 //-----------------------------------------------------------------------------
 
-
-
+#include <stdlib.h>
 
 #include "doomdef.h"
 #include "d_event.h"
@@ -36,6 +35,13 @@
 #include "p_dialog.h"   // villsa [STRIFE]
 #include "d_main.h"     // villsa [STRIFE]
 #include "doomstat.h"
+#include "deh_str.h"    // haleyjd [STRIFE]
+#include "z_zone.h"
+#include "w_wad.h"
+#include "p_pspr.h"
+#include "m_random.h"
+#include "s_sound.h"
+#include "p_inter.h"
 
 
 

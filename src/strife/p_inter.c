@@ -41,8 +41,15 @@
 #include "p_dialog.h"   // villsa [STRIFE]
 #include "s_sound.h"
 #include "p_inter.h"
+
 #include "hu_stuff.h"   // villsa [STRIFE]
 #include "z_zone.h"     // villsa [STRIFE]
+
+// haleyjd [STRIFE]
+#include "w_wad.h"
+#include "p_pspr.h"
+#include "p_dialog.h"
+#include "f_finale.h"
 
 
 #define BONUSADD	6
@@ -112,31 +119,34 @@ boolean P_GiveAmmo(player_t* player, ammotype_t ammo, int num)
 
     // villsa [STRIFE] ammo update
     // where's the check for grenades? - haleyjd: verified no switch to grenades
-    switch(ammo && !player->readyweapon)
+    if(!player->readyweapon)
     {
-    case am_bullets:
-        if(player->weaponowned[wp_rifle])
-            player->pendingweapon = wp_rifle;
-        break;
+        switch(ammo)
+        {
+        case am_bullets:
+            if(player->weaponowned[wp_rifle])
+                player->pendingweapon = wp_rifle;
+            break;
 
-    case am_elecbolts:
-    case am_poisonbolts:
-        if(player->weaponowned[wp_elecbow])
-            player->pendingweapon = wp_elecbow;
-        break;
+        case am_elecbolts:
+        case am_poisonbolts:
+            if(player->weaponowned[wp_elecbow])
+                player->pendingweapon = wp_elecbow;
+            break;
 
-    case am_cell:
-        if(player->weaponowned[wp_mauler])
-            player->pendingweapon = wp_mauler;
-        break;
+        case am_cell:
+            if(player->weaponowned[wp_mauler])
+                player->pendingweapon = wp_mauler;
+            break;
 
-    case am_missiles:
-        if(player->weaponowned[wp_missile])
-            player->pendingweapon = wp_missile;
-        break;
+        case am_missiles:
+            if(player->weaponowned[wp_missile])
+                player->pendingweapon = wp_missile;
+            break;
 
-    default:
-        break;
+        default:
+            break;
+        }
     }
 
     return true;

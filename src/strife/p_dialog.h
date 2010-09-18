@@ -89,13 +89,15 @@ typedef struct mapdialog_s
     mapdlgchoice_t choices[MDLG_MAXCHOICES];
 } mapdialog_t;
 
-void            P_DialogLoad(void);
-void            P_DialogStart(player_t *player);
-void            P_DialogDoChoice(int choice);
-boolean         P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type);
-void            P_DialogStartP1(void);
-mapdialog_t*    P_DialogFind(mobjtype_t type, int jumptoconv);
-int             P_PlayerHasItem(player_t *player, mobjtype_t type);
+void         P_DialogLoad(void);
+void         P_DialogStart(player_t *player);
+void         P_DialogDoChoice(int choice);
+boolean      P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type);
+boolean      P_GiveInventoryItem(player_t *player, int sprnum, mobjtype_t type);
+boolean      P_UseInventoryItem(player_t* player, int item);
+void         P_DialogStartP1(void);
+mapdialog_t* P_DialogFind(mobjtype_t type, int jumptoconv);
+int          P_PlayerHasItem(player_t *player, mobjtype_t type);
 
 #endif
 

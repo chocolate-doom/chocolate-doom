@@ -99,6 +99,9 @@ int M_WriteText(int x, int y, const char *string);
 // haleyjd 09/04/10: [STRIFE] New function.
 void M_DialogDimMsg(int x, int y, char *str, boolean useyfont);
 
+// haleyjd [STRIFE] Externalized
+void M_ClearMenus (int choice);
+
 extern int detailLevel;
 extern int screenblocks;
 

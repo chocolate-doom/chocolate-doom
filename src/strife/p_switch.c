@@ -35,6 +35,8 @@
 #include "g_game.h"
 #include "d_main.h" // villsa [STRIFE]
 #include "s_sound.h"
+#include "m_random.h" // haleyjd [STRIFE]
+#include "p_dialog.h"
 
 // Data.
 #include "sounds.h"

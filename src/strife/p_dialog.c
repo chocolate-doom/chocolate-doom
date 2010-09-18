@@ -28,6 +28,8 @@
 //
 //-----------------------------------------------------------------------------
 
+#include <stdlib.h>
+
 #include "z_zone.h"
 #include "w_wad.h"
 #include "deh_str.h"
@@ -41,6 +43,9 @@
 #include "p_local.h"
 #include "sounds.h"
 #include "p_dialog.h"
+#include "s_sound.h"
+#include "p_local.h"
+#include "p_inter.h"
 
 //
 // Defines and Macros
@@ -1221,7 +1226,7 @@ void P_DialogDoChoice(int choice)
 
     dialogtalker->angle = dialogtalkerangle;
     dialogplayer->st_update = true;
-    M_ClearMenus();
+    M_ClearMenus(0);
 
     if(nextdialog >= 0 || gameaction == ga_victory) // Macil hack
         menuindialog = false;
@@ -1251,7 +1256,6 @@ void P_DialogStart(player_t *player)
     int j = 0;
     int pic;
     int rnd = 0;
-    mapdialog_t* dialog;
     char* byetext;
     int jumptoconv;
 

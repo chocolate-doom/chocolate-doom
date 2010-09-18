@@ -264,14 +264,14 @@ void P_ZMovement (mobj_t* mo)
 {
     fixed_t	dist;
     fixed_t	delta;
-    
+
     // check for smooth step up
     if (mo->player && mo->z < mo->floorz)
     {
-	mo->player->viewheight -= mo->floorz-mo->z;
+        mo->player->viewheight -= mo->floorz-mo->z;
 
-	mo->player->deltaviewheight
-	    = (VIEWHEIGHT - mo->player->viewheight)>>3;
+        mo->player->deltaviewheight
+            = (VIEWHEIGHT - mo->player->viewheight)>>3;
     }
     
     // adjust height
@@ -286,44 +286,44 @@ void P_ZMovement (mobj_t* mo)
     }
 
     //mo->z += mo->momz; // villsa [STRIFE] unused
-	
-    if ( mo->flags & MF_FLOAT
-	 && mo->target)
-    {
-	// float down towards target if too close
-	if ( /*!(mo->flags & MF_SKULLFLY)   // villsa [STRIFE] unused
-	     &&*/ !(mo->flags & MF_INFLOAT) )
-	{
-	    dist = P_AproxDistance (mo->x - mo->target->x,
-				    mo->y - mo->target->y);
-	    
-	    delta =(mo->target->z + (mo->height>>1)) - mo->z;
 
-	    if (delta<0 && dist < -(delta*3) )
-		mo->z -= FLOATSPEED;
-	    else if (delta>0 && dist < (delta*3) )
-		mo->z += FLOATSPEED;			
-	}
-	
+    if ( mo->flags & MF_FLOAT
+        && mo->target)
+    {
+        // float down towards target if too close
+        if ( /*!(mo->flags & MF_SKULLFLY)   // villsa [STRIFE] unused
+             &&*/ !(mo->flags & MF_INFLOAT) )
+        {
+            dist = P_AproxDistance (mo->x - mo->target->x,
+                                    mo->y - mo->target->y);
+
+            delta =(mo->target->z + (mo->height>>1)) - mo->z;
+
+            if (delta<0 && dist < -(delta*3) )
+                mo->z -= FLOATSPEED;
+            else if (delta>0 && dist < (delta*3) )
+                mo->z += FLOATSPEED;			
+        }
+
     }
     
     // clip movement
     if (mo->z <= mo->floorz)
     {
-	// hit the floor
+        // hit the floor
 
-	// Note (id):
-	//  somebody left this after the setting momz to 0,
-	//  kinda useless there.
-	//
-	// cph - This was the a bug in the linuxdoom-1.10 source which
-	//  caused it not to sync Doom 2 v1.9 demos. Someone
-	//  added the above comment and moved up the following code. So
-	//  demos would desync in close lost soul fights.
-	// Note that this only applies to original Doom 1 or Doom2 demos - not
-	//  Final Doom and Ultimate Doom.  So we test demo_compatibility *and*
-	//  gamemission. (Note we assume that Doom1 is always Ult Doom, which
-	//  seems to hold for most published demos.)
+        // Note (id):
+        //  somebody left this after the setting momz to 0,
+        //  kinda useless there.
+        //
+        // cph - This was the a bug in the linuxdoom-1.10 source which
+        //  caused it not to sync Doom 2 v1.9 demos. Someone
+        //  added the above comment and moved up the following code. So
+        //  demos would desync in close lost soul fights.
+        // Note that this only applies to original Doom 1 or Doom2 demos - not
+        //  Final Doom and Ultimate Doom.  So we test demo_compatibility *and*
+        //  gamemission. (Note we assume that Doom1 is always Ult Doom, which
+        //  seems to hold for most published demos.)
         //  
         //  fraggle - cph got the logic here slightly wrong.  There are three
         //  versions of Doom 1.9:
@@ -334,103 +334,104 @@ void P_ZMovement (mobj_t* mo)
         //
         // So we need to check that this is either retail or commercial
         // (but not doom2)
-	
-	//int correct_lost_soul_bounce = gameversion >= exe_ultimate;
 
-	if (/*correct_lost_soul_bounce &&*/ mo->flags & MF_BOUNCE)
-	{
-	    // the skull slammed into something
+        //int correct_lost_soul_bounce = gameversion >= exe_ultimate;
+
+        if (/*correct_lost_soul_bounce &&*/ mo->flags & MF_BOUNCE)
+        {
+            // the skull slammed into something
             // villsa [STRIFE] affect reactiontime
             // momz is also shifted by 1
-	    mo->momz = -mo->momz >> 1;
+            mo->momz = -mo->momz >> 1;
             mo->reactiontime >>= 1;
 
             // villsa [STRIFE] get terrain type
             if(P_GetTerrainType(mo) != FLOOR_SOLID)
                 mo->flags &= ~MF_BOUNCE;
-	}
-	
-	if (mo->momz < 0)
-	{
-	    if (mo->player
-		&& mo->momz < -GRAVITY*8)	
-	    {
-		// Squat down.
-		// Decrease viewheight for a moment
-		// after hitting the ground (hard),
-		// and utter appropriate sound.
-		mo->player->deltaviewheight = mo->momz>>3;
+        }
+
+        if (mo->momz < 0)
+        {
+            if (mo->player
+                && mo->momz < -GRAVITY*8)	
+            {
+                // Squat down.
+                // Decrease viewheight for a moment
+                // after hitting the ground (hard),
+                // and utter appropriate sound.
+                mo->player->deltaviewheight = mo->momz>>3;
 
                 // villsa [STRIFE] fall damage
-                if(mo->momz < -(20*FRACUNIT))
+                if(mo->momz < -20*FRACUNIT)
                 {
-                    P_DamageMobj(mo, NULL, mo, (mo->momz >> 32) / -25000);
+                    // haleyjd 09/18/10: Repaired calculation
+                    P_DamageMobj(mo, NULL, mo, mo->momz / -25000);
                     mo->player->centerview = 1;
                 }
 
-		S_StartSound (mo, sfx_oof);
-	    }
-	    mo->momz = 0;
-	}
-	mo->z = mo->floorz;
+                S_StartSound (mo, sfx_oof);
+            }
+            mo->momz = 0;
+        }
+        mo->z = mo->floorz;
 
 
-	// cph 2001/05/26 -
-	// See lost soul bouncing comment above. We need this here for bug
-	// compatibility with original Doom2 v1.9 - if a soul is charging and
-	// hit by a raising floor this incorrectly reverses its Y momentum.
-	//
+        // cph 2001/05/26 -
+        // See lost soul bouncing comment above. We need this here for bug
+        // compatibility with original Doom2 v1.9 - if a soul is charging and
+        // hit by a raising floor this incorrectly reverses its Y momentum.
+        //
 
         // villsa [STRIFE] unused
         /*if (!correct_lost_soul_bounce && mo->flags & MF_SKULLFLY)
             mo->momz = -mo->momz;*/
 
         // villsa [STRIFE] also check for MF_BOUNCE
-	if ( (mo->flags & MF_MISSILE)
-	     && !(mo->flags & (MF_NOCLIP|MF_BOUNCE)) )
-	{
+        if ( (mo->flags & MF_MISSILE)
+            && !(mo->flags & (MF_NOCLIP|MF_BOUNCE)) )
+        {
             P_ExplodeMissile (mo);
-	    return;
-	}
+            return;
+        }
     }
     else if (! (mo->flags & MF_NOGRAVITY) )
     {
-	if (mo->momz == 0)
-	    mo->momz = -GRAVITY*2;
-	else
-	    mo->momz -= GRAVITY;
+        if (mo->momz == 0)
+            mo->momz = -GRAVITY*2;
+        else
+            mo->momz -= GRAVITY;
     }
-	
+
     if (mo->z + mo->height > mo->ceilingz)
     {
         // villsa [STRIFE] replace skullfly flag with MF_BOUNCE
         if (mo->flags & MF_BOUNCE)
         {
-	    // villsa [STRIFE] affect reactiontime
+            // villsa [STRIFE] affect reactiontime
             // momz is also shifted by 1
-	    mo->momz = -mo->momz >> 1;
+            mo->momz = -mo->momz >> 1;
             mo->reactiontime >>= 1;
         }
 
-	// hit the ceiling
-	if (mo->momz > 0)
-	    mo->momz = 0;
-	{
-	    mo->z = mo->ceilingz - mo->height;
-	}
-	
+        // hit the ceiling
+        if (mo->momz > 0)
+            mo->momz = 0;
+        {
+            mo->z = mo->ceilingz - mo->height;
+        }
+
         // villsa [STRIFE] also check for MF_BOUNCE
-	if ( (mo->flags & MF_MISSILE)
-	     && !(mo->flags & (MF_NOCLIP|MF_BOUNCE)) )
-	{
+        if ( (mo->flags & MF_MISSILE)
+            && !(mo->flags & (MF_NOCLIP|MF_BOUNCE)) )
+        {
             // villsa [STRIFE] check against skies
             if(mo->subsector->sector->ceilingpic == skyflatnum)
                 P_RemoveMobj(mo);
             else
                 P_ExplodeMissile (mo);
 
-	    return;
-	}
+            return;
+        }
     }
 } 
 
@@ -756,7 +757,6 @@ void P_SpawnPlayer(mapthing_t* mthing)
     fixed_t     y;
     fixed_t     z;
     mobj_t*     mobj;
-    int         i;
 
     if(mthing->type == 0)
         return;
