@@ -53,42 +53,15 @@
 #include "am_map.h"
 
 
-// For use if I do walls with outsides/insides
-#define REDS		(256-5*16)
-#define REDRANGE	16
-#define BLUES		(256-4*16+8)
-#define BLUERANGE	8
-#define GREENS		(7*16)
-#define GREENRANGE	16
-#define GRAYS		(6*16)
-#define GRAYSRANGE	16
-#define BROWNS		(4*16)
-#define BROWNRANGE	16
-#define YELLOWS		(256-32)
-#define YELLOWRANGE	1
-#define BLACK		0
-#define WHITE		(256-47)
-
 // Automap colors
-#define BACKGROUND	BLACK
-#define YOURCOLORS	WHITE
-#define YOURRANGE	0
+#define BACKGROUND	0
 #define WALLCOLORS	5           // villsa [STRIFE]
-#define WALLRANGE	REDRANGE
+#define WALLRANGE	16
 #define TSWALLCOLORS	16
-#define TSWALLRANGE	GRAYSRANGE
 #define FDWALLCOLORS	122         // villsa [STRIFE]
-#define FDWALLRANGE	BROWNRANGE
 #define CDWALLCOLORS	116
 #define CTWALLCOLORS    19          // villsa [STRIFE]
 #define SPWALLCOLORS    243         // villsa [STRIFE]
-#define CDWALLRANGE	YELLOWRANGE
-#define THINGRANGE	GREENRANGE
-#define SECRETWALLCOLORS WALLCOLORS
-#define SECRETWALLRANGE WALLRANGE
-#define GRIDCOLORS	(GRAYS + GRAYSRANGE/2)
-#define GRIDRANGE	0
-#define XHAIRCOLORS	GRAYS
 #define THINGCOLORS     233         // villsa [STRIFE]
 #define MISSILECOLORS   227         // villsa [STRIFE]
 #define SHOOTABLECOLORS 235         // villsa [STRIFE]
@@ -271,7 +244,7 @@ static player_t *plr; // the player represented by an arrow
 static patch_t *marknums[10]; // numbers used for marking by the automap
 static mpoint_t markpoints[AM_NUMMARKPOINTS]; // where the points are
 static int markpointnum = 0; // next point to be assigned
-
+static int mapmarknum = 0;  // villsa [STRIFE] unused but this was meant to be used for objective based markers
 static int followplayer = 1; // specifies whether to follow the player around
 
 cheatseq_t cheat_amap = CHEAT("iddt", 0);
@@ -1164,12 +1137,7 @@ void AM_drawWalls(void)
                 continue;
 
             // villsa [STRIFE]
-            if(line->special == 145)
-            {
-                AM_drawMline(&l, SPWALLCOLORS);
-            }
-            // villsa [STRIFE]
-            else if(line->special == 186)
+            if(line->special == 145 || line->special == 186)
             {
                 AM_drawMline(&l, SPWALLCOLORS);
             }
@@ -1289,7 +1257,8 @@ void AM_drawPlayers(void)
 {
     int		i;
     player_t*	p;
-    static int 	their_colors[] = { GREENS, GRAYS, BROWNS, REDS };
+    // villsa [STRIFE] updated array
+    static int 	their_colors[] = { 0x80, 0x40, 0xB0, 0x10, 0x30, 0x50, 0xA0, 0x60, 0x90 };
     int		their_color = -1;
     int		color;
 
@@ -1299,7 +1268,7 @@ void AM_drawPlayers(void)
         // Player arrow is yellow instead of white
         AM_drawLineCharacter
 		(player_arrow, arrlen(player_arrow), 0, plr->mo->angle,
-		 YELLOWS, plr->mo->x, plr->mo->y);
+		 224, plr->mo->x, plr->mo->y);
 	return;
     }
 
@@ -1371,32 +1340,39 @@ void AM_drawThings(void)
     }
 }
 
+//
+// AM_drawMarks
+//
 void AM_drawMarks(void)
 {
     int i, fx, fy, w, h;
 
-    for (i=0;i<AM_NUMMARKPOINTS;i++)
+    for(i = 0; i < AM_NUMMARKPOINTS; i++)
     {
-	if (markpoints[i].x != -1)
-	{
-	    //      w = SHORT(marknums[i]->width);
-	    //      h = SHORT(marknums[i]->height);
-	    w = 5; // because something's wrong with the wad, i guess
-	    h = 6; // because something's wrong with the wad, i guess
-	    fx = CXMTOF(markpoints[i].x);
-	    fy = CYMTOF(markpoints[i].y);
-	    if (fx >= f_x && fx <= f_w - w && fy >= f_y && fy <= f_h - h)
-		V_DrawPatch(fx, fy, marknums[i]);
-	}
+        if(markpoints[i].x != -1)
+        {
+            //      w = SHORT(marknums[i]->width);
+            //      h = SHORT(marknums[i]->height);
+            w = 5; // because something's wrong with the wad, i guess
+            h = 6; // because something's wrong with the wad, i guess
+            fx = CXMTOF(markpoints[i].x);
+            fy = CYMTOF(markpoints[i].y);
+            if(fx >= f_x && fx <= f_w - w && fy >= f_y && fy <= f_h - h)
+            {
+                // villsa [STRIFE]
+                if(i >= mapmarknum)
+                    V_DrawPatch(fx, fy, marknums[i]);
+            }
+        }
     }
 
 }
 
-void AM_drawCrosshair(int color)
+// villsa [STRIFE] unused
+/*void AM_drawCrosshair(int color)
 {
     fb[(f_w*(f_h+1))/2] = color; // single point for now
-
-}
+}*/
 
 void AM_Drawer (void)
 {
