@@ -46,9 +46,21 @@
 extern char mission_objective[OBJECTIVE_LEN];
 
 // villsa - convenient macro for giving objective logs to player
-#define GiveObjective(x) \
-    if(W_CheckNumForName(DEH_String(x)) != -1)\
-{ strncpy(mission_objective, W_CacheLumpName(DEH_String(x), PU_CACHE), OBJECTIVE_LEN); }
+#define GiveObjective(x, minlumpnum) \
+do { \
+  int obj_ln  = W_CheckNumForName(DEH_String(x)); \
+  if(obj_ln > minlumpnum) \
+    strncpy(mission_objective, W_CacheLumpNum(obj_ln, PU_CACHE), OBJECTIVE_LEN);\
+} while(0)
+
+// haleyjd - voice and objective in one
+#define GiveVoiceObjective(voice, log, minlumpnum) \
+do { \
+  int obj_ln = W_CheckNumForName(DEH_String(log)); \
+  I_StartVoice(DEH_String(voice)); \
+  if(obj_ln > minlumpnum) \
+    strncpy(mission_objective, W_CacheLumpNum(obj_ln, PU_CACHE), OBJECTIVE_LEN);\
+} while(0)
 
 typedef struct mapdlgchoice_s
 {

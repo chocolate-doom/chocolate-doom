@@ -46,6 +46,7 @@
 
 // [STRIFE] Dialog / Inventory
 #include "p_dialog.h"
+#include "deh_str.h"
 
 // Forward Declarations:
 void A_RandomWalk(mobj_t *);
@@ -2514,7 +2515,7 @@ void P_ThrustMobj(mobj_t *actor, angle_t angle, fixed_t force)
 {
     angle_t an = angle >> ANGLETOFINESHIFT;
     actor->momx += FixedMul(finecosine[an], force);
-    actor->momy += FixedMul(finesine[an], force);
+    actor->momy += FixedMul(finesine[an],   force);
 }
 
 //
@@ -2527,7 +2528,39 @@ void P_ThrustMobj(mobj_t *actor, angle_t angle, fixed_t force)
 //
 void A_EntityDeath(mobj_t* actor)
 {
-    // STRIFE-TODO
+    mobj_t *subentity;
+    angle_t an;
+    fixed_t dist;
+    fixed_t momx, momy;
+
+    dist = 2 * mobjinfo[MT_SUBENTITY].radius;
+
+    // Subentity One
+    an = actor->angle >> ANGLETOFINESHIFT;
+    subentity = P_SpawnMobj(FixedMul(finecosine[an], dist) + entity_pos_x,
+                            FixedMul(finesine[an],   dist) + entity_pos_y,
+                            entity_pos_z, MT_SUBENTITY);
+    subentity->target = actor->target;
+    A_FaceTarget(subentity);
+    P_ThrustMobj(subentity, subentity->angle, 625 << 13);
+
+    // Subentity Two
+    an = (actor->angle + ANG90) >> ANGLETOFINESHIFT;
+    subentity = P_SpawnMobj(FixedMul(finecosine[an], dist) + entity_pos_x, 
+                            FixedMul(finesine[an],   dist) + entity_pos_y,
+                            entity_pos_z, MT_SUBENTITY);
+    subentity->target = actor->target;
+    P_ThrustMobj(subentity, actor->angle + ANG90, 4);
+    A_FaceTarget(subentity);
+
+    // Subentity Three
+    an = (actor->angle - ANG90) >> ANGLETOFINESHIFT;
+    subentity = P_SpawnMobj(FixedMul(finecosine[an], dist) + entity_pos_x, 
+                            FixedMul(finesine[an],   dist) + entity_pos_y,
+                            entity_pos_z, MT_SUBENTITY);
+    subentity->target = actor->target;
+    P_ThrustMobj(subentity, actor->angle - ANG90, 4);
+    A_FaceTarget(subentity);
 }
 
 //
@@ -2610,7 +2643,7 @@ void P_FreePrisoners(void)
 {
     int i;
 
-    sprintf(pmsgbuffer, "You've freed the prisoners!");
+    DEH_snprintf(pmsgbuffer, sizeof(pmsgbuffer), "You've freed the prisoners!");
 
     for(i = 0; i < MAXPLAYERS; i++)
     {
@@ -2630,7 +2663,7 @@ void P_DestroyConverter(void)
 {
     int i;
 
-    sprintf(pmsgbuffer, "You've destroyed the Converter!");
+    DEH_snprintf(pmsgbuffer, sizeof(pmsgbuffer), "You've destroyed the Converter!");
 
     for(i = 0; i < MAXPLAYERS; i++)
     {
@@ -2655,7 +2688,7 @@ void A_QuestMsg(mobj_t* actor)
     int i;
 
     // get name
-    name = mobjinfo[(MT_TOKEN_QUEST1 - 1) + actor->info->speed].name;
+    name = DEH_String(mobjinfo[(MT_TOKEN_QUEST1 - 1) + actor->info->speed].name);
     strcpy(pmsgbuffer, name);   // inlined in asm
 
     // give quest and display message to players
@@ -2860,12 +2893,159 @@ void A_BurnSpread(mobj_t* actor)
 
 //
 // A_BossDeath
+//
 // Possibly trigger special effects
 // if on first boss level
 //
-void A_BossDeath (mobj_t* mo)
+// haleyjd 09/17/10: [STRIFE]
+// * Modified to handle all Strife bosses.
+//
+void A_BossDeath (mobj_t* actor)
 {
-    // villsa [STRIFE] TODO - update to strife version
+    int i;
+    thinker_t *th;
+    line_t junk;
+
+    // only the following types can be a boss:
+    switch(actor->type)
+    {
+    case MT_CRUSADER:
+    case MT_SPECTRE_A:
+    case MT_SPECTRE_B:
+    case MT_SPECTRE_C:
+    case MT_SPECTRE_D:
+    case MT_SPECTRE_E:
+    case MT_SUBENTITY:
+    case MT_PROGRAMMER:
+        break;
+    default:
+        return;
+    }
+
+    // check for a living player
+    for(i = 0; i < MAXPLAYERS; i++)
+    {
+        if(playeringame[i] && players[i].health > 0)
+            break;
+    }
+    if(i == MAXPLAYERS)
+        return; // everybody's dead.
+
+    // check for a still living boss
+    for(th = thinkercap.next; th != &thinkercap; th = th->next)
+    {
+        if(th->function.acp1 == P_MobjThinker)
+        {
+            mobj_t *mo = (mobj_t *)th;
+
+            if(mo != actor && mo->type == actor->type && mo->health > 0)
+                return; // one is still alive.
+        }
+    }
+
+    // Victory!
+    switch(actor->type)
+    {
+    case MT_CRUSADER:
+        junk.tag = 667;
+        EV_DoFloor(&junk, lowerFloorToLowest);
+        break;
+
+    case MT_SPECTRE_A:
+        GiveVoiceObjective("VOC95", "LOG95", 0);
+        junk.tag = 999;
+        EV_DoFloor(&junk, lowerFloorToLowest);
+        break;
+
+    case MT_SPECTRE_B:
+        P_GiveItemToPlayer(&players[0], SPR_TOKN, MT_TOKEN_BISHOP);
+        GiveVoiceObjective("VOC74", "LOG74", 0);
+        break;
+
+    case MT_SPECTRE_C:
+        // Look for an MT_ORACLE - this is for in case the player awakened the 
+        // Oracle's spectre without killing the Oracle, which is possible by 
+        // looking up to max and firing the Sigil at it. If this were not done,
+        // a serious sequence break possibility would arise where one could 
+        // kill both the Oracle AND Macil, possibly throwing the game out of
+        // sorts entirely. Too bad they thought of it ;)  However this also
+        // causes a bug sometimes! The Oracle, in its death state, sets the
+        // Spectre C back to its seestate. If the Spectre C is already dead,
+        // it becomes an undead ghost monster. Then it's a REAL spectre ;)
+        for(th = thinkercap.next; th != &thinkercap; th = th->next)
+        {
+            if(th->function.acp1 == P_MobjThinker)
+            {
+                mobj_t *mo = (mobj_t *)th;
+
+                // KILL ALL ORACLES! RAWWR!
+                if(mo != actor && mo->type == MT_ORACLE && mo->health > 0)
+                    P_KillMobj(actor, mo);
+            }
+        }
+        P_GiveItemToPlayer(&players[0], SPR_TOKN, MT_TOKEN_ORACLE);
+        
+        // Bishop is dead? - verify.
+        if(players[0].questflags & QF_QUEST21) 
+            P_GiveItemToPlayer(&players[0], SPR_TOKN, MT_TOKEN_QUEST22);
+
+        // Macil is dead?
+        if(players[0].questflags & QF_QUEST24)
+        {
+            // Loremaster is dead?
+            if(players[0].questflags & QF_QUEST26)
+            {
+                // We wield the complete sigil, blahblah
+                GiveVoiceObjective("VOC85", "LOG85", 0);
+            }
+        }
+        else
+        {
+            // So much for prognostication.
+            GiveVoiceObjective("VOC87", "LOG87", 0);
+        }
+        junk.tag = 222;         // Open the exit door again;
+        EV_DoDoor(&junk, open); // Note this is NOT the Loremaster door...
+        break;
+
+    case MT_SPECTRE_D:
+        P_GiveItemToPlayer(&players[0], SPR_TOKN, MT_TOKEN_MACIL);
+        if(players[0].questflags & QF_QUEST25) // Destroyed converter?
+            GiveVoiceObjective("VOC106", "LOG106", 0);
+        else
+            GiveVoiceObjective("VOC79", "LOG79", 0);
+        break;
+
+    case MT_SPECTRE_E:
+        P_GiveItemToPlayer(&players[0], SPR_TOKN, MT_TOKEN_LOREMASTER);
+        if(!netgame)
+        {
+            P_GiveItemToPlayer(&players[0], SPR_TOKN, MT_TOKEN_STAMINA);
+            P_GiveItemToPlayer(&players[0], SPR_TOKN, MT_TOKEN_NEW_ACCURACY);
+        }
+        if(players[0].sigiltype == 4)
+            GiveVoiceObjective("VOC85", "LOG85", 0);
+        else
+            GiveVoiceObjective("VOC83", "LOG83", 0);
+        junk.tag = 666;
+        EV_DoFloor(&junk, lowerFloorToLowest);
+        break;
+
+    case MT_SUBENTITY:
+        F_StartFinale();
+        break;
+
+    case MT_PROGRAMMER:
+        F_StartFinale();
+        G_ExitLevel(0);
+        break;
+
+    default:
+        // Real classy, Rogue.
+        if(actor->type)
+            I_Error("Error: Unconnected BossDeath id %d", actor->type);
+        break;
+    }
 }
 
 //
@@ -2909,7 +3089,7 @@ void A_AcolyteSpecial(mobj_t* actor)
             I_StartVoice(DEH_String("VOC14"));
 
             // give objective
-            GiveObjective("LOG14");
+            GiveObjective("LOG14", 0);
         }
     }
 }

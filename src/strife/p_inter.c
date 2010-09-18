@@ -839,7 +839,7 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
             EV_DoFloor(&junk, lowerFloor);
 
             I_StartVoice(DEH_String("VOC13"));
-            GiveObjective("LOG13");
+            GiveObjective("LOG13", 0);
 
             item = MT_COUPLING_BROKEN;
             players[0].questflags |= (1 << (mobjinfo[MT_COUPLING].speed - 1));
