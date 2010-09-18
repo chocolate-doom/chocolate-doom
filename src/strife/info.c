@@ -1800,7 +1800,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SOLID|MF_SHOOTABLE|MF_NOTDMATCH,      //flags
-        "Weapon Smith",     //namepointer
+        "Weapon_Smith",     //namepointer
     },
 
     {       /*MT_SHOPKEEPER_B*/
@@ -1827,7 +1827,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_ambppl,     //activesound
         MF_SOLID|MF_SHOOTABLE|MF_NOTDMATCH|MF_COLORSWAP1|MF_COLORSWAP3,      //flags
-        "Bar Keep",     //namepointer
+        "Bar_Keep",     //namepointer
     },
 
     {       /*MT_SHOPKEEPER_A*/
@@ -1882,7 +1882,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         sfx_None,       //activesound
         MF_SOLID|MF_SHOOTABLE|MF_NOTDMATCH|MF_COLORSWAP1|MF_COLORSWAP2
         |MF_COLORSWAP3,     //flags
-        "medic",        //namepointer
+        "Medic",        //namepointer
     },
 
     {       /*MT_PEASANT2_A*/
@@ -2783,7 +2783,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SOLID|MF_SHOOTABLE|MF_JUSTHIT|MF_COUNTKILL,      //flags
-        "beggar",       //namepointer
+        "Beggar",       //namepointer
     },
 
     {       /*MT_BEGGAR2*/
@@ -2810,7 +2810,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SOLID|MF_SHOOTABLE|MF_JUSTHIT|MF_COUNTKILL,      //flags
-        "beggar",       //namepointer
+        "Beggar",       //namepointer
     },
 
     {       /*MT_BEGGAR3*/
@@ -2837,7 +2837,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SOLID|MF_SHOOTABLE|MF_JUSTHIT|MF_COUNTKILL,      //flags
-        "beggar",       //namepointer
+        "Beggar",       //namepointer
     },
 
     {       /*MT_BEGGAR4*/
@@ -2864,7 +2864,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SOLID|MF_SHOOTABLE|MF_JUSTHIT|MF_COUNTKILL,      //flags
-        "beggar",       //namepointer
+        "Beggar",       //namepointer
     },
 
     {       /*MT_BEGGAR5*/
@@ -2891,7 +2891,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SOLID|MF_SHOOTABLE|MF_JUSTHIT|MF_COUNTKILL,      //flags
-        "beggar",       //namepointer
+        "Beggar",       //namepointer
     },
 
     {       /*MT_REBEL1*/
@@ -2918,7 +2918,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_rebact,     //activesound
         MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_ALLY,     //flags
-        "rebel",        //namepointer
+        "Rebel",        //namepointer
     },
 
     {       /*MT_REBEL2*/
@@ -2945,7 +2945,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_rebact,     //activesound
         MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_ALLY,     //flags
-        "rebel",        //namepointer
+        "Rebel",        //namepointer
     },
 
     {       /*MT_REBEL3*/
@@ -2972,7 +2972,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_rebact,     //activesound
         MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_ALLY,     //flags
-        "rebel",        //namepointer
+        "Rebel",        //namepointer
     },
 
     {       /*MT_REBEL4*/
@@ -2999,7 +2999,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_rebact,     //activesound
         MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_ALLY,     //flags
-        "rebel",        //namepointer
+        "Rebel",        //namepointer
     },
 
     {       /*MT_REBEL5*/
@@ -3026,7 +3026,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_rebact,     //activesound
         MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_ALLY,     //flags
-        "rebel",        //namepointer
+        "Rebel",        //namepointer
     },
 
     {       /*MT_REBEL6*/
@@ -3053,7 +3053,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_rebact,     //activesound
         MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_ALLY,     //flags
-        "rebel",        //namepointer
+        "Rebel",        //namepointer
     },
 
     {       /*MT_RLEADER*/
@@ -3080,7 +3080,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_rebact,     //activesound
         MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_NOTDMATCH,     //flags
-        "macil",        //namepointer
+        "MACIL",        //namepointer
     },
 
     {       /*MT_RLEADER2*/
@@ -3107,7 +3107,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_rebact,     //activesound
         MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_NOTDMATCH|MF_SPECTRAL,     //flags
-        "macil",        //namepointer
+        "MACIL",        //namepointer
     },
 
     {       /*MT_MISSILESMOKE*/
@@ -3188,7 +3188,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_agrac1,     //activesound
         MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,     //flags
-        "acolyte",      //namepointer
+        "ACOLYTE",      //namepointer
     },
 
     {       /*MT_GUARD2*/
@@ -3215,7 +3215,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_agrac2,     //activesound
         MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_COLORSWAP1,       //flags
-        "acolyte",      //namepointer
+        "ACOLYTE",      //namepointer
     },
 
     {       /*MT_GUARD3*/
@@ -3242,7 +3242,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_agrac3,     //activesound
         MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_COLORSWAP2,       //flags
-        "acolyte",      //namepointer
+        "ACOLYTE",      //namepointer
     },
 
     {       /*MT_GUARD4*/
@@ -3269,7 +3269,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_agrac1,     //activesound
         MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_COLORSWAP1|MF_COLORSWAP2,     //flags
-        "acolyte",      //namepointer
+        "ACOLYTE",      //namepointer
     },
 
     {       /*MT_GUARD5*/
@@ -3296,7 +3296,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_agrac2,     //activesound
         MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_COLORSWAP3,       //flags
-        "acolyte",      //namepointer
+        "ACOLYTE",      //namepointer
     },
 
     {       /*MT_GUARD6*/
@@ -3323,7 +3323,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_agrac3,     //activesound
         MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_COLORSWAP1|MF_COLORSWAP3,     //flags
-        "acolyte",      //namepointer
+        "ACOLYTE",      //namepointer
     },
 
     {       /*MT_GUARD7*/
@@ -3350,7 +3350,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_agrac3,     //activesound
         MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_COLORSWAP2|MF_COLORSWAP3,     //flags
-        "acolyte",      //namepointer
+        "ACOLYTE",      //namepointer
     },
 
     {       /*MT_GUARD8*/
@@ -3378,7 +3378,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         sfx_agrac3,     //activesound
         MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL|MF_COLORSWAP1|MF_COLORSWAP2
         |MF_COLORSWAP3,     //flags
-        "acolyte",      //namepointer
+        "ACOLYTE",      //namepointer
     },
 
     {       /*MT_SHADOWGUARD*/
@@ -3405,7 +3405,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_agrac2,     //activesound
         MF_SOLID|MF_SHOOTABLE|MF_COUNTKILL,     //flags
-        "acolyte",      //namepointer
+        "ACOLYTE",      //namepointer
     },
 
     {       /*MT_PGUARD*/
@@ -3432,7 +3432,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_pgract,     //activesound
         MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD|MF_COUNTKILL,      //flags
-        "templar",      //namepointer
+        "TEMPLAR",      //namepointer
     },
 
     {       /*MT_CRUSADER*/
@@ -3514,7 +3514,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SOLID|MF_SHOOTABLE|MF_NOBLOOD|MF_COUNTKILL|MF_NOTDMATCH,      //flags
-        "oracle",       //namepointer
+        "ORACLE",       //namepointer
     },
 
     {       /*MT_PRIEST*/
@@ -3542,7 +3542,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         sfx_tend,       //activesound
         MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_GIVEQUEST|MF_FLOAT
         |MF_INCOMBAT|MF_NOBLOOD|MF_COUNTKILL|MF_NOTDMATCH,       //flags
-        "priest",       //namepointer
+        "PRIEST",       //namepointer
     },
 
     {       /*MT_SPECTRE_A*/
@@ -5153,7 +5153,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "medpatch",     //namepointer
+        "Med_patch",     //namepointer
     },
 
     {       /*MT_INV_MED2*/
@@ -5180,7 +5180,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "medical kit",      //namepointer
+        "Medical_kit",      //namepointer
     },
 
     {       /*MT_INV_MED3*/
@@ -5207,7 +5207,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "surgery kit",      //namepointer
+        "Surgery_Kit",      //namepointer
     },
 
     {       /*MT_DEGNINORE*/
@@ -5234,7 +5234,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_SOLID|MF_SHOOTABLE|MF_INCOMBAT|MF_NOBLOOD,        //flags
-        "degnin ore",       //namepointer
+        "Degnin_Ore",       //namepointer
     },
 
     {       /*MT_INV_ARMOR2*/
@@ -5261,7 +5261,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "metal armor",      //namepointer
+        "Metal_Armor",      //namepointer
     },
 
     {       /*MT_INV_ARMOR1*/
@@ -5288,7 +5288,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "leather armor",        //namepointer
+        "Leather_Armor",        //namepointer
     },
 
     {       /*MT_MISC_22*/
@@ -5369,7 +5369,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "base key",     //namepointer
+        "Base_Key",     //namepointer
     },
 
     {       /*MT_GOVSKEY*/
@@ -5396,7 +5396,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "govs key",     //namepointer
+        "Govs_Key",     //namepointer
     },
 
     {       /*MT_KEY_TRAVEL*/
@@ -5423,7 +5423,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "passcard",     //namepointer
+        "Passcard",     //namepointer
     },
 
     {       /*MT_KEY_ID_BLUE*/
@@ -5450,7 +5450,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "id badge",     //namepointer
+        "ID_Badge",     //namepointer
     },
 
     {       /*MT_PRISONKEY*/
@@ -5477,7 +5477,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_GIVEQUEST|MF_NOTDMATCH,        //flags
-        "prison key",       //namepointer
+        "Prison_Key",       //namepointer
     },
 
     {       /*MT_KEY_HAND*/
@@ -5504,7 +5504,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_GIVEQUEST|MF_NOTDMATCH,        //flags
-        "severed hand",     //namepointer
+        "Severed_Hand",     //namepointer
     },
 
     {       /*MT_POWER1KEY*/
@@ -5531,7 +5531,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "power1 key",       //namepointer
+        "Power1_Key",       //namepointer
     },
 
     {       /*MT_POWER2KEY*/
@@ -5558,7 +5558,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "power2 key",       //namepointer
+        "Power2_Key",       //namepointer
     },
 
     {       /*MT_POWER3KEY*/
@@ -5585,7 +5585,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "power3 key",       //namepointer
+        "Power3_Key",       //namepointer
     },
 
     {       /*MT_KEY_GOLD*/
@@ -5612,7 +5612,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "gold key",     //namepointer
+        "Gold_Key",     //namepointer
     },
 
     {       /*MT_KEY_ID_GOLD*/
@@ -5639,7 +5639,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "id card",      //namepointer
+        "ID_Card",      //namepointer
     },
 
     {       /*MT_KEY_SILVER*/
@@ -5666,7 +5666,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "silver key",       //namepointer
+        "Silver_Key",       //namepointer
     },
 
     {       /*MT_KEY_ORACLE*/
@@ -5693,7 +5693,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "oracle key",       //namepointer
+        "Oracle_Key",       //namepointer
     },
 
     {       /*MT_MILITARYID*/
@@ -5720,7 +5720,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "military id",      //namepointer
+        "Military_ID",      //namepointer
     },
 
     {       /*MT_KEY_ORDER*/
@@ -5747,7 +5747,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "order key",        //namepointer
+        "Order_Key",        //namepointer
     },
 
     {       /*MT_KEY_WAREHOUSE*/
@@ -5774,7 +5774,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "warehouse key",        //namepointer
+        "Warehouse_Key",        //namepointer
     },
 
     {       /*MT_KEY_BRASS*/
@@ -5801,7 +5801,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "brass key",        //namepointer
+        "Brass_Key",        //namepointer
     },
 
     {       /*MT_KEY_RED_CRYSTAL*/
@@ -5828,7 +5828,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "red crystal key",      //namepointer
+        "Red_Crystal_Key",      //namepointer
     },
 
     {       /*MT_KEY_BLUE_CRYSTAL*/
@@ -5855,7 +5855,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "blue crystal key",     //namepointer
+        "Blue_Crystal_Key",     //namepointer
     },
 
     {       /*MT_KEY_CHAPEL*/
@@ -5882,7 +5882,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "chapel key",       //namepointer
+        "Chapel_Key",       //namepointer
     },
 
     {       /*MT_CATACOMBKEY*/
@@ -5909,7 +5909,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_GIVEQUEST|MF_NOTDMATCH,        //flags
-        "catacomb key",     //namepointer
+        "Catacomb_Key",     //namepointer
     },
 
     {       /*MT_SECURITYKEY*/
@@ -5936,7 +5936,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "security key",     //namepointer
+        "Security_Key",     //namepointer
     },
 
     {       /*MT_KEY_CORE*/
@@ -5963,7 +5963,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "core key",     //namepointer
+        "Core_Key",     //namepointer
     },
 
     {       /*MT_KEY_MAULER*/
@@ -5990,7 +5990,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "mauler key",       //namepointer
+        "Mauler_Key",       //namepointer
     },
 
     {       /*MT_KEY_FACTORY*/
@@ -6017,7 +6017,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "factory key",      //namepointer
+        "Factory_Key",      //namepointer
     },
 
     {       /*MT_KEY_MINE*/
@@ -6044,7 +6044,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "mine key",     //namepointer
+        "MINE_KEY",     //namepointer
     },
 
     {       /*MT_NEWKEY5*/
@@ -6071,7 +6071,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "newkey 5",     //namepointer
+        "New_Key5",     //namepointer
     },
 
     {       /*MT_INV_SHADOWARMOR*/
@@ -6098,7 +6098,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "shadow armor",     //namepointer
+        "Shadow_armor",     //namepointer
     },
 
     {       /*MT_INV_SUIT*/
@@ -6125,7 +6125,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "environmental suit",       //namepointer
+        "Environmental_Suit",       //namepointer
     },
 
     {       /*MT_QUEST_UNIFORM*/
@@ -6152,7 +6152,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_GIVEQUEST,        //flags
-        "guard uniform",        //namepointer
+        "Guard_Uniform",        //namepointer
     },
 
     {       /*MT_QUEST_GUARD_UNIFORM*/
@@ -6179,7 +6179,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "officer's uniform",        //namepointer
+        "Officer's_Uniform",        //namepointer
     },
 
     {       /*MT_INV_SUPERMAP*/
@@ -6260,7 +6260,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_DROPPED,      //flags
-        "teleporter beacon",        //namepointer
+        "Teleporter_Beacon",        //namepointer
     },
 
     {       /*MT_INV_TARGETER*/
@@ -6287,7 +6287,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "targeter",     //namepointer
+        "Targeter",     //namepointer
     },
 
     {       /*MT_MONY_1*/
@@ -6341,7 +6341,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_DROPPED|MF_NOTDMATCH,      //flags
-        "10gold",       //namepointer
+        "10_gold",       //namepointer
     },
 
     {       /*MT_MONY_25*/
@@ -6368,7 +6368,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_DROPPED|MF_NOTDMATCH,      //flags
-        "25gold",       //namepointer
+        "25_gold",       //namepointer
     },
 
     {       /*MT_MONY_50*/
@@ -6395,7 +6395,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_DROPPED|MF_NOTDMATCH,      //flags
-        "50gold",       //namepointer
+        "50_gold",       //namepointer
     },
 
     {       /*MT_MONY_300*/
@@ -6422,7 +6422,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_GIVEQUEST|MF_DROPPED,     //flags
-        "300gold",      //namepointer
+        "300_gold",      //namepointer
     },
 
     {       /*MT_TOKEN_RING*/
@@ -6476,7 +6476,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_GIVEQUEST|MF_DROPPED,     //flags
-        "offeringchalice",      //namepointer
+        "Offering_Chalice",      //namepointer
     },
 
     {       /*MT_TOKEN_EAR*/
@@ -6530,7 +6530,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_NOTDMATCH,     //flags
-        "communitcator",        //namepointer
+        "Communicator",        //namepointer
     },
 
     {       /*MT_AGREN*/
@@ -6557,7 +6557,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "he-grenade rounds",        //namepointer
+        "HE-Grenade_Rounds",        //namepointer
     },
 
     {       /*MT_APGREN*/
@@ -6584,7 +6584,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "phoshorus-grenade rounds",     //namepointer
+        "Phosphorus-Grenade_Rounds",     //namepointer
     },
 
     {       /*MT_ACLIP*/
@@ -6611,7 +6611,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "clip of bullets",      //namepointer
+        "clip_of_bullets",      //namepointer
     },
 
     {       /*MT_AAMMOBOX*/
@@ -6638,7 +6638,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "box of bullets",       //namepointer
+        "ammo",       //namepointer
     },
 
     {       /*MT_AMINI*/
@@ -6665,7 +6665,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "mini missiles",        //namepointer
+        "mini_missiles",        //namepointer
     },
 
     {       /*MT_AMINIBOX*/
@@ -6692,7 +6692,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "crate of missiles",        //namepointer
+        "crate_of_missiles",        //namepointer
     },
 
     {       /*MT_ACELL*/
@@ -6719,7 +6719,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "energy pod",       //namepointer
+        "energy_pod",       //namepointer
     },
 
     {       /*MT_APCELL*/
@@ -6746,7 +6746,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "energy pack",      //namepointer
+        "energy_pack",      //namepointer
     },
 
     {       /*MT_APAROW*/
@@ -6773,7 +6773,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "poison bolts",     //namepointer
+        "poison_bolts",     //namepointer
     },
 
     {       /*MT_AAROW*/
@@ -6800,7 +6800,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "electric bolts",       //namepointer
+        "electric_bolts",       //namepointer
     },
 
     {       /*MT_INV_SATCHEL*/
@@ -6827,7 +6827,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "ammo satchel",     //namepointer
+        "ammo_satchel",     //namepointer
     },
 
     {       /*MT_PULSE*/
@@ -6854,7 +6854,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "assault gun",      //namepointer
+        "assault_gun",      //namepointer
     },
 
     {       /*MT_RIFLESTAND*/
@@ -6881,7 +6881,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "assault gun",      //namepointer
+        "assault_gun",      //namepointer
     },
 
     {       /*MT_FLAMETHROWER*/
@@ -6908,7 +6908,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "flame thrower",        //namepointer
+        "flame_thrower",        //namepointer
     },
 
     {       /*MT_TOKEN_FLAME_THROWER_PARTS*/
@@ -6935,7 +6935,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "flame thrower parts",      //namepointer
+        "flame_thrower_parts",      //namepointer
     },
 
     {       /*MT_MISSILELAUNCHER*/
@@ -6962,7 +6962,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "mini missile launcher",        //namepointer
+        "mini_missile_launcher",        //namepointer
     },
 
     {       /*MT_BLASTER*/
@@ -7043,7 +7043,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "grenade launcher",     //namepointer
+        "Grenade_launcher",     //namepointer
     },
 
     {       /*MT_SIGIL_A*/
@@ -7070,7 +7070,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "sigil",        //namepointer
+        "SIGIL",        //namepointer
     },
 
     {       /*MT_SIGIL_B*/
@@ -7097,7 +7097,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "sigil",        //namepointer
+        "SIGIL",        //namepointer
     },
 
     {       /*MT_SIGIL_C*/
@@ -7124,7 +7124,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "sigil",        //namepointer
+        "SIGIL",        //namepointer
     },
 
     {       /*MT_SIGIL_D*/
@@ -7151,7 +7151,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "sigil",        //namepointer
+        "SIGIL",        //namepointer
     },
 
     {       /*MT_SIGIL_E*/
@@ -7178,7 +7178,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "sigil",        //namepointer
+        "SIGIL",        //namepointer
     },
 
     {       /*MT_POWER_CRYSTAL*/
@@ -7232,7 +7232,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_ratact,     //activesound
         MF_INCOMBAT|MF_NOBLOOD|MF_COUNTKILL,        //flags
-        "rat buddy",        //namepointer
+        "rat_buddy",        //namepointer
     },
 
     {       /*MT_MISC_05*/
@@ -9582,7 +9582,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_GIVEQUEST|MF_DROPPED,     //flags
-        "broken power coupling",        //namepointer
+        "BROKEN_POWER_COUPLING",        //namepointer
     },
 
     {       /*MT_PILLAR10*/
@@ -9825,7 +9825,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "health",       //namepointer
+        "Ammo",       //namepointer
     },
 
     {       /*MT_TOKEN_HEALTH*/
@@ -9852,7 +9852,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "ammo",     //namepointer
+        "Health",     //namepointer
     },
 
     {       /*MT_TOKEN*/
@@ -9987,7 +9987,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_GIVEQUEST,        //flags
-        "prison pass",      //namepointer
+        "Prison_pass",      //namepointer
     },
 
     {       /*MT_TOKEN_DOOR3*/
@@ -10122,7 +10122,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "toughness",        //namepointer
+        "Toughness",        //namepointer
     },
 
     {       /*MT_TOKEN_ACCURACY*/
@@ -10149,7 +10149,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL,     //flags
-        "accuracy",     //namepointer
+        "Accuracy",     //namepointer
     },
 
     {       /*MT_TOKEN_ORACLE_PASS*/
@@ -10176,7 +10176,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         MF_SPECIAL|MF_GIVEQUEST,        //flags
-        "oracle pass",      //namepointer
+        "Oracle_Pass",      //namepointer
     },
 
     {       /*MT_TOKEN_QUEST1*/
@@ -10554,7 +10554,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         0,      //flags
-        "You've Blown Up the Crystal!",     //namepointer
+        "You've_Blown_Up_the_Crystal",     //namepointer
     },
 
     {       /*MT_TOKEN_QUEST15*/
@@ -10608,7 +10608,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         0,      //flags
-        "You've Blown Up the Gates!",       //namepointer
+        "You've_Blown_Up_the_Gates",       //namepointer
     },
 
     {       /*MT_TOKEN_QUEST17*/
@@ -10743,7 +10743,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         0,      //flags
-        "You've killed the Bishop!",        //namepointer
+        "You_Killed_the_Bishop!",        //namepointer
     },
 
     {       /*MT_TOKEN_QUEST22*/
@@ -10797,7 +10797,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         0,      //flags
-        "You've killed the Oracle!",        //namepointer
+        "You've_Killed_The_Oracle!",        //namepointer
     },
 
     {       /*MT_TOKEN_MACIL*/
@@ -10824,7 +10824,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         0,      //flags
-        "You've killed Macil!",     //namepointer
+        "You_Killed_Macil!",     //namepointer
     },
 
     {       /*MT_TOKEN_QUEST25*/
@@ -10878,7 +10878,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         0,      //flags
-        "You've killed the LoreMaster!",        //namepointer
+        "You've_Killed_The_Loremaster!",        //namepointer
     },
 
     {       /*MT_SECRQUEST*/
@@ -10905,7 +10905,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_None,       //activesound
         0,      //flags
-        "You've blowned Up the Computer!",      //namepointer
+        "You've_Blown_Up_the_Computer",      //namepointer
     },
 
     {       /*MT_TOKEN_QUEST28*/
