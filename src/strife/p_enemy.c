@@ -2874,7 +2874,6 @@ void A_BossDeath (mobj_t* mo)
 //
 void A_AcolyteSpecial(mobj_t* actor)
 {
-    int p;
     int i;
     thinker_t* th;
 
@@ -2883,12 +2882,11 @@ void A_AcolyteSpecial(mobj_t* actor)
 
     for(i = 0; i < MAXPLAYERS; i++)
     {
-        if(playeringame[i])
-            p++;
+        if(playeringame[i] && &players[i].health > 0)
+            break;
     }
 
-    // [STRIFE] TODO - whats the point of this?
-    if(p == 8)
+    if(i == 8)
         return;
 
     for(th = thinkercap.next; th != &thinkercap; th = th->next)
