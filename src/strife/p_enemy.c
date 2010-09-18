@@ -3010,7 +3010,7 @@ void A_TeleportBeacon(mobj_t* actor)
     fog = P_SpawnMobj(fog_x, fog_y, mobj->z, MT_TFOG);
     S_StartSound(fog, sfx_telept);
 
-    if((actor->health--) - 1 < 0)
+    if(--actor->health < 0)
         P_RemoveMobj(actor);
 }
 
