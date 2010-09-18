@@ -112,6 +112,9 @@ char dialoglastmsgbuffer[48];
 // Item to display to player when picked up or recieved
 char pickupstring[46];
 
+// Health based on gameskill given by the front's medic
+static const int healthamounts[] = { -100 , -75, -50, -50, -100 };
+
 //=============================================================================
 //
 // Dialog State Sets
@@ -740,9 +743,8 @@ boolean P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type)
 
     // health refill (at front HQ)
     case MT_TOKEN_HEALTH:
-        // [STRIFE] TODO - add healthamounts array
-        //if(!P_GiveBody(player, healthamounts[gameskill]))
-        //    return false;
+        if(!P_GiveBody(player, healthamounts[gameskill]))
+            return false;
         break;
 
     // alarm
@@ -1212,7 +1214,7 @@ void P_DialogDoChoice(int choice)
         {
             sprintf(mission_objective, "log%i", objective);
             objlump = W_CacheLumpName(mission_objective, PU_CACHE);
-            strncpy(mission_objective, objlump, 300);
+            strncpy(mission_objective, objlump, OBJECTIVE_LEN);
         }
         dialogplayer->message = message;
     }
