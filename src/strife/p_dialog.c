@@ -165,7 +165,7 @@ typedef struct rndmessage_s
 {
     const char *type_name;
     int nummessages;
-    const char *messages[MAXRNDMESSAGES];
+    char *messages[MAXRNDMESSAGES];
 } rndmessage_t;
 
 static rndmessage_t rndMessages[] = 
@@ -585,7 +585,7 @@ static dialogstateset_t *P_DialogGetStates(mobjtype_t type)
 static const char *P_DialogGetMsg(const char *message)
 {
     // if the message starts with "RANDOM"...
-    if(!strncasecmp(message, "RANDOM", 6))
+    if(!strncasecmp(message, DEH_String("RANDOM"), 6))
     {
         int i;
         const char *nameloc = message + 7;
@@ -599,7 +599,7 @@ static const char *P_DialogGetMsg(const char *message)
                 // found a match, so return a random message
                 int rnd = M_Random();
                 int nummessages = rndMessages[i].nummessages;
-                return rndMessages[i].messages[rnd % nummessages];
+                return DEH_String(rndMessages[i].messages[rnd % nummessages]);
             }
         }
     }
@@ -812,57 +812,57 @@ boolean P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type)
         // check for sprites if no specific type is found
         switch(sprnum)
         {
-        // bullets
+            // bullets
         case SPR_BLIT:
             ok = P_GiveAmmo(player, am_bullets, 1);
-        break;
+            break;
 
-        // box of bullets
+            // box of bullets
         case SPR_BBOX:
             ok = P_GiveAmmo(player, am_bullets, 5);
-        break;
+            break;
 
-        // missile
+            // missile
         case SPR_MSSL:
             ok = P_GiveAmmo(player, am_missiles, 1);
-        break;
+            break;
 
-        // box of missiles
+            // box of missiles
         case SPR_ROKT:
             ok = P_GiveAmmo(player, am_missiles, 5);
-        break;
+            break;
 
-        // battery
+            // battery
         case SPR_BRY1:
             ok = P_GiveAmmo(player, am_cell, 1);
-        break;
+            break;
 
-        // cell pack
+            // cell pack
         case SPR_CPAC:
             ok = P_GiveAmmo(player, am_cell, 5);
-        break;
+            break;
 
-        // poison bolts
+            // poison bolts
         case SPR_PQRL:
             ok = P_GiveAmmo(player, am_poisonbolts, 5);
-        break;
+            break;
 
-        // electric bolts
+            // electric bolts
         case SPR_XQRL:
             ok = P_GiveAmmo(player, am_elecbolts, 5);
-        break;
+            break;
 
-        // he grenades
+            // he grenades
         case SPR_GRN1:
             ok = P_GiveAmmo(player, am_hegrenades, 1);
-        break;
+            break;
 
-        // wp grenades
+            // wp grenades
         case SPR_GRN2:
             ok = P_GiveAmmo(player, am_wpgrenades, 1);
-        break;
+            break;
 
-        // backpack
+            // backpack
         case SPR_BKPK:
             if(!player->backpack)
             {
@@ -872,33 +872,33 @@ boolean P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type)
                 player->backpack = true;
             }
             for(i = 0; i < NUMAMMO; i++)
-	        P_GiveAmmo(player, i, 1);
-        break;
+                P_GiveAmmo(player, i, 1);
+            break;
 
-        // coin
+            // coin
         case SPR_COIN:
             P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
-        break;
+            break;
 
-        // gold 10
+            // gold 10
         case SPR_CRED:
             for(i = 0; i < 10; i++)
                 P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
-        break;
+            break;
 
-        // gold 25
+            // gold 25
         case SPR_SACK:
             for(i = 0; i < 25; i++)
                 P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
-        break;
+            break;
 
-        // gold 50
+            // gold 50
         case SPR_CHST:
             for(i = 0; i < 50; i++)
                 P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
-        break;
+            break;
 
-        // ???
+            // ???
         case SPR_HELT:
             P_GiveInventoryItem(player, SPR_HELT, MT_TOKEN_TOUGHNESS);
             P_GiveInventoryItem(player, SPR_GUNT, MT_TOKEN_ACCURACY);
@@ -906,82 +906,82 @@ boolean P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type)
             // [STRIFE] TODO - verify
             for(i = 0; i < 5 * player->numinventory + 300; i++)
                 P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
-        break;
+            break;
 
-        // metal armor
+            // metal armor
         case SPR_ARM1:
-           if(!P_GiveArmor(player, -2))
-               P_GiveInventoryItem(player, sprnum, type);
-        break;
+            if(!P_GiveArmor(player, -2))
+                P_GiveInventoryItem(player, sprnum, type);
+            break;
 
-        // leather armor
+            // leather armor
         case SPR_ARM2:
             if(!P_GiveArmor(player, -1))
                 P_GiveInventoryItem(player, sprnum, type);
-        break;
+            break;
 
-        // communicator
+            // communicator
         case SPR_COMM:
             if(!P_GivePower(player, pw_communicator))
                 return false;
-        break;
+            break;
 
-        // map
+            // map
         case SPR_PMAP:
             if(!P_GivePower(player, pw_allmap))
                 return false;
-        break;
+            break;
 
-        // rifle
+            // rifle
         case SPR_RIFL:
             if(player->weaponowned[wp_rifle])
                 return false;
 
             if(!P_GiveWeapon(player, wp_rifle, false))
                 return false;
-        break;
+            break;
 
-        // flame thrower
+            // flame thrower
         case SPR_FLAM:
             if(player->weaponowned[wp_flame])
                 return false;
 
             if(!P_GiveWeapon(player, wp_flame, false))
                 return false;
-        break;
+            break;
 
-        // missile launcher
+            // missile launcher
         case SPR_MMSL:
             if(player->weaponowned[wp_missile])
                 return false;
 
             if(!P_GiveWeapon(player, wp_missile, false))
                 return false;
-        break;
+            break;
 
-        // mauler
+            // mauler
         case SPR_TRPD:
             if(player->weaponowned[wp_mauler])
                 return false;
 
             if(!P_GiveWeapon(player, wp_mauler, false))
                 return false;
-        break;
+            break;
 
-        // crossbow
+            // crossbow
         case SPR_CBOW:
             if(player->weaponowned[wp_elecbow])
                 return false;
 
             if(!P_GiveWeapon(player, wp_elecbow, false))
                 return false;
-        break;
+            break;
 
-        // misc item
+            // misc item
         default:
             if(!P_GiveInventoryItem(player, sprnum, type))
                 return false;
-        break;
+            break;
         }
         break;
     }
@@ -1118,7 +1118,7 @@ static void P_DialogDrawer(void)
             finaly = 199 - height; // height it will bump down to if necessary.
 
         // draw divider
-        M_WriteText(42, finaly - 6, "______________________________");
+        M_WriteText(42, finaly - 6, DEH_String("______________________________"));
 
         dialogmenu.y = finaly + 6;
         y = 0;
@@ -1126,9 +1126,17 @@ static void P_DialogDrawer(void)
         // draw the menu items
         for(i = 0; i < dialogmenu.numitems - 1; i++)
         {
-            sprintf(choicetext, "%d) %s", i + 1, currentdialog->choices[i].text);
+            DEH_snprintf(choicetext, sizeof(choicetext),
+                         "%d) %s", i + 1, currentdialog->choices[i].text);
+            
+            // alternate text for items that need money
             if(currentdialog->choices[i].needamounts[0] > 0)
-                sprintf(choicetext, "%s for %d", choicetext, currentdialog->choices[i].needamounts[0]);
+            {
+                DEH_snprintf(choicetext, sizeof(choicetext),
+                             "%s for %d", 
+                             choicetext, 
+                             currentdialog->choices[i].needamounts[0]);
+            }
 
             M_WriteText(dialogmenu.x, dialogmenu.y + 3 + y, choicetext);
             y += 19;
@@ -1195,7 +1203,7 @@ void P_DialogDoChoice(int choice)
             }
         }
         else
-            message = "You seem to have enough!";
+            message = DEH_String("You seem to have enough!");
 
         // store next dialog into the talking actor
         nextdialog = currentchoice->next;
@@ -1217,7 +1225,7 @@ void P_DialogDoChoice(int choice)
 
         if((objective = currentchoice->objective))
         {
-            sprintf(mission_objective, "log%i", objective);
+            DEH_snprintf(mission_objective, OBJECTIVE_LEN, "log%i", objective);
             objlump = W_CacheLumpName(mission_objective, PU_CACHE);
             strncpy(mission_objective, objlump, OBJECTIVE_LEN);
         }
@@ -1346,9 +1354,9 @@ void P_DialogStart(player_t *player)
     {
         // use a fallback:
         if(mobjinfo[linetarget->type].name)
-            dialogname = mobjinfo[linetarget->type].name; // mobjtype name
+            dialogname = DEH_String(mobjinfo[linetarget->type].name); // mobjtype name
         else
-            dialogname = "Person";  // default name
+            dialogname = DEH_String("Person"); // default name - like Joe in Doom 3 :P
     }
 
     // setup number of choices to choose from
@@ -1388,16 +1396,17 @@ void P_DialogStart(player_t *player)
     switch(rnd)
     {
     case 2:
-        byetext = "BYE!";
+        byetext = DEH_String("BYE!");
         break;
     case 1:
-        byetext = "Thanks, Bye!";
+        byetext = DEH_String("Thanks, Bye!");
         break;
     case 0:
-        byetext = "See you later!";
+        byetext = DEH_String("See you later!");
         break;
     }
 
-    sprintf(dialoglastmsgbuffer, "%d) %s", i + 1, byetext);
+    DEH_snprintf(dialoglastmsgbuffer, sizeof(dialoglastmsgbuffer),
+                 "%d) %s", i + 1, byetext);
 }
 

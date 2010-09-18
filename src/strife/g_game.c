@@ -1248,7 +1248,6 @@ void G_PlayerReborn (int player)
 
     // villsa [STRIFE]
     strncpy(mission_objective, "Find help", OBJECTIVE_LEN);
-		 
 }
 
 //

@@ -305,13 +305,13 @@ static void F_DoSlideShow(void)
 
     case SLIDE_SIGIL1: // state #5
         slideshow_panel = DEH_String("SS3F1");
-        I_StartVoice("MAC16");
+        I_StartVoice(DEH_String("MAC16"));
         slideshow_state = SLIDE_SIGIL2;
         slideshow_tics = 350;
         break;
     case SLIDE_SIGIL2: // state #6
         slideshow_panel = DEH_String("SS3F2");
-        I_StartVoice("MAC17");
+        I_StartVoice(DEH_String("MAC17"));
         slideshow_state = SLIDE_SIGIL3;
         slideshow_tics = 420;
         break;

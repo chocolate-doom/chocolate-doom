@@ -3087,11 +3087,8 @@ void A_AcolyteSpecial(mobj_t* actor)
             for(i = 0; i < MAXPLAYERS; i++)
                 P_GiveItemToPlayer(&players[i], SPR_TOKN, MT_TOKEN_QUEST7);
 
-            // play voice
-            I_StartVoice(DEH_String("VOC14"));
-
-            // give objective
-            GiveObjective("LOG14", 0);
+            // play voice, give objective
+            GiveVoiceObjective("VOC14", "LOG14", 0);
         }
     }
 }
