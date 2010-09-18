@@ -832,11 +832,8 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
             EV_DoFloor(&junk, lowerFloor);
 
             I_StartVoice(DEH_String("VOC13"));
-            if(W_CheckNumForName(DEH_String("LOG13")) != -1)
-            {
-                strncpy(mission_objective,
-                    W_CacheLumpName(DEH_String("LOG13"), PU_CACHE), OBJECTIVE_LEN);
-            }
+            GiveObjective("LOG13");
+
             item = MT_COUPLING_BROKEN;
             players[0].questflags |= (1 << (mobjinfo[MT_COUPLING].speed - 1));
             break;

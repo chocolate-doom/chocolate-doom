@@ -45,6 +45,11 @@
 
 extern char mission_objective[OBJECTIVE_LEN];
 
+// villsa - convenient macro for giving objective logs to player
+#define GiveObjective(x) \
+    if(W_CheckNumForName(DEH_String(x)) != -1)\
+{ strncpy(mission_objective, W_CacheLumpName(DEH_String(x), PU_CACHE), OBJECTIVE_LEN); }
+
 typedef struct mapdlgchoice_s
 {
     int  giveitem;                      // item given when successful
@@ -59,14 +64,14 @@ typedef struct mapdlgchoice_s
 
 typedef struct mapdialog_s
 {
-    int speakerid;                  // script ID# for mobjtype that will use this dialog
-    int dropitem;                   // item to drop if that thingtype is killed
-    int checkitem[MDLG_MAXITEMS];   // item(s) needed to see this dialog
-    int jumptoconv;                 // conversation to jump to when... ?
-    char name[MDLG_NAMELEN];        // name of speaker
-    char voice[MDLG_LUMPLEN];       // voice file to play
-    char backpic[MDLG_LUMPLEN];     // backdrop pic for character, if any
-    char text[MDLG_TEXTLEN];        // main message text
+    int speakerid;                      // script ID# for mobjtype that will use this dialog
+    int dropitem;                       // item to drop if that thingtype is killed
+    int checkitem[MDLG_MAXITEMS];       // item(s) needed to see this dialog
+    int jumptoconv;                     // conversation to jump to when... ?
+    char name[MDLG_NAMELEN];            // name of speaker
+    char voice[MDLG_LUMPLEN];           // voice file to play
+    char backpic[MDLG_LUMPLEN];         // backdrop pic for character, if any
+    char text[MDLG_TEXTLEN];            // main message text
     
     // options that this dialog gives the player
     mapdlgchoice_t choices[MDLG_MAXCHOICES];

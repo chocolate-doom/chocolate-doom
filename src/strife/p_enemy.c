@@ -31,13 +31,11 @@
 
 #include "m_random.h"
 #include "i_system.h"
-
 #include "doomdef.h"
 #include "p_local.h"
-
 #include "s_sound.h"
-
 #include "g_game.h"
+#include "z_zone.h"     // villsa [STRIFE]
 
 // State.
 #include "doomstat.h"
@@ -2116,78 +2114,80 @@ void A_SpawnSparkPuff(mobj_t* actor)
 // A_BspiAttack, A_TroopAttack, A_SargAttack, A_HeadAttack, A_CyberAttack,
 // A_BruisAttack, A_SkelMissile
 
-int	TRACEANGLE = 0xc000000;
 
+int TRACEANGLE = 0xE000000; // villsa [STRIFE] changed from 0xC000000 to 0xE000000
+
+//
+// A_Tracer
+//
 void A_Tracer (mobj_t* actor)
 {
-    // villsa [STRIFE] TODO - update with strife version
-/*    angle_t	exact;
-    fixed_t	dist;
-    fixed_t	slope;
-    mobj_t*	dest;
-    mobj_t*	th;
-		
-    if (gametic & 3)
-	return;
-    
+    angle_t exact;
+    fixed_t dist;
+    fixed_t slope;
+    mobj_t* dest;
+    //mobj_t* th;
+
+    // villsa [STRIFE] not used
+    /*if(gametic & 3)
+        return;*/
+
     // spawn a puff of smoke behind the rocket		
-    P_SpawnPuff (actor->x, actor->y, actor->z);
-	
+    /*P_SpawnPuff(actor->x, actor->y, actor->z);
+
     th = P_SpawnMobj (actor->x-actor->momx,
-		      actor->y-actor->momy,
-		      actor->z, MT_SMOKE);
-    
+        actor->y-actor->momy,
+        actor->z, MT_SMOKE);
+
     th->momz = FRACUNIT;
     th->tics -= P_Random()&3;
     if (th->tics < 1)
-	th->tics = 1;
-    
+        th->tics = 1;*/
+
     // adjust direction
     dest = actor->tracer;
-	
-    if (!dest || dest->health <= 0)
-	return;
-    
-    // change angle	
-    exact = R_PointToAngle2 (actor->x,
-			     actor->y,
-			     dest->x,
-			     dest->y);
 
-    if (exact != actor->angle)
+    if(!dest || dest->health <= 0)
+        return;
+
+    // change angle	
+    exact = R_PointToAngle2(actor->x, actor->y, dest->x, dest->y);
+
+    if(exact != actor->angle)
     {
-	if (exact - actor->angle > 0x80000000)
-	{
-	    actor->angle -= TRACEANGLE;
-	    if (exact - actor->angle < 0x80000000)
-		actor->angle = exact;
-	}
-	else
-	{
-	    actor->angle += TRACEANGLE;
-	    if (exact - actor->angle > 0x80000000)
-		actor->angle = exact;
-	}
+        // villsa [STRIFE] slightly different algorithm
+        if(exact - actor->angle <= 0x80000000)
+        {
+            actor->angle += TRACEANGLE;
+            if(exact - actor->angle > 0x80000000)
+                actor->angle = exact;
+        }
+        else
+        {
+            actor->angle -= TRACEANGLE;
+            if (exact - actor->angle < 0x80000000)
+                actor->angle = exact;
+        }
     }
-	
+
     exact = actor->angle>>ANGLETOFINESHIFT;
     actor->momx = FixedMul (actor->info->speed, finecosine[exact]);
     actor->momy = FixedMul (actor->info->speed, finesine[exact]);
-    
+
     // change slope
     dist = P_AproxDistance (dest->x - actor->x,
-			    dest->y - actor->y);
-    
+        dest->y - actor->y);
+
     dist = dist / actor->info->speed;
 
     if (dist < 1)
-	dist = 1;
+        dist = 1;
     slope = (dest->z+40*FRACUNIT - actor->z) / dist;
 
     if (slope < actor->momz)
-	actor->momz -= FRACUNIT/8;
+        actor->momz -= FRACUNIT/8;
     else
-	actor->momz += FRACUNIT/8;*/
+        actor->momz += FRACUNIT/8;
 }
 
 //
@@ -2820,9 +2820,42 @@ void A_HeadChunk(mobj_t* actor)
     mo->momz = (P_Random() & 7) << FRACBITS;
 }
 
+//
+// A_BurnSpread
+// villsa [STRIFE] - new codepointer
+//
 void A_BurnSpread(mobj_t* actor)
 {
+    int t;
+    mobj_t* mo;
+    fixed_t x;
+    fixed_t y;
 
+    actor->momz -= (8*FRACUNIT);
+
+    t = P_Random();
+    actor->momx += ((t & 3) - (P_Random() & 3)) << FRACBITS;
+    t = P_Random();
+    actor->momy += ((t & 3) - (P_Random() & 3)) << FRACBITS;
+
+    S_StartSound(actor, sfx_lgfire);
+
+    if(actor->flags & MF_DROPPED)
+        return; // not the parent
+
+    x = actor->x + (((P_Random() + 12) & 31) << FRACBITS);
+    y = actor->y + (((P_Random() + 12) & 31) << FRACBITS);
+
+    // spawn child
+    mo = P_SpawnMobj(x, y, actor->z + (4*FRACUNIT), MT_PFLAME);
+
+    t = P_Random();
+    mo->momx += ((t & 7) - (P_Random() & 7)) << FRACBITS;
+    t = P_Random();
+    mo->momy += ((t & 7) - (P_Random() & 7)) << FRACBITS;
+    mo->momz -= FRACUNIT;
+    mo->flags |= MF_DROPPED;
+    mo->reactiontime = (P_Random() & 3) + 2;
 }
 
 //
@@ -2835,9 +2868,52 @@ void A_BossDeath (mobj_t* mo)
     // villsa [STRIFE] TODO - update to strife version
 }
 
+//
+// A_AcolyteSpecial
+// villsa [STRIFE] - new codepointer
+//
 void A_AcolyteSpecial(mobj_t* actor)
 {
-   // STRIFE-TODO
+    int p;
+    int i;
+    thinker_t* th;
+
+    if(actor->type != MT_GUARD8)
+        return; // must be MT_GUARD8
+
+    for(i = 0; i < MAXPLAYERS; i++)
+    {
+        if(playeringame[i])
+            p++;
+    }
+
+    // [STRIFE] TODO - whats the point of this?
+    if(p == 8)
+        return;
+
+    for(th = thinkercap.next; th != &thinkercap; th = th->next)
+    {
+        if(th->function.acp1 == P_MobjThinker)
+        {
+            mobj_t *mo = (mobj_t *)th;
+
+            if(mo != actor && mo->type == actor->type && mo->health > 0)
+                return;
+
+            if(mo->type != MT_GUARD8)
+                continue;   // not MT_GUARD8
+
+            // give quest token #7 to all players
+            for(i = 0; i < MAXPLAYERS; i++)
+                P_GiveItemToPlayer(&players[i], SPR_TOKN, MT_TOKEN_QUEST7);
+
+            // play voice
+            I_StartVoice(DEH_String("VOC14"));
+
+            // give objective
+            GiveObjective("LOG14");
+        }
+    }
 }
 
 //
