@@ -64,6 +64,7 @@ ticcmd_t        netcmds[MAXPLAYERS][BACKUPTICS];
 int         	nettics[MAXPLAYERS];
 
 int             maketic;
+int             recvtic;
 
 // Used for original sync code.
 
@@ -212,6 +213,97 @@ void NetUpdate (void)
 	++maketic;
         nettics[consoleplayer] = maketic;
     }
+}
+
+// Called when a player leaves the game
+
+static void D_PlayerQuitGame(player_t *player)
+{
+    static char exitmsg[80];
+    unsigned int player_num;
+
+    player_num = player - players;
+
+    // Do this the same way as Vanilla Doom does, to allow dehacked
+    // replacements of this message
+
+    strncpy(exitmsg, DEH_String("Player 1 left the game"), sizeof(exitmsg));
+    exitmsg[sizeof(exitmsg) - 1] = '\0';
+
+    exitmsg[7] += player_num;
+
+    playeringame[player_num] = false;
+    players[consoleplayer].message = exitmsg;
+
+    // TODO: check if it is sensible to do this:
+
+    if (demorecording) 
+    {
+        G_CheckDemoStatus ();
+    }
+}
+
+static void D_Disconnected(void)
+{
+    int i;
+
+    // In drone mode, the game cannot continue once disconnected.
+
+    if (drone)
+    { 
+        I_Error("Disconnected from server in drone mode.");
+    }
+
+    // disconnected from server
+
+    printf("Disconnected from server.\n");
+
+    for (i=0; i<MAXPLAYERS; ++i)
+    {
+        if (i != consoleplayer && playeringame[i])
+        {
+            D_PlayerQuitGame(&players[i]);
+        }
+    }
+}
+
+//
+// Invoked by the network engine when a complete set of ticcmds is
+// available.
+//
+
+void D_ReceiveTic(ticcmd_t *ticcmds, boolean *players_mask)
+{
+    int i;
+
+    // Disconnected from server?
+
+    if (ticcmds == NULL && players_mask == NULL)
+    {
+        D_Disconnected();
+        return;
+    }
+
+    for (i=0; i<MAXPLAYERS; ++i)
+    {
+        if (!drone && i == consoleplayer)
+        {
+            // This is us.
+        }
+        else if (players_mask[i])
+        {
+            netcmds[i][recvtic % BACKUPTICS] = ticcmds[i];
+            nettics[i] = recvtic;
+        }
+        else if (playeringame[i])
+        {
+            // Player quit the game.
+
+            D_PlayerQuitGame(&players[i]);
+        }
+    }
+
+    ++recvtic;
 }
 
 //

@@ -46,7 +46,8 @@
 #include "w_wad.h"
 
 #include "doom/doomstat.h"
-#include "doom/g_game.h"
+
+extern void D_ReceiveTic(ticcmd_t *ticcmds, boolean *playeringame);
 
 typedef enum
 {
@@ -188,53 +189,11 @@ static fixed_t average_latency;
 
 #define NET_CL_ExpandTicNum(b) NET_ExpandTicNum(recvwindow_start, (b))
 
-// Called when a player leaves the game
-
-static void NET_CL_PlayerQuitGame(player_t *player)
-{
-    static char exitmsg[80];
-
-    // Do this the same way as Vanilla Doom does, to allow dehacked
-    // replacements of this message
-
-    strncpy(exitmsg, DEH_String("Player 1 left the game"), sizeof(exitmsg));
-    exitmsg[sizeof(exitmsg) - 1] = '\0';
-
-    exitmsg[7] += player - players;
-
-    players[consoleplayer].message = exitmsg;
-
-    // TODO: check if it is sensible to do this:
-
-    if (demorecording) 
-    {
-        G_CheckDemoStatus ();
-    }
-}
-
 // Called when we become disconnected from the server
 
 static void NET_CL_Disconnected(void)
 {
-    int i;
-
-    // In drone mode, the game cannot continue once disconnected.
-
-    if (drone)
-    { 
-        I_Error("Disconnected from server in drone mode.");
-    }
-
-    // disconnected from server
-
-    players[consoleplayer].message = "Disconnected from server";
-    printf("Disconnected from server.\n");
-
-    for (i=0; i<MAXPLAYERS; ++i)
-    {
-        if (i != consoleplayer)
-            playeringame[i] = false;
-    }
+    D_ReceiveTic(NULL, NULL);
 }
 
 // Expand a net_full_ticcmd_t, applying the diffs in cmd->cmds as
@@ -242,7 +201,8 @@ static void NET_CL_Disconnected(void)
 // the d_net.c structures (netcmds/nettics) and save the new ticcmd
 // back into recvwindow_cmd_base.
 
-static void NET_CL_ExpandFullTiccmd(net_full_ticcmd_t *cmd, unsigned int seq)
+static void NET_CL_ExpandFullTiccmd(net_full_ticcmd_t *cmd, unsigned int seq,
+                                    ticcmd_t *ticcmds)
 {
     int latency;
     fixed_t adjustment;
@@ -309,33 +269,20 @@ static void NET_CL_ExpandFullTiccmd(net_full_ticcmd_t *cmd, unsigned int seq)
             continue;
         }
         
-        if (playeringame[i] && !cmd->playeringame[i])
-        {
-            NET_CL_PlayerQuitGame(&players[i]);
-        }
-        
-        playeringame[i] = cmd->playeringame[i];
-
-        if (playeringame[i])
+        if (cmd->playeringame[i])
         {
             net_ticdiff_t *diff;
-            ticcmd_t ticcmd;
 
             diff = &cmd->cmds[i];
 
             // Use the ticcmd diff to patch the previous ticcmd to
             // the new ticcmd
 
-            NET_TiccmdPatch(&recvwindow_cmd_base[i], diff, &ticcmd);
-
-            // Save in d_net.c structures
-
-            netcmds[i][nettics[i] % BACKUPTICS] = ticcmd;
-            ++nettics[i];
+            NET_TiccmdPatch(&recvwindow_cmd_base[i], diff, &ticcmds[i]);
 
             // Store a copy for next time
 
-            recvwindow_cmd_base[i] = ticcmd;
+            recvwindow_cmd_base[i] = ticcmds[i];
         }
     }
 }
@@ -344,11 +291,15 @@ static void NET_CL_ExpandFullTiccmd(net_full_ticcmd_t *cmd, unsigned int seq)
 
 static void NET_CL_AdvanceWindow(void)
 {
+    ticcmd_t ticcmds[MAXPLAYERS];
+
     while (recvwindow[0].active)
     {
         // Expand tic diff data into d_net.c structures
 
-        NET_CL_ExpandFullTiccmd(&recvwindow[0].cmd, recvwindow_start);
+        NET_CL_ExpandFullTiccmd(&recvwindow[0].cmd, recvwindow_start,
+                                ticcmds);
+        D_ReceiveTic(ticcmds, recvwindow[0].cmd.playeringame);
 
         // Advance the window
 
