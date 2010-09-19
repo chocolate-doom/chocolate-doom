@@ -57,6 +57,7 @@
 
 // Needs access to LFB.
 #include "v_video.h"
+#include "i_swap.h"
 
 // State.
 #include "doomstat.h"
@@ -64,6 +65,7 @@
 // Data.
 #include "dstrings.h"
 #include "sounds.h"
+#include "m_controls.h"
 
 //
 // STATUS BAR DATA
@@ -81,8 +83,6 @@
 
 // Location of status bar
 #define ST_X                    0
-
-#define ST_FX                   143
 
 // Location and size of statistics,
 //  justified according to widget type.
@@ -210,8 +210,8 @@
 // * Removed more faces, keyboxes, st_randomnumber
 
 // graphics are drawn to a backing screen and blitted to the real screen
-byte                   *st_backing_screen;
-	    
+//byte                   *st_backing_screen;  - [STRIFE]: Unused.
+
 // main player in game
 static player_t*        plyr; 
 
@@ -233,12 +233,14 @@ static boolean          st_displaypopup;
 
 // haleyjd 09/01/10: [STRIFE] sbar -> invback
 // main inventory background and other bits
-static patch_t*         invback;  // main bar
-static patch_t*         invtop;   // top bit
-static patch_t*         invpop;   // popup frame with text
-static patch_t*         invpop2;  // plain popup frame
-static patch_t*         invpbak;  // popup background w/details
-static patch_t*         invpbak2; // plain popup background
+static patch_t*         invback;   // main bar
+static patch_t*         stback;    // multiplayer background
+static patch_t*         invtop;    // top bit
+static patch_t*         invpop;    // popup frame with text
+static patch_t*         invpop2;   // plain popup frame
+static patch_t*         invpbak;   // popup background w/details
+static patch_t*         invpbak2;  // plain popup background
+static patch_t*         invcursor; // cursor
 
 // haleyjd 09/01/10: [STRIFE] Replaced tallnum, shortnum w/inv fonts
 // 0-9, green numbers
@@ -289,6 +291,9 @@ cheatseq_t	cheat_powerup[7] = // STRIFE-TODO
 
 //cheatseq_t cheat_choppers = CHEAT("idchoppers", 0); [STRIFE] no such thing
 
+// Forward declarations:
+void ST_drawNumFontY(int x, int y, int num);
+void ST_drawNumFontY2(int x, int y, int num);
 
 //
 // STATUS BAR CODE
@@ -299,21 +304,67 @@ void ST_refreshBackground(void)
 {
     if (st_statusbaron)
     {
-        V_UseBuffer(st_backing_screen);
+        int firstinventory, icon_x, num_x, i, numdrawn;
 
-        V_DrawPatch(ST_X, 0, invback);
+        // haleyjd 09/19/10: No backscreen caching in Strife.
+        //V_UseBuffer(st_backing_screen);
 
-        // haleyjd 09/01/10: STRIFE-TODO: status bar stuff
-        /*
-        if (netgame)
-            V_DrawPatch(ST_FX, 0, faceback);
-        */
-        V_RestoreBuffer();
+        // TODO: only sometimes drawing?
 
-        V_CopyRect(ST_X, 0, st_backing_screen, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y);
+        plyr->st_update = false;
+
+        // draw main status bar
+        V_DrawPatch(ST_X, ST_Y, invback);
+
+        // draw multiplayer armor backdrop if netgame
+        if(netgame)
+            V_DrawPatch(ST_X, 173, stback);
+
+        if(plyr->inventorycursor >= 6)
+            firstinventory = plyr->inventorycursor - 5;
+        else
+            firstinventory = 0;
+
+        // Draw cursor.
+        if(plyr->numinventory)
+        {
+            V_DrawPatch(35 * (plyr->inventorycursor - firstinventory) + 42,
+                        180, invcursor);
+        }
+
+        // Draw inventory bar
+        for(num_x = 68, icon_x = 48, i = firstinventory, numdrawn = 0; 
+            num_x < 278; 
+            num_x += 35, icon_x += 35, i++, numdrawn++)
+        {
+            int lumpnum;
+            patch_t *patch;
+            char iconname[8];
+
+            if(plyr->numinventory <= numdrawn)
+                break;
+            
+            DEH_snprintf(iconname, sizeof(iconname), "I_%s",
+                         DEH_String(sprnames[plyr->inventory[i].sprite]));
+
+            lumpnum = W_CheckNumForName(iconname);
+            if(lumpnum == -1)
+                patch = W_CacheLumpName(DEH_String("STCFN063"), PU_CACHE);
+            else
+                patch = W_CacheLumpNum(lumpnum, PU_STATIC);
+
+            V_DrawPatch(icon_x, 182, patch);
+            ST_drawNumFontY(num_x, 191, plyr->inventory[i].amount);
+        }
+
+        // haleyjd 09/19/10: nope, not in Strife.
+        //V_RestoreBuffer();
+        //V_CopyRect(ST_X, 0, st_backing_screen, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y);
     }
 }
 
+// [STRIFE]
+static char st_msgbuf[52];
 
 // Respond to keyboard input events,
 //  intercept cheats.
@@ -346,6 +397,47 @@ ST_Responder (event_t* ev)
     // if a user keypress...
     if(ev->type != ev_keydown)
         return false;
+
+    // keydown events
+    if(ev->data2 == key_invquery) // inventory query
+    {
+        inventory_t *inv = &(plyr->inventory[plyr->inventorycursor]);
+        if(inv->amount)
+        {
+            DEH_snprintf(st_msgbuf, sizeof(st_msgbuf), "%d %s",
+                         inv->amount, 
+                         DEH_String(mobjinfo[inv->type].name));
+            plyr->message = st_msgbuf;
+        }
+    }
+
+    // TODO: popup stuff here
+    
+    if(ev->data2 == key_invleft) // inventory move left
+    {
+        if(plyr->inventorycursor > 0)
+            plyr->inventorycursor--;
+        return true;
+    }
+    else if(ev->data2 == key_invright)
+    {
+        if(plyr->inventorycursor < plyr->numinventory - 1)
+            plyr->inventorycursor++;
+        return true;
+    }
+    else if(ev->data2 == key_invhome)
+    {
+        plyr->inventorycursor = 0;
+        return true;
+    }
+    else if(ev->data2 == key_invend)
+    {
+        if(plyr->numinventory)
+            plyr->inventorycursor = plyr->numinventory - 1;
+        else 
+            plyr->inventorycursor = 0;
+        return true;
+    }
 
     //
     // [STRIFE] Cheats which are allowed in netgames/demos:
@@ -735,6 +827,47 @@ void ST_drawWidgets(boolean refresh)
 }
 */
 
+//
+// ST_drawNumFontY
+//
+// haleyjd 09/19/10: [STRIFE] New function
+// Draws a small yellow number for inventory etc.
+//
+void ST_drawNumFontY(int x, int y, int num)
+{
+    if(!num)
+        V_DrawPatch(x, y, invfonty[0]);
+    
+    while(num)
+    {
+        V_DrawPatch(x, y, invfonty[num % 10]);
+        x -= SHORT(invfonty[0]->width) + 1;
+        num /= 10;
+    }
+}
+
+//
+// ST_drawNumFontY2
+//
+// haleyjd 09/19/10: [STRIFE] New function
+// As above, but turns negative numbers into zero.
+//
+void ST_drawNumFontY2(int x, int y, int num)
+{
+    if(!num)
+        V_DrawPatch(x, y, invfonty[0]);
+
+    if(num < 0)
+        num = 0;
+
+    while(num)
+    {
+        V_DrawPatchDirect(x, y, invfonty[num % 10]);
+        x -= SHORT(invfonty[0]->width) + 1;
+        num /= 10;
+    }
+}
+
 void ST_doRefresh(void)
 {
     st_firsttime = false;
@@ -759,9 +892,9 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
     // haleyjd 09/01/10: STRIFE-TODO: work out statbar details
 
     // If just after ST_Start(), refresh all
-    if (st_firsttime) ST_doRefresh();
+    /*if (st_firsttime)*/ ST_doRefresh();
     // Otherwise, update as little as possible
-    else ST_diffDraw();
+    /*else*/ ST_diffDraw();
 }
 
 //
@@ -780,11 +913,12 @@ boolean ST_DrawExternal(void)
     }
     else
     {
-        // STRIFE-TODO:
-        // ST_drawNumFontY2(15, 194, plyr->health);
-        // v5 = weaponinfo[plyr->readyweapon].ammo;
-        // if (v5 != am_noammo)
-        //     ST_drawNumFontY2(310, 194, plyr->ammo[v5]);
+        ammotype_t ammo;
+
+        ST_drawNumFontY2(15, 194, plyr->health);
+        ammo = weaponinfo[plyr->readyweapon].ammo;
+        if (ammo != am_noammo)
+            ST_drawNumFontY2(310, 194, plyr->ammo[ammo]);
     }
 
     if(!st_displaypopup)
@@ -822,8 +956,12 @@ static void ST_loadUnloadGraphics(load_callback_t callback)
         callback(namebuf, &invfonty[i]);
     }
 
-    // haleyjd 08/31/10: [STRIFE] 
-    // * No face - STRIFE-TODO: but there are similar color patches, which appear behind the armor in deathmatch...
+    // haleyjd 09/19/10: [STRIFE] 
+    // * No face, but there is this patch, which appears behind the armor
+    DEH_snprintf(namebuf, 9, "STBACK0%d", consoleplayer + 1);
+    if(netgame)
+        callback(namebuf, &stback);
+    
     // 09/01/10:
     // * Removed all unused DOOM stuff (arms, numbers, %, etc).
 
@@ -835,6 +973,7 @@ static void ST_loadUnloadGraphics(load_callback_t callback)
     callback(DEH_String("INVPOP2"),  &invpop2);
     callback(DEH_String("INVPBAK"),  &invpbak);
     callback(DEH_String("INVPBAK2"), &invpbak2);
+    callback(DEH_String("INVCURS"),  &invcursor);
 }
 
 static void ST_loadCallback(char *lumpname, patch_t **variable)
@@ -1003,7 +1142,7 @@ void ST_Start (void)
 void ST_Stop (void)
 {
     if (st_stopped)
-	return;
+        return;
 
     I_SetPalette (W_CacheLumpNum (lu_palette, PU_CACHE));
 
@@ -1013,6 +1152,8 @@ void ST_Stop (void)
 void ST_Init (void)
 {
     ST_loadData();
-    st_backing_screen = (byte *) Z_Malloc(ST_WIDTH * ST_HEIGHT, PU_STATIC, 0);
+
+    // haleyjd 09/19/10: This is not used by Strife. More memory for voices!
+    //st_backing_screen = (byte *) Z_Malloc(ST_WIDTH * ST_HEIGHT, PU_STATIC, 0);
 }
 

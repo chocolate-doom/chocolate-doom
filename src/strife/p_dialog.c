@@ -686,7 +686,7 @@ boolean P_GiveInventoryItem(player_t *player, int sprnum, mobjtype_t type)
     else
         ok = false;
 
-    return true;
+    return ok;
 }
 
 //
