@@ -1080,7 +1080,7 @@ static void P_DialogDrawer(void)
 
     // Dismiss the dialog if the player is out of alignment, or the thing he was
     // talking to is now engaged in battle.
-    if(angle > ANG45 && angle < (ANG270+ANG45) || dialogtalker->flags & MF_INCOMBAT)
+    if(angle > ANG45 && angle < (ANG270+ANG45) || dialogtalker->flags & MF_NODIALOG)
         P_DialogDoChoice(dialogmenu.numitems - 1);
 
     dialogtalker->reactiontime = 2;
@@ -1283,7 +1283,7 @@ void P_DialogStart(player_t *player)
        return;
 
     // already in combat, can't talk to it
-    if(linetarget->flags & MF_INCOMBAT)
+    if(linetarget->flags & MF_NODIALOG)
        return;
 
     // set pointer to the character talking

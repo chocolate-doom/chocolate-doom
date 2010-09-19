@@ -190,7 +190,7 @@ P_NoiseAlert
 //
 static void P_WakeUpThing(mobj_t* puncher, mobj_t* bystander)
 {
-    if(!(bystander->flags & MF_INCOMBAT))
+    if(!(bystander->flags & MF_NODIALOG))
     {
         bystander->target = puncher;
         if(bystander->info->seesound)
@@ -219,7 +219,7 @@ void P_DoPunchAlert(mobj_t *puncher, mobj_t *punchee)
       return;
       
    // has to be something you can wake up and kill too
-   if(!(punchee->flags & MF_COUNTKILL) || punchee->flags & MF_INCOMBAT)
+   if(!(punchee->flags & MF_COUNTKILL) || punchee->flags & MF_NODIALOG)
       return;
    
    // make the punchee hurt - haleyjd 09/05/10: Fixed to use painstate.
@@ -236,7 +236,7 @@ void P_DoPunchAlert(mobj_t *puncher, mobj_t *punchee)
          (P_CheckSight(rover, puncher) || P_CheckSight(rover, punchee)))
       {
          P_WakeUpThing(puncher, rover);
-         rover->flags |= MF_INCOMBAT;
+         rover->flags |= MF_NODIALOG;
       }
    }
 
@@ -248,7 +248,7 @@ void P_DoPunchAlert(mobj_t *puncher, mobj_t *punchee)
          (P_CheckSight(rover, puncher) || P_CheckSight(rover, punchee)))
       {
          P_WakeUpThing(puncher, rover);
-         rover->flags |= MF_INCOMBAT;
+         rover->flags |= MF_NODIALOG;
       }
    }
 }
@@ -961,7 +961,7 @@ void A_FriendLook(mobj_t* actor)
             if(P_LookForPlayers(actor, actor->flags & MF_GIVEQUEST))
             {
                 P_SetMobjState(actor, actor->info->seestate);
-                actor->flags |= MF_INCOMBAT;
+                actor->flags |= MF_NODIALOG;
                 return;
             }
         }
@@ -1106,7 +1106,7 @@ void A_Chase (mobj_t*	actor)
         P_SetMobjState (actor, actor->info->missilestate);
 
         // [STRIFE] Add INCOMBAT flag to disable dialog
-        actor->flags |= (MF_INCOMBAT|MF_JUSTATTACKED);
+        actor->flags |= (MF_NODIALOG|MF_JUSTATTACKED);
         return;
     }
 
@@ -2290,7 +2290,7 @@ void A_PeasantCrash(mobj_t* actor)
 {
     // Set INCOMBAT, because you probably wouldn't feel like talking either
     // if somebody just stabbed you in the gut with a punch dagger...
-    actor->flags |= MF_INCOMBAT;
+    actor->flags |= MF_NODIALOG;
 
     if(!(P_Random() % 5))
     {
@@ -2311,7 +2311,7 @@ void A_PeasantCrash(mobj_t* actor)
 void A_Fall (mobj_t *actor)
 {
     // villsa [STRIFE] set incombat flag to stop dialog
-    actor->flags |= MF_INCOMBAT;
+    actor->flags |= MF_NODIALOG;
 
     // actor is on ground, it can be walked over
     // villsa [STRIFE] remove nogravity/shadow flags as well
@@ -3162,7 +3162,7 @@ void A_TeleportBeacon(mobj_t* actor)
     actor->flags &= ~MF_SOLID;
 
     // set color and flags
-    mobj->flags |= ((actor->miscdata << MF_TRANSSHIFT) | MF_INCOMBAT);
+    mobj->flags |= ((actor->miscdata << MF_TRANSSHIFT) | MF_NODIALOG);
     mobj->target = NULL;
 
     // double Rebel's health in deathmatch mode

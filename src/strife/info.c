@@ -1745,7 +1745,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         10000,      //mass
         0,      //damage
         sfx_None,       //activesound
-        MF_SHOOTABLE|MF_NOSECTOR|MF_INCOMBAT,       //flags
+        MF_SHOOTABLE|MF_NOSECTOR|MF_NODIALOG,       //flags
         NULL,       //namepointer
     },
 
@@ -2755,7 +2755,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         50000,      //mass
         0,      //damage
         sfx_chant,      //activesound
-        MF_SOLID|MF_SHOOTABLE|MF_INCOMBAT|MF_NOBLOOD|MF_COUNTKILL,      //flags
+        MF_SOLID|MF_SHOOTABLE|MF_NODIALOG|MF_NOBLOOD|MF_COUNTKILL,      //flags
         NULL,       //namepointer
     },
 
@@ -3160,7 +3160,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         500,        //mass
         0,      //damage
         sfx_revact,     //activesound
-        MF_SOLID|MF_SHOOTABLE|MF_INCOMBAT|MF_NOBLOOD|MF_COUNTKILL,      //flags
+        MF_SOLID|MF_SHOOTABLE|MF_NODIALOG|MF_NOBLOOD|MF_COUNTKILL,      //flags
         NULL,       //namepointer
     },
 
@@ -3458,7 +3458,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         400,        //mass
         0,      //damage
         sfx_rb2act,     //activesound
-        MF_SOLID|MF_SHOOTABLE|MF_INCOMBAT|MF_NOBLOOD|MF_COUNTKILL,      //flags
+        MF_SOLID|MF_SHOOTABLE|MF_NODIALOG|MF_NOBLOOD|MF_COUNTKILL,      //flags
         NULL,       //namepointer
     },
 
@@ -3485,7 +3485,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         500,        //mass
         0,      //damage
         sfx_rb2act,     //activesound
-        MF_SOLID|MF_SHOOTABLE|MF_INCOMBAT|MF_NOBLOOD|MF_COUNTKILL
+        MF_SOLID|MF_SHOOTABLE|MF_NODIALOG|MF_NOBLOOD|MF_COUNTKILL
         |MF_NOTDMATCH,       //flags
         NULL,       //namepointer
     },
@@ -3541,7 +3541,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_tend,       //activesound
         MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_GIVEQUEST|MF_FLOAT
-        |MF_INCOMBAT|MF_NOBLOOD|MF_COUNTKILL|MF_NOTDMATCH,       //flags
+        |MF_NODIALOG|MF_NOBLOOD|MF_COUNTKILL|MF_NOTDMATCH,       //flags
         "PRIEST",       //namepointer
     },
 
@@ -3569,7 +3569,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_alnact,     //activesound
         MF_SPECIAL|MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_GIVEQUEST
-        |MF_FLOAT|MF_INCOMBAT|MF_SHADOW|MF_COUNTKILL|MF_NOTDMATCH
+        |MF_FLOAT|MF_NODIALOG|MF_SHADOW|MF_COUNTKILL|MF_NOTDMATCH
         |MF_MVIS|MF_SPECTRAL,        //flags
         NULL,       //namepointer
     },
@@ -3652,7 +3652,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_alnact,     //activesound
         MF_SPECIAL|MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_GIVEQUEST
-        |MF_FLOAT|MF_INCOMBAT|MF_SHADOW|MF_COUNTKILL|MF_NOTDMATCH
+        |MF_FLOAT|MF_NODIALOG|MF_SHADOW|MF_COUNTKILL|MF_NOTDMATCH
         |MF_MVIS|MF_SPECTRAL,        //flags
         NULL,       //namepointer
     },
@@ -3681,7 +3681,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_alnact,     //activesound
         MF_SPECIAL|MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_GIVEQUEST
-        |MF_FLOAT|MF_INCOMBAT|MF_SHADOW|MF_COUNTKILL|MF_NOTDMATCH
+        |MF_FLOAT|MF_NODIALOG|MF_SHADOW|MF_COUNTKILL|MF_NOTDMATCH
         |MF_MVIS|MF_SPECTRAL,        //flags
         NULL,       //namepointer
     },
@@ -3710,7 +3710,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_alnact,     //activesound
         MF_SPECIAL|MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_GIVEQUEST
-        |MF_FLOAT|MF_INCOMBAT|MF_SHADOW|MF_COUNTKILL|MF_NOTDMATCH
+        |MF_FLOAT|MF_NODIALOG|MF_SHADOW|MF_COUNTKILL|MF_NOTDMATCH
         |MF_MVIS|MF_SPECTRAL,        //flags
         NULL,       //namepointer
     },
@@ -3739,7 +3739,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_alnact,     //activesound
         MF_SPECIAL|MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_GIVEQUEST
-        |MF_FLOAT|MF_INCOMBAT|MF_SHADOW|MF_COUNTKILL|MF_NOTDMATCH
+        |MF_FLOAT|MF_NODIALOG|MF_SHADOW|MF_COUNTKILL|MF_NOTDMATCH
         |MF_MVIS|MF_SPECTRAL,        //flags
         NULL,       //namepointer
     },
@@ -3768,7 +3768,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_alnact,     //activesound
         MF_SPECIAL|MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_GIVEQUEST
-        |MF_FLOAT|MF_INCOMBAT|MF_SHADOW|MF_COUNTKILL|MF_NOTDMATCH
+        |MF_FLOAT|MF_NODIALOG|MF_SHADOW|MF_COUNTKILL|MF_NOTDMATCH
         |MF_MVIS|MF_SPECTRAL,        //flags
         NULL,       //namepointer
     },
@@ -3797,7 +3797,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_alnact,     //activesound
         MF_SPECIAL|MF_SOLID|MF_SHOOTABLE|MF_NOGRAVITY|MF_GIVEQUEST
-        |MF_FLOAT|MF_INCOMBAT|MF_SHADOW|MF_COUNTKILL|MF_NOTDMATCH
+        |MF_FLOAT|MF_NODIALOG|MF_SHADOW|MF_COUNTKILL|MF_NOTDMATCH
         |MF_MVIS|MF_SPECTRAL,        //flags
         NULL,       //namepointer
     },
@@ -4231,7 +4231,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_sntact,     //activesound
         MF_SOLID|MF_SHOOTABLE|MF_SPAWNCEILING|MF_NOGRAVITY|MF_GIVEQUEST
-        |MF_FLOAT|MF_INCOMBAT|MF_NOBLOOD|MF_COUNTKILL,      //flags
+        |MF_FLOAT|MF_NODIALOG|MF_NOBLOOD|MF_COUNTKILL,      //flags
         NULL,       //namepointer
     },
 
@@ -4259,7 +4259,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         0,      //damage
         sfx_spisit,     //activesound
         MF_SOLID|MF_SHOOTABLE|MF_SPAWNCEILING|MF_NOGRAVITY|MF_DROPOFF
-        |MF_INCOMBAT|MF_NOBLOOD|MF_COUNTKILL,       //flags
+        |MF_NODIALOG|MF_NOBLOOD|MF_COUNTKILL,       //flags
         NULL,       //namepointer
     },
 
@@ -5098,7 +5098,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         10000000,       //mass
         0,      //damage
         sfx_None,       //activesound
-        MF_SOLID|MF_SHOOTABLE|MF_GIVEQUEST|MF_INCOMBAT|MF_NOBLOOD,      //flags
+        MF_SOLID|MF_SHOOTABLE|MF_GIVEQUEST|MF_NODIALOG|MF_NOBLOOD,      //flags
         NULL,       //namepointer
     },
 
@@ -5125,7 +5125,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         100000,     //mass
         0,      //damage
         sfx_None,       //activesound
-        MF_SOLID|MF_SHOOTABLE|MF_GIVEQUEST|MF_INCOMBAT|MF_NOBLOOD,      //flags
+        MF_SOLID|MF_SHOOTABLE|MF_GIVEQUEST|MF_NODIALOG|MF_NOBLOOD,      //flags
         NULL,       //namepointer
     },
 
@@ -5233,7 +5233,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         10,     //mass
         0,      //damage
         sfx_None,       //activesound
-        MF_SPECIAL|MF_SOLID|MF_SHOOTABLE|MF_INCOMBAT|MF_NOBLOOD,        //flags
+        MF_SPECIAL|MF_SOLID|MF_SHOOTABLE|MF_NODIALOG|MF_NOBLOOD,        //flags
         "Degnin_Ore",       //namepointer
     },
 
@@ -7231,7 +7231,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         100,        //mass
         0,      //damage
         sfx_ratact,     //activesound
-        MF_INCOMBAT|MF_NOBLOOD|MF_COUNTKILL,        //flags
+        MF_NODIALOG|MF_NOBLOOD|MF_COUNTKILL,        //flags
         "rat_buddy",        //namepointer
     },
 
@@ -7258,7 +7258,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         100,        //mass
         0,      //damage
         sfx_None,       //activesound
-        MF_SOLID|MF_SHOOTABLE|MF_INCOMBAT|MF_NOBLOOD,       //flags
+        MF_SOLID|MF_SHOOTABLE|MF_NODIALOG|MF_NOBLOOD,       //flags
         NULL,       //namepointer
     },
 
@@ -7285,7 +7285,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         100,        //mass
         0,      //damage
         sfx_None,       //activesound
-        MF_SOLID|MF_SHOOTABLE|MF_INCOMBAT|MF_NOBLOOD,       //flags
+        MF_SOLID|MF_SHOOTABLE|MF_NODIALOG|MF_NOBLOOD,       //flags
         NULL,       //namepointer
     },
 
@@ -7312,7 +7312,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         9999999,        //mass
         0,      //damage
         sfx_None,       //activesound
-        MF_SOLID|MF_SHOOTABLE|MF_INCOMBAT|MF_NOBLOOD,       //flags
+        MF_SOLID|MF_SHOOTABLE|MF_NODIALOG|MF_NOBLOOD,       //flags
         NULL,       //namepointer
     },
 
@@ -9553,7 +9553,7 @@ mobjinfo_t mobjinfo[NUMMOBJTYPES] =
         999999,     //mass
         0,      //damage
         sfx_None,       //activesound
-        MF_SOLID|MF_SHOOTABLE|MF_GIVEQUEST|MF_INCOMBAT|MF_DROPPED
+        MF_SOLID|MF_SHOOTABLE|MF_GIVEQUEST|MF_NODIALOG|MF_DROPPED
         |MF_NOBLOOD|MF_NOTDMATCH,        //flags
         NULL,       //namepointer
     },

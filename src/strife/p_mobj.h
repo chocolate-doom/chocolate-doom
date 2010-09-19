@@ -168,8 +168,8 @@ typedef enum
     // For active floaters, e.g. cacodemons, pain elementals.
     MF_FLOAT            = 0x4000,
 
-    // villsa [STRIFE] is mobj in combat?
-    MF_INCOMBAT         = 0x8000,
+    // villsa [STRIFE] can NPC talk?
+    MF_NODIALOG         = 0x8000,
 
     // Don't hit same species, explode on block.
     // Player missiles as well as fireballs of various kinds.
