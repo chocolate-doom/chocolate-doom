@@ -34,6 +34,8 @@
 
 #include "g_game.h"
 #include "d_main.h" // villsa [STRIFE]
+#include "z_zone.h" // villsa [STRIFE]
+#include "w_wad.h" // villsa [STRIFE]
 #include "s_sound.h"
 #include "m_random.h" // haleyjd [STRIFE]
 #include "p_dialog.h"
@@ -439,19 +441,12 @@ static void P_MoveWall(line_t *line, mobj_t *thing)
     line->bbox[BOXTOP] = y;
 }
 
-
-
-
 //
 // P_UseSpecialLine
 // Called when a thing uses a special line.
 // Only the front sides of lines are usable.
 //
-boolean
-P_UseSpecialLine
-( mobj_t*       thing,
-  line_t*       line,
-  int           side )
+boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
 {
     // Err...
     // Use the back sides of VERY SPECIAL lines...
@@ -492,7 +487,7 @@ P_UseSpecialLine
     // except for a few new types at the bottom.
     
     // do something  
-    switch (line->special)
+    switch(line->special)
     {
         // MANUALS
     case 1:             // Vertical Door
@@ -508,9 +503,9 @@ P_UseSpecialLine
     case 117:           // Blazing door raise
     case 118:           // Blazing door open
 
-    case 165:           // That doesn't seem to work
-
-    case 205:           // Available in retail only
+    case 165:           // villsa [STRIFE] That doesn't seem to work
+    case 205:           // villsa [STRIFE] Available in retail only
+    case 232:           // villsa [STRIFE] Oracle pass open
         EV_VerticalDoor (line, thing);
         break;
 
@@ -840,6 +835,17 @@ P_UseSpecialLine
             P_ChangeSwitchTexture(line, 1);
         break; // haleyjd
 
+    case 226:
+        // villsa [STRIFE] complete training area
+        if(!EV_DoFloor(line, lowerFloor))
+            return true;
+        
+        P_GiveItemToPlayer(thing->player, SPR_TOKN, MT_TOKEN_STAMINA);
+        P_GiveItemToPlayer(thing->player, SPR_TOKN, MT_TOKEN_NEW_ACCURACY);
+        P_ChangeSwitchTexture(line, 0);
+        thing->player->message = DEH_String("Congratulations! You have completed the training area.");
+        break;
+
     case 229:
         // villsa [STRIFE] sigil sliding door
         if(thing->player && thing->player->sigiltype == 4)
@@ -848,6 +854,18 @@ P_UseSpecialLine
                 P_ChangeSwitchTexture(line, 1);
         }
         break; // haleyjd
+
+    case 233:
+        // villsa [STRIFE] objective given after revealing the computer
+        if(!EV_DoDoor(line, splitOpen))
+            return true;
+
+        P_ChangeSwitchTexture(line, 1);
+
+        GiveVoiceObjective("VOC70", "LOG70", -1);
+        thing->player->message = DEH_String("Incoming Message from BlackBird...");
+
+        break;
 
     case 666:
         // villsa [STRIFE] Move wall
