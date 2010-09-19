@@ -1761,6 +1761,8 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
     else
     {
         flags |= SDL_RESIZABLE;
+        // villsa - center window
+        SDL_putenv("SDL_VIDEO_CENTERED=1");
     }
 
     screen = SDL_SetVideoMode(w, h, 8, flags);
