@@ -230,14 +230,14 @@ static void SpechitOverrun(line_t *ld);
 boolean PIT_CheckLine (line_t* ld)
 {
     if (tmbbox[BOXRIGHT] <= ld->bbox[BOXLEFT]
-	|| tmbbox[BOXLEFT] >= ld->bbox[BOXRIGHT]
-	|| tmbbox[BOXTOP] <= ld->bbox[BOXBOTTOM]
-	|| tmbbox[BOXBOTTOM] >= ld->bbox[BOXTOP] )
-	return true;
+        || tmbbox[BOXLEFT] >= ld->bbox[BOXRIGHT]
+        || tmbbox[BOXTOP] <= ld->bbox[BOXBOTTOM]
+        || tmbbox[BOXBOTTOM] >= ld->bbox[BOXTOP] )
+        return true;
 
     if (P_BoxOnLineSide (tmbbox, ld) != -1)
-	return true;
-		
+        return true;
+
     // A line has been hit
     
     // The moving thing's destination position will cross
@@ -250,19 +250,19 @@ boolean PIT_CheckLine (line_t* ld)
     // could be crossed in either order.
     
     if (!ld->backsector)
-	return false;		// one sided line
-		
+        return false;           // one sided line
+
     if (!(tmthing->flags & MF_MISSILE) )
     {
         // villsa [STRIFE] include jumpover flag
-	if ( ld->flags & ML_BLOCKING &&
+        if ( ld->flags & ML_BLOCKING &&
             (!(ld->flags & ML_JUMPOVER) || tmfloorz + (32*FRACUNIT) > tmthing->z) )
-	    return false;	// explicitly blocking everything
+            return false;	// explicitly blocking everything
 
         // villsa [STRIFE] exclude floaters from blockmonster lines
-	if ( !tmthing->player && ld->flags & ML_BLOCKMONSTERS &&
+        if ( !tmthing->player && (ld->flags & ML_BLOCKMONSTERS) &&
             !(tmthing->flags & MF_FLOAT))
-	    return false;	// block monsters only
+            return false;	// block monsters only
 
         // villsa [STRIFE]
         if ( ld->flags & ML_BLOCKFLOATERS && tmthing->flags & MF_FLOAT )
@@ -271,25 +271,25 @@ boolean PIT_CheckLine (line_t* ld)
 
     // set openrange, opentop, openbottom
     P_LineOpening (ld);	
-	
+
     // adjust floor / ceiling heights
     if (opentop < tmceilingz)
     {
-	tmceilingz = opentop;
-	ceilingline = ld;
+        tmceilingz = opentop;
+        ceilingline = ld;
     }
 
     if (openbottom > tmfloorz)
-	tmfloorz = openbottom;	
+        tmfloorz = openbottom;	
 
     if (lowfloor < tmdropoffz)
-	tmdropoffz = lowfloor;
-		
+        tmdropoffz = lowfloor;
+
     // if contacted a special line, add it to the list
     if (ld->special)
     {
         spechit[numspechit] = ld;
-	numspechit++;
+        numspechit++;
 
         // fraggle: spechits overrun emulation code from prboom-plus
         if (numspechit > MAXSPECIALCROSS_ORIGINAL)
