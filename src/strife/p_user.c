@@ -362,31 +362,34 @@ void P_PlayerThink (player_t* player)
         P_PlayerInSpecialSector (player);
 
     // villsa [STRIFE] handle inventory input
-    if(!player->inventorydown)
+    if(cmd->buttons2 & (BT2_HEALTH|BT2_INVUSE|BT2_INVDROP))
     {
-        if(cmd->buttons2 & BT2_HEALTH)
-            P_UseInventoryItem(player, SPR_FULL);
-        else if(cmd->buttons2 & BT2_INVUSE)
-            P_UseInventoryItem(player, cmd->inventory);
-        else if(cmd->buttons2 & BT2_INVDROP)
-            P_DropInventoryItem(player, cmd->inventory);
-        else
+        if(!player->inventorydown)
         {
-            // villsa [STRIFE]
-            if(workparm)
+            if(cmd->buttons2 & BT2_HEALTH)
+                P_UseInventoryItem(player, SPR_FULL);
+            else if(cmd->buttons2 & BT2_INVUSE)
+                P_UseInventoryItem(player, cmd->inventory);
+            else if(cmd->buttons2 & BT2_INVDROP)
+                P_DropInventoryItem(player, cmd->inventory);
+            else
             {
-                int cheat = player->cheats ^ 1;
-                player->cheats ^= CF_NOCLIP;
+                // villsa [STRIFE]
+                if(workparm)
+                {
+                    int cheat = player->cheats ^ 1;
+                    player->cheats ^= CF_NOCLIP;
 
-                if(cheat & CF_NOCLIP)
-                {
-                    player->message = DEH_String("No Clipping Mode ON");
-                    player->mo->flags |= MF_NOCLIP;
-                }
-                else
-                {
-                    player->mo->flags &= ~MF_NOCLIP;
-                    player->message = DEH_String("No Clipping Mode OFF");
+                    if(cheat & CF_NOCLIP)
+                    {
+                        player->message = DEH_String("No Clipping Mode ON");
+                        player->mo->flags |= MF_NOCLIP;
+                    }
+                    else
+                    {
+                        player->mo->flags &= ~MF_NOCLIP;
+                        player->message = DEH_String("No Clipping Mode OFF");
+                    }
                 }
             }
 
