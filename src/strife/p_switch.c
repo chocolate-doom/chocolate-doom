@@ -48,6 +48,7 @@
 #include "r_state.h"
 #include "m_bbox.h"     // villsa [STRIFE]
 
+void P_FreePrisoners(void); // villsa [STRIFE]
 
 //
 // CHANGE THE TEXTURE OF A WALL SWITCH TO ITS OPPOSITE
@@ -441,6 +442,9 @@ static void P_MoveWall(line_t *line, mobj_t *thing)
     line->bbox[BOXTOP] = y;
 }
 
+// villsa [STRIFE]
+static char speciallinemsg[92];
+
 //
 // P_UseSpecialLine
 // Called when a thing uses a special line.
@@ -829,11 +833,32 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
         P_Thrust(thing->player, thing->angle + ANG180, 125*FRACUNIT/16);
         break;
 
+    case 194:
+        // villsa [STRIFE] free prisoners
+        if(EV_DoDoor(line, open))
+        {
+            P_ChangeSwitchTexture(line, 0);
+            P_FreePrisoners();
+            return true;
+        }
+        break;
+
     case 207:
         // villsa [STRIFE] remote sliding door
         if(EV_RemoteSlidingDoor(line, thing))
             P_ChangeSwitchTexture(line, 1);
         break; // haleyjd
+
+    case 211:
+        // villsa [STRIFE] play VOC## sound
+        if(&players[consoleplayer] == thing->player &&
+            thing->player->powers[pw_communicator])
+        {
+            DEH_snprintf(speciallinemsg, sizeof(speciallinemsg), "voc%i", line->tag);
+            I_StartVoice(speciallinemsg);
+            line->special = 0;
+        }
+        break;
 
     case 226:
         // villsa [STRIFE] complete training area
