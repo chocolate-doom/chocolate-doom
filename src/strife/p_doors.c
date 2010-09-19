@@ -618,6 +618,12 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
         }
         break;
 
+        // villsa [STRIFE] added 09/15/10
+    case 165:
+        player->message = DEH_String("That doesn't seem to work");
+        S_StartSound(NULL, sfx_oof);
+        break;
+
     case 166: // DR Hand Print door
         if(!player->cards[key_SeveredHand])
         {
