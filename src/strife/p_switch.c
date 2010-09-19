@@ -495,18 +495,22 @@ P_UseSpecialLine
     switch (line->special)
     {
         // MANUALS
-    case 1:           // Vertical Door
-    case 26:          // Blue Door/Locked
-    case 27:          // Yellow Door /Locked
-    case 28:          // Red Door /Locked
+    case 1:             // Vertical Door
+    case 26:            // Blue Door/Locked
+    case 27:            // Yellow Door /Locked
+    case 28:            // Red Door /Locked
 
-    case 31:          // Manual door open
-    case 32:          // Blue locked door open
-    case 33:          // Red locked door open
-    case 34:          // Yellow locked door open
+    case 31:            // Manual door open
+    case 32:            // Blue locked door open
+    case 33:            // Red locked door open
+    case 34:            // Yellow locked door open
 
-    case 117:         // Blazing door raise
-    case 118:         // Blazing door open
+    case 117:           // Blazing door raise
+    case 118:           // Blazing door open
+
+    case 165:           // That doesn't seem to work
+
+    case 205:           // Available in retail only
         EV_VerticalDoor (line, thing);
         break;
 
