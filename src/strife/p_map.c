@@ -1058,119 +1058,119 @@ PTR_AimTraverse (intercept_t* in)
 //
 boolean PTR_ShootTraverse (intercept_t* in)
 {
-    fixed_t		x;
-    fixed_t		y;
-    fixed_t		z;
-    fixed_t		frac;
-    
-    line_t*		li;
-    
-    mobj_t*		th;
+    fixed_t             x;
+    fixed_t             y;
+    fixed_t             z;
+    fixed_t             frac;
+
+    line_t*             li;
+
+    mobj_t*             th;
     mobj_t*             th2;    // villsa [STRIFE]
 
-    fixed_t		slope;
-    fixed_t		dist;
-    fixed_t		thingtopslope;
-    fixed_t		thingbottomslope;
-		
+    fixed_t             slope;
+    fixed_t             dist;
+    fixed_t             thingtopslope;
+    fixed_t             thingbottomslope;
+
     if (in->isaline)
     {
-	li = in->d.line;
-	
-	if (li->special)
-	    P_ShootSpecialLine (shootthing, li);
+        li = in->d.line;
 
-	if ( !(li->flags & ML_TWOSIDED) )
-	    goto hitline;
-	
-	// crosses a two sided line
-	P_LineOpening (li);
-		
-	dist = FixedMul (attackrange, in->frac);
+        if (li->special)
+            P_ShootSpecialLine (shootthing, li);
+
+        if ( !(li->flags & ML_TWOSIDED) )
+            goto hitline;
+
+        // crosses a two sided line
+        P_LineOpening (li);
+
+        dist = FixedMul (attackrange, in->frac);
 
         // Check if backsector is NULL.  See comment in PTR_AimTraverse.
 
-	if (li->backsector == NULL)
+        if (li->backsector == NULL)
         {
             goto hitline;
         }
 
         if (li->frontsector->floorheight != li->backsector->floorheight)
-	{
-	    slope = FixedDiv (openbottom - shootz , dist);
-	    if (slope > aimslope)
-		goto hitline;
-	}
-		
-	if (li->frontsector->ceilingheight != li->backsector->ceilingheight)
-	{
-	    slope = FixedDiv (opentop - shootz , dist);
-	    if (slope < aimslope)
-		goto hitline;
-	}
+        {
+            slope = FixedDiv (openbottom - shootz , dist);
+            if (slope > aimslope)
+                goto hitline;
+        }
 
-	// shot continues
-	return true;
-	
-	
-	// hit line
-      hitline:
-	// position a bit closer
-	frac = in->frac - FixedDiv (4*FRACUNIT,attackrange);
-	x = trace.x + FixedMul (trace.dx, frac);
-	y = trace.y + FixedMul (trace.dy, frac);
-	z = shootz + FixedMul (aimslope, FixedMul(frac, attackrange));
+        if (li->frontsector->ceilingheight != li->backsector->ceilingheight)
+        {
+            slope = FixedDiv (opentop - shootz , dist);
+            if (slope < aimslope)
+                goto hitline;
+        }
 
-	if (li->frontsector->ceilingpic == skyflatnum)
-	{
-	    // don't shoot the sky!
-	    if (z > li->frontsector->ceilingheight)
-		return false;
-	    
-	    // it's a sky hack wall
-	    if	(li->backsector && li->backsector->ceilingpic == skyflatnum)
-		return false;		
-	}
+        // shot continues
+        return true;
+
+
+        // hit line
+hitline:
+        // position a bit closer
+        frac = in->frac - FixedDiv (4*FRACUNIT,attackrange);
+        x = trace.x + FixedMul (trace.dx, frac);
+        y = trace.y + FixedMul (trace.dy, frac);
+        z = shootz + FixedMul (aimslope, FixedMul(frac, attackrange));
+
+        if (li->frontsector->ceilingpic == skyflatnum)
+        {
+            // don't shoot the sky!
+            if (z > li->frontsector->ceilingheight)
+                return false;
+
+            // it's a sky hack wall
+            if	(li->backsector && li->backsector->ceilingpic == skyflatnum)
+                return false;		
+        }
 
         // villsa [STRIFE]
         if(la_damage > 0)
         {
-            // villsa [STRIFE] TODO - verify on whats the purpose with this
+            // villsa [STRIFE] Test against Mauler attack range
             if(attackrange != (2112*FRACUNIT))
                 P_SpawnPuff(x, y, z); // Spawn bullet puffs.
             else
                 P_SpawnMobj(x, y, z, MT_STRIFEPUFF3);
-	
-	    // don't go any farther
-	    return false;	
+
+            // don't go any farther
+            return false;	
         }
     }
-    
+
     // shoot a thing
     th = in->d.thing;
     if (th == shootthing)
-	return true;		// can't shoot self
-    
-    if (!(th->flags&MF_SHOOTABLE))
-	return true;		// corpse or something
+        return true;		// can't shoot self
 
-    // villsa [STRIFE] skip mvis flagged things?
-    if(th->flags & MF_MVIS)
+    if (!(th->flags&MF_SHOOTABLE))
+        return true;		// corpse or something
+
+    // haleyjd 09/18/10: [STRIFE] Corrected - not MVIS, but SPECTRAL.
+    if(th->flags & MF_SPECTRAL)
         return true;
-		
+
     // check angles to see if the thing can be aimed at
     dist = FixedMul (attackrange, in->frac);
     thingtopslope = FixedDiv (th->z+th->height - shootz , dist);
 
     if (thingtopslope < aimslope)
-	return true;		// shot over the thing
+        return true;		// shot over the thing
 
     thingbottomslope = FixedDiv (th->z - shootz, dist);
 
     if (thingbottomslope > aimslope)
-	return true;		// shot under the thing
+        return true;		// shot under the thing
 
-    
+
     // hit thing
     // position a bit closer
     frac = in->frac - FixedDiv (10*FRACUNIT,attackrange);
@@ -1190,18 +1190,18 @@ boolean PTR_ShootTraverse (intercept_t* in)
 
     // villsa [STRIFE] TODO - verify disabled check for damage?
     //if (la_damage)
-	P_DamageMobj (th, shootthing, shootthing, la_damage);
+    P_DamageMobj (th, shootthing, shootthing, la_damage);
 
     // Spawn bullet puffs or blod spots,
     // depending on target type.
     if (in->d.thing->flags & MF_NOBLOOD)
-	P_SpawnSparkPuff(x, y, z);  // villsa [STRIFE] call spark puff function instead
+        P_SpawnSparkPuff(x, y, z);  // villsa [STRIFE] call spark puff function instead
     else
-	P_SpawnBlood (x,y,z, la_damage);
+        P_SpawnBlood (x,y,z, la_damage);
 
     // don't go any farther
     return false;
-	
+
 }
 
 
