@@ -1225,7 +1225,7 @@ static void D_Endoom(void)
 // haleyjd 08/28/10: Clip patches to the framebuffer without errors.
 // Returns false if V_DrawPatch should return without drawing.
 //
-static boolean D_PatchClipCallback(patch_t *patch, int x, int y)
+boolean D_PatchClipCallback(patch_t *patch, int x, int y)
 {
     // note that offsets were already accounted for in V_DrawPatch
     return (x >= 0 && y >= 0 

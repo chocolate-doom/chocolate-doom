@@ -256,6 +256,9 @@ void M_BindHexenControls(void)
 
 void M_BindStrifeControls(void)
 {
+    // These are shared with all games, but have different defaults:
+    key_message_refresh = '/';
+
     // These keys are shared with Heretic/Hexen but have different defaults:
     key_jump     = 'a';
     key_lookup   = KEY_PGUP;

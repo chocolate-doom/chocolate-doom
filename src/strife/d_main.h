@@ -58,6 +58,5 @@ extern  boolean        isdemoversion;  // haleyjd [STRIFE]
 extern  boolean         stonecold;      // villsa [STRIFE]
 extern  boolean         workparm;       // villsa [STRIFE]
 
-
 #endif
 
