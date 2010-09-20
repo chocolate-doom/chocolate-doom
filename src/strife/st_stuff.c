@@ -61,6 +61,7 @@
 
 // State.
 #include "doomstat.h"
+#include "d_main.h"    // [STRIFE]
 
 // Data.
 #include "dstrings.h"
@@ -231,16 +232,39 @@ static boolean          st_statusbaron;
 // Whether or not a popup is currently displayed
 static boolean          st_displaypopup;
 
+// haleyjd 09/19/10: [STRIFE] Cached player data
+static int              st_lastcursorpos;
+static int              st_lastammo;
+static int              st_lastarmortype;
+static int              st_lasthealth;
+
 // haleyjd 09/01/10: [STRIFE] sbar -> invback
 // main inventory background and other bits
-static patch_t*         invback;   // main bar
-static patch_t*         stback;    // multiplayer background
-static patch_t*         invtop;    // top bit
-static patch_t*         invpop;    // popup frame with text
-static patch_t*         invpop2;   // plain popup frame
-static patch_t*         invpbak;   // popup background w/details
-static patch_t*         invpbak2;  // plain popup background
-static patch_t*         invcursor; // cursor
+static patch_t*         invback;     // main bar
+static patch_t*         stback;      // multiplayer background
+static patch_t*         invtop;      // top bit
+static patch_t*         invpop;      // popup frame with text
+static patch_t*         invpop2;     // plain popup frame
+static patch_t*         invpbak;     // popup background w/details
+static patch_t*         invpbak2;    // plain popup background
+static patch_t*         invcursor;   // cursor
+
+// ammo/weapon/armor patches
+static patch_t*         invammo[NUMAMMO]; // ammo/weapons
+static patch_t*         invsigil[5];      // sigil pieces
+static patch_t*         invarmor[2];      // armor icons
+
+// names for ammo patches
+static char *invammonames[NUMAMMO] =
+{
+    "I_BLIT",
+    "I_XQRL",
+    "I_PQRL",
+    "I_BRY1",
+    "I_ROKT",
+    "I_GRN1",
+    "I_GRN2"
+};
 
 // haleyjd 09/01/10: [STRIFE] Replaced tallnum, shortnum w/inv fonts
 // 0-9, green numbers
@@ -300,6 +324,11 @@ void ST_drawNumFontY2(int x, int y, int num);
 //
 void ST_Stop(void);
 
+//
+// ST_refreshBackground
+//
+// [STRIFE] Completely overhauled.
+//
 void ST_refreshBackground(void)
 {
     if (st_statusbaron)
@@ -312,6 +341,13 @@ void ST_refreshBackground(void)
         // TODO: only sometimes drawing?
 
         plyr->st_update = false;
+
+        // cache data
+        st_lastcursorpos = plyr->inventorycursor;
+        st_lastammo      = weaponinfo[plyr->readyweapon].ammo;
+        st_lastarmortype = plyr->armortype;
+        st_lasthealth    = plyr->health;
+        st_firsttime     = false;
 
         // draw main status bar
         V_DrawPatch(ST_X, ST_Y, invback);
@@ -356,6 +392,23 @@ void ST_refreshBackground(void)
             V_DrawPatch(icon_x, 182, patch);
             ST_drawNumFontY(num_x, 191, plyr->inventory[i].amount);
         }
+
+        // haleyjd 09/19/10: Draw sigil icon
+        if(plyr->weaponowned[wp_sigil])
+            V_DrawPatch(253, 175, invsigil[plyr->sigiltype]);
+
+        // haleyjd 09/19/10: Draw ammo
+        if(st_lastammo < NUMAMMO)
+            V_DrawPatch(290, 180, invammo[st_lastammo]);
+
+        // haleyjd 09/19/10: Draw armor
+        if(plyr->armortype)
+        {
+            V_DrawPatch(2, 177, invarmor[plyr->armortype - 1]);
+            ST_drawNumFontY(20, 191, plyr->armorpoints);
+        }
+
+        // STRIFE-TODO: health bars
 
         // haleyjd 09/19/10: nope, not in Strife.
         //V_RestoreBuffer();
@@ -935,15 +988,18 @@ boolean ST_DrawExternal(void)
 
 typedef void (*load_callback_t)(char *lumpname, patch_t **variable); 
 
+//
+// ST_loadUnloadGraphics
+//
 // Iterates through all graphics to be loaded or unloaded, along with
 // the variable they use, invoking the specified callback function.
-
+//
+// [STRIFE] Altered to load all Strife status bar resources.
+//
 static void ST_loadUnloadGraphics(load_callback_t callback)
 {
-
-    int		i;
-    
-    char	namebuf[9];
+    int         i;
+    char        namebuf[9];
 
     // haleyjd 09/01/10: [STRIFE]
     // Load the numbers, green and yellow
@@ -955,6 +1011,24 @@ static void ST_loadUnloadGraphics(load_callback_t callback)
         DEH_snprintf(namebuf, 9, "INVFONY%d", i);
         callback(namebuf, &invfonty[i]);
     }
+
+    // haleyjd 09/19/10: load Sigil patches
+    if(!isdemoversion)
+    {
+        for(i = 0; i < 5; i++)
+        {
+            DEH_snprintf(namebuf, 9, "I_SGL%d", i+1);
+            callback(namebuf, &invsigil[i]);
+        }
+    }
+
+    // load ammo patches
+    for(i = 0; i < NUMAMMO; i++)
+        callback(DEH_String(invammonames[i]), &invammo[i]);
+
+    // load armor patches
+    callback(DEH_String("I_ARM2"), &invarmor[0]);
+    callback(DEH_String("I_ARM1"), &invarmor[1]);
 
     // haleyjd 09/19/10: [STRIFE] 
     // * No face, but there is this patch, which appears behind the armor
