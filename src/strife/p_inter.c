@@ -404,6 +404,8 @@ static char pickupmsg[80];
 //
 // P_TouchSpecialThing
 //
+// [STRIFE] Rewritten for Strife collectables.
+//
 void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
 {
     player_t*   player;
@@ -416,7 +418,6 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
     if(delta > toucher->height || delta < -8*FRACUNIT)
         return; // out of reach
 
-
     sound = sfx_itemup;	
     player = toucher->player;
 
@@ -425,11 +426,21 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
     if(toucher->health <= 0)
         return;
 
-    // villsa [STRIFE] damage toucher if special has spectral flag
-    if(special->flags & MF_SPECTRAL)
+    // villsa [STRIFE] damage toucher if special is spectral
+    // haleyjd 09/21/10: corrected to test for SPECTRE thingtypes specifically
+    switch(special->type)
     {
+    case MT_SPECTRE_A:
+    case MT_SPECTRE_B:
+    case MT_SPECTRE_C:
+    case MT_SPECTRE_D:
+    case MT_SPECTRE_E:
+    case MT_ENTITY:
+    case MT_SUBENTITY:
         P_DamageMobj(toucher, NULL, NULL, 5);
         return;
+    default:
+        break;
     }
 
     // villsa [STRIFE]
@@ -440,8 +451,8 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
     switch(special->sprite)
     {
     // bullets
-    case SPR_BLIT:
-        if(!P_GiveAmmo(player, am_bullets, 1))
+    case SPR_BLIT: // haleyjd: fixed missing MF_DROPPED check
+        if(!P_GiveAmmo(player, am_bullets, !(special->flags & MF_DROPPED)))
             return;
         break;
 
@@ -501,38 +512,64 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
 
     // rifle
     case SPR_RIFL:
-        if(!P_GiveWeapon(player, wp_rifle, special->flags&MF_DROPPED))
+        if(!P_GiveWeapon(player, wp_rifle, special->flags & MF_DROPPED))
             return;
+        sound = sfx_wpnup; // haleyjd: SHK-CHK!
         break;
 
     // flame thrower
     case SPR_FLAM:
         if(!P_GiveWeapon(player, wp_flame, false))
             return;
+        // haleyjd: gives extra ammo.
+        P_GiveAmmo(player, am_cell, 3);
+        sound = sfx_wpnup; // haleyjd: SHK-CHK!
         break;
 
     // missile launcher
     case SPR_MMSL:
         if(!P_GiveWeapon(player, wp_missile, false))
             return;
+        sound = sfx_wpnup; // haleyjd: SHK-CHK!
         break;
 
-    // missile launcher
+    // grenade launcher
     case SPR_GRND:
-        if(!P_GiveWeapon(player, wp_hegrenade, special->flags&MF_DROPPED))
+        if(!P_GiveWeapon(player, wp_hegrenade, special->flags & MF_DROPPED))
             return;
+        sound = sfx_wpnup; // haleyjd: SHK-CHK!
         break;
 
     // mauler
     case SPR_TRPD:
         if(!P_GiveWeapon(player, wp_mauler, false))
             return;
+        sound = sfx_wpnup; // haleyjd: SHK-CHK!
         break;
 
-    // crossbow
+    // electric bolt crossbow
     case SPR_CBOW:
-        if(!P_GiveWeapon(player, wp_elecbow, special->flags&MF_DROPPED))
+        if(!P_GiveWeapon(player, wp_elecbow, special->flags & MF_DROPPED))
             return;
+        sound = sfx_wpnup; // haleyjd: SHK-CHK!
+        break;
+
+    // haleyjd 09/21/10: missed case: THE SIGIL!
+    case SPR_SIGL:
+        if(!P_GiveWeapon(player, wp_sigil, special->flags & MF_DROPPED))
+        {
+            player->sigiltype = special->frame;
+            return;
+        }
+        
+        if(netgame)
+            player->sigiltype = 4;
+
+        player->pendingweapon = wp_sigil;
+        player->st_update = true;
+        if(deathmatch)
+            return;
+        sound = sfx_wpnup;
         break;
 
     // backpack
@@ -548,47 +585,74 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
             P_GiveAmmo(player, i, 1);
         break;
 
+    // 1 Gold
     case SPR_COIN:
         P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
         break;
 
+    // 10 Gold
     case SPR_CRED:
         for(i = 0; i < 10; i++)
             P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
         break;
 
+    // 25 Gold
     case SPR_SACK:
-        for(i = 0; i < 25; i++)
-            P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
+        // haleyjd 09/21/10: missed code: if a SPR_SACK object has negative
+        // health, it will give that much gold - STRIFE-TODO: verify
+        if(special->health < 0)
+        {
+            for(i = special->health; i != 0; i++)
+                P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
+        }
+        else
+        {
+            for(i = 0; i < 25; i++)
+                P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
+        }
         break;
 
+    // 50 Gold
     case SPR_CHST:
         for(i = 0; i < 50; i++)
             P_GiveInventoryItem(player, SPR_COIN, MT_MONY_1);
         break;
 
+    // Leather Armor
     case SPR_ARM1:
         if(!P_GiveArmor(player, -2))
             if(!P_GiveInventoryItem(player, special->sprite, special->type))
                 pickupmsg[0] = '!';
         break;
 
+    // Metal Armor
     case SPR_ARM2:
         if(!P_GiveArmor(player, -1))
             if(!P_GiveInventoryItem(player, special->sprite, special->type))
                 pickupmsg[0] = '!';
         break;
 
+    // All-map powerup
     case SPR_PMAP:
         if(!P_GivePower(player, pw_allmap))
             return;
-        sound = sfx_yeah;	
+        sound = sfx_yeah;
         break;
 
+    // The Comm Unit - because you need Blackbird whining in your ear the
+    // whole time and telling you how lost she is :P
     case SPR_COMM:
         if(!P_GivePower(player, pw_communicator))
             return;
         sound = sfx_yeah;
+        break;
+
+    // haleyjd 09/21/10: missed case - Shadow Armor; though, I do not know why
+    // this has a case distinct from generic inventory items... Maybe it started
+    // out as an auto-use-if-possible item much like regular armor...
+    case SPR_SHD1:
+        if(!P_GiveInventoryItem(player, SPR_SHD1, special->type))
+            pickupmsg[0] = '!';
         break;
 
     // villsa [STRIFE] check default items
@@ -596,14 +660,17 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
     default:
         if(special->type >= MT_KEY_BASE && special->type <= MT_NEWKEY5)
         {
+            // haleyjd 09/21/10: Strife player still picks up keys that
+            // he has already found. (break, not return)
             if(!P_GiveCard(player, special->type - MT_KEY_BASE))
-                return;
+                break; 
         }
         else
         {
             if(!P_GiveInventoryItem(player, special->sprite, special->type))
-                    pickupmsg[0] = '!';
+                pickupmsg[0] = '!';
         }
+        break;
     }
 
     // villsa [STRIFE] set message

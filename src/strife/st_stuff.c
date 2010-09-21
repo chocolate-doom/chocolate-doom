@@ -315,106 +315,19 @@ cheatseq_t	cheat_powerup[7] = // STRIFE-TODO
 
 //cheatseq_t cheat_choppers = CHEAT("idchoppers", 0); [STRIFE] no such thing
 
-// Forward declarations:
-void ST_drawNumFontY(int x, int y, int num);
-void ST_drawNumFontY2(int x, int y, int num);
 
 //
 // STATUS BAR CODE
 //
 void ST_Stop(void);
 
-//
-// ST_refreshBackground
-//
-// [STRIFE] Completely overhauled.
-//
+
+// [STRIFE] Unused.
+/*
 void ST_refreshBackground(void)
 {
-    if (st_statusbaron)
-    {
-        int firstinventory, icon_x, num_x, i, numdrawn;
-
-        // haleyjd 09/19/10: No backscreen caching in Strife.
-        //V_UseBuffer(st_backing_screen);
-
-        // TODO: only sometimes drawing?
-
-        plyr->st_update = false;
-
-        // cache data
-        st_lastcursorpos = plyr->inventorycursor;
-        st_lastammo      = weaponinfo[plyr->readyweapon].ammo;
-        st_lastarmortype = plyr->armortype;
-        st_lasthealth    = plyr->health;
-        st_firsttime     = false;
-
-        // draw main status bar
-        V_DrawPatch(ST_X, ST_Y, invback);
-
-        // draw multiplayer armor backdrop if netgame
-        if(netgame)
-            V_DrawPatch(ST_X, 173, stback);
-
-        if(plyr->inventorycursor >= 6)
-            firstinventory = plyr->inventorycursor - 5;
-        else
-            firstinventory = 0;
-
-        // Draw cursor.
-        if(plyr->numinventory)
-        {
-            V_DrawPatch(35 * (plyr->inventorycursor - firstinventory) + 42,
-                        180, invcursor);
-        }
-
-        // Draw inventory bar
-        for(num_x = 68, icon_x = 48, i = firstinventory, numdrawn = 0; 
-            num_x < 278; 
-            num_x += 35, icon_x += 35, i++, numdrawn++)
-        {
-            int lumpnum;
-            patch_t *patch;
-            char iconname[8];
-
-            if(plyr->numinventory <= numdrawn)
-                break;
-            
-            DEH_snprintf(iconname, sizeof(iconname), "I_%s",
-                         DEH_String(sprnames[plyr->inventory[i].sprite]));
-
-            lumpnum = W_CheckNumForName(iconname);
-            if(lumpnum == -1)
-                patch = W_CacheLumpName(DEH_String("STCFN063"), PU_CACHE);
-            else
-                patch = W_CacheLumpNum(lumpnum, PU_STATIC);
-
-            V_DrawPatch(icon_x, 182, patch);
-            ST_drawNumFontY(num_x, 191, plyr->inventory[i].amount);
-        }
-
-        // haleyjd 09/19/10: Draw sigil icon
-        if(plyr->weaponowned[wp_sigil])
-            V_DrawPatch(253, 175, invsigil[plyr->sigiltype]);
-
-        // haleyjd 09/19/10: Draw ammo
-        if(st_lastammo < NUMAMMO)
-            V_DrawPatch(290, 180, invammo[st_lastammo]);
-
-        // haleyjd 09/19/10: Draw armor
-        if(plyr->armortype)
-        {
-            V_DrawPatch(2, 177, invarmor[plyr->armortype - 1]);
-            ST_drawNumFontY(20, 191, plyr->armorpoints);
-        }
-
-        // STRIFE-TODO: health bars
-
-        // haleyjd 09/19/10: nope, not in Strife.
-        //V_RestoreBuffer();
-        //V_CopyRect(ST_X, 0, st_backing_screen, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y);
-    }
 }
+*/
 
 // [STRIFE]
 static char st_msgbuf[52];
@@ -921,12 +834,161 @@ void ST_drawNumFontY2(int x, int y, int num)
     }
 }
 
+//
+// ST_drawLine
+//
+// haleyjd 09/20/10: [STRIFE] New function
+// Basic horizontal line drawing routine used for the health bars.
+//
+void ST_drawLine(int x, int y, int len, int color)
+{
+    byte putcolor = (byte)(color);
+    byte *drawpos = I_VideoBuffer + y * SCREENWIDTH + x;
+    int i = 0;
+
+    while(i < len)
+    {
+        *drawpos++ = putcolor;
+        ++i;
+    }
+}
+
+//
+// ST_doRefresh
+//
+// haleyjd 09/20/10: Evidence more than suggests that Rogue moved all status bar
+// drawing down to this function.
+//
 void ST_doRefresh(void)
 {
-    st_firsttime = false;
-
     // draw status bar background to off-screen buff
-    ST_refreshBackground();
+    if (st_statusbaron)
+    {
+        int firstinventory, icon_x, num_x, i, numdrawn;
+
+        // haleyjd 09/19/10: No backscreen caching in Strife.
+        //V_UseBuffer(st_backing_screen);
+
+        // TODO: only sometimes drawing?
+
+        plyr->st_update = false;
+
+        // cache data
+        st_lastcursorpos = plyr->inventorycursor;
+        st_lastammo      = weaponinfo[plyr->readyweapon].ammo;
+        st_lastarmortype = plyr->armortype;
+        st_lasthealth    = plyr->health;
+        st_firsttime     = false;
+
+        // draw main status bar
+        V_DrawPatch(ST_X, ST_Y, invback);
+
+        // draw multiplayer armor backdrop if netgame
+        if(netgame)
+            V_DrawPatch(ST_X, 173, stback);
+
+        if(plyr->inventorycursor >= 6)
+            firstinventory = plyr->inventorycursor - 5;
+        else
+            firstinventory = 0;
+
+        // Draw cursor.
+        if(plyr->numinventory)
+        {
+            V_DrawPatch(35 * (plyr->inventorycursor - firstinventory) + 42,
+                        180, invcursor);
+        }
+
+        // Draw inventory bar
+        for(num_x = 68, icon_x = 48, i = firstinventory, numdrawn = 0; 
+            num_x < 278; 
+            num_x += 35, icon_x += 35, i++, numdrawn++)
+        {
+            int lumpnum;
+            patch_t *patch;
+            char iconname[8];
+
+            if(plyr->numinventory <= numdrawn)
+                break;
+            
+            DEH_snprintf(iconname, sizeof(iconname), "I_%s",
+                         DEH_String(sprnames[plyr->inventory[i].sprite]));
+
+            lumpnum = W_CheckNumForName(iconname);
+            if(lumpnum == -1)
+                patch = W_CacheLumpName(DEH_String("STCFN063"), PU_CACHE);
+            else
+                patch = W_CacheLumpNum(lumpnum, PU_STATIC);
+
+            V_DrawPatch(icon_x, 182, patch);
+            ST_drawNumFontY(num_x, 191, plyr->inventory[i].amount);
+        }
+
+        // haleyjd 09/19/10: Draw sigil icon
+        if(plyr->weaponowned[wp_sigil])
+            V_DrawPatch(253, 175, invsigil[plyr->sigiltype]);
+
+        // haleyjd 09/19/10: Draw ammo
+        if(st_lastammo < NUMAMMO)
+            V_DrawPatch(290, 180, invammo[st_lastammo]);
+
+        // haleyjd 09/19/10: Draw armor
+        if(plyr->armortype)
+        {
+            V_DrawPatch(2, 177, invarmor[plyr->armortype - 1]);
+            ST_drawNumFontY(20, 191, plyr->armorpoints);
+        }
+
+        // haleyjd 09/20/10: Draw life bars.
+        {
+            int barlength;
+            int lifecolor1;
+            int lifecolor2;
+
+            barlength = plyr->health;
+            if(barlength > 100)
+                barlength = 200 - plyr->health;
+            barlength *= 2;
+
+            if(plyr->health < 11)      // Danger, Will Robinson!
+                lifecolor1 = 64;
+            else if(plyr->health < 21) // Caution
+                lifecolor1 = 80;
+            else                       // All is well.
+                lifecolor1 = 96;
+
+            if(plyr->cheats & CF_GODMODE) // Gold, probably a throwback to DOOM.
+                lifecolor1 = 226;
+
+            lifecolor2 = lifecolor1 + 3;
+
+            // Draw the normal health bars
+            ST_drawLine(49, 172, barlength, lifecolor1);
+            ST_drawLine(49, 173, barlength, lifecolor2);
+            ST_drawLine(49, 175, barlength, lifecolor1);
+            ST_drawLine(49, 176, barlength, lifecolor2);
+
+            // Draw the > 100 health lines
+            if(plyr->health > 100)
+            {
+                int oldbarlength = barlength;
+                lifecolor1 = 112;             // Shades of blue
+                lifecolor2 = lifecolor1 + 3;
+
+                // take up the difference not drawn by the first (<= 100) bar
+                barlength = 200 - barlength;
+
+                ST_drawLine(49 + oldbarlength, 172, barlength, lifecolor1);
+                ST_drawLine(49 + oldbarlength, 173, barlength, lifecolor2);
+                ST_drawLine(49 + oldbarlength, 175, barlength, lifecolor1);
+                ST_drawLine(49 + oldbarlength, 176, barlength, lifecolor2);
+            }
+        } // end local-scope block
+
+        // haleyjd 09/19/10: nope, not in Strife.
+        //V_RestoreBuffer();
+        //V_CopyRect(ST_X, 0, st_backing_screen, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y);
+    }
 }
 
 void ST_diffDraw(void)
@@ -945,9 +1007,9 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
     // haleyjd 09/01/10: STRIFE-TODO: work out statbar details
 
     // If just after ST_Start(), refresh all
-    /*if (st_firsttime)*/ ST_doRefresh();
+    ST_doRefresh();
     // Otherwise, update as little as possible
-    /*else*/ ST_diffDraw();
+    ST_diffDraw();
 }
 
 //
