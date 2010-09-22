@@ -201,8 +201,8 @@ typedef enum
 // villsa [STRIFE]
 // quest numbers
 typedef enum
-{               // Hex          Watcom Name   
-    tk_quest1,  // 0x00000001   questflags & 1
+{               // Hex          Watcom Name               player_t offset
+    tk_quest1,  // 0x00000001   questflags & 1            0x4D
     tk_quest2,  // 0x00000002   questflags & 2
     tk_quest3,  // 0x00000004   questflags & 4
     tk_quest4,  // 0x00000008   questflags & 8
@@ -210,7 +210,7 @@ typedef enum
     tk_quest6,  // 0x00000020   questflags & 20h
     tk_quest7,  // 0x00000040   questflags & 40h
     tk_quest8,  // 0x00000080   questflags & 80h
-    tk_quest9,  // 0x00000100   BYTE1(questflags) & 1
+    tk_quest9,  // 0x00000100   BYTE1(questflags) & 1     0x4E
     tk_quest10, // 0x00000200   BYTE1(questflags) & 2
     tk_quest11, // 0x00000400   BYTE1(questflags) & 4
     tk_quest12, // 0x00000800   BYTE1(questflags) & 8
@@ -218,7 +218,7 @@ typedef enum
     tk_quest14, // 0x00002000   BYTE1(questflags) & 20h
     tk_quest15, // 0x00004000   BYTE1(questflags) & 40h
     tk_quest16, // 0x00008000   BYTE1(questflags) & 80h
-    tk_quest17, // 0x00010000   BYTE2(questflags) & 1
+    tk_quest17, // 0x00010000   BYTE2(questflags) & 1     0x4F
     tk_quest18, // 0x00020000   BYTE2(questflags) & 2
     tk_quest19, // 0x00040000   BYTE2(questflags) & 4
     tk_quest20, // 0x00080000   BYTE2(questflags) & 8
@@ -226,7 +226,7 @@ typedef enum
     tk_quest22, // 0x00200000   BYTE2(questflags) & 20h
     tk_quest23, // 0x00400000   BYTE2(questflags) & 40h
     tk_quest24, // 0x00800000   BYTE2(questflags) & 80h
-    tk_quest25, // 0x01000000   BYTE3(questflags) & 1
+    tk_quest25, // 0x01000000   BYTE3(questflags) & 1     0x50
     tk_quest26, // 0x02000000   BYTE3(questflags) & 2
     tk_quest27, // 0x04000000   BYTE3(questflags) & 4
     tk_quest28, // 0x08000000   BYTE3(questflags) & 8
@@ -256,7 +256,7 @@ enum
     QF_QUEST13 = (1 << tk_quest13),
     QF_QUEST14 = (1 << tk_quest14),
     QF_QUEST15 = (1 << tk_quest15),
-    QF_QUEST16 = (1 << tk_quest16),
+    QF_QUEST16 = (1 << tk_quest16), // Destroyed the Gate Mechanism
     QF_QUEST17 = (1 << tk_quest17),
     QF_QUEST18 = (1 << tk_quest18), // Obtained Oracle Pass
     QF_QUEST19 = (1 << tk_quest19),
@@ -268,7 +268,7 @@ enum
     QF_QUEST25 = (1 << tk_quest25), // Destroyed the Converter
     QF_QUEST26 = (1 << tk_quest26), // Killed Loremaster
     QF_QUEST27 = (1 << tk_quest27),
-    QF_QUEST28 = (1 << tk_quest28),
+    QF_QUEST28 = (1 << tk_quest28), // ???? - checked by line type 228 STRIFE-TODO
     QF_QUEST29 = (1 << tk_quest29), // Destroyed the Mines Transmitter
     QF_QUEST30 = (1 << tk_quest30),
     QF_QUEST31 = (1 << tk_quest31),

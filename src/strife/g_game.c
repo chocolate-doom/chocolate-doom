@@ -1458,6 +1458,19 @@ void G_SecretExitLevel (void)
 */
 
 //
+// G_StartFinale
+//
+// haleyjd 09/21/10: [STRIFE] New function.
+// This replaced G_SecretExitLevel in Strife. I don't know that it's actually
+// used anywhere in the game, but it *is* usable in mods via linetype 124,
+// W1 Start Finale.
+//
+void G_StartFinale(void)
+{
+    gameaction = ga_victory;
+}
+
+//
 // G_DoCompleted
 //
 // haleyjd 08/23/10: [STRIFE]:

@@ -57,6 +57,7 @@
 
 // [STRIFE]
 #include "hu_stuff.h"
+#include "p_dialog.h"
 
 
 //
@@ -581,6 +582,9 @@ P_FindMinSurroundingLight
 // or shooting special lines, or by timed thinkers.
 //
 
+// [STRIFE]
+static char crosslinestr[90];
+
 //
 // P_CrossSpecialLine - TRIGGER
 // Called every time a thing origin is about
@@ -593,29 +597,25 @@ P_CrossSpecialLine
   mobj_t*       thing )
 {
     line_t*     line;
+    side_t*     sidedef; // [STRIFE]
+    int         flag;    // [STRIFE]
     int         ok;
 
     line = &lines[linenum];
+
+    // haleyjd 09/21/10: corpses and missiles cannot activate any cross-over
+    // line types, *except* 182 (which is for the sake of missiles).
+    if((thing->flags & (MF_MISSILE|MF_CORPSE)) && line->special != 182)
+        return;
 
     //	Triggers that other things can activate
     if (!thing->player)
     {
         // Things that should NOT trigger specials...
-        switch(thing->type)
-        {
-            // villsa [STRIFE] unused
-            //case MT_ROCKET:
-            //case MT_PLASMA:
-            //case MT_BFG:
-            //case MT_TROOPSHOT:
-            //case MT_HEADSHOT:
-            //case MT_BRUISERSHOT:
-            //return;
-            //break;
-
-        default: break;
-        }
-
+        // villsa [STRIFE] unused
+        //   haleyjd: removed dead switch. Strife only excludes missiles and
+        //   corpses, which is handled above.
+ 
         ok = 0;
 
         // [STRIFE] Added several line types. Removed none.
@@ -627,7 +627,7 @@ P_CrossSpecialLine
         case 231:       // haleyjd: STRIFE-TODO: Identify type
         case 125:       // TELEPORT MONSTERONLY TRIGGER
         case 126:       // TELEPORT MONSTERONLY RETRIGGER
-        case 182:       // haleyjd: [STRIFE] Break glass - it's a cross type too!
+        case 182:       // haleyjd: [STRIFE] Break glass - it's a W1 type too!
         case 10:        // PLAT DOWN-WAIT-UP-STAY TRIGGER
         case 39:        // TELEPORT TRIGGER
         case 88:        // PLAT DOWN-WAIT-UP-STAY RETRIGGER
@@ -643,127 +643,152 @@ P_CrossSpecialLine
     // Note: could use some const's here.
     switch (line->special)
     {
-        //
-        // TRIGGERS.
-        // All from here to RETRIGGERS.
-        //
+    //
+    // TRIGGERS.
+    // All from here to RETRIGGERS.
+    //
+    case 230:
+        // haleyjd 09/21/10: [STRIFE] W1 Open Door if Quest
+        sidedef = &sides[line->sidenum[0]];
+        flag = (sidedef->rowoffset >> FRACBITS) - 1;
+
+        if(!(thing->player->questflags & (1 << flag)))
+            break;
+        // fall-through:
     case 2:
-        // Open Door
+        // Open Door - [STRIFE] Verified unmodified.
         EV_DoDoor(line,open);
         line->special = 0;
         break;
 
+    case 227:
+        // haleyjd 09/21/10: [STRIFE] W1 Close Door if Quest
+        sidedef = &sides[line->sidenum[0]];
+        flag = (sidedef->rowoffset >> FRACBITS) - 1;
+
+        if(!(thing->player->questflags & (1 << flag)))
+            break;
+        // fall-through:
     case 3:
-        // Close Door
+        // Close Door - [STRIFE] Verified unmodified.
         EV_DoDoor(line,close);
         line->special = 0;
         break;
 
     case 4:
-        // Raise Door
+        // Raise Door - [STRIFE] Verified unmodified.
         EV_DoDoor(line,normal);
         line->special = 0;
         break;
 
     case 5:
-        // Raise Floor
+        // Raise Floor - [STRIFE] Verified unmodified.
         EV_DoFloor(line,raiseFloor);
         line->special = 0;
         break;
 
     case 6:
-        // Fast Ceiling Crush & Raise
+        // Fast Ceiling Crush & Raise - [STRIFE] Verified unmodified.
         EV_DoCeiling(line,fastCrushAndRaise);
         line->special = 0;
         break;
 
     case 8:
-        // Build Stairs
+        // Build Stairs - [STRIFE] Verified unmodified.
         EV_BuildStairs(line,build8);
         line->special = 0;
         break;
 
     case 10:
-        // PlatDownWaitUp
+        // PlatDownWaitUp - [STRIFE] Verified unmodified.
         EV_DoPlat(line,downWaitUpStay,0);
         line->special = 0;
         break;
 
     case 12:
-        // Light Turn On - brightest near
+        // Light Turn On - brightest near - [STRIFE] Verified unmodified.
         EV_LightTurnOn(line,0);
         line->special = 0;
         break;
 
     case 13:
-        // Light Turn On 255
+        // Light Turn On 255 - [STRIFE] Verified unmodified.
         EV_LightTurnOn(line,255);
         line->special = 0;
         break;
 
     case 16:
-        // Close Door 30
+        // Close Door 30 - [STRIFE] Verified unmodified.
         EV_DoDoor(line,close30ThenOpen);
         line->special = 0;
         break;
 
     case 17:
-        // Start Light Strobing
+        // Start Light Strobing - [STRIFE] Verified unmodified.
         EV_StartLightStrobing(line);
         line->special = 0;
         break;
 
     case 19:
-        // Lower Floor
+        // Lower Floor - [STRIFE] Verified unmodified.
         EV_DoFloor(line,lowerFloor);
         line->special = 0;
         break;
 
-    case 22:
+    case 22: // STRIFE-TODO: Something is different about this type - uses plat type 4
         // Raise floor to nearest height and change texture
         EV_DoPlat(line,raiseToNearestAndChange,0);
         line->special = 0;
         break;
 
     case 25:
-        // Ceiling Crush and Raise
+        // Ceiling Crush and Raise - [STRIFE] Verified unmodified.
         EV_DoCeiling(line,crushAndRaise);
         line->special = 0;
         break;
 
     case 30:
-        // Raise floor to shortest texture height
+        // Raise floor to shortest texture height - [STRIFE] Verified unmodified.
         //  on either side of lines.
         EV_DoFloor(line,raiseToTexture);
         line->special = 0;
         break;
 
     case 35:
-        // Lights Very Dark
+        // Lights Very Dark - [STRIFE] Verified unmodified.
         EV_LightTurnOn(line,35);
         line->special = 0;
         break;
 
     case 36:
-        // Lower Floor (TURBO)
+        // Lower Floor (TURBO) - [STRIFE] Verified unmodified.
         EV_DoFloor(line,turboLower);
         line->special = 0;
         break;
 
     case 37:
-        // LowerAndChange
+        // LowerAndChange - [STRIFE] Verified unmodified.
         EV_DoFloor(line,lowerAndChange);
         line->special = 0;
         break;
 
-    case 38:
-        // Lower Floor To Lowest
+    case 193:
+        // haleyjd 09/21/10: [STRIFE] W1 Floor Lower to Lowest if Quest
+        sidedef = &sides[line->sidenum[0]];
+        flag = (sidedef->rowoffset >> FRACBITS) - 1; // note is fixed_t
+
+        // must have the questflag indicated in the line's y offset
+        if(!(thing->player->questflags & (1 << flag)))
+            break;
+        // fall-through:
+    case 38: 
+        // Lower Floor To Lowest - [STRIFE] Verified unmodified.
         EV_DoFloor( line, lowerFloorToLowest );
         line->special = 0;
         break;
 
     case 39:
-        // TELEPORT!
+        // TELEPORT! - [STRIFE] Verified unmodified.
         EV_Teleport( line, side, thing );
         line->special = 0;
         break;
@@ -776,36 +801,36 @@ P_CrossSpecialLine
         break;*/
 
     case 44:
-        // Ceiling Crush
+        // Ceiling Crush - [STRIFE] Verified unmodified.
         EV_DoCeiling( line, lowerAndCrush );
         line->special = 0;
         break;
 
     case 52:
-        // EXIT!
-        G_ExitLevel (0);
+        // EXIT! - haleyjd 09/21/10: [STRIFE] Exit to level tag/100
+        G_ExitLevel (line->tag / 100);
         break;
 
     case 53:
-        // Perpetual Platform Raise
+        // Perpetual Platform Raise - [STRIFE] Verified unmodified.
         EV_DoPlat(line,perpetualRaise,0);
         line->special = 0;
         break;
 
     case 54:
-        // Platform Stop
+        // Platform Stop - [STRIFE] Verified unmodified.
         EV_StopPlat(line);
         line->special = 0;
         break;
 
     case 56:
-        // Raise Floor Crush
+        // Raise Floor Crush - [STRIFE] Verified unmodified.
         EV_DoFloor(line,raiseFloorCrush);
         line->special = 0;
         break;
 
     case 57:
-        // Ceiling Crush Stop
+        // Ceiling Crush Stop - [STRIFE] Verified unmodified.
         EV_CeilingCrushStop(line);
         line->special = 0;
         break;
@@ -818,62 +843,66 @@ P_CrossSpecialLine
         break;
 
     case 59:
-        // Raise Floor 24 And Change
+        // Raise Floor 24 And Change - [STRIFE] Verified unmodified.
         EV_DoFloor(line,raiseFloor24AndChange);
         line->special = 0;
         break;
 
     case 104:
-        // Turn lights off in sector(tag)
+        // Turn lights off in sector(tag) - [STRIFE] Verified unmodified.
         EV_TurnTagLightsOff(line);
         line->special = 0;
         break;
 
     case 108:
-        // Blazing Door Raise (faster than TURBO!)
+        // Blazing Door Raise (faster than TURBO!) - [STRIFE] Verified unmodified.
         EV_DoDoor (line,blazeRaise);
         line->special = 0;
         break;
 
     case 109:
-        // Blazing Door Open (faster than TURBO!)
+        // Blazing Door Open (faster than TURBO!) - [STRIFE] Verified unmodified.
         EV_DoDoor (line,blazeOpen);
         line->special = 0;
         break;
 
     case 100:
-        // Build Stairs Turbo 16
+        // Build Stairs Turbo 16 - [STRIFE] Verified unmodified.
         EV_BuildStairs(line,turbo16);
         line->special = 0;
         break;
 
+    case 197:
+        // haleyjd 09/21/10: [STRIFE] Blazing Door Close if Has Sigil B
+        if(thing->player->sigiltype <= 0)
+            break;
+        // fall-through:
     case 110:
-        // Blazing Door Close (faster than TURBO!)
+        // Blazing Door Close (faster than TURBO!) - [STRIFE] Verified unmodified.
         EV_DoDoor (line,blazeClose);
         line->special = 0;
         break;
 
     case 119:
-        // Raise floor to nearest surr. floor
+        // Raise floor to nearest surr. floor - [STRIFE] Verified unmodified.
         EV_DoFloor(line,raiseFloorToNearest);
         line->special = 0;
         break;
 
-    case 121:
+    case 121: // STRIFE-TODO: This has been modified! - uses plat type 5
         // Blazing PlatDownWaitUpStay
         EV_DoPlat(line,blazeDWUS,0);
         line->special = 0;
         break;
 
     case 124:
-        // Secret EXIT
-        // [STRIFE] No secret exits;
-        // STRIFE-TODO: is this reused for something else?
-        //G_SecretExitLevel ();
+        // haleyjd 09/21/10: [STRIFE] W1 Start Finale
+        // Altered from G_SecretExitLevel.
+        G_StartFinale();
         break;
 
     case 125:
-        // TELEPORT MonsterONLY
+        // TELEPORT MonsterONLY - [STRIFE] Verified unmodified.
         if (!thing->player)
         {
             EV_Teleport( line, side, thing );
@@ -882,13 +911,13 @@ P_CrossSpecialLine
         break;
 
     case 130:
-        // Raise Floor Turbo
+        // Raise Floor Turbo - [STRIFE] Verified unmodified.
         EV_DoFloor(line,raiseFloorTurbo);
         line->special = 0;
         break;
 
     case 141:
-        // Silent Ceiling Crush & Raise
+        // Silent Ceiling Crush & Raise - [STRIFE] Verified unmodified.
         EV_DoCeiling(line,silentCrushAndRaise);
         line->special = 0;
         break;
@@ -899,17 +928,165 @@ P_CrossSpecialLine
         line->special = 0;
         break;
 
+    case 183:
+        // villsa [STRIFE] Split Raise Nearest
+        EV_DoDoor(line, splitRaiseNearest);
+        line->special = 0;
+        break;
+
+    case 178: // STRIFE-TODO: new Stairs type?
+        // EV_BuildStairs(line, 2);
+        line->special = 0;
+        break;
+
+    case 179: // STRIFE-TODO: new Ceiling type?
+        // EV_DoCeiling(line, 0);
+        line->special = 0;
+        break;
+
     case 182:
-        // haleyjd 09/21/10: [STRIFE]
+        // haleyjd 09/21/10: [STRIFE] Break Glass
         // 182 is a unique linetype in that it is both a G1 and a W1 linetype,
         // but only missiles may activate it as a W1 type.
         if(thing->flags & MF_MISSILE)
             P_ChangeSwitchTexture(line, 1); // why 1? it will be cleared anyway.
         break;
 
-    case 183:
-        // villsa [STRIFE] Split Raise Nearest
-        EV_DoDoor(line, splitRaiseNearest);
+    case 187:
+        // haleyjd 09/21/10: [STRIFE] W1 Clear Force Fields if Quest
+        sidedef = &sides[line->sidenum[0]];
+        flag = (sidedef->rowoffset >> FRACBITS) - 1; // note is fixed_t
+
+        // must have the questflag indicated in the line's y offset
+        if(!(thing->player->questflags & (1 << flag)))
+            break;
+
+        // Do it!
+        EV_ClearForceFields(line);
+        line->special = 0;
+        break;
+
+    case 188:
+        // haleyjd 09/21/10: [STRIFE] W1 Open Door if Quest 16 (Gate Mechanism 
+        // Destroyed)
+        if(!(thing->player->questflags & QF_QUEST16))
+            break;
+        EV_DoDoor(line, open);
+        line->special = 0;
+        break;
+
+    case 200:
+        // haleyjd 09/21/10: [STRIFE] W1 Open Door if Sigil Owned
+        if(!(thing->player->weaponowned[wp_sigil]))
+            break;
+        EV_DoDoor(line, open);
+        line->special = 0;
+        break;
+
+    case 201:
+        // haleyjd 09/21/10: [STRIFE] W1 Voiced Objective (First Side Only)
+        if(side == 1)
+            break;
+        // fall-through:
+    case 202:
+        // haleyjd 09/21/10: [STRIFE] W1 Voiced Objective (Tag = VOC/LOG #)
+        // must be consoleplayer
+        if(thing->player != &players[consoleplayer])
+            break;
+
+        // must have comm unit
+        if(!(thing->player->powers[pw_communicator]))
+            break;
+
+        // load voice
+        DEH_snprintf(crosslinestr, sizeof(crosslinestr), "voc%i", line->tag);
+        I_StartVoice(crosslinestr);
+
+        // load objective
+        DEH_snprintf(crosslinestr, sizeof(crosslinestr), "log%i", line->tag);
+        GiveObjective(crosslinestr, 0);
+
+        // Put up a message
+        thing->player->message = DEH_String("Incoming Message...");
+        line->special = 0;
+        break;
+
+    case 210:
+        // haleyjd 09/21/10: [STRIFE] W1 Voiced Objective if Flamethrower????
+        // I don't think this is actually used anywhere o_O
+        // must be player 1...
+        if(thing->player != &players[0])
+            break;
+
+        // must have comm unit
+        if(!(thing->player->powers[pw_communicator]))
+            break;
+
+        // must have... the flamethrower?!
+        if(!(thing->player->weaponowned[wp_flame]))
+            break;
+
+        // load voice
+        DEH_snprintf(crosslinestr, sizeof(crosslinestr), "voc%i", line->tag);
+        I_StartVoice(crosslinestr);
+
+        // load objective
+        DEH_snprintf(crosslinestr, sizeof(crosslinestr), "log%i", line->tag);
+        GiveObjective(crosslinestr, 0);
+
+        // Put up a message
+        thing->player->message = DEH_String("Incoming Message from BlackBird...");
+        line->special = 0;
+        break;
+
+    case 215:
+        // haleyjd 09/21/10: [STRIFE] W1 Voiced Objective if Quest (Tag/100, Tag%100)
+        // must be player 1...
+        if(thing->player != &players[0])
+            break;
+
+        // must have comm unit
+        if(!(thing->player->powers[pw_communicator]))
+            break;
+
+        if(line->tag != 0)
+        {
+            // test for questflag
+            if(!(thing->player->questflags & (1 << (line->tag % 100 - 1))))
+                break;
+        }
+
+        // start voice
+        DEH_snprintf(crosslinestr, sizeof(crosslinestr), "voc%i", line->tag/100);
+        I_StartVoice(crosslinestr);
+
+        // give objective
+        DEH_snprintf(crosslinestr, sizeof(crosslinestr), "log%i", line->tag/100);
+        GiveObjective(crosslinestr, 0);
+
+        // Put up a message
+        thing->player->message = DEH_String("Incoming Message from BlackBird...");
+        line->special = 0;
+        break;
+
+    case 204:
+        // haleyjd 09/21/10: [STRIFE] W1 Change Music (unused!)
+        if(thing->player != &players[0])
+            break;
+        S_ChangeMusic(line->tag, 1);
+        line->special = 0;
+        break;
+
+    case 228:
+        // haleyjd 09/21/10: [STRIFE] W1 Entity Voice?
+        if(!(thing->player->questflags & QF_QUEST24)) // Not killed Macil???
+            break; // STRIFE-TODO: verify...
+
+        if(!(thing->player->questflags & QF_QUEST28)) // ????? STRIFE-TODO
+            I_StartVoice(DEH_String("voc128"));
+        else
+            I_StartVoice(DEH_String("voc130"));
+        
         line->special = 0;
         break;
 
@@ -917,92 +1094,100 @@ P_CrossSpecialLine
         // RETRIGGERS.  All from here till end.
         //
     case 72:
-        // Ceiling Crush
+        // Ceiling Crush - [STRIFE] Verified unmodified.
         EV_DoCeiling( line, lowerAndCrush );
         break;
 
     case 73:
-        // Ceiling Crush and Raise
+        // Ceiling Crush and Raise - [STRIFE] Verified unmodified.
         EV_DoCeiling(line,crushAndRaise);
         break;
 
     case 74:
-        // Ceiling Crush Stop
+        // Ceiling Crush Stop - [STRIFE] Verified unmodified.
         EV_CeilingCrushStop(line);
         break;
 
     case 75:
-        // Close Door
+        // Close Door - [STRIFE] Verified unmodified.
         EV_DoDoor(line,close);
         break;
 
     case 76:
-        // Close Door 30
+        // Close Door 30 - [STRIFE] Verified unmodified.
         EV_DoDoor(line,close30ThenOpen);
         break;
 
     case 77:
-        // Fast Ceiling Crush & Raise
+        // Fast Ceiling Crush & Raise - [STRIFE] Verified unmodified.
         EV_DoCeiling(line,fastCrushAndRaise);
         break;
 
     case 79:
-        // Lights Very Dark
+        // Lights Very Dark - [STRIFE] Verified unmodified.
         EV_LightTurnOn(line,35);
         break;
 
     case 80:
-        // Light Turn On - brightest near
+        // Light Turn On - brightest near - [STRIFE] Verified unmodified.
         EV_LightTurnOn(line,0);
         break;
 
     case 81:
-        // Light Turn On 255
+        // Light Turn On 255 - [STRIFE] Verified unmodified.
         EV_LightTurnOn(line,255);
         break;
 
     case 82:
-        // Lower Floor To Lowest
+        // Lower Floor To Lowest - [STRIFE] Verified unmodified.
         EV_DoFloor( line, lowerFloorToLowest );
         break;
 
     case 83:
-        // Lower Floor
+        // Lower Floor - [STRIFE] Verified unmodified.
         EV_DoFloor(line,lowerFloor);
         break;
 
     case 84:
-        // LowerAndChange
+        // LowerAndChange - [STRIFE] Verified unmodified.
         EV_DoFloor(line,lowerAndChange);
         break;
 
     case 86:
-        // Open Door
+        // Open Door - [STRIFE] Verified unmodified.
         EV_DoDoor(line,open);
         break;
 
     case 87:
-        // Perpetual Platform Raise
+        // Perpetual Platform Raise - [STRIFE] Verified unmodified.
         EV_DoPlat(line,perpetualRaise,0);
         break;
 
     case 88:
-        // PlatDownWaitUp
+        // PlatDownWaitUp - [STRIFE] Verified unmodified.
         EV_DoPlat(line,downWaitUpStay,0);
         break;
 
     case 89:
-        // Platform Stop
+        // Platform Stop - [STRIFE] Verified unmodified.
         EV_StopPlat(line);
         break;
 
-    case 90:
-        // Raise Door
+    case 216:
+        // haleyjd 09/21/10: [STRIFE] WR Raise Door if Quest
+        sidedef = &sides[line->sidenum[0]];
+        flag = (sidedef->rowoffset >> FRACBITS) - 1; // note is fixed_t.
+
+        if(!(thing->player->questflags & (1 << flag)))
+            break;
+        // fall-through:
+    case 90: 
+        // Raise Door - [STRIFE] Verified unmodified.
         EV_DoDoor(line,normal);
         break;
 
     case 91:
-        // Raise Floor
+        // Raise Floor - [STRIFE] Verified unmodified.
         EV_DoFloor(line,raiseFloor);
         break;
 
@@ -1013,80 +1198,84 @@ P_CrossSpecialLine
         break;
 
     case 93:
-        // Raise Floor 24 And Change
+        // Raise Floor 24 And Change - [STRIFE] Verified unmodified.
         EV_DoFloor(line,raiseFloor24AndChange);
         break;
 
     case 94:
-        // Raise Floor Crush
+        // Raise Floor Crush - [STRIFE] Verified unmodified.
         EV_DoFloor(line,raiseFloorCrush);
         break;
 
-    case 95:
+    case 95: // STRIFE-TODO: changed to use plat type 4...
         // Raise floor to nearest height
         // and change texture.
         EV_DoPlat(line,raiseToNearestAndChange,0);
         break;
 
     case 96:
-        // Raise floor to shortest texture height
+        // Raise floor to shortest texture height - [STRIFE] Verified unmodified.
         // on either side of lines.
         EV_DoFloor(line,raiseToTexture);
         break;
 
     case 97:
-        // TELEPORT!
+        // TELEPORT! - [STRIFE] Verified unmodified.
         EV_Teleport( line, side, thing );
         break;
 
     case 98:
-        // Lower Floor (TURBO)
+        // Lower Floor (TURBO) - [STRIFE] Verified unmodified.
         EV_DoFloor(line,turboLower);
         break;
 
     case 105:
-        // Blazing Door Raise (faster than TURBO!)
+        // Blazing Door Raise (faster than TURBO!) - [STRIFE] Verified unmodified.
         EV_DoDoor (line,blazeRaise);
         break;
 
     case 106:
-        // Blazing Door Open (faster than TURBO!)
+        // Blazing Door Open (faster than TURBO!) - [STRIFE] Verified unmodified.
         EV_DoDoor (line,blazeOpen);
         break;
 
     case 107:
-        // Blazing Door Close (faster than TURBO!)
+        // Blazing Door Close (faster than TURBO!) - [STRIFE] Verified unmodified.
         EV_DoDoor (line,blazeClose);
         break;
 
-    case 120:
+    case 120: // STRIFE-TODO: changed - uses plat type 5
         // Blazing PlatDownWaitUpStay.
         EV_DoPlat(line,blazeDWUS,0);
         break;
 
     case 126:
-        // TELEPORT MonsterONLY.
+        // TELEPORT MonsterONLY. - [STRIFE] Verified unmodified.
         if (!thing->player)
             EV_Teleport( line, side, thing );
         break;
 
     case 128:
-        // Raise To Nearest Floor
+        // Raise To Nearest Floor - [STRIFE] Verified unmodified.
         EV_DoFloor(line,raiseFloorToNearest);
         break;
 
     case 129:
-        // Raise Floor Turbo
+        // Raise Floor Turbo - [STRIFE] Verified unmodified.
         EV_DoFloor(line,raiseFloorTurbo);
         break;
 
+    case 186:
+        // haleyjd [STRIFE] Exit Level to Spot, First Side Only
+        if(side == 1)
+            break;
+        // fall-through:
     case 145:
         // haleyjd [STRIFE] Exit Level to Spot
         thing->momx = thing->momy = thing->momz = 0;
         {
             int map  = line->tag / 100;
             int spot = line->tag % 100;
-            static char msgbuf[90];
 
             if(thing->player->weaponowned[wp_sigil])
             {
@@ -1096,17 +1285,19 @@ P_CrossSpecialLine
                     map = 10;
             }
 
-            DEH_snprintf(msgbuf, sizeof(msgbuf), "Entering%s", 
+            DEH_snprintf(crosslinestr, sizeof(crosslinestr), 
+                         "Entering%s", 
                          DEH_String(mapnames[map - 1]) + 8);
-            thing->player->message = msgbuf;
+            thing->player->message = crosslinestr;
 
             if(netgame && deathmatch)
             {
                 if(levelTimer && levelTimeCount != 0)
                 {
-                    DEH_snprintf(msgbuf, sizeof(msgbuf), "%d min left", 
+                    DEH_snprintf(crosslinestr, sizeof(crosslinestr), 
+                                 "%d min left", 
                                  (levelTimeCount/TICRATE)/60);
-                    return;
+                    break;
                 }
 
                 // raise switch from floor
@@ -1121,11 +1312,75 @@ P_CrossSpecialLine
                 // that this is incorrect, as that they forgot to add such a 
                 // check to the other kind of exit lines too ;)
                 if(thing->player->health <= 0)
-                    return;
+                    break;
 
                 G_RiftExitLevel(map, spot, thing->angle);
             }
         }
+        break;
+
+    case 175:
+        // haleyjd 09/21/10: [STRIFE] WR Raise Alarm if < 16 Above Floor
+        if(thing->z < thing->floorz + 16 * FRACUNIT)
+            P_NoiseAlert(thing->player->mo, thing->player->mo);
+        break;
+
+    case 198:
+        // haleyjd 09/21/10: [STRIFE] WR Raise Alarm if No Guard Uniform
+        if(P_PlayerHasItem(thing->player, MT_QUEST_GUARD_UNIFORM))
+            break;
+        // fall-through:
+    case 150:
+        // haleyjd 09/21/10: [STRIFE] WR Raise Alarm
+        P_NoiseAlert(thing->player->mo, thing->player->mo);
+        break;
+
+    case 208:
+        // haleyjd 09/21/10: [STRIFE] WR Raise Alarm if Have Flamethrower
+        // O_o - this is definitely unused. Was an entire flamethrower quest
+        // cut out of the game before release?
+        if(thing->player->weaponowned[wp_flame])
+            P_NoiseAlert(thing->player->mo, thing->player->mo);
+        break;
+
+    case 206:
+        // haleyjd 09/21/10: [STRIFE] WR Raise Alarm if Have Chalice
+        // This *is* used, inside the Tavern in Tarnhill. Oddly there is also
+        // one just randomly placed outside the entrance to the Power Station.
+        if(P_PlayerHasItem(thing->player, MT_INV_CHALICE))
+            P_NoiseAlert(thing->player->mo, thing->player->mo);
+        break;
+
+    case 184:
+        // STRIFE-TODO: New plat type?
+        break;
+
+    case 185:
+        // haleyjd 09/21/10: [STRIFE] Silent Teleport (used for Converter)
+        // STRIFE-TODO: Figure out the flags that have been added to EV_Teleport!
+        // flag = 51;
+        EV_Teleport(line, side, thing /*, flag*/);
+        break;
+
+    case 195:
+        // haleyjd 09/21/10: [STRIFE] Silent Teleport and Change Zombie
+        // STRIFE-TODO: Figure out the flags that have been added to EV_Teleport!
+        // flag = 51;
+        EV_Teleport(line, side, thing /*, flag*/);
+        P_SetMobjState(thing, S_AGRD_00); // 419
+        break;
+
+    case 203:
+        // haleyjd 09/21/10: [STRIFE] WR Change Music
+        if(thing->player != &players[0])
+            break;
+        S_ChangeMusic(line->tag, 1);
+        break;
+
+    case 231:
+        // haleyjd 09/21/10: [STRIFE] WR Teleport ???? - STRIFE-TODO: figure out flags
+        // flag = 33;
+        EV_Teleport(line, side, thing /*, flag*/);
         break;
         
         // haleyjd 09/21/10: Moved one-time-use lines up above with the others.

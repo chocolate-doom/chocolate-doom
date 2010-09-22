@@ -69,6 +69,8 @@ void G_RiftExitLevel(int map, int spot, angle_t angle); // [STRIFE]
 void G_ExitLevel (int dest);
 //void G_SecretExitLevel (void);
 
+void G_StartFinale(void); // [STRIFE]
+
 //void G_WorldDone (void);
 
 boolean G_RiftCheat(int riftSpotNum); // [STRIFE]
