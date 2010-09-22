@@ -263,7 +263,6 @@ void P_ChangeSwitchTexture(line_t* line, int useAgain)
 
     sound = sfx_swtchn;
 
-    // EXIT SWITCH?
     // villsa [STRIFE] check for linetype 182 (break glass)
     if(line->special == 182)
     {
@@ -272,11 +271,12 @@ void P_ChangeSwitchTexture(line_t* line, int useAgain)
 
         if(useAgain)
         {
-            texMid = 0;
+            // haleyjd 09/21/10: Corrected (>> 16 == next field)
             texTop = 0;
+            texBot = 0;
         }
 
-        if(texBot)
+        if(texMid) // haleyjd 09/21/10: Corrected (>> 16 == next field)
             useAgain = 0;
 
         sound = sfx_bglass;
@@ -295,7 +295,7 @@ void P_ChangeSwitchTexture(line_t* line, int useAgain)
             if(sl->sound)
                 sound = sl->sound;
 
-            S_StartSound(buttonlist->soundorg,sound);
+            S_StartSound(buttonlist->soundorg, sound);
             sides[line->sidenum[0]].toptexture = switchlist[i^1];
 
             if(useAgain)
@@ -318,13 +318,14 @@ void P_ChangeSwitchTexture(line_t* line, int useAgain)
                 sides[line->sidenum[0]].midtexture = switchlist[i^1];
 
                 // villsa [STRIFE] affect second side of line
+                // BUG: will crash if 1S line is marked with TWOSIDED flag!
                 if(line->flags & ML_TWOSIDED)
                     sides[line->sidenum[1]].midtexture = switchlist[i^1];
 
                 if(useAgain)
                     P_StartButton(line, middle,switchlist[i],BUTTONTIME);
 
-                // villsa [STRIFE]
+                // villsa [STRIFE]: Mines Converter hack
                 if(sound == sfx_firxpl)
                 {
                     breakglass = true;

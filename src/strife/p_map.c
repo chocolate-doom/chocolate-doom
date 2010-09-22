@@ -1214,11 +1214,11 @@ P_AimLineAttack
   angle_t	angle,
   fixed_t	distance )
 {
-    fixed_t	x2;
-    fixed_t	y2;
+    fixed_t     x2;
+    fixed_t     y2;
 
     t1 = P_SubstNullMobj(t1);
-	
+
     angle >>= ANGLETOFINESHIFT;
     shootthing = t1;
     
@@ -1232,14 +1232,14 @@ P_AimLineAttack
     
     attackrange = distance;
     linetarget = NULL;
-	
+
     P_PathTraverse ( t1->x, t1->y,
-		     x2, y2,
-		     PT_ADDLINES|PT_ADDTHINGS,
-		     PTR_AimTraverse );
-		
+                     x2, y2,
+                     PT_ADDLINES|PT_ADDTHINGS,
+                     PTR_AimTraverse );
+
     if (linetarget)
-	return aimslope;
+        return aimslope;
     else    // villsa [STRIFE] checks for player pitch
     {
         if(t1->player)

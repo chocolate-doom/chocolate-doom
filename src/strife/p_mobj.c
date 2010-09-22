@@ -1177,6 +1177,8 @@ mobj_t* P_SpawnFacingMissile(mobj_t* source, mobj_t* target, mobjtype_t type)
 //
 // Tries to aim at a nearby monster
 // villsa [STRIFE] now returns a mobj
+// * Also modified to allow up/down look, and to account for foot-clipping
+//   by liquid terrain.
 //
 mobj_t* P_SpawnPlayerMissile(mobj_t* source, mobjtype_t type)
 {
@@ -1206,7 +1208,9 @@ mobj_t* P_SpawnPlayerMissile(mobj_t* source, mobjtype_t type)
         if (!linetarget)
         {
             an = source->angle;
-            slope = 0;
+
+            // haleyjd 09/21/10: [STRIFE] Removed, for look up/down support.
+            //slope = 0; 
         }
     }
 

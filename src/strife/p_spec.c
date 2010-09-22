@@ -627,7 +627,7 @@ P_CrossSpecialLine
         case 231:       // haleyjd: STRIFE-TODO: Identify type
         case 125:       // TELEPORT MONSTERONLY TRIGGER
         case 126:       // TELEPORT MONSTERONLY RETRIGGER
-        case 182:       // haleyjd: STRIFE-TODO: Identify type
+        case 182:       // haleyjd: [STRIFE] Break glass - it's a cross type too!
         case 10:        // PLAT DOWN-WAIT-UP-STAY TRIGGER
         case 39:        // TELEPORT TRIGGER
         case 88:        // PLAT DOWN-WAIT-UP-STAY RETRIGGER
@@ -643,8 +643,10 @@ P_CrossSpecialLine
     // Note: could use some const's here.
     switch (line->special)
     {
+        //
         // TRIGGERS.
         // All from here to RETRIGGERS.
+        //
     case 2:
         // Open Door
         EV_DoDoor(line,open);
@@ -865,6 +867,8 @@ P_CrossSpecialLine
 
     case 124:
         // Secret EXIT
+        // [STRIFE] No secret exits;
+        // STRIFE-TODO: is this reused for something else?
         //G_SecretExitLevel ();
         break;
 
@@ -889,7 +893,29 @@ P_CrossSpecialLine
         line->special = 0;
         break;
 
+    case 174:
+        // villsa [STRIFE] Split Open
+        EV_DoDoor(line, splitOpen);
+        line->special = 0;
+        break;
+
+    case 182:
+        // haleyjd 09/21/10: [STRIFE]
+        // 182 is a unique linetype in that it is both a G1 and a W1 linetype,
+        // but only missiles may activate it as a W1 type.
+        if(thing->flags & MF_MISSILE)
+            P_ChangeSwitchTexture(line, 1); // why 1? it will be cleared anyway.
+        break;
+
+    case 183:
+        // villsa [STRIFE] Split Raise Nearest
+        EV_DoDoor(line, splitRaiseNearest);
+        line->special = 0;
+        break;
+
+        //
         // RETRIGGERS.  All from here till end.
+        //
     case 72:
         // Ceiling Crush
         EV_DoCeiling( line, lowerAndCrush );
@@ -1071,7 +1097,7 @@ P_CrossSpecialLine
             }
 
             DEH_snprintf(msgbuf, sizeof(msgbuf), "Entering%s", 
-                         mapnames[map - 1] + 8);
+                         DEH_String(mapnames[map - 1]) + 8);
             thing->player->message = msgbuf;
 
             if(netgame && deathmatch)
@@ -1101,18 +1127,8 @@ P_CrossSpecialLine
             }
         }
         break;
-
-    case 174:
-        // villsa [STRIFE] Split Open
-        EV_DoDoor(line, splitOpen);
-        line->special = 0;
-        break;
-
-    case 183:
-        // villsa [STRIFE] Split Raise Nearest
-        EV_DoDoor(line, splitRaiseNearest);
-        line->special = 0;
-        break;
+        
+        // haleyjd 09/21/10: Moved one-time-use lines up above with the others.
     }
 }
 
