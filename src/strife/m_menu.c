@@ -542,6 +542,58 @@ void M_ReadSaveStrings(void)
     }
 }
 
+//
+// M_DrawNameChar
+//
+// haleyjd 09/22/10: [STRIFE] New function
+// Handler for drawing the "Name Your Character" menu.
+//
+void M_DrawNameChar(void)
+{
+    int i;
+
+    M_WriteText(72, 28, DEH_String("Name Your Character"));
+
+    for (i = 0;i < load_end; i++)
+    {
+        M_DrawSaveLoadBorder(LoadDef.x,LoadDef.y+LINEHEIGHT*i);
+        M_WriteText(LoadDef.x,LoadDef.y+LINEHEIGHT*i,savegamestrings[i]);
+    }
+
+    if (saveStringEnter)
+    {
+        i = M_StringWidth(savegamestrings[saveSlot]); // STRIFE-TODO: verify variable
+        M_WriteText(LoadDef.x + i,LoadDef.y+LINEHEIGHT*saveSlot,"_");
+    }
+}
+
+//
+// M_DoNameChar
+//
+// haleyjd 09/22/10: [STRIFE] New function
+// Handler for items in the "Name Your Character" menu.
+//
+void M_DoNameChar(int choice)
+{
+    int map;
+
+    // STRIFE-TODO
+    // dword_9F144 = 1;
+    // ClearTmp();
+    // G_WriteSaveName(...);
+    // quickSaveSlot = v5;  // VERIFY VARIABLE
+    // SaveDef.lastOn = v5;
+    // ClearSlot();
+    // FromCurr(...);
+    
+    if(isdemoversion)
+        map = 33;
+    else
+        map = 2;
+
+    //G_DeferedInitNew(skill, map);
+    M_ClearMenus(0);
+}
 
 //
 // M_LoadGame & Cie.
@@ -555,8 +607,8 @@ void M_DrawLoad(void)
 
     for (i = 0;i < load_end; i++)
     {
-	M_DrawSaveLoadBorder(LoadDef.x,LoadDef.y+LINEHEIGHT*i);
-	M_WriteText(LoadDef.x,LoadDef.y+LINEHEIGHT*i,savegamestrings[i]);
+        M_DrawSaveLoadBorder(LoadDef.x,LoadDef.y+LINEHEIGHT*i);
+        M_WriteText(LoadDef.x,LoadDef.y+LINEHEIGHT*i,savegamestrings[i]);
     }
 }
 
@@ -568,15 +620,15 @@ void M_DrawLoad(void)
 void M_DrawSaveLoadBorder(int x,int y)
 {
     int             i;
-	
+
     V_DrawPatchDirect(x - 8, y + 7,
                       W_CacheLumpName(DEH_String("M_LSLEFT"), PU_CACHE));
-	
+
     for (i = 0;i < 24;i++)
     {
-	V_DrawPatchDirect(x, y + 7,
+        V_DrawPatchDirect(x, y + 7,
                           W_CacheLumpName(DEH_String("M_LSCNTR"), PU_CACHE));
-	x += 8;
+        x += 8;
     }
 
     V_DrawPatchDirect(x, y + 7, 
@@ -591,7 +643,7 @@ void M_DrawSaveLoadBorder(int x,int y)
 void M_LoadSelect(int choice)
 {
     char    name[256];
-	
+
     strcpy(name, P_SaveGameFile(choice));
 
     G_LoadGame (name);
@@ -605,10 +657,10 @@ void M_LoadGame (int choice)
 {
     if (netgame)
     {
-	M_StartMessage(DEH_String(LOADNET),NULL,false);
-	return;
+        M_StartMessage(DEH_String(LOADNET),NULL,false);
+        return;
     }
-	
+
     M_SetupNextMenu(&LoadDef);
     M_ReadSaveStrings();
 }
@@ -620,18 +672,18 @@ void M_LoadGame (int choice)
 void M_DrawSave(void)
 {
     int             i;
-	
+
     V_DrawPatchDirect(72, 28, W_CacheLumpName(DEH_String("M_SAVEG"), PU_CACHE));
     for (i = 0;i < load_end; i++)
     {
-	M_DrawSaveLoadBorder(LoadDef.x,LoadDef.y+LINEHEIGHT*i);
-	M_WriteText(LoadDef.x,LoadDef.y+LINEHEIGHT*i,savegamestrings[i]);
+        M_DrawSaveLoadBorder(LoadDef.x,LoadDef.y+LINEHEIGHT*i);
+        M_WriteText(LoadDef.x,LoadDef.y+LINEHEIGHT*i,savegamestrings[i]);
     }
-	
+
     if (saveStringEnter)
     {
-	i = M_StringWidth(savegamestrings[saveSlot]);
-	M_WriteText(LoadDef.x + i,LoadDef.y+LINEHEIGHT*saveSlot,"_");
+        i = M_StringWidth(savegamestrings[saveSlot]);
+        M_WriteText(LoadDef.x + i,LoadDef.y+LINEHEIGHT*saveSlot,"_");
     }
 }
 
@@ -936,7 +988,7 @@ void M_VerifyNightmare(int key)
     if (key != key_menu_confirm)
         return;
 
-    G_DeferedInitNew(nightmare,epi+1,1);
+    G_DeferedInitNew(nightmare, 1);
     M_ClearMenus (0);
 }
 */
@@ -944,7 +996,9 @@ void M_VerifyNightmare(int key)
 void M_ChooseSkill(int choice)
 {
     // haleyjd 09/07/10: Removed nightmare confirmation
-    G_DeferedInitNew(choice,epi+1,1);
+    // STRIFE-TODO: This is not done here, but on the "Name your Character" menu.
+    // I have modified the starting map to 2 until the naming menu is functional.
+    G_DeferedInitNew(choice, 2);
     M_ClearMenus (0);
 }
 

@@ -1399,46 +1399,54 @@ P_ShootSpecialLine
   line_t*	line )
 {
     int		ok;
-    
+
     //	Impacts that other things can activate.
     if (!thing->player)
     {
-	ok = 0;
-	switch(line->special)
-	{
-	  case 46:
-          case 182: // villsa [STRIFE] for windows
-	    // OPEN DOOR IMPACT
-	    ok = 1;
-	    break;
-	}
-	if (!ok)
-	    return;
+        ok = 0;
+        switch(line->special)
+        {
+        case 46:
+        case 182: // villsa [STRIFE] for windows
+            // OPEN DOOR IMPACT
+            ok = 1;
+            break;
+        }
+        if (!ok)
+            return;
     }
 
     switch(line->special)
     {
-      case 24:
-	// RAISE FLOOR
-	EV_DoFloor(line,raiseFloor);
-	P_ChangeSwitchTexture(line,0);
-	break;
-	
-      case 46:
-	// OPEN DOOR
-	EV_DoDoor(line,open);
-	P_ChangeSwitchTexture(line,1);
-	break;
-	
-      case 47:
-	// RAISE FLOOR NEAR AND CHANGE
-	EV_DoPlat(line,raiseToNearestAndChange,0);
-	P_ChangeSwitchTexture(line,0);
-	break;
+    case 24:
+        // RAISE FLOOR - [STRIFE] Verified unmodified
+        EV_DoFloor(line,raiseFloor);
+        P_ChangeSwitchTexture(line,0);
+        break;
 
-      case 182:
-          // villsa [STRIFE] break glass
-          P_ChangeSwitchTexture(line, 0);
+    case 46:
+        // OPEN DOOR - [STRIFE] Verified unmodified.
+        EV_DoDoor(line,open);
+        P_ChangeSwitchTexture(line,1);
+        break;
+
+    case 47: // STRIFE-TODO: plat type changed to 4 ????
+        // RAISE FLOOR NEAR AND CHANGE
+        EV_DoPlat(line,raiseToNearestAndChange,0);
+        P_ChangeSwitchTexture(line,0);
+        break;
+
+    case 180:
+        // haleyjd 09/22/10: [STRIFE] G1 Raise Floor 512 & Change
+        EV_DoFloor(line, raiseFloor512AndChange);
+        P_ChangeSwitchTexture(line, 0);
+        break;
+
+    case 182:
+        // villsa [STRIFE] G1 Break Glass
+        //   haleyjd: note that 182 is also a W1 type in P_CrossSpecialLine, but
+        //   can only be activated in that manner by an MF_MISSILE object.
+        P_ChangeSwitchTexture(line, 0);
         break;
     }
 }

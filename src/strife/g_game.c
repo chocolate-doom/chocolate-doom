@@ -1730,22 +1730,22 @@ void G_DoSaveGame (void)
  
 
 //
-// G_InitNew
-// Can be called by the startup code or the menu task,
-// consoleplayer, displayplayer, playeringame[] should be set. 
-//
 skill_t	d_skill; 
 int     d_episode; 
 int     d_map; 
- 
-void
-G_DeferedInitNew
-( skill_t	skill,
-  int		episode,
-  int		map) 
+
+//
+// G_DeferedInitNew
+//
+// Can be called by the startup code or the menu task,
+// consoleplayer, displayplayer, playeringame[] should be set. 
+//
+// haleyjd 09/22/10: [STRIFE] Removed episode parameter
+//
+void G_DeferedInitNew(skill_t skill, int map)
 { 
     d_skill = skill; 
-    d_episode = episode; 
+    d_episode = 1; // STRIFE-TODO: no such thing as episodes.
     d_map = map; 
     gameaction = ga_newgame; 
 } 
