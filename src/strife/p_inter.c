@@ -418,7 +418,7 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
     if(delta > toucher->height || delta < -8*FRACUNIT)
         return; // out of reach
 
-    sound = sfx_itemup;	
+    sound = sfx_itemup;
     player = toucher->player;
 
     // Dead thing touching.

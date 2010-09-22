@@ -480,7 +480,7 @@ void S_StartSound(void *origin_p, int sfx_id)
     }
 
     // kill old sound
-    S_StopSound(origin);
+    //S_StopSound(origin);
 
     // try to find a channel
     cnum = S_GetChannel(origin, sfx, false); // haleyjd: not a voice.
