@@ -453,6 +453,8 @@ static char speciallinemsg[92];
 //
 boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
 {
+    static char usemessage[92]; // [STRIFE]
+
     // Err...
     // Use the back sides of VERY SPECIAL lines...
     if (side)
@@ -464,10 +466,8 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
 
         default:
             return false;
-            break;
         }
     }
-
     
     // Switches that other things can activate.
     if (!thing->player)
@@ -528,9 +528,11 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
         break;
 
     case 11:
-        // Exit level
-        P_ChangeSwitchTexture(line,0);
-        G_ExitLevel (0);
+        // Exit level - [STRIFE] Modified to take tag, etc.
+        P_ChangeSwitchTexture(line, 1);
+        if(levelTimer && levelTimeCount)
+            break;
+        G_ExitLevel(line->tag);
         break;
 
     case 14:
@@ -888,16 +890,30 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
 
         P_ChangeSwitchTexture(line, 1);
 
-        GiveVoiceObjective("VOC70", "LOG70", -1);
-        thing->player->message = DEH_String("Incoming Message from BlackBird...");
+        GiveVoiceObjective("voc70", "log70", 0);
+        // haleyjd: Strife used sprintf here, not a direct set.
+        DEH_snprintf(usemessage, sizeof(usemessage), 
+                     "Incoming Message from BlackBird...");
+        thing->player->message = usemessage;
 
+        break;
+
+    case 234:
+        // haleyjd 09/24/10: [STRIFE] SR Raise Door if Quest 3
+        if(!(thing->player->questflags & QF_QUEST3)) // STRIFE-TODO: identify quest 3
+        {
+            DEH_snprintf(usemessage, sizeof(usemessage), 
+                         "That doesn't seem to work!");
+            thing->player->message = usemessage;
+        }
+        else if(EV_DoDoor(line, normal))
+            P_ChangeSwitchTexture(line, 1);
         break;
 
     case 666:
         // villsa [STRIFE] Move wall
         P_MoveWall(line, thing);
         break;
-
     }
 
     return true;
