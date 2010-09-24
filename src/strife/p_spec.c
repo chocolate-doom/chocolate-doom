@@ -788,8 +788,8 @@ P_CrossSpecialLine
         break;
 
     case 39:
-        // TELEPORT! - [STRIFE] Verified unmodified.
-        EV_Teleport( line, side, thing );
+        // TELEPORT! - [STRIFE] Verified unmodified (except for 0 flags param)
+        EV_Teleport( line, side, thing, TF_NORMAL );
         line->special = 0;
         break;
 
@@ -902,10 +902,11 @@ P_CrossSpecialLine
         break;
 
     case 125:
-        // TELEPORT MonsterONLY - [STRIFE] Verified unmodified.
+        // TELEPORT MonsterONLY - [STRIFE] Verified unmodified
+        //    (except for 0 flags parameter)
         if (!thing->player)
         {
-            EV_Teleport( line, side, thing );
+            EV_Teleport( line, side, thing, TF_NORMAL );
             line->special = 0;
         }
         break;
@@ -1220,8 +1221,8 @@ P_CrossSpecialLine
         break;
 
     case 97:
-        // TELEPORT! - [STRIFE] Verified unmodified.
-        EV_Teleport( line, side, thing );
+        // TELEPORT! - [STRIFE] Verified unmodified (except for 0 flags param)
+        EV_Teleport( line, side, thing, TF_NORMAL );
         break;
 
     case 98:
@@ -1250,9 +1251,9 @@ P_CrossSpecialLine
         break;
 
     case 126:
-        // TELEPORT MonsterONLY. - [STRIFE] Verified unmodified.
+        // TELEPORT MonsterONLY. - [STRIFE] Verified unmodified (except for 0 flags param)
         if (!thing->player)
-            EV_Teleport( line, side, thing );
+            EV_Teleport( line, side, thing, TF_NORMAL );
         break;
 
     case 128:
@@ -1357,16 +1358,12 @@ P_CrossSpecialLine
 
     case 185:
         // haleyjd 09/21/10: [STRIFE] Silent Teleport (used for Converter)
-        // STRIFE-TODO: Figure out the flags that have been added to EV_Teleport!
-        // flag = 51;
-        EV_Teleport(line, side, thing /*, flag*/);
+        EV_Teleport(line, side, thing, TF_FULLSILENCE);
         break;
 
     case 195:
         // haleyjd 09/21/10: [STRIFE] Silent Teleport and Change Zombie
-        // STRIFE-TODO: Figure out the flags that have been added to EV_Teleport!
-        // flag = 51;
-        EV_Teleport(line, side, thing /*, flag*/);
+        EV_Teleport(line, side, thing, TF_FULLSILENCE);
         P_SetMobjState(thing, S_AGRD_00); // 419
         break;
 
@@ -1378,9 +1375,8 @@ P_CrossSpecialLine
         break;
 
     case 231:
-        // haleyjd 09/21/10: [STRIFE] WR Teleport ???? - STRIFE-TODO: figure out flags
-        // flag = 33;
-        EV_Teleport(line, side, thing /*, flag*/);
+        // haleyjd 09/21/10: [STRIFE] WR Teleport (Silent at Source)
+        EV_Teleport(line, side, thing, TF_SRCSILENCE);
         break;
         
         // haleyjd 09/21/10: Moved one-time-use lines up above with the others.
@@ -1406,9 +1402,8 @@ P_ShootSpecialLine
         ok = 0;
         switch(line->special)
         {
-        case 46:
+        case 46:  // OPEN DOOR IMPACT
         case 182: // villsa [STRIFE] for windows
-            // OPEN DOOR IMPACT
             ok = 1;
             break;
         }

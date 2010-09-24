@@ -655,10 +655,28 @@ void T_MoveFloor( floormove_t* floor);
 //
 // P_TELEPT
 //
+
+// [STRIFE] Teleportation flags - teleflags
+// Not to be conflated with telefrags, though they be tangentially related ;)
+typedef enum teleflags
+{
+    TF_NOSRCSND = 0x01,
+    TF_NODSTSND = 0x02,
+    TF_NODSTFOG = 0x10,
+    TF_NOSRCFOG = 0x20,
+
+    TF_NORMAL      = 0,
+    TF_DSTSILENCE  = (TF_NODSTSND|TF_NODSTFOG),    // 0x12 (18) (Not used)
+    TF_SRCSILENCE  = (TF_NOSRCSND|TF_NOSRCFOG),    // 0x21 (33)
+    TF_FULLSILENCE = (TF_SRCSILENCE|TF_DSTSILENCE) // 0x33 (51)
+
+} teleflags_e;
+
 int
 EV_Teleport
-( line_t*	line,
-  int		side,
-  mobj_t*	thing );
+( line_t*       line,
+  int           side,
+  mobj_t*       thing,
+  teleflags_e   flags);
 
 #endif

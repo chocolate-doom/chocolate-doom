@@ -1140,10 +1140,10 @@ hitline:
                 P_SpawnPuff(x, y, z); // Spawn bullet puffs.
             else
                 P_SpawnMobj(x, y, z, MT_STRIFEPUFF3);
-
-            // don't go any farther
-            return false;	
         }
+        
+        // don't go any farther
+        return false;	
     }
 
     // shoot a thing

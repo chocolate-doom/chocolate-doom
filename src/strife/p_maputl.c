@@ -685,6 +685,8 @@ boolean PIT_AddThingIntercepts (mobj_t* thing)
 // P_TraverseIntercepts
 // Returns true if the traverser function returns true
 // for all lines.
+//
+// [STRIFE] Verified unmodified.
 // 
 boolean
 P_TraverseIntercepts

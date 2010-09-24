@@ -987,12 +987,13 @@ P_SpawnPuff
 
 //
 // P_SpawnSparkPuff
+//
 // villsa [STRIFE] new function
 //
-
 mobj_t* P_SpawnSparkPuff(fixed_t x, fixed_t y, fixed_t z)
 {
-    return P_SpawnMobj(x, y, ((P_Random() - P_Random()) << 10) + z, MT_SPARKPUFF);
+    int t = P_Random();
+    return P_SpawnMobj(x, y, ((t - P_Random()) << 10) + z, MT_SPARKPUFF);
 }
 
 
