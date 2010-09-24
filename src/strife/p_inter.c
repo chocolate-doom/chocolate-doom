@@ -238,29 +238,50 @@ boolean P_GiveWeapon(player_t* player, weapontype_t weapon, boolean dropped)
 //
 boolean P_GiveBody(player_t* player, int num)
 {
-    int health;
+    int maxhealth;
+    int healing;
 
-    if(num >= 0)
+    maxhealth = MAXHEALTH + player->stamina;
+
+    if(num >= 0) // haleyjd 09/23/10: fixed to give proper amount of health
     {
-        health = player->stamina + MAXHEALTH;
-
-        if(health <= player->health)
+        // any healing to do?
+        if(player->health >= maxhealth)
             return false;
 
+        // give, and cap to maxhealth
         player->health += num;
+        if(player->health >= maxhealth)
+            player->health = maxhealth;
 
-        if(health < player->health + num)
-            player->health = health;
+        // Set mo->health for consistency.
         player->mo->health = player->health;
     }
-    // [STRIFE] handle healing from the front's medic
     else
     {
-        health = (-num * (player->stamina + MAXHEALTH)) / MAXHEALTH;
-        if(health <= player->health)
+        // [STRIFE] handle healing from the Front's medic
+        // The amount the player's health will be set to scales up with stamina
+        // increases.
+        // Ex 1: On the wimpiest skill level, -100 is sent in. This restores 
+        //       full health no matter what your stamina.
+        //       (100*100)/100 = 100
+        //       (200*100)/100 = 200
+        // Ex 2: On the most stringent skill levels, -50 is sent in. This will
+        //       restore at most half of your health.
+        //       (100*50)/100 = 50
+        //       (200*50)/100 = 100
+        healing = (-num * maxhealth) / MAXHEALTH;
+
+        // This is also the "threshold" of healing. You need less health than
+        // the amount that will be restored in order to get any benefit.
+        // So on the easiest skill you will always be fully healed.
+        // On the hardest skill you must have less than 50 health, and will
+        // only recover to 50 (assuming base stamina stat)
+        if(player->health >= healing)
             return false;
 
-        player->health = health;
+        // Set health. Oddly, mo->health is NOT set here...
+        player->health = healing;
     }
 
     return true;
