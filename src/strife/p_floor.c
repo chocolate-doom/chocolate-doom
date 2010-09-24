@@ -477,101 +477,110 @@ EV_BuildStairs
 ( line_t*	line,
   stair_e	type )
 {
-    int			secnum;
-    int			height;
-    int			i;
-    int			newsecnum;
-    int			texture;
-    int			ok;
-    int			rtn;
-    
-    sector_t*		sec;
-    sector_t*		tsec;
+    int                 secnum;
+    int                 height;
+    int                 i;
+    int                 newsecnum;
+    int                 texture;
+    int                 ok;
+    int                 rtn;
 
-    floormove_t*	floor;
-    
-    fixed_t		stairsize = 0;
-    fixed_t		speed = 0;
+    sector_t*           sec;
+    sector_t*           tsec;
+
+    floormove_t*        floor;
+
+    // Either Watcom or Rogue moved the switch out of the loop below, probably
+    // because it was a loop invariant, and put the default values in the 
+    // initializers here. I cannot be bothered to figure it out without doing
+    // this myself :P
+    fixed_t             stairsize = 8*FRACUNIT;
+    fixed_t             speed     = FLOORSPEED;
+    int                 direction = 1;
+
+    switch(type)
+    {
+    case build8: // [STRIFE] Verified unmodified.
+        speed = FLOORSPEED/4;
+        break;
+    case turbo16: // [STRIFE] Verified unmodified.
+        speed = FLOORSPEED*4;
+        stairsize = 16*FRACUNIT;
+        break;
+    case buildDown16: // [STRIFE] New stair type
+        stairsize = -16*FRACUNIT;
+        direction = -1;
+        break;
+    }
 
     secnum = -1;
     rtn = 0;
     while ((secnum = P_FindSectorFromLineTag(line,secnum)) >= 0)
     {
-	sec = &sectors[secnum];
-		
-	// ALREADY MOVING?  IF SO, KEEP GOING...
-	if (sec->specialdata)
-	    continue;
-	
-	// new floor thinker
-	rtn = 1;
-	floor = Z_Malloc (sizeof(*floor), PU_LEVSPEC, 0);
-	P_AddThinker (&floor->thinker);
-	sec->specialdata = floor;
-	floor->thinker.function.acp1 = (actionf_p1) T_MoveFloor;
-	floor->direction = 1;
-	floor->sector = sec;
-	switch(type)
-	{
-	  case build8:
-	    speed = FLOORSPEED/4;
-	    stairsize = 8*FRACUNIT;
-	    break;
-	  case turbo16:
-	    speed = FLOORSPEED*4;
-	    stairsize = 16*FRACUNIT;
-	    break;
-	}
-	floor->speed = speed;
-	height = sec->floorheight + stairsize;
-	floor->floordestheight = height;
-		
-	texture = sec->floorpic;
-	
-	// Find next sector to raise
-	// 1.	Find 2-sided line with same sector side[0]
-	// 2.	Other side is the next sector to raise
-	do
-	{
-	    ok = 0;
-	    for (i = 0;i < sec->linecount;i++)
-	    {
-		if ( !((sec->lines[i])->flags & ML_TWOSIDED) )
-		    continue;
-					
-		tsec = (sec->lines[i])->frontsector;
-		newsecnum = tsec-sectors;
-		
-		if (secnum != newsecnum)
-		    continue;
+        sec = &sectors[secnum];
 
-		tsec = (sec->lines[i])->backsector;
-		newsecnum = tsec - sectors;
+        // ALREADY MOVING?  IF SO, KEEP GOING...
+        if (sec->specialdata)
+            continue;
 
-		if (tsec->floorpic != texture)
-		    continue;
-					
-		height += stairsize;
+        // new floor thinker
+        rtn = 1;
+        floor = Z_Malloc (sizeof(*floor), PU_LEVSPEC, 0);
+        P_AddThinker (&floor->thinker);
+        sec->specialdata = floor;
+        floor->thinker.function.acp1 = (actionf_p1) T_MoveFloor;
+        floor->direction = 1;
+        floor->sector = sec;
+        floor->speed = speed;
+        height = sec->floorheight + stairsize;
+        floor->floordestheight = height;
 
-		if (tsec->specialdata)
-		    continue;
-					
-		sec = tsec;
-		secnum = newsecnum;
-		floor = Z_Malloc (sizeof(*floor), PU_LEVSPEC, 0);
+        texture = sec->floorpic;
 
-		P_AddThinker (&floor->thinker);
+        // Find next sector to raise
+        // 1.	Find 2-sided line with same sector side[0]
+        // 2.	Other side is the next sector to raise
+        do
+        {
+            ok = 0;
+            for (i = 0;i < sec->linecount;i++)
+            {
+                if ( !((sec->lines[i])->flags & ML_TWOSIDED) )
+                    continue;
 
-		sec->specialdata = floor;
-		floor->thinker.function.acp1 = (actionf_p1) T_MoveFloor;
-		floor->direction = 1;
-		floor->sector = sec;
-		floor->speed = speed;
-		floor->floordestheight = height;
-		ok = 1;
-		break;
-	    }
-	} while(ok);
+                tsec = (sec->lines[i])->frontsector;
+                newsecnum = tsec-sectors;
+
+                if (secnum != newsecnum)
+                    continue;
+
+                tsec = (sec->lines[i])->backsector;
+                newsecnum = tsec - sectors;
+
+                if (tsec->floorpic != texture)
+                    continue;
+
+                height += stairsize;
+
+                if (tsec->specialdata)
+                    continue;
+
+                sec = tsec;
+                secnum = newsecnum;
+                floor = Z_Malloc (sizeof(*floor), PU_LEVSPEC, 0);
+
+                P_AddThinker (&floor->thinker);
+
+                sec->specialdata = floor;
+                floor->thinker.function.acp1 = (actionf_p1) T_MoveFloor;
+                floor->direction = direction; // [STRIFE]: for buildDown16
+                floor->sector = sec;
+                floor->speed = speed;
+                floor->floordestheight = height;
+                ok = 1;
+                break;
+            }
+        } while(ok);
     }
     return rtn;
 }

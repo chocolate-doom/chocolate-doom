@@ -935,8 +935,9 @@ P_CrossSpecialLine
         line->special = 0;
         break;
 
-    case 178: // STRIFE-TODO: new Stairs type?
-        // EV_BuildStairs(line, 2);
+    case 178: 
+        // haleyjd 09/24/10: [STRIFE] W1 Build Stairs Down 16
+        EV_BuildStairs(line, buildDown16);
         line->special = 0;
         break;
 

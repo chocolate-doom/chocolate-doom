@@ -444,7 +444,7 @@ static void P_MoveWall(line_t *line, mobj_t *thing)
 }
 
 // villsa [STRIFE]
-static char speciallinemsg[92];
+static char usemessage[92];
 
 //
 // P_UseSpecialLine
@@ -453,8 +453,6 @@ static char speciallinemsg[92];
 //
 boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
 {
-    static char usemessage[92]; // [STRIFE]
-
     // Err...
     // Use the back sides of VERY SPECIAL lines...
     if (side)
@@ -516,7 +514,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
 
         // SWITCHES
     case 7:
-        // Build Stairs
+        // Build Stairs - [STRIFE] Verified unmodified
         if (EV_BuildStairs(line,build8))
             P_ChangeSwitchTexture(line,0);
         break;
@@ -661,7 +659,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
         break;
 
     case 127:
-        // Build Stairs Turbo 16
+        // Build Stairs Turbo 16 - [STRIFE] Verified unmodified
         if (EV_BuildStairs(line,turbo16))
             P_ChangeSwitchTexture(line,0);
         break;
@@ -830,6 +828,18 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
         EV_SlidingDoor(line, thing);
         break;
 
+    case 146:
+        // haleyjd 09/24/10: [STRIFE] S1 Build Stairs Down 16 (new type)
+        if(EV_BuildStairs(line, buildDown16))
+            P_ChangeSwitchTexture(line, 0);
+        break;
+
+    case 147:
+        // haleyjd 09/24/10: [STRIFE] S1 Clear Force Fields
+        if(EV_ClearForceFields(line))
+            P_ChangeSwitchTexture(line, 0);
+        break;
+
     case 148:
         // haleyjd 09/16/10: [STRIFE] using forcefields hurts
         P_DamageMobj(thing, NULL, NULL, 16);
@@ -852,26 +862,41 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
             P_ChangeSwitchTexture(line, 1);
         break; // haleyjd
 
+    case 209:
+        // haleyjd 09/24/10: [STRIFE] S1 Build Stairs Down 16 if Have Chalice
+        if(!P_PlayerHasItem(thing->player, MT_INV_CHALICE))
+        {
+            DEH_snprintf(usemessage, sizeof(usemessage), "You need the chalice!");
+            thing->player->message = usemessage;
+            S_StartSound(thing, sfx_oof);
+            break;
+        }
+        else if(EV_BuildStairs(line, buildDown16))
+            P_ChangeSwitchTexture(line, 0);
+        break;
+
     case 211:
         // villsa [STRIFE] play VOC## sound
         if(&players[consoleplayer] == thing->player &&
             thing->player->powers[pw_communicator])
         {
-            DEH_snprintf(speciallinemsg, sizeof(speciallinemsg), "voc%i", line->tag);
-            I_StartVoice(speciallinemsg);
+            DEH_snprintf(usemessage, sizeof(usemessage), "voc%i", line->tag);
+            I_StartVoice(usemessage);
             line->special = 0;
         }
         break;
 
     case 226:
         // villsa [STRIFE] complete training area
-        if(!EV_DoFloor(line, lowerFloor))
-            return true;
-        
-        P_GiveItemToPlayer(thing->player, SPR_TOKN, MT_TOKEN_STAMINA);
-        P_GiveItemToPlayer(thing->player, SPR_TOKN, MT_TOKEN_NEW_ACCURACY);
-        P_ChangeSwitchTexture(line, 0);
-        thing->player->message = DEH_String("Congratulations! You have completed the training area.");
+        if(EV_DoFloor(line, lowerFloor))
+        {
+            P_GiveItemToPlayer(thing->player, SPR_TOKN, MT_TOKEN_STAMINA);
+            P_GiveItemToPlayer(thing->player, SPR_TOKN, MT_TOKEN_NEW_ACCURACY);
+            P_ChangeSwitchTexture(line, 0);
+            DEH_snprintf(usemessage, sizeof(usemessage),
+                DEH_String("Congratulations! You have completed the training area."));
+            thing->player->message = usemessage;
+        }
         break;
 
     case 229:

@@ -598,9 +598,9 @@ typedef enum
 
 typedef enum
 {
-    build8,	// slowly build by 8
-    turbo16	// quickly build by 16
-    
+    build8,     // slowly build by 8
+    turbo16,    // quickly build by 16
+    buildDown16 // haleyjd 09/24/10: [STRIFE] new stair type
 } stair_e;
 
 
