@@ -1485,6 +1485,7 @@ void G_DoCompleted (void)
     // STRIFE-TODO: save automap powerup state (possibly inlined from G_PlayerFinishLevel);
     // set stonecold to 0
 
+    stonecold = false;  // villsa [STRIFE]
     if (automapactive) 
         AM_Stop (); 
 
@@ -1760,6 +1761,7 @@ void G_DoNewGame (void)
     playeringame[1] = playeringame[2] = playeringame[3] = 0;
     respawnparm = false;
     fastparm = false;
+    stonecold = false;      // villsa [STRIFE]
     nomonsters = false;
     consoleplayer = 0;
     G_InitNew (d_skill, d_episode, d_map); 

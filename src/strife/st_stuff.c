@@ -49,6 +49,7 @@
 
 #include "p_local.h"
 #include "p_inter.h"
+#include "p_dialog.h"   // villsa [STRIFE]
 
 #include "am_map.h"
 #include "m_cheat.h"
@@ -293,14 +294,19 @@ static st_number_t      w_maxammo[NUMAMMO];  // haleyjd [STRIFE]: Still used.
 static int              st_fragscount;
 
 
-cheatseq_t cheat_mus = CHEAT("spin", 2);       // [STRIFE]: idmus -> spin
-cheatseq_t cheat_god = CHEAT("omnipotent", 0); // [STRIFE]: iddqd -> omnipotent
-cheatseq_t cheat_ammo = CHEAT("idkfa", 0);     // STRIFE-TODO
-cheatseq_t cheat_ammonokey = CHEAT("idfa", 0); // STRIFE-TODO
-cheatseq_t cheat_noclip = CHEAT("elvis", 0);   // [STRIFE]: idclip -> elvis
-cheatseq_t cheat_clev = CHEAT("rift", 2);      // [STRIFE]: idclev -> rift
-cheatseq_t cheat_mypos = CHEAT("gps", 0);      // [STRIFE]: idmypos -> gps
-cheatseq_t cheat_scoot = CHEAT("scoot", 1);    // [STRIFE]: new cheat scoot
+cheatseq_t cheat_mus        = CHEAT("spin", 2);         // [STRIFE]: idmus -> spin
+cheatseq_t cheat_god        = CHEAT("omnipotent", 0);   // [STRIFE]: iddqd -> omnipotent
+cheatseq_t cheat_ammo       = CHEAT("idkfa", 0);        // STRIFE-TODO
+cheatseq_t cheat_ammonokey  = CHEAT("idfa", 0);         // STRIFE-TODO
+cheatseq_t cheat_noclip     = CHEAT("elvis", 0);        // [STRIFE]: idclip -> elvis
+cheatseq_t cheat_clev       = CHEAT("rift", 2);         // [STRIFE]: idclev -> rift
+cheatseq_t cheat_mypos      = CHEAT("gps", 0);          // [STRIFE]: idmypos -> gps
+cheatseq_t cheat_scoot      = CHEAT("scoot", 1);        // [STRIFE]: new cheat scoot
+cheatseq_t cheat_nuke       = CHEAT("stonecold", 0);    // [STRIFE]: new cheat stonecold
+cheatseq_t cheat_keys       = CHEAT("jimmy", 0);        // [STRIFE]: new cheat jimmy (all keys)
+cheatseq_t cheat_stealth    = CHEAT("gripper", 0);      // [STRIFE]: new cheat gripper
+cheatseq_t cheat_midas      = CHEAT("donnytrump", 0);   // [STRIFE]: new cheat
+cheatseq_t cheat_lego       = CHEAT("lego", 0);         // [STRIFE]: new cheat
 
 cheatseq_t	cheat_powerup[7] = // STRIFE-TODO
 {
@@ -491,6 +497,37 @@ ST_Responder (event_t* ev)
 
         plyr->message = DEH_String(STSTR_KFAADDED);
     }
+
+    // villsa [STRIFE]
+    else if(cht_CheckCheat(&cheat_keys, ev->data2))
+    {
+        #define FIRSTKEYSETAMOUNT   16
+
+        if(plyr->cards[FIRSTKEYSETAMOUNT - 1])
+        {
+            if(plyr->cards[NUMCARDS - 1] || isdemoversion)
+            {
+                for(i = 0; i < NUMCARDS; i++)
+                    plyr->cards[i] = false;
+
+                plyr->message = DEH_String("Keys removed");
+            }
+            else
+            {
+                for(i = 0; i < NUMCARDS; i++)
+                    plyr->cards[i] = true;
+
+                plyr->message = DEH_String("Cheater Keys Added");
+            }
+        }
+        else
+        {
+            for(i = 0; i < FIRSTKEYSETAMOUNT; i++)
+                plyr->cards[i] = true;
+
+            plyr->message = DEH_String("Cheater Keys Added");
+        }
+    }
     else if (cht_CheckCheat(&cheat_noclip, ev->data2))
     {
         // [STRIFE] Verified unmodified, except no idspispopd shit:
@@ -503,19 +540,17 @@ ST_Responder (event_t* ev)
         else
             plyr->message = DEH_String(STSTR_NCOFF);
     }
-    //
-    // STRIFE-TODO: Stealth Cheat
-    //
-    /*
-    else if (cht_CheckCheat(&cheat_stealth, ev->data2))
+    
+    // villsa [STRIFE]
+    else if(cht_CheckCheat(&cheat_stealth, ev->data2))
     {
-        plyr->cheats ^= 4;
-        if(plyr->cheats & 4)
+        plyr->cheats ^= CF_NOMOMENTUM;
+        if(plyr->cheats & CF_NOMOMENTUM)
             plyr->message = DEH_String("STEALTH BOOTS ON");
         else
             plyr->message = DEH_String("STEALTH BOOTS OFF");
     }
-    */
+    
 
     //
     // STRIFE-TODO: Fix idbehold equivalent
@@ -631,11 +666,41 @@ ST_Responder (event_t* ev)
         }
     }
 
-    //
-    // STRIFE-TODO:
-    // * stonecold cheat
-    // * LEGO cheat
-    //
+    // villsa [STRIFE]
+    if(cht_CheckCheat(&cheat_nuke, ev->data2))
+    {
+        stonecold ^= 1;
+        plyr->message = DEH_String("Kill 'em.  Kill 'em All");
+    }
+
+    // villsa [STRIFE]
+    if(cht_CheckCheat(&cheat_midas, ev->data2))
+    {
+        plyr->message = DEH_String("YOU GOT THE MIDAS TOUCH, BABY");
+        P_GiveItemToPlayer(plyr, SPR_HELT, MT_TOKEN_TOUGHNESS);
+    }
+
+    // villsa [STRIFE]
+    if(cht_CheckCheat(&cheat_lego, ev->data2))
+    {
+        plyr->st_update = true;
+        if(plyr->weaponowned[wp_sigil])
+        {
+            plyr->weaponowned[wp_sigil] = true;
+            if(++plyr->sigiltype > 4)
+            {
+                plyr->sigiltype = -1;
+                plyr->pendingweapon = wp_sigil;
+                plyr->weaponowned[wp_sigil] = true;
+            }
+        }
+        else
+        {
+            plyr->weaponowned[wp_sigil] = true;
+            plyr->sigiltype = -1;
+        }
+        plyr->pendingweapon = wp_sigil;
+    }
 
     return false;
 }

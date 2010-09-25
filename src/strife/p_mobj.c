@@ -545,6 +545,13 @@ void P_MobjThinker (mobj_t* mobj)
     if (mobj->tics != -1)
     {
 	mobj->tics--;
+
+        // villsa [STRIFE] stonecold cheat
+        if(stonecold)
+        {
+            if(mobj->flags & MF_COUNTKILL)
+                P_DamageMobj(mobj, mobj, mobj, 10);
+        }
 		
 	// you can cycle through multiple states in a tic
 	if (!mobj->tics)
@@ -808,11 +815,13 @@ void P_SpawnPlayer(mapthing_t* mthing)
     // accuracy to 50 and give all quest flags
     if(deathmatch)
     {
+        int i;
+
         p->accuracy = 50;
         p->questflags = QF_ALLQUESTS; // 0x7fffffff
 
-        /*for(i = 0; i < NUMCARDS; i++)
-            p->cards[i] = true;*/
+        for(i = 0; i < NUMCARDS; i++)
+            p->cards[i] = true;
     }
 
     // villsa [STRIFE] set godmode?

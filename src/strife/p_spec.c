@@ -1358,7 +1358,11 @@ P_CrossSpecialLine
         break;
 
     case 184:
-        // STRIFE-TODO: New plat type?
+        // villsa [STRIFE] plat up wait down stay
+        EV_DoPlat(line, upWaitDownStay, 0);
+
+        // hmm.. looks like Rogue screwed up here..
+        P_ChangeSwitchTexture(line, 1);
         break;
 
     case 185:
