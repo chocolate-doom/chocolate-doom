@@ -735,7 +735,8 @@ P_CrossSpecialLine
         line->special = 0;
         break;
 
-    case 22: // STRIFE-TODO: Something is different about this type - uses plat type 4
+    case 22:
+        // villsa [STRIFE] Verified unmodified.
         // Raise floor to nearest height and change texture
         EV_DoPlat(line,raiseToNearestAndChange,0);
         line->special = 0;
@@ -889,7 +890,8 @@ P_CrossSpecialLine
         line->special = 0;
         break;
 
-    case 121: // STRIFE-TODO: This has been modified! - uses plat type 5
+    case 121:
+        // villsa [STRIFE] Verified unmodified.
         // Blazing PlatDownWaitUpStay
         EV_DoPlat(line,blazeDWUS,0);
         line->special = 0;
@@ -1209,7 +1211,8 @@ P_CrossSpecialLine
         EV_DoFloor(line,raiseFloorCrush);
         break;
 
-    case 95: // STRIFE-TODO: changed to use plat type 4...
+    case 95:
+        // villsa [STRIFE] Verified unmodified.
         // Raise floor to nearest height
         // and change texture.
         EV_DoPlat(line,raiseToNearestAndChange,0);
@@ -1246,7 +1249,8 @@ P_CrossSpecialLine
         EV_DoDoor (line,blazeClose);
         break;
 
-    case 120: // STRIFE-TODO: changed - uses plat type 5
+    case 120:
+        // villsa [STRIFE] Verified unmodified.
         // Blazing PlatDownWaitUpStay.
         EV_DoPlat(line,blazeDWUS,0);
         break;
@@ -1426,7 +1430,8 @@ P_ShootSpecialLine
         P_ChangeSwitchTexture(line,1);
         break;
 
-    case 47: // STRIFE-TODO: plat type changed to 4 ????
+    case 47:
+        // villsa [STRIFE] Verified unmodified.
         // RAISE FLOOR NEAR AND CHANGE
         EV_DoPlat(line,raiseToNearestAndChange,0);
         P_ChangeSwitchTexture(line,0);

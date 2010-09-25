@@ -292,9 +292,11 @@ typedef enum
 {
     perpetualRaise,
     downWaitUpStay,
+    slowDWUS,           // villsa [STRIFE]
     raiseAndChange,
     raiseToNearestAndChange,
-    blazeDWUS
+    blazeDWUS,
+    upWaitDownStay      // villsa [STRIFE]
 
 } plattype_e;
 

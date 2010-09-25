@@ -535,13 +535,13 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
 
     case 14:
         // Raise Floor 32 and change texture
-        if (EV_DoPlat(line,raiseAndChange,32))
+        if (EV_DoPlat(line, raiseAndChange,32))
             P_ChangeSwitchTexture(line,0);
         break;
 
     case 15:
         // Raise Floor 24 and change texture
-        if (EV_DoPlat(line,raiseAndChange,24))
+        if (EV_DoPlat(line, raiseAndChange,24))
             P_ChangeSwitchTexture(line,0);
         break;
 
@@ -553,13 +553,13 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
 
     case 20:
         // Raise Plat next highest floor and change texture
-        if (EV_DoPlat(line,raiseToNearestAndChange,0))
+        if(EV_DoPlat(line, raiseToNearestAndChange, 0))
             P_ChangeSwitchTexture(line,0);
         break;
 
     case 21:
         // PlatDownWaitUpStay
-        if (EV_DoPlat(line,downWaitUpStay,0))
+        if (EV_DoPlat(line, downWaitUpStay,0))
             P_ChangeSwitchTexture(line,0);
         break;
 
@@ -654,7 +654,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
 
     case 122:
         // Blazing PlatDownWaitUpStay
-        if (EV_DoPlat(line,blazeDWUS,0))
+        if(EV_DoPlat(line, blazeDWUS, 0))
             P_ChangeSwitchTexture(line,0);
         break;
 
@@ -719,7 +719,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
 
     case 62:
         // PlatDownWaitUpStay
-        if (EV_DoPlat(line,downWaitUpStay,1))
+        if (EV_DoPlat(line, downWaitUpStay,1))
             P_ChangeSwitchTexture(line,1);
         break;
 
@@ -737,13 +737,13 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
 
     case 66:
         // Raise Floor 24 and change texture
-        if (EV_DoPlat(line,raiseAndChange,24))
+        if (EV_DoPlat(line, raiseAndChange, 24))
             P_ChangeSwitchTexture(line,1);
         break;
 
     case 67:
         // Raise Floor 32 and change texture
-        if (EV_DoPlat(line,raiseAndChange,32))
+        if (EV_DoPlat(line, raiseAndChange, 32))
             P_ChangeSwitchTexture(line,1);
         break;
 
@@ -755,7 +755,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
 
     case 68:
         // Raise Plat to next highest floor and change texture
-        if (EV_DoPlat(line,raiseToNearestAndChange,0))
+        if (EV_DoPlat(line, raiseToNearestAndChange, 0))
             P_ChangeSwitchTexture(line,1);
         break;
 
@@ -791,7 +791,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
 
     case 123:
         // Blazing PlatDownWaitUpStay
-        if (EV_DoPlat(line,blazeDWUS,0))
+        if(EV_DoPlat(line, blazeDWUS, 0))
             P_ChangeSwitchTexture(line,1);
         break;
 
@@ -846,6 +846,52 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
         P_Thrust(thing->player, thing->angle + ANG180, 125*FRACUNIT/16);
         break;
 
+    case 151:
+        // villsa [STRIFE] BlzOpenDoor Gold key
+        if(EV_DoLockedDoor(line, blazeOpen,thing))
+            P_ChangeSwitchTexture(line, 1);
+        break;
+
+    case 154:
+        // villsa [STRIFE] plat lower wait rise if have gold key
+        if(thing->player->cards[key_GoldKey])
+        {
+            if(EV_DoPlat(line, downWaitUpStay, 0))
+                P_ChangeSwitchTexture(line, 1);
+        }
+        else
+        {
+            thing->player->message = DEH_String("You need a gold key");
+            S_StartSound(thing, sfx_oof);
+        }
+        break;
+
+    case 155:
+        // villsa [STRIFE] raise plat wait lower
+        if(EV_DoPlat(line, upWaitDownStay, 0))
+            P_ChangeSwitchTexture(line, 1);
+        break;
+
+    case 164:
+        // villsa [STRIFE] BlzOpenDoor Gold key
+        if(EV_DoLockedDoor(line, blazeOpen,thing))
+            P_ChangeSwitchTexture(line, 0);
+        break;
+
+    case 177:
+        // villsa [STRIFE] plat lower wait rise if have power3 key
+        if(thing->player->cards[key_Power3Key])
+        {
+            if(EV_DoPlat(line, downWaitUpStay, 0))
+                P_ChangeSwitchTexture(line, 1);
+        }
+        else
+        {
+            thing->player->message = DEH_String("You don't have the key");
+            S_StartSound(thing, sfx_oof);
+        }
+        break;
+
     case 194:
         // villsa [STRIFE] free prisoners
         if(EV_DoDoor(line, open))
@@ -884,6 +930,12 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
             I_StartVoice(usemessage);
             line->special = 0;
         }
+        break;
+
+    case 214:
+        // villsa [STRIFE] slow lift lower wait up stay
+        if(EV_DoPlat(line, slowDWUS, 1))
+            P_ChangeSwitchTexture(line, 1);
         break;
 
     case 226:
