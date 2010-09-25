@@ -214,12 +214,8 @@ int EV_DoPlat(line_t* line, plattype_e type, int amount)
             // villsa [STRIFE]
         case upWaitDownStay:
             plat->speed = PLATSPEED * 4;
-            plat->low = P_FindNextHighestFloor(sec, sec->floorheight);
-
-            if(plat->low > sec->floorheight)
-                plat->low = sec->floorheight;
-
-            plat->high = sec->floorheight;
+            plat->high = P_FindNextHighestFloor(sec, sec->floorheight);
+            plat->low = sec->floorheight;
             plat->wait = TICRATE * PLATWAIT;
             plat->status = up;
             S_StartSound(&sec->soundorg, sfx_pstart);
