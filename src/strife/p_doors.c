@@ -542,6 +542,8 @@ boolean EV_ClearForceFields(line_t* line)
 //
 // EV_VerticalDoor : open a door manually, no tag value
 //
+// [STRIFE] Tons of new door types were added.
+//
 void EV_VerticalDoor(line_t* line, mobj_t* thing)
 {
     player_t*   player;
@@ -736,6 +738,13 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
     if (sec->specialdata)
     {
         door = sec->specialdata;
+        // [STRIFE] Adjusted to handle linetypes handled here by Strife.
+        // BUG: Not all door types are checked here. This means that certain 
+        // door lines are allowed to fall through and start a new thinker on the
+        // sector! This is why some doors can become jammed in Strife - stuck in 
+        // midair, or unable to be opened at all. Multiple thinkers will fight 
+        // over how to move the door. They should have added a default return if
+        // they weren't going to handle this unconditionally...
         switch(line->special)
         {
         case 1:         // ONLY FOR "RAISE" DOORS, NOT "OPEN"s
@@ -743,14 +752,15 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
         case 27:
         case 28:
         case 117:
-        case 159:       // villsa [STRIFE] -- haleyjd 09/16/10: STRIFE-TODO: verify all this
-        case 161:       // villsa [STRIFE]
-        case 166:       // villsa [STRIFE]
-        case 169:       // villsa [STRIFE]
-        case 170:       // villsa [STRIFE]
-        case 190:       // villsa [STRIFE]
-        case 213:       // villsa [STRIFE]
-        case 232:       // villsa [STRIFE]
+        case 159:       // villsa
+        case 160:       // haleyjd
+        case 161:       // villsa
+        case 166:       // villsa
+        case 169:       // villsa
+        case 170:       // villsa
+        case 190:       // villsa
+        case 213:       // villsa
+        case 232:       // villsa
             if(door->direction == -1)
                 door->direction = 1;	// go back up
             else
@@ -810,9 +820,7 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
     door->topwait = VDOORWAIT;
     R_SoundNumForDoor(door);   // haleyjd 09/15/10: [STRIFE] Get door sounds
 
-    // STRIFE-TODO: handle all door types, old and new.
-
-    // for proper sound
+    // for proper sound - [STRIFE] - verified complete
     switch(line->special)
     {
     case 117:   // BLAZING DOOR RAISE
@@ -825,7 +833,7 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
         break;
     }
 
-    // haleyjd: STRIFE-TODO: verify all of this.
+    // haleyjd: [STRIFE] - verified all.
     switch(line->special)
     {
     case 1:
@@ -835,8 +843,9 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
         door->type = normal;
         break;
 
-
-        // villsa [STRIFE] 31 through 33 are removed
+    case 31:
+    case 32:
+    case 33:
     case 34:
     case 156:   // villsa [STRIFE]
     case 157:   // villsa [STRIFE]
@@ -854,6 +863,11 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
         door->type = blazeOpen;
         line->special = 0;
         door->speed = VDOORSPEED*4;
+        break;
+
+    default:
+        // haleyjd: [STRIFE] pretty important to have this here!
+        door->type = normal;
         break;
     }
 

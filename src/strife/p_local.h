@@ -150,6 +150,8 @@ void P_DoPunchAlert(mobj_t *puncher, mobj_t *punchee);  // villsa [STRIFE]
 void A_BodyParts(mobj_t *actor);                        // haleyjd: [STRIFE]
 void A_AlertSpectreC(mobj_t* actor);
 void A_FaceTarget (mobj_t* actor);
+void P_FreePrisoners(void);
+void P_DestroyConverter(void);
 
 //
 // P_MAPUTL

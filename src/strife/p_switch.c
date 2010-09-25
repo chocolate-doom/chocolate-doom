@@ -35,10 +35,12 @@
 #include "g_game.h"
 #include "d_main.h" // villsa [STRIFE]
 #include "z_zone.h" // villsa [STRIFE]
-#include "w_wad.h" // villsa [STRIFE]
+#include "w_wad.h"  // villsa [STRIFE]
 #include "s_sound.h"
 #include "m_random.h" // haleyjd [STRIFE]
 #include "p_dialog.h"
+#include "p_local.h"  // haleyjd [STRIFE]
+#include "m_bbox.h"   // villsa [STRIFE]
 
 // Data.
 #include "sounds.h"
@@ -46,9 +48,6 @@
 // State.
 #include "doomstat.h"
 #include "r_state.h"
-#include "m_bbox.h"     // villsa [STRIFE]
-
-void P_FreePrisoners(void); // villsa [STRIFE]
 
 //
 // CHANGE THE TEXTURE OF A WALL SWITCH TO ITS OPPOSITE
@@ -477,6 +476,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
         switch(line->special)
         {
         case 1:         // MANUAL DOOR RAISE
+        case 31:        // haleyjd [STRIFE]
         case 144:       // haleyjd [STRIFE] Manual sliding door
             break;
 
@@ -494,25 +494,40 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
     {
         // MANUALS
     case 1:             // Vertical Door
-    case 26:            // Blue Door/Locked
-    case 27:            // Yellow Door /Locked
-    case 28:            // Red Door /Locked
-
+    case 26:            // DR ID Card
+    case 27:            // DR Pass Card
+    case 28:            // DR ID Badge
     case 31:            // Manual door open
-    case 32:            // Blue locked door open
-    case 33:            // Red locked door open
-    case 34:            // Yellow locked door open
-
+    case 32:            // D1 ID Card
+    case 33:            // D1 ID Badge
+    case 34:            // D1 Pass Card
     case 117:           // Blazing door raise
     case 118:           // Blazing door open
-
-    case 165:           // villsa [STRIFE] That doesn't seem to work
-    case 205:           // villsa [STRIFE] Available in retail only
-    case 232:           // villsa [STRIFE] Oracle pass open
+    case 156:           // haleyjd [STRIFE] D1 Brass Key
+    case 157:           // haleyjd [STRIFE] D1 Silver Key
+    case 158:           // haleyjd [STRIFE] D1 Gold Key
+    case 159:           // haleyjd [STRIFE] DR Gold Key
+    case 160:           // haleyjd [STRIFE] DR Silver Key
+    case 161:           // haleyjd [STRIFE] DR Brass Key
+    case 165:           // villsa  [STRIFE] That doesn't seem to work
+    case 166:           // haleyjd [STRIFE] DR Hand Print
+    case 169:           // haleyjd [STRIFE] DR Base Key
+    case 170:           // haleyjd [STRIFE] DR Gov's Key
+    case 190:           // haleyjd [STRIFE] DR Order Key
+    case 205:           // villsa  [STRIFE] Available in retail only
+    case 213:           // haleyjd [STRIFE] DR Chalice
+    case 217:           // haleyjd [STRIFE] DR Core Key
+    case 221:           // haleyjd [STRIFE] DR Mauler Key
+    case 224:           // haleyjd [STRIFE] DR Chapel Key
+    case 225:           // haleyjd [STRIFE] DR Catacomb Key
+    case 232:           // villsa  [STRIFE] DR Oracle Pass
         EV_VerticalDoor (line, thing);
         break;
 
-        // SWITCHES
+    // haleyjd: For the sake of our sanity, I have reordered all the line
+    // specials from this point down so that they are strictly in numeric
+    // order, and not divided up in a semi-arbitrary fashion.
+
     case 7:
         // Build Stairs - [STRIFE] Verified unmodified
         if (EV_BuildStairs(line,build8))
@@ -520,7 +535,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
         break;
 
     case 9:
-        // Change Donut
+        // Change Donut - [STRIFE] Verified unmodified
         if (EV_DoDonut(line))
             P_ChangeSwitchTexture(line,0);
         break;
@@ -534,7 +549,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
         break;
 
     case 14:
-        // Raise Floor 32 and change texture
+        // Raise Floor 32 and change texture - [STRIFE] Verified unmodified
         if (EV_DoPlat(line, raiseAndChange,32))
             P_ChangeSwitchTexture(line,0);
         break;
@@ -546,31 +561,31 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
         break;
 
     case 18:
-        // Raise Floor to next highest floor
+        // Raise Floor to next highest floor - [STRIFE] Verified unmodified
         if (EV_DoFloor(line, raiseFloorToNearest))
             P_ChangeSwitchTexture(line,0);
         break;
 
     case 20:
-        // Raise Plat next highest floor and change texture
+        // Raise Plat next highest floor and change texture - [STRIFE] Verified unmodified
         if(EV_DoPlat(line, raiseToNearestAndChange, 0))
             P_ChangeSwitchTexture(line,0);
         break;
 
     case 21:
-        // PlatDownWaitUpStay
+        // PlatDownWaitUpStay - [STRIFE] Verified unmodified
         if (EV_DoPlat(line, downWaitUpStay,0))
             P_ChangeSwitchTexture(line,0);
         break;
 
     case 23:
-        // Lower Floor to Lowest
+        // Lower Floor to Lowest - [STRIFE] Verified unmodified
         if (EV_DoFloor(line,lowerFloorToLowest))
             P_ChangeSwitchTexture(line,0);
         break;
 
     case 29:
-        // Raise Door
+        // Raise Door - [STRIFE] Verified unmodified
         if (EV_DoDoor(line,normal))
             P_ChangeSwitchTexture(line,0);
         break;
@@ -579,83 +594,192 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
         // villsa [STRIFE] Split Open Door
         if(EV_DoDoor(line, splitOpen))
             P_ChangeSwitchTexture(line, 0);
+        break; // haleyjd
 
     case 41:
-        // Lower Ceiling to Floor
+        // Lower Ceiling to Floor - [STRIFE] Verified unmodified
         if (EV_DoCeiling(line,lowerToFloor))
             P_ChangeSwitchTexture(line,0);
         break;
 
-    case 71:
-        // Turbo Lower Floor
-        if (EV_DoFloor(line,turboLower))
-            P_ChangeSwitchTexture(line,0);
+    case 42:
+        // Close Door - [STRIFE] Verified unmodified
+        if (EV_DoDoor(line,close))
+            P_ChangeSwitchTexture(line,1);
+        break;
+
+    case 43:
+        // Lower Ceiling to Floor - [STRIFE] Verified unmodified
+        if (EV_DoCeiling(line,lowerToFloor))
+            P_ChangeSwitchTexture(line,1);
+        break;
+
+    case 45:
+        // Lower Floor to Surrounding floor height - [STRIFE] Verified unmodified
+        if (EV_DoFloor(line,lowerFloor))
+            P_ChangeSwitchTexture(line,1);
         break;
 
     case 49:
-        // Ceiling Crush And Raise
+        // Ceiling Crush And Raise - [STRIFE] Verified unmodified
         if (EV_DoCeiling(line,crushAndRaise))
             P_ChangeSwitchTexture(line,0);
         break;
 
     case 50:
-        // Close Door
+        // Close Door - [STRIFE] Verified unmodified
         if (EV_DoDoor(line,close))
             P_ChangeSwitchTexture(line,0);
         break;
 
     case 51:
-        // Secret EXIT
+        // [STRIFE] Modifed into S1 Start Finale (was Secret Exit)
         P_ChangeSwitchTexture(line,0);
-        //G_SecretExitLevel ();
+        G_StartFinale();
         break;
 
     case 55:
-        // Raise Floor Crush
+        // Raise Floor Crush - [STRIFE] Verified unmodified
         if (EV_DoFloor(line,raiseFloorCrush))
             P_ChangeSwitchTexture(line,0);
         break;
 
+    case 60:
+        // Lower Floor to Lowest - [STRIFE] Verified unmodified
+        if (EV_DoFloor(line,lowerFloorToLowest))
+            P_ChangeSwitchTexture(line,1);
+        break;
+
+    case 61:
+        // Open Door - [STRIFE] Verified unmodified
+        if (EV_DoDoor(line,open))
+            P_ChangeSwitchTexture(line,1);
+        break;
+
+    case 62:
+        // PlatDownWaitUpStay - [STRIFE] Verified unmodified
+        if (EV_DoPlat(line, downWaitUpStay,1))
+            P_ChangeSwitchTexture(line,1);
+        break;
+
+    case 63:
+        // Raise Door - [STRIFE] Verified unmodified
+        if (EV_DoDoor(line,normal))
+            P_ChangeSwitchTexture(line,1);
+        break;
+
+    case 64:
+        // Raise Floor to ceiling - [STRIFE] Verified unmodified
+        if (EV_DoFloor(line,raiseFloor))
+            P_ChangeSwitchTexture(line,1);
+        break;
+
+    case 65:
+        // Raise Floor Crush - [STRIFE] Verified unmodified
+        if (EV_DoFloor(line,raiseFloorCrush))
+            P_ChangeSwitchTexture(line,1);
+        break;
+
+    case 66:
+        // Raise Floor 24 and change texture - [STRIFE] Verified unmodified
+        if (EV_DoPlat(line, raiseAndChange, 24))
+            P_ChangeSwitchTexture(line,1);
+        break;
+
+    case 67:
+        // Raise Floor 32 and change texture - [STRIFE] Verified unmodified
+        if (EV_DoPlat(line, raiseAndChange, 32))
+            P_ChangeSwitchTexture(line,1);
+        break;
+   
+    case 68:
+        // Raise Plat to next highest floor and change texture - [STRIFE] Verified unmodified
+        if (EV_DoPlat(line, raiseToNearestAndChange, 0))
+            P_ChangeSwitchTexture(line,1);
+        break;
+
+    case 69:
+        // Raise Floor to next highest floor - [STRIFE] Verified unmodified
+        if (EV_DoFloor(line, raiseFloorToNearest))
+            P_ChangeSwitchTexture(line,1);
+        break;
+
+    case 70:
+        // Turbo Lower Floor - [STRIFE] Verified unmodified
+        if (EV_DoFloor(line,turboLower))
+            P_ChangeSwitchTexture(line,1);
+        break;
+
+    case 71:
+        // Turbo Lower Floor - [STRIFE] Verified unmodified
+        if (EV_DoFloor(line,turboLower))
+            P_ChangeSwitchTexture(line,0);
+        break;
+
     case 101:
-        // Raise Floor
+        // Raise Floor - [STRIFE] Verified unmodified
         if (EV_DoFloor(line,raiseFloor))
             P_ChangeSwitchTexture(line,0);
         break;
 
     case 102:
-        // Lower Floor to Surrounding floor height
+        // Lower Floor to Surrounding floor height - [STRIFE] Verified unmodified
         if (EV_DoFloor(line,lowerFloor))
             P_ChangeSwitchTexture(line,0);
         break;
 
     case 103:
-        // Open Door
+        // Open Door - [STRIFE] Verified unmodified
         if (EV_DoDoor(line,open))
             P_ChangeSwitchTexture(line,0);
         break;
 
     case 111:
-        // Blazing Door Raise (faster than TURBO!)
+        // Blazing Door Raise (faster than TURBO!) - [STRIFE] Verified unmodified
         if (EV_DoDoor (line,blazeRaise))
             P_ChangeSwitchTexture(line,0);
         break;
 
     case 112:
-        // Blazing Door Open (faster than TURBO!)
+        // Blazing Door Open (faster than TURBO!) - [STRIFE] Verified unmodified
         if (EV_DoDoor (line,blazeOpen))
             P_ChangeSwitchTexture(line,0);
         break;
 
     case 113:
-        // Blazing Door Close (faster than TURBO!)
+        // Blazing Door Close (faster than TURBO!) - [STRIFE] Verified unmodified
         if (EV_DoDoor (line,blazeClose))
             P_ChangeSwitchTexture(line,0);
         break;
+    
+    case 114:
+        // Blazing Door Raise (faster than TURBO!) - [STRIFE] Verified unmodified
+        if (EV_DoDoor (line,blazeRaise))
+            P_ChangeSwitchTexture(line,1);
+        break;
+
+    case 115:
+        // Blazing Door Open (faster than TURBO!) - [STRIFE] Verified unmodified
+        if (EV_DoDoor (line,blazeOpen))
+            P_ChangeSwitchTexture(line,1);
+        break;
+
+    case 116:
+        // Blazing Door Close (faster than TURBO!) - [STRIFE] Verified unmodified
+        if (EV_DoDoor (line,blazeClose))
+            P_ChangeSwitchTexture(line,1);
+        break;
 
     case 122:
-        // Blazing PlatDownWaitUpStay
+        // Blazing PlatDownWaitUpStay - [STRIFE] Verified unmodified
         if(EV_DoPlat(line, blazeDWUS, 0))
             P_ChangeSwitchTexture(line,0);
+        break;
+
+    case 123:
+        // Blazing PlatDownWaitUpStay - [STRIFE] Verified unmodified
+        if(EV_DoPlat(line, blazeDWUS, 0))
+            P_ChangeSwitchTexture(line,1);
         break;
 
     case 127:
@@ -665,162 +789,47 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
         break;
 
     case 131:
-        // Raise Floor Turbo
+        // Raise Floor Turbo - [STRIFE] Verified unmodified
         if (EV_DoFloor(line,raiseFloorTurbo))
             P_ChangeSwitchTexture(line,0);
         break;
+    
+    case 132:
+        // Raise Floor Turbo - [STRIFE] Verified unmodified
+        if (EV_DoFloor(line,raiseFloorTurbo))
+            P_ChangeSwitchTexture(line,1);
+        break;
 
-    case 133:
-        // BlzOpenDoor BLUE
-    case 135:
-        // BlzOpenDoor RED
-    case 137:
-        // BlzOpenDoor YELLOW
+    case 133: // [STRIFE] TODO - which key is it?
+    case 135: // [STRIFE] TODO - which key is it?
+    case 137: // [STRIFE] TODO - which key is it?
         if (EV_DoLockedDoor (line,blazeOpen,thing))
             P_ChangeSwitchTexture(line,0);
         break;
 
-    case 140:
-        // Raise Floor 512
-        if (EV_DoFloor(line,raiseFloor512))
-            P_ChangeSwitchTexture(line,0);
-        break;
-
-        // BUTTONS
-    case 42:
-        // Close Door
-        if (EV_DoDoor(line,close))
-            P_ChangeSwitchTexture(line,1);
-        break;
-
-    case 43:
-        // Lower Ceiling to Floor
-        if (EV_DoCeiling(line,lowerToFloor))
-            P_ChangeSwitchTexture(line,1);
-        break;
-
-    case 45:
-        // Lower Floor to Surrounding floor height
-        if (EV_DoFloor(line,lowerFloor))
-            P_ChangeSwitchTexture(line,1);
-        break;
-
-    case 60:
-        // Lower Floor to Lowest
-        if (EV_DoFloor(line,lowerFloorToLowest))
-            P_ChangeSwitchTexture(line,1);
-        break;
-
-    case 61:
-        // Open Door
-        if (EV_DoDoor(line,open))
-            P_ChangeSwitchTexture(line,1);
-        break;
-
-    case 62:
-        // PlatDownWaitUpStay
-        if (EV_DoPlat(line, downWaitUpStay,1))
-            P_ChangeSwitchTexture(line,1);
-        break;
-
-    case 63:
-        // Raise Door
-        if (EV_DoDoor(line,normal))
-            P_ChangeSwitchTexture(line,1);
-        break;
-
-    case 64:
-        // Raise Floor to ceiling
-        if (EV_DoFloor(line,raiseFloor))
-            P_ChangeSwitchTexture(line,1);
-        break;
-
-    case 66:
-        // Raise Floor 24 and change texture
-        if (EV_DoPlat(line, raiseAndChange, 24))
-            P_ChangeSwitchTexture(line,1);
-        break;
-
-    case 67:
-        // Raise Floor 32 and change texture
-        if (EV_DoPlat(line, raiseAndChange, 32))
-            P_ChangeSwitchTexture(line,1);
-        break;
-
-    case 65:
-        // Raise Floor Crush
-        if (EV_DoFloor(line,raiseFloorCrush))
-            P_ChangeSwitchTexture(line,1);
-        break;
-
-    case 68:
-        // Raise Plat to next highest floor and change texture
-        if (EV_DoPlat(line, raiseToNearestAndChange, 0))
-            P_ChangeSwitchTexture(line,1);
-        break;
-
-    case 69:
-        // Raise Floor to next highest floor
-        if (EV_DoFloor(line, raiseFloorToNearest))
-            P_ChangeSwitchTexture(line,1);
-        break;
-
-    case 70:
-        // Turbo Lower Floor
-        if (EV_DoFloor(line,turboLower))
-            P_ChangeSwitchTexture(line,1);
-        break;
-
-    case 114:
-        // Blazing Door Raise (faster than TURBO!)
-        if (EV_DoDoor (line,blazeRaise))
-            P_ChangeSwitchTexture(line,1);
-        break;
-
-    case 115:
-        // Blazing Door Open (faster than TURBO!)
-        if (EV_DoDoor (line,blazeOpen))
-            P_ChangeSwitchTexture(line,1);
-        break;
-
-    case 116:
-        // Blazing Door Close (faster than TURBO!)
-        if (EV_DoDoor (line,blazeClose))
-            P_ChangeSwitchTexture(line,1);
-        break;
-
-    case 123:
-        // Blazing PlatDownWaitUpStay
-        if(EV_DoPlat(line, blazeDWUS, 0))
-            P_ChangeSwitchTexture(line,1);
-        break;
-
-    case 132:
-        // Raise Floor Turbo
-        if (EV_DoFloor(line,raiseFloorTurbo))
-            P_ChangeSwitchTexture(line,1);
-        break;
-
-    case 99:
-        // BlzOpenDoor BLUE
-    case 134:
-        // BlzOpenDoor RED
-    case 136:
-        // BlzOpenDoor YELLOW
+    case 99:  // [STRIFE] TODO: which key is it?
+    case 134: // [STRIFE] TODO: which key is it?
+    case 136: // [STRIFE] TODO: which key is it?
         if (EV_DoLockedDoor (line,blazeOpen,thing))
             P_ChangeSwitchTexture(line,1);
         break;
 
     case 138:
-        // Light Turn On
+        // Light Turn On - [STRIFE] Verified unmodified
         EV_LightTurnOn(line,255);
         P_ChangeSwitchTexture(line,1);
         break;
 
     case 139:
-        // Light Turn Off
+        // Light Turn Off - [STRIFE] Verified unmodified
         EV_LightTurnOn(line,35);
         P_ChangeSwitchTexture(line,1);
+        break;
+
+    case 140:
+        // Raise Floor 512 - [STRIFE] Verified unmodified
+        if (EV_DoFloor(line,raiseFloor512))
+            P_ChangeSwitchTexture(line,0);
         break;
 
     case 144:
@@ -846,9 +855,10 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
         P_Thrust(thing->player, thing->angle + ANG180, 125*FRACUNIT/16);
         break;
 
-    case 151:
-        // villsa [STRIFE] BlzOpenDoor Gold key
-        if(EV_DoLockedDoor(line, blazeOpen,thing))
+    case 151: // villsa [STRIFE] BlzOpenDoor Gold key
+    case 152: // [STRIFE] TODO: which key is it?
+    case 153: // [STRIFE] TODO: which key is it?
+        if(EV_DoLockedDoor(line, blazeOpen, thing))
             P_ChangeSwitchTexture(line, 1);
         break;
 
@@ -872,10 +882,34 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
             P_ChangeSwitchTexture(line, 1);
         break;
 
-    case 164:
-        // villsa [STRIFE] BlzOpenDoor Gold key
-        if(EV_DoLockedDoor(line, blazeOpen,thing))
+    case 162: // [STRIFE] TODO: which key is it?
+    case 163: // [STRIFE] TODO: which key is it?
+    case 164: // villsa [STRIFE] BlzOpenDoor Gold key
+    case 167: // [STRIFE] TODO: which key is it?
+        if(EV_DoLockedDoor(line, blazeOpen, thing))
             P_ChangeSwitchTexture(line, 0);
+        break;
+
+    case 168: // [STRIFE] TODO: which key is it?
+        // haleyjd 09/25/10: [STRIFE] SR Blaze Open Door ???? Key
+        if(EV_DoLockedDoor(line, blazeOpen, thing))
+            P_ChangeSwitchTexture(line, 1);
+        break;
+
+    case 171: // [STRIFE] TODO: which key is it?
+        // haleyjd 09/25/10: [STRIFE] S1 Open Door ???? Key
+        if(EV_DoLockedDoor(line, open, thing))
+            P_ChangeSwitchTexture(line, 0);
+        break;
+
+    case 172: // [STRIFE] TODO: which key is it?
+    case 173: // [STRIFE] TODO: which key is it?
+    case 176: // [STRIFE] TODO: which key is it?
+    case 191: // [STRIFE] TODO: which key is it?
+    case 192: // [STRIFE] TODO: which key is it?
+    case 223: // [STRIFE] TODO: which key is it?
+        if(EV_DoLockedDoor(line, normal, thing))
+            P_ChangeSwitchTexture(line, 1);
         break;
 
     case 177:
@@ -892,18 +926,38 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
         }
         break;
 
+    case 181:
+        // haleyjd 09/25/10: [STRIFE] S1 Floor Raise 512 & Change
+        if(EV_DoFloor(line, raiseFloor512AndChange))
+            P_ChangeSwitchTexture(line, 0);
+        break;
+
+    case 189: // [STRIFE] TODO: which key is it???
+        // haleyjd 09/25/10: [STRIFE] S1 Split Open Door ???? Key
+        if(EV_DoLockedDoor(line, splitOpen, thing))
+            P_ChangeSwitchTexture(line, 0);
+        break;
+
     case 194:
-        // villsa [STRIFE] free prisoners
+        // villsa [STRIFE] S1 Free Prisoners
         if(EV_DoDoor(line, open))
         {
             P_ChangeSwitchTexture(line, 0);
             P_FreePrisoners();
-            return true;
+        }
+        break;
+
+    case 199:
+        // haleyjd 09/25/10: [STRIFE] S1 Destroy Converter
+        if(EV_DoCeiling(line, lowerAndCrush))
+        {
+            P_ChangeSwitchTexture(line, 0);
+            P_DestroyConverter();
         }
         break;
 
     case 207:
-        // villsa [STRIFE] remote sliding door
+        // villsa [STRIFE] SR Remote Sliding Door
         if(EV_RemoteSlidingDoor(line, thing))
             P_ChangeSwitchTexture(line, 1);
         break; // haleyjd
@@ -922,7 +976,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
         break;
 
     case 211:
-        // villsa [STRIFE] play VOC## sound
+        // villsa [STRIFE] S1 Play VOC## sound
         if(&players[consoleplayer] == thing->player &&
             thing->player->powers[pw_communicator])
         {
@@ -933,13 +987,35 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
         break;
 
     case 214:
-        // villsa [STRIFE] slow lift lower wait up stay
+        // villsa [STRIFE] S1 slow lift lower wait up stay
         if(EV_DoPlat(line, slowDWUS, 1))
             P_ChangeSwitchTexture(line, 1);
         break;
 
+    case 219:
+        // haleyjd 09/25/10: S1 Lower Floor Blue Crystal
+        if(!thing->player->cards[key_BlueCrystalKey])
+        {
+            thing->player->message = DEH_String("You need the Blue Crystal");
+            S_StartSound(thing, sfx_oof);
+        }
+        else if(EV_DoFloor(line, lowerFloor))
+            P_ChangeSwitchTexture(line, 0);
+        break;
+
+    case 220:
+        // haleyjd 09/25/10: S1 Lower Floor Red Crystal
+        if(!thing->player->cards[key_RedCrystalKey])
+        {
+            thing->player->message = DEH_String("You need the Red Crystal");
+            S_StartSound(thing, sfx_oof);
+        }
+        else if(EV_DoFloor(line, lowerFloor))
+            P_ChangeSwitchTexture(line, 0);
+        break;
+
     case 226:
-        // villsa [STRIFE] complete training area
+        // villsa [STRIFE] S1 Complete Training Area
         if(EV_DoFloor(line, lowerFloor))
         {
             P_GiveItemToPlayer(thing->player, SPR_TOKN, MT_TOKEN_STAMINA);
@@ -952,8 +1028,8 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
         break;
 
     case 229:
-        // villsa [STRIFE] sigil sliding door
-        if(thing->player && thing->player->sigiltype == 4)
+        // villsa [STRIFE] SR Sigil Sliding Door
+        if(thing->player->sigiltype == 4)
         {
             if(EV_RemoteSlidingDoor(line, thing))
                 P_ChangeSwitchTexture(line, 1);
@@ -966,8 +1042,8 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
             return true;
 
         P_ChangeSwitchTexture(line, 1);
-
         GiveVoiceObjective("voc70", "log70", 0);
+        
         // haleyjd: Strife used sprintf here, not a direct set.
         DEH_snprintf(usemessage, sizeof(usemessage), 
                      "Incoming Message from BlackBird...");
@@ -977,7 +1053,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
 
     case 234:
         // haleyjd 09/24/10: [STRIFE] SR Raise Door if Quest 3
-        if(!(thing->player->questflags & QF_QUEST3)) // STRIFE-TODO: identify quest 3
+        if(!(thing->player->questflags & QF_QUEST3)) // QUEST3 == Irale
         {
             DEH_snprintf(usemessage, sizeof(usemessage), 
                          "That doesn't seem to work!");
@@ -987,8 +1063,17 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
             P_ChangeSwitchTexture(line, 1);
         break;
 
+    case 235:
+        // haleyjd 09/25/10: [STRIFE] S1 Split Open Door if Have Sigil 4
+        if(thing->player->sigiltype == 4)
+        {
+            if(EV_DoDoor(line, splitOpen))
+                P_ChangeSwitchTexture(line, 0);
+        }
+        break;
+
     case 666:
-        // villsa [STRIFE] Move wall
+        // villsa [STRIFE] SR Move Wall
         P_MoveWall(line, thing);
         break;
     }

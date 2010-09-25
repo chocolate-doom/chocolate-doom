@@ -1400,10 +1400,10 @@ P_CrossSpecialLine
 //
 void
 P_ShootSpecialLine
-( mobj_t*	thing,
-  line_t*	line )
+( mobj_t*       thing,
+  line_t*       line )
 {
-    int		ok;
+    int         ok;
 
     //	Impacts that other things can activate.
     if (!thing->player)

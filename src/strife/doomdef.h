@@ -243,7 +243,7 @@ enum
 { //  Name       Flag from bitnum      Purpose, if known
     QF_QUEST1  = (1 << tk_quest1),
     QF_QUEST2  = (1 << tk_quest2),
-    QF_QUEST3  = (1 << tk_quest3), 
+    QF_QUEST3  = (1 << tk_quest3),  // Permission to visit Irale
     QF_QUEST4  = (1 << tk_quest4),
     QF_QUEST5  = (1 << tk_quest5),
     QF_QUEST6  = (1 << tk_quest6),  // Destroyed the Power Coupling
@@ -253,7 +253,7 @@ enum
     QF_QUEST10 = (1 << tk_quest10),
     QF_QUEST11 = (1 << tk_quest11),
     QF_QUEST12 = (1 << tk_quest12),
-    QF_QUEST13 = (1 << tk_quest13),
+    QF_QUEST13 = (1 << tk_quest13), // Freed the Prisoners
     QF_QUEST14 = (1 << tk_quest14),
     QF_QUEST15 = (1 << tk_quest15),
     QF_QUEST16 = (1 << tk_quest16), // Destroyed the Gate Mechanism
