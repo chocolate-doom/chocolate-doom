@@ -289,7 +289,7 @@ extern	int		rndindex;
 extern	int		maketic;
 extern  int             nettics[MAXPLAYERS];
 
-extern  ticcmd_t        netcmds[MAXPLAYERS][BACKUPTICS];
+extern  ticcmd_t       *netcmds;
 extern	int		ticdup;
 
 

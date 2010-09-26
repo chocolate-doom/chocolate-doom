@@ -986,9 +986,9 @@ void G_Ticker (void)
 	if (playeringame[i]) 
 	{ 
 	    cmd = &players[i].cmd; 
- 
-	    memcpy (cmd, &netcmds[i][buf], sizeof(ticcmd_t)); 
- 
+
+	    memcpy(cmd, &netcmds[i], sizeof(ticcmd_t));
+
 	    if (demoplayback) 
 		G_ReadDemoTiccmd (cmd); 
 	    if (demorecording) 

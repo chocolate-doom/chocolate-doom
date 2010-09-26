@@ -457,9 +457,12 @@ void D_DoomLoop (void)
 	// process one or more tics
 	if (singletics)
 	{
+            static ticcmd_t cmds[MAXPLAYERS];
+
 	    I_StartTic ();
 	    D_ProcessEvents ();
-	    G_BuildTiccmd (&netcmds[consoleplayer][maketic%BACKUPTICS]);
+            netcmds = cmds;
+	    G_BuildTiccmd(&cmds[consoleplayer]);
 	    if (advancedemo)
 		D_DoAdvanceDemo ();
 	    M_Ticker ();

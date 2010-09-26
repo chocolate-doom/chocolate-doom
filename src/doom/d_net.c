@@ -49,19 +49,27 @@
 #include "net_sdl.h"
 #include "net_loop.h"
 
+// The complete set of data for a particular tic.
+
+typedef struct
+{
+    ticcmd_t cmds[MAXPLAYERS];
+    boolean ingame[MAXPLAYERS];
+} ticcmd_set_t;
 
 //
 // NETWORKING
 //
 // gametic is the tic about to (or currently being) run
-// maketic is the tick that hasn't had control made for it yet
-// nettics[] has the maketics for all players 
+// maketic is the tic that hasn't had control made for it yet
+// recvtic is the latest tic received from the server.
 //
-// a gametic cannot be run until nettics[] > gametic for all players
+// a gametic cannot be run until ticcmds are received for it
+// from all players.
 //
 
-ticcmd_t        netcmds[MAXPLAYERS][BACKUPTICS];
-int         	nettics[MAXPLAYERS];
+ticcmd_set_t ticdata[BACKUPTICS];
+ticcmd_t *netcmds;
 
 int             maketic;
 int             recvtic;
@@ -208,10 +216,10 @@ void NetUpdate (void)
         }
 
 #endif
-        netcmds[consoleplayer][maketic % BACKUPTICS] = cmd;
+        ticdata[maketic % BACKUPTICS].cmds[consoleplayer] = cmd;
+        ticdata[maketic % BACKUPTICS].ingame[consoleplayer] = true;
 
 	++maketic;
-        nettics[consoleplayer] = maketic;
     }
 }
 
@@ -245,8 +253,6 @@ static void D_PlayerQuitGame(player_t *player)
 
 static void D_Disconnected(void)
 {
-    int i;
-
     // In drone mode, the game cannot continue once disconnected.
 
     if (drone)
@@ -257,14 +263,6 @@ static void D_Disconnected(void)
     // disconnected from server
 
     printf("Disconnected from server.\n");
-
-    for (i=0; i<MAXPLAYERS; ++i)
-    {
-        if (i != consoleplayer && playeringame[i])
-        {
-            D_PlayerQuitGame(&players[i]);
-        }
-    }
 }
 
 //
@@ -284,22 +282,16 @@ void D_ReceiveTic(ticcmd_t *ticcmds, boolean *players_mask)
         return;
     }
 
-    for (i=0; i<MAXPLAYERS; ++i)
+    for (i = 0; i < MAXPLAYERS; ++i)
     {
         if (!drone && i == consoleplayer)
         {
-            // This is us.
+            // This is us.  Don't overwrite it.
         }
-        else if (players_mask[i])
+        else
         {
-            netcmds[i][recvtic % BACKUPTICS] = ticcmds[i];
-            nettics[i] = recvtic;
-        }
-        else if (playeringame[i])
-        {
-            // Player quit the game.
-
-            D_PlayerQuitGame(&players[i]);
+            ticdata[recvtic % BACKUPTICS].cmds[i] = ticcmds[i];
+            ticdata[recvtic % BACKUPTICS].ingame[i] = players_mask[i];
         }
     }
 
@@ -345,8 +337,9 @@ void D_CheckNetGame (void)
     for (i=0; i<MAXPLAYERS; i++)
     {
         playeringame[i] = false;
-       	nettics[i] = 0;
     }
+
+    recvtic = 0;
 
     playeringame[0] = true;
 
@@ -503,62 +496,172 @@ void D_QuitNetGame (void)
 
 }
 
-// Returns true if there are currently any players in the game.
-
-static boolean PlayersInGame(void)
-{
-    int i;
-
-    for (i=0; i<MAXPLAYERS; ++i)
-    {
-        if (playeringame[i])
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
 static int GetLowTic(void)
 {
     int lowtic;
 
+    lowtic = maketic;
+
 #ifdef FEATURE_MULTIPLAYER
     if (net_client_connected)
     {
-        int i;
-
-        lowtic = INT_MAX;
-    
-        for (i=0; i<MAXPLAYERS; ++i)
+        if (drone || recvtic < lowtic)
         {
-            if (playeringame[i])
-            {
-                if (nettics[i] < lowtic)
-                    lowtic = nettics[i];
-            }
+            lowtic = recvtic;
         }
     }
-    else
 #endif
-    {
-        lowtic = maketic;
-    }
 
     return lowtic;
 }
 
-//
-// TryRunTics
-//
-int	oldnettics;
 int	frametics[4];
 int	frameon;
 int	frameskip[4];
 int	oldnettics;
 
-extern	boolean	advancedemo;
+static void OldNetSync(void)
+{
+    unsigned int i;
+    unsigned int keyplayer = -1;
+
+    frameon++;
+
+    // ideally maketic should be 1 - 3 tics above lowtic
+    // if we are consistantly slower, speed up time
+
+    for (i=0 ; i<MAXPLAYERS ; i++)
+    {
+        // TODO: playeringame should not be used here.
+
+        if (playeringame[i])
+        {
+            keyplayer = i;
+            break;
+        }
+    }
+
+    if (keyplayer < 0)
+    {
+        // If there are no players, we can never advance anyway
+
+        return;
+    }
+
+    if (consoleplayer == keyplayer)
+    {
+        // the key player does not adapt
+    }
+    else
+    {
+        if (maketic <= recvtic)
+        {
+            lasttime--;
+            // printf ("-");
+        }
+
+        frameskip[frameon & 3] = oldnettics > recvtic;
+        oldnettics = maketic;
+
+        if (frameskip[0] && frameskip[1] && frameskip[2] && frameskip[3])
+        {
+            skiptics = 1;
+            // printf ("+");
+        }
+    }
+}
+
+// Returns true if there are players in the game:
+
+static boolean PlayersInGame(void)
+{
+    boolean result = false;
+    unsigned int i;
+
+    // If we are connected to a server, check if there are any players
+    // in the game.
+
+    if (net_client_connected)
+    {
+        for (i = 0; i < MAXPLAYERS; ++i)
+        {
+            result = result || playeringame[i];
+        }
+    }
+
+    // Whether single or multi-player, unless we are running as a drone,
+    // we are in the game.
+
+    if (!drone)
+    {
+        result = true;
+    }
+
+    return result;
+}
+
+// When using ticdup, certain values must be cleared out when running
+// the duplicate ticcmds.
+
+static void TicdupSquash(ticcmd_set_t *set)
+{
+    ticcmd_t *cmd;
+    unsigned int i;
+                    
+    for (i = 0; i < MAXPLAYERS ; ++i)
+    {
+        cmd = &set->cmds[i];
+        cmd->chatchar = 0;
+        if (cmd->buttons & BT_SPECIAL)
+            cmd->buttons = 0;
+    }
+}
+
+static void D_RunTic(ticcmd_set_t *set)
+{
+    extern boolean advancedemo;
+    unsigned int i;
+
+    // Check for player quits.
+
+    for (i = 0; i < MAXPLAYERS; ++i)
+    {
+        if (playeringame[i] && !set->ingame[i])
+        {
+            D_PlayerQuitGame(&players[i]);
+        }
+    }
+
+    netcmds = set->cmds;
+
+    // check that there are players in the game.  if not, we cannot
+    // run a tic.
+
+    if (advancedemo)
+        D_DoAdvanceDemo ();
+
+    G_Ticker ();
+}
+
+// When running in single player mode, clear all the ingame[] array
+// except the consoleplayer.
+
+static void SinglePlayerClear(ticcmd_set_t *set)
+{
+    unsigned int i;
+
+    for (i = 0; i < MAXPLAYERS; ++i)
+    {
+        if (i != consoleplayer)
+        {
+            set->ingame[i] = false;
+        }
+    }
+}
+
+//
+// TryRunTics
+//
 
 void TryRunTics (void)
 {
@@ -601,52 +704,9 @@ void TryRunTics (void)
         if (counts < 1)
             counts = 1;
                     
-        frameon++;
-
-        if (!demoplayback)
+        if (net_client_connected)
         {
-	    int keyplayer = -1;
-
-            // ideally maketic should be 1 - 3 tics above lowtic
-            // if we are consistantly slower, speed up time
-
-            for (i=0 ; i<MAXPLAYERS ; i++)
-	    {
-                if (playeringame[i])
-		{
-		    keyplayer = i;
-                    break;
-		}
-	    }
-
-	    if (keyplayer < 0)
-	    {
-		// If there are no players, we can never advance anyway
-
-		return;
-	    }
-
-            if (consoleplayer == keyplayer)
-            {
-                // the key player does not adapt
-            }
-            else
-            {
-                if (maketic <= nettics[keyplayer])
-                {
-                    lasttime--;
-                    // printf ("-");
-                }
-
-                frameskip[frameon & 3] = (oldnettics > nettics[keyplayer]);
-                oldnettics = maketic;
-
-                if (frameskip[0] && frameskip[1] && frameskip[2] && frameskip[3])
-                {
-                    skiptics = 1;
-                    // printf ("+");
-                }
-            }
+            OldNetSync();
         }
     }
 
@@ -678,41 +738,33 @@ void TryRunTics (void)
     // run the count * ticdup dics
     while (counts--)
     {
+        ticcmd_set_t *set;
+
+        if (!PlayersInGame())
+        {
+            return;
+        }
+
+        set = &ticdata[(gametic / ticdup) % BACKUPTICS];
+
+        if (!net_client_connected)
+        {
+            SinglePlayerClear(set);
+        }
+
 	for (i=0 ; i<ticdup ; i++)
 	{
-            // check that there are players in the game.  if not, we cannot
-            // run a tic.
-        
-            if (!PlayersInGame())
-            {
-                return;
-            }
-    
-	    if (gametic/ticdup > lowtic)
-		I_Error ("gametic>lowtic");
-	    if (advancedemo)
-		D_DoAdvanceDemo ();
+            if (gametic/ticdup > lowtic)
+                I_Error ("gametic>lowtic");
 
-	    G_Ticker ();
+            D_RunTic(set);
 	    gametic++;
 	    
 	    // modify command for duplicated tics
-	    if (i != ticdup-1)
-	    {
-		ticcmd_t	*cmd;
-		int			buf;
-		int			j;
-				
-		buf = (gametic/ticdup)%BACKUPTICS; 
-		for (j=0 ; j<MAXPLAYERS ; j++)
-		{
-		    cmd = &netcmds[j][buf];
-		    cmd->chatchar = 0;
-		    if (cmd->buttons & BT_SPECIAL)
-			cmd->buttons = 0;
-		}
-	    }
+
+            TicdupSquash(set);
 	}
+
 	NetUpdate ();	// check for new console commands
     }
 }
