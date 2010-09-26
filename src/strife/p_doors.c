@@ -218,7 +218,9 @@ void T_VerticalDoor(vldoor_t* door)
 // EV_DoLockedDoor
 // Move a locked door up/down
 //
-
+// [STRIFE] This game has a crap load of keys. And this function doesn't even
+// deal with all of them...
+//
 int EV_DoLockedDoor(line_t* line, vldoor_e type, mobj_t* thing)
 {
     player_t* p;

@@ -943,8 +943,9 @@ P_CrossSpecialLine
         line->special = 0;
         break;
 
-    case 179: // STRIFE-TODO: new Ceiling type?
-        // EV_DoCeiling(line, 0);
+    case 179: 
+        // haleyjd 09/25/10: [STRIFE] W1 Ceiling Lower to Floor
+        EV_DoCeiling(line, lowerToFloor);
         line->special = 0;
         break;
 
@@ -1359,10 +1360,8 @@ P_CrossSpecialLine
 
     case 184:
         // villsa [STRIFE] plat up wait down stay
-        EV_DoPlat(line, upWaitDownStay, 0);
-
-        // hmm.. looks like Rogue screwed up here..
-        P_ChangeSwitchTexture(line, 1);
+        if(EV_DoPlat(line, upWaitDownStay, 0))
+            P_ChangeSwitchTexture(line, 1); // In P_CrossSpecialLine? Copypasta error?
         break;
 
     case 185:
