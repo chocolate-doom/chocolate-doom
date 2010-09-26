@@ -2803,9 +2803,7 @@ void A_RaiseAlarm(mobj_t* actor)
 //
 void A_MissileTick(mobj_t* actor)
 {
-    int r = actor->reactiontime--;
-
-    if(r - 1 <= 0)
+    if(--actor->reactiontime <= 0)
     {
         P_ExplodeMissile(actor);
         actor->flags &= ~MF_MISSILE;
@@ -3339,6 +3337,7 @@ void A_ClearForceField(mobj_t* actor)
     for(i = 0; i < sec->linecount; i++)
     {
         secline = sec->lines[i];
+        // BUG: will crash if 1S line has TWOSIDED flag!
         if(!(secline->flags & ML_TWOSIDED))
             continue;
         if(secline->special != 148)

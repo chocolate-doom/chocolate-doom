@@ -1055,6 +1055,8 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
         // haleyjd 09/24/10: [STRIFE] SR Raise Door if Quest 3
         if(!(thing->player->questflags & QF_QUEST3)) // QUEST3 == Irale
         {
+            // BUG: doesn't make sfx_oof sound like all other message-
+            // giving door types. I highly doubt this was intentional.
             DEH_snprintf(usemessage, sizeof(usemessage), 
                          "That doesn't seem to work!");
             thing->player->message = usemessage;

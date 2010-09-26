@@ -1462,6 +1462,8 @@ P_ShootSpecialLine
 // Called every tic frame
 //  that the player origin is in a special sector
 //
+// [STRIFE] Modified for new sector types and changes to old ones.
+//
 void P_PlayerInSpecialSector (player_t* player)
 {
     sector_t*	sector;
@@ -1523,7 +1525,6 @@ void P_PlayerInSpecialSector (player_t* player)
 
     case 18:
         // haleyjd 08/30/10: [STRIFE] Water current
-        // STRIFE-TODO: Verify this works as the ASM is shifty
         {
             int tagval = sector->tag - 100;
             fixed_t force;
@@ -1554,81 +1555,103 @@ void P_PlayerInSpecialSector (player_t* player)
 // P_UpdateSpecials
 // Animate planes, scroll walls, etc.
 //
-boolean		levelTimer;
-int		levelTimeCount;
+// [STRIFE] Modifications to support multiple scrolling line types.
+//
+boolean         levelTimer;
+int             levelTimeCount;
 
 void P_UpdateSpecials (void)
 {
-    anim_t*	anim;
-    int		pic;
-    int		i;
-    line_t*	line;
+    anim_t*     anim;
+    int         pic;
+    int         i;
+    line_t*     line;
 
-    
-    //	LEVEL TIMER
+
+    //  LEVEL TIMER
     if (levelTimer == true)
     {
-	levelTimeCount--;
-	if (!levelTimeCount)
-	    G_ExitLevel(0);
+        if(levelTimeCount) // [STRIFE] Does not allow to go negative
+            levelTimeCount--;
+        
+        /*
+        // [STRIFE] Not done here. Exit lines check this manually instead.
+        if (!levelTimeCount)
+            G_ExitLevel(0);
+        */
     }
-    
-    //	ANIMATE FLATS AND TEXTURES GLOBALLY
+
+    //  ANIMATE FLATS AND TEXTURES GLOBALLY
     for (anim = anims ; anim < lastanim ; anim++)
     {
-	for (i=anim->basepic ; i<anim->basepic+anim->numpics ; i++)
-	{
-	    pic = anim->basepic + ( (leveltime/anim->speed + i)%anim->numpics );
-	    if (anim->istexture)
-		texturetranslation[i] = pic;
-	    else
-		flattranslation[i] = pic;
-	}
+        for (i=anim->basepic ; i<anim->basepic+anim->numpics ; i++)
+        {
+            pic = anim->basepic + ( (leveltime/anim->speed + i)%anim->numpics );
+            if (anim->istexture)
+                texturetranslation[i] = pic;
+            else
+                flattranslation[i] = pic;
+        }
     }
 
     
-    //	ANIMATE LINE SPECIALS
+    //  ANIMATE LINE SPECIALS
     for (i = 0; i < numlinespecials; i++)
     {
-	line = linespeciallist[i];
-	switch(line->special)
-	{
-	  case 48:
-	    // EFFECT FIRSTCOL SCROLL +
-	    sides[line->sidenum[0]].textureoffset += FRACUNIT;
-	    break;
-	}
+        line = linespeciallist[i];
+        switch(line->special)
+        {
+        case 48:
+            // EFFECT FIRSTCOL SCROLL +
+            sides[line->sidenum[0]].textureoffset += FRACUNIT;
+            break;
+
+        case 142:
+            // haleyjd 09/25/10 [STRIFE] Scroll Up Slow
+            sides[line->sidenum[0]].rowoffset += FRACUNIT;
+            break;
+
+        case 143:
+            // haleyjd 09/25/10 [STRIFE] Scroll Down Fast (3 Units/Tic)
+            sides[line->sidenum[0]].rowoffset -= 3*FRACUNIT;
+            break;
+
+        case 149:
+            // haleyjd 09/25/10 [STRIFE] Scroll Down Slow
+            sides[line->sidenum[0]].rowoffset -= FRACUNIT;
+            break;
+        }
     }
 
     
-    //	DO BUTTONS
+    //  DO BUTTONS
     for (i = 0; i < MAXBUTTONS; i++)
-	if (buttonlist[i].btimer)
-	{
-	    buttonlist[i].btimer--;
-	    if (!buttonlist[i].btimer)
-	    {
-		switch(buttonlist[i].where)
-		{
-		  case top:
-		    sides[buttonlist[i].line->sidenum[0]].toptexture =
-			buttonlist[i].btexture;
-		    break;
-		    
-		  case middle:
-		    sides[buttonlist[i].line->sidenum[0]].midtexture =
-			buttonlist[i].btexture;
-		    break;
-		    
-		  case bottom:
-		    sides[buttonlist[i].line->sidenum[0]].bottomtexture =
-			buttonlist[i].btexture;
-		    break;
-		}
-		S_StartSound(&buttonlist[i].soundorg,sfx_swtchn);
-		memset(&buttonlist[i],0,sizeof(button_t));
-	    }
-	}
+        if (buttonlist[i].btimer)
+        {
+            buttonlist[i].btimer--;
+            if (!buttonlist[i].btimer)
+            {
+                switch(buttonlist[i].where)
+                {
+                case top:
+                    sides[buttonlist[i].line->sidenum[0]].toptexture =
+                        buttonlist[i].btexture;
+                    break;
+
+                case middle:
+                    sides[buttonlist[i].line->sidenum[0]].midtexture =
+                        buttonlist[i].btexture;
+                    break;
+
+                case bottom:
+                    sides[buttonlist[i].line->sidenum[0]].bottomtexture =
+                        buttonlist[i].btexture;
+                    break;
+                }
+                S_StartSound(&buttonlist[i].soundorg,sfx_swtchn);
+                memset(&buttonlist[i],0,sizeof(button_t));
+            }
+        }
 }
 
 
@@ -1838,17 +1861,21 @@ line_t*		linespeciallist[MAXLINEANIMS];
 
 
 // Parses command line parameters.
+//
+// haleyjd 09/25/10: [STRIFE] Modifications for more scrolling line types and
+// for initialization of sliding door resources.
+//
 void P_SpawnSpecials (void)
 {
-    sector_t*	sector;
-    int		i;
-    int		episode;
+    sector_t*   sector;
+    int         i;
+    int         episode;
 
     episode = 1;
     if (W_CheckNumForName(DEH_String("texture2")) >= 0)
-	episode = 2;
+        episode = 2;
 
-    
+
     // See if -TIMER was specified.
 
     if (timelimit > 0)
@@ -1858,99 +1885,100 @@ void P_SpawnSpecials (void)
     }
     else
     {
-	levelTimer = false;
+        levelTimer = false;
     }
-    
-    //	Init special SECTORs.
+
+    //	Init special SECTORs - [STRIFE] Verified unmodified.
     sector = sectors;
     for (i=0 ; i<numsectors ; i++, sector++)
     {
-	if (!sector->special)
-	    continue;
-	
-	switch (sector->special)
-	{
-	  case 1:
-	    // FLICKERING LIGHTS
-	    P_SpawnLightFlash (sector);
-	    break;
+        if (!sector->special)
+            continue;
 
-	  case 2:
-	    // STROBE FAST
-	    P_SpawnStrobeFlash(sector,FASTDARK,0);
-	    break;
-	    
-	  case 3:
-	    // STROBE SLOW
-	    P_SpawnStrobeFlash(sector,SLOWDARK,0);
-	    break;
-	    
-	  case 4:
-	    // STROBE FAST/DEATH SLIME
-	    P_SpawnStrobeFlash(sector,FASTDARK,0);
-	    sector->special = 4;
-	    break;
-	    
-	  case 8:
-	    // GLOWING LIGHT
-	    P_SpawnGlowingLight(sector);
-	    break;
-	  case 9:
-	    // SECRET SECTOR
-	    totalsecret++;
-	    break;
-	    
-	  case 10:
-	    // DOOR CLOSE IN 30 SECONDS
-	    P_SpawnDoorCloseIn30 (sector);
-	    break;
-	    
-	  case 12:
-	    // SYNC STROBE SLOW
-	    P_SpawnStrobeFlash (sector, SLOWDARK, 1);
-	    break;
+        switch (sector->special)
+        {
+        case 1:
+            // FLICKERING LIGHTS
+            P_SpawnLightFlash (sector);
+            break;
 
-	  case 13:
-	    // SYNC STROBE FAST
-	    P_SpawnStrobeFlash (sector, FASTDARK, 1);
-	    break;
+        case 2:
+            // STROBE FAST
+            P_SpawnStrobeFlash(sector,FASTDARK,0);
+            break;
 
-	  case 14:
-	    // DOOR RAISE IN 5 MINUTES
-	    P_SpawnDoorRaiseIn5Mins (sector, i);
-	    break;
-	    
-	  case 17:
-	    P_SpawnFireFlicker(sector);
-	    break;
-	}
+        case 3:
+            // STROBE SLOW
+            P_SpawnStrobeFlash(sector,SLOWDARK,0);
+            break;
+
+        case 4:
+            // STROBE FAST/DEATH SLIME
+            P_SpawnStrobeFlash(sector,FASTDARK,0);
+            sector->special = 4;
+            break;
+
+        case 8:
+            // GLOWING LIGHT
+            P_SpawnGlowingLight(sector);
+            break;
+        case 9:
+            // SECRET SECTOR
+            totalsecret++;
+            break;
+
+        case 10:
+            // DOOR CLOSE IN 30 SECONDS
+            P_SpawnDoorCloseIn30 (sector);
+            break;
+
+        case 12:
+            // SYNC STROBE SLOW
+            P_SpawnStrobeFlash (sector, SLOWDARK, 1);
+            break;
+
+        case 13:
+            // SYNC STROBE FAST
+            P_SpawnStrobeFlash (sector, FASTDARK, 1);
+            break;
+
+        case 14:
+            // DOOR RAISE IN 5 MINUTES
+            P_SpawnDoorRaiseIn5Mins (sector, i);
+            break;
+
+        case 17:
+            P_SpawnFireFlicker(sector);
+            break;
+        }
     }
 
-    
+
     //	Init line EFFECTs
     numlinespecials = 0;
     for (i = 0;i < numlines; i++)
     {
-	switch(lines[i].special)
-	{
-	  case 48:
-	    // EFFECT FIRSTCOL SCROLL+
-	    linespeciallist[numlinespecials] = &lines[i];
-	    numlinespecials++;
-	    break;
-	}
+        switch(lines[i].special)
+        {
+        case 48:  // EFFECT FIRSTCOL SCROLL+
+        case 142: // [STRIFE] TODO: verify scroll types
+        case 143:
+        case 149:
+            linespeciallist[numlinespecials] = &lines[i];
+            numlinespecials++;
+            break;
+        }
     }
 
-    
     //	Init other misc stuff
     for (i = 0;i < MAXCEILINGS;i++)
-	activeceilings[i] = NULL;
+        activeceilings[i] = NULL;
 
     for (i = 0;i < MAXPLATS;i++)
-	activeplats[i] = NULL;
-    
+        activeplats[i] = NULL;
+
     for (i = 0;i < MAXBUTTONS;i++)
-	memset(&buttonlist[i],0,sizeof(button_t));
+        memset(&buttonlist[i],0,sizeof(button_t));
 
     // villsa [STRIFE]
     P_InitSlidingDoorFrames();

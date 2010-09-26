@@ -247,7 +247,7 @@ enum
     QF_QUEST4  = (1 << tk_quest4),
     QF_QUEST5  = (1 << tk_quest5),
     QF_QUEST6  = (1 << tk_quest6),  // Destroyed the Power Coupling
-    QF_QUEST7  = (1 << tk_quest7),
+    QF_QUEST7  = (1 << tk_quest7),  // Killed Blue Acolytes ("Scanning Team")
     QF_QUEST8  = (1 << tk_quest8),
     QF_QUEST9  = (1 << tk_quest9),
     QF_QUEST10 = (1 << tk_quest10),

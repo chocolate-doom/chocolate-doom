@@ -173,6 +173,7 @@ boolean P_GiveWeapon(player_t* player, weapontype_t weapon, boolean dropped)
         gaveweapon = true;
         player->weaponowned[weapon] = true;
 
+        // Alternate "sister" weapons that you also get as a bonus:
         switch(weapon)
         {
         case wp_elecbow:
@@ -1152,7 +1153,7 @@ void P_DamageMobj(mobj_t* target, mobj_t* inflictor, mobj_t* source, int damage)
     // villsa [STRIFE] handle fieldguard damage
     if(target->type == MT_FIELDGUARD)
     {
-        // degin ores are only allowed to damage the fieldguard
+        // degnin ores are only allowed to damage the fieldguard
         if(!inflictor || inflictor->type != MT_DEGNINORE)
             return;
 
@@ -1215,12 +1216,12 @@ void P_DamageMobj(mobj_t* target, mobj_t* inflictor, mobj_t* source, int damage)
         // villsa [STRIFE] flame attacks don't damage player if wearing envirosuit??
         if(player->powers[pw_ironfeet] && inflictor)
         {
-            if(inflictor->type == MT_SFIREBALL
-                || inflictor->type == MT_C_FLAME
-                || inflictor->type == MT_PFLAME)
-                {
-                    damage = 0;
-                }
+            if(inflictor->type == MT_SFIREBALL || 
+               inflictor->type == MT_C_FLAME   || 
+               inflictor->type == MT_PFLAME)
+            {
+                damage = 0;
+            }
         }
 
         if(player->armortype)

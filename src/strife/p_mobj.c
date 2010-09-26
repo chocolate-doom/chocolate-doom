@@ -597,11 +597,11 @@ P_SpawnMobj
     mobj_t*	mobj;
     state_t*	st;
     mobjinfo_t*	info;
-	
+
     mobj = Z_Malloc (sizeof(*mobj), PU_LEVEL, NULL);
     memset (mobj, 0, sizeof (*mobj));
     info = &mobjinfo[type];
-	
+
     mobj->type = type;
     mobj->info = info;
     mobj->x = x;
@@ -611,8 +611,10 @@ P_SpawnMobj
     mobj->flags = info->flags;
     mobj->health = info->spawnhealth;
 
-    if (gameskill != sk_nightmare)
-	mobj->reactiontime = info->reactiontime;
+    // haleyjd 09/25/10: [STRIFE] Doesn't do this; messes up flamethrower
+    // and a lot of other stuff.
+    //if (gameskill != sk_nightmare)
+    mobj->reactiontime = info->reactiontime;
     
     mobj->lastlook = P_Random () % MAXPLAYERS;
     // do not set the state with P_SetMobjState,
@@ -626,13 +628,13 @@ P_SpawnMobj
 
     // set subsector and/or block links
     P_SetThingPosition (mobj);
-	
+
     mobj->floorz = mobj->subsector->sector->floorheight;
     mobj->ceilingz = mobj->subsector->sector->ceilingheight;
 
     if (z == ONFLOORZ)
     {
-	mobj->z = mobj->floorz;
+        mobj->z = mobj->floorz;
 
         // villsa [STRIFE]
         if(P_GetTerrainType(mobj) != FLOOR_SOLID)
@@ -640,12 +642,12 @@ P_SpawnMobj
 
     }
     else if (z == ONCEILINGZ)
-	mobj->z = mobj->ceilingz - mobj->info->height;
+        mobj->z = mobj->ceilingz - mobj->info->height;
     else 
-	mobj->z = z;
+        mobj->z = z;
 
     mobj->thinker.function.acp1 = (actionf_p1)P_MobjThinker;
-	
+
     P_AddThinker (&mobj->thinker);
 
     return mobj;
