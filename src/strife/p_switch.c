@@ -485,10 +485,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
             break;
         }
     }
-
-    // [STRIFE] TODO: here on down mostly untouched so far,
-    // except for a few new types at the bottom.
-    
+   
     // do something  
     switch(line->special)
     {

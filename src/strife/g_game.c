@@ -1567,16 +1567,31 @@ boolean G_RiftCheat(int riftSpotNum)
 //
 void G_DoWorldDone (void) 
 {        
+    int temp_leveltime = leveltime;
+
     gamestate = GS_LEVEL; 
     gamemap = destmap;
-    
+
     // STRIFE-TODO: hubs bullshit
-    
+    // G_LoadPath();
+    // if (!deathmatch)
+    //  ebx0 = (*(_DWORD *)(players[0].mo + 104) & 0x8000000) > 0;
+    // G_DoLoadGame(...);
+
+    // temporary substitute:
     G_DoLoadLevel (); 
+
+    // [STRIFE] leveltime carries over between maps
+    leveltime = temp_leveltime;
 
     if(!deathmatch)
     {
         // STRIFE-TODO: powerup transfers etc
+        // *(_WORD *)(players[0].mo + 106) &= 0xF7FBu;
+        // if (v1)
+        //    *(_BYTE *)(plaeyrs[0].mo + 106) |= 4u;
+        // if (ebx0)
+        //    *(_BYTE *)(players[0].mo + 107) |= 8u;
 
         G_RiftPlayer();
 
@@ -1612,9 +1627,9 @@ void G_LoadGame (char* name)
 void G_DoLoadGame (void) 
 { 
     int savedleveltime;
-	 
+
     gameaction = ga_nothing; 
-	 
+
     save_stream = fopen(savename, "rb");
 
     if (save_stream == NULL)
@@ -1644,12 +1659,12 @@ void G_DoLoadGame (void)
     P_UnArchiveSpecials (); 
  
     if (!P_ReadSaveGameEOF())
-	I_Error ("Bad savegame");
+        I_Error ("Bad savegame");
 
     fclose(save_stream);
     
     if (setsizeneeded)
-	R_ExecuteSetViewSize ();
+        R_ExecuteSetViewSize ();
     
     // draw the pattern into the back screen
     R_FillBackScreen ();   

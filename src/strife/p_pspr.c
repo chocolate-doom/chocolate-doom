@@ -560,11 +560,8 @@ void A_FireGrenade(player_t* player, pspdef_t* pspr)
     // decide on what type of grenade to spawn
     if(player->readyweapon == wp_hegrenade)
         type = MT_HEGRENADE;
-    else
-    {
-        if(player->readyweapon == wp_wpgrenade)
-            type = MT_PGRENADE;
-    }
+    else if(player->readyweapon == wp_wpgrenade)
+        type = MT_PGRENADE;
 
     player->ammo[weaponinfo[player->readyweapon].ammo]--;
 
@@ -749,8 +746,8 @@ void A_FireMauler1(player_t* player, pspdef_t* pspr)
             t = P_Random();
             angle += (t - P_Random()) << 19;
             t = P_Random();
-            P_LineAttack(player->mo, angle, (2112*FRACUNIT),
-                bulletslope + ((t - P_Random())<<5), damage);
+            P_LineAttack(player->mo, angle, 2112*FRACUNIT,
+                         bulletslope + ((t - P_Random())<<5), damage);
         }
     }
 }

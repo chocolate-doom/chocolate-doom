@@ -612,7 +612,7 @@ P_SpawnMobj
     mobj->health = info->spawnhealth;
 
     // haleyjd 09/25/10: [STRIFE] Doesn't do this; messes up flamethrower
-    // and a lot of other stuff.
+    // and a lot of other stuff using reactiontime as a counter.
     //if (gameskill != sk_nightmare)
     mobj->reactiontime = info->reactiontime;
     

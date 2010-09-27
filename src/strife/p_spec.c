@@ -980,6 +980,15 @@ P_CrossSpecialLine
         line->special = 0;
         break;
 
+    case 196:
+        // haleyjd 09/26/10: [STRIFE] W1 Floor Lower to Lowest if Sigil Type > 0
+        if(thing->player->sigiltype > 0)
+        {
+            EV_DoFloor(line, lowerFloorToLowest);
+            line->special = 0;
+        }
+        break;
+
     case 200:
         // haleyjd 09/21/10: [STRIFE] W1 Open Door if Sigil Owned
         if(!(thing->player->weaponowned[wp_sigil]))
@@ -1042,6 +1051,15 @@ P_CrossSpecialLine
         // Put up a message
         thing->player->message = DEH_String("Incoming Message from BlackBird...");
         line->special = 0;
+        break;
+
+    case 212:
+        // haleyjd 09/25/10: [STRIFE] W1 Floor Lower to Lowest if Have Flamethrower
+        if(thing->player->weaponowned[wp_flame])
+        {
+            EV_DoFloor(line, lowerFloorToLowest);
+            line->special = 0;
+        }
         break;
 
     case 215:
