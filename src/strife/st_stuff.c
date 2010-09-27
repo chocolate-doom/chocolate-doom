@@ -53,6 +53,7 @@
 
 #include "am_map.h"
 #include "m_cheat.h"
+#include "m_menu.h" // villsa [STRIFE]
 
 #include "s_sound.h"
 
@@ -229,9 +230,27 @@ static st_stateenum_t   st_gamestate;
 // whether left-side main status bar is active
 static boolean          st_statusbaron;
 
+// villsa [STRIFE]
+static boolean          st_dosizedisplay = false;
+
 // haleyjd 09/01/10: [STRIFE]
 // Whether or not a popup is currently displayed
-static boolean          st_displaypopup;
+static boolean          st_displaypopup = false;
+
+// villsa [STRIFE]
+// Whether or not show popup objective screen
+static boolean          st_showobjective = false;
+
+// villsa [STRIFE]
+static boolean          st_showinvpop = false;
+
+// villsa [STRIFE]
+static boolean          st_showkeys = false;
+
+// villsa [STRIFE] TODO - identify variables
+static boolean          dword_88604 = false;
+static int              dword_88484 = 1;
+static int              dword_88490 = 0;
 
 // haleyjd 09/19/10: [STRIFE] Cached player data
 static int              st_lastcursorpos;
@@ -321,6 +340,7 @@ cheatseq_t	cheat_powerup[7] = // STRIFE-TODO
 
 //cheatseq_t cheat_choppers = CHEAT("idchoppers", 0); [STRIFE] no such thing
 
+void M_SizeDisplay(int choice); // villsa [STRIFE]
 
 //
 // STATUS BAR CODE
@@ -328,39 +348,74 @@ cheatseq_t	cheat_powerup[7] = // STRIFE-TODO
 void ST_Stop(void);
 
 
-// [STRIFE] Unused.
-/*
-void ST_refreshBackground(void)
-{
-}
-*/
+// villsa [STRIFE]
+static int st_popupdisplaytics = 0;
 
 // [STRIFE]
 static char st_msgbuf[52];
 
 // Respond to keyboard input events,
 //  intercept cheats.
-boolean
-ST_Responder (event_t* ev)
+boolean ST_Responder(event_t* ev)
 {
-    int         i;
+    int i;
 
     // Filter automap on/off.
-    if (ev->type == ev_keyup
-        && ((ev->data1 & 0xffff0000) == AM_MSGHEADER))
+    if(ev->type == ev_keyup)
     {
-        switch(ev->data1)
+        if((ev->data1 & 0xffff0000) == AM_MSGHEADER)
         {
-        case AM_MSGENTERED:
-            st_gamestate = AutomapState;
-            st_firsttime = true;
-            break;
+            switch(ev->data1)
+            {
+            case AM_MSGENTERED:
+                st_gamestate = AutomapState;
+                st_firsttime = true;
+                break;
 
-        case AM_MSGEXITED:
-            //	fprintf(stderr, "AM exited\n");
-            st_gamestate = FirstPersonState;
-            break;
+            case AM_MSGEXITED:
+                st_gamestate = FirstPersonState;
+                break;
+            }
+
+            return false;
         }
+
+        // villsa [STRIFE]
+        if(ev->data2 != key_invpop &&
+            ev->data2 != key_mission &&
+            ev->data2 != key_invkey)
+            return false;
+
+        // villsa [STRIFE]
+        if(ev->data2 == key_invpop)
+            st_showinvpop = false;
+        else
+        {
+            if(ev->data2 == key_mission)
+                st_showobjective = false;
+            else
+            {
+                if(ev->data2 == key_invkey)
+                {
+                    st_showkeys = 0;
+                    dword_88604 = 0;
+                }
+            }
+        }
+
+        if(!st_showkeys && !st_showobjective && !st_showinvpop)
+        {
+             if(!st_popupdisplaytics)
+             {
+                 st_displaypopup = st_popupdisplaytics;
+                 if(st_dosizedisplay)
+                     M_SizeDisplay(true);
+
+                 st_dosizedisplay = false;
+             }
+        }
+
+        return true;
     }
 
     // STRIFE-TODO: this is branched on for handling key ups/key downs
@@ -383,7 +438,70 @@ ST_Responder (event_t* ev)
         }
     }
 
-    // TODO: popup stuff here
+    // villsa [STRIFE]
+    if(ev->data2 == key_invpop || ev->data2 == key_invkey || ev->data2 == key_mission)
+    {
+        if(ev->data2 == key_invkey)
+        {
+            st_showobjective = false;
+            st_showinvpop = false;
+
+            if(!dword_88604)
+            {
+                dword_88604 = true;
+                if(++dword_88484 > 2)
+                {
+                    st_popupdisplaytics = 0;
+                    st_showkeys = false;
+                    st_displaypopup = false;
+                    dword_88484 = -1;
+                    return true;
+                }
+            }
+
+            if(netgame)
+                st_popupdisplaytics = 20;
+            else
+                st_popupdisplaytics = 50;
+
+            st_showkeys = true;
+        }
+        else
+        {
+            if(ev->data2 != key_mission || netgame)
+            {
+                if(ev->data2 ==  key_invpop)
+                {
+                    dword_88484 = -1;
+                    st_popupdisplaytics = false;
+                    st_showkeys = false;
+                    st_showobjective = false;
+                    st_showinvpop = true;
+                }
+            }
+            else
+            {
+                st_showkeys = netgame ? true : false;
+                st_showinvpop = netgame ? true : false;
+                dword_88484 = -1;
+
+                // villsa [STRIFE] TODO - verify this logic
+                st_popupdisplaytics = ev->data2 ^ key_mission;
+
+                st_showobjective = true;
+            }
+        }
+
+        if(st_showkeys || st_showobjective || st_showinvpop)
+        {
+            st_displaypopup = true;
+            if(viewheight == SCREENHEIGHT)
+            {
+                M_SizeDisplay(false);
+                st_dosizedisplay = true;
+            }
+        }
+    }
     
     if(ev->data2 == key_invleft) // inventory move left
     {
@@ -757,22 +875,25 @@ void ST_Ticker (void)
     /*
     v2 = dword_88490-- == 1; // no clue yet...
     if(v2)
-        dword_DC7F4 = dword_DC7F0;
-    v1 = st_popupdisplaytics;
+        dword_DC7F4 = dword_DC7F0;*/
+
     if(st_popupdisplaytics)
     {
+        int tics = st_popupdisplaytics;
+
         --st_popupdisplaytics;
-        if(v1 == 1)
+        if(tics == 1)
         {
             st_displaypopup = false;
             st_showkeys = false;
             dword_88484 = -1;     // unknown var
+
             if(st_dosizedisplay)
-                M_SizeDisplay();  // mondo hack?
+                M_SizeDisplay(true);  // mondo hack?
+
             st_dosizedisplay = false;
         }
     }
-    */
 
     // haleyjd 09/01/10: [STRIFE] Keys are handled on a popup
     // haleyjd 08/31/10: [STRIFE] No face widget
@@ -1078,6 +1199,28 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
 }
 
 //
+// ST_drawTime
+//
+// villsa [STRIFE] New function.
+// Draws game time on pop up screen
+//
+static void ST_drawTime(int x, int y, int time)
+{
+    int hours;
+    int minutes;
+    int seconds;
+    char string[16];
+
+    hours = time / 3600;
+    minutes = time / 60;
+    seconds = time % 60;
+
+
+    DEH_snprintf(string, 16, "%02d:%02d:%02d", hours, minutes, seconds);
+    HUlib_drawYellowText(x, y, string);
+}
+
+//
 // ST_DrawExternal
 //
 // haleyjd 09/01/10: [STRIFE] New function.
@@ -1085,7 +1228,9 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
 //
 boolean ST_DrawExternal(void)
 {
-    if (st_statusbaron)
+    int i;
+
+    if(st_statusbaron)
     {
         V_DrawPatchDirect(0, 160, invtop);
         STlib_drawNumPositive(&w_health);
@@ -1104,11 +1249,60 @@ boolean ST_DrawExternal(void)
     if(!st_displaypopup)
         return false;
 
-    // STRIFE-TODO: Shitloads more stuff:
-    // * showobjective shit
-    // * keys/frags popup
-    // * weapons/ammo/stats popup
-    // * etc etc etc
+    // villsa [STRIFE] added 09/26/10
+    if(st_showobjective)
+    {
+        V_DrawXlaPatch(0, 56, invpbak2);
+        V_DrawPatchDirect(0, 56, invpop2);
+        M_DialogDimMsg(24, 74, mission_objective, 1);
+        HUlib_drawYellowText(24, 74, mission_objective);
+        ST_drawTime(210, 64, leveltime / TICRATE);
+    }
+    else
+    {
+        int keys = 0;
+
+        // villsa [STRIFE] TODO
+        /*if(st_showkeys || st_popupdisplaytics)
+            return ST_drawKeysPopup();*/
+
+        V_DrawXlaPatch(0, 56, invpbak);
+        V_DrawPatchDirect(0, 56, invpop);
+
+        for(i = 0; i < NUMCARDS; i++)
+        {
+            if(plyr->cards[i])
+                keys++;
+        }
+
+        ST_drawNumFontY2(261, 132, keys);
+
+         if(plyr->weaponowned[wp_elecbow])
+             V_DrawPatchDirect(38, 86, W_CacheLumpName("CBOWA0", PU_CACHE));
+
+         if(plyr->weaponowned[wp_rifle])
+             V_DrawPatchDirect(40, 107, W_CacheLumpName("RIFLA0", PU_CACHE));
+
+         if(plyr->weaponowned[wp_missile])
+             V_DrawPatchDirect(39, 131, W_CacheLumpName("MMSLA0", PU_CACHE));
+
+         if(plyr->weaponowned[wp_hegrenade])
+             V_DrawPatchDirect(78, 87, W_CacheLumpName("GRNDA0", PU_CACHE));
+
+         if(plyr->weaponowned[wp_flame])
+             V_DrawPatchDirect(80, 117, W_CacheLumpName("FLAMA0", PU_CACHE));
+
+         if(plyr->weaponowned[wp_mauler])
+             V_DrawPatchDirect(75, 142, W_CacheLumpName("TRPDA0", PU_CACHE));
+
+         // STRIFE TODO DRAW AMMO PICS
+
+         ST_drawNumFontY2(261, 84, plyr->accuracy);
+         ST_drawNumFontY2(261, 108, plyr->stamina);
+
+         if(plyr->powers[pw_communicator])
+             V_DrawPatchDirect(280, 130, W_CacheLumpName(DEH_String("I_COMM"), PU_CACHE));
+    }
 
     return true;
 }

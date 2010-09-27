@@ -435,7 +435,7 @@ void R_DrawTRTLColumn(void)
 
 // haleyjd 08/26/10: [STRIFE] - Rogue's translucency lookup table
 // This is functionally equivalent to Raven's TINTTAB and BOOM's TRANMAPs.
-byte *xlatab;
+extern byte *xlatab;
 
 //
 // R_InitTranslationTables
@@ -465,7 +465,9 @@ void R_InitTranslationTables (void)
     // just set the 2nd memset call's length to 0 bytes... Terrible. Since none
     // of this accomplishes anything, and isn't strictly portable, all we need
     // to do is this:
-    xlatab = W_CacheLumpName("XLATAB", PU_STATIC);
+
+    // villsa [STRIFE] 09/26/10: load table through this function instead
+    V_LoadXlaTable();
 
     // villsa [STRIFE] allocate a larger size for translation tables
     translationtables = Z_Malloc (256*8, PU_STATIC, 0);

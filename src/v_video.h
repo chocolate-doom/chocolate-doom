@@ -67,7 +67,7 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch);
 void V_DrawTLPatch(int x, int y, patch_t *patch);
 void V_DrawAltTLPatch(int x, int y, patch_t * patch);
 void V_DrawShadowedPatch(int x, int y, patch_t *patch);
-
+void V_DrawXlaPatch(int x, int y, patch_t * patch);     // villsa [STRIFE]
 void V_DrawPatchDirect(int x, int y, patch_t *patch);
 
 // Draw a linear block of pixels into the view buffer.
@@ -98,6 +98,12 @@ void V_ScreenShot(char *format);
 // lump.
 
 void V_LoadTintTable(void);
+
+// villsa [STRIFE]
+// Load the lookup table for translucency calculations from the XLATAB
+// lump.
+
+void V_LoadXlaTable(void);
 
 #endif
 

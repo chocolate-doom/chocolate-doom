@@ -117,7 +117,10 @@ boolean HUlib_delCharFromTextLine(hu_textline_t *t);
 void	HUlib_drawTextLine(hu_textline_t *l, boolean drawcursor);
 
 // erases text line
-void	HUlib_eraseTextLine(hu_textline_t *l); 
+void	HUlib_eraseTextLine(hu_textline_t *l);
+
+// villsa [STRIFE]
+void HUlib_drawYellowText(int x, int y, char *text);
 
 
 //
