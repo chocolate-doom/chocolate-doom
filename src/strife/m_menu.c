@@ -1464,14 +1464,10 @@ void M_DialogDimMsg(int x, int y, char *str, boolean useyfont)
     char *message = str;  // edi
     char  bl;             // bl
 
-    /*
-    STRIFE-TODO:
     if(useyfont)
        fontarray = yfont;
     else
        fontarray = hu_font;
-    */
-    fontarray = hu_font;
 
     bl = toupper(*message);
 

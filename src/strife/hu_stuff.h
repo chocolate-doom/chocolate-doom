@@ -27,6 +27,7 @@
 #define __HU_STUFF_H__
 
 #include "d_event.h"
+#include "v_patch.h"
 
 //
 // Globally visible constants.
@@ -66,6 +67,9 @@ extern char pnameprefixes[8][16];   // villsa [STRIFE]
 
 // haleyjd [STRIFE] externalized:
 extern char *mapnames[];
+
+// [STRIFE]
+extern patch_t* yfont[HU_FONTSIZE];   // haleyjd 09/18/10: [STRIFE]
 
 #endif
 

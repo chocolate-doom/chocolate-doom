@@ -1402,7 +1402,7 @@ void P_DialogStart(player_t *player)
         jumptoconv = currentdialog->jumptoconv;
     }
 
-    M_DialogDimMsg(20, 28, currentdialog->text, 0);
+    M_DialogDimMsg(20, 28, currentdialog->text, false);
     dialogtext = P_DialogGetMsg(currentdialog->text);
 
     // get states

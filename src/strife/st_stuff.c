@@ -69,6 +69,8 @@
 #include "dstrings.h"
 #include "sounds.h"
 #include "m_controls.h"
+#include "hu_lib.h"     // [STRIFE]
+#include "hu_stuff.h"
 
 //
 // STATUS BAR DATA
@@ -1254,7 +1256,7 @@ boolean ST_DrawExternal(void)
     {
         V_DrawXlaPatch(0, 56, invpbak2);
         V_DrawPatchDirect(0, 56, invpop2);
-        M_DialogDimMsg(24, 74, mission_objective, 1);
+        M_DialogDimMsg(24, 74, mission_objective, true);
         HUlib_drawYellowText(24, 74, mission_objective);
         ST_drawTime(210, 64, leveltime / TICRATE);
     }

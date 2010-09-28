@@ -44,8 +44,6 @@ extern boolean	automapactive;	// in AM_map.c
 
 extern boolean D_PatchClipCallback(patch_t *patch, int x, int y); // [STRIFE]
 
-extern patch_t* yfont[HU_FONTSIZE];   // haleyjd 09/18/10: [STRIFE]
-
 //
 // HUlib_drawYellowText
 //
