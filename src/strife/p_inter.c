@@ -187,6 +187,9 @@ boolean P_GiveWeapon(player_t* player, weapontype_t weapon, boolean dropped)
         case wp_mauler:
             player->weaponowned[wp_torpedo] = true;
             break;
+
+        default:
+            break;
         }
 
         // check for the standard weapons only
@@ -997,6 +1000,9 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
         if(!deathmatch)
             players[consoleplayer].message = plrkilledmsg;
         return;
+
+    default:
+        break;
     }
 
     // villsa [STRIFE] toss out item
@@ -1027,9 +1033,10 @@ static boolean P_IsMobjBoss(mobjtype_t type)
     case MT_ORACLE:
     case MT_PRIEST:
         return true;
-    }
 
-    return false;
+    default:
+        return false;
+    }
 }
 
 
