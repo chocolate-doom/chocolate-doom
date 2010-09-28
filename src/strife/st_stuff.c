@@ -248,8 +248,7 @@ static boolean          st_showinvpop = false;
 static boolean          st_showkeys = false;
 
 // villsa [STRIFE] TODO - identify variables
-static boolean          dword_88604 = false;
-static int              dword_88484 = 1;
+static int              st_keypage = -1;
 static int              dword_88490 = 0;
 
 // haleyjd 09/19/10: [STRIFE] Cached player data
@@ -358,6 +357,8 @@ static char st_msgbuf[52];
 //  intercept cheats.
 boolean ST_Responder(event_t* ev)
 {
+    // haleyjd 09/27/10: made static to ST_Responder
+    static boolean st_keystate = false;
     int i;
 
     // Filter automap on/off.
@@ -398,7 +399,7 @@ boolean ST_Responder(event_t* ev)
                 if(ev->data2 == key_invkey)
                 {
                     st_showkeys = 0;
-                    dword_88604 = 0;
+                    st_keystate = 0;
                 }
             }
         }
@@ -417,9 +418,6 @@ boolean ST_Responder(event_t* ev)
 
         return true;
     }
-
-    // STRIFE-TODO: this is branched on for handling key ups/key downs
-    // with regard to raising/lowering popups
 
     // if a user keypress...
     if(ev->type != ev_keydown)
@@ -446,15 +444,15 @@ boolean ST_Responder(event_t* ev)
             st_showobjective = false;
             st_showinvpop = false;
 
-            if(!dword_88604)
+            if(!st_keystate)
             {
-                dword_88604 = true;
-                if(++dword_88484 > 2)
+                st_keystate = true;
+                if(++st_keypage > 2)
                 {
                     st_popupdisplaytics = 0;
                     st_showkeys = false;
                     st_displaypopup = false;
-                    dword_88484 = -1;
+                    st_keypage = -1;
                     return true;
                 }
             }
@@ -472,7 +470,7 @@ boolean ST_Responder(event_t* ev)
             {
                 if(ev->data2 ==  key_invpop)
                 {
-                    dword_88484 = -1;
+                    st_keypage = -1;
                     st_popupdisplaytics = false;
                     st_showkeys = false;
                     st_showobjective = false;
@@ -483,7 +481,7 @@ boolean ST_Responder(event_t* ev)
             {
                 st_showkeys = netgame ? true : false;
                 st_showinvpop = netgame ? true : false;
-                dword_88484 = -1;
+                st_keypage = -1;
 
                 // villsa [STRIFE] TODO - verify this logic
                 st_popupdisplaytics = ev->data2 ^ key_mission;
@@ -886,7 +884,7 @@ void ST_Ticker (void)
         {
             st_displaypopup = false;
             st_showkeys = false;
-            dword_88484 = -1;     // unknown var
+            st_keypage = -1;     // unknown var
 
             if(st_dosizedisplay)
                 M_SizeDisplay(true);  // mondo hack?
@@ -1383,6 +1381,9 @@ void ST_loadGraphics(void)
 
 void ST_loadData(void)
 {
+    static int dword_8848C = 1; // STRIFE-TODO: what is the purpose of this?
+    dword_8848C = 0;
+
     lu_palette = W_GetNumForName (DEH_String("PLAYPAL"));
     ST_loadGraphics();
 }
