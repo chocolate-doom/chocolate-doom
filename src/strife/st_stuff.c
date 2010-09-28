@@ -238,6 +238,9 @@ static boolean          st_dosizedisplay = false;
 static boolean          st_displaypopup = false;
 
 // villsa [STRIFE]
+static int              st_popupdisplaytics = 0;
+
+// villsa [STRIFE]
 // Whether or not show popup objective screen
 static boolean          st_showobjective = false;
 
@@ -346,10 +349,6 @@ void M_SizeDisplay(int choice); // villsa [STRIFE]
 //
 void ST_Stop(void);
 
-
-// villsa [STRIFE]
-static int st_popupdisplaytics = 0;
-
 // [STRIFE]
 static char st_msgbuf[52];
 
@@ -382,24 +381,24 @@ boolean ST_Responder(event_t* ev)
         }
 
         // villsa [STRIFE]
-        if(ev->data2 != key_invpop &&
-            ev->data2 != key_mission &&
-            ev->data2 != key_invkey)
+        if(ev->data1 != key_invpop &&
+           ev->data1 != key_mission &&
+           ev->data1 != key_invkey)
             return false;
 
         // villsa [STRIFE]
-        if(ev->data2 == key_invpop)
+        if(ev->data1 == key_invpop)
             st_showinvpop = false;
         else
         {
-            if(ev->data2 == key_mission)
+            if(ev->data1 == key_mission)
                 st_showobjective = false;
             else
             {
-                if(ev->data2 == key_invkey)
+                if(ev->data1 == key_invkey)
                 {
-                    st_showkeys = 0;
-                    st_keystate = 0;
+                    st_showkeys = false;
+                    st_keystate = false;
                 }
             }
         }
@@ -408,7 +407,7 @@ boolean ST_Responder(event_t* ev)
         {
              if(!st_popupdisplaytics)
              {
-                 st_displaypopup = st_popupdisplaytics;
+                 st_displaypopup = false;
                  if(st_dosizedisplay)
                      M_SizeDisplay(true);
 
@@ -423,8 +422,12 @@ boolean ST_Responder(event_t* ev)
     if(ev->type != ev_keydown)
         return false;
 
+    // haleyjd 09/27/10: No input allowed when the player is dead
+    if(plyr->mo->health <= 0)
+        return false;
+
     // keydown events
-    if(ev->data2 == key_invquery) // inventory query
+    if(ev->data1 == key_invquery) // inventory query
     {
         inventory_t *inv = &(plyr->inventory[plyr->inventorycursor]);
         if(inv->amount)
@@ -437,9 +440,9 @@ boolean ST_Responder(event_t* ev)
     }
 
     // villsa [STRIFE]
-    if(ev->data2 == key_invpop || ev->data2 == key_invkey || ev->data2 == key_mission)
+    if(ev->data1 == key_invpop || ev->data1 == key_invkey || ev->data1 == key_mission)
     {
-        if(ev->data2 == key_invkey)
+        if(ev->data1 == key_invkey)
         {
             st_showobjective = false;
             st_showinvpop = false;
@@ -466,9 +469,9 @@ boolean ST_Responder(event_t* ev)
         }
         else
         {
-            if(ev->data2 != key_mission || netgame)
+            if(ev->data1 != key_mission || netgame)
             {
-                if(ev->data2 ==  key_invpop)
+                if(ev->data1 ==  key_invpop)
                 {
                     st_keypage = -1;
                     st_popupdisplaytics = false;
@@ -479,8 +482,8 @@ boolean ST_Responder(event_t* ev)
             }
             else
             {
-                st_showkeys = netgame ? true : false;
-                st_showinvpop = netgame ? true : false;
+                st_showkeys = netgame;
+                st_showinvpop = netgame;
                 st_keypage = -1;
 
                 // villsa [STRIFE] TODO - verify this logic
@@ -501,24 +504,24 @@ boolean ST_Responder(event_t* ev)
         }
     }
     
-    if(ev->data2 == key_invleft) // inventory move left
+    if(ev->data1 == key_invleft) // inventory move left
     {
         if(plyr->inventorycursor > 0)
             plyr->inventorycursor--;
         return true;
     }
-    else if(ev->data2 == key_invright)
+    else if(ev->data1 == key_invright)
     {
         if(plyr->inventorycursor < plyr->numinventory - 1)
             plyr->inventorycursor++;
         return true;
     }
-    else if(ev->data2 == key_invhome)
+    else if(ev->data1 == key_invhome)
     {
         plyr->inventorycursor = 0;
         return true;
     }
-    else if(ev->data2 == key_invend)
+    else if(ev->data1 == key_invend)
     {
         if(plyr->numinventory)
             plyr->inventorycursor = plyr->numinventory - 1;
@@ -1213,7 +1216,6 @@ static void ST_drawTime(int x, int y, int time)
     minutes = time / 60;
     seconds = time % 60;
 
-
     DEH_snprintf(string, 16, "%02d:%02d:%02d", hours, minutes, seconds);
     HUlib_drawYellowText(x, y, string);
 }
@@ -1261,8 +1263,9 @@ boolean ST_DrawExternal(void)
         int keys = 0;
 
         // villsa [STRIFE] TODO
-        /*if(st_showkeys || st_popupdisplaytics)
-            return ST_drawKeysPopup();*/
+        if(st_showkeys || st_popupdisplaytics)
+            return true; // temp
+            //return ST_drawKeysPopup();
 
         V_DrawXlaPatch(0, 56, invpbak);
         V_DrawPatchDirect(0, 56, invpop);
@@ -1276,30 +1279,46 @@ boolean ST_DrawExternal(void)
         ST_drawNumFontY2(261, 132, keys);
 
          if(plyr->weaponowned[wp_elecbow])
-             V_DrawPatchDirect(38, 86, W_CacheLumpName("CBOWA0", PU_CACHE));
-
+         {
+             V_DrawPatchDirect(38, 86, 
+                 W_CacheLumpName(DEH_String("CBOWA0"), PU_CACHE));
+         }
          if(plyr->weaponowned[wp_rifle])
-             V_DrawPatchDirect(40, 107, W_CacheLumpName("RIFLA0", PU_CACHE));
-
+         {
+             V_DrawPatchDirect(40, 107, 
+                 W_CacheLumpName(DEH_String("RIFLA0"), PU_CACHE));
+         }
          if(plyr->weaponowned[wp_missile])
-             V_DrawPatchDirect(39, 131, W_CacheLumpName("MMSLA0", PU_CACHE));
-
+         {
+             V_DrawPatchDirect(39, 131, 
+                 W_CacheLumpName(DEH_String("MMSLA0"), PU_CACHE));
+         }
          if(plyr->weaponowned[wp_hegrenade])
-             V_DrawPatchDirect(78, 87, W_CacheLumpName("GRNDA0", PU_CACHE));
-
+         {
+             V_DrawPatchDirect(78, 87, 
+                 W_CacheLumpName(DEH_String("GRNDA0"), PU_CACHE));
+         }
          if(plyr->weaponowned[wp_flame])
-             V_DrawPatchDirect(80, 117, W_CacheLumpName("FLAMA0", PU_CACHE));
-
+         {
+             V_DrawPatchDirect(80, 117, 
+                 W_CacheLumpName(DEH_String("FLAMA0"), PU_CACHE));
+         }
          if(plyr->weaponowned[wp_mauler])
-             V_DrawPatchDirect(75, 142, W_CacheLumpName("TRPDA0", PU_CACHE));
-
-         // STRIFE TODO DRAW AMMO PICS
+         {
+             V_DrawPatchDirect(75, 142, 
+                 W_CacheLumpName(DEH_String("TRPDA0"), PU_CACHE));
+         }
+         
+         // STRIFE-TODO: DRAW AMMO PICS
 
          ST_drawNumFontY2(261, 84, plyr->accuracy);
          ST_drawNumFontY2(261, 108, plyr->stamina);
 
          if(plyr->powers[pw_communicator])
-             V_DrawPatchDirect(280, 130, W_CacheLumpName(DEH_String("I_COMM"), PU_CACHE));
+         {
+             V_DrawPatchDirect(280, 130, 
+                 W_CacheLumpName(DEH_String("I_COMM"), PU_CACHE));
+         }
     }
 
     return true;
