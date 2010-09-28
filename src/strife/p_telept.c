@@ -59,7 +59,7 @@ EV_Teleport
     int         i;
     int         tag;
     mobj_t*     m;
-    mobj_t*     fog;
+    mobj_t*     fog = NULL;
     unsigned    an;
     thinker_t*  thinker;
     sector_t*   sector;

@@ -559,9 +559,18 @@ void A_FireGrenade(player_t* player, pspdef_t* pspr)
 
     // decide on what type of grenade to spawn
     if(player->readyweapon == wp_hegrenade)
+    {
         type = MT_HEGRENADE;
+    }
     else if(player->readyweapon == wp_wpgrenade)
+    {
         type = MT_PGRENADE;
+    }
+    else
+    {
+        type = MT_HEGRENADE;
+        fprintf(stderr, "Warning: A_FireGrenade used on wrong weapon!\n");
+    }
 
     player->ammo[weaponinfo[player->readyweapon].ammo]--;
 

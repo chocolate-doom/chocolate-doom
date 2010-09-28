@@ -544,8 +544,9 @@ P_TryMove
             return false;	// mobj must lower itself to fit
 
         // villsa [STRIFE] non-robots are limited to 16 unit step height
-        if(!(thing->flags & MF_NOBLOOD) && tmfloorz - thing->z > (16*FRACUNIT) ||
-            tmfloorz - thing->z > 24*FRACUNIT)
+        if ((thing->flags & MF_NOBLOOD) == 0 && tmfloorz - thing->z > (16*FRACUNIT))
+            return false;
+        if (tmfloorz - thing->z > 24*FRACUNIT)
             return false;       // too big a step up
 
         // villsa [STRIFE] special case for missiles

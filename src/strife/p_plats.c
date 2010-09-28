@@ -136,6 +136,9 @@ void T_PlatRaise(plat_t* plat)
                 plat->status = down;
             S_StartSound(&plat->sector->soundorg,sfx_pstart);
         }
+
+    case in_stasis:
+        break;
     }
 }
 

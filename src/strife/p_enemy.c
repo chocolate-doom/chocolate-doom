@@ -748,10 +748,10 @@ P_LookForPlayers
 
                 // Clear target if nothing is visible, or if the target is a
                 // friendly Rebel or the allied player.
-                if(!linetarget ||
-                    actor->target->type == MT_REBEL1 &&
-                    actor->target->miscdata == actor->miscdata ||
-                    actor->target == master)
+                if (linetarget == NULL
+                 || (actor->target->type == MT_REBEL1
+                  && actor->target->miscdata == actor->miscdata)
+                 || actor->target == master)
                 {
                     actor->target = NULL;
                     return false;
@@ -2934,7 +2934,7 @@ void A_BossDeath (mobj_t* actor)
     // check for a still living boss
     for(th = thinkercap.next; th != &thinkercap; th = th->next)
     {
-        if(th->function.acp1 == P_MobjThinker)
+        if(th->function.acp1 == (actionf_p1) P_MobjThinker)
         {
             mobj_t *mo = (mobj_t *)th;
 
@@ -2974,7 +2974,7 @@ void A_BossDeath (mobj_t* actor)
         // it becomes an undead ghost monster. Then it's a REAL spectre ;)
         for(th = thinkercap.next; th != &thinkercap; th = th->next)
         {
-            if(th->function.acp1 == P_MobjThinker)
+            if(th->function.acp1 == (actionf_p1) P_MobjThinker)
             {
                 mobj_t *mo = (mobj_t *)th;
 
@@ -3071,7 +3071,7 @@ void A_AcolyteSpecial(mobj_t* actor)
 
     for(th = thinkercap.next; th != &thinkercap; th = th->next)
     {
-        if(th->function.acp1 == P_MobjThinker)
+        if(th->function.acp1 == (actionf_p1) P_MobjThinker)
         {
             mobj_t *mo = (mobj_t *)th;
 

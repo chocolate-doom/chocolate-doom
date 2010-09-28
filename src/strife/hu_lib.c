@@ -68,7 +68,7 @@ void HUlib_drawYellowText(int x, int y, char *text)
 
             if(c >= 0 && c < HU_FONTSIZE)
             {
-                patch_t *patch = yfont[c];
+                patch_t *patch = yfont[(int) c];
                 int      width = SHORT(patch->width);
 
                 if(x + width <= (SCREENWIDTH - 20))
