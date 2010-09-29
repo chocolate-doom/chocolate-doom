@@ -480,6 +480,8 @@ typedef struct
 
 } slideframe_t;
 
+// haleyjd 09/29/10: [STRIFE] Externalized for savegames
+void T_SlidingDoor(slidedoor_t* door);
 
 
 // how many frames of animation

@@ -771,7 +771,7 @@ static char *GetGameName(char *gamename)
             // We also need to cut off spaces to get the basic name
 
             gamename = Z_Malloc(strlen(deh_sub) + 10, PU_STATIC, 0);
-            sprintf(gamename, deh_sub, DOOM_VERSION / 100, DOOM_VERSION % 100);
+            sprintf(gamename, deh_sub, STRIFE_VERSION / 100, STRIFE_VERSION % 100);
 
             while (gamename[0] != '\0' && isspace(gamename[0]))
                 strcpy(gamename, gamename+1);

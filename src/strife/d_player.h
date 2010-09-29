@@ -94,6 +94,8 @@ typedef struct inventory_s
     int amount; // amount being carried
 } inventory_t;
 
+#define NUMINVENTORY 32
+
 //
 // Extended player object info: player_t
 //
@@ -128,17 +130,17 @@ typedef struct player_s
     int			powers[NUMPOWERS];
 
     // [STRIFE] Additions:
-    int			sigiltype;       // Type of Sigil carried
-    int			nukagecount;     // Nukage exposure counter
-    int			questflags;      // Quest bit flags
-    int			pitch;           // Up/down look angle
-    boolean		centerview;      // True if view should be centered
-    inventory_t		inventory[32];   // Player inventory items
-    boolean		st_update;       // If true, update status bar
-    short		numinventory;    // Num. active inventory items
-    short		inventorycursor; // Selected inventory item
-    short		accuracy;        // Accuracy stat
-    short		stamina;         // Stamina stat
+    int			sigiltype;               // Type of Sigil carried
+    int			nukagecount;             // Nukage exposure counter
+    int			questflags;              // Quest bit flags
+    int			pitch;                   // Up/down look angle
+    boolean		centerview;              // True if view should be centered
+    inventory_t		inventory[NUMINVENTORY]; // Player inventory items
+    boolean		st_update;               // If true, update status bar
+    short		numinventory;            // Num. active inventory items
+    short		inventorycursor;         // Selected inventory item
+    short		accuracy;                // Accuracy stat
+    short		stamina;                 // Stamina stat
     
     boolean		cards[NUMCARDS];
     boolean		backpack;
@@ -190,7 +192,7 @@ typedef struct player_s
 
     // Player skin colorshift,
     //  0-3 for which color to draw player.
-    int			colormap;	
+    //int			colormap; [STRIFE] no such? or did it become the below?
 
     // [STRIFE] For use of teleport beacons
     short		allegiance;  

@@ -40,7 +40,9 @@
 #include "r_state.h"
 
 #define SAVEGAME_EOF 0x1d
-#define VERSIONSIZE 16 
+
+// haleyjd 09/28/10: [STRIFE] VERSIONSIZE == 8
+#define VERSIONSIZE 8 
 
 FILE *save_stream;
 int savegamelength;
@@ -304,6 +306,8 @@ static void saveg_write_thinker_t(thinker_t *str)
 //
 // mobj_t
 //
+// haleyjd 09/28/10: [STRIFE] Changed to match Strife binary mobj_t structure.
+// 
 
 static void saveg_read_mobj_t(mobj_t *str)
 {
@@ -423,6 +427,9 @@ static void saveg_read_mobj_t(mobj_t *str)
 
     // struct mobj_s* tracer;
     str->tracer = saveg_readp();
+
+    // byte miscdata;
+    str->miscdata = saveg_read8(); // [STRIFE] Only change to mobj_t.
 }
 
 static void saveg_write_mobj_t(mobj_t *str)
@@ -538,16 +545,20 @@ static void saveg_write_mobj_t(mobj_t *str)
 
     // struct mobj_s* tracer;
     saveg_writep(str->tracer);
+
+    // byte miscdata;
+    saveg_write8(str->miscdata); // [STRIFE] Only change to mobj_t.
 }
 
 
 //
 // ticcmd_t
 //
+// haleyjd 09/28/10: [STRIFE] Modified for Strife binary ticcmd_t structure.
+//
 
 static void saveg_read_ticcmd_t(ticcmd_t *str)
 {
-
     // signed char forwardmove;
     str->forwardmove = saveg_read8();
 
@@ -558,18 +569,25 @@ static void saveg_read_ticcmd_t(ticcmd_t *str)
     str->angleturn = saveg_read16();
 
     // short consistancy;
-    str->consistancy = saveg_read16();
+    // STRIFE-FIXME: throwing away top byte of consistancy until
+    // the true Strife ticcmd_t structure is available.
+    str->consistancy = (byte)saveg_read16();
 
     // byte chatchar;
     str->chatchar = saveg_read8();
 
     // byte buttons;
     str->buttons = saveg_read8();
+
+    // byte buttons2;
+    str->buttons2 = saveg_read8(); // [STRIFE]
+
+    // int inventory;
+    str->inventory = saveg_read32(); // [STRIFE]
 }
 
 static void saveg_write_ticcmd_t(ticcmd_t *str)
 {
-
     // signed char forwardmove;
     saveg_write8(str->forwardmove);
 
@@ -587,6 +605,12 @@ static void saveg_write_ticcmd_t(ticcmd_t *str)
 
     // byte buttons;
     saveg_write8(str->buttons);
+
+    // byte buttons2;
+    saveg_write8(str->buttons2); // [STRIFE]
+
+    // int inventory;
+    saveg_write32(str->inventory); // [STRIFE]
 }
 
 //
@@ -642,7 +666,34 @@ static void saveg_write_pspdef_t(pspdef_t *str)
 }
 
 //
+// inventory_t 
+//
+// haleyjd 09/28/10: [STRIFE] handle inventory input/output
+//
+
+static void saveg_read_inventory_t(inventory_t *str)
+{
+    //int sprite;
+    str->sprite = saveg_read32();
+
+    //int type;
+    str->type = saveg_read32();
+
+    //int amount;
+    str->amount = saveg_read32();
+}
+
+static void saveg_write_inventory_t(inventory_t *str)
+{
+    saveg_write32(str->sprite);
+    saveg_write32(str->type);
+    saveg_write32(str->amount);
+}
+
+//
 // player_t
+//
+// haleyjd 09/28/10: [STRIFE] Modified for Strife binary player_t structure.
 //
 
 static void saveg_read_player_t(player_t *str)
@@ -674,16 +725,52 @@ static void saveg_read_player_t(player_t *str)
     str->health = saveg_read32();
 
     // int armorpoints;
-    str->armorpoints = saveg_read32();
+    str->armorpoints = saveg_read16(); // [STRIFE] 32 -> 16
 
     // int armortype;
-    str->armortype = saveg_read32();
+    str->armortype = saveg_read16(); // [STRIFE] 32 -> 16
 
     // int powers[NUMPOWERS];
     for (i=0; i<NUMPOWERS; ++i)
     {
         str->powers[i] = saveg_read32();
     }
+
+    // int sigiltype;
+    str->sigiltype = saveg_read32(); // [STRIFE]
+
+    // int nukagecount;
+    str->nukagecount = saveg_read32(); // [STRIFE]
+
+    // int questflags;
+    str->questflags = saveg_read32(); // [STRIFE]
+
+    // int pitch;
+    str->pitch = saveg_read32(); // [STRIFE]
+
+    // int centerview;
+    str->centerview = saveg_read32(); // [STRIFE]
+
+    // inventory_t inventory[NUMINVENTORY];
+    for(i = 0; i < NUMINVENTORY; i++)
+    {
+        saveg_read_inventory_t(&(str->inventory[i])); // [STRIFE]
+    }
+
+    // int st_update;
+    str->st_update = saveg_read32(); // [STRIFE]
+
+    // short numinventory;
+    str->numinventory = saveg_read16(); // [STRIFE]
+
+    // short inventorycursor;
+    str->inventorycursor = saveg_read16(); // [STRIFE]
+
+    // short accuracy;
+    str->accuracy = saveg_read16(); // [STRIFE]
+
+    // short stamina;
+    str->stamina = saveg_read16(); // [STRIFE]
 
     // boolean cards[NUMCARDS];
     for (i=0; i<NUMCARDS; ++i)
@@ -693,6 +780,15 @@ static void saveg_read_player_t(player_t *str)
 
     // boolean backpack;
     str->backpack = saveg_read32();
+
+    // int attackdown;
+    str->attackdown = saveg_read32();
+
+    // int usedown;
+    str->usedown = saveg_read32();
+
+    // int inventorydown;
+    str->inventorydown = saveg_read32(); // [STRIFE]
 
     // int frags[MAXPLAYERS];
     for (i=0; i<MAXPLAYERS; ++i)
@@ -724,20 +820,14 @@ static void saveg_read_player_t(player_t *str)
         str->maxammo[i] = saveg_read32();
     }
 
-    // int attackdown;
-    str->attackdown = saveg_read32();
-
-    // int usedown;
-    str->usedown = saveg_read32();
-
     // int cheats;
     str->cheats = saveg_read32();
 
     // int refire;
     str->refire = saveg_read32();
 
-    // int killcount;
-    str->killcount = saveg_read32();
+    // short killcount;
+    str->killcount = saveg_read16(); // [STRIFE] 32 -> 16
 
     // haleyjd 08/30/10 [STRIFE] No itemcount.
     // int itemcount;
@@ -765,13 +855,22 @@ static void saveg_read_player_t(player_t *str)
     // int fixedcolormap;
     str->fixedcolormap = saveg_read32();
 
-    // int colormap;
-    str->colormap = saveg_read32();
+    // int colormap; - [STRIFE] no such field
+    //str->colormap = saveg_read32();
+
+    // short allegiance;
+    str->allegiance = saveg_read16(); // [STRIFE]
 
     // pspdef_t psprites[NUMPSPRITES];
     for (i=0; i<NUMPSPRITES; ++i)
     {
         saveg_read_pspdef_t(&str->psprites[i]);
+    }
+
+    // int mapstate[40];
+    for(i = 0; i < 40; ++i) // [STRIFE]
+    {
+        str->mapstate[i] = saveg_read32();
     }
 
     // haleyjd 08/30/10: [STRIFE] No intermission, no didsecret.
@@ -808,16 +907,52 @@ static void saveg_write_player_t(player_t *str)
     saveg_write32(str->health);
 
     // int armorpoints;
-    saveg_write32(str->armorpoints);
+    saveg_write16(str->armorpoints); // [STRIFE] 32 -> 16
 
     // int armortype;
-    saveg_write32(str->armortype);
+    saveg_write16(str->armortype); // [STRIFE] 32 -> 16
 
     // int powers[NUMPOWERS];
     for (i=0; i<NUMPOWERS; ++i)
     {
         saveg_write32(str->powers[i]);
     }
+
+    // int sigiltype;
+    saveg_write32(str->sigiltype); // [STRIFE]
+
+    // int nukagecount;
+    saveg_write32(str->nukagecount); // [STRIFE]
+
+    // int questflags;
+    saveg_write32(str->questflags); // [STRIFE]
+
+    // int pitch;
+    saveg_write32(str->pitch); // [STRIFE]
+
+    // int centerview;
+    saveg_write32(str->centerview); // [STRIFE]
+
+    // inventory_t inventory[NUMINVENTORY];
+    for(i = 0; i < NUMINVENTORY; ++i) // [STRIFE]
+    {
+        saveg_write_inventory_t(&str->inventory[i]);
+    }
+
+    // int st_update;
+    saveg_write32(str->st_update); // [STRIFE]
+
+    // short numinventory;
+    saveg_write16(str->numinventory); // [STRIFE]
+
+    // short inventorycursor;
+    saveg_write16(str->inventorycursor); // [STRIFE]
+
+    // short accuracy;
+    saveg_write16(str->accuracy); // [STRIFE]
+
+    // short stamina;
+    saveg_write16(str->stamina); // [STRIFE]
 
     // boolean cards[NUMCARDS];
     for (i=0; i<NUMCARDS; ++i)
@@ -827,6 +962,15 @@ static void saveg_write_player_t(player_t *str)
 
     // boolean backpack;
     saveg_write32(str->backpack);
+
+    // int attackdown;
+    saveg_write32(str->attackdown);
+
+    // int usedown;
+    saveg_write32(str->usedown);
+
+    // int inventorydown;
+    saveg_write32(str->inventorydown); // [STRIFE]
 
     // int frags[MAXPLAYERS];
     for (i=0; i<MAXPLAYERS; ++i)
@@ -858,11 +1002,6 @@ static void saveg_write_player_t(player_t *str)
         saveg_write32(str->maxammo[i]);
     }
 
-    // int attackdown;
-    saveg_write32(str->attackdown);
-
-    // int usedown;
-    saveg_write32(str->usedown);
 
     // int cheats;
     saveg_write32(str->cheats);
@@ -870,8 +1009,8 @@ static void saveg_write_player_t(player_t *str)
     // int refire;
     saveg_write32(str->refire);
 
-    // int killcount;
-    saveg_write32(str->killcount);
+    // short killcount;
+    saveg_write16(str->killcount); // [STRIFE] 32 -> 16
 
     // haleyjd 08/30/10 [STRIFE] No itemcount
     // int itemcount;
@@ -899,13 +1038,22 @@ static void saveg_write_player_t(player_t *str)
     // int fixedcolormap;
     saveg_write32(str->fixedcolormap);
 
-    // int colormap;
-    saveg_write32(str->colormap);
+    // int colormap; [STRIFE] no such field
+    //saveg_write32(str->colormap);
+
+    // short allegiance;
+    saveg_write16(str->allegiance); // [STRIFE]
 
     // pspdef_t psprites[NUMPSPRITES];
     for (i=0; i<NUMPSPRITES; ++i)
     {
         saveg_write_pspdef_t(&str->psprites[i]);
+    }
+
+    // int mapstate[40];
+    for(i = 0; i < 40; ++i) // [STRIFE]
+    {
+        saveg_write32(str->mapstate[i]);
     }
 
     // haleyjd 08/30/10: [STRIFE] No intermission, no secret.
@@ -990,6 +1138,8 @@ static void saveg_write_ceiling_t(ceiling_t *str)
 //
 // vldoor_t
 //
+// haleyjd 09/28/10: [STRIFE] Modified for Strife binary vldoor_t structure.
+//
 
 static void saveg_read_vldoor_t(vldoor_t *str)
 {
@@ -1019,6 +1169,14 @@ static void saveg_read_vldoor_t(vldoor_t *str)
 
     // int topcountdown;
     str->topcountdown = saveg_read32();
+
+    // villsa [STRIFE] new field - sound to play when opening
+    //int         opensound;
+    str->opensound = saveg_read32();
+
+    // villsa [STRIFE] new field - sound to play when closing
+    //int         closesound;
+    str->closesound = saveg_read32();
 }
 
 static void saveg_write_vldoor_t(vldoor_t *str)
@@ -1046,6 +1204,84 @@ static void saveg_write_vldoor_t(vldoor_t *str)
 
     // int topcountdown;
     saveg_write32(str->topcountdown);
+
+    // villsa [STRIFE] new field - sound to play when opening
+    //int         opensound;
+    saveg_write32(str->opensound);
+
+    // villsa [STRIFE] new field - sound to play when closing
+    //int         closesound;
+    saveg_write32(str->closesound);
+}
+
+//
+// slidedoor_t [STRIFE]: new thinker type
+//
+
+static void saveg_read_slidedoor_t(slidedoor_t *str)
+{
+    int sector;
+    int line;
+
+    // thinker_t thinker;
+    saveg_read_thinker_t(&str->thinker);
+
+    // sdt_e type;
+    str->type = saveg_read_enum();
+
+    // line_t *line1;
+    line = saveg_read32();
+    str->line1 = &lines[line];
+
+    // line_t *line2;
+    line = saveg_read32();
+    str->line2 = &lines[line];
+
+    // int frame;
+    str->frame = saveg_read32();
+
+    // int whichDoorIndex;
+    str->whichDoorIndex = saveg_read32();
+
+    // int timer;
+    str->timer = saveg_read32();
+
+    // sector_t *frontsector;
+    sector = saveg_read32();
+    str->frontsector = &sectors[sector];
+
+    // sd_e status;
+    str->status = saveg_read_enum();
+}
+
+static void saveg_write_slidedoor_t(slidedoor_t *str)
+{
+    // thinker_t thinker;
+    saveg_write_thinker_t(&str->thinker);
+
+    // sdt_e type;
+    saveg_write_enum(str->type);
+
+    // line_t *line1;
+    saveg_write32(str->line1 - lines);
+
+    // line_t *line2;
+    saveg_write32(str->line2 - lines);
+
+    // int frame;
+    saveg_write32(str->frame);
+
+    // int whichDoorIndex;
+    saveg_write32(str->whichDoorIndex);
+
+    // int timer;
+    saveg_write32(str->timer);
+
+    // sector_t *frontsector;
+    saveg_write32(str->frontsector - sectors);
+
+    // sd_e status;
+    saveg_write_enum(str->status);
 }
 
 //
@@ -1356,26 +1592,33 @@ static void saveg_write_glow_t(glow_t *str)
 //
 // Write the header for a savegame
 //
+// haleyjd 09/28/10: [STRIFE] numerous modifications.
+//
 
 void P_WriteSaveGameHeader(char *description)
 {
     char name[VERSIONSIZE]; 
     int i; 
-	
+
+    /*
+    [STRIFE] This is in the "NAME" file in a Strife save directory.
     for (i=0; description[i] != '\0'; ++i)
         saveg_write8(description[i]);
     for (; i<SAVESTRINGSIZE; ++i)
         saveg_write8(0);
+    */
 
     memset (name,0,sizeof(name)); 
-    sprintf (name,"version %i",DOOM_VERSION); 
+    sprintf (name,"ver %i",STRIFE_VERSION); 
 
     for (i=0; i<VERSIONSIZE; ++i)
         saveg_write8(name[i]);
-	 
+
     saveg_write8(gameskill);
-    saveg_write8(gameepisode);
-    saveg_write8(gamemap);
+    
+    // [STRIFE] This information is implicit in the file being loaded.
+    //saveg_write8(gameepisode);
+    //saveg_write8(gamemap);
 
     for (i=0 ; i<MAXPLAYERS ; i++) 
         saveg_write8(playeringame[i]);
@@ -1395,26 +1638,29 @@ boolean P_ReadSaveGameHeader(void)
     byte a, b, c; 
     char vcheck[VERSIONSIZE]; 
     char read_vcheck[VERSIONSIZE];
-	 
-    // skip the description field 
 
+    // skip the description field 
+    /*
     for (i=0; i<SAVESTRINGSIZE; ++i)
         saveg_read8();
+    */
     
     for (i=0; i<VERSIONSIZE; ++i)
         read_vcheck[i] = saveg_read8();
 
     memset (vcheck,0,sizeof(vcheck)); 
-    sprintf (vcheck,"version %i",DOOM_VERSION); 
+    sprintf (vcheck,"ver %i",STRIFE_VERSION); 
     if (strcmp(read_vcheck, vcheck) != 0)
-	return false;				// bad version 
-			 
+        return false;                       // bad version 
+
     gameskill = saveg_read8();
-    gameepisode = saveg_read8();
-    gamemap = saveg_read8();
+
+    // [STRIFE] This info is implicit in the file being read.
+    //gameepisode = saveg_read8();
+    //gamemap = saveg_read8();
 
     for (i=0 ; i<MAXPLAYERS ; i++) 
-	playeringame[i] = saveg_read8();
+        playeringame[i] = saveg_read8();
 
     // get the times 
     a = saveg_read8();
@@ -1450,16 +1696,18 @@ void P_WriteSaveGameEOF(void)
 //
 // P_ArchivePlayers
 //
+// [STRIFE] Verified unmodified.
+//
 void P_ArchivePlayers (void)
 {
-    int		i;
-		
+    int         i;
+
     for (i=0 ; i<MAXPLAYERS ; i++)
     {
-	if (!playeringame[i])
-	    continue;
-	
-	saveg_write_pad();
+        if (!playeringame[i])
+            continue;
+
+        saveg_write_pad();
 
         saveg_write_player_t(&players[i]);
     }
@@ -1470,23 +1718,25 @@ void P_ArchivePlayers (void)
 //
 // P_UnArchivePlayers
 //
+// [STRIFE] Verified unmodified.
+//
 void P_UnArchivePlayers (void)
 {
-    int		i;
-	
+    int         i;
+
     for (i=0 ; i<MAXPLAYERS ; i++)
     {
-	if (!playeringame[i])
-	    continue;
-	
-	saveg_read_pad();
+        if (!playeringame[i])
+            continue;
+
+        saveg_read_pad();
 
         saveg_read_player_t(&players[i]);
-	
-	// will be set when unarc thinker
-	players[i].mo = NULL;	
-	players[i].message = NULL;
-	players[i].attacker = NULL;
+
+        // will be set when unarc thinker
+        players[i].mo = NULL;	
+        players[i].message = NULL;
+        players[i].attacker = NULL;
     }
 }
 
@@ -1494,46 +1744,49 @@ void P_UnArchivePlayers (void)
 //
 // P_ArchiveWorld
 //
+// haleyjd 09/28/10: [STRIFE] Minor modifications.
+//
 void P_ArchiveWorld (void)
 {
-    int			i;
-    int			j;
-    sector_t*		sec;
-    line_t*		li;
-    side_t*		si;
+    int                 i;
+    int                 j;
+    sector_t*           sec;
+    line_t*             li;
+    side_t*             si;
     
     // do sectors
     for (i=0, sec = sectors ; i<numsectors ; i++,sec++)
     {
-	saveg_write16(sec->floorheight >> FRACBITS);
-	saveg_write16(sec->ceilingheight >> FRACBITS);
-	saveg_write16(sec->floorpic);
-	saveg_write16(sec->ceilingpic);
-	saveg_write16(sec->lightlevel);
-	saveg_write16(sec->special);		// needed?
-	saveg_write16(sec->tag);		// needed?
+        saveg_write16(sec->floorheight >> FRACBITS);
+        saveg_write16(sec->ceilingheight >> FRACBITS);
+        saveg_write16(sec->floorpic);
+        //saveg_write16(sec->ceilingpic); [STRIFE] not saved.
+        saveg_write16(sec->lightlevel);
+        saveg_write16(sec->special);            // needed?
+        //saveg_write16(sec->tag);                // needed? [STRIFE] not saved.
     }
 
     
     // do lines
     for (i=0, li = lines ; i<numlines ; i++,li++)
     {
-	saveg_write16(li->flags);
-	saveg_write16(li->special);
-	saveg_write16(li->tag);
-	for (j=0 ; j<2 ; j++)
-	{
-	    if (li->sidenum[j] == -1)
-		continue;
-	    
-	    si = &sides[li->sidenum[j]];
+        saveg_write16(li->flags);
+        saveg_write16(li->special);
+        //saveg_write16(li->tag); [STRIFE] not saved.
+        for (j=0 ; j<2 ; j++)
+        {
+            if (li->sidenum[j] == -1)
+                continue;
 
-	    saveg_write16(si->textureoffset >> FRACBITS);
-	    saveg_write16(si->rowoffset >> FRACBITS);
-	    saveg_write16(si->toptexture);
-	    saveg_write16(si->bottomtexture);
-	    saveg_write16(si->midtexture);	
-	}
+            si = &sides[li->sidenum[j]];
+
+            // [STRIFE] offsets not saved.
+            //saveg_write16(si->textureoffset >> FRACBITS);
+            //saveg_write16(si->rowoffset >> FRACBITS);
+            saveg_write16(si->toptexture);
+            saveg_write16(si->bottomtexture);
+            saveg_write16(si->midtexture);
+        }
     }
 }
 
@@ -1553,34 +1806,35 @@ void P_UnArchiveWorld (void)
     // do sectors
     for (i=0, sec = sectors ; i<numsectors ; i++,sec++)
     {
-	sec->floorheight = saveg_read16() << FRACBITS;
-	sec->ceilingheight = saveg_read16() << FRACBITS;
-	sec->floorpic = saveg_read16();
-	sec->ceilingpic = saveg_read16();
-	sec->lightlevel = saveg_read16();
-	sec->special = saveg_read16();		// needed?
-	sec->tag = saveg_read16();		// needed?
-	sec->specialdata = 0;
-	sec->soundtarget = 0;
+        sec->floorheight = saveg_read16() << FRACBITS;
+        sec->ceilingheight = saveg_read16() << FRACBITS;
+        sec->floorpic = saveg_read16();
+        //sec->ceilingpic = saveg_read16(); [STRIFE] not saved
+        sec->lightlevel = saveg_read16();
+        sec->special = saveg_read16();          // needed?
+        //sec->tag = saveg_read16();              // needed? [STRIFE] not saved
+        sec->specialdata = 0;
+        sec->soundtarget = 0;
     }
     
     // do lines
     for (i=0, li = lines ; i<numlines ; i++,li++)
     {
-	li->flags = saveg_read16();
-	li->special = saveg_read16();
-	li->tag = saveg_read16();
-	for (j=0 ; j<2 ; j++)
-	{
-	    if (li->sidenum[j] == -1)
-		continue;
-	    si = &sides[li->sidenum[j]];
-	    si->textureoffset = saveg_read16() << FRACBITS;
-	    si->rowoffset = saveg_read16() << FRACBITS;
-	    si->toptexture = saveg_read16();
-	    si->bottomtexture = saveg_read16();
-	    si->midtexture = saveg_read16();
-	}
+        li->flags = saveg_read16();
+        li->special = saveg_read16();
+        //li->tag = saveg_read16(); [STRIFE] not saved
+        for (j=0 ; j<2 ; j++)
+        {
+            if (li->sidenum[j] == -1)
+                continue;
+            si = &sides[li->sidenum[j]];
+            // [STRIFE] offsets not saved.
+            //si->textureoffset = saveg_read16() << FRACBITS;
+            //si->rowoffset = saveg_read16() << FRACBITS;
+            si->toptexture = saveg_read16();
+            si->bottomtexture = saveg_read16();
+            si->midtexture = saveg_read16();
+        }
     }
 }
 
@@ -1602,23 +1856,32 @@ typedef enum
 //
 // P_ArchiveThinkers
 //
+// [STRIFE] Verified unmodified.
+//
 void P_ArchiveThinkers (void)
 {
-    thinker_t*		th;
+    thinker_t*          th;
 
     // save off the current thinkers
     for (th = thinkercap.next ; th != &thinkercap ; th=th->next)
     {
-	if (th->function.acp1 == (actionf_p1)P_MobjThinker)
-	{
+        if (th->function.acp1 == (actionf_p1)P_MobjThinker)
+        {
             saveg_write8(tc_mobj);
-	    saveg_write_pad();
+            saveg_write_pad();
             saveg_write_mobj_t((mobj_t *) th);
 
-	    continue;
-	}
-		
-	// I_Error ("P_ArchiveThinkers: Unknown thinker function");
+            continue;
+        }
+
+        // haleyjd: This may seem mysterious but in the DOOM prebeta, 
+        // different types of things used different thinker functions. 
+        // Those would have all been handled here and this message is 
+        // probably a relic of that old system, not to mention the odd
+        // name of this function, and use of an enumeration with only
+        // two values in it.
+
+        // I_Error ("P_ArchiveThinkers: Unknown thinker function");
     }
 
     // add a terminating marker
@@ -1632,56 +1895,75 @@ void P_ArchiveThinkers (void)
 //
 void P_UnArchiveThinkers (void)
 {
-    byte		tclass;
-    thinker_t*		currentthinker;
-    thinker_t*		next;
-    mobj_t*		mobj;
+    byte                tclass;
+    thinker_t*          currentthinker;
+    thinker_t*          next;
+    mobj_t*             mobj;
     
     // remove all the current thinkers
     currentthinker = thinkercap.next;
     while (currentthinker != &thinkercap)
     {
-	next = currentthinker->next;
-	
-	if (currentthinker->function.acp1 == (actionf_p1)P_MobjThinker)
-	    P_RemoveMobj ((mobj_t *)currentthinker);
-	else
-	    Z_Free (currentthinker);
+        next = currentthinker->next;
 
-	currentthinker = next;
+        if (currentthinker->function.acp1 == (actionf_p1)P_MobjThinker)
+            P_RemoveMobj ((mobj_t *)currentthinker);
+        else
+            Z_Free (currentthinker);
+
+        currentthinker = next;
     }
     P_InitThinkers ();
     
     // read in saved thinkers
     while (1)
     {
-	tclass = saveg_read8();
-	switch (tclass)
-	{
-	  case tc_end:
-	    return; 	// end of list
-			
-	  case tc_mobj:
-	    saveg_read_pad();
-	    mobj = Z_Malloc (sizeof(*mobj), PU_LEVEL, NULL);
+        tclass = saveg_read8();
+        switch (tclass)
+        {
+        case tc_end:
+            return; 	// end of list
+
+        case tc_mobj:
+            saveg_read_pad();
+            mobj = Z_Malloc (sizeof(*mobj), PU_LEVEL, NULL);
             saveg_read_mobj_t(mobj);
 
-	    mobj->target = NULL;
+            // haleyjd 09/29/10: Strife sets the targets of non-allied creatures
+            // who had a non-NULL target at save time to players[0].mo so that
+            // they won't fall back asleep.
+            //
+            // BUG: As the player may not have been spawned yet, we could be
+            // setting monsters' targets to the mobj which was spawned by 
+            // P_SetupLevel and then removed just above. Due to a subtle glitch
+            // in the DOOM engine whereby all things removed in this function
+            // are leaked until the next time P_SetupLevel is called, this is a
+            // safe operation - the call to P_InitThinkers above stops any of
+            // the objects removed, including the player's previous body, from
+            // being passed to Z_Free. One glitch relying on another!
+
+            if(mobj->target != NULL && (mobj->flags & MF_ALLY) != MF_ALLY)
+                mobj->target = players[0].mo;
+            else
+                mobj->target = NULL;
+
+            // WARNING! Strife does not seem to set tracer! I am leaving it be
+            // for now because so far no crashes have been observed, and failing
+            // to set this here will almost certainly crash Choco.
             mobj->tracer = NULL;
-	    P_SetThingPosition (mobj);
-	    mobj->info = &mobjinfo[mobj->type];
-	    mobj->floorz = mobj->subsector->sector->floorheight;
-	    mobj->ceilingz = mobj->subsector->sector->ceilingheight;
-	    mobj->thinker.function.acp1 = (actionf_p1)P_MobjThinker;
-	    P_AddThinker (&mobj->thinker);
-	    break;
+            P_SetThingPosition (mobj);
+            mobj->info = &mobjinfo[mobj->type];
+            // [STRIFE]: doesn't set these
+            //mobj->floorz = mobj->subsector->sector->floorheight;
+            //mobj->ceilingz = mobj->subsector->sector->ceilingheight;
+            mobj->thinker.function.acp1 = (actionf_p1)P_MobjThinker;
+            P_AddThinker (&mobj->thinker);
+            break;
 
-	  default:
-	    I_Error ("Unknown tclass %i in savegame",tclass);
-	}
-	
+        default:
+            I_Error ("Unknown tclass %i in savegame",tclass);
+        }
     }
-
 }
 
 
@@ -1697,9 +1979,10 @@ enum
     tc_flash,
     tc_strobe,
     tc_glow,
+    tc_slidingdoor, // [STRIFE]
     tc_endspecials
 
-} specials_e;	
+} specials_e;
 
 
 
@@ -1708,6 +1991,7 @@ enum
 //
 // T_MoveCeiling, (ceiling_t: sector_t * swizzle), - active list
 // T_VerticalDoor, (vldoor_t: sector_t * swizzle),
+// T_SlidingDoor, (slidedoor_t: sector_t *, line_t * x 2 swizzle)
 // T_MoveFloor, (floormove_t: sector_t * swizzle),
 // T_LightFlash, (lightflash_t: sector_t * swizzle),
 // T_StrobeFlash, (strobe_t: sector_t *),
@@ -1716,87 +2000,93 @@ enum
 //
 void P_ArchiveSpecials (void)
 {
-    thinker_t*		th;
-    int			i;
-	
+    thinker_t*          th;
+    int                 i;
+
     // save off the current thinkers
     for (th = thinkercap.next ; th != &thinkercap ; th=th->next)
     {
-	if (th->function.acv == (actionf_v)NULL)
-	{
-	    for (i = 0; i < MAXCEILINGS;i++)
-		if (activeceilings[i] == (ceiling_t *)th)
-		    break;
-	    
-	    if (i<MAXCEILINGS)
-	    {
+        if (th->function.acv == (actionf_v)NULL)
+        {
+            for (i = 0; i < MAXCEILINGS;i++)
+                if (activeceilings[i] == (ceiling_t *)th)
+                    break;
+
+            if (i<MAXCEILINGS)
+            {
                 saveg_write8(tc_ceiling);
-		saveg_write_pad();
+                saveg_write_pad();
                 saveg_write_ceiling_t((ceiling_t *) th);
-	    }
-	    continue;
-	}
-			
-	if (th->function.acp1 == (actionf_p1)T_MoveCeiling)
-	{
+            }
+            continue;
+        }
+
+        if (th->function.acp1 == (actionf_p1)T_MoveCeiling)
+        {
             saveg_write8(tc_ceiling);
-	    saveg_write_pad();
+            saveg_write_pad();
             saveg_write_ceiling_t((ceiling_t *) th);
-	    continue;
-	}
-			
-	if (th->function.acp1 == (actionf_p1)T_VerticalDoor)
-	{
+            continue;
+        }
+
+        if (th->function.acp1 == (actionf_p1)T_VerticalDoor)
+        {
             saveg_write8(tc_door);
-	    saveg_write_pad();
+            saveg_write_pad();
             saveg_write_vldoor_t((vldoor_t *) th);
-	    continue;
-	}
-			
-	if (th->function.acp1 == (actionf_p1)T_MoveFloor)
-	{
+            continue;
+        }
+
+        if (th->function.acp1 == (actionf_p1)T_SlidingDoor)
+        {
+            saveg_write8(tc_slidingdoor);
+            saveg_write_pad();
+            continue;
+        }
+
+        if (th->function.acp1 == (actionf_p1)T_MoveFloor)
+        {
             saveg_write8(tc_floor);
-	    saveg_write_pad();
+            saveg_write_pad();
             saveg_write_floormove_t((floormove_t *) th);
-	    continue;
-	}
-			
-	if (th->function.acp1 == (actionf_p1)T_PlatRaise)
-	{
+            continue;
+        }
+
+        if (th->function.acp1 == (actionf_p1)T_PlatRaise)
+        {
             saveg_write8(tc_plat);
-	    saveg_write_pad();
+            saveg_write_pad();
             saveg_write_plat_t((plat_t *) th);
-	    continue;
-	}
-			
-	if (th->function.acp1 == (actionf_p1)T_LightFlash)
-	{
+            continue;
+        }
+
+        if (th->function.acp1 == (actionf_p1)T_LightFlash)
+        {
             saveg_write8(tc_flash);
-	    saveg_write_pad();
+            saveg_write_pad();
             saveg_write_lightflash_t((lightflash_t *) th);
-	    continue;
-	}
-			
-	if (th->function.acp1 == (actionf_p1)T_StrobeFlash)
-	{
+            continue;
+        }
+
+        if (th->function.acp1 == (actionf_p1)T_StrobeFlash)
+        {
             saveg_write8(tc_strobe);
-	    saveg_write_pad();
+            saveg_write_pad();
             saveg_write_strobe_t((strobe_t *) th);
-	    continue;
-	}
-			
-	if (th->function.acp1 == (actionf_p1)T_Glow)
-	{
+            continue;
+        }
+
+        if (th->function.acp1 == (actionf_p1)T_Glow)
+        {
             saveg_write8(tc_glow);
-	    saveg_write_pad();
+            saveg_write_pad();
             saveg_write_glow_t((glow_t *) th);
-	    continue;
-	}
+            continue;
+        }
     }
-	
+
     // add a terminating marker
     saveg_write8(tc_endspecials);
-
 }
 
 

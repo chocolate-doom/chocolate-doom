@@ -39,7 +39,9 @@
 // Global parameters/defines.
 //
 // DOOM version
-#define DOOM_VERSION 109
+//
+// haleyjd 09/28/10: Replaced with Strife version
+#define STRIFE_VERSION 101
 
 // Version code for cph's longtics hack ("v1.91")
 #define DOOM_191_VERSION 111

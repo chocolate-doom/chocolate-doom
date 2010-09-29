@@ -1621,7 +1621,8 @@ void G_LoadGame (char* name)
     gameaction = ga_loadgame; 
 } 
  
-#define VERSIONSIZE		16 
+// haleyjd 09/28/10: [STRIFE] VERSIONSIZE == 8
+#define VERSIONSIZE		8 
 
 
 void G_DoLoadGame (void) 
@@ -2108,7 +2109,7 @@ void G_BeginRecording (void)
     }
     else
     {
-        *demo_p++ = DOOM_VERSION;
+        *demo_p++ = STRIFE_VERSION;
     }
 
     *demo_p++ = gameskill; 
@@ -2186,7 +2187,7 @@ void G_DoPlayDemo (void)
 
     demoversion = *demo_p++;
 
-    if (demoversion == DOOM_VERSION)
+    if (demoversion == STRIFE_VERSION)
     {
         longtics = false;
     }
@@ -2205,7 +2206,7 @@ void G_DoPlayDemo (void)
                         "    See: http://doomworld.com/files/patches.shtml\n"
                         "    This appears to be %s.";
 
-        I_Error(message, demoversion, DOOM_VERSION,
+        I_Error(message, demoversion, STRIFE_VERSION,
                          DemoVersionDescription(demoversion));
     }
     
