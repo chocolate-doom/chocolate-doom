@@ -458,13 +458,9 @@ void R_InitTranslationTables (void)
     //   LOWORD(v8) = 0; // aligning to a 64K boundary, as if this is Wolf3D.
     //   xlatab = v8;
     //   memcpy(v8, v7, 65536);
-    //   memcpy(v8+65536, v7+65536, 0); // 0 bytes, does nothing!
     // As you can see, they copypasta'd id's unnecessary 64K boundary alignment
-    // from the colormap code, and then evidently at some point dropped the high
-    // side of the presumably 128KB lump (because it is redundant data), but 
-    // just set the 2nd memset call's length to 0 bytes... Terrible. Since none
-    // of this accomplishes anything, and isn't strictly portable, all we need
-    // to do is this:
+    // from the colormap code. Since this doesn't accomplish anything, and isn't
+    // strictly portable, all we need to do is this:
 
     // villsa [STRIFE] 09/26/10: load table through this function instead
     V_LoadXlaTable();

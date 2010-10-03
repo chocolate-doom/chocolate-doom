@@ -497,6 +497,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\src\strife\m_saves.h"
+					>
+				</File>
+				<File
 					RelativePath="..\src\strife\p_dialog.h"
 					>
 				</File>
@@ -902,6 +906,10 @@
 				</File>
 				<File
 					RelativePath="..\src\strife\m_random.c"
+					>
+				</File>
+				<File
+					RelativePath="..\src\strife\m_saves.c"
 					>
 				</File>
 				<File

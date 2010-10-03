@@ -1198,7 +1198,7 @@ static default_t extra_defaults_list[] =
     // Key to send a message to player 8 during multiplayer games.
     //
 
-    CONFIG_VARIABLE_KEY(key_multi_msgplayer8)
+    CONFIG_VARIABLE_KEY(key_multi_msgplayer8),
 };
 
 static default_collection_t extra_defaults =

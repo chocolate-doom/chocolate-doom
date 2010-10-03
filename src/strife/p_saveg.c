@@ -1991,7 +1991,7 @@ enum
 //
 // T_MoveCeiling, (ceiling_t: sector_t * swizzle), - active list
 // T_VerticalDoor, (vldoor_t: sector_t * swizzle),
-// T_SlidingDoor, (slidedoor_t: sector_t *, line_t * x 2 swizzle)
+// T_SlidingDoor, (slidedoor_t: sector_t *, line_t * x 2 swizzle) [STRIFE]
 // T_MoveFloor, (floormove_t: sector_t * swizzle),
 // T_LightFlash, (lightflash_t: sector_t * swizzle),
 // T_StrobeFlash, (strobe_t: sector_t *),
@@ -2041,6 +2041,7 @@ void P_ArchiveSpecials (void)
         {
             saveg_write8(tc_slidingdoor);
             saveg_write_pad();
+            saveg_write_slidedoor_t((slidedoor_t *)th);
             continue;
         }
 
@@ -2095,100 +2096,109 @@ void P_ArchiveSpecials (void)
 //
 void P_UnArchiveSpecials (void)
 {
-    byte		tclass;
-    ceiling_t*		ceiling;
-    vldoor_t*		door;
-    floormove_t*	floor;
-    plat_t*		plat;
-    lightflash_t*	flash;
-    strobe_t*		strobe;
-    glow_t*		glow;
-	
-	
+    byte                tclass;
+    ceiling_t*          ceiling;
+    vldoor_t*           door;
+    slidedoor_t*        slidedoor; // haleyjd [STRIFE]
+    floormove_t*        floor;
+    plat_t*             plat;
+    lightflash_t*       flash;
+    strobe_t*           strobe;
+    glow_t*             glow;
+
+
     // read in saved thinkers
     while (1)
     {
-	tclass = saveg_read8();
+        tclass = saveg_read8();
 
-	switch (tclass)
-	{
-	  case tc_endspecials:
-	    return;	// end of list
-			
-	  case tc_ceiling:
-	    saveg_read_pad();
-	    ceiling = Z_Malloc (sizeof(*ceiling), PU_LEVEL, NULL);
+        switch (tclass)
+        {
+        case tc_endspecials:
+            return;	// end of list
+
+        case tc_ceiling:
+            saveg_read_pad();
+            ceiling = Z_Malloc (sizeof(*ceiling), PU_LEVEL, NULL);
             saveg_read_ceiling_t(ceiling);
-	    ceiling->sector->specialdata = ceiling;
+            ceiling->sector->specialdata = ceiling;
 
-	    if (ceiling->thinker.function.acp1)
-		ceiling->thinker.function.acp1 = (actionf_p1)T_MoveCeiling;
+            if (ceiling->thinker.function.acp1)
+                ceiling->thinker.function.acp1 = (actionf_p1)T_MoveCeiling;
 
-	    P_AddThinker (&ceiling->thinker);
-	    P_AddActiveCeiling(ceiling);
-	    break;
-				
-	  case tc_door:
-	    saveg_read_pad();
-	    door = Z_Malloc (sizeof(*door), PU_LEVEL, NULL);
+            P_AddThinker (&ceiling->thinker);
+            P_AddActiveCeiling(ceiling);
+            break;
+
+        case tc_door:
+            saveg_read_pad();
+            door = Z_Malloc (sizeof(*door), PU_LEVEL, NULL);
             saveg_read_vldoor_t(door);
-	    door->sector->specialdata = door;
-	    door->thinker.function.acp1 = (actionf_p1)T_VerticalDoor;
-	    P_AddThinker (&door->thinker);
-	    break;
-				
-	  case tc_floor:
-	    saveg_read_pad();
-	    floor = Z_Malloc (sizeof(*floor), PU_LEVEL, NULL);
+            door->sector->specialdata = door;
+            door->thinker.function.acp1 = (actionf_p1)T_VerticalDoor;
+            P_AddThinker (&door->thinker);
+            break;
+
+        case tc_slidingdoor:
+            // haleyjd 09/29/10: [STRIFE] New thinker type for sliding doors
+            saveg_read_pad();
+            slidedoor = Z_Malloc(sizeof(*slidedoor), PU_LEVEL, NULL);
+            saveg_read_slidedoor_t(slidedoor);
+            slidedoor->frontsector->specialdata = slidedoor;
+            slidedoor->thinker.function.acp1 = (actionf_p1)T_SlidingDoor;
+            P_AddThinker(&slidedoor->thinker);
+            break;
+
+        case tc_floor:
+            saveg_read_pad();
+            floor = Z_Malloc (sizeof(*floor), PU_LEVEL, NULL);
             saveg_read_floormove_t(floor);
-	    floor->sector->specialdata = floor;
-	    floor->thinker.function.acp1 = (actionf_p1)T_MoveFloor;
-	    P_AddThinker (&floor->thinker);
-	    break;
-				
-	  case tc_plat:
-	    saveg_read_pad();
-	    plat = Z_Malloc (sizeof(*plat), PU_LEVEL, NULL);
+            floor->sector->specialdata = floor;
+            floor->thinker.function.acp1 = (actionf_p1)T_MoveFloor;
+            P_AddThinker (&floor->thinker);
+            break;
+
+        case tc_plat:
+            saveg_read_pad();
+            plat = Z_Malloc (sizeof(*plat), PU_LEVEL, NULL);
             saveg_read_plat_t(plat);
-	    plat->sector->specialdata = plat;
+            plat->sector->specialdata = plat;
 
-	    if (plat->thinker.function.acp1)
-		plat->thinker.function.acp1 = (actionf_p1)T_PlatRaise;
+            if (plat->thinker.function.acp1)
+                plat->thinker.function.acp1 = (actionf_p1)T_PlatRaise;
 
-	    P_AddThinker (&plat->thinker);
-	    P_AddActivePlat(plat);
-	    break;
-				
-	  case tc_flash:
-	    saveg_read_pad();
-	    flash = Z_Malloc (sizeof(*flash), PU_LEVEL, NULL);
+            P_AddThinker (&plat->thinker);
+            P_AddActivePlat(plat);
+            break;
+
+        case tc_flash:
+            saveg_read_pad();
+            flash = Z_Malloc (sizeof(*flash), PU_LEVEL, NULL);
             saveg_read_lightflash_t(flash);
-	    flash->thinker.function.acp1 = (actionf_p1)T_LightFlash;
-	    P_AddThinker (&flash->thinker);
-	    break;
-				
-	  case tc_strobe:
-	    saveg_read_pad();
-	    strobe = Z_Malloc (sizeof(*strobe), PU_LEVEL, NULL);
-            saveg_read_strobe_t(strobe);
-	    strobe->thinker.function.acp1 = (actionf_p1)T_StrobeFlash;
-	    P_AddThinker (&strobe->thinker);
-	    break;
-				
-	  case tc_glow:
-	    saveg_read_pad();
-	    glow = Z_Malloc (sizeof(*glow), PU_LEVEL, NULL);
-            saveg_read_glow_t(glow);
-	    glow->thinker.function.acp1 = (actionf_p1)T_Glow;
-	    P_AddThinker (&glow->thinker);
-	    break;
-				
-	  default:
-	    I_Error ("P_UnarchiveSpecials:Unknown tclass %i "
-		     "in savegame",tclass);
-	}
-	
-    }
+            flash->thinker.function.acp1 = (actionf_p1)T_LightFlash;
+            P_AddThinker (&flash->thinker);
+            break;
 
+        case tc_strobe:
+            saveg_read_pad();
+            strobe = Z_Malloc (sizeof(*strobe), PU_LEVEL, NULL);
+            saveg_read_strobe_t(strobe);
+            strobe->thinker.function.acp1 = (actionf_p1)T_StrobeFlash;
+            P_AddThinker (&strobe->thinker);
+            break;
+
+        case tc_glow:
+            saveg_read_pad();
+            glow = Z_Malloc (sizeof(*glow), PU_LEVEL, NULL);
+            saveg_read_glow_t(glow);
+            glow->thinker.function.acp1 = (actionf_p1)T_Glow;
+            P_AddThinker (&glow->thinker);
+            break;
+
+        default:
+            I_Error ("P_UnarchiveSpecials:Unknown tclass %i "
+                     "in savegame",tclass);
+        }
+    }
 }
 
