@@ -32,10 +32,10 @@
 
 
 // NOT called by W_Ticker. Fixme.
+// [STRIFE] Removed episode parameter
 void
 P_SetupLevel
-( int		episode,
-  int		map,
+( int		map,
   int		playermask,
   skill_t	skill);
 

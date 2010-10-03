@@ -38,7 +38,8 @@
 //
 void G_DeathMatchSpawnPlayer (int playernum);
 
-void G_InitNew (skill_t skill, int episode, int map);
+// [STRIFE] Removed episode parameter
+void G_InitNew (skill_t skill, int map);
 
 // Can be called by the startup code or M_Responder.
 // A normal game starts at map 1,

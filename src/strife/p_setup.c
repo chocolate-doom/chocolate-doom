@@ -751,8 +751,7 @@ static void P_LoadReject(int lumpnum)
 //
 void
 P_SetupLevel
-( int		episode,
-  int		map,
+( int		map,
   int		playermask,
   skill_t	skill)
 {
@@ -789,28 +788,17 @@ P_SetupLevel
 
     // UNUSED W_Profile ();
     P_InitThinkers ();
-	   
-    // find map name
-    if ( gamemode == commercial)
-    {
-	if (map<10)
-	    DEH_snprintf(lumpname, 9, "map0%i", map);
-	else
-	    DEH_snprintf(lumpname, 9, "map%i", map);
-    }
+
+    // [STRIFE] Removed ExMy map support
+    if (map<10)
+        DEH_snprintf(lumpname, 9, "map0%i", map);
     else
-    {
-	lumpname[0] = 'E';
-	lumpname[1] = '0' + episode;
-	lumpname[2] = 'M';
-	lumpname[3] = '0' + map;
-	lumpname[4] = 0;
-    }
+        DEH_snprintf(lumpname, 9, "map%i", map);
 
     lumpnum = W_GetNumForName (lumpname);
-	
+
     leveltime = 0;
-	
+
     // note: most of this ordering is important	
     P_LoadBlockMap (lumpnum+ML_BLOCKMAP);
     P_LoadVertexes (lumpnum+ML_VERTEXES);

@@ -53,6 +53,7 @@
 #include "hu_stuff.h"
 #include "st_stuff.h"
 #include "am_map.h"
+#include "m_misc.h" // STRIFE
 
 // Needs access to LFB.
 #include "v_video.h"
@@ -82,7 +83,7 @@ boolean	G_CheckDemoStatus (void);
 void	G_ReadDemoTiccmd (ticcmd_t* cmd); 
 void	G_WriteDemoTiccmd (ticcmd_t* cmd); 
 void	G_PlayerReborn (int player); 
-void	G_InitNew (skill_t skill, int episode, int map); 
+void	G_InitNew (skill_t skill, int map); 
  
 void	G_DoReborn (int playernum); 
  
@@ -103,7 +104,7 @@ gameaction_t    gameaction;
 gamestate_t     gamestate; 
 skill_t         gameskill; 
 boolean		respawnmonsters;
-int             gameepisode; 
+//int             gameepisode; 
 int             gamemap;
 
 // haleyjd 08/24/10: [STRIFE] New variables
@@ -784,7 +785,7 @@ void G_DoLoadLevel (void)
 	memset (players[i].frags,0,sizeof(players[i].frags)); 
     } 
 		 
-    P_SetupLevel (gameepisode, gamemap, 0, gameskill);    
+    P_SetupLevel (gamemap, 0, gameskill);    
     displayplayer = consoleplayer;		// view the guy you are playing    
     gameaction = ga_nothing; 
     Z_CheckHeap ();
@@ -1170,6 +1171,8 @@ void G_Ticker (void)
 // Called at the start.
 // Called by the game initialization functions.
 //
+// [STRIFE] No such function.
+/*
 void G_InitPlayer (int player) 
 { 
     player_t*	p; 
@@ -1181,13 +1184,16 @@ void G_InitPlayer (int player)
     G_PlayerReborn (player); 
 	 
 } 
- 
+*/
  
 
 //
 // G_PlayerFinishLevel
 // Can when a player completes a level.
 //
+// [STRIFE] No such function. The equivalent to this logic was moved into
+// G_DoCompleted.
+/*
 void G_PlayerFinishLevel (int player) 
 { 
     player_t*	p; 
@@ -1202,12 +1208,15 @@ void G_PlayerFinishLevel (int player)
     p->damagecount = 0;			// no palette changes 
     p->bonuscount = 0; 
 } 
- 
+*/
 
 //
 // G_PlayerReborn
 // Called after a player dies 
 // almost everything is cleared and initialized 
+//
+// [STRIFE] Small changes for allegiance, inventory, health auto-use, and
+// mission objective.
 //
 void G_PlayerReborn (int player) 
 { 
@@ -1216,38 +1225,38 @@ void G_PlayerReborn (int player)
     int         frags[MAXPLAYERS]; 
     int         killcount;
     int         allegiance;
-	 
+
     killcount = players[player].killcount;
     allegiance = players[player].allegiance;
 
     memcpy(frags,players[player].frags,sizeof(frags));
-	 
+
     p = &players[player]; 
     memset (p, 0, sizeof(*p)); 
 
     memcpy(p->frags, frags, sizeof(p->frags));
 
-    p->usedown              = true;                 // don't do anything immediately
-    p->attackdown           = true;
-    p->inventorydown        = true;                 // villsa [STRIFE]
-    p->playerstate          = PST_LIVE;       
-    p->health               = deh_initial_health;   // Use dehacked value
-    p->readyweapon          = wp_fist;              // villsa [STRIFE] default to fists
-    p->pendingweapon        = wp_fist;              // villsa [STRIFE] default to fists
-    p->weaponowned[wp_fist] = true;                 // villsa [STRIFE] default to fists
-    p->cheats               |= CF_AUTOHEALTH;       // villsa [STRIFE]
-    p->killcount            = killcount;
-    p->allegiance           = allegiance;           // villsa [STRIFE]
-    p->centerview           = true;                 // villsa [STRIFE]
-	 
+    p->usedown               = true;                 // don't do anything immediately
+    p->attackdown            = true;
+    p->inventorydown         = true;                 // villsa [STRIFE]
+    p->playerstate           = PST_LIVE;       
+    p->health                = deh_initial_health;   // Use dehacked value
+    p->readyweapon           = wp_fist;              // villsa [STRIFE] default to fists
+    p->pendingweapon         = wp_fist;              // villsa [STRIFE] default to fists
+    p->weaponowned[wp_fist]  = true;                 // villsa [STRIFE] default to fists
+    p->cheats               |= CF_AUTOHEALTH;        // villsa [STRIFE]
+    p->killcount             = killcount;
+    p->allegiance            = allegiance;           // villsa [STRIFE]
+    p->centerview            = true;                 // villsa [STRIFE]
+
     for(i = 0; i < NUMAMMO; i++) 
-	p->maxammo[i] = maxammo[i]; 
+        p->maxammo[i] = maxammo[i]; 
 
     for(i = 0; i < 32; i++)
         p->inventory[i].type = NUMMOBJTYPES;
 
     // villsa [STRIFE]
-    strncpy(mission_objective, "Find help", OBJECTIVE_LEN);
+    strncpy(mission_objective, DEH_String("Find help"), OBJECTIVE_LEN);
 }
 
 //
@@ -1256,6 +1265,8 @@ void G_PlayerReborn (int player)
 // at the given mapthing_t spot  
 // because something is occupying it 
 //
+// [STRIFE] Changed to eliminate body queue and an odd error message was added.
+//
 void P_SpawnPlayer (mapthing_t* mthing); 
  
 boolean
@@ -1263,46 +1274,54 @@ G_CheckSpot
 ( int		playernum,
   mapthing_t*	mthing ) 
 { 
-    fixed_t		x;
-    fixed_t		y; 
-    subsector_t*	ss; 
-    unsigned		an; 
-    mobj_t*		mo; 
-    int			i;
-	
+    fixed_t             x;
+    fixed_t             y; 
+    subsector_t*        ss; 
+    unsigned            an; 
+    mobj_t*             mo; 
+    int                 i;
+
     if (!players[playernum].mo)
     {
-	// first spawn of level, before corpses
-	for (i=0 ; i<playernum ; i++)
-	    if (players[i].mo->x == mthing->x << FRACBITS
-		&& players[i].mo->y == mthing->y << FRACBITS)
-		return false;	
-	return true;
+        // [STRIFE] weird error message added here:
+        if(leveltime > 0)
+            players[playernum].message = DEH_String("you didn't have a body!");
+
+        // first spawn of level, before corpses
+        for (i=0 ; i<playernum ; i++)
+            if (players[i].mo->x == mthing->x << FRACBITS
+                && players[i].mo->y == mthing->y << FRACBITS)
+                return false;	
+        return true;
     }
-		
+
     x = mthing->x << FRACBITS; 
     y = mthing->y << FRACBITS; 
-	 
+
     if (!P_CheckPosition (players[playernum].mo, x, y) ) 
-	return false; 
- 
-    // flush an old corpse if needed 
+        return false; 
+
+    // flush an old corpse if needed
+    // [STRIFE] player corpses remove themselves after a short time, so
+    // evidently this wasn't needed.
+    /*
     if (bodyqueslot >= BODYQUESIZE) 
-	P_RemoveMobj (bodyque[bodyqueslot%BODYQUESIZE]); 
+        P_RemoveMobj (bodyque[bodyqueslot%BODYQUESIZE]); 
     bodyque[bodyqueslot%BODYQUESIZE] = players[playernum].mo; 
     bodyqueslot++; 
-	
+    */
+
     // spawn a teleport fog 
     ss = R_PointInSubsector (x,y); 
     an = ( ANG45 * (((unsigned int) mthing->angle)/45) ) >> ANGLETOFINESHIFT; 
- 
+
     mo = P_SpawnMobj (x+20*finecosine[an], y+20*finesine[an] 
-		      , ss->sector->floorheight 
-		      , MT_TFOG); 
-	 
+                      , ss->sector->floorheight 
+                      , MT_TFOG); 
+
     if (players[consoleplayer].viewz != 1) 
-	S_StartSound (mo, sfx_telept);	// don't start sound on first frame 
- 
+        S_StartSound (mo, sfx_telept);	// don't start sound on first frame 
+
     return true; 
 } 
 
@@ -1311,6 +1330,8 @@ G_CheckSpot
 // G_DeathMatchSpawnPlayer 
 // Spawns a player at one of the random death match spots 
 // called at level load and each death 
+//
+// [STRIFE] Verified unmodified
 //
 void G_DeathMatchSpawnPlayer (int playernum) 
 { 
@@ -1337,50 +1358,67 @@ void G_DeathMatchSpawnPlayer (int playernum)
 } 
 
 //
-// G_DoReborn 
+// G_LoadPath
+//
+// haleyjd 10/03/10: [STRIFE] New function
+// Sets loadpath based on the map and "savepath2"
+//
+void G_LoadPath(int map)
+{
+    // STRIFE-TODO:
+    // sprintf(loadpath, "%s%d", savepath2, map)
+}
+
+//
+// G_DoReborn
 // 
 void G_DoReborn (int playernum) 
 { 
     int                             i; 
-	 
+
     if (!netgame)
     {
-	// reload the level from scratch
-	gameaction = ga_loadlevel;  
+        // reload the level from scratch
+        // STRIFE-TODO: HUB REBORN
+        // G_LoadPath(gamemap);
+        // gameaction = 3;
+        gameaction = ga_loadlevel;  // STRIFE-TODO: temporary
     }
     else 
     {
-	// respawn at the start
+        // respawn at the start
 
-	// first dissasociate the corpse 
-	players[playernum].mo->player = NULL;   
-		 
-	// spawn at random spot if in death match 
-	if (deathmatch) 
-	{ 
-	    G_DeathMatchSpawnPlayer (playernum); 
-	    return; 
-	} 
-		 
-	if (G_CheckSpot (playernum, &playerstarts[playernum]) ) 
-	{ 
-	    P_SpawnPlayer (&playerstarts[playernum]); 
-	    return; 
-	}
-	
-	// try to spawn at one of the other players spots 
-	for (i=0 ; i<MAXPLAYERS ; i++)
-	{
-	    if (G_CheckSpot (playernum, &playerstarts[i]) ) 
-	    { 
-		playerstarts[i].type = playernum+1;	// fake as other player 
-		P_SpawnPlayer (&playerstarts[i]); 
-		playerstarts[i].type = i+1;		// restore 
-		return; 
-	    }	    
-	    // he's going to be inside something.  Too bad.
-	}
-	P_SpawnPlayer (&playerstarts[playernum]); 
+        // first dissasociate the corpse 
+        // [STRIFE] Checks for NULL first
+        if(players[playernum].mo)
+            players[playernum].mo->player = NULL;
+
+        // spawn at random spot if in death match 
+        if (deathmatch) 
+        { 
+            G_DeathMatchSpawnPlayer (playernum); 
+            return; 
+        } 
+
+        if (G_CheckSpot (playernum, &playerstarts[playernum]) ) 
+        { 
+            P_SpawnPlayer (&playerstarts[playernum]); 
+            return; 
+        }
+
+        // try to spawn at one of the other players spots 
+        for (i=0 ; i<MAXPLAYERS ; i++)
+        {
+            if (G_CheckSpot (playernum, &playerstarts[i]) ) 
+            { 
+                playerstarts[i].type = playernum+1;     // fake as other player 
+                P_SpawnPlayer (&playerstarts[i]);
+                playerstarts[i].type = i+1;             // restore 
+                return; 
+            }
+            // he's going to be inside something.  Too bad.
+        }
+        P_SpawnPlayer (&playerstarts[playernum]); 
     } 
 } 
  
@@ -1425,6 +1463,21 @@ void G_RiftExitLevel(int map, int spot, angle_t angle)
     riftangle = angle;
     riftdest  = spot;
     destmap   = map;
+}
+
+//
+// G_Exit2
+//
+// haleyjd 10/03/10: [STRIFE] New function.
+// No xrefs to this, doesn't seem to be used. Could have gotten inlined
+// somewhere but I haven't seen it.
+//
+void G_Exit2(int dest, angle_t angle)
+{
+    riftdest = dest;
+    gameaction = ga_completed;
+    riftangle = angle;
+    destmap = gamemap;
 }
 
 //
@@ -1474,7 +1527,7 @@ void G_StartFinale(void)
 // G_DoCompleted
 //
 // haleyjd 08/23/10: [STRIFE]:
-// * Removed G_PlayerFinishLevel call for now... STRIFE-TODO
+// * Removed G_PlayerFinishLevel and just sets some powerup states.
 // * Removed Chex, as not relevant to Strife.
 // * Removed DOOM level transfer logic 
 // * Removed intermission code.
@@ -1482,10 +1535,25 @@ void G_StartFinale(void)
 //
 void G_DoCompleted (void) 
 {
-    // STRIFE-TODO: save automap powerup state (possibly inlined from G_PlayerFinishLevel);
-    // set stonecold to 0
+    int i;
+
+    // deal with powerup states
+    for(i = 0; i < MAXPLAYERS; i++)
+    {
+        if(playeringame[i])
+        {
+            // STRIFE-TODO: not quite sure why it does this
+            if(destmap < 40)
+                players[i].powers[pw_allmap] = players[i].mapstate[destmap];
+
+            // Shadowarmor doesn't persist between maps in netgames
+            if(netgame)
+                players[i].powers[pw_invisibility] = 0;
+        }
+    }
 
     stonecold = false;  // villsa [STRIFE]
+
     if (automapactive) 
         AM_Stop (); 
 
@@ -1596,15 +1664,64 @@ void G_DoWorldDone (void)
         G_RiftPlayer();
 
         // STRIFE-TODO:
-        // G_DoSaveGame(...);
-        // M_SaveMisObj();
+        // G_DoSaveGame(savepath2);
+        // M_SaveMisObj(savepath2, v6);
     }
 
     gameaction = ga_nothing; 
     viewactive = true; 
 } 
 
+//
+// G_DoWorldDone2
+//
+// haleyjd 10/03/10: [STRIFE] New function. No xrefs; unused.
+//
+void G_DoWorldDone2(void)
+{
+    gamestate = GS_LEVEL;
+    gameaction = ga_nothing;
+    viewactive = true;
+}
 
+//
+// G_ReadCurrent
+//
+// haleyjd 10/03/10: [STRIFE] New function.
+// Reads the "CURRENT" file from the given path and then sets it to
+// gamemap.
+//
+void G_ReadCurrent(const char *path)
+{
+    // STRIFE-TODO: Can't go live. Too much bullshit.
+    // Without any kind of framework to work with file paths and directories
+    // this stuff is nearly hopeless, and I am already getting fed up with the
+    // idea of trying to make this work on 200 different platforms when there
+    // is nothing I can find in this thing to facilitate portable programming!
+#if 0
+    char temppath[108]; // WARNING: not big enough for modern file paths!
+
+    // STRIFE-TODO: SYSTEM SPECIFIC DIRECTORY SEPARATORS!!!!!!!!!!!!!!!!
+    // What takes precedence? SeHackEd or Linux support?
+    // Where is the godforsaken global that will tell me what character to
+    // use in the first place?????
+    DEH_snprintf(temppath, "%s\\current", path);
+    
+    // STRIFE-TODO: MOVE TO P_SAVEG.C ???? NO SAVEBUFFER OR SAVE_P HERE!
+    // STRIFE-TODO: Read int from file with an appropriate routine
+    if(M_ReadFile(temppath, &savebuffer) <= 0)
+        gameaction = ga_newgame;
+    else
+    {
+        save_p = savebuffer;
+        gamemap = *(int *)savebuffer;
+        gameaction = 3;
+        Z_Free(savebuffer);
+    }
+#endif
+
+    G_LoadPath(gamemap);
+}
 
 //
 // G_InitFromSavegame
@@ -1622,14 +1739,17 @@ void G_LoadGame (char* name)
 } 
  
 // haleyjd 09/28/10: [STRIFE] VERSIONSIZE == 8
-#define VERSIONSIZE		8 
+#define VERSIONSIZE             8
 
 
 void G_DoLoadGame (void) 
 { 
     int savedleveltime;
 
-    gameaction = ga_nothing; 
+    gameaction = ga_nothing;
+
+    // STRIFE-TODO: If the file does not exist OR cannot be read in its entirety, 
+    // G_DoLoadLevel is called.
 
     save_stream = fopen(savename, "rb");
 
@@ -1649,7 +1769,12 @@ void G_DoLoadGame (void)
     savedleveltime = leveltime;
     
     // load a base level 
-    G_InitNew (gameskill, gameepisode, gamemap); 
+
+    // STRIFE-TODO: ????
+    // if(v4)
+         G_InitNew (gameskill, gamemap); 
+    // else
+    //   G_DoLoadLevel();
  
     leveltime = savedleveltime;
 
@@ -1670,7 +1795,47 @@ void G_DoLoadGame (void)
     // draw the pattern into the back screen
     R_FillBackScreen ();   
 } 
- 
+
+//
+// G_WriteSaveName
+//
+// haleyjd 10/03/10: [STRIFE] New function
+//
+// Writes the character name to the NAME file.
+//
+boolean G_WriteSaveName()
+{
+    // STRIFE-TODO: Yeah right. This is gonna happen really soon...
+#if 0
+    const char *dirstr;
+
+    dword_86280 = eax0;
+
+    // STRIFE-TODO: yeah good luck making THIS work on Linux.
+    if(M_CheckParm(DEH_String("-cdrom")))
+    {
+        sprintf(savepath2, "c:\\strife.cd\\strfsav%d.ssg\\", 6);
+        v5 = dword_86280;
+        dirstr = "c:\\strife.cd\\strfsav%d.ssg\\";
+    }
+    else
+    {
+        sprintf(savepath2, "strfsav%d.ssg\\", 6);
+        v5 = dword_86280;
+        dirstr = "strfsav%d.ssg\\";
+    }
+
+    sprintf(savepath, dirstr, v5);
+
+    *character_name = 0;
+    strcpy(character_name, edx);
+
+    sprintf(hellifiknow, "%sname", savepath2);
+
+    return M_WriteFile(hellifiknow, character_name, 32);
+#endif
+    return false;
+}
 
 //
 // G_SaveGame
@@ -1694,6 +1859,8 @@ void G_DoSaveGame (void)
 
     temp_savegame_file = P_TempSaveGameFile();
     savegame_file = P_SaveGameFile(savegameslot);
+
+    // STRIFE-TODO: save the "current" file?
 
     // Open the savegame file for writing.  We write to a temporary file
     // and then rename it at the end if it was successfully written.
@@ -1767,7 +1934,11 @@ void G_DeferedInitNew(skill_t skill, int map)
     gameaction = ga_newgame; 
 } 
 
-
+//
+// G_DoNewGame
+//
+// [STRIFE] Code added to turn off the stonecold effect.
+//
 void G_DoNewGame (void) 
 {
     demoplayback = false; 
@@ -1780,7 +1951,7 @@ void G_DoNewGame (void)
     stonecold = false;      // villsa [STRIFE]
     nomonsters = false;
     consoleplayer = 0;
-    G_InitNew (d_skill, d_episode, d_map); 
+    G_InitNew (d_skill, d_map);
     gameaction = ga_nothing; 
 } 
 
@@ -1792,98 +1963,60 @@ extern  int	skytexture;
 //
 // haleyjd 08/24/10: [STRIFE]:
 // * Added riftdest initialization
+// * Removed episode parameter
 //
 void
 G_InitNew
-( skill_t	skill,
-  int		episode,
-  int		map ) 
+( skill_t       skill,
+  int           map ) 
 { 
     char *skytexturename;
     int             i; 
-	 
+
     if (paused) 
     { 
-	paused = false; 
-	S_ResumeSound (); 
+        paused = false; 
+        S_ResumeSound (); 
     } 
-	
+
 
     if (skill > sk_nightmare) 
-	skill = sk_nightmare;
+        skill = sk_nightmare;
 
+    // [STRIFE] Removed episode nonsense and gamemap clipping
 
-    // This was quite messy with SPECIAL and commented parts.
-    // Supposedly hacks to make the latest edition work.
-    // It might not work properly.
-    if (episode < 1)
-      episode = 1; 
-
-    if ( gamemode == retail )
-    {
-      if (episode > 4)
-	episode = 4;
-    }
-    else if ( gamemode == shareware )
-    {
-      if (episode > 1) 
-	   episode = 1;	// only start episode 1 on shareware
-    }  
-    else
-    {
-      if (episode > 3)
-	episode = 3;
-    }
-    
-
-  
-    if (map < 1) 
-	map = 1;
-    
-    if ( (map > 9)
-	 && ( gamemode != commercial) )
-      map = 9; 
-		 
     M_ClearRandom (); 
-	 
-    if (skill == sk_nightmare || respawnparm )
-	respawnmonsters = true;
-    else
-	respawnmonsters = false;
 
-    // STRIFE-TODO: (broken) Strife skill level mobjinfo/states tweaking
-    /*if (fastparm || (skill == sk_nightmare && gameskill != sk_nightmare) )
-    { 
-	for (i=S_SARG_RUN1 ; i<=S_SARG_PAIN2 ; i++) 
-	    states[i].tics >>= 1; 
-	mobjinfo[MT_BRUISERSHOT].speed = 20*FRACUNIT; 
-	mobjinfo[MT_HEADSHOT].speed = 20*FRACUNIT; 
-	mobjinfo[MT_TROOPSHOT].speed = 20*FRACUNIT; 
-    } 
-    else if (skill != sk_nightmare && gameskill == sk_nightmare) 
-    { 
-	for (i=S_SARG_RUN1 ; i<=S_SARG_PAIN2 ; i++) 
-	    states[i].tics <<= 1; 
-	mobjinfo[MT_BRUISERSHOT].speed = 15*FRACUNIT; 
-	mobjinfo[MT_HEADSHOT].speed = 10*FRACUNIT; 
-	mobjinfo[MT_TROOPSHOT].speed = 10*FRACUNIT; 
-    } */
-	 
-			 
-    // force players to be initialized upon first level load         
+    if (skill == sk_nightmare || respawnparm )
+        respawnmonsters = true;
+    else
+        respawnmonsters = false;
+
+    // STRIFE-TODO: Strife skill level mobjinfo/states tweaking
+    // BUG: None of this code runs properly when loading save games, so
+    // basically it's impossible to play any skill level properly unless
+    // you never quit and reload from the command line.
+#if 0
+    if(!skill && gameskill)
+    {
+        // Setting to Baby skill... make things easier.
+    }
+#endif
+
+    // force players to be initialized upon first level load
     for (i=0 ; i<MAXPLAYERS ; i++) 
-	players[i].playerstate = PST_REBORN; 
- 
+        players[i].playerstate = PST_REBORN; 
+
     usergame = true;                // will be set false if a demo 
     paused = false; 
     demoplayback = false; 
     automapactive = false; 
     viewactive = true; 
-    gameepisode = episode; 
+    //gameepisode = episode; 
     gamemap = map; 
     gameskill = skill; 
     riftdest = 0; // haleyjd 08/24/10: [STRIFE] init riftdest to zero on new game
- 
+
     viewactive = true;
 
     // Set the sky to use.
@@ -1896,36 +2029,11 @@ G_InitNew
     // restore from a saved game.  This was fixed before the Doom
     // source release, but this IS the way Vanilla DOS Doom behaves.
 
-    // STRIFE-TODO: Strife skies (of which there are but two)
-    // villsa [STRIFE] setting all skies to SKY03 as a placeholder
-    if (gamemode == commercial)
-    {
-        if (gamemap < 12)
-            skytexturename = "SKY03";
-        else if (gamemap < 21)
-            skytexturename = "SKY03";
-        else
-            skytexturename = "SKY03";
-    }
+    // [STRIFE] Strife skies (of which there are but two)
+    if(gamemap >= 9 && gamemap < 32)
+        skytexturename = "skymnt01";
     else
-    {
-        switch (gameepisode) 
-        { 
-          default:
-          case 1: 
-            skytexturename = "SKY03"; 
-            break; 
-          case 2: 
-            skytexturename = "SKY03"; 
-            break; 
-          case 3: 
-            skytexturename = "SKY03"; 
-            break; 
-          case 4:        // Special Edition sky
-            skytexturename = "SKY03";
-            break;
-        } 
-    }
+        skytexturename = "skymnt02";
 
     skytexturename = DEH_String(skytexturename);
 
@@ -1933,7 +2041,7 @@ G_InitNew
 
     // STRIFE-TODO:
     // G_LoadPath(gamemap)
-    G_DoLoadLevel (); 
+    G_DoLoadLevel ();
 } 
  
 
@@ -1942,32 +2050,26 @@ G_InitNew
 // 
 #define DEMOMARKER		0x80
 
-
+//
+// G_ReadDemoTiccmd
+//
+// [STRIFE] Modified for Strife ticcmd_t
+//
 void G_ReadDemoTiccmd (ticcmd_t* cmd) 
 { 
     if (*demo_p == DEMOMARKER) 
     {
-	// end of demo data stream 
-	G_CheckDemoStatus (); 
-	return; 
-    } 
+        // end of demo data stream 
+        G_CheckDemoStatus (); 
+        return; 
+    }
     cmd->forwardmove = ((signed char)*demo_p++); 
     cmd->sidemove = ((signed char)*demo_p++); 
-
-    // If this is a longtics demo, read back in higher resolution
-
-    if (longtics)
-    {
-        cmd->angleturn = *demo_p++;
-        cmd->angleturn |= (*demo_p++) << 8;
-    }
-    else
-    {
-        cmd->angleturn = ((unsigned char) *demo_p++)<<8; 
-    }
-
+    cmd->angleturn = ((unsigned char) *demo_p++)<<8; 
     cmd->buttons = (unsigned char)*demo_p++; 
-} 
+    cmd->buttons2 = (unsigned char)*demo_p++; // [STRIFE]
+    cmd->inventory = (int)*demo_p++;          // [STRIFE]
+}
 
 // Increase the size of the demo buffer to allow unlimited demos
 
@@ -2001,31 +2103,26 @@ static void IncreaseDemoBuffer(void)
     demoend = demobuffer + new_length;
 }
 
+//
+// G_WriteDemoTiccmd
+//
+// [STRIFE] Modified for Strife ticcmd_t.
+//
 void G_WriteDemoTiccmd (ticcmd_t* cmd) 
 { 
     byte *demo_start;
 
     if (gamekeydown[key_demo_quit])           // press q to end demo recording 
-	G_CheckDemoStatus (); 
+        G_CheckDemoStatus (); 
 
     demo_start = demo_p;
 
     *demo_p++ = cmd->forwardmove; 
     *demo_p++ = cmd->sidemove; 
-
-    // If this is a longtics demo, record in higher resolution
- 
-    if (longtics)
-    {
-        *demo_p++ = (cmd->angleturn & 0xff);
-        *demo_p++ = (cmd->angleturn >> 8) & 0xff;
-    }
-    else
-    {
-        *demo_p++ = cmd->angleturn >> 8; 
-    }
-
+    *demo_p++ = cmd->angleturn >> 8; 
     *demo_p++ = cmd->buttons; 
+    *demo_p++ = cmd->buttons2;                 // [STRIFE]
+    *demo_p++ = (byte)(cmd->inventory & 0xff); // [STRIFE]
 
     // reset demo pointer back
     demo_p = demo_start;
@@ -2046,7 +2143,7 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
             IncreaseDemoBuffer();
         }
     } 
-	
+
     G_ReadDemoTiccmd (cmd);         // make SURE it is exactly the same 
 } 
  
@@ -2055,11 +2152,13 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
 //
 // G_RecordDemo 
 // 
+// [STRIFE] Verified unmodified
+//
 void G_RecordDemo (char* name) 
 { 
     int             i; 
-    int				maxsize;
-	
+    int             maxsize;
+
     usergame = false; 
     strcpy (demoname, name); 
     strcat (demoname, ".lmp"); 
@@ -2075,10 +2174,10 @@ void G_RecordDemo (char* name)
 
     i = M_CheckParm ("-maxdemo");
     if (i && i<myargc-1)
-	maxsize = atoi(myargv[i+1])*1024;
+        maxsize = atoi(myargv[i+1])*1024;
     demobuffer = Z_Malloc (maxsize,PU_STATIC,NULL); 
     demoend = demobuffer + maxsize;
-	
+
     demorecording = true; 
 } 
  
@@ -2092,37 +2191,37 @@ void G_BeginRecording (void)
     //
     // Record a high resolution "Doom 1.91" demo.
     //
-
+    
+    // STRIFE-TODO: if somebody makes a "Strife Plus", we could add this.
+    /*
     longtics = M_CheckParm("-longtics") != 0;
+    */
+    longtics = false;
 
     // If not recording a longtics demo, record in low res
-
     lowres_turn = !longtics;
-    
+
     demo_p = demobuffer;
-	
+
     // Save the right version code for this demo
- 
-    if (longtics)
-    {
-        *demo_p++ = DOOM_191_VERSION;
-    }
-    else
-    {
-        *demo_p++ = STRIFE_VERSION;
-    }
+    *demo_p++ = STRIFE_VERSION;
 
     *demo_p++ = gameskill; 
-    *demo_p++ = gameepisode; 
+    //*demo_p++ = gameepisode; [STRIFE] Doesn't have episodes.
     *demo_p++ = gamemap; 
     *demo_p++ = deathmatch; 
     *demo_p++ = respawnparm;
     *demo_p++ = fastparm;
     *demo_p++ = nomonsters;
     *demo_p++ = consoleplayer;
-	 
+ 
     for (i=0 ; i<MAXPLAYERS ; i++) 
-	*demo_p++ = playeringame[i]; 		 
+        *demo_p++ = playeringame[i]; 
+
+    // STRIFE-TODO: TEMPORARY: fill out the rest of playeringame until
+    // MAXPLAYERS == 8
+    for (; i < 8; i++)
+        *demo_p++ = 0;
 } 
  
 
@@ -2139,49 +2238,40 @@ void G_DeferedPlayDemo (char* name)
 } 
 
 // Generate a string describing a demo version
-
+// [STRIFE] Modified to handle the one and only Strife demo version.
 static char *DemoVersionDescription(int version)
 {
     static char resultbuf[16];
+ 
+    // [STRIFE] All versions of Strife 1.1 and later use 101 as their 
+    // internal version number. Brilliant, huh? So we can't discern much
+    // here.
 
     switch (version)
     {
-        case 104:
-            return "v1.4";
-        case 105:
-            return "v1.5";
-        case 106:
-            return "v1.6/v1.666";
-        case 107:
-            return "v1.7/v1.7a";
-        case 108:
-            return "v1.8";
-        case 109:
-            return "v1.9";
-        default:
-            break;
+    case 100: 
+        return "v1.0"; // v1.0 would be the ancient demo version
+    default:
+        break;
     }
 
-    // Unknown version.  Perhaps this is a pre-v1.4 IWAD?  If the version
-    // byte is in the range 0-4 then it can be a v1.0-v1.2 demo.
+    // Unknown version. Who knows?
+    sprintf(resultbuf, "%i.%i (unknown)", version / 100, version % 100);
 
-    if (version >= 0 && version <= 4)
-    {
-        return "v1.0/v1.1/v1.2";
-    }
-    else
-    {
-        sprintf(resultbuf, "%i.%i (unknown)", version / 100, version % 100);
-        return resultbuf;
-    }
+    return resultbuf;
 }
 
+//
+// G_DoPlayDemo
+//
+// [STRIFE] Modified for Strife demo format.
+//
 void G_DoPlayDemo (void) 
 { 
     skill_t skill; 
-    int             i, episode, map; 
-    int demoversion;
-	 
+    int     i, map; 
+    int     demoversion;
+
     gameaction = ga_nothing; 
     demobuffer = demo_p = W_CacheLumpName (defdemoname, PU_STATIC); 
 
@@ -2191,18 +2281,20 @@ void G_DoPlayDemo (void)
     {
         longtics = false;
     }
+    /* STRIFE-TODO: Not until/unless somebody makes a Strife-Plus :P
     else if (demoversion == DOOM_191_VERSION)
     {
         // demo recorded with cph's modified "v1.91" doom exe
         longtics = true;
     }
+    */
     else
     {
         char *message = "Demo is from a different game version!\n"
                         "(read %i, should be %i)\n"
                         "\n"
                         "*** You may need to upgrade your version "
-                            "of Doom to v1.9. ***\n"
+                            "of Strife to v1.1 or later. ***\n"
                         "    See: http://doomworld.com/files/patches.shtml\n"
                         "    This appears to be %s.";
 
@@ -2211,16 +2303,21 @@ void G_DoPlayDemo (void)
     }
     
     skill = *demo_p++; 
-    episode = *demo_p++; 
+    //episode = *demo_p++; [STRIFE] No episodes
     map = *demo_p++; 
     deathmatch = *demo_p++;
     respawnparm = *demo_p++;
     fastparm = *demo_p++;
     nomonsters = *demo_p++;
     consoleplayer = *demo_p++;
-	
+
     for (i=0 ; i<MAXPLAYERS ; i++) 
-	playeringame[i] = *demo_p++; 
+        playeringame[i] = *demo_p++; 
+
+    // STRIFE-TODO: read out the rest of playeringame until
+    // MAXPLAYERS is bumped to 8
+    for(; i < 8; i++)
+        ++demo_p;
 
     //!
     // @category demo
@@ -2230,13 +2327,13 @@ void G_DoPlayDemo (void)
 
     if (playeringame[1] || M_CheckParm("-netdemo") > 0) 
     { 
-	netgame = true; 
-	netdemo = true; 
+        netgame = true; 
+        netdemo = true; 
     }
 
     // don't spend a lot of time in loadlevel 
     precache = false;
-    G_InitNew (skill, episode, map); 
+    G_InitNew(skill, map); 
     precache = true; 
     starttime = I_GetTime (); 
 
@@ -2246,6 +2343,8 @@ void G_DoPlayDemo (void)
 
 //
 // G_TimeDemo 
+//
+// [STRIFE] Verified unmodified
 //
 void G_TimeDemo (char* name) 
 {
@@ -2274,17 +2373,17 @@ void G_TimeDemo (char* name)
 = Returns true if a new demo loop action will take place 
 =================== 
 */ 
- 
+// [STRIFE] Verified unmodified
 boolean G_CheckDemoStatus (void) 
 { 
     int             endtime; 
-	 
+
     if (timingdemo) 
     { 
         float fps;
         int realtics;
 
-	endtime = I_GetTime (); 
+        endtime = I_GetTime (); 
         realtics = endtime - starttime;
         fps = ((float) gametic * TICRATE) / realtics;
 
@@ -2292,42 +2391,42 @@ boolean G_CheckDemoStatus (void)
         timingdemo = false;
         demoplayback = false;
 
-	I_Error ("timed %i gametics in %i realtics (%f fps)",
+        I_Error ("timed %i gametics in %i realtics (%f fps)",
                  gametic, realtics, fps);
     } 
-	 
+
     if (demoplayback) 
     { 
         W_ReleaseLumpName(defdemoname);
-	demoplayback = false; 
-	netdemo = false;
-	netgame = false;
-	deathmatch = false;
-	playeringame[1] = playeringame[2] = playeringame[3] = 0;
-	respawnparm = false;
-	fastparm = false;
-	nomonsters = false;
-	consoleplayer = 0;
+        demoplayback = false; 
+        netdemo = false;
+        netgame = false;
+        deathmatch = false;
+        playeringame[1] = playeringame[2] = playeringame[3] = 0;
+        respawnparm = false;
+        fastparm = false;
+        nomonsters = false;
+        consoleplayer = 0;
         
         if (singledemo) 
             I_Quit (); 
         else 
             D_AdvanceDemo (); 
 
-	return true; 
+        return true; 
     } 
  
     if (demorecording) 
     { 
-	*demo_p++ = DEMOMARKER; 
-	M_WriteFile (demoname, demobuffer, demo_p - demobuffer); 
-	Z_Free (demobuffer); 
-	demorecording = false; 
-	I_Error ("Demo %s recorded",demoname); 
+        *demo_p++ = DEMOMARKER; 
+        M_WriteFile (demoname, demobuffer, demo_p - demobuffer); 
+        Z_Free (demobuffer); 
+        demorecording = false; 
+        I_Error ("Demo %s recorded",demoname); 
     } 
-	 
+
     return false; 
 } 
  
- 
+  
  

@@ -552,11 +552,11 @@ void AM_Start (void)
 
     if (!stopped) AM_Stop();
     stopped = false;
-    if (lastlevel != gamemap || lastepisode != gameepisode)
+    if (lastlevel != gamemap  /*|| lastepisode != gameepisode*/)
     {
 	AM_LevelInit();
 	lastlevel = gamemap;
-	lastepisode = gameepisode;
+	//lastepisode = gameepisode;
     }
     AM_initVariables();
     AM_loadPics();
