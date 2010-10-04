@@ -283,6 +283,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\strife\m_random.h" />
+		<Unit filename="..\src\strife\m_saves.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\strife\m_saves.h" />
 		<Unit filename="..\src\strife\p_ceilng.c">
 			<Option compilerVar="CC" />
 		</Unit>
