@@ -119,6 +119,8 @@ boolean P_GiveAmmo(player_t* player, ammotype_t ammo, int num)
 
     // villsa [STRIFE] ammo update
     // where's the check for grenades? - haleyjd: verified no switch to grenades
+    //   haleyjd 10/03/10: don't change to electric bow when picking up poison
+    //   arrows.
     if(!player->readyweapon)
     {
         switch(ammo)
@@ -129,7 +131,6 @@ boolean P_GiveAmmo(player_t* player, ammotype_t ammo, int num)
             break;
 
         case am_elecbolts:
-        case am_poisonbolts:
             if(player->weaponowned[wp_elecbow])
                 player->pendingweapon = wp_elecbow;
             break;
