@@ -1748,7 +1748,8 @@ void A_ProgrammerAttack(mobj_t* actor)
     if(!actor->target)
         return;
 
-    mo = P_SpawnMobj(actor->x, actor->y, ONFLOORZ, MT_SIGIL_A_GROUND);
+    mo = P_SpawnMobj(actor->target->x, actor->target->y, ONFLOORZ, 
+                     MT_SIGIL_A_GROUND);
     mo->threshold = 25;
     mo->target = actor;
     mo->health = -2;
