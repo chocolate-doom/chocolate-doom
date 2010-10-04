@@ -165,78 +165,93 @@ void T_MoveCeiling (ceiling_t* ceiling)
 // EV_DoCeiling
 // Move a ceiling up/down and all around!
 //
+// haleyjd 10/04/10: [STRIFE] Changes:
+// * Fast crushers were made 2x as fast.
+// * lowerAndCrush was apparently "fixed" to actually crush, and was also
+//   altered to lower all the way to the floor rather than remain 8 above.
 int
 EV_DoCeiling
-( line_t*	line,
-  ceiling_e	type )
+( line_t*       line,
+  ceiling_e     type )
 {
-    int		secnum;
-    int		rtn;
-    sector_t*	sec;
-    ceiling_t*	ceiling;
-	
+    int         secnum;
+    int         rtn;
+    sector_t*   sec;
+    ceiling_t*  ceiling;
+
     secnum = -1;
     rtn = 0;
-    
+
     //	Reactivate in-stasis ceilings...for certain types.
     switch(type)
     {
-      case fastCrushAndRaise:
-      case silentCrushAndRaise:
-      case crushAndRaise:
-	P_ActivateInStasisCeiling(line);
-      default:
-	break;
+    case fastCrushAndRaise:
+    case silentCrushAndRaise:
+    case crushAndRaise:
+        P_ActivateInStasisCeiling(line);
+    default:
+        break;
     }
-	
+
     while ((secnum = P_FindSectorFromLineTag(line,secnum)) >= 0)
     {
-	sec = &sectors[secnum];
-	if (sec->specialdata)
-	    continue;
-	
-	// new door thinker
-	rtn = 1;
-	ceiling = Z_Malloc (sizeof(*ceiling), PU_LEVSPEC, 0);
-	P_AddThinker (&ceiling->thinker);
-	sec->specialdata = ceiling;
-	ceiling->thinker.function.acp1 = (actionf_p1)T_MoveCeiling;
-	ceiling->sector = sec;
-	ceiling->crush = false;
-	
-	switch(type)
-	{
-	  case fastCrushAndRaise:
-	    ceiling->crush = true;
-	    ceiling->topheight = sec->ceilingheight;
-	    ceiling->bottomheight = sec->floorheight + (8*FRACUNIT);
-	    ceiling->direction = -1;
-	    ceiling->speed = CEILSPEED * 2;
-	    break;
+        sec = &sectors[secnum];
+        if (sec->specialdata)
+            continue;
 
-	  case silentCrushAndRaise:
-	  case crushAndRaise:
-	    ceiling->crush = true;
-	    ceiling->topheight = sec->ceilingheight;
-	  case lowerAndCrush:
-	  case lowerToFloor:
-	    ceiling->bottomheight = sec->floorheight;
-	    if (type != lowerToFloor)
-		ceiling->bottomheight += 8*FRACUNIT;
-	    ceiling->direction = -1;
-	    ceiling->speed = CEILSPEED;
-	    break;
+        // new door thinker
+        rtn = 1;
+        ceiling = Z_Malloc (sizeof(*ceiling), PU_LEVSPEC, 0);
+        P_AddThinker (&ceiling->thinker);
+        sec->specialdata = ceiling;
+        ceiling->thinker.function.acp1 = (actionf_p1)T_MoveCeiling;
+        ceiling->sector = sec;
+        ceiling->crush = false;
 
-	  case raiseToHighest:
-	    ceiling->topheight = P_FindHighestCeilingSurrounding(sec);
-	    ceiling->direction = 1;
-	    ceiling->speed = CEILSPEED;
-	    break;
-	}
-		
-	ceiling->tag = sec->tag;
-	ceiling->type = type;
-	P_AddActiveCeiling(ceiling);
+        switch(type)
+        {
+        case fastCrushAndRaise:
+            // [STRIFE]: Speed of fast crushers increased by 2x!
+            ceiling->crush = true;
+            ceiling->topheight = sec->ceilingheight;
+            ceiling->bottomheight = sec->floorheight + (8*FRACUNIT);
+            ceiling->direction = -1;
+            ceiling->speed = CEILSPEED * 4; // [STRIFE] Was CEILSPEED * 2
+            break;
+        
+        case lowerAndCrush:
+            // [STRIFE] lowerAndCrush doesn't seem to have crushed in DOOM,
+            // but it was certainly made to do so in Strife! It is also
+            // changed to lower all the way to the floor.
+            ceiling->crush = 1;
+            ceiling->direction = -1;
+            ceiling->speed = CEILSPEED;
+            ceiling->bottomheight = sec->floorheight;
+            break;
+
+        case silentCrushAndRaise:
+        case crushAndRaise:
+            ceiling->crush = true;
+            ceiling->topheight = sec->ceilingheight;
+
+        case lowerToFloor:
+            ceiling->bottomheight = sec->floorheight;
+            if (type != lowerToFloor)
+                ceiling->bottomheight += 8*FRACUNIT;
+            ceiling->direction = -1;
+            ceiling->speed = CEILSPEED;
+            break;
+
+        case raiseToHighest:
+            ceiling->topheight = P_FindHighestCeilingSurrounding(sec);
+            ceiling->direction = 1;
+            ceiling->speed = CEILSPEED;
+            break;
+        }
+
+        ceiling->tag = sec->tag;
+        ceiling->type = type;
+        P_AddActiveCeiling(ceiling);
     }
     return rtn;
 }

@@ -1370,35 +1370,40 @@ boolean PIT_RadiusAttack (mobj_t* thing)
     fixed_t	dx;
     fixed_t	dy;
     fixed_t	dist;
-	
-    if (!(thing->flags & MF_SHOOTABLE) )
-	return true;
+
+    if (!(thing->flags & MF_SHOOTABLE))
+        return true;
+
+    // haleyjd 10/04/10: Spectrals are not damaged by blast radii
+    if(thing->flags & MF_SPECTRAL)
+        return true;
 
     // Boss spider and cyborg
     // take no damage from concussion.
     // villsa [STRIFE] unused
-    /*if (thing->type == MT_CYBORG
-	|| thing->type == MT_SPIDER)
-	return true;	*/
-		
+    // haleyjd: INQUISITOR
+
+    if(thing->type == MT_INQUISITOR)
+        return true;
+
     dx = abs(thing->x - bombspot->x);
     dy = abs(thing->y - bombspot->y);
-    
+
     dist = dx>dy ? dx : dy;
     dist = (dist - thing->radius) >> FRACBITS;
 
     if (dist < 0)
-	dist = 0;
+        dist = 0;
 
     if (dist >= bombdamage)
-	return true;	// out of range
+        return true;	// out of range
 
     if ( P_CheckSight (thing, bombspot) )
     {
-	// must be in direct path
-	P_DamageMobj (thing, bombspot, bombsource, bombdamage - dist);
+        // must be in direct path
+        P_DamageMobj (thing, bombspot, bombsource, bombdamage - dist);
     }
-    
+
     return true;
 }
 
@@ -1409,20 +1414,20 @@ boolean PIT_RadiusAttack (mobj_t* thing)
 //
 void
 P_RadiusAttack
-( mobj_t*	spot,
-  mobj_t*	source,
-  int		damage )
+( mobj_t*       spot,
+  mobj_t*       source,
+  int           damage )
 {
-    int		x;
-    int		y;
+    int         x;
+    int         y;
     
-    int		xl;
-    int		xh;
-    int		yl;
-    int		yh;
+    int         xl;
+    int         xh;
+    int         yl;
+    int         yh;
     
-    fixed_t	dist;
-	
+    fixed_t     dist;
+
     dist = (damage+MAXRADIUS)<<FRACBITS;
     yh = (spot->y + dist - bmaporgy)>>MAPBLOCKSHIFT;
     yl = (spot->y - dist - bmaporgy)>>MAPBLOCKSHIFT;
@@ -1431,18 +1436,18 @@ P_RadiusAttack
     bombspot = spot;
     bombsource = source;
     bombdamage = damage;
-	
-    for (y=yl ; y<=yh ; y++)
-	for (x=xl ; x<=xh ; x++)
-	    P_BlockThingsIterator (x, y, PIT_RadiusAttack );
 
-    // villsa [STRIFE] TODO - verify. what on earth is it trying to do here?
-    spot->z += MAXRADIUS;
-    P_LineAttack(spot, 0, dist, 1, 0);
-    P_LineAttack(spot, ANG90, dist, 1, 0);
+    for (y=yl ; y<=yh ; y++)
+        for (x=xl ; x<=xh ; x++)
+            P_BlockThingsIterator (x, y, PIT_RadiusAttack );
+
+    // villsa [STRIFE] Send out 0 damage tracers to shatter nearby glass.
+    spot->z += 32*FRACUNIT;
+    P_LineAttack(spot, 0,      dist, 1, 0);
+    P_LineAttack(spot, ANG90,  dist, 1, 0);
     P_LineAttack(spot, ANG180, dist, 1, 0);
     P_LineAttack(spot, ANG270, dist, 1, 0);
-    spot->z -= MAXRADIUS;
+    spot->z -= 32*FRACUNIT;
 }
 
 
