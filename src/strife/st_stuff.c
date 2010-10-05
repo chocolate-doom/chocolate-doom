@@ -801,25 +801,28 @@ boolean ST_Responder(event_t* ev)
         P_GiveItemToPlayer(plyr, SPR_HELT, MT_TOKEN_TOUGHNESS);
     }
 
-    // villsa [STRIFE]
+    // villsa [STRIFE] 
     if(cht_CheckCheat(&cheat_lego, ev->data2))
     {
         plyr->st_update = true;
         if(plyr->weaponowned[wp_sigil])
         {
-            plyr->weaponowned[wp_sigil] = true;
             if(++plyr->sigiltype > 4)
             {
                 plyr->sigiltype = -1;
-                plyr->pendingweapon = wp_sigil;
-                plyr->weaponowned[wp_sigil] = true;
+                plyr->pendingweapon = wp_fist;
+                plyr->weaponowned[wp_sigil] = false;
             }
         }
         else
         {
             plyr->weaponowned[wp_sigil] = true;
-            plyr->sigiltype = -1;
+            plyr->sigiltype = 0;
         }
+        // BUG: This brings up a bad version of the Sigil (sigiltype -1) which
+        // causes some VERY interesting behavior, when you type LEGO for the
+        // sixth time. This shouldn't be done when taking it away, and yet it
+        // is here... verified with vanilla.
         plyr->pendingweapon = wp_sigil;
     }
 
