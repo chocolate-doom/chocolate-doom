@@ -1735,6 +1735,7 @@ boolean M_Responder (event_t* ev)
         if (messageRoutine)
             messageRoutine(key);
 
+        menupause = false;                // [STRIFE] unpause
         menuactive = false;
         S_StartSound(NULL, sfx_mtalht);   // [STRIFE] sound
         return true;

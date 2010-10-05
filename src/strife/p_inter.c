@@ -1140,7 +1140,7 @@ void P_DamageMobj(mobj_t* target, mobj_t* inflictor, mobj_t* source, int damage)
             else if(inflictor->type == MT_PFLAME)
             {
                 damage /= 2;
-                // robots deal very little damage
+                // robots take very little damage
                 if(target->flags & MF_NOBLOOD)
                     damage = temp / 2;
             }
