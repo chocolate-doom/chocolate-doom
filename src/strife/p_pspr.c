@@ -787,7 +787,7 @@ void A_FireSigil(player_t* player, pspdef_t* pspr)
     // keep info on armor because sigil does piercing damage
     i = player->armortype;
     player->armortype = 0;
-    P_DamageMobj(player->mo, player->mo, 0, 4 * player->sigiltype + 1);
+    P_DamageMobj(player->mo, player->mo, 0, 4 * (player->sigiltype + 1));
 
     // restore armor
     player->armortype = i;

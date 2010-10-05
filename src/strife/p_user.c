@@ -308,8 +308,6 @@ void P_DeathThink(player_t* player)
     if(player->pitch <= 90)
         player->pitch = player->pitch + 3;
 
-
-
     if(player->cmd.buttons & BT_USE)
         player->playerstate = PST_REBORN;
 }
