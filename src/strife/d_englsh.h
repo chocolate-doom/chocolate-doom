@@ -66,7 +66,7 @@
 #define MSGOFF	"Messages OFF"
 #define MSGON		"Messages ON"
 #define NETEND	"you can't end a netgame!\n\n"PRESSKEY
-#define ENDGAME	"are you sure you want to end the game?\n\n"PRESSYN
+#define ENDGAME	"are you sure you want\nto end the game?\n\n"PRESSYN
 
 // haleyjd 09/11/10: [STRIFE] No "to dos." on this
 #define DOSY		"(press y to quit)" 
