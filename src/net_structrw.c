@@ -30,6 +30,22 @@
 #include "net_packet.h"
 #include "net_structrw.h"
 
+void NET_WriteConnectData(net_packet_t *packet, net_connect_data_t *data)
+{
+    NET_WriteInt8(packet, data->gamemode);
+    NET_WriteInt8(packet, data->gamemission);
+    NET_WriteInt8(packet, data->lowres_turn);
+    NET_WriteInt8(packet, data->drone);
+}
+
+boolean NET_ReadConnectData(net_packet_t *packet, net_connect_data_t *data)
+{
+    return NET_ReadInt8(packet, (unsigned int *) &data->gamemode)
+        && NET_ReadInt8(packet, (unsigned int *) &data->gamemission)
+        && NET_ReadInt8(packet, (unsigned int *) &data->lowres_turn)
+        && NET_ReadInt8(packet, (unsigned int *) &data->drone);
+}
+
 void NET_WriteSettings(net_packet_t *packet, net_gamesettings_t *settings)
 {
     NET_WriteInt8(packet, settings->ticdup);
@@ -46,6 +62,8 @@ void NET_WriteSettings(net_packet_t *packet, net_gamesettings_t *settings)
     NET_WriteInt8(packet, settings->new_sync);
     NET_WriteInt32(packet, settings->timelimit);
     NET_WriteInt8(packet, settings->loadgame);
+    NET_WriteInt8(packet, settings->num_players);
+    NET_WriteInt8(packet, settings->consoleplayer);
 }
 
 boolean NET_ReadSettings(net_packet_t *packet, net_gamesettings_t *settings)
@@ -63,7 +81,9 @@ boolean NET_ReadSettings(net_packet_t *packet, net_gamesettings_t *settings)
         && NET_ReadInt8(packet, (unsigned int *) &settings->lowres_turn)
         && NET_ReadInt8(packet, (unsigned int *) &settings->new_sync)
         && NET_ReadInt32(packet, (unsigned int *) &settings->timelimit)
-        && NET_ReadSInt8(packet, (signed int *) &settings->loadgame);
+        && NET_ReadSInt8(packet, (signed int *) &settings->loadgame)
+        && NET_ReadInt8(packet, (unsigned int *) &settings->num_players)
+        && NET_ReadSInt8(packet, (signed int *) &settings->consoleplayer);
 }
 
 boolean NET_ReadQueryData(net_packet_t *packet, net_querydata_t *query)

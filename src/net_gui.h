@@ -30,7 +30,7 @@
 
 #include "doomtype.h"
 
-extern void NET_WaitForStart();
+extern void NET_WaitForStart(net_gamesettings_t *settings);
 
 #endif /* #ifndef NET_GUI_H */
 

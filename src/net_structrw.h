@@ -26,6 +26,9 @@
 #include "net_defs.h"
 #include "net_packet.h"
 
+void NET_WriteConnectData(net_packet_t *packet, net_connect_data_t *data);
+boolean NET_ReadConnectData(net_packet_t *packet, net_connect_data_t *data);
+
 extern void NET_WriteSettings(net_packet_t *packet, net_gamesettings_t *settings);
 extern boolean NET_ReadSettings(net_packet_t *packet, net_gamesettings_t *settings);
 

@@ -53,9 +53,11 @@ static void EscapePressed(TXT_UNCAST_ARG(widget), void *unused)
     I_Quit();
 }
 
-static void StartGame(TXT_UNCAST_ARG(widget), void *unused)
+static void StartGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(settings))
 {
-    NET_CL_StartGame();
+    TXT_CAST_ARG(net_gamesettings_t, settings);
+
+    NET_CL_StartGame(settings);
 }
 
 static void BuildGUI(void)
@@ -101,7 +103,7 @@ static void BuildGUI(void)
     TXT_SetWindowAction(window, TXT_HORIZ_LEFT, cancel);
 }
 
-static void UpdateGUI(void)
+static void UpdateGUI(net_gamesettings_t *settings)
 {
     txt_window_action_t *startgame;
     char buf[50];
@@ -144,7 +146,7 @@ static void UpdateGUI(void)
     if (net_client_controller)
     {
         startgame = TXT_NewWindowAction(' ', "Start game");
-        TXT_SignalConnect(startgame, "pressed", StartGame, NULL);
+        TXT_SignalConnect(startgame, "pressed", StartGame, settings);
     }
     else
     {
@@ -259,7 +261,7 @@ static void CheckMD5Sums(void)
     had_warning = true;
 }
 
-void NET_WaitForStart(void)
+void NET_WaitForStart(net_gamesettings_t *settings)
 {
     if (!TXT_Init())
     {
@@ -274,7 +276,7 @@ void NET_WaitForStart(void)
 
     while (net_waiting_for_start)
     {
-        UpdateGUI();
+        UpdateGUI(settings);
         CheckMD5Sums();
 
         TXT_DispatchEvents();

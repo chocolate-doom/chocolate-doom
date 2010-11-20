@@ -447,10 +447,8 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
                             net_addr_t *addr)
 {
     unsigned int magic;
-    unsigned int cl_gamemode, cl_gamemission;
-    unsigned int cl_recording_lowres;
-    unsigned int cl_drone;
     unsigned int is_freedoom;
+    net_connect_data_t data;
     md5_digest_t deh_md5sum, wad_md5sum;
     char *player_name;
     char *client_version;
@@ -501,10 +499,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
 
     // read the game mode and mission
 
-    if (!NET_ReadInt16(packet, &cl_gamemode) 
-     || !NET_ReadInt16(packet, &cl_gamemission)
-     || !NET_ReadInt8(packet, &cl_recording_lowres)
-     || !NET_ReadInt8(packet, &cl_drone)
+    if (!NET_ReadConnectData(packet, &data)
      || !NET_ReadMD5Sum(packet, wad_md5sum)
      || !NET_ReadMD5Sum(packet, deh_md5sum)
      || !NET_ReadInt8(packet, &is_freedoom))
@@ -512,7 +507,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         return;
     }
 
-    if (!D_ValidGameMode(cl_gamemission, cl_gamemode))
+    if (!D_ValidGameMode(data.gamemission, data.gamemode))
     {
         return;
     }
@@ -579,7 +574,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         NET_SV_AssignPlayers();
         num_players = NET_SV_NumPlayers();
 
-        if ((!cl_drone && num_players >= MAXPLAYERS)
+        if ((!data.drone && num_players >= MAXPLAYERS)
          || NET_SV_NumClients() >= MAXNETNODES)
         {
             NET_SV_SendReject(addr, "Server is full!");
@@ -592,10 +587,10 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
 
         // Adopt the game mode and mission of the first connecting client
 
-        if (num_players == 0 && !cl_drone)
+        if (num_players == 0 && !data.drone)
         {
-            sv_gamemode = cl_gamemode;
-            sv_gamemission = cl_gamemission;
+            sv_gamemode = data.gamemode;
+            sv_gamemission = data.gamemission;
         }
 
         // Save the MD5 checksums
@@ -607,7 +602,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         // Check the connecting client is playing the same game as all
         // the other clients
 
-        if (cl_gamemode != sv_gamemode || cl_gamemission != sv_gamemission)
+        if (data.gamemode != sv_gamemode || data.gamemission != sv_gamemission)
         {
             NET_SV_SendReject(addr, "You are playing the wrong game!");
             return;
@@ -617,8 +612,8 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
 
         NET_SV_InitNewClient(client, addr, player_name);
 
-        client->recording_lowres = cl_recording_lowres;
-        client->drone = cl_drone;
+        client->recording_lowres = data.lowres_turn;
+        client->drone = data.drone;
     }
 
     if (client->connection.state == NET_CONN_STATE_WAITING_ACK)
@@ -681,6 +676,8 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
         }
     }
 
+    settings.num_players = NET_SV_NumPlayers();
+
     nowtime = I_GetTimeMS();
 
     // Send start packets to each connected node
@@ -695,8 +692,8 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
         startpacket = NET_Conn_NewReliable(&clients[i].connection,
                                            NET_PACKET_TYPE_GAMESTART);
 
-        NET_WriteInt8(startpacket, NET_SV_NumPlayers());
-        NET_WriteInt8(startpacket, clients[i].player_number);
+        settings.consoleplayer = clients[i].player_number;
+
         NET_WriteSettings(startpacket, &settings);
     }
 

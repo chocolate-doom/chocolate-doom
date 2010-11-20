@@ -25,7 +25,7 @@
 //
 //-----------------------------------------------------------------------------
 
-
+#include <stdlib.h>
 
 #include "doomfeatures.h"
 
@@ -76,8 +76,7 @@ int             recvtic;
 
 // Used for original sync code.
 
-int		lastnettic;
-int             skiptics = 0;
+static int      skiptics = 0;
 
 // Reduce the bandwidth needed by sampling game input less and transmitting
 // less.  If ticdup is 2, sample half normal, 3 = one third normal, etc.
@@ -94,11 +93,7 @@ fixed_t         offsetms;
 
 // Use new client syncronisation code
 
-boolean         net_cl_new_sync = true;
-
-// Connected but not participating in the game (observer)
-
-boolean drone = false;
+boolean         new_sync = true;
 
 // 35 fps clock adjusted by offsetms milliseconds
 
@@ -108,7 +103,7 @@ static int GetAdjustedTime(void)
 
     time_ms = I_GetTimeMS();
 
-    if (net_cl_new_sync)
+    if (new_sync)
     {
 	// Use the adjustments from net_client.c only if we are
 	// using the new sync mode.
@@ -186,7 +181,7 @@ void NetUpdate (void)
             continue;
         }
 	
-        if (net_cl_new_sync)
+        if (new_sync)
         { 
            // If playing single player, do not allow tics to buffer
            // up very far
@@ -309,21 +304,144 @@ void D_StartGameLoop(void)
     lasttime = GetAdjustedTime() / ticdup;
 }
 
+// Load game settings from the specified structure and 
+// set global variables.
 
-//
-// D_CheckNetGame
-// Works out player numbers among the net participants
-//
-extern	int			viewangleoffset;
+static void LoadGameSettings(net_gamesettings_t *settings)
+{
+    unsigned int i;
 
-void D_CheckNetGame (void)
+    deathmatch = settings->deathmatch;
+    ticdup = settings->ticdup;
+    extratics = settings->extratics;
+    startepisode = settings->episode;
+    startmap = settings->map;
+    startskill = settings->skill;
+    startloadgame = settings->loadgame;
+    lowres_turn = settings->lowres_turn;
+    nomonsters = settings->nomonsters;
+    fastparm = settings->fast_monsters;
+    respawnparm = settings->respawn_monsters;
+    timelimit = settings->timelimit;
+
+    if (lowres_turn)
+    {
+        printf("NOTE: Turning resolution is reduced; this is probably "
+               "because there is a client recording a Vanilla demo.\n");
+    }
+
+    new_sync = settings->new_sync;
+
+    if (new_sync == false)
+    {
+	printf("Syncing netgames like Vanilla Doom.\n");
+    }
+
+    netgame = true;
+    autostart = true;
+
+    if (!drone)
+    {
+        consoleplayer = settings->consoleplayer;
+    }
+    else
+    {
+        consoleplayer = 0;
+    }
+    
+    for (i=0; i<MAXPLAYERS; ++i) 
+    {
+        playeringame[i] = i < settings->num_players;
+    }
+}
+
+// Save the game settings from global variables to the specified
+// game settings structure.
+
+static void SaveGameSettings(net_gamesettings_t *settings,
+                             net_connect_data_t *connect_data)
 {
     int i;
-    int num_players;
 
-    // Call D_QuitNetGame on exit 
+    // Fill in game settings structure with appropriate parameters
+    // for the new game
 
-    I_AtExit(D_QuitNetGame, true);
+    settings->deathmatch = deathmatch;
+    settings->episode = startepisode;
+    settings->map = startmap;
+    settings->skill = startskill;
+    settings->loadgame = startloadgame;
+    settings->gameversion = gameversion;
+    settings->nomonsters = nomonsters;
+    settings->fast_monsters = fastparm;
+    settings->respawn_monsters = respawnparm;
+    settings->timelimit = timelimit;
+
+    settings->lowres_turn = M_CheckParm("-record") > 0
+                         && M_CheckParm("-longtics") == 0;
+
+    //!
+    // @category net
+    //
+    // Use original game sync code.
+    //
+
+    if (M_CheckParm("-oldsync") > 0)
+	settings->new_sync = 0;
+    else
+	settings->new_sync = 1;
+    
+    //!
+    // @category net
+    // @arg <n>
+    //
+    // Send n extra tics in every packet as insurance against dropped
+    // packets.
+    //
+
+    i = M_CheckParm("-extratics");
+
+    if (i > 0)
+        settings->extratics = atoi(myargv[i+1]);
+    else
+        settings->extratics = 1;
+
+    //!
+    // @category net
+    // @arg <n>
+    //
+    // Reduce the resolution of the game by a factor of n, reducing
+    // the amount of network bandwidth needed.
+    //
+
+    i = M_CheckParm("-dup");
+
+    if (i > 0)
+        settings->ticdup = atoi(myargv[i+1]);
+    else
+        settings->ticdup = 1;
+
+    //
+    // Connect data
+    //
+
+    // Game type fields:
+
+    connect_data->gamemode = gamemode;
+    connect_data->gamemission = gamemission;
+
+    // Drone mode?
+
+    connect_data->drone = M_CheckParm("-drone") > 0;
+
+    // Are we recording a demo? Possibly set lowres turn mode
+
+    connect_data->lowres_turn = settings->lowres_turn;
+}
+
+void D_InitSinglePlayerGame(void)
+{
+    int i;
 
     // default values for single player
 
@@ -342,128 +460,160 @@ void D_CheckNetGame (void)
     recvtic = 0;
 
     playeringame[0] = true;
+}
+
+boolean D_InitNetGame(net_connect_data_t *connect_data,
+                      net_gamesettings_t *settings)
+{
+    net_addr_t *addr = NULL;
+    int i;
 
 #ifdef FEATURE_MULTIPLAYER
 
+    //!
+    // @category net
+    //
+    // Start a multiplayer server, listening for connections.
+    //
+
+    if (M_CheckParm("-server") > 0)
     {
-        net_addr_t *addr = NULL;
+        NET_SV_Init();
+        NET_SV_AddModule(&net_loop_server_module);
+        NET_SV_AddModule(&net_sdl_module);
+
+        net_loop_client_module.InitClient();
+        addr = net_loop_client_module.ResolveAddress(NULL);
+    }
+    else
+    {
+        //! 
+        // @category net
+        //
+        // Automatically search the local LAN for a multiplayer
+        // server and join it.
+        //
+
+        i = M_CheckParm("-autojoin");
+
+        if (i > 0)
+        {
+            addr = NET_FindLANServer();
+
+            if (addr == NULL)
+            {
+                I_Error("No server found on local LAN");
+            }
+        }
+
+        //!
+        // @arg <address>
+        // @category net
+        //
+        // Connect to a multiplayer server running on the given 
+        // address.
+        //
+        
+        i = M_CheckParm("-connect");
+
+        if (i > 0)
+        {
+            net_sdl_module.InitClient();
+            addr = net_sdl_module.ResolveAddress(myargv[i+1]);
+
+            if (addr == NULL)
+            {
+                I_Error("Unable to resolve '%s'\n", myargv[i+1]);
+            }
+        }
+    }
+
+    if (addr != NULL)
+    {
+        if (M_CheckParm("-drone") > 0)
+        {
+            connect_data->drone = true;
+        }
 
         //!
         // @category net
         //
-        // Start a multiplayer server, listening for connections.
+        // Run as the left screen in three screen mode.
         //
 
-        if (M_CheckParm("-server") > 0)
+        if (M_CheckParm("-left") > 0)
         {
-            NET_SV_Init();
-            NET_SV_AddModule(&net_loop_server_module);
-            NET_SV_AddModule(&net_sdl_module);
-
-            net_loop_client_module.InitClient();
-            addr = net_loop_client_module.ResolveAddress(NULL);
-        }
-        else
-        {
-            //! 
-            // @category net
-            //
-            // Automatically search the local LAN for a multiplayer
-            // server and join it.
-            //
-
-            i = M_CheckParm("-autojoin");
-
-            if (i > 0)
-            {
-                addr = NET_FindLANServer();
-
-                if (addr == NULL)
-                {
-                    I_Error("No server found on local LAN");
-                }
-            }
-
-            //!
-            // @arg <address>
-            // @category net
-            //
-            // Connect to a multiplayer server running on the given 
-            // address.
-            //
-            
-            i = M_CheckParm("-connect");
-
-            if (i > 0)
-            {
-                net_sdl_module.InitClient();
-                addr = net_sdl_module.ResolveAddress(myargv[i+1]);
-
-                if (addr == NULL)
-                {
-                    I_Error("Unable to resolve '%s'\n", myargv[i+1]);
-                }
-            }
+            viewangleoffset = ANG90;
+            connect_data->drone = true;
         }
 
-        if (addr != NULL)
+        //! 
+        // @category net
+        //
+        // Run as the right screen in three screen mode.
+        //
+
+        if (M_CheckParm("-right") > 0)
         {
-            if (M_CheckParm("-drone") > 0)
-            {
-                drone = true;
-            }
-
-            //!
-            // @category net
-            //
-            // Run as the left screen in three screen mode.
-            //
-
-            if (M_CheckParm("-left") > 0)
-            {
-                viewangleoffset = ANG90;
-                drone = true;
-            }
-
-            //! 
-            // @category net
-            //
-            // Run as the right screen in three screen mode.
-            //
-
-            if (M_CheckParm("-right") > 0)
-            {
-                viewangleoffset = ANG270;
-                drone = true;
-            }
-
-            if (!NET_CL_Connect(addr))
-            {
-                I_Error("D_CheckNetGame: Failed to connect to %s\n", 
-                        NET_AddrToString(addr));
-            }
-
-            printf("D_CheckNetGame: Connected to %s\n", NET_AddrToString(addr));
-
-            NET_WaitForStart();
+            viewangleoffset = ANG270;
+            connect_data->drone = true;
         }
+
+        if (!NET_CL_Connect(addr, connect_data))
+        {
+            I_Error("D_CheckNetGame: Failed to connect to %s\n", 
+                    NET_AddrToString(addr));
+        }
+
+        printf("D_CheckNetGame: Connected to %s\n", NET_AddrToString(addr));
+
+        // Wait for game start message received from server.
+
+        NET_WaitForStart(settings);
+
+        // Read the game settings that were received.
+
+        NET_CL_GetSettings(settings);
+
+        return true;
     }
 
 #endif
 
-    num_players = 0;
+    return false;
+}
 
-    for (i=0; i<MAXPLAYERS; ++i)
+//
+// D_CheckNetGame
+// Works out player numbers among the net participants
+//
+extern	int			viewangleoffset;
+
+void D_CheckNetGame (void)
+{
+    net_connect_data_t connect_data;
+    net_gamesettings_t settings;
+
+    // Call D_QuitNetGame on exit 
+
+    I_AtExit(D_QuitNetGame, true);
+
+    SaveGameSettings(&settings, &connect_data);
+
+    if (D_InitNetGame(&connect_data, &settings))
     {
-        if (playeringame[i])
-            ++num_players;
+        LoadGameSettings(&settings);
+    }
+    else
+    {
+        D_InitSinglePlayerGame();
     }
 
     DEH_printf("startskill %i  deathmatch: %i  startmap: %i  startepisode: %i\n",
                startskill, deathmatch, startmap, startepisode);
 	
     DEH_printf("player %i of %i (%i nodes)\n",
-               consoleplayer+1, num_players, num_players);
+               consoleplayer+1, settings.num_players, settings.num_players);
 
     // Show players here; the server might have specified a time limit
 
@@ -687,7 +837,7 @@ void TryRunTics (void)
     
     // decide how many tics to run
     
-    if (net_cl_new_sync)
+    if (new_sync)
     {
 	counts = availabletics;
     }
