@@ -93,6 +93,12 @@ char *video_driver = "";
 
 static SDL_Surface *screen;
 
+// Intermediate 8-bit buffer that we draw to instead of 'screen'.
+// This is used when we are rendering in 32-bit screen mode.
+// When in a real 8-bit screen mode, screenbuffer == screen.
+
+static SDL_Surface *screenbuffer;
+
 // palette
 
 static SDL_Color palette[256];
@@ -750,17 +756,18 @@ static boolean BlitArea(int x1, int y1, int x2, int y2)
 	return true;
     }
 
-    x_offset = (screen->w - screen_mode->width) / 2;
-    y_offset = (screen->h - screen_mode->height) / 2;
+    x_offset = (screenbuffer->w - screen_mode->width) / 2;
+    y_offset = (screenbuffer->h - screen_mode->height) / 2;
 
-    if (SDL_LockSurface(screen) >= 0)
+    if (SDL_LockSurface(screenbuffer) >= 0)
     {
-        I_InitScale(screens[0], 
-                    (byte *) screen->pixels + (y_offset * screen->pitch)
-                                            + x_offset, 
-                    screen->pitch);
+        I_InitScale(screens[0],
+                    (byte *) screenbuffer->pixels
+                                + (y_offset * screenbuffer->pitch)
+                                + x_offset,
+                    screenbuffer->pitch);
         result = screen_mode->DrawScreen(x1, y1, x2, y2);
-      	SDL_UnlockSurface(screen);
+      	SDL_UnlockSurface(screenbuffer);
     }
     else
     {
@@ -895,19 +902,30 @@ void I_FinishUpdate (void)
     // draw to screen
 
     BlitArea(0, 0, SCREENWIDTH, SCREENHEIGHT);
-    
-    // If we have a palette to set, the act of setting the palette
-    // updates the screen
 
     if (palette_to_set)
     {
-        SDL_SetColors(screen, palette, 0, 256);
+        SDL_SetColors(screenbuffer, palette, 0, 256);
         palette_to_set = false;
+
+        // In native 8-bit mode, if we have a palette to set, the act
+        // of setting the palette updates the screen
+
+        if (screenbuffer == screen)
+        {
+            return;
+        }
     }
-    else
+
+    // In 8in32 mode, we must blit from the fake 8-bit screen buffer
+    // to the real screen before doing a screen flip.
+
+    if (screenbuffer != screen)
     {
-        SDL_Flip(screen);
+        SDL_BlitSurface(screenbuffer, NULL, screen, NULL);
     }
+
+    SDL_Flip(screen);
 }
 
 
@@ -1540,6 +1558,7 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
 {
     byte *doompal;
     int flags = 0;
+    int bpp = 8;
 
     doompal = W_CacheLumpName(DEH_String("PLAYPAL"), PU_CACHE);
 
@@ -1552,7 +1571,16 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
 
     // Set the video mode.
 
-    flags |= SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF;
+    flags |= SDL_SWSURFACE;
+
+    if (M_CheckParm("-8in32"))
+    {
+        bpp = 32;
+    }
+    else
+    {
+        flags |= SDL_HWPALETTE | SDL_DOUBLEBUF;
+    }
 
     if (fullscreen)
     {
@@ -1563,11 +1591,23 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
         flags |= SDL_RESIZABLE;
     }
 
-    screen = SDL_SetVideoMode(w, h, 8, flags);
+    screen = SDL_SetVideoMode(w, h, bpp, flags);
 
     if (screen == NULL)
     {
-        I_Error("Error setting video mode: %s\n", SDL_GetError());
+        I_Error("Error setting video mode %ix%ix%ibpp: %s\n",
+                w, h, bpp, SDL_GetError());
+    }
+
+    if (screen->format->BitsPerPixel == 8)
+    {
+        screenbuffer = screen;
+    }
+    else
+    {
+        screenbuffer = SDL_CreateRGBSurface(SDL_SWSURFACE,
+                                            screen->w, screen->h, 8,
+                                            0, 0, 0, 0);
     }
 
     // If mode was not set, it must be set now that we know the
@@ -1708,24 +1748,19 @@ void I_InitGraphics(void)
     // Start with a clear black screen
     // (screen will be flipped after we set the palette)
 
-    if (SDL_LockSurface(screen) >= 0)
-    {
-        byte *screenpixels;
-        int y;
-
-        screenpixels = (byte *) screen->pixels;
-
-        for (y=0; y<screen->h; ++y)
-            memset(screenpixels + screen->pitch * y, 0, screen->w);
-
-        SDL_UnlockSurface(screen);
-    }
+    SDL_FillRect(screenbuffer, NULL, 0);
 
     // Set the palette
 
     doompal = W_CacheLumpName(DEH_String("PLAYPAL"), PU_CACHE);
     I_SetPalette(doompal);
-    SDL_SetColors(screen, palette, 0, 256);
+    SDL_SetColors(screenbuffer, palette, 0, 256);
+
+    if (screen != screenbuffer)
+    {
+        SDL_BlitSurface(screenbuffer, NULL, screen, NULL);
+        SDL_Flip(screen);
+    }
 
     CreateCursors();
 
@@ -1747,7 +1782,8 @@ void I_InitGraphics(void)
     // Likewise if the screen pitch is not the same as the width
     // If we have to multiply, drawing is done to a separate 320x200 buf
 
-    native_surface = !SDL_MUSTLOCK(screen)
+    native_surface = screen == screenbuffer
+                  && !SDL_MUSTLOCK(screen)
                   && screen_mode == &mode_scale_1x
                   && screen->pitch == SCREENWIDTH
                   && aspect_ratio_correct;
