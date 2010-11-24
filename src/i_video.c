@@ -126,6 +126,10 @@ static boolean native_surface;
 int screen_width = SCREENWIDTH;
 int screen_height = SCREENHEIGHT;
 
+// Color depth.
+
+int screen_bpp = 8;
+
 // Automatically adjust video settings if the selected mode is 
 // not a valid video mode.
 
@@ -1407,6 +1411,33 @@ static void CheckCommandLine(void)
 
     //!
     // @category video
+    // @arg <bpp>
+    //
+    // Specify the color depth of the screen, in bits per pixel.
+    //
+
+    i = M_CheckParm("-bpp");
+
+    if (i > 0)
+    {
+        screen_bpp = atoi(myargv[i + 1]);
+    }
+
+    // Because we love Eternity:
+
+    //!
+    // @category video
+    //
+    // Set the color depth of the screen to 32 bits per pixel.
+    //
+
+    if (M_CheckParm("-8in32"))
+    {
+        screen_bpp = 32;
+    }
+
+    //!
+    // @category video
     // @arg <WxY>
     //
     // Specify the screen mode (when running fullscreen) or the window
@@ -1558,7 +1589,6 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
 {
     byte *doompal;
     int flags = 0;
-    int bpp = 8;
 
     doompal = W_CacheLumpName(DEH_String("PLAYPAL"), PU_CACHE);
 
@@ -1573,11 +1603,7 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
 
     flags |= SDL_SWSURFACE;
 
-    if (M_CheckParm("-8in32"))
-    {
-        bpp = 32;
-    }
-    else
+    if (screen_bpp == 8)
     {
         flags |= SDL_HWPALETTE | SDL_DOUBLEBUF;
     }
@@ -1591,12 +1617,12 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
         flags |= SDL_RESIZABLE;
     }
 
-    screen = SDL_SetVideoMode(w, h, bpp, flags);
+    screen = SDL_SetVideoMode(w, h, screen_bpp, flags);
 
     if (screen == NULL)
     {
         I_Error("Error setting video mode %ix%ix%ibpp: %s\n",
-                w, h, bpp, SDL_GetError());
+                w, h, screen_bpp, SDL_GetError());
     }
 
     if (screen->format->BitsPerPixel == 8)

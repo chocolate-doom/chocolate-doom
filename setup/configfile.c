@@ -265,6 +265,7 @@ static default_t extra_defaults_list[] =
     {"startup_delay",               &startup_delay, DEFAULT_INT, 0, 0},
     {"screen_width",                &screen_width, DEFAULT_INT, 0, 0},
     {"screen_height",               &screen_height, DEFAULT_INT, 0, 0},
+    {"screen_bpp",                  &screen_bpp, DEFAULT_INT, 0, 0},
     {"grabmouse",                   &grabmouse, DEFAULT_INT, 0, 0},
     {"novert",                      &novert, DEFAULT_INT, 0, 0},
     {"mouse_acceleration",          &mouse_acceleration, DEFAULT_FLOAT, 0, 0},

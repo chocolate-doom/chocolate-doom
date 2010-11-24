@@ -26,6 +26,7 @@ extern int autoadjust_video_settings;
 extern int aspect_ratio_correct;
 extern int fullscreen;
 extern int screen_width, screen_height;
+extern int screen_bpp;
 extern int startup_delay;
 extern int show_endoom;
 extern char *video_driver;

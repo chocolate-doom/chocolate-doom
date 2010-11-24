@@ -75,6 +75,7 @@ int aspect_ratio_correct = 1;
 int fullscreen = 1;
 int screen_width = 320;
 int screen_height = 200;
+int screen_bpp = 8;
 int startup_delay = 1000;
 int show_endoom = 1;
 
