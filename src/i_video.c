@@ -926,7 +926,14 @@ void I_FinishUpdate (void)
 
     if (screenbuffer != screen)
     {
-        SDL_BlitSurface(screenbuffer, NULL, screen, NULL);
+        SDL_Rect dst_rect;
+
+        // Center the buffer within the full screen space.
+
+        dst_rect.x = (screen->w - screenbuffer->w) / 2;
+        dst_rect.y = (screen->h - screenbuffer->h) / 2;
+
+        SDL_BlitSurface(screenbuffer, NULL, screen, &dst_rect);
     }
 
     SDL_Flip(screen);
@@ -1625,16 +1632,10 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
                 w, h, screen_bpp, SDL_GetError());
     }
 
-    if (screen->format->BitsPerPixel == 8)
-    {
-        screenbuffer = screen;
-    }
-    else
-    {
-        screenbuffer = SDL_CreateRGBSurface(SDL_SWSURFACE,
-                                            screen->w, screen->h, 8,
-                                            0, 0, 0, 0);
-    }
+    // Blank out the full screen area in case there is any junk in
+    // the borders that won't otherwise be overwritten.
+
+    SDL_FillRect(screen, NULL, 0);
 
     // If mode was not set, it must be set now that we know the
     // screen size.
@@ -1655,6 +1656,22 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
         {
             mode->InitMode(doompal);
         }
+    }
+
+    // Create the screenbuffer surface; if we have a real 8-bit palettized
+    // screen, then we can use the screen as the screenbuffer.
+
+    if (screen->format->BitsPerPixel == 8)
+    {
+        screenbuffer = screen;
+    }
+    else
+    {
+        screenbuffer = SDL_CreateRGBSurface(SDL_SWSURFACE,
+                                            mode->width, mode->height, 8,
+                                            0, 0, 0, 0);
+
+        SDL_FillRect(screenbuffer, NULL, 0);
     }
 
     // Save screen mode.
@@ -1781,12 +1798,6 @@ void I_InitGraphics(void)
     doompal = W_CacheLumpName(DEH_String("PLAYPAL"), PU_CACHE);
     I_SetPalette(doompal);
     SDL_SetColors(screenbuffer, palette, 0, 256);
-
-    if (screen != screenbuffer)
-    {
-        SDL_BlitSurface(screenbuffer, NULL, screen, NULL);
-        SDL_Flip(screen);
-    }
 
     CreateCursors();
 
