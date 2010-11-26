@@ -1601,11 +1601,11 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
 
     // Set the video mode.
 
-    flags |= SDL_SWSURFACE;
+    flags |= SDL_SWSURFACE | SDL_DOUBLEBUF;
 
     if (screen_bpp == 8)
     {
-        flags |= SDL_HWPALETTE | SDL_DOUBLEBUF;
+        flags |= SDL_HWPALETTE;
     }
 
     if (fullscreen)
