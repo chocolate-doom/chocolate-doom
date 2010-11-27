@@ -1305,10 +1305,9 @@ void D_DoomMain (void)
 
     p = M_CheckParm ("-timer");
 
-    if (p && p < myargc-1 && deathmatch)
+    if (p && p < myargc-1)
     {
 	timelimit = atoi(myargv[p+1]);
-	printf("timer: %i\n", timelimit);
     }
 
     //!
@@ -1320,10 +1319,8 @@ void D_DoomMain (void)
 
     p = M_CheckParm ("-avg");
 
-    if (p && p < myargc-1 && deathmatch)
+    if (p && p < myargc-1)
     {
-        DEH_printf("Austin Virtual Gaming: Levels will end "
-                       "after 20 minutes\n");
 	timelimit = 20;
     }
 

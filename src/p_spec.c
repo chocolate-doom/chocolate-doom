@@ -1389,10 +1389,9 @@ void P_SpawnSpecials (void)
     if (W_CheckNumForName(DEH_String("texture2")) >= 0)
 	episode = 2;
 
-    
     // See if -TIMER was specified.
 
-    if (timelimit > 0)
+    if (timelimit > 0 && deathmatch)
     {
         levelTimer = true;
         levelTimeCount = timelimit * 60 * TICRATE;
@@ -1401,7 +1400,7 @@ void P_SpawnSpecials (void)
     {
 	levelTimer = false;
     }
-    
+
     //	Init special SECTORs.
     sector = sectors;
     for (i=0 ; i<numsectors ; i++, sector++)
