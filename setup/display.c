@@ -243,7 +243,7 @@ static int GetSupportedBPPIndex(char *description)
             return i;
         }
     }
-    
+
     // Shouldn't happen; fall back to the first in the list.
 
     return 0;
@@ -251,7 +251,7 @@ static int GetSupportedBPPIndex(char *description)
 
 // Set selected_bpp to match screen_bpp.
 
-static void SetSelectedBPP(void)
+static int TrySetSelectedBPP(void)
 {
     unsigned int num_depths = sizeof(pixel_depths) / sizeof(*pixel_depths);
     unsigned int i;
@@ -264,16 +264,41 @@ static void SetSelectedBPP(void)
         if (pixel_depths[i].bpp == screen_bpp)
         {
             selected_bpp = GetSupportedBPPIndex(pixel_depths[i].description);
-            return;
+            return 1;
         }
     }
 
-    // screen_bpp does not match anything in pixel_depths.  Set selected_bpp
-    // to something that is supported, and reset screen_bpp to something
-    // sensible while we're at it.
+    return 0;
+}
 
-    selected_bpp = 0;
-    screen_bpp = GetSelectedBPP();
+static void SetSelectedBPP(void)
+{
+    const SDL_VideoInfo *info;
+
+    if (TrySetSelectedBPP())
+    {
+        return;
+    }
+
+    // screen_bpp does not match any supported pixel depth.  Query SDL
+    // to find out what it recommends using.
+
+    info = SDL_GetVideoInfo();
+
+    if (info != NULL && info->vfmt != NULL)
+    {
+        screen_bpp = info->vfmt->BitsPerPixel;
+    }
+
+    // Try again.
+
+    if (!TrySetSelectedBPP())
+    {
+        // Give up and just use the first in the list.
+
+        selected_bpp = 0;
+        screen_bpp = GetSelectedBPP();
+    }
 }
 
 static void ModeSelected(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(mode))

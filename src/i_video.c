@@ -1207,15 +1207,61 @@ static void AutoAdjustWindowed(void)
     }
 }
 
+// Auto-adjust to a valid color depth.
+
+static void AutoAdjustColorDepth(void)
+{
+    SDL_Rect **modes;
+    SDL_PixelFormat format;
+    const SDL_VideoInfo *info;
+    int flags;
+
+    if (fullscreen)
+    {
+        flags = SDL_FULLSCREEN;
+    }
+    else
+    {
+        flags = 0;
+    }
+
+    format.BitsPerPixel = screen_bpp;
+    format.BytesPerPixel = (screen_bpp + 7) / 8;
+
+    // Are any screen modes supported at the configured color depth?
+
+    modes = SDL_ListModes(&format, flags);
+
+    // If not, we must autoadjust to something sensible.
+
+    if (modes == NULL)
+    {
+        printf("I_InitGraphics: %ibpp color depth not supported.\n",
+               screen_bpp);
+
+        info = SDL_GetVideoInfo();
+
+        if (info != NULL && info->vfmt != NULL)
+        {
+            screen_bpp = info->vfmt->BitsPerPixel;
+        }
+    }
+}
+
 // If the video mode set in the configuration file is not available,
 // try to choose a different mode.
 
 static void I_AutoAdjustSettings(void)
 {
-    int old_screen_w, old_screen_h;
+    int old_screen_w, old_screen_h, old_screen_bpp;
 
     old_screen_w = screen_width;
     old_screen_h = screen_height;
+    old_screen_bpp = screen_bpp;
+
+    // Possibly adjust color depth.
+
+    AutoAdjustColorDepth();
 
     // If we are running fullscreen, try to autoadjust to a valid fullscreen
     // mode.  If this is impossible, switch to windowed.
@@ -1234,10 +1280,11 @@ static void I_AutoAdjustSettings(void)
 
     // Have the settings changed?  Show a message.
 
-    if (screen_width != old_screen_w || screen_height != old_screen_h)
+    if (screen_width != old_screen_w || screen_height != old_screen_h
+     || screen_bpp != old_screen_bpp)
     {
-        printf("I_InitGraphics: Auto-adjusted to %ix%i.\n",
-               screen_width, screen_height);
+        printf("I_InitGraphics: Auto-adjusted to %ix%ix%ibpp.\n",
+               screen_width, screen_height, screen_bpp);
 
         printf("NOTE: Your video settings have been adjusted.  "
                "To disable this behavior,\n"
