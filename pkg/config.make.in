@@ -24,6 +24,7 @@ DOC_FILES = README       \
             INSTALL      \
             NEWS         \
             BUGS         \
+            NOT-BUGS     \
             CMDLINE      \
             TODO
 
