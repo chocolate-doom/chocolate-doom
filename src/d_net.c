@@ -405,9 +405,6 @@ void D_CheckNetGame (void)
 //
 void D_QuitNetGame (void)
 {
-    if (debugfile)
-	fclose (debugfile);
-
 #ifdef FEATURE_MULTIPLAYER
 
     NET_SV_Shutdown();

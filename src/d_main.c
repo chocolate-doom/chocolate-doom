@@ -124,8 +124,6 @@ int		startmap;
 boolean		autostart;
 int             startloadgame;
 
-FILE*		debugfile;
-
 boolean		advancedemo;
 
 // Store demo, do not accept any inputs
@@ -399,14 +397,6 @@ void D_DoomLoop (void)
     if (demorecording)
 	G_BeginRecording ();
 		
-    if (M_CheckParm ("-debugfile"))
-    {
-	char    filename[20];
-	sprintf (filename,"debug%i.txt",consoleplayer);
-	printf ("debug output to: %s\n",filename);
-	debugfile = fopen (filename,"w");
-    }
-
     TryRunTics();
 
     I_InitGraphics ();
