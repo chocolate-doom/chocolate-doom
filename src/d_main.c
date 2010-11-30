@@ -660,6 +660,7 @@ static struct
     GameVersion_t version;
 } gameversions[] = {
     {"Doom 1.9",             "1.9",        exe_doom_1_9},
+    {"Hacx",                 "hacx",       exe_hacx},
     {"Ultimate Doom",        "ultimate",   exe_ultimate},
     {"Final Doom",           "final",      exe_final},
     {"Chex Quest",           "chex",       exe_chex},
@@ -711,7 +712,7 @@ static void InitGameVersion(void)
     {
         // Determine automatically
 
-        if (gameversion == exe_chex) 
+        if (gameversion == exe_chex || gameversion == exe_hacx)
         {
             // Already determined
         }
@@ -792,6 +793,20 @@ static void LoadChexDeh(void)
         if (!DEH_LoadFile(chex_deh))
         {
             I_Error("Failed to load chex.deh needed for emulating chex.exe.");
+        }
+    }
+}
+
+static void LoadHacxDeh(void)
+{
+    // If this is the HACX IWAD, we need to load the DEHACKED lump.
+
+    if (gameversion == exe_hacx)
+    {
+        if (!DEH_LoadLumpByName("DEHACKED"))
+        {
+            I_Error("DEHACKED lump not found.  Please check that this is the "
+                    "Hacx v1.2 IWAD.");
         }
     }
 }
@@ -1227,6 +1242,7 @@ void D_DoomMain (void)
     D_IdentifyVersion();
     InitGameVersion();
     LoadChexDeh();
+    LoadHacxDeh();
     D_SetGameDescription();
     D_SetSaveGameDir();
 
