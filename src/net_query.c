@@ -36,7 +36,17 @@
 #include "net_structrw.h"
 #include "net_sdl.h"
 
+// DNS address of the Internet master server.
+
 #define MASTER_SERVER_ADDRESS "master.chocolate-doom.org"
+
+// Time to wait for a response before declaring a timeout.
+
+#define QUERY_TIMEOUT_SECS 1
+
+// Number of query attempts to make before giving up on a server.
+
+#define QUERY_MAX_ATTEMPTS 5
 
 typedef enum
 {
@@ -50,7 +60,7 @@ typedef enum
     QUERY_TARGET_QUEUED,       // Query not yet sent
     QUERY_TARGET_QUERIED,      // Query sent, waiting response
     QUERY_TARGET_RESPONDED,    // Response received
-    QUERY_TARGET_TIMED_OUT
+    QUERY_TARGET_NO_RESPONSE
 } query_target_state_t;
 
 typedef struct
@@ -60,6 +70,7 @@ typedef struct
     net_addr_t *addr;
     net_querydata_t data;
     unsigned int query_time;
+    unsigned int query_attempts;
     boolean printed;
 } query_target_t;
 
@@ -179,6 +190,7 @@ static query_target_t *GetTargetForAddr(net_addr_t *addr, boolean create)
     target->type = QUERY_TARGET_SERVER;
     target->state = QUERY_TARGET_QUEUED;
     target->printed = false;
+    target->query_attempts = 0;
     target->addr = addr;
     ++num_targets;
 
@@ -329,11 +341,19 @@ static void NET_Query_GetResponse(net_query_callback_t callback,
 
 static void SendOneQuery(void)
 {
+    unsigned int now;
     unsigned int i;
+
+    now = I_GetTimeMS();
 
     for (i = 0; i < num_targets; ++i)
     {
-        if (targets[i].state == QUERY_TARGET_QUEUED)
+        // Not queried yet?
+        // Or last query timed out without a response?
+
+        if (targets[i].state == QUERY_TARGET_QUEUED
+         || (targets[i].state == QUERY_TARGET_QUERIED
+             && now - targets[i].query_time > QUERY_TIMEOUT_SECS * 1000))
         {
             break;
         }
@@ -365,6 +385,7 @@ static void SendOneQuery(void)
     //printf("Queried %s\n", NET_AddrToString(targets[i].addr));
     targets[i].state = QUERY_TARGET_QUERIED;
     targets[i].query_time = I_GetTimeMS();
+    ++targets[i].query_attempts;
 }
 
 // Time out servers that have been queried and not responded.
@@ -378,10 +399,15 @@ static void CheckTargetTimeouts(void)
 
     for (i = 0; i < num_targets; ++i)
     {
+        // We declare a target to be "no response" when we've sent
+        // multiple query packets to it (QUERY_MAX_ATTEMPTS) and
+        // received no response to any of them.
+
         if (targets[i].state == QUERY_TARGET_QUERIED
-         && now - targets[i].query_time > 5000)
+         && targets[i].query_attempts >= QUERY_MAX_ATTEMPTS
+         && now - targets[i].query_time > QUERY_TIMEOUT_SECS * 1000)
         {
-            targets[i].state = QUERY_TARGET_TIMED_OUT;
+            targets[i].state = QUERY_TARGET_NO_RESPONSE;
         }
     }
 }
@@ -395,7 +421,7 @@ static boolean AllTargetsDone(void)
     for (i = 0; i < num_targets; ++i)
     {
         if (targets[i].state != QUERY_TARGET_RESPONDED
-         && targets[i].state != QUERY_TARGET_TIMED_OUT)
+         && targets[i].state != QUERY_TARGET_NO_RESPONSE)
         {
             return false;
         }
@@ -432,7 +458,7 @@ static void NET_Query_QueryLoop(net_query_callback_t callback,
 
         // Don't thrash the CPU
 
-        I_Sleep(100);
+        I_Sleep(50);
 
         CheckTargetTimeouts();
     }
@@ -598,6 +624,14 @@ int NET_MasterQuery(net_query_callback_t callback, void *user_data)
     target->type = QUERY_TARGET_MASTER;
 
     NET_Query_QueryLoop(callback, user_data);
+
+    // Check that we got a response from the master, and display
+    // a warning if we didn't.
+
+    if (target->state == QUERY_TARGET_NO_RESPONSE)
+    {
+        fprintf(stderr, "NET_MasterQuery: no response from master server.\n");
+    }
 
     return GetNumResponses();
 }
