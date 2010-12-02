@@ -852,7 +852,10 @@ void D_DoomMain (void)
 
     if (M_CheckParm("-masterquery"))
     {
-        NET_MasterQuery();
+        printf("\nSearching for servers on Internet ...\n\n");
+        p = NET_MasterQuery(NET_QueryPrintCallback, NULL);
+        printf("%i server(s) found.\n", p);
+        exit(0);
     }
 
     //!
@@ -868,6 +871,7 @@ void D_DoomMain (void)
     if (p > 0)
     {
         NET_QueryAddress(myargv[p+1]);
+        exit(0);
     }
 
     //!
@@ -877,7 +881,12 @@ void D_DoomMain (void)
     //
 
     if (M_CheckParm("-search"))
-        NET_LANQuery();
+    {
+        printf("\nSearching for servers on local LAN ...\n");
+        p = NET_LANQuery(NET_QueryPrintCallback, NULL);
+        printf("\n%i server(s) found.\n", p);
+        exit(0);
+    }
 
 #endif
             
