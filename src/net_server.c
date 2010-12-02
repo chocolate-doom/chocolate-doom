@@ -1079,6 +1079,7 @@ void NET_SV_SendQueryResponse(net_addr_t *addr)
 {
     net_packet_t *reply;
     net_querydata_t querydata;
+    int p;
 
     // Version
 
@@ -1098,9 +1099,22 @@ void NET_SV_SendQueryResponse(net_addr_t *addr)
     querydata.gamemode = sv_gamemode;
     querydata.gamemission = sv_gamemission;
 
-    // Server description.  This is currently hard-coded.
+    //!
+    // @arg <name>
+    //
+    // When starting a network server, specify a name for the server.
+    //
 
-    querydata.description = "Chocolate Doom server";
+    p = M_CheckParm("-servername");
+
+    if (p > 0 && p + 1 < myargc)
+    {
+        querydata.description = myargv[p + 1];
+    }
+    else
+    {
+        querydata.description = "Unnamed server";
+    }
 
     // Send it and we're done.
 
