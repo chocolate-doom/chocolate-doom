@@ -113,6 +113,14 @@ typedef enum
     NET_PACKET_TYPE_QUERY_RESPONSE,
 } net_packet_type_t;
 
+typedef enum
+{
+    NET_MASTER_PACKET_TYPE_ADD,
+    NET_MASTER_PACKET_TYPE_ADD_RESPONSE,
+    NET_MASTER_PACKET_TYPE_QUERY,
+    NET_MASTER_PACKET_TYPE_QUERY_RESPONSE
+} net_master_packet_type_t;
+
 typedef struct 
 {
     int ticdup;

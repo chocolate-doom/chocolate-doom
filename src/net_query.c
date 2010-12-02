@@ -36,15 +36,85 @@
 #include "net_structrw.h"
 #include "net_sdl.h"
 
+#define MASTER_SERVER_ADDRESS "master.chocolate-doom.org"
+
 typedef struct 
 {
     net_addr_t *addr;
     net_querydata_t data;
 } queryresponse_t;
 
+static boolean registered_with_master = false;
+
 static net_context_t *query_context;
 static queryresponse_t *responders;
 static int num_responses;
+
+// Resolve the master server address.
+
+net_addr_t *NET_Query_ResolveMaster(net_context_t *context)
+{
+    net_addr_t *addr;
+
+    addr = NET_ResolveAddress(context, MASTER_SERVER_ADDRESS);
+
+    if (addr == NULL)
+    {
+        fprintf(stderr, "Warning: Failed to resolve address "
+                        "for master server: %s\n", MASTER_SERVER_ADDRESS);
+    }
+
+    return addr;
+}
+
+// Send a registration packet to the master server to register
+// ourselves with the global list.
+
+void NET_Query_AddToMaster(net_addr_t *master_addr)
+{
+    net_packet_t *packet;
+
+    packet = NET_NewPacket(10);
+    NET_WriteInt16(packet, NET_MASTER_PACKET_TYPE_ADD);
+    NET_SendPacket(master_addr, packet);
+    NET_FreePacket(packet);
+}
+
+// Process a packet received from the master server.
+
+void NET_Query_MasterResponse(net_packet_t *packet)
+{
+    unsigned int packet_type;
+    unsigned int result;
+
+    if (!NET_ReadInt16(packet, &packet_type)
+     || !NET_ReadInt16(packet, &result))
+    {
+        return;
+    }
+
+    if (packet_type == NET_MASTER_PACKET_TYPE_ADD_RESPONSE)
+    {
+        if (result != 0)
+        {
+            // Only show the message once.
+
+            if (!registered_with_master)
+            {
+                printf("Registered with master server at %s\n",
+                       MASTER_SERVER_ADDRESS);
+                registered_with_master = true;
+            }
+        }
+        else
+        {
+            // Always show rejections.
+
+            printf("Failed to register with master server at %s\n",
+                   MASTER_SERVER_ADDRESS);
+        }
+    }
+}
 
 // Add a new address to the list of hosts that has responded
 
@@ -318,4 +388,5 @@ void NET_LANQuery(void)
 
     exit(0);
 }
+
 

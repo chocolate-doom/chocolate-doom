@@ -270,6 +270,7 @@ void D_CheckNetGame (void)
             NET_SV_Init();
             NET_SV_AddModule(&net_loop_server_module);
             NET_SV_AddModule(&net_sdl_module);
+            NET_SV_RegisterWithMaster();
 
             net_loop_client_module.InitClient();
             addr = net_loop_client_module.ResolveAddress(NULL);
