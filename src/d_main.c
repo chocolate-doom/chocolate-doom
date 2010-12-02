@@ -844,6 +844,18 @@ void D_DoomMain (void)
     }
 
     //!
+    // @category net
+    //
+    // Query the Internet master server for a global list of active
+    // servers.
+    //
+
+    if (M_CheckParm("-masterquery"))
+    {
+        NET_MasterQuery();
+    }
+
+    //!
     // @arg <address>
     // @category net
     //

@@ -30,10 +30,11 @@
 extern void NET_QueryAddress(char *addr);
 extern void NET_LANQuery(void);
 extern net_addr_t *NET_FindLANServer(void);
+extern void NET_MasterQuery(void);
 
-net_addr_t *NET_Query_ResolveMaster(net_context_t *context);
-void NET_Query_AddToMaster(net_addr_t *master_addr);
-void NET_Query_MasterResponse(net_packet_t *packet);
+extern net_addr_t *NET_Query_ResolveMaster(net_context_t *context);
+extern void NET_Query_AddToMaster(net_addr_t *master_addr);
+extern void NET_Query_MasterResponse(net_packet_t *packet);
 
 #endif /* #ifndef NET_QUERY_H */
 
