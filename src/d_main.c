@@ -852,9 +852,9 @@ void D_DoomMain (void)
 
     if (M_CheckParm("-masterquery"))
     {
-        printf("\nSearching for servers on Internet ...\n\n");
+        printf("\nSearching for servers on Internet ...\n");
         p = NET_MasterQuery(NET_QueryPrintCallback, NULL);
-        printf("%i server(s) found.\n", p);
+        printf("\n%i server(s) found.\n", p);
         exit(0);
     }
 
