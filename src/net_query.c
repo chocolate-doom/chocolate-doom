@@ -42,11 +42,11 @@
 
 // Time to wait for a response before declaring a timeout.
 
-#define QUERY_TIMEOUT_SECS 1
+#define QUERY_TIMEOUT_SECS 2
 
 // Number of query attempts to make before giving up on a server.
 
-#define QUERY_MAX_ATTEMPTS 5
+#define QUERY_MAX_ATTEMPTS 3
 
 typedef enum
 {
@@ -69,6 +69,7 @@ typedef struct
     query_target_state_t state;
     net_addr_t *addr;
     net_querydata_t data;
+    unsigned int ping_time;
     unsigned int query_time;
     unsigned int query_attempts;
     boolean printed;
@@ -251,9 +252,13 @@ static void NET_Query_ParseResponse(net_addr_t *addr, net_packet_t *packet,
         target->state = QUERY_TARGET_RESPONDED;
         memcpy(&target->data, &querydata, sizeof(net_querydata_t));
 
+        // Calculate RTT.
+
+        target->ping_time = I_GetTimeMS() - target->query_time;
+
         // Invoke callback to signal that we have a new address.
 
-        callback(addr, &target->data, user_data);
+        callback(addr, &target->data, target->ping_time, user_data);
     }
 }
 
@@ -479,7 +484,7 @@ void NET_Query_Init(void)
 // Callback that exits the query loop when the first server is found.
 
 static void NET_Query_ExitCallback(net_addr_t *addr, net_querydata_t *data,
-                                   void *user_data)
+                                   unsigned int ping_time, void *user_data)
 {
     NET_Query_ExitLoop();
 }
@@ -552,7 +557,7 @@ void NET_QueryAddress(char *addr_str)
 
     if (target->state == QUERY_TARGET_RESPONDED)
     {
-        NET_QueryPrintCallback(addr, &target->data, NULL);
+        NET_QueryPrintCallback(addr, &target->data, target->ping_time, NULL);
     }
     else
     {
@@ -679,6 +684,7 @@ static void PrintHeader(void)
     int i;
 
     putchar('\n');
+    formatted_printf(5, "Ping");
     formatted_printf(18, "Address");
     formatted_printf(8, "Players");
     puts("Description");
@@ -692,6 +698,7 @@ static void PrintHeader(void)
 
 void NET_QueryPrintCallback(net_addr_t *addr,
                             net_querydata_t *data,
+                            unsigned int ping_time,
                             void *user_data)
 {
     // If this is the first server, print the header.
@@ -702,6 +709,7 @@ void NET_QueryPrintCallback(net_addr_t *addr,
         printed_header = true;
     }
 
+    formatted_printf(5, "%4i", ping_time);
     formatted_printf(18, "%s: ", NET_AddrToString(addr));
     formatted_printf(8, "%i/%i", data->num_players, 
                                  data->max_players);
