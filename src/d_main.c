@@ -850,7 +850,7 @@ void D_DoomMain (void)
     // servers.
     //
 
-    if (M_CheckParm("-masterquery"))
+    if (M_CheckParm("-search"))
     {
         printf("\nSearching for servers on Internet ...\n");
         p = NET_MasterQuery(NET_QueryPrintCallback, NULL);
@@ -880,7 +880,7 @@ void D_DoomMain (void)
     // Search the local LAN for running servers.
     //
 
-    if (M_CheckParm("-search"))
+    if (M_CheckParm("-localsearch"))
     {
         printf("\nSearching for servers on local LAN ...\n");
         p = NET_LANQuery(NET_QueryPrintCallback, NULL);
