@@ -2223,10 +2223,11 @@ void G_DoPlayDemo (void)
     // Play back a demo recorded in a netgame with a single player.
     //
 
-    if (playeringame[1] || M_CheckParm("-netdemo") > 0) 
-    { 
-	netgame = true; 
-	netdemo = true; 
+    if (playeringame[1] || M_CheckParm("-solo-net") > 0
+                        || M_CheckParm("-netdemo") > 0)
+    {
+	netgame = true;
+	netdemo = true;
     }
 
     // don't spend a lot of time in loadlevel 
