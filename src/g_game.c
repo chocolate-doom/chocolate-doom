@@ -2217,12 +2217,6 @@ void G_DoPlayDemo (void)
     for (i=0 ; i<MAXPLAYERS ; i++) 
 	playeringame[i] = *demo_p++; 
 
-    //!
-    // @category demo
-    // 
-    // Play back a demo recorded in a netgame with a single player.
-    //
-
     if (playeringame[1] || M_CheckParm("-solo-net") > 0
                         || M_CheckParm("-netdemo") > 0)
     {
