@@ -8,8 +8,15 @@
        just 8-bit modes).  This is mainly to work around problems with
        Windows Vista/7, where 8-bit color modes don't always work
        properly.
+     * Multiplayer servers now register themselves with an Internet
+       master server.  Use the -search command line parameter to
+       find servers on the Internet to play on.  You can also use
+       DoomSeeker (http://skulltag.net/doomseeker/) which supports
+       this functionality.
      * When running in windowed mode, it is now possible to
        dynamically resize the window by dragging the window borders.
+     * Names can be specified for servers with the -servername command
+       line parameter.
      * There are now keyboard, mouse and joystick bindings to cycle
        through available weapons, making play with joypads or mobile
        devices (ie. without a proper keyboard) much more practical.
@@ -22,6 +29,9 @@
      * The Python scripts used for building Chocolate Doom now work
        with Python 3 (but also continue to work with Python 2)
        (thanks arin).
+     * The font used for the textscreen library can be forced by
+       setting the TEXTSCREEN_FONT environment variable to "small" or
+       "normal".
      * There is now a NOT-BUGS file included that lists some common
        Vanilla Doom bugs/limitations that you might encounter.
 
