@@ -69,6 +69,11 @@ typedef struct
     int last_send_time;
     char *name;
 
+    // Time that this client connected to the server.
+    // This is used to determine the controller (oldest client).
+
+    unsigned int connect_time;
+
     // Last time new gamedata was received from this client
     
     int last_gamedata_time;
@@ -381,19 +386,29 @@ static void NET_SV_AdvanceWindow(void)
 
 static net_client_t *NET_SV_Controller(void)
 {
+    net_client_t *best;
     int i;
 
-    // first client in the list is the controller
+    // Find the oldest client (first to connect).
+
+    best = NULL;
 
     for (i=0; i<MAXNETNODES; ++i)
     {
-        if (ClientConnected(&clients[i]) && !clients[i].drone)
+        // Can't be controller?
+
+        if (!ClientConnected(&clients[i]) || clients[i].drone)
         {
-            return &clients[i];
+            continue;
+        }
+
+        if (best == NULL || clients[i].connect_time < best->connect_time)
+        {
+            best = &clients[i];
         }
     }
 
-    return NULL;
+    return best;
 }
 
 // Given an address, find the corresponding client
@@ -433,6 +448,7 @@ static void NET_SV_InitNewClient(net_client_t *client,
                                  char *player_name)
 {
     client->active = true;
+    client->connect_time = I_GetTimeMS();
     NET_Conn_InitServer(&client->connection, addr);
     client->addr = addr;
     client->last_send_time = -1;
