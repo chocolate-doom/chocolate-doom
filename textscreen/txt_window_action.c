@@ -93,6 +93,7 @@ static void TXT_WindowActionMousePress(TXT_UNCAST_ARG(action),
 
 txt_widget_class_t txt_window_action_class =
 {
+    TXT_AlwaysSelectable,
     TXT_WindowActionSizeCalc,
     TXT_WindowActionDrawer,
     TXT_WindowActionKeyPress,

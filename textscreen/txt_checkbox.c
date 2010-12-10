@@ -117,6 +117,7 @@ static void TXT_CheckBoxMousePress(TXT_UNCAST_ARG(checkbox), int x, int y, int b
 
 txt_widget_class_t txt_checkbox_class =
 {
+    TXT_AlwaysSelectable,
     TXT_CheckBoxSizeCalc,
     TXT_CheckBoxDrawer,
     TXT_CheckBoxKeyPress,

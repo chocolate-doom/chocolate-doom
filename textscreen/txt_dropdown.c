@@ -262,6 +262,7 @@ static void TXT_DropdownListMousePress(TXT_UNCAST_ARG(list),
 
 txt_widget_class_t txt_dropdown_list_class =
 {
+    TXT_AlwaysSelectable,
     TXT_DropdownListSizeCalc,
     TXT_DropdownListDrawer,
     TXT_DropdownListKeyPress,

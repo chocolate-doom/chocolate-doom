@@ -287,7 +287,7 @@ void NET_WaitForStart(net_gamesettings_t *settings)
 
         if (!net_client_connected)
         {
-            I_Error("Disconnected from server");
+            I_Error("Lost connection to server");
         }
 
         TXT_Sleep(100);

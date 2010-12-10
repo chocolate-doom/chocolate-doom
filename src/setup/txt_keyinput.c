@@ -171,6 +171,7 @@ static void TXT_KeyInputMousePress(TXT_UNCAST_ARG(widget), int x, int y, int b)
 
 txt_widget_class_t txt_key_input_class =
 {
+    TXT_AlwaysSelectable,
     TXT_KeyInputSizeCalc,
     TXT_KeyInputDrawer,
     TXT_KeyInputKeyPress,

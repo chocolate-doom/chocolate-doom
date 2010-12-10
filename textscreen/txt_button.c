@@ -96,6 +96,7 @@ static void TXT_ButtonMousePress(TXT_UNCAST_ARG(button), int x, int y, int b)
 
 txt_widget_class_t txt_button_class =
 {
+    TXT_AlwaysSelectable,
     TXT_ButtonSizeCalc,
     TXT_ButtonDrawer,
     TXT_ButtonKeyPress,

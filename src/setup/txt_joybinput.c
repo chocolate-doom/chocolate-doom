@@ -206,6 +206,7 @@ static void TXT_JoystickInputMousePress(TXT_UNCAST_ARG(widget), int x, int y, in
 
 txt_widget_class_t txt_joystick_input_class =
 {
+    TXT_AlwaysSelectable,
     TXT_JoystickInputSizeCalc,
     TXT_JoystickInputDrawer,
     TXT_JoystickInputKeyPress,

@@ -204,8 +204,8 @@ void NetUpdate (void)
 	G_BuildTiccmd(&cmd);
 
 #ifdef FEATURE_MULTIPLAYER
-        
-        if (netgame && !demoplayback)
+
+        if (net_client_connected)
         {
             NET_CL_SendTiccmd(&cmd, maketic);
         }
@@ -460,6 +460,19 @@ void D_InitSinglePlayerGame(void)
     recvtic = 0;
 
     playeringame[0] = true;
+
+    //!
+    // @category net
+    //
+    // Start the game playing as though in a netgame with a single
+    // player.  This can also be used to play back single player netgame
+    // demos.
+    //
+
+    if (M_CheckParm("-solo-net") > 0)
+    {
+        netgame = true;
+    }
 }
 
 boolean D_InitNetGame(net_connect_data_t *connect_data,
@@ -467,6 +480,7 @@ boolean D_InitNetGame(net_connect_data_t *connect_data,
 {
     net_addr_t *addr = NULL;
     int i;
+
 
 #ifdef FEATURE_MULTIPLAYER
 

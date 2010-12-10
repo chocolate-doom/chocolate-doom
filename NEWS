@@ -22,18 +22,20 @@
        devices (ie. without a proper keyboard) much more practical.
      * There is now a key binding to change the multiplayer spy key
        (usually F12).
-     * There is now a configuration file parameter to set the OPL I/O
-       port, for cards that don't use port 0x388.
+     * The setup tool now has a "warp" button on the main menu, like
+       Vanilla setup.exe (thanks Proteh).
      * Up to 8 mouse buttons are now supported (including the
        mousewheel).
+     * A new command line parameter has been added (-solo-net) which
+       can be used to simulate being in a single player netgame.
+     * There is now a configuration file parameter to set the OPL I/O
+       port, for cards that don't use port 0x388.
      * The Python scripts used for building Chocolate Doom now work
        with Python 3 (but also continue to work with Python 2)
        (thanks arin).
-     * The font used for the textscreen library can be forced by
-       setting the TEXTSCREEN_FONT environment variable to "small" or
-       "normal".
      * There is now a NOT-BUGS file included that lists some common
-       Vanilla Doom bugs/limitations that you might encounter.
+       Vanilla Doom bugs/limitations that you might encounter
+       (thanks to Sander van Dijk for feedback).
 
     Compatibility:
      * The -timer and -avg options now work the same as Vanilla when
@@ -43,6 +45,11 @@
      * The HacX v1.2 IWAD file is now supported, and can be used
        standalone without the need for the Doom II IWAD (thanks
        atyth).
+     * The I_Error function doesn't display "Error:" before the error
+       message, matching the Vanilla behavior.  "Error" has also been
+       removed from the title of the dialog box that appears on
+       Windows when this happens.  This is desirable as not all such
+       messages are actually errors (thanks Proteh).
 
     Bugs fixed:
      * A workaround has been a bug in old versions of SDL_mixer
@@ -70,6 +77,17 @@
      * Screen borders no longer flash when running on widescreen
        monitors, if you choose a true-color screen mode (thanks
        exp(x)).
+     * The controller player in a netgame is the first player to join,
+       instead of just being someone who gets lucky.
+
+    libtextscreen:
+     * The font used for the textscreen library can be forced by
+       setting the TEXTSCREEN_FONT environment variable to "small" or
+       "normal".
+     * Tables or scroll panes that don't contain any selectable widgets
+       are now themselves not selectable (thanks Proteh).
+     * The actions displayed at the bottom of windows are now laid out
+       in a more aesthetically pleasing way.
 
 1.4.0 (2010-07-10):
 

@@ -209,7 +209,11 @@ static void AddIWADParameter(execute_context_t *exec)
     }
 }
 
-static void StartGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
+// Callback function invoked to launch the game.
+// This is used when starting a server and also when starting a
+// single player game via the "warp" menu.
+
+static void StartGame(int multiplayer)
 {
     execute_context_t *exec;
 
@@ -221,7 +225,6 @@ static void StartGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
     AddExtraParameters(exec);
 
     AddIWADParameter(exec);
-    AddCmdLineParameter(exec, "-server");
     AddCmdLineParameter(exec, "-skill %i", skill + 1);
 
     if (gamemission == hexen)
@@ -244,20 +247,6 @@ static void StartGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
         AddCmdLineParameter(exec, "-respawn");
     }
 
-    if (deathmatch == 1)
-    {
-        AddCmdLineParameter(exec, "-deathmatch");
-    }
-    else if (deathmatch == 2)
-    {
-        AddCmdLineParameter(exec, "-altdeath");
-    }
-
-    if (timer > 0)
-    {
-        AddCmdLineParameter(exec, "-timer %i", timer);
-    }
-
     if (warptype == WARP_ExMy)
     {
         // TODO: select IWAD based on warp type
@@ -268,7 +257,27 @@ static void StartGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
         AddCmdLineParameter(exec, "-warp %i", warpmap);
     }
 
-    AddCmdLineParameter(exec, "-port %i", udpport);
+    // Multiplayer-specific options:
+
+    if (multiplayer)
+    {
+        AddCmdLineParameter(exec, "-server");
+        AddCmdLineParameter(exec, "-port %i", udpport);
+
+        if (deathmatch == 1)
+        {
+            AddCmdLineParameter(exec, "-deathmatch");
+        }
+        else if (deathmatch == 2)
+        {
+            AddCmdLineParameter(exec, "-altdeath");
+        }
+
+        if (timer > 0)
+        {
+            AddCmdLineParameter(exec, "-timer %i", timer);
+        }
+    }
 
     AddWADs(exec);
 
@@ -280,6 +289,16 @@ static void StartGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
     ExecuteDoom(exec);
 
     exit(0);
+}
+
+static void StartServerGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
+{
+    StartGame(1);
+}
+
+static void StartSinglePlayerGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
+{
+    StartGame(0);
 }
 
 static void UpdateWarpButton(void)
@@ -544,12 +563,27 @@ static txt_widget_t *IWADSelector(void)
     return result;
 }
 
-static txt_window_action_t *StartGameAction(void)
+// Create the window action button to start the game.  This invokes
+// a different callback depending on whether to start a multiplayer
+// or single player game.
+
+static txt_window_action_t *StartGameAction(int multiplayer)
 {
     txt_window_action_t *action;
+    TxtWidgetSignalFunc callback;
 
     action = TXT_NewWindowAction(KEY_F10, "Start");
-    TXT_SignalConnect(action, "pressed", StartGame, NULL);
+
+    if (multiplayer)
+    {
+        callback = StartServerGame;
+    }
+    else
+    {
+        callback = StartSinglePlayerGame;
+    }
+
+    TXT_SignalConnect(action, "pressed", callback, NULL);
 
     return action;
 }
@@ -591,7 +625,11 @@ static txt_window_action_t *WadWindowAction(void)
     return action;
 }
 
-void StartMultiGame(void)
+// "Start game" menu.  This is used for the start server window
+// and the single player warp menu.  The parameters specify
+// the window title and whether to display multiplayer options.
+
+static void StartGameMenu(char *window_title, int multiplayer)
 {
     txt_window_t *window;
     txt_table_t *gameopt_table;
@@ -599,7 +637,7 @@ void StartMultiGame(void)
     txt_widget_t *iwad_selector;
     int num_mult_types = 2;
 
-    window = TXT_NewWindow("Start multiplayer game");
+    window = TXT_NewWindow(window_title);
 
     TXT_AddWidgets(window, 
                    gameopt_table = TXT_NewTable(2),
@@ -614,7 +652,7 @@ void StartMultiGame(void)
                    NULL);
 
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, WadWindowAction());
-    TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, StartGameAction());
+    TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, StartGameAction(multiplayer));
     
     TXT_SetColumnWidths(gameopt_table, 12, 12);
 
@@ -632,14 +670,8 @@ void StartMultiGame(void)
            iwad_selector = IWADSelector(),
            TXT_NewLabel("Skill"),
            skillbutton = TXT_NewDropdownList(&skill, doom_skills, 5),
-           TXT_NewLabel("Game type"),
-           TXT_NewDropdownList(&deathmatch, gamemodes, num_mult_types),
            TXT_NewLabel("Level warp"),
            warpbutton = TXT_NewButton2("????", LevelSelectDialog, NULL),
-           TXT_NewLabel("Time limit"),
-           TXT_NewHorizBox(TXT_NewIntInputBox(&timer, 2),
-                           TXT_NewLabel("minutes"),
-                           NULL),
            NULL);
 
     if (gamemission == hexen)
@@ -651,17 +683,39 @@ void StartMultiGame(void)
                        NULL);
     }
 
+    if (multiplayer)
+    {
+        TXT_AddWidgets(gameopt_table,
+               TXT_NewLabel("Game type"),
+               TXT_NewDropdownList(&deathmatch, gamemodes, num_mult_types),
+               TXT_NewLabel("Time limit"),
+               TXT_NewHorizBox(TXT_NewIntInputBox(&timer, 2),
+                               TXT_NewLabel("minutes"),
+                               NULL),
+               NULL);
+
+        TXT_AddWidgets(advanced_table, 
+                       TXT_NewLabel("UDP port"),
+                       TXT_NewIntInputBox(&udpport, 5),
+                       NULL);
+    }
+
     TXT_SetColumnWidths(advanced_table, 12, 12);
 
     TXT_SignalConnect(iwad_selector, "changed", UpdateWarpType, NULL);
 
-    TXT_AddWidgets(advanced_table, 
-                   TXT_NewLabel("UDP port"),
-                   TXT_NewIntInputBox(&udpport, 5),
-                   NULL);
-
     UpdateWarpType(NULL, NULL);
     UpdateWarpButton();
+}
+
+void StartMultiGame(void)
+{
+    StartGameMenu("Start multiplayer game", 1);
+}
+
+void WarpMenu(void)
+{
+    StartGameMenu("Level Warp", 0);
 }
 
 static void DoJoinGame(void *unused1, void *unused2)

@@ -39,7 +39,7 @@
 
 // DNS address of the Internet master server.
 
-#define MASTER_SERVER_ADDRESS "master.chocolate-doom.org"
+#define MASTER_SERVER_ADDRESS "master.chocolate-doom.org:2342"
 
 // Time to wait for a response before declaring a timeout.
 

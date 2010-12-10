@@ -121,6 +121,7 @@ static void TXT_RadioButtonMousePress(TXT_UNCAST_ARG(radiobutton),
 
 txt_widget_class_t txt_radiobutton_class =
 {
+    TXT_AlwaysSelectable,
     TXT_RadioButtonSizeCalc,
     TXT_RadioButtonDrawer,
     TXT_RadioButtonKeyPress,

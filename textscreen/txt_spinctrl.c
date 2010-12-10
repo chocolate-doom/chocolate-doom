@@ -358,6 +358,7 @@ static void TXT_SpinControlMousePress(TXT_UNCAST_ARG(spincontrol),
 
 txt_widget_class_t txt_spincontrol_class =
 {
+    TXT_AlwaysSelectable,
     TXT_SpinControlSizeCalc,
     TXT_SpinControlDrawer,
     TXT_SpinControlKeyPress,
