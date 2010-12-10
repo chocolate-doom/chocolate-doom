@@ -202,7 +202,7 @@ void TXT_AddWidgets(TXT_UNCAST_ARG(table), ...)
     va_end(args);
 }
 
-static int SelectableWidget(txt_table_t *table, int x, int y)
+static int SelectableCell(txt_table_t *table, int x, int y)
 {
     txt_widget_t *widget;
     int i;
@@ -217,7 +217,9 @@ static int SelectableWidget(txt_table_t *table, int x, int y)
     if (i >= 0 && i < table->num_widgets)
     {
         widget = table->widgets[i];
-        return widget != NULL && widget->selectable && widget->visible;
+        return widget != NULL
+            && TXT_SelectableWidget(widget)
+            && widget->visible;
     }
 
     return 0;
@@ -237,14 +239,14 @@ static int FindSelectableColumn(txt_table_t *table, int row, int start_col)
     {
         // Search to the right
 
-        if (SelectableWidget(table, start_col + x, row))
+        if (SelectableCell(table, start_col + x, row))
         {
             return start_col + x;
         }
 
         // Search to the left
 
-        if (SelectableWidget(table, start_col - x, row))
+        if (SelectableCell(table, start_col - x, row))
         {
             return start_col - x;
         }
@@ -270,7 +272,7 @@ static int TXT_TableKeyPress(TXT_UNCAST_ARG(table), int key)
     if (selected >= 0 && selected < table->num_widgets)
     {
         if (table->widgets[selected] != NULL
-         && table->widgets[selected]->selectable
+         && TXT_SelectableWidget(table->widgets[selected])
          && TXT_WidgetKeyPress(table->widgets[selected], key))
         {
             return 1;
@@ -329,7 +331,7 @@ static int TXT_TableKeyPress(TXT_UNCAST_ARG(table), int key)
 
         for (new_x = table->selected_x - 1; new_x >= 0; --new_x)
         {
-            if (SelectableWidget(table, new_x, table->selected_y))
+            if (SelectableCell(table, new_x, table->selected_y))
             {
                 // Found a selectable widget!
 
@@ -348,7 +350,7 @@ static int TXT_TableKeyPress(TXT_UNCAST_ARG(table), int key)
 
         for (new_x = table->selected_x + 1; new_x < table->columns; ++new_x)
         {
-            if (SelectableWidget(table, new_x, table->selected_y))
+            if (SelectableCell(table, new_x, table->selected_y))
             {
                 // Found a selectable widget!
 
@@ -547,7 +549,7 @@ static void TXT_TableMousePress(TXT_UNCAST_ARG(table), int x, int y, int b)
 
                 // Select the cell if the widget is selectable
 
-                if (widget->selectable)
+                if (TXT_SelectableWidget(widget))
                 {
                     table->selected_x = i % table->columns;
                     table->selected_y = i / table->columns;
@@ -563,8 +565,41 @@ static void TXT_TableMousePress(TXT_UNCAST_ARG(table), int x, int y, int b)
     }
 }
 
+// Determine whether the table is selectable.
+
+static int TXT_TableSelectable(TXT_UNCAST_ARG(table))
+{
+    TXT_CAST_ARG(txt_table_t, table);
+    int i;
+
+    // Is the currently-selected cell selectable?
+
+    if (SelectableCell(table, table->selected_x, table->selected_y))
+    {
+        return 1;
+    }
+
+    // Find the first selectable cell and set selected_x, selected_y.
+
+    for (i = 0; i < table->num_widgets; ++i)
+    {
+        if (table->widgets[i] != NULL
+         && TXT_SelectableWidget(table->widgets[i]))
+        {
+            table->selected_x = i % table->columns;
+            table->selected_y = i / table->columns;
+            return 1;
+        }
+    }
+
+    // No selectable widgets exist within the table.
+
+    return 0;
+}
+
 txt_widget_class_t txt_table_class =
 {
+    TXT_TableSelectable,
     TXT_CalcTableSize,
     TXT_TableDrawer,
     TXT_TableKeyPress,

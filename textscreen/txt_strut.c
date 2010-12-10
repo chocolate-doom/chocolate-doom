@@ -55,6 +55,7 @@ static int TXT_StrutKeyPress(TXT_UNCAST_ARG(strut), int key)
 
 txt_widget_class_t txt_strut_class =
 {
+    TXT_NeverSelectable,
     TXT_StrutSizeCalc,
     TXT_StrutDrawer,
     TXT_StrutKeyPress,
@@ -70,7 +71,6 @@ txt_strut_t *TXT_NewStrut(int width, int height)
     strut = malloc(sizeof(txt_strut_t));
 
     TXT_InitWidget(strut, &txt_strut_class);
-    strut->widget.selectable = 0;
     strut->width = width;
     strut->height = height;
 
