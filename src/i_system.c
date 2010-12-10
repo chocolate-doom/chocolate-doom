@@ -328,9 +328,9 @@ void I_Error (char *error, ...)
     
     // Message first.
     va_start(argptr, error);
-    fprintf(stderr, "\nError: ");
+    //fprintf(stderr, "\nError: ");
     vfprintf(stderr, error, argptr);
-    fprintf(stderr, "\n");
+    fprintf(stderr, "\n\n");
     va_end(argptr);
     fflush(stderr);
 
@@ -360,7 +360,7 @@ void I_Error (char *error, ...)
                             msgbuf, strlen(msgbuf) + 1,
                             wmsgbuf, sizeof(wmsgbuf));
 
-        MessageBoxW(NULL, wmsgbuf, L"Error", MB_OK);
+        MessageBoxW(NULL, wmsgbuf, L"" PACKAGE_NAME, MB_OK);
     }
 #endif
 

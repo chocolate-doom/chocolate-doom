@@ -45,6 +45,11 @@
      * The HacX v1.2 IWAD file is now supported, and can be used
        standalone without the need for the Doom II IWAD (thanks
        atyth).
+     * The I_Error function doesn't display "Error:" before the error
+       message, matching the Vanilla behavior.  "Error" has also been
+       removed from the title of the dialog box that appears on
+       Windows when this happens.  This is desirable as not all such
+       messages are actually errors (thanks Proteh).
 
     Bugs fixed:
      * A workaround has been a bug in old versions of SDL_mixer
