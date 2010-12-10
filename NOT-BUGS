@@ -65,7 +65,7 @@ If you are playing on a particularly large level, it is possible that
 when you save the game, the game will quit with the message "Savegame
 buffer overrun".
 
-Vanilla Doom has a limited size memory bufferthat it uses for saving
+Vanilla Doom has a limited size memory buffer that it uses for saving
 games.  If you are playing on a large level, the buffer may be too
 small for the entire savegame to fit.  Chocolate Doom allows the limit
 to be disabled: in the setup tool, go to the "compatibility" menu and

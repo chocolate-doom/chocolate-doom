@@ -33,7 +33,8 @@
        setting the TEXTSCREEN_FONT environment variable to "small" or
        "normal".
      * There is now a NOT-BUGS file included that lists some common
-       Vanilla Doom bugs/limitations that you might encounter.
+       Vanilla Doom bugs/limitations that you might encounter
+       (thanks to Sander van Dijk for feedback).
 
     Compatibility:
      * The -timer and -avg options now work the same as Vanilla when
