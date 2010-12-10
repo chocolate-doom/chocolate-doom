@@ -762,6 +762,8 @@ void M_DrawReadThis1(void)
     switch (gameversion)
     {
         case exe_doom_1_9:
+        case exe_hacx:
+
             if (gamemode == commercial)
             {
                 // Doom 2

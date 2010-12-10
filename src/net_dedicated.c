@@ -74,8 +74,8 @@ void NET_DedicatedServer(void)
     CheckForClientOptions();
 
     NET_SV_Init();
-
     NET_SV_AddModule(&net_sdl_module);
+    NET_SV_RegisterWithMaster();
 
     while (true)
     {

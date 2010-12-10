@@ -4,8 +4,19 @@
      * The DOSbox OPL emulator (DBOPL) has been imported to replace
        the older FMOPL code.  The quality of OPL emulation is now
        therefore much better.
+     * The game can now run in screen modes at any color depth (not
+       just 8-bit modes).  This is mainly to work around problems with
+       Windows Vista/7, where 8-bit color modes don't always work
+       properly.
+     * Multiplayer servers now register themselves with an Internet
+       master server.  Use the -search command line parameter to
+       find servers on the Internet to play on.  You can also use
+       DoomSeeker (http://skulltag.net/doomseeker/) which supports
+       this functionality.
      * When running in windowed mode, it is now possible to
        dynamically resize the window by dragging the window borders.
+     * Names can be specified for servers with the -servername command
+       line parameter.
      * There are now keyboard, mouse and joystick bindings to cycle
        through available weapons, making play with joypads or mobile
        devices (ie. without a proper keyboard) much more practical.
@@ -15,19 +26,50 @@
        port, for cards that don't use port 0x388.
      * Up to 8 mouse buttons are now supported (including the
        mousewheel).
+     * The Python scripts used for building Chocolate Doom now work
+       with Python 3 (but also continue to work with Python 2)
+       (thanks arin).
+     * The font used for the textscreen library can be forced by
+       setting the TEXTSCREEN_FONT environment variable to "small" or
+       "normal".
+     * There is now a NOT-BUGS file included that lists some common
+       Vanilla Doom bugs/limitations that you might encounter.
+
+    Compatibility:
+     * The -timer and -avg options now work the same as Vanilla when
+       playing back demos (thanks xttl)
+     * A texture lookup bug was fixed that caused the wrong sky to be
+       displayed in Spooky01.wad (thanks Porsche Monty).
+     * The HacX v1.2 IWAD file is now supported, and can be used
+       standalone without the need for the Doom II IWAD (thanks
+       atyth).
 
     Bugs fixed:
+     * A workaround has been a bug in old versions of SDL_mixer
+       (v1.2.8 and earlier) that could cause the game to lock up.
+       Please upgrade to a newer version if you haven't already.
      * It is now possible to use OPL emulation at 11025Hz sound
-       sampling rate (thanks to the new OPL emulator).
+       sampling rate, due to the new OPL emulator (thanks Porsche
+       Monty).
      * The span renderer function (used for drawing floors and
        ceilings) now behaves the same as Vanilla Doom, so screenshots
        are pixel-perfect identical to Vanilla Doom (thanks Porsche
        Monty).
      * The zone memory system now aligns allocated memory to 8-byte
        boundaries on 64-bit systems, which may fix crashes on systems
-       such as sparc64.
+       such as sparc64 (thanks Ryan Freeman and Edd Barrett).
      * The configure script now checks for libm, fixing compile
-       problems on Fedora Linux.
+       problems on Fedora Linux (thanks Sander van Dijk).
+     * Sound distortion with certain music files when played back
+       using OPL (eg. Heretic title screen).
+     * Error in Windows when reading response files (thanks Porsche
+       Monty, xttl, Janizdreg).
+     * Windows Vista/7 8-bit color mode issues (the default is now to
+       run in 32-bit color depth on these versions) (thanks to
+       everybody who reported this and helped test the fix).
+     * Screen borders no longer flash when running on widescreen
+       monitors, if you choose a true-color screen mode (thanks
+       exp(x)).
 
 1.4.0 (2010-07-10):
 

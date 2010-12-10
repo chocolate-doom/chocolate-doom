@@ -122,8 +122,6 @@ int		startmap;
 boolean		autostart;
 int             startloadgame;
 
-FILE*		debugfile;
-
 boolean		advancedemo;
 
 // Store demo, do not accept any inputs
@@ -424,14 +422,6 @@ void D_DoomLoop (void)
     if (demorecording)
 	G_BeginRecording ();
 		
-    if (M_CheckParm ("-debugfile"))
-    {
-	char    filename[20];
-	sprintf (filename,"debug%i.txt",consoleplayer);
-	printf ("debug output to: %s\n",filename);
-	debugfile = fopen (filename,"w");
-    }
-
     TryRunTics();
 
     I_SetWindowTitle(gamedescription);
@@ -611,8 +601,12 @@ void D_StartTitle (void)
 // These are from the original source: some of them are perhaps
 // not used in any dehacked patches
 
-static char *banners[] = 
+static char *banners[] =
 {
+    // doom2.wad
+    "                         "
+    "DOOM 2: Hell on Earth v%i.%i"
+    "                           ",
     // doom1.wad
     "                            "
     "DOOM Shareware Startup v%i.%i"
@@ -629,10 +623,6 @@ static char *banners[] =
     "                         "
     "The Ultimate DOOM Startup v%i.%i"
     "                        ",
-    // doom2.wad
-    "                         "
-    "DOOM 2: Hell on Earth v%i.%i"
-    "                           ",
     // tnt.wad
     "                     "
     "DOOM 2: TNT - Evilution v%i.%i"
@@ -833,6 +823,18 @@ static boolean CheckChex(char *iwadname)
                     chex_iwadname));
 }
 
+// Check if the IWAD file is the Hacx IWAD.
+// Returns true if this is hacx.wad.
+
+static boolean CheckHacx(char *iwadname)
+{
+    char *hacx_iwadname = "hacx.wad";
+
+    return (strlen(iwadname) > strlen(hacx_iwadname)
+     && !strcasecmp(iwadname + strlen(iwadname) - strlen(hacx_iwadname),
+                    hacx_iwadname));
+}
+
 //      print title for every printed line
 char            title[128];
 
@@ -903,6 +905,7 @@ static struct
     GameVersion_t version;
 } gameversions[] = {
     {"Doom 1.9",             "1.9",        exe_doom_1_9},
+    {"Hacx",                 "hacx",       exe_hacx},
     {"Ultimate Doom",        "ultimate",   exe_ultimate},
     {"Final Doom",           "final",      exe_final},
     {"Chex Quest",           "chex",       exe_chex},
@@ -959,6 +962,12 @@ static void InitGameVersion(void)
             // chex.exe - identified by iwad filename
 
             gameversion = exe_chex;
+        }
+        else if (CheckHacx(iwadfile))
+        {
+            // hacx exe: identified by iwad filename
+
+            gameversion = exe_hacx;
         }
         else if (gamemode == shareware || gamemode == registered)
         {
@@ -1060,6 +1069,20 @@ static void D_Endoom(void)
     I_Endoom(endoom);
 }
 
+static void LoadHacxDeh(void)
+{
+    // If this is the HACX IWAD, we need to load the DEHACKED lump.
+
+    if (gameversion == exe_hacx)
+    {
+        if (!DEH_LoadLumpByName("DEHACKED"))
+        {
+            I_Error("DEHACKED lump not found.  Please check that this is the "
+                    "Hacx v1.2 IWAD.");
+        }
+    }
+}
+
 //
 // D_DoomMain
 //
@@ -1097,6 +1120,21 @@ void D_DoomMain (void)
     }
 
     //!
+    // @category net
+    //
+    // Query the Internet master server for a global list of active
+    // servers.
+    //
+
+    if (M_CheckParm("-search"))
+    {
+        printf("\nSearching for servers on Internet ...\n");
+        p = NET_MasterQuery(NET_QueryPrintCallback, NULL);
+        printf("\n%i server(s) found.\n", p);
+        exit(0);
+    }
+
+    //!
     // @arg <address>
     // @category net
     //
@@ -1109,6 +1147,7 @@ void D_DoomMain (void)
     if (p > 0)
     {
         NET_QueryAddress(myargv[p+1]);
+        exit(0);
     }
 
     //!
@@ -1117,8 +1156,13 @@ void D_DoomMain (void)
     // Search the local LAN for running servers.
     //
 
-    if (M_CheckParm("-search"))
-        NET_LANQuery();
+    if (M_CheckParm("-localsearch"))
+    {
+        printf("\nSearching for servers on local LAN ...\n");
+        p = NET_LANQuery(NET_QueryPrintCallback, NULL);
+        printf("\n%i server(s) found.\n", p);
+        exit(0);
+    }
 
 #endif
             
@@ -1365,6 +1409,7 @@ void D_DoomMain (void)
     D_IdentifyVersion();
     InitGameVersion();
     LoadChexDeh();
+    LoadHacxDeh();
     D_SetGameDescription();
     SetSaveGameDir(iwadfile);
 
@@ -1443,10 +1488,9 @@ void D_DoomMain (void)
 
     p = M_CheckParm ("-timer");
 
-    if (p && p < myargc-1 && deathmatch)
+    if (p && p < myargc-1)
     {
 	timelimit = atoi(myargv[p+1]);
-	printf("timer: %i\n", timelimit);
     }
 
     //!
@@ -1458,10 +1502,8 @@ void D_DoomMain (void)
 
     p = M_CheckParm ("-avg");
 
-    if (p && p < myargc-1 && deathmatch)
+    if (p && p < myargc-1)
     {
-        DEH_printf("Austin Virtual Gaming: Levels will end "
-                       "after 20 minutes\n");
 	timelimit = 20;
     }
 

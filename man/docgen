@@ -150,11 +150,8 @@ config_files = {}
 show_vanilla_options = True
 
 class Parameter:
-    def __cmp__(self, other):
-        if self.name < other.name:
-            return -1
-        else:
-            return 1
+    def __lt__(self, other):
+        return self.name < other.name
 
     def __init__(self):
         self.text = ""
@@ -389,7 +386,7 @@ def print_template(template_file, content):
     try:
         for line in f:
             line = line.replace("@content", content)
-            print line.rstrip()
+            print(line.rstrip())
 
     finally:
         f.close()
@@ -407,7 +404,7 @@ def wiki_output(targets, template):
     read_wikipages()
 
     for t in targets:
-        print t.wiki_output()
+        print(t.wiki_output())
 
 def plaintext_output(targets, template_file):
 
@@ -419,13 +416,13 @@ def plaintext_output(targets, template_file):
     print_template(template_file, content)
 
 def usage():
-    print "Usage: %s [-V] [-c filename ]( -m | -w | -p ) <directory>" \
-            % sys.argv[0]
-    print "   -c :  Provide documentation for the specified configuration file"
-    print "   -m :  Manpage output"
-    print "   -w :  Wikitext output"
-    print "   -p :  Plaintext output"
-    print "   -V :  Don't show Vanilla Doom options"
+    print("Usage: %s [-V] [-c filename ]( -m | -w | -p ) <directory>" \
+            % sys.argv[0])
+    print("   -c :  Provide documentation for the specified configuration file")
+    print("   -m :  Manpage output")
+    print("   -w :  Wikitext output")
+    print("   -p :  Plaintext output")
+    print("   -V :  Don't show Vanilla Doom options")
     sys.exit(0)
 
 # Parse command line

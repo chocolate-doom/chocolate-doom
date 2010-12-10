@@ -47,6 +47,7 @@ static iwad_t iwads[] =
     { "doom.wad",     doom,      retail,     "Doom" },
     { "doom1.wad",    doom,      shareware,  "Doom Shareware" },
     { "chex.wad",     doom,      shareware,  "Chex Quest" },
+    { "hacx.wad",     doom2,     commercial, "Hacx" },
     { "heretic.wad",  heretic,   retail,     "Heretic" },
     { "heretic1.wad", heretic,   shareware,  "Heretic Shareware" },
     { "hexen.wad",    hexen,     commercial, "Hexen" },

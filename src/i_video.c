@@ -139,6 +139,12 @@ static SDL_Surface *screen;
 
 static char *window_title = "";
 
+// Intermediate 8-bit buffer that we draw to instead of 'screen'.
+// This is used when we are rendering in 32-bit screen mode.
+// When in a real 8-bit screen mode, screenbuffer == screen.
+
+static SDL_Surface *screenbuffer;
+
 // palette
 
 static SDL_Color palette[256];
@@ -171,6 +177,10 @@ static boolean native_surface;
 
 static int screen_width = SCREENWIDTH;
 static int screen_height = SCREENHEIGHT;
+
+// Color depth.
+
+int screen_bpp = 8;
 
 // Automatically adjust video settings if the selected mode is 
 // not a valid video mode.
@@ -911,17 +921,18 @@ static boolean BlitArea(int x1, int y1, int x2, int y2)
 	return true;
     }
 
-    x_offset = (screen->w - screen_mode->width) / 2;
-    y_offset = (screen->h - screen_mode->height) / 2;
+    x_offset = (screenbuffer->w - screen_mode->width) / 2;
+    y_offset = (screenbuffer->h - screen_mode->height) / 2;
 
-    if (SDL_LockSurface(screen) >= 0)
+    if (SDL_LockSurface(screenbuffer) >= 0)
     {
         I_InitScale(I_VideoBuffer,
-                    (byte *) screen->pixels + (y_offset * screen->pitch)
-                                            + x_offset, 
+                    (byte *) screenbuffer->pixels
+                                + (y_offset * screen->pitch)
+                                + x_offset,
                     screen->pitch);
         result = screen_mode->DrawScreen(x1, y1, x2, y2);
-      	SDL_UnlockSurface(screen);
+      	SDL_UnlockSurface(screenbuffer);
     }
     else
     {
@@ -1055,19 +1066,37 @@ void I_FinishUpdate (void)
     // draw to screen
 
     BlitArea(0, 0, SCREENWIDTH, SCREENHEIGHT);
-    
-    // If we have a palette to set, the act of setting the palette
-    // updates the screen
 
     if (palette_to_set)
     {
-        SDL_SetColors(screen, palette, 0, 256);
+        SDL_SetColors(screenbuffer, palette, 0, 256);
         palette_to_set = false;
+
+        // In native 8-bit mode, if we have a palette to set, the act
+        // of setting the palette updates the screen
+
+        if (screenbuffer == screen)
+        {
+            return;
+        }
     }
-    else
+
+    // In 8in32 mode, we must blit from the fake 8-bit screen buffer
+    // to the real screen before doing a screen flip.
+
+    if (screenbuffer != screen)
     {
-        SDL_Flip(screen);
+        SDL_Rect dst_rect;
+
+        // Center the buffer within the full screen space.
+
+        dst_rect.x = (screen->w - screenbuffer->w) / 2;
+        dst_rect.y = (screen->h - screenbuffer->h) / 2;
+
+        SDL_BlitSurface(screenbuffer, NULL, screen, &dst_rect);
     }
+
+    SDL_Flip(screen);
 }
 
 
@@ -1348,15 +1377,61 @@ static void AutoAdjustWindowed(void)
     }
 }
 
+// Auto-adjust to a valid color depth.
+
+static void AutoAdjustColorDepth(void)
+{
+    SDL_Rect **modes;
+    SDL_PixelFormat format;
+    const SDL_VideoInfo *info;
+    int flags;
+
+    if (fullscreen)
+    {
+        flags = SDL_FULLSCREEN;
+    }
+    else
+    {
+        flags = 0;
+    }
+
+    format.BitsPerPixel = screen_bpp;
+    format.BytesPerPixel = (screen_bpp + 7) / 8;
+
+    // Are any screen modes supported at the configured color depth?
+
+    modes = SDL_ListModes(&format, flags);
+
+    // If not, we must autoadjust to something sensible.
+
+    if (modes == NULL)
+    {
+        printf("I_InitGraphics: %ibpp color depth not supported.\n",
+               screen_bpp);
+
+        info = SDL_GetVideoInfo();
+
+        if (info != NULL && info->vfmt != NULL)
+        {
+            screen_bpp = info->vfmt->BitsPerPixel;
+        }
+    }
+}
+
 // If the video mode set in the configuration file is not available,
 // try to choose a different mode.
 
 static void I_AutoAdjustSettings(void)
 {
-    int old_screen_w, old_screen_h;
+    int old_screen_w, old_screen_h, old_screen_bpp;
 
     old_screen_w = screen_width;
     old_screen_h = screen_height;
+    old_screen_bpp = screen_bpp;
+
+    // Possibly adjust color depth.
+
+    AutoAdjustColorDepth();
 
     // If we are running fullscreen, try to autoadjust to a valid fullscreen
     // mode.  If this is impossible, switch to windowed.
@@ -1375,10 +1450,11 @@ static void I_AutoAdjustSettings(void)
 
     // Have the settings changed?  Show a message.
 
-    if (screen_width != old_screen_w || screen_height != old_screen_h)
+    if (screen_width != old_screen_w || screen_height != old_screen_h
+     || screen_bpp != old_screen_bpp)
     {
-        printf("I_InitGraphics: Auto-adjusted to %ix%i.\n",
-               screen_width, screen_height);
+        printf("I_InitGraphics: Auto-adjusted to %ix%ix%ibpp.\n",
+               screen_width, screen_height, screen_bpp);
 
         printf("NOTE: Your video settings have been adjusted.  "
                "To disable this behavior,\n"
@@ -1563,6 +1639,33 @@ static void CheckCommandLine(void)
     if (i > 0)
     {
         screen_height = atoi(myargv[i + 1]);
+    }
+
+    //!
+    // @category video
+    // @arg <bpp>
+    //
+    // Specify the color depth of the screen, in bits per pixel.
+    //
+
+    i = M_CheckParm("-bpp");
+
+    if (i > 0)
+    {
+        screen_bpp = atoi(myargv[i + 1]);
+    }
+
+    // Because we love Eternity:
+
+    //!
+    // @category video
+    //
+    // Set the color depth of the screen to 32 bits per pixel.
+    //
+
+    if (M_CheckParm("-8in32"))
+    {
+        screen_bpp = 32;
     }
 
     //!
@@ -1752,7 +1855,12 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
 
     // Set the video mode.
 
-    flags |= SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF;
+    flags |= SDL_SWSURFACE | SDL_DOUBLEBUF;
+
+    if (screen_bpp == 8)
+    {
+        flags |= SDL_HWPALETTE;
+    }
 
     if (fullscreen)
     {
@@ -1763,12 +1871,18 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
         flags |= SDL_RESIZABLE;
     }
 
-    screen = SDL_SetVideoMode(w, h, 8, flags);
+    screen = SDL_SetVideoMode(w, h, screen_bpp, flags);
 
     if (screen == NULL)
     {
-        I_Error("Error setting video mode: %s\n", SDL_GetError());
+        I_Error("Error setting video mode %ix%ix%ibpp: %s\n",
+                w, h, screen_bpp, SDL_GetError());
     }
+
+    // Blank out the full screen area in case there is any junk in
+    // the borders that won't otherwise be overwritten.
+
+    SDL_FillRect(screen, NULL, 0);
 
     // If mode was not set, it must be set now that we know the
     // screen size.
@@ -1789,6 +1903,22 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
         {
             mode->InitMode(doompal);
         }
+    }
+
+    // Create the screenbuffer surface; if we have a real 8-bit palettized
+    // screen, then we can use the screen as the screenbuffer.
+
+    if (screen->format->BitsPerPixel == 8)
+    {
+        screenbuffer = screen;
+    }
+    else
+    {
+        screenbuffer = SDL_CreateRGBSurface(SDL_SWSURFACE,
+                                            mode->width, mode->height, 8,
+                                            0, 0, 0, 0);
+
+        SDL_FillRect(screenbuffer, NULL, 0);
     }
 
     // Save screen mode.
@@ -1908,24 +2038,13 @@ void I_InitGraphics(void)
     // Start with a clear black screen
     // (screen will be flipped after we set the palette)
 
-    if (SDL_LockSurface(screen) >= 0)
-    {
-        byte *screenpixels;
-        int y;
-
-        screenpixels = (byte *) screen->pixels;
-
-        for (y=0; y<screen->h; ++y)
-            memset(screenpixels + screen->pitch * y, 0, screen->w);
-
-        SDL_UnlockSurface(screen);
-    }
+    SDL_FillRect(screenbuffer, NULL, 0);
 
     // Set the palette
 
     doompal = W_CacheLumpName(DEH_String("PLAYPAL"), PU_CACHE);
     I_SetPalette(doompal);
-    SDL_SetColors(screen, palette, 0, 256);
+    SDL_SetColors(screenbuffer, palette, 0, 256);
 
     CreateCursors();
 
@@ -1947,7 +2066,8 @@ void I_InitGraphics(void)
     // Likewise if the screen pitch is not the same as the width
     // If we have to multiply, drawing is done to a separate 320x200 buf
 
-    native_surface = !SDL_MUSTLOCK(screen)
+    native_surface = screen == screenbuffer
+                  && !SDL_MUSTLOCK(screen)
                   && screen_mode == &mode_scale_1x
                   && screen->pitch == SCREENWIDTH
                   && aspect_ratio_correct;
@@ -2018,5 +2138,26 @@ void I_BindVideoVariables(void)
     M_BindVariable("usegamma",                  &usegamma);
     M_BindVariable("vanilla_keyboard_mapping",  &vanilla_keyboard_mapping);
     M_BindVariable("novert",                    &novert);
+
+    // Windows Vista or later?  Set screen color depth to
+    // 32 bits per pixel, as 8-bit palettized screen modes
+    // don't work properly in recent versions.
+
+#if defined(_WIN32) && !defined(_WIN32_WCE)
+    {
+        OSVERSIONINFOEX version_info;
+
+        ZeroMemory(&version_info, sizeof(OSVERSIONINFOEX));
+        version_info.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+
+        GetVersionEx((OSVERSIONINFO *) &version_info);
+
+        if (version_info.dwPlatformId == VER_PLATFORM_WIN32_NT
+         && version_info.dwMajorVersion >= 6)
+        {
+            screen_bpp = 32;
+        }
+    }
+#endif
 }
 

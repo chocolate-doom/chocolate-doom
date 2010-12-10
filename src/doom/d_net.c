@@ -499,6 +499,7 @@ boolean D_InitNetGame(net_connect_data_t *connect_data,
         if (i > 0)
         {
             addr = NET_FindLANServer();
+            NET_SV_RegisterWithMaster();
 
             if (addr == NULL)
             {
@@ -617,12 +618,22 @@ void D_CheckNetGame (void)
 
     // Show players here; the server might have specified a time limit
 
-    if (timelimit > 0)
+    if (timelimit > 0 && deathmatch)
     {
-	DEH_printf("Levels will end after %d minute", timelimit);
-	if (timelimit > 1)
-	    printf("s");
-	printf(".\n");
+        // Gross hack to work like Vanilla:
+
+        if (timelimit == 20 && M_CheckParm("-avg"))
+        {
+            DEH_printf("Austin Virtual Gaming: Levels will end "
+                           "after 20 minutes\n");
+        }
+        else
+        {
+            DEH_printf("Levels will end after %d minute", timelimit);
+            if (timelimit > 1)
+                printf("s");
+            printf(".\n");
+        }
     }
 }
 
@@ -634,9 +645,6 @@ void D_CheckNetGame (void)
 //
 void D_QuitNetGame (void)
 {
-    if (debugfile)
-	fclose (debugfile);
-
 #ifdef FEATURE_MULTIPLAYER
 
     NET_SV_Shutdown();

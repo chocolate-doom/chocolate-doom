@@ -53,6 +53,7 @@ EXTRA_DIST=                             \
         README.OPL                      \
         TODO                            \
         BUGS                            \
+        NOT-BUGS                        \
         rpm.spec
 
 MAINTAINERCLEANFILES =  $(AUX_DIST_GEN)
