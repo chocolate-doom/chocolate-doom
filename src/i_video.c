@@ -97,7 +97,7 @@ static SDL_Surface *screen;
 // This is used when we are rendering in 32-bit screen mode.
 // When in a real 8-bit screen mode, screenbuffer == screen.
 
-static SDL_Surface *screenbuffer;
+static SDL_Surface *screenbuffer = NULL;
 
 // palette
 
@@ -1645,6 +1645,14 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
     int flags = 0;
 
     doompal = W_CacheLumpName(DEH_String("PLAYPAL"), PU_CACHE);
+
+    // If we are already running and in a true color mode, we need
+    // to free the screenbuffer surface before setting the new mode.
+
+    if (screenbuffer != NULL && screen != screenbuffer)
+    {
+        SDL_FreeSurface(screenbuffer);
+    }
 
     // Generate lookup tables before setting the video mode.
 
