@@ -162,6 +162,7 @@ void MainMenu(void)
 {
     txt_window_t *window;
     txt_window_action_t *quit_action;
+    txt_window_action_t *warp_action;
 
     window = TXT_NewWindow("Main Menu");
 
@@ -189,8 +190,12 @@ void MainMenu(void)
           NULL);
 
     quit_action = TXT_NewWindowAction(KEY_ESCAPE, "Quit");
+    warp_action = TXT_NewWindowAction(KEY_F1, "Warp");
     TXT_SignalConnect(quit_action, "pressed", QuitConfirm, NULL);
+    TXT_SignalConnect(warp_action, "pressed",
+                      (TxtWidgetSignalFunc) WarpMenu, NULL);
     TXT_SetWindowAction(window, TXT_HORIZ_LEFT, quit_action);
+    TXT_SetWindowAction(window, TXT_HORIZ_CENTER, warp_action);
 
     TXT_SetKeyListener(window, MainMenuKeyPress, NULL);
 }

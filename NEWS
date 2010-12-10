@@ -22,10 +22,12 @@
        devices (ie. without a proper keyboard) much more practical.
      * There is now a key binding to change the multiplayer spy key
        (usually F12).
-     * There is now a configuration file parameter to set the OPL I/O
-       port, for cards that don't use port 0x388.
+     * The setup tool now has a "warp" button on the main menu, like
      * Up to 8 mouse buttons are now supported (including the
        mousewheel).
+       Vanilla setup.exe (thanks Proteh).
+     * There is now a configuration file parameter to set the OPL I/O
+       port, for cards that don't use port 0x388.
      * The Python scripts used for building Chocolate Doom now work
        with Python 3 (but also continue to work with Python 2)
        (thanks arin).
