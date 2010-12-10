@@ -360,7 +360,7 @@ void I_Error (char *error, ...)
                             msgbuf, strlen(msgbuf) + 1,
                             wmsgbuf, sizeof(wmsgbuf));
 
-        MessageBoxW(NULL, wmsgbuf, L"" PACKAGE_NAME, MB_OK);
+        MessageBoxW(NULL, wmsgbuf, L"", MB_OK);
     }
 #endif
 
