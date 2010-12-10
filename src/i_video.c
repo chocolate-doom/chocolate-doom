@@ -928,9 +928,9 @@ static boolean BlitArea(int x1, int y1, int x2, int y2)
     {
         I_InitScale(I_VideoBuffer,
                     (byte *) screenbuffer->pixels
-                                + (y_offset * screen->pitch)
+                                + (y_offset * screenbuffer->pitch)
                                 + x_offset,
-                    screen->pitch);
+                    screenbuffer->pitch);
         result = screen_mode->DrawScreen(x1, y1, x2, y2);
       	SDL_UnlockSurface(screenbuffer);
     }
