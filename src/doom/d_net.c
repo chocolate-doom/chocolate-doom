@@ -337,9 +337,6 @@ static void LoadGameSettings(net_gamesettings_t *settings)
 	printf("Syncing netgames like Vanilla Doom.\n");
     }
 
-    netgame = true;
-    autostart = true;
-
     if (!drone)
     {
         consoleplayer = settings->consoleplayer;
@@ -439,27 +436,14 @@ static void SaveGameSettings(net_gamesettings_t *settings,
     connect_data->lowres_turn = settings->lowres_turn;
 }
 
-void D_InitSinglePlayerGame(void)
+void D_InitSinglePlayerGame(net_gamesettings_t *settings)
 {
-    int i;
-
     // default values for single player
 
-    consoleplayer = 0;
+    settings->consoleplayer = 0;
+    settings->num_players = 1;
+
     netgame = false;
-    ticdup = 1;
-    extratics = 1;
-    lowres_turn = false;
-    offsetms = 0;
-    
-    for (i=0; i<MAXPLAYERS; i++)
-    {
-        playeringame[i] = false;
-    }
-
-    recvtic = 0;
-
-    playeringame[0] = true;
 
     //!
     // @category net
@@ -609,6 +593,9 @@ void D_CheckNetGame (void)
     net_connect_data_t connect_data;
     net_gamesettings_t settings;
 
+    offsetms = 0;
+    recvtic = 0;
+
     // Call D_QuitNetGame on exit 
 
     I_AtExit(D_QuitNetGame, true);
@@ -617,12 +604,15 @@ void D_CheckNetGame (void)
 
     if (D_InitNetGame(&connect_data, &settings))
     {
-        LoadGameSettings(&settings);
+        netgame = true;
+        autostart = true;
     }
     else
     {
-        D_InitSinglePlayerGame();
+        D_InitSinglePlayerGame(&settings);
     }
+
+    LoadGameSettings(&settings);
 
     DEH_printf("startskill %i  deathmatch: %i  startmap: %i  startepisode: %i\n",
                startskill, deathmatch, startmap, startepisode);
