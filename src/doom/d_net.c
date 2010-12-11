@@ -479,6 +479,7 @@ boolean D_InitNetGame(net_connect_data_t *connect_data,
         NET_SV_Init();
         NET_SV_AddModule(&net_loop_server_module);
         NET_SV_AddModule(&net_sdl_module);
+        NET_SV_RegisterWithMaster();
 
         net_loop_client_module.InitClient();
         addr = net_loop_client_module.ResolveAddress(NULL);
@@ -497,7 +498,6 @@ boolean D_InitNetGame(net_connect_data_t *connect_data,
         if (i > 0)
         {
             addr = NET_FindLANServer();
-            NET_SV_RegisterWithMaster();
 
             if (addr == NULL)
             {
