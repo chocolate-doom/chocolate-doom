@@ -868,7 +868,7 @@ void D_DoomMain (void)
 
     p = M_CheckParm("-query");
 
-    if (p > 0)
+    if (p && p < myargc-1)
     {
         NET_QueryAddress(myargv[p+1]);
         exit(0);

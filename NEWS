@@ -79,6 +79,8 @@
        exp(x)).
      * The controller player in a netgame is the first player to join,
        instead of just being someone who gets lucky.
+     * Check that an address is provided to the -query command line
+       option (thanks Sander van Dijk).
 
     libtextscreen:
      * The font used for the textscreen library can be forced by
