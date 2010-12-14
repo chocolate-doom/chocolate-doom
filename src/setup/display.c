@@ -26,6 +26,11 @@
 #include "libc_wince.h"
 #endif
 
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
+
 #include "textscreen.h"
 #include "m_config.h"
 #include "mode.h"
