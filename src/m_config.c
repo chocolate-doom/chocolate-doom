@@ -1409,9 +1409,9 @@ void M_LoadDefaults (void)
     // default.cfg.
     //
 
-    i = M_CheckParm ("-config");
+    i = M_CheckParmWithArgs("-config", 1);
 
-    if (i && i<myargc-1)
+    if (i)
     {
 	doom_defaults.filename = myargv[i+1];
 	printf ("	default file: %s\n",doom_defaults.filename);
@@ -1431,9 +1431,9 @@ void M_LoadDefaults (void)
     // of chocolate-doom.cfg.
     //
 
-    i = M_CheckParm("-extraconfig");
+    i = M_CheckParmWithArgs("-extraconfig", 1);
 
-    if (i && i<myargc-1)
+    if (i)
     {
         extra_defaults.filename = myargv[i+1];
         printf("        extra configuration file: %s\n", 

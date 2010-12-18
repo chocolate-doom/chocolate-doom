@@ -658,7 +658,7 @@ char *D_FindIWAD(void)
     // @arg <file>
     //
 
-    iwadparm = M_CheckParm("-iwad");
+    iwadparm = M_CheckParmWithArgs("-iwad", 1);
 
     if (iwadparm)
     {

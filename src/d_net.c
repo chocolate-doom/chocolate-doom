@@ -317,7 +317,7 @@ void D_CheckNetGame (void)
             // address.
             //
             
-            i = M_CheckParm("-connect");
+            i = M_CheckParmWithArgs("-connect", 1);
 
             if (i > 0)
             {

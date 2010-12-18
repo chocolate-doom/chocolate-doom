@@ -171,7 +171,7 @@ byte *I_ZoneBase (int *size)
     // Specify the heap size, in MiB (default 16).
     //
 
-    p = M_CheckParm("-mb");
+    p = M_CheckParmWithArgs("-mb", 1);
 
     if (p > 0)
     {

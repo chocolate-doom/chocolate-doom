@@ -47,17 +47,22 @@ char**		myargv;
 // or 0 if not present
 //
 
-int M_CheckParm (char *check)
+int M_CheckParmWithArgs(char *check, int num_args)
 {
-    int		i;
+    int i;
 
-    for (i = 1;i<myargc;i++)
+    for (i = 1; i < myargc - num_args; i++)
     {
-	if ( !strcasecmp(check, myargv[i]) )
+	if (!strcasecmp(check, myargv[i]))
 	    return i;
     }
 
     return 0;
+}
+
+int M_CheckParm(char *check)
+{
+    return M_CheckParmWithArgs(check, 0);
 }
 
 #define MAXARGVS        100

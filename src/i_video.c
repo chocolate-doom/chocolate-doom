@@ -1442,7 +1442,7 @@ static void CheckCommandLine(void)
     // Specify the screen width, in pixels.
     //
 
-    i = M_CheckParm("-width");
+    i = M_CheckParmWithArgs("-width", 1);
 
     if (i > 0)
     {
@@ -1456,7 +1456,7 @@ static void CheckCommandLine(void)
     // Specify the screen height, in pixels.
     //
 
-    i = M_CheckParm("-height");
+    i = M_CheckParmWithArgs("-height", 1);
 
     if (i > 0)
     {
@@ -1470,7 +1470,7 @@ static void CheckCommandLine(void)
     // Specify the color depth of the screen, in bits per pixel.
     //
 
-    i = M_CheckParm("-bpp");
+    i = M_CheckParmWithArgs("-bpp", 1);
 
     if (i > 0)
     {
@@ -1497,7 +1497,7 @@ static void CheckCommandLine(void)
     // Specify the screen mode (when running fullscreen) or the window
     // dimensions (when running in windowed mode).
 
-    i = M_CheckParm("-geometry");
+    i = M_CheckParmWithArgs("-geometry", 1);
 
     if (i > 0)
     {

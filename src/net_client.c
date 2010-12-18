@@ -411,7 +411,7 @@ void NET_CL_StartGame(void)
     // packets.
     //
 
-    i = M_CheckParm("-extratics");
+    i = M_CheckParmWithArgs("-extratics", 1);
 
     if (i > 0)
         settings.extratics = atoi(myargv[i+1]);
@@ -426,7 +426,7 @@ void NET_CL_StartGame(void)
     // the amount of network bandwidth needed.
     //
 
-    i = M_CheckParm("-dup");
+    i = M_CheckParmWithArgs("-dup", 1);
 
     if (i > 0)
         settings.ticdup = atoi(myargv[i+1]);

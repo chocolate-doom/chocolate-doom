@@ -1121,9 +1121,9 @@ void NET_SV_SendQueryResponse(net_addr_t *addr)
     // When starting a network server, specify a name for the server.
     //
 
-    p = M_CheckParm("-servername");
+    p = M_CheckParmWithArgs("-servername", 1);
 
-    if (p > 0 && p + 1 < myargc)
+    if (p > 0)
     {
         querydata.description = myargv[p + 1];
     }
