@@ -81,6 +81,8 @@
        instead of just being someone who gets lucky.
      * Command line arguments that take an option now check that an
        option is provided (thanks Sander van Dijk).
+     * Skill level names in the setup tool are now written the same as
+       they are on the in-game "new game" menu (thanks AlexXav).
 
     libtextscreen:
      * The font used for the textscreen library can be forced by

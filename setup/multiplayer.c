@@ -78,10 +78,10 @@ static char *iwadfile;
 
 static char *skills[] = 
 {
-    "I'm too young to die!",
+    "I'm too young to die.",
     "Hey, not too rough.",
     "Hurt me plenty.",
-    "Ultra-violence",
+    "Ultra-Violence.",
     "NIGHTMARE!",
 };
 
