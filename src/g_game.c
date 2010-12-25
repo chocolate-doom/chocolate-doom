@@ -139,7 +139,7 @@ int             gametic;
 int             levelstarttic;          // gametic at level start 
 int             totalkills, totalitems, totalsecret;    // for intermission 
  
-char            demoname[32]; 
+char           *demoname;
 boolean         demorecording; 
 boolean         longtics;               // cph's doom 1.91 longtics hack
 boolean         lowres_turn;            // low resolution turning for longtics
@@ -2050,14 +2050,14 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
 //
 // G_RecordDemo 
 // 
-void G_RecordDemo (char* name) 
+void G_RecordDemo (char *name) 
 { 
     int             i; 
     int				maxsize;
 	
     usergame = false; 
-    strcpy (demoname, name); 
-    strcat (demoname, ".lmp"); 
+    demoname = Z_Malloc(strlen(name) + 5, PU_STATIC, NULL);
+    sprintf(demoname, "%s.lmp", name);
     maxsize = 0x20000;
 
     //!

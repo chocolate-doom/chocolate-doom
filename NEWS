@@ -83,6 +83,8 @@
        option is provided (thanks Sander van Dijk).
      * Skill level names in the setup tool are now written the same as
        they are on the in-game "new game" menu (thanks AlexXav).
+     * There is no longer a limit on the lengths of filenames provided
+       to the -record command line parameter (thanks AlexXav).
 
     libtextscreen:
      * The font used for the textscreen library can be forced by
