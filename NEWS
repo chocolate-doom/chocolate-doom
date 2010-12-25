@@ -50,6 +50,8 @@
        removed from the title of the dialog box that appears on
        Windows when this happens.  This is desirable as not all such
        messages are actually errors (thanks Proteh).
+     * The setup tool now passes through all command line arguments
+       when launching the game (thanks AlexXav).
 
     Bugs fixed:
      * A workaround has been a bug in old versions of SDL_mixer

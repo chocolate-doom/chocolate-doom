@@ -265,7 +265,7 @@ static void StartGame(int multiplayer)
     TXT_Shutdown();
     
     M_SaveDefaults();
-    AddConfigParameters(exec);
+    PassThroughArguments(exec);
 
     ExecuteDoom(exec);
 
@@ -702,7 +702,7 @@ static void DoJoinGame(void *unused1, void *unused2)
     
     M_SaveDefaults();
 
-    AddConfigParameters(exec);
+    PassThroughArguments(exec);
 
     ExecuteDoom(exec);
 

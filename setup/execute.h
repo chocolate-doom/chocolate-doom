@@ -35,7 +35,7 @@ typedef struct execute_context_s execute_context_t;
 
 execute_context_t *NewExecuteContext(void);
 void AddCmdLineParameter(execute_context_t *context, char *s, ...);
-void AddConfigParameters(execute_context_t *context);
+void PassThroughArguments(execute_context_t *context);
 int ExecuteDoom(execute_context_t *context);
 int FindInstalledIWADs(void);
 
