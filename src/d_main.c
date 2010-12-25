@@ -1158,40 +1158,6 @@ void D_DoomMain (void)
     // Debug:
 //    W_PrintDirectory();
 
-    // add any files specified on the command line with -file wadfile
-    // to the wad list
-    //
-    // convenience hack to allow -wart e m to add a wad file
-    // prepend a tilde to the filename so wadfile will be reloadable
-    p = M_CheckParmWithArgs("-wart", 1);
-    if (p)
-    {
-	myargv[p][4] = 'p';     // big hack, change to -warp
-
-	// Map name handling.
-	switch (gamemode )
-	{
-	  case shareware:
-	  case retail:
-	  case registered:
-	    sprintf (file,"~"DEVMAPS"E%cM%c.wad",
-		     myargv[p+1][0], myargv[p+2][0]);
-	    printf("Warping to Episode %s, Map %s.\n",
-		   myargv[p+1],myargv[p+2]);
-	    break;
-	    
-	  case commercial:
-	  default:
-	    p = atoi (myargv[p+1]);
-	    if (p<10)
-	      sprintf (file,"~"DEVMAPS"cdata/map0%i.wad", p);
-	    else
-	      sprintf (file,"~"DEVMAPS"cdata/map%i.wad", p);
-	    break;
-	}
-	D_AddFile (file);
-    }
-
     //!
     // @arg <demo>
     // @category demo
