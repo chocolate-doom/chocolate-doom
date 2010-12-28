@@ -52,6 +52,10 @@
        messages are actually errors (thanks Proteh).
      * The setup tool now passes through all command line arguments
        when launching the game (thanks AlexXav).
+     * Demo loop behavior (ie. whether to play DEMO4) now depends on
+       the version being emulated.  When playing Final Doom the game
+       will exit unexpectedly as it tries to play the fourth demo -
+       this is Vanilla behaviour (thanks AlexXav).
 
     Bugs fixed:
      * A workaround has been a bug in old versions of SDL_mixer

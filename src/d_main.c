@@ -494,7 +494,13 @@ void D_DoAdvanceDemo (void)
     paused = false;
     gameaction = ga_nothing;
 
-    if (gamemode == retail && gameversion != exe_chex)
+    // The Ultimate Doom executable changed the demo sequence to add
+    // a DEMO4 demo.  Final Doom was based on Ultimate, so also
+    // includes this change; however, the Final Doom IWADs do not
+    // include a DEMO4 lump, so the game bombs out with an error
+    // when it reaches this point in the demo sequence.
+
+    if (gameversion == exe_ultimate || gameversion == exe_final)
       demosequence = (demosequence+1)%7;
     else
       demosequence = (demosequence+1)%6;
