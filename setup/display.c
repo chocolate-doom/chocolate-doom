@@ -29,6 +29,8 @@
 
 #include "display.h"
 
+extern void RestartTextscreen(void);
+
 typedef struct
 {
     char *description;
@@ -519,18 +521,6 @@ static char *win32_video_drivers[] =
     "DirectX",
     "Windows GDI",
 };
-
-// Restart the textscreen library.  Used when the video_driver variable
-// is changed.
-
-static void RestartTextscreen(void)
-{
-    TXT_Shutdown();
-
-    SetDisplayDriver();
-
-    TXT_Init();
-}
 
 static void SetWin32VideoDriver(void)
 {

@@ -256,11 +256,9 @@ static void SetIcon(void)
     free(mask);
 }
 
-// 
-// Initialize and run the textscreen GUI.
-//
+// Initialize the textscreen library.
 
-static void RunGUI(void)
+static void InitTextscreen(void)
 {
     SetDisplayDriver();
 
@@ -272,7 +270,24 @@ static void RunGUI(void)
 
     TXT_SetDesktopTitle(PACKAGE_NAME " Setup ver " PACKAGE_VERSION);
     SetIcon();
-    
+}
+
+// Restart the textscreen library.  Used when the video_driver variable
+// is changed.
+
+void RestartTextscreen(void)
+{
+    TXT_Shutdown();
+    InitTextscreen();
+}
+
+// 
+// Initialize and run the textscreen GUI.
+//
+
+static void RunGUI(void)
+{
+    InitTextscreen();
     MainMenu();
 
     TXT_GUIMainLoop();

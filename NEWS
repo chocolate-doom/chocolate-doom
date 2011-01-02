@@ -91,6 +91,8 @@
        they are on the in-game "new game" menu (thanks AlexXav).
      * There is no longer a limit on the lengths of filenames provided
        to the -record command line parameter (thanks AlexXav).
+     * Window title is not lost in setup tool when changing video
+       driver (thanks AlexXav).
 
     libtextscreen:
      * The font used for the textscreen library can be forced by
