@@ -1676,7 +1676,13 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
     }
     else
     {
+        // In windowed mode, the window can be resized while the game is
+        // running.  This feature is disabled on OS X, as it adds an ugly
+        // scroll handle to the corner of the screen.
+
+#ifndef __MACOSX__
         flags |= SDL_RESIZABLE;
+#endif
     }
 
     screen = SDL_SetVideoMode(w, h, screen_bpp, flags);
