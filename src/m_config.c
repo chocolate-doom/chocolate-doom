@@ -1217,8 +1217,18 @@ static void SaveDefaultCollection(default_collection_t *collection)
                 
                 v = * (int *) defaults[i].location;
 
-                if (defaults[i].untranslated
-                 && v == defaults[i].original_translated)
+                if (v == KEY_RSHIFT)
+                {
+                    // Special case: for shift, force scan code for
+                    // right shift, as this is what Vanilla uses.
+                    // This overrides the change check below, to fix
+                    // configuration files made by old versions that
+                    // mistakenly used the scan code for left shift.
+
+                    v = 54;
+                }
+                else if (defaults[i].untranslated
+                      && v == defaults[i].original_translated)
                 {
                     // Has not been changed since the last time we
                     // read the config file.

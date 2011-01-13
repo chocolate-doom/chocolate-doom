@@ -2,6 +2,8 @@
 
     Bugs fixed:
      * Menu navigation when using joystick/joypad (thanks AlexXav).
+     * For configuration file value for shift keys, use scan code for
+       right shift, not left shift (thanks AlexXav).
 
 1.5.0 (2011-01-02):
 
