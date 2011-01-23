@@ -4,6 +4,8 @@
      * Menu navigation when using joystick/joypad (thanks AlexXav).
      * For configuration file value for shift keys, use scan code for
        right shift, not left shift (thanks AlexXav).
+     * Default joystick buttons for the setup tool now match Vanilla
+       (thanks twipley).
 
 1.5.0 (2011-01-02):
 

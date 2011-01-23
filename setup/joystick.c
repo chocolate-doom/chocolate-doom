@@ -46,8 +46,8 @@ int usejoystick = 0;
 
 int joybfire = 0;
 int joybstrafe = 1;
-int joybuse = 2;
-int joybspeed = 3;
+int joybuse = 3;
+int joybspeed = 2;
 int joybstrafeleft = -1;
 int joybstraferight = -1;
 int joybprevweapon = -1;
