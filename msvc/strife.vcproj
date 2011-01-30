@@ -390,6 +390,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\win_opendir.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\z_zone.h"
 				>
 			</File>
@@ -803,6 +807,10 @@
 			</File>
 			<File
 				RelativePath="..\src\w_wad.c"
+				>
+			</File>
+			<File
+				RelativePath=".\win_opendir.c"
 				>
 			</File>
 			<File

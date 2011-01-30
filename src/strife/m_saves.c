@@ -28,6 +28,16 @@
 //
 //-----------------------------------------------------------------------------
 
+// For GNU C and POSIX targets, dirent.h should be available. Otherwise, for
+// Visual C++, we need to include the win_opendir module.
+#if defined(_MSC_VER)
+#include <win_opendir.h>
+#elif defined(__GNUC__) || defined(POSIX)
+#include <dirent.h>
+#else
+#error Need an include for dirent.h!
+#endif
+
 #include "z_zone.h"
 #include "i_system.h"
 #include "d_player.h"
