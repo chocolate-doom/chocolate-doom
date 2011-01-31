@@ -34,9 +34,9 @@ static void TXT_CheckBoxSizeCalc(TXT_UNCAST_ARG(checkbox))
 {
     TXT_CAST_ARG(txt_checkbox_t, checkbox);
 
-    // Minimum width is the string length + two spaces for padding
+    // Minimum width is the string length + right-side space for padding
 
-    checkbox->widget.w = strlen(checkbox->label) + 6;
+    checkbox->widget.w = strlen(checkbox->label) + 5;
     checkbox->widget.h = 1;
 }
 
@@ -50,7 +50,7 @@ static void TXT_CheckBoxDrawer(TXT_UNCAST_ARG(checkbox), int selected)
 
     TXT_BGColor(TXT_COLOR_BLUE, 0);
     TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);
-    TXT_DrawString(" (");
+    TXT_DrawString("(");
 
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
 
@@ -76,7 +76,7 @@ static void TXT_CheckBoxDrawer(TXT_UNCAST_ARG(checkbox), int selected)
 
     TXT_DrawString(checkbox->label);
     
-    for (i=strlen(checkbox->label); i < w-6; ++i)
+    for (i=strlen(checkbox->label); i < w-5; ++i)
     {
         TXT_DrawString(" ");
     }
