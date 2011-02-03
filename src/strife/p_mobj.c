@@ -38,6 +38,9 @@
 #include "doomstat.h"
 #include "d_main.h"     // villsa [STRIFE]
 
+extern line_t *spechit[];  // haleyjd:
+extern int     numspechit; // [STRIFE] - needed in P_XYMovement
+
 
 void G_PlayerReborn (int player);
 void P_SpawnMapThing (mapthing_t*	mthing);
@@ -195,6 +198,13 @@ void P_XYMovement (mobj_t* mo)
             }
             else if (mo->flags & MF_MISSILE)
             {
+                // haley 20110203: [STRIFE]
+                // This modification allows missiles to activate shoot specials
+                if(blockingline && blockingline->special)
+                    P_ShootSpecialLine(mo, blockingline);
+                if(numspechit)
+                    P_ShootSpecialLine(mo, spechit[numspechit]);
+
                 // explode a missile
                 if (ceilingline &&
                     ceilingline->backsector &&

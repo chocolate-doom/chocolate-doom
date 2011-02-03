@@ -227,12 +227,12 @@ void P_SetThingPosition (mobj_t* thing);
 
 // If "floatok" true, move would be ok
 // if within "tmfloorz - tmceilingz".
-extern boolean		floatok;
-extern fixed_t		tmfloorz;
-extern fixed_t		tmceilingz;
+extern boolean      floatok;
+extern fixed_t      tmfloorz;
+extern fixed_t      tmceilingz;
 
-
-extern	line_t*		ceilingline;
+extern line_t      *ceilingline;
+extern line_t      *blockingline; // [STRIFE] New global
 
 boolean P_CheckPosition (mobj_t *thing, fixed_t x, fixed_t y);
 boolean P_TryMove (mobj_t* thing, fixed_t x, fixed_t y);

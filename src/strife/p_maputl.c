@@ -471,39 +471,45 @@ P_SetThingPosition (mobj_t* thing)
 // to P_BlockLinesIterator, then make one or more calls
 // to it.
 //
+// haleyjd 20110203:
+// [STRIFE] Modified to track blockingline
+//
 boolean
 P_BlockLinesIterator
-( int			x,
-  int			y,
+( int           x,
+  int           y,
   boolean(*func)(line_t*) )
 {
-    int			offset;
-    short*		list;
-    line_t*		ld;
-	
+    int         offset;
+    short*      list;
+    line_t*     ld;
+
     if (x<0
-	|| y<0
-	|| x>=bmapwidth
-	|| y>=bmapheight)
+        || y<0
+        || x>=bmapwidth
+        || y>=bmapheight)
     {
-	return true;
+        return true;
     }
     
     offset = y*bmapwidth+x;
-	
+
     offset = *(blockmap+offset);
 
     for ( list = blockmaplump+offset ; *list != -1 ; list++)
     {
-	ld = &lines[*list];
+        ld = &lines[*list];
 
-	if (ld->validcount == validcount)
-	    continue; 	// line has already been checked
+        // [STRIFE]: set blockingline (see P_XYMovement @ p_mobj.c)
+        blockingline = ld;
 
-	ld->validcount = validcount;
-		
-	if ( !func(ld) )
-	    return false;
+        if (ld->validcount == validcount)
+            continue; 	// line has already been checked
+
+        ld->validcount = validcount;
+
+        if ( !func(ld) )
+            return false;
     }
     return true;	// everything was checked
 }

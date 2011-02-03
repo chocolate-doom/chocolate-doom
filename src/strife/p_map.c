@@ -68,24 +68,30 @@
 //#define DEFAULT_SPECHIT_MAGIC 0x84f968e8
 
 
-fixed_t		tmbbox[4];
-mobj_t*		tmthing;
-int		tmflags;
-fixed_t		tmx;
-fixed_t		tmy;
+fixed_t     tmbbox[4];
+mobj_t*     tmthing;
+int         tmflags;
+fixed_t     tmx;
+fixed_t     tmy;
 
 
 // If "floatok" true, move would be ok
 // if within "tmfloorz - tmceilingz".
-boolean		floatok;
+boolean     floatok;
 
-fixed_t		tmfloorz;
-fixed_t		tmceilingz;
-fixed_t		tmdropoffz;
+fixed_t     tmfloorz;
+fixed_t     tmceilingz;
+fixed_t     tmdropoffz;
 
 // keep track of the line that lowers the ceiling,
 // so missiles don't explode against sky hack walls
-line_t*		ceilingline;
+line_t*     ceilingline;
+
+// haleyjd 20110203: [STRIFE] New global
+// "blockingline" tracks the linedef responsible for blocking motion of an mobj
+// for purposes of doing impact special activation by missiles. Suspiciously 
+// similar to the solution used by Raven in Heretic and Hexen.
+line_t     *blockingline;
 
 // keep track of special lines as they are hit,
 // but don't process them until the move is proven valid
@@ -440,6 +446,9 @@ boolean PIT_CheckThing (mobj_t* thing)
 //  speciallines[]
 //  numspeciallines
 //
+// haleyjd 20110203:
+// [STRIFE] Modified to clear blockingline in advance of P_BlockLinesIterator
+//
 boolean
 P_CheckPosition
 ( mobj_t*	thing,
@@ -456,17 +465,20 @@ P_CheckPosition
 
     tmthing = thing;
     tmflags = thing->flags;
-	
+
     tmx = x;
     tmy = y;
-	
+
     tmbbox[BOXTOP] = y + tmthing->radius;
     tmbbox[BOXBOTTOM] = y - tmthing->radius;
     tmbbox[BOXRIGHT] = x + tmthing->radius;
     tmbbox[BOXLEFT] = x - tmthing->radius;
 
     newsubsec = R_PointInSubsector (x,y);
-    ceilingline = NULL;
+    
+    // [STRIFE] clear blockingline (see P_XYMovement, P_BlockLinesIterator)
+    blockingline = NULL;
+    ceilingline  = NULL;
     
     // The base floor / ceiling is from the subsector
     // that contains the point.
@@ -474,12 +486,12 @@ P_CheckPosition
     // will adjust them.
     tmfloorz = tmdropoffz = newsubsec->sector->floorheight;
     tmceilingz = newsubsec->sector->ceilingheight;
-			
+
     validcount++;
     numspechit = 0;
 
     if ( tmflags & MF_NOCLIP )
-	return true;
+        return true;
     
     // Check things first, possibly picking things up.
     // The bounding box is extended by MAXRADIUS
@@ -492,9 +504,9 @@ P_CheckPosition
     yh = (tmbbox[BOXTOP] - bmaporgy + MAXRADIUS)>>MAPBLOCKSHIFT;
 
     for (bx=xl ; bx<=xh ; bx++)
-	for (by=yl ; by<=yh ; by++)
-	    if (!P_BlockThingsIterator(bx,by,PIT_CheckThing))
-		return false;
+        for (by=yl ; by<=yh ; by++)
+            if (!P_BlockThingsIterator(bx,by,PIT_CheckThing))
+                return false;
     
     // check lines
     xl = (tmbbox[BOXLEFT] - bmaporgx)>>MAPBLOCKSHIFT;
@@ -503,9 +515,9 @@ P_CheckPosition
     yh = (tmbbox[BOXTOP] - bmaporgy)>>MAPBLOCKSHIFT;
 
     for (bx=xl ; bx<=xh ; bx++)
-	for (by=yl ; by<=yh ; by++)
-	    if (!P_BlockLinesIterator (bx,by,PIT_CheckLine))
-		return false;
+        for (by=yl ; by<=yh ; by++)
+            if (!P_BlockLinesIterator (bx,by,PIT_CheckLine))
+                return false;
 
     return true;
 }
