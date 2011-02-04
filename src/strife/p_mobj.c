@@ -117,6 +117,11 @@ void P_ExplodeMissile (mobj_t* mo)
 //
 // P_XYMovement
 //
+// [STRIFE] Modifications for:
+// * No SKULLFLY logic (replaced by BOUNCE flag)
+// * Missiles can activate G1/GR line types
+// * Player walking logic
+//
 #define STOPSPEED       0x1000
 #define FRICTION        0xe800
 
@@ -278,6 +283,12 @@ void P_XYMovement (mobj_t* mo)
 //
 // P_ZMovement
 //
+// [STRIFE] Modifications for:
+// * 3D Object Clipping
+// * Different momz handling
+// * No SKULLFLY logic (replaced with BOUNCE)
+// * Missiles don't hit sky flats
+//
 void P_ZMovement (mobj_t* mo)
 {
     fixed_t	dist;
@@ -320,7 +331,7 @@ void P_ZMovement (mobj_t* mo)
             if (delta<0 && dist < -(delta*3) )
                 mo->z -= FLOATSPEED;
             else if (delta>0 && dist < (delta*3) )
-                mo->z += FLOATSPEED;			
+                mo->z += FLOATSPEED;
         }
 
     }
@@ -353,6 +364,7 @@ void P_ZMovement (mobj_t* mo)
         // So we need to check that this is either retail or commercial
         // (but not doom2)
 
+        // [STRIFE] not applicable
         //int correct_lost_soul_bounce = gameversion >= exe_ultimate;
 
         if (/*correct_lost_soul_bounce &&*/ mo->flags & MF_BOUNCE)
@@ -371,7 +383,7 @@ void P_ZMovement (mobj_t* mo)
         if (mo->momz < 0)
         {
             if (mo->player
-                && mo->momz < -GRAVITY*8)	
+                && mo->momz < -GRAVITY*8)
             {
                 // Squat down.
                 // Decrease viewheight for a moment
@@ -401,8 +413,10 @@ void P_ZMovement (mobj_t* mo)
         //
 
         // villsa [STRIFE] unused
-        /*if (!correct_lost_soul_bounce && mo->flags & MF_SKULLFLY)
-            mo->momz = -mo->momz;*/
+        /*
+        if (!correct_lost_soul_bounce && mo->flags & MF_SKULLFLY)
+            mo->momz = -mo->momz;
+        */
 
         // villsa [STRIFE] also check for MF_BOUNCE
         if ( (mo->flags & MF_MISSILE)
@@ -698,14 +712,13 @@ P_SpawnMobj
 //
 // P_RemoveMobj
 //
+// [STRIFE] Modifications for item respawn timing
+//
 mapthing_t  itemrespawnque[ITEMQUESIZE];
 int         itemrespawntime[ITEMQUESIZE];
 int         iquehead;
 int         iquetail;
 
-//
-// [STRIFE] Modifications to item respawn timing
-//
 void P_RemoveMobj (mobj_t* mobj)
 {
     // villsa [STRIFE] removed invuln/invis. sphere exceptions
@@ -803,6 +816,10 @@ void P_RespawnSpecials (void)
 // Most of the player structure stays unchanged
 //  between levels.
 //
+// [STRIFE] Modifications for:
+// * stonecold cheat, -workparm
+// * default inventory/questflags
+//
 void P_SpawnPlayer(mapthing_t* mthing)
 {
     player_t*   p;
@@ -887,6 +904,14 @@ void P_SpawnPlayer(mapthing_t* mthing)
 // P_SpawnMapThing
 // The fields of the mapthing should
 // already be in host byte order.
+//
+// [STRIFE] Modifications for:
+// * No Lost Souls, item count
+// * New mapthing_t flag bits
+//
+// STRIFE-FIXME/STRIFE-TODO:
+// * 8-player support
+// * Restore I_Error for missing mapthings (8-player support is prerequisite)
 //
 void P_SpawnMapThing (mapthing_t* mthing)
 {
@@ -1012,6 +1037,10 @@ void P_SpawnMapThing (mapthing_t* mthing)
 //
 // P_SpawnPuff
 //
+// [STRIFE] Modifications for:
+// * No spawn tics randomization
+// * Player melee behavior
+//
 extern fixed_t attackrange;
 
 void
@@ -1057,6 +1086,10 @@ mobj_t* P_SpawnSparkPuff(fixed_t x, fixed_t y, fixed_t z)
 //
 // P_SpawnBlood
 // 
+// [STRIFE] Modifications for:
+// * No spawn tics randomization
+// * Different damage ranges for state setting
+//
 void
 P_SpawnBlood
 ( fixed_t	x,
@@ -1094,6 +1127,9 @@ P_SpawnBlood
 // P_CheckMissileSpawn
 // Moves the missile forward a bit
 //  and possibly explodes it right there.
+//
+// [STRIFE] Modifications for:
+// * No spawn tics randomization
 //
 void P_CheckMissileSpawn (mobj_t* th)
 {
@@ -1139,6 +1175,8 @@ mobj_t *P_SubstNullMobj(mobj_t *mobj)
 
 //
 // P_SpawnMissile
+//
+// [STRIFE] Added MVIS inaccuracy
 //
 mobj_t*
 P_SpawnMissile
@@ -1309,10 +1347,10 @@ mobj_t* P_SpawnPlayerMissile(mobj_t* source, mobjtype_t type)
 
 //
 // P_SpawnMortar
+//
 // villsa [STRIFE] new function
 // Spawn a high-arcing ballistic projectile
 //
-
 mobj_t* P_SpawnMortar(mobj_t *source, mobjtype_t type)
 {
     mobj_t* th;
@@ -1326,13 +1364,14 @@ mobj_t* P_SpawnMortar(mobj_t *source, mobjtype_t type)
     th->angle = an;
     an >>= ANGLETOFINESHIFT;
 
-    slope = P_AimLineAttack(source, source->angle, 1024*FRACUNIT);
-
+    // haleyjd 20110203: corrected order of function calls
     th->momx = FixedMul(th->info->speed, finecosine[an]);
     th->momy = FixedMul(th->info->speed, finesine[an]);
-    th->momz = FixedMul(th->info->speed, slope);
 
     P_CheckMissileSpawn(th);
+    
+    slope = P_AimLineAttack(source, source->angle, 1024*FRACUNIT);
+    th->momz = FixedMul(th->info->speed, slope);
 
     return th;
 }

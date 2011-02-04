@@ -331,7 +331,7 @@ cheatseq_t cheat_stealth    = CHEAT("gripper", 0);      // [STRIFE]: new cheat g
 cheatseq_t cheat_midas      = CHEAT("donnytrump", 0);   // [STRIFE]: new cheat
 cheatseq_t cheat_lego       = CHEAT("lego", 0);         // [STRIFE]: new cheat
 
-cheatseq_t	cheat_powerup[7] = // STRIFE-TODO
+cheatseq_t cheat_powerup[7] = // STRIFE-TODO
 {
     CHEAT("idbeholdv", 0),
     CHEAT("idbeholds", 0),
