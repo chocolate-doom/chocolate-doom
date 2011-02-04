@@ -1393,7 +1393,7 @@ boolean PIT_RadiusAttack (mobj_t* thing)
     // Boss spider and cyborg
     // take no damage from concussion.
     // villsa [STRIFE] unused
-    // haleyjd: INQUISITOR
+    // - haleyjd: INQUISITOR
 
     if(thing->type == MT_INQUISITOR)
         return true;

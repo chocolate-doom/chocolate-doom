@@ -3136,6 +3136,7 @@ void A_PlayerScream (mobj_t* mo)
 
 //
 // A_TeleportBeacon
+//
 // villsa [STRIFE] - new codepointer
 //
 void A_TeleportBeacon(mobj_t* actor)
