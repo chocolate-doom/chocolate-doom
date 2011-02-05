@@ -324,7 +324,7 @@ void P_ChangeSwitchTexture(line_t* line, int useAgain)
                 if(useAgain)
                     P_StartButton(line, middle,switchlist[i],BUTTONTIME);
 
-                // villsa [STRIFE]: Mines Converter hack
+                // villsa [STRIFE]: Mines Transmitter hack
                 if(sound == sfx_firxpl)
                 {
                     breakglass = true;

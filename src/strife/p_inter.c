@@ -723,7 +723,7 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
     {
         // [STRIFE] TODO - verify this. Seems that questflag isn't
         // applied if the special's speed is equal to 8 or if
-        // the player has recieved a specific quest token
+        // the player has received a specific quest token
         if(special->info->speed != 8 || !(player->questflags & QF_QUEST6))
             player->questflags |= 1 << (special->info->speed - 1);
     }

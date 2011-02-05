@@ -72,13 +72,15 @@ int M_Random (void)
     return rndtable[rndindex];
 }
 
+//
+// M_ClearRandom
+//
+// haleyjd 20110204 [STRIFE]: No "seeding" of M_Random index
+//
 void M_ClearRandom (void)
 {
     prndindex = 0;
-
-    // Seed the M_Random counter from the system time
-
-    rndindex = time(NULL) & 0xff;
+    rndindex = 0;
 }
 
 

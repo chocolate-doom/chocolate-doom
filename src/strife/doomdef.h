@@ -243,34 +243,34 @@ typedef enum
 // flag values for each quest.
 enum
 { //  Name       Flag from bitnum      Purpose, if known
-    QF_QUEST1  = (1 << tk_quest1),
-    QF_QUEST2  = (1 << tk_quest2),
-    QF_QUEST3  = (1 << tk_quest3),  // Permission to visit Irale
+    QF_QUEST1  = (1 << tk_quest1),  // Obtained Beldin's ring
+    QF_QUEST2  = (1 << tk_quest2),  // Stole the Chalice
+    QF_QUEST3  = (1 << tk_quest3),  // Permission to visit Irale (visited Macil)
     QF_QUEST4  = (1 << tk_quest4),
     QF_QUEST5  = (1 << tk_quest5),
     QF_QUEST6  = (1 << tk_quest6),  // Destroyed the Power Coupling
     QF_QUEST7  = (1 << tk_quest7),  // Killed Blue Acolytes ("Scanning Team")
     QF_QUEST8  = (1 << tk_quest8),
-    QF_QUEST9  = (1 << tk_quest9),
-    QF_QUEST10 = (1 << tk_quest10),
-    QF_QUEST11 = (1 << tk_quest11),
-    QF_QUEST12 = (1 << tk_quest12),
+    QF_QUEST9  = (1 << tk_quest9),  // Obtained Derwin's ear
+    QF_QUEST10 = (1 << tk_quest10), // Obtained Prison Pass
+    QF_QUEST11 = (1 << tk_quest11), // Obtained Prison Key
+    QF_QUEST12 = (1 << tk_quest12), // Obtained Judge Wolenick's hand
     QF_QUEST13 = (1 << tk_quest13), // Freed the Prisoners
-    QF_QUEST14 = (1 << tk_quest14),
-    QF_QUEST15 = (1 << tk_quest15),
+    QF_QUEST14 = (1 << tk_quest14), // Destroyed the Power Crystal
+    QF_QUEST15 = (1 << tk_quest15), // Obtained Guard Uniform
     QF_QUEST16 = (1 << tk_quest16), // Destroyed the Gate Mechanism
-    QF_QUEST17 = (1 << tk_quest17),
+    QF_QUEST17 = (1 << tk_quest17), // Heard Macil's story about the Sigil (MAP10)
     QF_QUEST18 = (1 << tk_quest18), // Obtained Oracle Pass
     QF_QUEST19 = (1 << tk_quest19),
     QF_QUEST20 = (1 << tk_quest20),
-    QF_QUEST21 = (1 << tk_quest21), // Killed Bishop - TODO: verify!
+    QF_QUEST21 = (1 << tk_quest21), // Killed Bishop
     QF_QUEST22 = (1 << tk_quest22), // Killed Oracle with QUEST21 set
     QF_QUEST23 = (1 << tk_quest23), // Killed Oracle (always given)
     QF_QUEST24 = (1 << tk_quest24), // Killed Macil
     QF_QUEST25 = (1 << tk_quest25), // Destroyed the Converter
     QF_QUEST26 = (1 << tk_quest26), // Killed Loremaster
-    QF_QUEST27 = (1 << tk_quest27),
-    QF_QUEST28 = (1 << tk_quest28), // ???? - checked by line type 228 STRIFE-TODO
+    QF_QUEST27 = (1 << tk_quest27), // Destroyed the Computer (checked for good ending)
+    QF_QUEST28 = (1 << tk_quest28), // Obtained Catacomb Key (checked by line type 228)
     QF_QUEST29 = (1 << tk_quest29), // Destroyed the Mines Transmitter
     QF_QUEST30 = (1 << tk_quest30),
     QF_QUEST31 = (1 << tk_quest31),

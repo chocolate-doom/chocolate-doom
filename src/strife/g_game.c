@@ -103,7 +103,7 @@ gamestate_t     oldgamestate;
 gameaction_t    gameaction; 
 gamestate_t     gamestate; 
 skill_t         gameskill = 2; // [STRIFE] Default value set to 2.
-boolean		respawnmonsters;
+boolean         respawnmonsters;
 //int             gameepisode; 
 int             gamemap;
 
@@ -132,7 +132,8 @@ boolean         netgame;                // only true if packets are broadcast
 boolean         playeringame[MAXPLAYERS]; 
 player_t        players[MAXPLAYERS]; 
 
-boolean         turbodetected[MAXPLAYERS];
+// [STRIFE] unused
+//boolean         turbodetected[MAXPLAYERS];
  
 int             consoleplayer;          // player taking events and displaying 
 int             displayplayer;          // view being displayed 
@@ -766,25 +767,28 @@ void G_DoLoadLevel (void)
     //skyflatnum = R_FlatNumForName(DEH_String(SKYFLATNAME));
 
     levelstarttic = gametic;        // for time calculation
-    
+
     if (wipegamestate == GS_LEVEL) 
-	wipegamestate = -1;             // force a wipe 
+        wipegamestate = -1;             // force a wipe 
 
     gamestate = GS_LEVEL; 
 
     for (i=0 ; i<MAXPLAYERS ; i++) 
     { 
-	turbodetected[i] = false;
-	if (playeringame[i] && players[i].playerstate == PST_DEAD) 
-	    players[i].playerstate = PST_REBORN; 
-	memset (players[i].frags,0,sizeof(players[i].frags)); 
+        //turbodetected[i] = false; [STRIFE] unused
+
+        // haleyjd 20110204 [STRIFE]: PST_REBORN if players[i].health <= 0
+        if (playeringame[i] && (players[i].playerstate == PST_DEAD || players[i].health <= 0))
+            players[i].playerstate = PST_REBORN; 
+        memset (players[i].frags,0,sizeof(players[i].frags)); 
     } 
-		 
+
     P_SetupLevel (gamemap, 0, gameskill);    
-    displayplayer = consoleplayer;		// view the guy you are playing    
+    displayplayer = consoleplayer;      // view the guy you are playing    
+    starttime = I_GetTime(); // haleyjd 20110204 [STRIFE]
     gameaction = ga_nothing; 
     Z_CheckHeap ();
-    
+
     // clear cmd building stuff
 
     memset (gamekeydown, 0, sizeof(gamekeydown)); 
@@ -1058,7 +1062,10 @@ void G_Ticker (void)
             // over the past 4 seconds.  offset the checking period
             // for each player so messages are not displayed at the
             // same time.
+            //
+            // haleyjd 20110204 [STRIFE] unused
 
+            /*
             if (cmd->forwardmove > TURBOTHRESHOLD)
             {
                 turbodetected[i] = true;
@@ -1074,6 +1081,7 @@ void G_Ticker (void)
                 players[consoleplayer].message = turbomessage;
                 turbodetected[i] = false;
             }
+            */
 
             if (netgame && !netdemo && !(gametic%ticdup) ) 
             { 

@@ -980,7 +980,10 @@ void A_FriendLook(mobj_t* actor)
 
     // do some idle animation
     if(P_Random() < 30)
-        P_SetMobjState(actor, actor->info->spawnstate + 1 + (P_Random() & 1));
+    {
+        int t = P_Random();
+        P_SetMobjState(actor, (t & 1) + actor->info->spawnstate + 1);
+    }
 
     // wander around a bit
     if(!(actor->flags & MF_STAND) && P_Random() < 40)
@@ -1038,13 +1041,11 @@ void A_Chase (mobj_t*	actor)
     // modify target threshold
     if  (actor->threshold)
     {
-        if (!actor->target
-            || actor->target->health <= 0)
-        {
-            actor->threshold = 0;
-        }
-        else
+        // haleyjd 20110204 [STRIFE]: No health <= 0 check here!
+        if (actor->target)
             actor->threshold--;
+        else
+            actor->threshold = 0;
     }
     
     // turn towards movement direction if not there yet
@@ -1063,7 +1064,7 @@ void A_Chase (mobj_t*	actor)
         || !(actor->target->flags&MF_SHOOTABLE))
     {
         // look for a new target
-        if (P_LookForPlayers(actor,true))
+        if (P_LookForPlayers(actor, true))
             return; 	// got a new target
 
         P_SetMobjState (actor, actor->info->spawnstate);
@@ -1105,7 +1106,7 @@ void A_Chase (mobj_t*	actor)
 
         P_SetMobjState (actor, actor->info->missilestate);
 
-        // [STRIFE] Add INCOMBAT flag to disable dialog
+        // [STRIFE] Add NODIALOG flag to disable dialog
         actor->flags |= (MF_NODIALOG|MF_JUSTATTACKED);
         return;
     }
@@ -1117,8 +1118,8 @@ nomissile:
         && !actor->threshold
         && !P_CheckSight (actor, actor->target) )
     {
-        if (P_LookForPlayers(actor,true))
-            return;	// got a new target
+        if (P_LookForPlayers(actor, true))
+            return; // got a new target
     }
     
     // chase towards player
@@ -1153,7 +1154,7 @@ nomissile:
 // haleyjd 09/05/10: Handling for visibility-modifying flags.
 //
 void A_FaceTarget (mobj_t* actor)
-{	
+{
     if (!actor->target)
         return;
 
@@ -1995,7 +1996,6 @@ void A_SetTLOptions(mobj_t* actor)
         actor->flags |= MF_SHADOW;
     if(actor->spawnpoint.options & MTF_MVIS)
         actor->flags |= MF_MVIS;
-
 }
 
 //
@@ -2307,11 +2307,11 @@ void A_PeasantCrash(mobj_t* actor)
 // A_Fall
 //
 // [STRIFE]
-// * Set INCOMBAT, and clear NOGRAVITY and SHADOW
+// * Set NODIALOG, and clear NOGRAVITY and SHADOW
 //
 void A_Fall (mobj_t *actor)
 {
-    // villsa [STRIFE] set incombat flag to stop dialog
+    // villsa [STRIFE] set NODIALOG flag to stop dialog
     actor->flags |= MF_NODIALOG;
 
     // actor is on ground, it can be walked over
@@ -2697,7 +2697,7 @@ void A_QuestMsg(mobj_t* actor)
     // give quest and display message to players
     for(i = 0; i < MAXPLAYERS; i++)
     {
-        quest = 1 << ((actor->info->speed) - 1);
+        quest = 1 << (actor->info->speed - 1);
         players[i].message = pmsgbuffer;
         players[i].questflags |= quest;
     }
@@ -3002,7 +3002,7 @@ void A_BossDeath (mobj_t* actor)
         }
         else
         {
-            // So much for prognostication.
+            // So much for prognostication!
             GiveVoiceObjective("VOC87", "LOG87", 0);
         }
         junk.tag = 222;         // Open the exit door again;
@@ -3051,7 +3051,9 @@ void A_BossDeath (mobj_t* actor)
 
 //
 // A_AcolyteSpecial
+//
 // villsa [STRIFE] - new codepointer
+// Awards quest #7 when all the Blue Acolytes are killed in Tarnhill
 //
 void A_AcolyteSpecial(mobj_t* actor)
 {
@@ -3063,7 +3065,7 @@ void A_AcolyteSpecial(mobj_t* actor)
 
     for(i = 0; i < MAXPLAYERS; i++)
     {
-        if(playeringame[i] && &players[i].health > 0)
+        if(playeringame[i] && players[i].health > 0)
             break;
     }
 
@@ -3076,20 +3078,18 @@ void A_AcolyteSpecial(mobj_t* actor)
         {
             mobj_t *mo = (mobj_t *)th;
 
+            // Found a living MT_GUARD8?
             if(mo != actor && mo->type == actor->type && mo->health > 0)
                 return;
-
-            if(mo->type != MT_GUARD8)
-                continue;   // not MT_GUARD8
-
-            // give quest token #7 to all players
-            for(i = 0; i < MAXPLAYERS; i++)
-                P_GiveItemToPlayer(&players[i], SPR_TOKN, MT_TOKEN_QUEST7);
-
-            // play voice, give objective
-            GiveVoiceObjective("VOC14", "LOG14", 0);
         }
     }
+
+    // All MT_GUARD8 are dead, give quest token #7 to all players
+    for(i = 0; i < MAXPLAYERS; i++)
+        P_GiveItemToPlayer(&players[i], SPR_TOKN, MT_TOKEN_QUEST7);
+
+    // play voice, give objective
+    GiveVoiceObjective("VOC14", "LOG14", 0);
 }
 
 //
