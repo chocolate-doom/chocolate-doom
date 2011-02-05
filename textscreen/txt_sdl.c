@@ -384,10 +384,6 @@ static int TranslateKey(SDL_keysym *sym)
 
         case SDLK_PAUSE:       return KEY_PAUSE;
 
-#if !SDL_VERSION_ATLEAST(1, 3, 0)
-        case SDLK_EQUALS:      return KEY_EQUALS;
-#endif
-
         case SDLK_LSHIFT:
         case SDLK_RSHIFT:
                                return KEY_RSHIFT;

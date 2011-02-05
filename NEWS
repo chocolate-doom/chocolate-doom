@@ -1,11 +1,16 @@
 1.6.0 (2011-??-??):
 
     Bugs fixed:
-     * Menu navigation when using joystick/joypad (thanks AlexXav).
+     * Menu navigation when using joystick/joypad (thanks Alexandre
+       Xavier).
      * For configuration file value for shift keys, use scan code for
        right shift, not left shift (thanks AlexXav).
      * Default joystick buttons for the setup tool now match Vanilla
        (thanks twipley).
+
+    libtextscreen:
+     * It is now possible to type a '+' in input boxes (thanks
+       Alexandre Xavier).
 
 1.5.0 (2011-01-02):
 
