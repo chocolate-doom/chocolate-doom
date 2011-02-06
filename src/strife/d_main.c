@@ -471,14 +471,14 @@ extern  boolean         demorecording;
 void D_DoomLoop (void)
 {
     if (demorecording)
-	G_BeginRecording ();
-		
+        G_BeginRecording ();
+
     if (M_CheckParm ("-debugfile"))
     {
-	char    filename[20];
-	sprintf (filename,"debug%i.txt",consoleplayer);
-	printf ("debug output to: %s\n",filename);
-	debugfile = fopen (filename,"w");
+        char    filename[20];
+        sprintf (filename,"debug%i.txt",consoleplayer);
+        printf ("debug output to: %s\n",filename);
+        debugfile = fopen (filename,"w");
     }
 
     TryRunTics();
@@ -500,30 +500,30 @@ void D_DoomLoop (void)
 
     while (1)
     {
-	// frame syncronous IO operations
-	I_StartFrame ();                
-	
-	// process one or more tics
-	if (singletics)
-	{
-	    I_StartTic ();
-	    D_ProcessEvents ();
-	    G_BuildTiccmd (&netcmds[consoleplayer][maketic%BACKUPTICS]);
-	    if (advancedemo)
-		D_DoAdvanceDemo ();
-	    M_Ticker ();
-	    G_Ticker ();
-	    gametic++;
-	    maketic++;
-	}
-	else
-	{
-	    TryRunTics (); // will run at least one tic
-	}
+        // frame syncronous IO operations
+        I_StartFrame ();
 
-	S_UpdateSounds (players[consoleplayer].mo);// move positional sounds
+        // process one or more tics
+        if (singletics)
+        {
+            I_StartTic ();
+            D_ProcessEvents ();
+            G_BuildTiccmd (&netcmds[consoleplayer][maketic%BACKUPTICS]);
+            if (advancedemo)
+                D_DoAdvanceDemo ();
+            M_Ticker ();
+            G_Ticker ();
+            gametic++;
+            maketic++;
+        }
+        else
+        {
+            TryRunTics (); // will run at least one tic
+        }
 
-	// Update display, next frame, with current state.
+        S_UpdateSounds (players[consoleplayer].mo);// move positional sounds
+
+        // Update display, next frame, with current state.
         if (screenvisible)
             D_Display ();
     }
@@ -548,7 +548,7 @@ char                    *pagename;
 void D_PageTicker (void)
 {
     if (--pagetic < 0)
-	D_AdvanceDemo ();
+        D_AdvanceDemo ();
 }
 
 
@@ -580,6 +580,8 @@ void D_AdvanceDemo (void)
 // This cycles through the demo sequences.
 // FIXME - version dependend demo numbers?
 //
+// [STRIFE] Modified for the opening slideshow and the exit screen
+//
 void D_DoAdvanceDemo (void)
 {
     players[consoleplayer].playerstate = PST_LIVE;  // not reborn
@@ -596,7 +598,7 @@ void D_DoAdvanceDemo (void)
         return;
     case -4: // show exit screen
         menuactive = false;
-        pagetic = (3*TICRATE);
+        pagetic = 3*TICRATE;
         gamestate = GS_DEMOSCREEN;
         pagename = DEH_String("PANEL7");
         S_StartMusic(mus_fast);
@@ -606,13 +608,13 @@ void D_DoAdvanceDemo (void)
             demosequence = -5; // exit
         return;
     case -3: // show Velocity logo for demo version
-        pagetic = (6*TICRATE);
+        pagetic = 6*TICRATE;
         gamestate = GS_DEMOSCREEN;
         pagename = DEH_String("vellogo");
         demosequence = -5; // exit
         return;
     case -2: // title screen
-        pagetic = (6*TICRATE);
+        pagetic = 6*TICRATE;
         gamestate = GS_DEMOSCREEN;
         pagename = DEH_String("TITLEPIC");
         S_StartMusic(mus_logo);
@@ -626,68 +628,68 @@ void D_DoAdvanceDemo (void)
         wipegamestate = -1;
         break;
     case 0: // Rogue logo
-        pagetic = (4*TICRATE);
+        pagetic = 4*TICRATE;
         gamestate = GS_DEMOSCREEN;
         pagename = DEH_String("RGELOGO");
         wipegamestate = -1;
         break;
     case 1:
-        pagetic = (7*TICRATE);            // The comet struck our planet without
+        pagetic = 7*TICRATE;              // The comet struck our planet without
         gamestate = GS_DEMOSCREEN;        // warning.We lost our paradise in a 
         pagename = DEH_String("PANEL1");  // single, violent stroke.
         I_StartVoice(DEH_String("pro1")); 
         S_StartMusic(mus_intro);
         break;
     case 2:
-        pagetic = (9*TICRATE);            // The impact released a virus which 
+        pagetic = 9*TICRATE;              // The impact released a virus which 
         gamestate = GS_DEMOSCREEN;        // swept through the land and killed 
         pagename = DEH_String("PANEL2");  // millions. They turned out to be 
         I_StartVoice(DEH_String("pro2")); // the lucky ones...
         break;
     case 3:
-        pagetic = (12*TICRATE);           // For those that did not die became 
+        pagetic = 12*TICRATE;             // For those that did not die became 
         gamestate = GS_DEMOSCREEN;        // mutations of humanity. Some became
         pagename = DEH_String("PANEL3");  // fanatics who heard the voice of a
         I_StartVoice(DEH_String("pro3")); // malignant God in their heads, and 
         break;                            // called themselves the Order.
     case 4:
-        pagetic = (11*TICRATE);           // Those of us who were deaf to this
+        pagetic = 11*TICRATE;             // Those of us who were deaf to this
         pagename = DEH_String("PANEL4");  // voice suffer horribly and are 
         gamestate = GS_DEMOSCREEN;        // forced to serve these ruthless
         I_StartVoice(DEH_String("pro4")); // psychotics, who wield weapons more
         break;                            // powerful than anything we can muster.
     case 5:
-        pagetic = (10*TICRATE);           // They destroy our women and children,
+        pagetic = 10*TICRATE;             // They destroy our women and children,
         gamestate = GS_DEMOSCREEN;        // so that we must hide them underground,
         pagename = DEH_String("PANEL5");  // and live like animals in constant
         I_StartVoice(DEH_String("pro5")); // fear for our lives.
         break;
     case 6:                               // But there are whispers of discontent.
-        pagetic = (16*TICRATE);           // If we organize, can we defeat our
+        pagetic = 16*TICRATE;             // If we organize, can we defeat our
         gamestate = GS_DEMOSCREEN;        // masters? Weapons are being stolen,
         pagename = DEH_String("PANEL6");  // soldiers are being trained. A 
         I_StartVoice(DEH_String("pro6")); // Movement is born! Born of lifelong 
         break;                            // STRIFE!
     case 7: // titlepic again - unused...
-        pagetic = (9*TICRATE);
+        pagetic = 9*TICRATE;
         gamestate = GS_DEMOSCREEN;
         pagename = DEH_String("TITLEPIC");
         wipegamestate = -1;
         break;
     case 8: // demo
         //ClearTmp();  STRIFE-TODO
-        pagetic = (9*TICRATE);
+        pagetic = 9*TICRATE;
         G_DeferedPlayDemo(DEH_String("demo1"));
         break;
     case 9: // velocity logo? - unused...
-        pagetic = (6*TICRATE);
+        pagetic = 6*TICRATE;
         gamestate = GS_DEMOSCREEN;
         pagename = DEH_String("vellogo");
         wipegamestate = -1;
         break;
     case 10: // credits
         gamestate = GS_DEMOSCREEN;
-        pagetic = (12*TICRATE);
+        pagetic = 12*TICRATE;
         pagename = DEH_String("CREDIT");
         wipegamestate = -1;
         break;

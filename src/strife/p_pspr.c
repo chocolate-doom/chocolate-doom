@@ -59,12 +59,12 @@
 //
 void
 P_SetPsprite
-( player_t*	player,
-  int		position,
-  statenum_t	stnum ) 
+( player_t*     player,
+  int           position,
+  statenum_t    stnum )
 {
-    pspdef_t*	psp;
-    state_t*	state;
+    pspdef_t*   psp;
+    state_t*    state;
 
     psp = &player->psprites[position];
 
@@ -74,7 +74,7 @@ P_SetPsprite
         {
             // object removed itself
             psp->state = NULL;
-            break;	
+            break;
         }
 
         state = &states[stnum];
@@ -116,7 +116,7 @@ P_SetPsprite
 //
 void P_BringUpWeapon (player_t* player)
 {
-    statenum_t	newstate;
+    statenum_t  newstate;
 
     if (player->pendingweapon == wp_nochange)
         player->pendingweapon = player->readyweapon;
@@ -207,7 +207,7 @@ boolean P_CheckAmmo (player_t* player)
     // Now set appropriate weapon overlay.
     P_SetPsprite(player, ps_weapon, weaponinfo[player->readyweapon].downstate);
 
-    return false;	
+    return false;
 }
 
 
@@ -255,9 +255,9 @@ void P_DropWeapon (player_t* player)
 // or after previous attack/fire sequence.
 //
 void A_WeaponReady( player_t* player, pspdef_t* psp)
-{	
-    statenum_t	newstate;
-    int		angle;
+{
+    statenum_t  newstate;
+    int         angle;
     
     // get out of attack state
     if (player->mo->state == &states[S_PLAY_05] || // 292
@@ -282,14 +282,13 @@ void A_WeaponReady( player_t* player, pspdef_t* psp)
         //  (pending weapon should allready be validated)
         newstate = weaponinfo[player->readyweapon].downstate;
         P_SetPsprite (player, ps_weapon, newstate);
-        return;	
+        return;
     }
     
     // check for fire
     //  the missile launcher and torpedo do not auto fire
     if (player->cmd.buttons & BT_ATTACK)
     {
-
         if ( !player->attackdown
             || (player->readyweapon != wp_missile
             && player->readyweapon != wp_torpedo)) // villsa [STRIFE] replace bfg with torpedo
@@ -382,7 +381,7 @@ A_Lower
     {
         // Player is dead, so keep the weapon off screen.
         P_SetPsprite (player,  ps_weapon, S_NULL);
-        return;	
+        return;
     }
 
     player->readyweapon = player->pendingweapon; 

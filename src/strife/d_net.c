@@ -61,7 +61,7 @@
 //
 
 ticcmd_t        netcmds[MAXPLAYERS][BACKUPTICS];
-int         	nettics[MAXPLAYERS];
+int             nettics[MAXPLAYERS];
 
 int             maketic;
 
@@ -253,7 +253,7 @@ void D_CheckNetGame (void)
     for (i=0; i<MAXPLAYERS; i++)
     {
         playeringame[i] = false;
-       	nettics[i] = 0;
+        nettics[i] = 0;
     }
 
     playeringame[0] = true;

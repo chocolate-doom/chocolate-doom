@@ -751,20 +751,23 @@ static void P_LoadReject(int lumpnum)
 //
 void
 P_SetupLevel
-( int		map,
-  int		playermask,
-  skill_t	skill)
+( int       map,
+  int       playermask,
+  skill_t   skill)
 {
-    int		i;
-    char	lumpname[9];
-    int		lumpnum;
-	
-    totalkills = totalitems = totalsecret = wminfo.maxfrags = 0;
-    wminfo.partime = 180;
+    int     i;
+    char    lumpname[9];
+    int     lumpnum;
+
+    // haleyjd 20110205 [STRIFE]: removed totalitems and wminfo
+    totalkills =  totalsecret = 0;
+
     for (i=0 ; i<MAXPLAYERS ; i++)
     {
-        // haleyjd 08/30/10: [STRIFE] Removed secretcount, itemcount
-	players[i].killcount = 0;
+        // haleyjd 20100830: [STRIFE] Removed secretcount, itemcount
+        //         20110205: [STRIFE] Initialize players.allegiance
+        players[i].allegiance = i;
+        players[i].killcount = 0;
     }
 
     // Initial height of PointOfView
@@ -772,18 +775,18 @@ P_SetupLevel
     players[consoleplayer].viewz = 1; 
 
     // Make sure all sounds are stopped before Z_FreeTags.
-    S_Start ();			
+    S_Start ();
 
     
 #if 0 // UNUSED
     if (debugfile)
     {
-	Z_FreeTags (PU_LEVEL, INT_MAX);
-	Z_FileDumpHeap (debugfile);
+        Z_FreeTags (PU_LEVEL, INT_MAX);
+        Z_FileDumpHeap (debugfile);
     }
     else
 #endif
-	Z_FreeTags (PU_LEVEL, PU_PURGELEVEL-1);
+    Z_FreeTags (PU_LEVEL, PU_PURGELEVEL-1);
 
 
     // UNUSED W_Profile ();
@@ -813,37 +816,36 @@ P_SetupLevel
     P_GroupLines ();
     P_LoadReject (lumpnum+ML_REJECT);
 
-    bodyqueslot = 0;
+    //bodyqueslot = 0; [STRIFE] unused
     deathmatch_p = deathmatchstarts;
     P_LoadThings (lumpnum+ML_THINGS);
     
     // if deathmatch, randomly spawn the active players
     if (deathmatch)
     {
-	for (i=0 ; i<MAXPLAYERS ; i++)
-	    if (playeringame[i])
-	    {
-		players[i].mo = NULL;
-		G_DeathMatchSpawnPlayer (i);
-	    }
-			
+        for (i=0 ; i<MAXPLAYERS ; i++)
+            if (playeringame[i])
+            {
+                players[i].mo = NULL;
+                G_DeathMatchSpawnPlayer (i);
+            }
+
     }
 
     // clear special respawning que
-    iquehead = iquetail = 0;		
-	
+    iquehead = iquetail = 0;
+
     // set up world state
     P_SpawnSpecials ();
-	
+
     // build subsector connect matrix
-    //	UNUSED P_ConnectSubsectors ();
+    // UNUSED P_ConnectSubsectors ();
 
     // preload graphics
     if (precache)
-	R_PrecacheLevel ();
+        R_PrecacheLevel ();
 
     //printf ("free memory: 0x%x\n", Z_FreeMemory());
-
 }
 
 

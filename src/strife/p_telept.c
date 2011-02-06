@@ -47,7 +47,8 @@
 // TELEPORTATION
 //
 // haleyjd 09/22/10: [STRIFE] Modified to take a flags parameter to control
-// silent teleportation.
+// silent teleportation. Rogue also removed the check for missiles, and the 
+// z-set was replaced with one in P_TeleportMove.
 //
 int
 EV_Teleport
@@ -67,15 +68,15 @@ EV_Teleport
     fixed_t     oldy;
     fixed_t     oldz;
 
+    // haleyjd 20110205 [STRIFE]: this is not checked here
     // don't teleport missiles
-    if (thing->flags & MF_MISSILE)
-        return 0;
+    //if (thing->flags & MF_MISSILE)
+    //    return 0;
 
     // Don't teleport if hit back of line,
     //  so you can get out of teleporter.
     if (side == 1)
         return 0;
-
 
     tag = line->tag;
     for (i = 0; i < numsectors; i++)
@@ -89,18 +90,18 @@ EV_Teleport
             {
                 // not a mobj
                 if (thinker->function.acp1 != (actionf_p1)P_MobjThinker)
-                    continue;	
+                    continue;
 
                 m = (mobj_t *)thinker;
 
                 // not a teleportman
                 if (m->type != MT_TELEPORTMAN )
-                    continue;		
+                    continue;
 
                 sector = m->subsector->sector;
                 // wrong sector
                 if (sector-sectors != i )
-                    continue;	
+                    continue;
 
                 oldx = thing->x;
                 oldy = thing->y;
@@ -114,9 +115,13 @@ EV_Teleport
                 //
                 // Note that although chex.exe is based on Final Doom,
                 // it does not have this quirk.
-
+                //
+                // haleyjd 20110205 [STRIFE] This code is *not* present,
+                // because of a z-set which Rogue added to P_TeleportMove.
+                /*
                 if (gameversion < exe_final || gameversion == exe_chex)
                     thing->z = thing->floorz;
+                */
 
                 if (thing->player)
                     thing->player->viewz = thing->z+thing->player->viewheight;
@@ -142,12 +147,12 @@ EV_Teleport
 
                 // don't move for a bit
                 if (thing->player)
-                    thing->reactiontime = 18;	
+                    thing->reactiontime = 18;
 
                 thing->angle = m->angle;
                 thing->momx = thing->momy = thing->momz = 0;
                 return 1;
-            }	
+            }
         }
     }
     return 0;

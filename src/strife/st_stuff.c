@@ -651,15 +651,21 @@ boolean ST_Responder(event_t* ev)
     }
     else if (cht_CheckCheat(&cheat_noclip, ev->data2))
     {
-        // [STRIFE] Verified unmodified, except no idspispopd shit:
+        // [STRIFE] Removed idspispopd, added NOCLIP flag setting/removal
         // Noclip cheat - "ELVIS" (hah-hah :P )
 
         plyr->cheats ^= CF_NOCLIP;
 
         if (plyr->cheats & CF_NOCLIP)
+        {
             plyr->message = DEH_String(STSTR_NCON);
+            plyr->mo->flags |= MF_NOCLIP;
+        }
         else
+        {
             plyr->message = DEH_String(STSTR_NCOFF);
+            plyr->mo->flags &= ~MF_NOCLIP;
+        }
     }
     
     // villsa [STRIFE]

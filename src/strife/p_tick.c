@@ -32,7 +32,7 @@
 #include "doomstat.h"
 
 
-int	leveltime;
+int leveltime;
 
 //
 // THINKERS
@@ -45,11 +45,13 @@ int	leveltime;
 
 
 // Both the head and tail of the thinker list.
-thinker_t	thinkercap;
+thinker_t   thinkercap;
 
 
 //
 // P_InitThinkers
+//
+// [STRIFE] Verified unmodified
 //
 void P_InitThinkers (void)
 {
@@ -62,6 +64,8 @@ void P_InitThinkers (void)
 //
 // P_AddThinker
 // Adds a new thinker at the end of the list.
+//
+// [STRIFE] Verified unmodified
 //
 void P_AddThinker (thinker_t* thinker)
 {
@@ -77,6 +81,8 @@ void P_AddThinker (thinker_t* thinker)
 // P_RemoveThinker
 // Deallocation is lazy -- it will not actually be freed
 // until its thinking turn comes up.
+//
+// [STRIFE] Verified unmodified
 //
 void P_RemoveThinker (thinker_t* thinker)
 {
@@ -97,43 +103,46 @@ void P_AllocateThinker (thinker_t*	thinker)
 //
 // P_RunThinkers
 //
+// [STRIFE] Verified unmodified
+//
 void P_RunThinkers (void)
 {
-    thinker_t*	currentthinker;
+    thinker_t*  currentthinker;
 
     currentthinker = thinkercap.next;
     while (currentthinker != &thinkercap)
     {
-	if ( currentthinker->function.acv == (actionf_v)(-1) )
-	{
-	    // time to remove it
-	    currentthinker->next->prev = currentthinker->prev;
-	    currentthinker->prev->next = currentthinker->next;
-	    Z_Free (currentthinker);
-	}
-	else
-	{
-	    if (currentthinker->function.acp1)
-		currentthinker->function.acp1 (currentthinker);
-	}
-	currentthinker = currentthinker->next;
+        if ( currentthinker->function.acv == (actionf_v)(-1) )
+        {
+            // time to remove it
+            currentthinker->next->prev = currentthinker->prev;
+            currentthinker->prev->next = currentthinker->next;
+            Z_Free (currentthinker);
+        }
+        else
+        {
+            if (currentthinker->function.acp1)
+                currentthinker->function.acp1 (currentthinker);
+        }
+        currentthinker = currentthinker->next;
     }
 }
 
 //
 // P_Ticker
 //
-
+// [STRIFE] Menu pause behavior modified
+//
 void P_Ticker (void)
 {
-    int		i;
+    int     i;
     
     // run the tic
     if (paused)
         return;
-		
+
     // pause if in menu and at least one tic has been run
-    // haleyjd 09/08/10: menuactive -> menupause
+    // haleyjd 09/08/10 [STRIFE]: menuactive -> menupause
     if (!netgame 
         && menupause 
         && !demoplayback 
@@ -152,5 +161,5 @@ void P_Ticker (void)
     P_RespawnSpecials ();
 
     // for par times
-    leveltime++;	
+    leveltime++;
 }

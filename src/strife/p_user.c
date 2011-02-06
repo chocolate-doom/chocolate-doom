@@ -71,6 +71,8 @@ boolean		onground;
 // P_Thrust
 // Moves the given origin along a given angle.
 //
+// [STRIFE] Verified unmodified
+//
 void
 P_Thrust
 ( player_t*	player,
@@ -90,10 +92,12 @@ P_Thrust
 // P_CalcHeight
 // Calculate the walking / running height adjustment
 //
+// [STRIFE] Some odd adjustments, and terrain view height adjustment
+//
 void P_CalcHeight (player_t* player) 
 {
-    int		angle;
-    fixed_t	bob;
+    int     angle;
+    fixed_t bob;
     
     // Regular movement bobbing
     // (needs to be calculated for gun swing
@@ -102,62 +106,69 @@ void P_CalcHeight (player_t* player)
     // Note: a LUT allows for effects
     //  like a ramp with low health.
     player->bob =
-	FixedMul (player->mo->momx, player->mo->momx)
-	+ FixedMul (player->mo->momy,player->mo->momy);
-    
+        FixedMul (player->mo->momx, player->mo->momx)
+        + FixedMul (player->mo->momy,player->mo->momy);
+
     player->bob >>= 2;
 
     if (player->bob>MAXBOB)
-	player->bob = MAXBOB;
+        player->bob = MAXBOB;
 
-    if ((player->cheats & CF_NOMOMENTUM) || !onground)
+    // haleyjd 20110205 [STRIFE]: No CF_NOMOMENTUM check, and Rogue also removed
+    // the dead code inside.
+    if (!onground)
     {
-	player->viewz = player->mo->z + VIEWHEIGHT;
+        /*
+        player->viewz = player->mo->z + VIEWHEIGHT;
 
-	if (player->viewz > player->mo->ceilingz-4*FRACUNIT)
-	    player->viewz = player->mo->ceilingz-4*FRACUNIT;
+        if (player->viewz > player->mo->ceilingz-4*FRACUNIT)
+            player->viewz = player->mo->ceilingz-4*FRACUNIT;
+        */
 
-	player->viewz = player->mo->z + player->viewheight;
-	return;
+        player->viewz = player->mo->z + player->viewheight;
+        return;
     }
-		
+
     angle = (FINEANGLES/20*leveltime)&FINEMASK;
     bob = FixedMul ( player->bob/2, finesine[angle]);
 
-    
     // move viewheight
     if (player->playerstate == PST_LIVE)
     {
-	player->viewheight += player->deltaviewheight;
+        player->viewheight += player->deltaviewheight;
 
-	if (player->viewheight > VIEWHEIGHT)
-	{
-	    player->viewheight = VIEWHEIGHT;
-	    player->deltaviewheight = 0;
-	}
+        if (player->viewheight > VIEWHEIGHT)
+        {
+            player->viewheight = VIEWHEIGHT;
+            player->deltaviewheight = 0;
+        }
 
-	if (player->viewheight < VIEWHEIGHT/2)
-	{
-	    player->viewheight = VIEWHEIGHT/2;
-	    if (player->deltaviewheight <= 0)
-		player->deltaviewheight = 1;
-	}
-	
-	if (player->deltaviewheight)	
-	{
-	    player->deltaviewheight += FRACUNIT/4;
-	    if (!player->deltaviewheight)
-		player->deltaviewheight = 1;
-	}
+        if (player->viewheight < VIEWHEIGHT/2)
+        {
+            player->viewheight = VIEWHEIGHT/2;
+            if (player->deltaviewheight <= 0)
+                player->deltaviewheight = 1;
+        }
+
+        if (player->deltaviewheight)
+        {
+            player->deltaviewheight += FRACUNIT/4;
+            if (!player->deltaviewheight)
+                player->deltaviewheight = 1;
+        }
     }
     player->viewz = player->mo->z + player->viewheight + bob;
 
-    // villsa [STRIFE] TODO - verify
+    // villsa [STRIFE] account for terrain lowering the view
     if(player->mo->flags & MF_FEETCLIPPED)
-        player->viewz -= (13*FRACUNIT);
+        player->viewz -= 13*FRACUNIT;
 
     if (player->viewz > player->mo->ceilingz-4*FRACUNIT)
-	player->viewz = player->mo->ceilingz-4*FRACUNIT;
+        player->viewz = player->mo->ceilingz-4*FRACUNIT;
+
+    // haleyjd [STRIFE]: added a floorz clip here
+    if (player->viewz < player->mo->floorz)
+        player->viewz = player->mo->floorz;
 }
 
 
@@ -165,12 +176,14 @@ void P_CalcHeight (player_t* player)
 //
 // P_MovePlayer
 //
+// [STRIFE] Adjustments to allow air control, jumping, and up/down look.
+//
 void P_MovePlayer (player_t* player)
 {
-    ticcmd_t*		cmd;
-	
+    ticcmd_t*      cmd;
+
     cmd = &player->cmd;
-	
+
     player->mo->angle += (cmd->angleturn<<16);
 
     // Do not let the player control movement
@@ -178,10 +191,11 @@ void P_MovePlayer (player_t* player)
     onground = (player->mo->z <= player->mo->floorz);
 
     // villsa [STRIFE] allows player to climb over things by jumping
+    // haleyjd 20110205: air control thrust should be 256, not cmd->forwardmove
     if(!onground)
     {
         if(cmd->forwardmove)
-            P_Thrust (player, player->mo->angle, cmd->forwardmove);
+            P_Thrust (player, player->mo->angle, 256);
     }
     else
     {
@@ -189,21 +203,23 @@ void P_MovePlayer (player_t* player)
         if (cmd->buttons2 & BT2_JUMP)
         {
             if(!player->deltaviewheight)
-                player->mo->momz += (8*FRACUNIT);
+                player->mo->momz += 8*FRACUNIT;
         }
-	
-        if (cmd->forwardmove && onground)
-	    P_Thrust (player, player->mo->angle, cmd->forwardmove*2048);
-    
-        if (cmd->sidemove && onground)
-	    P_Thrust (player, player->mo->angle-ANG90, cmd->sidemove*2048);
+
+        // haleyjd 20110205 [STRIFE] Either Rogue or Watcom removed the
+        // redundant "onground" checks from these if's.
+        if (cmd->forwardmove)
+            P_Thrust (player, player->mo->angle, cmd->forwardmove*2048);
+
+        if (cmd->sidemove)
+            P_Thrust (player, player->mo->angle-ANG90, cmd->sidemove*2048);
     }
 
-    // villsa [STRIFE] TODO - verify
+    // villsa [STRIFE] player walking state set
     if ( (cmd->forwardmove || cmd->sidemove) 
-	 && player->mo->state == &states[S_PLAY_00] )
+        && player->mo->state == &states[S_PLAY_00] )
     {
-	P_SetMobjState (player->mo, S_PLAY_01);
+        P_SetMobjState (player->mo, S_PLAY_01);
     }
 
     // villsa [STRIFE] centerview button
@@ -249,7 +265,7 @@ void P_MovePlayer (player_t* player)
         }
     }
 
-}	
+}
 
 
 
@@ -258,7 +274,9 @@ void P_MovePlayer (player_t* player)
 // Fall on your face when dying.
 // Decrease POV height to floor height.
 //
-#define ANG5   	(ANG90/18)
+// [STRIFE] Modifications for up/down look.
+//
+#define ANG5    (ANG90/18)
 
 void P_DeathThink(player_t* player)
 {
@@ -281,9 +299,9 @@ void P_DeathThink(player_t* player)
     if(player->attacker && player->attacker != player->mo)
     {
         angle = R_PointToAngle2 (player->mo->x,
-            player->mo->y,
-            player->attacker->x,
-            player->attacker->y);
+                                 player->mo->y,
+                                 player->attacker->x,
+                                 player->attacker->y);
 
         delta = angle - player->mo->angle;
 
@@ -317,17 +335,35 @@ void P_DeathThink(player_t* player)
 //
 // P_PlayerThink
 //
+// [STRIFE] Massive changes/additions:
+// * NOCLIP hack removed
+// * P_DeathThink moved up
+// * Inventory use/dropping
+// * Strife weapons logic
+// * Dialog
+// * Strife powerups and nukage behavior
+// * Fire Death/Sigil Shock
+//
 void P_PlayerThink (player_t* player)
 {
-    ticcmd_t*		cmd;
-    weapontype_t	newweapon;
+    ticcmd_t*       cmd;
+    weapontype_t    newweapon;
 
+    // villsa [STRIFE] unused code (see ST_Responder)
+    /*
     // fixme: do this in the cheat code
-    // villsa [STRIFE] TODO - verify if unused
     if (player->cheats & CF_NOCLIP)
         player->mo->flags |= MF_NOCLIP;
     else
         player->mo->flags &= ~MF_NOCLIP;
+    */
+
+    // haleyjd 20110205 [STRIFE]: P_DeathThink moved up
+    if (player->playerstate == PST_DEAD)
+    {
+        P_DeathThink (player);
+        return;
+    }
 
     // chain saw run forward
     cmd = &player->cmd;
@@ -337,13 +373,6 @@ void P_PlayerThink (player_t* player)
         cmd->forwardmove = 0xc800/512;
         cmd->sidemove = 0;
         player->mo->flags &= ~MF_JUSTATTACKED;
-    }
-
-
-    if (player->playerstate == PST_DEAD)
-    {
-        P_DeathThink (player);
-        return;
     }
 
     // Move around.
@@ -369,9 +398,10 @@ void P_PlayerThink (player_t* player)
             else if(cmd->buttons2 & BT2_INVUSE)
                 P_UseInventoryItem(player, cmd->inventory);
             else if(cmd->buttons2 & BT2_INVDROP)
-                P_DropInventoryItem(player, cmd->inventory);
-            else
             {
+                P_DropInventoryItem(player, cmd->inventory);
+
+                // haleyjd 20110205: removed incorrect "else" here
                 // villsa [STRIFE]
                 if(workparm)
                 {
@@ -390,7 +420,6 @@ void P_PlayerThink (player_t* player)
                     }
                 }
             }
-
         }
 
         player->inventorydown = true;
@@ -402,7 +431,7 @@ void P_PlayerThink (player_t* player)
 
     // A special event has no other buttons.
     if(cmd->buttons & BT_SPECIAL)
-        cmd->buttons = 0;			
+        cmd->buttons = 0;
 
     if(cmd->buttons & BT_CHANGE)
     {
@@ -491,7 +520,7 @@ void P_PlayerThink (player_t* player)
 
     // Strength counts up to diminish fade.
     if (player->powers[pw_strength])
-        player->powers[pw_strength]++;	
+        player->powers[pw_strength]++;
 
     // villsa [STRIFE] targeter powerup
     if(player->powers[pw_targeter])
@@ -500,21 +529,20 @@ void P_PlayerThink (player_t* player)
         if(player->powers[pw_targeter] == 1)
         {
             P_SetPsprite(player, ps_targcenter, S_NULL);
-            P_SetPsprite(player, ps_targleft, S_NULL);
-            P_SetPsprite(player, ps_targright, S_NULL);
+            P_SetPsprite(player, ps_targleft,   S_NULL);
+            P_SetPsprite(player, ps_targright,  S_NULL);
         }
-        else if(player->powers[pw_targeter] - 1 < 175)
+        else if(player->powers[pw_targeter] - 1 < 5*TICRATE)
         {
             if(player->powers[pw_targeter] & 32)
             {
                 P_SetPsprite(player, ps_targright, S_NULL);
-                P_SetPsprite(player, ps_targleft, S_TRGT_01);   // 11
+                P_SetPsprite(player, ps_targleft,  S_TRGT_01);   // 11
             }
-
-            if(player->powers[pw_targeter] & 16)
+            else if(player->powers[pw_targeter] & 16) // haleyjd 20110205: missing else
             {
                 P_SetPsprite(player, ps_targright, S_TRGT_02);  // 12
-                P_SetPsprite(player, ps_targleft, S_NULL);
+                P_SetPsprite(player, ps_targleft,  S_NULL);
             }
         }
     }

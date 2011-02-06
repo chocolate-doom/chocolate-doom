@@ -2,7 +2,6 @@
 //-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 1996 Rogue Entertainment / Velocity, Inc.
 // Copyright(C) 2010 James Haley, Samuel Villareal
 //
 // This program is free software; you can redistribute it and/or
@@ -138,7 +137,7 @@ typedef struct dialogstateset_s
 
 static dialogstateset_t dialogstatesets[] =
 {
-    { MT_PLAYER,       S_NULL,     S_NULL,   S_NULL    },
+    { MT_PLAYER,       S_NULL,    S_NULL,    S_NULL    },
     { MT_SHOPKEEPER_W, S_MRGT_00, S_MRYS_00, S_MRNO_00 },
     { MT_SHOPKEEPER_B, S_MRGT_00, S_MRYS_00, S_MRNO_00 },
     { MT_SHOPKEEPER_A, S_MRGT_00, S_MRYS_00, S_MRNO_00 },
@@ -558,7 +557,6 @@ mapdialog_t *P_DialogFind(mobjtype_t type, int jumptoconv)
 // [STRIFE] New function
 // haleyjd 09/03/10: Find the set of special dialog states (greetings, yes, no)
 // for a particular thing type.
-// STRIFE-TODO: Or is it a conversation ID?
 //
 static dialogstateset_t *P_DialogGetStates(mobjtype_t type)
 {
@@ -984,75 +982,6 @@ boolean P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type)
         S_StartSound(NULL, sound);
 
     return true;
-
-    // check for other types
-    /*
-    switch(type)
-    {
-    // severed hand
-
-    // 300 gold
-
-    // ammo refill (at training)
-
-    // health refill (at front HQ)
-
-    // alarm
-
-    // door special 1
-
-    // door special 2
-
-    // door special 3
-
-    // door special 4
-
-    // stamina upgrade
-
-    // slideshow
-
-    default:
-        // check for sprites if no specific type is found
-        switch(sprnum)
-        {
-            // bullets
-
-            // box of bullets
-
-            // missile
-
-            // box of missiles
-
-            // battery
-
-
-
-            // backpack
-
-            // communicator
-
-
-            // rifle
-
-            // flame thrower
-
-            // missile launcher
-
-            // mauler
-
-
-            // misc item
-        default:
-            if(!P_GiveInventoryItem(player, sprnum, type))
-                return false;
-            break;
-        }
-        break;
-    }
-
-    S_StartSound(player->mo, sfx_itemup);
-    return true;
-    */
 }
 
 //
@@ -1478,4 +1407,7 @@ void P_DialogStart(player_t *player)
     DEH_snprintf(dialoglastmsgbuffer, sizeof(dialoglastmsgbuffer),
                  "%d) %s", i + 1, byetext);
 }
+
+// EOF
+
 

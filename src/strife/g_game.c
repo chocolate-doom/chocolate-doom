@@ -132,14 +132,13 @@ boolean         netgame;                // only true if packets are broadcast
 boolean         playeringame[MAXPLAYERS]; 
 player_t        players[MAXPLAYERS]; 
 
-// [STRIFE] unused
-//boolean         turbodetected[MAXPLAYERS];
+boolean         turbodetected[MAXPLAYERS];
  
 int             consoleplayer;          // player taking events and displaying 
 int             displayplayer;          // view being displayed 
 int             gametic; 
 int             levelstarttic;          // gametic at level start 
-int             totalkills, totalitems, totalsecret;    // for intermission 
+int             totalkills, /*totalitems,*/ totalsecret;    // for intermission 
  
 char            demoname[32]; 
 boolean         demorecording; 
@@ -242,7 +241,7 @@ static int      testcontrols_mousespeed;
 #define	BODYQUESIZE	32
 
 mobj_t*		bodyque[BODYQUESIZE]; 
-int		bodyqueslot; 
+//int       bodyqueslot; [STRIFE] unused
  
 int             vanilla_savegame_limit = 1;
 int             vanilla_demo_limit = 1;
@@ -775,7 +774,7 @@ void G_DoLoadLevel (void)
 
     for (i=0 ; i<MAXPLAYERS ; i++) 
     { 
-        //turbodetected[i] = false; [STRIFE] unused
+        turbodetected[i] = false;
 
         // haleyjd 20110204 [STRIFE]: PST_REBORN if players[i].health <= 0
         if (playeringame[i] && (players[i].playerstate == PST_DEAD || players[i].health <= 0))
@@ -868,54 +867,54 @@ boolean G_Responder (event_t* ev)
 { 
     // allow spy mode changes even during the demo
     if (gamestate == GS_LEVEL && ev->type == ev_keydown 
-     && ev->data1 == key_spy && (singledemo || !deathmatch) )
+        && ev->data1 == key_spy && (singledemo || !deathmatch) )
     {
-	// spy mode 
-	do 
-	{ 
-	    displayplayer++; 
-	    if (displayplayer == MAXPLAYERS) 
-		displayplayer = 0; 
-	} while (!playeringame[displayplayer] && displayplayer != consoleplayer); 
-	return true; 
+        // spy mode 
+        do 
+        { 
+            displayplayer++; 
+            if (displayplayer == MAXPLAYERS) 
+                displayplayer = 0; 
+        } while (!playeringame[displayplayer] && displayplayer != consoleplayer); 
+        return true; 
     }
-    
+
     // any other key pops up menu if in demos
     if (gameaction == ga_nothing && !singledemo && 
-	(demoplayback || gamestate == GS_DEMOSCREEN) 
-	) 
+        (demoplayback || gamestate == GS_DEMOSCREEN) 
+        ) 
     { 
-	if (ev->type == ev_keydown ||  
-	    (ev->type == ev_mouse && ev->data1) || 
-	    (ev->type == ev_joystick && ev->data1) ) 
-	{ 
-	    M_StartControlPanel (); 
-	    return true; 
-	} 
-	return false; 
+        if (ev->type == ev_keydown ||  
+            (ev->type == ev_mouse && ev->data1) || 
+            (ev->type == ev_joystick && ev->data1) ) 
+        { 
+            M_StartControlPanel (); 
+            return true; 
+        } 
+        return false; 
     } 
 
     if (gamestate == GS_LEVEL) 
     { 
 #if 0 
-	if (devparm && ev->type == ev_keydown && ev->data1 == ';') 
-	{ 
-	    G_DeathMatchSpawnPlayer (0); 
-	    return true; 
-	} 
+        if (devparm && ev->type == ev_keydown && ev->data1 == ';') 
+        { 
+            G_DeathMatchSpawnPlayer (0); 
+            return true; 
+        } 
 #endif 
-	if (HU_Responder (ev)) 
-	    return true;	// chat ate the event 
-	if (ST_Responder (ev)) 
-	    return true;	// status window ate it 
-	if (AM_Responder (ev)) 
-	    return true;	// automap ate it 
+        if (HU_Responder (ev)) 
+            return true;	// chat ate the event 
+        if (ST_Responder (ev)) 
+            return true;	// status window ate it 
+        if (AM_Responder (ev)) 
+            return true;	// automap ate it 
     } 
-	 
+
     if (gamestate == GS_FINALE) 
     { 
-	if (F_Responder (ev)) 
-	    return true;	// finale ate the event 
+        if (F_Responder (ev)) 
+            return true;	// finale ate the event 
     } 
 
     if (testcontrols && ev->type == ev_mouse)
@@ -942,39 +941,39 @@ boolean G_Responder (event_t* ev)
 
     switch (ev->type) 
     { 
-      case ev_keydown: 
-	if (ev->data1 == key_pause) 
-	{ 
-	    sendpause = true; 
-	}
+    case ev_keydown: 
+        if (ev->data1 == key_pause) 
+        { 
+            sendpause = true; 
+        }
         else if (ev->data1 <NUMKEYS) 
         {
-	    gamekeydown[ev->data1] = true; 
+            gamekeydown[ev->data1] = true; 
         }
 
-	return true;    // eat key down events 
- 
-      case ev_keyup: 
-	if (ev->data1 <NUMKEYS) 
-	    gamekeydown[ev->data1] = false; 
-	return false;   // always let key up events filter down 
-		 
-      case ev_mouse: 
+        return true;    // eat key down events 
+
+    case ev_keyup: 
+        if (ev->data1 <NUMKEYS) 
+            gamekeydown[ev->data1] = false; 
+        return false;   // always let key up events filter down 
+
+    case ev_mouse: 
         SetMouseButtons(ev->data1);
-	mousex = ev->data2*(mouseSensitivity+5)/10; 
-	mousey = ev->data3*(mouseSensitivity+5)/10; 
-	return true;    // eat events 
- 
-      case ev_joystick: 
+        mousex = ev->data2*(mouseSensitivity+5)/10; 
+        mousey = ev->data3*(mouseSensitivity+5)/10; 
+        return true;    // eat events 
+
+    case ev_joystick: 
         SetJoyButtons(ev->data1);
-	joyxmove = ev->data2; 
-	joyymove = ev->data3; 
-	return true;    // eat events 
- 
-      default: 
-	break; 
+        joyxmove = ev->data2; 
+        joyymove = ev->data3; 
+        return true;    // eat events 
+
+    default: 
+        break; 
     } 
- 
+
     return false; 
 } 
 
@@ -1062,10 +1061,7 @@ void G_Ticker (void)
             // over the past 4 seconds.  offset the checking period
             // for each player so messages are not displayed at the
             // same time.
-            //
-            // haleyjd 20110204 [STRIFE] unused
 
-            /*
             if (cmd->forwardmove > TURBOTHRESHOLD)
             {
                 turbodetected[i] = true;
@@ -1081,7 +1077,6 @@ void G_Ticker (void)
                 players[consoleplayer].message = turbomessage;
                 turbodetected[i] = false;
             }
-            */
 
             if (netgame && !netdemo && !(gametic%ticdup) ) 
             { 
@@ -1236,7 +1231,7 @@ void G_PlayerReborn (int player)
     int         allegiance;
 
     killcount = players[player].killcount;
-    allegiance = players[player].allegiance;
+    allegiance = players[player].allegiance; // [STRIFE]
 
     memcpy(frags,players[player].frags,sizeof(frags));
 
@@ -1261,10 +1256,11 @@ void G_PlayerReborn (int player)
     for(i = 0; i < NUMAMMO; i++) 
         p->maxammo[i] = maxammo[i]; 
 
+    // [STRIFE] clear inventory
     for(i = 0; i < 32; i++)
         p->inventory[i].type = NUMMOBJTYPES;
 
-    // villsa [STRIFE]
+    // villsa [STRIFE]: Default objective
     strncpy(mission_objective, DEH_String("Find help"), OBJECTIVE_LEN);
 }
 

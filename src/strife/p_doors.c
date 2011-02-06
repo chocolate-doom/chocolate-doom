@@ -554,7 +554,7 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
     vldoor_t*   door;
     int         side;
 
-    side = 0;	// only front sides can be used
+    side = 0;   // only front sides can be used
 
     //	Check for locks
     player = thing->player;
@@ -732,11 +732,6 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
     sec = sides[ line->sidenum[side^1]] .sector;
     secnum = sec-sectors;
 
-
-    // STRIFE-TODO: retriggering logic was modified, and has a serious bug in that
-    // some linetypes are allowed to fall through and start multiple thinkers on a
-    // single sector - this must be carefully replicated
-
     if (sec->specialdata)
     {
         door = sec->specialdata;
@@ -764,7 +759,7 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
         case 213:       // villsa
         case 232:       // villsa
             if(door->direction == -1)
-                door->direction = 1;	// go back up
+                door->direction = 1;    // go back up
             else
             {
                 if (!thing->player)
@@ -776,7 +771,7 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
 
                 if (door->thinker.function.acp1 == (actionf_p1) T_VerticalDoor)
                 {
-                    door->direction = -1;	// start going down immediately
+                    door->direction = -1;   // start going down immediately
                 }
                 else if (door->thinker.function.acp1 == (actionf_p1) T_PlatRaise)
                 {
@@ -806,6 +801,8 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
                 }
             }
             return;
+        default:
+            break;
         }
     }
 
@@ -830,7 +827,7 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
         S_StartSound(&sec->soundorg, sfx_bdopn);
         break;
 
-    default:	// NORMAL DOOR SOUND
+    default:    // NORMAL DOOR SOUND
         S_StartSound(&sec->soundorg, door->opensound);
         break;
     }
@@ -884,8 +881,8 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
 //
 void P_SpawnDoorCloseIn30 (sector_t* sec)
 {
-    vldoor_t*	door;
-	
+    vldoor_t*   door;
+
     door = Z_Malloc ( sizeof(*door), PU_LEVSPEC, 0);
 
     P_AddThinker (&door->thinker);

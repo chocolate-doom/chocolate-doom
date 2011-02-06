@@ -175,7 +175,7 @@ extern  int	displayplayer;
 // Statistics on a given map, for intermission.
 //
 extern  int	totalkills;
-extern	int	totalitems;
+//extern	int	totalitems; [STRIFE] unused
 extern	int	totalsecret;
 
 // Timer, for scores.
@@ -279,7 +279,7 @@ extern  int             mouseSensitivity;
 // debug flag to cancel adaptiveness
 extern  boolean         singletics;	
 
-extern  int             bodyqueslot;
+//extern  int             bodyqueslot; [STRIFE] unused
 
 
 
