@@ -105,12 +105,13 @@ char *          savegamedir;
 char *          iwadfile;
 
 
-boolean		devparm;	// started game with -devparm
-boolean         nomonsters;	// checkparm of -nomonsters
-boolean         respawnparm;	// checkparm of -respawn
-boolean         fastparm;	// checkparm of -fast
+boolean         devparm;        // started game with -devparm
+boolean         nomonsters;     // checkparm of -nomonsters
+boolean         respawnparm;    // checkparm of -respawn
+boolean         fastparm;       // checkparm of -fast
 
-boolean		singletics = false; // debug flag to cancel adaptiveness
+boolean         showintro = true;   // [STRIFE] checkparm of -nograph, disables intro
+boolean         singletics = false; // debug flag to cancel adaptiveness
 
 
 //extern int soundVolume;
@@ -144,7 +145,7 @@ boolean         isdemoversion;
 //boolean         storedemo;
 
 
-char		wadfile[1024];		// primary wad file
+char		wadfile[1024];          // primary wad file
 char		mapdir[1024];           // directory of development maps
 
 int             show_endoom = 1;
@@ -162,7 +163,7 @@ void D_DoAdvanceDemo (void);
 //
 void D_ProcessEvents (void)
 {
-    event_t*	ev;
+    event_t*    ev;
 
     // haleyjd 08/22/2010: [STRIFE] there is no such thing as a "store demo" 
     // version of Strife
@@ -190,9 +191,10 @@ void D_ProcessEvents (void)
 //
 // haleyjd 08/23/10: [STRIFE]:
 // * Changes to eliminate intermission and change timing of screenwipe
-// * 9/01/10: Added ST_DrawExternal and popupactivestate static variable
+// * 20100901: Added ST_DrawExternal and popupactivestate static variable
+// * 20110206: Start wipegamestate at GS_UNKNOWN (STRIFE-TODO: rename?)
 //
-gamestate_t     wipegamestate = GS_DEMOSCREEN;
+gamestate_t     wipegamestate = GS_UNKNOWN;
 extern  boolean setsizeneeded;
 extern  int             showMessages;
 void R_ExecuteSetViewSize (void);
@@ -483,8 +485,11 @@ void D_DoomLoop (void)
 
     TryRunTics();
 
-    I_SetWindowTitle(gamedescription);
-    I_InitGraphics();
+    if(!showintro) // [STRIFE]
+    {
+        I_SetWindowTitle(gamedescription);
+        I_InitGraphics();
+    }
     I_EnableLoadingDisk();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
 
@@ -892,8 +897,7 @@ void D_IdentifyVersion(void)
 
         if(disable_voices) // voices disabled?
         {
-            // STRIFE-FIXME:
-            // if(debugmode)
+            if(devparm)
                  printf("Voices disabled\n");
             return;
         }
@@ -1248,6 +1252,163 @@ static void D_InitChocoStrife(void)
     V_SetPatchClipCallback(D_PatchClipCallback);
 }
 
+
+//
+// STRIFE Graphical Intro Sequence
+//
+
+#define MAXINTROPROGRESS 69
+
+static int introprogress;        // track the progress of the intro
+
+static byte *rawgfx_startup0;    // raw linear gfx for intro
+static byte *rawgfx_startp[4];
+static byte *rawgfx_startlz[2];
+static byte *rawgfx_startbot;
+
+//
+// D_IntroBackground
+//
+// [STRIFE] New function
+// haleyjd 20110206: Strife only drew this once, but for supporting double-
+// buffered or page-flipped surfaces it is best to redraw the entire screen
+// every frame.
+//
+static void D_IntroBackground(void)
+{
+    // Slam up PANEL0 to fill the background entirely (wasn't needed in vanilla)
+    patch_t *panel0 = W_CacheLumpName("PANEL0", PU_CACHE);
+    V_DrawPatch(0, 0, panel0);
+
+    // Strife cleared the screen somewhere in the low-level code between the
+    // intro and the titlescreen, so this is to take care of that and get
+    // proper fade-in behavior on the titlescreen
+    if(introprogress >= MAXINTROPROGRESS)
+    {
+        I_FinishUpdate();
+        return;
+    }
+
+    // Draw a 95-pixel rect from STARTUP0 starting at y=57 to (0,41) on the
+    // screen (this was a memcpy directly to 0xA3340 in low DOS memory)
+    V_DrawBlock(0, 41, 320, 95, rawgfx_startup0 + (320*57));
+}
+
+//
+// D_InitIntroSequence
+//
+// [STRIFE] New function
+// haleyjd 20110206: Initialize the graphical introduction sequence
+//
+static void D_InitIntroSequence(void)
+{
+    if(showintro)
+    {
+        // In vanilla Strife, Mode 13h was initialized directly in D_DoomMain.
+        // We have to be a little more courteous of the low-level code here.
+        I_SetWindowTitle(gamedescription);
+        I_InitGraphics();
+        V_RestoreBuffer(); // make the V_ routines work
+
+        // Load all graphics
+        rawgfx_startup0   = W_CacheLumpName("STARTUP0", PU_STATIC);
+        rawgfx_startp[0]  = W_CacheLumpName("STRTPA1",  PU_STATIC);
+        rawgfx_startp[1]  = W_CacheLumpName("STRTPB1",  PU_STATIC);
+        rawgfx_startp[2]  = W_CacheLumpName("STRTPC1",  PU_STATIC);
+        rawgfx_startp[3]  = W_CacheLumpName("STRTPD1",  PU_STATIC);
+        rawgfx_startlz[0] = W_CacheLumpName("STRTLZ1",  PU_STATIC);
+        rawgfx_startlz[1] = W_CacheLumpName("STRTLZ2",  PU_STATIC);
+        rawgfx_startbot   = W_CacheLumpName("STRTBOT",  PU_STATIC);
+
+        // Draw the background
+        D_IntroBackground();
+    }
+    else
+    {
+        puts(DEH_String("Conversation ON"));
+        puts("\n");
+        puts(DEH_String("Rogue Entertainment"));
+        puts("\n");
+        puts(DEH_String("and"));
+        puts("\n");
+        puts(DEH_String("Velocity Games"));
+        puts("\n");
+        puts(DEH_String("present"));
+        puts("\n");
+        puts(DEH_String("S T R I F E"));
+        puts("\n");
+        puts(DEH_String("Loading..."));
+        puts("\n");
+    }
+}
+
+//
+// D_DrawIntroSequence
+//
+// [STRIFE] New function
+// haleyjd 20110206: Refresh the intro sequence
+//
+static void D_DrawIntroSequence(void)
+{
+    int laserpos;
+    int robotpos;
+
+    if(!showintro)
+        return;
+
+    D_IntroBackground(); // haleyjd: refresh the background
+
+    // Laser position
+    laserpos = (200 * introprogress / MAXINTROPROGRESS) + 60;
+
+    // BUG: (?) Due to this clip, the laser never even comes close to
+    // touching the peasant; confirmed with vanilla. This MAY have been
+    // intentional, for effect, however, since no death frames are shown 
+    // either... kind of a black-out death.
+    if(laserpos > 200)
+        laserpos = 200;
+
+    // Draw the laser
+    // Blitted 16 bytes for 16 rows starting at 705280 + laserpos
+    // (705280 - 0xA0000) / 320 == 156
+    V_DrawBlock(laserpos, 156, 16, 16, rawgfx_startlz[laserpos % 2]);
+
+    // Robot position
+    robotpos = laserpos % 5 - 2;
+
+    // Draw the robot
+    // Blitted 48 bytes for 48 rows starting at 699534 + (320*robotpos)
+    // 699534 - 0xA0000 == 44174, which % 320 == 14, / 320 == 138
+    V_DrawBlock(14, 138 + robotpos, 48, 48, rawgfx_startbot);
+
+    // Draw the peasant
+    // Blitted 32 bytes for 64 rows starting at 699142
+    // 699142 - 0xA0000 == 43782, which % 320 == 262, / 320 == 136
+    V_DrawBlock(262, 136, 32, 64, rawgfx_startp[laserpos % 4]);
+
+    I_FinishUpdate();
+}
+
+//
+// D_IntroTick
+//
+// Advance the intro sequence
+//
+void D_IntroTick(void)
+{
+    if(devparm)
+        return;
+
+    ++introprogress;
+    if(introprogress >= MAXINTROPROGRESS)
+    {
+        D_IntroBackground(); // haleyjd: clear the bg anyway
+        S_StartSound(NULL, sfx_psdtha);
+    }
+    else
+        D_DrawIntroSequence();
+}
+
 //
 // End Chocolate Strife Specifics
 //
@@ -1266,11 +1427,33 @@ void D_DoomMain (void)
 
     M_FindResponseFile ();
 
+    // haleyjd 20110206 [STRIFE]: -nograph parameter
+
+    //!
+    // @vanilla
+    //
+    // Disable graphical introduction sequence
+    //
+    
+    if (M_CheckParm("-nograph") > 0)
+        showintro = false;
+
+    // haleyjd 20110206: Moved up -devparm for max visibility
+
+    //! 
+    // @vanilla
+    //
+    // Developer mode.  F1 saves a screenshot in the current working
+    // directory.
+    //
+
+    devparm = M_CheckParm ("-devparm");
+
     // print banner
 
     I_PrintBanner(PACKAGE_STRING);
 
-    DEH_printf("Z_Init: Init zone memory allocation daemon. \n");
+    //DEH_printf("Z_Init: Init zone memory allocation daemon. \n"); [STRIFE] removed
     Z_Init ();
 
 #ifdef FEATURE_MULTIPLAYER
@@ -1316,7 +1499,8 @@ void D_DoomMain (void)
 #endif
             
 #ifdef FEATURE_DEHACKED
-    printf("DEH_Init: Init Dehacked support.\n");
+    if(devparm)
+        printf("DEH_Init: Init Dehacked support.\n");
     DEH_Init();
 #endif
 
@@ -1337,7 +1521,7 @@ void D_DoomMain (void)
     //
     // Disable monsters.
     //
-	
+
     nomonsters = M_CheckParm ("-nomonsters");
 
     //!
@@ -1356,16 +1540,11 @@ void D_DoomMain (void)
 
     fastparm = M_CheckParm ("-fast");
 
-    //! 
-    // @vanilla
-    //
-    // Developer mode.  F1 saves a screenshot in the current working
-    // directory.
-    //
-
-    devparm = M_CheckParm ("-devparm");
-
     I_DisplayFPSDots(devparm);
+
+    // haleyjd 20110206 [STRIFE]: -devparm implies -nograph
+    if(devparm)
+        showintro = false;
 
     //!
     // @category net
@@ -1375,7 +1554,7 @@ void D_DoomMain (void)
     //
 
     if (M_CheckParm ("-deathmatch"))
-	deathmatch = 1;
+        deathmatch = 1;
 
     //!
     // @category net
@@ -1386,10 +1565,10 @@ void D_DoomMain (void)
     //
 
     if (M_CheckParm ("-altdeath"))
-	deathmatch = 2;
+        deathmatch = 2;
 
     if (devparm)
-	DEH_printf(D_DEVSTR);
+        DEH_printf(D_DEVSTR);
     
     // find which dir to use for config files
 
@@ -1428,30 +1607,30 @@ void D_DoomMain (void)
 
     if ( (p=M_CheckParm ("-turbo")) )
     {
-	int     scale = 200;
-	extern int forwardmove[2];
-	extern int sidemove[2];
-	
-	if (p<myargc-1)
-	    scale = atoi (myargv[p+1]);
-	if (scale < 10)
-	    scale = 10;
-	if (scale > 400)
-	    scale = 400;
+        int     scale = 200;
+        extern int forwardmove[2];
+        extern int sidemove[2];
+
+        if (p<myargc-1)
+            scale = atoi (myargv[p+1]);
+        if (scale < 10)
+            scale = 10;
+        if (scale > 400)
+            scale = 400;
         DEH_printf("turbo scale: %i%%\n", scale);
-	forwardmove[0] = forwardmove[0]*scale/100;
-	forwardmove[1] = forwardmove[1]*scale/100;
-	sidemove[0] = sidemove[0]*scale/100;
-	sidemove[1] = sidemove[1]*scale/100;
+        forwardmove[0] = forwardmove[0]*scale/100;
+        forwardmove[1] = forwardmove[1]*scale/100;
+        sidemove[0] = sidemove[0]*scale/100;
+        sidemove[1] = sidemove[1]*scale/100;
     }
     
     // init subsystems
-    DEH_printf("V_Init: allocate screens.\n");
+    // DEH_printf("V_Init: allocate screens.\n"); [STRIFE] removed
     V_Init ();
 
     // Load configuration files before initialising other subsystems.
     // haleyjd 08/22/2010: [STRIFE] - use strife.cfg
-    DEH_printf("M_LoadDefaults: Load system defaults.\n");
+    // DEH_printf("M_LoadDefaults: Load system defaults.\n"); [STRIFE] removed
     M_SetConfigFilenames("strife.cfg", PROGRAM_PREFIX "strife.cfg");
     D_BindVariables();
     M_LoadDefaults();
@@ -1459,9 +1638,21 @@ void D_DoomMain (void)
     // Save configuration at exit.
     I_AtExit(M_SaveDefaults, false);
 
-    DEH_printf("W_Init: Init WADfiles.\n");
+    if(devparm) // [STRIFE] Devparm only
+        DEH_printf("W_Init: Init WADfiles.\n");
     D_AddFile(iwadfile);
     modifiedgame = W_ParseCommandLine();
+
+    // [STRIFE] serial number output
+    if(devparm)
+    {
+        char msgbuf[80];
+        char *serial  = W_CacheLumpName("SERIAL", PU_CACHE);
+        int serialnum = atoi(serial);
+
+        DEH_snprintf(msgbuf, sizeof(msgbuf), "Wad Serial Number: %d:", serialnum);
+        printf("%s\n", msgbuf);
+    }
 
     // add any files specified on the command line with -file wadfile
     // to the wad list
@@ -1471,30 +1662,17 @@ void D_DoomMain (void)
     p = M_CheckParm ("-wart");
     if (p)
     {
-	myargv[p][4] = 'p';     // big hack, change to -warp
+        myargv[p][4] = 'p';     // big hack, change to -warp
 
-	// Map name handling.
-	switch (gamemode )
-	{
-	  case shareware:
-	  case retail:
-	  case registered:
-	    sprintf (file,"~"DEVMAPS"E%cM%c.wad",
-		     myargv[p+1][0], myargv[p+2][0]);
-	    printf("Warping to Episode %s, Map %s.\n",
-		   myargv[p+1],myargv[p+2]);
-	    break;
-	    
-	  case commercial:
-	  default:
-	    p = atoi (myargv[p+1]);
-	    if (p<10)
-	      sprintf (file,"~"DEVMAPS"cdata/map0%i.wad", p);
-	    else
-	      sprintf (file,"~"DEVMAPS"cdata/map%i.wad", p);
-	    break;
-	}
-	D_AddFile (file);
+        // Map name handling.
+        // [STRIFE]: looks for f:/st/data
+        p = atoi (myargv[p+1]);
+        if (p<10)
+            sprintf (file,"~f:/st/data/map0%i.wad", p);
+        else
+            sprintf (file,"~f:/st/data/map%i.wad", p);
+
+        D_AddFile (file);
     }
 
     //!
@@ -1517,7 +1695,7 @@ void D_DoomMain (void)
         // Play back the demo named demo.lmp, determining the framerate
         // of the screen.
         //
-	p = M_CheckParm ("-timedemo");
+        p = M_CheckParm ("-timedemo");
 
     }
 
@@ -1529,10 +1707,10 @@ void D_DoomMain (void)
         }
         else
         {
-	    sprintf (file,"%s.lmp", myargv[p+1]);
+            sprintf (file,"%s.lmp", myargv[p+1]);
         }
 
-	if (D_AddFile (file))
+        if (D_AddFile (file))
         {
             strncpy(demolumpname, lumpinfo[numlumps - 1].name, 8);
             demolumpname[8] = '\0';
@@ -1563,6 +1741,10 @@ void D_DoomMain (void)
     D_SetGameDescription();
     SetSaveGameDir(iwadfile);
 
+    // haleyjd 20110206 [STRIFE] Startup the introduction sequence
+    D_InitIntroSequence();
+    D_IntroTick();
+
     // Check for -file in shareware
     if (modifiedgame)
     {
@@ -1590,6 +1772,8 @@ void D_DoomMain (void)
                     I_Error(DEH_String("\nThis is not the registered version."));
     }
     
+    D_IntroTick(); // [STRIFE]
+    
     // get skill / episode / map from parms
     startskill = sk_medium;
     startepisode = 1;
@@ -1608,8 +1792,8 @@ void D_DoomMain (void)
 
     if (p && p < myargc-1)
     {
-	startskill = myargv[p+1][0]-'1';
-	autostart = true;
+        startskill = myargv[p+1][0]-'1';
+        autostart = true;
     }
 
     //!
@@ -1623,11 +1807,11 @@ void D_DoomMain (void)
 
     if (p && p < myargc-1)
     {
-	startepisode = myargv[p+1][0]-'0';
-	startmap = 1;
-	autostart = true;
+        startepisode = myargv[p+1][0]-'0';
+        startmap = 1;
+        autostart = true;
     }
-	
+
     timelimit = 0;
 
     //! 
@@ -1642,8 +1826,8 @@ void D_DoomMain (void)
 
     if (p && p < myargc-1 && deathmatch)
     {
-	timelimit = atoi(myargv[p+1]);
-	printf("timer: %i\n", timelimit);
+        timelimit = atoi(myargv[p+1]);
+        printf("timer: %i\n", timelimit);
     }
 
     //!
@@ -1659,7 +1843,7 @@ void D_DoomMain (void)
     {
         DEH_printf("Austin Virtual Gaming: Levels will end "
                        "after 20 minutes\n");
-	timelimit = 20;
+        timelimit = 20;
     }
 
     //!
@@ -1743,39 +1927,59 @@ void D_DoomMain (void)
     // haleyjd 08/28/10: Init Choco Strife stuff.
     D_InitChocoStrife();
 
-    DEH_printf("M_Init: Init miscellaneous info.\n");
-    M_Init ();
-
     // haleyjd 08/22/2010: [STRIFE] Modified string to match binary
-    DEH_printf("R_Init: Loading Graphics - ");
+    if(devparm) // [STRIFE]
+       DEH_printf("R_Init: Loading Graphics - ");
     R_Init ();
+    D_IntroTick(); // [STRIFE]
 
-    DEH_printf("\nP_Init: Init Playloop state.\n");
+    if(devparm) // [STRIFE]
+        DEH_printf("\nP_Init: Init Playloop state.\n");
     P_Init ();
+    D_IntroTick(); // [STRIFE]
 
-    DEH_printf("I_Init: Setting up machine state.\n");
+    if(devparm) // [STRIFE]
+        DEH_printf("I_Init: Setting up machine state.\n");
     I_CheckIsScreensaver();
     I_InitTimer();
     I_InitJoystick();
+    D_IntroTick(); // [STRIFE]
 
 #ifdef FEATURE_MULTIPLAYER
-    printf ("NET_Init: Init network subsystem.\n");
+    if(devparm) // [STRIFE]
+        printf ("NET_Init: Init network subsystem.\n");
     NET_Init ();
 #endif
+    D_IntroTick(); // [STRIFE]
 
-    DEH_printf("S_Init: Setting up sound.\n");
+    if(devparm) // [STRIFE]
+        DEH_printf("M_Init: Init Menu.\n");
+    M_Init ();
+    D_IntroTick(); // [STRIFE]
+
+    if(devparm) // [STRIFE]
+        DEH_printf("S_Init: Setting up sound.\n");
     S_Init (sfxVolume * 8, musicVolume * 8, voiceVolume * 8); // [STRIFE]: voice
+    D_IntroTick(); // [STRIFE]
 
-    DEH_printf("D_CheckNetGame: Checking network game status.\n");
+    if(devparm) // [STRIFE]
+        DEH_printf("D_CheckNetGame: Checking network game status.\n");
     D_CheckNetGame ();
 
     PrintGameVersion();
 
-    DEH_printf("HU_Init: Setting up heads up display.\n");
+    if(devparm)
+        DEH_printf("HU_Init: Setting up heads up display.\n");
     HU_Init ();
+    D_IntroTick(); // [STRIFE]
 
-    DEH_printf("ST_Init: Init status bar.\n");
+    if(devparm)
+        DEH_printf("ST_Init: Init status bar.\n");
     ST_Init ();
+    D_IntroTick(); // [STRIFE]
+
+    // haleyjd [STRIFE] -statcopy used to be here...
+    D_IntroTick();
 
     // If Doom II without a MAP01 lump, this is a store demo.  
     // Moved this here so that MAP01 isn't constantly looked up
@@ -1798,37 +2002,41 @@ void D_DoomMain (void)
 
     if (p && p < myargc-1)
     {
-	G_RecordDemo (myargv[p+1]);
-	autostart = true;
+        G_RecordDemo (myargv[p+1]);
+        autostart = true;
     }
+    D_IntroTick(); // [STRIFE]
 
     p = M_CheckParm ("-playdemo");
     if (p && p < myargc-1)
     {
-	singledemo = true;              // quit after one demo
-	G_DeferedPlayDemo (demolumpname);
-	D_DoomLoop ();  // never returns
+        singledemo = true;              // quit after one demo
+        G_DeferedPlayDemo (demolumpname);
+        D_DoomLoop ();  // never returns
     }
-	
+    D_IntroTick(); // [STRIFE]
+
     p = M_CheckParm ("-timedemo");
     if (p && p < myargc-1)
     {
-	G_TimeDemo (demolumpname);
-	D_DoomLoop ();  // never returns
+        G_TimeDemo (demolumpname);
+        D_DoomLoop ();  // never returns
     }
-	
+    D_IntroTick(); // [STRIFE]
+
     if (startloadgame >= 0)
     {
         strcpy(file, P_SaveGameFile(startloadgame));
-	G_LoadGame (file);
+        G_LoadGame (file);
     }
-	
+    D_IntroTick(); // [STRIFE]
+
     if (gameaction != ga_loadgame )
     {
-	if (autostart || netgame)
-	    G_InitNew (startskill, startmap);
-	else
-	    D_StartTitle ();                // start up intro loop
+        if (autostart || netgame)
+            G_InitNew (startskill, startmap);
+        else
+            D_StartTitle ();                // start up intro loop
     }
 
     D_DoomLoop ();  // never returns

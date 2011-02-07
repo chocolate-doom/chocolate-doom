@@ -556,8 +556,8 @@ boolean ST_Responder(event_t* ev)
     // STRIFE-TODO: "dev" cheat - is this the "DOTS" cheat?
     else if (cht_CheckCheat(&cheat_dev, ev->data2))
     {
-        debugmode = !debugmode;
-        if (debugmode)
+        devparm = !devparm;
+        if (devparm)
             plyr->message = DEH_String("devparm ON");
         else
             plyr->message = DEH_String("devparm OFF");

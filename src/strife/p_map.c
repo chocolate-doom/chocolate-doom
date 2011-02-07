@@ -1285,14 +1285,14 @@ P_AimLineAttack
 //
 void
 P_LineAttack
-( mobj_t*	t1,
-  angle_t	angle,
-  fixed_t	distance,
-  fixed_t	slope,
-  int		damage )
+( mobj_t*       t1,
+  angle_t       angle,
+  fixed_t       distance,
+  fixed_t       slope,
+  int	        damage )
 {
-    fixed_t	x2;
-    fixed_t	y2;
+    fixed_t     x2;
+    fixed_t     y2;
     int         traverseflags;
 
     angle >>= ANGLETOFINESHIFT;

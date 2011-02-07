@@ -36,6 +36,7 @@
 
 #include "doomdef.h"
 #include "doomstat.h"   // villsa [STRIFE]
+#include "d_main.h"
 #include "d_net.h"
 
 #include "m_bbox.h"
@@ -782,22 +783,41 @@ void R_ExecuteSetViewSize (void)
 void R_Init (void)
 {
     R_InitData ();
-    printf (".");
+    if(devparm)
+        printf (".");
+    else
+        D_IntroTick(); // [STRIFE] tick intro
+
     R_InitPointToAngle ();
-    printf (".");
+    if(devparm)
+        printf (".");
+
     R_InitTables ();
     // viewwidth / viewheight / detailLevel are set by the defaults
-    printf (".");
+    if(devparm)
+        printf (".");
 
     R_SetViewSize (screenblocks, detailLevel);
     R_InitPlanes ();
-    printf (".");
+    if(devparm)
+        printf (".");
+    
     R_InitLightTables ();
-    printf (".");
+    if(devparm)
+        printf (".");
+    else
+        D_IntroTick();
+    
     R_InitSkyMap ();
+    if(!devparm)
+        D_IntroTick();
+
     R_InitTranslationTables ();
-    printf (".");
-	
+    if(devparm)
+        printf (".");
+    else
+        D_IntroTick();
+
     framecount = 0;
 }
 
