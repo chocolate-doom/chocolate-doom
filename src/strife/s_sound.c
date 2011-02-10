@@ -538,7 +538,8 @@ static unsigned int S_voiceHash(const char *str)
       ++c;
    }
 
-   return h;}
+   return h;
+}
 
 static voiceinfo_t *voices[NUMVOICECHAINS];
 
@@ -618,7 +619,6 @@ void I_StartVoice(const char *lumpname)
     // Because of constness problems...
     strncpy(lumpnamedup, lumpname, 9);
     lumpnamedup[8] = '\0';
-
 
     if((lumpnum = W_CheckNumForName(lumpnamedup)) != -1)
     {

@@ -31,7 +31,15 @@
 #ifndef M_SAVES_H__
 #define M_SAVES_H__
 
+// Strife Savegame Functions
 boolean M_SaveMisObj(const char *path);
+
+// Custom Utilities for Filepath Handling
+void *M_Calloc(size_t n1, size_t n2);
+void  M_NormalizeSlashes(char *str);
+int   M_StringAlloc(char **str, int numstrs, size_t extra, const char *str1, ...);
+char *M_SafeFilePath(const char *basepath, const char *newcomponent);
+char  M_GetFilePath(const char *fn, char *dest, size_t len);
 
 #endif
 

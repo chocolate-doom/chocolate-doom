@@ -246,8 +246,8 @@ enum
     QF_QUEST1  = (1 << tk_quest1),  // Obtained Beldin's ring
     QF_QUEST2  = (1 << tk_quest2),  // Stole the Chalice
     QF_QUEST3  = (1 << tk_quest3),  // Permission to visit Irale (visited Macil)
-    QF_QUEST4  = (1 << tk_quest4),
-    QF_QUEST5  = (1 << tk_quest5),
+    QF_QUEST4  = (1 << tk_quest4),  // Accepted Gov. Mourel's "messy" chore
+    QF_QUEST5  = (1 << tk_quest5),  // Accepted Gov. Mourel's "bloody" chore
     QF_QUEST6  = (1 << tk_quest6),  // Destroyed the Power Coupling
     QF_QUEST7  = (1 << tk_quest7),  // Killed Blue Acolytes ("Scanning Team")
     QF_QUEST8  = (1 << tk_quest8),

@@ -58,6 +58,7 @@
 #include "m_controls.h"
 #include "m_misc.h"
 #include "m_menu.h"
+#include "m_saves.h" // haleyjd [STRIFE]
 #include "p_saveg.h"
 
 #include "i_endoom.h"
@@ -79,7 +80,6 @@
 
 #include "p_setup.h"
 #include "r_local.h"
-
 
 #include "d_main.h"
 
@@ -793,53 +793,6 @@ static char *GetGameName(char *gamename)
     return gamename;
 }
 
-// 
-// haleyjd: STRIFE-FIXME: Temporary?
-// Code borrowed from Eternity, and modified to return separator char
-//
-char M_GetFilePath(const char *fn, char *dest, size_t len)
-{
-   boolean found_slash = false;
-   char *p;
-   char sepchar = '\0';
-
-   memset(dest, 0, len);
-
-   p = dest + len - 1;
-
-   strncpy(dest, fn, len);
-   
-   while(p >= dest)
-   {
-      if(*p == '/' || *p == '\\')
-      {
-         sepchar = *p;
-         found_slash = true; // mark that the path ended with a slash
-         *p = '\0';
-         break;
-      }
-      *p = '\0';
-      p--;
-   }
-
-   // haleyjd: in the case that no slash was ever found, yet the
-   // path string is empty, we are dealing with a file local to the
-   // working directory. The proper path to return for such a string is
-   // not "", but ".", since the format strings add a slash now. When
-   // the string is empty but a slash WAS found, we really do want to
-   // return the empty string, since the path is relative to the root.
-   if(!found_slash && *dest == '\0')
-      *dest = '.';
-
-   // if a separator is not found, default to forward, because Windows 
-   // supports that too.
-   if(sepchar == '\0') 
-       sepchar = '/';
-
-   return sepchar;
-}
-
-
 //
 // Find out what version of Doom is playing.
 //
@@ -978,6 +931,8 @@ static void SetSaveGameDir(char *iwad_filename)
             basefile, DIR_SEPARATOR);
 
     M_MakeDirectory(savegamedir);
+
+    // haleyjd 20110210: Create Strife hub save folders
 }
 
 // Check if the IWAD file is the Chex Quest IWAD.  

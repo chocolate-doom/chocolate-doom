@@ -23,8 +23,6 @@
 //
 //-----------------------------------------------------------------------------
 
-
-
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
@@ -41,6 +39,7 @@
 #include "m_controls.h"
 #include "m_misc.h"
 #include "m_menu.h"
+#include "m_saves.h" // STRIFE
 #include "m_random.h"
 #include "i_system.h"
 #include "i_timer.h"
@@ -53,7 +52,6 @@
 #include "hu_stuff.h"
 #include "st_stuff.h"
 #include "am_map.h"
-#include "m_misc.h" // STRIFE
 
 // Needs access to LFB.
 #include "v_video.h"
@@ -117,17 +115,17 @@ angle_t         riftangle; // player angle saved during exit
 int             timelimit;
 
 boolean         paused; 
-boolean         sendpause;             	// send a pause event next tic 
-boolean         sendsave;             	// send a save event next tic 
+boolean         sendpause;              // send a pause event next tic 
+boolean         sendsave;               // send a save event next tic 
 boolean         usergame;               // ok to save / end game 
  
 boolean         timingdemo;             // if true, exit with report on completion 
 boolean         nodrawers;              // for comparative timing purposes 
-int             starttime;          	// for comparative timing purposes  	 
+int             starttime;              // for comparative timing purposes 
  
 boolean         viewactive; 
  
-boolean         deathmatch;           	// only if started as net death 
+boolean         deathmatch;             // only if started as net death 
 boolean         netgame;                // only true if packets are broadcast 
 boolean         playeringame[MAXPLAYERS]; 
 player_t        players[MAXPLAYERS]; 
@@ -149,15 +147,15 @@ boolean		netdemo;
 byte*		demobuffer;
 byte*		demo_p;
 byte*		demoend; 
-boolean         singledemo;            	// quit after playing a demo from cmdline 
+boolean         singledemo;             // quit after playing a demo from cmdline 
  
 boolean         precache = true;        // if true, load all graphics at start 
 
 boolean         testcontrols = false;    // Invoked by setup to test controls
  
-wbstartstruct_t wminfo;               	// parms for world map / intermission 
+wbstartstruct_t wminfo;                 // parms for world map / intermission 
  
-byte		consistancy[MAXPLAYERS][BACKUPTICS]; 
+byte            consistancy[MAXPLAYERS][BACKUPTICS]; 
  
 #define MAXPLMOVE		(forwardmove[1]) 
  
@@ -1341,23 +1339,23 @@ G_CheckSpot
 void G_DeathMatchSpawnPlayer (int playernum) 
 { 
     int             i,j; 
-    int				selections; 
-	 
+    int             selections; 
+
     selections = deathmatch_p - deathmatchstarts; 
     if (selections < 4) 
-	I_Error ("Only %i deathmatch spots, 4 required", selections); 
- 
+        I_Error ("Only %i deathmatch spots, 4 required", selections); 
+
     for (j=0 ; j<20 ; j++) 
     { 
-	i = P_Random() % selections; 
-	if (G_CheckSpot (playernum, &deathmatchstarts[i]) ) 
-	{ 
-	    deathmatchstarts[i].type = playernum+1; 
-	    P_SpawnPlayer (&deathmatchstarts[i]); 
-	    return; 
-	} 
+        i = P_Random() % selections; 
+        if (G_CheckSpot (playernum, &deathmatchstarts[i]) ) 
+        { 
+            deathmatchstarts[i].type = playernum+1; 
+            P_SpawnPlayer (&deathmatchstarts[i]); 
+            return; 
+        } 
     } 
- 
+
     // no good spot, so the player will probably get stuck 
     P_SpawnPlayer (&playerstarts[playernum]); 
 } 
@@ -1819,14 +1817,15 @@ boolean G_WriteSaveName()
 
     dword_86280 = eax0;
 
-    // STRIFE-TODO: yeah good luck making THIS work on Linux.
-    if(M_CheckParm(DEH_String("-cdrom")))
+#ifdef _WIN32
+    if(M_CheckParm("-cdrom") > 0)
     {
         sprintf(savepath2, "c:\\strife.cd\\strfsav%d.ssg\\", 6);
         v5 = dword_86280;
         dirstr = "c:\\strife.cd\\strfsav%d.ssg\\";
     }
     else
+#endif
     {
         sprintf(savepath2, "strfsav%d.ssg\\", 6);
         v5 = dword_86280;

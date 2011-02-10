@@ -315,7 +315,7 @@ boolean P_CheckMissileRange(mobj_t* actor)
                            actor->y-actor->target->y) - 64*FRACUNIT;
     
     if (!actor->info->meleestate)
-        dist -= 128*FRACUNIT;	// no melee attack, so fire more
+        dist -= 128*FRACUNIT;       // no melee attack, so fire more
 
     dist >>= 16;
 
@@ -669,7 +669,7 @@ void P_NewRandomDir(mobj_t* actor)
         dir = DI_SOUTHEAST;
         while(1)
         {
-            // haleyjd 09/05/10: P_TryWalk -> P_Move, missing random code.
+            // haleyjd 09/05/10: missing random code.
             if(dir != opposite[actor->movedir])
             {
                 actor->movedir = dir;
