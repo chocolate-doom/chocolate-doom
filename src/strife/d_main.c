@@ -1232,8 +1232,13 @@ static byte *rawgfx_startbot;
 //
 static void D_IntroBackground(void)
 {
+    patch_t *panel0;
+
+    if(!showintro)
+        return;
+
     // Slam up PANEL0 to fill the background entirely (wasn't needed in vanilla)
-    patch_t *panel0 = W_CacheLumpName("PANEL0", PU_CACHE);
+    panel0 = W_CacheLumpName("PANEL0", PU_CACHE);
     V_DrawPatch(0, 0, panel0);
 
     // Strife cleared the screen somewhere in the low-level code between the
