@@ -933,6 +933,7 @@ static void SetSaveGameDir(char *iwad_filename)
     M_MakeDirectory(savegamedir);
 
     // haleyjd 20110210: Create Strife hub save folders
+    M_CreateSaveDirs(savegamedir);
 }
 
 // Check if the IWAD file is the Chex Quest IWAD.  

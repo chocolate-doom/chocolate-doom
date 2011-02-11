@@ -2,7 +2,6 @@
 //-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 1996 Rogue Entertainment / Velocity, Inc.
 // Copyright(C) 2010 James Haley, Samuel Villareal
 //
 // This program is free software; you can redistribute it and/or
@@ -55,9 +54,9 @@
 //
 // Strife maintains multiple file paths related to savegames.
 //
-char *savepath;
-char *savepath2;
-char *loadpath;
+char *savepath;   // The actual path of the saveslot?
+char *savepath2;  // The path of the temporary saveslot?
+char *loadpath;   // Path used while loading the game
 
 //
 // ClearTmp
@@ -101,10 +100,30 @@ void ClearTmp(void)
 //
 void ClearSlot(void)
 {
+    DIR *spdir = NULL;
+    struct dirent *f = NULL;
+
     if(savepath == NULL)
         I_Error("userdir is fucked up man!");
 
-    // STRIFE-TODO
+    if(!(spdir = opendir(savepath)))
+        I_Error("ClearSlot: Couldn't open dir %s", savepath);
+
+    while((f = readdir(spdir)))
+    {
+        char *filepath = NULL;
+
+        if(!strcmp(f->d_name, ".") || !strcmp(f->d_name, ".."))
+            continue;
+        
+        // haleyjd: use M_SafeFilePath, not sprintf
+        filepath = M_SafeFilePath(savepath, f->d_name);
+        remove(filepath);
+
+        Z_Free(filepath);
+    }
+
+    closedir(spdir);
 }
 
 //
@@ -148,13 +167,45 @@ void FromCurr(void)
 }
 
 //
-// ?????
+// ToCurr
 //
-// More file moving; don't even know what to call it yet.
+// Copying files from savepath to savepath2
 //
-void sub_1B2F4(void)
+void ToCurr(void)
 {
-    // STRIFE-TODO
+    DIR *spdir = NULL;
+    struct dirent *f = NULL;
+
+    ClearTmp();
+
+    // BUG: Rogue copypasta'd this error message, which is why we don't know
+    // the real original name of this function.
+    if(!(spdir = opendir(savepath)))
+        I_Error("ClearSlot: Couldn't open dir %s", savepath);
+
+    while((f = readdir(spdir)))
+    {
+        byte *filebuffer  = NULL;
+        int   filelen     = 0;
+        char *srcfilename = NULL;
+        char *dstfilename = NULL;
+
+        if(!strcmp(f->d_name, ".") || !strcmp(f->d_name, ".."))
+            continue;
+
+        // haleyjd: use M_SafeFilePath, NOT sprintf.
+        srcfilename = M_SafeFilePath(savepath,  f->d_name);
+        dstfilename = M_SafeFilePath(savepath2, f->d_name);
+
+        filelen = M_ReadFile(srcfilename, &filebuffer);
+        M_WriteFile(dstfilename, filebuffer, filelen);
+
+        Z_Free(filebuffer);
+        Z_Free(srcfilename);
+        Z_Free(dstfilename);
+    }
+
+    closedir(spdir);
 }
 
 //
@@ -385,6 +436,35 @@ char *M_SafeFilePath(const char *basepath, const char *newcomponent)
     M_NormalizeSlashes(newstr);
 
     return newstr;
+}
+
+//
+// M_CreateSaveDirs
+//
+// haleyjd 20110210: Vanilla Strife went tits-up if it didn't have the full set
+// of save folders which were created externally by the installer. fraggle says
+// that's no good for Choco purposes, and I agree, so this routine will create
+// the full set of folders under the configured savegamedir.
+//
+void M_CreateSaveDirs(const char *savedir)
+{
+    int i;
+
+    for(i = 0; i < 7; i++)
+    {
+        char dirname[16];
+        char *compositedir;
+
+        memset(dirname, 0, sizeof(dirname));
+        sprintf(dirname, "STRFSAV%d.SSG", i);
+
+        // compose the full path by concatenating with savedir
+        compositedir = M_SafeFilePath(savedir, dirname);
+
+        M_MakeDirectory(compositedir);
+
+        Z_Free(compositedir);
+    }
 }
 
 // 
