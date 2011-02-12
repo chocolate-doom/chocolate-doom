@@ -41,9 +41,14 @@
 #include "net_io.h"
 #include "net_loop.h"
 #include "net_packet.h"
+#include "net_query.h"
 #include "net_server.h"
 #include "net_sdl.h"
 #include "net_structrw.h"
+
+// How often to refresh our registration with the master server.
+
+#define MASTER_REFRESH_PERIOD 20 * 60 /* 20 minutes */
 
 typedef enum
 {
@@ -64,6 +69,11 @@ typedef struct
     net_connection_t connection;
     int last_send_time;
     char *name;
+
+    // Time that this client connected to the server.
+    // This is used to determine the controller (oldest client).
+
+    unsigned int connect_time;
 
     // Last time new gamedata was received from this client
     
@@ -127,6 +137,11 @@ static net_context_t *server_context;
 static unsigned int sv_gamemode;
 static unsigned int sv_gamemission;
 static net_gamesettings_t sv_settings;
+
+// For registration with master server:
+
+static net_addr_t *master_server = NULL;
+static unsigned int master_refresh_time;
 
 // receive window
 
@@ -372,19 +387,29 @@ static void NET_SV_AdvanceWindow(void)
 
 static net_client_t *NET_SV_Controller(void)
 {
+    net_client_t *best;
     int i;
 
-    // first client in the list is the controller
+    // Find the oldest client (first to connect).
+
+    best = NULL;
 
     for (i=0; i<MAXNETNODES; ++i)
     {
-        if (ClientConnected(&clients[i]) && !clients[i].drone)
+        // Can't be controller?
+
+        if (!ClientConnected(&clients[i]) || clients[i].drone)
         {
-            return &clients[i];
+            continue;
+        }
+
+        if (best == NULL || clients[i].connect_time < best->connect_time)
+        {
+            best = &clients[i];
         }
     }
 
-    return NULL;
+    return best;
 }
 
 // Given an address, find the corresponding client
@@ -424,6 +449,7 @@ static void NET_SV_InitNewClient(net_client_t *client,
                                  char *player_name)
 {
     client->active = true;
+    client->connect_time = I_GetTimeMS();
     NET_Conn_InitServer(&client->connection, addr);
     client->addr = addr;
     client->last_send_time = -1;
@@ -447,10 +473,8 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
                             net_addr_t *addr)
 {
     unsigned int magic;
-    unsigned int cl_gamemode, cl_gamemission;
-    unsigned int cl_recording_lowres;
-    unsigned int cl_drone;
     unsigned int is_freedoom;
+    net_connect_data_t data;
     md5_digest_t deh_md5sum, wad_md5sum;
     char *player_name;
     char *client_version;
@@ -501,10 +525,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
 
     // read the game mode and mission
 
-    if (!NET_ReadInt16(packet, &cl_gamemode) 
-     || !NET_ReadInt16(packet, &cl_gamemission)
-     || !NET_ReadInt8(packet, &cl_recording_lowres)
-     || !NET_ReadInt8(packet, &cl_drone)
+    if (!NET_ReadConnectData(packet, &data)
      || !NET_ReadMD5Sum(packet, wad_md5sum)
      || !NET_ReadMD5Sum(packet, deh_md5sum)
      || !NET_ReadInt8(packet, &is_freedoom))
@@ -512,7 +533,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         return;
     }
 
-    if (!D_ValidGameMode(cl_gamemission, cl_gamemode))
+    if (!D_ValidGameMode(data.gamemission, data.gamemode))
     {
         return;
     }
@@ -579,7 +600,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         NET_SV_AssignPlayers();
         num_players = NET_SV_NumPlayers();
 
-        if ((!cl_drone && num_players >= MAXPLAYERS)
+        if ((!data.drone && num_players >= MAXPLAYERS)
          || NET_SV_NumClients() >= MAXNETNODES)
         {
             NET_SV_SendReject(addr, "Server is full!");
@@ -592,10 +613,10 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
 
         // Adopt the game mode and mission of the first connecting client
 
-        if (num_players == 0 && !cl_drone)
+        if (num_players == 0 && !data.drone)
         {
-            sv_gamemode = cl_gamemode;
-            sv_gamemission = cl_gamemission;
+            sv_gamemode = data.gamemode;
+            sv_gamemission = data.gamemission;
         }
 
         // Save the MD5 checksums
@@ -607,7 +628,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         // Check the connecting client is playing the same game as all
         // the other clients
 
-        if (cl_gamemode != sv_gamemode || cl_gamemission != sv_gamemission)
+        if (data.gamemode != sv_gamemode || data.gamemission != sv_gamemission)
         {
             NET_SV_SendReject(addr, "You are playing the wrong game!");
             return;
@@ -617,8 +638,8 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
 
         NET_SV_InitNewClient(client, addr, player_name);
 
-        client->recording_lowres = cl_recording_lowres;
-        client->drone = cl_drone;
+        client->recording_lowres = data.lowres_turn;
+        client->drone = data.drone;
     }
 
     if (client->connection.state == NET_CONN_STATE_WAITING_ACK)
@@ -681,6 +702,8 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
         }
     }
 
+    settings.num_players = NET_SV_NumPlayers();
+
     nowtime = I_GetTimeMS();
 
     // Send start packets to each connected node
@@ -695,8 +718,8 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
         startpacket = NET_Conn_NewReliable(&clients[i].connection,
                                            NET_PACKET_TYPE_GAMESTART);
 
-        NET_WriteInt8(startpacket, NET_SV_NumPlayers());
-        NET_WriteInt8(startpacket, clients[i].player_number);
+        settings.consoleplayer = clients[i].player_number;
+
         NET_WriteSettings(startpacket, &settings);
     }
 
@@ -1070,6 +1093,7 @@ void NET_SV_SendQueryResponse(net_addr_t *addr)
 {
     net_packet_t *reply;
     net_querydata_t querydata;
+    int p;
 
     // Version
 
@@ -1089,9 +1113,22 @@ void NET_SV_SendQueryResponse(net_addr_t *addr)
     querydata.gamemode = sv_gamemode;
     querydata.gamemission = sv_gamemission;
 
-    // Server description.  This is currently hard-coded.
+    //!
+    // @arg <name>
+    //
+    // When starting a network server, specify a name for the server.
+    //
 
-    querydata.description = "Chocolate Doom server";
+    p = M_CheckParmWithArgs("-servername", 1);
+
+    if (p > 0)
+    {
+        querydata.description = myargv[p + 1];
+    }
+    else
+    {
+        querydata.description = "Unnamed server";
+    }
 
     // Send it and we're done.
 
@@ -1108,6 +1145,14 @@ static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
 {
     net_client_t *client;
     unsigned int packet_type;
+
+    // Response from master server?
+
+    if (addr != NULL && addr == master_server)
+    {
+        NET_Query_MasterResponse(packet);
+        return;
+    }
 
     // Find which client this packet came from
 
@@ -1514,6 +1559,32 @@ void NET_SV_Init(void)
     server_initialized = true;
 }
 
+void NET_SV_RegisterWithMaster(void)
+{
+    //!
+    // When running a server, don't register with the global master server.
+    //
+    // @category net
+    //
+
+    if (!M_CheckParm("-privateserver"))
+    {
+        master_server = NET_Query_ResolveMaster(server_context);
+    }
+    else
+    {
+        master_server = NULL;
+    }
+
+    // Send request.
+
+    if (master_server != NULL)
+    {
+        NET_Query_AddToMaster(master_server);
+        master_refresh_time = I_GetTimeMS();
+    }
+}
+
 // Run server code to check for new packets/send packets as the server
 // requires
 
@@ -1528,10 +1599,19 @@ void NET_SV_Run(void)
         return;
     }
 
-    while (NET_RecvPacket(server_context, &addr, &packet)) 
+    while (NET_RecvPacket(server_context, &addr, &packet))
     {
         NET_SV_Packet(packet, addr);
         NET_FreePacket(packet);
+    }
+
+    // Possibly refresh our registration with the master server.
+
+    if (master_server != NULL
+     && I_GetTimeMS() - master_refresh_time > MASTER_REFRESH_PERIOD * 1000)
+    {
+        NET_Query_AddToMaster(master_server);
+        master_refresh_time = I_GetTimeMS();
     }
 
     // "Run" any clients that may have things to do, independent of responses

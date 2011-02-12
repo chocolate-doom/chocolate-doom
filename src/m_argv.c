@@ -47,13 +47,13 @@ char**		myargv;
 // or 0 if not present
 //
 
-int M_CheckParm (char *check)
+int M_CheckParmWithArgs(char *check, int num_args)
 {
-    int		i;
+    int i;
 
-    for (i = 1;i<myargc;i++)
+    for (i = 1; i < myargc - num_args; i++)
     {
-	if ( !strcasecmp(check, myargv[i]) )
+	if (!strcasecmp(check, myargv[i]))
 	    return i;
     }
 
@@ -72,6 +72,11 @@ boolean M_ParmExists(char *check)
     return M_CheckParm(check) != 0;
 }
 
+int M_CheckParm(char *check)
+{
+    return M_CheckParmWithArgs(check, 0);
+}
+
 #define MAXARGVS        100
 
 static void LoadResponseFile(int argv_index)
@@ -88,7 +93,7 @@ static void LoadResponseFile(int argv_index)
     response_filename = myargv[argv_index] + 1;
 
     // Read the response file into memory
-    handle = fopen(response_filename, "r");
+    handle = fopen(response_filename, "rb");
 
     if (handle == NULL)
     {

@@ -156,7 +156,7 @@ static void LaunchDoom(void *unused1, void *unused2)
     // Launch Doom
 
     exec = NewExecuteContext();
-    AddConfigParameters(exec);
+    PassThroughArguments(exec);
     ExecuteDoom(exec);
 
     exit(0);
@@ -189,6 +189,7 @@ void MainMenu(void)
 {
     txt_window_t *window;
     txt_window_action_t *quit_action;
+    txt_window_action_t *warp_action;
 
     window = TXT_NewWindow("Main Menu");
 
@@ -230,8 +231,12 @@ void MainMenu(void)
           NULL);
 
     quit_action = TXT_NewWindowAction(KEY_ESCAPE, "Quit");
+    warp_action = TXT_NewWindowAction(KEY_F1, "Warp");
     TXT_SignalConnect(quit_action, "pressed", QuitConfirm, NULL);
+    TXT_SignalConnect(warp_action, "pressed",
+                      (TxtWidgetSignalFunc) WarpMenu, NULL);
     TXT_SetWindowAction(window, TXT_HORIZ_LEFT, quit_action);
+    TXT_SetWindowAction(window, TXT_HORIZ_CENTER, warp_action);
 
     TXT_SetKeyListener(window, MainMenuKeyPress, NULL);
 }
@@ -292,11 +297,9 @@ static void SetIcon(void)
     free(mask);
 }
 
-// 
-// Initialize and run the textscreen GUI.
-//
+// Initialize the textscreen library.
 
-static void RunGUI(void)
+static void InitTextscreen(void)
 {
     SetDisplayDriver();
 
@@ -308,6 +311,24 @@ static void RunGUI(void)
 
     TXT_SetDesktopTitle(PACKAGE_NAME " Setup ver " PACKAGE_VERSION);
     SetIcon();
+}
+
+// Restart the textscreen library.  Used when the video_driver variable
+// is changed.
+
+void RestartTextscreen(void)
+{
+    TXT_Shutdown();
+    InitTextscreen();
+}
+
+// 
+// Initialize and run the textscreen GUI.
+//
+
+static void RunGUI(void)
+{
+    InitTextscreen();
 
     TXT_GUIMainLoop();
 }

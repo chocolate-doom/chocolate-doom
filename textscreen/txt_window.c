@@ -140,6 +140,15 @@ static void CalcWindowPosition(txt_window_t *window)
 static void LayoutActionArea(txt_window_t *window)
 {
     txt_widget_t *widget;
+    int space_available;
+    int space_left_offset;
+
+    // We need to calculate the available horizontal space for the center
+    // action widget, so that we can center it within it.
+    // To start with, we have the entire action area available.
+
+    space_available = window->window_w;
+    space_left_offset = 0;
 
     // Left action
 
@@ -151,18 +160,11 @@ static void LayoutActionArea(txt_window_t *window)
 
         widget->x = window->window_x + 2;
         widget->y = window->window_y + window->window_h - widget->h - 1;
-    }
 
-    // Draw the center action
+        // Adjust available space:
 
-    if (window->actions[TXT_HORIZ_CENTER] != NULL)
-    {
-        widget = (txt_widget_t *) window->actions[TXT_HORIZ_CENTER];
-
-        TXT_CalcWidgetSize(widget);
-
-        widget->x = window->window_x + (window->window_w - widget->w - 2) / 2;
-        widget->y = window->window_y + window->window_h - widget->h - 1;
+        space_available -= widget->w;
+        space_left_offset += widget->w;
     }
 
     // Draw the right action
@@ -174,6 +176,27 @@ static void LayoutActionArea(txt_window_t *window)
         TXT_CalcWidgetSize(widget);
 
         widget->x = window->window_x + window->window_w - 2 - widget->w;
+        widget->y = window->window_y + window->window_h - widget->h - 1;
+
+        // Adjust available space:
+
+        space_available -= widget->w;
+    }
+
+    // Draw the center action
+
+    if (window->actions[TXT_HORIZ_CENTER] != NULL)
+    {
+        widget = (txt_widget_t *) window->actions[TXT_HORIZ_CENTER];
+
+        TXT_CalcWidgetSize(widget);
+
+        // The left and right widgets have left a space sandwiched between
+        // them.  Center this widget within that space.
+
+        widget->x = window->window_x
+                  + space_left_offset
+                  + (space_available - widget->w) / 2;
         widget->y = window->window_y + window->window_h - widget->h - 1;
     }
 }

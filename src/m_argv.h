@@ -40,6 +40,10 @@ extern  char**	myargv;
 // in the arg list (0 if not found).
 int M_CheckParm (char* check);
 
+// Same as M_CheckParm, but checks that num_args arguments are available
+// following the specified argument.
+int M_CheckParmWithArgs(char *check, int num_args);
+
 void M_FindResponseFile(void);
 
 // Parameter has been specified?

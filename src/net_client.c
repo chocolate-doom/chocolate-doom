@@ -28,13 +28,12 @@
 
 #include "config.h"
 #include "doomtype.h"
-#include "doomstat.h"
 #include "deh_main.h"
 #include "deh_str.h"
-#include "g_game.h"
 #include "i_system.h"
 #include "i_timer.h"
 #include "m_argv.h"
+#include "m_fixed.h"
 #include "m_config.h"
 #include "net_client.h"
 #include "net_common.h"
@@ -46,6 +45,8 @@
 #include "net_structrw.h"
 #include "w_checksum.h"
 #include "w_wad.h"
+
+extern void D_ReceiveTic(ticcmd_t *ticcmds, boolean *playeringame);
 
 typedef enum
 {
@@ -105,6 +106,10 @@ static net_clientstate_t client_state;
 static net_addr_t *server_addr;
 static net_context_t *client_context;
 
+// game settings, as received from the server when the game started
+
+static net_gamesettings_t settings;
+
 // true if the client code is in use
 
 boolean net_client_connected;
@@ -152,6 +157,10 @@ boolean net_waiting_for_start = false;
 
 char *net_player_name = NULL;
 
+// Connected but not participating in the game (observer)
+
+boolean drone = false;
+
 // The last ticcmd constructed
 
 static ticcmd_t last_ticcmd;
@@ -187,53 +196,11 @@ static fixed_t average_latency;
 
 #define NET_CL_ExpandTicNum(b) NET_ExpandTicNum(recvwindow_start, (b))
 
-// Called when a player leaves the game
-
-static void NET_CL_PlayerQuitGame(player_t *player)
-{
-    static char exitmsg[80];
-
-    // Do this the same way as Vanilla Doom does, to allow dehacked
-    // replacements of this message
-
-    strncpy(exitmsg, DEH_String("Player 1 left the game"), sizeof(exitmsg));
-    exitmsg[sizeof(exitmsg) - 1] = '\0';
-
-    exitmsg[7] += player - players;
-
-    players[consoleplayer].message = exitmsg;
-
-    // TODO: check if it is sensible to do this:
-
-    if (demorecording) 
-    {
-        G_CheckDemoStatus ();
-    }
-}
-
 // Called when we become disconnected from the server
 
 static void NET_CL_Disconnected(void)
 {
-    int i;
-
-    // In drone mode, the game cannot continue once disconnected.
-
-    if (drone)
-    { 
-        I_Error("Disconnected from server in drone mode.");
-    }
-
-    // disconnected from server
-
-    players[consoleplayer].message = "Disconnected from server";
-    printf("Disconnected from server.\n");
-
-    for (i=0; i<MAXPLAYERS; ++i)
-    {
-        if (i != consoleplayer)
-            playeringame[i] = false;
-    }
+    D_ReceiveTic(NULL, NULL);
 }
 
 // Expand a net_full_ticcmd_t, applying the diffs in cmd->cmds as
@@ -241,7 +208,8 @@ static void NET_CL_Disconnected(void)
 // the d_net.c structures (netcmds/nettics) and save the new ticcmd
 // back into recvwindow_cmd_base.
 
-static void NET_CL_ExpandFullTiccmd(net_full_ticcmd_t *cmd, unsigned int seq)
+static void NET_CL_ExpandFullTiccmd(net_full_ticcmd_t *cmd, unsigned int seq,
+                                    ticcmd_t *ticcmds)
 {
     int latency;
     fixed_t adjustment;
@@ -303,38 +271,25 @@ static void NET_CL_ExpandFullTiccmd(net_full_ticcmd_t *cmd, unsigned int seq)
     
     for (i=0; i<MAXPLAYERS; ++i)
     {
-        if (i == consoleplayer && !drone)
+        if (i == settings.consoleplayer && !drone)
         {
             continue;
         }
         
-        if (playeringame[i] && !cmd->playeringame[i])
-        {
-            NET_CL_PlayerQuitGame(&players[i]);
-        }
-        
-        playeringame[i] = cmd->playeringame[i];
-
-        if (playeringame[i])
+        if (cmd->playeringame[i])
         {
             net_ticdiff_t *diff;
-            ticcmd_t ticcmd;
 
             diff = &cmd->cmds[i];
 
             // Use the ticcmd diff to patch the previous ticcmd to
             // the new ticcmd
 
-            NET_TiccmdPatch(&recvwindow_cmd_base[i], diff, &ticcmd);
-
-            // Save in d_net.c structures
-
-            netcmds[i][nettics[i] % BACKUPTICS] = ticcmd;
-            ++nettics[i];
+            NET_TiccmdPatch(&recvwindow_cmd_base[i], diff, &ticcmds[i]);
 
             // Store a copy for next time
 
-            recvwindow_cmd_base[i] = ticcmd;
+            recvwindow_cmd_base[i] = ticcmds[i];
         }
     }
 }
@@ -343,11 +298,15 @@ static void NET_CL_ExpandFullTiccmd(net_full_ticcmd_t *cmd, unsigned int seq)
 
 static void NET_CL_AdvanceWindow(void)
 {
+    ticcmd_t ticcmds[MAXPLAYERS];
+
     while (recvwindow[0].active)
     {
         // Expand tic diff data into d_net.c structures
 
-        NET_CL_ExpandFullTiccmd(&recvwindow[0].cmd, recvwindow_start);
+        NET_CL_ExpandFullTiccmd(&recvwindow[0].cmd, recvwindow_start,
+                                ticcmds);
+        D_ReceiveTic(ticcmds, recvwindow[0].cmd.playeringame);
 
         // Advance the window
 
@@ -375,66 +334,9 @@ static void NET_CL_Shutdown(void)
     }
 }
 
-void NET_CL_StartGame(void)
+void NET_CL_StartGame(net_gamesettings_t *settings)
 {
     net_packet_t *packet;
-    net_gamesettings_t settings;
-    int i;
-
-    // Fill in game settings structure with appropriate parameters
-    // for the new game
-
-    settings.deathmatch = deathmatch;
-    settings.episode = startepisode;
-    settings.map = startmap;
-    settings.skill = startskill;
-    settings.loadgame = startloadgame;
-    settings.gameversion = gameversion;
-    settings.nomonsters = nomonsters;
-    settings.fast_monsters = fastparm;
-    settings.respawn_monsters = respawnparm;
-    settings.timelimit = timelimit;
-
-    //!
-    // @category net
-    //
-    // Use original game sync code.
-    //
-
-    if (M_CheckParm("-oldsync") > 0)
-	settings.new_sync = 0;
-    else
-	settings.new_sync = 1;
-    
-    //!
-    // @category net
-    // @arg <n>
-    //
-    // Send n extra tics in every packet as insurance against dropped
-    // packets.
-    //
-
-    i = M_CheckParm("-extratics");
-
-    if (i > 0)
-        settings.extratics = atoi(myargv[i+1]);
-    else
-        settings.extratics = 1;
-
-    //!
-    // @category net
-    // @arg <n>
-    //
-    // Reduce the resolution of the game by a factor of n, reducing
-    // the amount of network bandwidth needed.
-    //
-
-    i = M_CheckParm("-dup");
-
-    if (i > 0)
-        settings.ticdup = atoi(myargv[i+1]);
-    else
-        settings.ticdup = 1;
 
     // Start from a ticcmd of all zeros
 
@@ -445,7 +347,7 @@ void NET_CL_StartGame(void)
     packet = NET_Conn_NewReliable(&client_connection, 
                                   NET_PACKET_TYPE_GAMESTART);
 
-    NET_WriteSettings(packet, &settings);
+    NET_WriteSettings(packet, settings);
 }
 
 static void NET_CL_SendGameDataACK(void)
@@ -455,7 +357,7 @@ static void NET_CL_SendGameDataACK(void)
     packet = NET_NewPacket(10);
 
     NET_WriteInt16(packet, NET_PACKET_TYPE_GAMEDATA_ACK);
-    NET_WriteInt8(packet, (gametic / ticdup) & 0xff);
+    NET_WriteInt8(packet, recvwindow_start & 0xff);
 
     NET_Conn_SendPacket(&client_connection, packet);
 
@@ -487,7 +389,7 @@ static void NET_CL_SendTics(int start, int end)
     // Write the start tic and number of tics.  Send only the low byte
     // of start - it can be inferred by the server.
 
-    NET_WriteInt8(packet, (gametic / ticdup) & 0xff);
+    NET_WriteInt8(packet, recvwindow_start & 0xff);
     NET_WriteInt8(packet, start & 0xff);
     NET_WriteInt8(packet, end - start + 1);
 
@@ -501,7 +403,7 @@ static void NET_CL_SendTics(int start, int end)
 
         NET_WriteInt16(packet, average_latency / FRACUNIT);
 
-        NET_WriteTiccmdDiff(packet, &sendobj->cmd, lowres_turn);
+        NET_WriteTiccmdDiff(packet, &sendobj->cmd, settings.lowres_turn);
     }
     
     // Send the packet
@@ -541,7 +443,7 @@ void NET_CL_SendTiccmd(ticcmd_t *ticcmd, int maketic)
 
     // Send to server.
 
-    starttic = maketic - extratics;
+    starttic = maketic - settings.extratics;
     endtic = maketic;
 
     if (starttic < 0)
@@ -632,14 +534,7 @@ static void NET_CL_ParseWaitingData(net_packet_t *packet)
 
 static void NET_CL_ParseGameStart(net_packet_t *packet)
 {
-    net_gamesettings_t settings;
-    unsigned int num_players;
-    signed int player_number;
-    unsigned int i;
-
-    if (!NET_ReadInt8(packet, &num_players)
-     || !NET_ReadSInt8(packet, &player_number)
-     || !NET_ReadSettings(packet, &settings))
+    if (!NET_ReadSettings(packet, &settings))
     {
         return;
     }
@@ -649,14 +544,15 @@ static void NET_CL_ParseGameStart(net_packet_t *packet)
         return;
     }
 
-    if (num_players > MAXPLAYERS || player_number >= (signed int) num_players)
+    if (settings.num_players > MAXPLAYERS
+     || settings.consoleplayer >= (signed int) settings.num_players)
     {
         // insane values
         return;
     }
 
-    if ((drone && player_number >= 0)
-     || (!drone && player_number < 0))
+    if ((drone && settings.consoleplayer >= 0)
+     || (!drone && settings.consoleplayer < 0))
     {
         // Invalid player number: must be positive for real players,
         // negative for drones
@@ -664,48 +560,7 @@ static void NET_CL_ParseGameStart(net_packet_t *packet)
         return;
     }
 
-    // Start the game
-
-    if (!drone)
-    {
-        consoleplayer = player_number;
-    }
-    else
-    {
-        consoleplayer = 0;
-    }
-    
-    for (i=0; i<MAXPLAYERS; ++i) 
-    {
-        playeringame[i] = i < num_players;
-    }
-
     client_state = CLIENT_STATE_IN_GAME;
-
-    deathmatch = settings.deathmatch;
-    ticdup = settings.ticdup;
-    extratics = settings.extratics;
-    startepisode = settings.episode;
-    startmap = settings.map;
-    startskill = settings.skill;
-    startloadgame = settings.loadgame;
-    lowres_turn = settings.lowres_turn;
-    nomonsters = settings.nomonsters;
-    fastparm = settings.fast_monsters;
-    respawnparm = settings.respawn_monsters;
-    net_cl_new_sync = settings.new_sync != 0;
-    timelimit = settings.timelimit;
-
-    if (net_cl_new_sync == false)
-    {
-	printf("Syncing netgames like Vanilla Doom.\n");
-    }
-
-    if (lowres_turn)
-    {
-        printf("NOTE: Turning resolution is reduced; this is probably "
-               "because there is a client recording a Vanilla demo.\n");
-    }
 
     // Clear the receive window
 
@@ -716,9 +571,6 @@ static void NET_CL_ParseGameStart(net_packet_t *packet)
     // Clear the send queue
 
     memset(&send_queue, 0x00, sizeof(send_queue));
-
-    netgame = true;
-    autostart = true;
 }
 
 static void NET_CL_SendResendRequest(int start, int end)
@@ -865,7 +717,7 @@ static void NET_CL_ParseGameData(net_packet_t *packet)
 
         index = seq - recvwindow_start + i;
 
-        if (!NET_ReadFullTiccmd(packet, &cmd, lowres_turn))
+        if (!NET_ReadFullTiccmd(packet, &cmd, settings.lowres_turn))
         {
             return;
         }
@@ -1106,7 +958,7 @@ void NET_CL_Run(void)
     }
 }
 
-static void NET_CL_SendSYN(void)
+static void NET_CL_SendSYN(net_connect_data_t *data)
 {
     net_packet_t *packet;
 
@@ -1114,10 +966,7 @@ static void NET_CL_SendSYN(void)
     NET_WriteInt16(packet, NET_PACKET_TYPE_SYN);
     NET_WriteInt32(packet, NET_MAGIC_NUMBER);
     NET_WriteString(packet, PACKAGE_STRING);
-    NET_WriteInt16(packet, gamemode);
-    NET_WriteInt16(packet, gamemission);
-    NET_WriteInt8(packet, lowres_turn);
-    NET_WriteInt8(packet, drone);
+    NET_WriteConnectData(packet, data);
     NET_WriteMD5Sum(packet, net_local_wad_md5sum);
     NET_WriteMD5Sum(packet, net_local_deh_md5sum);
     NET_WriteInt8(packet, net_local_is_freedoom);
@@ -1128,19 +977,12 @@ static void NET_CL_SendSYN(void)
 
 // connect to a server
 
-boolean NET_CL_Connect(net_addr_t *addr)
+boolean NET_CL_Connect(net_addr_t *addr, net_connect_data_t *data)
 {
     int start_time;
     int last_send_time;
 
     server_addr = addr;
-
-    // Are we recording a demo? Possibly set lowres turn mode
-
-    if (M_CheckParm("-record") > 0 && M_CheckParm("-longtics") == 0)
-    {
-        lowres_turn = true;
-    }
 
     // Read checksums of our WAD directory and dehacked information
 
@@ -1155,7 +997,7 @@ boolean NET_CL_Connect(net_addr_t *addr)
     // necessary module
 
     client_context = NET_NewContext();
-    
+
     // initialize module for client mode
 
     if (!addr->module->InitClient())
@@ -1185,7 +1027,7 @@ boolean NET_CL_Connect(net_addr_t *addr)
 
         if (nowtime - last_send_time > 1000 || last_send_time < 0)
         {
-            NET_CL_SendSYN();
+            NET_CL_SendSYN(data);
             last_send_time = nowtime;
         }
  
@@ -1199,7 +1041,7 @@ boolean NET_CL_Connect(net_addr_t *addr)
         // run client code
 
         NET_CL_Run();
-        
+
         // run the server, just incase we are doing a loopback
         // connect
 
@@ -1215,6 +1057,7 @@ boolean NET_CL_Connect(net_addr_t *addr)
         // connected ok!
 
         client_state = CLIENT_STATE_WAITING_START;
+        drone = data->drone;
 
         return true;
     }
@@ -1223,9 +1066,23 @@ boolean NET_CL_Connect(net_addr_t *addr)
         // failed to connect
 
         NET_CL_Shutdown();
-        
+
         return false;
     }
+}
+
+// read game settings received from server
+
+boolean NET_CL_GetSettings(net_gamesettings_t *_settings)
+{
+    if (client_state != CLIENT_STATE_IN_GAME)
+    {
+        return false;
+    }
+
+    memcpy(_settings, &settings, sizeof(net_gamesettings_t));
+
+    return true;
 }
 
 // disconnect from the server

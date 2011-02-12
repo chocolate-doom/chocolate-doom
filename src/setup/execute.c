@@ -88,6 +88,42 @@ static char *TempFile(char *s)
     return result;
 }
 
+static int ArgumentNeedsEscape(char *arg)
+{
+    char *p;
+
+    for (p = arg; *p != '\0'; ++p)
+    {
+        if (isspace(*p))
+        {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+// Arguments passed to the setup tool should be passed through to the
+// game when launching a game.  Calling this adds all arguments from
+// myargv to the output context.
+
+void PassThroughArguments(execute_context_t *context)
+{
+    int i;
+
+    for (i = 1; i < myargc; ++i)
+    {
+        if (ArgumentNeedsEscape(myargv[i]))
+        {
+            AddCmdLineParameter(context, "\"%s\"", myargv[i]);
+        }
+        else
+        {
+            AddCmdLineParameter(context, "%s", myargv[i]);
+        }
+    }
+}
+
 execute_context_t *NewExecuteContext(void)
 {
     execute_context_t *result;
@@ -104,25 +140,6 @@ execute_context_t *NewExecuteContext(void)
     }
     
     return result;
-}
-
-void AddConfigParameters(execute_context_t *context)
-{
-    int p;
-
-    p = M_CheckParm("-config");
-
-    if (p > 0)
-    {
-        AddCmdLineParameter(context, "-config \"%s\"", myargv[p + 1]);
-    }
-
-    p = M_CheckParm("-extraconfig");
-
-    if (p > 0)
-    {
-        AddCmdLineParameter(context, "-extraconfig \"%s\"", myargv[p + 1]);
-    }
 }
 
 void AddCmdLineParameter(execute_context_t *context, char *s, ...)

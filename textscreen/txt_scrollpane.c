@@ -138,7 +138,7 @@ static void TXT_ScrollPaneSizeCalc(TXT_UNCAST_ARG(scrollpane))
     }
     if (scrollpane->expand_h)
     {
-        scrollpane->h = FullWidth(scrollpane);
+        scrollpane->h = FullHeight(scrollpane);
     }
 
     scrollpane->widget.w = scrollpane->w;
@@ -486,8 +486,26 @@ static void TXT_ScrollPaneLayout(TXT_UNCAST_ARG(scrollpane))
     }
 }
 
+static int TXT_ScrollPaneSelectable(TXT_UNCAST_ARG(scrollpane))
+{
+    TXT_CAST_ARG(txt_scrollpane_t, scrollpane);
+
+    // If scroll bars are displayed, the scroll pane must be selectable
+    // so that we can use the arrow keys to scroll around.
+
+    if (NeedsScrollbars(scrollpane))
+    {
+        return 1;
+    }
+
+    // Otherwise, whether this is selectable depends on the child widget.
+
+    return TXT_SelectableWidget(scrollpane->child);
+}
+
 txt_widget_class_t txt_scrollpane_class =
 {
+    TXT_ScrollPaneSelectable,
     TXT_ScrollPaneSizeCalc,
     TXT_ScrollPaneDrawer,
     TXT_ScrollPaneKeyPress,

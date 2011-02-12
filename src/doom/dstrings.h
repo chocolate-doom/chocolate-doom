@@ -38,15 +38,6 @@
 #define SAVEGAMENAME	"doomsav"
 
 
-//
-// File locations,
-//  relative to current position.
-// Path names are OS-sensitive.
-//
-#define DEVMAPS "devmaps"
-#define DEVDATA "devdata"
-
-
 // QuitDOOM messages
 // 8 per each game type
 #define NUM_QUITMESSAGES   8

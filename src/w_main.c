@@ -53,7 +53,7 @@ boolean W_ParseCommandLine(void)
     // into the main IWAD.  Multiple files may be specified.
     //
 
-    p = M_CheckParm("-merge");
+    p = M_CheckParmWithArgs("-merge", 1);
 
     if (p > 0)
     {
@@ -81,7 +81,7 @@ boolean W_ParseCommandLine(void)
     // Simulates the behavior of NWT's -merge option.  Multiple files
     // may be specified.
 
-    p = M_CheckParm("-nwtmerge");
+    p = M_CheckParmWithArgs("-nwtmerge", 1);
 
     if (p > 0)
     {
@@ -108,7 +108,7 @@ boolean W_ParseCommandLine(void)
     // the main IWAD directory.  Multiple files may be specified.
     //
 
-    p = M_CheckParm("-af");
+    p = M_CheckParmWithArgs("-af", 1);
 
     if (p > 0)
     {
@@ -133,7 +133,7 @@ boolean W_ParseCommandLine(void)
     // into the main IWAD directory.  Multiple files may be specified.
     //
 
-    p = M_CheckParm("-as");
+    p = M_CheckParmWithArgs("-as", 1);
 
     if (p > 0)
     {
@@ -156,7 +156,7 @@ boolean W_ParseCommandLine(void)
     // Equivalent to "-af <files> -as <files>".
     //
 
-    p = M_CheckParm("-aa");
+    p = M_CheckParmWithArgs("-aa", 1);
 
     if (p > 0)
     {
@@ -182,7 +182,7 @@ boolean W_ParseCommandLine(void)
     // Load the specified PWAD files.
     //
 
-    p = M_CheckParm ("-file");
+    p = M_CheckParmWithArgs ("-file", 1);
     if (p)
     {
 	// the parms after p are wadfile/lump names,

@@ -32,6 +32,7 @@
 #include "doomtype.h"
 #include "d_iwad.h"
 #include "m_argv.h"
+#include "w_wad.h"
 
 #include "deh_defs.h"
 #include "deh_io.h"
@@ -246,9 +247,6 @@ static void DEH_ParseContext(deh_context_t *context)
         DEH_Error(context, "This is not a valid dehacked patch file!");
     }
 
-    deh_allow_long_strings = false;
-    deh_allow_long_cheats = false;
-    
     // Read the file
     
     for (;;) 
@@ -260,7 +258,9 @@ static void DEH_ParseContext(deh_context_t *context)
         // end of file?
 
         if (line == NULL)
+        {
             return;
+        }
 
         while (line[0] != '\0' && isspace(line[0]))
             ++line;
@@ -347,6 +347,48 @@ int DEH_LoadFile(char *filename)
     return 1;
 }
 
+// Load dehacked file from WAD lump.
+
+int DEH_LoadLump(int lumpnum)
+{
+    deh_context_t *context;
+
+    // If it's in a lump, it's probably designed for a modern source port,
+    // so allow it to do long string and cheat replacements.
+
+    deh_allow_long_strings = true;
+    deh_allow_long_cheats = true;
+
+    context = DEH_OpenLump(lumpnum);
+
+    if (context == NULL)
+    {
+        fprintf(stderr, "DEH_LoadFile: Unable to open lump %i\n", lumpnum);
+        return 0;
+    }
+
+    DEH_ParseContext(context);
+
+    DEH_CloseFile(context);
+
+    return 1;
+}
+
+int DEH_LoadLumpByName(char *name)
+{
+    int lumpnum;
+
+    lumpnum = W_CheckNumForName(name);
+
+    if (lumpnum == -1)
+    {
+        fprintf(stderr, "DEH_LoadLumpByName: '%s' lump not found\n", name);
+        return 0;
+    }
+
+    return DEH_LoadLump(lumpnum);
+}
+
 // Checks the command line for -deh argument
 
 void DEH_Init(void)
@@ -386,5 +428,4 @@ void DEH_Init(void)
         }
     }
 }
-
 

@@ -762,6 +762,8 @@ void M_DrawReadThis1(void)
     switch (gameversion)
     {
         case exe_doom_1_9:
+        case exe_hacx:
+
             if (gamemode == commercial)
             {
                 // Doom 2
@@ -1440,23 +1442,23 @@ boolean M_Responder (event_t* ev)
 	
     if (ev->type == ev_joystick && joywait < I_GetTime())
     {
-	if (ev->data3 == -1)
+	if (ev->data3 < 0)
 	{
 	    key = key_menu_up;
 	    joywait = I_GetTime() + 5;
 	}
-	else if (ev->data3 == 1)
+	else if (ev->data3 > 0)
 	{
 	    key = key_menu_down;
 	    joywait = I_GetTime() + 5;
 	}
 		
-	if (ev->data2 == -1)
+	if (ev->data2 < 0)
 	{
 	    key = key_menu_left;
 	    joywait = I_GetTime() + 2;
 	}
-	else if (ev->data2 == 1)
+	else if (ev->data2 > 0)
 	{
 	    key = key_menu_right;
 	    joywait = I_GetTime() + 2;

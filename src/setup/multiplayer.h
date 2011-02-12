@@ -23,6 +23,7 @@
 #define SETUP_MULTIPLAYER_H
 
 void StartMultiGame(void);
+void WarpMenu(void);
 void JoinMultiGame(void);
 void MultiplayerConfig(void);
 

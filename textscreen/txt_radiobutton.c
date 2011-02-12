@@ -34,9 +34,9 @@ static void TXT_RadioButtonSizeCalc(TXT_UNCAST_ARG(radiobutton))
 {
     TXT_CAST_ARG(txt_radiobutton_t, radiobutton);
 
-    // Minimum width is the string length + two spaces for padding
+    // Minimum width is the string length + right-side spaces for padding
 
-    radiobutton->widget.w = strlen(radiobutton->label) + 6;
+    radiobutton->widget.w = strlen(radiobutton->label) + 5;
     radiobutton->widget.h = 1;
 }
 
@@ -50,7 +50,7 @@ static void TXT_RadioButtonDrawer(TXT_UNCAST_ARG(radiobutton), int selected)
 
     TXT_BGColor(TXT_COLOR_BLUE, 0);
     TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);
-    TXT_DrawString(" (");
+    TXT_DrawString("(");
 
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
 
@@ -76,7 +76,7 @@ static void TXT_RadioButtonDrawer(TXT_UNCAST_ARG(radiobutton), int selected)
 
     TXT_DrawString(radiobutton->label);
     
-    for (i=strlen(radiobutton->label); i < w-6; ++i)
+    for (i=strlen(radiobutton->label); i < w-5; ++i)
     {
         TXT_DrawString(" ");
     }
@@ -121,6 +121,7 @@ static void TXT_RadioButtonMousePress(TXT_UNCAST_ARG(radiobutton),
 
 txt_widget_class_t txt_radiobutton_class =
 {
+    TXT_AlwaysSelectable,
     TXT_RadioButtonSizeCalc,
     TXT_RadioButtonDrawer,
     TXT_RadioButtonKeyPress,

@@ -645,6 +645,12 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(screen_height), 
 
     //!
+    // Color depth of the screen, in bits.
+    //
+
+    CONFIG_VARIABLE_INT(screen_bpp),
+
+    //!
     // If this is non-zero, the mouse will be "grabbed" when running
     // in windowed mode so that it can be used as an input device.
     // When running full screen, this has no effect.
@@ -1288,8 +1294,18 @@ static void SaveDefaultCollection(default_collection_t *collection)
                 
                 v = * (int *) defaults[i].location;
 
-                if (defaults[i].untranslated
-                 && v == defaults[i].original_translated)
+                if (v == KEY_RSHIFT)
+                {
+                    // Special case: for shift, force scan code for
+                    // right shift, as this is what Vanilla uses.
+                    // This overrides the change check below, to fix
+                    // configuration files made by old versions that
+                    // mistakenly used the scan code for left shift.
+
+                    v = 54;
+                }
+                else if (defaults[i].untranslated
+                      && v == defaults[i].original_translated)
                 {
                     // Has not been changed since the last time we
                     // read the config file.
@@ -1507,9 +1523,9 @@ void M_LoadDefaults (void)
     // configuration file (for Doom) is named default.cfg.
     //
 
-    i = M_CheckParm ("-config");
+    i = M_CheckParmWithArgs("-config", 1);
 
-    if (i && i<myargc-1)
+    if (i)
     {
 	doom_defaults.filename = myargv[i+1];
 	printf ("	default file: %s\n",doom_defaults.filename);
@@ -1530,9 +1546,9 @@ void M_LoadDefaults (void)
     // configuration file for Doom is named chocolate-doom.cfg.
     //
 
-    i = M_CheckParm("-extraconfig");
+    i = M_CheckParmWithArgs("-extraconfig", 1);
 
-    if (i && i<myargc-1)
+    if (i)
     {
         extra_defaults.filename = myargv[i+1];
         printf("        extra configuration file: %s\n", 

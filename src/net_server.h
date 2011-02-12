@@ -41,5 +41,9 @@ void NET_SV_Shutdown(void);
 
 void NET_SV_AddModule(net_module_t *module);
 
+// Register server with master server.
+
+void NET_SV_RegisterWithMaster(void);
+
 #endif /* #ifndef NET_SERVER_H */
 

@@ -47,6 +47,7 @@ static iwad_t iwads[] =
     { "doom.wad",     doom,      retail,     "Doom" },
     { "doom1.wad",    doom,      shareware,  "Doom Shareware" },
     { "chex.wad",     doom,      shareware,  "Chex Quest" },
+    { "hacx.wad",     doom2,     commercial, "Hacx" },
     { "heretic.wad",  heretic,   retail,     "Heretic" },
     { "heretic1.wad", heretic,   shareware,  "Heretic Shareware" },
     { "hexen.wad",    hexen,     commercial, "Hexen" },
@@ -657,7 +658,7 @@ char *D_FindIWAD(int mask, GameMission_t *mission)
     // @arg <file>
     //
 
-    iwadparm = M_CheckParm("-iwad");
+    iwadparm = M_CheckParmWithArgs("-iwad", 1);
 
     if (iwadparm)
     {

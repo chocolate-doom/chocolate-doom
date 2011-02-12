@@ -30,6 +30,7 @@
 #include "deh_defs.h"
 
 deh_context_t *DEH_OpenFile(char *filename);
+deh_context_t *DEH_OpenLump(int lumpnum);
 void DEH_CloseFile(deh_context_t *context);
 int DEH_GetChar(deh_context_t *context);
 char *DEH_ReadLine(deh_context_t *context);

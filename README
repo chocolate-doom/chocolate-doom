@@ -65,9 +65,13 @@ Here are some examples:
    You are encouraged to sign up and contribute any useful information
    you may have regarding the port!
 
- * Chocolate Doom is not perfect.  See the BUGS file for a list of
-   known issues. New bug reports can be submitted to the Chocolate
-   Doom bug tracker on Sourceforge.  See:
+ * Chocolate Doom is not perfect. See the BUGS file for a list of
+   known issues. Because of the nature of the project, you may also
+   encounter Vanilla Doom bugs; these are intentionally present; see
+   the NOT-BUGS file for more information.
+
+   New bug reports can be submitted to the Chocolate Doom bug tracker
+   on Sourceforge.  See:
 
      http://sourceforge.net/projects/chocolate-doom
 

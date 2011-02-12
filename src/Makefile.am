@@ -34,6 +34,7 @@ net_dedicated.c      net_dedicated.h       \
 net_io.c             net_io.h              \
 net_packet.c         net_packet.h          \
 net_sdl.c            net_sdl.h             \
+net_query.c          net_query.h           \
 net_server.c         net_server.h          \
 net_structrw.c       net_structrw.h        \
 z_native.c           z_zone.h
@@ -142,9 +143,11 @@ EXTRA_LIBS =                                               \
                @SDLNET_LIBS@
 
 if HAVE_WINDRES
-@PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc
+@PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc \
+               $(FEATURE_MULTIPLAYER_SOURCE_FILES)
 else
-@PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES_WITH_DEH)
+@PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES_WITH_DEH) \
+               $(FEATURE_MULTIPLAYER_SOURCE_FILES)
 endif
 
 @PROGRAM_PREFIX@doom_LDADD = doom/libdoom.a $(EXTRA_LIBS)

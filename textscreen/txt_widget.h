@@ -77,9 +77,11 @@ typedef int (*TxtWidgetKeyPress)(TXT_UNCAST_ARG(widget), int key);
 typedef void (*TxtWidgetSignalFunc)(TXT_UNCAST_ARG(widget), void *user_data);
 typedef void (*TxtMousePressFunc)(TXT_UNCAST_ARG(widget), int x, int y, int b);
 typedef void (*TxtWidgetLayoutFunc)(TXT_UNCAST_ARG(widget));
+typedef int (*TxtWidgetSelectableFunc)(TXT_UNCAST_ARG(widget));
 
 struct txt_widget_class_s
 {
+    TxtWidgetSelectableFunc selectable;
     TxtWidgetSizeCalc size_calc;
     TxtWidgetDrawer drawer;
     TxtWidgetKeyPress key_press;
@@ -92,7 +94,6 @@ struct txt_widget_s
 {
     txt_widget_class_t *widget_class;
     txt_callback_table_t *callback_table;
-    int selectable;
     int visible;
     txt_horiz_align_t align;
 
@@ -111,6 +112,8 @@ int TXT_WidgetKeyPress(TXT_UNCAST_ARG(widget), int key);
 void TXT_WidgetMousePress(TXT_UNCAST_ARG(widget), int x, int y, int b);
 void TXT_DestroyWidget(TXT_UNCAST_ARG(widget));
 void TXT_LayoutWidget(TXT_UNCAST_ARG(widget));
+int TXT_AlwaysSelectable(TXT_UNCAST_ARG(widget));
+int TXT_NeverSelectable(TXT_UNCAST_ARG(widget));
 
 /**
  * Set a callback function to be invoked when a signal occurs.
@@ -133,6 +136,15 @@ void TXT_SignalConnect(TXT_UNCAST_ARG(widget), const char *signal_name,
  */
 
 void TXT_SetWidgetAlign(TXT_UNCAST_ARG(widget), txt_horiz_align_t horiz_align);
+
+/**
+ * Query whether a widget is selectable with the cursor.
+ *
+ * @param widget       The widget.
+ * @return             Non-zero if the widget is selectable.
+ */
+
+int TXT_SelectableWidget(TXT_UNCAST_ARG(widget));
 
 #endif /* #ifndef TXT_WIDGET_H */
 

@@ -128,6 +128,30 @@ typedef enum
     NET_PACKET_TYPE_QUERY_RESPONSE,
 } net_packet_type_t;
 
+typedef enum
+{
+    NET_MASTER_PACKET_TYPE_ADD,
+    NET_MASTER_PACKET_TYPE_ADD_RESPONSE,
+    NET_MASTER_PACKET_TYPE_QUERY,
+    NET_MASTER_PACKET_TYPE_QUERY_RESPONSE
+} net_master_packet_type_t;
+
+// Settings specified when the client connects to the server.
+
+typedef struct
+{
+    int gamemode;
+    int gamemission;
+    int lowres_turn;
+    int drone;
+    // TODO: is_freedoom in here?  WAD/DEH checksums?
+    // TODO: [Hexen] Requested player class
+
+} net_connect_data_t;
+
+// Game settings sent by client to server when initiating game start,
+// and received from the server by clients when the game starts.
+
 typedef struct 
 {
     int ticdup;
@@ -144,6 +168,15 @@ typedef struct
     int new_sync;
     int timelimit;
     int loadgame;
+
+    // These fields are only used by the server when sending a game
+    // start message:
+
+    int num_players;
+    int consoleplayer;
+
+    // TODO: [Hexen] Array of player classes, one for each player.
+
 } net_gamesettings_t;
 
 #define NET_TICDIFF_FORWARD      (1 << 0)

@@ -83,9 +83,8 @@ void TXT_InitWidget(TXT_UNCAST_ARG(widget), txt_widget_class_t *widget_class)
     widget->widget_class = widget_class;
     widget->callback_table = TXT_NewCallbackTable();
 
-    // Default values: visible and selectable
+    // Visible by default.
 
-    widget->selectable = 1;
     widget->visible = 1;
 
     // Align left by default
@@ -211,6 +210,30 @@ void TXT_LayoutWidget(TXT_UNCAST_ARG(widget))
     if (widget->widget_class->layout != NULL)
     {
         widget->widget_class->layout(widget);
+    }
+}
+
+int TXT_AlwaysSelectable(TXT_UNCAST_ARG(widget))
+{
+    return 1;
+}
+
+int TXT_NeverSelectable(TXT_UNCAST_ARG(widget))
+{
+    return 0;
+}
+
+int TXT_SelectableWidget(TXT_UNCAST_ARG(widget))
+{
+    TXT_CAST_ARG(txt_widget_t, widget);
+
+    if (widget->widget_class->selectable != NULL)
+    {
+        return widget->widget_class->selectable(widget);
+    }
+    else
+    {
+        return 0;
     }
 }
 

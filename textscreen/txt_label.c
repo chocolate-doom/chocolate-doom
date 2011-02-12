@@ -104,6 +104,7 @@ static void TXT_LabelDestructor(TXT_UNCAST_ARG(label))
 
 txt_widget_class_t txt_label_class =
 {
+    TXT_NeverSelectable,
     TXT_LabelSizeCalc,
     TXT_LabelDrawer,
     NULL,
@@ -170,7 +171,6 @@ txt_label_t *TXT_NewLabel(char *text)
     label = malloc(sizeof(txt_label_t));
 
     TXT_InitWidget(label, &txt_label_class);
-    label->widget.selectable = 0;
     label->label = NULL;
     label->lines = NULL;
 

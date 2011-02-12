@@ -1628,7 +1628,7 @@ static void SpechitOverrun(line_t *ld)
         // Use the specified magic value when emulating spechit overruns.
         //
 
-        p = M_CheckParm("-spechit");
+        p = M_CheckParmWithArgs("-spechit", 1);
         
         if (p > 0)
         {

@@ -65,8 +65,8 @@ static int joystick_y_invert = 0;
 static txt_button_t *joystick_button;
 
 static int *all_joystick_buttons[] = {
-        &joybstraferight, &joybstrafeleft, &joybfire, &joybspeed,
-        &joybuse, &joybstrafe, &joybjump
+    &joybstraferight, &joybstrafeleft, &joybfire, &joybspeed,
+    &joybuse, &joybstrafe, &joybprevweapon, &joybnextweapon, &joybjump
 };
 
 //

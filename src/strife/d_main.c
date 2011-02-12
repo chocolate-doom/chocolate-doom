@@ -126,8 +126,6 @@ int		startmap;
 boolean		autostart;
 int             startloadgame;
 
-FILE*		debugfile;
-
 boolean		advancedemo;
 
 // villsa [STRIFE] workparm variable (similar to devparm?)
@@ -475,14 +473,6 @@ void D_DoomLoop (void)
     if (demorecording)
         G_BeginRecording ();
 
-    if (M_CheckParm ("-debugfile"))
-    {
-        char    filename[20];
-        sprintf (filename,"debug%i.txt",consoleplayer);
-        printf ("debug output to: %s\n",filename);
-        debugfile = fopen (filename,"w");
-    }
-
     TryRunTics();
 
     if(!showintro) // [STRIFE]
@@ -745,7 +735,7 @@ void D_QuitGame(void)
 // These are from the original source: some of them are perhaps
 // not used in any dehacked patches
 
-static char *banners[] = 
+static char *banners[] =
 {
     // strife1.wad:
 
@@ -1040,9 +1030,9 @@ static void InitGameVersion(void)
     // "ultimate" and "final".
     //
 
-    p = M_CheckParm("-gameversion");
+    p = M_CheckParmWithArgs("-gameversion", 1);
 
-    if (p > 0)
+    if (p)
     {
         for (i=0; gameversions[i].description != NULL; ++i)
         {
@@ -1431,6 +1421,21 @@ void D_DoomMain (void)
     }
 
     //!
+    // @category net
+    //
+    // Query the Internet master server for a global list of active
+    // servers.
+    //
+
+    if (M_CheckParm("-search"))
+    {
+        printf("\nSearching for servers on Internet ...\n");
+        p = NET_MasterQuery(NET_QueryPrintCallback, NULL);
+        printf("\n%i server(s) found.\n", p);
+        exit(0);
+    }
+
+    //!
     // @arg <address>
     // @category net
     //
@@ -1438,11 +1443,12 @@ void D_DoomMain (void)
     // address.
     //
 
-    p = M_CheckParm("-query");
+    p = M_CheckParmWithArgs("-query", 1);
 
-    if (p > 0)
+    if (p)
     {
         NET_QueryAddress(myargv[p+1]);
+        exit(0);
     }
 
     //!
@@ -1451,8 +1457,13 @@ void D_DoomMain (void)
     // Search the local LAN for running servers.
     //
 
-    if (M_CheckParm("-search"))
-        NET_LANQuery();
+    if (M_CheckParm("-localsearch"))
+    {
+        printf("\nSearching for servers on local LAN ...\n");
+        p = NET_LANQuery(NET_QueryPrintCallback, NULL);
+        printf("\n%i server(s) found.\n", p);
+        exit(0);
+    }
 
 #endif
             
@@ -1615,23 +1626,9 @@ void D_DoomMain (void)
     // add any files specified on the command line with -file wadfile
     // to the wad list
     //
-    // convenience hack to allow -wart e m to add a wad file
-    // prepend a tilde to the filename so wadfile will be reloadable
-    p = M_CheckParm ("-wart");
-    if (p)
-    {
-        myargv[p][4] = 'p';     // big hack, change to -warp
 
-        // Map name handling.
-        // [STRIFE]: looks for f:/st/data
-        p = atoi (myargv[p+1]);
-        if (p<10)
-            sprintf (file,"~f:/st/data/map0%i.wad", p);
-        else
-            sprintf (file,"~f:/st/data/map%i.wad", p);
-
-        D_AddFile (file);
-    }
+    // Debug:
+//    W_PrintDirectory();
 
     //!
     // @arg <demo>
@@ -1641,7 +1638,7 @@ void D_DoomMain (void)
     // Play back the demo named demo.lmp.
     //
 
-    p = M_CheckParm ("-playdemo");
+    p = M_CheckParmWithArgs ("-playdemo", 1);
 
     if (!p)
     {
@@ -1653,11 +1650,11 @@ void D_DoomMain (void)
         // Play back the demo named demo.lmp, determining the framerate
         // of the screen.
         //
-        p = M_CheckParm ("-timedemo");
+	p = M_CheckParmWithArgs("-timedemo", 1);
 
     }
 
-    if (p && p < myargc-1)
+    if (p)
     {
         if (!strcasecmp(myargv[p+1] + strlen(myargv[p+1]) - 4, ".lmp"))
         {
@@ -1746,9 +1743,9 @@ void D_DoomMain (void)
     // 0 disables all monsters.
     //
 
-    p = M_CheckParm ("-skill");
+    p = M_CheckParmWithArgs("-skill", 1);
 
-    if (p && p < myargc-1)
+    if (p)
     {
         startskill = myargv[p+1][0]-'1';
         autostart = true;
@@ -1761,9 +1758,9 @@ void D_DoomMain (void)
     // Start playing on episode n (1-4)
     //
 
-    p = M_CheckParm ("-episode");
+    p = M_CheckParmWithArgs("-episode", 1);
 
-    if (p && p < myargc-1)
+    if (p)
     {
         startepisode = myargv[p+1][0]-'0';
         startmap = 1;
@@ -1780,9 +1777,9 @@ void D_DoomMain (void)
     // For multiplayer games: exit each level after n minutes.
     //
 
-    p = M_CheckParm ("-timer");
+    p = M_CheckParmWithArgs("-timer", 1);
 
-    if (p && p < myargc-1 && deathmatch)
+    if (p)
     {
         timelimit = atoi(myargv[p+1]);
         printf("timer: %i\n", timelimit);
@@ -1797,10 +1794,8 @@ void D_DoomMain (void)
 
     p = M_CheckParm ("-avg");
 
-    if (p && p < myargc-1 && deathmatch)
+    if (p)
     {
-        DEH_printf("Austin Virtual Gaming: Levels will end "
-                       "after 20 minutes\n");
         timelimit = 20;
     }
 
@@ -1812,9 +1807,9 @@ void D_DoomMain (void)
     // (Doom 2)
     //
 
-    p = M_CheckParm ("-warp");
+    p = M_CheckParmWithArgs("-warp", 1);
 
-    if (p && p < myargc-1)
+    if (p)
     {
         if (gamemode == commercial)
             startmap = atoi (myargv[p+1]);
@@ -1858,9 +1853,9 @@ void D_DoomMain (void)
     // Load the game in slot s.
     //
 
-    p = M_CheckParm ("-loadgame");
+    p = M_CheckParmWithArgs("-loadgame", 1);
     
-    if (p && p < myargc-1)
+    if (p)
     {
         startloadgame = atoi(myargv[p+1]);
     }
@@ -1956,17 +1951,17 @@ void D_DoomMain (void)
     // Record a demo named x.lmp.
     //
 
-    p = M_CheckParm ("-record");
+    p = M_CheckParmWithArgs("-record", 1);
 
-    if (p && p < myargc-1)
+    if (p)
     {
         G_RecordDemo (myargv[p+1]);
         autostart = true;
     }
     D_IntroTick(); // [STRIFE]
 
-    p = M_CheckParm ("-playdemo");
-    if (p && p < myargc-1)
+    p = M_CheckParmWithArgs("-playdemo", 1);
+    if (p)
     {
         singledemo = true;              // quit after one demo
         G_DeferedPlayDemo (demolumpname);
@@ -1974,8 +1969,8 @@ void D_DoomMain (void)
     }
     D_IntroTick(); // [STRIFE]
 
-    p = M_CheckParm ("-timedemo");
-    if (p && p < myargc-1)
+    p = M_CheckParmWithArgs("-timedemo", 1);
+    if (p)
     {
         G_TimeDemo (demolumpname);
         D_DoomLoop ();  // never returns

@@ -255,7 +255,6 @@ extern  int		maxammo[NUMAMMO];
 // File handling stuff.
 extern  char *          savegamedir;
 extern	char		basedefault[1024];
-extern  FILE*		debugfile;
 
 // if true, load all graphics at level load
 extern  boolean         precache;
@@ -289,7 +288,7 @@ extern	int		rndindex;
 extern	int		maketic;
 extern  int             nettics[MAXPLAYERS];
 
-extern  ticcmd_t        netcmds[MAXPLAYERS][BACKUPTICS];
+extern  ticcmd_t       *netcmds;
 extern	int		ticdup;
 
 

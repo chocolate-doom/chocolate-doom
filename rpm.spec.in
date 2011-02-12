@@ -57,5 +57,6 @@ rm -rf $RPM_BUILD_ROOT
 %doc COPYING
 %doc CMDLINE
 %doc BUGS
+%doc NOT-BUGS
 /usr/games/*
 
