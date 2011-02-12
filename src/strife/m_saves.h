@@ -30,9 +30,12 @@
 #ifndef M_SAVES_H__
 #define M_SAVES_H__
 
+#define CHARACTER_NAME_LEN 32
+
 extern char *savepath;
-extern char *savepath2;
+extern char *savepathtemp;
 extern char *loadpath;
+extern char character_name[CHARACTER_NAME_LEN];
 
 // Strife Savegame Functions
 void ClearTmp(void);
@@ -51,6 +54,7 @@ void  M_NormalizeSlashes(char *str);
 int   M_StringAlloc(char **str, int numstrs, size_t extra, const char *str1, ...);
 char *M_SafeFilePath(const char *basepath, const char *newcomponent);
 char  M_GetFilePath(const char *fn, char *dest, size_t len);
+char *M_MakeStrifeSaveDir(int slotnum, const char *extra);
 void  M_CreateSaveDirs(const char *savedir);
 
 #endif

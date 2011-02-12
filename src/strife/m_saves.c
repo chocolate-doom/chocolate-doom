@@ -54,9 +54,11 @@
 //
 // Strife maintains multiple file paths related to savegames.
 //
-char *savepath;   // The actual path of the saveslot?
-char *savepath2;  // The path of the temporary saveslot?
-char *loadpath;   // Path used while loading the game
+char *savepath;     // The actual path of the selected saveslot
+char *savepathtemp; // The path of the temporary saveslot (strfsav6.ssg)
+char *loadpath;     // Path used while loading the game
+
+char character_name[CHARACTER_NAME_LEN]; // Name of "character" for saveslot
 
 //
 // ClearTmp
@@ -68,11 +70,11 @@ void ClearTmp(void)
     DIR *sp2dir = NULL;
     struct dirent *f = NULL;
 
-    if(savepath2 == NULL)
+    if(savepathtemp == NULL)
         I_Error("you fucked up savedir man!");
 
-    if(!(sp2dir = opendir(savepath2)))
-        I_Error("ClearTmp: Couldn't open dir %s", savepath2);
+    if(!(sp2dir = opendir(savepathtemp)))
+        I_Error("ClearTmp: Couldn't open dir %s", savepathtemp);
 
     while((f = readdir(sp2dir)))
     {
@@ -84,7 +86,7 @@ void ClearTmp(void)
             continue;
 
         // haleyjd: use M_SafeFilePath, not sprintf
-        filepath = M_SafeFilePath(savepath2, f->d_name);
+        filepath = M_SafeFilePath(savepathtemp, f->d_name);
         remove(filepath);
 
         Z_Free(filepath);
@@ -129,15 +131,15 @@ void ClearSlot(void)
 //
 // FromCurr
 //
-// Copying files from savepath2 to savepath
+// Copying files from savepathtemp to savepath
 //
 void FromCurr(void)
 {
     DIR *sp2dir = NULL;
     struct dirent *f = NULL;
 
-    if(!(sp2dir = opendir(savepath2)))
-        I_Error("FromCurr: Couldn't open dir %s", savepath2);
+    if(!(sp2dir = opendir(savepathtemp)))
+        I_Error("FromCurr: Couldn't open dir %s", savepathtemp);
 
     while((f = readdir(sp2dir)))
     {
@@ -152,8 +154,8 @@ void FromCurr(void)
             continue;
 
         // haleyjd: use M_SafeFilePath, NOT sprintf.
-        srcfilename = M_SafeFilePath(savepath2, f->d_name);
-        dstfilename = M_SafeFilePath(savepath,  f->d_name);
+        srcfilename = M_SafeFilePath(savepathtemp, f->d_name);
+        dstfilename = M_SafeFilePath(savepath,     f->d_name);
 
         filelen = M_ReadFile(srcfilename, &filebuffer);
         M_WriteFile(dstfilename, filebuffer, filelen);
@@ -169,7 +171,7 @@ void FromCurr(void)
 //
 // ToCurr
 //
-// Copying files from savepath to savepath2
+// Copying files from savepath to savepathtemp
 //
 void ToCurr(void)
 {
@@ -194,8 +196,8 @@ void ToCurr(void)
             continue;
 
         // haleyjd: use M_SafeFilePath, NOT sprintf.
-        srcfilename = M_SafeFilePath(savepath,  f->d_name);
-        dstfilename = M_SafeFilePath(savepath2, f->d_name);
+        srcfilename = M_SafeFilePath(savepath,     f->d_name);
+        dstfilename = M_SafeFilePath(savepathtemp, f->d_name);
 
         filelen = M_ReadFile(srcfilename, &filebuffer);
         M_WriteFile(dstfilename, filebuffer, filelen);
@@ -253,8 +255,8 @@ void M_SaveMoveHereToMap(void)
     memset(tmpnum, 0, sizeof(tmpnum));
     sprintf(tmpnum, "%d", gamemap);
 
-    mapsave  = M_SafeFilePath(savepath2, tmpnum);
-    heresave = M_SafeFilePath(savepath2, "here");
+    mapsave  = M_SafeFilePath(savepathtemp, tmpnum);
+    heresave = M_SafeFilePath(savepathtemp, "here");
 
     if(M_FileExists(heresave))
     {
@@ -295,7 +297,7 @@ void M_ReadMisObj(void)
     char *srcpath = NULL;
 
     // haleyjd: use M_SafeFilePath, not sprintf
-    srcpath = M_SafeFilePath(savepath2, "mis_obj");
+    srcpath = M_SafeFilePath(savepathtemp, "mis_obj");
 
     if((f = fopen(srcpath, "rb")))
     {
@@ -452,19 +454,30 @@ void M_CreateSaveDirs(const char *savedir)
 
     for(i = 0; i < 7; i++)
     {
-        char dirname[16];
         char *compositedir;
 
-        memset(dirname, 0, sizeof(dirname));
-        sprintf(dirname, "STRFSAV%d.SSG", i);
-
         // compose the full path by concatenating with savedir
-        compositedir = M_SafeFilePath(savedir, dirname);
+        compositedir = M_SafeFilePath(savedir, M_MakeStrifeSaveDir(i, ""));
 
         M_MakeDirectory(compositedir);
 
         Z_Free(compositedir);
     }
+}
+
+//
+// M_MakeStrifeSaveDir
+//
+// haleyjd 20110211: Convenience routine
+//
+char *M_MakeStrifeSaveDir(int slotnum, const char *extra)
+{
+    static char tmpbuffer[32];
+
+    memset(tmpbuffer, 0, sizeof(tmpbuffer));
+    sprintf(tmpbuffer, "strfsav%d.ssg%s", slotnum, extra);
+
+    return tmpbuffer;
 }
 
 // 

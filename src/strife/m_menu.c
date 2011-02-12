@@ -54,6 +54,7 @@
 
 #include "m_argv.h"
 #include "m_controls.h"
+#include "m_saves.h"    // [STRIFE]
 #include "p_saveg.h"
 
 #include "s_sound.h"
@@ -69,10 +70,11 @@
 
 extern void M_QuitStrife(int);
 
-extern patch_t*		hu_font[HU_FONTSIZE];
-extern boolean		message_dontfuckwithme;
+extern patch_t*         hu_font[HU_FONTSIZE];
+extern boolean          message_dontfuckwithme;
 
-extern boolean		chat_on;		// in heads-up code
+extern boolean          chat_on;        // in heads-up code
+extern boolean          sendsave;       // [STRIFE]
 
 //
 // defaulted values
@@ -151,6 +153,9 @@ short		whichCursor;		// which skull to draw
 // haleyjd 08/27/10: [STRIFE] M_SKULL* -> M_CURS*
 char    *cursorName[8] = {"M_CURS1", "M_CURS2", "M_CURS3", "M_CURS4", 
                           "M_CURS5", "M_CURS6", "M_CURS7", "M_CURS8" };
+
+// haleyjd 20110210 [STRIFE]: skill level for menus
+int menuskill;
 
 // current menudef
 menu_t*	currentMenu;                          
@@ -296,11 +301,11 @@ enum
 menuitem_t NewGameMenu[]=
 {
     // haleyjd 08/28/10: [STRIFE] changed all shortcut letters
-    {1,"M_JKILL",	M_ChooseSkill, 't'},
-    {1,"M_ROUGH",	M_ChooseSkill, 'r'},
-    {1,"M_HURT",	M_ChooseSkill, 'v'},
-    {1,"M_ULTRA",	M_ChooseSkill, 'e'},
-    {1,"M_NMARE",	M_ChooseSkill, 'b'}
+    {1,"M_JKILL",   M_ChooseSkill, 't'},
+    {1,"M_ROUGH",   M_ChooseSkill, 'r'},
+    {1,"M_HURT",    M_ChooseSkill, 'v'},
+    {1,"M_ULTRA",   M_ChooseSkill, 'e'},
+    {1,"M_NMARE",   M_ChooseSkill, 'b'}
 };
 
 menu_t  NewDef =
@@ -312,8 +317,6 @@ menu_t  NewDef =
     48,63,              // x,y
     toorough            // lastOn - haleyjd [STRIFE]: default to skill 1
 };
-
-
 
 //
 // OPTIONS MENU
@@ -513,33 +516,59 @@ menu_t  SaveDef =
     0
 };
 
+void M_DrawNameChar(void);
+
+//
+// NAME CHARACTER MENU
+//
+// [STRIFE]
+// haleyjd 20110210: New "Name Your Character" Menu
+//
+menu_t NameCharDef =
+{
+    load_end,
+    &NewDef,
+    SaveMenu,
+    M_DrawNameChar,
+    80,54,
+    0
+};
+
 
 //
 // M_ReadSaveStrings
 //  read the strings from the savegame files
 //
+// [STRIFE]
+// haleyjd 20110210: Rewritten to read "name" file in each slot directory
+//
 void M_ReadSaveStrings(void)
 {
-    FILE   *handle;
-    int     count;
-    int     i;
-    char    name[256];
-	
-    for (i = 0;i < load_end;i++)
-    {
-        strcpy(name, P_SaveGameFile(i));
+    FILE *handle;
+    int   count;
+    int   i;
+    char *fname = NULL;
 
-	handle = fopen(name, "rb");
-	if (handle == NULL)
-	{
-	    strcpy(&savegamestrings[i][0], EMPTYSTRING);
-	    LoadMenu[i].status = 0;
-	    continue;
-	}
-	count = fread(&savegamestrings[i], 1, SAVESTRINGSIZE, handle);
-	fclose(handle);
-	LoadMenu[i].status = 1;
+    for(i = 0; i < load_end; i++)
+    {
+        if(fname)
+            Z_Free(fname);
+        fname = M_SafeFilePath(savegamedir, M_MakeStrifeSaveDir(i, "\\name"));
+
+        handle = fopen(fname, "rb");
+        if(handle == NULL)
+        {
+            strcpy(savegamestrings[i], EMPTYSTRING);
+            LoadMenu[i].status = 0;
+            continue;
+        }
+        count = fread(savegamestrings[i], 1, SAVESTRINGSIZE, handle);
+        fclose(handle);
+        LoadMenu[i].status = 1;
     }
+
+    if(fname)
+        Z_Free(fname);
 }
 
 //
@@ -577,21 +606,20 @@ void M_DoNameChar(int choice)
 {
     int map;
 
-    // STRIFE-TODO
-    // dword_9F144 = 1;
-    // ClearTmp();
-    // G_WriteSaveName(...);
-    // quickSaveSlot = v5;  // VERIFY VARIABLE
-    // SaveDef.lastOn = v5;
-    // ClearSlot();
-    // FromCurr(...);
+    sendsave = 1;
+    ClearTmp();
+    G_WriteSaveName(choice, savegamestrings[choice]);
+    quickSaveSlot = choice;  // VERIFY VARIABLE
+    SaveDef.lastOn = choice;
+    ClearSlot();
+    FromCurr();
     
     if(isdemoversion)
         map = 33;
     else
         map = 2;
 
-    //G_DeferedInitNew(skill, map);
+    G_DeferedInitNew(menuskill, map);
     M_ClearMenus(0);
 }
 
@@ -601,7 +629,7 @@ void M_DoNameChar(int choice)
 void M_DrawLoad(void)
 {
     int             i;
-	
+
     V_DrawPatchDirect(72, 28, 
                       W_CacheLumpName(DEH_String("M_LOADG"), PU_CACHE));
 
@@ -642,22 +670,40 @@ void M_DrawSaveLoadBorder(int x,int y)
 //
 void M_LoadSelect(int choice)
 {
+    /*
     char    name[256];
 
     strcpy(name, P_SaveGameFile(choice));
 
     G_LoadGame (name);
     M_ClearMenus (0);
+    */
+    
+    // [STRIFE] (v1.2) - TODO: v1.31
+    char *name = NULL;
+
+    G_WriteSaveName(choice, savegamestrings[choice]);
+    ToCurr();
+
+    name = M_SafeFilePath(savegamedir, M_MakeStrifeSaveDir(choice, ""));
+
+    G_ReadCurrent(name);
+    quickSaveSlot = choice;
+    M_ClearMenus(0);
+
+    Z_Free(name);
 }
 
 //
 // Selected from DOOM menu
 //
+// [STRIFE] Verified unmodified (v1.2) - TODO: v1.31
+//
 void M_LoadGame (int choice)
 {
     if (netgame)
     {
-        M_StartMessage(DEH_String(LOADNET),NULL,false);
+        M_StartMessage(DEH_String(LOADNET), NULL, false);
         return;
     }
 
@@ -692,12 +738,25 @@ void M_DrawSave(void)
 //
 void M_DoSave(int slot)
 {
+    /*
     G_SaveGame (slot,savegamestrings[slot]);
     M_ClearMenus (0);
 
     // PICK QUICKSAVE SLOT YET?
     if (quickSaveSlot == -2)
-	quickSaveSlot = slot;
+        quickSaveSlot = slot;
+    */
+    // [STRIFE] (v1.2) - TODO: v1.31
+    if(slot >= 0)
+    {
+        sendsave = 1;
+        G_WriteSaveName(slot, savegamestrings[slot]);
+        M_ClearMenus(0);
+        quickSaveSlot = slot;
+        FromCurr();
+    }
+    else
+        M_StartMessage(DEH_String(QSAVESPOT), NULL, false);
 }
 
 //
@@ -707,11 +766,14 @@ void M_SaveSelect(int choice)
 {
     // we are going to be intercepting all chars
     saveStringEnter = 1;
-    
-    saveSlot = choice;
+
+    // [STRIFE] (v1.2) - TODO: 1.31
+    quickSaveSlot = choice;
+    //saveSlot = choice;
+
     strcpy(saveOldString,savegamestrings[choice]);
     if (!strcmp(savegamestrings[choice],EMPTYSTRING))
-	savegamestrings[choice][0] = 0;
+        savegamestrings[choice][0] = 0;
     saveCharIndex = strlen(savegamestrings[choice]);
 }
 
@@ -720,17 +782,26 @@ void M_SaveSelect(int choice)
 //
 void M_SaveGame (int choice)
 {
+    // [STRIFE] (v1.2) - TODO: v1.31
+    if (netgame)
+    {
+        // haleyjd 20110211: Hooray for Rogue's awesome multiplayer support...
+        M_StartMessage(DEH_String("You can't save a netgame"), NULL, false);
+        return;
+    }
     if (!usergame)
     {
-	M_StartMessage(DEH_String(SAVEDEAD),NULL,false);
-	return;
+        M_StartMessage(DEH_String(SAVEDEAD),NULL,false);
+        return;
     }
-	
+
     if (gamestate != GS_LEVEL)
-	return;
-	
-    M_SetupNextMenu(&SaveDef);
+        return;
+
+    // [STRIFE] (v1.2) - TODO: v1.31
+    //M_SetupNextMenu(&SaveDef);
     M_ReadSaveStrings();
+    M_DoSave(quickSaveSlot);
 }
 
 
@@ -751,22 +822,29 @@ void M_QuickSaveResponse(int key)
 
 void M_QuickSave(void)
 {
+    if (netgame)
+    {
+        // haleyjd 20110211 [STRIFE]: More fun...
+        M_StartMessage(DEH_String("You can't save a netgame"), NULL, false);
+        return;
+    }
+
     if (!usergame)
     {
-	S_StartSound(NULL, sfx_oof);
-	return;
+        S_StartSound(NULL, sfx_oof);
+        return;
     }
 
     if (gamestate != GS_LEVEL)
-	return;
-	
+        return;
+
     if (quickSaveSlot < 0)
     {
-	M_StartControlPanel();
-	M_ReadSaveStrings();
-	M_SetupNextMenu(&SaveDef);
-	quickSaveSlot = -2;	// means to pick a slot now
-	return;
+        M_StartControlPanel();
+        M_ReadSaveStrings();
+        M_SetupNextMenu(&SaveDef);
+        quickSaveSlot = -2;	// means to pick a slot now
+        return;
     }
     DEH_snprintf(tempstring, 80, QSPROMPT, savegamestrings[quickSaveSlot]);
     M_StartMessage(tempstring,M_QuickSaveResponse,true);
@@ -775,7 +853,7 @@ void M_QuickSave(void)
 
 
 //
-// M_QuickLoad
+// M_QuickLoadResponse
 //
 void M_QuickLoadResponse(int key)
 {
@@ -786,19 +864,23 @@ void M_QuickLoadResponse(int key)
     }
 }
 
-
+//
+// M_QuickLoad
+//
+// [STRIFE] Verified unmodified (v1.2) - TODO: v1.31
+//
 void M_QuickLoad(void)
 {
     if (netgame)
     {
-	M_StartMessage(DEH_String(QLOADNET),NULL,false);
-	return;
+        M_StartMessage(DEH_String(QLOADNET),NULL,false);
+        return;
     }
-	
+
     if (quickSaveSlot < 0)
     {
-	M_StartMessage(DEH_String(QSAVESPOT),NULL,false);
-	return;
+        M_StartMessage(DEH_String(QSAVESPOT),NULL,false);
+        return;
     }
     DEH_snprintf(tempstring, 80, QLPROMPT, savegamestrings[quickSaveSlot]);
     M_StartMessage(tempstring,M_QuickLoadResponse,true);
@@ -877,16 +959,16 @@ void M_SfxVol(int choice)
 {
     switch(choice)
     {
-      case 0:
-	if (sfxVolume)
-	    sfxVolume--;
-	break;
-      case 1:
-	if (sfxVolume < 15)
-	    sfxVolume++;
-	break;
+    case 0:
+        if (sfxVolume)
+            sfxVolume--;
+        break;
+    case 1:
+        if (sfxVolume < 15)
+            sfxVolume++;
+        break;
     }
-	
+
     S_SetSfxVolume(sfxVolume * 8);
 }
 
@@ -918,16 +1000,16 @@ void M_MusicVol(int choice)
 {
     switch(choice)
     {
-      case 0:
-	if (musicVolume)
-	    musicVolume--;
-	break;
-      case 1:
-	if (musicVolume < 15)
-	    musicVolume++;
-	break;
+    case 0:
+        if (musicVolume)
+            musicVolume--;
+        break;
+    case 1:
+        if (musicVolume < 15)
+            musicVolume++;
+        break;
     }
-	
+
     S_SetMusicVolume(musicVolume * 8);
 }
 
@@ -996,10 +1078,11 @@ void M_VerifyNightmare(int key)
 void M_ChooseSkill(int choice)
 {
     // haleyjd 09/07/10: Removed nightmare confirmation
-    // STRIFE-TODO: This is not done here, but on the "Name your Character" menu.
-    // I have modified the starting map to 2 until the naming menu is functional.
-    G_DeferedInitNew(choice, 2);
-    M_ClearMenus (0);
+    // [STRIFE]: start "Name Your Character" menu
+    menuskill = choice;
+    currentMenu = &NameCharDef;
+    itemOn = NameCharDef.lastOn;
+    M_ReadSaveStrings();
 }
 
 /*
@@ -1053,7 +1136,39 @@ void M_Options(int choice)
     M_SetupNextMenu(&OptionsDef);
 }
 
+//
+// M_AutoUseHealth
+//
+// [STRIFE] New function
+// haleyjd 20110211: toggle autouse health state
+//
+void M_AutoUseHealth(void)
+{
+    if(!netgame && usergame)
+    {
+        players[consoleplayer].cheats ^= CF_AUTOHEALTH;
 
+        if(players[consoleplayer].cheats & CF_AUTOHEALTH)
+            players[consoleplayer].message = DEH_String("Auto use health ON");
+        else
+            players[consoleplayer].message = DEH_String("Auto use health OFF");
+    }
+}
+
+//
+// M_ChangeShowText
+//
+// [STRIFE] New function
+//
+void M_ChangeShowText(void)
+{
+    dialogshowtext ^= true;
+
+    if(dialogshowtext)
+        players[consoleplayer].message = DEH_String("Conversation Text On");
+    else
+        players[consoleplayer].message = DEH_String("Conversation Text Off");
+}
 
 //
 //      Toggle messages on/off
@@ -1063,11 +1178,11 @@ void M_ChangeMessages(int choice)
     // warning: unused parameter `int choice'
     choice = 0;
     showMessages = 1 - showMessages;
-	
+
     if (!showMessages)
-	players[consoleplayer].message = DEH_String(MSGOFF);
+        players[consoleplayer].message = DEH_String(MSGOFF);
     else
-	players[consoleplayer].message = DEH_String(MSGON);
+        players[consoleplayer].message = DEH_String(MSGON);
 
     message_dontfuckwithme = true;
 }
@@ -1079,8 +1194,8 @@ void M_ChangeMessages(int choice)
 void M_EndGameResponse(int key)
 {
     if (key != key_menu_confirm)
-	return;
-		
+        return;
+
     currentMenu->lastOn = itemOn;
     M_ClearMenus (0);
     D_StartTitle ();
@@ -1091,16 +1206,16 @@ void M_EndGame(int choice)
     choice = 0;
     if (!usergame)
     {
-	S_StartSound(NULL,sfx_oof);
-	return;
+        S_StartSound(NULL,sfx_oof);
+        return;
     }
-	
+
     if (netgame)
     {
-	M_StartMessage(DEH_String(NETEND),NULL,false);
-	return;
+        M_StartMessage(DEH_String(NETEND),NULL,false);
+        return;
     }
-	
+
     M_StartMessage(DEH_String(ENDGAME),M_EndGameResponse,true);
 }
 
@@ -1200,14 +1315,14 @@ void M_ChangeSensitivity(int choice)
 {
     switch(choice)
     {
-      case 0:
-	if (mouseSensitivity)
-	    mouseSensitivity--;
-	break;
-      case 1:
-	if (mouseSensitivity < 9)
-	    mouseSensitivity++;
-	break;
+    case 0:
+        if (mouseSensitivity)
+            mouseSensitivity--;
+        break;
+    case 1:
+        if (mouseSensitivity < 9)
+            mouseSensitivity++;
+        break;
     }
 }
 
@@ -1232,22 +1347,21 @@ void M_SizeDisplay(int choice)
 {
     switch(choice)
     {
-      case 0:
-	if (screenSize > 0)
-	{
-	    screenblocks--;
-	    screenSize--;
-	}
-	break;
-      case 1:
-	if (screenSize < 8)
-	{
-	    screenblocks++;
-	    screenSize++;
-	}
-	break;
+    case 0:
+        if (screenSize > 0)
+        {
+            screenblocks--;
+            screenSize--;
+        }
+        break;
+    case 1:
+        if (screenSize < 8)
+        {
+            screenblocks++;
+            screenSize++;
+        }
+        break;
     }
-	
 
     R_SetViewSize (screenblocks, detailLevel);
 }
@@ -1346,16 +1460,16 @@ int M_StringWidth(char* string)
     size_t             i;
     int             w = 0;
     int             c;
-	
+
     for (i = 0;i < strlen(string);i++)
     {
-	c = toupper(string[i]) - HU_FONTSTART;
-	if (c < 0 || c >= HU_FONTSIZE)
-	    w += 4;
-	else
-	    w += SHORT (hu_font[c]->width);
+        c = toupper(string[i]) - HU_FONTSTART;
+        if (c < 0 || c >= HU_FONTSIZE)
+            w += 4;
+        else
+            w += SHORT (hu_font[c]->width);
     }
-		
+
     return w;
 }
 
@@ -1369,12 +1483,12 @@ int M_StringHeight(char* string)
     size_t             i;
     int             h;
     int             height = SHORT(hu_font[0]->height);
-	
+
     h = height;
     for (i = 0;i < strlen(string);i++)
-	if (string[i] == '\n')
-	    h += height;
-		
+        if (string[i] == '\n')
+            h += height;
+
     return h;
 }
 
@@ -1689,9 +1803,10 @@ boolean M_Responder (event_t* ev)
             break;
 
         case KEY_ENTER:
+            // [STRIFE] v1.2 - TODO: v1.31
             saveStringEnter = 0;
-            if (savegamestrings[saveSlot][0])
-                M_DoSave(saveSlot);
+            if (savegamestrings[quickSaveSlot][0])
+                M_DoNameChar(quickSaveSlot);
             break;
 
         default:
@@ -1741,11 +1856,17 @@ boolean M_Responder (event_t* ev)
         return true;
     }
 
+    // [STRIFE]:
+    // * In v1.2 this is moved to F9 (quickload)
+    // * In v1.31 it is moved to a different button and quicksave
+    //   functionality is restored separate from normal saving (STRIFE-TODO)
+    /*
     if (devparm && key == key_menu_help)
     {
         G_ScreenShot ();
         return true;
     }
+    */
 
     // F-Keys
     if (!menuactive)
@@ -1778,16 +1899,35 @@ boolean M_Responder (event_t* ev)
         }
         else if (key == key_menu_save)     // Save
         {
+            /*
             M_StartControlPanel();
             S_StartSound(NULL, sfx_swtchn);
             M_SaveGame(0);
+            */
+            // [STRIFE] (v1.2) - TODO: v1.31
+            if(netgame || players[consoleplayer].health <= 0 ||
+                players[consoleplayer].cheats & CF_ONFIRE)
+            {
+                S_StartSound(NULL, sfx_oof);
+            }
+            else
+            {
+                M_StartControlPanel();
+                S_StartSound(NULL, sfx_swtchn);
+                M_SaveGame(0);
+            }
             return true;
         }
         else if (key == key_menu_load)     // Load
         {
+            /*
             M_StartControlPanel();
             S_StartSound(NULL, sfx_swtchn);
             M_LoadGame(0);
+            */
+            // [STRIFE] (v1.2) - TODO: v1.31
+            S_StartSound(NULL, sfx_swtchn);
+            M_QuickLoad();
             return true;
         }
         else if (key == key_menu_volume)   // Sound Volume
@@ -1798,18 +1938,29 @@ boolean M_Responder (event_t* ev)
             S_StartSound(NULL, sfx_swtchn);
             return true;
         }
-        /*
         else if (key == key_menu_detail)   // Detail toggle
         {
-            M_ChangeDetail(0);
+            //M_ChangeDetail(0);
+            M_AutoUseHealth(); // [STRIFE]
             S_StartSound(NULL,sfx_swtchn);
             return true;
         }
-        */
+        // STRIFE-TODO: autouse health toggle
         else if (key == key_menu_qsave)    // Quicksave
         {
-            S_StartSound(NULL, sfx_swtchn);
-            M_QuickSave();
+            //S_StartSound(NULL, sfx_swtchn);
+            //M_QuickSave();
+            // [STRIFE] (v1.2) - TODO: v1.31
+            if(netgame || players[consoleplayer].health <= 0 ||
+               players[consoleplayer].cheats & CF_ONFIRE)
+            {
+                S_StartSound(NULL, sfx_oof);
+            }
+            else
+            {
+                S_StartSound(NULL, sfx_swtchn);
+                M_QuickSave();
+            }
             return true;
         }
         else if (key == key_menu_endgame)  // End game
@@ -1820,14 +1971,21 @@ boolean M_Responder (event_t* ev)
         }
         else if (key == key_menu_messages) // Toggle messages
         {
-            M_ChangeMessages(0);
+            //M_ChangeMessages(0);
+            M_ChangeShowText(); // [STRIFE]
             S_StartSound(NULL, sfx_swtchn);
             return true;
         }
         else if (key == key_menu_qload)    // Quickload
         {
+            // [STRIFE]
+            // * v1.2: takes a screenshot
+            // * v1.31: does quickload again... (STRIFE-TODO)
+            /*
             S_StartSound(NULL, sfx_swtchn);
             M_QuickLoad();
+            */
+            G_ScreenShot();
             return true;
         }
         else if (key == key_menu_quit)     // Quit DOOM
@@ -2145,6 +2303,10 @@ void M_Init (void)
     messageString = NULL;
     messageLastMenuActive = menuactive; // STRIFE-FIXME: assigns 0 here...
     quickSaveSlot = -1;
+
+    // [STRIFE]: Initialize savegame paths and clear temporary directory
+    G_WriteSaveName(5, "ME");
+    ClearTmp();
 
     // Here we could catch other version dependencies,
     //  like HELP1/2, and four episodes.

@@ -1720,21 +1720,32 @@ void P_ArchivePlayers (void)
 //
 // [STRIFE] Verified unmodified.
 //
-void P_UnArchivePlayers (void)
+void P_UnArchivePlayers (boolean userload)
 {
     int         i;
 
     for (i=0 ; i<MAXPLAYERS ; i++)
     {
+        player_t dummy;
+
         if (!playeringame[i])
             continue;
 
         saveg_read_pad();
 
-        saveg_read_player_t(&players[i]);
+        // haleyjd [STRIFE]: not exactly how vanilla did it, but this is
+        // necessary because of Choco's change to the savegame code which
+        // reads it directly from file. When not a userload, all the player_t
+        // data loaded from the save is thrown away.
+        if(userload)
+        {
+            saveg_read_player_t(&players[i]);
+            players[i].mo = NULL;
+        }
+        else
+            saveg_read_player_t(&dummy);
 
         // will be set when unarc thinker
-        players[i].mo = NULL;	
         players[i].message = NULL;
         players[i].attacker = NULL;
     }

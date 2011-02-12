@@ -45,6 +45,8 @@
 
 extern char mission_objective[OBJECTIVE_LEN];
 
+extern boolean dialogshowtext;
+
 // villsa - convenient macro for giving objective logs to player
 #define GiveObjective(x, minlumpnum) \
 do { \

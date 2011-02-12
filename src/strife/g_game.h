@@ -53,7 +53,7 @@ void G_DeferedPlayDemo (char* demo);
 // calls P_SetupLevel or W_EnterWorld.
 void G_LoadGame (char* name);
 
-void G_DoLoadGame (void);
+void G_DoLoadGame (boolean userload);
 
 // Called by M_Responder.
 void G_SaveGame (int slot, char* description);
@@ -87,6 +87,10 @@ boolean G_Responder (event_t*	ev);
 void G_ScreenShot (void);
 
 void G_DrawMouseSpeedBox(void);
+
+// [STRIFE]
+boolean G_WriteSaveName(int slot, const char *charname);
+void    G_ReadCurrent(const char *path);
 
 extern int vanilla_savegame_limit;
 extern int vanilla_demo_limit;

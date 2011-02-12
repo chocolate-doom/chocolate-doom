@@ -101,6 +101,7 @@ void M_DialogDimMsg(int x, int y, char *str, boolean useyfont);
 
 // haleyjd [STRIFE] Externalized
 void M_ClearMenus (int choice);
+void M_LoadSelect(int choice);
 
 extern int detailLevel;
 extern int screenblocks;

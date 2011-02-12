@@ -682,7 +682,7 @@ void D_DoAdvanceDemo (void)
         wipegamestate = -1;
         break;
     case 8: // demo
-        //ClearTmp();  STRIFE-TODO
+        ClearTmp();
         pagetic = 9*TICRATE;
         G_DeferedPlayDemo(DEH_String("demo1"));
         break;
@@ -1284,23 +1284,20 @@ static void D_InitIntroSequence(void)
         // Draw the background
         D_IntroBackground();
     }
+    /*
+    // STRIFE-FIXME: This was actually displayed on a special textmode
+    // screen with ANSI color codes...
     else
     {
         puts(DEH_String("Conversation ON"));
-        puts("\n");
         puts(DEH_String("Rogue Entertainment"));
-        puts("\n");
         puts(DEH_String("and"));
-        puts("\n");
         puts(DEH_String("Velocity Games"));
-        puts("\n");
         puts(DEH_String("present"));
-        puts("\n");
         puts(DEH_String("S T R I F E"));
-        puts("\n");
         puts(DEH_String("Loading..."));
-        puts("\n");
     }
+    */
 }
 
 //
@@ -1987,8 +1984,8 @@ void D_DoomMain (void)
 
     if (startloadgame >= 0)
     {
-        strcpy(file, P_SaveGameFile(startloadgame));
-        G_LoadGame (file);
+        // [STRIFE]: different, for hubs
+        M_LoadSelect(startloadgame);
     }
     D_IntroTick(); // [STRIFE]
 

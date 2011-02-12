@@ -87,12 +87,12 @@ void	G_DoReborn (int playernum);
  
 void	G_DoLoadLevel (void); 
 void	G_DoNewGame (void); 
-void	G_DoLoadGame (void); 
+void	G_DoLoadGame (boolean userload); 
 void	G_DoPlayDemo (void); 
 void	G_DoCompleted (void); 
 void	G_DoVictory (void); 
 void	G_DoWorldDone (void); 
-void	G_DoSaveGame (void); 
+void	G_DoSaveGame (char *path); 
  
 // Gamestate the last time G_Ticker was called.
 
@@ -231,7 +231,7 @@ static int      joyymove;
 static boolean  joyarray[MAX_JOY_BUTTONS + 1]; 
 static boolean *joybuttons = &joyarray[1];		// allow [-1] 
  
-static int      savegameslot; 
+static int      savegameslot = 6; // [STRIFE] initialized to 6
 static char     savedescription[32]; 
  
 static int      testcontrols_mousespeed;
@@ -865,7 +865,7 @@ boolean G_Responder (event_t* ev)
 { 
     // allow spy mode changes even during the demo
     if (gamestate == GS_LEVEL && ev->type == ev_keydown 
-        && ev->data1 == key_spy && (singledemo || !deathmatch) )
+        && ev->data1 == key_spy && (singledemo || !gameskill) ) // [STRIFE]: o_O
     {
         // spy mode 
         do 
@@ -886,7 +886,10 @@ boolean G_Responder (event_t* ev)
             (ev->type == ev_mouse && ev->data1) || 
             (ev->type == ev_joystick && ev->data1) ) 
         { 
-            M_StartControlPanel (); 
+            if(devparm && ev->data1 == 'g')
+                D_PageTicker(); // [STRIFE]: wat? o_O
+            else
+                M_StartControlPanel (); 
             return true; 
         } 
         return false; 
@@ -1002,16 +1005,14 @@ void G_Ticker (void)
             G_DoNewGame (); 
             break; 
         case ga_loadgame: 
-            G_DoLoadGame (); 
-            // [STRIFE-TODO]:
-            // M_SaveMoveHereToMap();
-            // M_ReadMisObj(...);
+            G_DoLoadGame(true); 
+            M_SaveMoveHereToMap(); // [STRIFE]
+            M_ReadMisObj();
             break; 
         case ga_savegame: 
-            // [STRIFE-TODO]:
-            // M_SaveMoveMapToHere(...);
-            // M_SaveMisObj(...);
-            G_DoSaveGame (); 
+            M_SaveMoveMapToHere(); // [STRIFE]
+            M_SaveMisObj(savepath);
+            G_DoSaveGame(savepath); 
             break; 
         case ga_playdemo: 
             G_DoPlayDemo (); 
@@ -1038,6 +1039,8 @@ void G_Ticker (void)
     // get commands, check consistancy,
     // and build new consistancy check
     buf = (gametic/ticdup)%BACKUPTICS; 
+
+    // STRIFE-TODO: pnameprefixes bullcrap
 
     for (i=0 ; i<MAXPLAYERS ; i++)
     {
@@ -1110,8 +1113,8 @@ void G_Ticker (void)
                     break; 
 
                 case BTS_SAVEGAME: 
-                    if (!savedescription[0]) 
-                        strcpy (savedescription, "NET GAME"); 
+                    if (!character_name[0]) // [STRIFE]
+                        strcpy (character_name, "NET GAME"); 
                     savegameslot =  
                         (players[i].cmd.buttons & BTS_SAVEMASK)>>BTS_SAVESHIFT; 
                     gameaction = ga_savegame; 
@@ -1364,12 +1367,19 @@ void G_DeathMatchSpawnPlayer (int playernum)
 // G_LoadPath
 //
 // haleyjd 10/03/10: [STRIFE] New function
-// Sets loadpath based on the map and "savepath2"
+// Sets loadpath based on the map and "savepathtemp"
 //
 void G_LoadPath(int map)
 {
-    // STRIFE-TODO:
-    // sprintf(loadpath, "%s%d", savepath2, map)
+    char mapbuf[33];
+
+    memset(mapbuf, 0, sizeof(mapbuf));
+    sprintf(mapbuf, "%d", map);
+
+    // haleyjd: free if already set, and use M_SafeFilePath
+    if(loadpath)
+        Z_Free(loadpath);
+    loadpath = M_SafeFilePath(savepathtemp, mapbuf);
 }
 
 //
@@ -1382,10 +1392,9 @@ void G_DoReborn (int playernum)
     if (!netgame)
     {
         // reload the level from scratch
-        // STRIFE-TODO: HUB REBORN
-        // G_LoadPath(gamemap);
-        // gameaction = 3;
-        gameaction = ga_loadlevel;  // STRIFE-TODO: temporary
+        // [STRIFE] Reborn level load
+        G_LoadPath(gamemap);
+        gameaction = ga_loadgame;
     }
     else 
     {
@@ -1425,7 +1434,11 @@ void G_DoReborn (int playernum)
     } 
 } 
  
- 
+//
+// G_ScreenShot
+//
+// [STRIFE] Verified unmodified
+//
 void G_ScreenShot (void) 
 { 
     gameaction = ga_screenshot; 
@@ -1560,9 +1573,9 @@ void G_DoCompleted (void)
     if (automapactive) 
         AM_Stop (); 
 
-    // STRIFE-TODO: needs call to G_DoSaveGame for hubs
-    // if(!deathmatch)
-    //     G_DoSaveGame(savepath2);
+    // [STRIFE] HUB SAVE
+    if(!deathmatch)
+        G_DoSaveGame(savepathtemp);
     
     gameaction = ga_worlddone;
 } 
@@ -1634,41 +1647,44 @@ boolean G_RiftCheat(int riftSpotNum)
 // G_DoWorldDone
 //
 // haleyjd 08/24/10: [STRIFE] Added destmap -> gamemap set.
-// STRIFE-TODO: Load hub save and other changes.
 //
 void G_DoWorldDone (void) 
 {        
     int temp_leveltime = leveltime;
+    boolean temp_shadow = false;
+    boolean temp_mvis   = false;
 
     gamestate = GS_LEVEL; 
     gamemap = destmap;
 
-    // STRIFE-TODO: hubs bullshit
-    // G_LoadPath();
-    // if (!deathmatch)
-    //  ebx0 = (*(_DWORD *)(players[0].mo + 104) & 0x8000000) > 0;
-    // G_DoLoadGame(...);
-
-    // temporary substitute:
-    G_DoLoadLevel (); 
+    // [STRIFE] HUB LOAD
+    G_LoadPath(destmap);
+    if (!deathmatch)
+    {
+        // Remember Shadowarmor across hub loads
+        if(players[0].mo->flags & MF_SHADOW)
+            temp_shadow = true;
+        if(players[0].mo->flags & MF_MVIS)
+            temp_mvis = true;
+    }
+    G_DoLoadGame(false);
 
     // [STRIFE] leveltime carries over between maps
     leveltime = temp_leveltime;
 
     if(!deathmatch)
     {
-        // STRIFE-TODO: powerup transfers etc
-        // *(_WORD *)(players[0].mo + 106) &= 0xF7FBu;
-        // if (v1)
-        //    *(_BYTE *)(plaeyrs[0].mo + 106) |= 4u;
-        // if (ebx0)
-        //    *(_BYTE *)(players[0].mo + 107) |= 8u;
+        // [STRIFE]: transfer saved powerups
+        players[0].mo->flags &= ~(MF_SHADOW|MF_MVIS);
+        if(temp_shadow)
+            players[0].mo->flags |= MF_SHADOW;
+        if(temp_mvis)
+            players[0].mo->flags |= MF_MVIS;
 
+        // [STRIFE] HUB SAVE
         G_RiftPlayer();
-
-        // STRIFE-TODO:
-        // G_DoSaveGame(savepath2);
-        // M_SaveMisObj(savepath2, v6);
+        G_DoSaveGame(savepathtemp);
+        M_SaveMisObj(savepathtemp);
     }
 
     gameaction = ga_nothing; 
@@ -1696,33 +1712,26 @@ void G_DoWorldDone2(void)
 //
 void G_ReadCurrent(const char *path)
 {
-    // STRIFE-TODO: Can't go live. Too much bullshit.
-    // Without any kind of framework to work with file paths and directories
-    // this stuff is nearly hopeless, and I am already getting fed up with the
-    // idea of trying to make this work on 200 different platforms when there
-    // is nothing I can find in this thing to facilitate portable programming!
-#if 0
-    char temppath[108]; // WARNING: not big enough for modern file paths!
+    char *temppath = NULL;
+    byte *buffer = NULL;
 
-    // STRIFE-TODO: SYSTEM SPECIFIC DIRECTORY SEPARATORS!!!!!!!!!!!!!!!!
-    // What takes precedence? SeHackEd or Linux support?
-    // Where is the godforsaken global that will tell me what character to
-    // use in the first place?????
-    DEH_snprintf(temppath, "%s\\current", path);
-    
-    // STRIFE-TODO: MOVE TO P_SAVEG.C ???? NO SAVEBUFFER OR SAVE_P HERE!
-    // STRIFE-TODO: Read int from file with an appropriate routine
-    if(M_ReadFile(temppath, &savebuffer) <= 0)
+    temppath = M_SafeFilePath(path, "\\current");
+
+    if(M_ReadFile(temppath, &buffer) <= 0)
         gameaction = ga_newgame;
     else
     {
-        save_p = savebuffer;
-        gamemap = *(int *)savebuffer;
-        gameaction = 3;
-        Z_Free(savebuffer);
+        // haleyjd 20110211: do endian-correct read
+        gamemap = (((int)buffer[0])       |
+                   ((int)buffer[1] <<  8) |
+                   ((int)buffer[2] << 16) |
+                   ((int)buffer[3] << 24));
+        gameaction = ga_loadgame;
+        Z_Free(buffer);
     }
-#endif
 
+    Z_Free(temppath);
+    
     G_LoadPath(gamemap);
 }
 
@@ -1735,22 +1744,26 @@ void R_ExecuteSetViewSize (void);
 
 char	savename[256];
 
+// [STRIFE]: No such function, at least in v1.2
+// STRIFE-TODO: Does this come back in v1.31?
+/*
 void G_LoadGame (char* name) 
 { 
     strcpy (savename, name); 
     gameaction = ga_loadgame; 
 } 
+*/
  
 // haleyjd 09/28/10: [STRIFE] VERSIONSIZE == 8
 #define VERSIONSIZE             8
 
-void G_DoLoadGame (void) 
+void G_DoLoadGame (boolean userload) 
 {
-    //int savedleveltime;
+    int savedleveltime;
 
     gameaction = ga_nothing;
 
-    save_stream = fopen(savename, "rb");
+    save_stream = fopen(loadpath, "rb");
 
     // [STRIFE] If the file does not exist, G_DoLoadLevel is called.
     if (save_stream == NULL)
@@ -1767,25 +1780,25 @@ void G_DoLoadGame (void)
         return;
     }
 
-    // haleyjd: where did this come from? Was this in vanilla? o_O
-    //savedleveltime = leveltime;
+    // haleyjd: A comment would be good here, fraggle...
+    // Evidently this is a Choco-ism, necessitated by reading the savegame
+    // header *before* calling G_DoLoadLevel.
+    savedleveltime = leveltime;
     
     // load a base level
 
     // STRIFE-TODO: ????
-    // if(v4)
-         G_InitNew (gameskill, gamemap); 
-    // else
-    //   G_DoLoadLevel();
+    if(userload)
+        G_InitNew(gameskill, gamemap); 
+    else
+        G_DoLoadLevel();
  
-    // haleyjd: As above, no clue. leveltime is supposed to be saved into
-    // and restored from savegames, not carried over from whatever level 
-    // was  being previously played. The fact this is here at all is 
-    // bizarre.
-    //leveltime = savedleveltime;
+    leveltime = savedleveltime;
 
     // dearchive all the modifications
-    P_UnArchivePlayers (); 
+    // [STRIFE] some portions of player_t are not overwritten when loading
+    //   between hub levels
+    P_UnArchivePlayers (userload); 
     P_UnArchiveWorld (); 
     P_UnArchiveThinkers (); 
     P_UnArchiveSpecials (); 
@@ -1799,49 +1812,51 @@ void G_DoLoadGame (void)
         R_ExecuteSetViewSize ();
     
     // draw the pattern into the back screen
-    R_FillBackScreen ();   
+    R_FillBackScreen ();
 } 
 
 //
 // G_WriteSaveName
 //
-// haleyjd 10/03/10: [STRIFE] New function
+// haleyjd 2010103: [STRIFE] New function
 //
 // Writes the character name to the NAME file.
 //
-boolean G_WriteSaveName()
+boolean G_WriteSaveName(int slot, const char *charname)
 {
-    // STRIFE-TODO: Yeah right. This is gonna happen really soon...
-#if 0
-    const char *dirstr;
+    //char savedir[16];
+    char *tmpname;
+    boolean retval;
 
-    dword_86280 = eax0;
+    savegameslot = slot;
 
-#ifdef _WIN32
-    if(M_CheckParm("-cdrom") > 0)
-    {
-        sprintf(savepath2, "c:\\strife.cd\\strfsav%d.ssg\\", 6);
-        v5 = dword_86280;
-        dirstr = "c:\\strife.cd\\strfsav%d.ssg\\";
-    }
-    else
-#endif
-    {
-        sprintf(savepath2, "strfsav%d.ssg\\", 6);
-        v5 = dword_86280;
-        dirstr = "strfsav%d.ssg\\";
-    }
+    // haleyjd: removed special -cdrom treatment, as I believe it is taken
+    // care of automatically via using Choco's savegamedir setting.
 
-    sprintf(savepath, dirstr, v5);
+    // haleyjd: free previous path, if any, and allocate new one using
+    // M_SafeFilePath routine, which isn't limited to 128 characters.
+    if(savepathtemp)
+        Z_Free(savepathtemp);
+    savepathtemp = M_SafeFilePath(savegamedir, "strfsav6.ssg");
 
-    *character_name = 0;
-    strcpy(character_name, edx);
+    // haleyjd: as above.
+    if(savepath)
+        Z_Free(savepath);
+    savepath = M_SafeFilePath(savegamedir, M_MakeStrifeSaveDir(savegameslot, ""));
 
-    sprintf(hellifiknow, "%sname", savepath2);
+    // haleyjd: memset full character_name for safety
+    memset(character_name, 0, CHARACTER_NAME_LEN);
+    strcpy(character_name, charname);
 
-    return M_WriteFile(hellifiknow, character_name, 32);
-#endif
-    return false;
+    // haleyjd: use M_SafeFilePath
+    tmpname = M_SafeFilePath(savepathtemp, "name");
+
+    // Write the "name" file under the directory
+    retval = M_WriteFile(tmpname, character_name, 32);
+
+    Z_Free(tmpname);
+
+    return retval;
 }
 
 //
@@ -1849,6 +1864,9 @@ boolean G_WriteSaveName()
 // Called by the menu task.
 // Description is a 24 byte text string 
 //
+// [STRIFE] No such function, at least in v1.2
+// STRIFE-TODO: Does this make a comeback in v1.31?
+/*
 void
 G_SaveGame
 ( int	slot,
@@ -1858,16 +1876,33 @@ G_SaveGame
     strcpy (savedescription, description); 
     sendsave = true; 
 } 
+*/
  
-void G_DoSaveGame (void) 
+void G_DoSaveGame (char *path)
 { 
+    char *current_path;
     char *savegame_file;
     char *temp_savegame_file;
+    byte gamemapbytes[4];
+    char gamemapstr[33];
 
     temp_savegame_file = P_TempSaveGameFile();
-    savegame_file = P_SaveGameFile(savegameslot);
+    
+    // [STRIFE] custom save file path logic
+    memset(gamemapstr, 0, sizeof(gamemapstr));
+    sprintf(gamemapstr, "%d", gamemap);
+    savegame_file = M_SafeFilePath(path, gamemapstr);
 
-    // STRIFE-TODO: save the "current" file?
+    // [STRIFE] write the "current" file, which tells which hub map
+    //   the save slot is currently on.
+    current_path = M_SafeFilePath(path, "current");
+    // haleyjd: endian-agnostic IO
+    gamemapbytes[0] = (byte)( gamemap        & 0xff);
+    gamemapbytes[1] = (byte)((gamemap >>  8) & 0xff);
+    gamemapbytes[2] = (byte)((gamemap >> 16) & 0xff);
+    gamemapbytes[3] = (byte)((gamemap >> 24) & 0xff);
+    M_WriteFile(current_path, gamemapbytes, 4);
+    Z_Free(current_path);
 
     // Open the savegame file for writing.  We write to a temporary file
     // and then rename it at the end if it was successfully written.
@@ -1889,11 +1924,12 @@ void G_DoSaveGame (void)
     P_ArchiveWorld (); 
     P_ArchiveThinkers (); 
     P_ArchiveSpecials (); 
-	 
+
     P_WriteSaveGameEOF();
-	 
+
     // Enforce the same savegame size limit as in Vanilla Doom, 
     // except if the vanilla_savegame_limit setting is turned off.
+    // [STRIFE]: Verified subject to same limit.
 
     if (vanilla_savegame_limit && ftell(save_stream) > SAVEGAMESIZE)
     {
@@ -1910,19 +1946,27 @@ void G_DoSaveGame (void)
     remove(savegame_file);
     rename(temp_savegame_file, savegame_file);
     
-    gameaction = ga_nothing; 
-    strcpy(savedescription, "");
+    // haleyjd: free the savegame_file path
+    Z_Free(savegame_file);
 
-    players[consoleplayer].message = DEH_String(GGSAVED);
+    gameaction = ga_nothing; 
+    //strcpy(savedescription, "");
+
+    // [STRIFE]: custom message logic
+    if(!strcmp(path, savepath))
+    {
+        sprintf(savename, "%s saved.", character_name);
+        players[consoleplayer].message = savename;
+    }
 
     // draw the pattern into the back screen
-    R_FillBackScreen ();	
+    R_FillBackScreen ();
 } 
  
 
 //
-skill_t	d_skill; 
-int     d_episode; 
+skill_t d_skill; 
+//int     d_episode; [STRIFE] No such thing as episodes in Strife
 int     d_map; 
 
 //
@@ -1936,7 +1980,6 @@ int     d_map;
 void G_DeferedInitNew(skill_t skill, int map)
 { 
     d_skill = skill; 
-    d_episode = 1; // STRIFE-TODO: no such thing as episodes.
     d_map = map; 
     gameaction = ga_newgame; 
 } 
@@ -1945,6 +1988,7 @@ void G_DeferedInitNew(skill_t skill, int map)
 // G_DoNewGame
 //
 // [STRIFE] Code added to turn off the stonecold effect.
+//   Someone also removed the nomonsters reset...
 //
 void G_DoNewGame (void) 
 {
@@ -1956,7 +2000,7 @@ void G_DoNewGame (void)
     respawnparm = false;
     fastparm = false;
     stonecold = false;      // villsa [STRIFE]
-    nomonsters = false;
+    //nomonsters = false;   [STRIFE] not set here!?!
     consoleplayer = 0;
     G_InitNew (d_skill, d_map);
     gameaction = ga_nothing; 
@@ -1985,7 +2029,6 @@ G_InitNew
         paused = false; 
         S_ResumeSound (); 
     } 
-
 
     if (skill > sk_nightmare) 
         skill = sk_nightmare;
@@ -2091,12 +2134,10 @@ G_InitNew
     demoplayback = false; 
     automapactive = false; 
     viewactive = true; 
-    //gameepisode = episode; 
+    //gameepisode = episode; [STRIFE] no episodes
     gamemap = map; 
     gameskill = skill; 
     riftdest = 0; // haleyjd 08/24/10: [STRIFE] init riftdest to zero on new game
-
-    viewactive = true;
 
     // Set the sky to use.
     //
@@ -2118,9 +2159,9 @@ G_InitNew
 
     skytexture = R_TextureNumForName(skytexturename);
 
-    // STRIFE-TODO:
-    // G_LoadPath(gamemap)
-    G_DoLoadLevel ();
+    // [STRIFE] HUBS
+    G_LoadPath(gamemap);
+    G_DoLoadLevel();
 } 
  
 
@@ -2310,6 +2351,11 @@ void G_BeginRecording (void)
 
 char*	defdemoname; 
  
+//
+// G_DeferedPlayDemo
+//
+// [STRIFE] Verified unmodified
+//
 void G_DeferedPlayDemo (char* name) 
 { 
     defdemoname = name; 
@@ -2414,7 +2460,9 @@ void G_DoPlayDemo (void)
     precache = false;
     G_InitNew(skill, map); 
     precache = true; 
-    starttime = I_GetTime (); 
+    
+    // [STRIFE] not here...
+    //starttime = I_GetTime (); 
 
     usergame = false; 
     demoplayback = true; 
@@ -2435,6 +2483,8 @@ void G_TimeDemo (char* name)
 
     nodrawers = M_CheckParm ("-nodraw"); 
 
+    // haleyjd: STRIFE-TODO: where's -noblit?
+
     timingdemo = true; 
     singletics = true; 
 
@@ -2452,7 +2502,9 @@ void G_TimeDemo (char* name)
 = Returns true if a new demo loop action will take place 
 =================== 
 */ 
+//
 // [STRIFE] Verified unmodified
+//
 boolean G_CheckDemoStatus (void) 
 { 
     int             endtime; 
@@ -2501,7 +2553,7 @@ boolean G_CheckDemoStatus (void)
         M_WriteFile (demoname, demobuffer, demo_p - demobuffer); 
         Z_Free (demobuffer); 
         demorecording = false; 
-        I_Error ("Demo %s recorded",demoname); 
+        I_Error ("Demo %s recorded", demoname); 
     } 
 
     return false; 
