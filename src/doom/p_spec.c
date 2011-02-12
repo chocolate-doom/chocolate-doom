@@ -1213,9 +1213,9 @@ static void DonutOverrun(fixed_t *s3_floorheight, short *s3_floorpic,
         // system.  The default (if this option is not specified) is to
         // emulate the behavior when running under Windows 98.
 
-        p = M_CheckParm("-donut");
+        p = M_CheckParmWithArgs("-donut", 2);
 
-        if (p > 0 && p < myargc - 2)
+        if (p > 0)
         {
             // Dump of needed memory: (fixed_t)0000:0000 and (short)0000:0008
             //

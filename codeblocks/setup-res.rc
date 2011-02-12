@@ -3,21 +3,21 @@
 CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "setup-manifest.xml"
 
 1 VERSIONINFO
-PRODUCTVERSION 1,4,0,0
-FILEVERSION 1,4,0,0
+PRODUCTVERSION 1,5,0,0
+FILEVERSION 1,5,0,0
 FILETYPE 1
 {
  BLOCK "StringFileInfo"
  {
   BLOCK "040904E4"
   {
-   VALUE "FileVersion", "1.4.0"
+   VALUE "FileVersion", "1.5.0"
    VALUE "FileDescription", "Chocolate-Doom Setup"
    VALUE "InternalName", "chocolate-setup"
    VALUE "CompanyName", "fraggle@gmail.com"
    VALUE "LegalCopyright", "GNU General Public License"
    VALUE "ProductName", "Chocolate-Doom Setup"
-   VALUE "ProductVersion", "1.4.0"
+   VALUE "ProductVersion", "1.5.0"
   }
  }
 }

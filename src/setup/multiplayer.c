@@ -70,10 +70,10 @@ static char *iwadfile;
 
 static char *doom_skills[] = 
 {
-    "I'm too young to die!",
+    "I'm too young to die.",
     "Hey, not too rough.",
     "Hurt me plenty.",
-    "Ultra-violence",
+    "Ultra-Violence.",
     "NIGHTMARE!",
 };
 
@@ -144,6 +144,7 @@ static int fast = 0;
 static int respawn = 0;
 static int udpport = 2342;
 static int timer = 0;
+static int privateserver = 0;
 
 static txt_dropdown_list_t *skillbutton;
 static txt_button_t *warpbutton;
@@ -277,6 +278,11 @@ static void StartGame(int multiplayer)
         {
             AddCmdLineParameter(exec, "-timer %i", timer);
         }
+
+        if (privateserver)
+        {
+            AddCmdLineParameter(exec, "-privateserver");
+        }
     }
 
     AddWADs(exec);
@@ -284,7 +290,7 @@ static void StartGame(int multiplayer)
     TXT_Shutdown();
     
     M_SaveDefaults();
-    AddConfigParameters(exec);
+    PassThroughArguments(exec);
 
     ExecuteDoom(exec);
 
@@ -647,14 +653,12 @@ static void StartGameMenu(char *window_title, int multiplayer)
                    TXT_NewCheckBox("Respawning monsters", &respawn),
                    TXT_NewSeparator("Advanced"),
                    advanced_table = TXT_NewTable(2),
-                   TXT_NewButton2("Add extra parameters...", 
-                                  OpenExtraParamsWindow, NULL),
                    NULL);
 
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, WadWindowAction());
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, StartGameAction(multiplayer));
     
-    TXT_SetColumnWidths(gameopt_table, 12, 12);
+    TXT_SetColumnWidths(gameopt_table, 12, 6);
 
     if (gamemission == doom)
     {
@@ -694,13 +698,21 @@ static void StartGameMenu(char *window_title, int multiplayer)
                                NULL),
                NULL);
 
-        TXT_AddWidgets(advanced_table, 
+        TXT_AddWidget(window,
+                      TXT_NewInvertedCheckBox("Register with master server",
+                                              &privateserver));
+
+        TXT_AddWidgets(advanced_table,
                        TXT_NewLabel("UDP port"),
                        TXT_NewIntInputBox(&udpport, 5),
                        NULL);
     }
 
-    TXT_SetColumnWidths(advanced_table, 12, 12);
+    TXT_AddWidget(window,
+                  TXT_NewButton2("Add extra parameters...", 
+                                 OpenExtraParamsWindow, NULL));
+
+    TXT_SetColumnWidths(advanced_table, 12, 6);
 
     TXT_SignalConnect(iwad_selector, "changed", UpdateWarpType, NULL);
 
@@ -749,7 +761,7 @@ static void DoJoinGame(void *unused1, void *unused2)
     
     M_SaveDefaults();
 
-    AddConfigParameters(exec);
+    PassThroughArguments(exec);
 
     ExecuteDoom(exec);
 

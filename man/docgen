@@ -293,10 +293,10 @@ def add_parameter(param, line, config_file):
 
     # Is this documenting a command line parameter?
 
-    match = re.search('M_CheckParm\s*\(\s*"(.*?)"\s*\)', line)
+    match = re.search('M_CheckParm(WithArgs)?\s*\(\s*"(.*?)"', line)
 
     if match:
-        param.name = match.group(1)
+        param.name = match.group(2)
         categories[param.category].add_param(param)
         return
 

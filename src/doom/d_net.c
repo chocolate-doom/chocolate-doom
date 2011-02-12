@@ -396,7 +396,7 @@ static void SaveGameSettings(net_gamesettings_t *settings,
     // packets.
     //
 
-    i = M_CheckParm("-extratics");
+    i = M_CheckParmWithArgs("-extratics", 1);
 
     if (i > 0)
         settings->extratics = atoi(myargv[i+1]);
@@ -411,7 +411,7 @@ static void SaveGameSettings(net_gamesettings_t *settings,
     // the amount of network bandwidth needed.
     //
 
-    i = M_CheckParm("-dup");
+    i = M_CheckParmWithArgs("-dup", 1);
 
     if (i > 0)
         settings->ticdup = atoi(myargv[i+1]);
@@ -513,7 +513,7 @@ boolean D_InitNetGame(net_connect_data_t *connect_data,
         // address.
         //
         
-        i = M_CheckParm("-connect");
+        i = M_CheckParmWithArgs("-connect", 1);
 
         if (i > 0)
         {

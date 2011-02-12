@@ -148,7 +148,7 @@ static char *window_title = "";
 // This is used when we are rendering in 32-bit screen mode.
 // When in a real 8-bit screen mode, screenbuffer == screen.
 
-static SDL_Surface *screenbuffer;
+static SDL_Surface *screenbuffer = NULL;
 
 // palette
 
@@ -1625,7 +1625,7 @@ static void CheckCommandLine(void)
     // Specify the screen width, in pixels.
     //
 
-    i = M_CheckParm("-width");
+    i = M_CheckParmWithArgs("-width", 1);
 
     if (i > 0)
     {
@@ -1639,7 +1639,7 @@ static void CheckCommandLine(void)
     // Specify the screen height, in pixels.
     //
 
-    i = M_CheckParm("-height");
+    i = M_CheckParmWithArgs("-height", 1);
 
     if (i > 0)
     {
@@ -1653,7 +1653,7 @@ static void CheckCommandLine(void)
     // Specify the color depth of the screen, in bits per pixel.
     //
 
-    i = M_CheckParm("-bpp");
+    i = M_CheckParmWithArgs("-bpp", 1);
 
     if (i > 0)
     {
@@ -1680,7 +1680,7 @@ static void CheckCommandLine(void)
     // Specify the screen mode (when running fullscreen) or the window
     // dimensions (when running in windowed mode).
 
-    i = M_CheckParm("-geometry");
+    i = M_CheckParmWithArgs("-geometry", 1);
 
     if (i > 0)
     {
@@ -1851,6 +1851,14 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
 
     doompal = W_CacheLumpName(DEH_String("PLAYPAL"), PU_CACHE);
 
+    // If we are already running and in a true color mode, we need
+    // to free the screenbuffer surface before setting the new mode.
+
+    if (screenbuffer != NULL && screen != screenbuffer)
+    {
+        SDL_FreeSurface(screenbuffer);
+    }
+
     // Generate lookup tables before setting the video mode.
 
     if (mode != NULL && mode->InitMode != NULL)
@@ -1873,7 +1881,13 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
     }
     else
     {
+        // In windowed mode, the window can be resized while the game is
+        // running.  This feature is disabled on OS X, as it adds an ugly
+        // scroll handle to the corner of the screen.
+
+#ifndef __MACOSX__
         flags |= SDL_RESIZABLE;
+#endif
     }
 
     screen = SDL_SetVideoMode(w, h, screen_bpp, flags);

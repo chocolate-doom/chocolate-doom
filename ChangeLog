@@ -1,3 +1,380 @@
+2011-01-02 17:45:24 fraggle
+	
+	Remove redundant package version label from top of OS X launcher
+	window.
+
+2011-01-02 02:49:20 fraggle
+	
+	Restore window title when changing video driver in setup tool (thanks
+	AlexXav).
+
+2011-01-02 02:31:20 fraggle
+	
+	Turn off dynamic window resizing feature on OS X, as it adds an ugly
+	resize handle to the corner of the window that overlaps the view of
+	the game.
+
+2010-12-28 16:43:41 fraggle
+	
+	Make demo loop handling of DEMO4 case depend on the executable version
+	being emulated: the Vanilla versions did not have any conditional
+	behavior based on gamemode/gamemission.  This has the side effect of
+	causing the game to exit with an error when playing with Final Doom,
+	but this is Vanilla behavior.
+
+2010-12-25 22:42:40 fraggle
+	
+	Include NOT-BUGS in rpm packages.
+
+2010-12-25 21:51:24 fraggle
+	
+	Pass through all command line arguments specified to the setup tool to
+	the game, to match Vanilla behavior (thanks AlexXav).
+
+2010-12-25 21:04:10 fraggle
+	
+	Remove the -wart parameter (thanks Sander van Dijk).
+
+2010-12-25 20:55:30 fraggle
+	
+	Remove the 32 character limit on the lengths of filenames specified to
+	-record (thanks AlexXav).
+
+2010-12-19 20:15:09 fraggle
+	
+	Change setup tool skill level names to match Doom's "new game" menu
+	exactly (thanks AlexXav).
+
+2010-12-18 23:55:07 fraggle
+	
+	Add a M_CheckParmWithArgs function, that behaves like M_CheckParm but
+	also checks that extra options were provided on the command line
+	(thanks Sander van Dijk).
+
+2010-12-14 20:55:30 fraggle
+	
+	Check that an address is provided to the -query command line option
+	(thanks Sander van Dijk).
+
+2010-12-12 13:11:11 fraggle
+	
+	Add -privateserver and -servername options to chocolate-server
+	manpage.  Add server registration option to setup tool (thanks
+	exp(x)).
+
+2010-12-10 23:56:32 fraggle
+	
+	Fix memory leak when dynamically resizing window in true color video
+	modes.
+
+2010-12-10 22:37:29 fraggle
+	
+	Fix build problem (thanks Proteh).
+
+2010-12-10 22:21:56 fraggle
+	
+	Remove "Error:" from the message displayed by I_Error, to match
+	Vanilla.
+
+2010-12-10 20:53:23 fraggle
+	
+	Update NEWS.
+
+2010-12-10 20:43:05 fraggle
+	
+	Change alignment of actions in a window's action area so that there is
+	equal space either side of the center widget.  This is more
+	aesthetically pleasing.
+
+2010-12-10 20:31:46 fraggle
+	
+	Replace txt_widget_t#selectable with a callback function to query
+	whether the widget is selectable.  This stops the table code from
+	selecting things that aren't really selectable - eg.  empty tables,
+	scrollpanes containing unselectable widgets, etc.  Fixes a bug with
+	the warp menu (thanks Proteh).
+
+2010-12-10 19:15:37 fraggle
+	
+	Add "warp" menu to the main menu of the setup tool, like Vanilla
+	setup.exe (thanks Proteh).
+
+2010-12-10 18:15:12 fraggle
+	
+	Fix typo (thanks Sander van Dijk).
+
+2010-12-10 17:53:50 fraggle
+	
+	Specify master server port explicitly, so that server registration
+	works when using -port.
+
+2010-12-07 23:13:34 rtc_marine
+	
+	- Update chocolate-server codeblocks project
+
+2010-12-07 22:35:17 fraggle
+	
+	Assign the oldest client to be the controller, not the first found in
+	the clients[] array.
+
+2010-12-06 23:37:27 fraggle
+	
+	Fix -solo-net to actually behave the same as other ports.
+
+2010-12-06 22:38:24 fraggle
+	
+	Rename -netdemo command line parameter to -solo-net, for consistency
+	with other ports (-netdemo is still recognised).
+
+2010-12-06 00:04:08 fraggle
+	
+	Update NEWS.
+
+2010-12-05 14:42:09 fraggle
+	
+	Allow textscreen font to be overridden using the TEXTSCREEN_FONT
+	command line variable.
+
+2010-12-04 20:56:04 fraggle
+	
+	Rename search command line options: -search to search the Internet,
+	-localsearch to search local LAN.
+
+2010-12-04 20:48:07 fraggle
+	
+	Add ping time to query output.
+
+2010-12-04 20:40:10 fraggle
+	
+	Fix formatting for -masterquery to match -search.
+
+2010-12-04 20:34:39 fraggle
+	
+	Fix bug when running with -server option.
+
+2010-12-02 21:34:51 fraggle
+	
+	Make multiple query attempts to servers before giving up.  Display a
+	warning if the master server does not respond.
+
+2010-12-02 20:32:52 fraggle
+	
+	Add -servername parameter to allow the owner to change the name
+	returned in response to queries (thanks AlexMax).
+
+2010-12-02 20:11:24 fraggle
+	
+	More refactoring of querying code, to not be specific to the purpose
+	of printing out a list.
+
+2010-12-02 19:26:05 fraggle
+	
+	Refactor query code and add a -masterquery command line parameter to
+	query the master server.
+
+2010-12-02 18:23:09 fraggle
+	
+	Register servers with Internet master server.
+
+2010-11-30 21:52:38 fraggle
+	
+	Oops.
+
+2010-11-30 20:44:20 fraggle
+	
+	Remove "-debugfile" command line option and associated variable.
+
+2010-11-30 20:26:37 fraggle
+	
+	Update NEWS.
+
+2010-11-30 20:09:22 rtc_marine
+	
+	- Update codeblocks project
+
+2010-11-30 20:00:06 fraggle
+	
+	Add support for HACX v1.2 IWAD file.
+
+2010-11-30 01:08:59 fraggle
+	
+	Add NOT-BUGS file with some common Vanilla gotchas.
+
+2010-11-29 20:18:10 fraggle
+	
+	Auto-adjust the screen color depth if the configured color depth is
+	not supported by the hardware.
+
+2010-11-27 23:23:12 fraggle
+	
+	Add dropdown list to setup tool to select screen BPP.
+
+2010-11-27 19:39:14 fraggle
+	
+	When generating the texture name lookup hash table, add new entries to
+	the end of chains.  This way, entries earlier in the texture list
+	trump later entries with the same name.  This fixes a bug with the
+	wrong sky being shown in Spooky01.wad (thanks Porsche Monty).
+
+2010-11-27 15:36:43 fraggle
+	
+	Fix -timer / -avg options to work like Vanilla when playing demos.
+
+2010-11-26 18:56:45 fraggle
+	
+	In non-palettized boxed screen modes, don't update the border areas of
+	the screen.  This is more CPU and memory efficient, and also fixes the
+	"flashing border" bug when palette flashes occur.
+
+2010-11-26 18:36:48 fraggle
+	
+	Turn double buffering on for non-palettized screen modes, as this may
+	be the cause of screen tearing reports.
+
+2010-11-24 23:34:18 fraggle
+	
+	Detect when running on Windows Vista or later, and switch to 32 bpp
+	screen mode.
+
+2010-11-24 22:43:37 fraggle
+	
+	Add configuration file parameter and command line option to specify
+	the screen pixel depth.
+
+2010-11-24 08:09:48 fraggle
+	
+	Add workaround to stop freezeups with old versions of SDL_mixer.
+
+2010-11-21 15:44:43 fraggle
+	
+	Add -8in32 command line parameter to make the game run in 32-bit color
+	mode, scaling up into an intermediate 8-bit buffer first.  This should
+	help with the palette problems experienced by Windows Vista/7 users.
+
+2010-11-09 16:10:52 fraggle
+	
+	Update Python scripts to work in Python 3.
+
+2010-09-19 21:09:36 fraggle
+	
+	Read response file in binary mode, to fix incomplete response file
+	bug.
+
+2010-08-31 21:00:20 fraggle
+	
+	Add weapon cycling buttons to joystick button list.
+
+2010-08-31 20:59:24 fraggle
+	
+	Don't double OPL sample values, as it causes horrible things to happen
+	with the Heretic title screen music.
+
+2010-08-28 19:35:08 fraggle
+	
+	Update NEWS.
+
+2010-08-28 19:28:05 fraggle
+	
+	Include INSTALL file in distribution packages.
+
+2010-08-22 18:59:12 fraggle
+	
+	Shut up compiler warning.
+
+2010-08-22 02:21:27 fraggle
+	
+	Change span drawing functions to work the same as Vanilla, so that in
+	screenshots, floors and ceilings are pixel-perfect identical to
+	Vanilla Doom (thanks Porsche Monty).
+
+2010-08-21 19:49:20 fraggle
+	
+	Change default mouse acceleration in setup tool to match the game's
+	default.
+
+2010-08-21 18:47:24 fraggle
+	
+	"Bug fix".
+
+2010-08-20 14:01:29 fraggle
+	
+	Remove debug printf().
+
+2010-08-20 13:20:58 fraggle
+	
+	Align memory allocated by zone memory system to 8 byte boundaries on
+	64-bit machines.  Possibly fixes problems on sparc64?
+
+2010-08-20 12:30:30 fraggle
+	
+	Extend mouse code to support up to 8 buttons (allows mouse wheel to be
+	used).
+
+2010-08-15 16:23:28 fraggle
+	
+	Fix volume multiply; DBOPL now generating output.
+
+2010-08-15 15:57:37 fraggle
+	
+	Hook DBOPL into OPL library and remove FMOPL.  Does not generate any
+	sound yet.
+
+2010-08-13 19:42:52 fraggle
+	
+	Add C-converted version of DOSbox OPL emulator.
+
+2010-08-09 18:53:10 fraggle
+	
+	Add weapon cycling bindings for mouse and joystick buttons.  Add
+	weapon cycling bindings to configuration file and setup tool.
+
+2010-08-07 18:23:09 fraggle
+	
+	Change back filter frequency.  Add debug code to dump resampled sound
+	effects to WAV files.
+
+2010-08-07 17:07:00 fraggle
+	
+	Fix sound resampling low pass filter.
+
+2010-08-04 19:25:04 fraggle
+	
+	Initial code for previous/next weapon switching keys.
+
+2010-08-03 21:12:36 fraggle
+	
+	When in windowed mode, allow the screen size to be dynamically resized
+	by dragging the window borders.
+
+2010-07-31 20:25:17 fraggle
+	
+	Add multiplayer spy key binding.
+
+2010-07-28 21:39:07 fraggle
+	
+	Add config file parameter to set OPL I/O port.
+
+2010-07-17 01:33:57 fraggle
+	
+	Check for libm, to fix Fedora compile issues.
+
+2010-07-14 21:36:53 fraggle
+	
+	Set MACOSX_DEPLOYMENT_TARGET to target 10.4, so that the launcher will
+	work on older versions.
+
+2010-07-10 17:06:15 fraggle
+	
+	Update NEWS and ChangeLog, bump version number.
+
+2010-07-10 16:56:18 fraggle
+	
+	Add key bindings for multiplayer messaging.
+
+2010-07-10 16:27:52 fraggle
+	
+	Add key binding to change demo recording quit key.
+
 2010-05-30 04:03:44 fraggle
 	
 	Add INSTALL to all distribution packages, add note in README.

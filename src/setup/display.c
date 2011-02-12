@@ -37,6 +37,8 @@
 
 #include "display.h"
 
+extern void RestartTextscreen(void);
+
 typedef struct
 {
     char *description;
@@ -95,6 +97,7 @@ static screen_mode_t screen_modes_scaled[] =
 // List of fullscreen modes generated at runtime
 
 static screen_mode_t *screen_modes_fullscreen = NULL;
+static int num_screen_modes_fullscreen;
 
 static int vidmode = 0;
 
@@ -411,6 +414,8 @@ static void BuildFullscreenModesList(void)
         memcpy(m1, m2, sizeof(screen_mode_t));
         memcpy(m2, &m, sizeof(screen_mode_t));
     }
+
+    num_screen_modes_fullscreen = num_modes;
 }
 
 static int FindBestMode(screen_mode_t *modes)
@@ -477,7 +482,7 @@ static void GenerateModesTable(TXT_UNCAST_ARG(widget),
     // Build the table
  
     TXT_ClearTable(modes_table);
-    TXT_SetColumnWidths(modes_table, 15, 15, 15);
+    TXT_SetColumnWidths(modes_table, 14, 14, 14, 14, 14);
 
     for (i=0; modes[i].w != 0; ++i) 
     {
@@ -530,18 +535,6 @@ static char *win32_video_drivers[] =
     "Windows GDI",
 };
 
-// Restart the textscreen library.  Used when the video_driver variable
-// is changed.
-
-static void RestartTextscreen(void)
-{
-    TXT_Shutdown();
-
-    SetDisplayDriver();
-
-    TXT_Init();
-}
-
 static void SetWin32VideoDriver(void)
 {
     if (!strcmp(video_driver, "windib"))
@@ -593,6 +586,8 @@ void ConfigDisplay(void)
     txt_checkbox_t *fs_checkbox;
     txt_checkbox_t *ar_checkbox;
     txt_dropdown_list_t *bpp_selector;
+    int num_columns;
+    int window_y;
 
     // What color depths are supported?  Generate supported_bpps array
     // and set selected_bpp to match the current value of screen_bpp.
@@ -612,16 +607,43 @@ void ConfigDisplay(void)
     
     window = TXT_NewWindow("Display Configuration");
 
-    TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_TOP, 
-                                  TXT_SCREEN_W / 2, 5);
-
     TXT_AddWidgets(window, 
                    fs_checkbox = TXT_NewCheckBox("Fullscreen", &fullscreen),
                    ar_checkbox = TXT_NewCheckBox("Correct aspect ratio",
                                                  &aspect_ratio_correct),
                    NULL);
 
-    modes_table = TXT_NewTable(3);
+    // Some machines can have lots of video modes.  This tries to
+    // keep a limit of six lines by increasing the number of
+    // columns.  In extreme cases, the window is moved up slightly.
+
+    BuildFullscreenModesList();
+
+    window_y = 5;
+
+    if (num_screen_modes_fullscreen <= 18)
+    {
+        num_columns = 3;
+    }
+    else if (num_screen_modes_fullscreen <= 24)
+    {
+        num_columns = 4;
+    }
+    else
+    {
+        num_columns = 5;
+        window_y -= 3;
+    }
+
+    modes_table = TXT_NewTable(num_columns);
+
+    // The window is set at a fixed vertical position.  This keeps
+    // the top of the window stationary when switching between
+    // fullscreen and windowed mode (which causes the window's
+    // height to change).
+
+    TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_TOP, 
+                                  TXT_SCREEN_W / 2, window_y);
 
     // On Windows, there is an extra control to change between 
     // the Windows GDI and DirectX video drivers.
