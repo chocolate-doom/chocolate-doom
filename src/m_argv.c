@@ -32,6 +32,7 @@
 #include "doomtype.h"
 #include "i_system.h"
 #include "m_misc.h"
+#include "m_argv.h"  // haleyjd 20110212: warning fix
 
 int		myargc;
 char**		myargv;
