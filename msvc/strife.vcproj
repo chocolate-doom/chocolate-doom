@@ -69,6 +69,7 @@
 				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib ..\lib\libpcsound.lib ..\lib\libtextscreen.lib ..\lib\libopl.lib"
 				OutputFile="$(OutDir)\chocolate-strife-dbg.exe"
 				LinkIncremental="2"
+				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames="msvcrtd.lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
@@ -124,13 +125,13 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories=".;..\src;..\src\strife;..\src\doom;..\textscreen;..\pcsound"
+				AdditionalIncludeDirectories=".;..\src;..\src\strife;..\src\doom;..\textscreen;..\pcsound;..\opl"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;PROGRAM_PREFIX=&quot;\&quot;chocolate-\&quot;&quot;"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				DebugInformationFormat="3"
+				DebugInformationFormat="0"
 				CompileAs="1"
 			/>
 			<Tool
@@ -144,9 +145,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib ..\lib\libpcsound.lib ..\lib\libtextscreen.lib"
+				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib ..\lib\libpcsound.lib ..\lib\libtextscreen.lib ..\lib\libopl.lib"
 				OutputFile="$(OutDir)\chocolate-strife.exe"
 				LinkIncremental="0"
+				IgnoreDefaultLibraryNames="msvcrtd"
 				GenerateDebugInformation="false"
 				SubSystem="1"
 				OptimizeReferences="2"

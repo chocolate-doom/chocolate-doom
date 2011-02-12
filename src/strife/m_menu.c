@@ -591,8 +591,8 @@ void M_DrawNameChar(void)
 
     if (saveStringEnter)
     {
-        i = M_StringWidth(savegamestrings[saveSlot]); // STRIFE-TODO: verify variable
-        M_WriteText(LoadDef.x + i,LoadDef.y+LINEHEIGHT*saveSlot,"_");
+        i = M_StringWidth(savegamestrings[quickSaveSlot]);
+        M_WriteText(LoadDef.x + i,LoadDef.y+LINEHEIGHT*quickSaveSlot,"_");
     }
 }
 
@@ -728,8 +728,8 @@ void M_DrawSave(void)
 
     if (saveStringEnter)
     {
-        i = M_StringWidth(savegamestrings[saveSlot]);
-        M_WriteText(LoadDef.x + i,LoadDef.y+LINEHEIGHT*saveSlot,"_");
+        i = M_StringWidth(savegamestrings[quickSaveSlot]);
+        M_WriteText(LoadDef.x + i,LoadDef.y+LINEHEIGHT*quickSaveSlot,"_");
     }
 }
 
@@ -1793,13 +1793,13 @@ boolean M_Responder (event_t* ev)
             if (saveCharIndex > 0)
             {
                 saveCharIndex--;
-                savegamestrings[saveSlot][saveCharIndex] = 0;
+                savegamestrings[quickSaveSlot][saveCharIndex] = 0;
             }
             break;
 
         case KEY_ESCAPE:
             saveStringEnter = 0;
-            strcpy(&savegamestrings[saveSlot][0],saveOldString);
+            strcpy(&savegamestrings[quickSaveSlot][0],saveOldString);
             break;
 
         case KEY_ENTER:
@@ -1822,11 +1822,11 @@ boolean M_Responder (event_t* ev)
 
             if (ch >= 32 && ch <= 127 &&
                 saveCharIndex < SAVESTRINGSIZE-1 &&
-                M_StringWidth(savegamestrings[saveSlot]) <
+                M_StringWidth(savegamestrings[quickSaveSlot]) <
                 (SAVESTRINGSIZE-2)*8)
             {
-                savegamestrings[saveSlot][saveCharIndex++] = ch;
-                savegamestrings[saveSlot][saveCharIndex] = 0;
+                savegamestrings[quickSaveSlot][saveCharIndex++] = ch;
+                savegamestrings[quickSaveSlot][saveCharIndex] = 0;
             }
             break;
         }

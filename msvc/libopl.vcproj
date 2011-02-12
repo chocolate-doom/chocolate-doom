@@ -127,6 +127,7 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
+				IgnoreDefaultLibraryNames="msvcrtd"
 			/>
 			<Tool
 				Name="VCALinkTool"
