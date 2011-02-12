@@ -27,7 +27,8 @@ AC_ARG_ENABLE(penis-extension,
 
 if test "$GCC" = "yes"
 then
-        CFLAGS="-O$OPT_LEVEL -g -Wall $orig_CFLAGS"
+        WARNINGS="-Wall -Wdeclaration-after-statement"
+        CFLAGS="-O$OPT_LEVEL -g $WARNINGS $orig_CFLAGS"
 fi
 
 dnl Search for SDL ...

@@ -412,9 +412,8 @@ static void Operator__UpdateRates(Operator *self, const Chip* chip ) {
 }
 
 static inline Bit32s Operator__RateForward(Operator *self, Bit32u add ) {
-	Bit32s ret; // haleyjd: GNUisms out!
 	self->rateIndex += add;
-	ret = self->rateIndex >> RATE_SH;
+	Bit32s ret = self->rateIndex >> RATE_SH;
 	self->rateIndex = self->rateIndex & RATE_MASK;
 	return ret;
 }
