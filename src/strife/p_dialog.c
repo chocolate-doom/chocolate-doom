@@ -211,7 +211,7 @@ static rndmessage_t rndMessages[] =
             "STAND AGAINST US.",
 
             "WE'RE ALMOST READY TO STRIKE. \n"
-            "MACIL'S PLANES ARE FALLING IN PLACE.",
+            "MACIL'S PLANS ARE FALLING IN PLACE.",
 
             "WE'RE ALL BEHIND YOU, DON'T WORRY.",
 
