@@ -293,6 +293,7 @@ static rndmessage_t rndMessages[] =
 
             "STARE NOW, BUT YOU KNOW THAT THIS WILL BE YOUR OWN FACE ONE DAY.",
 
+            // Note: "NOTHING THING" is an authentic typo
             "THERE'S NOTHING THING MORE \n"
             "ANNOYING THAN A SURFACER WITH AN ATTITUDE!",
 

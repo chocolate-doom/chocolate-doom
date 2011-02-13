@@ -140,35 +140,15 @@
 #define ST_KEY2Y			191
 
 // Ammunition counter.
-#define ST_AMMO0WIDTH		3
-#define ST_AMMO0HEIGHT		6
-#define ST_AMMO0X			288
-#define ST_AMMO0Y			173
-#define ST_AMMO1WIDTH		ST_AMMO0WIDTH
-#define ST_AMMO1X			288
-#define ST_AMMO1Y			179
-#define ST_AMMO2WIDTH		ST_AMMO0WIDTH
-#define ST_AMMO2X			288
-#define ST_AMMO2Y			191
-#define ST_AMMO3WIDTH		ST_AMMO0WIDTH
-#define ST_AMMO3X			288
-#define ST_AMMO3Y			185
+// haleyjd 20110213 [STRIFE]: ammo counters for the popup widget
+#define ST_POPUPAMMOX       206
+static const int st_yforammo[NUMAMMO] = { 75, 99, 91, 139, 131, 115, 123 };
+static const int st_wforammo[NUMAMMO] = { 3,  3,  2,  3,   3,   2,   3   };
 
 // Indicate maximum ammunition.
 // Only needed because backpack exists.
-#define ST_MAXAMMO0WIDTH		3
-#define ST_MAXAMMO0HEIGHT		5
-#define ST_MAXAMMO0X		314
-#define ST_MAXAMMO0Y		173
-#define ST_MAXAMMO1WIDTH		ST_MAXAMMO0WIDTH
-#define ST_MAXAMMO1X		314
-#define ST_MAXAMMO1Y		179
-#define ST_MAXAMMO2WIDTH		ST_MAXAMMO0WIDTH
-#define ST_MAXAMMO2X		314
-#define ST_MAXAMMO2Y		191
-#define ST_MAXAMMO3WIDTH		ST_MAXAMMO0WIDTH
-#define ST_MAXAMMO3X		314
-#define ST_MAXAMMO3Y		185
+// haleyjd 20110213 [STRIFE]: maxammo counters for the popup widget
+#define ST_POPUPMAXAMMOX    239
 
 // pistol
 #define ST_WEAPON0X			110 
@@ -898,7 +878,7 @@ void ST_Ticker (void)
         {
             st_displaypopup = false;
             st_showkeys = false;
-            st_keypage = -1;     // unknown var
+            st_keypage = -1;
 
             if(st_dosizedisplay)
                 M_SizeDisplay(true);  // mondo hack?
@@ -1223,8 +1203,9 @@ static void ST_drawTime(int x, int y, int time)
     int seconds;
     char string[16];
 
-    hours = time / 3600;
-    minutes = time / 60;
+    // haleyjd 20110213: fixed minutes
+    hours   = time / 3600;
+    minutes = (time / 60) % 60;
     seconds = time % 60;
 
     DEH_snprintf(string, 16, "%02d:%02d:%02d", hours, minutes, seconds);
@@ -1320,9 +1301,14 @@ boolean ST_DrawExternal(void)
                  W_CacheLumpName(DEH_String("TRPDA0"), PU_CACHE));
          }
          
-         // STRIFE-TODO: DRAW AMMO PICS
+         // haleyjd 20110213: draw ammo
+         for(i = 0; i < NUMAMMO; i++)
+         {
+             STlib_drawNumPositive(&w_ammo[i]);
+             STlib_drawNumPositive(&w_maxammo[i]);
+         }
 
-         ST_drawNumFontY2(261, 84, plyr->accuracy);
+         ST_drawNumFontY2(261, 84,  plyr->accuracy);
          ST_drawNumFontY2(261, 108, plyr->stamina);
 
          if(plyr->powers[pw_communicator])
@@ -1458,6 +1444,8 @@ void ST_initData(void)
 
 void ST_createWidgets(void)
 {
+    int i;
+
     // ready weapon ammo
     STlib_initNum(&w_ready,
                   ST_AMMOX,
@@ -1477,79 +1465,20 @@ void ST_createWidgets(void)
                   &plyr->health,
                   ST_HEALTHWIDTH);
 
-    // haleyjd 08/31/10: [STRIFE] 
+    // haleyjd 20100831: [STRIFE] 
     // * No face.
-    // 09/01/10:
+    // 20100901:
     // * No arms, weaponsowned, frags, armor, keyboxes
 
-    // haleyjd 09/01/10: STRIFE-TODO: Ammo Widgets!!!
-    /*
-    // ammo count (all four kinds)
-    STlib_initNum(&w_ammo[0],
-		  ST_AMMO0X,
-		  ST_AMMO0Y,
-		  shortnum,
-		  &plyr->ammo[0],
-		  &st_statusbaron,
-		  ST_AMMO0WIDTH);
+    // haleyjd 20110213: Ammo Widgets!!!
+    for(i = 0; i < NUMAMMO; i++)
+    {
+        STlib_initNum(&w_ammo[i], ST_POPUPAMMOX, st_yforammo[i], 
+                      invfonty, &plyr->ammo[i], st_wforammo[i]);
 
-    STlib_initNum(&w_ammo[1],
-		  ST_AMMO1X,
-		  ST_AMMO1Y,
-		  shortnum,
-		  &plyr->ammo[1],
-		  &st_statusbaron,
-		  ST_AMMO1WIDTH);
-
-    STlib_initNum(&w_ammo[2],
-		  ST_AMMO2X,
-		  ST_AMMO2Y,
-		  shortnum,
-		  &plyr->ammo[2],
-		  &st_statusbaron,
-		  ST_AMMO2WIDTH);
-    
-    STlib_initNum(&w_ammo[3],
-		  ST_AMMO3X,
-		  ST_AMMO3Y,
-		  shortnum,
-		  &plyr->ammo[3],
-		  &st_statusbaron,
-		  ST_AMMO3WIDTH);
-
-    // max ammo count (all four kinds)
-    STlib_initNum(&w_maxammo[0],
-		  ST_MAXAMMO0X,
-		  ST_MAXAMMO0Y,
-		  shortnum,
-		  &plyr->maxammo[0],
-		  &st_statusbaron,
-		  ST_MAXAMMO0WIDTH);
-
-    STlib_initNum(&w_maxammo[1],
-		  ST_MAXAMMO1X,
-		  ST_MAXAMMO1Y,
-		  shortnum,
-		  &plyr->maxammo[1],
-		  &st_statusbaron,
-		  ST_MAXAMMO1WIDTH);
-
-    STlib_initNum(&w_maxammo[2],
-		  ST_MAXAMMO2X,
-		  ST_MAXAMMO2Y,
-		  shortnum,
-		  &plyr->maxammo[2],
-		  &st_statusbaron,
-		  ST_MAXAMMO2WIDTH);
-    
-    STlib_initNum(&w_maxammo[3],
-		  ST_MAXAMMO3X,
-		  ST_MAXAMMO3Y,
-		  shortnum,
-		  &plyr->maxammo[3],
-		  &st_statusbaron,
-		  ST_MAXAMMO3WIDTH);
-  */
+        STlib_initNum(&w_maxammo[i], ST_POPUPMAXAMMOX, st_yforammo[i],
+                      invfonty, &plyr->maxammo[i], st_wforammo[i]);
+    }
 }
 
 static boolean	st_stopped = true;
