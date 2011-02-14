@@ -76,7 +76,6 @@
 // STATUS BAR DATA
 //
 
-
 // Palette indices.
 // For damage/bonus red-/gold-shifts
 #define STARTREDPALS            1
@@ -109,35 +108,12 @@
 #define ST_HEALTHX              79
 #define ST_HEALTHY              162
 
-// Weapon pos.
-#define ST_ARMSX		111
-#define ST_ARMSY		172
-#define ST_ARMSBGX		104
-#define ST_ARMSBGY		168
-#define ST_ARMSXSPACE		12
-#define ST_ARMSYSPACE		10
-
-// Frags pos.
-#define ST_FRAGSX			138
-#define ST_FRAGSY			171	
-#define ST_FRAGSWIDTH		2
-
-// ARMOR number pos.
-#define ST_ARMORWIDTH		3
-#define ST_ARMORX			221
-#define ST_ARMORY			171
-
-// Key icon positions.
-#define ST_KEY0WIDTH		8
-#define ST_KEY0HEIGHT		5
-#define ST_KEY0X			239
-#define ST_KEY0Y			171
-#define ST_KEY1WIDTH		ST_KEY0WIDTH
-#define ST_KEY1X			239
-#define ST_KEY1Y			181
-#define ST_KEY2WIDTH		ST_KEY0WIDTH
-#define ST_KEY2X			239
-#define ST_KEY2Y			191
+// [STRIFE]
+// Removed:
+// * Weapon pos.
+// * Frags pos.
+// * ARMOR number pos.
+// * Key icon positions.
 
 // Ammunition counter.
 // haleyjd 20110213 [STRIFE]: ammo counters for the popup widget
@@ -148,42 +124,15 @@ static const int st_wforammo[NUMAMMO] = { 3,  3,  2,  3,   3,   2,   3   };
 // Indicate maximum ammunition.
 // Only needed because backpack exists.
 // haleyjd 20110213 [STRIFE]: maxammo counters for the popup widget
-#define ST_POPUPMAXAMMOX    239
+#define ST_POPUPMAXAMMOX        239
 
-// pistol
-#define ST_WEAPON0X			110 
-#define ST_WEAPON0Y			172
-
-// shotgun
-#define ST_WEAPON1X			122 
-#define ST_WEAPON1Y			172
-
-// chain gun
-#define ST_WEAPON2X			134 
-#define ST_WEAPON2Y			172
-
-// missile launcher
-#define ST_WEAPON3X			110 
-#define ST_WEAPON3Y			181
-
-// plasma gun
-#define ST_WEAPON4X			122 
-#define ST_WEAPON4Y			181
-
- // bfg
-#define ST_WEAPON5X			134
-#define ST_WEAPON5Y			181
-
-// WPNS title
-#define ST_WPNSX			109 
-#define ST_WPNSY			191
-
- // DETH title
-#define ST_DETHX			109
-#define ST_DETHY			191
+// [STRIFE]
+// Removed:
+// * Doom weapon stuff
+// * DETH title (???)
 
 // Dimensions given in characters.
-#define ST_MSGWIDTH			52
+#define ST_MSGWIDTH             52
 
 // haleyjd 08/31/10: [STRIFE] 
 // * Removed faces.
@@ -332,7 +281,7 @@ void M_SizeDisplay(int choice); // villsa [STRIFE]
 void ST_Stop(void);
 
 // [STRIFE]
-static char st_msgbuf[52];
+static char st_msgbuf[ST_MSGWIDTH];
 
 // Respond to keyboard input events,
 //  intercept cheats.
@@ -1212,6 +1161,105 @@ static void ST_drawTime(int x, int y, int time)
     HUlib_drawYellowText(x, y, string);
 }
 
+#define ST_KEYSPERPAGE   10
+#define ST_KEYS_X        20
+#define ST_KEYS_Y        63
+#define ST_KEYNAME_X     17
+#define ST_KEYNAME_Y      4
+#define ST_KEYS_YSTEP    17
+#define ST_KEYS_NUMROWS   4
+#define ST_KEYS_COL2X   160
+
+//
+// ST_drawKeysPopup
+//
+// haleyjd 20110213: [STRIFE] New function
+// This has taken the longest out of almost everything to get working properly.
+//
+static boolean ST_drawKeysPopup(void)
+{
+    int x, y, key, keycount;
+    mobjinfo_t *info;
+
+    V_DrawXlaPatch(0, 56, invpbak2);
+    V_DrawPatchDirect(0, 56, invpop2);
+
+    if(deathmatch)
+    {
+        // STRIFE-TODO: In deathmatch, the keys popup is replaced by a chart
+        // of frag counts
+    }
+    else
+    {
+        // Bounds-check page number
+        if(st_keypage < 0 || st_keypage > 2)
+        {
+            st_keypage = -1;
+            st_popupdisplaytics = 0;
+            st_displaypopup = false;
+
+            return false;
+        }
+
+        // Are there any keys to display on this page?
+        if(st_keypage > 0)
+        {
+            boolean haskeyinrange = false;
+
+            for(key = ST_KEYSPERPAGE * st_keypage, keycount = 0;
+                keycount < ST_KEYSPERPAGE && key < NUMCARDS;
+                ++key, ++keycount)
+            {
+                if(plyr->cards[key])
+                    haskeyinrange = true;
+            }
+
+            if(!haskeyinrange)
+            {
+                st_displaypopup = false;
+                st_showkeys = false;
+                st_keypage = -1;
+                
+                return false;
+            }
+        }
+
+        // Draw the keys for the current page
+        key = ST_KEYSPERPAGE * st_keypage;
+        keycount = 0;
+        x = ST_KEYS_X;
+        y = ST_KEYS_Y;
+        info = &mobjinfo[MT_KEY_BASE + key];
+
+        for(; keycount < ST_KEYSPERPAGE && key < NUMCARDS; ++key, ++keycount, ++info)
+        {
+            char sprname[8];
+            patch_t *patch;
+            memset(sprname, 0, sizeof(sprname));
+
+            if(plyr->cards[key])
+            {
+                // Get spawnstate sprite name and load corresponding icon
+                DEH_snprintf(sprname, sizeof(sprname), "I_%s",
+                    sprnames[states[info->spawnstate].sprite]);
+                patch = W_CacheLumpName(sprname, PU_CACHE);
+                V_DrawPatchDirect(x, y, patch);
+                HUlib_drawYellowText(x + ST_KEYNAME_X, y + ST_KEYNAME_Y, info->name);
+            }
+
+            if(keycount != ST_KEYS_NUMROWS)
+                y += ST_KEYS_YSTEP;
+            else
+            {
+                x = ST_KEYS_COL2X;
+                y = ST_KEYS_Y;
+            }
+        }
+    }
+
+    return true;
+}
+
 //
 // ST_DrawExternal
 //
@@ -1254,10 +1302,9 @@ boolean ST_DrawExternal(void)
     {
         int keys = 0;
 
-        // villsa [STRIFE] TODO
+        // villsa [STRIFE] keys popup
         if(st_showkeys || st_popupdisplaytics)
-            return true; // temp
-            //return ST_drawKeysPopup();
+            return ST_drawKeysPopup();
 
         V_DrawXlaPatch(0, 56, invpbak);
         V_DrawPatchDirect(0, 56, invpop);

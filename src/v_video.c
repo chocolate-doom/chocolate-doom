@@ -653,7 +653,7 @@ void WritePCXfile(char *filename, byte *data,
 void V_ScreenShot(char *format)
 {
     int i;
-    char lbmname[12];
+    char lbmname[16]; // haleyjd 20110213: BUG FIX - 12 is too small!
     
     // find a file name to save it to
 

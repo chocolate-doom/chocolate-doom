@@ -47,7 +47,7 @@ extern boolean D_PatchClipCallback(patch_t *patch, int x, int y); // [STRIFE]
 //
 // HUlib_drawYellowText
 //
-// haleyjd 09/18/10: [STRIFE] New function.
+// haleyjd 20100918: [STRIFE] New function.
 //
 void HUlib_drawYellowText(int x, int y, char *text)
 {
@@ -61,36 +61,42 @@ void HUlib_drawYellowText(int x, int y, char *text)
         {
             x = start_x;
             y += 12;
+            continue;
         }
-        else if(c == '_' || c != ' ' || x != start_x)
+
+        // haleyjd 20110213: found MORE code ignored/misinterpreted by Hex-Rays:
+        // Underscores are replaced by spaces.
+        if(c == '_')
+            c = ' ';
+        else if (c == ' ' && x == start_x) // skip spaces at the start of a line
+            continue;
+
+        c = toupper(c) - HU_FONTSTART;
+
+        if(c >= 0 && c < HU_FONTSIZE)
         {
-            c = toupper(c) - HU_FONTSTART;
+            patch_t *patch = yfont[(int) c];
+            int      width = SHORT(patch->width);
 
-            if(c >= 0 && c < HU_FONTSIZE)
+            if(x + width <= (SCREENWIDTH - 20))
             {
-                patch_t *patch = yfont[(int) c];
-                int      width = SHORT(patch->width);
-
-                if(x + width <= (SCREENWIDTH - 20))
-                {
-                    // haleyjd: STRIFE-TODO: bit different than the exe... for now
-                    if(!D_PatchClipCallback(patch, x + SHORT(patch->leftoffset),
-                                                   y + SHORT(patch->topoffset)))
-                        return;
-                    V_DrawPatchDirect(x, y, patch);
-                    x = x + width;
-                }
-                else
-                {
-                    x = start_x;
-                    --rover;
-                    y += 12;
-                }
+                // haleyjd: STRIFE-TODO: bit different than the exe... for now
+                if(!D_PatchClipCallback(patch, x + SHORT(patch->leftoffset),
+                    y + SHORT(patch->topoffset)))
+                    return;
+                V_DrawPatchDirect(x, y, patch);
+                x = x + width;
             }
             else
             {
-                x += 4;
+                x = start_x;
+                --rover;
+                y += 12;
             }
+        }
+        else
+        {
+            x += 4;
         }
     }
 }
