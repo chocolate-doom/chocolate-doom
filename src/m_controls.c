@@ -303,7 +303,7 @@ void M_BindMenuControls(void)
 
 void M_BindChatControls(unsigned int num_players)
 {
-    char name[20];
+    char name[32];
     int i;
 
     M_BindVariable("key_multi_msg",     &key_multi_msg);
