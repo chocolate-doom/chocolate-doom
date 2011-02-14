@@ -484,14 +484,13 @@ void R_InitTranslationTables (void)
             translationtables [i+5*256] = (i & 0x0f) + 96;
             translationtables [i+6*256] = (i & 0x0f) - 112;
         }
-
         else if(i >= 0x50 && i<= 0x5f)
         {
             translationtables [i      ] = i;
             translationtables [i+  256] = i;
             translationtables [i+2*256] = i;
             translationtables [i+3*256] = i;
-            translationtables [i+4*256] = (i & 0x0f) + -128;
+            translationtables [i+4*256] = (i & 0x0f) + 0x80;
             translationtables [i+5*256] = (i & 0x0f) + 16;
             translationtables [i+6*256] = (i & 0x0f) + 64;
         }
@@ -514,6 +513,9 @@ void R_InitTranslationTables (void)
             translationtables [i+4*256] = (i & 0x0f) - 96;
             translationtables [i+5*256] = (i & 0x0f) + 32;
             translationtables [i+6*256] = (i & 0x0f);
+            // haleyjd 20110213: missing code:
+            if(!(i & 0x0f))
+                translationtables[i+6*256] = 1;
         }
         else if(i >= 0xf7 && i<= 0xfb)
         {
@@ -535,7 +537,7 @@ void R_InitTranslationTables (void)
             translationtables [i+5*256] = i;
             translationtables [i+6*256] = i;
         }
-        else if(i >= 0x20 && i<= 0x40)
+        else if(i >= 0x20 && i <= 0x3f) // haleyjd 20110213: fixed upper end
         {
             translationtables [i      ] = col2;
             translationtables [i+  256] = col2;
