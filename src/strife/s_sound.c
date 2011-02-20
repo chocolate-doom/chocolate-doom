@@ -138,7 +138,7 @@ int disable_voices = 0;
 // Sets channels, SFX and music volume,
 //  allocates channel buffer, sets S_sfx lookup.
 //
-// haleyjd 09/11/10: Added voice volume
+// haleyjd 09/11/10: [STRIFE] Added voice volume
 //
 void S_Init(int sfxVolume, int musicVolume, int voiceVolume)
 {  
@@ -342,7 +342,11 @@ static int S_GetChannel(mobj_t *origin, sfxinfo_t *sfxinfo, boolean isvoice)
 // If the sound is not audible, returns a 0.
 // Otherwise, modifies parameters and returns 1.
 //
-
+// [STRIFE]
+// haleyjd 20110220: changed to eliminate the gamemap == 8 hack that was
+// left over from Doom 1's original boss levels. Kind of amazing that Rogue
+// was able to catch the smallest things like that.
+//
 static int S_AdjustSoundParams(mobj_t *listener, mobj_t *source,
                                int *vol, int *sep)
 {
@@ -359,7 +363,8 @@ static int S_AdjustSoundParams(mobj_t *listener, mobj_t *source,
     // From _GG1_ p.428. Appox. eucledian distance fast.
     approx_dist = adx + ady - ((adx < ady ? adx : ady)>>1);
     
-    if (gamemap != 8 && approx_dist > S_CLIPPING_DIST)
+    // [STRIFE] removed gamemap == 8 hack
+    if (approx_dist > S_CLIPPING_DIST)
     {
         return 0;
     }
@@ -385,20 +390,10 @@ static int S_AdjustSoundParams(mobj_t *listener, mobj_t *source,
     *sep = 128 - (FixedMul(S_STEREO_SWING, finesine[angle]) >> FRACBITS);
 
     // volume calculation
+    // [STRIFE] Removed gamemap == 8 hack
     if (approx_dist < S_CLOSE_DIST)
     {
         *vol = snd_SfxVolume;
-    }
-    else if (gamemap == 8)
-    {
-        if (approx_dist > S_CLIPPING_DIST)
-        {
-            approx_dist = S_CLIPPING_DIST;
-        }
-
-        *vol = 15+ ((snd_SfxVolume-15)
-                    *((S_CLIPPING_DIST - approx_dist)>>FRACBITS))
-            / S_ATTENUATOR;
     }
     else
     {
@@ -427,6 +422,10 @@ void S_StartSound(void *origin_p, int sfx_id)
     // check for bogus sound #
     if (sfx_id < 1 || sfx_id > NUMSFX)
     {
+        // [STRIFE]: BUG - Note: vanilla had some extremely buggy and dangerous
+        // code here that tried to print the sprite name of the object playing 
+        // the bad sound. Because it invokes multiple undefined behaviors and 
+        // is of basically no consequence, it has deliberately not been ported.
         I_Error("Bad sfx #: %d", sfx_id);
     }
 
@@ -479,7 +478,7 @@ void S_StartSound(void *origin_p, int sfx_id)
         sep = NORM_SEP;
     }
 
-    // kill old sound
+    // kill old sound [STRIFE] - nope!
     //S_StopSound(origin);
 
     // try to find a channel
