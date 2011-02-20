@@ -142,7 +142,7 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_INT(music_volume),
 
     //!
-    // Volume of voice sound effects, range 0-15. Strife only.
+    // Volume of voice sound effects, range 0-15. (Strife only)
     //
 
     CONFIG_VARIABLE_INT(voice_volume),
@@ -154,6 +154,13 @@ static default_t	doom_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(show_messages),
+
+    //!
+    // If non-zero, dialogue text is displayed over characters' pictures
+    // when engaging actors who have voices. (Strife only)
+    //
+
+    CONFIG_VARIABLE_INT(show_text),
 
     //! 
     // Keyboard key to turn right.

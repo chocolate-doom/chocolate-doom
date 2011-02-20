@@ -60,6 +60,7 @@
 #include "m_menu.h"
 #include "m_saves.h" // haleyjd [STRIFE]
 #include "p_saveg.h"
+#include "p_dialog.h" // haleyjd [STRIFE]
 
 #include "i_endoom.h"
 #include "i_joystick.h"
@@ -194,7 +195,7 @@ void D_ProcessEvents (void)
 //
 gamestate_t     wipegamestate = GS_UNKNOWN;
 extern  boolean setsizeneeded;
-extern  int             showMessages;
+//extern  int             showMessages; [STRIFE] no such variable
 void R_ExecuteSetViewSize (void);
 
 void D_Display (void)
@@ -414,11 +415,13 @@ void D_BindVariables(void)
     // haleyjd 08/29/10: [STRIFE]
     // * Added voice volume
     // * Added back flat
+    // * Removed show_messages
+    // * Added show_text
     M_BindVariable("mouse_sensitivity",      &mouseSensitivity);
     M_BindVariable("sfx_volume",             &sfxVolume);
     M_BindVariable("music_volume",           &musicVolume);
     M_BindVariable("voice_volume",           &voiceVolume); 
-    M_BindVariable("show_messages",          &showMessages);
+    M_BindVariable("show_text",              &dialogshowtext);
     M_BindVariable("screenblocks",           &screenblocks);
     M_BindVariable("detaillevel",            &detailLevel);
     M_BindVariable("snd_channels",           &snd_channels);
@@ -1914,6 +1917,16 @@ void D_DoomMain (void)
         DEH_printf("S_Init: Setting up sound.\n");
     S_Init (sfxVolume * 8, musicVolume * 8, voiceVolume * 8); // [STRIFE]: voice
     D_IntroTick(); // [STRIFE]
+
+    // haleyjd 20110220: This stuff was done in I_StartupSound in vanilla, but 
+    // we'll do it here instead so we don't have to modify the low-level shared
+    // code with Strife-specific stuff.
+    if(disable_voices || M_CheckParm("-novoice"))
+    {
+        dialogshowtext = disable_voices = 1;
+    }
+    if(devparm)
+        DEH_printf("  Play voices = %d\n", disable_voices == 0);
 
     if(devparm) // [STRIFE]
         DEH_printf("D_CheckNetGame: Checking network game status.\n");

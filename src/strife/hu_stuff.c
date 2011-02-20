@@ -117,7 +117,7 @@ static boolean          message_nottobefuckedwith;
 static hu_stext_t       w_message;
 static int              message_counter;
 
-extern int              showMessages;
+//extern int              showMessages; [STRIFE] no such variable
 extern boolean          automapactive;
 
 static boolean          headsupactive = false;
@@ -420,8 +420,9 @@ void HU_Ticker(void)
         message_nottobefuckedwith = false;
     }
 
-    if (showMessages || message_dontfuckwithme)
-    {
+    // haleyjd 20110219: [STRIFE] this condition was removed
+    //if (showMessages || message_dontfuckwithme)
+    //{
         // display message if necessary
         if ((plr->message && !message_nottobefuckedwith)
             || (plr->message && message_dontfuckwithme))
@@ -434,7 +435,7 @@ void HU_Ticker(void)
             message_nottobefuckedwith = message_dontfuckwithme;
             message_dontfuckwithme = 0;
         }
-    } // else message_on = false;
+    //} // else message_on = false;
 
     // check for incoming chat characters
     if (netgame)

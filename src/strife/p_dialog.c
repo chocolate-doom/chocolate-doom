@@ -70,7 +70,7 @@
 
 // This can be toggled at runtime to determine if the full dialog messages
 // are subtitled on screen or not. Defaults to off.
-boolean dialogshowtext = false;
+int dialogshowtext = false;
 
 // The global mission objective buffer. This gets written to and read from file,
 // and is set by dialogs and line actions.

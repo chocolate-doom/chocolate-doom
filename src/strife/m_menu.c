@@ -81,8 +81,9 @@ extern boolean          sendsave;       // [STRIFE]
 //
 int			mouseSensitivity = 5;
 
+// [STRIFE]: removed this entirely
 // Show messages has default, 0 = off, 1 = on
-int			showMessages = 1;
+//int			showMessages = 1;
 	
 
 // Blocky mode, has default, 0 = high, 1 = normal
@@ -175,7 +176,7 @@ void M_ReadThis2(int choice);
 void M_ReadThis3(int choice); // [STRIFE]
 void M_QuitStrife(int choice);
 
-void M_ChangeMessages(int choice);
+//void M_ChangeMessages(int choice); [STRIFE]
 void M_ChangeSensitivity(int choice);
 void M_SfxVol(int choice);
 void M_VoiceVol(int choice); // [STRIFE]
@@ -1173,6 +1174,8 @@ void M_ChangeShowText(void)
 //
 //      Toggle messages on/off
 //
+// [STRIFE] Messages cannot be disabled in Strife
+/*
 void M_ChangeMessages(int choice)
 {
     // warning: unused parameter `int choice'
@@ -1186,6 +1189,7 @@ void M_ChangeMessages(int choice)
 
     message_dontfuckwithme = true;
 }
+*/
 
 
 //
