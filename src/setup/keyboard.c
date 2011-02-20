@@ -294,12 +294,6 @@ static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddKeyControl(table, "- to brown",            &key_multi_msgplayer[2]);
     AddKeyControl(table, "- to red",              &key_multi_msgplayer[3]);
 
-    TXT_AddWidgets(table, TXT_NewStrut(0, 1),
-                          TXT_NewStrut(0, 1),
-                          TXT_NewLabel(" - Map - "),
-                          TXT_NewStrut(0, 0),
-                          NULL);
-
     scrollpane = TXT_NewScrollPane(0, 13, table);
 
     TXT_AddWidget(window, scrollpane);
