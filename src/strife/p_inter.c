@@ -878,12 +878,7 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
         }
     }
 
-    // villsa [STRIFE] unused
-    /*
-    target->tics -= P_Random()&3;
-    if (target->tics < 1)
-        target->tics = 1;
-    */
+    // villsa [STRIFE] no death tics randomization
 
     // Drop stuff.
     // villsa [STRIFE] get item from dialog target

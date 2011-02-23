@@ -233,7 +233,7 @@ static void P_SpawnBrokenGlass(line_t* line)
 
         glass->angle = (an << ANGLETOFINESHIFT);
         glass->momx = FixedMul(finecosine[an], (P_Random() & 3) << FRACBITS);
-        glass->momy = FixedMul(finesine[an], (P_Random() & 3) << FRACBITS);
+        glass->momy = FixedMul(finesine[an],   (P_Random() & 3) << FRACBITS);
         glass->momz = (P_Random() & 7) << FRACBITS;
         glass->tics += (P_Random() + 7) & 7;
     }

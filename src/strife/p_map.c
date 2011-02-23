@@ -341,20 +341,7 @@ boolean PIT_CheckThing (mobj_t* thing)
         return true;    // underneath
 
     // villsa [STRIFE] unused
-    // check for skulls slamming into things
-    /*if (tmthing->flags & MF_SKULLFLY)
-    {
-        damage = ((P_Random()%8)+1)*tmthing->info->damage;
-
-        P_DamageMobj (thing, tmthing, tmthing, damage);
-
-        tmthing->flags &= ~MF_SKULLFLY;
-        tmthing->momx = tmthing->momy = tmthing->momz = 0;
-
-        P_SetMobjState (tmthing, tmthing->info->spawnstate);
-
-        return false;           // stop moving
-    }*/
+    // check for skulls slamming into things (removed)
 
     // missiles can hit other things
     if (tmthing->flags & MF_MISSILE)

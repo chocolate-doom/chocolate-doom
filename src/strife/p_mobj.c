@@ -99,13 +99,7 @@ void P_ExplodeMissile (mobj_t* mo)
 
     P_SetMobjState (mo, mobjinfo[mo->type].deathstate);
 
-    // villsa [STRIFE] unused
-    /*
-    mo->tics -= P_Random()&3;
-
-    if (mo->tics < 1)
-        mo->tics = 1;
-    */
+    // villsa [STRIFE] removed tics randomization
 
     mo->flags &= ~MF_MISSILE;
 
@@ -1050,13 +1044,12 @@ P_SpawnPuff
   fixed_t	z )
 {
     mobj_t*	th;
-    int t = P_Random();
-
+    int t;
+    
+    t = P_Random();
     z += ((t - P_Random()) << 10);
 
-    // [STRIFE] Unused
-    //th->momz = FRACUNIT;
-    //th->tics -= P_Random()&3;
+    // [STRIFE] removed momz and tics randomization
 
     th = P_SpawnMobj(x, y, z, MT_STRIFEPUFF); // [STRIFE]: new type
 
@@ -1092,25 +1085,20 @@ mobj_t* P_SpawnSparkPuff(fixed_t x, fixed_t y, fixed_t z)
 //
 void
 P_SpawnBlood
-( fixed_t	x,
-  fixed_t	y,
-  fixed_t	z,
-  int		damage )
+( fixed_t       x,
+  fixed_t       y,
+  fixed_t       z,
+  int           damage )
 {
-    mobj_t*	th;
+    mobj_t*     th;
+    int temp;
     
-    int temp = P_Random();
+    temp = P_Random();
     z += (temp - P_Random()) << 10;
     th = P_SpawnMobj(x, y, z, MT_BLOOD_DEATH);
     th->momz = FRACUNIT*2;
     
-    // villsa [STRIFE] unused
-    /*
-    th->tics -= P_Random()&3; 
-
-    if (th->tics < 1)
-        th->tics = 1;
-    */
+    // villsa [STRIFE]: removed tics randomization
 
     // villsa [STRIFE] different checks for damage range
     if(damage >= 10 && damage <= 13)
@@ -1133,12 +1121,7 @@ P_SpawnBlood
 //
 void P_CheckMissileSpawn (mobj_t* th)
 {
-    // villsa [STRIFE] unused
-    /*
-    th->tics -= P_Random()&3;
-    if (th->tics < 1)
-        th->tics = 1;
-    */
+    // villsa [STRIFE] removed tics randomization
     
     // move a little forward so an angle can
     // be computed if it immediately explodes
@@ -1180,13 +1163,13 @@ mobj_t *P_SubstNullMobj(mobj_t *mobj)
 //
 mobj_t*
 P_SpawnMissile
-( mobj_t*	source,
-  mobj_t*	dest,
-  mobjtype_t	type )
+( mobj_t*       source,
+  mobj_t*       dest,
+  mobjtype_t    type )
 {
-    mobj_t*	th;
-    angle_t	an;
-    int		dist;
+    mobj_t*     th;
+    angle_t     an;
+    int         dist;
 
     th = P_SpawnMobj (source->x,
                       source->y,
@@ -1200,10 +1183,16 @@ P_SpawnMissile
 
     // fuzzy player
     if (dest->flags & MF_SHADOW)
-        an += (P_Random()-P_Random())<<21;
+    {
+        int t = P_Random(); // haleyjd 20110223: remove order-of-evaluation dependencies
+        an += (t - P_Random()) << 21;
+    }
     // villsa [STRIFE] check for heavily transparent things
     else if(dest->flags & MF_MVIS)
-        an += (P_Random()-P_Random())<<22;
+    {
+        int t = P_Random();
+        an += (t - P_Random()) << 22;
+    }
 
     th->angle = an;
     an >>= ANGLETOFINESHIFT;
