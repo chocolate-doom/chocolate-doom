@@ -154,6 +154,8 @@ int main(int argc, char **argv)
 
     LockCPUAffinity();
 
+    M_FindResponseFile();
+
     // start doom
 
     D_DoomMain ();
