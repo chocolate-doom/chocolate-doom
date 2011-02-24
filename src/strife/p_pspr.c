@@ -650,7 +650,7 @@ void A_FirePoisonBolt(player_t* player, pspdef_t* pspr)
 //
 // haleyjd 09/06/10 [STRIFE] Modified with a little target hack...
 //
-fixed_t		bulletslope;
+fixed_t         bulletslope;
 
 
 void P_BulletSlope (mobj_t *mo)

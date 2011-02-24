@@ -348,14 +348,12 @@ boolean P_CheckMissileRange(mobj_t* actor)
     if (dist > 150)
         dist = 150;
 
-    // haleyjd 09/10/10: Hex-Rays was leaving this out completely:
+    // haleyjd 20100910: Hex-Rays was leaving this out completely:
     if (actor->type == MT_CRUSADER && dist > 120)
         dist = 120;
 
-    if (P_Random () < dist)
-        return false;
-
-    return true;
+    // haleyjd 20110224 [STRIFE]: reversed predicate
+    return (dist < P_Random());
 }
 
 //
@@ -647,13 +645,15 @@ void P_NewChaseDir(mobj_t* actor)
 void P_NewRandomDir(mobj_t* actor)
 {
     int dir = 0;
+    int omovedir = opposite[actor->movedir]; // haleyjd 20110223: nerfed this...
 
     // randomly determine direction of search
     if(P_Random() & 1)
     {
+        // Try all non-reversal directions forward, first
         for(dir = 0; dir < DI_NODIR; dir++)
         {
-            if(dir != opposite[actor->movedir])
+            if(dir != omovedir)
             {
                 actor->movedir = dir;
                 if(P_Random() & 1)
@@ -663,14 +663,34 @@ void P_NewRandomDir(mobj_t* actor)
                 }
             }
         }
+
+        // haleyjd 20110223: logic missing entirely:
+        // failed all non-reversal directions? try reversing
+        if(dir > DI_SOUTHEAST) 
+        {
+            if(omovedir == DI_NODIR)
+            {
+                actor->movedir = DI_NODIR;
+                return;
+            }
+            actor->movedir = omovedir;
+            if(P_TryWalk(actor))
+                return;
+            else
+            {
+                actor->movedir = DI_NODIR;
+                return;
+            }
+        }
     }
     else
     {
+        // Try directions one at a time in backward order
         dir = DI_SOUTHEAST;
         while(1)
         {
             // haleyjd 09/05/10: missing random code.
-            if(dir != opposite[actor->movedir])
+            if(dir != omovedir)
             {
                 actor->movedir = dir;
 
@@ -679,16 +699,15 @@ void P_NewRandomDir(mobj_t* actor)
                     return;
             }
 
+            // Ran out of non-reversal directions to try? Reverse.
             if(--dir == -1)
             {
-                if(opposite[actor->movedir] == DI_NODIR)
+                if(omovedir == DI_NODIR)
                 {
                     actor->movedir = DI_NODIR;
                     return;
                 }
-
-                actor->movedir = opposite[actor->movedir];
-
+                actor->movedir = omovedir;
                 // villsa 09/06/10: un-inlined code
                 if(P_TryWalk(actor))
                     return;
@@ -2069,7 +2088,6 @@ void A_FireChainShot(mobj_t* actor)
     P_SpawnMobj(actor->x - actor->momx,
                 actor->y - actor->momy,
                 actor->z, MT_CHAINSHOT);
-
 }
 
 //
@@ -2088,7 +2106,6 @@ void A_MissileSmoke(mobj_t* actor)
                      actor->z, MT_MISSILESMOKE);
 
     mo->momz = FRACUNIT;
-
 }
 
 //
@@ -2133,21 +2150,7 @@ void A_Tracer (mobj_t* actor)
     mobj_t* dest;
     //mobj_t* th;
 
-    // villsa [STRIFE] not used
-    /*if(gametic & 3)
-        return;*/
-
-    // spawn a puff of smoke behind the rocket		
-    /*P_SpawnPuff(actor->x, actor->y, actor->z);
-
-    th = P_SpawnMobj (actor->x-actor->momx,
-        actor->y-actor->momy,
-        actor->z, MT_SMOKE);
-
-    th->momz = FRACUNIT;
-    th->tics -= P_Random()&3;
-    if (th->tics < 1)
-        th->tics = 1;*/
+    // villsa [STRIFE] removed all randomization and puff code
 
     // adjust direction
     dest = actor->tracer;
@@ -2210,8 +2213,10 @@ void A_ProgrammerMelee(mobj_t* actor)
     A_FaceTarget(actor);
     if(P_CheckMeleeRange(actor))
     {
+        int damage = 8 * (P_Random() % 10 + 1);
+        
         S_StartSound(actor, sfx_mtalht);
-        P_DamageMobj(actor->target, actor, actor, 8 * (P_Random() % 10 + 1));
+        P_DamageMobj(actor->target, actor, actor, damage);
     }
 
 }
@@ -2289,7 +2294,7 @@ void A_Pain(mobj_t* actor)
 //
 void A_PeasantCrash(mobj_t* actor)
 {
-    // Set INCOMBAT, because you probably wouldn't feel like talking either
+    // Set NODIALOG, because you probably wouldn't feel like talking either
     // if somebody just stabbed you in the gut with a punch dagger...
     actor->flags |= MF_NODIALOG;
 
@@ -2323,6 +2328,7 @@ void A_Fall (mobj_t *actor)
 // A_HideZombie
 //
 // villsa [STRIFE] new codepointer
+// Used by the "Becoming" Acolytes on the Loremaster's level.
 //
 void A_HideZombie(mobj_t* actor)
 {
@@ -2374,10 +2380,11 @@ void A_ProgrammerDie(mobj_t* actor)
     angle_t an;
     mobj_t* mo;
 
-    mo = P_SpawnMobj(actor->x, actor->y, actor->z + (24*FRACUNIT), MT_PROGRAMMERBASE);
+    mo = P_SpawnMobj(actor->x, actor->y, actor->z + 24*FRACUNIT, MT_PROGRAMMERBASE);
 
+    // haleyjd 20110223: fix add w/ANG180
     r = P_Random();
-    an = ((r - P_Random()) << 22) + actor->angle - ANG180;
+    an = ((r - P_Random()) << 22) + actor->angle + ANG180;
     mo->angle = an;
 
     P_ThrustMobj(mo, an, mo->info->speed);  // inlined in asm
@@ -2414,7 +2421,7 @@ void A_InqTossArm(mobj_t* actor)
 // villsa [STRIFE] new codepointer (unused)
 // 09/08/10: Spawns Spectre A. Or would, if anything actually used this.
 // This is evidence that the Programmer's spectre, which appears in the 
-// catacombs in the final version, was originally meant to be spawned
+// Catacombs in the final version, was originally meant to be spawned
 // after his death.
 //
 void A_SpawnSpectreA(mobj_t* actor)
@@ -2493,15 +2500,14 @@ static fixed_t entity_pos_z = 0;
 // A_SpawnEntity
 //
 // villsa [STRIFE] new codepointer
-// 09/08/10: You will fall on your knees before the True God, the
-// One Light.
+// 09/08/10: You will fall on your knees before the True God, the One Light.
 //
 void A_SpawnEntity(mobj_t* actor)
 {
     mobj_t* mo;
 
-    mo = P_SpawnMobj(actor->x, actor->y, actor->z + (70*FRACUNIT), MT_ENTITY);
-    mo->momz = (5*FRACUNIT);
+    mo = P_SpawnMobj(actor->x, actor->y, actor->z + 70*FRACUNIT, MT_ENTITY);
+    mo->momz = 5*FRACUNIT;
 
     entity_pos_x = mo->x;
     entity_pos_y = mo->y;
@@ -2607,6 +2613,10 @@ void A_ZombieInSpecialSector(mobj_t* actor)
 // A_CrystalExplode
 //
 // villsa [STRIFE] new codepointer
+// Throws out debris from the Power Crystal and sets its sector floorheight
+// to the lowest surrounding floor (this is maybe the only time a direct
+// level-changing action is done by an object in this fashion in any of
+// the DOOM engine games... they usually call a line special instead)
 //
 void A_CrystalExplode(mobj_t* actor)
 {
@@ -2628,7 +2638,6 @@ void A_CrystalExplode(mobj_t* actor)
         r = P_Random();
         rubble->momy = ((r & 7) - (P_Random() & 7)) << FRACBITS;
         rubble->momz = ((P_Random() & 3) << FRACBITS) + (7*FRACUNIT);
-
     }
 }
 
@@ -2822,14 +2831,16 @@ void A_SpawnGrenadeFire(mobj_t* actor)
 
 //
 // A_NodeChunk
+//
 // villsa [STRIFE] - new codepointer
+// Throw out "nodes" from a spectral entity
 //
 void A_NodeChunk(mobj_t* actor)
 {
     int r;
     mobj_t* mo;
 
-    mo = P_SpawnMobj(actor->x, actor->y, actor->z + (10*FRACUNIT), MT_NODE);
+    mo = P_SpawnMobj(actor->x, actor->y, actor->z + 10*FRACUNIT, MT_NODE);
     r = P_Random();
     mo->momx = ((r & 0x0f) - (P_Random() & 7)) << FRACBITS;
     r = P_Random();
@@ -2839,14 +2850,16 @@ void A_NodeChunk(mobj_t* actor)
 
 //
 // A_HeadChunk
+//
 // villsa [STRIFE] - new codepointer
+// Throw out the little "eye"-like object from a spectral entity when it dies.
 //
 void A_HeadChunk(mobj_t* actor)
 {
     int r;
     mobj_t* mo;
 
-    mo = P_SpawnMobj(actor->x, actor->y, actor->z + (10*FRACUNIT), MT_SPECTREHEAD);
+    mo = P_SpawnMobj(actor->x, actor->y, actor->z + 10*FRACUNIT, MT_SPECTREHEAD);
     r = P_Random();
     mo->momx = ((r & 7) - (P_Random() & 0x0f)) << FRACBITS;
     r = P_Random();
@@ -2877,8 +2890,9 @@ void A_BurnSpread(mobj_t* actor)
     if(actor->flags & MF_DROPPED)
         return; // not the parent
 
-    x = actor->x + (((P_Random() + 12) & 31) << FRACBITS);
+    // haleyjd 20110223: match order of calls in binary
     y = actor->y + (((P_Random() + 12) & 31) << FRACBITS);
+    x = actor->x + (((P_Random() + 12) & 31) << FRACBITS);
 
     // spawn child
     mo = P_SpawnMobj(x, y, actor->z + (4*FRACUNIT), MT_PFLAME);
@@ -3217,9 +3231,9 @@ void A_BodyParts(mobj_t* actor)
     an = (P_Random() << 13) / 255;
     mo->angle = an << ANGLETOFINESHIFT;
 
-    mo->momx += FixedMul(finecosine[an], (P_Random() & 0x0f) << FRACBITS);
-    mo->momy += FixedMul(finesine[an], (P_Random() & 0x0f) << FRACBITS);
-    mo->momz += (P_Random() & 0x0f) << FRACBITS;
+    mo->momx = FixedMul(finecosine[an], (P_Random() & 0x0f) << FRACBITS);
+    mo->momy = FixedMul(finesine[an], (P_Random() & 0x0f) << FRACBITS);
+    mo->momz = (P_Random() & 0x0f) << FRACBITS;
 }
 
 //
