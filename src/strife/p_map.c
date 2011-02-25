@@ -263,12 +263,12 @@ boolean PIT_CheckLine (line_t* ld)
         // villsa [STRIFE] include jumpover flag
         if ( ld->flags & ML_BLOCKING &&
             (!(ld->flags & ML_JUMPOVER) || tmfloorz + (32*FRACUNIT) > tmthing->z) )
-            return false;	// explicitly blocking everything
+            return false;   // explicitly blocking everything
 
         // villsa [STRIFE] exclude floaters from blockmonster lines
         if ( !tmthing->player && (ld->flags & ML_BLOCKMONSTERS) &&
             !(tmthing->flags & MF_FLOAT))
-            return false;	// block monsters only
+            return false;   // block monsters only
 
         // villsa [STRIFE]
         if ( ld->flags & ML_BLOCKFLOATERS && tmthing->flags & MF_FLOAT )

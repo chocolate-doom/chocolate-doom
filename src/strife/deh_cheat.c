@@ -43,23 +43,25 @@ typedef struct
 
 static deh_cheat_t allcheats[] =
 {
+    // haleyjd 20110224: filled in all cheats
     {"Change music",        &cheat_mus },
     {"Level Warp",          &cheat_clev },
-    {"Stealth Boots",       NULL }, // STRIFE-TODO
-    {"Sigil piece",         NULL }, // STRIFE-TODO
-    {"FPS",                 NULL }, // STRIFE-TODO
-    {"TeleportMapSpot",     NULL }, // STRIFE-TODO
-    {"Gold&StatTokens",     NULL }, // STRIFE-TODO
+    {"Stealth Boots",       &cheat_stealth },
+    {"Sigil piece",         &cheat_lego },
+    {"FPS",                 &cheat_mypos },
+    {"TeleportMapSpot",     &cheat_scoot },
+    {"Gold&StatTokens",     &cheat_midas },
     {"God mode",            &cheat_god },
-    {"Keys",                NULL }, // STRIFE-TODO
-    {"Weapons & Ammo",      NULL }, // STRIFE-TODO
-    {"Massacre",            NULL }, // STRIFE-TODO
+    {"Keys",                &cheat_keys },
+    {"Weapons & Ammo",      &cheat_ammo },
+    {"Massacre",            &cheat_nuke },
     {"No Clipping",         &cheat_noclip },
-    {"Berserk",             &cheat_powerup[1] },
-    {"Invisibility",        &cheat_powerup[2] },
-    {"Enviro Suit",         &cheat_powerup[3] },
-    {"Health",              NULL }, // STRIFE-TODO
-    {"Backpack",            NULL }, // STRIFE-TODO
+    {"Berserk",             &cheat_powerup[0] },
+    {"Invisibility",        &cheat_powerup[1] },
+    {"Enviro Suit",         &cheat_powerup[2] },
+    {"Health",              &cheat_powerup[3] },
+    {"Backpack",            &cheat_powerup[4] },
+    // STRIFE-FIXME/TODO: Does SeHackEd not support PUMPUP{S,T,nil}, or "DOTS" ?
 };
 
 static deh_cheat_t *FindCheatByName(char *name)
@@ -122,10 +124,10 @@ static void DEH_CheatParseLine(deh_context_t *context, char *line, void *tag)
             break;
         }
 
-	if (deh_apply_cheats)
-	{
-	    cheat->seq->sequence[i] = unsvalue[i];
-	}
+        if (deh_apply_cheats)
+        {
+            cheat->seq->sequence[i] = unsvalue[i];
+        }
         ++i;
 
         // Absolute limit - don't exceed

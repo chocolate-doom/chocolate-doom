@@ -88,16 +88,22 @@ typedef enum
 boolean ST_Responder(event_t* ev);
 
 extern byte *st_backing_screen;
-extern cheatseq_t cheat_mus;
-extern cheatseq_t cheat_god;
-extern cheatseq_t cheat_ammo;
-extern cheatseq_t cheat_ammonokey;
-extern cheatseq_t cheat_noclip;
-extern cheatseq_t cheat_commercial_noclip;
-extern cheatseq_t cheat_powerup[7];
-extern cheatseq_t cheat_choppers;
-extern cheatseq_t cheat_clev;
-extern cheatseq_t cheat_mypos;
+
+extern cheatseq_t cheat_mus;     // [STRIFE]: idmus -> spin
+extern cheatseq_t cheat_god;     // [STRIFE]: iddqd -> omnipotent
+extern cheatseq_t cheat_ammo;    // [STRIFE]: idfa -> boomstix
+extern cheatseq_t cheat_noclip;  // [STRIFE]: idclip -> elvis
+extern cheatseq_t cheat_clev;    // [STRIFE]: idclev -> rift
+extern cheatseq_t cheat_mypos;   // [STRIFE]: idmypos -> gps
+extern cheatseq_t cheat_scoot;   // [STRIFE]: new cheat scoot
+extern cheatseq_t cheat_nuke;    // [STRIFE]: new cheat stonecold
+extern cheatseq_t cheat_keys;    // [STRIFE]: new cheat jimmy (all keys)
+extern cheatseq_t cheat_stealth; // [STRIFE]: new cheat gripper
+extern cheatseq_t cheat_midas;   // [STRIFE]: new cheat
+extern cheatseq_t cheat_lego;    // [STRIFE]: new cheat
+extern cheatseq_t cheat_dev;     // [STRIFE]: new cheat
+
+extern cheatseq_t cheat_powerup[];
 
 
 #endif

@@ -242,16 +242,16 @@
 
 #define STSTR_MUS               "Music Change"
 #define STSTR_NOMUS             "IMPOSSIBLE SELECTION"
-#define STSTR_DQDON             "You're invincible!"   // [STRIFE]
+#define STSTR_DQDON             "You're Invincible!"   // [STRIFE]
 #define STSTR_DQDOFF            "You're a looney!"     // [STRIFE]
 
 #define STSTR_KFAADDED          "Very Happy Ammo Added"
-#define STSTR_FAADDED           "Ammo (no keys) Added"
+#define STSTR_FAADDED           "Ammo Added"           // [STRIFE]
 
 #define STSTR_NCON              "No Clipping Mode ON"
 #define STSTR_NCOFF             "No Clipping Mode OFF"
 
-#define STSTR_BEHOLD            "inVuln, Str, Inviso, Rad, Allmap, or Lite-amp"
+#define STSTR_BEHOLD            "Bzrk, Inviso, Mask, Health, Pack, Stats"  // [STRIFE]
 #define STSTR_BEHOLDX           "Power-up Toggled"
 
 #define STSTR_CHOPPERS          "... doesn't suck - GM"

@@ -248,8 +248,7 @@ static int              st_fragscount;
 
 cheatseq_t cheat_mus        = CHEAT("spin", 2);         // [STRIFE]: idmus -> spin
 cheatseq_t cheat_god        = CHEAT("omnipotent", 0);   // [STRIFE]: iddqd -> omnipotent
-cheatseq_t cheat_ammo       = CHEAT("idkfa", 0);        // STRIFE-TODO
-cheatseq_t cheat_ammonokey  = CHEAT("idfa", 0);         // STRIFE-TODO
+cheatseq_t cheat_ammo       = CHEAT("boomstix", 0);     // [STRIFE]: idfa -> boomstix
 cheatseq_t cheat_noclip     = CHEAT("elvis", 0);        // [STRIFE]: idclip -> elvis
 cheatseq_t cheat_clev       = CHEAT("rift", 2);         // [STRIFE]: idclev -> rift
 cheatseq_t cheat_mypos      = CHEAT("gps", 0);          // [STRIFE]: idmypos -> gps
@@ -259,16 +258,32 @@ cheatseq_t cheat_keys       = CHEAT("jimmy", 0);        // [STRIFE]: new cheat j
 cheatseq_t cheat_stealth    = CHEAT("gripper", 0);      // [STRIFE]: new cheat gripper
 cheatseq_t cheat_midas      = CHEAT("donnytrump", 0);   // [STRIFE]: new cheat
 cheatseq_t cheat_lego       = CHEAT("lego", 0);         // [STRIFE]: new cheat
+cheatseq_t cheat_dev        = CHEAT("dots", 0);         // [STRIFE]: new cheat
 
-cheatseq_t cheat_powerup[7] = // STRIFE-TODO
+// haleyjd 20110224: enumeration for access to powerup cheats
+enum
 {
-    CHEAT("idbeholdv", 0),
-    CHEAT("idbeholds", 0),
-    CHEAT("idbeholdi", 0),
-    CHEAT("idbeholdr", 0),
-    CHEAT("idbeholda", 0),
-    CHEAT("idbeholdl", 0),
-    CHEAT("idbehold", 0),
+    ST_PUMPUP_B,
+    ST_PUMPUP_I,
+    ST_PUMPUP_M,
+    ST_PUMPUP_H,
+    ST_PUMPUP_P,
+    ST_PUMPUP_S,
+    ST_PUMPUP_T,
+    ST_PUMPUP,
+    NUM_ST_PUMPUP
+};
+
+cheatseq_t cheat_powerup[NUM_ST_PUMPUP] = // [STRIFE]
+{
+    CHEAT("pumpupb", 0),
+    CHEAT("pumpupi", 0),
+    CHEAT("pumpupm", 0),
+    CHEAT("pumpuph", 0),
+    CHEAT("pumpupp", 0),
+    CHEAT("pumpups", 0),
+    CHEAT("pumpupt", 0),
+    CHEAT("pumpup", 0),
 };
 
 //cheatseq_t cheat_choppers = CHEAT("idchoppers", 0); [STRIFE] no such thing
@@ -481,8 +496,7 @@ boolean ST_Responder(event_t* ev)
         else
             S_ChangeMusic(musnum, 1);
     }
-    /*
-    // STRIFE-TODO: "dev" cheat - is this the "DOTS" cheat?
+    // [STRIFE]: "dev" cheat - "DOTS"
     else if (cht_CheckCheat(&cheat_dev, ev->data2))
     {
         devparm = !devparm;
@@ -491,7 +505,6 @@ boolean ST_Responder(event_t* ev)
         else
             plyr->message = DEH_String("devparm OFF");
     }
-    */
 
     // [STRIFE] Cheats below are not allowed in netgames or demos
     if(netgame || !usergame)
@@ -511,46 +524,32 @@ boolean ST_Responder(event_t* ev)
             plyr->message = DEH_String(STSTR_DQDON);
         }
         else 
+        {
+            plyr->st_update = true;
             plyr->message = DEH_String(STSTR_DQDOFF);
+        }
     }
-    //
-    // STRIFE-TODO: IDFA, IDKFA equivs are unfinished
-    //
-    else if (cht_CheckCheat(&cheat_ammonokey, ev->data2))
+    else if (cht_CheckCheat(&cheat_ammo, ev->data2))
     {
-        // 'fa' cheat for killer fucking arsenal
-        plyr->armorpoints = deh_idfa_armor;
-        plyr->armortype = deh_idfa_armor_class;
+        // [STRIFE]: "BOOMSTIX" cheat for all normal weapons
+        plyr->armorpoints = deh_idkfa_armor;
+        plyr->armortype = deh_idkfa_armor_class;
 
-        for (i=0;i<NUMWEAPONS;i++)
-            plyr->weaponowned[i] = true;
+        for (i = 0; i < NUMWEAPONS; i++)
+            if(!isdemoversion || weaponinfo[i].availabledemo)
+                plyr->weaponowned[i] = true;
+        
+        // Takes away the Sigil, even if you already had it...
+        plyr->weaponowned[wp_sigil] = false;
 
         for (i=0;i<NUMAMMO;i++)
             plyr->ammo[i] = plyr->maxammo[i];
 
         plyr->message = DEH_String(STSTR_FAADDED);
     }
-    else if (cht_CheckCheat(&cheat_ammo, ev->data2))
-    {
-        // 'kfa' cheat for key full ammo
-        plyr->armorpoints = deh_idkfa_armor;
-        plyr->armortype = deh_idkfa_armor_class;
-
-        for (i=0;i<NUMWEAPONS;i++)
-            plyr->weaponowned[i] = true;
-
-        for (i=0;i<NUMAMMO;i++)
-            plyr->ammo[i] = plyr->maxammo[i];
-
-        for (i=0;i<NUMCARDS;i++)
-            plyr->cards[i] = true;
-
-        plyr->message = DEH_String(STSTR_KFAADDED);
-    }
-
-    // villsa [STRIFE]
     else if(cht_CheckCheat(&cheat_keys, ev->data2))
     {
+        // villsa [STRIFE]: "JIMMY" cheat for all keys
         #define FIRSTKEYSETAMOUNT   16
 
         if(plyr->cards[FIRSTKEYSETAMOUNT - 1])
@@ -596,10 +595,9 @@ boolean ST_Responder(event_t* ev)
             plyr->mo->flags &= ~MF_NOCLIP;
         }
     }
-    
-    // villsa [STRIFE]
     else if(cht_CheckCheat(&cheat_stealth, ev->data2))
     {
+        // villsa [STRIFE]: "GRIPPER" cheat; nothing to do with stealth...
         plyr->cheats ^= CF_NOMOMENTUM;
         if(plyr->cheats & CF_NOMOMENTUM)
             plyr->message = DEH_String("STEALTH BOOTS ON");
@@ -607,82 +605,71 @@ boolean ST_Responder(event_t* ev)
             plyr->message = DEH_String("STEALTH BOOTS OFF");
     }
     
-
-    //
-    // STRIFE-TODO: Fix idbehold equivalent
-    //
-    for (i=0;i<6;i++)
+    for(i = 0; i < ST_PUMPUP_B + 3; ++i)
     {
-        // 'behold?' power-up cheats
-        if (cht_CheckCheat(&cheat_powerup[i], ev->data2))
+        // [STRIFE]: Handle berserk, invisibility, and envirosuit
+        if(cht_CheckCheat(&cheat_powerup[i], ev->data2))
         {
-            if (!plyr->powers[i])
-                P_GivePower( plyr, i);
-            else if (i!=pw_strength)
-                plyr->powers[i] = 1;
+            if(plyr->powers[i])
+                plyr->powers[i] = (i != 1);
             else
-                plyr->powers[i] = 0;
-
+                P_GivePower(plyr, i);
             plyr->message = DEH_String(STSTR_BEHOLDX);
         }
     }
-    // STRIFE-TODO:
-    if (cht_CheckCheat(&cheat_powerup[6], ev->data2))
+    if(cht_CheckCheat(&cheat_powerup[ST_PUMPUP_H], ev->data2))
     {
-        // 'behold' power-up menu
-        plyr->message = DEH_String(STSTR_BEHOLD);
-    }
-    
-    //
-    // STRIFE-TODO: 
-    // * Give medical items cheat (what code???)
-    // * Ammo cheat
-    // * Stats cheat
-    // * Unknown power-giving cheat
-    /*
-    if(cht_CheckCheat(&cheat_meditems, ev->data2))
-    {
+        // [STRIFE]: PUMPUPH gives medical inventory items
         P_GiveItemToPlayer(plyr, SPR_STMP, MT_INV_MED1);
         P_GiveItemToPlayer(plyr, SPR_MDKT, MT_INV_MED2);
         P_GiveItemToPlayer(plyr, SPR_FULL, MT_INV_MED3);
         plyr->message = DEH_String("you got the stuff!");
     }
-    if (cht_CheckCheat(&off_885E4, ev->data2))
+    if(cht_CheckCheat(&cheat_powerup[ST_PUMPUP_P], ev->data2))
     {
+        // [STRIFE]: PUMPUPP gives backpack
         if(!plyr->backpack)
         {
-            for(i = 0; i < NUMAMMO; i++)
+            for(i = 0; i < NUMAMMO; ++i)
                 plyr->maxammo[i] = 2 * plyr->maxammo[i];
-            plyr->backpack = true;
         }
-        for(i = 0; i < NUMAMMO; i++)
+        plyr->backpack = true;
+
+        for(i = 0; i < NUMAMMO; ++i)
             P_GiveAmmo(plyr, i, 1);
         plyr->message = DEH_String("you got the stuff!");
     }
-    if(cht_CheckCheat(&cheat_stats, ev->data2))
+    if(cht_CheckCheat(&cheat_powerup[ST_PUMPUP_S], ev->data2))
     {
+        // [STRIFE]: PUMPUPS gives stamina and accuracy upgrades
         P_GiveItemToPlayer(plyr, SPR_TOKN, MT_TOKEN_STAMINA);
         P_GiveItemToPlayer(plyr, SPR_TOKN, MT_TOKEN_NEW_ACCURACY);
         plyr->message = DEH_String("you got the stuff!");
     }
-    //
-    // UNKNOWN POWER GIVING CHEAT HERE...
-    //
-    */
-   
-    // STRIFE-TODO: weird isdemoversion check
+    if(cht_CheckCheat(&cheat_powerup[ST_PUMPUP_T], ev->data2))
+    {
+        // [STRIFE] PUMPUPT gives targeter
+        P_GivePower(plyr, pw_targeter);
+        plyr->message = DEH_String("you got the stuff!");
+    }
+    // [STRIFE]: PUMPUP
+    if (cht_CheckCheat(&cheat_powerup[ST_PUMPUP], ev->data2))
+    {
+        // 'behold' power-up menu
+        plyr->message = DEH_String(STSTR_BEHOLD);
+        return false;
+    }
 
     if (cht_CheckCheat(&cheat_mypos, ev->data2))
     {
         // [STRIFE] 'GPS' for player position
-        static char	buf[ST_MSGWIDTH];
+        static char buf[ST_MSGWIDTH];
         sprintf(buf, "ang=0x%x;x,y=(0x%x,0x%x)",
                 players[consoleplayer].mo->angle,
                 players[consoleplayer].mo->x,
                 players[consoleplayer].mo->y);
         plyr->message = buf;
     }
-    
 
     // 'rift' change-level cheat
     if (cht_CheckCheat(&cheat_clev, ev->data2))
@@ -697,6 +684,7 @@ boolean ST_Responder(event_t* ev)
         // haleyjd 09/01/10: Removed Chex Quest stuff.
         // haleyjd 09/15/10: Removed retail/registered/shareware stuff
 
+        // STRIFE-TODO: different bounds in v1.31
         // Ohmygod - this is not going to work.
         if (map <= 0 || map > 40)
             return false;
@@ -719,6 +707,7 @@ boolean ST_Responder(event_t* ev)
         {
             plyr->message = DEH_String("Spawning to spot");
             G_RiftCheat(spot);
+            return false;
         }
     }
 
@@ -727,6 +716,7 @@ boolean ST_Responder(event_t* ev)
     {
         stonecold ^= 1;
         plyr->message = DEH_String("Kill 'em.  Kill 'em All");
+        return false;
     }
 
     // villsa [STRIFE]
@@ -737,7 +727,8 @@ boolean ST_Responder(event_t* ev)
     }
 
     // villsa [STRIFE] 
-    if(cht_CheckCheat(&cheat_lego, ev->data2))
+    // haleyjd 20110224: No sigil in demo version
+    if(!isdemoversion && cht_CheckCheat(&cheat_lego, ev->data2))
     {
         plyr->st_update = true;
         if(plyr->weaponowned[wp_sigil])

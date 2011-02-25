@@ -115,9 +115,11 @@ void P_ExplodeMissile (mobj_t* mo)
 // * No SKULLFLY logic (replaced by BOUNCE flag)
 // * Missiles can activate G1/GR line types
 // * Player walking logic
+// * Air friction for players
 //
 #define STOPSPEED       0x1000
 #define FRICTION        0xe800
+#define AIRFRICTION     0xfff0  // [STRIFE]
 
 void P_XYMovement (mobj_t* mo) 
 {
@@ -202,7 +204,7 @@ void P_XYMovement (mobj_t* mo)
                 if(blockingline && blockingline->special)
                     P_ShootSpecialLine(mo, blockingline);
                 if(numspechit)
-                    P_ShootSpecialLine(mo, spechit[numspechit]);
+                    P_ShootSpecialLine(mo, spechit[numspechit-1]);
 
                 // explode a missile
                 if (ceilingline &&
@@ -234,8 +236,18 @@ void P_XYMovement (mobj_t* mo)
     if (mo->flags & (MF_MISSILE | MF_BOUNCE) )
         return;     // no friction for missiles ever
 
+    // haleyjd 20110224: [STRIFE] players experience friction even in the air,
+    // although less than when on the ground. With this fix, the 1.2-and-up 
+    // IWAD demo is now in sync!
     if (mo->z > mo->floorz)
+    {
+        if(player)
+        {
+            mo->momx = FixedMul (mo->momx, AIRFRICTION);
+            mo->momy = FixedMul (mo->momy, AIRFRICTION);
+        }
         return;     // no friction when airborne
+    }
 
     if (mo->flags & MF_CORPSE)
     {
@@ -260,7 +272,7 @@ void P_XYMovement (mobj_t* mo)
                 && player->cmd.sidemove == 0 ) ) )
     {
         // if in a walking frame, stop moving
-        // villsa [STRIFE]: different player state (haleyjd - verified 02/02/11)
+        // villsa [STRIFE]: different player state (haleyjd - verified 20110202)
         if ( player&&(unsigned)((player->mo->state - states) - S_PLAY_01) < 4)
             P_SetMobjState (player->mo, S_PLAY_00);
 
@@ -305,7 +317,6 @@ void P_ZMovement (mobj_t* mo)
             mo->ceilingz = mo->height + mo->z;
         else
             mo->floorz = mo->z;
-
     }
 
     //mo->z += mo->momz; // villsa [STRIFE] unused
@@ -327,7 +338,6 @@ void P_ZMovement (mobj_t* mo)
             else if (delta>0 && dist < (delta*3) )
                 mo->z += FLOATSPEED;
         }
-
     }
     
     // clip movement
@@ -386,13 +396,13 @@ void P_ZMovement (mobj_t* mo)
                 mo->player->deltaviewheight = mo->momz>>3;
 
                 // villsa [STRIFE] fall damage
+                // haleyjd 09/18/10: Repaired calculation
                 if(mo->momz < -20*FRACUNIT)
-                {
-                    // haleyjd 09/18/10: Repaired calculation
                     P_DamageMobj(mo, NULL, mo, mo->momz / -25000);
-                    mo->player->centerview = 1;
-                }
 
+                // haleyjd 20110224: *Any* fall centers your view, not just
+                // damaging falls (moved outside the above if).
+                mo->player->centerview = 1;
                 S_StartSound (mo, sfx_oof);
             }
             mo->momz = 0;
@@ -417,46 +427,45 @@ void P_ZMovement (mobj_t* mo)
             && !(mo->flags & (MF_NOCLIP|MF_BOUNCE)) )
         {
             P_ExplodeMissile (mo);
-            return;
         }
     }
-    else if (! (mo->flags & MF_NOGRAVITY) )
+    else // haleyjd 20110224: else here, not else if - Strife change or what?
     {
-        if (mo->momz == 0)
-            mo->momz = -GRAVITY*2;
-        else
-            mo->momz -= GRAVITY;
-    }
-
-    if (mo->z + mo->height > mo->ceilingz)
-    {
-        // villsa [STRIFE] replace skullfly flag with MF_BOUNCE
-        if (mo->flags & MF_BOUNCE)
+        if (! (mo->flags & MF_NOGRAVITY) )
         {
-            // villsa [STRIFE] affect reactiontime
-            // momz is also shifted by 1
-            mo->momz = -mo->momz >> 1;
-            mo->reactiontime >>= 1;
-        }
-
-        // hit the ceiling
-        if (mo->momz > 0)
-            mo->momz = 0;
-        {
-            mo->z = mo->ceilingz - mo->height;
-        }
-
-        // villsa [STRIFE] also check for MF_BOUNCE
-        if ( (mo->flags & MF_MISSILE)
-            && !(mo->flags & (MF_NOCLIP|MF_BOUNCE)) )
-        {
-            // villsa [STRIFE] check against skies
-            if(mo->subsector->sector->ceilingpic == skyflatnum)
-                P_RemoveMobj(mo);
+            if (mo->momz == 0)
+                mo->momz = -GRAVITY*2;
             else
-                P_ExplodeMissile (mo);
+                mo->momz -= GRAVITY;
+        }
 
-            return;
+        if (mo->z + mo->height > mo->ceilingz)
+        {
+            // villsa [STRIFE] replace skullfly flag with MF_BOUNCE
+            if (mo->flags & MF_BOUNCE)
+            {
+                // villsa [STRIFE] affect reactiontime
+                // momz is also shifted by 1
+                mo->momz = -mo->momz >> 1;
+                mo->reactiontime >>= 1;
+            }
+
+            // hit the ceiling
+            if (mo->momz > 0)
+                mo->momz = 0;
+
+            mo->z = mo->ceilingz - mo->height;
+
+            // villsa [STRIFE] also check for MF_BOUNCE
+            if ( (mo->flags & MF_MISSILE)
+                && !(mo->flags & (MF_NOCLIP|MF_BOUNCE)) )
+            {
+                // villsa [STRIFE] check against skies
+                if(mo->subsector->sector->ceilingpic == skyflatnum)
+                    P_RemoveMobj(mo);
+                else
+                    P_ExplodeMissile (mo);
+            }
         }
     }
 } 
