@@ -997,8 +997,10 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
                     players[i].sigiltype = 4;
             }
 
-            players[i].weaponowned[wp_sigil] = true;
-            players[i].readyweapon = wp_sigil;
+            // haleyjd 20110225: fixed these two assignments which Watcom munged
+            // up in the assembly by pre-incrementing the pointer into players[]
+            players[i].st_update = true;
+            players[i].pendingweapon = wp_sigil;
         }
         return;
 
