@@ -1,6 +1,4 @@
-#!/usr/bin/python
-#
-# $Id: convert-icon 704 2006-10-18 00:51:11Z fraggle $
+#!/usr/bin/env python
 #
 # Copyright(C) 2005 Simon Howard
 #
@@ -29,7 +27,7 @@ import re
 try:
         import Image
 except ImportError:
-        print "WARNING: Could not update %s.  Please install the Python Imaging library." % sys.argv[2]
+        print("WARNING: Could not update %s.  Please install the Python Imaging library." % sys.argv[2])
         sys.exit(0)
 
 
@@ -70,5 +68,4 @@ def convert_image(filename, output_filename):
     outfile.write("};\n")
 
 convert_image(sys.argv[1], sys.argv[2])
-
 

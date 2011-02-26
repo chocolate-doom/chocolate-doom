@@ -37,6 +37,8 @@ extern int mousebstraferight;
 extern int mousebbackward;
 extern int mousebuse;
 extern int dclick_use;
+extern int mousebprevweapon;
+extern int mousebnextweapon;
 
 void ConfigMouse(void);
 

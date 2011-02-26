@@ -21,8 +21,10 @@ PACKAGE_VERSION = @PACKAGE_VERSION@
 DOC_FILES = README       \
             COPYING      \
             ChangeLog    \
+            INSTALL      \
             NEWS         \
             BUGS         \
+            NOT-BUGS     \
             CMDLINE      \
             TODO
 

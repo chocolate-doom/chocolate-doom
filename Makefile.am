@@ -43,9 +43,9 @@ EXTRA_DIST=                             \
         CMDLINE                         \
         HACKING                         \
         README.OPL                      \
-        OPL-TODO                        \
         TODO                            \
         BUGS                            \
+        NOT-BUGS                        \
         rpm.spec
 
 MAINTAINERCLEANFILES =  $(AUX_DIST_GEN)

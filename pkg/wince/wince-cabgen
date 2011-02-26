@@ -3,10 +3,11 @@
 import os
 import re
 import shutil
+import struct
 import sys
 import tempfile
 
-CAB_HEADER = "MSCE"
+CAB_HEADER = "MSCE".encode("ascii")
 
 ARCHITECTURES = {
     "shx-sh3":        103,
@@ -58,16 +59,10 @@ DIR_VARIABLES = {
 }
 
 def write_int16(f, value):
-    b1 = value & 0xff
-    b2 = (value >> 8) & 0xff
-    f.write("%c%c" % (b1, b2))
+    f.write(struct.pack("<H", value))
 
 def write_int32(f, value):
-    b1 = value & 0xff
-    b2 = (value >> 8) & 0xff
-    b3 = (value >> 16) & 0xff
-    b4 = (value >> 24) & 0xff
-    f.write("%c%c%c%c" % (b1, b2, b3, b4))
+    f.write(struct.pack("<I", value))
 
 # Pad a string with NUL characters so that it has a length that is 
 # a multiple of 4.  At least one NUL is always added.
@@ -208,7 +203,7 @@ class StringDictionary:
         for i, s in self.string_list:
             write_int16(stream, i)
             write_int16(stream, len(s))
-            stream.write(s)
+            stream.write(s.encode("ascii"))
 
 class DirectoryList:
     def __init__(self, cab_header):
@@ -252,7 +247,7 @@ class DirectoryList:
             #    dir_path = dir_path[1:]
             dir_path = [ dir ]
 
-            dir_path = map(lambda x: dictionary.get(x), dir_path)
+            dir_path = list(map(lambda x: dictionary.get(x), dir_path))
 
             self.directories[key] = self.index
             self.directories_list.append((self.index, dir_path))
@@ -334,7 +329,7 @@ class FileList:
             write_int16(stream, file_no)
             write_int32(stream, flags)
             write_int16(stream, len(filename))
-            stream.write(filename)
+            stream.write(filename.encode("ascii"))
 
 # TODO?
 
@@ -412,7 +407,7 @@ class LinkList:
         # Map dirs that make up the path to strings.
 
         dictionary = self.cab_header.dictionary
-        dest_path = map(lambda x: dictionary.get(x), dest_path)
+        dest_path = list(map(lambda x: dictionary.get(x), dest_path))
 
         self.links.append((self.index, target_type, target_id,
                            base_dir, dest_path))
@@ -492,6 +487,7 @@ class CabHeaderFile:
             section.write(stream)
             pos = stream.tell()
             if pos != old_pos + len(section):
+                print(section)
                 raise Exception("Section is %i bytes long, but %i written" % \
                                 (len(section), pos - old_pos))
             old_pos = pos
@@ -574,7 +570,7 @@ class CabFile:
         basename = self.__shorten_name(self.files[0], 0)
         filename = os.path.join(dir, basename)
 
-        stream = file(filename, "w")
+        stream = open(filename, "wb")
         self.cab_header.write(stream)
         stream.close()
 
@@ -625,17 +621,17 @@ def expand_path(filename):
     # Expand $(xyz) path variables to their Windows equivalents:
 
     def replace_var(match):
-	var_name = match.group(1)
+        var_name = match.group(1)
 
-	if not var_name in DIR_VARIABLES:
-	    raise Exception("Unknown variable '%s'" % var_name)
-	else:
-	    return DIR_VARIABLES[var_name]
+        if not var_name in DIR_VARIABLES:
+            raise Exception("Unknown variable '%s'" % var_name)
+        else:
+            return DIR_VARIABLES[var_name]
 
     return re.sub(r"\$\((.*?)\)", replace_var, filename)
 
 def read_config_file(filename):
-    f = file(filename)
+    f = open(filename)
 
     data = f.readlines()
     data = "".join(data)
@@ -656,10 +652,10 @@ def print_dependencies(filename):
     files_list = config["files"]
 
     for dest, source_file in files_list.items():
-        print source_file
+        print(source_file)
 
 if len(sys.argv) < 3:
-    print "Usage: %s <config file> <output file>" % sys.argv[0]
+    print("Usage: %s <config file> <output file>" % sys.argv[0])
     sys.exit(0)
 
 if sys.argv[1] == "-d":

@@ -163,8 +163,8 @@ void Window2(void)
 {
     txt_window_t *window;
     txt_table_t *table;
+    txt_table_t *unselectable_table;
     txt_scrollpane_t *scrollpane;
-    int i;
 
     window = TXT_NewWindow("Another test");
     TXT_SetWindowPosition(window, 
@@ -172,10 +172,13 @@ void Window2(void)
                           TXT_VERT_TOP, 
                           TXT_SCREEN_W - 1, 1);
 
-    for (i=0; i<5; ++i)
-    {
-        TXT_AddWidget(window, TXT_NewButton("hello there blah blah blah blah"));
-    }
+    TXT_AddWidgets(window,
+                   TXT_NewScrollPane(40, 1,
+                        TXT_NewLabel("* Unselectable scroll pane *")),
+                   unselectable_table = TXT_NewTable(1),
+                   NULL);
+
+    TXT_AddWidget(unselectable_table, TXT_NewLabel("* Unselectable table *"));
 
     TXT_AddWidget(window, TXT_NewSeparator("Input boxes"));
     table = TXT_NewTable(2);

@@ -25,7 +25,6 @@
 //
 //-----------------------------------------------------------------------------
 
-
 #include "config.h"
 
 #include <stdio.h>
@@ -41,6 +40,7 @@
 
 #include "deh_main.h"
 #include "i_system.h"
+#include "i_swap.h"
 #include "s_sound.h"
 #include "m_argv.h"
 #include "w_wad.h"
@@ -49,8 +49,11 @@
 #include "doomdef.h"
 
 #define LOW_PASS_FILTER
+//#define DEBUG_DUMP_WAVS
 #define MAX_SOUND_SLICE_TIME 70 /* ms */
 #define NUM_CHANNELS 16
+
+static boolean setpanning_workaround = false;
 
 static boolean sound_initialized = false;
 
@@ -159,12 +162,62 @@ static boolean ConvertibleRatio(int freq1, int freq2)
     }
 }
 
+#ifdef DEBUG_DUMP_WAVS
+
+// Debug code to dump resampled sound effects to WAV files for analysis.
+
+static void WriteWAV(char *filename, byte *data,
+                     uint32_t length, int samplerate)
+{
+    FILE *wav;
+    unsigned int i;
+    unsigned short s;
+
+    wav = fopen(filename, "wb");
+
+    // Header
+
+    fwrite("RIFF", 1, 4, wav);
+    i = LONG(36 + samplerate);
+    fwrite(&i, 4, 1, wav);
+    fwrite("WAVE", 1, 4, wav);
+
+    // Subchunk 1
+
+    fwrite("fmt ", 1, 4, wav);
+    i = LONG(16);
+    fwrite(&i, 4, 1, wav);           // Length
+    s = SHORT(1);
+    fwrite(&s, 2, 1, wav);           // Format (PCM)
+    s = SHORT(2);
+    fwrite(&s, 2, 1, wav);           // Channels (2=stereo)
+    i = LONG(samplerate);
+    fwrite(&i, 4, 1, wav);           // Sample rate
+    i = LONG(samplerate * 2 * 2);
+    fwrite(&i, 4, 1, wav);           // Byte rate (samplerate * stereo * 16 bit)
+    s = SHORT(2 * 2);
+    fwrite(&s, 2, 1, wav);           // Block align (stereo * 16 bit)
+    s = SHORT(16);
+    fwrite(&s, 2, 1, wav);           // Bits per sample (16 bit)
+
+    // Data subchunk
+
+    fwrite("data", 1, 4, wav);
+    i = LONG(length);
+    fwrite(&i, 4, 1, wav);           // Data length
+    fwrite(data, 1, length, wav);    // Data
+
+    fclose(wav);
+}
+
+#endif
+
 // Generic sound expansion function for any sample rate.
 
 static void ExpandSoundData_SDL(byte *data,
-				int samplerate,
-				uint32_t length,
-				Mix_Chunk *destination)
+                                int samplerate,
+                                uint32_t length,
+                                Mix_Chunk *destination)
 {
     SDL_AudioCVT convertor;
     uint32_t expanded_length;
@@ -181,7 +234,7 @@ static void ExpandSoundData_SDL(byte *data,
         = Z_Malloc(expanded_length, PU_STATIC, &destination->abuf);
 
     // If we can, use the standard / optimized SDL conversion routines.
-    
+
     if (samplerate <= mixer_freq
      && ConvertibleRatio(samplerate, mixer_freq)
      && SDL_BuildAudioCVT(&convertor,
@@ -247,9 +300,12 @@ static void ExpandSoundData_SDL(byte *data,
             rc = 1.0f / (3.14f * samplerate);
             alpha = dt / (rc + dt);
 
-            for (i=1; i<expanded_length; ++i) 
+            // Both channels are processed in parallel, hence [i-2]:
+
+            for (i=2; i<expanded_length * 2; ++i)
             {
-                expanded[i] = (Sint16) (alpha * expanded[i] + (1 - alpha) * expanded[i-1]);
+                expanded[i] = (Sint16) (alpha * expanded[i]
+                                      + (1 - alpha) * expanded[i-2]);
             }
         }
 #endif /* #ifdef LOW_PASS_FILTER */
@@ -343,6 +399,16 @@ static boolean CacheSFX_SDL(int sound)
 			samplerate, 
 			length, 
 			&sound_chunks[sound]);
+
+#ifdef DEBUG_DUMP_WAVS
+    {
+        char filename[16];
+
+        sprintf(filename, "%s.wav", DEH_String(S_sfx[sound].name));
+        WriteWAV(filename, sound_chunks[sound].abuf,
+                 sound_chunks[sound].alen, mixer_freq);
+    }
+#endif
 
     // don't need the original lump any more
   
@@ -556,9 +622,18 @@ static void I_SDL_UpdateSoundParams(int handle, int vol, int sep)
     left = ((254 - sep) * vol) / 127;
     right = ((sep) * vol) / 127;
 
+    // SDL_mixer version 1.2.8 and earlier has a bug in the Mix_SetPanning
+    // function.  A workaround is to call Mix_UnregisterAllEffects for
+    // the channel before calling it.  This is undesirable as it may lead
+    // to the channel volumes resetting briefly.
+
+    if (setpanning_workaround)
+    {
+        Mix_UnregisterAllEffects(handle);
+    }
+
     Mix_SetPanning(handle, left, right);
 }
-
 
 //
 // Starting a sound means adding it
@@ -747,8 +822,34 @@ static boolean I_SDL_InitSound(void)
     }
 #endif
 
+    // SDL_mixer version 1.2.8 and earlier has a bug in the Mix_SetPanning
+    // function that can cause the game to lock up.  If we're using an old
+    // version, we need to apply a workaround.  But the workaround has its
+    // own drawbacks ...
+
+    {
+        const SDL_version *mixer_version;
+        int v;
+
+        mixer_version = Mix_Linked_Version();
+        v = SDL_VERSIONNUM(mixer_version->major,
+                           mixer_version->minor,
+                           mixer_version->patch);
+
+        if (v <= SDL_VERSIONNUM(1, 2, 8))
+        {
+            setpanning_workaround = true;
+            fprintf(stderr, "\n"
+              "ATTENTION: You are using an old version of SDL_mixer!\n"
+              "           This version has a bug that may cause "
+                          "your sound to stutter.\n"
+              "           Please upgrade to a newer version!\n"
+              "\n");
+        }
+    }
+
     Mix_AllocateChannels(NUM_CHANNELS);
-    
+
     SDL_PauseAudio(0);
 
     sound_initialized = true;

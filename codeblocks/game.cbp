@@ -56,10 +56,10 @@
 		<Unit filename="game-res.rc">
 			<Option compilerVar="WINDRES" />
 		</Unit>
-		<Unit filename="..\opl\fmopl.c">
+		<Unit filename="..\opl\dbopl.c">
 			<Option compilerVar="CC" />
 		</Unit>
-		<Unit filename="..\opl\fmopl.h" />
+		<Unit filename="..\opl\dbopl.h" />
 		<Unit filename="..\opl\ioperm_sys.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -70,6 +70,9 @@
 		<Unit filename="..\opl\opl.h" />
 		<Unit filename="..\opl\opl_internal.h" />
 		<Unit filename="..\opl\opl_linux.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\opl\opl_obsd.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\opl\opl_queue.c">

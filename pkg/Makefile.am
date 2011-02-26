@@ -5,8 +5,7 @@ osx/Resources/app.icns                                                  \
 osx/Resources/app.png                                                   \
 osx/Resources/wadfile.icns                                              \
 osx/Resources/wadfile.png                                               \
-osx/Resources/launcher.nib/classes.nib                                  \
-osx/Resources/launcher.nib/info.nib                                     \
+osx/Resources/launcher.nib/designable.nib                               \
 osx/Resources/launcher.nib/keyedobjects.nib                             \
 osx/GNUmakefile                                                         \
 osx/Info.plist.in       osx/Info-gnustep.plist.in                       \

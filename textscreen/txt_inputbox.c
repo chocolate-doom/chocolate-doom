@@ -232,6 +232,7 @@ static void TXT_InputBoxMousePress(TXT_UNCAST_ARG(inputbox),
 
 txt_widget_class_t txt_inputbox_class =
 {
+    TXT_AlwaysSelectable,
     TXT_InputBoxSizeCalc,
     TXT_InputBoxDrawer,
     TXT_InputBoxKeyPress,
@@ -242,6 +243,7 @@ txt_widget_class_t txt_inputbox_class =
 
 txt_widget_class_t txt_int_inputbox_class =
 {
+    TXT_AlwaysSelectable,
     TXT_InputBoxSizeCalc,
     TXT_InputBoxDrawer,
     TXT_IntInputBoxKeyPress,

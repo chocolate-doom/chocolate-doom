@@ -78,10 +78,10 @@ static char *iwadfile;
 
 static char *skills[] = 
 {
-    "I'm too young to die!",
+    "I'm too young to die.",
     "Hey, not too rough.",
     "Hurt me plenty.",
-    "Ultra-violence",
+    "Ultra-Violence.",
     "NIGHTMARE!",
 };
 
@@ -115,6 +115,7 @@ static int fast = 0;
 static int respawn = 0;
 static int udpport = 2342;
 static int timer = 0;
+static int privateserver = 0;
 
 static txt_dropdown_list_t *skillbutton;
 static txt_button_t *warpbutton;
@@ -189,7 +190,11 @@ static void AddIWADParameter(execute_context_t *exec)
     }
 }
 
-static void StartGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
+// Callback function invoked to launch the game.
+// This is used when starting a server and also when starting a
+// single player game via the "warp" menu.
+
+static void StartGame(int multiplayer)
 {
     execute_context_t *exec;
 
@@ -201,7 +206,6 @@ static void StartGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
     AddExtraParameters(exec);
 
     AddIWADParameter(exec);
-    AddCmdLineParameter(exec, "-server");
     AddCmdLineParameter(exec, "-skill %i", skill + 1);
 
     if (nomonsters)
@@ -219,20 +223,6 @@ static void StartGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
         AddCmdLineParameter(exec, "-respawn");
     }
 
-    if (deathmatch == 1)
-    {
-        AddCmdLineParameter(exec, "-deathmatch");
-    }
-    else if (deathmatch == 2)
-    {
-        AddCmdLineParameter(exec, "-altdeath");
-    }
-
-    if (timer > 0)
-    {
-        AddCmdLineParameter(exec, "-timer %i", timer);
-    }
-
     if (warptype == WARP_DOOM1)
     {
         // TODO: select IWAD based on warp type
@@ -243,18 +233,53 @@ static void StartGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
         AddCmdLineParameter(exec, "-warp %i", warpmap);
     }
 
-    AddCmdLineParameter(exec, "-port %i", udpport);
+    // Multiplayer-specific options:
+
+    if (multiplayer)
+    {
+        AddCmdLineParameter(exec, "-server");
+        AddCmdLineParameter(exec, "-port %i", udpport);
+
+        if (deathmatch == 1)
+        {
+            AddCmdLineParameter(exec, "-deathmatch");
+        }
+        else if (deathmatch == 2)
+        {
+            AddCmdLineParameter(exec, "-altdeath");
+        }
+
+        if (timer > 0)
+        {
+            AddCmdLineParameter(exec, "-timer %i", timer);
+        }
+
+        if (privateserver)
+        {
+            AddCmdLineParameter(exec, "-privateserver");
+        }
+    }
 
     AddWADs(exec);
 
     TXT_Shutdown();
     
     M_SaveDefaults();
-    AddConfigParameters(exec);
+    PassThroughArguments(exec);
 
     ExecuteDoom(exec);
 
     exit(0);
+}
+
+static void StartServerGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
+{
+    StartGame(1);
+}
+
+static void StartSinglePlayerGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
+{
+    StartGame(0);
 }
 
 static void UpdateWarpButton(void)
@@ -509,12 +534,27 @@ static txt_widget_t *IWADSelector(void)
     return result;
 }
 
-static txt_window_action_t *StartGameAction(void)
+// Create the window action button to start the game.  This invokes
+// a different callback depending on whether to start a multiplayer
+// or single player game.
+
+static txt_window_action_t *StartGameAction(int multiplayer)
 {
     txt_window_action_t *action;
+    TxtWidgetSignalFunc callback;
 
     action = TXT_NewWindowAction(KEY_F10, "Start");
-    TXT_SignalConnect(action, "pressed", StartGame, NULL);
+
+    if (multiplayer)
+    {
+        callback = StartServerGame;
+    }
+    else
+    {
+        callback = StartSinglePlayerGame;
+    }
+
+    TXT_SignalConnect(action, "pressed", callback, NULL);
 
     return action;
 }
@@ -556,14 +596,18 @@ static txt_window_action_t *WadWindowAction(void)
     return action;
 }
 
-void StartMultiGame(void)
+// "Start game" menu.  This is used for the start server window
+// and the single player warp menu.  The parameters specify
+// the window title and whether to display multiplayer options.
+
+static void StartGameMenu(char *window_title, int multiplayer)
 {
     txt_window_t *window;
     txt_table_t *gameopt_table;
     txt_table_t *advanced_table;
     txt_widget_t *iwad_selector;
 
-    window = TXT_NewWindow("Start multiplayer game");
+    window = TXT_NewWindow(window_title);
 
     TXT_AddWidgets(window, 
                    gameopt_table = TXT_NewTable(2),
@@ -573,41 +617,63 @@ void StartMultiGame(void)
                    TXT_NewCheckBox("Respawning monsters", &respawn),
                    TXT_NewSeparator("Advanced"),
                    advanced_table = TXT_NewTable(2),
-                   TXT_NewButton2("Add extra parameters...", 
-                                  OpenExtraParamsWindow, NULL),
                    NULL);
 
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, WadWindowAction());
-    TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, StartGameAction());
+    TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, StartGameAction(multiplayer));
     
-    TXT_SetColumnWidths(gameopt_table, 12, 12);
+    TXT_SetColumnWidths(gameopt_table, 12, 6);
 
     TXT_AddWidgets(gameopt_table,
            TXT_NewLabel("Game"),
            iwad_selector = IWADSelector(),
            TXT_NewLabel("Skill"),
            skillbutton = TXT_NewDropdownList(&skill, skills, 5),
-           TXT_NewLabel("Game type"),
-           TXT_NewDropdownList(&deathmatch, gamemodes, 3),
            TXT_NewLabel("Level warp"),
            warpbutton = TXT_NewButton2("????", LevelSelectDialog, NULL),
-           TXT_NewLabel("Time limit"),
-           TXT_NewHorizBox(TXT_NewIntInputBox(&timer, 2),
-                           TXT_NewLabel("minutes"),
-                           NULL),
            NULL);
 
-    TXT_SetColumnWidths(advanced_table, 12, 12);
+    if (multiplayer)
+    {
+        TXT_AddWidgets(gameopt_table,
+               TXT_NewLabel("Game type"),
+               TXT_NewDropdownList(&deathmatch, gamemodes, 3),
+               TXT_NewLabel("Time limit"),
+               TXT_NewHorizBox(TXT_NewIntInputBox(&timer, 2),
+                               TXT_NewLabel("minutes"),
+                               NULL),
+               NULL);
+
+        TXT_AddWidget(window,
+                      TXT_NewInvertedCheckBox("Register with master server",
+                                              &privateserver));
+
+        TXT_AddWidgets(advanced_table,
+                       TXT_NewLabel("UDP port"),
+                       TXT_NewIntInputBox(&udpport, 5),
+                       NULL);
+    }
+
+    TXT_AddWidget(window,
+                  TXT_NewButton2("Add extra parameters...", 
+                                 OpenExtraParamsWindow, NULL));
+
+    TXT_SetColumnWidths(advanced_table, 12, 6);
 
     TXT_SignalConnect(iwad_selector, "changed", UpdateWarpType, NULL);
 
-    TXT_AddWidgets(advanced_table, 
-                   TXT_NewLabel("UDP port"),
-                   TXT_NewIntInputBox(&udpport, 5),
-                   NULL);
-
     UpdateWarpType(NULL, NULL);
     UpdateWarpButton();
+}
+
+void StartMultiGame(void)
+{
+    StartGameMenu("Start multiplayer game", 1);
+}
+
+void WarpMenu(void)
+{
+    StartGameMenu("Level Warp", 0);
 }
 
 static void DoJoinGame(void *unused1, void *unused2)
@@ -636,7 +702,7 @@ static void DoJoinGame(void *unused1, void *unused2)
     
     M_SaveDefaults();
 
-    AddConfigParameters(exec);
+    PassThroughArguments(exec);
 
     ExecuteDoom(exec);
 

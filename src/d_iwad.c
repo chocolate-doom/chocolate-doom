@@ -326,15 +326,21 @@ static struct
     {"doom.wad",     doom},
     {"doom1.wad",    doom},
     {"chex.wad",     doom},
+    {"hacx.wad",     doom2},
 };
-            
+
 // Hack for chex quest mode
 
-static void CheckChex(char *iwad_name)
+static void CheckSpecialIWADs(char *iwad_name)
 {
-    if (!strcmp(iwad_name, "chex.wad")) 
+    if (!strcasecmp(iwad_name, "chex.wad"))
     {
         gameversion = exe_chex;
+    }
+
+    if (!strcasecmp(iwad_name, "hacx.wad"))
+    {
+        gameversion = exe_hacx;
     }
 }
 
@@ -408,7 +414,7 @@ static char *SearchDirectoryForIWAD(char *dir)
 
         if (filename != NULL)
         {
-            CheckChex(iwads[i].name);
+            CheckSpecialIWADs(iwads[i].name);
             gamemission = iwads[i].mission;
 
             return filename;
@@ -441,7 +447,7 @@ static void IdentifyIWADByName(char *name)
         if (!strcasecmp(name + strlen(name) - strlen(iwadname), 
                         iwadname))
         {
-            CheckChex(iwads[i].name);
+            CheckSpecialIWADs(iwads[i].name);
             gamemission = iwads[i].mission;
             break;
         }
@@ -652,7 +658,7 @@ char *D_FindIWAD(void)
     // @arg <file>
     //
 
-    iwadparm = M_CheckParm("-iwad");
+    iwadparm = M_CheckParmWithArgs("-iwad", 1);
 
     if (iwadparm)
     {
@@ -699,6 +705,13 @@ static char *SaveGameIWADName(void)
     if (gameversion == exe_chex)
     {
         return "chex.wad";
+    }
+
+    // Hacx hack
+
+    if (gameversion == exe_hacx)
+    {
+        return "hacx.wad";
     }
 
     // Find what subdirectory to use for savegames
@@ -770,6 +783,10 @@ void D_SetSaveGameDir(void)
 
 static char *banners[] = 
 {
+    // doom2.wad
+    "                         "
+    "DOOM 2: Hell on Earth v%i.%i"
+    "                           ",
     // doom1.wad
     "                            "
     "DOOM Shareware Startup v%i.%i"
@@ -786,10 +803,6 @@ static char *banners[] =
     "                         "
     "The Ultimate DOOM Startup v%i.%i"
     "                        ",
-    // doom2.wad
-    "                         "
-    "DOOM 2: Hell on Earth v%i.%i"
-    "                           ",
     // tnt.wad
     "                     "
     "DOOM 2: TNT - Evilution v%i.%i"
@@ -809,13 +822,13 @@ static char *GetGameName(char *gamename)
 {
     size_t i;
     char *deh_sub;
-    
+
     for (i=0; i<arrlen(banners); ++i)
     {
         // Has the banner been replaced?
 
         deh_sub = DEH_String(banners[i]);
-        
+
         if (deh_sub != banners[i])
         {
             // Has been replaced

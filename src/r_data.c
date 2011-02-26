@@ -413,6 +413,7 @@ R_GetColumn
 
 static void GenerateTextureHashTable(void)
 {
+    texture_t **rover;
     int i;
     int key;
 
@@ -429,12 +430,25 @@ static void GenerateTextureHashTable(void)
 
         textures[i]->index = i;
 
-        // Hook into hash table
+        // Vanilla Doom does a linear search of the texures array
+        // and stops at the first entry it finds.  If there are two
+        // entries with the same name, the first one in the array
+        // wins. The new entry must therefore be added at the end
+        // of the hash chain, so that earlier entries win.
 
         key = W_LumpNameHash(textures[i]->name) % numtextures;
 
-        textures[i]->next = textures_hashtable[key];
-        textures_hashtable[key] = textures[i];
+        rover = &textures_hashtable[key];
+
+        while (*rover != NULL)
+        {
+            rover = &(*rover)->next;
+        }
+
+        // Hook into hash table
+
+        textures[i]->next = NULL;
+        *rover = textures[i];
     }
 }
 

@@ -33,7 +33,7 @@ int usemouse = 1;
 
 int novert = 0;
 int mouseSensitivity = 5;
-float mouse_acceleration = 1.0;
+float mouse_acceleration = 2.0;
 int mouse_threshold = 10;
 int grabmouse = 1;
 
@@ -44,6 +44,8 @@ int mousebstrafeleft = -1;
 int mousebstraferight = -1;
 int mousebbackward = -1;
 int mousebuse = -1;
+int mousebprevweapon = -1;
+int mousebnextweapon = -1;
 
 int dclick_use = 1;
 
@@ -55,6 +57,8 @@ static int *all_mouse_buttons[] = {
     &mousebstraferight,
     &mousebbackward,
     &mousebuse,
+    &mousebprevweapon,
+    &mousebnextweapon
 };
 
 static void MouseSetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))
@@ -104,6 +108,8 @@ static void ConfigExtraButtons(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddMouseControl(buttons_table, "Use", &mousebuse);
     AddMouseControl(buttons_table, "Strafe left", &mousebstrafeleft);
     AddMouseControl(buttons_table, "Strafe right", &mousebstraferight);
+    AddMouseControl(buttons_table, "Previous weapon", &mousebprevweapon);
+    AddMouseControl(buttons_table, "Next weapon", &mousebnextweapon);
 }
 
 void ConfigMouse(void)

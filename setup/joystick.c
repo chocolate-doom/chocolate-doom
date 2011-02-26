@@ -46,10 +46,12 @@ int usejoystick = 0;
 
 int joybfire = 0;
 int joybstrafe = 1;
-int joybuse = 2;
-int joybspeed = 3;
+int joybuse = 3;
+int joybspeed = 2;
 int joybstrafeleft = -1;
 int joybstraferight = -1;
+int joybprevweapon = -1;
+int joybnextweapon = -1;
 
 // Joystick to use, as an SDL joystick index:
 
@@ -70,8 +72,8 @@ int joystick_y_invert = 0;
 static txt_button_t *joystick_button;
 
 static int *all_joystick_buttons[] = {
-        &joybstraferight, &joybstrafeleft, &joybfire, &joybspeed,
-        &joybuse, &joybstrafe,
+    &joybstraferight, &joybstrafeleft, &joybfire, &joybspeed,
+    &joybuse, &joybstrafe, &joybprevweapon, &joybnextweapon
 };
 
 //
@@ -430,6 +432,8 @@ void ConfigJoystick(void)
 
     AddJoystickControl(button_table, "Strafe Left", &joybstrafeleft);
     AddJoystickControl(button_table, "Strafe Right", &joybstraferight);
+    AddJoystickControl(button_table, "Previous weapon", &joybprevweapon);
+    AddJoystickControl(button_table, "Next weapon", &joybnextweapon);
 
     TXT_SignalConnect(joystick_button, "pressed", CalibrateJoystick, NULL);
     TXT_SignalConnect(window, "closed", JoystickWindowClosed, NULL);

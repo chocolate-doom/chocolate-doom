@@ -35,7 +35,6 @@
     id launchButton;
 
     id commandLineArguments;
-    id packageLabel;
 }
 
 - (void) launch: (id)sender;

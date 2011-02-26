@@ -76,6 +76,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\net_packet.h" />
+		<Unit filename="..\src\net_query.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\net_query.h" />
 		<Unit filename="..\src\net_sdl.c">
 			<Option compilerVar="CC" />
 		</Unit>

@@ -125,8 +125,6 @@ int		startmap;
 boolean		autostart;
 int             startloadgame;
 
-FILE*		debugfile;
-
 boolean		advancedemo;
 
 // Store demo, do not accept any inputs
@@ -499,14 +497,6 @@ void D_DoomLoop (void)
     if (demorecording)
 	G_BeginRecording ();
 		
-    if (M_CheckParm ("-debugfile"))
-    {
-	char    filename[20];
-	sprintf (filename,"debug%i.txt",consoleplayer);
-	printf ("debug output to: %s\n",filename);
-	debugfile = fopen (filename,"w");
-    }
-
     TryRunTics();
 
     I_InitGraphics ();
@@ -604,7 +594,13 @@ void D_DoAdvanceDemo (void)
     paused = false;
     gameaction = ga_nothing;
 
-    if (gamemode == retail && gameversion != exe_chex)
+    // The Ultimate Doom executable changed the demo sequence to add
+    // a DEMO4 demo.  Final Doom was based on Ultimate, so also
+    // includes this change; however, the Final Doom IWADs do not
+    // include a DEMO4 lump, so the game bombs out with an error
+    // when it reaches this point in the demo sequence.
+
+    if (gameversion == exe_ultimate || gameversion == exe_final)
       demosequence = (demosequence+1)%7;
     else
       demosequence = (demosequence+1)%6;
@@ -760,6 +756,7 @@ static struct
     GameVersion_t version;
 } gameversions[] = {
     {"Doom 1.9",             "1.9",        exe_doom_1_9},
+    {"Hacx",                 "hacx",       exe_hacx},
     {"Ultimate Doom",        "ultimate",   exe_ultimate},
     {"Final Doom",           "final",      exe_final},
     {"Chex Quest",           "chex",       exe_chex},
@@ -781,9 +778,9 @@ static void InitGameVersion(void)
     // "ultimate" and "final".
     //
 
-    p = M_CheckParm("-gameversion");
+    p = M_CheckParmWithArgs("-gameversion", 1);
 
-    if (p > 0)
+    if (p)
     {
         for (i=0; gameversions[i].description != NULL; ++i)
         {
@@ -811,7 +808,7 @@ static void InitGameVersion(void)
     {
         // Determine automatically
 
-        if (gameversion == exe_chex) 
+        if (gameversion == exe_chex || gameversion == exe_hacx)
         {
             // Already determined
         }
@@ -896,6 +893,20 @@ static void LoadChexDeh(void)
     }
 }
 
+static void LoadHacxDeh(void)
+{
+    // If this is the HACX IWAD, we need to load the DEHACKED lump.
+
+    if (gameversion == exe_hacx)
+    {
+        if (!DEH_LoadLumpByName("DEHACKED"))
+        {
+            I_Error("DEHACKED lump not found.  Please check that this is the "
+                    "Hacx v1.2 IWAD.");
+        }
+    }
+}
+
 //
 // D_DoomMain
 //
@@ -919,7 +930,7 @@ void D_DoomMain (void)
 
     PrintBanner(PACKAGE_STRING);
 
-    printf (DEH_String("Z_Init: Init zone memory allocation daemon. \n"));
+    DEH_printf("Z_Init: Init zone memory allocation daemon. \n");
     Z_Init ();
 
 #ifdef FEATURE_MULTIPLAYER
@@ -939,6 +950,21 @@ void D_DoomMain (void)
     }
 
     //!
+    // @category net
+    //
+    // Query the Internet master server for a global list of active
+    // servers.
+    //
+
+    if (M_CheckParm("-search"))
+    {
+        printf("\nSearching for servers on Internet ...\n");
+        p = NET_MasterQuery(NET_QueryPrintCallback, NULL);
+        printf("\n%i server(s) found.\n", p);
+        exit(0);
+    }
+
+    //!
     // @arg <address>
     // @category net
     //
@@ -946,11 +972,12 @@ void D_DoomMain (void)
     // address.
     //
 
-    p = M_CheckParm("-query");
+    p = M_CheckParmWithArgs("-query", 1);
 
-    if (p > 0)
+    if (p)
     {
         NET_QueryAddress(myargv[p+1]);
+        exit(0);
     }
 
     //!
@@ -959,8 +986,13 @@ void D_DoomMain (void)
     // Search the local LAN for running servers.
     //
 
-    if (M_CheckParm("-search"))
-        NET_LANQuery();
+    if (M_CheckParm("-localsearch"))
+    {
+        printf("\nSearching for servers on local LAN ...\n");
+        p = NET_LANQuery(NET_QueryPrintCallback, NULL);
+        printf("\n%i server(s) found.\n", p);
+        exit(0);
+    }
 
 #endif
             
@@ -1036,7 +1068,7 @@ void D_DoomMain (void)
 	deathmatch = 2;
 
     if (devparm)
-	printf(DEH_String(D_DEVSTR));
+	DEH_printf(D_DEVSTR);
     
     // find which dir to use for config files
 
@@ -1062,7 +1094,7 @@ void D_DoomMain (void)
 	    scale = 10;
 	if (scale > 400)
 	    scale = 400;
-	printf (DEH_String("turbo scale: %i%%\n"),scale);
+        DEH_printf("turbo scale: %i%%\n", scale);
 	forwardmove[0] = forwardmove[0]*scale/100;
 	forwardmove[1] = forwardmove[1]*scale/100;
 	sidemove[0] = sidemove[0]*scale/100;
@@ -1070,14 +1102,14 @@ void D_DoomMain (void)
     }
     
     // init subsystems
-    printf (DEH_String("V_Init: allocate screens.\n"));
+    DEH_printf("V_Init: allocate screens.\n");
     V_Init ();
 
-    printf (DEH_String("M_LoadDefaults: Load system defaults.\n"));
+    DEH_printf("M_LoadDefaults: Load system defaults.\n");
     M_ApplyPlatformDefaults();
     M_LoadDefaults ();              // load before initing other systems
 
-    printf (DEH_String("W_Init: Init WADfiles.\n"));
+    DEH_printf("W_Init: Init WADfiles.\n");
     D_AddFile(iwadfile);
 
 #ifdef FEATURE_WAD_MERGE
@@ -1093,7 +1125,7 @@ void D_DoomMain (void)
     // into the main IWAD.  Multiple files may be specified.
     //
 
-    p = M_CheckParm("-merge");
+    p = M_CheckParmWithArgs("-merge", 1);
 
     if (p > 0)
     {
@@ -1119,7 +1151,7 @@ void D_DoomMain (void)
     // Simulates the behavior of NWT's -merge option.  Multiple files
     // may be specified.
 
-    p = M_CheckParm("-nwtmerge");
+    p = M_CheckParmWithArgs("-nwtmerge", 1);
 
     if (p > 0)
     {
@@ -1144,7 +1176,7 @@ void D_DoomMain (void)
     // the main IWAD directory.  Multiple files may be specified.
     //
 
-    p = M_CheckParm("-af");
+    p = M_CheckParmWithArgs("-af", 1);
 
     if (p > 0)
     {
@@ -1167,7 +1199,7 @@ void D_DoomMain (void)
     // into the main IWAD directory.  Multiple files may be specified.
     //
 
-    p = M_CheckParm("-as");
+    p = M_CheckParmWithArgs("-as", 1);
 
     if (p > 0)
     {
@@ -1189,7 +1221,7 @@ void D_DoomMain (void)
     // Equivalent to "-af <files> -as <files>".
     //
 
-    p = M_CheckParm("-aa");
+    p = M_CheckParmWithArgs("-aa", 1);
 
     if (p > 0)
     {
@@ -1213,7 +1245,7 @@ void D_DoomMain (void)
     // Load the specified PWAD files.
     //
 
-    p = M_CheckParm ("-file");
+    p = M_CheckParmWithArgs("-file", 1);
     if (p)
     {
 	// the parms after p are wadfile/lump names,
@@ -1232,40 +1264,6 @@ void D_DoomMain (void)
     // Debug:
 //    W_PrintDirectory();
 
-    // add any files specified on the command line with -file wadfile
-    // to the wad list
-    //
-    // convenience hack to allow -wart e m to add a wad file
-    // prepend a tilde to the filename so wadfile will be reloadable
-    p = M_CheckParm ("-wart");
-    if (p)
-    {
-	myargv[p][4] = 'p';     // big hack, change to -warp
-
-	// Map name handling.
-	switch (gamemode )
-	{
-	  case shareware:
-	  case retail:
-	  case registered:
-	    sprintf (file,"~"DEVMAPS"E%cM%c.wad",
-		     myargv[p+1][0], myargv[p+2][0]);
-	    printf("Warping to Episode %s, Map %s.\n",
-		   myargv[p+1],myargv[p+2]);
-	    break;
-	    
-	  case commercial:
-	  default:
-	    p = atoi (myargv[p+1]);
-	    if (p<10)
-	      sprintf (file,"~"DEVMAPS"cdata/map0%i.wad", p);
-	    else
-	      sprintf (file,"~"DEVMAPS"cdata/map%i.wad", p);
-	    break;
-	}
-	D_AddFile (file);
-    }
-
     //!
     // @arg <demo>
     // @category demo
@@ -1274,7 +1272,7 @@ void D_DoomMain (void)
     // Play back the demo named demo.lmp.
     //
 
-    p = M_CheckParm ("-playdemo");
+    p = M_CheckParmWithArgs ("-playdemo", 1);
 
     if (!p)
     {
@@ -1286,11 +1284,11 @@ void D_DoomMain (void)
         // Play back the demo named demo.lmp, determining the framerate
         // of the screen.
         //
-	p = M_CheckParm ("-timedemo");
+	p = M_CheckParmWithArgs("-timedemo", 1);
 
     }
 
-    if (p && p < myargc-1)
+    if (p)
     {
         if (!strcasecmp(myargv[p+1] + strlen(myargv[p+1]) - 4, ".lmp"))
         {
@@ -1327,6 +1325,7 @@ void D_DoomMain (void)
     D_IdentifyVersion();
     InitGameVersion();
     LoadChexDeh();
+    LoadHacxDeh();
     D_SetGameDescription();
     D_SetSaveGameDir();
 
@@ -1369,9 +1368,9 @@ void D_DoomMain (void)
     // 0 disables all monsters.
     //
 
-    p = M_CheckParm ("-skill");
+    p = M_CheckParmWithArgs("-skill", 1);
 
-    if (p && p < myargc-1)
+    if (p)
     {
 	startskill = myargv[p+1][0]-'1';
 	autostart = true;
@@ -1384,9 +1383,9 @@ void D_DoomMain (void)
     // Start playing on episode n (1-4)
     //
 
-    p = M_CheckParm ("-episode");
+    p = M_CheckParmWithArgs("-episode", 1);
 
-    if (p && p < myargc-1)
+    if (p)
     {
 	startepisode = myargv[p+1][0]-'0';
 	startmap = 1;
@@ -1403,12 +1402,11 @@ void D_DoomMain (void)
     // For multiplayer games: exit each level after n minutes.
     //
 
-    p = M_CheckParm ("-timer");
+    p = M_CheckParmWithArgs("-timer", 1);
 
-    if (p && p < myargc-1 && deathmatch)
+    if (p)
     {
 	timelimit = atoi(myargv[p+1]);
-	printf("timer: %i\n", timelimit);
     }
 
     //!
@@ -1420,10 +1418,8 @@ void D_DoomMain (void)
 
     p = M_CheckParm ("-avg");
 
-    if (p && p < myargc-1 && deathmatch)
+    if (p)
     {
-	printf(DEH_String("Austin Virtual Gaming: Levels will end "
-			  "after 20 minutes\n"));
 	timelimit = 20;
     }
 
@@ -1435,9 +1431,9 @@ void D_DoomMain (void)
     // (Doom 2)
     //
 
-    p = M_CheckParm ("-warp");
+    p = M_CheckParmWithArgs("-warp", 1);
 
-    if (p && p < myargc-1)
+    if (p)
     {
         if (gamemode == commercial)
             startmap = atoi (myargv[p+1]);
@@ -1481,9 +1477,9 @@ void D_DoomMain (void)
     // Load the game in slot s.
     //
 
-    p = M_CheckParm ("-loadgame");
+    p = M_CheckParmWithArgs("-loadgame", 1);
     
-    if (p && p < myargc-1)
+    if (p)
     {
         startloadgame = atoi(myargv[p+1]);
     }
@@ -1537,16 +1533,16 @@ void D_DoomMain (void)
 
     PrintDehackedBanners();
 
-    printf (DEH_String("M_Init: Init miscellaneous info.\n"));
+    DEH_printf("M_Init: Init miscellaneous info.\n");
     M_Init ();
 
-    printf (DEH_String("R_Init: Init DOOM refresh daemon - "));
+    DEH_printf("R_Init: Init DOOM refresh daemon - ");
     R_Init ();
 
-    printf (DEH_String("\nP_Init: Init Playloop state.\n"));
+    DEH_printf("\nP_Init: Init Playloop state.\n");
     P_Init ();
 
-    printf (DEH_String("I_Init: Setting up machine state.\n"));
+    DEH_printf("I_Init: Setting up machine state.\n");
     I_Init ();
 
 #ifdef FEATURE_MULTIPLAYER
@@ -1554,18 +1550,18 @@ void D_DoomMain (void)
     NET_Init ();
 #endif
 
-    printf (DEH_String("S_Init: Setting up sound.\n"));
+    DEH_printf("S_Init: Setting up sound.\n");
     S_Init (sfxVolume * 8, musicVolume * 8);
 
-    printf (DEH_String("D_CheckNetGame: Checking network game status.\n"));
+    DEH_printf("D_CheckNetGame: Checking network game status.\n");
     D_CheckNetGame ();
 
     PrintGameVersion();
 
-    printf (DEH_String("HU_Init: Setting up heads up display.\n"));
+    DEH_printf("HU_Init: Setting up heads up display.\n");
     HU_Init ();
 
-    printf (DEH_String("ST_Init: Init status bar.\n"));
+    DEH_printf("ST_Init: Init status bar.\n");
     ST_Init ();
 
     // If Doom II without a MAP01 lump, this is a store demo.  
@@ -1583,24 +1579,24 @@ void D_DoomMain (void)
     // Record a demo named x.lmp.
     //
 
-    p = M_CheckParm ("-record");
+    p = M_CheckParmWithArgs("-record", 1);
 
-    if (p && p < myargc-1)
+    if (p)
     {
 	G_RecordDemo (myargv[p+1]);
 	autostart = true;
     }
 
-    p = M_CheckParm ("-playdemo");
-    if (p && p < myargc-1)
+    p = M_CheckParmWithArgs("-playdemo", 1);
+    if (p)
     {
 	singledemo = true;              // quit after one demo
 	G_DeferedPlayDemo (demolumpname);
 	D_DoomLoop ();  // never returns
     }
 	
-    p = M_CheckParm ("-timedemo");
-    if (p && p < myargc-1)
+    p = M_CheckParmWithArgs("-timedemo", 1);
+    if (p)
     {
 	G_TimeDemo (demolumpname);
 	D_DoomLoop ();  // never returns

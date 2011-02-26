@@ -37,6 +37,11 @@ extern int vanilla_keyboard_mapping;
 
 extern int key_pause;
 
+// Multiplayer messages:
+
+extern int key_multi_msg;
+extern int key_multi_msgplayer[];
+
 // Menu keys:
 
 extern int key_menu_activate;
@@ -60,6 +65,7 @@ extern int key_menu_messages;
 extern int key_menu_qload;
 extern int key_menu_quit;
 extern int key_menu_gamma;
+extern int key_spy;
 
 extern int key_menu_incscreen;
 extern int key_menu_decscreen;
@@ -89,8 +95,11 @@ extern int key_weapon5;
 extern int key_weapon6;
 extern int key_weapon7;
 extern int key_weapon8;
+extern int key_prevweapon;
+extern int key_nextweapon;
 
 extern int key_message_refresh;
+extern int key_demo_quit;
 
 void ConfigKeyboard(void);
 

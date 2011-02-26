@@ -1589,16 +1589,16 @@ static void WI_loadUnloadData(load_callback_t callback)
     if (gamemode == commercial)
     {
 	for (i=0 ; i<NUMCMAPS ; i++)
-	{								
-	    sprintf(name, DEH_String("CWILV%2.2d"), i);
+	{
+	    DEH_snprintf(name, 9, "CWILV%2.2d", i);
             callback(name, &lnames[i]);
-	}					
+	}
     }
     else
     {
 	for (i=0 ; i<NUMMAPS ; i++)
 	{
-	    sprintf(name, DEH_String("WILV%d%d"), wbs->epsd, i);
+	    DEH_snprintf(name, 9, "WILV%d%d", wbs->epsd, i);
             callback(name, &lnames[i]);
 	}
 
@@ -1610,7 +1610,7 @@ static void WI_loadUnloadData(load_callback_t callback)
 
 	// splat
         callback(DEH_String("WISPLAT"), &splat[0]);
-	
+
 	if (wbs->epsd < 3)
 	{
 	    for (j=0;j<NUMANIMS[wbs->epsd];j++)
@@ -1619,17 +1619,16 @@ static void WI_loadUnloadData(load_callback_t callback)
 		for (i=0;i<a->nanims;i++)
 		{
 		    // MONDO HACK!
-		    if (wbs->epsd != 1 || j != 8) 
+		    if (wbs->epsd != 1 || j != 8)
 		    {
 			// animations
-			sprintf(name, DEH_String("WIA%d%.2d%.2d"), 
-				      wbs->epsd, j, i);  
+			DEH_snprintf(name, 9, "WIA%d%.2d%.2d", wbs->epsd, j, i);
                         callback(name, &a->p[i]);
 		    }
 		    else
 		    {
 			// HACK ALERT!
-			a->p[i] = anims[1][4].p[i]; 
+			a->p[i] = anims[1][4].p[i];
 		    }
 		}
 	    }
@@ -1642,7 +1641,7 @@ static void WI_loadUnloadData(load_callback_t callback)
     for (i=0;i<10;i++)
     {
 	 // numbers 0-9
-	sprintf(name, DEH_String("WINUM%d"), i);     
+	DEH_snprintf(name, 9, "WINUM%d", i);
         callback(name, &num[i]);
     }
 
@@ -1683,13 +1682,13 @@ static void WI_loadUnloadData(load_callback_t callback)
     callback(DEH_String("WICOLON"), &colon);
 
     // "time"
-    callback(DEH_String("WITIME"), &timepatch);   
+    callback(DEH_String("WITIME"), &timepatch);
 
     // "sucks"
-    callback(DEH_String("WISUCKS"), &sucks);  
+    callback(DEH_String("WISUCKS"), &sucks);
 
     // "par"
-    callback(DEH_String("WIPAR"), &par);   
+    callback(DEH_String("WIPAR"), &par);
 
     // "killers" (vertical)
     callback(DEH_String("WIKILRS"), &killers);
@@ -1698,16 +1697,16 @@ static void WI_loadUnloadData(load_callback_t callback)
     callback(DEH_String("WIVCTMS"), &victims);
 
     // "total"
-    callback(DEH_String("WIMSTT"), &total);   
+    callback(DEH_String("WIMSTT"), &total);
 
     for (i=0 ; i<MAXPLAYERS ; i++)
     {
 	// "1,2,3,4"
-	sprintf(name, DEH_String("STPB%d"), i);      
+	DEH_snprintf(name, 9, "STPB%d", i);
         callback(name, &p[i]);
 
 	// "1,2,3,4"
-	sprintf(name, DEH_String("WIBP%d"), i+1);     
+	DEH_snprintf(name, 9, "WIBP%d", i+1);
         callback(name, &bp[i]);
     }
 
@@ -1725,7 +1724,7 @@ void WI_loadData(void)
 
     if (gamemode == commercial)
     {
-	NUMCMAPS = 32;								
+	NUMCMAPS = 32;
 	lnames = (patch_t **) Z_Malloc(sizeof(patch_t*) * NUMCMAPS,
 				       PU_STATIC, NULL);
     }
@@ -1750,17 +1749,19 @@ void WI_loadData(void)
 
     if (gamemode == commercial)
     {
-	strcpy(bg_lumpname, DEH_String("INTERPIC"));
+	strncpy(bg_lumpname, DEH_String("INTERPIC"), 9);
+        bg_lumpname[8] = '\0';
     }
     else if (gamemode == retail && wbs->epsd == 3)
     {
-	strcpy(bg_lumpname, DEH_String("INTERPIC"));
+	strncpy(bg_lumpname, DEH_String("INTERPIC"), 9);
+        bg_lumpname[8] = '\0';
     }
-    else 
+    else
     {
-	sprintf(bg_lumpname, DEH_String("WIMAP%d"), wbs->epsd);
+	DEH_snprintf(bg_lumpname, 9, "WIMAP%d", wbs->epsd);
     }
-    
+
     bg = W_CacheLumpName(bg_lumpname, PU_CACHE);
     V_DrawPatch(0, 0, 1, bg);
 }

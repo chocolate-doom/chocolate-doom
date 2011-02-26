@@ -122,6 +122,7 @@ extern int key_menu_messages;
 extern int key_menu_qload;
 extern int key_menu_quit;
 extern int key_menu_gamma;
+extern int key_spy;
 
 extern int key_menu_incscreen;
 extern int key_menu_decscreen;
@@ -147,9 +148,15 @@ extern int key_weapon5;
 extern int key_weapon6;
 extern int key_weapon7;
 extern int key_weapon8;
+extern int key_prevweapon;
+extern int key_nextweapon;
 
 extern int key_message_refresh;
- 
+extern int key_demo_quit;
+
+extern int key_multi_msg;
+extern int key_multi_msgplayer[];
+
 extern int	mousebfire;
 extern int	mousebstrafe;
 extern int	mousebforward;
@@ -159,6 +166,9 @@ extern int      mousebstraferight;
 extern int      mousebbackward;
 extern int      mousebuse;
 
+extern int      mousebprevweapon;
+extern int      mousebnextweapon;
+
 extern int      dclick_use;
 
 extern int	joybfire;
@@ -167,6 +177,9 @@ extern int	joybuse;
 extern int	joybspeed;
 extern int      joybstrafeleft;
 extern int      joybstraferight;
+
+extern int      joybprevweapon;
+extern int      joybnextweapon;
 
 extern int	viewwidth;
 extern int	viewheight;
@@ -187,6 +200,7 @@ extern int      vanilla_demo_limit;
 extern int snd_musicdevice;
 extern int snd_sfxdevice;
 extern int snd_samplerate;
+extern int opl_io_port;
 
 // controls whether to use libsamplerate for sample rate conversions
 
@@ -204,6 +218,7 @@ static int snd_mport = 0;
 typedef enum 
 {
     DEFAULT_INT,
+    DEFAULT_INT_HEX,
     DEFAULT_STRING,
     DEFAULT_FLOAT,
     DEFAULT_KEY,
@@ -239,14 +254,19 @@ typedef struct
     char      *filename;
 } default_collection_t;
 
+#define CONFIG_VARIABLE_GENERIC(name, variable, type) \
+    { #name, &variable, type, 0, 0 }
+
 #define CONFIG_VARIABLE_KEY(name, variable) \
-    { #name, &variable, DEFAULT_KEY, 0, 0 }
+    CONFIG_VARIABLE_GENERIC(name, variable, DEFAULT_KEY)
 #define CONFIG_VARIABLE_INT(name, variable) \
-    { #name, &variable, DEFAULT_INT, 0, 0 }
+    CONFIG_VARIABLE_GENERIC(name, variable, DEFAULT_INT)
+#define CONFIG_VARIABLE_INT_HEX(name, variable) \
+    CONFIG_VARIABLE_GENERIC(name, variable, DEFAULT_INT_HEX)
 #define CONFIG_VARIABLE_FLOAT(name, variable) \
-    { #name, &variable, DEFAULT_FLOAT, 0, 0 }
+    CONFIG_VARIABLE_GENERIC(name, variable, DEFAULT_FLOAT)
 #define CONFIG_VARIABLE_STRING(name, variable) \
-    { #name, &variable, DEFAULT_STRING, 0, 0 }
+    CONFIG_VARIABLE_GENERIC(name, variable, DEFAULT_STRING)
 
 //! @begin_config_file default.cfg
 
@@ -596,6 +616,12 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(screen_height,             screen_height),
 
     //!
+    // Color depth of the screen, in bits.
+    //
+
+    CONFIG_VARIABLE_INT(screen_bpp,                screen_bpp),
+
+    //!
     // If this is non-zero, the mouse will be "grabbed" when running
     // in windowed mode so that it can be used as an input device.
     // When running full screen, this has no effect.
@@ -621,18 +647,25 @@ static default_t extra_defaults_list[] =
 
     //!
     // Mouse acceleration threshold.  When the speed of mouse movement
-    // exceeds this threshold value, the speed is multiplied by an 
+    // exceeds this threshold value, the speed is multiplied by an
     // acceleration factor (mouse_acceleration).
     //
 
     CONFIG_VARIABLE_INT(mouse_threshold,           mouse_threshold),
 
     //!
-    // Sound output sample rate, in Hz.  Typical values to use are 
+    // Sound output sample rate, in Hz.  Typical values to use are
     // 11025, 22050, 44100 and 48000.
     //
 
     CONFIG_VARIABLE_INT(snd_samplerate,            snd_samplerate),
+
+    //!
+    // The I/O port to use to access the OPL chip.  Only relevant when
+    // using native OPL music playback.
+    //
+
+    CONFIG_VARIABLE_INT_HEX(opl_io_port,           opl_io_port),
 
     //!
     // If non-zero, the ENDOOM screen is displayed when exiting the
@@ -729,6 +762,18 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joyb_straferight,          joybstraferight),
 
     //!
+    // Joystick button to cycle to the previous weapon.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_prevweapon,           joybprevweapon),
+
+    //!
+    // Joystick button to cycle to the next weapon.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_nextweapon,          joybnextweapon),
+
+    //!
     // Mouse button to strafe left.
     //
 
@@ -751,6 +796,18 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(mouseb_backward,           mousebbackward),
+
+    //!
+    // Mouse button to cycle to the previous weapon.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_prevweapon,         mousebprevweapon),
+
+    //!
+    // Mouse button to cycle to the next weapon.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_nextweapon,         mousebnextweapon),
 
     //!
     // If non-zero, double-clicking a mouse button acts like pressing
@@ -905,6 +962,12 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_menu_gamma,            key_menu_gamma),
 
     //!
+    // Keyboard shortcut to switch view in multiplayer.
+    //
+
+    CONFIG_VARIABLE_KEY(key_spy,                   key_spy),
+
+    //!
     // Keyboard shortcut to increase the screen size.
     //
 
@@ -1037,10 +1100,58 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_weapon8,               key_weapon8),
 
     //!
+    // Key to cycle to the previous weapon.
+    //
+
+    CONFIG_VARIABLE_KEY(key_prevweapon,            key_prevweapon),
+
+    //!
+    // Key to cycle to the next weapon.
+    //
+
+    CONFIG_VARIABLE_KEY(key_nextweapon,            key_nextweapon),
+
+    //!
     // Key to re-display last message.
     //
 
     CONFIG_VARIABLE_KEY(key_message_refresh,       key_message_refresh),
+
+    //!
+    // Key to quit the game when recording a demo.
+    //
+
+    CONFIG_VARIABLE_KEY(key_demo_quit,             key_demo_quit),
+
+    //!
+    // Key to send a message during multiplayer games.
+    //
+
+    CONFIG_VARIABLE_KEY(key_multi_msg,             key_multi_msg),
+
+    //!
+    // Key to send a message to the green player during multiplayer games.
+    //
+
+    CONFIG_VARIABLE_KEY(key_multi_msgplayer1,      key_multi_msgplayer[0]),
+
+    //!
+    // Key to send a message to the indigo player during multiplayer games.
+    //
+
+    CONFIG_VARIABLE_KEY(key_multi_msgplayer2,      key_multi_msgplayer[1]),
+
+    //!
+    // Key to send a message to the brown player during multiplayer games.
+    //
+
+    CONFIG_VARIABLE_KEY(key_multi_msgplayer3,      key_multi_msgplayer[2]),
+
+    //!
+    // Key to send a message to the red player during multiplayer games.
+    //
+
+    CONFIG_VARIABLE_KEY(key_multi_msgplayer4,      key_multi_msgplayer[3]),
 };
 
 static default_collection_t extra_defaults =
@@ -1106,8 +1217,18 @@ static void SaveDefaultCollection(default_collection_t *collection)
                 
                 v = * (int *) defaults[i].location;
 
-                if (defaults[i].untranslated
-                 && v == defaults[i].original_translated)
+                if (v == KEY_RSHIFT)
+                {
+                    // Special case: for shift, force scan code for
+                    // right shift, as this is what Vanilla uses.
+                    // This overrides the change check below, to fix
+                    // configuration files made by old versions that
+                    // mistakenly used the scan code for left shift.
+
+                    v = 54;
+                }
+                else if (defaults[i].untranslated
+                      && v == defaults[i].original_translated)
                 {
                     // Has not been changed since the last time we
                     // read the config file.
@@ -1136,6 +1257,10 @@ static void SaveDefaultCollection(default_collection_t *collection)
 
             case DEFAULT_INT:
 	        fprintf(f, "%i", * (int *) defaults[i].location);
+                break;
+
+            case DEFAULT_INT_HEX:
+	        fprintf(f, "0x%x", * (int *) defaults[i].location);
                 break;
 
             case DEFAULT_FLOAT:
@@ -1227,6 +1352,7 @@ static void LoadDefaultCollection(default_collection_t *collection)
                     break;
 
                 case DEFAULT_INT:
+                case DEFAULT_INT_HEX:
                     * (int *) def->location = ParseIntParameter(strparm);
                     break;
 
@@ -1293,9 +1419,9 @@ void M_LoadDefaults (void)
     // default.cfg.
     //
 
-    i = M_CheckParm ("-config");
+    i = M_CheckParmWithArgs("-config", 1);
 
-    if (i && i<myargc-1)
+    if (i)
     {
 	doom_defaults.filename = myargv[i+1];
 	printf ("	default file: %s\n",doom_defaults.filename);
@@ -1315,9 +1441,9 @@ void M_LoadDefaults (void)
     // of chocolate-doom.cfg.
     //
 
-    i = M_CheckParm("-extraconfig");
+    i = M_CheckParmWithArgs("-extraconfig", 1);
 
-    if (i && i<myargc-1)
+    if (i)
     {
         extra_defaults.filename = myargv[i+1];
         printf("        extra configuration file: %s\n", 
@@ -1479,6 +1605,27 @@ void M_ApplyPlatformDefaults(void)
           < SDL_VERSIONNUM(1, 2, 11))
         {
             snd_musicdevice = SNDDEVICE_NONE;
+        }
+    }
+#endif
+
+    // Windows Vista or later?  Set screen color depth to
+    // 32 bits per pixel, as 8-bit palettized screen modes
+    // don't work properly in recent versions.
+
+#if defined(_WIN32) && !defined(_WIN32_WCE)
+    {
+        OSVERSIONINFOEX version_info;
+
+        ZeroMemory(&version_info, sizeof(OSVERSIONINFOEX));
+        version_info.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+
+        GetVersionEx((OSVERSIONINFO *) &version_info);
+
+        if (version_info.dwPlatformId == VER_PLATFORM_WIN32_NT
+         && version_info.dwMajorVersion >= 6)
+        {
+            screen_bpp = 32;
         }
     }
 #endif

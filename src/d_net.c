@@ -200,8 +200,8 @@ void NetUpdate (void)
 	G_BuildTiccmd(&cmd);
 
 #ifdef FEATURE_MULTIPLAYER
-        
-        if (netgame && !demoplayback)
+
+        if (net_client_connected)
         {
             NET_CL_SendTiccmd(&cmd, maketic);
         }
@@ -254,6 +254,19 @@ void D_CheckNetGame (void)
 
     playeringame[0] = true;
 
+    //!
+    // @category net
+    //
+    // Start the game playing as though in a netgame with a single
+    // player.  This can also be used to play back single player netgame
+    // demos.
+    //
+
+    if (M_CheckParm("-solo-net") > 0)
+    {
+        netgame = true;
+    }
+
 #ifdef FEATURE_MULTIPLAYER
 
     {
@@ -270,6 +283,7 @@ void D_CheckNetGame (void)
             NET_SV_Init();
             NET_SV_AddModule(&net_loop_server_module);
             NET_SV_AddModule(&net_sdl_module);
+            NET_SV_RegisterWithMaster();
 
             net_loop_client_module.InitClient();
             addr = net_loop_client_module.ResolveAddress(NULL);
@@ -303,7 +317,7 @@ void D_CheckNetGame (void)
             // address.
             //
             
-            i = M_CheckParm("-connect");
+            i = M_CheckParmWithArgs("-connect", 1);
 
             if (i > 0)
             {
@@ -370,20 +384,30 @@ void D_CheckNetGame (void)
             ++num_players;
     }
 
-    printf (DEH_String("startskill %i  deathmatch: %i  startmap: %i  startepisode: %i\n"),
-	    startskill, deathmatch, startmap, startepisode);
+    DEH_printf("startskill %i  deathmatch: %i  startmap: %i  startepisode: %i\n",
+               startskill, deathmatch, startmap, startepisode);
 	
-    printf(DEH_String("player %i of %i (%i nodes)\n"),
-	    consoleplayer+1, num_players, num_players);
+    DEH_printf("player %i of %i (%i nodes)\n",
+               consoleplayer+1, num_players, num_players);
 
     // Show players here; the server might have specified a time limit
 
-    if (timelimit > 0)
+    if (timelimit > 0 && deathmatch)
     {
-	printf(DEH_String("Levels will end after %d minute"),timelimit);
-	if (timelimit > 1)
-	    printf("s");
-	printf(".\n");
+        // Gross hack to work like Vanilla:
+
+        if (timelimit == 20 && M_CheckParm("-avg"))
+        {
+            DEH_printf("Austin Virtual Gaming: Levels will end "
+                           "after 20 minutes\n");
+        }
+        else
+        {
+            DEH_printf("Levels will end after %d minute", timelimit);
+            if (timelimit > 1)
+                printf("s");
+            printf(".\n");
+        }
     }
 }
 
@@ -395,9 +419,6 @@ void D_CheckNetGame (void)
 //
 void D_QuitNetGame (void)
 {
-    if (debugfile)
-	fclose (debugfile);
-
 #ifdef FEATURE_MULTIPLAYER
 
     NET_SV_Shutdown();

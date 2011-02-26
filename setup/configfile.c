@@ -154,9 +154,10 @@ static int snd_sbirq = 0;
 static int snd_sbdma = 0;
 static int snd_mport = 0;
 
-typedef enum 
+typedef enum
 {
     DEFAULT_INT,
+    DEFAULT_INT_HEX,
     DEFAULT_STRING,
     DEFAULT_FLOAT,
     DEFAULT_KEY,
@@ -264,11 +265,13 @@ static default_t extra_defaults_list[] =
     {"startup_delay",               &startup_delay, DEFAULT_INT, 0, 0},
     {"screen_width",                &screen_width, DEFAULT_INT, 0, 0},
     {"screen_height",               &screen_height, DEFAULT_INT, 0, 0},
+    {"screen_bpp",                  &screen_bpp, DEFAULT_INT, 0, 0},
     {"grabmouse",                   &grabmouse, DEFAULT_INT, 0, 0},
     {"novert",                      &novert, DEFAULT_INT, 0, 0},
     {"mouse_acceleration",          &mouse_acceleration, DEFAULT_FLOAT, 0, 0},
     {"mouse_threshold",             &mouse_threshold, DEFAULT_INT, 0, 0},
     {"snd_samplerate",              &snd_samplerate, DEFAULT_INT, 0, 0},
+    {"opl_io_port",                 &opl_io_port, DEFAULT_INT_HEX, 0, 0},
     {"show_endoom",                 &show_endoom, DEFAULT_INT, 0, 0},
     {"vanilla_savegame_limit",      &vanilla_savegame_limit, DEFAULT_INT, 0, 0},
     {"vanilla_demo_limit",          &vanilla_demo_limit, DEFAULT_INT, 0, 0},
@@ -284,11 +287,15 @@ static default_t extra_defaults_list[] =
     {"joystick_y_invert",           &joystick_y_invert, DEFAULT_INT, 0, 0},
     {"joyb_strafeleft",             &joybstrafeleft, DEFAULT_INT, 0, 0},
     {"joyb_straferight",            &joybstraferight, DEFAULT_INT, 0, 0},
+    {"joyb_prevweapon",             &joybprevweapon, DEFAULT_INT, 0, 0},
+    {"joyb_nextweapon",             &joybnextweapon, DEFAULT_INT, 0, 0},
     {"dclick_use",                  &dclick_use, DEFAULT_INT, 0, 0},
     {"mouseb_strafeleft",           &mousebstrafeleft, DEFAULT_INT, 0, 0},
     {"mouseb_straferight",          &mousebstraferight, DEFAULT_INT, 0, 0},
     {"mouseb_use",                  &mousebuse, DEFAULT_INT, 0, 0},
     {"mouseb_backward",             &mousebbackward, DEFAULT_INT, 0, 0},
+    {"mouseb_prevweapon",           &mousebprevweapon, DEFAULT_INT, 0, 0},
+    {"mouseb_nextweapon",           &mousebnextweapon, DEFAULT_INT, 0, 0},
     {"use_libsamplerate",           &use_libsamplerate, DEFAULT_INT, 0, 0},
 
     {"key_pause",                   &key_pause, DEFAULT_KEY, 0, 0},
@@ -312,6 +319,7 @@ static default_t extra_defaults_list[] =
     {"key_menu_qload",              &key_menu_qload, DEFAULT_KEY, 0, 0},
     {"key_menu_quit",               &key_menu_quit, DEFAULT_KEY, 0, 0},
     {"key_menu_gamma",              &key_menu_gamma, DEFAULT_KEY, 0, 0},
+    {"key_spy",                     &key_spy, DEFAULT_KEY, 0, 0},
     {"key_menu_incscreen",          &key_menu_incscreen, DEFAULT_KEY, 0, 0},
     {"key_menu_decscreen",          &key_menu_decscreen, DEFAULT_KEY, 0, 0},
 
@@ -335,7 +343,15 @@ static default_t extra_defaults_list[] =
     {"key_weapon6",                 &key_weapon6, DEFAULT_KEY, 0, 0},
     {"key_weapon7",                 &key_weapon7, DEFAULT_KEY, 0, 0},
     {"key_weapon8",                 &key_weapon8, DEFAULT_KEY, 0, 0},
+    {"key_prevweapon",              &key_prevweapon, DEFAULT_KEY, 0, 0},
+    {"key_nextweapon",              &key_nextweapon, DEFAULT_KEY, 0, 0},
     {"key_message_refresh",         &key_message_refresh, DEFAULT_KEY, 0, 0},
+    {"key_demo_quit",               &key_demo_quit, DEFAULT_KEY, 0, 0},
+    {"key_multi_msg",               &key_multi_msg, DEFAULT_KEY, 0, 0},
+    {"key_multi_msgplayer1",        &key_multi_msgplayer[0], DEFAULT_KEY, 0, 0},
+    {"key_multi_msgplayer2",        &key_multi_msgplayer[1], DEFAULT_KEY, 0, 0},
+    {"key_multi_msgplayer3",        &key_multi_msgplayer[2], DEFAULT_KEY, 0, 0},
+    {"key_multi_msgplayer4",        &key_multi_msgplayer[3], DEFAULT_KEY, 0, 0},
 };
 
 static default_collection_t extra_defaults =
@@ -401,8 +417,18 @@ static void SaveDefaultCollection(default_collection_t *collection)
                 
                 v = * (int *) defaults[i].location;
 
-                if (defaults[i].untranslated
-                 && v == defaults[i].original_translated)
+                if (v == KEY_RSHIFT)
+                {
+                    // Special case: for shift, force scan code for
+                    // right shift, as this is what Vanilla uses.
+                    // This overrides the change check below, to fix
+                    // configuration files made by old versions that
+                    // mistakenly used the scan code for left shift.
+
+                    v = 54;
+                }
+                else if (defaults[i].untranslated
+                      && v == defaults[i].original_translated)
                 {
                     // Has not been changed since the last time we
                     // read the config file.
@@ -427,6 +453,10 @@ static void SaveDefaultCollection(default_collection_t *collection)
                 }
 
 	        fprintf(f, "%i", v);
+                break;
+
+            case DEFAULT_INT_HEX:
+	        fprintf(f, "0x%x", * (int *) defaults[i].location);
                 break;
 
             case DEFAULT_INT:
@@ -522,6 +552,7 @@ static void LoadDefaultCollection(default_collection_t *collection)
                     break;
 
                 case DEFAULT_INT:
+                case DEFAULT_INT_HEX:
                     * (int *) def->location = ParseIntParameter(strparm);
                     break;
 
@@ -744,6 +775,27 @@ void M_ApplyPlatformDefaults(void)
           < SDL_VERSIONNUM(1, 2, 11))
         {
             snd_musicdevice = SNDDEVICE_NONE;
+        }
+    }
+#endif
+
+    // Windows Vista or later?  Set screen color depth to
+    // 32 bits per pixel, as 8-bit palettized screen modes
+    // don't work properly in recent versions.
+
+#if defined(_WIN32) && !defined(_WIN32_WCE)
+    {
+        OSVERSIONINFOEX version_info;
+
+        ZeroMemory(&version_info, sizeof(OSVERSIONINFOEX));
+        version_info.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
+
+        GetVersionEx((OSVERSIONINFO *) &version_info);
+
+        if (version_info.dwPlatformId == VER_PLATFORM_WIN32_NT
+         && version_info.dwMajorVersion >= 6)
+        {
+            screen_bpp = 32;
         }
     }
 #endif

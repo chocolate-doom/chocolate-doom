@@ -64,6 +64,7 @@ int key_menu_messages  = KEY_F8;
 int key_menu_qload     = KEY_F9;
 int key_menu_quit      = KEY_F10;
 int key_menu_gamma     = KEY_F11;
+int key_spy            = KEY_F12;
 
 int key_menu_incscreen = KEY_EQUALS;
 int key_menu_decscreen = KEY_MINUS;
@@ -89,8 +90,14 @@ int key_weapon5        = '5';
 int key_weapon6        = '6';
 int key_weapon7        = '7';
 int key_weapon8        = '8';
+int key_prevweapon     = 0;
+int key_nextweapon     = 0;
 
 int key_message_refresh = KEY_ENTER;
+int key_demo_quit      = 'q';
+
+int key_multi_msg      = 't';
+int key_multi_msgplayer[] = { 'g', 'i', 'b', 'r' };
 
 int vanilla_keyboard_mapping = 1;
 
@@ -104,7 +111,8 @@ static int *controls[] = { &key_left, &key_right, &key_up, &key_down,
                            &key_pause,
                            &key_weapon1, &key_weapon2, &key_weapon3,
                            &key_weapon4, &key_weapon5, &key_weapon6,
-                           &key_weapon7, &key_weapon8, NULL };
+                           &key_weapon7, &key_weapon8,
+                           &key_prevweapon, &key_nextweapon, NULL };
 
 static int *menu_nav[] = { &key_menu_activate, &key_menu_up, &key_menu_down,
                            &key_menu_left, &key_menu_right, &key_menu_back,
@@ -112,10 +120,12 @@ static int *menu_nav[] = { &key_menu_activate, &key_menu_up, &key_menu_down,
 
 static int *shortcuts[] = { &key_menu_help, &key_menu_save, &key_menu_load,
                             &key_menu_volume, &key_menu_detail, &key_menu_qsave,
-                            &key_menu_endgame, &key_menu_messages,
+                            &key_menu_endgame, &key_menu_messages, &key_spy,
                             &key_menu_qload, &key_menu_quit, &key_menu_gamma,
                             &key_menu_incscreen, &key_menu_decscreen, 
-                            &key_message_refresh, NULL };
+                            &key_message_refresh, &key_multi_msg,
+                            &key_multi_msgplayer[0], &key_multi_msgplayer[1],
+                            &key_multi_msgplayer[2], &key_multi_msgplayer[3] };
 
 static int *map_keys[] = { &key_map_north, &key_map_south, &key_map_east,
                            &key_map_west, &key_map_zoomin, &key_map_zoomout,
@@ -233,6 +243,8 @@ static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddKeyControl(table, "Weapon 6",              &key_weapon6);
     AddKeyControl(table, "Weapon 7",              &key_weapon7);
     AddKeyControl(table, "Weapon 8",              &key_weapon8);
+    AddKeyControl(table, "Previous weapon",       &key_prevweapon);
+    AddKeyControl(table, "Next weapon",           &key_nextweapon);
 
     TXT_AddWidgets(table, TXT_NewStrut(0, 1),
                           TXT_NewStrut(0, 1),
@@ -268,11 +280,25 @@ static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddKeyControl(table, "Quick load",            &key_menu_qload);
     AddKeyControl(table, "Quit game",             &key_menu_quit);
     AddKeyControl(table, "Toggle gamma",          &key_menu_gamma);
+    AddKeyControl(table, "Multiplayer spy",       &key_spy);
 
     AddKeyControl(table, "Increase screen size",  &key_menu_incscreen);
     AddKeyControl(table, "Decrease screen size",  &key_menu_decscreen);
 
     AddKeyControl(table, "Display last message",  &key_message_refresh);
+    AddKeyControl(table, "Finish recording demo", &key_demo_quit);
+
+    TXT_AddWidgets(table, TXT_NewStrut(0, 1),
+                          TXT_NewStrut(0, 1),
+                          TXT_NewLabel(" - Multiplayer - "),
+                          TXT_NewStrut(0, 0),
+                          NULL);
+
+    AddKeyControl(table, "Send message",          &key_multi_msg);
+    AddKeyControl(table, "- to green",            &key_multi_msgplayer[0]);
+    AddKeyControl(table, "- to indigo",           &key_multi_msgplayer[1]);
+    AddKeyControl(table, "- to brown",            &key_multi_msgplayer[2]);
+    AddKeyControl(table, "- to red",              &key_multi_msgplayer[3]);
 
     TXT_AddWidgets(table, TXT_NewStrut(0, 1),
                           TXT_NewStrut(0, 1),

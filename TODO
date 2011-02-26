@@ -1,6 +1,5 @@
 Currently in progress:
 
-* OPL MIDI playback (see: opl-branch)
 * Heretic/Hexen support (see: raven-branch)
 * Strife support (see: strife-branch)
 
@@ -35,4 +34,23 @@ Crazy pie in the sky ideas:
   automatically download and play speedruns.
 * DWANGO-like interface for finding players and setting up games.
 * Video capture mode?
+
+== OPL TODO list ==
+
+Needs research:
+
+ * Strategy when no more voices are available is still wrong
+ * Scale levels don't exactly match Vanilla (off-by-one?)
+
+Bad MIDIs:
+
+ * doom2.wad MAP01
+ * gothicdm MAP05
+ * tnt.wad MAP30
+ * Alien Vendetta (title screen, MAP01, etc)
+
+Other tasks:
+
+ * Get a better software OPL emulator
+ * DMXOPTIONS opl3/phase option support.
 

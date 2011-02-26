@@ -44,6 +44,7 @@ extern int snd_musicdevice;
 extern int musicVolume;
 
 extern int snd_samplerate;
+extern int opl_io_port;
 
 extern int use_libsamplerate;
 

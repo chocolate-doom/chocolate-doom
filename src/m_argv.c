@@ -47,17 +47,22 @@ char**		myargv;
 // or 0 if not present
 //
 
-int M_CheckParm (char *check)
+int M_CheckParmWithArgs(char *check, int num_args)
 {
-    int		i;
+    int i;
 
-    for (i = 1;i<myargc;i++)
+    for (i = 1; i < myargc - num_args; i++)
     {
-	if ( !strcasecmp(check, myargv[i]) )
+	if (!strcasecmp(check, myargv[i]))
 	    return i;
     }
 
     return 0;
+}
+
+int M_CheckParm(char *check)
+{
+    return M_CheckParmWithArgs(check, 0);
 }
 
 #define MAXARGVS        100
@@ -74,9 +79,9 @@ static void LoadResponseFile(int argv_index)
     int i, k;
 
     response_filename = myargv[argv_index] + 1;
-		
+
     // Read the response file into memory
-    handle = fopen(response_filename, "r");
+    handle = fopen(response_filename, "rb");
 
     if (handle == NULL)
     {
@@ -89,12 +94,17 @@ static void LoadResponseFile(int argv_index)
     size = M_FileLength(handle);
 
     // Read in the entire file
-    // Allocate one byte extra - this is incase there is an argument
+    // Allocate one byte extra - this is in case there is an argument
     // at the end of the response file, in which case a '\0' will be 
     // needed.
 
     file = malloc(size + 1);
-    fread(file, size, 1, handle);
+
+    if (fread(file, 1, size, handle) < size)
+    {
+        I_Error("Failed to read entire response file");
+    }
+
     fclose(handle);
 
     // Create new arguments list array

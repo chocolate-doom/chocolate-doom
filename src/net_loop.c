@@ -137,9 +137,16 @@ static void NET_CL_FreeAddress(net_addr_t *addr)
 
 static net_addr_t *NET_CL_ResolveAddress(char *address)
 {
-    client_addr.module = &net_loop_client_module;
+    if (address == NULL)
+    {
+        client_addr.module = &net_loop_client_module;
 
-    return &client_addr;
+        return &client_addr;
+    }
+    else
+    {
+        return NULL;
+    }
 }
 
 net_module_t net_loop_client_module =
@@ -206,8 +213,15 @@ static void NET_SV_FreeAddress(net_addr_t *addr)
 
 static net_addr_t *NET_SV_ResolveAddress(char *address)
 {
-    server_addr.module = &net_loop_server_module;
-    return &server_addr;
+    if (address == NULL)
+    {
+        server_addr.module = &net_loop_server_module;
+        return &server_addr;
+    }
+    else
+    {
+        return NULL;
+    }
 }
 
 net_module_t net_loop_server_module =

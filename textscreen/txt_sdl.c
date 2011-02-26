@@ -119,6 +119,22 @@ static SDL_Color ega_colors[] =
 
 #endif
 
+static txt_font_t *FontForName(char *name)
+{
+    if (!strcmp(name, "small"))
+    {
+        return &small_font;
+    }
+    else if (!strcmp(name, "normal"))
+    {
+        return &main_font;
+    }
+    else
+    {
+        return NULL;
+    }
+}
+
 //
 // Select the font to use, based on screen resolution
 //
@@ -129,9 +145,22 @@ static SDL_Color ega_colors[] =
 static void ChooseFont(void)
 {
     SDL_Rect **modes;
+    char *env;
     int i;
 
-    font = &main_font;
+    // Allow normal selection to be overridden from an environment variable:
+
+    env = getenv("TEXTSCREEN_FONT");
+
+    if (env != NULL)
+    {
+        font = FontForName(env);
+
+        if (font != NULL)
+        {
+            return;
+        }
+    }
 
     // Check all modes
 
@@ -139,6 +168,8 @@ static void ChooseFont(void)
 
     // If in doubt and we can't get a list, always prefer to
     // fall back to the normal font:
+
+    font = &main_font;
 
     if (modes == NULL || modes == (SDL_Rect **) -1 || *modes == NULL)
     {
@@ -352,10 +383,6 @@ static int TranslateKey(SDL_keysym *sym)
         case SDLK_DELETE:      return KEY_DEL;
 
         case SDLK_PAUSE:       return KEY_PAUSE;
-
-#if !SDL_VERSION_ATLEAST(1, 3, 0)
-        case SDLK_EQUALS:      return KEY_EQUALS;
-#endif
 
         case SDLK_LSHIFT:
         case SDLK_RSHIFT:

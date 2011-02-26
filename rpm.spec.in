@@ -49,12 +49,14 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %doc %{_mandir}/man5/*
 %doc %{_mandir}/man6/*
-%doc NEWS
-%doc AUTHORS
 %doc README
 %doc README.OPL
+%doc INSTALL
+%doc NEWS
+%doc AUTHORS
 %doc COPYING
 %doc CMDLINE
 %doc BUGS
+%doc NOT-BUGS
 /usr/games/*
 

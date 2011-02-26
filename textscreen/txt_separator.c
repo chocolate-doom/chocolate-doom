@@ -82,6 +82,7 @@ static void TXT_SeparatorDestructor(TXT_UNCAST_ARG(separator))
 
 txt_widget_class_t txt_separator_class =
 {
+    TXT_NeverSelectable,
     TXT_SeparatorSizeCalc,
     TXT_SeparatorDrawer,
     NULL,
@@ -97,7 +98,6 @@ txt_separator_t *TXT_NewSeparator(char *label)
     separator = malloc(sizeof(txt_separator_t));
 
     TXT_InitWidget(separator, &txt_separator_class);
-    separator->widget.selectable = 0;
 
     if (label != NULL)
     {

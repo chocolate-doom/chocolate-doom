@@ -27,6 +27,8 @@
 #ifndef DEH_MAIN_H
 #define DEH_MAIN_H
 
+#include <stdio.h>
+
 #include "doomtype.h"
 #include "doomfeatures.h"
 #include "md5.h"
@@ -40,6 +42,8 @@
 
 void DEH_Init(void);
 int DEH_LoadFile(char *filename);
+int DEH_LoadLump(int lumpnum);
+int DEH_LoadLumpByName(char *name);
 
 boolean DEH_ParseAssignment(char *line, char **variable_name, char **value);
 
@@ -52,10 +56,16 @@ void DEH_Checksum(md5_digest_t digest);
 #ifdef FEATURE_DEHACKED
 
 char *DEH_String(char *s);
+void DEH_printf(char *fmt, ...);
+void DEH_fprintf(FILE *fstream, char *fmt, ...);
+void DEH_snprintf(char *buffer, size_t len, char *fmt, ...);
 
 #else
 
 #define DEH_String(x) (x)
+#define DEH_printf printf
+#define DEH_fprintf fprintf
+#define DEH_snprintf snprintf
 
 #endif
 

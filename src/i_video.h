@@ -28,10 +28,11 @@
 #ifndef __I_VIDEO__
 #define __I_VIDEO__
 
-
 #include "doomtype.h"
 
-typedef struct 
+#define MAX_MOUSE_BUTTONS 8
+
+typedef struct
 {
         // Screen width and height
 
@@ -88,6 +89,7 @@ extern char *video_driver;
 extern int autoadjust_video_settings;
 extern boolean screenvisible;
 extern int screen_width, screen_height;
+extern int screen_bpp;
 extern int fullscreen;
 extern int aspect_ratio_correct;
 extern int grabmouse;

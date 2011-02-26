@@ -258,7 +258,6 @@ extern  int		maxammo[NUMAMMO];
 // File handling stuff.
 extern  char *          savegamedir;
 extern	char		basedefault[1024];
-extern  FILE*		debugfile;
 
 // if true, load all graphics at level load
 extern  boolean         precache;

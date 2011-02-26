@@ -91,7 +91,7 @@ static void GetMouseButtonDescription(int button, char *buf)
             strcpy(buf, "MID");
             break;
         default:
-            sprintf(buf, "BUTTON #%i", button);
+            sprintf(buf, "BUTTON #%i", button + 1);
             break;
     }
 }
@@ -153,7 +153,7 @@ static int TXT_MouseInputKeyPress(TXT_UNCAST_ARG(mouse_input), int mouse)
 static void TXT_MouseInputMousePress(TXT_UNCAST_ARG(widget), int x, int y, int b)
 {
     TXT_CAST_ARG(txt_mouse_input_t, widget);
-            
+
     // Clicking is like pressing enter
 
     if (b == TXT_MOUSE_LEFT)
@@ -164,6 +164,7 @@ static void TXT_MouseInputMousePress(TXT_UNCAST_ARG(widget), int x, int y, int b
 
 txt_widget_class_t txt_mouse_input_class =
 {
+    TXT_AlwaysSelectable,
     TXT_MouseInputSizeCalc,
     TXT_MouseInputDrawer,
     TXT_MouseInputKeyPress,
