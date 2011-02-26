@@ -329,7 +329,7 @@ static void F_DoSlideShow(void)
         break;
 
     case SLIDE_GOODEND1: // state #10
-        slideshow_panel = DEH_String("SS4F2");
+        slideshow_panel = DEH_String("SS4F1");
         S_StartMusic(mus_happy);
         I_StartVoice(DEH_String("RIE01"));
         slideshow_state = SLIDE_GOODEND2;

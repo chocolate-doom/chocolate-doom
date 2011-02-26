@@ -244,8 +244,10 @@ boolean P_GiveBody(player_t* player, int num)
 
     maxhealth = MAXHEALTH + player->stamina;
 
-    if(num >= 0) // haleyjd 09/23/10: fixed to give proper amount of health
+    if(num >= 0) // haleyjd 20100923: fixed to give proper amount of health
     {
+        mobj_t *mo; // haleyjd 20110225: needed below...
+
         // any healing to do?
         if(player->health >= maxhealth)
             return false;
@@ -256,7 +258,11 @@ boolean P_GiveBody(player_t* player, int num)
             player->health = maxhealth;
 
         // Set mo->health for consistency.
-        player->mo->health = player->health;
+        // haleyjd 20110225: Seems Strife can call this on a NULL player->mo
+        // when giving items to players that are not in the game...
+        // STRIFE-FIXME: needs major verification!
+        mo = P_SubstNullMobj(player->mo);
+        mo->health = player->health;
     }
     else
     {
