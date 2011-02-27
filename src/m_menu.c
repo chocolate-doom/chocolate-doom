@@ -1428,6 +1428,10 @@ M_WriteText
 // CONTROL PANEL
 //
 
+int G_ClearMaxVis();	// d_main.c
+int G_MoveMaxVis();	// d_main.c
+int G_CRLWriteLog();	// d_main.c
+
 //
 // M_Responder
 //
@@ -1624,10 +1628,32 @@ boolean M_Responder (event_t* ev)
 	return true;
     }
 
-    if (devparm && key == key_menu_help)
+	// GhostlyDeath <February 26, 2011> -- F1: Always screenshot on help key
+    if (key == key_menu_help)
     {
 	G_ScreenShot ();
 	return true;
+    }
+    
+    // GhostlyDeath <February 26, 2011> -- F2: Clear max visplane
+    else if (key == key_menu_save)
+    {
+    	G_ClearMaxVis();
+    	return true;
+    }
+    
+    // GhostlyDeath <February 26, 2011> -- F3: Clear max visplane
+    else if (key == key_menu_load)
+    {
+    	G_MoveMaxVis();
+    	return true;
+    }
+    
+    // GhostlyDeath <February 26, 2011> -- F4: Write to log
+    else if (key == key_menu_volume)
+    {
+    	G_CRLWriteLog();
+    	return true;
     }
 
     // F-Keys

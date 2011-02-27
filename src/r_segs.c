@@ -370,6 +370,7 @@ void R_RenderSegLoop (void)
 
 
 
+extern int ActualDrawSegs;
 
 //
 // R_StoreWallRange
@@ -386,6 +387,9 @@ R_StoreWallRange
     angle_t		distangle, offsetangle;
     fixed_t		vtop;
     int			lightnum;
+    
+    // Increment actual
+    ActualDrawSegs++;
 
     // don't overflow and crash
     if (ds_p == &drawsegs[MAXDRAWSEGS])

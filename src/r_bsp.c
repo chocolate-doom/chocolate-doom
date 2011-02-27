@@ -61,13 +61,14 @@ R_StoreWallRange
   int	stop );
 
 
-
+extern int ActualDrawSegs;
 
 //
 // R_ClearDrawSegs
 //
 void R_ClearDrawSegs (void)
 {
+	ActualDrawSegs = 0;
     ds_p = drawsegs;
 }
 

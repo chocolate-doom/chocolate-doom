@@ -729,7 +729,7 @@ AM_Responder
             rc = false;
         }
 
-	if (!deathmatch && cht_CheckCheat(&cheat_amap, ev->data2))
+	if (cht_CheckCheat(&cheat_amap, ev->data2))
 	{
 	    rc = false;
 	    cheating = (cheating+1) % 3;

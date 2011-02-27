@@ -589,6 +589,7 @@ byte*			ds_source;
 // just for profiling
 int			dscount;
 
+int VSOverflash = 0;
 
 //
 // Draws the actual span.
@@ -636,7 +637,7 @@ void R_DrawSpan (void)
 
 	// Lookup pixel from flat texture tile,
 	//  re-index using light/colormap.
-	*dest++ = ds_colormap[ds_source[spot]];
+	*dest++ = (VSOverflash ? 176 : ds_colormap[ds_source[spot]]);
 
         position += step;
 
@@ -763,8 +764,8 @@ void R_DrawSpanLow (void)
 
 	// Lowres/blocky mode does it twice,
 	//  while scale is adjusted appropriately.
-	*dest++ = ds_colormap[ds_source[spot]];
-	*dest++ = ds_colormap[ds_source[spot]];
+	*dest++ = (VSOverflash ? 176 : ds_colormap[ds_source[spot]]);
+	*dest++ = (VSOverflash ? 176 : ds_colormap[ds_source[spot]]);
 
 	position += step;
 

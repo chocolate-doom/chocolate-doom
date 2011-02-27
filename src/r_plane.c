@@ -105,6 +105,7 @@ void R_InitPlanes (void)
   // Doh!
 }
 
+extern int VSOverflash;
 
 //
 // R_MapPlane
@@ -243,6 +244,14 @@ R_FindPlane
 			
     if (check < lastvisplane)
 	return check;
+	
+	// GhostlyDeath <February 26, 2011> -- Add flash effect to overflowers with red
+	if (lastvisplane - visplanes >= NORMMAXVISPLANES)
+		check->flashy = 1;
+	
+	// GhostlyDeath <February 26, 2011> -- Otherwise do nothing
+	else
+		check->flashy = 0;
 
     if (lastvisplane - visplanes == MAXVISPLANES)
     {
@@ -458,6 +467,11 @@ void R_DrawPlanes (void)
 	pl->top[pl->minx-1] = 0xff;
 		
 	stop = pl->maxx + 1;
+	
+	if (gametic & 1)
+		VSOverflash = pl->flashy;
+	else
+		VSOverflash = 0;
 
 	for (x=pl->minx ; x<= stop ; x++)
 	{

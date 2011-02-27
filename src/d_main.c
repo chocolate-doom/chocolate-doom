@@ -209,6 +209,121 @@ void D_ProcessEvents (void)
     }
 }
 
+int ActualDrawSegs = 0;
+
+int MaxPlaneCount = 0;
+fixed_t MaxPlanePos[3] = {0, 0, 0};
+angle_t MaxPlaneAng = 0;
+
+int G_ClearMaxVis()
+{
+	MaxPlaneCount = 0;
+	MaxPlaneAng = 0;
+	memset(MaxPlanePos, 0, sizeof(MaxPlanePos));
+	return 0;
+}
+
+int G_MoveMaxVis()
+{
+	subsector_t* ss;
+	
+	ss = R_PointInSubsector(MaxPlanePos[0], MaxPlanePos[1]);
+	
+	P_UnsetThingPosition(players[displayplayer].mo);
+	players[displayplayer].mo->x = MaxPlanePos[0];
+	players[displayplayer].mo->y = MaxPlanePos[1];
+	players[displayplayer].mo->z = MaxPlanePos[2];
+	players[displayplayer].mo->momx = players[displayplayer].mo->momy = players[displayplayer].mo->momz = 0;
+	players[displayplayer].mo->angle = MaxPlaneAng;
+    players[displayplayer].mo->floorz = ss->sector->floorheight;
+    players[displayplayer].mo->ceilingz = ss->sector->ceilingheight;
+	P_SetThingPosition(players[displayplayer].mo);
+	return 0;
+}
+
+int G_CRLWriteLog()
+{
+	// Write info
+	unsigned int nwfactor;
+	unsigned int nwtest;
+	char buffer[128];
+	char *status;
+	int rl_pos;
+	int flash_color, flash_color2;
+	FILE* log;
+	
+	log = fopen("crl-log.txt", "a+t");
+	
+	if (log)
+	{
+		// UNIX Time
+		fprintf(log, "\n>> %i\n", time(NULL));
+		
+	    nwtest = (unsigned)(MaxPlaneAng) >> FRACBITS;
+	    nwfactor = nwtest / 180;
+		fprintf(log, "Most vis %i at x=%i y=%i vz=%i a=%i am=%i\n",
+			MaxPlaneCount,
+		    (int)(MaxPlanePos[0]) >> FRACBITS,
+		    (int)(MaxPlanePos[1]) >> FRACBITS,
+		    (int)(MaxPlanePos[1]) >> FRACBITS,
+		    nwtest,
+		    nwfactor);
+		
+		// Player Pos
+		if (players[displayplayer].mo)
+		{
+		    // what direction kinda?
+		    nwtest = (unsigned)(players[displayplayer].mo->angle) >> FRACBITS;
+		    nwfactor = nwtest / 180;
+		    // display player
+		    fprintf(log, "Play x=%i y=%i vz=%i a=%i am=%i\n",
+		        (int)(players[displayplayer].mo->x) >> FRACBITS,
+		        (int)(players[displayplayer].mo->y) >> FRACBITS,
+		        (int)(players[displayplayer].viewz) >> FRACBITS,
+		        nwtest,
+		        nwfactor);
+		}
+
+		// openings:
+
+		fprintf(log, "PLT: %i/%i\n", numplats, MAXPLATS);
+
+		// visplanes:
+
+		if ((int)(lastvisplane - visplanes) < 128)
+		    status = "";
+		else if ((int)(lastvisplane - visplanes) == 128)
+		    // visplane
+		    status = "===";
+		else
+		    status = "!!!";
+
+		fprintf(log, "PLN: %i/%i (MAX: %i) %s\n",
+		        lastvisplane - visplanes, NORMMAXVISPLANES, MaxPlaneCount, status);
+		
+		// drawsegs
+		if (ActualDrawSegs >= NORMMAXDRAWSEGS)
+		    status = "HOM";
+		else
+		    status = "";
+
+		fprintf(log, "SEG: %i/%i %s\n",
+		                ActualDrawSegs, NORMMAXDRAWSEGS, status);
+
+		// opening
+		fprintf(log, "OPN: %i/%i\n", lastopening - openings, MAXOPENINGS);
+
+		// vissprites
+		fprintf(log, "SPR: %i/%i\n", (vissprite_p - vissprites) + 1, MAXVISSPRITES);
+		
+		// Close	
+		fprintf(log, "\n");
+		fclose(log);
+		
+		players[consoleplayer].message = DEH_String("Wrote to log!");
+	}
+}
+
 static void DrawRenderLimits(void)
 {
     unsigned int nwfactor;
@@ -276,14 +391,29 @@ static void DrawRenderLimits(void)
         V_DrawRect(0, rl_pos-10, 200, 8, flash_color);
         status = "!!!";
     }
+    
+    // Overflow?
+    if ((int)(lastvisplane - visplanes) > MaxPlaneCount)
+    {
+    	// Set count
+    	MaxPlaneCount = (int)(lastvisplane - visplanes);
+    	
+    	// Set position
+    	MaxPlanePos[0] = players[displayplayer].mo->x;
+    	MaxPlanePos[1] = players[displayplayer].mo->y;
+    	MaxPlanePos[2] = players[displayplayer].mo->z;
+    	
+    	// Set angle
+    	MaxPlaneAng = players[displayplayer].mo->angle;
+    }
 
-    sprintf(buffer, "PLN: %i/%i (Doom = 128) %s",
-            lastvisplane - visplanes, MAXVISPLANES, status);
+    sprintf(buffer, "PLN: %i/%i (MAX: %i) %s ",
+            lastvisplane - visplanes, NORMMAXVISPLANES, MaxPlaneCount, status);
 
     M_WriteText(0, rl_pos - 10, buffer);
 
     // drawsegs
-    if (ds_p - drawsegs >= MAXDRAWSEGS)
+    if (ActualDrawSegs >= NORMMAXDRAWSEGS)
     {
         V_DrawRect(0, rl_pos-20, 200, 8, flash_color);
         status = "HOM";
@@ -294,7 +424,7 @@ static void DrawRenderLimits(void)
     }
 
     sprintf(buffer, "SEG: %i/%i %s",
-                    ds_p - drawsegs, MAXDRAWSEGS, status);
+                    ActualDrawSegs, NORMMAXDRAWSEGS, status);
     M_WriteText(0, rl_pos - 20, buffer);
 
     // opening

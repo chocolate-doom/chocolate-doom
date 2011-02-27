@@ -1,0 +1,24 @@
+Chocorenderlimits by GhostlyDeath <ghostlydeath@gmail.com>
+
+For those determined vanilla mappers who believe you don't need Boom or anything else.
+
+This modifcation shows you how bad of a job you did making a vanilla compatible
+map that will cause anguish and pain amongst your peers getting visplane overflows.
+Where you frustrate and have no clue where the hell it exactly overflows, you find
+it very very difficult.
+
+Well, this makes life easier, which means gray hair later on in life.
+
+Cool key binds
+
+F1 = Screenshot
+F2 = Clear max visplane mark
+F3 = Warp to max visplane mark
+F4 = Send something to some file
+
+You can cheat in nightmare and in multiplayer (this is map testing)
+
+F4 makes "crl-log.txt" containing something to the lines of:
+
+The code is horribly written, it is only for test purposes not an actual game.
+

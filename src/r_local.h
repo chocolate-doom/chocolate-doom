@@ -51,7 +51,9 @@
 #include "r_draw.h"
 #include "p_spec.h"
 
-#define MAXVISPLANES	256
+#define NORMMAXVISPLANES	128			// Normal visplane limit in doom
+#define MAXVISPLANES		1024		// Chocorenderlimits visplane max
+
 extern visplane_t		visplanes[MAXVISPLANES];
 extern visplane_t*		lastvisplane;
 #define MAXOPENINGS	SCREENWIDTH*64

@@ -54,6 +54,7 @@
 #define SIL_TOP			2
 #define SIL_BOTH		3
 
+#define NORMMAXDRAWSEGS	256
 #define MAXDRAWSEGS		256
 
 
@@ -466,6 +467,7 @@ typedef struct
   int			lightlevel;
   int			minx;
   int			maxx;
+  int			flashy;
   
   // leave pads for [minx-1]/[maxx+1]
   
