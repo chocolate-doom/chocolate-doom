@@ -53,6 +53,16 @@
 #define MAX_SOUND_SLICE_TIME 70 /* ms */
 #define NUM_CHANNELS 16
 
+typedef struct allocated_sound_s allocated_sound_t;
+
+struct allocated_sound_s
+{
+    sfxinfo_t *sfxinfo;
+    Mix_Chunk chunk;
+    int use_count;
+    allocated_sound_t *prev, *next;
+};
+
 static boolean setpanning_workaround = false;
 
 static boolean sound_initialized = false;
@@ -68,7 +78,173 @@ static void (*ExpandSoundData)(sfxinfo_t *sfxinfo,
                                int samplerate,
                                int length) = NULL;
 
+// Doubly-linked list of allocated sounds.
+// When a sound is played, it is moved to the head, so that the oldest
+// sounds not used recently are at the tail.
+
+static allocated_sound_t *allocated_sounds_head = NULL;
+static allocated_sound_t *allocated_sounds_tail = NULL;
+static int allocated_sounds_size = 0;
+
 int use_libsamplerate = 0;
+
+// Hook a sound into the linked list at the head.
+
+static void AllocatedSoundLink(allocated_sound_t *snd)
+{
+    snd->prev = NULL;
+
+    snd->next = allocated_sounds_head;
+    allocated_sounds_head = snd;
+
+    if (allocated_sounds_tail == NULL)
+    {
+        allocated_sounds_tail = snd;
+    }
+}
+
+// Unlink a sound from the linked list.
+
+static void AllocatedSoundUnlink(allocated_sound_t *snd)
+{
+    if (snd->prev == NULL)
+    {
+        allocated_sounds_head = snd->next;
+    }
+    else
+    {
+        snd->prev->next = snd->next;
+    }
+
+    if (snd->next == NULL)
+    {
+        allocated_sounds_tail = snd->prev;
+    }
+    else
+    {
+        snd->next->prev = snd->prev;
+    }
+}
+
+static void FreeAllocatedSound(allocated_sound_t *snd)
+{
+    // Unlink from linked list.
+
+    AllocatedSoundUnlink(snd);
+
+    // Unlink from higher-level code.
+
+    snd->sfxinfo->driver_data = NULL;
+
+    // Keep track of the amount of allocated sound data:
+
+    allocated_sounds_size -= snd->chunk.alen;
+
+    free(snd);
+}
+
+// Search from the tail backwards along the allocated sounds list, find
+// and free a sound that is not in use, to free up memory.  Return true
+// for success.
+
+static boolean FindAndFreeSound(void)
+{
+    allocated_sound_t *snd;
+
+    snd = allocated_sounds_tail;
+
+    while (snd != NULL)
+    {
+        if (snd->use_count == 0)
+        {
+            FreeAllocatedSound(snd);
+            return true;
+        }
+
+        snd = snd->prev;
+    }
+
+    // No available sounds to free...
+
+    return false;
+}
+
+// Allocate a block for a new sound effect.
+
+static Mix_Chunk *AllocateSound(sfxinfo_t *sfxinfo, size_t len)
+{
+    allocated_sound_t *snd;
+
+    // Allocate the sound structure and data.  The data will immediately
+    // follow the structure, which acts as a header.
+
+    do
+    {
+        snd = malloc(sizeof(allocated_sound_t) + len);
+
+        // Out of memory?  Try to free an old sound, then loop round
+        // and try again.
+
+        if (snd == NULL && !FindAndFreeSound())
+        {
+            return NULL;
+        }
+
+    } while (snd == NULL);
+
+    // Skip past the chunk structure for the audio buffer
+
+    snd->chunk.abuf = (byte *) (snd + 1);
+    snd->chunk.alen = len;
+    snd->chunk.allocated = 1;
+    snd->chunk.volume = MIX_MAX_VOLUME;
+
+    snd->sfxinfo = sfxinfo;
+    snd->use_count = 0;
+
+    // driver_data pointer points to the allocated_sound structure.
+
+    sfxinfo->driver_data = snd;
+
+    // Keep track of how much memory all these cached sounds are using...
+
+    allocated_sounds_size += len;
+
+    AllocatedSoundLink(snd);
+
+    return &snd->chunk;
+}
+
+// Lock a sound, to indicate that it may not be freed.
+
+static void LockAllocatedSound(allocated_sound_t *snd)
+{
+    // Increase use count, to stop the sound being freed.
+
+    ++snd->use_count;
+
+    //printf("++ %s: Use count=%i\n", snd->sfxinfo->name, snd->use_count);
+
+    // When we use a sound, re-link it into the list at the head, so
+    // that the oldest sounds fall to the end of the list for freeing.
+
+    AllocatedSoundUnlink(snd);
+    AllocatedSoundLink(snd);
+}
+
+// Unlock a sound to indicate that it may now be freed.
+
+static void UnlockAllocatedSound(allocated_sound_t *snd)
+{
+    if (snd->use_count <= 0)
+    {
+        I_Error("Sound effect released more times than it was locked...");
+    }
+
+    --snd->use_count;
+
+    //printf("-- %s: Use count=%i\n", snd->sfxinfo->name, snd->use_count);
+}
 
 // When a sound stops, check if it is still playing.  If it is not, 
 // we can mark the sound data as CACHE to be freed back for other
@@ -76,7 +252,6 @@ int use_libsamplerate = 0;
 
 static void ReleaseSoundOnChannel(int channel)
 {
-    int i;
     sfxinfo_t *sfxinfo = channels_playing[channel];
 
     if (sfxinfo == NULL)
@@ -85,42 +260,8 @@ static void ReleaseSoundOnChannel(int channel)
     }
 
     channels_playing[channel] = NULL;
-    
-    for (i=0; i<NUM_CHANNELS; ++i)
-    {
-        // Playing on this channel? if so, don't release.
 
-        if (channels_playing[i] == sfxinfo)
-            return;
-    }
-
-    // Not used on any channel, and can be safely released
-
-    Z_ChangeTag(sfxinfo->driver_data, PU_CACHE);
-}
-
-// Allocate a new Mix_Chunk along with its data, storing
-// the result in the variable pointed to by variable
-
-static Mix_Chunk *AllocateChunk(sfxinfo_t *sfxinfo, uint32_t len)
-{
-    Mix_Chunk *chunk;
-
-    // Allocate the chunk and the audio buffer together
-
-    chunk = Z_Malloc(len + sizeof(Mix_Chunk),
-                     PU_STATIC,
-                     &sfxinfo->driver_data);
-    sfxinfo->driver_data = chunk;
-
-    // Skip past the chunk structure for the audio buffer
-
-    chunk->abuf = (byte *) (chunk + 1);
-    chunk->alen = len;
-    chunk->allocated = 1;
-    chunk->volume = MIX_MAX_VOLUME;
-
-    return chunk;
+    UnlockAllocatedSound(sfxinfo->driver_data);
 }
 
 #ifdef HAVE_LIBSAMPLERATE
@@ -200,7 +341,7 @@ static void ExpandSoundData_SRC(sfxinfo_t *sfxinfo,
 
     alen = src_data.output_frames_gen * 4;
 
-    chunk = AllocateChunk(sfxinfo, src_data.output_frames_gen * 4);
+    chunk = AllocateSound(sfxinfo, src_data.output_frames_gen * 4);
     expanded = (int16_t *) chunk->abuf;
 
     // Convert the result back into 16-bit integers.
@@ -363,7 +504,7 @@ static void ExpandSoundData_SDL(sfxinfo_t *sfxinfo,
 
     // Allocate a chunk in which to expand the sound
 
-    chunk = AllocateChunk(sfxinfo, expanded_length);
+    chunk = AllocateSound(sfxinfo, expanded_length);
 
     // If we can, use the standard / optimized SDL conversion routines.
 
@@ -559,12 +700,7 @@ static void I_SDL_PrecacheSounds(sfxinfo_t *sounds, int num_sounds)
 
         if (sounds[i].lumpnum != -1)
         {
-            // Try to cache the sound and then release it as cache
-
-            if (CacheSFX(&sounds[i])) 
-            {
-                Z_ChangeTag(sounds[i].driver_data, PU_CACHE);
-            }
+            CacheSFX(&sounds[i]);
         }
     }
 
@@ -593,12 +729,8 @@ static boolean LockSound(sfxinfo_t *sfxinfo)
             return false;
         }
     }
-    else
-    {
-        // Lock the sound effect into memory
-   
-        Z_ChangeTag(sfxinfo->driver_data, PU_STATIC);
-    }
+
+    LockAllocatedSound(sfxinfo->driver_data);
 
     return true;
 }
@@ -662,7 +794,7 @@ static void I_SDL_UpdateSoundParams(int handle, int vol, int sep)
 
 static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
 {
-    Mix_Chunk *chunk;
+    allocated_sound_t *snd;
 
     if (!sound_initialized)
     {
@@ -681,11 +813,11 @@ static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
 	return -1;
     }
 
-    chunk = (Mix_Chunk *) sfxinfo->driver_data;
+    snd = sfxinfo->driver_data;
 
     // play sound
 
-    Mix_PlayChannelTimed(channel, chunk, 0, -1);
+    Mix_PlayChannelTimed(channel, &snd->chunk, 0, -1);
 
     channels_playing[channel] = sfxinfo;
 
