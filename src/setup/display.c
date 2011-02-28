@@ -715,6 +715,7 @@ void BindDisplayVariables(void)
     M_BindVariable("fullscreen",                &fullscreen);
     M_BindVariable("screen_width",              &screen_width);
     M_BindVariable("screen_height",             &screen_height);
+    M_BindVariable("screen_bpp",                &screen_bpp);
     M_BindVariable("startup_delay",             &startup_delay);
     M_BindVariable("video_driver",              &video_driver);
     M_BindVariable("usegamma",                  &usegamma);
