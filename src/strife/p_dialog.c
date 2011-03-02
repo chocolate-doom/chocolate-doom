@@ -733,7 +733,7 @@ boolean P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type)
     // mobjtypes and to implement missing logic.
     switch(sprnum)
     {
-    case SPR_HELT: // STRIFE-TODO: verify - I believe this is related to a cheat
+    case SPR_HELT: // This is given only by the "DONNYTRUMP" cheat (aka Midas)
         P_GiveInventoryItem(player, SPR_HELT, MT_TOKEN_TOUGHNESS);
         P_GiveInventoryItem(player, SPR_GUNT, MT_TOKEN_ACCURACY);
 

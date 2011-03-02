@@ -1279,7 +1279,8 @@ static void D_InitIntroSequence(void)
     }
     /*
     // STRIFE-FIXME: This was actually displayed on a special textmode
-    // screen with ANSI color codes...
+    // screen with ANSI color codes... would require use of textlib to
+    // emulate properly...
     else
     {
         puts(DEH_String("Conversation ON"));

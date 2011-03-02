@@ -200,10 +200,15 @@ void P_XYMovement (mobj_t* mo)
             else if (mo->flags & MF_MISSILE)
             {
                 // haley 20110203: [STRIFE]
-                // This modification allows missiles to activate shoot specials
+                // This modification allows missiles to activate shoot specials.
+                // *** BUG: In vanilla Strife the second condition is simply
+                // if(numspechit). However, numspechit can be negative, and
+                // when it is, this accesses spechit[-2]. This always causes the
+                // DOS exe to read from NULL, and the 'special' value there (in
+                // DOS 6.22 at least) is 0x70, which does nothing.
                 if(blockingline && blockingline->special)
                     P_ShootSpecialLine(mo, blockingline);
-                if(numspechit)
+                if(numspechit > 0)
                     P_ShootSpecialLine(mo, spechit[numspechit-1]);
 
                 // explode a missile

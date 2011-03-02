@@ -54,12 +54,12 @@
 
 
 // Automap colors
-#define BACKGROUND	0
-#define WALLCOLORS	5           // villsa [STRIFE]
-#define WALLRANGE	16
-#define TSWALLCOLORS	16
-#define FDWALLCOLORS	122         // villsa [STRIFE]
-#define CDWALLCOLORS	116
+#define BACKGROUND      240         // haleyjd [STRIFE]
+#define WALLCOLORS      5           // villsa [STRIFE]
+#define WALLRANGE       16
+#define TSWALLCOLORS    16
+#define FDWALLCOLORS    122         // villsa [STRIFE]
+#define CDWALLCOLORS    116
 #define CTWALLCOLORS    19          // villsa [STRIFE]
 #define SPWALLCOLORS    243         // villsa [STRIFE]
 #define THINGCOLORS     233         // villsa [STRIFE]
@@ -1382,14 +1382,14 @@ void AM_Drawer (void)
 
     // villsa [STRIFE] not used
     /*if(grid)
-	AM_drawGrid(GRIDCOLORS);*/
+        AM_drawGrid(GRIDCOLORS);*/
 
     AM_drawWalls();
     AM_drawPlayers();
 
     // villsa [STRIFE] draw things when map powerup is enabled
     if(cheating == 2 || plr->powers[pw_allmap] > 1)
-	AM_drawThings();
+        AM_drawThings();
 
     // villsa [STRIFE] not used
     //AM_drawCrosshair(XHAIRCOLORS);

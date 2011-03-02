@@ -884,19 +884,15 @@ boolean P_ItemBehavior(player_t* player, int item)
     {
     case SPR_ARM1:  // 136
         return P_GiveArmor(player, 2);
-        break;
 
     case SPR_ARM2:  // 137
         return P_GiveArmor(player, 1);
-        break;
 
     case SPR_SHD1:  // 186
         return P_GivePower(player, pw_invisibility);
-        break;
 
     case SPR_MASK:  // 187
         return P_GivePower(player, pw_ironfeet);
-        break;
 
     case SPR_PMUP:  // 191
         if(!player->powers[pw_allmap])
@@ -905,27 +901,22 @@ boolean P_ItemBehavior(player_t* player, int item)
             return false;
         }
         player->powers[pw_allmap] = PMUPTICS;
-        break;
+        return true; // haleyjd 20110228: repaired
 
     case SPR_STMP:  // 180
         return P_GiveBody(player, 10);
-        break;
 
     case SPR_MDKT:  // 181
         return P_GiveBody(player, 25);
-        break;
 
     case SPR_FULL:  // 130
         return P_GiveBody(player, 200);
-        break;
 
     case SPR_BEAC:  // 135
         return P_SpawnTeleportBeacon(player);
-        break;
 
     case SPR_TARG:  // 108
         return P_GivePower(player, pw_targeter);
-        break;
     }
 
     return false;

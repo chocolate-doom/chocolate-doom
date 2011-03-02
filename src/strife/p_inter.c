@@ -748,7 +748,7 @@ void P_TouchSpecialThing(mobj_t* special, mobj_t* toucher)
 }
 
 // villsa [STRIFE]
-static char plrkilledmsg[76];
+static char plrkilledmsg[80];
 
 //
 // KillMobj
