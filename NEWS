@@ -7,6 +7,7 @@
        right shift, not left shift (thanks AlexXav).
      * Default joystick buttons for the setup tool now match Vanilla
        (thanks twipley).
+     * Visual Studio project files work again (thanks GhostlyDeath).
 
     libtextscreen:
      * It is now possible to type a '+' in input boxes (thanks
