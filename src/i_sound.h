@@ -232,6 +232,7 @@ boolean I_MusicIsPlaying(void);
 extern int snd_sfxdevice;
 extern int snd_musicdevice;
 extern int snd_samplerate;
+extern int snd_cachesize;
 
 void I_BindSoundVariables(void);
 

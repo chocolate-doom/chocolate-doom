@@ -697,6 +697,13 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(snd_samplerate),
 
     //!
+    // Maximum number of bytes to allocate for caching converted sound
+    // effects in memory. If set to zero, there is no limit applied.
+    //
+
+    CONFIG_VARIABLE_INT(snd_cachesize),
+
+    //!
     // The I/O port to use to access the OPL chip.  Only relevant when
     // using native OPL music playback.
     //

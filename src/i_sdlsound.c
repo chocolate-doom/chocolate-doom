@@ -169,11 +169,40 @@ static boolean FindAndFreeSound(void)
     return false;
 }
 
+// Enforce SFX cache size limit.  We are just about to allocate "len"
+// bytes on the heap for a new sound effect, so free up some space
+// so that we keep allocated_sounds_size < snd_cachesize
+
+static void ReserveCacheSpace(size_t len)
+{
+    if (snd_cachesize <= 0)
+    {
+        return;
+    }
+
+    // Keep freeing sound effects that aren't currently being played,
+    // until there is enough space for the new sound.
+
+    while (allocated_sounds_size + len > snd_cachesize)
+    {
+        // Free a sound.  If there is nothing more to free, stop.
+
+        if (!FindAndFreeSound())
+        {
+            break;
+        }
+    }
+}
+
 // Allocate a block for a new sound effect.
 
 static Mix_Chunk *AllocateSound(sfxinfo_t *sfxinfo, size_t len)
 {
     allocated_sound_t *snd;
+
+    // Keep allocated sounds within the cache size.
+
+    ReserveCacheSpace(len);
 
     // Allocate the sound structure and data.  The data will immediately
     // follow the structure, which acts as a header.
