@@ -73,10 +73,10 @@ static int mixer_freq;
 static Uint16 mixer_format;
 static int mixer_channels;
 static boolean use_sfx_prefix;
-static void (*ExpandSoundData)(sfxinfo_t *sfxinfo,
-                               byte *data,
-                               int samplerate,
-                               int length) = NULL;
+static boolean (*ExpandSoundData)(sfxinfo_t *sfxinfo,
+                                  byte *data,
+                                  int samplerate,
+                                  int length) = NULL;
 
 // Doubly-linked list of allocated sounds.
 // When a sound is played, it is moved to the head, so that the oldest
@@ -300,10 +300,10 @@ static int SRC_ConversionMode(void)
 // Returns number of clipped samples.
 // DWF 2008-02-10 with cleanups by Simon Howard.
 
-static void ExpandSoundData_SRC(sfxinfo_t *sfxinfo,
-                                byte *data,
-                                int samplerate,
-                                int length)
+static boolean ExpandSoundData_SRC(sfxinfo_t *sfxinfo,
+                                   byte *data,
+                                   int samplerate,
+                                   int length)
 {
     SRC_DATA src_data;
     uint32_t i, abuf_index=0, clipped=0;
@@ -342,6 +342,12 @@ static void ExpandSoundData_SRC(sfxinfo_t *sfxinfo,
     alen = src_data.output_frames_gen * 4;
 
     chunk = AllocateSound(sfxinfo, src_data.output_frames_gen * 4);
+
+    if (chunk == NULL)
+    {
+        return false;
+    }
+
     expanded = (int16_t *) chunk->abuf;
 
     // Convert the result back into 16-bit integers.
@@ -399,6 +405,8 @@ static void ExpandSoundData_SRC(sfxinfo_t *sfxinfo,
                         sfxinfo->name, clipped,
                         400.0 * clipped / chunk->alen);
     }
+
+    return true;
 }
 
 #endif
@@ -485,10 +493,10 @@ static void WriteWAV(char *filename, byte *data,
 // Generic sound expansion function for any sample rate.
 // Returns number of clipped samples (always 0).
 
-static void ExpandSoundData_SDL(sfxinfo_t *sfxinfo,
-                                byte *data,
-                                int samplerate,
-                                int length)
+static boolean ExpandSoundData_SDL(sfxinfo_t *sfxinfo,
+                                   byte *data,
+                                   int samplerate,
+                                   int length)
 {
     SDL_AudioCVT convertor;
     Mix_Chunk *chunk;
@@ -505,6 +513,11 @@ static void ExpandSoundData_SDL(sfxinfo_t *sfxinfo,
     // Allocate a chunk in which to expand the sound
 
     chunk = AllocateSound(sfxinfo, expanded_length);
+
+    if (chunk == NULL)
+    {
+        return false;
+    }
 
     // If we can, use the standard / optimized SDL conversion routines.
 
@@ -583,6 +596,8 @@ static void ExpandSoundData_SDL(sfxinfo_t *sfxinfo,
         }
 #endif /* #ifdef LOW_PASS_FILTER */
     }
+
+    return true;
 }
 
 // Load and convert a sound effect
@@ -627,7 +642,10 @@ static boolean CacheSFX(sfxinfo_t *sfxinfo)
 
     // Sample rate conversion
 
-    ExpandSoundData(sfxinfo, data + 8, samplerate, length);
+    if (!ExpandSoundData(sfxinfo, data + 8, samplerate, length))
+    {
+        return false;
+    }
 
 #ifdef DEBUG_DUMP_WAVS
     {
