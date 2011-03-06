@@ -33,6 +33,8 @@ typedef enum
     IWAD_TNT,
     IWAD_PLUTONIA,
     IWAD_CHEX,
+    IWAD_HERETIC,
+    IWAD_HEXEN,
     NUM_IWAD_TYPES
 } IWAD;
 
@@ -42,7 +44,9 @@ static NSString *IWADLabels[NUM_IWAD_TYPES] =
     @"Doom II: Hell on Earth",
     @"Final Doom: TNT: Evilution",
     @"Final Doom: Plutonia Experiment",
-    @"Chex Quest"
+    @"Chex Quest",
+    @"Heretic",
+    @"Hexen"
 };
 
 static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
@@ -52,6 +56,8 @@ static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
     @"tnt.wad",
     @"plutonia.wad",
     @"chex.wad",
+    @"heretic.wad",
+    @"hexen.wad",
     @"undefined"
 };
 
@@ -64,6 +70,8 @@ static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
     iwadList[IWAD_TNT] = self->tnt;
     iwadList[IWAD_PLUTONIA] = self->plutonia;
     iwadList[IWAD_CHEX] = self->chex;
+    iwadList[IWAD_HERETIC] = self->heretic;
+    iwadList[IWAD_HEXEN] = self->hexen;
 }
 
 - (IWAD) getSelectedIWAD
@@ -99,6 +107,27 @@ static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
         [self getIWADList: iwadList];
 
 	return [iwadList[selectedIWAD] getLocation];
+    }
+}
+
+// Get the name used for the executable for the selected IWAD.
+
+- (const char *) getGameName
+{
+    IWAD selectedIWAD;
+
+    selectedIWAD = [self getSelectedIWAD];
+
+    switch (selectedIWAD)
+    {
+        case IWAD_HERETIC:
+            return "heretic";
+
+        case IWAD_HEXEN:
+            return "hexen";
+
+        default:
+            return "doom";
     }
 }
 
@@ -250,6 +279,10 @@ static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
 
 - (void) awakeFromNib
 {
+    // TODO: This is temporary:
+    self->heretic = self->doom1;
+    self->hexen = self->doom2;
+
     [self->configWindow center];
 
     // Set configuration for all IWADs from configuration file.

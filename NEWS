@@ -1,5 +1,10 @@
 1.6.0 (2011-??-??):
 
+    Compatibility:
+     * Very short sound effects are not played, to better emulate the
+       behavior of DMX in Vanilla Doom (thanks to Quasar for help in
+       investigating this).
+
     Bugs fixed:
      * Menu navigation when using joystick/joypad (thanks Alexandre
        Xavier).
@@ -7,6 +12,7 @@
        right shift, not left shift (thanks AlexXav).
      * Default joystick buttons for the setup tool now match Vanilla
        (thanks twipley).
+     * Visual Studio project files work again (thanks GhostlyDeath).
 
     libtextscreen:
      * It is now possible to type a '+' in input boxes (thanks

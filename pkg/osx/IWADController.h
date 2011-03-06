@@ -36,6 +36,9 @@
     id doom2;
     id plutonia;
     id tnt;
+
+    id heretic;
+    id hexen;
 }
 
 - (void) closeConfigWindow: (id)sender;
@@ -47,6 +50,7 @@
 - (void) saveConfig;
 - (char *) doomWadPath;
 - (void) setEnvironment;
+- (const char *) getGameName;
 
 @end
 

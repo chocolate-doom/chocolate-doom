@@ -278,6 +278,8 @@ static NSString *AppendQuotedFilename(NSString *str, NSString *fileName)
 {
     NSString *iwad;
     NSString *args;
+    char *executable_name;
+    const char *game_name;
 
     [self saveConfig];
 
@@ -294,7 +296,11 @@ static NSString *AppendQuotedFilename(NSString *str, NSString *fileName)
         return;
     }
 
-    ExecuteProgram(PACKAGE_TARNAME, [iwad UTF8String],
+    game_name = [self->iwadController getGameName];
+    executable_name = malloc(strlen(PROGRAM_PREFIX) + strlen(game_name) + 1);
+    sprintf(executable_name, "%s%s", PROGRAM_PREFIX, game_name);
+
+    ExecuteProgram(executable_name, [iwad UTF8String],
                                     [args UTF8String]);
     [NSApp terminate:sender];
 }
@@ -303,10 +309,22 @@ static NSString *AppendQuotedFilename(NSString *str, NSString *fileName)
 
 - (void) runSetup: (id)sender
 {
-    [self saveConfig];
+    const char *game_name;
+    char *arg;
 
+    [self saveConfig];
     [self->iwadController setEnvironment];
-    ExecuteProgram("chocolate-setup", NULL, NULL);
+
+    // Provide the -game command line parameter to select the game
+    // to configure, based on the game selected in the dropdown.
+
+    game_name = [self->iwadController getGameName];
+    arg = malloc(strlen(game_name) + 8);
+    sprintf(arg, "-game %s", game_name);
+
+    ExecuteProgram(PROGRAM_PREFIX "setup", NULL, arg);
+
+    free(arg);
 }
 
 // Invoked when the "Terminal" option is selected from the menu, to open

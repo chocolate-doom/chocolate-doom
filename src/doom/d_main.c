@@ -1100,8 +1100,6 @@ void D_DoomMain (void)
 
     I_AtExit(D_Endoom, false);
 
-    M_FindResponseFile ();
-
     // print banner
 
     I_PrintBanner(PACKAGE_STRING);

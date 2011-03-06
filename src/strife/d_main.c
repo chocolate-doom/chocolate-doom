@@ -1377,8 +1377,6 @@ void D_DoomMain (void)
 
     I_AtExit(D_Endoom, false);
 
-    M_FindResponseFile ();
-
     // haleyjd 20110206 [STRIFE]: -nograph parameter
 
     //!
