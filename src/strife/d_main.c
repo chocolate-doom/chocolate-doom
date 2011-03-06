@@ -149,6 +149,14 @@ char		mapdir[1024];           // directory of development maps
 
 int             show_endoom = 1;
 
+// fraggle 06/03/11 [STRIFE]: Unused config variable, preserved
+// for compatibility:
+
+static int comport = 0;
+
+// fraggle 06/03/11 [STRIFE]: Multiplayer nickname?
+
+static char *nickname = NULL;
 
 void D_CheckNetGame (void);
 void D_ProcessEvents (void);
@@ -416,19 +424,26 @@ void D_BindVariables(void)
     // * Added voice volume
     // * Added back flat
     // * Removed show_messages
-    // * Added show_text
+    // * Added show_talk
+    // fraggle 03/06/10: [STRIFE]
+    // * Removed detailLevel
+    // * screenblocks -> screensize
+    // * Added nickname, comport
+
     M_BindVariable("mouse_sensitivity",      &mouseSensitivity);
     M_BindVariable("sfx_volume",             &sfxVolume);
     M_BindVariable("music_volume",           &musicVolume);
     M_BindVariable("voice_volume",           &voiceVolume); 
-    M_BindVariable("show_text",              &dialogshowtext);
-    M_BindVariable("screenblocks",           &screenblocks);
-    M_BindVariable("detaillevel",            &detailLevel);
+    M_BindVariable("show_talk",              &dialogshowtext);
+    M_BindVariable("screensize",             &screenblocks);
     M_BindVariable("snd_channels",           &snd_channels);
     M_BindVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
     M_BindVariable("vanilla_demo_limit",     &vanilla_demo_limit);
     M_BindVariable("show_endoom",            &show_endoom);
     M_BindVariable("back_flat",              &back_flat);
+
+    M_BindVariable("nickname",               &nickname);
+    M_BindVariable("comport",                &comport);
 
     // Multiplayer chat macros
 

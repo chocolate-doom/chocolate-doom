@@ -142,6 +142,13 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_INT(music_volume),
 
     //!
+    // If non-zero, dialogue text is displayed over characters' pictures
+    // when engaging actors who have voices. (Strife only)
+    //
+
+    CONFIG_VARIABLE_INT(show_talk),
+
+    //!
     // Volume of voice sound effects, range 0-15. (Strife only)
     //
 
@@ -154,13 +161,6 @@ static default_t	doom_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(show_messages),
-
-    //!
-    // If non-zero, dialogue text is displayed over characters' pictures
-    // when engaging actors who have voices. (Strife only)
-    //
-
-    CONFIG_VARIABLE_INT(show_text),
 
     //! 
     // Keyboard key to turn right.
@@ -443,6 +443,16 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_INT(screenblocks),
 
     //!
+    // Screen size, range 3-11.
+    //
+    // A value of 11 gives a full-screen view with the status bar not
+    // displayed.  A value of 10 gives a full-screen view with the
+    // status bar displayed. (Strife only)
+    //
+
+    CONFIG_VARIABLE_INT(screensize),
+
+    //!
     // Screen detail.  Zero gives normal "high detail" mode, while
     // a non-zero value gives "low detail" mode.
     //
@@ -522,6 +532,11 @@ static default_t	doom_defaults_list[] =
 
     CONFIG_VARIABLE_STRING(back_flat),
 
+    //!
+    // Multiplayer nickname (?). (Strife only)
+    //
+
+    CONFIG_VARIABLE_STRING(nickname),
 
     //!
     // Multiplayer chat macro: message to send when alt+0 is pressed.
@@ -582,6 +597,13 @@ static default_t	doom_defaults_list[] =
     //
 
     CONFIG_VARIABLE_STRING(chatmacro9),
+
+    //!
+    // Serial port number to use for SERSETUP.EXE (unused).
+    // (Strife only)
+    //
+
+    CONFIG_VARIABLE_INT(comport),
 };
 
 static default_collection_t doom_defaults = 
