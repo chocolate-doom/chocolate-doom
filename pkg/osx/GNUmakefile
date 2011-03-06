@@ -68,6 +68,8 @@ $(STAGING_DIR): launcher $(TOPLEVEL_DOCS)
 	$(STRIP) "$(APP_BIN_DIR)/$(PROGRAM_PREFIX)heretic"
 	./cp-with-libs $(TOPLEVEL)/src/$(PROGRAM_PREFIX)hexen "$(APP_BIN_DIR)"
 	$(STRIP) "$(APP_BIN_DIR)/$(PROGRAM_PREFIX)hexen"
+	./cp-with-libs $(TOPLEVEL)/src/$(PROGRAM_PREFIX)strife "$(APP_BIN_DIR)"
+	$(STRIP) "$(APP_BIN_DIR)/$(PROGRAM_PREFIX)strife"
 	./cp-with-libs $(TOPLEVEL)/src/$(PROGRAM_PREFIX)setup "$(APP_BIN_DIR)"
 	$(STRIP) "$(APP_BIN_DIR)/$(PROGRAM_PREFIX)setup"
 

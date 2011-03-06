@@ -35,6 +35,7 @@ typedef enum
     IWAD_CHEX,
     IWAD_HERETIC,
     IWAD_HEXEN,
+    IWAD_STRIFE,
     NUM_IWAD_TYPES
 } IWAD;
 
@@ -46,7 +47,8 @@ static NSString *IWADLabels[NUM_IWAD_TYPES] =
     @"Final Doom: Plutonia Experiment",
     @"Chex Quest",
     @"Heretic",
-    @"Hexen"
+    @"Hexen",
+    @"Strife"
 };
 
 static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
@@ -58,6 +60,7 @@ static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
     @"chex.wad",
     @"heretic.wad",
     @"hexen.wad",
+    @"strife.wad",
     @"undefined"
 };
 
@@ -72,6 +75,7 @@ static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
     iwadList[IWAD_CHEX] = self->chex;
     iwadList[IWAD_HERETIC] = self->heretic;
     iwadList[IWAD_HEXEN] = self->hexen;
+    iwadList[IWAD_STRIFE] = self->strife;
 }
 
 - (IWAD) getSelectedIWAD
@@ -125,6 +129,9 @@ static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
 
         case IWAD_HEXEN:
             return "hexen";
+
+        case IWAD_STRIFE:
+            return "strife";
 
         default:
             return "doom";
@@ -282,6 +289,7 @@ static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
     // TODO: This is temporary:
     self->heretic = self->doom1;
     self->hexen = self->doom2;
+    self->strife = self->tnt;
 
     [self->configWindow center];
 
