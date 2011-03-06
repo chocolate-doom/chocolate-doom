@@ -479,10 +479,22 @@ static boolean CacheSFX(sfxinfo_t *sfxinfo)
     // If the header specifies that the length of the sound is greater than
     // the length of the lump itself, this is an invalid sound lump
 
-    if (length > lumplen - 8)
+    // We also discard sound lumps that are less than 49 samples long,
+    // as this is how DMX behaves - although the actual cut-off length
+    // seems to vary slightly depending on the sample rate.  This needs
+    // further investigation to better understand the correct
+    // behavior.
+
+    if (length > lumplen - 8 || length <= 48)
     {
         return false;
     }
+
+    // The DMX sound library seems to skip the first 16 and last 16
+    // bytes of the lump - reason unknown.
+
+    data += 16;
+    length -= 32;
 
     // Sample rate conversion
 

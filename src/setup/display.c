@@ -257,9 +257,7 @@ static int GetSupportedBPPIndex(char *description)
         }
     }
 
-    // Shouldn't happen; fall back to the first in the list.
-
-    return 0;
+    return -1;
 }
 
 // Set selected_bpp to match screen_bpp.
@@ -277,7 +275,11 @@ static int TrySetSelectedBPP(void)
         if (pixel_depths[i].bpp == screen_bpp)
         {
             selected_bpp = GetSupportedBPPIndex(pixel_depths[i].description);
-            return 1;
+
+            if (selected_bpp >= 0)
+            {
+                return 1;
+            }
         }
     }
 
