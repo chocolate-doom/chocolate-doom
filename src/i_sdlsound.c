@@ -359,7 +359,13 @@ static boolean LoadSoundLump(int sound,
     // greater than the length of the lump itself, this is an invalid
     // sound lump.
 
-    if (*length > lumplen - 8)
+    // We also discard sound lumps that are less than 49 samples long,
+    // as this is how DMX behaves - although the actual cut-off length
+    // seems to vary slightly depending on the sample rate.  This needs
+    // further investigation to better understand the correct
+    // behavior.
+
+    if (*length > lumplen - 8 || *length <= 48)
     {
 	W_ReleaseLumpNum(*lumpnum);
 	return false;
@@ -367,6 +373,12 @@ static boolean LoadSoundLump(int sound,
 
     // Prune header
     *data_ref += 8;
+
+    // The DMX sound library seems to skip the first 16 and last 16
+    // bytes of the lump - reason unknown.
+
+    *data_ref += 16;
+    *length -= 32;
 
     return true;
 }

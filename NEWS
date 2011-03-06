@@ -1,5 +1,10 @@
 1.6.0 (2011-??-??):
 
+    Compatibility:
+     * Very short sound effects are not played, to better emulate the
+       behavior of DMX in Vanilla Doom (thanks to Quasar for help in
+       investigating this).
+
     Bugs fixed:
      * Menu navigation when using joystick/joypad (thanks Alexandre
        Xavier).
