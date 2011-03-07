@@ -113,11 +113,11 @@ static int detailLevel = 0;
 static char *savedir = NULL;
 static char *executable = NULL;
 static char *back_flat = "F_PAVE01";
+static int comport = 0;
+static char *nickname = NULL;
 
 static void BindMiscVariables(void)
 {
-    M_BindVariable("screenblocks",      &screenblocks);
-
     if (gamemission == doom)
     {
         M_BindVariable("detaillevel",       &detailLevel);
@@ -133,7 +133,15 @@ static void BindMiscVariables(void)
     if (gamemission == strife)
     {
         M_BindVariable("back_flat",         &back_flat);
+        M_BindVariable("screensize"  ,      &screenblocks);
+        M_BindVariable("comport",           &comport);
+        M_BindVariable("nickname",          &nickname);
     }
+    else
+    {
+        M_BindVariable("screenblocks",      &screenblocks);
+    }
+
 }
 
 //

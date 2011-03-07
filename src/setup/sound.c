@@ -75,6 +75,7 @@ static int numChannels = 8;
 static int sfxVolume = 15;
 static int musicVolume = 15;
 static int voiceVolume = 15;
+static int show_talk = 0;
 static int use_libsamplerate = 0;
 
 // DOS specific variables: these are unused but should be maintained
@@ -196,8 +197,6 @@ void ConfigSound(void)
     TXT_AddWidgets(window,
                TXT_NewSeparator("Sound effects"),
                sfx_table = TXT_NewTable(2),
-               TXT_NewSeparator("Music"),
-               music_table = TXT_NewTable(2),
                NULL);
 
     TXT_SetColumnWidths(sfx_table, 20, 14);
@@ -219,7 +218,14 @@ void ConfigSound(void)
                        TXT_NewLabel("Voice volume"),
                        TXT_NewSpinControl(&voiceVolume, 0, 15),
                        NULL);
+        TXT_AddWidget(window,
+                      TXT_NewCheckBox("Show text with voices", &show_talk));
     }
+
+    TXT_AddWidgets(window,
+               TXT_NewSeparator("Music"),
+               music_table = TXT_NewTable(2),
+               NULL);
 
     TXT_SetColumnWidths(music_table, 20, 14);
 
@@ -253,7 +259,8 @@ void BindSoundVariables(void)
 
     if (gamemission == strife)
     {
-        M_BindVariable("voice_volume",   &voiceVolume);
+        M_BindVariable("voice_volume",    &voiceVolume);
+        M_BindVariable("show_talk",       &show_talk);
     }
 
     // Before SDL_mixer version 1.2.11, MIDI music caused the game

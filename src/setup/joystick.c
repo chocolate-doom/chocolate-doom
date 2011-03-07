@@ -428,7 +428,7 @@ void ConfigJoystick(void)
     AddJoystickControl(button_table, "Previous weapon", &joybprevweapon);
     AddJoystickControl(button_table, "Next weapon", &joybnextweapon);
 
-    if (gamemission == hexen)
+    if (gamemission == hexen || gamemission == strife)
     {
         AddJoystickControl(button_table, "Jump", &joybjump);
     }

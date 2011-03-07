@@ -689,7 +689,8 @@ void ConfigDisplay(void)
                       TXT_NewCheckBox("Graphical startup", &graphical_startup));
     }
 
-    if (gamemission == doom || gamemission == heretic)
+    if (gamemission == doom || gamemission == heretic
+     || gamemission == strife)
     {
         TXT_AddWidget(window,
                       TXT_NewCheckBox("Show ENDOOM screen", &show_endoom));
@@ -723,7 +724,8 @@ void BindDisplayVariables(void)
     M_BindVariable("usegamma",                  &usegamma);
 
 
-    if (gamemission == doom || gamemission == heretic)
+    if (gamemission == doom || gamemission == heretic
+     || gamemission == strife)
     {
         M_BindVariable("show_endoom",               &show_endoom);
     }

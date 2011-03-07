@@ -358,7 +358,7 @@ void ConfigKeyboard(void)
     AddKeyControl(movement_table, "Turn Right", &key_right);
     AddKeyControl(movement_table, " Strafe On", &key_strafe);
 
-    if (gamemission == hexen)
+    if (gamemission == hexen || gamemission == strife)
     {
         AddKeyControl(movement_table, "Jump", &key_jump);
     }

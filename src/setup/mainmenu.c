@@ -177,6 +177,9 @@ static txt_button_t *GetLaunchButton(void)
         case hexen:
             label = "Save parameters and launch Hexen";
             break;
+        case strife:
+            label = "Save parameters and launch STRIFE!";
+            break;
         default:
             label = "Save parameters and launch game";
             break;
@@ -206,9 +209,9 @@ void MainMenu(void)
                          (TxtWidgetSignalFunc) ConfigJoystick, NULL),
           NULL);
 
-    // The compatibility window is only appropriate for Doom.
+    // The compatibility window is only appropriate for Doom/Strife.
 
-    if (gamemission == doom)
+    if (gamemission == doom || gamemission == strife)
     {
         txt_button_t *button;
 
