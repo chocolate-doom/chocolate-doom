@@ -155,7 +155,24 @@ void P_LoadVertexes (int lump)
     W_ReleaseLumpNum(lump);
 }
 
+//
+// GetSectorAtNullAddress
+//
+sector_t* GetSectorAtNullAddress(void)
+{
+    static boolean null_sector_is_initialized = false;
+    static sector_t null_sector;
 
+    if (!null_sector_is_initialized)
+    {
+        memset(&null_sector, 0, sizeof(null_sector));
+        I_GetMemoryValue(0, &null_sector.floorheight, 4);
+        I_GetMemoryValue(4, &null_sector.ceilingheight, 4);
+        null_sector_is_initialized = true;
+    }
+
+    return &null_sector;
+}
 
 //
 // P_LoadSegs
@@ -204,10 +221,12 @@ void P_LoadSegs (int lump)
 
             if (sidenum < 0 || sidenum >= numsides)
             {
-                sidenum = 0;
+                li->backsector = GetSectorAtNullAddress();
             }
-
-            li->backsector = sides[sidenum].sector;
+            else
+            {
+                li->backsector = sides[sidenum].sector;
+            }
         }
         else
         {

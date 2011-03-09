@@ -15,6 +15,9 @@
      * Very short sound effects are not played, to better emulate the
        behavior of DMX in Vanilla Doom (thanks to Quasar for help in
        investigating this).
+     * The null sector dereference emulation code has been imported
+       from Prboom+ - this fixes a desync with CLNJ-506.LMP (thanks
+       entryway).
 
     Bugs fixed:
      * Menu navigation when using joystick/joypad (thanks Alexandre

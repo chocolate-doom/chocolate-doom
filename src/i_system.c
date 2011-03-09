@@ -369,3 +369,109 @@ void I_Error (char *error, ...)
     exit(-1);
 }
 
+//
+// Read Access Violation emulation.
+//
+// From PrBoom+, by entryway.
+//
+
+// C:\>debug
+// -d 0:0
+//
+// DOS 6.22:
+// 0000:0000  (57 92 19 00) F4 06 70 00-(16 00)
+// DOS 7.1:
+// 0000:0000  (9E 0F C9 00) 65 04 70 00-(16 00)
+// Win98:
+// 0000:0000  (9E 0F C9 00) 65 04 70 00-(16 00)
+// DOSBox under XP:
+// 0000:0000  (00 00 00 F1) ?? ?? ?? 00-(07 00)
+
+#define DOS_MEM_DUMP_SIZE 10
+
+static const unsigned char mem_dump_dos622[DOS_MEM_DUMP_SIZE] = {
+  0x57, 0x92, 0x19, 0x00, 0xF4, 0x06, 0x70, 0x00, 0x16, 0x00};
+static const unsigned char mem_dump_win98[DOS_MEM_DUMP_SIZE] = {
+  0x9E, 0x0F, 0xC9, 0x00, 0x65, 0x04, 0x70, 0x00, 0x16, 0x00};
+static const unsigned char mem_dump_dosbox[DOS_MEM_DUMP_SIZE] = {
+  0x00, 0x00, 0x00, 0xF1, 0x00, 0x00, 0x00, 0x00, 0x07, 0x00};
+static unsigned char mem_dump_custom[DOS_MEM_DUMP_SIZE];
+
+static const unsigned char *dos_mem_dump = mem_dump_dos622;
+
+boolean I_GetMemoryValue(unsigned int offset, void *value, int size)
+{
+    static boolean firsttime = true;
+
+    if (firsttime)
+    {
+        int p, i, val;
+
+        firsttime = false;
+        i = 0;
+
+        //!
+        // @category compat
+        // @arg <version>
+        //
+        // Specify DOS version to emulate for NULL pointer dereference
+        // emulation.  Supported versions are: dos622, dos71, dosbox.
+        // The default is to emulate DOS 7.1 (Windows 98).
+        //
+
+        p = M_CheckParmWithArgs("-setmem", 1);
+
+        if (p > 0)
+        {
+            if (!strcasecmp(myargv[p + 1], "dos622"))
+            {
+                dos_mem_dump = mem_dump_dos622;
+            }
+            if (!strcasecmp(myargv[p + 1], "dos71"))
+            {
+                dos_mem_dump = mem_dump_win98;
+            }
+            else if (!strcasecmp(myargv[p + 1], "dosbox"))
+            {
+                dos_mem_dump = mem_dump_dosbox;
+            }
+            else
+            {
+                for (i = 0; i < DOS_MEM_DUMP_SIZE; ++i)
+                {
+                    ++p;
+
+                    if (p >= myargc || myargv[p][0] == '-')
+                    {
+                        break;
+                    }
+
+                    M_StrToInt(myargv[p], &val);
+                    mem_dump_custom[i++] = (unsigned char) val;
+                }
+
+                dos_mem_dump = mem_dump_custom;
+            }
+        }
+    }
+
+    switch (size)
+    {
+    case 1:
+        *((unsigned char *) value) = dos_mem_dump[offset];
+        return true;
+    case 2:
+        *((unsigned short *) value) = dos_mem_dump[offset]
+                                    | (dos_mem_dump[offset + 1] << 8);
+        return true;
+    case 4:
+        *((unsigned int *) value) = dos_mem_dump[offset]
+                                  | (dos_mem_dump[offset + 1] << 8)
+                                  | (dos_mem_dump[offset + 2] << 16)
+                                  | (dos_mem_dump[offset + 3] << 24);
+        return true;
+    }
+
+    return false;
+}
+
