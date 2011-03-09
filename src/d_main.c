@@ -500,6 +500,9 @@ void D_DoAdvanceDemo (void)
     // include a DEMO4 lump, so the game bombs out with an error
     // when it reaches this point in the demo sequence.
 
+    // However! There is an alternate version of Final Doom that
+    // includes a fixed executable.
+
     if (gameversion == exe_ultimate || gameversion == exe_final)
       demosequence = (demosequence+1)%7;
     else
@@ -659,6 +662,7 @@ static struct
     {"Hacx",                 "hacx",       exe_hacx},
     {"Ultimate Doom",        "ultimate",   exe_ultimate},
     {"Final Doom",           "final",      exe_final},
+    {"Final Doom (alt)",     "final2",     exe_final2},
     {"Chex Quest",           "chex",       exe_chex},
     { NULL,                  NULL,         0},
 };
@@ -675,7 +679,7 @@ static void InitGameVersion(void)
     // @category compat
     //
     // Emulate a specific version of Doom.  Valid values are "1.9",
-    // "ultimate" and "final".
+    // "ultimate", "final", "final2", "hacx" and "chex".
     //
 
     p = M_CheckParmWithArgs("-gameversion", 1);
@@ -731,8 +735,10 @@ static void InitGameVersion(void)
             else
             {
                 // Final Doom: tnt or plutonia
+                // Default to the "alt" version of the executable that
+                // fixes the demo loop behavior.
 
-                gameversion = exe_final;
+                gameversion = exe_final2;
             }
         }
     }

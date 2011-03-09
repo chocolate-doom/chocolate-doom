@@ -107,6 +107,7 @@ typedef enum
     exe_hacx,       // Hacx executable (Doom 1.9 with patch applied)
     exe_ultimate,   // Ultimate Doom (retail)
     exe_final,      // Final Doom
+    exe_final2,     // Final Doom (alternate exe)
     exe_chex,       // Chex Quest executable (based on Final Doom)
 } GameVersion_t;
 
