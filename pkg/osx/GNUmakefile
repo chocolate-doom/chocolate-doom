@@ -73,6 +73,10 @@ $(STAGING_DIR): launcher $(TOPLEVEL_DOCS)
 
 	find $(STAGING_DIR) -name .svn -delete -exec rm -rf {} \; || true
 
+	mkdir -p "$(APP_BIN_DIR)/man/man5" "$(APP_BIN_DIR)/man/man6"
+	cp $(TOPLEVEL)/man/*.5 "$(APP_BIN_DIR)/man/man5"
+	cp $(TOPLEVEL)/man/*.6 "$(APP_BIN_DIR)/man/man6"
+
 clean : launcher_clean
 	rm -f $(DMG)
 	rm -rf $(STAGING_DIR)

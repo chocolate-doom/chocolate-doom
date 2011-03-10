@@ -175,6 +175,8 @@ void OpenTerminalWindow(const char *doomwadpath)
     fprintf(stream, "#!/bin/sh\n");
     //fprintf(stream, "set -x\n");
     fprintf(stream, "PATH=\"%s:$PATH\"\n", executable_path);
+    fprintf(stream, "MANPATH=\"%s/man:$(manpath)\"\n", executable_path);
+    fprintf(stream, "export MANPATH\n");
     fprintf(stream, "DOOMWADPATH=\"%s\"\n", doomwadpath);
     fprintf(stream, "export DOOMWADPATH\n");
     fprintf(stream, "rm -f \"%s\"\n", TEMP_SCRIPT);
