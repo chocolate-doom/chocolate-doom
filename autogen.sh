@@ -4,7 +4,7 @@ mkdir autotools
 
 aclocal
 autoheader
-automake -a -c
+automake
 autoconf
 automake
 

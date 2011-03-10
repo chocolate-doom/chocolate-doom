@@ -1,5 +1,12 @@
 1.6.0 (2011-??-??):
 
+     * The instructions in the INSTALL file are now customized for
+       different platforms, and each binary package contains a version
+       with instructions specific to the platform that it is
+       targetting.  This should help to avoid confusion that some
+       users have reported experiencing.
+
+    Compatibility:
      * Added support for the alternate version of the Final Doom
        executable included in some later versions of the Id Anthology.
        This version fixed the demo loop crash that occurred with the
@@ -10,8 +17,6 @@
        with the Final Doom IWADs (the original behavior can be
        selected with -gameversion final).  (thanks Porsche Monty,
        Enjay).
-
-    Compatibility:
      * Very short sound effects are not played, to better emulate the
        behavior of DMX in Vanilla Doom (thanks to Quasar for help in
        investigating this).

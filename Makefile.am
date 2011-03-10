@@ -33,24 +33,31 @@ DATA_FILES=                   \
         data/setup.png        \
         data/convert-icon
 
+DOC_FILES=                              \
+        CMDLINE                         \
+        README                          \
+        README.OPL                      \
+        BUGS                            \
+        NEWS                            \
+        ChangeLog                       \
+        NOT-BUGS
+
 EXTRA_DIST=                             \
         $(AUX_DIST_GEN)                 \
         $(MSVC_FILES)                   \
         $(CODEBLOCKS_FILES)             \
         $(DATA_FILES)                   \
+        $(DOC_FILES)                    \
         .lvimrc                         \
-        config.h                        \
-        CMDLINE                         \
         HACKING                         \
-        README.OPL                      \
         TODO                            \
-        BUGS                            \
-        NOT-BUGS                        \
         rpm.spec
+
+docdir=$(prefix)/share/doc/@PACKAGE@
+doc_DATA=$(DOC_FILES)
 
 MAINTAINERCLEANFILES =  $(AUX_DIST_GEN)
 
-docdir=$(prefix)/share/doc/@PACKAGE@
 SUBDIRS=wince textscreen opl pcsound src man setup
 DIST_SUBDIRS=pkg $(SUBDIRS)
 
@@ -60,6 +67,9 @@ noinst_DATA=CMDLINE
 
 CMDLINE : src/
 	./man/docgen -p man/CMDLINE.template src/ > $@
+
+INSTALL : man/INSTALL.template man/simplecpp
+	./man/simplecpp < man/INSTALL.template > $@
 
 endif
 

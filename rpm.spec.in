@@ -49,14 +49,6 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %doc %{_mandir}/man5/*
 %doc %{_mandir}/man6/*
-%doc README
-%doc README.OPL
-%doc INSTALL
-%doc NEWS
-%doc AUTHORS
-%doc COPYING
-%doc CMDLINE
-%doc BUGS
-%doc NOT-BUGS
+/usr/share/doc/@PACKAGE@/*
 /usr/games/*
 

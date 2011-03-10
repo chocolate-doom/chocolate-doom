@@ -27,6 +27,10 @@ staging: $(EXE_FILES) $(DLL_FILES) $(patsubst %,../../%,$(DOC_FILES))
 		cp $(TOPLEVEL)/$$f staging/$$f.txt;  \
 		unix2dos staging/$$f.txt;            \
 	done
+	$(TOPLEVEL)/man/simplecpp -D_WIN32 -DPRECOMPILED  \
+	         < $(TOPLEVEL)/man/INSTALL.template       \
+	         > staging/INSTALL.txt
+	unix2dos staging/INSTALL.txt
 
 clean:
 	rm -f $(ZIP)
