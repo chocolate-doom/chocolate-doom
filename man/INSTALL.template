@@ -113,13 +113,13 @@ Running the game
 #if __MACOSX__
 Once you have an IWAD file, you can specify its location within the
 graphical launcher program.  Click the "Configure..." button, and then
-click "Set..." for each IWAD location to choose its location.  From
-the main launcher dialog you can then choose which game you want to
-play and click the "Launch" button to start the game.
+click "Set..." for each IWAD to choose its location.  From the main
+launcher dialog you can then choose which game you want to play and
+click the "Launch" button to start the game.
 
 If you are an advanced user and like to run Doom from the command
-line, you can use the "Open Terminal..." menu item to open a command
-line terminal.  The DOOMWADPATH environment variable is preconfigured
+line, you can use the "Command Prompt..." menu item to open a Terminal
+window.  The DOOMWADPATH environment variable is preconfigured
 to point to the locations of the IWAD files set within the launcher.
 You can launch the game with a specific IWAD file by typing, for
 example:
