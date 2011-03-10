@@ -40,9 +40,9 @@ Obtaining an IWAD file
 ----------------------
 
 To play Doom, you need an IWAD file.  This file contains the game data
-that is used in gameplay (graphics, sounds, etc).  The full versions of
-the Doom games are proprietary and need to be bought.  The IWAD file
-has one of the following names:
+(graphics, sounds, etc).  The full versions of the Doom games are
+proprietary and need to be bought.  The IWAD file has one of the
+following names:
 
    doom1.wad                   (Shareware Doom)
    doom.wad                    (Registered / Ultimate Doom)
@@ -51,15 +51,15 @@ has one of the following names:
    plutonia.wad                (Final Doom: Plutonia Experiment)
    chex.wad                    (Chex Quest)
 
-If you don't have a copy of the commercial version, you can download
+If you don't have a copy of a commercial version, you can download
 the shareware version (extract the file named doom1.wad):
 
  * http://www.doomworld.com/idgames/index.php?id=7053
    (idstuff/doom/win95/doom95.zip in your nearest /idgames mirror)
 
-If you have a commercial version, obtaining the IWAD file may be slightly
-complicated.  The method depends on how you obtained your copy of the
-game:
+If you have a commercial version, obtaining the IWAD file is usually
+straightforward.  The method depends on how you obtained your copy of
+the game:
 
 #if _WIN32
  * The Doom games are available to buy for download on Steam
@@ -133,6 +133,11 @@ do one of the following:
  * Within Explorer, simply place the IWAD file in the same folder as
    the Chocolate Doom files, and double-click chocolate-doom.exe.
 
+ * Run Chocolate Doom from the command prompt with the '-iwad' command
+   line parameter to specify the IWAD file to use, eg.
+
+       chocolate-doom -iwad c:\games\doom2.wad
+
  * Set the environment variable DOOMWADDIR to the location of a
    directory containing your IWAD files.
 
@@ -140,12 +145,12 @@ do one of the following:
    environment variable DOOMWADPATH to be a semicolon-separated list
    of directories to search (similar to the PATH environment
    variable).
-
- * Run Chocolate Doom from the command prompt with the '-iwad' command
+#else
+ * Run Chocolate Doom from the Unix console with the '-iwad' command
    line parameter to specify the IWAD file to use, eg.
 
-       chocolate-doom -iwad c:\games\doom2.wad
-#else
+       chocolate-doom -iwad /root/doom2.wad
+
  * Put the file into one of the following directories:
 
      /usr/share/games/doom
@@ -158,11 +163,6 @@ do one of the following:
    environment variable DOOMWADPATH to be a colon-separated list of
    directories to search (similar to the Unix PATH environment
    variable).
-
- * Run Chocolate Doom from the Unix console with the '-iwad' command
-   line parameter to specify the IWAD file to use, eg.
-
-       chocolate-doom -iwad /root/doom2.wad
 #endif
 #endif
 
@@ -176,8 +176,9 @@ are needed:
 
  * The IWAD file 'chex.wad', from the Chex Quest CD.
 
- * The dehacked patch 'chex.deh', which can be found in the /idgames
-   repository in utils/exe_edit/patches/chexdeh.zip.
+ * The dehacked patch 'chex.deh', which can be found here:
+   http://www.doomworld.com/idgames/?id=15420
+   (utils/exe_edit/patches/chexdeh.zip in your nearest /idgames mirror)
 
 Copy these files into a directory together and use the '-iwad' command
 line parameter to specify the Chex Quest IWAD file:
