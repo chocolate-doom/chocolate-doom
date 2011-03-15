@@ -28,7 +28,7 @@
      * Menu navigation when using joystick/joypad (thanks Alexandre
        Xavier).
      * For configuration file value for shift keys, use scan code for
-       right shift, not left shift (thanks AlexXav).
+       right shift, not left shift (thanks Alexandre Xavier).
      * Default joystick buttons for the setup tool now match Vanilla
        (thanks twipley).
      * Visual Studio project files work again (thanks GhostlyDeath).
