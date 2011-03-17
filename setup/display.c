@@ -579,6 +579,7 @@ void ConfigDisplay(void)
     txt_checkbox_t *ar_checkbox;
     txt_dropdown_list_t *bpp_selector;
     int num_columns;
+    int num_rows;
     int window_y;
 
     // What color depths are supported?  Generate supported_bpps array
@@ -611,8 +612,6 @@ void ConfigDisplay(void)
 
     BuildFullscreenModesList();
 
-    window_y = 5;
-
     if (num_screen_modes_fullscreen <= 18)
     {
         num_columns = 3;
@@ -624,7 +623,17 @@ void ConfigDisplay(void)
     else
     {
         num_columns = 5;
-        window_y -= 3;
+    }
+
+    num_rows = (num_screen_modes_fullscreen + num_columns - 1) / num_columns;
+
+    if (num_rows < 10)
+    {
+        window_y = 6 - ((num_rows + 1) / 2);
+    }
+    else
+    {
+        window_y = 1;
     }
 
     modes_table = TXT_NewTable(num_columns);
