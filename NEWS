@@ -5,6 +5,8 @@
        with instructions specific to the platform that it is
        targetting.  This should help to avoid confusion that some
        users have reported experiencing.
+     * The display settings window in the setup tool has been
+       reorganised to a better arrangement.
 
     Compatibility:
      * Added support for the alternate version of the Final Doom
@@ -36,6 +38,10 @@
     libtextscreen:
      * It is now possible to type a '+' in input boxes (thanks
        Alexandre Xavier).
+     * It is possible to use the mouse wheel to scroll through scroll
+       panes.
+     * Clicking on scroll bars now moves the scroll handle to a
+       matching location.
 
 1.5.0 (2011-01-02):
 

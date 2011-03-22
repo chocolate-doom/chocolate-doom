@@ -59,6 +59,14 @@ extern txt_widget_class_t txt_separator_class;
 
 txt_separator_t *TXT_NewSeparator(char *label);
 
-#endif /* #ifndef TXT_SEPARATOR_H */
+/**
+ * Change the label on a separator.
+ *
+ * @param separator     The separator.
+ * @param label         The new label.
+ */
 
+void TXT_SetSeparatorLabel(txt_separator_t *separator, char *label);
+
+#endif /* #ifndef TXT_SEPARATOR_H */
 

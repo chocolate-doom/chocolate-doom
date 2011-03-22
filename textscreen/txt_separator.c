@@ -80,6 +80,20 @@ static void TXT_SeparatorDestructor(TXT_UNCAST_ARG(separator))
     free(separator->label);
 }
 
+void TXT_SetSeparatorLabel(txt_separator_t *separator, char *label)
+{
+    free(separator->label);
+
+    if (label != NULL)
+    {
+        separator->label = strdup(label);
+    }
+    else
+    {
+        separator->label = NULL;
+    }
+}
+
 txt_widget_class_t txt_separator_class =
 {
     TXT_NeverSelectable,
@@ -99,14 +113,8 @@ txt_separator_t *TXT_NewSeparator(char *label)
 
     TXT_InitWidget(separator, &txt_separator_class);
 
-    if (label != NULL)
-    {
-        separator->label = strdup(label);
-    }
-    else
-    {
-        separator->label = NULL;
-    }
+    separator->label = NULL;
+    TXT_SetSeparatorLabel(separator, label);
 
     return separator;
 }
