@@ -34,10 +34,12 @@
 
 // Special keypress values that correspond to mouse button clicks
 
-#define TXT_MOUSE_BASE   0x10000
-#define TXT_MOUSE_LEFT   (TXT_MOUSE_BASE + 0)
-#define TXT_MOUSE_RIGHT  (TXT_MOUSE_BASE + 1)
-#define TXT_MOUSE_MIDDLE (TXT_MOUSE_BASE + 2)
+#define TXT_MOUSE_BASE         0x10000
+#define TXT_MOUSE_LEFT         (TXT_MOUSE_BASE + 0)
+#define TXT_MOUSE_RIGHT        (TXT_MOUSE_BASE + 1)
+#define TXT_MOUSE_MIDDLE       (TXT_MOUSE_BASE + 2)
+#define TXT_MOUSE_SCROLLUP     (TXT_MOUSE_BASE + 3)
+#define TXT_MOUSE_SCROLLDOWN   (TXT_MOUSE_BASE + 4)
 #define TXT_MAX_MOUSE_BUTTONS  16
 
 // Screen size
