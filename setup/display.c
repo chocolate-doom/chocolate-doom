@@ -519,23 +519,17 @@ static void UpdateBPP(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(modes_table))
 
 #if defined(_WIN32) && !defined(_WIN32_WCE)
 
-static int win32_video_driver = 0;
-
-static char *win32_video_drivers[] = 
-{
-    "DirectX",
-    "Windows GDI",
-};
+static int use_directx = 1;
 
 static void SetWin32VideoDriver(void)
 {
     if (!strcmp(video_driver, "windib"))
     {
-        win32_video_driver = 1;
+        use_directx = 0;
     }
     else
     {
-        win32_video_driver = 0;
+        use_directx = 1;
     }
 }
 
@@ -543,13 +537,15 @@ static void UpdateVideoDriver(TXT_UNCAST_ARG(widget),
                               TXT_UNCAST_ARG(modes_table))
 {
     TXT_CAST_ARG(txt_table_t, modes_table);
-    char *drivers[] = 
-    {
-        "",
-        "windib",
-    };
 
-    video_driver = drivers[win32_video_driver != 0];
+    if (use_directx)
+    {
+        video_driver = "";
+    }
+    else
+    {
+        video_driver = "windib";
+    }
 
     // When the video driver is changed, we need to restart the textscreen 
     // library.
@@ -569,6 +565,48 @@ static void UpdateVideoDriver(TXT_UNCAST_ARG(widget),
 
 #endif
 
+static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
+                                  TXT_UNCAST_ARG(modes_table))
+{
+    TXT_CAST_ARG(txt_table_t, modes_table);
+    txt_window_t *window;
+    txt_checkbox_t *ar_checkbox;
+
+    window = TXT_NewWindow("Advanced display options");
+
+    TXT_SetColumnWidths(window, 35);
+
+    TXT_AddWidgets(window,
+                   ar_checkbox = TXT_NewCheckBox("Fix aspect ratio",
+                                                 &aspect_ratio_correct),
+                   TXT_NewCheckBox("Show ENDOOM screen on exit", &show_endoom),
+                   NULL);
+
+    TXT_SignalConnect(ar_checkbox, "changed", GenerateModesTable, modes_table);
+
+    // On Windows, there is an extra control to change between 
+    // the Windows GDI and DirectX video drivers.
+
+#if defined(_WIN32) && !defined(_WIN32_WCE)
+    {
+        txt_radiobutton_t *dx_button, *gdi_button;
+
+        TXT_AddWidgets(window,
+                       TXT_NewSeparator("Windows video driver"),
+                       dx_button = TXT_NewRadioButton("DirectX",
+                                                      &use_directx, 1),
+                       gdi_button = TXT_NewRadioButton("Windows GDI",
+                                                       &use_directx, 0),
+                       NULL);
+
+        TXT_SignalConnect(dx_button, "selected",
+                          UpdateVideoDriver, modes_table);
+        TXT_SignalConnect(gdi_button, "selected",
+                          UpdateVideoDriver, modes_table);
+        SetWin32VideoDriver();
+    }
+#endif
+}
 
 void ConfigDisplay(void)
 {
@@ -576,8 +614,8 @@ void ConfigDisplay(void)
     txt_table_t *modes_table;
     txt_table_t *bpp_table;
     txt_checkbox_t *fs_checkbox;
-    txt_checkbox_t *ar_checkbox;
-    txt_dropdown_list_t *bpp_selector;
+    txt_window_action_t *advanced_button;
+    int i;
     int num_columns;
     int num_rows;
     int window_y;
@@ -597,14 +635,8 @@ void ConfigDisplay(void)
     }
 
     // Open the window
-    
-    window = TXT_NewWindow("Display Configuration");
 
-    TXT_AddWidgets(window, 
-                   fs_checkbox = TXT_NewCheckBox("Fullscreen", &fullscreen),
-                   ar_checkbox = TXT_NewCheckBox("Correct aspect ratio",
-                                                 &aspect_ratio_correct),
-                   NULL);
+    window = TXT_NewWindow("Display Configuration");
 
     // Some machines can have lots of video modes.  This tries to
     // keep a limit of six lines by increasing the number of
@@ -612,11 +644,11 @@ void ConfigDisplay(void)
 
     BuildFullscreenModesList();
 
-    if (num_screen_modes_fullscreen <= 18)
+    if (num_screen_modes_fullscreen <= 24)
     {
         num_columns = 3;
     }
-    else if (num_screen_modes_fullscreen <= 24)
+    else if (num_screen_modes_fullscreen <= 40)
     {
         num_columns = 4;
     }
@@ -625,18 +657,65 @@ void ConfigDisplay(void)
         num_columns = 5;
     }
 
+    modes_table = TXT_NewTable(num_columns);
+
+    // Build window:
+
+    TXT_AddWidget(window, 
+                  fs_checkbox = TXT_NewCheckBox("Full screen", &fullscreen));
+
+    if (num_supported_bpps > 1)
+    {
+        TXT_AddWidgets(window,
+                       TXT_NewSeparator("Color depth"),
+                       bpp_table = TXT_NewTable(4),
+                       NULL);
+
+        for (i = 0; i < num_supported_bpps; ++i)
+        {
+            txt_radiobutton_t *button;
+
+            button = TXT_NewRadioButton(supported_bpps[i],
+                                        &selected_bpp, i);
+
+            TXT_AddWidget(bpp_table, button);
+            TXT_SignalConnect(button, "selected", UpdateBPP, modes_table);
+        }
+    }
+
+    TXT_AddWidgets(window,
+                   TXT_NewSeparator("Screen mode"),
+                   modes_table,
+                   NULL);
+
+    TXT_SignalConnect(fs_checkbox, "changed", GenerateModesTable, modes_table);
+
+    // How many rows high will the configuration window be?
+    // Need to take into account number of fullscreen modes, and also
+    // number of supported pixel depths.
+    // The windowed modes list is four rows, so take the maximum of
+    // windowed and fullscreen.
+
     num_rows = (num_screen_modes_fullscreen + num_columns - 1) / num_columns;
 
-    if (num_rows < 10)
+    if (num_rows < 4)
     {
-        window_y = 6 - ((num_rows + 1) / 2);
+        num_rows = 4;
+    }
+
+    if (num_supported_bpps > 1)
+    {
+        num_rows += 2;
+    }
+
+    if (num_rows < 14)
+    {
+        window_y = 8 - ((num_rows + 1) / 2);
     }
     else
     {
         window_y = 1;
     }
-
-    modes_table = TXT_NewTable(num_columns);
 
     // The window is set at a fixed vertical position.  This keeps
     // the top of the window stationary when switching between
@@ -646,55 +725,15 @@ void ConfigDisplay(void)
     TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_TOP, 
                                   TXT_SCREEN_W / 2, window_y);
 
-    // On Windows, there is an extra control to change between 
-    // the Windows GDI and DirectX video drivers.
-
-#if defined(_WIN32) && !defined(_WIN32_WCE)
-    {
-        txt_table_t *driver_table;
-        txt_dropdown_list_t *driver_list;
-
-        driver_table = TXT_NewTable(2);
-
-        TXT_SetColumnWidths(driver_table, 20, 0);
-
-        TXT_AddWidgets(driver_table,
-                       TXT_NewLabel("Video driver"),
-                       driver_list = TXT_NewDropdownList(&win32_video_driver,
-                                                         win32_video_drivers,
-                                                         2),
-                       NULL);
-
-        TXT_SignalConnect(driver_list, "changed",
-                          UpdateVideoDriver, modes_table);
-        SetWin32VideoDriver();
-
-        TXT_AddWidget(window, driver_table);
-    }
-#endif
-
-    // Screen modes list
-
-    TXT_AddWidgets(window,
-                   TXT_NewSeparator("Screen mode"),
-                   bpp_table = TXT_NewTable(2),
-                   modes_table,
-                   TXT_NewSeparator("Misc."),
-                   TXT_NewCheckBox("Show ENDOOM screen", &show_endoom),
-                   NULL);
-
-    TXT_AddWidgets(bpp_table,
-                   TXT_NewLabel("Color depth: "),
-                   bpp_selector = TXT_NewDropdownList(&selected_bpp,
-                                                      supported_bpps,
-                                                      num_supported_bpps),
-                   NULL);
-
-
-    TXT_SignalConnect(bpp_selector, "changed", UpdateBPP, modes_table);
-    TXT_SignalConnect(fs_checkbox, "changed", GenerateModesTable, modes_table);
-    TXT_SignalConnect(ar_checkbox, "changed", GenerateModesTable, modes_table);
-
     GenerateModesTable(NULL, modes_table);
+
+    // Button to open "advanced" window.
+    // Need to pass a pointer to the modes table, as some of the options
+    // in there trigger a rebuild of it.
+
+    advanced_button = TXT_NewWindowAction('a', "Advanced");
+    TXT_SetWindowAction(window, TXT_HORIZ_CENTER, advanced_button);
+    TXT_SignalConnect(advanced_button, "pressed",
+                      AdvancedDisplayConfig, modes_table);
 }
 
