@@ -34,6 +34,9 @@
      * Default joystick buttons for the setup tool now match Vanilla
        (thanks twipley).
      * Visual Studio project files work again (thanks GhostlyDeath).
+     * The default sfx/music volume set by the setup tool is now 8
+       instead of 15, matching the game itself. (thanks Alexandre
+       Xavier).
 
     libtextscreen:
      * It is now possible to type a '+' in input boxes (thanks

@@ -59,10 +59,10 @@ static char *musmode_strings[] =
 
 int snd_sfxdevice = SNDDEVICE_SB;
 int numChannels = 8;
-int sfxVolume = 15;
+int sfxVolume = 8;
 
 int snd_musicdevice = SNDDEVICE_GENMIDI;
-int musicVolume = 15;
+int musicVolume = 8;
 
 int snd_samplerate = 22050;
 int opl_io_port = 0x388;
