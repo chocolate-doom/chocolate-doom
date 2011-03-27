@@ -420,11 +420,11 @@ static void TXT_ScrollPaneMousePress(TXT_UNCAST_ARG(scrollpane),
     {
         if (scrollbars & SCROLLBAR_VERTICAL)
         {
-            --scrollpane->y;
+            scrollpane->y -= 3;
         }
         else if (scrollbars & SCROLLBAR_HORIZONTAL)
         {
-            --scrollpane->x;
+            scrollpane->x -= 3;
         }
 
         return;
@@ -433,11 +433,11 @@ static void TXT_ScrollPaneMousePress(TXT_UNCAST_ARG(scrollpane),
     {
         if (scrollbars & SCROLLBAR_VERTICAL)
         {
-            ++scrollpane->y;
+            scrollpane->y += 3;
         }
         else if (scrollbars & SCROLLBAR_HORIZONTAL)
         {
-            ++scrollpane->x;
+            scrollpane->x += 3;
         }
 
         return;
