@@ -37,6 +37,8 @@
      * The default sfx/music volume set by the setup tool is now 8
        instead of 15, matching the game itself. (thanks Alexandre
        Xavier).
+     * Weapon cycling from the shotgun to the chaingun in Doom 1 now
+       works properly (thanks Alexandre Xavier).
 
     libtextscreen:
      * It is now possible to type a '+' in input boxes (thanks
