@@ -11,3 +11,5 @@
   An example of this can be seen in Ledmeister's "Blackbug" demo which 
   shows a bug that relies on the memory layout of the Doom executable.  
 
+# vim: tw=70
+
