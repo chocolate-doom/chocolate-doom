@@ -7,6 +7,8 @@
        users have reported experiencing.
      * The display settings window in the setup tool has been
        reorganised to a better arrangement.
+     * It is now possible to load .lmp files (and play back demos)
+       with long filenames (thanks blzut3).
 
     Compatibility:
      * Added support for the alternate version of the Final Doom
