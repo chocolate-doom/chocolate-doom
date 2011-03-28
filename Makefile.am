@@ -37,7 +37,6 @@ DOC_FILES=                              \
         CMDLINE                         \
         README                          \
         README.OPL                      \
-        BUGS                            \
         NEWS                            \
         ChangeLog                       \
         NOT-BUGS
