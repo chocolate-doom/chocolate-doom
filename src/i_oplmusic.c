@@ -1080,7 +1080,7 @@ static void ScheduleTrack(opl_track_data_t *track);
 
 // Restart a song from the beginning.
 
-static void RestartSong(void)
+static void RestartSong(void *unused)
 {
     unsigned int i;
 
@@ -1118,10 +1118,15 @@ static void TrackTimerCallback(void *arg)
         --running_tracks;
 
         // When all tracks have finished, restart the song.
+        // Don't restart the song immediately, but wait for 5ms
+        // before triggering a restart.  Otherwise it is possible
+        // to construct an empty MIDI file that causes the game
+        // to lock up in an infinite loop. (5ms should be short
+        // enough not to be noticeable by the listener).
 
         if (running_tracks <= 0 && song_looping)
         {
-            RestartSong();
+            OPL_SetCallback(5, RestartSong, NULL);
         }
 
         return;

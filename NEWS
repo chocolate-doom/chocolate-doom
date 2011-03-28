@@ -41,6 +41,8 @@
        Xavier).
      * Weapon cycling from the shotgun to the chaingun in Doom 1 now
        works properly (thanks Alexandre Xavier).
+     * MIDI playback that locked up when using an empty MUS / MIDI
+       file (thanks Alexandre Xavier).
 
     libtextscreen:
      * It is now possible to type a '+' in input boxes (thanks
