@@ -27,6 +27,8 @@
      * The null sector dereference emulation code has been imported
        from Prboom+ - this fixes a desync with CLNJ-506.LMP (thanks
        entryway).
+     * The IDMUS cheat doesn't work when emulating the v1.9 executable
+       (thanks Alexandre Xavier).
 
     Bugs fixed:
      * Menu navigation when using joystick/joypad (thanks Alexandre

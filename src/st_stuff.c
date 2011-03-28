@@ -521,8 +521,13 @@ ST_Responder (event_t* ev)
 	
 	plyr->message = DEH_String(STSTR_MUS);
 	cht_GetParam(&cheat_mus, buf);
-	
-	if (gamemode == commercial)
+
+        // Note: The original v1.9 had a bug that tried to play back
+        // the Doom II music regardless of gamemode.  This was fixed
+        // in the Ultimate Doom executable so that it would work for
+        // the Doom 1 music as well.
+
+	if (gamemode == commercial || gameversion < exe_ultimate)
 	{
 	  musnum = mus_runnin + (buf[0]-'0')*10 + buf[1]-'0' - 1;
 	  

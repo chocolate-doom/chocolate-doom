@@ -110,3 +110,20 @@ More information can be found here:
 
     http://rome.ro/lee_killough/editing/visplane.shtml
 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+== IDMUS## cheat doesn't work with shareware/registered Doom IWADs ==
+
+The IDMUS cheat allows the in-game music to be changed.  However, in
+the original v1.9 this cheat didn't work properly when playing with
+the Doom 1 (shareware and registered) IWADs.  This bug was fixed in
+the Ultimate Doom and Final Doom executables.
+
+Chocolate Doom emulates this bug.  When playing with the shareware or
+registered Doom IWADs, the IDMUS cheat therefore does not work
+properly.  If you are playing with the Ultimate Doom IWAD, the
+Ultimate Doom executable is emulated by default, so the cheat works
+properly.
+
+# vim: tw=70
+
