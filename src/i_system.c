@@ -38,6 +38,8 @@
 #include <unistd.h>
 #endif
 
+#include "config.h"
+
 #include "deh_main.h"
 #include "doomdef.h"
 #include "doomstat.h"
@@ -58,6 +60,10 @@
 
 #include "w_wad.h"
 #include "z_zone.h"
+
+#ifdef __MACOSX__
+#include <CoreFoundation/CFUserNotification.h>
+#endif
 
 #define DEFAULT_RAM 16 /* MiB */
 #define MIN_RAM     4  /* MiB */
@@ -361,6 +367,43 @@ void I_Error (char *error, ...)
                             wmsgbuf, sizeof(wmsgbuf));
 
         MessageBoxW(NULL, wmsgbuf, L"", MB_OK);
+    }
+#endif
+
+#ifdef __MACOSX__
+    {
+        CFStringRef message;
+        char msgbuf[512];
+	int i;
+
+        va_start(argptr, error);
+        memset(msgbuf, 0, sizeof(msgbuf));
+        vsnprintf(msgbuf, sizeof(msgbuf) - 1, error, argptr);
+        va_end(argptr);
+
+	// The CoreFoundation message box wraps text lines, so replace
+	// newline characters with spaces so that multiline messages
+	// are continuous.
+
+	for (i = 0; msgbuf[i] != '\0'; ++i)
+        {
+            if (msgbuf[i] == '\n')
+            {
+                msgbuf[i] = ' ';
+            }
+        }
+
+        message = CFStringCreateWithCString(NULL, msgbuf,
+                                            kCFStringEncodingUTF8);
+
+        CFUserNotificationDisplayNotice(0,
+                                        kCFUserNotificationCautionAlertLevel,
+                                        NULL,
+                                        NULL,
+                                        NULL,
+                                        CFSTR(PACKAGE_STRING),
+                                        message,
+                                        NULL);
     }
 #endif
 
