@@ -175,8 +175,19 @@ void OpenTerminalWindow(const char *doomwadpath)
     fprintf(stream, "#!/bin/sh\n");
     //fprintf(stream, "set -x\n");
     fprintf(stream, "PATH=\"%s:$PATH\"\n", executable_path);
-    fprintf(stream, "MANPATH=\"%s/man:$(manpath)\"\n", executable_path);
+
+    // MANPATH is set to point to the directory within the bundle that
+    // contains the Unix manpages.  However, the bundle name or path to
+    // it can contain a space, and OS X doesn't like this!  As a
+    // workaround, create a symlink in /tmp to point to the real directory,
+    // and put *this* in MANPATH.
+
+    fprintf(stream, "rm -f \"/tmp/%s.man\"\n", PACKAGE_TARNAME);
+    fprintf(stream, "ln -s \"%s/man\" \"/tmp/%s.man\"\n",
+                    executable_path, PACKAGE_TARNAME);
+    fprintf(stream, "MANPATH=\"/tmp/%s.man:$(manpath)\"\n", PACKAGE_TARNAME);
     fprintf(stream, "export MANPATH\n");
+
     fprintf(stream, "DOOMWADPATH=\"%s\"\n", doomwadpath);
     fprintf(stream, "export DOOMWADPATH\n");
     fprintf(stream, "rm -f \"%s\"\n", TEMP_SCRIPT);
