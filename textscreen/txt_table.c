@@ -176,7 +176,10 @@ void TXT_AddWidget(TXT_UNCAST_ARG(table), TXT_UNCAST_ARG(widget))
 
     // Maintain parent pointer.
 
-    widget->parent = &table->widget;
+    if (widget != NULL)
+    {
+        widget->parent = &table->widget;
+    }
 }
 
 // Add multiple widgets to a table.
