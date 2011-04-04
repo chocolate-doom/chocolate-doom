@@ -64,7 +64,7 @@ int sfxVolume = 8;
 int snd_musicdevice = SNDDEVICE_GENMIDI;
 int musicVolume = 8;
 
-int snd_samplerate = 22050;
+int snd_samplerate = 44100;
 int opl_io_port = 0x388;
 
 int use_libsamplerate = 0;

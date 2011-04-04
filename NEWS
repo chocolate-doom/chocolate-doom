@@ -45,6 +45,8 @@
        works properly (thanks Alexandre Xavier).
      * MIDI playback that locked up when using an empty MUS / MIDI
        file (thanks Alexandre Xavier).
+     * Default sampling rate used by setup tool changed to 44100Hz, to
+       match the game default (thanks Alexandre Xavier).
 
     libtextscreen:
      * It is now possible to type a '+' in input boxes (thanks
