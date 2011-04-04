@@ -43,7 +43,10 @@ void TXT_SetWindowAction(txt_window_t *window,
 
     // Maintain parent pointer.
 
-    action->widget.parent = &window->table.widget;
+    if (action != NULL)
+    {
+        action->widget.parent = &window->table.widget;
+    }
 }
 
 txt_window_t *TXT_NewWindow(char *title)
