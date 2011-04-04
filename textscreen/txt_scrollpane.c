@@ -557,6 +557,10 @@ txt_scrollpane_t *TXT_NewScrollPane(int w, int h, TXT_UNCAST_ARG(target))
     scrollpane->expand_w = w <= 0;
     scrollpane->expand_h = h <= 0;
 
+    // Set parent pointer for inner widget.
+
+    target->parent = &scrollpane->widget;
+
     return scrollpane;
 }
 

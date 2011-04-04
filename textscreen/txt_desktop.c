@@ -61,6 +61,16 @@ void TXT_RemoveDesktopWindow(txt_window_t *win)
     num_windows = to;
 }
 
+txt_window_t *TXT_GetActiveWindow(void)
+{
+    if (num_windows == 0)
+    {
+        return NULL;
+    }
+
+    return all_windows[num_windows - 1];
+}
+
 static void DrawDesktopBackground(const char *title)
 {
     int i;

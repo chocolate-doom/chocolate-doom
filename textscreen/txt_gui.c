@@ -131,7 +131,7 @@ void TXT_DrawWindowFrame(const char *title, int x, int y, int w, int h)
     int bx, by;
 
     TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);
-    TXT_BGColor(TXT_COLOR_BLUE, 0);
+    TXT_BGColor(TXT_WINDOW_BACKGROUND, 0);
 
     for (y1=y; y1<y+h; ++y1)
     {
@@ -191,7 +191,7 @@ void TXT_DrawSeparator(int x, int y, int w)
     data = TXT_GetScreenData();
 
     TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);
-    TXT_BGColor(TXT_COLOR_BLUE, 0);
+    TXT_BGColor(TXT_WINDOW_BACKGROUND, 0);
 
     if (!VALID_Y(y))
     {

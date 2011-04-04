@@ -60,15 +60,9 @@ static void TXT_InputBoxDrawer(TXT_UNCAST_ARG(inputbox), int selected)
     {
         TXT_BGColor(TXT_COLOR_BLACK, 0);
     }
-    else if (selected)
-    {
-        TXT_BGColor(TXT_COLOR_GREY, 0);
-    }
     else
     {
-        // Not even selected
-
-        TXT_BGColor(TXT_COLOR_BLUE, 0);
+        TXT_SetWidgetBG(inputbox, selected);
     }
 
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);

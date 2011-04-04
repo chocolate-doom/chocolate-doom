@@ -153,15 +153,7 @@ static void TXT_JoystickInputDrawer(TXT_UNCAST_ARG(joystick_input), int selected
         GetJoystickButtonDescription(*joystick_input->variable, buf);
     }
 
-    if (selected)
-    {
-        TXT_BGColor(TXT_COLOR_GREY, 0);
-    }
-    else
-    {
-        TXT_BGColor(TXT_COLOR_BLUE, 0);
-    }
-
+    TXT_SetWidgetBG(joystick_input, selected);
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
     
     TXT_DrawString(buf);

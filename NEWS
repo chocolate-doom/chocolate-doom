@@ -49,6 +49,8 @@
        match the game default (thanks Alexandre Xavier).
 
     libtextscreen:
+     * The background on GUI controls now lights up when hovering over
+       them, so that it is more obvious what you are selecting.
      * It is now possible to type a '+' in input boxes (thanks
        Alexandre Xavier).
      * It is possible to use the mouse wheel to scroll through scroll

@@ -221,7 +221,7 @@ int TXT_Init(void)
 
     // Ignore all mouse motion events
 
-    SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
+//    SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
 
     // Repeat key presses so we can hold down arrows to scroll down the
     // menu, for example. This is what setup.exe does.
@@ -475,6 +475,24 @@ static int SDLButtonToTXTButton(int button)
     }
 }
 
+static int MouseHasMoved(void)
+{
+    static int last_x = 0, last_y = 0;
+    int x, y;
+
+    TXT_GetMousePosition(&x, &y);
+
+    if (x != last_x || y != last_y)
+    {
+        last_x = x; last_y = y;
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
 signed int TXT_GetChar(void)
 {
     SDL_Event ev;
@@ -509,6 +527,12 @@ signed int TXT_GetChar(void)
             case SDL_QUIT:
                 // Quit = escape
                 return 27;
+
+            case SDL_MOUSEMOTION:
+                if (MouseHasMoved())
+                {
+                    return 0;
+                }
 
             default:
                 break;

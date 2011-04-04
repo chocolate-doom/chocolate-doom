@@ -173,6 +173,10 @@ void TXT_AddWidget(TXT_UNCAST_ARG(table), TXT_UNCAST_ARG(widget))
                              sizeof(txt_widget_t *) * (table->num_widgets + 1));
     table->widgets[table->num_widgets] = widget;
     ++table->num_widgets;
+
+    // Maintain parent pointer.
+
+    widget->parent = &table->widget;
 }
 
 // Add multiple widgets to a table.

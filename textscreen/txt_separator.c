@@ -65,7 +65,7 @@ static void TXT_SeparatorDrawer(TXT_UNCAST_ARG(separator), int selected)
     {
         TXT_GotoXY(x, y);
 
-        TXT_BGColor(TXT_COLOR_BLUE, 0);
+        TXT_BGColor(TXT_WINDOW_BACKGROUND, 0);
         TXT_FGColor(TXT_COLOR_BRIGHT_GREEN);
         TXT_DrawString(" ");
         TXT_DrawString(separator->label);
