@@ -227,7 +227,7 @@ static void CalcActionAreaSize(txt_window_t *window,
     txt_widget_t *widget;
     int i;
 
-    *w = 1;
+    *w = 0;
     *h = 0;
 
     // Calculate the width of all the action widgets and use this
@@ -240,7 +240,7 @@ static void CalcActionAreaSize(txt_window_t *window,
         if (widget != NULL)
         {
             TXT_CalcWidgetSize(widget);
-            *w += widget->w + 1;
+            *w += widget->w;
 
             if (widget->h > *h)
             {
