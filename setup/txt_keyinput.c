@@ -42,7 +42,12 @@ static int KeyPressCallback(txt_window_t *window, int key,
         // Got the key press.  Save to the variable and close the window.
 
         *key_input->variable = key;
-        TXT_EmitSignal(key_input, "set");
+
+        if (key_input->check_conflicts)
+        {
+            TXT_EmitSignal(key_input, "set");
+        }
+
         TXT_CloseWindow(window);
 
         // Re-enable key mappings now that we have the key
@@ -66,6 +71,10 @@ static void OpenPromptWindow(txt_key_input_t *key_input)
 {
     txt_window_t *window;
     txt_label_t *label;
+
+    // Silently update when the shift button is held down.
+
+    key_input->check_conflicts = !TXT_GetModifierState(TXT_MOD_SHIFT);
 
     window = TXT_NewWindow(NULL);
     TXT_SetWindowAction(window, TXT_HORIZ_LEFT, NULL);

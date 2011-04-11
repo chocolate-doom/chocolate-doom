@@ -9,6 +9,9 @@
        reorganised to a better arrangement.
      * It is now possible to load .lmp files (and play back demos)
        with long filenames (thanks blzut3).
+     * In the setup tool, it is now possible to hold down shift when
+       changing key/mouse/joystick bindings to prevent other bindings
+       to the same key from being cleared (thanks myk).
 
     Compatibility:
      * Added support for the alternate version of the Final Doom

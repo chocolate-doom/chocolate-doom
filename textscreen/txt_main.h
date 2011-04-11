@@ -69,6 +69,16 @@ typedef enum
     TXT_COLOR_BRIGHT_WHITE,
 } txt_color_t;
 
+// Modifier keys.
+
+typedef enum
+{
+    TXT_MOD_SHIFT,
+    TXT_MOD_CTRL,
+    TXT_MOD_ALT,
+    TXT_NUM_MODIFIERS
+} txt_modifier_t;
+
 // Initialize the screen
 // Returns 1 if successful, 0 if failed.
 
@@ -93,6 +103,10 @@ void TXT_UpdateScreen(void);
 // Read a character from the keyboard
 
 int TXT_GetChar(void);
+
+// Read the current state of modifier keys that are held down.
+
+int TXT_GetModifierState(txt_modifier_t mod);
 
 // Provides a short description of a key code, placing into the 
 // provided buffer.
