@@ -563,7 +563,7 @@ void I_GetEvent(void)
                 }
                 else
                 {
-                    event.data2 = sdlevent.key.keysym.unicode;
+                    event.data2 = tolower(sdlevent.key.keysym.unicode);
                 }
 
                 if (event.data1 != 0)

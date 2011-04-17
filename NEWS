@@ -50,6 +50,8 @@
        file (thanks Alexandre Xavier).
      * Default sampling rate used by setup tool changed to 44100Hz, to
        match the game default (thanks Alexandre Xavier).
+     * Cheat codes and menu hot keys now work when shift is held down
+       or capslock turned on (thanks Alexandre Xavier).
 
     libtextscreen:
      * The background on GUI controls now lights up when hovering over
@@ -62,6 +64,9 @@
        matching location.
      * Clicking outside a dropdown list popup window now dismisses the
        window.
+     * Window hotkeys that are an alphabetical letter now work when
+       shift is held down or capslock turned on (thanks Alexandre
+       Xavier).
 
 1.5.0 (2011-01-02):
 
