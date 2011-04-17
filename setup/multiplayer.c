@@ -56,12 +56,12 @@ typedef enum
 
 static iwad_t iwads[] = 
 {
-    { "doom.wad",     "Doom",                                IWAD_DOOM },
-    { "doom2.wad",    "Doom 2",                              IWAD_DOOM2 },
-    { "tnt.wad",      "Final Doom: TNT: Evilution",          IWAD_TNT },
-    { "plutonia.wad", "Final Doom: The Plutonia Experiment", IWAD_PLUTONIA },
-    { "doom1.wad",    "Doom shareware",                      IWAD_DOOM1 },
-    { "chex.wad",     "Chex Quest",                          IWAD_CHEX },
+    { "doom.wad",     "Doom",                 IWAD_DOOM },
+    { "doom2.wad",    "Doom 2",               IWAD_DOOM2 },
+    { "tnt.wad",      "Final Doom: TNT",      IWAD_TNT },
+    { "plutonia.wad", "Final Doom: Plutonia", IWAD_PLUTONIA },
+    { "doom1.wad",    "Doom shareware",       IWAD_DOOM1 },
+    { "chex.wad",     "Chex Quest",           IWAD_CHEX },
 };
 
 // Array of IWADs found to be installed
