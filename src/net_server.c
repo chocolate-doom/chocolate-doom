@@ -1565,6 +1565,7 @@ void NET_SV_RegisterWithMaster(void)
 {
     //!
     // When running a server, don't register with the global master server.
+    // Implies -server.
     //
     // @category net
     //

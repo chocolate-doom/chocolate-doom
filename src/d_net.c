@@ -278,7 +278,8 @@ void D_CheckNetGame (void)
         // Start a multiplayer server, listening for connections.
         //
 
-        if (M_CheckParm("-server") > 0)
+        if (M_CheckParm("-server") > 0
+         || M_CheckParm("-privateserver") > 0)
         {
             NET_SV_Init();
             NET_SV_AddModule(&net_loop_server_module);

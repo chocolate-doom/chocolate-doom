@@ -14,6 +14,8 @@
        to the same key from being cleared (thanks myk).
      * The joystick menu in the setup tool now has a test button
        (thanks Alexandre Xavier).
+     * Specifying the -privateserver option implies -server (thanks
+       Porsche Monty).
 
     Compatibility:
      * Added support for the alternate version of the Final Doom
