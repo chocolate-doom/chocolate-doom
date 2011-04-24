@@ -25,6 +25,7 @@
 #include "textscreen.h"
 #include "txt_joybinput.h"
 
+#include "execute.h"
 #include "joystick.h"
 
 typedef enum
@@ -437,6 +438,8 @@ void ConfigJoystick(void)
 
     TXT_SignalConnect(joystick_button, "pressed", CalibrateJoystick, NULL);
     TXT_SignalConnect(window, "closed", JoystickWindowClosed, NULL);
+
+    TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
 
     SetJoystickButtonLabel();
 }
