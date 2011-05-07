@@ -325,6 +325,31 @@ static NSString *AppendQuotedFilename(NSString *str, NSString *fileName)
     free(doomwadpath);
 }
 
+- (void) openREADME: (id) sender
+{
+    OpenDocumentation("README");
+}
+
+- (void) openINSTALL: (id) sender
+{
+    OpenDocumentation("INSTALL");
+}
+
+- (void) openCMDLINE: (id) sender
+{
+    OpenDocumentation("CMDLINE");
+}
+
+- (void) openCOPYING: (id) sender
+{
+    OpenDocumentation("COPYING");
+}
+
+- (void) openDocumentation: (id) sender
+{
+    OpenDocumentation("");
+}
+
 - (void) awakeFromNib
 {
     [self->launcherWindow setTitle: @PACKAGE_NAME " Launcher"];

@@ -45,6 +45,12 @@
          forArgument: (NSString *) args;
 - (void) openTerminal: (id) sender;
 
+- (void) openREADME: (id) sender;
+- (void) openINSTALL: (id) sender;
+- (void) openCMDLINE: (id) sender;
+- (void) openCOPYING: (id) sender;
+- (void) openDocumentation: (id) sender;
+
 @end
 
 #endif /* #ifndef LAUNCHER_LAUNCHERMANAGER_H */

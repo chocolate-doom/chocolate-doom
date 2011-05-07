@@ -7,10 +7,13 @@ osx/Resources/wadfile.icns                                              \
 osx/Resources/wadfile.png                                               \
 osx/Resources/launcher.nib/designable.nib                               \
 osx/Resources/launcher.nib/keyedobjects.nib                             \
+osx/disk/dir.DS_Store                                                   \
+osx/disk/background.png                                                 \
 osx/GNUmakefile                                                         \
 osx/Info.plist.in       osx/Info-gnustep.plist.in                       \
 osx/PkgInfo                                                             \
 osx/cp-with-libs                                                        \
+osx/dmgfix                                                              \
 osx/main.m                                                              \
 osx/AppController.m     osx/AppController.h                             \
 osx/Execute.m           osx/Execute.h                                   \

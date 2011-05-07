@@ -1,0 +1,64 @@
+#!/usr/bin/osascript
+--
+-- Copyright(C) 2009 Simon Howard
+--
+-- This program is free software; you can redistribute it and/or
+-- modify it under the terms of the GNU General Public License
+-- as published by the Free Software Foundation; either version 2
+-- of the License, or (at your option) any later version.
+--
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+--
+-- You should have received a copy of the GNU General Public License
+-- along with this program; if not, write to the Free Software
+-- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+-- 02111-1307, USA.
+--
+--
+-- AppleScript script to automatically set the view properties in a
+-- .dmg file - ie. the background image, other Finder view options
+-- and icon positions.
+--
+-- Usage: dmgfix <absolute path to dmg> <disk name> <name of app>
+--
+
+on run argv
+    set dmgFile to POSIX file (item 1 of argv)
+    set diskName to item 2 of argv
+    set appName to item 3 of argv
+
+    tell application "Finder"
+        --activate
+        open dmgFile
+        delay 1
+        set win to the front Finder window
+        set theDisk to disk diskName
+        set the target of win to theDisk
+
+        -- window options:
+
+        set bgfile to file "background.png" of theDisk
+        set the bounds of win to {200, 200, 717, 536}
+        set icon size of icon view options of win to 96
+        set background picture of icon view options of win to bgfile
+        set toolbar visible of win to false
+
+        -- hide background file:
+
+        set bgloc to quoted form of POSIX path of (bgfile as text)
+        do shell script "SetFile -a V " & bgloc
+
+        -- icon positions:
+
+        set position of file "README" of theDisk to {120, 250}
+        set position of file "Software License" of theDisk to {380, 250}
+        set position of file appName of theDisk to {70, 110}
+        set position of file "Applications" of theDisk to {450, 110}
+
+        eject theDisk
+    end tell
+end run
+

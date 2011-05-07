@@ -219,3 +219,13 @@ void OpenTerminalWindow(const char *doomwadpath)
                                    withApplication: @"Terminal"];
 }
 
+void OpenDocumentation(const char *filename)
+{
+    NSString *path;
+
+    path = [NSString stringWithFormat: @"%s/Documentation/%s",
+                     executable_path, filename];
+
+    [[NSWorkspace sharedWorkspace] openFile: path];
+}
+
