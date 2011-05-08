@@ -358,5 +358,10 @@ static NSString *AppendQuotedFilename(NSString *str, NSString *fileName)
     [self setConfig];
 }
 
+- (BOOL) addIWADPath: (NSString *) path
+{
+    return [self->iwadController addIWADPath: path];
+}
+
 @end
 

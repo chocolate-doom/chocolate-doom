@@ -83,6 +83,14 @@
 {
     NSString *extension;
 
+    // This may be an IWAD.  If so, add it to the IWAD configuration;
+    // don't add it like a PWAD.
+
+    if ([self->launcherManager addIWADPath: fileName])
+    {
+        return YES;
+    }
+
     // If this is the first file added, clear out the existing
     // command line.  This allows us to select multiple files
     // in the finder and open them all together (for TCs, etc).

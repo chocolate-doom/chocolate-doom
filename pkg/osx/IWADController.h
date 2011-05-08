@@ -47,6 +47,7 @@
 - (void) saveConfig;
 - (char *) doomWadPath;
 - (void) setEnvironment;
+- (BOOL) addIWADPath: (NSString *) path;
 
 @end
 
