@@ -16,6 +16,10 @@
        (thanks Alexandre Xavier).
      * Specifying the -privateserver option implies -server (thanks
        Porsche Monty).
+     * The Mac OS X .dmg package now has a background and looks generally
+       more polished.
+     * In Mac OS X, it is now possible to simply double click an IWAD
+       file in the Finder to configure its location within the launcher.
 
     Compatibility:
      * Added support for the alternate version of the Final Doom
