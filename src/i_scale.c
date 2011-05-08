@@ -30,6 +30,7 @@
 #include "doomtype.h"
 
 #include "i_video.h"
+#include "m_argv.h"
 #include "z_zone.h"
 
 #if defined(_MSC_VER) && !defined(__cplusplus)
