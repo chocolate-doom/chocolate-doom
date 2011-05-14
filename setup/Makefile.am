@@ -36,6 +36,12 @@ endif
                        @SDLMIXER_LIBS@               \
                        @LDFLAGS@
 
+appdir = $(prefix)/share/applications
+app_DATA = @PROGRAM_PREFIX@setup.desktop
+
+@PROGRAM_PREFIX@setup.desktop : setup.desktop
+	cp $^ $@
+
 .rc.o:
 	$(WINDRES) $^ -o $@
 %.o : %.rc

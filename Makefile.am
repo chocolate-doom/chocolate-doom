@@ -23,16 +23,6 @@ CODEBLOCKS_FILES=                              \
 	codeblocks/setup-res.rc                \
 	codeblocks/textscreen.cbp
 
-DATA_FILES=                   \
-        data/README           \
-        data/doom.ico         \
-        data/doom8.ico        \
-        data/doom.png         \
-        data/setup.ico        \
-        data/setup8.ico       \
-        data/setup.png        \
-        data/convert-icon
-
 DOC_FILES=                              \
         CMDLINE                         \
         README                          \
@@ -45,7 +35,6 @@ EXTRA_DIST=                             \
         $(AUX_DIST_GEN)                 \
         $(MSVC_FILES)                   \
         $(CODEBLOCKS_FILES)             \
-        $(DATA_FILES)                   \
         $(DOC_FILES)                    \
         .lvimrc                         \
         HACKING                         \
@@ -57,7 +46,7 @@ doc_DATA=$(DOC_FILES)
 
 MAINTAINERCLEANFILES =  $(AUX_DIST_GEN)
 
-SUBDIRS=wince textscreen opl pcsound src man setup
+SUBDIRS=wince textscreen opl pcsound data src man setup
 DIST_SUBDIRS=pkg $(SUBDIRS)
 
 if HAVE_PYTHON

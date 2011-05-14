@@ -1,8 +1,8 @@
 
 [Desktop Entry]
 Encoding=UTF-8
-Name=Doom
-Comment=DOOM by Id Software.
+Name=@PACKAGE_NAME@
+Comment=@PACKAGE_SHORTDESC@
 TryExec=@PACKAGE_PREFIX@doom
 Exec=@PACKAGE_PREFIX@doom
 StartupNotify=false

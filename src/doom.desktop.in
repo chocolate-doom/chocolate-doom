@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=@PACKAGE_NAME@
+Exec=@PROGRAM_PREFIX@doom
+Icon=@PROGRAM_PREFIX@doom
+Type=Application
+Comment=@PACKAGE_SHORTDESC@
+Categories=Game;ActionGame;

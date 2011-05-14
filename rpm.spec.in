@@ -51,4 +51,6 @@ rm -rf $RPM_BUILD_ROOT
 %doc %{_mandir}/man6/*
 /usr/share/doc/@PACKAGE@/*
 /usr/games/*
+/usr/share/icons/*
+/usr/share/applications/*
 

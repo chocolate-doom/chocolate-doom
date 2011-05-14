@@ -1,7 +1,10 @@
 Makefile.in
 Makefile
 .deps
-chocolate-setup
+setup-manifest.xml
+setup.desktop
+*-setup
+*-setup.desktop
 *.rc
 *.exe
 tags
