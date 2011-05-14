@@ -3,7 +3,7 @@ gamesdir = $(prefix)/games
 
 AM_CFLAGS = -I../textscreen -I../src @SDLMIXER_CFLAGS@
 
-games_PROGRAMS = chocolate-setup
+games_PROGRAMS = @PROGRAM_PREFIX@setup
 
 SOURCE_FILES =                                  \
     compatibility.c   compatibility.h           \
@@ -22,16 +22,15 @@ SOURCE_FILES =                                  \
     txt_mouseinput.c  txt_mouseinput.h
 
 EXTRA_DIST=                                     \
-    setup_icon.c                                \
-    setup-manifest.xml
+    setup_icon.c
 
 if HAVE_WINDRES
-chocolate_setup_SOURCES=$(SOURCE_FILES) setup-res.rc
+@PROGRAM_PREFIX@setup_SOURCES=$(SOURCE_FILES) setup-res.rc
 else
-chocolate_setup_SOURCES=$(SOURCE_FILES)
+@PROGRAM_PREFIX@setup_SOURCES=$(SOURCE_FILES)
 endif
 
-chocolate_setup_LDADD =                              \
+@PROGRAM_PREFIX@setup_LDADD =                        \
                        ../wince/libc_wince.a         \
                        ../textscreen/libtextscreen.a \
                        @SDLMIXER_LIBS@               \

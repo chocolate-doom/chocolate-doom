@@ -17,6 +17,9 @@
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "1.5.0"
 
+/* Change this when you create your awesome forked version */
+#define PROGRAM_PREFIX "chocolate-"
+
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 

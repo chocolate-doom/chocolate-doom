@@ -294,8 +294,8 @@ static NSString *AppendQuotedFilename(NSString *str, NSString *fileName)
         return;
     }
 
-    ExecuteProgram(PACKAGE_TARNAME, [iwad UTF8String],
-                                    [args UTF8String]);
+    ExecuteProgram(PROGRAM_PREFIX "doom", [iwad UTF8String],
+                                          [args UTF8String]);
     [NSApp terminate:sender];
 }
 
@@ -306,7 +306,7 @@ static NSString *AppendQuotedFilename(NSString *str, NSString *fileName)
     [self saveConfig];
 
     [self->iwadController setEnvironment];
-    ExecuteProgram("chocolate-setup", NULL, NULL);
+    ExecuteProgram(PROGRAM_PREFIX "setup", NULL, NULL);
 }
 
 // Invoked when the "Terminal" option is selected from the menu, to open

@@ -3,8 +3,8 @@
 Encoding=UTF-8
 Name=Doom
 Comment=DOOM by Id Software.
-TryExec=@PACKAGE_TARNAME@
-Exec=@PACKAGE_TARNAME@
+TryExec=@PACKAGE_PREFIX@doom
+Exec=@PACKAGE_PREFIX@doom
 StartupNotify=false
 Terminal=false
 Type=Application

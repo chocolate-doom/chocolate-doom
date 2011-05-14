@@ -3,9 +3,9 @@ include ../config.make
 
 TOPLEVEL=../..
 
-EXE_FILES=$(TOPLEVEL)/src/$(PACKAGE_TARNAME).exe       \
-          $(TOPLEVEL)/src/chocolate-server.exe         \
-          $(TOPLEVEL)/setup/chocolate-setup.exe
+EXE_FILES=$(TOPLEVEL)/src/$(PROGRAM_PREFIX)doom.exe    \
+          $(TOPLEVEL)/src/$(PROGRAM_PREFIX)server.exe  \
+          $(TOPLEVEL)/setup/$(PROGRAM_PREFIX)setup.exe
 
 DLL_FILES=$(TOPLEVEL)/src/SDL.dll                      \
           $(TOPLEVEL)/src/SDL_mixer.dll                \

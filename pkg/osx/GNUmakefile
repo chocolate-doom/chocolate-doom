@@ -78,10 +78,10 @@ $(STAGING_DIR): launcher $(TOPLEVEL_DOCS)
 	cp launcher "$(APP_BIN_DIR)"
 	$(STRIP) "$(APP_BIN_DIR)/launcher"
 
-	./cp-with-libs $(TOPLEVEL)/src/$(PACKAGE_TARNAME) "$(APP_BIN_DIR)"
-	$(STRIP) "$(APP_BIN_DIR)/$(PACKAGE_TARNAME)"
-	./cp-with-libs $(TOPLEVEL)/setup/chocolate-setup "$(APP_BIN_DIR)"
-	$(STRIP) "$(APP_BIN_DIR)/chocolate-setup"
+	./cp-with-libs $(TOPLEVEL)/src/$(PROGRAM_PREFIX)doom "$(APP_BIN_DIR)"
+	$(STRIP) "$(APP_BIN_DIR)/$(PROGRAM_PREFIX)doom"
+	./cp-with-libs $(TOPLEVEL)/setup/$(PROGRAM_PREFIX)setup "$(APP_BIN_DIR)"
+	$(STRIP) "$(APP_BIN_DIR)/$(PROGRAM_PREFIX)setup"
 
 	$(TOPLEVEL)/man/simplecpp -DPRECOMPILED -D__MACOSX__  \
 	             < $(TOPLEVEL)/man/INSTALL.template       \
@@ -94,7 +94,6 @@ $(STAGING_DIR): launcher $(TOPLEVEL_DOCS)
 	cp $(TOPLEVEL)/man/*.6 "$(APP_BIN_DIR)/man/man6"
 	cp disk/dir.DS_Store $(STAGING_DIR)/.DS_Store
 	cp disk/background.png $(STAGING_DIR)/background.png
-#	setfile -a V $(STAGING_DIR)/background.png
 
 clean : launcher_clean
 	rm -f $(DMG)

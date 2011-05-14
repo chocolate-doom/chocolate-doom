@@ -637,9 +637,9 @@ void M_LoadDefaults (void)
     else
     {
         extra_defaults.filename 
-            = malloc(strlen(configdir) + strlen(PACKAGE_TARNAME) + 10);
-        sprintf(extra_defaults.filename, "%s%s.cfg", 
-                configdir, PACKAGE_TARNAME);
+            = malloc(strlen(configdir) + strlen(PROGRAM_PREFIX) + 15);
+        sprintf(extra_defaults.filename, "%s%sdoom.cfg", 
+                configdir, PROGRAM_PREFIX);
     }
 
     LoadDefaultCollection(&doom_defaults);

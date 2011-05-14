@@ -19,6 +19,9 @@
 /* Define to the version of this package. */
 #define PACKAGE_VERSION "1.5.0"
 
+/* Change this when you create your awesome forked version */
+#define PROGRAM_PREFIX "chocolate-"
+
 /* Version number of package */
 #define VERSION "1.5.0"
 
