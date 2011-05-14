@@ -3,8 +3,8 @@
 Encoding=UTF-8
 Name=@PACKAGE_NAME@
 Comment=@PACKAGE_SHORTDESC@
-TryExec=@PACKAGE_PREFIX@doom
-Exec=@PACKAGE_PREFIX@doom
+TryExec=@PROGRAM_PREFIX@doom
+Exec=@PROGRAM_PREFIX@doom
 StartupNotify=false
 Terminal=false
 Type=Application

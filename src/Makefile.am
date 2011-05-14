@@ -181,18 +181,18 @@ endif
                        @SDLMIXER_LIBS@               \
                        @SDLNET_LIBS@
 
-EXTRA_DIST =                        \
-        icon.c                      \
-        doom-screensaver.desktop.in
+EXTRA_DIST = icon.c
 
 appdir = $(prefix)/share/applications
-app_DATA = @PROGRAM_PREFIX@doom.desktop              \
-           @PROGRAM_PREFIX@doom-screensaver.desktop
-
-@PROGRAM_PREFIX@doom-screensaver.desktop: doom-screensaver.desktop
-	cp $^ $@
+app_DATA = @PROGRAM_PREFIX@doom.desktop
 
 @PROGRAM_PREFIX@doom.desktop : doom.desktop
+	cp $^ $@
+
+screensaverdir = $(prefix)/share/applications/screensavers
+screensaver_DATA = @PROGRAM_PREFIX@doom-screensaver.desktop
+
+@PROGRAM_PREFIX@doom-screensaver.desktop: doom-screensaver.desktop
 	cp $^ $@
 
 .rc.o:
