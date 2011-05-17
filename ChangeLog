@@ -1,3 +1,258 @@
+2011-05-17 23:51:37 fraggle
+	
+	Add dependency for INSTALL generation.
+
+2011-05-17 23:06:22 fraggle
+	
+	Detect chex.deh if it is in the same directory as the IWAD file.
+
+2011-05-14 22:50:46 fraggle
+	
+	Fix display of ENDOOM screen.
+
+2011-05-14 22:47:12 fraggle
+	
+	Fix install of screensaver desktop file.
+
+2011-05-14 22:07:55 fraggle
+	
+	Add freedesktop.org desktop files for chocolate-doom, chocolate-setup
+	(thanks Adrián Chaves Fernández).
+
+2011-05-14 21:11:26 fraggle
+	
+	Convert build system to using the PROGRAM_PREFIX system used on
+	raven-branch.
+
+2011-05-08 19:32:02 fraggle
+	
+	Update NEWS.
+
+2011-05-08 19:29:46 fraggle
+	
+	Allow IWAD files to be double-clicked in the finder to set the IWAD
+	configuration.
+
+2011-05-08 01:31:01 fraggle
+	
+	Shut up compiler warnings.
+
+2011-05-08 00:52:26 fraggle
+	
+	Rework OS X launcher package.  Include documentation files within the
+	application bundle and add a help menu with links.  Rework .dmg
+	generation to generate a file with a "fancy" background image and
+	overall nicer appearance.
+
+2011-04-26 06:49:53 quasar_te
+	
+	Support for Win32 native OPL output when compiled with Microsoft
+	Visual C++.  Confirmed to work with Aureal Vortex AU8830 in Win98SE by
+	GhostlyDeath.
+
+2011-04-24 23:22:11 fraggle
+	
+	Infer -server when -privateserver is specified (thanks Porsche Monty).
+
+2011-04-24 22:39:31 fraggle
+	
+	Add test button to joystick menu in setup tool (thanks Alexandre
+	Xavier).
+
+2011-04-18 23:10:16 fraggle
+	
+	Add test hack for simulating Porsche Monty's scanline emulation (see
+	comment in file).
+
+2011-04-17 18:33:04 fraggle
+	
+	Fix libtextscreen window hotkeys to work when shift is held down /
+	capslock turned on.  Fix a similar problem in-game when typing cheat
+	codes or using menu hotkeys (thanks Alexandre Xavier).
+
+2011-04-17 17:53:47 fraggle
+	
+	Make Final Doom IWAD labels shorter, so they don't make the launch
+	windows grow.
+
+2011-04-11 20:49:45 fraggle
+	
+	Allow the shift key to be held down when changing key/mouse/joystick
+	bindings to prevent bindings to the same key from being cleared
+	(thanks myk).
+
+2011-04-09 01:27:13 fraggle
+	
+	Fix action area minimum width calculation.
+
+2011-04-04 21:30:17 fraggle
+	
+	Close dropdown list popup windows when clicking outside the window.
+
+2011-04-04 21:12:59 fraggle
+	
+	Fix crash.
+
+2011-04-04 21:09:42 fraggle
+	
+	Fix crash.
+
+2011-04-04 21:07:07 fraggle
+	
+	Change the background color when hovering over widgets.
+
+2011-04-04 19:40:28 fraggle
+	
+	Change setup tool default sampling rate to 44100Hz to match the game
+	(thanks Alexandre Xavier).
+
+2011-03-30 20:16:40 fraggle
+	
+	Add a symlink hack to work around the fact that OS X doesn't like
+	paths in MANPATH to contain spaces.
+
+2011-03-30 20:00:51 fraggle
+	
+	On OS X, display a dialog box when exiting with I_Error, like on
+	Windows.
+
+2011-03-29 00:48:31 fraggle
+	
+	Remove the BUGS file as it doesn't really contain any useful
+	information.
+
+2011-03-29 00:39:48 fraggle
+	
+	Add vim modeline for text wrapping to documentation text files.
+
+2011-03-29 00:33:09 fraggle
+	
+	Emulate bug with IDMUS cheat when emulating v1.9 (thanks Alexandre
+	Xavier).
+
+2011-03-28 22:36:00 fraggle
+	
+	Fix OPL MIDI playback when using an empty .mus / .mid file (thanks
+	Alexandre Xavier).
+
+2011-03-28 22:32:14 fraggle
+	
+	Allow .lmp files to be loaded (and demo files to be played back) that
+	have long filenames (thanks blzut3).
+
+2011-03-28 01:24:47 fraggle
+	
+	Fix weapon cycling from the shotgun to the chaingun in Doom 1 (thanks
+	Alexandre Xavier).
+
+2011-03-28 00:45:53 fraggle
+	
+	Scroll faster in reaction to the scroll wheel.
+
+2011-03-28 00:42:00 fraggle
+	
+	Change default sfx/music volume in setup tool to 8, to match the game
+	(thanks Alexandre Xavier).
+
+2011-03-22 21:33:17 fraggle
+	
+	Switch separator to show "screen mode" or "window size" depending on
+	whether fullscreen is turned on or not.
+
+2011-03-22 21:08:04 fraggle
+	
+	Fix scrollbars so that clicks scroll the pane to a location that
+	matches the clicked location.  Interpret mousewheel events so that
+	scroll panes can be scrolled.
+
+2011-03-22 19:49:31 fraggle
+	
+	Reorganise the display settings window.
+
+2011-03-17 22:54:33 fraggle
+	
+	Add back -a option to automake, and remove INSTALL if automake
+	installs it.
+
+2011-03-17 22:43:56 fraggle
+	
+	Fix up placement of display settings window.
+
+2011-03-15 22:41:22 fraggle
+	
+	Fix NEWS entry to list the full name for Alexandre Xavier.
+
+2011-03-10 19:47:14 fraggle
+	
+	Include Unix manpages in MacOS package, and set MANPATH to point to
+	them when opening a terminal window.
+
+2011-03-10 19:45:29 fraggle
+	
+	Minor tweaks to MacOS instructions.
+
+2011-03-10 19:20:10 fraggle
+	
+	Minor tweak to INSTALL instructions.
+
+2011-03-10 19:03:23 fraggle
+	
+	Replace the INSTALL file with a template version that is customized to
+	different platforms.
+
+2011-03-09 19:02:15 fraggle
+	
+	Add null sector dereference emulation code from Prboom+, to fix desync
+	with CLNJ-506.LMP (thanks entryway).
+
+2011-03-09 01:06:07 fraggle
+	
+	Add support for the alternate version of the Final Doom executable
+	that fixes the demo loop crash (thanks Porsche Monty, Enjay).
+
+2011-03-06 20:59:51 fraggle
+	
+	Discard very short sound effects and strip lead-in / lead-out samples
+	that apparently aren't played by Vanilla Doom (thanks Quasar).
+
+2011-03-03 21:41:51 fraggle
+	
+	Fix Visual Studio build (thanks GhostlyDeath).
+
+2011-02-28 20:48:27 fraggle
+	
+	Fix autoadjust of pixel depth in setup tool.
+
+2011-02-05 16:50:28 fraggle
+	
+	Fix bug with libtextscreen where it was not possible to type a '+'
+	(thanks Alexandre Xavier).
+
+2011-01-31 01:25:47 fraggle
+	
+	When large numbers of screen resolutions are detected, increase the
+	number of columns in the mode list to fit them all on-screen.  Remove
+	superfluous left-side spacing from the checkbox and radio button
+	widgets so that the modes can be packed closer together.
+
+2011-01-23 21:42:09 fraggle
+	
+	Fix default joystick buttons in setup tool to match Vanilla (thanks
+	twipley).
+
+2011-01-13 20:34:55 fraggle
+	
+	In configuration files, use the scan code for right shift, not left
+	shift, to match Vanilla (thanks AlexXav).
+
+2011-01-12 23:22:20 fraggle
+	
+	Fix menu navigation when using joystick / joypad (thanks AlexXav).
+
+2011-01-02 18:14:59 fraggle
+	
+	Update NEWS and ChangeLog, bump version number.
+
 2011-01-02 17:45:24 fraggle
 	
 	Remove redundant package version label from top of OS X launcher
