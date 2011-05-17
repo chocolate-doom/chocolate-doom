@@ -24,6 +24,8 @@
        the setup tool, which will appear in the main menu on desktop
        environments such as Gnome and KDE (thanks Adrián Chaves
        Fernández).
+     * The Chex Quest dehacked patch (chex.deh) will now be detected
+       if it is in the same directory as the IWAD file.
 
     Compatibility:
      * Added support for the alternate version of the Final Doom
