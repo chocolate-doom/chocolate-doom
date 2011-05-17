@@ -22,7 +22,7 @@ default.cfg.5: ../src default.cfg.template
 $(PACKAGE).cfg.5: ../src extra.cfg.template
 	./docgen -m extra.cfg.template -c $(PACKAGE).cfg ../src > $@
 
-INSTALL:
+INSTALL: INSTALL.template
 	./simplecpp -DPRECOMPILED < INSTALL.template > $@
 
 endif
