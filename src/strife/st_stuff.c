@@ -226,7 +226,7 @@ static patch_t*         invfontg[10];
 // 0-9, yellow numbers
 static patch_t*         invfonty[10];
 
-// 3 key-cards, 3 skulls -- STRIFE-TODO: This is handled differently
+// 3 key-cards, 3 skulls -- [STRIFE] has a lot more keys than 3 :P
 static patch_t*         keys[NUMCARDS]; 
 
 // ready-weapon widget
@@ -432,7 +432,6 @@ boolean ST_Responder(event_t* ev)
                 st_showinvpop = netgame;
                 st_keypage = -1;
 
-                // villsa [STRIFE] TODO - verify this logic
                 st_popupdisplaytics = ev->data2 ^ key_mission;
 
                 st_showobjective = true;
@@ -1109,10 +1108,7 @@ void ST_doRefresh(void)
     }
 }
 
-void ST_diffDraw(void)
-{
-    // haleyjd: STRIFE-TODO: Needed?
-}
+// haleyjd [STRIFE]: Removed ST_diffDraw
 
 void ST_Drawer (boolean fullscreen, boolean refresh)
 {
@@ -1122,12 +1118,10 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
     // Do red-/gold-shifts from damage/items
     ST_doPaletteStuff();
 
-    // haleyjd 09/01/10: STRIFE-TODO: work out statbar details
-
     // If just after ST_Start(), refresh all
     ST_doRefresh();
     // Otherwise, update as little as possible
-    ST_diffDraw();
+    //ST_diffDraw(); [STRIFE]: nope
 }
 
 //

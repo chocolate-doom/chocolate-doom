@@ -494,7 +494,7 @@ void P_PlayerThink (player_t* player)
                         player->pendingweapon = wp_wpgrenade;
                     }
 
-                    // villsa [STRIFE] TODO - no check for mauler/torpedo??
+                    // villsa [STRIFE] - no check for mauler/torpedo??
                 }
             }
         }

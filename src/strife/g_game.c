@@ -570,8 +570,8 @@ void G_BuildTiccmd (ticcmd_t* cmd)
     // buttons
     cmd->chatchar = HU_dequeueChatChar(); 
 
-    // villsa [STRIFE] TODO - add mouse button support for jump
-    if(gamekeydown[key_jump] /*|| mousebuttons[mousebjump]*/)
+    // villsa [STRIFE] - add mouse button support for jump
+    if(gamekeydown[key_jump] || mousebuttons[mousebjump])
         cmd->buttons2 |= BT2_JUMP;
  
     // villsa [STRIFE]: Moved mousebuttons[mousebfire] to below
@@ -1558,7 +1558,7 @@ void G_DoCompleted (void)
     {
         if(playeringame[i])
         {
-            // STRIFE-TODO: not quite sure why it does this
+            // [STRIFE] restore pw_allmap power from mapstate cache
             if(destmap < 40)
                 players[i].powers[pw_allmap] = players[i].mapstate[destmap];
 
@@ -2483,8 +2483,6 @@ void G_TimeDemo (char* name)
     //
 
     nodrawers = M_CheckParm ("-nodraw"); 
-
-    // haleyjd: STRIFE-TODO: where's -noblit?
 
     timingdemo = true; 
     singletics = true; 

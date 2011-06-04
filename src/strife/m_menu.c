@@ -993,8 +993,7 @@ void M_VoiceVol(int choice)
         break;
     }
 
-    // STRIFE-TODO: Voice volume setting
-    //S_SetVoiceVolume(voiceVolume * 8);
+    S_SetVoiceVolume(voiceVolume * 8);
 }
 
 void M_MusicVol(int choice)

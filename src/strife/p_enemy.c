@@ -2595,7 +2595,7 @@ void A_ZombieInSpecialSector(mobj_t* actor)
     int tagval;
 
     sector = actor->subsector->sector;
-    if(actor->z != sector->floorheight) // [STRIFE] TODO - verify
+    if(actor->z != sector->floorheight)
         return;
 
     if(sector->special <= 15)

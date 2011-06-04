@@ -622,9 +622,9 @@ P_CrossSpecialLine
         switch(line->special)
         {
         case 97:        // TELEPORT RETRIGGER
-        case 185:       // haleyjd: STRIFE-TODO: Identify type
-        case 195:       // haleyjd: STRIFE-TODO: Identify type
-        case 231:       // haleyjd: STRIFE-TODO: Identify type
+        case 185:       // haleyjd: [STRIFE] Silent Teleport (used for Converter)
+        case 195:       // haleyjd: [STRIFE] Silent Teleport and Change Zombie
+        case 231:       // haleyjd: [STRIFE] WR Teleport (Silent at Source)
         case 125:       // TELEPORT MONSTERONLY TRIGGER
         case 126:       // TELEPORT MONSTERONLY RETRIGGER
         case 182:       // haleyjd: [STRIFE] Break glass - it's a W1 type too!
@@ -1978,7 +1978,7 @@ void P_SpawnSpecials (void)
         switch(lines[i].special)
         {
         case 48:  // EFFECT FIRSTCOL SCROLL+
-        case 142: // [STRIFE] TODO: verify scroll types
+        case 142:
         case 143:
         case 149:
             linespeciallist[numlinespecials] = &lines[i];

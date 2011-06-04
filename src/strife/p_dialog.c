@@ -2,7 +2,7 @@
 //-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2010 James Haley, Samuel Villareal
+// Copyright(C) 2010 James Haley, Samuel Villarreal
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -99,22 +99,22 @@ static int numscript0dialogs;
 
 // The player engaged in dialog. This is always player 1, though, since Rogue
 // never completed the ability to use dialog outside of single-player mode.
-player_t *dialogplayer;
+static player_t *dialogplayer;
 
 // The object to which the player is speaking.
-mobj_t   *dialogtalker;
+static mobj_t   *dialogtalker;
 
 // The talker's current angle
-angle_t dialogtalkerangle;
+static angle_t dialogtalkerangle;
 
 // The currently active mapdialog object.
 static mapdialog_t *currentdialog;
 
 // Text at the end of the choices
-char dialoglastmsgbuffer[48];
+static char dialoglastmsgbuffer[48];
 
 // Item to display to player when picked up or recieved
-char pickupstring[46];
+static char pickupstring[46];
 
 // Health based on gameskill given by the front's medic
 static const int healthamounts[] = { -100 , -75, -50, -50, -100 };
@@ -1371,8 +1371,8 @@ void P_DialogStart(player_t *player)
 
     // setup dialog menu
     M_StartControlPanel();
-    menupause = 0;
-    menuindialog = 1;
+    menupause = false;
+    menuindialog = true;
     menupausetime = gametic + 17;
     currentMenu = &dialogmenu;
 
