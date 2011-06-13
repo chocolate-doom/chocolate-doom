@@ -41,9 +41,16 @@
 - (void) runSetup: (id)sender;
 - (void) awakeFromNib;
 - (void) clearCommandLine;
+- (BOOL) addIWADPath: (NSString *) path;
 - (void) addFileToCommandLine: (NSString *) fileName
          forArgument: (NSString *) args;
 - (void) openTerminal: (id) sender;
+
+- (void) openREADME: (id) sender;
+- (void) openINSTALL: (id) sender;
+- (void) openCMDLINE: (id) sender;
+- (void) openCOPYING: (id) sender;
+- (void) openDocumentation: (id) sender;
 
 @end
 

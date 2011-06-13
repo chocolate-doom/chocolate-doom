@@ -33,6 +33,7 @@
 #include "doomtype.h"
 
 #include "i_video.h"
+#include "m_argv.h"
 #include "z_zone.h"
 
 #if defined(_MSC_VER) && !defined(__cplusplus)
@@ -965,6 +966,21 @@ static boolean I_Stretch5x(int x1, int y1, int x2, int y2)
         // 100% line 0
         WriteLine5x(screenp, bufp);
         screenp += dest_pitch; bufp += SCREENWIDTH;
+    }
+
+    // test hack for Porsche Monty... scan line simulation:
+    // See here: http://www.doomworld.com/vb/post/962612
+
+    if (M_CheckParm("-scanline") > 0)
+    {
+        screenp = (byte *) dest_buffer + 2 * dest_pitch;
+
+        for (y=0; y<1198; y += 3)
+        {
+            memset(screenp, 0, 1600);
+
+            screenp += dest_pitch * 3;
+        }
     }
 
     return true;

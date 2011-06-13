@@ -885,24 +885,16 @@ PTR_AimTraverse (intercept_t* in)
 	
 	dist = FixedMul (attackrange, in->frac);
 
-        // Return false if there is no back sector.  This should never
-        // be the case if the line is two-sided; however, some WADs
-        // (eg. ottawau.wad) use this as an "impassible glass" trick
-        // and rely on Vanilla Doom's (unintentional) support for this.
-
-        if (li->backsector == NULL)
-        {
-            return false;
-        }
-
-        if (li->frontsector->floorheight != li->backsector->floorheight)
+        if (li->backsector == NULL
+         || li->frontsector->floorheight != li->backsector->floorheight)
 	{
 	    slope = FixedDiv (openbottom - shootz , dist);
 	    if (slope > bottomslope)
 		bottomslope = slope;
 	}
 		
-	if (li->frontsector->ceilingheight != li->backsector->ceilingheight)
+	if (li->backsector == NULL
+         || li->frontsector->ceilingheight != li->backsector->ceilingheight)
 	{
 	    slope = FixedDiv (opentop - shootz , dist);
 	    if (slope < topslope)
@@ -983,26 +975,35 @@ boolean PTR_ShootTraverse (intercept_t* in)
 		
 	dist = FixedMul (attackrange, in->frac);
 
-        // Check if backsector is NULL.  See comment in PTR_AimTraverse.
+        // e6y: emulation of missed back side on two-sided lines.
+        // backsector can be NULL when emulating missing back side.
 
-	if (li->backsector == NULL)
+        if (li->backsector == NULL)
         {
-            goto hitline;
-        }
+            slope = FixedDiv (openbottom - shootz , dist);
+            if (slope > aimslope)
+                goto hitline;
 
-        if (li->frontsector->floorheight != li->backsector->floorheight)
-	{
-	    slope = FixedDiv (openbottom - shootz , dist);
-	    if (slope > aimslope)
-		goto hitline;
-	}
-		
-	if (li->frontsector->ceilingheight != li->backsector->ceilingheight)
-	{
-	    slope = FixedDiv (opentop - shootz , dist);
-	    if (slope < aimslope)
-		goto hitline;
-	}
+            slope = FixedDiv (opentop - shootz , dist);
+            if (slope < aimslope)
+                goto hitline;
+        }
+        else
+        {
+            if (li->frontsector->floorheight != li->backsector->floorheight)
+            {
+                slope = FixedDiv (openbottom - shootz , dist);
+                if (slope > aimslope)
+                    goto hitline;
+            }
+
+            if (li->frontsector->ceilingheight != li->backsector->ceilingheight)
+            {
+                slope = FixedDiv (opentop - shootz , dist);
+                if (slope < aimslope)
+                    goto hitline;
+            }
+        }
 
 	// shot continues
 	return true;

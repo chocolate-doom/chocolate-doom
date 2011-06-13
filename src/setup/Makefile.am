@@ -27,6 +27,12 @@ libsetup_a_SOURCES = $(SOURCE_FILES)
 EXTRA_DIST=                                     \
     setup_icon.c
 
+appdir = $(prefix)/share/applications
+app_DATA = @PROGRAM_PREFIX@setup.desktop
+
+@PROGRAM_PREFIX@setup.desktop : setup.desktop
+	cp $^ $@
+
 if HAVE_PYTHON
 
 setup_icon.c : $(top_builddir)/data/setup8.ico

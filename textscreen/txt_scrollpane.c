@@ -416,6 +416,33 @@ static void TXT_ScrollPaneMousePress(TXT_UNCAST_ARG(scrollpane),
 
     scrollbars = NeedsScrollbars(scrollpane);
 
+    if (b == TXT_MOUSE_SCROLLUP)
+    {
+        if (scrollbars & SCROLLBAR_VERTICAL)
+        {
+            scrollpane->y -= 3;
+        }
+        else if (scrollbars & SCROLLBAR_HORIZONTAL)
+        {
+            scrollpane->x -= 3;
+        }
+
+        return;
+    }
+    else if (b == TXT_MOUSE_SCROLLDOWN)
+    {
+        if (scrollbars & SCROLLBAR_VERTICAL)
+        {
+            scrollpane->y += 3;
+        }
+        else if (scrollbars & SCROLLBAR_HORIZONTAL)
+        {
+            scrollpane->x += 3;
+        }
+
+        return;
+    }
+
     rel_x = x - scrollpane->widget.x;
     rel_y = y - scrollpane->widget.y;
 
@@ -433,14 +460,15 @@ static void TXT_ScrollPaneMousePress(TXT_UNCAST_ARG(scrollpane),
         else
         {
             int range = FullWidth(scrollpane) - scrollpane->w;
+            int bar_max = scrollpane->w - 3;
 
-            scrollpane->x = ((rel_x - 1) * range) / (scrollpane->w - 3);
+            scrollpane->x = ((rel_x - 1) * range + (bar_max / 2)) / bar_max;
         }
 
         return;
     }
 
-    // Click on the horizontal scrollbar?
+    // Click on the vertical scrollbar?
     if ((scrollbars & SCROLLBAR_VERTICAL) && rel_x == scrollpane->w)
     {
         if (rel_y == 0)
@@ -454,8 +482,9 @@ static void TXT_ScrollPaneMousePress(TXT_UNCAST_ARG(scrollpane),
         else
         {
             int range = FullHeight(scrollpane) - scrollpane->h;
+            int bar_max = scrollpane->h - 3;
 
-            scrollpane->y = ((rel_y - 1) * range) / (scrollpane->h - 3);
+            scrollpane->y = ((rel_y - 1) * range + (bar_max / 2)) / bar_max;
         }
 
         return;
@@ -465,7 +494,6 @@ static void TXT_ScrollPaneMousePress(TXT_UNCAST_ARG(scrollpane),
     {
         TXT_WidgetMousePress(scrollpane->child, x, y, b);
     }
-
 }
 
 static void TXT_ScrollPaneLayout(TXT_UNCAST_ARG(scrollpane))
@@ -528,6 +556,10 @@ txt_scrollpane_t *TXT_NewScrollPane(int w, int h, TXT_UNCAST_ARG(target))
     scrollpane->child = target;
     scrollpane->expand_w = w <= 0;
     scrollpane->expand_h = h <= 0;
+
+    // Set parent pointer for inner widget.
+
+    target->parent = &scrollpane->widget;
 
     return scrollpane;
 }

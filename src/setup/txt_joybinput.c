@@ -48,7 +48,12 @@ static int EventCallback(SDL_Event *event, TXT_UNCAST_ARG(joystick_input))
     if (event->type == SDL_JOYBUTTONDOWN)
     {
         *joystick_input->variable = event->jbutton.button;
-        TXT_EmitSignal(joystick_input, "set");
+
+        if (joystick_input->check_conflicts)
+        {
+            TXT_EmitSignal(joystick_input, "set");
+        }
+
         TXT_CloseWindow(joystick_input->prompt_window);
         return 1;
     }
@@ -88,6 +93,10 @@ static void OpenPromptWindow(txt_joystick_input_t *joystick_input)
     txt_window_t *window;
     txt_label_t *label;
     SDL_Joystick *joystick;
+
+    // Silently update when the shift button is held down.
+
+    joystick_input->check_conflicts = !TXT_GetModifierState(TXT_MOD_SHIFT);
 
     if (SDL_Init(SDL_INIT_JOYSTICK) < 0)
     {
@@ -153,15 +162,7 @@ static void TXT_JoystickInputDrawer(TXT_UNCAST_ARG(joystick_input), int selected
         GetJoystickButtonDescription(*joystick_input->variable, buf);
     }
 
-    if (selected)
-    {
-        TXT_BGColor(TXT_COLOR_GREY, 0);
-    }
-    else
-    {
-        TXT_BGColor(TXT_COLOR_BLUE, 0);
-    }
-
+    TXT_SetWidgetBG(joystick_input, selected);
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
     
     TXT_DrawString(buf);

@@ -37,9 +37,10 @@ static void TXT_WindowActionSizeCalc(TXT_UNCAST_ARG(action))
 
     TXT_GetKeyDescription(action->key, buf);
 
-    // Minimum width is the string length + two spaces for padding
+    // Width is label length, plus key description length, plus '='
+    // and two surrounding spaces.
 
-    action->widget.w = strlen(action->label) + strlen(buf) + 1;
+    action->widget.w = strlen(action->label) + strlen(buf) + 3;
     action->widget.h = 1;
 }
 
@@ -50,12 +51,24 @@ static void TXT_WindowActionDrawer(TXT_UNCAST_ARG(action), int selected)
 
     TXT_GetKeyDescription(action->key, buf);
 
+    if (TXT_HoveringOverWidget(action))
+    {
+        TXT_BGColor(TXT_COLOR_BLACK, 0);
+    }
+    else
+    {
+        TXT_BGColor(TXT_WINDOW_BACKGROUND, 0);
+    }
+
+    TXT_DrawString(" ");
     TXT_FGColor(TXT_COLOR_BRIGHT_GREEN);
     TXT_DrawString(buf);
     TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);
     TXT_DrawString("=");
+
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
     TXT_DrawString(action->label);
+    TXT_DrawString(" ");
 }
 
 static void TXT_WindowActionDestructor(TXT_UNCAST_ARG(action))
@@ -69,7 +82,7 @@ static int TXT_WindowActionKeyPress(TXT_UNCAST_ARG(action), int key)
 {
     TXT_CAST_ARG(txt_window_action_t, action);
 
-    if (key == action->key)
+    if (tolower(key) == tolower(action->key))
     {
         TXT_EmitSignal(action, "pressed");
         return 1;

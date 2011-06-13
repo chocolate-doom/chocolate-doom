@@ -68,7 +68,7 @@ static char *musicmode_strings[] =
 
 int snd_sfxdevice = SNDDEVICE_SB;
 int snd_musicdevice = SNDDEVICE_GENMIDI;
-int snd_samplerate = 22050;
+int snd_samplerate = 44100;
 int opl_io_port = 0x388;
 
 static int numChannels = 8;

@@ -48,7 +48,7 @@ static void TXT_RadioButtonDrawer(TXT_UNCAST_ARG(radiobutton), int selected)
 
     w = radiobutton->widget.w;
 
-    TXT_BGColor(TXT_COLOR_BLUE, 0);
+    TXT_BGColor(TXT_WINDOW_BACKGROUND, 0);
     TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);
     TXT_DrawString("(");
 
@@ -67,11 +67,7 @@ static void TXT_RadioButtonDrawer(TXT_UNCAST_ARG(radiobutton), int selected)
 
     TXT_DrawString(") ");
 
-    if (selected)
-    {
-        TXT_BGColor(TXT_COLOR_GREY, 0);
-    }
-
+    TXT_SetWidgetBG(radiobutton, selected);
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
 
     TXT_DrawString(radiobutton->label);

@@ -656,7 +656,7 @@ static int GetTypedChar(SDL_Event *event)
     {
         // Unicode value, from key layout.
 
-        return event->key.keysym.unicode;
+        return tolower(event->key.keysym.unicode);
     }
 }
 

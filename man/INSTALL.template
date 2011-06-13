@@ -1,0 +1,253 @@
+
+Chocolate Doom installation
+===========================
+
+These are instructions for how to install and set up Chocolate Doom
+for play.
+
+#ifn PRECOMPILED
+Building Chocolate Doom
+-----------------------
+
+Before you can play Chocolate Doom, you need to compile a binary that
+you can run.  For compilation, Chocolate Doom requires the following
+to be installed:
+
+ * A C compiler (gcc is recommended)
+ * make (GNU make is recommended)
+ * LibSDL (see http://www.libsdl.org/)
+ * SDL_mixer (see http://www.libsdl.org/projects/SDL_mixer/)
+ * SDL_net (see http://www.libsdl.org/projects/SDL_net/)
+ * Python (optional)
+
+Follow the standard instructions for installing an autotools-based
+package:
+
+ 1. Run './configure' to initialize the package.
+ 2. Run 'make' to compile the package.
+ 3. Run 'make install' to install the package.
+
+An automated build script is available that installs the necessary
+dependencies and builds the source code automatically.  See the build
+instructions on the website.
+
+Advanced topics such as cross-compilation are beyond the scope of this
+document.  Please see the GNU autoconf / automake documentation for more
+information.
+
+#endif
+Obtaining an IWAD file
+----------------------
+
+To play Doom, you need an IWAD file.  This file contains the game data
+(graphics, sounds, etc).  The full versions of the Doom games are
+proprietary and need to be bought.  The IWAD file has one of the
+following names:
+
+   doom1.wad                   (Shareware Doom)
+   doom.wad                    (Registered / Ultimate Doom)
+   doom2.wad                   (Doom 2)
+   tnt.wad                     (Final Doom: TNT: Evilution)
+   plutonia.wad                (Final Doom: Plutonia Experiment)
+   chex.wad                    (Chex Quest)
+
+If you don't have a copy of a commercial version, you can download
+the shareware version (extract the file named doom1.wad):
+
+ * http://www.doomworld.com/idgames/index.php?id=7053
+   (idstuff/doom/win95/doom95.zip in your nearest /idgames mirror)
+
+If you have a commercial version, obtaining the IWAD file is usually
+straightforward.  The method depends on how you obtained your copy of
+the game:
+
+#if _WIN32
+ * The Doom games are available to buy for download on Steam
+   (http://www.steampowered.com/).  Chocolate Doom will autodetect
+   IWADs installed by Steam and you do not need to do anything.
+#else
+ * The Doom games are available to buy for download on Steam
+   (http://www.steampowered.com/).  To find the IWAD files on a
+   Windows system, look in the Steam directory (usually within
+   "Program Files"), under the "steamapps/common" path.
+#endif
+
+ * There have been several CD-based versions of Doom.  Generally, the
+   IWAD files can be found on the CD and copied off directly.
+
+#if _WIN32
+ * If the IWAD files are not directly available on the CD, or you have
+   a floppy disk version, you will need to run the install program to
+   install the game to your hard disk.  As the installer is DOS-based,
+   you may not be able to do this on 64-bit versions of Windows.  In
+   this case, the best suggestion is to use a DOS emulator (such as
+   DOSbox) to run the installer.
+#else
+ * If the IWAD files are not directly available on the CD, or you have
+   a floppy disk version, installation is more difficult.  The best
+   suggestion is to use a DOS emulator (such as DOSbox) to run the
+   installer.
+#endif
+
+ * As an alternative to using an emulator, it is possible to extract
+   the files manually.  On the install disk(s), you will find several
+   files with numbered extensions (with CD versions there may be a
+   single large file with the extension .1, eg. "resource.1").
+
+   From the command line it is possible to combine these files into a
+   single large file, using a command similar to the following:
+
+#if _WIN32
+     copy doom_se.1+doom_se.2+doom_se.3+doom_se.4+doom_se.5 doom_se.lha
+#else
+     cat doom_se.1 doom_se.2 doom_se.3 doom_se.4 doom_se.5 > doom_se.lha
+#endif
+
+   The resulting file is an LHA archive file, and it can be extracted
+   using an LHA archive tool (there is one available for almost every
+   operating system).
+
+Running the game
+----------------
+
+#if __MACOSX__
+Once you have an IWAD file, you can specify its location within the
+graphical launcher program.  Click the "Configure..." button, and then
+click "Set..." for each IWAD to choose its location.  From the main
+launcher dialog you can then choose which game you want to play and
+click the "Launch" button to start the game.
+
+If you are an advanced user and like to run Doom from the command
+line, you can use the "Command Prompt..." menu item to open a Terminal
+window.  The DOOMWADPATH environment variable is preconfigured
+to point to the locations of the IWAD files set within the launcher.
+You can launch the game with a specific IWAD file by typing, for
+example:
+
+    chocolate-doom -iwad tnt.wad
+#else
+Chocolate Doom needs to know where to find your IWAD file. To do this,
+do one of the following:
+
+#if _WIN32
+ * Within Explorer, simply place the IWAD file in the same folder as
+   the Chocolate Doom files, and double-click chocolate-doom.exe.
+
+ * Run Chocolate Doom from the command prompt with the '-iwad' command
+   line parameter to specify the IWAD file to use, eg.
+
+       chocolate-doom -iwad c:\games\doom2.wad
+
+ * Set the environment variable DOOMWADDIR to the location of a
+   directory containing your IWAD files.
+
+ * If you have multiple IWADs in different directories, set the
+   environment variable DOOMWADPATH to be a semicolon-separated list
+   of directories to search (similar to the PATH environment
+   variable).
+#else
+ * Run Chocolate Doom from the Unix console with the '-iwad' command
+   line parameter to specify the IWAD file to use, eg.
+
+       chocolate-doom -iwad /root/doom2.wad
+
+ * Put the file into one of the following directories:
+
+     /usr/share/games/doom
+     /usr/local/share/games/doom
+
+ * Set the environment variable DOOMWADDIR to specify the path to a
+   directory containing your IWAD files.
+
+ * If you have multiple IWADs in different directories, set the
+   environment variable DOOMWADPATH to be a colon-separated list of
+   directories to search (similar to the Unix PATH environment
+   variable).
+#endif
+#endif
+
+Playing with Chex Quest
+-----------------------
+
+Chex Quest is a game based on Doom with some minor modifications that
+was distributed with boxes of Chex cereal in 1997.  It is possible to
+play Chex Quest using Chocolate Doom.  To do this, the following files
+are needed:
+
+ * The IWAD file 'chex.wad', from the Chex Quest CD.
+
+ * The dehacked patch 'chex.deh', which can be found here:
+   http://www.doomworld.com/idgames/?id=15420
+   (utils/exe_edit/patches/chexdeh.zip in your nearest /idgames mirror)
+
+Copy these files into a directory together and use the '-iwad' command
+line parameter to specify the Chex Quest IWAD file:
+
+   chocolate-doom -iwad chex.wad
+
+Installing upgrades
+-------------------
+
+Chocolate Doom requires a version 1.9 IWAD file.  Generally, if you
+install a recent version of Doom you should have a version 1.9 IWAD.
+However, if you are installing from a very old CD version or from
+floppy disks, you might find you have an older version.
+
+The most obvious symptom of an out of date IWAD file is that the game
+will exit at the title screen before the demo starts, with the message
+"Demo is from a different game version!".  If this happens, your IWAD
+file is out of date and you need to upgrade.
+
+Id Software released upgrade patches that will update your game to
+version 1.9.  The following sites have the patches:
+
+  http://www.doomworld.com/files/patches.shtml
+  http://www.doom2.net/doom2/utils.html
+  ftp://ftp.idsoftware.com/idstuff/doom2
+
+#if _WIN32
+As the patches are binary patches that run as DOS executables, on
+recent 64-bit versions of Windows you will need to use a DOS emulator
+(such as DOSBox) to run them.
+#else
+As the patches are binary patches that run as DOS executables, you
+will need to use a DOS emulator (such as DOSBox) to run them.
+#endif
+
+Music support
+-------------
+
+Chocolate Doom includes OPL emulation code that accurately reproduces
+the way that the in-game music sounded under DOS when using an
+Adlib/Soundblaster card.  This is, however, not to everyone's taste.
+
+#if _WIN32
+Better quality MIDI playback is possible by using Windows' native
+MIDI synthesizer that is part of the operating system.  Select "Native
+MIDI" within the sound dialog in the setup tool.
+
+#endif
+#if __MACOSX__
+High quality MIDI playback is possible by using Mac OS X's native MIDI
+synthesizer that is part of the operating system. Select "Native MIDI"
+within the sound dialog in the setup tool.
+
+#endif
+As an alternative it is possible to use Timidity for high quality MIDI
+playback:
+
+  http://timidity.sourceforge.net/
+
+A good set of patches for Timidity is the eawpats collection, which can
+be found here:
+
+  http://www.doomworld.com/idgames/index.php?id=13928
+  (Doom idgames archive, /sounds/eawpats.zip)
+
+#ifn PRECOMPILED
+When compiling from source, be sure to compile and install timidity
+before installing SDL_mixer.
+#endif
+
+# vim: tw=70
+

@@ -27,6 +27,9 @@
 #ifndef TXT_GUI_H
 #define TXT_GUI_H
 
+#define TXT_WINDOW_BACKGROUND TXT_COLOR_BLUE
+#define TXT_HOVER_BACKGROUND  TXT_COLOR_CYAN
+
 void TXT_DrawDesktopBackground(const char *title);
 void TXT_DrawWindowFrame(const char *title, int x, int y, int w, int h);
 void TXT_DrawSeparator(int x, int y, int w);
@@ -34,6 +37,7 @@ void TXT_DrawString(const char *s);
 
 void TXT_DrawHorizScrollbar(int x, int y, int w, int cursor, int range);
 void TXT_DrawVertScrollbar(int x, int y, int h, int cursor, int range);
+
 
 void TXT_InitClipArea(void);
 void TXT_PushClipArea(int x1, int x2, int y1, int y2);

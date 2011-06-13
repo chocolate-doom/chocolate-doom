@@ -63,6 +63,8 @@ static int key_mapping = 1;
 static TxtSDLEventCallbackFunc event_callback;
 static void *event_callback_data;
 
+static int modifier_state[TXT_NUM_MODIFIERS];
+
 // Font we are using:
 
 static txt_font_t *font;
@@ -225,7 +227,7 @@ int TXT_Init(void)
 
     // Ignore all mouse motion events
 
-    SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
+//    SDL_EventState(SDL_MOUSEMOTION, SDL_IGNORE);
 
     // Repeat key presses so we can hold down arrows to scroll down the
     // menu, for example. This is what setup.exe does.
@@ -479,6 +481,66 @@ static int SDLButtonToTXTButton(int button)
     }
 }
 
+static int MouseHasMoved(void)
+{
+    static int last_x = 0, last_y = 0;
+    int x, y;
+
+    TXT_GetMousePosition(&x, &y);
+
+    if (x != last_x || y != last_y)
+    {
+        last_x = x; last_y = y;
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
+}
+
+// Examine a key press/release and update the modifier key state
+// if necessary.
+
+static void UpdateModifierState(SDL_keysym *sym, int pressed)
+{
+    txt_modifier_t mod;
+
+    switch (sym->sym)
+    {
+        case SDLK_LSHIFT:
+        case SDLK_RSHIFT:
+            mod = TXT_MOD_SHIFT;
+            break;
+
+        case SDLK_LCTRL:
+        case SDLK_RCTRL:
+            mod = TXT_MOD_CTRL;
+            break;
+
+        case SDLK_LALT:
+        case SDLK_RALT:
+#if !SDL_VERSION_ATLEAST(1, 3, 0)
+        case SDLK_LMETA:
+        case SDLK_RMETA:
+#endif
+            mod = TXT_MOD_ALT;
+            break;
+
+        default:
+            return;
+    }
+
+    if (pressed)
+    {
+        ++modifier_state[mod];
+    }
+    else
+    {
+        --modifier_state[mod];
+    }
+}
+
 signed int TXT_GetChar(void)
 {
     SDL_Event ev;
@@ -508,11 +570,23 @@ signed int TXT_GetChar(void)
                 break;
 
             case SDL_KEYDOWN:
+                UpdateModifierState(&ev.key.keysym, 1);
+
                 return TranslateKey(&ev.key.keysym);
+
+            case SDL_KEYUP:
+                UpdateModifierState(&ev.key.keysym, 0);
+                break;
 
             case SDL_QUIT:
                 // Quit = escape
                 return 27;
+
+            case SDL_MOUSEMOTION:
+                if (MouseHasMoved())
+                {
+                    return 0;
+                }
 
             default:
                 break;
@@ -520,6 +594,16 @@ signed int TXT_GetChar(void)
     }
 
     return -1;
+}
+
+int TXT_GetModifierState(txt_modifier_t mod)
+{
+    if (mod < TXT_NUM_MODIFIERS)
+    {
+        return modifier_state[mod] > 0;
+    }
+
+    return 0;
 }
 
 static const char *SpecialKeyName(int key)

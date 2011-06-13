@@ -191,6 +191,18 @@ EXTRA_DIST =                        \
         icon.c                      \
         doom-screensaver.desktop.in
 
+appdir = $(prefix)/share/applications
+app_DATA = @PROGRAM_PREFIX@doom.desktop
+
+@PROGRAM_PREFIX@doom.desktop : doom.desktop
+	cp $^ $@
+
+screensaverdir = $(prefix)/share/applications/screensavers
+screensaver_DATA = @PROGRAM_PREFIX@doom-screensaver.desktop
+
+@PROGRAM_PREFIX@doom-screensaver.desktop: doom-screensaver.desktop
+	cp $^ $@
+
 .rc.o:
 	$(WINDRES) $^ -o $@
 %.o : %.rc

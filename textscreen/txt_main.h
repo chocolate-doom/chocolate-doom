@@ -34,10 +34,12 @@
 
 // Special keypress values that correspond to mouse button clicks
 
-#define TXT_MOUSE_BASE   0x10000
-#define TXT_MOUSE_LEFT   (TXT_MOUSE_BASE + 0)
-#define TXT_MOUSE_RIGHT  (TXT_MOUSE_BASE + 1)
-#define TXT_MOUSE_MIDDLE (TXT_MOUSE_BASE + 2)
+#define TXT_MOUSE_BASE         0x10000
+#define TXT_MOUSE_LEFT         (TXT_MOUSE_BASE + 0)
+#define TXT_MOUSE_RIGHT        (TXT_MOUSE_BASE + 1)
+#define TXT_MOUSE_MIDDLE       (TXT_MOUSE_BASE + 2)
+#define TXT_MOUSE_SCROLLUP     (TXT_MOUSE_BASE + 3)
+#define TXT_MOUSE_SCROLLDOWN   (TXT_MOUSE_BASE + 4)
 #define TXT_MAX_MOUSE_BUTTONS  16
 
 // Screen size
@@ -67,6 +69,16 @@ typedef enum
     TXT_COLOR_BRIGHT_WHITE,
 } txt_color_t;
 
+// Modifier keys.
+
+typedef enum
+{
+    TXT_MOD_SHIFT,
+    TXT_MOD_CTRL,
+    TXT_MOD_ALT,
+    TXT_NUM_MODIFIERS
+} txt_modifier_t;
+
 // Initialize the screen
 // Returns 1 if successful, 0 if failed.
 
@@ -91,6 +103,10 @@ void TXT_UpdateScreen(void);
 // Read a character from the keyboard
 
 int TXT_GetChar(void);
+
+// Read the current state of modifier keys that are held down.
+
+int TXT_GetModifierState(txt_modifier_t mod);
 
 // Provides a short description of a key code, placing into the 
 // provided buffer.

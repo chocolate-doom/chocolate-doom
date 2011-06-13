@@ -65,7 +65,7 @@ static void TXT_SeparatorDrawer(TXT_UNCAST_ARG(separator), int selected)
     {
         TXT_GotoXY(x, y);
 
-        TXT_BGColor(TXT_COLOR_BLUE, 0);
+        TXT_BGColor(TXT_WINDOW_BACKGROUND, 0);
         TXT_FGColor(TXT_COLOR_BRIGHT_GREEN);
         TXT_DrawString(" ");
         TXT_DrawString(separator->label);
@@ -78,6 +78,20 @@ static void TXT_SeparatorDestructor(TXT_UNCAST_ARG(separator))
     TXT_CAST_ARG(txt_separator_t, separator);
 
     free(separator->label);
+}
+
+void TXT_SetSeparatorLabel(txt_separator_t *separator, char *label)
+{
+    free(separator->label);
+
+    if (label != NULL)
+    {
+        separator->label = strdup(label);
+    }
+    else
+    {
+        separator->label = NULL;
+    }
 }
 
 txt_widget_class_t txt_separator_class =
@@ -99,14 +113,8 @@ txt_separator_t *TXT_NewSeparator(char *label)
 
     TXT_InitWidget(separator, &txt_separator_class);
 
-    if (label != NULL)
-    {
-        separator->label = strdup(label);
-    }
-    else
-    {
-        separator->label = NULL;
-    }
+    separator->label = NULL;
+    TXT_SetSeparatorLabel(separator, label);
 
     return separator;
 }

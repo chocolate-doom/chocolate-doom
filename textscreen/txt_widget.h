@@ -102,6 +102,10 @@ struct txt_widget_s
 
     int x, y;
     unsigned int w, h;
+
+    // Pointer up to parent widget that contains this widget.
+
+    txt_widget_t *parent;
 };
 
 void TXT_InitWidget(TXT_UNCAST_ARG(widget), txt_widget_class_t *widget_class);
@@ -146,6 +150,34 @@ void TXT_SetWidgetAlign(TXT_UNCAST_ARG(widget), txt_horiz_align_t horiz_align);
 
 int TXT_SelectableWidget(TXT_UNCAST_ARG(widget));
 
-#endif /* #ifndef TXT_WIDGET_H */
+/**
+ * Query whether the mouse is hovering over the specified widget.
+ *
+ * @param widget       The widget.
+ * @return             Non-zero if the mouse cursor is over the widget.
+ */
 
+int TXT_HoveringOverWidget(TXT_UNCAST_ARG(widget));
+
+/**
+ * Set the background to draw the specified widget, depending on
+ * whether it is selected and the mouse is hovering over it.
+ *
+ * @param widget       The widget.
+ * @param selected     Whether the widget is selected.
+ */
+
+void TXT_SetWidgetBG(TXT_UNCAST_ARG(widget), int selected);
+
+/**
+ * Query whether the specified widget is contained within another
+ * widget.
+ *
+ * @param haystack     The widget that might contain needle.
+ * @param needle       The widget being queried.
+ */
+
+int TXT_ContainsWidget(TXT_UNCAST_ARG(haystack), TXT_UNCAST_ARG(needle));
+
+#endif /* #ifndef TXT_WIDGET_H */
 

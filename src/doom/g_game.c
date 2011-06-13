@@ -361,6 +361,13 @@ int G_CmdChecksum (ticcmd_t* cmd)
 
 static boolean WeaponSelectable(weapontype_t weapon)
 {
+    // Can't select the super shotgun in Doom 1.
+
+    if (weapon == wp_supershotgun && gamemission == doom)
+    {
+        return false;
+    }
+
     // Can't select a weapon if we don't own it.
 
     if (!players[consoleplayer].weaponowned[weapon])

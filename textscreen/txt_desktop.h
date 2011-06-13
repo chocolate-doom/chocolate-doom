@@ -63,6 +63,15 @@ void TXT_ExitMainLoop(void);
 
 void TXT_GUIMainLoop(void);
 
+/**
+ * Get the top window on the desktop that is currently receiving
+ * inputs.
+ *
+ * @return    The active window, or NULL if no windows are present.
+ */
+
+txt_window_t *TXT_GetActiveWindow(void);
+
 #endif /* #ifndef TXT_DESKTOP_H */
 
 
