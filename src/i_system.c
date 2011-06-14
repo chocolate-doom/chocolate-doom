@@ -38,6 +38,8 @@
 #include <unistd.h>
 #endif
 
+#include "SDL.h"
+
 #include "config.h"
 
 #include "deh_str.h"
