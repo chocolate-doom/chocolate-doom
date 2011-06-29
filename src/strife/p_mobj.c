@@ -737,6 +737,12 @@ void P_RemoveMobj (mobj_t* mobj)
         itemrespawntime[iquehead] = leveltime + 30*TICRATE; // [STRIFE]
         iquehead = (iquehead+1)&(ITEMQUESIZE-1);
 
+        // [STRIFE] FIXME/TODO: - haleyjd 20110629
+        // -random parameter affects the behavior of respawning items here.
+        // However, this requires addition of randomparm to the transmission
+        // of variables during netgame initialization, and the netcode is not
+        // functional yet - so, I haven't added this yet!
+
         // lose one off the end?
         if (iquehead == iquetail)
             iquetail = (iquetail+1)&(ITEMQUESIZE-1);

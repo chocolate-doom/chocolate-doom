@@ -725,7 +725,9 @@ void R_DrawPSprite (pspdef_t* psp)
     sprframe = &sprdef->spriteframes[ psp->state->frame & FF_FRAMEMASK ];
 
     lump = sprframe->lump[0];
-    flip = (boolean)sprframe->flip[0];
+    // [STRIFE] haleyjd 20110629: -flip replaces this.
+    //flip = (boolean)sprframe->flip[0];
+    flip = flipparm;
     
     // calculate edges of the shape
     tx = psp->sx-160*FRACUNIT;

@@ -110,6 +110,7 @@ boolean         devparm;        // started game with -devparm
 boolean         nomonsters;     // checkparm of -nomonsters
 boolean         respawnparm;    // checkparm of -respawn
 boolean         fastparm;       // checkparm of -fast
+boolean         flipparm;       // [STRIFE] haleyjd 20110629: checkparm of -flip
 
 boolean         showintro = true;   // [STRIFE] checkparm of -nograph, disables intro
 boolean         singletics = false; // debug flag to cancel adaptiveness
@@ -1509,6 +1510,22 @@ void D_DoomMain (void)
     //
 
     nomonsters = M_CheckParm ("-nomonsters");
+
+    //!
+    // @category strife
+    //
+    // Sets Rogue playtesting mode (godmode, noclip toggled by backspace)
+    //
+
+    workparm = M_CheckParm ("-work");
+
+    //!
+    // @category strife
+    //
+    // Attemps to flip player gun sprites, but is broken.
+    //
+
+    flipparm = M_CheckParm ("-flip");
 
     //!
     // @vanilla
