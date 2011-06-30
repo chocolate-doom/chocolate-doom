@@ -277,15 +277,18 @@ wipe_ScreenWipe
     if (!go)
     {
 	go = 1;
-	// wipe_scr = (byte *) Z_Malloc(width*height, PU_STATIC, 0); // DEBUG
-	wipe_scr = I_VideoBuffer;
+        // haleyjd 20110629 [STRIFE]: We *must* use a temp buffer here.
+	wipe_scr = (byte *) Z_Malloc(width*height, PU_STATIC, 0); // DEBUG
+	//wipe_scr = I_VideoBuffer;
 	(*wipes[wipeno*3])(width, height, ticks);
     }
 
     // do a piece of wipe-in
     V_MarkRect(0, 0, width, height);
     rc = (*wipes[wipeno*3+1])(width, height, ticks);
-    //  V_DrawBlock(x, y, 0, width, height, wipe_scr); // DEBUG
+
+    // haleyjd 20110629 [STRIFE]: Copy temp buffer to the real screen.
+    V_DrawBlock(x, y, width, height, wipe_scr);
 
     // final stuff
     if (rc)

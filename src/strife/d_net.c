@@ -165,10 +165,13 @@ void NetUpdate (void)
 	I_StartTic ();
 	D_ProcessEvents ();
 
+#if 0
         // Always run the menu
+        // - jhaley 20110629 [CHOCOFIX] - sure, if you want to cause serious 
+        //   problems. See TryRunTics for where the call to M_Ticker belongs.
 
         M_Ticker ();
-
+#endif
         if (drone)
         {
             // In drone mode, do not generate any ticcmds.
@@ -608,6 +611,11 @@ void TryRunTics (void)
 	    if (advancedemo)
 		D_DoAdvanceDemo ();
 
+            // [STRIFE]/[CHOCOFIX] jhaley 20110629 Chocolate compatibility problem!
+            // *Somebody* moved M_Ticker to NetUpdate where it specifically does not
+            // belong. It *must* be here. All it ever does is animate the cursor
+            // anyway so there is absolutely no reason to run it from NetUpdate.
+            M_Ticker (); 
 	    G_Ticker ();
 	    gametic++;
 	    
