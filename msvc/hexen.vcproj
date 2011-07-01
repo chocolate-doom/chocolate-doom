@@ -40,11 +40,11 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;..\src;..\src\doom;..\src\heretic;..\textscreen;..\pcsound"
+				AdditionalIncludeDirectories=".;..\src;..\src\strife;..\src\doom;..\textscreen;..\pcsound;..\opl"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;PROGRAM_PREFIX=&quot;\&quot;chocolate-\&quot;&quot;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="3"
+				RuntimeLibrary="2"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 				CompileAs="1"
@@ -60,8 +60,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib"
+				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib ..\lib\libpcsound.lib ..\lib\libtextscreen.lib ..\lib\libopl.lib"
 				OutputFile="$(OutDir)\chocolate-hexen-dbg.exe"
+				IgnoreAllDefaultLibraries="false"
+				IgnoreDefaultLibraryNames="msvcrtd.lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -204,6 +206,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\i_oplmusic.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\i_pcsound.c"
 				>
 			</File>
@@ -280,6 +286,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\midifile.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\mus2mid.c"
 				>
 			</File>
@@ -309,6 +319,10 @@
 			</File>
 			<File
 				RelativePath="..\src\w_file_win32.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\w_main.c"
 				>
 			</File>
 			<File
