@@ -187,26 +187,26 @@ appdir = $(prefix)/share/applications
 app_DATA = @PROGRAM_PREFIX@doom.desktop
 
 @PROGRAM_PREFIX@doom.desktop : doom.desktop
-	cp $^ $@
+	cp $< $@
 
 screensaverdir = $(prefix)/share/applications/screensavers
 screensaver_DATA = @PROGRAM_PREFIX@doom-screensaver.desktop
 
 @PROGRAM_PREFIX@doom-screensaver.desktop: doom-screensaver.desktop
-	cp $^ $@
+	cp $< $@
 
 .rc.o:
-	$(WINDRES) $^ -o $@
+	$(WINDRES) $< -o $@
 %.o : %.rc
-	$(WINDRES) $^ -o $@
+	$(WINDRES) $< -o $@
 
 if HAVE_PYTHON
 
 icon.c : ../data/doom8.ico
-	../data/convert-icon $^ $@
+	../data/convert-icon $< $@
 
 endif
 
 midiread : midifile.c
-	$(CC) -DTEST $(CFLAGS) @LDFLAGS@ $^ -o $@
+	$(CC) -DTEST $(CFLAGS) @LDFLAGS@ $< -o $@
 
