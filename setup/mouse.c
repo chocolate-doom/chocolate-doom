@@ -38,8 +38,8 @@ int mouse_threshold = 10;
 int grabmouse = 1;
 
 int mousebfire = 0;
-int mousebforward = 1;
-int mousebstrafe = 2;
+int mousebforward = 2;
+int mousebstrafe = 1;
 int mousebstrafeleft = -1;
 int mousebstraferight = -1;
 int mousebbackward = -1;
