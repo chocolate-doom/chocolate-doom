@@ -430,22 +430,24 @@ static char *SearchDirectoryForIWAD(char *dir)
 static void IdentifyIWADByName(char *name)
 {
     size_t i;
+    char *p;
+
+    // Trim down the name to just the filename, ignoring the path.
+
+    p = strrchr(name, DIR_SEPARATOR);
+
+    if (p != NULL)
+    {
+        name = p + 1;
+    }
 
     gamemission = none;
-    
+
     for (i=0; i<arrlen(iwads); ++i)
     {
-        char *iwadname;
+        // Check if the filename is this IWAD name.
 
-        iwadname = DEH_String(iwads[i].name);
-
-        if (strlen(name) < strlen(iwadname))
-            continue;
-
-        // Check if it ends in this IWAD name.
-
-        if (!strcasecmp(name + strlen(name) - strlen(iwadname), 
-                        iwadname))
+        if (!strcasecmp(name, DEH_String(iwads[i].name)))
         {
             CheckSpecialIWADs(iwads[i].name);
             gamemission = iwads[i].mission;
