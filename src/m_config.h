@@ -34,6 +34,7 @@ void M_SaveDefaultsAlternate(char *main, char *extra);
 void M_SetConfigDir(char *dir);
 void M_BindVariable(char *name, void *variable);
 void M_SetConfigFilenames(char *main_config, char *extra_config);
+char *M_GetSaveGameDir(char *iwadname);
 
 extern char *configdir;
 

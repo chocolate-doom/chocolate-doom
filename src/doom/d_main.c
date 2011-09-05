@@ -786,40 +786,6 @@ void D_SetGameDescription(void)
     }
 }
 
-static void SetSaveGameDir(char *iwad_filename)
-{
-    char *sep;
-    char *basefile;
-
-    // Extract the base filename
- 
-    sep = strrchr(iwad_filename, DIR_SEPARATOR);
-
-    if (sep == NULL)
-    {
-        basefile = iwad_filename;
-    }
-    else
-    {
-        basefile = sep + 1;
-    }
-
-    // ~/.chocolate-doom/savegames/
-
-    savegamedir = Z_Malloc(strlen(configdir) + 30, PU_STATIC, 0);
-    sprintf(savegamedir, "%ssavegames%c", configdir,
-                         DIR_SEPARATOR);
-
-    M_MakeDirectory(savegamedir);
-
-    // eg. ~/.chocolate-doom/savegames/doom2.wad/
-
-    sprintf(savegamedir + strlen(savegamedir), "%s%c",
-            basefile, DIR_SEPARATOR);
-
-    M_MakeDirectory(savegamedir);
-}
-
 // Check if the IWAD file is the Chex Quest IWAD.  
 // Returns true if this is chex.wad.
 
@@ -1119,6 +1085,27 @@ static void LoadHacxDeh(void)
                     "Hacx v1.2 IWAD.");
         }
     }
+}
+
+// Figure out what IWAD name to use for savegames.
+
+static char *SaveGameIWADName(void)
+{
+    // Chex quest hack
+
+    if (gameversion == exe_chex)
+    {
+        return "chex.wad";
+    }
+
+    // Hacx hack
+
+    if (gameversion == exe_hacx)
+    {
+        return "hacx.wad";
+    }
+
+    return D_SaveGameIWADName(gamemission);
 }
 
 //
@@ -1439,7 +1426,7 @@ void D_DoomMain (void)
     LoadChexDeh();
     LoadHacxDeh();
     D_SetGameDescription();
-    SetSaveGameDir(iwadfile);
+    savegamedir = M_GetSaveGameDir(SaveGameIWADName());
 
     // Check for -file in shareware
     if (modifiedgame)

@@ -1577,3 +1577,40 @@ void M_SetConfigDir(char *dir)
     M_MakeDirectory(configdir);
 }
 
+//
+// Calculate the path to the directory to use to store save games.
+// Creates the directory as necessary.
+//
+
+char *M_GetSaveGameDir(char *iwadname)
+{
+    char *savegamedir;
+
+    // If not "doing" a configuration directory (Windows), don't "do"
+    // a savegame directory, either.
+
+    if (!strcmp(configdir, ""))
+    {
+	savegamedir = strdup("");
+    }
+    else
+    {
+        // ~/.chocolate-doom/savegames/
+
+        savegamedir = malloc(strlen(configdir) + 30);
+        sprintf(savegamedir, "%ssavegames%c", configdir,
+                             DIR_SEPARATOR);
+
+        M_MakeDirectory(savegamedir);
+
+        // eg. ~/.chocolate-doom/savegames/doom2.wad/
+
+        sprintf(savegamedir + strlen(savegamedir), "%s%c",
+                iwadname, DIR_SEPARATOR);
+
+        M_MakeDirectory(savegamedir);
+    }
+
+    return savegamedir;
+}
+
