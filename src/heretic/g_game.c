@@ -25,6 +25,7 @@
 // G_game.c
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include "doomdef.h"
 #include "doomkeys.h"
@@ -133,6 +134,7 @@ boolean precache = true;        // if true, load all graphics at start
 
 short consistancy[MAXPLAYERS][BACKUPTICS];
 
+char *savegamedir;
 byte *savebuffer, *save_p;
 
 
@@ -1294,11 +1296,11 @@ void G_DoWorldDone(void)
 //
 //---------------------------------------------------------------------------
 
-char savename[256];
+static char *savename = NULL;
 
 void G_LoadGame(char *name)
 {
-    strcpy(savename, name);
+    savename = strdup(name);
     gameaction = ga_loadgame;
 }
 
@@ -1322,6 +1324,9 @@ void G_DoLoadGame(void)
     gameaction = ga_nothing;
 
     length = M_ReadFile(savename, &savebuffer);
+    free(savename);
+    savename = NULL;
+
     save_p = savebuffer + SAVESTRINGSIZE;
     // Skip the description field
     memset(vcheck, 0, sizeof(vcheck));
@@ -1684,21 +1689,15 @@ void G_SaveGame(int slot, char *description)
 void G_DoSaveGame(void)
 {
     int i;
-    char name[100];
+    char *filename;
     char verString[VERSIONSIZE];
     char *description;
 
-    if (cdrom)
-    {
-        sprintf(name, SAVEGAMENAMECD "%d.hsg", savegameslot);
-    }
-    else
-    {
-        sprintf(name, SAVEGAMENAME "%d.hsg", savegameslot);
-    }
+    filename = SV_Filename(savegameslot);
+
     description = savedescription;
 
-    SV_Open(name);
+    SV_Open(filename);
     SV_Write(description, SAVESTRINGSIZE);
     memset(verString, 0, sizeof(verString));
     DEH_snprintf(verString, VERSIONSIZE, "version %i", HERETIC_VERSION);
@@ -1717,11 +1716,32 @@ void G_DoSaveGame(void)
     P_ArchiveWorld();
     P_ArchiveThinkers();
     P_ArchiveSpecials();
-    SV_Close(name);
+    SV_Close(filename);
 
     gameaction = ga_nothing;
     savedescription[0] = 0;
     P_SetMessage(&players[consoleplayer], DEH_String(TXT_GAMESAVED), true);
+
+    free(filename);
+}
+
+//==========================================================================
+//
+// SV_Filename
+//
+// Generate the filename to use for a particular savegame slot.
+// Returns a malloc()'d buffer that must be freed by the caller.
+//
+//==========================================================================
+
+char *SV_Filename(int slot)
+{
+    char *filename;
+
+    filename = malloc(strlen(savegamedir) + strlen(SAVEGAMENAME) + 8);
+    sprintf(filename, "%s" SAVEGAMENAME "%d.hsg", savegamedir, slot);
+
+    return filename;
 }
 
 //==========================================================================
