@@ -444,7 +444,7 @@ static GameMission_t IdentifyIWADByName(char *name, int mask)
 
         // Check if it ends in this IWAD name.
 
-        if (!strcasecmp(name, iwadname))
+        if (!strcasecmp(name, iwads[i].name))
         {
             mission = iwads[i].mission;
             break;
