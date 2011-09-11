@@ -1,3 +1,9 @@
+
+     * Fixed gnome-screensaver desktop file (thanks Rahul Sundaram).
+     * Updated COPYING to current version of GPL2 (thanks Rahul
+       Sundaram).
+     * Fix bug with detection of IWAD type by filename (thanks mether).
+
 1.6.0 (2011-05-17):
 
      * The instructions in the INSTALL file are now customized for

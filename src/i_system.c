@@ -372,6 +372,7 @@ void I_Error (char *error, ...)
 #endif
 
 #ifdef __MACOSX__
+    if (!I_ConsoleStdout())
     {
         CFStringRef message;
         char msgbuf[512];

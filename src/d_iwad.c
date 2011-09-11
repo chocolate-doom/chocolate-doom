@@ -422,27 +422,29 @@ static GameMission_t IdentifyIWADByName(char *name, int mask)
 {
     size_t i;
     GameMission_t mission;
+    char *p;
+
+    p = strrchr(name, DIR_SEPARATOR);
+
+    if (p != NULL)
+    {
+        name = p + 1;
+    }
 
     mission = none;
 
     for (i=0; i<arrlen(iwads); ++i)
     {
-        char *iwadname;
+        // Check if the filename is this IWAD name.
 
         // Only use supported missions:
 
         if (((1 << iwads[i].mission) & mask) == 0)
             continue;
 
-        iwadname = DEH_String(iwads[i].name);
-
-        if (strlen(name) < strlen(iwadname))
-            continue;
-
         // Check if it ends in this IWAD name.
 
-        if (!strcasecmp(name + strlen(name) - strlen(iwadname), 
-                        iwadname))
+        if (!strcasecmp(name, iwadname))
         {
             mission = iwads[i].mission;
             break;
