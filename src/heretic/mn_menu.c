@@ -645,19 +645,14 @@ void MN_LoadSlotText(void)
     FILE *fp;
     int count;
     int i;
-    char name[256];
+    char *filename;
 
     for (i = 0; i < 6; i++)
     {
-        if (cdrom)
-        {
-            sprintf(name, SAVEGAMENAMECD "%d.hsg", i);
-        }
-        else
-        {
-            sprintf(name, SAVEGAMENAME "%d.hsg", i);
-        }
-        fp = fopen(name, "rb+");
+        filename = SV_Filename(i);
+        fp = fopen(filename, "rb+");
+	free(filename);
+
         if (!fp)
         {
             SlotText[i][0] = 0; // empty the string
@@ -826,21 +821,17 @@ static boolean SCMessages(int option)
 
 static boolean SCLoadGame(int option)
 {
-    char name[256];
+    char *filename;
 
     if (!SlotStatus[option])
     {                           // slot's empty...don't try and load
         return false;
     }
-    if (cdrom)
-    {
-        sprintf(name, SAVEGAMENAMECD "%d.hsg", option);
-    }
-    else
-    {
-        sprintf(name, SAVEGAMENAME "%d.hsg", option);
-    }
-    G_LoadGame(name);
+
+    filename = SV_Filename(option);
+    G_LoadGame(filename);
+    free(filename);
+
     MN_DeactivateMenu();
     BorderNeedRefresh = true;
     if (quickload == -1)

@@ -1,12 +1,12 @@
 
 [Desktop Entry]
-Encoding=UTF-8
-Name=Doom
-Comment=DOOM by Id Software.
-TryExec=@PACKAGE_TARNAME@
-Exec=@PACKAGE_TARNAME@
+Name=@PACKAGE_NAME@
+Comment=@PACKAGE_SHORTDESC@
+TryExec=@PROGRAM_PREFIX@doom
+Exec=@PROGRAM_PREFIX@doom
 StartupNotify=false
 Terminal=false
 Type=Application
-Categories=Screensaver
+OnlyShowIn=GNOME;
+Categories=Screensaver;
 

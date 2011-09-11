@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=@PACKAGE_NAME@ Setup
+Exec=@PROGRAM_PREFIX@setup
+Icon=@PROGRAM_PREFIX@setup
+Type=Application
+Comment=Setup tool for @PACKAGE_NAME@
+Categories=Settings;ConsoleOnly;

@@ -798,6 +798,7 @@ void M_DrawReadThis1(void)
             break;
 
         case exe_final:
+        case exe_final2:
 
             // Final Doom always displays "HELP".
 

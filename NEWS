@@ -1,22 +1,92 @@
-1.6.0 (2011-??-??):
+
+     * Fixed gnome-screensaver desktop file (thanks Rahul Sundaram).
+     * Updated COPYING to current version of GPL2 (thanks Rahul
+       Sundaram).
+     * Fix bug with detection of IWAD type by filename (thanks mether).
+
+1.6.0 (2011-05-17):
+
+     * The instructions in the INSTALL file are now customized for
+       different platforms, and each binary package contains a version
+       with instructions specific to the platform that it is
+       targetting.  This should help to avoid confusion that some
+       users have reported experiencing.
+     * The display settings window in the setup tool has been
+       reorganised to a better arrangement.
+     * It is now possible to load .lmp files (and play back demos)
+       with long filenames (thanks blzut3).
+     * In the setup tool, it is now possible to hold down shift when
+       changing key/mouse/joystick bindings to prevent other bindings
+       to the same key from being cleared (thanks myk).
+     * The joystick menu in the setup tool now has a test button
+       (thanks Alexandre Xavier).
+     * Specifying the -privateserver option implies -server (thanks
+       Porsche Monty).
+     * The Mac OS X .dmg package now has a background and looks generally
+       more polished.
+     * In Mac OS X, it is now possible to simply double click an IWAD
+       file in the Finder to configure its location within the launcher.
+     * Freedesktop.org desktop files are now installed for Doom and
+       the setup tool, which will appear in the main menu on desktop
+       environments such as Gnome and KDE (thanks Adrián Chaves
+       Fernández).
+     * The Chex Quest dehacked patch (chex.deh) will now be detected
+       if it is in the same directory as the IWAD file.
 
     Compatibility:
+     * Added support for the alternate version of the Final Doom
+       executable included in some later versions of the Id Anthology.
+       This version fixed the demo loop crash that occurred with the
+       "original" Final Doom executable.
+
+       This executable can be selected on the command line with
+       -gameversion final2. It has been made the default when playing
+       with the Final Doom IWADs (the original behavior can be
+       selected with -gameversion final).  (thanks Porsche Monty,
+       Enjay).
      * Very short sound effects are not played, to better emulate the
        behavior of DMX in Vanilla Doom (thanks to Quasar for help in
        investigating this).
+     * The null sector dereference emulation code has been imported
+       from Prboom+ - this fixes a desync with CLNJ-506.LMP (thanks
+       entryway).
+     * The IDMUS cheat doesn't work when emulating the v1.9 executable
+       (thanks Alexandre Xavier).
 
     Bugs fixed:
      * Menu navigation when using joystick/joypad (thanks Alexandre
        Xavier).
      * For configuration file value for shift keys, use scan code for
-       right shift, not left shift (thanks AlexXav).
+       right shift, not left shift (thanks Alexandre Xavier).
      * Default joystick buttons for the setup tool now match Vanilla
        (thanks twipley).
      * Visual Studio project files work again (thanks GhostlyDeath).
+     * The default sfx/music volume set by the setup tool is now 8
+       instead of 15, matching the game itself. (thanks Alexandre
+       Xavier).
+     * Weapon cycling from the shotgun to the chaingun in Doom 1 now
+       works properly (thanks Alexandre Xavier).
+     * MIDI playback that locked up when using an empty MUS / MIDI
+       file (thanks Alexandre Xavier).
+     * Default sampling rate used by setup tool changed to 44100Hz, to
+       match the game default (thanks Alexandre Xavier).
+     * Cheat codes and menu hot keys now work when shift is held down
+       or capslock turned on (thanks Alexandre Xavier).
 
     libtextscreen:
+     * The background on GUI controls now lights up when hovering over
+       them, so that it is more obvious what you are selecting.
      * It is now possible to type a '+' in input boxes (thanks
        Alexandre Xavier).
+     * It is possible to use the mouse wheel to scroll through scroll
+       panes.
+     * Clicking on scroll bars now moves the scroll handle to a
+       matching location.
+     * Clicking outside a dropdown list popup window now dismisses the
+       window.
+     * Window hotkeys that are an alphabetical letter now work when
+       shift is held down or capslock turned on (thanks Alexandre
+       Xavier).
 
 1.5.0 (2011-01-02):
 
@@ -622,4 +692,6 @@
 
 0.0.1 (2005-09-07):
     First beta release
+
+# vim: tw=70
 

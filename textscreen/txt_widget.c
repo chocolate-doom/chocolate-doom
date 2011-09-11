@@ -24,6 +24,8 @@
 
 #include "txt_io.h"
 #include "txt_widget.h"
+#include "txt_gui.h"
+#include "txt_desktop.h"
 
 typedef struct
 {
@@ -82,6 +84,7 @@ void TXT_InitWidget(TXT_UNCAST_ARG(widget), txt_widget_class_t *widget_class)
 
     widget->widget_class = widget_class;
     widget->callback_table = TXT_NewCallbackTable();
+    widget->parent = NULL;
 
     // Visible by default.
 
@@ -234,6 +237,65 @@ int TXT_SelectableWidget(TXT_UNCAST_ARG(widget))
     else
     {
         return 0;
+    }
+}
+
+int TXT_ContainsWidget(TXT_UNCAST_ARG(haystack), TXT_UNCAST_ARG(needle))
+{
+    TXT_CAST_ARG(txt_widget_t, haystack);
+    TXT_CAST_ARG(txt_widget_t, needle);
+
+    while (needle != NULL)
+    {
+        if (needle == haystack)
+        {
+            return 1;
+        }
+
+        needle = needle->parent;
+    }
+
+    return 0;
+}
+
+int TXT_HoveringOverWidget(TXT_UNCAST_ARG(widget))
+{
+    TXT_CAST_ARG(txt_widget_t, widget);
+    txt_window_t *active_window;
+    int x, y;
+
+    // We can only be hovering over widgets in the active window.
+
+    active_window = TXT_GetActiveWindow();
+
+    if (active_window == NULL || !TXT_ContainsWidget(active_window, widget))
+    {
+        return 0;
+    }
+
+    // Is the mouse cursor within the bounds of the widget?
+
+    TXT_GetMousePosition(&x, &y);
+
+    return (x >= widget->x && x < widget->x + widget->w
+         && y >= widget->y && y < widget->y + widget->h);
+}
+
+void TXT_SetWidgetBG(TXT_UNCAST_ARG(widget), int selected)
+{
+    TXT_CAST_ARG(txt_widget_t, widget);
+
+    if (selected)
+    {
+        TXT_BGColor(TXT_COLOR_GREY, 0);
+    }
+    else if (TXT_HoveringOverWidget(widget))
+    {
+        TXT_BGColor(TXT_HOVER_BACKGROUND, 0);
+    }
+    else
+    {
+        TXT_BGColor(TXT_WINDOW_BACKGROUND, 0);
     }
 }
 

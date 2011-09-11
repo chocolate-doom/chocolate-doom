@@ -421,25 +421,19 @@ void D_StartTitle(void)
 void D_CheckRecordFrom(void)
 {
     int p;
-    char file[256];
+    char *filename;
 
     p = M_CheckParm("-recordfrom");
     if (!p || p > myargc - 2)
         return;
 
-    if (cdrom)
-    {
-        sprintf(file, SAVEGAMENAMECD "%c.hsg", myargv[p + 1][0]);
-    }
-    else
-    {
-        sprintf(file, SAVEGAMENAME "%c.hsg", myargv[p + 1][0]);
-    }
-    G_LoadGame(file);
+    filename = SV_Filename(myargv[p + 1][0] - '0');
+    G_LoadGame(filename);
     G_DoLoadGame();             // load the gameskill etc info from savegame
 
     G_RecordDemo(gameskill, 1, gameepisode, gamemap, myargv[p + 2]);
     D_DoomLoop();               // never returns
+    free(filename);
 }
 
 /*
@@ -940,6 +934,8 @@ void D_DoomMain(void)
         gamedescription = "Heretic (registered)";
     }
 
+    savegamedir = M_GetSaveGameDir("heretic.wad");
+
     I_PrintStartupBanner(gamedescription);
 
     // haleyjd: removed WATCOMC
@@ -1033,15 +1029,11 @@ void D_DoomMain(void)
     p = M_CheckParm("-loadgame");
     if (p && p < myargc - 1)
     {
-        if (cdrom)
-        {
-            sprintf(file, SAVEGAMENAMECD "%c.hsg", myargv[p + 1][0]);
-        }
-        else
-        {
-            sprintf(file, SAVEGAMENAME "%c.hsg", myargv[p + 1][0]);
-        }
-        G_LoadGame(file);
+        char *filename;
+
+	filename = SV_Filename(myargv[p + 1][0] - '0');
+        G_LoadGame(filename);
+	free(filename);
     }
 
     // Check valid episode and map

@@ -384,5 +384,44 @@ static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
     //free(env);
 }
 
+// Examine a path to a WAD and determine whether it is an IWAD file.
+// If so, it is added to the IWAD configuration, and true is returned.
+
+- (BOOL) addIWADPath: (NSString *) path
+{
+    IWADLocation *iwadList[NUM_IWAD_TYPES];
+    NSArray *pathComponents;
+    NSString *filename;
+    unsigned int i;
+
+    [self getIWADList: iwadList];
+
+    // Find an IWAD file that matches the filename in the path that we
+    // have been given.
+
+    pathComponents = [path pathComponents];
+    filename = [pathComponents objectAtIndex: [pathComponents count] - 1];
+
+    for (i = 0; i < NUM_IWAD_TYPES; ++i)
+    {
+        if ([filename caseInsensitiveCompare: IWADFilenames[i]] == 0)
+        {
+            // Configure this IWAD.
+
+            [iwadList[i] setLocation: path];
+
+            // Rebuild dropdown list and select the new IWAD.
+
+            [self setDropdownList];
+            [self->iwadSelector selectItemWithTitle:IWADLabels[i]];
+            return YES;
+        }
+    }
+
+    // No IWAD found with this name.
+
+    return NO;
+}
+
 @end
 

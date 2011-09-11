@@ -184,8 +184,17 @@ void D_BindVariables(void)
 
 static void D_SetDefaultSavePath(void)
 {
-    SavePath = malloc(strlen(configdir) + 10);
-    sprintf(SavePath, "%shexndata%c", configdir, DIR_SEPARATOR);
+    SavePath = M_GetSaveGameDir("hexen.wad");
+
+    // If we are not using a savegame path (probably because we are on
+    // Windows and not using a config dir), behave like Vanilla Hexen
+    // and use hexndata/:
+
+    if (!strcmp(SavePath, ""))
+    {
+        SavePath = malloc(10);
+	sprintf(SavePath, "hexndata%c", DIR_SEPARATOR);
+    }
 }
 
 //

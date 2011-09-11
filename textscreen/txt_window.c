@@ -40,6 +40,13 @@ void TXT_SetWindowAction(txt_window_t *window,
     }
 
     window->actions[position] = action;
+
+    // Maintain parent pointer.
+
+    if (action != NULL)
+    {
+        action->widget.parent = &window->table.widget;
+    }
 }
 
 txt_window_t *TXT_NewWindow(char *title)
@@ -158,7 +165,7 @@ static void LayoutActionArea(txt_window_t *window)
 
         TXT_CalcWidgetSize(widget);
 
-        widget->x = window->window_x + 2;
+        widget->x = window->window_x + 1;
         widget->y = window->window_y + window->window_h - widget->h - 1;
 
         // Adjust available space:
@@ -175,7 +182,7 @@ static void LayoutActionArea(txt_window_t *window)
 
         TXT_CalcWidgetSize(widget);
 
-        widget->x = window->window_x + window->window_w - 2 - widget->w;
+        widget->x = window->window_x + window->window_w - 1 - widget->w;
         widget->y = window->window_y + window->window_h - widget->h - 1;
 
         // Adjust available space:
@@ -220,7 +227,7 @@ static void CalcActionAreaSize(txt_window_t *window,
     txt_widget_t *widget;
     int i;
 
-    *w = 1;
+    *w = 0;
     *h = 0;
 
     // Calculate the width of all the action widgets and use this
@@ -233,7 +240,7 @@ static void CalcActionAreaSize(txt_window_t *window,
         if (widget != NULL)
         {
             TXT_CalcWidgetSize(widget);
-            *w += widget->w + 1;
+            *w += widget->w;
 
             if (widget->h > *h)
             {

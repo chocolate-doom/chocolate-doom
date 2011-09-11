@@ -532,6 +532,9 @@ void D_DoAdvanceDemo (void)
     // include a DEMO4 lump, so the game bombs out with an error
     // when it reaches this point in the demo sequence.
 
+    // However! There is an alternate version of Final Doom that
+    // includes a fixed executable.
+
     if (gameversion == exe_ultimate || gameversion == exe_final)
       demosequence = (demosequence+1)%7;
     else
@@ -783,40 +786,6 @@ void D_SetGameDescription(void)
     }
 }
 
-static void SetSaveGameDir(char *iwad_filename)
-{
-    char *sep;
-    char *basefile;
-
-    // Extract the base filename
- 
-    sep = strrchr(iwad_filename, DIR_SEPARATOR);
-
-    if (sep == NULL)
-    {
-        basefile = iwad_filename;
-    }
-    else
-    {
-        basefile = sep + 1;
-    }
-
-    // ~/.chocolate-doom/savegames/
-
-    savegamedir = Z_Malloc(strlen(configdir) + 30, PU_STATIC, 0);
-    sprintf(savegamedir, "%ssavegames%c", configdir,
-                         DIR_SEPARATOR);
-
-    M_MakeDirectory(savegamedir);
-
-    // eg. ~/.chocolate-doom/savegames/doom2.wad/
-
-    sprintf(savegamedir + strlen(savegamedir), "%s%c",
-            basefile, DIR_SEPARATOR);
-
-    M_MakeDirectory(savegamedir);
-}
-
 // Check if the IWAD file is the Chex Quest IWAD.  
 // Returns true if this is chex.wad.
 
@@ -914,6 +883,7 @@ static struct
     {"Hacx",                 "hacx",       exe_hacx},
     {"Ultimate Doom",        "ultimate",   exe_ultimate},
     {"Final Doom",           "final",      exe_final},
+    {"Final Doom (alt)",     "final2",     exe_final2},
     {"Chex Quest",           "chex",       exe_chex},
     { NULL,                  NULL,         0},
 };
@@ -930,7 +900,7 @@ static void InitGameVersion(void)
     // @category compat
     //
     // Emulate a specific version of Doom.  Valid values are "1.9",
-    // "ultimate" and "final".
+    // "ultimate", "final", "final2", "hacx" and "chex".
     //
 
     p = M_CheckParmWithArgs("-gameversion", 1);
@@ -994,8 +964,10 @@ static void InitGameVersion(void)
             else
             {
                 // Final Doom: tnt or plutonia
+                // Default to the "alt" version of the executable that
+                // fixes the demo loop behavior.
 
-                gameversion = exe_final;
+                gameversion = exe_final2;
             }
         }
     }
@@ -1034,11 +1006,37 @@ void PrintGameVersion(void)
 
 static void LoadChexDeh(void)
 {
-    char *chex_deh;
+    char *chex_deh = NULL;
+    char *sep;
 
     if (gameversion == exe_chex)
     {
-        chex_deh = D_FindWADByName("chex.deh");
+        // Look for chex.deh in the same directory as the IWAD file.
+
+        sep = strrchr(iwadfile, DIR_SEPARATOR);
+
+        if (sep != NULL)
+        {
+            chex_deh = malloc(strlen(iwadfile) + 9);
+            strcpy(chex_deh, iwadfile);
+            chex_deh[sep - iwadfile + 1] = '\0';
+            strcat(chex_deh, "chex.deh");
+        }
+        else
+        {
+            chex_deh = strdup("chex.deh");
+        }
+
+        // If the dehacked patch isn't found, try searching the WAD
+        // search path instead.  We might find it...
+
+        if (!M_FileExists(chex_deh))
+        {
+            free(chex_deh);
+            chex_deh = D_FindWADByName("chex.deh");
+        }
+
+        // Still not found?
 
         if (chex_deh == NULL)
         {
@@ -1087,6 +1085,27 @@ static void LoadHacxDeh(void)
                     "Hacx v1.2 IWAD.");
         }
     }
+}
+
+// Figure out what IWAD name to use for savegames.
+
+static char *SaveGameIWADName(void)
+{
+    // Chex quest hack
+
+    if (gameversion == exe_chex)
+    {
+        return "chex.wad";
+    }
+
+    // Hacx hack
+
+    if (gameversion == exe_hacx)
+    {
+        return "hacx.wad";
+    }
+
+    return D_SaveGameIWADName(gamemission);
 }
 
 //
@@ -1407,7 +1426,7 @@ void D_DoomMain (void)
     LoadChexDeh();
     LoadHacxDeh();
     D_SetGameDescription();
-    SetSaveGameDir(iwadfile);
+    savegamedir = M_GetSaveGameDir(SaveGameIWADName());
 
     // Check for -file in shareware
     if (modifiedgame)

@@ -52,6 +52,7 @@
 - (char *) doomWadPath;
 - (void) setEnvironment;
 - (const char *) getGameName;
+- (BOOL) addIWADPath: (NSString *) path;
 
 @end
 

@@ -42,7 +42,12 @@ static int MousePressCallback(txt_window_t *window,
     // Got the mouse press.  Save to the variable and close the window.
 
     *mouse_input->variable = b - TXT_MOUSE_BASE;
-    TXT_EmitSignal(mouse_input, "set");
+
+    if (mouse_input->check_conflicts)
+    {
+        TXT_EmitSignal(mouse_input, "set");
+    }
+
     TXT_CloseWindow(window);
 
     return 1;
@@ -52,6 +57,9 @@ static void OpenPromptWindow(txt_mouse_input_t *mouse_input)
 {
     txt_window_t *window;
     txt_label_t *label;
+
+    // Silently update when the shift key is held down.
+    mouse_input->check_conflicts = !TXT_GetModifierState(TXT_MOD_SHIFT);
 
     window = TXT_NewWindow(NULL);
     TXT_SetWindowAction(window, TXT_HORIZ_LEFT, NULL);
@@ -111,15 +119,7 @@ static void TXT_MouseInputDrawer(TXT_UNCAST_ARG(mouse_input), int selected)
         GetMouseButtonDescription(*mouse_input->variable, buf);
     }
 
-    if (selected)
-    {
-        TXT_BGColor(TXT_COLOR_GREY, 0);
-    }
-    else
-    {
-        TXT_BGColor(TXT_COLOR_BLUE, 0);
-    }
-
+    TXT_SetWidgetBG(mouse_input, selected);
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
     
     TXT_DrawString(buf);

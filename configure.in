@@ -1,7 +1,7 @@
-AC_INIT(Chocolate Doom, 1.5.0, fraggle@gmail.com, chocolate-doom)
+AC_INIT(Chocolate Doom, 1.6.0, fraggle@gmail.com, chocolate-doom)
 
 PACKAGE_SHORTDESC="Conservative Doom source port"
-PACKAGE_COPYRIGHT="Copyright (C) 1993-2010"
+PACKAGE_COPYRIGHT="Copyright (C) 1993-2011"
 PACKAGE_LICENSE="GNU General Public License, version 2"
 PACKAGE_MAINTAINER="Simon Howard"
 PACKAGE_URL="http://www.chocolate-doom.org/"
@@ -110,6 +110,7 @@ AM_CONDITIONAL(HAVE_PYTHON, $HAVE_PYTHON)
 dnl Automake v1.8.0 is required, please upgrade!
 
 AM_INIT_AUTOMAKE([1.8.0])
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 WINDOWS_RC_VERSION=`echo $PACKAGE_VERSION.0 | sed 's/\./, /g' `
 
@@ -154,7 +155,9 @@ pkg/config.make
 pkg/osx/Info-gnustep.plist
 pkg/osx/Info.plist
 rpm.spec
+data/Makefile
 src/Makefile
+src/doom.desktop
 src/doom-screensaver.desktop
 src/doom/Makefile
 src/heretic/Makefile
@@ -162,6 +165,7 @@ src/hexen/Makefile
 src/resource.rc
 src/setup-res.rc
 src/setup/Makefile
+src/setup/setup.desktop
 src/setup/setup-manifest.xml
 src/strife/Makefile
 textscreen/Makefile

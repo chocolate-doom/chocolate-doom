@@ -66,7 +66,6 @@
 #include "d_ticcmd.h"
 
 #define	SAVEGAMENAME "hticsav"
-#define SAVEGAMENAMECD "c:\\heretic.cd\\hticsav"
 
 /*
 ===============================================================================
@@ -740,12 +739,15 @@ void G_SaveGame(int slot, char *description);
 // called by M_Responder
 
 // Support routines for saving games
+char *SV_Filename(int slot);
 void SV_Open(char *fileName);
 void SV_Close(char *fileName);
 void SV_Write(void *buffer, int size);
 void SV_WriteByte(byte val);
 void SV_WriteWord(unsigned short val);
 void SV_WriteLong(unsigned int val);
+
+extern char *savegamedir;
 
 void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
                   char *name);

@@ -99,6 +99,22 @@ static int SelectorWindowListener(txt_window_t *window, int key, void *user_data
     return 0;
 }
 
+static int SelectorMouseListener(txt_window_t *window, int x, int y, int b,
+                                 void *unused)
+{
+    txt_widget_t *win;
+
+    win = (txt_widget_t *) window;
+
+    if (x < win->x || x > win->x + win->w || y < win->y || y > win->y + win->h)
+    {
+        TXT_CloseWindow(window);
+        return 1;
+    }
+
+    return 0;
+}
+
 // Open the dropdown list window to select an item
 
 static void OpenSelectorWindow(txt_dropdown_list_t *list)
@@ -158,6 +174,7 @@ static void OpenSelectorWindow(txt_dropdown_list_t *list)
     // Catch presses of escape in this window and close it.
 
     TXT_SetKeyListener(window, SelectorWindowListener, NULL);
+    TXT_SetMouseListener(window, SelectorMouseListener, NULL);
 }
 
 static int DropdownListWidth(txt_dropdown_list_t *list)
@@ -197,15 +214,7 @@ static void TXT_DropdownListDrawer(TXT_UNCAST_ARG(list), int selected)
 
     // Set bg/fg text colors.
 
-    if (selected) 
-    {
-        TXT_BGColor(TXT_COLOR_GREY, 0);
-    }
-    else
-    {
-        TXT_BGColor(TXT_COLOR_BLUE, 0);
-    }
-
+    TXT_SetWidgetBG(list, selected);
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
 
     // Select a string to draw from the list, if the current value is

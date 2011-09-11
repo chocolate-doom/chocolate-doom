@@ -209,8 +209,9 @@ boolean M_StrToInt(const char *str, int *result)
 
 void M_ExtractFileBase(char *path, char *dest)
 {
-    char*	src;
-    int		length;
+    char *src;
+    char *filename;
+    int length;
 
     src = path + strlen(path) - 1;
 
@@ -220,20 +221,26 @@ void M_ExtractFileBase(char *path, char *dest)
 	src--;
     }
 
-    // copy up to eight characters
-    memset(dest, 0, 8);
+    filename = src;
+
+    // Copy up to eight characters
+    // Note: Vanilla Doom exits with an error if a filename is specified
+    // with a base of more than eight characters.  To remove the 8.3
+    // filename limit, instead we simply truncate the name.
+
     length = 0;
+    memset(dest, 0, 8);
 
     while (*src != '\0' && *src != '.')
     {
-        ++length;
-
-	if (length > 8)
+        if (length >= 8)
         {
-	    I_Error ("Filename base of %s >8 chars", path);
+            printf("Warning: Truncated '%s' lump name to '%.8s'.\n",
+                   filename, dest);
+            break;
         }
 
-	*dest++ = toupper((int)*src++);
+	dest[length++] = toupper((int)*src++);
     }
 }
 

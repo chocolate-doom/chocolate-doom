@@ -49,6 +49,7 @@ char *D_FindWADByName(char *filename);
 char *D_TryFindWADByName(char *filename);
 char *D_FindIWAD(int mask, GameMission_t *mission);
 iwad_t **D_FindAllIWADs(int mask);
+char *D_SaveGameIWADName(GameMission_t gamemission);
 
 #endif
 

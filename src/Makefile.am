@@ -194,24 +194,36 @@ endif
 @PROGRAM_PREFIX@setup_LDADD = setup/libsetup.a                             \
                         $(top_builddir)/wince/libc_wince.a           \
                         $(top_builddir)/textscreen/libtextscreen.a   \
-                        @LDFLAGS@ @SDL_LIBS@ @SDLNET_LIBS@ 
+                        @LDFLAGS@ @SDL_LIBS@ @SDLMIXER_LIBS@ @SDLNET_LIBS@
 
 EXTRA_DIST =                        \
         icon.c                      \
         doom-screensaver.desktop.in
 
+appdir = $(prefix)/share/applications
+app_DATA = @PROGRAM_PREFIX@doom.desktop
+
+@PROGRAM_PREFIX@doom.desktop : doom.desktop
+	cp $< $@
+
+screensaverdir = $(prefix)/share/applications/screensavers
+screensaver_DATA = @PROGRAM_PREFIX@doom-screensaver.desktop
+
+@PROGRAM_PREFIX@doom-screensaver.desktop: doom-screensaver.desktop
+	cp $< $@
+
 .rc.o:
-	$(WINDRES) $^ -o $@
+	$(WINDRES) $< -o $@
 %.o : %.rc
-	$(WINDRES) $^ -o $@
+	$(WINDRES) $< -o $@
 
 if HAVE_PYTHON
 
 icon.c : $(top_builddir)/data/doom8.ico
-	$(top_builddir)/data/convert-icon $^ $@
+	$(top_builddir)/data/convert-icon $< $@
 
 endif
 
 midiread : midifile.c
-	$(CC) -DTEST $(CFLAGS) @LDFLAGS@ $^ -o $@
+	$(CC) -DTEST $(CFLAGS) @LDFLAGS@ $< -o $@
 

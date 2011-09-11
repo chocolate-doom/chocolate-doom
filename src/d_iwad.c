@@ -424,27 +424,29 @@ static GameMission_t IdentifyIWADByName(char *name, int mask)
 {
     size_t i;
     GameMission_t mission;
+    char *p;
+
+    p = strrchr(name, DIR_SEPARATOR);
+
+    if (p != NULL)
+    {
+        name = p + 1;
+    }
 
     mission = none;
 
     for (i=0; i<arrlen(iwads); ++i)
     {
-        char *iwadname;
+        // Check if the filename is this IWAD name.
 
         // Only use supported missions:
 
         if (((1 << iwads[i].mission) & mask) == 0)
             continue;
 
-        iwadname = DEH_String(iwads[i].name);
-
-        if (strlen(name) < strlen(iwadname))
-            continue;
-
         // Check if it ends in this IWAD name.
 
-        if (!strcasecmp(name + strlen(name) - strlen(iwadname), 
-                        iwadname))
+        if (!strcasecmp(name, iwads[i].name))
         {
             mission = iwads[i].mission;
             break;
@@ -727,5 +729,33 @@ iwad_t **D_FindAllIWADs(int mask)
     result[result_len] = NULL;
 
     return result;
+}
+
+//
+// Get the IWAD name used for savegames.
+//
+
+char *D_SaveGameIWADName(GameMission_t gamemission)
+{
+    size_t i;
+
+    // Determine the IWAD name to use for savegames.
+    // This determines the directory the savegame files get put into.
+    //
+    // Note that we match on gamemission rather than on IWAD name.
+    // This ensures that doom1.wad and doom.wad saves are stored
+    // in the same place.
+
+    for (i=0; i<arrlen(iwads); ++i)
+    {
+        if (gamemission == iwads[i].mission)
+        {
+            return iwads[i].name;
+        }
+    }
+
+    // Default fallback:
+
+    return "unknown.wad";
 }
 

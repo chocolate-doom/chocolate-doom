@@ -181,7 +181,7 @@ int DEH_GetCharLump(deh_context_t *context)
 
 int DEH_GetChar(deh_context_t *context)
 {
-    int result;
+    int result = 0;
 
     // Read characters, but ignore carriage returns
     // Essentially this is a DOS->Unix conversion
