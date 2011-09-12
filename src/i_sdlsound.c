@@ -101,6 +101,10 @@ static void AllocatedSoundLink(allocated_sound_t *snd)
     {
         allocated_sounds_tail = snd;
     }
+    else
+    {
+        snd->next->prev = snd;
+    }
 }
 
 // Unlink a sound from the linked list.
