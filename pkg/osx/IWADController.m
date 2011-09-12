@@ -286,11 +286,6 @@ static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
 
 - (void) awakeFromNib
 {
-    // TODO: This is temporary:
-    self->heretic = self->doom1;
-    self->hexen = self->doom2;
-    self->strife = self->tnt;
-
     [self->configWindow center];
 
     // Set configuration for all IWADs from configuration file.
