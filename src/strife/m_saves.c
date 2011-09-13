@@ -2,7 +2,7 @@
 //-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2010 James Haley, Samuel Villareal
+// Copyright(C) 2010 James Haley, Samuel Villarreal
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -301,7 +301,7 @@ void M_ReadMisObj(void)
 
     if((f = fopen(srcpath, "rb")))
     {
-        fread(mission_objective, 1, 300, f);
+        fread(mission_objective, 1, OBJECTIVE_LEN, f);
         fclose(f);
     }
 
