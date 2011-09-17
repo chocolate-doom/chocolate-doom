@@ -1151,9 +1151,7 @@ void D_DoomMain (void)
 
     if (M_CheckParm("-search"))
     {
-        printf("\nSearching for servers on Internet ...\n");
-        p = NET_MasterQuery(NET_QueryPrintCallback, NULL);
-        printf("\n%i server(s) found.\n", p);
+        NET_MasterQuery();
         exit(0);
     }
 
@@ -1181,9 +1179,7 @@ void D_DoomMain (void)
 
     if (M_CheckParm("-localsearch"))
     {
-        printf("\nSearching for servers on local LAN ...\n");
-        p = NET_LANQuery(NET_QueryPrintCallback, NULL);
-        printf("\n%i server(s) found.\n", p);
+        NET_LANQuery();
         exit(0);
     }
 
