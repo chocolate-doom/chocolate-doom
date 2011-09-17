@@ -242,10 +242,35 @@ static void NET_Query_ParseResponse(net_addr_t *addr, net_packet_t *packet,
         return;
     }
 
-    // Find the target that responded, or potentially add a new target
-    // if it was not already known (for LAN broadcast search)
+    // Find the target that responded.
 
-    target = GetTargetForAddr(addr, true);
+    target = GetTargetForAddr(addr, false);
+
+    // If the target is not found, it may be because we are doing
+    // a LAN broadcast search, in which case we need to create a
+    // target for the new responder.
+
+    if (target == NULL)
+    {
+        query_target_t *broadcast_target;
+
+        broadcast_target = GetTargetForAddr(NULL, false);
+
+        // Not in broadcast mode, unexpected response that came out
+        // of nowhere. Ignore.
+
+        if (broadcast_target == NULL
+         || broadcast_target->state != QUERY_TARGET_QUERIED)
+        {
+            return;
+        }
+
+        // Create new target.
+
+        target = GetTargetForAddr(addr, true);
+        target->state = QUERY_TARGET_QUERIED;
+        target->query_time = broadcast_target->query_time;
+    }
 
     if (target->state != QUERY_TARGET_RESPONDED)
     {
