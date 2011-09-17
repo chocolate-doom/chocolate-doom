@@ -182,8 +182,14 @@ SETUP_FILES=                               \
 deh_str.c            deh_str.h             \
 d_mode.c             d_mode.h              \
 d_iwad.c             d_iwad.h              \
+i_timer.c            i_timer.h             \
 m_config.c           m_config.h            \
 m_controls.c         m_controls.h          \
+net_io.c             net_io.h              \
+net_packet.c         net_packet.h          \
+net_sdl.c            net_sdl.h             \
+net_query.c          net_query.h           \
+net_structrw.c       net_structrw.h        \
 z_native.c           z_zone.h
 
 if HAVE_WINDRES

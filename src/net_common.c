@@ -22,7 +22,6 @@
 //
 
 #include <stdio.h>
-#include <ctype.h>
 #include <stdlib.h>
 
 #include "doomtype.h"
@@ -32,6 +31,7 @@
 #include "net_common.h"
 #include "net_io.h"
 #include "net_packet.h"
+#include "net_structrw.h"
 
 // connections time out after 10 seconds
 
@@ -511,26 +511,6 @@ unsigned int NET_ExpandTicNum(unsigned int relative, unsigned int b)
         result += 0x100;
     
     return result;
-}
-
-// "Safe" version of puts, for displaying messages received from the
-// network.
-
-void NET_SafePuts(char *s)
-{
-    char *p;
-
-    // Do not do a straight "puts" of the string, as this could be
-    // dangerous (sending control codes to terminals can do all
-    // kinds of things)
-
-    for (p=s; *p; ++p)
-    {
-        if (isprint(*p))
-            putchar(*p);
-    }
-
-    putchar('\n');
 }
 
 // Check that game settings are valid

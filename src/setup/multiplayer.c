@@ -797,7 +797,7 @@ void JoinMultiGame(void)
     TXT_AddWidgets(window, 
         gameopt_table = TXT_NewTable(2),
         TXT_NewSeparator("Server"),
-        serveropt_table = TXT_NewTable(2),
+        serveropt_table = TXT_NewTable(1),
         TXT_NewStrut(0, 1),
         TXT_NewButton2("Add extra parameters...", OpenExtraParamsWindow, NULL),
         NULL);
@@ -819,11 +819,12 @@ void JoinMultiGame(void)
     }
 
     TXT_AddWidgets(serveropt_table,
-                   TXT_NewRadioButton("Connect to address:",
-                                      &jointype, JOIN_ADDRESS),
-                   address_box = TXT_NewInputBox(&connect_address, 30),
-                   TXT_NewRadioButton("Auto-join LAN game",
-                                      &jointype, JOIN_AUTO_LAN),
+                   TXT_NewHorizBox(
+                           TXT_NewLabel("Connect to address: "),
+                           address_box = TXT_NewInputBox(&connect_address, 30),
+                           NULL),
+                   TXT_NewButton("Find server on Internet..."),
+                   TXT_NewButton("Find server on local network..."),
                    NULL);
 
     TXT_SignalConnect(address_box, "changed", SelectAddressJoin, NULL);

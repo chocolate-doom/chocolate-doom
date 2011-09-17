@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "doomtype.h"
 
@@ -404,5 +405,25 @@ void NET_WriteMD5Sum(net_packet_t *packet, md5_digest_t digest)
     {
         NET_WriteInt8(packet, digest[i]);
     }
+}
+
+// "Safe" version of puts, for displaying messages received from the
+// network.
+
+void NET_SafePuts(char *s)
+{
+    char *p;
+
+    // Do not do a straight "puts" of the string, as this could be
+    // dangerous (sending control codes to terminals can do all
+    // kinds of things)
+
+    for (p=s; *p; ++p)
+    {
+        if (isprint(*p))
+            putchar(*p);
+    }
+
+    putchar('\n');
 }
 
