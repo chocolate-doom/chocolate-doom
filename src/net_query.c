@@ -520,7 +520,7 @@ static void NET_Query_QueryLoop(net_query_callback_t callback, void *user_data)
     {
         // Don't thrash the CPU
 
-        I_Sleep(50);
+        I_Sleep(1);
     }
 }
 
