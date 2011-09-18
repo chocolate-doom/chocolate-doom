@@ -792,10 +792,10 @@ static void QueryResponseCallback(net_addr_t *addr,
     description[46] = '\0';
 
     TXT_AddWidgets(results_table,
+                   TXT_NewLabel(ping_time_str),
                    TXT_NewButton2(NET_AddrToString(addr),
                                   SelectQueryAddress, addr),
                    TXT_NewLabel(description),
-                   TXT_NewLabel(ping_time_str),
                    NULL);
 
     ++query_servers_found;
@@ -834,7 +834,7 @@ static void ServerQueryWindow(char *title)
                   TXT_NewScrollPane(70, 10,
                                     results_table = TXT_NewTable(3)));
 
-    TXT_SetColumnWidths(results_table, 16, 46, 8);
+    TXT_SetColumnWidths(results_table, 7, 16, 46);
     TXT_SetPeriodicCallback(QueryPeriodicCallback, results_table, 1);
 
     TXT_SignalConnect(query_window, "closed", QueryWindowClosed, NULL);
