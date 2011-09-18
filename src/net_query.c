@@ -528,10 +528,14 @@ static void NET_Query_QueryLoop(net_query_callback_t callback, void *user_data)
 
 void NET_Query_Init(void)
 {
-    query_context = NET_NewContext();
-    NET_AddModule(query_context, &net_sdl_module);
-    net_sdl_module.InitClient();
+    if (query_context == NULL)
+    {
+        query_context = NET_NewContext();
+        NET_AddModule(query_context, &net_sdl_module);
+        net_sdl_module.InitClient();
+    }
 
+    free(targets);
     targets = NULL;
     num_targets = 0;
 

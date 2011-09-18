@@ -158,6 +158,18 @@ static void TXT_ScrollPaneSizeCalc(TXT_UNCAST_ARG(scrollpane))
     {
         ++scrollpane->widget.w;
     }
+
+    if (scrollpane->child != NULL)
+    {
+        if (scrollpane->child->w < scrollpane->w)
+        {
+            scrollpane->child->w = scrollpane->w;
+        }
+        if (scrollpane->child->h < scrollpane->h)
+        {
+            scrollpane->child->h = scrollpane->h;
+        }
+    }
 }
 
 static void TXT_ScrollPaneDrawer(TXT_UNCAST_ARG(scrollpane), int selected)
@@ -382,10 +394,10 @@ static int TXT_ScrollPaneKeyPress(TXT_UNCAST_ARG(scrollpane), int key)
         // automatically move the scroll pane to show the new
         // selected item.
 
-        if (scrollpane->child->widget_class == &txt_table_class
-         && (key == KEY_UPARROW || key == KEY_DOWNARROW
+        if ((key == KEY_UPARROW || key == KEY_DOWNARROW
           || key == KEY_LEFTARROW || key == KEY_RIGHTARROW
-          || key == KEY_PGUP || key == KEY_PGDN))
+          || key == KEY_PGUP || key == KEY_PGDN)
+         && scrollpane->child->widget_class == &txt_table_class)
         {
             if (PageSelectedWidget(scrollpane, key))
             {

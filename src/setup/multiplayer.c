@@ -35,6 +35,9 @@
 #include "mode.h"
 #include "execute.h"
 
+#include "net_io.h"
+#include "net_query.h"
+
 #define NUM_WADS 10
 #define NUM_EXTRA_PARAMS 10
 
@@ -43,12 +46,6 @@ typedef enum
     WARP_ExMy,
     WARP_MAPxy,
 } warptype_t;
-
-typedef enum
-{
-    JOIN_AUTO_LAN,
-    JOIN_ADDRESS,
-} jointype_t;
 
 // Fallback IWAD if none are found to be installed
 
@@ -132,8 +129,6 @@ static char *gamemodes[] =
 static char *net_player_name;
 static char *chat_macros[10];
 
-static int jointype = JOIN_ADDRESS;
-
 static char *wads[NUM_WADS];
 static char *extra_params[NUM_EXTRA_PARAMS];
 static int character_class = 0;
@@ -155,6 +150,9 @@ static int warpmap = 1;
 // Address to connect to when joining a game
 
 static char *connect_address = NULL;
+
+static txt_window_t *query_window;
+static int query_servers_found;
 
 // Find an IWAD from its description
 
@@ -736,14 +734,7 @@ static void DoJoinGame(void *unused1, void *unused2)
 
     exec = NewExecuteContext();
 
-    if (jointype == JOIN_ADDRESS)
-    {
-        AddCmdLineParameter(exec, "-connect %s", connect_address);
-    }
-    else if (jointype == JOIN_AUTO_LAN)
-    {
-        AddCmdLineParameter(exec, "-autojoin");
-    }
+    AddCmdLineParameter(exec, "-connect %s", connect_address);
 
     if (gamemission == hexen)
     {
@@ -778,11 +769,89 @@ static txt_window_action_t *JoinGameAction(void)
     return action;
 }
 
-// When an address is entered, select "address" mode.
-
-static void SelectAddressJoin(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
+static void SelectQueryAddress(TXT_UNCAST_ARG(button), TXT_UNCAST_ARG(addr))
 {
-    jointype = JOIN_ADDRESS;
+    TXT_CAST_ARG(txt_button_t, button);
+
+    free(connect_address);
+    connect_address = strdup(button->label);
+    TXT_CloseWindow(query_window);
+}
+
+static void QueryResponseCallback(net_addr_t *addr,
+                                  net_querydata_t *querydata,
+                                  unsigned int ping_time,
+                                  TXT_UNCAST_ARG(results_table))
+{
+    TXT_CAST_ARG(txt_table_t, results_table);
+    char ping_time_str[16];
+    char description[47];
+
+    sprintf(ping_time_str, "%ims", ping_time);
+    strncpy(description, querydata->description, 46);
+    description[46] = '\0';
+
+    TXT_AddWidgets(results_table,
+                   TXT_NewButton2(NET_AddrToString(addr),
+                                  SelectQueryAddress, addr),
+                   TXT_NewLabel(description),
+                   TXT_NewLabel(ping_time_str),
+                   NULL);
+
+    ++query_servers_found;
+}
+
+static void QueryPeriodicCallback(TXT_UNCAST_ARG(results_table))
+{
+    TXT_CAST_ARG(txt_table_t, results_table);
+
+    if (!NET_Query_Poll(QueryResponseCallback, results_table))
+    {
+        TXT_SetPeriodicCallback(NULL, NULL, 0);
+
+        if (query_servers_found == 0)
+        {
+            TXT_AddWidget(results_table, NULL);
+            TXT_AddWidget(results_table, TXT_NewLabel("No servers found."));
+        }
+    }
+}
+
+static void QueryWindowClosed(TXT_UNCAST_ARG(window), void *unused)
+{
+    TXT_SetPeriodicCallback(NULL, NULL, 0);
+}
+
+static void ServerQueryWindow(char *title)
+{
+    txt_table_t *results_table;
+
+    query_servers_found = 0;
+
+    query_window = TXT_NewWindow(title);
+
+    TXT_AddWidget(query_window,
+                  TXT_NewScrollPane(70, 10,
+                                    results_table = TXT_NewTable(3)));
+
+    TXT_SetColumnWidths(results_table, 16, 46, 8);
+    TXT_SetPeriodicCallback(QueryPeriodicCallback, results_table, 1);
+
+    TXT_SignalConnect(query_window, "closed", QueryWindowClosed, NULL);
+}
+
+static void FindInternetServer(TXT_UNCAST_ARG(widget),
+                               TXT_UNCAST_ARG(user_data))
+{
+    NET_StartMasterQuery();
+    ServerQueryWindow("Find internet server");
+}
+
+static void FindLANServer(TXT_UNCAST_ARG(widget),
+                          TXT_UNCAST_ARG(user_data))
+{
+    NET_StartLANQuery();
+    ServerQueryWindow("Find LAN server");
 }
 
 void JoinMultiGame(void)
@@ -823,11 +892,12 @@ void JoinMultiGame(void)
                            TXT_NewLabel("Connect to address: "),
                            address_box = TXT_NewInputBox(&connect_address, 30),
                            NULL),
-                   TXT_NewButton("Find server on Internet..."),
-                   TXT_NewButton("Find server on local network..."),
+                   TXT_NewButton2("Find server on Internet...",
+                                  FindInternetServer, NULL),
+                   TXT_NewButton2("Find server on local network...",
+                                  FindLANServer, NULL),
                    NULL);
 
-    TXT_SignalConnect(address_box, "changed", SelectAddressJoin, NULL);
     TXT_SelectWidget(window, address_box);
 
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, WadWindowAction());

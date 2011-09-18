@@ -30,6 +30,8 @@
 
 #include "txt_window.h"
 
+typedef void (*TxtIdleCallback)(void *user_data);
+
 void TXT_AddDesktopWindow(txt_window_t *win);
 void TXT_RemoveDesktopWindow(txt_window_t *win);
 void TXT_DrawDesktop(void);
@@ -72,6 +74,21 @@ void TXT_GUIMainLoop(void);
 
 txt_window_t *TXT_GetActiveWindow(void);
 
-#endif /* #ifndef TXT_DESKTOP_H */
+/**
+ * Set a callback function to be invoked periodically by the main
+ * loop code.
+ *
+ * @param callback      The callback to invoke, or NULL to cancel
+ *                      an existing callback.
+ * @param user_data     Extra data to pass to the callback.
+ * @param period        Maximum time between invoking each callback.
+ *                      eg. a value of 200 will cause the callback
+ *                      to be invoked at least once every 200ms.
+ */
 
+void TXT_SetPeriodicCallback(TxtIdleCallback callback,
+                             void *user_data,
+                             unsigned int period);
+
+#endif /* #ifndef TXT_DESKTOP_H */
 

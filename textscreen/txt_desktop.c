@@ -39,6 +39,10 @@ static txt_window_t *all_windows[MAXWINDOWS];
 static int num_windows = 0;
 static int main_loop_running = 0;
 
+static TxtIdleCallback periodic_callback = NULL;
+static void *periodic_callback_data;
+static unsigned int periodic_callback_period;
+
 void TXT_AddDesktopWindow(txt_window_t *win)
 {
     all_windows[num_windows] = win;
@@ -197,6 +201,15 @@ void TXT_DrawASCIITable(void)
     TXT_UpdateScreen();
 }
 
+void TXT_SetPeriodicCallback(TxtIdleCallback callback,
+                             void *user_data,
+                             unsigned int period)
+{
+    periodic_callback = callback;
+    periodic_callback_data = user_data;
+    periodic_callback_period = period;
+}
+
 void TXT_GUIMainLoop(void)
 {
     main_loop_running = 1;
@@ -211,10 +224,20 @@ void TXT_GUIMainLoop(void)
         {
             TXT_ExitMainLoop();
         }
-        
+
         TXT_DrawDesktop();
 //        TXT_DrawASCIITable();
-        TXT_Sleep(0);
+
+        if (periodic_callback == NULL)
+        {
+            TXT_Sleep(0);
+        }
+        else
+        {
+            TXT_Sleep(periodic_callback_period);
+
+            periodic_callback(periodic_callback_data);
+        }
     }
 }
 
