@@ -350,33 +350,7 @@ void P_ZMovement (mobj_t* mo)
     {
         // hit the floor
 
-        // Note (id):
-        //  somebody left this after the setting momz to 0,
-        //  kinda useless there.
-        //
-        // cph - This was the a bug in the linuxdoom-1.10 source which
-        //  caused it not to sync Doom 2 v1.9 demos. Someone
-        //  added the above comment and moved up the following code. So
-        //  demos would desync in close lost soul fights.
-        // Note that this only applies to original Doom 1 or Doom2 demos - not
-        //  Final Doom and Ultimate Doom.  So we test demo_compatibility *and*
-        //  gamemission. (Note we assume that Doom1 is always Ult Doom, which
-        //  seems to hold for most published demos.)
-        //  
-        //  fraggle - cph got the logic here slightly wrong.  There are three
-        //  versions of Doom 1.9:
-        //
-        //  * The version used in registered doom 1.9 + doom2 - no bounce
-        //  * The version used in ultimate doom - has bounce
-        //  * The version used in final doom - has bounce
-        //
-        // So we need to check that this is either retail or commercial
-        // (but not doom2)
-
-        // [STRIFE] not applicable
-        //int correct_lost_soul_bounce = gameversion >= exe_ultimate;
-
-        if (/*correct_lost_soul_bounce &&*/ mo->flags & MF_BOUNCE)
+        if (mo->flags & MF_BOUNCE)
         {
             // the skull slammed into something
             // villsa [STRIFE] affect reactiontime

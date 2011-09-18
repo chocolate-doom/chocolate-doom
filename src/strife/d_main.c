@@ -945,21 +945,6 @@ static void SetSaveGameDir(char *iwad_filename)
     M_CreateSaveDirs(savegamedir);
 }
 
-// Check if the IWAD file is the Chex Quest IWAD.  
-// Returns true if this is chex.wad.
-// haleyjd 08/23/10: there is no Chex Quest based on Strife,
-// though I must admit that makes an intriguing idea....
-/*
-static boolean CheckChex(char *iwadname)
-{
-    char *chex_iwadname = "chex.wad";
-
-    return (strlen(iwadname) > strlen(chex_iwadname)
-     && !strcasecmp(iwadname + strlen(iwadname) - strlen(chex_iwadname),
-                    chex_iwadname));
-}
-*/
-
 //      print title for every printed line
 char            title[128];
 
@@ -1027,10 +1012,7 @@ static struct
     char *cmdline;
     GameVersion_t version;
 } gameversions[] = {
-    {"Doom 1.9",             "1.9",        exe_doom_1_9},
-    {"Ultimate Doom",        "ultimate",   exe_ultimate},
-    {"Final Doom",           "final",      exe_final},
-    {"Chex Quest",           "chex",       exe_chex},
+    {"Strife 1.31",          "1.31",       exe_strife_1_31},
     { NULL,                  NULL,         0},
 };
 
@@ -1041,12 +1023,15 @@ static void InitGameVersion(void)
     int p;
     int i;
 
+    // This is mostly redundant for now, as we only support
+    // Strife v1.31. But perhaps in the future we might decide
+    // to support older versions ...
+
     //! 
     // @arg <version>
     // @category compat
     //
-    // Emulate a specific version of Doom.  Valid values are "1.9",
-    // "ultimate" and "final".
+    // Emulate a specific version of Doom.  Valid values are "1.31".
     //
 
     p = M_CheckParmWithArgs("-gameversion", 1);
@@ -1061,7 +1046,7 @@ static void InitGameVersion(void)
                 break;
             }
         }
-        
+
         if (gameversions[i].description == NULL) 
         {
             printf("Supported game versions:\n");
@@ -1071,52 +1056,13 @@ static void InitGameVersion(void)
                 printf("\t%s (%s)\n", gameversions[i].cmdline,
                         gameversions[i].description);
             }
-            
+
             I_Error("Unknown game version '%s'", myargv[p+1]);
         }
     }
     else
     {
-        // Determine automatically
-
-        // haleyjd 08/23/10: Removed Chex mode, as it is irrelevant to Strife
-        if (gamemode == shareware || gamemode == registered)
-        {
-            // original
-
-            gameversion = exe_doom_1_9;
-        }
-        else if (gamemode == retail)
-        {
-            gameversion = exe_ultimate;
-        }
-        else if (gamemode == commercial)
-        {
-            if (gamemission == doom2)
-            {
-                gameversion = exe_doom_1_9;
-            }
-            else
-            {
-                // Final Doom: tnt or plutonia
-
-                gameversion = exe_final;
-            }
-        }
-    }
-    
-    // The original exe does not support retail - 4th episode not supported
-
-    if (gameversion < exe_ultimate && gamemode == retail)
-    {
-        gamemode = registered;
-    }
-
-    // EXEs prior to the Final Doom exes do not support Final Doom.
-
-    if (gameversion < exe_final && gamemode == commercial)
-    {
-        gamemission = doom2;
+        gameversion = exe_strife_1_31;
     }
 }
 
@@ -1134,34 +1080,6 @@ void PrintGameVersion(void)
         }
     }
 }
-
-// Load the Chex Quest dehacked file, if we are in Chex mode.
-// haleyjd 08/23/2010: Removed, as irrelevant to Strife.
-/*
-static void LoadChexDeh(void)
-{
-    char *chex_deh;
-
-    if (gameversion == exe_chex)
-    {
-        chex_deh = D_FindWADByName("chex.deh");
-
-        if (chex_deh == NULL)
-        {
-            I_Error("Unable to find Chex Quest dehacked file (chex.deh).\n"
-                    "The dehacked file is required in order to emulate\n"
-                    "chex.exe correctly.  It can be found in your nearest\n"
-                    "/idgames repository mirror at:\n\n"
-                    "   utils/exe_edit/patches/chexdeh.zip");
-        }
-
-        if (!DEH_LoadFile(chex_deh))
-        {
-            I_Error("Failed to load chex.deh needed for emulating chex.exe.");
-        }
-    }
-}
-*/
 
 // Function called at exit to display the ENDOOM screen
 
@@ -1726,7 +1644,6 @@ void D_DoomMain (void)
     
     D_IdentifyVersion();
     InitGameVersion();
-    //LoadChexDeh(); - haleyjd: removed, as irrelevant to Strife
     D_SetGameDescription();
     SetSaveGameDir(iwadfile);
 
