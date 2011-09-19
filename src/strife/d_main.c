@@ -759,7 +759,7 @@ static char *banners[] =
     // strife1.wad:
 
     "                      "
-    "STRIFE:  Quest for the Sigil v1.31"
+    "STRIFE:  Quest for the Sigil v1.2"
     "                                 "
 };
 
@@ -1012,7 +1012,7 @@ static struct
     char *cmdline;
     GameVersion_t version;
 } gameversions[] = {
-    {"Strife 1.31",          "1.31",       exe_strife_1_31},
+    {"Strife 1.2",          "1.2",       exe_strife_1_2},
     { NULL,                  NULL,         0},
 };
 
@@ -1024,14 +1024,15 @@ static void InitGameVersion(void)
     int i;
 
     // This is mostly redundant for now, as we only support
-    // Strife v1.31. But perhaps in the future we might decide
+    // Strife v1.2. But perhaps in the future we might decide
     // to support older versions ...
+    // - haleyjd: the current code emulates v1.2. 1.31 support is the TODO.
 
     //! 
     // @arg <version>
     // @category compat
     //
-    // Emulate a specific version of Doom.  Valid values are "1.31".
+    // Emulate a specific version of Doom.  Valid values are "1.2".
     //
 
     p = M_CheckParmWithArgs("-gameversion", 1);
@@ -1062,7 +1063,7 @@ static void InitGameVersion(void)
     }
     else
     {
-        gameversion = exe_strife_1_31;
+        gameversion = exe_strife_1_2;
     }
 }
 

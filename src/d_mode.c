@@ -132,7 +132,7 @@ static struct {
     { doom,     exe_final },
     { heretic,  exe_heretic_1_3 },
     { hexen,    exe_hexen_1_1 },
-    { strife,   exe_strife_1_31 },
+    { strife,   exe_strife_1_2 },
 };
 
 boolean D_ValidGameVersion(GameMission_t mission, GameVersion_t version)
