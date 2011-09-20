@@ -38,12 +38,14 @@ static struct
     int episode;
     int map;
 } valid_modes[] = {
+    { pack_chex, shareware,  1, 5 },
     { doom,      shareware,  1, 9 },
     { doom,      registered, 3, 9 },
     { doom,      retail,     4, 9 },
     { doom2,     commercial, 1, 32 },
     { pack_tnt,  commercial, 1, 32 },
     { pack_plut, commercial, 1, 32 },
+    { pack_hacx, commercial, 1, 32 },
     { heretic,   shareware,  1, 9 },
     { heretic,   registered, 3, 9 },
     { heretic,   retail,     5, 9 },
@@ -127,9 +129,11 @@ static struct {
     GameVersion_t version;
 } valid_versions[] = {
     { doom,     exe_doom_1_9 },
+    { doom,     exe_hacx },
     { doom,     exe_ultimate },
-    { doom,     exe_chex },
     { doom,     exe_final },
+    { doom,     exe_final2 },
+    { doom,     exe_chex },
     { heretic,  exe_heretic_1_3 },
     { hexen,    exe_hexen_1_1 },
     { strife,   exe_strife_1_2 },
@@ -141,7 +145,8 @@ boolean D_ValidGameVersion(GameMission_t mission, GameVersion_t version)
 
     // All Doom variants can use the Doom versions.
 
-    if (mission == doom2 || mission == pack_plut || mission == pack_tnt)
+    if (mission == doom2 || mission == pack_plut || mission == pack_tnt
+     || mission == pack_hacx || mission == pack_chex)
     {
         mission = doom;
     }
@@ -166,11 +171,13 @@ boolean D_IsEpisodeMap(GameMission_t mission)
     {
         case doom:
         case heretic:
+        case pack_chex:
             return true;
 
         case none:
         case hexen:
         case doom2:
+        case pack_hacx:
         case pack_tnt:
         case pack_plut:
         case strife:

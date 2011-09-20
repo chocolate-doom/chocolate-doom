@@ -721,7 +721,7 @@ void D_IdentifyVersion(void)
 
     // Make sure gamemode is set up correctly
 
-    if (gamemission == doom)
+    if (logical_gamemission == doom)
     {
         // Doom 1.  But which version?
 
@@ -754,7 +754,7 @@ void D_SetGameDescription(void)
 {
     gamedescription = "Unknown";
 
-    if (gamemission == doom)
+    if (logical_gamemission == doom)
     {
         // Doom 1.  But which version?
 
@@ -777,37 +777,13 @@ void D_SetGameDescription(void)
     {
         // Doom 2 of some kind.  But which mission?
 
-        if (gamemission == doom2)
+        if (logical_gamemission == doom2)
             gamedescription = GetGameName("DOOM 2: Hell on Earth");
-        else if (gamemission == pack_plut)
+        else if (logical_gamemission == pack_plut)
             gamedescription = GetGameName("DOOM 2: Plutonia Experiment"); 
-        else if (gamemission == pack_tnt)
+        else if (logical_gamemission == pack_tnt)
             gamedescription = GetGameName("DOOM 2: TNT - Evilution");
     }
-}
-
-// Check if the IWAD file is the Chex Quest IWAD.  
-// Returns true if this is chex.wad.
-
-static boolean CheckChex(char *iwadname)
-{
-    char *chex_iwadname = "chex.wad";
-
-    return (strlen(iwadname) > strlen(chex_iwadname)
-     && !strcasecmp(iwadname + strlen(iwadname) - strlen(chex_iwadname),
-                    chex_iwadname));
-}
-
-// Check if the IWAD file is the Hacx IWAD.
-// Returns true if this is hacx.wad.
-
-static boolean CheckHacx(char *iwadname)
-{
-    char *hacx_iwadname = "hacx.wad";
-
-    return (strlen(iwadname) > strlen(hacx_iwadname)
-     && !strcasecmp(iwadname + strlen(iwadname) - strlen(hacx_iwadname),
-                    hacx_iwadname));
 }
 
 //      print title for every printed line
@@ -933,15 +909,15 @@ static void InitGameVersion(void)
     {
         // Determine automatically
 
-        if (CheckChex(iwadfile))
+        if (gamemission == pack_chex)
         {
             // chex.exe - identified by iwad filename
 
             gameversion = exe_chex;
         }
-        else if (CheckHacx(iwadfile))
+        else if (gamemission == pack_hacx)
         {
-            // hacx exe: identified by iwad filename
+            // hacx.exe: identified by iwad filename
 
             gameversion = exe_hacx;
         }
@@ -981,7 +957,8 @@ static void InitGameVersion(void)
 
     // EXEs prior to the Final Doom exes do not support Final Doom.
 
-    if (gameversion < exe_final && gamemode == commercial)
+    if (gameversion < exe_final && gamemode == commercial
+     && (gamemission == pack_tnt || gamemission == pack_plut))
     {
         gamemission = doom2;
     }
@@ -1085,27 +1062,6 @@ static void LoadHacxDeh(void)
                     "Hacx v1.2 IWAD.");
         }
     }
-}
-
-// Figure out what IWAD name to use for savegames.
-
-static char *SaveGameIWADName(void)
-{
-    // Chex quest hack
-
-    if (gameversion == exe_chex)
-    {
-        return "chex.wad";
-    }
-
-    // Hacx hack
-
-    if (gameversion == exe_hacx)
-    {
-        return "hacx.wad";
-    }
-
-    return D_SaveGameIWADName(gamemission);
 }
 
 //
@@ -1422,7 +1378,7 @@ void D_DoomMain (void)
     LoadChexDeh();
     LoadHacxDeh();
     D_SetGameDescription();
-    savegamedir = M_GetSaveGameDir(SaveGameIWADName());
+    savegamedir = M_GetSaveGameDir(D_SaveGameIWADName(gamemission));
 
     // Check for -file in shareware
     if (modifiedgame)

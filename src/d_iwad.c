@@ -46,8 +46,8 @@ static iwad_t iwads[] =
     { "tnt.wad",      pack_tnt,  commercial, "Final Doom: TNT: Evilution" },
     { "doom.wad",     doom,      retail,     "Doom" },
     { "doom1.wad",    doom,      shareware,  "Doom Shareware" },
-    { "chex.wad",     doom,      shareware,  "Chex Quest" },
-    { "hacx.wad",     doom2,     commercial, "Hacx" },
+    { "chex.wad",     pack_chex, shareware,  "Chex Quest" },
+    { "hacx.wad",     pack_hacx, commercial, "Hacx" },
     { "heretic.wad",  heretic,   retail,     "Heretic" },
     { "heretic1.wad", heretic,   shareware,  "Heretic Shareware" },
     { "hexen.wad",    hexen,     commercial, "Hexen" },
@@ -449,6 +449,7 @@ static GameMission_t IdentifyIWADByName(char *name, int mask)
         if (!strcasecmp(name, iwads[i].name))
         {
             mission = iwads[i].mission;
+printf("identified %s: mission = %i\n", name, mission);
             break;
         }
     }

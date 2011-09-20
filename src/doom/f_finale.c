@@ -122,7 +122,7 @@ void F_StartFinale (void)
     viewactive = false;
     automapactive = false;
 
-    if (gamemission == doom)
+    if (logical_gamemission == doom)
     {
         S_ChangeMusic(mus_victor, true);
     }
@@ -144,8 +144,8 @@ void F_StartFinale (void)
             screen->level = 5;
         }
 
-        if (gamemission == screen->mission
-         && (gamemission != doom || gameepisode == screen->episode)
+        if (logical_gamemission == screen->mission
+         && (logical_gamemission != doom || gameepisode == screen->episode)
          && gamemap == screen->level)
         {
             finaletext = screen->text;

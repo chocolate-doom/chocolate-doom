@@ -1156,7 +1156,7 @@ static char *M_SelectEndMessage(void)
 {
     char **endmsg;
 
-    if (gamemission == doom)
+    if (logical_gamemission == doom)
     {
         // Doom 1
 

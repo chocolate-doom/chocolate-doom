@@ -340,7 +340,7 @@ void HU_Start(void)
 		       hu_font,
 		       HU_FONTSTART);
     
-    switch ( gamemission )
+    switch ( logical_gamemission )
     {
       case doom:
 	s = HU_TITLE;
