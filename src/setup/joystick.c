@@ -270,19 +270,9 @@ static int CalibrationEventCallback(SDL_Event *event, void *user_data)
 
 static void NoJoystick(void)
 {
-    txt_window_t *window;
-
-    window = TXT_NewWindow(NULL);
-
-    TXT_AddWidget(window,
-                  TXT_NewLabel("No joysticks could be opened.\n\n"
-                               "Try configuring your joystick from within\n"
-                               "your OS first."));
-
-    TXT_SetWindowAction(window, TXT_HORIZ_LEFT, NULL);
-    TXT_SetWindowAction(window, TXT_HORIZ_CENTER, 
-                        TXT_NewWindowEscapeAction(window));
-    TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, NULL);
+    TXT_MessageBox(NULL, "No joysticks could be opened.\n\n"
+                         "Try configuring your joystick from within\n"
+                         "your OS first.");
 
     joystick_index = -1;
     SetJoystickButtonLabel();

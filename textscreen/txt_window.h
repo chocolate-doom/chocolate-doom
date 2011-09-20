@@ -176,6 +176,16 @@ void TXT_SetMouseListener(txt_window_t *window,
                           TxtWindowMousePress mouse_listener,
                           void *user_data);
 
+/**
+ * Open a window displaying a message.
+ *
+ * @param title           Title of the window.
+ * @param message         The message to display in the window.
+ * @return                The new window.
+ */
+
+txt_window_t *TXT_MessageBox(char *title, char *message, ...);
+
 #endif /* #ifndef TXT_WINDOW_T */
 
 
