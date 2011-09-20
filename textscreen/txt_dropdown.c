@@ -49,14 +49,29 @@ static int ValidSelection(txt_dropdown_list_t *list)
 
 static int SelectorWindowY(txt_dropdown_list_t *list)
 {
+    int result;
+
     if (ValidSelection(list))
     {
-        return list->widget.y - 1 - *list->variable;
+        result = list->widget.y - 1 - *list->variable;
     }
     else
     {
-        return list->widget.y - 1 - (list->num_values / 2);
+        result = list->widget.y - 1 - (list->num_values / 2);
     }
+
+    // Keep dropdown inside the screen.
+
+    if (result < 1)
+    {
+        result = 1;
+    }
+    else if (result + list->num_values > (TXT_SCREEN_H - 3))
+    {
+        result = TXT_SCREEN_H - list->num_values - 3;
+    }
+
+    return result;
 }
 
 // Called when a button in the selector window is pressed
