@@ -783,8 +783,7 @@ static void SelectQueryAddress(TXT_UNCAST_ARG(button),
 
     // Auto-choose IWAD if there is already a player connected.
 
-    if (querydata->num_players > 0
-     && !(querydata->gamemission == doom && querydata->gamemode == shareware))
+    if (querydata->num_players > 0)
     {
         for (i = 0; found_iwads[i] != NULL; ++i)
         {
@@ -794,6 +793,22 @@ static void SelectQueryAddress(TXT_UNCAST_ARG(button),
                 found_iwad_selected = i;
                 break;
             }
+        }
+
+        if (found_iwads[i] == NULL)
+        {
+            TXT_MessageBox(NULL,
+                           "The game on this server seems to be:\n"
+                           "\n"
+                           "   %s\n"
+                           "\n"
+                           "but the IWAD file %s is not found!\n"
+                           "Without the required IWAD file, it may not be\n"
+                           "possible to join this game.",
+                           D_SuggestGameName(querydata->gamemission,
+                                             querydata->gamemode),
+                           D_SuggestIWADName(querydata->gamemission,
+                                             querydata->gamemode));
         }
     }
 
