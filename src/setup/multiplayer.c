@@ -769,12 +769,36 @@ static txt_window_action_t *JoinGameAction(void)
     return action;
 }
 
-static void SelectQueryAddress(TXT_UNCAST_ARG(button), TXT_UNCAST_ARG(addr))
+static void SelectQueryAddress(TXT_UNCAST_ARG(button),
+                               TXT_UNCAST_ARG(querydata))
 {
     TXT_CAST_ARG(txt_button_t, button);
+    TXT_CAST_ARG(net_querydata_t, querydata);
+    int i;
+
+    // Set address to connect to:
 
     free(connect_address);
     connect_address = strdup(button->label);
+
+    // Auto-choose IWAD if there is already a player connected.
+
+    if (querydata->num_players > 0
+     && !(querydata->gamemission == doom && querydata->gamemode == shareware))
+    {
+        for (i = 0; found_iwads[i] != NULL; ++i)
+        {
+            if (found_iwads[i]->mode == querydata->gamemode
+             && found_iwads[i]->mission == querydata->gamemission)
+            {
+                found_iwad_selected = i;
+                break;
+            }
+        }
+    }
+
+    // Finished with search.
+
     TXT_CloseWindow(query_window);
 }
 
@@ -794,7 +818,7 @@ static void QueryResponseCallback(net_addr_t *addr,
     TXT_AddWidgets(results_table,
                    TXT_NewLabel(ping_time_str),
                    TXT_NewButton2(NET_AddrToString(addr),
-                                  SelectQueryAddress, addr),
+                                  SelectQueryAddress, querydata),
                    TXT_NewLabel(description),
                    NULL);
 
