@@ -776,6 +776,14 @@ static void SelectQueryAddress(TXT_UNCAST_ARG(button),
     TXT_CAST_ARG(net_querydata_t, querydata);
     int i;
 
+    if (querydata->server_state != 0)
+    {
+        TXT_MessageBox("Cannot connect to server",
+                       "Gameplay is already in progress\n"
+                       "on this server.");
+        return;
+    }
+
     // Set address to connect to:
 
     free(connect_address);
