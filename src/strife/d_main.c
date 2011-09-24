@@ -1091,7 +1091,7 @@ static void D_Endoom(void)
     // Don't show ENDOOM if we have it disabled, or we're running
     // in screensaver or control test mode.
 
-    if (!show_endoom || screensaver_mode || M_CheckParm("-testcontrols") > 0)
+    if (!show_endoom || screensaver_mode || testcontrols)
     {
         return;
     }
@@ -1319,9 +1319,18 @@ void D_DoomMain (void)
     //
     // Disable graphical introduction sequence
     //
-    
-    if (M_CheckParm("-nograph") > 0)
+
+    if (M_ParmExists("-nograph"))
         showintro = false;
+
+    // Undocumented:
+    // Invoked by setup to test the controls.
+
+    if (M_ParmExists("-testcontrols"))
+    {
+        testcontrols = true;
+        showintro = false;
+    }
 
     // haleyjd 20110206: Moved up -devparm for max visibility
 
@@ -1781,17 +1790,11 @@ void D_DoomMain (void)
         autostart = true;
     }
 
-    // Undocumented:
-    // Invoked by setup to test the controls.
-
-    p = M_CheckParm("-testcontrols");
-
-    if (p > 0)
+    if (testcontrols)
     {
         startepisode = 1;
         startmap = 1;
         autostart = true;
-        testcontrols = true;
     }
 
     // Check for load game parameter

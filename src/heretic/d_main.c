@@ -625,7 +625,7 @@ void initStartup(void)
     byte *textScreen;
     byte *loading;
 
-    if (!graphical_startup || debugmode)
+    if (!graphical_startup || debugmode || testcontrols)
     {
         using_graphical_startup = false;
         return;
@@ -943,6 +943,14 @@ void D_DoomMain(void)
 
     I_PrintStartupBanner(gamedescription);
 
+    if (M_ParmExists("-testcontrols"))
+    {
+        startepisode = 1;
+        startmap = 1;
+        autostart = true;
+        testcontrols = true;
+    }
+
     // haleyjd: removed WATCOMC
     initStartup();
 
@@ -1039,14 +1047,6 @@ void D_DoomMain(void)
 	filename = SV_Filename(myargv[p + 1][0] - '0');
         G_LoadGame(filename);
 	free(filename);
-    }
-
-    if (M_ParmExists("-testcontrols"))
-    {
-        startepisode = 1;
-        startmap = 1;
-        autostart = true;
-        testcontrols = true;
     }
 
     // Check valid episode and map

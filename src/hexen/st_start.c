@@ -129,7 +129,7 @@ void ST_Init(void)
     
     using_graphical_startup = false;
 
-    if (graphical_startup && !debugmode)
+    if (graphical_startup && !debugmode && !testcontrols)
     {
         I_SetWindowTitleHR("Hexen startup - " PACKAGE_STRING);
 
