@@ -1287,29 +1287,6 @@ void D_DoomMain (void)
     D_AddFile(iwadfile);
     modifiedgame = W_ParseCommandLine();
 
-    //!
-    // @arg <files>
-    // @vanilla
-    //
-    // Load the specified PWAD files.
-    //
-
-    p = M_CheckParmWithArgs("-file", 1);
-    if (p)
-    {
-	// the parms after p are wadfile/lump names,
-	// until end of parms or another - preceded parm
-	modifiedgame = true;            // homebrew levels
-	while (++p != myargc && myargv[p][0] != '-')
-        {
-            char *filename;
-
-            filename = D_TryFindWADByName(myargv[p]);
-
-	    D_AddFile(filename);
-        }
-    }
-
     // Debug:
 //    W_PrintDirectory();
 
