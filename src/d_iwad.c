@@ -449,7 +449,6 @@ static GameMission_t IdentifyIWADByName(char *name, int mask)
         if (!strcasecmp(name, iwads[i].name))
         {
             mission = iwads[i].mission;
-printf("identified %s: mission = %i\n", name, mission);
             break;
         }
     }
