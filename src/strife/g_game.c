@@ -234,7 +234,7 @@ static boolean *joybuttons = &joyarray[1];		// allow [-1]
 static int      savegameslot = 6; // [STRIFE] initialized to 6
 static char     savedescription[32]; 
  
-static int      testcontrols_mousespeed;
+int      testcontrols_mousespeed;
  
 #define	BODYQUESIZE	32
 
@@ -245,114 +245,6 @@ int             vanilla_savegame_limit = 1;
 int             vanilla_demo_limit = 1;
  
 
-#define MOUSE_SPEED_BOX_WIDTH 16
-#define COLOR_RED    0xb0
-#define COLOR_BLACK  0x00
-#define COLOR_WHITE  0x04
-#define COLOR_YELLOW 0xe7
-
-void G_DrawMouseSpeedBox(void)
-{
-    extern int usemouse;
-    int i;
-    int box_x, box_y;
-    int original_speed;
-    int x, y;
-    int redline_x;
-    int linelen;
-    char *lumpname;
-    int color;
-
-    // If the mouse is turned off or acceleration is turned off, don't
-    // draw the box at all.
-
-    if (!usemouse || fabs(mouse_acceleration - 1) < 0.01)
-    {
-        return;
-    }
-
-    // Calculate box position
-
-    box_x = SCREENWIDTH - MOUSE_SPEED_BOX_WIDTH * 8;
-    box_y = SCREENHEIGHT - 9;
-
-    // Draw the box.
-
-    x = box_x;
-    
-    for (i=0; i<MOUSE_SPEED_BOX_WIDTH; ++i)
-    {
-        if (i == 0)
-        {
-            lumpname = "M_LSLEFT";
-        }
-        else if (i == MOUSE_SPEED_BOX_WIDTH - 1)
-        {
-            lumpname = "M_LSRGHT";
-        }
-        else
-        {
-            lumpname = "M_LSCNTR";
-        }
-
-        V_DrawPatchDirect(x, box_y,
-                          W_CacheLumpName(DEH_String(lumpname), PU_CACHE));
-        x += 8;
-    }
-
-    // Calculate the position of the red line.  This is 1/3 of the way
-    // along the box.
-
-    redline_x = (MOUSE_SPEED_BOX_WIDTH / 3) * 8;
-
-    // Undo acceleration and get back the original mouse speed
-
-    if (testcontrols_mousespeed < mouse_threshold)
-    {
-        original_speed = testcontrols_mousespeed;
-    }
-    else
-    {
-        original_speed = testcontrols_mousespeed - mouse_threshold;
-        original_speed = (int) (original_speed / mouse_acceleration);
-        original_speed += mouse_threshold;
-    }
-
-    // Calculate line length
-
-    linelen = (original_speed * redline_x) / mouse_threshold;
-
-    // Draw horizontal "thermometer" 
-
-    for (x=0; x<(MOUSE_SPEED_BOX_WIDTH - 1) * 8; ++x)
-    {
-        if (x < linelen)
-        {
-            if (x < redline_x)
-            {
-                color = COLOR_WHITE;
-            }
-            else
-            {
-                color = COLOR_YELLOW;
-            }
-        }
-        else
-        {
-            color = COLOR_BLACK;
-        }
-
-        I_VideoBuffer[(box_y - 4) * SCREENWIDTH + box_x + x + 1] = color;
-    }
-
-    // Draw red line
-
-    for (y=box_y - 8; y<box_y; ++y)
-    {
-        I_VideoBuffer[y * SCREENWIDTH + box_x + redline_x] = COLOR_RED;
-    }
-}
- 
 int G_CmdChecksum (ticcmd_t* cmd) 
 { 
     size_t		i;
