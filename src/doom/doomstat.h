@@ -162,6 +162,7 @@ extern	int		viewwidth;
 extern	int		scaledviewwidth;
 
 extern  boolean         testcontrols;
+extern  int             testcontrols_mousespeed;
 
 
 

@@ -283,7 +283,7 @@ void D_Display (void)
     {
         // Box showing current mouse speed
 
-        G_DrawMouseSpeedBox();
+        V_DrawMouseSpeedBox(testcontrols_mousespeed);
     }
 
     menuactivestate = menuactive;

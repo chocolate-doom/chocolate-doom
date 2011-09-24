@@ -1131,6 +1131,36 @@ void I_SetPalette (byte *doompalette)
     palette_to_set = true;
 }
 
+// Given an RGB value, find the closest matching palette index.
+
+int I_GetPaletteIndex(int r, int g, int b)
+{
+    int best, best_diff, diff;
+    int i;
+
+    best = 0; best_diff = INT_MAX;
+
+    for (i = 0; i < 256; ++i)
+    {
+        diff = (r - palette[i].r) * (r - palette[i].r)
+             + (g - palette[i].g) * (g - palette[i].g)
+             + (b - palette[i].b) * (b - palette[i].b);
+
+        if (diff < best_diff)
+        {
+            best = i;
+            best_diff = diff;
+        }
+
+        if (diff == 0)
+        {
+            break;
+        }
+    }
+
+    return best;
+}
+
 // 
 // Set the window title
 //

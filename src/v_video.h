@@ -76,6 +76,11 @@ void V_DrawBlock(int x, int y, int width, int height, byte *src);
 
 void V_MarkRect(int x, int y, int width, int height);
 
+void V_DrawFilledBox(int x, int y, int w, int h, int c);
+void V_DrawHorizLine(int x, int y, int w, int c);
+void V_DrawVertLine(int x, int y, int h, int c);
+void V_DrawBox(int x, int y, int w, int h, int c);
+
 // Draw a raw screen lump
 
 void V_DrawRawScreen(byte *raw);
@@ -104,6 +109,8 @@ void V_LoadTintTable(void);
 // lump.
 
 void V_LoadXlaTable(void);
+
+void V_DrawMouseSpeedBox(int speed);
 
 #endif
 

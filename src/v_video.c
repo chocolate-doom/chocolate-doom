@@ -524,6 +524,61 @@ void V_DrawBlock(int x, int y, int width, int height, byte *src)
     } 
 } 
 
+void V_DrawFilledBox(int x, int y, int w, int h, int c)
+{
+    uint8_t *buf, *buf1;
+    int x1, y1;
+
+    buf = I_VideoBuffer + SCREENWIDTH * y + x;
+
+    for (y1 = 0; y1 < h; ++y1)
+    {
+        buf1 = buf;
+
+        for (x1 = 0; x1 < w; ++x1)
+        {
+            *buf1++ = c;
+        }
+
+        buf += SCREENWIDTH;
+    }
+}
+
+void V_DrawHorizLine(int x, int y, int w, int c)
+{
+    uint8_t *buf;
+    int x1;
+
+    buf = I_VideoBuffer + SCREENWIDTH * y + x;
+
+    for (x1 = 0; x1 < w; ++x1)
+    {
+        *buf++ = c;
+    }
+}
+
+void V_DrawVertLine(int x, int y, int h, int c)
+{
+    uint8_t *buf;
+    int y1;
+
+    buf = I_VideoBuffer + SCREENWIDTH * y + x;
+
+    for (y1 = 0; y1 < h; ++y1)
+    {
+        *buf = c;
+        buf += SCREENWIDTH;
+    }
+}
+
+void V_DrawBox(int x, int y, int w, int h, int c)
+{
+    V_DrawHorizLine(x, y, w, c);
+    V_DrawHorizLine(x, y+h-1, w, c);
+    V_DrawVertLine(x, y, h, c);
+    V_DrawVertLine(x+w-1, y, h, c);
+}
+
 //
 // Draw a "raw" screen (lump containing raw data to blit directly
 // to the screen)
@@ -676,5 +731,95 @@ void V_ScreenShot(char *format)
     WritePCXfile(lbmname, I_VideoBuffer,
                  SCREENWIDTH, SCREENHEIGHT,
                  W_CacheLumpName (DEH_String("PLAYPAL"), PU_CACHE));
+}
+
+#define MOUSE_SPEED_BOX_WIDTH  120
+#define MOUSE_SPEED_BOX_HEIGHT 9
+
+void V_DrawMouseSpeedBox(int speed)
+{
+    extern int usemouse;
+    int bgcolor, bordercolor, red, black, white, yellow;
+    int box_x, box_y;
+    int original_speed;
+    int redline_x;
+    int linelen;
+
+    // Get palette indices for colors for widget. These depend on the
+    // palette of the game being played.
+
+    bgcolor = I_GetPaletteIndex(0x77, 0x77, 0x77);
+    bordercolor = I_GetPaletteIndex(0x55, 0x55, 0x55);
+    red = I_GetPaletteIndex(0xff, 0x00, 0x00);
+    black = I_GetPaletteIndex(0x00, 0x00, 0x00);
+    yellow = I_GetPaletteIndex(0xff, 0xff, 0x00);
+    white = I_GetPaletteIndex(0xff, 0xff, 0xff);
+
+    // If the mouse is turned off or acceleration is turned off, don't
+    // draw the box at all.
+
+    if (!usemouse || fabs(mouse_acceleration - 1) < 0.01)
+    {
+        return;
+    }
+
+    // Calculate box position
+
+    box_x = SCREENWIDTH - MOUSE_SPEED_BOX_WIDTH - 10;
+    box_y = 10;
+
+    V_DrawFilledBox(box_x, box_y,
+                    MOUSE_SPEED_BOX_WIDTH, MOUSE_SPEED_BOX_HEIGHT, bgcolor);
+    V_DrawBox(box_x, box_y,
+              MOUSE_SPEED_BOX_WIDTH, MOUSE_SPEED_BOX_HEIGHT, bordercolor);
+
+    // Calculate the position of the red line.  This is 1/3 of the way
+    // along the box.
+
+    redline_x = MOUSE_SPEED_BOX_WIDTH / 3;
+
+    // Undo acceleration and get back the original mouse speed
+
+    if (speed < mouse_threshold)
+    {
+        original_speed = speed;
+    }
+    else
+    {
+        original_speed = speed - mouse_threshold;
+        original_speed = (int) (original_speed / mouse_acceleration);
+        original_speed += mouse_threshold;
+    }
+
+    // Calculate line length
+
+    linelen = (original_speed * redline_x) / mouse_threshold;
+
+    // Draw horizontal "thermometer" 
+
+    if (linelen > MOUSE_SPEED_BOX_WIDTH - 1)
+    {
+        linelen = MOUSE_SPEED_BOX_WIDTH - 1;
+    }
+
+    V_DrawHorizLine(box_x + 1, box_y + 4, MOUSE_SPEED_BOX_WIDTH - 2, black);
+
+    if (linelen < redline_x)
+    {
+        V_DrawHorizLine(box_x + 1, box_y + MOUSE_SPEED_BOX_HEIGHT / 2,
+                      linelen, white);
+    }
+    else
+    {
+        V_DrawHorizLine(box_x + 1, box_y + MOUSE_SPEED_BOX_HEIGHT / 2,
+                        redline_x, white);
+        V_DrawHorizLine(box_x + redline_x, box_y + MOUSE_SPEED_BOX_HEIGHT / 2,
+                        linelen - redline_x, yellow);
+    }
+
+    // Draw red line
+
+    V_DrawVertLine(box_x + redline_x, box_y + 1,
+                 MOUSE_SPEED_BOX_HEIGHT - 2, red);
 }
 
