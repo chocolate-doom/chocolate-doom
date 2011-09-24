@@ -1793,7 +1793,7 @@ void D_DoomMain (void)
     if (testcontrols)
     {
         startepisode = 1;
-        startmap = 1;
+        startmap = 3;
         autostart = true;
     }
 
