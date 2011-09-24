@@ -92,6 +92,7 @@ static void DrawAndBlit(void);
 static void ExecOptionSCRIPTS(char **args, int tag);
 static void ExecOptionSKILL(char **args, int tag);
 static void ExecOptionPLAYDEMO(char **args, int tag);
+static void ExecOptionTestControls(char **args, int tag);
 static void CreateSavePath(void);
 static void WarpCheck(void);
 
@@ -137,6 +138,7 @@ static execOpt_t ExecOptions[] = {
     {"-skill", ExecOptionSKILL, 1, 0},
     {"-playdemo", ExecOptionPLAYDEMO, 1, 0},
     {"-timedemo", ExecOptionPLAYDEMO, 1, 0},
+    {"-testcontrols", ExecOptionTestControls, 0, 0},
     {NULL, NULL, 0, 0}          // Terminator
 };
 
@@ -517,6 +519,18 @@ static void ExecOptionPLAYDEMO(char **args, int tag)
 
 //==========================================================================
 //
+// ExecOptionTestControls
+//
+//==========================================================================
+
+static void ExecOptionTestControls(char **args, int tag)
+{
+    autostart = true;
+    testcontrols = true;
+}
+
+//==========================================================================
+//
 // ExecOptionSCRIPTS
 //
 //==========================================================================
@@ -654,6 +668,11 @@ static void DrawAndBlit(void)
         case GS_DEMOSCREEN:
             PageDrawer();
             break;
+    }
+
+    if (testcontrols)
+    {
+        V_DrawMouseSpeedBox(testcontrols_mousespeed);
     }
 
     if (paused && !MenuActive && !askforquit)

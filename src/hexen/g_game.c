@@ -175,6 +175,9 @@ static skill_t TempSkill;
 static int TempEpisode;
 static int TempMap;
 
+boolean testcontrols = false;
+int testcontrols_mousespeed;
+
 //=============================================================================
 /*
 ====================
@@ -535,6 +538,12 @@ void G_BuildTiccmd(ticcmd_t * cmd)
     {
         cmd->angleturn -= mousex * 0x8;
     }
+
+    if (mousex == 0)
+    {
+        testcontrols_mousespeed = 0;
+    }
+
     forward += mousey;
     mousex = mousey = 0;
 
@@ -632,6 +641,11 @@ void G_DoLoadLevel(void)
     sendpause = sendsave = paused = false;
     memset(mousebuttons, 0, sizeof(mousebuttons));
     memset(joybuttons, 0, sizeof(joybuttons));
+
+    if (testcontrols)
+    {
+        P_SetMessage(&players[consoleplayer], "PRESS ESCAPE TO QUIT.", false);
+    }
 }
 
 
@@ -691,6 +705,11 @@ boolean G_Responder(event_t * ev)
         {                       // Automap ate the event
             return (true);
         }
+    }
+
+    if (ev->type == ev_mouse)
+    {
+        testcontrols_mousespeed = abs(ev->data2);
     }
 
     switch (ev->type)

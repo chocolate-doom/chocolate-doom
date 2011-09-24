@@ -1142,6 +1142,18 @@ boolean MN_Responder(event_t * event)
     extern void G_CheckDemoStatus(void);
     char *textBuffer;
 
+    if (testcontrols)
+    {
+        if (event->type == ev_quit
+         || (event->type == ev_keydown
+          && (event->data1 == key_menu_activate
+           || event->data1 == key_menu_quit)))
+        {
+            I_Quit();
+            return true;
+        }
+    }
+
     // "close" button pressed on window?
     if (event->type == ev_quit)
     {
