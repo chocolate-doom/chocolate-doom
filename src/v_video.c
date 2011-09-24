@@ -29,6 +29,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #include "i_system.h"
 
@@ -766,7 +767,7 @@ void V_DrawMouseSpeedBox(int speed)
     // Calculate box position
 
     box_x = SCREENWIDTH - MOUSE_SPEED_BOX_WIDTH - 10;
-    box_y = 10;
+    box_y = 15;
 
     V_DrawFilledBox(box_x, box_y,
                     MOUSE_SPEED_BOX_WIDTH, MOUSE_SPEED_BOX_HEIGHT, bgcolor);

@@ -182,6 +182,11 @@ void D_Display(void)
             break;
     }
 
+    if (testcontrols)
+    {
+        V_DrawMouseSpeedBox(testcontrols_mousespeed);
+    }
+
     if (paused && !MenuActive && !askforquit)
     {
         if (!netgame)
@@ -774,7 +779,7 @@ static void D_Endoom(void)
 
     // Disable ENDOOM?
 
-    if (!show_endoom)
+    if (!show_endoom || testcontrols)
     {
         return;
     }
@@ -1034,6 +1039,14 @@ void D_DoomMain(void)
 	filename = SV_Filename(myargv[p + 1][0] - '0');
         G_LoadGame(filename);
 	free(filename);
+    }
+
+    if (M_ParmExists("-testcontrols"))
+    {
+        startepisode = 1;
+        startmap = 1;
+        autostart = true;
+        testcontrols = true;
     }
 
     // Check valid episode and map
