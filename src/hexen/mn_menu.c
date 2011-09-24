@@ -1142,6 +1142,9 @@ boolean MN_Responder(event_t * event)
     extern void G_CheckDemoStatus(void);
     char *textBuffer;
 
+    // In testcontrols mode, none of the function keys should do anything
+    // - the only key is escape to quit.
+
     if (testcontrols)
     {
         if (event->type == ev_quit
@@ -1152,6 +1155,8 @@ boolean MN_Responder(event_t * event)
             I_Quit();
             return true;
         }
+
+        return false;
     }
 
     // "close" button pressed on window?
