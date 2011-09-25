@@ -1013,7 +1013,7 @@ void G_PlayerFinishLevel(int player)
 //      memset(p->inventory, 0, sizeof(p->inventory));
     if (p->chickenTics)
     {
-        p->readyweapon = p->mo->special1;       // Restore weapon
+        p->readyweapon = p->mo->special1.i;       // Restore weapon
         p->chickenTics = 0;
     }
     p->messageTics = 0;

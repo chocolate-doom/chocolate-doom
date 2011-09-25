@@ -1060,7 +1060,7 @@ boolean P_ChickenMorphPlayer(player_t * player)
     fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, MT_TFOG);
     S_StartSound(fog, sfx_telept);
     chicken = P_SpawnMobj(x, y, z, MT_CHICPLAYER);
-    chicken->special1 = player->readyweapon;
+    chicken->special1.i = player->readyweapon;
     chicken->angle = angle;
     chicken->player = player;
     player->health = chicken->health = MAXCHICKENHEALTH;
@@ -1122,8 +1122,8 @@ boolean P_ChickenMorph(mobj_t * actor)
     fog = P_SpawnMobj(x, y, z + TELEFOGHEIGHT, MT_TFOG);
     S_StartSound(fog, sfx_telept);
     chicken = P_SpawnMobj(x, y, z, MT_CHICKEN);
-    chicken->special2 = moType;
-    chicken->special1 = CHICKENTICS + P_Random();
+    chicken->special2.i = moType;
+    chicken->special1.i = CHICKENTICS + P_Random();
     chicken->flags |= ghost;
     chicken->target = target;
     chicken->angle = angle;
@@ -1453,7 +1453,7 @@ void P_DamageMobj
     target->health -= damage;
     if (target->health <= 0)
     {                           // Death
-        target->special1 = damage;
+        target->special1.i = damage;
         if (target->type == MT_POD && source && source->type != MT_POD)
         {                       // Make sure players get frags for chain-reaction kills
             target->target = source;

@@ -1113,7 +1113,7 @@ void A_FireMacePL1(player_t * player, pspdef_t * psp)
                       + (((P_Random() & 7) - 4) << 24));
     if (ball)
     {
-        ball->special1 = 16;    // tics till dropoff
+        ball->special1.i = 16;    // tics till dropoff
     }
 }
 
@@ -1127,16 +1127,16 @@ void A_MacePL1Check(mobj_t * ball)
 {
     angle_t angle;
 
-    if (ball->special1 == 0)
+    if (ball->special1.i == 0)
     {
         return;
     }
-    ball->special1 -= 4;
-    if (ball->special1 > 0)
+    ball->special1.i -= 4;
+    if (ball->special1.i > 0)
     {
         return;
     }
-    ball->special1 = 0;
+    ball->special1.i = 0;
     ball->flags2 |= MF2_LOGRAV;
     angle = ball->angle >> ANGLETOFINESHIFT;
     ball->momx = FixedMul(7 * FRACUNIT, finecosine[angle]);
@@ -1246,7 +1246,7 @@ void A_FireMacePL2(player_t * player, pspdef_t * psp)
         mo->momz = 2 * FRACUNIT + ((player->lookdir) << (FRACBITS - 5));
         if (linetarget)
         {
-            mo->special1 = (int) linetarget;
+            mo->special1.m = linetarget;
         }
     }
     S_StartSound(player->mo, sfx_lobsht);
@@ -1273,12 +1273,12 @@ void A_DeathBallImpact(mobj_t * ball)
     if ((ball->z <= ball->floorz) && ball->momz)
     {                           // Bounce
         newAngle = false;
-        target = (mobj_t *) ball->special1;
+        target = (mobj_t *) ball->special1.m;
         if (target)
         {
             if (!(target->flags & MF_SHOOTABLE))
             {                   // Target died
-                ball->special1 = 0;
+                ball->special1.m = NULL;
             }
             else
             {                   // Seek
@@ -1295,7 +1295,7 @@ void A_DeathBallImpact(mobj_t * ball)
                 P_AimLineAttack(ball, angle, 10 * 64 * FRACUNIT);
                 if (linetarget && ball->target != linetarget)
                 {
-                    ball->special1 = (int) linetarget;
+                    ball->special1.m = linetarget;
                     angle = R_PointToAngle2(ball->x, ball->y,
                                             linetarget->x, linetarget->y);
                     newAngle = true;
@@ -1445,15 +1445,15 @@ void A_FireSkullRodPL2(player_t * player, pspdef_t * psp)
     // even if it exploded immediately.
     if (netgame)
     {                           // Multi-player game
-        MissileMobj->special2 = P_GetPlayerNum(player);
+        MissileMobj->special2.i = P_GetPlayerNum(player);
     }
     else
     {                           // Always use red missiles in single player games
-        MissileMobj->special2 = 2;
+        MissileMobj->special2.i = 2;
     }
     if (linetarget)
     {
-        MissileMobj->special1 = (int) linetarget;
+        MissileMobj->special1.m = linetarget;
     }
     S_StartSound(MissileMobj, sfx_hrnpow);
 }
@@ -1480,7 +1480,7 @@ void A_AddPlayerRain(mobj_t * actor)
     int playerNum;
     player_t *player;
 
-    playerNum = netgame ? actor->special2 : 0;
+    playerNum = netgame ? actor->special2.i : 0;
     if (!playeringame[playerNum])
     {                           // Player left the game
         return;
@@ -1537,7 +1537,7 @@ void A_SkullRodStorm(mobj_t * actor)
     if (actor->health-- == 0)
     {
         P_SetMobjState(actor, S_NULL);
-        playerNum = netgame ? actor->special2 : 0;
+        playerNum = netgame ? actor->special2.i : 0;
         if (!playeringame[playerNum])
         {                       // Player left the game
             return;
@@ -1563,17 +1563,17 @@ void A_SkullRodStorm(mobj_t * actor)
     }
     x = actor->x + ((P_Random() & 127) - 64) * FRACUNIT;
     y = actor->y + ((P_Random() & 127) - 64) * FRACUNIT;
-    mo = P_SpawnMobj(x, y, ONCEILINGZ, MT_RAINPLR1 + actor->special2);
+    mo = P_SpawnMobj(x, y, ONCEILINGZ, MT_RAINPLR1 + actor->special2.i);
     mo->target = actor->target;
     mo->momx = 1;               // Force collision detection
     mo->momz = -mo->info->speed;
-    mo->special2 = actor->special2;     // Transfer player number
+    mo->special2.i = actor->special2.i;     // Transfer player number
     P_CheckMissileSpawn(mo);
-    if (!(actor->special1 & 31))
+    if (!(actor->special1.i & 31))
     {
         S_StartSound(actor, sfx_ramrain);
     }
-    actor->special1++;
+    actor->special1.i++;
 }
 
 //----------------------------------------------------------------------------
@@ -1586,7 +1586,7 @@ void A_RainImpact(mobj_t * actor)
 {
     if (actor->z > actor->floorz)
     {
-        P_SetMobjState(actor, S_RAINAIRXPLR1_1 + actor->special2);
+        P_SetMobjState(actor, S_RAINAIRXPLR1_1 + actor->special2.i);
     }
     else if (P_Random() < 40)
     {

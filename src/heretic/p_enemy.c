@@ -896,7 +896,7 @@ void A_ImpExplode(mobj_t * actor)
     mo->momx = (P_Random() - P_Random()) << 10;
     mo->momy = (P_Random() - P_Random()) << 10;
     mo->momz = 9 * FRACUNIT;
-    if (actor->special1 == 666)
+    if (actor->special1.i == 666)
     {                           // Extreme death crash
         P_SetMobjState(actor, S_IMP_XCRASH1);
     }
@@ -1020,7 +1020,7 @@ void A_ImpXDeath1(mobj_t * actor)
     actor->flags &= ~MF_SOLID;
     actor->flags |= MF_NOGRAVITY;
     actor->flags2 |= MF2_FOOTCLIP;
-    actor->special1 = 666;      // Flag the crash routine
+    actor->special1.i = 666;      // Flag the crash routine
 }
 
 //----------------------------------------------------------------------------
@@ -1056,12 +1056,12 @@ boolean P_UpdateChicken(mobj_t * actor, int tics)
     mobj_t *mo;
     mobj_t oldChicken;
 
-    actor->special1 -= tics;
-    if (actor->special1 > 0)
+    actor->special1.i -= tics;
+    if (actor->special1.i > 0)
     {
         return (false);
     }
-    moType = actor->special2;
+    moType = actor->special2.i;
     x = actor->x;
     y = actor->y;
     z = actor->z;
@@ -1076,8 +1076,8 @@ boolean P_UpdateChicken(mobj_t * actor, int tics)
         mo->flags = oldChicken.flags;
         mo->health = oldChicken.health;
         mo->target = oldChicken.target;
-        mo->special1 = 5 * 35;  // Next try in 5 seconds
-        mo->special2 = moType;
+        mo->special1.i = 5 * 35;  // Next try in 5 seconds
+        mo->special2.i = moType;
         return (false);
     }
     mo->angle = oldChicken.angle;
@@ -1234,7 +1234,7 @@ void A_MummyAttack2(mobj_t * actor)
     //mo = P_SpawnMissile(actor, actor->target, MT_EGGFX);
     if (mo != NULL)
     {
-        mo->special1 = (int) actor->target;
+        mo->special1.m = actor->target;
     }
 }
 
@@ -1272,7 +1272,7 @@ void A_MummySoul(mobj_t * mummy)
 
 void A_Sor1Pain(mobj_t * actor)
 {
-    actor->special1 = 20;       // Number of steps to walk fast
+    actor->special1.i = 20;       // Number of steps to walk fast
     A_Pain(actor);
 }
 
@@ -1284,9 +1284,9 @@ void A_Sor1Pain(mobj_t * actor)
 
 void A_Sor1Chase(mobj_t * actor)
 {
-    if (actor->special1)
+    if (actor->special1.i)
     {
-        actor->special1--;
+        actor->special1.i--;
         actor->tics -= 3;
     }
     A_Chase(actor);
@@ -1332,13 +1332,13 @@ void A_Srcr1Attack(mobj_t * actor)
         }
         if (actor->health < actor->info->spawnhealth / 3)
         {                       // Maybe attack again
-            if (actor->special1)
+            if (actor->special1.i)
             {                   // Just attacked, so don't attack again
-                actor->special1 = 0;
+                actor->special1.i = 0;
             }
             else
             {                   // Set state to attack again
-                actor->special1 = 1;
+                actor->special1.i = 1;
                 P_SetMobjState(actor, S_SRCR1_ATK4);
             }
         }
@@ -1514,7 +1514,7 @@ void A_GenWizard(mobj_t * actor)
 
 void A_Sor2DthInit(mobj_t * actor)
 {
-    actor->special1 = 7;        // Animation loop counter
+    actor->special1.i = 7;        // Animation loop counter
     P_Massacre();               // Kill monsters early
 }
 
@@ -1526,7 +1526,7 @@ void A_Sor2DthInit(mobj_t * actor)
 
 void A_Sor2DthLoop(mobj_t * actor)
 {
-    if (--actor->special1)
+    if (--actor->special1.i)
     {                           // Need to loop
         P_SetMobjState(actor, S_SOR2_DIE4);
     }
@@ -1630,13 +1630,13 @@ void A_MinotaurDecide(mobj_t * actor)
         angle = actor->angle >> ANGLETOFINESHIFT;
         actor->momx = FixedMul(MNTR_CHARGE_SPEED, finecosine[angle]);
         actor->momy = FixedMul(MNTR_CHARGE_SPEED, finesine[angle]);
-        actor->special1 = 35 / 2;       // Charge duration
+        actor->special1.i = 35 / 2;       // Charge duration
     }
     else if (target->z == target->floorz
              && dist < 9 * 64 * FRACUNIT && P_Random() < 220)
     {                           // Floor fire attack
         P_SetMobjState(actor, S_MNTR_ATK3_1);
-        actor->special2 = 0;
+        actor->special2.i = 0;
     }
     else
     {                           // Swing attack
@@ -1656,11 +1656,11 @@ void A_MinotaurCharge(mobj_t * actor)
 {
     mobj_t *puff;
 
-    if (actor->special1)
+    if (actor->special1.i)
     {
         puff = P_SpawnMobj(actor->x, actor->y, actor->z, MT_PHOENIXPUFF);
         puff->momz = 2 * FRACUNIT;
-        actor->special1--;
+        actor->special1.i--;
     }
     else
     {
@@ -1739,10 +1739,10 @@ void A_MinotaurAtk3(mobj_t * actor)
             S_StartSound(mo, sfx_minat1);
         }
     }
-    if (P_Random() < 192 && actor->special2 == 0)
+    if (P_Random() < 192 && actor->special2.i == 0)
     {
         P_SetMobjState(actor, S_MNTR_ATK3_4);
-        actor->special2 = 1;
+        actor->special2.i = 1;
     }
 }
 
@@ -1859,8 +1859,8 @@ void A_HeadAttack(mobj_t * actor)
         if (mo != NULL)
         {
             mo->z -= 32 * FRACUNIT;
-            mo->special1 = (int) target;
-            mo->special2 = 50;  // Timer for active sound
+            mo->special1.m = target;
+            mo->special2.i = 50;  // Timer for active sound
             mo->health = 20 * TICRATE;       // Duration
             S_StartSound(actor, sfx_hedat3);
         }
@@ -1883,13 +1883,13 @@ void A_WhirlwindSeek(mobj_t * actor)
         actor->flags &= ~MF_MISSILE;
         return;
     }
-    if ((actor->special2 -= 3) < 0)
+    if ((actor->special2.i -= 3) < 0)
     {
-        actor->special2 = 58 + (P_Random() & 31);
+        actor->special2.i = 58 + (P_Random() & 31);
         S_StartSound(actor, sfx_hedat3);
     }
-    if (actor->special1
-        && (((mobj_t *) (actor->special1))->flags & MF_SHADOW))
+    if (actor->special1.m
+        && (((mobj_t *) (actor->special1.m))->flags & MF_SHADOW))
     {
         return;
     }
@@ -2083,7 +2083,7 @@ void A_Scream(mobj_t * actor)
             break;
         case MT_PLAYER:
             // Handle the different player death screams
-            if (actor->special1 < 10)
+            if (actor->special1.i < 10)
             {                   // Wimpy death sound
                 S_StartSound(actor, sfx_plrwdth);
             }
@@ -2249,12 +2249,12 @@ void A_RemovePod(mobj_t * actor)
 {
     mobj_t *mo;
 
-    if (actor->special2)
+    if (actor->special2.m)
     {
-        mo = (mobj_t *) actor->special2;
-        if (mo->special1 > 0)
+        mo = (mobj_t *) actor->special2.m;
+        if (mo->special1.i > 0)
         {
-            mo->special1--;
+            mo->special1.i--;
         }
     }
 }
@@ -2274,7 +2274,7 @@ void A_MakePod(mobj_t * actor)
     fixed_t y;
     fixed_t z;
 
-    if (actor->special1 == MAX_GEN_PODS)
+    if (actor->special1.i == MAX_GEN_PODS)
     {                           // Too many generated pods
         return;
     }
@@ -2290,8 +2290,8 @@ void A_MakePod(mobj_t * actor)
     P_SetMobjState(mo, S_POD_GROW1);
     P_ThrustMobj(mo, P_Random() << 24, (fixed_t) (4.5 * FRACUNIT));
     S_StartSound(mo, sfx_newpod);
-    actor->special1++;          // Increment generated pod count
-    mo->special2 = (int) actor; // Link the generator to the pod
+    actor->special1.i++;          // Increment generated pod count
+    mo->special2.m = actor;       // Link the generator to the pod
     return;
 }
 
@@ -2598,7 +2598,7 @@ void A_CheckSkullFloor(mobj_t * actor)
 
 void A_CheckSkullDone(mobj_t * actor)
 {
-    if (actor->special2 == 666)
+    if (actor->special2.i == 666)
     {
         P_SetMobjState(actor, S_BLOODYSKULLX2);
     }
@@ -2612,7 +2612,7 @@ void A_CheckSkullDone(mobj_t * actor)
 
 void A_CheckBurnGone(mobj_t * actor)
 {
-    if (actor->special2 == 666)
+    if (actor->special2.i == 666)
     {
         P_SetMobjState(actor, S_PLAY_FDTH20);
     }

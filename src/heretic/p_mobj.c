@@ -122,7 +122,7 @@ void P_ExplodeMissile(mobj_t * mo)
 {
     if (mo->type == MT_WHIRLWIND)
     {
-        if (++mo->special2 < 60)
+        if (++mo->special2.i < 60)
         {
             return;
         }
@@ -227,14 +227,14 @@ boolean P_SeekerMissile(mobj_t * actor, angle_t thresh, angle_t turnMax)
     angle_t angle;
     mobj_t *target;
 
-    target = (mobj_t *) actor->special1;
+    target = (mobj_t *) actor->special1.m;
     if (target == NULL)
     {
         return (false);
     }
     if (!(target->flags & MF_SHOOTABLE))
     {                           // Target died
-        actor->special1 = 0;
+        actor->special1.m = NULL;
         return (false);
     }
     dir = P_FaceMobj(actor, target, &delta);

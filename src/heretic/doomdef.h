@@ -142,6 +142,12 @@ typedef struct thinker_s
     think_t function;
 } thinker_t;
 
+typedef union
+{
+    int i;
+    struct mobj_s *m;
+} specialval_t;
+
 struct player_s;
 
 typedef struct mobj_s
@@ -171,8 +177,8 @@ typedef struct mobj_s
     int damage;                 // For missiles
     int flags;
     int flags2;                 // Heretic flags
-    int special1;               // Special info
-    int special2;               // Special info
+    specialval_t special1;      // Special info
+    specialval_t special2;      // Special info
     int health;
     int movedir;                // 0-7
     int movecount;              // when 0, select a new dir

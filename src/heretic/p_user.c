@@ -404,7 +404,7 @@ void P_DeathThink(player_t * player)
         player->playerstate = PST_REBORN;
         // Let the mobj know the player has entered the reborn state.  Some
         // mobjs need to know when it's ok to remove themselves.
-        player->mo->special2 = 666;
+        player->mo->special2.i = 666;
     }
 }
 
@@ -488,7 +488,7 @@ boolean P_UndoPlayerChicken(player_t * player)
     y = pmo->y;
     z = pmo->z;
     angle = pmo->angle;
-    weapon = pmo->special1;
+    weapon = pmo->special1.i;
     oldFlags = pmo->flags;
     oldFlags2 = pmo->flags2;
     P_SetMobjState(pmo, S_FREETARGMOBJ);
@@ -499,7 +499,7 @@ boolean P_UndoPlayerChicken(player_t * player)
         mo = P_SpawnMobj(x, y, z, MT_CHICPLAYER);
         mo->angle = angle;
         mo->health = player->health;
-        mo->special1 = weapon;
+        mo->special1.i = weapon;
         mo->player = player;
         mo->flags = oldFlags;
         mo->flags2 = oldFlags2;
