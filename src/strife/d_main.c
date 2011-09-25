@@ -1283,6 +1283,8 @@ static void D_DrawIntroSequence(void)
 //
 void D_IntroTick(void)
 {
+    int savedvol;
+    
     if(devparm)
         return;
 
@@ -1290,7 +1292,10 @@ void D_IntroTick(void)
     if(introprogress >= MAXINTROPROGRESS)
     {
         D_IntroBackground(); // haleyjd: clear the bg anyway
+        savedvol = sfxVolume;
+        S_SetSfxVolume(4*8); // haleyjd 20110924: temporary hack...
         S_StartSound(NULL, sfx_psdtha);
+        S_SetSfxVolume(savedvol*8);
     }
     else
         D_DrawIntroSequence();
@@ -1659,7 +1664,12 @@ void D_DoomMain (void)
 
     // haleyjd 20110206 [STRIFE] Startup the introduction sequence
     D_InitIntroSequence();
-    D_IntroTick();
+
+    // haleyjd 20110924: moved S_Init up to here
+    if(devparm) // [STRIFE]
+        DEH_printf("S_Init: Setting up sound.\n");
+    S_Init (sfxVolume * 8, musicVolume * 8, voiceVolume * 8); // [STRIFE]: voice
+    D_IntroTick(); // [STRIFE]
 
     // Check for -file in shareware
     if (modifiedgame)
@@ -1865,10 +1875,8 @@ void D_DoomMain (void)
     M_Init ();
     D_IntroTick(); // [STRIFE]
 
-    if(devparm) // [STRIFE]
-        DEH_printf("S_Init: Setting up sound.\n");
-    S_Init (sfxVolume * 8, musicVolume * 8, voiceVolume * 8); // [STRIFE]: voice
-    D_IntroTick(); // [STRIFE]
+    // haleyjd 20110924: Moved S_Init up.
+    D_IntroTick();
 
     // haleyjd 20110220: This stuff was done in I_StartupSound in vanilla, but 
     // we'll do it here instead so we don't have to modify the low-level shared
