@@ -191,15 +191,15 @@ static const struct
     weapontype_t weapon_num;
 } weapon_order_table[] = {
     { wp_fist,                  wp_fist },
-    { wp_elecbow,               wp_elecbow },
     { wp_poisonbow,             wp_elecbow },
+    { wp_elecbow,               wp_elecbow },
     { wp_rifle,                 wp_rifle },
     { wp_missile,               wp_missile },
-    { wp_hegrenade,             wp_hegrenade },
     { wp_wpgrenade,             wp_hegrenade },
+    { wp_hegrenade,             wp_hegrenade },
     { wp_flame,                 wp_flame },
-    { wp_mauler,                wp_mauler },
     { wp_torpedo,               wp_mauler },
+    { wp_mauler,                wp_mauler },
     { wp_sigil,                 wp_sigil },
 };
 
@@ -258,14 +258,37 @@ int G_CmdChecksum (ticcmd_t* cmd)
 
 static boolean WeaponSelectable(weapontype_t weapon)
 {
+    player_t *player;
+
+    player = &players[consoleplayer];
+
     // Can't select a weapon if we don't own it.
 
-    if (!players[consoleplayer].weaponowned[weapon])
+    if (!player->weaponowned[weapon])
     {
         return false;
     }
 
-    // STRIFE-TODO: Special weapon cycling rules?
+    // Can't use registered-only weapons in demo mode:
+
+    if (isdemoversion && !weaponinfo[weapon].availabledemo)
+    {
+        return false;
+    }
+
+    // Special rules for switching to alternate versions of weapons.
+    // These must match the weapon-switching rules in P_PlayerThink()
+
+    if (weapon == wp_torpedo
+     && player->ammo[weaponinfo[am_cell].ammo] < 30)
+    {
+        return false;
+    }
+
+    if (player->ammo[weaponinfo[weapon].ammo] == 0)
+    {
+        return false;
+    }
 
     return true;
 }
