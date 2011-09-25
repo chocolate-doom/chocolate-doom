@@ -502,7 +502,7 @@ boolean P_LookForMonsters(mobj_t * actor)
         if (actor->type == MT_MINOTAUR)
         {
             if ((mo->type == MT_MINOTAUR) &&
-                (mo->target != ((player_t *) actor->special1)->mo))
+                (mo->target != actor->special1.p->mo))
             {
                 continue;
             }
@@ -583,7 +583,7 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
         }
         if (actor->type == MT_MINOTAUR)
         {
-            if (((player_t *) (actor->special1)) == player)
+            if (actor->special1.p == player)
             {
                 continue;       // Don't target master
             }
@@ -904,12 +904,12 @@ boolean P_UpdateMorphedMonster(mobj_t * actor, int tics)
     mobj_t *mo;
     mobj_t oldMonster;
 
-    actor->special1 -= tics;
-    if (actor->special1 > 0)
+    actor->special1.i -= tics;
+    if (actor->special1.i > 0)
     {
         return (false);
     }
-    moType = actor->special2;
+    moType = actor->special2.i;
     switch (moType)
     {
         case MT_WRAITHB:       // These must remain morphed
@@ -938,8 +938,8 @@ boolean P_UpdateMorphedMonster(mobj_t * actor, int tics)
         mo->health = oldMonster.health;
         mo->target = oldMonster.target;
         mo->special = oldMonster.special;
-        mo->special1 = 5 * 35;  // Next try in 5 seconds
-        mo->special2 = moType;
+        mo->special1.i = 5 * 35;  // Next try in 5 seconds
+        mo->special2.i = moType;
         mo->tid = oldMonster.tid;
         memcpy(mo->args, oldMonster.args, 5);
         P_InsertMobjIntoTIDList(mo, oldMonster.tid);
@@ -1150,7 +1150,7 @@ void A_MinotaurLook(mobj_t * actor)
     thinker_t *think;
     fixed_t dist;
     int i;
-    mobj_t *master = (mobj_t *) (actor->special1);
+    mobj_t *master = actor->special1.m;
 
     actor->target = NULL;
     if (deathmatch)             // Quick search for players
@@ -1202,7 +1202,7 @@ void A_MinotaurLook(mobj_t * actor)
             if ((mo == master) || (mo == actor))
                 continue;
             if ((mo->type == MT_MINOTAUR) &&
-                (mo->special1 == actor->special1))
+                (mo->special1.m == actor->special1.m))
                 continue;
             actor->target = mo;
             break;              // Found mobj to attack
@@ -1339,7 +1339,7 @@ void A_MinotaurDecide(mobj_t * actor)
              && dist < 9 * 64 * FRACUNIT && P_Random() < 100)
     {                           // Floor fire attack
         P_SetMobjState(actor, S_MNTR_ATK3_1);
-        actor->special2 = 0;
+        actor->special2.i = 0;
     }
     else
     {                           // Swing attack
@@ -1444,10 +1444,10 @@ void A_MinotaurAtk3(mobj_t * actor)
             S_StartSound(mo, SFX_MAULATOR_HAMMER_HIT);
         }
     }
-    if (P_Random() < 192 && actor->special2 == 0)
+    if (P_Random() < 192 && actor->special2.i == 0)
     {
         P_SetMobjState(actor, S_MNTR_ATK3_4);
-        actor->special2 = 1;
+        actor->special2.i = 1;
     }
 }
 
@@ -1758,7 +1758,7 @@ void A_SkullPop(mobj_t * actor)
     // Attach player mobj to bloody skull
     player = actor->player;
     actor->player = NULL;
-    actor->special1 = player->class;
+    actor->special1.i = player->class;
     mo->player = player;
     mo->health = actor->health;
     mo->angle = actor->angle;
@@ -1790,7 +1790,7 @@ void A_CheckSkullFloor(mobj_t * actor)
 
 void A_CheckSkullDone(mobj_t * actor)
 {
-    if (actor->special2 == 666)
+    if (actor->special2.i == 666)
     {
         P_SetMobjState(actor, S_BLOODYSKULLX2);
     }
@@ -1804,7 +1804,7 @@ void A_CheckSkullDone(mobj_t * actor)
 
 void A_CheckBurnGone(mobj_t * actor)
 {
-    if (actor->special2 == 666)
+    if (actor->special2.i == 666)
     {
         P_SetMobjState(actor, S_PLAY_FDTH20);
     }
@@ -2578,7 +2578,7 @@ void A_BishopAttack(mobj_t * actor)
         P_DamageMobj(actor->target, actor, actor, HITDICE(4));
         return;
     }
-    actor->special1 = (P_Random() & 3) + 5;
+    actor->special1.i = (P_Random() & 3) + 5;
 }
 
 //============================================================================
@@ -2592,19 +2592,19 @@ void A_BishopAttack2(mobj_t * actor)
 {
     mobj_t *mo;
 
-    if (!actor->target || !actor->special1)
+    if (!actor->target || !actor->special1.i)
     {
-        actor->special1 = 0;
+        actor->special1.i = 0;
         P_SetMobjState(actor, S_BISHOP_WALK1);
         return;
     }
     mo = P_SpawnMissile(actor, actor->target, MT_BISH_FX);
     if (mo)
     {
-        mo->special1 = (int) actor->target;
-        mo->special2 = 16;      // High word == x/y, Low word == z
+        mo->special1.m = actor->target;
+        mo->special2.i = 16;      // High word == x/y, Low word == z
     }
-    actor->special1--;
+    actor->special1.i--;
 }
 
 //============================================================================
@@ -2619,8 +2619,8 @@ void A_BishopMissileWeave(mobj_t * actor)
     int weaveXY, weaveZ;
     int angle;
 
-    weaveXY = actor->special2 >> 16;
-    weaveZ = actor->special2 & 0xFFFF;
+    weaveXY = actor->special2.i >> 16;
+    weaveZ = actor->special2.i & 0xFFFF;
     angle = (actor->angle + ANG90) >> ANGLETOFINESHIFT;
     newX = actor->x - FixedMul(finecosine[angle],
                                FloatBobOffsets[weaveXY] << 1);
@@ -2633,7 +2633,7 @@ void A_BishopMissileWeave(mobj_t * actor)
     actor->z -= FloatBobOffsets[weaveZ];
     weaveZ = (weaveZ + 2) & 63;
     actor->z += FloatBobOffsets[weaveZ];
-    actor->special2 = weaveZ + (weaveXY << 16);
+    actor->special2.i = weaveZ + (weaveXY << 16);
 }
 
 //============================================================================
@@ -2673,7 +2673,7 @@ void A_BishopDecide(mobj_t * actor)
 
 void A_BishopDoBlur(mobj_t * actor)
 {
-    actor->special1 = (P_Random() & 3) + 3;     // Random number of blurs
+    actor->special1.i = (P_Random() & 3) + 3;     // Random number of blurs
     if (P_Random() < 120)
     {
         P_ThrustMobj(actor, actor->angle + ANG90, 11 * FRACUNIT);
@@ -2699,7 +2699,7 @@ void A_BishopSpawnBlur(mobj_t * actor)
 {
     mobj_t *mo;
 
-    if (!--actor->special1)
+    if (!--actor->special1.i)
     {
         actor->momx = 0;
         actor->momy = 0;
@@ -2727,9 +2727,9 @@ void A_BishopSpawnBlur(mobj_t * actor)
 
 void A_BishopChase(mobj_t * actor)
 {
-    actor->z -= FloatBobOffsets[actor->special2] >> 1;
-    actor->special2 = (actor->special2 + 4) & 63;
-    actor->z += FloatBobOffsets[actor->special2] >> 1;
+    actor->z -= FloatBobOffsets[actor->special2.i] >> 1;
+    actor->special2.i = (actor->special2.i + 4) & 63;
+    actor->z += FloatBobOffsets[actor->special2.i] >> 1;
 }
 
 //============================================================================
@@ -2795,7 +2795,7 @@ static void DragonSeek(mobj_t * actor, angle_t thresh, angle_t turnMax)
     angle_t angleToSpot, angleToTarget;
     mobj_t *mo;
 
-    target = (mobj_t *) actor->special1;
+    target = actor->special1.m;
     if (target == NULL)
     {
         return;
@@ -2887,8 +2887,8 @@ static void DragonSeek(mobj_t * actor, angle_t thresh, angle_t turnMax)
             if (bestArg != -1)
             {
                 search = -1;
-                actor->special1 =
-                    (int) P_FindMobjFromTID(target->args[bestArg], &search);
+                actor->special1.m =
+                    P_FindMobjFromTID(target->args[bestArg], &search);
             }
         }
         else
@@ -2899,8 +2899,8 @@ static void DragonSeek(mobj_t * actor, angle_t thresh, angle_t turnMax)
             }
             while (!target->args[i]);
             search = -1;
-            actor->special1 =
-                (int) P_FindMobjFromTID(target->args[i], &search);
+            actor->special1.m =
+                P_FindMobjFromTID(target->args[i], &search);
         }
     }
 }
@@ -2918,14 +2918,14 @@ void A_DragonInitFlight(mobj_t * actor)
     search = -1;
     do
     {                           // find the first tid identical to the dragon's tid
-        actor->special1 = (int) P_FindMobjFromTID(actor->tid, &search);
+        actor->special1.m = P_FindMobjFromTID(actor->tid, &search);
         if (search == -1)
         {
             P_SetMobjState(actor, actor->info->spawnstate);
             return;
         }
     }
-    while (actor->special1 == (int) actor);
+    while (actor->special1.m == actor);
     P_RemoveMobjFromTIDList(actor);
 }
 
@@ -3035,7 +3035,7 @@ void A_DragonFX2(mobj_t * actor)
 void A_DragonPain(mobj_t * actor)
 {
     A_Pain(actor);
-    if (!actor->special1)
+    if (!actor->special1.i)
     {                           // no destination spot yet
         P_SetMobjState(actor, S_DRAGON_INIT);
     }
@@ -3284,7 +3284,7 @@ boolean A_RaiseMobj(mobj_t * actor)
                 break;
             case MT_THRUSTFLOOR_DOWN:
             case MT_THRUSTFLOOR_UP:
-                actor->floorclip -= actor->special2 * FRACUNIT;
+                actor->floorclip -= actor->special2.i * FRACUNIT;
                 break;
             default:
                 actor->floorclip -= 2 * FRACUNIT;
@@ -3318,7 +3318,7 @@ boolean A_RaiseMobj(mobj_t * actor)
 void A_WraithInit(mobj_t * actor)
 {
     actor->z += 48 << FRACBITS;
-    actor->special1 = 0;        // index into floatbob
+    actor->special1.i = 0;        // index into floatbob
 }
 
 void A_WraithRaiseInit(mobj_t * actor)
@@ -3483,9 +3483,9 @@ void A_WraithLook(mobj_t * actor)
 
 void A_WraithChase(mobj_t * actor)
 {
-    int weaveindex = actor->special1;
+    int weaveindex = actor->special1.i;
     actor->z += FloatBobOffsets[weaveindex];
-    actor->special1 = (weaveindex + 2) & 63;
+    actor->special1.i = (weaveindex + 2) & 63;
 //      if (actor->floorclip > 0)
 //      {
 //              P_SetMobjState(actor, S_WRAITH_RAISE2);
@@ -3568,11 +3568,11 @@ void A_FiredSpawnRock(mobj_t * actor)
         mo->momx = (P_Random() - 128) << 10;
         mo->momy = (P_Random() - 128) << 10;
         mo->momz = (P_Random() << 10);
-        mo->special1 = 2;       // Number bounces
+        mo->special1.i = 2;       // Number bounces
     }
 
     // Initialize fire demon
-    actor->special2 = 0;
+    actor->special2.i = 0;
     actor->flags &= ~MF_JUSTATTACKED;
 }
 
@@ -3607,7 +3607,7 @@ void A_SmBounce(mobj_t * actor)
 
 void A_FiredChase(mobj_t * actor)
 {
-    int weaveindex = actor->special1;
+    int weaveindex = actor->special1.i;
     mobj_t *target = actor->target;
     angle_t ang;
     fixed_t dist;
@@ -3619,7 +3619,7 @@ void A_FiredChase(mobj_t * actor)
 
     // Float up and down
     actor->z += FloatBobOffsets[weaveindex];
-    actor->special1 = (weaveindex + 2) & 63;
+    actor->special1.i = (weaveindex + 2) & 63;
 
     // Insure it stays above certain height
     if (actor->z < actor->floorz + (64 * FRACUNIT))
@@ -3634,13 +3634,13 @@ void A_FiredChase(mobj_t * actor)
     }
 
     // Strafe
-    if (actor->special2 > 0)
+    if (actor->special2.i > 0)
     {
-        actor->special2--;
+        actor->special2.i--;
     }
     else
     {
-        actor->special2 = 0;
+        actor->special2.i = 0;
         actor->momx = actor->momy = 0;
         dist = P_AproxDistance(actor->x - target->x, actor->y - target->y);
         if (dist < FIREDEMON_ATTACK_RANGE)
@@ -3656,7 +3656,7 @@ void A_FiredChase(mobj_t * actor)
                 ang >>= ANGLETOFINESHIFT;
                 actor->momx = FixedMul(8 * FRACUNIT, finecosine[ang]);
                 actor->momy = FixedMul(8 * FRACUNIT, finesine[ang]);
-                actor->special2 = 3;    // strafe time
+                actor->special2.i = 3;    // strafe time
             }
         }
     }
@@ -3664,7 +3664,7 @@ void A_FiredChase(mobj_t * actor)
     FaceMovementDirection(actor);
 
     // Normal movement
-    if (!actor->special2)
+    if (!actor->special2.i)
     {
         if (--actor->movecount < 0 || !P_Move(actor))
         {
@@ -3926,14 +3926,14 @@ void A_SorcSpinBalls(mobj_t * actor)
     actor->args[0] = 0;         // Currently no defense
     actor->args[3] = SORC_NORMAL;
     actor->args[4] = SORCBALL_INITIAL_SPEED;    // Initial orbit speed
-    actor->special1 = ANG1;
+    actor->special1.i = ANG1;
     z = actor->z - actor->floorclip + actor->info->height;
 
     mo = P_SpawnMobj(actor->x, actor->y, z, MT_SORCBALL1);
     if (mo)
     {
         mo->target = actor;
-        mo->special2 = SORCFX4_RAPIDFIRE_TIME;
+        mo->special2.i = SORCFX4_RAPIDFIRE_TIME;
     }
     mo = P_SpawnMobj(actor->x, actor->y, z, MT_SORCBALL2);
     if (mo)
@@ -3955,12 +3955,12 @@ void A_SorcBallOrbit(mobj_t * actor)
     int mode = actor->target->args[3];
     mobj_t *parent = (mobj_t *) actor->target;
     int dist = parent->radius - (actor->radius << 1);
-    angle_t prevangle = actor->special1;
+    angle_t prevangle = actor->special1.i;
 
     if (actor->target->health <= 0)
         P_SetMobjState(actor, actor->info->painstate);
 
-    baseangle = (angle_t) parent->special1;
+    baseangle = (angle_t) parent->special1.i;
     switch (actor->type)
     {
         case MT_SORCBALL1:
@@ -3993,7 +3993,7 @@ void A_SorcBallOrbit(mobj_t * actor)
             A_SorcUpdateBallAngle(actor);
             break;
         case SORC_STOPPING:    // Balls stopping
-            if ((parent->special2 == actor->type) &&
+            if ((parent->special2.i == actor->type) &&
                 (parent->args[1] > SORCBALL_SPEED_ROTATIONS) &&
                 (abs(angle - (parent->angle >> ANGLETOFINESHIFT)) <
                  (30 << 5)))
@@ -4005,16 +4005,16 @@ void A_SorcBallOrbit(mobj_t * actor)
                 switch (actor->type)
                 {
                     case MT_SORCBALL1:
-                        parent->special1 = (int) (parent->angle -
-                                                  BALL1_ANGLEOFFSET);
+                        parent->special1.i = (int) (parent->angle -
+                                                    BALL1_ANGLEOFFSET);
                         break;
                     case MT_SORCBALL2:
-                        parent->special1 = (int) (parent->angle -
-                                                  BALL2_ANGLEOFFSET);
+                        parent->special1.i = (int) (parent->angle -
+                                                    BALL2_ANGLEOFFSET);
                         break;
                     case MT_SORCBALL3:
-                        parent->special1 = (int) (parent->angle -
-                                                  BALL3_ANGLEOFFSET);
+                        parent->special1.i = (int) (parent->angle -
+                                                    BALL3_ANGLEOFFSET);
                         break;
                     default:
                         break;
@@ -4026,7 +4026,7 @@ void A_SorcBallOrbit(mobj_t * actor)
             }
             break;
         case SORC_FIRESPELL:   // Casting spell
-            if (parent->special2 == actor->type)
+            if (parent->special2.i == actor->type)
             {
                 // Put sorcerer into special throw spell anim
                 if (parent->health > 0)
@@ -4035,7 +4035,7 @@ void A_SorcBallOrbit(mobj_t * actor)
                 if (actor->type == MT_SORCBALL1 && P_Random() < 200)
                 {
                     S_StartSound(NULL, SFX_SORCERER_SPELLCAST);
-                    actor->special2 = SORCFX4_RAPIDFIRE_TIME;
+                    actor->special2.i = SORCFX4_RAPIDFIRE_TIME;
                     actor->args[4] = 128;
                     parent->args[3] = SORC_FIRING_SPELL;
                 }
@@ -4047,9 +4047,9 @@ void A_SorcBallOrbit(mobj_t * actor)
             }
             break;
         case SORC_FIRING_SPELL:
-            if (parent->special2 == actor->type)
+            if (parent->special2.i == actor->type)
             {
-                if (actor->special2-- <= 0)
+                if (actor->special2.i-- <= 0)
                 {
                     // Done rapid firing 
                     parent->args[3] = SORC_STOPPED;
@@ -4075,7 +4075,7 @@ void A_SorcBallOrbit(mobj_t * actor)
         // Completed full rotation - make woosh sound
         S_StartSound(actor, SFX_SORCERER_BALLWOOSH);
     }
-    actor->special1 = angle;    // Set previous angle
+    actor->special1.i = angle;    // Set previous angle
     x = parent->x + FixedMul(dist, finecosine[angle]);
     y = parent->y + FixedMul(dist, finesine[angle]);
     actor->x = x;
@@ -4116,16 +4116,16 @@ void A_StopBalls(mobj_t * actor)
 
     if ((actor->args[0] <= 0) && (chance < 200))
     {
-        actor->special2 = MT_SORCBALL2; // Blue
+        actor->special2.i = MT_SORCBALL2; // Blue
     }
     else if ((actor->health < (actor->info->spawnhealth >> 1)) &&
              (chance < 200))
     {
-        actor->special2 = MT_SORCBALL3; // Green
+        actor->special2.i = MT_SORCBALL3; // Green
     }
     else
     {
-        actor->special2 = MT_SORCBALL1; // Yellow
+        actor->special2.i = MT_SORCBALL1; // Yellow
     }
 
 
@@ -4176,7 +4176,7 @@ void A_SorcUpdateBallAngle(mobj_t * actor)
 {
     if (actor->type == MT_SORCBALL1)
     {
-        actor->target->special1 += ANG1 * actor->target->args[4];
+        actor->target->special1.i += ANG1 * actor->target->args[4];
     }
 }
 
@@ -4265,7 +4265,7 @@ void A_SorcOffense1(mobj_t * actor)
     if (mo)
     {
         mo->target = parent;
-        mo->special1 = (int) parent->target;
+        mo->special1.m = parent->target;
         mo->args[4] = BOUNCE_TIME_UNIT;
         mo->args[3] = 15;       // Bounce time in seconds
     }
@@ -4273,7 +4273,7 @@ void A_SorcOffense1(mobj_t * actor)
     if (mo)
     {
         mo->target = parent;
-        mo->special1 = (int) parent->target;
+        mo->special1.m = parent->target;
         mo->args[4] = BOUNCE_TIME_UNIT;
         mo->args[3] = 15;       // Bounce time in seconds
     }
@@ -4298,7 +4298,7 @@ void A_SorcOffense2(mobj_t * actor)
     mo = P_SpawnMissileAngle(parent, MT_SORCFX4, ang1, 0);
     if (mo)
     {
-        mo->special2 = 35 * 5 / 2;      // 5 seconds
+        mo->special2.i = 35 * 5 / 2;      // 5 seconds
         dist = P_AproxDistance(dest->x - mo->x, dest->y - mo->y);
         dist = dist / mo->info->speed;
         if (dist < 1)
@@ -4376,7 +4376,7 @@ void A_SorcFX2Split(mobj_t * actor)
     {
         mo->target = actor->target;
         mo->args[0] = 0;        // CW
-        mo->special1 = actor->angle;    // Set angle
+        mo->special1.i = actor->angle;    // Set angle
         P_SetMobjStateNF(mo, S_SORCFX2_ORBIT1);
     }
     mo = P_SpawnMobj(actor->x, actor->y, actor->z, MT_SORCFX2);
@@ -4384,7 +4384,7 @@ void A_SorcFX2Split(mobj_t * actor)
     {
         mo->target = actor->target;
         mo->args[0] = 1;        // CCW
-        mo->special1 = actor->angle;    // Set angle
+        mo->special1.i = actor->angle;    // Set angle
         P_SetMobjStateNF(mo, S_SORCFX2_ORBIT1);
     }
     P_SetMobjStateNF(actor, S_NULL);
@@ -4418,8 +4418,8 @@ void A_SorcFX2Orbit(mobj_t * actor)
     // Move to new position based on angle
     if (actor->args[0])         // Counter clock-wise
     {
-        actor->special1 += ANG1 * 10;
-        angle = ((angle_t) actor->special1) >> ANGLETOFINESHIFT;
+        actor->special1.i += ANG1 * 10;
+        angle = ((angle_t) actor->special1.i) >> ANGLETOFINESHIFT;
         x = parent->x + FixedMul(dist, finecosine[angle]);
         y = parent->y + FixedMul(dist, finesine[angle]);
         z = parent->z - parent->floorclip + SORC_DEFENSE_HEIGHT * FRACUNIT;
@@ -4429,8 +4429,8 @@ void A_SorcFX2Orbit(mobj_t * actor)
     }
     else                        // Clock wise
     {
-        actor->special1 -= ANG1 * 10;
-        angle = ((angle_t) actor->special1) >> ANGLETOFINESHIFT;
+        actor->special1.i -= ANG1 * 10;
+        angle = ((angle_t) actor->special1.i) >> ANGLETOFINESHIFT;
         x = parent->x + FixedMul(dist, finecosine[angle]);
         y = parent->y + FixedMul(dist, finesine[angle]);
         z = parent->z - parent->floorclip + SORC_DEFENSE_HEIGHT * FRACUNIT;
@@ -4489,7 +4489,7 @@ void A_SorcererBishopEntry(mobj_t * actor)
 
 void A_SorcFX4Check(mobj_t * actor)
 {
-    if (actor->special2-- <= 0)
+    if (actor->special2.i-- <= 0)
     {
         P_SetMobjStateNF(actor, actor->info->deathstate);
     }
@@ -4507,7 +4507,7 @@ void A_SorcBallPop(mobj_t * actor)
     actor->momx = ((P_Random() % 10) - 5) << FRACBITS;
     actor->momy = ((P_Random() % 10) - 5) << FRACBITS;
     actor->momz = (2 + (P_Random() % 3)) << FRACBITS;
-    actor->special2 = 4 * FRACUNIT;     // Initial bounce factor
+    actor->special2.i = 4 * FRACUNIT;     // Initial bounce factor
     actor->args[4] = BOUNCE_TIME_UNIT;  // Bounce time unit
     actor->args[3] = 5;         // Bounce time in seconds
 }
@@ -4616,14 +4616,14 @@ void A_FastChase(mobj_t * actor)
     }
 
     // Strafe
-    if (actor->special2 > 0)
+    if (actor->special2.i > 0)
     {
-        actor->special2--;
+        actor->special2.i--;
     }
     else
     {
         target = actor->target;
-        actor->special2 = 0;
+        actor->special2.i = 0;
         actor->momx = actor->momy = 0;
         dist = P_AproxDistance(actor->x - target->x, actor->y - target->y);
         if (dist < CLASS_BOSS_STRAFE_RANGE)
@@ -4639,7 +4639,7 @@ void A_FastChase(mobj_t * actor)
                 ang >>= ANGLETOFINESHIFT;
                 actor->momx = FixedMul(13 * FRACUNIT, finecosine[ang]);
                 actor->momy = FixedMul(13 * FRACUNIT, finesine[ang]);
-                actor->special2 = 3;    // strafe time
+                actor->special2.i = 3;    // strafe time
             }
         }
     }
@@ -4671,7 +4671,7 @@ void A_FastChase(mobj_t * actor)
 //
 // chase towards player
 //
-    if (!actor->special2)
+    if (!actor->special2.i)
     {
         if (--actor->movecount < 0 || !P_Move(actor))
         {
@@ -4715,10 +4715,10 @@ void A_ClassBossHealth(mobj_t * actor)
 {
     if (netgame && !deathmatch) // co-op only
     {
-        if (!actor->special1)
+        if (!actor->special1.i)
         {
             actor->health *= 5;
-            actor->special1 = true;     // has been initialized
+            actor->special1.i = true;     // has been initialized
         }
     }
 }
@@ -4800,7 +4800,7 @@ void A_IceSetTics(mobj_t * actor)
 
 void A_IceCheckHeadDone(mobj_t * actor)
 {
-    if (actor->special2 == 666)
+    if (actor->special2.i == 666)
     {
         P_SetMobjState(actor, S_ICECHUNK_HEAD2);
     }
@@ -4919,7 +4919,7 @@ void A_KoraxChase(mobj_t * actor)
     int lastfound;
     byte args[3] = { 0, 0, 0 };
 
-    if ((!actor->special2) &&
+    if ((!actor->special2.i) &&
         (actor->health <= (actor->info->spawnhealth / 2)))
     {
         lastfound = 0;
@@ -4930,7 +4930,7 @@ void A_KoraxChase(mobj_t * actor)
         }
 
         P_StartACS(249, 0, args, actor, NULL, 0);
-        actor->special2 = 1;    // Don't run again
+        actor->special2.i = 1;    // Don't run again
 
         return;
     }
@@ -4951,9 +4951,9 @@ void A_KoraxChase(mobj_t * actor)
     {
         if (P_Random() < 10)
         {
-            lastfound = actor->special1;
+            lastfound = actor->special1.i;
             spot = P_FindMobjFromTID(KORAX_TELEPORT_TID, &lastfound);
-            actor->special1 = lastfound;
+            actor->special1.i = lastfound;
             if (spot)
             {
                 P_Teleport(actor, spot->x, spot->y, spot->angle, true);
@@ -5018,22 +5018,22 @@ void KSpiritInit(mobj_t * spirit, mobj_t * korax)
 
     spirit->health = KORAX_SPIRIT_LIFETIME;
 
-    spirit->special1 = (int) korax;     // Swarm around korax
-    spirit->special2 = 32 + (P_Random() & 7);   // Float bob index
+    spirit->special1.m = korax;     // Swarm around korax
+    spirit->special2.i = 32 + (P_Random() & 7);   // Float bob index
     spirit->args[0] = 10;       // initial turn value
     spirit->args[1] = 0;        // initial look angle
 
     // Spawn a tail for spirit
     tail = P_SpawnMobj(spirit->x, spirit->y, spirit->z, MT_HOLY_TAIL);
-    tail->special2 = (int) spirit;      // parent
+    tail->special2.m = spirit;      // parent
     for (i = 1; i < 3; i++)
     {
         next = P_SpawnMobj(spirit->x, spirit->y, spirit->z, MT_HOLY_TAIL);
         P_SetMobjState(next, next->info->spawnstate + 1);
-        tail->special1 = (int) next;
+        tail->special1.m = next;
         tail = next;
     }
-    tail->special1 = 0;         // last tail bit
+    tail->special1.m = NULL;         // last tail bit
 }
 
 void A_KoraxDecide(mobj_t * actor)
@@ -5257,8 +5257,8 @@ void A_KSpiritWeave(mobj_t * actor)
     int weaveXY, weaveZ;
     int angle;
 
-    weaveXY = actor->special2 >> 16;
-    weaveZ = actor->special2 & 0xFFFF;
+    weaveXY = actor->special2.i >> 16;
+    weaveZ = actor->special2.i & 0xFFFF;
     angle = (actor->angle + ANG90) >> ANGLETOFINESHIFT;
     newX = actor->x - FixedMul(finecosine[angle],
                                FloatBobOffsets[weaveXY] << 2);
@@ -5271,7 +5271,7 @@ void A_KSpiritWeave(mobj_t * actor)
     actor->z -= FloatBobOffsets[weaveZ] << 1;
     weaveZ = (weaveZ + (P_Random() % 5)) & 63;
     actor->z += FloatBobOffsets[weaveZ] << 1;
-    actor->special2 = weaveZ + (weaveXY << 16);
+    actor->special2.i = weaveZ + (weaveXY << 16);
 }
 
 void A_KSpiritSeeker(mobj_t * actor, angle_t thresh, angle_t turnMax)
@@ -5284,7 +5284,7 @@ void A_KSpiritSeeker(mobj_t * actor, angle_t thresh, angle_t turnMax)
     fixed_t newZ;
     fixed_t deltaZ;
 
-    target = (mobj_t *) actor->special1;
+    target = actor->special1.m;
     if (target == NULL)
     {
         return;
@@ -5348,7 +5348,7 @@ void A_KSpiritRoam(mobj_t * actor)
     }
     else
     {
-        if (actor->special1)
+        if (actor->special1.m)
         {
             A_KSpiritSeeker(actor, actor->args[0] * ANG1,
                             actor->args[0] * ANG1 * 2);
@@ -5364,7 +5364,7 @@ void A_KSpiritRoam(mobj_t * actor)
 void A_KBolt(mobj_t * actor)
 {
     // Countdown lifetime
-    if (actor->special1-- <= 0)
+    if (actor->special1.i-- <= 0)
     {
         P_SetMobjState(actor, S_NULL);
     }
@@ -5387,7 +5387,7 @@ void A_KBoltRaise(mobj_t * actor)
         mo = P_SpawnMobj(actor->x, actor->y, z, MT_KORAX_BOLT);
         if (mo)
         {
-            mo->special1 = KORAX_BOLT_LIFETIME;
+            mo->special1.i = KORAX_BOLT_LIFETIME;
         }
     }
     else

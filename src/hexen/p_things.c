@@ -273,7 +273,7 @@ boolean EV_ThingSpawn(byte * args, boolean fog)
             newMobj->flags2 |= MF2_DROPPED;     // Don't respawn
             if (newMobj->flags2 & MF2_FLOATBOB)
             {
-                newMobj->special1 = newMobj->z - newMobj->floorz;
+                newMobj->special1.i = newMobj->z - newMobj->floorz;
             }
             success = true;
         }

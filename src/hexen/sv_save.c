@@ -1040,11 +1040,11 @@ static void MangleMobj(mobj_t * mobj)
         case MT_MSTAFF_FX2:
             if (corpse)
             {
-                mobj->special1 = MOBJ_NULL;
+                mobj->special1.m = MOBJ_NULL;
             }
             else
             {
-                mobj->special1 = GetMobjNum((mobj_t *) mobj->special1);
+                mobj->special1.m = GetMobjNum(mobj->special1.m);
             }
             break;
 
@@ -1053,11 +1053,11 @@ static void MangleMobj(mobj_t * mobj)
         case MT_LIGHTNING_ZAP:
             if (corpse)
             {
-                mobj->special2 = MOBJ_NULL;
+                mobj->special2.m = MOBJ_NULL;
             }
             else
             {
-                mobj->special2 = GetMobjNum((mobj_t *) mobj->special2);
+                mobj->special2.m = GetMobjNum(mobj->special2.m);
             }
             break;
 
@@ -1066,19 +1066,19 @@ static void MangleMobj(mobj_t * mobj)
         case MT_LIGHTNING_CEILING:
             if (corpse)
             {
-                mobj->special1 = MOBJ_NULL;
-                mobj->special2 = MOBJ_NULL;
+                mobj->special1.m = MOBJ_NULL;
+                mobj->special2.m = MOBJ_NULL;
             }
             else
             {
-                mobj->special1 = GetMobjNum((mobj_t *) mobj->special1);
-                mobj->special2 = GetMobjNum((mobj_t *) mobj->special2);
+                mobj->special1.m = GetMobjNum(mobj->special1.m);
+                mobj->special2.m = GetMobjNum(mobj->special2.m);
             }
             break;
 
             // Miscellaneous
         case MT_KORAX:
-            mobj->special1 = 0; // Searching index
+            mobj->special1.i = 0; // Searching index
             break;
 
         default:
@@ -1134,20 +1134,20 @@ static void RestoreMobj(mobj_t * mobj)
         case MT_THRUSTFLOOR_DOWN:
         case MT_MINOTAUR:
         case MT_SORCFX1:
-            SetMobjPtr(&mobj->special1);
+            SetMobjPtr(&mobj->special1.i);
             break;
 
             // Just special2
         case MT_LIGHTNING_FLOOR:
         case MT_LIGHTNING_ZAP:
-            SetMobjPtr(&mobj->special2);
+            SetMobjPtr(&mobj->special2.i);
             break;
 
             // Both special1 and special2
         case MT_HOLY_TAIL:
         case MT_LIGHTNING_CEILING:
-            SetMobjPtr(&mobj->special1);
-            SetMobjPtr(&mobj->special2);
+            SetMobjPtr(&mobj->special1.i);
+            SetMobjPtr(&mobj->special2.i);
             break;
 
         default:

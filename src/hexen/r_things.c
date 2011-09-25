@@ -577,7 +577,7 @@ void R_ProjectSprite(mobj_t * thing)
         }
         else
         {
-            vis->class = thing->special1;
+            vis->class = thing->special1.i;
         }
         if (vis->class > 2)
         {

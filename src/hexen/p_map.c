@@ -410,13 +410,13 @@ boolean PIT_CheckThing(mobj_t * thing)
                 if (thing->flags2 & MF2_REFLECTIVE
                     && (thing->player || thing->flags2 & MF2_BOSS))
                 {
-                    tmthing->special1 = (int) tmthing->target;
+                    tmthing->special1.m = tmthing->target;
                     tmthing->target = thing;
                     return true;
                 }
                 if (thing->flags & MF_COUNTKILL || thing->player)
                 {
-                    tmthing->special1 = (int) thing;
+                    tmthing->special1.m = thing;
                 }
                 if (P_Random() < 96)
                 {
@@ -447,7 +447,7 @@ boolean PIT_CheckThing(mobj_t * thing)
                 }
                 if (thing->health <= 0)
                 {
-                    tmthing->special1 = 0;
+                    tmthing->special1.i = 0;
                 }
             }
             return true;
@@ -549,16 +549,15 @@ boolean PIT_CheckThing(mobj_t * thing)
                 }
                 if (tmthing->type == MT_LIGHTNING_FLOOR)
                 {
-                    if (tmthing->special2
-                        && !((mobj_t *) tmthing->special2)->special1)
+                    if (tmthing->special2.m
+                        && !tmthing->special2.m->special1.m)
                     {
-                        ((mobj_t *) tmthing->special2)->special1 =
-                            (int) thing;
+                        tmthing->special2.m->special1.m = thing;
                     }
                 }
-                else if (!tmthing->special1)
+                else if (!tmthing->special1.m)
                 {
-                    tmthing->special1 = (int) thing;
+                    tmthing->special1.m = thing;
                 }
             }
             return true;        // lightning zaps through all sprites
@@ -569,21 +568,20 @@ boolean PIT_CheckThing(mobj_t * thing)
 
             if (thing->flags & MF_SHOOTABLE && thing != tmthing->target)
             {
-                lmo = (mobj_t *) tmthing->special2;
+                lmo = tmthing->special2.m;
                 if (lmo)
                 {
                     if (lmo->type == MT_LIGHTNING_FLOOR)
                     {
-                        if (lmo->special2
-                            && !((mobj_t *) lmo->special2)->special1)
+                        if (lmo->special2.m
+                            && !lmo->special2.m->special1.m)
                         {
-                            ((mobj_t *) lmo->special2)->special1 =
-                                (int) thing;
+                            lmo->special2.m->special1.m = thing;
                         }
                     }
-                    else if (!lmo->special1)
+                    else if (!lmo->special1.m)
                     {
-                        lmo->special1 = (int) thing;
+                        lmo->special1.m = thing;
                     }
                     if (!(leveltime & 3))
                     {

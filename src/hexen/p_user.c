@@ -435,14 +435,14 @@ void P_DeathThink(player_t * player)
             newtorchdelta = 0;
         }
         player->playerstate = PST_REBORN;
-        player->mo->special1 = player->class;
-        if (player->mo->special1 > 2)
+        player->mo->special1.i = player->class;
+        if (player->mo->special1.i > 2)
         {
-            player->mo->special1 = 0;
+            player->mo->special1.i = 0;
         }
         // Let the mobj know the player has entered the reborn state.  Some
         // mobjs need to know when it's ok to remove themselves.
-        player->mo->special2 = 666;
+        player->mo->special2.i = 666;
     }
 }
 
@@ -526,7 +526,7 @@ boolean P_UndoPlayerMorph(player_t * player)
     y = pmo->y;
     z = pmo->z;
     angle = pmo->angle;
-    weapon = pmo->special1;
+    weapon = pmo->special1.i;
     oldFlags = pmo->flags;
     oldFlags2 = pmo->flags2;
     oldBeast = pmo->type;
@@ -554,7 +554,7 @@ boolean P_UndoPlayerMorph(player_t * player)
         mo = P_SpawnMobj(x, y, z, oldBeast);
         mo->angle = angle;
         mo->health = player->health;
-        mo->special1 = weapon;
+        mo->special1.i = weapon;
         mo->player = player;
         mo->flags = oldFlags;
         mo->flags2 = oldFlags2;
@@ -694,10 +694,10 @@ void P_PlayerThink(player_t * player)
                     speedMo->flags |= playerNum << MF_TRANSSHIFT;
                 }
                 speedMo->target = pmo;
-                speedMo->special1 = player->class;
-                if (speedMo->special1 > 2)
+                speedMo->special1.i = player->class;
+                if (speedMo->special1.i > 2)
                 {
-                    speedMo->special1 = 0;
+                    speedMo->special1.i = 0;
                 }
                 speedMo->sprite = pmo->sprite;
                 speedMo->floorclip = pmo->floorclip;
@@ -1144,7 +1144,7 @@ void P_BlastMobj(mobj_t * source, mobj_t * victim, fixed_t strength)
                     return;
                     break;
                 case MT_MSTAFF_FX2:    // Reflect to originator
-                    victim->special1 = (int) victim->target;
+                    victim->special1.m = victim->target;
                     victim->target = source;
                     break;
                 default:
@@ -1153,9 +1153,9 @@ void P_BlastMobj(mobj_t * source, mobj_t * victim, fixed_t strength)
         }
         if (victim->type == MT_HOLY_FX)
         {
-            if ((mobj_t *) (victim->special1) == source)
+            if (victim->special1.m == source)
             {
-                victim->special1 = (int) victim->target;
+                victim->special1.m = victim->target;
                 victim->target = source;
             }
         }
@@ -1521,7 +1521,7 @@ boolean P_UseArtifact(player_t * player, artitype_t arti)
             if (mo)
             {
                 mo->target = player->mo;
-                mo->special1 = (int) (player->mo);
+                mo->special1.m = (player->mo);
                 mo->momz = 5 * FRACUNIT;
             }
             break;
