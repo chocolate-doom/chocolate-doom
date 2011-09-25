@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "doomtype.h"
 #include "i_system.h"
@@ -158,6 +159,31 @@ static void InitSpriteList(void)
     num_sprite_frames = 0;
 }
 
+static boolean ValidSpriteLumpName(char *name)
+{
+    if (name[0] == '\0' || name[1] == '\0'
+     || name[2] == '\0' || name[3] == '\0')
+    {
+        return false;
+    }
+
+    // First frame:
+
+    if (name[4] == '\0' || !isdigit(name[5]))
+    {
+        return false;
+    }
+
+    // Second frame (optional):
+
+    if (name[6] != '\0' && !isdigit(name[7]))
+    {
+        return false;
+    }
+
+    return true;
+}
+
 // Find a sprite frame
 
 static sprite_frame_t *FindSpriteFrame(char *name, int frame)
@@ -215,6 +241,11 @@ static boolean SpriteLumpNeeded(lumpinfo_t *lump)
     sprite_frame_t *sprite;
     int angle_num;
     int i;
+
+    if (!ValidSpriteLumpName(lump->name))
+    {
+        return true;
+    }
 
     // check the first frame
 
@@ -274,6 +305,11 @@ static void AddSpriteLump(lumpinfo_t *lump)
     sprite_frame_t *sprite;
     int angle_num;
     int i;
+
+    if (!ValidSpriteLumpName(lump->name))
+    {
+        return;
+    }
     
     // first angle
 
