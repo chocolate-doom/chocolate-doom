@@ -606,7 +606,7 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
                                                  &aspect_ratio_correct),
                    NULL);
 
-    if (gamemission == heretic || gamemission == hexen)
+    if (gamemission == heretic || gamemission == hexen || gamemission == strife)
     {
         TXT_AddWidget(window,
                       TXT_NewCheckBox("Graphical startup", &graphical_startup));
@@ -798,7 +798,7 @@ void BindDisplayVariables(void)
         M_BindVariable("show_endoom",               &show_endoom);
     }
 
-    if (gamemission == heretic || gamemission == hexen)
+    if (gamemission == heretic || gamemission == hexen || gamemission == strife)
     {
         M_BindVariable("graphical_startup",        &graphical_startup);
     }

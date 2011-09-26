@@ -149,6 +149,7 @@ char		wadfile[1024];          // primary wad file
 char		mapdir[1024];           // directory of development maps
 
 int             show_endoom = 1;
+int             graphical_startup = 1;
 
 // fraggle 06/03/11 [STRIFE]: Unused config variable, preserved
 // for compatibility:
@@ -442,6 +443,7 @@ void D_BindVariables(void)
     M_BindVariable("vanilla_demo_limit",     &vanilla_demo_limit);
     M_BindVariable("show_endoom",            &show_endoom);
     M_BindVariable("back_flat",              &back_flat);
+    M_BindVariable("graphical_startup",      &graphical_startup);
 
     M_BindVariable("nickname",               &nickname);
     M_BindVariable("comport",                &comport);
@@ -1570,6 +1572,11 @@ void D_DoomMain (void)
     M_SetConfigFilenames("strife.cfg", PROGRAM_PREFIX "strife.cfg");
     D_BindVariables();
     M_LoadDefaults();
+
+    if (!graphical_startup)
+    {
+        showintro = false;
+    }
 
     // Save configuration at exit.
     I_AtExit(M_SaveDefaults, false);
