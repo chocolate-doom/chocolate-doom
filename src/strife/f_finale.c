@@ -173,7 +173,10 @@ enum
 //
 void F_StartFinale (void)
 {
+#if 0
+    // haleyjd 20111006: see below...
     patch_t *panel;
+#endif
 
     gameaction = ga_nothing;
     gamestate = GS_FINALE;
@@ -184,8 +187,16 @@ void F_StartFinale (void)
     // [STRIFE] Setup the slide show
     slideshow_panel = DEH_String("PANEL0");
 
+    // haleyjd 20111006: These two lines of code *are* in vanilla Strife; 
+    // however, there, they were completely inconsequential due to the dirty
+    // rects system. No intervening V_MarkRect call means PANEL0 was never 
+    // drawn to the framebuffer. In Chocolate Strife, however, with no such
+    // system in place, this only manages to fuck up the fade-out that is
+    // supposed to happen at the beginning of all finales. So, don't do it!
+#if 0
     panel = (patch_t *)W_CacheLumpName(slideshow_panel, PU_CACHE);
     V_DrawPatch(0, 0, panel);
+#endif
 
     switch(gamemap)
     {
