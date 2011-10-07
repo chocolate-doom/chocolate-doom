@@ -2,9 +2,8 @@
 //-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 1996 Rogue Entertainment / Velocity, Inc.
 // Copyright(C) 2005 Simon Howard
-// Copyright(C) 2010 James Haley, Samuel Villareal
+// Copyright(C) 2010 James Haley, Samuel Villarreal
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -160,7 +159,7 @@ enum
     SLIDE_BADEND3, // Next state = -1
 
     // Blah Ending
-    SLIDE_BLAHEND1    = 17,
+    SLIDE_BLAHEND1    =  17,
     SLIDE_BLAHEND2,
     SLIDE_BLAHEND3 // Next state = -1
 };
@@ -259,8 +258,7 @@ boolean F_Responder (event_t *event)
 //
 // [STRIFE] New function
 // haleyjd 09/13/10: This is called from G_Ticker if gamestate is 1, but we
-// have no idea for what it's supposed to be. It may in fact be unused.
-// STRIFE-TODO: Determine if this is really used or not!
+// have no idea for what it's supposed to be. It is unused.
 //
 void F_WaitTicker(void)
 {
