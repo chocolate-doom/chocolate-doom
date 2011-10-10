@@ -28,6 +28,7 @@
 
 
 #include "doomfeatures.h"
+#undef FEATURE_MULTIPLAYER // TODO: Temporary disable for Strife
 
 #include "d_main.h"
 #include "m_argv.h"

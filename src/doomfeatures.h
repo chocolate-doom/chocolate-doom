@@ -36,9 +36,8 @@
 #define FEATURE_DEHACKED 1
 
 // Enables multiplayer support (network games)
-// STRIFE-TODO: multiplayer is currently broken ...
 
-// #define FEATURE_MULTIPLAYER 1
+#define FEATURE_MULTIPLAYER 1
 
 // Enables sound output
 

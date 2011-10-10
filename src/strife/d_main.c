@@ -40,6 +40,7 @@
 
 #include "dstrings.h"
 #include "doomfeatures.h"
+#undef FEATURE_MULTIPLAYER // TODO: Temporary disable for Strife
 #include "sounds.h"
 
 #include "d_iwad.h"
