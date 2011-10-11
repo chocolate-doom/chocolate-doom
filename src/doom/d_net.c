@@ -49,6 +49,13 @@
 #include "net_sdl.h"
 #include "net_loop.h"
 
+typedef struct
+{
+    void (*BuildTiccmd)(ticcmd_t *cmd);
+    void (*RunTic)(ticcmd_t *cmds, boolean *ingame);
+    void (*RunMenu)();
+} loop_interface_t;
+
 // The complete set of data for a particular tic.
 
 typedef struct
@@ -69,7 +76,6 @@ typedef struct
 //
 
 ticcmd_set_t ticdata[BACKUPTICS];
-ticcmd_t *netcmds;
 
 int             maketic;
 int             recvtic;
@@ -94,6 +100,10 @@ fixed_t         offsetms;
 // Use new client syncronisation code
 
 boolean         new_sync = true;
+
+// Callback functions for loop code.
+
+static loop_interface_t *loop_interface = NULL;
 
 // 35 fps clock adjusted by offsetms milliseconds
 
@@ -172,7 +182,7 @@ void NetUpdate (void)
 
         // Always run the menu
 
-        M_Ticker ();
+        loop_interface->RunMenu();
 
         if (drone)
         {
@@ -186,7 +196,7 @@ void NetUpdate (void)
            // If playing single player, do not allow tics to buffer
            // up very far
 
-           if ((!netgame || demoplayback) && maketic - gameticdiv > 2)
+           if (!net_client_connected && maketic - gameticdiv > 2)
                break;
 
            // Never go more than ~200ms ahead
@@ -201,7 +211,7 @@ void NetUpdate (void)
 	}
 
 	//printf ("mk:%i ",maketic);
-	G_BuildTiccmd(&cmd);
+	loop_interface->BuildTiccmd(&cmd);
 
 #ifdef FEATURE_MULTIPLAYER
 
@@ -215,34 +225,6 @@ void NetUpdate (void)
         ticdata[maketic % BACKUPTICS].ingame[consoleplayer] = true;
 
 	++maketic;
-    }
-}
-
-// Called when a player leaves the game
-
-static void D_PlayerQuitGame(player_t *player)
-{
-    static char exitmsg[80];
-    unsigned int player_num;
-
-    player_num = player - players;
-
-    // Do this the same way as Vanilla Doom does, to allow dehacked
-    // replacements of this message
-
-    strncpy(exitmsg, DEH_String("Player 1 left the game"), sizeof(exitmsg));
-    exitmsg[sizeof(exitmsg) - 1] = '\0';
-
-    exitmsg[7] += player_num;
-
-    playeringame[player_num] = false;
-    players[consoleplayer].message = exitmsg;
-
-    // TODO: check if it is sensible to do this:
-
-    if (demorecording) 
-    {
-        G_CheckDemoStatus ();
     }
 }
 
@@ -304,78 +286,12 @@ void D_StartGameLoop(void)
     lasttime = GetAdjustedTime() / ticdup;
 }
 
-// Load game settings from the specified structure and 
-// set global variables.
-
-static void LoadGameSettings(net_gamesettings_t *settings)
+boolean D_InitNetGame(net_connect_data_t *connect_data,
+                      net_gamesettings_t *settings)
 {
-    unsigned int i;
-
-    deathmatch = settings->deathmatch;
-    ticdup = settings->ticdup;
-    extratics = settings->extratics;
-    startepisode = settings->episode;
-    startmap = settings->map;
-    startskill = settings->skill;
-    startloadgame = settings->loadgame;
-    lowres_turn = settings->lowres_turn;
-    nomonsters = settings->nomonsters;
-    fastparm = settings->fast_monsters;
-    respawnparm = settings->respawn_monsters;
-    timelimit = settings->timelimit;
-
-    if (lowres_turn)
-    {
-        printf("NOTE: Turning resolution is reduced; this is probably "
-               "because there is a client recording a Vanilla demo.\n");
-    }
-
-    new_sync = settings->new_sync;
-
-    if (new_sync == false)
-    {
-	printf("Syncing netgames like Vanilla Doom.\n");
-    }
-
-    if (!drone)
-    {
-        consoleplayer = settings->consoleplayer;
-    }
-    else
-    {
-        consoleplayer = 0;
-    }
-    
-    for (i=0; i<MAXPLAYERS; ++i) 
-    {
-        playeringame[i] = i < settings->num_players;
-    }
-}
-
-// Save the game settings from global variables to the specified
-// game settings structure.
-
-static void SaveGameSettings(net_gamesettings_t *settings,
-                             net_connect_data_t *connect_data)
-{
+    net_addr_t *addr = NULL;
+    boolean result = false;
     int i;
-
-    // Fill in game settings structure with appropriate parameters
-    // for the new game
-
-    settings->deathmatch = deathmatch;
-    settings->episode = startepisode;
-    settings->map = startmap;
-    settings->skill = startskill;
-    settings->loadgame = startloadgame;
-    settings->gameversion = gameversion;
-    settings->nomonsters = nomonsters;
-    settings->fast_monsters = fastparm;
-    settings->respawn_monsters = respawnparm;
-    settings->timelimit = timelimit;
-
-    settings->lowres_turn = M_CheckParm("-record") > 0
-                         && M_CheckParm("-longtics") == 0;
 
     //!
     // @category net
@@ -417,54 +333,6 @@ static void SaveGameSettings(net_gamesettings_t *settings,
         settings->ticdup = atoi(myargv[i+1]);
     else
         settings->ticdup = 1;
-
-    //
-    // Connect data
-    //
-
-    // Game type fields:
-
-    connect_data->gamemode = gamemode;
-    connect_data->gamemission = gamemission;
-
-    // Drone mode?
-
-    connect_data->drone = M_CheckParm("-drone") > 0;
-
-    // Are we recording a demo? Possibly set lowres turn mode
-
-    connect_data->lowres_turn = settings->lowres_turn;
-}
-
-void D_InitSinglePlayerGame(net_gamesettings_t *settings)
-{
-    // default values for single player
-
-    settings->consoleplayer = 0;
-    settings->num_players = 1;
-
-    netgame = false;
-
-    //!
-    // @category net
-    //
-    // Start the game playing as though in a netgame with a single
-    // player.  This can also be used to play back single player netgame
-    // demos.
-    //
-
-    if (M_CheckParm("-solo-net") > 0)
-    {
-        netgame = true;
-    }
-}
-
-boolean D_InitNetGame(net_connect_data_t *connect_data,
-                      net_gamesettings_t *settings)
-{
-    net_addr_t *addr = NULL;
-    int i;
-
 
 #ifdef FEATURE_MULTIPLAYER
 
@@ -535,30 +403,6 @@ boolean D_InitNetGame(net_connect_data_t *connect_data,
             connect_data->drone = true;
         }
 
-        //!
-        // @category net
-        //
-        // Run as the left screen in three screen mode.
-        //
-
-        if (M_CheckParm("-left") > 0)
-        {
-            viewangleoffset = ANG90;
-            connect_data->drone = true;
-        }
-
-        //! 
-        // @category net
-        //
-        // Run as the right screen in three screen mode.
-        //
-
-        if (M_CheckParm("-right") > 0)
-        {
-            viewangleoffset = ANG270;
-            connect_data->drone = true;
-        }
-
         if (!NET_CL_Connect(addr, connect_data))
         {
             I_Error("D_CheckNetGame: Failed to connect to %s\n", 
@@ -575,71 +419,19 @@ boolean D_InitNetGame(net_connect_data_t *connect_data,
 
         NET_CL_GetSettings(settings);
 
-        return true;
+        result = true;
     }
 
 #endif
 
-    return false;
-}
+    new_sync = settings->new_sync;
 
-//
-// D_CheckNetGame
-// Works out player numbers among the net participants
-//
-extern	int			viewangleoffset;
-
-void D_CheckNetGame (void)
-{
-    net_connect_data_t connect_data;
-    net_gamesettings_t settings;
-
-    offsetms = 0;
-    recvtic = 0;
-
-    // Call D_QuitNetGame on exit 
-
-    I_AtExit(D_QuitNetGame, true);
-
-    SaveGameSettings(&settings, &connect_data);
-
-    if (D_InitNetGame(&connect_data, &settings))
+    if (new_sync == false)
     {
-        netgame = true;
-        autostart = true;
-    }
-    else
-    {
-        D_InitSinglePlayerGame(&settings);
+	printf("Syncing netgames like Vanilla Doom.\n");
     }
 
-    LoadGameSettings(&settings);
-
-    DEH_printf("startskill %i  deathmatch: %i  startmap: %i  startepisode: %i\n",
-               startskill, deathmatch, startmap, startepisode);
-	
-    DEH_printf("player %i of %i (%i nodes)\n",
-               consoleplayer+1, settings.num_players, settings.num_players);
-
-    // Show players here; the server might have specified a time limit
-
-    if (timelimit > 0 && deathmatch)
-    {
-        // Gross hack to work like Vanilla:
-
-        if (timelimit == 20 && M_CheckParm("-avg"))
-        {
-            DEH_printf("Austin Virtual Gaming: Levels will end "
-                           "after 20 minutes\n");
-        }
-        else
-        {
-            DEH_printf("Levels will end after %d minute", timelimit);
-            if (timelimit > 1)
-                printf("s");
-            printf(".\n");
-        }
-    }
+    return result;
 }
 
 
@@ -678,10 +470,9 @@ static int GetLowTic(void)
     return lowtic;
 }
 
-int	frametics[4];
-int	frameon;
-int	frameskip[4];
-int	oldnettics;
+static int frameon;
+static int frameskip[4];
+static int oldnettics;
 
 static void OldNetSync(void)
 {
@@ -778,32 +569,6 @@ static void TicdupSquash(ticcmd_set_t *set)
         if (cmd->buttons & BT_SPECIAL)
             cmd->buttons = 0;
     }
-}
-
-static void D_RunTic(ticcmd_set_t *set)
-{
-    extern boolean advancedemo;
-    unsigned int i;
-
-    // Check for player quits.
-
-    for (i = 0; i < MAXPLAYERS; ++i)
-    {
-        if (playeringame[i] && !set->ingame[i])
-        {
-            D_PlayerQuitGame(&players[i]);
-        }
-    }
-
-    netcmds = set->cmds;
-
-    // check that there are players in the game.  if not, we cannot
-    // run a tic.
-
-    if (advancedemo)
-        D_DoAdvanceDemo ();
-
-    G_Ticker ();
 }
 
 // When running in single player mode, clear all the ingame[] array
@@ -920,9 +685,9 @@ void TryRunTics (void)
             if (gametic/ticdup > lowtic)
                 I_Error ("gametic>lowtic");
 
-            D_RunTic(set);
+            loop_interface->RunTic(set->cmds, set->ingame);
 	    gametic++;
-	    
+
 	    // modify command for duplicated tics
 
             TicdupSquash(set);
@@ -931,4 +696,264 @@ void TryRunTics (void)
 	NetUpdate ();	// check for new console commands
     }
 }
+
+void D_RegisterLoopCallbacks(loop_interface_t *i)
+{
+    loop_interface = i;
+}
+
+//----------------------------------------------------------------------
+
+ticcmd_t *netcmds;
+
+// Called when a player leaves the game
+
+static void PlayerQuitGame(player_t *player)
+{
+    static char exitmsg[80];
+    unsigned int player_num;
+
+    player_num = player - players;
+
+    // Do this the same way as Vanilla Doom does, to allow dehacked
+    // replacements of this message
+
+    strncpy(exitmsg, DEH_String("Player 1 left the game"), sizeof(exitmsg));
+    exitmsg[sizeof(exitmsg) - 1] = '\0';
+
+    exitmsg[7] += player_num;
+
+    playeringame[player_num] = false;
+    players[consoleplayer].message = exitmsg;
+
+    // TODO: check if it is sensible to do this:
+
+    if (demorecording) 
+    {
+        G_CheckDemoStatus ();
+    }
+}
+
+static void RunTic(ticcmd_t *cmds, boolean *ingame)
+{
+    extern boolean advancedemo;
+    unsigned int i;
+
+    // Check for player quits.
+
+    for (i = 0; i < MAXPLAYERS; ++i)
+    {
+        if (playeringame[i] && !ingame[i])
+        {
+            PlayerQuitGame(&players[i]);
+        }
+    }
+
+    netcmds = cmds;
+
+    // check that there are players in the game.  if not, we cannot
+    // run a tic.
+
+    if (advancedemo)
+        D_DoAdvanceDemo ();
+
+    G_Ticker ();
+}
+
+static loop_interface_t doom_loop_interface = {
+    G_BuildTiccmd,
+    RunTic,
+    M_Ticker
+};
+
+
+// Load game settings from the specified structure and 
+// set global variables.
+
+static void LoadGameSettings(net_gamesettings_t *settings)
+{
+    unsigned int i;
+
+    deathmatch = settings->deathmatch;
+    ticdup = settings->ticdup;
+    extratics = settings->extratics;
+    startepisode = settings->episode;
+    startmap = settings->map;
+    startskill = settings->skill;
+    startloadgame = settings->loadgame;
+    lowres_turn = settings->lowres_turn;
+    nomonsters = settings->nomonsters;
+    fastparm = settings->fast_monsters;
+    respawnparm = settings->respawn_monsters;
+    timelimit = settings->timelimit;
+
+    if (lowres_turn)
+    {
+        printf("NOTE: Turning resolution is reduced; this is probably "
+               "because there is a client recording a Vanilla demo.\n");
+    }
+
+    if (!drone)
+    {
+        consoleplayer = settings->consoleplayer;
+    }
+    else
+    {
+        consoleplayer = 0;
+    }
+    
+    for (i=0; i<MAXPLAYERS; ++i) 
+    {
+        playeringame[i] = i < settings->num_players;
+    }
+}
+
+// Save the game settings from global variables to the specified
+// game settings structure.
+
+static void SaveGameSettings(net_gamesettings_t *settings,
+                             net_connect_data_t *connect_data)
+{
+    // Fill in game settings structure with appropriate parameters
+    // for the new game
+
+    settings->deathmatch = deathmatch;
+    settings->episode = startepisode;
+    settings->map = startmap;
+    settings->skill = startskill;
+    settings->loadgame = startloadgame;
+    settings->gameversion = gameversion;
+    settings->nomonsters = nomonsters;
+    settings->fast_monsters = fastparm;
+    settings->respawn_monsters = respawnparm;
+    settings->timelimit = timelimit;
+
+    settings->lowres_turn = M_CheckParm("-record") > 0
+                         && M_CheckParm("-longtics") == 0;
+
+    connect_data->drone = false;
+
+    //!
+    // @category net
+    //
+    // Run as the left screen in three screen mode.
+    //
+
+    if (M_CheckParm("-left") > 0)
+    {
+        viewangleoffset = ANG90;
+        connect_data->drone = true;
+    }
+
+    //! 
+    // @category net
+    //
+    // Run as the right screen in three screen mode.
+    //
+
+    if (M_CheckParm("-right") > 0)
+    {
+        viewangleoffset = ANG270;
+        connect_data->drone = true;
+    }
+
+    //
+    // Connect data
+    //
+
+    // Game type fields:
+
+    connect_data->gamemode = gamemode;
+    connect_data->gamemission = gamemission;
+
+    // Are we recording a demo? Possibly set lowres turn mode
+
+    connect_data->lowres_turn = settings->lowres_turn;
+}
+
+void D_InitSinglePlayerGame(net_gamesettings_t *settings)
+{
+    // default values for single player
+
+    settings->consoleplayer = 0;
+    settings->num_players = 1;
+
+    netgame = false;
+
+    //!
+    // @category net
+    //
+    // Start the game playing as though in a netgame with a single
+    // player.  This can also be used to play back single player netgame
+    // demos.
+    //
+
+    if (M_CheckParm("-solo-net") > 0)
+    {
+        netgame = true;
+    }
+}
+
+//
+// D_CheckNetGame
+// Works out player numbers among the net participants
+//
+extern	int			viewangleoffset;
+
+void D_CheckNetGame (void)
+{
+    net_connect_data_t connect_data;
+    net_gamesettings_t settings;
+
+    offsetms = 0;
+    recvtic = 0;
+
+    D_RegisterLoopCallbacks(&doom_loop_interface);
+
+    // Call D_QuitNetGame on exit 
+
+    I_AtExit(D_QuitNetGame, true);
+
+    SaveGameSettings(&settings, &connect_data);
+
+    if (D_InitNetGame(&connect_data, &settings))
+    {
+        netgame = true;
+        autostart = true;
+    }
+    else
+    {
+        D_InitSinglePlayerGame(&settings);
+    }
+
+    LoadGameSettings(&settings);
+
+    DEH_printf("startskill %i  deathmatch: %i  startmap: %i  startepisode: %i\n",
+               startskill, deathmatch, startmap, startepisode);
+
+    DEH_printf("player %i of %i (%i nodes)\n",
+               consoleplayer+1, settings.num_players, settings.num_players);
+
+    // Show players here; the server might have specified a time limit
+
+    if (timelimit > 0 && deathmatch)
+    {
+        // Gross hack to work like Vanilla:
+
+        if (timelimit == 20 && M_CheckParm("-avg"))
+        {
+            DEH_printf("Austin Virtual Gaming: Levels will end "
+                           "after 20 minutes\n");
+        }
+        else
+        {
+            DEH_printf("Levels will end after %d minute", timelimit);
+            if (timelimit > 1)
+                printf("s");
+            printf(".\n");
+        }
+    }
+}
+
+//----------------------------------------------------------------------
 
