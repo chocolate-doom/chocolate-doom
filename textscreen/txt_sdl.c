@@ -240,6 +240,7 @@ int TXT_Init(void)
 void TXT_Shutdown(void)
 {
     free(screendata);
+    screendata = NULL;
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
