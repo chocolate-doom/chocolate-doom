@@ -71,6 +71,7 @@ boolean D_InitNetGame(net_connect_data_t *connect_data,
                       net_gamesettings_t *settings);
 
 extern boolean singletics;
+extern int gametic, ticdup;
 
 #endif
 
