@@ -35,7 +35,7 @@
 
 
 #include "doomdef.h"
-#include "d_net.h"
+#include "d_loop.h"
 
 #include "m_bbox.h"
 #include "m_menu.h"
