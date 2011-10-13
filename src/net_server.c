@@ -1294,6 +1294,7 @@ static void NET_SV_PumpSendQueue(net_client_t *client)
 {
     net_full_ticcmd_t cmd;
     int recv_index;
+    int num_players;
     int i;
     int starttic, endtic;
 
@@ -1317,6 +1318,8 @@ static void NET_SV_PumpSendQueue(net_client_t *client)
     // Check if we can generate a new entry for the send queue
     // using the data in recvwindow.
 
+    num_players = 0;
+
     for (i=0; i<MAXPLAYERS; ++i)
     {
         if (sv_players[i] == client)
@@ -1338,6 +1341,19 @@ static void NET_SV_PumpSendQueue(net_client_t *client)
 
             return;
         }
+
+        ++num_players;
+    }
+
+    // If this is a game with only a single player in it, we might
+    // be sending a ticcmd set containing 0 ticcmds. This is fine;
+    // however, there's nothing to stop the game running on ahead
+    // and never stopping. Don't let the server get too far ahead
+    // of the client.
+
+    if (num_players == 0 && client->sendseq > recvwindow_start + 10)
+    {
+        return;
     }
 
     //printf("SV: have complete ticcmd for %i\n", client->sendseq);
