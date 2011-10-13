@@ -27,8 +27,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "doomfeatures.h"
+
 #include "txt_main.h"
 #include "txt_io.h"
+
+#include "net_client.h"
 
 #include "config.h"
 #include "ct_chat.h"
@@ -80,9 +84,6 @@ FILE *debugfile;
 static int show_endoom = 1;
 
 void D_CheckNetGame(void);
-void D_ProcessEvents(void);
-void G_BuildTiccmd(ticcmd_t * cmd);
-void D_DoAdvanceDemo(void);
 void D_PageDrawer(void);
 void D_AdvanceDemo(void);
 void F_Drawer(void);
@@ -254,22 +255,8 @@ void D_DoomLoop(void)
         I_StartFrame();
 
         // Process one or more tics
-        if (singletics)
-        {
-            I_StartTic();
-            D_ProcessEvents();
-            G_BuildTiccmd(&netcmds[consoleplayer][maketic % BACKUPTICS]);
-            if (advancedemo)
-                D_DoAdvanceDemo();
-            G_Ticker();
-            gametic++;
-            maketic++;
-        }
-        else
-        {
-            // Will run at least one tic
-            TryRunTics();
-        }
+        // Will run at least one tic
+        TryRunTics();
 
         // Move positional sounds
         S_UpdateSounds(players[consoleplayer].mo);
@@ -976,6 +963,11 @@ void D_DoomMain(void)
 
     tprintf(DEH_String("MN_Init: Init menu system.\n"), 1);
     MN_Init();
+
+#ifdef FEATURE_MULTIPLAYER
+    tprintf ("NET_Init: Init network subsystem.\n", 1);
+    NET_Init ();
+#endif
 
     CT_Init();
 

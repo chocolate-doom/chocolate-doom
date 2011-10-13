@@ -65,6 +65,8 @@
 // ticcmd_t
 #include "d_ticcmd.h"
 
+#include "d_loop.h"
+
 #define	SAVEGAMENAME "hticsav"
 
 /*
@@ -479,58 +481,6 @@ typedef struct player_s
 #define	CF_GODMODE		2
 #define	CF_NOMOMENTUM	4       // not really a cheat, just a debug aid
 
-
-#define		BACKUPTICS		12      // CHANGED FROM 12 !?!?
-
-typedef struct
-{
-    unsigned checksum;          // high bit is retransmit request
-    byte retransmitfrom;        // only valid if NCMD_RETRANSMIT
-    byte starttic;
-    byte player, numtics;
-    ticcmd_t cmds[BACKUPTICS];
-} doomdata_t;
-
-typedef struct
-{
-    int id;
-    short intnum;               // DOOM executes an int to execute commands
-
-// communication between DOOM and the driver
-    short command;              // CMD_SEND or CMD_GET
-    short remotenode;           // dest for send, set by get (-1 = no packet)
-    short datalength;           // bytes in doomdata to be sent
-
-// info common to all nodes
-    short numnodes;             // console is allways node 0
-    short ticdup;               // 1 = no duplication, 2-5 = dup for slow nets
-    short extratics;            // 1 = send a backup tic in every packet
-    short deathmatch;           // 1 = deathmatch
-    short savegame;             // -1 = new game, 0-5 = load savegame
-    short episode;              // 1-3
-    short map;                  // 1-9
-    short skill;                // 1-5
-
-// info specific to this node
-    short consoleplayer;
-    short numplayers;
-    short angleoffset;          // 1 = left, 0 = center, -1 = right
-    short drone;                // 1 = drone
-
-// packet data to be sent
-    doomdata_t data;
-} doomcom_t;
-
-#define	DOOMCOM_ID		0x12345678l
-
-extern doomcom_t *doomcom;
-extern doomdata_t *netbuffer;   // points inside doomcom
-
-#define	MAXNETNODES		8       // max computers in a game
-
-#define	CMD_SEND	1
-#define	CMD_GET		2
-
 #define	SBARHEIGHT	42      // status bar height at bottom of screen
 
 
@@ -588,6 +538,7 @@ extern boolean DebugSound;      // debug flag for displaying sound info
 extern int maxammo[NUMAMMO];
 extern int GetWeaponAmmo[NUMWEAPONS];
 
+extern boolean demorecording;
 extern boolean demoplayback;
 extern int skytexture;
 
@@ -601,13 +552,7 @@ extern int totalkills, totalitems, totalsecret; // for intermission
 extern int levelstarttic;       // gametic at level start
 extern int leveltime;           // tics in game play for par
 
-extern ticcmd_t netcmds[MAXPLAYERS][BACKUPTICS];
-extern int ticdup;
-
-#define	MAXNETNODES		8
-extern ticcmd_t localcmds[BACKUPTICS];
-extern int gametic, maketic;
-extern int nettics[MAXNETNODES];
+extern ticcmd_t *netcmds;
 
 #define SAVEGAMESIZE 0x30000
 #define SAVESTRINGSIZE 24

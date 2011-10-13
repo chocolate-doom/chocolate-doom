@@ -155,9 +155,13 @@ endif
 @PROGRAM_PREFIX@doom_LDADD = doom/libdoom.a $(EXTRA_LIBS)
 
 if HAVE_WINDRES
-@PROGRAM_PREFIX@heretic_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc
+@PROGRAM_PREFIX@heretic_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc \
+               d_loop.c d_loop.h \
+               $(FEATURE_MULTIPLAYER_SOURCE_FILES)
 else
-@PROGRAM_PREFIX@heretic_SOURCES=$(SOURCE_FILES_WITH_DEH)
+@PROGRAM_PREFIX@heretic_SOURCES=$(SOURCE_FILES_WITH_DEH) \
+               d_loop.c d_loop.h \
+               $(FEATURE_MULTIPLAYER_SOURCE_FILES)
 endif
 
 @PROGRAM_PREFIX@heretic_LDADD = heretic/libheretic.a $(EXTRA_LIBS)
