@@ -171,9 +171,13 @@ endif
 @PROGRAM_PREFIX@hexen_LDADD = hexen/libhexen.a $(EXTRA_LIBS)
 
 if HAVE_WINDRES
-@PROGRAM_PREFIX@strife_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc
+@PROGRAM_PREFIX@strife_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc \
+               d_loop.c d_loop.h \
+               $(FEATURE_MULTIPLAYER_SOURCE_FILES)
 else
-@PROGRAM_PREFIX@strife_SOURCES=$(SOURCE_FILES_WITH_DEH)
+@PROGRAM_PREFIX@strife_SOURCES=$(SOURCE_FILES_WITH_DEH) \
+               d_loop.c d_loop.h \
+               $(FEATURE_MULTIPLAYER_SOURCE_FILES)
 endif
 
 @PROGRAM_PREFIX@strife_LDADD = strife/libstrife.a $(EXTRA_LIBS)

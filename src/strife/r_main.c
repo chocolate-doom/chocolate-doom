@@ -37,7 +37,6 @@
 #include "doomdef.h"
 #include "doomstat.h"   // villsa [STRIFE]
 #include "d_main.h"
-#include "d_net.h"
 
 #include "m_bbox.h"
 #include "m_menu.h"
@@ -951,4 +950,3 @@ void R_RenderPlayerView (player_t* player)
     // Check for new console commands.
     NetUpdate ();				
 }
-

@@ -7,7 +7,7 @@ am_map.c           am_map.h     \
                    d_englsh.h   \
 d_items.c          d_items.h    \
 d_main.c           d_main.h     \
-d_net.c            d_net.h      \
+d_net.c                         \
                    doomdata.h   \
 doomdef.c          doomdef.h    \
 doomstat.c         doomstat.h   \

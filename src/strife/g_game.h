@@ -79,7 +79,7 @@ boolean G_RiftCheat(int riftSpotNum); // [STRIFE]
 
 // Read current data from inputs and build a player movement command.
 
-void G_BuildTiccmd (ticcmd_t *cmd); 
+void G_BuildTiccmd (ticcmd_t *cmd, int maketic);
 
 void G_Ticker (void);
 boolean G_Responder (event_t*	ev);
@@ -95,4 +95,3 @@ void    G_ReadCurrent(const char *path);
 extern int vanilla_savegame_limit;
 extern int vanilla_demo_limit;
 #endif
-

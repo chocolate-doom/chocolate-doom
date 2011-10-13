@@ -25,10 +25,9 @@
 //
 //-----------------------------------------------------------------------------
 
-
+#include <stdlib.h>
 
 #include "doomfeatures.h"
-#undef FEATURE_MULTIPLAYER // TODO: Temporary disable for Strife
 
 #include "d_main.h"
 #include "m_argv.h"
@@ -42,192 +41,204 @@
 
 #include "deh_main.h"
 
-#include "net_client.h"
-#include "net_gui.h"
-#include "net_io.h"
-#include "net_query.h"
-#include "net_server.h"
-#include "net_sdl.h"
-#include "net_loop.h"
+#include "d_loop.h"
 
-//
-// NETWORKING
-//
-// gametic is the tic about to (or currently being) run
-// maketic is the tick that hasn't had control made for it yet
-// nettics[] has the maketics for all players 
-//
-// a gametic cannot be run until nettics[] > gametic for all players
-//
+ticcmd_t *netcmds;
 
-ticcmd_t        netcmds[MAXPLAYERS][BACKUPTICS];
-int             nettics[MAXPLAYERS];
+// Called when a player leaves the game
 
-int             maketic;
-
-// Used for original sync code.
-
-int		lastnettic;
-int             skiptics = 0;
-
-// Reduce the bandwidth needed by sampling game input less and transmitting
-// less.  If ticdup is 2, sample half normal, 3 = one third normal, etc.
-
-int		ticdup;
-
-// Send this many extra (backup) tics in each packet.
-
-int             extratics;
-
-// Amount to offset the timer for game sync.
-
-fixed_t         offsetms;
-
-// Use new client syncronisation code
-
-boolean         net_cl_new_sync = true;
-
-// Connected but not participating in the game (observer)
-
-boolean drone = false;
-
-// 35 fps clock adjusted by offsetms milliseconds
-
-static int GetAdjustedTime(void)
+static void PlayerQuitGame(player_t *player)
 {
-    int time_ms;
+    static char exitmsg[80];
+    unsigned int player_num;
 
-    time_ms = I_GetTimeMS();
+    player_num = player - players;
 
-    if (net_cl_new_sync)
+    // Do this the same way as Vanilla Doom does, to allow dehacked
+    // replacements of this message
+
+    strncpy(exitmsg, DEH_String("Player 1 left the game"), sizeof(exitmsg));
+    exitmsg[sizeof(exitmsg) - 1] = '\0';
+
+    exitmsg[7] += player_num;
+
+    playeringame[player_num] = false;
+    players[consoleplayer].message = exitmsg;
+
+    // TODO: check if it is sensible to do this:
+
+    if (demorecording) 
     {
-	// Use the adjustments from net_client.c only if we are
-	// using the new sync mode.
-
-        time_ms += (offsetms / FRACUNIT);
+        G_CheckDemoStatus ();
     }
-
-    return (time_ms * TICRATE) / 1000;
 }
 
-//
-// NetUpdate
-// Builds ticcmds for console player,
-// sends out a packet
-//
-int      lasttime;
-
-void NetUpdate (void)
+static void RunTic(ticcmd_t *cmds, boolean *ingame)
 {
-    int nowtime;
-    int newtics;
-    int	i;
-    int	gameticdiv;
+    extern boolean advancedemo;
+    unsigned int i;
 
-    // If we are running with singletics (timing a demo), this
-    // is all done separately.
+    // Check for player quits.
 
-    if (singletics)
-        return;
-    
-#ifdef FEATURE_MULTIPLAYER
-
-    // Run network subsystems
-
-    NET_CL_Run();
-    NET_SV_Run();
-
-#endif
-
-    // check time
-    nowtime = GetAdjustedTime() / ticdup;
-    newtics = nowtime - lasttime;
-
-    lasttime = nowtime;
-
-    if (skiptics <= newtics)
+    for (i = 0; i < MAXPLAYERS; ++i)
     {
-        newtics -= skiptics;
-        skiptics = 0;
+        if (playeringame[i] && !ingame[i])
+        {
+            PlayerQuitGame(&players[i]);
+        }
+    }
+
+    netcmds = cmds;
+
+    // check that there are players in the game.  if not, we cannot
+    // run a tic.
+
+    if (advancedemo)
+        D_DoAdvanceDemo ();
+
+    M_Ticker();
+    G_Ticker();
+}
+
+static void NullMenuTicker()
+{
+    // no-op.
+}
+
+static loop_interface_t strife_loop_interface = {
+    D_ProcessEvents,
+    G_BuildTiccmd,
+    RunTic,
+    NullMenuTicker
+};
+
+
+// Load game settings from the specified structure and 
+// set global variables.
+
+static void LoadGameSettings(net_gamesettings_t *settings,
+                             net_connect_data_t *connect_data)
+{
+    unsigned int i;
+
+    deathmatch = settings->deathmatch;
+    ticdup = settings->ticdup;
+    startepisode = settings->episode;
+    startmap = settings->map;
+    startskill = settings->skill;
+    startloadgame = settings->loadgame;
+    lowres_turn = settings->lowres_turn;
+    nomonsters = settings->nomonsters;
+    fastparm = settings->fast_monsters;
+    respawnparm = settings->respawn_monsters;
+    timelimit = settings->timelimit;
+
+    if (lowres_turn)
+    {
+        printf("NOTE: Turning resolution is reduced; this is probably "
+               "because there is a client recording a Vanilla demo.\n");
+    }
+
+    if (!connect_data->drone)
+    {
+        consoleplayer = settings->consoleplayer;
     }
     else
     {
-        skiptics -= newtics;
-        newtics = 0;
+        consoleplayer = 0;
     }
-
-    // build new ticcmds for console player
-    gameticdiv = gametic/ticdup;
-
-    for (i=0 ; i<newtics ; i++)
+    
+    for (i=0; i<MAXPLAYERS; ++i) 
     {
-        ticcmd_t cmd;
-
-	I_StartTic ();
-	D_ProcessEvents ();
-
-#if 0
-        // Always run the menu
-        // - jhaley 20110629 [CHOCOFIX] - sure, if you want to cause serious 
-        //   problems. See TryRunTics for where the call to M_Ticker belongs.
-
-        M_Ticker ();
-#endif
-        if (drone)
-        {
-            // In drone mode, do not generate any ticcmds.
-
-            continue;
-        }
-	
-        if (net_cl_new_sync)
-        { 
-           // If playing single player, do not allow tics to buffer
-           // up very far
-
-           if ((!netgame || demoplayback) && maketic - gameticdiv > 2)
-               break;
-
-           // Never go more than ~200ms ahead
-
-           if (maketic - gameticdiv > 8)
-               break;
-        }
-	else
-	{
-           if (maketic - gameticdiv >= 5)
-               break;
-	}
-
-	//printf ("mk:%i ",maketic);
-	G_BuildTiccmd(&cmd);
-
-#ifdef FEATURE_MULTIPLAYER
-        
-        if (netgame && !demoplayback)
-        {
-            NET_CL_SendTiccmd(&cmd, maketic);
-        }
-
-#endif
-        netcmds[consoleplayer][maketic % BACKUPTICS] = cmd;
-
-	++maketic;
-        nettics[consoleplayer] = maketic;
+        playeringame[i] = i < settings->num_players;
     }
 }
 
-//
-// Start game loop
-//
-// Called after the screen is set but before the game starts running.
-//  
+// Save the game settings from global variables to the specified
+// game settings structure.
 
-void D_StartGameLoop(void)
+static void SaveGameSettings(net_gamesettings_t *settings,
+                             net_connect_data_t *connect_data)
 {
-    lasttime = GetAdjustedTime() / ticdup;
+    // Fill in game settings structure with appropriate parameters
+    // for the new game
+
+    settings->deathmatch = deathmatch;
+    settings->episode = startepisode;
+    settings->map = startmap;
+    settings->skill = startskill;
+    settings->loadgame = startloadgame;
+    settings->gameversion = gameversion;
+    settings->nomonsters = nomonsters;
+    settings->fast_monsters = fastparm;
+    settings->respawn_monsters = respawnparm;
+    settings->timelimit = timelimit;
+
+    settings->lowres_turn = M_CheckParm("-record") > 0
+                         && M_CheckParm("-longtics") == 0;
+
+    connect_data->drone = false;
+
+    //!
+    // @category net
+    //
+    // Run as the left screen in three screen mode.
+    //
+
+    if (M_CheckParm("-left") > 0)
+    {
+        viewangleoffset = ANG90;
+        connect_data->drone = true;
+    }
+
+    //! 
+    // @category net
+    //
+    // Run as the right screen in three screen mode.
+    //
+
+    if (M_CheckParm("-right") > 0)
+    {
+        viewangleoffset = ANG270;
+        connect_data->drone = true;
+    }
+
+    //
+    // Connect data
+    //
+
+    // Game type fields:
+
+    connect_data->gamemode = gamemode;
+    connect_data->gamemission = gamemission;
+
+    // Are we recording a demo? Possibly set lowres turn mode
+
+    connect_data->lowres_turn = settings->lowres_turn;
 }
 
+void D_InitSinglePlayerGame(net_gamesettings_t *settings)
+{
+    // default values for single player
+
+    settings->consoleplayer = 0;
+    settings->num_players = 1;
+
+    netgame = false;
+
+    //!
+    // @category net
+    //
+    // Start the game playing as though in a netgame with a single
+    // player.  This can also be used to play back single player netgame
+    // demos.
+    //
+
+    if (M_CheckParm("-solo-net") > 0)
+    {
+        netgame = true;
+    }
+}
 
 //
 // D_CheckNetGame
@@ -237,152 +248,34 @@ extern	int			viewangleoffset;
 
 void D_CheckNetGame (void)
 {
-    int i;
-    int num_players;
+    net_connect_data_t connect_data;
+    net_gamesettings_t settings;
+
+    D_RegisterLoopCallbacks(&strife_loop_interface);
 
     // Call D_QuitNetGame on exit 
 
     I_AtExit(D_QuitNetGame, true);
 
-    // default values for single player
+    SaveGameSettings(&settings, &connect_data);
 
-    consoleplayer = 0;
-    netgame = false;
-    ticdup = 1;
-    extratics = 1;
-    lowres_turn = false;
-    offsetms = 0;
-    
-    for (i=0; i<MAXPLAYERS; i++)
+    if (D_InitNetGame(&connect_data, &settings))
     {
-        playeringame[i] = false;
-        nettics[i] = 0;
+        netgame = true;
+        autostart = true;
+    }
+    else
+    {
+        D_InitSinglePlayerGame(&settings);
     }
 
-    playeringame[0] = true;
-
-#ifdef FEATURE_MULTIPLAYER
-
-    {
-        net_addr_t *addr = NULL;
-
-        //!
-        // @category net
-        //
-        // Start a multiplayer server, listening for connections.
-        //
-
-        if (M_CheckParm("-server") > 0)
-        {
-            NET_SV_Init();
-            NET_SV_AddModule(&net_loop_server_module);
-            NET_SV_AddModule(&net_sdl_module);
-
-            net_loop_client_module.InitClient();
-            addr = net_loop_client_module.ResolveAddress(NULL);
-        }
-        else
-        {
-            //! 
-            // @category net
-            //
-            // Automatically search the local LAN for a multiplayer
-            // server and join it.
-            //
-
-            i = M_CheckParm("-autojoin");
-
-            if (i > 0)
-            {
-                addr = NET_FindLANServer();
-                NET_SV_RegisterWithMaster();
-
-                if (addr == NULL)
-                {
-                    I_Error("No server found on local LAN");
-                }
-            }
-
-            //!
-            // @arg <address>
-            // @category net
-            //
-            // Connect to a multiplayer server running on the given 
-            // address.
-            //
-            
-            i = M_CheckParmWithArgs("-connect", 1);
-
-            if (i > 0)
-            {
-                net_sdl_module.InitClient();
-                addr = net_sdl_module.ResolveAddress(myargv[i+1]);
-
-                if (addr == NULL)
-                {
-                    I_Error("Unable to resolve '%s'\n", myargv[i+1]);
-                }
-            }
-        }
-
-        if (addr != NULL)
-        {
-            if (M_CheckParm("-drone") > 0)
-            {
-                drone = true;
-            }
-
-            //!
-            // @category net
-            //
-            // Run as the left screen in three screen mode.
-            //
-
-            if (M_CheckParm("-left") > 0)
-            {
-                viewangleoffset = ANG90;
-                drone = true;
-            }
-
-            //! 
-            // @category net
-            //
-            // Run as the right screen in three screen mode.
-            //
-
-            if (M_CheckParm("-right") > 0)
-            {
-                viewangleoffset = ANG270;
-                drone = true;
-            }
-
-            if (!NET_CL_Connect(addr))
-            {
-                I_Error("D_CheckNetGame: Failed to connect to %s\n", 
-                        NET_AddrToString(addr));
-            }
-
-            printf("D_CheckNetGame: Connected to %s\n", NET_AddrToString(addr));
-
-            NET_WaitForStart();
-        }
-    }
-
-#endif
-
-    num_players = 0;
-
-    for (i=0; i<MAXPLAYERS; ++i)
-    {
-        if (playeringame[i])
-            ++num_players;
-    }
+    LoadGameSettings(&settings, &connect_data);
 
     DEH_printf("startskill %i  deathmatch: %i  startmap: %i  startepisode: %i\n",
                startskill, deathmatch, startmap, startepisode);
-	
+
     DEH_printf("player %i of %i (%i nodes)\n",
-               consoleplayer+1, num_players, num_players);
+               consoleplayer+1, settings.num_players, settings.num_players);
 
     // Show players here; the server might have specified a time limit
 
@@ -404,241 +297,3 @@ void D_CheckNetGame (void)
         }
     }
 }
-
-
-//
-// D_QuitNetGame
-// Called before quitting to leave a net game
-// without hanging the other players
-//
-void D_QuitNetGame (void)
-{
-#ifdef FEATURE_MULTIPLAYER
-
-    NET_SV_Shutdown();
-    NET_CL_Disconnect();
-
-#endif
-
-}
-
-// Returns true if there are currently any players in the game.
-
-static boolean PlayersInGame(void)
-{
-    int i;
-
-    for (i=0; i<MAXPLAYERS; ++i)
-    {
-        if (playeringame[i])
-        {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-static int GetLowTic(void)
-{
-    int lowtic;
-
-#ifdef FEATURE_MULTIPLAYER
-    if (net_client_connected)
-    {
-        int i;
-
-        lowtic = INT_MAX;
-    
-        for (i=0; i<MAXPLAYERS; ++i)
-        {
-            if (playeringame[i])
-            {
-                if (nettics[i] < lowtic)
-                    lowtic = nettics[i];
-            }
-        }
-    }
-    else
-#endif
-    {
-        lowtic = maketic;
-    }
-
-    return lowtic;
-}
-
-//
-// TryRunTics
-//
-int	oldnettics;
-int	frametics[4];
-int	frameon;
-int	frameskip[4];
-int	oldnettics;
-
-extern	boolean	advancedemo;
-
-void TryRunTics (void)
-{
-    int	i;
-    int	lowtic;
-    int	entertic;
-    static int oldentertics;
-    int realtics;
-    int	availabletics;
-    int	counts;
-
-    // get real tics		
-    entertic = I_GetTime() / ticdup;
-    realtics = entertic - oldentertics;
-    oldentertics = entertic;
-    
-    // get available tics
-    NetUpdate ();
-	
-    lowtic = GetLowTic();
-
-    availabletics = lowtic - gametic/ticdup;
-    
-    // decide how many tics to run
-    
-    if (net_cl_new_sync)
-    {
-	counts = availabletics;
-    }
-    else
-    {
-        // decide how many tics to run
-        if (realtics < availabletics-1)
-            counts = realtics+1;
-        else if (realtics < availabletics)
-            counts = realtics;
-        else
-            counts = availabletics;
-        
-        if (counts < 1)
-            counts = 1;
-                    
-        frameon++;
-
-        if (!demoplayback)
-        {
-	    int keyplayer = -1;
-
-            // ideally maketic should be 1 - 3 tics above lowtic
-            // if we are consistantly slower, speed up time
-
-            for (i=0 ; i<MAXPLAYERS ; i++)
-	    {
-                if (playeringame[i])
-		{
-		    keyplayer = i;
-                    break;
-		}
-	    }
-
-	    if (keyplayer < 0)
-	    {
-		// If there are no players, we can never advance anyway
-
-		return;
-	    }
-
-            if (consoleplayer == keyplayer)
-            {
-                // the key player does not adapt
-            }
-            else
-            {
-                if (maketic <= nettics[keyplayer])
-                {
-                    lasttime--;
-                    // printf ("-");
-                }
-
-                frameskip[frameon & 3] = (oldnettics > nettics[keyplayer]);
-                oldnettics = maketic;
-
-                if (frameskip[0] && frameskip[1] && frameskip[2] && frameskip[3])
-                {
-                    skiptics = 1;
-                    // printf ("+");
-                }
-            }
-        }
-    }
-
-    if (counts < 1)
-	counts = 1;
-		
-    // wait for new tics if needed
-
-    while (!PlayersInGame() || lowtic < gametic/ticdup + counts)	
-    {
-	NetUpdate ();   
-
-        lowtic = GetLowTic();
-	
-	if (lowtic < gametic/ticdup)
-	    I_Error ("TryRunTics: lowtic < gametic");
-    
-        // Don't stay in this loop forever.  The menu is still running,
-        // so return to update the screen
-
-	if (I_GetTime() / ticdup - entertic > 0)
-	{
-	    return;
-	} 
-
-        I_Sleep(1);
-    }
-    
-    // run the count * ticdup dics
-    while (counts--)
-    {
-	for (i=0 ; i<ticdup ; i++)
-	{
-            // check that there are players in the game.  if not, we cannot
-            // run a tic.
-        
-            if (!PlayersInGame())
-            {
-                return;
-            }
-    
-	    if (gametic/ticdup > lowtic)
-		I_Error ("gametic>lowtic");
-	    if (advancedemo)
-		D_DoAdvanceDemo ();
-
-            // [STRIFE]/[CHOCOFIX] jhaley 20110629 Chocolate compatibility problem!
-            // *Somebody* moved M_Ticker to NetUpdate where it specifically does not
-            // belong. It *must* be here. All it ever does is animate the cursor
-            // anyway so there is absolutely no reason to run it from NetUpdate.
-            M_Ticker (); 
-	    G_Ticker ();
-	    gametic++;
-	    
-
-	    // modify command for duplicated tics
-	    if (i != ticdup-1)
-	    {
-		ticcmd_t	*cmd;
-		int			buf;
-		int			j;
-				
-		buf = (gametic/ticdup)%BACKUPTICS; 
-		for (j=0 ; j<MAXPLAYERS ; j++)
-		{
-		    cmd = &netcmds[j][buf];
-		    cmd->chatchar = 0;
-		    if (cmd->buttons & BT_SPECIAL)
-			cmd->buttons = 0;
-		}
-	    }
-	}
-	NetUpdate ();	// check for new console commands
-    }
-}
-

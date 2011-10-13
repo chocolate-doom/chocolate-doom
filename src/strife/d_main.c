@@ -40,7 +40,6 @@
 
 #include "dstrings.h"
 #include "doomfeatures.h"
-#undef FEATURE_MULTIPLAYER // TODO: Temporary disable for Strife
 #include "sounds.h"
 
 #include "d_iwad.h"
@@ -114,7 +113,6 @@ boolean         fastparm;       // checkparm of -fast
 boolean         flipparm;       // [STRIFE] haleyjd 20110629: checkparm of -flip
 
 boolean         showintro = true;   // [STRIFE] checkparm of -nograph, disables intro
-boolean         singletics = false; // debug flag to cancel adaptiveness
 
 
 //extern int soundVolume;
@@ -163,7 +161,6 @@ static char *nickname = NULL;
 
 void D_CheckNetGame (void);
 void D_ProcessEvents (void);
-void G_BuildTiccmd (ticcmd_t* cmd);
 void D_DoAdvanceDemo (void);
 
 
@@ -521,22 +518,7 @@ void D_DoomLoop (void)
         I_StartFrame ();
 
         // process one or more tics
-        if (singletics)
-        {
-            I_StartTic ();
-            D_ProcessEvents ();
-            G_BuildTiccmd (&netcmds[consoleplayer][maketic%BACKUPTICS]);
-            if (advancedemo)
-                D_DoAdvanceDemo ();
-            M_Ticker ();
-            G_Ticker ();
-            gametic++;
-            maketic++;
-        }
-        else
-        {
-            TryRunTics (); // will run at least one tic
-        }
+        TryRunTics (); // will run at least one tic
 
         S_UpdateSounds (players[consoleplayer].mo);// move positional sounds
 
@@ -1383,9 +1365,7 @@ void D_DoomMain (void)
 
     if (M_CheckParm("-search"))
     {
-        printf("\nSearching for servers on Internet ...\n");
-        p = NET_MasterQuery(NET_QueryPrintCallback, NULL);
-        printf("\n%i server(s) found.\n", p);
+        NET_MasterQuery();
         exit(0);
     }
 
@@ -1413,9 +1393,7 @@ void D_DoomMain (void)
 
     if (M_CheckParm("-localsearch"))
     {
-        printf("\nSearching for servers on local LAN ...\n");
-        p = NET_LANQuery(NET_QueryPrintCallback, NULL);
-        printf("\n%i server(s) found.\n", p);
+        NET_LANQuery();
         exit(0);
     }
 
@@ -1975,4 +1953,3 @@ void D_DoomMain (void)
 
     D_DoomLoop ();  // never returns
 }
-

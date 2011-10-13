@@ -334,7 +334,7 @@ static int G_NextWeapon(int direction)
 // or reads it from the demo buffer. 
 // If recording a demo, write it out 
 // 
-void G_BuildTiccmd (ticcmd_t* cmd) 
+void G_BuildTiccmd (ticcmd_t* cmd, int maketic) 
 { 
     int		i; 
     boolean	strafe;
@@ -963,7 +963,7 @@ void G_Ticker (void)
         { 
             cmd = &players[i].cmd; 
 
-            memcpy (cmd, &netcmds[i][buf], sizeof(ticcmd_t)); 
+            memcpy (cmd, &netcmds[i], sizeof(ticcmd_t)); 
 
             if (demoplayback)
                 G_ReadDemoTiccmd (cmd); 
@@ -2472,6 +2472,3 @@ boolean G_CheckDemoStatus (void)
 
     return false; 
 } 
- 
-  
- 
