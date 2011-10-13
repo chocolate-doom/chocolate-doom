@@ -853,7 +853,6 @@ void R_SoundNumForDoor(vldoor_t* door)
 
         texture = textures[sides[line->sidenum[0]].toptexture];
         memcpy(name, texture->name, 8);
-        //memcpy(&v6, texture->index, 0);   // [STRIFE] todo - WHAT?!
 
         if(strncmp(name, "DOR", 3))
             continue;
@@ -894,14 +893,12 @@ void R_SoundNumForDoor(vldoor_t* door)
             {
                 door->opensound = sfx_drlwud;
                 door->closesound = sfx_drlwud;
-
             }
             // S subtype
             else if(c2 == 'S')
             {
                 door->opensound = sfx_drswud;
                 door->closesound = sfx_drswud;
-
             }
             return;
         }
