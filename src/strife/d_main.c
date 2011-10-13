@@ -1878,6 +1878,15 @@ void D_DoomMain (void)
         DEH_printf("D_CheckNetGame: Checking network game status.\n");
     D_CheckNetGame ();
 
+    // STRIFE-TODO: This is a temporary hack. The startup splash screen
+    // stuff needs to be reworked.
+    // The netgame waiting screen killed the graphics display. Re-run
+    // I_InitGraphics() to bring it back again.
+    if (showintro && netgame)
+    {
+        I_InitGraphics();
+    }
+
     PrintGameVersion();
 
     if(devparm)
