@@ -107,9 +107,6 @@ boolean         nomonsters;	// checkparm of -nomonsters
 boolean         respawnparm;	// checkparm of -respawn
 boolean         fastparm;	// checkparm of -fast
 
-boolean		singletics = false; // debug flag to cancel adaptiveness
-
-
 //extern int soundVolume;
 //extern  int	sfxVolume;
 //extern  int	musicVolume;
@@ -136,8 +133,6 @@ int             show_endoom = 1;
 
 
 void D_CheckNetGame (void);
-void D_ProcessEvents (void);
-void G_BuildTiccmd (ticcmd_t* cmd);
 void D_DoAdvanceDemo (void);
 
 
@@ -442,29 +437,10 @@ void D_DoomLoop (void)
     while (1)
     {
 	// frame syncronous IO operations
-	I_StartFrame ();                
-	
-	// process one or more tics
-	if (singletics)
-	{
-            static ticcmd_t cmds[MAXPLAYERS];
+	I_StartFrame ();
 
-	    I_StartTic ();
-	    D_ProcessEvents ();
-            netcmds = cmds;
-	    G_BuildTiccmd(&cmds[consoleplayer]);
-	    if (advancedemo)
-		D_DoAdvanceDemo ();
-	    M_Ticker ();
-	    G_Ticker ();
-	    gametic++;
-	    maketic++;
-	}
-	else
-	{
-	    TryRunTics (); // will run at least one tic
-	}
-		
+        TryRunTics (); // will run at least one tic
+
 	S_UpdateSounds (players[consoleplayer].mo);// move positional sounds
 
 	// Update display, next frame, with current state.

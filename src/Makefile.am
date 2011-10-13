@@ -144,9 +144,11 @@ EXTRA_LIBS =                                               \
 
 if HAVE_WINDRES
 @PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc \
+               d_loop.c d_loop.h \
                $(FEATURE_MULTIPLAYER_SOURCE_FILES)
 else
 @PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES_WITH_DEH) \
+               d_loop.c d_loop.h \
                $(FEATURE_MULTIPLAYER_SOURCE_FILES)
 endif
 

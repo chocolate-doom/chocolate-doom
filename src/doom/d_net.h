@@ -28,24 +28,7 @@
 #ifndef __D_NET__
 #define __D_NET__
 
-#include "d_player.h"
-
-extern int extratics;
-
-// Create any new ticcmds and broadcast to other players.
-void NetUpdate (void);
-
-// Broadcasts special packets to other players
-//  to notify of game exit
-void D_QuitNetGame (void);
-
-//? how many ticks to run?
-void TryRunTics (void);
-
-// Called at start of game loop to initialize timers
-void D_StartGameLoop(void);
-
-extern boolean net_cl_new_sync;
+#include "d_loop.h"
 
 #endif
 
