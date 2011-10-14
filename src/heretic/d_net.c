@@ -55,13 +55,13 @@ static void PlayerQuitGame(player_t *player)
 
     player_num = player - players;
 
-    // Do this the same way as Vanilla Doom does, to allow dehacked
-    // replacements of this message
+    // Note:
+    // The Heretic source code does this, which doesn't actually work.
+    // As a result, the exit message is never seen.
 
-    strncpy(exitmsg, DEH_String("Player 1 left the game"), sizeof(exitmsg));
-    exitmsg[sizeof(exitmsg) - 1] = '\0';
-
+    strcpy(exitmsg, "PLAYER 1 LEFT THE GAME");
     exitmsg[7] += player_num;
+    players[consoleplayer].message = exitmsg;
 
     playeringame[player_num] = false;
     players[consoleplayer].message = exitmsg;

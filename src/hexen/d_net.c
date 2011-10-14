@@ -34,6 +34,8 @@
 #include "i_timer.h"
 #include "i_video.h"
 #include "h2def.h"
+#include "p_local.h"
+#include "s_sound.h"
 
 #include "deh_main.h"
 
@@ -57,16 +59,10 @@ static void PlayerQuitGame(player_t *player)
 
     player_num = player - players;
 
-    /* TODO
-    // Do this the same way as Vanilla Doom does, to allow dehacked
-    // replacements of this message
-
-    strncpy(exitmsg, DEH_String("Player 1 left the game"), sizeof(exitmsg));
-    exitmsg[sizeof(exitmsg) - 1] = '\0';
-
+    strcpy(exitmsg, "PLAYER 1 LEFT THE GAME");
     exitmsg[7] += player_num;
-    players[consoleplayer].message = exitmsg;
-*/
+    P_SetMessage(&players[consoleplayer], exitmsg, true);
+    S_StartSound(NULL, SFX_CHAT);
 
     playeringame[player_num] = false;
 
