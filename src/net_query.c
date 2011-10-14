@@ -646,23 +646,35 @@ static void formatted_printf(int wide, char *s, ...)
 
 static char *GameDescription(GameMode_t mode, GameMission_t mission)
 {
-    switch (mode)
+    switch (mission)
     {
-        case shareware:
-            return "shareware";
-        case registered:
-            return "registered";
-        case retail:
-            return "ultimate";
-        case commercial:
-            if (mission == doom2)
-                return "doom2";
-            else if (mission == pack_tnt)
-                return "tnt";
-            else if (mission == pack_plut)
-                return "plutonia";
+        case doom:
+            if (mode == shareware)
+                return "swdoom";
+            else if (mode == registered)
+                return "regdoom";
+            else if (mode == retail)
+                return "ultdoom";
+            else
+                return "doom";
+        case doom2:
+            return "doom2";
+        case pack_tnt:
+            return "tnt";
+        case pack_plut:
+            return "plutonia";
+        case pack_chex:
+            return "chex";
+        case pack_hacx:
+            return "hacx";
+        case heretic:
+            return "heretic";
+        case hexen:
+            return "hexen";
+        case strife:
+            return "strife";
         default:
-            return "unknown";
+            return "?";
     }
 }
 
