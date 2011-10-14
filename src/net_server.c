@@ -106,6 +106,10 @@ typedef struct
 
     unsigned int is_freedoom;
 
+    // Player class (for Hexen)
+
+    int player_class;
+
 } net_client_t;
 
 // structure used for the recv window
@@ -640,6 +644,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
 
         client->recording_lowres = data.lowres_turn;
         client->drone = data.drone;
+        client->player_class = data.player_class;
     }
 
     if (client->connection.state == NET_CONN_STATE_WAITING_ACK)
@@ -703,6 +708,20 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
     }
 
     settings.num_players = NET_SV_NumPlayers();
+
+    // Copy player classes:
+
+    for (i = 0; i < MAXPLAYERS; ++i)
+    {
+        if (sv_players[i] != NULL)
+        {
+            settings.player_classes[i] = sv_players[i]->player_class;
+        }
+        else
+        {
+            settings.player_classes[i] = 0;
+        }
+    }
 
     nowtime = I_GetTimeMS();
 
@@ -1716,4 +1735,3 @@ void NET_SV_Shutdown(void)
         I_Sleep(1);
     }
 }
-

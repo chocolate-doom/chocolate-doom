@@ -109,7 +109,8 @@ boolean singledemo;             // quit after playing a demo from cmdline
 
 boolean precache = true;        // if true, load all graphics at start
 
-short consistancy[MAXPLAYERS][BACKUPTICS];
+// TODO: Hexen uses 16-bit shorts for consistancy?
+byte consistancy[MAXPLAYERS][BACKUPTICS];
 
 int mouseSensitivity = 5;
 
@@ -195,9 +196,8 @@ extern int curpos;
 extern int inv_ptr;
 
 boolean usearti = true;
-void I_ReadCyberCmd(ticcmd_t * cmd);
 
-void G_BuildTiccmd(ticcmd_t * cmd)
+void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
 {
     int i;
     boolean strafe, bstrafe;
@@ -888,7 +888,7 @@ void G_Ticker(void)
         {
             cmd = &players[i].cmd;
 
-            memcpy(cmd, &netcmds[i][buf], sizeof(ticcmd_t));
+            memcpy(cmd, &netcmds[i], sizeof(ticcmd_t));
 
             if (demoplayback)
                 G_ReadDemoTiccmd(cmd);

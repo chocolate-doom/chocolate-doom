@@ -37,6 +37,7 @@ void NET_WriteConnectData(net_packet_t *packet, net_connect_data_t *data)
     NET_WriteInt8(packet, data->gamemission);
     NET_WriteInt8(packet, data->lowres_turn);
     NET_WriteInt8(packet, data->drone);
+    NET_WriteInt8(packet, data->player_class);
 }
 
 boolean NET_ReadConnectData(net_packet_t *packet, net_connect_data_t *data)
@@ -44,11 +45,14 @@ boolean NET_ReadConnectData(net_packet_t *packet, net_connect_data_t *data)
     return NET_ReadInt8(packet, (unsigned int *) &data->gamemode)
         && NET_ReadInt8(packet, (unsigned int *) &data->gamemission)
         && NET_ReadInt8(packet, (unsigned int *) &data->lowres_turn)
-        && NET_ReadInt8(packet, (unsigned int *) &data->drone);
+        && NET_ReadInt8(packet, (unsigned int *) &data->drone)
+        && NET_ReadInt8(packet, (unsigned int *) &data->player_class);
 }
 
 void NET_WriteSettings(net_packet_t *packet, net_gamesettings_t *settings)
 {
+    int i;
+
     NET_WriteInt8(packet, settings->ticdup);
     NET_WriteInt8(packet, settings->extratics);
     NET_WriteInt8(packet, settings->deathmatch);
@@ -65,26 +69,50 @@ void NET_WriteSettings(net_packet_t *packet, net_gamesettings_t *settings)
     NET_WriteInt8(packet, settings->loadgame);
     NET_WriteInt8(packet, settings->num_players);
     NET_WriteInt8(packet, settings->consoleplayer);
+
+    for (i = 0; i < settings->num_players; ++i)
+    {
+        NET_WriteInt8(packet, settings->player_classes[i]);
+    }
 }
 
 boolean NET_ReadSettings(net_packet_t *packet, net_gamesettings_t *settings)
 {
-    return NET_ReadInt8(packet, (unsigned int *) &settings->ticdup)
-        && NET_ReadInt8(packet, (unsigned int *) &settings->extratics)
-        && NET_ReadInt8(packet, (unsigned int *) &settings->deathmatch)
-        && NET_ReadInt8(packet, (unsigned int *) &settings->nomonsters)
-        && NET_ReadInt8(packet, (unsigned int *) &settings->fast_monsters)
-        && NET_ReadInt8(packet, (unsigned int *) &settings->respawn_monsters)
-        && NET_ReadInt8(packet, (unsigned int *) &settings->episode)
-        && NET_ReadInt8(packet, (unsigned int *) &settings->map)
-        && NET_ReadSInt8(packet, &settings->skill)
-        && NET_ReadInt8(packet, (unsigned int *) &settings->gameversion)
-        && NET_ReadInt8(packet, (unsigned int *) &settings->lowres_turn)
-        && NET_ReadInt8(packet, (unsigned int *) &settings->new_sync)
-        && NET_ReadInt32(packet, (unsigned int *) &settings->timelimit)
-        && NET_ReadSInt8(packet, (signed int *) &settings->loadgame)
-        && NET_ReadInt8(packet, (unsigned int *) &settings->num_players)
-        && NET_ReadSInt8(packet, (signed int *) &settings->consoleplayer);
+    boolean success;
+    int i;
+
+    success = NET_ReadInt8(packet, (unsigned int *) &settings->ticdup)
+           && NET_ReadInt8(packet, (unsigned int *) &settings->extratics)
+           && NET_ReadInt8(packet, (unsigned int *) &settings->deathmatch)
+           && NET_ReadInt8(packet, (unsigned int *) &settings->nomonsters)
+           && NET_ReadInt8(packet, (unsigned int *) &settings->fast_monsters)
+           && NET_ReadInt8(packet, (unsigned int *) &settings->respawn_monsters)
+           && NET_ReadInt8(packet, (unsigned int *) &settings->episode)
+           && NET_ReadInt8(packet, (unsigned int *) &settings->map)
+           && NET_ReadSInt8(packet, &settings->skill)
+           && NET_ReadInt8(packet, (unsigned int *) &settings->gameversion)
+           && NET_ReadInt8(packet, (unsigned int *) &settings->lowres_turn)
+           && NET_ReadInt8(packet, (unsigned int *) &settings->new_sync)
+           && NET_ReadInt32(packet, (unsigned int *) &settings->timelimit)
+           && NET_ReadSInt8(packet, (signed int *) &settings->loadgame)
+           && NET_ReadInt8(packet, (unsigned int *) &settings->num_players)
+           && NET_ReadSInt8(packet, (signed int *) &settings->consoleplayer);
+
+    if (!success)
+    {
+        return false;
+    }
+
+    for (i = 0; i < settings->num_players; ++i)
+    {
+        if (!NET_ReadInt8(packet,
+                          (unsigned int *) &settings->player_classes[i]))
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 boolean NET_ReadQueryData(net_packet_t *packet, net_querydata_t *query)
@@ -426,4 +454,3 @@ void NET_SafePuts(char *s)
 
     putchar('\n');
 }
-

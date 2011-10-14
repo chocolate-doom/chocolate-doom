@@ -145,8 +145,7 @@ typedef struct
     int lowres_turn;
     int drone;
     // TODO: is_freedoom in here?  WAD/DEH checksums?
-    // TODO: [Hexen] Requested player class
-
+    int player_class;
 } net_connect_data_t;
 
 // Game settings sent by client to server when initiating game start,
@@ -175,7 +174,9 @@ typedef struct
     int num_players;
     int consoleplayer;
 
-    // TODO: [Hexen] Array of player classes, one for each player.
+    // Hexen player classes:
+
+    int player_classes[MAXPLAYERS];
 
 } net_gamesettings_t;
 
@@ -218,4 +219,3 @@ typedef struct
 } net_querydata_t;
 
 #endif /* #ifndef NET_DEFS_H */
-

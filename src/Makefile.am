@@ -51,6 +51,7 @@ d_event.c            d_event.h             \
                      doomfeatures.h        \
                      doomtype.h            \
 d_iwad.c             d_iwad.h              \
+d_loop.c             d_loop.h              \
 d_mode.c             d_mode.h              \
                      d_ticcmd.h            \
 deh_str.c            deh_str.h             \
@@ -127,7 +128,8 @@ mus2mid.c            mus2mid.h
 SOURCE_FILES = $(COMMON_SOURCE_FILES)              \
                $(GAME_SOURCE_FILES)                \
                $(FEATURE_WAD_MERGE_SOURCE_FILES)   \
-               $(FEATURE_SOUND_SOURCE_FILES)
+               $(FEATURE_SOUND_SOURCE_FILES)       \
+               $(FEATURE_MULTIPLAYER_SOURCE_FILES)
 
 SOURCE_FILES_WITH_DEH = $(SOURCE_FILES)                    \
                         $(FEATURE_DEHACKED_SOURCE_FILES)
@@ -143,25 +145,17 @@ EXTRA_LIBS =                                               \
                @SDLNET_LIBS@
 
 if HAVE_WINDRES
-@PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc \
-               d_loop.c d_loop.h \
-               $(FEATURE_MULTIPLAYER_SOURCE_FILES)
+@PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc
 else
-@PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES_WITH_DEH) \
-               d_loop.c d_loop.h \
-               $(FEATURE_MULTIPLAYER_SOURCE_FILES)
+@PROGRAM_PREFIX@doom_SOURCES=$(SOURCE_FILES_WITH_DEH)
 endif
 
 @PROGRAM_PREFIX@doom_LDADD = doom/libdoom.a $(EXTRA_LIBS)
 
 if HAVE_WINDRES
-@PROGRAM_PREFIX@heretic_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc \
-               d_loop.c d_loop.h \
-               $(FEATURE_MULTIPLAYER_SOURCE_FILES)
+@PROGRAM_PREFIX@heretic_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc
 else
-@PROGRAM_PREFIX@heretic_SOURCES=$(SOURCE_FILES_WITH_DEH) \
-               d_loop.c d_loop.h \
-               $(FEATURE_MULTIPLAYER_SOURCE_FILES)
+@PROGRAM_PREFIX@heretic_SOURCES=$(SOURCE_FILES_WITH_DEH)
 endif
 
 @PROGRAM_PREFIX@heretic_LDADD = heretic/libheretic.a $(EXTRA_LIBS)
@@ -175,13 +169,9 @@ endif
 @PROGRAM_PREFIX@hexen_LDADD = hexen/libhexen.a $(EXTRA_LIBS)
 
 if HAVE_WINDRES
-@PROGRAM_PREFIX@strife_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc \
-               d_loop.c d_loop.h \
-               $(FEATURE_MULTIPLAYER_SOURCE_FILES)
+@PROGRAM_PREFIX@strife_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc
 else
-@PROGRAM_PREFIX@strife_SOURCES=$(SOURCE_FILES_WITH_DEH) \
-               d_loop.c d_loop.h \
-               $(FEATURE_MULTIPLAYER_SOURCE_FILES)
+@PROGRAM_PREFIX@strife_SOURCES=$(SOURCE_FILES_WITH_DEH)
 endif
 
 @PROGRAM_PREFIX@strife_LDADD = strife/libstrife.a $(EXTRA_LIBS)

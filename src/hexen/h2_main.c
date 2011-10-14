@@ -31,6 +31,7 @@
 #include <time.h>
 
 #include "config.h"
+#include "doomfeatures.h"
 
 #include "h2def.h"
 #include "ct_chat.h"
@@ -44,6 +45,7 @@
 #include "m_argv.h"
 #include "m_config.h"
 #include "m_controls.h"
+#include "net_client.h"
 #include "p_local.h"
 #include "v_video.h"
 #include "w_main.h"
@@ -66,7 +68,6 @@ typedef struct
 
 void R_ExecuteSetViewSize(void);
 void D_CheckNetGame(void);
-void G_BuildTiccmd(ticcmd_t * cmd);
 void F_Drawer(void);
 boolean F_Responder(event_t * ev);
 void I_StartupKeyboard(void);
@@ -314,6 +315,11 @@ void D_DoomMain(void)
     ST_Message("MN_Init: Init menu system.\n");
     MN_Init();
 
+#ifdef FEATURE_MULTIPLAYER
+    ST_Message("NET_Init: Init networking subsystem.\n");
+    NET_Init();
+#endif
+
     ST_Message("CT_Init: Init chat mode data.\n");
     CT_Init();
 
@@ -350,19 +356,20 @@ void D_DoomMain(void)
     // MAPINFO.TXT script must be already processed.
     WarpCheck();
 
+    ST_Message("SB_Init: Loading patches.\n");
+    SB_Init();
+
+    ST_Done();
+
+    // Netgame start must be here, after the splash screen has finished.
+    ST_Message("D_CheckNetGame: Checking network game status.\n");
+    D_CheckNetGame();
+
     if (autostart)
     {
         ST_Message("Warp to Map %d (\"%s\":%d), Skill %d\n",
                    WarpMap, P_GetMapName(startmap), startmap, startskill + 1);
     }
-
-    ST_Message("D_CheckNetGame: Checking network game status.\n");
-    D_CheckNetGame();
-
-    ST_Message("SB_Init: Loading patches.\n");
-    SB_Init();
-
-    ST_Done();
 
     CheckRecordFrom();
 
@@ -566,24 +573,8 @@ void H2_GameLoop(void)
         I_StartFrame();
 
         // Process one or more tics
-        if (singletics)
-        {
-            I_StartTic();
-            H2_ProcessEvents();
-            G_BuildTiccmd(&netcmds[consoleplayer][maketic % BACKUPTICS]);
-            if (advancedemo)
-            {
-                H2_DoAdvanceDemo();
-            }
-            G_Ticker();
-            gametic++;
-            maketic++;
-        }
-        else
-        {
-            // Will run at least one tic
-            TryRunTics();
-        }
+        // Will run at least one tic
+        TryRunTics();
 
         // Move positional sounds
         S_UpdateSounds(players[displayplayer].mo);
@@ -887,4 +878,3 @@ static void CreateSavePath(void)
 {
     M_MakeDirectory(SavePath);
 }
-

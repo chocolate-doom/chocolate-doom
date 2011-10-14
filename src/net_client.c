@@ -984,6 +984,7 @@ boolean NET_CL_Connect(net_addr_t *addr, net_connect_data_t *data)
 
     server_addr = addr;
 
+    // TODO: Move into net_connect_data_t
     // Read checksums of our WAD directory and dehacked information
 
     W_Checksum(net_local_wad_md5sum);
@@ -1146,4 +1147,3 @@ void NET_BindVariables(void)
 {
     M_BindVariable("player_name", &net_player_name);
 }
-
