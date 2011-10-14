@@ -1303,10 +1303,11 @@ void P_SpawnPlayer(mapthing_t * mthing)
     fixed_t x, y, z;
     mobj_t *mobj;
 
-    if (!playeringame[mthing->type - 1])
+    if (mthing->type - 1 >= MAXPLAYERS || !playeringame[mthing->type - 1])
     {                           // Not playing
         return;
     }
+
     p = &players[mthing->type - 1];
     if (p->playerstate == PST_REBORN)
     {
