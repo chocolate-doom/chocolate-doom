@@ -82,7 +82,7 @@ static void RunTic(ticcmd_t *cmds, boolean *ingame)
 
     for (i = 0; i < MAXPLAYERS; ++i)
     {
-        if (playeringame[i] && !ingame[i])
+        if (!demoplayback && playeringame[i] && !ingame[i])
         {
             PlayerQuitGame(&players[i]);
         }
