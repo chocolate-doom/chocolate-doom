@@ -1150,7 +1150,7 @@ boolean G_CheckSpot(int playernum, mapthing_t * mthing)
 
 // spawn a teleport fog
     ss = R_PointInSubsector(x, y);
-    an = (ANG45 * (mthing->angle / 45)) >> ANGLETOFINESHIFT;
+    an = ((unsigned) ANG45 * (mthing->angle / 45)) >> ANGLETOFINESHIFT;
 
     mo = P_SpawnMobj(x + 20 * finecosine[an], y + 20 * finesine[an],
                      ss->sector->floorheight + TELEFOGHEIGHT, MT_TFOG);
