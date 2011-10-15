@@ -165,6 +165,28 @@ static int *weapon_keys[] =
     &key_weapon7
 };
 
+// Set to -1 or +1 to switch to the previous or next weapon.
+
+static int next_weapon = 0;
+
+// Used for prev/next weapon keys.
+
+static const struct
+{
+    weapontype_t weapon;
+    weapontype_t weapon_num;
+} weapon_order_table[] = {
+    { wp_staff,       wp_staff },
+    { wp_gauntlets,   wp_staff },
+    { wp_goldwand,    wp_goldwand },
+    { wp_crossbow,    wp_crossbow },
+    { wp_blaster,     wp_blaster },
+    { wp_skullrod,    wp_skullrod },
+    { wp_phoenixrod,  wp_phoenixrod },
+    { wp_mace,        wp_mace },
+    { wp_beak,        wp_beak },
+};
+
 #define SLOWTURNTICS    6
 
 #define NUMKEYS 256
@@ -209,6 +231,51 @@ int G_CmdChecksum(ticcmd_t *cmd)
 	return(sum);
 }
 */
+
+static boolean WeaponSelectable(weapontype_t weapon)
+{
+    if (weapon == wp_beak)
+    {
+        return false;
+    }
+
+    return players[consoleplayer].weaponowned[weapon];
+}
+
+static int G_NextWeapon(int direction)
+{
+    weapontype_t weapon;
+    int i;
+
+    // Find index in the table.
+
+    if (players[consoleplayer].pendingweapon == wp_nochange)
+    {
+        weapon = players[consoleplayer].readyweapon;
+    }
+    else
+    {
+        weapon = players[consoleplayer].pendingweapon;
+    }
+
+    for (i=0; i<arrlen(weapon_order_table); ++i)
+    {
+        if (weapon_order_table[i].weapon == weapon)
+        {
+            break;
+        }
+    }
+
+    // Switch weapon.
+
+    do
+    {
+        i += direction;
+        i = (i + arrlen(weapon_order_table)) % arrlen(weapon_order_table);
+    } while (!WeaponSelectable(weapon_order_table[i].weapon));
+
+    return weapon_order_table[i].weapon_num;
+}
 
 /*
 ====================
@@ -411,18 +478,33 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         dclicks = 0;            // clear double clicks if hit use button
     }
 
-    for (i=0; i<arrlen(weapon_keys); ++i)
-    {
-        int key = *weapon_keys[i];
+    // If the previous or next weapon button is pressed, the
+    // next_weapon variable is set to change weapons when
+    // we generate a ticcmd.  Choose a new weapon.
+    // (Can't weapon cycle when the player is a chicken)
 
-        if (gamekeydown[key])
+    if (players[consoleplayer].chickenTics == 0 && next_weapon != 0)
+    {
+        i = G_NextWeapon(next_weapon);
+        cmd->buttons |= BT_CHANGE;
+        cmd->buttons |= i << BT_WEAPONSHIFT;
+    }
+    else
+    {
+        for (i=0; i<arrlen(weapon_keys); ++i)
         {
-	    cmd->buttons |= BT_CHANGE; 
-	    cmd->buttons |= i<<BT_WEAPONSHIFT; 
-	    break; 
+            int key = *weapon_keys[i];
+
+            if (gamekeydown[key])
+            {
+                cmd->buttons |= BT_CHANGE; 
+                cmd->buttons |= i<<BT_WEAPONSHIFT; 
+                break; 
+            }
         }
     }
-    
+
+    next_weapon = 0;
 
 //
 // mouse
@@ -674,6 +756,15 @@ boolean G_Responder(event_t * ev)
     if (ev->type == ev_mouse)
     {
         testcontrols_mousespeed = abs(ev->data2);
+    }
+
+    if (ev->type == ev_keydown && ev->data1 == key_prevweapon)
+    {
+        next_weapon = -1;
+    }
+    else if (ev->type == ev_keydown && ev->data1 == key_nextweapon)
+    {
+        next_weapon = 1;
     }
 
     switch (ev->type)
