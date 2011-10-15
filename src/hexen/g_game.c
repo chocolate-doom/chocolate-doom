@@ -144,6 +144,8 @@ static int *weapon_keys[] =
     &key_weapon4,
 };
 
+static int next_weapon = 0;
+
 #define SLOWTURNTICS    6
 
 #define NUMKEYS 256
@@ -457,17 +459,43 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         dclicks = 0;            // clear double clicks if hit use button
     }
 
-    for (i=0; i<arrlen(weapon_keys); ++i)
-    {
-        int key = *weapon_keys[i];
+    // Weapon cycling. Switch to previous or next weapon.
+    // (Disabled when player is a pig).
 
-        if (gamekeydown[key])
+    if (players[consoleplayer].morphTics == 0 && next_weapon != 0)
+    {
+        if (players[consoleplayer].pendingweapon == WP_NOCHANGE)
         {
-	    cmd->buttons |= BT_CHANGE; 
-	    cmd->buttons |= i<<BT_WEAPONSHIFT; 
-	    break; 
+            i = players[consoleplayer].readyweapon;
+        }
+        else
+        {
+            i = players[consoleplayer].pendingweapon;
+        }
+
+        do {
+            i = (i + next_weapon) % NUMWEAPONS;
+        } while (!players[consoleplayer].weaponowned[i]);
+
+        cmd->buttons |= BT_CHANGE;
+        cmd->buttons |= i << BT_WEAPONSHIFT;
+    }
+    else
+    {
+        for (i=0; i<arrlen(weapon_keys); ++i)
+        {
+            int key = *weapon_keys[i];
+
+            if (gamekeydown[key])
+            {
+                cmd->buttons |= BT_CHANGE; 
+                cmd->buttons |= i<<BT_WEAPONSHIFT; 
+                break; 
+            }
         }
     }
+
+    next_weapon = 0;
 
 //
 // mouse
@@ -710,6 +738,15 @@ boolean G_Responder(event_t * ev)
     if (ev->type == ev_mouse)
     {
         testcontrols_mousespeed = abs(ev->data2);
+    }
+
+    if (ev->type == ev_keydown && ev->data1 == key_prevweapon)
+    {
+        next_weapon = -1;
+    }
+    else if (ev->type == ev_keydown && ev->data1 == key_nextweapon)
+    {
+        next_weapon = 1;
     }
 
     switch (ev->type)
