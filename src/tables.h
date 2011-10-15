@@ -68,11 +68,11 @@ extern const byte gammatable[5][256];
 
 // Binary Angle Measument, BAM.
 
-#define ANG45           0x20000000
-#define ANG90           0x40000000
-#define ANG180          0x80000000
-#define ANG270          0xc0000000
-#define ANG_MAX         0xffffffff
+#define ANG45           0x20000000U
+#define ANG90           0x40000000U
+#define ANG180          0x80000000U
+#define ANG270          0xc0000000U
+#define ANG_MAX         0xffffffffU
 
 #define ANG1            (ANG45 / 45)
 #define ANG60           (ANG180 / 3)
@@ -80,7 +80,7 @@ extern const byte gammatable[5][256];
 // Heretic code uses this definition as though it represents one 
 // degree, but it is not!  This is actually ~1.40 degrees.
 
-#define ANG1_X          0x01000000
+#define ANG1_X          0x01000000U
 
 #define SLOPERANGE		2048
 #define SLOPEBITS		11
