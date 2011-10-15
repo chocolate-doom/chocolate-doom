@@ -197,6 +197,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\d_loop.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\d_mode.h"
 				>
 			</File>
@@ -621,6 +625,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\d_loop.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\d_mode.c"
 				>
 			</File>
@@ -745,7 +753,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\net_client.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\net_common.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_dedicated.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_gui.c"
 				>
 			</File>
 			<File
@@ -766,6 +786,10 @@
 			</File>
 			<File
 				RelativePath="..\src\net_sdl.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_server.c"
 				>
 			</File>
 			<File
