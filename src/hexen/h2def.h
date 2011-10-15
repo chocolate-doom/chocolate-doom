@@ -635,8 +635,6 @@ extern int viewangleoffset;     // ANG90 = left side, ANG270 = right
 
 extern player_t players[MAXPLAYERS];
 
-extern boolean singletics;      // debug flag to cancel adaptiveness
-
 extern boolean DebugSound;      // debug flag for displaying sound info
 
 extern boolean demoplayback;
@@ -682,7 +680,6 @@ extern byte *screen;            // off screen work buffer, from V_video.c
 
 extern boolean singledemo;      // quit after playing a demo from cmdline
 
-extern FILE *debugfile;
 extern int bodyqueslot;
 extern skill_t startskill;
 extern int startepisode;

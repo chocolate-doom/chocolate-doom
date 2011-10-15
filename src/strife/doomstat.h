@@ -223,10 +223,6 @@ extern  gamestate_t     gamestate;
 //  WAD, partly set at startup time.
 
 
-
-extern	int		gametic;
-
-
 // Bookkeeping on players - state.
 extern	player_t	players[MAXPLAYERS];
 
@@ -276,9 +272,6 @@ extern  boolean         precache;
 extern  gamestate_t     wipegamestate;
 
 extern  int             mouseSensitivity;
-//?
-// debug flag to cancel adaptiveness
-extern  boolean         singletics;	
 
 //extern  int             bodyqueslot; [STRIFE] unused
 
@@ -297,7 +290,6 @@ extern int		skyflatnum;
 extern	int		rndindex;
 
 extern  ticcmd_t        *netcmds;
-extern	int		ticdup;
 
 
 

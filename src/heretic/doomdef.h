@@ -78,7 +78,6 @@
 */
 
 #define NUMARTIFCTS	28
-#define MAXPLAYERS	4
 
 #define	BT_ATTACK		1
 #define	BT_USE			2
@@ -531,8 +530,6 @@ extern int viewangleoffset;     // ANG90 = left side, ANG270 = right
 
 extern player_t players[MAXPLAYERS];
 
-extern boolean singletics;      // debug flag to cancel adaptiveness
-
 extern boolean DebugSound;      // debug flag for displaying sound info
 
 extern int maxammo[NUMAMMO];
@@ -575,7 +572,6 @@ extern boolean precache;        // if true, load all graphics at level load
 
 extern boolean singledemo;      // quit after playing a demo from cmdline
 
-extern FILE *debugfile;
 extern int bodyqueslot;
 extern skill_t startskill;
 extern int startepisode;
