@@ -704,7 +704,7 @@ boolean G_Responder(event_t * ev)
 
     // Check for spy mode player cycle
     if (gamestate == GS_LEVEL && ev->type == ev_keydown
-        && ev->data1 == KEY_F12 && !deathmatch)
+        && ev->data1 == key_spy && !deathmatch)
     {                           // Cycle the display player
         do
         {
