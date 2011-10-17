@@ -564,6 +564,7 @@ void H2_GameLoop(void)
         debugfile = fopen(filename, "w");
     }
     I_SetWindowTitle("Hexen");
+    I_GraphicsCheckCommandLine();
     I_InitGraphics();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
 

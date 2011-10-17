@@ -180,8 +180,8 @@ static boolean native_surface;
 
 // Screen width and height, from configuration file.
 
-static int screen_width = SCREENWIDTH;
-static int screen_height = SCREENHEIGHT;
+int screen_width = SCREENWIDTH;
+int screen_height = SCREENHEIGHT;
 
 // Color depth.
 
@@ -194,11 +194,11 @@ static int autoadjust_video_settings = 1;
 
 // Run in full screen mode?  (int type for config code)
 
-static int fullscreen = true;
+int fullscreen = true;
 
 // Aspect ratio correction mode
 
-static int aspect_ratio_correct = true;
+int aspect_ratio_correct = true;
 
 // Time to wait for the screen to settle on startup before starting the
 // game (ms)
@@ -1581,7 +1581,7 @@ static void SetScaleFactor(int factor)
     }
 }
 
-static void CheckCommandLine(void)
+void I_GraphicsCheckCommandLine(void)
 {
     int i;
 
@@ -2033,10 +2033,6 @@ void I_InitGraphics(void)
         I_Error("Failed to initialize video: %s", SDL_GetError());
     }
 
-    // Check for command-line video-related parameters.
-
-    CheckCommandLine();
-
     // Set up title and icon.  Windows cares about the ordering; this
     // has to be done before the call to SDL_SetVideoMode.
 
@@ -2212,4 +2208,3 @@ void I_BindVideoVariables(void)
     }
 #endif
 }
-

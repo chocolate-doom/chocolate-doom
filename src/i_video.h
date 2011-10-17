@@ -78,6 +78,7 @@ typedef boolean (*grabmouse_callback_t)(void);
 // and sets up the video mode
 void I_InitGraphics (void);
 
+void I_GraphicsCheckCommandLine(void);
 
 void I_ShutdownGraphics(void);
 
@@ -125,5 +126,10 @@ extern boolean screensaver_mode;
 extern int usegamma;
 extern byte *I_VideoBuffer;
 
-#endif
+extern int screen_width;
+extern int screen_height;
+extern int screen_bpp;
+extern int fullscreen;
+extern int aspect_ratio_correct;
 
+#endif

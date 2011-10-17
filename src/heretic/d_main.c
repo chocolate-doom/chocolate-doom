@@ -246,6 +246,7 @@ void D_DoomLoop(void)
         debugfile = fopen(filename, "w");
     }
     I_SetWindowTitle(gamedescription);
+    I_GraphicsCheckCommandLine();
     I_InitGraphics();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
 
