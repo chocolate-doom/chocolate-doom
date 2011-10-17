@@ -341,7 +341,7 @@ void NET_TiccmdDiff(ticcmd_t *tic1, ticcmd_t *tic2, net_ticdiff_t *diff)
 
     // Strife-specific
 
-    if (tic2->buttons2 != 0 || tic2->inventory != 0)
+    if (tic1->buttons2 != tic2->buttons2 || tic2->inventory != 0)
         diff->diff |= NET_TICDIFF_STRIFE;
 }
 
@@ -388,7 +388,6 @@ void NET_TiccmdPatch(ticcmd_t *src, net_ticdiff_t *diff, ticcmd_t *dest)
     }
     else
     {
-        dest->buttons2 = 0;
         dest->inventory = 0;
     }
 }
