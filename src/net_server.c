@@ -477,9 +477,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
                             net_addr_t *addr)
 {
     unsigned int magic;
-    unsigned int is_freedoom;
     net_connect_data_t data;
-    md5_digest_t deh_md5sum, wad_md5sum;
     char *player_name;
     char *client_version;
     int i;
@@ -529,10 +527,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
 
     // read the game mode and mission
 
-    if (!NET_ReadConnectData(packet, &data)
-     || !NET_ReadMD5Sum(packet, wad_md5sum)
-     || !NET_ReadMD5Sum(packet, deh_md5sum)
-     || !NET_ReadInt8(packet, &is_freedoom))
+    if (!NET_ReadConnectData(packet, &data))
     {
         return;
     }
@@ -625,9 +620,9 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
 
         // Save the MD5 checksums
 
-        memcpy(client->wad_md5sum, wad_md5sum, sizeof(md5_digest_t));
-        memcpy(client->deh_md5sum, deh_md5sum, sizeof(md5_digest_t));
-        client->is_freedoom = is_freedoom;
+        memcpy(client->wad_md5sum, data.wad_md5sum, sizeof(md5_digest_t));
+        memcpy(client->deh_md5sum, data.deh_md5sum, sizeof(md5_digest_t));
+        client->is_freedoom = data.is_freedoom;
 
         // Check the connecting client is playing the same game as all
         // the other clients

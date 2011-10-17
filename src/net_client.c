@@ -967,9 +967,6 @@ static void NET_CL_SendSYN(net_connect_data_t *data)
     NET_WriteInt32(packet, NET_MAGIC_NUMBER);
     NET_WriteString(packet, PACKAGE_STRING);
     NET_WriteConnectData(packet, data);
-    NET_WriteMD5Sum(packet, net_local_wad_md5sum);
-    NET_WriteMD5Sum(packet, net_local_deh_md5sum);
-    NET_WriteInt8(packet, net_local_is_freedoom);
     NET_WriteString(packet, net_player_name);
     NET_Conn_SendPacket(&client_connection, packet);
     NET_FreePacket(packet);
@@ -984,15 +981,9 @@ boolean NET_CL_Connect(net_addr_t *addr, net_connect_data_t *data)
 
     server_addr = addr;
 
-    // TODO: Move into net_connect_data_t
-    // Read checksums of our WAD directory and dehacked information
-
-    W_Checksum(net_local_wad_md5sum);
-    DEH_Checksum(net_local_deh_md5sum);
-
-    // Are we playing with the Freedoom IWAD?
-
-    net_local_is_freedoom = W_CheckNumForName("FREEDOOM") >= 0;
+    memcpy(net_local_wad_md5sum, data->wad_md5sum, sizeof(md5_digest_t));
+    memcpy(net_local_deh_md5sum, data->deh_md5sum, sizeof(md5_digest_t));
+    net_local_is_freedoom = data->is_freedoom;
 
     // create a new network I/O context and add just the
     // necessary module

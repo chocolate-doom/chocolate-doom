@@ -30,6 +30,7 @@
 
 #include "doomtype.h"
 #include "d_ticcmd.h"
+#include "md5.h"
 
 // Absolute maximum number of "nodes" in the game.  This is different to
 // MAXPLAYERS, as there may be observers that are not participating
@@ -144,7 +145,9 @@ typedef struct
     int gamemission;
     int lowres_turn;
     int drone;
-    // TODO: is_freedoom in here?  WAD/DEH checksums?
+    int is_freedoom;
+    md5_digest_t wad_md5sum;
+    md5_digest_t deh_md5sum;
     int player_class;
 } net_connect_data_t;
 

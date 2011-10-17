@@ -31,12 +31,43 @@
 #include "net_packet.h"
 #include "net_structrw.h"
 
+static void NET_WriteMD5(net_packet_t *packet, md5_digest_t digest)
+{
+    int i;
+
+    for (i = 0; i < sizeof(md5_digest_t); ++i)
+    {
+        NET_WriteInt8(packet, digest[i]);
+    }
+}
+
+static boolean NET_ReadMD5(net_packet_t *packet, md5_digest_t digest)
+{
+    unsigned int val;
+    int i;
+
+    for (i = 0; i < sizeof(md5_digest_t); ++i)
+    {
+        if (!NET_ReadInt8(packet, &val))
+        {
+            return false;
+        }
+
+        digest[i] = (uint8_t) val;
+    }
+
+    return true;
+}
+
 void NET_WriteConnectData(net_packet_t *packet, net_connect_data_t *data)
 {
     NET_WriteInt8(packet, data->gamemode);
     NET_WriteInt8(packet, data->gamemission);
     NET_WriteInt8(packet, data->lowres_turn);
     NET_WriteInt8(packet, data->drone);
+    NET_WriteInt8(packet, data->is_freedoom);
+    NET_WriteMD5(packet, data->wad_md5sum);
+    NET_WriteMD5(packet, data->deh_md5sum);
     NET_WriteInt8(packet, data->player_class);
 }
 
@@ -46,6 +77,9 @@ boolean NET_ReadConnectData(net_packet_t *packet, net_connect_data_t *data)
         && NET_ReadInt8(packet, (unsigned int *) &data->gamemission)
         && NET_ReadInt8(packet, (unsigned int *) &data->lowres_turn)
         && NET_ReadInt8(packet, (unsigned int *) &data->drone)
+        && NET_ReadInt8(packet, (unsigned int *) &data->is_freedoom)
+        && NET_ReadMD5(packet, data->wad_md5sum)
+        && NET_ReadMD5(packet, data->deh_md5sum)
         && NET_ReadInt8(packet, (unsigned int *) &data->player_class);
 }
 

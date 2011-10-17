@@ -34,6 +34,7 @@
 #include "i_timer.h"
 #include "i_video.h"
 #include "doomdef.h"
+#include "w_checksum.h"
 
 #include "deh_main.h"
 
@@ -173,6 +174,13 @@ static void SaveGameSettings(net_gamesettings_t *settings,
     connect_data->gamemission = gamemission;
 
     connect_data->lowres_turn = false;
+
+    // Read checksums of our WAD directory and dehacked information
+
+    W_Checksum(connect_data->wad_md5sum);
+    DEH_Checksum(connect_data->deh_md5sum);
+
+    connect_data->is_freedoom = 0;
 }
 
 void D_InitSinglePlayerGame(net_gamesettings_t *settings)

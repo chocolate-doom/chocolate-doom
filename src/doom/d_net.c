@@ -38,6 +38,8 @@
 #include "g_game.h"
 #include "doomdef.h"
 #include "doomstat.h"
+#include "w_checksum.h"
+#include "w_wad.h"
 
 #include "deh_main.h"
 
@@ -209,6 +211,15 @@ static void SaveGameSettings(net_gamesettings_t *settings,
     // Are we recording a demo? Possibly set lowres turn mode
 
     connect_data->lowres_turn = settings->lowres_turn;
+
+    // Read checksums of our WAD directory and dehacked information
+
+    W_Checksum(connect_data->wad_md5sum);
+    DEH_Checksum(connect_data->deh_md5sum);
+
+    // Are we playing with the Freedoom IWAD?
+
+    connect_data->is_freedoom = W_CheckNumForName("FREEDOOM") >= 0;
 }
 
 void D_InitSinglePlayerGame(net_gamesettings_t *settings)

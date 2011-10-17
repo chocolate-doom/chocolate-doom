@@ -36,6 +36,7 @@
 #include "h2def.h"
 #include "p_local.h"
 #include "s_sound.h"
+#include "w_checksum.h"
 
 #include "deh_main.h"
 
@@ -198,6 +199,13 @@ static void SaveGameSettings(net_gamesettings_t *settings,
     {
         connect_data->player_class = PCLASS_FIGHTER;
     }
+
+    // Read checksums of our WAD directory and dehacked information
+
+    W_Checksum(connect_data->wad_md5sum);
+    memset(connect_data->deh_md5sum, 0, sizeof(md5_digest_t));
+
+    connect_data->is_freedoom = 0;
 }
 
 void D_InitSinglePlayerGame(net_gamesettings_t *settings)
@@ -265,9 +273,3 @@ void NET_SendFrags(player_t * player)
     // Not sure what this is intended for. Unused?
 }
 
-// TODO: This is a temporary hack!
-
-void DEH_Checksum(md5_digest_t digest)
-{
-    memset(digest, 0, sizeof(digest));
-}
