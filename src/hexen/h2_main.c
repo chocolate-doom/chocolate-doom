@@ -346,8 +346,8 @@ void D_DoomMain(void)
     R_Init();
     ST_Message("\n");
 
-    if (M_CheckParm("-net"))
-        ST_NetProgress();       // Console player found
+    //if (M_CheckParm("-net"))
+    //    ST_NetProgress();       // Console player found
 
     ST_Message("P_Init: Init Playloop state.\n");
     P_Init();
@@ -356,14 +356,16 @@ void D_DoomMain(void)
     // MAPINFO.TXT script must be already processed.
     WarpCheck();
 
-    ST_Message("SB_Init: Loading patches.\n");
-    SB_Init();
-
     ST_Done();
 
     // Netgame start must be here, after the splash screen has finished.
     ST_Message("D_CheckNetGame: Checking network game status.\n");
     D_CheckNetGame();
+
+    // SB_Init has been moved here; the status bar must be initialized
+    // *after* the netgame has started.
+    ST_Message("SB_Init: Loading patches.\n");
+    SB_Init();
 
     if (autostart)
     {
