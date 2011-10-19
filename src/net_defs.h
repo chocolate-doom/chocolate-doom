@@ -33,18 +33,24 @@
 #include "md5.h"
 
 // Absolute maximum number of "nodes" in the game.  This is different to
-// MAXPLAYERS, as there may be observers that are not participating
+// NET_MAXPLAYERS, as there may be observers that are not participating
 // (eg. left/right monitors)
 
 #define MAXNETNODES 16
 
 // The maximum number of players, multiplayer/networking.
+// This is the maximum supported by the networking code; individual games
+// have their own values for MAXPLAYERS that can be smaller.
 
-#define MAXPLAYERS		4
+#define NET_MAXPLAYERS 8
+
+// Maximum length of a player's name.
+
+#define MAXPLAYERNAME 30
 
 // Networking and tick handling related.
 
-#define BACKUPTICS		128
+#define BACKUPTICS 128
 
 typedef struct _net_module_s net_module_t;
 typedef struct _net_packet_s net_packet_t;
@@ -179,7 +185,7 @@ typedef struct
 
     // Hexen player classes:
 
-    int player_classes[MAXPLAYERS];
+    int player_classes[NET_MAXPLAYERS];
 
 } net_gamesettings_t;
 
@@ -204,8 +210,8 @@ typedef struct
 {
     signed int latency;
     unsigned int seq;
-    boolean playeringame[MAXPLAYERS];
-    net_ticdiff_t cmds[MAXPLAYERS];
+    boolean playeringame[NET_MAXPLAYERS];
+    net_ticdiff_t cmds[NET_MAXPLAYERS];
 } net_full_ticcmd_t;
 
 // Data sent in response to server queries
@@ -220,5 +226,21 @@ typedef struct
     int gamemission;
     char *description;
 } net_querydata_t;
+
+// Data sent by the server while waiting for the game to start.
+
+typedef struct
+{
+    int num_players;
+    int num_drones;
+    int max_players;
+    int is_controller;
+    int consoleplayer;
+    char player_names[NET_MAXPLAYERS][MAXPLAYERNAME];
+    char player_addrs[NET_MAXPLAYERS][MAXPLAYERNAME];
+    md5_digest_t wad_md5sum;
+    md5_digest_t deh_md5sum;
+    int is_freedoom;
+} net_waitdata_t;
 
 #endif /* #ifndef NET_DEFS_H */

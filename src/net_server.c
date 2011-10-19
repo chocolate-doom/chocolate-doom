@@ -136,7 +136,7 @@ typedef struct
 static net_server_state_t server_state;
 static boolean server_initialized = false;
 static net_client_t clients[MAXNETNODES];
-static net_client_t *sv_players[MAXPLAYERS];
+static net_client_t *sv_players[NET_MAXPLAYERS];
 static net_context_t *server_context;
 static unsigned int sv_gamemode;
 static unsigned int sv_gamemission;
@@ -150,7 +150,7 @@ static unsigned int master_refresh_time;
 // receive window
 
 static unsigned int recvwindow_start;
-static net_client_recv_t recvwindow[BACKUPTICS][MAXPLAYERS];
+static net_client_recv_t recvwindow[BACKUPTICS][NET_MAXPLAYERS];
 
 #define NET_SV_ExpandTicNum(b) NET_ExpandTicNum(recvwindow_start, (b))
 
@@ -239,7 +239,7 @@ static void NET_SV_AssignPlayers(void)
         }
     }
 
-    for (; pl<MAXPLAYERS; ++pl)
+    for (; pl<NET_MAXPLAYERS; ++pl)
     {
         sv_players[pl] = NULL;
     }
@@ -254,7 +254,7 @@ static int NET_SV_NumPlayers(void)
 
     result = 0;
 
-    for (i=0; i<MAXPLAYERS; ++i)
+    for (i=0; i<NET_MAXPLAYERS; ++i)
     {
         if (sv_players[i] != NULL && ClientConnected(sv_players[i]))
         {
@@ -354,7 +354,7 @@ static void NET_SV_AdvanceWindow(void)
         
         should_advance = true;
 
-        for (i=0; i<MAXPLAYERS; ++i)
+        for (i=0; i<NET_MAXPLAYERS; ++i)
         {
             if (sv_players[i] == NULL || !ClientConnected(sv_players[i]))
             {
@@ -599,7 +599,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         NET_SV_AssignPlayers();
         num_players = NET_SV_NumPlayers();
 
-        if ((!data.drone && num_players >= MAXPLAYERS)
+        if ((!data.drone && num_players >= NET_MAXPLAYERS)
          || NET_SV_NumClients() >= MAXNETNODES)
         {
             NET_SV_SendReject(addr, "Server is full!");
@@ -694,7 +694,7 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
 
     settings.lowres_turn = false;
 
-    for (i=0; i<MAXPLAYERS; ++i)
+    for (i=0; i<NET_MAXPLAYERS; ++i)
     {
         if (sv_players[i] != NULL && sv_players[i]->recording_lowres)
         {
@@ -706,7 +706,7 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
 
     // Copy player classes:
 
-    for (i = 0; i < MAXPLAYERS; ++i)
+    for (i = 0; i < NET_MAXPLAYERS; ++i)
     {
         if (sv_players[i] != NULL)
         {
@@ -1120,7 +1120,7 @@ void NET_SV_SendQueryResponse(net_addr_t *addr)
     // Number of players/maximum players
 
     querydata.num_players = NET_SV_NumPlayers();
-    querydata.max_players = MAXPLAYERS;
+    querydata.max_players = NET_MAXPLAYERS;
 
     // Game mode/mission
 
@@ -1234,71 +1234,58 @@ static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
 
 static void NET_SV_SendWaitingData(net_client_t *client)
 {
+    net_waitdata_t wait_data;
     net_packet_t *packet;
     net_client_t *controller;
-    int num_players;
     int i;
 
     NET_SV_AssignPlayers();
 
     controller = NET_SV_Controller();
 
-    num_players = NET_SV_NumPlayers();
-
-    // time to send the client another status packet
-
-    packet = NET_NewPacket(10);
-    NET_WriteInt16(packet, NET_PACKET_TYPE_WAITING_DATA);
-
-    // include the number of players waiting
-
-    NET_WriteInt8(packet, num_players);
-
-    // send the number of drone clients
-
-    NET_WriteInt8(packet, NET_SV_NumDrones());
-
-    // indicate whether the client is the controller
-
-    NET_WriteInt8(packet, client == controller);
-
-    // send the player number of this client
-
-    NET_WriteInt8(packet, client->player_number);
-
-    // send the addresses of all players
-
-    for (i=0; i<num_players; ++i)
-    {
-        char *addr;
-
-        // name
-
-        NET_WriteString(packet, sv_players[i]->name);
-
-        // address
-
-        addr = NET_AddrToString(sv_players[i]->addr);
-
-        NET_WriteString(packet, addr);
-    }
+    wait_data.num_players = NET_SV_NumPlayers();
+    wait_data.num_drones = NET_SV_NumDrones();
+    wait_data.max_players = NET_MAXPLAYERS;
+    wait_data.is_controller = (client == controller);
+    wait_data.consoleplayer = client->player_number;
 
     // Send the WAD and dehacked checksums of the controlling client.
+    // If no controller found (?), send the details that the client
+    // is expecting anyway.
 
     if (controller != NULL)
     {
-        NET_WriteMD5Sum(packet, controller->wad_md5sum);
-        NET_WriteMD5Sum(packet, controller->deh_md5sum);
-        NET_WriteInt8(packet, controller->is_freedoom);
-    }
-    else
-    {
-        NET_WriteMD5Sum(packet, client->wad_md5sum);
-        NET_WriteMD5Sum(packet, client->deh_md5sum);
-        NET_WriteInt8(packet, client->is_freedoom);
+        controller = client;
     }
 
-    // send packet to client and free
+    memcpy(&wait_data.wad_md5sum, &controller->wad_md5sum,
+           sizeof(md5_digest_t));
+    memcpy(&wait_data.deh_md5sum, &controller->deh_md5sum,
+           sizeof(md5_digest_t));
+    wait_data.is_freedoom = controller->is_freedoom;
+
+    // set name and address of each player:
+
+    for (i = 0; i < wait_data.num_players; ++i)
+    {
+        strncpy(wait_data.player_names[i],
+                sv_players[i]->name,
+                MAXPLAYERNAME);
+        wait_data.player_names[i][MAXPLAYERNAME-1] = '\0';
+
+        strncpy(wait_data.player_addrs[i],
+                NET_AddrToString(sv_players[i]->addr),
+                MAXPLAYERNAME);
+        wait_data.player_addrs[i][MAXPLAYERNAME-1] = '\0';
+    }
+
+    // Construct packet:
+
+    packet = NET_NewPacket(10);
+    NET_WriteInt16(packet, NET_PACKET_TYPE_WAITING_DATA);
+    NET_WriteWaitData(packet, &wait_data);
+
+    // Send packet to client and free
 
     NET_Conn_SendPacket(&client->connection, packet);
     NET_FreePacket(packet);
@@ -1334,7 +1321,7 @@ static void NET_SV_PumpSendQueue(net_client_t *client)
 
     num_players = 0;
 
-    for (i=0; i<MAXPLAYERS; ++i)
+    for (i=0; i<NET_MAXPLAYERS; ++i)
     {
         if (sv_players[i] == client)
         {
@@ -1380,7 +1367,7 @@ static void NET_SV_PumpSendQueue(net_client_t *client)
 
     cmd.latency = 0;
 
-    for (i=0; i<MAXPLAYERS; ++i)
+    for (i=0; i<NET_MAXPLAYERS; ++i)
     {
         net_client_recv_t *recvobj;
 
@@ -1660,7 +1647,7 @@ void NET_SV_Run(void)
     {
         NET_SV_AdvanceWindow();
 
-        for (i=0; i<MAXPLAYERS; ++i)
+        for (i=0; i<NET_MAXPLAYERS; ++i)
         {
             if (sv_players[i] != NULL && ClientConnected(sv_players[i]))
             {

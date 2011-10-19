@@ -42,8 +42,8 @@
 #include "textscreen.h"
 
 static txt_window_t *window;
-static txt_label_t *player_labels[MAXPLAYERS];
-static txt_label_t *ip_labels[MAXPLAYERS];
+static txt_label_t *player_labels[NET_MAXPLAYERS];
+static txt_label_t *ip_labels[NET_MAXPLAYERS];
 static txt_label_t *drone_label;
 static boolean had_warning;
 
@@ -83,7 +83,7 @@ static void BuildGUI(void)
 
     // Player labels
     
-    for (i=0; i<MAXPLAYERS; ++i)
+    for (i=0; i<NET_MAXPLAYERS; ++i)
     {
         sprintf(buf, " %i. ", i + 1);
         TXT_AddWidget(table, TXT_NewLabel(buf));
@@ -109,11 +109,11 @@ static void UpdateGUI(net_gamesettings_t *settings)
     char buf[50];
     unsigned int i;
 
-    for (i=0; i<MAXPLAYERS; ++i)
+    for (i=0; i<NET_MAXPLAYERS; ++i)
     {
         txt_color_t color = TXT_COLOR_BRIGHT_WHITE;
 
-        if ((signed) i == net_player_number)
+        if ((signed) i == net_client_wait_data.consoleplayer)
         {
             color = TXT_COLOR_YELLOW;
         }
@@ -121,10 +121,12 @@ static void UpdateGUI(net_gamesettings_t *settings)
         TXT_SetFGColor(player_labels[i], color);
         TXT_SetFGColor(ip_labels[i], color);
 
-        if (i < net_clients_in_game)
+        if (i < net_client_wait_data.num_players)
         {
-            TXT_SetLabel(player_labels[i], net_player_names[i]);
-            TXT_SetLabel(ip_labels[i], net_player_addresses[i]);
+            TXT_SetLabel(player_labels[i],
+                         net_client_wait_data.player_names[i]);
+            TXT_SetLabel(ip_labels[i],
+                         net_client_wait_data.player_addrs[i]);
         }
         else
         {
@@ -133,9 +135,10 @@ static void UpdateGUI(net_gamesettings_t *settings)
         }
     }
 
-    if (net_drones_in_game > 0)
+    if (net_client_wait_data.num_drones > 0)
     {
-        sprintf(buf, " (+%i observer clients)", net_drones_in_game);
+        sprintf(buf, " (+%i observer clients)",
+                     net_client_wait_data.num_drones);
         TXT_SetLabel(drone_label, buf);
     }
     else
@@ -143,7 +146,7 @@ static void UpdateGUI(net_gamesettings_t *settings)
         TXT_SetLabel(drone_label, "");
     }
 
-    if (net_client_controller)
+    if (net_client_wait_data.is_controller)
     {
         startgame = TXT_NewWindowAction(' ', "Start game");
         TXT_SignalConnect(startgame, "pressed", StartGame, settings);
@@ -181,11 +184,13 @@ static void CheckMD5Sums(void)
         return;
     }
 
-    correct_wad = memcmp(net_local_wad_md5sum, net_server_wad_md5sum, 
+    correct_wad = memcmp(net_local_wad_md5sum,
+                         net_client_wait_data.wad_md5sum, 
                          sizeof(md5_digest_t)) == 0;
-    correct_deh = memcmp(net_local_deh_md5sum, net_server_deh_md5sum, 
+    correct_deh = memcmp(net_local_deh_md5sum,
+                         net_client_wait_data.deh_md5sum, 
                          sizeof(md5_digest_t)) == 0;
-    same_freedoom = net_server_is_freedoom == net_local_is_freedoom;
+    same_freedoom = net_client_wait_data.is_freedoom == net_local_is_freedoom;
 
     if (correct_wad && correct_deh && same_freedoom)
     {
@@ -196,7 +201,7 @@ static void CheckMD5Sums(void)
     {
         printf("Warning: WAD MD5 does not match server:\n");
         PrintMD5Digest("Local", net_local_wad_md5sum);
-        PrintMD5Digest("Server", net_server_wad_md5sum);
+        PrintMD5Digest("Server", net_client_wait_data.wad_md5sum);
     }
 
     if (!same_freedoom)
@@ -204,14 +209,14 @@ static void CheckMD5Sums(void)
         printf("Warning: Mixing Freedoom with non-Freedoom\n");
         printf("Local: %i  Server: %i\n", 
                net_local_is_freedoom, 
-               net_server_is_freedoom);
+               net_client_wait_data.is_freedoom);
     }
 
     if (!correct_deh)
     {
         printf("Warning: Dehacked MD5 does not match server:\n");
         PrintMD5Digest("Local", net_local_deh_md5sum);
-        PrintMD5Digest("Server", net_server_deh_md5sum);
+        PrintMD5Digest("Server", net_client_wait_data.deh_md5sum);
     }
 
     window = TXT_NewWindow("WARNING");
@@ -295,4 +300,3 @@ void NET_WaitForStart(net_gamesettings_t *settings)
     
     TXT_Shutdown();
 }
-

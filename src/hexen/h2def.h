@@ -98,6 +98,7 @@
 */
 
 //#define NUMARTIFCTS   28
+#define MAXPLAYERS	8
 
 #define	BT_ATTACK		1
 #define	BT_USE			2

@@ -1815,6 +1815,7 @@ void G_DoPlayDemo(void)
         playeringame[i] = *demo_p++;
         PlayerClass[i] = *demo_p++;
     }
+    demo_p += 8;
 
     // Initialize world info, etc.
     G_StartNewInit();

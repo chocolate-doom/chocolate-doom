@@ -118,36 +118,7 @@ boolean net_client_connected;
 
 boolean net_client_received_wait_data;
 
-// if true, this client is the controller of the game
-
-boolean net_client_controller = false;
-
-// Number of clients currently connected to the server
-
-unsigned int net_clients_in_game;
-
-// Number of drone players connected to the server
-
-unsigned int net_drones_in_game;
-
-// Names of all players
-
-char net_player_addresses[MAXPLAYERS][MAXPLAYERNAME];
-char net_player_names[MAXPLAYERS][MAXPLAYERNAME];
-
-// MD5 checksums of the wad directory and dehacked data that the server
-// has sent to us.
-
-md5_digest_t net_server_wad_md5sum;
-md5_digest_t net_server_deh_md5sum;
-
-// Is the server a freedoom game?
-
-unsigned int net_server_is_freedoom;
-
-// Player number
-
-int net_player_number;
+net_waitdata_t net_client_wait_data;
 
 // Waiting for the game to start?
 
@@ -171,7 +142,7 @@ static net_server_send_t send_queue[BACKUPTICS];
 
 // Receive window
 
-static ticcmd_t recvwindow_cmd_base[MAXPLAYERS];
+static ticcmd_t recvwindow_cmd_base[NET_MAXPLAYERS];
 static int recvwindow_start;
 static net_server_recv_t recvwindow[BACKUPTICS];
 
@@ -269,7 +240,7 @@ static void NET_CL_ExpandFullTiccmd(net_full_ticcmd_t *cmd, unsigned int seq,
 
     // Expand tic diffs for all players
     
-    for (i=0; i<MAXPLAYERS; ++i)
+    for (i=0; i<NET_MAXPLAYERS; ++i)
     {
         if (i == settings.consoleplayer && !drone)
         {
@@ -298,7 +269,7 @@ static void NET_CL_ExpandFullTiccmd(net_full_ticcmd_t *cmd, unsigned int seq,
 
 static void NET_CL_AdvanceWindow(void)
 {
-    ticcmd_t ticcmds[MAXPLAYERS];
+    ticcmd_t ticcmds[NET_MAXPLAYERS];
 
     while (recvwindow[0].active)
     {
@@ -456,79 +427,32 @@ void NET_CL_SendTiccmd(ticcmd_t *ticcmd, int maketic)
 
 static void NET_CL_ParseWaitingData(net_packet_t *packet)
 {
-    unsigned int num_players;
-    unsigned int num_drones;
-    unsigned int is_controller;
-    signed int player_number;
-    char *player_names[MAXPLAYERS];
-    char *player_addr[MAXPLAYERS];
-    md5_digest_t wad_md5sum, deh_md5sum;
-    unsigned int server_is_freedoom;
-    size_t i;
+    net_waitdata_t wait_data;
 
-    if (!NET_ReadInt8(packet, &num_players)
-     || !NET_ReadInt8(packet, &num_drones)
-     || !NET_ReadInt8(packet, &is_controller)
-     || !NET_ReadSInt8(packet, &player_number))
+    if (!NET_ReadWaitData(packet, &wait_data))
     {
-        // invalid packet
-
+        // Invalid packet?
         return;
     }
 
-    if (num_players > MAXPLAYERS)
+    if (wait_data.num_players > wait_data.max_players
+     || wait_data.max_players > NET_MAXPLAYERS)
     {
         // insane data
 
         return;
     }
 
-    if ((player_number >= 0 && drone)
-     || (player_number < 0 && !drone)
-     || (player_number >= (signed int) num_players))
+    if ((wait_data.consoleplayer >= 0 && drone)
+     || (wait_data.consoleplayer < 0 && !drone)
+     || (wait_data.consoleplayer >= wait_data.num_players))
     {
         // Invalid player number
 
         return;
     }
- 
-    // Read the player names
 
-    for (i=0; i<num_players; ++i)
-    {
-        player_names[i] = NET_ReadString(packet);
-        player_addr[i] = NET_ReadString(packet);
-
-        if (player_names[i] == NULL || player_addr[i] == NULL)
-        {
-            return;
-        }
-    }
-
-    if (!NET_ReadMD5Sum(packet, wad_md5sum)
-     || !NET_ReadMD5Sum(packet, deh_md5sum)
-     || !NET_ReadInt8(packet, &server_is_freedoom))
-    {
-        return;
-    }
-
-    net_clients_in_game = num_players;
-    net_drones_in_game = num_drones;
-    net_client_controller = is_controller != 0;
-    net_player_number = player_number;
-
-    for (i=0; i<num_players; ++i)
-    {
-        strncpy(net_player_names[i], player_names[i], MAXPLAYERNAME);
-        net_player_names[i][MAXPLAYERNAME-1] = '\0';
-        strncpy(net_player_addresses[i], player_addr[i], MAXPLAYERNAME);
-        net_player_addresses[i][MAXPLAYERNAME-1] = '\0';
-    }
-
-    memcpy(net_server_wad_md5sum, wad_md5sum, sizeof(md5_digest_t));
-    memcpy(net_server_deh_md5sum, deh_md5sum, sizeof(md5_digest_t));
-    net_server_is_freedoom = server_is_freedoom;
-
+    memcpy(&net_client_wait_data, &wait_data, sizeof(net_waitdata_t));
     net_client_received_wait_data = true;
 }
 
@@ -544,7 +468,7 @@ static void NET_CL_ParseGameStart(net_packet_t *packet)
         return;
     }
 
-    if (settings.num_players > MAXPLAYERS
+    if (settings.num_players > NET_MAXPLAYERS
      || settings.consoleplayer >= (signed int) settings.num_players)
     {
         // insane values

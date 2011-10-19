@@ -47,6 +47,9 @@
 #define DOOM_191_VERSION 111
 
 
+// Maximum players for Strife:
+#define MAXPLAYERS 8
+
 // If rangecheck is undefined,
 // most parameter validation debugging code will not be compiled
 #define RANGECHECK
@@ -294,4 +297,3 @@ typedef enum
 } powerduration_t;
 
 #endif          // __DOOMDEF__
-

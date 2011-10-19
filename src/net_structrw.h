@@ -46,7 +46,9 @@ void NET_WriteFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd, boolean l
 boolean NET_ReadMD5Sum(net_packet_t *packet, md5_digest_t digest);
 void NET_WriteMD5Sum(net_packet_t *packet, md5_digest_t digest);
 
+void NET_WriteWaitData(net_packet_t *packet, net_waitdata_t *data);
+boolean NET_ReadWaitData(net_packet_t *packet, net_waitdata_t *data);
+
 void NET_SafePuts(char *msg);
 
 #endif /* #ifndef NET_STRUCTRW_H */
-

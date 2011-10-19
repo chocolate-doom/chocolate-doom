@@ -52,8 +52,8 @@
 
 typedef struct
 {
-    ticcmd_t cmds[MAXPLAYERS];
-    boolean ingame[MAXPLAYERS];
+    ticcmd_t cmds[NET_MAXPLAYERS];
+    boolean ingame[NET_MAXPLAYERS];
 } ticcmd_set_t;
 
 //
@@ -113,7 +113,7 @@ static loop_interface_t *loop_interface = NULL;
 // This is distinct from playeringame[] used by the game code, which may
 // modify playeringame[] when playing back multiplayer demos.
 
-static boolean local_playeringame[MAXPLAYERS];
+static boolean local_playeringame[NET_MAXPLAYERS];
 
 
 // 35 fps clock adjusted by offsetms milliseconds
@@ -282,7 +282,7 @@ void D_ReceiveTic(ticcmd_t *ticcmds, boolean *players_mask)
         return;
     }
 
-    for (i = 0; i < MAXPLAYERS; ++i)
+    for (i = 0; i < NET_MAXPLAYERS; ++i)
     {
         if (!drone && i == localplayer)
         {
@@ -457,7 +457,7 @@ boolean D_InitNetGame(net_connect_data_t *connect_data,
 
     localplayer = settings->consoleplayer;
 
-    for (i = 0; i < MAXPLAYERS; ++i)
+    for (i = 0; i < NET_MAXPLAYERS; ++i)
     {
         local_playeringame[i] = i < settings->num_players;
     }
@@ -524,7 +524,7 @@ static void OldNetSync(void)
     // ideally maketic should be 1 - 3 tics above lowtic
     // if we are consistantly slower, speed up time
 
-    for (i=0 ; i<MAXPLAYERS ; i++)
+    for (i=0 ; i<NET_MAXPLAYERS ; i++)
     {
         if (local_playeringame[i])
         {
@@ -575,7 +575,7 @@ static boolean PlayersInGame(void)
 
     if (net_client_connected)
     {
-        for (i = 0; i < MAXPLAYERS; ++i)
+        for (i = 0; i < NET_MAXPLAYERS; ++i)
         {
             result = result || local_playeringame[i];
         }
@@ -600,7 +600,7 @@ static void TicdupSquash(ticcmd_set_t *set)
     ticcmd_t *cmd;
     unsigned int i;
 
-    for (i = 0; i < MAXPLAYERS ; ++i)
+    for (i = 0; i < NET_MAXPLAYERS ; ++i)
     {
         cmd = &set->cmds[i];
         cmd->chatchar = 0;
@@ -616,7 +616,7 @@ static void SinglePlayerClear(ticcmd_set_t *set)
 {
     unsigned int i;
 
-    for (i = 0; i < MAXPLAYERS; ++i)
+    for (i = 0; i < NET_MAXPLAYERS; ++i)
     {
         if (i != localplayer)
         {
@@ -750,4 +750,3 @@ void D_RegisterLoopCallbacks(loop_interface_t *i)
 {
     loop_interface = i;
 }
-

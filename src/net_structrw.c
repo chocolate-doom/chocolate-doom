@@ -31,34 +31,6 @@
 #include "net_packet.h"
 #include "net_structrw.h"
 
-static void NET_WriteMD5(net_packet_t *packet, md5_digest_t digest)
-{
-    int i;
-
-    for (i = 0; i < sizeof(md5_digest_t); ++i)
-    {
-        NET_WriteInt8(packet, digest[i]);
-    }
-}
-
-static boolean NET_ReadMD5(net_packet_t *packet, md5_digest_t digest)
-{
-    unsigned int val;
-    int i;
-
-    for (i = 0; i < sizeof(md5_digest_t); ++i)
-    {
-        if (!NET_ReadInt8(packet, &val))
-        {
-            return false;
-        }
-
-        digest[i] = (uint8_t) val;
-    }
-
-    return true;
-}
-
 void NET_WriteConnectData(net_packet_t *packet, net_connect_data_t *data)
 {
     NET_WriteInt8(packet, data->gamemode);
@@ -66,8 +38,8 @@ void NET_WriteConnectData(net_packet_t *packet, net_connect_data_t *data)
     NET_WriteInt8(packet, data->lowres_turn);
     NET_WriteInt8(packet, data->drone);
     NET_WriteInt8(packet, data->is_freedoom);
-    NET_WriteMD5(packet, data->wad_md5sum);
-    NET_WriteMD5(packet, data->deh_md5sum);
+    NET_WriteMD5Sum(packet, data->wad_md5sum);
+    NET_WriteMD5Sum(packet, data->deh_md5sum);
     NET_WriteInt8(packet, data->player_class);
 }
 
@@ -78,8 +50,8 @@ boolean NET_ReadConnectData(net_packet_t *packet, net_connect_data_t *data)
         && NET_ReadInt8(packet, (unsigned int *) &data->lowres_turn)
         && NET_ReadInt8(packet, (unsigned int *) &data->drone)
         && NET_ReadInt8(packet, (unsigned int *) &data->is_freedoom)
-        && NET_ReadMD5(packet, data->wad_md5sum)
-        && NET_ReadMD5(packet, data->deh_md5sum)
+        && NET_ReadMD5Sum(packet, data->wad_md5sum)
+        && NET_ReadMD5Sum(packet, data->deh_md5sum)
         && NET_ReadInt8(packet, (unsigned int *) &data->player_class);
 }
 
@@ -415,14 +387,14 @@ boolean NET_ReadFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd, boolean
         return false;
     }
           
-    for (i=0; i<MAXPLAYERS; ++i)
+    for (i=0; i<NET_MAXPLAYERS; ++i)
     {
         cmd->playeringame[i] = (bitfield & (1 << i)) != 0;
     }
         
     // Read cmds
 
-    for (i=0; i<MAXPLAYERS; ++i)
+    for (i=0; i<NET_MAXPLAYERS; ++i)
     {
         if (cmd->playeringame[i])
         {
@@ -450,7 +422,7 @@ void NET_WriteFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd, boolean l
 
     bitfield = 0;
     
-    for (i=0; i<MAXPLAYERS; ++i)
+    for (i=0; i<NET_MAXPLAYERS; ++i)
     {
         if (cmd->playeringame[i])
         {
@@ -462,13 +434,74 @@ void NET_WriteFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd, boolean l
 
     // Write player ticcmds
 
-    for (i=0; i<MAXPLAYERS; ++i)
+    for (i=0; i<NET_MAXPLAYERS; ++i)
     {
         if (cmd->playeringame[i])
         {
             NET_WriteTiccmdDiff(packet, &cmd->cmds[i], lowres_turn);
         }
     }
+}
+
+void NET_WriteWaitData(net_packet_t *packet, net_waitdata_t *data)
+{
+    int i;
+
+    NET_WriteInt8(packet, data->num_players);
+    NET_WriteInt8(packet, data->num_drones);
+    NET_WriteInt8(packet, data->max_players);
+    NET_WriteInt8(packet, data->is_controller);
+    NET_WriteInt8(packet, data->consoleplayer);
+
+    for (i = 0; i < data->num_players && i < NET_MAXPLAYERS; ++i)
+    {
+        NET_WriteString(packet, data->player_names[i]);
+        NET_WriteString(packet, data->player_addrs[i]);
+    }
+
+    NET_WriteMD5Sum(packet, data->wad_md5sum);
+    NET_WriteMD5Sum(packet, data->deh_md5sum);
+    NET_WriteInt8(packet, data->is_freedoom);
+}
+
+boolean NET_ReadWaitData(net_packet_t *packet, net_waitdata_t *data)
+{
+    int i;
+    char *s;
+
+    if (!NET_ReadInt8(packet, (unsigned int *) &data->num_players)
+     || !NET_ReadInt8(packet, (unsigned int *) &data->num_drones)
+     || !NET_ReadInt8(packet, (unsigned int *) &data->max_players)
+     || !NET_ReadInt8(packet, (unsigned int *) &data->is_controller)
+     || !NET_ReadSInt8(packet, (unsigned int *) &data->consoleplayer))
+    {
+        return false;
+    }
+
+    for (i = 0; i < data->num_players && i < NET_MAXPLAYERS; ++i)
+    {
+        s = NET_ReadString(packet);
+
+        if (s == NULL || strlen(s) >= MAXPLAYERNAME)
+        {
+            return false;
+        }
+
+        strcpy(data->player_names[i], s);
+
+        s = NET_ReadString(packet);
+
+        if (s == NULL || strlen(s) >= MAXPLAYERNAME)
+        {
+            return false;
+        }
+
+        strcpy(data->player_addrs[i], s);
+    }
+
+    return NET_ReadMD5Sum(packet, data->wad_md5sum)
+        && NET_ReadMD5Sum(packet, data->deh_md5sum)
+        && NET_ReadInt8(packet, (unsigned int *) &data->is_freedoom);
 }
 
 boolean NET_ReadMD5Sum(net_packet_t *packet, md5_digest_t digest)
