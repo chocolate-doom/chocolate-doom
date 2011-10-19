@@ -42,6 +42,7 @@
 #include "textscreen.h"
 
 static txt_window_t *window;
+static int old_max_players;
 static txt_label_t *player_labels[NET_MAXPLAYERS];
 static txt_label_t *ip_labels[NET_MAXPLAYERS];
 static txt_label_t *drone_label;
@@ -60,18 +61,31 @@ static void StartGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(settings))
     NET_CL_StartGame(settings);
 }
 
-static void BuildGUI(void)
+static void OpenWaitDialog(void)
+{
+    txt_window_action_t *cancel;
+
+    TXT_SetDesktopTitle(PACKAGE_STRING);
+
+    window = TXT_NewWindow("Waiting for game start...");
+
+    TXT_AddWidget(window, TXT_NewLabel("\nPlease wait...\n\n"));
+
+    cancel = TXT_NewWindowAction(KEY_ESCAPE, "Cancel");
+    TXT_SignalConnect(cancel, "pressed", EscapePressed, NULL);
+
+    TXT_SetWindowAction(window, TXT_HORIZ_LEFT, cancel);
+
+    old_max_players = 0;
+}
+
+static void BuildWindow(void)
 {
     char buf[50];
     txt_table_t *table;
-    txt_window_action_t *cancel;
     int i;
-    
-    had_warning = false;
 
-    TXT_SetDesktopTitle(PACKAGE_STRING);
-    
-    window = TXT_NewWindow("Waiting for game start...");
+    TXT_ClearTable(window);
     table = TXT_NewTable(3);
     TXT_AddWidget(window, table);
 
@@ -82,8 +96,8 @@ static void BuildGUI(void)
     TXT_AddWidget(table, TXT_NewStrut(17, 1));
 
     // Player labels
-    
-    for (i=0; i<NET_MAXPLAYERS; ++i)
+
+    for (i = 0; i < net_client_wait_data.max_players; ++i)
     {
         sprintf(buf, " %i. ", i + 1);
         TXT_AddWidget(table, TXT_NewLabel(buf));
@@ -96,11 +110,6 @@ static void BuildGUI(void)
     drone_label = TXT_NewLabel("");
 
     TXT_AddWidget(window, drone_label);
-
-    cancel = TXT_NewWindowAction(KEY_ESCAPE, "Cancel");
-    TXT_SignalConnect(cancel, "pressed", EscapePressed, NULL);
-
-    TXT_SetWindowAction(window, TXT_HORIZ_LEFT, cancel);
 }
 
 static void UpdateGUI(net_gamesettings_t *settings)
@@ -109,7 +118,23 @@ static void UpdateGUI(net_gamesettings_t *settings)
     char buf[50];
     unsigned int i;
 
-    for (i=0; i<NET_MAXPLAYERS; ++i)
+    // If the value of max_players changes, we must rebuild the
+    // contents of the window. This includes when the first
+    // waiting data packet is received.
+
+    if (net_client_received_wait_data)
+    {
+        if (net_client_wait_data.max_players != old_max_players)
+        {
+            BuildWindow();
+        }
+    }
+    else
+    {
+        return;
+    }
+
+    for (i = 0; i < net_client_wait_data.max_players; ++i)
     {
         txt_color_t color = TXT_COLOR_BRIGHT_WHITE;
 
@@ -277,7 +302,8 @@ void NET_WaitForStart(net_gamesettings_t *settings)
     I_SetWindowTitle("Waiting for game start");
     //I_SetWindowIcon();
 
-    BuildGUI();
+    OpenWaitDialog();
+    had_warning = false;
 
     while (net_waiting_for_start)
     {

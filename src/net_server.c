@@ -93,6 +93,10 @@ typedef struct
 
     unsigned int acknowledged;
 
+    // Value of max_players specified by the client on connect.
+
+    int max_players;
+
     // Observer: receives data but does not participate in the game.
 
     boolean drone;
@@ -263,6 +267,23 @@ static int NET_SV_NumPlayers(void)
     }
 
     return result;
+}
+
+// Returns the maximum number of players that can play.
+
+static int NET_SV_MaxPlayers(void)
+{
+    int i;
+
+    for (i = 0; i < MAXNETNODES; ++i)
+    {
+        if (ClientConnected(&clients[i]))
+        {
+            return clients[i].max_players;
+        }
+    }
+
+    return NET_MAXPLAYERS;
 }
 
 // Returns the number of drones currently connected.
@@ -537,6 +558,13 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         return;
     }
 
+    // Check max_players value. This must be in a sensible range.
+
+    if (data.max_players > NET_MAXPLAYERS)
+    {
+        return;
+    }
+
     // read the player's name
 
     player_name = NET_ReadString(packet);
@@ -599,7 +627,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         NET_SV_AssignPlayers();
         num_players = NET_SV_NumPlayers();
 
-        if ((!data.drone && num_players >= NET_MAXPLAYERS)
+        if ((!data.drone && num_players >= NET_SV_MaxPlayers())
          || NET_SV_NumClients() >= MAXNETNODES)
         {
             NET_SV_SendReject(addr, "Server is full!");
@@ -623,6 +651,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         memcpy(client->wad_md5sum, data.wad_md5sum, sizeof(md5_digest_t));
         memcpy(client->deh_md5sum, data.deh_md5sum, sizeof(md5_digest_t));
         client->is_freedoom = data.is_freedoom;
+        client->max_players = data.max_players;
 
         // Check the connecting client is playing the same game as all
         // the other clients
@@ -632,7 +661,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
             NET_SV_SendReject(addr, "You are playing the wrong game!");
             return;
         }
-        
+
         // Activate, initialize connection
 
         NET_SV_InitNewClient(client, addr, player_name);
@@ -1120,7 +1149,7 @@ void NET_SV_SendQueryResponse(net_addr_t *addr)
     // Number of players/maximum players
 
     querydata.num_players = NET_SV_NumPlayers();
-    querydata.max_players = NET_MAXPLAYERS;
+    querydata.max_players = NET_SV_MaxPlayers();
 
     // Game mode/mission
 
@@ -1245,7 +1274,7 @@ static void NET_SV_SendWaitingData(net_client_t *client)
 
     wait_data.num_players = NET_SV_NumPlayers();
     wait_data.num_drones = NET_SV_NumDrones();
-    wait_data.max_players = NET_MAXPLAYERS;
+    wait_data.max_players = NET_SV_MaxPlayers();
     wait_data.is_controller = (client == controller);
     wait_data.consoleplayer = client->player_number;
 

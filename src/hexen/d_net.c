@@ -167,7 +167,6 @@ static void SaveGameSettings(net_gamesettings_t *settings,
     settings->nomonsters = nomonsters;
     settings->respawn_monsters = respawnparm;
     settings->timelimit = 0;
-
     settings->lowres_turn = false;
 
     //
@@ -181,6 +180,7 @@ static void SaveGameSettings(net_gamesettings_t *settings,
 
     connect_data->lowres_turn = false;
     connect_data->drone = false;
+    connect_data->max_players = MAXPLAYERS;
 
     //!
     // @category net

@@ -174,6 +174,7 @@ static void SaveGameSettings(net_gamesettings_t *settings,
                          && M_CheckParm("-longtics") == 0;
 
     connect_data->drone = false;
+    connect_data->max_players = MAXPLAYERS;
 
     //!
     // @category net

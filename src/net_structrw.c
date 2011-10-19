@@ -37,6 +37,7 @@ void NET_WriteConnectData(net_packet_t *packet, net_connect_data_t *data)
     NET_WriteInt8(packet, data->gamemission);
     NET_WriteInt8(packet, data->lowres_turn);
     NET_WriteInt8(packet, data->drone);
+    NET_WriteInt8(packet, data->max_players);
     NET_WriteInt8(packet, data->is_freedoom);
     NET_WriteMD5Sum(packet, data->wad_md5sum);
     NET_WriteMD5Sum(packet, data->deh_md5sum);
@@ -49,6 +50,7 @@ boolean NET_ReadConnectData(net_packet_t *packet, net_connect_data_t *data)
         && NET_ReadInt8(packet, (unsigned int *) &data->gamemission)
         && NET_ReadInt8(packet, (unsigned int *) &data->lowres_turn)
         && NET_ReadInt8(packet, (unsigned int *) &data->drone)
+        && NET_ReadInt8(packet, (unsigned int *) &data->max_players)
         && NET_ReadInt8(packet, (unsigned int *) &data->is_freedoom)
         && NET_ReadMD5Sum(packet, data->wad_md5sum)
         && NET_ReadMD5Sum(packet, data->deh_md5sum)

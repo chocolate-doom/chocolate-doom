@@ -151,6 +151,7 @@ typedef struct
     int gamemission;
     int lowres_turn;
     int drone;
+    int max_players;
     int is_freedoom;
     md5_digest_t wad_md5sum;
     md5_digest_t deh_md5sum;
