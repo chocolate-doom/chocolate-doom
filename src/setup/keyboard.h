@@ -25,5 +25,6 @@
 void ConfigKeyboard(void);
 void BindKeyboardVariables(void);
 
-#endif /* #ifndef SETUP_KEYBOARD_H */
+extern int vanilla_keyboard_mapping;
 
+#endif /* #ifndef SETUP_KEYBOARD_H */

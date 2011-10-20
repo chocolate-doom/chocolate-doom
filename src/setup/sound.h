@@ -25,5 +25,6 @@
 void ConfigSound(void);
 void BindSoundVariables(void);
 
-#endif /* #ifndef SETUP_SOUND_H */
+extern int snd_musicdevice;
 
+#endif /* #ifndef SETUP_SOUND_H */

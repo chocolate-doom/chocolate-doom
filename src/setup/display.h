@@ -26,5 +26,7 @@ void ConfigDisplay(void);
 void SetDisplayDriver(void);
 void BindDisplayVariables(void);
 
-#endif /* #ifndef SETUP_DISPLAY_H */
+extern int show_endoom;
+extern int graphical_startup;
 
+#endif /* #ifndef SETUP_DISPLAY_H */

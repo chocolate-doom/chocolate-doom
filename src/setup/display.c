@@ -109,9 +109,10 @@ static int screen_width = 320;
 static int screen_height = 200;
 static int screen_bpp = 8;
 static int startup_delay = 1000;
-static int graphical_startup = 1;
-static int show_endoom = 1;
 static int usegamma = 0;
+
+int graphical_startup = 1;
+int show_endoom = 1;
 
 // These are the last screen width/height values that were chosen by the
 // user.  These are used when finding the "nearest" mode, so when 
@@ -824,4 +825,3 @@ void BindDisplayVariables(void)
     }
 #endif
 }
-

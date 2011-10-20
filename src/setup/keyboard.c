@@ -31,7 +31,7 @@
 #include "joystick.h"
 #include "keyboard.h"
 
-static int vanilla_keyboard_mapping = 1;
+int vanilla_keyboard_mapping = 1;
 
 static int always_run = 0;
 
@@ -385,4 +385,3 @@ void BindKeyboardVariables(void)
 {
     M_BindVariable("vanilla_keyboard_mapping", &vanilla_keyboard_mapping);
 }
-

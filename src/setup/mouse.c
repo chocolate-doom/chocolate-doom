@@ -34,11 +34,12 @@
 
 static int usemouse = 1;
 
-static int novert = 0;
 static int mouseSensitivity = 5;
 static float mouse_acceleration = 2.0;
 static int mouse_threshold = 10;
 static int grabmouse = 1;
+
+int novert = 0;
 
 static int *all_mouse_buttons[] = {
     &mousebfire,
@@ -166,4 +167,3 @@ void BindMouseVariables(void)
     M_BindVariable("mouse_threshold",      &mouse_threshold);
     M_BindVariable("grabmouse",            &grabmouse);
 }
-

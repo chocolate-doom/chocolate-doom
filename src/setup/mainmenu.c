@@ -34,6 +34,7 @@
 
 #include "m_argv.h"
 #include "m_config.h"
+#include "m_controls.h"
 
 #include "setup_icon.c"
 #include "mode.h"
@@ -59,12 +60,22 @@ static unsigned int cheat_sequence_index = 0;
 
 static void SensibleDefaults(void)
 {
-#if 0
-    // TODO for raven-branch
     key_up = 'w';
     key_down = 's';
     key_strafeleft = 'a';
     key_straferight = 'd';
+    key_jump = '/';
+    key_lookup = KEY_PGUP;
+    key_lookdown = KEY_PGDN;
+    key_lookcenter = KEY_HOME;
+    key_flyup = KEY_INS;
+    key_flydown = KEY_DEL;
+    key_flycenter = KEY_END;
+    key_prevweapon = ',';
+    key_nextweapon = '.';
+    key_invleft = '[';
+    key_invright = ']';
+    key_message_refresh = KEY_ENTER;
     mousebprevweapon = 4;
     mousebnextweapon = 3;
     snd_musicdevice = 3;
@@ -72,10 +83,10 @@ static void SensibleDefaults(void)
     vanilla_savegame_limit = 0;
     vanilla_keyboard_mapping = 0;
     vanilla_demo_limit = 0;
+    graphical_startup = 0;
     show_endoom = 0;
     dclick_use = 0;
     novert = 1;
-#endif
 }
 
 static int MainMenuKeyPress(txt_window_t *window, int key, void *user_data)
@@ -348,4 +359,3 @@ void D_DoomMain(void)
 
     RunGUI();
 }
-
