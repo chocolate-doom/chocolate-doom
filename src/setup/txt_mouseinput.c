@@ -56,21 +56,11 @@ static int MousePressCallback(txt_window_t *window,
 static void OpenPromptWindow(txt_mouse_input_t *mouse_input)
 {
     txt_window_t *window;
-    txt_label_t *label;
 
     // Silently update when the shift key is held down.
     mouse_input->check_conflicts = !TXT_GetModifierState(TXT_MOD_SHIFT);
 
-    window = TXT_NewWindow(NULL);
-    TXT_SetWindowAction(window, TXT_HORIZ_LEFT, NULL);
-    TXT_SetWindowAction(window, TXT_HORIZ_CENTER, 
-                        TXT_NewWindowAbortAction(window));
-    TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, NULL);
-    
-    label = TXT_NewLabel("Press the new mouse button...");
-
-    TXT_AddWidget(window, label);
-    TXT_SetWidgetAlign(label, TXT_HORIZ_CENTER);
+    window = TXT_MessageBox(NULL, "Press the new mouse button...");
 
     TXT_SetMouseListener(window, MousePressCallback, mouse_input);
 }

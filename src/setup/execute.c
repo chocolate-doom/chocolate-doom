@@ -370,14 +370,10 @@ static void TestCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
     char *main_cfg;
     char *extra_cfg;
     txt_window_t *testwindow;
-    txt_label_t *label;
 
-    testwindow = TXT_NewWindow("Starting Doom");
-
-    label = TXT_NewLabel("Starting Doom to test the\n"
-                         "settings.  Please wait.");
-    TXT_SetWidgetAlign(label, TXT_HORIZ_CENTER);
-    TXT_AddWidget(testwindow, label);
+    testwindow = TXT_MessageBox("Starting Doom",
+                                "Starting Doom to test the\n"
+                                "settings.  Please wait.");
     TXT_DrawDesktop();
 
     // Save temporary configuration files with the current configuration

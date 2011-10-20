@@ -70,22 +70,12 @@ static void ReleaseGrab(TXT_UNCAST_ARG(window), TXT_UNCAST_ARG(unused))
 static void OpenPromptWindow(txt_key_input_t *key_input)
 {
     txt_window_t *window;
-    txt_label_t *label;
 
     // Silently update when the shift button is held down.
 
     key_input->check_conflicts = !TXT_GetModifierState(TXT_MOD_SHIFT);
 
-    window = TXT_NewWindow(NULL);
-    TXT_SetWindowAction(window, TXT_HORIZ_LEFT, NULL);
-    TXT_SetWindowAction(window, TXT_HORIZ_CENTER, 
-                        TXT_NewWindowAbortAction(window));
-    TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, NULL);
-    
-    label = TXT_NewLabel("Press the new key...");
-
-    TXT_AddWidget(window, label);
-    TXT_SetWidgetAlign(label, TXT_HORIZ_CENTER);
+    window = TXT_MessageBox(NULL, "Press the new key...");
 
     TXT_SetKeyListener(window, KeyPressCallback, key_input);
 

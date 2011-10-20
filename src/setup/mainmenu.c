@@ -100,9 +100,7 @@ static int MainMenuKeyPress(txt_window_t *window, int key, void *user_data)
             SensibleDefaults();
             cheat_sequence_index = 0;
 
-            window = TXT_NewWindow(NULL);
-            TXT_AddWidget(window, TXT_NewLabel("    \x01    "));
-            TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, NULL);
+            window = TXT_MessageBox(NULL, "    \x01    ");
 
             return 1;
         }

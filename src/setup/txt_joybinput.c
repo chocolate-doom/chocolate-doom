@@ -76,22 +76,12 @@ static void PromptWindowClosed(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(joystick))
 
 static void OpenErrorWindow(void)
 {
-    txt_window_t *window;
-
-    window = TXT_NewWindow(NULL);
-
-    TXT_AddWidget(window, TXT_NewLabel("Please configure a joystick first!"));
-
-    TXT_SetWindowAction(window, TXT_HORIZ_LEFT, NULL);
-    TXT_SetWindowAction(window, TXT_HORIZ_CENTER, 
-                        TXT_NewWindowEscapeAction(window));
-    TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, NULL);
+    TXT_MessageBox(NULL, "Please configure a joystick first!");
 }
 
 static void OpenPromptWindow(txt_joystick_input_t *joystick_input)
 {
     txt_window_t *window;
-    txt_label_t *label;
     SDL_Joystick *joystick;
 
     // Silently update when the shift button is held down.
@@ -115,16 +105,8 @@ static void OpenPromptWindow(txt_joystick_input_t *joystick_input)
 
     // Open the prompt window
 
-    window = TXT_NewWindow(NULL);
-    TXT_SetWindowAction(window, TXT_HORIZ_LEFT, NULL);
-    TXT_SetWindowAction(window, TXT_HORIZ_CENTER, 
-                        TXT_NewWindowAbortAction(window));
-    TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, NULL);
-    
-    label = TXT_NewLabel("Press the new joystick button...");
+    window = TXT_MessageBox(NULL, "Press the new joystick button...");
 
-    TXT_AddWidget(window, label);
-    TXT_SetWidgetAlign(label, TXT_HORIZ_CENTER);
     TXT_SDL_SetEventCallback(EventCallback, joystick_input);
     TXT_SignalConnect(window, "closed", PromptWindowClosed, joystick);
     joystick_input->prompt_window = window;
