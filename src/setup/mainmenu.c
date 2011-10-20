@@ -75,11 +75,14 @@ static void SensibleDefaults(void)
     key_nextweapon = '.';
     key_invleft = '[';
     key_invright = ']';
-    key_message_refresh = KEY_ENTER;
-    mousebprevweapon = 4;
+    key_message_refresh = '\'';
+    key_mission = 'i';              // Strife keys
+    key_invpop = 'o';
+    key_invkey = 'p';
+    mousebprevweapon = 4;           // Scroll wheel = weapon cycle
     mousebnextweapon = 3;
     snd_musicdevice = 3;
-    joybspeed = 29;
+    joybspeed = 29;                 // Always run
     vanilla_savegame_limit = 0;
     vanilla_keyboard_mapping = 0;
     vanilla_demo_limit = 0;

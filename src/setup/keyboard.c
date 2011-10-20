@@ -216,9 +216,9 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
             AddKeyControl(table, "End", &key_invend);
             AddKeyControl(table, "Query", &key_invquery);
             AddKeyControl(table, "Drop", &key_invdrop);
-            AddKeyControl(table, "PopWeap", &key_invpop);
-            AddKeyControl(table, "PopMiss", &key_mission);
-            AddKeyControl(table, "PopKey", &key_invkey);
+            AddKeyControl(table, "Show weapons", &key_invpop);
+            AddKeyControl(table, "Show mission", &key_mission);
+            AddKeyControl(table, "Show keys", &key_invkey);
             AddKeyControl(table, "Use", &key_invuse);
             AddKeyControl(table, "Use health", &key_usehealth);
         }
