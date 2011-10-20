@@ -259,12 +259,12 @@ void MainMenu(void)
 
 static void InitConfig(void)
 {
+    M_SetConfigDir(NULL);
     InitBindings();
 
     SetChatMacroDefaults();
     SetPlayerNameDefault();
 
-    M_SetConfigDir(NULL);
     M_LoadDefaults();
 }
 

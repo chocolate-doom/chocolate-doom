@@ -128,6 +128,20 @@ static void BindMiscVariables(void)
     {
         M_BindVariable("savedir",           &savedir);
         M_BindVariable("messageson",        &showMessages);
+
+        // Hexen has a variable to control the savegame directory
+        // that is used.
+
+        savedir = M_GetSaveGameDir("hexen.wad");
+
+        // On Windows, hexndata\ is the default.
+
+        if (!strcmp(savedir, ""))
+        {
+            free(savedir);
+            savedir = malloc(10);
+            sprintf(savedir, "hexndata%c", DIR_SEPARATOR);
+        }
     }
 
     if (gamemission == strife)
