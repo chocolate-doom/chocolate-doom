@@ -1686,8 +1686,19 @@ boolean M_Responder (event_t* ev)
     // "close" button pressed on window?
     if (ev->type == ev_quit)
     {
-        S_StartSound(NULL, sfx_swtchn);
-        M_QuitStrife(0);
+        // First click on close button = bring up quit confirm message.
+        // Second click on close button = confirm quit
+
+        if (menuactive && messageToPrint && messageRoutine == M_QuitResponse)
+        {
+            M_QuitResponse(key_menu_confirm);
+        }
+        else
+        {
+            S_StartSound(NULL, sfx_swtchn);
+            M_QuitStrife(0);
+        }
+
         return true;
     }
 

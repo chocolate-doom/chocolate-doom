@@ -1162,8 +1162,20 @@ boolean MN_Responder(event_t * event)
     // "close" button pressed on window?
     if (event->type == ev_quit)
     {
-        SCQuitGame(0);
-        S_StartSound(NULL, SFX_CHAT);
+        // First click on close = bring up quit confirm message.
+        // Second click = confirm quit.
+
+        if (!MenuActive && askforquit && typeofask == 1)
+        {
+            G_CheckDemoStatus();
+            I_Quit();
+        }
+        else
+        {
+            SCQuitGame(0);
+            S_StartSound(NULL, SFX_CHAT);
+        }
+
         return true;
     }
 
