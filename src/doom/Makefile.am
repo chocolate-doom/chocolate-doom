@@ -56,6 +56,7 @@ r_sky.c            r_sky.h      \
 r_things.c         r_things.h   \
 s_sound.c          s_sound.h    \
 sounds.c           sounds.h     \
+statdump.c         statdump.h   \
 st_lib.c           st_lib.h     \
 st_stuff.c         st_stuff.h   \
 wi_stuff.c         wi_stuff.h
