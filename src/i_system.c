@@ -319,6 +319,7 @@ void I_Error (char *error, ...)
 {
     va_list argptr;
     atexit_listentry_t *entry;
+    boolean exit_gui_popup;
 
     if (already_quitting)
     {
@@ -351,9 +352,13 @@ void I_Error (char *error, ...)
 
         entry = entry->next;
     }
-  
+
+    exit_gui_popup = !M_ParmExists("-nogui");
+
 #ifdef _WIN32
     // On Windows, pop up a dialog box with the error message.
+
+    if (exit_gui_popup)
     {
         char msgbuf[512];
         wchar_t wmsgbuf[512];
@@ -372,7 +377,7 @@ void I_Error (char *error, ...)
 #endif
 
 #ifdef __MACOSX__
-    if (!I_ConsoleStdout())
+    if (exit_gui_popup && !I_ConsoleStdout())
     {
         CFStringRef message;
         char msgbuf[512];
