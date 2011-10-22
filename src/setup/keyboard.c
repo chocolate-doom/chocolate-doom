@@ -309,10 +309,18 @@ static void OtherKeysDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     AddSectionLabel(table, "Multiplayer", true);
 
     AddKeyControl(table, "Send message",          &key_multi_msg);
-    AddKeyControl(table, "- to green",            &key_multi_msgplayer[0]);
-    AddKeyControl(table, "- to indigo",           &key_multi_msgplayer[1]);
-    AddKeyControl(table, "- to brown",            &key_multi_msgplayer[2]);
-    AddKeyControl(table, "- to red",              &key_multi_msgplayer[3]);
+    AddKeyControl(table, "- to player 1",         &key_multi_msgplayer[0]);
+    AddKeyControl(table, "- to player 2",         &key_multi_msgplayer[1]);
+    AddKeyControl(table, "- to player 3",         &key_multi_msgplayer[2]);
+    AddKeyControl(table, "- to player 4",         &key_multi_msgplayer[3]);
+
+    if (gamemission == hexen || gamemission == strife)
+    {
+        AddKeyControl(table, "- to player 5",     &key_multi_msgplayer[4]);
+        AddKeyControl(table, "- to player 6",     &key_multi_msgplayer[5]);
+        AddKeyControl(table, "- to player 7",     &key_multi_msgplayer[6]);
+        AddKeyControl(table, "- to player 8",     &key_multi_msgplayer[7]);
+    }
 
     scrollpane = TXT_NewScrollPane(0, 13, table);
 

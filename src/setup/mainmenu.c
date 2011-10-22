@@ -79,6 +79,14 @@ static void SensibleDefaults(void)
     key_mission = 'i';              // Strife keys
     key_invpop = 'o';
     key_invkey = 'p';
+    key_multi_msgplayer[0] = 'g';
+    key_multi_msgplayer[1] = 'h';
+    key_multi_msgplayer[2] = 'j';
+    key_multi_msgplayer[3] = 'k';
+    key_multi_msgplayer[4] = 'v';
+    key_multi_msgplayer[5] = 'b';
+    key_multi_msgplayer[6] = 'n';
+    key_multi_msgplayer[7] = 'm';
     mousebprevweapon = 4;           // Scroll wheel = weapon cycle
     mousebnextweapon = 3;
     snd_musicdevice = 3;
