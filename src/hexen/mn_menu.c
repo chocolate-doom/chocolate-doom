@@ -1723,7 +1723,10 @@ void MN_ActivateMenu(void)
 
 void MN_DeactivateMenu(void)
 {
-    CurrentMenu->oldItPos = CurrentItPos;
+    if (CurrentMenu != NULL)
+    {
+        CurrentMenu->oldItPos = CurrentItPos;
+    }
     MenuActive = false;
     if (!netgame)
     {
