@@ -53,6 +53,11 @@
 #include "w_main.h"
 #include "v_video.h"
 
+#define CT_KEY_GREEN    'g'
+#define CT_KEY_YELLOW   'y'
+#define CT_KEY_RED      'r'
+#define CT_KEY_BLUE     'b'
+
 #define STARTUP_WINDOW_X 17
 #define STARTUP_WINDOW_Y 7
 
@@ -736,6 +741,11 @@ void D_BindVariables(void)
     M_BindHereticControls();
     M_BindWeaponControls();
     M_BindChatControls(MAXPLAYERS);
+
+    key_multi_msgplayer[0] = CT_KEY_GREEN;
+    key_multi_msgplayer[1] = CT_KEY_YELLOW;
+    key_multi_msgplayer[2] = CT_KEY_RED;
+    key_multi_msgplayer[3] = CT_KEY_BLUE;
 
     M_BindMenuControls();
     M_BindMapControls();

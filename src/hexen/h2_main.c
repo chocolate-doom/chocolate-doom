@@ -53,6 +53,15 @@
 // MACROS ------------------------------------------------------------------
 
 #define MAXWADFILES 20
+#define CT_KEY_BLUE         'b'
+#define CT_KEY_RED          'r'
+#define CT_KEY_YELLOW       'y'
+#define CT_KEY_GREEN        'g'
+#define CT_KEY_PLAYER5      'j'     // Jade
+#define CT_KEY_PLAYER6      'w'     // White
+#define CT_KEY_PLAYER7      'h'     // Hazel
+#define CT_KEY_PLAYER8      'p'     // Purple
+#define CT_KEY_ALL          't'
 
 // TYPES -------------------------------------------------------------------
 
@@ -162,6 +171,15 @@ void D_BindVariables(void)
     M_BindChatControls(MAXPLAYERS);
     M_BindHereticControls();
     M_BindHexenControls();
+
+    key_multi_msgplayer[0] = CT_KEY_BLUE;
+    key_multi_msgplayer[1] = CT_KEY_RED;
+    key_multi_msgplayer[2] = CT_KEY_YELLOW;
+    key_multi_msgplayer[3] = CT_KEY_GREEN;
+    key_multi_msgplayer[4] = CT_KEY_PLAYER5;
+    key_multi_msgplayer[5] = CT_KEY_PLAYER6;
+    key_multi_msgplayer[6] = CT_KEY_PLAYER7;
+    key_multi_msgplayer[7] = CT_KEY_PLAYER8;
 
     M_BindVariable("graphical_startup",      &graphical_startup);
     M_BindVariable("mouse_sensitivity",      &mouseSensitivity);

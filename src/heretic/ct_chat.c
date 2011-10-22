@@ -27,9 +27,12 @@
 
 #include <string.h>
 #include <ctype.h>
+
 #include "doomdef.h"
 #include "doomkeys.h"
+
 #include "deh_str.h"
+#include "m_controls.h"
 #include "p_local.h"
 #include "s_sound.h"
 #include "v_video.h"
@@ -44,12 +47,10 @@
 #define CT_PLR_BLUE		4
 #define CT_PLR_ALL		5
 
-#define CT_KEY_GREEN		'g'
-#define CT_KEY_YELLOW	'y'
-#define CT_KEY_RED		'r'
-#define CT_KEY_BLUE		'b'
-#define CT_KEY_ALL		't'
-#define CT_ESCAPE			6
+// Vanilla Heretic seems to use this for KEY_BACKSPACE (tcpdump'ed trace):
+#define CT_BACKSPACE 0x7f
+
+#define CT_ESCAPE 6
 
 // Public data
 
@@ -132,6 +133,19 @@ void CT_Stop(void)
     return;
 }
 
+// These keys are allowed by Vanilla Heretic:
+
+static boolean ValidChatChar(char c)
+{
+    return (c >= 'a' && c <= 'z')
+        || (c >= 'A' && c <= 'Z')
+        || (c >= '0' && c <= '9')
+        || c == '!' || c == '?'
+        || c == ' ' || c == '\''
+        || c == ',' || c == '.'
+        || c == '-' || c == '=';
+}
+
 //===========================================================================
 //
 // CT_Responder
@@ -165,23 +179,23 @@ boolean CT_Responder(event_t * ev)
     if (!chatmodeon)
     {
         sendto = 0;
-        if (ev->data1 == CT_KEY_ALL)
+        if (ev->data1 == key_multi_msg)
         {
             sendto = CT_PLR_ALL;
         }
-        else if (ev->data1 == CT_KEY_GREEN)
+        else if (ev->data1 == key_multi_msgplayer[0])
         {
             sendto = CT_PLR_GREEN;
         }
-        else if (ev->data1 == CT_KEY_YELLOW)
+        else if (ev->data1 == key_multi_msgplayer[1])
         {
             sendto = CT_PLR_YELLOW;
         }
-        else if (ev->data1 == CT_KEY_RED)
+        else if (ev->data1 == key_multi_msgplayer[2])
         {
             sendto = CT_PLR_RED;
         }
-        else if (ev->data1 == CT_KEY_BLUE)
+        else if (ev->data1 == key_multi_msgplayer[3])
         {
             sendto = CT_PLR_BLUE;
         }
@@ -228,34 +242,15 @@ boolean CT_Responder(event_t * ev)
             CT_Stop();
             return true;
         }
-        else if (ev->data1 >= 'a' && ev->data1 <= 'z')
+        else if (ev->data1 == KEY_BACKSPACE)
         {
-            CT_queueChatChar(ev->data1 - 32);
+            CT_queueChatChar(CT_BACKSPACE);
             return true;
         }
-        else if (shiftdown)
+        else if (ValidChatChar(ev->data2))
         {
-            if (ev->data1 == '1')
-            {
-                CT_queueChatChar('!');
-                return true;
-            }
-            else if (ev->data1 == '/')
-            {
-                CT_queueChatChar('?');
-                return true;
-            }
-        }
-        else
-        {
-            if (ev->data1 == ' ' || ev->data1 == ',' || ev->data1 == '.'
-                || (ev->data1 >= '0' && ev->data1 <= '9') || ev->data1 == '\''
-                || ev->data1 == KEY_BACKSPACE || ev->data1 == '-'
-                || ev->data1 == '=')
-            {
-                CT_queueChatChar(ev->data1);
-                return true;
-            }
+            CT_queueChatChar(toupper(ev->data2));
+            return true;
         }
     }
     return false;
@@ -336,7 +331,7 @@ void CT_Ticker(void)
                 }
                 CT_ClearChatMessage(i);
             }
-            else if (c == KEY_BACKSPACE)
+            else if (c == CT_BACKSPACE)
             {
                 CT_BackSpace(i);
             }
