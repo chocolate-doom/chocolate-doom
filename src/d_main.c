@@ -735,10 +735,12 @@ static void InitGameVersion(void)
             else
             {
                 // Final Doom: tnt or plutonia
-                // Default to the "alt" version of the executable that
-                // fixes the demo loop behavior.
+                // Defaults to emulating the first Final Doom executable,
+                // which has the crash in the demo loop; however, having
+                // this as the default should mean that it plays back
+                // most demos correctly.
 
-                gameversion = exe_final2;
+                gameversion = exe_final;
             }
         }
     }
