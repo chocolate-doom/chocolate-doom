@@ -47,9 +47,6 @@
 #define CT_PLR_BLUE		4
 #define CT_PLR_ALL		5
 
-// Vanilla Heretic seems to use this for KEY_BACKSPACE (tcpdump'ed trace):
-#define CT_BACKSPACE 0x7f
-
 #define CT_ESCAPE 6
 
 // Public data
@@ -244,7 +241,7 @@ boolean CT_Responder(event_t * ev)
         }
         else if (ev->data1 == KEY_BACKSPACE)
         {
-            CT_queueChatChar(CT_BACKSPACE);
+            CT_queueChatChar(KEY_BACKSPACE);
             return true;
         }
         else if (ValidChatChar(ev->data2))
@@ -331,7 +328,7 @@ void CT_Ticker(void)
                 }
                 CT_ClearChatMessage(i);
             }
-            else if (c == CT_BACKSPACE)
+            else if (c == KEY_BACKSPACE)
             {
                 CT_BackSpace(i);
             }

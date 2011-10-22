@@ -52,12 +52,6 @@ enum
     CT_PLR_ALL
 };
 
-// KEY_BACKSPACE (ASCII code 0x08) can't be used, because it conflicts with
-// CT_PLR_PLAYER8. Investigation reveals that Vanilla Hexen appears to use
-// this value for backspace.
-
-#define CT_BACKSPACE 0x7f
-
 #define CT_ESCAPE 6
 
 // Public data
@@ -285,7 +279,7 @@ boolean CT_Responder(event_t * ev)
         }
         else if (ev->data1 == KEY_BACKSPACE)
         {
-            CT_queueChatChar(CT_BACKSPACE);
+            CT_queueChatChar(KEY_BACKSPACE);
             return true;
         }
         else if (ValidChatChar(ev->data2))
@@ -364,7 +358,7 @@ void CT_Ticker(void)
                 }
                 CT_ClearChatMessage(i);
             }
-            else if (c == CT_BACKSPACE)
+            else if (c == KEY_BACKSPACE)
             {
                 CT_BackSpace(i);
             }
