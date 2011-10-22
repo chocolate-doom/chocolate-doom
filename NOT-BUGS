@@ -31,6 +31,30 @@ upgrade.
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+== Game exits in demo loop when playing Final Doom ==
+
+When playing with the Final Doom IWAD files (tnt.wad, plutonia.wad),
+if you leave the game at the title screen to play through the demo
+loop, it will eventually exit with the following error message:
+
+    W_GetNumForName: demo4 not found!
+
+This is the same behavior as the Vanilla executables that were
+bundled with Final Doom.  When Ultimate Doom was developed, a fourth
+demo was added to the demo loop, and this change was retained in the
+Final Doom version of the executable.  However, the Final Doom IWADs
+do not include a fourth demo, so the game crashes.
+
+An alternate version of Final Doom was included in the Id Anthology
+boxed set, and this version of the game fixed this bug. However, this
+version also changes the teleport behavior, so the default is to
+emulate the most commonly distributed version of the game. To use
+the alternate version, run with:
+
+    chocolate-doom -gameversion final2
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 == Game exits when accessing the options menu ==
 
 The game may exit with the message "Bad V_DrawPatch" when accessing

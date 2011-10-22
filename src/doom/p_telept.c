@@ -104,19 +104,18 @@ EV_Teleport
 				
 		if (!P_TeleportMove (thing, m->x, m->y))
 		    return 0;
-		
-                // fraggle: this was changed in final doom, 
-                // problem between normal doom2 1.9 and final doom
-                //
-                // Note that although chex.exe is based on Final Doom,
-                // it does not have this quirk.
 
-                if (gameversion < exe_final || gameversion == exe_chex)
+                // The first Final Doom executable does not set thing->z
+                // when teleporting. This quirk is unique to this
+                // particular version; the later version included in
+                // some versions of the Id Anthology fixed this.
+
+                if (gameversion != exe_final)
 		    thing->z = thing->floorz;
-                
+
 		if (thing->player)
 		    thing->player->viewz = thing->z+thing->player->viewheight;
-				
+
 		// spawn teleport fog at source and destination
 		fog = P_SpawnMobj (oldx, oldy, oldz, MT_TFOG);
 		S_StartSound (fog, sfx_telept);

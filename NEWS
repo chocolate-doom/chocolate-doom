@@ -3,6 +3,10 @@
      * Updated COPYING to current version of GPL2 (thanks Rahul
        Sundaram).
      * Fix bug with detection of IWAD type by filename (thanks mether).
+     * Reduce palette accuracy to 6 bits per channel, to more accurately
+       emulate the PC VGA hardware (thanks GhostlyDeath).
+     * Fix teleport behavior when emulating the alternate Final Doom
+       executable (-gameversion final2) (thanks xttl).
 
 1.6.0 (2011-05-17):
 
