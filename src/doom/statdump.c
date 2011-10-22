@@ -152,7 +152,12 @@ static void PrintPercentage(FILE *stream, int amount, int total)
     {
         fprintf(stream, "%i / %i", amount, total);
 
-        fprintf(stream, " (%i%%)", (amount * 100) / total);
+        // statdump.exe is a 16-bit program, so very occasionally an
+        // integer overflow can occur when doing this calculation with
+        // a large value. Therefore, cast to short to give the same
+        // output.
+
+        fprintf(stream, " (%i%%)", (short) (amount * 100) / total);
     }
 }
 
