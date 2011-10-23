@@ -770,6 +770,7 @@ void SetChatMacroDefaults(void)
     int i;
     char *defaults[] = 
     {
+        HUSTR_CHATMACRO0,
         HUSTR_CHATMACRO1,
         HUSTR_CHATMACRO2,
         HUSTR_CHATMACRO3,
@@ -779,7 +780,6 @@ void SetChatMacroDefaults(void)
         HUSTR_CHATMACRO7,
         HUSTR_CHATMACRO8,
         HUSTR_CHATMACRO9,
-        HUSTR_CHATMACRO0,
     };
     
     // If the chat macros have not been set, initialize with defaults.
