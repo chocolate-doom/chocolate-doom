@@ -8,6 +8,13 @@
      * Fix teleport behavior when emulating the alternate Final Doom
        executable (-gameversion final2) (thanks xttl).
 
+    libtextscreen:
+     * Input boxes stop editing and save when they lose their focus,
+       correcting a previous counterintuitive behavior (thanks
+       Twelve).
+     * The numeric keypad now works properly when entering text values
+       (thanks Twelve).
+
 1.6.0 (2011-05-17):
 
      * The instructions in the INSTALL file are now customized for

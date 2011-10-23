@@ -405,25 +405,6 @@ static int TranslateKey(SDL_keysym *sym)
         case SDLK_CAPSLOCK:    return KEY_CAPSLOCK;
         case SDLK_SCROLLOCK:   return KEY_SCRLCK;
 
-        case SDLK_KP0:         return KEYP_0;
-        case SDLK_KP1:         return KEYP_1;
-        case SDLK_KP2:         return KEYP_2;
-        case SDLK_KP3:         return KEYP_3;
-        case SDLK_KP4:         return KEYP_4;
-        case SDLK_KP5:         return KEYP_5;
-        case SDLK_KP6:         return KEYP_6;
-        case SDLK_KP7:         return KEYP_7;
-        case SDLK_KP8:         return KEYP_8;
-        case SDLK_KP9:         return KEYP_9;
-
-        case SDLK_KP_PERIOD:   return KEYP_PERIOD;
-        case SDLK_KP_MULTIPLY: return KEYP_MULTIPLY;
-        case SDLK_KP_PLUS:     return KEYP_PLUS;
-        case SDLK_KP_MINUS:    return KEYP_MINUS;
-        case SDLK_KP_DIVIDE:   return KEYP_DIVIDE;
-        case SDLK_KP_EQUALS:   return KEYP_EQUALS;
-        case SDLK_KP_ENTER:    return KEYP_ENTER;
-
         case SDLK_HOME:        return KEY_HOME;
         case SDLK_INSERT:      return KEY_INS;
         case SDLK_END:         return KEY_END;
@@ -454,7 +435,34 @@ static int TranslateKey(SDL_keysym *sym)
     }
     else
     {
-        return tolower(sym->sym);
+        // Keypad mapping is only done when we want a raw value:
+        // most of the time, the keypad should behave as it normally
+        // does.
+
+        switch (sym->sym)
+        {
+            case SDLK_KP0:         return KEYP_0;
+            case SDLK_KP1:         return KEYP_1;
+            case SDLK_KP2:         return KEYP_2;
+            case SDLK_KP3:         return KEYP_3;
+            case SDLK_KP4:         return KEYP_4;
+            case SDLK_KP5:         return KEYP_5;
+            case SDLK_KP6:         return KEYP_6;
+            case SDLK_KP7:         return KEYP_7;
+            case SDLK_KP8:         return KEYP_8;
+            case SDLK_KP9:         return KEYP_9;
+
+            case SDLK_KP_PERIOD:   return KEYP_PERIOD;
+            case SDLK_KP_MULTIPLY: return KEYP_MULTIPLY;
+            case SDLK_KP_PLUS:     return KEYP_PLUS;
+            case SDLK_KP_MINUS:    return KEYP_MINUS;
+            case SDLK_KP_DIVIDE:   return KEYP_DIVIDE;
+            case SDLK_KP_EQUALS:   return KEYP_EQUALS;
+            case SDLK_KP_ENTER:    return KEYP_ENTER;
+
+            default:
+                return tolower(sym->sym);
+        }
     }
 }
 
