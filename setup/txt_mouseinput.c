@@ -104,7 +104,7 @@ static void GetMouseButtonDescription(int button, char *buf)
     }
 }
 
-static void TXT_MouseInputDrawer(TXT_UNCAST_ARG(mouse_input), int selected)
+static void TXT_MouseInputDrawer(TXT_UNCAST_ARG(mouse_input))
 {
     TXT_CAST_ARG(txt_mouse_input_t, mouse_input);
     char buf[20];
@@ -119,7 +119,7 @@ static void TXT_MouseInputDrawer(TXT_UNCAST_ARG(mouse_input), int selected)
         GetMouseButtonDescription(*mouse_input->variable, buf);
     }
 
-    TXT_SetWidgetBG(mouse_input, selected);
+    TXT_SetWidgetBG(mouse_input);
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
     
     TXT_DrawString(buf);

@@ -86,6 +86,10 @@ void TXT_InitWidget(TXT_UNCAST_ARG(widget), txt_widget_class_t *widget_class)
     widget->callback_table = TXT_NewCallbackTable();
     widget->parent = NULL;
 
+    // Not focused until we hear otherwise.
+
+    widget->focused = 0;
+
     // Visible by default.
 
     widget->visible = 1;
@@ -155,7 +159,7 @@ void TXT_CalcWidgetSize(TXT_UNCAST_ARG(widget))
     widget->widget_class->size_calc(widget);
 }
 
-void TXT_DrawWidget(TXT_UNCAST_ARG(widget), int selected)
+void TXT_DrawWidget(TXT_UNCAST_ARG(widget))
 {
     TXT_CAST_ARG(txt_widget_t, widget);
 
@@ -165,7 +169,7 @@ void TXT_DrawWidget(TXT_UNCAST_ARG(widget), int selected)
 
     // Call drawer method
  
-    widget->widget_class->drawer(widget, selected);
+    widget->widget_class->drawer(widget);
 }
 
 void TXT_DestroyWidget(TXT_UNCAST_ARG(widget))
@@ -187,6 +191,26 @@ int TXT_WidgetKeyPress(TXT_UNCAST_ARG(widget), int key)
     }
 
     return 0;
+}
+
+void TXT_SetWidgetFocus(TXT_UNCAST_ARG(widget), int focused)
+{
+    TXT_CAST_ARG(txt_widget_t, widget);
+
+    if (widget == NULL)
+    {
+        return;
+    }
+
+    if (widget->focused != focused)
+    {
+        widget->focused = focused;
+
+        if (widget->widget_class->focus_change != NULL)
+        {
+            widget->widget_class->focus_change(widget, focused);
+        }
+    }
 }
 
 void TXT_SetWidgetAlign(TXT_UNCAST_ARG(widget), txt_horiz_align_t horiz_align)
@@ -281,11 +305,11 @@ int TXT_HoveringOverWidget(TXT_UNCAST_ARG(widget))
          && y >= widget->y && y < widget->y + widget->h);
 }
 
-void TXT_SetWidgetBG(TXT_UNCAST_ARG(widget), int selected)
+void TXT_SetWidgetBG(TXT_UNCAST_ARG(widget))
 {
     TXT_CAST_ARG(txt_widget_t, widget);
 
-    if (selected)
+    if (widget->focused)
     {
         TXT_BGColor(TXT_COLOR_GREY, 0);
     }

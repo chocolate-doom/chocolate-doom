@@ -46,7 +46,7 @@ static void TXT_SeparatorSizeCalc(TXT_UNCAST_ARG(separator))
     separator->widget.h = 1;
 }
 
-static void TXT_SeparatorDrawer(TXT_UNCAST_ARG(separator), int selected)
+static void TXT_SeparatorDrawer(TXT_UNCAST_ARG(separator))
 {
     TXT_CAST_ARG(txt_separator_t, separator);
     int x, y;

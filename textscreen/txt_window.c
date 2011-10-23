@@ -216,7 +216,7 @@ static void DrawActionArea(txt_window_t *window)
     {
         if (window->actions[i] != NULL)
         {
-            TXT_DrawWidget(window->actions[i], 0);
+            TXT_DrawWidget(window->actions[i]);
         }
     }
 }
@@ -315,7 +315,7 @@ void TXT_LayoutWindow(txt_window_t *window)
     TXT_LayoutWidget(widgets);
 }
 
-void TXT_DrawWindow(txt_window_t *window, int selected)
+void TXT_DrawWindow(txt_window_t *window)
 {
     txt_widget_t *widgets;
 
@@ -329,7 +329,7 @@ void TXT_DrawWindow(txt_window_t *window, int selected)
 
     // Draw all widgets
 
-    TXT_DrawWidget(window, selected);
+    TXT_DrawWidget(window);
 
     // Draw an action area, if we have one
 
@@ -408,7 +408,21 @@ static void MouseButtonPress(txt_window_t *window, int b)
          && x >= widget->x && x < (signed) (widget->x + widget->w)
          && y >= widget->y && y < (signed) (widget->y + widget->h))
         {
+            int was_focused;
+
+            // Main table temporarily loses focus when action area button
+            // is clicked. This way, any active input boxes that depend
+            // on having focus will save their values before the
+            // action is performed.
+
+            was_focused = window->table.widget.focused;
+            TXT_SetWidgetFocus(window, 0);
+            TXT_SetWidgetFocus(window, was_focused);
+
+            // Pass through mouse press.
+
             TXT_WidgetMousePress(widget, x, y, b);
+
             break;
         }
     }
@@ -470,5 +484,10 @@ void TXT_SetMouseListener(txt_window_t *window,
 {
     window->mouse_listener = mouse_listener;
     window->mouse_listener_data = user_data;
+}
+
+void TXT_SetWindowFocus(txt_window_t *window, int focused)
+{
+    TXT_SetWidgetFocus(window, focused);
 }
 

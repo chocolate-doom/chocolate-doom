@@ -40,7 +40,7 @@ static void TXT_CheckBoxSizeCalc(TXT_UNCAST_ARG(checkbox))
     checkbox->widget.h = 1;
 }
 
-static void TXT_CheckBoxDrawer(TXT_UNCAST_ARG(checkbox), int selected)
+static void TXT_CheckBoxDrawer(TXT_UNCAST_ARG(checkbox))
 {
     TXT_CAST_ARG(txt_checkbox_t, checkbox);
     int i;
@@ -67,7 +67,7 @@ static void TXT_CheckBoxDrawer(TXT_UNCAST_ARG(checkbox), int selected)
 
     TXT_DrawString(") ");
 
-    TXT_SetWidgetBG(checkbox, selected);
+    TXT_SetWidgetBG(checkbox);
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
 
     TXT_DrawString(checkbox->label);

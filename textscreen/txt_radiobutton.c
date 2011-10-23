@@ -40,7 +40,7 @@ static void TXT_RadioButtonSizeCalc(TXT_UNCAST_ARG(radiobutton))
     radiobutton->widget.h = 1;
 }
 
-static void TXT_RadioButtonDrawer(TXT_UNCAST_ARG(radiobutton), int selected)
+static void TXT_RadioButtonDrawer(TXT_UNCAST_ARG(radiobutton))
 {
     TXT_CAST_ARG(txt_radiobutton_t, radiobutton);
     int i;
@@ -67,7 +67,7 @@ static void TXT_RadioButtonDrawer(TXT_UNCAST_ARG(radiobutton), int selected)
 
     TXT_DrawString(") ");
 
-    TXT_SetWidgetBG(radiobutton, selected);
+    TXT_SetWidgetBG(radiobutton);
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
 
     TXT_DrawString(radiobutton->label);

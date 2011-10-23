@@ -44,7 +44,7 @@ static void TXT_WindowActionSizeCalc(TXT_UNCAST_ARG(action))
     action->widget.h = 1;
 }
 
-static void TXT_WindowActionDrawer(TXT_UNCAST_ARG(action), int selected)
+static void TXT_WindowActionDrawer(TXT_UNCAST_ARG(action))
 {
     TXT_CAST_ARG(txt_window_action_t, action);
     char buf[10];

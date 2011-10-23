@@ -160,7 +160,7 @@ static void TXT_ScrollPaneSizeCalc(TXT_UNCAST_ARG(scrollpane))
     }
 }
 
-static void TXT_ScrollPaneDrawer(TXT_UNCAST_ARG(scrollpane), int selected)
+static void TXT_ScrollPaneDrawer(TXT_UNCAST_ARG(scrollpane))
 {
     TXT_CAST_ARG(txt_scrollpane_t, scrollpane);
     int x1, y1, x2, y2;
@@ -199,7 +199,7 @@ static void TXT_ScrollPaneDrawer(TXT_UNCAST_ARG(scrollpane), int selected)
 
     if (scrollpane->child != NULL)
     {
-        TXT_DrawWidget(scrollpane->child, selected);
+        TXT_DrawWidget(scrollpane->child);
     }
 
     // Restore old clipping area.
@@ -214,6 +214,19 @@ static void TXT_ScrollPaneDestructor(TXT_UNCAST_ARG(scrollpane))
     if (scrollpane->child != NULL)
     {
         TXT_DestroyWidget(scrollpane->child);
+    }
+}
+
+static void TXT_ScrollPaneFocused(TXT_UNCAST_ARG(scrollpane), int focused)
+{
+    TXT_CAST_ARG(txt_scrollpane_t, scrollpane);
+
+    // Whether the child is focused depends only on whether the scroll pane
+    // itself is focused. Pass through focus to the child.
+
+    if (scrollpane->child != NULL)
+    {
+        TXT_SetWidgetFocus(scrollpane->child, focused);
     }
 }
 
@@ -540,6 +553,7 @@ txt_widget_class_t txt_scrollpane_class =
     TXT_ScrollPaneDestructor,
     TXT_ScrollPaneMousePress,
     TXT_ScrollPaneLayout,
+    TXT_ScrollPaneFocused,
 };
 
 txt_scrollpane_t *TXT_NewScrollPane(int w, int h, TXT_UNCAST_ARG(target))

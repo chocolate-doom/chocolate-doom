@@ -41,13 +41,28 @@ static int main_loop_running = 0;
 
 void TXT_AddDesktopWindow(txt_window_t *win)
 {
+    // Previously-top window loses focus:
+
+    if (num_windows > 0)
+    {
+        TXT_SetWindowFocus(all_windows[num_windows - 1], 0);
+    }
+
     all_windows[num_windows] = win;
     ++num_windows;
+
+    // New window gains focus:
+
+    TXT_SetWindowFocus(win, 1);
 }
 
 void TXT_RemoveDesktopWindow(txt_window_t *win)
 {
     int from, to;
+
+    // Window must lose focus if it's being removed:
+
+    TXT_SetWindowFocus(win, 0);
 
     for (from=0, to=0; from<num_windows; ++from)
     {
@@ -57,8 +72,15 @@ void TXT_RemoveDesktopWindow(txt_window_t *win)
             ++to;
         }
     }
-    
+
     num_windows = to;
+
+    // Top window gains focus:
+
+    if (num_windows > 0)
+    {
+        TXT_SetWindowFocus(all_windows[num_windows - 1], 1);
+    }
 }
 
 txt_window_t *TXT_GetActiveWindow(void)
@@ -140,7 +162,7 @@ void TXT_DrawDesktop(void)
 
     for (i=0; i<num_windows; ++i)
     {
-        TXT_DrawWindow(all_windows[i], i == num_windows - 1);
+        TXT_DrawWindow(all_windows[i]);
     }
 
     TXT_UpdateScreen();

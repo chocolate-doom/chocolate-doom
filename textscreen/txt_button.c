@@ -38,7 +38,7 @@ static void TXT_ButtonSizeCalc(TXT_UNCAST_ARG(button))
     button->widget.h = 1;
 }
 
-static void TXT_ButtonDrawer(TXT_UNCAST_ARG(button), int selected)
+static void TXT_ButtonDrawer(TXT_UNCAST_ARG(button))
 {
     TXT_CAST_ARG(txt_button_t, button);
     int i;
@@ -48,7 +48,7 @@ static void TXT_ButtonDrawer(TXT_UNCAST_ARG(button), int selected)
 
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
 
-    TXT_SetWidgetBG(button, selected);
+    TXT_SetWidgetBG(button);
 
     TXT_DrawString(button->label);
 
