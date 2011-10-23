@@ -1135,7 +1135,7 @@ void A_MinotaurRoam(mobj_t * actor)
     {
         // Turn
         if (P_Random() & 1)
-            actor->movedir = (++actor->movedir) % 8;
+            actor->movedir = (actor->movedir + 1) % 8;
         else
             actor->movedir = (actor->movedir + 7) % 8;
         FaceMovementDirection(actor);

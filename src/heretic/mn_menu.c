@@ -145,7 +145,7 @@ static int MenuTime;
 static boolean soundchanged;
 
 boolean askforquit;
-boolean typeofask;
+static int typeofask;
 static boolean FileMenuKeySteal;
 static boolean slottextloaded;
 static char SlotText[6][SLOTTEXTLEN + 2];

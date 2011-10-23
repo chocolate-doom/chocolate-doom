@@ -1798,10 +1798,20 @@ static void CheatIDKFAFunc(player_t * player, Cheat_t * cheat)
     {
         return;
     }
-    for (i = 1; i < 8; i++)
+    for (i = 1; i < NUMWEAPONS; i++)
     {
         player->weaponowned[i] = false;
     }
+
+    // In the original code, NUMWEAPONS was 8. So the writes to weaponowned
+    // overflowed the array. We must set the following fields to zero as
+    // well:
+
+    player->mana[0] = 0;
+    player->mana[1] = 0;
+    player->attackdown = 0;
+    player->usedown = 0;
+
     player->pendingweapon = WP_FIRST;
     P_SetMessage(player, TXT_CHEATIDKFA, true);
 }

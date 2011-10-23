@@ -475,7 +475,7 @@ boolean NET_ReadWaitData(net_packet_t *packet, net_waitdata_t *data)
      || !NET_ReadInt8(packet, (unsigned int *) &data->num_drones)
      || !NET_ReadInt8(packet, (unsigned int *) &data->max_players)
      || !NET_ReadInt8(packet, (unsigned int *) &data->is_controller)
-     || !NET_ReadSInt8(packet, (unsigned int *) &data->consoleplayer))
+     || !NET_ReadSInt8(packet, &data->consoleplayer))
     {
         return false;
     }
