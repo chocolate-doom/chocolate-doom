@@ -95,6 +95,7 @@ void TXT_CloseWindow(txt_window_t *window)
     int i;
 
     TXT_EmitSignal(window, "closed");
+    TXT_RemoveDesktopWindow(window);
 
     free(window->title);
 
@@ -111,8 +112,6 @@ void TXT_CloseWindow(txt_window_t *window)
     // Destroy table and window
 
     TXT_DestroyWidget(window);
-    
-    TXT_RemoveDesktopWindow(window);
 }
 
 static void CalcWindowPosition(txt_window_t *window)
