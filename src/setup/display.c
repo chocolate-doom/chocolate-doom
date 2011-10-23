@@ -102,6 +102,7 @@ static int num_screen_modes_fullscreen;
 static int vidmode = 0;
 
 static char *video_driver = "";
+static char *window_position = "";
 static int autoadjust_video_settings = 1;
 static int aspect_ratio_correct = 1;
 static int fullscreen = 1;
@@ -790,6 +791,7 @@ void BindDisplayVariables(void)
     M_BindVariable("screen_bpp",                &screen_bpp);
     M_BindVariable("startup_delay",             &startup_delay);
     M_BindVariable("video_driver",              &video_driver);
+    M_BindVariable("window_position",           &window_position);
     M_BindVariable("usegamma",                  &usegamma);
 
 

@@ -770,7 +770,15 @@ static default_t extra_defaults_list[] =
     // the default video driver is used.
     //
 
-    CONFIG_VARIABLE_STRING(video_driver), 
+    CONFIG_VARIABLE_STRING(video_driver),
+
+    //!
+    // Position of the window on the screen when running in windowed
+    // mode. Accepted values are: "" (empty string) - don't care,
+    // "center" - place window at center of screen, "x,y" - place
+    // window at the specified coordinates.
+
+    CONFIG_VARIABLE_STRING(window_position),
 
 #ifdef FEATURE_MULTIPLAYER
 

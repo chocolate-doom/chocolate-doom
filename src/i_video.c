@@ -136,6 +136,10 @@ static screen_mode_t *screen_modes_corrected[] = {
 
 char *video_driver = "";
 
+// Window position:
+
+static char *window_position = "";
+
 // SDL surface for the screen.
 
 static SDL_Surface *screen;
@@ -1857,6 +1861,27 @@ static void SetSDLVideoDriver(void)
 #endif
 }
 
+static void SetWindowPositionVars(void)
+{
+    char buf[64];
+    int x, y;
+
+    if (window_position == NULL || !strcmp(window_position, ""))
+    {
+        return;
+    }
+
+    if (!strcmp(window_position, "center"))
+    {
+        putenv("SDL_VIDEO_CENTERED=1");
+    }
+    else if (sscanf(window_position, "%i,%i", &x, &y) == 2)
+    {
+        sprintf(buf, "SDL_VIDEO_WINDOW_POS=%i,%i", x, y);
+        putenv(buf);
+    }
+}
+
 static char *WindowBoxType(screen_mode_t *mode, int w, int h)
 {
     if (mode->width != w && mode->height != h) 
@@ -1921,8 +1946,6 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
 #ifndef __MACOSX__
         flags |= SDL_RESIZABLE;
 #endif
-        // villsa - center window
-        SDL_putenv("SDL_VIDEO_CENTERED=1");
     }
 
     screen = SDL_SetVideoMode(w, h, screen_bpp, flags);
@@ -2030,6 +2053,7 @@ void I_InitGraphics(void)
     }
 
     SetSDLVideoDriver();
+    SetWindowPositionVars();
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) 
     {
@@ -2186,6 +2210,7 @@ void I_BindVideoVariables(void)
     M_BindVariable("mouse_acceleration",        &mouse_acceleration);
     M_BindVariable("mouse_threshold",           &mouse_threshold);
     M_BindVariable("video_driver",              &video_driver);
+    M_BindVariable("window_position",           &window_position);
     M_BindVariable("usegamma",                  &usegamma);
     M_BindVariable("vanilla_keyboard_mapping",  &vanilla_keyboard_mapping);
     M_BindVariable("novert",                    &novert);
