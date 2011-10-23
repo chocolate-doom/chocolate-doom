@@ -24,6 +24,8 @@
 #include <string.h>
 
 #include "doomtype.h"
+#include "doomfeatures.h"
+
 #include "textscreen.h"
 
 #include "d_iwad.h"
@@ -983,17 +985,17 @@ void SetPlayerNameDefault(void)
 {
     if (net_player_name == NULL)
     {
-        net_player_name = getenv("USER");
+        net_player_name = strdup(getenv("USER"));
     }
 
     if (net_player_name == NULL)
     {
-        net_player_name = getenv("USERNAME");
+        net_player_name = strdup(getenv("USERNAME"));
     }
 
     if (net_player_name == NULL)
     {
-        net_player_name = "player";
+        net_player_name = strdup("player");
     }
 }
 
