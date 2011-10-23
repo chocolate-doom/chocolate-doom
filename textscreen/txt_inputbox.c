@@ -161,14 +161,6 @@ static void TXT_InputBoxDestructor(TXT_UNCAST_ARG(inputbox))
 {
     TXT_CAST_ARG(txt_inputbox_t, inputbox);
 
-    // If we're still editing when the widget is destroyed, save the
-    // value first.
-
-    if (inputbox->editing)
-    {
-        FinishEditing(inputbox);
-    }
-
     free(inputbox->buffer);
 }
 
