@@ -32,7 +32,71 @@
 #include "txt_main.h"
 #include "txt_window.h"
 
-static void SetBufferFromValue(txt_inputbox_t *inputbox);
+extern txt_widget_class_t txt_inputbox_class;
+extern txt_widget_class_t txt_int_inputbox_class;
+
+static void SetBufferFromValue(txt_inputbox_t *inputbox)
+{
+    if (inputbox->widget.widget_class == &txt_inputbox_class)
+    {
+        char **value = (char **) inputbox->value;
+
+        if (*value != NULL)
+        {
+            strncpy(inputbox->buffer, *value, inputbox->size);
+            inputbox->buffer[inputbox->size] = '\0';
+        }
+        else
+        {
+            strcpy(inputbox->buffer, "");
+        }
+    }
+    else if (inputbox->widget.widget_class == &txt_int_inputbox_class)
+    {
+        int *value = (int *) inputbox->value;
+        sprintf(inputbox->buffer, "%i", *value);
+    }
+}
+
+static void StartEditing(txt_inputbox_t *inputbox)
+{
+    // Integer input boxes start from an empty buffer:
+
+    if (inputbox->widget.widget_class == &txt_int_inputbox_class)
+    {
+        strcpy(inputbox->buffer, "");
+    }
+    else
+    {
+        SetBufferFromValue(inputbox);
+    }
+
+    inputbox->editing = 1;
+}
+
+static void FinishEditing(txt_inputbox_t *inputbox)
+{
+    if (!inputbox->editing)
+    {
+        return;
+    }
+
+    // Save the new value back to the variable.
+
+    if (inputbox->widget.widget_class == &txt_inputbox_class)
+    {
+        free(*((char **)inputbox->value));
+        *((char **) inputbox->value) = strdup(inputbox->buffer);
+    }
+    else if (inputbox->widget.widget_class == &txt_int_inputbox_class)
+    {
+        *((int *) inputbox->value) = atoi(inputbox->buffer);
+    }
+
+    TXT_EmitSignal(&inputbox->widget, "changed");
+
+    inputbox->editing = 0;
+}
 
 static void TXT_InputBoxSizeCalc(TXT_UNCAST_ARG(inputbox))
 {
@@ -44,25 +108,27 @@ static void TXT_InputBoxSizeCalc(TXT_UNCAST_ARG(inputbox))
     inputbox->widget.h = 1;
 }
 
-static void TXT_InputBoxDrawer(TXT_UNCAST_ARG(inputbox), int selected)
+static void TXT_InputBoxDrawer(TXT_UNCAST_ARG(inputbox))
 {
     TXT_CAST_ARG(txt_inputbox_t, inputbox);
+    int focused;
     int i;
     int chars;
     int w;
 
+    focused = inputbox->widget.focused;
     w = inputbox->widget.w;
 
     // Select the background color based on whether we are currently
-    // editing, and if not, whether the widget is selected.
+    // editing, and if not, whether the widget is focused.
 
-    if (inputbox->editing && selected)
+    if (inputbox->editing && focused)
     {
         TXT_BGColor(TXT_COLOR_BLACK, 0);
     }
     else
     {
-        TXT_SetWidgetBG(inputbox, selected);
+        TXT_SetWidgetBG(inputbox);
     }
 
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
@@ -70,21 +136,21 @@ static void TXT_InputBoxDrawer(TXT_UNCAST_ARG(inputbox), int selected)
     if (!inputbox->editing)
     {
         // If not editing, use the current value from inputbox->value.
- 
+
         SetBufferFromValue(inputbox);
     }
-    
+
     TXT_DrawString(inputbox->buffer);
 
     chars = strlen(inputbox->buffer);
 
-    if (chars < w && inputbox->editing && selected)
+    if (chars < w && inputbox->editing && focused)
     {
         TXT_BGColor(TXT_COLOR_BLACK, 1);
         TXT_DrawString("_");
         ++chars;
     }
-    
+
     for (i=chars; i < w; ++i)
     {
         TXT_DrawString(" ");
@@ -125,8 +191,7 @@ static int TXT_InputBoxKeyPress(TXT_UNCAST_ARG(inputbox), int key)
     {
         if (key == KEY_ENTER)
         {
-            SetBufferFromValue(inputbox);
-            inputbox->editing = 1;
+            StartEditing(inputbox);
             return 1;
         }
 
@@ -135,12 +200,7 @@ static int TXT_InputBoxKeyPress(TXT_UNCAST_ARG(inputbox), int key)
 
     if (key == KEY_ENTER)
     {
-        free(*((char **)inputbox->value));
-        *((char **) inputbox->value) = strdup(inputbox->buffer);
-
-        TXT_EmitSignal(&inputbox->widget, "changed");
-
-        inputbox->editing = 0;
+        FinishEditing(inputbox);
     }
 
     if (key == KEY_ESCAPE)
@@ -159,50 +219,7 @@ static int TXT_InputBoxKeyPress(TXT_UNCAST_ARG(inputbox), int key)
     {
         Backspace(inputbox);
     }
-    
-    return 1;
-}
 
-static int TXT_IntInputBoxKeyPress(TXT_UNCAST_ARG(inputbox), int key)
-{
-    TXT_CAST_ARG(txt_inputbox_t, inputbox);
-
-    if (!inputbox->editing)
-    {
-        if (key == KEY_ENTER)
-        {
-            strcpy(inputbox->buffer, "");
-            inputbox->editing = 1;
-            return 1;
-        }
-
-        return 0;
-    }
-
-    if (key == KEY_ENTER)
-    {
-        *((int *) inputbox->value) = atoi(inputbox->buffer);
-
-        inputbox->editing = 0;
-    }
-
-    if (key == KEY_ESCAPE)
-    {
-        inputbox->editing = 0;
-    }
-
-    if (isdigit(key))
-    {
-        // Add character to the buffer
-
-        AddCharacter(inputbox, key);
-    }
-
-    if (key == KEY_BACKSPACE)
-    {
-        Backspace(inputbox);
-    }
-    
     return 1;
 }
 
@@ -224,6 +241,18 @@ static void TXT_InputBoxMousePress(TXT_UNCAST_ARG(inputbox),
     }
 }
 
+static void TXT_InputBoxFocused(TXT_UNCAST_ARG(inputbox), int focused)
+{
+    TXT_CAST_ARG(txt_inputbox_t, inputbox);
+
+    // Stop editing when we lose focus.
+
+    if (inputbox->editing && !focused)
+    {
+        FinishEditing(inputbox);
+    }
+}
+
 txt_widget_class_t txt_inputbox_class =
 {
     TXT_AlwaysSelectable,
@@ -233,6 +262,7 @@ txt_widget_class_t txt_inputbox_class =
     TXT_InputBoxDestructor,
     TXT_InputBoxMousePress,
     NULL,
+    TXT_InputBoxFocused,
 };
 
 txt_widget_class_t txt_int_inputbox_class =
@@ -240,34 +270,12 @@ txt_widget_class_t txt_int_inputbox_class =
     TXT_AlwaysSelectable,
     TXT_InputBoxSizeCalc,
     TXT_InputBoxDrawer,
-    TXT_IntInputBoxKeyPress,
+    TXT_InputBoxKeyPress,
     TXT_InputBoxDestructor,
     TXT_InputBoxMousePress,
     NULL,
+    TXT_InputBoxFocused,
 };
-
-static void SetBufferFromValue(txt_inputbox_t *inputbox)
-{
-    if (inputbox->widget.widget_class == &txt_inputbox_class)
-    {
-        char **value = (char **) inputbox->value;
-
-        if (*value != NULL)
-        {
-            strncpy(inputbox->buffer, *value, inputbox->size);
-            inputbox->buffer[inputbox->size] = '\0';
-        }
-        else
-        {
-            strcpy(inputbox->buffer, "");
-        }
-    }
-    else if (inputbox->widget.widget_class == &txt_int_inputbox_class)
-    {
-        int *value = (int *) inputbox->value;
-        sprintf(inputbox->buffer, "%i", *value);
-    }
-}
 
 txt_inputbox_t *TXT_NewInputBox(char **value, int size)
 {

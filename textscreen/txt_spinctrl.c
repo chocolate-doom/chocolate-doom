@@ -142,11 +142,14 @@ static void SetBuffer(txt_spincontrol_t *spincontrol)
     }
 }
 
-static void TXT_SpinControlDrawer(TXT_UNCAST_ARG(spincontrol), int selected)
+static void TXT_SpinControlDrawer(TXT_UNCAST_ARG(spincontrol))
 {
     TXT_CAST_ARG(txt_spincontrol_t, spincontrol);
     unsigned int i;
     unsigned int padding;
+    int focused;
+
+    focused = spincontrol->widget.focused;
 
     TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);
     TXT_BGColor(TXT_WINDOW_BACKGROUND, 0);
@@ -157,13 +160,13 @@ static void TXT_SpinControlDrawer(TXT_UNCAST_ARG(spincontrol), int selected)
 
     // Choose background color
 
-    if (selected && spincontrol->editing)
+    if (focused && spincontrol->editing)
     {
         TXT_BGColor(TXT_COLOR_BLACK, 0);
     }
     else
     {
-        TXT_SetWidgetBG(spincontrol, selected);
+        TXT_SetWidgetBG(spincontrol);
     }
 
     if (!spincontrol->editing)
@@ -239,6 +242,23 @@ static void EnforceLimits(txt_spincontrol_t *spincontrol)
     }
 }
 
+static void FinishEditing(txt_spincontrol_t *spincontrol)
+{
+    switch (spincontrol->type)
+    {
+        case TXT_SPINCONTROL_INT:
+            spincontrol->value->i = atoi(spincontrol->buffer);
+            break;
+
+        case TXT_SPINCONTROL_FLOAT:
+            spincontrol->value->f = (float) atof(spincontrol->buffer);
+            break;
+    }
+
+    spincontrol->editing = 0;
+    EnforceLimits(spincontrol);
+}
+
 static int TXT_SpinControlKeyPress(TXT_UNCAST_ARG(spincontrol), int key)
 {
     TXT_CAST_ARG(txt_spincontrol_t, spincontrol);
@@ -249,19 +269,7 @@ static int TXT_SpinControlKeyPress(TXT_UNCAST_ARG(spincontrol), int key)
     {
         if (key == KEY_ENTER)
         {
-            switch (spincontrol->type)
-            {
-                case TXT_SPINCONTROL_INT:
-                    spincontrol->value->i = atoi(spincontrol->buffer);
-                    break;
-
-                case TXT_SPINCONTROL_FLOAT:
-                    spincontrol->value->f = (float) atof(spincontrol->buffer);
-                    break;
-            }
-
-            spincontrol->editing = 0;
-            EnforceLimits(spincontrol);
+            FinishEditing(spincontrol);
             return 1;
         }
 
@@ -352,6 +360,13 @@ static void TXT_SpinControlMousePress(TXT_UNCAST_ARG(spincontrol),
     }
 }
 
+static void TXT_SpinControlFocused(TXT_UNCAST_ARG(spincontrol), int focused)
+{
+    TXT_CAST_ARG(txt_spincontrol_t, spincontrol);
+
+    FinishEditing(spincontrol);
+}
+
 txt_widget_class_t txt_spincontrol_class =
 {
     TXT_AlwaysSelectable,
@@ -361,6 +376,7 @@ txt_widget_class_t txt_spincontrol_class =
     TXT_SpinControlDestructor,
     TXT_SpinControlMousePress,
     NULL,
+    TXT_SpinControlFocused,
 };
 
 static txt_spincontrol_t *TXT_BaseSpinControl(void)

@@ -129,7 +129,7 @@ static void GetJoystickButtonDescription(int button, char *buf)
     sprintf(buf, "BUTTON #%i", button + 1);
 }
 
-static void TXT_JoystickInputDrawer(TXT_UNCAST_ARG(joystick_input), int selected)
+static void TXT_JoystickInputDrawer(TXT_UNCAST_ARG(joystick_input))
 {
     TXT_CAST_ARG(txt_joystick_input_t, joystick_input);
     char buf[20];
@@ -144,7 +144,7 @@ static void TXT_JoystickInputDrawer(TXT_UNCAST_ARG(joystick_input), int selected
         GetJoystickButtonDescription(*joystick_input->variable, buf);
     }
 
-    TXT_SetWidgetBG(joystick_input, selected);
+    TXT_SetWidgetBG(joystick_input);
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
     
     TXT_DrawString(buf);

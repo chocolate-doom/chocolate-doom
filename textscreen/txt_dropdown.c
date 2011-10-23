@@ -221,7 +221,7 @@ static void TXT_DropdownListSizeCalc(TXT_UNCAST_ARG(list))
     list->widget.h = 1;
 }
 
-static void TXT_DropdownListDrawer(TXT_UNCAST_ARG(list), int selected)
+static void TXT_DropdownListDrawer(TXT_UNCAST_ARG(list))
 {
     TXT_CAST_ARG(txt_dropdown_list_t, list);
     unsigned int i;
@@ -229,7 +229,7 @@ static void TXT_DropdownListDrawer(TXT_UNCAST_ARG(list), int selected)
 
     // Set bg/fg text colors.
 
-    TXT_SetWidgetBG(list, selected);
+    TXT_SetWidgetBG(list);
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
 
     // Select a string to draw from the list, if the current value is

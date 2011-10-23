@@ -36,7 +36,7 @@ static void TXT_LabelSizeCalc(TXT_UNCAST_ARG(label))
     label->widget.h = label->h;
 }
 
-static void TXT_LabelDrawer(TXT_UNCAST_ARG(label), int selected)
+static void TXT_LabelDrawer(TXT_UNCAST_ARG(label))
 {
     TXT_CAST_ARG(txt_label_t, label);
     unsigned int x, y;

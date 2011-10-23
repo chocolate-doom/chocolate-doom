@@ -102,7 +102,7 @@ static void TXT_KeyInputSizeCalc(TXT_UNCAST_ARG(key_input))
 }
 
 
-static void TXT_KeyInputDrawer(TXT_UNCAST_ARG(key_input), int selected)
+static void TXT_KeyInputDrawer(TXT_UNCAST_ARG(key_input))
 {
     TXT_CAST_ARG(txt_key_input_t, key_input);
     char buf[20];
@@ -117,7 +117,7 @@ static void TXT_KeyInputDrawer(TXT_UNCAST_ARG(key_input), int selected)
         TXT_GetKeyDescription(*key_input->variable, buf);
     }
 
-    TXT_SetWidgetBG(key_input, selected);
+    TXT_SetWidgetBG(key_input);
     TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
     
     TXT_DrawString(buf);
