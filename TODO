@@ -1,19 +1,11 @@
-Currently in progress:
-
-* Heretic/Hexen support (see: raven-branch)
-* Strife support (see: strife-branch)
-
 To do:
 
 * Demo hashes for regression testing of this and other ports.
 * File selector for chocolate-setup, so that WADs can be selected from
   a browser, instead of simply typing the filenames.
 * Multiplayer:
-  - Master server for locating servers automatically - makes setting up
-    public servers easier.
   - Use UPnP to automatically configure port forwarding for NATted
     networks.
-  - Incorporate local LAN search into setup interface.
   - Multiplayer options and configuration file (server name, etc)
 * Improve multiplayer startup:
   - Select an IWAD automatically from the server's game type rather than
