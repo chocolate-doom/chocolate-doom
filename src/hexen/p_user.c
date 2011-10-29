@@ -330,8 +330,6 @@ void P_DeathThink(player_t * player)
     int dir;
     angle_t delta;
     int lookDelta;
-    extern int inv_ptr;
-    extern int curpos;
 
     P_MovePsprites(player);
 
@@ -1336,9 +1334,6 @@ boolean P_HealRadius(player_t * player)
 
 void P_PlayerNextArtifact(player_t * player)
 {
-    extern int inv_ptr;
-    extern int curpos;
-
     if (player == &players[consoleplayer])
     {
         inv_ptr--;
@@ -1375,8 +1370,6 @@ void P_PlayerNextArtifact(player_t * player)
 void P_PlayerRemoveArtifact(player_t * player, int slot)
 {
     int i;
-    extern int inv_ptr;
-    extern int curpos;
 
     player->artifactCount--;
     if (!(--player->inventory[slot].count))

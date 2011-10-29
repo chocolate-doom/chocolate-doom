@@ -608,8 +608,6 @@ int		castframes;
 int		castonmelee;
 boolean		castattacking;
 
-extern	gamestate_t     wipegamestate;
-
 //
 // F_StartCast
 //

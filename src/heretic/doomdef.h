@@ -533,7 +533,6 @@ extern player_t players[MAXPLAYERS];
 
 extern boolean DebugSound;      // debug flag for displaying sound info
 
-extern int maxammo[NUMAMMO];
 extern int GetWeaponAmmo[NUMWEAPONS];
 
 extern boolean demorecording;
@@ -560,12 +559,6 @@ extern byte *save_p;
 extern mapthing_t *deathmatch_p;
 extern mapthing_t deathmatchstarts[10];
 extern mapthing_t playerstarts[MAXPLAYERS];
-
-extern int viewwindowx;
-extern int viewwindowy;
-extern int viewwidth;
-extern int scaledviewwidth;
-extern int viewheight;
 
 extern int mouseSensitivity;
 
@@ -611,27 +604,9 @@ void D_DoomLoop(void);
 // calls all ?_Responder, ?_Ticker, and ?_Drawer functions
 // calls I_GetTime, I_StartFrame, and I_StartTic
 
-void NetUpdate(void);
-// create any new ticcmds and broadcast to other players
-
-void D_QuitNetGame(void);
-// broadcasts special packets to other players to notify of game exit
-
-void TryRunTics(void);
-
 //---------
 //SYSTEM IO
 //---------
-
-byte *I_ZoneBase(int *size);
-// called by startup code to get the ammount of memory to malloc
-// for the zone management
-
-// asyncronous interrupt functions should maintain private ques that are
-// read by the syncronous functions to be converted into events
-
-// Copy buffer to video
-
 byte *I_AllocLow(int length);
 // allocates from low memory under dos, just mallocs under unix
 
@@ -823,7 +798,6 @@ void F_StartFinale(void);
 // STATUS BAR (SB_bar.c)
 //----------------------
 
-extern int SB_state;
 void SB_Init(void);
 boolean SB_Responder(event_t * event);
 void SB_Ticker(void);

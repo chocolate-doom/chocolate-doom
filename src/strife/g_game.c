@@ -77,17 +77,14 @@
 
 #define SAVEGAMESIZE	0x2c000
 
-boolean	G_CheckDemoStatus (void); 
 void	G_ReadDemoTiccmd (ticcmd_t* cmd); 
 void	G_WriteDemoTiccmd (ticcmd_t* cmd); 
 void	G_PlayerReborn (int player); 
-void	G_InitNew (skill_t skill, int map); 
  
 void	G_DoReborn (int playernum); 
  
 void	G_DoLoadLevel (void); 
 void	G_DoNewGame (void); 
-void	G_DoLoadGame (boolean userload); 
 void	G_DoPlayDemo (void); 
 void	G_DoCompleted (void); 
 void	G_DoVictory (void); 
@@ -669,8 +666,6 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 //
 // G_DoLoadLevel 
 //
-extern  gamestate_t     wipegamestate; 
- 
 void G_DoLoadLevel (void) 
 { 
     int             i; 
@@ -1920,9 +1915,6 @@ void G_DoNewGame (void)
     G_InitNew (d_skill, d_map);
     gameaction = ga_nothing; 
 } 
-
-// The sky texture to be used instead of the F_SKY1 dummy.
-extern  int	skytexture; 
 
 //
 // G_InitNew

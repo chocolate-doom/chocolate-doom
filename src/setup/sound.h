@@ -22,9 +22,9 @@
 #ifndef SETUP_SOUND_H
 #define SETUP_SOUND_H
 
+#include "i_sound.h"
+
 void ConfigSound(void);
 void BindSoundVariables(void);
-
-extern int snd_musicdevice;
 
 #endif /* #ifndef SETUP_SOUND_H */

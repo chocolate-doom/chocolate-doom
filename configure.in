@@ -27,7 +27,7 @@ AC_ARG_ENABLE(penis-extension,
 
 if test "$GCC" = "yes"
 then
-        WARNINGS="-Wall -Wdeclaration-after-statement"
+        WARNINGS="-Wall -Wdeclaration-after-statement -Wredundant-decls"
         CFLAGS="-O$OPT_LEVEL -g $WARNINGS $orig_CFLAGS"
 fi
 

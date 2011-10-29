@@ -48,8 +48,6 @@ typedef struct Cheat_s
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
 
-void SB_PaletteFlash(boolean forceChange);
-
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 static void DrawSoundInfo(void);
@@ -83,7 +81,6 @@ static void CheatQuickenFunc2(player_t * player, Cheat_t * cheat);
 static void CheatQuickenFunc3(player_t * player, Cheat_t * cheat);
 static void CheatClassFunc1(player_t * player, Cheat_t * cheat);
 static void CheatClassFunc2(player_t * player, Cheat_t * cheat);
-static void CheatInitFunc(player_t * player, Cheat_t * cheat);
 static void CheatInitFunc(player_t * player, Cheat_t * cheat);
 static void CheatVersionFunc(player_t * player, Cheat_t * cheat);
 static void CheatDebugFunc(player_t * player, Cheat_t * cheat);

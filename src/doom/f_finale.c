@@ -345,9 +345,6 @@ boolean		castattacking;
 //
 // F_StartCast
 //
-extern	gamestate_t     wipegamestate;
-
-
 void F_StartCast (void)
 {
     wipegamestate = -1;		// force a screen wipe

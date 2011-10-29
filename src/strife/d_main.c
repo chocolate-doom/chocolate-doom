@@ -165,8 +165,6 @@ static int comport = 0;
 static char *nickname = NULL;
 
 void D_CheckNetGame (void);
-void D_ProcessEvents (void);
-void D_DoAdvanceDemo (void);
 
 
 //
@@ -490,8 +488,6 @@ boolean D_GrabMouseCallback(void)
 //
 //  haleyjd 08/23/10: [STRIFE] Verified unmodified.
 //
-extern  boolean         demorecording;
-
 void D_DoomLoop (void)
 {
     if (demorecording)

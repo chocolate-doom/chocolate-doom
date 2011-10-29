@@ -48,14 +48,12 @@ extern void P_PlayerNextArtifact(player_t * player);
 boolean G_CheckDemoStatus(void);
 void G_ReadDemoTiccmd(ticcmd_t * cmd);
 void G_WriteDemoTiccmd(ticcmd_t * cmd);
-void G_InitNew(skill_t skill, int episode, int map);
 
 void G_DoReborn(int playernum);
 
 void G_DoLoadLevel(void);
 void G_DoInitNew(void);
 void G_DoNewGame(void);
-void G_DoLoadGame(void);
 void G_DoPlayDemo(void);
 void G_DoTeleportNewMap(void);
 void G_DoCompleted(void);
@@ -194,9 +192,6 @@ int testcontrols_mousespeed;
 */
 
 extern boolean inventory;
-extern int curpos;
-extern int inv_ptr;
-
 boolean usearti = true;
 
 void G_BuildTiccmd(ticcmd_t *cmd, int maketic)

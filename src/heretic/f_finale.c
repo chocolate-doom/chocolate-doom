@@ -305,7 +305,6 @@ void F_DemonScroll(void)
 void F_DrawUnderwater(void)
 {
     static boolean underwawa;
-    extern boolean MenuActive;
     extern boolean askforquit;
 
     switch (finalestage)

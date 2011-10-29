@@ -52,13 +52,11 @@ boolean G_CheckDemoStatus(void);
 void G_ReadDemoTiccmd(ticcmd_t * cmd);
 void G_WriteDemoTiccmd(ticcmd_t * cmd);
 void G_PlayerReborn(int player);
-void G_InitNew(skill_t skill, int episode, int map);
 
 void G_DoReborn(int playernum);
 
 void G_DoLoadLevel(void);
 void G_DoNewGame(void);
-void G_DoLoadGame(void);
 void G_DoPlayDemo(void);
 void G_DoCompleted(void);
 void G_DoVictory(void);
@@ -708,7 +706,6 @@ static void SetJoyButtons(unsigned int buttons_mask)
 boolean G_Responder(event_t * ev)
 {
     player_t *plr;
-    extern boolean MenuActive;
 
     plr = &players[consoleplayer];
     if (ev->type == ev_keyup && ev->data1 == key_useartifact)
@@ -1071,8 +1068,6 @@ void G_InitPlayer(int player)
 = Can when a player completes a level
 ====================
 */
-extern int curpos;
-extern int inv_ptr;
 extern int playerkeys;
 
 void G_PlayerFinishLevel(int player)
@@ -1507,8 +1502,6 @@ void G_DoNewGame(void)
     G_InitNew(d_skill, d_episode, d_map);
     gameaction = ga_nothing;
 }
-
-extern int skytexture;
 
 void G_InitNew(skill_t skill, int episode, int map)
 {

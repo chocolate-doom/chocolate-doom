@@ -433,10 +433,6 @@ void R_DrawTRTLColumn(void)
 }
 
 
-// haleyjd 08/26/10: [STRIFE] - Rogue's translucency lookup table
-// This is functionally equivalent to Raven's TINTTAB and BOOM's TRANMAPs.
-extern byte *xlatab;
-
 //
 // R_InitTranslationTables
 // Creates the translation tables to map
@@ -943,13 +939,6 @@ R_VideoErase
 // Draws the border around the view
 //  for different size windows?
 //
-void
-V_MarkRect
-( int		x,
-  int		y,
-  int		width,
-  int		height ); 
- 
 void R_DrawViewBorder (void) 
 { 
     int		top;

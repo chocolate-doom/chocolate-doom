@@ -51,11 +51,6 @@
 
 // Public data
 
-void CT_Init(void);
-void CT_Drawer(void);
-boolean CT_Responder(event_t * ev);
-void CT_Ticker(void);
-char CT_dequeueChatChar(void);
 
 boolean chatmodeon;
 

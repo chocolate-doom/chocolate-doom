@@ -250,8 +250,6 @@ void D_InitSinglePlayerGame(net_gamesettings_t *settings)
 // D_CheckNetGame
 // Works out player numbers among the net participants
 //
-extern	int			viewangleoffset;
-
 void D_CheckNetGame (void)
 {
     net_connect_data_t connect_data;

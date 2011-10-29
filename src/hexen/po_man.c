@@ -40,10 +40,6 @@
 
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
-boolean PO_MovePolyobj(int num, int x, int y);
-boolean PO_RotatePolyobj(int num, angle_t angle);
-void PO_Init(int lump);
-
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 
 static polyobj_t *GetPolyobj(int polyNum);
@@ -61,8 +57,6 @@ static void SpawnPolyobj(int index, int tag, boolean crush);
 static void TranslateToStartSpot(int tag, int originX, int originY);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
-
-extern seg_t *segs;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 

@@ -274,15 +274,6 @@ cheatseq_t cheat_amap = CHEAT("iddt", 0);
 
 static boolean stopped = true;
 
-extern boolean viewactive;
-
-void
-V_MarkRect
-( int	x,
-  int	y,
-  int	width,
-  int	height );
-
 // Calculates the slope and slope according to the x-axis of a line
 // segment in map coordinates (with the upright y-axis n' all) so
 // that it can be used with the brain-dead drawing stuff.

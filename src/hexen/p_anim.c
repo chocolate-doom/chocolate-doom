@@ -78,7 +78,6 @@ static void P_LightningFlash(void);
 
 extern fixed_t Sky1ColumnOffset;
 extern fixed_t Sky2ColumnOffset;
-extern int Sky1Texture;
 extern boolean DoubleSky;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------

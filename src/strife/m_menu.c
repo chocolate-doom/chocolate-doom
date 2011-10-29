@@ -174,7 +174,6 @@ void M_EndGame(int choice);
 void M_ReadThis(int choice);
 void M_ReadThis2(int choice);
 void M_ReadThis3(int choice); // [STRIFE]
-void M_QuitStrife(int choice);
 
 //void M_ChangeMessages(int choice); [STRIFE]
 void M_ChangeSensitivity(int choice);
@@ -186,7 +185,6 @@ void M_StartGame(int choice);
 void M_Sound(int choice);
 
 //void M_FinishReadThis(int choice); - [STRIFE] unused
-void M_LoadSelect(int choice);
 void M_SaveSelect(int choice);
 void M_ReadSaveStrings(void);
 void M_QuickSave(void);
@@ -210,10 +208,8 @@ void M_DrawEmptyCell(menu_t *menu,int item);
 void M_DrawSelCell(menu_t *menu,int item);
 int  M_StringWidth(char *string);
 int  M_StringHeight(char *string);
-void M_StartControlPanel(void);
 void M_StartMessage(char *string,void *routine,boolean input);
 void M_StopMessage(void);
-void M_ClearMenus (int choice);
 
 
 

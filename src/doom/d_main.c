@@ -134,7 +134,6 @@ int             show_endoom = 1;
 
 
 void D_CheckNetGame (void);
-void D_DoAdvanceDemo (void);
 
 
 //
@@ -411,8 +410,6 @@ boolean D_GrabMouseCallback(void)
 //
 //  D_DoomLoop
 //
-extern  boolean         demorecording;
-
 void D_DoomLoop (void)
 {
     if (demorecording)

@@ -54,8 +54,6 @@ doc_DATA=$(DOC_FILES)
 
 MAINTAINERCLEANFILES =  $(AUX_DIST_GEN)
 
-docdir=$(prefix)/share/doc/@PACKAGE@
-
 SUBDIRS=wince textscreen opl pcsound data src man
 
 DIST_SUBDIRS=pkg $(SUBDIRS)

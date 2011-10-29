@@ -655,8 +655,6 @@ extern int leveltime;           // tics in game play for par
 
 extern ticcmd_t *netcmds;
 
-extern int rndindex;
-
 #define MAXDEATHMATCHSTARTS 16
 extern mapthing_t *deathmatch_p;
 extern mapthing_t deathmatchstarts[MAXDEATHMATCHSTARTS];
@@ -666,12 +664,6 @@ extern int RebornPosition;
 
 #define MAX_PLAYER_STARTS 8
 extern mapthing_t playerstarts[MAX_PLAYER_STARTS][MAXPLAYERS];
-
-extern int viewwindowx;
-extern int viewwindowy;
-extern int viewwidth;
-extern int scaledviewwidth;
-extern int viewheight;
 
 extern int mouseSensitivity;
 
@@ -717,21 +709,11 @@ void H2_GameLoop(void);
 // calls all ?_Responder, ?_Ticker, and ?_Drawer functions
 // calls I_GetTime, I_StartFrame, and I_StartTic
 
-void NetUpdate(void);
-// create any new ticcmds and broadcast to other players
-
-void D_QuitNetGame(void);
-// broadcasts special packets to other players to notify of game exit
-
-void TryRunTics(void);
-
 //---------
 //SYSTEM IO
 //---------
 byte *I_AllocLow(int length);
 // allocates from low memory under dos, just mallocs under unix
-
-void I_Tactile(int on, int off, int total);
 
 // haleyjd: was WATCOMC, again preserved for historical interest as in Heretic
 #if 0
@@ -1055,7 +1037,6 @@ void F_StartFinale(void);
 
 extern int inv_ptr;
 extern int curpos;
-extern int SB_state;
 void SB_Init(void);
 void SB_SetClassData(void);
 boolean SB_Responder(event_t * event);

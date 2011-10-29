@@ -30,9 +30,6 @@
 #include "i_swap.h"
 #include "r_local.h"
 
-void R_DrawColumn(void);
-void R_DrawTLColumn(void);
-void R_DrawAltTLColumn(void);
 //void R_DrawTranslatedAltTLColumn(void);
 
 typedef struct

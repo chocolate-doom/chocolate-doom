@@ -31,6 +31,7 @@
 
 #include "doomdef.h"
 #include "deh_str.h"
+#include "p_local.h"
 #include "s_sound.h"
 #include "i_system.h"
 #include "i_video.h"
@@ -45,9 +46,6 @@ typedef enum
 
 // Public functions
 
-void IN_Start(void);
-void IN_Ticker(void);
-void IN_Drawer(void);
 
 boolean intermission;
 

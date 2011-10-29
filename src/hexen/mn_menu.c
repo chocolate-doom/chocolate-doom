@@ -129,8 +129,6 @@ void MN_LoadSlotText(void);
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
 extern int detailLevel;
-extern char *SavePath;
-extern int key_speed, key_strafe;
 extern boolean gamekeydown[256];        // The NUMKEYS macro is local to g_game
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
@@ -1012,8 +1010,6 @@ static void SCClass(int option)
 
 static void SCSkill(int option)
 {
-    extern int SB_state;
-
     PlayerClass[consoleplayer] = MenuPClass;
     G_DeferredNewGame(option);
     SB_SetClassData();

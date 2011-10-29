@@ -30,9 +30,6 @@
 #include "i_system.h"
 #include "r_local.h"
 
-void R_DrawColumn(void);
-void R_DrawTLColumn(void);
-
 typedef struct
 {
     int x1, x2;

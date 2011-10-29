@@ -1138,8 +1138,6 @@ static void CheatHealthFunc(player_t * player, Cheat_t * cheat)
 
 static void CheatKeysFunc(player_t * player, Cheat_t * cheat)
 {
-    extern int playerkeys;
-
     player->keys[key_yellow] = true;
     player->keys[key_green] = true;
     player->keys[key_blue] = true;

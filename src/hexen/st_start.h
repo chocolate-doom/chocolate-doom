@@ -22,6 +22,8 @@
 //
 //-----------------------------------------------------------------------------
 
+#ifndef STSTART_H
+#define STSTART_H
 
 // HEADER FILES ------------------------------------------------------------
 
@@ -42,3 +44,4 @@ extern void ST_NetDone(void);
  
 extern int graphical_startup;
 
+#endif

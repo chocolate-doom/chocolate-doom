@@ -281,6 +281,7 @@ extern angle_t rw_normalangle;
 // R_main.c
 //
 extern int viewwidth, viewheight, viewwindowx, viewwindowy;
+extern int scaledviewwidth;
 extern int centerx, centery;
 extern int flyheight;
 extern fixed_t centerxfrac;
@@ -391,7 +392,6 @@ extern fixed_t *spritewidth;    // needed for pre rendering (fracs)
 extern fixed_t *spriteoffset;
 extern fixed_t *spritetopoffset;
 extern lighttable_t *colormaps;
-extern int viewwidth, scaledviewwidth, viewheight;
 extern int firstflat;
 extern int numflats;
 

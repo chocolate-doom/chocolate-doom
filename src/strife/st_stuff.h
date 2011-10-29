@@ -85,7 +85,6 @@ typedef enum
 } st_chatstateenum_t;
 
 
-boolean ST_Responder(event_t* ev);
 
 extern byte *st_backing_screen;
 

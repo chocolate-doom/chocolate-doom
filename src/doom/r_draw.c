@@ -946,13 +946,6 @@ R_VideoErase
 // Draws the border around the view
 //  for different size windows?
 //
-void
-V_MarkRect
-( int		x,
-  int		y,
-  int		width,
-  int		height ); 
- 
 void R_DrawViewBorder (void) 
 { 
     int		top;

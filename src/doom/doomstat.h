@@ -155,11 +155,6 @@ extern  boolean		viewactive;
 
 extern  boolean		nodrawers;
 
-extern	int		viewwindowx;
-extern	int		viewwindowy;
-extern	int		viewheight;
-extern	int		viewwidth;
-extern	int		scaledviewwidth;
 
 extern  boolean         testcontrols;
 extern  int             testcontrols_mousespeed;
@@ -247,9 +242,6 @@ extern  mapthing_t      playerstarts[MAXPLAYERS];
 extern  wbstartstruct_t		wminfo;	
 
 
-// LUT of ammunition limits for each kind.
-// This doubles with BackPack powerup item.
-extern  int		maxammo[NUMAMMO];
 
 
 

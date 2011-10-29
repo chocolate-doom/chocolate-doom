@@ -28,7 +28,6 @@
 #include "textscreen.h"
 #include "m_config.h"
 
-#include "i_sound.h"
 #include "mode.h"
 #include "sound.h"
 

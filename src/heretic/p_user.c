@@ -313,12 +313,12 @@ void P_MovePlayer(player_t * player)
 */
 
 #define         ANG5    (ANG90/18)
+extern int inv_ptr;
+extern int curpos;
 
 void P_DeathThink(player_t * player)
 {
     angle_t angle, delta;
-    extern int inv_ptr;
-    extern int curpos;
     int lookDelta;
 
     P_MovePsprites(player);
@@ -542,8 +542,6 @@ void P_PlayerThink(player_t * player)
 {
     ticcmd_t *cmd;
     weapontype_t newweapon;
-
-    extern boolean ultimatemsg;
 
     // No-clip cheat
     if (player->cheats & CF_NOCLIP)
@@ -812,9 +810,6 @@ void P_ArtiTele(player_t * player)
 
 void P_PlayerNextArtifact(player_t * player)
 {
-    extern int inv_ptr;
-    extern int curpos;
-
     if (player == &players[consoleplayer])
     {
         inv_ptr--;
@@ -851,9 +846,6 @@ void P_PlayerNextArtifact(player_t * player)
 void P_PlayerRemoveArtifact(player_t * player, int slot)
 {
     int i;
-    extern int inv_ptr;
-    extern int curpos;
-
     player->artifactCount--;
     if (!(--player->inventory[slot].count))
     {                           // Used last of a type - compact the artifact list

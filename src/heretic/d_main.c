@@ -91,7 +91,6 @@ static int show_endoom = 1;
 void D_CheckNetGame(void);
 void D_PageDrawer(void);
 void D_AdvanceDemo(void);
-void F_Drawer(void);
 boolean F_Responder(event_t * ev);
 
 //---------------------------------------------------------------------------
@@ -152,7 +151,6 @@ extern boolean finalestage;
 
 void D_Display(void)
 {
-    extern boolean MenuActive;
     extern boolean askforquit;
 
     // Change the view size if needed
@@ -307,8 +305,6 @@ void D_PageTicker(void)
 =
 ================
 */
-
-extern boolean MenuActive;
 
 void D_PageDrawer(void)
 {

@@ -77,7 +77,6 @@ typedef struct
 
 void R_ExecuteSetViewSize(void);
 void D_CheckNetGame(void);
-void F_Drawer(void);
 boolean F_Responder(event_t * ev);
 void I_StartupKeyboard(void);
 void I_StartupJoystick(void);
@@ -111,7 +110,6 @@ static void WarpCheck(void);
 extern boolean automapactive;
 extern boolean MenuActive;
 extern boolean askforquit;
-extern char *SavePath;
 
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 

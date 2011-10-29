@@ -123,7 +123,6 @@ void MN_LoadSlotText(void);
 
 // External Data
 
-extern int usegamma;
 extern int detailLevel;
 extern int screenblocks;
 

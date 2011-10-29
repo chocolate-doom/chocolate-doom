@@ -77,9 +77,6 @@ int snd_MaxVolume = 10;                // maximum volume for sound
 int snd_MusicVolume = 10;              // maximum volume for music
 int snd_Channels = 16;
 
-extern int startepisode;
-extern int startmap;
-
 // int AmbChan;
 
 //==========================================================================

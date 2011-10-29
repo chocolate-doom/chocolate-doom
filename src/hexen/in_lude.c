@@ -22,12 +22,13 @@
 //
 //-----------------------------------------------------------------------------
 
+#include <ctype.h>
 
 #include "h2def.h"
 #include "s_sound.h"
 #include "i_system.h"
 #include "i_video.h"
-#include <ctype.h>
+#include "p_local.h"
 #include "v_video.h"
 
 // MACROS ------------------------------------------------------------------
@@ -47,10 +48,6 @@ typedef enum
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 // PUBLIC FUNCTION PROTOTYPES ----------------------------------------------
-
-void IN_Start(void);
-void IN_Ticker(void);
-void IN_Drawer(void);
 
 // PRIVATE FUNCTION PROTOTYPES ---------------------------------------------
 

@@ -145,10 +145,6 @@ static void StreamOutLong(unsigned int val);
 
 // EXTERNAL DATA DECLARATIONS ----------------------------------------------
 
-extern int ACScriptCount;
-extern byte *ActionCodeBase;
-extern acsInfo_t *ACSInfo;
-
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 #define DEFAULT_SAVEPATH                "hexndata/"
