@@ -278,8 +278,17 @@ void D_CheckNetGame (void)
 
     LoadGameSettings(&settings, &connect_data);
 
-    DEH_printf("startskill %i  deathmatch: %i  startmap: %i  startepisode: %i\n",
-               startskill, deathmatch, startmap, startepisode);
+    // Strife netgames are *always* deathmatch,
+    // specifically altdeath mode.
+
+    if (netgame)
+    {
+        deathmatch = 2;
+    }
+
+    DEH_printf("startmap: %i, skill: %i, enemies: %i, random: %i\n",
+               startmap, startskill, !nomonsters, 0 /* ??? */);
+
 
     DEH_printf("player %i of %i (%i nodes)\n",
                consoleplayer+1, settings.num_players, settings.num_players);
@@ -304,3 +313,4 @@ void D_CheckNetGame (void)
         }
     }
 }
+

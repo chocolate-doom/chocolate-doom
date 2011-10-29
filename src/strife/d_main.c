@@ -1507,21 +1507,15 @@ void D_DoomMain (void)
     if(devparm)
         showintro = false;
 
-    //!
-    // @category net
-    // @vanilla
-    //
-    // Start a deathmatch game.
-    //
-
-    if (M_CheckParm ("-deathmatch"))
-        deathmatch = 1;
+    // Note: Strife *only* supports -altdeath mode. Vanilla
+    // Strife does not understand the -deathmatch command
+    // line parameter.
 
     //!
     // @category net
     // @vanilla
     //
-    // Start a deathmatch 2.0 game.  Weapons do not stay in place and
+    // Start a deathmatch game.  Weapons do not stay in place and
     // all items respawn after 30 seconds.
     //
 

@@ -689,9 +689,15 @@ static void StartGameMenu(char *window_title, int multiplayer)
 
     if (multiplayer)
     {
-        TXT_AddWidgets(gameopt_table,
+        if (gamemission != strife)
+        {
+            TXT_AddWidgets(gameopt_table,
                TXT_NewLabel("Game type"),
                TXT_NewDropdownList(&deathmatch, gamemodes, num_mult_types),
+               NULL);
+        }
+
+        TXT_AddWidgets(gameopt_table,
                TXT_NewLabel("Time limit"),
                TXT_NewHorizBox(TXT_NewIntInputBox(&timer, 2),
                                TXT_NewLabel("minutes"),
