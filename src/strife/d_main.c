@@ -1507,9 +1507,9 @@ void D_DoomMain (void)
     if(devparm)
         showintro = false;
 
-    // Note: Strife *only* supports -altdeath mode. Vanilla
-    // Strife does not understand the -deathmatch command
-    // line parameter.
+    // Note: Vanilla Strife does not understand the -deathmatch command
+    // line parameter. deathmatch=1 is the default behavior when
+    // playing a netgame.
 
     //!
     // @category net

@@ -278,12 +278,12 @@ void D_CheckNetGame (void)
 
     LoadGameSettings(&settings, &connect_data);
 
-    // Strife netgames are *always* deathmatch,
-    // specifically altdeath mode.
+    // Strife games are always deathmatch, though -altdeath is
+    // supported for respawning items.
 
-    if (netgame)
+    if (netgame && deathmatch == 0)
     {
-        deathmatch = 2;
+        deathmatch = 1;
     }
 
     DEH_printf("startmap: %i, skill: %i, enemies: %i, random: %i\n",

@@ -128,6 +128,12 @@ static char *gamemodes[] =
     "Deathmatch 2.0",
 };
 
+static char *strife_gamemodes[] =
+{
+    "Normal deathmatch",
+    "Items respawn", // (altdeath)
+};
+
 static char *net_player_name;
 static char *chat_macros[10];
 
@@ -137,6 +143,7 @@ static int character_class = 0;
 static int skill = 2;
 static int nomonsters = 0;
 static int deathmatch = 0;
+static int strife_altdeath = 0;
 static int fast = 0;
 static int respawn = 0;
 static int udpport = 2342;
@@ -269,7 +276,7 @@ static void StartGame(int multiplayer)
         {
             AddCmdLineParameter(exec, "-deathmatch");
         }
-        else if (deathmatch == 2)
+        else if (deathmatch == 2 || strife_altdeath != 0)
         {
             AddCmdLineParameter(exec, "-altdeath");
         }
@@ -631,6 +638,29 @@ static txt_window_action_t *WadWindowAction(void)
     return action;
 }
 
+static txt_dropdown_list_t *GameTypeDropdown(void)
+{
+    switch (gamemission)
+    {
+        case doom:
+        default:
+            return TXT_NewDropdownList(&deathmatch, gamemodes, 3);
+
+        // Heretic and Hexen don't support Deathmatch II:
+
+        case heretic:
+        case hexen:
+            return TXT_NewDropdownList(&deathmatch, gamemodes, 2);
+
+        // Strife supports both deathmatch modes, but doesn't support
+        // multiplayer co-op. Use a different variable to indicate whether
+        // to use altdeath or not.
+
+        case strife:
+            return TXT_NewDropdownList(&strife_altdeath, strife_gamemodes, 2);
+    }
+}
+
 // "Start game" menu.  This is used for the start server window
 // and the single player warp menu.  The parameters specify
 // the window title and whether to display multiplayer options.
@@ -641,7 +671,6 @@ static void StartGameMenu(char *window_title, int multiplayer)
     txt_table_t *gameopt_table;
     txt_table_t *advanced_table;
     txt_widget_t *iwad_selector;
-    int num_mult_types = 2;
 
     window = TXT_NewWindow(window_title);
 
@@ -659,15 +688,6 @@ static void StartGameMenu(char *window_title, int multiplayer)
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, StartGameAction(multiplayer));
     
     TXT_SetColumnWidths(gameopt_table, 12, 6);
-
-    if (gamemission == doom)
-    {
-        num_mult_types = 3;
-    }
-    else
-    {
-        num_mult_types = 2;
-    }
 
     TXT_AddWidgets(gameopt_table,
            TXT_NewLabel("Game"),
@@ -689,15 +709,9 @@ static void StartGameMenu(char *window_title, int multiplayer)
 
     if (multiplayer)
     {
-        if (gamemission != strife)
-        {
-            TXT_AddWidgets(gameopt_table,
-               TXT_NewLabel("Game type"),
-               TXT_NewDropdownList(&deathmatch, gamemodes, num_mult_types),
-               NULL);
-        }
-
         TXT_AddWidgets(gameopt_table,
+               TXT_NewLabel("Game type"),
+               GameTypeDropdown(),
                TXT_NewLabel("Time limit"),
                TXT_NewHorizBox(TXT_NewIntInputBox(&timer, 2),
                                TXT_NewLabel("minutes"),
