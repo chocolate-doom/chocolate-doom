@@ -187,13 +187,13 @@ appdir = $(prefix)/share/applications
 app_DATA = @PROGRAM_PREFIX@doom.desktop
 
 @PROGRAM_PREFIX@doom.desktop : doom.desktop
-	cp $< $@
+	cp doom.desktop $@
 
 screensaverdir = $(prefix)/share/applications/screensavers
 screensaver_DATA = @PROGRAM_PREFIX@doom-screensaver.desktop
 
 @PROGRAM_PREFIX@doom-screensaver.desktop: doom-screensaver.desktop
-	cp $< $@
+	cp doom-screensaver.desktop $@
 
 .rc.o:
 	$(WINDRES) $< -o $@
