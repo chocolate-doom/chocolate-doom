@@ -7,6 +7,8 @@
        emulate the PC VGA hardware (thanks GhostlyDeath).
      * Fix teleport behavior when emulating the alternate Final Doom
        executable (-gameversion final2) (thanks xttl).
+     * Fix weapon cycling keys when playing in Shareware Doom and using
+       the IDKFA cheat (thanks Alexandre Xavier).
 
     libtextscreen:
      * Input boxes stop editing and save when they lose their focus,
