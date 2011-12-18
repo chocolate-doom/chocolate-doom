@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <CodeBlocks_workspace_file>
 	<Workspace title="Chocolate">
-		<Project filename="doom.cbp" active="1">
+		<Project filename="doom.cbp">
 			<Depends filename="libtextscreen.cbp" />
 			<Depends filename="libopl.cbp" />
 			<Depends filename="libpcsound.cbp" />
@@ -16,7 +16,7 @@
 			<Depends filename="libopl.cbp" />
 			<Depends filename="libpcsound.cbp" />
 		</Project>
-		<Project filename="strife.cbp">
+		<Project filename="strife.cbp" active="1">
 			<Depends filename="libtextscreen.cbp" />
 			<Depends filename="libopl.cbp" />
 			<Depends filename="libpcsound.cbp" />

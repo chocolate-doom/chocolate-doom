@@ -66,6 +66,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\d_iwad.h" />
+		<Unit filename="..\src\d_loop.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\d_loop.h" />
 		<Unit filename="..\src\d_mode.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -300,6 +304,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\doom\st_stuff.h" />
+		<Unit filename="..\src\doom\statdump.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\doom\statdump.h" />
 		<Unit filename="..\src\doom\wi_stuff.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -355,6 +363,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\i_video.h" />
+		<Unit filename="..\src\i_videohr.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\i_videohr.h" />
 		<Unit filename="..\src\icon.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -415,6 +427,9 @@
 		</Unit>
 		<Unit filename="..\src\net_dedicated.h" />
 		<Unit filename="..\src\net_defs.h" />
+		<Unit filename="..\src\net_gui.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="..\src\net_gui.h" />
 		<Unit filename="..\src\net_io.c">
 			<Option compilerVar="CC" />

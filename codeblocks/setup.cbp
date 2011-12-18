@@ -54,7 +54,7 @@
 			<Add directory="..\src\setup" />
 		</ResourceCompiler>
 		<Linker>
-			<Add option="-lmingw32 -lSDLmain -lSDL -mwindows" />
+			<Add option="-lmingw32 -lSDLmain -lSDL -lSDL_net -mwindows" />
 			<Add directory="..\lib" />
 		</Linker>
 		<Unit filename="setup-res.rc">
@@ -74,6 +74,7 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\deh_str.h" />
+		<Unit filename="..\src\doomtype.h" />
 		<Unit filename="..\src\i_main.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -81,6 +82,10 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\i_system.h" />
+		<Unit filename="..\src\i_timer.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\i_timer.h" />
 		<Unit filename="..\src\m_argv.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -97,6 +102,31 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\m_misc.h" />
+		<Unit filename="..\src\net_defs.h" />
+		<Unit filename="..\src\net_io.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\net_io.h" />
+		<Unit filename="..\src\net_loop.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\net_loop.h" />
+		<Unit filename="..\src\net_packet.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\net_packet.h" />
+		<Unit filename="..\src\net_query.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\net_query.h" />
+		<Unit filename="..\src\net_sdl.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\net_sdl.h" />
+		<Unit filename="..\src\net_structrw.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\net_structrw.h" />
 		<Unit filename="..\src\setup\compatibility.c">
 			<Option compilerVar="CC" />
 		</Unit>

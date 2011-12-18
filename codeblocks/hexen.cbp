@@ -67,11 +67,25 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\d_iwad.h" />
+		<Unit filename="..\src\d_loop.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\d_loop.h" />
 		<Unit filename="..\src\d_mode.c">
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\d_mode.h" />
 		<Unit filename="..\src\d_ticcmd.h" />
+		<Unit filename="..\src\deh_defs.h" />
+		<Unit filename="..\src\deh_io.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\deh_io.h" />
+		<Unit filename="..\src\deh_main.h" />
+		<Unit filename="..\src\deh_mapping.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\deh_mapping.h" />
 		<Unit filename="..\src\deh_str.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -112,6 +126,9 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\hexen\info.h" />
+		<Unit filename="..\src\hexen\m_misc.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Unit filename="..\src\hexen\m_random.c">
 			<Option compilerVar="CC" />
 		</Unit>
@@ -334,6 +351,51 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="..\src\mus2mid.h" />
+		<Unit filename="..\src\net_client.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\net_client.h" />
+		<Unit filename="..\src\net_common.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\net_common.h" />
+		<Unit filename="..\src\net_dedicated.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\net_dedicated.h" />
+		<Unit filename="..\src\net_defs.h" />
+		<Unit filename="..\src\net_gui.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\net_gui.h" />
+		<Unit filename="..\src\net_io.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\net_io.h" />
+		<Unit filename="..\src\net_loop.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\net_loop.h" />
+		<Unit filename="..\src\net_packet.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\net_packet.h" />
+		<Unit filename="..\src\net_query.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\net_query.h" />
+		<Unit filename="..\src\net_sdl.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\net_sdl.h" />
+		<Unit filename="..\src\net_server.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\net_server.h" />
+		<Unit filename="..\src\net_structrw.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="..\src\net_structrw.h" />
 		<Unit filename="..\src\tables.c">
 			<Option compilerVar="CC" />
 		</Unit>
