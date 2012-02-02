@@ -49,6 +49,10 @@
 
 #define MASTER_REFRESH_PERIOD 20 * 60 /* 20 minutes */
 
+// How often to re-resolve the address of the master server?
+
+#define MASTER_RESOLVE_PERIOD 8 * 60 * 60 /* 8 hours */
+
 typedef enum
 {
     // waiting for the game to start
@@ -141,6 +145,7 @@ static net_gamesettings_t sv_settings;
 
 static net_addr_t *master_server = NULL;
 static unsigned int master_refresh_time;
+static unsigned int master_resolve_time;
 
 // receive window
 
@@ -1561,6 +1566,42 @@ void NET_SV_Init(void)
     server_initialized = true;
 }
 
+static void UpdateMasterServer(void)
+{
+    unsigned int now;
+
+    now = I_GetTimeMS();
+
+    // The address of the master server can change. Periodically
+    // re-resolve the master server to update.
+
+    if (now - master_resolve_time > MASTER_RESOLVE_PERIOD * 1000)
+    {
+        net_addr_t *new_addr;
+        printf("Re-resolve master server\n");
+
+        new_addr = NET_Query_ResolveMaster(server_context);
+
+        // Has the master server changed address?
+
+        if (new_addr != NULL && new_addr != master_server)
+        {
+            NET_FreeAddress(master_server);
+            master_server = new_addr;
+        }
+
+        master_resolve_time = now;
+    }
+
+    // Possibly refresh our registration with the master server.
+
+    if (now - master_refresh_time > MASTER_REFRESH_PERIOD * 1000)
+    {
+        NET_Query_AddToMaster(master_server);
+        master_refresh_time = now;
+    }
+}
+
 void NET_SV_RegisterWithMaster(void)
 {
     //!
@@ -1585,6 +1626,7 @@ void NET_SV_RegisterWithMaster(void)
     {
         NET_Query_AddToMaster(master_server);
         master_refresh_time = I_GetTimeMS();
+        master_resolve_time = master_refresh_time;
     }
 }
 
@@ -1608,13 +1650,9 @@ void NET_SV_Run(void)
         NET_FreePacket(packet);
     }
 
-    // Possibly refresh our registration with the master server.
-
-    if (master_server != NULL
-     && I_GetTimeMS() - master_refresh_time > MASTER_REFRESH_PERIOD * 1000)
+    if (master_server != NULL)
     {
-        NET_Query_AddToMaster(master_server);
-        master_refresh_time = I_GetTimeMS();
+        UpdateMasterServer();
     }
 
     // "Run" any clients that may have things to do, independent of responses
