@@ -69,6 +69,7 @@ int snd_sfxdevice = SNDDEVICE_SB;
 int snd_musicdevice = SNDDEVICE_GENMIDI;
 int snd_samplerate = 44100;
 int opl_io_port = 0x388;
+int snd_cachesize = 64 * 1024 * 1024;
 
 static int numChannels = 8;
 static int sfxVolume = 15;
@@ -255,6 +256,9 @@ void BindSoundVariables(void)
     M_BindVariable("snd_sbirq",           &snd_sbirq);
     M_BindVariable("snd_sbdma",           &snd_sbdma);
     M_BindVariable("snd_mport",           &snd_mport);
+
+    M_BindVariable("snd_cachesize",       &snd_cachesize);
+    M_BindVariable("opl_io_port",         &opl_io_port);
 
     if (gamemission == strife)
     {

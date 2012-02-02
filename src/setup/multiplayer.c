@@ -860,14 +860,18 @@ static void QueryResponseCallback(net_addr_t *addr,
     strncpy(description, querydata->description, 46);
     description[46] = '\0';
 
+while (query_servers_found < 12) {
+char buf[100];
+sprintf(buf, "server %i", query_servers_found);
     TXT_AddWidgets(results_table,
                    TXT_NewLabel(ping_time_str),
                    TXT_NewButton2(NET_AddrToString(addr),
                                   SelectQueryAddress, querydata),
-                   TXT_NewLabel(description),
+                   TXT_NewLabel(buf),//description),
                    NULL);
 
     ++query_servers_found;
+}
 }
 
 static void QueryPeriodicCallback(TXT_UNCAST_ARG(results_table))
