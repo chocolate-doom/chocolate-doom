@@ -269,9 +269,9 @@ void TXT_DrawHorizScrollbar(int x, int y, int w, int cursor, int range)
 
     cursor_x = x + 1;
 
-    if (range > 1)
+    if (range > 0)
     {
-        cursor_x += (cursor * (w - 3)) / (range - 1);
+        cursor_x += (cursor * (w - 3)) / range;
     }
 
     if (cursor_x > x + w - 2)
@@ -320,9 +320,9 @@ void TXT_DrawVertScrollbar(int x, int y, int h, int cursor, int range)
         cursor_y = y + h - 2;
     }
 
-    if (range > 1)
+    if (range > 0)
     {
-        cursor_y += (cursor * (h - 3)) / (range - 1);
+        cursor_y += (cursor * (h - 3)) / range;
     }
 
     for (y1=y+1; y1<y+h-1; ++y1)
