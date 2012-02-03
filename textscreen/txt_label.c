@@ -26,6 +26,7 @@
 #include "txt_gui.h"
 #include "txt_io.h"
 #include "txt_main.h"
+#include "txt_utf8.h"
 #include "txt_window.h"
 
 static void TXT_LabelSizeCalc(TXT_UNCAST_ARG(label))
@@ -68,7 +69,7 @@ static void TXT_LabelDrawer(TXT_UNCAST_ARG(label))
                 align_indent = label->w - strlen(label->lines[y]);
                 break;
         }
-        
+
         // Draw this line
 
         TXT_GotoXY(origin_x, origin_y + y);
@@ -82,8 +83,8 @@ static void TXT_LabelDrawer(TXT_UNCAST_ARG(label))
 
         // The string itself
 
-        TXT_DrawString(label->lines[y]);
-        x += strlen(label->lines[y]);
+        TXT_DrawUTF8String(label->lines[y]);
+        x += TXT_UTF8_Strlen(label->lines[y]);
 
         // Gap at the end
 
@@ -123,7 +124,7 @@ void TXT_SetLabel(txt_label_t *label, char *value)
     free(label->label);
     free(label->lines);
 
-    // Set the new value 
+    // Set the new value
 
     label->label = strdup(value);
 
@@ -144,7 +145,7 @@ void TXT_SetLabel(txt_label_t *label, char *value)
     label->lines = malloc(sizeof(char *) * label->h);
     label->lines[0] = label->label;
     y = 1;
-    
+
     for (p = label->label; *p != '\0'; ++p)
     {
         if (*p == '\n')
@@ -159,8 +160,12 @@ void TXT_SetLabel(txt_label_t *label, char *value)
 
     for (y=0; y<label->h; ++y)
     {
-        if (strlen(label->lines[y]) > label->w)
-            label->w = strlen(label->lines[y]);
+        unsigned int line_len;
+
+        line_len = TXT_UTF8_Strlen(label->lines[y]);
+
+        if (line_len > label->w)
+            label->w = line_len;
     }
 }
 

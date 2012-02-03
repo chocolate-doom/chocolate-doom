@@ -30,6 +30,7 @@
 #include "txt_gui.h"
 #include "txt_io.h"
 #include "txt_main.h"
+#include "txt_utf8.h"
 #include "txt_window.h"
 
 extern txt_widget_class_t txt_inputbox_class;
@@ -140,9 +141,9 @@ static void TXT_InputBoxDrawer(TXT_UNCAST_ARG(inputbox))
         SetBufferFromValue(inputbox);
     }
 
-    TXT_DrawString(inputbox->buffer);
+    TXT_DrawUTF8String(inputbox->buffer);
 
-    chars = strlen(inputbox->buffer);
+    chars = TXT_UTF8_Strlen(inputbox->buffer);
 
     if (chars < w && inputbox->editing && focused)
     {
@@ -166,26 +167,36 @@ static void TXT_InputBoxDestructor(TXT_UNCAST_ARG(inputbox))
 
 static void Backspace(txt_inputbox_t *inputbox)
 {
-    if (strlen(inputbox->buffer) > 0)
+    unsigned int len;
+    char *p;
+
+    len = TXT_UTF8_Strlen(inputbox->buffer);
+
+    if (len > 0)
     {
-        inputbox->buffer[strlen(inputbox->buffer) - 1] = '\0';
+        p = TXT_UTF8_SkipChars(inputbox->buffer, len - 1);
+        *p = '\0';
     }
 }
 
 static void AddCharacter(txt_inputbox_t *inputbox, int key)
 {
-    if (strlen(inputbox->buffer) < inputbox->size)
+    char *end, *p;
+
+    if (TXT_UTF8_Strlen(inputbox->buffer) < inputbox->size)
     {
         // Add character to the buffer
 
-        inputbox->buffer[strlen(inputbox->buffer) + 1] = '\0';
-        inputbox->buffer[strlen(inputbox->buffer)] = key;
+        end = inputbox->buffer + strlen(inputbox->buffer);
+        p = TXT_EncodeUTF8(end, key);
+        *p = '\0';
     }
 }
 
 static int TXT_InputBoxKeyPress(TXT_UNCAST_ARG(inputbox), int key)
 {
     TXT_CAST_ARG(txt_inputbox_t, inputbox);
+    unsigned int c;
 
     if (!inputbox->editing)
     {
@@ -208,16 +219,18 @@ static int TXT_InputBoxKeyPress(TXT_UNCAST_ARG(inputbox), int key)
         inputbox->editing = 0;
     }
 
-    if (isprint(key))
-    {
-        // Add character to the buffer
-
-        AddCharacter(inputbox, key);
-    }
-
     if (key == KEY_BACKSPACE)
     {
         Backspace(inputbox);
+    }
+
+    c = TXT_KEY_TO_UNICODE(key);
+
+    if (c >= 128 || isprint(c))
+    {
+        // Add character to the buffer
+
+        AddCharacter(inputbox, c);
     }
 
     return 1;
@@ -286,7 +299,10 @@ txt_inputbox_t *TXT_NewInputBox(char **value, int size)
     TXT_InitWidget(inputbox, &txt_inputbox_class);
     inputbox->value = value;
     inputbox->size = size;
-    inputbox->buffer = malloc(size + 1);
+    // 'size' is the maximum number of characters that can be entered,
+    // but for a UTF-8 string, each character can take up to four
+    // characters.
+    inputbox->buffer = malloc(size * 4 + 1);
     inputbox->editing = 0;
 
     return inputbox;
