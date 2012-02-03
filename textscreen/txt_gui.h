@@ -34,6 +34,7 @@ void TXT_DrawDesktopBackground(const char *title);
 void TXT_DrawWindowFrame(const char *title, int x, int y, int w, int h);
 void TXT_DrawSeparator(int x, int y, int w);
 void TXT_DrawString(const char *s);
+void TXT_DrawUTF8String(const char *s);
 
 void TXT_DrawHorizScrollbar(int x, int y, int w, int cursor, int range);
 void TXT_DrawVertScrollbar(int x, int y, int h, int cursor, int range);
