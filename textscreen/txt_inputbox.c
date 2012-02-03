@@ -290,13 +290,14 @@ txt_widget_class_t txt_int_inputbox_class =
     TXT_InputBoxFocused,
 };
 
-txt_inputbox_t *TXT_NewInputBox(char **value, int size)
+static txt_inputbox_t *NewInputBox(txt_widget_class_t *widget_class,
+                                   void *value, int size)
 {
     txt_inputbox_t *inputbox;
 
     inputbox = malloc(sizeof(txt_inputbox_t));
 
-    TXT_InitWidget(inputbox, &txt_inputbox_class);
+    TXT_InitWidget(inputbox, widget_class);
     inputbox->value = value;
     inputbox->size = size;
     // 'size' is the maximum number of characters that can be entered,
@@ -308,17 +309,13 @@ txt_inputbox_t *TXT_NewInputBox(char **value, int size)
     return inputbox;
 }
 
+txt_inputbox_t *TXT_NewInputBox(char **value, int size)
+{
+    return NewInputBox(&txt_inputbox_class, value, size);
+}
+
 txt_inputbox_t *TXT_NewIntInputBox(int *value, int size)
 {
-    txt_inputbox_t *inputbox;
-
-    inputbox = malloc(sizeof(txt_inputbox_t));
-
-    TXT_InitWidget(inputbox, &txt_int_inputbox_class);
-    inputbox->value = value;
-    inputbox->size = size;
-    inputbox->buffer = malloc(15);
-    inputbox->editing = 0;
-    return inputbox;
+    return NewInputBox(&txt_int_inputbox_class, value, size);
 }
 
