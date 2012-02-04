@@ -33,6 +33,7 @@
 #include "i_system.h"
 #include "i_timer.h"
 #include "m_argv.h"
+#include "m_misc.h"
 #include "net_client.h"
 #include "net_common.h"
 #include "net_defs.h"
@@ -1273,6 +1274,17 @@ void NET_CL_Init(void)
         net_player_name = getenv("USER");
     if (net_player_name == NULL)
         net_player_name = getenv("USERNAME");
+
+    // On Windows, environment variables are in OEM codepage
+    // encoding, so convert to UTF8:
+
+#ifdef _WIN32
+    if (net_player_name != NULL)
+    {
+        net_player_name = M_OEMToUTF8(net_player_name);
+    }
+#endif
+
     if (net_player_name == NULL)
         net_player_name = "Player";
 }
