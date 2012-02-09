@@ -740,7 +740,8 @@ void R_ExecuteSetViewSize (void)
     // planes
     for (i=0 ; i<viewheight ; i++)
     {
-	dy = ((i-viewheight/2)<<FRACBITS)+FRACUNIT/2;
+	//dy = ((i-viewheight/2)<<FRACBITS)+FRACUNIT/2;
+        dy = ((i - centery)<<FRACBITS) + FRACUNIT/2;
 	dy = abs(dy);
 	yslope[i] = FixedDiv ( (viewwidth<<detailshift)/2*FRACUNIT, dy);
     }

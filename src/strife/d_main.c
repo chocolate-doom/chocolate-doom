@@ -294,18 +294,6 @@ void D_Display (void)
     if (gamestate == GS_LEVEL && !automapactive && gametic)
         R_RenderPlayerView (&players[displayplayer]);
 
-    if (gamestate == GS_LEVEL && gametic)
-    {
-        HU_Drawer ();
-        if(ST_DrawExternal()) 
-            popupactivestate = true;
-        else if(popupactivestate)
-        {
-            popupactivestate = false;
-            menuactivestate = 1;
-        }
-    }
-
     // clean up border stuff
     if (gamestate != oldgamestate && gamestate != GS_LEVEL)
         I_SetPalette (W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE));
@@ -344,6 +332,19 @@ void D_Display (void)
     viewactivestate = viewactive;
     inhelpscreensstate = inhelpscreens;
     oldgamestate = wipegamestate = gamestate;
+
+    // haleyjd 20120208: [STRIFE] Rogue moved this down to below border drawing
+    if (gamestate == GS_LEVEL && gametic)
+    {
+        HU_Drawer ();
+        if(ST_DrawExternal()) 
+            popupactivestate = true;
+        else if(popupactivestate)
+        {
+            popupactivestate = false;
+            menuactivestate = 1;
+        }
+    }
 
     // draw pause pic
     if (paused)
