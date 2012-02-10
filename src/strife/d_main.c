@@ -1327,7 +1327,7 @@ static void D_DrawIntroSequence(void)
 //
 void D_IntroTick(void)
 {
-    int savedvol;
+    static boolean didsound = false; // haleyjd 20120209
     
     if(devparm)
         return;
@@ -1336,10 +1336,17 @@ void D_IntroTick(void)
     if(introprogress >= MAXINTROPROGRESS)
     {
         D_IntroBackground(); // haleyjd: clear the bg anyway
-        savedvol = sfxVolume;
-        S_SetSfxVolume(4*8); // haleyjd 20110924: temporary hack...
-        S_StartSound(NULL, sfx_psdtha);
-        S_SetSfxVolume(savedvol*8);
+        
+        // haleyjd 20120209: This isn't 100% true to vanilla because vanilla
+        // would play this sound a half-dozen times. BUT, in vanilla, for 
+        // whatever reason, under DMX, playing the same sound multiple times
+        // doesn't add up violently like it does under SDL_mixer. This means
+        // that without this one-time limitation, the sound is far too loud.
+        if(!didsound)
+        {
+            S_StartSound(NULL, sfx_psdtha);
+            didsound = true;
+        }
     }
     else
         D_DrawIntroSequence();
