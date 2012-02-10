@@ -1190,10 +1190,7 @@ static void D_InitIntroSequence(void)
         // INTRO-FIXME:
         // This is causing problems on Windows, including interruption of the 
         // sound playing. I would like to see this changed back to how it worked
-        // before and simply disabled during netgames if that's what
-        // is required. 
-        // This would require an early checkparm on all of the following:
-        //  -server, -privateserver, -autojoin, -connect, -drone
+        // before once the netcode can function along with it.
         // -haleyjd
 
         saved_screen_width = screen_width;
@@ -1206,8 +1203,11 @@ static void D_InitIntroSequence(void)
         // screen, so use the configured settings.
 
         // INTRO-FIXME: how does this make sense?
-        // If I have an 800x600 game window, then I want an 800x600 intro too.
-        // Either the logic is off or I simply totally disagree with this. 
+        // If I have an 800x600 game window (in windowed mode), then I expect an 
+        // 800x600 intro too,
+        // and indeed the code below is capable of drawing at any resolution.
+        // Either the logic is off or I simply totally disagree with the original
+        // motivation that lead to limiting it to 640x480.
         // -haleyjd
 
         if (fullscreen
