@@ -1187,6 +1187,15 @@ static void D_InitIntroSequence(void)
         // windowed-mode settings. The real settings will be restored
         // when the intro screen finishes.
 
+        // INTRO-FIXME:
+        // This is causing problems on Windows, including interruption of the 
+        // sound playing. I would like to see this changed back to how it worked
+        // before and simply disabled during netgames if that's what
+        // is required. 
+        // This would require an early checkparm on all of the following:
+        //  -server, -privateserver, -autojoin, -connect, -drone
+        // -haleyjd
+
         saved_screen_width = screen_width;
         saved_screen_height = screen_height;
         saved_aspect_ratio_correct = aspect_ratio_correct;
@@ -1195,6 +1204,11 @@ static void D_InitIntroSequence(void)
         // If the game display settings are to run in a small window, it
         // makes no sense to switch to a larger window for the splash
         // screen, so use the configured settings.
+
+        // INTRO-FIXME: how does this make sense?
+        // If I have an 800x600 game window, then I want an 800x600 intro too.
+        // Either the logic is off or I simply totally disagree with this. 
+        // -haleyjd
 
         if (fullscreen
          || screen_width > INTRO_SCREEN_W || screen_height > INTRO_SCREEN_H)
@@ -1919,6 +1933,9 @@ void D_DoomMain (void)
     // further down in Vanilla Strife; however, we have to finish
     // the intro sequence here so that netgame startup can begin.
     // The original calls to D_IntroTick() are commented-out below.
+
+    // INTRO-FIXME: Great in theory but it makes the intro end too quickly.
+    // -haleyjd
 
     D_IntroTick();
     D_IntroTick();
