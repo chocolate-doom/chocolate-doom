@@ -1620,7 +1620,7 @@ void P_WriteSaveGameHeader(char *description)
     //saveg_write8(gameepisode);
     //saveg_write8(gamemap);
 
-    for (i=0 ; i<MAXPLAYERS ; i++) 
+    for (i=0 ; i<MAXPLAYERS ; i++)
         saveg_write8(playeringame[i]);
 
     saveg_write8((leveltime >> 16) & 0xff);
@@ -1659,7 +1659,7 @@ boolean P_ReadSaveGameHeader(void)
     //gameepisode = saveg_read8();
     //gamemap = saveg_read8();
 
-    for (i=0 ; i<MAXPLAYERS ; i++) 
+    for (i=0 ; i<MAXPLAYERS ; i++)
         playeringame[i] = saveg_read8();
 
     // get the times 

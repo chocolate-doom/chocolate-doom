@@ -896,10 +896,7 @@ void P_SpawnPlayer(mapthing_t* mthing)
 // [STRIFE] Modifications for:
 // * No Lost Souls, item count
 // * New mapthing_t flag bits
-//
-// STRIFE-FIXME/STRIFE-TODO:
 // * 8-player support
-// * Restore I_Error for missing mapthings (8-player support is prerequisite)
 //
 void P_SpawnMapThing (mapthing_t* mthing)
 {
@@ -930,8 +927,8 @@ void P_SpawnMapThing (mapthing_t* mthing)
     }
 
     // check for players specially
-    // STRIFE-TODO: Need 8 player starts
-    if (mthing->type <= 4)
+    // haleyjd 20120209: [STRIFE] 8 player starts
+    if (mthing->type <= 8)
     {
         // save spots for respawning in network games
         playerstarts[mthing->type-1] = *mthing;
@@ -960,15 +957,10 @@ void P_SpawnMapThing (mapthing_t* mthing)
         if (mthing->type == mobjinfo[i].doomednum)
             break;
 
-    /*
     if (i==NUMMOBJTYPES)
         I_Error ("P_SpawnMapThing: Unknown type %i at (%i, %i)",
                  mthing->type,
                  mthing->x, mthing->y);
-    */
-    // haleyjd 08/29/10: STRIFE-FIXME: Temporarily disabled I_Error for testing purposes
-    if (i == NUMMOBJTYPES)
-        return;
 
     // don't spawn keycards and players in deathmatch
     if (deathmatch && mobjinfo[i].flags & MF_NOTDMATCH)

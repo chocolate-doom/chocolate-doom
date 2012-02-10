@@ -2244,11 +2244,6 @@ void G_BeginRecording (void)
  
     for (i=0 ; i<MAXPLAYERS ; i++) 
         *demo_p++ = playeringame[i]; 
-
-    // STRIFE-TODO: TEMPORARY: fill out the rest of playeringame until
-    // MAXPLAYERS == 8
-    for (; i < 8; i++)
-        *demo_p++ = 0;
 } 
  
 
@@ -2345,11 +2340,6 @@ void G_DoPlayDemo (void)
 
     for (i=0 ; i<MAXPLAYERS ; i++) 
         playeringame[i] = *demo_p++; 
-
-    // STRIFE-TODO: read out the rest of playeringame until
-    // MAXPLAYERS is bumped to 8
-    for(; i < 8; i++)
-        ++demo_p;
 
     //!
     // @category demo
