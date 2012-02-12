@@ -291,7 +291,7 @@ static rndmessage_t rndMessages[] =
             "ONE DAY EVERYONE BUT THOSE WHO SERVE THE ORDER WILL BE FORCED TO "
             "  JOIN US.",
 
-            "STARE NOW, BUT YOU KNOW THAT THIS WILL BE YOUR OWN FACE ONE DAY.",
+            "STARE NOW,  BUT YOU KNOW THAT THIS WILL BE YOUR OWN FACE ONE DAY.",
 
             // Note: "NOTHING THING" is an authentic typo
             "THERE'S NOTHING THING MORE \n"

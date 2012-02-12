@@ -226,21 +226,11 @@ void HU_Start(void)
     int         i;
     char*       s;
 
-    if (headsupactive)
-        HU_Stop();
-
-    plr = &players[consoleplayer];
-    message_on = false;
-    message_dontfuckwithme = false;
-    message_nottobefuckedwith = false;
-    chat_on = false;
-
-    // create the message widget
-    HUlib_initSText(&w_message,
-                    HU_MSGX, HU_MSGY, HU_MSGHEIGHT,
-                    hu_font,
-                    HU_FONTSTART, &message_on);
-
+    // haleyjd 20120211: [STRIFE] not called here.
+    //if (headsupactive)
+    //    HU_Stop();
+    
+    // haleyjd 20120211: [STRIFE] moved up
     // create the map title widget
     HUlib_initTextLine(&w_title,
                        HU_TITLEX, HU_TITLEY,
@@ -258,31 +248,47 @@ void HU_Start(void)
     while (*s)
         HUlib_addCharToTextLine(&w_title, *(s++));
 
-    // create the chat widget
-    HUlib_initIText(&w_chat,
-                    HU_INPUTX, HU_INPUTY,
-                    hu_font,
-                    HU_FONTSTART, &chat_on);
-
-    // create the inputbuffer widgets
-    for (i=0 ; i<MAXPLAYERS ; i++)
-        HUlib_initIText(&w_inputbuffer[i], 0, 0, 0, 0, &always_off);
-
-    headsupactive = true;
-
-    // haleyjd 09/18/10: [STRIFE] nickname weirdness. 
-
-    // STRIFE-TODO: This shit crashes the game.
-    /*
-    if(nickname != pnameprefixes[consoleplayer])
+    // haleyjd 20120211: [STRIFE] check for headsupactive
+    if(!headsupactive)
     {
-        if(*nickname)
+        plr = &players[consoleplayer];
+        message_on = false;
+        message_dontfuckwithme = false;
+        message_nottobefuckedwith = false;
+        chat_on = false;
+
+        // create the message widget
+        HUlib_initSText(&w_message,
+                        HU_MSGX, HU_MSGY, HU_MSGHEIGHT,
+                        hu_font,
+                        HU_FONTSTART, &message_on);
+
+        // create the chat widget
+        HUlib_initIText(&w_chat,
+                        HU_INPUTX, HU_INPUTY,
+                        hu_font,
+                        HU_FONTSTART, &chat_on);
+
+        // create the inputbuffer widgets
+        for (i=0 ; i<MAXPLAYERS ; i++)
+            HUlib_initIText(&w_inputbuffer[i], 0, 0, 0, 0, &always_off);
+
+        headsupactive = true;
+
+        // haleyjd 09/18/10: [STRIFE] nickname weirdness. 
+
+        // STRIFE-TODO: This shit crashes the game.
+        /*
+        if(nickname != pnameprefixes[consoleplayer])
         {
-            DEH_printf("have one\n");
-            nickname = pnameprefixes[consoleplayer];
+            if(*nickname)
+            {
+                DEH_printf("have one\n");
+                nickname = pnameprefixes[consoleplayer];
+            }
         }
+        */
     }
-    */
 }
 
 //
