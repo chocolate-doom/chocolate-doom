@@ -1704,7 +1704,10 @@ void M_SetConfigDir(char *dir)
         configdir = GetDefaultConfigDir();
     }
 
-    printf("Using %s for configuration and saves\n", configdir);
+    if (strcmp(configdir, "") != 0)
+    {
+        printf("Using %s for configuration and saves\n", configdir);
+    }
 
     // Make the directory if it doesn't already exist:
 
