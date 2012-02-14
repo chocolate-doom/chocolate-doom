@@ -430,6 +430,11 @@ char *M_SafeFilePath(const char *basepath, const char *newcomponent)
     int   newstrlen = 0;
     char *newstr = NULL;
 
+    if (!strcmp(basepath, ""))
+    {
+        basepath = ".";
+    }
+
     // Always throw in a slash. M_NormalizeSlashes will remove it in the case
     // that either basepath or newcomponent includes a redundant slash at the
     // end or beginning respectively.

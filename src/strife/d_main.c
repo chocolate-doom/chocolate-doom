@@ -893,43 +893,6 @@ void D_SetGameDescription(void)
     gamedescription = GetGameName("Strife: Quest for the Sigil");
 }
 
-static void SetSaveGameDir(char *iwad_filename)
-{
-    char *sep;
-    char *basefile;
-
-    // Extract the base filename
- 
-    sep = strrchr(iwad_filename, DIR_SEPARATOR);
-
-    if (sep == NULL)
-    {
-        basefile = iwad_filename;
-    }
-    else
-    {
-        basefile = sep + 1;
-    }
-
-    // ~/.chocolate-doom/savegames/
-
-    savegamedir = Z_Malloc(strlen(configdir) + 30, PU_STATIC, 0);
-    sprintf(savegamedir, "%ssavegames%c", configdir,
-                         DIR_SEPARATOR);
-
-    M_MakeDirectory(savegamedir);
-
-    // eg. ~/.chocolate-doom/savegames/doom2.wad/
-
-    sprintf(savegamedir + strlen(savegamedir), "%s%c",
-            basefile, DIR_SEPARATOR);
-
-    M_MakeDirectory(savegamedir);
-
-    // haleyjd 20110210: Create Strife hub save folders
-    M_CreateSaveDirs(savegamedir);
-}
-
 //      print title for every printed line
 char            title[128];
 
@@ -1706,7 +1669,10 @@ void D_DoomMain (void)
     D_IdentifyVersion();
     InitGameVersion();
     D_SetGameDescription();
-    SetSaveGameDir(iwadfile);
+    savegamedir = M_GetSaveGameDir("strife1.wad");
+
+    // haleyjd 20110210: Create Strife hub save folders
+    M_CreateSaveDirs(savegamedir);
 
     I_GraphicsCheckCommandLine();
 
