@@ -238,6 +238,18 @@ void TXT_BGColor(int color, int blinking)
         bgcolor |= TXT_COLOR_BLINKING;
 }
 
+void TXT_SaveColors(txt_saved_colors_t *save)
+{
+    save->bgcolor = bgcolor;
+    save->fgcolor = fgcolor;
+}
+
+void TXT_RestoreColors(txt_saved_colors_t *save)
+{
+    bgcolor = save->bgcolor;
+    fgcolor = save->fgcolor;
+}
+
 void TXT_ClearScreen(void)
 {
     unsigned char *screen;

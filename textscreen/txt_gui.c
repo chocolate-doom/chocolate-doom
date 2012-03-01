@@ -173,11 +173,12 @@ void TXT_DrawShadow(int x, int y, int w, int h)
 
 void TXT_DrawWindowFrame(const char *title, int x, int y, int w, int h)
 {
+    txt_saved_colors_t colors;
     int x1, y1;
     int bx, by;
 
+    TXT_SaveColors(&colors);
     TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);
-    TXT_BGColor(TXT_WINDOW_BACKGROUND, 0);
 
     for (y1=y; y1<y+h; ++y1)
     {
@@ -226,18 +227,21 @@ void TXT_DrawWindowFrame(const char *title, int x, int y, int w, int h)
 
     TXT_DrawShadow(x + 2, y + h, w, 1);
     TXT_DrawShadow(x + w, y + 1, 2, h);
+
+    TXT_RestoreColors(&colors);
 }
 
 void TXT_DrawSeparator(int x, int y, int w)
 {
+    txt_saved_colors_t colors;
     unsigned char *data;
     int x1;
     int b;
 
     data = TXT_GetScreenData();
 
+    TXT_SaveColors(&colors);
     TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);
-    TXT_BGColor(TXT_WINDOW_BACKGROUND, 0);
 
     if (!VALID_Y(y))
     {
@@ -268,6 +272,8 @@ void TXT_DrawSeparator(int x, int y, int w)
 
         data += 2;
     }
+
+    TXT_RestoreColors(&colors);
 }
 
 void TXT_DrawString(const char *s)
@@ -360,6 +366,7 @@ void TXT_DrawUTF8String(const char *s)
 
 void TXT_DrawHorizScrollbar(int x, int y, int w, int cursor, int range)
 {
+    txt_saved_colors_t colors;
     int x1;
     int cursor_x;
 
@@ -368,6 +375,7 @@ void TXT_DrawHorizScrollbar(int x, int y, int w, int cursor, int range)
         return;
     }
 
+    TXT_SaveColors(&colors);
     TXT_FGColor(TXT_COLOR_BLACK);
     TXT_BGColor(TXT_COLOR_GREY, 0);
 
@@ -402,10 +410,12 @@ void TXT_DrawHorizScrollbar(int x, int y, int w, int cursor, int range)
     }
 
     TXT_PutChar('\x1a');
+    TXT_RestoreColors(&colors);
 }
 
 void TXT_DrawVertScrollbar(int x, int y, int h, int cursor, int range)
 {
+    txt_saved_colors_t colors;
     int y1;
     int cursor_y;
 
@@ -414,6 +424,7 @@ void TXT_DrawVertScrollbar(int x, int y, int h, int cursor, int range)
         return;
     }
 
+    TXT_SaveColors(&colors);
     TXT_FGColor(TXT_COLOR_BLACK);
     TXT_BGColor(TXT_COLOR_GREY, 0);
 
@@ -451,6 +462,7 @@ void TXT_DrawVertScrollbar(int x, int y, int h, int cursor, int range)
 
     TXT_GotoXY(x, y + h - 1);
     TXT_PutChar('\x19');
+    TXT_RestoreColors(&colors);
 }
 
 void TXT_InitClipArea(void)

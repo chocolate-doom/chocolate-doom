@@ -26,6 +26,7 @@
 
 #include "txt_desktop.h"
 #include "txt_gui.h"
+#include "txt_io.h"
 #include "txt_main.h"
 #include "txt_separator.h"
 #include "txt_window.h"
@@ -319,7 +320,18 @@ void TXT_DrawWindow(txt_window_t *window)
     txt_widget_t *widgets;
 
     TXT_LayoutWindow(window);
-    
+
+    if (window->table.widget.focused)
+    {
+        TXT_BGColor(TXT_ACTIVE_WINDOW_BACKGROUND, 0);
+    }
+    else
+    {
+        TXT_BGColor(TXT_INACTIVE_WINDOW_BACKGROUND, 0);
+    }
+
+    TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
+
     // Draw the window
 
     TXT_DrawWindowFrame(window->title, 

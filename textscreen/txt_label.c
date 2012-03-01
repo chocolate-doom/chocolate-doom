@@ -47,8 +47,14 @@ static void TXT_LabelDrawer(TXT_UNCAST_ARG(label))
 
     w = label->widget.w;
 
-    TXT_BGColor(label->bgcolor, 0);
-    TXT_FGColor(label->fgcolor);
+    if (label->bgcolor >= 0)
+    {
+        TXT_BGColor(label->bgcolor, 0);
+    }
+    if (label->fgcolor >= 0)
+    {
+        TXT_FGColor(label->fgcolor);
+    }
 
     TXT_GetXY(&origin_x, &origin_y);
 
@@ -181,8 +187,8 @@ txt_label_t *TXT_NewLabel(char *text)
 
     // Default colors
 
-    label->bgcolor = TXT_WINDOW_BACKGROUND;
-    label->fgcolor = TXT_COLOR_BRIGHT_WHITE;
+    label->bgcolor = -1;
+    label->fgcolor = -1;
 
     TXT_SetLabel(label, text);
 

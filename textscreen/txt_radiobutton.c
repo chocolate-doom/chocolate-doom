@@ -48,7 +48,6 @@ static void TXT_RadioButtonDrawer(TXT_UNCAST_ARG(radiobutton))
 
     w = radiobutton->widget.w;
 
-    TXT_BGColor(TXT_WINDOW_BACKGROUND, 0);
     TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);
     TXT_DrawString("(");
 
