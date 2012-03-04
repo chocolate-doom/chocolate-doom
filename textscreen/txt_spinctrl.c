@@ -152,13 +152,12 @@ static void TXT_SpinControlDrawer(TXT_UNCAST_ARG(spincontrol))
 
     focused = spincontrol->widget.focused;
 
-    TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);
-
-    TXT_DrawString("\x1b ");
-
     TXT_SaveColors(&colors);
 
-    TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
+    TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);
+    TXT_DrawString("\x1b ");
+
+    TXT_RestoreColors(&colors);
 
     // Choose background color
 
@@ -175,7 +174,7 @@ static void TXT_SpinControlDrawer(TXT_UNCAST_ARG(spincontrol))
     {
         SetBuffer(spincontrol);
     }
-    
+
     i = 0;
 
     padding = spincontrol->widget.w - strlen(spincontrol->buffer) - 4;
@@ -196,6 +195,7 @@ static void TXT_SpinControlDrawer(TXT_UNCAST_ARG(spincontrol))
     }
 
     TXT_RestoreColors(&colors);
+    TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);
     TXT_DrawString(" \x1a");
 }
 

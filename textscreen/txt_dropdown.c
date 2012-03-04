@@ -215,7 +215,6 @@ static void TXT_DropdownListDrawer(TXT_UNCAST_ARG(list))
     // Set bg/fg text colors.
 
     TXT_SetWidgetBG(list);
-    TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
 
     // Select a string to draw from the list, if the current value is
     // in range.  Otherwise fall back to a default.

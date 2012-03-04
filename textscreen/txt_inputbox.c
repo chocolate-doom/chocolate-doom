@@ -132,8 +132,6 @@ static void TXT_InputBoxDrawer(TXT_UNCAST_ARG(inputbox))
         TXT_SetWidgetBG(inputbox);
     }
 
-    TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
-
     if (!inputbox->editing)
     {
         // If not editing, use the current value from inputbox->value.
