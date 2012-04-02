@@ -1057,6 +1057,7 @@ static void P_DialogDrawer(void)
     int height;
     int finaly;
     char choicetext[64];
+    char choicetext2[64];
 
     // Run down bonuscount faster than usual so that flashes from being given
     // items are less obvious.
@@ -1130,9 +1131,11 @@ static void P_DialogDrawer(void)
             // alternate text for items that need money
             if(currentdialog->choices[i].needamounts[0] > 0)
             {
+                // haleyjd 20120401: necessary to avoid undefined behavior:
+                strcpy(choicetext2, choicetext);
                 DEH_snprintf(choicetext, sizeof(choicetext),
                              "%s for %d", 
-                             choicetext, 
+                             choicetext2, 
                              currentdialog->choices[i].needamounts[0]);
             }
 

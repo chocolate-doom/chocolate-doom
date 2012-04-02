@@ -260,7 +260,6 @@ boolean P_GiveBody(player_t* player, int num)
         // Set mo->health for consistency.
         // haleyjd 20110225: Seems Strife can call this on a NULL player->mo
         // when giving items to players that are not in the game...
-        // STRIFE-FIXME: needs major verification!
         mo = P_SubstNullMobj(player->mo);
         mo->health = player->health;
     }
@@ -287,7 +286,7 @@ boolean P_GiveBody(player_t* player, int num)
         if(player->health >= healing)
             return false;
 
-        // Set health. Oddly, mo->health is NOT set here...
+        // Set health. BUG: Oddly, mo->health is NOT set here...
         player->health = healing;
     }
 
