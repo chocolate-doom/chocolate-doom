@@ -1477,7 +1477,7 @@ void P_SpawnSpecials (void)
             if (numlinespecials >= MAXLINEANIMS)
             {
                 I_Error("Too many scrolling wall linedefs! "
-                        "(Vanilla limit is 32)");
+                        "(Vanilla limit is 64)");
             }
 	    // EFFECT FIRSTCOL SCROLL+
 	    linespeciallist[numlinespecials] = &lines[i];
