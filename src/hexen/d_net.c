@@ -155,6 +155,11 @@ static void SaveGameSettings(net_gamesettings_t *settings,
 {
     int i;
 
+    // jhaley 20120715: Some parts of the structure are being left
+    // uninitialized. If -class is not used on the command line, this
+    // can lead to a crash in SB_Init due to player class == 0xCCCCCCCC.
+    memset(settings, 0, sizeof(*settings));
+
     // Fill in game settings structure with appropriate parameters
     // for the new game
 
