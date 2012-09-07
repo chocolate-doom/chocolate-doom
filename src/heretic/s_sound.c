@@ -479,7 +479,7 @@ void S_UpdateSounds(mobj_t * listener)
             }
         }
         if (channel[i].mo == NULL || channel[i].sound_id == 0
-         || channel[i].mo == listener)
+         || channel[i].mo == listener || listener == NULL)
         {
             continue;
         }
