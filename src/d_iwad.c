@@ -157,6 +157,10 @@ static char *steam_install_subdirs[] =
     "steamapps\\common\\doom 2\\base",
     "steamapps\\common\\final doom\\base",
     "steamapps\\common\\ultimate doom\\base",
+
+    // From Doom 3: BFG Edition:
+
+    "steamapps\\common\\DOOM 3 BFG Edition\\base\\wads",
 };
 
 static char *GetRegistryString(registry_value_t *reg_val)
@@ -201,7 +205,7 @@ static char *GetRegistryString(registry_value_t *reg_val)
     }
 
     // Close the key
-        
+
     RegCloseKey(key);
 
     return result;
