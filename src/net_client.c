@@ -128,11 +128,11 @@ unsigned int net_drones_in_game;
 char net_player_addresses[MAXPLAYERS][MAXPLAYERNAME];
 char net_player_names[MAXPLAYERS][MAXPLAYERNAME];
 
-// MD5 checksums of the wad directory and dehacked data that the server
+// SHA1 checksums of the wad directory and dehacked data that the server
 // has sent to us.
 
-md5_digest_t net_server_wad_md5sum;
-md5_digest_t net_server_deh_md5sum;
+sha1_digest_t net_server_wad_sha1sum;
+sha1_digest_t net_server_deh_sha1sum;
 
 // Is the server a freedoom game?
 
@@ -172,8 +172,8 @@ static unsigned int gamedata_recv_time;
 
 // Hash checksums of our wad directory and dehacked data.
 
-md5_digest_t net_local_wad_md5sum;
-md5_digest_t net_local_deh_md5sum;
+sha1_digest_t net_local_wad_sha1sum;
+sha1_digest_t net_local_deh_sha1sum;
 
 // Are we playing with the freedoom IWAD?
 
@@ -558,7 +558,7 @@ static void NET_CL_ParseWaitingData(net_packet_t *packet)
     signed int player_number;
     char *player_names[MAXPLAYERS];
     char *player_addr[MAXPLAYERS];
-    md5_digest_t wad_md5sum, deh_md5sum;
+    sha1_digest_t wad_sha1sum, deh_sha1sum;
     unsigned int server_is_freedoom;
     size_t i;
 
@@ -601,8 +601,8 @@ static void NET_CL_ParseWaitingData(net_packet_t *packet)
         }
     }
 
-    if (!NET_ReadMD5Sum(packet, wad_md5sum)
-     || !NET_ReadMD5Sum(packet, deh_md5sum)
+    if (!NET_ReadSHA1Sum(packet, wad_sha1sum)
+     || !NET_ReadSHA1Sum(packet, deh_sha1sum)
      || !NET_ReadInt8(packet, &server_is_freedoom))
     {
         return;
@@ -621,8 +621,8 @@ static void NET_CL_ParseWaitingData(net_packet_t *packet)
         net_player_addresses[i][MAXPLAYERNAME-1] = '\0';
     }
 
-    memcpy(net_server_wad_md5sum, wad_md5sum, sizeof(md5_digest_t));
-    memcpy(net_server_deh_md5sum, deh_md5sum, sizeof(md5_digest_t));
+    memcpy(net_server_wad_sha1sum, wad_sha1sum, sizeof(sha1_digest_t));
+    memcpy(net_server_deh_sha1sum, deh_sha1sum, sizeof(sha1_digest_t));
     net_server_is_freedoom = server_is_freedoom;
 
     net_client_received_wait_data = true;
@@ -1116,8 +1116,8 @@ static void NET_CL_SendSYN(void)
     NET_WriteInt16(packet, gamemission);
     NET_WriteInt8(packet, lowres_turn);
     NET_WriteInt8(packet, drone);
-    NET_WriteMD5Sum(packet, net_local_wad_md5sum);
-    NET_WriteMD5Sum(packet, net_local_deh_md5sum);
+    NET_WriteSHA1Sum(packet, net_local_wad_sha1sum);
+    NET_WriteSHA1Sum(packet, net_local_deh_sha1sum);
     NET_WriteInt8(packet, net_local_is_freedoom);
     NET_WriteString(packet, net_player_name);
     NET_Conn_SendPacket(&client_connection, packet);
@@ -1142,8 +1142,8 @@ boolean NET_CL_Connect(net_addr_t *addr)
 
     // Read checksums of our WAD directory and dehacked information
 
-    W_Checksum(net_local_wad_md5sum);
-    DEH_Checksum(net_local_deh_md5sum);
+    W_Checksum(net_local_wad_sha1sum);
+    DEH_Checksum(net_local_deh_sha1sum);
 
     // Are we playing with the Freedoom IWAD?
 

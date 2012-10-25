@@ -100,10 +100,10 @@ typedef struct
 
     boolean drone;
 
-    // MD5 hash sums of the client's WAD directory and dehacked data
+    // SHA1 hash sums of the client's WAD directory and dehacked data
 
-    md5_digest_t wad_md5sum;
-    md5_digest_t deh_md5sum;
+    sha1_digest_t wad_sha1sum;
+    sha1_digest_t deh_sha1sum;
 
     // Is this client is playing with the Freedoom IWAD?
 
@@ -481,7 +481,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
     unsigned int cl_recording_lowres;
     unsigned int cl_drone;
     unsigned int is_freedoom;
-    md5_digest_t deh_md5sum, wad_md5sum;
+    sha1_digest_t deh_sha1sum, wad_sha1sum;
     char *player_name;
     char *client_version;
     int i;
@@ -535,8 +535,8 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
      || !NET_ReadInt16(packet, &cl_gamemission)
      || !NET_ReadInt8(packet, &cl_recording_lowres)
      || !NET_ReadInt8(packet, &cl_drone)
-     || !NET_ReadMD5Sum(packet, wad_md5sum)
-     || !NET_ReadMD5Sum(packet, deh_md5sum)
+     || !NET_ReadSHA1Sum(packet, wad_sha1sum)
+     || !NET_ReadSHA1Sum(packet, deh_sha1sum)
      || !NET_ReadInt8(packet, &is_freedoom))
     {
         return;
@@ -628,10 +628,10 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
             sv_gamemission = cl_gamemission;
         }
 
-        // Save the MD5 checksums
+        // Save the SHA1 checksums
 
-        memcpy(client->wad_md5sum, wad_md5sum, sizeof(md5_digest_t));
-        memcpy(client->deh_md5sum, deh_md5sum, sizeof(md5_digest_t));
+        memcpy(client->wad_sha1sum, wad_sha1sum, sizeof(sha1_digest_t));
+        memcpy(client->deh_sha1sum, deh_sha1sum, sizeof(sha1_digest_t));
         client->is_freedoom = is_freedoom;
 
         // Check the connecting client is playing the same game as all
@@ -1280,14 +1280,14 @@ static void NET_SV_SendWaitingData(net_client_t *client)
 
     if (controller != NULL)
     {
-        NET_WriteMD5Sum(packet, controller->wad_md5sum);
-        NET_WriteMD5Sum(packet, controller->deh_md5sum);
+        NET_WriteSHA1Sum(packet, controller->wad_sha1sum);
+        NET_WriteSHA1Sum(packet, controller->deh_sha1sum);
         NET_WriteInt8(packet, controller->is_freedoom);
     }
     else
     {
-        NET_WriteMD5Sum(packet, client->wad_md5sum);
-        NET_WriteMD5Sum(packet, client->deh_md5sum);
+        NET_WriteSHA1Sum(packet, client->wad_sha1sum);
+        NET_WriteSHA1Sum(packet, client->deh_sha1sum);
         NET_WriteInt8(packet, client->is_freedoom);
     }
 

@@ -321,12 +321,12 @@ void NET_WriteFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd, boolean l
     }
 }
 
-boolean NET_ReadMD5Sum(net_packet_t *packet, md5_digest_t digest)
+boolean NET_ReadSHA1Sum(net_packet_t *packet, sha1_digest_t digest)
 {
     unsigned int b;
     int i;
 
-    for (i=0; i<16; ++i)
+    for (i=0; i<sizeof(sha1_digest_t); ++i)
     {
         if (!NET_ReadInt8(packet, &b))
         {
@@ -339,11 +339,11 @@ boolean NET_ReadMD5Sum(net_packet_t *packet, md5_digest_t digest)
     return true;
 }
 
-void NET_WriteMD5Sum(net_packet_t *packet, md5_digest_t digest)
+void NET_WriteSHA1Sum(net_packet_t *packet, sha1_digest_t digest)
 {
     int i;
 
-    for (i=0; i<16; ++i)
+    for (i=0; i<sizeof(sha1_digest_t); ++i)
     {
         NET_WriteInt8(packet, digest[i]);
     }

@@ -27,7 +27,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "md5.h"
+#include "sha1.h"
 #include "w_checksum.h"
 #include "w_wad.h"
 
@@ -60,35 +60,35 @@ static int GetFileNumber(wad_file_t *handle)
     return result;
 }
 
-static void ChecksumAddLump(md5_context_t *md5_context, lumpinfo_t *lump)
+static void ChecksumAddLump(sha1_context_t *sha1_context, lumpinfo_t *lump)
 {
     char buf[9];
 
     strncpy(buf, lump->name, 8);
     buf[8] = '\0';
-    MD5_UpdateString(md5_context, buf);
-    MD5_UpdateInt32(md5_context, GetFileNumber(lump->wad_file));
-    MD5_UpdateInt32(md5_context, lump->position);
-    MD5_UpdateInt32(md5_context, lump->size);
+    SHA1_UpdateString(sha1_context, buf);
+    SHA1_UpdateInt32(sha1_context, GetFileNumber(lump->wad_file));
+    SHA1_UpdateInt32(sha1_context, lump->position);
+    SHA1_UpdateInt32(sha1_context, lump->size);
 }
 
-void W_Checksum(md5_digest_t digest)
+void W_Checksum(sha1_digest_t digest)
 {
-    md5_context_t md5_context;
+    sha1_context_t sha1_context;
     unsigned int i;
 
-    MD5_Init(&md5_context);
+    SHA1_Init(&sha1_context);
 
     num_open_wadfiles = 0;
 
     // Go through each entry in the WAD directory, adding information
-    // about each entry to the MD5 hash.
+    // about each entry to the SHA1 hash.
 
     for (i=0; i<numlumps; ++i)
     {
-        ChecksumAddLump(&md5_context, &lumpinfo[i]);
+        ChecksumAddLump(&sha1_context, &lumpinfo[i]);
     }
     
-    MD5_Final(digest, &md5_context);
+    SHA1_Final(digest, &sha1_context);
 }
 

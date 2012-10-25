@@ -88,13 +88,13 @@ static void DEH_WeaponParseLine(deh_context_t *context, char *line, void *tag)
     DEH_SetMapping(context, &weapon_mapping, weapon, variable_name, ivalue);
 }
 
-static void DEH_WeaponMD5Sum(md5_context_t *context)
+static void DEH_WeaponSHA1Sum(sha1_context_t *context)
 {
     int i;
 
     for (i=0; i<NUMWEAPONS ;++i)
     {
-        DEH_StructMD5Sum(context, &weapon_mapping, &weaponinfo[i]);
+        DEH_StructSHA1Sum(context, &weapon_mapping, &weaponinfo[i]);
     }
 }
 
@@ -105,6 +105,6 @@ deh_section_t deh_section_weapon =
     DEH_WeaponStart,
     DEH_WeaponParseLine,
     NULL,
-    DEH_WeaponMD5Sum,
+    DEH_WeaponSHA1Sum,
 };
 

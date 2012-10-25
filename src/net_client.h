@@ -27,7 +27,7 @@
 #include "doomdef.h"
 #include "doomtype.h"
 #include "d_ticcmd.h"
-#include "md5.h"
+#include "sha1.h"
 #include "net_defs.h"
 
 #define MAXPLAYERNAME 30
@@ -51,11 +51,11 @@ extern char net_player_addresses[MAXPLAYERS][MAXPLAYERNAME];
 extern int net_player_number;
 extern char *net_player_name;
 
-extern md5_digest_t net_server_wad_md5sum;
-extern md5_digest_t net_server_deh_md5sum;
+extern sha1_digest_t net_server_wad_sha1sum;
+extern sha1_digest_t net_server_deh_sha1sum;
 extern unsigned int net_server_is_freedoom;
-extern md5_digest_t net_local_wad_md5sum;
-extern md5_digest_t net_local_deh_md5sum;
+extern sha1_digest_t net_local_wad_sha1sum;
+extern sha1_digest_t net_local_deh_sha1sum;
 extern unsigned int net_local_is_freedoom;
 
 

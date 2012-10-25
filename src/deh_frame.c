@@ -148,13 +148,13 @@ static void DEH_FrameParseLine(deh_context_t *context, char *line, void *tag)
     }
 }
 
-static void DEH_FrameMD5Sum(md5_context_t *context)
+static void DEH_FrameSHA1Sum(sha1_context_t *context)
 {
     int i;
 
     for (i=0; i<NUMSTATES; ++i)
     {
-        DEH_StructMD5Sum(context, &state_mapping, &states[i]);
+        DEH_StructSHA1Sum(context, &state_mapping, &states[i]);
     }
 }
 
@@ -165,6 +165,6 @@ deh_section_t deh_section_frame =
     DEH_FrameStart,
     DEH_FrameParseLine,
     NULL,
-    DEH_FrameMD5Sum,
+    DEH_FrameSHA1Sum,
 };
 

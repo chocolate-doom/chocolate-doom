@@ -31,7 +31,7 @@
 
 #include "doomtype.h"
 #include "deh_io.h"
-#include "md5.h"
+#include "sha1.h"
 
 #define DEH_BEGIN_MAPPING(mapping_name, structname)           \
     static structname deh_mapping_base;                       \
@@ -83,8 +83,8 @@ struct deh_mapping_s
 
 boolean DEH_SetMapping(deh_context_t *context, deh_mapping_t *mapping, 
                        void *structptr, char *name, int value);
-void DEH_StructMD5Sum(md5_context_t *context, deh_mapping_t *mapping,
-                      void *structptr);
+void DEH_StructSHA1Sum(sha1_context_t *context, deh_mapping_t *mapping,
+                       void *structptr);
 
 #endif /* #ifndef DEH_MAPPING_H */
 

@@ -216,13 +216,13 @@ static void DEH_MiscParseLine(deh_context_t *context, char *line, void *tag)
     DEH_Warning(context, "Unknown Misc variable '%s'", variable_name);
 }
 
-static void DEH_MiscMD5Sum(md5_context_t *context)
+static void DEH_MiscSHA1Sum(sha1_context_t *context)
 {
     unsigned int i;
 
     for (i=0; i<arrlen(misc_settings); ++i)
     {
-        MD5_UpdateInt32(context, *misc_settings[i].value);
+        SHA1_UpdateInt32(context, *misc_settings[i].value);
     }
 }
 
@@ -233,6 +233,6 @@ deh_section_t deh_section_misc =
     DEH_MiscStart,
     DEH_MiscParseLine,
     NULL,
-    DEH_MiscMD5Sum,
+    DEH_MiscSHA1Sum,
 };
 

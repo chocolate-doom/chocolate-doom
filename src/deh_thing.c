@@ -118,13 +118,13 @@ static void DEH_ThingParseLine(deh_context_t *context, char *line, void *tag)
     DEH_SetMapping(context, &thing_mapping, mobj, variable_name, ivalue);
 }
 
-static void DEH_ThingMD5Sum(md5_context_t *context)
+static void DEH_ThingSHA1Sum(sha1_context_t *context)
 {
     int i;
 
     for (i=0; i<NUMMOBJTYPES; ++i)
     {
-        DEH_StructMD5Sum(context, &thing_mapping, &mobjinfo[i]);
+        DEH_StructSHA1Sum(context, &thing_mapping, &mobjinfo[i]);
     }
 }
 
@@ -135,6 +135,6 @@ deh_section_t deh_section_thing =
     DEH_ThingStart,
     DEH_ThingParseLine,
     NULL,
-    DEH_ThingMD5Sum,
+    DEH_ThingSHA1Sum,
 };
 

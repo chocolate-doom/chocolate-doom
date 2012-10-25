@@ -153,13 +153,13 @@ static void UpdateGUI(void)
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, startgame);
 }
 
-static void PrintMD5Digest(char *s, byte *digest)
+static void PrintSHA1Digest(char *s, byte *digest)
 {
     unsigned int i;
 
     printf("%s: ", s);
 
-    for (i=0; i<sizeof(md5_digest_t); ++i)
+    for (i=0; i<sizeof(sha1_digest_t); ++i)
     {
         printf("%02x", digest[i]);
     }
@@ -167,7 +167,7 @@ static void PrintMD5Digest(char *s, byte *digest)
     printf("\n");
 }
 
-static void CheckMD5Sums(void)
+static void CheckSHA1Sums(void)
 {
     boolean correct_wad, correct_deh;
     boolean same_freedoom;
@@ -178,10 +178,10 @@ static void CheckMD5Sums(void)
         return;
     }
 
-    correct_wad = memcmp(net_local_wad_md5sum, net_server_wad_md5sum, 
-                         sizeof(md5_digest_t)) == 0;
-    correct_deh = memcmp(net_local_deh_md5sum, net_server_deh_md5sum, 
-                         sizeof(md5_digest_t)) == 0;
+    correct_wad = memcmp(net_local_wad_sha1sum, net_server_wad_sha1sum, 
+                         sizeof(sha1_digest_t)) == 0;
+    correct_deh = memcmp(net_local_deh_sha1sum, net_server_deh_sha1sum, 
+                         sizeof(sha1_digest_t)) == 0;
     same_freedoom = net_server_is_freedoom == net_local_is_freedoom;
 
     if (correct_wad && correct_deh && same_freedoom)
@@ -191,9 +191,9 @@ static void CheckMD5Sums(void)
 
     if (!correct_wad)
     {
-        printf("Warning: WAD MD5 does not match server:\n");
-        PrintMD5Digest("Local", net_local_wad_md5sum);
-        PrintMD5Digest("Server", net_server_wad_md5sum);
+        printf("Warning: WAD SHA1 does not match server:\n");
+        PrintSHA1Digest("Local", net_local_wad_sha1sum);
+        PrintSHA1Digest("Server", net_server_wad_sha1sum);
     }
 
     if (!same_freedoom)
@@ -206,9 +206,9 @@ static void CheckMD5Sums(void)
 
     if (!correct_deh)
     {
-        printf("Warning: Dehacked MD5 does not match server:\n");
-        PrintMD5Digest("Local", net_local_deh_md5sum);
-        PrintMD5Digest("Server", net_server_deh_md5sum);
+        printf("Warning: Dehacked SHA1 does not match server:\n");
+        PrintSHA1Digest("Local", net_local_deh_sha1sum);
+        PrintSHA1Digest("Server", net_server_deh_sha1sum);
     }
 
     window = TXT_NewWindow("WARNING");
@@ -274,7 +274,7 @@ void NET_WaitForStart(void)
     while (net_waiting_for_start)
     {
         UpdateGUI();
-        CheckMD5Sums();
+        CheckSHA1Sums();
 
         TXT_DispatchEvents();
         TXT_DrawDesktop();
