@@ -127,9 +127,10 @@ int             startloadgame;
 boolean		advancedemo;
 
 // Store demo, do not accept any inputs
-
 boolean         storedemo;
 
+// "BFG Edition" version of doom2.wad does not include TITLEPIC.
+boolean         bfgedition;
 
 char		wadfile[1024];		// primary wad file
 char		mapdir[1024];           // directory of development maps
@@ -558,6 +559,13 @@ void D_DoAdvanceDemo (void)
       case 6:
 	G_DeferedPlayDemo(DEH_String("demo4"));
 	break;
+    }
+
+    // The Doom 3: BFG Edition version of doom2.wad does not have a
+    // TITLETPIC lump. Use INTERPIC instead as a workaround.
+    if (bfgedition && !strcasecmp(pagename, "TITLEPIC"))
+    {
+        pagename = "INTERPIC";
     }
 }
 
@@ -1494,12 +1502,26 @@ void D_DoomMain (void)
     DEH_printf("ST_Init: Init status bar.\n");
     ST_Init ();
 
-    // If Doom II without a MAP01 lump, this is a store demo.  
+    // If Doom II without a MAP01 lump, this is a store demo.
     // Moved this here so that MAP01 isn't constantly looked up
     // in the main loop.
 
     if (gamemode == commercial && W_CheckNumForName("map01") < 0)
         storedemo = true;
+
+    // Doom 3: BFG Edition includes modified versions of the classic
+    // IWADs. The modified version of doom2.wad does not have a
+    // TITLEPIC lump, so detect this so we can apply a workaround.
+    // We specifically check for TITLEPIC here, after PWADs have been
+    // loaded - this means that we can play with the BFG Edition with
+    // PWADs that change the title screen and still see the modified
+    // titles.
+
+    if (gamemode == commercial && W_CheckNumForName("titlepic") < 0)
+    {
+        printf("BFG Edition: Using INTERPIC instead of TITLEPIC.\n");
+        bfgedition = true;
+    }
 
     //!
     // @arg <x>
