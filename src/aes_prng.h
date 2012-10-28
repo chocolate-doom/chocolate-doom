@@ -28,7 +28,11 @@
 
 #include "doomtype.h"
 
-void PRNG_Start(byte *key);
+// Nonce value used as random seed for secure demos.
+
+typedef byte prng_seed_t[16];
+
+void PRNG_Start(prng_seed_t seed);
 void PRNG_Stop(void);
 unsigned int PRNG_Random(void);
 

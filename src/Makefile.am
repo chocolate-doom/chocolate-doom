@@ -132,6 +132,7 @@ deh_weapon.c
 # source files needed for FEATURE_MULTIPLAYER
 
 FEATURE_MULTIPLAYER_SOURCE_FILES=          \
+aes_prng.c           aes_prng.h            \
 net_client.c         net_client.h          \
 net_common.c         net_common.h          \
 net_dedicated.c      net_dedicated.h       \

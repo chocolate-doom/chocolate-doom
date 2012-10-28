@@ -70,6 +70,7 @@
 #include <stdlib.h>
 #include <string.h> /* for memcmp() */
 
+#include "aes_prng.h"
 #include "doomtype.h"
 #include "i_system.h"
 
@@ -948,7 +949,7 @@ static unsigned int prng_value_index = 0;
 
 // Initialize Pseudo-RNG using the specified 128-bit key.
 
-void PRNG_Start(byte *key)
+void PRNG_Start(prng_seed_t key)
 {
     char *errormsg;
 
@@ -959,7 +960,7 @@ void PRNG_Start(byte *key)
         I_Error("Failed to initialize PRNG: %s", errormsg);
     }
 
-    AES_SetKey(&prng_context, key, 128 / 8);
+    AES_SetKey(&prng_context, key, sizeof(prng_seed_t));
     prng_value_index = 4;
     prng_input_counter = 0;
     prng_enabled = true;
