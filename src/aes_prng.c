@@ -778,77 +778,77 @@ static void AES_EncryptAligned(const RIJNDAEL_context *ctx,
     int r;
     union
     {
-        uint32_t  tempu32[4];  /* Force correct alignment. */
-        byte temp[4][4];
-    } u;
+        uint32_t u32;
+        byte b[4];
+    } temp[4];
 
-    *((uint32_t*)u.temp[0]) = *((uint32_t*)(a   )) ^ rk[0][0];
-    *((uint32_t*)u.temp[1]) = *((uint32_t*)(a+ 4)) ^ rk[0][1];
-    *((uint32_t*)u.temp[2]) = *((uint32_t*)(a+ 8)) ^ rk[0][2];
-    *((uint32_t*)u.temp[3]) = *((uint32_t*)(a+12)) ^ rk[0][3];
-    *((uint32_t*)(b    ))   = (*((uint32_t*)T1[u.temp[0][0]])
-                          ^ *((uint32_t*)T2[u.temp[1][1]])
-                          ^ *((uint32_t*)T3[u.temp[2][2]])
-                          ^ *((uint32_t*)T4[u.temp[3][3]]));
-    *((uint32_t*)(b + 4))   = (*((uint32_t*)T1[u.temp[1][0]])
-                          ^ *((uint32_t*)T2[u.temp[2][1]])
-                          ^ *((uint32_t*)T3[u.temp[3][2]])
-                          ^ *((uint32_t*)T4[u.temp[0][3]]));
-    *((uint32_t*)(b + 8))   = (*((uint32_t*)T1[u.temp[2][0]])
-                          ^ *((uint32_t*)T2[u.temp[3][1]])
-                          ^ *((uint32_t*)T3[u.temp[0][2]])
-                          ^ *((uint32_t*)T4[u.temp[1][3]]));
-    *((uint32_t*)(b +12))   = (*((uint32_t*)T1[u.temp[3][0]])
-                          ^ *((uint32_t*)T2[u.temp[0][1]])
-                          ^ *((uint32_t*)T3[u.temp[1][2]])
-                          ^ *((uint32_t*)T4[u.temp[2][3]]));
+    temp[0].u32 = *((uint32_t*)(a   )) ^ rk[0][0];
+    temp[1].u32 = *((uint32_t*)(a+ 4)) ^ rk[0][1];
+    temp[2].u32 = *((uint32_t*)(a+ 8)) ^ rk[0][2];
+    temp[3].u32 = *((uint32_t*)(a+12)) ^ rk[0][3];
+    *((uint32_t*)(b    )) = (*((uint32_t*)T1[temp[0].b[0]])
+                           ^ *((uint32_t*)T2[temp[1].b[1]])
+                           ^ *((uint32_t*)T3[temp[2].b[2]])
+                           ^ *((uint32_t*)T4[temp[3].b[3]]));
+    *((uint32_t*)(b + 4)) = (*((uint32_t*)T1[temp[1].b[0]])
+                           ^ *((uint32_t*)T2[temp[2].b[1]])
+                           ^ *((uint32_t*)T3[temp[3].b[2]])
+                           ^ *((uint32_t*)T4[temp[0].b[3]]));
+    *((uint32_t*)(b + 8)) = (*((uint32_t*)T1[temp[2].b[0]])
+                           ^ *((uint32_t*)T2[temp[3].b[1]])
+                           ^ *((uint32_t*)T3[temp[0].b[2]])
+                           ^ *((uint32_t*)T4[temp[1].b[3]]));
+    *((uint32_t*)(b +12)) = (*((uint32_t*)T1[temp[3].b[0]])
+                           ^ *((uint32_t*)T2[temp[0].b[1]])
+                           ^ *((uint32_t*)T3[temp[1].b[2]])
+                           ^ *((uint32_t*)T4[temp[2].b[3]]));
 
     for (r = 1; r < ROUNDS-1; r++)
-      {
-        *((uint32_t*)u.temp[0]) = *((uint32_t*)(b   )) ^ rk[r][0];
-        *((uint32_t*)u.temp[1]) = *((uint32_t*)(b+ 4)) ^ rk[r][1];
-        *((uint32_t*)u.temp[2]) = *((uint32_t*)(b+ 8)) ^ rk[r][2];
-        *((uint32_t*)u.temp[3]) = *((uint32_t*)(b+12)) ^ rk[r][3];
+    {
+        temp[0].u32 = *((uint32_t*)(b   )) ^ rk[r][0];
+        temp[1].u32 = *((uint32_t*)(b+ 4)) ^ rk[r][1];
+        temp[2].u32 = *((uint32_t*)(b+ 8)) ^ rk[r][2];
+        temp[3].u32 = *((uint32_t*)(b+12)) ^ rk[r][3];
 
-        *((uint32_t*)(b    )) = (*((uint32_t*)T1[u.temp[0][0]])
-                              ^ *((uint32_t*)T2[u.temp[1][1]])
-                              ^ *((uint32_t*)T3[u.temp[2][2]])
-                              ^ *((uint32_t*)T4[u.temp[3][3]]));
-        *((uint32_t*)(b + 4)) = (*((uint32_t*)T1[u.temp[1][0]])
-                              ^ *((uint32_t*)T2[u.temp[2][1]])
-                              ^ *((uint32_t*)T3[u.temp[3][2]])
-                              ^ *((uint32_t*)T4[u.temp[0][3]]));
-        *((uint32_t*)(b + 8)) = (*((uint32_t*)T1[u.temp[2][0]])
-                              ^ *((uint32_t*)T2[u.temp[3][1]])
-                              ^ *((uint32_t*)T3[u.temp[0][2]])
-                              ^ *((uint32_t*)T4[u.temp[1][3]]));
-        *((uint32_t*)(b +12)) = (*((uint32_t*)T1[u.temp[3][0]])
-                              ^ *((uint32_t*)T2[u.temp[0][1]])
-                              ^ *((uint32_t*)T3[u.temp[1][2]])
-                              ^ *((uint32_t*)T4[u.temp[2][3]]));
-      }
+        *((uint32_t*)(b    )) = (*((uint32_t*)T1[temp[0].b[0]])
+                               ^ *((uint32_t*)T2[temp[1].b[1]])
+                               ^ *((uint32_t*)T3[temp[2].b[2]])
+                               ^ *((uint32_t*)T4[temp[3].b[3]]));
+        *((uint32_t*)(b + 4)) = (*((uint32_t*)T1[temp[1].b[0]])
+                               ^ *((uint32_t*)T2[temp[2].b[1]])
+                               ^ *((uint32_t*)T3[temp[3].b[2]])
+                               ^ *((uint32_t*)T4[temp[0].b[3]]));
+        *((uint32_t*)(b + 8)) = (*((uint32_t*)T1[temp[2].b[0]])
+                               ^ *((uint32_t*)T2[temp[3].b[1]])
+                               ^ *((uint32_t*)T3[temp[0].b[2]])
+                               ^ *((uint32_t*)T4[temp[1].b[3]]));
+        *((uint32_t*)(b +12)) = (*((uint32_t*)T1[temp[3].b[0]])
+                               ^ *((uint32_t*)T2[temp[0].b[1]])
+                               ^ *((uint32_t*)T3[temp[1].b[2]])
+                               ^ *((uint32_t*)T4[temp[2].b[3]]));
+    }
 
     /* Last round is special. */
-    *((uint32_t*)u.temp[0]) = *((uint32_t*)(b   )) ^ rk[ROUNDS-1][0];
-    *((uint32_t*)u.temp[1]) = *((uint32_t*)(b+ 4)) ^ rk[ROUNDS-1][1];
-    *((uint32_t*)u.temp[2]) = *((uint32_t*)(b+ 8)) ^ rk[ROUNDS-1][2];
-    *((uint32_t*)u.temp[3]) = *((uint32_t*)(b+12)) ^ rk[ROUNDS-1][3];
-    b[ 0] = T1[u.temp[0][0]][1];
-    b[ 1] = T1[u.temp[1][1]][1];
-    b[ 2] = T1[u.temp[2][2]][1];
-    b[ 3] = T1[u.temp[3][3]][1];
-    b[ 4] = T1[u.temp[1][0]][1];
-    b[ 5] = T1[u.temp[2][1]][1];
-    b[ 6] = T1[u.temp[3][2]][1];
-    b[ 7] = T1[u.temp[0][3]][1];
-    b[ 8] = T1[u.temp[2][0]][1];
-    b[ 9] = T1[u.temp[3][1]][1];
-    b[10] = T1[u.temp[0][2]][1];
-    b[11] = T1[u.temp[1][3]][1];
-    b[12] = T1[u.temp[3][0]][1];
-    b[13] = T1[u.temp[0][1]][1];
-    b[14] = T1[u.temp[1][2]][1];
-    b[15] = T1[u.temp[2][3]][1];
+    temp[0].u32 = *((uint32_t*)(b   )) ^ rk[ROUNDS-1][0];
+    temp[1].u32 = *((uint32_t*)(b+ 4)) ^ rk[ROUNDS-1][1];
+    temp[2].u32 = *((uint32_t*)(b+ 8)) ^ rk[ROUNDS-1][2];
+    temp[3].u32 = *((uint32_t*)(b+12)) ^ rk[ROUNDS-1][3];
+    b[ 0] = T1[temp[0].b[0]][1];
+    b[ 1] = T1[temp[1].b[1]][1];
+    b[ 2] = T1[temp[2].b[2]][1];
+    b[ 3] = T1[temp[3].b[3]][1];
+    b[ 4] = T1[temp[1].b[0]][1];
+    b[ 5] = T1[temp[2].b[1]][1];
+    b[ 6] = T1[temp[3].b[2]][1];
+    b[ 7] = T1[temp[0].b[3]][1];
+    b[ 8] = T1[temp[2].b[0]][1];
+    b[ 9] = T1[temp[3].b[1]][1];
+    b[10] = T1[temp[0].b[2]][1];
+    b[11] = T1[temp[1].b[3]][1];
+    b[12] = T1[temp[3].b[0]][1];
+    b[13] = T1[temp[0].b[1]][1];
+    b[14] = T1[temp[1].b[2]][1];
+    b[15] = T1[temp[2].b[3]][1];
     *((uint32_t*)(b   )) ^= rk[ROUNDS][0];
     *((uint32_t*)(b+ 4)) ^= rk[ROUNDS][1];
     *((uint32_t*)(b+ 8)) ^= rk[ROUNDS][2];
