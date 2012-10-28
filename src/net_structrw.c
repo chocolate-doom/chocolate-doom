@@ -321,31 +321,51 @@ void NET_WriteFullTiccmd(net_packet_t *packet, net_full_ticcmd_t *cmd, boolean l
     }
 }
 
-boolean NET_ReadSHA1Sum(net_packet_t *packet, sha1_digest_t digest)
+static boolean NET_ReadBlob(net_packet_t *packet, uint8_t *buf, size_t len)
 {
     unsigned int b;
     int i;
 
-    for (i=0; i<sizeof(sha1_digest_t); ++i)
+    for (i=0; i<len; ++i)
     {
         if (!NET_ReadInt8(packet, &b))
         {
             return false;
         }
 
-        digest[i] = b;
+        buf[i] = b;
     }
 
     return true;
 }
 
-void NET_WriteSHA1Sum(net_packet_t *packet, sha1_digest_t digest)
+static void NET_WriteBlob(net_packet_t *packet, uint8_t *buf, size_t len)
 {
     int i;
 
-    for (i=0; i<sizeof(sha1_digest_t); ++i)
+    for (i=0; i<len; ++i)
     {
-        NET_WriteInt8(packet, digest[i]);
+        NET_WriteInt8(packet, buf[i]);
     }
+}
+
+boolean NET_ReadSHA1Sum(net_packet_t *packet, sha1_digest_t digest)
+{
+    return NET_ReadBlob(packet, digest, sizeof(sha1_digest_t));
+}
+
+void NET_WriteSHA1Sum(net_packet_t *packet, sha1_digest_t digest)
+{
+    NET_WriteBlob(packet, digest, sizeof(sha1_digest_t));
+}
+
+boolean NET_ReadPRNGSeed(net_packet_t *packet, prng_seed_t seed)
+{
+    return NET_ReadBlob(packet, seed, sizeof(prng_seed_t));
+}
+
+void NET_WritePRNGSeed(net_packet_t *packet, prng_seed_t seed)
+{
+    NET_WriteBlob(packet, seed, sizeof(prng_seed_t));
 }
 

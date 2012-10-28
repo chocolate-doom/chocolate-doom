@@ -44,6 +44,7 @@
 
 #define DEFAULT_PORT 2342
 
+static boolean initted = false;
 static int port = DEFAULT_PORT;
 static UDPsocket udpsocket;
 static UDPpacket *recvpacket;
@@ -162,6 +163,9 @@ static boolean NET_SDL_InitClient(void)
 {
     int p;
 
+    if (initted)
+        return true;
+
     //!
     // @category net
     // @arg <n>
@@ -189,13 +193,18 @@ static boolean NET_SDL_InitClient(void)
     srand(time(NULL));
 #endif
 
+    initted = true;
+
     return true;
 }
 
 static boolean NET_SDL_InitServer(void)
 {
     int p;
-    
+
+    if (initted)
+        return true;
+
     p = M_CheckParmWithArgs("-port", 1);
     if (p > 0)
         port = atoi(myargv[p+1]);
@@ -213,6 +222,8 @@ static boolean NET_SDL_InitServer(void)
 #ifdef DROP_PACKETS
     srand(time(NULL));
 #endif
+
+    initted = true;
 
     return true;
 }

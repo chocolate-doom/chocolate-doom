@@ -44,6 +44,10 @@
 
 #define QUERY_TIMEOUT_SECS 2
 
+// Time to wait for secure demo signatures before declaring a timeout.
+
+#define SIGNATURE_TIMEOUT_SECS 5
+
 // Number of query attempts to make before giving up on a server.
 
 #define QUERY_MAX_ATTEMPTS 3
@@ -86,6 +90,8 @@ static int num_targets;
 static boolean query_loop_running = false;
 static boolean printed_header = false;
 static int last_query_time = 0;
+
+static char *securedemo_start_message = NULL;
 
 // Resolve the master server address.
 
@@ -795,5 +801,126 @@ net_addr_t *NET_FindLANServer(void)
     {
         return NULL;
     }
+}
+
+// Block until a packet of the given type is received from the given
+// address.
+
+static net_packet_t *BlockForPacket(net_addr_t *addr, unsigned int packet_type,
+                                    unsigned int timeout_ms)
+{
+    net_packet_t *packet;
+    net_addr_t *packet_src;
+    unsigned int read_packet_type;
+    unsigned int start_time;
+
+    start_time = I_GetTimeMS();
+
+    while (I_GetTimeMS() < start_time + timeout_ms)
+    {
+        if (!NET_RecvPacket(query_context, &packet_src, &packet))
+        {
+            I_Sleep(20);
+            continue;
+        }
+
+        if (packet_src == addr
+         && NET_ReadInt16(packet, &read_packet_type)
+         && packet_type == read_packet_type)
+        {
+            return packet;
+        }
+
+        NET_FreePacket(packet);
+    }
+
+    // Timeout - no response.
+
+    return NULL;
+}
+
+// Query master server for secure demo start seed value.
+
+boolean NET_StartSecureDemo(prng_seed_t seed)
+{
+    net_packet_t *request, *response;
+    net_addr_t *master_addr;
+    char *signature;
+    boolean result;
+
+    NET_Query_Init();
+    master_addr = NET_Query_ResolveMaster(query_context);
+
+    // Send request packet to master server.
+
+    request = NET_NewPacket(10);
+    NET_WriteInt16(request, NET_MASTER_PACKET_TYPE_SIGN_START);
+    NET_SendPacket(master_addr, request);
+    NET_FreePacket(request);
+
+    // Block for response and read contents.
+    // The signed start message will be saved for later.
+
+    response = BlockForPacket(master_addr,
+                              NET_MASTER_PACKET_TYPE_SIGN_START_RESPONSE,
+                              SIGNATURE_TIMEOUT_SECS * 1000);
+
+    result = false;
+
+    if (response != NULL)
+    {
+        if (NET_ReadPRNGSeed(response, seed))
+        {
+            signature = NET_ReadString(response);
+
+            if (signature != NULL)
+            {
+                securedemo_start_message = strdup(signature);
+                result = true;
+            }
+        }
+
+        NET_FreePacket(response);
+    }
+
+    return result;
+}
+
+// Query master server for secure demo end signature.
+
+char *NET_EndSecureDemo(sha1_digest_t demo_hash)
+{
+    net_packet_t *request, *response;
+    net_addr_t *master_addr;
+    char *signature;
+
+    master_addr = NET_Query_ResolveMaster(query_context);
+
+    // Construct end request and send to master server.
+
+    request = NET_NewPacket(10);
+    NET_WriteInt16(request, NET_MASTER_PACKET_TYPE_SIGN_END);
+    NET_WriteSHA1Sum(request, demo_hash);
+    NET_WriteString(request, securedemo_start_message);
+    NET_SendPacket(master_addr, request);
+    NET_FreePacket(request);
+
+    // Block for response. The response packet simply contains a string
+    // with the ASCII signature.
+
+    response = BlockForPacket(master_addr,
+                              NET_MASTER_PACKET_TYPE_SIGN_END_RESPONSE,
+                              SIGNATURE_TIMEOUT_SECS * 1000);
+
+    if (response == NULL)
+    {
+        return NULL;
+    }
+
+    signature = NET_ReadString(response);
+
+    NET_FreePacket(response);
+
+    return signature;
 }
 
