@@ -378,6 +378,37 @@ static void UpdateFocus(void)
     screenvisible = (state & SDL_APPACTIVE) != 0;
 }
 
+// Show or hide the mouse cursor. We have to use different techniques
+// depending on the OS.
+
+static void ShowCursor(boolean show)
+{
+    // On Windows, using SDL_ShowCursor() adds lag to the mouse input,
+    // so work around this by setting an invisible cursor instead. On
+    // other systems, it isn't possible to change the cursor, so this
+    // hack has to be Windows-only. (Thanks to entryway for this)
+
+#ifdef _WIN32
+    if (show)
+    {
+        SDL_SetCursor(cursors[1]);
+    }
+    else
+    {
+        SDL_SetCursor(cursors[0]);
+    }
+#else
+    SDL_ShowCursor(show);
+#endif
+
+    // When the cursor is hidden, grab the input.
+
+    if (!screensaver_mode)
+    {
+        SDL_WM_GrabInput(!show);
+    }
+}
+
 void I_EnableLoadingDisk(void)
 {
     patch_t *disk;
@@ -532,12 +563,10 @@ void I_ShutdownGraphics(void)
 {
     if (initialized)
     {
-        SDL_SetCursor(cursors[1]);
-        SDL_ShowCursor(1);
-        SDL_WM_GrabInput(SDL_GRAB_OFF);
+        ShowCursor(true);
 
         SDL_QuitSubSystem(SDL_INIT_VIDEO);
-    
+
         initialized = false;
     }
 }
@@ -895,17 +924,15 @@ static void UpdateGrab(void)
     {
         // Hide the cursor in screensaver mode
 
-        SDL_SetCursor(cursors[0]);
+        ShowCursor(false);
     }
     else if (grab && !currently_grabbed)
     {
-        SDL_SetCursor(cursors[0]);
-        SDL_WM_GrabInput(SDL_GRAB_ON);
+        ShowCursor(false);
     }
     else if (!grab && currently_grabbed)
     {
-        SDL_SetCursor(cursors[1]);
-        SDL_WM_GrabInput(SDL_GRAB_OFF);
+        ShowCursor(true);
     }
 
     currently_grabbed = grab;

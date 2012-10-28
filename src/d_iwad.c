@@ -175,6 +175,10 @@ static char *steam_install_subdirs[] =
     "steamapps\\common\\ultimate doom\\base",
     "steamapps\\common\\hexen\\base",
     "steamapps\\common\\heretic shadow of the serpent riders\\base"
+
+    // From Doom 3: BFG Edition:
+
+    "steamapps\\common\\DOOM 3 BFG Edition\\base\\wads",
 };
 
 static char *GetRegistryString(registry_value_t *reg_val)
@@ -219,7 +223,7 @@ static char *GetRegistryString(registry_value_t *reg_val)
     }
 
     // Close the key
-        
+
     RegCloseKey(key);
 
     return result;

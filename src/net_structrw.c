@@ -39,8 +39,8 @@ void NET_WriteConnectData(net_packet_t *packet, net_connect_data_t *data)
     NET_WriteInt8(packet, data->drone);
     NET_WriteInt8(packet, data->max_players);
     NET_WriteInt8(packet, data->is_freedoom);
-    NET_WriteMD5Sum(packet, data->wad_md5sum);
-    NET_WriteMD5Sum(packet, data->deh_md5sum);
+    NET_WriteSHA1Sum(packet, data->wad_sha1sum);
+    NET_WriteSHA1Sum(packet, data->deh_sha1sum);
     NET_WriteInt8(packet, data->player_class);
 }
 
@@ -52,8 +52,8 @@ boolean NET_ReadConnectData(net_packet_t *packet, net_connect_data_t *data)
         && NET_ReadInt8(packet, (unsigned int *) &data->drone)
         && NET_ReadInt8(packet, (unsigned int *) &data->max_players)
         && NET_ReadInt8(packet, (unsigned int *) &data->is_freedoom)
-        && NET_ReadMD5Sum(packet, data->wad_md5sum)
-        && NET_ReadMD5Sum(packet, data->deh_md5sum)
+        && NET_ReadSHA1Sum(packet, data->wad_sha1sum)
+        && NET_ReadSHA1Sum(packet, data->deh_sha1sum)
         && NET_ReadInt8(packet, (unsigned int *) &data->player_class);
 }
 
@@ -461,8 +461,8 @@ void NET_WriteWaitData(net_packet_t *packet, net_waitdata_t *data)
         NET_WriteString(packet, data->player_addrs[i]);
     }
 
-    NET_WriteMD5Sum(packet, data->wad_md5sum);
-    NET_WriteMD5Sum(packet, data->deh_md5sum);
+    NET_WriteSHA1Sum(packet, data->wad_sha1sum);
+    NET_WriteSHA1Sum(packet, data->deh_sha1sum);
     NET_WriteInt8(packet, data->is_freedoom);
 }
 
@@ -501,37 +501,57 @@ boolean NET_ReadWaitData(net_packet_t *packet, net_waitdata_t *data)
         strcpy(data->player_addrs[i], s);
     }
 
-    return NET_ReadMD5Sum(packet, data->wad_md5sum)
-        && NET_ReadMD5Sum(packet, data->deh_md5sum)
+    return NET_ReadSHA1Sum(packet, data->wad_sha1sum)
+        && NET_ReadSHA1Sum(packet, data->deh_sha1sum)
         && NET_ReadInt8(packet, (unsigned int *) &data->is_freedoom);
 }
 
-boolean NET_ReadMD5Sum(net_packet_t *packet, md5_digest_t digest)
+static boolean NET_ReadBlob(net_packet_t *packet, uint8_t *buf, size_t len)
 {
     unsigned int b;
     int i;
 
-    for (i=0; i<16; ++i)
+    for (i=0; i<len; ++i)
     {
         if (!NET_ReadInt8(packet, &b))
         {
             return false;
         }
 
-        digest[i] = b;
+        buf[i] = b;
     }
 
     return true;
 }
 
-void NET_WriteMD5Sum(net_packet_t *packet, md5_digest_t digest)
+static void NET_WriteBlob(net_packet_t *packet, uint8_t *buf, size_t len)
 {
     int i;
 
-    for (i=0; i<16; ++i)
+    for (i=0; i<len; ++i)
     {
-        NET_WriteInt8(packet, digest[i]);
+        NET_WriteInt8(packet, buf[i]);
     }
+}
+
+boolean NET_ReadSHA1Sum(net_packet_t *packet, sha1_digest_t digest)
+{
+    return NET_ReadBlob(packet, digest, sizeof(sha1_digest_t));
+}
+
+void NET_WriteSHA1Sum(net_packet_t *packet, sha1_digest_t digest)
+{
+    NET_WriteBlob(packet, digest, sizeof(sha1_digest_t));
+}
+
+boolean NET_ReadPRNGSeed(net_packet_t *packet, prng_seed_t seed)
+{
+    return NET_ReadBlob(packet, seed, sizeof(prng_seed_t));
+}
+
+void NET_WritePRNGSeed(net_packet_t *packet, prng_seed_t seed)
+{
+    NET_WriteBlob(packet, seed, sizeof(prng_seed_t));
 }
 
 // "Safe" version of puts, for displaying messages received from the

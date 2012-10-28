@@ -45,8 +45,8 @@ struct txt_label_s
     char *label;
     char **lines;
     unsigned int w, h;
-    txt_color_t fgcolor;
-    txt_color_t bgcolor;
+    int fgcolor;
+    int bgcolor;
 };
 
 /**

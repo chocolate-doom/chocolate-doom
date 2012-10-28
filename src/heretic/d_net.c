@@ -177,8 +177,8 @@ static void SaveGameSettings(net_gamesettings_t *settings,
 
     // Read checksums of our WAD directory and dehacked information
 
-    W_Checksum(connect_data->wad_md5sum);
-    DEH_Checksum(connect_data->deh_md5sum);
+    W_Checksum(connect_data->wad_sha1sum);
+    DEH_Checksum(connect_data->deh_sha1sum);
 
     connect_data->is_freedoom = 0;
 }

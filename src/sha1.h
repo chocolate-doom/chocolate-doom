@@ -1,7 +1,7 @@
 // Emacs style mode select   -*- C++ -*- 
 //-----------------------------------------------------------------------------
 //
-// Copyright(C) 2005,2006 Simon Howard
+// Copyright(C) 2012 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -18,32 +18,31 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-//-----------------------------------------------------------------------------
+// DESCRIPTION:
+//     SHA-1 digest.
 //
-// Text mode emulation in SDL
-//
 //-----------------------------------------------------------------------------
 
-#ifndef TXT_IO_H
-#define TXT_IO_H
+#ifndef __SHA1_H__
+#define __SHA1_H__
 
-#include "txt_main.h"
+#include "doomtype.h"
 
-typedef struct
-{
-    int bgcolor;
-    int fgcolor;
-} txt_saved_colors_t;
+typedef struct sha1_context_s sha1_context_t;
+typedef byte sha1_digest_t[20];
 
-void TXT_PutChar(int c);
-void TXT_Puts(const char *s);
-void TXT_GotoXY(int x, int y);
-void TXT_GetXY(int *x, int *y);
-void TXT_FGColor(txt_color_t color);
-void TXT_BGColor(int color, int blinking);
-void TXT_SaveColors(txt_saved_colors_t *save);
-void TXT_RestoreColors(txt_saved_colors_t *save);
-void TXT_ClearScreen(void);
+struct sha1_context_s {
+    uint32_t h0,h1,h2,h3,h4;
+    uint32_t nblocks;
+    byte buf[64];
+    int count;
+};
 
-#endif /* #ifndef TXT_IO_H */
+void SHA1_Init(sha1_context_t *context);
+void SHA1_Update(sha1_context_t *context, byte *buf, size_t len);
+void SHA1_Final(sha1_digest_t digest, sha1_context_t *context);
+void SHA1_UpdateInt32(sha1_context_t *context, unsigned int val);
+void SHA1_UpdateString(sha1_context_t *context, char *str);
+
+#endif /* #ifndef __SHA1_H__ */
 

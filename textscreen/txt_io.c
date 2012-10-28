@@ -30,47 +30,9 @@
 #include "txt_io.h"
 #include "txt_main.h"
 
-static struct 
-{
-    txt_color_t color;
-    const char *name;
-} colors[] = {
-    {TXT_COLOR_BLACK,           "black"},
-    {TXT_COLOR_BLUE,            "blue"},
-    {TXT_COLOR_GREEN,           "green"},
-    {TXT_COLOR_CYAN,            "cyan"},
-    {TXT_COLOR_RED,             "red"},
-    {TXT_COLOR_MAGENTA,         "magenta"},
-    {TXT_COLOR_BROWN,           "brown"},
-    {TXT_COLOR_GREY,            "grey"},
-    {TXT_COLOR_DARK_GREY,       "darkgrey"},
-    {TXT_COLOR_BRIGHT_BLUE,     "brightblue"},
-    {TXT_COLOR_BRIGHT_GREEN,    "brightgreen"},
-    {TXT_COLOR_BRIGHT_CYAN,     "brightcyan"},
-    {TXT_COLOR_BRIGHT_RED,      "brightred"},
-    {TXT_COLOR_BRIGHT_MAGENTA,  "brightmagenta"},
-    {TXT_COLOR_YELLOW,          "yellow"},
-    {TXT_COLOR_BRIGHT_WHITE,    "brightwhite"},
-};
-
 static int cur_x = 0, cur_y = 0;
 static txt_color_t fgcolor = TXT_COLOR_GREY;
 static txt_color_t bgcolor = TXT_COLOR_BLACK;
-
-static int GetColorForName(char *s)
-{
-    size_t i;
-
-    for (i=0; i<sizeof(colors) / sizeof(*colors); ++i)
-    {
-        if (!strcmp(s, colors[i].name))
-        {
-            return colors[i].color;
-        }
-    }
-
-    return -1;
-}
 
 static void NewLine(unsigned char *screendata)
 {
@@ -104,7 +66,7 @@ static void NewLine(unsigned char *screendata)
 static void PutChar(unsigned char *screendata, int c)
 {
     unsigned char *p;
-   
+
     p = screendata + cur_y * TXT_SCREEN_W * 2 +  cur_x * 2;
 
     switch (c)
@@ -149,66 +111,14 @@ void TXT_PutChar(int c)
 
 void TXT_Puts(const char *s)
 {
-    int previous_color = TXT_COLOR_BLACK;
     unsigned char *screen;
     const char *p;
-    char colorname_buf[20];
-    char *ending;
-    int col;
 
     screen = TXT_GetScreenData();
 
     for (p=s; *p != '\0'; ++p)
     {
-        if (*p == '<')
-        {
-            ++p;
-
-            if (*p == '<')
-            {
-                PutChar(screen, '<');
-            }
-            else
-            {
-                ending = strchr(p, '>');
-
-                if (ending == NULL)
-                {
-                    return;
-                }
-
-                strncpy(colorname_buf, p, 19);
-                colorname_buf[ending-p] = '\0';
-
-                if (!strcmp(colorname_buf, "/"))
-                {
-                    // End of color block
-
-                    col = previous_color;
-                }
-                else
-                {
-                    col = GetColorForName(colorname_buf);
-
-                    if (col < 0)
-                    {
-                        return;
-                    }
-
-                    // Save the color for the ending marker
-
-                    previous_color = fgcolor;
-                }
-
-                TXT_FGColor(col);
-                
-                p = ending;
-            }
-        }
-        else
-        {
-            PutChar(screen, *p);
-        }
+        PutChar(screen, *p);
     }
 
     PutChar(screen, '\n');
@@ -236,6 +146,18 @@ void TXT_BGColor(int color, int blinking)
     bgcolor = color;
     if (blinking)
         bgcolor |= TXT_COLOR_BLINKING;
+}
+
+void TXT_SaveColors(txt_saved_colors_t *save)
+{
+    save->bgcolor = bgcolor;
+    save->fgcolor = fgcolor;
+}
+
+void TXT_RestoreColors(txt_saved_colors_t *save)
+{
+    bgcolor = save->bgcolor;
+    fgcolor = save->fgcolor;
 }
 
 void TXT_ClearScreen(void)

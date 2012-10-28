@@ -154,8 +154,8 @@ static unsigned int gamedata_recv_time;
 
 // Hash checksums of our wad directory and dehacked data.
 
-md5_digest_t net_local_wad_md5sum;
-md5_digest_t net_local_deh_md5sum;
+sha1_digest_t net_local_wad_sha1sum;
+sha1_digest_t net_local_deh_sha1sum;
 
 // Are we playing with the freedoom IWAD?
 
@@ -905,8 +905,8 @@ boolean NET_CL_Connect(net_addr_t *addr, net_connect_data_t *data)
 
     server_addr = addr;
 
-    memcpy(net_local_wad_md5sum, data->wad_md5sum, sizeof(md5_digest_t));
-    memcpy(net_local_deh_md5sum, data->deh_md5sum, sizeof(md5_digest_t));
+    memcpy(net_local_wad_sha1sum, data->wad_sha1sum, sizeof(sha1_digest_t));
+    memcpy(net_local_deh_sha1sum, data->deh_sha1sum, sizeof(sha1_digest_t));
     net_local_is_freedoom = data->is_freedoom;
 
     // create a new network I/O context and add just the
@@ -1049,6 +1049,17 @@ void NET_CL_Init(void)
         net_player_name = getenv("USER");
     if (net_player_name == NULL)
         net_player_name = getenv("USERNAME");
+
+    // On Windows, environment variables are in OEM codepage
+    // encoding, so convert to UTF8:
+
+#ifdef _WIN32
+    if (net_player_name != NULL)
+    {
+        net_player_name = M_OEMToUTF8(net_player_name);
+    }
+#endif
+
     if (net_player_name == NULL)
         net_player_name = "Player";
 }

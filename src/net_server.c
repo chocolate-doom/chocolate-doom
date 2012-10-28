@@ -50,6 +50,10 @@
 
 #define MASTER_REFRESH_PERIOD 20 * 60 /* 20 minutes */
 
+// How often to re-resolve the address of the master server?
+
+#define MASTER_RESOLVE_PERIOD 8 * 60 * 60 /* 8 hours */
+
 typedef enum
 {
     // waiting for the game to start
@@ -101,10 +105,10 @@ typedef struct
 
     boolean drone;
 
-    // MD5 hash sums of the client's WAD directory and dehacked data
+    // SHA1 hash sums of the client's WAD directory and dehacked data
 
-    md5_digest_t wad_md5sum;
-    md5_digest_t deh_md5sum;
+    sha1_digest_t wad_sha1sum;
+    sha1_digest_t deh_sha1sum;
 
     // Is this client is playing with the Freedoom IWAD?
 
@@ -150,6 +154,7 @@ static net_gamesettings_t sv_settings;
 
 static net_addr_t *master_server = NULL;
 static unsigned int master_refresh_time;
+static unsigned int master_resolve_time;
 
 // receive window
 
@@ -646,10 +651,10 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
             sv_gamemission = data.gamemission;
         }
 
-        // Save the MD5 checksums
+        // Save the SHA1 checksums
 
-        memcpy(client->wad_md5sum, data.wad_md5sum, sizeof(md5_digest_t));
-        memcpy(client->deh_md5sum, data.deh_md5sum, sizeof(md5_digest_t));
+        memcpy(client->wad_sha1sum, data.wad_sha1sum, sizeof(sha1_digest_t));
+        memcpy(client->deh_sha1sum, data.deh_sha1sum, sizeof(sha1_digest_t));
         client->is_freedoom = data.is_freedoom;
         client->max_players = data.max_players;
 
@@ -1287,10 +1292,10 @@ static void NET_SV_SendWaitingData(net_client_t *client)
         controller = client;
     }
 
-    memcpy(&wait_data.wad_md5sum, &controller->wad_md5sum,
-           sizeof(md5_digest_t));
-    memcpy(&wait_data.deh_md5sum, &controller->deh_md5sum,
-           sizeof(md5_digest_t));
+    memcpy(&wait_data.wad_sha1sum, &controller->wad_sha1sum,
+           sizeof(sha1_digest_t));
+    memcpy(&wait_data.deh_sha1sum, &controller->deh_sha1sum,
+           sizeof(sha1_digest_t));
     wait_data.is_freedoom = controller->is_freedoom;
 
     // set name and address of each player:
@@ -1605,6 +1610,42 @@ void NET_SV_Init(void)
     server_initialized = true;
 }
 
+static void UpdateMasterServer(void)
+{
+    unsigned int now;
+
+    now = I_GetTimeMS();
+
+    // The address of the master server can change. Periodically
+    // re-resolve the master server to update.
+
+    if (now - master_resolve_time > MASTER_RESOLVE_PERIOD * 1000)
+    {
+        net_addr_t *new_addr;
+        printf("Re-resolve master server\n");
+
+        new_addr = NET_Query_ResolveMaster(server_context);
+
+        // Has the master server changed address?
+
+        if (new_addr != NULL && new_addr != master_server)
+        {
+            NET_FreeAddress(master_server);
+            master_server = new_addr;
+        }
+
+        master_resolve_time = now;
+    }
+
+    // Possibly refresh our registration with the master server.
+
+    if (now - master_refresh_time > MASTER_REFRESH_PERIOD * 1000)
+    {
+        NET_Query_AddToMaster(master_server);
+        master_refresh_time = now;
+    }
+}
+
 void NET_SV_RegisterWithMaster(void)
 {
     //!
@@ -1629,6 +1670,7 @@ void NET_SV_RegisterWithMaster(void)
     {
         NET_Query_AddToMaster(master_server);
         master_refresh_time = I_GetTimeMS();
+        master_resolve_time = master_refresh_time;
     }
 }
 
@@ -1652,13 +1694,9 @@ void NET_SV_Run(void)
         NET_FreePacket(packet);
     }
 
-    // Possibly refresh our registration with the master server.
-
-    if (master_server != NULL
-     && I_GetTimeMS() - master_refresh_time > MASTER_REFRESH_PERIOD * 1000)
+    if (master_server != NULL)
     {
-        NET_Query_AddToMaster(master_server);
-        master_refresh_time = I_GetTimeMS();
+        UpdateMasterServer();
     }
 
     // "Run" any clients that may have things to do, independent of responses

@@ -595,11 +595,10 @@ boolean HU_Responder(event_t *ev)
     }
     else
     {
-	c = ev->data2;
 	// send a macro
 	if (altdown)
 	{
-	    c = c - '0';
+	    c = ev->data1 - '0';
 	    if (c > 9)
 		return false;
 	    // fprintf(stderr, "got here\n");
@@ -621,6 +620,8 @@ boolean HU_Responder(event_t *ev)
 	}
 	else
 	{
+            c = ev->data2;
+
 	    eatkey = HUlib_keyInIText(&w_chat, c);
 	    if (eatkey)
 	    {

@@ -14,8 +14,8 @@ icons_DATA = @PROGRAM_PREFIX@doom.png   \
              @PROGRAM_PREFIX@setup.png
 
 @PROGRAM_PREFIX@doom.png : doom.png
-	cp $< $@
+	cp doom.png $@
 
 @PROGRAM_PREFIX@setup.png : setup.png
-	cp $< $@
+	cp setup.png $@
 

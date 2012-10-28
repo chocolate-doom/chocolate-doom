@@ -31,7 +31,7 @@ appdir = $(prefix)/share/applications
 app_DATA = @PROGRAM_PREFIX@setup.desktop
 
 @PROGRAM_PREFIX@setup.desktop : setup.desktop
-	cp $^ $@
+	cp setup.desktop $@
 
 if HAVE_PYTHON
 

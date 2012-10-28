@@ -1,14 +1,46 @@
 
+1.7.0 (2012-06-09):
+
      * Fixed gnome-screensaver desktop file (thanks Rahul Sundaram).
      * Updated COPYING to current version of GPL2 (thanks Rahul
        Sundaram).
-     * Fix bug with detection of IWAD type by filename (thanks mether).
-     * Reduce palette accuracy to 6 bits per channel, to more accurately
-       emulate the PC VGA hardware (thanks GhostlyDeath).
-     * Fix teleport behavior when emulating the alternate Final Doom
+     * Running servers now re-resolve the address of the master server
+       occasionally, to adapt to DNS address changes.
+     * Error dialog is no longer shown on OS X when running from the
+       console.
+     * The Makefiles no longer use GNU make extensions, so the package
+       builds on OpenBSD.
+     * There is now an OPL MIDI debug option (-opldev), useful for
+       when developing GENMIDI lumps.
+     * A workaround for SDL mouse lag is now only used on Windows
+       (where it is needed), and not on other systems. This fixes
+       Chocolate Doom on AmigaOS (thanks Timo Sievänen).
+     * UTF-8 usernames are supported, and Windows usernames with
+       non-ASCII characters are now supported (thanks Alexandre
+       Xavier).
+
+    Compatibility:
+     * Palette accuracy is reduced to 6 bits per channel, to more
+       accurately emulate the PC VGA hardware (thanks GhostlyDeath).
+     * Fixed teleport behavior when emulating the alternate Final Doom
        executable (-gameversion final2) (thanks xttl).
 
+    Bugs fixed:
+     * Fixed weapon cycling keys when playing in Shareware Doom and using
+       the IDKFA cheat (thanks Alexandre Xavier).
+     * Fixed the default mouse buttons in the setup tool (thanks
+       Alexandre Xavier).
+     * Chat macros now work when vanilla_keyboard_mapping is turned
+       off.
+     * Default chat macros were fixed in the setup tool.
+     * Ping time calculation was fixed for LAN search, and made more
+       accurate for all searches.
+     * Fixed bug with detection of IWAD type by filename (thanks mether).
+
     libtextscreen:
+     * There is now limited UTF-8 text support in the textscreen
+       library, used in the label and input box widgets.
+     * Scroll bar behavior was fixed (thanks Alexandre Xavier).
      * Input boxes stop editing and save when they lose their focus,
        correcting a previous counterintuitive behavior (thanks
        Twelve).

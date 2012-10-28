@@ -257,6 +257,14 @@ static boolean WeaponSelectable(weapontype_t weapon)
         return false;
     }
 
+    // These weapons aren't available in shareware.
+
+    if ((weapon == wp_plasma || weapon == wp_bfg)
+     && gamemission == doom && gamemode == shareware)
+    {
+        return false;
+    }
+
     // Can't select a weapon if we don't own it.
 
     if (!players[consoleplayer].weaponowned[weapon])

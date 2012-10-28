@@ -55,10 +55,6 @@ static void TXT_WindowActionDrawer(TXT_UNCAST_ARG(action))
     {
         TXT_BGColor(TXT_COLOR_BLACK, 0);
     }
-    else
-    {
-        TXT_BGColor(TXT_WINDOW_BACKGROUND, 0);
-    }
 
     TXT_DrawString(" ");
     TXT_FGColor(TXT_COLOR_BRIGHT_GREEN);

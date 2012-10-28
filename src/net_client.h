@@ -26,7 +26,7 @@
 
 #include "doomtype.h"
 #include "d_ticcmd.h"
-#include "md5.h"
+#include "sha1.h"
 #include "net_defs.h"
 
 boolean NET_CL_Connect(net_addr_t *addr, net_connect_data_t *data);
@@ -46,11 +46,11 @@ extern net_waitdata_t net_client_wait_data;
 extern boolean net_waiting_for_start;
 extern char *net_player_name;
 
-extern md5_digest_t net_server_wad_md5sum;
-extern md5_digest_t net_server_deh_md5sum;
+extern sha1_digest_t net_server_wad_sha1sum;
+extern sha1_digest_t net_server_deh_sha1sum;
 extern unsigned int net_server_is_freedoom;
-extern md5_digest_t net_local_wad_md5sum;
-extern md5_digest_t net_local_deh_md5sum;
+extern sha1_digest_t net_local_wad_sha1sum;
+extern sha1_digest_t net_local_deh_sha1sum;
 extern unsigned int net_local_is_freedoom;
 
 extern boolean drone;

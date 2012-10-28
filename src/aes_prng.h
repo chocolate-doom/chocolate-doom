@@ -1,7 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
+// Emacs style mode select   -*- C++ -*-
 //-----------------------------------------------------------------------------
 //
-// Copyright(C) 2005,2006 Simon Howard
+// Copyright(C) 2012 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -18,32 +18,23 @@
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
 // 02111-1307, USA.
 //
-//-----------------------------------------------------------------------------
+// DESCRIPTION:
+//     Pseudo-random number generator for secure demos.
 //
-// Text mode emulation in SDL
-//
 //-----------------------------------------------------------------------------
 
-#ifndef TXT_IO_H
-#define TXT_IO_H
+#ifndef __AES_PRNG_H__
+#define __AES_PRNG_H__
 
-#include "txt_main.h"
+#include "doomtype.h"
 
-typedef struct
-{
-    int bgcolor;
-    int fgcolor;
-} txt_saved_colors_t;
+// Nonce value used as random seed for secure demos.
 
-void TXT_PutChar(int c);
-void TXT_Puts(const char *s);
-void TXT_GotoXY(int x, int y);
-void TXT_GetXY(int *x, int *y);
-void TXT_FGColor(txt_color_t color);
-void TXT_BGColor(int color, int blinking);
-void TXT_SaveColors(txt_saved_colors_t *save);
-void TXT_RestoreColors(txt_saved_colors_t *save);
-void TXT_ClearScreen(void);
+typedef byte prng_seed_t[16];
 
-#endif /* #ifndef TXT_IO_H */
+void PRNG_Start(prng_seed_t seed);
+void PRNG_Stop(void);
+unsigned int PRNG_Random(void);
+
+#endif /* #ifndef __AES_PRNG_H__ */
 

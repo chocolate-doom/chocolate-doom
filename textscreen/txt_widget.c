@@ -162,14 +162,22 @@ void TXT_CalcWidgetSize(TXT_UNCAST_ARG(widget))
 void TXT_DrawWidget(TXT_UNCAST_ARG(widget))
 {
     TXT_CAST_ARG(txt_widget_t, widget);
+    txt_saved_colors_t colors;
+
+    // The drawing function might change the fg/bg colors,
+    // so make sure we restore them after it's done.
+
+    TXT_SaveColors(&colors);
 
     // For convenience...
 
     TXT_GotoXY(widget->x, widget->y);
 
     // Call drawer method
- 
+
     widget->widget_class->drawer(widget);
+
+    TXT_RestoreColors(&colors);
 }
 
 void TXT_DestroyWidget(TXT_UNCAST_ARG(widget))
@@ -319,7 +327,7 @@ void TXT_SetWidgetBG(TXT_UNCAST_ARG(widget))
     }
     else
     {
-        TXT_BGColor(TXT_WINDOW_BACKGROUND, 0);
+        // Use normal window background.
     }
 }
 

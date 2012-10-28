@@ -179,6 +179,10 @@ void Window2(void)
                    NULL);
 
     TXT_AddWidget(unselectable_table, TXT_NewLabel("* Unselectable table *"));
+    TXT_AddWidget(unselectable_table, TXT_NewLabel(
+        "This is a UTF-8 string:\n"
+        "\xc3\x80 bient\xc3\xb4t na\xc3\xaet "
+        "\xc3\xa9v\xc3\xaaque \xc3\xa0 l'\xc5\x93uvre p\xc3\xa8re."));
 
     TXT_AddWidget(window, TXT_NewSeparator("Input boxes"));
     table = TXT_NewTable(2);

@@ -69,7 +69,7 @@ m_cheat.c            m_cheat.h             \
 m_config.c           m_config.h            \
 m_controls.c         m_controls.h          \
 m_fixed.c            m_fixed.h             \
-md5.c                md5.h                 \
+sha1.c               sha1.h                \
 memio.c              memio.h               \
 tables.c             tables.h              \
 v_video.c            v_video.h             \
@@ -95,6 +95,7 @@ deh_text.c
 # source files needed for FEATURE_MULTIPLAYER
 
 FEATURE_MULTIPLAYER_SOURCE_FILES=          \
+aes_prng.c           aes_prng.h            \
 net_client.c         net_client.h          \
 net_common.c         net_common.h          \
 net_dedicated.c      net_dedicated.h       \
@@ -210,13 +211,13 @@ appdir = $(prefix)/share/applications
 app_DATA = @PROGRAM_PREFIX@doom.desktop
 
 @PROGRAM_PREFIX@doom.desktop : doom.desktop
-	cp $< $@
+	cp doom.desktop $@
 
 screensaverdir = $(prefix)/share/applications/screensavers
 screensaver_DATA = @PROGRAM_PREFIX@doom-screensaver.desktop
 
 @PROGRAM_PREFIX@doom-screensaver.desktop: doom-screensaver.desktop
-	cp $< $@
+	cp doom-screensaver.desktop $@
 
 .rc.o:
 	$(WINDRES) $< -o $@

@@ -43,12 +43,13 @@ static void TXT_CheckBoxSizeCalc(TXT_UNCAST_ARG(checkbox))
 static void TXT_CheckBoxDrawer(TXT_UNCAST_ARG(checkbox))
 {
     TXT_CAST_ARG(txt_checkbox_t, checkbox);
+    txt_saved_colors_t colors;
     int i;
     int w;
 
     w = checkbox->widget.w;
 
-    TXT_BGColor(TXT_WINDOW_BACKGROUND, 0);
+    TXT_SaveColors(&colors);
     TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);
     TXT_DrawString("(");
 
@@ -67,11 +68,10 @@ static void TXT_CheckBoxDrawer(TXT_UNCAST_ARG(checkbox))
 
     TXT_DrawString(") ");
 
+    TXT_RestoreColors(&colors);
     TXT_SetWidgetBG(checkbox);
-    TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
-
     TXT_DrawString(checkbox->label);
-    
+
     for (i=strlen(checkbox->label); i < w-5; ++i)
     {
         TXT_DrawString(" ");

@@ -54,22 +54,22 @@ boolean deh_allow_long_cheats = false;
 
 boolean deh_apply_cheats = true;
 
-void DEH_Checksum(md5_digest_t digest)
+void DEH_Checksum(sha1_digest_t digest)
 {
-    md5_context_t md5_context;
+    sha1_context_t sha1_context;
     unsigned int i;
 
-    MD5_Init(&md5_context);
+    SHA1_Init(&sha1_context);
 
     for (i=0; deh_section_types[i] != NULL; ++i)
     {
-        if (deh_section_types[i]->md5_hash != NULL)
+        if (deh_section_types[i]->sha1_hash != NULL)
         {
-            deh_section_types[i]->md5_hash(&md5_context);
+            deh_section_types[i]->sha1_hash(&sha1_context);
         }
     }
 
-    MD5_Final(digest, &md5_context);
+    SHA1_Final(digest, &sha1_context);
 }
 
 // Called on startup to call the Init functions

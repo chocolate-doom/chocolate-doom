@@ -30,7 +30,7 @@
 
 #include "doomtype.h"
 #include "d_ticcmd.h"
-#include "md5.h"
+#include "sha1.h"
 
 // Absolute maximum number of "nodes" in the game.  This is different to
 // NET_MAXPLAYERS, as there may be observers that are not participating
@@ -140,7 +140,13 @@ typedef enum
     NET_MASTER_PACKET_TYPE_ADD,
     NET_MASTER_PACKET_TYPE_ADD_RESPONSE,
     NET_MASTER_PACKET_TYPE_QUERY,
-    NET_MASTER_PACKET_TYPE_QUERY_RESPONSE
+    NET_MASTER_PACKET_TYPE_QUERY_RESPONSE,
+    NET_MASTER_PACKET_TYPE_GET_METADATA,
+    NET_MASTER_PACKET_TYPE_GET_METADATA_RESPONSE,
+    NET_MASTER_PACKET_TYPE_SIGN_START,
+    NET_MASTER_PACKET_TYPE_SIGN_START_RESPONSE,
+    NET_MASTER_PACKET_TYPE_SIGN_END,
+    NET_MASTER_PACKET_TYPE_SIGN_END_RESPONSE,
 } net_master_packet_type_t;
 
 // Settings specified when the client connects to the server.
@@ -153,8 +159,8 @@ typedef struct
     int drone;
     int max_players;
     int is_freedoom;
-    md5_digest_t wad_md5sum;
-    md5_digest_t deh_md5sum;
+    sha1_digest_t wad_sha1sum;
+    sha1_digest_t deh_sha1sum;
     int player_class;
 } net_connect_data_t;
 
@@ -239,8 +245,8 @@ typedef struct
     int consoleplayer;
     char player_names[NET_MAXPLAYERS][MAXPLAYERNAME];
     char player_addrs[NET_MAXPLAYERS][MAXPLAYERNAME];
-    md5_digest_t wad_md5sum;
-    md5_digest_t deh_md5sum;
+    sha1_digest_t wad_sha1sum;
+    sha1_digest_t deh_sha1sum;
     int is_freedoom;
 } net_waitdata_t;
 

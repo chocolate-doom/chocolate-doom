@@ -29,8 +29,8 @@
 
 #include "doomtype.h"
 #include "doomfeatures.h"
-#include "md5.h"
 #include "deh_str.h"
+#include "sha1.h"
 
 // These are the limits that dehacked uses (from dheinit.h in the dehacked
 // source).  If these limits are exceeded, it does not generate an error, but
@@ -46,7 +46,7 @@ int DEH_LoadLumpByName(char *name);
 
 boolean DEH_ParseAssignment(char *line, char **variable_name, char **value);
 
-void DEH_Checksum(md5_digest_t digest);
+void DEH_Checksum(sha1_digest_t digest);
 
 extern boolean deh_allow_long_strings;
 extern boolean deh_allow_long_cheats;

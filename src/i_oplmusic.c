@@ -46,10 +46,13 @@
 
 #define MAXMIDLENGTH (96 * 1024)
 #define GENMIDI_NUM_INSTRS  128
+#define GENMIDI_NUM_PERCUSSION 47
 
 #define GENMIDI_HEADER          "#OPL_II#"
 #define GENMIDI_FLAG_FIXED      0x0001         /* fixed pitch */
 #define GENMIDI_FLAG_2VOICE     0x0004         /* double voice (OPL3) */
+
+#define PERCUSSION_LOG_LEN 16
 
 typedef struct
 {
@@ -313,6 +316,8 @@ static int current_music_volume;
 
 static genmidi_instr_t *main_instrs;
 static genmidi_instr_t *percussion_instrs;
+static char (*main_instr_names)[32];
+static char (*percussion_names)[32];
 
 // Voices:
 
@@ -326,6 +331,11 @@ static opl_track_data_t *tracks;
 static unsigned int num_tracks = 0;
 static unsigned int running_tracks = 0;
 static boolean song_looping;
+
+// Mini-log of recently played percussion instruments:
+
+static uint8_t last_perc[PERCUSSION_LOG_LEN];
+static unsigned int last_perc_count;
 
 // Configuration file variable, containing the port number for the
 // adlib chip.
@@ -351,6 +361,8 @@ static boolean LoadInstrumentTable(void)
 
     main_instrs = (genmidi_instr_t *) (lump + strlen(GENMIDI_HEADER));
     percussion_instrs = main_instrs + GENMIDI_NUM_INSTRS;
+    main_instr_names = (char (*)[32]) (percussion_instrs + GENMIDI_NUM_PERCUSSION);
+    percussion_names = main_instr_names + GENMIDI_NUM_INSTRS;
 
     return true;
 }
@@ -893,6 +905,9 @@ static void KeyOnEvent(opl_track_data_t *track, midi_event_t *event)
         }
 
         instrument = &percussion_instrs[key - 35];
+
+        last_perc[last_perc_count] = key;
+        last_perc_count = (last_perc_count + 1) % PERCUSSION_LOG_LEN;
     }
     else
     {
@@ -1466,4 +1481,96 @@ music_module_t music_opl_module =
     I_OPL_StopSong,
     I_OPL_MusicIsPlaying,
 };
+
+//----------------------------------------------------------------------
+//
+// Development / debug message generation, to help developing GENMIDI
+// lumps.
+//
+//----------------------------------------------------------------------
+
+static int NumActiveChannels(void)
+{
+    int i;
+
+    for (i = MIDI_CHANNELS_PER_TRACK - 1; i >= 0; --i)
+    {
+        if (tracks[0].channels[i].instrument != &main_instrs[0])
+        {
+            return i + 1;
+        }
+    }
+
+    return 0;
+}
+
+static int ChannelInUse(opl_channel_data_t *channel)
+{
+    opl_voice_t *voice;
+
+    for (voice = voice_alloced_list; voice != NULL; voice = voice->next)
+    {
+        if (voice->channel == channel)
+        {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+void I_OPL_DevMessages(char *result)
+{
+    int instr_num;
+    int lines;
+    int i;
+
+    if (num_tracks == 0)
+    {
+        sprintf(result, "No OPL track!");
+        return;
+    }
+
+    sprintf(result, "Tracks:\n");
+    lines = 1;
+
+    for (i = 0; i < NumActiveChannels(); ++i)
+    {
+        if (tracks[0].channels[i].instrument == NULL)
+        {
+            continue;
+        }
+
+        instr_num = tracks[0].channels[i].instrument - main_instrs;
+
+        sprintf(result + strlen(result),
+                "chan %i: %c i#%i (%s)\n",
+                i,
+                ChannelInUse(&tracks[0].channels[i]) ? '\'' : ' ',
+                instr_num + 1,
+                main_instr_names[instr_num]);
+        ++lines;
+    }
+
+    sprintf(result + strlen(result), "\nLast percussion:\n");
+    lines += 2;
+
+    i = (last_perc_count + PERCUSSION_LOG_LEN - 1) % PERCUSSION_LOG_LEN;
+
+    do {
+        if (last_perc[i] == 0)
+        {
+            break;
+        }
+
+        sprintf(result + strlen(result),
+                "%cp#%i (%s)\n",
+                i == 0 ? '\'' : ' ',
+                last_perc[i],
+                percussion_names[last_perc[i] - 35]);
+        ++lines;
+
+        i = (i + PERCUSSION_LOG_LEN - 1) % PERCUSSION_LOG_LEN;
+    } while (lines < 25 && i != last_perc_count);
+}
 

@@ -43,12 +43,13 @@ static void TXT_RadioButtonSizeCalc(TXT_UNCAST_ARG(radiobutton))
 static void TXT_RadioButtonDrawer(TXT_UNCAST_ARG(radiobutton))
 {
     TXT_CAST_ARG(txt_radiobutton_t, radiobutton);
+    txt_saved_colors_t colors;
     int i;
     int w;
 
     w = radiobutton->widget.w;
 
-    TXT_BGColor(TXT_WINDOW_BACKGROUND, 0);
+    TXT_SaveColors(&colors);
     TXT_FGColor(TXT_COLOR_BRIGHT_CYAN);
     TXT_DrawString("(");
 
@@ -67,11 +68,11 @@ static void TXT_RadioButtonDrawer(TXT_UNCAST_ARG(radiobutton))
 
     TXT_DrawString(") ");
 
+    TXT_RestoreColors(&colors);
     TXT_SetWidgetBG(radiobutton);
-    TXT_FGColor(TXT_COLOR_BRIGHT_WHITE);
 
     TXT_DrawString(radiobutton->label);
-    
+
     for (i=strlen(radiobutton->label); i < w-5; ++i)
     {
         TXT_DrawString(" ");

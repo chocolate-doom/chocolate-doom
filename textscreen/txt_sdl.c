@@ -436,7 +436,17 @@ static int TranslateKey(SDL_keysym *sym)
 
     if (key_mapping)
     {
-        return sym->unicode;
+        // Unicode characters beyond the ASCII range need to be
+        // mapped up into textscreen's Unicode range.
+
+        if (sym->unicode < 128)
+        {
+            return sym->unicode;
+        }
+        else
+        {
+            return sym->unicode - 128 + TXT_UNICODE_BASE;
+        }
     }
     else
     {

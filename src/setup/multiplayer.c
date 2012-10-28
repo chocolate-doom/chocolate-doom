@@ -978,6 +978,7 @@ void SetChatMacroDefaults(void)
     int i;
     char *defaults[] = 
     {
+        HUSTR_CHATMACRO0,
         HUSTR_CHATMACRO1,
         HUSTR_CHATMACRO2,
         HUSTR_CHATMACRO3,
@@ -987,7 +988,6 @@ void SetChatMacroDefaults(void)
         HUSTR_CHATMACRO7,
         HUSTR_CHATMACRO8,
         HUSTR_CHATMACRO9,
-        HUSTR_CHATMACRO0,
     };
     
     // If the chat macros have not been set, initialize with defaults.
@@ -1001,6 +1001,28 @@ void SetChatMacroDefaults(void)
     }
 }
 
+#ifdef _WIN32
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+char *M_OEMToUTF8(const char *oem)
+{
+    unsigned int len = strlen(oem) + 1;
+    wchar_t *tmp;
+    char *result;
+
+    tmp = malloc(len * sizeof(wchar_t));
+    MultiByteToWideChar(CP_OEMCP, 0, oem, len, tmp, len);
+    result = malloc(len * 4);
+    WideCharToMultiByte(CP_UTF8, 0, tmp, len, result, len * 4, NULL, NULL);
+    free(tmp);
+
+    return result;
+}
+
+#endif
+
 void SetPlayerNameDefault(void)
 {
     if (net_player_name == NULL)
@@ -1012,6 +1034,16 @@ void SetPlayerNameDefault(void)
     {
         net_player_name = strdup(getenv("USERNAME"));
     }
+
+    // On Windows, environment variables are in OEM codepage
+    // encoding, so convert to UTF8:
+
+#ifdef _WIN32
+    if (net_player_name != NULL)
+    {
+        net_player_name = M_OEMToUTF8(net_player_name);
+    }
+#endif
 
     if (net_player_name == NULL)
     {
