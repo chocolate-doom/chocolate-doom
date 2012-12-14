@@ -1,7 +1,7 @@
 // Emacs style mode select -*- C++ -*-
 //---------------------------------------------------------------------------
 //
-// Copyright(C) 2005,2006 Simon Howard
+// Copyright (C) 2005,2006 Simon Howard
 // Copyright (C) 2002-2004  The DOSBox Team
 //
 // This program is free software; you can redistribute it and/or modify
