@@ -279,7 +279,7 @@ static void UpdateFocus(void)
 // Show or hide the mouse cursor. We have to use different techniques
 // depending on the OS.
 
-static void ShowCursor(boolean show)
+static void SetShowCursor(boolean show)
 {
     // On Windows, using SDL_ShowCursor() adds lag to the mouse input,
     // so work around this by setting an invisible cursor instead. On
@@ -454,7 +454,7 @@ void I_ShutdownGraphics(void)
 {
     if (initialized)
     {
-        ShowCursor(true);
+        SetShowCursor(true);
 
         SDL_QuitSubSystem(SDL_INIT_VIDEO);
 
@@ -754,15 +754,15 @@ static void UpdateGrab(void)
     {
         // Hide the cursor in screensaver mode
 
-        ShowCursor(false);
+        SetShowCursor(false);
     }
     else if (grab && !currently_grabbed)
     {
-        ShowCursor(false);
+        SetShowCursor(false);
     }
     else if (!grab && currently_grabbed)
     {
-        ShowCursor(true);
+        SetShowCursor(true);
     }
 
     currently_grabbed = grab;
