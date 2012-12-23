@@ -691,3 +691,46 @@ boolean mus2mid(MEMFILE *musinput, MEMFILE *midioutput)
     return false;
 }
 
+#ifdef STANDALONE
+
+#include "m_misc.h"
+#include "z_zone.h"
+
+int main(int argc, char *argv[])
+{
+    MEMFILE *src, *dst;
+    byte *infile;
+    long infile_len;
+    void *outfile;
+    size_t outfile_len;
+
+    if (argc != 3)
+    {
+        printf("Usage: %s <musfile> <midfile>\n", argv[0]);
+        exit(-1);
+    }
+
+    Z_Init();
+
+    infile_len = M_ReadFile(argv[1], &infile);
+
+    src = mem_fopen_read(infile, infile_len);
+    dst = mem_fopen_write();
+
+    if (mus2mid(src, dst))
+    {
+        fprintf(stderr, "mus2mid() failed\n");
+        exit(-1);
+    }
+
+    // Write result to output file:
+
+    mem_get_buf(dst, &outfile, &outfile_len);
+
+    M_WriteFile(argv[2], outfile, outfile_len);
+
+    return 0;
+}
+
+#endif
+

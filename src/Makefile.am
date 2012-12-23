@@ -234,3 +234,6 @@ endif
 midiread : midifile.c
 	$(CC) -DTEST $(CFLAGS) @LDFLAGS@ $< -o $@
 
+mus2mid : mus2mid.c memio.c z_native.c i_system.c m_argv.c m_misc.c
+	$(CC) -DSTANDALONE -I$(top_builddir) $(CFLAGS) @LDFLAGS@ $^ -o $@
+
