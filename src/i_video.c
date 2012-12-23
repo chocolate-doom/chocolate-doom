@@ -1133,7 +1133,7 @@ static boolean AutoAdjustFullscreen(void)
     SDL_Rect **modes;
     SDL_Rect *best_mode;
     screen_mode_t *screen_mode;
-    int target_pixels, diff, best_diff;
+    int diff, best_diff;
     int i;
 
     modes = SDL_ListModes(NULL, SDL_FULLSCREEN);
@@ -1150,9 +1150,8 @@ static boolean AutoAdjustFullscreen(void)
 
     best_mode = NULL;
     best_diff = INT_MAX;
-    target_pixels = screen_width * screen_height;
 
-    for (i=0; modes[i] != NULL; ++i) 
+    for (i=0; modes[i] != NULL; ++i)
     {
         //printf("%ix%i?\n", modes[i]->w, modes[i]->h);
 

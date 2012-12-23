@@ -628,7 +628,6 @@ AM_Responder
 {
 
     int rc;
-    static int cheatstate=0;
     static int bigstate=0;
     static char buffer[20];
     int key;
@@ -725,7 +724,6 @@ AM_Responder
         }
         else
         {
-            cheatstate=0;
             rc = false;
         }
 

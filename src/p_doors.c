@@ -347,7 +347,6 @@ EV_VerticalDoor
   mobj_t*	thing )
 {
     player_t*	player;
-    int		secnum;
     sector_t*	sec;
     vldoor_t*	door;
     int		side;
@@ -402,7 +401,6 @@ EV_VerticalDoor
 	
     // if the sector has an active thinker, use it
     sec = sides[ line->sidenum[side^1]] .sector;
-    secnum = sec-sectors;
 
     if (sec->specialdata)
     {

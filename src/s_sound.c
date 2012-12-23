@@ -562,7 +562,6 @@ void S_StartSound(void *origin_p, int sfx_id)
     mobj_t *origin;
     int rc;
     int sep;
-    int priority;
     int cnum;
     int volume;
 
@@ -580,7 +579,6 @@ void S_StartSound(void *origin_p, int sfx_id)
     // Initialize sound parameters
     if (sfx->link)
     {
-        priority = sfx->priority;
         volume += sfx->volume;
 
         if (volume < 1)
@@ -592,10 +590,6 @@ void S_StartSound(void *origin_p, int sfx_id)
         {
             volume = snd_SfxVolume;
         }
-    }        
-    else
-    {
-        priority = NORM_PRIORITY;
     }
 
 

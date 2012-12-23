@@ -540,10 +540,9 @@ menu_t  SaveDef =
 void M_ReadSaveStrings(void)
 {
     FILE   *handle;
-    int     count;
     int     i;
     char    name[256];
-	
+
     for (i = 0;i < load_end;i++)
     {
         strcpy(name, P_SaveGameFile(i));
@@ -555,7 +554,7 @@ void M_ReadSaveStrings(void)
 	    LoadMenu[i].status = 0;
 	    continue;
 	}
-	count = fread(&savegamestrings[i], 1, SAVESTRINGSIZE, handle);
+	fread(&savegamestrings[i], 1, SAVESTRINGSIZE, handle);
 	fclose(handle);
 	LoadMenu[i].status = 1;
     }
