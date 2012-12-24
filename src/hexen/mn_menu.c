@@ -1133,7 +1133,6 @@ boolean MN_Responder(event_t * event)
     int i;
     MenuItem_t *item;
     extern boolean automapactive;
-    static boolean shiftdown;
     extern void H2_StartTitle(void);
     extern void G_CheckDemoStatus(void);
     char *textBuffer;
@@ -1175,13 +1174,9 @@ boolean MN_Responder(event_t * event)
         return true;
     }
 
-    if (event->data1 == KEY_RSHIFT)
+    if (event->data1 != KEY_RSHIFT && event->type != ev_keydown)
     {
-        shiftdown = (event->type == ev_keydown);
-    }
-    if (event->type != ev_keydown)
-    {
-        return (false);
+        return false;
     }
 
     key = event->data1;

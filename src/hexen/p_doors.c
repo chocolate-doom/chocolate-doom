@@ -206,7 +206,6 @@ int EV_DoDoor(line_t * line, byte * args, vldoor_e type)
 //==================================================================
 boolean EV_VerticalDoor(line_t * line, mobj_t * thing)
 {
-    int secnum;
     sector_t *sec;
     vldoor_t *door;
     int side;
@@ -215,7 +214,6 @@ boolean EV_VerticalDoor(line_t * line, mobj_t * thing)
 
     // if the sector has an active thinker, use it
     sec = sides[line->sidenum[side ^ 1]].sector;
-    secnum = sec - sectors;
     if (sec->specialdata)
     {
         return false;

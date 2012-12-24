@@ -1049,14 +1049,8 @@ also see P_SpawnPlayer in P_Things
 
 void G_InitPlayer(int player)
 {
-    player_t *p;
-
-// set up the saved info
-    p = &players[player];
-
-// clear everything else to defaults
+    // clear everything else to defaults
     G_PlayerReborn(player);
-
 }
 
 
@@ -1423,14 +1417,13 @@ void G_LoadGame(char *name)
 
 void G_DoLoadGame(void)
 {
-    int length;
     int i;
     int a, b, c;
     char vcheck[VERSIONSIZE];
 
     gameaction = ga_nothing;
 
-    length = M_ReadFile(savename, &savebuffer);
+    M_ReadFile(savename, &savebuffer);
     free(savename);
     savename = NULL;
 

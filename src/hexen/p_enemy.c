@@ -529,7 +529,6 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
     int c;
     int stop;
     player_t *player;
-    sector_t *sector;
     angle_t an;
     fixed_t dist;
 
@@ -537,7 +536,6 @@ boolean P_LookForPlayers(mobj_t * actor, boolean allaround)
     {                           // Single player game and player is dead, look for monsters
         return (P_LookForMonsters(actor));
     }
-    sector = actor->subsector->sector;
     c = 0;
 
     // NOTE: This behavior has been changed from the Vanilla behavior, where
@@ -2366,13 +2364,12 @@ void A_SerpentMeleeAttack(mobj_t * actor)
 
 void A_SerpentMissileAttack(mobj_t * actor)
 {
-    mobj_t *mo;
-
     if (!actor->target)
     {
         return;
     }
-    mo = P_SpawnMissile(actor, actor->target, MT_SERPENTFX);
+
+    P_SpawnMissile(actor, actor->target, MT_SERPENTFX);
 }
 
 //============================================================================
@@ -3002,9 +2999,7 @@ void A_DragonFlap(mobj_t * actor)
 
 void A_DragonAttack(mobj_t * actor)
 {
-    mobj_t *mo;
-
-    mo = P_SpawnMissile(actor, actor->target, MT_DRAGON_FX);
+    P_SpawnMissile(actor, actor->target, MT_DRAGON_FX);
 }
 
 //============================================================================
@@ -3816,9 +3811,7 @@ void A_IceGuyAttack(mobj_t * actor)
 
 void A_IceGuyMissilePuff(mobj_t * actor)
 {
-    mobj_t *mo;
-    mo = P_SpawnMobj(actor->x, actor->y, actor->z + 2 * FRACUNIT,
-                     MT_ICEFX_PUFF);
+    P_SpawnMobj(actor->x, actor->y, actor->z + 2 * FRACUNIT, MT_ICEFX_PUFF);
 }
 
 //============================================================================
@@ -4983,12 +4976,10 @@ void A_KoraxStep2(mobj_t * actor)
 
 void A_KoraxBonePop(mobj_t * actor)
 {
-    fixed_t x, y, z;
     mobj_t *mo;
     byte args[5];
 
     args[0] = args[1] = args[2] = args[3] = args[4] = 0;
-    x = actor->x, y = actor->y, z = actor->z;
 
     // Spawn 6 spirits equalangularly
     mo = P_SpawnMissileAngle(actor, MT_KORAX_SPIRIT1, ANG60 * 0,
@@ -5176,7 +5167,6 @@ void A_KoraxCommand(mobj_t * actor)
 // Arm 1 projectile
 void KoraxFire1(mobj_t * actor, int type)
 {
-    mobj_t *mo;
     angle_t ang;
     fixed_t x, y, z;
 
@@ -5184,14 +5174,13 @@ void KoraxFire1(mobj_t * actor, int type)
     x = actor->x + FixedMul(KORAX_ARM_EXTENSION_SHORT, finecosine[ang]);
     y = actor->y + FixedMul(KORAX_ARM_EXTENSION_SHORT, finesine[ang]);
     z = actor->z - actor->floorclip + KORAX_ARM1_HEIGHT;
-    mo = P_SpawnKoraxMissile(x, y, z, actor, actor->target, type);
+    P_SpawnKoraxMissile(x, y, z, actor, actor->target, type);
 }
 
 
 // Arm 2 projectile
 void KoraxFire2(mobj_t * actor, int type)
 {
-    mobj_t *mo;
     angle_t ang;
     fixed_t x, y, z;
 
@@ -5199,13 +5188,12 @@ void KoraxFire2(mobj_t * actor, int type)
     x = actor->x + FixedMul(KORAX_ARM_EXTENSION_LONG, finecosine[ang]);
     y = actor->y + FixedMul(KORAX_ARM_EXTENSION_LONG, finesine[ang]);
     z = actor->z - actor->floorclip + KORAX_ARM2_HEIGHT;
-    mo = P_SpawnKoraxMissile(x, y, z, actor, actor->target, type);
+    P_SpawnKoraxMissile(x, y, z, actor, actor->target, type);
 }
 
 // Arm 3 projectile
 void KoraxFire3(mobj_t * actor, int type)
 {
-    mobj_t *mo;
     angle_t ang;
     fixed_t x, y, z;
 
@@ -5213,13 +5201,12 @@ void KoraxFire3(mobj_t * actor, int type)
     x = actor->x + FixedMul(KORAX_ARM_EXTENSION_LONG, finecosine[ang]);
     y = actor->y + FixedMul(KORAX_ARM_EXTENSION_LONG, finesine[ang]);
     z = actor->z - actor->floorclip + KORAX_ARM3_HEIGHT;
-    mo = P_SpawnKoraxMissile(x, y, z, actor, actor->target, type);
+    P_SpawnKoraxMissile(x, y, z, actor, actor->target, type);
 }
 
 // Arm 4 projectile
 void KoraxFire4(mobj_t * actor, int type)
 {
-    mobj_t *mo;
     angle_t ang;
     fixed_t x, y, z;
 
@@ -5227,13 +5214,12 @@ void KoraxFire4(mobj_t * actor, int type)
     x = actor->x + FixedMul(KORAX_ARM_EXTENSION_SHORT, finecosine[ang]);
     y = actor->y + FixedMul(KORAX_ARM_EXTENSION_SHORT, finesine[ang]);
     z = actor->z - actor->floorclip + KORAX_ARM4_HEIGHT;
-    mo = P_SpawnKoraxMissile(x, y, z, actor, actor->target, type);
+    P_SpawnKoraxMissile(x, y, z, actor, actor->target, type);
 }
 
 // Arm 5 projectile
 void KoraxFire5(mobj_t * actor, int type)
 {
-    mobj_t *mo;
     angle_t ang;
     fixed_t x, y, z;
 
@@ -5241,13 +5227,12 @@ void KoraxFire5(mobj_t * actor, int type)
     x = actor->x + FixedMul(KORAX_ARM_EXTENSION_LONG, finecosine[ang]);
     y = actor->y + FixedMul(KORAX_ARM_EXTENSION_LONG, finesine[ang]);
     z = actor->z - actor->floorclip + KORAX_ARM5_HEIGHT;
-    mo = P_SpawnKoraxMissile(x, y, z, actor, actor->target, type);
+    P_SpawnKoraxMissile(x, y, z, actor, actor->target, type);
 }
 
 // Arm 6 projectile
 void KoraxFire6(mobj_t * actor, int type)
 {
-    mobj_t *mo;
     angle_t ang;
     fixed_t x, y, z;
 
@@ -5255,7 +5240,7 @@ void KoraxFire6(mobj_t * actor, int type)
     x = actor->x + FixedMul(KORAX_ARM_EXTENSION_LONG, finecosine[ang]);
     y = actor->y + FixedMul(KORAX_ARM_EXTENSION_LONG, finesine[ang]);
     z = actor->z - actor->floorclip + KORAX_ARM6_HEIGHT;
-    mo = P_SpawnKoraxMissile(x, y, z, actor, actor->target, type);
+    P_SpawnKoraxMissile(x, y, z, actor, actor->target, type);
 }
 
 

@@ -540,7 +540,8 @@ void AM_Stop (void)
 //
 void AM_Start (void)
 {
-    static int lastlevel = -1, lastepisode = -1;
+    static int lastlevel = -1;
+    //static int lastepisode = -1;
 
     if (!stopped) AM_Stop();
     stopped = false;
@@ -584,7 +585,6 @@ AM_Responder
 {
 
     int rc;
-    static int cheatstate=0;
     static int bigstate=0;
     static char buffer[20];
     int key;
@@ -681,7 +681,6 @@ AM_Responder
         }
         else
         {
-            cheatstate=0;
             rc = false;
         }
 

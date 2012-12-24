@@ -195,10 +195,7 @@ R_DrawColumnInCache
     int		count;
     int		position;
     byte*	source;
-    byte*	dest;
-	
-    dest = (byte *)cache + 3;
-	
+
     while (patch->topdelta != 0xff)
     {
 	source = (byte *)patch + 3;
@@ -708,12 +705,10 @@ void R_InitSpriteLumps (void)
 //
 void R_InitColormaps (void)
 {
-    int	lump, length;
-    
-    // Load in the light tables, 
-    //  256 byte align tables.
+    int	lump;
+
+    // Load in the light tables, 256 byte align tables.
     lump = W_GetNumForName(DEH_String("COLORMAP"));
-    length = W_LumpLength (lump);
     colormaps = W_CacheLumpNum(lump, PU_STATIC);
 }
 

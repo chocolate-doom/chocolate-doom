@@ -542,7 +542,6 @@ menu_t NameCharDef =
 void M_ReadSaveStrings(void)
 {
     FILE *handle;
-    int   count;
     int   i;
     char *fname = NULL;
 
@@ -559,7 +558,7 @@ void M_ReadSaveStrings(void)
             LoadMenu[i].status = 0;
             continue;
         }
-        count = fread(savegamestrings[i], 1, SAVESTRINGSIZE, handle);
+        fread(savegamestrings[i], 1, SAVESTRINGSIZE, handle);
         fclose(handle);
         LoadMenu[i].status = 1;
     }

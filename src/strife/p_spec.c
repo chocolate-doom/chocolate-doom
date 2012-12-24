@@ -261,7 +261,6 @@ terraintype_e P_GetTerrainType(mobj_t* mobj)
 
 void P_InitTerrainTypes(void)
 {
-    int pic = 0;
     int i = 0;
 
     if(terraintypes[0].type != FLOOR_END)
@@ -1887,11 +1886,6 @@ void P_SpawnSpecials (void)
 {
     sector_t*   sector;
     int         i;
-    int         episode;
-
-    episode = 1;
-    if (W_CheckNumForName(DEH_String("texture2")) >= 0)
-        episode = 2;
 
     // See if -TIMER was specified.
 

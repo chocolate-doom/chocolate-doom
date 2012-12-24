@@ -540,7 +540,6 @@ boolean HU_Responder(event_t *ev)
     static char         lastmessage[HU_MAXLINELENGTH+1];
     char*               macromessage;
     boolean             eatkey = false;
-    static boolean      shiftdown = false;
     static boolean      altdown = false;
     unsigned char       c;
     int                 i;
@@ -554,7 +553,6 @@ boolean HU_Responder(event_t *ev)
 
     if (ev->data1 == KEY_RSHIFT)
     {
-        shiftdown = ev->type == ev_keydown;
         return false;
     }
     else if (ev->data1 == KEY_RALT || ev->data1 == KEY_LALT)

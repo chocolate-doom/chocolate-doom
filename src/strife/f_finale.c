@@ -909,7 +909,6 @@ void F_DrawMap34End (void)
     int         x;
     patch_t*    p1;
     patch_t*    p2;
-    static int  laststage;
 
     p1 = W_CacheLumpName (DEH_String("credit"),  PU_LEVEL);
     p2 = W_CacheLumpName (DEH_String("vellogo"), PU_LEVEL);

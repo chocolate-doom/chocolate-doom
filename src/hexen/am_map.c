@@ -275,7 +275,6 @@ void AM_initVariables(void)
 {
     int pnum;
     thinker_t *think;
-    mobj_t *mo;
 
     //static event_t st_notify = { ev_keyup, AM_MSGENTERED };
 
@@ -323,7 +322,6 @@ void AM_initVariables(void)
             {                   //not a mobj
                 continue;
             }
-            mo = (mobj_t *) think;
         }
     }
 
@@ -424,7 +422,6 @@ boolean AM_Responder(event_t * ev)
 {
     int rc;
     int key;
-    static int cheatstate = 0;
     static int bigstate = 0;
 
     key = ev->data1;
@@ -511,7 +508,6 @@ boolean AM_Responder(event_t * ev)
         }
         else
         {
-            cheatstate = 0;
             rc = false;
         }
 

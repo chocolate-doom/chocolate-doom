@@ -506,7 +506,6 @@ boolean AM_Responder(event_t * ev)
 {
     int rc;
     int key;
-    static int cheatstate = 0;
     static int bigstate = 0;
 
     key = ev->data1;
@@ -611,7 +610,6 @@ boolean AM_Responder(event_t * ev)
         */
         else
         {
-            cheatstate = 0;
             rc = false;
         }
 

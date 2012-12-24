@@ -642,7 +642,6 @@ static void DrawSaveMenu(void)
 void MN_LoadSlotText(void)
 {
     FILE *fp;
-    int count;
     int i;
     char *filename;
 
@@ -658,7 +657,7 @@ void MN_LoadSlotText(void)
             SlotStatus[i] = 0;
             continue;
         }
-        count = fread(&SlotText[i], SLOTTEXTLEN, 1, fp);
+        fread(&SlotText[i], SLOTTEXTLEN, 1, fp);
         fclose(fp);
         SlotStatus[i] = 1;
     }
@@ -1040,7 +1039,6 @@ boolean MN_Responder(event_t * event)
     int i;
     MenuItem_t *item;
     extern boolean automapactive;
-    static boolean shiftdown;
     extern void D_StartTitle(void);
     extern void G_CheckDemoStatus(void);
     char *textBuffer;
@@ -1081,11 +1079,7 @@ boolean MN_Responder(event_t * event)
         return true;
     }
 
-    if (event->data1 == KEY_RSHIFT)
-    {
-        shiftdown = (event->type == ev_keydown);
-    }
-    if (event->type != ev_keydown)
+    if (event->data1 != KEY_RSHIFT && event->type != ev_keydown)
     {
         return (false);
     }

@@ -700,7 +700,6 @@ boolean P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type)
 {
     int i = 0;
     line_t junk;
-    boolean ok = true;
     int sound = sfx_itemup; // haleyjd 09/21/10: different sounds for items
 
     // set quest if mf_givequest flag is set
@@ -1262,7 +1261,6 @@ void P_DialogStartP1(void)
 void P_DialogStart(player_t *player)
 {
     int i = 0;
-    int j = 0;
     int pic;
     int rnd = 0;
     char* byetext;

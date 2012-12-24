@@ -741,7 +741,6 @@ P_LookForPlayers
     int         c;
     int         stop;
     player_t*   player;
-    sector_t*   sector;
     angle_t     an;
     fixed_t     dist;
     mobj_t  *   master = players[actor->miscdata].mo;
@@ -799,8 +798,6 @@ P_LookForPlayers
 
         return true;
     }
-
-    sector = actor->subsector->sector;
 
     c = 0;
 
