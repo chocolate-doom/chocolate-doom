@@ -1383,11 +1383,6 @@ void P_SpawnSpecials (void)
 {
     sector_t*	sector;
     int		i;
-    int		episode;
-
-    episode = 1;
-    if (W_CheckNumForName(DEH_String("texture2")) >= 0)
-	episode = 2;
 
     // See if -TIMER was specified.
 
