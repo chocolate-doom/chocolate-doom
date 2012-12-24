@@ -41,7 +41,7 @@ on run argv
         -- window options:
 
         set bgfile to file "background.png" of theDisk
-        set the bounds of win to {200, 200, 717, 546}
+        set the bounds of win to {200, 200, 717, 536}
         set icon size of icon view options of win to 96
         set background picture of icon view options of win to bgfile
         set toolbar visible of win to false
