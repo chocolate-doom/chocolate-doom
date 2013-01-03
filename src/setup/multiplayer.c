@@ -67,66 +67,47 @@ static int found_iwad_selected;
 
 static char *iwadfile;
 
-static char *doom_skills[] = 
+static char *doom_skills[] =
 {
-    "I'm too young to die.",
-    "Hey, not too rough.",
-    "Hurt me plenty.",
-    "Ultra-Violence.",
-    "NIGHTMARE!",
+    "I'm too young to die.", "Hey, not too rough.", "Hurt me plenty.",
+    "Ultra-Violence.", "NIGHTMARE!",
 };
 
-static char *chex_skills[] = 
+static char *chex_skills[] =
 {
-    "Easy does it",
-    "Not so sticky",
-    "Gobs of goo",
-    "Extreme ooze",
+    "Easy does it", "Not so sticky", "Gobs of goo", "Extreme ooze",
     "SUPER SLIMEY!"
 };
 
 static char *heretic_skills[] =
 {
-    "Thou needeth a wet-nurse",
-    "Yellowbellies-R-us",
-    "Bringest them oneth",
-    "Thou art a smite-meister",
-    "Black plague possesses thee"
+    "Thou needeth a wet-nurse", "Yellowbellies-R-us", "Bringest them oneth",
+    "Thou art a smite-meister", "Black plague possesses thee"
 };
 
-static char *hexen_skills[] =
+static char *hexen_fighter_skills[] =
 {
-    "Squire/Altar boy/Apprentice",
-    "Knight/Acolyte/Enchanter",
-    "Warrior/Priest/Sorceror",
-    "Berserker/Cardinal/Warlock",
-    "Titan/Pope/Archimage"
+    "Squire", "Knight", "Warrior", "Berserker", "Titan"
 };
 
-static char *character_classes[] =
+static char *hexen_cleric_skills[] =
 {
-    "Fighter",
-    "Cleric",
-    "Mage"
+    "Altar boy", "Acolyte", "Priest", "Cardinal", "Pope"
 };
 
-static struct
+static char *hexen_mage_skills[] =
 {
-    GameMission_t mission;
-    char **strings;
-} skills[] =
-{
-    { doom,    doom_skills },
-    { heretic, heretic_skills },
-    { hexen,   hexen_skills }
+    "Apprentice", "Enchanter", "Sorceror", "Warlock", "Archimage"
 };
 
-static char *gamemodes[] =
+static char *strife_skills[] =
 {
-    "Co-operative",
-    "Deathmatch",
-    "Deathmatch 2.0",
+    "Training", "Rookie", "Veteran", "Elite", "Bloodbath"
 };
+
+static char *character_classes[] = { "Fighter", "Cleric", "Mage" };
+
+static char *gamemodes[] = { "Co-operative", "Deathmatch", "Deathmatch 2.0" };
 
 static char *strife_gamemodes[] =
 {
@@ -333,22 +314,40 @@ static void UpdateWarpButton(void)
 static void UpdateSkillButton(void)
 {
     iwad_t *iwad = GetCurrentIWAD();
-    int i;
 
     if (IsChexQuest(iwad))
     {
         skillbutton->values = chex_skills;
     }
-    else
+    else switch(gamemission)
     {
-        for (i=0; i<arrlen(skills); ++i)
-        {
-            if (gamemission == skills[i].mission)
+        default:
+        case doom:
+            skillbutton->values = doom_skills;
+            break;
+
+        case heretic:
+            skillbutton->values = heretic_skills;
+            break;
+
+        case hexen:
+            if (character_class == 0)
             {
-                skillbutton->values = skills[i].strings;
-                break;
+                skillbutton->values = hexen_fighter_skills;
             }
-        }
+            else if (character_class == 2)
+            {
+                skillbutton->values = hexen_cleric_skills;
+            }
+            else
+            {
+                skillbutton->values = hexen_mage_skills;
+            }
+            break;
+
+        case strife:
+            skillbutton->values = strife_skills;
+            break;
     }
 }
 
@@ -686,26 +685,34 @@ static void StartGameMenu(char *window_title, int multiplayer)
 
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, WadWindowAction());
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, StartGameAction(multiplayer));
-    
+
     TXT_SetColumnWidths(gameopt_table, 12, 6);
 
     TXT_AddWidgets(gameopt_table,
            TXT_NewLabel("Game"),
            iwad_selector = IWADSelector(),
+           NULL);
+
+    if (gamemission == hexen)
+    {
+        txt_dropdown_list_t *cc_dropdown;
+        TXT_AddWidgets(gameopt_table,
+                       TXT_NewLabel("Character class "),
+                       cc_dropdown = TXT_NewDropdownList(&character_class,
+                                                         character_classes, 3),
+                       NULL);
+
+        // Update skill level dropdown when the character class is changed:
+
+        TXT_SignalConnect(cc_dropdown, "changed", UpdateWarpType, NULL);
+    }
+
+    TXT_AddWidgets(gameopt_table,
            TXT_NewLabel("Skill"),
            skillbutton = TXT_NewDropdownList(&skill, doom_skills, 5),
            TXT_NewLabel("Level warp"),
            warpbutton = TXT_NewButton2("????", LevelSelectDialog, NULL),
            NULL);
-
-    if (gamemission == hexen)
-    {
-        TXT_AddWidgets(gameopt_table,
-                       TXT_NewLabel("Character class "),
-                       TXT_NewDropdownList(&character_class,
-                                           character_classes, 3),
-                       NULL);
-    }
 
     if (multiplayer)
     {
