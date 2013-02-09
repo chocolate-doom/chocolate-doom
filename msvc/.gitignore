@@ -3,3 +3,5 @@
 *.suo
 *.user
 savegames
+strfsav*
+*.pcx

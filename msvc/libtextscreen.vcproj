@@ -215,6 +215,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\textscreen\txt_utf8.c"
+				>
+			</File>
+			<File
 				RelativePath="..\textscreen\txt_widget.c"
 				>
 			</File>
@@ -273,6 +277,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\textscreen\txt_largefont.h"
+				>
+			</File>
+			<File
 				RelativePath="..\textscreen\txt_main.h"
 				>
 			</File>
@@ -298,6 +306,10 @@
 			</File>
 			<File
 				RelativePath="..\textscreen\txt_table.h"
+				>
+			</File>
+			<File
+				RelativePath="..\textscreen\txt_utf8.h"
 				>
 			</File>
 			<File

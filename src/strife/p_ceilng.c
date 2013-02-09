@@ -169,6 +169,7 @@ void T_MoveCeiling (ceiling_t* ceiling)
 // * Fast crushers were made 2x as fast.
 // * lowerAndCrush was apparently "fixed" to actually crush, and was also
 //   altered to lower all the way to the floor rather than remain 8 above.
+// * silentCrushAndRaise and crushAndRaise no longer crush.
 int
 EV_DoCeiling
 ( line_t*       line,
@@ -231,7 +232,10 @@ EV_DoCeiling
 
         case silentCrushAndRaise:
         case crushAndRaise:
-            ceiling->crush = true;
+            // [STRIFE] haleyjd 20130209: Turns out these types do NOT crush
+            // in Strife... yeah, that makes a lot of sense. Thanks to Gez for
+            // having detected this difference.
+            //ceiling->crush = true;
             ceiling->topheight = sec->ceilingheight;
 
         case lowerToFloor:

@@ -193,6 +193,10 @@
 			Name="Header Files"
 			>
 			<File
+				RelativePath="..\src\aes_prng.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\d_event.h"
 				>
 			</File>
@@ -305,10 +309,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\md5.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\memio.h"
 				>
 			</File>
@@ -366,6 +366,10 @@
 			</File>
 			<File
 				RelativePath="..\src\net_structrw.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\sha1.h"
 				>
 			</File>
 			<File
@@ -621,6 +625,10 @@
 			Name="Source Files"
 			>
 			<File
+				RelativePath="..\src\aes_prng.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\d_event.c"
 				>
 			</File>
@@ -741,10 +749,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\md5.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\memio.c"
 				>
 			</File>
@@ -798,6 +802,10 @@
 			</File>
 			<File
 				RelativePath="..\src\net_structrw.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\sha1.c"
 				>
 			</File>
 			<File
