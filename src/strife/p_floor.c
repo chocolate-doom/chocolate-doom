@@ -46,167 +46,170 @@
 //
 // Move a plane (floor or ceiling) and check for crushing
 //
+// [STRIFE] Various changes were made to remove calls to P_ChangeSector when
+// P_ChangeSector returns true.
+//
 result_e
 T_MovePlane
-( sector_t*	sector,
-  fixed_t	speed,
-  fixed_t	dest,
-  boolean	crush,
-  int		floorOrCeiling,
-  int		direction )
+( sector_t*     sector,
+ fixed_t        speed,
+ fixed_t        dest,
+ boolean        crush,
+ int            floorOrCeiling,
+ int            direction )
 {
-    boolean	flag;
-    fixed_t	lastpos;
-	
+    boolean     flag;
+    fixed_t     lastpos;
+
     switch(floorOrCeiling)
     {
-      case 0:
-	// FLOOR
-	switch(direction)
-	{
-	  case -1:
-	    // DOWN
-	    if (sector->floorheight - speed < dest)
-	    {
+    case 0:
+        // FLOOR
+        switch(direction)
+        {
+        case -1:
+            // DOWN
+            if (sector->floorheight - speed < dest)
+            {
                 // villsa [STRIFE] unused
-		//lastpos = sector->floorheight;
-		sector->floorheight = dest;
-		flag = P_ChangeSector(sector,crush);
+                //lastpos = sector->floorheight;
+                sector->floorheight = dest;
+                flag = P_ChangeSector(sector,crush);
 
                 // villsa [STRIFE] unused
-		/*if (flag == true)
-		{
-		    sector->floorheight =lastpos;
-		    P_ChangeSector(sector,crush);
-		    //return crushed;
-		}*/
-		return pastdest;
-	    }
-	    else
-	    {
+                /*if (flag == true)
+                {
+                    sector->floorheight =lastpos;
+                    P_ChangeSector(sector,crush);
+                    //return crushed;
+                }*/
+                return pastdest;
+            }
+            else
+            {
                 // villsa [STRIFE] unused
-		//lastpos = sector->floorheight;
-		sector->floorheight -= speed;
-		flag = P_ChangeSector(sector,crush);
+                //lastpos = sector->floorheight;
+                sector->floorheight -= speed;
+                flag = P_ChangeSector(sector,crush);
 
                 // villsa [STRIFE] unused
-		/*if (flag == true)
-		{
-		    sector->floorheight = lastpos;
-		    P_ChangeSector(sector,crush);
-		    return crushed;
-		}*/
+                /*if (flag == true)
+                {
+                    sector->floorheight = lastpos;
+                    P_ChangeSector(sector,crush);
+                    return crushed;
+                }*/
                 return ok;
-	    }
-	    break;
-						
-	  case 1:
-	    // UP
-	    if (sector->floorheight + speed > dest)
-	    {
-		lastpos = sector->floorheight;
-		sector->floorheight = dest;
-		flag = P_ChangeSector(sector,crush);
-		if (flag == true)
-		{
-		    sector->floorheight = lastpos;
-		    P_ChangeSector(sector,crush);
-		    //return crushed;
-		}
-		return pastdest;
-	    }
-	    else
-	    {
-		// COULD GET CRUSHED
-		lastpos = sector->floorheight;
-		sector->floorheight += speed;
-		flag = P_ChangeSector(sector,crush);
-		if (flag == true)
-		{
-                    // villsa [STRIFE] unused
-		    //if (crush == true)
-			//return crushed;
-		    sector->floorheight = lastpos;
-		    P_ChangeSector(sector,crush);
-		    return crushed;
-		}
+             }
+             break;
+
+        case 1:
+            // UP
+            if (sector->floorheight + speed > dest)
+            {
+                lastpos = sector->floorheight;
+                sector->floorheight = dest;
+                flag = P_ChangeSector(sector,crush);
+                if (flag == true)
+                {
+                    sector->floorheight = lastpos;
+                    P_ChangeSector(sector,crush);
+                    //return crushed;
+                }
+                return pastdest;
+            }
+            else
+            {
+                // COULD GET CRUSHED
+                lastpos = sector->floorheight;
+                sector->floorheight += speed;
+                flag = P_ChangeSector(sector,crush);
+                if (flag == true)
+                {
+                    // haleyjd 20130210: Bug fix - Strife DOES do this.
+                    if (crush == true)
+                        return crushed;
+                    sector->floorheight = lastpos;
+                    P_ChangeSector(sector,crush);
+                    return crushed;
+                }
                 else
                     return ok;
-	    }
-	    break;
-	}
-	break;
-									
-      case 1:
-	// CEILING
-	switch(direction)
-	{
-	  case -1:
-	    // DOWN
-	    if (sector->ceilingheight - speed < dest)
-	    {
-		lastpos = sector->ceilingheight;
-		sector->ceilingheight = dest;
-		flag = P_ChangeSector(sector,crush);
+            }
+            break;
+        }
+        break;
 
-		if (flag == true)
-		{
-		    sector->ceilingheight = lastpos;
-		    P_ChangeSector(sector,crush);
-		    //return crushed;
-		}
-		return pastdest;
-	    }
-	    else
-	    {
-		// COULD GET CRUSHED
-		lastpos = sector->ceilingheight;
-		sector->ceilingheight -= speed;
-		flag = P_ChangeSector(sector,crush);
+    case 1:
+        // CEILING
+        switch(direction)
+        {
+        case -1:
+            // DOWN
+            if (sector->ceilingheight - speed < dest)
+            {
+                lastpos = sector->ceilingheight;
+                sector->ceilingheight = dest;
+                flag = P_ChangeSector(sector,crush);
 
-		if (flag == true)
-		{
-		    if (crush == true)
-			return crushed;
-		    sector->ceilingheight = lastpos;
-		    P_ChangeSector(sector,crush);
-		    return crushed;
-		}
-	    }
-	    break;
-						
-	  case 1:
-	    // UP
-	    if (sector->ceilingheight + speed > dest)
-	    {
-                // villsa [STRIFE] unused
-		//lastpos = sector->ceilingheight;
-		sector->ceilingheight = dest;
+                if (flag == true)
+                {
+                    sector->ceilingheight = lastpos;
+                    P_ChangeSector(sector,crush);
+                    //return crushed;
+                }
+                return pastdest;
+            }
+            else
+            {
+                // COULD GET CRUSHED
+                lastpos = sector->ceilingheight;
+                sector->ceilingheight -= speed;
+                flag = P_ChangeSector(sector,crush);
 
+                if (flag == true)
+                {
+                    if (crush == true)
+                        return crushed;
+                    sector->ceilingheight = lastpos;
+                    P_ChangeSector(sector,crush);
+                    return crushed;
+                }
+            }
+            break;
+
+        case 1:
+            // UP
+            if (sector->ceilingheight + speed > dest)
+            {
                 // villsa [STRIFE] unused
-		//flag = P_ChangeSector(sector,crush);
-		/*if (flag == true)
-		{
-		    sector->ceilingheight = lastpos;
-		    P_ChangeSector(sector,crush);
-		    //return crushed;
-		}*/
-		return pastdest;
-	    }
-	    else
-	    {
-                // villsa [STRIFE] unused
-		//lastpos = sector->ceilingheight;
-		sector->ceilingheight += speed;
+                //lastpos = sector->ceilingheight;
+                sector->ceilingheight = dest;
 
                 // villsa [STRIFE] unused
-		//flag = P_ChangeSector(sector,crush);
+                //flag = P_ChangeSector(sector,crush);
+                /*if (flag == true)
+                {
+                    sector->ceilingheight = lastpos;
+                    P_ChangeSector(sector,crush);
+                    //return crushed;
+                }*/
+                return pastdest;
+            }
+            else
+            {
+                // villsa [STRIFE] unused
+                //lastpos = sector->ceilingheight;
+                sector->ceilingheight += speed;
+
+                // villsa [STRIFE] unused
+                //flag = P_ChangeSector(sector,crush);
                 return ok;
-	    }
-	    break;
-	}
-	break;
-		
+            }
+            break;
+        }
+        break;
+
     }
     return ok;
 }
