@@ -253,7 +253,7 @@ enum
     QF_QUEST5  = (1 << tk_quest5),  // Accepted Gov. Mourel's "bloody" chore
     QF_QUEST6  = (1 << tk_quest6),  // Destroyed the Power Coupling
     QF_QUEST7  = (1 << tk_quest7),  // Killed Blue Acolytes ("Scanning Team")
-    QF_QUEST8  = (1 << tk_quest8),
+    QF_QUEST8  = (1 << tk_quest8),  // Unused; formerly, picked up Broken Coupling
     QF_QUEST9  = (1 << tk_quest9),  // Obtained Derwin's ear
     QF_QUEST10 = (1 << tk_quest10), // Obtained Prison Pass
     QF_QUEST11 = (1 << tk_quest11), // Obtained Prison Key
@@ -277,7 +277,7 @@ enum
     QF_QUEST29 = (1 << tk_quest29), // Destroyed the Mines Transmitter
     QF_QUEST30 = (1 << tk_quest30),
     QF_QUEST31 = (1 << tk_quest31),
-    QF_QUEST32 = (1 << tk_quest32), // Note: seems to be unused
+    QF_QUEST32 = (1 << tk_quest32), // Unused; BUG: Broken Coupling accidentally sets it.
     
     QF_ALLQUESTS  = (QF_QUEST31 + (QF_QUEST31 - 1)) // does not include bit 32!
 };
