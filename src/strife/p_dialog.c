@@ -256,7 +256,7 @@ static rndmessage_t rndMessages[] =
             "I'M NOT INTERESTED IN YOUR USELESS \n"
             "DRIVEL.",
 
-            "IF I HAD WANTED TO TALK YOU I \n"
+            "IF I HAD WANTED TO TALK TO YOU I \n"
             "WOULD HAVE TOLD YOU SO.",
 
             "GO AND ANNOY SOMEONE ELSE!",
