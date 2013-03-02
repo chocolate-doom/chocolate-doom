@@ -960,8 +960,9 @@ static struct
     char *cmdline;
     GameVersion_t version;
 } gameversions[] = {
-    {"Strife 1.2",          "1.2",       exe_strife_1_2},
-    { NULL,                  NULL,         0},
+    { "Strife 1.2",          "1.2",       exe_strife_1_2  },
+    { "Strife 1.31",         "1.31",      exe_strife_1_31 },
+    { NULL,                  NULL,        0               }
 };
 
 // Initialize the game version
@@ -971,16 +972,17 @@ static void InitGameVersion(void)
     int p;
     int i;
 
-    // This is mostly redundant for now, as we only support
-    // Strife v1.2. But perhaps in the future we might decide
-    // to support older versions ...
-    // - haleyjd: the current code emulates v1.2. 1.31 support is the TODO.
+    // haleyjd: we support emulating either the 1.2 or the 1.31 versions of 
+    // Strife, which are the most significant. 1.2 is the most mature version
+    // that still has the single saveslot restriction, whereas 1.31 is the
+    // final revision. The differences between the two are barely worth
+    // mentioning aside from that main one.
 
     //! 
     // @arg <version>
     // @category compat
     //
-    // Emulate a specific version of Doom.  Valid values are "1.2".
+    // Emulate a specific version of Doom.  Valid values are "1.2" and "1.31".
     //
 
     p = M_CheckParmWithArgs("-gameversion", 1);
@@ -1011,7 +1013,7 @@ static void InitGameVersion(void)
     }
     else
     {
-        gameversion = exe_strife_1_2;
+        gameversion = exe_strife_1_31;
     }
 }
 

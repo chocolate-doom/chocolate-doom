@@ -35,6 +35,7 @@
 #include "m_argv.h"
 #include "m_fixed.h"
 #include "m_config.h"
+#include "m_misc.h"
 #include "net_client.h"
 #include "net_common.h"
 #include "net_defs.h"

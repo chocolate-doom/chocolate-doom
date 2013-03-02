@@ -137,6 +137,7 @@ static struct {
     { heretic,  exe_heretic_1_3 },
     { hexen,    exe_hexen_1_1 },
     { strife,   exe_strife_1_2 },
+    { strife,   exe_strife_1_31 },
 };
 
 boolean D_ValidGameVersion(GameMission_t mission, GameVersion_t version)

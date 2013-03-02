@@ -32,7 +32,7 @@
 // Game Mode - identify IWAD as shareware, retail etc.
 GameMode_t gamemode = indetermined;
 GameMission_t	gamemission = doom;
-GameVersion_t   gameversion = exe_strife_1_2;
+GameVersion_t   gameversion = exe_strife_1_31;
 char *gamedescription;
 
 // Set if homebrew PWAD stuff has been added.

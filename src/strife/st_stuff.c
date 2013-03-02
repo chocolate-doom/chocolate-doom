@@ -683,10 +683,19 @@ boolean ST_Responder(event_t* ev)
         // haleyjd 09/01/10: Removed Chex Quest stuff.
         // haleyjd 09/15/10: Removed retail/registered/shareware stuff
 
-        // STRIFE-TODO: different bounds in v1.31
+        // haleyjd 20130301: different bounds in v1.31
         // Ohmygod - this is not going to work.
-        if (map <= 0 || map > 40)
-            return false;
+        if(gameversion == exe_strife_1_31)
+        {
+            if ((isdemoversion && (map < 32 || map > 34)) ||
+                (isregistered  && (map <= 0 || map > 34)))
+                return false;
+        }
+        else
+        {
+            if (map <= 0 || map > 40)
+                return false;
+        }
 
         // So be it.
         plyr->message = DEH_String(STSTR_CLEV);

@@ -129,9 +129,9 @@ char			saveOldString[SAVESTRINGSIZE];
 
 boolean                 inhelpscreens;
 boolean                 menuactive;
-boolean                 menupause;     // haleyjd 08/29/10: [STRIFE] New global
-int                     menupausetime; // haleyjd 09/04/10: [STRIFE] New global
-boolean                 menuindialog;  // haleyjd 09/04/10: ditto
+boolean                 menupause;      // haleyjd 08/29/10: [STRIFE] New global
+int                     menupausetime;  // haleyjd 09/04/10: [STRIFE] New global
+boolean                 menuindialog;   // haleyjd 09/04/10: ditto
 
 // haleyjd 08/27/10: [STRIFE] SKULLXOFF == -28, LINEHEIGHT == 19
 #define CURSORXOFF		-28
@@ -160,6 +160,12 @@ int menuskill;
 
 // current menudef
 menu_t*	currentMenu;                          
+
+// haleyjd 03/01/13: [STRIFE] v1.31-only:
+// Keeps track of whether the save game menu is being used to name a new
+// character slot, or to just save the current game. In the v1.31 disassembly
+// this was the new dword_8632C variable.
+boolean namingCharacter; 
 
 //
 // PROTOTYPES
@@ -602,10 +608,13 @@ void M_DoNameChar(int choice)
 {
     int map;
 
+    // 20130301: clear naming character flag for 1.31 save logic
+    if(gameversion == exe_strife_1_31)
+        namingCharacter = false;
     sendsave = 1;
     ClearTmp();
     G_WriteSaveName(choice, savegamestrings[choice]);
-    quickSaveSlot = choice;  // VERIFY VARIABLE
+    quickSaveSlot = choice;  
     SaveDef.lastOn = choice;
     ClearSlot();
     FromCurr();
@@ -666,21 +675,13 @@ void M_DrawSaveLoadBorder(int x,int y)
 //
 void M_LoadSelect(int choice)
 {
-    /*
-    char    name[256];
-
-    strcpy(name, P_SaveGameFile(choice));
-
-    G_LoadGame (name);
-    M_ClearMenus (0);
-    */
-    
-    // [STRIFE] (v1.2) - TODO: v1.31
+    // [STRIFE]: completely rewritten
     char *name = NULL;
 
     G_WriteSaveName(choice, savegamestrings[choice]);
     ToCurr();
 
+    // use safe & portable filepath concatenation for Choco
     name = M_SafeFilePath(savegamedir, M_MakeStrifeSaveDir(choice, ""));
 
     G_ReadCurrent(name);
@@ -693,7 +694,7 @@ void M_LoadSelect(int choice)
 //
 // Selected from DOOM menu
 //
-// [STRIFE] Verified unmodified (v1.2) - TODO: v1.31
+// [STRIFE] Verified unmodified
 //
 void M_LoadGame (int choice)
 {
@@ -734,15 +735,7 @@ void M_DrawSave(void)
 //
 void M_DoSave(int slot)
 {
-    /*
-    G_SaveGame (slot,savegamestrings[slot]);
-    M_ClearMenus (0);
-
-    // PICK QUICKSAVE SLOT YET?
-    if (quickSaveSlot == -2)
-        quickSaveSlot = slot;
-    */
-    // [STRIFE] (v1.2) - TODO: v1.31
+    // [STRIFE]: completely rewritten
     if(slot >= 0)
     {
         sendsave = 1;
@@ -763,7 +756,7 @@ void M_SaveSelect(int choice)
     // we are going to be intercepting all chars
     saveStringEnter = 1;
 
-    // [STRIFE] (v1.2) - TODO: 1.31
+    // [STRIFE]
     quickSaveSlot = choice;
     //saveSlot = choice;
 
@@ -778,7 +771,7 @@ void M_SaveSelect(int choice)
 //
 void M_SaveGame (int choice)
 {
-    // [STRIFE] (v1.2) - TODO: v1.31
+    // [STRIFE]
     if (netgame)
     {
         // haleyjd 20110211: Hooray for Rogue's awesome multiplayer support...
@@ -794,10 +787,19 @@ void M_SaveGame (int choice)
     if (gamestate != GS_LEVEL)
         return;
 
-    // [STRIFE] (v1.2) - TODO: v1.31
-    //M_SetupNextMenu(&SaveDef);
-    M_ReadSaveStrings();
-    M_DoSave(quickSaveSlot);
+    // [STRIFE]
+    if(gameversion == exe_strife_1_31)
+    {
+        // haleyjd 20130301: in 1.31, we can choose a slot again.
+        M_SetupNextMenu(&SaveDef);
+        M_ReadSaveStrings();
+    }
+    else
+    {
+        // In 1.2 and lower, you save over your character slot exclusively
+        M_ReadSaveStrings();
+        M_DoSave(quickSaveSlot);
+    }
 }
 
 
@@ -863,7 +865,7 @@ void M_QuickLoadResponse(int key)
 //
 // M_QuickLoad
 //
-// [STRIFE] Verified unmodified (v1.2) - TODO: v1.31
+// [STRIFE] Verified unmodified
 //
 void M_QuickLoad(void)
 {
@@ -1044,6 +1046,8 @@ void M_NewGame(int choice)
         return;
     }
     // haleyjd 09/07/10: [STRIFE] Removed Chex Quest and DOOM gamemodes
+    if(gameversion == exe_strife_1_31)
+       namingCharacter = true; // for 1.31 save logic
     M_SetupNextMenu(&NewDef);
 }
 
@@ -1051,6 +1055,9 @@ void M_NewGame(int choice)
 //
 //      M_Episode
 //
+
+// haleyjd: [STRIFE] Unused
+/*
 int     epi;
 
 void M_DrawEpisode(void)
@@ -1058,8 +1065,6 @@ void M_DrawEpisode(void)
     V_DrawPatchDirect(54, 38, W_CacheLumpName(DEH_String("M_EPISOD"), PU_CACHE));
 }
 
-/*
-// haleyjd: [STRIFE] Unused
 void M_VerifyNightmare(int key)
 {
     if (key != key_menu_confirm)
@@ -1260,6 +1265,28 @@ void M_FinishReadThis(int choice)
 }
 */
 
+#if 0
+extern void F_StartCast(void);
+
+//
+// M_CheckStartCast
+//
+// [STRIFE] New but unused function. Was going to start a cast
+//   call from within the menu system... not functional even in
+//   the earliest demo version.
+//
+void M_CheckStartCast()
+{
+    if(usergame)
+    {
+        M_StartMessage(DEH_String("You have to end your game first."), NULL, false);
+        return;
+    }
+
+    F_StartCast();
+    M_ClearMenus(0);
+}
+#endif
 
 //
 // M_QuitResponse
@@ -1814,8 +1841,16 @@ boolean M_Responder (event_t* ev)
             break;
 
         case KEY_ENTER:
-            // [STRIFE] v1.2 - TODO: v1.31
+            // [STRIFE]
             saveStringEnter = 0;
+            if(gameversion == exe_strife_1_31 && !namingCharacter)
+            {
+               // In 1.31, we can be here as a result of normal saving again,
+               // whereas in 1.2 this only ever happens when naming your
+               // character to begin a new game.
+               M_DoSave(quickSaveSlot);
+               return true;
+            }
             if (savegamestrings[quickSaveSlot][0])
                 M_DoNameChar(quickSaveSlot);
             break;
@@ -1869,8 +1904,8 @@ boolean M_Responder (event_t* ev)
 
     // [STRIFE]:
     // * In v1.2 this is moved to F9 (quickload)
-    // * In v1.31 it is moved to a different button and quicksave
-    //   functionality is restored separate from normal saving (STRIFE-TODO)
+    // * In v1.31 it is moved to F12 with DM spy, and quicksave
+    //   functionality is restored separate from normal saving
     /*
     if (devparm && key == key_menu_help)
     {
@@ -1910,12 +1945,10 @@ boolean M_Responder (event_t* ev)
         }
         else if (key == key_menu_save)     // Save
         {
-            /*
-            M_StartControlPanel();
-            S_StartSound(NULL, sfx_swtchn);
-            M_SaveGame(0);
-            */
-            // [STRIFE] (v1.2) - TODO: v1.31
+            // [STRIFE]: Hub saves
+            if(gameversion == exe_strife_1_31)
+                namingCharacter = false; // just saving normally, in 1.31
+
             if(netgame || players[consoleplayer].health <= 0 ||
                 players[consoleplayer].cheats & CF_ONFIRE)
             {
@@ -1931,14 +1964,21 @@ boolean M_Responder (event_t* ev)
         }
         else if (key == key_menu_load)     // Load
         {
-            /*
-            M_StartControlPanel();
-            S_StartSound(NULL, sfx_swtchn);
-            M_LoadGame(0);
-            */
-            // [STRIFE] (v1.2) - TODO: v1.31
-            S_StartSound(NULL, sfx_swtchn);
-            M_QuickLoad();
+            // [STRIFE]: Hub saves
+            if(gameversion == exe_strife_1_31)
+            {
+                // 1.31: normal save loading
+                namingCharacter = false;
+                M_StartControlPanel();
+                M_LoadGame(0);
+                S_StartSound(NULL, sfx_swtchn);
+            }
+            else
+            {
+                // Pre 1.31: quickload only
+                S_StartSound(NULL, sfx_swtchn);
+                M_QuickLoad();
+            }
             return true;
         }
         else if (key == key_menu_volume)   // Sound Volume
@@ -1953,15 +1993,15 @@ boolean M_Responder (event_t* ev)
         {
             //M_ChangeDetail(0);
             M_AutoUseHealth(); // [STRIFE]
-            S_StartSound(NULL,sfx_swtchn);
+            S_StartSound(NULL, sfx_swtchn);
             return true;
         }
-        // STRIFE-TODO: autouse health toggle
         else if (key == key_menu_qsave)    // Quicksave
         {
-            //S_StartSound(NULL, sfx_swtchn);
-            //M_QuickSave();
-            // [STRIFE] (v1.2) - TODO: v1.31
+            // [STRIFE]: Hub saves
+            if(gameversion == exe_strife_1_31)
+                namingCharacter = false; // for 1.31 save changes
+
             if(netgame || players[consoleplayer].health <= 0 ||
                players[consoleplayer].cheats & CF_ONFIRE)
             {
@@ -1991,12 +2031,15 @@ boolean M_Responder (event_t* ev)
         {
             // [STRIFE]
             // * v1.2: takes a screenshot
-            // * v1.31: does quickload again... (STRIFE-TODO)
-            /*
-            S_StartSound(NULL, sfx_swtchn);
-            M_QuickLoad();
-            */
-            G_ScreenShot();
+            // * v1.31: does quickload again
+            if(gameversion == exe_strife_1_31)
+            {
+                namingCharacter = false;
+                S_StartSound(NULL, sfx_swtchn);
+                M_QuickLoad();
+            }
+            else
+                G_ScreenShot();
             return true;
         }
         else if (key == key_menu_quit)     // Quit DOOM
@@ -2012,6 +2055,12 @@ boolean M_Responder (event_t* ev)
                 usegamma = 0;
             players[consoleplayer].message = DEH_String(gammamsg[usegamma]);
             I_SetPalette (W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE));
+            return true;
+        }
+        else if(gameversion == exe_strife_1_31 && key == key_spy)
+        {
+            // haleyjd 20130301: 1.31 moved screenshots to F12.
+            G_ScreenShot();
             return true;
         }
     }
@@ -2107,12 +2156,15 @@ boolean M_Responder (event_t* ev)
     else if (key == key_menu_activate)
     {
         // Deactivate menu
+        if(gameversion == exe_strife_1_31) // [STRIFE]: 1.31 saving
+            namingCharacter = false;
+
         if(menuindialog) // [STRIFE] - Get out of dialog engine semi-gracefully
             P_DialogDoChoice(-1);
 
         currentMenu->lastOn = itemOn;
         M_ClearMenus (0);
-        S_StartSound(NULL, sfx_mtalht);   // villsa [STRIFE] TODO - fix sounds
+        S_StartSound(NULL, sfx_mtalht); // villsa [STRIFE]: sounds
         return true;
     }
     else if (key == key_menu_back)

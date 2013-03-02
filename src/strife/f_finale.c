@@ -128,6 +128,7 @@ enum
 {
     // Exit states
     SLIDE_EXITHACK    = -99, // Hacky exit - start a new dialog
+    SLIDE_HACKHACK    =  -9, // Bizarre unused state
     SLIDE_EXIT        =  -1, // Exit to next finale state
     SLIDE_CHOCO       =  -2, // haleyjd: This state is Choco-specific... see below.
 
@@ -161,7 +162,11 @@ enum
     // Blah Ending
     SLIDE_BLAHEND1    =  17,
     SLIDE_BLAHEND2,
-    SLIDE_BLAHEND3 // Next state = -1
+    SLIDE_BLAHEND3, // Next state = -1
+
+    // Demo Ending - haleyjd 20130301: v1.31 only
+    SLIDE_DEMOEND1    =  25,
+    SLIDE_DEMOEND2 // Next state = -1
 };
 
 //
@@ -231,6 +236,15 @@ void F_StartFinale (void)
         break;
     case 34: // For the demo version ending
         slideshow_state = SLIDE_EXIT;
+        
+        // haleyjd 20130301: Somebody noticed the demo levels were missing the
+        // ending they used to have in the demo version EXE, I guess. But the
+        // weird thing is, this will only trigger if you run with strife0.wad,
+        // and no released version thereof actually works with the 1.31 EXE
+        // due to differing dialog formats... was there to be an updated demo
+        // that never got released?!
+        if(gameversion == exe_strife_1_31 && isdemoversion)
+            slideshow_state = SLIDE_DEMOEND1;
         break;
     }
 
@@ -404,16 +418,34 @@ static void F_DoSlideShow(void)
         slideshow_tics = 315;
         break;
 
+    case SLIDE_DEMOEND1: // state #25 - only exists in 1.31
+        slideshow_panel = DEH_String("PANEL7");
+        slideshow_tics = 175;
+        slideshow_state = SLIDE_DEMOEND2;
+        break;
+    case SLIDE_DEMOEND2: // state #26 - ditto
+        slideshow_panel = DEH_String("VELLOGO");
+        slideshow_tics = 175;
+        slideshow_state = SLIDE_EXIT; // Go to end credits
+        break;
+
     case SLIDE_EXITHACK: // state -99: super hack state
         gamestate = GS_LEVEL;
         P_DialogStartP1();
+        break;
+    case SLIDE_HACKHACK: // state -9: unknown bizarre unused state
+        S_StartSound(NULL, sfx_rifle);
+        slideshow_tics = 3150;
         break;
     case SLIDE_EXIT: // state -1: proceed to next finale stage
         finalecount = 0;
         finalestage = F_STAGE_ARTSCREEN;
         wipegamestate = -1;
         S_StartMusic(mus_fast);
-        slideshow_state = SLIDE_CHOCO; // haleyjd: see below...
+        // haleyjd 20130301: The ONLY glitch fixed in 1.31 of Strife
+        // *would* be something this insignificant, of course!
+        if(gameversion != exe_strife_1_31)
+            slideshow_state = SLIDE_CHOCO; // haleyjd: see below...
         break;
     case SLIDE_CHOCO: 
         // haleyjd 09/14/10: This wouldn't be necessary except that Choco
@@ -437,8 +469,11 @@ static void F_DoSlideShow(void)
     }
 
     finalecount = 0;
-    patch = (patch_t *)W_CacheLumpName(DEH_String("PANEL0"), PU_CACHE);
-    V_DrawPatch(0, 0, patch);
+    if(gameversion != exe_strife_1_31) // See above. This was removed in 1.31.
+    {
+       patch = (patch_t *)W_CacheLumpName(DEH_String("PANEL0"), PU_CACHE);
+       V_DrawPatch(0, 0, patch);
+    }
 }
 
 //

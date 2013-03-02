@@ -33,6 +33,7 @@
 #include "w_wad.h"
 #include "deh_str.h"
 #include "d_main.h"
+#include "d_mode.h"
 #include "d_player.h"
 #include "doomstat.h"
 #include "m_random.h"
@@ -1229,6 +1230,10 @@ void P_DialogDoChoice(int choice)
             objlump = W_CacheLumpName(mission_objective, PU_CACHE);
             strncpy(mission_objective, objlump, OBJECTIVE_LEN);
         }
+        // haleyjd 20130301: v1.31 hack: if first char of message is a period,
+        // clear the player's message. Is this actually used anywhere?
+        if(gameversion == exe_strife_1_31 && message[0] == '.')
+            message = NULL;
         dialogplayer->message = message;
     }
 
