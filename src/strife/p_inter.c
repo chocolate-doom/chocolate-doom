@@ -1288,8 +1288,10 @@ void P_DamageMobj(mobj_t* target, mobj_t* inflictor, mobj_t* source, int damage)
             damage -= saved;
         }
         player->health -= damage;   // mirror mobj health here for Dave
-        if(player->health < 0)
-            player->health = 0;
+        
+        // [STRIFE] haleyjd 20130302: bug fix - this is *not* capped here.
+        //if(player->health < 0)
+        //    player->health = 0;
 
         player->attacker = source;
         player->damagecount += damage;  // add damage after armor / invuln
