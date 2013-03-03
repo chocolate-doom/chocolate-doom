@@ -117,6 +117,7 @@ w_merge.c            w_merge.h
 # source files needed for FEATURE_SOUND
 
 FEATURE_SOUND_SOURCE_FILES =               \
+gusconf.c            gusconf.h             \
 i_pcsound.c                                \
 i_sdlsound.c                               \
 i_sdlmusic.c                               \

@@ -79,6 +79,8 @@ static int show_talk = 0;
 static int use_libsamplerate = 0;
 
 static char *timidity_cfg_path = "";
+static char *gus_patch_path = "";
+static unsigned int gus_ram_kb = 1024;
 
 // DOS specific variables: these are unused but should be maintained
 // so that the config file can be shared between chocolate
@@ -254,6 +256,8 @@ void BindSoundVariables(void)
     M_BindVariable("snd_samplerate",      &snd_samplerate);
     M_BindVariable("use_libsamplerate",   &use_libsamplerate);
     M_BindVariable("timidity_cfg_path",   &timidity_cfg_path);
+    M_BindVariable("gus_patch_path",      &gus_patch_path);
+    M_BindVariable("gus_ram_kb",          &gus_ram_kb);
 
     M_BindVariable("snd_sbport",          &snd_sbport);
     M_BindVariable("snd_sbirq",           &snd_sbirq);

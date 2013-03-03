@@ -32,6 +32,7 @@
 #include "doomfeatures.h"
 #include "doomtype.h"
 
+#include "gusconf.h"
 #include "i_sound.h"
 #include "i_video.h"
 #include "m_argv.h"
@@ -218,7 +219,9 @@ void I_InitSound(boolean use_sfx_prefix)
         // the TIMIDITY_CFG environment variable here before SDL_mixer
         // is opened.
 
-        if (!nomusic && snd_musicdevice == SNDDEVICE_GENMIDI)
+        if (!nomusic
+         && (snd_musicdevice == SNDDEVICE_GENMIDI
+          || snd_musicdevice == SNDDEVICE_GUS))
         {
             I_InitTimidityConfig();
         }
@@ -435,6 +438,8 @@ void I_BindSoundVariables(void)
     M_BindVariable("opl_io_port",       &opl_io_port);
 
     M_BindVariable("timidity_cfg_path", &timidity_cfg_path);
+    M_BindVariable("gus_patch_path",    &gus_patch_path);
+    M_BindVariable("gus_ram_kb",        &gus_ram_kb);
 
 #ifdef FEATURE_SOUND
     M_BindVariable("use_libsamplerate", &use_libsamplerate);

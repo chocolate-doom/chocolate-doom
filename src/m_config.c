@@ -915,6 +915,20 @@ static default_t extra_defaults_list[] =
 
     CONFIG_VARIABLE_STRING(timidity_cfg_path),
 
+    //!
+    // Path to GUS patch files to use when operating in GUS emulation
+    // mode.
+    //
+
+    CONFIG_VARIABLE_STRING(gus_patch_path),
+
+    //!
+    // Number of kilobytes of RAM to use in GUS emulation mode. Valid
+    // values are 256, 512, 768 or 1024.
+    //
+
+    CONFIG_VARIABLE_INT(gus_ram_kb),
+
 #endif
 
     //!
