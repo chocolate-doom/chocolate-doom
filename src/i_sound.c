@@ -56,6 +56,7 @@ int snd_sfxdevice = SNDDEVICE_SB;
 
 // Sound modules
 
+extern void I_InitTimidityConfig(void);
 extern sound_module_t sound_sdl_module;
 extern sound_module_t sound_pcsound_module;
 extern music_module_t music_sdl_module;
@@ -64,6 +65,10 @@ extern music_module_t music_opl_module;
 // For OPL module:
 
 extern int opl_io_port;
+
+// For native music module:
+
+extern char *timidity_cfg_path;
 
 // DOS-specific options: These are unused but should be maintained
 // so that the config file can be shared between chocolate
@@ -209,6 +214,15 @@ void I_InitSound(boolean use_sfx_prefix)
 
     if (!nosound && !screensaver_mode)
     {
+        // This is kind of a hack. If native MIDI is enabled, set up
+        // the TIMIDITY_CFG environment variable here before SDL_mixer
+        // is opened.
+
+        if (!nomusic && snd_musicdevice == SNDDEVICE_GENMIDI)
+        {
+            I_InitTimidityConfig();
+        }
+
         if (!nosfx)
         {
             InitSfxModule(use_sfx_prefix);
@@ -419,6 +433,9 @@ void I_BindSoundVariables(void)
     M_BindVariable("snd_samplerate",    &snd_samplerate);
     M_BindVariable("snd_cachesize",     &snd_cachesize);
     M_BindVariable("opl_io_port",       &opl_io_port);
+
+    M_BindVariable("timidity_cfg_path", &timidity_cfg_path);
+
 #ifdef FEATURE_SOUND
     M_BindVariable("use_libsamplerate", &use_libsamplerate);
 #endif

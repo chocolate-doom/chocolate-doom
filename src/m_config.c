@@ -906,6 +906,15 @@ static default_t extra_defaults_list[] =
 
     CONFIG_VARIABLE_INT(use_libsamplerate),
 
+    //!
+    // Full path to a Timidity configuration file to use for MIDI
+    // playback. The file will be evaluated from the directory where
+    // it is evaluated, so there is no need to add "dir" commands
+    // into it.
+    //
+
+    CONFIG_VARIABLE_STRING(timidity_cfg_path),
+
 #endif
 
     //!

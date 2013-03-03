@@ -78,6 +78,8 @@ static int voiceVolume = 15;
 static int show_talk = 0;
 static int use_libsamplerate = 0;
 
+static char *timidity_cfg_path = "";
+
 // DOS specific variables: these are unused but should be maintained
 // so that the config file can be shared between chocolate
 // doom and doom.exe
@@ -251,6 +253,7 @@ void BindSoundVariables(void)
     M_BindVariable("music_volume",        &musicVolume);
     M_BindVariable("snd_samplerate",      &snd_samplerate);
     M_BindVariable("use_libsamplerate",   &use_libsamplerate);
+    M_BindVariable("timidity_cfg_path",   &timidity_cfg_path);
 
     M_BindVariable("snd_sbport",          &snd_sbport);
     M_BindVariable("snd_sbirq",           &snd_sbirq);
