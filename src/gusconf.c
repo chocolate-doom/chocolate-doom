@@ -255,6 +255,17 @@ boolean GUS_WriteConfig(char *path)
     char *dmxconf;
     gus_config_t config;
 
+    if (!strcmp(gus_patch_path, ""))
+    {
+        printf("You haven't configured gus_patch_path.\n");
+        printf("gus_patch_path needs to point to the location of "
+               "your GUS patch set.\n"
+               "To get a copy of the \"standard\" GUS patches, "
+               "download a copy of dgguspat.zip.\n");
+
+        return false;
+    }
+
     dmxconf = ReadDMXConfig();
     ParseDMXConfig(dmxconf, &config);
 
