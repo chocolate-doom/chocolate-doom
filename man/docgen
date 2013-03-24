@@ -19,7 +19,7 @@
 #
 # For configuration file values:
 #
-#   //! @begin_config_file myconfig.cfg
+#   //! @begin_config_file myconfig
 #
 #   //!
 #   // Description of the configuration file value.
@@ -160,6 +160,7 @@ class Parameter:
         self.platform = None
         self.category = None
         self.vanilla_option = False
+        self.games = None
 
     def should_show(self):
         return not self.vanilla_option or show_vanilla_options
@@ -184,11 +185,20 @@ class Parameter:
                 self.category = data
             elif option_type == "vanilla":
                 self.vanilla_option = True
+            elif option_type == "game":
+                self.games = re.split(r'\s+', data.strip())
             else:
                 raise "Unknown option type '%s'" % option_type
 
         else:
             self.text += text + " "
+
+    def _games_only_text(self, pattern="(%s only)"):
+        if not match_game and self.games:
+            games_list = ", ".join(map(str.capitalize, self.games))
+            return " " + (pattern % games_list)
+        else:
+            return ""
 
     def manpage_output(self):
         result = self.name
@@ -205,7 +215,7 @@ class Parameter:
 
         escaped = re.sub('\\\\', '\\\\\\\\', self.text)
 
-        result += escaped + "\n"
+        result += escaped + self._games_only_text() + "\n"
 
         return result
 
@@ -221,6 +231,7 @@ class Parameter:
 
         if self.platform:
             result += "'''(%s only)'''" % self.platform
+        result += self._games_only_text("'''(%s only)'''")
 
         return result
 
@@ -242,6 +253,8 @@ class Parameter:
 
         if self.platform:
             description += " (%s only)" % self.platform
+
+        description += self._games_only_text()
 
         # Build the complete text for the argument
         # Split the description into words and add a word at a time
@@ -291,18 +304,25 @@ def add_wiki_links(text):
 
 def add_parameter(param, line, config_file):
 
+    # If we're only targeting a particular game, check this is one of
+    # the ones we're targeting.
+
+    if match_game and param.games and match_game not in param.games:
+        return
+
     # Is this documenting a command line parameter?
 
-    match = re.search('M_CheckParm(WithArgs)?\s*\(\s*"(.*?)"', line)
+    match = re.search('(M_CheckParm(WithArgs)|M_ParmExists)?\s*\(\s*"(.*?)"',
+                      line)
 
     if match:
-        param.name = match.group(2)
+        param.name = match.group(3)
         categories[param.category].add_param(param)
         return
 
     # Documenting a configuration file variable?
 
-    match = re.search('CONFIG_VARIABLE_\S+\s*\(\s*(\S+?),', line)
+    match = re.search('CONFIG_VARIABLE_\S+\s*\(\s*(\S+?)\),', line)
 
     if match:
         param.name = match.group(1)
@@ -357,9 +377,9 @@ def process_file(file):
 
                 if match:
                     # Beginning a configuration file
-                    filename = match.group(1)
-                    current_config_file = ConfigFile(filename)
-                    config_files[filename] = current_config_file
+                    tagname = match.group(1)
+                    current_config_file = ConfigFile(tagname)
+                    config_files[tagname] = current_config_file
                 else:
                     # Start of a normal comment
                     param = Parameter()
@@ -367,18 +387,18 @@ def process_file(file):
     finally:
         f.close()
 
-def process_files(dir):
+def process_files(path):
     # Process all C source files.
 
-    if os.path.isdir(dir):
-        files = glob.glob(dir + "/*.c")
+    if os.path.isdir(path):
+        files = glob.glob(path + "/*.c")
 
         for file in files:
             process_file(file)
     else:
         # Special case to allow a single file to be specified as a target
 
-        process_file(dir)
+        process_file(path)
 
 def print_template(template_file, content):
     f = open(template_file)
@@ -416,22 +436,25 @@ def plaintext_output(targets, template_file):
     print_template(template_file, content)
 
 def usage():
-    print("Usage: %s [-V] [-c filename ]( -m | -w | -p ) <directory>" \
+    print("Usage: %s [-V] [-c tag] [-g game] ( -m | -w | -p ) <dir>..." \
             % sys.argv[0])
     print("   -c :  Provide documentation for the specified configuration file")
+    print("         (matches the given tag name in the source file)")
     print("   -m :  Manpage output")
     print("   -w :  Wikitext output")
     print("   -p :  Plaintext output")
     print("   -V :  Don't show Vanilla Doom options")
+    print("   -g :  Only document options for specified game.")
     sys.exit(0)
 
 # Parse command line
 
-opts, args = getopt.getopt(sys.argv[1:], "m:wp:c:V")
+opts, args = getopt.getopt(sys.argv[1:], "m:wp:c:g:V")
 
 output_function = None
 template = None
 doc_config_file = None
+match_game = None
 
 for opt in opts:
     if opt[0] == "-m":
@@ -446,14 +469,16 @@ for opt in opts:
         show_vanilla_options = False
     elif opt[0] == "-c":
         doc_config_file = opt[1]
+    elif opt[0] == "-g":
+        match_game = opt[1]
 
-if output_function == None or len(args) != 1:
+if output_function == None or len(args) < 1:
     usage()
 else:
-
     # Process specified files
 
-    process_files(args[0])
+    for path in args:
+        process_files(path)
 
     # Build a list of things to document
 

@@ -2213,7 +2213,7 @@ void G_BeginRecording (void)
 { 
     int             i; 
 
-    //!
+    //
     // @category demo
     //
     // Record a high resolution "Doom 1.91" demo.

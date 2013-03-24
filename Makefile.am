@@ -62,8 +62,10 @@ if HAVE_PYTHON
 
 noinst_DATA=CMDLINE
 
+# TODO: CMDLINE only documents the Doom command line, not other games.
+
 CMDLINE : src/
-	./man/docgen -p man/CMDLINE.template src/ > $@
+	./man/docgen -p man/CMDLINE.template src/ src/doom/ > $@
 
 INSTALL : man/INSTALL.template man/simplecpp
 	./man/simplecpp < man/INSTALL.template > $@

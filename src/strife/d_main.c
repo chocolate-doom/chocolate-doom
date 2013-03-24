@@ -1457,16 +1457,12 @@ void D_DoomMain (void)
     nomonsters = M_CheckParm ("-nomonsters");
 
     //!
-    // @category strife
-    //
     // Sets Rogue playtesting mode (godmode, noclip toggled by backspace)
     //
 
     workparm = M_CheckParm ("-work");
 
     //!
-    // @category strife
-    //
     // Attemps to flip player gun sprites, but is broken.
     //
 
