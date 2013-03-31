@@ -149,8 +149,8 @@ static char *ExecReadOutput(char **argv)
 #include <shlobj.h>
 
 static BOOL WINAPI (*MyGetOpenFileName)(LPOPENFILENAME) = NULL;
-static PIDLIST_ABSOLUTE (*MySHBrowseForFolder)(LPBROWSEINFO) = NULL;
-static BOOL (*MySHGetPathFromIDList)(PCIDLIST_ABSOLUTE, LPTSTR) = NULL;
+static LPITEMIDLIST (*MySHBrowseForFolder)(LPBROWSEINFO) = NULL;
+static BOOL (*MySHGetPathFromIDList)(LPITEMIDLIST, LPTSTR) = NULL;
 
 // Load library functions from DLL files.
 
@@ -176,7 +176,7 @@ static int LoadDLLs(void)
         && MySHGetPathFromIDList != NULL;
 }
 
-static InitLibraries(void)
+static int InitLibraries(void)
 {
     static int initted = 0, success = 0;
 
@@ -233,7 +233,6 @@ static char *SelectDirectory(char *window_title)
 {
     LPITEMIDLIST pidl;
     BROWSEINFO bi;
-    LPMALLOC allocator;
     char selected[MAX_PATH] = "";
     char *result;
 
