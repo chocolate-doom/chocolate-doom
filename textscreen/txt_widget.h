@@ -168,7 +168,6 @@ int TXT_HoveringOverWidget(TXT_UNCAST_ARG(widget));
  * whether it is selected and the mouse is hovering over it.
  *
  * @param widget       The widget.
- * @param selected     Whether the widget is selected.
  */
 
 void TXT_SetWidgetBG(TXT_UNCAST_ARG(widget));

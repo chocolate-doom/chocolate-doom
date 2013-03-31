@@ -27,6 +27,19 @@
 #ifndef TXT_FILESELECT_H
 #define TXT_FILESELECT_H
 
+/**
+ * @file txt_fileselect.h
+ *
+ * File selection widget.
+ */
+
+/**
+ * File selection widget.
+ *
+ * A file selection widget resembles an input box (@ref txt_inputbox_t)
+ * but opens a file selector dialog box when clicked.
+ */
+
 typedef struct txt_fileselect_s txt_fileselect_t;
 
 /**
@@ -39,14 +52,14 @@ int TXT_CanSelectFiles(void);
 /**
  * Open a native file selector to select a file.
  *
- * @param title       Pointer to a string containing a prompt to display
+ * @param prompt      Pointer to a string containing a prompt to display
  *                    in the window.
  * @param extensions  NULL-terminated list of filename extensions for
  *                    files that can be selected, or @ref TXT_DIRECTORY
  *                    to select directories.
  */
 
-char *TXT_SelectFile(char *window_title, char **extensions);
+char *TXT_SelectFile(char *prompt, char **extensions);
 
 /**
  * Create a new txt_fileselect_t widget.
@@ -54,7 +67,7 @@ char *TXT_SelectFile(char *window_title, char **extensions);
  * @param variable    Pointer to a char * variable in which the selected
  *                    file should be stored.
  * @param size        Width of the file selector widget in characters.
- * @param title       Pointer to a string containing a prompt to display
+ * @param prompt      Pointer to a string containing a prompt to display
  *                    in the file selection window.
  * @param extensions  NULL-terminated list of filename extensions that
  *                    can be used for this widget, or @ref TXT_DIRECTORY
