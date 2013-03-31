@@ -216,6 +216,15 @@ static int TXT_InputBoxKeyPress(TXT_UNCAST_ARG(inputbox), int key)
             return 1;
         }
 
+        // Backspace or delete erases the contents of the box.
+
+        if ((key == KEY_DEL || key == KEY_BACKSPACE)
+         && inputbox->widget.widget_class == &txt_inputbox_class)
+        {
+            free(*((char **)inputbox->value));
+            *((char **) inputbox->value) = strdup("");
+        }
+
         return 0;
     }
 
