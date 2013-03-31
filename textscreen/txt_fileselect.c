@@ -115,6 +115,7 @@ static char *ExecReadOutput(char **argv)
         }
 
         usleep(100 * 1000);
+        TXT_Sleep(1);
         TXT_UpdateScreen();
     }
 
