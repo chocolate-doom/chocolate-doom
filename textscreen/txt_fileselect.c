@@ -114,7 +114,7 @@ static char *ExecReadOutput(char **argv)
             result[result_len] = '\0';
         }
 
-        TXT_Sleep(25);
+        usleep(100 * 1000);
         TXT_UpdateScreen();
     }
 
@@ -314,8 +314,6 @@ char *TXT_SelectFile(char *window_title, char **extensions)
     "    set theFile to (%s)\n" \
     "    copy POSIX path of theFile to stdout\n" \
     "end tell\n"
-
-//    "tell app appname\n"
 
 static char *EscapedString(char *s)
 {
