@@ -50,6 +50,7 @@ typedef enum
 {
     MUSICMODE_DISABLED,
     MUSICMODE_OPL,
+    MUSICMODE_GUS,
     MUSICMODE_NATIVE,
     MUSICMODE_CD,
     NUM_MUSICMODES
@@ -59,9 +60,12 @@ static char *musicmode_strings[] =
 {
     "Disabled",
     "OPL (Adlib/SB)",
+    "GUS (emulated)",
     "Native MIDI",
     "CD audio"
 };
+
+static char *cfg_extension[] = { "cfg", NULL };
 
 // Config file variables:
 
@@ -78,8 +82,8 @@ static int voiceVolume = 15;
 static int show_talk = 0;
 static int use_libsamplerate = 0;
 
-static char *timidity_cfg_path = "";
-static char *gus_patch_path = "";
+static char *timidity_cfg_path = NULL;
+static char *gus_patch_path = NULL;
 static unsigned int gus_ram_kb = 1024;
 
 // DOS specific variables: these are unused but should be maintained
@@ -122,8 +126,42 @@ static void UpdateSndDevices(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
         case MUSICMODE_OPL:
             snd_musicdevice = SNDDEVICE_SB;
             break;
+        case MUSICMODE_GUS:
+            snd_musicdevice = SNDDEVICE_GUS;
+            break;
         case MUSICMODE_CD:
             break;
+    }
+}
+
+static void UpdateExtraTable(TXT_UNCAST_ARG(widget),
+                             TXT_UNCAST_ARG(extra_table))
+{
+    TXT_CAST_ARG(txt_table_t, extra_table);
+
+    // Rebuild the GUS table. Start by emptying it, then only add the
+    // GUS control widget if we are in GUS music mode.
+
+    TXT_ClearTable(extra_table);
+
+    if (snd_musicmode == MUSICMODE_GUS)
+    {
+        TXT_AddWidgets(extra_table,
+                       TXT_NewLabel("GUS patch path:"),
+                       TXT_NewFileSelector(&gus_patch_path, 30,
+                                           "Select path to GUS patches",
+                                           TXT_DIRECTORY),
+                       NULL);
+    }
+
+    if (snd_musicmode == MUSICMODE_NATIVE)
+    {
+        TXT_AddWidgets(extra_table,
+                       TXT_NewLabel("Timidity configuration file:"),
+                       TXT_NewFileSelector(&timidity_cfg_path, 30,
+                                           "Select Timidity config file",
+                                           cfg_extension),
+                       NULL);
     }
 }
 
@@ -132,6 +170,7 @@ void ConfigSound(void)
     txt_window_t *window;
     txt_table_t *sfx_table;
     txt_table_t *music_table;
+    txt_table_t *extra_table;
     txt_dropdown_list_t *sfx_mode_control;
     txt_dropdown_list_t *music_mode_control;
     int num_sfx_modes, num_music_modes;
@@ -153,23 +192,25 @@ void ConfigSound(void)
 
     // Is music enabled?
 
-    if (snd_musicdevice == SNDDEVICE_GENMIDI)
+    switch (snd_musicdevice)
     {
-        snd_musicmode = MUSICMODE_NATIVE;
-    }
-    else if (snd_musicmode == SNDDEVICE_CD)
-    {
-        snd_musicmode = MUSICMODE_CD;
-    }
-    else if (snd_musicdevice == SNDDEVICE_SB
-          || snd_musicdevice == SNDDEVICE_ADLIB
-          || snd_musicdevice == SNDDEVICE_AWE32)
-    {
-        snd_musicmode = MUSICMODE_OPL;
-    }
-    else
-    {
-        snd_musicmode = MUSICMODE_DISABLED;
+        case SNDDEVICE_GENMIDI:
+            snd_musicmode = MUSICMODE_NATIVE;
+            break;
+        case SNDDEVICE_CD:
+            snd_musicmode = MUSICMODE_CD;
+            break;
+        case SNDDEVICE_SB:
+        case SNDDEVICE_ADLIB:
+        case SNDDEVICE_AWE32:
+            snd_musicmode = MUSICMODE_OPL;
+            break;
+        case SNDDEVICE_GUS:
+            snd_musicmode = MUSICMODE_GUS;
+            break;
+        default:
+            snd_musicmode = MUSICMODE_DISABLED;
+            break;
     }
 
     // Doom has PC speaker sound effects, but others do not:
@@ -198,6 +239,9 @@ void ConfigSound(void)
 
     window = TXT_NewWindow("Sound configuration");
 
+    TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_TOP,
+                                  TXT_SCREEN_W / 2, 6);
+
     TXT_AddWidgets(window,
                TXT_NewSeparator("Sound effects"),
                sfx_table = TXT_NewTable(2),
@@ -205,7 +249,7 @@ void ConfigSound(void)
 
     TXT_SetColumnWidths(sfx_table, 20, 14);
 
-    TXT_AddWidgets(sfx_table, 
+    TXT_AddWidgets(sfx_table,
                    TXT_NewLabel("Sound effects"),
                    sfx_mode_control = TXT_NewDropdownList(&snd_sfxmode,
                                                           sfxmode_strings,
@@ -229,6 +273,7 @@ void ConfigSound(void)
     TXT_AddWidgets(window,
                TXT_NewSeparator("Music"),
                music_table = TXT_NewTable(2),
+               extra_table = TXT_NewTable(1),
                NULL);
 
     TXT_SetColumnWidths(music_table, 20, 14);
@@ -242,8 +287,14 @@ void ConfigSound(void)
                    TXT_NewSpinControl(&musicVolume, 0, 15),
                    NULL);
 
+
     TXT_SignalConnect(sfx_mode_control, "changed", UpdateSndDevices, NULL);
     TXT_SignalConnect(music_mode_control, "changed", UpdateSndDevices, NULL);
+
+    // Update extra_table when the music mode is changed, and build it now.
+    TXT_SignalConnect(music_mode_control, "changed",
+                      UpdateExtraTable, extra_table);
+    UpdateExtraTable(music_mode_control, extra_table);
 }
 
 void BindSoundVariables(void)
