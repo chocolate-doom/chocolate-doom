@@ -139,9 +139,21 @@ static void TXT_InputBoxDrawer(TXT_UNCAST_ARG(inputbox))
         SetBufferFromValue(inputbox);
     }
 
-    TXT_DrawUTF8String(inputbox->buffer);
+    // If string size exceeds the widget's width, show only the end.
 
-    chars = TXT_UTF8_Strlen(inputbox->buffer);
+    if (TXT_UTF8_Strlen(inputbox->buffer) > w - 1)
+    {
+        TXT_DrawString("\xae");
+        TXT_DrawUTF8String(
+            TXT_UTF8_SkipChars(inputbox->buffer,
+                               TXT_UTF8_Strlen(inputbox->buffer) - w + 2));
+        chars = w - 1;
+    }
+    else
+    {
+        TXT_DrawUTF8String(inputbox->buffer);
+        chars = TXT_UTF8_Strlen(inputbox->buffer);
+    }
 
     if (chars < w && inputbox->editing && focused)
     {
@@ -202,6 +214,15 @@ static int TXT_InputBoxKeyPress(TXT_UNCAST_ARG(inputbox), int key)
         {
             StartEditing(inputbox);
             return 1;
+        }
+
+        // Backspace or delete erases the contents of the box.
+
+        if ((key == KEY_DEL || key == KEY_BACKSPACE)
+         && inputbox->widget.widget_class == &txt_inputbox_class)
+        {
+            free(*((char **)inputbox->value));
+            *((char **) inputbox->value) = strdup("");
         }
 
         return 0;

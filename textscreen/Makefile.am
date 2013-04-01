@@ -16,6 +16,7 @@ libtextscreen_a_SOURCES =                                 \
 	txt_checkbox.c           txt_checkbox.h           \
 	txt_desktop.c            txt_desktop.h            \
 	txt_dropdown.c           txt_dropdown.h           \
+	txt_fileselect.c         txt_fileselect.h         \
 	txt_gui.c                txt_gui.h                \
 	txt_inputbox.c           txt_inputbox.h           \
 	txt_io.c                 txt_io.h                 \

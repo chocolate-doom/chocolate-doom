@@ -39,10 +39,13 @@ enum
     RADIO_VALUE_MUSHROOM,
     RADIO_VALUE_SNAKE,
 };
+char *extensions[] = { "wad", "lmp", "txt", NULL };
 char *radio_values[] = { "Badger", "Mushroom", "Snake" };
 char *textbox_value = NULL;
 int numbox_value = 0;
 int radiobutton_value;
+char *file_path = NULL;
+char *dir_path = NULL;
 txt_label_t *value_label;
 txt_window_t *firstwin;
 int cheesy;
@@ -187,12 +190,20 @@ void Window2(void)
     TXT_AddWidget(window, TXT_NewSeparator("Input boxes"));
     table = TXT_NewTable(2);
     TXT_AddWidget(window, table);
-    TXT_AddWidget(table, TXT_NewLabel("String: "));
-    TXT_AddWidget(table, TXT_NewInputBox(&textbox_value, 20));
-    TXT_AddWidget(table, TXT_NewLabel("Int: "));
-    TXT_AddWidget(table, TXT_NewIntInputBox(&numbox_value, 10));
-    TXT_AddWidget(table, TXT_NewLabel("Spin control:"));
-    TXT_AddWidget(table, TXT_NewSpinControl(&numbox_value, 0, 15));
+    TXT_AddWidgets(table,
+                   TXT_NewLabel("String: "),
+                   TXT_NewInputBox(&textbox_value, 20),
+                   TXT_NewLabel("Int: "),
+                   TXT_NewIntInputBox(&numbox_value, 10),
+                   TXT_NewLabel("Spin control:"),
+                   TXT_NewSpinControl(&numbox_value, 0, 15),
+                   TXT_NewLabel("File:"),
+                   TXT_NewFileSelector(&file_path, 28, "Select file:",
+                                       extensions),
+                   TXT_NewLabel("Directory:"),
+                   TXT_NewFileSelector(&dir_path, 28, "Select directory:",
+                                       TXT_DIRECTORY),
+                   NULL);
 
     TXT_AddWidget(window, TXT_NewSeparator("Scroll pane test"));
     scrollpane = TXT_NewScrollPane(40, 5, TXT_NewLabel(
