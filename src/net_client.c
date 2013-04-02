@@ -51,6 +51,10 @@ extern void D_ReceiveTic(ticcmd_t *ticcmds, boolean *playeringame);
 
 typedef enum
 {
+    // waiting for the game to launch
+
+    CLIENT_STATE_WAITING_LAUNCH,
+
     // waiting for the game to start
 
     CLIENT_STATE_WAITING_START,
@@ -73,10 +77,10 @@ typedef struct
 
     unsigned int resend_time;
 
-    // Tic data from server 
+    // Tic data from server
 
     net_full_ticcmd_t cmd;
-    
+
 } net_server_recv_t;
 
 // Type of structure used in the send window
@@ -115,15 +119,15 @@ static net_gamesettings_t settings;
 
 boolean net_client_connected;
 
-// true if we have received waiting data from the server
+// true if we have received waiting data from the server,
+// and the wait data that was received.
 
 boolean net_client_received_wait_data;
-
 net_waitdata_t net_client_wait_data;
 
-// Waiting for the game to start?
+// Waiting at the initial wait screen for the game to be launched?
 
-boolean net_waiting_for_start = false;
+boolean net_waiting_for_launch = false;
 
 // Name that we send to the server
 
@@ -306,6 +310,11 @@ static void NET_CL_Shutdown(void)
     }
 }
 
+void NET_CL_LaunchGame(void)
+{
+    NET_Conn_NewReliable(&client_connection, NET_PACKET_TYPE_LAUNCH);
+}
+
 void NET_CL_StartGame(net_gamesettings_t *settings)
 {
     net_packet_t *packet;
@@ -455,6 +464,16 @@ static void NET_CL_ParseWaitingData(net_packet_t *packet)
 
     memcpy(&net_client_wait_data, &wait_data, sizeof(net_waitdata_t));
     net_client_received_wait_data = true;
+}
+
+static void NET_CL_ParseLaunch(net_packet_t *packet)
+{
+    if (client_state != CLIENT_STATE_WAITING_LAUNCH)
+    {
+        return;
+    }
+
+    client_state = CLIENT_STATE_WAITING_START;
 }
 
 static void NET_CL_ParseGameStart(net_packet_t *packet)
@@ -805,6 +824,10 @@ static void NET_CL_ParsePacket(net_packet_t *packet)
                 NET_CL_ParseWaitingData(packet);
                 break;
 
+            case NET_PACKET_TYPE_LAUNCH:
+                NET_CL_ParseLaunch(packet);
+                break;
+
             case NET_PACKET_TYPE_GAMESTART:
                 NET_CL_ParseGameStart(packet);
                 break;
@@ -864,12 +887,13 @@ void NET_CL_Run(void)
      || client_connection.state == NET_CONN_STATE_DISCONNECTED_SLEEP)
     {
         NET_CL_Disconnected();
-    
+
         NET_CL_Shutdown();
     }
-    
-    net_waiting_for_start = client_connection.state == NET_CONN_STATE_CONNECTED
-                         && client_state == CLIENT_STATE_WAITING_START;
+
+    net_waiting_for_launch =
+            client_connection.state == NET_CONN_STATE_CONNECTED
+         && client_state == CLIENT_STATE_WAITING_LAUNCH;
 
     if (client_state == CLIENT_STATE_IN_GAME)
     {
@@ -932,7 +956,7 @@ boolean NET_CL_Connect(net_addr_t *addr, net_connect_data_t *data)
     NET_Conn_InitClient(&client_connection, addr);
 
     // try to connect
- 
+
     start_time = I_GetTimeMS();
     last_send_time = -1;
 
@@ -947,8 +971,8 @@ boolean NET_CL_Connect(net_addr_t *addr, net_connect_data_t *data)
             NET_CL_SendSYN(data);
             last_send_time = nowtime;
         }
- 
-        // time out after 5 seconds 
+
+        // time out after 5 seconds
 
         if (nowtime - start_time > 5000)
         {
@@ -973,7 +997,7 @@ boolean NET_CL_Connect(net_addr_t *addr, net_connect_data_t *data)
     {
         // connected ok!
 
-        client_state = CLIENT_STATE_WAITING_START;
+        client_state = CLIENT_STATE_WAITING_LAUNCH;
         drone = data->drone;
 
         return true;

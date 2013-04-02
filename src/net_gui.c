@@ -54,11 +54,9 @@ static void EscapePressed(TXT_UNCAST_ARG(widget), void *unused)
     I_Quit();
 }
 
-static void StartGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(settings))
+static void StartGame(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 {
-    TXT_CAST_ARG(net_gamesettings_t, settings);
-
-    NET_CL_StartGame(settings);
+    NET_CL_LaunchGame();
 }
 
 static void OpenWaitDialog(void)
@@ -112,7 +110,7 @@ static void BuildWindow(void)
     TXT_AddWidget(window, drone_label);
 }
 
-static void UpdateGUI(net_gamesettings_t *settings)
+static void UpdateGUI(void)
 {
     txt_window_action_t *startgame;
     char buf[50];
@@ -174,7 +172,7 @@ static void UpdateGUI(net_gamesettings_t *settings)
     if (net_client_wait_data.is_controller)
     {
         startgame = TXT_NewWindowAction(' ', "Start game");
-        TXT_SignalConnect(startgame, "pressed", StartGame, settings);
+        TXT_SignalConnect(startgame, "pressed", StartGame, NULL);
     }
     else
     {
@@ -287,11 +285,11 @@ static void CheckSHA1Sums(void)
 
     TXT_AddWidget(window, TXT_NewLabel
             ("If you continue, this may cause your game to desync."));
-    
+
     had_warning = true;
 }
 
-void NET_WaitForStart(net_gamesettings_t *settings)
+void NET_WaitForLaunch(void)
 {
     if (!TXT_Init())
     {
@@ -305,9 +303,9 @@ void NET_WaitForStart(net_gamesettings_t *settings)
     OpenWaitDialog();
     had_warning = false;
 
-    while (net_waiting_for_start)
+    while (net_waiting_for_launch)
     {
-        UpdateGUI(settings);
+        UpdateGUI();
         CheckSHA1Sums();
 
         TXT_DispatchEvents();
@@ -323,6 +321,6 @@ void NET_WaitForStart(net_gamesettings_t *settings)
 
         TXT_Sleep(100);
     }
-    
+
     TXT_Shutdown();
 }

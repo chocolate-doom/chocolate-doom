@@ -309,6 +309,24 @@ void D_StartGameLoop(void)
     lasttime = GetAdjustedTime() / ticdup;
 }
 
+//
+// Block until the game start message is received from the server.
+//
+
+void D_BlockUntilStart(net_gamesettings_t *settings)
+{
+    while (!NET_CL_GetSettings(settings))
+    {
+        NET_CL_Run();
+        NET_SV_Run();
+
+        if (!net_client_connected)
+        {
+            I_Error("Lost connection to server");
+        }
+    }
+}
+
 boolean D_InitNetGame(net_connect_data_t *connect_data,
                       net_gamesettings_t *settings)
 {
@@ -440,9 +458,15 @@ boolean D_InitNetGame(net_connect_data_t *connect_data,
 
         printf("D_CheckNetGame: Connected to %s\n", NET_AddrToString(addr));
 
-        // Wait for game start message received from server.
+        // Wait for launch message received from server.
 
-        NET_WaitForStart(settings);
+        NET_WaitForLaunch();
+
+        // Send our game settings and block until game start is received
+        // from the server.
+
+        NET_CL_StartGame(settings);
+        D_BlockUntilStart(settings);
 
         // Read the game settings that were received.
 

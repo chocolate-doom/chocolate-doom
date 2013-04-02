@@ -116,7 +116,7 @@ struct _net_addr_s
 
 // packet types
 
-typedef enum 
+typedef enum
 {
     NET_PACKET_TYPE_SYN,
     NET_PACKET_TYPE_ACK,
@@ -133,6 +133,7 @@ typedef enum
     NET_PACKET_TYPE_CONSOLE_MESSAGE,
     NET_PACKET_TYPE_QUERY,
     NET_PACKET_TYPE_QUERY_RESPONSE,
+    NET_PACKET_TYPE_LAUNCH,
 } net_packet_type_t;
 
 typedef enum

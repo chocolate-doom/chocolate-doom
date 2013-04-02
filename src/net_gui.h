@@ -22,15 +22,15 @@
 //
 //  * The client waiting screen when we are waiting for the server to
 //    start the game.
-//   
+//
 
 
-#ifndef NET_GUI_H 
+#ifndef NET_GUI_H
 #define NET_GUI_H
 
 #include "doomtype.h"
 
-extern void NET_WaitForStart(net_gamesettings_t *settings);
+extern void NET_WaitForLaunch(void);
 
 #endif /* #ifndef NET_GUI_H */
 

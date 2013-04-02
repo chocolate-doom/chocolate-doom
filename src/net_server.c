@@ -56,7 +56,13 @@
 
 typedef enum
 {
-    // waiting for the game to start
+    // waiting for the game to be "launched" (key player to press the start
+    // button)
+
+    SERVER_WAITING_LAUNCH,
+
+    // game has been launched, we are waiting for all players to be ready
+    // so the game can start.
 
     SERVER_WAITING_START,
 
@@ -65,7 +71,7 @@ typedef enum
     SERVER_IN_GAME,
 } net_server_state_t;
 
-typedef struct 
+typedef struct
 {
     boolean active;
     int player_number;
@@ -80,7 +86,7 @@ typedef struct
     unsigned int connect_time;
 
     // Last time new gamedata was received from this client
-    
+
     int last_gamedata_time;
 
     // recording a demo without -longtics
@@ -542,7 +548,7 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         // will simply not function at all.
         //
 
-        if (M_CheckParm("-ignoreversion") == 0) 
+        if (M_CheckParm("-ignoreversion") == 0)
         {
             NET_SV_SendReject(addr,
                               "Version mismatch: server version is: "
@@ -578,17 +584,17 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
     {
         return;
     }
-    
+
     // received a valid SYN
 
     // not accepting new connections?
-    
-    if (server_state != SERVER_WAITING_START)
+
+    if (server_state != SERVER_WAITING_LAUNCH)
     {
         NET_SV_SendReject(addr, "Server is not currently accepting connections");
         return;
     }
-    
+
     // allocate a client slot if there isn't one already
 
     if (client == NULL)
@@ -683,6 +689,43 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
     }
 }
 
+// Parse a launch packet. This is sent by the key player when the "start"
+// button is pressed, and causes the startup process to continue.
+
+static void NET_SV_ParseLaunch(net_packet_t *packet, net_client_t *client)
+{
+    unsigned int i;
+
+    // Only the controller can launch the game.
+
+    if (client != NET_SV_Controller())
+    {
+        return;
+    }
+
+    // Can only launch when we are in the waiting state.
+
+    if (server_state != SERVER_WAITING_LAUNCH)
+    {
+        return;
+    }
+
+    // Forward launch on to all clients.
+
+    for (i=0; i<MAXNETNODES; ++i)
+    {
+        if (!ClientConnected(&clients[i]))
+            continue;
+
+        NET_Conn_NewReliable(&clients[i].connection,
+                             NET_PACKET_TYPE_LAUNCH);
+    }
+
+    // Now in launch state.
+
+    server_state = SERVER_WAITING_START;
+}
+
 // Parse a game start packet
 
 static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
@@ -691,7 +734,7 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
     net_packet_t *startpacket;
     int nowtime;
     int i;
-    
+
     if (client != NET_SV_Controller())
     {
         // Only the controller can start a new game
@@ -713,10 +756,10 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
         return;
     }
 
+    // Can only start a game if we are in the waiting start state.
+
     if (server_state != SERVER_WAITING_START)
     {
-        // Can only start a game if we are in the waiting start state.
-
         return;
     }
 
@@ -1232,13 +1275,16 @@ static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
         // Packet was eaten by the common connection code
     }
     else
-    { 
+    {
         //printf("SV: %s: %i\n", NET_AddrToString(addr), packet_type);
 
         switch (packet_type)
         {
             case NET_PACKET_TYPE_GAMESTART:
                 NET_SV_ParseGameStart(packet, client);
+                break;
+            case NET_PACKET_TYPE_LAUNCH:
+                NET_SV_ParseLaunch(packet, client);
                 break;
             case NET_PACKET_TYPE_GAMEDATA:
                 NET_SV_ParseGameData(packet, client);
@@ -1502,7 +1548,7 @@ static void NET_SV_GameEnded(void)
 {
     int i;
 
-    server_state = SERVER_WAITING_START;
+    server_state = SERVER_WAITING_LAUNCH;
     sv_gamemode = indetermined;
 
     for (i=0; i<MAXNETNODES; ++i)
@@ -1557,7 +1603,7 @@ static void NET_SV_RunClient(net_client_t *client)
         return;
     }
 
-    if (server_state == SERVER_WAITING_START)
+    if (server_state == SERVER_WAITING_LAUNCH)
     {
         // Waiting for the game to start
 
@@ -1605,7 +1651,7 @@ void NET_SV_Init(void)
 
     NET_SV_AssignPlayers();
 
-    server_state = SERVER_WAITING_START;
+    server_state = SERVER_WAITING_LAUNCH;
     sv_gamemode = indetermined;
     server_initialized = true;
 }
