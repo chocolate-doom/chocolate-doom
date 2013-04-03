@@ -451,6 +451,7 @@ void NET_WriteWaitData(net_packet_t *packet, net_waitdata_t *data)
 
     NET_WriteInt8(packet, data->num_players);
     NET_WriteInt8(packet, data->num_drones);
+    NET_WriteInt8(packet, data->ready_players);
     NET_WriteInt8(packet, data->max_players);
     NET_WriteInt8(packet, data->is_controller);
     NET_WriteInt8(packet, data->consoleplayer);
@@ -473,6 +474,7 @@ boolean NET_ReadWaitData(net_packet_t *packet, net_waitdata_t *data)
 
     if (!NET_ReadInt8(packet, (unsigned int *) &data->num_players)
      || !NET_ReadInt8(packet, (unsigned int *) &data->num_drones)
+     || !NET_ReadInt8(packet, (unsigned int *) &data->ready_players)
      || !NET_ReadInt8(packet, (unsigned int *) &data->max_players)
      || !NET_ReadInt8(packet, (unsigned int *) &data->is_controller)
      || !NET_ReadSInt8(packet, &data->consoleplayer))

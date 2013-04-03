@@ -80,6 +80,11 @@ typedef struct
     int last_send_time;
     char *name;
 
+    // If true, the client has sent the NET_PACKET_TYPE_GAMESTART
+    // message indicating that it is ready for the game to start.
+
+    boolean ready;
+
     // Time that this client connected to the server.
     // This is used to determine the controller (oldest client).
 
@@ -280,6 +285,25 @@ static int NET_SV_NumPlayers(void)
     return result;
 }
 
+// Returns the number of players ready to start the game.
+
+static int NET_SV_NumReadyPlayers(void)
+{
+    int result = 0;
+    int i;
+
+    for (i = 0; i < MAXNETNODES; ++i)
+    {
+        if (ClientConnected(&clients[i])
+         && !clients[i].drone && clients[i].ready)
+        {
+            ++result;
+        }
+    }
+
+    return result;
+}
+
 // Returns the maximum number of players that can play.
 
 static int NET_SV_MaxPlayers(void)
@@ -335,6 +359,95 @@ static int NET_SV_NumClients(void)
     }
 
     return count;
+}
+
+// returns a pointer to the client which controls the server
+
+static net_client_t *NET_SV_Controller(void)
+{
+    net_client_t *best;
+    int i;
+
+    // Find the oldest client (first to connect).
+
+    best = NULL;
+
+    for (i=0; i<MAXNETNODES; ++i)
+    {
+        // Can't be controller?
+
+        if (!ClientConnected(&clients[i]) || clients[i].drone)
+        {
+            continue;
+        }
+
+        if (best == NULL || clients[i].connect_time < best->connect_time)
+        {
+            best = &clients[i];
+        }
+    }
+
+    return best;
+}
+
+static void NET_SV_SendWaitingData(net_client_t *client)
+{
+    net_waitdata_t wait_data;
+    net_packet_t *packet;
+    net_client_t *controller;
+    int i;
+
+    NET_SV_AssignPlayers();
+
+    controller = NET_SV_Controller();
+
+    wait_data.num_players = NET_SV_NumPlayers();
+    wait_data.num_drones = NET_SV_NumDrones();
+    wait_data.ready_players = NET_SV_NumReadyPlayers();
+    wait_data.max_players = NET_SV_MaxPlayers();
+    wait_data.is_controller = (client == controller);
+    wait_data.consoleplayer = client->player_number;
+
+    // Send the WAD and dehacked checksums of the controlling client.
+    // If no controller found (?), send the details that the client
+    // is expecting anyway.
+
+    if (controller != NULL)
+    {
+        controller = client;
+    }
+
+    memcpy(&wait_data.wad_sha1sum, &controller->wad_sha1sum,
+           sizeof(sha1_digest_t));
+    memcpy(&wait_data.deh_sha1sum, &controller->deh_sha1sum,
+           sizeof(sha1_digest_t));
+    wait_data.is_freedoom = controller->is_freedoom;
+
+    // set name and address of each player:
+
+    for (i = 0; i < wait_data.num_players; ++i)
+    {
+        strncpy(wait_data.player_names[i],
+                sv_players[i]->name,
+                MAXPLAYERNAME);
+        wait_data.player_names[i][MAXPLAYERNAME-1] = '\0';
+
+        strncpy(wait_data.player_addrs[i],
+                NET_AddrToString(sv_players[i]->addr),
+                MAXPLAYERNAME);
+        wait_data.player_addrs[i][MAXPLAYERNAME-1] = '\0';
+    }
+
+    // Construct packet:
+
+    packet = NET_NewPacket(10);
+    NET_WriteInt16(packet, NET_PACKET_TYPE_WAITING_DATA);
+    NET_WriteWaitData(packet, &wait_data);
+
+    // Send packet to client and free
+
+    NET_Conn_SendPacket(&client->connection, packet);
+    NET_FreePacket(packet);
 }
 
 // Find the latest tic which has been acknowledged as received by
@@ -419,35 +532,6 @@ static void NET_SV_AdvanceWindow(void)
     }
 }
 
-// returns a pointer to the client which controls the server
-
-static net_client_t *NET_SV_Controller(void)
-{
-    net_client_t *best;
-    int i;
-
-    // Find the oldest client (first to connect).
-
-    best = NULL;
-
-    for (i=0; i<MAXNETNODES; ++i)
-    {
-        // Can't be controller?
-
-        if (!ClientConnected(&clients[i]) || clients[i].drone)
-        {
-            continue;
-        }
-
-        if (best == NULL || clients[i].connect_time < best->connect_time)
-        {
-            best = &clients[i];
-        }
-    }
-
-    return best;
-}
-
 // Given an address, find the corresponding client
 
 static net_client_t *NET_SV_FindClient(net_addr_t *addr)
@@ -496,6 +580,7 @@ static void NET_SV_InitNewClient(net_client_t *client,
     client->sendseq = 0;
     client->acknowledged = 0;
     client->drone = false;
+    client->ready = false;
 
     client->last_gamedata_time = 0;
 
@@ -694,6 +779,8 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
 
 static void NET_SV_ParseLaunch(net_packet_t *packet, net_client_t *client)
 {
+    net_packet_t *launchpacket;
+    int num_players;
     unsigned int i;
 
     // Only the controller can launch the game.
@@ -712,13 +799,17 @@ static void NET_SV_ParseLaunch(net_packet_t *packet, net_client_t *client)
 
     // Forward launch on to all clients.
 
+    NET_SV_AssignPlayers();
+    num_players = NET_SV_NumPlayers();
+
     for (i=0; i<MAXNETNODES; ++i)
     {
         if (!ClientConnected(&clients[i]))
             continue;
 
-        NET_Conn_NewReliable(&clients[i].connection,
-                             NET_PACKET_TYPE_LAUNCH);
+        launchpacket = NET_Conn_NewReliable(&clients[i].connection,
+                                            NET_PACKET_TYPE_LAUNCH);
+        NET_WriteInt8(launchpacket, num_players);
     }
 
     // Now in launch state.
@@ -726,42 +817,15 @@ static void NET_SV_ParseLaunch(net_packet_t *packet, net_client_t *client)
     server_state = SERVER_WAITING_START;
 }
 
-// Parse a game start packet
+// Transition to the in-game state and send all players the start game
+// message. Invoked once all players have indicated they are ready to
+// start the game.
 
-static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
+static void StartGame(void)
 {
-    net_gamesettings_t settings;
     net_packet_t *startpacket;
+    unsigned int i;
     int nowtime;
-    int i;
-
-    if (client != NET_SV_Controller())
-    {
-        // Only the controller can start a new game
-
-        return;
-    }
-
-    if (!NET_ReadSettings(packet, &settings))
-    {
-        // Malformed packet
-
-        return;
-    }
-
-    // Check the game settings are valid
-
-    if (!NET_ValidGameSettings(sv_gamemode, sv_gamemission, &settings))
-    {
-        return;
-    }
-
-    // Can only start a game if we are in the waiting start state.
-
-    if (server_state != SERVER_WAITING_START)
-    {
-        return;
-    }
 
     // Assign player numbers
 
@@ -769,17 +833,17 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
 
     // Check if anyone is recording a demo and set lowres_turn if so.
 
-    settings.lowres_turn = false;
+    sv_settings.lowres_turn = false;
 
-    for (i=0; i<NET_MAXPLAYERS; ++i)
+    for (i = 0; i < NET_MAXPLAYERS; ++i)
     {
         if (sv_players[i] != NULL && sv_players[i]->recording_lowres)
         {
-            settings.lowres_turn = true;
+            sv_settings.lowres_turn = true;
         }
     }
 
-    settings.num_players = NET_SV_NumPlayers();
+    sv_settings.num_players = NET_SV_NumPlayers();
 
     // Copy player classes:
 
@@ -787,11 +851,11 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
     {
         if (sv_players[i] != NULL)
         {
-            settings.player_classes[i] = sv_players[i]->player_class;
+            sv_settings.player_classes[i] = sv_players[i]->player_class;
         }
         else
         {
-            settings.player_classes[i] = 0;
+            sv_settings.player_classes[i] = 0;
         }
     }
 
@@ -799,7 +863,7 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
 
     // Send start packets to each connected node
 
-    for (i=0; i<MAXNETNODES; ++i) 
+    for (i = 0; i < MAXNETNODES; ++i)
     {
         if (!ClientConnected(&clients[i]))
             continue;
@@ -809,18 +873,98 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
         startpacket = NET_Conn_NewReliable(&clients[i].connection,
                                            NET_PACKET_TYPE_GAMESTART);
 
-        settings.consoleplayer = clients[i].player_number;
+        sv_settings.consoleplayer = clients[i].player_number;
 
-        NET_WriteSettings(startpacket, &settings);
+        NET_WriteSettings(startpacket, &sv_settings);
     }
 
     // Change server state
 
     server_state = SERVER_IN_GAME;
-    sv_settings = settings;
 
     memset(recvwindow, 0, sizeof(recvwindow));
     recvwindow_start = 0;
+}
+
+// Returns true when all nodes have indicated readiness to start the game.
+
+static boolean AllNodesReady(void)
+{
+    unsigned int i;
+
+    for (i = 0; i < MAXNETNODES; ++i)
+    {
+        if (ClientConnected(&clients[i]) && !clients[i].ready)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+// Send waiting data with current status to all nodes that are ready to
+// start the game.
+
+static void SendAllWaitingData(void)
+{
+    unsigned int i;
+
+    for (i = 0; i < MAXNETNODES; ++i)
+    {
+        if (ClientConnected(&clients[i]) && clients[i].ready)
+        {
+            NET_SV_SendWaitingData(&clients[i]);
+        }
+    }
+}
+
+// Parse a game start packet
+
+static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
+{
+    net_gamesettings_t settings;
+
+    // Can only start a game if we are in the waiting start state.
+
+    if (server_state != SERVER_WAITING_START)
+    {
+        return;
+    }
+
+    if (client == NET_SV_Controller())
+    {
+        if (!NET_ReadSettings(packet, &settings))
+        {
+            // Malformed packet
+
+            return;
+        }
+
+        // Check the game settings are valid
+
+        if (!NET_ValidGameSettings(sv_gamemode, sv_gamemission, &settings))
+        {
+            return;
+        }
+
+        sv_settings = settings;
+    }
+
+    client->ready = true;
+
+    // Start the game once all clients are ready.
+
+    if (AllNodesReady())
+    {
+        StartGame();
+    }
+
+    // Update all ready clients with the current state (number of players
+    // ready, etc.). This is used by games that show startup progress
+    // (eg. Hexen's spinal loading)
+
+    SendAllWaitingData();
 }
 
 // Send a resend request to a client
@@ -1311,65 +1455,6 @@ static void NET_SV_Packet(net_packet_t *packet, net_addr_t *addr)
     }
 }
 
-
-static void NET_SV_SendWaitingData(net_client_t *client)
-{
-    net_waitdata_t wait_data;
-    net_packet_t *packet;
-    net_client_t *controller;
-    int i;
-
-    NET_SV_AssignPlayers();
-
-    controller = NET_SV_Controller();
-
-    wait_data.num_players = NET_SV_NumPlayers();
-    wait_data.num_drones = NET_SV_NumDrones();
-    wait_data.max_players = NET_SV_MaxPlayers();
-    wait_data.is_controller = (client == controller);
-    wait_data.consoleplayer = client->player_number;
-
-    // Send the WAD and dehacked checksums of the controlling client.
-    // If no controller found (?), send the details that the client
-    // is expecting anyway.
-
-    if (controller != NULL)
-    {
-        controller = client;
-    }
-
-    memcpy(&wait_data.wad_sha1sum, &controller->wad_sha1sum,
-           sizeof(sha1_digest_t));
-    memcpy(&wait_data.deh_sha1sum, &controller->deh_sha1sum,
-           sizeof(sha1_digest_t));
-    wait_data.is_freedoom = controller->is_freedoom;
-
-    // set name and address of each player:
-
-    for (i = 0; i < wait_data.num_players; ++i)
-    {
-        strncpy(wait_data.player_names[i],
-                sv_players[i]->name,
-                MAXPLAYERNAME);
-        wait_data.player_names[i][MAXPLAYERNAME-1] = '\0';
-
-        strncpy(wait_data.player_addrs[i],
-                NET_AddrToString(sv_players[i]->addr),
-                MAXPLAYERNAME);
-        wait_data.player_addrs[i][MAXPLAYERNAME-1] = '\0';
-    }
-
-    // Construct packet:
-
-    packet = NET_NewPacket(10);
-    NET_WriteInt16(packet, NET_PACKET_TYPE_WAITING_DATA);
-    NET_WriteWaitData(packet, &wait_data);
-
-    // Send packet to client and free
-
-    NET_Conn_SendPacket(&client->connection, packet);
-    NET_FreePacket(packet);
-}
 
 static void NET_SV_PumpSendQueue(net_client_t *client)
 {

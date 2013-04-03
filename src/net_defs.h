@@ -241,6 +241,7 @@ typedef struct
 {
     int num_players;
     int num_drones;
+    int ready_players;
     int max_players;
     int is_controller;
     int consoleplayer;

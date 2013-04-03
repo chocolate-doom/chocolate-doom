@@ -446,6 +446,7 @@ static void NET_CL_ParseWaitingData(net_packet_t *packet)
     }
 
     if (wait_data.num_players > wait_data.max_players
+     || wait_data.ready_players > wait_data.num_players
      || wait_data.max_players > NET_MAXPLAYERS)
     {
         // insane data
@@ -468,11 +469,23 @@ static void NET_CL_ParseWaitingData(net_packet_t *packet)
 
 static void NET_CL_ParseLaunch(net_packet_t *packet)
 {
+    unsigned int num_players;
+
     if (client_state != CLIENT_STATE_WAITING_LAUNCH)
     {
         return;
     }
 
+    // The launch packet contains the number of players that will be
+    // in the game when it starts, so that we can do the startup
+    // progress indicator (the wait data is unreliable).
+
+    if (!NET_ReadInt8(packet, &num_players))
+    {
+        return;
+    }
+
+    net_client_wait_data.num_players = num_players;
     client_state = CLIENT_STATE_WAITING_START;
 }
 
