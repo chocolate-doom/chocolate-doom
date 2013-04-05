@@ -84,11 +84,6 @@
 
 #include "d_main.h"
 
-// Size of startup splash screen window.
-
-#define INTRO_SCREEN_W 640
-#define INTRO_SCREEN_H 480
-
 //
 // D-DoomLoop()
 // Not a globally visible function,
@@ -164,7 +159,8 @@ static int comport = 0;
 
 static char *nickname = NULL;
 
-void D_CheckNetGame (void);
+void D_ConnectNetGame(void);
+void D_CheckNetGame(void);
 
 
 //
@@ -496,8 +492,11 @@ void D_DoomLoop (void)
 
     TryRunTics();
 
-    I_SetWindowTitle(gamedescription);
-    I_InitGraphics();
+    if (!showintro)
+    {
+        I_SetWindowTitle(gamedescription);
+        I_InitGraphics();
+    }
 
     I_EnableLoadingDisk();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
@@ -1140,51 +1139,10 @@ static void D_IntroBackground(void)
 // haleyjd 20110206: Initialize the graphical introduction sequence
 //
 
-static int saved_screen_width, saved_screen_height;
-static int saved_fullscreen, saved_aspect_ratio_correct;
-
 static void D_InitIntroSequence(void)
 {
     if(showintro)
     {
-        // Intro splash screen runs in a window. We must save the actual
-        // display settings, and temporarily overwrite them with the
-        // windowed-mode settings. The real settings will be restored
-        // when the intro screen finishes.
-
-        // INTRO-FIXME:
-        // This is causing problems on Windows, including interruption of the 
-        // sound playing. I would like to see this changed back to how it worked
-        // before once the netcode can function along with it.
-        // -haleyjd
-
-        saved_screen_width = screen_width;
-        saved_screen_height = screen_height;
-        saved_aspect_ratio_correct = aspect_ratio_correct;
-        saved_fullscreen = fullscreen;
-
-        // If the game display settings are to run in a small window, it
-        // makes no sense to switch to a larger window for the splash
-        // screen, so use the configured settings.
-
-        // INTRO-FIXME: how does this make sense?
-        // If I have an 800x600 game window (in windowed mode), then I expect an 
-        // 800x600 intro too,
-        // and indeed the code below is capable of drawing at any resolution.
-        // Either the logic is off or I simply totally disagree with the original
-        // motivation that lead to limiting it to 640x480.
-        // -haleyjd
-
-        if (fullscreen
-         || screen_width > INTRO_SCREEN_W || screen_height > INTRO_SCREEN_H)
-        {
-            screen_width = INTRO_SCREEN_W;
-            screen_height = INTRO_SCREEN_H;
-            aspect_ratio_correct = 1;
-        }
-
-        fullscreen = 0;
-
         // In vanilla Strife, Mode 13h was initialized directly in D_DoomMain.
         // We have to be a little more courteous of the low-level code here.
         I_SetWindowTitle(gamedescription);
@@ -1219,23 +1177,6 @@ static void D_InitIntroSequence(void)
         puts(DEH_String("Loading..."));
     }
     */
-}
-
-// End of intro splash screen.
-
-static void D_FinishIntroSequence(void)
-{
-    if (showintro)
-    {
-        I_ShutdownGraphics();
-
-        // Restore display settings to the actual ones.
-
-        screen_width = saved_screen_width;
-        screen_height = saved_screen_height;
-        fullscreen = saved_fullscreen;
-        aspect_ratio_correct = saved_aspect_ratio_correct;
-    }
 }
 
 //
@@ -1669,6 +1610,17 @@ void D_DoomMain (void)
     D_SetGameDescription();
     savegamedir = M_GetSaveGameDir("strife1.wad");
 
+    // fraggle 20130405: I_InitTimer is needed here for the netgame
+    // startup.
+    I_InitTimer();
+
+#ifdef FEATURE_MULTIPLAYER
+    if(devparm) // [STRIFE]
+        printf ("NET_Init: Init network subsystem.\n");
+    NET_Init();
+#endif
+    D_ConnectNetGame();
+
     // haleyjd 20110210: Create Strife hub save folders
     M_CreateSaveDirs(savegamedir);
 
@@ -1871,15 +1823,9 @@ void D_DoomMain (void)
     if(devparm) // [STRIFE]
         DEH_printf("I_Init: Setting up machine state.\n");
     I_CheckIsScreensaver();
-    I_InitTimer();
     I_InitJoystick();
     D_IntroTick(); // [STRIFE]
 
-#ifdef FEATURE_MULTIPLAYER
-    if(devparm) // [STRIFE]
-        printf ("NET_Init: Init network subsystem.\n");
-    NET_Init ();
-#endif
     D_IntroTick(); // [STRIFE]
 
     if(devparm) // [STRIFE]
@@ -1900,24 +1846,6 @@ void D_DoomMain (void)
     if(devparm)
         DEH_printf("  Play voices = %d\n", disable_voices == 0);
 
-    // [STRIFE]: This has been rearranged. These intro ticks occur
-    // further down in Vanilla Strife; however, we have to finish
-    // the intro sequence here so that netgame startup can begin.
-    // The original calls to D_IntroTick() are commented-out below.
-
-    // INTRO-FIXME: Great in theory but it makes the intro end too quickly.
-    // -haleyjd
-
-    D_IntroTick();
-    D_IntroTick();
-    D_IntroTick();
-    D_IntroTick();
-    D_IntroTick();
-    D_IntroTick();
-    D_IntroTick();
-
-    D_FinishIntroSequence();
-
     if(devparm) // [STRIFE]
         DEH_printf("D_CheckNetGame: Checking network game status.\n");
     D_CheckNetGame ();
@@ -1927,15 +1855,15 @@ void D_DoomMain (void)
     if(devparm)
         DEH_printf("HU_Init: Setting up heads up display.\n");
     HU_Init ();
-    //D_IntroTick(); // [STRIFE]
+    D_IntroTick(); // [STRIFE]
 
     if(devparm)
         DEH_printf("ST_Init: Init status bar.\n");
     ST_Init ();
-    //D_IntroTick(); // [STRIFE]
+    D_IntroTick(); // [STRIFE]
 
     // haleyjd [STRIFE] -statcopy used to be here...
-    //D_IntroTick(); // [STRIFE]
+    D_IntroTick(); // [STRIFE]
 
     // If Doom II without a MAP01 lump, this is a store demo.  
     // Moved this here so that MAP01 isn't constantly looked up
@@ -1961,7 +1889,7 @@ void D_DoomMain (void)
         G_RecordDemo (myargv[p+1]);
         autostart = true;
     }
-    //D_IntroTick(); // [STRIFE]
+    D_IntroTick(); // [STRIFE]
 
     p = M_CheckParmWithArgs("-playdemo", 1);
     if (p)
@@ -1970,7 +1898,7 @@ void D_DoomMain (void)
         G_DeferedPlayDemo (demolumpname);
         D_DoomLoop ();  // never returns
     }
-    //D_IntroTick(); // [STRIFE]
+    D_IntroTick(); // [STRIFE]
 
     p = M_CheckParmWithArgs("-timedemo", 1);
     if (p)
@@ -1978,14 +1906,14 @@ void D_DoomMain (void)
         G_TimeDemo (demolumpname);
         D_DoomLoop ();  // never returns
     }
-    //D_IntroTick(); // [STRIFE]
+    D_IntroTick(); // [STRIFE]
 
     if (startloadgame >= 0)
     {
         // [STRIFE]: different, for hubs
         M_LoadSelect(startloadgame);
     }
-    //D_IntroTick(); // [STRIFE]
+    D_IntroTick(); // [STRIFE]
 
 
     if (gameaction != ga_loadgame )
