@@ -313,7 +313,8 @@ void D_StartGameLoop(void)
 // Block until the game start message is received from the server.
 //
 
-void D_BlockUntilStart(net_gamesettings_t *settings)
+static void BlockUntilStart(net_gamesettings_t *settings,
+                            netgame_startup_callback_t callback)
 {
     while (!NET_CL_GetSettings(settings))
     {
@@ -324,10 +325,17 @@ void D_BlockUntilStart(net_gamesettings_t *settings)
         {
             I_Error("Lost connection to server");
         }
+
+        if (callback != NULL && !callback(net_client_wait_data.ready_players,
+                                          net_client_wait_data.num_players))
+        {
+            I_Error("Netgame startup aborted.");
+        }
     }
 }
 
-void D_StartNetGame(net_gamesettings_t *settings)
+void D_StartNetGame(net_gamesettings_t *settings,
+                    netgame_startup_callback_t callback)
 {
     int i;
 
@@ -384,7 +392,7 @@ void D_StartNetGame(net_gamesettings_t *settings)
         // from the server.
 
         NET_CL_StartGame(settings);
-        D_BlockUntilStart(settings);
+        BlockUntilStart(settings, callback);
 
         // Read the game settings that were received.
 

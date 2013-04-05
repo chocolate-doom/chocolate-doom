@@ -214,7 +214,7 @@ void D_CheckNetGame (void)
     }
 
     SaveGameSettings(&settings);
-    D_StartNetGame(&settings);
+    D_StartNetGame(&settings, NULL);
     LoadGameSettings(&settings);
 }
 

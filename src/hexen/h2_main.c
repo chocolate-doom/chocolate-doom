@@ -76,6 +76,7 @@ typedef struct
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 void R_ExecuteSetViewSize(void);
+void D_ConnectNetGame(void);
 void D_CheckNetGame(void);
 boolean F_Responder(event_t * ev);
 void I_StartupKeyboard(void);
@@ -331,11 +332,6 @@ void D_DoomMain(void)
     ST_Message("MN_Init: Init menu system.\n");
     MN_Init();
 
-#ifdef FEATURE_MULTIPLAYER
-    ST_Message("NET_Init: Init networking subsystem.\n");
-    NET_Init();
-#endif
-
     ST_Message("CT_Init: Init chat mode data.\n");
     CT_Init();
 
@@ -350,6 +346,12 @@ void D_DoomMain(void)
     I_CheckIsScreensaver();
     I_InitTimer();
     I_InitJoystick();
+
+#ifdef FEATURE_MULTIPLAYER
+    ST_Message("NET_Init: Init networking subsystem.\n");
+    NET_Init();
+#endif
+    D_ConnectNetGame();
 
     S_Init();
     S_Start();
@@ -372,16 +374,13 @@ void D_DoomMain(void)
     // MAPINFO.TXT script must be already processed.
     WarpCheck();
 
-    ST_Done();
-
-    // Netgame start must be here, after the splash screen has finished.
     ST_Message("D_CheckNetGame: Checking network game status.\n");
     D_CheckNetGame();
 
-    // SB_Init has been moved here; the status bar must be initialized
-    // *after* the netgame has started.
     ST_Message("SB_Init: Loading patches.\n");
     SB_Init();
+
+    ST_Done();
 
     if (autostart)
     {
