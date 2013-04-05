@@ -88,6 +88,7 @@ FILE *debugfile;
 
 static int show_endoom = 1;
 
+void D_ConnectNetGame(void);
 void D_CheckNetGame(void);
 void D_PageDrawer(void);
 void D_AdvanceDemo(void);
@@ -945,6 +946,14 @@ void D_DoomMain(void)
         testcontrols = true;
     }
 
+#ifdef FEATURE_MULTIPLAYER
+    tprintf("NET_Init: Init network subsystem.\n", 1);
+    NET_Init ();
+#endif
+
+    I_InitTimer();
+    D_ConnectNetGame();
+
     // haleyjd: removed WATCOMC
     initStartup();
 
@@ -971,11 +980,6 @@ void D_DoomMain(void)
     tprintf(DEH_String("MN_Init: Init menu system.\n"), 1);
     MN_Init();
 
-#ifdef FEATURE_MULTIPLAYER
-    tprintf ("NET_Init: Init network subsystem.\n", 1);
-    NET_Init ();
-#endif
-
     CT_Init();
 
     tprintf(DEH_String("R_Init: Init Heretic refresh daemon."), 1);
@@ -990,7 +994,6 @@ void D_DoomMain(void)
 
     tprintf(DEH_String("I_Init: Setting up machine state.\n"), 1);
     I_CheckIsScreensaver();
-    I_InitTimer();
     I_InitJoystick();
     IncThermo();
 
