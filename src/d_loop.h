@@ -65,10 +65,14 @@ void TryRunTics (void);
 // Called at start of game loop to initialize timers
 void D_StartGameLoop(void);
 
-// Initialize networking code; structures contain desired game settings,
-// these may be changed.
-boolean D_InitNetGame(net_connect_data_t *connect_data,
-                      net_gamesettings_t *settings);
+// Initialize networking code and connect to server.
+
+boolean D_InitNetGame(net_connect_data_t *connect_data);
+
+// Start game with specified settings. The structure will be updated
+// with the actual settings for the game.
+
+void D_StartNetGame(net_gamesettings_t *settings);
 
 extern boolean singletics;
 extern int gametic, ticdup;

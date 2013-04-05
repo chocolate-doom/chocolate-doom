@@ -112,8 +112,7 @@ static loop_interface_t doom_loop_interface = {
 // Load game settings from the specified structure and 
 // set global variables.
 
-static void LoadGameSettings(net_gamesettings_t *settings,
-                             net_connect_data_t *connect_data)
+static void LoadGameSettings(net_gamesettings_t *settings)
 {
     unsigned int i;
 
@@ -125,17 +124,9 @@ static void LoadGameSettings(net_gamesettings_t *settings,
     // TODO startloadgame = settings->loadgame;
     nomonsters = settings->nomonsters;
     respawnparm = settings->respawn_monsters;
+    consoleplayer = settings->consoleplayer;
 
-    if (!connect_data->drone)
-    {
-        consoleplayer = settings->consoleplayer;
-    }
-    else
-    {
-        consoleplayer = 0;
-    }
-    
-    for (i=0; i<MAXPLAYERS; ++i) 
+    for (i = 0; i < MAXPLAYERS; ++i)
     {
         playeringame[i] = i < settings->num_players;
     }
@@ -144,8 +135,7 @@ static void LoadGameSettings(net_gamesettings_t *settings,
 // Save the game settings from global variables to the specified
 // game settings structure.
 
-static void SaveGameSettings(net_gamesettings_t *settings,
-                             net_connect_data_t *connect_data)
+static void SaveGameSettings(net_gamesettings_t *settings)
 {
     // Fill in game settings structure with appropriate parameters
     // for the new game
@@ -160,7 +150,10 @@ static void SaveGameSettings(net_gamesettings_t *settings,
     settings->respawn_monsters = respawnparm;
     settings->timelimit = 0;
     settings->lowres_turn = false;
+}
 
+static void InitConnectData(net_connect_data_t *connect_data)
+{
     connect_data->drone = false;
     connect_data->max_players = MAXPLAYERS;
 
@@ -183,29 +176,6 @@ static void SaveGameSettings(net_gamesettings_t *settings,
     connect_data->is_freedoom = 0;
 }
 
-void D_InitSinglePlayerGame(net_gamesettings_t *settings)
-{
-    // default values for single player
-
-    settings->consoleplayer = 0;
-    settings->num_players = 1;
-
-    netgame = false;
-
-    //!
-    // @category net
-    //
-    // Start the game playing as though in a netgame with a single
-    // player.  This can also be used to play back single player netgame
-    // demos.
-    //
-
-    if (M_CheckParm("-solo-net") > 0)
-    {
-        netgame = true;
-    }
-}
-
 //
 // D_CheckNetGame
 // Works out player numbers among the net participants
@@ -222,17 +192,28 @@ void D_CheckNetGame (void)
 
     I_AtExit(D_QuitNetGame, true);
 
-    SaveGameSettings(&settings, &connect_data);
+    InitConnectData(&connect_data);
+    netgame = D_InitNetGame(&connect_data);
 
-    if (D_InitNetGame(&connect_data, &settings))
+    //!
+    // @category net
+    //
+    // Start the game playing as though in a netgame with a single
+    // player.  This can also be used to play back single player netgame
+    // demos.
+    //
+
+    if (M_CheckParm("-solo-net") > 0)
     {
         netgame = true;
-        autostart = true;
-    }
-    else
-    {
-        D_InitSinglePlayerGame(&settings);
     }
 
-    LoadGameSettings(&settings, &connect_data);
+    if (netgame)
+    {
+        autostart = true;
+    }
+
+    SaveGameSettings(&settings);
+    D_StartNetGame(&settings);
+    LoadGameSettings(&settings);
 }

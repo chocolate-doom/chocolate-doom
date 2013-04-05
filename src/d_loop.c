@@ -327,11 +327,8 @@ void D_BlockUntilStart(net_gamesettings_t *settings)
     }
 }
 
-boolean D_InitNetGame(net_connect_data_t *connect_data,
-                      net_gamesettings_t *settings)
+void D_StartNetGame(net_gamesettings_t *settings)
 {
-    net_addr_t *addr = NULL;
-    boolean result = false;
     int i;
 
     offsetms = 0;
@@ -380,6 +377,50 @@ boolean D_InitNetGame(net_connect_data_t *connect_data,
         settings->ticdup = atoi(myargv[i+1]);
     else
         settings->ticdup = 1;
+
+    if (net_client_connected)
+    {
+        // Send our game settings and block until game start is received
+        // from the server.
+
+        NET_CL_StartGame(settings);
+        D_BlockUntilStart(settings);
+
+        // Read the game settings that were received.
+
+        NET_CL_GetSettings(settings);
+    }
+
+    if (drone)
+    {
+        settings->consoleplayer = 0;
+    }
+
+    // Set the local player and playeringame[] values.
+
+    localplayer = settings->consoleplayer;
+
+    for (i = 0; i < NET_MAXPLAYERS; ++i)
+    {
+        local_playeringame[i] = i < settings->num_players;
+    }
+
+    // Copy settings to global variables.
+
+    ticdup = settings->ticdup;
+    new_sync = settings->new_sync;
+
+    if (!new_sync)
+    {
+	printf("Syncing netgames like Vanilla Doom.\n");
+    }
+}
+
+boolean D_InitNetGame(net_connect_data_t *connect_data)
+{
+    boolean result = false;
+    net_addr_t *addr = NULL;
+    int i;
 
 #ifdef FEATURE_MULTIPLAYER
 
@@ -452,48 +493,19 @@ boolean D_InitNetGame(net_connect_data_t *connect_data,
 
         if (!NET_CL_Connect(addr, connect_data))
         {
-            I_Error("D_CheckNetGame: Failed to connect to %s\n",
+            I_Error("D_InitNetGame: Failed to connect to %s\n",
                     NET_AddrToString(addr));
         }
 
-        printf("D_CheckNetGame: Connected to %s\n", NET_AddrToString(addr));
+        printf("D_InitNetGame: Connected to %s\n", NET_AddrToString(addr));
 
         // Wait for launch message received from server.
 
         NET_WaitForLaunch();
 
-        // Send our game settings and block until game start is received
-        // from the server.
-
-        NET_CL_StartGame(settings);
-        D_BlockUntilStart(settings);
-
-        // Read the game settings that were received.
-
-        NET_CL_GetSettings(settings);
-
         result = true;
     }
-
 #endif
-
-    // Set the local player and playeringame[] values.
-
-    localplayer = settings->consoleplayer;
-
-    for (i = 0; i < NET_MAXPLAYERS; ++i)
-    {
-        local_playeringame[i] = i < settings->num_players;
-    }
-
-    // Check for sync mode.
-
-    new_sync = settings->new_sync;
-
-    if (new_sync == false)
-    {
-	printf("Syncing netgames like Vanilla Doom.\n");
-    }
 
     return result;
 }

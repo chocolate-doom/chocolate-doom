@@ -109,16 +109,14 @@ static loop_interface_t doom_loop_interface = {
 };
 
 
-// Load game settings from the specified structure and 
+// Load game settings from the specified structure and
 // set global variables.
 
-static void LoadGameSettings(net_gamesettings_t *settings,
-                             net_connect_data_t *connect_data)
+static void LoadGameSettings(net_gamesettings_t *settings)
 {
     unsigned int i;
 
     deathmatch = settings->deathmatch;
-    ticdup = settings->ticdup;
     startepisode = settings->episode;
     startmap = settings->map;
     startskill = settings->skill;
@@ -128,6 +126,7 @@ static void LoadGameSettings(net_gamesettings_t *settings,
     fastparm = settings->fast_monsters;
     respawnparm = settings->respawn_monsters;
     timelimit = settings->timelimit;
+    consoleplayer = settings->consoleplayer;
 
     if (lowres_turn)
     {
@@ -135,16 +134,7 @@ static void LoadGameSettings(net_gamesettings_t *settings,
                "because there is a client recording a Vanilla demo.\n");
     }
 
-    if (!connect_data->drone)
-    {
-        consoleplayer = settings->consoleplayer;
-    }
-    else
-    {
-        consoleplayer = 0;
-    }
-    
-    for (i=0; i<MAXPLAYERS; ++i) 
+    for (i = 0; i < MAXPLAYERS; ++i)
     {
         playeringame[i] = i < settings->num_players;
     }
@@ -153,8 +143,7 @@ static void LoadGameSettings(net_gamesettings_t *settings,
 // Save the game settings from global variables to the specified
 // game settings structure.
 
-static void SaveGameSettings(net_gamesettings_t *settings,
-                             net_connect_data_t *connect_data)
+static void SaveGameSettings(net_gamesettings_t *settings)
 {
     // Fill in game settings structure with appropriate parameters
     // for the new game
@@ -172,9 +161,12 @@ static void SaveGameSettings(net_gamesettings_t *settings,
 
     settings->lowres_turn = M_CheckParm("-record") > 0
                          && M_CheckParm("-longtics") == 0;
+}
 
-    connect_data->drone = false;
+static void InitConnectData(net_connect_data_t *connect_data)
+{
     connect_data->max_players = MAXPLAYERS;
+    connect_data->drone = false;
 
     //!
     // @category net
@@ -211,7 +203,8 @@ static void SaveGameSettings(net_gamesettings_t *settings,
 
     // Are we recording a demo? Possibly set lowres turn mode
 
-    connect_data->lowres_turn = settings->lowres_turn;
+    connect_data->lowres_turn = M_CheckParm("-record") > 0
+                             && M_CheckParm("-longtics") == 0;
 
     // Read checksums of our WAD directory and dehacked information
 
@@ -221,29 +214,6 @@ static void SaveGameSettings(net_gamesettings_t *settings,
     // Are we playing with the Freedoom IWAD?
 
     connect_data->is_freedoom = W_CheckNumForName("FREEDOOM") >= 0;
-}
-
-void D_InitSinglePlayerGame(net_gamesettings_t *settings)
-{
-    // default values for single player
-
-    settings->consoleplayer = 0;
-    settings->num_players = 1;
-
-    netgame = false;
-
-    //!
-    // @category net
-    //
-    // Start the game playing as though in a netgame with a single
-    // player.  This can also be used to play back single player netgame
-    // demos.
-    //
-
-    if (M_CheckParm("-solo-net") > 0)
-    {
-        netgame = true;
-    }
 }
 
 //
@@ -257,23 +227,34 @@ void D_CheckNetGame (void)
 
     D_RegisterLoopCallbacks(&doom_loop_interface);
 
-    // Call D_QuitNetGame on exit 
+    // Call D_QuitNetGame on exit
 
     I_AtExit(D_QuitNetGame, true);
 
-    SaveGameSettings(&settings, &connect_data);
+    InitConnectData(&connect_data);
+    netgame = D_InitNetGame(&connect_data);
 
-    if (D_InitNetGame(&connect_data, &settings))
+    //!
+    // @category net
+    //
+    // Start the game playing as though in a netgame with a single
+    // player.  This can also be used to play back single player netgame
+    // demos.
+    //
+
+    if (M_CheckParm("-solo-net") > 0)
     {
         netgame = true;
-        autostart = true;
-    }
-    else
-    {
-        D_InitSinglePlayerGame(&settings);
     }
 
-    LoadGameSettings(&settings, &connect_data);
+    if (netgame)
+    {
+        autostart = true;
+    }
+
+    SaveGameSettings(&settings);
+    D_StartNetGame(&settings);
+    LoadGameSettings(&settings);
 
     DEH_printf("startskill %i  deathmatch: %i  startmap: %i  startepisode: %i\n",
                startskill, deathmatch, startmap, startepisode);

@@ -112,8 +112,7 @@ static loop_interface_t hexen_loop_interface = {
 // Load game settings from the specified structure and 
 // set global variables.
 
-static void LoadGameSettings(net_gamesettings_t *settings,
-                             net_connect_data_t *connect_data)
+static void LoadGameSettings(net_gamesettings_t *settings)
 {
     unsigned int i;
 
@@ -125,15 +124,7 @@ static void LoadGameSettings(net_gamesettings_t *settings,
     // TODO startloadgame = settings->loadgame;
     nomonsters = settings->nomonsters;
     respawnparm = settings->respawn_monsters;
-
-    if (!connect_data->drone)
-    {
-        consoleplayer = settings->consoleplayer;
-    }
-    else
-    {
-        consoleplayer = 0;
-    }
+    consoleplayer = settings->consoleplayer;
 
     for (i=0; i<MAXPLAYERS; ++i)
     {
@@ -150,11 +141,8 @@ static void LoadGameSettings(net_gamesettings_t *settings,
 // Save the game settings from global variables to the specified
 // game settings structure.
 
-static void SaveGameSettings(net_gamesettings_t *settings,
-                             net_connect_data_t *connect_data)
+static void SaveGameSettings(net_gamesettings_t *settings)
 {
-    int i;
-
     // jhaley 20120715: Some parts of the structure are being left
     // uninitialized. If -class is not used on the command line, this
     // can lead to a crash in SB_Init due to player class == 0xCCCCCCCC.
@@ -173,6 +161,11 @@ static void SaveGameSettings(net_gamesettings_t *settings,
     settings->respawn_monsters = respawnparm;
     settings->timelimit = 0;
     settings->lowres_turn = false;
+}
+
+static void InitConnectData(net_connect_data_t *connect_data)
+{
+    int i;
 
     //
     // Connect data
@@ -213,14 +206,24 @@ static void SaveGameSettings(net_gamesettings_t *settings,
     connect_data->is_freedoom = 0;
 }
 
-void D_InitSinglePlayerGame(net_gamesettings_t *settings)
+//
+// D_CheckNetGame
+// Works out player numbers among the net participants
+//
+
+void D_CheckNetGame (void)
 {
-    // default values for single player
+    net_connect_data_t connect_data;
+    net_gamesettings_t settings;
 
-    settings->consoleplayer = 0;
-    settings->num_players = 1;
+    D_RegisterLoopCallbacks(&hexen_loop_interface);
 
-    netgame = false;
+    // Call D_QuitNetGame on exit
+
+    I_AtExit(D_QuitNetGame, true);
+
+    InitConnectData(&connect_data);
+    netgame = D_InitNetGame(&connect_data);
 
     //!
     // @category net
@@ -234,37 +237,15 @@ void D_InitSinglePlayerGame(net_gamesettings_t *settings)
     {
         netgame = true;
     }
-}
 
-//
-// D_CheckNetGame
-// Works out player numbers among the net participants
-//
-
-void D_CheckNetGame (void)
-{
-    net_connect_data_t connect_data;
-    net_gamesettings_t settings;
-
-    D_RegisterLoopCallbacks(&hexen_loop_interface);
-
-    // Call D_QuitNetGame on exit 
-
-    I_AtExit(D_QuitNetGame, true);
-
-    SaveGameSettings(&settings, &connect_data);
-
-    if (D_InitNetGame(&connect_data, &settings))
+    if (netgame)
     {
-        netgame = true;
         autostart = true;
     }
-    else
-    {
-        D_InitSinglePlayerGame(&settings);
-    }
 
-    LoadGameSettings(&settings, &connect_data);
+    SaveGameSettings(&settings);
+    D_StartNetGame(&settings);
+    LoadGameSettings(&settings);
 }
 
 //==========================================================================
