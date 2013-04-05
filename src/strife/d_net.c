@@ -231,10 +231,6 @@ void D_CheckNetGame (void)
 
     D_RegisterLoopCallbacks(&strife_loop_interface);
 
-    // Call D_QuitNetGame on exit 
-
-    I_AtExit(D_QuitNetGame, true);
-
     InitConnectData(&connect_data);
     netgame = D_InitNetGame(&connect_data);
 

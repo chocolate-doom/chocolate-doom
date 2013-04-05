@@ -134,7 +134,8 @@ char		mapdir[1024];           // directory of development maps
 int             show_endoom = 1;
 
 
-void D_CheckNetGame (void);
+void D_ConnectNetGame(void);
+void D_CheckNetGame(void);
 
 
 //
@@ -1366,7 +1367,32 @@ void D_DoomMain (void)
 		if (W_CheckNumForName(name[i])<0)
 		    I_Error(DEH_String("\nThis is not the registered version."));
     }
-    
+
+    if (W_CheckNumForName("SS_START") >= 0
+     || W_CheckNumForName("FF_END") >= 0)
+    {
+        I_PrintDivider();
+        printf(" WARNING: The loaded WAD file contains modified sprites or\n"
+               " floor textures.  You may want to use the '-merge' command\n"
+               " line option instead of '-file'.\n");
+    }
+
+    I_PrintStartupBanner(gamedescription);
+    PrintDehackedBanners();
+
+    DEH_printf("I_Init: Setting up machine state.\n");
+    I_CheckIsScreensaver();
+    I_InitTimer();
+    I_InitJoystick();
+
+#ifdef FEATURE_MULTIPLAYER
+    printf ("NET_Init: Init network subsystem.\n");
+    NET_Init ();
+#endif
+
+    // Initial netgame startup. Connect to server etc.
+    D_ConnectNetGame();
+
     // get skill / episode / map from parms
     startskill = sk_medium;
     startepisode = 1;
@@ -1502,18 +1528,6 @@ void D_DoomMain (void)
         startloadgame = -1;
     }
 
-    if (W_CheckNumForName("SS_START") >= 0
-     || W_CheckNumForName("FF_END") >= 0)
-    {
-        I_PrintDivider();
-        printf(" WARNING: The loaded WAD file contains modified sprites or\n"
-               " floor textures.  You may want to use the '-merge' command\n"
-               " line option instead of '-file'.\n");
-    }
-
-    I_PrintStartupBanner(gamedescription);
-    PrintDehackedBanners();
-
     DEH_printf("M_Init: Init miscellaneous info.\n");
     M_Init ();
 
@@ -1522,16 +1536,6 @@ void D_DoomMain (void)
 
     DEH_printf("\nP_Init: Init Playloop state.\n");
     P_Init ();
-
-    DEH_printf("I_Init: Setting up machine state.\n");
-    I_CheckIsScreensaver();
-    I_InitTimer();
-    I_InitJoystick();
-
-#ifdef FEATURE_MULTIPLAYER
-    printf ("NET_Init: Init network subsystem.\n");
-    NET_Init ();
-#endif
 
     DEH_printf("S_Init: Setting up sound.\n");
     S_Init (sfxVolume * 8, musicVolume * 8);

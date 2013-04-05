@@ -33,7 +33,7 @@ typedef struct
 {
     // Read events from the event queue, and process them.
 
-    void (*ProcesEvents)();
+    void (*ProcessEvents)();
 
     // Given the current input state, fill in the fields of the specified
     // ticcmd_t structure with data for a new tic.

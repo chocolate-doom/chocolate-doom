@@ -143,7 +143,7 @@ static boolean BuildNewTic(void)
     gameticdiv = gametic/ticdup;
 
     I_StartTic ();
-    loop_interface->ProcesEvents();
+    loop_interface->ProcessEvents();
 
     // Always run the menu
 
@@ -422,6 +422,10 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
     net_addr_t *addr = NULL;
     int i;
 
+    // Call D_QuitNetGame on exit:
+
+    I_AtExit(D_QuitNetGame, true);
+
 #ifdef FEATURE_MULTIPLAYER
 
     //!
@@ -519,12 +523,9 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
 void D_QuitNetGame (void)
 {
 #ifdef FEATURE_MULTIPLAYER
-
     NET_SV_Shutdown();
     NET_CL_Disconnect();
-
 #endif
-
 }
 
 static int GetLowTic(void)

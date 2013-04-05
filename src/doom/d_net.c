@@ -216,20 +216,9 @@ static void InitConnectData(net_connect_data_t *connect_data)
     connect_data->is_freedoom = W_CheckNumForName("FREEDOOM") >= 0;
 }
 
-//
-// D_CheckNetGame
-// Works out player numbers among the net participants
-//
-void D_CheckNetGame (void)
+void D_ConnectNetGame(void)
 {
     net_connect_data_t connect_data;
-    net_gamesettings_t settings;
-
-    D_RegisterLoopCallbacks(&doom_loop_interface);
-
-    // Call D_QuitNetGame on exit
-
-    I_AtExit(D_QuitNetGame, true);
 
     InitConnectData(&connect_data);
     netgame = D_InitNetGame(&connect_data);
@@ -246,11 +235,22 @@ void D_CheckNetGame (void)
     {
         netgame = true;
     }
+}
+
+//
+// D_CheckNetGame
+// Works out player numbers among the net participants
+//
+void D_CheckNetGame (void)
+{
+    net_gamesettings_t settings;
 
     if (netgame)
     {
         autostart = true;
     }
+
+    D_RegisterLoopCallbacks(&doom_loop_interface);
 
     SaveGameSettings(&settings);
     D_StartNetGame(&settings);
