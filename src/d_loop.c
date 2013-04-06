@@ -331,6 +331,8 @@ static void BlockUntilStart(net_gamesettings_t *settings,
         {
             I_Error("Netgame startup aborted.");
         }
+
+        I_Sleep(100);
     }
 }
 
