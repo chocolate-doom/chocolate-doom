@@ -903,6 +903,16 @@ static boolean AllNodesReady(void)
     return true;
 }
 
+// Check if the game should start, and if so, start it.
+
+static void CheckStartGame(void)
+{
+    if (AllNodesReady())
+    {
+        StartGame();
+    }
+}
+
 // Send waiting data with current status to all nodes that are ready to
 // start the game.
 
@@ -953,12 +963,7 @@ static void NET_SV_ParseGameStart(net_packet_t *packet, net_client_t *client)
 
     client->ready = true;
 
-    // Start the game once all clients are ready.
-
-    if (AllNodesReady())
-    {
-        StartGame();
-    }
+    CheckStartGame();
 
     // Update all ready clients with the current state (number of players
     // ready, etc.). This is used by games that show startup progress
@@ -1664,9 +1669,19 @@ static void NET_SV_RunClient(net_client_t *client)
 
     if (client->connection.state == NET_CONN_STATE_DISCONNECTED)
     {
-        // deactivate and free back 
-
         client->active = false;
+
+        // If we were about to start a game, any player disconnecting
+        // should cause an abort.
+
+        if (server_state == SERVER_WAITING_START && !client->drone)
+        {
+            NET_SV_BroadcastMessage("Game startup aborted because "
+                                    "player '%s' disconnected.",
+                                    client->name);
+            NET_SV_GameEnded();
+        }
+
         free(client->name);
         NET_FreeAddress(client->addr);
 
@@ -1680,7 +1695,7 @@ static void NET_SV_RunClient(net_client_t *client)
             NET_SV_GameEnded();
         }
     }
-    
+
     if (!ClientConnected(client))
     {
         // client has not yet finished connecting
@@ -1753,7 +1768,6 @@ static void UpdateMasterServer(void)
     if (now - master_resolve_time > MASTER_RESOLVE_PERIOD * 1000)
     {
         net_addr_t *new_addr;
-        printf("Re-resolve master server\n");
 
         new_addr = NET_Query_ResolveMaster(server_context);
 
@@ -1841,17 +1855,26 @@ void NET_SV_Run(void)
         }
     }
 
-    if (server_state == SERVER_IN_GAME)
+    switch (server_state)
     {
-        NET_SV_AdvanceWindow();
+        case SERVER_WAITING_LAUNCH:
+            break;
 
-        for (i=0; i<NET_MAXPLAYERS; ++i)
-        {
-            if (sv_players[i] != NULL && ClientConnected(sv_players[i]))
+        case SERVER_WAITING_START:
+            CheckStartGame();
+            break;
+
+        case SERVER_IN_GAME:
+            NET_SV_AdvanceWindow();
+
+            for (i = 0; i < NET_MAXPLAYERS; ++i)
             {
-                NET_SV_CheckResends(sv_players[i]);
+                if (sv_players[i] != NULL && ClientConnected(sv_players[i]))
+                {
+                    NET_SV_CheckResends(sv_players[i]);
+                }
             }
-        }
+            break;
     }
 }
 
