@@ -34,6 +34,7 @@
 #include "doomtype.h"
 #include "d_event.h"
 #include "i_joystick.h"
+#include "i_system.h"
 
 #include "m_config.h"
 
@@ -65,6 +66,16 @@ static int joystick_x_invert = 0;
 
 static int joystick_y_axis = 1;
 static int joystick_y_invert = 0;
+
+void I_ShutdownJoystick(void)
+{
+    if (joystick != NULL)
+    {
+        SDL_JoystickClose(joystick);
+        joystick = NULL;
+        SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
+    }
+}
 
 void I_InitJoystick(void)
 {
@@ -118,16 +129,8 @@ void I_InitJoystick(void)
     // Initialized okay!
 
     printf("I_InitJoystick: %s\n", SDL_JoystickName(joystick_index));
-}
 
-void I_ShutdownJoystick(void)
-{
-    if (joystick != NULL) 
-    {
-        SDL_JoystickClose(joystick);
-        joystick = NULL;
-        SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
-    }
+    I_AtExit(I_ShutdownJoystick, true);
 }
 
 // Get a bitmask of all currently-pressed buttons
