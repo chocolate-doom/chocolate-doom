@@ -33,9 +33,9 @@
 #include "net_packet.h"
 #include "net_structrw.h"
 
-// connections time out after 10 seconds
+// connections time out after 30 seconds
 
-#define CONNECTION_TIMEOUT_LEN 10
+#define CONNECTION_TIMEOUT_LEN 30
 
 // maximum time between sending packets
 
