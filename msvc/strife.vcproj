@@ -245,6 +245,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\gusconf.h"
+				>
+			</File>
+			<File
 				RelativePath="..\src\i_cdmus.h"
 				>
 			</File>
@@ -662,6 +666,10 @@
 			</File>
 			<File
 				RelativePath="..\src\deh_text.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\gusconf.c"
 				>
 			</File>
 			<File
