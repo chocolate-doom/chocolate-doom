@@ -30,7 +30,8 @@
 
 
 
-#define MAXVISSPRITES  	128
+// [cndoom] Doom+ limits
+#define MAXVISSPRITES  	1024 // was 128
 
 extern vissprite_t	vissprites[MAXVISSPRITES];
 extern vissprite_t*	vissprite_p;

@@ -1,0 +1,5 @@
+
+00001   Update/change Competition Doom program icons
+        Set Doom+ limits: MAXLINEANIMS 16384, MAXVISPLANES 1024
+        MAXOPENINGS 65536, MAXPLATS 7680, MAXDRAWSEGS 2048 &
+        MAXVISSPRITES 1024

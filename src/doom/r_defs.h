@@ -56,7 +56,8 @@
 #define SIL_TOP			2
 #define SIL_BOTH		3
 
-#define MAXDRAWSEGS		256
+// [cndoom] Doom+ limits
+#define MAXDRAWSEGS		2048 // was 256 
 
 
 
