@@ -1,5 +1,6 @@
-
-00001   Update/change Competition Doom program icons
-        Set Doom+ limits: MAXLINEANIMS 16384, MAXVISPLANES 1024
+00002   Renamed to Competition Doom, changed version to 0.2.4,
+        fixed links and missing files in doom.vcproj file
+00001   Update/change Competition Doom program icons;
+        Set Doom+ limits: MAXLINEANIMS 16384, MAXVISPLANES 1024,
         MAXOPENINGS 65536, MAXPLATS 7680, MAXDRAWSEGS 2048 &
         MAXVISSPRITES 1024
