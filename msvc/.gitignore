@@ -1,7 +1,8 @@
 *.cfg
 *.ncb
+*.pcx
 *.suo
 *.user
+doom.vcproj
 savegames
 strfsav*
-*.pcx

@@ -1,90 +1,75 @@
-
-Chocolate Doom is a Doom source port which aims to behave as closely
-as possible to the original DOS Doom executables.
-
-Chocolate Doom aims to:
-
- * Be compatible with DOS Doom demos
- * Be compatible with DOS Doom configuration files
- * Be compatible with DOS Doom savegames
- * Be compatible with DOS Doom bugs
- * Provide the same "feel" as DOS Doom (display and input should behave
-   the same)
- * As far as possible, provide all the same features that are available
-   using the DOS version.
-
-== Setting up gameplay ==
-
-For instructions on how to set up Chocolate Doom for play, see the
-INSTALL file.
+Competition Doom is a Doom source port based on Chocolate Doom and
+adds additional features and settings to it.
 
 == Configuration File ==
 
-Chocolate Doom is compatible with the DOS Doom configuration file
-(normally named 'default.cfg').  Existing configuration files for DOS
-Doom should therefore simply work out of the box.  However, Chocolate
-Doom also provides some extra settings.  These are stored in a
-separate file named 'chocolate-doom.cfg'.
+Competition Doom also provides some extra settings.
+These are stored in a separate file named 'cndoom.cfg'.
 
-The configuration can be edited using the chocolate-setup tool.
+Detailed explanation about each setting:
 
-== Command-line options ==
+// Display ingame/intermission screen timer
+// 0 - No. 1 - Yes (Default)
+cn_timer_enabled              1
 
-For a complete list of command-line options, see the CMDLINE file.
+// Timer X position
+// Default: -1
+cn_timer_offset_x             -1
 
-== Playing TCs ==
+// Timer Y position
+// Default: 0
+cn_timer_offset_y             0
 
-With Vanilla Doom there is no way to include sprites in PWAD files.
-Chocolate Doom's '-file' command line option behaves exactly the same
-as Vanilla Doom, and trying to play TCs by adding the WAD files using
-'-file' will not work.
+// Timer color
+// 0 - 255 (Default:168)
+cn_timer_color_index          168
 
-Many Total Conversions (TCs) are distributed as a PWAD file which must
-be merged into the main IWAD.  Typically a copy of DEUSF.EXE is
-included which performs this merge.  Chocolate Doom includes a new
-option, '-merge', which will simulate this merge.  Essentially, the
-WAD directory is merged in memory, removing the need to modify the
-IWAD on disk.
+// Shadow for timer
+// 0 - No (Default). 1 - Yes
+cn_timer_shadow_index         0
 
-To play TCs using Chocolate Doom, run like this:
+// Backgroung color for timer
+// 0 - 255 (Default:16)
+cn_timer_bg_colormap          16
 
-  chocolate-doom -merge thetc.wad
+// Quickstart delay so monitor can change resolution and let you adjust mouse and keys before the game starts.
+// 0 - 99999 (Default:1500)
+cn_quickstart_delay           1500
 
-Here are some examples:
+// Precache all sounds at start, otherwise game will 'skip' when new sound is loaded.
+// 0 - No. 1 - Yes (Default)
+cn_precache_sounds            1
 
-  chocolate-doom -merge batman.wad -deh batman.deh vbatman.deh  (Batman Doom)
-  chocolate-doom -merge aoddoom1.wad -deh aoddoom1.deh  (Army of Darkness Doom)
+// Your details (All required for demo submission)
+cn_meta_firstname
+cn_meta_lastname
+cn_meta_nickname
+
+// Country format: two letter ISO 3166, example for USA (us)
+// http://www.iso.org/iso/prods-services/iso3166ma/02iso-3166-code-lists/country_names_and_code_elements
+cn_meta_country
+
+// Extra details not required (Optional)
+// Date format: YYYY-MM-DD
+cn_meta_birthdate
+cn_meta_email
+cn_meta_url 
+
+== Additional command-line options ==
+
 
 == Other information ==
 
- * More information, including information about how to play various
-   classic TCs, is available on the Chocolate Doom website:
+ * More information is available on the Competition Doom website:
 
-     http://www.chocolate-doom.org/
+	http://www.doom.com.hr/compet-n/
+	http://www.doom.com.hr/forum/
 
    You are encouraged to sign up and contribute any useful information
    you may have regarding the port!
 
- * Chocolate Doom is not perfect.  Although it aims to accurately
-   emulate Vanilla Doom, some of the behavior of Vanilla Doom can be
-   very difficult to reproduce. Because of the nature of the project,
-   you may also encounter Vanilla Doom bugs; these are intentionally
-   present; see the NOT-BUGS file for more information.
-
-   New bug reports can be submitted to the Chocolate Doom bug tracker
-   on Sourceforge.  See:
-
-     http://sourceforge.net/projects/chocolate-doom
-
- * Source code patches are welcome, but please follow the style
-   guidelines - see the file named HACKING included with the source
-   distribution.
-
- * Chocolate Doom is distributed under the GNU GPL.  See the COPYING
+ * Competition Doom is distributed under the GNU GPL.  See the COPYING
    file for more information.
 
  * Please send any feedback, questions or suggestions to
-   fraggle@gmail.com.  Thanks!
-
-# vim: tw=70
-
+   admin@doom.com.hr  Thanks!

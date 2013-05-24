@@ -1,3 +1,5 @@
+00003   more fixes for MSVC, Competition README
+        savegame and demo limits removed by default
 00002   Renamed to Competition Doom, changed version to 0.2.4,
         fixed links and missing files in doom.vcproj file
 00001   Update/change Competition Doom program icons;
