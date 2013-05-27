@@ -149,7 +149,7 @@ static char *ExecReadOutput(char **argv)
 #include <windows.h>
 #include <shlobj.h>
 
-static BOOL WINAPI (*MyGetOpenFileName)(LPOPENFILENAME) = NULL;
+static BOOL (*MyGetOpenFileName)(LPOPENFILENAME) = NULL;
 static LPITEMIDLIST (*MySHBrowseForFolder)(LPBROWSEINFO) = NULL;
 static BOOL (*MySHGetPathFromIDList)(LPITEMIDLIST, LPTSTR) = NULL;
 
