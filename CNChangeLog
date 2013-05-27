@@ -1,6 +1,10 @@
-00003   more fixes for MSVC, Competition README
+00004   Removed message box after recording;
+        -record and -playdemo works with or without extension;
+        key "Finish recording demo" works in playdemo too;
+        show intermission screen for ExM8
+00003   More fixes for MSVC, Competition README;
         savegame and demo limits removed by default
-00002   Renamed to Competition Doom, changed version to 0.2.4,
+00002   Renamed to Competition Doom, changed version to 0.2.4;
         fixed links and missing files in doom.vcproj file
 00001   Update/change Competition Doom program icons;
         Set Doom+ limits: MAXLINEANIMS 16384, MAXVISPLANES 1024,

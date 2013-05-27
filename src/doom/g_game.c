@@ -835,6 +835,13 @@ void G_Ticker (void)
     int		buf; 
     ticcmd_t*	cmd;
     
+    // [cndoom] moved this here so it works during playback too
+    // G_CheckDemoStatus just returns if no demo is playing or recording,
+    // and during the regular demo loop the keystroke goes to the menu 
+    // code so there should be no unwanted side effects.
+    if (gamekeydown[key_demo_quit])
+	G_CheckDemoStatus ();
+    
     // do player reborns if needed
     for (i=0 ; i<MAXPLAYERS ; i++) 
 	if (playeringame[i] && players[i].playerstate == PST_REBORN) 
@@ -863,9 +870,10 @@ void G_Ticker (void)
 	  case ga_completed: 
 	    G_DoCompleted (); 
 	    break; 
-	  case ga_victory: 
-	    F_StartFinale (); 
-	    break; 
+      // [cndoom] not needed anymore
+	  //case ga_victory: 
+	    //F_StartFinale (); 
+	    //break;
 	  case ga_worlddone: 
 	    G_DoWorldDone (); 
 	    break; 
@@ -1274,52 +1282,17 @@ void G_DoCompleted (void)
 	 
     if (automapactive) 
 	AM_Stop (); 
-	
-    if (gamemode != commercial)
-    {
-        // Chex Quest ends after 5 levels, rather than 8.
+	  
+    // [cndoom] handle ending after map8 for gamemode != commercial in the
+    // same place it's done for gamemode == commercial (G_WorldDone), so that
+    // that timers in the intermission screen can be seen.
 
-        if (gameversion == exe_chex)
-        {
-            if (gamemap == 5)
-            {
-                gameaction = ga_victory;
-                return;
-            }
-        }
-        else
-        {
-            switch(gamemap)
-            {
-              case 8:
-                gameaction = ga_victory;
-                return;
-              case 9: 
-                for (i=0 ; i<MAXPLAYERS ; i++) 
-                    players[i].didsecret = true; 
-                break;
-            }
-        }
-    }
-
-//#if 0  Hmmm - why?
-    if ( (gamemap == 8)
-	 && (gamemode != commercial) ) 
-    {
-	// victory 
-	gameaction = ga_victory; 
-	return; 
-    } 
-	 
-    if ( (gamemap == 9)
-	 && (gamemode != commercial) ) 
+    if ((gamemap == 9) && (gamemode != commercial) ) 
     {
 	// exit secret level 
 	for (i=0 ; i<MAXPLAYERS ; i++) 
 	    players[i].didsecret = true; 
-    } 
-//#endif
-    
+    }
 	 
     wminfo.didsecret = players[consoleplayer].didsecret; 
     wminfo.epsd = gameepisode -1; 
@@ -1373,14 +1346,10 @@ void G_DoCompleted (void)
     wminfo.maxitems = totalitems; 
     wminfo.maxsecret = totalsecret; 
     wminfo.maxfrags = 0; 
-
-    // Set par time. Doom episode 4 doesn't have a par time, so this
-    // overflows into the cpars array. It's necessary to emulate this
-    // for statcheck regression testing.
-    if (gamemode == commercial)
-	wminfo.partime = TICRATE*cpars[gamemap-1];
+    if ( gamemode == commercial )
+	wminfo.partime = TICRATE*cpars[gamemap-1]; 
     else if (gameepisode < 4)
-	wminfo.partime = TICRATE*pars[gameepisode][gamemap];
+	wminfo.partime = TICRATE*pars[gameepisode][gamemap]; 
     else
         wminfo.partime = TICRATE*cpars[gamemap];
 
@@ -1399,8 +1368,17 @@ void G_DoCompleted (void)
  
     gamestate = GS_INTERMISSION; 
     viewactive = false; 
-    automapactive = false; 
+    automapactive = false;
 
+    // [cndoom] save leveltime here for later use, also calculate total
+    // time spent on all levels so far for use in the intermission screen
+
+    //leveltimes[gamemap-1] = leveltime;
+
+    //for (i=0, totaltime=0; i < MAXLEVELTIMES; i++)
+	//totaltime += leveltimes[i];
+    // end cndoom
+    
     StatCopy(&wminfo);
  
     WI_Start (&wminfo); 
@@ -1433,8 +1411,18 @@ void G_WorldDone (void)
 	    break;
 	}
     }
-} 
- 
+    // [cndoom] gamemode != commercial is handled here now instead of
+    // setting ga_victory in G_DoCompleted so that the intermission
+    // screen gets shown for ExM8
+    else
+    {
+	if (gameversion == exe_chex && gamemap == 5)
+	    F_StartFinale();
+	else if (gamemap == 8)
+	    F_StartFinale();
+    }
+}
+
 void G_DoWorldDone (void) 
 {        
     gamestate = GS_LEVEL; 
@@ -1829,9 +1817,10 @@ static void IncreaseDemoBuffer(void)
 void G_WriteDemoTiccmd (ticcmd_t* cmd) 
 { 
     byte *demo_start;
-
-    if (gamekeydown[key_demo_quit])           // press q to end demo recording 
-	G_CheckDemoStatus (); 
+    
+    // [cndoom] moved this elsewhere so it works during playback too
+    //if (gamekeydown[key_demo_quit])           // press q to end demo recording 
+	//G_CheckDemoStatus (); 
 
     demo_start = demo_p;
 
@@ -1887,7 +1876,11 @@ void G_RecordDemo (char *name)
 	
     usergame = false; 
     demoname = Z_Malloc(strlen(name) + 5, PU_STATIC, NULL);
-    sprintf(demoname, "%s.lmp", name);
+    // [cndoom] only append .lmp if it's missing, to match new -playdemo behaviour
+    if (!strcasecmp(name + strlen(name) - 4, ".lmp"))
+	strcpy(demoname, name);
+    else
+	sprintf(demoname, "%s.lmp", name);
     maxsize = 0x20000;
 
     //!
@@ -1901,6 +1894,7 @@ void G_RecordDemo (char *name)
     i = M_CheckParmWithArgs("-maxdemo", 1);
     if (i)
 	maxsize = atoi(myargv[i+1])*1024;
+
     demobuffer = Z_Malloc (maxsize,PU_STATIC,NULL); 
     demoend = demobuffer + maxsize;
 	
@@ -2006,10 +2000,10 @@ void G_DoPlayDemo (void)
     skill_t skill; 
     int             i, episode, map; 
     int demoversion;
-	 
     gameaction = ga_nothing; 
-    demobuffer = demo_p = W_CacheLumpName (defdemoname, PU_STATIC); 
-
+    
+    	demobuffer = demo_p = W_CacheLumpName (defdemoname, PU_STATIC);
+	
     demoversion = *demo_p++;
 
     if (demoversion == DOOM_VERSION)
@@ -2117,8 +2111,9 @@ boolean G_CheckDemoStatus (void)
     } 
 	 
     if (demoplayback) 
-    { 
+    {
         W_ReleaseLumpName(defdemoname);
+    
 	demoplayback = false; 
 	netdemo = false;
 	netgame = false;
@@ -2141,10 +2136,12 @@ boolean G_CheckDemoStatus (void)
     { 
 	*demo_p++ = DEMOMARKER; 
 	M_WriteFile (demoname, demobuffer, demo_p - demobuffer); 
-	Z_Free (demobuffer); 
+	
+    Z_Free (demobuffer);
 	demorecording = false; 
-	I_Error ("Demo %s recorded",demoname); 
-    } 
+    // [cndoom] remove annoying message box after recording
+    //	I_Error ("Demo %s recorded",demoname); 
+    }
 	 
     return false; 
 } 
