@@ -36,6 +36,11 @@
 
 static Uint32 basetime = 0;
 
+// [cndoom] "fast" timer for quickly speeding through demos, similar to
+// -fastdemo from boom
+int cn_fasttimer = 0;
+static int cn_fastticks = 0;
+
 int  I_GetTime (void)
 {
     Uint32 ticks;

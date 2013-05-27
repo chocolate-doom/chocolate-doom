@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;..\src;..\src\doom;..\textscreen;..\pcsound"
+				AdditionalIncludeDirectories=".;..\src;..\src\doom;..\textscreen;..\pcsound;..\opl"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;PROGRAM_PREFIX=&quot;\&quot;cndoom-\&quot;&quot;"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
@@ -186,6 +186,10 @@
 			>
 			<File
 				RelativePath="..\src\aes_prng.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\cn_timer.h"
 				>
 			</File>
 			<File
@@ -626,6 +630,10 @@
 			>
 			<File
 				RelativePath="..\src\aes_prng.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\cn_timer.c"
 				>
 			</File>
 			<File

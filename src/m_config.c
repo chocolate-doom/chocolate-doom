@@ -43,6 +43,9 @@
 
 #include "z_zone.h"
 
+// [cndoom] for timer config vars
+#include "cn_timer.h"
+
 //
 // DEFAULTS
 //
@@ -56,6 +59,9 @@ char *configdir;
 
 static char *default_main_config;
 static char *default_extra_config;
+
+// [cndoom] quickstart configuration setting, see d_main.c
+extern int cn_quickstart_delay;
 
 typedef enum 
 {
@@ -1367,6 +1373,43 @@ static default_collection_t extra_defaults =
     NULL,
 };
 
+
+// [cndoom] new config vars in cndoom.cfg
+static default_t cn_defaults_list[] = 
+{
+    // in-game timer settings, see hu_stuff.c
+    CONFIG_VARIABLE_INT (cn_timer_enabled),
+    CONFIG_VARIABLE_INT (cn_timer_offset_x),
+    CONFIG_VARIABLE_INT (cn_timer_offset_y),
+    CONFIG_VARIABLE_INT (cn_timer_color_index),
+    CONFIG_VARIABLE_INT (cn_timer_shadow_index),
+    CONFIG_VARIABLE_INT (cn_timer_bg_colormap),
+
+    // quickstart settings, see d_main.c
+    CONFIG_VARIABLE_INT (cn_quickstart_delay),
+
+    // optionally precache sounds, see i_sdlsound.c
+    CONFIG_VARIABLE_INT (cn_precache_sounds),
+
+    // player info for demo metadata, g_game.c
+    CONFIG_VARIABLE_STRING (cn_meta_firstname),
+    CONFIG_VARIABLE_STRING (cn_meta_lastname),
+    CONFIG_VARIABLE_STRING (cn_meta_nickname),
+    CONFIG_VARIABLE_STRING (cn_meta_birthdate),
+    CONFIG_VARIABLE_STRING (cn_meta_country),
+    CONFIG_VARIABLE_STRING (cn_meta_email),
+    CONFIG_VARIABLE_STRING (cn_meta_url),
+};
+
+static default_collection_t cn_defaults =
+{
+    cn_defaults_list,
+    arrlen(cn_defaults_list),
+    NULL,
+};
+
+// end [cndoom]
+
 // Search a collection for a variable
 
 static default_t *SearchCollection(default_collection_t *collection, char *name)
@@ -1631,6 +1674,7 @@ void M_SaveDefaults (void)
 {
     SaveDefaultCollection(&doom_defaults);
     SaveDefaultCollection(&extra_defaults);
+    SaveDefaultCollection(&cn_defaults); // [cndoom]
 }
 
 //
@@ -1715,8 +1759,22 @@ void M_LoadDefaults (void)
                 configdir, default_extra_config);
     }
 
+    // [cndoom]
+    i = M_CheckParmWithArgs("-cnconfig",1);
+    if (i)
+    {
+	cn_defaults.filename = myargv[i+1];
+	printf("        cndoom configuration file: %s\n", cn_defaults.filename);
+    }
+    else
+    {
+	cn_defaults.filename = malloc(strlen(configdir) + 20);
+	sprintf(cn_defaults.filename, "%scndoom.cfg", configdir);
+    }
+    
     LoadDefaultCollection(&doom_defaults);
     LoadDefaultCollection(&extra_defaults);
+    LoadDefaultCollection(&cn_defaults); // [cndoom]
 }
 
 // Get a configuration file variable by its name

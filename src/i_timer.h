@@ -30,6 +30,10 @@
 
 #define TICRATE 35
 
+// [cndoom] "fast" timer for quickly speeding through demos, similar to
+// -fastdemo from boom
+extern int cn_fasttimer;
+
 // Called by D_DoomLoop,
 // returns current time in tics.
 int I_GetTime (void);

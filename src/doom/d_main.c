@@ -83,6 +83,9 @@
 
 #include "d_main.h"
 
+// [cndoom]
+#include "cn_timer.h"
+
 //
 // D-DoomLoop()
 // Not a globally visible function,
@@ -199,6 +202,7 @@ void D_Display (void)
 	R_ExecuteSetViewSize ();
 	oldgamestate = -1;                      // force background redraw
 	borderdrawcount = 3;
+    CN_UpdateTimerLocation(1); // [cndoom] timer
     }
 
     // save the current screen if about to wipe
@@ -304,6 +308,9 @@ void D_Display (void)
     M_Drawer ();          // menu is drawn even on top of everything
     NetUpdate ();         // send out any new accumulation
 
+    // [cndoom] draw timer here
+    if (gamestate == GS_LEVEL && !inhelpscreens && !automapactive && !wipe)
+	CN_DrawTimer();
 
     // normal update
     if (!wipe)
@@ -428,6 +435,10 @@ void D_DoomLoop (void)
     V_RestoreBuffer();
     R_ExecuteSetViewSize();
 
+    // [cndoom]
+    CN_ResetTimer();
+    CN_UpdateTimerLocation(1); 
+    
     D_StartGameLoop();
 
     if (testcontrols)
@@ -1537,6 +1548,10 @@ void D_DoomMain (void)
     DEH_printf("\nP_Init: Init Playloop state.\n");
     P_Init ();
 
+    // [cndoom] "fast" timer for quickly speeding through demos, similar to
+    // -fastdemo from boom
+    cn_fasttimer = M_CheckParm("-fasttimer");
+    
     DEH_printf("S_Init: Setting up sound.\n");
     S_Init (sfxVolume * 8, musicVolume * 8);
 

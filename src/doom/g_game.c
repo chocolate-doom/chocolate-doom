@@ -156,7 +156,13 @@ int             testcontrols_mousespeed;
 wbstartstruct_t wminfo;               	// parms for world map / intermission 
  
 byte		consistancy[MAXPLAYERS][BACKUPTICS]; 
- 
+
+// [cndoom] all level times saved here on map completion for later use,
+// also keep track of total time spent on all levels so far.
+#define MAXLEVELTIMES 34
+int leveltimes[MAXLEVELTIMES];
+int totaltime;
+
 #define MAXPLMOVE		(forwardmove[1]) 
  
 #define TURBOTHRESHOLD	0x32
@@ -203,7 +209,7 @@ static const struct
 #define NUMKEYS		256 
 #define MAX_JOY_BUTTONS 20
 
-static boolean  gamekeydown[NUMKEYS]; 
+/*static*/ boolean  gamekeydown[NUMKEYS]; // [cndoom]
 static int      turnheld;		// for accelerative turning 
  
 static boolean  mousearray[MAX_MOUSE_BUTTONS + 1];
@@ -1619,7 +1625,10 @@ G_InitNew
 { 
     char *skytexturename;
     int             i; 
-	 
+	
+    // [cndoom] clear leveltimes
+    memset (leveltimes, 0, sizeof(int)*MAXLEVELTIMES);
+    
     if (paused) 
     { 
 	paused = false; 

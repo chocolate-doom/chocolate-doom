@@ -1,3 +1,5 @@
+00005   Precache sounds to avoid possible slowdown inside game;
+        milisecond timer in the corner and intermission screen
 00004   Removed message box after recording;
         -record and -playdemo works with or without extension;
         key "Finish recording demo" works in playdemo too;
