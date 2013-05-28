@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="Server"
 	ProjectGUID="{10DCBB24-F8BB-4796-A653-6DE9C8AAC24B}"
 	RootNamespace="Server"
@@ -62,7 +62,7 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="SDL.lib SDL_net.lib SDLmain.lib"
-				OutputFile="$(OutDir)\chocolate-server-dbg.exe"
+				OutputFile="$(OutDir)\cnserver-dbg.exe"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -138,8 +138,8 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDL_net.lib SDLmain.lib"
-				OutputFile="$(OutDir)\chocolate-server.exe"
+				AdditionalDependencies="SDL.lib SDL_net.lib SDLmain.lib SDL_mixer.lib"
+				OutputFile="$(OutDir)\cnserver.exe"
 				GenerateDebugInformation="false"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -222,6 +222,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\net_query.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\net_sdl.c"
 				>
 			</File>
@@ -277,6 +281,10 @@
 			</File>
 			<File
 				RelativePath="..\src\net_packet.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_query.h"
 				>
 			</File>
 			<File

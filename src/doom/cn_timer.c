@@ -278,3 +278,4 @@ extern int cn_timer_offset_y;
 extern int cn_timer_color_index;
 extern int cn_timer_bg_colormap;
 extern int cn_timer_enabled;
+

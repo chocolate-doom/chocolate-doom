@@ -20,3 +20,4 @@ extern void CN_DrawIntermissionTime (int x, int y, int time);
 extern void CN_DrawTotalTime (void);
 
 #endif
+

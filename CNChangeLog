@@ -1,3 +1,9 @@
+00006   MSVC: server and heretic now compiles, moved cn_timer files;
+        Set Heretic+ limits: MAXLINEANIMS 16384, MAXVISPLANES 1024,
+        MAXOPENINGS 65536, MAXPLATS 7680, MAXDRAWSEGS 2048 &
+        MAXVISSPRITES 1024
+        Additional cn config settings: dclick_use = 0, show_endoom = 0,
+        vanilla_keyboard_mapping = 0, always_run = 1
 00005   Precache sounds to avoid possible slowdown inside game;
         milisecond timer in the corner and intermission screen
 00004   Removed message box after recording;

@@ -147,7 +147,7 @@ boolean         isdemoversion;
 char		wadfile[1024];          // primary wad file
 char		mapdir[1024];           // directory of development maps
 
-int             show_endoom = 1;
+int             show_endoom = 0;
 int             graphical_startup = 1;
 
 // fraggle 06/03/11 [STRIFE]: Unused config variable, preserved

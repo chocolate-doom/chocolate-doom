@@ -31,9 +31,9 @@
 #include "joystick.h"
 #include "keyboard.h"
 
-int vanilla_keyboard_mapping = 1;
+int vanilla_keyboard_mapping = 0;  // [cndoom]
 
-static int always_run = 0;
+static int always_run = 1; // [cndoom]
 
 // Keys within these groups cannot have the same value.
 

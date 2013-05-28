@@ -44,7 +44,7 @@
 #include "z_zone.h"
 
 // [cndoom] for timer config vars
-#include "cn_timer.h"
+#include "doom/cn_timer.h"
 
 //
 // DEFAULTS
@@ -1373,22 +1373,45 @@ static default_collection_t extra_defaults =
     NULL,
 };
 
-
 // [cndoom] new config vars in cndoom.cfg
 static default_t cn_defaults_list[] = 
 {
     // in-game timer settings, see hu_stuff.c
+    
+    // Display ingame/intermission screen timer
+    // 0 - No. 1 - Yes (Default)
     CONFIG_VARIABLE_INT (cn_timer_enabled),
+    
+    // Timer X position
+    // Default: -1
     CONFIG_VARIABLE_INT (cn_timer_offset_x),
+    
+    // Timer Y position
+    // Default: 0
     CONFIG_VARIABLE_INT (cn_timer_offset_y),
+    
+    // Timer color
+    // 0 - 255 (Default:168)
     CONFIG_VARIABLE_INT (cn_timer_color_index),
+    
+    // Shadow for timer
+    // 0 - No (Default). 1 - Yes
     CONFIG_VARIABLE_INT (cn_timer_shadow_index),
+    
+    // Backgroung color for timer
+    // 0 - 255 (Default:16)
     CONFIG_VARIABLE_INT (cn_timer_bg_colormap),
 
     // quickstart settings, see d_main.c
+    // Quickstart delay so monitor can change resolution and
+    // let you adjust mouse and keys before the game starts.
+    // 0 - 99999 (Default:1500)
     CONFIG_VARIABLE_INT (cn_quickstart_delay),
 
     // optionally precache sounds, see i_sdlsound.c
+    // Precache all sounds at start, otherwise game
+    // will 'skip' when new sound is loaded.
+    // 0 - No. 1 - Yes (Default)
     CONFIG_VARIABLE_INT (cn_precache_sounds),
 
     // player info for demo metadata, g_game.c
@@ -1681,18 +1704,21 @@ void M_SaveDefaults (void)
 // Save defaults to alternate filenames
 //
 
-void M_SaveDefaultsAlternate(char *main, char *extra)
+void M_SaveDefaultsAlternate(char *main, char *extra, char *cn)
 {
     char *orig_main;
     char *orig_extra;
+    char *orig_cn;
 
     // Temporarily change the filenames
 
     orig_main = doom_defaults.filename;
     orig_extra = extra_defaults.filename;
+    orig_cn = cn_defaults.filename;
 
     doom_defaults.filename = main;
     extra_defaults.filename = extra;
+    cn_defaults.filename = cn;
 
     M_SaveDefaults();
 
@@ -1700,6 +1726,7 @@ void M_SaveDefaultsAlternate(char *main, char *extra)
 
     doom_defaults.filename = orig_main;
     extra_defaults.filename = orig_extra;
+    cn_defaults.filename = orig_cn;
 }
 
 //

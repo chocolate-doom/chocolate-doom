@@ -29,7 +29,7 @@
 
 #include "compatibility.h"
 
-# [cndoom] turn off limits by default
+// [cndoom] turn off limits by default
 int vanilla_savegame_limit = 0;
 int vanilla_demo_limit = 0;
 

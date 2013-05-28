@@ -191,7 +191,7 @@ int joybnextweapon = -1;
 // Control whether if a mouse button is double clicked, it acts like 
 // "use" has been pressed
 
-int dclick_use = 1;
+int dclick_use = 0; // [cndoom] no double click
  
 // 
 // Bind all of the common controls used by Doom and all other games.
