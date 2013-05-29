@@ -1,61 +1,65 @@
 Competition Doom is a Doom source port based on Chocolate Doom and
 adds additional features and settings to it.
 
+
 == Configuration File ==
 
 Competition Doom also provides some extra settings.
-These are stored in a separate file named 'cndoom.cfg'.
+These are stored in a file named 'cndoom.cfg'.
 
 Detailed explanation about each setting:
 
 // Display ingame/intermission screen timer
 // 0 - No. 1 - Yes (Default)
-cn_timer_enabled              1
+ cn_timer_enabled              1
 
 // Timer X position
 // Default: -1
-cn_timer_offset_x             -1
+ cn_timer_offset_x             -1
 
 // Timer Y position
 // Default: 0
-cn_timer_offset_y             0
+ cn_timer_offset_y             0
 
 // Timer color
 // 0 - 255 (Default:168)
-cn_timer_color_index          168
+ cn_timer_color_index          168
 
 // Shadow for timer
 // 0 - No (Default). 1 - Yes
-cn_timer_shadow_index         0
+ cn_timer_shadow_index         0
 
 // Backgroung color for timer
 // 0 - 255 (Default:16)
-cn_timer_bg_colormap          16
+ cn_timer_bg_colormap          16
 
-// Quickstart delay so monitor can change resolution and let you adjust mouse and keys before the game starts.
+// Quickstart delay so monitor can change resolution and
+// let you adjust mouse and keys before the game starts.
 // 0 - 99999 (Default:1500)
-cn_quickstart_delay           1500
-
-// Precache all sounds at start, otherwise game will 'skip' when new sound is loaded.
-// 0 - No. 1 - Yes (Default)
-cn_precache_sounds            1
+ cn_quickstart_delay           1500
 
 // Your details (All required for demo submission)
-cn_meta_firstname
-cn_meta_lastname
-cn_meta_nickname
+ cn_meta_firstname
+ cn_meta_lastname
+ cn_meta_nickname
 
 // Country format: two letter ISO 3166, example for USA (us)
-// http://www.iso.org/iso/prods-services/iso3166ma/02iso-3166-code-lists/country_names_and_code_elements
-cn_meta_country
+// http://goo.gl/Bn8d3
+ cn_meta_country
 
 // Extra details not required (Optional)
 // Date format: YYYY-MM-DD
-cn_meta_birthdate
-cn_meta_email
-cn_meta_url 
+ cn_meta_birthdate
+ cn_meta_email
+ cn_meta_url 
+
 
 == Additional command-line options ==
+
+ -printstats        Outputs demo stats (time, kills, items) to
+                    stdout.txt, use this when playing demo:
+                    eg. "cndoom -playdemo demo.lmp -printstats"
+                    Should be useful for movie and episode runs.
 
 
 == Other information ==

@@ -1,3 +1,7 @@
+00007   Additional config settings: joybspeed = 29, usegamma = 4,
+        screenblocks = 10, fixes for new config file variables;
+        new cmd argument -printstats, outputs demo stats to stdout.txt;
+        builds properly under Linux now (tested)
 00006   MSVC: server and heretic now compiles, moved cn_timer files;
         Set Heretic+ limits: MAXLINEANIMS 16384, MAXVISPLANES 1024,
         MAXOPENINGS 65536, MAXPLATS 7680, MAXDRAWSEGS 2048 &

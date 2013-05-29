@@ -110,7 +110,7 @@ static int screen_width = 320;
 static int screen_height = 200;
 static int screen_bpp = 8;
 static int startup_delay = 1000;
-static int usegamma = 0;
+static int usegamma = 4; // [cndoom]
 
 int graphical_startup = 1;
 int show_endoom = 0;

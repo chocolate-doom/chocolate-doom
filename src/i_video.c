@@ -176,7 +176,7 @@ static unsigned int mouse_button_state = 0;
 // motion.  Specified with the '-novert' command line parameter.
 // This is an int to allow saving to config file
 
-int novert = 0;
+int novert = 1; // [cndoom]
 
 // if true, I_VideoBuffer is screen->pixels
 
@@ -266,7 +266,7 @@ static unsigned int last_resize_time;
 // The sensible thing to do is to disable this if you have a non-US
 // keyboard.
 
-int vanilla_keyboard_mapping = true;
+int vanilla_keyboard_mapping = false; // [cndoom]
 
 // Is the shift key currently down?
 

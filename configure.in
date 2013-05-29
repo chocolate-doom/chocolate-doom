@@ -118,7 +118,7 @@ WINDOWS_RC_VERSION=`echo $PACKAGE_VERSION.0 | sed 's/\./, /g' `
 # if this is changed to "lemon-", the programs generated will be named
 # lemon-doom, lemon-heretic, etc.
 
-PROGRAM_PREFIX=chocolate-
+PROGRAM_PREFIX=cn
 
 AC_SUBST(PROGRAM_PREFIX)
 AC_DEFINE_UNQUOTED(PROGRAM_PREFIX, "$PROGRAM_PREFIX",

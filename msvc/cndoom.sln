@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+# Visual C++ Express 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Doom", "doom.vcproj", "{8B744A3B-8F18-41A0-85A3-293816E85B6E}"
 	ProjectSection(ProjectDependencies) = postProject
 		{66CD7F50-73B9-482F-8B69-1AF54983F845} = {66CD7F50-73B9-482F-8B69-1AF54983F845}

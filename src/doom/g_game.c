@@ -240,8 +240,8 @@ static char     savedescription[32];
 mobj_t*		bodyque[BODYQUESIZE]; 
 int		bodyqueslot; 
  
-int             vanilla_savegame_limit = 1;
-int             vanilla_demo_limit = 1;
+int             vanilla_savegame_limit = 0; // [cndoom]
+int             vanilla_demo_limit = 0; // [cndoom]
  
 int G_CmdChecksum (ticcmd_t* cmd) 
 { 
@@ -1376,20 +1376,72 @@ void G_DoCompleted (void)
     viewactive = false; 
     automapactive = false;
 
-    // [cndoom] save leveltime here for later use, also calculate total
+    //[cndoom] save leveltime here for later use, also calculate total
     // time spent on all levels so far for use in the intermission screen
 
-    //leveltimes[gamemap-1] = leveltime;
+    leveltimes[gamemap-1] = leveltime;
 
-    //for (i=0, totaltime=0; i < MAXLEVELTIMES; i++)
-	//totaltime += leveltimes[i];
+    for (i=0, totaltime=0; i < MAXLEVELTIMES; i++)
+	totaltime += leveltimes[i];
     // end cndoom
     
     StatCopy(&wminfo);
  
+    // [cndoom] save leveltime here for later use, also calculate total
+    // time spent on all levels so far for use in the intermission screen
+
+    leveltimes[gamemap-1] = leveltime;
+
+    for (i=0, totaltime=0; i < MAXLEVELTIMES; i++)
+	totaltime += leveltimes[i];
+
+    // [cndoom] temp stuff, remove or improve later
+    if (M_CheckParm("-printstats"))
+    {
+	int ki, it, se;
+
+	printf ("\n### ");
+	if (gamemode == commercial)
+	    printf ("MAP%02i ", gamemap);
+	else
+	    printf ("E%iM%i #", gameepisode, gamemap);
+	printf ("#####################################\n"\
+		"#                                             #\n");
+
+	if (leveltime >= TICRATE*35*60)
+	{
+		printf ("#   Time: %03i:%05.2f", leveltime / TICRATE / 60,
+		(float)(leveltime % (60*TICRATE)) / TICRATE);
+	}
+	else
+	{
+		printf ("#   Time:  %02i:%05.2f", leveltime / TICRATE / 60,
+		(float)(leveltime % (60*TICRATE)) / TICRATE);
+	}
+
+	for (i = ki = it = se = 0; i<MAXPLAYERS; i++)
+	{
+	    ki += players[i].killcount;
+	    it += players[i].itemcount;
+	    se += players[i].secretcount;
+	}
+
+	printf ("       Kills: % 5i/%-5i  #\n", ki, totalkills);
+	printf ("#  Items: % 5i/%-5i   ", it, totalitems);
+	printf ("Secrets: % 5i/%-5i  #\n", se, totalsecret);
+
+	printf ("#                                             #\n"\
+		"################### Total time: %02i:%02i:%05.2f ###\n",
+		totaltime / TICRATE / 60 / 60,
+		(totaltime / TICRATE / 60) % 60,
+		(float)(totaltime % (60*TICRATE)) / TICRATE);
+
+	fflush(stdout);
+    }
+    // end cndoom
+ 
     WI_Start (&wminfo); 
 } 
-
 
 //
 // G_WorldDone 

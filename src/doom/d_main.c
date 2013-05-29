@@ -381,6 +381,20 @@ void D_BindVariables(void)
     M_BindVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
     M_BindVariable("vanilla_demo_limit",     &vanilla_demo_limit);
     M_BindVariable("show_endoom",            &show_endoom);
+    // [cndoom]
+    M_BindVariable("cn_timer_enabled",       &cn_timer_enabled);
+    M_BindVariable("cn_timer_bg_colormap",   &cn_timer_bg_colormap);
+    M_BindVariable("cn_timer_offset_x",      &cn_timer_offset_x);
+    M_BindVariable("cn_timer_offset_y",      &cn_timer_offset_y);
+    M_BindVariable("cn_timer_color_index",   &cn_timer_color_index);
+    M_BindVariable("cn_timer_shadow_index",  &cn_timer_shadow_index);
+    //M_BindVariable("cn_meta_firstname",      &cn_meta_firstname);
+    //M_BindVariable("cn_meta_lastname",       &cn_meta_lastname);
+    //M_BindVariable("cn_meta_nickname",       &cn_meta_nickname);
+    //M_BindVariable("cn_meta_birthdate",      &cn_meta_birthdate);
+    //M_BindVariable("cn_meta_country",        &cn_meta_country);
+    //M_BindVariable("cn_meta_email",          &cn_meta_email);
+    //M_BindVariable("cn_meta_url",            &cn_meta_url);
 
     // Multiplayer chat macros
 

@@ -189,10 +189,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\cn_timer.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\d_event.h"
 				>
 			</File>
@@ -448,6 +444,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\src\doom\cn_timer.h"
+					>
+				</File>
+				<File
 					RelativePath="..\src\doom\d_englsh.h"
 					>
 				</File>
@@ -630,10 +630,6 @@
 			>
 			<File
 				RelativePath="..\src\aes_prng.c"
-				>
-			</File>
-			<File
-				RelativePath="..\src\cn_timer.c"
 				>
 			</File>
 			<File
@@ -909,6 +905,10 @@
 				>
 				<File
 					RelativePath="..\src\doom\am_map.c"
+					>
+				</File>
+				<File
+					RelativePath="..\src\doom\cn_timer.c"
 					>
 				</File>
 				<File

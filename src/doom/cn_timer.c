@@ -271,11 +271,3 @@ void CN_ResetTimer (void)
     timer_height = TFONTHEIGHT + BORDER_V;
     CN_UpdateTimerLocation(1);
 }
-
-// [cndoom] new configuration variables for timer (see m_config.c)
-extern int cn_timer_offset_x;
-extern int cn_timer_offset_y;
-extern int cn_timer_color_index;
-extern int cn_timer_bg_colormap;
-extern int cn_timer_enabled;
-
