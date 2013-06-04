@@ -174,13 +174,13 @@ void CN_DrawIntermissionTime (int x, int y, int time)
 extern int totaltime;
 void CN_DrawTotalTime (void)
 {
-    /* int i, l;
+    int i, l;
     static byte buffer[16];
 
     l = snprintf (buffer, 16, "%02i:%02i:%05.2f", totaltime / TICRATE / 60 / 60, (totaltime / TICRATE / 60) % 60,
                   (float)(totaltime % (60*TICRATE)) / TICRATE);
 
-    printf ("%s\r", buffer); */
+    printf ("%s\r", buffer);
     return;
 }
 

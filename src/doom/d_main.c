@@ -202,7 +202,11 @@ void D_Display (void)
 	R_ExecuteSetViewSize ();
 	oldgamestate = -1;                      // force background redraw
 	borderdrawcount = 3;
-    CN_UpdateTimerLocation(1); // [cndoom] timer
+    // cndoom timer
+    if (cn_timer_enabled)
+    {
+	CN_UpdateTimerLocation(1); // [cndoom] timer
+    }
     }
 
     // save the current screen if about to wipe
@@ -310,8 +314,12 @@ void D_Display (void)
 
     // [cndoom] draw timer here
     if (gamestate == GS_LEVEL && !inhelpscreens && !automapactive && !wipe)
+    {
+	if (cn_timer_enabled)
+    {
 	CN_DrawTimer();
-
+    }
+    }
     // normal update
     if (!wipe)
     {

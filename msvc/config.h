@@ -20,7 +20,7 @@
 #define PACKAGE_VERSION "0.2.4"
 
 /* Change this when you create your awesome forked version */
-#define PROGRAM_PREFIX "cndoom-"
+#define PROGRAM_PREFIX "cn"
 
 /* Version number of package */
 #define VERSION "0.2.4"
