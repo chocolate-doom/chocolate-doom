@@ -113,6 +113,12 @@ static boolean initialized = false;
 static boolean nomouse = false;
 extern int usemouse;
 
+// Disallow mouse and joystick movement to cause forward/backward
+// motion.  Specified with the '-novert' command line parameter.
+// This is an int to allow saving to config file.
+
+int             novert = 0;
+
 // Bit mask of mouse button state.
 
 static unsigned int mouse_button_state = 0;
@@ -703,8 +709,16 @@ static void I_ReadMouse(void)
         ev.type = ev_mouse;
         ev.data1 = mouse_button_state;
         ev.data2 = AccelerateMouse(x);
-        ev.data3 = -AccelerateMouse(y);
-        
+
+        if (!novert)
+        {
+            ev.data3 = 0;
+        }
+        else
+        {
+            ev.data3 = -AccelerateMouse(y);
+        }
+
         D_PostEvent(&ev);
     }
 
@@ -1457,12 +1471,30 @@ static void CheckCommandLine(void)
     }
 
     //!
-    // @category video 
+    // @category video
     //
     // Disable the mouse.
     //
 
     nomouse = M_CheckParm("-nomouse") > 0;
+
+    //!
+    // @category video
+    //
+    // Disable vertical mouse movement.
+    //
+
+    if (M_CheckParm("-novert"))
+        novert = true;
+
+    //!
+    // @category video
+    //
+    // Enable vertical mouse movement.
+    //
+
+    if (M_CheckParm("-nonovert"))
+        novert = false;
 
     //!
     // @category video

@@ -216,11 +216,6 @@ int             joybstraferight = -1;
 int             joybprevweapon = -1;
 int             joybnextweapon = -1;
 
-// fraggle: Disallow mouse and joystick movement to cause forward/backward
-// motion.  Specified with the '-novert' command line parameter.
-// This is an int to allow saving to config file
-
-int             novert = 0;
  
  
  
@@ -716,12 +711,7 @@ void G_BuildTiccmd (ticcmd_t* cmd)
         } 
     }
 
-    // fraggle: allow disabling mouse y movement
- 
-    if (!novert) 
-    {
-        forward += mousey; 
-    }
+    forward += mousey; 
 
     if (strafe) 
 	side += mousex*2; 

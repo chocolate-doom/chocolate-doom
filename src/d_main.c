@@ -1427,24 +1427,6 @@ void D_DoomMain (void)
         startloadgame = -1;
     }
 
-    //!
-    // @category video
-    //
-    // Disable vertical mouse movement.
-    //
-
-    if (M_CheckParm("-novert"))
-        novert = true;
-
-    //!
-    // @category video
-    //
-    // Enable vertical mouse movement.
-    //
-
-    if (M_CheckParm("-nonovert"))
-        novert = false;
-
     if (W_CheckNumForName("SS_START") >= 0
      || W_CheckNumForName("FF_END") >= 0)
     {
