@@ -1,3 +1,4 @@
+00009   Quickstart (still bugged)
 00008   MSVC fix for config file name, cn_timer_enabled fixed
 00007   Additional config settings: joybspeed = 29, usegamma = 4,
         screenblocks = 10, fixes for new config file variables;

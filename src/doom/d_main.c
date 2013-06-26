@@ -139,7 +139,8 @@ int             show_endoom = 0; // [cndoom]
 
 void D_ConnectNetGame(void);
 void D_CheckNetGame(void);
-
+void D_ProcessEvents (void); // [cndoom]
+void G_BuildTiccmd (ticcmd_t* cmd); // [cndoom]
 
 //
 // D_ProcessEvents
@@ -350,6 +351,47 @@ void D_Display (void)
     } while (!done);
 }
 
+// [cndoom]
+//
+// Simple delay screen with progress bar for "quickstart" when recording
+// Default delay is 1500 milliseconds, can be changed from config file (or
+// set to 0 to disable quickstart), or overridden temporarily from
+// command line using -quickstart.
+//
+int cn_quickstart_delay = 1500;
+
+static void CN_QSScreen (int qsdelay)
+{
+    int qs_starttime, qs_endtime, bar_width, bar_x, bar_y;
+    float bar_progress, bar_factor;
+
+    qs_starttime = I_GetTimeMS();
+    qs_endtime = qs_starttime + qsdelay;
+    bar_factor = (float)(qs_endtime - qs_starttime) / 10 / SCREENWIDTH;
+
+    while (I_GetTimeMS() < qs_endtime)
+    {
+	bar_progress = (I_GetTimeMS() / 10 + 10) / bar_factor;
+
+	bar_width = (int)bar_progress;
+	if (bar_width > SCREENWIDTH)
+	    bar_width = SCREENWIDTH;
+
+	for (bar_y=SCREENHEIGHT-10; bar_y<SCREENHEIGHT; bar_y++)
+	{
+	    for (bar_x=0; bar_x<bar_width; bar_x++)
+	    {
+		I_VideoBuffer[bar_y*SCREENWIDTH+bar_x] = 128;
+	    }
+	}
+
+	I_FinishUpdate();
+	I_Sleep(10);
+    }
+
+    return;
+}
+
 //
 // Add configuration file variable bindings.
 //
@@ -443,9 +485,30 @@ boolean D_GrabMouseCallback(void)
 //
 void D_DoomLoop (void)
 {
+    int i, qsdelay; // [cndoom]
     if (demorecording)
 	G_BeginRecording ();
-		
+    
+    // [cndoom] don't run any tics before the player has a chance to move,
+    // and optionally wait for a little while after I_InitGraphics has been
+    // called and input grabbed, so the player can start moving immediately
+    // after the level loads.
+
+    // [cndoom] don't initialize graphics at all if -nodraw is in use
+    if (!nodrawers)
+	I_InitGraphics ();
+	
+    if (demorecording)
+    {
+	qsdelay = cn_quickstart_delay;
+	i = M_CheckParmWithArgs("-quickstart", 1);
+	if (i)
+	    qsdelay = atoi(myargv[i+1]);
+
+	if (qsdelay)
+	    CN_QSScreen(qsdelay);
+    }
+    
     TryRunTics();
 
     I_SetWindowTitle(gamedescription);
