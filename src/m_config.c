@@ -1672,8 +1672,8 @@ void M_LoadDefaults (void)
     // @arg <file>
     // @vanilla
     //
-    // Load configuration from the specified file.  The default 
-    // configuration file (for Doom) is named default.cfg.
+    // Load main configuration from the specified file, instead of the
+    // default.
     //
 
     i = M_CheckParmWithArgs("-config", 1);
@@ -1695,8 +1695,8 @@ void M_LoadDefaults (void)
     //!
     // @arg <file>
     //
-    // Load extra configuration from the specified file.  The default
-    // configuration file for Doom is named chocolate-doom.cfg.
+    // Load additional configuration from the specified file, instead of
+    // the default.
     //
 
     i = M_CheckParmWithArgs("-extraconfig", 1);

@@ -977,11 +977,11 @@ static void InitGameVersion(void)
     // final revision. The differences between the two are barely worth
     // mentioning aside from that main one.
 
-    //! 
+    //!
     // @arg <version>
     // @category compat
     //
-    // Emulate a specific version of Doom.  Valid values are "1.2" and "1.31".
+    // Emulate a specific version of Strife. Valid values are "1.2" and "1.31".
     //
 
     p = M_CheckParmWithArgs("-gameversion", 1);
@@ -1296,11 +1296,10 @@ void D_DoomMain (void)
 
     // haleyjd 20110206: Moved up -devparm for max visibility
 
-    //! 
+    //!
     // @vanilla
     //
-    // Developer mode.  F1 saves a screenshot in the current working
-    // directory.
+    // Developer mode. Implies -nograph.
     //
 
     devparm = M_CheckParm ("-devparm");
@@ -1461,7 +1460,7 @@ void D_DoomMain (void)
     // @platform windows
     // @vanilla
     //
-    // Save configuration data and savegames in c:\doomdata,
+    // Save configuration data and savegames in c:\strife.cd,
     // allowing play from CD.
     //
 
@@ -1690,21 +1689,22 @@ void D_DoomMain (void)
         autostart = true;
     }
 
-    //!
-    // @arg <n>
-    // @vanilla
+    // [STRIFE] no such thing in Strife
     //
-    // Start playing on episode n (1-4)
-    //
+    // // @arg <n>
+    // // @vanilla
+    // //
+    // // Start playing on episode n (1-4)
+    // //
 
-    p = M_CheckParmWithArgs("-episode", 1);
+    // p = M_CheckParmWithArgs("-episode", 1);
 
-    if (p)
-    {
-        startepisode = myargv[p+1][0]-'0';
-        startmap = 1;
-        autostart = true;
-    }
+    // if (p)
+    // {
+    //     startepisode = myargv[p+1][0]-'0';
+    //     startmap = 1;
+    //     autostart = true;
+    // }
 
     timelimit = 0;
 
@@ -1739,11 +1739,10 @@ void D_DoomMain (void)
     }
 
     //!
-    // @arg [<x> <y> | <xy>]
+    // @arg x
     // @vanilla
     //
-    // Start a game immediately, warping to ExMy (Doom 1) or MAPxy
-    // (Doom 2)
+    // Start a game immediately, warping to level x.
     //
 
     p = M_CheckParmWithArgs("-warp", 1);
@@ -1843,10 +1842,19 @@ void D_DoomMain (void)
     // haleyjd 20110220: This stuff was done in I_StartupSound in vanilla, but 
     // we'll do it here instead so we don't have to modify the low-level shared
     // code with Strife-specific stuff.
+
+    //!
+    // @vanilla
+    //
+    // Disable voice dialog and show dialog as text instead,
+    // even if voices.wad can be found.
+    //
+
     if(disable_voices || M_CheckParm("-novoice"))
     {
         dialogshowtext = disable_voices = 1;
     }
+
     if(devparm)
         DEH_printf("  Play voices = %d\n", disable_voices == 0);
 
