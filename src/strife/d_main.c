@@ -1398,13 +1398,17 @@ void D_DoomMain (void)
     nomonsters = M_CheckParm ("-nomonsters");
 
     //!
-    // Sets Rogue playtesting mode (godmode, noclip toggled by backspace)
+    // @vanilla
+    //
+    // Set Rogue playtesting mode (godmode, noclip toggled by backspace)
     //
 
     workparm = M_CheckParm ("-work");
 
     //!
-    // Attemps to flip player gun sprites, but is broken.
+    // @vanilla
+    //
+    // Flip player gun sprites (broken).
     //
 
     flipparm = M_CheckParm ("-flip");
@@ -1412,7 +1416,7 @@ void D_DoomMain (void)
     //!
     // @vanilla
     //
-    // Monsters respawn after being killed.
+    // Respawn monsters after they are killed.
     //
 
     respawnparm = M_CheckParm ("-respawn");
