@@ -94,51 +94,6 @@ void I_Tactile(int on, int off, int total)
 {
 }
 
-#ifdef _WIN32_WCE
-
-// Windows CE-specific auto-allocation function that allocates the zone
-// size based on the amount of memory reported free by the OS.
-
-static byte *AutoAllocMemory(int *size, int default_ram, int min_ram)
-{
-    MEMORYSTATUS memory_status;
-    byte *zonemem;
-    size_t available;
-
-    // Get available physical RAM.  We leave one megabyte extra free
-    // for the OS to keep running (my PDA becomes unstable if too
-    // much RAM is allocated)
-
-    GlobalMemoryStatus(&memory_status);
-    available = memory_status.dwAvailPhys - 2 * 1024 * 1024;
-
-    // Limit to default_ram if we have more than that available:
-
-    if (available > default_ram * 1024 * 1024)
-    {
-        available = default_ram * 1024 * 1024;
-    }
-
-    if (available < min_ram * 1024 * 1024)
-    {
-        I_Error("Unable to allocate %i MiB of RAM for zone", min_ram);
-    }
-
-    // Allocate zone:
-
-    *size = available;
-    zonemem = malloc(*size);
-
-    if (zonemem == NULL)
-    {
-        I_Error("Failed when allocating %i bytes", *size);
-    }
-
-    return zonemem;
-}
-
-#else
-
 // Zone memory auto-allocation function that allocates the zone size
 // by trying progressively smaller zone sizes until one is found that
 // works.
@@ -180,8 +135,6 @@ static byte *AutoAllocMemory(int *size, int default_ram, int min_ram)
 
     return zonemem;
 }
-
-#endif
 
 byte *I_ZoneBase (int *size)
 {

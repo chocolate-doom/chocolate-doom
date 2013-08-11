@@ -28,10 +28,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#ifdef _WIN32_WCE
-#include "libc_wince.h"
-#endif
-
 #include "SDL.h"
 
 #include "opl.h"

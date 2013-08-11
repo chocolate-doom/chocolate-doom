@@ -140,15 +140,6 @@ int main(int argc, char **argv)
     myargc = argc;
     myargv = argv;
 
-#ifdef _WIN32_WCE
-
-    // Windows CE has no environment, but SDL provides an implementation.
-    // Populate the environment with the values we normally find.
-
-    PopulateEnvironment();
-
-#endif
-
     // Only schedule on a single core, if we have multiple
     // cores.  This is to work around a bug in SDL_mixer.
 

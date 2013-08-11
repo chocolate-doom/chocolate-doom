@@ -90,20 +90,6 @@ AC_SDL_MAIN_WORKAROUND([
 AC_CHECK_TOOL(WINDRES, windres, )
 AC_CHECK_TOOL(STRIP, strip, )
 
-# Windows CE build?
-
-WINDOWS_CE=false
-
-case "$host" in
-    *mingw32ce*|*cegcc*|*wince*)
-        CFLAGS="-I\$(top_builddir)/wince $CFLAGS"
-        WINDOWS_CE=true
-        ;;
-    *)
-        ;;
-esac
-
-AM_CONDITIONAL(WINDOWS_CE, $WINDOWS_CE)
 AM_CONDITIONAL(HAVE_WINDRES, test "$WINDRES" != "")
 AM_CONDITIONAL(HAVE_PYTHON, $HAVE_PYTHON)
 
@@ -170,6 +156,5 @@ src/setup/setup-manifest.xml
 src/strife/Makefile
 textscreen/Makefile
 textscreen/examples/Makefile
-wince/Makefile
 ])
 

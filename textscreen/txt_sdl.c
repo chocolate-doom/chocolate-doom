@@ -178,11 +178,7 @@ static void ChooseFont(void)
 
     if (modes == NULL || modes == (SDL_Rect **) -1 || *modes == NULL)
     {
-#ifdef _WIN32_WCE
-        font = &small_font;
-#else
         font = &main_font;
-#endif
         return;
     }
 
