@@ -1,17 +1,15 @@
 .TH chocolate\-doom 6
 .SH NAME
-chocolate\-doom \- historically compatible doom engine
+chocolate\-doom \- historically compatible Doom engine
 .SH SYNOPSIS
 .B chocolate\-doom
 [\fIOPTIONS\fR]
 .SH DESCRIPTION
 .PP
-Chocolate Doom is a port of the game Doom designed to behave
-as similar to the original DOS version of Doom as is possible.
+Chocolate Doom is a port of Id Software's 1993 game "Doom" that is designed
+to behave as similar to the original DOS version of Doom as is possible.
 .br
-
 @content
-
 .SH ENVIRONMENT
 This section describes environment variables that control Chocolate Doom's
 behavior.
@@ -26,13 +24,16 @@ Extra configuration values that are specific to Chocolate Doom and not
 present in Vanilla Doom.  See \fBchocolate-doom.cfg\fR(5).
 .SH SEE ALSO
 \fBchocolate-server\fR(6),
-\fBchocolate-setup\fR(6)
+\fBchocolate-setup\fR(6),
+\fBchocolate-heretic\fR(6),
+\fBchocolate-hexen\fR(6),
+\fBchocolate-strife\fR(6)
 .SH AUTHOR
 Chocolate Doom is written and maintained by Simon Howard.  It is based on
 the LinuxDoom source code, released by Id Software.
 .SH COPYRIGHT
 Copyright \(co id Software Inc.
-Copyright \(co 2005-8 Simon Howard.
+Copyright \(co 2005-2013 Simon Howard.
 .br
 This is free software.  You may redistribute copies of it under the terms of
 the GNU General Public License <http://www.gnu.org/licenses/gpl.html>.

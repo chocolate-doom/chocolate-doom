@@ -27,7 +27,7 @@ The main configuration file for Chocolate Strife.  See \fBstrife.cfg\fR(5).
 Extra configuration values that are specific to Chocolate Strife and not
 present in Vanilla Strife.  See \fBchocolate-strife.cfg\fR(5).
 .SH SEE ALSO
-\fBchocolate-strife\fR(6),
+\fBchocolate-doom\fR(6),
 \fBchocolate-server\fR(6),
 \fBchocolate-setup\fR(6)
 

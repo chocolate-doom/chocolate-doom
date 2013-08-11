@@ -1,17 +1,16 @@
 .TH chocolate\-heretic 6
 .SH NAME
-chocolate\-heretic \- historically compatible heretic engine
+chocolate\-heretic \- historically compatible Heretic engine
 .SH SYNOPSIS
 .B chocolate\-heretic
 [\fIOPTIONS\fR]
 .SH DESCRIPTION
 .PP
-Chocolate Heretic is a port of the game Heretic that aims to behave
-as similar to the original DOS version of Heretic as possible.
+Chocolate Heretic is a port of Raven Software's 1994 game "Heretic" that
+aims to behave as similar to the original DOS version of Heretic as
+possible.
 .br
-
 @content
-
 .SH ENVIRONMENT
 This section describes environment variables that control Chocolate Heretic's
 behavior.
