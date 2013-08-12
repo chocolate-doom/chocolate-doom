@@ -136,11 +136,11 @@ char		mapdir[1024];           // directory of development maps
 
 int             show_endoom = 0; // [cndoom]
 
-
+boolean         noblit;          //  [cndoom]
 void D_ConnectNetGame(void);
 void D_CheckNetGame(void);
-void D_ProcessEvents (void); // [cndoom]
-void G_BuildTiccmd (ticcmd_t* cmd); // [cndoom]
+// void D_ProcessEvents (void); // [cndoom]
+// void G_BuildTiccmd (ticcmd_t* cmd); // [cndoom]
 
 //
 // D_ProcessEvents
@@ -1369,29 +1369,16 @@ void D_DoomMain (void)
     D_AddFile(iwadfile);
     modifiedgame = W_ParseCommandLine();
 
-    // Debug:
-//    W_PrintDirectory();
 
-    //!
-    // @arg <demo>
-    // @category demo
-    // @vanilla
-    //
-    // Play back the demo named demo.lmp.
-    //
 
+// [cndoom] don't bother with the WAD manager at all for external
+// (.lmp) demos
+/*
     p = M_CheckParmWithArgs ("-playdemo", 1);
 
     if (!p)
     {
-        //!
-        // @arg <demo>
-        // @category demo
-        // @vanilla
-        //
-        // Play back the demo named demo.lmp, determining the framerate
-        // of the screen.
-        //
+ 
 	p = M_CheckParmWithArgs("-timedemo", 1);
 
     }
@@ -1425,8 +1412,8 @@ void D_DoomMain (void)
         }
 
     }
-
-    I_AtExit((atexit_func_t) G_CheckDemoStatus, true);
+// [cndoom] end
+*/
 
     // Generate the WAD hash table.  Speed things up a bit.
 
@@ -1635,7 +1622,7 @@ void D_DoomMain (void)
 
     // [cndoom] "fast" timer for quickly speeding through demos, similar to
     // -fastdemo from boom
-    cn_fasttimer = M_CheckParm("-fasttimer");
+    cn_fastdemo = M_CheckParm("-fastdemo");
     
     DEH_printf("S_Init: Setting up sound.\n");
     S_Init (sfxVolume * 8, musicVolume * 8);
@@ -1657,6 +1644,25 @@ void D_DoomMain (void)
 
     if (gamemode == commercial && W_CheckNumForName("map01") < 0)
         storedemo = true;
+    
+    // [cndoom] moved these here from G_TimeDemo so that they can be used
+    // without -timedemo
+
+    //!
+    // @vanilla 
+    //
+    // Disable rendering the screen entirely.
+    //
+
+    nodrawers = M_CheckParm ("-nodraw");
+
+    //!
+    // @vanilla
+    //
+    // Disable blitting the screen.
+    //
+
+    noblit = M_CheckParm ("-noblit"); 
 
     // Doom 3: BFG Edition includes modified versions of the classic
     // IWADs. The modified version of doom2.wad does not have a
@@ -1694,18 +1700,20 @@ void D_DoomMain (void)
 	autostart = true;
     }
 
+// [cndoom] don't bother with the WAD manager at all for external
+// (.lmp) demos
     p = M_CheckParmWithArgs("-playdemo", 1);
     if (p)
     {
 	singledemo = true;              // quit after one demo
-	G_DeferedPlayDemo (demolumpname);
+	G_DeferedPlayDemo (myargv[p+1]); // [cndoom]
 	D_DoomLoop ();  // never returns
     }
 	
     p = M_CheckParmWithArgs("-timedemo", 1);
     if (p)
     {
-	G_TimeDemo (demolumpname);
+	G_TimeDemo (myargv[p+1]); // [cndoom]
 	D_DoomLoop ();  // never returns
     }
 	

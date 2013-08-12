@@ -79,7 +79,7 @@ static mission_config_t mission_configs[] =
         heretic,
         IWAD_MASK_HERETIC,
         "heretic",
-        "heretic.cfg",
+        "cnheretic.cfg",
         PROGRAM_PREFIX "heretic.cfg",
         PROGRAM_PREFIX "heretic"
     },
@@ -88,7 +88,7 @@ static mission_config_t mission_configs[] =
         hexen,
         IWAD_MASK_HEXEN,
         "hexen",
-        "hexen.cfg",
+        "cnhexen.cfg",
         PROGRAM_PREFIX "hexen.cfg",
         PROGRAM_PREFIX "hexen"
     },
@@ -97,7 +97,7 @@ static mission_config_t mission_configs[] =
         strife,
         IWAD_MASK_STRIFE,
         "strife",
-        "strife.cfg",
+        "cnstrife.cfg",
         PROGRAM_PREFIX "strife.cfg",
         PROGRAM_PREFIX "strife"
     }

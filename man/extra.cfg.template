@@ -1,21 +1,21 @@
-.TH chocolate-doom.cfg 5
+.TH cndoom.cfg 5
 .SH NAME
-chocolate-doom.cfg \- Chocolate Doom configuration file
+cndoom.cfg \- Competition Doom configuration file
 .SH DESCRIPTION
 .PP
-\fIchocolate-doom.cfg\fR
-is a configuration file for \fBchocolate-doom\fR(6).  This file acts
+\fIcndoom.cfg\fR
+is a configuration file for \fBcndoom\fR(6).  This file acts
 as an auxiliary configuration file; the main configuration options
 are stored in \fBdefault.cfg\fR, which contains the same configuration
-options as Vanilla Doom (for compatibility).  \fIchocolate-doom.cfg\fR
-contains configuration options that are specific to Chocolate Doom
+options as Vanilla Doom (for compatibility).  \fIcndoom.cfg\fR
+contains configuration options that are specific to Competition Doom
 only.
 .PP
-\fIchocolate-doom.cfg\fR is normally stored in the user's home directory,
-as \fI~/.chocolate-doom/chocolate-doom.cfg\fR.
+\fIcndoom.cfg\fR is normally stored in the user's home directory,
+as \fI~/.cndoom/cndoom.cfg\fR.
 .PP
-The \fBchocolate-setup\fR(6) tool provides a simple to use front-end
-for editing \fIchocolate-doom.cfg\fR.
+The \fBcnsetup\fR(6) tool provides a simple to use front-end
+for editing \fIcndoom.cfg\fR.
 .SH FILE FORMAT
 .PP
 The file format is the same as that used for \fBdefault.cfg\fR(5).
@@ -24,7 +24,7 @@ The file format is the same as that used for \fBdefault.cfg\fR(5).
 @content
 
 .SH SEE ALSO
-\fBchocolate-doom\fR(6),
+\fBcndoom\fR(6),
 \fBdefault.cfg\fR(5),
-\fBchocolate-setup\fR(6)
+\fBcnsetup\fR(6)
 

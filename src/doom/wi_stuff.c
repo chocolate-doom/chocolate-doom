@@ -689,7 +689,7 @@ WI_drawNum
 
     // draw a minus sign if necessary
     if (neg)
-	V_DrawPatch(x-=8, y, wiminus);
+	V_DrawPatch(x-=8, y, wiminus); // [cndoom]
 
     return x;
 
@@ -734,12 +734,12 @@ WI_drawTime
 	do
 	{
 	    n = (t / div) % 60;
-	    x = WI_drawNum(x, y, n, 2) - SHORT(wicolon->width);  // [cndoom]
+	    x = WI_drawNum(x, y, n, 2) - SHORT(wicolon->width); // [cndoom]
 	    div *= 60;
 
 	    // draw
 	    if (div==60 || t / div)
-		V_DrawPatch(x, y, wicolon);  // [cndoom]
+		V_DrawPatch(x, y, wicolon); // [cndoom]
 	    
 	} while (t / div);
     }
@@ -1297,7 +1297,7 @@ void WI_drawNetgameStats(void)
     int		i;
     int		x;
     int		y;
-    int		pwidth = SHORT(wipercent->width);  // [cndoom]
+    int		pwidth = SHORT(wipercent->width); // [cndoom]
 
     WI_slamBackground();
     
@@ -1496,7 +1496,7 @@ void WI_drawStats(void)
     V_DrawPatch(SP_STATSX, SP_STATSY+2*lh, sp_secret);
     WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY+2*lh, cnt_secret[0]);
 
-    V_DrawPatch(SP_TIMEX, SP_TIMEY, timepatch); // [cndoom] timer
+    V_DrawPatch(SP_TIMEX, SP_TIMEY, timepatch);
     // WI_drawTime(SCREENWIDTH/2 - SP_TIMEX, SP_TIMEY, cnt_time); // [cndoom] timer
 
     // [cndoom] overlay more accurate timer
@@ -1654,7 +1654,7 @@ static void WI_loadUnloadData(load_callback_t callback)
     }
 
     // percent sign
-    callback(DEH_String("WIPCNT"), &wipercent);  // [cndoom]
+    callback(DEH_String("WIPCNT"), &wipercent); // [cndoom]
 
     // "finished"
     callback(DEH_String("WIF"), &finished);

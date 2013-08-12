@@ -1,16 +1,16 @@
 
-Chocolate Doom installation
+Competition Doom installation
 ===========================
 
-These are instructions for how to install and set up Chocolate Doom
+These are instructions for how to install and set up Competition Doom
 for play.
 
 #ifn PRECOMPILED
-Building Chocolate Doom
+Building Competition Doom
 -----------------------
 
-Before you can play Chocolate Doom, you need to compile a binary that
-you can run.  For compilation, Chocolate Doom requires the following
+Before you can play Competition Doom, you need to compile a binary that
+you can run.  For compilation, Competition Doom requires the following
 to be installed:
 
  * A C compiler (gcc is recommended)
@@ -63,7 +63,7 @@ the game:
 
 #if _WIN32
  * The Doom games are available to buy for download on Steam
-   (http://www.steampowered.com/).  Chocolate Doom will autodetect
+   (http://www.steampowered.com/).  Competition Doom will autodetect
    IWADs installed by Steam and you do not need to do anything.
 #else
  * The Doom games are available to buy for download on Steam
@@ -124,19 +124,19 @@ to point to the locations of the IWAD files set within the launcher.
 You can launch the game with a specific IWAD file by typing, for
 example:
 
-    chocolate-doom -iwad tnt.wad
+    cndoom -iwad tnt.wad
 #else
-Chocolate Doom needs to know where to find your IWAD file. To do this,
+Competition Doom needs to know where to find your IWAD file. To do this,
 do one of the following:
 
 #if _WIN32
  * Within Explorer, simply place the IWAD file in the same folder as
-   the Chocolate Doom files, and double-click chocolate-doom.exe.
+   the Competition Doom files, and double-click cndoom.exe.
 
- * Run Chocolate Doom from the command prompt with the '-iwad' command
+ * Run Competition Doom from the command prompt with the '-iwad' command
    line parameter to specify the IWAD file to use, eg.
 
-       chocolate-doom -iwad c:\games\doom2.wad
+       cndoom -iwad c:\games\doom2.wad
 
  * Set the environment variable DOOMWADDIR to the location of a
    directory containing your IWAD files.
@@ -146,10 +146,10 @@ do one of the following:
    of directories to search (similar to the PATH environment
    variable).
 #else
- * Run Chocolate Doom from the Unix console with the '-iwad' command
+ * Run Competition Doom from the Unix console with the '-iwad' command
    line parameter to specify the IWAD file to use, eg.
 
-       chocolate-doom -iwad /root/doom2.wad
+       cndoom -iwad /root/doom2.wad
 
  * Put the file into one of the following directories:
 
@@ -171,7 +171,7 @@ Playing with Chex Quest
 
 Chex Quest is a game based on Doom with some minor modifications that
 was distributed with boxes of Chex cereal in 1997.  It is possible to
-play Chex Quest using Chocolate Doom.  To do this, the following files
+play Chex Quest using Competition Doom.  To do this, the following files
 are needed:
 
  * The IWAD file 'chex.wad', from the Chex Quest CD.
@@ -183,12 +183,12 @@ are needed:
 Copy these files into a directory together and use the '-iwad' command
 line parameter to specify the Chex Quest IWAD file:
 
-   chocolate-doom -iwad chex.wad
+   cndoom -iwad chex.wad
 
 Installing upgrades
 -------------------
 
-Chocolate Doom requires a version 1.9 IWAD file.  Generally, if you
+Competition Doom requires a version 1.9 IWAD file.  Generally, if you
 install a recent version of Doom you should have a version 1.9 IWAD.
 However, if you are installing from a very old CD version or from
 floppy disks, you might find you have an older version.
@@ -217,7 +217,7 @@ will need to use a DOS emulator (such as DOSBox) to run them.
 Music support
 -------------
 
-Chocolate Doom includes OPL emulation code that accurately reproduces
+Competition Doom includes OPL emulation code that accurately reproduces
 the way that the in-game music sounded under DOS when using an
 Adlib/Soundblaster card.  This is, however, not to everyone's taste.
 

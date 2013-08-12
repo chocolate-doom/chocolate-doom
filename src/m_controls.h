@@ -35,6 +35,7 @@ extern int key_straferight;
 extern int key_fire;
 extern int key_use;
 extern int key_strafe;
+extern int key_strafe_alt; // [cndoom]
 extern int key_speed;
 
 extern int key_jump;

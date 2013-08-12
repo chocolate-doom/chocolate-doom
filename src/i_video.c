@@ -189,7 +189,7 @@ int screen_height = SCREENHEIGHT;
 
 // Color depth.
 
-int screen_bpp = 8;
+int screen_bpp = 32; // [cndoom]
 
 // Automatically adjust video settings if the selected mode is 
 // not a valid video mode.

@@ -1,19 +1,19 @@
-.TH chocolate\-doom 6
+.TH cndoom 6
 .SH NAME
-chocolate\-doom \- historically compatible doom engine
+cndoom \- historically compatible doom engine
 .SH SYNOPSIS
-.B chocolate\-doom
+.B cndoom
 [\fIOPTIONS\fR]
 .SH DESCRIPTION
 .PP
-Chocolate Doom is a modern doom engine designed to behave
+Competition Doom is a modern doom engine designed to behave
 as similar to the original doom game as is possible.
 .br
 
 @content
 
 .SH ENVIRONMENT
-This section describes environment variables that control Chocolate Doom's
+This section describes environment variables that control Competition Doom's
 behavior.
 .TP 
 \fBDOOMWADDIR\fR, \fBDOOMWADPATH\fR
@@ -41,17 +41,17 @@ present, it may still require extra work to set up and elevated
 security privileges to access.
 .SH FILES
 .TP
-\fB$HOME/.chocolate-doom/default.cfg\fR
-The main configuration file for Chocolate Doom.  See \fBdefault.cfg\fR(5).
+\fB$HOME/.cndoom/default.cfg\fR
+The main configuration file for Competition Doom.  See \fBdefault.cfg\fR(5).
 .TP
-\fB$HOME/.chocolate-doom/chocolate-doom.cfg\fR
-Extra configuration values that are specific to Chocolate Doom and not
-present in Vanilla Doom.  See \fBchocolate-doom.cfg\fR(5).
+\fB$HOME/.cndoom/cndoom.cfg\fR
+Extra configuration values that are specific to Competition Doom and not
+present in Vanilla Doom.  See \fBcndoom.cfg\fR(5).
 .SH SEE ALSO
-\fBchocolate-server\fR(6),
-\fBchocolate-setup\fR(6)
+\fBcnserver\fR(6),
+\fBcnsetup\fR(6)
 .SH AUTHOR
-Chocolate Doom is written and maintained by Simon Howard.  It is based on
+Competition Doom is written and maintained by Simon Howard.  It is based on
 the LinuxDoom source code, released by Id Software.
 .SH COPYRIGHT
 Copyright \(co id Software Inc.

@@ -1,4 +1,4 @@
-AC_INIT(Competition Doom, 0.2.4, admin@doom.com.hr, cndoom)
+AC_INIT(Competition Doom, 2.0.1, admin@doom.com.hr, cndoom)
 
 PACKAGE_SHORTDESC="Conservative Doom source port"
 PACKAGE_COPYRIGHT="Copyright (C) 1993-2013"

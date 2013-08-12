@@ -5,72 +5,72 @@ docdir=$(prefix)/share/doc/@PACKAGE@
 
 if HAVE_PYTHON
 
-man_MANS=chocolate-server.6       \
-         chocolate-setup.6        \
-         chocolate-doom.6         \
+man_MANS=cnserver.6       \
+         cnsetup.6        \
+         cndoom.6         \
          default.cfg.5            \
-         chocolate-doom.cfg.5     \
-         chocolate-heretic.6      \
+         cndoom.cfg.5     \
+         cnheretic.6      \
          heretic.cfg.5            \
-         chocolate-heretic.cfg.5  \
-         chocolate-hexen.6        \
+         cnheretic.cfg.5  \
+         cnhexen.6        \
          hexen.cfg.5              \
-         chocolate-hexen.cfg.5    \
-         chocolate-strife.6       \
+         cnhexen.cfg.5    \
+         cnstrife.6       \
          strife.cfg.5             \
-         chocolate-strife.cfg.5
+         cnstrife.cfg.5
 
 nodist_doc_DATA=INSTALL
 
 
 
-chocolate-doom.6: ../src $(MANPAGE_GEN_FILES)
+cndoom.6: ../src $(MANPAGE_GEN_FILES)
 	./docgen -g doom -m manpage.template ../src ../src/doom > $@
 
 default.cfg.5: ../src default.cfg.template
 	./docgen -g doom -m default.cfg.template \
                  -c default ../src/m_config.c > $@
 
-chocolate-doom.cfg.5: ../src extra.cfg.template
+cndoom.cfg.5: ../src extra.cfg.template
 	./docgen -g doom -m extra.cfg.template \
                  -c extended ../src/m_config.c > $@
 
 
 
-chocolate-heretic.6: ../src $(MANPAGE_GEN_FILES)
+cnheretic.6: ../src $(MANPAGE_GEN_FILES)
 	./docgen -g heretic -m manpage.template ../src ../src/heretic > $@
 
 heretic.cfg.5: ../src default.cfg.template
 	./docgen -g heretic -m default.cfg.template \
                  -c default ../src/m_config.c > $@
 
-chocolate-heretic.cfg.5: ../src extra.cfg.template
+cnheretic.cfg.5: ../src extra.cfg.template
 	./docgen -g heretic -m extra.cfg.template \
                  -c extended ../src/m_config.c > $@
 
 
 
-chocolate-hexen.6: ../src $(MANPAGE_GEN_FILES)
+cnhexen.6: ../src $(MANPAGE_GEN_FILES)
 	./docgen -g hexen -m manpage.template ../src ../src/hexen > $@
 
 hexen.cfg.5: ../src default.cfg.template
 	./docgen -g hexen -m default.cfg.template \
                  -c default ../src/m_config.c > $@
 
-chocolate-hexen.cfg.5: ../src extra.cfg.template
+cnhexen.cfg.5: ../src extra.cfg.template
 	./docgen -g hexen -m extra.cfg.template \
                  -c extended ../src/m_config.c > $@
 
 
 
-chocolate-strife.6: ../src $(MANPAGE_GEN_FILES)
+cnstrife.6: ../src $(MANPAGE_GEN_FILES)
 	./docgen -g strife -m manpage.template ../src ../src/strife > $@
 
 strife.cfg.5: ../src default.cfg.template
 	./docgen -g strife -m default.cfg.template \
                  -c default ../src/m_config.c > $@
 
-chocolate-strife.cfg.5: ../src extra.cfg.template
+cnstrife.cfg.5: ../src extra.cfg.template
 	./docgen -g strife -m extra.cfg.template \
                  -c extended ../src/m_config.c > $@
 

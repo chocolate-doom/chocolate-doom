@@ -451,7 +451,7 @@ void D_CheckRecordFrom(void)
 
 char *iwadfile;
 
-char *basedefault = "heretic.cfg";
+char *basedefault = "cnheretic.cfg";
 
 void wadprintf(void)
 {
@@ -895,7 +895,7 @@ void D_DoomMain(void)
     // Load defaults before initing other systems
     DEH_printf("M_LoadDefaults: Load system defaults.\n");
     D_BindVariables();
-    M_SetConfigFilenames("heretic.cfg", PROGRAM_PREFIX "heretic.cfg");
+    M_SetConfigFilenames("cnheretic.cfg", PROGRAM_PREFIX "heretic.cfg");
     M_LoadDefaults();
 
     I_AtExit(M_SaveDefaults, false);

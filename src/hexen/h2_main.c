@@ -299,7 +299,7 @@ void D_DoomMain(void)
     }
 
     D_SetDefaultSavePath();
-    M_SetConfigFilenames("hexen.cfg", PROGRAM_PREFIX "hexen.cfg");
+    M_SetConfigFilenames("cnhexen.cfg", PROGRAM_PREFIX "hexen.cfg");
     M_LoadDefaults();
 
     I_AtExit(M_SaveDefaults, false);

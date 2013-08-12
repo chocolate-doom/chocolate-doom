@@ -1016,6 +1016,12 @@ static default_t extra_defaults_list[] =
     // 0 - 99999 (Default:1500)
 
     CONFIG_VARIABLE_INT(cn_quickstart_delay),
+
+    //!
+    // alternate strafe ON key for second SR50 combination
+    // (Default:x)
+
+    CONFIG_VARIABLE_KEY(key_strafe_alt),
     
     //!
     // Player firstname
@@ -1784,7 +1790,7 @@ void M_LoadDefaults (void)
     // @arg <file>
     //
     // Load extra configuration from the specified file.  The default
-    // configuration file for Doom is named chocolate-doom.cfg.
+    // configuration file for Doom is named cndoom.cfg.
     //
 
     i = M_CheckParmWithArgs("-extraconfig", 1);
@@ -1885,7 +1891,7 @@ static char *GetDefaultConfigDir(void)
 // SetConfigDir:
 //
 // Sets the location of the configuration directory, where configuration
-// files are stored - default.cfg, chocolate-doom.cfg, savegames, etc.
+// files are stored - default.cfg, cndoom.cfg, savegames, etc.
 //
 
 void M_SetConfigDir(char *dir)

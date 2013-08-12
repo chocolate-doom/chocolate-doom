@@ -354,7 +354,7 @@ void I_Error (char *error, ...)
     }
 
     exit_gui_popup = !M_ParmExists("-nogui");
-
+/* // [cndoom] remove message box
 #ifdef _WIN32
     // On Windows, pop up a dialog box with the error message.
 
@@ -375,7 +375,7 @@ void I_Error (char *error, ...)
         MessageBoxW(NULL, wmsgbuf, L"", MB_OK);
     }
 #endif
-
+*/
 #ifdef __MACOSX__
     if (exit_gui_popup && !I_ConsoleStdout())
     {

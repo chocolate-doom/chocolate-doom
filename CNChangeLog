@@ -1,3 +1,12 @@
+00010   Fixed: key "Finish recording demo" now works;
+        -nodraw and -noblit works without -timedemo;
+        wad manager not used for external lmp files;
+        partially implemented -fastdemo for speeding trought demos;
+        more config alterations: screen_bpp = 32;
+        new key and config variable "key_strafe_alt" is alternate
+        strafe ON key that can be used for second key combination;
+        renamed manual pages chocolate -> competition -> cn;
+        Changed version to 2.0.1 as it's based on Chocolate Doom v2
 00009   Quickstart (still bugged)
 00008   MSVC fix for config file name, cn_timer_enabled fixed
 00007   Additional config settings: joybspeed = 29, usegamma = 4,

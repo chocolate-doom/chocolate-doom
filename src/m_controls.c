@@ -43,6 +43,7 @@ int key_straferight = '.';
 int key_fire = KEY_RCTRL;
 int key_use = ' ';
 int key_strafe = KEY_RALT;
+int key_strafe_alt = 'x'; // [cndoom] alternate strafe-on key
 int key_speed = KEY_RSHIFT; 
 
 // 
@@ -178,7 +179,7 @@ int key_menu_decscreen = KEY_MINUS;
 int joybfire = 0; 
 int joybstrafe = 1; 
 int joybuse = 3; 
-int joybspeed = 29;
+int joybspeed = 29; // [cndoom]
 
 int joybstrafeleft = -1;
 int joybstraferight = -1;
@@ -208,6 +209,7 @@ void M_BindBaseControls(void)
     M_BindVariable("key_fire",           &key_fire),
     M_BindVariable("key_use",            &key_use),
     M_BindVariable("key_strafe",         &key_strafe),
+    M_BindVariable("key_strafe_alt",     &key_strafe_alt),
     M_BindVariable("key_speed",          &key_speed),
 
     M_BindVariable("mouseb_fire",        &mousebfire),

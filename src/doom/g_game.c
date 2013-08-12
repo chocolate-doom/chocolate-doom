@@ -348,7 +348,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 	consistancy[consoleplayer][maketic%BACKUPTICS]; 
  
     strafe = gamekeydown[key_strafe] || mousebuttons[mousebstrafe] 
-	|| joybuttons[joybstrafe]; 
+    || joybuttons[joybstrafe]
+    || gamekeydown[key_strafe_alt];  // [cndoom]
 
     // fraggle: support the old "joyb_speed = 31" hack which
     // allowed an autorun effect
@@ -2200,8 +2201,7 @@ boolean G_CheckDemoStatus (void)
 	
     Z_Free (demobuffer);
 	demorecording = false; 
-    // [cndoom] remove annoying message box after recording
-    //	I_Error ("Demo %s recorded",demoname); 
+    I_Error ("Demo %s recorded",demoname); 
     }
 	 
     return false; 
