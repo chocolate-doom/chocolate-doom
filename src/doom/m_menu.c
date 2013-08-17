@@ -1843,10 +1843,13 @@ boolean M_Responder (event_t* ev)
 	}
 	return true;
     }
-    else if (ch != 0)
-    {
-        // Keyboard shortcut?
 
+    // Keyboard shortcut?
+    // Vanilla Doom has a weird behavior where it jumps to the scroll bars
+    // when the pause key is pressed, so emulate this.
+
+    else if (ch != 0 || key == KEY_PAUSE)
+    {
 	for (i = itemOn+1;i < currentMenu->numitems;i++)
         {
 	    if (currentMenu->menuitems[i].alphaKey == ch)
