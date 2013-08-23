@@ -35,7 +35,28 @@ extern int key_straferight;
 extern int key_fire;
 extern int key_use;
 extern int key_strafe;
-extern int key_strafe_alt; // [cndoom]
+
+// [cndoom]
+// [cndoom] quickstart configuration setting, see d_main.c
+extern int cn_quickstart_delay;
+// [cndoom] optionally precache all sounds, see i_sdlsound.c
+extern int cn_precache_sounds;
+extern int key_strafe_alt;
+extern char *cn_meta_firstname;
+extern char *cn_meta_lastname;
+extern char *cn_meta_nickname;
+extern char *cn_meta_birthdate;
+extern char *cn_meta_country;
+extern char *cn_meta_email;
+extern char *cn_meta_url;
+extern int cn_meta_id;
+// [cndoom] end
+
+
+
+
+
+
 extern int key_speed;
 
 extern int key_jump;

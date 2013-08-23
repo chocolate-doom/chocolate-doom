@@ -141,6 +141,7 @@ anim_t*		lastanim;
 //
 //      Animating line specials
 // [cndoom] Doom+ limits
+
 #define MAXLINEANIMS            16384 // was 64
 
 extern  short	numlinespecials;

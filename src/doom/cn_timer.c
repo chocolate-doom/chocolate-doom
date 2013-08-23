@@ -62,12 +62,12 @@ static byte timerfont[TFONTWIDTH*TFONTHEIGHT*TFONTCHARS] =
 	0x02,0x02,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x02,0x00,
 };
 
-int cn_timer_offset_x		= -1;		// cfg vars
-int cn_timer_offset_y		= 0;		// and default values
-int cn_timer_color_index	= 168;		// (see m_config.c)
-int cn_timer_shadow_index	= 0;		//
-int cn_timer_bg_colormap	= 16;		//
-int cn_timer_enabled		= 1;		//
+extern int cn_timer_offset_x;
+extern int cn_timer_offset_y;
+extern int cn_timer_color_index;
+extern int cn_timer_shadow_index;
+extern int cn_timer_bg_colormap;
+extern int cn_timer_enabled;
 
 // from wi_stuff.c for use in new intermission timers
 extern patch_t *winum[10], *wicolon;

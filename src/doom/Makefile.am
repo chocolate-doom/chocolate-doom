@@ -3,6 +3,7 @@ AM_CFLAGS = -I.. @SDL_CFLAGS@ @SDLMIXER_CFLAGS@ @SDLNET_CFLAGS@
 noinst_LIBRARIES=libdoom.a
 
 SOURCE_FILES=                   \
+cn_meta.c          cn_meta.h   \
 cn_timer.c         cn_timer.h   \
 am_map.c           am_map.h     \
                    d_englsh.h   \

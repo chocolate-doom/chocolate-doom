@@ -1,3 +1,7 @@
+00011   Metadata for demos v001 (still some quirks);
+        fix for precaching sounds;
+        Code/variables re-organization for better management;
+        Implemented Competition menu in setup (player details)
 00010   Fixed: key "Finish recording demo" now works;
         -nodraw and -noblit works without -timedemo;
         wad manager not used for external lmp files;

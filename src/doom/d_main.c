@@ -85,6 +85,7 @@
 
 // [cndoom]
 #include "cn_timer.h"
+#include "cn_meta.h"
 
 //
 // D-DoomLoop()
@@ -139,8 +140,6 @@ int             show_endoom = 0; // [cndoom]
 boolean         noblit;          //  [cndoom]
 void D_ConnectNetGame(void);
 void D_CheckNetGame(void);
-// void D_ProcessEvents (void); // [cndoom]
-// void G_BuildTiccmd (ticcmd_t* cmd); // [cndoom]
 
 //
 // D_ProcessEvents
@@ -358,7 +357,7 @@ void D_Display (void)
 // set to 0 to disable quickstart), or overridden temporarily from
 // command line using -quickstart.
 //
-int cn_quickstart_delay = 1500;
+//extern int cn_quickstart_delay;
 
 static void CN_QSScreen (int qsdelay)
 {
@@ -405,12 +404,13 @@ void D_BindVariables(void)
     I_BindVideoVariables();
     I_BindJoystickVariables();
     I_BindSoundVariables();
-
+    
     M_BindBaseControls();
     M_BindWeaponControls();
     M_BindMapControls();
     M_BindMenuControls();
     M_BindChatControls(MAXPLAYERS);
+    CN_BindMetaVariables(); // [cndoom]
 
     key_multi_msgplayer[0] = HUSTR_KEYGREEN;
     key_multi_msgplayer[1] = HUSTR_KEYINDIGO;
@@ -432,19 +432,14 @@ void D_BindVariables(void)
     M_BindVariable("vanilla_demo_limit",     &vanilla_demo_limit);
     M_BindVariable("show_endoom",            &show_endoom);
     // [cndoom]
+    M_BindVariable("cn_quickstart_delay",    &cn_quickstart_delay);
+    M_BindVariable("cn_precache_sounds",     &cn_precache_sounds);
     M_BindVariable("cn_timer_enabled",       &cn_timer_enabled);
     M_BindVariable("cn_timer_bg_colormap",   &cn_timer_bg_colormap);
     M_BindVariable("cn_timer_offset_x",      &cn_timer_offset_x);
     M_BindVariable("cn_timer_offset_y",      &cn_timer_offset_y);
     M_BindVariable("cn_timer_color_index",   &cn_timer_color_index);
     M_BindVariable("cn_timer_shadow_index",  &cn_timer_shadow_index);
-    //M_BindVariable("cn_meta_firstname",      &cn_meta_firstname);
-    //M_BindVariable("cn_meta_lastname",       &cn_meta_lastname);
-    //M_BindVariable("cn_meta_nickname",       &cn_meta_nickname);
-    //M_BindVariable("cn_meta_birthdate",      &cn_meta_birthdate);
-    //M_BindVariable("cn_meta_country",        &cn_meta_country);
-    //M_BindVariable("cn_meta_email",          &cn_meta_email);
-    //M_BindVariable("cn_meta_url",            &cn_meta_url);
 
     // Multiplayer chat macros
 
@@ -1153,7 +1148,7 @@ void D_DoomMain (void)
 {
     int             p;
     char            file[256];
-    char            demolumpname[9];
+    // char            demolumpname[9]; // [cndoom] remove restriction of 9 chars
 
     I_AtExit(D_Endoom, false);
 
@@ -1624,6 +1619,18 @@ void D_DoomMain (void)
     // -fastdemo from boom
     cn_fastdemo = M_CheckParm("-fastdemo");
     
+    // [cndoom] reserve space for metadata player info here
+    for (p=0; p<MAXPLAYERS; p++)
+    {
+	cn_meta_playerinfos[p].firstname = malloc(CN_NETMETALEN);
+	cn_meta_playerinfos[p].lastname = malloc(CN_NETMETALEN);
+	cn_meta_playerinfos[p].nickname = malloc(CN_NETMETALEN);
+	cn_meta_playerinfos[p].birthdate = malloc(CN_NETMETALEN);
+	cn_meta_playerinfos[p].country = malloc(CN_NETMETALEN);
+	cn_meta_playerinfos[p].email = malloc(CN_NETMETALEN);
+	cn_meta_playerinfos[p].url = malloc(CN_NETMETALEN);
+    }
+
     DEH_printf("S_Init: Setting up sound.\n");
     S_Init (sfxVolume * 8, musicVolume * 8);
 

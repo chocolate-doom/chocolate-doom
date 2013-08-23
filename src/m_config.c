@@ -43,9 +43,6 @@
 
 #include "z_zone.h"
 
-// [cndoom] for timer config vars
-#include "doom/cn_timer.h"
-
 //
 // DEFAULTS
 //
@@ -59,9 +56,6 @@ char *configdir;
 
 static char *default_main_config;
 static char *default_extra_config;
-
-// [cndoom] quickstart configuration setting, see d_main.c
-extern int cn_quickstart_delay;
 
 typedef enum 
 {
@@ -972,91 +966,6 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(dclick_use),
- 
-    //!
-    // [cndoom] additional config options start
-    // Display ingame/intermission screen timer
-    // 0 - No. 1 - Yes (Default)
-
-    CONFIG_VARIABLE_INT(cn_timer_enabled),
-
-    //!    
-    // Timer X position
-    // Default: -1
-
-    CONFIG_VARIABLE_INT(cn_timer_offset_x),
-
-    //!
-    // Timer Y position
-    // Default: 0
-
-    CONFIG_VARIABLE_INT(cn_timer_offset_y),
-
-    //!
-    // Timer color
-    // 0 - 255 (Default:168)
-
-    CONFIG_VARIABLE_INT(cn_timer_color_index),
-    //!    
-    // Shadow for timer
-    // 0 - No (Default). 1 - Yes
-
-    CONFIG_VARIABLE_INT(cn_timer_shadow_index),
-
-    //!    
-    // Backgroung color for timer
-    // 0 - 255 (Default:16)
-
-    CONFIG_VARIABLE_INT(cn_timer_bg_colormap),
-
-    //!
-    // quickstart settings, see d_main.c
-    // Quickstart delay so monitor can change resolution and
-    // let you adjust mouse and keys before the game starts.
-    // 0 - 99999 (Default:1500)
-
-    CONFIG_VARIABLE_INT(cn_quickstart_delay),
-
-    //!
-    // alternate strafe ON key for second SR50 combination
-    // (Default:x)
-
-    CONFIG_VARIABLE_KEY(key_strafe_alt),
-    
-    //!
-    // Player firstname
-
-    CONFIG_VARIABLE_STRING(cn_meta_firstname),
-
-    //!
-    // Player lastname
-
-    CONFIG_VARIABLE_STRING(cn_meta_lastname),
-
-    //!
-    // Player nickname
-
-    CONFIG_VARIABLE_STRING(cn_meta_nickname),
-
-    //!
-    // Player birthdate
-
-    CONFIG_VARIABLE_STRING(cn_meta_birthdate),
-    
-    //!
-    // Player country
-
-    CONFIG_VARIABLE_STRING(cn_meta_country),
-
-    //!
-    // Player email
-
-    CONFIG_VARIABLE_STRING(cn_meta_email),
-
-    //!
-    // Player homepage
-
-    CONFIG_VARIABLE_STRING(cn_meta_url),
 
 
 #ifdef FEATURE_SOUND
@@ -1419,6 +1328,103 @@ static default_t extra_defaults_list[] =
 
     CONFIG_VARIABLE_KEY(key_multi_msgplayer4),
 
+    // [cndoom] additional config options start
+
+    //!
+    // alternate strafe ON key for second SR50 combination
+    // (Default:x)
+
+    CONFIG_VARIABLE_KEY(key_strafe_alt),
+    
+    //!    
+    // Display ingame/intermission screen timer
+    // 0 - No. 1 - Yes (Default)
+
+    CONFIG_VARIABLE_INT(cn_timer_enabled),
+
+    //!    
+    // Timer X position
+    // Default: -1
+
+    CONFIG_VARIABLE_INT(cn_timer_offset_x),
+
+    //!
+    // Timer Y position
+    // Default: 0
+
+    CONFIG_VARIABLE_INT(cn_timer_offset_y),
+
+    //!
+    // Timer color
+    // 0 - 255 (Default:168)
+
+    CONFIG_VARIABLE_INT(cn_timer_color_index),
+    //!    
+    // Shadow for timer
+    // 0 - No (Default). 1 - Yes
+
+    CONFIG_VARIABLE_INT(cn_timer_shadow_index),
+
+    //!    
+    // Backgroung color for timer
+    // 0 - 255 (Default:16)
+
+    CONFIG_VARIABLE_INT(cn_timer_bg_colormap),
+
+    //!
+    // quickstart settings, see d_main.c
+    // Quickstart delay so monitor can change resolution and
+    // let you adjust mouse and keys before the game starts.
+    // 0 - 99999 (Default:1500)
+
+    CONFIG_VARIABLE_INT(cn_quickstart_delay),
+
+    //!
+    // Precache all sounds
+    // 0 - No. 1 - Yes (Default)
+
+    CONFIG_VARIABLE_INT(cn_precache_sounds),
+
+    //!
+    // Player firstname
+
+    CONFIG_VARIABLE_STRING(cn_meta_firstname),
+
+    //!
+    // Player lastname
+
+    CONFIG_VARIABLE_STRING(cn_meta_lastname),
+
+    //!
+    // Player nickname
+
+    CONFIG_VARIABLE_STRING(cn_meta_nickname),
+
+    //!
+    // Player birthdate
+
+    CONFIG_VARIABLE_STRING(cn_meta_birthdate),
+    
+    //!
+    // Player country
+
+    CONFIG_VARIABLE_STRING(cn_meta_country),
+
+    //!
+    // Player email
+
+    CONFIG_VARIABLE_STRING(cn_meta_email),
+
+    //!
+    // Player homepage
+
+    CONFIG_VARIABLE_STRING(cn_meta_url),
+
+    //!
+    // Competition Doom ID from http://www.doom.com.hr/
+    // You have to register on forum and request ID
+    CONFIG_VARIABLE_INT(cn_meta_id),
+    
     //!
     // @game hexen strife
     //
@@ -1859,7 +1865,7 @@ static char *GetDefaultConfigDir(void)
 {
 #if !defined(_WIN32) || defined(_WIN32_WCE)
 
-    // Configuration settings are stored in ~/.chocolate-doom/,
+    // Configuration settings are stored in ~/.cndoom/,
     // except on Windows, where we behave like Vanilla Doom and
     // save in the current directory.
 
@@ -1935,7 +1941,7 @@ char *M_GetSaveGameDir(char *iwadname)
     }
     else
     {
-        // ~/.chocolate-doom/savegames/
+        // ~/.cndoom/savegames/
 
         savegamedir = malloc(strlen(configdir) + 30);
         sprintf(savegamedir, "%ssavegames%c", configdir,
@@ -1943,7 +1949,7 @@ char *M_GetSaveGameDir(char *iwadname)
 
         M_MakeDirectory(savegamedir);
 
-        // eg. ~/.chocolate-doom/savegames/doom2.wad/
+        // eg. ~/.cndoom/savegames/doom2.wad/
 
         sprintf(savegamedir + strlen(savegamedir), "%s%c",
                 iwadname, DIR_SEPARATOR);

@@ -40,6 +40,7 @@
 #include "mode.h"
 
 #include "compatibility.h"
+#include "competition.h" // [cndoom]
 #include "display.h"
 #include "joystick.h"
 #include "keyboard.h"
@@ -227,6 +228,10 @@ void MainMenu(void)
                          (TxtWidgetSignalFunc) ConfigMouse, NULL),
           TXT_NewButton2("Configure Joystick", 
                          (TxtWidgetSignalFunc) ConfigJoystick, NULL),
+          // [cndoom]
+          TXT_NewButton2("Competition", 
+                         (TxtWidgetSignalFunc) ConfigCompetition, NULL),
+          // [cndoom]
           NULL);
 
     // The compatibility window is only appropriate for Doom/Strife.

@@ -355,7 +355,6 @@ static patch_t*		splat[2] = { NULL, NULL };
 
 // [cndoom] colon and 0-9 needed in cn_timer.c, so not static anymore,
 // wi prefix added to names
-
 // %, : graphics
 static patch_t*		wipercent; // [cndoom]
 patch_t*		wicolon; // [cndoom]
@@ -1497,6 +1496,7 @@ void WI_drawStats(void)
     WI_drawPercent(SCREENWIDTH - SP_STATSX, SP_STATSY+2*lh, cnt_secret[0]);
 
     V_DrawPatch(SP_TIMEX, SP_TIMEY, timepatch);
+    // [cndoom] remove old timer
     // WI_drawTime(SCREENWIDTH/2 - SP_TIMEX, SP_TIMEY, cnt_time); // [cndoom] timer
 
     // [cndoom] overlay more accurate timer
@@ -1506,7 +1506,8 @@ void WI_drawStats(void)
 				 SP_TIMEY /* + SHORT(timepatch->height) */,
 				 plrs[me].stime);
     }
-    
+    // [cndoom] end
+
     if (wbs->epsd < 3)
     {
 	V_DrawPatch(SCREENWIDTH/2 + SP_TIMEX, SP_TIMEY, par);

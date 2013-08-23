@@ -1,0 +1,100 @@
+Competition Doom is a Doom source port based on Chocolate Doom and
+adds additional features and settings to it.
+
+
+== Configuration File ==
+
+Competition Doom also provides some extra settings.
+These are stored in a file named 'cndoom.cfg' with a prefix cn_.
+
+Detailed explanation about each setting:
+
+// Display ingame/intermission screen timer
+// 0 - No. 1 - Yes (Default)
+cn_timer_enabled              1
+
+// Timer X position
+// Default: -1
+cn_timer_offset_x             -1
+
+// Timer Y position
+// Default: 0
+cn_timer_offset_y             0
+
+// Timer color
+// 0 - 255 (Default:168)
+cn_timer_color_index          168
+
+// Shadow for timer
+// 0 - No (Default). 1 - Yes
+cn_timer_shadow_index         0
+
+// Backgroung color for timer
+// 0 - 255 (Default:16)
+cn_timer_bg_colormap          16
+
+// Quickstart delay so monitor can change resolution and let you adjust mouse and keys before the game starts.
+// 0 - 99999 (Default:1500)
+cn_quickstart_delay           1500
+
+// Precache all sounds at start, otherwise game will 'skip' when new sound is loaded.
+// 0 - No. 1 - Yes (Default)
+cn_precache_sounds            1
+
+// Competition Doom ID from http://www.doom.com.hr/ (required for demo submission)
+// You have to register on forum and request ID there or send request to cndoom@doom.com.hr
+cn_meta_id
+
+// Your details (All required for demo submission if you don't have Competition Doom ID)
+cn_meta_firstname
+cn_meta_lastname
+cn_meta_nickname
+
+// Country format: two letter ISO 3166, example for USA (us)
+// http://www.iso.org/iso/prods-services/iso3166ma/02iso-3166-code-lists/country_names_and_code_elements
+cn_meta_country
+
+// Extra details not required (Optional)
+// Date format: YYYY-MM-DD
+cn_meta_birthdate
+cn_meta_email
+cn_meta_url 
+
+
+== Additional Competition Doom command-line options ==
+
+-fastdemo       Speeding trought demos like in Boom
+
+-quickstart X   Quickstart delay value
+
+-printstats     outputs demo stats to stdout.txt, use with playdemo
+
+
+== Requirements ==
+
+For Windows:
+- DirectX 9.0c
+Microsoft .NET Framework 2.0 or higher (required only for launcher)
+
+For Windows 9x, use -gdi command line option or change in cndoom.cfg video_driver to "windib"
+All files, patches and fixes can be downloaded from here: http://doom.com.hr/cndoom/support/
+
+
+== Other information ==
+
+ * More information is available on the Competition Doom website:
+
+	http://www.doom.com.hr/compet-n/
+	http://www.doom.com.hr/forum/
+
+   You are encouraged to sign up and contribute any useful information
+   you may have regarding the port!
+
+ * Competition Doom is distributed under the GNU GPL.  See the COPYING
+   file for more information.
+
+ * Please send any feedback, questions or suggestions to
+   admin@doom.com.hr  Thanks!
+   
+ * BIG THANKS to Simon 'fraggle' Howard for patience and solving some problems for me.
+ * Without xttl, there would be no Competition Doom as he coded 99% of it, THANK YOU!
