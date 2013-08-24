@@ -747,8 +747,17 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
                 P_RemoveMobj(mobj);
             }
         }
-        parm = M_CheckParm("-timer");
-        if (parm && parm < myargc - 1)
+
+        //!
+        // @arg <n>
+        // @category net
+        // @vanilla
+        //
+        // For multiplayer games: exit each level after n minutes.
+        //
+
+        parm = M_CheckParmWithArgs("-timer", 1);
+        if (parm)
         {
             TimerGame = atoi(myargv[parm + 1]) * 35 * 60;
         }

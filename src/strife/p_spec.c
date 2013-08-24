@@ -1708,7 +1708,7 @@ static void DonutOverrun(fixed_t *s3_floorheight, short *s3_floorpic,
         //
         // Use the specified magic values when emulating behavior caused
         // by memory overruns from improperly constructed donuts.
-        // In Vanilla Doom this can differ depending on the operating
+        // In Vanilla Strife this can differ depending on the operating
         // system.  The default (if this option is not specified) is to
         // emulate the behavior when running under Windows 98.
 

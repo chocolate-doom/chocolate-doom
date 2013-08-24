@@ -21,17 +21,9 @@ osx/IWADController.m    osx/IWADController.h                            \
 osx/IWADLocation.m      osx/IWADLocation.h                              \
 osx/LauncherManager.m   osx/LauncherManager.h
 
-WINCE_FILES=                                                            \
-wince/GNUmakefile                                                       \
-wince/common.py                                                         \
-wince/doom-cab.cfg                                                      \
-wince/heretic-cab.cfg                                                   \
-wince/hexen-cab.cfg                                                     \
-wince/wince-cabgen
-
 WIN32_FILES=                                                            \
 win32/GNUmakefile                                                       \
 win32/README
 
-EXTRA_DIST=$(OSX_FILES) $(WINCE_FILES) $(WIN32_FILES)
+EXTRA_DIST=$(OSX_FILES) $(WIN32_FILES)
 

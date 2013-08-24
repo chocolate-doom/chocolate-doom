@@ -40,8 +40,7 @@ net_structrw.c       net_structrw.h        \
 z_native.c           z_zone.h
 
 @PROGRAM_PREFIX@server_SOURCES=$(COMMON_SOURCE_FILES) $(DEDSERV_FILES)
-@PROGRAM_PREFIX@server_LDADD = $(top_builddir)/wince/libc_wince.a           \
-                         @LDFLAGS@ @SDLNET_LIBS@
+@PROGRAM_PREFIX@server_LDADD = @LDFLAGS@ @SDLNET_LIBS@
 
 # Source files used by the game binaries (chocolate-doom, etc.)
 
@@ -137,7 +136,6 @@ SOURCE_FILES_WITH_DEH = $(SOURCE_FILES)                    \
                         $(FEATURE_DEHACKED_SOURCE_FILES)
 
 EXTRA_LIBS =                                               \
-               $(top_builddir)/wince/libc_wince.a          \
                $(top_builddir)/textscreen/libtextscreen.a  \
                $(top_builddir)/pcsound/libpcsound.a        \
                $(top_builddir)/opl/libopl.a                \
@@ -200,7 +198,6 @@ else
 @PROGRAM_PREFIX@setup_SOURCES=$(SETUP_FILES) $(COMMON_SOURCE_FILES)
 endif
 @PROGRAM_PREFIX@setup_LDADD = setup/libsetup.a                             \
-                        $(top_builddir)/wince/libc_wince.a           \
                         $(top_builddir)/textscreen/libtextscreen.a   \
                         @LDFLAGS@ @SDL_LIBS@ @SDLMIXER_LIBS@ @SDLNET_LIBS@
 

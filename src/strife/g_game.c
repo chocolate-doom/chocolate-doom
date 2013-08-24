@@ -2347,8 +2347,7 @@ void G_DoPlayDemo (void)
     // Play back a demo recorded in a netgame with a single player.
     //
 
-    if (playeringame[1] || M_CheckParm("-solo-net") > 0
-                        || M_CheckParm("-netdemo") > 0)
+    if (playeringame[1] || M_ParmExists("-solo-net"))
     {
 	netgame = true;
 	netdemo = true;
@@ -2379,7 +2378,7 @@ void G_TimeDemo (char* name)
     // Disable rendering the screen entirely.
     //
 
-    nodrawers = M_CheckParm ("-nodraw"); 
+    nodrawers = M_ParmExists("-nodraw");
 
     timingdemo = true; 
     singletics = true; 

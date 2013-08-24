@@ -421,8 +421,16 @@ void D_CheckRecordFrom(void)
     int p;
     char *filename;
 
-    p = M_CheckParm("-recordfrom");
-    if (!p || p > myargc - 2)
+    //!
+    // @vanilla
+    // @category demo
+    // @arg <savenum> <demofile>
+    //
+    // Record a demo, loading from the given filename. Equivalent
+    // to -loadgame <savenum> -record <demofile>.
+
+    p = M_CheckParmWithArgs("-recordfrom", 2);
+    if (!p)
         return;
 
     filename = SV_Filename(myargv[p + 1][0] - '0');
@@ -816,11 +824,39 @@ void D_DoomMain(void)
 
     I_AtExit(D_Endoom, false);
 
-    nomonsters = M_CheckParm("-nomonsters");
-    respawnparm = M_CheckParm("-respawn");
-    ravpic = M_CheckParm("-ravpic");
-    noartiskip = M_CheckParm("-noartiskip");
-    debugmode = M_CheckParm("-debug");
+    //!
+    // @vanilla
+    //
+    // Disable monsters.
+    //
+
+    nomonsters = M_ParmExists("-nomonsters");
+
+    //!
+    // @vanilla
+    //
+    // Monsters respawn after being killed.
+    //
+
+    respawnparm = M_ParmExists("-respawn");
+
+    //!
+    // @vanilla
+    //
+    // Take screenshots when F1 is pressed.
+    //
+
+    ravpic = M_ParmExists("-ravpic");
+
+    //!
+    // @vanilla
+    //
+    // Allow artifacts to be used when the run key is held down.
+    //
+
+    noartiskip = M_ParmExists("-noartiskip");
+
+    debugmode = M_ParmExists("-debug");
     startskill = sk_medium;
     startepisode = 1;
     startmap = 1;
@@ -829,27 +865,57 @@ void D_DoomMain(void)
 //
 // get skill / episode / map from parms
 //
-    if (M_CheckParm("-deathmatch"))
+
+    //!
+    // @vanilla
+    // @category net
+    //
+    // Start a deathmatch game.
+    //
+
+    if (M_ParmExists("-deathmatch"))
     {
         deathmatch = true;
     }
 
-    p = M_CheckParm("-skill");
-    if (p && p < myargc - 1)
+    //!
+    // @arg <skill>
+    // @vanilla
+    //
+    // Set the game skill, 1-5 (1: easiest, 5: hardest).  A skill of
+    // 0 disables all monsters.
+    //
+
+    p = M_CheckParmWithArgs("-skill", 1);
+    if (p)
     {
         startskill = myargv[p + 1][0] - '1';
         autostart = true;
     }
 
-    p = M_CheckParm("-episode");
-    if (p && p < myargc - 1)
+    //!
+    // @arg <n>
+    // @vanilla
+    //
+    // Start playing on episode n (1-4)
+    //
+
+    p = M_CheckParmWithArgs("-episode", 1);
+    if (p)
     {
         startepisode = myargv[p + 1][0] - '0';
         startmap = 1;
         autostart = true;
     }
 
-    p = M_CheckParm("-warp");
+    //!
+    // @arg <x> <y>
+    // @vanilla
+    //
+    // Start a game immediately, warping to level ExMy.
+    //
+
+    p = M_CheckParmWithArgs("-warp", 2);
     if (p && p < myargc - 2)
     {
         startepisode = myargv[p + 1][0] - '0';
@@ -921,12 +987,30 @@ void D_DoomMain(void)
     D_AddFile(iwadfile);
     W_ParseCommandLine();
 
-    p = M_CheckParm("-playdemo");
+    //!
+    // @arg <demo>
+    // @category demo
+    // @vanilla
+    //
+    // Play back the demo named demo.lmp.
+    //
+
+    p = M_CheckParmWithArgs("-playdemo", 1);
     if (!p)
     {
-        p = M_CheckParm("-timedemo");
+        //!
+        // @arg <demo>
+        // @category demo
+        // @vanilla
+        //
+        // Play back the demo named demo.lmp, determining the framerate
+        // of the screen.
+        //
+
+        p = M_CheckParmWithArgs("-timedemo", 1);
     }
-    if (p && p < myargc - 1)
+
+    if (p)
     {
         DEH_snprintf(file, sizeof(file), "%s.lmp", myargv[p + 1]);
         D_AddFile(file);
@@ -1036,29 +1120,44 @@ void D_DoomMain(void)
 
     D_CheckRecordFrom();
 
-    p = M_CheckParm("-record");
-    if (p && p < myargc - 1)
+    //!
+    // @arg <x>
+    // @category demo
+    // @vanilla
+    //
+    // Record a demo named x.lmp.
+    //
+
+    p = M_CheckParmWithArgs("-record", 1);
+    if (p)
     {
         G_RecordDemo(startskill, 1, startepisode, startmap, myargv[p + 1]);
         D_DoomLoop();           // Never returns
     }
 
-    p = M_CheckParm("-playdemo");
-    if (p && p < myargc - 1)
+    p = M_CheckParmWithArgs("-playdemo", 1);
+    if (p)
     {
         singledemo = true;      // Quit after one demo
         G_DeferedPlayDemo(myargv[p + 1]);
         D_DoomLoop();           // Never returns
     }
 
-    p = M_CheckParm("-timedemo");
-    if (p && p < myargc - 1)
+    p = M_CheckParmWithArgs("-timedemo", 1);
+    if (p)
     {
         G_TimeDemo(myargv[p + 1]);
         D_DoomLoop();           // Never returns
     }
 
-    p = M_CheckParm("-loadgame");
+    //!
+    // @arg <s>
+    // @vanilla
+    //
+    // Load the game in savegame slot s.
+    //
+
+    p = M_CheckParmWithArgs("-loadgame", 1);
     if (p && p < myargc - 1)
     {
         char *filename;

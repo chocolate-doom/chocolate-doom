@@ -63,16 +63,6 @@
 #define CT_KEY_PLAYER8      'p'     // Purple
 #define CT_KEY_ALL          't'
 
-// TYPES -------------------------------------------------------------------
-
-typedef struct
-{
-    char *name;
-    void (*func) (char **args, int tag);
-    int requiredArgs;
-    int tag;
-} execOpt_t;
-
 // EXTERNAL FUNCTION PROTOTYPES --------------------------------------------
 
 void R_ExecuteSetViewSize(void);
@@ -99,10 +89,6 @@ static void PageDrawer(void);
 static void HandleArgs(void);
 static void CheckRecordFrom(void);
 static void DrawAndBlit(void);
-static void ExecOptionSCRIPTS(char **args, int tag);
-static void ExecOptionSKILL(char **args, int tag);
-static void ExecOptionPLAYDEMO(char **args, int tag);
-static void ExecOptionTestControls(char **args, int tag);
 static void CreateSavePath(void);
 static void WarpCheck(void);
 
@@ -141,15 +127,6 @@ static int WarpMap;
 static int demosequence;
 static int pagetic;
 static char *pagename;
-
-static execOpt_t ExecOptions[] = {
-    {"-scripts", ExecOptionSCRIPTS, 1, 0},
-    {"-skill", ExecOptionSKILL, 1, 0},
-    {"-playdemo", ExecOptionPLAYDEMO, 1, 0},
-    {"-timedemo", ExecOptionPLAYDEMO, 1, 0},
-    {"-testcontrols", ExecOptionTestControls, 0, 0},
-    {NULL, NULL, 0, 0}          // Terminator
-};
 
 // CODE --------------------------------------------------------------------
 
@@ -397,23 +374,30 @@ void D_DoomMain(void)
         H2_GameLoop();          // Never returns
     }
 
-    p = M_CheckParm("-playdemo");
-    if (p && p < myargc - 1)
+    p = M_CheckParmWithArgs("-playdemo", 1);
+    if (p)
     {
         singledemo = true;      // Quit after one demo
         G_DeferedPlayDemo(myargv[p + 1]);
         H2_GameLoop();          // Never returns
     }
 
-    p = M_CheckParm("-timedemo");
-    if (p && p < myargc - 1)
+    p = M_CheckParmWithArgs("-timedemo", 1);
+    if (p)
     {
         G_TimeDemo(myargv[p + 1]);
         H2_GameLoop();          // Never returns
     }
 
-    p = M_CheckParm("-loadgame");
-    if (p && p < myargc - 1)
+    //!
+    // @arg <s>
+    // @vanilla
+    //
+    // Load the game in savegame slot s.
+    //
+
+    p = M_CheckParmWithArgs("-loadgame", 1);
+    if (p)
     {
         G_LoadGame(atoi(myargv[p + 1]));
     }
@@ -444,29 +428,141 @@ void D_DoomMain(void)
 static void HandleArgs(void)
 {
     int p;
-    execOpt_t *opt;
+
+    //!
+    // @vanilla
+    //
+    // Disable monsters.
+    //
 
     nomonsters = M_ParmExists("-nomonsters");
+
+    //!
+    // @vanilla
+    //
+    // Monsters respawn after being killed.
+    //
+
     respawnparm = M_ParmExists("-respawn");
+
+    //!
+    // @vanilla
+    // @category net
+    //
+    // In deathmatch mode, change a player's class each time the
+    // player respawns.
+    //
+
     randomclass = M_ParmExists("-randclass");
+
+    //!
+    // @vanilla
+    //
+    // Take screenshots when F1 is pressed.
+    //
+
     ravpic = M_ParmExists("-ravpic");
+
+    //!
+    // @vanilla
+    //
+    // Don't allow artifacts to be used when the run key is held down.
+    //
+
     artiskip = M_ParmExists("-artiskip");
+
     debugmode = M_ParmExists("-debug");
+
+    //!
+    // @vanilla
+    // @category net
+    //
+    // Start a deathmatch game.
+    //
+
     deathmatch = M_ParmExists("-deathmatch");
 
+    // currently broken or unused:
     cmdfrag = M_ParmExists("-cmdfrag");
 
     // Check WAD file command line options
     W_ParseCommandLine();
 
-    // Process command line options
-    for (opt = ExecOptions; opt->name != NULL; opt++)
+    //!
+    // @vanilla
+    // @arg <path>
+    //
+    // Development option to specify path to level scripts.
+    //
+
+    p = M_CheckParmWithArgs("-scripts", 1);
+
+    if (p)
     {
-        p = M_CheckParm(opt->name);
-        if (p && p < myargc - opt->requiredArgs)
+        sc_FileScripts = true;
+        sc_ScriptsDir = myargv[p+1];
+    }
+
+    //!
+    // @arg <skill>
+    // @vanilla
+    //
+    // Set the game skill, 1-5 (1: easiest, 5: hardest).  A skill of
+    // 0 disables all monsters.
+    //
+
+    p = M_CheckParmWithArgs("-skill", 1);
+
+    if (p)
+    {
+        startskill = myargv[p+1][0] - '1';
+        autostart = true;
+    }
+
+    //!
+    // @arg <demo>
+    // @category demo
+    // @vanilla
+    //
+    // Play back the demo named demo.lmp.
+    //
+
+    p = M_CheckParmWithArgs("-playdemo", 1);
+
+    if (!p)
+    {
+        //!
+        // @arg <demo>
+        // @category demo
+        // @vanilla
+        //
+        // Play back the demo named demo.lmp, determining the framerate
+        // of the screen.
+        //
+
+        p = M_CheckParmWithArgs("-timedemo", 1);
+    }
+
+    if (p)
+    {
+        char file[256];
+
+        strncpy(file, myargv[p+1], sizeof(file));
+        file[sizeof(file) - 6] = '\0';
+
+        if (strcasecmp(file + strlen(file) - 4, ".lmp") != 0)
         {
-            opt->func(&myargv[p], opt->tag);
+            strcat(file, ".lmp");
         }
+
+        W_AddFile(file);
+        ST_Message("Playing demo %s.\n", file);
+    }
+
+    if (M_ParmExists("-testcontrols"))
+    {
+        autostart = true;
+        testcontrols = true;
     }
 }
 
@@ -507,64 +603,6 @@ static void WarpCheck(void)
         }
     }
 }
-
-//==========================================================================
-//
-// ExecOptionSKILL
-//
-//==========================================================================
-
-static void ExecOptionSKILL(char **args, int tag)
-{
-    startskill = args[1][0] - '1';
-    autostart = true;
-}
-
-//==========================================================================
-//
-// ExecOptionPLAYDEMO
-//
-//==========================================================================
-
-static void ExecOptionPLAYDEMO(char **args, int tag)
-{
-    char file[256];
-
-    strcpy(file, args[1]);
-
-    if (strcasecmp(file + strlen(file) - 4, ".lmp") != 0)
-    {
-        strcat(file, ".lmp");
-    }
-
-    W_AddFile(file);
-    ST_Message("Playing demo %s.\n", file);
-}
-
-//==========================================================================
-//
-// ExecOptionTestControls
-//
-//==========================================================================
-
-static void ExecOptionTestControls(char **args, int tag)
-{
-    autostart = true;
-    testcontrols = true;
-}
-
-//==========================================================================
-//
-// ExecOptionSCRIPTS
-//
-//==========================================================================
-
-static void ExecOptionSCRIPTS(char **args, int tag)
-{
-    sc_FileScripts = true;
-    sc_ScriptsDir = args[1];
-}
-
 
 //==========================================================================
 //

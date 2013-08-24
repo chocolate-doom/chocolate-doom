@@ -111,6 +111,7 @@ void DEH_HereticInit(void)
 
     //!
     // @arg <version>
+    // @category mod
     //
     // Select the Heretic version number that was used to generate the
     // HHE patch to be loaded.  Patches for each of the Vanilla

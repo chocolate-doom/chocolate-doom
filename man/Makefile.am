@@ -1,5 +1,12 @@
 
-MANPAGE_GEN_FILES=manpage.template docgen default.cfg.template extra.cfg.template
+MANPAGE_GEN_FILES=\
+        doom.template \
+        heretic.template \
+        hexen.template \
+        strife.template \
+        docgen \
+        default.cfg.template \
+        extra.cfg.template
 
 docdir=$(prefix)/share/doc/@PACKAGE@
 
@@ -25,7 +32,7 @@ nodist_doc_DATA=INSTALL
 
 
 cndoom.6: ../src $(MANPAGE_GEN_FILES)
-	./docgen -g doom -m manpage.template ../src ../src/doom > $@
+	./docgen -g doom -m doom.template ../src ../src/doom > $@
 
 default.cfg.5: ../src default.cfg.template
 	./docgen -g doom -m default.cfg.template \
@@ -38,7 +45,7 @@ cndoom.cfg.5: ../src extra.cfg.template
 
 
 cnheretic.6: ../src $(MANPAGE_GEN_FILES)
-	./docgen -g heretic -m manpage.template ../src ../src/heretic > $@
+	./docgen -g heretic -m heretic.template ../src ../src/heretic > $@
 
 heretic.cfg.5: ../src default.cfg.template
 	./docgen -g heretic -m default.cfg.template \
@@ -51,7 +58,7 @@ cnheretic.cfg.5: ../src extra.cfg.template
 
 
 cnhexen.6: ../src $(MANPAGE_GEN_FILES)
-	./docgen -g hexen -m manpage.template ../src ../src/hexen > $@
+	./docgen -g hexen -m hexen.template ../src ../src/hexen > $@
 
 hexen.cfg.5: ../src default.cfg.template
 	./docgen -g hexen -m default.cfg.template \
@@ -64,7 +71,7 @@ cnhexen.cfg.5: ../src extra.cfg.template
 
 
 cnstrife.6: ../src $(MANPAGE_GEN_FILES)
-	./docgen -g strife -m manpage.template ../src ../src/strife > $@
+	./docgen -g strife -m strife.template ../src ../src/strife > $@
 
 strife.cfg.5: ../src default.cfg.template
 	./docgen -g strife -m default.cfg.template \

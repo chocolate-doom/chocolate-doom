@@ -833,6 +833,7 @@ static void SelectQueryAddress(TXT_UNCAST_ARG(button),
              && found_iwads[i]->mission == querydata->gamemission)
             {
                 found_iwad_selected = i;
+                iwadfile = found_iwads[i]->name;
                 break;
             }
         }

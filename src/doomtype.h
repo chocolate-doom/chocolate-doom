@@ -64,13 +64,6 @@
 #define PACKEDATTR
 #endif
 
-// Windows CE is missing some vital ANSI C functions.  We have to
-// use our own replacements.
-
-#ifdef _WIN32_WCE
-#include "libc_wince.h"
-#endif
-
 // C99 integer types; with gcc we just use this.  Other compilers 
 // should add conditional statements that define the C99 types.
 
