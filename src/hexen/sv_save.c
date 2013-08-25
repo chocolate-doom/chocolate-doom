@@ -120,10 +120,8 @@ static void ArchiveMisc(void);
 static void UnarchiveMisc(void);
 static void SetMobjArchiveNums(void);
 static void RemoveAllThinkers(void);
-static void MangleMobj(mobj_t * mobj);
-static void RestoreMobj(mobj_t * mobj);
 static int GetMobjNum(mobj_t * mobj);
-static void SetMobjPtr(int *archiveNum);
+static void SetMobjPtr(mobj_t **ptr, unsigned int archiveNum);
 static void MangleSSThinker(ssthinker_t * sst);
 static void RestoreSSThinker(ssthinker_t * sst);
 static void RestoreSSThinkerNoSD(ssthinker_t * sst);
@@ -156,7 +154,7 @@ char *SavePath = DEFAULT_SAVEPATH;
 
 static int MobjCount;
 static mobj_t **MobjList;
-static int **TargetPlayerAddrs;
+static mobj_t ***TargetPlayerAddrs;
 static int TargetPlayerCount;
 static byte *SaveBuffer;
 static boolean SavingPlayers;
@@ -780,6 +778,436 @@ static void StreamOut_player_t(player_t *str)
 }
 
 
+//
+// thinker_t
+//
+
+static void StreamIn_thinker_t(thinker_t *str)
+{
+    // struct thinker_s *prev, *next;
+    // Pointers are discarded:
+    GET_LONG;
+    str->prev = NULL;
+    GET_LONG;
+    str->next = NULL;
+
+    // think_t function;
+    // Function pointer is discarded:
+    GET_LONG;
+    str->function = NULL;
+}
+
+static void StreamOut_thinker_t(thinker_t *str)
+{
+    // struct thinker_s *prev, *next;
+    StreamOutPtr(str->prev);
+    StreamOutPtr(str->next);
+
+    // think_t function;
+    StreamOutPtr(&str->function);
+}
+
+
+//
+// mobj_t
+//
+
+static void StreamInMobjSpecials(mobj_t *mobj)
+{
+    unsigned int special1, special2;
+
+    special1 = GET_LONG;
+    special2 = GET_LONG;
+
+    mobj->special1.i = special1;
+    mobj->special2.i = special2;
+
+    switch (mobj->type)
+    {
+            // Just special1
+        case MT_BISH_FX:
+        case MT_HOLY_FX:
+        case MT_DRAGON:
+        case MT_THRUSTFLOOR_UP:
+        case MT_THRUSTFLOOR_DOWN:
+        case MT_MINOTAUR:
+        case MT_SORCFX1:
+            SetMobjPtr(&mobj->special1.m, special1);
+            break;
+
+            // Just special2
+        case MT_LIGHTNING_FLOOR:
+        case MT_LIGHTNING_ZAP:
+            SetMobjPtr(&mobj->special2.m, special2);
+            break;
+
+            // Both special1 and special2
+        case MT_HOLY_TAIL:
+        case MT_LIGHTNING_CEILING:
+            SetMobjPtr(&mobj->special1.m, special1);
+            SetMobjPtr(&mobj->special2.m, special2);
+            break;
+
+        default:
+            break;
+    }
+}
+
+static void StreamIn_mobj_t(mobj_t *str)
+{
+    unsigned int i;
+
+    // thinker_t thinker;
+    StreamIn_thinker_t(&str->thinker);
+
+    // fixed_t x, y, z;
+    str->x = GET_LONG;
+    str->y = GET_LONG;
+    str->z = GET_LONG;
+
+    // struct mobj_s *snext, *sprev;
+    // Pointer values are discarded:
+    GET_LONG;
+    str->snext = NULL;
+    GET_LONG;
+    str->sprev = NULL;
+
+    // angle_t angle;
+    str->angle = GET_LONG;
+
+    // spritenum_t sprite;
+    str->sprite = GET_LONG;
+
+    // int frame;
+    str->frame = GET_LONG;
+
+    // struct mobj_s *bnext, *bprev;
+    // Values are read but discarded; this will be restored when the thing's
+    // position is set.
+    GET_LONG;
+    str->bnext = NULL;
+    GET_LONG;
+    str->bprev = NULL;
+
+    // struct subsector_s *subsector;
+    // Read but discard: pointer will be restored when thing position is set.
+    GET_LONG;
+    str->subsector = NULL;
+
+    // fixed_t floorz, ceilingz;
+    str->floorz = GET_LONG;
+    str->ceilingz = GET_LONG;
+
+    // fixed_t floorpic;
+    str->floorpic = GET_LONG;
+
+    // fixed_t radius, height;
+    str->radius = GET_LONG;
+    str->height = GET_LONG;
+
+    // fixed_t momx, momy, momz;
+    str->momx = GET_LONG;
+    str->momy = GET_LONG;
+    str->momz = GET_LONG;
+
+    // int validcount;
+    str->validcount = GET_LONG;
+
+    // mobjtype_t type;
+    str->type = GET_LONG;
+
+    // mobjinfo_t *info;
+    // Pointer value is read but discarded.
+    GET_LONG;
+    str->info = NULL;
+
+    // int tics;
+    str->tics = GET_LONG;
+
+    // state_t *state;
+    // Restore as index into states table.
+    i = GET_LONG;
+    str->state = &states[i];
+
+    // int damage;
+    str->damage = GET_LONG;
+
+    // int flags;
+    str->flags = GET_LONG;
+
+    // int flags2;
+    str->flags2 = GET_LONG;
+
+    // specialval_t special1;
+    // specialval_t special2;
+    // Read in special values: there are special cases to deal with with
+    // mobj pointers.
+    StreamInMobjSpecials(str);
+
+    // int health;
+    str->health = GET_LONG;
+
+    // int movedir;
+    str->movedir = GET_LONG;
+
+    // int movecount;
+    str->movecount = GET_LONG;
+
+    // struct mobj_s *target;
+    i = GET_LONG;
+    SetMobjPtr(&str->target, i);
+
+    // int reactiontime;
+    str->reactiontime = GET_LONG;
+
+    // int threshold;
+    str->threshold = GET_LONG;
+
+    // struct player_s *player;
+    // Saved as player number.
+    i = GET_LONG;
+    if (i == 0)
+    {
+        str->player = NULL;
+    }
+    else
+    {
+        str->player = &players[i - 1];
+        str->player->mo = str;
+    }
+
+    // int lastlook;
+    str->lastlook = GET_LONG;
+
+    // fixed_t floorclip;
+    str->floorclip = GET_LONG;
+
+    // int archiveNum;
+    str->archiveNum = GET_LONG;
+
+    // short tid;
+    str->tid = GET_WORD;
+
+    // byte special;
+    str->special = GET_BYTE;
+
+    // byte args[5];
+    for (i=0; i<5; ++i)
+    {
+        str->args[i] = GET_BYTE;
+    }
+}
+
+static void StreamOutMobjSpecials(mobj_t *mobj)
+{
+    unsigned int special1, special2;
+    boolean corpse;
+    
+    corpse = (mobj->flags & MF_CORPSE) != 0;
+    special1 = mobj->special1.i;
+    special2 = mobj->special2.i;
+
+    switch (mobj->type)
+    {
+            // Just special1
+        case MT_BISH_FX:
+        case MT_HOLY_FX:
+        case MT_DRAGON:
+        case MT_THRUSTFLOOR_UP:
+        case MT_THRUSTFLOOR_DOWN:
+        case MT_MINOTAUR:
+        case MT_SORCFX1:
+        case MT_MSTAFF_FX2:
+            if (corpse)
+            {
+                special1 = MOBJ_NULL;
+            }
+            else
+            {
+                special1 = GetMobjNum(mobj->special1.m);
+            }
+            break;
+
+            // Just special2
+        case MT_LIGHTNING_FLOOR:
+        case MT_LIGHTNING_ZAP:
+            if (corpse)
+            {
+                special2 = MOBJ_NULL;
+            }
+            else
+            {
+                special2 = GetMobjNum(mobj->special2.m);
+            }
+            break;
+
+            // Both special1 and special2
+        case MT_HOLY_TAIL:
+        case MT_LIGHTNING_CEILING:
+            if (corpse)
+            {
+                special1 = MOBJ_NULL;
+                special2 = MOBJ_NULL;
+            }
+            else
+            {
+                special1 = GetMobjNum(mobj->special1.m);
+                special2 = GetMobjNum(mobj->special2.m);
+            }
+            break;
+
+            // Miscellaneous
+        case MT_KORAX:
+            special1 = 0; // Searching index
+            break;
+
+        default:
+            break;
+    }
+
+    // Write special values to savegame file.
+
+    StreamOutLong(special1);
+    StreamOutLong(special2);
+}
+
+static void StreamOut_mobj_t(mobj_t *str)
+{
+    int i;
+
+    // thinker_t thinker;
+    StreamOut_thinker_t(&str->thinker);
+
+    // fixed_t x, y, z;
+    StreamOutLong(str->x);
+    StreamOutLong(str->y);
+    StreamOutLong(str->z);
+
+    // struct mobj_s *snext, *sprev;
+    StreamOutPtr(str->snext);
+    StreamOutPtr(str->sprev);
+
+    // angle_t angle;
+    StreamOutLong(str->angle);
+
+    // spritenum_t sprite;
+    StreamOutLong(str->sprite);
+
+    // int frame;
+    StreamOutLong(str->frame);
+
+    // struct mobj_s *bnext, *bprev;
+    StreamOutPtr(str->bnext);
+    StreamOutPtr(str->bprev);
+
+    // struct subsector_s *subsector;
+    StreamOutPtr(str->subsector);
+
+    // fixed_t floorz, ceilingz;
+    StreamOutLong(str->floorz);
+    StreamOutLong(str->ceilingz);
+
+    // fixed_t floorpic;
+    StreamOutLong(str->floorpic);
+
+    // fixed_t radius, height;
+    StreamOutLong(str->radius);
+    StreamOutLong(str->height);
+
+    // fixed_t momx, momy, momz;
+    StreamOutLong(str->momx);
+    StreamOutLong(str->momy);
+    StreamOutLong(str->momz);
+
+    // int validcount;
+    StreamOutLong(str->validcount);
+
+    // mobjtype_t type;
+    StreamOutLong(str->type);
+
+    // mobjinfo_t *info;
+    StreamOutPtr(str->info);
+
+    // int tics;
+    StreamOutLong(str->tics);
+
+    // state_t *state;
+    // Save as index into the states table.
+    StreamOutLong(str->state - states);
+
+    // int damage;
+    StreamOutLong(str->damage);
+
+    // int flags;
+    StreamOutLong(str->flags);
+
+    // int flags2;
+    StreamOutLong(str->flags2);
+
+    // specialval_t special1;
+    // specialval_t special2;
+    // There are lots of special cases for the special values:
+    StreamOutMobjSpecials(str);
+
+    // int health;
+    StreamOutLong(str->health);
+
+    // int movedir;
+    StreamOutLong(str->movedir);
+
+    // int movecount;
+    StreamOutLong(str->movecount);
+
+    // struct mobj_s *target;
+    if ((str->flags & MF_CORPSE) != 0)
+    {
+        StreamOutLong(MOBJ_NULL);
+    }
+    else
+    {
+        StreamOutLong(GetMobjNum(str->target));
+    }
+
+    // int reactiontime;
+    StreamOutLong(str->reactiontime);
+
+    // int threshold;
+    StreamOutLong(str->threshold);
+
+    // struct player_s *player;
+    // Stored as index into players[] array, if there is a player pointer.
+    if (str->player != NULL)
+    {
+        StreamOutLong(str->player - players + 1);
+    }
+    else
+    {
+        StreamOutLong(0);
+    }
+
+    // int lastlook;
+    StreamOutLong(str->lastlook);
+
+    // fixed_t floorclip;
+    StreamOutLong(str->floorclip);
+
+    // int archiveNum;
+    StreamOutLong(str->archiveNum);
+
+    // short tid;
+    StreamOutWord(str->tid);
+
+    // byte special;
+    StreamOutByte(str->special);
+
+    // byte args[5];
+    for (i=0; i<5; ++i)
+    {
+        StreamOutByte(str->args[i]);
+    }
+}
+
+
 
 //==========================================================================
 //
@@ -1142,7 +1570,7 @@ void SV_MapTeleport(int map, int position)
     {
         for (i = 0; i < TargetPlayerCount; i++)
         {
-            *TargetPlayerAddrs[i] = (int) targetPlayerMobj;
+            *TargetPlayerAddrs[i] = targetPlayerMobj;
         }
         Z_Free(TargetPlayerAddrs);
     }
@@ -1451,7 +1879,6 @@ static void ArchiveMobjs(void)
 {
     int count;
     thinker_t *thinker;
-    mobj_t tempMobj;
 
     StreamOutLong(ASEG_MOBJS);
     StreamOutLong(MobjCount);
@@ -1468,9 +1895,7 @@ static void ArchiveMobjs(void)
             continue;
         }
         count++;
-        memcpy(&tempMobj, thinker, sizeof(mobj_t));
-        MangleMobj(&tempMobj);
-        StreamOutBuffer(&tempMobj, sizeof(mobj_t));
+        StreamOut_mobj_t((mobj_t *) thinker);
     }
     if (count != MobjCount)
     {
@@ -1490,7 +1915,7 @@ static void UnarchiveMobjs(void)
     mobj_t *mobj;
 
     AssertSegment(ASEG_MOBJS);
-    TargetPlayerAddrs = Z_Malloc(MAX_TARGET_PLAYERS * sizeof(int *),
+    TargetPlayerAddrs = Z_Malloc(MAX_TARGET_PLAYERS * sizeof(mobj_t **),
                                  PU_STATIC, NULL);
     TargetPlayerCount = 0;
     MobjCount = GET_LONG;
@@ -1502,97 +1927,19 @@ static void UnarchiveMobjs(void)
     for (i = 0; i < MobjCount; i++)
     {
         mobj = MobjList[i];
-        memcpy(mobj, SavePtr.b, sizeof(mobj_t));
-        SavePtr.b += sizeof(mobj_t);
+        StreamIn_mobj_t(mobj);
+
+        // Restore broken pointers.
+        mobj->info = &mobjinfo[mobj->type];
+        P_SetThingPosition(mobj);
+        mobj->floorz = mobj->subsector->sector->floorheight;
+        mobj->ceilingz = mobj->subsector->sector->ceilingheight;
+
         mobj->thinker.function = P_MobjThinker;
-        RestoreMobj(mobj);
         P_AddThinker(&mobj->thinker);
     }
     P_CreateTIDList();
     P_InitCreatureCorpseQueue(true);    // true = scan for corpses
-}
-
-//==========================================================================
-//
-// MangleMobj
-//
-//==========================================================================
-
-static void MangleMobj(mobj_t * mobj)
-{
-    boolean corpse;
-
-    corpse = mobj->flags & MF_CORPSE;
-    mobj->state = (state_t *) (mobj->state - states);
-    if (mobj->player)
-    {
-        mobj->player = (player_t *) ((mobj->player - players) + 1);
-    }
-    if (corpse)
-    {
-        mobj->target = (mobj_t *) MOBJ_NULL;
-    }
-    else
-    {
-        mobj->target = (mobj_t *) GetMobjNum(mobj->target);
-    }
-    switch (mobj->type)
-    {
-            // Just special1
-        case MT_BISH_FX:
-        case MT_HOLY_FX:
-        case MT_DRAGON:
-        case MT_THRUSTFLOOR_UP:
-        case MT_THRUSTFLOOR_DOWN:
-        case MT_MINOTAUR:
-        case MT_SORCFX1:
-        case MT_MSTAFF_FX2:
-            if (corpse)
-            {
-                mobj->special1.m = MOBJ_NULL;
-            }
-            else
-            {
-                mobj->special1.m = GetMobjNum(mobj->special1.m);
-            }
-            break;
-
-            // Just special2
-        case MT_LIGHTNING_FLOOR:
-        case MT_LIGHTNING_ZAP:
-            if (corpse)
-            {
-                mobj->special2.m = MOBJ_NULL;
-            }
-            else
-            {
-                mobj->special2.m = GetMobjNum(mobj->special2.m);
-            }
-            break;
-
-            // Both special1 and special2
-        case MT_HOLY_TAIL:
-        case MT_LIGHTNING_CEILING:
-            if (corpse)
-            {
-                mobj->special1.m = MOBJ_NULL;
-                mobj->special2.m = MOBJ_NULL;
-            }
-            else
-            {
-                mobj->special1.m = GetMobjNum(mobj->special1.m);
-                mobj->special2.m = GetMobjNum(mobj->special2.m);
-            }
-            break;
-
-            // Miscellaneous
-        case MT_KORAX:
-            mobj->special1.i = 0; // Searching index
-            break;
-
-        default:
-            break;
-    }
 }
 
 //==========================================================================
@@ -1616,78 +1963,29 @@ static int GetMobjNum(mobj_t * mobj)
 
 //==========================================================================
 //
-// RestoreMobj
-//
-//==========================================================================
-
-static void RestoreMobj(mobj_t * mobj)
-{
-    mobj->state = &states[(int) mobj->state];
-    if (mobj->player)
-    {
-        mobj->player = &players[(int) mobj->player - 1];
-        mobj->player->mo = mobj;
-    }
-    P_SetThingPosition(mobj);
-    mobj->info = &mobjinfo[mobj->type];
-    mobj->floorz = mobj->subsector->sector->floorheight;
-    mobj->ceilingz = mobj->subsector->sector->ceilingheight;
-    SetMobjPtr((int *) &mobj->target);
-    switch (mobj->type)
-    {
-            // Just special1
-        case MT_BISH_FX:
-        case MT_HOLY_FX:
-        case MT_DRAGON:
-        case MT_THRUSTFLOOR_UP:
-        case MT_THRUSTFLOOR_DOWN:
-        case MT_MINOTAUR:
-        case MT_SORCFX1:
-            SetMobjPtr(&mobj->special1.i);
-            break;
-
-            // Just special2
-        case MT_LIGHTNING_FLOOR:
-        case MT_LIGHTNING_ZAP:
-            SetMobjPtr(&mobj->special2.i);
-            break;
-
-            // Both special1 and special2
-        case MT_HOLY_TAIL:
-        case MT_LIGHTNING_CEILING:
-            SetMobjPtr(&mobj->special1.i);
-            SetMobjPtr(&mobj->special2.i);
-            break;
-
-        default:
-            break;
-    }
-}
-
-//==========================================================================
-//
 // SetMobjPtr
 //
 //==========================================================================
 
-static void SetMobjPtr(int *archiveNum)
+static void SetMobjPtr(mobj_t **ptr, unsigned int archiveNum)
 {
-    if (*archiveNum == MOBJ_NULL)
+    if (archiveNum == MOBJ_NULL)
     {
-        *archiveNum = 0;
-        return;
+        *ptr = NULL;
     }
-    if (*archiveNum == MOBJ_XX_PLAYER)
+    else if (archiveNum == MOBJ_XX_PLAYER)
     {
         if (TargetPlayerCount == MAX_TARGET_PLAYERS)
         {
             I_Error("RestoreMobj: exceeded MAX_TARGET_PLAYERS");
         }
-        TargetPlayerAddrs[TargetPlayerCount++] = archiveNum;
-        *archiveNum = 0;
-        return;
+        TargetPlayerAddrs[TargetPlayerCount++] = ptr;
+        *ptr = NULL;
     }
-    *archiveNum = (int) MobjList[*archiveNum];
+    else
+    {
+        *ptr = MobjList[archiveNum];
+    }
 }
 
 //==========================================================================
@@ -1829,7 +2127,7 @@ static void RestoreScript(acs_t * script)
     {
         script->line = &lines[(int) script->line];
     }
-    SetMobjPtr((int *) &script->activator);
+    SetMobjPtr(&script->activator, (int) script->activator);
 }
 
 //==========================================================================
