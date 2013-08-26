@@ -48,7 +48,7 @@
 
 #include "doomtype.h"
 #include "m_controls.h" // [cndoom]
-extern int cn_precache_sounds; // [cndoom]
+//extern int cn_precache_sounds; // [cndoom]
 
 #define LOW_PASS_FILTER
 //#define DEBUG_DUMP_WAVS

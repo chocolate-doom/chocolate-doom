@@ -496,6 +496,16 @@ void D_DoomLoop (void)
     if (demorecording)
     {
 	qsdelay = cn_quickstart_delay;
+    
+    //!
+    // @arg <x>
+    // @category demo
+    // @vanilla
+    //
+    // Delay starting the game in miliseconds (0 - 9999) with
+    // progress bar so you can adjust/press your mouse and key
+    //
+    
 	i = M_CheckParmWithArgs("-quickstart", 1);
 	if (i)
 	    qsdelay = atoi(myargv[i+1]);
@@ -1617,8 +1627,9 @@ void D_DoomMain (void)
 
     // [cndoom] "fast" timer for quickly speeding through demos, similar to
     // -fastdemo from boom
-    cn_fastdemo = M_CheckParm("-fastdemo");
+    // cn_fastdemo = M_CheckParm("-fastdemo");
     
+    /* not used
     // [cndoom] reserve space for metadata player info here
     for (p=0; p<MAXPLAYERS; p++)
     {
@@ -1630,7 +1641,7 @@ void D_DoomMain (void)
 	cn_meta_playerinfos[p].email = malloc(CN_NETMETALEN);
 	cn_meta_playerinfos[p].url = malloc(CN_NETMETALEN);
     }
-
+    */
     DEH_printf("S_Init: Setting up sound.\n");
     S_Init (sfxVolume * 8, musicVolume * 8);
 

@@ -42,6 +42,7 @@ void ConfigCompetition(void)
                                TXT_NewIntInputBox(&cn_meta_id, 4),
                                NULL),
                 TXT_NewStrut(0, 1),
+/* we will not use this, player should register on forum and use ID
                 TXT_NewSeparator("* Optional *"),
                    TXT_NewHorizBox(TXT_NewLabel("First name: "),
                                TXT_NewInputBox(&cn_meta_firstname, 32),
@@ -64,5 +65,6 @@ void ConfigCompetition(void)
                    TXT_NewHorizBox(TXT_NewLabel("WWW: "),
                                TXT_NewInputBox(&cn_meta_url, 32),
                                NULL),
+*/
                    NULL);
 }

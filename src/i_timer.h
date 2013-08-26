@@ -32,7 +32,7 @@
 
 // [cndoom] "fast" timer for quickly speeding through demos, similar to
 // -fastdemo from boom
-extern int cn_fastdemo;
+// extern int cn_fastdemo;
 
 // Called by D_DoomLoop,
 // returns current time in tics.

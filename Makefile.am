@@ -32,11 +32,13 @@ CODEBLOCKS_FILES=                              \
         codeblocks/setup-res.rc
 
 DOC_FILES=                              \
+        CNDOOM                          \
         CMDLINE                         \
         README                          \
         README.OPL                      \
         NEWS                            \
         ChangeLog                       \
+        CNChangeLog                     \
         NOT-BUGS
 
 EXTRA_DIST=                             \

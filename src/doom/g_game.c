@@ -1388,9 +1388,13 @@ void G_DoCompleted (void)
 
     for (i=0, totaltime=0; i < MAXLEVELTIMES; i++)
 	totaltime += leveltimes[i];
-    // end cndoom
 
-    // [cndoom] temp stuff, remove or improve later
+    //!
+    // @vanilla
+    //
+    // Outputs gameplay stats per map/total to stdout/console
+    //
+    
     if (M_CheckParm("-printstats"))
     {
 	int ki, it, se;
@@ -2256,109 +2260,6 @@ boolean G_CheckDemoStatus (void)
     if (demorecording) 
     { 
 	*demo_p++ = DEMOMARKER; 
-
-    // [cndoom] write some stuff to demo after marker
-
-    // meta version
-    memcpy (demo_p, "CNV001#", 7);
-    demo_p += 7;
-
-    //memcpy (demo_p, cn_meta_id, 4);
-    //demo_p += 4;
-    
-    memcpy (demo_p, "#", 1);
-    demo_p += 1;
-    
-    // game
-    if (gamemission == doom)
-    {
-        memcpy (demo_p, "D1", 2);
-    }
-    else if (gamemission == doom2)
-    {
-        memcpy (demo_p, "D2", 2);
-    }
-    else if (gamemission == pack_tnt)
-    {
-        memcpy (demo_p, "EV", 2);
-    }
-    else if (gamemission == pack_plut)
-    {
-        memcpy (demo_p, "PL", 2);
-    }
-    else
-    {
-        memcpy (demo_p, "XX", 2);
-    }
-    demo_p += 2;
-    
-    memcpy (demo_p, "#", 1);
-    demo_p += 1;
-    
-    // episode
-    if (gameepisode == 1)
-    {
-        memcpy (demo_p, "EP1", 3);
-    }
-    else if (gameepisode == 2)
-    {
-        memcpy (demo_p, "EP2", 3);
-    }
-    else if (gameepisode == 3)
-    {
-        memcpy (demo_p, "EP3", 3);
-    }
-    else if (gameepisode == 4)
-    {
-        memcpy (demo_p, "EP4", 3);
-    }
-    else
-    {
-        memcpy (demo_p, "EPX", 3);
-    }
-    demo_p += 3;
-
-    memcpy (demo_p, "#", 1);
-    demo_p += 1; 
-    
-    // map
-    //memcpy (demo_p, (void*) gamemap, 1);
-    //demo_p += 1; 
- 
-    memcpy (demo_p, "#", 1);
-    demo_p += 1; 
-
-    // skill
-    if (gameskill == sk_baby)
-    {
-        memcpy (demo_p, "SK1", 3);
-    }
-    else if (gameskill == sk_easy)
-    {
-        memcpy (demo_p, "SK2", 3);
-    }
-    else if (gameskill == sk_medium)
-    {
-        memcpy (demo_p, "SK3", 3);
-    }
-    else if (gameskill == sk_hard)
-    {
-        memcpy (demo_p, "SK4", 3);
-    }
-    else if (gameskill == sk_nightmare)
-    {
-        memcpy (demo_p, "SK5", 3);
-    }
-    else
-    {
-        memcpy (demo_p, "SKX", 3);
-    }
-    demo_p += 3;
-
-    memcpy (demo_p, "#", 1);
-    demo_p += 1; 
-    
-    // [cndoom] end
 
 	M_WriteFile (demoname, demobuffer, demo_p - demobuffer); 
 	

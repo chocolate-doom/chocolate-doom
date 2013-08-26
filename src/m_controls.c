@@ -56,6 +56,7 @@ int cn_timer_offset_y       = 0;
 int cn_timer_color_index    = 168;
 int cn_timer_shadow_index   = 0;
 int cn_timer_bg_colormap    = 16;
+/* not used
 char *cn_meta_firstname     = "Joe";
 char *cn_meta_lastname      = "Doe";
 char *cn_meta_nickname      = "foobar";
@@ -63,6 +64,7 @@ char *cn_meta_birthdate     = "1985-04-22";
 char *cn_meta_country       = "zw";
 char *cn_meta_email         = "jdoe@example.net";
 char *cn_meta_url           = "http://www.example.net";
+*/
 int cn_meta_id              = 0;
 // [cndoom] end
 
@@ -244,6 +246,7 @@ void M_BindBaseControls(void)
     M_BindVariable("cn_timer_offset_y",         &cn_timer_offset_y);
     M_BindVariable("cn_timer_color_index",      &cn_timer_color_index);
     M_BindVariable("cn_timer_shadow_index",     &cn_timer_shadow_index);
+    /* not used
     M_BindVariable("cn_meta_firstname",         &cn_meta_firstname);
     M_BindVariable("cn_meta_lastname",          &cn_meta_lastname);
     M_BindVariable("cn_meta_nickname",          &cn_meta_nickname);
@@ -251,6 +254,7 @@ void M_BindBaseControls(void)
     M_BindVariable("cn_meta_country",           &cn_meta_country);
     M_BindVariable("cn_meta_email",             &cn_meta_email);
     M_BindVariable("cn_meta_url",               &cn_meta_url);
+    */
     M_BindVariable("cn_meta_id",                &cn_meta_id);
     // [cndoom] end
     

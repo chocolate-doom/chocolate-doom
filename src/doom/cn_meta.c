@@ -5,25 +5,21 @@
 #include <string.h>
 #include "doomtype.h"
 #include "doomstat.h"
+#include "d_iwad.h"
 #include "i_swap.h"
 #include "cn_meta.h"
 #include "g_game.h"
 #include "m_config.h"
 #include "m_controls.h"
+#include "m_argv.h"
+
+
 //
 // Defaults for the local player's data. can be modified from the config
 // file. This structure is passed around over the network in multiplayer
 // games so that every player's information can be saved on each machine
 // participating in the game.
 //
-
-extern char *cn_meta_firstname;
-extern char *cn_meta_lastname;
-extern char *cn_meta_nickname;
-extern char *cn_meta_birthdate;
-extern char *cn_meta_country;
-extern char *cn_meta_email;
-extern char *cn_meta_url;
 
 cn_playerinfo_t cn_meta_local_playerinfo =
 {
@@ -45,16 +41,11 @@ cn_playerinfo_t cn_meta_local_playerinfo =
 //
 cn_playerinfo_t cn_meta_playerinfos[MAXPLAYERS];
 
-
-
-
-
 #define CN_META_SIG ('C' | ('N'<<8) | ('D'<<16) | ('M'<<24))
-#define CN_META_VERSION 1
+#define CN_META_VERSION 001
 
 static int num_tags;
 static FILE *metafp;
-// int cn_meta_id = 0;
 
 // 
 // Bind all of the common controls used by Doom and all other games.
@@ -62,16 +53,7 @@ static FILE *metafp;
 
 void CN_BindMetaVariables(void)
 {
-
-    //M_BindVariable("key_strafe_alt",            &key_strafe_alt),
-    //M_BindVariable("cn_precache_sounds",        &cn_precache_sounds),
-    //M_BindVariable("cn_quickstart_delay",       &cn_quickstart_delay),
-    //M_BindVariable("cn_timer_enabled",          &cn_timer_enabled);
-    //M_BindVariable("cn_timer_bg_colormap",      &cn_timer_bg_colormap);
-    //M_BindVariable("cn_timer_offset_x",         &cn_timer_offset_x);
-    //M_BindVariable("cn_timer_offset_y",         &cn_timer_offset_y);
-    //M_BindVariable("cn_timer_color_index",      &cn_timer_color_index);
-    //M_BindVariable("cn_timer_shadow_index",     &cn_timer_shadow_index);
+/* not used
     M_BindVariable("cn_meta_firstname",         &cn_meta_firstname);
     M_BindVariable("cn_meta_lastname",          &cn_meta_lastname);
     M_BindVariable("cn_meta_nickname",          &cn_meta_nickname);
@@ -79,9 +61,9 @@ void CN_BindMetaVariables(void)
     M_BindVariable("cn_meta_country",           &cn_meta_country);
     M_BindVariable("cn_meta_email",             &cn_meta_email);
     M_BindVariable("cn_meta_url",               &cn_meta_url);
+*/
     M_BindVariable("cn_meta_id",                &cn_meta_id);
 }
-
 
 static void CN_AddMetaTag (char *tag, int size, char *data)
 {
@@ -118,7 +100,8 @@ void CN_WriteMetaData (char *filename)
 {
     int metapos;	// location of metadata in the lmp file
     int i, tmp;
-
+    int p;
+    
     metafp = fopen(filename, "rb+");
     if (!metafp)
 	return;
@@ -136,9 +119,9 @@ void CN_WriteMetaData (char *filename)
     tmp = CN_META_VERSION;
     tmp = LONG(tmp);
     fwrite (&tmp, 4, 1, metafp);
-
+ 
     num_tags = 0;
-
+/* not used as it's not finished
     for (i=0; i < MAXPLAYERS; i++)
     {
 	char buffer[32];
@@ -177,7 +160,7 @@ void CN_WriteMetaData (char *filename)
 	    CN_AddMetaTag (buffer, 0, cn_meta_playerinfos[i].url);
 	}
     }
-
+*/
     // finally write metadata location and # of tags
     tmp = LONG(metapos);
     fwrite (&tmp, 4, 1, metafp);

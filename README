@@ -1,79 +1,90 @@
-Competition Doom is a Doom source port based on Chocolate Doom and
-adds additional features and settings to it.
 
+Competition Doom is a Doom source port which aims to behave as closely
+as possible to the original DOS Doom executables.
+
+Competition Doom aims to:
+
+ * Be compatible with DOS Doom demos
+ * Be compatible with DOS Doom configuration files
+ * Be compatible with DOS Doom savegames
+ * Be compatible with DOS Doom bugs
+ * Provide the same "feel" as DOS Doom (display and input should behave
+   the same)
+ * As far as possible, provide all the same features that are available
+   using the DOS version.
+
+== Setting up gameplay ==
+
+For instructions on how to set up Competition Doom for play, see the
+INSTALL file.
 
 == Configuration File ==
 
-Competition Doom also provides some extra settings.
-These are stored in a file named 'cndoom.cfg'.
+Competition Doom is compatible with the DOS Doom configuration file
+(normally named 'default.cfg').  Existing configuration files for DOS
+Doom should therefore simply work out of the box.  However, Competition
+Doom also provides some extra settings.  These are stored in a
+separate file named 'cndoom.cfg'.
 
-Detailed explanation about each setting:
+The configuration can be edited using the cnsetup tool.
 
-// Display ingame/intermission screen timer
-// 0 - No. 1 - Yes (Default)
- cn_timer_enabled              1
+== Command-line options ==
 
-// Timer X position
-// Default: -1
- cn_timer_offset_x             -1
+For a complete list of command-line options, see the CMDLINE file.
 
-// Timer Y position
-// Default: 0
- cn_timer_offset_y             0
+== Playing TCs ==
 
-// Timer color
-// 0 - 255 (Default:168)
- cn_timer_color_index          168
+With Vanilla Doom there is no way to include sprites in PWAD files.
+Competition Doom's '-file' command line option behaves exactly the same
+as Vanilla Doom, and trying to play TCs by adding the WAD files using
+'-file' will not work.
 
-// Shadow for timer
-// 0 - No (Default). 1 - Yes
- cn_timer_shadow_index         0
+Many Total Conversions (TCs) are distributed as a PWAD file which must
+be merged into the main IWAD.  Typically a copy of DEUSF.EXE is
+included which performs this merge.  Competition Doom includes a new
+option, '-merge', which will simulate this merge.  Essentially, the
+WAD directory is merged in memory, removing the need to modify the
+IWAD on disk.
 
-// Backgroung color for timer
-// 0 - 255 (Default:16)
- cn_timer_bg_colormap          16
+To play TCs using Competition Doom, run like this:
 
-// Quickstart delay so monitor can change resolution and
-// let you adjust mouse and keys before the game starts.
-// 0 - 99999 (Default:1500)
- cn_quickstart_delay           1500
+  cndoom -merge thetc.wad
 
-// Your details (All required for demo submission)
- cn_meta_firstname
- cn_meta_lastname
- cn_meta_nickname
+Here are some examples:
 
-// Country format: two letter ISO 3166, example for USA (us)
-// http://goo.gl/Bn8d3
- cn_meta_country
-
-// Extra details not required (Optional)
-// Date format: YYYY-MM-DD
- cn_meta_birthdate
- cn_meta_email
- cn_meta_url 
-
-
-== Additional command-line options ==
-
- -printstats        Outputs demo stats (time, kills, items) to
-                    stdout.txt, use this when playing demo:
-                    eg. "cndoom -playdemo demo.lmp -printstats"
-                    Should be useful for movie and episode runs.
-
+  cndoom -merge batman.wad -deh batman.deh vbatman.deh  (Batman Doom)
+  cndoom -merge aoddoom1.wad -deh aoddoom1.deh  (Army of Darkness Doom)
 
 == Other information ==
 
- * More information is available on the Competition Doom website:
+ * More information, including information about how to play various
+   classic TCs, is available on the Competition Doom website:
 
-	http://www.doom.com.hr/compet-n/
-	http://www.doom.com.hr/forum/
+     http://www.chocolate-doom.org/
 
    You are encouraged to sign up and contribute any useful information
    you may have regarding the port!
+
+ * Competition Doom is not perfect.  Although it aims to accurately
+   emulate Vanilla Doom, some of the behavior of Vanilla Doom can be
+   very difficult to reproduce. Because of the nature of the project,
+   you may also encounter Vanilla Doom bugs; these are intentionally
+   present; see the NOT-BUGS file for more information.
+
+   New bug reports can be submitted to the Competition Doom bug tracker
+   on Sourceforge.  See:
+
+     http://www.doom.com.hr/cndoom/bug/
+
+ * Source code patches are welcome, but please follow the style
+   guidelines - see the file named HACKING included with the source
+   distribution.
 
  * Competition Doom is distributed under the GNU GPL.  See the COPYING
    file for more information.
 
  * Please send any feedback, questions or suggestions to
-   admin@doom.com.hr  Thanks!
+   cndoom@doom.com.hr.  Thanks!
+
+# vim: tw=70
+

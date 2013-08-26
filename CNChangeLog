@@ -1,3 +1,7 @@
+00012   Merged with latest Chocolate doom v2;
+        Fixed crash caused by Choco v2 merge (m_config.c);
+        -fastdemo completly removed, some metadata removed;
+        Added CNDOOM and CNChangeLog to docs/manual
 00011   Metadata for demos v001 (still some quirks);
         fix for precaching sounds;
         Code/variables re-organization for better management;

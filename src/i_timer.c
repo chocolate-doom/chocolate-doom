@@ -38,15 +38,15 @@ static Uint32 basetime = 0;
 
 // [cndoom] "fast" timer for quickly speeding through demos, similar to
 // -fastdemo from boom
-int cn_fastdemo = 0;
-static int cn_fastticks = 0;
+// int cn_fastdemo = 0;
+// static int cn_fastticks = 0;
 
 int  I_GetTime (void)
 {
    Uint32 ticks;
 
-    if (cn_fastdemo) // [cndoom]
-	return cn_fastticks++; // [cndoom]
+    // if (cn_fastdemo) // [cndoom]
+	// return cn_fastticks++; // [cndoom]
 
     ticks = SDL_GetTicks();
 
@@ -66,8 +66,8 @@ int I_GetTimeMS(void)
 {
     Uint32 ticks;
 
-    if (cn_fastdemo) // [cndoom]
-	return cn_fastticks++; // [cndoom]
+    // if (cn_fastdemo) // [cndoom]
+	// return cn_fastticks++; // [cndoom]
     ticks = SDL_GetTicks();
 
     if (basetime == 0)
@@ -80,7 +80,7 @@ int I_GetTimeMS(void)
 
 void I_Sleep(int ms)
 {
-    if (!cn_fastdemo) // [cndoom]
+    //if (!cn_fastdemo) // [cndoom]
     SDL_Delay(ms);
 }
 
