@@ -91,5 +91,25 @@ void TXT_SetPeriodicCallback(TxtIdleCallback callback,
                              void *user_data,
                              unsigned int period);
 
+/**
+ * Raise the z-position of the given window relative to other windows.
+ *
+ * @param window        The window to raise.
+ * @return              Non-zero if the window was raised successfully,
+ *                      or zero if the window could not be raised further.
+ */
+
+int TXT_RaiseWindow(txt_window_t *window);
+
+/**
+ * Lower the z-position of the given window relative to other windows.
+ *
+ * @param window        The window to make inactive.
+ * @return              Non-zero if the window was lowered successfully,
+ *                      or zero if the window could not be lowered further.
+ */
+
+int TXT_LowerWindow(txt_window_t *window);
+
 #endif /* #ifndef TXT_DESKTOP_H */
 
