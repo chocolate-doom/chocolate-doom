@@ -81,9 +81,8 @@ typedef struct
     boolean printed;
 } query_target_t;
 
-// Transmit a query packet
-
 static boolean registered_with_master = false;
+static boolean got_master_response = false;
 
 static net_context_t *query_context;
 static query_target_t *targets;
@@ -158,7 +157,22 @@ void NET_Query_MasterResponse(net_packet_t *packet)
             printf("Failed to register with master server at %s\n",
                    MASTER_SERVER_ADDRESS);
         }
+
+        got_master_response = true;
     }
+}
+
+boolean NET_Query_CheckAddedToMaster(boolean *result)
+{
+    // Got response from master yet?
+
+    if (!got_master_response)
+    {
+        return false;
+    }
+
+    *result = registered_with_master;
+    return true;
 }
 
 // Send a query to the master server.
