@@ -83,7 +83,8 @@ typedef struct
 {
     thinkClass_t tClass;
     think_t thinkerFunc;
-    void (*mangleFunc) ();
+    void (*writeFunc)();
+    void (*readFunc)();
     void (*restoreFunc) ();
     size_t size;
 } thinkInfo_t;
@@ -122,11 +123,7 @@ static void SetMobjArchiveNums(void);
 static void RemoveAllThinkers(void);
 static int GetMobjNum(mobj_t * mobj);
 static void SetMobjPtr(mobj_t **ptr, unsigned int archiveNum);
-static void MangleSSThinker(ssthinker_t * sst);
 static void RestoreSSThinker(ssthinker_t * sst);
-static void RestoreSSThinkerNoSD(ssthinker_t * sst);
-static void MangleScript(acs_t * script);
-static void RestoreScript(acs_t * script);
 static void RestorePlatRaise(plat_t * plat);
 static void RestoreMoveCeiling(ceiling_t * ceiling);
 static void AssertSegment(gameArchiveSegment_t segType);
@@ -165,96 +162,6 @@ static union
     int *l;
 } SavePtr;
 static FILE *SavingFP;
-
-// This list has been prioritized using frequency estimates
-static thinkInfo_t ThinkerInfo[] = {
-    {
-     TC_MOVE_FLOOR,
-     T_MoveFloor,
-     MangleSSThinker,
-     RestoreSSThinker,
-     sizeof(floormove_t)}
-    ,
-    {
-     TC_PLAT_RAISE,
-     T_PlatRaise,
-     MangleSSThinker,
-     RestorePlatRaise,
-     sizeof(plat_t)}
-    ,
-    {
-     TC_MOVE_CEILING,
-     T_MoveCeiling,
-     MangleSSThinker,
-     RestoreMoveCeiling,
-     sizeof(ceiling_t)}
-    ,
-    {
-     TC_LIGHT,
-     T_Light,
-     MangleSSThinker,
-     RestoreSSThinkerNoSD,
-     sizeof(light_t)}
-    ,
-    {
-     TC_VERTICAL_DOOR,
-     T_VerticalDoor,
-     MangleSSThinker,
-     RestoreSSThinker,
-     sizeof(vldoor_t)}
-    ,
-    {
-     TC_PHASE,
-     T_Phase,
-     MangleSSThinker,
-     RestoreSSThinkerNoSD,
-     sizeof(phase_t)}
-    ,
-    {
-     TC_INTERPRET_ACS,
-     T_InterpretACS,
-     MangleScript,
-     RestoreScript,
-     sizeof(acs_t)}
-    ,
-    {
-     TC_ROTATE_POLY,
-     T_RotatePoly,
-     NULL,
-     NULL,
-     sizeof(polyevent_t)}
-    ,
-    {
-     TC_BUILD_PILLAR,
-     T_BuildPillar,
-     MangleSSThinker,
-     RestoreSSThinker,
-     sizeof(pillar_t)}
-    ,
-    {
-     TC_MOVE_POLY,
-     T_MovePoly,
-     NULL,
-     NULL,
-     sizeof(polyevent_t)}
-    ,
-    {
-     TC_POLY_DOOR,
-     T_PolyDoor,
-     NULL,
-     NULL,
-     sizeof(polydoor_t)}
-    ,
-    {
-     TC_FLOOR_WAGGLE,
-     T_FloorWaggle,
-     MangleSSThinker,
-     RestoreSSThinker,
-     sizeof(floorWaggle_t)}
-    ,
-    {                           // Terminator
-     TC_NULL, NULL, NULL, NULL, 0}
-};
 
 // CODE --------------------------------------------------------------------
 
@@ -1208,6 +1115,817 @@ static void StreamOut_mobj_t(mobj_t *str)
 }
 
 
+//
+// floormove_t
+//
+
+static void StreamIn_floormove_t(floormove_t *str)
+{
+    int i;
+
+    // thinker_t thinker;
+    StreamIn_thinker_t(&str->thinker);
+
+    // sector_t *sector;
+    i = GET_LONG;
+    str->sector = sectors + i;
+
+    // floor_e type;
+    str->type = GET_LONG;
+
+    // int crush;
+    str->crush = GET_LONG;
+
+    // int direction;
+    str->direction = GET_LONG;
+
+    // int newspecial;
+    str->newspecial = GET_LONG;
+
+    // short texture;
+    str->texture = GET_WORD;
+
+    // fixed_t floordestheight;
+    str->floordestheight = GET_LONG;
+
+    // fixed_t speed;
+    str->speed = GET_LONG;
+
+    // int delayCount;
+    str->delayCount = GET_LONG;
+
+    // int delayTotal;
+    str->delayTotal = GET_LONG;
+
+    // fixed_t stairsDelayHeight;
+    str->stairsDelayHeight = GET_LONG;
+
+    // fixed_t stairsDelayHeightDelta;
+    str->stairsDelayHeightDelta = GET_LONG;
+
+    // fixed_t resetHeight;
+    str->resetHeight = GET_LONG;
+
+    // short resetDelay;
+    str->resetDelay = GET_WORD;
+
+    // short resetDelayCount;
+    str->resetDelayCount = GET_WORD;
+
+    // byte textureChange;
+    str->textureChange = GET_BYTE;
+}
+
+static void StreamOut_floormove_t(floormove_t *str)
+{
+    // thinker_t thinker;
+    StreamOut_thinker_t(&str->thinker);
+
+    // sector_t *sector;
+    StreamOutLong(str->sector - sectors);
+
+    // floor_e type;
+    StreamOutLong(str->type);
+
+    // int crush;
+    StreamOutLong(str->crush);
+
+    // int direction;
+    StreamOutLong(str->direction);
+
+    // int newspecial;
+    StreamOutLong(str->newspecial);
+
+    // short texture;
+    StreamOutWord(str->texture);
+
+    // fixed_t floordestheight;
+    StreamOutLong(str->floordestheight);
+
+    // fixed_t speed;
+    StreamOutLong(str->speed);
+
+    // int delayCount;
+    StreamOutLong(str->delayCount);
+
+    // int delayTotal;
+    StreamOutLong(str->delayTotal);
+
+    // fixed_t stairsDelayHeight;
+    StreamOutLong(str->stairsDelayHeight);
+
+    // fixed_t stairsDelayHeightDelta;
+    StreamOutLong(str->stairsDelayHeightDelta);
+
+    // fixed_t resetHeight;
+    StreamOutLong(str->resetHeight);
+
+    // short resetDelay;
+    StreamOutWord(str->resetDelay);
+
+    // short resetDelayCount;
+    StreamOutWord(str->resetDelayCount);
+
+    // byte textureChange;
+    StreamOutByte(str->textureChange);
+}
+
+
+//
+// plat_t
+//
+
+static void StreamIn_plat_t(plat_t *str)
+{
+    int i;
+
+    // thinker_t thinker;
+    StreamIn_thinker_t(&str->thinker);
+
+    // sector_t *sector;
+    i = GET_LONG;
+    str->sector = sectors + i;
+
+    // fixed_t speed;
+    str->speed = GET_LONG;
+
+    // fixed_t low;
+    str->low = GET_LONG;
+
+    // fixed_t high;
+    str->high = GET_LONG;
+
+    // int wait;
+    str->wait = GET_LONG;
+
+    // int count;
+    str->count = GET_LONG;
+
+    // plat_e status;
+    str->status = GET_LONG;
+
+    // plat_e oldstatus;
+    str->oldstatus = GET_LONG;
+
+    // int crush;
+    str->crush = GET_LONG;
+
+    // int tag;
+    str->tag = GET_LONG;
+
+    // plattype_e type;
+    str->type = GET_LONG;
+}
+
+static void StreamOut_plat_t(plat_t *str)
+{
+    // thinker_t thinker;
+    StreamOut_thinker_t(&str->thinker);
+
+    // sector_t *sector;
+    StreamOutLong(str->sector - sectors);
+
+    // fixed_t speed;
+    StreamOutLong(str->speed);
+
+    // fixed_t low;
+    StreamOutLong(str->low);
+
+    // fixed_t high;
+    StreamOutLong(str->high);
+
+    // int wait;
+    StreamOutLong(str->wait);
+
+    // int count;
+    StreamOutLong(str->count);
+
+    // plat_e status;
+    StreamOutLong(str->status);
+
+    // plat_e oldstatus;
+    StreamOutLong(str->oldstatus);
+
+    // int crush;
+    StreamOutLong(str->crush);
+
+    // int tag;
+    StreamOutLong(str->tag);
+
+    // plattype_e type;
+    StreamOutLong(str->type);
+}
+
+
+//
+// ceiling_t
+//
+
+static void StreamIn_ceiling_t(ceiling_t *str)
+{
+    int i;
+
+    // thinker_t thinker;
+    StreamIn_thinker_t(&str->thinker);
+
+    // sector_t *sector;
+    i = GET_LONG;
+    str->sector = sectors + i;
+
+    // ceiling_e type;
+    str->type = GET_LONG;
+
+    // fixed_t bottomheight, topheight;
+    str->bottomheight = GET_LONG;
+    str->topheight = GET_LONG;
+
+    // fixed_t speed;
+    str->speed = GET_LONG;
+
+    // int crush;
+    str->crush = GET_LONG;
+
+    // int direction;
+    str->direction = GET_LONG;
+
+    // int tag;
+    str->tag = GET_LONG;
+
+    // int olddirection;
+    str->olddirection = GET_LONG;
+}
+
+static void StreamOut_ceiling_t(ceiling_t *str)
+{
+    // thinker_t thinker;
+    StreamOut_thinker_t(&str->thinker);
+
+    // sector_t *sector;
+    StreamOutLong(str->sector - sectors);
+
+    // ceiling_e type;
+    StreamOutLong(str->type);
+
+    // fixed_t bottomheight, topheight;
+    StreamOutLong(str->bottomheight);
+    StreamOutLong(str->topheight);
+
+    // fixed_t speed;
+    StreamOutLong(str->speed);
+
+    // int crush;
+    StreamOutLong(str->crush);
+
+    // int direction;
+    StreamOutLong(str->direction);
+
+    // int tag;
+    StreamOutLong(str->tag);
+
+    // int olddirection;
+    StreamOutLong(str->olddirection);
+}
+
+
+//
+// light_t
+//
+
+static void StreamIn_light_t(light_t *str)
+{
+    int i;
+
+    // thinker_t thinker;
+    StreamIn_thinker_t(&str->thinker);
+
+    // sector_t *sector;
+    i = GET_LONG;
+    str->sector = sectors + i;
+
+    // lighttype_t type;
+    str->type = GET_LONG;
+
+    // int value1;
+    str->value1 = GET_LONG;
+
+    // int value2;
+    str->value2 = GET_LONG;
+
+    // int tics1;
+    str->tics1 = GET_LONG;
+
+    // int tics2;
+    str->tics2 = GET_LONG;
+
+    // int count;
+    str->count = GET_LONG;
+}
+
+static void StreamOut_light_t(light_t *str)
+{
+    // thinker_t thinker;
+    StreamOut_thinker_t(&str->thinker);
+
+    // sector_t *sector;
+    StreamOutLong(str->sector - sectors);
+
+    // lighttype_t type;
+    StreamOutLong(str->type);
+
+    // int value1;
+    StreamOutLong(str->value1);
+
+    // int value2;
+    StreamOutLong(str->value2);
+
+    // int tics1;
+    StreamOutLong(str->tics1);
+
+    // int tics2;
+    StreamOutLong(str->tics2);
+
+    // int count;
+    StreamOutLong(str->count);
+}
+
+
+//
+// vldoor_t
+//
+
+static void StreamIn_vldoor_t(vldoor_t *str)
+{
+    int i;
+
+    // thinker_t thinker;
+    StreamIn_thinker_t(&str->thinker);
+
+    // sector_t *sector;
+    i = GET_LONG;
+    str->sector = &sectors[i];
+
+    // vldoor_e type;
+    str->type = GET_LONG;
+
+    // fixed_t topheight;
+    str->topheight = GET_LONG;
+
+    // fixed_t speed;
+    str->speed = GET_LONG;
+
+    // int direction;
+    str->direction = GET_LONG;
+
+    // int topwait;
+    str->topwait = GET_LONG;
+
+    // int topcountdown;
+    str->topcountdown = GET_LONG;
+}
+
+static void StreamOut_vldoor_t(vldoor_t *str)
+{
+    // thinker_t thinker;
+    StreamOut_thinker_t(&str->thinker);
+
+    // sector_t *sector;
+    StreamOutLong(str->sector - sectors);
+
+    // vldoor_e type;
+    StreamOutLong(str->type);
+
+    // fixed_t topheight;
+    StreamOutLong(str->topheight);
+
+    // fixed_t speed;
+    StreamOutLong(str->speed);
+
+    // int direction;
+    StreamOutLong(str->direction);
+
+    // int topwait;
+    StreamOutLong(str->topwait);
+
+    // int topcountdown;
+    StreamOutLong(str->topcountdown);
+}
+
+
+//
+// phase_t
+//
+
+static void StreamIn_phase_t(phase_t *str)
+{
+    int i;
+
+    // thinker_t thinker;
+    StreamIn_thinker_t(&str->thinker);
+
+    // sector_t *sector;
+    i = GET_LONG;
+    str->sector = &sectors[i];
+
+    // int index;
+    str->index = GET_LONG;
+
+    // int base;
+    str->base = GET_LONG;
+}
+
+static void StreamOut_phase_t(phase_t *str)
+{
+    // thinker_t thinker;
+    StreamOut_thinker_t(&str->thinker);
+
+    // sector_t *sector;
+    StreamOutLong(str->sector - sectors);
+
+    // int index;
+    StreamOutLong(str->index);
+
+    // int base;
+    StreamOutLong(str->base);
+}
+
+
+//
+// acs_t
+//
+
+static void StreamIn_acs_t(acs_t *str)
+{
+    int i;
+
+    // thinker_t thinker;
+    StreamIn_thinker_t(&str->thinker);
+
+    // mobj_t *activator;
+    i = GET_LONG;
+    SetMobjPtr(&str->activator, i);
+
+    // line_t *line;
+    i = GET_LONG;
+    if (i != -1)
+    {
+        str->line = &lines[i];
+    }
+    else
+    {
+        str->line = NULL;
+    }
+
+    // int side;
+    str->side = GET_LONG;
+
+    // int number;
+    str->number = GET_LONG;
+
+    // int infoIndex;
+    str->infoIndex = GET_LONG;
+
+    // int delayCount;
+    str->delayCount = GET_LONG;
+
+    // int stack[ACS_STACK_DEPTH];
+    for (i=0; i<ACS_STACK_DEPTH; ++i)
+    {
+        str->stack[i] = GET_LONG;
+    }
+
+    // int stackPtr;
+    str->stackPtr = GET_LONG;
+
+    // int vars[MAX_ACS_SCRIPT_VARS];
+    for (i=0; i<MAX_ACS_SCRIPT_VARS; ++i)
+    {
+        str->vars[i] = GET_LONG;
+    }
+
+    // int *ip;
+    i = GET_LONG;
+    str->ip = (int *) (ActionCodeBase + i);
+}
+
+static void StreamOut_acs_t(acs_t *str)
+{
+    int i;
+
+    // thinker_t thinker;
+    StreamOut_thinker_t(&str->thinker);
+
+    // mobj_t *activator;
+    StreamOutLong(GetMobjNum(str->activator));
+
+    // line_t *line;
+    if (str->line != NULL)
+    {
+        StreamOutLong(str->line - lines);
+    }
+    else
+    {
+        StreamOutLong(-1);
+    }
+
+    // int side;
+    StreamOutLong(str->side);
+
+    // int number;
+    StreamOutLong(str->number);
+
+    // int infoIndex;
+    StreamOutLong(str->infoIndex);
+
+    // int delayCount;
+    StreamOutLong(str->delayCount);
+
+    // int stack[ACS_STACK_DEPTH];
+    for (i=0; i<ACS_STACK_DEPTH; ++i)
+    {
+        StreamOutLong(str->stack[i]);
+    }
+
+    // int stackPtr;
+    StreamOutLong(str->stackPtr);
+
+    // int vars[MAX_ACS_SCRIPT_VARS];
+    for (i=0; i<MAX_ACS_SCRIPT_VARS; ++i)
+    {
+        StreamOutLong(str->vars[i]);
+    }
+
+    // int *ip;
+    StreamOutLong((byte *) str->ip - ActionCodeBase);
+}
+
+
+//
+// polyevent_t
+//
+
+static void StreamIn_polyevent_t(polyevent_t *str)
+{
+    // thinker_t thinker;
+    StreamIn_thinker_t(&str->thinker);
+
+    // int polyobj;
+    str->polyobj = GET_LONG;
+
+    // int speed;
+    str->speed = GET_LONG;
+
+    // unsigned int dist;
+    str->dist = GET_LONG;
+
+    // int angle;
+    str->angle = GET_LONG;
+
+    // fixed_t xSpeed;
+    str->xSpeed = GET_LONG;
+
+    // fixed_t ySpeed;
+    str->ySpeed = GET_LONG;
+}
+
+static void StreamOut_polyevent_t(polyevent_t *str)
+{
+    // thinker_t thinker;
+    StreamOut_thinker_t(&str->thinker);
+
+    // int polyobj;
+    StreamOutLong(str->polyobj);
+
+    // int speed;
+    StreamOutLong(str->speed);
+
+    // unsigned int dist;
+    StreamOutLong(str->dist);
+
+    // int angle;
+    StreamOutLong(str->angle);
+
+    // fixed_t xSpeed;
+    StreamOutLong(str->xSpeed);
+
+    // fixed_t ySpeed;
+    StreamOutLong(str->ySpeed);
+}
+
+
+//
+// pillar_t
+//
+
+static void StreamIn_pillar_t(pillar_t *str)
+{
+    int i;
+
+    // thinker_t thinker;
+    StreamIn_thinker_t(&str->thinker);
+
+    // sector_t *sector;
+    i = GET_LONG;
+    str->sector = &sectors[i];
+
+    // int ceilingSpeed;
+    str->ceilingSpeed = GET_LONG;
+
+    // int floorSpeed;
+    str->floorSpeed = GET_LONG;
+
+    // int floordest;
+    str->floordest = GET_LONG;
+
+    // int ceilingdest;
+    str->ceilingdest = GET_LONG;
+
+    // int direction;
+    str->direction = GET_LONG;
+
+    // int crush;
+    str->crush = GET_LONG;
+}
+
+static void StreamOut_pillar_t(pillar_t *str)
+{
+    // thinker_t thinker;
+    StreamOut_thinker_t(&str->thinker);
+
+    // sector_t *sector;
+    StreamOutLong(str->sector - sectors);
+
+    // int ceilingSpeed;
+    StreamOutLong(str->ceilingSpeed);
+
+    // int floorSpeed;
+    StreamOutLong(str->floorSpeed);
+
+    // int floordest;
+    StreamOutLong(str->floordest);
+
+    // int ceilingdest;
+    StreamOutLong(str->ceilingdest);
+
+    // int direction;
+    StreamOutLong(str->direction);
+
+    // int crush;
+    StreamOutLong(str->crush);
+}
+
+
+//
+// polydoor_t
+//
+
+static void StreamIn_polydoor_t(polydoor_t *str)
+{
+    // thinker_t thinker;
+    StreamIn_thinker_t(&str->thinker);
+
+    // int polyobj;
+    str->polyobj = GET_LONG;
+
+    // int speed;
+    str->speed = GET_LONG;
+
+    // int dist;
+    str->dist = GET_LONG;
+
+    // int totalDist;
+    str->totalDist = GET_LONG;
+
+    // int direction;
+    str->direction = GET_LONG;
+
+    // fixed_t xSpeed, ySpeed;
+    str->xSpeed = GET_LONG;
+    str->ySpeed = GET_LONG;
+
+    // int tics;
+    str->tics = GET_LONG;
+
+    // int waitTics;
+    str->waitTics = GET_LONG;
+
+    // podoortype_t type;
+    str->type = GET_LONG;
+
+    // boolean close;
+    str->close = GET_LONG;
+}
+
+static void StreamOut_polydoor_t(polydoor_t *str)
+{
+    // thinker_t thinker;
+    StreamOut_thinker_t(&str->thinker);
+
+    // int polyobj;
+    StreamOutLong(str->polyobj);
+
+    // int speed;
+    StreamOutLong(str->speed);
+
+    // int dist;
+    StreamOutLong(str->dist);
+
+    // int totalDist;
+    StreamOutLong(str->totalDist);
+
+    // int direction;
+    StreamOutLong(str->direction);
+
+    // fixed_t xSpeed, ySpeed;
+    StreamOutLong(str->xSpeed);
+    StreamOutLong(str->ySpeed);
+
+    // int tics;
+    StreamOutLong(str->tics);
+
+    // int waitTics;
+    StreamOutLong(str->waitTics);
+
+    // podoortype_t type;
+    StreamOutLong(str->type);
+
+    // boolean close;
+    StreamOutLong(str->close);
+}
+
+
+//
+// floorWaggle_t
+//
+
+static void StreamIn_floorWaggle_t(floorWaggle_t *str)
+{
+    int i;
+
+    // thinker_t thinker;
+    StreamIn_thinker_t(&str->thinker);
+
+    // sector_t *sector;
+    i = GET_LONG;
+    str->sector = &sectors[i];
+
+    // fixed_t originalHeight;
+    str->originalHeight = GET_LONG;
+
+    // fixed_t accumulator;
+    str->accumulator = GET_LONG;
+
+    // fixed_t accDelta;
+    str->accDelta = GET_LONG;
+
+    // fixed_t targetScale;
+    str->targetScale = GET_LONG;
+
+    // fixed_t scale;
+    str->scale = GET_LONG;
+
+    // fixed_t scaleDelta;
+    str->scaleDelta = GET_LONG;
+
+    // int ticker;
+    str->ticker = GET_LONG;
+
+    // int state;
+    str->state = GET_LONG;
+}
+
+static void StreamOut_floorWaggle_t(floorWaggle_t *str)
+{
+    // thinker_t thinker;
+    StreamOut_thinker_t(&str->thinker);
+
+    // sector_t *sector;
+    StreamOutLong(str->sector - sectors);
+
+    // fixed_t originalHeight;
+    StreamOutLong(str->originalHeight);
+
+    // fixed_t accumulator;
+    StreamOutLong(str->accumulator);
+
+    // fixed_t accDelta;
+    StreamOutLong(str->accDelta);
+
+    // fixed_t targetScale;
+    StreamOutLong(str->targetScale);
+
+    // fixed_t scale;
+    StreamOutLong(str->scale);
+
+    // fixed_t scaleDelta;
+    StreamOutLong(str->scaleDelta);
+
+    // int ticker;
+    StreamOutLong(str->ticker);
+
+    // int state;
+    StreamOutLong(str->state);
+}
+
 
 //==========================================================================
 //
@@ -1990,6 +2708,117 @@ static void SetMobjPtr(mobj_t **ptr, unsigned int archiveNum)
 
 //==========================================================================
 //
+// Thinker types list.
+//
+// This is used by ArchiveThinkers and UnarchiveThinkers, below.
+//
+// Original comment:
+// "This list has been prioritized using frequency estimates"
+//
+//==========================================================================
+
+static thinkInfo_t ThinkerInfo[] = {
+    {
+     TC_MOVE_FLOOR,
+     T_MoveFloor,
+     StreamOut_floormove_t,
+     StreamIn_floormove_t,
+     RestoreSSThinker,
+     sizeof(floormove_t)
+    },
+    {
+     TC_PLAT_RAISE,
+     T_PlatRaise,
+     StreamOut_plat_t,
+     StreamIn_plat_t,
+     RestorePlatRaise,
+     sizeof(plat_t)
+    },
+    {
+     TC_MOVE_CEILING,
+     T_MoveCeiling,
+     StreamOut_ceiling_t,
+     StreamIn_ceiling_t,
+     RestoreMoveCeiling,
+     sizeof(ceiling_t)
+    },
+    {
+     TC_LIGHT,
+     T_Light,
+     StreamOut_light_t,
+     StreamIn_light_t,
+     NULL,
+     sizeof(light_t)
+    },
+    {
+     TC_VERTICAL_DOOR,
+     T_VerticalDoor,
+     StreamOut_vldoor_t,
+     StreamIn_vldoor_t,
+     RestoreSSThinker,
+     sizeof(vldoor_t)
+    },
+    {
+     TC_PHASE,
+     T_Phase,
+     StreamOut_phase_t,
+     StreamIn_phase_t,
+     NULL,
+     sizeof(phase_t)
+    },
+    {
+     TC_INTERPRET_ACS,
+     T_InterpretACS,
+     StreamOut_acs_t,
+     StreamIn_acs_t,
+     NULL,
+     sizeof(acs_t)
+    },
+    {
+     TC_ROTATE_POLY,
+     T_RotatePoly,
+     StreamOut_polyevent_t,
+     StreamIn_polyevent_t,
+     NULL,
+     sizeof(polyevent_t)
+    },
+    {
+     TC_BUILD_PILLAR,
+     T_BuildPillar,
+     StreamOut_pillar_t,
+     StreamIn_pillar_t,
+     RestoreSSThinker,
+     sizeof(pillar_t)
+    },
+    {
+     TC_MOVE_POLY,
+     T_MovePoly,
+     StreamOut_polyevent_t,
+     StreamIn_polyevent_t,
+     NULL,
+     sizeof(polyevent_t)
+    },
+    {
+     TC_POLY_DOOR,
+     T_PolyDoor,
+     StreamOut_polydoor_t,
+     StreamIn_polydoor_t,
+     NULL,
+     sizeof(polydoor_t)
+    },
+    {
+     TC_FLOOR_WAGGLE,
+     T_FloorWaggle,
+     StreamOut_floorWaggle_t,
+     StreamIn_floorWaggle_t,
+     RestoreSSThinker,
+     sizeof(floorWaggle_t)
+    },
+    { TC_NULL, NULL, NULL, NULL, NULL, 0},
+};
+
+//==========================================================================
+//
 // ArchiveThinkers
 //
 //==========================================================================
@@ -1998,7 +2827,6 @@ static void ArchiveThinkers(void)
 {
     thinker_t *thinker;
     thinkInfo_t *info;
-    byte buffer[MAX_THINKER_SIZE];
 
     StreamOutLong(ASEG_THINKERS);
     for (thinker = thinkercap.next; thinker != &thinkercap;
@@ -2009,12 +2837,7 @@ static void ArchiveThinkers(void)
             if (thinker->function == info->thinkerFunc)
             {
                 StreamOutByte(info->tClass);
-                memcpy(buffer, thinker, info->size);
-                if (info->mangleFunc)
-                {
-                    info->mangleFunc(buffer);
-                }
-                StreamOutBuffer(buffer, info->size);
+                info->writeFunc(thinker);
                 break;
             }
         }
@@ -2043,8 +2866,7 @@ static void UnarchiveThinkers(void)
             if (tClass == info->tClass)
             {
                 thinker = Z_Malloc(info->size, PU_LEVEL, NULL);
-                memcpy(thinker, SavePtr.b, info->size);
-                SavePtr.b += info->size;
+                info->readFunc(thinker);
                 thinker->function = info->thinkerFunc;
                 if (info->restoreFunc)
                 {
@@ -2064,70 +2886,13 @@ static void UnarchiveThinkers(void)
 
 //==========================================================================
 //
-// MangleSSThinker
-//
-//==========================================================================
-
-static void MangleSSThinker(ssthinker_t * sst)
-{
-    sst->sector = (sector_t *) (sst->sector - sectors);
-}
-
-//==========================================================================
-//
 // RestoreSSThinker
 //
 //==========================================================================
 
-static void RestoreSSThinker(ssthinker_t * sst)
+static void RestoreSSThinker(ssthinker_t *sst)
 {
-    sst->sector = &sectors[(int) sst->sector];
     sst->sector->specialdata = sst->thinker.function;
-}
-
-//==========================================================================
-//
-// RestoreSSThinkerNoSD
-//
-//==========================================================================
-
-static void RestoreSSThinkerNoSD(ssthinker_t * sst)
-{
-    sst->sector = &sectors[(int) sst->sector];
-}
-
-//==========================================================================
-//
-// MangleScript
-//
-//==========================================================================
-
-static void MangleScript(acs_t * script)
-{
-    script->ip = (int *) ((int) (script->ip) - (int) ActionCodeBase);
-    script->line = script->line ?
-        (line_t *) (script->line - lines) : (line_t *) - 1;
-    script->activator = (mobj_t *) GetMobjNum(script->activator);
-}
-
-//==========================================================================
-//
-// RestoreScript
-//
-//==========================================================================
-
-static void RestoreScript(acs_t * script)
-{
-    script->ip = (int *) (ActionCodeBase + (int) script->ip);
-    if ((int) script->line == -1)
-    {
-        script->line = NULL;
-    }
-    else
-    {
-        script->line = &lines[(int) script->line];
-    }
-    SetMobjPtr(&script->activator, (int) script->activator);
 }
 
 //==========================================================================
@@ -2136,9 +2901,8 @@ static void RestoreScript(acs_t * script)
 //
 //==========================================================================
 
-static void RestorePlatRaise(plat_t * plat)
+static void RestorePlatRaise(plat_t *plat)
 {
-    plat->sector = &sectors[(int) plat->sector];
     plat->sector->specialdata = T_PlatRaise;
     P_AddActivePlat(plat);
 }
@@ -2149,9 +2913,8 @@ static void RestorePlatRaise(plat_t * plat)
 //
 //==========================================================================
 
-static void RestoreMoveCeiling(ceiling_t * ceiling)
+static void RestoreMoveCeiling(ceiling_t *ceiling)
 {
-    ceiling->sector = &sectors[(int) ceiling->sector];
     ceiling->sector->specialdata = T_MoveCeiling;
     P_AddActiveCeiling(ceiling);
 }
