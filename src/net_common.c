@@ -533,33 +533,9 @@ boolean NET_ValidGameSettings(GameMode_t mode, GameMission_t mission,
     if (!D_ValidGameVersion(mission, settings->gameversion))
         return false;
 
-    if (mode == shareware || mode == retail || mode == registered)
-    {
-        if (settings->map < 1 || settings->map > 9)
-            return false;
-    }
-    else
-    {
-        if (settings->map < 1 || settings->map > 32)
-            return false;
-    }
-    
-    if (mode == shareware)
-    {
-        if (settings->episode != 1)
-            return false;
-    }
-    else if (mode == registered)
-    {
-        if (settings->episode < 1 || settings->episode > 3)
-            return false;
-    }
-    else if (mode == retail)
-    {
-        if (settings->episode < 1 || settings->episode > 4)
-            return false;
-    }
-    
+    if (!D_ValidEpisodeMap(mission, mode, settings->episode, settings->map))
+        return false;
+
     return true;
 }
 
