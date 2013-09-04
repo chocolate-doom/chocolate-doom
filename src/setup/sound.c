@@ -82,8 +82,8 @@ static int voiceVolume = 15;
 static int show_talk = 0;
 static int use_libsamplerate = 0;
 
-static char *timidity_cfg_path = NULL;
-static char *gus_patch_path = NULL;
+static char *timidity_cfg_path = "";
+static char *gus_patch_path = "";
 static unsigned int gus_ram_kb = 1024;
 
 // DOS specific variables: these are unused but should be maintained
