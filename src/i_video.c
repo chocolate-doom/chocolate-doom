@@ -506,6 +506,7 @@ static int TranslateKey(SDL_keysym *sym)
 
       case SDLK_CAPSLOCK: return KEY_CAPSLOCK;
       case SDLK_SCROLLOCK: return KEY_SCRLCK;
+      case SDLK_NUMLOCK: return KEY_NUMLOCK;
 
       case SDLK_KP0: return KEYP_0;
       case SDLK_KP1: return KEYP_1;

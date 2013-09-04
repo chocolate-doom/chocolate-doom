@@ -67,6 +67,7 @@
 // new keys:
 
 #define KEY_CAPSLOCK    (0x80+0x3a)
+#define KEY_NUMLOCK     (0x80+0x45)
 #define KEY_SCRLCK      (0x80+0x46)
 
 #define KEY_HOME        (0x80+0x47)

@@ -1403,7 +1403,14 @@ M_WriteText
     }
 }
 
+// These keys evaluate to a "null" key in Vanilla Doom that allows weird
+// jumping in the menus. Preserve this behavior for accuracy.
 
+static boolean IsNullKey(int key)
+{
+    return key == KEY_PAUSE || key == KEY_CAPSLOCK
+        || key == KEY_SCRLCK || key == KEY_NUMLOCK;
+}
 
 //
 // CONTROL PANEL
@@ -1745,7 +1752,6 @@ boolean M_Responder (event_t* ev)
 	return false;
     }
 
-    
     // Keys usable within menu
 
     if (key == key_menu_down)
@@ -1846,9 +1852,9 @@ boolean M_Responder (event_t* ev)
 
     // Keyboard shortcut?
     // Vanilla Doom has a weird behavior where it jumps to the scroll bars
-    // when the pause key is pressed, so emulate this.
+    // when the certain keys are pressed, so emulate this.
 
-    else if (ch != 0 || key == KEY_PAUSE)
+    else if (ch != 0 || IsNullKey(key))
     {
 	for (i = itemOn+1;i < currentMenu->numitems;i++)
         {

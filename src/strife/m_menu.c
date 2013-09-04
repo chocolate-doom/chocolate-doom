@@ -1669,6 +1669,14 @@ void M_DialogDimMsg(int x, int y, char *str, boolean useyfont)
     while((bl = toupper(message[++i])) != 0); // step to the next character
 }
 
+// These keys evaluate to a "null" key in Vanilla Doom that allows weird
+// jumping in the menus. Preserve this behavior for accuracy.
+
+static boolean IsNullKey(int key)
+{
+    return key == KEY_PAUSE || key == KEY_CAPSLOCK
+        || key == KEY_SCRLCK || key == KEY_NUMLOCK;
+}
 
 //
 // CONTROL PANEL
@@ -2183,9 +2191,9 @@ boolean M_Responder (event_t* ev)
 
     // Keyboard shortcut?
     // Vanilla Strife has a weird behavior where it jumps to the scroll bars
-    // when the pause key is pressed, so emulate this.
+    // when certain keys are pressed, so emulate this.
 
-    else if (ch != 0 || key == KEY_PAUSE)
+    else if (ch != 0 || IsNullKey(key))
     {
         // Keyboard shortcut?
 
