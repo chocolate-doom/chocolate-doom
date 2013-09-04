@@ -1,8 +1,5 @@
 To do:
 
-* Demo hashes for regression testing of this and other ports.
-* File selector for chocolate-setup, so that WADs can be selected from
-  a browser, instead of simply typing the filenames.
 * Multiplayer:
   - Use UPnP to automatically configure port forwarding for NATted
     networks.

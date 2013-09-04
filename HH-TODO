@@ -1,8 +1,5 @@
- * Update docgen to generate manpages for Heretic/Hexen.
-
 Heretic:
  * Frequency shifted sounds.
- * Check all command line parameters
  * Check for endianness assumptions
  * Savegame code to write structures predictably and endianness-correct
  * Remove NeXT and WATCOMC defines
@@ -15,7 +12,6 @@ Hexen:
  * CD-ROM music playback
  * Frequency shifted sounds.
  * Check for endianness assumptions - mostly done now
- * Savegame code to write structures predictably and endianness-correct
  * Remove NeXT and WATCOMC defines
  * Structure packing macros for structures read from disk
  * Merge r_draw.c to common version and delete duplicate
