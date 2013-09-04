@@ -115,6 +115,12 @@ static loop_interface_t *loop_interface = NULL;
 
 static boolean local_playeringame[NET_MAXPLAYERS];
 
+// Requested player class "sent" to the server on connect.
+// If we are only doing a single player game then this needs to be remembered
+// and saved in the game settings.
+
+static int player_class;
+
 
 // 35 fps clock adjusted by offsetms milliseconds
 
@@ -346,6 +352,7 @@ void D_StartNetGame(net_gamesettings_t *settings,
 
     settings->consoleplayer = 0;
     settings->num_players = 1;
+    settings->player_classes[0] = player_class;
 
     //!
     // @category net
@@ -435,6 +442,8 @@ boolean D_InitNetGame(net_connect_data_t *connect_data)
     // Call D_QuitNetGame on exit:
 
     I_AtExit(D_QuitNetGame, true);
+
+    player_class = connect_data->player_class;
 
 #ifdef FEATURE_MULTIPLAYER
 
