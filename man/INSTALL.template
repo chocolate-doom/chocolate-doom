@@ -39,8 +39,8 @@ information.
 Obtaining an IWAD file
 ----------------------
 
-To play Doom, you need an IWAD file.  This file contains the game data
-(graphics, sounds, etc).  The full versions of the Doom games are
+To play, you need an IWAD file.  This file contains the game data
+(graphics, sounds, etc). The full versions of the games are
 proprietary and need to be bought.  The IWAD file has one of the
 following names:
 
@@ -50,49 +50,50 @@ following names:
    tnt.wad                     (Final Doom: TNT: Evilution)
    plutonia.wad                (Final Doom: Plutonia Experiment)
    chex.wad                    (Chex Quest)
+   heretic.wad                 (Heretic)
+   hexen.wad                   (Hexen)
+   strife1.wad (+voices.wad)   (Strife)
 
 If you don't have a copy of a commercial version, you can download
-the shareware version (extract the file named doom1.wad):
+the shareware version of Doom (extract the file named doom1.wad):
 
  * http://www.doomworld.com/idgames/index.php?id=7053
    (idstuff/doom/win95/doom95.zip in your nearest /idgames mirror)
 
 If you have a commercial version, obtaining the IWAD file is usually
-straightforward.  The method depends on how you obtained your copy of
+straightforward. The method depends on how you obtained your copy of
 the game:
 
 #if _WIN32
  * The Doom games are available to buy for download on Steam
-   (http://www.steampowered.com/).  Chocolate Doom will autodetect
+   (http://www.steampowered.com/). Chocolate Doom will autodetect
    IWADs installed by Steam and you do not need to do anything.
 #else
  * The Doom games are available to buy for download on Steam
-   (http://www.steampowered.com/).  To find the IWAD files on a
-   Windows system, look in the Steam directory (usually within
-   "Program Files"), under the "steamapps/common" path.
+   (http://www.steampowered.com/), but are available for Windows only.
+   To find the IWAD files on a Windows system, look in the Steam
+   directory (usually within "Program Files"), under the
+   "steamapps/common" path.
 #endif
 
- * There have been several CD-based versions of Doom.  Generally, the
+ * There have been several CD-based versions of Doom. Generally, the
    IWAD files can be found on the CD and copied off directly.
 
 #if _WIN32
- * If the IWAD files are not directly available on the CD, or you have
-   a floppy disk version, you will need to run the install program to
-   install the game to your hard disk.  As the installer is DOS-based,
-   you may not be able to do this on 64-bit versions of Windows.  In
-   this case, the best suggestion is to use a DOS emulator (such as
-   DOSbox) to run the installer.
+ * If you have a floppy disk version, you will need to run the install
+   program to install the game to your hard disk. As the installer is
+   DOS-based, you may not be able to do this on 64-bit versions of
+   Windows.  In this case, the easiest suggestion is to use a DOS
+   emulator (such as DOSbox) to run the installer.
 #else
- * If the IWAD files are not directly available on the CD, or you have
-   a floppy disk version, installation is more difficult.  The best
-   suggestion is to use a DOS emulator (such as DOSbox) to run the
-   installer.
+ * If you have a floppy disk version, installation is more difficult.
+   The easiest suggestion is to use a DOS emulator (such as DOSbox) to
+   run the installer.
 #endif
 
  * As an alternative to using an emulator, it is possible to extract
-   the files manually.  On the install disk(s), you will find several
-   files with numbered extensions (with CD versions there may be a
-   single large file with the extension .1, eg. "resource.1").
+   the files manually. On the install disk(s), you will find several
+   files with numbered extensions (eg. "doom_se.1").
 
    From the command line it is possible to combine these files into a
    single large file, using a command similar to the following:
@@ -219,7 +220,7 @@ Music support
 
 Chocolate Doom includes OPL emulation code that accurately reproduces
 the way that the in-game music sounded under DOS when using an
-Adlib/Soundblaster card.  This is, however, not to everyone's taste.
+Adlib/Soundblaster card. This is, however, not to everyone's taste.
 
 #if _WIN32
 Better quality MIDI playback is possible by using Windows' native
@@ -244,10 +245,18 @@ be found here:
   http://www.doomworld.com/idgames/index.php?id=13928
   (Doom idgames archive, /sounds/eawpats.zip)
 
-#ifn PRECOMPILED
-When compiling from source, be sure to compile and install timidity
-before installing SDL_mixer.
-#endif
+Chocolate Doom also has provides a very limited form "emulation" of
+the Gravis Ultrasound (GUS) card, using Timidity's GUS patch file
+support. To use this requires a copy of the GUS patch files, found
+here:
 
+  http://www.doomworld.com/idgames/index.php?id=17127
+  (Doom idgames archive, /music/dgguspat.zip)
+
+#ifn PRECOMPILED
+When compiling from source, be sure to compile and install Timidity
+before installing SDL_mixer.
+
+#endif
 # vim: tw=70
 
