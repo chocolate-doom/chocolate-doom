@@ -79,6 +79,7 @@ int startmap;
 int UpdateState;
 static int graphical_startup = 1;
 static boolean using_graphical_startup;
+static boolean main_loop_started = false;
 boolean autostart;
 extern boolean automapactive;
 
@@ -253,6 +254,8 @@ void D_DoomLoop(void)
     I_GraphicsCheckCommandLine();
     I_InitGraphics();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
+
+    main_loop_started = true;
 
     while (1)
     {
@@ -782,7 +785,7 @@ static void D_Endoom(void)
 
     // Disable ENDOOM?
 
-    if (!show_endoom || testcontrols)
+    if (!show_endoom || testcontrols || !main_loop_started)
     {
         return;
     }

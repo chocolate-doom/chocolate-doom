@@ -128,6 +128,9 @@ boolean         storedemo;
 // "BFG Edition" version of doom2.wad does not include TITLEPIC.
 boolean         bfgedition;
 
+// If true, the main game loop has started.
+boolean         main_loop_started = false;
+
 char		wadfile[1024];		// primary wad file
 char		mapdir[1024];           // directory of development maps
 
@@ -416,7 +419,9 @@ void D_DoomLoop (void)
 {
     if (demorecording)
 	G_BeginRecording ();
-		
+
+    main_loop_started = true;
+
     TryRunTics();
 
     I_SetWindowTitle(gamedescription);
@@ -1024,9 +1029,11 @@ static void D_Endoom(void)
     byte *endoom;
 
     // Don't show ENDOOM if we have it disabled, or we're running
-    // in screensaver or control test mode.
+    // in screensaver or control test mode. Only show it once the
+    // game has actually started.
 
-    if (!show_endoom || screensaver_mode || M_CheckParm("-testcontrols") > 0)
+    if (!show_endoom || !main_loop_started
+     || screensaver_mode || M_CheckParm("-testcontrols") > 0)
     {
         return;
     }
