@@ -706,7 +706,7 @@ int MIDI_GetNextEvent(midi_track_iter_t *iter, midi_event_t **event)
 
 unsigned int MIDI_GetFileTimeDivision(midi_file_t *file)
 {
-    return file->header.time_division;
+    return SHORT(file->header.time_division);
 }
 
 void MIDI_RestartIterator(midi_track_iter_t *iter)

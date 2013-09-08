@@ -1,4 +1,4 @@
-// Emacs style mode select   -*- C++ -*- 
+// Emacs style mode select   -*- C++ -*-
 //-----------------------------------------------------------------------------
 //
 // Copyright(C) 2006 Simon Howard
@@ -49,15 +49,16 @@
 
 typedef struct txt_window_s txt_window_t;
 
-#include "txt_widget.h" 
+#include "txt_widget.h"
 #include "txt_table.h"
 #include "txt_window_action.h"
 
 // Callback function for window key presses
 
-typedef int (*TxtWindowKeyPress)(txt_window_t *window, int key, void *user_data);
-typedef int (*TxtWindowMousePress)(txt_window_t *window, 
-                                   int x, int y, int b, 
+typedef int (*TxtWindowKeyPress)(txt_window_t *window, int key,
+                                 void *user_data);
+typedef int (*TxtWindowMousePress)(txt_window_t *window,
+                                   int x, int y, int b,
                                    void *user_data);
 
 struct txt_window_s
@@ -65,7 +66,7 @@ struct txt_window_s
     // Base class: all windows are tables with one column.
 
     txt_table_t table;
-    
+
     // Window title
 
     char *title;
@@ -114,17 +115,31 @@ void TXT_CloseWindow(txt_window_t *window);
 /**
  * Set the position of a window on the screen.
  *
- * The window is specified as coordinates relative to a predefined
- * position on the screen (eg. center of the screen, top left of the
- * screen, etc).
+ * The position is specified as a pair of x, y, coordinates on the
+ * screen. These specify the position of a particular point on the
+ * window. The following are some examples:
+ *
+ * <code>
+ *   // Centered on the screen:
+ *
+ *   TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_CENTER,
+ *                                 TXT_SCREEN_W / 2, TXT_SCREEN_H / 2);
+ *
+ *   // Horizontally centered, with top of the window on line 6:
+ *
+ *   TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_TOP,
+ *                                 TXT_SCREEN_W / 2, 6);
+ *
+ *   // Top-left of window at 20, 6:
+ *
+ *   TXT_SetWindowPosition(window, TXT_HORIZ_LEFT, TXT_VERT_TOP, 20, 6);
+ * </code>
  *
  * @param window       The window.
- * @param horiz_align  Horizontal position on the screen to which the
- *                     coordinates are relative (left side, right side
- *                     or center).
- * @param vert_align   Vertical position on the screen to which the
- *                     coordinates are relative (top, bottom or center).
- * @param x            X coordinate (horizonal axis) for window position.
+ * @param horiz_align  Horizontal location on the window for the X
+ *                     position.
+ * @param vert_align   Vertical location on the window for the Y position.
+ * @param x            X coordinate (horizontal axis) for window position.
  * @param y            Y coordinate (vertical axis) for window position.
  */
 
@@ -145,7 +160,7 @@ void TXT_SetWindowPosition(txt_window_t *window,
  *                    current window action in the given slot is removed.
  */
 
-void TXT_SetWindowAction(txt_window_t *window, txt_horiz_align_t position, 
+void TXT_SetWindowAction(txt_window_t *window, txt_horiz_align_t position,
                          txt_window_action_t *action);
 
 /**
@@ -186,6 +201,5 @@ void TXT_SetMouseListener(txt_window_t *window,
 
 txt_window_t *TXT_MessageBox(char *title, char *message, ...);
 
-#endif /* #ifndef TXT_WINDOW_T */
-
+#endif /* #ifndef TXT_WINDOW_H */
 
