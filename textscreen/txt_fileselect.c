@@ -591,6 +591,16 @@ static int DoSelectFile(txt_fileselect_t *fileselect)
     {
         path = TXT_SelectFile(fileselect->prompt,
                               fileselect->extensions);
+
+        // Update inputbox variable.
+        // If cancel was pressed (ie. NULL was returned by TXT_SelectFile)
+        // then reset to empty string, not NULL).
+
+        if (path == NULL)
+        {
+            path = strdup("");
+        }
+
         var = fileselect->inputbox->value;
         free(*var);
         *var = path;
@@ -658,6 +668,16 @@ txt_widget_class_t txt_fileselect_class =
     TXT_FileSelectFocused,
 };
 
+// If the (inner) inputbox widget is changed, emit a change to the
+// outer (fileselect) widget.
+
+static void InputBoxChanged(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(fileselect))
+{
+    TXT_CAST_ARG(txt_fileselect_t, fileselect);
+
+    TXT_EmitSignal(&fileselect->widget, "changed");
+}
+
 txt_fileselect_t *TXT_NewFileSelector(char **variable, int size,
                                       char *prompt, char **extensions)
 {
@@ -670,6 +690,9 @@ txt_fileselect_t *TXT_NewFileSelector(char **variable, int size,
     fileselect->size = size;
     fileselect->prompt = prompt;
     fileselect->extensions = extensions;
+
+    TXT_SignalConnect(fileselect->inputbox, "changed",
+                      InputBoxChanged, fileselect);
 
     return fileselect;
 }
