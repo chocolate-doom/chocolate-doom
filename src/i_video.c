@@ -712,11 +712,11 @@ static void I_ReadMouse(void)
 
         if (!novert)
         {
-            ev.data3 = 0;
+            ev.data3 = -AccelerateMouse(y);
         }
         else
         {
-            ev.data3 = -AccelerateMouse(y);
+            ev.data3 = 0;
         }
 
         D_PostEvent(&ev);
