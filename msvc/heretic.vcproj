@@ -139,9 +139,11 @@
 				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib"
 				OutputFile="$(OutDir)\cnheretic.exe"
 				GenerateDebugInformation="false"
-				SubSystem="1"
+				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				DataExecutionPrevention="0"
+				TurnOffAssemblyGeneration="false"
 				TargetMachine="1"
 			/>
 			<Tool

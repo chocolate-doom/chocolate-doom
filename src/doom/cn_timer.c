@@ -171,7 +171,7 @@ void CN_DrawIntermissionTime (int x, int y, int time)
     }
 }
 
-extern int totaltime;
+// extern int totaltime;
 void CN_DrawTotalTime (void)
 {
     int i, l;

@@ -1,3 +1,10 @@
+00013   Quickstart default delay is 3000 now to work properly;
+        Config fixes for heretic, hexen and strife, msvc fixes;
+        New cmd line arguments for metadata: -speed, -nmare,
+        - max, -tyson, -pacifist, -movie;
+        - episode 1(1-10)/2(11-20)/3(21-30) also works in Doom 2;
+        cn_meta_id changed to char; other small fixes and changes;
+        linux build script included, metadata completed, thnx Kilgore
 00012   Merged with latest Chocolate doom v2;
         Fixed crash caused by Choco v2 merge (m_config.c);
         -fastdemo completly removed, some metadata removed;

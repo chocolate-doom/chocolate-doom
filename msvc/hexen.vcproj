@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="Hexen"
 	ProjectGUID="{8FBB8720-340B-4185-9442-A76781FD6278}"
 	RootNamespace="Hexen"
@@ -141,7 +141,6 @@
 				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib"
 				OutputFile="$(OutDir)\cnhexen.exe"
 				GenerateDebugInformation="false"
-				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"

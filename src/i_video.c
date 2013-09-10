@@ -286,7 +286,7 @@ int mouse_threshold = 10;
 
 // Gamma correction level to use
 
-int usegamma = 0;
+int usegamma = 4; // [cndoom]
 
 static void ApplyWindowResize(unsigned int w, unsigned int h);
 

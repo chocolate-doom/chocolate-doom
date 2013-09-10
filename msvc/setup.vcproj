@@ -140,10 +140,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDLmain.lib SDL_net.lib"
+				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib"
 				OutputFile="$(OutDir)\cnsetup.exe"
 				GenerateDebugInformation="false"
-				SubSystem="1"
+				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"
@@ -181,6 +181,10 @@
 			>
 			<File
 				RelativePath="..\src\setup\compatibility.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\setup\competition.c"
 				>
 			</File>
 			<File
@@ -363,6 +367,10 @@
 			>
 			<File
 				RelativePath="..\src\setup\compatibility.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\setup\competition.h"
 				>
 			</File>
 			<File

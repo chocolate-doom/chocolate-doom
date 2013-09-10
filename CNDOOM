@@ -36,8 +36,8 @@ cn_timer_bg_colormap          16
 
 // Delay starting the game in miliseconds (0 - 9999) with
 // progress bar so you can adjust/press your mouse and key
-// 0 - 9999 (Default: 1500)
-cn_quickstart_delay           1500
+// 0 - 9999 (Default: 3000)
+cn_quickstart_delay           3000
 
 // Precache all sounds at start, otherwise game will 'skip/lag'
 // when new sound is loaded.
@@ -56,6 +56,24 @@ cn_meta_id
 -quickstart x   Delay starting the game in miliseconds (0 - 9999) with
                 progress bar so you can adjust/press your mouse and key
 -printstats     Outputs gameplay stats per map/total to stdout/console
+
+-speed          Use when recording speed category
+
+-max            Use when recording max category
+
+-nmare          Use when recording nightmare category
+
+-nm100s         Use when recording Nightmare 100% secrets category
+
+-tyson          Use when recording tyson category
+
+-pacifist       Use when recording pacifist category
+
+-episode x      Use when recording episode movie (Doom and Doom 2)
+                Combine category and episode eg. cndoom -speed -episode 2
+
+-movie          Use when recording movie (Doom and Doom 2)
+                Combine vategory and movie eg. cndoom -max -movie
 
 
 

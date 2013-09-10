@@ -83,5 +83,10 @@ void G_DrawMouseSpeedBox(void);
 
 extern int vanilla_savegame_limit;
 extern int vanilla_demo_limit;
+extern int totaltime;
+extern int ki;
+extern int it;
+extern int se;
+extern boolean secretexit;
 #endif
 

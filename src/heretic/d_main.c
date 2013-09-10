@@ -54,7 +54,7 @@
 #include "v_video.h"
 
 // [cndoom]
-//#include "cn_timer.h"
+//#include "doom/cn_meta.h"
 
 #define CT_KEY_GREEN    'g'
 #define CT_KEY_YELLOW   'y'
@@ -459,7 +459,7 @@ void D_CheckRecordFrom(void)
 
 char *iwadfile;
 
-char *basedefault = "cnheretic.cfg";
+char *basedefault = "heretic.cfg";
 
 void wadprintf(void)
 {
@@ -772,7 +772,8 @@ void D_BindVariables(void)
     //M_BindVariable("cn_timer_offset_y",      &cn_timer_offset_y);
     //M_BindVariable("cn_timer_color_index",   &cn_timer_color_index);
     //M_BindVariable("cn_timer_shadow_index",  &cn_timer_shadow_index);
-
+    M_BindVariable("cn_meta_id",               &cn_meta_id);
+    
     for (i=0; i<10; ++i)
     {
         char buf[12];
@@ -954,7 +955,7 @@ void D_DoomMain(void)
     // Load defaults before initing other systems
     DEH_printf("M_LoadDefaults: Load system defaults.\n");
     D_BindVariables();
-    M_SetConfigFilenames("cnheretic.cfg", PROGRAM_PREFIX "heretic.cfg");
+    M_SetConfigFilenames("heretic.cfg", PROGRAM_PREFIX "heretic.cfg");
     M_LoadDefaults();
 
     I_AtExit(M_SaveDefaults, false);

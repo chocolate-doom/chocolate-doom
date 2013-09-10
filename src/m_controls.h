@@ -51,7 +51,7 @@ extern char *cn_meta_country;
 extern char *cn_meta_email;
 extern char *cn_meta_url;
 */
-extern int cn_meta_id;
+extern char *cn_meta_id;
 // [cndoom] end
 
 

@@ -1,6 +1,6 @@
-== Chocolate Doom hardware OPL support notes ==
+== Competition Doom hardware OPL support notes ==
 
-Chocolate Doom is able to play MIDI music as it sounds in Vanilla Doom
+Competition Doom is able to play MIDI music as it sounds in Vanilla Doom
 with an OPL chip (as found in the Yamaha Adlib card, the Sound Blaster
 and its clones).  Most modern computers do not include an OPL chip any
 more, as CPUs are fast enough to do decent software MIDI synthesis.
@@ -8,7 +8,7 @@ For this reason, a software OPL emulator is included as a substitute.
 
 However, no software emulator sounds exactly like a real (hardware)
 OPL chip, so if you do have a sound card with hardware OPL, here's how
-to configure Chocolate Doom to use it.
+to configure Competition Doom to use it.
 
 === Sound cards with OPL chips ===
 
@@ -47,7 +47,7 @@ have to use the software OPL.
 
 If you're certain that you have a sound card with hardware OPL, you
 may need to take extra steps to configure your operating system to
-allow access to it.  To do hardware OPL, Chocolate Doom must access
+allow access to it.  To do hardware OPL, Competition Doom must access
 the chip directly, which is usually not possible in modern operating
 systems unless you are running as the superuser (root/Administrator).
 
@@ -69,7 +69,7 @@ it is possible to use the "ioperm.sys" driver developed for Cygwin:
     http://openwince.sourceforge.net/ioperm/
 
 It is not necessary to have Cygwin installed to use this.  Copy the
-ioperm.sys file into the same directory as the Chocolate Doom
+ioperm.sys file into the same directory as the Competition Doom
 executable and it should be automatically loaded.
 
 You can confirm that hardware OPL is working by checking for this

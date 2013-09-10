@@ -49,7 +49,7 @@ int key_strafe = KEY_RALT;
 // [cndoom] config variables for setup
 int key_strafe_alt          = 'x'; // [cndoom]
 int cn_precache_sounds      = 1; // [cndoom]
-int cn_quickstart_delay     = 1500; // [cndoom]
+int cn_quickstart_delay     = 3000; // [cndoom]
 int cn_timer_enabled        = 1;
 int cn_timer_offset_x       = -1;
 int cn_timer_offset_y       = 0;
@@ -65,7 +65,7 @@ char *cn_meta_country       = "zw";
 char *cn_meta_email         = "jdoe@example.net";
 char *cn_meta_url           = "http://www.example.net";
 */
-int cn_meta_id              = 0;
+char *cn_meta_id            = " ";
 // [cndoom] end
 
 

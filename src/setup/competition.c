@@ -36,10 +36,10 @@ void ConfigCompetition(void)
     window = TXT_NewWindow("Competition");
 
     TXT_AddWidgets(window, 
-                TXT_NewSeparator("* Required *"),
+                TXT_NewSeparator("### Required ###"),
                 TXT_NewStrut(0, 1),
                    TXT_NewHorizBox(TXT_NewLabel("Competition Doom ID: "),
-                               TXT_NewIntInputBox(&cn_meta_id, 4),
+                               TXT_NewInputBox(&cn_meta_id, 4),
                                NULL),
                 TXT_NewStrut(0, 1),
 /* we will not use this, player should register on forum and use ID

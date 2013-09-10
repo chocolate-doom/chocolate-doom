@@ -1374,7 +1374,7 @@ static default_t extra_defaults_list[] =
     // quickstart settings, see d_main.c
     // Quickstart delay so monitor can change resolution and
     // let you adjust mouse and keys before the game starts.
-    // 0 - 99999 (Default:1500)
+    // 0 - 99999 (Default:3000)
 
     CONFIG_VARIABLE_INT(cn_quickstart_delay),
 
@@ -1422,11 +1422,10 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_STRING(cn_meta_url),
 */
 
-
     //!
     // Competition Doom ID from http://www.doom.com.hr/
     // You have to register on forum and request ID
-    CONFIG_VARIABLE_INT(cn_meta_id),
+    CONFIG_VARIABLE_STRING(cn_meta_id),
     
     //!
     // @game hexen strife

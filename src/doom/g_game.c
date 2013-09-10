@@ -161,9 +161,10 @@ byte		consistancy[MAXPLAYERS][BACKUPTICS];
 
 // [cndoom] all level times saved here on map completion for later use,
 // also keep track of total time spent on all levels so far.
-#define MAXLEVELTIMES 34
+#define MAXLEVELTIMES 49
 int leveltimes[MAXLEVELTIMES];
 int totaltime;
+int ki, it, se;
 // [cndoom] end
 
 #define MAXPLMOVE		(forwardmove[1]) 
@@ -1383,8 +1384,8 @@ void G_DoCompleted (void)
  
      //[cndoom] save leveltime here for later use, also calculate total
     // time spent on all levels so far for use in the intermission screen
-
-    leveltimes[gamemap-1] = leveltime;
+    if (gamemode == commercial) { leveltimes[gamemap-1] = leveltime;}
+    else { leveltimes[gameepisode*9+gamemap-1] = leveltime; }
 
     for (i=0, totaltime=0; i < MAXLEVELTIMES; i++)
 	totaltime += leveltimes[i];
@@ -1395,10 +1396,8 @@ void G_DoCompleted (void)
     // Outputs gameplay stats per map/total to stdout/console
     //
     
-    if (M_CheckParm("-printstats"))
+    if (M_CheckParm("-printstats") || M_CheckParm("-record"))
     {
-	int ki, it, se;
-
 	printf ("\n### ");
 	if (gamemode == commercial)
 	    printf ("MAP%02i ", gamemap);

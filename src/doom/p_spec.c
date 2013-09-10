@@ -363,13 +363,14 @@ P_FindNextHighestFloor
             {
                 height = other->floorheight;
             }
+/* [cndoom]
             else if (h == MAX_ADJOINING_SECTORS + 2)
             {
                 // Fatal overflow: game crashes at 22 textures
                 I_Error("Sector with more than 22 adjoining sectors. "
                         "Vanilla will crash here");
             }
-
+*/
             heightlist[h++] = other->floorheight;
         }
     }

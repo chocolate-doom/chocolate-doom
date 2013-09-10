@@ -350,15 +350,6 @@ void D_Display (void)
     } while (!done);
 }
 
-// [cndoom]
-//
-// Simple delay screen with progress bar for "quickstart" when recording
-// Default delay is 1500 milliseconds, can be changed from config file (or
-// set to 0 to disable quickstart), or overridden temporarily from
-// command line using -quickstart.
-//
-//extern int cn_quickstart_delay;
-
 static void CN_QSScreen (int qsdelay)
 {
     int qs_starttime, qs_endtime, bar_width, bar_x, bar_y;
@@ -1379,10 +1370,27 @@ void D_DoomMain (void)
 // [cndoom] don't bother with the WAD manager at all for external
 // (.lmp) demos
 /*
+
+    //!
+    // @arg <demo>
+    // @category demo
+    // @vanilla
+    //
+    // Play back the demo named demo.lmp.
+    //
+
     p = M_CheckParmWithArgs ("-playdemo", 1);
 
     if (!p)
     {
+    //!
+    // @arg <demo>
+    // @category demo
+    // @vanilla
+    //
+    // Play back the demo named demo.lmp, determining the framerate
+    // of the screen.
+    //
  
 	p = M_CheckParmWithArgs("-timedemo", 1);
 
@@ -1514,8 +1522,15 @@ void D_DoomMain (void)
 
     if (p)
     {
-	startepisode = myargv[p+1][0]-'0';
-	startmap = 1;
+    startepisode = myargv[p+1][0]-'0';
+    startmap = 1;
+    if (gamemission != doom) // [cndoom]
+    {
+    if (startepisode == 2) { startmap = 11; }
+    if (startepisode == 3) { startmap = 21; }
+    }	
+
+
 	autostart = true;
     }
 	

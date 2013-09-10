@@ -15,7 +15,7 @@ DLL_FILES=$(TOPLEVEL)/src/SDL.dll                      \
 
 DOC_FILES += README.OPL
 
-ZIP=$(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-win32.zip
+ZIP=$(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-win.zip
 
 $(ZIP) : staging
 	zip -j -r $@ staging/

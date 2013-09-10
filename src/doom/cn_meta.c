@@ -12,163 +12,306 @@
 #include "m_config.h"
 #include "m_controls.h"
 #include "m_argv.h"
+#include "config.h"
 
+boolean     speedparm;
+boolean     nmareparm;
+boolean     maxparm;
+boolean     nm100sparm;
+boolean     tysonparm;
+boolean     pacifistparm;
+boolean     episodeparm;
+boolean     movieparm;
+boolean     coopparm;
+boolean     dmparm;
 
-//
-// Defaults for the local player's data. can be modified from the config
-// file. This structure is passed around over the network in multiplayer
-// games so that every player's information can be saved on each machine
-// participating in the game.
-//
+char        cn_meta_signature[4]    = "CNDM";
+char        cn_meta_version[4]      = "0001";
 
-cn_playerinfo_t cn_meta_local_playerinfo =
-{
-    "John",				// first name
-    "Doe",				// last name
-    "foobar",				// nickname
-    "1985-04-22",			// birthdate
-    "zw",				// country
-    "jdoe@example.net",			// email
-    "http://www.example.net/~jdoe/",	// url
-};
-
-//
-// Array for holding every player's data, including the local player
-// or only the local player if it's not a netgame. This is what is
-// actually used when writing the metadata after recording is done.
-// It is filled inside the netgame code or in the demo recording
-// code if it's a single player game.
-//
-cn_playerinfo_t cn_meta_playerinfos[MAXPLAYERS];
-
-#define CN_META_SIG ('C' | ('N'<<8) | ('D'<<16) | ('M'<<24))
-#define CN_META_VERSION 001
-
-static int num_tags;
 static FILE *metafp;
-
-// 
-// Bind all of the common controls used by Doom and all other games.
-//
 
 void CN_BindMetaVariables(void)
 {
-/* not used
-    M_BindVariable("cn_meta_firstname",         &cn_meta_firstname);
-    M_BindVariable("cn_meta_lastname",          &cn_meta_lastname);
-    M_BindVariable("cn_meta_nickname",          &cn_meta_nickname);
-    M_BindVariable("cn_meta_birthdate",         &cn_meta_birthdate);
-    M_BindVariable("cn_meta_country",           &cn_meta_country);
-    M_BindVariable("cn_meta_email",             &cn_meta_email);
-    M_BindVariable("cn_meta_url",               &cn_meta_url);
-*/
     M_BindVariable("cn_meta_id",                &cn_meta_id);
 }
 
-static void CN_AddMetaTag (char *tag, int size, char *data)
+static void write_int(FILE *f, int v)
 {
-    int len, tmp;
-
-    // Write length of tag name + the name itself.
-    len = strlen(tag);
-    // convert endianness if necessary
-    tmp = LONG(len);
-    fwrite (&tmp, 4, 1, metafp);
-    fwrite (tag, 1, len, metafp);
-
-    // Write length of data + the data itself.
-    //
-    // size==0 means it's a string and we can use strlen, otherwise it's
-    // binary data and it's the caller's responsibility to set size
-    // correctly in advance.
-
-    if (!size)
-	len = strlen(data);
-    else
-	len = size;
-
-    tmp = LONG(len);
-    fwrite (&tmp, 4, 1, metafp);
-    fwrite (data, 1, len, metafp);
-
-    num_tags++;
-
-    return;
+	// convert endianness if necessary
+	v = LONG(v);
+	fwrite(&v,4,1,f);
 }
 
-void CN_WriteMetaData (char *filename)
+static void write_bytes(FILE *f, const void *buf, int len)
 {
-    int metapos;	// location of metadata in the lmp file
-    int i, tmp;
-    int p;
-    
-    metafp = fopen(filename, "rb+");
-    if (!metafp)
-	return;
+	fwrite(buf, 1, len, f);
+}
 
-    // seek to end of demo first and save the location so it can be written later
-    fseek (metafp, 0, SEEK_END);
-    metapos = ftell(metafp);
+/*
+static void CN_AddMetaTag(char *tag, int size, char *data)
+{
+	int len;
 
-    // write signature "CNDM"
-    tmp = CN_META_SIG;
-    tmp = LONG(tmp);
-    fwrite (&tmp, 4, 1, metafp);
+	// Write length of tag name + the name itself.
+	len = strlen(tag);
+	write_int(metafp, len);
+	write_bytes(metafp, tag, len);
 
-    // write version
-    tmp = CN_META_VERSION;
-    tmp = LONG(tmp);
-    fwrite (&tmp, 4, 1, metafp);
- 
-    num_tags = 0;
-/* not used as it's not finished
-    for (i=0; i < MAXPLAYERS; i++)
-    {
-	char buffer[32];
+	// Write length of data + the data itself.
+	//
+	// size==0 means it's a string and we can use strlen, otherwise it's
+	// binary data and it's the caller's responsibility to set size
+	// correctly in advance.
 
-	// cannot use playersingame here because a player can leave midgame,
-	// but is still present in the demo
-	if (players[i].mo)
-	{
-        
-        snprintf (buffer, 32, "Player%iFirstName", i+1);
-	    snprintf (buffer, 32, cn_meta_firstname, i+1);
-	    CN_AddMetaTag (buffer, 0, cn_meta_playerinfos[i].firstname);
-
-	    snprintf (buffer, 32, "Player%iLastName", i+1);
-        snprintf (buffer, 32, cn_meta_lastname, i+1);
-	    CN_AddMetaTag (buffer, 0, cn_meta_playerinfos[i].lastname);
-
-	    snprintf (buffer, 32, "Player%iNickName", i+1);
-        snprintf (buffer, 32, cn_meta_nickname, i+1);
-	    CN_AddMetaTag (buffer, 0, cn_meta_playerinfos[i].nickname);
-
-	    snprintf (buffer, 32, "Player%iBirthDate", i+1);
-        snprintf (buffer, 32, cn_meta_birthdate, i+1);
-	    CN_AddMetaTag (buffer, 0, cn_meta_playerinfos[i].birthdate);
-
-	    snprintf (buffer, 32, "Player%iCountry", i+1);
-        snprintf (buffer, 32, cn_meta_country, i+1);
-	    CN_AddMetaTag (buffer, 0, cn_meta_playerinfos[i].country);
-
-	    snprintf (buffer, 32, "Player%iEMail", i+1);
-        snprintf (buffer, 32, cn_meta_email, i+1);
-	    CN_AddMetaTag (buffer, 0, cn_meta_playerinfos[i].email);
-
-	    snprintf (buffer, 32, "Player%iURL", i+1);
-        snprintf (buffer, 32, cn_meta_url, i+1);
-	    CN_AddMetaTag (buffer, 0, cn_meta_playerinfos[i].url);
-	}
-    }
+	len = (size) ? size : strlen(data);
+	write_int(metafp, len);
+	write_bytes(metafp, data, len);
+}
 */
-    // finally write metadata location and # of tags
-    tmp = LONG(metapos);
-    fwrite (&tmp, 4, 1, metafp);
-    tmp = LONG(num_tags);
-    fwrite (&tmp, 4, 1, metafp);
 
-    fclose (metafp);
+void CN_WriteMetaData(char *filename)
+{
+	int   metapos;	// location of metadata in the lmp file
+	int   p;
+	char  temp[16];
 
-    return;
+	//!
+	// @arg
+	// @category demo
+	// @vanilla
+	//
+	// Used only when recording speed demo for Competition
+	speedparm = M_CheckParm ("-speed");
+
+	//!
+	// @arg
+	// @category demo
+	// @vanilla
+	//
+	// Used only when recording nightmare demo for Competition
+	nmareparm = M_CheckParm ("-nmare");
+
+	//!
+	// @arg
+	// @category demo
+	// @vanilla
+	//
+	// Used only when recording max demo for Competition
+	maxparm = M_CheckParm ("-max");
+
+	//!
+	// @arg
+	// @category demo
+	// @vanilla
+	//
+	// Used only when recording nightmare 100% secrets demo for Competition
+	nm100sparm = M_CheckParm ("-nm100s");
+
+	//!
+	// @arg
+	// @category demo
+	// @vanilla
+	//
+	// Used only when recording tyson demo for Competition
+	tysonparm = M_CheckParm ("-tyson");
+
+	//!
+	// @arg
+	// @category demo
+	// @vanilla
+	//
+	// Used only when recording pacifist demo for Competition
+	pacifistparm = M_CheckParm ("-pacifist");
+
+	episodeparm = M_CheckParm ("-episode");
+    
+	//!
+	// @arg
+	// @category demo
+	// @vanilla
+	//
+	// Used only when recording movie demo for Competition
+	movieparm = M_CheckParm ("-movie");
+
+    dmparm = M_CheckParm ("-deathmatch");
+    
+    // check if game is DM or not
+    if (!dmparm)
+        coopparm = M_CheckParm ("-connect");
+    
+	metafp = fopen(filename, "rb+");
+	if (!metafp)
+		return;
+
+	// seek to end of demo first and save the location so it can be written later
+	fseek (metafp, 0, SEEK_END);
+	metapos = ftell(metafp);
+
+	// fputc (012, metafp);
+    // META HEADER
+    write_bytes(metafp, "*", 1);
+
+	// write signature "CNDM"
+	write_bytes(metafp, cn_meta_signature, 4);
+    write_bytes(metafp, "#", 1);
+
+	// write meta version
+	write_bytes(metafp, cn_meta_version, 4);
+    write_bytes(metafp, "#", 1);
+ 
+	// write CNDOOM version
+	write_bytes(metafp, PACKAGE_VERSION, 5);
+    write_bytes(metafp, "#", 1);
+    
+	// write Competition ID
+	write_bytes(metafp, cn_meta_id, 4);
+    write_bytes(metafp, "#", 1);
+ 
+	// player2 ID
+	write_bytes(metafp, "0000", 4);
+    write_bytes(metafp, "#", 1);
+
+	// player3 ID
+	write_bytes(metafp, "0000", 4);
+    write_bytes(metafp, "#", 1);
+
+	// player4 ID
+	write_bytes(metafp, "0000", 4);
+    write_bytes(metafp, "#", 1);
+ 
+	// write game
+	p = M_CheckParmWithArgs ("-file", 1);
+	if (p)
+	{
+		while (++p != myargc && myargv[p][0] != '-')
+		{
+			char *wadfilename = D_TryFindWADByName(myargv[p]);
+			write_bytes(metafp,
+				(strcasecmp(wadfilename,"av.wad") == 0)       ? "05" :
+				(strcasecmp(wadfilename,"hr.wad") == 0)       ? "06" :
+                (strcasecmp(wadfilename,"hr2.wad") == 0)      ? "07" :
+				(strcasecmp(wadfilename,"mm.wad") == 0)       ? "08" :
+				(strcasecmp(wadfilename,"mm2.wad") == 0)      ? "09" :
+				(strcasecmp(wadfilename,"mm2info.wad") == 0)  ? "09" :
+				(strcasecmp(wadfilename,"requiem.wad") == 0)  ? "10" :
+				(strcasecmp(wadfilename,"class_ep.wad") == 0) ? "11" :
+			                                                    "00", 2);
+		}
+	}
+	else
+	{
+		write_bytes(metafp,
+				(gamemission == doom)      ? "01" :
+				(gamemission == doom2)     ? "02" :
+				(gamemission == pack_tnt)  ? "03" :
+				(gamemission == pack_plut) ? "04" :
+				                             "00", 2);
+	}
+    write_bytes(metafp, "#", 1);
+	
+    // write episode
+	if (gameepisode>=1 && gameepisode<=4)   sprintf(temp, "%d", gameepisode);
+	write_bytes(metafp, temp, 1);
+    write_bytes(metafp, "#", 1);
+    
+	// write map
+    if ((gamemission == doom) && (gameepisode == 1)) {
+             if (gamemap>=1 && gamemap<=3 && !secretexit) sprintf(temp,"11%d",gamemap);
+        else if (gamemap==3 && secretexit)                sprintf(temp,"114");
+        else if (gamemap>=4 && gamemap<=9 && !secretexit) sprintf(temp,"%d",gamemap+111);
+    }
+    else if ((gamemission == doom) && (gameepisode == 2)) {
+             if (gamemap>=1 && gamemap<=5 && !secretexit) sprintf(temp,"12%d",gamemap);
+        else if (gamemap==5 && secretexit)                sprintf(temp,"126");
+        else if (gamemap>=6 && gamemap<=9 && !secretexit) sprintf(temp,"%d",gamemap+121);
+    }
+    else if ((gamemission == doom) && (gameepisode == 3)) {
+        if (gamemap>=1 && gamemap<=6 && !secretexit) sprintf(temp,"13%d",gamemap);
+        if (gamemap==6 && secretexit)                sprintf(temp,"137");
+        if (gamemap>=7 && gamemap<=9 && !secretexit) sprintf(temp,"%d",gamemap+131);
+    }
+    else if ((gamemission == doom) && (gameepisode == 4)) {
+             if (gamemap>=1 && gamemap<=2 && !secretexit) sprintf(temp,"14%d",gamemap);
+        else if (gamemap==2 && secretexit)                sprintf(temp,"143");
+        else if (gamemap>=3 && gamemap<=9 && !secretexit) sprintf(temp,"%d",gamemap+141);
+    }
+    else
+    {
+         if (gamemap>=1 && gamemap<=15 && !secretexit)    sprintf(temp,"%02d",gamemap);
+    else if (gamemap==15 && secretexit)                   sprintf(temp,"%02d",gamemap+1);
+    else if (gamemap>=16 && gamemap<=31 && !secretexit)   sprintf(temp,"%02d",gamemap+1);
+    else if (gamemap==31 && secretexit)                   sprintf(temp,"%02d",gamemap+2);
+    else if (gamemap==32)                                 sprintf(temp,"%02d",gamemap+2);
+    }
+	write_bytes(metafp, temp, 3);
+    write_bytes(metafp, "#", 1);
+
+	// write category  
+	write_bytes(metafp,
+		(nomonsters)   ? "31" :
+		(speedparm)    ? "01" :
+		(nmareparm)    ? "02" :
+		(maxparm)      ? "03" :
+		(nm100sparm)   ? "04" :
+		(tysonparm)    ? "05" :
+		(pacifistparm) ? "06" :
+		(fastparm)     ? "07" :
+		(respawnparm)  ? "08" :
+		                 "00", 2);
+    write_bytes(metafp, "#", 1);
+
+	// check episode or movie
+	write_bytes(metafp,
+			(episodeparm) ? "E" :
+			(movieparm)   ? "M" :
+			                "D", 1);
+    write_bytes(metafp, "#", 1);
+
+	// check sp, coop, dm
+	write_bytes(metafp,
+			(dmparm)    ? "D" :
+			(coopparm)  ? "C" :
+			              "S", 1);
+    write_bytes(metafp, "#", 1);
+                          
+	// write skill
+	write_bytes(metafp,
+			(gameskill == sk_baby)      ? "1" :
+			(gameskill == sk_easy)      ? "2" :
+			(gameskill == sk_medium)    ? "3" :
+			(gameskill == sk_hard)      ? "4" :
+			(gameskill == sk_nightmare) ? "5" :
+			                              "0", 1);
+    write_bytes(metafp, "#", 1);
+
+	// write game stats (valid only for one map)
+	fprintf(metafp,"%04i%04i", ki, totalkills);
+    write_bytes(metafp, "#", 1);
+	fprintf(metafp,"%04i%04i", it, totalitems);
+    write_bytes(metafp, "#", 1);
+	fprintf(metafp,"%04i%04i", se, totalsecret);
+    write_bytes(metafp, "#", 1);
+
+	// write record time
+	if (totaltime != NULL)
+		{
+        fprintf(metafp, "%02i:%02i:%05.2f",
+			totaltime / TICRATE / 60 / 60,
+			(totaltime / TICRATE / 60) % 60,
+			(float)(totaltime % (60*TICRATE)) / TICRATE);
+        write_bytes(metafp, "#", 1);
+        }
+	else
+        {
+		write_bytes(metafp, "XX:XX:XX.XX", 11);
+        write_bytes(metafp, "#", 1);
+        }
+        
+    // META FOOTER
+    write_bytes(metafp, "*", 1);
+        
+	// finally write metadata location and # of tags
+	write_int(metafp, metapos);
+
+	fclose(metafp);
 }
-
