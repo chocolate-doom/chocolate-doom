@@ -192,10 +192,9 @@ void CN_WriteMetaData(char *filename)
                 (strcasecmp(wadfilename,"hr2.wad") == 0)      ? "07" :
 				(strcasecmp(wadfilename,"mm.wad") == 0)       ? "08" :
 				(strcasecmp(wadfilename,"mm2.wad") == 0)      ? "09" :
-				(strcasecmp(wadfilename,"mm2info.wad") == 0)  ? "09" :
 				(strcasecmp(wadfilename,"requiem.wad") == 0)  ? "10" :
 				(strcasecmp(wadfilename,"class_ep.wad") == 0) ? "11" :
-			                                                    "00", 2);
+                                                                "00" , 2);
 		}
 	}
 	else
