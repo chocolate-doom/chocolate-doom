@@ -27,8 +27,9 @@ man_MANS=chocolate-server.6       \
          strife.cfg.5             \
          chocolate-strife.cfg.5
 
-nodist_doc_DATA=INSTALL CMDLINE.doom CMDLINE.heretic \
-                CMDLINE.hexen CMDLINE.strife
+nodist_doc_DATA=INSTALL \
+    INSTALL.doom INSTALL.heretic INSTALL.hexen INSTALL.strife \
+    CMDLINE.doom CMDLINE.heretic CMDLINE.hexen CMDLINE.strife
 
 
 
@@ -43,9 +44,11 @@ chocolate-doom.cfg.5: ../src extra.cfg.template
 	./docgen -g doom -m extra.cfg.template \
                  -c extended ../src/m_config.c > $@
 
-CMDLINE.doom : ../src ../src/doom
+CMDLINE.doom : CMDLINE.template ../src ../src/doom
 	./docgen -p CMDLINE.template ../src/ ../src/doom/ > $@
 
+INSTALL.doom: INSTALL.template
+	./simplecpp -DDOOM -DPRECOMPILED < INSTALL.template > $@
 
 
 chocolate-heretic.6: ../src $(MANPAGE_GEN_FILES)
@@ -59,8 +62,11 @@ chocolate-heretic.cfg.5: ../src extra.cfg.template
 	./docgen -g heretic -m extra.cfg.template \
                  -c extended ../src/m_config.c > $@
 
-CMDLINE.heretic : ../src ../src/heretic
+CMDLINE.heretic : CMDLINE.template ../src ../src/heretic
 	./docgen -p CMDLINE.template ../src/ ../src/heretic/ > $@
+
+INSTALL.heretic: INSTALL.template
+	./simplecpp -DHERETIC -DPRECOMPILED < INSTALL.template > $@
 
 
 chocolate-hexen.6: ../src $(MANPAGE_GEN_FILES)
@@ -74,9 +80,11 @@ chocolate-hexen.cfg.5: ../src extra.cfg.template
 	./docgen -g hexen -m extra.cfg.template \
                  -c extended ../src/m_config.c > $@
 
-CMDLINE.hexen : ../src ../src/hexen
+CMDLINE.hexen : CMDLINE.template ../src ../src/hexen
 	./docgen -p CMDLINE.template ../src/ ../src/hexen/ > $@
 
+INSTALL.hexen: INSTALL.template
+	./simplecpp -DHEXEN -DPRECOMPILED < INSTALL.template > $@
 
 
 chocolate-strife.6: ../src $(MANPAGE_GEN_FILES)
@@ -90,13 +98,16 @@ chocolate-strife.cfg.5: ../src extra.cfg.template
 	./docgen -g strife -m extra.cfg.template \
                  -c extended ../src/m_config.c > $@
 
-CMDLINE.strife : ../src ../src/strife
+CMDLINE.strife : CMDLINE.template ../src ../src/strife
 	./docgen -p CMDLINE.template ../src/ ../src/strife/ > $@
 
+INSTALL.strife: INSTALL.template
+	./simplecpp -DSTRIFE -DPRECOMPILED < INSTALL.template > $@
 
 
 INSTALL: INSTALL.template
-	./simplecpp -DPRECOMPILED < INSTALL.template > $@
+	./simplecpp -DDOOM -DHERETIC -DHEXEN -DSTRIFE \
+	            -DPRECOMPILED < INSTALL.template > $@
 
 endif
 
