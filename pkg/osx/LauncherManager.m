@@ -355,7 +355,16 @@ static NSString *AppendQuotedFilename(NSString *str, NSString *fileName)
 
 - (void) openCMDLINE: (id) sender
 {
-    OpenDocumentation("CMDLINE");
+    char *game_name;
+    char filename[32];
+
+    // We need to open the appropriate doc file for the currently
+    // selected game.
+
+    game_name = [self->iwadController getGameName];
+    sprintf(filename, "CMDLINE.%s", game_name);
+
+    OpenDocumentation(filename);
 }
 
 - (void) openCOPYING: (id) sender
