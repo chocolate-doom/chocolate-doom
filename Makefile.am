@@ -32,13 +32,11 @@ CODEBLOCKS_FILES=                              \
         codeblocks/setup-res.rc
 
 DOC_FILES=                              \
-        CNDOOM                          \
+        NEWS                            \
         CMDLINE                         \
         README                          \
         README.OPL                      \
-        NEWS                            \
         ChangeLog                       \
-        CNChangeLog                     \
         NOT-BUGS
 
 EXTRA_DIST=                             \
@@ -48,7 +46,6 @@ EXTRA_DIST=                             \
         $(DOC_FILES)                    \
         .lvimrc                         \
         HACKING                         \
-        TODO                            \
         rpm.spec
 
 docdir=$(prefix)/share/doc/@PACKAGE@

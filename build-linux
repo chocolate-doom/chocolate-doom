@@ -427,10 +427,10 @@ if $svn_build; then
 
     build_module "$SVN_CO_NAME" "$HOST_ARG"
 else
-    # Build v2.0.2
+    # Build v2.0.3
 
     fetch_and_build_module http://www.doom.com.hr/cndoom/ \
-                           cndoom 2.0.2 "$HOST_ARG"
+                           cndoom 2.0.3 "$HOST_ARG"
 fi
 
 cd $COMPETITION_DOOM_DIR

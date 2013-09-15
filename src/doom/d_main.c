@@ -1427,7 +1427,10 @@ void D_DoomMain (void)
     }
 // [cndoom] end
 */
+    I_AtExit((atexit_func_t) G_CheckDemoStatus, true);
 
+    
+    
     // Generate the WAD hash table.  Speed things up a bit.
 
     W_GenerateHashTable();
