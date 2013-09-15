@@ -32,7 +32,6 @@ CODEBLOCKS_FILES=                              \
         codeblocks/setup-res.rc
 
 DOC_FILES=                              \
-        CMDLINE                         \
         README                          \
         README.OPL                      \
         NEWS                            \
@@ -59,13 +58,6 @@ SUBDIRS=textscreen opl pcsound data src man
 DIST_SUBDIRS=pkg $(SUBDIRS)
 
 if HAVE_PYTHON
-
-noinst_DATA=CMDLINE
-
-# TODO: CMDLINE only documents the Doom command line, not other games.
-
-CMDLINE : src/
-	./man/docgen -p man/CMDLINE.template src/ src/doom/ > $@
 
 INSTALL : man/INSTALL.template man/simplecpp
 	./man/simplecpp < man/INSTALL.template > $@

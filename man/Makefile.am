@@ -27,7 +27,8 @@ man_MANS=chocolate-server.6       \
          strife.cfg.5             \
          chocolate-strife.cfg.5
 
-nodist_doc_DATA=INSTALL
+nodist_doc_DATA=INSTALL CMDLINE.doom CMDLINE.heretic \
+                CMDLINE.hexen CMDLINE.strife
 
 
 
@@ -42,6 +43,9 @@ chocolate-doom.cfg.5: ../src extra.cfg.template
 	./docgen -g doom -m extra.cfg.template \
                  -c extended ../src/m_config.c > $@
 
+CMDLINE.doom : ../src ../src/doom
+	./docgen -p CMDLINE.template ../src/ ../src/doom/ > $@
+
 
 
 chocolate-heretic.6: ../src $(MANPAGE_GEN_FILES)
@@ -55,6 +59,8 @@ chocolate-heretic.cfg.5: ../src extra.cfg.template
 	./docgen -g heretic -m extra.cfg.template \
                  -c extended ../src/m_config.c > $@
 
+CMDLINE.heretic : ../src ../src/heretic
+	./docgen -p CMDLINE.template ../src/ ../src/heretic/ > $@
 
 
 chocolate-hexen.6: ../src $(MANPAGE_GEN_FILES)
@@ -68,6 +74,9 @@ chocolate-hexen.cfg.5: ../src extra.cfg.template
 	./docgen -g hexen -m extra.cfg.template \
                  -c extended ../src/m_config.c > $@
 
+CMDLINE.hexen : ../src ../src/hexen
+	./docgen -p CMDLINE.template ../src/ ../src/hexen/ > $@
+
 
 
 chocolate-strife.6: ../src $(MANPAGE_GEN_FILES)
@@ -80,6 +89,9 @@ strife.cfg.5: ../src default.cfg.template
 chocolate-strife.cfg.5: ../src extra.cfg.template
 	./docgen -g strife -m extra.cfg.template \
                  -c extended ../src/m_config.c > $@
+
+CMDLINE.strife : ../src ../src/strife
+	./docgen -p CMDLINE.template ../src/ ../src/strife/ > $@
 
 
 

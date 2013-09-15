@@ -23,7 +23,5 @@ DOC_FILES = README       \
             COPYING      \
             ChangeLog    \
             NEWS         \
-            NOT-BUGS     \
-            CMDLINE      \
-            TODO
+            NOT-BUGS
 
