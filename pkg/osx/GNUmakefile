@@ -99,7 +99,9 @@ $(STAGING_DIR): launcher $(TOPLEVEL_DOCS)
 	mkdir -p "$(APP_BIN_DIR)/man/man5" "$(APP_BIN_DIR)/man/man6"
 	cp $(TOPLEVEL)/man/*.5 "$(APP_BIN_DIR)/man/man5"
 	cp $(TOPLEVEL)/man/*.6 "$(APP_BIN_DIR)/man/man6"
-	cp $(TOPLEVEL)/man/CMDLINE.{doom,heretic,hexen,strife} $(APP_DOC_DIR)
+	cp $(TOPLEVEL)/man/CMDLINE.doom $(TOPLEVEL)/man/CMDLINE.heretic \
+	   $(TOPLEVEL)/man/CMDLINE.hexen $(TOPLEVEL)/man/CMDLINE.strife \
+	   "$(APP_DOC_DIR)"
 	cp disk/dir.DS_Store $(STAGING_DIR)/.DS_Store
 	cp disk/background.png $(STAGING_DIR)/background.png
 
