@@ -39,6 +39,7 @@
 #define HU_FONTSIZE     (HU_FONTEND - HU_FONTSTART + 1)	
 
 #define HU_BROADCAST    9       // haleyjd [STRIFE] Changed 5 -> 9
+#define HU_CHANGENAME   10      // haleyjd [STRIFE] Special command
 
 #define HU_MSGX         0
 #define HU_MSGY         (SHORT(hu_font[0]->height) + 1) // [STRIFE]: DOOM bug fix
@@ -63,7 +64,7 @@ char HU_dequeueChatChar(void);
 void HU_Erase(void);
 
 extern char *chat_macros[10];
-extern char pnameprefixes[8][16];   // villsa [STRIFE]
+extern char player_names[8][16];   // villsa [STRIFE]
 
 // haleyjd [STRIFE] externalized:
 extern char *mapnames[];

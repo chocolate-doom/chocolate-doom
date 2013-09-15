@@ -160,8 +160,7 @@ static boolean main_loop_started = false;
 static int comport = 0;
 
 // fraggle 06/03/11 [STRIFE]: Multiplayer nickname?
-
-static char *nickname = NULL;
+char *nickname = NULL;
 
 void D_ConnectNetGame(void);
 void D_CheckNetGame(void);
@@ -415,10 +414,15 @@ void D_BindVariables(void)
     M_BindStrifeControls(); // haleyjd 09/01/10: [STRIFE]
     M_BindChatControls(MAXPLAYERS);
 
-    key_multi_msgplayer[0] = HUSTR_KEYGREEN;
-    key_multi_msgplayer[1] = HUSTR_KEYINDIGO;
-    key_multi_msgplayer[2] = HUSTR_KEYBROWN;
-    key_multi_msgplayer[3] = HUSTR_KEYRED;
+    // haleyjd 20130915: Strife chat keys
+    key_multi_msgplayer[0] = '1';
+    key_multi_msgplayer[1] = '2';
+    key_multi_msgplayer[2] = '3';
+    key_multi_msgplayer[3] = '4';
+    key_multi_msgplayer[4] = '5';
+    key_multi_msgplayer[5] = '6';
+    key_multi_msgplayer[6] = '7';
+    key_multi_msgplayer[7] = '8';
 
 #ifdef FEATURE_MULTIPLAYER
     NET_BindVariables();

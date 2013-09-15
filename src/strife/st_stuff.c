@@ -1218,7 +1218,7 @@ static boolean ST_drawKeysPopup(void)
             colpatch = W_CacheLumpName(buffer, PU_CACHE);
             V_DrawPatchDirect(28, y, colpatch);
             frags = ST_calcFrags(pnum);
-            DEH_snprintf(buffer, sizeof(buffer), "%s%d", pnameprefixes[pnum], frags);
+            DEH_snprintf(buffer, sizeof(buffer), "%s%d", player_names[pnum], frags);
             HUlib_drawYellowText(38, yt, buffer);
             if(!playeringame[pnum])
                 HUlib_drawYellowText(28, pnum*17 + 65, "X");
@@ -1235,7 +1235,7 @@ static boolean ST_drawKeysPopup(void)
             colpatch = W_CacheLumpName(buffer, PU_CACHE);
             V_DrawPatchDirect(158, y, colpatch);
             frags = ST_calcFrags(pnum);
-            DEH_snprintf(buffer, sizeof(buffer), "%s%d", pnameprefixes[pnum], frags);
+            DEH_snprintf(buffer, sizeof(buffer), "%s%d", player_names[pnum], frags);
             HUlib_drawYellowText(168, yt, buffer);
             if(!playeringame[pnum])
                 HUlib_drawYellowText(158, pnum*17 - 3, "X");

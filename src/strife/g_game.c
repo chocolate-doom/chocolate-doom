@@ -983,8 +983,8 @@ void G_Ticker (void)
                 && turbodetected[i])
             {
                 static char turbomessage[80];
-                extern char *player_names[4];
-                sprintf (turbomessage, "%s is turbo!",player_names[i]);
+                extern char player_names[8][16];
+                sprintf (turbomessage, "%s is turbo!", player_names[i]);
                 players[consoleplayer].message = turbomessage;
                 turbodetected[i] = false;
             }

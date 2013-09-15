@@ -79,7 +79,7 @@ char *chat_macros[10] =
 };
 
 // villsa [STRIFE]
-char pnameprefixes[8][16] =
+char player_names[8][16] =
 {
     "1: ",
     "2: ",
@@ -89,14 +89,6 @@ char pnameprefixes[8][16] =
     "6: ",
     "7: ",
     "8: "
-};
-
-char*	player_names[] =
-{
-    HUSTR_PLRGREEN,
-    HUSTR_PLRINDIGO,
-    HUSTR_PLRBROWN,
-    HUSTR_PLRRED
 };
 
 char                    chat_char; // remove later.
@@ -121,7 +113,11 @@ static int              message_counter;
 
 static boolean          headsupactive = false;
 
-static char *           nickname; // haleyjd 09/18/10: [STRIFE]
+// haleyjd 20130915 [STRIFE]: need nickname
+extern char *nickname;
+
+// haleyjd 20130915 [STRIFE]: true if setting nickname
+static boolean hu_setting_name = false;
 
 //
 // Builtin map names.
@@ -276,18 +272,14 @@ void HU_Start(void)
         headsupactive = true;
 
         // haleyjd 09/18/10: [STRIFE] nickname weirdness. 
-
-        // STRIFE-TODO: This shit crashes the game.
-        /*
-        if(nickname != pnameprefixes[consoleplayer])
+        if(nickname != player_names[consoleplayer])
         {
             if(*nickname)
             {
                 DEH_printf("have one\n");
-                nickname = pnameprefixes[consoleplayer];
+                nickname = player_names[consoleplayer];
             }
         }
-        */
     }
 }
 
@@ -463,15 +455,19 @@ void HU_Ticker(void)
                             && (chat_dest[i] == consoleplayer+1
                              || chat_dest[i] == HU_BROADCAST))
                         {
-                            // STRIFE-TODO: there is interaction with the player
-                            // name prefixes array here...
-                            HU_addMessage(DEH_String(player_names[i]),
+                            HU_addMessage(player_names[i],
                                           w_inputbuffer[i].l.l);
 
                             message_nottobefuckedwith = true;
                             message_on = true;
                             message_counter = HU_MSGTIMEOUT;
                             S_StartSound(0, sfx_radio);
+                        }
+                        else if(chat_dest[i] == HU_CHANGENAME)
+                        {
+                            // haleyjd 20130915 [STRIFE]: set player name
+                            DEH_snprintf(player_names[i], sizeof(player_names[i]),
+                                         "%.13s: ", w_inputbuffer[i].l.l);
                         }
                         HUlib_resetIText(&w_inputbuffer[i]);
                     }
@@ -533,7 +529,7 @@ char HU_dequeueChatChar(void)
 //   - The default value of key_message_refresh is changed. That is handled
 //     elsewhere in Choco, however.
 //   - There is support for setting the player name through the chat
-//     mechanism. This is a STRIFE-TODO.
+//     mechanism.
 //
 boolean HU_Responder(event_t *ev)
 {
@@ -572,44 +568,14 @@ boolean HU_Responder(event_t *ev)
             message_counter = HU_MSGTIMEOUT;
             eatkey = true;
         }
-        else if (netgame && ev->data2 == key_multi_msg)
+        else if (/*netgame && */ev->data2 == key_multi_msg)
         {
             eatkey = chat_on = true;
             HUlib_resetIText(&w_chat);
             HU_queueChatChar(HU_BROADCAST);
         }
-        else if (netgame && numplayers > 2)
-        {
-            // STRIFE-TODO: support for setting player names
-
-            for (i=0; i<MAXPLAYERS ; i++)
-            {
-                if (ev->data2 == key_multi_msgplayer[i])
-                {
-                    if (playeringame[i] && i!=consoleplayer)
-                    {
-                        eatkey = chat_on = true;
-                        HUlib_resetIText(&w_chat);
-                        HU_queueChatChar(i+1);
-                        break;
-                    }
-                    else if (i == consoleplayer)
-                    {
-                        num_nobrainers++;
-                        if (num_nobrainers < 3)
-                            plr->message = DEH_String(HUSTR_TALKTOSELF1);
-                        else if (num_nobrainers < 6)
-                            plr->message = DEH_String(HUSTR_TALKTOSELF2);
-                        else if (num_nobrainers < 9)
-                            plr->message = DEH_String(HUSTR_TALKTOSELF3);
-                        else if (num_nobrainers < 32)
-                            plr->message = DEH_String(HUSTR_TALKTOSELF4);
-                        else
-                            plr->message = DEH_String(HUSTR_TALKTOSELF5);
-                    }
-                }
-            }
-        }
+        // [STRIFE]: You cannot go straight to chatting with a particular
+        // player from here... you must press 't' first. See below.
     }
     else
     {
@@ -639,21 +605,80 @@ boolean HU_Responder(event_t *ev)
         }
         else
         {
-            eatkey = HUlib_keyInIText(&w_chat, c);
-            if (eatkey)
+            if(w_chat.l.len) // [STRIFE]: past first char of chat?
             {
-                // static unsigned char buf[20]; // DEBUG
-                HU_queueChatChar(c);
-
-                // sprintf(buf, "KEY: %d => %d", ev->data1, c);
-                //      plr->message = buf;
+                eatkey = HUlib_keyInIText(&w_chat, c);
+                if (eatkey)
+                    HU_queueChatChar(c);
             }
+            else
+            {
+                // [STRIFE]: check for player-specific message;
+                // slightly different than vanilla, to allow keys to be customized
+                for(i = 0; i < MAXPLAYERS; i++)
+                {
+                    if(c == key_multi_msgplayer[i])
+                        break;
+                }
+                if(i < MAXPLAYERS)
+                {
+                    // talking to self?
+                    if(i == consoleplayer)
+                    {
+                        num_nobrainers++;
+                        if (num_nobrainers < 3)
+                            plr->message = DEH_String(HUSTR_TALKTOSELF1);
+                        else if (num_nobrainers < 6)
+                            plr->message = DEH_String(HUSTR_TALKTOSELF2);
+                        else if (num_nobrainers < 9)
+                            plr->message = DEH_String(HUSTR_TALKTOSELF3);
+                        else if (num_nobrainers < 32)
+                            plr->message = DEH_String(HUSTR_TALKTOSELF4);
+                        else
+                            plr->message = DEH_String(HUSTR_TALKTOSELF5);
+                    }
+                    else
+                    {
+                        eatkey = true;
+                        HU_queueChatChar(i+1);
+                        DEH_snprintf(lastmessage, sizeof(lastmessage),
+                            "Talking to: %c", '1' + i);
+                        plr->message = lastmessage;
+                    }
+                }
+                else if(c == '$') // [STRIFE]: name changing
+                {
+                    eatkey = true;
+                    HU_queueChatChar(HU_CHANGENAME);
+                    strncpy(lastmessage, DEH_String("Changing Name:"), sizeof(lastmessage));
+                    plr->message = lastmessage;
+                    hu_setting_name = true;
+                }
+                else
+                {
+                    eatkey = HUlib_keyInIText(&w_chat, c);
+                    if (eatkey)
+                        HU_queueChatChar(c);
+                }
+            }
+
             if (c == KEY_ENTER)
             {
                 chat_on = false;
                 if (w_chat.l.len)
                 {
-                    strcpy(lastmessage, w_chat.l.l);
+                    // [STRIFE]: name setting
+                    if(hu_setting_name)
+                    {
+                        DEH_snprintf(lastmessage, sizeof(lastmessage),
+                            "%s now %.13s", player_names[consoleplayer],
+                            w_chat.l.l);
+                        hu_setting_name = false;
+                    }
+                    else
+                    {
+                        strcpy(lastmessage, w_chat.l.l);
+                    }
                     plr->message = lastmessage;
                 }
             }
