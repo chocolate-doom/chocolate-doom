@@ -568,7 +568,7 @@ boolean HU_Responder(event_t *ev)
             message_counter = HU_MSGTIMEOUT;
             eatkey = true;
         }
-        else if (/*netgame && */ev->data2 == key_multi_msg)
+        else if (netgame && ev->data2 == key_multi_msg)
         {
             eatkey = chat_on = true;
             HUlib_resetIText(&w_chat);
