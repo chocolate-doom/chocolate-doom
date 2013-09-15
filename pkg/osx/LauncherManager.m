@@ -362,7 +362,7 @@ static NSString *AppendQuotedFilename(NSString *str, NSString *fileName)
     // selected game.
 
     game_name = [self->iwadController getGameName];
-    sprintf(filename, "CMDLINE.%s", game_name);
+    sprintf(filename, "CMDLINE-%s", game_name);
 
     OpenDocumentation(filename);
 }
