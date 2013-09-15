@@ -1134,6 +1134,28 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
 }
 
 //
+// ST_calcFrags
+//
+// haleyjd [STRIFE] New function.
+// Calculate frags for display on the frags popup.
+//
+static int ST_calcFrags(int pnum)
+{
+    int i;
+    int result = 0;
+
+    for(i = 0; i < MAXPLAYERS; i++)
+    {
+        if(i == pnum) // self-frags
+            result -= players[pnum].frags[i];
+        else
+            result += players[pnum].frags[i];
+    }
+
+    return result;
+}
+
+//
 // ST_drawTime
 //
 // villsa [STRIFE] New function.
@@ -1172,7 +1194,7 @@ static void ST_drawTime(int x, int y, int time)
 //
 static boolean ST_drawKeysPopup(void)
 {
-    int x, y, key, keycount;
+    int x, y, yt, key, keycount;
     mobjinfo_t *info;
 
     V_DrawXlaPatch(0, 56, invpbak2);
@@ -1180,8 +1202,46 @@ static boolean ST_drawKeysPopup(void)
 
     if(deathmatch)
     {
-        // STRIFE-TODO: In deathmatch, the keys popup is replaced by a chart
-        // of frag counts
+        int pnum;
+        patch_t *colpatch;
+        char buffer[128];
+        int frags;
+
+        // In deathmatch, the keys popup is replaced by a chart of frag counts
+        
+        // first column
+        y  = 64;
+        yt = 66;
+        for(pnum = 0; pnum < MAXPLAYERS/2; pnum++)
+        {
+            DEH_snprintf(buffer, sizeof(buffer), "stcolor%d", pnum+1);
+            colpatch = W_CacheLumpName(buffer, PU_CACHE);
+            V_DrawPatchDirect(28, y, colpatch);
+            frags = ST_calcFrags(pnum);
+            DEH_snprintf(buffer, sizeof(buffer), "%s%d", pnameprefixes[pnum], frags);
+            HUlib_drawYellowText(38, yt, buffer);
+            if(!playeringame[pnum])
+                HUlib_drawYellowText(28, pnum*17 + 65, "X");
+            y  += 17;
+            yt += 17;
+        }
+
+        // second column
+        y  = 64;
+        yt = 66;
+        for(pnum = MAXPLAYERS/2; pnum < MAXPLAYERS; pnum++)
+        {
+            DEH_snprintf(buffer, sizeof(buffer), "stcolor%d", pnum+1);
+            colpatch = W_CacheLumpName(buffer, PU_CACHE);
+            V_DrawPatchDirect(158, y, colpatch);
+            frags = ST_calcFrags(pnum);
+            DEH_snprintf(buffer, sizeof(buffer), "%s%d", pnameprefixes[pnum], frags);
+            HUlib_drawYellowText(168, yt, buffer);
+            if(!playeringame[pnum])
+                HUlib_drawYellowText(158, pnum*17 - 3, "X");
+            y  += 17;
+            yt += 17;
+        }
     }
     else
     {
