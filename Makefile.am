@@ -60,7 +60,8 @@ DIST_SUBDIRS=pkg $(SUBDIRS)
 if HAVE_PYTHON
 
 INSTALL : man/INSTALL.template man/simplecpp
-	./man/simplecpp < man/INSTALL.template > $@
+	./man/simplecpp -DDOOM -DHERETIC -DHEXEN -DSTRIFE \
+	                < man/INSTALL.template > $@
 
 endif
 
