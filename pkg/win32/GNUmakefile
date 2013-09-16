@@ -24,12 +24,17 @@ $(ZIPS):
 $(DOOM_ZIP): staging-doom hook-doom
 $(HERETIC_ZIP): staging-heretic
 $(HEXEN_ZIP): staging-hexen
-$(STRIFE_ZIP): staging-strife
+$(STRIFE_ZIP): staging-strife hook-strife
 
 # Special hooks to custom modify files for particular games.
 
 hook-doom: staging-doom
 	cp $(TOPLEVEL)/NOT-BUGS $</NOT-BUGS.txt
+
+# Chocolate Strife has its own custom README file:
+
+hook-strife: staging-strife
+	cp $(TOPLEVEL)/README.Strife $</README.txt
 
 # Build up a staging dir for a particular game.
 

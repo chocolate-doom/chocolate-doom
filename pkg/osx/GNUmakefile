@@ -6,6 +6,8 @@
 
 include ../config.make
 
+DOC_FILES += README.Strife
+
 # Build so that the package will work on older versions.
 
 export MACOSX_DEPLOYMENT_TARGET=10.4
