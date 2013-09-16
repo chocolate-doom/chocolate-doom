@@ -93,7 +93,7 @@ Some new command-line parameters in Chocolate Strife include the following:
 -nograph
   Disables the graphical introduction sequence. -devparm implies this.
 
--novoices
+-novoice
   Disables voices even if voices.wad can be found.
 
 -work
