@@ -34,6 +34,7 @@ CODEBLOCKS_FILES=                              \
 DOC_FILES=                              \
         README                          \
         README.OPL                      \
+        README.Strife                   \
         NEWS                            \
         ChangeLog                       \
         NOT-BUGS
