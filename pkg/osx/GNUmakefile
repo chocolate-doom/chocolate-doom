@@ -6,7 +6,7 @@
 
 include ../config.make
 
-DOC_FILES += README.Strife
+DOC_FILES += README.Strife NOT-BUGS
 
 # Build so that the package will work on older versions.
 
