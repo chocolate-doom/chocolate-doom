@@ -111,6 +111,7 @@ boolean         nomonsters;     // checkparm of -nomonsters
 boolean         respawnparm;    // checkparm of -respawn
 boolean         fastparm;       // checkparm of -fast
 boolean         flipparm;       // [STRIFE] haleyjd 20110629: checkparm of -flip
+boolean         randomparm;     // [STRIFE] haleyjd 20130915: checkparm of -random
 
 boolean         showintro = true;   // [STRIFE] checkparm of -nograph, disables intro
 
@@ -1431,6 +1432,14 @@ void D_DoomMain (void)
     //
 
     respawnparm = M_CheckParm ("-respawn");
+
+    //!
+    // @vanilla
+    //
+    // Items respawn at random locations
+    //
+
+    randomparm = M_CheckParm ("-random");
 
     //!
     // @vanilla

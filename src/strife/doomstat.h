@@ -54,6 +54,7 @@
 extern  boolean	nomonsters;	// checkparm of -nomonsters
 extern  boolean	respawnparm;	// checkparm of -respawn
 extern  boolean	fastparm;	// checkparm of -fast
+extern  boolean randomparm;     // [STRIFE] checkparm of -random
 extern  boolean flipparm;       // [STRIFE] checkparm of -flip
 
 extern  boolean	devparm;	// DEBUG: launched with -devparm

@@ -709,13 +709,22 @@ void P_RemoveMobj (mobj_t* mobj)
     {
         itemrespawnque[iquehead] = mobj->spawnpoint;
         itemrespawntime[iquehead] = leveltime + 30*TICRATE; // [STRIFE]
-        iquehead = (iquehead+1)&(ITEMQUESIZE-1);
 
-        // [STRIFE] FIXME/TODO: - haleyjd 20110629
+        // [STRIFE] haleyjd 20130915
         // -random parameter affects the behavior of respawning items here.
-        // However, this requires addition of randomparm to the transmission
-        // of variables during netgame initialization, and the netcode is not
-        // functional yet - so, I haven't added this yet!
+        if(randomparm && iquehead != iquetail)
+        {
+            short type    = itemrespawnque[iquehead].type;
+            short options = itemrespawnque[iquehead].options;
+
+            // swap the type and options of iquehead and iquetail
+            itemrespawnque[iquehead].type    = itemrespawnque[iquetail].type;
+            itemrespawnque[iquehead].options = itemrespawnque[iquetail].options;
+            itemrespawnque[iquetail].type    = type;
+            itemrespawnque[iquetail].options = options;
+        }
+
+        iquehead = (iquehead+1)&(ITEMQUESIZE-1);
 
         // lose one off the end?
         if (iquehead == iquetail)
