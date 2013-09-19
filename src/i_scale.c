@@ -405,6 +405,32 @@ static void I_InitSquashTable(byte *palette)
     puts("");
 }
 
+// Destroy the scaling lookup tables. This should only ever be called
+// if switching to a completely different palette from the normal one
+// (in which case the mappings no longer make any sense).
+
+void I_ResetScaleTables(byte *palette)
+{
+    if (stretch_tables[0] != NULL)
+    {
+        Z_Free(stretch_tables[0]);
+        Z_Free(stretch_tables[1]);
+
+        printf("I_ResetScaleTables: Regenerating lookup tables..\n");
+        stretch_tables[0] = GenerateStretchTable(palette, 20);
+        stretch_tables[1] = GenerateStretchTable(palette, 40);
+    }
+
+    if (half_stretch_table != NULL)
+    {
+        Z_Free(half_stretch_table);
+
+        printf("I_ResetScaleTables: Regenerating lookup table..");
+
+        half_stretch_table = GenerateStretchTable(palette, 50);
+    }
+}
+
 
 // 
 // Aspect ratio correcting scale up functions.
