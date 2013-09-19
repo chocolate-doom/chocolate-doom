@@ -425,7 +425,7 @@ void I_ResetScaleTables(byte *palette)
     {
         Z_Free(half_stretch_table);
 
-        printf("I_ResetScaleTables: Regenerating lookup table..");
+        printf("I_ResetScaleTables: Regenerating lookup table..\n");
 
         half_stretch_table = GenerateStretchTable(palette, 50);
     }
