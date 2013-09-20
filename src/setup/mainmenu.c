@@ -31,6 +31,8 @@
 #include "m_argv.h"
 #include "m_config.h"
 #include "m_controls.h"
+#include "m_misc.h"
+#include "z_zone.h"
 
 #include "setup_icon.c"
 #include "mode.h"
@@ -316,6 +318,20 @@ static void SetIcon(void)
     free(mask);
 }
 
+static void SetWindowTitle(void)
+{
+    char *title;
+
+    title = M_StringReplace(PACKAGE_NAME " Setup ver " PACKAGE_VERSION,
+                            "Doom",
+                            GetGameTitle());
+
+
+    TXT_SetDesktopTitle(title);
+
+    Z_Free(title);
+}
+
 // Initialize the textscreen library.
 
 static void InitTextscreen(void)
@@ -328,8 +344,8 @@ static void InitTextscreen(void)
         exit(-1);
     }
 
-    TXT_SetDesktopTitle(PACKAGE_NAME " Setup ver " PACKAGE_VERSION);
     SetIcon();
+    SetWindowTitle();
 }
 
 // Restart the textscreen library.  Used when the video_driver variable
@@ -354,6 +370,7 @@ static void RunGUI(void)
 
 static void MissionSet(void)
 {
+    SetWindowTitle();
     InitConfig();
     MainMenu();
 }

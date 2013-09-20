@@ -43,6 +43,7 @@ boolean M_StrToInt(const char *str, int *result);
 void M_ExtractFileBase(char *path, char *dest);
 void M_ForceUppercase(char *text);
 char *M_StrCaseStr(char *haystack, char *needle);
+char *M_StringReplace(char *haystack, char *needle, char *replacement);
 char *M_OEMToUTF8(const char *ansi);
 
 #endif

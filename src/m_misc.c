@@ -296,6 +296,61 @@ char *M_StrCaseStr(char *haystack, char *needle)
     return NULL;
 }
 
+//
+// String replace function.
+// Returns a Z_Malloc()ed string.
+//
+
+char *M_StringReplace(char *haystack, char *needle, char *replacement)
+{
+    char *result, *p, *dst;
+    size_t needle_len = strlen(needle);
+    int n;
+
+    // Count number of occurrences of 'p':
+
+    for (p = haystack, n = 0;; ++n)
+    {
+        p = strstr(p, needle);
+
+        if (p == NULL)
+        {
+            break;
+        }
+
+        p += needle_len;
+    }
+
+    // Construct new string.
+
+    result = Z_Malloc(strlen(haystack)
+                      + (strlen(replacement) - needle_len) * n
+                      + 1,
+                      PU_STATIC, NULL);
+
+    dst = result;
+    p = haystack;
+
+    while (*p != '\0')
+    {
+        if (!strncmp(p, needle, needle_len))
+        {
+            strcpy(dst, replacement);
+            dst += strlen(replacement);
+            p += needle_len;
+        }
+        else
+        {
+            *dst = *p;
+            ++dst;
+            ++p;
+        }
+    }
+    *dst = '\0';
+
+    return result;
+}
+
 #ifdef _WIN32
 
 char *M_OEMToUTF8(const char *oem)
