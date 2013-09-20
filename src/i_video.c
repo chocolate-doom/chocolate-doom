@@ -921,6 +921,14 @@ static void UpdateGrab(void)
     else if (!grab && currently_grabbed)
     {
         SetShowCursor(true);
+
+        // When releasing the mouse from grab, warp the mouse cursor to
+        // the bottom-right of the screen. This is a minimally distracting
+        // place for it to appear - we may only have released the grab
+        // because we're at an end of level intermission screen, for
+        // example.
+
+        SDL_WarpMouse(screen->w - 16, screen->h - 16);
     }
 
     currently_grabbed = grab;
