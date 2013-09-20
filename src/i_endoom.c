@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "config.h"
 #include "doomtype.h"
 #include "i_video.h"
 
@@ -47,6 +48,7 @@ void I_Endoom(byte *endoom_data)
     // Set up text mode screen
 
     TXT_Init();
+    TXT_SetWindowTitle(PACKAGE_STRING);
 
     // Write the data to the screen memory
 
