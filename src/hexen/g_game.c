@@ -448,7 +448,7 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         || joybuttons[joybfire])
         cmd->buttons |= BT_ATTACK;
 
-    if (gamekeydown[key_use] || joybuttons[joybuse])
+    if (gamekeydown[key_use] || joybuttons[joybuse] || mousebuttons[mousebuse])
     {
         cmd->buttons |= BT_USE;
         dclicks = 0;            // clear double clicks if hit use button
