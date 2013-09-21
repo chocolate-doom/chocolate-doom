@@ -28,6 +28,11 @@ Summary: @PACKAGE_SHORTDESC@ (Hexen binaries)
 Group: Amusements/Games
 Requires: libSDL-1.2.so.0, libSDL_mixer-1.2.so.0, libSDL_net-1.2.so.0
 
+%package -n @PROGRAM_PREFIX@strife
+Summary: @PACKAGE_SHORTDESC@ (Strife binaries)
+Group: Amusements/Games
+Requires: libSDL-1.2.so.0, libSDL_mixer-1.2.so.0, libSDL_net-1.2.so.0
+
 %prep
 rm -rf $RPM_BUILD_ROOT
 
@@ -86,4 +91,13 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/doc/@PROGRAM_PREFIX@hexen/*
 /usr/games/@PROGRAM_PREFIX@hexen
 /usr/games/@PROGRAM_PREFIX@hexen-setup
+
+%files @PROGRAM_PREFIX@strife
+%{_mandir}/man5/@PROGRAM_PREFIX@strife.cfg.5
+%{_mandir}/man5/strife.cfg.5
+%{_mandir}/man6/@PROGRAM_PREFIX@strife.6
+%{_mandir}/man6/@PROGRAM_PREFIX@strife-setup.6
+/usr/share/doc/@PROGRAM_PREFIX@strife/*
+/usr/games/@PROGRAM_PREFIX@strife
+/usr/games/@PROGRAM_PREFIX@strife-setup
 
