@@ -1,5 +1,5 @@
 
-SUBDIRS=doom heretic hexen strife setup
+SUBDIRS = doom heretic hexen strife setup
 
 gamesdir = $(prefix)/games
 
@@ -7,8 +7,16 @@ games_PROGRAMS = @PROGRAM_PREFIX@doom     \
                  @PROGRAM_PREFIX@heretic  \
                  @PROGRAM_PREFIX@hexen    \
                  @PROGRAM_PREFIX@strife   \
-                 @PROGRAM_PREFIX@server   \
-                 @PROGRAM_PREFIX@setup
+                 @PROGRAM_PREFIX@server
+
+noinst_PROGRAMS = @PROGRAM_PREFIX@setup
+
+SETUP_BINARIES = @PROGRAM_PREFIX@doom-setup$(EXEEXT) \
+                 @PROGRAM_PREFIX@heretic-setup$(EXEEXT) \
+                 @PROGRAM_PREFIX@hexen-setup$(EXEEXT) \
+                 @PROGRAM_PREFIX@strife-setup$(EXEEXT)
+
+games_DATA = $(SETUP_BINARIES)
 
 AM_CFLAGS = -I$(top_builddir)/textscreen            \
             -I$(top_builddir)/opl                   \
@@ -175,6 +183,9 @@ else
 endif
 
 @PROGRAM_PREFIX@strife_LDADD = strife/libstrife.a $(EXTRA_LIBS)
+
+$(SETUP_BINARIES): @PROGRAM_PREFIX@setup$(EXEEXT)
+	cp $< $@
 
 # Source files needed for chocolate-setup:
 
