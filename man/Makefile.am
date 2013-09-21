@@ -8,30 +8,32 @@ MANPAGE_GEN_FILES=\
         default.cfg.template \
         extra.cfg.template
 
-docdir=$(prefix)/share/doc/@PACKAGE@
+doomdocsdir = $(prefix)/share/doc/@PROGRAM_PREFIX@doom
+hereticdocsdir = $(prefix)/share/doc/@PROGRAM_PREFIX@heretic
+hexendocsdir = $(prefix)/share/doc/@PROGRAM_PREFIX@hexen
+strifedocsdir = $(prefix)/share/doc/@PROGRAM_PREFIX@strife
 
 if HAVE_PYTHON
 
-man_MANS=chocolate-server.6       \
-         chocolate-setup.6        \
-         chocolate-doom.6         \
-         default.cfg.5            \
-         chocolate-doom.cfg.5     \
-         chocolate-heretic.6      \
-         heretic.cfg.5            \
-         chocolate-heretic.cfg.5  \
-         chocolate-hexen.6        \
-         hexen.cfg.5              \
-         chocolate-hexen.cfg.5    \
-         chocolate-strife.6       \
-         strife.cfg.5             \
-         chocolate-strife.cfg.5
+man_MANS = chocolate-server.6       \
+           chocolate-setup.6        \
+           chocolate-doom.6         \
+           default.cfg.5            \
+           chocolate-doom.cfg.5     \
+           chocolate-heretic.6      \
+           heretic.cfg.5            \
+           chocolate-heretic.cfg.5  \
+           chocolate-hexen.6        \
+           hexen.cfg.5              \
+           chocolate-hexen.cfg.5    \
+           chocolate-strife.6       \
+           strife.cfg.5             \
+           chocolate-strife.cfg.5
 
-nodist_doc_DATA=INSTALL \
-    INSTALL.doom INSTALL.heretic INSTALL.hexen INSTALL.strife \
-    CMDLINE.doom CMDLINE.heretic CMDLINE.hexen CMDLINE.strife
-
-
+doomdocs_DATA    = INSTALL.doom    CMDLINE.doom
+hereticdocs_DATA = INSTALL.heretic CMDLINE.heretic
+hexendocs_DATA   = INSTALL.hexen   CMDLINE.hexen
+strifedocs_DATA  = INSTALL.strife  CMDLINE.strife
 
 chocolate-doom.6: ../src $(MANPAGE_GEN_FILES)
 	./docgen -g doom -m doom.template ../src ../src/doom > $@

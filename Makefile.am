@@ -34,10 +34,8 @@ CODEBLOCKS_FILES=                              \
 DOC_FILES=                              \
         README                          \
         README.OPL                      \
-        README.Strife                   \
         NEWS                            \
-        ChangeLog                       \
-        NOT-BUGS
+        ChangeLog
 
 EXTRA_DIST=                             \
         $(AUX_DIST_GEN)                 \
@@ -49,8 +47,17 @@ EXTRA_DIST=                             \
         TODO                            \
         rpm.spec
 
-docdir=$(prefix)/share/doc/@PACKAGE@
-doc_DATA=$(DOC_FILES)
+doomdocsdir = $(prefix)/share/doc/@PROGRAM_PREFIX@doom
+doomdocs_DATA = $(DOC_FILES) NOT-BUGS
+
+hereticdocsdir = $(prefix)/share/doc/@PROGRAM_PREFIX@heretic
+hereticdocs_DATA = $(DOC_FILES)
+
+hexendocsdir = $(prefix)/share/doc/@PROGRAM_PREFIX@hexen
+hexendocs_DATA = $(DOC_FILES)
+
+strifedocsdir = $(prefix)/share/doc/@PROGRAM_PREFIX@strife
+strifedocs_DATA = $(DOC_FILES) README.Strife
 
 MAINTAINERCLEANFILES =  $(AUX_DIST_GEN)
 
