@@ -1,12 +1,12 @@
 
-MANPAGE_GEN_FILES=\
-        doom.template \
-        heretic.template \
-        hexen.template \
-        strife.template \
-        docgen \
-        default.cfg.template \
-        extra.cfg.template
+MANPAGE_GEN_FILES = environ.man           \
+                    doom.template         \
+                    heretic.template      \
+                    hexen.template        \
+                    strife.template       \
+                    docgen                \
+                    default.cfg.template  \
+                    extra.cfg.template
 
 doomdocsdir = $(prefix)/share/doc/@PROGRAM_PREFIX@doom
 hereticdocsdir = $(prefix)/share/doc/@PROGRAM_PREFIX@heretic

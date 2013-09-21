@@ -42,6 +42,8 @@ EXTRA_DIST=                             \
         $(MSVC_FILES)                   \
         $(CODEBLOCKS_FILES)             \
         $(DOC_FILES)                    \
+        NOT-BUGS                        \
+        README.Strife                   \
         .lvimrc                         \
         HACKING                         \
         TODO                            \
