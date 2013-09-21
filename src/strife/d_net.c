@@ -133,6 +133,7 @@ static void LoadGameSettings(net_gamesettings_t *settings)
     respawnparm = settings->respawn_monsters;
     timelimit = settings->timelimit;
     consoleplayer = settings->consoleplayer;
+    randomparm = settings->random;
 
     if (lowres_turn)
     {
@@ -164,6 +165,7 @@ static void SaveGameSettings(net_gamesettings_t *settings)
     settings->fast_monsters = fastparm;
     settings->respawn_monsters = respawnparm;
     settings->timelimit = timelimit;
+    settings->random = randomparm;
 
     settings->lowres_turn = M_ParmExists("-record")
                          && !M_ParmExists("-longtics");

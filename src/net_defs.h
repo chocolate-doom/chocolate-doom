@@ -168,7 +168,7 @@ typedef struct
 // Game settings sent by client to server when initiating game start,
 // and received from the server by clients when the game starts.
 
-typedef struct 
+typedef struct
 {
     int ticdup;
     int extratics;
@@ -184,6 +184,7 @@ typedef struct
     int new_sync;
     int timelimit;
     int loadgame;
+    int random;  // [Strife only]
 
     // These fields are only used by the server when sending a game
     // start message:
