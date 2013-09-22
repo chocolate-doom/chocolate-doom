@@ -532,6 +532,8 @@ void S_Init(void)
     S_SetMaxVolume(true);
 
     I_AtExit(S_ShutDown, true);
+
+    I_PrecacheSounds(S_sfx, NUMSFX);
 }
 
 void S_GetChannelInfo(SoundInfo_t * s)

@@ -737,6 +737,8 @@ void S_Init(void)
 
     I_AtExit(S_ShutDown, true);
 
+    I_PrecacheSounds(S_sfx, NUMSFX);
+
 #ifdef CDMUSIC
 //TODO
     // Attempt to setup CD music
