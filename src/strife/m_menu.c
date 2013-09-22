@@ -741,7 +741,12 @@ void M_DoSave(int slot)
         sendsave = 1;
         G_WriteSaveName(slot, savegamestrings[slot]);
         M_ClearMenus(0);
-        quickSaveSlot = slot;
+        quickSaveSlot = slot;        
+        // haleyjd 20130922: slight divergence. We clear the destination slot 
+        // of files here, which vanilla did not do. As a result, 1.31 had 
+        // broken save behavior to the point of unusability. fraggle agrees 
+        // this is detrimental enough to be fixed - unconditionally, for now.
+        ClearSlot();        
         FromCurr();
     }
     else
