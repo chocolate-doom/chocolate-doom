@@ -139,9 +139,16 @@ void SV_WriteLong(unsigned int val)
     SV_Write(&val, sizeof(int));
 }
 
+void SV_WritePtr(void *ptr)
+{
+    long val = (long) ptr;
+
+    SV_WriteLong(val & 0xffffffff);
+}
+
 //==========================================================================
 //
-// SV_Write
+// SV_Read
 //
 //==========================================================================
 
@@ -179,6 +186,471 @@ uint32_t SV_ReadLong(void)
     return LONG(result);
 }
 
+//
+// ticcmd_t
+//
+
+static void saveg_read_ticcmd_t(ticcmd_t *str)
+{
+    // char forwardmove;
+    str->forwardmove = SV_ReadByte();
+
+    // char sidemove;
+    str->sidemove = SV_ReadByte();
+
+    // short angleturn;
+    str->angleturn = SV_ReadWord();
+
+    // short consistancy;
+    str->consistancy = SV_ReadWord();
+
+    // byte chatchar;
+    str->chatchar = SV_ReadByte();
+
+    // byte buttons;
+    str->buttons = SV_ReadByte();
+
+    // byte lookfly;
+    str->lookfly = SV_ReadByte();
+
+    // byte arti;
+    str->arti = SV_ReadByte();
+}
+
+static void saveg_write_ticcmd_t(ticcmd_t *str)
+{
+    // char forwardmove;
+    SV_WriteByte(str->forwardmove);
+
+    // char sidemove;
+    SV_WriteByte(str->sidemove);
+
+    // short angleturn;
+    SV_WriteWord(str->angleturn);
+
+    // short consistancy;
+    SV_WriteWord(str->consistancy);
+
+    // byte chatchar;
+    SV_WriteByte(str->chatchar);
+
+    // byte buttons;
+    SV_WriteByte(str->buttons);
+
+    // byte lookfly;
+    SV_WriteByte(str->lookfly);
+
+    // byte arti;
+    SV_WriteByte(str->arti);
+}
+
+//
+// inventory_t
+//
+
+static void saveg_read_inventory_t(inventory_t *str)
+{
+    // int type;
+    str->type = SV_ReadLong();
+
+    // int count;
+    str->count = SV_ReadLong();
+}
+
+static void saveg_write_inventory_t(inventory_t *str)
+{
+    // int type;
+    SV_WriteLong(str->type);
+
+    // int count;
+    SV_WriteLong(str->count);
+}
+
+
+//
+// pspdef_t
+//
+
+static void saveg_read_pspdef_t(pspdef_t *str)
+{
+    int i;
+
+    // state_t *state;
+    i = SV_ReadLong();
+    if (i == 0)
+    {
+        str->state = NULL;
+    }
+    else
+    {
+        str->state = &states[i];
+    }
+
+    // int tics;
+    str->tics = SV_ReadLong();
+
+    // fixed_t sx, sy;
+    str->sx = SV_ReadLong();
+    str->sy = SV_ReadLong();
+}
+
+static void saveg_write_pspdef_t(pspdef_t *str)
+{
+    // state_t *state;
+    if (str->state != NULL)
+    {
+        SV_WriteLong(str->state - states);
+    }
+    else
+    {
+        SV_WriteLong(0);
+    }
+
+    // int tics;
+    SV_WriteLong(str->tics);
+
+    // fixed_t sx, sy;
+    SV_WriteLong(str->sx);
+    SV_WriteLong(str->sy);
+}
+
+
+//
+// player_t
+//
+
+static void saveg_read_player_t(player_t *str)
+{
+    int i;
+
+    // mobj_t *mo;
+    SV_ReadLong();
+    str->mo = NULL;
+
+    // playerstate_t playerstate;
+    str->playerstate = SV_ReadLong();
+
+    // ticcmd_t cmd;
+    saveg_read_ticcmd_t(&str->cmd);
+
+    // fixed_t viewz;
+    str->viewz = SV_ReadLong();
+
+    // fixed_t viewheight;
+    str->viewheight = SV_ReadLong();
+
+    // fixed_t deltaviewheight;
+    str->deltaviewheight = SV_ReadLong();
+
+    // fixed_t bob;
+    str->bob = SV_ReadLong();
+
+    // int flyheight;
+    str->flyheight = SV_ReadLong();
+
+    // int lookdir;
+    str->lookdir = SV_ReadLong();
+
+    // boolean centering;
+    str->centering = SV_ReadLong();
+
+    // int health;
+    str->health = SV_ReadLong();
+
+    // int armorpoints, armortype;
+    str->armorpoints = SV_ReadLong();
+    str->armortype = SV_ReadLong();
+
+    // inventory_t inventory[NUMINVENTORYSLOTS];
+    for (i=0; i<NUMINVENTORYSLOTS; ++i)
+    {
+        saveg_read_inventory_t(&str->inventory[i]);
+    }
+
+    // artitype_t readyArtifact;
+    str->readyArtifact = SV_ReadLong();
+
+    // int artifactCount;
+    str->artifactCount = SV_ReadLong();
+
+    // int inventorySlotNum;
+    str->inventorySlotNum = SV_ReadLong();
+
+    // int powers[NUMPOWERS];
+    for (i=0; i<NUMPOWERS; ++i)
+    {
+        str->powers[i] = SV_ReadLong();
+    }
+
+    // boolean keys[NUMKEYS];
+    for (i=0; i<NUMKEYS; ++i)
+    {
+        str->keys[i] = SV_ReadLong();
+    }
+
+    // boolean backpack;
+    str->backpack = SV_ReadLong();
+
+    // signed int frags[MAXPLAYERS];
+    for (i=0; i<MAXPLAYERS; ++i)
+    {
+        str->frags[i] = SV_ReadLong();
+    }
+
+    // weapontype_t readyweapon;
+    str->readyweapon = SV_ReadLong();
+
+    // weapontype_t pendingweapon;
+    str->pendingweapon = SV_ReadLong();
+
+    // boolean weaponowned[NUMWEAPONS];
+    for (i=0; i<NUMWEAPONS; ++i)
+    {
+        str->weaponowned[i] = SV_ReadLong();
+    }
+
+    // int ammo[NUMAMMO];
+    for (i=0; i<NUMAMMO; ++i)
+    {
+        str->ammo[i] = SV_ReadLong();
+    }
+
+    // int maxammo[NUMAMMO];
+    for (i=0; i<NUMAMMO; ++i)
+    {
+        str->maxammo[i] = SV_ReadLong();
+    }
+
+    // int attackdown, usedown;
+    str->attackdown = SV_ReadLong();
+    str->usedown = SV_ReadLong();
+
+    // int cheats;
+    str->cheats = SV_ReadLong();
+
+    // int refire;
+    str->refire = SV_ReadLong();
+
+    // int killcount, itemcount, secretcount;
+    str->killcount = SV_ReadLong();
+    str->itemcount = SV_ReadLong();
+    str->secretcount = SV_ReadLong();
+
+    // char *message;
+    SV_ReadLong();
+    str->message = NULL;
+
+    // int messageTics;
+    str->messageTics = SV_ReadLong();
+
+    // int damagecount, bonuscount;
+    str->damagecount = SV_ReadLong();
+    str->bonuscount = SV_ReadLong();
+
+    // int flamecount;
+    str->flamecount = SV_ReadLong();
+
+    // mobj_t *attacker;
+    SV_ReadLong();
+    str->attacker = NULL;
+
+    // int extralight;
+    str->extralight = SV_ReadLong();
+
+    // int fixedcolormap;
+    str->fixedcolormap = SV_ReadLong();
+
+    // int colormap;
+    str->colormap = SV_ReadLong();
+
+    // pspdef_t psprites[NUMPSPRITES];
+    for (i=0; i<NUMPSPRITES; ++i)
+    {
+        saveg_read_pspdef_t(&str->psprites[i]);
+    }
+
+    // boolean didsecret;
+    str->didsecret = SV_ReadLong();
+
+    // int chickenTics;
+    str->chickenTics = SV_ReadLong();
+
+    // int chickenPeck;
+    str->chickenPeck = SV_ReadLong();
+
+    // mobj_t *rain1;
+    SV_ReadLong();
+    str->rain1 = NULL;
+
+    // mobj_t *rain2;
+    SV_ReadLong();
+    str->rain2 = NULL;
+}
+
+static void saveg_write_player_t(player_t *str)
+{
+    int i;
+
+    // mobj_t *mo;
+    SV_WritePtr(str->mo);
+
+    // playerstate_t playerstate;
+    SV_WriteLong(str->playerstate);
+
+    // ticcmd_t cmd;
+    saveg_write_ticcmd_t(&str->cmd);
+
+    // fixed_t viewz;
+    SV_WriteLong(str->viewz);
+
+    // fixed_t viewheight;
+    SV_WriteLong(str->viewheight);
+
+    // fixed_t deltaviewheight;
+    SV_WriteLong(str->deltaviewheight);
+
+    // fixed_t bob;
+    SV_WriteLong(str->bob);
+
+    // int flyheight;
+    SV_WriteLong(str->flyheight);
+
+    // int lookdir;
+    SV_WriteLong(str->lookdir);
+
+    // boolean centering;
+    SV_WriteLong(str->centering);
+
+    // int health;
+    SV_WriteLong(str->health);
+
+    // int armorpoints, armortype;
+    SV_WriteLong(str->armorpoints);
+    SV_WriteLong(str->armortype);
+
+    // inventory_t inventory[NUMINVENTORYSLOTS];
+    for (i=0; i<NUMINVENTORYSLOTS; ++i)
+    {
+        saveg_write_inventory_t(&str->inventory[i]);
+    }
+
+    // artitype_t readyArtifact;
+    SV_WriteLong(str->readyArtifact);
+
+    // int artifactCount;
+    SV_WriteLong(str->artifactCount);
+
+    // int inventorySlotNum;
+    SV_WriteLong(str->inventorySlotNum);
+
+    // int powers[NUMPOWERS];
+    for (i=0; i<NUMPOWERS; ++i)
+    {
+        SV_WriteLong(str->powers[i]);
+    }
+
+    // boolean keys[NUMKEYS];
+    for (i=0; i<NUMKEYS; ++i)
+    {
+        SV_WriteLong(str->keys[i]);
+    }
+
+    // boolean backpack;
+    SV_WriteLong(str->backpack);
+
+    // signed int frags[MAXPLAYERS];
+    for (i=0; i<MAXPLAYERS; ++i)
+    {
+        SV_WriteLong(str->frags[i]);
+    }
+
+    // weapontype_t readyweapon;
+    SV_WriteLong(str->readyweapon);
+
+    // weapontype_t pendingweapon;
+    SV_WriteLong(str->pendingweapon);
+
+    // boolean weaponowned[NUMWEAPONS];
+    for (i=0; i<NUMWEAPONS; ++i)
+    {
+        SV_WriteLong(str->weaponowned[i]);
+    }
+
+    // int ammo[NUMAMMO];
+    for (i=0; i<NUMAMMO; ++i)
+    {
+        SV_WriteLong(str->ammo[i]);
+    }
+
+    // int maxammo[NUMAMMO];
+    for (i=0; i<NUMAMMO; ++i)
+    {
+        SV_WriteLong(str->maxammo[i]);
+    }
+
+    // int attackdown, usedown;
+    SV_WriteLong(str->attackdown);
+    SV_WriteLong(str->usedown);
+
+    // int cheats;
+    SV_WriteLong(str->cheats);
+
+    // int refire;
+    SV_WriteLong(str->refire);
+
+    // int killcount, itemcount, secretcount;
+    SV_WriteLong(str->killcount);
+    SV_WriteLong(str->itemcount);
+    SV_WriteLong(str->secretcount);
+
+    // char *message;
+    SV_WritePtr(str->message);
+
+    // int messageTics;
+    SV_WriteLong(str->messageTics);
+
+    // int damagecount, bonuscount;
+    SV_WriteLong(str->damagecount);
+    SV_WriteLong(str->bonuscount);
+
+    // int flamecount;
+    SV_WriteLong(str->flamecount);
+
+    // mobj_t *attacker;
+    SV_WritePtr(str->attacker);
+
+    // int extralight;
+    SV_WriteLong(str->extralight);
+
+    // int fixedcolormap;
+    SV_WriteLong(str->fixedcolormap);
+
+    // int colormap;
+    SV_WriteLong(str->colormap);
+
+    // pspdef_t psprites[NUMPSPRITES];
+    for (i=0; i<NUMPSPRITES; ++i)
+    {
+        saveg_write_pspdef_t(&str->psprites[i]);
+    }
+
+    // boolean didsecret;
+    SV_WriteLong(str->didsecret);
+
+    // int chickenTics;
+    SV_WriteLong(str->chickenTics);
+
+    // int chickenPeck;
+    SV_WriteLong(str->chickenPeck);
+
+    // mobj_t *rain1;
+    SV_WritePtr(str->rain1);
+
+    // mobj_t *rain2;
+    SV_WritePtr(str->rain2);
+}
+
+
 
 /*
 ====================
@@ -191,8 +663,6 @@ uint32_t SV_ReadLong(void)
 void P_ArchivePlayers(void)
 {
     int i;
-    int j;
-    player_t dest;
 
     for (i = 0; i < MAXPLAYERS; i++)
     {
@@ -200,16 +670,7 @@ void P_ArchivePlayers(void)
         {
             continue;
         }
-        memcpy(&dest, &players[i], sizeof(player_t));
-        for (j = 0; j < NUMPSPRITES; j++)
-        {
-            if (dest.psprites[j].state)
-            {
-                dest.psprites[j].state =
-                    (state_t *) (dest.psprites[j].state - states);
-            }
-        }
-        SV_Write(&dest, sizeof(player_t));
+        saveg_write_player_t(&players[i]);
     }
 }
 
@@ -223,20 +684,16 @@ void P_ArchivePlayers(void)
 
 void P_UnArchivePlayers(void)
 {
-    int i, j;
+    int i;
 
     for (i = 0; i < MAXPLAYERS; i++)
     {
         if (!playeringame[i])
             continue;
-        SV_Read(&players[i], sizeof(player_t));
+        saveg_read_player_t(&players[i]);
         players[i].mo = NULL;   // will be set when unarc thinker
         players[i].message = NULL;
         players[i].attacker = NULL;
-        for (j = 0; j < NUMPSPRITES; j++)
-            if (players[i].psprites[j].state)
-                players[i].psprites[j].state
-                    = &states[(int) players[i].psprites[j].state];
     }
 }
 
