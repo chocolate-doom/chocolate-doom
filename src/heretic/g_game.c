@@ -126,9 +126,7 @@ boolean precache = true;        // if true, load all graphics at start
 
 // TODO: Heretic uses 16-bit shorts for consistency?
 byte consistancy[MAXPLAYERS][BACKUPTICS];
-
 char *savegamedir;
-byte *savebuffer, *save_p;
 
 boolean testcontrols = false;
 int testcontrols_mousespeed;
@@ -1413,39 +1411,41 @@ void G_DoLoadGame(void)
 {
     int i;
     int a, b, c;
-    char vcheck[VERSIONSIZE];
+    char savestr[SAVESTRINGSIZE];
+    char vcheck[VERSIONSIZE], readversion[VERSIONSIZE];
 
     gameaction = ga_nothing;
 
-    M_ReadFile(savename, &savebuffer);
+    SV_OpenRead(savename);
+
     free(savename);
     savename = NULL;
 
-    save_p = savebuffer + SAVESTRINGSIZE;
     // Skip the description field
+    SV_Read(savestr, SAVESTRINGSIZE);
+
     memset(vcheck, 0, sizeof(vcheck));
-
     DEH_snprintf(vcheck, VERSIONSIZE, "version %i", HERETIC_VERSION);
+    SV_Read(readversion, VERSIONSIZE);
 
-    if (strcmp((char *) save_p, vcheck) != 0)
+    if (strncmp(readversion, vcheck, VERSIONSIZE) != 0)
     {                           // Bad version
         return;
     }
-    save_p += VERSIONSIZE;
-    gameskill = *save_p++;
-    gameepisode = *save_p++;
-    gamemap = *save_p++;
+    gameskill = SV_ReadByte();
+    gameepisode = SV_ReadByte();
+    gamemap = SV_ReadByte();
     for (i = 0; i < MAXPLAYERS; i++)
     {
-        playeringame[i] = *save_p++;
+        playeringame[i] = SV_ReadByte();
     }
     // Load a base level
     G_InitNew(gameskill, gameepisode, gamemap);
 
     // Create leveltime
-    a = *save_p++;
-    b = *save_p++;
-    c = *save_p++;
+    a = SV_ReadByte();
+    b = SV_ReadByte();
+    c = SV_ReadByte();
     leveltime = (a << 16) + (b << 8) + c;
 
     // De-archive all the modifications
@@ -1454,11 +1454,10 @@ void G_DoLoadGame(void)
     P_UnArchiveThinkers();
     P_UnArchiveSpecials();
 
-    if (*save_p != SAVE_GAME_TERMINATOR)
+    if (SV_ReadByte() != SAVE_GAME_TERMINATOR)
     {                           // Missing savegame termination marker
         I_Error("Bad savegame");
     }
-    Z_Free(savebuffer);
 }
 
 

@@ -25,6 +25,7 @@
 // P_tick.c
 
 #include "doomdef.h"
+#include "i_swap.h"
 #include "i_system.h"
 #include "m_misc.h"
 #include "p_local.h"
@@ -33,8 +34,10 @@
 #define SVG_RAM 0
 #define SVG_FILE 1
 
-FILE *SaveGameFP;
-int SaveGameType;
+static FILE *SaveGameFP;
+static int SaveGameType;
+static byte *savebuffer, *save_p;
+
 
 //==========================================================================
 //
@@ -65,6 +68,12 @@ void SV_Open(char *fileName)
 {
     SaveGameType = SVG_FILE;
     SaveGameFP = fopen(fileName, "wb");
+}
+
+void SV_OpenRead(char *filename)
+{
+    SaveGameType = SVG_FILE;
+    SaveGameFP = fopen(filename, "rb");
 }
 
 //==========================================================================
@@ -120,13 +129,56 @@ void SV_WriteByte(byte val)
 
 void SV_WriteWord(unsigned short val)
 {
+    val = SHORT(val);
     SV_Write(&val, sizeof(unsigned short));
 }
 
 void SV_WriteLong(unsigned int val)
 {
+    val = LONG(val);
     SV_Write(&val, sizeof(int));
 }
+
+//==========================================================================
+//
+// SV_Write
+//
+//==========================================================================
+
+void SV_Read(void *buffer, int size)
+{
+    if (SaveGameType == SVG_RAM)
+    {
+        memcpy(buffer, save_p, size);
+        save_p += size;
+    }
+    else
+    {                           // SVG_FILE
+        fread(buffer, size, 1, SaveGameFP);
+    }
+}
+
+byte SV_ReadByte(void)
+{
+    byte result;
+    SV_Read(&result, sizeof(byte));
+    return result;
+}
+
+uint16_t SV_ReadWord(void)
+{
+    uint16_t result;
+    SV_Read(&result, sizeof(unsigned short));
+    return SHORT(result);
+}
+
+uint32_t SV_ReadLong(void)
+{
+    uint32_t result;
+    SV_Read(&result, sizeof(int));
+    return LONG(result);
+}
+
 
 /*
 ====================
@@ -177,8 +229,7 @@ void P_UnArchivePlayers(void)
     {
         if (!playeringame[i])
             continue;
-        memcpy(&players[i], save_p, sizeof(player_t));
-        save_p += sizeof(player_t);
+        SV_Read(&players[i], sizeof(player_t));
         players[i].mo = NULL;   // will be set when unarc thinker
         players[i].message = NULL;
         players[i].attacker = NULL;
@@ -255,22 +306,19 @@ void P_UnArchiveWorld(void)
     sector_t *sec;
     line_t *li;
     side_t *si;
-    short *get;
-
-    get = (short *) save_p;
 
 //
 // do sectors
 //
     for (i = 0, sec = sectors; i < numsectors; i++, sec++)
     {
-        sec->floorheight = *get++ << FRACBITS;
-        sec->ceilingheight = *get++ << FRACBITS;
-        sec->floorpic = *get++;
-        sec->ceilingpic = *get++;
-        sec->lightlevel = *get++;
-        sec->special = *get++;  // needed?
-        sec->tag = *get++;      // needed?
+        sec->floorheight = SV_ReadWord() << FRACBITS;
+        sec->ceilingheight = SV_ReadWord() << FRACBITS;
+        sec->floorpic = SV_ReadWord();
+        sec->ceilingpic = SV_ReadWord();
+        sec->lightlevel = SV_ReadWord();
+        sec->special = SV_ReadWord();  // needed?
+        sec->tag = SV_ReadWord();      // needed?
         sec->specialdata = 0;
         sec->soundtarget = 0;
     }
@@ -280,23 +328,21 @@ void P_UnArchiveWorld(void)
 //
     for (i = 0, li = lines; i < numlines; i++, li++)
     {
-        li->flags = *get++;
-        li->special = *get++;
-        li->tag = *get++;
+        li->flags = SV_ReadWord();
+        li->special = SV_ReadWord();
+        li->tag = SV_ReadWord();
         for (j = 0; j < 2; j++)
         {
             if (li->sidenum[j] == -1)
                 continue;
             si = &sides[li->sidenum[j]];
-            si->textureoffset = *get++ << FRACBITS;
-            si->rowoffset = *get++ << FRACBITS;
-            si->toptexture = *get++;
-            si->bottomtexture = *get++;
-            si->midtexture = *get++;
+            si->textureoffset = SV_ReadWord() << FRACBITS;
+            si->rowoffset = SV_ReadWord() << FRACBITS;
+            si->toptexture = SV_ReadWord();
+            si->bottomtexture = SV_ReadWord();
+            si->midtexture = SV_ReadWord();
         }
     }
-
-    save_p = (byte *) get;
 }
 
 //=============================================================================
@@ -373,7 +419,7 @@ void P_UnArchiveThinkers(void)
 // read in saved thinkers
     while (1)
     {
-        tclass = *save_p++;
+        tclass = SV_ReadByte();
         switch (tclass)
         {
             case tc_end:
@@ -381,8 +427,7 @@ void P_UnArchiveThinkers(void)
 
             case tc_mobj:
                 mobj = Z_Malloc(sizeof(*mobj), PU_LEVEL, NULL);
-                memcpy(mobj, save_p, sizeof(*mobj));
-                save_p += sizeof(*mobj);
+                SV_Read(mobj, sizeof(*mobj));
                 mobj->state = &states[(int) mobj->state];
                 mobj->target = NULL;
                 if (mobj->player)
@@ -535,7 +580,7 @@ void P_UnArchiveSpecials(void)
 // read in saved thinkers
     while (1)
     {
-        tclass = *save_p++;
+        tclass = SV_ReadByte();
         switch (tclass)
         {
             case tc_endspecials:
@@ -543,8 +588,7 @@ void P_UnArchiveSpecials(void)
 
             case tc_ceiling:
                 ceiling = Z_Malloc(sizeof(*ceiling), PU_LEVEL, NULL);
-                memcpy(ceiling, save_p, sizeof(*ceiling));
-                save_p += sizeof(*ceiling);
+                SV_Read(ceiling, sizeof(*ceiling));
                 ceiling->sector = &sectors[(int) ceiling->sector];
                 ceiling->sector->specialdata = T_MoveCeiling;
                 if (ceiling->thinker.function)
@@ -555,8 +599,7 @@ void P_UnArchiveSpecials(void)
 
             case tc_door:
                 door = Z_Malloc(sizeof(*door), PU_LEVEL, NULL);
-                memcpy(door, save_p, sizeof(*door));
-                save_p += sizeof(*door);
+                SV_Read(door, sizeof(*door));
                 door->sector = &sectors[(int) door->sector];
                 door->sector->specialdata = door;
                 door->thinker.function = T_VerticalDoor;
@@ -565,8 +608,7 @@ void P_UnArchiveSpecials(void)
 
             case tc_floor:
                 floor = Z_Malloc(sizeof(*floor), PU_LEVEL, NULL);
-                memcpy(floor, save_p, sizeof(*floor));
-                save_p += sizeof(*floor);
+                SV_Read(floor, sizeof(*floor));
                 floor->sector = &sectors[(int) floor->sector];
                 floor->sector->specialdata = T_MoveFloor;
                 floor->thinker.function = T_MoveFloor;
@@ -575,8 +617,7 @@ void P_UnArchiveSpecials(void)
 
             case tc_plat:
                 plat = Z_Malloc(sizeof(*plat), PU_LEVEL, NULL);
-                memcpy(plat, save_p, sizeof(*plat));
-                save_p += sizeof(*plat);
+                SV_Read(plat, sizeof(*plat));
                 plat->sector = &sectors[(int) plat->sector];
                 plat->sector->specialdata = T_PlatRaise;
                 if (plat->thinker.function)
@@ -587,8 +628,7 @@ void P_UnArchiveSpecials(void)
 
             case tc_flash:
                 flash = Z_Malloc(sizeof(*flash), PU_LEVEL, NULL);
-                memcpy(flash, save_p, sizeof(*flash));
-                save_p += sizeof(*flash);
+                SV_Read(flash, sizeof(*flash));
                 flash->sector = &sectors[(int) flash->sector];
                 flash->thinker.function = T_LightFlash;
                 P_AddThinker(&flash->thinker);
@@ -596,8 +636,7 @@ void P_UnArchiveSpecials(void)
 
             case tc_strobe:
                 strobe = Z_Malloc(sizeof(*strobe), PU_LEVEL, NULL);
-                memcpy(strobe, save_p, sizeof(*strobe));
-                save_p += sizeof(*strobe);
+                SV_Read(strobe, sizeof(*strobe));
                 strobe->sector = &sectors[(int) strobe->sector];
                 strobe->thinker.function = T_StrobeFlash;
                 P_AddThinker(&strobe->thinker);
@@ -605,8 +644,7 @@ void P_UnArchiveSpecials(void)
 
             case tc_glow:
                 glow = Z_Malloc(sizeof(*glow), PU_LEVEL, NULL);
-                memcpy(glow, save_p, sizeof(*glow));
-                save_p += sizeof(*glow);
+                SV_Read(glow, sizeof(*glow));
                 glow->sector = &sectors[(int) glow->sector];
                 glow->thinker.function = T_Glow;
                 P_AddThinker(&glow->thinker);
