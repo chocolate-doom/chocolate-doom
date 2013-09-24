@@ -651,6 +651,326 @@ static void saveg_write_player_t(player_t *str)
 }
 
 
+//
+// mapthing_t
+//
+
+static void saveg_read_mapthing_t(mapthing_t *str)
+{
+    // short x, y;
+    str->x = SV_ReadWord();
+    str->y = SV_ReadWord();
+
+    // short angle;
+    str->angle = SV_ReadWord();
+
+    // short type;
+    str->type = SV_ReadWord();
+
+    // short options;
+    str->options = SV_ReadWord();
+}
+
+static void saveg_write_mapthing_t(mapthing_t *str)
+{
+    // short x, y;
+    SV_WriteWord(str->x);
+    SV_WriteWord(str->y);
+
+    // short angle;
+    SV_WriteWord(str->angle);
+
+    // short type;
+    SV_WriteWord(str->type);
+
+    // short options;
+    SV_WriteWord(str->options);
+}
+
+
+//
+// thinker_t
+//
+
+static void saveg_read_thinker_t(thinker_t *str)
+{
+    // struct thinker_s *prev, *next;
+    SV_ReadLong();
+    str->prev = NULL;
+    SV_ReadLong();
+    str->next = NULL;
+
+    // think_t function;
+    SV_ReadLong();
+    str->function = NULL;
+}
+
+static void saveg_write_thinker_t(thinker_t *str)
+{
+    // struct thinker_s *prev, *next;
+    SV_WritePtr(str->prev);
+    SV_WritePtr(str->next);
+
+    // think_t function;
+    SV_WritePtr(str->function);
+}
+
+
+//
+// specialval_t
+//
+
+static void saveg_read_specialval_t(specialval_t *str)
+{
+    // This can also be a mobj_t ptr, but we just assume it's
+    // an int. This is probably a really bad assumption that's
+    // likely to end in tears.
+
+    // int i;
+    str->i = SV_ReadLong();
+}
+
+static void saveg_write_specialval_t(specialval_t *str)
+{
+    // int i;
+    SV_WriteLong(str->i);
+}
+
+
+//
+// mobj_t
+//
+
+static void saveg_read_mobj_t(mobj_t *str)
+{
+    int i;
+
+    // thinker_t thinker;
+    saveg_read_thinker_t(&str->thinker);
+
+    // fixed_t x, y, z;
+    str->x = SV_ReadLong();
+    str->y = SV_ReadLong();
+    str->z = SV_ReadLong();
+
+    // struct mobj_s *snext, *sprev;
+    SV_ReadLong();
+    str->snext = NULL;
+    SV_ReadLong();
+    str->sprev = NULL;
+
+    // angle_t angle;
+    str->angle = SV_ReadLong();
+
+    // spritenum_t sprite;
+    str->sprite = SV_ReadLong();
+
+    // int frame;
+    str->frame = SV_ReadLong();
+
+    // struct mobj_s *bnext, *bprev;
+    SV_ReadLong();
+    str->bnext = NULL;
+    SV_ReadLong();
+    str->bprev = NULL;
+
+    // struct subsector_s *subsector;
+    SV_ReadLong();
+    str->subsector = NULL;
+
+    // fixed_t floorz, ceilingz;
+    str->floorz = SV_ReadLong();
+    str->ceilingz = SV_ReadLong();
+
+    // fixed_t radius, height;
+    str->radius = SV_ReadLong();
+    str->height = SV_ReadLong();
+
+    // fixed_t momx, momy, momz;
+    str->momx = SV_ReadLong();
+    str->momy = SV_ReadLong();
+    str->momz = SV_ReadLong();
+
+    // int validcount;
+    str->validcount = SV_ReadLong();
+
+    // mobjtype_t type;
+    str->type = SV_ReadLong();
+
+    // mobjinfo_t *info;
+    SV_ReadLong();
+    str->info = NULL;
+
+    // int tics;
+    str->tics = SV_ReadLong();
+
+    // state_t *state;
+    i = SV_ReadLong();
+    str->state = &states[i];
+
+    // int damage;
+    str->damage = SV_ReadLong();
+
+    // int flags;
+    str->flags = SV_ReadLong();
+
+    // int flags2;
+    str->flags2 = SV_ReadLong();
+
+    // specialval_t special1;
+    saveg_read_specialval_t(&str->special1);
+
+    // specialval_t special2;
+    saveg_read_specialval_t(&str->special2);
+
+    // int health;
+    str->health = SV_ReadLong();
+
+    // int movedir;
+    str->movedir = SV_ReadLong();
+
+    // int movecount;
+    str->movecount = SV_ReadLong();
+
+    // struct mobj_s *target;
+    SV_ReadLong();
+    str->target = NULL;
+
+    // int reactiontime;
+    str->reactiontime = SV_ReadLong();
+
+    // int threshold;
+    str->threshold = SV_ReadLong();
+
+    // struct player_s *player;
+    i = SV_ReadLong();
+    if (i != 0)
+    {
+        str->player = &players[i - 1];
+        str->player->mo = str;
+    }
+    else
+    {
+        str->player = NULL;
+    }
+
+    // int lastlook;
+    str->lastlook = SV_ReadLong();
+
+    // mapthing_t spawnpoint;
+    saveg_read_mapthing_t(&str->spawnpoint);
+}
+
+static void saveg_write_mobj_t(mobj_t *str)
+{
+    // thinker_t thinker;
+    saveg_write_thinker_t(&str->thinker);
+
+    // fixed_t x, y, z;
+    SV_WriteLong(str->x);
+    SV_WriteLong(str->y);
+    SV_WriteLong(str->z);
+
+    // struct mobj_s *snext, *sprev;
+    SV_WritePtr(str->snext);
+    SV_WritePtr(str->sprev);
+
+    // angle_t angle;
+    SV_WriteLong(str->angle);
+
+    // spritenum_t sprite;
+    SV_WriteLong(str->sprite);
+
+    // int frame;
+    SV_WriteLong(str->frame);
+
+    // struct mobj_s *bnext, *bprev;
+    SV_WritePtr(str->bnext);
+    SV_WritePtr(str->bprev);
+
+    // struct subsector_s *subsector;
+    SV_WritePtr(str->subsector);
+
+    // fixed_t floorz, ceilingz;
+    SV_WriteLong(str->floorz);
+    SV_WriteLong(str->ceilingz);
+
+    // fixed_t radius, height;
+    SV_WriteLong(str->radius);
+    SV_WriteLong(str->height);
+
+    // fixed_t momx, momy, momz;
+    SV_WriteLong(str->momx);
+    SV_WriteLong(str->momy);
+    SV_WriteLong(str->momz);
+
+    // int validcount;
+    SV_WriteLong(str->validcount);
+
+    // mobjtype_t type;
+    SV_WriteLong(str->type);
+
+    // mobjinfo_t *info;
+    SV_WritePtr(str->info);
+
+    // int tics;
+    SV_WriteLong(str->tics);
+
+    // state_t *state;
+    SV_WriteLong(str->state - states);
+
+    // int damage;
+    SV_WriteLong(str->damage);
+
+    // int flags;
+    SV_WriteLong(str->flags);
+
+    // int flags2;
+    SV_WriteLong(str->flags2);
+
+    // specialval_t special1;
+    saveg_write_specialval_t(&str->special1);
+
+    // specialval_t special2;
+    saveg_write_specialval_t(&str->special2);
+
+    // int health;
+    SV_WriteLong(str->health);
+
+    // int movedir;
+    SV_WriteLong(str->movedir);
+
+    // int movecount;
+    SV_WriteLong(str->movecount);
+
+    // struct mobj_s *target;
+    SV_WritePtr(str->target);
+
+    // int reactiontime;
+    SV_WriteLong(str->reactiontime);
+
+    // int threshold;
+    SV_WriteLong(str->threshold);
+
+    // struct player_s *player;
+    if (str->player != NULL)
+    {
+        SV_WriteLong(str->player - players + 1);
+    }
+    else
+    {
+        SV_WriteLong(0);
+    }
+
+    // int lastlook;
+    SV_WriteLong(str->lastlook);
+
+    // mapthing_t spawnpoint;
+    saveg_write_mapthing_t(&str->spawnpoint);
+}
+
+
+
 
 /*
 ====================
@@ -821,21 +1141,13 @@ typedef enum
 void P_ArchiveThinkers(void)
 {
     thinker_t *th;
-    mobj_t mobj;
 
     for (th = thinkercap.next; th != &thinkercap; th = th->next)
     {
         if (th->function == P_MobjThinker)
         {
             SV_WriteByte(tc_mobj);
-            memcpy(&mobj, th, sizeof(mobj_t));
-            mobj.state = (state_t *) (mobj.state - states);
-            if (mobj.player)
-            {
-                mobj.player = (player_t *) ((mobj.player - players) + 1);
-            }
-            SV_Write(&mobj, sizeof(mobj_t));
-            continue;
+            saveg_write_mobj_t((mobj_t *) th);
         }
         //I_Error("P_ArchiveThinkers: Unknown thinker function");
     }
@@ -858,9 +1170,9 @@ void P_UnArchiveThinkers(void)
     thinker_t *currentthinker, *next;
     mobj_t *mobj;
 
-//
-// remove all the current thinkers
-//
+    //
+    // remove all the current thinkers
+    //
     currentthinker = thinkercap.next;
     while (currentthinker != &thinkercap)
     {
@@ -873,7 +1185,7 @@ void P_UnArchiveThinkers(void)
     }
     P_InitThinkers();
 
-// read in saved thinkers
+    // read in saved thinkers
     while (1)
     {
         tclass = SV_ReadByte();
@@ -884,14 +1196,8 @@ void P_UnArchiveThinkers(void)
 
             case tc_mobj:
                 mobj = Z_Malloc(sizeof(*mobj), PU_LEVEL, NULL);
-                SV_Read(mobj, sizeof(*mobj));
-                mobj->state = &states[(int) mobj->state];
+                saveg_read_mobj_t(mobj);
                 mobj->target = NULL;
-                if (mobj->player)
-                {
-                    mobj->player = &players[(int) mobj->player - 1];
-                    mobj->player->mo = mobj;
-                }
                 P_SetThingPosition(mobj);
                 mobj->info = &mobjinfo[mobj->type];
                 mobj->floorz = mobj->subsector->sector->floorheight;
