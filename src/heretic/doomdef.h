@@ -664,6 +664,7 @@ void G_DoLoadGame(void);
 void G_SaveGame(int slot, char *description);
 // called by M_Responder
 
+#define SAVE_GAME_TERMINATOR 0x1d
 // Support routines for saving games
 char *SV_Filename(int slot);
 void SV_Open(char *fileName);

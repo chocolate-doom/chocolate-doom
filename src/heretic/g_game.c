@@ -41,9 +41,6 @@
 
 // Macros
 
-#define SVG_RAM 0
-#define SVG_FILE 1
-#define SAVE_GAME_TERMINATOR 0x1d
 #define AM_STARTKEY     9
 
 // Functions
@@ -87,9 +84,6 @@ struct
     { MT_SOR2FX1, { 20, 28 } },
     { -1, { -1, -1 } }                 // Terminator
 };
-
-FILE *SaveGameFP;
-int SaveGameType;
 
 gameaction_t gameaction;
 gamestate_t gamestate;
@@ -1823,94 +1817,3 @@ void G_DoSaveGame(void)
     free(filename);
 }
 
-//==========================================================================
-//
-// SV_Filename
-//
-// Generate the filename to use for a particular savegame slot.
-// Returns a malloc()'d buffer that must be freed by the caller.
-//
-//==========================================================================
-
-char *SV_Filename(int slot)
-{
-    char *filename;
-
-    filename = malloc(strlen(savegamedir) + strlen(SAVEGAMENAME) + 8);
-    sprintf(filename, "%s" SAVEGAMENAME "%d.hsg", savegamedir, slot);
-
-    return filename;
-}
-
-//==========================================================================
-//
-// SV_Open
-//
-//==========================================================================
-
-void SV_Open(char *fileName)
-{
-    SaveGameType = SVG_FILE;
-    SaveGameFP = fopen(fileName, "wb");
-}
-
-//==========================================================================
-//
-// SV_Close
-//
-//==========================================================================
-
-void SV_Close(char *fileName)
-{
-    int length;
-
-    SV_WriteByte(SAVE_GAME_TERMINATOR);
-    if (SaveGameType == SVG_RAM)
-    {
-        length = save_p - savebuffer;
-        if (length > SAVEGAMESIZE)
-        {
-            I_Error("Savegame buffer overrun");
-        }
-        M_WriteFile(fileName, savebuffer, length);
-        Z_Free(savebuffer);
-    }
-    else
-    {                           // SVG_FILE
-        fclose(SaveGameFP);
-    }
-}
-
-//==========================================================================
-//
-// SV_Write
-//
-//==========================================================================
-
-void SV_Write(void *buffer, int size)
-{
-    if (SaveGameType == SVG_RAM)
-    {
-        memcpy(save_p, buffer, size);
-        save_p += size;
-    }
-    else
-    {                           // SVG_FILE
-        fwrite(buffer, size, 1, SaveGameFP);
-    }
-}
-
-void SV_WriteByte(byte val)
-{
-    SV_Write(&val, sizeof(byte));
-}
-
-void SV_WriteWord(unsigned short val)
-{
-    SV_Write(&val, sizeof(unsigned short));
-}
-
-void SV_WriteLong(unsigned int val)
-{
-    SV_Write(&val, sizeof(int));
-}
