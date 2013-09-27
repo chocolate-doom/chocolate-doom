@@ -66,21 +66,24 @@ DEH_END_MAPPING
 
 static void *DEH_ThingStart(deh_context_t *context, char *line)
 {
-    int thing_number = 0;
+    int orig_thing_number = 0, thing_number = 0;
     mobjinfo_t *mobj;
 
-    if (sscanf(line, "Thing %i", &thing_number) != 1)
+    if (sscanf(line, "Thing %i", &orig_thing_number) != 1)
     {
         DEH_Warning(context, "Parse error on section start");
         return NULL;
     }
 
-    // HHE thing numbers are indexed from 1
-    --thing_number;
+    // Translate to the correct thing number based on the exe version this
+    // patch was made for. Subtract one because HHE thing numbers are
+    // indexed from 1.
+
+    thing_number = DEH_MapHereticThingType(orig_thing_number - 1);
 
     if (thing_number < 0 || thing_number >= DEH_HERETIC_NUMMOBJTYPES)
     {
-        DEH_Warning(context, "Invalid thing number: %i", thing_number);
+        DEH_Warning(context, "Invalid thing number: %i", orig_thing_number);
         return NULL;
     }
 

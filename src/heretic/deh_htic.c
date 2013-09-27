@@ -138,6 +138,24 @@ void DEH_HereticInit(void)
     }
 }
 
+int DEH_MapHereticThingType(int type)
+{
+    // Heretic 1.0 had an extra entry in the mobjinfo table that was removed
+    // in later versions. This has been added back into the table for
+    // compatibility. However, it also means that if we're loading a patch
+    // for a later version, we need to translate to the index used internally.
+
+    if (deh_hhe_version > deh_hhe_1_0)
+    {
+        if (type >= MT_PHOENIXFX_REMOVED)
+        {
+            ++type;
+        }
+    }
+
+    return type;
+}
+
 int DEH_MapHereticFrameNumber(int frame)
 {
     if (deh_hhe_version < deh_hhe_1_2)
