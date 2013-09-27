@@ -278,8 +278,8 @@ static void saveg_read_state_ptr(state_t **state)
     statenum = SV_ReadLong();
 
     // We have read a state number, but it is indexed according to the state
-    // table in Vanilla Heretic v1.3. To support v1.0 Dehacked patches we
-    // have three extra states, so map the state number to our internal state
+    // table in Vanilla Heretic v1.3. To support v1.0 HHE patches we have
+    // three extra states, so map the state number to our internal state
     // number.
 
     if (statenum >= S_PHOENIXFXIX_1)
@@ -847,7 +847,7 @@ static void saveg_read_mobj_t(mobj_t *str)
     // mobjtype_t type;
     str->type = SV_ReadLong();
 
-    // An extra thing type was added for v1.0 dehacked compatibility.
+    // An extra thing type was added for v1.0 HHE compatibility.
     // Map from the v1.3 thing type index to the internal one.
     if (str->type >= MT_PHOENIXFX_REMOVED)
     {
