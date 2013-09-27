@@ -1,7 +1,6 @@
 Heretic:
  * Frequency shifted sounds.
  * Check for endianness assumptions
- * Savegame code to write structures predictably and endianness-correct
  * Remove NeXT and WATCOMC defines
  * Structure packing macros for structures read from disk
  * Merge r_draw.c to common version and delete duplicate
