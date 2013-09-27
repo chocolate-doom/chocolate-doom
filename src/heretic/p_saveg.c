@@ -492,6 +492,8 @@ static void saveg_write_player_t(player_t *str)
     int i;
 
     // mobj_t *mo;
+    // pointer will be trashed, but it gets restored on load as
+    // the player number reference is stored in the mo.
     SV_WritePtr(str->mo);
 
     // playerstate_t playerstate;
@@ -970,6 +972,446 @@ static void saveg_write_mobj_t(mobj_t *str)
 }
 
 
+//
+// ceiling_t
+//
+
+static void saveg_read_ceiling_t(ceiling_t *str)
+{
+    int i;
+
+    // thinker_t thinker;
+    saveg_read_thinker_t(&str->thinker);
+
+    // ceiling_e type;
+    str->type = SV_ReadLong();
+
+    // sector_t *sector;
+    i = SV_ReadLong();
+    str->sector = &sectors[i];
+
+    // fixed_t bottomheight, topheight;
+    str->bottomheight = SV_ReadLong();
+    str->topheight = SV_ReadLong();
+
+    // fixed_t speed;
+    str->speed = SV_ReadLong();
+
+    // boolean crush;
+    str->crush = SV_ReadLong();
+
+    // int direction;
+    str->direction = SV_ReadLong();
+
+    // int tag;
+    str->tag = SV_ReadLong();
+
+    // int olddirection;
+    str->olddirection = SV_ReadLong();
+}
+
+static void saveg_write_ceiling_t(ceiling_t *str)
+{
+    // thinker_t thinker;
+    saveg_write_thinker_t(&str->thinker);
+
+    // ceiling_e type;
+    SV_WriteLong(str->type);
+
+    // sector_t *sector;
+    SV_WriteLong(str->sector - sectors);
+
+    // fixed_t bottomheight, topheight;
+    SV_WriteLong(str->bottomheight);
+    SV_WriteLong(str->topheight);
+
+    // fixed_t speed;
+    SV_WriteLong(str->speed);
+
+    // boolean crush;
+    SV_WriteLong(str->crush);
+
+    // int direction;
+    SV_WriteLong(str->direction);
+
+    // int tag;
+    SV_WriteLong(str->tag);
+
+    // int olddirection;
+    SV_WriteLong(str->olddirection);
+}
+
+
+//
+// vldoor_t
+//
+
+static void saveg_read_vldoor_t(vldoor_t *str)
+{
+    int i;
+
+    // thinker_t thinker;
+    saveg_read_thinker_t(&str->thinker);
+
+    // vldoor_e type;
+    str->type = SV_ReadLong();
+
+    // sector_t *sector;
+    i = SV_ReadLong();
+    str->sector = &sectors[i];
+
+    // fixed_t topheight;
+    str->topheight = SV_ReadLong();
+
+    // fixed_t speed;
+    str->speed = SV_ReadLong();
+
+    // int direction;
+    str->direction = SV_ReadLong();
+
+    // int topwait;
+    str->topwait = SV_ReadLong();
+
+    // int topcountdown;
+    str->topcountdown = SV_ReadLong();
+}
+
+static void saveg_write_vldoor_t(vldoor_t *str)
+{
+    // thinker_t thinker;
+    saveg_write_thinker_t(&str->thinker);
+
+    // vldoor_e type;
+    SV_WriteLong(str->type);
+
+    // sector_t *sector;
+    SV_WriteLong(str->sector - sectors);
+
+    // fixed_t topheight;
+    SV_WriteLong(str->topheight);
+
+    // fixed_t speed;
+    SV_WriteLong(str->speed);
+
+    // int direction;
+    SV_WriteLong(str->direction);
+
+    // int topwait;
+    SV_WriteLong(str->topwait);
+
+    // int topcountdown;
+    SV_WriteLong(str->topcountdown);
+}
+
+
+//
+// floormove_t
+//
+
+static void saveg_read_floormove_t(floormove_t *str)
+{
+    int i;
+
+    // thinker_t thinker;
+    saveg_read_thinker_t(&str->thinker);
+
+    // floor_e type;
+    str->type = SV_ReadLong();
+
+    // boolean crush;
+    str->crush = SV_ReadLong();
+
+    // sector_t *sector;
+    i = SV_ReadLong();
+    str->sector = &sectors[i];
+
+    // int direction;
+    str->direction = SV_ReadLong();
+
+    // int newspecial;
+    str->newspecial = SV_ReadLong();
+
+    // short texture;
+    str->texture = SV_ReadWord();
+
+    // fixed_t floordestheight;
+    str->floordestheight = SV_ReadLong();
+
+    // fixed_t speed;
+    str->speed = SV_ReadLong();
+}
+
+static void saveg_write_floormove_t(floormove_t *str)
+{
+    // thinker_t thinker;
+    saveg_write_thinker_t(&str->thinker);
+
+    // floor_e type;
+    SV_WriteLong(str->type);
+
+    // boolean crush;
+    SV_WriteLong(str->crush);
+
+    // sector_t *sector;
+    SV_WriteLong(str->sector - sectors);
+
+    // int direction;
+    SV_WriteLong(str->direction);
+
+    // int newspecial;
+    SV_WriteLong(str->newspecial);
+
+    // short texture;
+    SV_WriteWord(str->texture);
+
+    // fixed_t floordestheight;
+    SV_WriteLong(str->floordestheight);
+
+    // fixed_t speed;
+    SV_WriteLong(str->speed);
+}
+
+
+//
+// plat_t
+//
+
+static void saveg_read_plat_t(plat_t *str)
+{
+    int i;
+
+    // thinker_t thinker;
+    saveg_read_thinker_t(&str->thinker);
+
+    // sector_t *sector;
+    i = SV_ReadLong();
+    str->sector = &sectors[i];
+
+    // fixed_t speed;
+    str->speed = SV_ReadLong();
+
+    // fixed_t low;
+    str->low = SV_ReadLong();
+
+    // fixed_t high;
+    str->high = SV_ReadLong();
+
+    // int wait;
+    str->wait = SV_ReadLong();
+
+    // int count;
+    str->count = SV_ReadLong();
+
+    // plat_e status;
+    str->status = SV_ReadLong();
+
+    // plat_e oldstatus;
+    str->oldstatus = SV_ReadLong();
+
+    // boolean crush;
+    str->crush = SV_ReadLong();
+
+    // int tag;
+    str->tag = SV_ReadLong();
+
+    // plattype_e type;
+    str->type = SV_ReadLong();
+}
+
+static void saveg_write_plat_t(plat_t *str)
+{
+    // thinker_t thinker;
+    saveg_write_thinker_t(&str->thinker);
+
+    // sector_t *sector;
+    SV_WriteLong(str->sector - sectors);
+
+    // fixed_t speed;
+    SV_WriteLong(str->speed);
+
+    // fixed_t low;
+    SV_WriteLong(str->low);
+
+    // fixed_t high;
+    SV_WriteLong(str->high);
+
+    // int wait;
+    SV_WriteLong(str->wait);
+
+    // int count;
+    SV_WriteLong(str->count);
+
+    // plat_e status;
+    SV_WriteLong(str->status);
+
+    // plat_e oldstatus;
+    SV_WriteLong(str->oldstatus);
+
+    // boolean crush;
+    SV_WriteLong(str->crush);
+
+    // int tag;
+    SV_WriteLong(str->tag);
+
+    // plattype_e type;
+    SV_WriteLong(str->type);
+}
+
+
+//
+// lightflash_t
+//
+
+static void saveg_read_lightflash_t(lightflash_t *str)
+{
+    int i;
+
+    // thinker_t thinker;
+    saveg_read_thinker_t(&str->thinker);
+
+    // sector_t *sector;
+    i = SV_ReadLong();
+    str->sector = &sectors[i];
+
+    // int count;
+    str->count = SV_ReadLong();
+
+    // int maxlight;
+    str->maxlight = SV_ReadLong();
+
+    // int minlight;
+    str->minlight = SV_ReadLong();
+
+    // int maxtime;
+    str->maxtime = SV_ReadLong();
+
+    // int mintime;
+    str->mintime = SV_ReadLong();
+}
+
+static void saveg_write_lightflash_t(lightflash_t *str)
+{
+    // thinker_t thinker;
+    saveg_write_thinker_t(&str->thinker);
+
+    // sector_t *sector;
+    SV_WriteLong(str->sector - sectors);
+
+    // int count;
+    SV_WriteLong(str->count);
+
+    // int maxlight;
+    SV_WriteLong(str->maxlight);
+
+    // int minlight;
+    SV_WriteLong(str->minlight);
+
+    // int maxtime;
+    SV_WriteLong(str->maxtime);
+
+    // int mintime;
+    SV_WriteLong(str->mintime);
+}
+
+
+//
+// strobe_t
+//
+
+static void saveg_read_strobe_t(strobe_t *str)
+{
+    int i;
+
+    // thinker_t thinker;
+    saveg_read_thinker_t(&str->thinker);
+
+    // sector_t *sector;
+    i = SV_ReadLong();
+    str->sector = &sectors[i];
+
+    // int count;
+    str->count = SV_ReadLong();
+
+    // int minlight;
+    str->minlight = SV_ReadLong();
+
+    // int maxlight;
+    str->maxlight = SV_ReadLong();
+
+    // int darktime;
+    str->darktime = SV_ReadLong();
+
+    // int brighttime;
+    str->brighttime = SV_ReadLong();
+}
+
+static void saveg_write_strobe_t(strobe_t *str)
+{
+    // thinker_t thinker;
+    saveg_write_thinker_t(&str->thinker);
+
+    // sector_t *sector;
+    SV_WriteLong(str->sector - sectors);
+
+    // int count;
+    SV_WriteLong(str->count);
+
+    // int minlight;
+    SV_WriteLong(str->minlight);
+
+    // int maxlight;
+    SV_WriteLong(str->maxlight);
+
+    // int darktime;
+    SV_WriteLong(str->darktime);
+
+    // int brighttime;
+    SV_WriteLong(str->brighttime);
+}
+
+
+//
+// glow_t
+//
+
+static void saveg_read_glow_t(glow_t *str)
+{
+    int i;
+
+    // thinker_t thinker;
+    saveg_read_thinker_t(&str->thinker);
+
+    // sector_t *sector;
+    i = SV_ReadLong();
+    str->sector = &sectors[i];
+
+    // int minlight;
+    str->minlight = SV_ReadLong();
+
+    // int maxlight;
+    str->maxlight = SV_ReadLong();
+
+    // int direction;
+    str->direction = SV_ReadLong();
+}
+
+static void saveg_write_glow_t(glow_t *str)
+{
+    // thinker_t thinker;
+    saveg_write_thinker_t(&str->thinker);
+
+    // sector_t *sector;
+    SV_WriteLong(str->sector - sectors);
+
+    // int minlight;
+    SV_WriteLong(str->minlight);
+
+    // int maxlight;
+    SV_WriteLong(str->maxlight);
+
+    // int direction;
+    SV_WriteLong(str->direction);
+}
 
 
 /*
@@ -1238,82 +1680,54 @@ enum
 
 void P_ArchiveSpecials(void)
 {
-/*
-T_MoveCeiling, (ceiling_t: sector_t * swizzle), - active list
-T_VerticalDoor, (vldoor_t: sector_t * swizzle),
-T_MoveFloor, (floormove_t: sector_t * swizzle),
-T_LightFlash, (lightflash_t: sector_t * swizzle),
-T_StrobeFlash, (strobe_t: sector_t *),
-T_Glow, (glow_t: sector_t *),
-T_PlatRaise, (plat_t: sector_t *), - active list
-*/
+    /*
+    T_MoveCeiling, (ceiling_t: sector_t * swizzle), - active list
+    T_VerticalDoor, (vldoor_t: sector_t * swizzle),
+    T_MoveFloor, (floormove_t: sector_t * swizzle),
+    T_LightFlash, (lightflash_t: sector_t * swizzle),
+    T_StrobeFlash, (strobe_t: sector_t *),
+    T_Glow, (glow_t: sector_t *),
+    T_PlatRaise, (plat_t: sector_t *), - active list
+    */
 
     thinker_t *th;
-    ceiling_t ceiling;
-    vldoor_t door;
-    floormove_t floor;
-    plat_t plat;
-    lightflash_t flash;
-    strobe_t strobe;
-    glow_t glow;
 
     for (th = thinkercap.next; th != &thinkercap; th = th->next)
     {
         if (th->function == T_MoveCeiling)
         {
             SV_WriteByte(tc_ceiling);
-            memcpy(&ceiling, th, sizeof(ceiling_t));
-            ceiling.sector = (sector_t *) (ceiling.sector - sectors);
-            SV_Write(&ceiling, sizeof(ceiling_t));
-            continue;
+            saveg_write_ceiling_t((ceiling_t *) th);
         }
-        if (th->function == T_VerticalDoor)
+        else if (th->function == T_VerticalDoor)
         {
             SV_WriteByte(tc_door);
-            memcpy(&door, th, sizeof(vldoor_t));
-            door.sector = (sector_t *) (door.sector - sectors);
-            SV_Write(&door, sizeof(vldoor_t));
-            continue;
+            saveg_write_vldoor_t((vldoor_t *) th);
         }
-        if (th->function == T_MoveFloor)
+        else if (th->function == T_MoveFloor)
         {
             SV_WriteByte(tc_floor);
-            memcpy(&floor, th, sizeof(floormove_t));
-            floor.sector = (sector_t *) (floor.sector - sectors);
-            SV_Write(&floor, sizeof(floormove_t));
-            continue;
+            saveg_write_floormove_t((floormove_t *) th);
         }
-        if (th->function == T_PlatRaise)
+        else if (th->function == T_PlatRaise)
         {
             SV_WriteByte(tc_plat);
-            memcpy(&plat, th, sizeof(plat_t));
-            plat.sector = (sector_t *) (plat.sector - sectors);
-            SV_Write(&plat, sizeof(plat_t));
-            continue;
+            saveg_write_plat_t((plat_t *) th);
         }
-        if (th->function == T_LightFlash)
+        else if (th->function == T_LightFlash)
         {
             SV_WriteByte(tc_flash);
-            memcpy(&flash, th, sizeof(lightflash_t));
-            flash.sector = (sector_t *) (flash.sector - sectors);
-            SV_Write(&flash, sizeof(lightflash_t));
-            continue;
+            saveg_write_lightflash_t((lightflash_t *) th);
         }
-        if (th->function == T_StrobeFlash)
+        else if (th->function == T_StrobeFlash)
         {
             SV_WriteByte(tc_strobe);
-            memcpy(&strobe, th, sizeof(strobe_t));
-            strobe.sector = (sector_t *) (strobe.sector - sectors);
-            SV_Write(&strobe, sizeof(strobe_t));
-            continue;
+            saveg_write_strobe_t((strobe_t *) th);
         }
-        if (th->function == T_Glow)
+        else if (th->function == T_Glow)
         {
             SV_WriteByte(tc_glow);
-            memcpy(&glow, th, sizeof(glow_t));
-            glow.sector = (sector_t *) (glow.sector - sectors);
-            SV_Write(&glow, sizeof(glow_t));
-            continue;
+            saveg_write_glow_t((glow_t *) th);
         }
     }
     // Add a terminating marker
@@ -1340,7 +1754,7 @@ void P_UnArchiveSpecials(void)
     glow_t *glow;
 
 
-// read in saved thinkers
+    // read in saved thinkers
     while (1)
     {
         tclass = SV_ReadByte();
@@ -1351,19 +1765,16 @@ void P_UnArchiveSpecials(void)
 
             case tc_ceiling:
                 ceiling = Z_Malloc(sizeof(*ceiling), PU_LEVEL, NULL);
-                SV_Read(ceiling, sizeof(*ceiling));
-                ceiling->sector = &sectors[(int) ceiling->sector];
-                ceiling->sector->specialdata = T_MoveCeiling;
-                if (ceiling->thinker.function)
-                    ceiling->thinker.function = T_MoveCeiling;
+                saveg_read_ceiling_t(ceiling);
+                ceiling->sector->specialdata = T_MoveCeiling;  // ???
+                ceiling->thinker.function = T_MoveCeiling;
                 P_AddThinker(&ceiling->thinker);
                 P_AddActiveCeiling(ceiling);
                 break;
 
             case tc_door:
                 door = Z_Malloc(sizeof(*door), PU_LEVEL, NULL);
-                SV_Read(door, sizeof(*door));
-                door->sector = &sectors[(int) door->sector];
+                saveg_read_vldoor_t(door);
                 door->sector->specialdata = door;
                 door->thinker.function = T_VerticalDoor;
                 P_AddThinker(&door->thinker);
@@ -1371,8 +1782,7 @@ void P_UnArchiveSpecials(void)
 
             case tc_floor:
                 floor = Z_Malloc(sizeof(*floor), PU_LEVEL, NULL);
-                SV_Read(floor, sizeof(*floor));
-                floor->sector = &sectors[(int) floor->sector];
+                saveg_read_floormove_t(floor);
                 floor->sector->specialdata = T_MoveFloor;
                 floor->thinker.function = T_MoveFloor;
                 P_AddThinker(&floor->thinker);
@@ -1380,8 +1790,7 @@ void P_UnArchiveSpecials(void)
 
             case tc_plat:
                 plat = Z_Malloc(sizeof(*plat), PU_LEVEL, NULL);
-                SV_Read(plat, sizeof(*plat));
-                plat->sector = &sectors[(int) plat->sector];
+                saveg_read_plat_t(plat);
                 plat->sector->specialdata = T_PlatRaise;
                 if (plat->thinker.function)
                     plat->thinker.function = T_PlatRaise;
@@ -1391,24 +1800,21 @@ void P_UnArchiveSpecials(void)
 
             case tc_flash:
                 flash = Z_Malloc(sizeof(*flash), PU_LEVEL, NULL);
-                SV_Read(flash, sizeof(*flash));
-                flash->sector = &sectors[(int) flash->sector];
+                saveg_read_lightflash_t(flash);
                 flash->thinker.function = T_LightFlash;
                 P_AddThinker(&flash->thinker);
                 break;
 
             case tc_strobe:
                 strobe = Z_Malloc(sizeof(*strobe), PU_LEVEL, NULL);
-                SV_Read(strobe, sizeof(*strobe));
-                strobe->sector = &sectors[(int) strobe->sector];
+                saveg_read_strobe_t(strobe);
                 strobe->thinker.function = T_StrobeFlash;
                 P_AddThinker(&strobe->thinker);
                 break;
 
             case tc_glow:
                 glow = Z_Malloc(sizeof(*glow), PU_LEVEL, NULL);
-                SV_Read(glow, sizeof(*glow));
-                glow->sector = &sectors[(int) glow->sector];
+                saveg_read_glow_t(glow);
                 glow->thinker.function = T_Glow;
                 P_AddThinker(&glow->thinker);
                 break;
