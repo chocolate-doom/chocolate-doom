@@ -268,23 +268,78 @@ static void saveg_write_inventory_t(inventory_t *str)
 
 
 //
+// state_t *
+//
+
+static void saveg_read_state_ptr(state_t **state)
+{
+    int statenum;
+
+    statenum = SV_ReadLong();
+
+    // We have read a state number, but it is indexed according to the state
+    // table in Vanilla Heretic v1.3. To support v1.0 Dehacked patches we
+    // have three extra states, so map the state number to our internal state
+    // number.
+
+    if (statenum >= S_PHOENIXFXIX_1)
+    {
+        statenum = (statenum - S_PHOENIXFXIX_1) + S_PHOENIXPUFF1;
+    }
+
+    if (statenum == 0)
+    {
+        *state = NULL;
+    }
+    else
+    {
+        *state = &states[statenum];
+    }
+}
+
+static void saveg_write_state_ptr(state_t *state)
+{
+    int statenum;
+
+    // NULL states are just written as zero.
+
+    if (state == NULL)
+    {
+        SV_WriteLong(0);
+        return;
+    }
+
+    statenum = state - states;
+
+    // Our internal state table has three extra states than Vanilla, so map
+    // to the state numbers used by Vanilla Heretic v1.3 for savegame
+    // compatibility.
+
+    if (statenum >= S_PHOENIXPUFF1)
+    {
+        statenum = (statenum - S_PHOENIXPUFF1) + S_PHOENIXFXIX_1;
+    }
+    else if (statenum >= S_PHOENIXFXIX_1)
+    {
+        // Now we're really in trouble. This state doesn't exist in Vanilla
+        // Heretic v1.3 (but does in v1.0). Map to a frame that might be
+        // vaguely sensible.
+
+        statenum = S_PHOENIXFXI1_8;
+    }
+
+    SV_WriteLong(statenum);
+}
+
+
+//
 // pspdef_t
 //
 
 static void saveg_read_pspdef_t(pspdef_t *str)
 {
-    int i;
-
     // state_t *state;
-    i = SV_ReadLong();
-    if (i == 0)
-    {
-        str->state = NULL;
-    }
-    else
-    {
-        str->state = &states[i];
-    }
+    saveg_read_state_ptr(&str->state);
 
     // int tics;
     str->tics = SV_ReadLong();
@@ -297,14 +352,7 @@ static void saveg_read_pspdef_t(pspdef_t *str)
 static void saveg_write_pspdef_t(pspdef_t *str)
 {
     // state_t *state;
-    if (str->state != NULL)
-    {
-        SV_WriteLong(str->state - states);
-    }
-    else
-    {
-        SV_WriteLong(0);
-    }
+    saveg_write_state_ptr(str->state);
 
     // int tics;
     SV_WriteLong(str->tics);
@@ -799,6 +847,13 @@ static void saveg_read_mobj_t(mobj_t *str)
     // mobjtype_t type;
     str->type = SV_ReadLong();
 
+    // An extra thing type was added for v1.0 dehacked compatibility.
+    // Map from the v1.3 thing type index to the internal one.
+    if (str->type >= MT_PHOENIXFX_REMOVED)
+    {
+        ++str->type;
+    }
+
     // mobjinfo_t *info;
     SV_ReadLong();
     str->info = NULL;
@@ -807,8 +862,7 @@ static void saveg_read_mobj_t(mobj_t *str)
     str->tics = SV_ReadLong();
 
     // state_t *state;
-    i = SV_ReadLong();
-    str->state = &states[i];
+    saveg_read_state_ptr(&str->state);
 
     // int damage;
     str->damage = SV_ReadLong();
@@ -910,7 +964,24 @@ static void saveg_write_mobj_t(mobj_t *str)
     SV_WriteLong(str->validcount);
 
     // mobjtype_t type;
-    SV_WriteLong(str->type);
+    // Our mobjinfo table has an extra entry, for compatibility with v1.0
+    // HHE patches. So translate the internal thing type index to the
+    // equivalent for Vanilla Heretic v1.3, for savegame compatibility.
+
+    if (str->type > MT_PHOENIXFX_REMOVED)
+    {
+        SV_WriteLong(str->type - 1);
+    }
+    else if (str->type == MT_PHOENIXFX_REMOVED)
+    {
+        // This should never happen, but just in case, do something
+        // vaguely sensible ... ?
+        SV_WriteLong(MT_PHOENIXFX1);
+    }
+    else
+    {
+        SV_WriteLong(str->type);
+    }
 
     // mobjinfo_t *info;
     SV_WritePtr(str->info);
@@ -919,7 +990,7 @@ static void saveg_write_mobj_t(mobj_t *str)
     SV_WriteLong(str->tics);
 
     // state_t *state;
-    SV_WriteLong(str->state - states);
+    saveg_write_state_ptr(str->state);
 
     // int damage;
     SV_WriteLong(str->damage);
