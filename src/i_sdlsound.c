@@ -88,6 +88,14 @@ static int allocated_sounds_size = 0;
 
 int use_libsamplerate = 0;
 
+// Scale factor used when converting libsamplerate floating point numbers
+// to integers. Too high means the sounds can clip; too low means they
+// will be too quiet. This is an amount that should avoid clipping most
+// of the time: with all the Doom IWAD sound effects, at least. If a PWAD
+// is used, clipping might occur.
+
+float libsamplerate_scale = 0.65;
+
 // Hook a sound into the linked list at the head.
 
 static void AllocatedSoundLink(allocated_sound_t *snd)
@@ -408,7 +416,8 @@ static boolean ExpandSoundData_SRC(sfxinfo_t *sfxinfo,
         // using INT16_MAX as the multiplier are not all that bad, but
         // artifacts are noticeable during the loudest parts.
 
-        float   cvtval_f = src_data.data_out[i] * 22265;
+        float cvtval_f =
+            src_data.data_out[i] * libsamplerate_scale * INT16_MAX;
         int32_t cvtval_i = cvtval_f + (cvtval_f < 0 ? -0.5 : 0.5);
 
         // Asymmetrical sound worries me, so we won't use -32768.

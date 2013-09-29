@@ -426,6 +426,7 @@ boolean I_MusicIsPlaying(void)
 void I_BindSoundVariables(void)
 {
     extern int use_libsamplerate;
+    extern float libsamplerate_scale;
 
     M_BindVariable("snd_musicdevice",   &snd_musicdevice);
     M_BindVariable("snd_sfxdevice",     &snd_sfxdevice);
@@ -442,7 +443,8 @@ void I_BindSoundVariables(void)
     M_BindVariable("gus_ram_kb",        &gus_ram_kb);
 
 #ifdef FEATURE_SOUND
-    M_BindVariable("use_libsamplerate", &use_libsamplerate);
+    M_BindVariable("use_libsamplerate",   &use_libsamplerate);
+    M_BindVariable("libsamplerate_scale", &libsamplerate_scale);
 #endif
 
     // Before SDL_mixer version 1.2.11, MIDI music caused the game

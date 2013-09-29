@@ -985,6 +985,18 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(use_libsamplerate),
 
     //!
+    // Scaling factor used by libsamplerate. This is used when converting
+    // sounds internally back into integer form; normally it should not
+    // be necessary to change it from the default value. The only time
+    // it might be needed is if a PWAD file is loaded that contains very
+    // loud sounds, in which case the conversion may cause sound clipping
+    // and the scale factor should be reduced. The lower the value, the
+    // quieter the sound effects become, so it should be set as high as is
+    // possible without clipping occurring.
+
+    CONFIG_VARIABLE_FLOAT(libsamplerate_scale),
+
+    //!
     // Full path to a Timidity configuration file to use for MIDI
     // playback. The file will be evaluated from the directory where
     // it is evaluated, so there is no need to add "dir" commands
