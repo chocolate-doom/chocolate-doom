@@ -81,6 +81,7 @@ static int musicVolume = 15;
 static int voiceVolume = 15;
 static int show_talk = 0;
 static int use_libsamplerate = 0;
+static float libsamplerate_scale = 0.65;
 
 static char *timidity_cfg_path = "";
 static char *gus_patch_path = "";
@@ -306,6 +307,7 @@ void BindSoundVariables(void)
     M_BindVariable("music_volume",        &musicVolume);
     M_BindVariable("snd_samplerate",      &snd_samplerate);
     M_BindVariable("use_libsamplerate",   &use_libsamplerate);
+    M_BindVariable("libsamplerate_scale", &libsamplerate_scale);
     M_BindVariable("timidity_cfg_path",   &timidity_cfg_path);
     M_BindVariable("gus_patch_path",      &gus_patch_path);
     M_BindVariable("gus_ram_kb",          &gus_ram_kb);
