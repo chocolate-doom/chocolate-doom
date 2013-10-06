@@ -44,6 +44,10 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
+// TODO: There are separate RANGECHECK defines for different games, but this
+// is common code. Fix this.
+#define RANGECHECK
+
 // Blending table used for fuzzpatch, etc.
 // Only used in Heretic/Hexen
 
