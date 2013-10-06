@@ -636,8 +636,8 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         if (M_CheckParm("-ignoreversion") == 0)
         {
             NET_SV_SendReject(addr,
-                              "Version mismatch: server version is: "
-                              PACKAGE_STRING);
+                "Different " PACKAGE_NAME " versions cannot play a net game!\n"
+                "Version mismatch: server version is: " PACKAGE_STRING);
             return;
         }
     }
