@@ -671,11 +671,6 @@ void P_GroupLines(void)
 =================
 */
 
-// haleyjd FIXME: CDMUSIC
-#ifdef __WATCOMC__
-extern boolean i_CDMusic;
-#endif
-
 void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
 {
     int i;
@@ -690,15 +685,14 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
             = players[i].itemcount = 0;
     }
     players[consoleplayer].viewz = 1;   // will be set by player think
- 
-    
-    // haleyjd FIXME: CDMUSIC
-#ifdef __WATCOMC__
-    if (i_CDMusic == false)
+
+    // Waiting-for-level-load song; not played if playing music from CD
+    // (the seek time will be so long it will just make loading take
+    // longer)
+    if (!cdmusic)
     {
-        S_StartSongName("chess", true); // Waiting-for-level-load song
+        S_StartSongName("chess", true);
     }
-#endif
 
     Z_FreeTags(PU_LEVEL, PU_PURGELEVEL - 1);
 

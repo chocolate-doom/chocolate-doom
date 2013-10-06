@@ -131,6 +131,7 @@ static void UpdateSndDevices(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
             snd_musicdevice = SNDDEVICE_GUS;
             break;
         case MUSICMODE_CD:
+            snd_musicdevice = SNDDEVICE_CD;
             break;
     }
 }

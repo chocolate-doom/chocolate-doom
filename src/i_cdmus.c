@@ -42,8 +42,20 @@ int I_CDMusInit(void)
 {
     int drive_num = 0;
 
+    // The initialize function is re-invoked when the CD track play cheat
+    // is used, so use the opportunity to call SDL_CDStatus() to update
+    // the status of the drive.
+    // TODO: Check this actually works.
+
+    if (cd_handle != NULL)
+    {
+        SDL_CDStatus(cd_handle);
+        cd_Error = 0;
+        return 0;
+    }
+
     // TODO: config variable to control CDROM to use.
-   
+
     cd_handle = SDL_CDOpen(drive_num);
 
     if (cd_handle == NULL)
@@ -52,6 +64,8 @@ int I_CDMusInit(void)
         cd_Error = 1;
         return -1;
     }
+
+    printf("I_CDMusInit: Using CD-ROM drive: %s\n", SDL_CDName(drive_num));
 
     if (!CD_INDRIVE(cd_handle->status))
     {
@@ -139,8 +153,7 @@ int I_CDMusFirstTrack(void)
         }
     }
 
-    /* Don't know? */
-
+    // Don't know?
     cd_Error = 1;
 
     return -1;

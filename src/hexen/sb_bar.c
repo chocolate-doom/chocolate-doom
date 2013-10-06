@@ -26,6 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "h2def.h"
+#include "i_cdmus.h"
 #include "i_video.h"
 #include "m_bbox.h"
 #include "m_cheat.h"
@@ -33,8 +34,6 @@
 #include "p_local.h"
 #include "s_sound.h"
 #include "v_video.h"
-
-#include "i_sound.h"            // For CD stuff
 
 // TYPES -------------------------------------------------------------------
 
@@ -96,15 +95,6 @@ static void CheatTrackFunc2(player_t * player, Cheat_t * cheat);
 extern int ArmorIncrement[NUMCLASSES][NUMARMOR];
 extern int AutoArmorSave[NUMCLASSES];
 
-// haleyjd FIXME: CDMUSIC
-#ifdef __WATCOMC__
-extern boolean i_CDMusic;
-extern int i_CDMusicLength;
-extern int i_CDTrack;
-extern int i_CDCurrentTrack;
-extern int oldTic;
-#endif
-
 // PUBLIC DATA DECLARATIONS ------------------------------------------------
 
 boolean DebugSound;             // Debug flag for displaying sound info
@@ -112,11 +102,6 @@ boolean inventory;
 int curpos;
 int inv_ptr;
 int ArtifactFlash;
-
-// haleyjd FIXME: CDMUSIC
-#ifndef __WATCOMC__
-boolean i_CDMusic;              // in Watcom, defined in i_ibm
-#endif
 
 // PRIVATE DATA DEFINITIONS ------------------------------------------------
 
@@ -1517,7 +1502,7 @@ static boolean HandleCheats(byte key)
     else if (netgame)
     {                           // change CD track is the only cheat available in deathmatch
         eat = false;
-        if (i_CDMusic)
+        if (cdmusic)
         {
             if (CheatAddKey(&Cheats[0], key, &eat))
             {
@@ -1931,22 +1916,21 @@ static void CheatRevealFunc(player_t * player, Cheat_t * cheat)
 
 static void CheatTrackFunc1(player_t * player, Cheat_t * cheat)
 {
-    // haleyjd FIXME: CDMUSIC
-#ifdef __WATCOMC__
     char buffer[80];
 
-    if (!i_CDMusic)
+    if (!cdmusic)
     {
         return;
     }
+
     if (I_CDMusInit() == -1)
     {
         P_SetMessage(player, "ERROR INITIALIZING CD", true);
     }
+
     sprintf(buffer, "ENTER DESIRED CD TRACK (%.2d - %.2d):\n",
             I_CDMusFirstTrack(), I_CDMusLastTrack());
     P_SetMessage(player, buffer, true);
-#endif
 }
 
 //===========================================================================
@@ -1957,41 +1941,38 @@ static void CheatTrackFunc1(player_t * player, Cheat_t * cheat)
 
 static void CheatTrackFunc2(player_t * player, Cheat_t * cheat)
 {
-    // haleyjd FIXME: CDMUSIC
-#ifdef __WATCOMC__
     char buffer[80];
     int track;
     char args[2];
 
     cht_GetParam(cheat->seq, args);
 
-    if (!i_CDMusic)
+    if (!cdmusic)
     {
         return;
     }
+
     track = (args[0] - '0') * 10 + (args[1] - '0');
     if (track < I_CDMusFirstTrack() || track > I_CDMusLastTrack())
     {
         P_SetMessage(player, "INVALID TRACK NUMBER\n", true);
         return;
     }
-    if (track == i_CDCurrentTrack)
+
+    if (track == S_GetCurrentCDTrack())
     {
         return;
     }
-    if (I_CDMusPlay(track))
+
+    if (!S_StartCustomCDTrack(track))
     {
         sprintf(buffer, "ERROR WHILE TRYING TO PLAY CD TRACK: %.2d\n", track);
         P_SetMessage(player, buffer, true);
     }
     else
-    {                           // No error encountered while attempting to play the track
+    {
+        // No error encountered while attempting to play the track
         sprintf(buffer, "PLAYING TRACK: %.2d\n", track);
         P_SetMessage(player, buffer, true);
-        i_CDMusicLength = 35 * I_CDMusTrackLength(track);
-        oldTic = gametic;
-        i_CDTrack = track;
-        i_CDCurrentTrack = track;
     }
-#endif
 }
