@@ -479,14 +479,21 @@ boolean D_GrabMouseCallback(void)
     if (drone)
         return false;
 
-    // when menu is active or game is paused, release the mouse 
- 
+    // when menu is active or game is paused, release the mouse.
+
     if (menuactive || paused)
         return false;
 
     // only grab mouse when playing levels (but not demos)
 
     return (gamestate == GS_LEVEL) && !demoplayback;
+}
+
+// During startup, never grab the mouse.
+
+static boolean D_StartupGrabCallback(void)
+{
+    return false;
 }
 
 //
@@ -1156,6 +1163,7 @@ static void D_InitIntroSequence(void)
         // In vanilla Strife, Mode 13h was initialized directly in D_DoomMain.
         // We have to be a little more courteous of the low-level code here.
         I_SetWindowTitle(gamedescription);
+        I_SetGrabMouseCallback(D_StartupGrabCallback);
         I_InitGraphics();
         V_RestoreBuffer(); // make the V_ routines work
 
