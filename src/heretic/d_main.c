@@ -250,7 +250,6 @@ void D_DoomLoop(void)
         sprintf(filename, "debug%i.txt", consoleplayer);
         debugfile = fopen(filename, "w");
     }
-    I_SetWindowTitle(gamedescription);
     I_GraphicsCheckCommandLine();
     I_InitGraphics();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
@@ -638,6 +637,9 @@ void initStartup(void)
         return;
     }
 
+    I_InitWindowTitle();
+    I_InitWindowIcon();
+
     // Blit main screen
     textScreen = TXT_GetScreenData();
     loading = W_CacheLumpName(DEH_String("LOADING"), PU_CACHE);
@@ -1020,6 +1022,8 @@ void D_DoomMain(void)
         gamemode = registered;
         gamedescription = "Heretic (registered)";
     }
+
+    I_SetWindowTitle(gamedescription);
 
     savegamedir = M_GetSaveGameDir("heretic.wad");
 

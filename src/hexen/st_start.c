@@ -32,6 +32,7 @@
 
 #include "h2def.h"
 #include "i_system.h"
+#include "i_video.h"
 #include "i_videohr.h"
 #include "s_sound.h"
 #include "st_start.h"
@@ -137,6 +138,7 @@ void ST_Init(void)
         if (I_SetVideoModeHR())
         {
             using_graphical_startup = true;
+            I_InitWindowIcon();
 
             S_StartSongName("orb", true);
 
