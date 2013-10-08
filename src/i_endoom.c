@@ -48,7 +48,8 @@ void I_Endoom(byte *endoom_data)
     // Set up text mode screen
 
     TXT_Init();
-    TXT_SetWindowTitle(PACKAGE_STRING);
+    I_InitWindowTitle();
+    I_InitWindowIcon();
 
     // Write the data to the screen memory
 

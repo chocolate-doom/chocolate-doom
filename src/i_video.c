@@ -1205,7 +1205,7 @@ void I_SetWindowTitle(char *title)
 // the title set with I_SetWindowTitle.
 //
 
-static void I_InitWindowTitle(void)
+void I_InitWindowTitle(void)
 {
     char *buf;
 
@@ -1220,18 +1220,18 @@ static void I_InitWindowTitle(void)
 
 // Set the application icon
 
-static void I_InitWindowIcon(void)
+void I_InitWindowIcon(void)
 {
     SDL_Surface *surface;
     Uint8 *mask;
     int i;
 
     // Generate the mask
-  
+
     mask = malloc(icon_w * icon_h / 8);
     memset(mask, 0, icon_w * icon_h / 8);
 
-    for (i=0; i<icon_w * icon_h; ++i) 
+    for (i=0; i<icon_w * icon_h; ++i)
     {
         if (icon_data[i * 3] != 0x00
          || icon_data[i * 3 + 1] != 0x00
