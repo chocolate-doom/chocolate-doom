@@ -15,6 +15,15 @@ To do:
   - Don't make structure packing assumptions when loading levels.
   - Port to every OS and architecture under the sun
 
+Heretic/Hexen:
+ * Frequency shifted sounds.
+ * Check for endianness assumptions - mostly done now
+ * Structure packing macros for structures read from disk
+ * Merge r_draw.c to common version and delete duplicate
+ * Heretic v1.2 emulation (if possible)
+ * Hexen v1.0 emulation (if possible/necessary)
+ * Screensaver mode
+
 Crazy pie in the sky ideas:
 
 * Automatic WAD installer - download and run TCs from a list automatically
