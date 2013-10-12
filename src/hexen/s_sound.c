@@ -289,7 +289,7 @@ void S_StartSongName(char *songLump, boolean loop)
 			cdTrack = P_GetCDStartTrack();
 		}
 */
-        if (!cdTrack)
+        if (cdTrack != 0)
         {
             cd_custom_track = 0;
             StartCDTrack(cdTrack, loop);
@@ -830,6 +830,8 @@ void S_Init(void)
         {
             ST_Message("failed.\n");
         }
+
+        I_CDMusPrintStartup();
     }
 }
 
