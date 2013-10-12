@@ -1,4 +1,39 @@
 
+2.0.0 (????-??-??):
+
+    This is version 2.0 of Chocolate Doom! This new version has some
+    major changes compared to the original 1.0 series:
+
+     * The codebase now includes Chocolate Heretic and Chocolate
+       Hexen. These are based on the GPL source code released by
+       Raven Software.
+     * Also included is Chocolate Strife. This was developed through a
+       mammoth four year reverse engineering project conducted by
+       James "Quasar" Haley and Samuel "Kaiser" Villareal. The result
+       is the most accurate reproduction of Strife to date, including
+       full demo and savegame compatibility. See README.Strife for
+       more information.
+
+    Minor features that are nonetheless worth mentioning:
+     * Chocolate Doom now includes a -statdump command line option,
+       which emulates the output of the statdump.exe tool. This is
+       used to implement a form of regression testing (statcheck) that
+       directly compares against the Vanilla behavior.
+     * Chocolate Heretic includes HHE patch file support, and I
+       believe is the first Heretic port to include this feature.
+     * GUS "pseudo-emulation" is now supported. This does not fully
+       emulate a GUS, but Doom's DMXGUS lump can be used to generate
+       a Timidity configuration file that plays music using the GUS
+       patch set.
+     * The setup tool now includes a built-in server browser, for use
+       when selecting a server to join.
+
+    Version 2.0 of Chocolate Doom has been in development for a long
+    time, and there have been many bugs fixed over this time, too many
+    to list here. Thanks to all the people who have tested it and
+    diligently reported bugs over this time. Your contributions have
+    been invaluable.
+
 1.7.0 (2012-06-09):
 
      * Fixed gnome-screensaver desktop file (thanks Rahul Sundaram).
