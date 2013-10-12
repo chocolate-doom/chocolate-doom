@@ -202,14 +202,14 @@ static void D_SetDefaultSavePath(void)
 
 static boolean D_GrabMouseCallback(void)
 {
-    // when menu is active or game is paused, release the mouse 
- 
+    // when menu is active or game is paused, release the mouse
+
     if (MenuActive || paused)
         return false;
 
     // only grab mouse when playing levels (but not demos)
 
-    return (gamestate == GS_LEVEL) && !demoplayback;
+    return (gamestate == GS_LEVEL) && !advancedemo && !demoplayback;
 }
 
 // Message displayed when quitting Hexen
@@ -620,8 +620,8 @@ void H2_GameLoop(void)
     }
     I_SetWindowTitle("Hexen");
     I_GraphicsCheckCommandLine();
-    I_InitGraphics();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
+    I_InitGraphics();
 
     while (1)
     {

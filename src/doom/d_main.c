@@ -409,7 +409,7 @@ boolean D_GrabMouseCallback(void)
 
     // only grab mouse when playing levels (but not demos)
 
-    return (gamestate == GS_LEVEL) && !demoplayback;
+    return (gamestate == GS_LEVEL) && !demoplayback && !advancedemo;
 }
 
 //
@@ -426,9 +426,9 @@ void D_DoomLoop (void)
 
     I_SetWindowTitle(gamedescription);
     I_GraphicsCheckCommandLine();
+    I_SetGrabMouseCallback(D_GrabMouseCallback);
     I_InitGraphics();
     I_EnableLoadingDisk();
-    I_SetGrabMouseCallback(D_GrabMouseCallback);
 
     V_RestoreBuffer();
     R_ExecuteSetViewSize();

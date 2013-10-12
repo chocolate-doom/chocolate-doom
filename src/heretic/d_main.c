@@ -226,14 +226,14 @@ void D_Display(void)
 
 boolean D_GrabMouseCallback(void)
 {
-    // when menu is active or game is paused, release the mouse 
- 
+    // when menu is active or game is paused, release the mouse
+
     if (MenuActive || paused)
         return false;
 
     // only grab mouse when playing levels (but not demos)
 
-    return (gamestate == GS_LEVEL) && !demoplayback;
+    return (gamestate == GS_LEVEL) && !demoplayback && !advancedemo;
 }
 
 //---------------------------------------------------------------------------
@@ -251,8 +251,8 @@ void D_DoomLoop(void)
         debugfile = fopen(filename, "w");
     }
     I_GraphicsCheckCommandLine();
-    I_InitGraphics();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
+    I_InitGraphics();
 
     main_loop_started = true;
 

@@ -2203,11 +2203,6 @@ void I_InitGraphics(void)
   
     while (SDL_PollEvent(&dummy));
 
-    if (usemouse && !nomouse && (fullscreen || grabmouse))
-    {
-        CenterMouse();
-    }
-
     initialized = true;
 
     // Call I_ShutdownGraphics on quit
