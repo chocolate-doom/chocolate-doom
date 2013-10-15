@@ -182,7 +182,7 @@ static char *steam_install_subdirs[] =
     "steamapps\\common\\final doom\\base",
     "steamapps\\common\\ultimate doom\\base",
     "steamapps\\common\\hexen\\base",
-    "steamapps\\common\\heretic shadow of the serpent riders\\base"
+    "steamapps\\common\\heretic shadow of the serpent riders\\base",
 
     // From Doom 3: BFG Edition:
 
