@@ -350,9 +350,6 @@ void NET_WaitForLaunch(void)
         exit(-1);
     }
 
-    I_SetWindowTitle("Waiting for game start");
-    //I_SetWindowIcon();
-
     OpenWaitDialog();
     had_warning = false;
 
