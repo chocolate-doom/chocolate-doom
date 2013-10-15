@@ -499,7 +499,6 @@ extern gameaction_t gameaction;
 extern boolean paused;
 
 extern GameMode_t gamemode;
-extern GameMission_t gamemission;
 
 extern boolean ExtendedWAD;     // true if main WAD is the extended version
 

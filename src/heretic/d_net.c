@@ -164,7 +164,7 @@ static void InitConnectData(net_connect_data_t *connect_data)
     // Game type fields:
 
     connect_data->gamemode = gamemode;
-    connect_data->gamemission = gamemission;
+    connect_data->gamemission = heretic;
 
     connect_data->lowres_turn = false;
 

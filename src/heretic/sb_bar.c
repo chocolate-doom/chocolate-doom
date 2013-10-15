@@ -1241,7 +1241,7 @@ static void CheatWarpFunc(player_t * player, Cheat_t * cheat)
 
     episode = args[0] - '0';
     map = args[1] - '0';
-    if (D_ValidEpisodeMap(gamemission, gamemode, episode, map))
+    if (D_ValidEpisodeMap(heretic, gamemode, episode, map))
     {
         G_DeferedInitNew(gameskill, episode, map);
         P_SetMessage(player, DEH_String(TXT_CHEATWARP), false);

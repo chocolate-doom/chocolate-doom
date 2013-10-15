@@ -61,7 +61,6 @@
 #define STARTUP_WINDOW_X 17
 #define STARTUP_WINDOW_Y 7
 
-GameMission_t gamemission = heretic;
 GameMode_t gamemode = indetermined;
 char *gamedescription = "unknown";
 
@@ -805,6 +804,7 @@ static void D_Endoom(void)
 
 void D_DoomMain(void)
 {
+    GameMission_t gamemission;
     int p;
     char file[256];
 
@@ -1160,7 +1160,7 @@ void D_DoomMain(void)
     // Check valid episode and map
     if (autostart || netgame)
     {
-        if (!D_ValidEpisodeMap(gamemission, gamemode, startepisode, startmap))
+        if (!D_ValidEpisodeMap(heretic, gamemode, startepisode, startmap))
         {
             startepisode = 1;
             startmap = 1;

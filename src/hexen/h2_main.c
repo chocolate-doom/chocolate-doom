@@ -101,7 +101,6 @@ extern boolean askforquit;
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 GameMode_t gamemode;
-GameMission_t gamemission;
 char *iwadfile;
 boolean nomonsters;             // checkparm of -nomonsters
 boolean respawnparm;            // checkparm of -respawn
@@ -235,6 +234,7 @@ void InitMapMusicInfo(void);
 
 void D_DoomMain(void)
 {
+    GameMission_t gamemission;
     int p;
 
     I_AtExit(D_HexenQuitMessage, false);
