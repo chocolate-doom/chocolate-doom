@@ -83,8 +83,8 @@ static int show_talk = 0;
 static int use_libsamplerate = 0;
 static float libsamplerate_scale = 0.65;
 
-static char *timidity_cfg_path = "";
-static char *gus_patch_path = "";
+static char *timidity_cfg_path = NULL;
+static char *gus_patch_path = NULL;
 static unsigned int gus_ram_kb = 1024;
 
 // DOS specific variables: these are unused but should be maintained
@@ -326,6 +326,9 @@ void BindSoundVariables(void)
         M_BindVariable("voice_volume",    &voiceVolume);
         M_BindVariable("show_talk",       &show_talk);
     }
+
+    timidity_cfg_path = strdup("");
+    gus_patch_path = strdup("");
 
     // Before SDL_mixer version 1.2.11, MIDI music caused the game
     // to crash when it looped.  If this is an old SDL_mixer version,
