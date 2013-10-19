@@ -248,8 +248,8 @@ void P_MovePlayer (player_t* player)
     if (cmd->buttons2 & BT2_LOOKUP)
     {
         player->pitch += LOOKPITCHAMOUNT;
-        if ((player->pitch + LOOKPITCHAMOUNT) > LOOKUPMAX ||
-            (player->pitch + LOOKPITCHAMOUNT) < LOOKDOWNMAX)
+        if (player->pitch > LOOKUPMAX ||
+            player->pitch < LOOKDOWNMAX)
             player->pitch -= LOOKPITCHAMOUNT;
     }
     else
@@ -258,8 +258,8 @@ void P_MovePlayer (player_t* player)
         if (cmd->buttons2 & BT2_LOOKDOWN)
         {
             player->pitch -= LOOKPITCHAMOUNT;
-            if ((player->pitch - LOOKPITCHAMOUNT) > LOOKUPMAX ||
-                (player->pitch - LOOKPITCHAMOUNT) < LOOKDOWNMAX)
+            if (player->pitch > LOOKUPMAX ||
+                player->pitch < LOOKDOWNMAX)
                 player->pitch += LOOKPITCHAMOUNT;
         }
     }
