@@ -350,6 +350,8 @@ void NET_WaitForLaunch(void)
         exit(-1);
     }
 
+    I_InitWindowIcon();
+
     OpenWaitDialog();
     had_warning = false;
 
