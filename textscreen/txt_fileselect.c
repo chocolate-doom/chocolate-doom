@@ -150,7 +150,19 @@ static char *ExecReadOutput(char **argv)
 //     TXT_UpdateScreen can be run in the background).
 //   * On Windows XP the program exits/crashes when the dialog is
 //     closed.
-#if defined(xxxdisabled_WIN32)
+#if defined(_WIN32)
+
+int TXT_CanSelectFiles(void)
+{
+    return 0;
+}
+
+char *TXT_SelectFile(char *window_title, char **extensions)
+{
+    return NULL;
+}
+
+#elif defined(xxxdisabled_WIN32)
 
 // Windows code. Use comdlg32 to pop up a dialog box.
 
