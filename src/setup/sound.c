@@ -70,7 +70,7 @@ static char *cfg_extension[] = { "cfg", NULL };
 // Config file variables:
 
 int snd_sfxdevice = SNDDEVICE_SB;
-int snd_musicdevice = SNDDEVICE_GENMIDI;
+int snd_musicdevice = SNDDEVICE_SB;
 int snd_samplerate = 44100;
 int opl_io_port = 0x388;
 int snd_cachesize = 64 * 1024 * 1024;
