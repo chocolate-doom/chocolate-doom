@@ -879,6 +879,32 @@ static void saveg_read_mobj_t(mobj_t *str)
     // specialval_t special2;
     saveg_read_specialval_t(&str->special2);
 
+    // Now we have a bunch of hacks to try to NULL out special values
+    // where special[12] contained a mobj_t pointer that isn't valid
+    // any more. This isn't in Vanilla but at least it stops the game
+    // from crashing.
+
+    switch (str->type)
+    {
+        // Gas pods use special2.m to point to the pod generator
+        // that made it.
+        case MT_POD:
+            str->special2.m = NULL;
+            break;
+
+        // Several thing types use special1.m to mean 'target':
+        case MT_MACEFX4:     // A_DeathBallImpact
+        case MT_WHIRLWIND:   // A_WhirlwindSeek
+        case MT_MUMMYFX1:    // A_MummyFX1Seek
+        case MT_HORNRODFX2:  // A_SkullRodPL2Seek
+        case MT_PHOENIXFX1:  // A_PhoenixPuff
+            str->special1.m = NULL;
+            break;
+
+        default:
+            break;
+    }
+
     // int health;
     str->health = SV_ReadLong();
 
