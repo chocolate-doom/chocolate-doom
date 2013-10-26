@@ -2567,9 +2567,17 @@ void A_SkullPop(mobj_t * actor)
     mo->player = player;
     mo->health = actor->health;
     mo->angle = actor->angle;
-    player->mo = mo;
-    player->lookdir = 0;
-    player->damagecount = 32;
+
+    // fraggle: This check wasn't originally here in the Vanilla Heretic
+    // source, causing crashes if the player respawns before this
+    // function is called.
+
+    if (player != NULL)
+    {
+        player->mo = mo;
+        player->lookdir = 0;
+        player->damagecount = 32;
+    }
 }
 
 //----------------------------------------------------------------------------
