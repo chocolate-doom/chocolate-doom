@@ -2060,6 +2060,15 @@ void I_InitGraphics(void)
     I_InitWindowIcon();
 #endif
 
+    // Warning to OS X users... though they might never see it :(
+#ifdef __MACOSX__
+    if (fullscreen)
+    {
+        printf("Some old versions of OS X might crash in fullscreen mode.\n"
+               "If this happens to you, switch back to windowed mode.\n");
+    }
+#endif
+
     //
     // Enter into graphics mode.
     //
@@ -2221,5 +2230,14 @@ void I_BindVideoVariables(void)
             screen_bpp = 32;
         }
     }
+#endif
+
+    // Disable fullscreen by default on OS X, as there is an SDL bug
+    // where some old versions of OS X (<= Snow Leopard) crash.
+
+#ifdef __MACOSX__
+    fullscreen = 0;
+    screen_width = 800;
+    screen_height = 600;
 #endif
 }

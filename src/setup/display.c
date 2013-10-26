@@ -743,4 +743,13 @@ void BindDisplayVariables(void)
         }
     }
 #endif
+
+    // Disable fullscreen by default on OS X, as there is an SDL bug
+    // where some old versions of OS X (<= Snow Leopard) crash.
+
+#ifdef __MACOSX__
+    fullscreen = 0;
+    screen_width = 800;
+    screen_height = 600;
+#endif
 }
