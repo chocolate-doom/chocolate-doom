@@ -50,10 +50,14 @@ typedef enum
     WARP_MAPxy,
 } warptype_t;
 
-// Fallback IWAD if none are found to be installed
+// Fallback IWADs to use if no IWADs are detected.
 
-static iwad_t fallback_iwad = { "doom2.wad", doom2, commercial, "Doom II" };
-static iwad_t *fallback_iwad_list[2] = { &fallback_iwad, NULL };
+static iwad_t fallback_iwads[] = {
+    { "doom.wad",     doom,     commercial,  "Doom" },
+    { "heretic.wad",  heretic,  retail,      "Heretic" },
+    { "hexen.wad",    hexen,    commercial,  "Hexen" },
+    { "strife1.wad",  strife,   commercial,  "Strife" },
+};
 
 // Array of IWADs found to be installed
 
@@ -520,6 +524,31 @@ static void UpdateWarpType(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     UpdateSkillButton();
 }
 
+// Get an IWAD list with a default fallback IWAD that is appropriate
+// for the game we are configuring (matches gamemission global variable).
+
+static iwad_t **GetFallbackIwadList(void)
+{
+    static iwad_t *fallback_iwad_list[2];
+    unsigned int i;
+
+    // Default to use if we don't find something better.
+
+    fallback_iwad_list[0] = &fallback_iwads[0];
+    fallback_iwad_list[1] = NULL;
+
+    for (i = 0; i < arrlen(fallback_iwads); ++i)
+    {
+        if (gamemission == fallback_iwads[i].mission)
+        {
+            fallback_iwad_list[0] = &fallback_iwads[i];
+            break;
+        }
+    }
+
+    return fallback_iwad_list;
+}
+
 static txt_widget_t *IWADSelector(void)
 {
     txt_dropdown_list_t *dropdown;
@@ -528,7 +557,7 @@ static txt_widget_t *IWADSelector(void)
     unsigned int i;
 
     // Find out what WADs are installed
-    
+
     found_iwads = GetIwads();
 
     // Build a list of the descriptions for all installed IWADs
@@ -546,7 +575,7 @@ static txt_widget_t *IWADSelector(void)
 
     if (num_iwads == 0)
     {
-        found_iwads = fallback_iwad_list;
+        found_iwads = GetFallbackIwadList();
         num_iwads = 1;
     }
 
