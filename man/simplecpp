@@ -217,7 +217,7 @@ def read_block(stream, ignore):
 				func(arg)
 		else:
 			if not ignore:
-				for key, value in defines.iteritems():
+				for key, value in defines.items():
 					if isinstance(value, str):
 						line = line.replace(key, value)
 				print(line)
