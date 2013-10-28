@@ -151,9 +151,8 @@ static txt_font_t *FontForName(char *name)
 
 static void ChooseFont(void)
 {
-    SDL_Rect **modes;
+    const SDL_VideoInfo *info;
     char *env;
-    int i;
 
     // Allow normal selection to be overridden from an environment variable:
 
@@ -169,14 +168,14 @@ static void ChooseFont(void)
         }
     }
 
-    // Check all modes
+    // Get desktop resolution:
 
-    modes = SDL_ListModes(NULL, SDL_FULLSCREEN);
+    info = SDL_GetVideoInfo();
 
     // If in doubt and we can't get a list, always prefer to
     // fall back to the normal font:
 
-    if (modes == NULL || modes == (SDL_Rect **) -1 || *modes == NULL)
+    if (info == NULL)
     {
 #ifdef _WIN32_WCE
         font = &small_font;
@@ -186,24 +185,22 @@ static void ChooseFont(void)
         return;
     }
 
-    // Scan through the list of modes. If we find no modes that are at
-    // least 640x480 in side, default to the small font. If we find one
-    // mode that is at least 1920x1080, this is a modern high-resolution
-    // display, and we can use the large font.
+    // On tiny low-res screens (eg. palmtops) use the small font.
+    // If the screen resolution is at least 1920x1080, this is
+    // a modern high-resolution display, and we can use the
+    // large font.
 
-    font = &small_font;
-
-    for (i=0; modes[i] != NULL; ++i)
+    if (info->current_w < 640 || info->current_h < 480)
     {
-        if (modes[i]->w >= 1920 && modes[i]->h >= 1080)
-        {
-            font = &large_font;
-            break;
-        }
-        else if (modes[i]->w >= 640 && modes[i]->h >= 480)
-        {
-            font = &main_font;
-        }
+        font = &small_font;
+    }
+    else if (info->current_w >= 1920 && info->current_h >= 1080)
+    {
+        font = &large_font;
+    }
+    else
+    {
+        font = &main_font;
     }
 }
 
