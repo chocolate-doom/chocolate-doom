@@ -122,6 +122,34 @@ static SDL_Color ega_colors[] =
 
 #endif
 
+#ifdef _WIN32
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+// Examine system DPI settings to determine whether to use the large font.
+
+static int Win32_UseLargeFont(void)
+{
+    HDC hdc = GetDC(NULL);
+    int dpix;
+
+    if (!hdc)
+    {
+        return 0;
+    }
+
+    dpix = GetDeviceCaps(hdc, LOGPIXELSX);
+    ReleaseDC(NULL, hdc);
+
+    // 144 is the DPI when using "150%" scaling. If the user has this set
+    // then consider this an appropriate threshold for using the large font.
+
+    return dpix >= 144;
+}
+
+#endif
+
 static txt_font_t *FontForName(char *name)
 {
     if (!strcmp(name, "small"))
@@ -194,10 +222,20 @@ static void ChooseFont(void)
     {
         font = &small_font;
     }
+#ifdef _WIN32
+    // On Windows we can use the system DPI settings to make a
+    // more educated guess about whether to use the large font.
+
+    else if (Win32_UseLargeFont())
+    {
+        font = &large_font;
+    }
+#else
     else if (info->current_w >= 1920 && info->current_h >= 1080)
     {
         font = &large_font;
     }
+#endif
     else
     {
         font = &main_font;
