@@ -214,7 +214,8 @@ endif
 
 EXTRA_DIST =                        \
         icon.c                      \
-        doom-screensaver.desktop.in
+        doom-screensaver.desktop.in \
+        manifest.xml
 
 appdir = $(prefix)/share/applications
 app_DATA = @PROGRAM_PREFIX@doom.desktop
