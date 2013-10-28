@@ -1586,9 +1586,19 @@ boolean M_Responder (event_t* ev)
 	    if (savegamestrings[saveSlot][0])
 		M_DoSave(saveSlot);
 	    break;
-				
+
 	  default:
-	    // Entering a character - use the 'ch' value, not the key
+            // This is complicated.
+            // Vanilla has a bug where the shift key is ignored when entering
+            // a savegame name. If vanilla_keyboard_mapping is on, we want
+            // to emulate this bug by using 'data1'. But if it's turned off,
+            // it implies the user doesn't care about Vanilla emulation: just
+            // use the correct 'data2'.
+
+            if (vanilla_keyboard_mapping)
+            {
+                ch = key;
+            }
 
             ch = toupper(ch);
 
