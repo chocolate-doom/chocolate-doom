@@ -16,7 +16,7 @@ SETUP_BINARIES = @PROGRAM_PREFIX@doom-setup$(EXEEXT)    \
                  @PROGRAM_PREFIX@hexen-setup$(EXEEXT)   \
                  @PROGRAM_PREFIX@strife-setup$(EXEEXT)
 
-execgames_DATA = $(SETUP_BINARIES)
+execgames_SCRIPTS = $(SETUP_BINARIES)
 
 AM_CFLAGS = -I$(top_builddir)/textscreen            \
             -I$(top_builddir)/opl                   \
