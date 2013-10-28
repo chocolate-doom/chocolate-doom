@@ -1,4 +1,4 @@
-AC_INIT(Chocolate Doom, 2.0.0-beta1, fraggle@gmail.com, chocolate-doom)
+AC_INIT(Chocolate Doom, 2.0.0-beta2, fraggle@gmail.com, chocolate-doom)
 
 PACKAGE_SHORTDESC="Conservative Doom source port"
 PACKAGE_COPYRIGHT="Copyright (C) 1993-2013"
