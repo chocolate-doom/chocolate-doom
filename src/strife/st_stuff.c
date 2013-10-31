@@ -97,13 +97,13 @@
 //       or into the frame buffer?
 
 // AMMO number pos.
-// haleyjd 09/01/10: [STRIFE] Adjusted.
+// haleyjd 20100901: [STRIFE] Adjusted.
 #define ST_AMMOWIDTH            3
 #define ST_AMMOX                311
 #define ST_AMMOY                162
 
 // HEALTH number pos.
-// haleyjd 09/01/10: [STRIFE] Adjusted.
+// haleyjd 20100901: [STRIFE] Adjusted.
 #define ST_HEALTHWIDTH          3
 #define ST_HEALTHX              79
 #define ST_HEALTHY              162
@@ -134,9 +134,9 @@ static const int st_wforammo[NUMAMMO] = { 3,  3,  2,  3,   3,   2,   3   };
 // Dimensions given in characters.
 #define ST_MSGWIDTH             52
 
-// haleyjd 08/31/10: [STRIFE] 
+// haleyjd 20100831: [STRIFE] 
 // * Removed faces.
-// haleyjd 09/01/10:
+// haleyjd 20100901:
 // * Removed DOOM pre-beta cruft.
 // * Removed deathmatch frags/arms-related stuff.
 // * Removed arms panel stuff.
@@ -191,7 +191,7 @@ static int              st_lastammo;
 static int              st_lastarmortype;
 static int              st_lasthealth;
 
-// haleyjd 09/01/10: [STRIFE] sbar -> invback
+// haleyjd 20100901: [STRIFE] sbar -> invback
 // main inventory background and other bits
 static patch_t*         invback;     // main bar
 static patch_t*         stback;      // multiplayer background
@@ -219,7 +219,7 @@ static char *invammonames[NUMAMMO] =
     "I_GRN2"
 };
 
-// haleyjd 09/01/10: [STRIFE] Replaced tallnum, shortnum w/inv fonts
+// haleyjd 20100901: [STRIFE] Replaced tallnum, shortnum w/inv fonts
 // 0-9, green numbers
 static patch_t*         invfontg[10];
 
@@ -368,7 +368,7 @@ boolean ST_Responder(event_t* ev)
     if(ev->type != ev_keydown)
         return false;
 
-    // haleyjd 09/27/10: No input allowed when the player is dead
+    // haleyjd 20100927: No input allowed when the player is dead
     if(plyr->mo->health <= 0)
         return false;
 
@@ -680,8 +680,8 @@ boolean ST_Responder(event_t* ev)
 
         map = (buf[0] - '0') * 10 + buf[1] - '0';
 
-        // haleyjd 09/01/10: Removed Chex Quest stuff.
-        // haleyjd 09/15/10: Removed retail/registered/shareware stuff
+        // haleyjd 20100901: Removed Chex Quest stuff.
+        // haleyjd 20100915: Removed retail/registered/shareware stuff
 
         // haleyjd 20130301: different bounds in v1.31
         // Ohmygod - this is not going to work.
@@ -835,9 +835,9 @@ void ST_Ticker (void)
         }
     }
 
-    // haleyjd 09/01/10: [STRIFE] Keys are handled on a popup
-    // haleyjd 08/31/10: [STRIFE] No face widget
-    // haleyjd 09/01/10: [STRIFE] Armor, weapons, frags, etc. handled elsewhere
+    // haleyjd 20100901: [STRIFE] Keys are handled on a popup
+    // haleyjd 20100831: [STRIFE] No face widget
+    // haleyjd 20100901: [STRIFE] Armor, weapons, frags, etc. handled elsewhere
 
     // haleyjd: This is from the PRE-BETA! Left here because it amuses me ;)
     // get rid of chat window if up because of message
@@ -850,7 +850,7 @@ static int st_palette = 0;
 //
 // ST_doPaletteStuff
 //
-// haleyjd 08/31/10: [STRIFE]
+// haleyjd 20100831: [STRIFE]
 // * Changed radsuit palette handling for Strife nukagecount.
 // * All other logic verified to be unmodified.
 //
@@ -892,7 +892,7 @@ void ST_doPaletteStuff(void)
 
         palette += STARTBONUSPALS;
     }
-    // haleyjd 08/31/10: [STRIFE] Flash green when in nukage, not when has
+    // haleyjd 20100831: [STRIFE] Flash green when in nukage, not when has
     // an environment suit (a breathing sound is played to indicate that
     // instead).
     else if ( plyr->nukagecount > 16*TICRATE || 
@@ -922,7 +922,7 @@ void ST_drawWidgets(boolean refresh)
 //
 // ST_drawNumFontY
 //
-// haleyjd 09/19/10: [STRIFE] New function
+// haleyjd 20100919: [STRIFE] New function
 // Draws a small yellow number for inventory etc.
 //
 void ST_drawNumFontY(int x, int y, int num)
@@ -941,7 +941,7 @@ void ST_drawNumFontY(int x, int y, int num)
 //
 // ST_drawNumFontY2
 //
-// haleyjd 09/19/10: [STRIFE] New function
+// haleyjd 20100919: [STRIFE] New function
 // As above, but turns negative numbers into zero.
 //
 void ST_drawNumFontY2(int x, int y, int num)
@@ -963,7 +963,7 @@ void ST_drawNumFontY2(int x, int y, int num)
 //
 // ST_drawLine
 //
-// haleyjd 09/20/10: [STRIFE] New function
+// haleyjd 20100920: [STRIFE] New function
 // Basic horizontal line drawing routine used for the health bars.
 //
 void ST_drawLine(int x, int y, int len, int color)
@@ -982,7 +982,7 @@ void ST_drawLine(int x, int y, int len, int color)
 //
 // ST_doRefresh
 //
-// haleyjd 09/20/10: Evidence more than suggests that Rogue moved all status bar
+// haleyjd 20100920: Evidence more than suggests that Rogue moved all status bar
 // drawing down to this function.
 //
 void ST_doRefresh(void)
@@ -992,7 +992,7 @@ void ST_doRefresh(void)
     {
         int firstinventory, icon_x, num_x, i, numdrawn;
 
-        // haleyjd 09/19/10: No backscreen caching in Strife.
+        // haleyjd 20100919: No backscreen caching in Strife.
         //V_UseBuffer(st_backing_screen);
 
         // TODO: only sometimes drawing?
@@ -1010,7 +1010,10 @@ void ST_doRefresh(void)
         V_DrawPatch(ST_X, ST_Y, invback);
 
         // draw multiplayer armor backdrop if netgame
-        if(netgame)
+        // haleyjd 20131031: BUG - vanilla is accessing a NULL pointer here when
+        // playing back netdemos! It doesn't appear to draw anything, and there 
+        // is no apparent ill effect on gameplay, so the best we can do is check.
+        if(netgame && stback)
             V_DrawPatch(ST_X, 173, stback);
 
         if(plyr->inventorycursor >= 6)
@@ -1050,22 +1053,22 @@ void ST_doRefresh(void)
             ST_drawNumFontY(num_x, 191, plyr->inventory[i].amount);
         }
 
-        // haleyjd 09/19/10: Draw sigil icon
+        // haleyjd 20100919: Draw sigil icon
         if(plyr->weaponowned[wp_sigil])
             V_DrawPatch(253, 175, invsigil[plyr->sigiltype]);
 
-        // haleyjd 09/19/10: Draw ammo
+        // haleyjd 20100919: Draw ammo
         if(st_lastammo < NUMAMMO)
             V_DrawPatch(290, 180, invammo[st_lastammo]);
 
-        // haleyjd 09/19/10: Draw armor
+        // haleyjd 20100919: Draw armor
         if(plyr->armortype)
         {
             V_DrawPatch(2, 177, invarmor[plyr->armortype - 1]);
             ST_drawNumFontY(20, 191, plyr->armorpoints);
         }
 
-        // haleyjd 09/20/10: Draw life bars.
+        // haleyjd 20100920: Draw life bars.
         {
             int barlength;
             int lifecolor1;
@@ -1111,7 +1114,7 @@ void ST_doRefresh(void)
             }
         } // end local-scope block
 
-        // haleyjd 09/19/10: nope, not in Strife.
+        // haleyjd 20100919: nope, not in Strife.
         //V_RestoreBuffer();
         //V_CopyRect(ST_X, 0, st_backing_screen, ST_WIDTH, ST_HEIGHT, ST_X, ST_Y);
     }
@@ -1317,7 +1320,7 @@ static boolean ST_drawKeysPopup(void)
 //
 // ST_DrawExternal
 //
-// haleyjd 09/01/10: [STRIFE] New function.
+// haleyjd 20100901: [STRIFE] New function.
 // * Draws external portions of the status bar such the top bar and popups.
 //
 boolean ST_DrawExternal(void)
@@ -1343,7 +1346,7 @@ boolean ST_DrawExternal(void)
     if(!st_displaypopup)
         return false;
 
-    // villsa [STRIFE] added 09/26/10
+    // villsa [STRIFE] added 20100926
     if(st_showobjective)
     {
         V_DrawXlaPatch(0, 56, invpbak2);
@@ -1437,7 +1440,7 @@ static void ST_loadUnloadGraphics(load_callback_t callback)
     int         i;
     char        namebuf[9];
 
-    // haleyjd 09/01/10: [STRIFE]
+    // haleyjd 20100901: [STRIFE]
     // Load the numbers, green and yellow
     for (i=0;i<10;i++)
     {
@@ -1448,7 +1451,7 @@ static void ST_loadUnloadGraphics(load_callback_t callback)
         callback(namebuf, &invfonty[i]);
     }
 
-    // haleyjd 09/19/10: load Sigil patches
+    // haleyjd 20100919: load Sigil patches
     if(!isdemoversion)
     {
         for(i = 0; i < 5; i++)
@@ -1466,16 +1469,16 @@ static void ST_loadUnloadGraphics(load_callback_t callback)
     callback(DEH_String("I_ARM2"), &invarmor[0]);
     callback(DEH_String("I_ARM1"), &invarmor[1]);
 
-    // haleyjd 09/19/10: [STRIFE] 
+    // haleyjd 20100919: [STRIFE] 
     // * No face, but there is this patch, which appears behind the armor
     DEH_snprintf(namebuf, 9, "STBACK0%d", consoleplayer + 1);
     if(netgame)
         callback(namebuf, &stback);
     
-    // 09/01/10:
+    // 20100901:
     // * Removed all unused DOOM stuff (arms, numbers, %, etc).
 
-    // haleyjd 09/01/10: [STRIFE]: stbar -> invback, added new patches
+    // haleyjd 20100901: [STRIFE]: stbar -> invback, added new patches
     // status bar background bits
     callback(DEH_String("INVBACK"),  &invback);
     callback(DEH_String("INVTOP"),   &invtop);
@@ -1524,7 +1527,7 @@ void ST_unloadData(void)
 //
 // ST_initData
 //
-// haleyjd 09/01/10: [STRIFE]
+// haleyjd 20100901: [STRIFE]
 // * Removed prebeta cruft, face stuff, keyboxes, and oldwe
 //
 void ST_initData(void)
@@ -1609,7 +1612,7 @@ void ST_Init (void)
 {
     ST_loadData();
 
-    // haleyjd 09/19/10: This is not used by Strife. More memory for voices!
+    // haleyjd 20100919: This is not used by Strife. More memory for voices!
     //st_backing_screen = (byte *) Z_Malloc(ST_WIDTH * ST_HEIGHT, PU_STATIC, 0);
 }
 
