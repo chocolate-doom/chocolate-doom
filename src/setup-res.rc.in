@@ -1,6 +1,6 @@
 1 ICON "../data/setup.ico"
 
-CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "setup/setup-manifest.xml"
+1 24 MOVEABLE PURE "setup/setup-manifest.xml"
 
 1 VERSIONINFO
 PRODUCTVERSION @WINDOWS_RC_VERSION@
