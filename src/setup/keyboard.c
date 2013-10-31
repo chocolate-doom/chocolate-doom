@@ -199,11 +199,14 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
         AddKeyControl(table, "Look down", &key_lookdown);
         AddKeyControl(table, "Center view", &key_lookcenter);
 
-        AddSectionLabel(table, "Flying", true);
+        if (gamemission == heretic || gamemission == hexen)
+        {
+            AddSectionLabel(table, "Flying", true);
 
-        AddKeyControl(table, "Fly up", &key_flyup);
-        AddKeyControl(table, "Fly down", &key_flydown);
-        AddKeyControl(table, "Fly center", &key_flycenter);
+            AddKeyControl(table, "Fly up", &key_flyup);
+            AddKeyControl(table, "Fly down", &key_flydown);
+            AddKeyControl(table, "Fly center", &key_flycenter);
+        }
 
         AddSectionLabel(table, "Inventory", true);
 
