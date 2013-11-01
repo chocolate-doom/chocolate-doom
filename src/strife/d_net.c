@@ -271,7 +271,7 @@ void D_CheckNetGame(void)
     }
 
     DEH_printf("startmap: %i, skill: %i, enemies: %i, random: %i\n",
-               startmap, startskill, !nomonsters, 0 /* ??? */);
+               startmap, startskill, !nomonsters, randomparm);
 
 
     DEH_printf("player %i of %i (%i nodes)\n",
