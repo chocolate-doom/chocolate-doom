@@ -1247,7 +1247,7 @@ G_CheckSpot
 // Spawns a player at one of the random death match spots 
 // called at level load and each death 
 //
-// [STRIFE] Verified unmodified
+// [STRIFE]: Modified exit message to match binary.
 //
 void G_DeathMatchSpawnPlayer (int playernum) 
 { 
@@ -1256,7 +1256,7 @@ void G_DeathMatchSpawnPlayer (int playernum)
 
     selections = deathmatch_p - deathmatchstarts; 
     if (selections < 4) 
-        I_Error ("Only %i deathmatch spots, 4 required", selections); 
+        I_Error ("Only %i deathmatch spots, at least 4 required!", selections); 
 
     for (j=0 ; j<20 ; j++) 
     { 
@@ -1276,7 +1276,7 @@ void G_DeathMatchSpawnPlayer (int playernum)
 //
 // G_LoadPath
 //
-// haleyjd 10/03/10: [STRIFE] New function
+// haleyjd 20101003: [STRIFE] New function
 // Sets loadpath based on the map and "savepathtemp"
 //
 void G_LoadPath(int map)
@@ -1354,7 +1354,7 @@ void G_ScreenShot (void)
     gameaction = ga_screenshot; 
 } 
 
-// haleyjd 08/23/2010: [STRIFE] Removed par times.
+// haleyjd 20100823: [STRIFE] Removed par times.
 
 //
 // G_DoCompleted 
@@ -1365,7 +1365,7 @@ extern char*	pagename;
 //
 // G_RiftExitLevel
 //
-// haleyjd 08/24/10: [STRIFE] New function
+// haleyjd 20100824: [STRIFE] New function
 // * Called from some exit linedefs to exit to a specific riftspot in the 
 //   given destination map.
 //
@@ -1394,7 +1394,7 @@ void G_RiftExitLevel(int map, int spot, angle_t angle)
 //
 // G_Exit2
 //
-// haleyjd 10/03/10: [STRIFE] New function.
+// haleyjd 20101003: [STRIFE] New function.
 // No xrefs to this, doesn't seem to be used. Could have gotten inlined
 // somewhere but I haven't seen it.
 //
@@ -1409,7 +1409,7 @@ void G_Exit2(int dest, angle_t angle)
 //
 // G_ExitLevel
 //
-// haleyjd 08/24/10: [STRIFE]:
+// haleyjd 20100824: [STRIFE]:
 // * Default to next map in numeric order; init destmap and riftdest.
 //
 void G_ExitLevel (int dest) 
@@ -1422,7 +1422,7 @@ void G_ExitLevel (int dest)
 } 
 
 /*
-// haleyjd 08/23/2010: [STRIFE] No secret exits in Strife.
+// haleyjd 20100823: [STRIFE] No secret exits in Strife.
 // Here's for the german edition.
 void G_SecretExitLevel (void) 
 {
@@ -1439,7 +1439,7 @@ void G_SecretExitLevel (void)
 //
 // G_StartFinale
 //
-// haleyjd 09/21/10: [STRIFE] New function.
+// haleyjd 20100921: [STRIFE] New function.
 // This replaced G_SecretExitLevel in Strife. I don't know that it's actually
 // used anywhere in the game, but it *is* usable in mods via linetype 124,
 // W1 Start Finale.
@@ -1452,7 +1452,7 @@ void G_StartFinale(void)
 //
 // G_DoCompleted
 //
-// haleyjd 08/23/10: [STRIFE]:
+// haleyjd 20100823: [STRIFE]:
 // * Removed G_PlayerFinishLevel and just sets some powerup states.
 // * Removed Chex, as not relevant to Strife.
 // * Removed DOOM level transfer logic 
@@ -1491,7 +1491,7 @@ void G_DoCompleted (void)
 } 
 
 
-// haleyjd 08/24/10: [STRIFE] No secret exits.
+// haleyjd 20100824: [STRIFE] No secret exits.
 /*
 //
 // G_WorldDone 
@@ -1525,7 +1525,7 @@ void G_WorldDone (void)
 //
 // G_RiftPlayer
 //
-// haleyjd 08/24/10: [STRIFE] New function
+// haleyjd 20100824: [STRIFE] New function
 // Teleports the player to the appropriate rift spot.
 //
 void G_RiftPlayer(void)
@@ -1543,7 +1543,7 @@ void G_RiftPlayer(void)
 //
 // G_RiftCheat
 //
-// haleyjd 08/24/10: [STRIFE] New function
+// haleyjd 20100824: [STRIFE] New function
 // Called from the cheat code to jump to a rift spot.
 //
 boolean G_RiftCheat(int riftSpotNum)
@@ -1556,7 +1556,7 @@ boolean G_RiftCheat(int riftSpotNum)
 //
 // G_DoWorldDone
 //
-// haleyjd 08/24/10: [STRIFE] Added destmap -> gamemap set.
+// haleyjd 20100824: [STRIFE] Added destmap -> gamemap set.
 //
 void G_DoWorldDone (void) 
 {        
@@ -1604,7 +1604,7 @@ void G_DoWorldDone (void)
 //
 // G_DoWorldDone2
 //
-// haleyjd 10/03/10: [STRIFE] New function. No xrefs; unused.
+// haleyjd 20101003: [STRIFE] New function. No xrefs; unused.
 //
 void G_DoWorldDone2(void)
 {
@@ -1616,7 +1616,7 @@ void G_DoWorldDone2(void)
 //
 // G_ReadCurrent
 //
-// haleyjd 10/03/10: [STRIFE] New function.
+// haleyjd 20101003: [STRIFE] New function.
 // Reads the "CURRENT" file from the given path and then sets it to
 // gamemap.
 //
@@ -1654,8 +1654,7 @@ void R_ExecuteSetViewSize (void);
 
 char	savename[256];
 
-// [STRIFE]: No such function, at least in v1.2
-// STRIFE-TODO: Does this come back in v1.31?
+// [STRIFE]: No such function.
 /*
 void G_LoadGame (char* name) 
 { 
@@ -1664,7 +1663,7 @@ void G_LoadGame (char* name)
 } 
 */
  
-// haleyjd 09/28/10: [STRIFE] VERSIONSIZE == 8
+// haleyjd 20100928: [STRIFE] VERSIONSIZE == 8
 #define VERSIONSIZE             8
 
 void G_DoLoadGame (boolean userload) 
@@ -1728,7 +1727,7 @@ void G_DoLoadGame (boolean userload)
 //
 // G_WriteSaveName
 //
-// haleyjd 2010103: [STRIFE] New function
+// haleyjd 20101003: [STRIFE] New function
 //
 // Writes the character name to the NAME file.
 //
@@ -1885,7 +1884,7 @@ int     d_map;
 // Can be called by the startup code or the menu task,
 // consoleplayer, displayplayer, playeringame[] should be set. 
 //
-// haleyjd 09/22/10: [STRIFE] Removed episode parameter
+// haleyjd 20100922: [STRIFE] Removed episode parameter
 //
 void G_DeferedInitNew(skill_t skill, int map)
 { 
@@ -1919,7 +1918,7 @@ void G_DoNewGame (void)
 //
 // G_InitNew
 //
-// haleyjd 08/24/10: [STRIFE]:
+// haleyjd 20100824: [STRIFE]:
 // * Added riftdest initialization
 // * Removed episode parameter
 //
