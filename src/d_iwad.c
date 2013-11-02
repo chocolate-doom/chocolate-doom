@@ -337,6 +337,14 @@ static void CheckDOSDefaults(void)
     AddIWADDir("\\doom");               // Shareware / Registered Doom
     AddIWADDir("\\dooms");              // Shareware versions
     AddIWADDir("\\doomsw");
+
+    AddIWADDir("\\heretic");            // Heretic
+    AddIWADDir("\\hrtic_se");           // Heretic Shareware from Quake disc
+
+    AddIWADDir("\\hexen");              // Hexen
+    AddIWADDir("\\hexendk");            // Hexen Deathkings of the Dark Citadel
+
+    AddIWADDir("\\strife");             // Strife
 }
 
 #endif
