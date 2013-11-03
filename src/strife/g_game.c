@@ -2047,8 +2047,8 @@ G_InitNew
 
     // Set the sky to use.
     //
-    // Note: This IS broken, but it is how Vanilla Doom behaves.  
-    // See http://doom.wikia.com/wiki/Sky_never_changes_in_Doom_II.
+    // Note: This IS broken, but it is how Vanilla Doom behaves.
+    // See http://doomwiki.org/wiki/Sky_never_changes_in_Doom_II.
     //
     // Because we set the sky here at the start of a game, not at the
     // start of a level, the sky texture never changes unless we
