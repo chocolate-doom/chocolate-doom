@@ -244,6 +244,8 @@ void D_DoomMain(void)
     startmap = 1;
     gamemode = commercial;
 
+    I_PrintBanner(PACKAGE_STRING);
+
     // Initialize subsystems
 
     ST_Message("V_Init: allocate screens.\n");
