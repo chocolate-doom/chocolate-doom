@@ -1174,7 +1174,9 @@ boolean MN_Responder(event_t * event)
         return true;
     }
 
-    if (event->data1 != KEY_RSHIFT && event->type != ev_keydown)
+    // Only care about keypresses beyond this point.
+
+    if (event->type != ev_keydown)
     {
         return false;
     }

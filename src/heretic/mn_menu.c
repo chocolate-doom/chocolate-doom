@@ -1079,10 +1079,11 @@ boolean MN_Responder(event_t * event)
         return true;
     }
 
-    if (event->data1 != KEY_RSHIFT && event->type != ev_keydown)
+    if (event->type != ev_keydown)
     {
-        return (false);
+        return false;
     }
+
     key = event->data1;
     charTyped = event->data2;
 
