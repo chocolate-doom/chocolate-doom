@@ -1577,6 +1577,16 @@ void D_DoomMain (void)
     {
         printf("BFG Edition: Using INTERPIC instead of TITLEPIC.\n");
         bfgedition = true;
+
+        // BFG Edition changes the names of the secret levels to
+        // censor the Wolfenstein references. It also has an extra
+        // secret level (MAP33). In Vanilla Doom (meaning the DOS
+        // version), MAP33 overflows into the Plutonia level names
+        // array, so HUSTR_33 is actually PHUSTR_1.
+
+        DEH_AddStringReplacement(HUSTR_31, "level 31: idkfa");
+        DEH_AddStringReplacement(HUSTR_32, "level 32: keen");
+        DEH_AddStringReplacement(PHUSTR_1, "level 33: betray");
     }
 
     if (M_CheckParmWithArgs("-statdump", 1))
