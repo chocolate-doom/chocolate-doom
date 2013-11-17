@@ -203,10 +203,25 @@ line parameter to specify the Chex Quest IWAD file:
 
    LONG_EXE_NAME -iwad chex.wad
 
+#endif
 == Installing upgrades ==
 
+#if DOOM
 LONG_GAME_NAME requires a version 1.9 IWAD file.  Generally, if you
 install a recent version of Doom you should have a version 1.9 IWAD.
+#elif HERETIC
+LONG_GAME_NAME requires a version 1.2 (Shareware) or version 1.3
+(Shadow of the Serpent Riders) IWAD file.  Generally, if you install a
+recent version of Heretic you should have a version 1.2 or 1.3 IWAD.
+#elif HEXEN
+LONG_GAME_NAME requires a version 1.1 IWAD file.  Generally, if you
+install a recent version of Hexen you should have a version 1.1 IWAD.
+#elif STRIFE
+LONG_GAME_NAME requires a version 1.2 IWAD file.  Generally, if you
+install a recent version of Strife you should have a version 1.2 IWAD.
+Please note that Strife version 1.3 does not update the IWAD, if your
+version.txt file says "STRIFE(TM) VERSION 1.3", you are still good.
+#endif
 However, if you are installing from a very old CD version or from
 floppy disks, you might find you have an older version.
 
@@ -215,12 +230,22 @@ will exit at the title screen before the demo starts, with the message
 "Demo is from a different game version!".  If this happens, your IWAD
 file is out of date and you need to upgrade.
 
-Id Software released upgrade patches that will update your game to
-version 1.9.  The following sites have the patches:
+Upgrade patches are available that will update your game to the latest
+version, the following sites have the patches:
 
-  http://www.doomworld.com/files/patches.shtml
+#if DOOM
   http://www.doom2.net/doom2/utils.html
+  ftp://ftp.idsoftware.com/idstuff/doom
   ftp://ftp.idsoftware.com/idstuff/doom2
+#elif HERETIC
+  ftp://ftp.idsoftware.com/idstuff/heretic
+#elif HEXEN
+  ftp://ftp.idsoftware.com/idstuff/hexen
+#elif STRIFE
+  ftp://ftp.fu-berlin.de/pc/games/idgames/roguestuff
+#endif
+
+Please see http://doomwiki.org/wiki/Game_patch for more information.
 
 #if _WIN32
 As the patches are binary patches that run as DOS executables, on
@@ -231,7 +256,6 @@ As the patches are binary patches that run as DOS executables, you
 will need to use a DOS emulator (such as DOSBox) to run them.
 #endif
 
-#endif
 == Music support ==
 
 LONG_GAME_NAME includes OPL emulation code that accurately reproduces
