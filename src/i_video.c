@@ -756,6 +756,14 @@ void I_GetEvent(void)
                 event.type = ev_keyup;
                 event.data1 = TranslateKey(&sdlevent.key.keysym);
 
+                // data2 is just initialized to zero for ev_keyup.
+                // For ev_keydown it's the shifted Unicode character
+                // that was typed, but if something wants to detect
+                // key releases it should do so based on data1
+                // (key ID), not the printable char.
+
+                event.data2 = 0;
+
                 if (event.data1 != 0)
                 {
                     D_PostEvent(&event);
