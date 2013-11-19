@@ -53,7 +53,7 @@ typedef enum
 // Fallback IWADs to use if no IWADs are detected.
 
 static iwad_t fallback_iwads[] = {
-    { "doom.wad",     doom,     commercial,  "Doom" },
+    { "doom.wad",     doom,     registered,  "Doom" },
     { "heretic.wad",  heretic,  retail,      "Heretic" },
     { "hexen.wad",    hexen,    commercial,  "Hexen" },
     { "strife1.wad",  strife,   commercial,  "Strife" },
