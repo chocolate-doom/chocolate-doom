@@ -1070,9 +1070,17 @@ void A_FireMacePL1B(player_t * player, pspdef_t * psp)
     }
     player->ammo[am_mace] -= USE_MACE_AMMO_1;
     pmo = player->mo;
+
+    // Vanilla bug here:
+    // Original code here looks like:
+    //   (pmo->flags2 & MF2_FEETARECLIPPED != 0)
+    // C's operator precedence interprets this as:
+    //   (pmo->flags2 & (MF2_FEETARECLIPPED != 0))
+    // Which simplifies to:
+    //   (pmo->flags2 & 1)
     ball = P_SpawnMobj(pmo->x, pmo->y, pmo->z + 28 * FRACUNIT
-                       - FOOTCLIPSIZE * ((pmo->flags2 & MF2_FEETARECLIPPED) !=
-                                         0), MT_MACEFX2);
+                       - FOOTCLIPSIZE * (pmo->flags2 & 1), MT_MACEFX2);
+
     ball->momz = 2 * FRACUNIT + ((player->lookdir) << (FRACBITS - 5));
     angle = pmo->angle;
     ball->target = pmo;

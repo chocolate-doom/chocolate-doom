@@ -988,11 +988,18 @@ boolean P_UseArtifact(player_t * player, artitype_t arti)
             break;
         case arti_firebomb:
             angle = player->mo->angle >> ANGLETOFINESHIFT;
+
+            // Vanilla bug here:
+            // Original code here looks like:
+            //   (player->mo->flags2 & MF2_FEETARECLIPPED != 0),
+            // Which under C's operator precedence is:
+            //   (player->mo->flags2 & (MF2_FEETARECLIPPED != 0)),
+            // Which simplifies to:
+            //   (player->mo->flags2 & 1),
             mo = P_SpawnMobj(player->mo->x + 24 * finecosine[angle],
                              player->mo->y + 24 * finesine[angle],
                              player->mo->z -
-                             15 * FRACUNIT *
-                             (player->mo->flags2 & MF2_FEETARECLIPPED) != 0,
+                             15 * FRACUNIT * (player->mo->flags2 & 1),
                              MT_FIREBOMB);
             mo->target = player->mo;
             break;
