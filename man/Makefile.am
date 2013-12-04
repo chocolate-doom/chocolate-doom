@@ -15,8 +15,7 @@ strifedocsdir = $(prefix)/share/doc/@PROGRAM_PREFIX@strife
 
 if HAVE_PYTHON
 
-man_MANS = chocolate-server.6       \
-           chocolate-setup.6        \
+GENERATED_MAN_PAGES =               \
            chocolate-doom.6         \
            default.cfg.5            \
            chocolate-doom.cfg.5     \
@@ -30,12 +29,16 @@ man_MANS = chocolate-server.6       \
            strife.cfg.5             \
            chocolate-strife.cfg.5
 
+man_MANS = chocolate-server.6       \
+           chocolate-setup.6        \
+           $(GENERATED_MAN_PAGES)
+
 doomdocs_DATA    = INSTALL.doom    CMDLINE.doom
 hereticdocs_DATA = INSTALL.heretic CMDLINE.heretic
 hexendocs_DATA   = INSTALL.hexen   CMDLINE.hexen
 strifedocs_DATA  = INSTALL.strife  CMDLINE.strife
 
-CLEANFILES = $(man_MANS) $(doomdocs_DATA) $(hereticdocs_DATA) \
+CLEANFILES = $(GENERATED_MAN_PAGES) $(doomdocs_DATA) $(hereticdocs_DATA) \
              $(hexendocs_DATA) $(strifedocs_DATA)
 
 chocolate-doom.6: ../src $(MANPAGE_GEN_FILES)
