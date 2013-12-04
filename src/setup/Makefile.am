@@ -30,6 +30,8 @@ EXTRA_DIST=                                     \
 appdir = $(prefix)/share/applications
 app_DATA = @PROGRAM_PREFIX@setup.desktop
 
+CLEANFILES = $(app_DATA)
+
 @PROGRAM_PREFIX@setup.desktop : setup.desktop
 	cp setup.desktop $@
 

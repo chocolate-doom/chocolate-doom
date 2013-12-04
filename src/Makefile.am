@@ -229,6 +229,8 @@ screensaver_DATA = @PROGRAM_PREFIX@doom-screensaver.desktop
 @PROGRAM_PREFIX@doom-screensaver.desktop: doom-screensaver.desktop
 	cp doom-screensaver.desktop $@
 
+CLEANFILES = $(execgames_SCRIPTS) $(app_DATA) $(screensaver_DATA)
+
 .rc.o:
 	$(WINDRES) $< -o $@
 %.o : %.rc

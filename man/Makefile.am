@@ -35,6 +35,9 @@ hereticdocs_DATA = INSTALL.heretic CMDLINE.heretic
 hexendocs_DATA   = INSTALL.hexen   CMDLINE.hexen
 strifedocs_DATA  = INSTALL.strife  CMDLINE.strife
 
+CLEANFILES = $(man_MANS) $(doomdocs_DATA) $(hereticdocs_DATA) \
+             $(hexendocs_DATA) $(strifedocs_DATA)
+
 chocolate-doom.6: ../src $(MANPAGE_GEN_FILES)
 	./docgen -g doom -m doom.template ../src ../src/doom > $@
 
