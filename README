@@ -74,10 +74,9 @@ Here are some examples:
    may also encounter Vanilla Doom bugs; these are intentionally
    present; see the NOT-BUGS file for more information.
 
-   New bug reports can be submitted to the Chocolate Doom bug tracker
-   on Sourceforge.  See:
+   New bug reports can be submitted to the issue tracker on Github:
 
-     http://sourceforge.net/projects/chocolate-doom
+     https://github.com/fragglet/chocolate-doom/issues
 
  * Source code patches are welcome, but please follow the style
    guidelines - see the file named HACKING included with the source
