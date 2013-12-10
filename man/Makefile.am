@@ -8,10 +8,10 @@ MANPAGE_GEN_FILES = environ.man           \
                     default.cfg.template  \
                     extra.cfg.template
 
-doomdocsdir = $(prefix)/share/doc/@PROGRAM_PREFIX@doom
-hereticdocsdir = $(prefix)/share/doc/@PROGRAM_PREFIX@heretic
-hexendocsdir = $(prefix)/share/doc/@PROGRAM_PREFIX@hexen
-strifedocsdir = $(prefix)/share/doc/@PROGRAM_PREFIX@strife
+doomdocsdir = ${docdir}/../${PROGRAM_PREFIX}doom
+hereticdocsdir = ${docdir}/../${PROGRAM_PREFIX}heretic
+hexendocsdir = ${docdir}/../${PROGRAM_PREFIX}hexen
+strifedocsdir = ${docdir}/../${PROGRAM_PREFIX}strife
 
 if HAVE_PYTHON
 
