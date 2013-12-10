@@ -1,7 +1,7 @@
 
 SUBDIRS = doom heretic hexen strife setup
 
-execgamesdir = $(prefix)/games
+execgamesdir = ${exec_prefix}/games
 
 execgames_PROGRAMS = @PROGRAM_PREFIX@doom     \
                      @PROGRAM_PREFIX@heretic  \
