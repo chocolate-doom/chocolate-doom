@@ -6,7 +6,7 @@ else
     have_INSTALL=false
 fi
 
-mkdir autotools
+mkdir -p autotools
 
 aclocal
 autoheader
