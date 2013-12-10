@@ -6,7 +6,7 @@ and adds additional features and settings to it.
 == Configuration File ==
 
 Competition Doom also provides some extra settings.
-These are stored in a file named 'cndoom.cfg' with a prefix cn_.
+These are stored in a file named 'cndoom.cfg' with a prefix cn.
 
 Detailed explanation about each setting:
 
