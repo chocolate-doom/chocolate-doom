@@ -40,6 +40,7 @@ extern screen_mode_t mode_scale_2x;
 extern screen_mode_t mode_scale_3x;
 extern screen_mode_t mode_scale_4x;
 extern screen_mode_t mode_scale_5x;
+extern screen_mode_t mode_scale_10x;
 
 // Vertically stretched modes (320x200 -> multiples of 320x240)
 
@@ -48,6 +49,7 @@ extern screen_mode_t mode_stretch_2x;
 extern screen_mode_t mode_stretch_3x;
 extern screen_mode_t mode_stretch_4x;
 extern screen_mode_t mode_stretch_5x;
+extern screen_mode_t mode_stretch_9x;
 
 // Horizontally squashed modes (320x200 -> multiples of 256x200)
 
@@ -56,6 +58,7 @@ extern screen_mode_t mode_squash_2x;
 extern screen_mode_t mode_squash_3x;
 extern screen_mode_t mode_squash_4x;
 extern screen_mode_t mode_squash_5x;
+extern screen_mode_t mode_squash_10x;
 
 #endif /* #ifndef __I_SCALE__ */
 

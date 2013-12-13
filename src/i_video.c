@@ -109,6 +109,7 @@ static screen_mode_t *screen_modes[] = {
     &mode_scale_3x,
     &mode_scale_4x,
     &mode_scale_5x,
+	&mode_scale_10x,
 };
 
 // Aspect ratio corrected modes (4:3 ratio)
@@ -122,6 +123,7 @@ static screen_mode_t *screen_modes_corrected[] = {
     &mode_stretch_3x,
     &mode_stretch_4x,
     &mode_stretch_5x,
+	&mode_stretch_9x,
 
     // Horizontally squashed modes (320x200 -> 256x200 and multiples)
 
@@ -130,6 +132,7 @@ static screen_mode_t *screen_modes_corrected[] = {
     &mode_squash_3x,
     &mode_squash_4x,
     &mode_squash_5x,
+	&mode_squash_10x,
 };
 
 // SDL video driver name
