@@ -296,7 +296,259 @@ screen_mode_t mode_scale_5x = {
     false,
 };
 
-// 10x Scale (3200x2000, 4K)
+// 6x scale (1920x1200)
+
+static boolean I_Scale6x(int x1, int y1, int x2, int y2)
+{
+    byte *bufp, *screenp, *screenp2, *screenp3, *screenp4, *screenp5, *screenp6;
+    int x, y;
+    int multi_pitch;
+
+    multi_pitch = dest_pitch * 6;
+    bufp = src_buffer + y1 * SCREENWIDTH + x1;
+    screenp = (byte *) dest_buffer + (y1 * dest_pitch + x1) * 6;
+    screenp2 = screenp + dest_pitch;
+    screenp3 = screenp + dest_pitch * 2;
+    screenp4 = screenp + dest_pitch * 3;
+    screenp5 = screenp + dest_pitch * 4;
+    screenp6 = screenp + dest_pitch * 5;
+
+    for (y=y1; y<y2; ++y)
+    {
+        byte *sp, *sp2, *sp3, *sp4, *sp5, *sp6, *bp;
+        sp = screenp;
+        sp2 = screenp2;
+        sp3 = screenp3;
+        sp4 = screenp4;
+        sp5 = screenp5;
+		sp6 = screenp6;
+        bp = bufp;
+
+        for (x=x1; x<x2; ++x)
+        {
+            *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;
+            *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp;
+            *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp;
+            *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp;
+            *sp5++ = *bp; *sp5++ = *bp; *sp5++ = *bp; *sp5++ = *bp; *sp5++ = *bp; *sp5++ = *bp;
+            *sp6++ = *bp; *sp6++ = *bp; *sp6++ = *bp; *sp6++ = *bp; *sp6++ = *bp; *sp6++ = *bp;
+            ++bp;
+        }
+        screenp += multi_pitch;
+        screenp2 += multi_pitch;
+        screenp3 += multi_pitch;
+        screenp4 += multi_pitch;
+        screenp5 += multi_pitch;
+        screenp6 += multi_pitch;
+        bufp += SCREENWIDTH;
+    }
+
+    return true;
+}
+
+screen_mode_t mode_scale_6x = {
+    SCREENWIDTH * 6, SCREENHEIGHT * 6,
+    NULL,
+    I_Scale6x,
+    false,
+};
+
+// 7x scale (2240x1400)
+
+static boolean I_Scale7x(int x1, int y1, int x2, int y2)
+{
+    byte *bufp, *screenp, *screenp2, *screenp3, *screenp4, *screenp5, *screenp6, *screenp7;
+    int x, y;
+    int multi_pitch;
+
+    multi_pitch = dest_pitch * 7;
+    bufp = src_buffer + y1 * SCREENWIDTH + x1;
+    screenp = (byte *) dest_buffer + (y1 * dest_pitch + x1) * 7;
+    screenp2 = screenp + dest_pitch;
+    screenp3 = screenp + dest_pitch * 2;
+    screenp4 = screenp + dest_pitch * 3;
+    screenp5 = screenp + dest_pitch * 4;
+    screenp6 = screenp + dest_pitch * 5;
+    screenp7 = screenp + dest_pitch * 6;
+
+    for (y=y1; y<y2; ++y)
+    {
+        byte *sp, *sp2, *sp3, *sp4, *sp5, *sp6, *sp7, *bp;
+        sp = screenp;
+        sp2 = screenp2;
+        sp3 = screenp3;
+        sp4 = screenp4;
+        sp5 = screenp5;
+		sp6 = screenp6;
+		sp7 = screenp7;
+        bp = bufp;
+
+        for (x=x1; x<x2; ++x)
+        {
+            *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;
+            *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp;
+            *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp;
+            *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp;
+            *sp5++ = *bp; *sp5++ = *bp; *sp5++ = *bp; *sp5++ = *bp; *sp5++ = *bp; *sp5++ = *bp; *sp5++ = *bp;
+            *sp6++ = *bp; *sp6++ = *bp; *sp6++ = *bp; *sp6++ = *bp; *sp6++ = *bp; *sp6++ = *bp; *sp6++ = *bp;
+            *sp7++ = *bp; *sp7++ = *bp; *sp7++ = *bp; *sp7++ = *bp; *sp7++ = *bp; *sp7++ = *bp; *sp7++ = *bp;
+            ++bp;
+        }
+        screenp += multi_pitch;
+        screenp2 += multi_pitch;
+        screenp3 += multi_pitch;
+        screenp4 += multi_pitch;
+        screenp5 += multi_pitch;
+        screenp6 += multi_pitch;
+        screenp7 += multi_pitch;
+        bufp += SCREENWIDTH;
+    }
+
+    return true;
+}
+
+screen_mode_t mode_scale_7x = {
+    SCREENWIDTH * 7, SCREENHEIGHT * 7,
+    NULL,
+    I_Scale7x,
+    false,
+};
+
+// 8x scale (2560x1600)
+
+static boolean I_Scale8x(int x1, int y1, int x2, int y2)
+{
+    byte *bufp, *screenp, *screenp2, *screenp3, *screenp4, *screenp5, *screenp6, *screenp7, *screenp8;
+    int x, y;
+    int multi_pitch;
+
+    multi_pitch = dest_pitch * 8;
+    bufp = src_buffer + y1 * SCREENWIDTH + x1;
+    screenp = (byte *) dest_buffer + (y1 * dest_pitch + x1) * 8;
+    screenp2 = screenp + dest_pitch;
+    screenp3 = screenp + dest_pitch * 2;
+    screenp4 = screenp + dest_pitch * 3;
+    screenp5 = screenp + dest_pitch * 4;
+    screenp6 = screenp + dest_pitch * 5;
+    screenp7 = screenp + dest_pitch * 6;
+    screenp8 = screenp + dest_pitch * 7;
+
+    for (y=y1; y<y2; ++y)
+    {
+        byte *sp, *sp2, *sp3, *sp4, *sp5, *sp6, *sp7, *sp8, *bp;
+        sp = screenp;
+        sp2 = screenp2;
+        sp3 = screenp3;
+        sp4 = screenp4;
+        sp5 = screenp5;
+		sp6 = screenp6;
+		sp7 = screenp7;
+		sp8 = screenp8;
+        bp = bufp;
+
+        for (x=x1; x<x2; ++x)
+        {
+            *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;
+            *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp;
+            *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp;
+            *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp;
+            *sp5++ = *bp; *sp5++ = *bp; *sp5++ = *bp; *sp5++ = *bp; *sp5++ = *bp; *sp5++ = *bp; *sp5++ = *bp; *sp5++ = *bp;
+            *sp6++ = *bp; *sp6++ = *bp; *sp6++ = *bp; *sp6++ = *bp; *sp6++ = *bp; *sp6++ = *bp; *sp6++ = *bp; *sp6++ = *bp;
+            *sp7++ = *bp; *sp7++ = *bp; *sp7++ = *bp; *sp7++ = *bp; *sp7++ = *bp; *sp7++ = *bp; *sp7++ = *bp; *sp7++ = *bp;
+            *sp8++ = *bp; *sp8++ = *bp; *sp8++ = *bp; *sp8++ = *bp; *sp8++ = *bp; *sp8++ = *bp; *sp8++ = *bp; *sp8++ = *bp;
+            ++bp;
+        }
+        screenp += multi_pitch;
+        screenp2 += multi_pitch;
+        screenp3 += multi_pitch;
+        screenp4 += multi_pitch;
+        screenp5 += multi_pitch;
+        screenp6 += multi_pitch;
+        screenp7 += multi_pitch;
+        screenp8 += multi_pitch;
+        bufp += SCREENWIDTH;
+    }
+
+    return true;
+}
+
+screen_mode_t mode_scale_8x = {
+    SCREENWIDTH * 8, SCREENHEIGHT * 8,
+    NULL,
+    I_Scale8x,
+    false,
+};
+
+// 9x scale (2880x1800)
+
+static boolean I_Scale9x(int x1, int y1, int x2, int y2)
+{
+    byte *bufp, *screenp, *screenp2, *screenp3, *screenp4, *screenp5, *screenp6, *screenp7, *screenp8, *screenp9;
+    int x, y;
+    int multi_pitch;
+
+    multi_pitch = dest_pitch * 9;
+    bufp = src_buffer + y1 * SCREENWIDTH + x1;
+    screenp = (byte *) dest_buffer + (y1 * dest_pitch + x1) * 9;
+    screenp2 = screenp + dest_pitch;
+    screenp3 = screenp + dest_pitch * 2;
+    screenp4 = screenp + dest_pitch * 3;
+    screenp5 = screenp + dest_pitch * 4;
+    screenp6 = screenp + dest_pitch * 5;
+    screenp7 = screenp + dest_pitch * 6;
+    screenp8 = screenp + dest_pitch * 7;
+    screenp9 = screenp + dest_pitch * 8;
+
+    for (y=y1; y<y2; ++y)
+    {
+        byte *sp, *sp2, *sp3, *sp4, *sp5, *sp6, *sp7, *sp8, *sp9, *bp;
+        sp = screenp;
+        sp2 = screenp2;
+        sp3 = screenp3;
+        sp4 = screenp4;
+        sp5 = screenp5;
+		sp6 = screenp6;
+		sp7 = screenp7;
+		sp8 = screenp8;
+		sp9 = screenp9;
+        bp = bufp;
+
+        for (x=x1; x<x2; ++x)
+        {
+            *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;  *sp++ = *bp;
+            *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp; *sp2++ = *bp;
+            *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp; *sp3++ = *bp;
+            *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp; *sp4++ = *bp;
+            *sp5++ = *bp; *sp5++ = *bp; *sp5++ = *bp; *sp5++ = *bp; *sp5++ = *bp; *sp5++ = *bp; *sp5++ = *bp; *sp5++ = *bp; *sp5++ = *bp;
+            *sp6++ = *bp; *sp6++ = *bp; *sp6++ = *bp; *sp6++ = *bp; *sp6++ = *bp; *sp6++ = *bp; *sp6++ = *bp; *sp6++ = *bp; *sp6++ = *bp;
+            *sp7++ = *bp; *sp7++ = *bp; *sp7++ = *bp; *sp7++ = *bp; *sp7++ = *bp; *sp7++ = *bp; *sp7++ = *bp; *sp7++ = *bp; *sp7++ = *bp;
+            *sp8++ = *bp; *sp8++ = *bp; *sp8++ = *bp; *sp8++ = *bp; *sp8++ = *bp; *sp8++ = *bp; *sp8++ = *bp; *sp8++ = *bp; *sp8++ = *bp;
+            *sp9++ = *bp; *sp9++ = *bp; *sp9++ = *bp; *sp9++ = *bp; *sp9++ = *bp; *sp9++ = *bp; *sp9++ = *bp; *sp9++ = *bp; *sp9++ = *bp;
+            ++bp;
+        }
+        screenp += multi_pitch;
+        screenp2 += multi_pitch;
+        screenp3 += multi_pitch;
+        screenp4 += multi_pitch;
+        screenp5 += multi_pitch;
+        screenp6 += multi_pitch;
+        screenp7 += multi_pitch;
+        screenp8 += multi_pitch;
+        screenp9 += multi_pitch;
+        bufp += SCREENWIDTH;
+    }
+
+    return true;
+}
+
+screen_mode_t mode_scale_9x = {
+    SCREENWIDTH * 9, SCREENHEIGHT * 9,
+    NULL,
+    I_Scale9x,
+    false,
+};
+
+// 10x Scale (3200x2000)
 
 static boolean I_Scale10x(int x1, int y1, int x2, int y2)
 {
@@ -306,7 +558,7 @@ static boolean I_Scale10x(int x1, int y1, int x2, int y2)
 
     multi_pitch = dest_pitch * 10;
     bufp = src_buffer + y1 * SCREENWIDTH + x1;
-    screenp = (byte *) dest_buffer + (y1 * dest_pitch + x1) * 5;
+    screenp = (byte *) dest_buffer + (y1 * dest_pitch + x1) * 10;
     screenp2 = screenp + dest_pitch;
     screenp3 = screenp + dest_pitch * 2;
     screenp4 = screenp + dest_pitch * 3;
@@ -1092,6 +1344,513 @@ screen_mode_t mode_stretch_5x = {
     false,
 };
 
+static inline void WriteLine6x(byte *dest, byte *src)
+{
+    int x;
+
+    for (x=0; x<SCREENWIDTH; ++x)
+    {
+        dest[0] = *src;
+        dest[1] = *src;
+        dest[2] = *src;
+        dest[3] = *src;
+        dest[4] = *src;
+        dest[5] = *src;
+        dest += 6;
+        ++src;
+    }
+}
+
+static inline void WriteBlendedLine6x(byte *dest, byte *src1, byte *src2, 
+                               byte *stretch_table)
+{
+    int x;
+    int val;
+
+    for (x=0; x<SCREENWIDTH; ++x)
+    {
+        val = stretch_table[*src1 * 256 + *src2];
+        dest[0] = val;
+        dest[1] = val;
+        dest[2] = val;
+        dest[3] = val;
+        dest[4] = val;
+        dest[5] = val;
+        dest += 6;
+        ++src1;
+        ++src2;
+    }
+} 
+
+// 6x stretch (1920x1440)
+
+static boolean I_Stretch6x(int x1, int y1, int x2, int y2)
+{
+    byte *bufp, *screenp;
+    int y;
+
+    // Only works with full screen update
+
+    if (x1 != 0 || y1 != 0 || x2 != SCREENWIDTH || y2 != SCREENHEIGHT)
+    {
+        return false;
+    }    
+
+    // Need to byte-copy from buffer into the screen buffer
+
+    bufp = src_buffer + y1 * SCREENWIDTH + x1;
+    screenp = (byte *) dest_buffer + y1 * dest_pitch + x1;
+
+    // For every 5 lines of src_buffer, 36 lines are written to dest_buffer.
+    // (200 -> 1440)
+
+    for (y=0; y<SCREENHEIGHT; y += 5)
+    {
+        // 100% line 0 x7
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        // 20% line 0, 80% line 1
+        WriteBlendedLine6x(screenp, bufp, bufp + SCREENWIDTH, stretch_tables[0]);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+        // 100% line 1 x6
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        // 40% line 1, 60% line 2
+        WriteBlendedLine6x(screenp, bufp, bufp + SCREENWIDTH, stretch_tables[1]);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+        // 100% line 2 x6
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        // 60% line 2, 40% line 3
+        WriteBlendedLine6x(screenp, bufp + SCREENWIDTH, bufp, stretch_tables[1]);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+        // 100% line 3 x6
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        // 80% line 3, 20% line 4
+        WriteBlendedLine6x(screenp, bufp + SCREENWIDTH, bufp, stretch_tables[0]);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+        // 100% line 4 x7
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine6x(screenp, bufp);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+    }
+
+    return true;
+}
+
+screen_mode_t mode_stretch_6x = {
+    SCREENWIDTH * 6, SCREENHEIGHT_4_3 * 6,
+    I_InitStretchTables,
+    I_Stretch6x,
+    false,
+};
+
+static inline void WriteLine7x(byte *dest, byte *src)
+{
+    int x;
+
+    for (x=0; x<SCREENWIDTH; ++x)
+    {
+        dest[0] = *src;
+        dest[1] = *src;
+        dest[2] = *src;
+        dest[3] = *src;
+        dest[4] = *src;
+        dest[5] = *src;
+        dest[6] = *src;
+        dest += 7;
+        ++src;
+    }
+}
+
+static inline void WriteBlendedLine7x(byte *dest, byte *src1, byte *src2, 
+                               byte *stretch_table)
+{
+    int x;
+    int val;
+
+    for (x=0; x<SCREENWIDTH; ++x)
+    {
+        val = stretch_table[*src1 * 256 + *src2];
+        dest[0] = val;
+        dest[1] = val;
+        dest[2] = val;
+        dest[3] = val;
+        dest[4] = val;
+        dest[5] = val;
+        dest[6] = val;
+        dest += 7;
+        ++src1;
+        ++src2;
+    }
+} 
+
+// 7x stretch (2240x1680)
+
+static boolean I_Stretch7x(int x1, int y1, int x2, int y2)
+{
+    byte *bufp, *screenp;
+    int y;
+
+    // Only works with full screen update
+
+    if (x1 != 0 || y1 != 0 || x2 != SCREENWIDTH || y2 != SCREENHEIGHT)
+    {
+        return false;
+    }    
+
+    // Need to byte-copy from buffer into the screen buffer
+
+    bufp = src_buffer + y1 * SCREENWIDTH + x1;
+    screenp = (byte *) dest_buffer + y1 * dest_pitch + x1;
+
+    // For every 5 lines of src_buffer, 42 lines are written to dest_buffer.
+    // (200 -> 1680)
+
+    for (y=0; y<SCREENHEIGHT; y += 5)
+    {
+        // 100% line 0 x8
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        // 40% line 0, 60% line 1
+        WriteBlendedLine7x(screenp, bufp, bufp + SCREENWIDTH, stretch_tables[1]);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+		// 100% line 1 x7
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        // 80% line 1, 20% line 2
+        WriteBlendedLine7x(screenp, bufp + SCREENWIDTH, bufp, stretch_tables[0]);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+		// 100% line 2 x8
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        // 20% line 2, 80% line 3
+        WriteBlendedLine7x(screenp, bufp, bufp + SCREENWIDTH, stretch_tables[0]);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+		// 100% line 3 x7
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        // 60% line 3, 40% line 4
+        WriteBlendedLine7x(screenp, bufp + SCREENWIDTH, bufp, stretch_tables[1]);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+        // 100% line 4 x8
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine7x(screenp, bufp);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+    }
+
+    return true;
+}
+
+screen_mode_t mode_stretch_7x = {
+    SCREENWIDTH * 7, SCREENHEIGHT_4_3 * 7,
+    I_InitStretchTables,
+    I_Stretch7x,
+    false,
+};
+
+static inline void WriteLine8x(byte *dest, byte *src)
+{
+    int x;
+
+    for (x=0; x<SCREENWIDTH; ++x)
+    {
+        dest[0] = *src;
+        dest[1] = *src;
+        dest[2] = *src;
+        dest[3] = *src;
+        dest[4] = *src;
+        dest[5] = *src;
+        dest[6] = *src;
+        dest[7] = *src;
+        dest += 8;
+        ++src;
+    }
+}
+
+static inline void WriteBlendedLine8x(byte *dest, byte *src1, byte *src2, 
+                               byte *stretch_table)
+{
+    int x;
+    int val;
+
+    for (x=0; x<SCREENWIDTH; ++x)
+    {
+        val = stretch_table[*src1 * 256 + *src2];
+        dest[0] = val;
+        dest[1] = val;
+        dest[2] = val;
+        dest[3] = val;
+        dest[4] = val;
+        dest[5] = val;
+        dest[6] = val;
+        dest[7] = val;
+        dest += 8;
+        ++src1;
+        ++src2;
+    }
+} 
+
+// 8x stretch (2560x1920)
+
+static boolean I_Stretch8x(int x1, int y1, int x2, int y2)
+{
+    byte *bufp, *screenp;
+    int y;
+
+    // Only works with full screen update
+
+    if (x1 != 0 || y1 != 0 || x2 != SCREENWIDTH || y2 != SCREENHEIGHT)
+    {
+        return false;
+    }    
+
+    // Need to byte-copy from buffer into the screen buffer
+
+    bufp = src_buffer + y1 * SCREENWIDTH + x1;
+    screenp = (byte *) dest_buffer + y1 * dest_pitch + x1;
+
+    // For every 5 lines of src_buffer, 48 lines are written to dest_buffer.
+    // (200 -> 1920)
+
+    for (y=0; y<SCREENHEIGHT; y += 5)
+    {
+        // 100% line 0 x9
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        // 60% line 0, 40% line 1
+        WriteBlendedLine8x(screenp, bufp + SCREENWIDTH, bufp, stretch_tables[1]);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+		// 100% line 1 x9
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+		// 20% line 1, 80% line 2
+        WriteBlendedLine8x(screenp, bufp, bufp + SCREENWIDTH, stretch_tables[0]);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+		// 100% line 2 x8
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+		// 80% line 2, 20% line 3
+        WriteBlendedLine8x(screenp, bufp + SCREENWIDTH, bufp, stretch_tables[0]);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+		// 100% line 3 x9
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+		// 40% line 3, 60% line 4
+        WriteBlendedLine8x(screenp, bufp, bufp + SCREENWIDTH, stretch_tables[1]);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+		// 100% line 4 x9
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch;
+        WriteLine8x(screenp, bufp);
+        screenp += dest_pitch; bufp += SCREENWIDTH;
+    }
+
+    return true;
+}
+
+screen_mode_t mode_stretch_8x = {
+    SCREENWIDTH * 8, SCREENHEIGHT_4_3 * 8,
+    I_InitStretchTables,
+    I_Stretch8x,
+    false,
+};
+
 static inline void WriteLine9x(byte *dest, byte *src)
 {
     int x;
@@ -1727,6 +2486,452 @@ screen_mode_t mode_squash_5x = {
     false,
 };
 
+#define DRAW_PIXEL6 \
+        *dest++ = *dest2++ = *dest3++ = *dest4++ = *dest5++ = *dest6++ = c
+
+static inline void WriteSquashedLine6x(byte *dest, byte *src)
+{
+    int x;
+    int c;
+    byte *dest2, *dest3, *dest4, *dest5, *dest6;
+
+    dest2 = dest + dest_pitch;
+    dest3 = dest + dest_pitch * 2;
+    dest4 = dest + dest_pitch * 3;
+    dest5 = dest + dest_pitch * 4;
+    dest6 = dest + dest_pitch * 5;
+
+    for (x=0; x<SCREENWIDTH; )
+    {
+        // 1536 / 320 = 4.8, 4.8 * 5 = 24
+
+        // 100% pixel 0 x4
+        c = src[0];
+        DRAW_PIXEL6;
+        DRAW_PIXEL6;
+        DRAW_PIXEL6;
+        DRAW_PIXEL6;
+		// 80% pixel 0, 20% pixel 1, 4.6 remainder
+        c = stretch_tables[0][src[1] * 256 + src[0]];
+        DRAW_PIXEL6;
+		// 100% pixel 1 x4
+		c = src[1];
+        DRAW_PIXEL6;
+        DRAW_PIXEL6;
+        DRAW_PIXEL6;
+        DRAW_PIXEL6;
+		// 60% pixel 1, 40% pixel 2, 4.4 remainder
+        c = stretch_tables[1][src[2] * 256 + src[1]];
+        DRAW_PIXEL6;
+		// 100% pixel 2 x4
+		c = src[2];
+        DRAW_PIXEL6;
+        DRAW_PIXEL6;
+        DRAW_PIXEL6;
+        DRAW_PIXEL6;
+		// 40% pixel 2, 60% pixel 3, 4.2 remainder
+        c = stretch_tables[1][src[2] * 256 + src[3]];
+        DRAW_PIXEL6;
+		// 100% pixel 3 x4
+		c = src[3];
+        DRAW_PIXEL6;
+        DRAW_PIXEL6;
+        DRAW_PIXEL6;
+        DRAW_PIXEL6;
+		// 20% pixel 3, 80% pixel 4, 4.0 remainder
+        c = stretch_tables[0][src[3] * 256 + src[4]];
+        DRAW_PIXEL6;
+		// 100% pixel 4 x4
+		c = src[4];
+        DRAW_PIXEL6;
+        DRAW_PIXEL6;
+        DRAW_PIXEL6;
+        DRAW_PIXEL6;
+
+        x += 5;
+        src += 5;
+    }
+}
+
+//
+// 6x squashed (1536x1200)
+//
+
+static boolean I_Squash6x(int x1, int y1, int x2, int y2)
+{
+    byte *bufp, *screenp;
+    int y;
+
+    // Only works with full screen update
+
+    if (x1 != 0 || y1 != 0 || x2 != SCREENWIDTH || y2 != SCREENHEIGHT)
+    {
+        return false;
+    }    
+
+    bufp = src_buffer;
+    screenp = (byte *) dest_buffer;
+
+    for (y=0; y<SCREENHEIGHT; ++y) 
+    {
+        WriteSquashedLine6x(screenp, bufp);
+
+        screenp += dest_pitch * 6;
+        bufp += SCREENWIDTH;
+    }
+
+    return true;
+}
+
+screen_mode_t mode_squash_6x = {
+    SCREENWIDTH_4_3 * 6, SCREENHEIGHT * 6,
+    I_InitStretchTables,
+    I_Squash6x,
+    false,
+};
+
+#define DRAW_PIXEL7 \
+        *dest++ = *dest2++ = *dest3++ = *dest4++ = *dest5++ = *dest6++ = *dest7++ = c
+
+static inline void WriteSquashedLine7x(byte *dest, byte *src)
+{
+    int x;
+    int c;
+    byte *dest2, *dest3, *dest4, *dest5, *dest6, *dest7;
+
+    dest2 = dest + dest_pitch;
+    dest3 = dest + dest_pitch * 2;
+    dest4 = dest + dest_pitch * 3;
+    dest5 = dest + dest_pitch * 4;
+    dest6 = dest + dest_pitch * 5;
+	dest7 = dest + dest_pitch * 6;
+
+    for (x=0; x<SCREENWIDTH; )
+    {
+        // 1792 / 320 = 5.6, 5.6 * 5 = 28
+
+        // 100% pixel 0 x5
+        c = src[0];
+        DRAW_PIXEL7;
+        DRAW_PIXEL7;
+        DRAW_PIXEL7;
+        DRAW_PIXEL7;
+        DRAW_PIXEL7;
+		// 60% pixel 0, 40% pixel 1, 5.2 remainder
+        c = stretch_tables[1][src[1] * 256 + src[0]];
+        DRAW_PIXEL7;
+       // 100% pixel 1 x5
+        c = src[1];
+        DRAW_PIXEL7;
+        DRAW_PIXEL7;
+        DRAW_PIXEL7;
+        DRAW_PIXEL7;
+        DRAW_PIXEL7;
+		// 20% pixel 1, 80% pixel 2, 4.8 remainder
+        c = stretch_tables[0][src[1] * 256 + src[2]];
+        DRAW_PIXEL7;
+		// 100% pixel 2 x4
+        c = src[2];
+        DRAW_PIXEL7;
+        DRAW_PIXEL7;
+        DRAW_PIXEL7;
+        DRAW_PIXEL7;
+		// 80% pixel 2, 20% pixel 3, 5.4 remainder
+        c = stretch_tables[0][src[3] * 256 + src[2]];
+        DRAW_PIXEL7;
+		// 100% pixel 3 x5
+        c = src[3];
+        DRAW_PIXEL7;
+        DRAW_PIXEL7;
+        DRAW_PIXEL7;
+        DRAW_PIXEL7;
+        DRAW_PIXEL7;
+		// 40% pixel 3, 60% pixel 4, 5.0 remainder
+        c = stretch_tables[1][src[3] * 256 + src[4]];
+        DRAW_PIXEL7;
+		// 100% pixel 3 x5
+        c = src[4];
+        DRAW_PIXEL7;
+        DRAW_PIXEL7;
+        DRAW_PIXEL7;
+        DRAW_PIXEL7;
+        DRAW_PIXEL7;
+
+        x += 5;
+        src += 5;
+    }
+}
+
+//
+// 7x squashed (1792x1400)
+//
+
+static boolean I_Squash7x(int x1, int y1, int x2, int y2)
+{
+    byte *bufp, *screenp;
+    int y;
+
+    // Only works with full screen update
+
+    if (x1 != 0 || y1 != 0 || x2 != SCREENWIDTH || y2 != SCREENHEIGHT)
+    {
+        return false;
+    }    
+
+    bufp = src_buffer;
+    screenp = (byte *) dest_buffer;
+
+    for (y=0; y<SCREENHEIGHT; ++y) 
+    {
+        WriteSquashedLine7x(screenp, bufp);
+
+        screenp += dest_pitch * 7;
+        bufp += SCREENWIDTH;
+    }
+
+    return true;
+}
+
+screen_mode_t mode_squash_7x = {
+    SCREENWIDTH_4_3 * 7, SCREENHEIGHT * 7,
+    I_InitStretchTables,
+    I_Squash7x,
+    false,
+};
+
+#define DRAW_PIXEL8 \
+        *dest++ = *dest2++ = *dest3++ = *dest4++ = *dest5++ = *dest6++ = *dest7++ = *dest8++ = c
+
+static inline void WriteSquashedLine8x(byte *dest, byte *src)
+{
+    int x;
+    int c;
+    byte *dest2, *dest3, *dest4, *dest5, *dest6, *dest7, *dest8;
+
+    dest2 = dest + dest_pitch;
+    dest3 = dest + dest_pitch * 2;
+    dest4 = dest + dest_pitch * 3;
+    dest5 = dest + dest_pitch * 4;
+    dest6 = dest + dest_pitch * 5;
+	dest7 = dest + dest_pitch * 6;
+	dest8 = dest + dest_pitch * 7;
+
+    for (x=0; x<SCREENWIDTH; )
+    {
+        // 2048 / 320 = 6.4, 6.4 * 5 = 32
+
+        // 100% pixel 0 x6
+        c = src[0];
+        DRAW_PIXEL8;
+        DRAW_PIXEL8;
+        DRAW_PIXEL8;
+        DRAW_PIXEL8;
+        DRAW_PIXEL8;
+        DRAW_PIXEL8;
+		// 40% pixel 0, 60% pixel 1, 5.8 remainder
+        c = stretch_tables[1][src[0] * 256 + src[1]];
+        DRAW_PIXEL8;
+        // 100% pixel 1 x5
+        c = src[1];
+        DRAW_PIXEL8;
+        DRAW_PIXEL8;
+        DRAW_PIXEL8;
+        DRAW_PIXEL8;
+        DRAW_PIXEL8;
+		// 80% pixel 1, 20% pixel 2, 6.2 remainder
+        c = stretch_tables[0][src[2] * 256 + src[1]];
+        DRAW_PIXEL8;
+        // 100% pixel 2 x6
+        c = src[2];
+        DRAW_PIXEL8;
+        DRAW_PIXEL8;
+        DRAW_PIXEL8;
+        DRAW_PIXEL8;
+        DRAW_PIXEL8;
+        DRAW_PIXEL8;
+		// 20% pixel 2, 80% pixel 3, 5.6 remainder
+        c = stretch_tables[0][src[2] * 256 + src[3]];
+        DRAW_PIXEL8;
+        // 100% pixel 3 x5
+        c = src[3];
+        DRAW_PIXEL8;
+        DRAW_PIXEL8;
+        DRAW_PIXEL8;
+        DRAW_PIXEL8;
+        DRAW_PIXEL8;
+		// 60% pixel 3, 40% pixel 4, 6.0 remainder
+        c = stretch_tables[1][src[4] * 256 + src[3]];
+        DRAW_PIXEL8;
+        // 100% pixel 4 x6
+        c = src[4];
+        DRAW_PIXEL8;
+        DRAW_PIXEL8;
+        DRAW_PIXEL8;
+        DRAW_PIXEL8;
+        DRAW_PIXEL8;
+        DRAW_PIXEL8;
+
+        x += 5;
+        src += 5;
+    }
+}
+
+//
+// 8x squashed (2048x1600)
+//
+
+static boolean I_Squash8x(int x1, int y1, int x2, int y2)
+{
+    byte *bufp, *screenp;
+    int y;
+
+    // Only works with full screen update
+
+    if (x1 != 0 || y1 != 0 || x2 != SCREENWIDTH || y2 != SCREENHEIGHT)
+    {
+        return false;
+    }    
+
+    bufp = src_buffer;
+    screenp = (byte *) dest_buffer;
+
+    for (y=0; y<SCREENHEIGHT; ++y) 
+    {
+        WriteSquashedLine8x(screenp, bufp);
+
+        screenp += dest_pitch * 8;
+        bufp += SCREENWIDTH;
+    }
+
+    return true;
+}
+
+screen_mode_t mode_squash_8x = {
+    SCREENWIDTH_4_3 * 8, SCREENHEIGHT * 8,
+    I_InitStretchTables,
+    I_Squash8x,
+    false,
+};
+
+#define DRAW_PIXEL9 \
+        *dest++ = *dest2++ = *dest3++ = *dest4++ = *dest5++ = *dest6++ = *dest7++ = *dest8++ = *dest9++ = c
+
+static inline void WriteSquashedLine9x(byte *dest, byte *src)
+{
+    int x;
+    int c;
+    byte *dest2, *dest3, *dest4, *dest5, *dest6, *dest7, *dest8, *dest9;
+
+    dest2 = dest + dest_pitch;
+    dest3 = dest + dest_pitch * 2;
+    dest4 = dest + dest_pitch * 3;
+    dest5 = dest + dest_pitch * 4;
+    dest6 = dest + dest_pitch * 5;
+	dest7 = dest + dest_pitch * 6;
+	dest8 = dest + dest_pitch * 7;
+	dest9 = dest + dest_pitch * 8;
+
+    for (x=0; x<SCREENWIDTH; )
+    {
+        // 2304 / 320 = 7.2, 7.2 * 5 = 36
+
+        // 100% pixel 0 x7
+        c = src[0];
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+		// 20% pixel 0, 80% pixel 1, 6.4 remainder
+        c = stretch_tables[0][src[0] * 256 + src[1]];
+        DRAW_PIXEL9;
+        // 100% pixel 1 x6
+        c = src[1];
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+		// 40% pixel 1, 60% pixel 2, 6.6 remainder
+        c = stretch_tables[1][src[1] * 256 + src[2]];
+        DRAW_PIXEL9;
+        // 100% pixel 2 x6
+        c = src[2];
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+		// 60% pixel 2, 40% pixel 3, 6.8 remainder
+        c = stretch_tables[1][src[3] * 256 + src[2]];
+        DRAW_PIXEL9;
+        // 100% pixel 3 x6
+        c = src[3];
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+		// 80% pixel 3, 20% pixel 4, 7.0 remainder
+        c = stretch_tables[0][src[4] * 256 + src[3]];
+        DRAW_PIXEL9;
+        // 100% pixel 3 x7
+        c = src[4];
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+        DRAW_PIXEL9;
+
+        x += 5;
+        src += 5;
+    }
+}
+
+//
+// 9x squashed (2304x1800)
+//
+
+static boolean I_Squash9x(int x1, int y1, int x2, int y2)
+{
+    byte *bufp, *screenp;
+    int y;
+
+    // Only works with full screen update
+
+    if (x1 != 0 || y1 != 0 || x2 != SCREENWIDTH || y2 != SCREENHEIGHT)
+    {
+        return false;
+    }    
+
+    bufp = src_buffer;
+    screenp = (byte *) dest_buffer;
+
+    for (y=0; y<SCREENHEIGHT; ++y) 
+    {
+        WriteSquashedLine9x(screenp, bufp);
+
+        screenp += dest_pitch * 9;
+        bufp += SCREENWIDTH;
+    }
+
+    return true;
+}
+
+screen_mode_t mode_squash_9x = {
+    SCREENWIDTH_4_3 * 9, SCREENHEIGHT * 9,
+    I_InitStretchTables,
+    I_Squash9x,
+    false,
+};
+
 #define DRAW_PIXEL10 \
         *dest++ = *dest2++ = *dest3++ = *dest4++ = *dest5++ = *dest6++ = *dest7++ = *dest8++ = *dest9++ = *dest10++ = c
 
@@ -1741,31 +2946,32 @@ static inline void WriteSquashedLine10x(byte *dest, byte *src)
     dest4 = dest + dest_pitch * 3;
     dest5 = dest + dest_pitch * 4;
     dest6 = dest + dest_pitch * 5;
-    dest7 = dest + dest_pitch * 6;
-    dest8 = dest + dest_pitch * 7;
-    dest9 = dest + dest_pitch * 8;
-    dest10 = dest + dest_pitch * 9;
+	dest7 = dest + dest_pitch * 6;
+	dest8 = dest + dest_pitch * 7;
+	dest9 = dest + dest_pitch * 8;
+	dest10 = dest + dest_pitch * 9;
 
-    for (x=0; x<SCREENWIDTH; ++x)
+    for (x=0; x<SCREENWIDTH; x++)
     {
-        // Draw in blocks of 10
+        // 2304 / 320 = 8
 
-        // 100% pixel 0  x8
+        // 100% pixel 0 x8
+        c = src[0];
+        DRAW_PIXEL10;
+        DRAW_PIXEL10;
+        DRAW_PIXEL10;
+        DRAW_PIXEL10;
+        DRAW_PIXEL10;
+        DRAW_PIXEL10;
+        DRAW_PIXEL10;
+        DRAW_PIXEL10;
 
-        c = *src++;
-        DRAW_PIXEL10;
-        DRAW_PIXEL10;
-        DRAW_PIXEL10;
-        DRAW_PIXEL10;
-        DRAW_PIXEL10;
-        DRAW_PIXEL10;
-        DRAW_PIXEL10;
-        DRAW_PIXEL10;
+        src++;
     }
 }
 
 //
-// 5x squashed (2560x2000)
+// 10x squashed (2560x2000)
 //
 
 static boolean I_Squash10x(int x1, int y1, int x2, int y2)
@@ -1797,7 +3003,6 @@ static boolean I_Squash10x(int x1, int y1, int x2, int y2)
 screen_mode_t mode_squash_10x = {
     SCREENWIDTH_4_3 * 10, SCREENHEIGHT * 10,
     I_InitStretchTables,
-    I_Squash5x,
+    I_Squash10x,
     false,
 };
-

@@ -109,6 +109,10 @@ static screen_mode_t *screen_modes[] = {
     &mode_scale_3x,
     &mode_scale_4x,
     &mode_scale_5x,
+    &mode_scale_6x,
+    &mode_scale_7x,
+    &mode_scale_8x,
+    &mode_scale_9x,
 	&mode_scale_10x,
 };
 
@@ -123,6 +127,9 @@ static screen_mode_t *screen_modes_corrected[] = {
     &mode_stretch_3x,
     &mode_stretch_4x,
     &mode_stretch_5x,
+    &mode_stretch_6x,
+    &mode_stretch_7x,
+    &mode_stretch_8x,
 	&mode_stretch_9x,
 
     // Horizontally squashed modes (320x200 -> 256x200 and multiples)
@@ -132,7 +139,11 @@ static screen_mode_t *screen_modes_corrected[] = {
     &mode_squash_3x,
     &mode_squash_4x,
     &mode_squash_5x,
-	&mode_squash_10x,
+    &mode_squash_6x,
+    &mode_squash_7x,
+    &mode_squash_8x,
+    &mode_squash_9x,
+    &mode_squash_10x,
 };
 
 // SDL video driver name
