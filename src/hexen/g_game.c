@@ -152,7 +152,7 @@ int turnheld;                   // for accelerative turning
 int lookheld;
 
 
-boolean mousearray[4];
+boolean mousearray[MAX_MOUSE_BUTTONS + 1];
 boolean *mousebuttons = &mousearray[1];
         // allow [-1]
 int mousex, mousey;             // mouse values are used once
@@ -671,6 +671,59 @@ void G_DoLoadLevel(void)
     }
 }
 
+static void SetJoyButtons(unsigned int buttons_mask)
+{
+    int i;
+
+    for (i=0; i<MAX_JOY_BUTTONS; ++i)
+    {
+        int button_on = (buttons_mask & (1 << i)) != 0;
+
+        // Detect button press:
+
+        if (!joybuttons[i] && button_on)
+        {
+            // Weapon cycling:
+
+            if (i == joybprevweapon)
+            {
+                next_weapon = -1;
+            }
+            else if (i == joybnextweapon)
+            {
+                next_weapon = 1;
+            }
+        }
+
+        joybuttons[i] = button_on;
+    }
+}
+
+static void SetMouseButtons(unsigned int buttons_mask)
+{
+    int i;
+
+    for (i=0; i<MAX_MOUSE_BUTTONS; ++i)
+    {
+        unsigned int button_on = (buttons_mask & (1 << i)) != 0;
+
+        // Detect button press:
+
+        if (!mousebuttons[i] && button_on)
+        {
+            if (i == mousebprevweapon)
+            {
+                next_weapon = -1;
+            }
+            else if (i == mousebnextweapon)
+            {
+                next_weapon = 1;
+            }
+        }
+
+        mousebuttons[i] = button_on;
+    }
+}
 
 /*
 ===============================================================================
@@ -814,18 +867,13 @@ boolean G_Responder(event_t * ev)
             return (false);     // always let key up events filter down
 
         case ev_mouse:
-            mousebuttons[0] = ev->data1 & 1;
-            mousebuttons[1] = ev->data1 & 2;
-            mousebuttons[2] = ev->data1 & 4;
+            SetMouseButtons(ev->data1);
             mousex = ev->data2 * (mouseSensitivity + 5) / 10;
             mousey = ev->data3 * (mouseSensitivity + 5) / 10;
             return (true);      // eat events
 
         case ev_joystick:
-            joybuttons[0] = ev->data1 & 1;
-            joybuttons[1] = ev->data1 & 2;
-            joybuttons[2] = ev->data1 & 4;
-            joybuttons[3] = ev->data1 & 8;
+            SetJoyButtons(ev->data1);
             joyxmove = ev->data2;
             joyymove = ev->data3;
             return (true);      // eat events
