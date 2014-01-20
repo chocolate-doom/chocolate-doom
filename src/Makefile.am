@@ -7,14 +7,13 @@ execgames_PROGRAMS = @PROGRAM_PREFIX@doom     \
                      @PROGRAM_PREFIX@heretic  \
                      @PROGRAM_PREFIX@hexen    \
                      @PROGRAM_PREFIX@strife   \
-                     @PROGRAM_PREFIX@server
+                     @PROGRAM_PREFIX@server   \
+                     @PROGRAM_PREFIX@setup
 
-noinst_PROGRAMS = @PROGRAM_PREFIX@setup
-
-SETUP_BINARIES = @PROGRAM_PREFIX@doom-setup$(EXEEXT)    \
-                 @PROGRAM_PREFIX@heretic-setup$(EXEEXT) \
-                 @PROGRAM_PREFIX@hexen-setup$(EXEEXT)   \
-                 @PROGRAM_PREFIX@strife-setup$(EXEEXT)
+SETUP_BINARIES = @PROGRAM_PREFIX@doom-setup    \
+                 @PROGRAM_PREFIX@heretic-setup \
+                 @PROGRAM_PREFIX@hexen-setup   \
+                 @PROGRAM_PREFIX@strife-setup
 
 execgames_SCRIPTS = $(SETUP_BINARIES)
 
@@ -184,8 +183,8 @@ endif
 
 @PROGRAM_PREFIX@strife_LDADD = strife/libstrife.a $(EXTRA_LIBS)
 
-$(SETUP_BINARIES): @PROGRAM_PREFIX@setup$(EXEEXT)
-	cp $< $@
+$(SETUP_BINARIES): @PROGRAM_PREFIX@setup
+	$(LN_S) $< $@
 
 # Source files needed for chocolate-setup:
 
