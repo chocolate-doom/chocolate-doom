@@ -271,7 +271,7 @@ void I_UpdateSound(void)
     }
 }
 
-static void CheckVolumeSeparation(int *sep, int *vol)
+static void CheckVolumeSeparation(int *vol, int *sep)
 {
     if (*sep < 0)
     {
