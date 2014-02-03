@@ -50,7 +50,7 @@ CLEANFILES = $(GENERATED_MAN_PAGES) $(SETUP_MAN_PAGES) \
              $(hexendocs_DATA) $(strifedocs_DATA)
 
 $(SETUP_MAN_PAGES): @PROGRAM_PREFIX@setup.6
-	$(LN_S) $< $@
+	cp $< $@
 
 @PROGRAM_PREFIX@doom.6: ../src $(MANPAGE_GEN_FILES)
 	./docgen -g doom -m doom.template ../src ../src/doom > $@
