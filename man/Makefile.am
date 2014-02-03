@@ -16,39 +16,50 @@ strifedocsdir = ${docdir}/../${PROGRAM_PREFIX}strife
 if HAVE_PYTHON
 
 GENERATED_MAN_PAGES =               \
-           chocolate-doom.6         \
+           @PROGRAM_PREFIX@doom.6         \
            default.cfg.5            \
-           chocolate-doom.cfg.5     \
-           chocolate-heretic.6      \
+           @PROGRAM_PREFIX@doom.cfg.5     \
+           @PROGRAM_PREFIX@heretic.6      \
            heretic.cfg.5            \
-           chocolate-heretic.cfg.5  \
-           chocolate-hexen.6        \
+           @PROGRAM_PREFIX@heretic.cfg.5  \
+           @PROGRAM_PREFIX@hexen.6        \
            hexen.cfg.5              \
-           chocolate-hexen.cfg.5    \
-           chocolate-strife.6       \
+           @PROGRAM_PREFIX@hexen.cfg.5    \
+           @PROGRAM_PREFIX@strife.6       \
            strife.cfg.5             \
-           chocolate-strife.cfg.5
+           @PROGRAM_PREFIX@strife.cfg.5
 
-man_MANS = chocolate-server.6       \
-           chocolate-setup.6        \
-           $(GENERATED_MAN_PAGES)
+SETUP_MAN_PAGES =                          \
+           @PROGRAM_PREFIX@doom-setup.6    \
+           @PROGRAM_PREFIX@heretic-setup.6 \
+           @PROGRAM_PREFIX@hexen-setup.6   \
+           @PROGRAM_PREFIX@strife-setup.6
+
+man_MANS = @PROGRAM_PREFIX@server.6       \
+           @PROGRAM_PREFIX@setup.6        \
+           $(GENERATED_MAN_PAGES)         \
+           $(SETUP_MAN_PAGES)
 
 doomdocs_DATA    = INSTALL.doom    CMDLINE.doom
 hereticdocs_DATA = INSTALL.heretic CMDLINE.heretic
 hexendocs_DATA   = INSTALL.hexen   CMDLINE.hexen
 strifedocs_DATA  = INSTALL.strife  CMDLINE.strife
 
-CLEANFILES = $(GENERATED_MAN_PAGES) $(doomdocs_DATA) $(hereticdocs_DATA) \
+CLEANFILES = $(GENERATED_MAN_PAGES) $(SETUP_MAN_PAGES) \
+             $(doomdocs_DATA) $(hereticdocs_DATA) \
              $(hexendocs_DATA) $(strifedocs_DATA)
 
-chocolate-doom.6: ../src $(MANPAGE_GEN_FILES)
+$(SETUP_MAN_PAGES): @PROGRAM_PREFIX@setup.6
+	cp $< $@
+
+@PROGRAM_PREFIX@doom.6: ../src $(MANPAGE_GEN_FILES)
 	./docgen -g doom -m doom.template ../src ../src/doom > $@
 
 default.cfg.5: ../src default.cfg.template
 	./docgen -g doom -m default.cfg.template \
                  -c default ../src/m_config.c > $@
 
-chocolate-doom.cfg.5: ../src extra.cfg.template
+@PROGRAM_PREFIX@doom.cfg.5: ../src extra.cfg.template
 	./docgen -g doom -m extra.cfg.template \
                  -c extended ../src/m_config.c > $@
 
@@ -59,14 +70,14 @@ INSTALL.doom: INSTALL.template
 	./simplecpp -DDOOM -DPRECOMPILED < INSTALL.template > $@
 
 
-chocolate-heretic.6: ../src $(MANPAGE_GEN_FILES)
+@PROGRAM_PREFIX@heretic.6: ../src $(MANPAGE_GEN_FILES)
 	./docgen -g heretic -m heretic.template ../src ../src/heretic > $@
 
 heretic.cfg.5: ../src default.cfg.template
 	./docgen -g heretic -m default.cfg.template \
                  -c default ../src/m_config.c > $@
 
-chocolate-heretic.cfg.5: ../src extra.cfg.template
+@PROGRAM_PREFIX@heretic.cfg.5: ../src extra.cfg.template
 	./docgen -g heretic -m extra.cfg.template \
                  -c extended ../src/m_config.c > $@
 
@@ -77,14 +88,14 @@ INSTALL.heretic: INSTALL.template
 	./simplecpp -DHERETIC -DPRECOMPILED < INSTALL.template > $@
 
 
-chocolate-hexen.6: ../src $(MANPAGE_GEN_FILES)
+@PROGRAM_PREFIX@hexen.6: ../src $(MANPAGE_GEN_FILES)
 	./docgen -g hexen -m hexen.template ../src ../src/hexen > $@
 
 hexen.cfg.5: ../src default.cfg.template
 	./docgen -g hexen -m default.cfg.template \
                  -c default ../src/m_config.c > $@
 
-chocolate-hexen.cfg.5: ../src extra.cfg.template
+@PROGRAM_PREFIX@hexen.cfg.5: ../src extra.cfg.template
 	./docgen -g hexen -m extra.cfg.template \
                  -c extended ../src/m_config.c > $@
 
@@ -95,14 +106,14 @@ INSTALL.hexen: INSTALL.template
 	./simplecpp -DHEXEN -DPRECOMPILED < INSTALL.template > $@
 
 
-chocolate-strife.6: ../src $(MANPAGE_GEN_FILES)
+@PROGRAM_PREFIX@strife.6: ../src $(MANPAGE_GEN_FILES)
 	./docgen -g strife -m strife.template ../src ../src/strife > $@
 
 strife.cfg.5: ../src default.cfg.template
 	./docgen -g strife -m default.cfg.template \
                  -c default ../src/m_config.c > $@
 
-chocolate-strife.cfg.5: ../src extra.cfg.template
+@PROGRAM_PREFIX@strife.cfg.5: ../src extra.cfg.template
 	./docgen -g strife -m extra.cfg.template \
                  -c extended ../src/m_config.c > $@
 
