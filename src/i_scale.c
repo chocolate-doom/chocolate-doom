@@ -1195,7 +1195,7 @@ screen_mode_t mode_squash_2x = {
     SCREENWIDTH_4_3 * 2, SCREENHEIGHT * 2,
     I_InitStretchTables,
     I_Squash2x,
-    true,
+    false,
 };
 
 
