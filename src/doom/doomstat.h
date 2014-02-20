@@ -66,6 +66,9 @@ extern GameMission_t	gamemission;
 extern GameVersion_t    gameversion;
 extern char            *gamedescription;
 
+// If true, we're using one of the mangled BFG edition IWADs.
+extern boolean bfgedition;
+
 // Convenience macro.
 // 'gamemission' can be equal to pack_chex or pack_hacx, but these are
 // just modified versions of doom and doom2, and should be interpreted
