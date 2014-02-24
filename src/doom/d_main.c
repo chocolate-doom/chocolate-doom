@@ -576,9 +576,9 @@ void D_DoAdvanceDemo (void)
 
     // The Doom 3: BFG Edition version of doom2.wad does not have a
     // TITLETPIC lump. Use INTERPIC instead as a workaround.
-    if (bfgedition && !strcasecmp(pagename, "TITLEPIC"))
+    if (!strcasecmp(pagename, "TITLEPIC") && W_CheckNumForName("titlepic") < 0)
     {
-        pagename = "INTERPIC";
+        pagename = DEH_String("INTERPIC");
     }
 }
 
@@ -1278,6 +1278,31 @@ void D_DoomMain (void)
 
     DEH_printf("W_Init: Init WADfiles.\n");
     D_AddFile(iwadfile);
+
+    // Doom 3: BFG Edition includes modified versions of the classic
+    // IWADs which can be identified by an additional DMENUPIC lump.
+    // Furthermore, the M_GDHIGH lumps have been modified in a way that
+    // makes them incompatible to Vanilla Doom and the modified version
+    // of doom2.wad is missing the TITLEPIC lump.
+    // We specifically check for DMENUPIC here, before PWADs have been
+    // loaded which could probably include a lump of that name.
+
+    if (W_CheckNumForName("dmenupic") >= 0)
+    {
+        printf("BFG Edition: Using workarounds as needed.\n");
+        bfgedition = true;
+
+        // BFG Edition changes the names of the secret levels to
+        // censor the Wolfenstein references. It also has an extra
+        // secret level (MAP33). In Vanilla Doom (meaning the DOS
+        // version), MAP33 overflows into the Plutonia level names
+        // array, so HUSTR_33 is actually PHUSTR_1.
+
+        DEH_AddStringReplacement(HUSTR_31, "level 31: idkfa");
+        DEH_AddStringReplacement(HUSTR_32, "level 32: keen");
+        DEH_AddStringReplacement(PHUSTR_1, "level 33: betray");
+    }
+
     modifiedgame = W_ParseCommandLine();
 
     // Debug:
@@ -1576,30 +1601,6 @@ void D_DoomMain (void)
 
     if (gamemode == commercial && W_CheckNumForName("map01") < 0)
         storedemo = true;
-
-    // Doom 3: BFG Edition includes modified versions of the classic
-    // IWADs. The modified version of doom2.wad does not have a
-    // TITLEPIC lump, so detect this so we can apply a workaround.
-    // We specifically check for TITLEPIC here, after PWADs have been
-    // loaded - this means that we can play with the BFG Edition with
-    // PWADs that change the title screen and still see the modified
-    // titles.
-
-    if (gamemode == commercial && W_CheckNumForName("titlepic") < 0)
-    {
-        printf("BFG Edition: Using INTERPIC instead of TITLEPIC.\n");
-        bfgedition = true;
-
-        // BFG Edition changes the names of the secret levels to
-        // censor the Wolfenstein references. It also has an extra
-        // secret level (MAP33). In Vanilla Doom (meaning the DOS
-        // version), MAP33 overflows into the Plutonia level names
-        // array, so HUSTR_33 is actually PHUSTR_1.
-
-        DEH_AddStringReplacement(HUSTR_31, "level 31: idkfa");
-        DEH_AddStringReplacement(HUSTR_32, "level 32: keen");
-        DEH_AddStringReplacement(PHUSTR_1, "level 33: betray");
-    }
 
     if (M_CheckParmWithArgs("-statdump", 1))
     {
