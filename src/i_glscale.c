@@ -85,12 +85,12 @@ static int screen_w, screen_h;
 static int window_w, window_h;
 
 // The texture that "receives" the original 320x200 screen contents:
-static GLuint unscaled_texture;
-static unsigned int *unscaled_data;
+static GLuint unscaled_texture = 0;
+static unsigned int *unscaled_data = NULL;
 
 // The "scaled" version of the texture:
-static GLuint scaled_framebuffer;
-static GLuint scaled_texture;
+static GLuint scaled_framebuffer = 0;
+static GLuint scaled_texture = 0;
 static int scaled_w, scaled_h;
 
 // The converted GL_RGBA format palette.
@@ -140,15 +140,23 @@ static void CreateTextures(void)
     // OES_texture_npot also works.
 
     // Unscaled texture for input:
-    unscaled_data = malloc(SCREENWIDTH * SCREENHEIGHT * sizeof(int));
-    glGenTextures(1, &unscaled_texture);
+    if (unscaled_data == NULL)
+    {
+        unscaled_data = malloc(SCREENWIDTH * SCREENHEIGHT * sizeof(int));
+    }
+    if (unscaled_texture == 0)
+    {
+        glGenTextures(1, &unscaled_texture);
+    }
     glBindTexture(GL_TEXTURE_2D, unscaled_texture);
-    memset(unscaled_data, 0x77, SCREENWIDTH * SCREENHEIGHT * sizeof(int)/2);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCREENWIDTH, SCREENHEIGHT, 0,
                  GL_RGBA, GL_UNSIGNED_BYTE, unscaled_data);
 
     // Framebuffer for scaled texture:
-    glGenFramebuffers(1, &scaled_framebuffer);
+    if (scaled_framebuffer == 0)
+    {
+        glGenFramebuffers(1, &scaled_framebuffer);
+    }
     glBindFramebuffer(GL_FRAMEBUFFER, scaled_framebuffer);
 
     // TODO: Check GL_MAX_TEXTURE_SIZE and set a tighter maximum scale
