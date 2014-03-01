@@ -1968,11 +1968,7 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
 
     // Perform screen scale setup before changing video mode.
 
-    if (using_opengl)
-    {
-        I_GL_PreInit();
-    }
-    else if (mode != NULL && mode->InitMode != NULL)
+    if (!using_opengl && mode != NULL && mode->InitMode != NULL)
     {
         mode->InitMode(doompal);
     }
@@ -2146,6 +2142,14 @@ void I_InitGraphics(void)
                "If this happens to you, switch back to windowed mode.\n");
     }
 #endif
+
+    // If we're using OpenGL, call the preinit function now; if it fails
+    // then we have to fall back to software mode.
+
+    if (using_opengl && !I_GL_PreInit())
+    {
+        using_opengl = false;
+    }
 
     //
     // Enter into graphics mode.

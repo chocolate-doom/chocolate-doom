@@ -160,7 +160,6 @@ else
 endif
 
 @PROGRAM_PREFIX@doom_LDADD = doom/libdoom.a $(EXTRA_LIBS)
-@PROGRAM_PREFIX@doom_LDFLAGS = -framework OpenGL
 
 if HAVE_WINDRES
 @PROGRAM_PREFIX@heretic_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc
@@ -169,7 +168,6 @@ else
 endif
 
 @PROGRAM_PREFIX@heretic_LDADD = heretic/libheretic.a $(EXTRA_LIBS)
-@PROGRAM_PREFIX@heretic_LDFLAGS = -framework OpenGL
 
 if HAVE_WINDRES
 @PROGRAM_PREFIX@hexen_SOURCES=$(SOURCE_FILES) resource.rc
@@ -178,7 +176,6 @@ else
 endif
 
 @PROGRAM_PREFIX@hexen_LDADD = hexen/libhexen.a $(EXTRA_LIBS)
-@PROGRAM_PREFIX@hexen_LDFLAGS = -framework OpenGL
 
 if HAVE_WINDRES
 @PROGRAM_PREFIX@strife_SOURCES=$(SOURCE_FILES_WITH_DEH) resource.rc
@@ -187,7 +184,6 @@ else
 endif
 
 @PROGRAM_PREFIX@strife_LDADD = strife/libstrife.a $(EXTRA_LIBS)
-@PROGRAM_PREFIX@strife_LDFLAGS = -framework OpenGL
 
 $(SETUP_BINARIES): @PROGRAM_PREFIX@setup$(EXEEXT)
 	cp $< $@

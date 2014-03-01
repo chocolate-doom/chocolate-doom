@@ -93,6 +93,70 @@ static GLuint scaled_framebuffer = 0;
 static GLuint scaled_texture = 0;
 static int scaled_w, scaled_h;
 
+// GL function pointers used for scale code:
+static void (*_glBegin)(GLenum);
+static void (*_glBindFramebuffer)(GLenum, GLuint);
+static void (*_glBindTexture)(GLenum, GLuint);
+static GLenum (*_glCheckFramebufferStatus)(GLenum);
+static void (*_glClear)(GLbitfield);
+static void (*_glClearColor)(GLclampf, GLclampf, GLclampf, GLclampf);
+static void (*_glDrawBuffers)(GLsizei, const GLenum *);
+static void (*_glEnable)(GLenum);
+static void (*_glEnd)(void);
+static void (*_glFramebufferTexture)(GLenum, GLenum, GLuint, GLint);
+static void (*_glGenFramebuffers)(GLsizei, GLuint *);
+static void (*_glGenTextures)(GLsizei, GLuint *);
+static const GLubyte *(*_glGetString)(GLenum);
+static void (*_glLoadIdentity)(void);
+static void (*_glMatrixMode)(GLenum);
+static void (*_glShadeModel)(GLenum);
+static void (*_glTexCoord2f)(GLfloat, GLfloat);
+static void (*_glTexImage2D)(GLenum, GLint, GLint, GLsizei, GLsizei, GLint,
+                             GLenum, GLenum, const GLvoid *);
+static void (*_glTexParameteri)(GLenum, GLenum, GLint);
+static void (*_glVertex2f)(GLfloat, GLfloat);
+static void (*_glViewport)(GLint, GLint, GLsizei, GLsizei);
+
+static void *GetGLFunction(char *name)
+{
+    void *ptr;
+
+    ptr = SDL_GL_GetProcAddress(name);
+
+    if (ptr == NULL)
+    {
+        fprintf(stderr, "Failed to find GL function: %s\n", name);
+    }
+
+    return ptr;
+}
+
+static int SetGLFunctions(void)
+{
+    return
+        (_glBegin = GetGLFunction("glBegin"))
+     && (_glBindFramebuffer = GetGLFunction("glBindFramebuffer"))
+     && (_glBindTexture = GetGLFunction("glBindTexture"))
+     && (_glCheckFramebufferStatus = GetGLFunction("glCheckFramebufferStatus"))
+     && (_glClear = GetGLFunction("glClear"))
+     && (_glClearColor = GetGLFunction("glClearColor"))
+     && (_glDrawBuffers = GetGLFunction("glDrawBuffers"))
+     && (_glEnable = GetGLFunction("glEnable"))
+     && (_glEnd = GetGLFunction("glEnd"))
+     && (_glFramebufferTexture = GetGLFunction("glFramebufferTexture"))
+     && (_glGenFramebuffers = GetGLFunction("glGenFramebuffers"))
+     && (_glGenTextures = GetGLFunction("glGenTextures"))
+     && (_glGetString = GetGLFunction("glGetString"))
+     && (_glLoadIdentity = GetGLFunction("glLoadIdentity"))
+     && (_glMatrixMode = GetGLFunction("glMatrixMode"))
+     && (_glShadeModel = GetGLFunction("glShadeModel"))
+     && (_glTexCoord2f = GetGLFunction("glTexCoord2f"))
+     && (_glTexImage2D = GetGLFunction("glTexImage2D"))
+     && (_glTexParameteri = GetGLFunction("glTexParameteri"))
+     && (_glVertex2f = GetGLFunction("glVertex2f"))
+     && (_glViewport = GetGLFunction("glViewport"));
+}
+
 // Called on startup or on window resize so that we calculate the
 // size of the actual "window" where we show the game screen.
 static void CalculateWindowSize(void)
@@ -143,18 +207,18 @@ static void CreateTextures(void)
     }
     if (unscaled_texture == 0)
     {
-        glGenTextures(1, &unscaled_texture);
+        _glGenTextures(1, &unscaled_texture);
     }
-    glBindTexture(GL_TEXTURE_2D, unscaled_texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCREENWIDTH, SCREENHEIGHT, 0,
+    _glBindTexture(GL_TEXTURE_2D, unscaled_texture);
+    _glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCREENWIDTH, SCREENHEIGHT, 0,
                  GL_RGBA, GL_UNSIGNED_BYTE, unscaled_data);
 
     // Framebuffer for scaled texture:
     if (scaled_framebuffer == 0)
     {
-        glGenFramebuffers(1, &scaled_framebuffer);
+        _glGenFramebuffers(1, &scaled_framebuffer);
     }
-    glBindFramebuffer(GL_FRAMEBUFFER, scaled_framebuffer);
+    _glBindFramebuffer(GL_FRAMEBUFFER, scaled_framebuffer);
 
     // TODO: Check GL_MAX_TEXTURE_SIZE and set a tighter maximum scale
     // size if necessary.
@@ -179,9 +243,9 @@ static void CreateTextures(void)
     scaled_h = SCREENHEIGHT * factor;
 
     // Scaled texture:
-    glGenTextures(1, &scaled_texture);
-    glBindTexture(GL_TEXTURE_2D, scaled_texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, scaled_w, scaled_h, 0,
+    _glGenTextures(1, &scaled_texture);
+    _glBindTexture(GL_TEXTURE_2D, scaled_texture);
+    _glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, scaled_w, scaled_h, 0,
                  GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 }
 
@@ -204,8 +268,8 @@ static void SetInputData(byte *screen, SDL_Color *palette)
         *s++ = 0xff;
     }
 
-    glBindTexture(GL_TEXTURE_2D, unscaled_texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCREENWIDTH, SCREENHEIGHT, 0,
+    _glBindTexture(GL_TEXTURE_2D, unscaled_texture);
+    _glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCREENWIDTH, SCREENHEIGHT, 0,
                  GL_RGBA, GL_UNSIGNED_BYTE, unscaled_data);
 }
 
@@ -216,32 +280,32 @@ static void DrawUnscaledToScaled(void)
     GLenum DrawBuffers[1] = {GL_COLOR_ATTACHMENT0};
 
     // Render unscaled texture into scaled texture:
-    glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                         scaled_texture, 0);
-    glDrawBuffers(1, DrawBuffers);
+    _glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                          scaled_texture, 0);
+    _glDrawBuffers(1, DrawBuffers);
 
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    if (_glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     {
 	fprintf(stderr, "Failed to set up framebuffer\n");
         return;
     }
 
-    glBindFramebuffer(GL_FRAMEBUFFER, scaled_framebuffer);
-    glLoadIdentity();
-    glViewport(0, 0, scaled_w, scaled_h);
-    glBindTexture(GL_TEXTURE_2D, unscaled_texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    _glBindFramebuffer(GL_FRAMEBUFFER, scaled_framebuffer);
+    _glLoadIdentity();
+    _glViewport(0, 0, scaled_w, scaled_h);
+    _glBindTexture(GL_TEXTURE_2D, unscaled_texture);
+    _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-    glBegin(GL_QUADS);
-    glTexCoord2f(0, 1); glVertex2f(-1, 1);
-    glTexCoord2f(1, 1); glVertex2f(1, 1);
-    glTexCoord2f(1, 0); glVertex2f(1, -1);
-    glTexCoord2f(0, 0); glVertex2f(-1, -1);
-    glEnd();
+    _glBegin(GL_QUADS);
+    _glTexCoord2f(0, 1); _glVertex2f(-1, 1);
+    _glTexCoord2f(1, 1); _glVertex2f(1, 1);
+    _glTexCoord2f(1, 0); _glVertex2f(1, -1);
+    _glTexCoord2f(0, 0); _glVertex2f(-1, -1);
+    _glEnd();
 
     // Finished with framebuffer
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    _glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 // Render the scaled_texture to the screen.
@@ -249,46 +313,54 @@ static void DrawScreen(void)
 {
     GLfloat w, h;
 
-    glClear(GL_COLOR_BUFFER_BIT);
+    _glClear(GL_COLOR_BUFFER_BIT);
 
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    glViewport(0, 0, screen_w, screen_h);
-    glBindTexture(GL_TEXTURE_2D, scaled_texture);
+    _glMatrixMode(GL_MODELVIEW);
+    _glLoadIdentity();
+    _glViewport(0, 0, screen_w, screen_h);
+    _glBindTexture(GL_TEXTURE_2D, scaled_texture);
 
     // Translate scaled-up texture to the screen with linear filtering.
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
     // Don't wrap/repeat the texture; this stops the linear filtering
     // from blurring the edges of the screen with each other.
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
     w = (float) window_w / screen_w;
     h = (float) window_h / screen_h;
 
-    glBegin(GL_QUADS);
-    glTexCoord2f(0, 0); glVertex2f(-w, h);
-    glTexCoord2f(1, 0); glVertex2f(w, h);
-    glTexCoord2f(1, 1); glVertex2f(w, -h);
-    glTexCoord2f(0, 1); glVertex2f(-w, -h);
-    glEnd();
+    _glBegin(GL_QUADS);
+    _glTexCoord2f(0, 0); _glVertex2f(-w, h);
+    _glTexCoord2f(1, 0); _glVertex2f(w, h);
+    _glTexCoord2f(1, 1); _glVertex2f(w, -h);
+    _glTexCoord2f(0, 1); _glVertex2f(-w, -h);
+    _glEnd();
 }
 
-void I_GL_PreInit(void)
+int I_GL_PreInit(void)
 {
+    if (SDL_GL_LoadLibrary(NULL) < 0)
+    {
+        return 0;
+    }
+
     SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 5 );
     SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 5 );
     SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE, 5 );
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
+
+    return 1;
 }
 
 void I_GL_InitScale(int w, int h)
 {
-    glEnable(GL_TEXTURE_2D);
-    glShadeModel(GL_SMOOTH);
-    glClearColor(0, 0, 0, 0);
+    SetGLFunctions();
+    _glEnable(GL_TEXTURE_2D);
+    _glShadeModel(GL_SMOOTH);
+    _glClearColor(0, 0, 0, 0);
 
     screen_w = w;
     screen_h = h;
