@@ -752,6 +752,14 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(screen_bpp),
 
     //!
+    // Maximum scale factor for the intermediate buffer used for doing
+    // hardware-based scaling. A scale factor of 1 will be very blurry
+    // but not use a lot of texture memory; a scale factor of 4 gives
+    // pretty much best results.
+
+    CONFIG_VARIABLE_INT(gl_max_scale),
+
+    //!
     // If this is non-zero, the mouse will be "grabbed" when running
     // in windowed mode so that it can be used as an input device.
     // When running full screen, this has no effect.

@@ -2293,6 +2293,7 @@ void I_BindVideoVariables(void)
     M_BindVariable("usegamma",                  &usegamma);
     M_BindVariable("vanilla_keyboard_mapping",  &vanilla_keyboard_mapping);
     M_BindVariable("novert",                    &novert);
+    M_BindVariable("gl_max_scale",              &gl_max_scale);
 
     // Windows Vista or later?  Set screen color depth to
     // 32 bits per pixel, as 8-bit palettized screen modes
