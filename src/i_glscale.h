@@ -26,8 +26,7 @@
 
 void I_GL_PreInit(void);
 void I_GL_InitScale(int w, int h);
-void I_GL_SetPalette(byte *palette);
-void I_GL_UpdateScreen(byte *screendata);
+void I_GL_UpdateScreen(byte *screendata, SDL_Color *palette);
 
 #endif /* #ifndef I_GLSCALE_H */
 

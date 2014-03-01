@@ -155,7 +155,7 @@ static char *window_title = "";
 
 static SDL_Surface *screenbuffer = NULL;
 
-// palette
+// Palette:
 
 static SDL_Color palette[256];
 static boolean palette_to_set;
@@ -1152,7 +1152,7 @@ void I_FinishUpdate (void)
 
     if (using_opengl)
     {
-        I_GL_UpdateScreen(I_VideoBuffer);
+        I_GL_UpdateScreen(I_VideoBuffer, palette);
         SDL_GL_SwapBuffers();
     }
     else
@@ -1177,14 +1177,6 @@ void I_ReadScreen (byte* scr)
 void I_SetPalette (byte *doompalette)
 {
     int i;
-
-    // In OpenGL mode, we override the normal palette code and call
-    // the function in the GL scaling code.
-    if (using_opengl)
-    {
-        I_GL_SetPalette(doompalette);
-        return;
-    }
 
     for (i=0; i<256; ++i)
     {

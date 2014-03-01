@@ -93,9 +93,6 @@ static GLuint scaled_framebuffer = 0;
 static GLuint scaled_texture = 0;
 static int scaled_w, scaled_h;
 
-// The converted GL_RGBA format palette.
-static unsigned int gl_palette[256];
-
 // Called on startup or on window resize so that we calculate the
 // size of the actual "window" where we show the game screen.
 static void CalculateWindowSize(void)
@@ -188,37 +185,23 @@ static void CreateTextures(void)
                  GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 }
 
-// Convert the given Doom-format palette into a GL_RGBA palette
-// that we can use to convert the screen.
-static void ConvertPalette(byte *palette, unsigned int *out)
-{
-    unsigned int i;
-    byte *o;
-
-    o = (byte *) out;
-
-    for (i = 0; i < 256; ++i)
-    {
-        // Zero out the bottom two bits of each channel - the PC VGA
-        // controller only supports 6 bits of accuracy.
-
-	*o++ = palette[i * 3] & ~3;
-	*o++ = palette[i * 3 + 1] & ~3;
-	*o++ = palette[i * 3 + 2] & ~3;
-	*o++ = 0xff;
-    }
-}
-
 // Import screen data from the given pointer and palette and update
 // the unscaled_texture texture.
-static void SetInputData(byte *screen, unsigned int *palette)
+static void SetInputData(byte *screen, SDL_Color *palette)
 {
+    SDL_Color *c;
+    byte *s;
     unsigned int i;
 
     // TODO: Maybe support GL_RGB as well as GL_RGBA?
+    s = (byte *) unscaled_data;
     for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; ++i)
     {
-	unscaled_data[i] = palette[screen[i]];
+        c = &palette[screen[i]];
+        *s++ = c->r;
+        *s++ = c->g;
+        *s++ = c->b;
+        *s++ = 0xff;
     }
 
     glBindTexture(GL_TEXTURE_2D, unscaled_texture);
@@ -306,14 +289,9 @@ void I_GL_InitScale(int w, int h)
     CreateTextures();
 }
 
-void I_GL_SetPalette(byte *palette)
+void I_GL_UpdateScreen(byte *screendata, SDL_Color *palette)
 {
-    ConvertPalette(palette, gl_palette);
-}
-
-void I_GL_UpdateScreen(byte *screendata)
-{
-    SetInputData(screendata, gl_palette);
+    SetInputData(screendata, palette);
     DrawUnscaledToScaled();
     DrawScreen();
 }
