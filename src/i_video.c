@@ -227,6 +227,11 @@ boolean screensaver_mode = false;
 
 boolean screenvisible;
 
+// If true, we are rendering the screen using OpenGL hardware scaling
+// rather than software mode.
+
+static boolean using_opengl = true;
+
 // If true, we display dots at the bottom of the screen to 
 // indicate FPS.
 
@@ -1059,6 +1064,46 @@ void I_EndRead(void)
                SCREENWIDTH, SCREENHEIGHT);
 }
 
+// Ending of I_FinishUpdate() when in software scaling mode.
+
+static void FinishUpdateSoftware(void)
+{
+    // draw to screen
+
+    BlitArea(0, 0, SCREENWIDTH, SCREENHEIGHT);
+
+    if (palette_to_set)
+    {
+        SDL_SetColors(screenbuffer, palette, 0, 256);
+        palette_to_set = false;
+
+        // In native 8-bit mode, if we have a palette to set, the act
+        // of setting the palette updates the screen
+
+        if (screenbuffer == screen)
+        {
+            return;
+        }
+    }
+
+    // In 8in32 mode, we must blit from the fake 8-bit screen buffer
+    // to the real screen before doing a screen flip.
+
+    if (screenbuffer != screen)
+    {
+        SDL_Rect dst_rect;
+
+        // Center the buffer within the full screen space.
+
+        dst_rect.x = (screen->w - screenbuffer->w) / 2;
+        dst_rect.y = (screen->h - screenbuffer->h) / 2;
+
+        SDL_BlitSurface(screenbuffer, NULL, screen, &dst_rect);
+    }
+
+    SDL_Flip(screen);
+}
+
 //
 // I_FinishUpdate
 //
@@ -1105,45 +1150,15 @@ void I_FinishUpdate (void)
 	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
     }
 
-    I_GL_UpdateScreen(I_VideoBuffer);
-    SDL_GL_SwapBuffers();
-    return;
-
-
-    // draw to screen
-
-    BlitArea(0, 0, SCREENWIDTH, SCREENHEIGHT);
-
-    if (palette_to_set)
+    if (using_opengl)
     {
-        SDL_SetColors(screenbuffer, palette, 0, 256);
-        palette_to_set = false;
-
-        // In native 8-bit mode, if we have a palette to set, the act
-        // of setting the palette updates the screen
-
-        if (screenbuffer == screen)
-        {
-            return;
-        }
+        I_GL_UpdateScreen(I_VideoBuffer);
+        SDL_GL_SwapBuffers();
     }
-
-    // In 8in32 mode, we must blit from the fake 8-bit screen buffer
-    // to the real screen before doing a screen flip.
-
-    if (screenbuffer != screen)
+    else
     {
-        SDL_Rect dst_rect;
-
-        // Center the buffer within the full screen space.
-
-        dst_rect.x = (screen->w - screenbuffer->w) / 2;
-        dst_rect.y = (screen->h - screenbuffer->h) / 2;
-
-        SDL_BlitSurface(screenbuffer, NULL, screen, &dst_rect);
+        FinishUpdateSoftware();
     }
-
-    SDL_Flip(screen);
 }
 
 
@@ -1163,8 +1178,13 @@ void I_SetPalette (byte *doompalette)
 {
     int i;
 
-    I_GL_SetPalette(doompalette);
-    return;
+    // In OpenGL mode, we override the normal palette code and call
+    // the function in the GL scaling code.
+    if (using_opengl)
+    {
+        I_GL_SetPalette(doompalette);
+        return;
+    }
 
     for (i=0; i<256; ++i)
     {
@@ -1300,6 +1320,33 @@ static screen_mode_t *I_FindScreenMode(int w, int h)
     int num_pixels;
     int best_num_pixels;
     int i;
+
+    // In OpenGL mode the rules are different. We can have any
+    // resolution, though it needs to match the aspect ratio we
+    // expect.
+
+    if (using_opengl)
+    {
+        static screen_mode_t gl_mode;
+        int screenheight;
+
+        if (aspect_ratio_correct)
+        {
+            screenheight = SCREENHEIGHT_4_3;
+        }
+        else
+        {
+            screenheight = SCREENHEIGHT;
+        }
+
+        gl_mode.width = h * SCREENWIDTH / screenheight;
+        gl_mode.height = h;
+        gl_mode.InitMode = NULL;
+        gl_mode.DrawScreen = NULL;
+        gl_mode.poor_quality = false;
+
+        return &gl_mode;
+    }
 
     // Special case: 320x200 and 640x400 are available even if aspect 
     // ratio correction is turned on.  These modes have non-square
@@ -1922,28 +1969,23 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
     // If we are already running and in a true color mode, we need
     // to free the screenbuffer surface before setting the new mode.
 
-    if (screenbuffer != NULL && screen != screenbuffer)
+    if (!using_opengl && screenbuffer != NULL && screen != screenbuffer)
     {
         SDL_FreeSurface(screenbuffer);
     }
 
-    // Generate lookup tables before setting the video mode.
+    // Perform screen scale setup before changing video mode.
 
-    if (mode != NULL && mode->InitMode != NULL)
+    if (using_opengl)
+    {
+        I_GL_PreInit();
+    }
+    else if (mode != NULL && mode->InitMode != NULL)
     {
         mode->InitMode(doompal);
     }
 
-    I_GL_PreInit();
-
     // Set the video mode.
-
-    flags |= SDL_SWSURFACE | SDL_DOUBLEBUF;
-
-    if (screen_bpp == 8)
-    {
-        flags |= SDL_HWPALETTE;
-    }
 
     if (fullscreen)
     {
@@ -1952,15 +1994,30 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
     else
     {
         // In windowed mode, the window can be resized while the game is
-        // running.  This feature is disabled on OS X, as it adds an ugly
-        // scroll handle to the corner of the screen.
-
-#ifndef __MACOSX__
-        flags |= SDL_RESIZABLE;
+        // running. Mac OS X has a quirk where an ugly resize handle is
+        // shown in software mode when resizing is enabled, so avoid that.
+#ifdef __MACOSX__
+        if (using_opengl)
 #endif
+        {
+            flags |= SDL_RESIZABLE;
+        }
     }
 
-    flags |= SDL_OPENGL;
+    if (using_opengl)
+    {
+        flags |= SDL_OPENGL;
+        screen_bpp = 32;
+    }
+    else
+    {
+        flags |= SDL_SWSURFACE | SDL_DOUBLEBUF;
+
+        if (screen_bpp == 8)
+        {
+            flags |= SDL_HWPALETTE;
+        }
+    }
 
     screen = SDL_SetVideoMode(w, h, screen_bpp, flags);
 
@@ -1970,53 +2027,58 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
                 w, h, screen_bpp, SDL_GetError());
     }
 
-    I_GL_InitScale(screen->w, screen->h);
-
-    // Blank out the full screen area in case there is any junk in
-    // the borders that won't otherwise be overwritten.
-
-    SDL_FillRect(screen, NULL, 0);
-
-    // If mode was not set, it must be set now that we know the
-    // screen size.
-
-    if (mode == NULL)
+    if (using_opengl)
     {
-        mode = I_FindScreenMode(screen->w, screen->h);
-
-        if (mode == NULL)
-        {
-            I_Error("I_InitGraphics: Unable to find a screen mode small "
-                    "enough for %ix%i", screen->w, screen->h);
-        }
-
-        // Generate lookup tables before setting the video mode.
-
-        if (mode->InitMode != NULL)
-        {
-            mode->InitMode(doompal);
-        }
-    }
-
-    // Create the screenbuffer surface; if we have a real 8-bit palettized
-    // screen, then we can use the screen as the screenbuffer.
-
-    if (screen->format->BitsPerPixel == 8)
-    {
-        screenbuffer = screen;
+        I_GL_InitScale(screen->w, screen->h);
     }
     else
     {
-        screenbuffer = SDL_CreateRGBSurface(SDL_SWSURFACE,
-                                            mode->width, mode->height, 8,
-                                            0, 0, 0, 0);
+        // Blank out the full screen area in case there is any junk in
+        // the borders that won't otherwise be overwritten.
 
-        SDL_FillRect(screenbuffer, NULL, 0);
+        SDL_FillRect(screen, NULL, 0);
+
+        // If mode was not set, it must be set now that we know the
+        // screen size.
+
+        if (mode == NULL)
+        {
+            mode = I_FindScreenMode(screen->w, screen->h);
+
+            if (mode == NULL)
+            {
+                I_Error("I_InitGraphics: Unable to find a screen mode small "
+                        "enough for %ix%i", screen->w, screen->h);
+            }
+
+            // Generate lookup tables before setting the video mode.
+
+            if (mode->InitMode != NULL)
+            {
+                mode->InitMode(doompal);
+            }
+        }
+
+        // Save screen mode.
+
+        screen_mode = mode;
+
+        // Create the screenbuffer surface; if we have a real 8-bit palettized
+        // screen, then we can use the screen as the screenbuffer.
+
+        if (screen->format->BitsPerPixel == 8)
+        {
+            screenbuffer = screen;
+        }
+        else
+        {
+            screenbuffer = SDL_CreateRGBSurface(SDL_SWSURFACE,
+                                                mode->width, mode->height, 8,
+                                                0, 0, 0, 0);
+
+            SDL_FillRect(screenbuffer, NULL, 0);
+        }
     }
-
-    // Save screen mode.
-
-    screen_mode = mode;
 }
 
 static void ApplyWindowResize(unsigned int w, unsigned int h)
@@ -2134,16 +2196,20 @@ void I_InitGraphics(void)
         SetVideoMode(screen_mode, w, h);
     }
 
-    // Start with a clear black screen
-    // (screen will be flipped after we set the palette)
-
-    SDL_FillRect(screenbuffer, NULL, 0);
-
     // Set the palette
 
     doompal = W_CacheLumpName(DEH_String("PLAYPAL"), PU_CACHE);
     I_SetPalette(doompal);
-    SDL_SetColors(screenbuffer, palette, 0, 256);
+
+    if (!using_opengl)
+    {
+        SDL_SetColors(screenbuffer, palette, 0, 256);
+
+        // Start with a clear black screen
+        // (screen will be flipped after we set the palette)
+
+        SDL_FillRect(screenbuffer, NULL, 0);
+    }
 
     CreateCursors();
 
@@ -2165,7 +2231,8 @@ void I_InitGraphics(void)
     // Likewise if the screen pitch is not the same as the width
     // If we have to multiply, drawing is done to a separate 320x200 buf
 
-    native_surface = screen == screenbuffer
+    native_surface = !using_opengl
+                  && screen == screenbuffer
                   && !SDL_MUSTLOCK(screen)
                   && screen_mode == &mode_scale_1x
                   && screen->pitch == SCREENWIDTH
@@ -2182,8 +2249,8 @@ void I_InitGraphics(void)
     }
     else
     {
-	I_VideoBuffer = (unsigned char *) Z_Malloc (SCREENWIDTH * SCREENHEIGHT, 
-                                                    PU_STATIC, NULL);
+	I_VideoBuffer = (unsigned char *) Z_Malloc(SCREENWIDTH * SCREENHEIGHT,
+                                                   PU_STATIC, NULL);
     }
 
     V_RestoreBuffer();
@@ -2202,8 +2269,8 @@ void I_InitGraphics(void)
 
     SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 
-    // clear out any events waiting at the start and center the mouse
-  
+    // Clear out any events waiting at the start:
+
     while (SDL_PollEvent(&dummy));
 
     initialized = true;
