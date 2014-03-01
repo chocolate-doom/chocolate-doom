@@ -42,6 +42,7 @@
 #include "deh_str.h"
 #include "doomtype.h"
 #include "doomkeys.h"
+#include "i_glscale.h"
 #include "i_joystick.h"
 #include "i_system.h"
 #include "i_swap.h"
@@ -1104,6 +1105,11 @@ void I_FinishUpdate (void)
 	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
     }
 
+    I_GL_UpdateScreen(I_VideoBuffer);
+    SDL_GL_SwapBuffers();
+    return;
+
+
     // draw to screen
 
     BlitArea(0, 0, SCREENWIDTH, SCREENHEIGHT);
@@ -1156,6 +1162,9 @@ void I_ReadScreen (byte* scr)
 void I_SetPalette (byte *doompalette)
 {
     int i;
+
+    I_GL_SetPalette(doompalette);
+    return;
 
     for (i=0; i<256; ++i)
     {
@@ -1925,6 +1934,8 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
         mode->InitMode(doompal);
     }
 
+    I_GL_PreInit();
+
     // Set the video mode.
 
     flags |= SDL_SWSURFACE | SDL_DOUBLEBUF;
@@ -1949,6 +1960,8 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
 #endif
     }
 
+    flags |= SDL_OPENGL;
+
     screen = SDL_SetVideoMode(w, h, screen_bpp, flags);
 
     if (screen == NULL)
@@ -1956,6 +1969,8 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
         I_Error("Error setting video mode %ix%ix%ibpp: %s\n",
                 w, h, screen_bpp, SDL_GetError());
     }
+
+    I_GL_InitScale(screen->w, screen->h);
 
     // Blank out the full screen area in case there is any junk in
     // the borders that won't otherwise be overwritten.
