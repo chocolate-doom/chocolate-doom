@@ -1018,7 +1018,7 @@ void I_BeginRead(void)
                     + (SCREENWIDTH - LOADING_DISK_W);
     int y;
 
-    if (!initialized || disk_image == NULL)
+    if (!initialized || disk_image == NULL || using_opengl)
         return;
 
     // save background and copy the disk image in
@@ -1046,7 +1046,7 @@ void I_EndRead(void)
                     + (SCREENWIDTH - LOADING_DISK_W);
     int y;
 
-    if (!initialized || disk_image == NULL)
+    if (!initialized || disk_image == NULL || using_opengl)
         return;
 
     // save background and copy the disk image in
