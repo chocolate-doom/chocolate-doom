@@ -255,8 +255,15 @@ static void DrawScreen(void)
     glLoadIdentity();
     glViewport(0, 0, screen_w, screen_h);
     glBindTexture(GL_TEXTURE_2D, scaled_texture);
+
+    // Translate scaled-up texture to the screen with linear filtering.
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    // Don't wrap/repeat the texture; this stops the linear filtering
+    // from blurring the edges of the screen with each other.
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
     w = (float) window_w / screen_w;
     h = (float) window_h / screen_h;
