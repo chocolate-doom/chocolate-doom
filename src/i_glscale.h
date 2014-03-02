@@ -24,8 +24,8 @@
 #ifndef I_GLSCALE_H
 #define I_GLSCALE_H
 
-int I_GL_PreInit(void);
-void I_GL_InitScale(int w, int h);
+boolean I_GL_PreInit(void);
+boolean I_GL_InitScale(int w, int h);
 void I_GL_UpdateScreen(byte *screendata, SDL_Color *palette);
 
 extern int gl_max_scale;

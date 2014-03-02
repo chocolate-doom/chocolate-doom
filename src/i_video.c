@@ -2017,7 +2017,24 @@ static void SetVideoMode(screen_mode_t *mode, int w, int h)
 
     if (using_opengl)
     {
-        I_GL_InitScale(screen->w, screen->h);
+        // Try to initialize OpenGL scaling backend. This can fail,
+        // because we need an OpenGL context before we can find out
+        // if we have all the extensions that we need to make it work.
+        // If it does, then fall back to software mode instead.
+
+        if (!I_GL_InitScale(screen->w, screen->h))
+        {
+            fprintf(stderr,
+                    "Failed to initialize in OpenGL mode. "
+                    "Falling back to software mode instead.\n");
+            using_opengl = false;
+
+            // TODO: This leaves us in window with borders around it.
+            // We shouldn't call with NULL here; this needs to be refactored
+            // so that 'mode' isn't even an argument to this function.
+            SetVideoMode(NULL, w, h);
+            return;
+        }
     }
     else
     {

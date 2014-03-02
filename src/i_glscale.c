@@ -62,9 +62,11 @@
 #ifdef __MACOSX__
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
+#include <OpenGL/glext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <GL/glext.h>
 #endif
 
 #include <stdio.h>
@@ -157,6 +159,48 @@ static int SetGLFunctions(void)
      && (_glViewport = GetGLFunction("glViewport"));
 }
 
+// Returns true if the specified GL extension is available.
+static boolean HaveExtension(char *extname)
+{
+    const GLubyte *last_ext_start;
+    const GLubyte *extensions;
+    const GLubyte *p;
+
+    extensions = _glGetString(GL_EXTENSIONS);
+
+    if (extensions == NULL)
+    {
+        fprintf(stderr, "Failed to read GL extensions\n");
+        return false;
+    }
+
+    // Extensions are listed in a string and separated by spaces.
+    p = extensions;
+    last_ext_start = extensions;
+
+    while (*p != '\0')
+    {
+        ++p;
+
+        // Every time we reach an end-of-string (space or NUL), check
+        // if the extension we just passed over matched the one we're
+        // looking for.
+        if (*p == ' ' || *p == '\0')
+        {
+            if (p - last_ext_start == strlen(extname)
+             && !strncmp((char *) last_ext_start, extname, strlen(extname)))
+            {
+                return true;
+            }
+
+            last_ext_start = p + 1;
+        }
+    }
+
+    fprintf(stderr, "Missing GL extension: %s\n", extname);
+    return false;
+}
+
 // Called on startup or on window resize so that we calculate the
 // size of the actual "window" where we show the game screen.
 static void CalculateWindowSize(void)
@@ -191,14 +235,17 @@ static void CalculateWindowSize(void)
 }
 
 // Create the OpenGL textures used for scaling.
-static void CreateTextures(void)
+static boolean CreateTextures(void)
 {
     int factor;
 
-    // TODO: Check for GL_ARB_texture_non_power_of_two in the string
-    // returned by glGetString(GL_EXTENSIONS); if not present then
-    // we need to do something here as a workaround.
-    // OES_texture_npot also works.
+    // We need to have all the required extensions, otherwise this
+    // isn't going to work.
+    if (!HaveExtension("GL_ARB_texture_non_power_of_two")
+     || !HaveExtension("GL_EXT_framebuffer_object"))
+    {
+        return false;
+    }
 
     // Unscaled texture for input:
     if (unscaled_data == NULL)
@@ -247,6 +294,8 @@ static void CreateTextures(void)
     _glBindTexture(GL_TEXTURE_2D, scaled_texture);
     _glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, scaled_w, scaled_h, 0,
                  GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+
+    return true;
 }
 
 // Import screen data from the given pointer and palette and update
@@ -340,24 +389,28 @@ static void DrawScreen(void)
     _glEnd();
 }
 
-int I_GL_PreInit(void)
+boolean I_GL_PreInit(void)
 {
     if (SDL_GL_LoadLibrary(NULL) < 0)
     {
-        return 0;
+        return false;
     }
 
-    SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 5 );
-    SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 5 );
-    SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE, 5 );
-    SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
+    SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
+    SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
+    SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-    return 1;
+    return true;
 }
 
-void I_GL_InitScale(int w, int h)
+boolean I_GL_InitScale(int w, int h)
 {
-    SetGLFunctions();
+    if (!SetGLFunctions())
+    {
+        return false;
+    }
+
     _glEnable(GL_TEXTURE_2D);
     _glShadeModel(GL_SMOOTH);
     _glClearColor(0, 0, 0, 0);
@@ -365,7 +418,12 @@ void I_GL_InitScale(int w, int h)
     screen_w = w;
     screen_h = h;
     CalculateWindowSize();
-    CreateTextures();
+    if (!CreateTextures())
+    {
+        return false;
+    }
+
+    return true;
 }
 
 void I_GL_UpdateScreen(byte *screendata, SDL_Color *palette)
