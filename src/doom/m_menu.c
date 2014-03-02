@@ -1007,7 +1007,7 @@ void M_DrawOptions(void)
     // the BFG edition IWADs, use the "ON"/"OFF" graphics instead.
     if (bfgedition)
     {
-        detail_patch = msgNames[detailLevel];
+        detail_patch = msgNames[!detailLevel];
     }
     else
     {
