@@ -275,15 +275,24 @@ static boolean CreateTextures(void)
     // size, but no more than 2x the screen size we are rendering -
     // GL_LINEAR uses a 2x2 matrix to calculate which pixel to use.
     // Clamp the scale factor because we don't want to get too large.
-    factor = (window_w + SCREENWIDTH - 1) / SCREENWIDTH;
-    if (factor > gl_max_scale)
+    factor = window_w * 2 / SCREENWIDTH;
+    if (window_h <= SCREENWIDTH)
+    {
+        factor = 1;
+    }
+    else if (factor > gl_max_scale)
     {
         factor = gl_max_scale;
     }
     scaled_w = SCREENWIDTH * factor;
 
-    factor = (window_h + SCREENHEIGHT - 1) / SCREENHEIGHT;
-    if (factor > gl_max_scale)
+    factor = window_h * 2 / SCREENHEIGHT;
+
+    if (window_h <= SCREENHEIGHT_4_3)
+    {
+        factor = 1;
+    }
+    else if (factor > gl_max_scale)
     {
         factor = gl_max_scale;
     }
