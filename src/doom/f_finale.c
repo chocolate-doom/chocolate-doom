@@ -100,6 +100,8 @@ static textscreen_t textscreens[] =
     { pack_plut, 1, 30, "RROCK17",   P4TEXT},
     { pack_plut, 1, 15, "RROCK13",   P5TEXT},
     { pack_plut, 1, 31, "RROCK19",   P6TEXT},
+
+    { pack_nerve, 1, 8, "SLIME16",   N1TEXT},
 };
 
 char*	finaletext;
@@ -192,6 +194,9 @@ void F_Ticker (void)
 				
       if (i < MAXPLAYERS)
       {	
+	if (gamemission == pack_nerve && gamemap == 8)
+	  F_StartCast ();
+	else
 	if (gamemap == 30)
 	  F_StartCast ();
 	else

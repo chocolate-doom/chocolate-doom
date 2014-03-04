@@ -615,6 +615,12 @@ ST_Responder (event_t* ev)
       
       cht_GetParam(&cheat_clev, buf);
       
+      if (gamemission == pack_nerve)
+      {
+	epsd = 2;
+	map = (buf[0] - '0')*10 + buf[1] - '0';
+      }
+      else
       if (gamemode == commercial)
       {
 	epsd = 1;
@@ -653,8 +659,12 @@ ST_Responder (event_t* ev)
 	  && ((epsd > 1) || (map > 9)))
 	return false;
 
-      if ((gamemode == commercial)
+      if ((gamemode == commercial && gamemission != pack_nerve)
 	&& (( epsd > 1) || (map > 34)))
+	return false;
+
+      if ((gamemission == pack_nerve)
+	&& (( epsd > 2) || (map > 9)))
 	return false;
 
       // So be it.

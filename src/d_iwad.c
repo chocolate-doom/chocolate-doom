@@ -45,6 +45,8 @@ static iwad_t iwads[] =
     { "plutonia.wad", pack_plut, commercial, "Final Doom: Plutonia Experiment" },
     { "tnt.wad",      pack_tnt,  commercial, "Final Doom: TNT: Evilution" },
     { "doom.wad",     doom,      retail,     "Doom" },
+    { "bfgdoom2.wad", doom2,     commercial, "Doom II (BFG Edition)" },
+    { "bfgdoom.wad",  doom,      retail,     "Doom (BFG Edition)" },
     { "doom1.wad",    doom,      shareware,  "Doom Shareware" },
     { "chex.wad",     pack_chex, shareware,  "Chex Quest" },
     { "hacx.wad",     pack_hacx, commercial, "Hacx" },

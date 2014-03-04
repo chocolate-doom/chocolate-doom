@@ -127,6 +127,7 @@ boolean         storedemo;
 
 // "BFG Edition" version of doom2.wad does not include TITLEPIC.
 boolean         bfgedition;
+char            *nervewadfile = NULL;
 
 // If true, the main game loop has started.
 boolean         main_loop_started = false;
@@ -1057,6 +1058,65 @@ static void LoadHacxDeh(void)
     }
 }
 
+static void LoadNerveWad(void)
+{
+    int i;
+    char *sep;
+    char lumpname[9];
+    
+    if (!modifiedgame)
+    {
+        sep = strrchr(iwadfile, DIR_SEPARATOR);
+
+        if (sep != NULL)
+        {
+            nervewadfile = malloc(strlen(iwadfile) + 9);
+            strcpy(nervewadfile, iwadfile);
+            nervewadfile[sep - iwadfile + 1] = '\0';
+            strcat(nervewadfile, "nerve.wad");
+        }
+        else
+        {
+            nervewadfile = strdup("nerve.wad");
+        }
+
+        if (!M_FileExists(nervewadfile))
+        {
+            free(nervewadfile);
+            nervewadfile = D_FindWADByName("nerve.wad");
+        }
+
+        if (nervewadfile == NULL)
+        {
+            return;
+        }
+
+        D_AddFile(nervewadfile);
+        
+        // Rename level name patch lumps out of the way        
+        for (i = 0; i < 9; i++)
+        {
+            snprintf (lumpname, 9, "CWILV%2.2d", i);
+            lumpinfo[W_GetNumForName(lumpname)].name[0] = 'N';
+        }
+    }
+    else
+    {
+        i = M_CheckParmWithArgs ("-file", 1);
+
+        if (i)
+        {
+            while (++i != myargc && myargv[i][0] != '-')
+            {
+                if (!strncasecmp(basename(myargv[i]), "nerve.wad", 8));
+                    gamemission = pack_nerve;
+            }
+        }
+
+        DEH_AddStringReplacement ("TITLEPIC", "DMENUPIC");
+    }
+}
+
 //
 // D_DoomMain
 //
@@ -1349,6 +1409,12 @@ void D_DoomMain (void)
     LoadHacxDeh();
     D_SetGameDescription();
     savegamedir = M_GetSaveGameDir(D_SaveGameIWADName(gamemission));
+
+    // Should check for (bfgedition), which isn't known, yet
+    if (gamemode == commercial && W_CheckNumForName("titlepic") < 0)
+    {
+        LoadNerveWad();
+    }
 
     // Check for -file in shareware
     if (modifiedgame)

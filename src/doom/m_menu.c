@@ -182,6 +182,7 @@ menu_t*	currentMenu;
 //
 void M_NewGame(int choice);
 void M_Episode(int choice);
+void M_Expansion(int choice);
 void M_ChooseSkill(int choice);
 void M_LoadGame(int choice);
 void M_SaveGame(int choice);
@@ -296,6 +297,32 @@ menu_t  EpiDef =
     M_DrawEpisode,	// drawing routine ->
     48,63,              // x,y
     ep1			// lastOn
+};
+
+//
+// EXPANSION SELECT
+//
+enum
+{
+    ex1,
+    ex2,
+    ex_end
+} expansions_e;
+
+menuitem_t ExpansionMenu[]=
+{
+    {1,"M_EPI1", M_Expansion,'h'},
+    {1,"M_EPI2", M_Expansion,'n'},
+};
+
+menu_t  ExpDef =
+{
+    ex_end,		// # of menu items
+    &MainDef,		// previous menu
+    ExpansionMenu,	// menuitem_t ->
+    M_DrawEpisode,	// drawing routine ->
+    48,63,              // x,y
+    ex1			// lastOn
 };
 
 //
@@ -919,6 +946,9 @@ void M_NewGame(int choice)
 	
     // Chex Quest disabled the episode select screen, as did Doom II.
 
+    if (nervewadfile)
+	M_SetupNextMenu(&ExpDef);
+    else
     if (gamemode == commercial || gameversion == exe_chex)
 	M_SetupNextMenu(&NewDef);
     else
@@ -980,6 +1010,11 @@ void M_Episode(int choice)
     M_SetupNextMenu(&NewDef);
 }
 
+void M_Expansion(int choice)
+{
+    epi = choice;
+    M_SetupNextMenu(&NewDef);
+}
 
 
 //
@@ -1853,6 +1888,9 @@ boolean M_Responder (event_t* ev)
 	currentMenu->lastOn = itemOn;
 	if (currentMenu->prevMenu)
 	{
+	    if (nervewadfile && currentMenu == &NewDef)
+	        currentMenu->prevMenu = &ExpDef;
+
 	    currentMenu = currentMenu->prevMenu;
 	    itemOn = currentMenu->lastOn;
 	    S_StartSound(NULL,sfx_swtchn);

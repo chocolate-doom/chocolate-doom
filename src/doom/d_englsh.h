@@ -292,6 +292,16 @@
 #define THUSTR_31	"level 31: pharaoh"
 #define THUSTR_32	"level 32: caribbean"
 
+#define NHUSTR_1	"level 1: The Earth Base"
+#define NHUSTR_2	"level 2: The Pain Labs"
+#define NHUSTR_3	"level 3: Canyon of the Dead"
+#define NHUSTR_4	"level 4: Hell Mountain"
+#define NHUSTR_5	"level 5: Vivisection"
+#define NHUSTR_6	"level 6: Inferno of Blood"
+#define NHUSTR_7	"level 7: Baron's Banquet"
+#define NHUSTR_8	"level 8: Tomb of Malevolence"
+#define NHUSTR_9	"level 9: March of the Demons"
+
 #define HUSTR_CHATMACRO1	"I'm ready to kick butt!"
 #define HUSTR_CHATMACRO2	"I'm OK."
 #define HUSTR_CHATMACRO3	"I'm not looking too good!"
@@ -675,6 +685,20 @@
 "the stomp of a cyberdemon's iron shoe."
 
 
+#define N1TEXT \
+"TROUBLE WAS BREWING AGAIN IN YOUR FAVORITE\n"\
+"VACATION SPOT... HELL. SOME CYBERDEMON\n"\
+"PUNK THOUGHT HE COULD TURN HELL INTO A\n"\
+"PERSONAL AMUSEMENT PARK, AND MAKE EARTH\nTHE TICKET BOOTH.\n\n"\
+"WELL THAT HALF-ROBOT FREAK SHOW DIDN'T\n"\
+"KNOW WHO WAS COMING TO THE FAIR. THERE'S\n"\
+"NOTHING LIKE A SHOOTING GALLERY FULL OF\n"\
+"HELLSPAWN TO GET THE BLOOD PUMPING...\n\n"\
+"NOW THE WALLS OF THE DEMON'S LABYRINTH\n"\
+"ECHO WITH THE SOUND OF HIS METALLIC LIMBS\n"\
+"HITTING THE FLOOR. HIS DEATH MOAN GURGLES\n" \
+"OUT THROUGH THE MESS YOU LEFT OF HIS FACE.\n\n" \
+"THIS RIDE IS CLOSED."
 
 //
 // Character cast strings F_FINALE.C

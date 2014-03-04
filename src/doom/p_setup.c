@@ -798,6 +798,30 @@ P_SetupLevel
 
     lumpnum = W_GetNumForName (lumpname);
 	
+    if (nervewadfile)
+    {
+        if (episode == 2)
+        {
+            gamemission = pack_nerve;
+        }
+        else
+        {
+            gamemission = doom2;
+        }
+    }
+    else
+    {
+        if (gamemission == pack_nerve)
+        {
+            gameepisode = 2;
+        }
+    }
+
+    if (nervewadfile && gamemission != pack_nerve)
+    {
+        lumpnum = W_GetSecondNumForName (lumpname);
+    }
+
     leveltime = 0;
 	
     // note: most of this ordering is important	

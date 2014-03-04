@@ -1237,6 +1237,11 @@ int cpars[32] =
     120,30					// 31-32
 };
  
+// No Rest For The Living Par Times
+int npars[9] =
+{
+    75,105,120,105,210,105,165,105,135
+};
 
 //
 // G_DoCompleted 
@@ -1326,6 +1331,21 @@ void G_DoCompleted (void)
     wminfo.last = gamemap -1;
     
     // wminfo.next is 0 biased, unlike gamemap
+    if ( gamemission == pack_nerve)
+    {
+	if (secretexit)
+	    switch(gamemap)
+	    {
+	      case  4: wminfo.next = 8; break;
+	    }
+	else
+	    switch(gamemap)
+	    {
+	      case  9: wminfo.next = 4; break;
+	      default: wminfo.next = gamemap;
+	    }
+    }
+    else
     if ( gamemode == commercial)
     {
 	if (secretexit)
@@ -1333,12 +1353,18 @@ void G_DoCompleted (void)
 	    {
 	      case 15: wminfo.next = 30; break;
 	      case 31: wminfo.next = 31; break;
+	      case  2:
+	          if (bfgedition)
+	               wminfo.next = 32; break;
 	    }
 	else
 	    switch(gamemap)
 	    {
 	      case 31:
 	      case 32: wminfo.next = 15; break;
+	      case 33:
+	          if (bfgedition)
+	               wminfo.next =  2; break;
 	      default: wminfo.next = gamemap;
 	    }
     }
@@ -1377,6 +1403,9 @@ void G_DoCompleted (void)
     // Set par time. Doom episode 4 doesn't have a par time, so this
     // overflows into the cpars array. It's necessary to emulate this
     // for statcheck regression testing.
+    if (gamemission == pack_nerve)
+	wminfo.partime = TICRATE*npars[gamemap-1];
+    else
     if (gamemode == commercial)
 	wminfo.partime = TICRATE*cpars[gamemap-1];
     else if (gameepisode < 4)
@@ -1417,6 +1446,16 @@ void G_WorldDone (void)
     if (secretexit) 
 	players[consoleplayer].didsecret = true; 
 
+    if ( gamemission == pack_nerve )
+    {
+	switch (gamemap)
+	{
+	  case 8:
+	    F_StartFinale ();
+	    break;
+	}
+    }
+    else
     if ( gamemode == commercial )
     {
 	switch (gamemap)
