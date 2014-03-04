@@ -59,6 +59,10 @@ static int dest_pitch;
 
 static byte *stretch_tables[2] = { NULL, NULL };
 
+// 25%/75% stretch table, for 400x300 squash mode
+
+static byte *quarter_stretch_table = NULL;
+
 // 50%/50% stretch table, for 800x600 squash mode
 
 static byte *half_stretch_table = NULL;
@@ -399,9 +403,18 @@ static void I_InitSquashTable(byte *palette)
         return;
     }
 
-    printf("I_InitSquashTable: Generating lookup table..");
+    printf("I_InitSquashTable: Generating lookup tables..");
     fflush(stdout);
     half_stretch_table = GenerateStretchTable(palette, 50);
+    printf(".."); fflush(stdout);
+
+    if (quarter_stretch_table != NULL)
+    {
+        puts("");
+        return;
+    }
+
+    quarter_stretch_table = GenerateStretchTable(palette, 25);
     puts("");
 }
 
@@ -428,6 +441,15 @@ void I_ResetScaleTables(byte *palette)
         printf("I_ResetScaleTables: Regenerating lookup table..\n");
 
         half_stretch_table = GenerateStretchTable(palette, 50);
+    }
+
+    if (quarter_stretch_table != NULL)
+    {
+        Z_Free(quarter_stretch_table);
+
+        printf("I_ResetScaleTables: Regenerating lookup table..\n");
+
+        quarter_stretch_table = GenerateStretchTable(palette, 25);
     }
 }
 
@@ -1099,6 +1121,93 @@ screen_mode_t mode_squash_1x = {
     true,
 };
 
+//
+// 1.5x squashed scale (400x300)
+//
+
+static inline void WriteSquashedLine1p5x(byte *dest, byte *src)
+{
+    byte *dest2, *dest3;
+    int x;
+
+    dest2 = dest + dest_pitch;
+    dest3 = dest + dest_pitch * 2;
+
+    for (x=0; x<SCREENWIDTH; )
+    {
+        // Every 4 pixels is expanded to 5 pixels horizontally
+        // Every 2 pixels is expanded to 3 pixels vertically
+
+        // 100% pixel 0
+
+        *dest = src[0];
+        *dest3 = src[0 + SCREENWIDTH];
+        *dest2 = half_stretch_table[*dest * 256 + *dest3];
+        dest++; dest2++; dest3++;
+
+        // 25% pixel 0, 75% pixel 1
+
+        *dest = quarter_stretch_table[src[0] * 256 + src[1]];
+        *dest3 = quarter_stretch_table[src[0 + SCREENWIDTH] * 256 + src[1 + SCREENWIDTH]];
+        *dest2 = half_stretch_table[*dest * 256 + *dest3];
+        dest++; dest2++; dest3++;
+
+        // 50% pixel 1, 50% pixel 2
+
+        *dest = half_stretch_table[src[1] * 256 + src[2]];
+        *dest3 = half_stretch_table[src[1 + SCREENWIDTH] * 256 + src[2 + SCREENWIDTH]];
+        *dest2 = half_stretch_table[*dest * 256 + *dest3];
+        dest++; dest2++; dest3++;
+
+        // 75% pixel 2, 25% pixel 3
+
+        *dest = quarter_stretch_table[src[2] * 256 + src[3]];
+        *dest3 = quarter_stretch_table[src[2 + SCREENWIDTH] * 256 + src[3 + SCREENWIDTH]];
+        *dest2 = half_stretch_table[*dest * 256 + *dest3];
+        dest++; dest2++; dest3++;
+
+        // 100% pixel 3
+
+        *dest = src[3];
+        *dest3 = src[3 + SCREENWIDTH];
+        *dest2 = half_stretch_table[*dest * 256 + *dest3];
+        dest++; dest2++; dest3++;
+
+        x += 4;
+        src += 4;
+    }
+}
+
+static boolean I_Squash1p5x(int x1, int y1, int x2, int y2)
+{
+    byte *bufp, *screenp;
+    int y;
+
+    if (x1 != 0 || y1 != 0 || x2 != SCREENWIDTH || y2 != SCREENHEIGHT)
+    {
+        return false;
+    }    
+
+    bufp = src_buffer;
+    screenp = (byte *) dest_buffer;
+
+    for (y=0; y<SCREENHEIGHT; y += 2) 
+    {
+        WriteSquashedLine1p5x(screenp, bufp);
+
+        screenp += dest_pitch * 3;
+        bufp += 2 * SCREENWIDTH;
+    }
+
+    return true;
+}
+
+screen_mode_t mode_squash_1p5x = {
+    400 << hires, 300 << hires,
+    I_InitSquashTable,
+    I_Squash1p5x,
+    true && !hires,
+};
 
 //
 // 2x squashed scale (512x400)

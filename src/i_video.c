@@ -126,6 +126,7 @@ static screen_mode_t *screen_modes_corrected[] = {
     // Horizontally squashed modes (320x200 -> 256x200 and multiples)
 
     &mode_squash_1x,
+    &mode_squash_1p5x,
     &mode_squash_2x,
     &mode_squash_3x,
     &mode_squash_4x,
