@@ -365,8 +365,11 @@ void HU_Start(void)
 	s = HU_TITLET;
 	break;
       case pack_nerve:
-	s = HU_TITLEN;
-	break;
+	if (gamemap <= 9)
+	{
+	  s = HU_TITLEN;
+	  break;
+	}
       default:
          s = "Unknown level";
          break;
