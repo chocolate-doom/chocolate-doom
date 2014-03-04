@@ -240,7 +240,7 @@ screen_mode_t mode_scale_4x = {
     SCREENWIDTH * 4, SCREENHEIGHT * 4,
     NULL,
     I_Scale4x,
-    false,
+    false || hires,
 };
 
 // 5x scale (1600x1000)
@@ -293,7 +293,7 @@ screen_mode_t mode_scale_5x = {
     SCREENWIDTH * 5, SCREENHEIGHT * 5,
     NULL,
     I_Scale5x,
-    false,
+    false || hires,
 };
 
 
@@ -509,7 +509,7 @@ screen_mode_t mode_stretch_1x = {
     SCREENWIDTH, SCREENHEIGHT_4_3,
     I_InitStretchTables,
     I_Stretch1x,
-    true,
+    true && !hires,
 };
 
 static inline void WriteLine2x(byte *dest, byte *src)
@@ -761,7 +761,7 @@ screen_mode_t mode_stretch_3x = {
     SCREENWIDTH * 3, SCREENHEIGHT_4_3 * 3,
     I_InitStretchTables,
     I_Stretch3x,
-    false,
+    false || hires,
 };
 
 static inline void WriteLine4x(byte *dest, byte *src)
@@ -926,7 +926,7 @@ screen_mode_t mode_stretch_4x = {
     SCREENWIDTH * 4, SCREENHEIGHT_4_3 * 4,
     I_InitStretchTables,
     I_Stretch4x,
-    false,
+    false || hires,
 };
 
 static inline void WriteLine5x(byte *dest, byte *src)
@@ -997,7 +997,7 @@ static boolean I_Stretch5x(int x1, int y1, int x2, int y2)
     // test hack for Porsche Monty... scan line simulation:
     // See here: http://www.doomworld.com/vb/post/962612
 
-    if (M_CheckParm("-scanline") > 0)
+    if (M_CheckParm("-scanline") > 0 && !hires)
     {
         screenp = (byte *) dest_buffer + 2 * dest_pitch;
 
@@ -1016,7 +1016,7 @@ screen_mode_t mode_stretch_5x = {
     SCREENWIDTH * 5, SCREENHEIGHT_4_3 * 5,
     I_InitStretchTables,
     I_Stretch5x,
-    false,
+    false || hires,
 };
 
 //
@@ -1195,7 +1195,7 @@ screen_mode_t mode_squash_2x = {
     SCREENWIDTH_4_3 * 2, SCREENHEIGHT * 2,
     I_InitStretchTables,
     I_Squash2x,
-    true,
+    true && !hires,
 };
 
 
@@ -1275,7 +1275,7 @@ static boolean I_Squash3x(int x1, int y1, int x2, int y2)
 }
 
 screen_mode_t mode_squash_3x = {
-    800, 600,
+    800 << hires, 600 << hires,
     I_InitSquashTable,
     I_Squash3x,
     false,
@@ -1389,7 +1389,7 @@ screen_mode_t mode_squash_4x = {
     SCREENWIDTH_4_3 * 4, SCREENHEIGHT * 4,
     I_InitStretchTables,
     I_Squash4x,
-    false,
+    false || hires,
 };
 
 #define DRAW_PIXEL5 \
@@ -1454,7 +1454,7 @@ screen_mode_t mode_squash_5x = {
     SCREENWIDTH_4_3 * 5, SCREENHEIGHT * 5,
     I_InitStretchTables,
     I_Squash5x,
-    false,
+    false || hires,
 };
 
 

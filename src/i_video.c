@@ -98,8 +98,8 @@ static const char shiftxform[] =
 };
 
 
-#define LOADING_DISK_W 16
-#define LOADING_DISK_H 16
+#define LOADING_DISK_W (16 << hires)
+#define LOADING_DISK_H (16 << hires)
 
 // Non aspect ratio-corrected modes (direct multiples of 320x200)
 
@@ -424,7 +424,7 @@ void I_EnableLoadingDisk(void)
 
     // Draw the patch into a temporary buffer
 
-    tmpbuf = Z_Malloc(SCREENWIDTH * (disk->height + 1), PU_STATIC, NULL);
+    tmpbuf = Z_Malloc(SCREENWIDTH * ((disk->height + 1) << hires), PU_STATIC, NULL);
     V_UseBuffer(tmpbuf);
 
     // Draw the disk to the screen:
@@ -1302,7 +1302,7 @@ static screen_mode_t *I_FindScreenMode(int w, int h)
         {
             return &mode_scale_1x;
         }
-        else if (w == SCREENWIDTH*2 && h == SCREENHEIGHT*2)
+        else if (w == SCREENWIDTH*2 && h == SCREENHEIGHT*2 && !hires)
         {
             return &mode_scale_2x;
         }
