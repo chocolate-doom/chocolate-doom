@@ -1065,6 +1065,9 @@ static void LoadNerveWad(void)
     char *sep;
     char lumpname[9];
     
+    if (!bfgedition || gamemode != commercial)
+        return;
+
     if (!modifiedgame)
     {
         sep = strrchr(iwadfile, DIR_SEPARATOR);
@@ -1109,12 +1112,14 @@ static void LoadNerveWad(void)
         {
             while (++i != myargc && myargv[i][0] != '-')
             {
-                if (!strncasecmp(basename(myargv[i]), "nerve.wad", 8));
+                if (!strncasecmp(basename(myargv[i]), "nerve.wad", 9))
+                {
                     gamemission = pack_nerve;
+                    DEH_AddStringReplacement ("TITLEPIC", "DMENUPIC");
+                    break;
+                }
             }
         }
-
-        DEH_AddStringReplacement ("TITLEPIC", "DMENUPIC");
     }
 }
 
@@ -1433,14 +1438,9 @@ void D_DoomMain (void)
     InitGameVersion();
     LoadChexDeh();
     LoadHacxDeh();
+    LoadNerveWad();
     D_SetGameDescription();
     savegamedir = M_GetSaveGameDir(D_SaveGameIWADName(gamemission));
-
-    // Should check for (bfgedition), which isn't known, yet
-    if (gamemode == commercial && W_CheckNumForName("titlepic") < 0)
-    {
-        LoadNerveWad();
-    }
 
     // Check for -file in shareware
     if (modifiedgame)

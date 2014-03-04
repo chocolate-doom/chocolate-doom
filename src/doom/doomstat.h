@@ -65,11 +65,10 @@ extern GameMode_t	gamemode;
 extern GameMission_t	gamemission;
 extern GameVersion_t    gameversion;
 extern char            *gamedescription;
-extern boolean          bfgedition;
-extern char            *nervewadfile;
 
 // If true, we're using one of the mangled BFG edition IWADs.
 extern boolean bfgedition;
+extern char *nervewadfile;
 
 // Convenience macro.
 // 'gamemission' can be equal to pack_chex or pack_hacx, but these are
