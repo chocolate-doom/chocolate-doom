@@ -774,6 +774,8 @@ void D_SetGameDescription(void)
             gamedescription = GetGameName("DOOM 2: Plutonia Experiment"); 
         else if (logical_gamemission == pack_tnt)
             gamedescription = GetGameName("DOOM 2: TNT - Evilution");
+        else if (logical_gamemission == pack_nerve)
+            gamedescription = GetGameName("DOOM 2: No Rest For The Living");
     }
 }
 
