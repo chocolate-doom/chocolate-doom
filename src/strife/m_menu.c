@@ -1573,7 +1573,7 @@ M_WriteText
         w = SHORT (hu_font[c]->width);
 
         // haleyjd 09/04/10: [STRIFE] Different linebreak handling
-        if (cx + w > SCREENWIDTH - 20)
+        if (cx + w > ORIGWIDTH - 20)
         {
             cx = x;
             cy += 11;
@@ -1601,7 +1601,7 @@ M_WriteText
 //
 void M_DialogDimMsg(int x, int y, char *str, boolean useyfont)
 {
-    int rightbound = (SCREENWIDTH - 20) - x;
+    int rightbound = (ORIGWIDTH - 20) - x;
     patch_t **fontarray;  // ebp
     int linewidth = 0;    // esi
     int i = 0;            // edx
