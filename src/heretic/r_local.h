@@ -165,12 +165,12 @@ typedef struct
     int lightlevel;
     int special;
     int minx, maxx;
-    byte pad1;                  // leave pads for [minx-1]/[maxx+1]
-    byte top[SCREENWIDTH];
-    byte pad2;
-    byte pad3;
-    byte bottom[SCREENWIDTH];
-    byte pad4;
+    unsigned short pad1;                  // leave pads for [minx-1]/[maxx+1]
+    unsigned short top[SCREENWIDTH];
+    unsigned short pad2;
+    unsigned short pad3;
+    unsigned short bottom[SCREENWIDTH];
+    unsigned short pad4;
 } visplane_t;
 
 typedef struct drawseg_s

@@ -598,7 +598,7 @@ void R_ProjectSprite(mobj_t * thing)
         vis->colormap = colormaps;      // full bright
     else
     {                           // diminished light
-        index = xscale >> (LIGHTSCALESHIFT - detailshift);
+        index = xscale >> (LIGHTSCALESHIFT - detailshift + hires);
         if (index >= MAXLIGHTSCALE)
             index = MAXLIGHTSCALE - 1;
         vis->colormap = spritelights[index];

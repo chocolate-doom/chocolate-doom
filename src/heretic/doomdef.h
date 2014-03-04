@@ -481,7 +481,7 @@ typedef struct player_s
 #define	CF_GODMODE		2
 #define	CF_NOMOMENTUM	4       // not really a cheat, just a debug aid
 
-#define	SBARHEIGHT	42      // status bar height at bottom of screen
+#define	SBARHEIGHT	(42 << hires)      // status bar height at bottom of screen
 
 
 /*
