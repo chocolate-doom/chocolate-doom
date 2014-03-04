@@ -586,7 +586,7 @@ F_DrawPatchCol
     byte*	source;
     byte*	dest;
     byte*	desttop;
-    int		count;
+    int		count, f;
 	
     column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
     desttop = I_VideoBuffer + x;
@@ -594,15 +594,23 @@ F_DrawPatchCol
     // step through the posts in a column
     while (column->topdelta != 0xff )
     {
+      for (f = 0; f <= hires; f++)
+      {
 	source = (byte *)column + 3;
-	dest = desttop + column->topdelta*SCREENWIDTH;
+	dest = desttop + column->topdelta*(SCREENWIDTH << hires) + (x * hires) + f;
 	count = column->length;
 		
 	while (count--)
 	{
+	    if (hires)
+	    {
+	        *dest = *source;
+	        dest += SCREENWIDTH;
+	    }
 	    *dest = *source++;
 	    dest += SCREENWIDTH;
 	}
+      }
 	column = (column_t *)(  (byte *)column + column->length + 4 );
     }
 }
@@ -632,7 +640,7 @@ void F_BunnyScroll (void)
     if (scrolled < 0)
 	scrolled = 0;
 		
-    for ( x=0 ; x<SCREENWIDTH ; x++)
+    for ( x=0 ; x<ORIGWIDTH ; x++)
     {
 	if (x+scrolled < 320)
 	    F_DrawPatchCol (x, p1, x+scrolled);
@@ -644,8 +652,8 @@ void F_BunnyScroll (void)
 	return;
     if (finalecount < 1180)
     {
-        V_DrawPatch((SCREENWIDTH - 13 * 8) / 2,
-                    (SCREENHEIGHT - 8 * 8) / 2, 
+        V_DrawPatch((ORIGWIDTH - 13 * 8) / 2,
+                    (ORIGHEIGHT - 8 * 8) / 2, 
                     W_CacheLumpName(DEH_String("END0"), PU_CACHE));
 	laststage = 0;
 	return;
@@ -661,8 +669,8 @@ void F_BunnyScroll (void)
     }
 	
     DEH_snprintf(name, 10, "END%i", stage);
-    V_DrawPatch((SCREENWIDTH - 13 * 8) / 2, 
-                (SCREENHEIGHT - 8 * 8) / 2, 
+    V_DrawPatch((ORIGWIDTH - 13 * 8) / 2, 
+                (ORIGHEIGHT - 8 * 8) / 2, 
                 W_CacheLumpName (name,PU_CACHE));
 }
 

@@ -224,12 +224,12 @@ void D_Display (void)
 	    break;
 	if (automapactive)
 	    AM_Drawer ();
-	if (wipe || (viewheight != 200 && fullscreen) )
+	if (wipe || (viewheight != (200 << hires) && fullscreen) )
 	    redrawsbar = true;
 	if (inhelpscreensstate && !inhelpscreens)
 	    redrawsbar = true;              // just put away the help screen
-	ST_Drawer (viewheight == 200, redrawsbar );
-	fullscreen = viewheight == 200;
+	ST_Drawer (viewheight == (200 << hires), redrawsbar );
+	fullscreen = viewheight == (200 << hires);
 	break;
 
       case GS_INTERMISSION:
@@ -267,7 +267,7 @@ void D_Display (void)
     }
 
     // see if the border needs to be updated to the screen
-    if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != 320)
+    if (gamestate == GS_LEVEL && !automapactive && scaledviewwidth != (320 << hires))
     {
 	if (menuactive || menuactivestate || !viewactivestate)
 	    borderdrawcount = 3;
@@ -297,8 +297,8 @@ void D_Display (void)
 	if (automapactive)
 	    y = 4;
 	else
-	    y = viewwindowy+4;
-	V_DrawPatchDirect(viewwindowx + (scaledviewwidth - 68) / 2, y,
+	    y = (viewwindowy >> hires)+4;
+	V_DrawPatchDirect((viewwindowx >> hires) + ((scaledviewwidth >> hires) - 68) / 2, y,
                           W_CacheLumpName (DEH_String("M_PAUSE"), PU_CACHE));
     }
 

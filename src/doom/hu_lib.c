@@ -155,15 +155,15 @@ void HUlib_eraseTextLine(hu_textline_t* l)
     if (!automapactive &&
 	viewwindowx && l->needsupdate)
     {
-	lh = SHORT(l->f[0]->height) + 1;
-	for (y=l->y,yoffset=y*SCREENWIDTH ; y<l->y+lh ; y++,yoffset+=SCREENWIDTH)
+	lh = (SHORT(l->f[0]->height) + 1) << hires;
+	for (y=l->y,yoffset=y*(SCREENWIDTH << hires) ; y<l->y+lh ; y++,yoffset+=SCREENWIDTH)
 	{
-	    if (y < viewwindowy || y >= viewwindowy + viewheight)
+	    if (y < (viewwindowy >> hires) || y >= (viewwindowy >> hires) + (viewheight >> hires))
 		R_VideoErase(yoffset, SCREENWIDTH); // erase entire line
 	    else
 	    {
 		R_VideoErase(yoffset, viewwindowx); // erase left border
-		R_VideoErase(yoffset + viewwindowx + viewwidth, viewwindowx);
+		R_VideoErase(yoffset + viewwindowx + scaledviewwidth, viewwindowx);
 		// erase right border
 	    }
 	}

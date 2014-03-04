@@ -630,7 +630,7 @@ void R_InitLightTables (void)
 	startmap = ((LIGHTLEVELS-1-i)*2)*NUMCOLORMAPS/LIGHTLEVELS;
 	for (j=0 ; j<MAXLIGHTZ ; j++)
 	{
-	    scale = FixedDiv ((SCREENWIDTH/2*FRACUNIT), (j+1)<<LIGHTZSHIFT);
+	    scale = FixedDiv ((ORIGWIDTH/2*FRACUNIT), (j+1)<<LIGHTZSHIFT);
 	    scale >>= LIGHTSCALESHIFT;
 	    level = startmap - scale/DISTMAP;
 	    
@@ -690,8 +690,8 @@ void R_ExecuteSetViewSize (void)
     }
     else
     {
-	scaledviewwidth = setblocks*32;
-	viewheight = (setblocks*168/10)&~7;
+	scaledviewwidth = (setblocks*32)<<hires;
+	viewheight = ((setblocks*168/10)&~7)<<hires;
     }
     
     detailshift = setdetail;
@@ -723,8 +723,8 @@ void R_ExecuteSetViewSize (void)
     R_InitTextureMapping ();
     
     // psprite scales
-    pspritescale = FRACUNIT*viewwidth/SCREENWIDTH;
-    pspriteiscale = FRACUNIT*SCREENWIDTH/viewwidth;
+    pspritescale = FRACUNIT*viewwidth/ORIGWIDTH;
+    pspriteiscale = FRACUNIT*ORIGWIDTH/viewwidth;
     
     // thing clipping
     for (i=0 ; i<viewwidth ; i++)
