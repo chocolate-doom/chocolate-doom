@@ -1,10 +1,10 @@
-AC_INIT(Chocolate Doom, 2.0.0, fraggle@gmail.com, chocolate-doom)
+AC_INIT(Crispy Doom, 1.0, fabian@greffrath.com, crispy-doom)
 
-PACKAGE_SHORTDESC="Conservative Doom source port"
-PACKAGE_COPYRIGHT="Copyright (C) 1993-2013"
+PACKAGE_SHORTDESC="Limit-raising medium-resolution Doom source port"
+PACKAGE_COPYRIGHT="Copyright (C) 1993-2014"
 PACKAGE_LICENSE="GNU General Public License, version 2"
-PACKAGE_MAINTAINER="Simon Howard"
-PACKAGE_URL="http://www.chocolate-doom.org/"
+PACKAGE_MAINTAINER="Fabian Greffrath"
+PACKAGE_URL="http://www.chocolate-doom.org/wiki/index.php/Crispy_Doom"
 
 AC_CONFIG_AUX_DIR(autotools)
 
@@ -109,7 +109,7 @@ WINDOWS_RC_VERSION=`echo $PACKAGE_VERSION | sed 's/-.*//; s/\./, /g; s/$/, 0/'`
 # if this is changed to "lemon-", the programs generated will be named
 # lemon-doom, lemon-heretic, etc.
 
-PROGRAM_PREFIX=chocolate-
+PROGRAM_PREFIX=crispy-
 
 AC_SUBST(PROGRAM_PREFIX)
 AC_DEFINE_UNQUOTED(PROGRAM_PREFIX, "$PROGRAM_PREFIX",
