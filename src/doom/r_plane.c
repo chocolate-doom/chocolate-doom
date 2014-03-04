@@ -397,7 +397,7 @@ void R_DrawPlanes (void)
 	// sky flat
 	if (pl->picnum == skyflatnum)
 	{
-	    dc_iscale = pspriteiscale>>detailshift;
+	    dc_iscale = pspriteiscale>>(detailshift && !hires);
 	    
 	    // Sky is allways drawn full bright,
 	    //  i.e. colormaps[0] is used.

@@ -487,7 +487,7 @@ fixed_t R_ScaleFromGlobalAngle (angle_t visangle)
     // both sines are allways positive
     sinea = finesine[anglea>>ANGLETOFINESHIFT];	
     sineb = finesine[angleb>>ANGLETOFINESHIFT];
-    num = FixedMul(projection,sineb)<<detailshift;
+    num = FixedMul(projection,sineb)<<(detailshift && !hires);
     den = FixedMul(rw_distance,sinea);
 
     if (den > num>>16)
@@ -686,16 +686,17 @@ void R_ExecuteSetViewSize (void)
     if (setblocks == 11)
     {
 	scaledviewwidth = SCREENWIDTH;
-	viewheight = SCREENHEIGHT;
+	scaledviewheight = SCREENHEIGHT;
     }
     else
     {
 	scaledviewwidth = (setblocks*32)<<hires;
-	viewheight = ((setblocks*168/10)&~7)<<hires;
+	scaledviewheight = ((setblocks*168/10)&~7)<<hires;
     }
     
     detailshift = setdetail;
     viewwidth = scaledviewwidth>>detailshift;
+    viewheight = scaledviewheight>>(detailshift && hires);
 	
     centery = viewheight/2;
     centerx = viewwidth/2;
@@ -718,7 +719,7 @@ void R_ExecuteSetViewSize (void)
 	spanfunc = R_DrawSpanLow;
     }
 
-    R_InitBuffer (scaledviewwidth, viewheight);
+    R_InitBuffer (scaledviewwidth, scaledviewheight);
 	
     R_InitTextureMapping ();
     
@@ -735,7 +736,7 @@ void R_ExecuteSetViewSize (void)
     {
 	dy = ((i-viewheight/2)<<FRACBITS)+FRACUNIT/2;
 	dy = abs(dy);
-	yslope[i] = FixedDiv ( (viewwidth<<detailshift)/2*FRACUNIT, dy);
+	yslope[i] = FixedDiv ( (viewwidth<<(detailshift && !hires))/2*FRACUNIT, dy);
     }
 	
     for (i=0 ; i<viewwidth ; i++)
