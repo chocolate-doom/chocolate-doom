@@ -19,3 +19,4 @@ icons_DATA = @PROGRAM_PREFIX@doom.png   \
 @PROGRAM_PREFIX@setup.png : setup.png
 	cp setup.png $@
 
+CLEANFILES = $(icons_DATA)

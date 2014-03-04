@@ -49,16 +49,16 @@ EXTRA_DIST=                             \
         TODO                            \
         rpm.spec
 
-doomdocsdir = $(prefix)/share/doc/@PROGRAM_PREFIX@doom
+doomdocsdir = ${docdir}/../${PROGRAM_PREFIX}doom
 doomdocs_DATA = $(DOC_FILES) NOT-BUGS
 
-hereticdocsdir = $(prefix)/share/doc/@PROGRAM_PREFIX@heretic
+hereticdocsdir = ${docdir}/../${PROGRAM_PREFIX}heretic
 hereticdocs_DATA = $(DOC_FILES)
 
-hexendocsdir = $(prefix)/share/doc/@PROGRAM_PREFIX@hexen
+hexendocsdir = ${docdir}/../${PROGRAM_PREFIX}hexen
 hexendocs_DATA = $(DOC_FILES)
 
-strifedocsdir = $(prefix)/share/doc/@PROGRAM_PREFIX@strife
+strifedocsdir = ${docdir}/../${PROGRAM_PREFIX}strife
 strifedocs_DATA = $(DOC_FILES) README.Strife
 
 MAINTAINERCLEANFILES =  $(AUX_DIST_GEN)

@@ -634,7 +634,7 @@ boolean AM_Responder(event_t * ev)
             if (!followplayer)
                 m_paninc.x = 0;
         }
-        else if (key == key_map_east)
+        else if (key == key_map_west)
         {
             if (!followplayer)
                 m_paninc.x = 0;

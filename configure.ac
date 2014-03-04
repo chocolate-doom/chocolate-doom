@@ -73,8 +73,13 @@ AC_SDL_MAIN_WORKAROUND([
     ])
 
     # Check for libsamplerate.
-
-    AC_CHECK_LIB(samplerate, src_new)
+    AC_ARG_WITH([libsamplerate],
+    AS_HELP_STRING([--without-libsamplerate],
+        [Build without libsamplerate @<:@default=check@:>@]),
+    [],
+    [
+        AC_CHECK_LIB(samplerate, src_new)
+    ])
     AC_CHECK_LIB(m, log)
 
     AC_CHECK_HEADERS([linux/kd.h dev/isa/spkrio.h dev/speaker/speaker.h])
@@ -95,7 +100,7 @@ AM_CONDITIONAL(HAVE_PYTHON, $HAVE_PYTHON)
 
 dnl Automake v1.8.0 is required, please upgrade!
 
-AM_INIT_AUTOMAKE([1.8.0])
+AM_INIT_AUTOMAKE([1.8.0 foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 WINDOWS_RC_VERSION=`echo $PACKAGE_VERSION | sed 's/-.*//; s/\./, /g; s/$/, 0/'`
