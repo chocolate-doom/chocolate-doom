@@ -764,6 +764,7 @@ P_KillMobj
     }
 
     mo = P_SpawnMobj (target->x,target->y,ONFLOORZ, item);
+    mo->momz += 5*FRACUNIT;
     mo->flags |= MF_DROPPED;	// special versions of items
 }
 
