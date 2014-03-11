@@ -95,6 +95,10 @@ char			chat_char; // remove later.
 static player_t*	plr;
 patch_t*		hu_font[HU_FONTSIZE];
 static hu_textline_t	w_title;
+static hu_textline_t	w_kills;
+static hu_textline_t	w_items;
+static hu_textline_t	w_scrts;
+static hu_textline_t	w_ltime;
 boolean			chat_on;
 static hu_itext_t	w_chat;
 static boolean		always_off = false;
@@ -349,6 +353,26 @@ void HU_Start(void)
 		       HU_TITLEX, HU_TITLEY,
 		       hu_font,
 		       HU_FONTSTART);
+
+    HUlib_initTextLine(&w_kills,
+		       HU_TITLEX, HU_MSGY + 1 * 8,
+		       hu_font,
+		       HU_FONTSTART);
+
+    HUlib_initTextLine(&w_items,
+		       HU_TITLEX, HU_MSGY + 2 * 8,
+		       hu_font,
+		       HU_FONTSTART);
+
+    HUlib_initTextLine(&w_scrts,
+		       HU_TITLEX, HU_MSGY + 3 * 8,
+		       hu_font,
+		       HU_FONTSTART);
+
+    HUlib_initTextLine(&w_ltime,
+		       HU_TITLEX, HU_MSGY + 5 * 8,
+		       hu_font,
+		       HU_FONTSTART);
     
     switch ( logical_gamemission )
     {
@@ -410,7 +434,40 @@ void HU_Drawer(void)
     HUlib_drawSText(&w_message);
     HUlib_drawIText(&w_chat);
     if (automapactive)
+    {
+        static char str[32], *s;
+        int time = leveltime / TICRATE;
+
 	HUlib_drawTextLine(&w_title, false);
+
+	sprintf(str, "Kills: %d/%d", players[consoleplayer].killcount, totalkills);
+	HUlib_clearTextLine(&w_kills);
+	s = str;
+	while (*s)
+	    HUlib_addCharToTextLine(&w_kills, *(s++));
+	HUlib_drawTextLine(&w_kills, false);
+
+	sprintf(str, "Items: %d/%d", players[consoleplayer].itemcount, totalitems);
+	HUlib_clearTextLine(&w_items);
+	s = str;
+	while (*s)
+	    HUlib_addCharToTextLine(&w_items, *(s++));
+	HUlib_drawTextLine(&w_items, false);
+
+	sprintf(str, "Scrts: %d/%d", players[consoleplayer].secretcount, totalsecret);
+	HUlib_clearTextLine(&w_scrts);
+	s = str;
+	while (*s)
+	    HUlib_addCharToTextLine(&w_scrts, *(s++));
+	HUlib_drawTextLine(&w_scrts, false);
+
+	sprintf(str, "%02d:%02d:%02d", time/3600, (time%3600)/60, time%60);
+	HUlib_clearTextLine(&w_ltime);
+	s = str;
+	while (*s)
+	    HUlib_addCharToTextLine(&w_ltime, *(s++));
+	HUlib_drawTextLine(&w_ltime, false);
+    }
 
 }
 
