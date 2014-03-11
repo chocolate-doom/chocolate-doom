@@ -251,7 +251,12 @@ void D_Display (void)
     
     // draw the view directly
     if (gamestate == GS_LEVEL && !automapactive && gametic)
+    {
 	R_RenderPlayerView (&players[displayplayer]);
+
+        if (screenblocks == 12)
+            ST_Drawer(0, 0);
+    }
 
     if (gamestate == GS_LEVEL && gametic)
 	HU_Drawer ();

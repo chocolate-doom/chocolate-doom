@@ -52,6 +52,7 @@
 
 #include "am_map.h"
 #include "m_cheat.h"
+#include "m_menu.h"
 
 #include "s_sound.h"
 
@@ -1031,20 +1032,20 @@ void ST_drawWidgets(boolean refresh)
 	STlib_updateNum(&w_maxammo[i], refresh);
     }
 
-    STlib_updatePercent(&w_health, refresh);
-    STlib_updatePercent(&w_armor, refresh);
+    STlib_updatePercent(&w_health, refresh || screenblocks == 12);
+    STlib_updatePercent(&w_armor, refresh || screenblocks == 12);
 
     STlib_updateBinIcon(&w_armsbg, refresh);
 
     for (i=0;i<6;i++)
-	STlib_updateMultIcon(&w_arms[i], refresh);
+	STlib_updateMultIcon(&w_arms[i], refresh || screenblocks == 12);
 
     STlib_updateMultIcon(&w_faces, refresh);
 
     for (i=0;i<3;i++)
-	STlib_updateMultIcon(&w_keyboxes[i], refresh);
+	STlib_updateMultIcon(&w_keyboxes[i], refresh || screenblocks == 12);
 
-    STlib_updateNum(&w_frags, refresh);
+    STlib_updateNum(&w_frags, refresh || screenblocks == 12);
 
 }
 
@@ -1070,7 +1071,7 @@ void ST_diffDraw(void)
 void ST_Drawer (boolean fullscreen, boolean refresh)
 {
   
-    st_statusbaron = (!fullscreen) || automapactive;
+    st_statusbaron = (!fullscreen) || automapactive || screenblocks == 12;
     st_firsttime = st_firsttime || refresh;
 
     // Do red-/gold-shifts from damage/items
