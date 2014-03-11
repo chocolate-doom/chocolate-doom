@@ -481,7 +481,7 @@ P_TouchSpecialThing
 	if (!P_GiveBody (player, 25))
 	    return;
 
-	if (player->health < 25)
+	if (player->health < 50)
 	    player->message = DEH_String(GOTMEDINEED);
 	else
 	    player->message = DEH_String(GOTMEDIKIT);
