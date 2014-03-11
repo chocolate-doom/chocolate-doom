@@ -297,6 +297,21 @@ void D_Display (void)
     inhelpscreensstate = inhelpscreens;
     oldgamestate = wipegamestate = gamestate;
     
+    if (paused || menuactive)
+    {
+	static int i;
+	byte *b;
+
+	for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++)
+	{
+	    b = I_VideoBuffer + i;
+	    *b = colormaps[16 * 256 + *b];
+	}
+
+	viewactivestate = false;
+	inhelpscreensstate = true;
+    }
+
     // draw pause pic
     if (paused)
     {
