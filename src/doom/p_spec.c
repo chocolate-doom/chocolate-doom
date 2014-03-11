@@ -54,6 +54,7 @@
 
 // Data.
 #include "sounds.h"
+#include "dstrings.h" // HUSTR_SECRETFOUND
 
 
 //
@@ -1027,6 +1028,7 @@ P_ShootSpecialLine
 void P_PlayerInSpecialSector (player_t* player)
 {
     sector_t*	sector;
+    extern int showMessages;
 	
     sector = player->mo->subsector->sector;
 
@@ -1065,6 +1067,12 @@ void P_PlayerInSpecialSector (player_t* player)
 			
       case 9:
 	// SECRET SECTOR
+	if (showMessages)
+	{
+	    player->message = HUSTR_SECRETFOUND;
+	    if (player == &players[consoleplayer])
+	        S_StartSound(NULL, sfx_itmbk);
+	}
 	player->secretcount++;
 	sector->special = 0;
 	break;
