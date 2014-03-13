@@ -75,6 +75,15 @@ extern int key_weapon6;
 extern int key_weapon7;
 extern int key_weapon8;
 
+extern int key_arti_all;
+extern int key_arti_health;
+extern int key_arti_poisonbag;
+extern int key_arti_blastradius;
+extern int key_arti_teleport;
+extern int key_arti_teleportother;
+extern int key_arti_egg;
+extern int key_arti_invulnerability;
+
 extern int key_demo_quit;
 extern int key_spy;
 extern int key_prevweapon;
