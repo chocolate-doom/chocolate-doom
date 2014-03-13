@@ -1298,6 +1298,70 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_nextweapon),
 
     //!
+    // @game hexen
+    //
+    // Key to use one of each artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_all),
+
+    //!
+    // @game hexen
+    //
+    // Key to use "quartz flask" artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_health),
+
+    //!
+    // @game hexen
+    //
+    // Key to use "flechette" artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_poisonbag),
+
+    //!
+    // @game hexen
+    //
+    // Key to use "disc of repulsion" artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_blastradius),
+
+    //!
+    // @game hexen
+    //
+    // Key to use "chaos device" artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_teleport),
+
+    //!
+    // @game hexen
+    //
+    // Key to use "banishment device" artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_teleportother),
+
+    //!
+    // @game hexen
+    //
+    // Key to use "porkalator" artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_egg),
+
+    //!
+    // @game hexen
+    //
+    // Key to use "icon of the defender" artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_invulnerability),
+
+    //!
     // Key to re-display last message.
     //
 

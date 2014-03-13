@@ -67,6 +67,15 @@ int key_useartifact = KEY_ENTER;
 
 int key_jump = '/';
 
+int key_arti_all             = KEY_BACKSPACE;
+int key_arti_health          = '\\';
+int key_arti_poisonbag       = '0';
+int key_arti_blastradius     = '9';
+int key_arti_teleport        = '8';
+int key_arti_teleportother   = '7';
+int key_arti_egg             = '6';
+int key_arti_invulnerability = '5';
+
 //
 // Strife key controls
 //
@@ -252,6 +261,15 @@ void M_BindHexenControls(void)
     M_BindVariable("key_jump",           &key_jump);
     M_BindVariable("mouseb_jump",        &mousebjump);
     M_BindVariable("joyb_jump",          &joybjump);
+
+    M_BindVariable("key_arti_all",             &key_arti_all);
+    M_BindVariable("key_arti_health",          &key_arti_health);
+    M_BindVariable("key_arti_poisonbag",       &key_arti_poisonbag);
+    M_BindVariable("key_arti_blastradius",     &key_arti_blastradius);
+    M_BindVariable("key_arti_teleport",        &key_arti_teleport);
+    M_BindVariable("key_arti_teleportother",   &key_arti_teleportother);
+    M_BindVariable("key_arti_egg",             &key_arti_egg);
+    M_BindVariable("key_arti_invulnerability", &key_arti_invulnerability);
 }
 
 void M_BindStrifeControls(void)

@@ -49,6 +49,10 @@ static int *controls[] = { &key_left, &key_right, &key_up, &key_down,
                            &key_weapon1, &key_weapon2, &key_weapon3,
                            &key_weapon4, &key_weapon5, &key_weapon6,
                            &key_weapon7, &key_weapon8,
+                           &key_arti_all, &key_arti_health, &key_arti_poisonbag,
+                           &key_arti_blastradius, &key_arti_teleport,
+                           &key_arti_teleportother, &key_arti_egg,
+                           &key_arti_invulnerability,
                            &key_prevweapon, &key_nextweapon, NULL };
 
 static int *menu_nav[] = { &key_menu_activate, &key_menu_up, &key_menu_down,
@@ -184,7 +188,7 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
     table = TXT_NewTable(2);
 
-    TXT_SetColumnWidths(table, 20, 9);
+    TXT_SetColumnWidths(table, 21, 9);
 
     if (extra_keys)
     {
@@ -228,6 +232,20 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
         else
         {
             AddKeyControl(table, "Use artifact", &key_useartifact);
+        }
+
+        if (gamemission == hexen)
+        {
+            AddSectionLabel(table, "Artifacts", true);
+
+            AddKeyControl(table, "One of each", &key_arti_all);
+            AddKeyControl(table, "Quartz Flask", &key_arti_health);
+            AddKeyControl(table, "Flechette", &key_arti_poisonbag);
+            AddKeyControl(table, "Disc of Repulsion", &key_arti_blastradius);
+            AddKeyControl(table, "Chaos Device", &key_arti_teleport);
+            AddKeyControl(table, "Banishment Device", &key_arti_teleportother);
+            AddKeyControl(table, "Porkalator", &key_arti_egg);
+            AddKeyControl(table, "Icon of the Defender", &key_arti_invulnerability);
         }
     }
     else
