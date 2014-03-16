@@ -1889,8 +1889,13 @@ void P_UnArchiveSpecials(void)
                 plat = Z_Malloc(sizeof(*plat), PU_LEVEL, NULL);
                 saveg_read_plat_t(plat);
                 plat->sector->specialdata = T_PlatRaise;
-                if (plat->thinker.function)
-                    plat->thinker.function = T_PlatRaise;
+                // In the original Heretic code this was a conditional "fix"
+                // of the thinker function, but the save code (above) decides
+                // whether to save a T_PlatRaise based on thinker function
+                // anyway, so it can't be NULL. Having the conditional causes
+                // a bug, as our saveg_read_thinker_t sets these to NULL.
+                // if (plat->thinker.function)
+                plat->thinker.function = T_PlatRaise;
                 P_AddThinker(&plat->thinker);
                 P_AddActivePlat(plat);
                 break;
