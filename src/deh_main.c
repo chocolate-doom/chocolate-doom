@@ -348,16 +348,20 @@ int DEH_LoadFile(char *filename)
 }
 
 // Load dehacked file from WAD lump.
+// If allow_long is set, allow long strings and cheats just for this lump.
 
-int DEH_LoadLump(int lumpnum)
+int DEH_LoadLump(int lumpnum, boolean allow_long)
 {
     deh_context_t *context;
+    boolean long_strings, long_cheats;
 
-    // If it's in a lump, it's probably designed for a modern source port,
-    // so allow it to do long string and cheat replacements.
-
-    deh_allow_long_strings = true;
-    deh_allow_long_cheats = true;
+    if (allow_long)
+    {
+        long_strings = deh_allow_long_strings;
+        long_cheats = deh_allow_long_cheats;
+        deh_allow_long_strings = true;
+        deh_allow_long_cheats = true;
+    }
 
     context = DEH_OpenLump(lumpnum);
 
@@ -371,10 +375,17 @@ int DEH_LoadLump(int lumpnum)
 
     DEH_CloseFile(context);
 
+    // Restore old value of long flags.
+    if (allow_long)
+    {
+        deh_allow_long_strings = long_strings;
+        deh_allow_long_cheats = long_cheats;
+    }
+
     return 1;
 }
 
-int DEH_LoadLumpByName(char *name)
+int DEH_LoadLumpByName(char *name, boolean allow_long)
 {
     int lumpnum;
 
@@ -386,7 +397,7 @@ int DEH_LoadLumpByName(char *name)
         return 0;
     }
 
-    return DEH_LoadLump(lumpnum);
+    return DEH_LoadLump(lumpnum, allow_long);
 }
 
 // Checks the command line for -deh argument
