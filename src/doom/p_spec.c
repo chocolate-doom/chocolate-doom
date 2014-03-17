@@ -1028,7 +1028,7 @@ P_ShootSpecialLine
 void P_PlayerInSpecialSector (player_t* player)
 {
     sector_t*	sector;
-    extern int showMessages;
+    extern int showMessages, crispy_secretmessage;
 	
     sector = player->mo->subsector->sector;
 
@@ -1067,7 +1067,7 @@ void P_PlayerInSpecialSector (player_t* player)
 			
       case 9:
 	// SECRET SECTOR
-	if (showMessages)
+	if (showMessages && crispy_secretmessage)
 	{
 	    player->message = HUSTR_SECRETFOUND;
 	    if (player == &players[consoleplayer])

@@ -446,10 +446,14 @@ void HU_Drawer(void)
     HUlib_drawIText(&w_chat);
     if (automapactive)
     {
-        static char str[32], *s;
-        int time = leveltime / TICRATE;
+        extern int crispy_automapstats;
 
 	HUlib_drawTextLine(&w_title, false);
+
+	if (crispy_automapstats)
+	{
+        static char str[32], *s;
+        int time = leveltime / TICRATE;
 
 	sprintf(str, "Kills: %d/%d", players[consoleplayer].killcount, totalkills);
 	HUlib_clearTextLine(&w_kills);
@@ -478,6 +482,7 @@ void HU_Drawer(void)
 	while (*s)
 	    HUlib_addCharToTextLine(&w_ltime, *(s++));
 	HUlib_drawTextLine(&w_ltime, false);
+	}
     }
 
 }

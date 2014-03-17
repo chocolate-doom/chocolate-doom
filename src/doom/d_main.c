@@ -137,6 +137,8 @@ char		mapdir[1024];           // directory of development maps
 
 int             show_endoom = 1;
 
+int             crispy_automapstats = 1;
+int             crispy_secretmessage = 1;
 
 void D_ConnectNetGame(void);
 void D_CheckNetGame(void);
@@ -408,6 +410,9 @@ void D_BindVariables(void)
         sprintf(buf, "chatmacro%i", i);
         M_BindVariable(buf, &chat_macros[i]);
     }
+
+    M_BindVariable("crispy_automapstats",    &crispy_automapstats);
+    M_BindVariable("crispy_secretmessage",   &crispy_secretmessage);
 }
 
 //
