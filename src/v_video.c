@@ -771,7 +771,7 @@ void WritePNGfile(char *filename, byte *data,
 
     for (i = 0; i < 256; i++)
     {
-        pcolor[i].red   = *(palette + 3 * i + 0);
+        pcolor[i].red   = *(palette + 3 * i);
         pcolor[i].green = *(palette + 3 * i + 1);
         pcolor[i].blue  = *(palette + 3 * i + 2);
     }
