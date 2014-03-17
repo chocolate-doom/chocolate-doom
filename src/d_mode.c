@@ -49,7 +49,7 @@ static struct
     { heretic,   shareware,  1, 9 },
     { heretic,   registered, 3, 9 },
     { heretic,   retail,     5, 9 },
-    { hexen,     commercial, 1, 40 },
+    { hexen,     commercial, 1, 60 },
     { strife,    commercial, 1, 34 },
 };
 

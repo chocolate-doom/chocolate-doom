@@ -1073,7 +1073,7 @@ static void LoadHacxDeh(void)
 
     if (gameversion == exe_hacx)
     {
-        if (!DEH_LoadLumpByName("DEHACKED"))
+        if (!DEH_LoadLumpByName("DEHACKED", true))
         {
             I_Error("DEHACKED lump not found.  Please check that this is the "
                     "Hacx v1.2 IWAD.");
@@ -1511,6 +1511,31 @@ void D_DoomMain (void)
                " for more information on how to play using Freedoom:\n"
                "   http://www.chocolate-doom.org/wiki/index.php/Freedoom\n");
         I_PrintDivider();
+    }
+
+    // Load DEHACKED lumps from WAD files - but only if we give the right
+    // command line parameter.
+
+    //!
+    // @category mod
+    //
+    // Load Dehacked patches from DEHACKED lumps contained in one of the
+    // loaded PWAD files.
+    //
+    if (M_ParmExists("-dehlump"))
+    {
+        int i, loaded = 0;
+
+        for (i = 0; i < numlumps; ++i)
+        {
+            if (!strncmp(lumpinfo[i].name, "DEHACKED", 8))
+            {
+                DEH_LoadLump(i, false);
+                loaded++;
+            }
+        }
+
+        printf("Loaded %i DEHACKED lumps from WAD files.\n", loaded);
     }
 
     DEH_printf("I_Init: Setting up machine state.\n");

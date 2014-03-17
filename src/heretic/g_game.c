@@ -851,7 +851,7 @@ boolean G_Responder(event_t * ev)
                 }
                 return (true);
             }
-            if (ev->data1 == KEY_PAUSE && !MenuActive)
+            if (ev->data1 == key_pause && !MenuActive)
             {
                 sendpause = true;
                 return (true);
