@@ -931,6 +931,7 @@ static void UpdateGrab(void)
     else if (grab && !currently_grabbed)
     {
         SetShowCursor(false);
+        CenterMouse();
     }
     else if (!grab && currently_grabbed)
     {

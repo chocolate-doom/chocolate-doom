@@ -396,46 +396,46 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     }
 
     // Artifact hot keys
-    if (gamekeydown[KEY_BACKSPACE] && !cmd->arti)
+    if (gamekeydown[key_arti_all] && !cmd->arti)
     {
-        gamekeydown[KEY_BACKSPACE] = false;     // Use one of each artifact
+        gamekeydown[key_arti_all] = false;     // Use one of each artifact
         cmd->arti = NUMARTIFACTS;
     }
-    else if (gamekeydown['\\'] && !cmd->arti
+    else if (gamekeydown[key_arti_health] && !cmd->arti
              && (players[consoleplayer].mo->health < MAXHEALTH))
     {
-        gamekeydown['\\'] = false;
+        gamekeydown[key_arti_health] = false;
         cmd->arti = arti_health;
     }
-    else if (gamekeydown['0'] && !cmd->arti)
+    else if (gamekeydown[key_arti_poisonbag] && !cmd->arti)
     {
-        gamekeydown['0'] = false;
+        gamekeydown[key_arti_poisonbag] = false;
         cmd->arti = arti_poisonbag;
     }
-    else if (gamekeydown['9'] && !cmd->arti)
+    else if (gamekeydown[key_arti_blastradius] && !cmd->arti)
     {
-        gamekeydown['9'] = false;
+        gamekeydown[key_arti_blastradius] = false;
         cmd->arti = arti_blastradius;
     }
-    else if (gamekeydown['8'] && !cmd->arti)
+    else if (gamekeydown[key_arti_teleport] && !cmd->arti)
     {
-        gamekeydown['8'] = false;
+        gamekeydown[key_arti_teleport] = false;
         cmd->arti = arti_teleport;
     }
-    else if (gamekeydown['7'] && !cmd->arti)
+    else if (gamekeydown[key_arti_teleportother] && !cmd->arti)
     {
-        gamekeydown['7'] = false;
+        gamekeydown[key_arti_teleportother] = false;
         cmd->arti = arti_teleportother;
     }
-    else if (gamekeydown['6'] && !cmd->arti)
+    else if (gamekeydown[key_arti_egg] && !cmd->arti)
     {
-        gamekeydown['6'] = false;
+        gamekeydown[key_arti_egg] = false;
         cmd->arti = arti_egg;
     }
-    else if (gamekeydown['5'] && !cmd->arti
+    else if (gamekeydown[key_arti_invulnerability] && !cmd->arti
              && !players[consoleplayer].powers[pw_invulnerability])
     {
-        gamekeydown['5'] = false;
+        gamekeydown[key_arti_invulnerability] = false;
         cmd->arti = arti_invulnerability;
     }
 
@@ -848,7 +848,7 @@ boolean G_Responder(event_t * ev)
                 }
                 return (true);
             }
-            if (ev->data1 == KEY_PAUSE && !MenuActive)
+            if (ev->data1 == key_pause && !MenuActive)
             {
                 sendpause = true;
                 return (true);

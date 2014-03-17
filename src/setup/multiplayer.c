@@ -442,12 +442,12 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
     }
     else
     {
-        table = TXT_NewTable(4);
+        table = TXT_NewTable(6);
 
-        for (i=0; i<40; ++i)
+        for (i=0; i<60; ++i)
         {
-            x = i % 4;
-            y = i / 4;
+            x = i % 6;
+            y = i / 6;
 
             l = x * 10 + y + 1;
 

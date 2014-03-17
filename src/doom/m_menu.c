@@ -1007,7 +1007,7 @@ void M_DrawOptions(void)
     // the BFG edition IWADs, use the "ON"/"OFF" graphics instead.
     if (bfgedition)
     {
-        detail_patch = msgNames[detailLevel];
+        detail_patch = msgNames[!detailLevel];
     }
     else
     {
@@ -2113,13 +2113,20 @@ void M_Init (void)
 	// Episode 2 and 3 are handled,
 	//  branching to an ad screen.
       case registered:
-	// We need to remove the fourth episode.
-	EpiDef.numitems--;
 	break;
       case retail:
 	// We are fine.
       default:
 	break;
+    }
+
+    // Versions of doom.exe before the Ultimate Doom release only had
+    // three episodes; if we're emulating one of those then don't try
+    // to show episode four. If we are, then do show episode four
+    // (should crash if missing).
+    if (gameversion < exe_ultimate)
+    {
+	EpiDef.numitems--;
     }
 
     opldev = M_CheckParm("-opldev") > 0;
