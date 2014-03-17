@@ -735,7 +735,7 @@ void R_DrawPSprite(pspdef_t * psp)
     vis->mobjflags = 0;
     vis->class = 0;
     vis->psprite = true;
-    vis->texturemid = (BASEYCENTER << FRACBITS) + FRACUNIT / 2
+    vis->texturemid = (BASEYCENTER << FRACBITS) /* + FRACUNIT / 2 */
         - (psp->sy - spritetopoffset[lump]);
     if (viewheight == SCREENHEIGHT)
     {

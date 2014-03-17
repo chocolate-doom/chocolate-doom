@@ -765,7 +765,7 @@ void R_DrawPSprite (pspdef_t* psp)
     }
 
     // villsa [STRIFE] calculate y offset with view pitch
-    vis->texturemid = ((BASEYCENTER<<FRACBITS)+FRACUNIT/2)-(psp->sy-spritetopoffset[lump])
+    vis->texturemid = ((BASEYCENTER<<FRACBITS)/*+FRACUNIT/2*/)-(psp->sy-spritetopoffset[lump])
         + FixedMul(vis->xiscale, (centery-viewheight/2)<<FRACBITS);
 
     if (vis->x1 > x1)
