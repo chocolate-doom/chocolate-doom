@@ -32,6 +32,7 @@
 #include "mode.h"
 
 #include "display.h"
+#include "config.h"
 
 extern void RestartTextscreen(void);
 
@@ -561,6 +562,12 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
                       TXT_NewCheckBox("Show ENDOOM screen on exit",
                                       &show_endoom));
     }
+
+#ifdef HAVE_LIBPNG
+    TXT_AddWidget(window,
+                  TXT_NewCheckBox("Save screenshots in PNG format",
+                                  &png_screenshots));
+#endif
 
     TXT_SignalConnect(ar_checkbox, "changed", GenerateModesTable, modes_table);
 }

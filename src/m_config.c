@@ -814,6 +814,12 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(show_endoom),
 
     //!
+    // If non-zero, save screenshots in PNG format.
+    //
+
+    CONFIG_VARIABLE_INT(png_screenshots),
+
+    //!
     // @game doom strife
     //
     // If non-zero, the Vanilla savegame limit is enforced; if the
@@ -1434,12 +1440,6 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_KEY(key_multi_msgplayer8),
-
-    //!
-    // If non-zero, save screenshots in PNG format.
-    //
-
-    CONFIG_VARIABLE_INT(png_screenshots),
 };
 
 static default_collection_t extra_defaults =
