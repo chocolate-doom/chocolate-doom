@@ -930,7 +930,7 @@ void G_Ticker(void)
                 G_DoPlayDemo();
                 break;
             case ga_screenshot:
-                V_ScreenShot("HTIC%02i.pcx");
+                V_ScreenShot("HTIC%02i.%s");
                 gameaction = ga_nothing;
                 break;
             case ga_completed:

@@ -110,6 +110,7 @@ static int usegamma = 0;
 
 int graphical_startup = 1;
 int show_endoom = 1;
+int png_screenshots = 0;
 
 // These are the last screen width/height values that were chosen by the
 // user.  These are used when finding the "nearest" mode, so when 
@@ -710,6 +711,7 @@ void BindDisplayVariables(void)
     M_BindVariable("video_driver",              &video_driver);
     M_BindVariable("window_position",           &window_position);
     M_BindVariable("usegamma",                  &usegamma);
+    M_BindVariable("png_screenshots",           &png_screenshots);
 
 
     if (gamemission == doom || gamemission == heretic
