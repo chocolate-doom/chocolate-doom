@@ -80,6 +80,14 @@ AC_SDL_MAIN_WORKAROUND([
     [
         AC_CHECK_LIB(samplerate, src_new)
     ])
+    # Check for libpng.
+    AC_ARG_WITH([libpng],
+    AS_HELP_STRING([--without-libpng],
+        [Build without libpng @<:@default=check@:>@]),
+    [],
+    [
+        AC_CHECK_LIB(png, png_get_io_ptr)
+    ])
     AC_CHECK_LIB(m, log)
 
     AC_CHECK_HEADERS([linux/kd.h dev/isa/spkrio.h dev/speaker/speaker.h])

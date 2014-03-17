@@ -934,7 +934,7 @@ void G_Ticker(void)
                 G_DoPlayDemo();
                 break;
             case ga_screenshot:
-                V_ScreenShot("HEXEN%02i.pcx");
+                V_ScreenShot("HEXEN%02i.%s");
                 P_SetMessage(&players[consoleplayer], "SCREEN SHOT", false);
                 gameaction = ga_nothing;
                 break;
