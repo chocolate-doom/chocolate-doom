@@ -31,9 +31,13 @@ separate file named 'chocolate-doom.cfg'.
 
 The configuration can be edited using the chocolate-setup tool.
 
-== Command-line options ==
+== Command line options ==
 
-For a complete list of command-line options, see the CMDLINE file.
+Chocolate Doom supports a number of command line parameters, including
+some extras that were not originally suported by the DOS versions. For
+binary distributions, see the CMDLINE file included with your
+download; more information is also available on the Chocolate Doom
+website.
 
 == Playing TCs ==
 
