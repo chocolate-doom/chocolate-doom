@@ -846,12 +846,16 @@ void WritePNGfile(char *filename, byte *data,
 
     handle = fopen(filename, "wb");
     if (!handle)
+    {
         return;
+    }
 
     ppng = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL,
                                    error_fn, warning_fn);
     if (!ppng)
+    {
         return;
+    }
 
     pinfo = png_create_info_struct(ppng);
     if (!pinfo)
@@ -875,7 +879,7 @@ void WritePNGfile(char *filename, byte *data,
 
     for (i = 0; i < 256; i++)
     {
-        pcolor[i].red   = *(palette + 3 * i + 0);
+        pcolor[i].red   = *(palette + 3 * i);
         pcolor[i].green = *(palette + 3 * i + 1);
         pcolor[i].blue  = *(palette + 3 * i + 2);
     }
@@ -886,7 +890,9 @@ void WritePNGfile(char *filename, byte *data,
     png_write_info(ppng, pinfo);
 
     for (i = 0; i < SCREENHEIGHT; i++)
+    {
         png_write_row(ppng, data + i*SCREENWIDTH);
+    }
 
     png_write_end(ppng, pinfo);
     png_destroy_write_struct(&ppng, &pinfo);
@@ -909,10 +915,14 @@ void V_ScreenShot(char *format)
 
 #ifdef HAVE_LIBPNG
     if (png_screenshots)
+    {
         ext = "png";
+    }
     else
 #endif
+    {
         ext = "pcx";
+    }
 
     for (i=0; i<=99; i++)
     {
@@ -931,15 +941,19 @@ void V_ScreenShot(char *format)
 
 #ifdef HAVE_LIBPNG
     if (png_screenshots)
+    {
     WritePNGfile(lbmname, I_VideoBuffer,
                  SCREENWIDTH, SCREENHEIGHT,
                  W_CacheLumpName (DEH_String("PLAYPAL"), PU_CACHE));
+    }
     else
 #endif
+    {
     // save the pcx file
     WritePCXfile(lbmname, I_VideoBuffer,
                  SCREENWIDTH, SCREENHEIGHT,
                  W_CacheLumpName (DEH_String("PLAYPAL"), PU_CACHE));
+    }
 }
 
 #define MOUSE_SPEED_BOX_WIDTH  120
