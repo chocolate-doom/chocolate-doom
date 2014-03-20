@@ -127,6 +127,7 @@ boolean         deathmatch;           	// only if started as net death
 boolean         netgame;                // only true if packets are broadcast 
 boolean         playeringame[MAXPLAYERS]; 
 player_t        players[MAXPLAYERS]; 
+player2_t       players2[MAXPLAYERS];
 
 boolean         turbodetected[MAXPLAYERS];
  
@@ -1045,6 +1046,7 @@ void G_PlayerFinishLevel (int player)
 void G_PlayerReborn (int player) 
 { 
     player_t*	p; 
+    player2_t*	p2;
     int		i; 
     int		frags[MAXPLAYERS]; 
     int		killcount;
@@ -1058,6 +1060,8 @@ void G_PlayerReborn (int player)
 	 
     p = &players[player]; 
     memset (p, 0, sizeof(*p)); 
+    p2 = &players2[player];
+    memset (p2, 0, sizeof(*p2));
  
     memcpy (players[player].frags, frags, sizeof(players[player].frags)); 
     players[player].killcount = killcount; 

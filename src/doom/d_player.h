@@ -168,6 +168,10 @@ typedef struct player_s
 
 } player_t;
 
+typedef struct player2_s
+{
+    char*		centermessage;
+} player2_t;
 
 //
 // INTERMISSION

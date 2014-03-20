@@ -93,6 +93,7 @@ char*	player_names[] =
 
 char			chat_char; // remove later.
 static player_t*	plr;
+static player2_t*	plr2;
 patch_t*		hu_font[HU_FONTSIZE];
 static hu_textline_t	w_title;
 static hu_textline_t	w_kills;
@@ -340,6 +341,7 @@ void HU_Start(void)
 	HU_Stop();
 
     plr = &players[consoleplayer];
+    plr2 = &players2[consoleplayer];
     message_on = false;
     message_dontfuckwithme = false;
     message_nottobefuckedwith = false;
@@ -519,15 +521,14 @@ void HU_Ticker(void)
     {
 
 	// display message if necessary
-	if (plr->message
-	    && !strncmp(plr->message, HUSTR_SECRETFOUND, 21))
+	if (plr2->centermessage)
 	{
-	    HUlib_addMessageToSText(&w_secret, 0, plr->message);
-	    plr->message = 0;
+	    HUlib_addMessageToSText(&w_secret, 0, plr2->centermessage);
+	    plr2->centermessage = 0;
 	    secret_on = true;
 	    secret_counter = HU_MSGTIMEOUT >> 1;
 	}
-	else
+
 	if ((plr->message && !message_nottobefuckedwith)
 	    || (plr->message && message_dontfuckwithme))
 	{

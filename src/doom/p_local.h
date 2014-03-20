@@ -92,6 +92,7 @@ void P_DropWeapon (player_t* player);
 // P_USER
 //
 void	P_PlayerThink (player_t* player);
+player2_t* p2fromp (player_t* player);
 
 
 //

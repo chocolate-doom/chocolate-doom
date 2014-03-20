@@ -1029,6 +1029,7 @@ void P_PlayerInSpecialSector (player_t* player)
 {
     sector_t*	sector;
     extern int showMessages, crispy_secretmessage;
+    player2_t  *player2 = p2fromp(player);
 	
     sector = player->mo->subsector->sector;
 
@@ -1069,7 +1070,7 @@ void P_PlayerInSpecialSector (player_t* player)
 	// SECRET SECTOR
 	if (showMessages && crispy_secretmessage)
 	{
-	    player->message = HUSTR_SECRETFOUND;
+	    player2->centermessage = HUSTR_SECRETFOUND;
 	    if (player == &players[consoleplayer])
 	        S_StartSound(NULL, sfx_itmbk);
 	}

@@ -384,4 +384,13 @@ void P_PlayerThink (player_t* player)
 	player->fixedcolormap = 0;
 }
 
+player2_t* p2fromp (player_t* player)
+{
+    int p;
 
+    for (p = 0; p < MAXPLAYERS; p++)
+        if (&players[p] == player)
+            return &players2[p];
+
+    return NULL;
+}
