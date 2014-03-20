@@ -320,6 +320,8 @@ void P_ZMovement (mobj_t* mo)
 	
 	if (mo->momz < 0)
 	{
+	    if (mo->player)
+		p2fromp(mo->player)->jumpTics = 7;
 	    if (mo->player
 		&& mo->momz < -GRAVITY*8)	
 	    {

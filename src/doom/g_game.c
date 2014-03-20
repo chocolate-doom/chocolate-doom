@@ -466,6 +466,12 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         look = TOCENTER;
     }
 
+    if (gamekeydown[key_jump] || mousebuttons[mousebjump]
+        || joybuttons[joybjump])
+    {
+        cmd->arti |= AFLAG_JUMP;
+    }
+
     // buttons
     cmd->chatchar = HU_dequeueChatChar(); 
  

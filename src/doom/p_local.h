@@ -33,6 +33,7 @@
 #endif
 
 #define TOCENTER                -8
+#define AFLAG_JUMP              0x80
 #define FLOATSPEED		(FRACUNIT*4)
 
 

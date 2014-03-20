@@ -162,9 +162,15 @@ void P_MovePlayer (player_t* player)
 	
     if (cmd->forwardmove && onground)
 	P_Thrust (player, player->mo->angle, cmd->forwardmove*2048);
+    else
+    if (cmd->forwardmove)
+        P_Thrust (player, player->mo->angle, FRACUNIT >> 8);
     
     if (cmd->sidemove && onground)
 	P_Thrust (player, player->mo->angle-ANG90, cmd->sidemove*2048);
+    else
+    if (cmd->sidemove)
+            P_Thrust(player, player->mo->angle, FRACUNIT >> 8);
 
     if ( (cmd->forwardmove || cmd->sidemove) 
 	 && player->mo->state == &states[S_PLAY] )
@@ -277,6 +283,7 @@ void P_PlayerThink (player_t* player)
 {
     ticcmd_t*		cmd;
     weapontype_t	newweapon;
+    player2_t*		player2 = p2fromp(player);
 	
     // fixme: do this in the cheat code
     if (player->cheats & CF_NOCLIP)
@@ -300,6 +307,10 @@ void P_PlayerThink (player_t* player)
 	P_DeathThink (player);
 	return;
     }
+    if (player2->jumpTics)
+    {
+        player2->jumpTics--;
+    }
     
     // Move around.
     // Reactiontime is used to prevent movement
@@ -314,6 +325,15 @@ void P_PlayerThink (player_t* player)
     if (player->mo->subsector->sector->special)
 	P_PlayerInSpecialSector (player);
     
+    if (cmd->arti)
+    {
+        if ((cmd->arti & AFLAG_JUMP) && onground && !player2->jumpTics)
+        {
+            player->mo->momz = 9 * FRACUNIT;
+            player2->jumpTics = 18;
+        }
+    }
+
     // Check for weapon change.
 
     // A special event has no other buttons.
