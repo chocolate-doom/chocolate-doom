@@ -219,6 +219,10 @@ void M_BindBaseControls(void)
     M_BindVariable("key_strafe",         &key_strafe),
     M_BindVariable("key_speed",          &key_speed),
 
+    M_BindVariable("key_lookup",         &key_lookup);
+    M_BindVariable("key_lookdown",       &key_lookdown);
+    M_BindVariable("key_lookcenter",     &key_lookcenter);
+
     M_BindVariable("mouseb_fire",        &mousebfire),
     M_BindVariable("mouseb_strafe",      &mousebstrafe),
     M_BindVariable("mouseb_forward",     &mousebforward),
@@ -246,10 +250,6 @@ void M_BindHereticControls(void)
     M_BindVariable("key_flyup",          &key_flyup);
     M_BindVariable("key_flydown",        &key_flydown);
     M_BindVariable("key_flycenter",      &key_flycenter);
-
-    M_BindVariable("key_lookup",         &key_lookup);
-    M_BindVariable("key_lookdown",       &key_lookdown);
-    M_BindVariable("key_lookcenter",     &key_lookcenter);
 
     M_BindVariable("key_invleft",        &key_invleft);
     M_BindVariable("key_invright",       &key_invright);

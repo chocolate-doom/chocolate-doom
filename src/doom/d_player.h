@@ -170,7 +170,9 @@ typedef struct player_s
 
 typedef struct player2_s
 {
-    char*		centermessage;
+    char*	centermessage;
+    int	lookdir;
+    boolean	centering;
 } player2_t;
 
 //

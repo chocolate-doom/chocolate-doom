@@ -206,6 +206,7 @@ static const struct
 
 static boolean  gamekeydown[NUMKEYS]; 
 static int      turnheld;		// for accelerative turning 
+static int      lookheld;
  
 static boolean  mousearray[MAX_MOUSE_BUTTONS + 1];
 static boolean *mousebuttons = &mousearray[1];  // allow [-1]
@@ -334,8 +335,10 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     boolean	bstrafe; 
     int		speed;
     int		tspeed; 
+    int		lspeed;
     int		forward;
     int		side;
+    int		look;
 
     memset(cmd, 0, sizeof(ticcmd_t));
 
@@ -353,7 +356,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
          ^ (gamekeydown[key_speed]
          || joybuttons[joybspeed]);
  
-    forward = side = 0;
+    forward = side = look = 0;
     
     // use two stage accelerative turning
     // on the keyboard and joystick
@@ -370,6 +373,23 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     else 
 	tspeed = speed;
     
+    if (gamekeydown[key_lookdown] || gamekeydown[key_lookup])
+    {
+        lookheld += ticdup;
+    }
+    else
+    {
+        lookheld = 0;
+    }
+    if (lookheld < SLOWTURNTICS)
+    {
+        lspeed = 1;
+    }
+    else
+    {
+        lspeed = 2;
+    }
+
     // let movement keys cancel each other out
     if (strafe) 
     { 
@@ -429,6 +449,20 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
      || mousebuttons[mousebstraferight])
     {
         side += sidemove[speed]; 
+    }
+
+    // Look up/down/center keys
+    if (gamekeydown[key_lookup])
+    {
+        look = lspeed;
+    }
+    if (gamekeydown[key_lookdown])
+    {
+        look = -lspeed;
+    }
+    if (gamekeydown[key_lookcenter])
+    {
+        look = TOCENTER;
     }
 
     // buttons
@@ -566,6 +600,15 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
  
     cmd->forwardmove += forward; 
     cmd->sidemove += side;
+
+    if (players[consoleplayer].playerstate == PST_LIVE)
+    {
+        if (look < 0)
+        {
+            look += 16;
+        }
+        cmd->lookfly = look;
+    }
     
     // special buttons
     if (sendpause) 
@@ -1025,11 +1068,14 @@ void G_InitPlayer (int player)
 void G_PlayerFinishLevel (int player) 
 { 
     player_t*	p; 
+    player2_t*	p2;
 	 
     p = &players[player]; 
+    p2 = &players2[player];
 	 
     memset (p->powers, 0, sizeof (p->powers)); 
     memset (p->cards, 0, sizeof (p->cards)); 
+    memset (p2, 0, sizeof (*p2));
     p->mo->flags &= ~MF_SHADOW;		// cancel invisibility 
     p->extralight = 0;			// cancel gun flashes 
     p->fixedcolormap = 0;		// cancel ir gogles 

@@ -149,6 +149,8 @@ void P_CalcHeight (player_t* player)
 void P_MovePlayer (player_t* player)
 {
     ticcmd_t*		cmd;
+    int		look;
+    player2_t*		player2 = p2fromp(player);
 	
     cmd = &player->cmd;
 	
@@ -168,6 +170,43 @@ void P_MovePlayer (player_t* player)
 	 && player->mo->state == &states[S_PLAY] )
     {
 	P_SetMobjState (player->mo, S_PLAY_RUN1);
+    }
+
+    look = cmd->lookfly & 15;
+    if (look > 7)
+    {
+        look -= 16;
+    }
+    if (look)
+    {
+        if (look == TOCENTER)
+        {
+            player2->centering = true;
+        }
+        else
+        {
+            player2->lookdir += 5 * look;
+            if (player2->lookdir > 90 || player2->lookdir < -110)
+            {
+                player2->lookdir -= 5 * look;
+            }
+        }
+    }
+    if (player2->centering)
+    {
+        if (player2->lookdir > 0)
+        {
+            player2->lookdir -= 8;
+        }
+        else if (player2->lookdir < 0)
+        {
+            player2->lookdir += 8;
+        }
+        if (abs(player2->lookdir) < 8)
+        {
+            player2->lookdir = 0;
+            player2->centering = false;
+        }
     }
 }	
 

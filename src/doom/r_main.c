@@ -40,6 +40,7 @@
 #include "m_bbox.h"
 #include "m_menu.h"
 
+#include "p_local.h"
 #include "r_local.h"
 #include "r_sky.h"
 
@@ -832,6 +833,8 @@ R_PointInSubsector
 void R_SetupFrame (player_t* player)
 {		
     int		i;
+    int		tempCentery;
+    player2_t* 	player2 = p2fromp(player);
     
     viewplayer = player;
     viewx = player->mo->x;
@@ -840,6 +843,19 @@ void R_SetupFrame (player_t* player)
     extralight = player->extralight;
 
     viewz = player->viewz;
+
+    tempCentery = viewheight / 2 + ((player2->lookdir) << (hires && !detailshift)) * screenblocks / 10;
+    if (centery != tempCentery)
+    {
+        centery = tempCentery;
+        centeryfrac = centery << FRACBITS;
+        for (i = 0; i < viewheight; i++)
+        {
+            yslope[i] = FixedDiv((viewwidth << (detailshift && !hires)) / 2 * FRACUNIT,
+                                 abs(((i - centery) << FRACBITS) +
+                                     FRACUNIT / 2));
+        }
+    }
     
     viewsin = finesine[viewangle>>ANGLETOFINESHIFT];
     viewcos = finecosine[viewangle>>ANGLETOFINESHIFT];

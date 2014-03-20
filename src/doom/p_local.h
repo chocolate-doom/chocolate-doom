@@ -32,6 +32,7 @@
 #include "r_local.h"
 #endif
 
+#define TOCENTER                -8
 #define FLOATSPEED		(FRACUNIT*4)
 
 
