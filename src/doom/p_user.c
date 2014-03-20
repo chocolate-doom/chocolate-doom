@@ -163,13 +163,13 @@ void P_MovePlayer (player_t* player)
     if (cmd->forwardmove && onground)
 	P_Thrust (player, player->mo->angle, cmd->forwardmove*2048);
     else
-    if (cmd->forwardmove)
+    if (cmd->forwardmove && singleplayer)
         P_Thrust (player, player->mo->angle, FRACUNIT >> 8);
     
     if (cmd->sidemove && onground)
 	P_Thrust (player, player->mo->angle-ANG90, cmd->sidemove*2048);
     else
-    if (cmd->sidemove)
+    if (cmd->sidemove && singleplayer)
             P_Thrust(player, player->mo->angle, FRACUNIT >> 8);
 
     if ( (cmd->forwardmove || cmd->sidemove) 
