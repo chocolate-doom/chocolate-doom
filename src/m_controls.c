@@ -36,10 +36,10 @@
 int key_right = KEY_RIGHTARROW;
 int key_left = KEY_LEFTARROW;
 
-int key_up = KEY_UPARROW;
-int key_down = KEY_DOWNARROW; 
-int key_strafeleft = ',';
-int key_straferight = '.';
+int key_up = 'w';
+int key_down = 's';
+int key_strafeleft = 'a';
+int key_straferight = 'd';
 int key_fire = KEY_RCTRL;
 int key_use = ' ';
 int key_strafe = KEY_RALT;
@@ -111,8 +111,8 @@ int mousebstraferight = -1;
 int mousebbackward = -1;
 int mousebuse = -1;
 
-int mousebprevweapon = -1;
-int mousebnextweapon = -1;
+int mousebprevweapon = 4;
+int mousebnextweapon = 3;
 
 
 int key_message_refresh = KEY_ENTER;
@@ -187,7 +187,7 @@ int key_menu_decscreen = KEY_MINUS;
 int joybfire = 0; 
 int joybstrafe = 1; 
 int joybuse = 3; 
-int joybspeed = 2; 
+int joybspeed = 29;
 
 int joybstrafeleft = -1;
 int joybstraferight = -1;

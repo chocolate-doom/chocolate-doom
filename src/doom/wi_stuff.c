@@ -829,7 +829,7 @@ void WI_drawShowNextLoc(void)
 	    WI_drawOnLnode(wbs->next, yah); 
     }
     
-    if (gamemission == pack_nerve && wbs->last == 7)
+    if (gamemission == pack_nerve && singleplayer && wbs->last == 7)
         return;
 
     // draws which level you are entering..

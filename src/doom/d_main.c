@@ -135,7 +135,7 @@ boolean         main_loop_started = false;
 char		wadfile[1024];		// primary wad file
 char		mapdir[1024];           // directory of development maps
 
-int             show_endoom = 1;
+int             show_endoom = 0;
 
 int             crispy_automapstats = 1;
 int             crispy_secretmessage = 1;
@@ -1531,7 +1531,7 @@ void D_DoomMain (void)
     // Load Dehacked patches from DEHACKED lumps contained in one of the
     // loaded PWAD files.
     //
-    if (M_ParmExists("-dehlump"))
+    if (!M_ParmExists("-nodehlump"))
     {
         int i, loaded = 0;
 

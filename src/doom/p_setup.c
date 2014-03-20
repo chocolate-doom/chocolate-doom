@@ -379,7 +379,7 @@ void P_LoadThings (int lump)
 	// Do not spawn cool, old monsters if MAP33 Betray needs German censorship.
 	else
 	{
-	    if (bfgedition && mt->type == 84) // MAP33 Betray still has Wolf SS
+	    if (bfgedition && singleplayer && mt->type == 84) // MAP33 Betray still has Wolf SS
 	    {
 	        mt->type = 3004; // Former Human instead
 	    }

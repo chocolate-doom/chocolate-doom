@@ -82,7 +82,7 @@ int			showMessages = 1;
 
 // Blocky mode, has default, 0 = high, 1 = normal
 int			detailLevel = 0;
-int			screenblocks = 9;
+int			screenblocks = 10;
 
 // temp for screenblocks (0-9)
 int			screenSize;

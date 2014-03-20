@@ -194,7 +194,7 @@ void F_Ticker (void)
 				
       if (i < MAXPLAYERS)
       {	
-	if (gamemission == pack_nerve && gamemap == 8)
+	if (gamemission == pack_nerve && singleplayer && gamemap == 8)
 	  F_StartCast ();
 	else
 	if (gamemap == 30)

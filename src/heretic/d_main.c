@@ -76,7 +76,7 @@ skill_t startskill;
 int startepisode;
 int startmap;
 int UpdateState;
-static int graphical_startup = 1;
+static int graphical_startup = 0;
 static boolean using_graphical_startup;
 static boolean main_loop_started = false;
 boolean autostart;
@@ -86,7 +86,7 @@ boolean advancedemo;
 
 FILE *debugfile;
 
-static int show_endoom = 1;
+static int show_endoom = 0;
 
 void D_ConnectNetGame(void);
 void D_CheckNetGame(void);

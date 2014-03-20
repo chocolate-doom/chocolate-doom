@@ -31,7 +31,7 @@
 #include "joystick.h"
 #include "keyboard.h"
 
-int vanilla_keyboard_mapping = 1;
+int vanilla_keyboard_mapping = 0;
 
 static int always_run = 0;
 
