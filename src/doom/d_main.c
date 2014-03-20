@@ -417,6 +417,15 @@ boolean D_GrabMouseCallback(void)
 //
 void D_DoomLoop (void)
 {
+    if (bfgedition &&
+        (demorecording || (gameaction == ga_playdemo) || netgame))
+    {
+        printf(" WARNING: You are playing using one of the Doom Classic\n"
+               " IWAD files shipped with the Doom 3: BFG Edition. These are\n"
+               " known to be incompatible with the regular IWAD files and\n"
+               " may cause demos and network games to get out of sync.\n");
+    }
+
     if (demorecording)
 	G_BeginRecording ();
 
