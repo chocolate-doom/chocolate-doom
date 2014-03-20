@@ -128,6 +128,7 @@ extern int key_menu_gamma;
 
 extern int key_menu_incscreen;
 extern int key_menu_decscreen;
+extern int key_menu_screenshot;
 
 extern int mousebfire;
 extern int mousebstrafe;

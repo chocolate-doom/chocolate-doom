@@ -1172,6 +1172,12 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_menu_decscreen),
 
     //!
+    // Keyboard shortcut to save a screenshot.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_screenshot),
+
+    //!
     // Key to toggle the map view.
     //
 
