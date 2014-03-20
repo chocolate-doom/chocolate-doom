@@ -234,8 +234,8 @@ static char     savedescription[32];
 mobj_t*		bodyque[BODYQUESIZE]; 
 int		bodyqueslot; 
  
-int             vanilla_savegame_limit = 1;
-int             vanilla_demo_limit = 1;
+int             vanilla_savegame_limit = 0;
+int             vanilla_demo_limit = 0;
  
 int G_CmdChecksum (ticcmd_t* cmd) 
 { 
@@ -372,12 +372,12 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // let movement keys cancel each other out
     if (strafe) 
     { 
-	if (gamekeydown[key_right]) 
+	if (gamekeydown[key_right] || gamekeydown[key_menu_right])
 	{
 	    // fprintf(stderr, "strafe right\n");
 	    side += sidemove[speed]; 
 	}
-	if (gamekeydown[key_left]) 
+	if (gamekeydown[key_left] || gamekeydown[key_menu_left])
 	{
 	    //	fprintf(stderr, "strafe left\n");
 	    side -= sidemove[speed]; 
@@ -400,12 +400,12 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 	    cmd->angleturn += angleturn[tspeed]; 
     } 
  
-    if (gamekeydown[key_up]) 
+    if (gamekeydown[key_up] || gamekeydown[key_menu_up])
     {
 	// fprintf(stderr, "up\n");
 	forward += forwardmove[speed]; 
     }
-    if (gamekeydown[key_down]) 
+    if (gamekeydown[key_down] || gamekeydown[key_menu_down])
     {
 	// fprintf(stderr, "down\n");
 	forward -= forwardmove[speed]; 
@@ -1331,7 +1331,7 @@ void G_DoCompleted (void)
     wminfo.last = gamemap -1;
     
     // wminfo.next is 0 biased, unlike gamemap
-    if ( gamemission == pack_nerve)
+    if ( gamemission == pack_nerve && singleplayer )
     {
 	if (secretexit)
 	    switch(gamemap)
@@ -1354,7 +1354,7 @@ void G_DoCompleted (void)
 	      case 15: wminfo.next = 30; break;
 	      case 31: wminfo.next = 31; break;
 	      case  2:
-	          if (bfgedition)
+	          if (bfgedition && singleplayer)
 	               wminfo.next = 32; break;
 	    }
 	else
@@ -1363,7 +1363,7 @@ void G_DoCompleted (void)
 	      case 31:
 	      case 32: wminfo.next = 15; break;
 	      case 33:
-	          if (bfgedition)
+	          if (bfgedition && singleplayer)
 	               wminfo.next =  2; break;
 	      default: wminfo.next = gamemap;
 	    }
@@ -1446,7 +1446,7 @@ void G_WorldDone (void)
     if (secretexit) 
 	players[consoleplayer].didsecret = true; 
 
-    if ( gamemission == pack_nerve )
+    if ( gamemission == pack_nerve && singleplayer )
     {
 	switch (gamemap)
 	{
