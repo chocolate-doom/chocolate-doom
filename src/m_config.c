@@ -1456,6 +1456,14 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(crispy_secretmessage),
+
+    //!
+    // @game doom
+    //
+    // Use the mouse to look up and down.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_mouselook),
 };
 
 static default_collection_t extra_defaults =

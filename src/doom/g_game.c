@@ -339,6 +339,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     int		forward;
     int		side;
     int		look;
+    extern int		crispy_mouselook;
 
     memset(cmd, 0, sizeof(ticcmd_t));
 
@@ -573,6 +574,9 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         } 
     }
 
+    if (crispy_mouselook)
+         look += mousey / 8;
+    else
     forward += mousey; 
 
     if (strafe) 
