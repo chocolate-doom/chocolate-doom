@@ -339,6 +339,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     int		forward;
     int		side;
     int		look;
+    extern int		crispy_freelook;
     extern int		crispy_mouselook;
 
     memset(cmd, 0, sizeof(ticcmd_t));
@@ -453,17 +454,20 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     }
 
     // Look up/down/center keys
-    if (gamekeydown[key_lookup])
+    if (crispy_freelook)
     {
-        look = lspeed;
-    }
-    if (gamekeydown[key_lookdown])
-    {
-        look = -lspeed;
-    }
-    if (gamekeydown[key_lookcenter])
-    {
-        look = TOCENTER;
+        if (gamekeydown[key_lookup])
+        {
+            look = lspeed;
+        }
+        if (gamekeydown[key_lookdown])
+        {
+            look = -lspeed;
+        }
+        if (gamekeydown[key_lookcenter])
+        {
+            look = TOCENTER;
+        }
     }
 
     if (gamekeydown[key_jump] || mousebuttons[mousebjump]

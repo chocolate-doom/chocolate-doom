@@ -1460,6 +1460,14 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
+    // Enable looking up and down.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_freelook),
+
+    //!
+    // @game doom
+    //
     // Use the mouse to look up and down.
     //
 
