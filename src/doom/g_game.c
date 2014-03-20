@@ -339,6 +339,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     int		forward;
     int		side;
     int		look;
+    extern int		crispy_jump;
     extern int		crispy_freelook;
     extern int		crispy_mouselook;
 
@@ -470,10 +471,13 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         }
     }
 
-    if (gamekeydown[key_jump] || mousebuttons[mousebjump]
-        || joybuttons[joybjump])
+    if (crispy_jump && singleplayer)
     {
-        cmd->arti |= AFLAG_JUMP;
+        if (gamekeydown[key_jump] || mousebuttons[mousebjump]
+            || joybuttons[joybjump])
+        {
+            cmd->arti |= AFLAG_JUMP;
+        }
     }
 
     // buttons

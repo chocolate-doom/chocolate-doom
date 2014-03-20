@@ -1460,6 +1460,14 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
+    // Enable jumping.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_jump),
+
+    //!
+    // @game doom
+    //
     // Enable looking up and down.
     //
 
