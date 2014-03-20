@@ -151,6 +151,7 @@ void P_MovePlayer (player_t* player)
     ticcmd_t*		cmd;
     int		look;
     player2_t*		player2 = p2fromp(player);
+    extern int		crispy_jump;
 	
     cmd = &player->cmd;
 	
@@ -163,13 +164,13 @@ void P_MovePlayer (player_t* player)
     if (cmd->forwardmove && onground)
 	P_Thrust (player, player->mo->angle, cmd->forwardmove*2048);
     else
-    if (cmd->forwardmove && singleplayer)
+    if (cmd->forwardmove && singleplayer && crispy_jump)
         P_Thrust (player, player->mo->angle, FRACUNIT >> 8);
     
     if (cmd->sidemove && onground)
 	P_Thrust (player, player->mo->angle-ANG90, cmd->sidemove*2048);
     else
-    if (cmd->sidemove && singleplayer)
+    if (cmd->sidemove && singleplayer && crispy_jump)
             P_Thrust(player, player->mo->angle, FRACUNIT >> 8);
 
     if ( (cmd->forwardmove || cmd->sidemove) 
