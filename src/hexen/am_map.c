@@ -255,18 +255,23 @@ void AM_changeWindowLoc(void)
         m_y = min_y - m_h / 2;
         m_paninc.y = 0;
     }
-/*
-  mapxstart += MTOF(m_paninc.x+FRACUNIT/2);
-  mapystart -= MTOF(m_paninc.y+FRACUNIT/2);
-  if(mapxstart >= finit_width)
-		mapxstart -= finit_width;
-  if(mapxstart < 0)
-		mapxstart += finit_width;
-  if(mapystart >= finit_height)
-		mapystart -= finit_height;
-  if(mapystart < 0)
-		mapystart += finit_height;
-*/
+
+    // The following code was commented out in the released Hexen source,
+    // but I believe we need to do this here to stop the background moving
+    // when we reach the map boundaries. (In the released source it's done
+    // in AM_clearFB).
+    mapxstart += MTOF(m_paninc.x+FRACUNIT/2);
+    mapystart -= MTOF(m_paninc.y+FRACUNIT/2);
+    if(mapxstart >= finit_width)
+        mapxstart -= finit_width;
+    if(mapxstart < 0)
+        mapxstart += finit_width;
+    if(mapystart >= finit_height)
+        mapystart -= finit_height;
+    if(mapystart < 0)
+        mapystart += finit_height;
+    // - end of code that was commented-out
+
     m_x2 = m_x + m_w;
     m_y2 = m_y + m_h;
 }
@@ -682,6 +687,10 @@ void AM_clearFB(int color)
     }
     else
     {
+        // The released Hexen source does this here, but this causes a bug
+        // where the map background keeps moving when we reach the map
+        // boundaries. This is instead done in AM_changeWindowLoc.
+        /*
         mapxstart += (MTOF(m_paninc.x) >> 1);
         mapystart -= (MTOF(m_paninc.y) >> 1);
         if (mapxstart >= finit_width)
@@ -692,6 +701,7 @@ void AM_clearFB(int color)
             mapystart -= finit_height;
         if (mapystart < 0)
             mapystart += finit_height;
+        */
     }
 
     //blit the automap background to the screen.
