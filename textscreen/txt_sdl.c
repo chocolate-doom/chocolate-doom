@@ -226,11 +226,9 @@ static void ChooseFont(void)
     {
         font = &large_font;
     }
-#else
-    else if (info->current_w >= 1920 && info->current_h >= 1080)
-    {
-        font = &large_font;
-    }
+
+    // TODO: Add conditionals for other operating systems to know
+    // when to use the large font.
 #endif
     else
     {
