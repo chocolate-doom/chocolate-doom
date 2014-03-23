@@ -659,13 +659,15 @@ static char *GetGameName(char *gamename)
         
         if (deh_sub != banners[i])
         {
-            // Has been replaced
-            // We need to expand via printf to include the Doom version 
-            // number
+            int version;
+
+            // Has been replaced.
+            // We need to expand via printf to include the Doom version number
             // We also need to cut off spaces to get the basic name
 
             gamename = Z_Malloc(strlen(deh_sub) + 10, PU_STATIC, 0);
-            sprintf(gamename, deh_sub, DOOM_VERSION / 100, DOOM_VERSION % 100);
+            version = G_VanillaVersionCode();
+            sprintf(gamename, deh_sub, version / 100, version % 100);
 
             while (gamename[0] != '\0' && isspace(gamename[0]))
                 strcpy(gamename, gamename+1);
@@ -854,6 +856,9 @@ static struct
     char *cmdline;
     GameVersion_t version;
 } gameversions[] = {
+    {"Doom 1.666",           "1.666",      exe_doom_1_666},
+    {"Doom 1.7/1.7a",        "1.7",        exe_doom_1_7},
+    {"Doom 1.8",             "1.8",        exe_doom_1_8},
     {"Doom 1.9",             "1.9",        exe_doom_1_9},
     {"Hacx",                 "hacx",       exe_hacx},
     {"Ultimate Doom",        "ultimate",   exe_ultimate},
@@ -925,6 +930,8 @@ static void InitGameVersion(void)
             // original
 
             gameversion = exe_doom_1_9;
+
+            // TODO: Detect IWADs earlier than Doom v1.9.
         }
         else if (gamemode == retail)
         {

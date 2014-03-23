@@ -1961,8 +1961,26 @@ void G_RecordDemo (char *name)
 	
     demorecording = true; 
 } 
- 
- 
+
+// Get the demo version code appropriate for the version set in gameversion.
+int G_VanillaVersionCode(void)
+{
+    switch (gameversion)
+    {
+        case exe_doom_1_2:
+            I_Error("Doom 1.2 does not have a version code!");
+        case exe_doom_1_666:
+            return 106;
+        case exe_doom_1_7:
+            return 107;
+        case exe_doom_1_8:
+            return 108;
+        case exe_doom_1_9:
+        default:  // All other versions are variants on v1.9:
+            return 109;
+    }
+}
+
 void G_BeginRecording (void) 
 { 
     int             i; 
@@ -1989,7 +2007,7 @@ void G_BeginRecording (void)
     }
     else
     {
-        *demo_p++ = DOOM_VERSION;
+        *demo_p++ = G_VanillaVersionCode();
     }
 
     *demo_p++ = gameskill; 
@@ -2067,7 +2085,7 @@ void G_DoPlayDemo (void)
 
     demoversion = *demo_p++;
 
-    if (demoversion == DOOM_VERSION)
+    if (demoversion == G_VanillaVersionCode())
     {
         longtics = false;
     }
@@ -2086,7 +2104,7 @@ void G_DoPlayDemo (void)
                         "    See: http://doomworld.com/files/patches.shtml\n"
                         "    This appears to be %s.";
 
-        I_Error(message, demoversion, DOOM_VERSION,
+        I_Error(message, demoversion, G_VanillaVersionCode(),
                          DemoVersionDescription(demoversion));
     }
     
