@@ -108,6 +108,7 @@ static void (*_glFramebufferTexture)(GLenum, GLenum, GLuint, GLint);
 static void (*_glGenFramebuffers)(GLsizei, GLuint *);
 static void (*_glGenTextures)(GLsizei, GLuint *);
 static const GLubyte *(*_glGetString)(GLenum);
+static void (*_glGetIntegerv)(GLenum, GLint *);
 static void (*_glLoadIdentity)(void);
 static void (*_glMatrixMode)(GLenum);
 static void (*_glShadeModel)(GLenum);
@@ -147,6 +148,7 @@ static int SetGLFunctions(void)
      && (_glGenFramebuffers = GetGLFunction("glGenFramebuffers"))
      && (_glGenTextures = GetGLFunction("glGenTextures"))
      && (_glGetString = GetGLFunction("glGetString"))
+     && (_glGetIntegerv = GetGLFunction("glGetIntegerv"))
      && (_glLoadIdentity = GetGLFunction("glLoadIdentity"))
      && (_glMatrixMode = GetGLFunction("glMatrixMode"))
      && (_glShadeModel = GetGLFunction("glShadeModel"))
@@ -199,6 +201,59 @@ static boolean HaveExtension(char *extname)
     return false;
 }
 
+// Check we have all the required extensions, otherwise this
+// isn't going to work.
+static boolean CheckExtensions(void)
+{
+    return HaveExtension("GL_ARB_texture_non_power_of_two")
+        && HaveExtension("GL_EXT_framebuffer_object");
+}
+
+// Get the size of the intermediate buffer (scaled_texture) for a particular
+// dimension.
+//   base_size: SCREENWIDTH or SCREENHEIGHT
+//   limit_size: Size below which we use scale factor 1
+//   window_size: size (width or height) of the actual window.
+static int GetScaledSize(int base_size, int limit_size, int window_size)
+{
+    GLint maxtexture = -1;
+    int factor;
+
+    // It must be an integer multiple of the original (unscaled) screen
+    // size, but no more than 2x the screen size we are rendering -
+    // GL_LINEAR uses a 2x2 matrix to calculate which pixel to use.
+    // The scaled size must be an integer multiple of the original
+    // (unscaled) screen size, as we are drawing into it with GL_NEAREST.
+
+    // For a given screen size, we want to use the next largest scale
+    // factor that encompasses the screen. For example:
+    //   640x480 -> 640x600 (only needs smooth scaling vertically)
+    //   800x600 -> 960x600 (smooth scaling horizontally)
+    factor = (window_size + base_size - 1) / base_size;
+
+    // We don't want the scale factor to be an insane size, so we
+    // set a limit (gl_max_scale).
+    if (window_size < limit_size)
+    {
+        factor = 1;
+    }
+    else if (factor > gl_max_scale)
+    {
+        factor = gl_max_scale;
+    }
+
+    // The system has a limit on the texture size, and we must not
+    // exceed this either.
+    _glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxtexture);
+
+    if (base_size * factor > maxtexture)
+    {
+        factor = maxtexture / base_size;
+    }
+
+    return factor * base_size;
+}
+
 // Called on startup or on window resize so that we calculate the
 // size of the actual "window" where we show the game screen.
 static void CalculateWindowSize(void)
@@ -230,21 +285,18 @@ static void CalculateWindowSize(void)
         window_w = screen_w;
         window_h = (screen_w * base_height) / base_width;
     }
-}
 
-// Check we have all the required extensions, otherwise this
-// isn't going to work.
-static boolean CheckExtensions(void)
-{
-    return HaveExtension("GL_ARB_texture_non_power_of_two")
-        && HaveExtension("GL_EXT_framebuffer_object");
+    // Calculate the size of the intermediate scaled texture. It will
+    // be an integer multiple of the original screen size.
+    // Below ~480x360 the scaling doesn't look so great. Use this as
+    // the limit, below which we (effectively) just use GL_LINEAR.
+    scaled_w = GetScaledSize(SCREENWIDTH, base_width * 1.5, window_w);
+    scaled_h = GetScaledSize(SCREENHEIGHT, base_height * 1.5, window_h);
 }
 
 // Create the OpenGL textures used for scaling.
 static boolean CreateTextures(void)
 {
-    int factor;
-
     // Unscaled texture for input:
     if (unscaled_data == NULL)
     {
@@ -257,37 +309,6 @@ static boolean CreateTextures(void)
     _glBindTexture(GL_TEXTURE_2D, unscaled_texture);
     _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-
-    // TODO: Check GL_MAX_TEXTURE_SIZE and set a tighter maximum scale
-    // size if necessary.
-
-    // How big is the scaled texture?
-    // It must be an integer multiple of the original (unscaled) screen
-    // size, but no more than 2x the screen size we are rendering -
-    // GL_LINEAR uses a 2x2 matrix to calculate which pixel to use.
-    // Clamp the scale factor because we don't want to get too large.
-    factor = window_w * 2 / SCREENWIDTH;
-    if (window_h <= SCREENWIDTH)
-    {
-        factor = 1;
-    }
-    else if (factor > gl_max_scale)
-    {
-        factor = gl_max_scale;
-    }
-    scaled_w = SCREENWIDTH * factor;
-
-    factor = window_h * 2 / SCREENHEIGHT;
-
-    if (window_h <= SCREENHEIGHT_4_3)
-    {
-        factor = 1;
-    }
-    else if (factor > gl_max_scale)
-    {
-        factor = gl_max_scale;
-    }
-    scaled_h = SCREENHEIGHT * factor;
 
     // Scaled texture:
     _glGenTextures(1, &scaled_texture);
@@ -422,7 +443,7 @@ boolean I_GL_PreInit(void)
 
 boolean I_GL_InitScale(int w, int h)
 {
-    if (!SetGLFunctions())
+    if (!SetGLFunctions() || !CheckExtensions())
     {
         return false;
     }
@@ -434,7 +455,7 @@ boolean I_GL_InitScale(int w, int h)
     screen_w = w;
     screen_h = h;
     CalculateWindowSize();
-    if (!CheckExtensions() || !CreateTextures() || !SetupFramebuffer())
+    if (!CreateTextures() || !SetupFramebuffer())
     {
         return false;
     }
