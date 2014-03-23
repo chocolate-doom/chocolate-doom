@@ -807,6 +807,14 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(snd_maxslicetime_ms),
 
     //!
+    // External command to invoke to perform MIDI playback. If set to
+    // the empty string, SDL_mixer's internal MIDI playback is used.
+    // This only has any effect when snd_musicdevice is set to General
+    // MIDI output.
+
+    CONFIG_VARIABLE_STRING(snd_musiccmd),
+
+    //!
     // The I/O port to use to access the OPL chip.  Only relevant when
     // using native OPL music playback.
     //
