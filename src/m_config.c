@@ -798,6 +798,15 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(snd_cachesize),
 
     //!
+    // Maximum size of the output sound buffer size in milliseconds.
+    // Sound output is generated periodically in slices. Higher values
+    // might be more efficient but will introduce latency to the
+    // sound output. The default is 28ms (one slice per tic with the
+    // 35fps timer).
+
+    CONFIG_VARIABLE_INT(snd_maxslicetime_ms),
+
+    //!
     // The I/O port to use to access the OPL chip.  Only relevant when
     // using native OPL music playback.
     //

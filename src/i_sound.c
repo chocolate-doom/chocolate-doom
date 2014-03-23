@@ -47,6 +47,11 @@ int snd_samplerate = 44100;
 
 int snd_cachesize = 64 * 1024 * 1024;
 
+// Config variable that controls the sound buffer size.
+// We default to 28ms (1000 / 35fps = 1 buffer per tic).
+
+int snd_maxslicetime_ms = 28;
+
 // Low-level sound and music modules we are using
 
 static sound_module_t *sound_module;
@@ -434,6 +439,7 @@ void I_BindSoundVariables(void)
     M_BindVariable("snd_sbirq",         &snd_sbirq);
     M_BindVariable("snd_sbdma",         &snd_sbdma);
     M_BindVariable("snd_mport",         &snd_mport);
+    M_BindVariable("snd_maxslicetime_ms", &snd_maxslicetime_ms);
     M_BindVariable("snd_samplerate",    &snd_samplerate);
     M_BindVariable("snd_cachesize",     &snd_cachesize);
     M_BindVariable("opl_io_port",       &opl_io_port);
