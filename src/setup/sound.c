@@ -74,6 +74,7 @@ int snd_musicdevice = SNDDEVICE_SB;
 int snd_samplerate = 44100;
 int opl_io_port = 0x388;
 int snd_cachesize = 64 * 1024 * 1024;
+int snd_maxslicetime_ms = 28;
 char *snd_musiccmd = "";
 
 static int numChannels = 8;
@@ -318,6 +319,7 @@ void BindSoundVariables(void)
     M_BindVariable("snd_sbirq",           &snd_sbirq);
     M_BindVariable("snd_sbdma",           &snd_sbdma);
     M_BindVariable("snd_mport",           &snd_mport);
+    M_BindVariable("snd_maxslicetime_ms", &snd_maxslicetime_ms);
     M_BindVariable("snd_musiccmd",        &snd_musiccmd);
 
     M_BindVariable("snd_cachesize",       &snd_cachesize);
