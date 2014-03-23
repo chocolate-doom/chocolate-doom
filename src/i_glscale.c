@@ -102,7 +102,6 @@ static void (*_glBindTexture)(GLenum, GLuint);
 static GLenum (*_glCheckFramebufferStatus)(GLenum);
 static void (*_glClear)(GLbitfield);
 static void (*_glClearColor)(GLclampf, GLclampf, GLclampf, GLclampf);
-static void (*_glDrawBuffers)(GLsizei, const GLenum *);
 static void (*_glEnable)(GLenum);
 static void (*_glEnd)(void);
 static void (*_glFramebufferTexture)(GLenum, GLenum, GLuint, GLint);
@@ -142,7 +141,6 @@ static int SetGLFunctions(void)
      && (_glCheckFramebufferStatus = GetGLFunction("glCheckFramebufferStatus"))
      && (_glClear = GetGLFunction("glClear"))
      && (_glClearColor = GetGLFunction("glClearColor"))
-     && (_glDrawBuffers = GetGLFunction("glDrawBuffers"))
      && (_glEnable = GetGLFunction("glEnable"))
      && (_glEnd = GetGLFunction("glEnd"))
      && (_glFramebufferTexture = GetGLFunction("glFramebufferTexture"))
@@ -234,18 +232,18 @@ static void CalculateWindowSize(void)
     }
 }
 
+// Check we have all the required extensions, otherwise this
+// isn't going to work.
+static boolean CheckExtensions(void)
+{
+    return HaveExtension("GL_ARB_texture_non_power_of_two")
+        && HaveExtension("GL_EXT_framebuffer_object");
+}
+
 // Create the OpenGL textures used for scaling.
 static boolean CreateTextures(void)
 {
     int factor;
-
-    // We need to have all the required extensions, otherwise this
-    // isn't going to work.
-    if (!HaveExtension("GL_ARB_texture_non_power_of_two")
-     || !HaveExtension("GL_EXT_framebuffer_object"))
-    {
-        return false;
-    }
 
     // Unscaled texture for input:
     if (unscaled_data == NULL)
@@ -257,15 +255,8 @@ static boolean CreateTextures(void)
         _glGenTextures(1, &unscaled_texture);
     }
     _glBindTexture(GL_TEXTURE_2D, unscaled_texture);
-    _glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCREENWIDTH, SCREENHEIGHT, 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, unscaled_data);
-
-    // Framebuffer for scaled texture:
-    if (scaled_framebuffer == 0)
-    {
-        _glGenFramebuffers(1, &scaled_framebuffer);
-    }
-    _glBindFramebuffer(GL_FRAMEBUFFER, scaled_framebuffer);
+    _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
     // TODO: Check GL_MAX_TEXTURE_SIZE and set a tighter maximum scale
     // size if necessary.
@@ -302,9 +293,47 @@ static boolean CreateTextures(void)
     _glGenTextures(1, &scaled_texture);
     _glBindTexture(GL_TEXTURE_2D, scaled_texture);
     _glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, scaled_w, scaled_h, 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+                  GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+
+    // Translate scaled-up texture to the screen with linear filtering.
+    _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    // Don't wrap/repeat the texture; this stops the linear filtering
+    // from blurring the edges of the screen with each other.
+    _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+
+    // Finished.
+    _glBindTexture(GL_TEXTURE_2D, 0);
 
     return true;
+}
+
+static boolean SetupFramebuffer(void)
+{
+    boolean result = true;
+
+    // Framebuffer for scaled texture:
+    if (scaled_framebuffer == 0)
+    {
+        _glGenFramebuffers(1, &scaled_framebuffer);
+    }
+    _glBindFramebuffer(GL_FRAMEBUFFER, scaled_framebuffer);
+
+    // Render unscaled texture into scaled texture:
+    _glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+                          scaled_texture, 0);
+
+    if (_glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    {
+        fprintf(stderr, "Failed to set up framebuffer.\n");
+        result = false;
+    }
+
+    _glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    return result;
 }
 
 // Import screen data from the given pointer and palette and update
@@ -335,25 +364,12 @@ static void SetInputData(byte *screen, SDL_Color *palette)
 // second scaled_texture texture.
 static void DrawUnscaledToScaled(void)
 {
-    GLenum DrawBuffers[1] = {GL_COLOR_ATTACHMENT0};
-
-    // Render unscaled texture into scaled texture:
-    _glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-                          scaled_texture, 0);
-    _glDrawBuffers(1, DrawBuffers);
-
-    if (_glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-    {
-	fprintf(stderr, "Failed to set up framebuffer\n");
-        return;
-    }
-
+    // Render into scaled_texture through framebuffer.
     _glBindFramebuffer(GL_FRAMEBUFFER, scaled_framebuffer);
+
     _glLoadIdentity();
     _glViewport(0, 0, scaled_w, scaled_h);
     _glBindTexture(GL_TEXTURE_2D, unscaled_texture);
-    _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
     _glBegin(GL_QUADS);
     _glTexCoord2f(0, 1); _glVertex2f(-1, 1);
@@ -377,15 +393,6 @@ static void DrawScreen(void)
     _glLoadIdentity();
     _glViewport(0, 0, screen_w, screen_h);
     _glBindTexture(GL_TEXTURE_2D, scaled_texture);
-
-    // Translate scaled-up texture to the screen with linear filtering.
-    _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-    // Don't wrap/repeat the texture; this stops the linear filtering
-    // from blurring the edges of the screen with each other.
-    _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-    _glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
     w = (float) window_w / screen_w;
     h = (float) window_h / screen_h;
@@ -427,7 +434,7 @@ boolean I_GL_InitScale(int w, int h)
     screen_w = w;
     screen_h = h;
     CalculateWindowSize();
-    if (!CreateTextures())
+    if (!CheckExtensions() || !CreateTextures() || !SetupFramebuffer())
     {
         return false;
     }
