@@ -1093,7 +1093,6 @@ G_CheckSpot
     fixed_t		x;
     fixed_t		y; 
     subsector_t*	ss; 
-    unsigned		an; 
     mobj_t*		mo; 
     int			i;
 	
@@ -1118,15 +1117,71 @@ G_CheckSpot
 	P_RemoveMobj (bodyque[bodyqueslot%BODYQUESIZE]); 
     bodyque[bodyqueslot%BODYQUESIZE] = players[playernum].mo; 
     bodyqueslot++; 
-	
-    // spawn a teleport fog 
-    ss = R_PointInSubsector (x,y); 
-    an = ( ANG45 * (((unsigned int) mthing->angle)/45) ) >> ANGLETOFINESHIFT; 
- 
-    mo = P_SpawnMobj (x+20*finecosine[an], y+20*finesine[an] 
-		      , ss->sector->floorheight 
-		      , MT_TFOG); 
-	 
+
+    // spawn a teleport fog
+    ss = R_PointInSubsector (x,y);
+
+
+    // The code in the released source looks like this:
+    //
+    //    an = ( ANG45 * (((unsigned int) mthing->angle)/45) )
+    //         >> ANGLETOFINESHIFT;
+    //    mo = P_SpawnMobj (x+20*finecosine[an], y+20*finesine[an]
+    //                     , ss->sector->floorheight
+    //                     , MT_TFOG);
+    //
+    // But 'an' can be a signed value in the DOS version. This means that
+    // we get a negative index and the lookups into finecosine/finesine
+    // end up dereferencing values in finetangent[].
+    // A player spawning on a deathmatch start facing directly west spawns
+    // "silently" with no spawn fog. Emulate this.
+    //
+    // This code is imported from PrBoom+.
+
+    {
+        fixed_t xa, ya;
+        signed int an;
+
+        an = (ANG45 * ((signed int) mthing->angle / 45));
+        // Right-shifting a negative signed integer is implementation-defined,
+        // so divide instead.
+        an /= 1 << ANGLETOFINESHIFT;
+
+        switch (an)
+        {
+            case -4096:
+                xa = finetangent[2048];    // finecosine[-4096]
+                ya = finetangent[0];       // finesine[-4096]
+                break;
+            case -3072:
+                xa = finetangent[3072];    // finecosine[-3072]
+                ya = finetangent[1024];    // finesine[-3072]
+                break;
+            case -2048:
+                xa = finesine[0];          // finecosine[-2048]
+                ya = finetangent[2048];    // finesine[-2048]
+                break;
+            case -1024:
+                xa = finesine[1024];       // finecosine[-1024]
+                ya = finetangent[3072];    // finesine[-1024]
+                break;
+            case 0:
+            case 1024:
+            case 2048:
+            case 3072:
+            case 4096:
+                xa = finecosine[an];
+                ya = finesine[an];
+                break;
+            default:
+                I_Error("G_CheckSpot: unexpected angle %d\n", an);
+                xa = ya = 0;
+                break;
+        }
+        mo = P_SpawnMobj(x + 20 * xa, y + 20 * ya,
+                         ss->sector->floorheight, MT_TFOG);
+    }
+
     if (players[consoleplayer].viewz != 1) 
 	S_StartSound (mo, sfx_telept);	// don't start sound on first frame 
  
