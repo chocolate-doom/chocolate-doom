@@ -82,7 +82,7 @@ static int sfxVolume = 15;
 static int musicVolume = 15;
 static int voiceVolume = 15;
 static int show_talk = 0;
-static int use_libsamplerate = 0;
+static int use_libsamplerate = 1;
 static float libsamplerate_scale = 0.65;
 
 static char *timidity_cfg_path = NULL;
