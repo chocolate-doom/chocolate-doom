@@ -142,7 +142,7 @@ int             crispy_secretmessage = 1;
 int             crispy_crosshair = 0;
 int             crispy_crosshair_highlight = 1;
 int             crispy_jump = 0;
-int             crispy_freelook = 0;
+int             crispy_freelook = 1;
 int             crispy_mouselook = 0;
 
 void D_ConnectNetGame(void);

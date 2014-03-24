@@ -190,7 +190,7 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
     TXT_SetColumnWidths(table, 21, 9);
 
-    if (extra_keys)
+    if (extra_keys || 1) // Crispy
     {
         // When we have extra controls, a scrollable pane must be used.
 
@@ -212,10 +212,13 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
             AddKeyControl(table, "Fly center", &key_flycenter);
         }
 
+        if (gamemission != doom)
+        {
         AddSectionLabel(table, "Inventory", true);
 
         AddKeyControl(table, "Inventory left", &key_invleft);
         AddKeyControl(table, "Inventory right", &key_invright);
+        }
 
         if (gamemission == strife)
         {
@@ -230,6 +233,7 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
             AddKeyControl(table, "Use health", &key_usehealth);
         }
         else
+        if (gamemission == heretic || gamemission == hexen)
         {
             AddKeyControl(table, "Use artifact", &key_useartifact);
         }
@@ -387,7 +391,7 @@ void ConfigKeyboard(void)
     AddKeyControl(movement_table, "Turn Right", &key_right);
     AddKeyControl(movement_table, " Strafe On", &key_strafe);
 
-    if (gamemission == hexen || gamemission == strife)
+    if (gamemission == hexen || gamemission == strife || gamemission == doom) // Crispy
     {
         AddKeyControl(movement_table, "Jump", &key_jump);
     }
