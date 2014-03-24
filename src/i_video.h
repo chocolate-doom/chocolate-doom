@@ -155,6 +155,8 @@ extern boolean screenvisible;
 
 extern float mouse_acceleration;
 extern int mouse_threshold;
+extern float mouse_acceleration_y;
+extern int mouse_threshold_y;
 extern int vanilla_keyboard_mapping;
 extern boolean screensaver_mode;
 extern int usegamma;
@@ -165,5 +167,6 @@ extern int screen_height;
 extern int screen_bpp;
 extern int fullscreen;
 extern int aspect_ratio_correct;
+extern int novert;
 
 #endif

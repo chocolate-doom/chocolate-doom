@@ -51,7 +51,8 @@ static int *all_mouse_buttons[] = {
     &mousebuse,
     &mousebjump,
     &mousebprevweapon,
-    &mousebnextweapon
+    &mousebnextweapon,
+    &mousebmouselook
 };
 
 static void MouseSetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))

@@ -110,6 +110,7 @@ int mousebstrafeleft = -1;
 int mousebstraferight = -1;
 int mousebbackward = -1;
 int mousebuse = -1;
+int mousebmouselook = -1;
 
 int mousebprevweapon = 4;
 int mousebnextweapon = 3;
@@ -247,6 +248,8 @@ void M_BindBaseControls(void)
     M_BindVariable("key_jump",           &key_jump);
     M_BindVariable("mouseb_jump",        &mousebjump);
     M_BindVariable("joyb_jump",          &joybjump);
+
+    M_BindVariable("mouseb_mouselook",   &mousebmouselook);
 }
 
 void M_BindHereticControls(void)
