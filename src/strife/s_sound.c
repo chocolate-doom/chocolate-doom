@@ -144,9 +144,6 @@ void S_Init(int sfxVolume, int musicVolume, int voiceVolume)
 {  
     int i;
 
-    I_InitSound(true);
-    I_InitMusic();
-
     I_PrecacheSounds(S_sfx, NUMSFX);
 
     S_SetSfxVolume(sfxVolume);
