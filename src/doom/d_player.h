@@ -168,6 +168,13 @@ typedef struct player_s
 
 } player_t;
 
+typedef struct player2_s
+{
+    char*	centermessage;
+    int	lookdir;
+    boolean	centering;
+    unsigned int	jumpTics;
+} player2_t;
 
 //
 // INTERMISSION

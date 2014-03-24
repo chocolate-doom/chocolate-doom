@@ -32,17 +32,43 @@
 int vanilla_savegame_limit = 0;
 int vanilla_demo_limit = 0;
 
+int crispy_automapstats = 1;
+int crispy_secretmessage = 1;
+int crispy_crosshair = 0;
+int crispy_crosshair_highlight = 1;
+int crispy_jump = 0;
+int crispy_freelook = 1;
+int crispy_mouselook = 0;
+
 void CompatibilitySettings(void)
 {
     txt_window_t *window;
 
-    window = TXT_NewWindow("Compatibility");
+    window = TXT_NewWindow("Crispness");
 
+/*
     TXT_AddWidgets(window, 
                    TXT_NewCheckBox("Vanilla savegame limit",
                                    &vanilla_savegame_limit),
                    TXT_NewCheckBox("Vanilla demo limit",
                                    &vanilla_demo_limit),
+                   NULL);
+*/
+    TXT_AddWidgets(window, 
+                   TXT_NewCheckBox("Show level stats in automap",
+                                   &crispy_automapstats),
+                   TXT_NewCheckBox("Show secrets revealed message",
+                                   &crispy_secretmessage),
+                   TXT_NewCheckBox("Show laser pointer",
+                                   &crispy_crosshair),
+                   TXT_NewCheckBox("Change laser pointer color on target",
+                                   &crispy_crosshair_highlight),
+                   TXT_NewCheckBox("Enable jumping",
+                                   &crispy_jump),
+                   TXT_NewCheckBox("Enable free look",
+                                   &crispy_freelook),
+                   TXT_NewCheckBox("Enable permanent mouse look",
+                                   &crispy_mouselook),
                    NULL);
 }
 
@@ -52,6 +78,13 @@ void BindCompatibilityVariables(void)
     {
         M_BindVariable("vanilla_savegame_limit", &vanilla_savegame_limit);
         M_BindVariable("vanilla_demo_limit",     &vanilla_demo_limit);
+        M_BindVariable("crispy_automapstats",    &crispy_automapstats);
+        M_BindVariable("crispy_secretmessage",   &crispy_secretmessage);
+        M_BindVariable("crispy_crosshair",       &crispy_crosshair);
+        M_BindVariable("crispy_crosshair_highlight", &crispy_crosshair_highlight);
+        M_BindVariable("crispy_jump",            &crispy_jump);
+        M_BindVariable("crispy_freelook",        &crispy_freelook);
+        M_BindVariable("crispy_mouselook",       &crispy_mouselook);
     }
 }
 

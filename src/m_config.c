@@ -449,6 +449,14 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_INT(mouseb_jump),
 
     //!
+    // @game doom
+    //
+    // Mouse button to enable free looking.
+    //
+
+    CONFIG_VARIABLE_INT(mouseb_mouselook),
+
+    //!
     // If non-zero, joystick input is enabled.
     //
 
@@ -782,6 +790,22 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(mouse_threshold),
+
+    //!
+    // Vertical mouse acceleration factor.  When the speed of mouse movement
+    // exceeds the threshold value (mouse_threshold), the speed is
+    // multiplied by this value.
+    //
+
+    CONFIG_VARIABLE_FLOAT(mouse_acceleration_y),
+
+    //!
+    // Vertical mouse acceleration threshold.  When the speed of mouse movement
+    // exceeds this threshold value, the speed is multiplied by an
+    // acceleration factor (mouse_acceleration).
+    //
+
+    CONFIG_VARIABLE_INT(mouse_threshold_y),
 
     //!
     // Sound output sample rate, in Hz.  Typical values to use are
@@ -1479,6 +1503,46 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(crispy_secretmessage),
+
+    //!
+    // @game doom
+    //
+    // Show a laser pointer.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_crosshair),
+
+    //!
+    // @game doom
+    //
+    // Change laser pointer color on target.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_crosshair_highlight),
+
+    //!
+    // @game doom
+    //
+    // Enable jumping.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_jump),
+
+    //!
+    // @game doom
+    //
+    // Enable looking up and down.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_freelook),
+
+    //!
+    // @game doom
+    //
+    // Use the mouse to look up and down.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_mouselook),
 };
 
 static default_collection_t extra_defaults =

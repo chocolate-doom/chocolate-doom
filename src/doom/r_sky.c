@@ -54,7 +54,13 @@ int			skytexturemid;
 //
 void R_InitSkyMap (void)
 {
+    extern int                 crispy_freelook;
+    extern int                 crispy_mouselook;
+
   // skyflatnum = R_FlatNumForName ( SKYFLATNAME );
-    skytexturemid = 100*FRACUNIT;
+    if (crispy_freelook || crispy_mouselook)
+        skytexturemid = -28*FRACUNIT * 128 / 228;
+    else
+        skytexturemid = 100*FRACUNIT;
 }
 

@@ -110,6 +110,7 @@ int mousebstrafeleft = -1;
 int mousebstraferight = -1;
 int mousebbackward = -1;
 int mousebuse = -1;
+int mousebmouselook = -1;
 
 int mousebprevweapon = 4;
 int mousebnextweapon = 3;
@@ -240,6 +241,16 @@ void M_BindBaseControls(void)
     M_BindVariable("dclick_use",         &dclick_use);
     M_BindVariable("key_pause",          &key_pause);
     M_BindVariable("key_message_refresh", &key_message_refresh);
+
+    M_BindVariable("key_lookup",         &key_lookup);
+    M_BindVariable("key_lookdown",       &key_lookdown);
+    M_BindVariable("key_lookcenter",     &key_lookcenter);
+
+    M_BindVariable("key_jump",           &key_jump);
+    M_BindVariable("mouseb_jump",        &mousebjump);
+    M_BindVariable("joyb_jump",          &joybjump);
+
+    M_BindVariable("mouseb_mouselook",   &mousebmouselook);
 }
 
 void M_BindHereticControls(void)
@@ -247,10 +258,6 @@ void M_BindHereticControls(void)
     M_BindVariable("key_flyup",          &key_flyup);
     M_BindVariable("key_flydown",        &key_flydown);
     M_BindVariable("key_flycenter",      &key_flycenter);
-
-    M_BindVariable("key_lookup",         &key_lookup);
-    M_BindVariable("key_lookdown",       &key_lookdown);
-    M_BindVariable("key_lookcenter",     &key_lookcenter);
 
     M_BindVariable("key_invleft",        &key_invleft);
     M_BindVariable("key_invright",       &key_invright);

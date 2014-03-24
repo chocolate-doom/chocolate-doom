@@ -373,6 +373,8 @@ void R_DrawPlanes (void)
     int			stop;
     int			angle;
     int                 lumpnum;
+    extern int                 crispy_freelook;
+    extern int                 crispy_mouselook;
 				
 #ifdef RANGECHECK
     if (ds_p - drawsegs > MAXDRAWSEGS)
@@ -398,6 +400,8 @@ void R_DrawPlanes (void)
 	if (pl->picnum == skyflatnum)
 	{
 	    dc_iscale = pspriteiscale>>(detailshift && !hires);
+	    if (crispy_freelook || crispy_mouselook)
+	        dc_iscale = dc_iscale * 128 / 228;
 	    
 	    // Sky is allways drawn full bright,
 	    //  i.e. colormaps[0] is used.

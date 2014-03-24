@@ -140,6 +140,7 @@ extern int mousebstrafeleft;
 extern int mousebstraferight;
 extern int mousebbackward;
 extern int mousebuse;
+extern int mousebmouselook;
 
 extern int mousebprevweapon;
 extern int mousebnextweapon;

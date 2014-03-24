@@ -127,6 +127,7 @@ int             deathmatch;           	// only if started as net death
 boolean         netgame;                // only true if packets are broadcast 
 boolean         playeringame[MAXPLAYERS]; 
 player_t        players[MAXPLAYERS]; 
+player2_t       players2[MAXPLAYERS];
 
 boolean         turbodetected[MAXPLAYERS];
  
@@ -205,6 +206,7 @@ static const struct
 
 static boolean  gamekeydown[NUMKEYS]; 
 static int      turnheld;		// for accelerative turning 
+static int      lookheld;
  
 static boolean  mousearray[MAX_MOUSE_BUTTONS + 1];
 static boolean *mousebuttons = &mousearray[1];  // allow [-1]
@@ -333,8 +335,13 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     boolean	bstrafe; 
     int		speed;
     int		tspeed; 
+    int		lspeed;
     int		forward;
     int		side;
+    int		look;
+    extern int		crispy_jump;
+    extern int		crispy_freelook;
+    extern int		crispy_mouselook;
 
     memset(cmd, 0, sizeof(ticcmd_t));
 
@@ -352,7 +359,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
          ^ (gamekeydown[key_speed]
          || joybuttons[joybspeed]);
  
-    forward = side = 0;
+    forward = side = look = 0;
     
     // use two stage accelerative turning
     // on the keyboard and joystick
@@ -369,6 +376,23 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     else 
 	tspeed = speed;
     
+    if (gamekeydown[key_lookdown] || gamekeydown[key_lookup])
+    {
+        lookheld += ticdup;
+    }
+    else
+    {
+        lookheld = 0;
+    }
+    if (lookheld < SLOWTURNTICS)
+    {
+        lspeed = 1;
+    }
+    else
+    {
+        lspeed = 2;
+    }
+
     // let movement keys cancel each other out
     if (strafe) 
     { 
@@ -428,6 +452,32 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
      || mousebuttons[mousebstraferight])
     {
         side += sidemove[speed]; 
+    }
+
+    // Look up/down/center keys
+    if (crispy_freelook)
+    {
+        if (gamekeydown[key_lookup])
+        {
+            look = lspeed;
+        }
+        if (gamekeydown[key_lookdown])
+        {
+            look = -lspeed;
+        }
+        if (gamekeydown[key_lookcenter])
+        {
+            look = TOCENTER;
+        }
+    }
+
+    if (crispy_jump && singleplayer)
+    {
+        if (gamekeydown[key_jump] || mousebuttons[mousebjump]
+            || joybuttons[joybjump])
+        {
+            cmd->arti |= AFLAG_JUMP;
+        }
     }
 
     // buttons
@@ -538,7 +588,19 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         } 
     }
 
-    forward += mousey; 
+    if ((crispy_freelook && mousebuttons[mousebmouselook]) ||
+         crispy_mouselook)
+    {
+        look += mousey / 8;
+
+        if (look > 7)
+            look = 7;
+        else if (mousey && look < -7)
+            look = -7;
+    }
+    else
+    if (!novert)
+        forward += mousey;
 
     if (strafe) 
 	side += mousex*2; 
@@ -565,6 +627,15 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
  
     cmd->forwardmove += forward; 
     cmd->sidemove += side;
+
+    if (players[consoleplayer].playerstate == PST_LIVE)
+    {
+        if (look < 0)
+        {
+            look += 16;
+        }
+        cmd->lookfly = look;
+    }
     
     // special buttons
     if (sendpause) 
@@ -1024,11 +1095,14 @@ void G_InitPlayer (int player)
 void G_PlayerFinishLevel (int player) 
 { 
     player_t*	p; 
+    player2_t*	p2;
 	 
     p = &players[player]; 
+    p2 = &players2[player];
 	 
     memset (p->powers, 0, sizeof (p->powers)); 
     memset (p->cards, 0, sizeof (p->cards)); 
+    memset (p2, 0, sizeof (*p2));
     p->mo->flags &= ~MF_SHADOW;		// cancel invisibility 
     p->extralight = 0;			// cancel gun flashes 
     p->fixedcolormap = 0;		// cancel ir gogles 
@@ -1045,6 +1119,7 @@ void G_PlayerFinishLevel (int player)
 void G_PlayerReborn (int player) 
 { 
     player_t*	p; 
+    player2_t*	p2;
     int		i; 
     int		frags[MAXPLAYERS]; 
     int		killcount;
@@ -1058,6 +1133,8 @@ void G_PlayerReborn (int player)
 	 
     p = &players[player]; 
     memset (p, 0, sizeof(*p)); 
+    p2 = &players2[player];
+    memset (p2, 0, sizeof(*p2));
  
     memcpy (players[player].frags, frags, sizeof(players[player].frags)); 
     players[player].killcount = killcount; 

@@ -93,6 +93,7 @@ char*	player_names[] =
 
 char			chat_char; // remove later.
 static player_t*	plr;
+static player2_t*	plr2;
 patch_t*		hu_font[HU_FONTSIZE];
 static hu_textline_t	w_title;
 static hu_textline_t	w_kills;
@@ -340,6 +341,7 @@ void HU_Start(void)
 	HU_Stop();
 
     plr = &players[consoleplayer];
+    plr2 = &players2[consoleplayer];
     message_on = false;
     message_dontfuckwithme = false;
     message_nottobefuckedwith = false;
@@ -440,13 +442,15 @@ void HU_Start(void)
 
 void HU_Drawer(void)
 {
+    extern int crispy_automapstats;
+    extern int crispy_crosshair;
+    extern int crispy_crosshair_highlight;
 
     HUlib_drawSText(&w_message);
     HUlib_drawSText(&w_secret);
     HUlib_drawIText(&w_chat);
     if (automapactive)
     {
-        extern int crispy_automapstats;
 
 	HUlib_drawTextLine(&w_title, false);
 
@@ -485,6 +489,40 @@ void HU_Drawer(void)
 	}
     }
 
+    if (crispy_crosshair &&
+        !automapactive && !menuactive && !paused && !secret_on &&
+        !(plr->readyweapon == wp_fist) && !(plr->readyweapon == wp_chainsaw))
+    {
+        extern int screenblocks, detailshift;
+        byte *b = I_VideoBuffer;
+
+        byte c = 180;
+        int h = 100 << hires;
+
+        if (screenblocks <= 10)
+            h -= (32 << (hires && !detailshift)) / 2;
+
+        if (crispy_crosshair_highlight)
+        {
+            extern fixed_t P_AimLineAttack (mobj_t* t1, angle_t angle, fixed_t distance);
+            extern mobj_t *linetarget;
+
+            fixed_t slope = P_AimLineAttack(plr->mo, plr->mo->angle, 16*64*FRACUNIT);
+
+            if (linetarget && !(linetarget->flags & MF_SHADOW))
+            {
+                c = 160;
+            }
+        }
+
+        b += h * SCREENWIDTH + SCREENWIDTH / 2;
+        *b++ = c;
+        *b = c;
+        b += SCREENWIDTH - 1;
+        *b++ = c;
+        *b = c;
+    }
+
 }
 
 void HU_Erase(void)
@@ -519,15 +557,14 @@ void HU_Ticker(void)
     {
 
 	// display message if necessary
-	if (plr->message
-	    && !strncmp(plr->message, HUSTR_SECRETFOUND, 21))
+	if (plr2->centermessage)
 	{
-	    HUlib_addMessageToSText(&w_secret, 0, plr->message);
-	    plr->message = 0;
+	    HUlib_addMessageToSText(&w_secret, 0, plr2->centermessage);
+	    plr2->centermessage = 0;
 	    secret_on = true;
 	    secret_counter = HU_MSGTIMEOUT >> 1;
 	}
-	else
+
 	if ((plr->message && !message_nottobefuckedwith)
 	    || (plr->message && message_dontfuckwithme))
 	{
