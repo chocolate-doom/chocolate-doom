@@ -590,7 +590,14 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 
     if ((crispy_freelook && mousebuttons[mousebmouselook]) ||
          crispy_mouselook)
-        look += mousey / 10;
+    {
+        look += mousey / 8;
+
+        if (look > 7)
+            look = 7;
+        else if (look < -7)
+            look = -7;
+    }
     else
     if (!novert)
         forward += mousey;

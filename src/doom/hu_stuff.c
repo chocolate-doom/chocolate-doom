@@ -490,9 +490,8 @@ void HU_Drawer(void)
     }
 
     if (crispy_crosshair &&
-        !automapactive && !menuactive && !paused &&
-        !(plr->readyweapon == wp_fist) && !(plr->readyweapon == wp_chainsaw) &&
-        !plr2->centermessage)
+        !automapactive && !menuactive && !paused && !secret_on &&
+        !(plr->readyweapon == wp_fist) && !(plr->readyweapon == wp_chainsaw))
     {
         extern int screenblocks, detailshift;
         byte *b = I_VideoBuffer;
