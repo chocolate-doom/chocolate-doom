@@ -595,7 +595,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 
         if (look > 7)
             look = 7;
-        else if (look < -7)
+        else if (mousey && look < -7)
             look = -7;
     }
     else
