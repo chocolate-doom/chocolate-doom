@@ -937,7 +937,7 @@ void G_Ticker (void)
             G_DoWorldDone (); 
             break; 
         case ga_screenshot: 
-            V_ScreenShot("STRIFE%02i.pcx"); // [STRIFE] file name, message
+            V_ScreenShot("STRIFE%02i.%s"); // [STRIFE] file name, message
             players[consoleplayer].message = DEH_String("STRIFE  by Rogue entertainment");
             gameaction = ga_nothing; 
             break; 

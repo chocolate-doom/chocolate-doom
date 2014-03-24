@@ -32,6 +32,7 @@
 #include "deh_str.h"
 #include "doomkeys.h"
 #include "d_iwad.h"
+#include "gusconf.h"
 #include "i_system.h"
 #include "m_argv.h"
 #include "m_config.h"
@@ -193,6 +194,9 @@ static char *steam_install_subdirs[] =
     "steamapps\\common\\DOOM 3 BFG Edition\\base\\wads",
 };
 
+#define STEAM_BFG_GUS_PATCHES \
+    "steamapps\\common\\DOOM 3 BFG Edition\\base\\classicmusic\\instruments"
+
 static char *GetRegistryString(registry_value_t *reg_val)
 {
     HKEY key;
@@ -322,6 +326,48 @@ static void CheckSteamEdition(void)
         sprintf(subpath, "%s\\%s", install_path, steam_install_subdirs[i]);
 
         AddIWADDir(subpath);
+    }
+
+    free(install_path);
+}
+
+// The BFG edition ships with a full set of GUS patches. If we find them,
+// we can autoconfigure to use them.
+
+static void CheckSteamGUSPatches(void)
+{
+    char *install_path;
+    char *patch_path;
+    int len;
+
+    // Already configured? Don't stomp on the user's choices.
+    if (gus_patch_path != NULL && strlen(gus_patch_path) > 0)
+    {
+        return;
+    }
+
+    install_path = GetRegistryString(&steam_install_location);
+
+    if (install_path == NULL)
+    {
+        return;
+    }
+
+    len = strlen(install_path) + strlen(STEAM_BFG_GUS_PATCHES) + 20;
+    patch_path = malloc(len);
+    snprintf(patch_path, len, "%s\\%s\\ACBASS.PAT",
+             install_path, STEAM_BFG_GUS_PATCHES);
+
+    // Does acbass.pat exist? If so, then set gus_patch_path.
+    if (M_FileExists(patch_path))
+    {
+        snprintf(patch_path, len, "%s\\%s",
+                 install_path, STEAM_BFG_GUS_PATCHES);
+        gus_patch_path = patch_path;
+    }
+    else
+    {
+        free(patch_path);
     }
 
     free(install_path);
@@ -564,6 +610,10 @@ static void BuildIWADDirList(void)
     CheckCollectorsEdition();
     CheckSteamEdition();
     CheckDOSDefaults();
+
+    // Check for GUS patches installed with the BFG edition!
+
+    CheckSteamGUSPatches();
 
 #else
 

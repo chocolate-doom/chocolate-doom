@@ -32,6 +32,7 @@
 #include "mode.h"
 
 #include "display.h"
+#include "config.h"
 
 extern void RestartTextscreen(void);
 
@@ -110,6 +111,7 @@ static int usegamma = 0;
 
 int graphical_startup = 1;
 int show_endoom = 1;
+int png_screenshots = 0;
 
 // These are the last screen width/height values that were chosen by the
 // user.  These are used when finding the "nearest" mode, so when 
@@ -561,6 +563,12 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
                                       &show_endoom));
     }
 
+#ifdef HAVE_LIBPNG
+    TXT_AddWidget(window,
+                  TXT_NewCheckBox("Save screenshots in PNG format",
+                                  &png_screenshots));
+#endif
+
     TXT_SignalConnect(ar_checkbox, "changed", GenerateModesTable, modes_table);
 }
 
@@ -710,6 +718,7 @@ void BindDisplayVariables(void)
     M_BindVariable("video_driver",              &video_driver);
     M_BindVariable("window_position",           &window_position);
     M_BindVariable("usegamma",                  &usegamma);
+    M_BindVariable("png_screenshots",           &png_screenshots);
 
 
     if (gamemission == doom || gamemission == heretic

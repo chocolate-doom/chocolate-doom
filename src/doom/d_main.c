@@ -417,6 +417,15 @@ boolean D_GrabMouseCallback(void)
 //
 void D_DoomLoop (void)
 {
+    if (bfgedition &&
+        (demorecording || (gameaction == ga_playdemo) || netgame))
+    {
+        printf(" WARNING: You are playing using one of the Doom Classic\n"
+               " IWAD files shipped with the Doom 3: BFG Edition. These are\n"
+               " known to be incompatible with the regular IWAD files and\n"
+               " may cause demos and network games to get out of sync.\n");
+    }
+
     if (demorecording)
 	G_BeginRecording ();
 
@@ -650,13 +659,15 @@ static char *GetGameName(char *gamename)
         
         if (deh_sub != banners[i])
         {
-            // Has been replaced
-            // We need to expand via printf to include the Doom version 
-            // number
+            int version;
+
+            // Has been replaced.
+            // We need to expand via printf to include the Doom version number
             // We also need to cut off spaces to get the basic name
 
             gamename = Z_Malloc(strlen(deh_sub) + 10, PU_STATIC, 0);
-            sprintf(gamename, deh_sub, DOOM_VERSION / 100, DOOM_VERSION % 100);
+            version = G_VanillaVersionCode();
+            sprintf(gamename, deh_sub, version / 100, version % 100);
 
             while (gamename[0] != '\0' && isspace(gamename[0]))
                 strcpy(gamename, gamename+1);
@@ -845,6 +856,9 @@ static struct
     char *cmdline;
     GameVersion_t version;
 } gameversions[] = {
+    {"Doom 1.666",           "1.666",      exe_doom_1_666},
+    {"Doom 1.7/1.7a",        "1.7",        exe_doom_1_7},
+    {"Doom 1.8",             "1.8",        exe_doom_1_8},
     {"Doom 1.9",             "1.9",        exe_doom_1_9},
     {"Hacx",                 "hacx",       exe_hacx},
     {"Ultimate Doom",        "ultimate",   exe_ultimate},
@@ -916,6 +930,8 @@ static void InitGameVersion(void)
             // original
 
             gameversion = exe_doom_1_9;
+
+            // TODO: Detect IWADs earlier than Doom v1.9.
         }
         else if (gamemode == retail)
         {
@@ -1454,6 +1470,8 @@ void D_DoomMain (void)
     I_CheckIsScreensaver();
     I_InitTimer();
     I_InitJoystick();
+    I_InitSound(true);
+    I_InitMusic();
 
 #ifdef FEATURE_MULTIPLAYER
     printf ("NET_Init: Init network subsystem.\n");
