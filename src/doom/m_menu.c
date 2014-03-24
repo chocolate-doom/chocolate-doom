@@ -1663,7 +1663,7 @@ boolean M_Responder (event_t* ev)
     }
 
     if ((devparm && key == key_menu_help) ||
-        key == key_menu_screenshot)
+        (key != 0 && key == key_menu_screenshot))
     {
 	G_ScreenShot ();
 	return true;

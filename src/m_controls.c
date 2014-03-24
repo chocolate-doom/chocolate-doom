@@ -179,7 +179,7 @@ int key_menu_gamma     = KEY_F11;
 
 int key_menu_incscreen = KEY_EQUALS;
 int key_menu_decscreen = KEY_MINUS;
-int key_menu_screenshot = -1;
+int key_menu_screenshot = 0;
 
 //
 // Joystick controls

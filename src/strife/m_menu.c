@@ -2086,7 +2086,7 @@ boolean M_Responder (event_t* ev)
             G_ScreenShot();
             return true;
         }
-        else if (key == key_menu_screenshot)
+        else if (key != 0 && key == key_menu_screenshot)
         {
             G_ScreenShot();
             return true;

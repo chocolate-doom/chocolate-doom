@@ -1213,7 +1213,7 @@ boolean MN_Responder(event_t * event)
     }
 
     if ((ravpic && key == KEY_F1) ||
-        key == key_menu_screenshot)
+        (key != 0 && key == key_menu_screenshot))
     {
         G_ScreenShot();
         return (true);
