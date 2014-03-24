@@ -50,7 +50,6 @@
 
 #define LOW_PASS_FILTER
 //#define DEBUG_DUMP_WAVS
-#define MAX_SOUND_SLICE_TIME 70 /* ms */
 #define NUM_CHANNELS 16
 
 typedef struct allocated_sound_s allocated_sound_t;
@@ -961,7 +960,7 @@ static void I_SDL_ShutdownSound(void)
     sound_initialized = false;
 }
 
-// Calculate slice size, based on MAX_SOUND_SLICE_TIME.
+// Calculate slice size, based on snd_maxslicetime_ms.
 // The result must be a power of two.
 
 static int GetSliceSize(void)
@@ -969,7 +968,7 @@ static int GetSliceSize(void)
     int limit;
     int n;
 
-    limit = (snd_samplerate * MAX_SOUND_SLICE_TIME) / 1000;
+    limit = (snd_samplerate * snd_maxslicetime_ms) / 1000;
 
     // Try all powers of two, not exceeding the limit.
 

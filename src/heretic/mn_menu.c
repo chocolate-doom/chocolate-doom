@@ -1112,7 +1112,8 @@ boolean MN_Responder(event_t * event)
         return (true);          //make the info screen eat the keypress
     }
 
-    if (ravpic && key == KEY_F1)
+    if ((ravpic && key == KEY_F1) ||
+        (key != 0 && key == key_menu_screenshot))
     {
         G_ScreenShot();
         return (true);

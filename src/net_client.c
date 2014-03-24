@@ -1060,8 +1060,8 @@ void NET_CL_Disconnect(void)
         if (I_GetTimeMS() - start_time > 5000)
         {
             // time out after 5 seconds
-            
-            client_state = NET_CONN_STATE_DISCONNECTED;
+
+            client_state = CLIENT_STATE_WAITING_START;
 
             fprintf(stderr, "NET_CL_Disconnect: Timeout while disconnecting from server\n");
             break;

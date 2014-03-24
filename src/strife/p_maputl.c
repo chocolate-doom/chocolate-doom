@@ -574,7 +574,7 @@ divline_t 	trace;
 boolean 	earlyout;
 int		ptflags;
 
-static void InterceptsOverrun(int num_intercepts, intercept_t *intercept);
+//static void InterceptsOverrun(int num_intercepts, intercept_t *intercept);
 
 //
 // PIT_AddLineIntercepts.
@@ -782,6 +782,7 @@ P_TraverseIntercepts
 
 extern fixed_t bulletslope;
 
+#if 0
 // Intercepts Overrun emulation, from PrBoom-plus.
 // Thanks to Andrey Budko (entryway) for researching this and his 
 // implementation of Intercepts Overrun emulation in PrBoom-plus
@@ -906,6 +907,7 @@ static void InterceptsOverrun(int num_intercepts, intercept_t *intercept)
     InterceptsMemoryOverrun(location + 4, intercept->isaline);
     InterceptsMemoryOverrun(location + 8, (int) intercept->d.thing);
 }
+#endif
 
 
 //

@@ -1037,12 +1037,15 @@ void D_DoomMain(void)
         testcontrols = true;
     }
 
+    I_InitTimer();
+    I_InitSound(false);
+    I_InitMusic();
+
 #ifdef FEATURE_MULTIPLAYER
     tprintf("NET_Init: Init network subsystem.\n", 1);
     NET_Init ();
 #endif
 
-    I_InitTimer();
     D_ConnectNetGame();
 
     // haleyjd: removed WATCOMC

@@ -36,7 +36,7 @@
 
 static SDL_CD *cd_handle = NULL;
 static char *startup_error = NULL;
-static char *cd_name = NULL;
+static const char *cd_name = NULL;
 
 int cd_Error;
 

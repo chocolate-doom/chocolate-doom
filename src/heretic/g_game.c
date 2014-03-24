@@ -65,7 +65,7 @@ void D_AdvanceDemo(void);
 
 struct
 {
-    mobjtype_t type;
+    int type;   // mobjtype_t
     int speed[2];
 } MonsterMissileInfo[] = {
     { MT_IMPBALL, { 10, 20 } },
@@ -666,8 +666,8 @@ void G_DoLoadLevel(void)
     joyxmove = joyymove = 0;
     mousex = mousey = 0;
     sendpause = sendsave = paused = false;
-    memset(mousebuttons, 0, sizeof(mousebuttons));
-    memset(joybuttons, 0, sizeof(joybuttons));
+    memset(mousearray, 0, sizeof(mousearray));
+    memset(joyarray, 0, sizeof(joyarray));
 
     if (testcontrols)
     {
@@ -1735,12 +1735,18 @@ void G_DoPlayDemo(void)
 void G_TimeDemo(char *name)
 {
     skill_t skill;
-    int episode, map;
+    int episode, map, i;
 
     demobuffer = demo_p = W_CacheLumpName(name, PU_STATIC);
     skill = *demo_p++;
     episode = *demo_p++;
     map = *demo_p++;
+
+    for (i = 0; i < MAXPLAYERS; i++)
+    {
+        playeringame[i] = *demo_p++;
+    }
+
     G_InitNew(skill, episode, map);
     usergame = false;
     demoplayback = true;
@@ -1761,13 +1767,16 @@ void G_TimeDemo(char *name)
 
 boolean G_CheckDemoStatus(void)
 {
-    int endtime;
+    int endtime, realtics;
 
     if (timingdemo)
     {
+        float fps;
         endtime = I_GetTime();
-        I_Error("timed %i gametics in %i realtics", gametic,
-                endtime - starttime);
+        realtics = endtime - starttime;
+        fps = ((float) gametic * TICRATE) / realtics;
+        I_Error("timed %i gametics in %i realtics (%f fps)",
+                gametic, realtics, fps);
     }
 
     if (demoplayback)

@@ -222,6 +222,14 @@ static boolean I_SDL_InitMusic(void)
 
     RemoveTimidityConfig();
 
+    // If snd_musiccmd is set, we need to call Mix_SetMusicCMD to
+    // configure an external music playback program.
+
+    if (strlen(snd_musiccmd) > 0)
+    {
+        Mix_SetMusicCMD(snd_musiccmd);
+    }
+
     return music_initialized;
 }
 
@@ -378,27 +386,29 @@ static void *I_SDL_RegisterSong(void *data, int len)
     {
         return NULL;
     }
-    
+
     // MUS files begin with "MUS"
     // Reject anything which doesnt have this signature
-    
+
     filename = M_TempFile("doom.mid");
 
     if (IsMid(data, len) && len < MAXMIDLENGTH)
     {
         M_WriteFile(filename, data, len);
     }
-    else 
+    else
     {
 	// Assume a MUS file and try to convert
 
         ConvertMus(data, len, filename);
     }
 
-    // Load the MIDI
+    // Load the MIDI. In an ideal world we'd be using Mix_LoadMUS_RW()
+    // by now, but Mix_SetMusicCMD() only works with Mix_LoadMUS(), so
+    // we have to generate a temporary file.
 
     music = Mix_LoadMUS(filename);
-    
+
     if (music == NULL)
     {
         // Failed to load
@@ -406,9 +416,15 @@ static void *I_SDL_RegisterSong(void *data, int len)
         fprintf(stderr, "Error loading midi: %s\n", Mix_GetError());
     }
 
-    // remove file now
+    // Remove the temporary MIDI file; however, when using an external
+    // MIDI program we can't delete the file. Otherwise, the program
+    // won't find the file to play. This means we leave a mess on
+    // disk :(
 
-    remove(filename);
+    if (strlen(snd_musiccmd) == 0)
+    {
+        remove(filename);
+    }
 
     Z_Free(filename);
 

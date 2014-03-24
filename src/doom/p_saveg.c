@@ -37,6 +37,7 @@
 
 // State.
 #include "doomstat.h"
+#include "g_game.h"
 #include "r_state.h"
 
 #define SAVEGAME_EOF 0x1d
@@ -1361,8 +1362,8 @@ void P_WriteSaveGameHeader(char *description)
     for (; i<SAVESTRINGSIZE; ++i)
         saveg_write8(0);
 
-    memset (name,0,sizeof(name)); 
-    sprintf (name,"version %i",DOOM_VERSION); 
+    memset(name, 0, sizeof(name));
+    sprintf(name, "version %i", G_VanillaVersionCode());
 
     for (i=0; i<VERSIONSIZE; ++i)
         saveg_write8(name[i]);
@@ -1398,11 +1399,11 @@ boolean P_ReadSaveGameHeader(void)
     for (i=0; i<VERSIONSIZE; ++i)
         read_vcheck[i] = saveg_read8();
 
-    memset (vcheck,0,sizeof(vcheck)); 
-    sprintf (vcheck,"version %i",DOOM_VERSION); 
+    memset(vcheck, 0, sizeof(vcheck));
+    sprintf(vcheck, "version %i", G_VanillaVersionCode());
     if (strcmp(read_vcheck, vcheck) != 0)
 	return false;				// bad version 
-			 
+
     gameskill = saveg_read8();
     gameepisode = saveg_read8();
     gamemap = saveg_read8();
