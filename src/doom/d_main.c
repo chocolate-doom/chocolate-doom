@@ -1479,9 +1479,12 @@ void D_DoomMain (void)
     
     D_IdentifyVersion();
     InitGameVersion();
+    if (!M_ParmExists("-nodeh"))
+    {
     LoadChexDeh();
     LoadHacxDeh();
     LoadNerveWad();
+    }
     D_SetGameDescription();
     savegamedir = M_GetSaveGameDir(D_SaveGameIWADName(gamemission));
 
@@ -1543,7 +1546,7 @@ void D_DoomMain (void)
     // Load Dehacked patches from DEHACKED lumps contained in one of the
     // loaded PWAD files.
     //
-    if (!M_ParmExists("-nodehlump"))
+    if (!M_ParmExists("-nodehlump") && !M_ParmExists("-nodeh"))
     {
         int i, loaded = 0;
 
