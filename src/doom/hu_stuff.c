@@ -442,13 +442,15 @@ void HU_Start(void)
 
 void HU_Drawer(void)
 {
+    extern int crispy_automapstats;
+    extern int crispy_crosshair;
+    extern int crispy_crosshair_highlight;
 
     HUlib_drawSText(&w_message);
     HUlib_drawSText(&w_secret);
     HUlib_drawIText(&w_chat);
     if (automapactive)
     {
-        extern int crispy_automapstats;
 
 	HUlib_drawTextLine(&w_title, false);
 
@@ -485,6 +487,41 @@ void HU_Drawer(void)
 	    HUlib_addCharToTextLine(&w_ltime, *(s++));
 	HUlib_drawTextLine(&w_ltime, false);
 	}
+    }
+
+    if (crispy_crosshair &&
+        !automapactive && !menuactive && !paused &&
+        !(plr->readyweapon == wp_fist) && !(plr->readyweapon == wp_chainsaw) &&
+        !plr2->centermessage)
+    {
+        extern int screenblocks, detailshift;
+        byte *b = I_VideoBuffer;
+
+        byte c = 180;
+        int h = 100 << hires;
+
+        if (screenblocks <= 10)
+            h -= (32 << (hires && !detailshift)) / 2;
+
+        if (crispy_crosshair_highlight)
+        {
+            extern fixed_t P_AimLineAttack (mobj_t* t1, angle_t angle, fixed_t distance);
+            extern mobj_t *linetarget;
+
+            fixed_t slope = P_AimLineAttack(plr->mo, plr->mo->angle, 16*64*FRACUNIT);
+
+            if (linetarget && !(linetarget->flags & MF_SHADOW))
+            {
+                c = 160;
+            }
+        }
+
+        b += h * SCREENWIDTH + SCREENWIDTH / 2;
+        *b++ = c;
+        *b = c;
+        b += SCREENWIDTH - 1;
+        *b++ = c;
+        *b = c;
     }
 
 }
