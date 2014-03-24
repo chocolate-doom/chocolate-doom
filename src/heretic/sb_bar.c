@@ -1188,7 +1188,7 @@ static void CheatArtifact3Func(player_t * player, Cheat_t * cheat)
     char args[2];
     int i;
     int j;
-    artitype_t type;
+    int type;
     int count;
 
     cht_GetParam(cheat->seq, args);

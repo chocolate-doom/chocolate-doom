@@ -662,8 +662,8 @@ void G_DoLoadLevel(void)
     joyxmove = joyymove = 0;
     mousex = mousey = 0;
     sendpause = sendsave = paused = false;
-    memset(mousebuttons, 0, sizeof(mousebuttons));
-    memset(joybuttons, 0, sizeof(joybuttons));
+    memset(mousearray, 0, sizeof(mousearray));
+    memset(joyarray, 0, sizeof(joyarray));
 
     if (testcontrols)
     {

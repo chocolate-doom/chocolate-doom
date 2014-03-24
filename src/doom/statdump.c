@@ -59,7 +59,7 @@ static const char *player_colors[] =
 static wbstartstruct_t captured_stats[MAX_CAPTURES];
 static int num_captured_stats = 0;
 
-static GameMode_t discovered_gamemode = indetermined;
+static GameMission_t discovered_gamemission = none;
 
 /* Try to work out whether this is a Doom 1 or Doom 2 game, by looking
  * at the episode and map, and the par times.  This is used to decide
@@ -72,7 +72,7 @@ static void DiscoverGamemode(wbstartstruct_t *stats, int num_stats)
     int level;
     int i;
 
-    if (discovered_gamemode != indetermined)
+    if (discovered_gamemission != none)
     {
         return;
     }
@@ -85,7 +85,7 @@ static void DiscoverGamemode(wbstartstruct_t *stats, int num_stats)
 
         if (stats[i].epsd > 0)
         {
-            discovered_gamemode = doom;
+            discovered_gamemission = doom;
             return;
         }
 
@@ -94,7 +94,7 @@ static void DiscoverGamemode(wbstartstruct_t *stats, int num_stats)
 
         if (level >= 9)
         {
-            discovered_gamemode = doom2;
+            discovered_gamemission = doom2;
             return;
         }
 
@@ -106,14 +106,14 @@ static void DiscoverGamemode(wbstartstruct_t *stats, int num_stats)
         if (partime == doom1_par_times[level] * TICRATE
          && partime != doom2_par_times[level] * TICRATE)
         {
-            discovered_gamemode = doom;
+            discovered_gamemission = doom;
             return;
         }
 
         if (partime != doom1_par_times[level] * TICRATE
          && partime == doom2_par_times[level] * TICRATE)
         {
-            discovered_gamemode = doom2;
+            discovered_gamemission = doom2;
             return;
         }
     }
@@ -251,7 +251,7 @@ static void PrintLevelName(FILE *stream, int episode, int level)
 {
     PrintBanner(stream);
 
-    switch (discovered_gamemode)
+    switch (discovered_gamemission)
     {
 
         case doom:
@@ -261,7 +261,7 @@ static void PrintLevelName(FILE *stream, int episode, int level)
             fprintf(stream, "MAP%02i\n", level + 1);
             break;
         default:
-        case indetermined:
+        case none:
             fprintf(stream, "E%iM%i / MAP%02i\n", 
                     episode + 1, level + 1, level + 1);
             break;
@@ -332,7 +332,7 @@ void StatDump(void)
     {
         printf("Statistics captured for %i level(s)\n", num_captured_stats);
 
-        // We actually know what the real gamemode is, but this has
+        // We actually know what the real gamemission is, but this has
         // to match the output from statdump.exe.
 
         DiscoverGamemode(captured_stats, num_captured_stats);

@@ -123,7 +123,7 @@ int             starttime;          	// for comparative timing purposes
  
 boolean         viewactive; 
  
-boolean         deathmatch;           	// only if started as net death 
+int             deathmatch;           	// only if started as net death 
 boolean         netgame;                // only true if packets are broadcast 
 boolean         playeringame[MAXPLAYERS]; 
 player_t        players[MAXPLAYERS]; 
@@ -642,8 +642,8 @@ void G_DoLoadLevel (void)
     joyxmove = joyymove = 0; 
     mousex = mousey = 0; 
     sendpause = sendsave = paused = false; 
-    memset (mousebuttons, 0, sizeof(mousebuttons)); 
-    memset (joybuttons, 0, sizeof(joybuttons)); 
+    memset(mousearray, 0, sizeof(mousearray)); 
+    memset(joyarray, 0, sizeof(joyarray)); 
 
     if (testcontrols)
     {
