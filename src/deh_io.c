@@ -300,6 +300,9 @@ void DEH_Error(deh_context_t *context, char *msg, ...)
 
     va_end(args);
 
+    if (!M_ParmExists("-deh"))
+        printf("Error parsing dehacked file\n");
+    else
     I_Error("Error parsing dehacked file");
 }
 
