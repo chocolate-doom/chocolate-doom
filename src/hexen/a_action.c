@@ -860,8 +860,6 @@ boolean A_LocalQuake(byte * args, mobj_t * actor)
     int lastfound = 0;
     int success = false;
 
-    actor = actor;              // suppress warning
-
     // Find all quake foci
     do
     {

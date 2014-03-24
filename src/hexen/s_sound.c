@@ -796,8 +796,6 @@ void S_Init(void)
     SoundCurve = W_CacheLumpName("SNDCURVE", PU_STATIC);
 //      SoundCurve = Z_Malloc(MAX_SND_DIST, PU_STATIC, NULL);
 
-    I_InitSound(false);
-
     if (snd_Channels > 8)
     {
         snd_Channels = 8;

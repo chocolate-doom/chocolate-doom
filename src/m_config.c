@@ -798,6 +798,23 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(snd_cachesize),
 
     //!
+    // Maximum size of the output sound buffer size in milliseconds.
+    // Sound output is generated periodically in slices. Higher values
+    // might be more efficient but will introduce latency to the
+    // sound output. The default is 28ms (one slice per tic with the
+    // 35fps timer).
+
+    CONFIG_VARIABLE_INT(snd_maxslicetime_ms),
+
+    //!
+    // External command to invoke to perform MIDI playback. If set to
+    // the empty string, SDL_mixer's internal MIDI playback is used.
+    // This only has any effect when snd_musicdevice is set to General
+    // MIDI output.
+
+    CONFIG_VARIABLE_STRING(snd_musiccmd),
+
+    //!
     // The I/O port to use to access the OPL chip.  Only relevant when
     // using native OPL music playback.
     //
@@ -1170,6 +1187,12 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_KEY(key_menu_decscreen),
+
+    //!
+    // Keyboard shortcut to save a screenshot.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_screenshot),
 
     //!
     // Key to toggle the map view.
