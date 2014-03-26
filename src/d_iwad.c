@@ -342,7 +342,7 @@ static void CheckSteamGUSPatches(void)
     int len;
 
     // Already configured? Don't stomp on the user's choices.
-    current_path = D_GetStrVariable("gus_patch_path");
+    current_path = M_GetStrVariable("gus_patch_path");
     if (current_path != NULL && strlen(current_path) > 0)
     {
         return;
@@ -365,7 +365,7 @@ static void CheckSteamGUSPatches(void)
     {
         snprintf(patch_path, len, "%s\\%s",
                  install_path, STEAM_BFG_GUS_PATCHES);
-        D_SetVariable("gus_patch_path", patch_path);
+        M_SetVariable("gus_patch_path", patch_path);
     }
 
     free(patch_path);

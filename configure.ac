@@ -86,7 +86,8 @@ AC_SDL_MAIN_WORKAROUND([
         [Build without libpng @<:@default=check@:>@]),
     [],
     [
-        AC_CHECK_LIB(png, png_get_io_ptr, [], [], -lz)
+        AC_CHECK_LIB(z, zlibVersion)
+        AC_CHECK_LIB(png, png_get_io_ptr)
     ])
     AC_CHECK_LIB(m, log)
 
