@@ -32,7 +32,6 @@
 #include "deh_str.h"
 #include "doomkeys.h"
 #include "d_iwad.h"
-#include "gusconf.h"
 #include "i_system.h"
 #include "m_argv.h"
 #include "m_config.h"
@@ -337,12 +336,14 @@ static void CheckSteamEdition(void)
 
 static void CheckSteamGUSPatches(void)
 {
+    const char *current_path;
     char *install_path;
     char *patch_path;
     int len;
 
     // Already configured? Don't stomp on the user's choices.
-    if (gus_patch_path != NULL && strlen(gus_patch_path) > 0)
+    current_path = D_GetStrVariable("gus_patch_path");
+    if (current_path != NULL && strlen(current_path) > 0)
     {
         return;
     }
@@ -364,13 +365,10 @@ static void CheckSteamGUSPatches(void)
     {
         snprintf(patch_path, len, "%s\\%s",
                  install_path, STEAM_BFG_GUS_PATCHES);
-        gus_patch_path = patch_path;
-    }
-    else
-    {
-        free(patch_path);
+        D_SetVariable("gus_patch_path", patch_path);
     }
 
+    free(patch_path);
     free(install_path);
 }
 
