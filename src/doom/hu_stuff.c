@@ -500,7 +500,7 @@ void HU_Drawer(void)
         int h = 100 << hires;
 
         if (screenblocks <= 10)
-            h -= (32 << (hires && !detailshift)) / 2;
+            h -= (32 << hires) / 2;
 
         if (crispy_crosshair_highlight)
         {
