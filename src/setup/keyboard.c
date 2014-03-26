@@ -200,9 +200,18 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
         AddSectionLabel(table, "View", false);
 
+        if (gamemission == doom)
+        {
+        AddKeyControl(table, "Look up [*]", &key_lookup);
+        AddKeyControl(table, "Look down [*]", &key_lookdown);
+        AddKeyControl(table, "Center view [*]", &key_lookcenter);
+        }
+        else
+        {
         AddKeyControl(table, "Look up", &key_lookup);
         AddKeyControl(table, "Look down", &key_lookdown);
         AddKeyControl(table, "Center view", &key_lookcenter);
+        }
 
         if (gamemission == heretic || gamemission == hexen)
         {
@@ -393,9 +402,14 @@ void ConfigKeyboard(void)
     AddKeyControl(movement_table, "Turn Right", &key_right);
     AddKeyControl(movement_table, " Strafe On", &key_strafe);
 
-    if (gamemission == hexen || gamemission == strife || gamemission == doom) // Crispy
+    if (gamemission == hexen || gamemission == strife)
     {
         AddKeyControl(movement_table, "Jump", &key_jump);
+    }
+    else
+    if (gamemission == doom) // Crispy
+    {
+        AddKeyControl(movement_table, "Jump [*]", &key_jump);
     }
 
     TXT_SetColumnWidths(action_table, 15, 8, 15, 8);
