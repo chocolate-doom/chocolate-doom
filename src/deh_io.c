@@ -36,6 +36,8 @@
 #include "deh_defs.h"
 #include "deh_io.h"
 
+boolean deh_autoload = false;
+
 typedef enum
 {
     DEH_INPUT_FILE,
@@ -300,7 +302,7 @@ void DEH_Error(deh_context_t *context, char *msg, ...)
 
     va_end(args);
 
-    if (!M_ParmExists("-deh"))
+    if (deh_autoload)
         printf("Error parsing dehacked file\n");
     else
     I_Error("Error parsing dehacked file");

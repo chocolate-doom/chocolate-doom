@@ -1559,6 +1559,9 @@ void D_DoomMain (void)
     if (!M_ParmExists("-nodehlump") && !M_ParmExists("-nodeh"))
     {
         int i, loaded = 0;
+        extern boolean deh_autoload;
+
+        deh_autoload = true;
 
         for (i = 0; i < numlumps; ++i)
         {
@@ -1570,6 +1573,8 @@ void D_DoomMain (void)
         }
 
         printf("Loaded %i DEHACKED lumps from WAD files.\n", loaded);
+
+        deh_autoload = false;
     }
 
     DEH_printf("I_Init: Setting up machine state.\n");
