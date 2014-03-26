@@ -135,8 +135,8 @@ void ConfigMouse(void)
                    TXT_NewCheckBox("Double click acts as \"use\"",
                                    &dclick_use),
 
-                   TXT_NewSeparator("Mouse motion (horiz/vert)"),
-                   motion_table = TXT_NewTable(3),
+                   TXT_NewSeparator("Mouse motion"),
+                   motion_table = TXT_NewTable(2),
     
                    TXT_NewSeparator("Buttons"),
                    buttons_table = TXT_NewTable(2),
@@ -150,12 +150,13 @@ void ConfigMouse(void)
     TXT_AddWidgets(motion_table,
                    TXT_NewLabel("Speed"),
                    TXT_NewSpinControl(&mouseSensitivity, 1, 256),
-                   TXT_NewSpinControl(&mouseSensitivity, 1, 256),
-                   TXT_NewLabel("Acceleration"),
+                   TXT_NewLabel("Acceleration (h)"),
                    TXT_NewFloatSpinControl(&mouse_acceleration, 1.0, 5.0),
-                   TXT_NewFloatSpinControl(&mouse_acceleration_y, 1.0, 5.0),
-                   TXT_NewLabel("Acceleration threshold"),
+                   TXT_NewLabel("Acceleration threshold (h)"),
                    TXT_NewSpinControl(&mouse_threshold, 0, 32),
+                   TXT_NewLabel("Acceleration (v)"),
+                   TXT_NewFloatSpinControl(&mouse_acceleration_y, 1.0, 5.0),
+                   TXT_NewLabel("Acceleration threshold (v)"),
                    TXT_NewSpinControl(&mouse_threshold_y, 0, 32),
                    NULL);
 
