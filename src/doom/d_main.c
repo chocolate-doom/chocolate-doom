@@ -1156,18 +1156,6 @@ void D_DoomMain (void)
     DEH_Init();
 #endif
 
-    iwadfile = D_FindIWAD(IWAD_MASK_DOOM, &gamemission);
-
-    // None found?
-
-    if (iwadfile == NULL)
-    {
-        I_Error("Game mode indeterminate.  No IWAD file was found.  Try\n"
-                "specifying one with the '-iwad' command line parameter.\n");
-    }
-
-    modifiedgame = false;
-
     //!
     // @vanilla
     //
@@ -1292,6 +1280,19 @@ void D_DoomMain (void)
 
     // Save configuration at exit.
     I_AtExit(M_SaveDefaults, false);
+
+    // Find main IWAD file and load it.
+    iwadfile = D_FindIWAD(IWAD_MASK_DOOM, &gamemission);
+
+    // None found?
+
+    if (iwadfile == NULL)
+    {
+        I_Error("Game mode indeterminate.  No IWAD file was found.  Try\n"
+                "specifying one with the '-iwad' command line parameter.\n");
+    }
+
+    modifiedgame = false;
 
     DEH_printf("W_Init: Init WADfiles.\n");
     D_AddFile(iwadfile);
