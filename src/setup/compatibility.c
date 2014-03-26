@@ -32,12 +32,12 @@
 int vanilla_savegame_limit = 0;
 int vanilla_demo_limit = 0;
 
-int crispy_automapstats = 1;
-int crispy_secretmessage = 1;
+int crispy_automapstats = 0;
+int crispy_secretmessage = 0;
 int crispy_crosshair = 0;
-int crispy_crosshair_highlight = 1;
+int crispy_crosshair_highlight = 0;
 int crispy_jump = 0;
-int crispy_freelook = 1;
+int crispy_freelook = 0;
 int crispy_mouselook = 0;
 
 void CompatibilitySettings(void)
@@ -63,9 +63,9 @@ void CompatibilitySettings(void)
                                    &crispy_crosshair),
                    TXT_NewCheckBox("Change laser pointer color on target",
                                    &crispy_crosshair_highlight),
-                   TXT_NewCheckBox("Enable jumping",
+                   TXT_NewCheckBox("Enable jumping [*]",
                                    &crispy_jump),
-                   TXT_NewCheckBox("Enable free look",
+                   TXT_NewCheckBox("Enable free look [*]",
                                    &crispy_freelook),
                    TXT_NewCheckBox("Enable permanent mouse look",
                                    &crispy_mouselook),
