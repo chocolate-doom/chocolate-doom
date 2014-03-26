@@ -1627,14 +1627,55 @@ static int ParseIntParameter(char *strparm)
     return parm;
 }
 
+static void SetVariable(default_t *def, char *value)
+{
+    int intparm;
+
+    // parameter found
+
+    switch (def->type)
+    {
+        case DEFAULT_STRING:
+            * (char **) def->location = strdup(value);
+            break;
+
+        case DEFAULT_INT:
+        case DEFAULT_INT_HEX:
+            * (int *) def->location = ParseIntParameter(value);
+            break;
+
+        case DEFAULT_KEY:
+
+            // translate scancodes read from config
+            // file (save the old value in untranslated)
+
+            intparm = ParseIntParameter(value);
+            def->untranslated = intparm;
+            if (intparm >= 0 && intparm < 128)
+            {
+                intparm = scantokey[intparm];
+            }
+            else
+            {
+                intparm = 0;
+            }
+
+            def->original_translated = intparm;
+            * (int *) def->location = intparm;
+            break;
+
+        case DEFAULT_FLOAT:
+            * (float *) def->location = (float) atof(value);
+            break;
+    }
+}
+
 static void LoadDefaultCollection(default_collection_t *collection)
 {
-    default_t *def;
     FILE *f;
+    default_t *def;
     char defname[80];
     char strparm[100];
-    char *s;
-    int intparm;
 
     // read the file in, overriding any set defaults
     f = fopen(collection->filename, "r");
@@ -1646,26 +1687,18 @@ static void LoadDefaultCollection(default_collection_t *collection)
 
         return;
     }
-    
+
     while (!feof(f))
     {
-        if (fscanf (f, "%79s %[^\n]\n", defname, strparm) != 2)
+        if (fscanf(f, "%79s %99[^\n]\n", defname, strparm) != 2)
         {
             // This line doesn't match
-          
+
             continue;
         }
 
-        // Strip off trailing non-printable characters (\r characters
-        // from DOS text files)
-
-        while (strlen(strparm) > 0 && !isprint(strparm[strlen(strparm)-1]))
-        {
-            strparm[strlen(strparm)-1] = '\0';
-        }
-        
         // Find the setting in the list
-       
+
         def = SearchCollection(collection, defname);
 
         if (def == NULL || !def->bound)
@@ -1676,47 +1709,25 @@ static void LoadDefaultCollection(default_collection_t *collection)
             continue;
         }
 
-        // parameter found
+        // Strip off trailing non-printable characters (\r characters
+        // from DOS text files)
 
-        switch (def->type)
+        while (strlen(strparm) > 0 && !isprint(strparm[strlen(strparm)-1]))
         {
-            case DEFAULT_STRING:
-                s = strdup(strparm + 1);
-                s[strlen(s) - 1] = '\0';
-                * (char **) def->location = s;
-                break;
-
-            case DEFAULT_INT:
-            case DEFAULT_INT_HEX:
-                * (int *) def->location = ParseIntParameter(strparm);
-                break;
-
-            case DEFAULT_KEY:
-
-                // translate scancodes read from config
-                // file (save the old value in untranslated)
-
-                intparm = ParseIntParameter(strparm);
-                def->untranslated = intparm;
-                if (intparm >= 0 && intparm < 128)
-                {
-                    intparm = scantokey[intparm];
-                }
-                else
-                {
-                    intparm = 0;
-                }
-
-                def->original_translated = intparm;
-                * (int *) def->location = intparm;
-                break;
-
-            case DEFAULT_FLOAT:
-                * (float *) def->location = (float) atof(strparm);
-                break;
+            strparm[strlen(strparm)-1] = '\0';
         }
+
+        // Surrounded by quotes? If so, remove them.
+        if (strlen(strparm) >= 2
+         && strparm[0] == '"' && strparm[strlen(strparm) - 1] == '"')
+        {
+            strparm[strlen(strparm) - 1] = '\0';
+            memmove(strparm, strparm + 1, sizeof(strparm) - 1);
+        }
+
+        SetVariable(def, strparm);
     }
-            
+
     fclose (f);
 }
 
@@ -1861,6 +1872,72 @@ void M_BindVariable(char *name, void *location)
 
     variable->location = location;
     variable->bound = true;
+}
+
+// Set the value of a particular variable; an API function for other
+// parts of the program to assign values to config variables by name.
+
+boolean M_SetVariable(char *name, char *value)
+{
+    default_t *variable;
+
+    variable = GetDefaultForName(name);
+
+    if (variable == NULL || !variable->bound)
+    {
+        return false;
+    }
+
+    SetVariable(variable, value);
+
+    return true;
+}
+
+// Get the value of a variable.
+
+int M_GetIntVariable(char *name)
+{
+    default_t *variable;
+
+    variable = GetDefaultForName(name);
+
+    if (variable == NULL || !variable->bound
+     || (variable->type != DEFAULT_INT && variable->type != DEFAULT_INT_HEX))
+    {
+        return 0;
+    }
+
+    return *((int *) variable->location);
+}
+
+const char *M_GetStrVariable(char *name)
+{
+    default_t *variable;
+
+    variable = GetDefaultForName(name);
+
+    if (variable == NULL || !variable->bound
+     || variable->type != DEFAULT_STRING)
+    {
+        return NULL;
+    }
+
+    return *((const char **) variable->location);
+}
+
+float M_GetFloatVariable(char *name)
+{
+    default_t *variable;
+
+    variable = GetDefaultForName(name);
+
+    if (variable == NULL || !variable->bound
+     || variable->type != DEFAULT_FLOAT)
+    {
+        return 0;
+    }
+
+    return *((float *) variable->location);
 }
 
 // Get the path to the default configuration dir to use, if NULL
