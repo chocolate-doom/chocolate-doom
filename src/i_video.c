@@ -1104,7 +1104,7 @@ void I_FinishUpdate (void)
 	lasttic = i;
 	if (tics > 20) tics = 20;
 
-	for (i=0 ; i<tics*2 ; i+=4)
+	for (i=0 ; i<tics*4 ; i+=4)
 	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0xff;
 	for ( ; i<20*4 ; i+=4)
 	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
