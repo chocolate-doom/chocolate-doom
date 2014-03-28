@@ -1546,83 +1546,23 @@ static void I_AutoAdjustSettings(void)
 
 static void SetScaleFactor(int factor)
 {
-    if (fullscreen)
+    int w, h;
+
+    // Pick 320x200 or 320x240, depending on aspect ratio correct
+
+    if (aspect_ratio_correct)
     {
-        // In fullscreen, find a mode that will provide this scale factor
-
-        SDL_Rect **modes;
-        SDL_Rect *best_mode;
-        screen_mode_t *scrmode;
-        int best_num_pixels, num_pixels;
-        int i;
-
-        modes = SDL_ListModes(NULL, SDL_FULLSCREEN);
-
-        best_mode = NULL;
-        best_num_pixels = INT_MAX;
-
-        for (i=0; modes[i] != NULL; ++i)
-        {
-            // What screen_mode_t will this use?
-
-            scrmode = I_FindScreenMode(modes[i]->w, modes[i]->h);
-
-            if (scrmode == NULL)
-            {
-                continue;
-            }
-
-            // Only choose modes that fit the requested scale factor.
-            //
-            // Note that this allows 320x240 as valid for 1x scale, as 
-            // 240/200 is rounded down to 1 by integer division.
-
-            if ((scrmode->width / SCREENWIDTH) != factor
-             || (scrmode->height / SCREENHEIGHT) != factor)
-            {
-                continue;
-            }
-
-            // Is this a better mode than what we currently have?
-
-            num_pixels = modes[i]->w * modes[i]->h;
-
-            if (num_pixels < best_num_pixels)
-            {
-                best_num_pixels = num_pixels;
-                best_mode = modes[i];
-            }
-        }
-
-        if (best_mode == NULL)
-        {
-            I_Error("No fullscreen graphics mode available to support "
-                    "%ix scale factor!", factor);
-        }
-
-        screen_width = best_mode->w;
-        screen_height = best_mode->h;
+        w = SCREENWIDTH;
+        h = SCREENHEIGHT_4_3;
     }
     else
     {
-        int w, h;
-
-        // Pick 320x200 or 320x240, depending on aspect ratio correct
-
-        if (aspect_ratio_correct)
-        {
-            w = SCREENWIDTH;
-            h = SCREENHEIGHT_4_3;
-        }
-        else 
-        {
-            w = SCREENWIDTH;
-            h = SCREENHEIGHT;
-        }
-
-        screen_width = w * factor;
-        screen_height = h * factor;
+        w = SCREENWIDTH;
+        h = SCREENHEIGHT;
     }
+
+    screen_width = w * factor;
+    screen_height = h * factor;
 }
 
 void I_GraphicsCheckCommandLine(void)
