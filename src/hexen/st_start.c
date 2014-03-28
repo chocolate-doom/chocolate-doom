@@ -204,11 +204,11 @@ void ST_UpdateNetNotches(int notchPosition)
 
 void ST_Progress(void)
 {
-    // haleyjd FIXME: any way to get input here? SDL event loop?
-#ifdef __WATCOMC__
     // Check for ESC press -- during startup all events eaten here
-    I_StartupReadKeys();
-#endif
+    if (I_CheckAbortHR())
+    {
+        I_Quit();
+    }
 
     if (using_graphical_startup)
     {

@@ -33,6 +33,7 @@
 #include "i_system.h"
 #include "i_timer.h"
 #include "i_video.h"
+#include "i_videohr.h"
 #include "h2def.h"
 #include "p_local.h"
 #include "s_sound.h"
@@ -239,7 +240,8 @@ static boolean StartupProgress(int now_ready, int total)
 
     ready = now_ready;
 
-    return true;
+    // Allow the user to hit escape during netgame startup to abort.
+    return !I_CheckAbortHR();
 }
 
 //
