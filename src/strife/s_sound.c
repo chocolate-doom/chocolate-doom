@@ -95,7 +95,7 @@ int sfxVolume = 8;
 
 // Maximum volume of music. 
 
-int musicVolume = 8;
+int musicVolume = 13;
 
 // haleyjd 08/29/10: [STRIFE] New global variable
 // Volume of voice channel.
