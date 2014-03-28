@@ -480,7 +480,8 @@ static int TranslateKey(SDL_keysym *sym)
       case SDLK_F10:	return KEY_F10;
       case SDLK_F11:	return KEY_F11;
       case SDLK_F12:	return KEY_F12;
-	
+      case SDLK_PRINT:  return KEY_PRTSCR;
+
       case SDLK_BACKSPACE: return KEY_BACKSPACE;
       case SDLK_DELETE:	return KEY_DEL;
 

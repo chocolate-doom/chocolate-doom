@@ -1489,6 +1489,16 @@ static default_t *SearchCollection(default_collection_t *collection, char *name)
     return NULL;
 }
 
+// Mapping from DOS keyboard scan code to internal key code (as defined
+// in doomkey.h). I think I (fraggle) reused this from somewhere else
+// but I can't find where. Anyway, notes:
+//  * KEY_PAUSE is wrong - it's in the KEY_NUMLOCK spot. This shouldn't
+//    matter in terms of Vanilla compatibility because neither of
+//    those were valid for key bindings.
+//  * There is no proper scan code for PrintScreen (on DOS machines it
+//    sends an interrupt). So I added a fake scan code of 126 for it.
+//    The presence of this is important so we can bind PrintScreen as
+//    a screenshot key.
 static const int scantokey[128] =
 {
     0  ,    27,     '1',    '2',    '3',    '4',    '5',    '6',
@@ -1499,14 +1509,14 @@ static const int scantokey[128] =
     '\'',   '`',    KEY_RSHIFT,'\\',   'z',    'x',    'c',    'v',
     'b',    'n',    'm',    ',',    '.',    '/',    KEY_RSHIFT,KEYP_MULTIPLY,
     KEY_RALT,  ' ',  KEY_CAPSLOCK,KEY_F1,  KEY_F2,   KEY_F3,   KEY_F4,   KEY_F5,
-    KEY_F6,   KEY_F7,   KEY_F8,   KEY_F9,   KEY_F10,  KEY_PAUSE,KEY_SCRLCK,KEY_HOME,
+    KEY_F6,   KEY_F7,   KEY_F8,   KEY_F9,   KEY_F10,  /*KEY_NUMLOCK?*/KEY_PAUSE,KEY_SCRLCK,KEY_HOME,
     KEY_UPARROW,KEY_PGUP,KEY_MINUS,KEY_LEFTARROW,KEYP_5,KEY_RIGHTARROW,KEYP_PLUS,KEY_END,
     KEY_DOWNARROW,KEY_PGDN,KEY_INS,KEY_DEL,0,   0,      0,      KEY_F11,
     KEY_F12,  0,      0,      0,      0,      0,      0,      0,
     0,      0,      0,      0,      0,      0,      0,      0,
     0,      0,      0,      0,      0,      0,      0,      0,
     0,      0,      0,      0,      0,      0,      0,      0,
-    0,      0,      0,      0,      0,      0,      0,      0
+    0,      0,      0,      0,      0,      0,      KEY_PRTSCR, 0
 };
 
 
