@@ -1359,21 +1359,21 @@ void D_DoomMain (void)
 
     if (p)
     {
+        // With Vanilla you have to specify the file without extension,
+        // but make that optional.
         if (M_StringEndsWith(myargv[p + 1], ".lmp"))
         {
             M_StringCopy(file, myargv[p + 1], sizeof(file));
         }
         else
         {
-            snprintf(file, sizeof(file), "%s.lmp", myargv[p+1]);
+            DEH_snprintf(file, sizeof(file), "%s.lmp", myargv[p+1]);
         }
 
         if (D_AddFile(file))
         {
             M_StringCopy(demolumpname, lumpinfo[numlumps - 1].name,
                          sizeof(demolumpname));
-
-            printf("Playing demo %s.\n", file);
         }
         else
         {
@@ -1383,6 +1383,8 @@ void D_DoomMain (void)
 
             M_StringCopy(demolumpname, myargv[p + 1], sizeof(demolumpname));
         }
+
+        printf("Playing demo %s.\n", file);
     }
 
     I_AtExit((atexit_func_t) G_CheckDemoStatus, true);

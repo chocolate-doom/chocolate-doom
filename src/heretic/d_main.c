@@ -1006,26 +1006,30 @@ void D_DoomMain(void)
 
     if (p)
     {
-        if (!M_StringEndsWith(myargv[p + 1], ".lmp"))
+        // In Vanilla, the filename must be specified without .lmp,
+        // but make that optional.
+        if (M_StringEndsWith(myargv[p + 1], ".lmp"))
         {
-            DEH_snprintf(file, sizeof(file), "%s.lmp", myargv[p + 1]);
+            M_StringCopy(file, myargv[p + 1], sizeof(file));
         }
         else
         {
-            M_StringCopy(file, myargv[p + 1], sizeof(file));
+            DEH_snprintf(file, sizeof(file), "%s.lmp", myargv[p + 1]);
         }
 
         if (D_AddFile(file))
         {
             M_StringCopy(demolumpname, lumpinfo[numlumps - 1].name,
                          sizeof(demolumpname));
-
-            DEH_printf("Playing demo %s.\n", file);
         }
         else
         {
+            // The file failed to load, but copy the original arg as a
+            // demo name to make tricks like -playdemo demo1 possible.
             M_StringCopy(demolumpname, myargv[p + 1], sizeof(demolumpname));
         }
+
+        printf("Playing demo %s.\n", file);
     }
 
     if (W_CheckNumForName(DEH_String("E2M1")) == -1)

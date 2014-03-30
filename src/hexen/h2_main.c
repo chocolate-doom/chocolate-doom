@@ -102,6 +102,7 @@ extern boolean askforquit;
 
 GameMode_t gamemode;
 char *iwadfile;
+static char demolumpname[9];    // Demo lump to start playing.
 boolean nomonsters;             // checkparm of -nomonsters
 boolean respawnparm;            // checkparm of -respawn
 boolean randomclass;            // checkparm of -randclass
@@ -382,14 +383,14 @@ void D_DoomMain(void)
     if (p)
     {
         singledemo = true;      // Quit after one demo
-        G_DeferedPlayDemo(myargv[p + 1]);
+        G_DeferedPlayDemo(demolumpname);
         H2_GameLoop();          // Never returns
     }
 
     p = M_CheckParmWithArgs("-timedemo", 1);
     if (p)
     {
-        G_TimeDemo(myargv[p + 1]);
+        G_TimeDemo(demolumpname);
         H2_GameLoop();          // Never returns
     }
 
@@ -553,13 +554,26 @@ static void HandleArgs(void)
 
         M_StringCopy(file, myargv[p+1], sizeof(file));
 
-        if (!M_StringEndsWith(file, ".lmp"))
+        // With Vanilla Hexen you have to specify the file without
+        // extension, but make that optional.
+        if (!M_StringEndsWith(myargv[p+1], ".lmp"))
         {
             M_StringConcat(file, ".lmp", sizeof(file));
         }
 
-        W_AddFile(file);
-        ST_Message("Playing demo %s.\n", file);
+        if (W_AddFile(file) != NULL)
+        {
+            M_StringCopy(demolumpname, lumpinfo[numlumps - 1].name,
+                         sizeof(demolumpname));
+        }
+        else
+        {
+            // The file failed to load, but copy the original arg as a
+            // demo name to make tricks like -playdemo demo1 possible.
+            M_StringCopy(demolumpname, myargv[p+1], sizeof(demolumpname));
+        }
+
+        ST_Message("Playing demo %s.\n", myargv[p+1]);
     }
 
     if (M_ParmExists("-testcontrols"))
