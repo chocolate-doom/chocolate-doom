@@ -1948,7 +1948,7 @@ void SV_SaveGame(int slot, char *description)
 
     // Write version info
     memset(versionText, 0, HXS_VERSION_TEXT_LENGTH);
-    strcpy(versionText, HXS_VERSION_TEXT);
+    M_StringCopy(versionText, HXS_VERSION_TEXT, HXS_VERSION_TEXT_LENGTH);
     StreamOutBuffer(versionText, HXS_VERSION_TEXT_LENGTH);
 
     // Place a header marker

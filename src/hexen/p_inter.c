@@ -24,6 +24,7 @@
 
 
 #include "h2def.h"
+#include "m_misc.h"
 #include "m_random.h"
 #include "i_system.h"
 #include "p_local.h"
@@ -76,15 +77,8 @@ void P_SetMessage(player_t * player, char *message, boolean ultmsg)
     {
         return;
     }
-    if (strlen(message) > 79)
-    {
-        strncpy(player->message, message, 80);
-        player->message[79] = 0;
-    }
-    else
-    {
-        strcpy(player->message, message);
-    }
+
+    M_StringCopy(player->message, message, sizeof(player->message));
 //    strupr(player->message);
     player->messageTics = MESSAGETICS;
     player->yellowMessage = false;
@@ -110,15 +104,7 @@ void P_SetYellowMessage(player_t * player, char *message, boolean ultmsg)
     {
         return;
     }
-    if (strlen(message) > 79)
-    {
-        strncpy(player->message, message, 80);
-        player->message[79] = 0;
-    }
-    else
-    {
-        strcpy(player->message, message);
-    }
+    M_StringCopy(player->message, message, sizeof(player->message));
     player->messageTics = 5 * MESSAGETICS;      // Bold messages last longer
     player->yellowMessage = true;
     if (ultmsg)

@@ -35,6 +35,7 @@
 #include "i_video.h"
 #include "i_videohr.h"
 #include "h2def.h"
+#include "m_misc.h"
 #include "p_local.h"
 #include "s_sound.h"
 #include "w_checksum.h"
@@ -61,7 +62,7 @@ static void PlayerQuitGame(player_t *player)
 
     player_num = player - players;
 
-    strcpy(exitmsg, "PLAYER 1 LEFT THE GAME");
+    M_StringCopy(exitmsg, "PLAYER 1 LEFT THE GAME", sizeof(exitmsg));
     exitmsg[7] += player_num;
     P_SetMessage(&players[consoleplayer], exitmsg, true);
     S_StartSound(NULL, SFX_CHAT);

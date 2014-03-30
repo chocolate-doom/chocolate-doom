@@ -26,6 +26,7 @@
 // HEADER FILES ------------------------------------------------------------
 
 #include "h2def.h"
+#include "m_misc.h"
 #include "m_random.h"
 #include "s_sound.h"
 #include "i_swap.h"
@@ -1682,7 +1683,7 @@ static int CmdEndPrintBold(void)
 
 static int CmdPrintString(void)
 {
-    strcat(PrintBuffer, ACStrings[Pop()]);
+    M_StringConcat(PrintBuffer, ACStrings[Pop()], sizeof(PrintBuffer));
     return SCRIPT_CONTINUE;
 }
 
@@ -1690,8 +1691,8 @@ static int CmdPrintNumber(void)
 {
     char tempStr[16];
 
-    sprintf(tempStr, "%d", Pop());
-    strcat(PrintBuffer, tempStr);
+    snprintf(tempStr, sizeof(tempStr), "%d", Pop());
+    M_StringConcat(PrintBuffer, tempStr, sizeof(PrintBuffer));
     return SCRIPT_CONTINUE;
 }
 

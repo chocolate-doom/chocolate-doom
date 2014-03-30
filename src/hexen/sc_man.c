@@ -138,7 +138,7 @@ static void OpenScript(char *name, int type)
         ScriptLumpNum = W_GetNumForName(name);
         ScriptBuffer = (char *) W_CacheLumpNum(ScriptLumpNum, PU_STATIC);
         ScriptSize = W_LumpLength(ScriptLumpNum);
-        strcpy(ScriptName, name);
+        M_StringCopy(ScriptName, name, sizeof(ScriptName));
     }
     else if (type == FILE_ZONE_SCRIPT)
     {                           // File script - zone

@@ -551,12 +551,11 @@ static void HandleArgs(void)
     {
         char file[256];
 
-        strncpy(file, myargv[p+1], sizeof(file));
-        file[sizeof(file) - 6] = '\0';
+        M_StringCopy(file, myargv[p+1], sizeof(file));
 
-        if (strcasecmp(file + strlen(file) - 4, ".lmp") != 0)
+        if (!M_StringEndsWith(file, ".lmp"))
         {
-            strcat(file, ".lmp");
+            M_StringConcat(file, ".lmp", sizeof(file));
         }
 
         W_AddFile(file);
