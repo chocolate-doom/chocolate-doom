@@ -174,7 +174,6 @@ int M_ReadFile(char *name, byte **buffer)
 
 char *M_TempFile(char *s)
 {
-    char *result;
     char *tempdir;
 
 #ifdef _WIN32
@@ -193,10 +192,7 @@ char *M_TempFile(char *s)
     tempdir = "/tmp";
 #endif
 
-    result = Z_Malloc(strlen(tempdir) + strlen(s) + 2, PU_STATIC, 0);
-    sprintf(result, "%s%c%s", tempdir, DIR_SEPARATOR, s);
-
-    return result;
+    return M_StringJoin(tempdir, DIR_SEPARATOR_S, s, NULL);
 }
 
 boolean M_StrToInt(const char *str, int *result)

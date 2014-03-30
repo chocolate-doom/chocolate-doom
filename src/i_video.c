@@ -50,6 +50,7 @@
 #include "i_scale.h"
 #include "m_argv.h"
 #include "m_config.h"
+#include "m_misc.h"
 #include "tables.h"
 #include "v_video.h"
 #include "w_wad.h"
@@ -1224,13 +1225,9 @@ void I_InitWindowTitle(void)
 {
     char *buf;
 
-    buf = Z_Malloc(strlen(window_title) + strlen(PACKAGE_STRING) + 5, 
-                   PU_STATIC, NULL);
-    sprintf(buf, "%s - %s", window_title, PACKAGE_STRING);
-
+    buf = M_StringJoin(window_title, " - ", PACKAGE_STRING, NULL);
     SDL_WM_SetCaption(buf, NULL);
-
-    Z_Free(buf);
+    free(buf);
 }
 
 // Set the application icon
@@ -1801,8 +1798,7 @@ static void SetSDLVideoDriver(void)
     {
         char *env_string;
 
-        env_string = malloc(strlen(video_driver) + 30);
-        sprintf(env_string, "SDL_VIDEODRIVER=%s", video_driver);
+        env_string = M_StringJoin("SDL_VIDEODRIVER=", video_driver, NULL);
         putenv(env_string);
         free(env_string);
     }
@@ -1824,7 +1820,7 @@ static void SetWindowPositionVars(void)
     }
     else if (sscanf(window_position, "%i,%i", &x, &y) == 2)
     {
-        sprintf(buf, "SDL_VIDEO_WINDOW_POS=%i,%i", x, y);
+        snprintf(buf, sizeof(buf), "SDL_VIDEO_WINDOW_POS=%i,%i", x, y);
         putenv(buf);
     }
 }
@@ -1994,7 +1990,7 @@ void I_InitGraphics(void)
         int winid;
 
         sscanf(env, "0x%x", &winid);
-        sprintf(winenv, "SDL_WINDOWID=%i", winid);
+        snprintf(winenv, sizeof(winenv), "SDL_WINDOWID=%i", winid);
 
         putenv(winenv);
     }

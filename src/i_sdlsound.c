@@ -705,7 +705,8 @@ static boolean CacheSFX(sfxinfo_t *sfxinfo)
     {
         char filename[16];
 
-        sprintf(filename, "%s.wav", DEH_String(S_sfx[sound].name));
+        snprintf(filename, sizeof(filename), "%s.wav",
+                 DEH_String(S_sfx[sound].name));
         WriteWAV(filename, sound_chunks[sound].abuf,
                  sound_chunks[sound].alen, mixer_freq);
     }

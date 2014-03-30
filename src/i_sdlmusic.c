@@ -116,13 +116,12 @@ void I_InitTimidityConfig(void)
 
     if (success)
     {
-        env_string = malloc(strlen(temp_timidity_cfg) + 15);
-        sprintf(env_string, "TIMIDITY_CFG=%s", temp_timidity_cfg);
+        env_string = M_StringJoin("TIMIDITY_CFG=", temp_timidity_cfg, NULL);
         putenv(env_string);
     }
     else
     {
-        Z_Free(temp_timidity_cfg);
+        free(temp_timidity_cfg);
         temp_timidity_cfg = NULL;
     }
 }
@@ -426,7 +425,7 @@ static void *I_SDL_RegisterSong(void *data, int len)
         remove(filename);
     }
 
-    Z_Free(filename);
+    free(filename);
 
     return music;
 }

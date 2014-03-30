@@ -1812,8 +1812,7 @@ void M_LoadDefaults (void)
     else
     {
         doom_defaults.filename
-            = malloc(strlen(configdir) + strlen(default_main_config) + 1);
-        sprintf(doom_defaults.filename, "%s%s", configdir, default_main_config);
+            = M_StringJoin(configdir, default_main_config, NULL);
     }
 
     printf("saving config in %s\n", doom_defaults.filename);
@@ -1835,10 +1834,8 @@ void M_LoadDefaults (void)
     }
     else
     {
-        extra_defaults.filename 
-            = malloc(strlen(configdir) + strlen(default_extra_config) + 1);
-        sprintf(extra_defaults.filename, "%s%s", 
-                configdir, default_extra_config);
+        extra_defaults.filename
+            = M_StringJoin(configdir, default_extra_config, NULL);
     }
 
     LoadDefaultCollection(&doom_defaults);
@@ -1971,10 +1968,8 @@ static char *GetDefaultConfigDir(void)
         // put all configuration in a config directory off the
         // homedir
 
-        result = malloc(strlen(homedir) + strlen(PACKAGE_TARNAME) + 5);
-
-        sprintf(result, "%s%c.%s%c", homedir, DIR_SEPARATOR,
-                                     PACKAGE_TARNAME, DIR_SEPARATOR);
+        result = M_StringJoin(homedir, DIR_SEPARATOR_S,
+                              "." PACKAGE_TARNAME, DIR_SEPARATOR_S, NULL);
 
         return result;
     }
@@ -2023,6 +2018,7 @@ void M_SetConfigDir(char *dir)
 char *M_GetSaveGameDir(char *iwadname)
 {
     char *savegamedir;
+    char *topdir;
 
     // If not "doing" a configuration directory (Windows), don't "do"
     // a savegame directory, either.
@@ -2033,20 +2029,19 @@ char *M_GetSaveGameDir(char *iwadname)
     }
     else
     {
-        // ~/.chocolate-doom/savegames/
+        // ~/.chocolate-doom/savegames
 
-        savegamedir = malloc(strlen(configdir) + 30);
-        sprintf(savegamedir, "%ssavegames%c", configdir,
-                             DIR_SEPARATOR);
-
-        M_MakeDirectory(savegamedir);
+        topdir = M_StringJoin(configdir, "savegames", NULL);
+        M_MakeDirectory(topdir);
 
         // eg. ~/.chocolate-doom/savegames/doom2.wad/
 
-        sprintf(savegamedir + strlen(savegamedir), "%s%c",
-                iwadname, DIR_SEPARATOR);
+        savegamedir = M_StringJoin(topdir, DIR_SEPARATOR_S, iwadname,
+                                   DIR_SEPARATOR_S, NULL);
 
         M_MakeDirectory(savegamedir);
+
+        free(topdir);
     }
 
     return savegamedir;

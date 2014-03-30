@@ -289,11 +289,8 @@ static void CheckCollectorsEdition(void)
 
     for (i=0; i<arrlen(collectors_edition_subdirs); ++i)
     {
-        subpath = malloc(strlen(install_path)
-                         + strlen(collectors_edition_subdirs[i])
-                         + 5);
-
-        sprintf(subpath, "%s\\%s", install_path, collectors_edition_subdirs[i]);
+        subpath = M_StringJoin(install_path, DIR_SEPARATOR_S,
+                               collectors_edition_subdirs[i], NULL);
 
         AddIWADDir(subpath);
     }
@@ -319,10 +316,8 @@ static void CheckSteamEdition(void)
 
     for (i=0; i<arrlen(steam_install_subdirs); ++i)
     {
-        subpath = malloc(strlen(install_path) 
-                         + strlen(steam_install_subdirs[i]) + 5);
-
-        sprintf(subpath, "%s\\%s", install_path, steam_install_subdirs[i]);
+        subpath = M_StringJoin(install_path, DIR_SEPARATOR_S,
+                               steam_install_subdirs[i], NULL);
 
         AddIWADDir(subpath);
     }
@@ -438,8 +433,7 @@ static char *CheckDirectoryHasIWAD(char *dir, char *iwadname)
     }
     else
     {
-        char sep[] = {DIR_SEPARATOR, '\0'};
-        filename = M_StringJoin(dir, sep, iwadname, NULL);
+        filename = M_StringJoin(dir, DIR_SEPARATOR_S, iwadname, NULL);
     }
 
     if (M_FileExists(filename))
@@ -632,7 +626,7 @@ static void BuildIWADDirList(void)
 
 char *D_FindWADByName(char *name)
 {
-    char *buf;
+    char *path;
     int i;
     
     // Absolute path?
@@ -643,7 +637,7 @@ char *D_FindWADByName(char *name)
     }
 
     BuildIWADDirList();
-    
+
     // Search through all IWAD paths for a file with the given name.
 
     for (i=0; i<num_iwad_dirs; ++i)
@@ -659,15 +653,14 @@ char *D_FindWADByName(char *name)
 
         // Construct a string for the full path
 
-        buf = malloc(strlen(iwad_dirs[i]) + strlen(name) + 5);
-        sprintf(buf, "%s%c%s", iwad_dirs[i], DIR_SEPARATOR, name);
+        path = M_StringJoin(iwad_dirs[i], DIR_SEPARATOR_S, name, NULL);
 
-        if (M_FileExists(buf))
+        if (M_FileExists(path))
         {
-            return buf;
+            return path;
         }
 
-        free(buf);
+        free(path);
     }
 
     // File not found
