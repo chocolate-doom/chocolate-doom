@@ -300,10 +300,11 @@ char *M_StrCaseStr(char *haystack, char *needle)
 // String replace function.
 //
 
-char *M_StringReplace(char *haystack, char *needle, char *replacement)
+char *M_StringReplace(const char *haystack, const char *needle,
+                      const char *replacement)
 {
-    char *result, *p;
-    char *dst;
+    char *result, *dst;
+    const char *p;
     size_t needle_len = strlen(needle);
     size_t result_len, dst_len;
 
@@ -359,7 +360,7 @@ char *M_StringReplace(char *haystack, char *needle, char *replacement)
 // Safe string copy function that works like OpenBSD's strlcpy().
 // Returns true if the string was not truncated.
 
-boolean M_StringCopy(char *dest, char *src, size_t dest_size)
+boolean M_StringCopy(char *dest, const char *src, size_t dest_size)
 {
     strncpy(dest, src, dest_size);
     dest[dest_size - 1] = '\0';
@@ -369,7 +370,7 @@ boolean M_StringCopy(char *dest, char *src, size_t dest_size)
 // Safe string concat function that works like OpenBSD's strlcat().
 // Returns true if string not truncated.
 
-boolean M_StringConcat(char *dest, char *src, size_t dest_size)
+boolean M_StringConcat(char *dest, const char *src, size_t dest_size)
 {
     size_t offset;
 
@@ -387,7 +388,7 @@ boolean M_StringConcat(char *dest, char *src, size_t dest_size)
 
 // Returns true if 's' begins with the specified prefix.
 
-boolean M_StringStartsWith(char *s, char *prefix)
+boolean M_StringStartsWith(const char *s, const char *prefix)
 {
     return strlen(s) > strlen(prefix)
         && strncmp(s, prefix, strlen(prefix)) == 0;
@@ -395,7 +396,7 @@ boolean M_StringStartsWith(char *s, char *prefix)
 
 // Returns true if 's' ends with the specified suffix.
 
-boolean M_StringEndsWith(char *s, char *suffix)
+boolean M_StringEndsWith(const char *s, const char *suffix)
 {
     return strlen(s) >= strlen(suffix)
         && strcmp(s + strlen(s) - strlen(suffix), suffix) == 0;
@@ -404,9 +405,10 @@ boolean M_StringEndsWith(char *s, char *suffix)
 // Return a newly-malloced string with all the strings given as arguments
 // concatenated together.
 
-char *M_StringJoin(char *s, ...)
+char *M_StringJoin(const char *s, ...)
 {
-    char *result, *v;
+    char *result;
+    const char *v;
     va_list args;
     size_t result_len;
 
@@ -415,7 +417,7 @@ char *M_StringJoin(char *s, ...)
     va_start(args, s);
     for (;;)
     {
-        v = va_arg(args, char *);
+        v = va_arg(args, const char *);
         if (v == NULL)
         {
             break;
@@ -438,7 +440,7 @@ char *M_StringJoin(char *s, ...)
     va_start(args, s);
     for (;;)
     {
-        v = va_arg(args, char *);
+        v = va_arg(args, const char *);
         if (v == NULL)
         {
             break;

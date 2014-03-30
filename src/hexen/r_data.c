@@ -26,6 +26,7 @@
 #include "h2def.h"
 #include "i_system.h"
 #include "i_swap.h"
+#include "m_misc.h"
 #include "r_local.h"
 #include "p_local.h"
 
