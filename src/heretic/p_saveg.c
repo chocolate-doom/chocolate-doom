@@ -51,9 +51,12 @@ static byte *savebuffer, *save_p;
 char *SV_Filename(int slot)
 {
     char *filename;
+    size_t filename_len;
 
-    filename = malloc(strlen(savegamedir) + strlen(SAVEGAMENAME) + 8);
-    sprintf(filename, "%s" SAVEGAMENAME "%d.hsg", savegamedir, slot);
+    filename_len = strlen(savegamedir) + strlen(SAVEGAMENAME) + 8;
+    filename = malloc(filename_len);
+    snprintf(filename, filename_len,
+             "%s" SAVEGAMENAME "%d.hsg", savegamedir, slot);
 
     return filename;
 }
