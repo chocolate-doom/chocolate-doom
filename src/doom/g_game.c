@@ -909,17 +909,18 @@ void G_Ticker (void)
                 turbodetected[i] = true;
             }
 
-	    if ((gametic & 31) == 0 
+            if ((gametic & 31) == 0 
              && ((gametic >> 5) % MAXPLAYERS) == i
              && turbodetected[i])
-	    {
-		static char turbomessage[80];
-		extern char *player_names[4];
-		sprintf (turbomessage, "%s is turbo!",player_names[i]);
-		players[consoleplayer].message = turbomessage;
+            {
+                static char turbomessage[80];
+                extern char *player_names[4];
+                snprintf(turbomessage, sizeof(turbomessage),
+                         "%s is turbo!", player_names[i]);
+                players[consoleplayer].message = turbomessage;
                 turbodetected[i] = false;
-	    }
-			
+            }
+
 	    if (netgame && !netdemo && !(gametic%ticdup) ) 
 	    { 
 		if (gametic > BACKUPTICS 
@@ -1937,16 +1938,18 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
  
  
 //
-// G_RecordDemo 
-// 
-void G_RecordDemo (char *name) 
-{ 
-    int             i; 
-    int				maxsize;
-	
-    usergame = false; 
-    demoname = Z_Malloc(strlen(name) + 5, PU_STATIC, NULL);
-    sprintf(demoname, "%s.lmp", name);
+// G_RecordDemo
+//
+void G_RecordDemo (char *name)
+{
+    size_t demoname_size;
+    int i;
+    int maxsize;
+
+    usergame = false;
+    demoname_size = strlen(name) + 5;
+    demoname = Z_Malloc(demoname_size, PU_STATIC, NULL);
+    snprintf(demoname, demoname_size, "%s.lmp", name);
     maxsize = 0x20000;
 
     //!
@@ -2073,7 +2076,8 @@ static char *DemoVersionDescription(int version)
     }
     else
     {
-        sprintf(resultbuf, "%i.%i (unknown)", version / 100, version % 100);
+        snprintf(resultbuf, sizeof(resultbuf),
+                 "%i.%i (unknown)", version / 100, version % 100);
         return resultbuf;
     }
 }

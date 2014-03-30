@@ -1192,10 +1192,9 @@ static char *M_SelectEndMessage(void)
 
 void M_QuitDOOM(int choice)
 {
-    sprintf(endstring,
-            DEH_String("%s\n\n" DOSY),
-            DEH_String(M_SelectEndMessage()));
-  
+    DEH_snprintf(endstring, sizeof(endstring), "%s\n\n" DOSY,
+                 DEH_String(M_SelectEndMessage()));
+
     M_StartMessage(endstring,M_QuitResponse,true);
 }
 
