@@ -861,7 +861,8 @@ boolean P_UseInventoryItem(player_t* player, int item)
         if(name == NULL)
             name = "Item";
 
-        sprintf(useinventorymsg, "You used the %s.", name);
+        snprintf(useinventorymsg, sizeof(useinventorymsg),
+                 "You used the %s.", name);
         player->message = useinventorymsg;
 
         if(player == &players[consoleplayer])

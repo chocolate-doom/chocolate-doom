@@ -461,7 +461,7 @@ void D_BindVariables(void)
     {
         char buf[12];
 
-        sprintf(buf, "chatmacro%i", i);
+        snprintf(buf, sizeof(buf), "chatmacro%i", i);
         M_BindVariable(buf, &chat_macros[i]);
     }
 }

@@ -670,7 +670,8 @@ AM_Responder
         }
         else if (key == key_map_mark)
         {
-            sprintf(buffer, "%s %d", DEH_String(AMSTR_MARKEDSPOT), markpointnum);
+            snprintf(buffer, sizeof(buffer),
+                     "%s %d", DEH_String(AMSTR_MARKEDSPOT), markpointnum);
             plr->message = buffer;
             AM_addMark();
         }

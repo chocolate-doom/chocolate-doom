@@ -985,7 +985,8 @@ void G_Ticker (void)
             {
                 static char turbomessage[80];
                 extern char player_names[8][16];
-                sprintf (turbomessage, "%s is turbo!", player_names[i]);
+                snprintf(turbomessage, sizeof(turbomessage),
+                         "%s is turbo!", player_names[i]);
                 players[consoleplayer].message = turbomessage;
                 turbodetected[i] = false;
             }
@@ -1289,7 +1290,7 @@ void G_LoadPath(int map)
     char mapbuf[33];
 
     memset(mapbuf, 0, sizeof(mapbuf));
-    sprintf(mapbuf, "%d", map);
+    snprintf(mapbuf, sizeof(mapbuf), "%d", map);
 
     // haleyjd: free if already set, and use M_SafeFilePath
     if(loadpath)
@@ -1804,7 +1805,7 @@ void G_DoSaveGame (char *path)
     
     // [STRIFE] custom save file path logic
     memset(gamemapstr, 0, sizeof(gamemapstr));
-    sprintf(gamemapstr, "%d", gamemap);
+    snprintf(gamemapstr, sizeof(gamemapstr), "%d", gamemap);
     savegame_file = M_SafeFilePath(path, gamemapstr);
 
     // [STRIFE] write the "current" file, which tells which hub map
@@ -1869,7 +1870,7 @@ void G_DoSaveGame (char *path)
     // [STRIFE]: custom message logic
     if(!strcmp(path, savepath))
     {
-        sprintf(savename, "%s saved.", character_name);
+        snprintf(savename, sizeof(savename), "%s saved.", character_name);
         players[consoleplayer].message = savename;
     }
 
@@ -2185,14 +2186,16 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
 // 
 // [STRIFE] Verified unmodified
 //
-void G_RecordDemo (char* name) 
-{ 
-    int             i; 
+void G_RecordDemo (char* name)
+{
+    size_t demoname_size;
+    int             i;
     int             maxsize;
 
-    usergame = false; 
-    demoname = Z_Malloc(strlen(name) + 5, PU_STATIC, NULL);
-    sprintf(demoname, "%s.lmp", name);
+    usergame = false;
+    demoname_size = strlen(name) + 5;
+    demoname = Z_Malloc(demoname_size, PU_STATIC, NULL);
+    snprintf(demoname, demoname_size, "%s.lmp", name);
     maxsize = 0x20000;
 
     //!
@@ -2287,7 +2290,8 @@ static char *DemoVersionDescription(int version)
     }
 
     // Unknown version. Who knows?
-    sprintf(resultbuf, "%i.%i (unknown)", version / 100, version % 100);
+    snprintf(resultbuf, sizeof(resultbuf),
+             "%i.%i (unknown)", version / 100, version % 100);
 
     return resultbuf;
 }
