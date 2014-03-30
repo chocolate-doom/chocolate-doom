@@ -31,6 +31,7 @@
 #include "deh_main.h"
 #include "deh_misc.h"
 #include "doomstat.h"
+#include "m_misc.h"
 #include "m_random.h"
 #include "i_system.h"
 #include "am_map.h"

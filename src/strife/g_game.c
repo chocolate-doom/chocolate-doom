@@ -39,6 +39,7 @@
 #include "m_controls.h"
 #include "m_misc.h"
 #include "m_menu.h"
+#include "m_misc.h"
 #include "m_saves.h" // STRIFE
 #include "m_random.h"
 #include "i_system.h"
@@ -1024,7 +1025,10 @@ void G_Ticker (void)
 
                 case BTS_SAVEGAME: 
                     if (!character_name[0]) // [STRIFE]
-                        strcpy (character_name, "NET GAME"); 
+                    {
+                        M_StringCopy(character_name, "NET GAME",
+                                     sizeof(character_name));
+                    }
                     savegameslot =  
                         (players[i].cmd.buttons & BTS_SAVEMASK)>>BTS_SAVESHIFT; 
                     gameaction = ga_savegame; 
@@ -1172,7 +1176,8 @@ void G_PlayerReborn (int player)
         p->inventory[i].type = NUMMOBJTYPES;
 
     // villsa [STRIFE]: Default objective
-    strncpy(mission_objective, DEH_String("Find help"), OBJECTIVE_LEN);
+    M_StringCopy(mission_objective, DEH_String("Find help"),
+                 OBJECTIVE_LEN);
 }
 
 //
@@ -1656,13 +1661,13 @@ char	savename[256];
 
 // [STRIFE]: No such function.
 /*
-void G_LoadGame (char* name) 
-{ 
-    strcpy (savename, name); 
-    gameaction = ga_loadgame; 
-} 
+void G_LoadGame (char* name)
+{
+    M_StringCopy(savename, name, sizeof(savename));
+    gameaction = ga_loadgame;
+}
 */
- 
+
 // haleyjd 20100928: [STRIFE] VERSIONSIZE == 8
 #define VERSIONSIZE             8
 
@@ -1755,7 +1760,7 @@ boolean G_WriteSaveName(int slot, const char *charname)
 
     // haleyjd: memset full character_name for safety
     memset(character_name, 0, CHARACTER_NAME_LEN);
-    strcpy(character_name, charname);
+    M_StringCopy(character_name, charname, sizeof(character_name));
 
     // haleyjd: use M_SafeFilePath
     tmpname = M_SafeFilePath(savepathtemp, "name");
@@ -1771,7 +1776,7 @@ boolean G_WriteSaveName(int slot, const char *charname)
 //
 // G_SaveGame
 // Called by the menu task.
-// Description is a 24 byte text string 
+// Description is a 24 byte text string
 //
 // [STRIFE] No such function, at least in v1.2
 // STRIFE-TODO: Does this make a comeback in v1.31?
@@ -1779,14 +1784,14 @@ boolean G_WriteSaveName(int slot, const char *charname)
 void
 G_SaveGame
 ( int	slot,
-  char*	description ) 
-{ 
-    savegameslot = slot; 
-    strcpy (savedescription, description); 
-    sendsave = true; 
-} 
+  char*	description )
+{
+    savegameslot = slot;
+    M_StringCopy(savedescription, description, sizeof(savedescription));
+    sendsave = true;
+}
 */
- 
+
 void G_DoSaveGame (char *path)
 { 
     char *current_path;
@@ -1859,7 +1864,7 @@ void G_DoSaveGame (char *path)
     Z_Free(savegame_file);
 
     gameaction = ga_nothing; 
-    //strcpy(savedescription, "");
+    //M_StringCopy(savedescription, "", sizeof(savedescription));
 
     // [STRIFE]: custom message logic
     if(!strcmp(path, savepath))

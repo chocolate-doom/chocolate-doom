@@ -501,7 +501,7 @@ char M_GetFilePath(const char *fn, char *dest, size_t len)
 
     p = dest + len - 1;
 
-    strncpy(dest, fn, len);
+    M_StringCopy(dest, fn, len);
 
     while(p >= dest)
     {
