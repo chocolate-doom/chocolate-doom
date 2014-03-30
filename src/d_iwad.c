@@ -439,7 +439,7 @@ static char *CheckDirectoryHasIWAD(char *dir, char *iwadname)
     else
     {
         char sep[] = {DIR_SEPARATOR, '\0'};
-        filename = M_StringJoin(dir, sep, iwadname);
+        filename = M_StringJoin(dir, sep, iwadname, NULL);
     }
 
     if (M_FileExists(filename))
