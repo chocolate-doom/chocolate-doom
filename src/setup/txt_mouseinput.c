@@ -24,6 +24,7 @@
 #include <string.h>
 
 #include "doomkeys.h"
+#include "m_misc.h"
 
 #include "txt_mouseinput.h"
 #include "txt_gui.h"
@@ -75,21 +76,21 @@ static void TXT_MouseInputSizeCalc(TXT_UNCAST_ARG(mouse_input))
     mouse_input->widget.h = 1;
 }
 
-static void GetMouseButtonDescription(int button, char *buf)
+static void GetMouseButtonDescription(int button, char *buf, size_t buf_len)
 {
     switch (button)
     {
         case 0:
-            strcpy(buf, "LEFT");
+            M_StringCopy(buf, "LEFT", buf_len);
             break;
         case 1:
-            strcpy(buf, "RIGHT");
+            M_StringCopy(buf, "RIGHT", buf_len);
             break;
         case 2:
-            strcpy(buf, "MID");
+            M_StringCopy(buf, "MID", buf_len);
             break;
         default:
-            sprintf(buf, "BUTTON #%i", button + 1);
+            snprintf(buf, buf_len, "BUTTON #%i", button + 1);
             break;
     }
 }
@@ -102,11 +103,11 @@ static void TXT_MouseInputDrawer(TXT_UNCAST_ARG(mouse_input))
 
     if (*mouse_input->variable < 0)
     {
-        strcpy(buf, "(none)");
+        M_StringCopy(buf, "(none)", sizeof(buf));
     }
     else
     {
-        GetMouseButtonDescription(*mouse_input->variable, buf);
+        GetMouseButtonDescription(*mouse_input->variable, buf, sizeof(buf));
     }
 
     TXT_SetWidgetBG(mouse_input);

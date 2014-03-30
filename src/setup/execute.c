@@ -48,6 +48,7 @@
 #include "mode.h"
 #include "m_argv.h"
 #include "m_config.h"
+#include "m_misc.h"
 
 struct execute_context_s
 {
@@ -271,6 +272,7 @@ static char *GetFullExePath(const char *program)
 {
     char *result;
     char *sep;
+    size_t result_len;
     unsigned int path_len;
 
     sep = strrchr(myargv[0], DIR_SEPARATOR);
@@ -282,13 +284,13 @@ static char *GetFullExePath(const char *program)
     else
     {
         path_len = sep - myargv[0] + 1;
+        result_len = strlen(program) + path_len + 1;
+        result = malloc(result_len);
 
-        result = malloc(strlen(program) + path_len + 1);
-
-        strncpy(result, myargv[0], path_len);
+        M_StringCopy(result, myargv[0], result_len);
         result[path_len] = '\0';
 
-        strcat(result, program);
+        M_StringConcat(result, program, result_len);
     }
 
     return result;

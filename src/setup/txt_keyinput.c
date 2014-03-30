@@ -23,6 +23,7 @@
 #include <string.h>
 
 #include "doomkeys.h"
+#include "m_misc.h"
 
 #include "txt_keyinput.h"
 #include "txt_gui.h"
@@ -110,7 +111,7 @@ static void TXT_KeyInputDrawer(TXT_UNCAST_ARG(key_input))
 
     if (*key_input->variable == 0)
     {
-        strcpy(buf, "(none)");
+        M_StringCopy(buf, "(none)", sizeof(buf));
     }
     else
     {

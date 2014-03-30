@@ -899,8 +899,8 @@ static void QueryResponseCallback(net_addr_t *addr,
     char description[47];
 
     sprintf(ping_time_str, "%ims", ping_time);
-    strncpy(description, querydata->description, 46);
-    description[46] = '\0';
+    M_StringCopy(description, querydata->description,
+                 sizeof(description));
 
     TXT_AddWidgets(results_table,
                    TXT_NewLabel(ping_time_str),
