@@ -812,6 +812,7 @@ void D_DoomMain(void)
     GameMission_t gamemission;
     int p;
     char file[256];
+    char demolumpname[9];
 
     I_PrintBanner(PACKAGE_STRING);
 
@@ -1005,9 +1006,26 @@ void D_DoomMain(void)
 
     if (p)
     {
-        DEH_snprintf(file, sizeof(file), "%s.lmp", myargv[p + 1]);
-        D_AddFile(file);
-        DEH_printf("Playing demo %s.lmp.\n", myargv[p + 1]);
+        if (!M_StringEndsWith(myargv[p + 1], ".lmp"))
+        {
+            DEH_snprintf(file, sizeof(file), "%s.lmp", myargv[p + 1]);
+        }
+        else
+        {
+            M_StringCopy(file, myargv[p + 1], sizeof(file));
+        }
+
+        if (D_AddFile(file))
+        {
+            M_StringCopy(demolumpname, lumpinfo[numlumps - 1].name,
+                         sizeof(demolumpname));
+
+            DEH_printf("Playing demo %s.\n", file);
+        }
+        else
+        {
+            M_StringCopy(demolumpname, myargv[p + 1], sizeof(demolumpname));
+        }
     }
 
     if (W_CheckNumForName(DEH_String("E2M1")) == -1)
@@ -1137,14 +1155,14 @@ void D_DoomMain(void)
     if (p)
     {
         singledemo = true;      // Quit after one demo
-        G_DeferedPlayDemo(myargv[p + 1]);
+        G_DeferedPlayDemo(demolumpname);
         D_DoomLoop();           // Never returns
     }
 
     p = M_CheckParmWithArgs("-timedemo", 1);
     if (p)
     {
-        G_TimeDemo(myargv[p + 1]);
+        G_TimeDemo(demolumpname);
         D_DoomLoop();           // Never returns
     }
 
