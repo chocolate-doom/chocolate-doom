@@ -32,8 +32,8 @@
 #include "d_mode.h"
 #include "i_system.h"
 #include "i_timer.h"
-
 #include "m_argv.h"
+#include "m_misc.h"
 
 #include "net_client.h"
 #include "net_common.h"
@@ -427,15 +427,12 @@ static void NET_SV_SendWaitingData(net_client_t *client)
 
     for (i = 0; i < wait_data.num_players; ++i)
     {
-        strncpy(wait_data.player_names[i],
-                sv_players[i]->name,
-                MAXPLAYERNAME);
-        wait_data.player_names[i][MAXPLAYERNAME-1] = '\0';
-
-        strncpy(wait_data.player_addrs[i],
-                NET_AddrToString(sv_players[i]->addr),
-                MAXPLAYERNAME);
-        wait_data.player_addrs[i][MAXPLAYERNAME-1] = '\0';
+        M_StringCopy(wait_data.player_names[i],
+                     sv_players[i]->name,
+                     MAXPLAYERNAME);
+        M_StringCopy(wait_data.player_addrs[i],
+                     NET_AddrToString(sv_players[i]->addr),
+                     MAXPLAYERNAME);
     }
 
     // Construct packet:
