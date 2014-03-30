@@ -133,7 +133,7 @@ static void RemoveTimidityConfig(void)
     if (temp_timidity_cfg != NULL)
     {
         remove(temp_timidity_cfg);
-        Z_Free(temp_timidity_cfg);
+        free(temp_timidity_cfg);
     }
 }
 
