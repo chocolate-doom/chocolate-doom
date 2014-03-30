@@ -366,6 +366,25 @@ boolean M_StringCopy(char *dest, char *src, size_t dest_size)
     return strlen(dest) == strlen(src);
 }
 
+// Safe string concat function that works like OpenBSD's strlcat().
+// Returns true if string not truncated.
+
+boolean M_StringConcat(char *dest, char *src, size_t dest_size)
+{
+    size_t offset;
+
+    offset = strlen(dest);
+    if (offset > dest_size)
+    {
+        offset = dest_size;
+    }
+
+    dest += offset;
+    dest_size -= offset;
+
+    return M_StringCopy(dest, src, dest_size);
+}
+
 // Returns true if 's' begins with the specified prefix.
 
 boolean M_StringStartsWith(char *s, char *prefix)
@@ -425,7 +444,7 @@ char *M_StringJoin(char *s, ...)
             break;
         }
 
-        strncat(result, v, result_len);
+        M_StringConcat(result, v, result_len);
     }
     va_end(args);
 

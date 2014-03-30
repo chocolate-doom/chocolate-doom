@@ -1002,10 +1002,11 @@ static void LoadChexDeh(void)
 
         if (sep != NULL)
         {
-            chex_deh = malloc(strlen(iwadfile) + 9);
-            strcpy(chex_deh, iwadfile);
+            size_t chex_deh_len = strlen(iwadfile) + 9;
+            chex_deh = malloc(chex_deh_len);
+            M_StringCopy(chex_deh, iwadfile, chex_deh_len);
             chex_deh[sep - iwadfile + 1] = '\0';
-            strcat(chex_deh, "chex.deh");
+            M_StringConcat(chex_deh, "chex.deh", chex_deh_len);
         }
         else
         {
