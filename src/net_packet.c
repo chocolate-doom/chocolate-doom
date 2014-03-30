@@ -24,6 +24,7 @@
 //-----------------------------------------------------------------------------
 
 #include <string.h>
+#include "m_misc.h"
 #include "net_packet.h"
 #include "z_zone.h"
 
@@ -280,19 +281,22 @@ void NET_WriteInt32(net_packet_t *packet, unsigned int i)
 void NET_WriteString(net_packet_t *packet, char *string)
 {
     byte *p;
+    size_t string_size;
+
+    string_size = strlen(string) + 1;
 
     // Increase the packet size until large enough to hold the string
 
-    while (packet->len + strlen(string) + 1 > packet->alloced)
+    while (packet->len + string_size > packet->alloced)
     {
         NET_IncreasePacket(packet);
     }
 
     p = packet->data + packet->len;
 
-    strcpy((char *) p, string);
+    M_StringCopy((char *) p, string, string_size);
 
-    packet->len += strlen(string) + 1;
+    packet->len += string_size;
 }
 
 

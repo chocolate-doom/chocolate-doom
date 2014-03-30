@@ -27,7 +27,7 @@
 #include <ctype.h>
 
 #include "doomtype.h"
-
+#include "m_misc.h"
 #include "net_packet.h"
 #include "net_structrw.h"
 
@@ -493,7 +493,7 @@ boolean NET_ReadWaitData(net_packet_t *packet, net_waitdata_t *data)
             return false;
         }
 
-        strcpy(data->player_names[i], s);
+        M_StringCopy(data->player_names[i], s, MAXPLAYERNAME);
 
         s = NET_ReadString(packet);
 
@@ -502,7 +502,7 @@ boolean NET_ReadWaitData(net_packet_t *packet, net_waitdata_t *data)
             return false;
         }
 
-        strcpy(data->player_addrs[i], s);
+        M_StringCopy(data->player_addrs[i], s, MAXPLAYERNAME);
     }
 
     return NET_ReadSHA1Sum(packet, data->wad_sha1sum)

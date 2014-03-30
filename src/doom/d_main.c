@@ -1352,19 +1352,19 @@ void D_DoomMain (void)
 
     if (p)
     {
-        if (!strcasecmp(myargv[p+1] + strlen(myargv[p+1]) - 4, ".lmp"))
+        if (M_StringEndsWith(myargv[p + 1], ".lmp"))
         {
-            strcpy(file, myargv[p + 1]);
+            M_StringCopy(file, myargv[p + 1], sizeof(file));
         }
         else
         {
-	    sprintf (file,"%s.lmp", myargv[p+1]);
+            snprintf(file, sizeof(file), "%s.lmp", myargv[p+1]);
         }
 
-	if (D_AddFile (file))
+        if (D_AddFile(file))
         {
-            strncpy(demolumpname, lumpinfo[numlumps - 1].name, 8);
-            demolumpname[8] = '\0';
+            M_StringCopy(demolumpname, lumpinfo[numlumps - 1].name,
+                         sizeof(demolumpname));
 
             printf("Playing demo %s.\n", file);
         }
@@ -1374,10 +1374,8 @@ void D_DoomMain (void)
             // the demo in the same way as Vanilla Doom.  This makes
             // tricks like "-playdemo demo1" possible.
 
-            strncpy(demolumpname, myargv[p + 1], 8);
-            demolumpname[8] = '\0';
+            M_StringCopy(demolumpname, myargv[p + 1], sizeof(demolumpname));
         }
-
     }
 
     I_AtExit((atexit_func_t) G_CheckDemoStatus, true);
@@ -1686,8 +1684,8 @@ void D_DoomMain (void)
 	
     if (startloadgame >= 0)
     {
-        strcpy(file, P_SaveGameFile(startloadgame));
-	G_LoadGame (file);
+        M_StringCopy(file, P_SaveGameFile(startloadgame), sizeof(file));
+	G_LoadGame(file);
     }
 	
     if (gameaction != ga_loadgame )
