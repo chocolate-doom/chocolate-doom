@@ -48,6 +48,7 @@
 #include "m_argv.h"
 #include "m_config.h"
 #include "m_controls.h"
+#include "m_misc.h"
 #include "p_local.h"
 #include "s_sound.h"
 #include "w_main.h"
@@ -543,7 +544,7 @@ void status(char *string)
 {
     if (using_graphical_startup)
     {
-        strcat(smsg, string);
+        M_StringConcat(smsg, string, sizeof(smsg));
         drawstatus();
     }
 }
@@ -676,7 +677,7 @@ void tprintf(char *msg, int initflag)
 
     if (initflag)
         tmsg[0] = 0;
-    strcat(tmsg, msg);
+    M_StringConcat(tmsg, msg, sizeof(tmsg));
     blitStartup();
     DrawThermo();
     _setbkcolor(4);
@@ -685,7 +686,11 @@ void tprintf(char *msg, int initflag)
         if ((tmsg[i] == '\n') || (!tmsg[i]))
         {
             memset(temp, 0, 80);
-            strncpy(temp, tmsg + start, i - start);
+            M_StringCopy(temp, tmsg + start, sizeof(temp));
+            if (i - start < sizeof(temp))
+            {
+                temp[i - start] = '\0';
+            }
             _settextposition(MSG_Y + add, 40 - strlen(temp) / 2);
             _outtext(temp);
             start = i + 1;
