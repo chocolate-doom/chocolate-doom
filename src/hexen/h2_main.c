@@ -172,7 +172,7 @@ void D_BindVariables(void)
     {
         char buf[12];
 
-        sprintf(buf, "chatmacro%i", i);
+        snprintf(buf, sizeof(buf), "chatmacro%i", i);
         M_BindVariable(buf, &chat_macros[i]);
     }
 }
@@ -190,7 +190,7 @@ static void D_SetDefaultSavePath(void)
     if (!strcmp(SavePath, ""))
     {
         SavePath = malloc(10);
-	sprintf(SavePath, "hexndata%c", DIR_SEPARATOR);
+	snprintf(SavePath, 10, "hexndata%c", DIR_SEPARATOR);
     }
 }
 
@@ -632,7 +632,7 @@ void H2_GameLoop(void)
     if (M_CheckParm("-debugfile"))
     {
         char filename[20];
-        sprintf(filename, "debug%i.txt", consoleplayer);
+        snprintf(filename, sizeof(filename), "debug%i.txt", consoleplayer);
         debugfile = fopen(filename, "w");
     }
     I_SetWindowTitle("Hexen");

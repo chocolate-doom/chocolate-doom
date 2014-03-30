@@ -428,7 +428,8 @@ static boolean CheckedLockedDoor(mobj_t * mo, byte lock)
     }
     if (!(mo->player->keys & (1 << (lock - 1))))
     {
-        sprintf(LockedBuffer, "YOU NEED THE %s\n", TextKeyMessages[lock - 1]);
+        snprintf(LockedBuffer, sizeof(LockedBuffer),
+                 "YOU NEED THE %s\n", TextKeyMessages[lock - 1]);
         P_SetMessage(mo->player, LockedBuffer, true);
         S_StartSound(mo, SFX_DOOR_LOCKED);
         return false;

@@ -700,7 +700,7 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
     P_InitThinkers();
     leveltime = 0;
 
-    sprintf(lumpname, "MAP%02d", map);
+    snprintf(lumpname, sizeof(lumpname), "MAP%02d", map);
     lumpnum = W_GetNumForName(lumpname);
     //
     // Begin processing map lumps
