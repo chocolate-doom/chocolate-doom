@@ -955,7 +955,11 @@ void G_Ticker (void)
 					 
 		  case BTS_SAVEGAME: 
 		    if (!savedescription[0]) 
-			strcpy (savedescription, "NET GAME"); 
+                    {
+                        M_StringCopy(savedescription, "NET GAME",
+                                     sizeof(savedescription));
+                    }
+
 		    savegameslot =  
 			(players[i].cmd.buttons & BTS_SAVEMASK)>>BTS_SAVESHIFT; 
 		    gameaction = ga_savegame; 
@@ -1512,7 +1516,7 @@ char	savename[256];
 
 void G_LoadGame (char* name) 
 { 
-    strcpy (savename, name); 
+    M_StringCopy(savename, name, sizeof(savename));
     gameaction = ga_loadgame; 
 } 
  
@@ -1574,13 +1578,13 @@ void G_DoLoadGame (void)
 void
 G_SaveGame
 ( int	slot,
-  char*	description ) 
-{ 
-    savegameslot = slot; 
-    strcpy (savedescription, description); 
-    sendsave = true; 
-} 
- 
+  char*	description )
+{
+    savegameslot = slot;
+    M_StringCopy(savedescription, description, sizeof(savedescription));
+    sendsave = true;
+}
+
 void G_DoSaveGame (void) 
 { 
     char *savegame_file;
@@ -1631,7 +1635,7 @@ void G_DoSaveGame (void)
     rename(temp_savegame_file, savegame_file);
     
     gameaction = ga_nothing; 
-    strcpy(savedescription, "");
+    M_StringCopy(savedescription, "", sizeof(savedescription));
 
     players[consoleplayer].message = DEH_String(GGSAVED);
 

@@ -659,22 +659,28 @@ static char *GetGameName(char *gamename)
         
         if (deh_sub != banners[i])
         {
+            size_t gamename_size;
             int version;
 
             // Has been replaced.
             // We need to expand via printf to include the Doom version number
             // We also need to cut off spaces to get the basic name
 
-            gamename = Z_Malloc(strlen(deh_sub) + 10, PU_STATIC, 0);
+            gamename_size = strlen(deh_sub) + 10;
+            gamename = Z_Malloc(gamename_size, PU_STATIC, 0);
             version = G_VanillaVersionCode();
             sprintf(gamename, deh_sub, version / 100, version % 100);
 
             while (gamename[0] != '\0' && isspace(gamename[0]))
-                strcpy(gamename, gamename+1);
+            {
+                memmove(gamename, gamename + 1, gamename_size - 1);
+            }
 
             while (gamename[0] != '\0' && isspace(gamename[strlen(gamename)-1]))
+            {
                 gamename[strlen(gamename) - 1] = '\0';
-            
+            }
+
             return gamename;
         }
     }
