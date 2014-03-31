@@ -1069,7 +1069,7 @@ boolean PTR_ShootTraverse (intercept_t* in)
     if (in->d.thing->flags & MF_NOBLOOD)
 	P_SpawnPuff (x,y,z);
     else
-	P_SpawnBlood (x,y,z, la_damage);
+	P_SpawnBlood (x,y,z, la_damage, th);
 
     if (la_damage)
 	P_DamageMobj (th, shootthing, shootthing, la_damage);
@@ -1369,6 +1369,7 @@ boolean PIT_ChangeSector (mobj_t*	thing)
 	mo = P_SpawnMobj (thing->x,
 			  thing->y,
 			  thing->z + thing->height/2, MT_BLOOD);
+	mo->target = thing;
 	
 	mo->momx = (P_Random() - P_Random ())<<12;
 	mo->momy = (P_Random() - P_Random ())<<12;

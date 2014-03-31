@@ -843,6 +843,9 @@ void P_SpawnMapThing (mapthing_t* mthing)
     mobj->angle = ANG45 * (mthing->angle/45);
     if (mthing->options & MTF_AMBUSH)
 	mobj->flags |= MF_AMBUSH;
+
+    if (singleplayer && i == MT_SKULL) // Lost Souls bleed Puffs
+        mobj->flags |= MF_NOBLOOD;
 }
 
 
@@ -889,7 +892,8 @@ P_SpawnBlood
 ( fixed_t	x,
   fixed_t	y,
   fixed_t	z,
-  int		damage )
+  int		damage,
+  mobj_t*	target )
 {
     mobj_t*	th;
 	
@@ -897,6 +901,10 @@ P_SpawnBlood
     th = P_SpawnMobj (x,y,z, MT_BLOOD);
     th->momz = FRACUNIT*2;
     th->tics -= P_Random()&3;
+    th->target = target;
+
+    if (target->flags & MF_SHADOW) // Spectres bleed spectre blood
+        th->flags |= MF_SHADOW;
 
     if (th->tics < 1)
 	th->tics = 1;
