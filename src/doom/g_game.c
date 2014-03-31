@@ -342,8 +342,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     extern int		crispy_jump;
     extern int		crispy_freelook;
     extern int		crispy_mouselook;
-    static int		mbmlook_clicked = 0;
-    static int		mbmlook_moved = 0;
+    static byte		mbmlookctrl = 0;
 
     memset(cmd, 0, sizeof(ticcmd_t));
 
@@ -608,19 +607,19 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     if (!novert)
         forward += mousey;
 
-    if (mousebuttons[mousebmouselook] && !mbmlook_clicked)
+    if (mousebuttons[mousebmouselook] && !mbmlookctrl)
     {
-        mbmlook_clicked++;
+        mbmlookctrl |= 1; // clicked
     }
-    if (mbmlook_clicked && !mbmlook_moved && mousey)
+    if (mbmlookctrl && !(mbmlookctrl & 2) && mousey)
     {
-        mbmlook_moved++;
+        mbmlookctrl |= 2; // moved
     }
-    if (!mousebuttons[mousebmouselook] && mbmlook_clicked)
+    if (!mousebuttons[mousebmouselook] && mbmlookctrl)
     {
-        if (!mbmlook_moved)
+        if (!(mbmlookctrl & 2))
             look = TOCENTER;
-        mbmlook_clicked = mbmlook_moved = 0;
+        mbmlookctrl = 0;
     }
 
     if (strafe) 
