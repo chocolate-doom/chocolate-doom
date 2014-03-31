@@ -493,7 +493,7 @@ void HU_Drawer(void)
         !automapactive && !menuactive && !paused && !secret_on &&
         !(plr->readyweapon == wp_fist) && !(plr->readyweapon == wp_chainsaw))
     {
-        extern int screenblocks, detailshift;
+        extern int screenblocks;
         byte *b = I_VideoBuffer;
 
         byte c = 180;
