@@ -767,7 +767,7 @@ static void I_SDL_PrecacheSounds(sfxinfo_t *sounds, int num_sounds)
             fflush(stdout);
         }
 
-        GetSfxLumpName(&sounds[i], namebuf, sizeof(buf));
+        GetSfxLumpName(&sounds[i], namebuf, sizeof(namebuf));
 
         sounds[i].lumpnum = W_CheckNumForName(namebuf);
 
