@@ -32,6 +32,7 @@
 #include "i_system.h"
 #include "i_swap.h"
 #include "m_controls.h"
+#include "m_misc.h"
 #include "p_local.h"
 #include "r_local.h"
 #include "s_sound.h"
@@ -854,7 +855,7 @@ static boolean SCSaveGame(int option)
     if (!FileMenuKeySteal)
     {
         FileMenuKeySteal = true;
-        strcpy(oldSlotText, SlotText[option]);
+        M_StringCopy(oldSlotText, SlotText[option], sizeof(oldSlotText));
         ptr = SlotText[option];
         while (*ptr)
         {
@@ -1513,7 +1514,8 @@ boolean MN_Responder(event_t * event)
         if (key == KEY_ESCAPE)
         {
             memset(SlotText[currentSlot], 0, SLOTTEXTLEN + 2);
-            strcpy(SlotText[currentSlot], oldSlotText);
+            M_StringCopy(SlotText[currentSlot], oldSlotText,
+                         sizeof(SlotText[currentSlot]));
             SlotStatus[currentSlot]--;
             MN_DeactivateMenu();
             return (true);

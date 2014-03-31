@@ -174,7 +174,6 @@ int M_ReadFile(char *name, byte **buffer)
 
 char *M_TempFile(char *s)
 {
-    char *result;
     char *tempdir;
 
 #ifdef _WIN32
@@ -193,10 +192,7 @@ char *M_TempFile(char *s)
     tempdir = "/tmp";
 #endif
 
-    result = Z_Malloc(strlen(tempdir) + strlen(s) + 2, PU_STATIC, 0);
-    sprintf(result, "%s%c%s", tempdir, DIR_SEPARATOR, s);
-
-    return result;
+    return M_StringJoin(tempdir, DIR_SEPARATOR_S, s, NULL);
 }
 
 boolean M_StrToInt(const char *str, int *result)
@@ -298,55 +294,157 @@ char *M_StrCaseStr(char *haystack, char *needle)
 
 //
 // String replace function.
-// Returns a Z_Malloc()ed string.
 //
 
-char *M_StringReplace(char *haystack, char *needle, char *replacement)
+char *M_StringReplace(const char *haystack, const char *needle,
+                      const char *replacement)
 {
-    char *result, *p, *dst;
+    char *result, *dst;
+    const char *p;
     size_t needle_len = strlen(needle);
-    int n;
+    size_t result_len, dst_len;
 
-    // Count number of occurrences of 'p':
+    // Iterate through occurrences of 'needle' and calculate the size of
+    // the new string.
+    result_len = strlen(haystack) + 1;
+    p = haystack;
 
-    for (p = haystack, n = 0;; ++n)
+    for (;;)
     {
         p = strstr(p, needle);
-
         if (p == NULL)
         {
             break;
         }
 
         p += needle_len;
+        result_len += strlen(replacement) - needle_len;
     }
 
     // Construct new string.
 
-    result = Z_Malloc(strlen(haystack)
-                      + (strlen(replacement) - needle_len) * n
-                      + 1,
-                      PU_STATIC, NULL);
+    result = malloc(result_len);
+    if (result == NULL)
+    {
+        I_Error("M_StringReplace: Failed to allocate new string");
+        return NULL;
+    }
 
-    dst = result;
+    dst = result; dst_len = result_len;
     p = haystack;
 
     while (*p != '\0')
     {
         if (!strncmp(p, needle, needle_len))
         {
-            strcpy(dst, replacement);
-            dst += strlen(replacement);
+            M_StringCopy(dst, replacement, dst_len);
             p += needle_len;
+            dst += strlen(replacement);
+            dst_len -= strlen(replacement);
         }
         else
         {
             *dst = *p;
-            ++dst;
+            ++dst; --dst_len;
             ++p;
         }
     }
-    *dst = '\0';
+
+    return result;
+}
+
+// Safe string copy function that works like OpenBSD's strlcpy().
+// Returns true if the string was not truncated.
+
+boolean M_StringCopy(char *dest, const char *src, size_t dest_size)
+{
+    strncpy(dest, src, dest_size);
+    dest[dest_size - 1] = '\0';
+    return strlen(dest) == strlen(src);
+}
+
+// Safe string concat function that works like OpenBSD's strlcat().
+// Returns true if string not truncated.
+
+boolean M_StringConcat(char *dest, const char *src, size_t dest_size)
+{
+    size_t offset;
+
+    offset = strlen(dest);
+    if (offset > dest_size)
+    {
+        offset = dest_size;
+    }
+
+    dest += offset;
+    dest_size -= offset;
+
+    return M_StringCopy(dest, src, dest_size);
+}
+
+// Returns true if 's' begins with the specified prefix.
+
+boolean M_StringStartsWith(const char *s, const char *prefix)
+{
+    return strlen(s) > strlen(prefix)
+        && strncmp(s, prefix, strlen(prefix)) == 0;
+}
+
+// Returns true if 's' ends with the specified suffix.
+
+boolean M_StringEndsWith(const char *s, const char *suffix)
+{
+    return strlen(s) >= strlen(suffix)
+        && strcmp(s + strlen(s) - strlen(suffix), suffix) == 0;
+}
+
+// Return a newly-malloced string with all the strings given as arguments
+// concatenated together.
+
+char *M_StringJoin(const char *s, ...)
+{
+    char *result;
+    const char *v;
+    va_list args;
+    size_t result_len;
+
+    result_len = strlen(s) + 1;
+
+    va_start(args, s);
+    for (;;)
+    {
+        v = va_arg(args, const char *);
+        if (v == NULL)
+        {
+            break;
+        }
+
+        result_len += strlen(v);
+    }
+    va_end(args);
+
+    result = malloc(result_len);
+
+    if (result == NULL)
+    {
+        I_Error("M_StringJoin: Failed to allocate new string.");
+        return NULL;
+    }
+
+    M_StringCopy(result, s, result_len);
+
+    va_start(args, s);
+    for (;;)
+    {
+        v = va_arg(args, const char *);
+        if (v == NULL)
+        {
+            break;
+        }
+
+        M_StringConcat(result, v, result_len);
+    }
+    va_end(args);
 
     return result;
 }

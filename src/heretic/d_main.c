@@ -48,6 +48,7 @@
 #include "m_argv.h"
 #include "m_config.h"
 #include "m_controls.h"
+#include "m_misc.h"
 #include "p_local.h"
 #include "s_sound.h"
 #include "w_main.h"
@@ -246,7 +247,7 @@ void D_DoomLoop(void)
     if (M_CheckParm("-debugfile"))
     {
         char filename[20];
-        sprintf(filename, "debug%i.txt", consoleplayer);
+        snprintf(filename, sizeof(filename), "debug%i.txt", consoleplayer);
         debugfile = fopen(filename, "w");
     }
     I_GraphicsCheckCommandLine();
@@ -543,7 +544,7 @@ void status(char *string)
 {
     if (using_graphical_startup)
     {
-        strcat(smsg, string);
+        M_StringConcat(smsg, string, sizeof(smsg));
         drawstatus();
     }
 }
@@ -676,7 +677,7 @@ void tprintf(char *msg, int initflag)
 
     if (initflag)
         tmsg[0] = 0;
-    strcat(tmsg, msg);
+    M_StringConcat(tmsg, msg, sizeof(tmsg));
     blitStartup();
     DrawThermo();
     _setbkcolor(4);
@@ -685,7 +686,11 @@ void tprintf(char *msg, int initflag)
         if ((tmsg[i] == '\n') || (!tmsg[i]))
         {
             memset(temp, 0, 80);
-            strncpy(temp, tmsg + start, i - start);
+            M_StringCopy(temp, tmsg + start, sizeof(temp));
+            if (i - start < sizeof(temp))
+            {
+                temp[i - start] = '\0';
+            }
             _settextposition(MSG_Y + add, 40 - strlen(temp) / 2);
             _outtext(temp);
             start = i + 1;
@@ -771,7 +776,7 @@ void D_BindVariables(void)
     {
         char buf[12];
 
-        sprintf(buf, "chatmacro%i", i);
+        snprintf(buf, sizeof(buf), "chatmacro%i", i);
         M_BindVariable(buf, &chat_macros[i]);
     }
 }
@@ -807,6 +812,7 @@ void D_DoomMain(void)
     GameMission_t gamemission;
     int p;
     char file[256];
+    char demolumpname[9];
 
     I_PrintBanner(PACKAGE_STRING);
 
@@ -1000,9 +1006,30 @@ void D_DoomMain(void)
 
     if (p)
     {
-        DEH_snprintf(file, sizeof(file), "%s.lmp", myargv[p + 1]);
-        D_AddFile(file);
-        DEH_printf("Playing demo %s.lmp.\n", myargv[p + 1]);
+        // In Vanilla, the filename must be specified without .lmp,
+        // but make that optional.
+        if (M_StringEndsWith(myargv[p + 1], ".lmp"))
+        {
+            M_StringCopy(file, myargv[p + 1], sizeof(file));
+        }
+        else
+        {
+            DEH_snprintf(file, sizeof(file), "%s.lmp", myargv[p + 1]);
+        }
+
+        if (D_AddFile(file))
+        {
+            M_StringCopy(demolumpname, lumpinfo[numlumps - 1].name,
+                         sizeof(demolumpname));
+        }
+        else
+        {
+            // The file failed to load, but copy the original arg as a
+            // demo name to make tricks like -playdemo demo1 possible.
+            M_StringCopy(demolumpname, myargv[p + 1], sizeof(demolumpname));
+        }
+
+        printf("Playing demo %s.\n", file);
     }
 
     if (W_CheckNumForName(DEH_String("E2M1")) == -1)
@@ -1132,14 +1159,14 @@ void D_DoomMain(void)
     if (p)
     {
         singledemo = true;      // Quit after one demo
-        G_DeferedPlayDemo(myargv[p + 1]);
+        G_DeferedPlayDemo(demolumpname);
         D_DoomLoop();           // Never returns
     }
 
     p = M_CheckParmWithArgs("-timedemo", 1);
     if (p)
     {
-        G_TimeDemo(myargv[p + 1]);
+        G_TimeDemo(demolumpname);
         D_DoomLoop();           // Never returns
     }
 

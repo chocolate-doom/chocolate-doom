@@ -29,6 +29,7 @@
 
 #include "i_swap.h"
 #include "i_system.h"
+#include "m_misc.h"
 #include "r_local.h"
 #include "p_local.h"
 
@@ -325,14 +326,13 @@ void R_InitTextures(void)
 //
 // load the patch names from pnames.lmp
 //
-    name[8] = 0;
     names = W_CacheLumpName(pnames, PU_STATIC);
     nummappatches = LONG(*((int *) names));
     name_p = names + 4;
     patchlookup = Z_Malloc(nummappatches * sizeof(*patchlookup), PU_STATIC, NULL);
     for (i = 0; i < nummappatches; i++)
     {
-        strncpy(name, name_p + i * 8, 8);
+        M_StringCopy(name, name_p + i * 8, sizeof(name));
         patchlookup[i] = W_CheckNumForName(name);
     }
     W_ReleaseLumpName(pnames);

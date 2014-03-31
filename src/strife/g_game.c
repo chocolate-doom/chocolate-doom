@@ -39,6 +39,7 @@
 #include "m_controls.h"
 #include "m_misc.h"
 #include "m_menu.h"
+#include "m_misc.h"
 #include "m_saves.h" // STRIFE
 #include "m_random.h"
 #include "i_system.h"
@@ -985,7 +986,8 @@ void G_Ticker (void)
             {
                 static char turbomessage[80];
                 extern char player_names[8][16];
-                sprintf (turbomessage, "%s is turbo!", player_names[i]);
+                snprintf(turbomessage, sizeof(turbomessage),
+                         "%s is turbo!", player_names[i]);
                 players[consoleplayer].message = turbomessage;
                 turbodetected[i] = false;
             }
@@ -1025,7 +1027,10 @@ void G_Ticker (void)
 
                 case BTS_SAVEGAME: 
                     if (!character_name[0]) // [STRIFE]
-                        strcpy (character_name, "NET GAME"); 
+                    {
+                        M_StringCopy(character_name, "NET GAME",
+                                     sizeof(character_name));
+                    }
                     savegameslot =  
                         (players[i].cmd.buttons & BTS_SAVEMASK)>>BTS_SAVESHIFT; 
                     gameaction = ga_savegame; 
@@ -1173,7 +1178,8 @@ void G_PlayerReborn (int player)
         p->inventory[i].type = NUMMOBJTYPES;
 
     // villsa [STRIFE]: Default objective
-    strncpy(mission_objective, DEH_String("Find help"), OBJECTIVE_LEN);
+    M_StringCopy(mission_objective, DEH_String("Find help"),
+                 OBJECTIVE_LEN);
 }
 
 //
@@ -1285,7 +1291,7 @@ void G_LoadPath(int map)
     char mapbuf[33];
 
     memset(mapbuf, 0, sizeof(mapbuf));
-    sprintf(mapbuf, "%d", map);
+    snprintf(mapbuf, sizeof(mapbuf), "%d", map);
 
     // haleyjd: free if already set, and use M_SafeFilePath
     if(loadpath)
@@ -1657,13 +1663,13 @@ char	savename[256];
 
 // [STRIFE]: No such function.
 /*
-void G_LoadGame (char* name) 
-{ 
-    strcpy (savename, name); 
-    gameaction = ga_loadgame; 
-} 
+void G_LoadGame (char* name)
+{
+    M_StringCopy(savename, name, sizeof(savename));
+    gameaction = ga_loadgame;
+}
 */
- 
+
 // haleyjd 20100928: [STRIFE] VERSIONSIZE == 8
 #define VERSIONSIZE             8
 
@@ -1756,7 +1762,7 @@ boolean G_WriteSaveName(int slot, const char *charname)
 
     // haleyjd: memset full character_name for safety
     memset(character_name, 0, CHARACTER_NAME_LEN);
-    strcpy(character_name, charname);
+    M_StringCopy(character_name, charname, sizeof(character_name));
 
     // haleyjd: use M_SafeFilePath
     tmpname = M_SafeFilePath(savepathtemp, "name");
@@ -1772,7 +1778,7 @@ boolean G_WriteSaveName(int slot, const char *charname)
 //
 // G_SaveGame
 // Called by the menu task.
-// Description is a 24 byte text string 
+// Description is a 24 byte text string
 //
 // [STRIFE] No such function, at least in v1.2
 // STRIFE-TODO: Does this make a comeback in v1.31?
@@ -1780,14 +1786,14 @@ boolean G_WriteSaveName(int slot, const char *charname)
 void
 G_SaveGame
 ( int	slot,
-  char*	description ) 
-{ 
-    savegameslot = slot; 
-    strcpy (savedescription, description); 
-    sendsave = true; 
-} 
+  char*	description )
+{
+    savegameslot = slot;
+    M_StringCopy(savedescription, description, sizeof(savedescription));
+    sendsave = true;
+}
 */
- 
+
 void G_DoSaveGame (char *path)
 { 
     char *current_path;
@@ -1800,7 +1806,7 @@ void G_DoSaveGame (char *path)
     
     // [STRIFE] custom save file path logic
     memset(gamemapstr, 0, sizeof(gamemapstr));
-    sprintf(gamemapstr, "%d", gamemap);
+    snprintf(gamemapstr, sizeof(gamemapstr), "%d", gamemap);
     savegame_file = M_SafeFilePath(path, gamemapstr);
 
     // [STRIFE] write the "current" file, which tells which hub map
@@ -1860,12 +1866,12 @@ void G_DoSaveGame (char *path)
     Z_Free(savegame_file);
 
     gameaction = ga_nothing; 
-    //strcpy(savedescription, "");
+    //M_StringCopy(savedescription, "", sizeof(savedescription));
 
     // [STRIFE]: custom message logic
     if(!strcmp(path, savepath))
     {
-        sprintf(savename, "%s saved.", character_name);
+        snprintf(savename, sizeof(savename), "%s saved.", character_name);
         players[consoleplayer].message = savename;
     }
 
@@ -2181,14 +2187,16 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
 // 
 // [STRIFE] Verified unmodified
 //
-void G_RecordDemo (char* name) 
-{ 
-    int             i; 
+void G_RecordDemo (char* name)
+{
+    size_t demoname_size;
+    int             i;
     int             maxsize;
 
-    usergame = false; 
-    demoname = Z_Malloc(strlen(name) + 5, PU_STATIC, NULL);
-    sprintf(demoname, "%s.lmp", name);
+    usergame = false;
+    demoname_size = strlen(name) + 5;
+    demoname = Z_Malloc(demoname_size, PU_STATIC, NULL);
+    snprintf(demoname, demoname_size, "%s.lmp", name);
     maxsize = 0x20000;
 
     //!
@@ -2283,7 +2291,8 @@ static char *DemoVersionDescription(int version)
     }
 
     // Unknown version. Who knows?
-    sprintf(resultbuf, "%i.%i (unknown)", version / 100, version % 100);
+    snprintf(resultbuf, sizeof(resultbuf),
+             "%i.%i (unknown)", version / 100, version % 100);
 
     return resultbuf;
 }

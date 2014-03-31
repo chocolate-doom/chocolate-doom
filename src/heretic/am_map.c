@@ -411,7 +411,7 @@ void AM_loadPics(void)
     //char namebuf[9];
 /*  for (i=0;i<10;i++)
   {
-    sprintf(namebuf, "AMMNUM%d", i);
+    snprintf(namebuf, sizeof(namebuf), "AMMNUM%d", i);
     marknums[i] = W_CacheLumpName(namebuf, PU_STATIC);
   }*/
     maplump = W_CacheLumpName(DEH_String("AUTOPAGE"), PU_STATIC);
@@ -603,7 +603,8 @@ boolean AM_Responder(event_t * ev)
         }
         else if (key == key_map_mark)
         {
-            sprintf(buffer, "%s %d", AMSTR_MARKEDSPOT, markpointnum);
+            snprintf(buffer, sizeof(buffer), "%s %d",
+                     AMSTR_MARKEDSPOT, markpointnum);
             plr->message = buffer;
             AM_addMark();
         }

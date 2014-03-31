@@ -490,20 +490,20 @@ static void DrawSoundInfo(void)
             MN_DrTextA(DEH_String("------"), xPos[0], y);
             continue;
         }
-        sprintf(text, "%s", c->name);
+        snprintf(text, sizeof(text), "%s", c->name);
         M_ForceUppercase(text);
         MN_DrTextA(text, xPos[x++], y);
-        sprintf(text, "%d", c->mo->type);
+        snprintf(text, sizeof(text), "%d", c->mo->type);
         MN_DrTextA(text, xPos[x++], y);
-        sprintf(text, "%d", c->mo->x >> FRACBITS);
+        snprintf(text, sizeof(text), "%d", c->mo->x >> FRACBITS);
         MN_DrTextA(text, xPos[x++], y);
-        sprintf(text, "%d", c->mo->y >> FRACBITS);
+        snprintf(text, sizeof(text), "%d", c->mo->y >> FRACBITS);
         MN_DrTextA(text, xPos[x++], y);
-        sprintf(text, "%d", c->id);
+        snprintf(text, sizeof(text), "%d", c->id);
         MN_DrTextA(text, xPos[x++], y);
-        sprintf(text, "%d", c->priority);
+        snprintf(text, sizeof(text), "%d", c->priority);
         MN_DrTextA(text, xPos[x++], y);
-        sprintf(text, "%d", c->distance);
+        snprintf(text, sizeof(text), "%d", c->distance);
         MN_DrTextA(text, xPos[x++], y);
     }
     UpdateState |= I_FULLSCRN;

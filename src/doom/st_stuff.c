@@ -598,12 +598,12 @@ ST_Responder (event_t* ev)
       // 'mypos' for player position
       else if (cht_CheckCheat(&cheat_mypos, ev->data2))
       {
-	static char	buf[ST_MSGWIDTH];
-	sprintf(buf, "ang=0x%x;x,y=(0x%x,0x%x)",
-		players[consoleplayer].mo->angle,
-		players[consoleplayer].mo->x,
-		players[consoleplayer].mo->y);
-	plyr->message = buf;
+        static char buf[ST_MSGWIDTH];
+        snprintf(buf, sizeof(buf), "ang=0x%x;x,y=(0x%x,0x%x)",
+                 players[consoleplayer].mo->angle,
+                 players[consoleplayer].mo->x,
+                 players[consoleplayer].mo->y);
+        plyr->message = buf;
       }
     }
     

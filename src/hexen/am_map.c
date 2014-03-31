@@ -1474,7 +1474,8 @@ void AM_DrawDeathmatchStats(void)
         else
         {
             MN_DrTextA(PlayerColorText[order[i]], 8, yPosition);
-            sprintf(textBuffer, "%d", fragCount[order[i]]);
+            snprintf(textBuffer, sizeof(textBuffer),
+                     "%d", fragCount[order[i]]);
             MN_DrTextA(textBuffer, 80, yPosition);
             yPosition += 10;
         }
@@ -1508,18 +1509,19 @@ static void DrawWorldTimer(void)
     worldTimer -= minutes * 60;
     seconds = worldTimer;
 
-    sprintf(timeBuffer, "%.2d : %.2d : %.2d", hours, minutes, seconds);
+    snprintf(timeBuffer, sizeof(timeBuffer),
+             "%.2d : %.2d : %.2d", hours, minutes, seconds);
     MN_DrTextA(timeBuffer, 240, 8);
 
     if (days)
     {
         if (days == 1)
         {
-            sprintf(dayBuffer, "%.2d DAY", days);
+            snprintf(dayBuffer, sizeof(dayBuffer), "%.2d DAY", days);
         }
         else
         {
-            sprintf(dayBuffer, "%.2d DAYS", days);
+            snprintf(dayBuffer, sizeof(dayBuffer), "%.2d DAYS", days);
         }
         MN_DrTextA(dayBuffer, 240, 20);
         if (days >= 5)

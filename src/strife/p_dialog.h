@@ -52,7 +52,8 @@ extern int dialogshowtext;
 do { \
   int obj_ln  = W_CheckNumForName(DEH_String(x)); \
   if(obj_ln > minlumpnum) \
-    strncpy(mission_objective, W_CacheLumpNum(obj_ln, PU_CACHE), OBJECTIVE_LEN);\
+    M_StringCopy(mission_objective, W_CacheLumpNum(obj_ln, PU_CACHE), \
+                 OBJECTIVE_LEN);\
 } while(0)
 
 // haleyjd - voice and objective in one
@@ -61,7 +62,8 @@ do { \
   int obj_ln = W_CheckNumForName(DEH_String(log)); \
   I_StartVoice(DEH_String(voice)); \
   if(obj_ln > minlumpnum) \
-    strncpy(mission_objective, W_CacheLumpNum(obj_ln, PU_CACHE), OBJECTIVE_LEN);\
+    M_StringCopy(mission_objective, W_CacheLumpNum(obj_ln, PU_CACHE), \
+                 OBJECTIVE_LEN);\
 } while(0)
 
 typedef struct mapdlgchoice_s

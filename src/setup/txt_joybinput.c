@@ -27,6 +27,7 @@
 
 #include "doomkeys.h"
 #include "joystick.h"
+#include "m_misc.h"
 
 #include "txt_joybinput.h"
 #include "txt_gui.h"
@@ -137,7 +138,7 @@ static void TXT_JoystickInputDrawer(TXT_UNCAST_ARG(joystick_input))
 
     if (*joystick_input->variable < 0)
     {
-        strcpy(buf, "(none)");
+        M_StringCopy(buf, "(none)", sizeof(buf));
     }
     else
     {

@@ -31,6 +31,7 @@
 #include "i_system.h"
 #include "m_argv.h"
 #include "m_bbox.h"
+#include "m_misc.h"
 #include "i_swap.h"
 #include "s_sound.h"
 #include "p_local.h"
@@ -699,7 +700,7 @@ void P_SetupLevel(int episode, int map, int playermask, skill_t skill)
     P_InitThinkers();
     leveltime = 0;
 
-    sprintf(lumpname, "MAP%02d", map);
+    snprintf(lumpname, sizeof(lumpname), "MAP%02d", map);
     lumpnum = W_GetNumForName(lumpname);
     //
     // Begin processing map lumps
@@ -819,9 +820,9 @@ static void InitMapInfo(void)
     info->doubleSky = false;
     info->lightning = false;
     info->fadetable = W_GetNumForName(DEFAULT_FADE_TABLE);
-    strcpy(info->name, UNKNOWN_MAP_NAME);
+    M_StringCopy(info->name, UNKNOWN_MAP_NAME, sizeof(info->name));
 
-//      strcpy(info->songLump, DEFAULT_SONG_LUMP);
+//    M_StringCopy(info->songLump, DEFAULT_SONG_LUMP, sizeof(info->songLump));
     SC_Open(MAPINFO_SCRIPT_NAME);
     while (SC_GetString())
     {
@@ -839,20 +840,20 @@ static void InitMapInfo(void)
         info = &MapInfo[map];
 
         // Save song lump name
-        strcpy(songMulch, info->songLump);
+        M_StringCopy(songMulch, info->songLump, sizeof(songMulch));
 
         // Copy defaults to current map definition
         memcpy(info, &MapInfo[0], sizeof(*info));
 
         // Restore song lump name
-        strcpy(info->songLump, songMulch);
+        M_StringCopy(info->songLump, songMulch, sizeof(info->songLump));
 
         // The warp translation defaults to the map number
         info->warpTrans = map;
 
         // Map name must follow the number
         SC_MustGetString();
-        strcpy(info->name, sc_String);
+        M_StringCopy(info->name, sc_String, sizeof(info->name));
 
         // Process optional tokens
         while (SC_GetString())
@@ -1106,7 +1107,8 @@ void P_PutMapSongLump(int map, char *lumpName)
     {
         return;
     }
-    strcpy(MapInfo[map].songLump, lumpName);
+    M_StringCopy(MapInfo[map].songLump, lumpName,
+                 sizeof(MapInfo[map].songLump));
 }
 
 //==========================================================================
@@ -1210,7 +1212,8 @@ void InitMapMusicInfo(void)
 
     for (i = 0; i < 99; i++)
     {
-        strcpy(MapInfo[i].songLump, DEFAULT_SONG_LUMP);
+        M_StringCopy(MapInfo[i].songLump, DEFAULT_SONG_LUMP,
+                     sizeof(MapInfo[i].songLump));
     }
     MapCount = 98;
 }

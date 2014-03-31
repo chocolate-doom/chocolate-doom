@@ -222,8 +222,7 @@ void M_SaveMoveMapToHere(void)
     char tmpnum[33];
 
     // haleyjd: no itoa available...
-    memset(tmpnum, 0, sizeof(tmpnum));
-    sprintf(tmpnum, "%d", gamemap);
+    snprintf(tmpnum, sizeof(tmpnum), "%d", gamemap);
 
     // haleyjd: use M_SafeFilePath, not sprintf
     mapsave  = M_SafeFilePath(savepath, tmpnum);
@@ -252,8 +251,7 @@ void M_SaveMoveHereToMap(void)
     char tmpnum[33];
 
     // haleyjd: no itoa available...
-    memset(tmpnum, 0, sizeof(tmpnum));
-    sprintf(tmpnum, "%d", gamemap);
+    snprintf(tmpnum, sizeof(tmpnum), "%d", gamemap);
 
     mapsave  = M_SafeFilePath(savepathtemp, tmpnum);
     heresave = M_SafeFilePath(savepathtemp, "here");
@@ -479,8 +477,8 @@ char *M_MakeStrifeSaveDir(int slotnum, const char *extra)
 {
     static char tmpbuffer[32];
 
-    memset(tmpbuffer, 0, sizeof(tmpbuffer));
-    sprintf(tmpbuffer, "strfsav%d.ssg%s", slotnum, extra);
+    snprintf(tmpbuffer, sizeof(tmpbuffer),
+             "strfsav%d.ssg%s", slotnum, extra);
 
     return tmpbuffer;
 }
@@ -501,7 +499,7 @@ char M_GetFilePath(const char *fn, char *dest, size_t len)
 
     p = dest + len - 1;
 
-    strncpy(dest, fn, len);
+    M_StringCopy(dest, fn, len);
 
     while(p >= dest)
     {

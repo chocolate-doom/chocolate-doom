@@ -37,6 +37,7 @@ void I_InitPaletteHR(void);
 void I_SetPaletteHR(const byte *palette);
 void I_FadeToPaletteHR(const byte *palette);
 void I_BlackPaletteHR(void);
+boolean I_CheckAbortHR(void);
 
 #endif /* #ifndef I_VIDEOHR_H */
 

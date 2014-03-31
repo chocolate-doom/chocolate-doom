@@ -1376,7 +1376,7 @@ static void *I_OPL_RegisterSong(void *data, int len)
     {
         M_WriteFile(filename, data, len);
     }
-    else 
+    else
     {
 	// Assume a MUS file and try to convert
 
@@ -1393,8 +1393,7 @@ static void *I_OPL_RegisterSong(void *data, int len)
     // remove file now
 
     remove(filename);
-
-    Z_Free(filename);
+    free(filename);
 
     return result;
 }
@@ -1519,19 +1518,20 @@ static int ChannelInUse(opl_channel_data_t *channel)
     return 0;
 }
 
-void I_OPL_DevMessages(char *result)
+void I_OPL_DevMessages(char *result, size_t result_len)
 {
+    char tmp[80];
     int instr_num;
     int lines;
     int i;
 
     if (num_tracks == 0)
     {
-        sprintf(result, "No OPL track!");
+        snprintf(result, result_len, "No OPL track!");
         return;
     }
 
-    sprintf(result, "Tracks:\n");
+    snprintf(result, result_len, "Tracks:\n");
     lines = 1;
 
     for (i = 0; i < NumActiveChannels(); ++i)
@@ -1543,16 +1543,19 @@ void I_OPL_DevMessages(char *result)
 
         instr_num = tracks[0].channels[i].instrument - main_instrs;
 
-        sprintf(result + strlen(result),
+        snprintf(tmp, sizeof(tmp),
                 "chan %i: %c i#%i (%s)\n",
                 i,
                 ChannelInUse(&tracks[0].channels[i]) ? '\'' : ' ',
                 instr_num + 1,
                 main_instr_names[instr_num]);
+        M_StringConcat(result, tmp, result_len);
+
         ++lines;
     }
 
-    sprintf(result + strlen(result), "\nLast percussion:\n");
+    snprintf(tmp, sizeof(tmp), "\nLast percussion:\n");
+    M_StringConcat(result, tmp, result_len);
     lines += 2;
 
     i = (last_perc_count + PERCUSSION_LOG_LEN - 1) % PERCUSSION_LOG_LEN;
@@ -1563,11 +1566,12 @@ void I_OPL_DevMessages(char *result)
             break;
         }
 
-        sprintf(result + strlen(result),
-                "%cp#%i (%s)\n",
-                i == 0 ? '\'' : ' ',
-                last_perc[i],
-                percussion_names[last_perc[i] - 35]);
+        snprintf(tmp, sizeof(tmp),
+                 "%cp#%i (%s)\n",
+                 i == 0 ? '\'' : ' ',
+                 last_perc[i],
+                 percussion_names[last_perc[i] - 35]);
+        M_StringConcat(result, tmp, result_len);
         ++lines;
 
         i = (i + PERCUSSION_LOG_LEN - 1) % PERCUSSION_LOG_LEN;

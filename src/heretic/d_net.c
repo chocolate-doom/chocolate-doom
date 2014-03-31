@@ -29,11 +29,12 @@
 
 #include "doomfeatures.h"
 
-#include "m_argv.h"
 #include "i_system.h"
 #include "i_timer.h"
 #include "i_video.h"
 #include "doomdef.h"
+#include "m_argv.h"
+#include "m_misc.h"
 #include "w_checksum.h"
 
 #include "deh_main.h"
@@ -60,7 +61,7 @@ static void PlayerQuitGame(player_t *player)
     // The Heretic source code does this, which doesn't actually work.
     // As a result, the exit message is never seen.
 
-    strcpy(exitmsg, "PLAYER 1 LEFT THE GAME");
+    M_StringCopy(exitmsg, "PLAYER 1 LEFT THE GAME", sizeof(exitmsg));
     exitmsg[7] += player_num;
     players[consoleplayer].message = exitmsg;
 

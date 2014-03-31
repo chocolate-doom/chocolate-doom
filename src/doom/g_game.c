@@ -1000,17 +1000,18 @@ void G_Ticker (void)
                 turbodetected[i] = true;
             }
 
-	    if ((gametic & 31) == 0 
+            if ((gametic & 31) == 0 
              && ((gametic >> 5) % MAXPLAYERS) == i
              && turbodetected[i])
-	    {
-		static char turbomessage[80];
-		extern char *player_names[4];
-		sprintf (turbomessage, "%s is turbo!",player_names[i]);
-		players[consoleplayer].message = turbomessage;
+            {
+                static char turbomessage[80];
+                extern char *player_names[4];
+                snprintf(turbomessage, sizeof(turbomessage),
+                         "%s is turbo!", player_names[i]);
+                players[consoleplayer].message = turbomessage;
                 turbodetected[i] = false;
-	    }
-			
+            }
+
 	    if (netgame && !netdemo && !(gametic%ticdup) ) 
 	    { 
 		if (gametic > BACKUPTICS 
@@ -1046,7 +1047,11 @@ void G_Ticker (void)
 					 
 		  case BTS_SAVEGAME: 
 		    if (!savedescription[0]) 
-			strcpy (savedescription, "NET GAME"); 
+                    {
+                        M_StringCopy(savedescription, "NET GAME",
+                                     sizeof(savedescription));
+                    }
+
 		    savegameslot =  
 			(players[i].cmd.buttons & BTS_SAVEMASK)>>BTS_SAVESHIFT; 
 		    gameaction = ga_savegame; 
@@ -1648,7 +1653,7 @@ char	savename[256];
 
 void G_LoadGame (char* name) 
 { 
-    strcpy (savename, name); 
+    M_StringCopy(savename, name, sizeof(savename));
     gameaction = ga_loadgame; 
 } 
  
@@ -1710,13 +1715,13 @@ void G_DoLoadGame (void)
 void
 G_SaveGame
 ( int	slot,
-  char*	description ) 
-{ 
-    savegameslot = slot; 
-    strcpy (savedescription, description); 
-    sendsave = true; 
-} 
- 
+  char*	description )
+{
+    savegameslot = slot;
+    M_StringCopy(savedescription, description, sizeof(savedescription));
+    sendsave = true;
+}
+
 void G_DoSaveGame (void) 
 { 
     char *savegame_file;
@@ -1767,7 +1772,7 @@ void G_DoSaveGame (void)
     rename(temp_savegame_file, savegame_file);
     
     gameaction = ga_nothing; 
-    strcpy(savedescription, "");
+    M_StringCopy(savedescription, "", sizeof(savedescription));
 
     players[consoleplayer].message = DEH_String(GGSAVED);
 
@@ -2069,16 +2074,18 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
  
  
 //
-// G_RecordDemo 
-// 
-void G_RecordDemo (char *name) 
-{ 
-    int             i; 
-    int				maxsize;
-	
-    usergame = false; 
-    demoname = Z_Malloc(strlen(name) + 5, PU_STATIC, NULL);
-    sprintf(demoname, "%s.lmp", name);
+// G_RecordDemo
+//
+void G_RecordDemo (char *name)
+{
+    size_t demoname_size;
+    int i;
+    int maxsize;
+
+    usergame = false;
+    demoname_size = strlen(name) + 5;
+    demoname = Z_Malloc(demoname_size, PU_STATIC, NULL);
+    snprintf(demoname, demoname_size, "%s.lmp", name);
     maxsize = 0x20000;
 
     //!
@@ -2205,7 +2212,8 @@ static char *DemoVersionDescription(int version)
     }
     else
     {
-        sprintf(resultbuf, "%i.%i (unknown)", version / 100, version % 100);
+        snprintf(resultbuf, sizeof(resultbuf),
+                 "%i.%i (unknown)", version / 100, version % 100);
         return resultbuf;
     }
 }

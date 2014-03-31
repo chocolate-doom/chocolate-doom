@@ -39,6 +39,7 @@
 #include "sounds.h"
 #include "s_sound.h"
 
+#include "m_misc.h"
 #include "m_random.h"
 #include "m_argv.h"
 
@@ -95,7 +96,7 @@ int sfxVolume = 8;
 
 // Maximum volume of music. 
 
-int musicVolume = 8;
+int musicVolume = 13;
 
 // haleyjd 08/29/10: [STRIFE] New global variable
 // Volume of voice channel.
@@ -553,7 +554,7 @@ static voiceinfo_t *S_getVoice(const char *name, int lumpnum)
     {
         voice = calloc(1, sizeof(voiceinfo_t));
 
-        strncpy(voice->sfx.name, name, 8);
+        M_StringCopy(voice->sfx.name, name, sizeof(voice->sfx.name));
         voice->sfx.priority = INT_MIN; // make highest possible priority
         voice->sfx.pitch = -1;
         voice->sfx.volume = -1;
@@ -607,8 +608,7 @@ void I_StartVoice(const char *lumpname)
         return;
 
     // Because of constness problems...
-    strncpy(lumpnamedup, lumpname, 9);
-    lumpnamedup[8] = '\0';
+    M_StringCopy(lumpnamedup, lumpname, sizeof(lumpnamedup));
 
     if((lumpnum = W_CheckNumForName(lumpnamedup)) != -1)
     {
@@ -788,7 +788,7 @@ void S_ChangeMusic(int musicnum, int looping)
     // get lumpnum if neccessary
     if (!music->lumpnum)
     {
-        sprintf(namebuf, "d_%s", DEH_String(music->name));
+        snprintf(namebuf, sizeof(namebuf), "d_%s", DEH_String(music->name));
         music->lumpnum = W_GetNumForName(namebuf);
     }
 

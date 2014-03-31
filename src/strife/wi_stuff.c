@@ -1697,12 +1697,12 @@ static void WI_loadUnloadData(load_callback_t callback)
 
     if (gamemode == commercial)
     {
-	strncpy(name, DEH_String("INTERPIC"), 9);
+	M_StringCopy(name, DEH_String("INTERPIC"), sizeof(name));
         name[8] = '\0';
     }
     else if (gamemode == retail && wbs->epsd == 3)
     {
-	strncpy(name, DEH_String("INTERPIC"), 9);
+	M_StringCopy(name, DEH_String("INTERPIC"), sizeof(name));
         name[8] = '\0';
     }
     else

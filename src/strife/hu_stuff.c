@@ -38,6 +38,7 @@
 #include "hu_stuff.h"
 #include "hu_lib.h"
 #include "m_controls.h"
+#include "m_misc.h"
 #include "w_wad.h"
 
 #include "s_sound.h"
@@ -599,7 +600,7 @@ boolean HU_Responder(event_t *ev)
 
             // leave chat mode and notify that it was sent
             chat_on = false;
-            strcpy(lastmessage, chat_macros[c]);
+            M_StringCopy(lastmessage, chat_macros[c], sizeof(lastmessage));
             plr->message = lastmessage;
             eatkey = true;
         }
@@ -650,7 +651,8 @@ boolean HU_Responder(event_t *ev)
                 {
                     eatkey = true;
                     HU_queueChatChar(HU_CHANGENAME);
-                    strncpy(lastmessage, DEH_String("Changing Name:"), sizeof(lastmessage));
+                    M_StringCopy(lastmessage, DEH_String("Changing Name:"),
+                                 sizeof(lastmessage));
                     plr->message = lastmessage;
                     hu_setting_name = true;
                 }
@@ -677,7 +679,8 @@ boolean HU_Responder(event_t *ev)
                     }
                     else
                     {
-                        strcpy(lastmessage, w_chat.l.l);
+                        M_StringCopy(lastmessage, w_chat.l.l,
+                                     sizeof(lastmessage));
                     }
                     plr->message = lastmessage;
                 }

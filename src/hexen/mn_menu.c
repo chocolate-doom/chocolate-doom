@@ -32,6 +32,7 @@
 #include "i_swap.h"
 #include "i_video.h"
 #include "m_controls.h"
+#include "m_misc.h"
 #include "p_local.h"
 #include "r_local.h"
 #include "s_sound.h"
@@ -684,7 +685,7 @@ static boolean ReadDescriptionForSlot(int slot, char *description)
     char name[100];
     char versionText[HXS_VERSION_TEXT_LENGTH];
 
-    sprintf(name, "%shex%d.hxs", SavePath, slot);
+    snprintf(name, sizeof(name), "%shex%d.hxs", SavePath, slot);
 
     fp = fopen(name, "rb");
 
@@ -929,7 +930,7 @@ static void SCSaveGame(int option)
     if (!FileMenuKeySteal)
     {
         FileMenuKeySteal = true;
-        strcpy(oldSlotText, SlotText[option]);
+        M_StringCopy(oldSlotText, SlotText[option], sizeof(oldSlotText));
         ptr = SlotText[option];
         while (*ptr)
         {
@@ -1635,8 +1636,8 @@ boolean MN_Responder(event_t * event)
         }
         if (key == KEY_ESCAPE)
         {
-            memset(SlotText[currentSlot], 0, SLOTTEXTLEN + 2);
-            strcpy(SlotText[currentSlot], oldSlotText);
+            M_StringCopy(SlotText[currentSlot], oldSlotText,
+                         sizeof(SlotText[currentSlot]));
             SlotStatus[currentSlot]--;
             MN_DeactivateMenu();
             return (true);

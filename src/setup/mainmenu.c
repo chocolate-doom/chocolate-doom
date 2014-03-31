@@ -329,7 +329,7 @@ static void SetWindowTitle(void)
 
     TXT_SetDesktopTitle(title);
 
-    Z_Free(title);
+    free(title);
 }
 
 // Initialize the textscreen library.

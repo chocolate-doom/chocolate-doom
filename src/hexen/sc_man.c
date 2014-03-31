@@ -88,7 +88,7 @@ void SC_Open(char *name)
 
     if (sc_FileScripts == true)
     {
-        sprintf(fileName, "%s%s.txt", sc_ScriptsDir, name);
+        snprintf(fileName, sizeof(fileName), "%s%s.txt", sc_ScriptsDir, name);
         SC_OpenFile(fileName);
     }
     else
@@ -138,7 +138,7 @@ static void OpenScript(char *name, int type)
         ScriptLumpNum = W_GetNumForName(name);
         ScriptBuffer = (char *) W_CacheLumpNum(ScriptLumpNum, PU_STATIC);
         ScriptSize = W_LumpLength(ScriptLumpNum);
-        strcpy(ScriptName, name);
+        M_StringCopy(ScriptName, name, sizeof(ScriptName));
     }
     else if (type == FILE_ZONE_SCRIPT)
     {                           // File script - zone

@@ -50,6 +50,7 @@
 #include "i_scale.h"
 #include "m_argv.h"
 #include "m_config.h"
+#include "m_misc.h"
 #include "tables.h"
 #include "v_video.h"
 #include "w_wad.h"
@@ -484,7 +485,8 @@ static int TranslateKey(SDL_keysym *sym)
       case SDLK_F10:	return KEY_F10;
       case SDLK_F11:	return KEY_F11;
       case SDLK_F12:	return KEY_F12;
-	
+      case SDLK_PRINT:  return KEY_PRTSCR;
+
       case SDLK_BACKSPACE: return KEY_BACKSPACE;
       case SDLK_DELETE:	return KEY_DEL;
 
@@ -1122,7 +1124,7 @@ void I_FinishUpdate (void)
 	lasttic = i;
 	if (tics > 20) tics = 20;
 
-	for (i=0 ; i<tics*2 ; i+=4)
+	for (i=0 ; i<tics*4 ; i+=4)
 	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0xff;
 	for ( ; i<20*4 ; i+=4)
 	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
@@ -1242,13 +1244,9 @@ void I_InitWindowTitle(void)
 {
     char *buf;
 
-    buf = Z_Malloc(strlen(window_title) + strlen(PACKAGE_STRING) + 5, 
-                   PU_STATIC, NULL);
-    sprintf(buf, "%s - %s", window_title, PACKAGE_STRING);
-
+    buf = M_StringJoin(window_title, " - ", PACKAGE_STRING, NULL);
     SDL_WM_SetCaption(buf, NULL);
-
-    Z_Free(buf);
+    free(buf);
 }
 
 // Set the application icon
@@ -1564,83 +1562,23 @@ static void I_AutoAdjustSettings(void)
 
 static void SetScaleFactor(int factor)
 {
-    if (fullscreen)
+    int w, h;
+
+    // Pick 320x200 or 320x240, depending on aspect ratio correct
+
+    if (aspect_ratio_correct)
     {
-        // In fullscreen, find a mode that will provide this scale factor
-
-        SDL_Rect **modes;
-        SDL_Rect *best_mode;
-        screen_mode_t *scrmode;
-        int best_num_pixels, num_pixels;
-        int i;
-
-        modes = SDL_ListModes(NULL, SDL_FULLSCREEN);
-
-        best_mode = NULL;
-        best_num_pixels = INT_MAX;
-
-        for (i=0; modes[i] != NULL; ++i)
-        {
-            // What screen_mode_t will this use?
-
-            scrmode = I_FindScreenMode(modes[i]->w, modes[i]->h);
-
-            if (scrmode == NULL)
-            {
-                continue;
-            }
-
-            // Only choose modes that fit the requested scale factor.
-            //
-            // Note that this allows 320x240 as valid for 1x scale, as 
-            // 240/200 is rounded down to 1 by integer division.
-
-            if ((scrmode->width / SCREENWIDTH) != factor
-             || (scrmode->height / SCREENHEIGHT) != factor)
-            {
-                continue;
-            }
-
-            // Is this a better mode than what we currently have?
-
-            num_pixels = modes[i]->w * modes[i]->h;
-
-            if (num_pixels < best_num_pixels)
-            {
-                best_num_pixels = num_pixels;
-                best_mode = modes[i];
-            }
-        }
-
-        if (best_mode == NULL)
-        {
-            I_Error("No fullscreen graphics mode available to support "
-                    "%ix scale factor!", factor);
-        }
-
-        screen_width = best_mode->w;
-        screen_height = best_mode->h;
+        w = SCREENWIDTH;
+        h = SCREENHEIGHT_4_3;
     }
     else
     {
-        int w, h;
-
-        // Pick 320x200 or 320x240, depending on aspect ratio correct
-
-        if (aspect_ratio_correct)
-        {
-            w = SCREENWIDTH;
-            h = SCREENHEIGHT_4_3;
-        }
-        else 
-        {
-            w = SCREENWIDTH;
-            h = SCREENHEIGHT;
-        }
-
-        screen_width = w * factor;
-        screen_height = h * factor;
+        w = SCREENWIDTH;
+        h = SCREENHEIGHT;
     }
+
+    screen_width = w * factor;
+    screen_height = h * factor;
 }
 
 void I_GraphicsCheckCommandLine(void)
@@ -1879,8 +1817,7 @@ static void SetSDLVideoDriver(void)
     {
         char *env_string;
 
-        env_string = malloc(strlen(video_driver) + 30);
-        sprintf(env_string, "SDL_VIDEODRIVER=%s", video_driver);
+        env_string = M_StringJoin("SDL_VIDEODRIVER=", video_driver, NULL);
         putenv(env_string);
         free(env_string);
     }
@@ -1902,7 +1839,7 @@ static void SetWindowPositionVars(void)
     }
     else if (sscanf(window_position, "%i,%i", &x, &y) == 2)
     {
-        sprintf(buf, "SDL_VIDEO_WINDOW_POS=%i,%i", x, y);
+        snprintf(buf, sizeof(buf), "SDL_VIDEO_WINDOW_POS=%i,%i", x, y);
         putenv(buf);
     }
 }
@@ -2072,7 +2009,7 @@ void I_InitGraphics(void)
         int winid;
 
         sscanf(env, "0x%x", &winid);
-        sprintf(winenv, "SDL_WINDOWID=%i", winid);
+        snprintf(winenv, sizeof(winenv), "SDL_WINDOWID=%i", winid);
 
         putenv(winenv);
     }

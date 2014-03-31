@@ -32,6 +32,8 @@
 
 #include "doomtype.h"
 #include "i_system.h"
+#include "m_misc.h"
+
 #include "deh_mapping.h"
 
 static deh_mapping_entry_t *GetMappingEntryByName(deh_context_t *context,
@@ -158,7 +160,7 @@ boolean DEH_SetStringMapping(deh_context_t *context, deh_mapping_t *mapping,
 
     // Copy value into field:
 
-    strncpy(location, value, entry->size);
+    M_StringCopy(location, value, entry->size);
 
     return true;
 }

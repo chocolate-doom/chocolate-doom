@@ -29,6 +29,7 @@
 
 #include "z_zone.h"
 
+#include "m_misc.h"
 #include "m_random.h"
 
 #include "deh_main.h"
@@ -1704,17 +1705,15 @@ static void WI_loadUnloadData(load_callback_t callback)
 
     if (gamemode == commercial)
     {
-	strncpy(name, DEH_String("INTERPIC"), 9);
-        name[8] = '\0';
+        M_StringCopy(name, DEH_String("INTERPIC"), sizeof(name));
     }
     else if (gamemode == retail && wbs->epsd == 3)
     {
-	strncpy(name, DEH_String("INTERPIC"), 9);
-        name[8] = '\0';
+        M_StringCopy(name, DEH_String("INTERPIC"), sizeof(name));
     }
     else
     {
-	DEH_snprintf(name, 9, "WIMAP%d", wbs->epsd);
+	DEH_snprintf(name, sizeof(name), "WIMAP%d", wbs->epsd);
     }
 
     // Draw backdrop and save to a temporary buffer

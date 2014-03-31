@@ -30,7 +30,7 @@
 
 #include "deh_str.h"
 #include "i_sound.h"
-
+#include "m_misc.h"
 #include "w_wad.h"
 #include "z_zone.h"
 
@@ -253,11 +253,11 @@ static int I_PCS_GetSfxLumpNum(sfxinfo_t* sfx)
 
     if (use_sfx_prefix)
     {
-        sprintf(namebuf, "dp%s", DEH_String(sfx->name));
+        snprintf(namebuf, sizeof(namebuf), "dp%s", DEH_String(sfx->name));
     }
     else
     {
-        strcpy(namebuf, DEH_String(sfx->name));
+        M_StringCopy(namebuf, DEH_String(sfx->name), sizeof(namebuf));
     }
 
     return W_GetNumForName(namebuf);

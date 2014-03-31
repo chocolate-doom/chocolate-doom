@@ -1569,6 +1569,16 @@ static default_t *SearchCollection(default_collection_t *collection, char *name)
     return NULL;
 }
 
+// Mapping from DOS keyboard scan code to internal key code (as defined
+// in doomkey.h). I think I (fraggle) reused this from somewhere else
+// but I can't find where. Anyway, notes:
+//  * KEY_PAUSE is wrong - it's in the KEY_NUMLOCK spot. This shouldn't
+//    matter in terms of Vanilla compatibility because neither of
+//    those were valid for key bindings.
+//  * There is no proper scan code for PrintScreen (on DOS machines it
+//    sends an interrupt). So I added a fake scan code of 126 for it.
+//    The presence of this is important so we can bind PrintScreen as
+//    a screenshot key.
 static const int scantokey[128] =
 {
     0  ,    27,     '1',    '2',    '3',    '4',    '5',    '6',
@@ -1579,14 +1589,14 @@ static const int scantokey[128] =
     '\'',   '`',    KEY_RSHIFT,'\\',   'z',    'x',    'c',    'v',
     'b',    'n',    'm',    ',',    '.',    '/',    KEY_RSHIFT,KEYP_MULTIPLY,
     KEY_RALT,  ' ',  KEY_CAPSLOCK,KEY_F1,  KEY_F2,   KEY_F3,   KEY_F4,   KEY_F5,
-    KEY_F6,   KEY_F7,   KEY_F8,   KEY_F9,   KEY_F10,  KEY_PAUSE,KEY_SCRLCK,KEY_HOME,
+    KEY_F6,   KEY_F7,   KEY_F8,   KEY_F9,   KEY_F10,  /*KEY_NUMLOCK?*/KEY_PAUSE,KEY_SCRLCK,KEY_HOME,
     KEY_UPARROW,KEY_PGUP,KEY_MINUS,KEY_LEFTARROW,KEYP_5,KEY_RIGHTARROW,KEYP_PLUS,KEY_END,
     KEY_DOWNARROW,KEY_PGDN,KEY_INS,KEY_DEL,0,   0,      0,      KEY_F11,
     KEY_F12,  0,      0,      0,      0,      0,      0,      0,
     0,      0,      0,      0,      0,      0,      0,      0,
     0,      0,      0,      0,      0,      0,      0,      0,
     0,      0,      0,      0,      0,      0,      0,      0,
-    0,      0,      0,      0,      0,      0,      0,      0
+    0,      0,      0,      0,      0,      0,      KEY_PRTSCR, 0
 };
 
 
@@ -1882,8 +1892,7 @@ void M_LoadDefaults (void)
     else
     {
         doom_defaults.filename
-            = malloc(strlen(configdir) + strlen(default_main_config) + 1);
-        sprintf(doom_defaults.filename, "%s%s", configdir, default_main_config);
+            = M_StringJoin(configdir, default_main_config, NULL);
     }
 
     printf("saving config in %s\n", doom_defaults.filename);
@@ -1905,10 +1914,8 @@ void M_LoadDefaults (void)
     }
     else
     {
-        extra_defaults.filename 
-            = malloc(strlen(configdir) + strlen(default_extra_config) + 1);
-        sprintf(extra_defaults.filename, "%s%s", 
-                configdir, default_extra_config);
+        extra_defaults.filename
+            = M_StringJoin(configdir, default_extra_config, NULL);
     }
 
     LoadDefaultCollection(&doom_defaults);
@@ -2041,10 +2048,8 @@ static char *GetDefaultConfigDir(void)
         // put all configuration in a config directory off the
         // homedir
 
-        result = malloc(strlen(homedir) + strlen(PACKAGE_TARNAME) + 5);
-
-        sprintf(result, "%s%c.%s%c", homedir, DIR_SEPARATOR,
-                                     PACKAGE_TARNAME, DIR_SEPARATOR);
+        result = M_StringJoin(homedir, DIR_SEPARATOR_S,
+                              "." PACKAGE_TARNAME, DIR_SEPARATOR_S, NULL);
 
         return result;
     }
@@ -2093,6 +2098,7 @@ void M_SetConfigDir(char *dir)
 char *M_GetSaveGameDir(char *iwadname)
 {
     char *savegamedir;
+    char *topdir;
 
     // If not "doing" a configuration directory (Windows), don't "do"
     // a savegame directory, either.
@@ -2103,20 +2109,19 @@ char *M_GetSaveGameDir(char *iwadname)
     }
     else
     {
-        // ~/.chocolate-doom/savegames/
+        // ~/.chocolate-doom/savegames
 
-        savegamedir = malloc(strlen(configdir) + 30);
-        sprintf(savegamedir, "%ssavegames%c", configdir,
-                             DIR_SEPARATOR);
-
-        M_MakeDirectory(savegamedir);
+        topdir = M_StringJoin(configdir, "savegames", NULL);
+        M_MakeDirectory(topdir);
 
         // eg. ~/.chocolate-doom/savegames/doom2.wad/
 
-        sprintf(savegamedir + strlen(savegamedir), "%s%c",
-                iwadname, DIR_SEPARATOR);
+        savegamedir = M_StringJoin(topdir, DIR_SEPARATOR_S, iwadname,
+                                   DIR_SEPARATOR_S, NULL);
 
         M_MakeDirectory(savegamedir);
+
+        free(topdir);
     }
 
     return savegamedir;

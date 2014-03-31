@@ -537,7 +537,8 @@ static void DrNumber(int val, int x, int y, int wrapThresh)
 
     if (!(val < -9 && wrapThresh < 1000))
     {
-        sprintf(buff, "%d", val >= wrapThresh ? val % wrapThresh : val);
+        snprintf(buff, sizeof(buff), "%d",
+                 val >= wrapThresh ? val % wrapThresh : val);
     }
     MN_DrTextA(buff, x - MN_TextAWidth(buff) / 2, y);
 }
@@ -554,7 +555,8 @@ static void DrNumberBold(int val, int x, int y, int wrapThresh)
 
     if (!(val < -9 && wrapThresh < 1000))
     {
-        sprintf(buff, "%d", val >= wrapThresh ? val % wrapThresh : val);
+        snprintf(buff, sizeof(buff), "%d",
+                 val >= wrapThresh ? val % wrapThresh : val);
     }
     MN_DrTextAYellow(buff, x - MN_TextAWidth(buff) / 2, y);
 }

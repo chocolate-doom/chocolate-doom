@@ -29,6 +29,7 @@
 #include "s_sound.h"
 #include "doomkeys.h"
 #include "m_controls.h"
+#include "m_misc.h"
 #include "p_local.h"
 #include "v_video.h"
 
@@ -326,12 +327,15 @@ void CT_Ticker(void)
                 CT_AddChar(i, 0);       // set the end of message character
                 if (numplayers > 2)
                 {
-                    strcpy(plr_lastmsg[i], CT_FromPlrText[i]);
-                    strcat(plr_lastmsg[i], chat_msg[i]);
+                    M_StringCopy(plr_lastmsg[i], CT_FromPlrText[i],
+                                 sizeof(plr_lastmsg[i]));
+                    M_StringConcat(plr_lastmsg[i], chat_msg[i],
+                                   sizeof(plr_lastmsg[i]));
                 }
                 else
                 {
-                    strcpy(plr_lastmsg[i], chat_msg[i]);
+                    M_StringCopy(plr_lastmsg[i], chat_msg[i],
+                                 sizeof(plr_lastmsg[i]));
                 }
                 if (i != consoleplayer && (chat_dest[i] == consoleplayer + 1
                                            || chat_dest[i] == CT_PLR_ALL)

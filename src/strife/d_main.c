@@ -461,7 +461,7 @@ void D_BindVariables(void)
     {
         char buf[12];
 
-        sprintf(buf, "chatmacro%i", i);
+        snprintf(buf, sizeof(buf), "chatmacro%i", i);
         M_BindVariable(buf, &chat_macros[i]);
     }
 }
@@ -783,20 +783,26 @@ static char *GetGameName(char *gamename)
         
         if (deh_sub != banners[i])
         {
+            size_t gamename_size;
+
             // Has been replaced
             // We need to expand via printf to include the Doom version 
             // number
             // We also need to cut off spaces to get the basic name
 
-            gamename = Z_Malloc(strlen(deh_sub) + 10, PU_STATIC, 0);
-            sprintf(gamename, deh_sub, STRIFE_VERSION / 100, STRIFE_VERSION % 100);
+            gamename_size = strlen(deh_sub) + 10;
+            gamename = Z_Malloc(gamename_size, PU_STATIC, 0);
+            snprintf(gamename, gamename_size, deh_sub,
+                     STRIFE_VERSION / 100, STRIFE_VERSION % 100);
 
             while (gamename[0] != '\0' && isspace(gamename[0]))
-                strcpy(gamename, gamename+1);
+            {
+                memmove(gamename, gamename + 1, gamename_size - 1);
+            }
 
             while (gamename[0] != '\0' && isspace(gamename[strlen(gamename)-1]))
                 gamename[strlen(gamename) - 1] = '\0';
-            
+
             return gamename;
         }
     }
@@ -848,7 +854,7 @@ void D_IdentifyVersion(void)
                 // how the heck is Choco surviving without this routine?
                 sepchar = M_GetFilePath(iwad, filename, len);
                 filename[strlen(filename)] = sepchar;
-                strcat(filename, "voices.wad");
+                M_StringConcat(filename, "voices.wad", sizeof(filename));
 
                 if(!M_FileExists(filename))
                     disable_voices = 1;
@@ -1600,21 +1606,21 @@ void D_DoomMain (void)
 
     if (p)
     {
-        if (!strcasecmp(myargv[p+1] + strlen(myargv[p+1]) - 4, ".lmp"))
+        // With Vanilla you have to specify the file without extension,
+        // but make that optional.
+        if (M_StringEndsWith(myargv[p + 1], ".lmp"))
         {
-            strcpy(file, myargv[p + 1]);
+            M_StringCopy(file, myargv[p + 1], sizeof(file));
         }
         else
         {
-            sprintf (file,"%s.lmp", myargv[p+1]);
+            DEH_snprintf(file, sizeof(file), "%s.lmp", myargv[p+1]);
         }
 
         if (D_AddFile (file))
         {
-            strncpy(demolumpname, lumpinfo[numlumps - 1].name, 8);
-            demolumpname[8] = '\0';
-
-            printf("Playing demo %s.\n", file);
+            M_StringCopy(demolumpname, lumpinfo[numlumps - 1].name,
+                         sizeof(demolumpname));
         }
         else
         {
@@ -1622,10 +1628,10 @@ void D_DoomMain (void)
             // the demo in the same way as Vanilla Doom.  This makes
             // tricks like "-playdemo demo1" possible.
 
-            strncpy(demolumpname, myargv[p + 1], 8);
-            demolumpname[8] = '\0';
+            M_StringCopy(demolumpname, myargv[p + 1], sizeof(demolumpname));
         }
 
+        printf("Playing demo %s.\n", file);
     }
 
     I_AtExit((atexit_func_t) G_CheckDemoStatus, true);

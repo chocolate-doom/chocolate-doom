@@ -41,6 +41,7 @@
 #include "p_dialog.h"
 #include "p_local.h"  // haleyjd [STRIFE]
 #include "m_bbox.h"   // villsa [STRIFE]
+#include "m_misc.h"
 
 // Data.
 #include "sounds.h"

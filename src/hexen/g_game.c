@@ -1018,11 +1018,13 @@ void G_Ticker(void)
                         {
                             if (netgame)
                             {
-                                strcpy(savedescription, "NET GAME");
+                                M_StringCopy(savedescription, "NET GAME",
+                                             sizeof(savedescription));
                             }
                             else
                             {
-                                strcpy(savedescription, "SAVE GAME");
+                                M_StringCopy(savedescription, "SAVE GAME",
+                                             sizeof(savedescription));
                             }
                         }
                         savegameslot =
@@ -1628,7 +1630,7 @@ void G_DoLoadGame(void)
 void G_SaveGame(int slot, char *description)
 {
     savegameslot = slot;
-    strcpy(savedescription, description);
+    M_StringCopy(savedescription, description, sizeof(savedescription));
     sendsave = true;
 }
 
@@ -1811,8 +1813,8 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
 
     G_InitNew(skill, episode, map);
     usergame = false;
-    strcpy(demoname, name);
-    strcat(demoname, ".lmp");
+    M_StringCopy(demoname, name, sizeof(demoname));
+    M_StringConcat(demoname, ".lmp", sizeof(demoname));
     demobuffer = demo_p = Z_Malloc(0x20000, PU_STATIC, NULL);
     *demo_p++ = skill;
     *demo_p++ = episode;

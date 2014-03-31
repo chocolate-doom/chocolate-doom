@@ -43,6 +43,7 @@
 #include "i_system.h"
 #include "i_swap.h"
 #include "m_argv.h"
+#include "m_misc.h"
 #include "w_wad.h"
 #include "z_zone.h"
 
@@ -704,7 +705,8 @@ static boolean CacheSFX(sfxinfo_t *sfxinfo)
     {
         char filename[16];
 
-        sprintf(filename, "%s.wav", DEH_String(S_sfx[sound].name));
+        snprintf(filename, sizeof(filename), "%s.wav",
+                 DEH_String(S_sfx[sound].name));
         WriteWAV(filename, sound_chunks[sound].abuf,
                  sound_chunks[sound].alen, mixer_freq);
     }
@@ -717,7 +719,7 @@ static boolean CacheSFX(sfxinfo_t *sfxinfo)
     return true;
 }
 
-static void GetSfxLumpName(sfxinfo_t *sfx, char *buf)
+static void GetSfxLumpName(sfxinfo_t *sfx, char *buf, size_t buf_len)
 {
     // Linked sfx lumps? Get the lump number for the sound linked to.
 
@@ -731,11 +733,11 @@ static void GetSfxLumpName(sfxinfo_t *sfx, char *buf)
 
     if (use_sfx_prefix)
     {
-        sprintf(buf, "ds%s", DEH_String(sfx->name));
+        snprintf(buf, buf_len, "ds%s", DEH_String(sfx->name));
     }
     else
     {
-        strcpy(buf, DEH_String(sfx->name));
+        M_StringCopy(buf, DEH_String(sfx->name), buf_len);
     }
 }
 
@@ -765,7 +767,7 @@ static void I_SDL_PrecacheSounds(sfxinfo_t *sounds, int num_sounds)
             fflush(stdout);
         }
 
-        GetSfxLumpName(&sounds[i], namebuf);
+        GetSfxLumpName(&sounds[i], namebuf, sizeof(namebuf));
 
         sounds[i].lumpnum = W_CheckNumForName(namebuf);
 
@@ -815,7 +817,7 @@ static int I_SDL_GetSfxLumpNum(sfxinfo_t *sfx)
 {
     char namebuf[9];
 
-    GetSfxLumpName(sfx, namebuf);
+    GetSfxLumpName(sfx, namebuf, sizeof(namebuf));
 
     return W_GetNumForName(namebuf);
 }
