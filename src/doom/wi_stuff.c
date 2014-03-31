@@ -447,7 +447,7 @@ void WI_drawLF(void)
         // bits of memory at this point, but let's try to be accurate
         // anyway.  This deliberately triggers a V_DrawPatch error.
 
-        patch_t tmp = { ORIGWIDTH, ORIGHEIGHT, 1, 1, 
+        patch_t tmp = { ORIGWIDTH, ORIGHEIGHT, 1, 1,
                         { 0, 0, 0, 0, 0, 0, 0, 0 } };
 
         V_DrawPatch(0, y, &tmp);
@@ -829,7 +829,7 @@ void WI_drawShowNextLoc(void)
 	if (snl_pointeron)
 	    WI_drawOnLnode(wbs->next, yah); 
     }
-    
+
     if (gamemission == pack_nerve && singleplayer && wbs->last == 7)
         return;
 

@@ -231,7 +231,7 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
     byte *desttop;
     byte *dest;
     byte *source; 
-    int w, f; 
+    int w, f;
  
     y -= SHORT(patch->topoffset); 
     x -= SHORT(patch->leftoffset); 
@@ -318,7 +318,7 @@ void V_DrawTLPatch(int x, int y, patch_t * patch)
     x -= SHORT(patch->leftoffset);
 
     if (x < 0
-     || x + SHORT(patch->width) > ORIGWIDTH 
+     || x + SHORT(patch->width) > ORIGWIDTH
      || y < 0
      || y + SHORT(patch->height) > ORIGHEIGHT)
     {

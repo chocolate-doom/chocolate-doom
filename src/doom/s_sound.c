@@ -213,8 +213,8 @@ void S_Start(void)
     // start new music for the level
     mus_paused = 0;
 
-    if (gamemode == commercial
-        && (gameepisode == 2 || gamemission == pack_nerve))
+    if (gamemode == commercial &&
+        (gameepisode == 2 || gamemission == pack_nerve))
     {
         int nmus[]=
         {
