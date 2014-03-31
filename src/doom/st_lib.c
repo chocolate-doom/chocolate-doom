@@ -44,6 +44,7 @@
 #include "r_local.h"
 #include "m_menu.h"
 
+#include "v_trans.h"
 
 // in AM_map.c
 extern boolean		automapactive; 
@@ -184,10 +185,17 @@ STlib_updatePercent
 ( st_percent_t*		per,
   int			refresh )
 {
-    if (refresh && *per->n.on)
-	V_DrawPatch(per->n.x, per->n.y, per->p);
-    
+    extern int crispy_coloredhud;
+
     STlib_updateNum(&per->n, refresh);
+
+    if (refresh && *per->n.on)
+    {
+        if (crispy_coloredhud)
+            dp_translation = (byte *) &cr_gray;
+	V_DrawPatch(per->n.x, per->n.y, per->p);
+	dp_translation = NULL;
+    }
 }
 
 

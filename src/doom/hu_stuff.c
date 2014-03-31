@@ -49,6 +49,9 @@
 #include "dstrings.h"
 #include "sounds.h"
 
+#include "v_trans.h"
+#include "v_video.h"
+
 //
 // Locally used constants, shortcuts.
 //
@@ -447,12 +450,17 @@ void HU_Drawer(void)
     extern int crispy_crosshair;
     extern int crispy_crosshair_highlight;
 
+    dp_translation = NULL;
     HUlib_drawSText(&w_message);
+    dp_translation = &cr_gold;
     HUlib_drawSText(&w_secret);
     HUlib_drawIText(&w_chat);
+    dp_translation = NULL;
     if (automapactive)
     {
 
+	if (crispy_automapstats)
+	    dp_translation = &cr_gold;
 	HUlib_drawTextLine(&w_title, false);
 
 	if (crispy_automapstats)
@@ -460,6 +468,7 @@ void HU_Drawer(void)
         static char str[32], *s;
         int time = leveltime / TICRATE;
 
+	dp_translation = &cr_blue2;
 	sprintf(str, "Kills: %d/%d", players[consoleplayer].killcount, totalkills);
 	HUlib_clearTextLine(&w_kills);
 	s = str;
@@ -481,6 +490,7 @@ void HU_Drawer(void)
 	    HUlib_addCharToTextLine(&w_scrts, *(s++));
 	HUlib_drawTextLine(&w_scrts, false);
 
+	dp_translation = &cr_gray;
 	sprintf(str, "%02d:%02d:%02d", time/3600, (time%3600)/60, time%60);
 	HUlib_clearTextLine(&w_ltime);
 	s = str;
@@ -488,6 +498,8 @@ void HU_Drawer(void)
 	    HUlib_addCharToTextLine(&w_ltime, *(s++));
 	HUlib_drawTextLine(&w_ltime, false);
 	}
+
+    dp_translation = NULL;
     }
 
     if (crispy_crosshair &&

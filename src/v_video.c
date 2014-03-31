@@ -57,6 +57,7 @@
 // Only used in Heretic/Hexen
 
 byte *tinttable = NULL;
+byte *dp_translation = NULL;
 
 // villsa [STRIFE] Blending table used for Strife
 byte *xlatab = NULL;
@@ -159,6 +160,7 @@ void V_DrawPatch(int x, int y, patch_t *patch)
     byte *desttop;
     byte *dest;
     byte *source;
+    byte *sourcetrans;
     int w, f;
 
     y -= SHORT(patch->topoffset);
@@ -197,18 +199,21 @@ void V_DrawPatch(int x, int y, patch_t *patch)
         {
           for (f = 0; f <= hires; f++)
           {
-            source = (byte *)column + 3;
+            source = sourcetrans = (byte *)column + 3;
             dest = desttop + column->topdelta*(SCREENWIDTH << hires) + (x * hires) + f;
             count = column->length;
 
             while (count--)
             {
+                if (dp_translation)
+                    sourcetrans = &dp_translation[*source++];
+
                 if (hires)
                 {
-                    *dest = *source;
+                    *dest = *sourcetrans;
                     dest += SCREENWIDTH;
                 }
-                *dest = *source++;
+                *dest = *sourcetrans++;
                 dest += SCREENWIDTH;
             }
           }

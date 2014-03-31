@@ -1491,6 +1491,14 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
+    // Show colored numbers in the status bar.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_coloredhud),
+
+    //!
+    // @game doom
+    //
     // Show additional level statistics in the automap.
     //
 

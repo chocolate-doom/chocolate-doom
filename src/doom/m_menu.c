@@ -66,6 +66,7 @@
 
 #include "m_menu.h"
 
+#include "v_trans.h"
 
 extern patch_t*		hu_font[HU_FONTSIZE];
 extern boolean		message_dontfuckwithme;
@@ -572,7 +573,13 @@ void M_DrawLoad(void)
     for (i = 0;i < load_end; i++)
     {
 	M_DrawSaveLoadBorder(LoadDef.x,LoadDef.y+LINEHEIGHT*i);
+
+	if (!strncmp(savegamestrings[i], EMPTYSTRING, strlen(EMPTYSTRING)))
+	    dp_translation = (byte *) &cr_brick;
+
 	M_WriteText(LoadDef.x,LoadDef.y+LINEHEIGHT*i,savegamestrings[i]);
+
+	dp_translation = NULL;
     }
 }
 
@@ -2078,7 +2085,14 @@ void M_Drawer (void)
 
 	if (name[0])
 	{
+	    if ((currentMenu == &MainDef && i == savegame && !usergame) ||
+	        (currentMenu == &OptionsDef && i == endgame && !usergame) ||
+	        (currentMenu == &MainDef && i == loadgame && netgame))
+	        dp_translation = (byte *) &cr_brick;
+
 	    V_DrawPatchDirect (x, y, W_CacheLumpName(name, PU_CACHE));
+
+	    dp_translation = NULL;
 	}
 	y += LINEHEIGHT;
     }
