@@ -147,6 +147,8 @@ void ConfigMouse(void)
 
     TXT_SetColumnWidths(motion_table, 27, 5);
 
+    if (gamemission == doom) // Crispy
+    {
     TXT_AddWidgets(motion_table,
                    TXT_NewLabel("Speed"),
                    TXT_NewSpinControl(&mouseSensitivity, 1, 256),
@@ -159,6 +161,18 @@ void ConfigMouse(void)
                    TXT_NewLabel("Acceleration threshold (v)"),
                    TXT_NewSpinControl(&mouse_threshold_y, 0, 32),
                    NULL);
+    }
+    else
+    {
+    TXT_AddWidgets(motion_table,
+                   TXT_NewLabel("Speed"),
+                   TXT_NewSpinControl(&mouseSensitivity, 1, 256),
+                   TXT_NewLabel("Acceleration"),
+                   TXT_NewFloatSpinControl(&mouse_acceleration, 1.0, 5.0),
+                   TXT_NewLabel("Acceleration threshold"),
+                   TXT_NewSpinControl(&mouse_threshold, 0, 32),
+                   NULL);
+    }
 
     TXT_SetColumnWidths(buttons_table, 27, 5);
 
@@ -176,7 +190,10 @@ void BindMouseVariables(void)
     M_BindVariable("mouse_sensitivity",    &mouseSensitivity);
     M_BindVariable("mouse_acceleration",   &mouse_acceleration);
     M_BindVariable("mouse_threshold",      &mouse_threshold);
+    if (gamemission == doom) // Crispy
+    {
     M_BindVariable("mouse_acceleration_y", &mouse_acceleration_y);
     M_BindVariable("mouse_threshold_y",    &mouse_threshold_y);
+    }
     M_BindVariable("grabmouse",            &grabmouse);
 }

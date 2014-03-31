@@ -338,7 +338,7 @@ static int GoodFullscreenMode(screen_mode_t *mode)
     // Special case: 320x240 letterboxed mode is okay (but not aspect
     // ratio corrected 320x240)
 
-    if (w == 320 && h == 240 && !aspect_ratio_correct && 0) // hires
+    if (w == 640 && h == 480 && !aspect_ratio_correct) // hires
     {
         return 1;
     }
