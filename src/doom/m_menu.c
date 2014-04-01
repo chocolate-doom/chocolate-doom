@@ -575,7 +575,7 @@ void M_DrawLoad(void)
 	M_DrawSaveLoadBorder(LoadDef.x,LoadDef.y+LINEHEIGHT*i);
 
 	if (!strncmp(savegamestrings[i], EMPTYSTRING, strlen(EMPTYSTRING)))
-	    dp_translation = (byte *) &cr_brick;
+	    dp_translation = (byte *) &colormaps[16*256];
 
 	M_WriteText(LoadDef.x,LoadDef.y+LINEHEIGHT*i,savegamestrings[i]);
 
@@ -2088,7 +2088,7 @@ void M_Drawer (void)
 	    if ((currentMenu == &MainDef && i == savegame && !usergame) ||
 	        (currentMenu == &OptionsDef && i == endgame && !usergame) ||
 	        (currentMenu == &MainDef && i == loadgame && netgame))
-	        dp_translation = (byte *) &cr_brick;
+	        dp_translation = (byte *) &colormaps[16*256];
 
 	    V_DrawPatchDirect (x, y, W_CacheLumpName(name, PU_CACHE));
 
