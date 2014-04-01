@@ -1481,7 +1481,7 @@ void WI_drawStats(void)
     V_DrawPatch(SP_TIMEX, SP_TIMEY, timepatch);
     WI_drawTime(ORIGWIDTH/2 - SP_TIMEX, SP_TIMEY, cnt_time);
 
-    if (wbs->epsd < 3)
+    if (wbs->epsd < 4)
     {
 	V_DrawPatch(ORIGWIDTH/2 + SP_TIMEX, SP_TIMEY, par);
 	WI_drawTime(ORIGWIDTH - SP_TIMEX, SP_TIMEY, cnt_par);
