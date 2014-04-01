@@ -481,6 +481,7 @@ P_TouchSpecialThing
 	if (!P_GiveBody (player, 25))
 	    return;
 
+	// [crispy] show "Picked up a Medikit that you really need" message as intended
 	if (player->health < 50)
 	    player->message = DEH_String(GOTMEDINEED);
 	else
@@ -764,6 +765,7 @@ P_KillMobj
     }
 
     mo = P_SpawnMobj (target->x,target->y,ONFLOORZ, item);
+    // [crispy] ammo released by enemies will slightly bob vertically
     if (singleplayer)
         mo->momz += 5*FRACUNIT;
     mo->flags |= MF_DROPPED;	// special versions of items

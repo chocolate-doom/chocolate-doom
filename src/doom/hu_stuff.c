@@ -452,15 +452,14 @@ void HU_Drawer(void)
 
     dp_translation = NULL;
     HUlib_drawSText(&w_message);
-    dp_translation = &cr_gold;
+    dp_translation = (byte *) &cr_gold;
     HUlib_drawSText(&w_secret);
     HUlib_drawIText(&w_chat);
     dp_translation = NULL;
     if (automapactive)
     {
-
 	if (crispy_automapstats)
-	    dp_translation = &cr_gold;
+	    dp_translation = (byte *) &cr_gold;
 	HUlib_drawTextLine(&w_title, false);
 
 	if (crispy_automapstats)
@@ -468,7 +467,7 @@ void HU_Drawer(void)
         static char str[32], *s;
         int time = leveltime / TICRATE;
 
-	dp_translation = &cr_blue2;
+	dp_translation = (byte *) &cr_blue2;
 	sprintf(str, "Kills: %d/%d", players[consoleplayer].killcount, totalkills);
 	HUlib_clearTextLine(&w_kills);
 	s = str;
@@ -483,14 +482,14 @@ void HU_Drawer(void)
 	    HUlib_addCharToTextLine(&w_items, *(s++));
 	HUlib_drawTextLine(&w_items, false);
 
-	sprintf(str, "Scrts: %d/%d", players[consoleplayer].secretcount, totalsecret);
+	sprintf(str, "Secret: %d/%d", players[consoleplayer].secretcount, totalsecret);
 	HUlib_clearTextLine(&w_scrts);
 	s = str;
 	while (*s)
 	    HUlib_addCharToTextLine(&w_scrts, *(s++));
 	HUlib_drawTextLine(&w_scrts, false);
 
-	dp_translation = &cr_gray;
+	dp_translation = (byte *) &cr_gray;
 	sprintf(str, "%02d:%02d:%02d", time/3600, (time%3600)/60, time%60);
 	HUlib_clearTextLine(&w_ltime);
 	s = str;
@@ -503,8 +502,8 @@ void HU_Drawer(void)
     }
 
     if (crispy_crosshair &&
-        !automapactive && !menuactive && !paused && !secret_on &&
-        !(plr->readyweapon == wp_fist) && !(plr->readyweapon == wp_chainsaw))
+        plr->readyweapon != wp_fist && plr->readyweapon != wp_chainsaw &&
+        !automapactive && !menuactive && !paused && !secret_on)
     {
         extern int screenblocks;
         byte *b = I_VideoBuffer;
@@ -569,7 +568,6 @@ void HU_Ticker(void)
     if (showMessages || message_dontfuckwithme)
     {
 
-	// display message if necessary
 	if (plr2->centermessage)
 	{
 	    HUlib_addMessageToSText(&w_secret, 0, plr2->centermessage);
@@ -578,6 +576,7 @@ void HU_Ticker(void)
 	    secret_counter = HU_MSGTIMEOUT >> 1;
 	}
 
+	// display message if necessary
 	if ((plr->message && !message_nottobefuckedwith)
 	    || (plr->message && message_dontfuckwithme))
 	{

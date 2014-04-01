@@ -262,6 +262,7 @@ void D_Display (void)
     {
 	R_RenderPlayerView (&players[displayplayer]);
 
+        // [crispy] simple HUD
         if (screenblocks == 12)
             ST_Drawer(0, 0);
     }
@@ -305,6 +306,7 @@ void D_Display (void)
     inhelpscreensstate = inhelpscreens;
     oldgamestate = wipegamestate = gamestate;
     
+    // [crispy] shade background when a menu is active or the game is paused
     if (paused || menuactive)
     {
 	static int i;
@@ -316,6 +318,7 @@ void D_Display (void)
 	    *b = colormaps[16 * 256 + *b];
 	}
 
+	// force redraw of status bar and border
 	viewactivestate = false;
 	inhelpscreensstate = true;
     }

@@ -710,6 +710,7 @@ void R_DrawPSprite (pspdef_t* psp)
     vis = &avis;
     vis->translation = NULL;
     vis->mobjflags = 0;
+    // [crispy] weapons drawn 1 pixel too high when player is idle
     vis->texturemid = (BASEYCENTER<<FRACBITS) /* +FRACUNIT/2 */ -(psp->sy-spritetopoffset[lump]);
     vis->x1 = x1 < 0 ? 0 : x1;
     vis->x2 = x2 >= viewwidth ? viewwidth-1 : x2;	
@@ -726,6 +727,7 @@ void R_DrawPSprite (pspdef_t* psp)
 	vis->startfrac = 0;
     }
     
+    // [crispy] free look
     vis->texturemid += FixedMul(((centery - viewheight / 2) << FRACBITS), vis->xiscale);
 
     if (vis->x1 > x1)

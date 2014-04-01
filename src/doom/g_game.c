@@ -355,6 +355,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // fraggle: support the old "joyb_speed = 31" hack which
     // allowed an autorun effect
 
+    // [crispy] when autorun is active, pressing the run key results in walking
     speed = (key_speed >= NUMKEYS
          || joybspeed >= MAX_JOY_BUTTONS)
          ^ (gamekeydown[key_speed]
@@ -607,6 +608,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     if (!novert)
         forward += mousey;
 
+    // [crispy] single click on mouse look button centers view
     if (mousebuttons[mousebmouselook] && !mbmlookctrl)
     {
         mbmlookctrl |= 1; // clicked

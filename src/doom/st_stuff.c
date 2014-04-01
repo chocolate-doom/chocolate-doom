@@ -371,10 +371,6 @@ static st_number_t	w_ammo[4];
 // max ammo widgets
 static st_number_t	w_maxammo[4]; 
 
-byte*	cr_ready;
-byte*	cr_health;
-byte*	cr_armor;
-
 
 
  // number of frags so far in deathmatch
@@ -556,6 +552,7 @@ ST_Responder (event_t* ev)
 	    S_ChangeMusic(musnum, 1);
 	}
       }
+      // [crispy] allow both idspispopd and idclip cheats in all gamemissions
       else if ( ( /* logical_gamemission == doom
                  && */ cht_CheckCheat(&cheat_noclip, ev->data2))
              || ( /* logical_gamemission != doom
@@ -761,6 +758,7 @@ void ST_updateFaceWidget(void)
 	    // being attacked
 	    priority = 7;
 	    
+	    // [crispy] show "Ouch Face" as intended
 	    if (st_oldhealth - plyr->health > ST_MUCHPAIN)
 	    {
 		st_facecount = ST_TURNCOUNT;
@@ -814,6 +812,7 @@ void ST_updateFaceWidget(void)
 	// getting hurt because of your own damn stupidity
 	if (plyr->damagecount)
 	{
+	    // [crispy] show "Ouch Face" as intended
 	    if (st_oldhealth - plyr->health > ST_MUCHPAIN)
 	    {
 		priority = 7;
@@ -1080,8 +1079,8 @@ byte* ST_WidgetColor(int i)
             break;
         }
     }
-    
-    return NULL;    
+
+    return NULL;
 }
 
 void ST_drawWidgets(boolean refresh)
@@ -1094,7 +1093,6 @@ void ST_drawWidgets(boolean refresh)
     // used by w_frags widget
     st_fragson = deathmatch && st_statusbaron; 
 
-    
     dp_translation = ST_WidgetColor(0);
     STlib_updateNum(&w_ready, refresh);
     dp_translation = NULL;

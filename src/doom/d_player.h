@@ -168,6 +168,7 @@ typedef struct player_s
 
 } player_t;
 
+// [crispy] overcome the limitations of the original player_t
 typedef struct player2_s
 {
     char*	centermessage;
