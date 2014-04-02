@@ -297,8 +297,7 @@ static NSString *AppendQuotedFilename(NSString *str, NSString *fileName)
     }
 
     game_name = [self->iwadController getGameName];
-    executable_name = malloc(strlen(PROGRAM_PREFIX) + strlen(game_name) + 1);
-    sprintf(executable_name, "%s%s", PROGRAM_PREFIX, game_name);
+    asprintf(&executable_name, "%s%s", PROGRAM_PREFIX, game_name);
 
     ExecuteProgram(executable_name, [iwad UTF8String],
                                     [args UTF8String]);
@@ -319,8 +318,7 @@ static NSString *AppendQuotedFilename(NSString *str, NSString *fileName)
     // to configure, based on the game selected in the dropdown.
 
     game_name = [self->iwadController getGameName];
-    arg = malloc(strlen(game_name) + 8);
-    sprintf(arg, "-game %s", game_name);
+    asprintf(&arg, "-game %s", game_name);
 
     ExecuteProgram(PROGRAM_PREFIX "setup", NULL, arg);
 
@@ -355,14 +353,14 @@ static NSString *AppendQuotedFilename(NSString *str, NSString *fileName)
 
 - (void) openCMDLINE: (id) sender
 {
-    char *game_name;
+    const char *game_name;
     char filename[32];
 
     // We need to open the appropriate doc file for the currently
     // selected game.
 
     game_name = [self->iwadController getGameName];
-    sprintf(filename, "CMDLINE-%s", game_name);
+    snprintf(filename, sizeof(filename), "CMDLINE-%s", game_name);
 
     OpenDocumentation(filename);
 }
