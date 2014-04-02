@@ -915,8 +915,8 @@ void G_Ticker (void)
             {
                 static char turbomessage[80];
                 extern char *player_names[4];
-                snprintf(turbomessage, sizeof(turbomessage),
-                         "%s is turbo!", player_names[i]);
+                M_snprintf(turbomessage, sizeof(turbomessage),
+                           "%s is turbo!", player_names[i]);
                 players[consoleplayer].message = turbomessage;
                 turbodetected[i] = false;
             }
@@ -1949,7 +1949,7 @@ void G_RecordDemo (char *name)
     usergame = false;
     demoname_size = strlen(name) + 5;
     demoname = Z_Malloc(demoname_size, PU_STATIC, NULL);
-    snprintf(demoname, demoname_size, "%s.lmp", name);
+    M_snprintf(demoname, demoname_size, "%s.lmp", name);
     maxsize = 0x20000;
 
     //!
@@ -2076,8 +2076,8 @@ static char *DemoVersionDescription(int version)
     }
     else
     {
-        snprintf(resultbuf, sizeof(resultbuf),
-                 "%i.%i (unknown)", version / 100, version % 100);
+        M_snprintf(resultbuf, sizeof(resultbuf),
+                   "%i.%i (unknown)", version / 100, version % 100);
         return resultbuf;
     }
 }

@@ -318,7 +318,7 @@ void I_Error (char *error, ...)
 
         va_start(argptr, error);
         memset(msgbuf, 0, sizeof(msgbuf));
-        vsnprintf(msgbuf, sizeof(msgbuf) - 1, error, argptr);
+        M_vsnprintf(msgbuf, sizeof(msgbuf), error, argptr);
         va_end(argptr);
 
         MultiByteToWideChar(CP_ACP, 0,
@@ -338,7 +338,7 @@ void I_Error (char *error, ...)
 
         va_start(argptr, error);
         memset(msgbuf, 0, sizeof(msgbuf));
-        vsnprintf(msgbuf, sizeof(msgbuf) - 1, error, argptr);
+        M_vsnprintf(msgbuf, sizeof(msgbuf), error, argptr);
         va_end(argptr);
 
 	// The CoreFoundation message box wraps text lines, so replace

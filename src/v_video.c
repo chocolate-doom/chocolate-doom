@@ -818,7 +818,7 @@ void V_ScreenShot(char *format)
 
     for (i=0; i<=99; i++)
     {
-        snprintf(lbmname, sizeof(lbmname), format, i, ext);
+        M_snprintf(lbmname, sizeof(lbmname), format, i, ext);
 
         if (!M_FileExists(lbmname))
         {

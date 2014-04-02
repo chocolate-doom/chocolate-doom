@@ -461,7 +461,7 @@ void D_BindVariables(void)
     {
         char buf[12];
 
-        snprintf(buf, sizeof(buf), "chatmacro%i", i);
+        M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
         M_BindVariable(buf, &chat_macros[i]);
     }
 }
@@ -792,8 +792,8 @@ static char *GetGameName(char *gamename)
 
             gamename_size = strlen(deh_sub) + 10;
             gamename = Z_Malloc(gamename_size, PU_STATIC, 0);
-            snprintf(gamename, gamename_size, deh_sub,
-                     STRIFE_VERSION / 100, STRIFE_VERSION % 100);
+            M_snprintf(gamename, gamename_size, deh_sub,
+                       STRIFE_VERSION / 100, STRIFE_VERSION % 100);
 
             while (gamename[0] != '\0' && isspace(gamename[0]))
             {

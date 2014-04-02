@@ -29,6 +29,7 @@
 #include "i_video.h"
 #include "i_swap.h"
 #include "m_controls.h"
+#include "m_misc.h"
 #include "p_local.h"
 #include "am_map.h"
 #include "am_data.h"
@@ -1474,8 +1475,8 @@ void AM_DrawDeathmatchStats(void)
         else
         {
             MN_DrTextA(PlayerColorText[order[i]], 8, yPosition);
-            snprintf(textBuffer, sizeof(textBuffer),
-                     "%d", fragCount[order[i]]);
+            M_snprintf(textBuffer, sizeof(textBuffer),
+                       "%d", fragCount[order[i]]);
             MN_DrTextA(textBuffer, 80, yPosition);
             yPosition += 10;
         }
@@ -1509,19 +1510,19 @@ static void DrawWorldTimer(void)
     worldTimer -= minutes * 60;
     seconds = worldTimer;
 
-    snprintf(timeBuffer, sizeof(timeBuffer),
-             "%.2d : %.2d : %.2d", hours, minutes, seconds);
+    M_snprintf(timeBuffer, sizeof(timeBuffer),
+               "%.2d : %.2d : %.2d", hours, minutes, seconds);
     MN_DrTextA(timeBuffer, 240, 8);
 
     if (days)
     {
         if (days == 1)
         {
-            snprintf(dayBuffer, sizeof(dayBuffer), "%.2d DAY", days);
+            M_snprintf(dayBuffer, sizeof(dayBuffer), "%.2d DAY", days);
         }
         else
         {
-            snprintf(dayBuffer, sizeof(dayBuffer), "%.2d DAYS", days);
+            M_snprintf(dayBuffer, sizeof(dayBuffer), "%.2d DAYS", days);
         }
         MN_DrTextA(dayBuffer, 240, 20);
         if (days >= 5)

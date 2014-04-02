@@ -449,6 +449,39 @@ char *M_StringJoin(const char *s, ...)
     return result;
 }
 
+// On Windows, vsnprintf() is _vsnprintf().
+#ifdef _WIN32
+#if _MSC_VER < 1400 /* not needed for Visual Studio 2008 */
+#define vsnprintf _vsnprintf
+#endif
+#endif
+
+// Safe, portable vsnprintf().
+int M_vsnprintf(char *buf, size_t buf_len, const char *s, va_list args)
+{
+    if (buf_len < 1)
+    {
+        return 0;
+    }
+
+    // Windows (and other OSes?) has a vsnprintf() that doesn't always
+    // append a trailing \0. So we must do it, and write into a buffer
+    // that is one byte shorter; otherwise this function is unsafe.
+    buf[buf_len - 1] = '\0';
+    return vsnprintf(buf, buf_len - 1, s, args);
+}
+
+// Safe, portable snprintf().
+int M_snprintf(char *buf, size_t buf_len, const char *s, ...)
+{
+    va_list args;
+    int result;
+    va_start(args, s);
+    result = M_vsnprintf(buf, buf_len, s, args);
+    va_end(args);
+    return result;
+}
+
 #ifdef _WIN32
 
 char *M_OEMToUTF8(const char *oem)

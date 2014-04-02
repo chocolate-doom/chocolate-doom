@@ -39,6 +39,7 @@
 #include "z_zone.h"
 #include "w_wad.h"
 #include "p_pspr.h"
+#include "m_misc.h"
 #include "m_random.h"
 #include "s_sound.h"
 #include "p_inter.h"
@@ -861,8 +862,8 @@ boolean P_UseInventoryItem(player_t* player, int item)
         if(name == NULL)
             name = "Item";
 
-        snprintf(useinventorymsg, sizeof(useinventorymsg),
-                 "You used the %s.", name);
+        M_snprintf(useinventorymsg, sizeof(useinventorymsg),
+                   "You used the %s.", name);
         player->message = useinventorymsg;
 
         if(player == &players[consoleplayer])

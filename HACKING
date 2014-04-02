@@ -122,7 +122,10 @@ avoided when writing code for Chocolate Doom. These are:
     Unsafe function       Safer alternative
     ---------------------------------------------
     gets()                fgets(.., stdin)
-    sprintf               snprintf()
+    sprintf               M_snprintf()
+    snprintf              M_snprintf()
+    vsprintf              M_vsnprintf()
+    vsnprintf             M_vsnprintf()
     strcpy()              M_StringCopy()
     strncpy()             M_StringCopy()
     strcat()              M_StringConcat()

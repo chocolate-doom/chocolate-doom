@@ -38,6 +38,7 @@
 
 #include "m_cheat.h"
 #include "m_controls.h"
+#include "m_misc.h"
 #include "i_system.h"
 
 // Needs access to LFB.
@@ -689,8 +690,8 @@ AM_Responder
         }
         else if (key == key_map_mark)
         {
-            snprintf(buffer, sizeof(buffer), "%s %d",
-                     DEH_String(AMSTR_MARKEDSPOT), markpointnum);
+            M_snprintf(buffer, sizeof(buffer), "%s %d",
+                       DEH_String(AMSTR_MARKEDSPOT), markpointnum);
             plr->message = buffer;
             AM_addMark();
         }

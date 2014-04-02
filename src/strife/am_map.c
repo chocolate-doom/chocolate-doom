@@ -32,6 +32,7 @@
 #include "z_zone.h"
 #include "doomkeys.h"
 #include "doomdef.h"
+#include "m_misc.h"
 #include "st_stuff.h"
 #include "p_local.h"
 #include "w_wad.h"
@@ -670,8 +671,8 @@ AM_Responder
         }
         else if (key == key_map_mark)
         {
-            snprintf(buffer, sizeof(buffer),
-                     "%s %d", DEH_String(AMSTR_MARKEDSPOT), markpointnum);
+            M_snprintf(buffer, sizeof(buffer),
+                       "%s %d", DEH_String(AMSTR_MARKEDSPOT), markpointnum);
             plr->message = buffer;
             AM_addMark();
         }

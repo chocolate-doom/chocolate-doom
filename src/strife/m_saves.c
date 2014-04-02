@@ -222,7 +222,7 @@ void M_SaveMoveMapToHere(void)
     char tmpnum[33];
 
     // haleyjd: no itoa available...
-    snprintf(tmpnum, sizeof(tmpnum), "%d", gamemap);
+    M_snprintf(tmpnum, sizeof(tmpnum), "%d", gamemap);
 
     // haleyjd: use M_SafeFilePath, not sprintf
     mapsave  = M_SafeFilePath(savepath, tmpnum);
@@ -251,7 +251,7 @@ void M_SaveMoveHereToMap(void)
     char tmpnum[33];
 
     // haleyjd: no itoa available...
-    snprintf(tmpnum, sizeof(tmpnum), "%d", gamemap);
+    M_snprintf(tmpnum, sizeof(tmpnum), "%d", gamemap);
 
     mapsave  = M_SafeFilePath(savepathtemp, tmpnum);
     heresave = M_SafeFilePath(savepathtemp, "here");
@@ -437,7 +437,7 @@ char *M_SafeFilePath(const char *basepath, const char *newcomponent)
     // that either basepath or newcomponent includes a redundant slash at the
     // end or beginning respectively.
     newstrlen = M_StringAlloc(&newstr, 3, 1, basepath, "/", newcomponent);
-    snprintf(newstr, newstrlen, "%s/%s", basepath, newcomponent);
+    M_snprintf(newstr, newstrlen, "%s/%s", basepath, newcomponent);
     M_NormalizeSlashes(newstr);
 
     return newstr;
@@ -477,8 +477,8 @@ char *M_MakeStrifeSaveDir(int slotnum, const char *extra)
 {
     static char tmpbuffer[32];
 
-    snprintf(tmpbuffer, sizeof(tmpbuffer),
-             "strfsav%d.ssg%s", slotnum, extra);
+    M_snprintf(tmpbuffer, sizeof(tmpbuffer),
+               "strfsav%d.ssg%s", slotnum, extra);
 
     return tmpbuffer;
 }
