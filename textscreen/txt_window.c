@@ -511,7 +511,7 @@ txt_window_t *TXT_MessageBox(char *title, char *message, ...)
     va_list args;
 
     va_start(args, message);
-    vsnprintf(buf, sizeof(buf), message, args);
+    TXT_vsnprintf(buf, sizeof(buf), message, args);
     va_end(args);
 
     window = TXT_NewWindow(title);

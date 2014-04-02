@@ -109,55 +109,55 @@ typedef enum
 
 // Initialize the screen
 // Returns 1 if successful, 0 if failed.
-
 int TXT_Init(void);
 
 // Shut down text mode emulation
-
 void TXT_Shutdown(void);
 
 // Get a pointer to the buffer containing the raw screen data.
-
 unsigned char *TXT_GetScreenData(void);
 
 // Update an area of the screen
-
 void TXT_UpdateScreenArea(int x, int y, int w, int h);
 
 // Update the whole screen
-
 void TXT_UpdateScreen(void);
 
 // Read a character from the keyboard
-
 int TXT_GetChar(void);
 
 // Read the current state of modifier keys that are held down.
-
 int TXT_GetModifierState(txt_modifier_t mod);
 
 // Provides a short description of a key code, placing into the 
 // provided buffer.
-
-void TXT_GetKeyDescription(int key, char *buf);
+void TXT_GetKeyDescription(int key, char *buf, size_t buf_len);
 
 // Retrieve the current position of the mouse
-
 void TXT_GetMousePosition(int *x, int *y);
 
 // Sleep until an event is received or the screen needs updating
 // Optional timeout in ms (timeout == 0 : sleep forever)
-
 void TXT_Sleep(int timeout);
 
 // Controls whether keys are returned from TXT_GetChar based on keyboard
 // mapping, or raw key code.
-
 void TXT_EnableKeyMapping(int enable);
 
 // Set the window title of the window containing the text mode screen
-
 void TXT_SetWindowTitle(char *title);
+
+// Safe string copy.
+void TXT_StringCopy(char *dest, const char *src, size_t dest_len);
+
+// Safe string concatenate.
+void TXT_StringConcat(char *dest, const char *src, size_t dest_len);
+
+// Safe version of vsnprintf().
+int TXT_vsnprintf(char *buf, size_t buf_len, const char *s, va_list args);
+
+// Safe version of snprintf().
+int TXT_snprintf(char *buf, size_t buf_len, const char *s, ...);
 
 #endif /* #ifndef TXT_MAIN_H */
 

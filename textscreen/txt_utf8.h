@@ -22,6 +22,8 @@
 #ifndef TXT_UTF8_H
 #define TXT_UTF8_H
 
+#include <stdarg.h>
+
 char *TXT_EncodeUTF8(char *p, unsigned int c);
 unsigned int TXT_DecodeUTF8(const char **ptr);
 unsigned int TXT_UTF8_Strlen(const char *s);
