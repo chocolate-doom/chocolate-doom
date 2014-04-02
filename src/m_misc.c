@@ -358,8 +358,11 @@ char *M_StringReplace(const char *haystack, const char *needle,
 
 boolean M_StringCopy(char *dest, const char *src, size_t dest_size)
 {
-    strncpy(dest, src, dest_size);
-    dest[dest_size - 1] = '\0';
+    if (dest_size >= 1)
+    {
+        dest[dest_size - 1] = '\0';
+        strncpy(dest, src, dest_size - 1);
+    }
     return strlen(dest) == strlen(src);
 }
 
@@ -376,10 +379,7 @@ boolean M_StringConcat(char *dest, const char *src, size_t dest_size)
         offset = dest_size;
     }
 
-    dest += offset;
-    dest_size -= offset;
-
-    return M_StringCopy(dest, src, dest_size);
+    return M_StringCopy(dest + offset, src, dest_size - offset);
 }
 
 // Returns true if 's' begins with the specified prefix.
