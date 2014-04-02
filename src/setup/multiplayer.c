@@ -308,11 +308,11 @@ static void UpdateWarpButton(void)
 
     if (warptype == WARP_ExMy)
     {
-        sprintf(buf, "E%iM%i", warpepisode, warpmap);
+        M_snprintf(buf, sizeof(buf), "E%iM%i", warpepisode, warpmap);
     }
     else if (warptype == WARP_MAPxy)
     {
-        sprintf(buf, "MAP%02i", warpmap);
+        M_snprintf(buf, sizeof(buf), "MAP%02i", warpmap);
     }
 
     TXT_SetButtonLabel(warpbutton, buf);
@@ -425,7 +425,7 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
                     continue;
                 }
 
-                sprintf(buf, " E%iM%i ", x, y);
+                M_snprintf(buf, sizeof(buf), " E%iM%i ", x, y);
                 button = TXT_NewButton(buf);
                 TXT_SignalConnect(button, "pressed",
                                   SetExMyWarp, (void *) (x * 10 + y));
@@ -457,7 +457,7 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
                 continue;
             }
 
-            sprintf(buf, " MAP%02i ", l);
+            M_snprintf(buf, sizeof(buf), " MAP%02i ", l);
             button = TXT_NewButton(buf);
             TXT_SignalConnect(button, "pressed", 
                               SetMAPxyWarp, (void *) l);
@@ -898,7 +898,7 @@ static void QueryResponseCallback(net_addr_t *addr,
     char ping_time_str[16];
     char description[47];
 
-    sprintf(ping_time_str, "%ims", ping_time);
+    M_snprintf(ping_time_str, sizeof(ping_time_str), "%ims", ping_time);
     M_StringCopy(description, querydata->description,
                  sizeof(description));
 
@@ -1094,7 +1094,7 @@ void MultiplayerConfig(void)
 
     for (i=0; i<10; ++i)
     {
-        sprintf(buf, "#%i ", i + 1);
+        M_snprintf(buf, sizeof(buf), "#%i ", i + 1);
 
         label = TXT_NewLabel(buf);
         TXT_SetFGColor(label, TXT_COLOR_BRIGHT_CYAN);
@@ -1119,7 +1119,7 @@ void BindMultiplayerVariables(void)
 
     for (i=0; i<10; ++i)
     {
-        sprintf(buf, "chatmacro%i", i);
+        M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
         M_BindVariable(buf, &chat_macros[i]);
     }
 
