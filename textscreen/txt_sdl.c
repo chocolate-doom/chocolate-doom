@@ -906,6 +906,8 @@ void TXT_StringConcat(char *dest, const char *src, size_t dest_len)
 // Safe, portable vsnprintf().
 int TXT_vsnprintf(char *buf, size_t buf_len, const char *s, va_list args)
 {
+    int result;
+
     if (buf_len < 1)
     {
         return 0;
@@ -914,8 +916,17 @@ int TXT_vsnprintf(char *buf, size_t buf_len, const char *s, va_list args)
     // Windows (and other OSes?) has a vsnprintf() that doesn't always
     // append a trailing \0. So we must do it, and write into a buffer
     // that is one byte shorter; otherwise this function is unsafe.
-    buf[buf_len - 1] = '\0';
-    return vsnprintf(buf, buf_len - 1, s, args);
+    result = vsnprintf(buf, buf_len, s, args);
+
+    // If truncated, change the final char in the buffer to a \0.
+    // A negative result indicates a truncated buffer on Windows.
+    if (result < 0 || result >= buf_len)
+    {
+        buf[buf_len - 1] = '\0';
+        result = buf_len - 1;
+    }
+
+    return result;
 }
 
 // Safe, portable snprintf().
