@@ -1051,8 +1051,10 @@ byte* ST_WidgetColor(int i)
                     return (byte *) &cr_red;
                 else if (ammopct < 50)
                     return (byte *) &cr_gold;
-                else
+                else if (ammopct <= 100)
                     return (byte *) &cr_green;
+                else
+                    return (byte *) &cr_blue2;
             }
             break;
         }
@@ -1073,6 +1075,13 @@ byte* ST_WidgetColor(int i)
         }
         case hudcolor_armor:
         {
+	    if (plyr->armortype == 0)
+                return (byte *) &cr_red;
+	    else if (plyr->armortype == 1)
+                return (byte *) &cr_green;
+	    else if (plyr->armortype == 2)
+                return (byte *) &cr_blue2;
+/*
             int armor = plyr->armorpoints;
 
             if (armor < 25)
@@ -1083,7 +1092,7 @@ byte* ST_WidgetColor(int i)
                 return (byte *) &cr_green;
             else
                 return (byte *) &cr_blue2;
-
+*/
             break;
         }
     }
