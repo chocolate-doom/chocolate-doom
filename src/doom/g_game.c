@@ -1379,27 +1379,30 @@ void G_ScreenShot (void)
 
 
 // DOOM Par Times
-int pars[5][10] =
+int pars[4][10] = 
 { 
     {0}, 
     {0,30,75,120,90,165,180,180,30,165}, 
     {0,90,90,90,120,90,360,240,30,170}, 
-    {0,90,45,90,150,90,90,165,30,135},
-    // [crispy] episode 4 par times from the BFG Edition
-    {0,165,255,135,150,180,390,135,360,180}
+    {0,90,45,90,150,90,90,165,30,135} 
 }; 
 
 // DOOM II Par Times
-int cpars[33] =
+int cpars[32] =
 {
     30,90,120,120,90,150,120,120,270,90,	//  1-10
     210,150,150,150,210,150,420,150,210,150,	// 11-20
     240,150,180,150,150,300,330,420,300,180,	// 21-30
-    // [crispy] map 33 par time sucks
-    120,30,INT_MAX				// 31-33
+    120,30					// 31-32
 };
  
-// No Rest For The Living Par Times
+// [crispy] Episode 4 par times from the BFG Edition
+int e4pars[10] =
+{
+    0,165,255,135,150,180,390,135,360,180
+};
+
+// [crispy] No Rest For The Living par times from the BFG Edition
 int npars[9] =
 {
     75,105,120,105,210,105,165,105,135
@@ -1568,10 +1571,15 @@ void G_DoCompleted (void)
     if (gamemission == pack_nerve)
 	wminfo.partime = TICRATE*npars[gamemap-1];
     else
+    if (bfgedition && singleplayer && gamemap == 33)
+	wminfo.partime = INT_MAX;
+    else
     if (gamemode == commercial)
 	wminfo.partime = TICRATE*cpars[gamemap-1];
-    else if (gameepisode < 5)
+    else if (gameepisode < 4)
 	wminfo.partime = TICRATE*pars[gameepisode][gamemap];
+    else if (gameepisode == 4 && singleplayer)
+	wminfo.partime = TICRATE*e4pars[gamemap];
     else
         wminfo.partime = TICRATE*cpars[gamemap];
 

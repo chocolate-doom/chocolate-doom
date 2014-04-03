@@ -400,6 +400,7 @@ void R_DrawPlanes (void)
 	if (pl->picnum == skyflatnum)
 	{
 	    dc_iscale = pspriteiscale>>(detailshift && !hires);
+	    // [crispy] stretch sky
 	    if (crispy_freelook || crispy_mouselook)
 	        dc_iscale = dc_iscale * 128 / 228;
 	    

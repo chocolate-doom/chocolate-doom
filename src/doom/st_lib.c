@@ -189,13 +189,13 @@ STlib_updatePercent
 
     STlib_updateNum(&per->n, refresh);
 
+    if (crispy_coloredhud)
+        dp_translation = (byte *) &cr_gray;
+
     if (refresh && *per->n.on)
-    {
-        if (crispy_coloredhud)
-            dp_translation = (byte *) &cr_gray;
 	V_DrawPatch(per->n.x, per->n.y, per->p);
-	dp_translation = NULL;
-    }
+
+    dp_translation = NULL;
 }
 
 

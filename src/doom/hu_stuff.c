@@ -454,8 +454,8 @@ void HU_Drawer(void)
     HUlib_drawSText(&w_message);
     dp_translation = (byte *) &cr_gold;
     HUlib_drawSText(&w_secret);
-    HUlib_drawIText(&w_chat);
     dp_translation = NULL;
+    HUlib_drawIText(&w_chat);
     if (automapactive)
     {
 	if (crispy_automapstats)
@@ -464,8 +464,8 @@ void HU_Drawer(void)
 
 	if (crispy_automapstats)
 	{
-        static char str[32], *s;
-        int time = leveltime / TICRATE;
+	static char str[32], *s;
+	int time = leveltime / TICRATE;
 
 	dp_translation = (byte *) &cr_blue2;
 	sprintf(str, "Kills: %d/%d", players[consoleplayer].killcount, totalkills);
