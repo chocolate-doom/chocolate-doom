@@ -719,7 +719,7 @@ void R_ExecuteSetViewSize (void)
 	colfunc = basecolfunc = R_DrawColumnLow;
 	fuzzcolfunc = R_DrawFuzzColumnLow;
 	transcolfunc = R_DrawTranslatedColumnLow;
-	tlcolfunc = basecolfunc;
+	tlcolfunc = R_DrawTLColumnLow;
 	spanfunc = R_DrawSpanLow;
     }
 

@@ -595,7 +595,58 @@ void R_DrawTLColumn (void)
     } while (count--);
 }
 
+void R_DrawTLColumnLow (void)
+{
+    int			count;
+    byte*		dest;
+    byte*		dest2;
+    byte*		dest3;
+    byte*		dest4;
+    fixed_t		frac;
+    fixed_t		fracstep;
+    int                 x;
 
+    count = dc_yh - dc_yl;
+    if (count < 0)
+	return;
+
+    x = dc_x << 1;
+
+#ifdef RANGECHECK
+    if ((unsigned)x >= SCREENWIDTH
+	|| dc_yl < 0
+	|| dc_yh >= SCREENHEIGHT)
+    {
+	I_Error ( "R_DrawColumn: %i to %i at %i",
+		  dc_yl, dc_yh, x);
+    }
+#endif
+
+    dest = ylookup[(dc_yl << hires)] + columnofs[x];
+    dest2 = ylookup[(dc_yl << hires)] + columnofs[x+1];
+    dest3 = ylookup[(dc_yl << hires) + 1] + columnofs[x];
+    dest4 = ylookup[(dc_yl << hires) + 1] + columnofs[x+1];
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl-centery)*fracstep;
+
+    do
+    {
+	*dest = tranmap[(*dest<<8)+dc_colormap[dc_source[frac>>FRACBITS]]];
+	*dest2 = tranmap[(*dest<<8)+dc_colormap[dc_source[frac>>FRACBITS]]];
+	dest += SCREENWIDTH << hires;
+	dest2 += SCREENWIDTH << hires;
+	if (hires)
+	{
+	    *dest3 = tranmap[(*dest<<8)+dc_colormap[dc_source[frac>>FRACBITS]]];
+	    *dest4 = tranmap[(*dest<<8)+dc_colormap[dc_source[frac>>FRACBITS]]];
+	    dest3 += SCREENWIDTH << hires;
+	    dest4 += SCREENWIDTH << hires;
+	}
+
+	frac += fracstep;
+    } while (count--);
+}
 
 //
 // R_InitTranslationTables
