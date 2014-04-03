@@ -160,7 +160,7 @@ void V_DrawPatch(int x, int y, patch_t *patch)
     byte *desttop;
     byte *dest;
     byte *source;
-    byte *sourcetrans;
+    byte sourcetrans;
     int w, f;
 
     y -= SHORT(patch->topoffset);
@@ -199,21 +199,23 @@ void V_DrawPatch(int x, int y, patch_t *patch)
         {
           for (f = 0; f <= hires; f++)
           {
-            source = sourcetrans = (byte *)column + 3;
+            source = (byte *)column + 3;
             dest = desttop + column->topdelta*(SCREENWIDTH << hires) + (x * hires) + f;
             count = column->length;
 
             while (count--)
             {
                 if (dp_translation)
-                    sourcetrans = &dp_translation[*source++];
+                    sourcetrans = dp_translation[*source++];
+                else
+                    sourcetrans = *source++;
 
                 if (hires)
                 {
-                    *dest = *sourcetrans;
+                    *dest = sourcetrans;
                     dest += SCREENWIDTH;
                 }
-                *dest = *sourcetrans++;
+                *dest = sourcetrans;
                 dest += SCREENWIDTH;
             }
           }
