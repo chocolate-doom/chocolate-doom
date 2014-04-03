@@ -1018,6 +1018,13 @@ void ST_doPaletteStuff(void)
 
 }
 
+enum
+{
+    hudcolor_ammo,
+    hudcolor_health,
+    hudcolor_armor
+} hudcolor_t;
+
 byte* ST_WidgetColor(int i)
 {
     extern int crispy_coloredhud;
@@ -1027,7 +1034,7 @@ byte* ST_WidgetColor(int i)
 
     switch (i)
     {
-        case 0:
+        case hudcolor_ammo:
         {
             if (weaponinfo[plyr->readyweapon].ammo == am_noammo)
             {
@@ -1048,7 +1055,7 @@ byte* ST_WidgetColor(int i)
             }
             break;
         }
-        case 1:
+        case hudcolor_health:
         {
             int health = plyr->health;
 
@@ -1063,7 +1070,7 @@ byte* ST_WidgetColor(int i)
 
             break;
         }
-        case 2:
+        case hudcolor_armor:
         {
             int armor = plyr->armorpoints;
 
@@ -1093,7 +1100,7 @@ void ST_drawWidgets(boolean refresh)
     // used by w_frags widget
     st_fragson = deathmatch && st_statusbaron; 
 
-    dp_translation = ST_WidgetColor(0);
+    dp_translation = ST_WidgetColor(hudcolor_ammo);
     STlib_updateNum(&w_ready, refresh);
     dp_translation = NULL;
 
@@ -1103,9 +1110,9 @@ void ST_drawWidgets(boolean refresh)
 	STlib_updateNum(&w_maxammo[i], refresh);
     }
 
-    dp_translation = ST_WidgetColor(1);
+    dp_translation = ST_WidgetColor(hudcolor_health);
     STlib_updatePercent(&w_health, refresh || screenblocks == 12);
-    dp_translation = ST_WidgetColor(2);
+    dp_translation = ST_WidgetColor(hudcolor_armor);
     STlib_updatePercent(&w_armor, refresh || screenblocks == 12);
     dp_translation = NULL;
 
