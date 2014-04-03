@@ -721,6 +721,11 @@ P_KillMobj
 	
     }
 
+    // [crispy] Make Lost Soul and Pain Elemental explosions translucent
+    if (target->type == MT_SKULL ||
+        target->type == MT_PAIN)
+        target->flags |= MF_TRANSLUCENT;
+
     if (target->health < -target->info->spawnhealth 
 	&& target->info->xdeathstate)
     {
