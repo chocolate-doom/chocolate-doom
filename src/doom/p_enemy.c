@@ -1215,7 +1215,7 @@ void A_VileChase (mobj_t* actor)
 		    corpsehit->target = NULL;
 
 		    // [crispy] resurrected pools of gore ("ghost monsters") are translucent
-		    if (corpsehit->flags & MF_SOLID)
+		    if (corpsehit->height == 0 && corpsehit->radius == 0)
 		        corpsehit->flags |= MF_TRANSLUCENT;
 
 		    return;
