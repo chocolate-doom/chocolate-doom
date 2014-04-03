@@ -247,7 +247,7 @@ void D_DoomLoop(void)
     if (M_CheckParm("-debugfile"))
     {
         char filename[20];
-        snprintf(filename, sizeof(filename), "debug%i.txt", consoleplayer);
+        M_snprintf(filename, sizeof(filename), "debug%i.txt", consoleplayer);
         debugfile = fopen(filename, "w");
     }
     I_GraphicsCheckCommandLine();
@@ -776,7 +776,7 @@ void D_BindVariables(void)
     {
         char buf[12];
 
-        snprintf(buf, sizeof(buf), "chatmacro%i", i);
+        M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
         M_BindVariable(buf, &chat_macros[i]);
     }
 }

@@ -75,8 +75,7 @@ static void DoExec(const char *executable, const char *iwad, const char *args)
 {
     char *argv[3];
 
-    argv[0] = malloc(strlen(executable_path) + strlen(executable) + 3);
-    sprintf(argv[0], "%s/%s", executable_path, executable);
+    asprintf(&argv[0], "%s/%s", executable_path, executable);
 
     if (iwad != NULL || args != NULL)
     {

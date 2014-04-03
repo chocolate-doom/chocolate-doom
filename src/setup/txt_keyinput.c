@@ -115,7 +115,7 @@ static void TXT_KeyInputDrawer(TXT_UNCAST_ARG(key_input))
     }
     else
     {
-        TXT_GetKeyDescription(*key_input->variable, buf);
+        TXT_GetKeyDescription(*key_input->variable, buf, sizeof(buf));
     }
 
     TXT_SetWidgetBG(key_input);

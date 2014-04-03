@@ -490,20 +490,20 @@ static void DrawSoundInfo(void)
             MN_DrTextA(DEH_String("------"), xPos[0], y);
             continue;
         }
-        snprintf(text, sizeof(text), "%s", c->name);
+        M_snprintf(text, sizeof(text), "%s", c->name);
         M_ForceUppercase(text);
         MN_DrTextA(text, xPos[x++], y);
-        snprintf(text, sizeof(text), "%d", c->mo->type);
+        M_snprintf(text, sizeof(text), "%d", c->mo->type);
         MN_DrTextA(text, xPos[x++], y);
-        snprintf(text, sizeof(text), "%d", c->mo->x >> FRACBITS);
+        M_snprintf(text, sizeof(text), "%d", c->mo->x >> FRACBITS);
         MN_DrTextA(text, xPos[x++], y);
-        snprintf(text, sizeof(text), "%d", c->mo->y >> FRACBITS);
+        M_snprintf(text, sizeof(text), "%d", c->mo->y >> FRACBITS);
         MN_DrTextA(text, xPos[x++], y);
-        snprintf(text, sizeof(text), "%d", c->id);
+        M_snprintf(text, sizeof(text), "%d", c->id);
         MN_DrTextA(text, xPos[x++], y);
-        snprintf(text, sizeof(text), "%d", c->priority);
+        M_snprintf(text, sizeof(text), "%d", c->priority);
         MN_DrTextA(text, xPos[x++], y);
-        snprintf(text, sizeof(text), "%d", c->distance);
+        M_snprintf(text, sizeof(text), "%d", c->distance);
         MN_DrTextA(text, xPos[x++], y);
     }
     UpdateState |= I_FULLSCRN;

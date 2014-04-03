@@ -1839,7 +1839,7 @@ static void SetWindowPositionVars(void)
     }
     else if (sscanf(window_position, "%i,%i", &x, &y) == 2)
     {
-        snprintf(buf, sizeof(buf), "SDL_VIDEO_WINDOW_POS=%i,%i", x, y);
+        M_snprintf(buf, sizeof(buf), "SDL_VIDEO_WINDOW_POS=%i,%i", x, y);
         putenv(buf);
     }
 }
@@ -2009,7 +2009,7 @@ void I_InitGraphics(void)
         int winid;
 
         sscanf(env, "0x%x", &winid);
-        snprintf(winenv, sizeof(winenv), "SDL_WINDOWID=%i", winid);
+        M_snprintf(winenv, sizeof(winenv), "SDL_WINDOWID=%i", winid);
 
         putenv(winenv);
     }

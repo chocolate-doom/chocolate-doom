@@ -443,8 +443,8 @@ boolean P_StartACS(int number, int map, byte * args, mobj_t * activator,
     if (infoIndex == -1)
     {                           // Script not found
         //I_Error("P_StartACS: Unknown script number %d", number);
-        snprintf(ErrorMsg, sizeof(ErrorMsg),
-                 "P_STARTACS ERROR: UNKNOWN SCRIPT %d", number);
+        M_snprintf(ErrorMsg, sizeof(ErrorMsg),
+                   "P_STARTACS ERROR: UNKNOWN SCRIPT %d", number);
         P_SetMessage(&players[consoleplayer], ErrorMsg, true);
     }
     statePtr = &ACSInfo[infoIndex].state;
@@ -540,8 +540,8 @@ boolean P_StartLockedACS(line_t * line, byte * args, mobj_t * mo, int side)
     {
         if (!(mo->player->keys & (1 << (lock - 1))))
         {
-            snprintf(LockedBuffer, sizeof(LockedBuffer),
-                     "YOU NEED THE %s\n", TextKeyMessages[lock - 1]);
+            M_snprintf(LockedBuffer, sizeof(LockedBuffer),
+                       "YOU NEED THE %s\n", TextKeyMessages[lock - 1]);
             P_SetMessage(mo->player, LockedBuffer, true);
             S_StartSound(mo, SFX_DOOR_LOCKED);
             return false;
@@ -1692,7 +1692,7 @@ static int CmdPrintNumber(void)
 {
     char tempStr[16];
 
-    snprintf(tempStr, sizeof(tempStr), "%d", Pop());
+    M_snprintf(tempStr, sizeof(tempStr), "%d", Pop());
     M_StringConcat(PrintBuffer, tempStr, sizeof(PrintBuffer));
     return SCRIPT_CONTINUE;
 }

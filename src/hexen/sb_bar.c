@@ -640,20 +640,20 @@ static void DrawSoundInfo(void)
             MN_DrTextA("------", xPos[0], y);
             continue;
         }
-        snprintf(text, sizeof(text), "%s", c->name);
+        M_snprintf(text, sizeof(text), "%s", c->name);
         M_ForceUppercase(text);
         MN_DrTextA(text, xPos[x++], y);
-        snprintf(text, sizeof(text), "%d", c->mo->type);
+        M_snprintf(text, sizeof(text), "%d", c->mo->type);
         MN_DrTextA(text, xPos[x++], y);
-        snprintf(text, sizeof(text), "%d", c->mo->x >> FRACBITS);
+        M_snprintf(text, sizeof(text), "%d", c->mo->x >> FRACBITS);
         MN_DrTextA(text, xPos[x++], y);
-        snprintf(text, sizeof(text), "%d", c->mo->y >> FRACBITS);
+        M_snprintf(text, sizeof(text), "%d", c->mo->y >> FRACBITS);
         MN_DrTextA(text, xPos[x++], y);
-        snprintf(text, sizeof(text), "%d", (int) c->id);
+        M_snprintf(text, sizeof(text), "%d", (int) c->id);
         MN_DrTextA(text, xPos[x++], y);
-        snprintf(text, sizeof(text), "%d", c->priority);
+        M_snprintf(text, sizeof(text), "%d", c->priority);
         MN_DrTextA(text, xPos[x++], y);
-        snprintf(text, sizeof(text), "%d", c->distance);
+        M_snprintf(text, sizeof(text), "%d", c->distance);
         MN_DrTextA(text, xPos[x++], y);
     }
     UpdateState |= I_FULLSCRN;
@@ -1746,7 +1746,7 @@ static void CheatWarpFunc(player_t * player, Cheat_t * cheat)
         P_SetMessage(player, TXT_CHEATBADINPUT, true);
         return;
     }
-    snprintf(mapName, sizeof(mapName), "MAP%02d", map);
+    M_snprintf(mapName, sizeof(mapName), "MAP%02d", map);
     if (W_CheckNumForName(mapName) == -1)
     {                       // Can't find
         P_SetMessage(player, TXT_CHEATNOMAP, true);
@@ -1777,7 +1777,7 @@ static void CheatMassacreFunc(player_t * player, Cheat_t * cheat)
     char buffer[80];
 
     count = P_Massacre();
-    snprintf(buffer, sizeof(buffer), "%d MONSTERS KILLED\n", count);
+    M_snprintf(buffer, sizeof(buffer), "%d MONSTERS KILLED\n", count);
     P_SetMessage(player, buffer, true);
 }
 
@@ -1865,12 +1865,12 @@ static void CheatVersionFunc(player_t * player, Cheat_t * cheat)
 static void CheatDebugFunc(player_t * player, Cheat_t * cheat)
 {
     char textBuffer[50];
-    snprintf(textBuffer, sizeof(textBuffer),
-             "MAP %d (%d)  X:%5d  Y:%5d  Z:%5d",
-             P_GetMapWarpTrans(gamemap),
-             gamemap,
-             player->mo->x >> FRACBITS,
-             player->mo->y >> FRACBITS, player->mo->z >> FRACBITS);
+    M_snprintf(textBuffer, sizeof(textBuffer),
+               "MAP %d (%d)  X:%5d  Y:%5d  Z:%5d",
+               P_GetMapWarpTrans(gamemap),
+               gamemap,
+               player->mo->x >> FRACBITS,
+               player->mo->y >> FRACBITS, player->mo->z >> FRACBITS);
     P_SetMessage(player, textBuffer, true);
 }
 
@@ -1905,8 +1905,8 @@ static void CheatScriptFunc3(player_t * player, Cheat_t * cheat)
 
     if (P_StartACS(script, 0, script_args, player->mo, NULL, 0))
     {
-        snprintf(textBuffer, sizeof(textBuffer),
-                 "RUNNING SCRIPT %.2d", script);
+        M_snprintf(textBuffer, sizeof(textBuffer),
+                   "RUNNING SCRIPT %.2d", script);
         P_SetMessage(player, textBuffer, true);
     }
 }
@@ -1938,8 +1938,8 @@ static void CheatTrackFunc1(player_t * player, Cheat_t * cheat)
         P_SetMessage(player, "ERROR INITIALIZING CD", true);
     }
 
-    snprintf(buffer, sizeof(buffer), "ENTER DESIRED CD TRACK (%.2d - %.2d):\n",
-            I_CDMusFirstTrack(), I_CDMusLastTrack());
+    M_snprintf(buffer, sizeof(buffer), "ENTER DESIRED CD TRACK (%.2d - %.2d):\n",
+               I_CDMusFirstTrack(), I_CDMusLastTrack());
     P_SetMessage(player, buffer, true);
 }
 
@@ -1976,14 +1976,14 @@ static void CheatTrackFunc2(player_t * player, Cheat_t * cheat)
 
     if (!S_StartCustomCDTrack(track))
     {
-        snprintf(buffer, sizeof(buffer),
-                 "ERROR WHILE TRYING TO PLAY CD TRACK: %.2d\n", track);
+        M_snprintf(buffer, sizeof(buffer),
+                   "ERROR WHILE TRYING TO PLAY CD TRACK: %.2d\n", track);
         P_SetMessage(player, buffer, true);
     }
     else
     {
         // No error encountered while attempting to play the track
-        snprintf(buffer, sizeof(buffer), "PLAYING TRACK: %.2d\n", track);
+        M_snprintf(buffer, sizeof(buffer), "PLAYING TRACK: %.2d\n", track);
         P_SetMessage(player, buffer, true);
     }
 }

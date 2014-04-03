@@ -53,6 +53,7 @@ struct txt_spincontrol_s
     union { float f; int i; } min, max, *value, step; 
     int editing;
     char *buffer;
+    size_t buffer_len;
 };
 
 /**

@@ -352,14 +352,14 @@ static void CheckSteamGUSPatches(void)
 
     len = strlen(install_path) + strlen(STEAM_BFG_GUS_PATCHES) + 20;
     patch_path = malloc(len);
-    snprintf(patch_path, len, "%s\\%s\\ACBASS.PAT",
-             install_path, STEAM_BFG_GUS_PATCHES);
+    M_snprintf(patch_path, len, "%s\\%s\\ACBASS.PAT",
+               install_path, STEAM_BFG_GUS_PATCHES);
 
     // Does acbass.pat exist? If so, then set gus_patch_path.
     if (M_FileExists(patch_path))
     {
-        snprintf(patch_path, len, "%s\\%s",
-                 install_path, STEAM_BFG_GUS_PATCHES);
+        M_snprintf(patch_path, len, "%s\\%s",
+                   install_path, STEAM_BFG_GUS_PATCHES);
         M_SetVariable("gus_patch_path", patch_path);
     }
 

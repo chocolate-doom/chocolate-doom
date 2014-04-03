@@ -28,6 +28,7 @@
 
 #include "doomtype.h"
 #include "i_system.h"
+#include "m_misc.h"
 #include "net_defs.h"
 #include "net_loop.h"
 #include "net_packet.h"
@@ -128,7 +129,7 @@ static boolean NET_CL_RecvPacket(net_addr_t **addr, net_packet_t **packet)
 
 static void NET_CL_AddrToString(net_addr_t *addr, char *buffer, int buffer_len)
 {
-    snprintf(buffer, buffer_len, "local server");
+    M_snprintf(buffer, buffer_len, "local server");
 }
 
 static void NET_CL_FreeAddress(net_addr_t *addr)
@@ -204,7 +205,7 @@ static boolean NET_SV_RecvPacket(net_addr_t **addr, net_packet_t **packet)
 
 static void NET_SV_AddrToString(net_addr_t *addr, char *buffer, int buffer_len)
 {
-    snprintf(buffer, buffer_len, "local client");
+    M_snprintf(buffer, buffer_len, "local client");
 }
 
 static void NET_SV_FreeAddress(net_addr_t *addr)

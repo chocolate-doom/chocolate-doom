@@ -61,7 +61,6 @@ struct execute_context_s
 
 static char *TempFile(char *s)
 {
-    char *result;
     char *tempdir;
 
 #ifdef _WIN32
@@ -79,10 +78,7 @@ static char *TempFile(char *s)
     tempdir = "/tmp";
 #endif
 
-    result = malloc(strlen(tempdir) + strlen(s) + 2);
-    sprintf(result, "%s%c%s", tempdir, DIR_SEPARATOR, s);
-
-    return result;
+    return M_StringJoin(tempdir, DIR_SEPARATOR_S, s, NULL);
 }
 
 static int ArgumentNeedsEscape(char *arg)
@@ -345,8 +341,7 @@ int ExecuteDoom(execute_context_t *context)
 
     // Build the command line
 
-    response_file_arg = malloc(strlen(context->response_file) + 2);
-    sprintf(response_file_arg, "@%s", context->response_file);
+    response_file_arg = M_StringJoin("@", context->response_file);
 
     // Run Doom
 

@@ -971,8 +971,8 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
         EV_DoDoor(&junk, close);
         P_NoiseAlert(players[0].mo, players[0].mo);
 
-        snprintf(plrkilledmsg, sizeof(plrkilledmsg),
-                 "%s", DEH_String("You're dead!  You set off the alarm."));
+        M_snprintf(plrkilledmsg, sizeof(plrkilledmsg),
+                   "%s", DEH_String("You're dead!  You set off the alarm."));
         if(!deathmatch)
             players[consoleplayer].message = plrkilledmsg;
 
@@ -1011,8 +1011,8 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
     case MT_TOKEN_ALARM:
         P_NoiseAlert(players[0].mo, players[0].mo);
 
-        snprintf(plrkilledmsg, sizeof(plrkilledmsg),
-                 "%s", DEH_String("You Fool!  You've set off the alarm"));
+        M_snprintf(plrkilledmsg, sizeof(plrkilledmsg),
+                   "%s", DEH_String("You Fool!  You've set off the alarm"));
         if(!deathmatch)
             players[consoleplayer].message = plrkilledmsg;
         return;

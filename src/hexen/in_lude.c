@@ -28,6 +28,7 @@
 #include "s_sound.h"
 #include "i_system.h"
 #include "i_video.h"
+#include "m_misc.h"
 #include "p_local.h"
 #include "v_video.h"
 
@@ -537,8 +538,8 @@ static void DrNumber(int val, int x, int y, int wrapThresh)
 
     if (!(val < -9 && wrapThresh < 1000))
     {
-        snprintf(buff, sizeof(buff), "%d",
-                 val >= wrapThresh ? val % wrapThresh : val);
+        M_snprintf(buff, sizeof(buff), "%d",
+                   val >= wrapThresh ? val % wrapThresh : val);
     }
     MN_DrTextA(buff, x - MN_TextAWidth(buff) / 2, y);
 }
@@ -555,8 +556,8 @@ static void DrNumberBold(int val, int x, int y, int wrapThresh)
 
     if (!(val < -9 && wrapThresh < 1000))
     {
-        snprintf(buff, sizeof(buff), "%d",
-                 val >= wrapThresh ? val % wrapThresh : val);
+        M_snprintf(buff, sizeof(buff), "%d",
+                   val >= wrapThresh ? val % wrapThresh : val);
     }
     MN_DrTextAYellow(buff, x - MN_TextAWidth(buff) / 2, y);
 }

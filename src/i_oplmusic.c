@@ -1527,11 +1527,11 @@ void I_OPL_DevMessages(char *result, size_t result_len)
 
     if (num_tracks == 0)
     {
-        snprintf(result, result_len, "No OPL track!");
+        M_snprintf(result, result_len, "No OPL track!");
         return;
     }
 
-    snprintf(result, result_len, "Tracks:\n");
+    M_snprintf(result, result_len, "Tracks:\n");
     lines = 1;
 
     for (i = 0; i < NumActiveChannels(); ++i)
@@ -1543,18 +1543,18 @@ void I_OPL_DevMessages(char *result, size_t result_len)
 
         instr_num = tracks[0].channels[i].instrument - main_instrs;
 
-        snprintf(tmp, sizeof(tmp),
-                "chan %i: %c i#%i (%s)\n",
-                i,
-                ChannelInUse(&tracks[0].channels[i]) ? '\'' : ' ',
-                instr_num + 1,
-                main_instr_names[instr_num]);
+        M_snprintf(tmp, sizeof(tmp),
+                   "chan %i: %c i#%i (%s)\n",
+                   i,
+                   ChannelInUse(&tracks[0].channels[i]) ? '\'' : ' ',
+                   instr_num + 1,
+                   main_instr_names[instr_num]);
         M_StringConcat(result, tmp, result_len);
 
         ++lines;
     }
 
-    snprintf(tmp, sizeof(tmp), "\nLast percussion:\n");
+    M_snprintf(tmp, sizeof(tmp), "\nLast percussion:\n");
     M_StringConcat(result, tmp, result_len);
     lines += 2;
 
@@ -1566,11 +1566,11 @@ void I_OPL_DevMessages(char *result, size_t result_len)
             break;
         }
 
-        snprintf(tmp, sizeof(tmp),
-                 "%cp#%i (%s)\n",
-                 i == 0 ? '\'' : ' ',
-                 last_perc[i],
-                 percussion_names[last_perc[i] - 35]);
+        M_snprintf(tmp, sizeof(tmp),
+                   "%cp#%i (%s)\n",
+                   i == 0 ? '\'' : ' ',
+                   last_perc[i],
+                   percussion_names[last_perc[i] - 35]);
         M_StringConcat(result, tmp, result_len);
         ++lines;
 

@@ -34,6 +34,7 @@
 #include "i_system.h"
 #include "i_timer.h"
 #include "i_video.h"
+#include "m_misc.h"
 
 #include "net_client.h"
 #include "net_gui.h"
@@ -101,7 +102,7 @@ static void BuildWindow(void)
 
     for (i = 0; i < net_client_wait_data.max_players; ++i)
     {
-        snprintf(buf, sizeof(buf), " %i. ", i + 1);
+        M_snprintf(buf, sizeof(buf), " %i. ", i + 1);
         TXT_AddWidget(table, TXT_NewLabel(buf));
         player_labels[i] = TXT_NewLabel("");
         ip_labels[i] = TXT_NewLabel("");
@@ -164,8 +165,8 @@ static void UpdateGUI(void)
 
     if (net_client_wait_data.num_drones > 0)
     {
-        snprintf(buf, sizeof(buf), " (+%i observer clients)",
-                 net_client_wait_data.num_drones);
+        M_snprintf(buf, sizeof(buf), " (+%i observer clients)",
+                   net_client_wait_data.num_drones);
         TXT_SetLabel(drone_label, buf);
     }
     else

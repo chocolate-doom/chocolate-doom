@@ -23,6 +23,7 @@
 #include "doomtype.h"
 #include "m_config.h"
 #include "m_controls.h"
+#include "m_misc.h"
 
 #include "execute.h"
 #include "txt_keyinput.h"
@@ -171,7 +172,7 @@ static void AddSectionLabel(txt_table_t *table, char *title, boolean add_space)
                               NULL);
     }
 
-    sprintf(buf, " - %s - ", title);
+    M_snprintf(buf, sizeof(buf), " - %s - ", title);
 
     TXT_AddWidgets(table, TXT_NewLabel(buf),  TXT_NewStrut(0, 0),
                           NULL);

@@ -29,6 +29,7 @@
 
 #include "textscreen.h"
 #include "m_config.h"
+#include "m_misc.h"
 #include "mode.h"
 
 #include "display.h"
@@ -152,8 +153,7 @@ void SetDisplayDriver(void)
     {
         char *env_string;
 
-        env_string = malloc(strlen(video_driver) + 30);
-        sprintf(env_string, "SDL_VIDEODRIVER=%s", video_driver);
+        env_string = M_StringJoin("SDL_VIDEODRIVER=", video_driver, NULL);
         putenv(env_string);
         free(env_string);
     }
@@ -492,7 +492,7 @@ static void GenerateModesTable(TXT_UNCAST_ARG(widget),
             continue;
         }
 
-        sprintf(buf, "%ix%i", modes[i].w, modes[i].h);
+        M_snprintf(buf, sizeof(buf), "%ix%i", modes[i].w, modes[i].h);
         rbutton = TXT_NewRadioButton(buf, &vidmode, i);
         TXT_AddWidget(modes_table, rbutton);
         TXT_SignalConnect(rbutton, "selected", ModeSelected, &modes[i]);

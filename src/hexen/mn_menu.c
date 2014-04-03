@@ -685,7 +685,7 @@ static boolean ReadDescriptionForSlot(int slot, char *description)
     char name[100];
     char versionText[HXS_VERSION_TEXT_LENGTH];
 
-    snprintf(name, sizeof(name), "%shex%d.hxs", SavePath, slot);
+    M_snprintf(name, sizeof(name), "%shex%d.hxs", SavePath, slot);
 
     fp = fopen(name, "rb");
 

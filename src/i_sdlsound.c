@@ -705,8 +705,8 @@ static boolean CacheSFX(sfxinfo_t *sfxinfo)
     {
         char filename[16];
 
-        snprintf(filename, sizeof(filename), "%s.wav",
-                 DEH_String(S_sfx[sound].name));
+        M_snprintf(filename, sizeof(filename), "%s.wav",
+                   DEH_String(S_sfx[sound].name));
         WriteWAV(filename, sound_chunks[sound].abuf,
                  sound_chunks[sound].alen, mixer_freq);
     }
@@ -733,7 +733,7 @@ static void GetSfxLumpName(sfxinfo_t *sfx, char *buf, size_t buf_len)
 
     if (use_sfx_prefix)
     {
-        snprintf(buf, buf_len, "ds%s", DEH_String(sfx->name));
+        M_snprintf(buf, buf_len, "ds%s", DEH_String(sfx->name));
     }
     else
     {

@@ -54,6 +54,7 @@
 #include "am_map.h"
 #include "m_cheat.h"
 #include "m_menu.h" // villsa [STRIFE]
+#include "m_misc.h"
 
 #include "s_sound.h"
 
@@ -663,11 +664,11 @@ boolean ST_Responder(event_t* ev)
     {
         // [STRIFE] 'GPS' for player position
         static char buf[ST_MSGWIDTH];
-        snprintf(buf, sizeof(buf),
-                "ang=0x%x;x,y=(0x%x,0x%x)",
-                players[consoleplayer].mo->angle,
-                players[consoleplayer].mo->x,
-                players[consoleplayer].mo->y);
+        M_snprintf(buf, sizeof(buf),
+                   "ang=0x%x;x,y=(0x%x,0x%x)",
+                   players[consoleplayer].mo->angle,
+                   players[consoleplayer].mo->x,
+                   players[consoleplayer].mo->y);
         plyr->message = buf;
     }
 

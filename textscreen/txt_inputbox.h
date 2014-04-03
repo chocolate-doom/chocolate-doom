@@ -45,6 +45,7 @@ struct txt_inputbox_s
 {
     txt_widget_t widget;
     char *buffer;
+    size_t buffer_len;
     unsigned int size;
     int editing;
     void *value;

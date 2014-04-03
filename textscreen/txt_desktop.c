@@ -263,7 +263,7 @@ void TXT_DrawASCIITable(void)
             n = y * 16 + x;
 
             TXT_GotoXY(x * 5, y);
-            sprintf(buf, "%02x   ", n);
+            TXT_snprintf(buf, sizeof(buf), "%02x   ", n);
             TXT_Puts(buf);
 
             // Write the character directly to the screen memory buffer:

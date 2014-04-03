@@ -253,7 +253,7 @@ static int I_PCS_GetSfxLumpNum(sfxinfo_t* sfx)
 
     if (use_sfx_prefix)
     {
-        snprintf(namebuf, sizeof(namebuf), "dp%s", DEH_String(sfx->name));
+        M_snprintf(namebuf, sizeof(namebuf), "dp%s", DEH_String(sfx->name));
     }
     else
     {

@@ -986,8 +986,8 @@ void G_Ticker (void)
             {
                 static char turbomessage[80];
                 extern char player_names[8][16];
-                snprintf(turbomessage, sizeof(turbomessage),
-                         "%s is turbo!", player_names[i]);
+                M_snprintf(turbomessage, sizeof(turbomessage),
+                           "%s is turbo!", player_names[i]);
                 players[consoleplayer].message = turbomessage;
                 turbodetected[i] = false;
             }
@@ -1291,7 +1291,7 @@ void G_LoadPath(int map)
     char mapbuf[33];
 
     memset(mapbuf, 0, sizeof(mapbuf));
-    snprintf(mapbuf, sizeof(mapbuf), "%d", map);
+    M_snprintf(mapbuf, sizeof(mapbuf), "%d", map);
 
     // haleyjd: free if already set, and use M_SafeFilePath
     if(loadpath)
@@ -1806,7 +1806,7 @@ void G_DoSaveGame (char *path)
     
     // [STRIFE] custom save file path logic
     memset(gamemapstr, 0, sizeof(gamemapstr));
-    snprintf(gamemapstr, sizeof(gamemapstr), "%d", gamemap);
+    M_snprintf(gamemapstr, sizeof(gamemapstr), "%d", gamemap);
     savegame_file = M_SafeFilePath(path, gamemapstr);
 
     // [STRIFE] write the "current" file, which tells which hub map
@@ -1871,7 +1871,7 @@ void G_DoSaveGame (char *path)
     // [STRIFE]: custom message logic
     if(!strcmp(path, savepath))
     {
-        snprintf(savename, sizeof(savename), "%s saved.", character_name);
+        M_snprintf(savename, sizeof(savename), "%s saved.", character_name);
         players[consoleplayer].message = savename;
     }
 
@@ -2196,7 +2196,7 @@ void G_RecordDemo (char* name)
     usergame = false;
     demoname_size = strlen(name) + 5;
     demoname = Z_Malloc(demoname_size, PU_STATIC, NULL);
-    snprintf(demoname, demoname_size, "%s.lmp", name);
+    M_snprintf(demoname, demoname_size, "%s.lmp", name);
     maxsize = 0x20000;
 
     //!
@@ -2291,8 +2291,8 @@ static char *DemoVersionDescription(int version)
     }
 
     // Unknown version. Who knows?
-    snprintf(resultbuf, sizeof(resultbuf),
-             "%i.%i (unknown)", version / 100, version % 100);
+    M_snprintf(resultbuf, sizeof(resultbuf),
+               "%i.%i (unknown)", version / 100, version % 100);
 
     return resultbuf;
 }

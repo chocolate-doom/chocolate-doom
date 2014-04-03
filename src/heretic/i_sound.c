@@ -211,8 +211,8 @@ int I_GetSfxLumpNum(sfxinfo_t * sound)
         return 0;
     if (sound->link)
         sound = sound->link;
-//  snprintf(namebuf, sizeof(namebuf), "d%c%s",
-//           snd_prefixen[snd_SfxDevice], sound->name);
+//  M_snprintf(namebuf, sizeof(namebuf), "d%c%s",
+//             snd_prefixen[snd_SfxDevice], sound->name);
     return W_GetNumForName(sound->name);
 
 }
@@ -320,15 +320,15 @@ void I_sndArbitrateCards(void)
     {
         if (debugmode)
         {
-            snprintf(tmp, sizeof(tmp), "cfg p=0x%x, i=%d, d=%d\n",
-                     snd_SBport, snd_SBirq, snd_SBdma);
+            M_snprintf(tmp, sizeof(tmp), "cfg p=0x%x, i=%d, d=%d\n",
+                       snd_SBport, snd_SBirq, snd_SBdma);
             tprintf(tmp, 0);
         }
         if (SB_Detect(&snd_SBport, &snd_SBirq, &snd_SBdma, 0))
         {
-            snprintf(tmp, sizeof(tmp),
-                     "SB isn't responding at p=0x%x, i=%d, d=%d\n",
-                     snd_SBport, snd_SBirq, snd_SBdma);
+            M_snprintf(tmp, sizeof(tmp),
+                       "SB isn't responding at p=0x%x, i=%d, d=%d\n",
+                       snd_SBport, snd_SBirq, snd_SBdma);
             tprintf(tmp, 0);
         }
         else
@@ -336,8 +336,8 @@ void I_sndArbitrateCards(void)
 
         if (debugmode)
         {
-            snprintf(tmp, sizeof(tmp), "SB_Detect returned p=0x%x,i=%d,d=%d\n",
-                     snd_SBport, snd_SBirq, snd_SBdma);
+            M_snprintf(tmp, sizeof(tmp), "SB_Detect returned p=0x%x,i=%d,d=%d\n",
+                       snd_SBport, snd_SBirq, snd_SBdma);
             tprintf(tmp, 0);
         }
     }
@@ -354,14 +354,14 @@ void I_sndArbitrateCards(void)
     {
         if (debugmode)
         {
-            snprintf(tmp, sizeof(tmp), "cfg p=0x%x\n", snd_Mport);
+            M_snprintf(tmp, sizeof(tmp), "cfg p=0x%x\n", snd_Mport);
             tprintf(tmp, 0);
         }
 
         if (MPU_Detect(&snd_Mport, &i))
         {
-            snprintf(tmp, sizeof(tmp),
-                     "The MPU-401 isn't reponding @ p=0x%x.\n", snd_Mport);
+            M_snprintf(tmp, sizeof(tmp),
+                       "The MPU-401 isn't reponding @ p=0x%x.\n", snd_Mport);
             tprintf(tmp, 0);
         }
         else
@@ -399,11 +399,11 @@ void I_StartupSound(void)
 
     if (debugmode)
     {
-        snprintf(tmp, sizeof(tmp), "  Music device #%d & dmxCode=%d",
-                 snd_MusicDevice, dmxCodes[snd_MusicDevice]);
+        M_snprintf(tmp, sizeof(tmp), "  Music device #%d & dmxCode=%d",
+                   snd_MusicDevice, dmxCodes[snd_MusicDevice]);
         tprintf(tmp, 0);
-        snprintf(tmp, sizeof(tmp),  "  Sfx device #%d & dmxCode=%d\n",
-                 snd_SfxDevice, dmxCodes[snd_SfxDevice]);
+        M_snprintf(tmp, sizeof(tmp),  "  Sfx device #%d & dmxCode=%d\n",
+                   snd_SfxDevice, dmxCodes[snd_SfxDevice]);
         tprintf(tmp, 0);
     }
 
@@ -414,7 +414,7 @@ void I_StartupSound(void)
 
     if (debugmode)
     {
-        snprintf(tmp, sizeof(tmp), "  DMX_Init() returned %d", rc);
+        M_snprintf(tmp, sizeof(tmp), "  DMX_Init() returned %d", rc);
         tprintf(tmp, 0);
     }
 

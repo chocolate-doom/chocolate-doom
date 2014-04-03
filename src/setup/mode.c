@@ -34,6 +34,7 @@
 #include "m_argv.h"
 #include "m_config.h"
 #include "m_controls.h"
+#include "m_misc.h"
 
 #include "compatibility.h"
 #include "display.h"
@@ -140,8 +141,7 @@ static void BindMiscVariables(void)
         if (!strcmp(savedir, ""))
         {
             free(savedir);
-            savedir = malloc(10);
-            sprintf(savedir, "hexndata%c", DIR_SEPARATOR);
+            savedir = "hexndata" DIR_SEPARATOR_S;
         }
     }
 
@@ -215,8 +215,7 @@ static void SetExecutable(mission_config_t *config)
     extension = "";
 #endif
 
-    executable = malloc(strlen(config->executable) + 5);
-    sprintf(executable, "%s%s", config->executable, extension);
+    executable = M_StringJoin(config->executable, extension, NULL);
 }
 
 static void SetMission(mission_config_t *config)

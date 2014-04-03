@@ -125,9 +125,9 @@ static void TXT_JoystickInputSizeCalc(TXT_UNCAST_ARG(joystick_input))
     joystick_input->widget.h = 1;
 }
 
-static void GetJoystickButtonDescription(int button, char *buf)
+static void GetJoystickButtonDescription(int button, char *buf, size_t buf_len)
 {
-    sprintf(buf, "BUTTON #%i", button + 1);
+    M_snprintf(buf, buf_len, "BUTTON #%i", button + 1);
 }
 
 static void TXT_JoystickInputDrawer(TXT_UNCAST_ARG(joystick_input))
@@ -142,7 +142,8 @@ static void TXT_JoystickInputDrawer(TXT_UNCAST_ARG(joystick_input))
     }
     else
     {
-        GetJoystickButtonDescription(*joystick_input->variable, buf);
+        GetJoystickButtonDescription(*joystick_input->variable,
+                                     buf, sizeof(buf));
     }
 
     TXT_SetWidgetBG(joystick_input);
