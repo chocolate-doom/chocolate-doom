@@ -238,6 +238,7 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
     byte *desttop;
     byte *dest;
     byte *source; 
+    byte sourcetrans;
     int w, f;
  
     y -= SHORT(patch->topoffset); 
@@ -282,12 +283,17 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
 
             while (count--)
             {
+                if (dp_translation)
+                    sourcetrans = dp_translation[*source++];
+                else
+                    sourcetrans = *source++;
+
                 if (hires)
                 {
-                    *dest = *source;
+                    *dest = sourcetrans;
                     dest += SCREENWIDTH;
                 }
-                *dest = *source++;
+                *dest = sourcetrans;
                 dest += SCREENWIDTH;
             }
           }
