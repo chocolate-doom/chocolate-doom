@@ -1491,6 +1491,14 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
+    // Enable translucency.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_translucency),
+
+    //!
+    // @game doom
+    //
     // Show colored numbers in the status bar.
     //
 

@@ -1889,6 +1889,7 @@ void A_BrainExplode (mobj_t* mo)
     int		y;
     int		z;
     mobj_t*	th;
+    extern int crispy_translucency;
 	
     x = mo->x + (P_Random () - P_Random ())*2048;
     y = mo->y;
@@ -1901,6 +1902,9 @@ void A_BrainExplode (mobj_t* mo)
     th->tics -= P_Random()&7;
     if (th->tics < 1)
 	th->tics = 1;
+
+    if (crispy_translucency)
+        th->flags |= MF_TRANSLUCENT;
 }
 
 

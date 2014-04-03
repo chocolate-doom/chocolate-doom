@@ -91,6 +91,8 @@ P_SetMobjState
 //
 void P_ExplodeMissile (mobj_t* mo)
 {
+    extern int crispy_translucency;
+
     mo->momx = mo->momy = mo->momz = 0;
 
     P_SetMobjState (mo, mobjinfo[mo->type].deathstate);
@@ -101,6 +103,9 @@ void P_ExplodeMissile (mobj_t* mo)
 	mo->tics = 1;
 
     mo->flags &= ~MF_MISSILE;
+
+    if (crispy_translucency)
+        mo->flags |= MF_TRANSLUCENT;
 
     if (mo->info->deathsound)
 	S_StartSound (mo, mo->info->deathsound);

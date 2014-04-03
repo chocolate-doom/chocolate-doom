@@ -32,6 +32,7 @@
 int vanilla_savegame_limit = 0;
 int vanilla_demo_limit = 0;
 
+int crispy_translucency = 0;
 int crispy_coloredhud = 0;
 int crispy_automapstats = 0;
 int crispy_secretmessage = 0;
@@ -50,6 +51,8 @@ void CompatibilitySettings(void)
     window = TXT_NewWindow("Crispness");
 
     TXT_AddWidgets(window,
+                   TXT_NewCheckBox("Enable translucency",
+                                   &crispy_translucency),
                    TXT_NewCheckBox("Show colored numbers in status bar",
                                    &crispy_coloredhud),
                    TXT_NewCheckBox("Show level stats in automap",
@@ -89,6 +92,7 @@ void BindCompatibilityVariables(void)
         M_BindVariable("vanilla_demo_limit",     &vanilla_demo_limit);
         if (gamemission == doom)
         {
+        M_BindVariable("crispy_translucency",    &crispy_translucency);
         M_BindVariable("crispy_coloredhud",      &crispy_coloredhud);
         M_BindVariable("crispy_automapstats",    &crispy_automapstats);
         M_BindVariable("crispy_secretmessage",   &crispy_secretmessage);

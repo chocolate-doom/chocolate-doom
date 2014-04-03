@@ -40,6 +40,7 @@
 
 // Needs access to LFB (guess what).
 #include "v_video.h"
+#include "v_trans.h"
 
 // State.
 #include "doomstat.h"
@@ -559,6 +560,40 @@ void R_DrawTranslatedColumnLow (void)
     } while (count--); 
 } 
 
+void R_DrawTLColumn (void)
+{
+    int			count;
+    byte*		dest;
+    fixed_t		frac;
+    fixed_t		fracstep;
+
+    count = dc_yh - dc_yl;
+    if (count < 0)
+	return;
+
+#ifdef RANGECHECK
+    if ((unsigned)dc_x >= SCREENWIDTH
+	|| dc_yl < 0
+	|| dc_yh >= SCREENHEIGHT)
+    {
+	I_Error ( "R_DrawColumn: %i to %i at %i",
+		  dc_yl, dc_yh, dc_x);
+    }
+#endif
+
+    dest = ylookup[dc_yl] + columnofs[dc_x];
+
+    fracstep = dc_iscale;
+    frac = dc_texturemid + (dc_yl-centery)*fracstep;
+
+    do
+    {
+        *dest = tranmap[(*dest<<8)+dc_colormap[dc_source[frac>>FRACBITS]]];
+	dest += SCREENWIDTH;
+
+	frac += fracstep;
+    } while (count--);
+}
 
 
 

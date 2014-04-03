@@ -23,7 +23,10 @@
 //  02111-1307, USA.
 //
 // DESCRIPTION:
-//  palette color ranges for translation.
+//  Gamma correction LUT.
+//  Color range translation support
+//  Functions to draw patches (by post) directly to screen.
+//  Functions to blit a block to the screen.
 //
 //-----------------------------------------------------------------------------
 
@@ -43,6 +46,8 @@ extern byte *cr_blue;
 extern byte *cr_blue2;
 extern byte *cr_orange;
 extern byte *cr_yellow;
+
+extern byte *tranmap;
 
 #endif // __V_TRANS__
 

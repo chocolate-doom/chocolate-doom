@@ -404,6 +404,7 @@ R_DrawVisSprite
     int			texturecolumn;
     fixed_t		frac;
     patch_t*		patch;
+    extern int		crispy_translucency;
 	
 	
     patch = W_CacheLumpNum (vis->patch+firstspritelump, PU_CACHE);
@@ -425,6 +426,11 @@ R_DrawVisSprite
     {
 	colfunc = transcolfunc;
 	dc_translation = vis->translation;
+    }
+    // [crispy] translucent sprites
+    if (crispy_translucency && (vis->mobjflags & MF_TRANSLUCENT))
+    {
+	colfunc = tlcolfunc;
     }
 	
     dc_iscale = abs(vis->xiscale)>>(detailshift && !hires);
