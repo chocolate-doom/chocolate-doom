@@ -1214,6 +1214,10 @@ void A_VileChase (mobj_t* actor)
 		    corpsehit->health = info->spawnhealth;
 		    corpsehit->target = NULL;
 
+		    // [crispy] resurrected pools of gore ("ghost monsters") are translucent
+		    if (corpsehit->flags & MF_SOLID)
+		        corpsehit->flags |= MF_TRANSLUCENT;
+
 		    return;
 		}
 	    }
@@ -1889,7 +1893,6 @@ void A_BrainExplode (mobj_t* mo)
     int		y;
     int		z;
     mobj_t*	th;
-    extern int crispy_translucency;
 	
     x = mo->x + (P_Random () - P_Random ())*2048;
     y = mo->y;
@@ -1903,8 +1906,7 @@ void A_BrainExplode (mobj_t* mo)
     if (th->tics < 1)
 	th->tics = 1;
 
-    if (crispy_translucency)
-        th->flags |= MF_TRANSLUCENT;
+    th->flags |= MF_TRANSLUCENT;
 }
 
 
