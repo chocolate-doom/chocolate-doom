@@ -24,9 +24,9 @@ INSTALL file.
 == Configuration File ==
 
 Chocolate Doom is compatible with the DOS Doom configuration file
-(normally named 'default.cfg').  Existing configuration files for DOS
-Doom should therefore simply work out of the box.  However, Chocolate
-Doom also provides some extra settings.  These are stored in a
+(normally named 'default.cfg'). Existing configuration files for DOS
+Doom should therefore simply work out of the box. However, Chocolate
+Doom also provides some extra settings. These are stored in a
 separate file named 'chocolate-doom.cfg'.
 
 The configuration can be edited using the chocolate-setup tool.
@@ -47,9 +47,9 @@ as Vanilla Doom, and trying to play TCs by adding the WAD files using
 '-file' will not work.
 
 Many Total Conversions (TCs) are distributed as a PWAD file which must
-be merged into the main IWAD.  Typically a copy of DEUSF.EXE is
-included which performs this merge.  Chocolate Doom includes a new
-option, '-merge', which will simulate this merge.  Essentially, the
+be merged into the main IWAD. Typically a copy of DEUSF.EXE is
+included which performs this merge. Chocolate Doom includes a new
+option, '-merge', which will simulate this merge. Essentially, the
 WAD directory is merged in memory, removing the need to modify the
 IWAD on disk.
 
@@ -64,6 +64,9 @@ Here are some examples:
 
 == Other information ==
 
+ * Chocolate Doom includes a number of different options for music
+   playback. See the README.Music file for more details.
+
  * More information, including information about how to play various
    classic TCs, is available on the Chocolate Doom website:
 
@@ -72,7 +75,7 @@ Here are some examples:
    You are encouraged to sign up and contribute any useful information
    you may have regarding the port!
 
- * Chocolate Doom is not perfect.  Although it aims to accurately
+ * Chocolate Doom is not perfect. Although it aims to accurately
    emulate reproduce the DOS executables, some behavior can be very
    difficult to reproduce. Because of the nature of the project, you
    may also encounter Vanilla Doom bugs; these are intentionally
@@ -86,11 +89,11 @@ Here are some examples:
    guidelines - see the file named HACKING included with the source
    distribution.
 
- * Chocolate Doom is distributed under the GNU GPL.  See the COPYING
+ * Chocolate Doom is distributed under the GNU GPL. See the COPYING
    file for more information.
 
  * Please send any feedback, questions or suggestions to
-   fraggle@gmail.com.  Thanks!
+   fraggle@gmail.com. Thanks!
 
 # vim: tw=70
 
