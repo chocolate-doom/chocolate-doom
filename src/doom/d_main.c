@@ -1583,7 +1583,7 @@ void D_DoomMain (void)
         {
             if (!strncmp(lumpinfo[i].name, "DEHACKED", 8))
             {
-                DEH_LoadLump(i, false);
+                DEH_LoadLump(i, true);
                 loaded++;
             }
         }

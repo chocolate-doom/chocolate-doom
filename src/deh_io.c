@@ -303,7 +303,8 @@ void DEH_Error(deh_context_t *context, char *msg, ...)
     va_end(args);
 
     if (deh_autoload)
-        printf("Error parsing dehacked file\n");
+        printf("Error parsing dehacked lump (consider disabling automatic loading \n\
+of DEHACKED lumps from PWAD files wih the \"-nodehlump\" parameter).\n");
     else
     I_Error("Error parsing dehacked file");
 }
