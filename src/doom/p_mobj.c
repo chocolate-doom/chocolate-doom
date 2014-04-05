@@ -902,6 +902,7 @@ P_SpawnBlood
     th = P_SpawnMobj (x,y,z, MT_BLOOD);
     th->momz = FRACUNIT*2;
     th->tics -= P_Random()&3;
+    // [crispy] connect blood object with the monster that bleeds it
     th->target = target;
 
     if (target->flags & MF_SHADOW) // Spectres bleed spectre blood

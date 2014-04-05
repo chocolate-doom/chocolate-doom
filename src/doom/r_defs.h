@@ -376,6 +376,7 @@ typedef struct vissprite_s
     lighttable_t*	colormap;
    
     int			mobjflags;
+    // [crispy] color translation table for blood colored by monster class
     byte*			translation;
     
 } vissprite_t;
