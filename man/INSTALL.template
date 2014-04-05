@@ -262,36 +262,9 @@ LONG_GAME_NAME includes OPL emulation code that accurately reproduces
 the way that the in-game music sounded under DOS when using an
 Adlib/Soundblaster card. This is, however, not to everyone's taste.
 
-#if _WIN32
-Better quality MIDI playback is possible by using Windows' native
-MIDI synthesizer that is part of the operating system.  Select "Native
-MIDI" within the sound dialog in the setup tool.
-
-#endif
-#if __MACOSX__
-High quality MIDI playback is possible by using Mac OS X's native MIDI
-synthesizer that is part of the operating system. Select "Native MIDI"
-within the sound dialog in the setup tool.
-
-#endif
-As an alternative it is possible to use Timidity for high quality MIDI
-playback:
-
-  http://timidity.sourceforge.net/
-
-A good set of patches for Timidity is the eawpats collection, which can
-be found here:
-
-  http://www.doomworld.com/idgames/index.php?id=13928
-  (Doom idgames archive, /sounds/eawpats.zip)
-
-LONG_GAME_NAME also has provides a very limited form "emulation" of
-the Gravis Ultrasound (GUS) card, using Timidity's GUS patch file
-support. To use this requires a copy of the GUS patch files, found
-here:
-
-  http://www.doomworld.com/idgames/index.php?id=17127
-  (Doom idgames archive, /music/dgguspat.zip)
+LONG_GAME_NAME includes a number of different options for better
+quality MIDI playback; see the file README.Music for more details of
+how to set these up.
 
 #if !PRECOMPILED
 When compiling from source, be sure to compile and install Timidity
