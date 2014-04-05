@@ -244,14 +244,14 @@ void ConfigSound(void)
     window = TXT_NewWindow("Sound configuration");
 
     TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_TOP,
-                                  TXT_SCREEN_W / 2, 6);
+                                  TXT_SCREEN_W / 2, 5);
 
     TXT_AddWidgets(window,
                TXT_NewSeparator("Sound effects"),
                sfx_table = TXT_NewTable(2),
                NULL);
 
-    TXT_SetColumnWidths(sfx_table, 20, 14);
+    TXT_SetColumnWidths(sfx_table, 19, 15);
 
     TXT_AddWidgets(sfx_table,
                    TXT_NewLabel("Sound effects"),
@@ -280,7 +280,7 @@ void ConfigSound(void)
                extra_table = TXT_NewTable(1),
                NULL);
 
-    TXT_SetColumnWidths(music_table, 20, 14);
+    TXT_SetColumnWidths(music_table, 19, 15);
 
     TXT_AddWidgets(music_table,
                    TXT_NewLabel("Music"),
