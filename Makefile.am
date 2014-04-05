@@ -33,7 +33,7 @@ CODEBLOCKS_FILES=                              \
 
 DOC_FILES=                              \
         README                          \
-        README.OPL                      \
+        README.Music                    \
         NEWS                            \
         ChangeLog
 
