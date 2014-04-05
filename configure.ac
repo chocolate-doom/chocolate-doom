@@ -1,4 +1,4 @@
-AC_INIT(Crispy Doom, 1.0, fabian@greffrath.com, crispy-doom)
+AC_INIT(Crispy Doom, 1.1, fabian@greffrath.com, crispy-doom)
 
 PACKAGE_SHORTDESC="Limit-raising medium-resolution Doom source port"
 PACKAGE_COPYRIGHT="Copyright (C) 1993-2014"
