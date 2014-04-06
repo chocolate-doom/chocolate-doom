@@ -149,7 +149,7 @@ the following to your /etc/modprobe.conf file to do this:
 === OpenBSD/NetBSD ===
 
 You must be running as root to access the hardware OPL directly. You
-can confirm that hadware OPL is working by checking for this message
+can confirm that hardware OPL is working by checking for this message
 on startup:
 
   OPL_Init: Using driver 'OpenBSD'.
