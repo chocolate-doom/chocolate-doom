@@ -321,7 +321,7 @@ static void LoadSubstituteConfigs(void)
     }
     else
     {
-        musicdir = M_StringJoin(configdir, "music/", NULL);
+        musicdir = M_StringJoin(configdir, "music", DIR_SEPARATOR_S, NULL);
     }
 
     // Load all music packs. We always load all music substitution packs for
@@ -365,6 +365,7 @@ static void DumpSubstituteConfig(char *filename)
     }
 
     fprintf(fs, "# Example %s substitute MIDI file.\n\n", PACKAGE_NAME);
+    fprintf(fs, "# SHA1 hash                              = filename\n");
 
     for (lumpnum = 0; lumpnum < numlumps; ++lumpnum)
     {
