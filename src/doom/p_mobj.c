@@ -1043,6 +1043,9 @@ P_SpawnPlayerMissile
 	if (!linetarget)
 	{
 	    an = source->angle;
+	    if (singleplayer)
+	        slope = ((p2fromp(source->player)->lookdir) << FRACBITS) / 173;
+	    else
 	    slope = 0;
 	}
     }
