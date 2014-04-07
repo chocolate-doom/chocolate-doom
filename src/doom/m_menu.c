@@ -937,7 +937,7 @@ void M_DrawOptions(void)
                                       PU_CACHE));
 
     M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (mousesens + 1),
-		 10, mouseSensitivity);
+		 20, mouseSensitivity);
 
     M_DrawThermo(OptionsDef.x,OptionsDef.y+LINEHEIGHT*(scrnsize+1),
 		 9,screenSize);
@@ -1112,7 +1112,7 @@ void M_ChangeSensitivity(int choice)
 	    mouseSensitivity--;
 	break;
       case 1:
-	if (mouseSensitivity < 9)
+	if (mouseSensitivity < 19)
 	    mouseSensitivity++;
 	break;
     }
@@ -1186,6 +1186,10 @@ M_DrawThermo
 	xx += 8;
     }
     V_DrawPatchDirect(xx, y, W_CacheLumpName(DEH_String("M_THERMR"), PU_CACHE));
+
+    // [crispy] do not crash anymore if value exceeds thermometer range
+    if (thermDot > thermWidth)
+        thermDot = thermWidth;
 
     V_DrawPatchDirect((x + 8) + thermDot * 8, y,
 		      W_CacheLumpName(DEH_String("M_THERMO"), PU_CACHE));
