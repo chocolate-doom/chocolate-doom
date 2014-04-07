@@ -390,7 +390,7 @@ static void DumpSubstituteConfig(char *filename)
             fprintf(fs, "%02x", digest[h]);
         }
 
-        fprintf(fs, " = %s.mp3\n", name);
+        fprintf(fs, " = %s.ogg\n", name);
     }
 
     fprintf(fs, "\n");
