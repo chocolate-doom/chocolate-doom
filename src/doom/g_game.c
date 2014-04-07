@@ -590,23 +590,17 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         } 
     }
 
+    // [crispy] mouse look
     if ((crispy_freelook && mousebuttons[mousebmouselook]) ||
          crispy_mouselook)
     {
-        if (mousey)
-        {
-            look += mousey / 8;
-
-            if (look >  7)
-                look =  7;
-            else
-            if (look < -7)
-                look = -7;
-        }
+        players2[consoleplayer].lookdir += mousey / 8;
     }
     else
     if (!novert)
+    {
         forward += mousey;
+    }
 
     // [crispy] single click on mouse look button centers view
     if (mousebuttons[mousebmouselook] && !mbmlookctrl)
