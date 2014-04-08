@@ -130,6 +130,12 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_INT(mouse_sensitivity),
 
     //!
+    // Vertical mouse sensitivity
+    //
+
+    CONFIG_VARIABLE_INT(mouse_sensitivity_y),
+
+    //!
     // Volume of sound effects, range 0-15.
     //
 

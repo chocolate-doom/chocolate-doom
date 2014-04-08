@@ -401,6 +401,7 @@ void D_BindVariables(void)
 #endif
 
     M_BindVariable("mouse_sensitivity",      &mouseSensitivity);
+    M_BindVariable("mouse_sensitivity_y",    &mouseSensitivity_y);
     M_BindVariable("sfx_volume",             &sfxVolume);
     M_BindVariable("music_volume",           &musicVolume);
     M_BindVariable("show_messages",          &showMessages);

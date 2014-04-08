@@ -37,6 +37,7 @@ static int usemouse = 1;
 static int mouseSensitivity = 5;
 static float mouse_acceleration = 2.0;
 static int mouse_threshold = 10;
+static int mouseSensitivity_y = 5;
 static float mouse_acceleration_y = 1.0;
 static int mouse_threshold_y = 0;
 static int grabmouse = 1;
@@ -150,12 +151,14 @@ void ConfigMouse(void)
     if (gamemission == doom) // Crispy
     {
     TXT_AddWidgets(motion_table,
-                   TXT_NewLabel("Speed"),
+                   TXT_NewLabel("Speed (h)"),
                    TXT_NewSpinControl(&mouseSensitivity, 1, 256),
                    TXT_NewLabel("Acceleration (h)"),
                    TXT_NewFloatSpinControl(&mouse_acceleration, 1.0, 5.0),
                    TXT_NewLabel("Acceleration threshold (h)"),
                    TXT_NewSpinControl(&mouse_threshold, 0, 32),
+                   TXT_NewLabel("Speed (v)"),
+                   TXT_NewSpinControl(&mouseSensitivity_y, 1, 256),
                    TXT_NewLabel("Acceleration (v)"),
                    TXT_NewFloatSpinControl(&mouse_acceleration_y, 1.0, 5.0),
                    TXT_NewLabel("Acceleration threshold (v)"),
@@ -192,6 +195,7 @@ void BindMouseVariables(void)
     M_BindVariable("mouse_threshold",      &mouse_threshold);
     if (gamemission == doom) // Crispy
     {
+    M_BindVariable("mouse_sensitivity_y",  &mouseSensitivity_y);
     M_BindVariable("mouse_acceleration_y", &mouse_acceleration_y);
     M_BindVariable("mouse_threshold_y",    &mouse_threshold_y);
     }

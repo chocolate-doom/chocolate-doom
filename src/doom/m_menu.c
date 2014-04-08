@@ -77,6 +77,7 @@ extern boolean		chat_on;		// in heads-up code
 // defaulted values
 //
 int			mouseSensitivity = 5;
+int			mouseSensitivity_y = 5;
 
 // Show messages has default, 0 = off, 1 = on
 int			showMessages = 1;
@@ -196,6 +197,7 @@ void M_QuitDOOM(int choice);
 
 void M_ChangeMessages(int choice);
 void M_ChangeSensitivity(int choice);
+void M_ChangeSensitivity_y(int choice);
 void M_SfxVol(int choice);
 void M_MusicVol(int choice);
 void M_ChangeDetail(int choice);
@@ -373,6 +375,7 @@ enum
     option_empty1,
     mousesens,
     option_empty2,
+    option_empty3,
     soundvol,
     opt_end
 } options_e;
@@ -384,8 +387,9 @@ menuitem_t OptionsMenu[]=
     {1,"M_DETAIL",	M_ChangeDetail,'g'},
     {2,"M_SCRNSZ",	M_SizeDisplay,'s'},
     {-1,"",0,'\0'},
-    {2,"M_MSENS",	M_ChangeSensitivity,'m'},
-    {-1,"",0,'\0'},
+    {-1,"M_MSENS",'\0'},
+    {2,"",	M_ChangeSensitivity,'m'},
+    {2,"",	M_ChangeSensitivity_y,'v'},
     {1,"M_SVOL",	M_Sound,'s'}
 };
 
@@ -1064,8 +1068,17 @@ void M_DrawOptions(void)
                       W_CacheLumpName(DEH_String(msgNames[showMessages]),
                                       PU_CACHE));
 
-    M_DrawThermo(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (mousesens + 1),
+    M_WriteText(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (option_empty2) + 3,
+                "H");
+
+    M_DrawThermo(OptionsDef.x + 10, OptionsDef.y + LINEHEIGHT * (option_empty2),
 		 20, mouseSensitivity);
+
+    M_WriteText(OptionsDef.x, OptionsDef.y + LINEHEIGHT * (option_empty3) + 3,
+                "V");
+
+    M_DrawThermo(OptionsDef.x + 10, OptionsDef.y + LINEHEIGHT * (option_empty3),
+		 20, mouseSensitivity_y);
 
     M_DrawThermo(OptionsDef.x,OptionsDef.y+LINEHEIGHT*(scrnsize+1),
 		 10,screenSize);
@@ -1252,8 +1265,23 @@ void M_ChangeSensitivity(int choice)
 	    mouseSensitivity--;
 	break;
       case 1:
-	if (mouseSensitivity < 19)
+	if (mouseSensitivity < 255)
 	    mouseSensitivity++;
+	break;
+    }
+}
+
+void M_ChangeSensitivity_y(int choice)
+{
+    switch(choice)
+    {
+      case 0:
+	if (mouseSensitivity_y)
+	    mouseSensitivity_y--;
+	break;
+      case 1:
+	if (mouseSensitivity_y < 255)
+	    mouseSensitivity_y++;
 	break;
     }
 }
@@ -1328,8 +1356,13 @@ M_DrawThermo
     V_DrawPatchDirect(xx, y, W_CacheLumpName(DEH_String("M_THERMR"), PU_CACHE));
 
     // [crispy] do not crash anymore if value exceeds thermometer range
-    if (thermDot > thermWidth)
-        thermDot = thermWidth;
+    if (thermDot >= thermWidth)
+    {
+        char num[4];
+        snprintf(num, 4, "%3d", thermDot);
+        M_WriteText(xx + 8, y + 3, num);
+        thermDot = thermWidth - 1;
+    }
 
     V_DrawPatchDirect((x + 8) + thermDot * 8, y,
 		      W_CacheLumpName(DEH_String("M_THERMO"), PU_CACHE));
