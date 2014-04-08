@@ -341,7 +341,7 @@ int ExecuteDoom(execute_context_t *context)
 
     // Build the command line
 
-    response_file_arg = M_StringJoin("@", context->response_file);
+    response_file_arg = M_StringJoin("@", context->response_file, NULL);
 
     // Run Doom
 
