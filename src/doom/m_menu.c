@@ -406,7 +406,9 @@ menu_t  OptionsDef =
 //
 enum
 {
+    mouse_horiz,
     mouse_empty1,
+    mouse_vert,
     mouse_empty2,
     mouse_end
 } mouse_e;
@@ -414,7 +416,9 @@ enum
 menuitem_t MouseMenu[]=
 {
     {2,"",	M_ChangeSensitivity,'h'},
+    {-1,"",0,'\0'},
     {2,"",	M_ChangeSensitivity_y,'v'},
+    {-1,"",0,'\0'},
 };
 
 menu_t  MouseDef =
@@ -1100,16 +1104,16 @@ void M_DrawMouse(void)
 {
     V_DrawPatchDirect (60, 38, W_CacheLumpName(DEH_String("M_MSENS"), PU_CACHE));
 
-    M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_empty1 + 3,
-                "H");
+    M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_horiz + 6,
+                "HORIZONTAL");
 
-    M_DrawThermo(MouseDef.x + 10, MouseDef.y + LINEHEIGHT * mouse_empty1,
+    M_DrawThermo(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_empty1,
 		 20, mouseSensitivity);
 
-    M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_empty2 + 3,
-                "V");
+    M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_vert + 6,
+                "VERTICAL");
 
-    M_DrawThermo(MouseDef.x + 10, MouseDef.y + LINEHEIGHT * mouse_empty2,
+    M_DrawThermo(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_empty2,
 		 20, mouseSensitivity_y);
 }
 
