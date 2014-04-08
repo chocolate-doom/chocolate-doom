@@ -572,6 +572,13 @@ void R_ProjectSprite (mobj_t* thing)
     vis->x2 = x2 >= viewwidth ? viewwidth-1 : x2;	
     iscale = FixedDiv (FRACUNIT, xscale);
 
+    // [crispy] flip death sprites and corpses randomly
+    if (singleplayer && thing->type != MT_CYBORG &&
+        thing->flags & MF_CORPSE && -thing->health & 1)
+    {
+        flip = true;
+    }
+
     if (flip)
     {
 	vis->startfrac = spritewidth[lump]-1;
