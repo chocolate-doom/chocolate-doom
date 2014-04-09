@@ -1108,13 +1108,13 @@ void M_DrawMouse(void)
                 "HORIZONTAL");
 
     M_DrawThermo(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_empty1,
-		 20, mouseSensitivity);
+		 21, mouseSensitivity);
 
     M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_vert + 6,
                 "VERTICAL");
 
     M_DrawThermo(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_empty2,
-		 20, mouseSensitivity_y);
+		 21, mouseSensitivity_y);
 }
 
 void M_Options(int choice)
@@ -1400,10 +1400,13 @@ M_DrawThermo
         snprintf(num, 4, "%3d", thermDot);
         M_WriteText(xx + 8, y + 3, num);
         thermDot = thermWidth - 1;
+        dp_translation = (byte *) &colormaps[16*256];
     }
 
     V_DrawPatchDirect((x + 8) + thermDot * 8, y,
 		      W_CacheLumpName(DEH_String("M_THERMO"), PU_CACHE));
+
+    dp_translation = NULL;
 }
 
 
