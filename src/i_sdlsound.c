@@ -86,7 +86,7 @@ static allocated_sound_t *allocated_sounds_head = NULL;
 static allocated_sound_t *allocated_sounds_tail = NULL;
 static int allocated_sounds_size = 0;
 
-int use_libsamplerate = 1;
+int use_libsamplerate = 3;
 
 // Scale factor used when converting libsamplerate floating point numbers
 // to integers. Too high means the sounds can clip; too low means they
