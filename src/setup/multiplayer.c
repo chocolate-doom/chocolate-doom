@@ -795,6 +795,13 @@ static void DoJoinGame(void *unused1, void *unused2)
 {
     execute_context_t *exec;
 
+    if (connect_address == NULL || strlen(connect_address) <= 0)
+    {
+        TXT_MessageBox(NULL, "Please enter a server address\n"
+                             "to connect to.");
+        return;
+    }
+
     exec = NewExecuteContext();
 
     AddCmdLineParameter(exec, "-connect %s", connect_address);
