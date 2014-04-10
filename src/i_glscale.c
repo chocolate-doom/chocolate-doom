@@ -73,11 +73,15 @@
 #include <stdlib.h>
 
 #include "i_video.h"
+#include "m_argv.h"
 
 // Maximum scale factor for the intermediate scaled texture. A value
 // of 4 is pretty much perfect; you can try larger values but it's
 // a case of diminishing returns.
 int gl_max_scale = 4;
+
+// Simulate fake scanlines?
+static boolean scanline_mode = false;
 
 // Screen dimensions:
 static int screen_w, screen_h;
@@ -118,6 +122,7 @@ static void (*_glTexImage2D)(GLenum, GLint, GLint, GLsizei, GLsizei, GLint,
 static void (*_glTexParameteri)(GLenum, GLenum, GLint);
 static void (*_glVertex2f)(GLfloat, GLfloat);
 static void (*_glViewport)(GLint, GLint, GLsizei, GLsizei);
+static void (*_glColor3f)(GLfloat, GLfloat, GLfloat);
 
 static void *GetGLFunction(char *name)
 {
@@ -142,6 +147,7 @@ static int SetGLFunctions(void)
      && (_glCheckFramebufferStatus = GetGLFunction("glCheckFramebufferStatus"))
      && (_glClear = GetGLFunction("glClear"))
      && (_glClearColor = GetGLFunction("glClearColor"))
+     && (_glColor3f = GetGLFunction("glColor3f"))
      && (_glEnable = GetGLFunction("glEnable"))
      && (_glEnd = GetGLFunction("glEnd"))
      && (_glFramebufferTexture = GetGLFunction("glFramebufferTexture"))
@@ -286,6 +292,13 @@ static void CalculateWindowSize(void)
         window_h = (screen_w * base_height) / base_width;
     }
 
+    if (scanline_mode)
+    {
+        scaled_w = SCREENWIDTH * 5;   // 1600
+        scaled_h = SCREENHEIGHT * 6;  // x1200
+        return;
+    }
+
     // Calculate the size of the intermediate scaled texture. It will
     // be an integer multiple of the original screen size.
     // Below ~480x360 the scaling doesn't look so great. Use this as
@@ -381,6 +394,28 @@ static void SetInputData(byte *screen, SDL_Color *palette)
                  GL_RGBA, GL_UNSIGNED_BYTE, unscaled_data);
 }
 
+// Draw fake scanlines.
+static void DrawScanlines(void)
+{
+    GLfloat y1;
+    int y;
+
+    _glColor3f(0.0, 0.0, 0.0);
+
+    // We draw two scanlines for each row of pixels; this matches the
+    // behavior of the software code.
+    for (y = 0; y < SCREENHEIGHT * 2; ++y)
+    {
+        y1 = (float) y / SCREENHEIGHT - 1.0;
+        _glBegin(GL_LINES);
+        _glVertex2f(-1, y1);
+        _glVertex2f(1, y1);
+        _glEnd();
+    }
+
+    _glColor3f(1.0, 1.0, 1.0);
+}
+
 // Draw unscaled_texture (containing the screen buffer) into the
 // second scaled_texture texture.
 static void DrawUnscaledToScaled(void)
@@ -398,6 +433,12 @@ static void DrawUnscaledToScaled(void)
     _glTexCoord2f(1, 0); _glVertex2f(1, -1);
     _glTexCoord2f(0, 0); _glVertex2f(-1, -1);
     _glEnd();
+
+    // Scanline hack.
+    if (scanline_mode)
+    {
+        DrawScanlines();
+    }
 
     // Finished with framebuffer
     _glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -447,6 +488,12 @@ boolean I_GL_InitScale(int w, int h)
     {
         return false;
     }
+
+    // Scanline hack. Don't enable at less than half the 1600x1200
+    // intermediate buffer size or horrible aliasing effects will
+    // occur.
+    scanline_mode = M_ParmExists("-scanline")
+                 && h > (SCREENHEIGHT * 3);
 
     _glEnable(GL_TEXTURE_2D);
     _glShadeModel(GL_SMOOTH);
