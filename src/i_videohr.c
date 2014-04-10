@@ -220,3 +220,26 @@ void I_BlackPaletteHR(void)
     I_SetPaletteHR(blackpal);
 }
 
+// Check if the user has hit the escape key to abort startup.
+boolean I_CheckAbortHR(void)
+{
+    SDL_Event ev;
+    boolean result = false;
+
+    // Not initialized?
+    if (hr_surface == NULL)
+    {
+        return false;
+    }
+
+    while (SDL_PollEvent(&ev))
+    {
+        if (ev.type == SDL_KEYDOWN && ev.key.keysym.sym == SDLK_ESCAPE)
+        {
+            result = true;
+        }
+    }
+
+    return result;
+}
+

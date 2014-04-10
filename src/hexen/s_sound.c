@@ -981,11 +981,13 @@ void S_InitScript(void)
                     SC_MustGetString();
                     if (*sc_String != '?')
                     {
-                        strcpy(S_sfx[i].name, sc_String);
+                        M_StringCopy(S_sfx[i].name, sc_String,
+                                     sizeof(S_sfx[i].name));
                     }
                     else
                     {
-                        strcpy(S_sfx[i].name, "default");
+                        M_StringCopy(S_sfx[i].name, "default",
+                                     sizeof(S_sfx[i].name));
                     }
                     break;
                 }
@@ -1002,7 +1004,7 @@ void S_InitScript(void)
     {
         if (!strcmp(S_sfx[i].name, ""))
         {
-            strcpy(S_sfx[i].name, "default");
+            M_StringCopy(S_sfx[i].name, "default", sizeof(S_sfx[i].name));
         }
     }
 }

@@ -30,6 +30,7 @@
 #include "doomtype.h"
 #include "i_system.h"
 #include "m_argv.h"
+#include "m_misc.h"
 #include "net_defs.h"
 #include "net_io.h"
 #include "net_packet.h"
@@ -312,12 +313,12 @@ void NET_SDL_AddrToString(net_addr_t *addr, char *buffer, int buffer_len)
 
     ip = (IPaddress *) addr->handle;
     
-    snprintf(buffer, buffer_len, 
-             "%i.%i.%i.%i",
-             ip->host & 0xff,
-             (ip->host >> 8) & 0xff,
-             (ip->host >> 16) & 0xff,
-             (ip->host >> 24) & 0xff);
+    M_snprintf(buffer, buffer_len, 
+               "%i.%i.%i.%i",
+               ip->host & 0xff,
+               (ip->host >> 8) & 0xff,
+               (ip->host >> 16) & 0xff,
+               (ip->host >> 24) & 0xff);
 }
 
 net_addr_t *NET_SDL_ResolveAddress(char *address)

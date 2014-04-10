@@ -35,7 +35,7 @@ static void TXT_WindowActionSizeCalc(TXT_UNCAST_ARG(action))
     TXT_CAST_ARG(txt_window_action_t, action);
     char buf[10];
 
-    TXT_GetKeyDescription(action->key, buf);
+    TXT_GetKeyDescription(action->key, buf, sizeof(buf));
 
     // Width is label length, plus key description length, plus '='
     // and two surrounding spaces.
@@ -49,7 +49,7 @@ static void TXT_WindowActionDrawer(TXT_UNCAST_ARG(action))
     TXT_CAST_ARG(txt_window_action_t, action);
     char buf[10];
 
-    TXT_GetKeyDescription(action->key, buf);
+    TXT_GetKeyDescription(action->key, buf, sizeof(buf));
 
     if (TXT_HoveringOverWidget(action))
     {

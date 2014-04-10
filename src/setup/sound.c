@@ -78,8 +78,8 @@ int snd_maxslicetime_ms = 28;
 char *snd_musiccmd = "";
 
 static int numChannels = 8;
-static int sfxVolume = 15;
-static int musicVolume = 15;
+static int sfxVolume = 8;
+static int musicVolume = 8;
 static int voiceVolume = 15;
 static int show_talk = 0;
 static int use_libsamplerate = 0;
@@ -244,14 +244,14 @@ void ConfigSound(void)
     window = TXT_NewWindow("Sound configuration");
 
     TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_TOP,
-                                  TXT_SCREEN_W / 2, 6);
+                                  TXT_SCREEN_W / 2, 5);
 
     TXT_AddWidgets(window,
                TXT_NewSeparator("Sound effects"),
                sfx_table = TXT_NewTable(2),
                NULL);
 
-    TXT_SetColumnWidths(sfx_table, 20, 14);
+    TXT_SetColumnWidths(sfx_table, 19, 15);
 
     TXT_AddWidgets(sfx_table,
                    TXT_NewLabel("Sound effects"),
@@ -280,7 +280,7 @@ void ConfigSound(void)
                extra_table = TXT_NewTable(1),
                NULL);
 
-    TXT_SetColumnWidths(music_table, 20, 14);
+    TXT_SetColumnWidths(music_table, 19, 15);
 
     TXT_AddWidgets(music_table,
                    TXT_NewLabel("Music"),
@@ -333,6 +333,23 @@ void BindSoundVariables(void)
 
     timidity_cfg_path = strdup("");
     gus_patch_path = strdup("");
+
+    // Default sound volumes - different games use different values.
+
+    switch (gamemission)
+    {
+        case doom:
+        default:
+            sfxVolume = 8;  musicVolume = 8;
+            break;
+        case heretic:
+        case hexen:
+            sfxVolume = 10; musicVolume = 10;
+            break;
+        case strife:
+            sfxVolume = 8;  musicVolume = 13;
+            break;
+    }
 
     // Before SDL_mixer version 1.2.11, MIDI music caused the game
     // to crash when it looped.  If this is an old SDL_mixer version,

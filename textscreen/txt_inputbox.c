@@ -44,18 +44,17 @@ static void SetBufferFromValue(txt_inputbox_t *inputbox)
 
         if (*value != NULL)
         {
-            strncpy(inputbox->buffer, *value, inputbox->size);
-            inputbox->buffer[inputbox->size] = '\0';
+            TXT_StringCopy(inputbox->buffer, *value, inputbox->size);
         }
         else
         {
-            strcpy(inputbox->buffer, "");
+            TXT_StringCopy(inputbox->buffer, "", inputbox->buffer_len);
         }
     }
     else if (inputbox->widget.widget_class == &txt_int_inputbox_class)
     {
         int *value = (int *) inputbox->value;
-        sprintf(inputbox->buffer, "%i", *value);
+        TXT_snprintf(inputbox->buffer, inputbox->buffer_len, "%i", *value);
     }
 }
 
@@ -65,7 +64,7 @@ static void StartEditing(txt_inputbox_t *inputbox)
 
     if (inputbox->widget.widget_class == &txt_int_inputbox_class)
     {
-        strcpy(inputbox->buffer, "");
+        TXT_StringCopy(inputbox->buffer, "", inputbox->buffer_len);
     }
     else
     {
@@ -322,7 +321,8 @@ static txt_inputbox_t *NewInputBox(txt_widget_class_t *widget_class,
     // 'size' is the maximum number of characters that can be entered,
     // but for a UTF-8 string, each character can take up to four
     // characters.
-    inputbox->buffer = malloc(size * 4 + 1);
+    inputbox->buffer_len = size * 4 + 1;
+    inputbox->buffer = malloc(inputbox->buffer_len);
     inputbox->editing = 0;
 
     return inputbox;

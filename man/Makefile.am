@@ -1,4 +1,3 @@
-
 MANPAGE_GEN_FILES = environ.man           \
                     doom.template         \
                     heretic.template      \
@@ -35,8 +34,8 @@ SETUP_MAN_PAGES =                          \
            @PROGRAM_PREFIX@hexen-setup.6   \
            @PROGRAM_PREFIX@strife-setup.6
 
-man_MANS = @PROGRAM_PREFIX@server.6       \
-           @PROGRAM_PREFIX@setup.6        \
+man_MANS = chocolate-server.6             \
+           chocolate-setup.6              \
            $(GENERATED_MAN_PAGES)         \
            $(SETUP_MAN_PAGES)
 

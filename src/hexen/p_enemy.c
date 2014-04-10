@@ -430,7 +430,9 @@ void P_NewChaseDir(mobj_t * actor)
     }
     else
     {
-        for (tdir = DI_SOUTHEAST; tdir != DI_EAST-1; tdir--)
+        tdir = DI_SOUTHEAST;
+
+        for (;;)
         {
             if (tdir != turnaround)
             {
@@ -438,6 +440,13 @@ void P_NewChaseDir(mobj_t * actor)
                 if (P_TryWalk(actor))
                     return;
             }
+
+            if (tdir == DI_EAST)
+            {
+                break;
+            }
+
+            --tdir;
         }
     }
 

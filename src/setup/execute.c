@@ -48,6 +48,7 @@
 #include "mode.h"
 #include "m_argv.h"
 #include "m_config.h"
+#include "m_misc.h"
 
 struct execute_context_s
 {
@@ -60,7 +61,6 @@ struct execute_context_s
 
 static char *TempFile(char *s)
 {
-    char *result;
     char *tempdir;
 
 #ifdef _WIN32
@@ -78,10 +78,7 @@ static char *TempFile(char *s)
     tempdir = "/tmp";
 #endif
 
-    result = malloc(strlen(tempdir) + strlen(s) + 2);
-    sprintf(result, "%s%c%s", tempdir, DIR_SEPARATOR, s);
-
-    return result;
+    return M_StringJoin(tempdir, DIR_SEPARATOR_S, s, NULL);
 }
 
 static int ArgumentNeedsEscape(char *arg)
@@ -271,6 +268,7 @@ static char *GetFullExePath(const char *program)
 {
     char *result;
     char *sep;
+    size_t result_len;
     unsigned int path_len;
 
     sep = strrchr(myargv[0], DIR_SEPARATOR);
@@ -282,13 +280,13 @@ static char *GetFullExePath(const char *program)
     else
     {
         path_len = sep - myargv[0] + 1;
+        result_len = strlen(program) + path_len + 1;
+        result = malloc(result_len);
 
-        result = malloc(strlen(program) + path_len + 1);
-
-        strncpy(result, myargv[0], path_len);
+        M_StringCopy(result, myargv[0], result_len);
         result[path_len] = '\0';
 
-        strcat(result, program);
+        M_StringConcat(result, program, result_len);
     }
 
     return result;
@@ -343,8 +341,7 @@ int ExecuteDoom(execute_context_t *context)
 
     // Build the command line
 
-    response_file_arg = malloc(strlen(context->response_file) + 2);
-    sprintf(response_file_arg, "@%s", context->response_file);
+    response_file_arg = M_StringJoin("@", context->response_file, NULL);
 
     // Run Doom
 

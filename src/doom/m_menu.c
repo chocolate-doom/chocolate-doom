@@ -41,9 +41,10 @@
 #include "i_system.h"
 #include "i_timer.h"
 #include "i_video.h"
-#include "z_zone.h"
+#include "m_misc.h"
 #include "v_video.h"
 #include "w_wad.h"
+#include "z_zone.h"
 
 #include "r_local.h"
 
@@ -515,15 +516,15 @@ void M_ReadSaveStrings(void)
 
     for (i = 0;i < load_end;i++)
     {
-        strcpy(name, P_SaveGameFile(i));
+        M_StringCopy(name, P_SaveGameFile(i), sizeof(name));
 
 	handle = fopen(name, "rb");
-	if (handle == NULL)
-	{
-	    strcpy(&savegamestrings[i][0], EMPTYSTRING);
-	    LoadMenu[i].status = 0;
-	    continue;
-	}
+        if (handle == NULL)
+        {
+            M_StringCopy(savegamestrings[i], EMPTYSTRING, SAVESTRINGSIZE);
+            LoadMenu[i].status = 0;
+            continue;
+        }
 	fread(&savegamestrings[i], 1, SAVESTRINGSIZE, handle);
 	fclose(handle);
 	LoadMenu[i].status = 1;
@@ -580,7 +581,7 @@ void M_LoadSelect(int choice)
 {
     char    name[256];
 	
-    strcpy(name, P_SaveGameFile(choice));
+    M_StringCopy(name, P_SaveGameFile(choice), sizeof(name));
 
     G_LoadGame (name);
     M_ClearMenus ();
@@ -645,8 +646,8 @@ void M_SaveSelect(int choice)
     saveStringEnter = 1;
     
     saveSlot = choice;
-    strcpy(saveOldString,savegamestrings[choice]);
-    if (!strcmp(savegamestrings[choice],EMPTYSTRING))
+    M_StringCopy(saveOldString,savegamestrings[choice], SAVESTRINGSIZE);
+    if (!strcmp(savegamestrings[choice], EMPTYSTRING))
 	savegamestrings[choice][0] = 0;
     saveCharIndex = strlen(savegamestrings[choice]);
 }
@@ -1191,10 +1192,9 @@ static char *M_SelectEndMessage(void)
 
 void M_QuitDOOM(int choice)
 {
-    sprintf(endstring,
-            DEH_String("%s\n\n" DOSY),
-            DEH_String(M_SelectEndMessage()));
-  
+    DEH_snprintf(endstring, sizeof(endstring), "%s\n\n" DOSY,
+                 DEH_String(M_SelectEndMessage()));
+
     M_StartMessage(endstring,M_QuitResponse,true);
 }
 
@@ -1594,12 +1594,13 @@ boolean M_Responder (event_t* ev)
 		savegamestrings[saveSlot][saveCharIndex] = 0;
 	    }
 	    break;
-				
-	  case KEY_ESCAPE:
-	    saveStringEnter = 0;
-	    strcpy(&savegamestrings[saveSlot][0],saveOldString);
-	    break;
-				
+
+          case KEY_ESCAPE:
+            saveStringEnter = 0;
+            M_StringCopy(savegamestrings[saveSlot], saveOldString,
+                         SAVESTRINGSIZE);
+            break;
+
 	  case KEY_ENTER:
 	    saveStringEnter = 0;
 	    if (savegamestrings[saveSlot][0])
@@ -1930,12 +1931,12 @@ void M_StartControlPanel (void)
 
 static void M_DrawOPLDev(void)
 {
-    extern void I_OPL_DevMessages(char *);
+    extern void I_OPL_DevMessages(char *, size_t);
     char debug[1024];
     char *curr, *p;
     int line;
 
-    I_OPL_DevMessages(debug);
+    I_OPL_DevMessages(debug, sizeof(debug));
     curr = debug;
     line = 0;
 
@@ -1986,21 +1987,28 @@ void M_Drawer (void)
 	{
 	    int foundnewline = 0;
 
-	    for (i = 0; i < strlen(messageString + start); i++)
-		if (messageString[start + i] == '\n')
-		{
-		    memset(string, 0, sizeof(string));
-		    strncpy(string, messageString + start, i);
-		    foundnewline = 1;
-		    start += i + 1;
-		    break;
-		}
-				
-	    if (!foundnewline)
-	    {
-		strcpy(string, messageString + start);
-		start += strlen(string);
-	    }
+            for (i = 0; i < strlen(messageString + start); i++)
+            {
+                if (messageString[start + i] == '\n')
+                {
+                    M_StringCopy(string, messageString + start,
+                                 sizeof(string));
+                    if (i < sizeof(string))
+                    {
+                        string[i] = '\0';
+                    }
+
+                    foundnewline = 1;
+                    start += i + 1;
+                    break;
+                }
+            }
+
+            if (!foundnewline)
+            {
+                M_StringCopy(string, messageString + start, sizeof(string));
+                start += strlen(string);
+            }
 
 	    x = 160 - M_StringWidth(string) / 2;
 	    M_WriteText(x, y, string);

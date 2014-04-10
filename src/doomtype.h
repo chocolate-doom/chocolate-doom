@@ -35,10 +35,6 @@
 
 #ifdef _WIN32
 
-#define snprintf _snprintf
-#if _MSC_VER < 1400 /* not needed for Visual Studio 2008 */
-#define vsnprintf _vsnprintf
-#endif
 #define strcasecmp stricmp
 #define strncasecmp strnicmp
 
@@ -97,11 +93,13 @@ typedef uint8_t byte;
 #ifdef _WIN32
 
 #define DIR_SEPARATOR '\\'
+#define DIR_SEPARATOR_S "\\"
 #define PATH_SEPARATOR ';'
 
 #else
 
 #define DIR_SEPARATOR '/'
+#define DIR_SEPARATOR_S "/"
 #define PATH_SEPARATOR ':'
 
 #endif

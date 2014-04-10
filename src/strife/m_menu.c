@@ -54,6 +54,7 @@
 
 #include "m_argv.h"
 #include "m_controls.h"
+#include "m_misc.h"
 #include "m_saves.h"    // [STRIFE]
 #include "p_saveg.h"
 
@@ -560,7 +561,8 @@ void M_ReadSaveStrings(void)
         handle = fopen(fname, "rb");
         if(handle == NULL)
         {
-            strcpy(savegamestrings[i], EMPTYSTRING);
+            M_StringCopy(savegamestrings[i], EMPTYSTRING,
+                         sizeof(savegamestrings[i]));
             LoadMenu[i].status = 0;
             continue;
         }
@@ -765,7 +767,7 @@ void M_SaveSelect(int choice)
     quickSaveSlot = choice;
     //saveSlot = choice;
 
-    strcpy(saveOldString,savegamestrings[choice]);
+    M_StringCopy(saveOldString, savegamestrings[choice], sizeof(saveOldString));
     if (!strcmp(savegamestrings[choice],EMPTYSTRING))
         savegamestrings[choice][0] = 0;
     saveCharIndex = strlen(savegamestrings[choice]);
@@ -1850,7 +1852,8 @@ boolean M_Responder (event_t* ev)
 
         case KEY_ESCAPE:
             saveStringEnter = 0;
-            strcpy(&savegamestrings[quickSaveSlot][0],saveOldString);
+            M_StringCopy(savegamestrings[quickSaveSlot], saveOldString,
+                         sizeof(savegamestrings[quickSaveSlot]));
             break;
 
         case KEY_ENTER:
@@ -2286,24 +2289,32 @@ void M_Drawer (void)
             int foundnewline = 0;
 
             for (i = 0; i < strlen(messageString + start); i++)
+            {
                 if (messageString[start + i] == '\n')
                 {
-                    memset(string, 0, sizeof(string));
-                    strncpy(string, messageString + start, i);
+                    M_StringCopy(string, messageString + start,
+                                 sizeof(string));
+                    if (i < sizeof(string))
+                    {
+                        string[i] = '\0';
+                    }
+
                     foundnewline = 1;
                     start += i + 1;
                     break;
                 }
+            }
 
-                if (!foundnewline)
-                {
-                    strcpy(string, messageString + start);
-                    start += strlen(string);
-                }
+            if (!foundnewline)
+            {
+                M_StringCopy(string, messageString + start,
+                             sizeof(string));
+                start += strlen(string);
+            }
 
-                x = 160 - M_StringWidth(string) / 2;
-                M_WriteText(x, y, string);
-                y += SHORT(hu_font[0]->height);
+            x = 160 - M_StringWidth(string) / 2;
+            M_WriteText(x, y, string);
+            y += SHORT(hu_font[0]->height);
         }
 
         return;

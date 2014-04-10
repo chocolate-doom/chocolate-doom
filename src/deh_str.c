@@ -31,6 +31,7 @@
 
 #include "doomtype.h"
 #include "deh_str.h"
+#include "m_misc.h"
 
 #include "z_zone.h"
 
@@ -401,7 +402,7 @@ void DEH_snprintf(char *buffer, size_t len, char *fmt, ...)
 
     va_start(args, fmt);
 
-    vsnprintf(buffer, len, repl, args);
+    M_vsnprintf(buffer, len, repl, args);
 
     va_end(args);
 }

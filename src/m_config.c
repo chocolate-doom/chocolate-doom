@@ -1497,6 +1497,16 @@ static default_t *SearchCollection(default_collection_t *collection, char *name)
     return NULL;
 }
 
+// Mapping from DOS keyboard scan code to internal key code (as defined
+// in doomkey.h). I think I (fraggle) reused this from somewhere else
+// but I can't find where. Anyway, notes:
+//  * KEY_PAUSE is wrong - it's in the KEY_NUMLOCK spot. This shouldn't
+//    matter in terms of Vanilla compatibility because neither of
+//    those were valid for key bindings.
+//  * There is no proper scan code for PrintScreen (on DOS machines it
+//    sends an interrupt). So I added a fake scan code of 126 for it.
+//    The presence of this is important so we can bind PrintScreen as
+//    a screenshot key.
 static const int scantokey[128] =
 {
     0  ,    27,     '1',    '2',    '3',    '4',    '5',    '6',
@@ -1507,14 +1517,14 @@ static const int scantokey[128] =
     '\'',   '`',    KEY_RSHIFT,'\\',   'z',    'x',    'c',    'v',
     'b',    'n',    'm',    ',',    '.',    '/',    KEY_RSHIFT,KEYP_MULTIPLY,
     KEY_RALT,  ' ',  KEY_CAPSLOCK,KEY_F1,  KEY_F2,   KEY_F3,   KEY_F4,   KEY_F5,
-    KEY_F6,   KEY_F7,   KEY_F8,   KEY_F9,   KEY_F10,  KEY_PAUSE,KEY_SCRLCK,KEY_HOME,
+    KEY_F6,   KEY_F7,   KEY_F8,   KEY_F9,   KEY_F10,  /*KEY_NUMLOCK?*/KEY_PAUSE,KEY_SCRLCK,KEY_HOME,
     KEY_UPARROW,KEY_PGUP,KEY_MINUS,KEY_LEFTARROW,KEYP_5,KEY_RIGHTARROW,KEYP_PLUS,KEY_END,
     KEY_DOWNARROW,KEY_PGDN,KEY_INS,KEY_DEL,0,   0,      0,      KEY_F11,
     KEY_F12,  0,      0,      0,      0,      0,      0,      0,
     0,      0,      0,      0,      0,      0,      0,      0,
     0,      0,      0,      0,      0,      0,      0,      0,
     0,      0,      0,      0,      0,      0,      0,      0,
-    0,      0,      0,      0,      0,      0,      0,      0
+    0,      0,      0,      0,      0,      0,      KEY_PRTSCR, 0
 };
 
 
@@ -1635,14 +1645,55 @@ static int ParseIntParameter(char *strparm)
     return parm;
 }
 
+static void SetVariable(default_t *def, char *value)
+{
+    int intparm;
+
+    // parameter found
+
+    switch (def->type)
+    {
+        case DEFAULT_STRING:
+            * (char **) def->location = strdup(value);
+            break;
+
+        case DEFAULT_INT:
+        case DEFAULT_INT_HEX:
+            * (int *) def->location = ParseIntParameter(value);
+            break;
+
+        case DEFAULT_KEY:
+
+            // translate scancodes read from config
+            // file (save the old value in untranslated)
+
+            intparm = ParseIntParameter(value);
+            def->untranslated = intparm;
+            if (intparm >= 0 && intparm < 128)
+            {
+                intparm = scantokey[intparm];
+            }
+            else
+            {
+                intparm = 0;
+            }
+
+            def->original_translated = intparm;
+            * (int *) def->location = intparm;
+            break;
+
+        case DEFAULT_FLOAT:
+            * (float *) def->location = (float) atof(value);
+            break;
+    }
+}
+
 static void LoadDefaultCollection(default_collection_t *collection)
 {
-    default_t *def;
     FILE *f;
+    default_t *def;
     char defname[80];
     char strparm[100];
-    char *s;
-    int intparm;
 
     // read the file in, overriding any set defaults
     f = fopen(collection->filename, "r");
@@ -1654,26 +1705,18 @@ static void LoadDefaultCollection(default_collection_t *collection)
 
         return;
     }
-    
+
     while (!feof(f))
     {
-        if (fscanf (f, "%79s %[^\n]\n", defname, strparm) != 2)
+        if (fscanf(f, "%79s %99[^\n]\n", defname, strparm) != 2)
         {
             // This line doesn't match
-          
+
             continue;
         }
 
-        // Strip off trailing non-printable characters (\r characters
-        // from DOS text files)
-
-        while (strlen(strparm) > 0 && !isprint(strparm[strlen(strparm)-1]))
-        {
-            strparm[strlen(strparm)-1] = '\0';
-        }
-        
         // Find the setting in the list
-       
+
         def = SearchCollection(collection, defname);
 
         if (def == NULL || !def->bound)
@@ -1684,47 +1727,25 @@ static void LoadDefaultCollection(default_collection_t *collection)
             continue;
         }
 
-        // parameter found
+        // Strip off trailing non-printable characters (\r characters
+        // from DOS text files)
 
-        switch (def->type)
+        while (strlen(strparm) > 0 && !isprint(strparm[strlen(strparm)-1]))
         {
-            case DEFAULT_STRING:
-                s = strdup(strparm + 1);
-                s[strlen(s) - 1] = '\0';
-                * (char **) def->location = s;
-                break;
-
-            case DEFAULT_INT:
-            case DEFAULT_INT_HEX:
-                * (int *) def->location = ParseIntParameter(strparm);
-                break;
-
-            case DEFAULT_KEY:
-
-                // translate scancodes read from config
-                // file (save the old value in untranslated)
-
-                intparm = ParseIntParameter(strparm);
-                def->untranslated = intparm;
-                if (intparm >= 0 && intparm < 128)
-                {
-                    intparm = scantokey[intparm];
-                }
-                else
-                {
-                    intparm = 0;
-                }
-
-                def->original_translated = intparm;
-                * (int *) def->location = intparm;
-                break;
-
-            case DEFAULT_FLOAT:
-                * (float *) def->location = (float) atof(strparm);
-                break;
+            strparm[strlen(strparm)-1] = '\0';
         }
+
+        // Surrounded by quotes? If so, remove them.
+        if (strlen(strparm) >= 2
+         && strparm[0] == '"' && strparm[strlen(strparm) - 1] == '"')
+        {
+            strparm[strlen(strparm) - 1] = '\0';
+            memmove(strparm, strparm + 1, sizeof(strparm) - 1);
+        }
+
+        SetVariable(def, strparm);
     }
-            
+
     fclose (f);
 }
 
@@ -1799,8 +1820,7 @@ void M_LoadDefaults (void)
     else
     {
         doom_defaults.filename
-            = malloc(strlen(configdir) + strlen(default_main_config) + 1);
-        sprintf(doom_defaults.filename, "%s%s", configdir, default_main_config);
+            = M_StringJoin(configdir, default_main_config, NULL);
     }
 
     printf("saving config in %s\n", doom_defaults.filename);
@@ -1822,10 +1842,8 @@ void M_LoadDefaults (void)
     }
     else
     {
-        extra_defaults.filename 
-            = malloc(strlen(configdir) + strlen(default_extra_config) + 1);
-        sprintf(extra_defaults.filename, "%s%s", 
-                configdir, default_extra_config);
+        extra_defaults.filename
+            = M_StringJoin(configdir, default_extra_config, NULL);
     }
 
     LoadDefaultCollection(&doom_defaults);
@@ -1871,6 +1889,72 @@ void M_BindVariable(char *name, void *location)
     variable->bound = true;
 }
 
+// Set the value of a particular variable; an API function for other
+// parts of the program to assign values to config variables by name.
+
+boolean M_SetVariable(char *name, char *value)
+{
+    default_t *variable;
+
+    variable = GetDefaultForName(name);
+
+    if (variable == NULL || !variable->bound)
+    {
+        return false;
+    }
+
+    SetVariable(variable, value);
+
+    return true;
+}
+
+// Get the value of a variable.
+
+int M_GetIntVariable(char *name)
+{
+    default_t *variable;
+
+    variable = GetDefaultForName(name);
+
+    if (variable == NULL || !variable->bound
+     || (variable->type != DEFAULT_INT && variable->type != DEFAULT_INT_HEX))
+    {
+        return 0;
+    }
+
+    return *((int *) variable->location);
+}
+
+const char *M_GetStrVariable(char *name)
+{
+    default_t *variable;
+
+    variable = GetDefaultForName(name);
+
+    if (variable == NULL || !variable->bound
+     || variable->type != DEFAULT_STRING)
+    {
+        return NULL;
+    }
+
+    return *((const char **) variable->location);
+}
+
+float M_GetFloatVariable(char *name)
+{
+    default_t *variable;
+
+    variable = GetDefaultForName(name);
+
+    if (variable == NULL || !variable->bound
+     || variable->type != DEFAULT_FLOAT)
+    {
+        return 0;
+    }
+
+    return *((float *) variable->location);
+}
+
 // Get the path to the default configuration dir to use, if NULL
 // is passed to M_SetConfigDir.
 
@@ -1892,10 +1976,8 @@ static char *GetDefaultConfigDir(void)
         // put all configuration in a config directory off the
         // homedir
 
-        result = malloc(strlen(homedir) + strlen(PACKAGE_TARNAME) + 5);
-
-        sprintf(result, "%s%c.%s%c", homedir, DIR_SEPARATOR,
-                                     PACKAGE_TARNAME, DIR_SEPARATOR);
+        result = M_StringJoin(homedir, DIR_SEPARATOR_S,
+                              "." PACKAGE_TARNAME, DIR_SEPARATOR_S, NULL);
 
         return result;
     }
@@ -1944,6 +2026,7 @@ void M_SetConfigDir(char *dir)
 char *M_GetSaveGameDir(char *iwadname)
 {
     char *savegamedir;
+    char *topdir;
 
     // If not "doing" a configuration directory (Windows), don't "do"
     // a savegame directory, either.
@@ -1954,20 +2037,19 @@ char *M_GetSaveGameDir(char *iwadname)
     }
     else
     {
-        // ~/.chocolate-doom/savegames/
+        // ~/.chocolate-doom/savegames
 
-        savegamedir = malloc(strlen(configdir) + 30);
-        sprintf(savegamedir, "%ssavegames%c", configdir,
-                             DIR_SEPARATOR);
-
-        M_MakeDirectory(savegamedir);
+        topdir = M_StringJoin(configdir, "savegames", NULL);
+        M_MakeDirectory(topdir);
 
         // eg. ~/.chocolate-doom/savegames/doom2.wad/
 
-        sprintf(savegamedir + strlen(savegamedir), "%s%c",
-                iwadname, DIR_SEPARATOR);
+        savegamedir = M_StringJoin(topdir, DIR_SEPARATOR_S, iwadname,
+                                   DIR_SEPARATOR_S, NULL);
 
         M_MakeDirectory(savegamedir);
+
+        free(topdir);
     }
 
     return savegamedir;

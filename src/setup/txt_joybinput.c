@@ -27,6 +27,7 @@
 
 #include "doomkeys.h"
 #include "joystick.h"
+#include "m_misc.h"
 
 #include "txt_joybinput.h"
 #include "txt_gui.h"
@@ -124,9 +125,9 @@ static void TXT_JoystickInputSizeCalc(TXT_UNCAST_ARG(joystick_input))
     joystick_input->widget.h = 1;
 }
 
-static void GetJoystickButtonDescription(int button, char *buf)
+static void GetJoystickButtonDescription(int button, char *buf, size_t buf_len)
 {
-    sprintf(buf, "BUTTON #%i", button + 1);
+    M_snprintf(buf, buf_len, "BUTTON #%i", button + 1);
 }
 
 static void TXT_JoystickInputDrawer(TXT_UNCAST_ARG(joystick_input))
@@ -137,11 +138,12 @@ static void TXT_JoystickInputDrawer(TXT_UNCAST_ARG(joystick_input))
 
     if (*joystick_input->variable < 0)
     {
-        strcpy(buf, "(none)");
+        M_StringCopy(buf, "(none)", sizeof(buf));
     }
     else
     {
-        GetJoystickButtonDescription(*joystick_input->variable, buf);
+        GetJoystickButtonDescription(*joystick_input->variable,
+                                     buf, sizeof(buf));
     }
 
     TXT_SetWidgetBG(joystick_input);

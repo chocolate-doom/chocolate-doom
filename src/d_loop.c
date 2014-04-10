@@ -573,7 +573,7 @@ static int oldnettics;
 static void OldNetSync(void)
 {
     unsigned int i;
-    unsigned int keyplayer = -1;
+    int keyplayer = -1;
 
     frameon++;
 

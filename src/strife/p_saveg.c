@@ -32,6 +32,7 @@
 #include "deh_main.h"
 #include "i_system.h"
 #include "z_zone.h"
+#include "m_misc.h"
 #include "p_local.h"
 #include "p_saveg.h"
 
@@ -58,10 +59,8 @@ char *P_TempSaveGameFile(void)
 
     if (filename == NULL)
     {
-        filename = malloc(strlen(savegamedir) + 32);
+        filename = M_StringJoin(savegamedir, "temp.dsg", NULL);
     }
-
-    sprintf(filename, "%stemp.dsg", savegamedir);
 
     return filename;
 }
@@ -71,16 +70,18 @@ char *P_TempSaveGameFile(void)
 char *P_SaveGameFile(int slot)
 {
     static char *filename = NULL;
+    static size_t filename_size;
     char basename[32];
 
     if (filename == NULL)
     {
-        filename = malloc(strlen(savegamedir) + 32);
+        filename_size = strlen(savegamedir) + 32;
+        filename = malloc(filename_size);
     }
 
     DEH_snprintf(basename, 32, SAVEGAMENAME "%d.dsg", slot);
 
-    sprintf(filename, "%s%s", savegamedir, basename);
+    M_snprintf(filename, filename_size, "%s%s", savegamedir, basename);
 
     return filename;
 }
@@ -1609,7 +1610,7 @@ void P_WriteSaveGameHeader(char *description)
     */
 
     memset (name,0,sizeof(name)); 
-    sprintf (name,"ver %i",STRIFE_VERSION); 
+    M_snprintf(name, sizeof(name), "ver %i", STRIFE_VERSION);
 
     for (i=0; i<VERSIONSIZE; ++i)
         saveg_write8(name[i]);
@@ -1648,8 +1649,8 @@ boolean P_ReadSaveGameHeader(void)
     for (i=0; i<VERSIONSIZE; ++i)
         read_vcheck[i] = saveg_read8();
 
-    memset (vcheck,0,sizeof(vcheck)); 
-    sprintf (vcheck,"ver %i",STRIFE_VERSION); 
+    memset (vcheck,0,sizeof(vcheck));
+    M_snprintf(vcheck, sizeof(vcheck), "ver %i", STRIFE_VERSION);
     if (strcmp(read_vcheck, vcheck) != 0)
         return false;                       // bad version 
 

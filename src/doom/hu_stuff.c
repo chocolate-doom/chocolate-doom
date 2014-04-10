@@ -38,6 +38,7 @@
 #include "hu_stuff.h"
 #include "hu_lib.h"
 #include "m_controls.h"
+#include "m_misc.h"
 #include "w_wad.h"
 
 #include "s_sound.h"
@@ -610,11 +611,11 @@ boolean HU_Responder(event_t *ev)
 		HU_queueChatChar(*macromessage++);
 	    HU_queueChatChar(KEY_ENTER);
 	    
-	    // leave chat mode and notify that it was sent
-	    chat_on = false;
-	    strcpy(lastmessage, chat_macros[c]);
-	    plr->message = lastmessage;
-	    eatkey = true;
+            // leave chat mode and notify that it was sent
+            chat_on = false;
+            M_StringCopy(lastmessage, chat_macros[c], sizeof(lastmessage));
+            plr->message = lastmessage;
+            eatkey = true;
 	}
 	else
 	{
@@ -626,17 +627,17 @@ boolean HU_Responder(event_t *ev)
 		// static unsigned char buf[20]; // DEBUG
 		HU_queueChatChar(c);
 		
-		// sprintf(buf, "KEY: %d => %d", ev->data1, c);
-		//      plr->message = buf;
+		// M_snprintf(buf, sizeof(buf), "KEY: %d => %d", ev->data1, c);
+		//        plr->message = buf;
 	    }
 	    if (c == KEY_ENTER)
 	    {
 		chat_on = false;
-		if (w_chat.l.len)
-		{
-		    strcpy(lastmessage, w_chat.l.l);
-		    plr->message = lastmessage;
-		}
+                if (w_chat.l.len)
+                {
+                    M_StringCopy(lastmessage, w_chat.l.l, sizeof(lastmessage));
+                    plr->message = lastmessage;
+                }
 	    }
 	    else if (c == KEY_ESCAPE)
 		chat_on = false;

@@ -384,7 +384,7 @@ void D_BindVariables(void)
     {
         char buf[12];
 
-        sprintf(buf, "chatmacro%i", i);
+        M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
         M_BindVariable(buf, &chat_macros[i]);
     }
 }
@@ -659,22 +659,29 @@ static char *GetGameName(char *gamename)
         
         if (deh_sub != banners[i])
         {
+            size_t gamename_size;
             int version;
 
             // Has been replaced.
             // We need to expand via printf to include the Doom version number
             // We also need to cut off spaces to get the basic name
 
-            gamename = Z_Malloc(strlen(deh_sub) + 10, PU_STATIC, 0);
+            gamename_size = strlen(deh_sub) + 10;
+            gamename = Z_Malloc(gamename_size, PU_STATIC, 0);
             version = G_VanillaVersionCode();
-            sprintf(gamename, deh_sub, version / 100, version % 100);
+            M_snprintf(gamename, gamename_size, deh_sub,
+                       version / 100, version % 100);
 
             while (gamename[0] != '\0' && isspace(gamename[0]))
-                strcpy(gamename, gamename+1);
+            {
+                memmove(gamename, gamename + 1, gamename_size - 1);
+            }
 
             while (gamename[0] != '\0' && isspace(gamename[strlen(gamename)-1]))
+            {
                 gamename[strlen(gamename) - 1] = '\0';
-            
+            }
+
             return gamename;
         }
     }
@@ -1002,10 +1009,11 @@ static void LoadChexDeh(void)
 
         if (sep != NULL)
         {
-            chex_deh = malloc(strlen(iwadfile) + 9);
-            strcpy(chex_deh, iwadfile);
+            size_t chex_deh_len = strlen(iwadfile) + 9;
+            chex_deh = malloc(chex_deh_len);
+            M_StringCopy(chex_deh, iwadfile, chex_deh_len);
             chex_deh[sep - iwadfile + 1] = '\0';
-            strcat(chex_deh, "chex.deh");
+            M_StringConcat(chex_deh, "chex.deh", chex_deh_len);
         }
         else
         {
@@ -1156,18 +1164,6 @@ void D_DoomMain (void)
     DEH_Init();
 #endif
 
-    iwadfile = D_FindIWAD(IWAD_MASK_DOOM, &gamemission);
-
-    // None found?
-
-    if (iwadfile == NULL)
-    {
-        I_Error("Game mode indeterminate.  No IWAD file was found.  Try\n"
-                "specifying one with the '-iwad' command line parameter.\n");
-    }
-
-    modifiedgame = false;
-
     //!
     // @vanilla
     //
@@ -1293,6 +1289,19 @@ void D_DoomMain (void)
     // Save configuration at exit.
     I_AtExit(M_SaveDefaults, false);
 
+    // Find main IWAD file and load it.
+    iwadfile = D_FindIWAD(IWAD_MASK_DOOM, &gamemission);
+
+    // None found?
+
+    if (iwadfile == NULL)
+    {
+        I_Error("Game mode indeterminate.  No IWAD file was found.  Try\n"
+                "specifying one with the '-iwad' command line parameter.\n");
+    }
+
+    modifiedgame = false;
+
     DEH_printf("W_Init: Init WADfiles.\n");
     D_AddFile(iwadfile);
 
@@ -1351,21 +1360,21 @@ void D_DoomMain (void)
 
     if (p)
     {
-        if (!strcasecmp(myargv[p+1] + strlen(myargv[p+1]) - 4, ".lmp"))
+        // With Vanilla you have to specify the file without extension,
+        // but make that optional.
+        if (M_StringEndsWith(myargv[p + 1], ".lmp"))
         {
-            strcpy(file, myargv[p + 1]);
+            M_StringCopy(file, myargv[p + 1], sizeof(file));
         }
         else
         {
-	    sprintf (file,"%s.lmp", myargv[p+1]);
+            DEH_snprintf(file, sizeof(file), "%s.lmp", myargv[p+1]);
         }
 
-	if (D_AddFile (file))
+        if (D_AddFile(file))
         {
-            strncpy(demolumpname, lumpinfo[numlumps - 1].name, 8);
-            demolumpname[8] = '\0';
-
-            printf("Playing demo %s.\n", file);
+            M_StringCopy(demolumpname, lumpinfo[numlumps - 1].name,
+                         sizeof(demolumpname));
         }
         else
         {
@@ -1373,10 +1382,10 @@ void D_DoomMain (void)
             // the demo in the same way as Vanilla Doom.  This makes
             // tricks like "-playdemo demo1" possible.
 
-            strncpy(demolumpname, myargv[p + 1], 8);
-            demolumpname[8] = '\0';
+            M_StringCopy(demolumpname, myargv[p + 1], sizeof(demolumpname));
         }
 
+        printf("Playing demo %s.\n", file);
     }
 
     I_AtExit((atexit_func_t) G_CheckDemoStatus, true);
@@ -1685,8 +1694,8 @@ void D_DoomMain (void)
 	
     if (startloadgame >= 0)
     {
-        strcpy(file, P_SaveGameFile(startloadgame));
-	G_LoadGame (file);
+        M_StringCopy(file, P_SaveGameFile(startloadgame), sizeof(file));
+	G_LoadGame(file);
     }
 	
     if (gameaction != ga_loadgame )

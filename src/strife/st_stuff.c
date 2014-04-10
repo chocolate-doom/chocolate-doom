@@ -54,6 +54,7 @@
 #include "am_map.h"
 #include "m_cheat.h"
 #include "m_menu.h" // villsa [STRIFE]
+#include "m_misc.h"
 
 #include "s_sound.h"
 
@@ -183,7 +184,7 @@ static boolean          st_showkeys = false;
 
 // villsa [STRIFE] TODO - identify variables
 static int              st_keypage = -1;
-static int              dword_88490 = 0;
+// [unused] static int              dword_88490 = 0;
 
 // haleyjd 09/19/10: [STRIFE] Cached player data
 static int              st_lastcursorpos;
@@ -226,8 +227,8 @@ static patch_t*         invfontg[10];
 // 0-9, yellow numbers
 static patch_t*         invfonty[10];
 
-// 3 key-cards, 3 skulls -- [STRIFE] has a lot more keys than 3 :P
-static patch_t*         keys[NUMCARDS]; 
+// [unused] 3 key-cards, 3 skulls -- [STRIFE] has a lot more keys than 3 :P
+//static patch_t*         keys[NUMCARDS]; 
 
 // ready-weapon widget
 static st_number_t      w_ready; // haleyjd [STRIFE]: This is still used.
@@ -242,8 +243,8 @@ static st_number_t      w_ammo[NUMAMMO];     // haleyjd [STRIFE]: Still used.
 // max ammo widgets
 static st_number_t      w_maxammo[NUMAMMO];  // haleyjd [STRIFE]: Still used.
 
-// number of frags so far in deathmatch
-static int              st_fragscount;
+// [unused] number of frags so far in deathmatch
+//static int              st_fragscount;
 
 
 cheatseq_t cheat_mus        = CHEAT("spin", 2);         // [STRIFE]: idmus -> spin
@@ -663,10 +664,11 @@ boolean ST_Responder(event_t* ev)
     {
         // [STRIFE] 'GPS' for player position
         static char buf[ST_MSGWIDTH];
-        sprintf(buf, "ang=0x%x;x,y=(0x%x,0x%x)",
-                players[consoleplayer].mo->angle,
-                players[consoleplayer].mo->x,
-                players[consoleplayer].mo->y);
+        M_snprintf(buf, sizeof(buf),
+                   "ang=0x%x;x,y=(0x%x,0x%x)",
+                   players[consoleplayer].mo->angle,
+                   players[consoleplayer].mo->x,
+                   players[consoleplayer].mo->y);
         plyr->message = buf;
     }
 

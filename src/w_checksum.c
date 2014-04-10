@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "m_misc.h"
 #include "sha1.h"
 #include "w_checksum.h"
 #include "w_wad.h"
@@ -64,8 +65,7 @@ static void ChecksumAddLump(sha1_context_t *sha1_context, lumpinfo_t *lump)
 {
     char buf[9];
 
-    strncpy(buf, lump->name, 8);
-    buf[8] = '\0';
+    M_StringCopy(buf, lump->name, sizeof(buf));
     SHA1_UpdateString(sha1_context, buf);
     SHA1_UpdateInt32(sha1_context, GetFileNumber(lump->wad_file));
     SHA1_UpdateInt32(sha1_context, lump->position);

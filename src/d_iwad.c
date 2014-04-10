@@ -32,7 +32,6 @@
 #include "deh_str.h"
 #include "doomkeys.h"
 #include "d_iwad.h"
-#include "gusconf.h"
 #include "i_system.h"
 #include "m_argv.h"
 #include "m_config.h"
@@ -290,11 +289,8 @@ static void CheckCollectorsEdition(void)
 
     for (i=0; i<arrlen(collectors_edition_subdirs); ++i)
     {
-        subpath = malloc(strlen(install_path)
-                         + strlen(collectors_edition_subdirs[i])
-                         + 5);
-
-        sprintf(subpath, "%s\\%s", install_path, collectors_edition_subdirs[i]);
+        subpath = M_StringJoin(install_path, DIR_SEPARATOR_S,
+                               collectors_edition_subdirs[i], NULL);
 
         AddIWADDir(subpath);
     }
@@ -320,10 +316,8 @@ static void CheckSteamEdition(void)
 
     for (i=0; i<arrlen(steam_install_subdirs); ++i)
     {
-        subpath = malloc(strlen(install_path) 
-                         + strlen(steam_install_subdirs[i]) + 5);
-
-        sprintf(subpath, "%s\\%s", install_path, steam_install_subdirs[i]);
+        subpath = M_StringJoin(install_path, DIR_SEPARATOR_S,
+                               steam_install_subdirs[i], NULL);
 
         AddIWADDir(subpath);
     }
@@ -336,12 +330,14 @@ static void CheckSteamEdition(void)
 
 static void CheckSteamGUSPatches(void)
 {
+    const char *current_path;
     char *install_path;
     char *patch_path;
     int len;
 
     // Already configured? Don't stomp on the user's choices.
-    if (gus_patch_path != NULL && strlen(gus_patch_path) > 0)
+    current_path = M_GetStrVariable("gus_patch_path");
+    if (current_path != NULL && strlen(current_path) > 0)
     {
         return;
     }
@@ -355,21 +351,18 @@ static void CheckSteamGUSPatches(void)
 
     len = strlen(install_path) + strlen(STEAM_BFG_GUS_PATCHES) + 20;
     patch_path = malloc(len);
-    snprintf(patch_path, len, "%s\\%s\\ACBASS.PAT",
-             install_path, STEAM_BFG_GUS_PATCHES);
+    M_snprintf(patch_path, len, "%s\\%s\\ACBASS.PAT",
+               install_path, STEAM_BFG_GUS_PATCHES);
 
     // Does acbass.pat exist? If so, then set gus_patch_path.
     if (M_FileExists(patch_path))
     {
-        snprintf(patch_path, len, "%s\\%s",
-                 install_path, STEAM_BFG_GUS_PATCHES);
-        gus_patch_path = patch_path;
-    }
-    else
-    {
-        free(patch_path);
+        M_snprintf(patch_path, len, "%s\\%s",
+                   install_path, STEAM_BFG_GUS_PATCHES);
+        M_SetVariable("gus_patch_path", patch_path);
     }
 
+    free(patch_path);
     free(install_path);
 }
 
@@ -425,7 +418,7 @@ static char *CheckDirectoryHasIWAD(char *dir, char *iwadname)
 
     // As a special case, the "directory" may refer directly to an
     // IWAD file if the path comes from DOOMWADDIR or DOOMWADPATH.
-    
+
     if (DirIsFile(dir, iwadname) && M_FileExists(dir))
     {
         return strdup(dir);
@@ -434,15 +427,13 @@ static char *CheckDirectoryHasIWAD(char *dir, char *iwadname)
     // Construct the full path to the IWAD if it is located in
     // this directory, and check if it exists.
 
-    filename = malloc(strlen(dir) + strlen(iwadname) + 3);
-
     if (!strcmp(dir, "."))
     {
-        strcpy(filename, iwadname);
+        filename = strdup(iwadname);
     }
     else
     {
-        sprintf(filename, "%s%c%s", dir, DIR_SEPARATOR, iwadname);
+        filename = M_StringJoin(dir, DIR_SEPARATOR_S, iwadname, NULL);
     }
 
     if (M_FileExists(filename))
@@ -635,7 +626,7 @@ static void BuildIWADDirList(void)
 
 char *D_FindWADByName(char *name)
 {
-    char *buf;
+    char *path;
     int i;
     
     // Absolute path?
@@ -646,7 +637,7 @@ char *D_FindWADByName(char *name)
     }
 
     BuildIWADDirList();
-    
+
     // Search through all IWAD paths for a file with the given name.
 
     for (i=0; i<num_iwad_dirs; ++i)
@@ -662,15 +653,14 @@ char *D_FindWADByName(char *name)
 
         // Construct a string for the full path
 
-        buf = malloc(strlen(iwad_dirs[i]) + strlen(name) + 5);
-        sprintf(buf, "%s%c%s", iwad_dirs[i], DIR_SEPARATOR, name);
+        path = M_StringJoin(iwad_dirs[i], DIR_SEPARATOR_S, name, NULL);
 
-        if (M_FileExists(buf))
+        if (M_FileExists(path))
         {
-            return buf;
+            return path;
         }
 
-        free(buf);
+        free(path);
     }
 
     // File not found

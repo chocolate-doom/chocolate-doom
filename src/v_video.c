@@ -801,11 +801,11 @@ void V_ScreenShot(char *format)
     int i;
     char lbmname[16]; // haleyjd 20110213: BUG FIX - 12 is too small!
     char *ext;
-    extern int png_screenshots;
     
     // find a file name to save it to
 
 #ifdef HAVE_LIBPNG
+    extern int png_screenshots;
     if (png_screenshots)
     {
         ext = "png";
@@ -818,7 +818,7 @@ void V_ScreenShot(char *format)
 
     for (i=0; i<=99; i++)
     {
-        sprintf(lbmname, format, i, ext);
+        M_snprintf(lbmname, sizeof(lbmname), format, i, ext);
 
         if (!M_FileExists(lbmname))
         {

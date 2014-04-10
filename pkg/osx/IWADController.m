@@ -308,15 +308,15 @@ static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
     IWADLocation *iwadList[NUM_IWAD_TYPES];
     NSString *location;
     unsigned int i;
-    unsigned int len;
     BOOL first;
     char *env;
+    size_t env_len;
 
     [self getIWADList: iwadList];
 
     // Calculate length of environment string.
 
-    len = 0;
+    env_len = 0;
 
     for (i=0; i<NUM_IWAD_TYPES; ++i)
     {
@@ -324,14 +324,14 @@ static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
 
         if (location != nil && [location length] > 0)
         {
-            len += [location length] + 1;
+            env_len += [location length] + 1;
         }
     }
 
     // Build string.
 
-    env = malloc(len);
-    strcpy(env, "");
+    env = malloc(env_len);
+    strlcpy(env, "", env_len);
 
     first = YES;
 
@@ -343,10 +343,10 @@ static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
         {
             if (!first)
             {
-                strcat(env, ":");
+                strlcat(env, ":", env_len);
             }
 
-            strcat(env, [location UTF8String]);
+            strlcat(env, [location UTF8String], env_len);
             first = NO;
         }
     }
@@ -366,9 +366,7 @@ static NSString *IWADFilenames[NUM_IWAD_TYPES + 1] =
 
     doomwadpath = [self doomWadPath];
 
-    env = malloc(strlen(doomwadpath) + 15);
-
-    sprintf(env, "DOOMWADPATH=%s", doomwadpath);
+    asprintf(&env, "DOOMWADPATH=%s", doomwadpath);
 
     free(doomwadpath);
 

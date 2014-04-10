@@ -28,6 +28,7 @@
 #include "doomkeys.h"
 
 #include "m_config.h"
+#include "m_misc.h"
 
 //
 // Keyboard controls
@@ -385,7 +386,7 @@ void M_BindChatControls(unsigned int num_players)
 
     for (i=0; i<num_players; ++i)
     {
-        sprintf(name, "key_multi_msgplayer%i", i + 1);
+        M_snprintf(name, sizeof(name), "key_multi_msgplayer%i", i + 1);
         M_BindVariable(name, &key_multi_msgplayer[i]);
     }
 }

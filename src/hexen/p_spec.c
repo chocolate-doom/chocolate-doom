@@ -27,6 +27,7 @@
 
 #include "h2def.h"
 #include "i_system.h"
+#include "m_misc.h"
 #include "p_local.h"
 #include "s_sound.h"
 
@@ -428,7 +429,8 @@ static boolean CheckedLockedDoor(mobj_t * mo, byte lock)
     }
     if (!(mo->player->keys & (1 << (lock - 1))))
     {
-        sprintf(LockedBuffer, "YOU NEED THE %s\n", TextKeyMessages[lock - 1]);
+        M_snprintf(LockedBuffer, sizeof(LockedBuffer),
+                   "YOU NEED THE %s\n", TextKeyMessages[lock - 1]);
         P_SetMessage(mo->player, LockedBuffer, true);
         S_StartSound(mo, SFX_DOOR_LOCKED);
         return false;
@@ -447,7 +449,8 @@ boolean EV_LineSearchForPuzzleItem(line_t * line, byte * args, mobj_t * mo)
 {
     player_t *player;
     int i;
-    artitype_t type, arti;
+    int type;
+    artitype_t arti;
 
     if (!mo)
         return false;

@@ -33,6 +33,7 @@
 
 #include "doomtype.h"
 #include "i_system.h"
+#include "m_misc.h"
 #include "w_merge.h"
 #include "w_wad.h"
 #include "z_zone.h"
@@ -718,7 +719,7 @@ void W_NWTDashMerge(char *filename)
             // Replace this entry with an empty string.  This is what
             // nwt -merge does.
 
-            strcpy(iwad_sprites.lumps[i].name, "");
+            M_StringCopy(iwad_sprites.lumps[i].name, "", 8);
         }
     }
 

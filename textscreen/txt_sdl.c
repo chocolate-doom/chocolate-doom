@@ -443,6 +443,7 @@ static int TranslateKey(SDL_keysym *sym)
         case SDLK_F10:         return KEY_F10;
         case SDLK_F11:         return KEY_F11;
         case SDLK_F12:         return KEY_F12;
+        case SDLK_PRINT:       return KEY_PRTSCR;
 
         case SDLK_BACKSPACE:   return KEY_BACKSPACE;
         case SDLK_DELETE:      return KEY_DEL;
@@ -722,6 +723,7 @@ static const char *SpecialKeyName(int key)
         case KEY_PGDN:        return "PGDN";
         case KEY_INS:         return "INS";
         case KEY_DEL:         return "DEL";
+        case KEY_PRTSCR:      return "PRTSC";
                  /*
         case KEYP_0:          return "PAD0";
         case KEYP_1:          return "PAD1";
@@ -747,7 +749,7 @@ static const char *SpecialKeyName(int key)
     }
 }
 
-void TXT_GetKeyDescription(int key, char *buf)
+void TXT_GetKeyDescription(int key, char *buf, size_t buf_len)
 {
     const char *keyname;
 
@@ -755,15 +757,15 @@ void TXT_GetKeyDescription(int key, char *buf)
 
     if (keyname != NULL)
     {
-        strcpy(buf, keyname);
+        TXT_StringCopy(buf, keyname, buf_len);
     }
     else if (isprint(key))
     {
-        sprintf(buf, "%c", toupper(key));
+        TXT_snprintf(buf, buf_len, "%c", toupper(key));
     }
     else
     {
-        sprintf(buf, "??%i", key);
+        TXT_snprintf(buf, buf_len, "??%i", key);
     }
 }
 
@@ -864,5 +866,75 @@ void TXT_SDL_SetEventCallback(TxtSDLEventCallbackFunc callback, void *user_data)
 {
     event_callback = callback;
     event_callback_data = user_data;
+}
+
+// Safe string functions.
+
+void TXT_StringCopy(char *dest, const char *src, size_t dest_len)
+{
+    if (dest_len < 1)
+    {
+        return;
+    }
+
+    dest[dest_len - 1] = '\0';
+    strncpy(dest, src, dest_len - 1);
+}
+
+void TXT_StringConcat(char *dest, const char *src, size_t dest_len)
+{
+    size_t offset;
+
+    offset = strlen(dest);
+    if (offset > dest_len)
+    {
+        offset = dest_len;
+    }
+
+    TXT_StringCopy(dest + offset, src, dest_len - offset);
+}
+
+// On Windows, vsnprintf() is _vsnprintf().
+#ifdef _WIN32
+#if _MSC_VER < 1400 /* not needed for Visual Studio 2008 */
+#define vsnprintf _vsnprintf
+#endif
+#endif
+
+// Safe, portable vsnprintf().
+int TXT_vsnprintf(char *buf, size_t buf_len, const char *s, va_list args)
+{
+    int result;
+
+    if (buf_len < 1)
+    {
+        return 0;
+    }
+
+    // Windows (and other OSes?) has a vsnprintf() that doesn't always
+    // append a trailing \0. So we must do it, and write into a buffer
+    // that is one byte shorter; otherwise this function is unsafe.
+    result = vsnprintf(buf, buf_len, s, args);
+
+    // If truncated, change the final char in the buffer to a \0.
+    // A negative result indicates a truncated buffer on Windows.
+    if (result < 0 || result >= buf_len)
+    {
+        buf[buf_len - 1] = '\0';
+        result = buf_len - 1;
+    }
+
+    return result;
+}
+
+// Safe, portable snprintf().
+int TXT_snprintf(char *buf, size_t buf_len, const char *s, ...)
+{
+    va_list args;
+    int result;
+    va_start(args, s);
+    result = TXT_vsnprintf(buf, buf_len, s, args);
+    va_end(args);
+    return result;
 }
 
