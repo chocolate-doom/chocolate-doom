@@ -654,14 +654,16 @@ ST_Responder (event_t* ev)
 	  && ((epsd > 1) || (map > 9)))
 	return false;
 
+      // The source release has this check as map > 34. However, Vanilla
+      // Doom allows IDCLEV up to MAP40 even though it normally crashes.
       if ((gamemode == commercial)
-	&& (( epsd > 1) || (map > 34)))
+	&& (( epsd > 1) || (map > 40)))
 	return false;
 
       // So be it.
       plyr->message = DEH_String(STSTR_CLEV);
       G_DeferedInitNew(gameskill, epsd, map);
-    }    
+    }
   }
   return false;
 }
