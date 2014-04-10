@@ -237,6 +237,7 @@ static int StartSoundServer(void)
         // This is the parent
 
         sound_server_pid = result;
+        close(speaker_handle);
     }
 
     return 1;

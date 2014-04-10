@@ -66,7 +66,7 @@ static char *iwad_labels[8];
 
 // Index of the currently selected IWAD
 
-static int found_iwad_selected;
+static int found_iwad_selected = -1;
 
 // Filename to pass to '-iwad'.
 
@@ -599,9 +599,15 @@ static txt_widget_t *IWADSelector(void)
         result = (txt_widget_t *) dropdown;
     }
 
-    // Select first in the list.
+    // The first time the dialog is opened, found_iwad_selected=-1,
+    // so select the first IWAD in the list. Don't lose the setting
+    // if we close and reopen the dialog.
 
-    found_iwad_selected = 0;
+    if (found_iwad_selected < 0 || found_iwad_selected >= num_iwads)
+    {
+        found_iwad_selected = 0;
+    }
+
     IWADSelected(NULL, NULL);
 
     return result;
@@ -794,6 +800,13 @@ void WarpMenu(void)
 static void DoJoinGame(void *unused1, void *unused2)
 {
     execute_context_t *exec;
+
+    if (connect_address == NULL || strlen(connect_address) <= 0)
+    {
+        TXT_MessageBox(NULL, "Please enter a server address\n"
+                             "to connect to.");
+        return;
+    }
 
     exec = NewExecuteContext();
 

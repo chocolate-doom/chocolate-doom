@@ -826,7 +826,7 @@ static void I_SDL_UpdateSoundParams(int handle, int vol, int sep)
 {
     int left, right;
 
-    if (!sound_initialized)
+    if (!sound_initialized || handle < 0 || handle >= NUM_CHANNELS)
     {
         return;
     }
@@ -869,7 +869,7 @@ static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
 {
     allocated_sound_t *snd;
 
-    if (!sound_initialized)
+    if (!sound_initialized || channel < 0 || channel >= NUM_CHANNELS)
     {
         return -1;
     }
@@ -901,9 +901,9 @@ static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
     return channel;
 }
 
-static void I_SDL_StopSound (int handle)
+static void I_SDL_StopSound(int handle)
 {
-    if (!sound_initialized)
+    if (!sound_initialized || handle < 0 || handle >= NUM_CHANNELS)
     {
         return;
     }
@@ -919,7 +919,7 @@ static void I_SDL_StopSound (int handle)
 
 static boolean I_SDL_SoundIsPlaying(int handle)
 {
-    if (handle < 0)
+    if (!sound_initialized || handle < 0 || handle >= NUM_CHANNELS)
     {
         return false;
     }

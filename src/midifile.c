@@ -176,9 +176,10 @@ static void *ReadByteSequence(unsigned int num_bytes, FILE *stream)
     unsigned int i;
     byte *result;
 
-    // Allocate a buffer:
+    // Allocate a buffer. Allocate one extra byte, as malloc(0) is
+    // non-portable.
 
-    result = malloc(num_bytes);
+    result = malloc(num_bytes + 1);
 
     if (result == NULL)
     {
