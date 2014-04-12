@@ -37,13 +37,12 @@
 #define HR_SCREENWIDTH 640
 #define HR_SCREENHEIGHT 480
 
+static SDL_Surface *hr_screen = NULL;
 static SDL_Surface *hr_surface = NULL;
 static char *window_title = "";
 
 boolean I_SetVideoModeHR(void)
 {
-    Uint32 flags;
-
     if (SDL_Init(SDL_INIT_VIDEO) < 0)
     {
         return false;
@@ -51,15 +50,19 @@ boolean I_SetVideoModeHR(void)
 
     SDL_WM_SetCaption(window_title,  NULL);
 
-    flags = SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF;
+    // Create screen surface at the native desktop pixel depth (bpp=0),
+    // as we cannot trust true 8-bit to reliably work nowadays.
+    hr_screen = SDL_SetVideoMode(HR_SCREENWIDTH, HR_SCREENHEIGHT, 0, 0);
 
-    hr_surface = SDL_SetVideoMode(HR_SCREENWIDTH, HR_SCREENHEIGHT, 8, flags);
-
-    if (hr_surface == NULL)
+    if (hr_screen == NULL)
     {
         SDL_QuitSubSystem(SDL_INIT_VIDEO);
         return false;
     }
+
+    // We do all actual drawing into an intermediate surface.
+    hr_surface = SDL_CreateRGBSurface(0, HR_SCREENWIDTH, HR_SCREENHEIGHT,
+                                      8, 0, 0, 0, 0);
 
     return true;
 }
@@ -71,9 +74,11 @@ void I_SetWindowTitleHR(char *title)
 
 void I_UnsetVideoModeHR(void)
 {
-    if (hr_surface != NULL)
+    if (hr_screen != NULL)
     {
         SDL_QuitSubSystem(SDL_INIT_VIDEO);
+        hr_screen = NULL;
+        SDL_FreeSurface(hr_surface);
         hr_surface = NULL;
     }
 }
@@ -87,6 +92,7 @@ void I_ClearScreenHR(void)
 
 void I_SlamBlockHR(int x, int y, int w, int h, const byte *src)
 {
+    SDL_Rect blit_rect;
     const byte *srcptrs[4];
     byte srcbits[4];
     byte *dest;
@@ -143,9 +149,12 @@ void I_SlamBlockHR(int x, int y, int w, int h, const byte *src)
     SDL_UnlockSurface(hr_surface);
 
     // Update the region we drew.
-
-    //SDL_UpdateRect(hr_surface, x, y, w, h);
-    SDL_Flip(hr_surface);
+    blit_rect.x = x;
+    blit_rect.y = y;
+    blit_rect.w = w;
+    blit_rect.h = h;
+    SDL_BlitSurface(hr_surface, &blit_rect, hr_screen, &blit_rect);
+    SDL_UpdateRects(hr_screen, 1, &blit_rect);
 }
 
 void I_SlamHR(const byte *buffer)
@@ -160,6 +169,7 @@ void I_InitPaletteHR(void)
 
 void I_SetPaletteHR(const byte *palette)
 {
+    SDL_Rect screen_rect = {0, 0, HR_SCREENWIDTH, HR_SCREENHEIGHT};
     SDL_Color sdlpal[16];
     int i;
 
@@ -170,7 +180,10 @@ void I_SetPaletteHR(const byte *palette)
         sdlpal[i].b = palette[i * 3 + 2] * 4;
     }
 
+    // After setting colors, update the screen.
     SDL_SetColors(hr_surface, sdlpal, 0, 16);
+    SDL_BlitSurface(hr_surface, &screen_rect, hr_screen, &screen_rect);
+    SDL_UpdateRects(hr_screen, 1, &screen_rect);
 }
 
 void I_FadeToPaletteHR(const byte *palette)
