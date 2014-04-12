@@ -59,21 +59,21 @@
 // so we can build without OpenGL.
 
 #include <SDL.h>
-#ifdef __MACOSX__
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#include <OpenGL/glext.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glext.h>
-#endif
+#include "SDL_opengl.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "i_video.h"
 #include "m_argv.h"
+
+// Constants for GL framebuffer extension. These are not in the MingW
+// GL header, so this is a hacky workaround.
+#ifndef GL_FRAMEBUFFER
+#define GL_FRAMEBUFFER           0x8D40
+#define GL_FRAMEBUFFER_COMPLETE  0x8CD5
+#define GL_COLOR_ATTACHMENT0     0x8CE0
+#endif
 
 // Maximum scale factor for the intermediate scaled texture. A value
 // of 4 is pretty much perfect; you can try larger values but it's
@@ -99,7 +99,9 @@ static GLuint scaled_framebuffer = 0;
 static GLuint scaled_texture = 0;
 static int scaled_w, scaled_h;
 
-// GL function pointers used for scale code:
+// GL function pointers used for scale code.
+// We load the function pointers at runtime to avoid a hard dependency
+// on the OpenGL library.
 static void (*_glBegin)(GLenum);
 static void (*_glBindFramebuffer)(GLenum, GLuint);
 static void (*_glBindTexture)(GLenum, GLuint);
