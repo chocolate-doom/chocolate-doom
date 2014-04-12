@@ -34,6 +34,7 @@
 #include "i_system.h"
 #include "i_timer.h"
 #include "i_video.h"
+#include "m_argv.h"
 #include "m_misc.h"
 
 #include "net_client.h"
@@ -50,6 +51,11 @@ static txt_label_t *ip_labels[NET_MAXPLAYERS];
 static txt_label_t *drone_label;
 static txt_label_t *master_msg_label;
 static boolean had_warning;
+
+// Number of players we expect to be in the game. When the number is
+// reached, we auto-start the game (if we're the controller). If
+// zero, do not autostart.
+static int expected_nodes;
 
 static void EscapePressed(TXT_UNCAST_ARG(widget), void *unused)
 {
@@ -343,6 +349,43 @@ static void CheckSHA1Sums(void)
     had_warning = true;
 }
 
+static void ParseCommandLineArgs(void)
+{
+    int i;
+
+    //!
+    // @arg <n>
+    // @category net
+    //
+    // Autostart the netgame when n nodes (clients) have joined the server.
+    //
+
+    i = M_CheckParmWithArgs("-nodes", 1);
+    if (i > 0)
+    {
+        expected_nodes = atoi(myargv[i + 1]);
+    }
+}
+
+static void CheckAutoLaunch(void)
+{
+    int nodes;
+
+    if (net_client_received_wait_data
+     && net_client_wait_data.is_controller
+     && expected_nodes > 0)
+    {
+        nodes = net_client_wait_data.num_players
+              + net_client_wait_data.num_drones;
+
+        if (nodes >= expected_nodes)
+        {
+            StartGame(NULL, NULL);
+            expected_nodes = 0;
+        }
+    }
+}
+
 void NET_WaitForLaunch(void)
 {
     if (!TXT_Init())
@@ -353,12 +396,14 @@ void NET_WaitForLaunch(void)
 
     I_InitWindowIcon();
 
+    ParseCommandLineArgs();
     OpenWaitDialog();
     had_warning = false;
 
     while (net_waiting_for_launch)
     {
         UpdateGUI();
+        CheckAutoLaunch();
         CheckSHA1Sums();
         CheckMasterStatus();
 
