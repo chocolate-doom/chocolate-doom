@@ -747,6 +747,8 @@ static default_t extra_defaults_list[] =
 
     //!
     // Color depth of the screen, in bits.
+    // If this is set to zero, the color depth will be automatically set
+    // on startup to the machine's default/native color depth.
     //
 
     CONFIG_VARIABLE_INT(screen_bpp),

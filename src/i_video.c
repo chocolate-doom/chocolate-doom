@@ -194,7 +194,7 @@ int screen_height = SCREENHEIGHT;
 
 // Color depth.
 
-int screen_bpp = 8;
+int screen_bpp = 0;
 
 // Automatically adjust video settings if the selected mode is 
 // not a valid video mode.
@@ -1461,6 +1461,19 @@ static void AutoAdjustColorDepth(void)
     SDL_PixelFormat format;
     const SDL_VideoInfo *info;
     int flags;
+
+    // If screen_bpp=0, we should use the current (default) pixel depth.
+    // Fetch it from SDL.
+
+    if (screen_bpp == 0)
+    {
+        info = SDL_GetVideoInfo();
+
+        if (info != NULL && info->vfmt != NULL)
+        {
+            screen_bpp = info->vfmt->BitsPerPixel;
+        }
+    }
 
     if (fullscreen)
     {
