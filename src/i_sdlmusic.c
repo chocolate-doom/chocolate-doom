@@ -48,6 +48,8 @@
 #include "z_zone.h"
 
 #define MAXMIDLENGTH (96 * 1024)
+#define MID_HEADER_MAGIC "MThd"
+#define MUS_HEADER_MAGIC "MUS\x1a"
 
 // Structure for music substitution.
 // We store a mapping based on SHA1 checksum -> filename of substitute music
@@ -344,6 +346,31 @@ static void LoadSubstituteConfigs(void)
     }
 }
 
+// Returns true if the given lump number is a music lump that should
+// be included in substitute configs.
+// Identifying music lumps by name is not feasible; some games (eg.
+// Heretic, Hexen) don't have a common naming pattern for music lumps.
+
+static boolean IsMusicLump(int lumpnum)
+{
+    byte *data;
+    boolean result;
+
+    if (W_LumpLength(lumpnum) < 4)
+    {
+        return false;
+    }
+
+    data = W_CacheLumpNum(lumpnum, PU_STATIC);
+
+    result = memcmp(data, MUS_HEADER_MAGIC, 4) == 0
+          || memcmp(data, MID_HEADER_MAGIC, 4) == 0;
+
+    W_ReleaseLumpNum(lumpnum);
+
+    return result;
+}
+
 // Dump an example config file containing checksums for all MIDI music
 // found in the WAD directory.
 
@@ -372,7 +399,7 @@ static void DumpSubstituteConfig(char *filename)
         strncpy(name, lumpinfo[lumpnum].name, 8);
         name[8] = '\0';
 
-        if (!M_StringStartsWith(name, "D_"))
+        if (!IsMusicLump(lumpnum))
         {
             continue;
         }
