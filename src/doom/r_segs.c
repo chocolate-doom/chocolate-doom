@@ -402,6 +402,10 @@ R_StoreWallRange
     // mark the segment as visible for auto map
     linedef->flags |= ML_MAPPED;
     
+    // [crispy] (flags & ML_MAPPED) is all we need to know for automap
+    if (automapactive)
+        return;
+
     // calculate rw_distance for scale calculation
     rw_normalangle = curline->angle + ANG90;
     offsetangle = abs(rw_normalangle-rw_angle1);

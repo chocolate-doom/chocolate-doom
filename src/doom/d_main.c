@@ -233,7 +233,11 @@ void D_Display (void)
 	if (!gametic)
 	    break;
 	if (automapactive)
+	{
+	    // [crispy] update automap while playing
+	    R_RenderPlayerView (&players[displayplayer]);
 	    AM_Drawer ();
+	}
 	if (wipe || (scaledviewheight != (200 << hires) && fullscreen) )
 	    redrawsbar = true;
 	if (inhelpscreensstate && !inhelpscreens)
