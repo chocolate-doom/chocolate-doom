@@ -1862,6 +1862,10 @@ void M_StartControlPanel (void)
     // intro might call this repeatedly
     if (menuactive)
 	return;
+
+    // [crispy] entering menus while recording demos pauses the game
+    if (demorecording && !paused)
+        sendpause = true;
     
     menuactive = 1;
     currentMenu = &MainDef;         // JDC
@@ -2000,6 +2004,11 @@ void M_Drawer (void)
 void M_ClearMenus (void)
 {
     menuactive = 0;
+
+    // [crispy] entering menus while recording demos pauses the game
+    if (demorecording && paused)
+        sendpause = true;
+
     // if (!netgame && usergame && paused)
     //       sendpause = true;
 }
