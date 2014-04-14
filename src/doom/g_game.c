@@ -2102,11 +2102,23 @@ void G_RecordDemo (char *name)
     size_t demoname_size;
     int i;
     int maxsize;
+    FILE *fp = NULL;
 
     usergame = false;
-    demoname_size = strlen(name) + 5;
+    demoname_size = strlen(name) + 5 + 4; // + 4: "-xyz"
     demoname = Z_Malloc(demoname_size, PU_STATIC, NULL);
     M_snprintf(demoname, demoname_size, "%s.lmp", name);
+
+    // [crispy] prevent overriding demos by adding a file name suffix
+    for (i = 0; i <= 999 && (fp = fopen(demoname, "rb")) != NULL; i++)
+    {
+        M_snprintf(demoname, demoname_size, "%s-%03d.lmp", name, i);
+    }
+    if (fp != NULL)
+    {
+        fclose (fp);
+    }
+
     maxsize = 0x20000;
 
     //!
