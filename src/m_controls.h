@@ -27,6 +27,7 @@
  
 extern int key_right;
 extern int key_left;
+extern int key_reverse;
 
 extern int key_up;
 extern int key_down;

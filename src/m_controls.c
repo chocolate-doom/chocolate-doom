@@ -36,6 +36,7 @@
 
 int key_right = KEY_RIGHTARROW;
 int key_left = KEY_LEFTARROW;
+int key_reverse = 0;
 
 int key_up = 'w';
 int key_down = 's';
@@ -252,6 +253,7 @@ void M_BindBaseControls(void)
     M_BindVariable("joyb_jump",          &joybjump);
 
     M_BindVariable("mouseb_mouselook",   &mousebmouselook);
+    M_BindVariable("key_reverse",        &key_reverse);
 }
 
 void M_BindHereticControls(void)

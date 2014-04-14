@@ -1496,6 +1496,13 @@ static default_t extra_defaults_list[] =
 
     //!
     // @game doom
+    // Quick 180° reverse.
+    //
+
+    CONFIG_VARIABLE_KEY(key_reverse),
+
+    //!
+    // @game doom
     //
     // Enable translucency.
     //
