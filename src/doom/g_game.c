@@ -993,7 +993,8 @@ void G_Ticker (void)
 
 	    if (demoplayback) 
 		G_ReadDemoTiccmd (cmd); 
-	    if (demorecording) 
+	    // [crispy] entering menus while recording demos does not desync
+	    if (demorecording && !menuactive)
 		G_WriteDemoTiccmd (cmd);
 	    
 	    // check for turbo cheats
