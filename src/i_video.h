@@ -157,6 +157,7 @@ extern float mouse_acceleration;
 extern int mouse_threshold;
 extern float mouse_acceleration_y;
 extern int mouse_threshold_y;
+extern int mouse_y_invert;
 extern int vanilla_keyboard_mapping;
 extern boolean screensaver_mode;
 extern int usegamma;

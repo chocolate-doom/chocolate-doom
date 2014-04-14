@@ -1503,6 +1503,13 @@ static default_t extra_defaults_list[] =
 
     //!
     // @game doom
+    // Invert vertical mouse movement.
+    //
+
+    CONFIG_VARIABLE_KEY(mouse_y_invert),
+
+    //!
+    // @game doom
     //
     // Enable translucency.
     //

@@ -40,6 +40,7 @@ static int mouse_threshold = 10;
 static int mouseSensitivity_y = 5;
 static float mouse_acceleration_y = 1.0;
 static int mouse_threshold_y = 0;
+static int mouse_y_invert = 0;
 static int grabmouse = 1;
 
 int novert = 1;
@@ -163,6 +164,7 @@ void ConfigMouse(void)
                    TXT_NewFloatSpinControl(&mouse_acceleration_y, 1.0, 5.0),
                    TXT_NewLabel("Acceleration threshold (v)"),
                    TXT_NewSpinControl(&mouse_threshold_y, 0, 32),
+                   TXT_NewCheckBox("Invert mouse (v)", &mouse_y_invert),
                    NULL);
     }
     else
@@ -198,6 +200,7 @@ void BindMouseVariables(void)
     M_BindVariable("mouse_sensitivity_y",  &mouseSensitivity_y);
     M_BindVariable("mouse_acceleration_y", &mouse_acceleration_y);
     M_BindVariable("mouse_threshold_y",    &mouse_threshold_y);
+    M_BindVariable("mouse_y_invert",       &mouse_y_invert);
     }
     M_BindVariable("grabmouse",            &grabmouse);
 }

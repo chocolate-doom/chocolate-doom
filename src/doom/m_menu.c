@@ -198,6 +198,7 @@ void M_QuitDOOM(int choice);
 void M_ChangeMessages(int choice);
 void M_ChangeSensitivity(int choice);
 void M_ChangeSensitivity_y(int choice);
+void M_MouseInvert(int choice);
 void M_SfxVol(int choice);
 void M_MusicVol(int choice);
 void M_ChangeDetail(int choice);
@@ -410,6 +411,7 @@ enum
     mouse_empty1,
     mouse_vert,
     mouse_empty2,
+    mouse_invert,
     mouse_end
 } mouse_e;
 
@@ -419,6 +421,7 @@ menuitem_t MouseMenu[]=
     {-1,"",0,'\0'},
     {2,"",	M_ChangeSensitivity_y,'v'},
     {-1,"",0,'\0'},
+    {1,"",	M_MouseInvert,'i'},
 };
 
 menu_t  MouseDef =
@@ -1102,6 +1105,8 @@ void M_DrawOptions(void)
 
 void M_DrawMouse(void)
 {
+    static char *mouse_invert_text;
+
     V_DrawPatchDirect (60, 38, W_CacheLumpName(DEH_String("M_MSENS"), PU_CACHE));
 
     M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_horiz + 6,
@@ -1115,6 +1120,14 @@ void M_DrawMouse(void)
 
     M_DrawThermo(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_empty2,
 		 21, mouseSensitivity_y);
+
+    if (mouse_y_invert)
+        mouse_invert_text = "INVERT MOUSE: YES";
+    else
+        mouse_invert_text = "INVERT MOUSE: NO";
+
+    M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_invert + 6,
+                mouse_invert_text);
 }
 
 void M_Options(int choice)
@@ -1124,6 +1137,18 @@ void M_Options(int choice)
 
 void M_Mouse(int choice)
 {
+    if (mouseSensitivity_y < 0)
+    {
+        mouseSensitivity_y = -mouseSensitivity_y;
+        mouse_y_invert = 1;
+    }
+
+    if (mouse_acceleration_y < 0)
+    {
+        mouse_acceleration_y = -mouse_acceleration_y;
+        mouse_y_invert = 1;
+    }
+
     M_SetupNextMenu(&MouseDef);
 }
 
@@ -1324,6 +1349,11 @@ void M_ChangeSensitivity_y(int choice)
     }
 }
 
+void M_MouseInvert(int choice)
+{
+    choice = 0;
+    mouse_y_invert = 1 - mouse_y_invert;
+}
 
 
 

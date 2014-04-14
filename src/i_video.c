@@ -292,6 +292,7 @@ int mouse_threshold = 10;
 
 float mouse_acceleration_y = 1.0;
 int mouse_threshold_y = 0;
+int mouse_y_invert = 0;
 
 // Gamma correction level to use
 
@@ -2177,6 +2178,7 @@ void I_BindVideoVariables(void)
     M_BindVariable("mouse_threshold",           &mouse_threshold);
     M_BindVariable("mouse_acceleration_y",      &mouse_acceleration_y);
     M_BindVariable("mouse_threshold_y",         &mouse_threshold_y);
+    M_BindVariable("mouse_y_invert",            &mouse_threshold_y);
     M_BindVariable("video_driver",              &video_driver);
     M_BindVariable("window_position",           &window_position);
     M_BindVariable("usegamma",                  &usegamma);
