@@ -35,6 +35,7 @@
 #include "hu_lib.h"
 #include "r_local.h"
 #include "r_draw.h"
+#include "v_trans.h"
 
 // boolean : whether the screen is always erased
 #define noterased viewwindowx
@@ -114,7 +115,18 @@ HUlib_drawTextLine
     for (i=0;i<l->len;i++)
     {
 	c = toupper(l->l[i]);
-	if (c != ' '
+	if (c == '\x1b')
+        {
+            if (++i < l->len)
+            {
+                if (l->l[i] >= '0' && l->l[i] <= '9')
+                {
+                    dp_translation = cr[(int) (l->l[i] - '0')];
+                }
+            }
+        }
+        else
+        if (c != ' '
 	    && c >= l->sc
 	    && c <= '_')
 	{

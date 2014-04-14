@@ -625,11 +625,11 @@ void R_ProjectSprite (mobj_t* thing)
     if (thing->type == MT_BLOOD && thing->target)
     {
         if (thing->target->type == MT_HEAD)
-            vis->translation = (byte *) &cr_blue2;
+            vis->translation = cr[CR_BLUE2];
         else
         if (thing->target->type == MT_BRUISER ||
             thing->target->type == MT_KNIGHT)
-            vis->translation = (byte *) &cr_green;
+            vis->translation = cr[CR_GREEN];
     }
 }
 

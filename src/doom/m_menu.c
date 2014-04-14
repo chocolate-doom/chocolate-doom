@@ -1105,7 +1105,7 @@ void M_DrawOptions(void)
 
 void M_DrawMouse(void)
 {
-    static char *mouse_invert_text;
+    static char mouse_invert_text[24];
 
     V_DrawPatchDirect (60, 38, W_CacheLumpName(DEH_String("M_MSENS"), PU_CACHE));
 
@@ -1122,12 +1122,14 @@ void M_DrawMouse(void)
 		 21, mouseSensitivity_y);
 
     if (mouse_y_invert)
-        mouse_invert_text = "INVERT MOUSE: YES";
+        sprintf(mouse_invert_text, "INVERT MOUSE: \x1b%cON", '0' + CR_GREEN);
     else
-        mouse_invert_text = "INVERT MOUSE: NO";
+        sprintf(mouse_invert_text, "INVERT MOUSE: \x1b%cOFF", '0' + CR_GREEN);
 
     M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_invert + 6,
                 mouse_invert_text);
+
+    dp_translation = NULL;
 }
 
 void M_Options(int choice)
@@ -1556,6 +1558,12 @@ M_WriteText
 	    cy += 12;
 	    continue;
 	}
+	if (c == '\x1b')
+        {
+            c = *ch++;
+            dp_translation = cr[(int) (c - '0')];
+            continue;
+        }
 		
 	c = toupper(c) - HU_FONTSTART;
 	if (c < 0 || c>= HU_FONTSIZE)

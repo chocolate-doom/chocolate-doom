@@ -1050,13 +1050,13 @@ byte* ST_WidgetColor(int i)
                 int ammopct = 100 * ammo / fullammo;
 
                 if (ammopct < 25)
-                    return (byte *) &cr_red;
+                    return cr[CR_RED];
                 else if (ammopct < 50)
-                    return (byte *) &cr_gold;
+                    return cr[CR_GOLD];
                 else if (ammopct <= 100)
-                    return (byte *) &cr_green;
+                    return cr[CR_GREEN];
                 else
-                    return (byte *) &cr_blue2;
+                    return cr[CR_BLUE2];
             }
             break;
         }
@@ -1065,35 +1065,35 @@ byte* ST_WidgetColor(int i)
             int health = plyr->health;
 
             if (health < 25)
-                return (byte *) &cr_red;
+                return cr[CR_RED];
             else if (health < 50)
-                return (byte *) &cr_gold;
+                return cr[CR_GOLD];
             else if (health <= 100)
-                return (byte *) &cr_green;
+                return cr[CR_GREEN];
             else
-                return (byte *) &cr_blue2;
+                return cr[CR_BLUE2];
 
             break;
         }
         case hudcolor_armor:
         {
 	    if (plyr->armortype == 0)
-                return (byte *) &cr_red;
+                return cr[CR_RED];
 	    else if (plyr->armortype == 1)
-                return (byte *) &cr_green;
+                return cr[CR_GREEN];
 	    else if (plyr->armortype == 2)
-                return (byte *) &cr_blue2;
+                return cr[CR_BLUE2];
 /*
             int armor = plyr->armorpoints;
 
             if (armor < 25)
-                return (byte *) &cr_red;
+                return cr[CR_RED];
             else if (armor < 50)
-                return (byte *) &cr_gold;
+                return cr[CR_GOLD];
             else if (armor <= 100)
-                return (byte *) &cr_green;
+                return cr[CR_GREEN];
             else
-                return (byte *) &cr_blue2;
+                return cr[CR_BLUE2];
 */
             break;
         }

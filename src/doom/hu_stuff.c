@@ -452,14 +452,14 @@ void HU_Drawer(void)
 
     dp_translation = NULL;
     HUlib_drawSText(&w_message);
-    dp_translation = (byte *) &cr_gold;
+    dp_translation = cr[CR_GOLD];
     HUlib_drawSText(&w_secret);
     dp_translation = NULL;
     HUlib_drawIText(&w_chat);
     if (automapactive)
     {
 	if (crispy_automapstats)
-	    dp_translation = (byte *) &cr_gold;
+	    dp_translation = cr[CR_GOLD];
 	HUlib_drawTextLine(&w_title, false);
 
 	if (crispy_automapstats)
@@ -467,30 +467,32 @@ void HU_Drawer(void)
 	static char str[32], *s;
 	int time = leveltime / TICRATE;
 
-	dp_translation = (byte *) &cr_blue2;
-	sprintf(str, "Kills: %d/%d", players[consoleplayer].killcount, totalkills);
+	sprintf(str, "\x1b%cKills: \x1b%c%d/%d", '0' + CR_GREEN, '0' + CR_GRAY,
+	        players[consoleplayer].killcount, totalkills);
 	HUlib_clearTextLine(&w_kills);
 	s = str;
 	while (*s)
 	    HUlib_addCharToTextLine(&w_kills, *(s++));
 	HUlib_drawTextLine(&w_kills, false);
 
-	sprintf(str, "Items: %d/%d", players[consoleplayer].itemcount, totalitems);
+	sprintf(str, "\x1b%cItems: \x1b%c%d/%d", '0' + CR_GREEN, '0' + CR_GRAY,
+	        players[consoleplayer].itemcount, totalitems);
 	HUlib_clearTextLine(&w_items);
 	s = str;
 	while (*s)
 	    HUlib_addCharToTextLine(&w_items, *(s++));
 	HUlib_drawTextLine(&w_items, false);
 
-	sprintf(str, "Secret: %d/%d", players[consoleplayer].secretcount, totalsecret);
+	sprintf(str, "\x1b%cSecret: \x1b%c%d/%d", '0' + CR_GREEN, '0' + CR_GRAY,
+	        players[consoleplayer].secretcount, totalsecret);
 	HUlib_clearTextLine(&w_scrts);
 	s = str;
 	while (*s)
 	    HUlib_addCharToTextLine(&w_scrts, *(s++));
 	HUlib_drawTextLine(&w_scrts, false);
 
-	dp_translation = (byte *) &cr_gray;
-	sprintf(str, "%02d:%02d:%02d", time/3600, (time%3600)/60, time%60);
+	sprintf(str, "\x1b%c%02d:%02d:%02d", '0' + CR_GRAY,
+	        time/3600, (time%3600)/60, time%60);
 	HUlib_clearTextLine(&w_ltime);
 	s = str;
 	while (*s)
