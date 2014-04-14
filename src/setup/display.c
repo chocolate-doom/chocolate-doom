@@ -106,7 +106,7 @@ static int aspect_ratio_correct = 1;
 static int fullscreen = 1;
 static int screen_width = 640;
 static int screen_height = 400;
-static int screen_bpp = 8;
+static int screen_bpp = 0;
 static int startup_delay = 1000;
 static int usegamma = 0;
 

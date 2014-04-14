@@ -129,6 +129,8 @@ static void DoQuit(void *widget, void *dosave)
         M_SaveDefaults();
     }
 
+    TXT_Shutdown();
+
     exit(0);
 }
 
