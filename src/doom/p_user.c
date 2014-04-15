@@ -241,6 +241,7 @@ void P_DeathThink (player_t* player)
 	player->viewheight = 6*FRACUNIT;
 
     player->deltaviewheight = 0;
+    p2fromp(player)->lookdir = 0;
     onground = (player->mo->z <= player->mo->floorz);
     P_CalcHeight (player);
 	

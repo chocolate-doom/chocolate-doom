@@ -250,6 +250,7 @@ void P_ZMovement (mobj_t* mo)
 {
     fixed_t	dist;
     fixed_t	delta;
+    extern int crispy_mouselook;
     
     // check for smooth step up
     if (mo->player && mo->z < mo->floorz)
@@ -331,6 +332,8 @@ void P_ZMovement (mobj_t* mo)
 		// after hitting the ground (hard),
 		// and utter appropriate sound.
 		mo->player->deltaviewheight = mo->momz>>3;
+		if (!crispy_mouselook)
+		    p2fromp(mo->player)->centering = true;
 		S_StartSound (mo, sfx_oof);
 	    }
 	    mo->momz = 0;
