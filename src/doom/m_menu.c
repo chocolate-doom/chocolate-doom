@@ -1121,10 +1121,8 @@ void M_DrawMouse(void)
     M_DrawThermo(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_empty2,
 		 21, mouseSensitivity_y);
 
-    if (mouse_y_invert)
-        sprintf(mouse_invert_text, "INVERT MOUSE: \x1b%cON", '0' + CR_GREEN);
-    else
-        sprintf(mouse_invert_text, "INVERT MOUSE: \x1b%cOFF", '0' + CR_GREEN);
+    sprintf(mouse_invert_text, "INVERT MOUSE: \x1b%c%s", '0' + CR_GREEN,
+            mouse_y_invert ? "ON" : "OFF");
 
     M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_invert + 6,
                 mouse_invert_text);
