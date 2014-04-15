@@ -230,6 +230,7 @@ void P_DeathThink (player_t* player)
 {
     angle_t		angle;
     angle_t		delta;
+    player2_t*		player2 = p2fromp(player);
 
     P_MovePsprites (player);
 	
@@ -240,8 +241,16 @@ void P_DeathThink (player_t* player)
     if (player->viewheight < 6*FRACUNIT)
 	player->viewheight = 6*FRACUNIT;
 
+    if (player2->lookdir >  8)
+        player2->lookdir -= 8;
+    else
+    if (player2->lookdir < -8)
+        player2->lookdir += 8;
+    else
+    if (player2->lookdir)
+        player2->lookdir = 0;
+
     player->deltaviewheight = 0;
-    p2fromp(player)->lookdir = 0;
     onground = (player->mo->z <= player->mo->floorz);
     P_CalcHeight (player);
 	
