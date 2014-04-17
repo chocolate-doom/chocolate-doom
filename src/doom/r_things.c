@@ -574,7 +574,7 @@ void R_ProjectSprite (mobj_t* thing)
 
     // [crispy] flip death sprites and corpses randomly
     if (singleplayer && thing->type != MT_CYBORG &&
-        thing->flags & MF_CORPSE && -thing->health & 1)
+        thing->flags & MF_CORPSE && thing->health & 1)
     {
         flip = true;
     }
