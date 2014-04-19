@@ -187,3 +187,30 @@ boolean D_IsEpisodeMap(GameMission_t mission)
     }
 }
 
+char *D_GameMissionString(GameMission_t mission)
+{
+    switch (mission)
+    {
+        case none:
+            return "none";
+        case doom:
+            return "doom";
+        case doom2:
+            return "doom2";
+        case pack_tnt:
+            return "tnt";
+        case pack_plut:
+            return "plutonia";
+        case pack_hacx:
+            return "hacx";
+        case pack_chex:
+            return "chex";
+        case heretic:
+            return "heretic";
+        case hexen:
+            return "hexen";
+        case strife:
+            return "strife";
+    }
+}
+

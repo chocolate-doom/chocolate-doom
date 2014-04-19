@@ -1305,6 +1305,8 @@ void D_DoomMain (void)
     DEH_printf("W_Init: Init WADfiles.\n");
     D_AddFile(iwadfile);
 
+    W_CheckCorrectIWAD(doom);
+
     // Doom 3: BFG Edition includes modified versions of the classic
     // IWADs which can be identified by an additional DMENUPIC lump.
     // Furthermore, the M_GDHIGH lumps have been modified in a way that

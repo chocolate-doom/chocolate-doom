@@ -1560,6 +1560,7 @@ void D_DoomMain (void)
     if(devparm) // [STRIFE] Devparm only
         DEH_printf("W_Init: Init WADfiles.\n");
     D_AddFile(iwadfile);
+    W_CheckCorrectIWAD(strife);
     modifiedgame = W_ParseCommandLine();
 
     // [STRIFE] serial number output

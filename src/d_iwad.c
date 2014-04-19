@@ -39,7 +39,7 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
-static iwad_t iwads[] =
+static const iwad_t iwads[] =
 {
     { "doom2.wad",    doom2,     commercial, "Doom II" },
     { "plutonia.wad", pack_plut, commercial, "Final Doom: Plutonia Experiment" },
@@ -749,9 +749,9 @@ char *D_FindIWAD(int mask, GameMission_t *mission)
 
 // Find all IWADs in the IWAD search path matching the given mask.
 
-iwad_t **D_FindAllIWADs(int mask)
+const iwad_t **D_FindAllIWADs(int mask)
 {
-    iwad_t **result;
+    const iwad_t **result;
     int result_len;
     char *filename;
     int i;
@@ -833,7 +833,8 @@ char *D_SuggestGameName(GameMission_t mission, GameMode_t mode)
 
     for (i = 0; i < arrlen(iwads); ++i)
     {
-        if (iwads[i].mission == mission && iwads[i].mode == mode)
+        if (iwads[i].mission == mission
+         && (mode == indetermined || iwads[i].mode == mode))
         {
             return iwads[i].description;
         }

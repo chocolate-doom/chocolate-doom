@@ -304,6 +304,7 @@ void D_DoomMain(void)
     }
 
     D_AddFile(iwadfile);
+    W_CheckCorrectIWAD(hexen);
 
     HandleArgs();
 
