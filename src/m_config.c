@@ -951,6 +951,12 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joyb_straferight),
 
     //!
+    // Joystick button to activate the game menu.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_menu_activate),
+
+    //!
     // Joystick button to cycle to the previous weapon.
     //
 

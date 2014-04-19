@@ -157,6 +157,8 @@ extern int joybstraferight;
 extern int joybprevweapon;
 extern int joybnextweapon;
 
+extern int joybmenu;
+
 extern int dclick_use;
 
 void M_BindBaseControls(void);

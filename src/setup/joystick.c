@@ -72,7 +72,8 @@ static txt_button_t *joystick_button;
 
 static int *all_joystick_buttons[] = {
     &joybstraferight, &joybstrafeleft, &joybfire, &joybspeed,
-    &joybuse, &joybstrafe, &joybprevweapon, &joybnextweapon, &joybjump
+    &joybuse, &joybstrafe, &joybprevweapon, &joybnextweapon, &joybjump,
+    &joybmenu,
 };
 
 //

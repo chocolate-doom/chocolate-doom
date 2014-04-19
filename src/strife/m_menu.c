@@ -1778,6 +1778,11 @@ boolean M_Responder (event_t* ev)
             key = key_menu_back;
             joywait = I_GetTime() + 5;
         }
+        if (joybmenu >= 0 && (ev->data1 & (1 << joybmenu)) != 0)
+        {
+            key = key_menu_activate;
+            joywait = I_GetTime() + 5;
+        }
     }
     else
     {
