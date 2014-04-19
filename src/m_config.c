@@ -926,6 +926,19 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joystick_y_invert),
 
     //!
+    // Joystick axis to use to for strafing movement.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_strafe_axis),
+
+    //!
+    // If non-zero, movement on the joystick axis used for strafing
+    // is inverted.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_strafe_invert),
+
+    //!
     // Joystick button to strafe left.
     //
 

@@ -223,6 +223,7 @@ static int      dclicks2;
 // joystick values are repeated 
 static int      joyxmove;
 static int      joyymove;
+static int      joystrafemove;
 static boolean  joyarray[MAX_JOY_BUTTONS + 1]; 
 static boolean *joybuttons = &joyarray[1];		// allow [-1] 
  
@@ -418,14 +419,16 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 
     if (gamekeydown[key_strafeleft]
      || joybuttons[joybstrafeleft]
-     || mousebuttons[mousebstrafeleft]) 
+     || mousebuttons[mousebstrafeleft]
+     || joystrafemove < 0)
     {
         side -= sidemove[speed];
     }
 
     if (gamekeydown[key_straferight]
      || joybuttons[joybstraferight]
-     || mousebuttons[mousebstraferight])
+     || mousebuttons[mousebstraferight]
+     || joystrafemove > 0)
     {
         side += sidemove[speed]; 
     }
@@ -638,12 +641,12 @@ void G_DoLoadLevel (void)
     
     // clear cmd building stuff
 
-    memset (gamekeydown, 0, sizeof(gamekeydown)); 
-    joyxmove = joyymove = 0; 
-    mousex = mousey = 0; 
-    sendpause = sendsave = paused = false; 
-    memset(mousearray, 0, sizeof(mousearray)); 
-    memset(joyarray, 0, sizeof(joyarray)); 
+    memset (gamekeydown, 0, sizeof(gamekeydown));
+    joyxmove = joyymove = joystrafemove = 0;
+    mousex = mousey = 0;
+    sendpause = sendsave = paused = false;
+    memset(mousearray, 0, sizeof(mousearray));
+    memset(joyarray, 0, sizeof(joyarray));
 
     if (testcontrols)
     {
@@ -814,6 +817,7 @@ boolean G_Responder (event_t* ev)
         SetJoyButtons(ev->data1);
 	joyxmove = ev->data2; 
 	joyymove = ev->data3; 
+        joystrafemove = ev->data4;
 	return true;    // eat events 
  
       default: 

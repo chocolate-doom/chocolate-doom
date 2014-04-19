@@ -63,6 +63,11 @@ static int joystick_x_invert = 0;
 static int joystick_y_axis = 1;
 static int joystick_y_invert = 0;
 
+// Strafe axis.
+
+static int joystick_strafe_axis = -1;
+static int joystick_strafe_invert = 0;
+
 static txt_button_t *joystick_button;
 
 static int *all_joystick_buttons[] = {
@@ -438,7 +443,9 @@ void BindJoystickVariables(void)
     M_BindVariable("joystick_index",        &joystick_index);
     M_BindVariable("joystick_x_axis",       &joystick_x_axis);
     M_BindVariable("joystick_y_axis",       &joystick_y_axis);
+    M_BindVariable("joystick_strafe_axis",  &joystick_strafe_axis);
     M_BindVariable("joystick_x_invert",     &joystick_x_invert);
     M_BindVariable("joystick_y_invert",     &joystick_y_invert);
+    M_BindVariable("joystick_strafe_invert",&joystick_strafe_invert);
 }
 
