@@ -47,7 +47,7 @@
 #include "mode.h"
 
 GameMission_t gamemission;
-static iwad_t **iwads;
+static const iwad_t **iwads;
 
 typedef struct
 {
@@ -280,7 +280,7 @@ static void OpenGameSelectDialog(GameSelectCallback callback)
 {
     mission_config_t *mission = NULL;
     txt_window_t *window;
-    iwad_t **iwads;
+    const iwad_t **iwads;
     int num_games;
     int i;
 
@@ -380,7 +380,7 @@ char *GetGameTitle(void)
     return game_title;
 }
 
-iwad_t **GetIwads(void)
+const iwad_t **GetIwads(void)
 {
     return iwads;
 }

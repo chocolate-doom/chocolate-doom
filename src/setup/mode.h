@@ -32,7 +32,7 @@ void SetupMission(GameSelectCallback callback);
 void InitBindings(void);
 char *GetExecutableName(void);
 char *GetGameTitle(void);
-iwad_t **GetIwads(void);
+const iwad_t **GetIwads(void);
 
 #endif /* #ifndef SETUP_MODE_H */
 
