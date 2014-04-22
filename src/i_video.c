@@ -761,12 +761,6 @@ void I_GetEvent(void)
 
         UpdateShiftStatus(&sdlevent);
 
-        // [crispy] special-case CAPSLOCK, which sends a key up event
-        // every second time it is actually pressed down
-        if (sdlevent.type == SDL_KEYUP &&
-            sdlevent.key.keysym.sym == SDLK_CAPSLOCK)
-            sdlevent.type = SDL_KEYDOWN;
-
         // process event
         
         switch (sdlevent.type)
@@ -2016,6 +2010,9 @@ void I_InitGraphics(void)
     SDL_Event dummy;
     byte *doompal;
     char *env;
+
+    // [crispy] disable special lock-key behavior
+    putenv("SDL_DISABLE_LOCK_KEYS=1");
 
     // Pass through the XSCREENSAVER_WINDOW environment variable to 
     // SDL_WINDOWID, to embed the SDL window into the Xscreensaver
