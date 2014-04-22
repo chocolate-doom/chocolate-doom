@@ -202,6 +202,8 @@ int joybjump = -1;
 int joybprevweapon = -1;
 int joybnextweapon = -1;
 
+int joybmenu = -1;
+
 // Control whether if a mouse button is double clicked, it acts like 
 // "use" has been pressed
 
@@ -213,25 +215,27 @@ int dclick_use = 1;
 
 void M_BindBaseControls(void)
 {
-    M_BindVariable("key_right",          &key_right),
-    M_BindVariable("key_left",           &key_left),
-    M_BindVariable("key_up",             &key_up),
-    M_BindVariable("key_down",           &key_down),
-    M_BindVariable("key_strafeleft",     &key_strafeleft),
-    M_BindVariable("key_straferight",    &key_straferight),
-    M_BindVariable("key_fire",           &key_fire),
-    M_BindVariable("key_use",            &key_use),
-    M_BindVariable("key_strafe",         &key_strafe),
-    M_BindVariable("key_speed",          &key_speed),
+    M_BindVariable("key_right",          &key_right);
+    M_BindVariable("key_left",           &key_left);
+    M_BindVariable("key_up",             &key_up);
+    M_BindVariable("key_down",           &key_down);
+    M_BindVariable("key_strafeleft",     &key_strafeleft);
+    M_BindVariable("key_straferight",    &key_straferight);
+    M_BindVariable("key_fire",           &key_fire);
+    M_BindVariable("key_use",            &key_use);
+    M_BindVariable("key_strafe",         &key_strafe);
+    M_BindVariable("key_speed",          &key_speed);
 
-    M_BindVariable("mouseb_fire",        &mousebfire),
-    M_BindVariable("mouseb_strafe",      &mousebstrafe),
-    M_BindVariable("mouseb_forward",     &mousebforward),
+    M_BindVariable("mouseb_fire",        &mousebfire);
+    M_BindVariable("mouseb_strafe",      &mousebstrafe);
+    M_BindVariable("mouseb_forward",     &mousebforward);
 
-    M_BindVariable("joyb_fire",          &joybfire),
-    M_BindVariable("joyb_strafe",        &joybstrafe),
-    M_BindVariable("joyb_use",           &joybuse),
-    M_BindVariable("joyb_speed",         &joybspeed),
+    M_BindVariable("joyb_fire",          &joybfire);
+    M_BindVariable("joyb_strafe",        &joybstrafe);
+    M_BindVariable("joyb_use",           &joybuse);
+    M_BindVariable("joyb_speed",         &joybspeed);
+
+    M_BindVariable("joyb_menu_activate", &joybmenu);
 
     // Extra controls that are not in the Vanilla versions:
 

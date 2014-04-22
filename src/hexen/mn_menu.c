@@ -1175,6 +1175,17 @@ boolean MN_Responder(event_t * event)
         return true;
     }
 
+    // Allow the menu to be activated from a joystick button if a button
+    // is bound for joybmenu.
+    if (event->type == ev_joystick)
+    {
+        if (joybmenu >= 0 && (event->data1 & (1 << joybmenu)) != 0)
+        {
+            MN_ActivateMenu();
+            return true;
+        }
+    }
+
     // Only care about keypresses beyond this point.
 
     if (event->type != ev_keydown)

@@ -195,6 +195,7 @@ int dclicktime2, dclickstate2, dclicks2;
 #define MAX_JOY_BUTTONS 20
 
 int joyxmove, joyymove;         // joystick values are repeated
+int joystrafemove;
 boolean joyarray[MAX_JOY_BUTTONS + 1];
 boolean *joybuttons = &joyarray[1];     // allow [-1]
 
@@ -379,10 +380,10 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     if (joyymove > 0)
         forward -= forwardmove[speed];
     if (gamekeydown[key_straferight] || mousebuttons[mousebstraferight]
-     || joybuttons[joybstraferight])
+     || joybuttons[joybstraferight] || joystrafemove > 0)
         side += sidemove[speed];
     if (gamekeydown[key_strafeleft] || mousebuttons[mousebstrafeleft]
-     || joybuttons[joybstrafeleft])
+     || joybuttons[joybstrafeleft] || joystrafemove < 0)
         side -= sidemove[speed];
 
     // Look up/down/center keys
@@ -664,7 +665,7 @@ void G_DoLoadLevel(void)
 //
 
     memset(gamekeydown, 0, sizeof(gamekeydown));
-    joyxmove = joyymove = 0;
+    joyxmove = joyymove = joystrafemove = 0;
     mousex = mousey = 0;
     sendpause = sendsave = paused = false;
     memset(mousearray, 0, sizeof(mousearray));
@@ -880,6 +881,7 @@ boolean G_Responder(event_t * ev)
             SetJoyButtons(ev->data1);
             joyxmove = ev->data2;
             joyymove = ev->data3;
+            joystrafemove = ev->data4;
             return (true);      // eat events
 
         default:

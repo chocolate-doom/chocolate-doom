@@ -52,7 +52,7 @@ typedef enum
 
 // Fallback IWADs to use if no IWADs are detected.
 
-static iwad_t fallback_iwads[] = {
+static const iwad_t fallback_iwads[] = {
     { "doom.wad",     doom,     registered,  "Doom" },
     { "heretic.wad",  heretic,  retail,      "Heretic" },
     { "hexen.wad",    hexen,    commercial,  "Hexen" },
@@ -61,7 +61,7 @@ static iwad_t fallback_iwads[] = {
 
 // Array of IWADs found to be installed
 
-static iwad_t **found_iwads;
+static const iwad_t **found_iwads;
 static char *iwad_labels[8];
 
 // Index of the currently selected IWAD
@@ -153,14 +153,14 @@ static int query_servers_found;
 
 // Find an IWAD from its description
 
-static iwad_t *GetCurrentIWAD(void)
+static const iwad_t *GetCurrentIWAD(void)
 {
     return found_iwads[found_iwad_selected];
 }
 
 // Is the currently selected IWAD the Chex Quest chex.wad?
 
-static boolean IsChexQuest(iwad_t *iwad)
+static boolean IsChexQuest(const iwad_t *iwad)
 {
     return !strcmp(iwad->name, "chex.wad");
 }
@@ -320,7 +320,7 @@ static void UpdateWarpButton(void)
 
 static void UpdateSkillButton(void)
 {
-    iwad_t *iwad = GetCurrentIWAD();
+    const iwad_t *iwad = GetCurrentIWAD();
 
     if (IsChexQuest(iwad))
     {
@@ -393,7 +393,7 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
     txt_window_t *window;
     txt_table_t *table;
     txt_button_t *button;
-    iwad_t *iwad;
+    const iwad_t *iwad;
     char buf[10];
     int episodes;
     int x, y;
@@ -477,7 +477,7 @@ static void LevelSelectDialog(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(user_data))
 
 static void IWADSelected(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 {
-    iwad_t *iwad;
+    const iwad_t *iwad;
 
     // Find the iwad_t selected
 
@@ -493,7 +493,7 @@ static void IWADSelected(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 static void UpdateWarpType(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 {
     warptype_t new_warptype;
-    iwad_t *iwad;
+    const iwad_t *iwad;
 
     // Get the selected IWAD
 
@@ -527,9 +527,9 @@ static void UpdateWarpType(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 // Get an IWAD list with a default fallback IWAD that is appropriate
 // for the game we are configuring (matches gamemission global variable).
 
-static iwad_t **GetFallbackIwadList(void)
+static const iwad_t **GetFallbackIwadList(void)
 {
-    static iwad_t *fallback_iwad_list[2];
+    static const iwad_t *fallback_iwad_list[2];
     unsigned int i;
 
     // Default to use if we don't find something better.

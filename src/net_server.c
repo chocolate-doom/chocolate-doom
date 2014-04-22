@@ -412,7 +412,7 @@ static void NET_SV_SendWaitingData(net_client_t *client)
     // If no controller found (?), send the details that the client
     // is expecting anyway.
 
-    if (controller != NULL)
+    if (controller == NULL)
     {
         controller = client;
     }

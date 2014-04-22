@@ -63,11 +63,17 @@ static int joystick_x_invert = 0;
 static int joystick_y_axis = 1;
 static int joystick_y_invert = 0;
 
+// Strafe axis.
+
+static int joystick_strafe_axis = -1;
+static int joystick_strafe_invert = 0;
+
 static txt_button_t *joystick_button;
 
 static int *all_joystick_buttons[] = {
     &joybstraferight, &joybstrafeleft, &joybfire, &joybspeed,
-    &joybuse, &joybstrafe, &joybprevweapon, &joybnextweapon, &joybjump
+    &joybuse, &joybstrafe, &joybprevweapon, &joybnextweapon, &joybjump,
+    &joybmenu,
 };
 
 //
@@ -174,15 +180,15 @@ static void SetCalibrationLabel(void)
     switch (calibrate_stage)
     {
         case CALIBRATE_CENTER:
-            message = "Move the joystick to the\n"
+            message = "Move the D-pad or joystick to the\n"
                       "center, and press a button.";
             break;
         case CALIBRATE_UP:
-            message = "Move the joystick up,\n"
+            message = "Push the D-pad or joystick up,\n"
                       "and press a button.";
             break;
         case CALIBRATE_LEFT:
-            message = "Move the joystick to the\n"
+            message = "Push the D-pad or joystick to the\n"
                       "left, and press a button.";
             break;
     }
@@ -270,9 +276,10 @@ static int CalibrationEventCallback(SDL_Event *event, void *user_data)
 
 static void NoJoystick(void)
 {
-    TXT_MessageBox(NULL, "No joysticks could be opened.\n\n"
-                         "Try configuring your joystick from within\n"
-                         "your OS first.");
+    TXT_MessageBox(NULL, "No joysticks or gamepads could be found.\n\n"
+                         "Try configuring your controller from within\n"
+                         "your OS first. Maybe you need to install\n"
+                         "some drivers or otherwise configure it.");
 
     joystick_index = -1;
     SetJoystickButtonLabel();
@@ -298,11 +305,11 @@ static void CalibrateJoystick(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
         return;
     }
 
-    calibration_window = TXT_NewWindow("Joystick calibration");
+    calibration_window = TXT_NewWindow("Gamepad/Joystick calibration");
 
-    TXT_AddWidgets(calibration_window, 
+    TXT_AddWidgets(calibration_window,
                    TXT_NewLabel("Please follow the following instructions\n"
-                                "in order to calibrate your joystick."),
+                                "in order to calibrate your controller."),
                    TXT_NewStrut(0, 1),
                    calibration_label = TXT_NewLabel("zzz"),
                    TXT_NewStrut(0, 1),
@@ -382,19 +389,19 @@ void ConfigJoystick(void)
         joystick_initted = SDL_Init(SDL_INIT_JOYSTICK) >= 0;
     }
 
-    window = TXT_NewWindow("Joystick configuration");
+    window = TXT_NewWindow("Gamepad/Joystick configuration");
 
     TXT_AddWidgets(window,
-                   TXT_NewCheckBox("Enable joystick", &usejoystick),
+                   TXT_NewCheckBox("Enable gamepad/joystick", &usejoystick),
                    joystick_table = TXT_NewTable(2),
-                   TXT_NewSeparator("Joystick buttons"),
+                   TXT_NewSeparator("Buttons"),
                    button_table = TXT_NewTable(2),
                    NULL);
 
     TXT_SetColumnWidths(joystick_table, 20, 15);
 
     TXT_AddWidgets(joystick_table,
-                   TXT_NewLabel("Current joystick"),
+                   TXT_NewLabel("Current controller"),
                    joystick_button = TXT_NewButton("zzzz"),
                    NULL);
 
@@ -438,7 +445,9 @@ void BindJoystickVariables(void)
     M_BindVariable("joystick_index",        &joystick_index);
     M_BindVariable("joystick_x_axis",       &joystick_x_axis);
     M_BindVariable("joystick_y_axis",       &joystick_y_axis);
+    M_BindVariable("joystick_strafe_axis",  &joystick_strafe_axis);
     M_BindVariable("joystick_x_invert",     &joystick_x_invert);
     M_BindVariable("joystick_y_invert",     &joystick_y_invert);
+    M_BindVariable("joystick_strafe_invert",&joystick_strafe_invert);
 }
 

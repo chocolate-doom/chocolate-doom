@@ -217,15 +217,15 @@ void MainMenu(void)
     window = TXT_NewWindow("Main Menu");
 
     TXT_AddWidgets(window,
-          TXT_NewButton2("Configure Display", 
+          TXT_NewButton2("Configure Display",
                          (TxtWidgetSignalFunc) ConfigDisplay, NULL),
-          TXT_NewButton2("Configure Sound", 
+          TXT_NewButton2("Configure Sound",
                          (TxtWidgetSignalFunc) ConfigSound, NULL),
-          TXT_NewButton2("Configure Keyboard", 
+          TXT_NewButton2("Configure Keyboard",
                          (TxtWidgetSignalFunc) ConfigKeyboard, NULL),
-          TXT_NewButton2("Configure Mouse", 
+          TXT_NewButton2("Configure Mouse",
                          (TxtWidgetSignalFunc) ConfigMouse, NULL),
-          TXT_NewButton2("Configure Joystick", 
+          TXT_NewButton2("Configure Gamepad/Joystick",
                          (TxtWidgetSignalFunc) ConfigJoystick, NULL),
           NULL);
 

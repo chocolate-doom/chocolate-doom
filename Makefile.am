@@ -35,6 +35,7 @@ DOC_FILES=                              \
         README                          \
         README.Music                    \
         NEWS                            \
+        PHILOSOPHY                      \
         ChangeLog
 
 EXTRA_DIST=                             \

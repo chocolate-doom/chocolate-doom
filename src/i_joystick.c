@@ -67,6 +67,11 @@ static int joystick_x_invert = 0;
 static int joystick_y_axis = 1;
 static int joystick_y_invert = 0;
 
+// Which joystick axis to use for strafing?
+
+static int joystick_strafe_axis = -1;
+static int joystick_strafe_invert = 0;
+
 void I_ShutdownJoystick(void)
 {
     if (joystick != NULL)
@@ -112,8 +117,9 @@ void I_InitJoystick(void)
 
     num_axes = SDL_JoystickNumAxes(joystick);
 
-    if (joystick_x_axis < 0 || joystick_x_axis >= num_axes
-     || joystick_y_axis < 0 || joystick_y_axis >= num_axes)
+    if (joystick_x_axis >= num_axes
+     || joystick_y_axis >= num_axes
+     || joystick_strafe_axis >= num_axes)
     {
         printf("I_InitJoystick: Invalid joystick axis for joystick #%i "
                "(run joystick setup again)\n",
@@ -159,6 +165,13 @@ static int GetAxisState(int axis, int invert)
 {
     int result;
 
+    // Axis -1 means disabled.
+
+    if (axis < 0)
+    {
+        return 0;
+    }
+
     result = SDL_JoystickGetAxis(joystick, axis);
 
     if (invert)
@@ -184,6 +197,7 @@ void I_UpdateJoystick(void)
         ev.data1 = GetButtonState();
         ev.data2 = GetAxisState(joystick_x_axis, joystick_x_invert);
         ev.data3 = GetAxisState(joystick_y_axis, joystick_y_invert);
+        ev.data4 = GetAxisState(joystick_strafe_axis, joystick_strafe_invert);
 
         D_PostEvent(&ev);
     }
@@ -195,7 +209,9 @@ void I_BindJoystickVariables(void)
     M_BindVariable("joystick_index",        &joystick_index);
     M_BindVariable("joystick_x_axis",       &joystick_x_axis);
     M_BindVariable("joystick_y_axis",       &joystick_y_axis);
+    M_BindVariable("joystick_strafe_axis",  &joystick_strafe_axis);
     M_BindVariable("joystick_x_invert",     &joystick_x_invert);
     M_BindVariable("joystick_y_invert",     &joystick_y_invert);
+    M_BindVariable("joystick_strafe_invert",&joystick_strafe_invert);
 }
 
