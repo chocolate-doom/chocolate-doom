@@ -328,6 +328,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     int		tspeed; 
     int		forward;
     int		side;
+    static int		joybspeed_old = 2;
 
     memset(cmd, 0, sizeof(ticcmd_t));
 
@@ -362,6 +363,28 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     else 
 	tspeed = speed;
     
+    // [crispy] toggle always run
+    if (gamekeydown[key_toggleautorun])
+    {
+        static char autorunmsg[15];
+
+        if (joybspeed >= MAX_JOY_BUTTONS)
+        {
+            joybspeed = joybspeed_old;
+        }
+        else
+        {
+            joybspeed_old = joybspeed;
+            joybspeed = 29;
+        }
+
+        sprintf(autorunmsg, "ALWAYS RUN %s",
+            (joybspeed >= MAX_JOY_BUTTONS) ? "ON" : "OFF");
+        players[consoleplayer].message = autorunmsg;
+
+        gamekeydown[key_toggleautorun] = false;
+    }
+
     // let movement keys cancel each other out
     if (strafe) 
     { 

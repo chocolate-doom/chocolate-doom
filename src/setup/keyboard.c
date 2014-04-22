@@ -34,6 +34,7 @@ static int always_run = 0;
 // Keys within these groups cannot have the same value.
 
 static int *controls[] = { &key_left, &key_right, &key_up, &key_down,
+                           &key_toggleautorun,
                            &key_strafeleft, &key_straferight, &key_fire,
                            &key_use, &key_strafe, &key_speed, &key_jump,
                            &key_flyup, &key_flydown, &key_flycenter,
@@ -196,12 +197,18 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 
     TXT_SetColumnWidths(table, 21, 9);
 
-    if (extra_keys)
+    if (extra_keys || 1) // Crispy
     {
         // When we have extra controls, a scrollable pane must be used.
 
         scrollpane = TXT_NewScrollPane(0, 13, table);
         TXT_AddWidget(window, scrollpane);
+
+        if (gamemission == doom)
+        {
+        AddSectionLabel(table, "Movement", false);
+        AddKeyControl(table, "Toggle always run", &key_toggleautorun);
+        }
 
         AddSectionLabel(table, "View", false);
 

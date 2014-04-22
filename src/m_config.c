@@ -1591,6 +1591,13 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_KEY(key_multi_msgplayer8),
+
+    //!
+    // @game doom
+    // Toggle always run.
+    //
+
+    CONFIG_VARIABLE_KEY(key_toggleautorun),
 };
 
 static default_collection_t extra_defaults =
