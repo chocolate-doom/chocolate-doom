@@ -319,7 +319,7 @@ static void LoadSubstituteConfigs(void)
 
     if (!strcmp(configdir, ""))
     {
-        musicdir = "";
+        musicdir = strdup("");
     }
     else
     {
