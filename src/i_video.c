@@ -761,6 +761,12 @@ void I_GetEvent(void)
 
         UpdateShiftStatus(&sdlevent);
 
+        // [crispy] special-case CAPSLOCK, which sends a key up event
+        // every second time it is actually pressed down
+        if (sdlevent.type == SDL_KEYUP &&
+            sdlevent.key.keysym.sym == SDLK_CAPSLOCK)
+            sdlevent.type = SDL_KEYDOWN;
+
         // process event
         
         switch (sdlevent.type)
