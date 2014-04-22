@@ -1505,6 +1505,13 @@ static default_t extra_defaults_list[] =
 
     //!
     // @game doom
+    // Toggle always run.
+    //
+
+    CONFIG_VARIABLE_KEY(key_toggleautorun),
+
+    //!
+    // @game doom
     // Invert vertical mouse movement.
     //
 

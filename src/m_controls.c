@@ -46,6 +46,7 @@ int key_fire = KEY_RCTRL;
 int key_use = ' ';
 int key_strafe = KEY_RALT;
 int key_speed = KEY_RSHIFT; 
+int key_toggleautorun = KEY_CAPSLOCK;
 
 // 
 // Heretic keyboard controls
@@ -254,6 +255,7 @@ void M_BindBaseControls(void)
 
     M_BindVariable("mouseb_mouselook",   &mousebmouselook);
     M_BindVariable("key_reverse",        &key_reverse);
+    M_BindVariable("key_toggleautorun",  &key_toggleautorun);
 }
 
 void M_BindHereticControls(void)

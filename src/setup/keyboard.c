@@ -39,7 +39,7 @@ static int always_run = 0;
 // Keys within these groups cannot have the same value.
 
 static int *controls[] = { &key_left, &key_right, &key_up, &key_down,
-                           &key_reverse,
+                           &key_reverse, &key_toggleautorun,
                            &key_strafeleft, &key_straferight, &key_fire,
                            &key_use, &key_strafe, &key_speed, &key_jump,
                            &key_flyup, &key_flydown, &key_flycenter,
@@ -200,17 +200,23 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
         scrollpane = TXT_NewScrollPane(0, 13, table);
         TXT_AddWidget(window, scrollpane);
 
-        AddSectionLabel(table, "View", false);
 
         if (gamemission == doom)
         {
+        AddSectionLabel(table, "View", false);
+
         AddKeyControl(table, "Look up [*]", &key_lookup);
         AddKeyControl(table, "Look down [*]", &key_lookdown);
         AddKeyControl(table, "Center view [*]", &key_lookcenter);
+
+        AddSectionLabel(table, "Movement", false);
+        AddKeyControl(table, "Toggle always run", &key_toggleautorun);
         AddKeyControl(table, "Quick Reverse", &key_reverse);
         }
         else
         {
+        AddSectionLabel(table, "View", false);
+
         AddKeyControl(table, "Look up", &key_lookup);
         AddKeyControl(table, "Look down", &key_lookdown);
         AddKeyControl(table, "Center view", &key_lookcenter);
