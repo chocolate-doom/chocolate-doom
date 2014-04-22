@@ -79,6 +79,7 @@
 
 
 #include "g_game.h"
+#include "v_trans.h"
 
 
 #define SAVEGAMESIZE	0x2c000
@@ -342,6 +343,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     extern int		crispy_jump;
     extern int		crispy_freelook;
     extern int		crispy_mouselook;
+    extern int		crispy_coloredhud;
     static byte		mbmlookctrl = 0;
     static int		joybspeed_old = 2;
 
@@ -406,7 +408,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // [crispy] toggle always run
     if (gamekeydown[key_toggleautorun])
     {
-        static char autorunmsg[15];
+        static char autorunmsg[22];
 
         if (joybspeed >= MAX_JOY_BUTTONS)
         {
@@ -418,7 +420,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
             joybspeed = 29;
         }
 
-        sprintf(autorunmsg, "ALWAYS RUN %s",
+        sprintf(autorunmsg, "ALWAYS RUN \x1b%c%s",
+            (crispy_coloredhud) ? '0' + CR_GREEN : '0' + CR_RED,
             (joybspeed >= MAX_JOY_BUTTONS) ? "ON" : "OFF");
         players[consoleplayer].message = autorunmsg;
 
