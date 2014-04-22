@@ -1027,6 +1027,7 @@ P_SpawnPlayerMissile
     fixed_t	y;
     fixed_t	z;
     fixed_t	slope;
+    extern int	crispy_freeaim;
     
     // see which target is to be aimed at
     an = source->angle;
@@ -1046,7 +1047,7 @@ P_SpawnPlayerMissile
 	if (!linetarget)
 	{
 	    an = source->angle;
-	    if (singleplayer)
+	    if (singleplayer && crispy_freeaim)
 	        slope = ((p2fromp(source->player)->lookdir) << FRACBITS) / 173;
 	    else
 	    slope = 0;

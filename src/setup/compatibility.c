@@ -41,6 +41,7 @@ int crispy_crosshair_highlight = 0;
 int crispy_jump = 0;
 int crispy_freelook = 0;
 int crispy_mouselook = 0;
+int crispy_freeaim = 0;
 
 void CompatibilitySettings(void)
 {
@@ -69,6 +70,8 @@ void CompatibilitySettings(void)
                                    &crispy_freelook),
                    TXT_NewCheckBox("Enable permanent mouse look",
                                    &crispy_mouselook),
+                   TXT_NewCheckBox("Enable vertical aiming",
+                                   &crispy_freeaim),
                    NULL);
     }
     else

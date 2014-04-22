@@ -1588,6 +1588,14 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(crispy_mouselook),
+
+    //!
+    // @game doom
+    //
+    // Enable vertical aiming.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_freeaim),
 };
 
 static default_collection_t extra_defaults =
