@@ -230,6 +230,7 @@ static int      joystrafemove;
 static boolean  joyarray[MAX_JOY_BUTTONS + 1]; 
 static boolean *joybuttons = &joyarray[1];		// allow [-1] 
  
+static char     savename[256];
 static int      savegameslot; 
 static char     savedescription[32]; 
  
@@ -1369,6 +1370,11 @@ void G_DoReborn (int playernum)
 	 
     if (!netgame)
     {
+	// [crispy] if the player dies and the game has been loaded or saved
+	// in the mean time, reload that savegame instead of restarting the level
+	if (*savename)
+	gameaction = ga_loadgame;
+	else
 	// reload the level from scratch
 	gameaction = ga_loadlevel;  
     }
@@ -1455,6 +1461,7 @@ extern char*	pagename;
 void G_ExitLevel (void) 
 { 
     secretexit = false; 
+    M_StringCopy(savename, "", sizeof(savename));
     gameaction = ga_completed; 
 } 
 
@@ -1467,6 +1474,7 @@ void G_SecretExitLevel (void)
 	secretexit = false;
     else
 	secretexit = true; 
+    M_StringCopy(savename, "", sizeof(savename));
     gameaction = ga_completed; 
 } 
  
@@ -1701,7 +1709,6 @@ void G_DoWorldDone (void)
 extern boolean setsizeneeded;
 void R_ExecuteSetViewSize (void);
 
-char	savename[256];
 
 void G_LoadGame (char* name) 
 { 
@@ -1825,6 +1832,7 @@ void G_DoSaveGame (void)
     
     gameaction = ga_nothing; 
     M_StringCopy(savedescription, "", sizeof(savedescription));
+    M_StringCopy(savename, savegame_file, sizeof(savename));
 
     players[consoleplayer].message = DEH_String(GGSAVED);
 
@@ -1851,6 +1859,7 @@ G_DeferedInitNew
     d_skill = skill; 
     d_episode = episode; 
     d_map = map; 
+    M_StringCopy(savename, "", sizeof(savename));
     gameaction = ga_newgame; 
 } 
 
