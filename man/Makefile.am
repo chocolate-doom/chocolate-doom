@@ -48,7 +48,7 @@ CLEANFILES = $(GENERATED_MAN_PAGES) $(SETUP_MAN_PAGES) \
              $(doomdocs_DATA) $(hereticdocs_DATA) \
              $(hexendocs_DATA) $(strifedocs_DATA)
 
-$(SETUP_MAN_PAGES): @PROGRAM_PREFIX@setup.6
+$(SETUP_MAN_PAGES): chocolate-setup.6
 	cp $< $@
 
 @PROGRAM_PREFIX@doom.6: ../src $(MANPAGE_GEN_FILES)
