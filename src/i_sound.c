@@ -278,6 +278,11 @@ void I_UpdateSound(void)
     {
         sound_module->Update();
     }
+
+    if (music_module != NULL)
+    {
+        music_module->Poll();
+    }
 }
 
 static void CheckVolumeSeparation(int *vol, int *sep)

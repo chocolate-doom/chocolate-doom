@@ -518,6 +518,8 @@ void S_UpdateSounds(mobj_t *listener)
     sfxinfo_t*        sfx;
     channel_t*        c;
 
+    I_UpdateSound();
+
     for (cnum=0; cnum<snd_channels; cnum++)
     {
         c = &channels[cnum];

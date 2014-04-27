@@ -706,6 +706,8 @@ void S_UpdateSounds(mobj_t * listener)
     int absx;
     int absy;
 
+    I_UpdateSound();
+
     // If we are looping a CD track, we need to check if it has
     // finished playing and needs to restart.
     if (cdmusic && ShouldRestartCDTrack())

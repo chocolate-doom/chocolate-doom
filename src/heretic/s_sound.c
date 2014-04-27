@@ -452,6 +452,8 @@ void S_UpdateSounds(mobj_t * listener)
     int absx;
     int absy;
 
+    I_UpdateSound();
+
     listener = GetSoundListener();
     if (snd_MaxVolume == 0)
     {

@@ -40,6 +40,7 @@
 #include "gusconf.h"
 #include "i_sound.h"
 #include "i_system.h"
+#include "i_swap.h"
 #include "m_argv.h"
 #include "m_config.h"
 #include "m_misc.h"
@@ -50,6 +51,24 @@
 #define MAXMIDLENGTH (96 * 1024)
 #define MID_HEADER_MAGIC "MThd"
 #define MUS_HEADER_MAGIC "MUS\x1a"
+
+#define FLAC_HEADER "fLaC"
+#define OGG_HEADER "OggS"
+
+// Looping Vorbis metadata tag names. These have been defined by ZDoom
+// for specifying the start and end positions for looping music tracks
+// in .ogg and .flac files.
+// More information is here: http://zdoom.org/wiki/Audio_loop
+#define LOOP_START_TAG "LOOP_START"
+#define LOOP_END_TAG   "LOOP_END"
+
+// FLAC metadata headers that we care about.
+#define FLAC_STREAMINFO      0
+#define FLAC_VORBIS_COMMENT  4
+
+// Ogg metadata headers that we care about.
+#define OGG_ID_HEADER        1
+#define OGG_COMMENT_HEADER   3
 
 // Structure for music substitution.
 // We store a mapping based on SHA1 checksum -> filename of substitute music
@@ -66,6 +85,14 @@ typedef struct
     sha1_digest_t hash;
     char *filename;
 } subst_music_t;
+
+// Structure containing parsed metadata read from a digital music track:
+typedef struct
+{
+    boolean valid;
+    unsigned int samplerate_hz;
+    int start_time, end_time;
+} file_metadata_t;
 
 static subst_music_t *subst_music = NULL;
 static unsigned int subst_music_len = 0;
@@ -93,6 +120,298 @@ static int current_music_volume;
 char *timidity_cfg_path = "";
 
 static char *temp_timidity_cfg = NULL;
+
+// If true, we are playing a substitute digital track rather than in-WAD
+// MIDI/MUS track, and file_metadata contains loop metadata.
+static boolean playing_substitute = false;
+static file_metadata_t file_metadata;
+
+// Position (in samples) that we have reached in the current track.
+// This is updated by the TrackPositionCallback function.
+static unsigned int current_track_pos;
+
+// Currently playing music track.
+static Mix_Music *current_track_music = NULL;
+
+// If true, the currently playing track is being played on loop.
+static boolean current_track_loop;
+
+// Given a time string (for LOOP_START/LOOP_END), parse it and return
+// the time (in # samples since start of track) it represents.
+static unsigned int ParseVorbisTime(unsigned int samplerate_hz, char *value)
+{
+    char *num_start, *p;
+    unsigned int result = 0;
+    char c;
+
+    if (strchr(value, ':') == NULL)
+    {
+	return atoi(value);
+    }
+
+    result = 0;
+    num_start = value;
+
+    for (p = value; *p != '\0'; ++p)
+    {
+        if (*p == '.' || *p == ':')
+        {
+            c = *p; *p = '\0';
+            result = result * 60 + atoi(num_start);
+            num_start = p + 1;
+            *p = c;
+        }
+
+        if (*p == '.')
+        {
+            return result * samplerate_hz
+	         + (unsigned int) (atof(p) * samplerate_hz);
+        }
+    }
+
+    return (result * 60 + atoi(num_start)) * samplerate_hz;
+}
+
+// Given a vorbis comment string (eg. "LOOP_START=12345"), set fields
+// in the metadata structure as appropriate.
+static void ParseVorbisComment(file_metadata_t *metadata, char *comment)
+{
+    char *eq, *key, *value;
+
+    eq = strchr(comment, '=');
+
+    if (eq == NULL)
+    {
+        return;
+    }
+
+    key = comment;
+    *eq = '\0';
+    value = eq + 1;
+
+    if (!strcmp(key, LOOP_START_TAG))
+    {
+        metadata->start_time = ParseVorbisTime(metadata->samplerate_hz, value);
+    }
+    else if (!strcmp(key, LOOP_END_TAG))
+    {
+        metadata->end_time = ParseVorbisTime(metadata->samplerate_hz, value);
+    }
+}
+
+// Parse a vorbis comments structure, reading from the given file.
+static void ParseVorbisComments(file_metadata_t *metadata, FILE *fs)
+{
+    uint32_t buf;
+    unsigned int num_comments, i, comment_len;
+    char *comment;
+
+    // We must have read the sample rate already from an earlier header.
+    if (metadata->samplerate_hz == 0)
+    {
+	return;
+    }
+
+    // Skip the starting part we don't care about.
+    if (fread(&buf, 4, 1, fs) < 1)
+    {
+        return;
+    }
+    if (fseek(fs, LONG(buf), SEEK_CUR) != 0)
+    {
+	return;
+    }
+
+    // Read count field for number of comments.
+    if (fread(&buf, 4, 1, fs) < 1)
+    {
+        return;
+    }
+    num_comments = LONG(buf);
+
+    // Read each individual comment.
+    for (i = 0; i < num_comments; ++i)
+    {
+        // Read length of comment.
+        if (fread(&buf, 4, 1, fs) < 1)
+	{
+            return;
+	}
+
+        comment_len = LONG(buf);
+
+        // Read actual comment data into string buffer.
+        comment = calloc(1, comment_len + 1);
+        if (comment == NULL
+         || fread(comment, 1, comment_len, fs) < comment_len)
+        {
+            free(comment);
+            break;
+        }
+
+        // Parse comment string.
+        ParseVorbisComment(metadata, comment);
+        free(comment);
+    }
+}
+
+static void ParseFlacStreaminfo(file_metadata_t *metadata, FILE *fs)
+{
+    byte buf[34];
+
+    // Read block data.
+    if (fread(buf, sizeof(buf), 1, fs) < 1)
+    {
+        return;
+    }
+
+    // We only care about sample rate and song length.
+    metadata->samplerate_hz = (buf[10] << 12) | (buf[11] << 4)
+                            | (buf[12] >> 4);
+    // Song length is actually a 36 bit field, but 32 bits should be
+    // enough for everybody.
+    //metadata->song_length = (buf[14] << 24) | (buf[15] << 16)
+    //                      | (buf[16] << 8) | buf[17];
+}
+
+static void ParseFlacFile(file_metadata_t *metadata, FILE *fs)
+{
+    byte header[4];
+    unsigned int block_type;
+    size_t block_len;
+    boolean last_block;
+
+    for (;;)
+    {
+        // Read METADATA_BLOCK_HEADER:
+        if (fread(header, 4, 1, fs) < 1)
+        {
+            return;
+        }
+
+        block_type = header[0] & ~0x80;
+        last_block = (header[0] & 0x80) != 0;
+        block_len = (header[1] << 16) | (header[2] << 8) | header[3];
+
+        long pos = ftell(fs);
+        if (pos < 0)
+        {
+            return;
+        }
+
+        if (block_type == FLAC_STREAMINFO)
+        {
+            ParseFlacStreaminfo(metadata, fs);
+        }
+        else if (block_type == FLAC_VORBIS_COMMENT)
+        {
+            ParseVorbisComments(metadata, fs);
+        }
+
+        if (last_block)
+        {
+            break;
+        }
+
+        // Seek to start of next block.
+        if (fseek(fs, pos + block_len, SEEK_SET) != 0)
+        {
+            return;
+        }
+    }
+}
+
+static void ParseOggIdHeader(file_metadata_t *metadata, FILE *fs)
+{
+    byte buf[21];
+
+    if (fread(buf, sizeof(buf), 1, fs) < 1)
+    {
+        return;
+    }
+
+    metadata->samplerate_hz = (buf[8] << 24) | (buf[7] << 16)
+                            | (buf[6] << 8) | buf[5];
+}
+
+static void ParseOggFile(file_metadata_t *metadata, FILE *fs)
+{
+    byte buf[7];
+    unsigned int offset;
+
+    // Scan through the start of the file looking for headers. They
+    // begin '[byte]vorbis' where the byte value indicates header type.
+    memset(buf, 0, sizeof(buf));
+
+    for (offset = 0; offset < 100 * 1024; ++offset)
+    {
+	// buf[] is used as a sliding window. Each iteration, we
+	// move the buffer one byte to the left and read an extra
+	// byte onto the end.
+        memmove(buf, buf + 1, sizeof(buf) - 1);
+
+        if (fread(&buf[6], 1, 1, fs) < 1)
+        {
+            return;
+        }
+
+        if (!memcmp(buf + 1, "vorbis", 6))
+        {
+            switch (buf[0])
+            {
+                case OGG_ID_HEADER:
+                    ParseOggIdHeader(metadata, fs);
+                    break;
+                case OGG_COMMENT_HEADER:
+		    ParseVorbisComments(metadata, fs);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+}
+
+static void ReadLoopPoints(char *filename, file_metadata_t *metadata)
+{
+    FILE *fs;
+    char header[4];
+
+    metadata->valid = false;
+    metadata->samplerate_hz = 0;
+    metadata->start_time = 0;
+    metadata->end_time = -1;
+
+    fs = fopen(filename, "r");
+
+    if (fs == NULL)
+    {
+        return;
+    }
+
+    // Check for a recognized file format; use the first four bytes
+    // of the file.
+
+    if (fread(header, 4, 1, fs) < 1)
+    {
+        fclose(fs);
+        return;
+    }
+
+    if (memcmp(header, FLAC_HEADER, 4) == 0)
+    {
+        ParseFlacFile(metadata, fs);
+    }
+    else if (memcmp(header, OGG_HEADER, 4) == 0)
+    {
+        ParseOggFile(metadata, fs);
+    }
+
+    fclose(fs);
+
+    // Only valid if at the very least we read the sample rate.
+    metadata->valid = metadata->samplerate_hz > 0;
+}
 
 // Given a MUS lump, look up a substitute MUS file to play instead
 // (or NULL to just use normal MIDI playback).
@@ -532,8 +851,14 @@ static boolean SDLIsInitialized(void)
     return Mix_QuerySpec(&freq, &format, &channels) != 0;
 }
 
-// Initialize music subsystem
+// Callback function that is invoked to track current track position.
+void TrackPositionCallback(int chan, void *stream, int len, void *udata)
+{
+    // Position is doubled up twice: for 16-bit samples and for stereo.
+    current_track_pos += len / 4;
+}
 
+// Initialize music subsystem
 static boolean I_SDL_InitMusic(void)
 {
     int i;
@@ -614,6 +939,9 @@ static boolean I_SDL_InitMusic(void)
         Mix_SetMusicCMD(snd_musiccmd);
     }
 
+    // Register an effect function to track the music position.
+    Mix_RegisterEffect(MIX_CHANNEL_POST, TrackPositionCallback, NULL, NULL);
+
     // If we're in GENMIDI mode, try to load sound packs.
     if (snd_musicdevice == SNDDEVICE_GENMIDI)
     {
@@ -658,7 +986,6 @@ static void I_SDL_SetMusicVolume(int volume)
 
 static void I_SDL_PlaySong(void *handle, boolean looping)
 {
-    Mix_Music *music = (Mix_Music *) handle;
     int loops;
 
     if (!music_initialized)
@@ -671,6 +998,9 @@ static void I_SDL_PlaySong(void *handle, boolean looping)
         return;
     }
 
+    current_track_music = (Mix_Music *) handle;
+    current_track_loop = looping;
+
     if (looping)
     {
         loops = -1;
@@ -680,7 +1010,17 @@ static void I_SDL_PlaySong(void *handle, boolean looping)
         loops = 1;
     }
 
-    Mix_PlayMusic(music, loops);
+    // Don't loop when playing substitute music, as we do it
+    // ourselves instead.
+    if (playing_substitute && file_metadata.valid)
+    {
+        loops = 1;
+        SDL_LockAudio();
+        current_track_pos = 0;  // start of track
+        SDL_UnlockAudio();
+    }
+
+    Mix_PlayMusic(current_track_music, loops);
 }
 
 static void I_SDL_PauseSong(void)
@@ -715,6 +1055,8 @@ static void I_SDL_StopSong(void)
     }
 
     Mix_HaltMusic();
+    playing_substitute = false;
+    current_track_music = NULL;
 }
 
 static void I_SDL_UnRegisterSong(void *handle)
@@ -777,6 +1119,8 @@ static void *I_SDL_RegisterSong(void *data, int len)
         return NULL;
     }
 
+    playing_substitute = false;
+
     // See if we're substituting this MUS for a high-quality replacement.
     filename = GetSubstituteMusicFile(data, len);
 
@@ -793,6 +1137,10 @@ static void *I_SDL_RegisterSong(void *data, int len)
         }
         else
         {
+            // Read loop point metadata from the file so that we know where
+            // to loop the music.
+            playing_substitute = true;
+            ReadLoopPoints(filename, &file_metadata);
             return music;
         }
     }
@@ -852,6 +1200,72 @@ static boolean I_SDL_MusicIsPlaying(void)
     return Mix_PlayingMusic();
 }
 
+// Get position in substitute music track, in seconds since start of track.
+static double GetMusicPosition(void)
+{
+    unsigned int music_pos;
+    int freq;
+
+    Mix_QuerySpec(&freq, NULL, NULL);
+
+    SDL_LockAudio();
+    music_pos = current_track_pos;
+    SDL_UnlockAudio();
+
+    return (double) music_pos / freq;
+}
+
+static void RestartCurrentTrack(void)
+{
+    double start = (double) file_metadata.start_time
+                 / file_metadata.samplerate_hz;
+
+    // If the track is playing on loop then reset to the start point.
+    // Otherwise we need to stop the track.
+    if (current_track_loop)
+    {
+        // If the track finished we need to restart it.
+        if (current_track_music != NULL)
+        {
+            Mix_PlayMusic(current_track_music, 1);
+        }
+
+        Mix_SetMusicPosition(start);
+        SDL_LockAudio();
+        current_track_pos = file_metadata.start_time;
+        SDL_UnlockAudio();
+    }
+    else
+    {
+        Mix_HaltMusic();
+        current_track_music = NULL;
+        playing_substitute = false;
+    }
+}
+
+// Poll music position; if we have passed the loop point end position
+// then we need to go back.
+static void I_SDL_PollMusic(void)
+{
+    if (playing_substitute && file_metadata.valid)
+    {
+        double end = (double) file_metadata.end_time
+                   / file_metadata.samplerate_hz;
+
+        // If we have reached the loop end point then we have to take action.
+        if (file_metadata.end_time >= 0 && GetMusicPosition() >= end)
+        {
+            RestartCurrentTrack();
+        }
+
+        // Have we reached the actual end of track (not loop end)?
+        if (!Mix_PlayingMusic() && current_track_loop)
+        {
+            RestartCurrentTrack();
+        }
+    }
+}
+
 static snddevice_t music_sdl_devices[] =
 {
     SNDDEVICE_PAS,
@@ -876,6 +1290,6 @@ music_module_t music_sdl_module =
     I_SDL_PlaySong,
     I_SDL_StopSong,
     I_SDL_MusicIsPlaying,
+    I_SDL_PollMusic,
 };
-
 
