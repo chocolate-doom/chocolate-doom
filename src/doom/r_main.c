@@ -905,6 +905,11 @@ void R_RenderPlayerView (player_t* player)
     R_ClearPlanes ();
     R_ClearSprites ();
     
+    // [crispy] flashing HOM indicator
+    V_DrawFilledBox(viewwindowx, viewwindowy,
+        scaledviewwidth, scaledviewheight,
+        (gametic % 20) < 9 ? 0xb0 : 0);
+
     // check for new console commands.
     NetUpdate ();
 
