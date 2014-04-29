@@ -1,4 +1,4 @@
-// Emacs style mode select   -*- C++ -*- 
+// Emacs style mode select   -*- C++ -*-
 //-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
@@ -63,6 +63,7 @@
 
 #define DEFAULT_RAM 16 /* MiB */
 #define MIN_RAM     4  /* MiB */
+#define ZENITY_BINARY "/usr/bin/zenity"
 
 
 typedef struct atexit_listentry_s atexit_listentry_t;
@@ -163,7 +164,7 @@ byte *I_ZoneBase (int *size)
 
     zonemem = AutoAllocMemory(size, default_ram, min_ram);
 
-    printf("zone memory: %p, %x allocated for zone\n", 
+    printf("zone memory: %p, %x allocated for zone\n",
            zonemem, *size);
 
     return zonemem;
@@ -197,7 +198,7 @@ void I_PrintStartupBanner(char *gamedescription)
     I_PrintDivider();
     I_PrintBanner(gamedescription);
     I_PrintDivider();
-    
+
     printf(
     " " PACKAGE_NAME " is free software, covered by the GNU General Public\n"
     " License.  There is NO warranty; not even for MERCHANTABILITY or FITNESS\n"
@@ -207,7 +208,7 @@ void I_PrintStartupBanner(char *gamedescription)
     I_PrintDivider();
 }
 
-// 
+//
 // I_ConsoleStdout
 //
 // Returns true if stdout is a real console, false if it is a file
@@ -250,8 +251,8 @@ void I_Quit (void)
     atexit_listentry_t *entry;
 
     // Run through all exit functions
- 
-    entry = exit_funcs; 
+
+    entry = exit_funcs;
 
     while (entry != NULL)
     {
@@ -283,7 +284,7 @@ void I_Error (char *error, ...)
     {
         already_quitting = true;
     }
-    
+
     // Message first.
     va_start(argptr, error);
     //fprintf(stderr, "\nError: ");
@@ -327,9 +328,7 @@ void I_Error (char *error, ...)
 
         MessageBoxW(NULL, wmsgbuf, L"", MB_OK);
     }
-#endif
-
-#ifdef __MACOSX__
+#elif defined(__MACOSX__)
     if (exit_gui_popup && !I_ConsoleStdout())
     {
         CFStringRef message;
@@ -365,12 +364,51 @@ void I_Error (char *error, ...)
                                         message,
                                         NULL);
     }
+#else
+    // Linux version: invoke the Zenity command line program to pop up a
+    // dialog box. This avoids adding Gtk+ as a compile dependency.
+    if (exit_gui_popup && I_ConsoleStdout())
+    {
+        ZenityErrorBox(error);
+    }
 #endif
 
     // abort();
 
     exit(-1);
 }
+
+// returns non-zero if zenity is available
+
+static int ZenityAvailable(void)
+{
+    return system(ZENITY_BINARY " --help >/dev/null 2>&1") == 0;
+}
+
+// Open a native error box with a message using zenity
+
+int ZenityErrorBox(char *message)
+{
+    int *result;
+    char *errorboxpath;
+    static size_t errorboxpath_size;
+
+    if (!ZenityAvailable())
+    {
+        return 0;
+    }
+
+    errorboxpath_size = strlen(ZENITY_BINARY) + strlen(message) + 19;
+    errorboxpath = malloc(errorboxpath_size);
+    M_snprintf(errorboxpath, errorboxpath_size, "%s --error --text=\"%s\"", ZENITY_BINARY, message);
+
+    result = system(errorboxpath);
+
+    free(errorboxpath);
+
+    return result;
+}
+
 
 //
 // Read Access Violation emulation.
