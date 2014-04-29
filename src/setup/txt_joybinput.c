@@ -161,17 +161,22 @@ static void TXT_JoystickInputDestructor(TXT_UNCAST_ARG(joystick_input))
 {
 }
 
-static int TXT_JoystickInputKeyPress(TXT_UNCAST_ARG(joystick_input), int joystick)
+static int TXT_JoystickInputKeyPress(TXT_UNCAST_ARG(joystick_input), int key)
 {
     TXT_CAST_ARG(txt_joystick_input_t, joystick_input);
 
-    if (joystick == KEY_ENTER)
+    if (key == KEY_ENTER)
     {
         // Open a window to prompt for the new joystick press
 
         OpenPromptWindow(joystick_input);
 
         return 1;
+    }
+
+    if (key == KEY_BACKSPACE || key == KEY_DEL)
+    {
+        *joystick_input->variable = -1;
     }
 
     return 0;

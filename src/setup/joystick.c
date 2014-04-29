@@ -23,6 +23,7 @@
 #include <stdlib.h>
 
 #include "doomtype.h"
+#include "i_joystick.h"
 #include "m_config.h"
 #include "m_controls.h"
 #include "textscreen.h"
@@ -37,6 +38,10 @@ typedef enum
     CALIBRATE_CENTER,
     CALIBRATE_LEFT,
     CALIBRATE_UP,
+
+    // These are only used when defining button axes:
+    CALIBRATE_RIGHT,
+    CALIBRATE_DOWN,
 } calibration_stage_t;
 
 // SDL joystick successfully initialized?
@@ -50,6 +55,12 @@ static int usejoystick = 0;
 // Joystick to use, as an SDL joystick index:
 
 int joystick_index = -1;
+
+// Calibration button. This is the button the user pressed at the
+// start of the calibration sequence. They *must* press this button
+// for each subsequent sequence.
+
+static int calibrate_button = -1;
 
 // Which joystick axis to use for horizontal movement, and whether to
 // invert the direction:
@@ -185,18 +196,91 @@ static void SetCalibrationLabel(void)
             break;
         case CALIBRATE_UP:
             message = "Push the D-pad or joystick up,\n"
-                      "and press a button.";
+                      "and press the button.";
             break;
         case CALIBRATE_LEFT:
             message = "Push the D-pad or joystick to the\n"
-                      "left, and press a button.";
+                      "left, and press the button.";
+            break;
+        case CALIBRATE_DOWN:
+            message = "Push the D-pad or joystick down,\n"
+                      "and press the button.";
+            break;
+        case CALIBRATE_RIGHT:
+            message = "Push the D-pad or joystick to the\n"
+                      "right, and press the button.";
             break;
     }
 
     TXT_SetLabel(calibration_label, message);
 }
 
-static void CalibrateAxis(int *axis_index, int *axis_invert)
+// Search all axes on joystick being configured; find a button that is
+// pressed (other than the calibrate button). Returns the button number.
+
+static int FindPressedAxisButton(void)
+{
+    SDL_Joystick *joystick;
+    int i;
+
+    joystick = all_joysticks[joystick_index];
+
+    for (i = 0; i < SDL_JoystickNumButtons(joystick); ++i)
+    {
+        if (i == calibrate_button)
+        {
+            continue;
+        }
+
+        if (SDL_JoystickGetButton(joystick, i))
+        {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
+// Look for a hat that isn't centered. Returns the encoded hat axis.
+
+static int FindUncenteredHat(int *axis_invert)
+{
+    SDL_Joystick *joystick;
+    int i, hatval;
+
+    joystick = all_joysticks[joystick_index];
+
+    for (i = 0; i < SDL_JoystickNumHats(joystick); ++i)
+    {
+        hatval = SDL_JoystickGetHat(joystick, i);
+
+        switch (hatval)
+        {
+            case SDL_HAT_LEFT:
+            case SDL_HAT_RIGHT:
+                *axis_invert = hatval != SDL_HAT_LEFT;
+                return CREATE_HAT_AXIS(i, HAT_AXIS_HORIZONTAL);
+
+            case SDL_HAT_UP:
+            case SDL_HAT_DOWN:
+                *axis_invert = hatval != SDL_HAT_UP;
+                return CREATE_HAT_AXIS(i, HAT_AXIS_VERTICAL);
+
+            // If the hat is centered, or is not pointing in a
+            // definite direction, then ignore it. We don't accept
+            // the hat being pointed to the upper-left for example,
+            // because it's ambiguous.
+            case SDL_HAT_CENTERED:
+            default:
+                break;
+        }
+    }
+
+    // None found.
+    return -1;
+}
+
+static boolean CalibrateAxis(int *axis_index, int *axis_invert)
 {
     SDL_Joystick *joystick;
     int best_axis;
@@ -218,7 +302,7 @@ static void CalibrateAxis(int *axis_index, int *axis_invert)
     for (i=0; i<SDL_JoystickNumAxes(joystick); ++i)
     {
         axis_value = SDL_JoystickGetAxis(joystick, i);
-    
+
         if (abs(axis_value) > best_value)
         {
             best_value = abs(axis_value);
@@ -227,48 +311,165 @@ static void CalibrateAxis(int *axis_index, int *axis_invert)
         }
     }
 
-    // Save the best values we have found
+    // Did we find one axis that had a significant value?
 
-    *axis_index = best_axis;
-    *axis_invert = best_invert;
+    if (best_value > 32768 / 4)
+    {
+        // Save the best values we have found
+
+        *axis_index = best_axis;
+        *axis_invert = best_invert;
+        return true;
+    }
+
+    // Otherwise, maybe this is a "button axis", like the PS3 SIXAXIS
+    // controller that exposes the D-pad as four individual buttons.
+    // Search for a button.
+
+    i = FindPressedAxisButton();
+
+    if (i >= 0)
+    {
+        *axis_index = CREATE_BUTTON_AXIS(i, 0);
+        *axis_invert = 0;
+        return true;
+    }
+
+    // Maybe it's a D-pad that is presented as a hat. This sounds weird
+    // but gamepads like this really do exist; an example is the
+    // Nyko AIRFLO Ex.
+
+    i = FindUncenteredHat(axis_invert);
+
+    if (i >= 0)
+    {
+        *axis_index = i;
+        return true;
+    }
+
+    // User pressed the button without pushing the joystick anywhere.
+    return false;
+}
+
+static boolean SetButtonAxisPositive(int *axis_index)
+{
+    int button;
+
+    button = FindPressedAxisButton();
+
+    if (button >= 0)
+    {
+        *axis_index |= CREATE_BUTTON_AXIS(0, button);
+        return true;
+    }
+
+    return false;
+}
+
+static int NextCalibrateStage(void)
+{
+    switch (calibrate_stage)
+    {
+        case CALIBRATE_CENTER:
+            return CALIBRATE_LEFT;
+
+        // After pushing to the left, there are two possibilities:
+        // either it is a button axis, in which case we need to find
+        // the other button, or we can just move on to the next axis.
+        case CALIBRATE_LEFT:
+            if (IS_BUTTON_AXIS(joystick_x_axis))
+            {
+                return CALIBRATE_RIGHT;
+            }
+            else
+            {
+                return CALIBRATE_UP;
+            }
+
+        case CALIBRATE_RIGHT:
+            return CALIBRATE_UP;
+
+        case CALIBRATE_UP:
+            if (IS_BUTTON_AXIS(joystick_y_axis))
+            {
+                return CALIBRATE_DOWN;
+            }
+            else
+            {
+                // Finished.
+                return CALIBRATE_CENTER;
+            }
+
+        case CALIBRATE_DOWN:
+            // Finished.
+            return CALIBRATE_CENTER;
+    }
 }
 
 static int CalibrationEventCallback(SDL_Event *event, void *user_data)
 {
-    if (event->type == SDL_JOYBUTTONDOWN
-     && (joystick_index == -1 || event->jbutton.which == joystick_index))
+    boolean advance;
+
+    if (event->type != SDL_JOYBUTTONDOWN)
+    {
+        return 0;
+    }
+
+    // At this point, we have a button press.
+    // In the first "center" stage, we're just trying to work out which
+    // joystick is being configured and which button the user is pressing.
+    if (calibrate_stage == CALIBRATE_CENTER)
+    {
+        joystick_index = event->jbutton.which;
+        calibrate_button = event->jbutton.button;
+
+        // Advance to next stage.
+        calibrate_stage = CALIBRATE_LEFT;
+        SetCalibrationLabel();
+        return 1;
+    }
+
+    // In subsequent stages, the user is asked to push in a specific
+    // direction and press the button. They must push the same button
+    // as they did before; this is necessary to support button axes.
+    if (event->jbutton.which == joystick_index
+     && event->jbutton.button == calibrate_button)
     {
         switch (calibrate_stage)
         {
-            case CALIBRATE_CENTER:
-                // Centering stage selects which joystick to use.
-                joystick_index = event->jbutton.which;
+            default:
+            case CALIBRATE_LEFT:
+                advance = CalibrateAxis(&joystick_x_axis, &joystick_x_invert);
                 break;
 
-            case CALIBRATE_LEFT:
-                CalibrateAxis(&joystick_x_axis, &joystick_x_invert);
+            case CALIBRATE_RIGHT:
+                advance = SetButtonAxisPositive(&joystick_x_axis);
                 break;
 
             case CALIBRATE_UP:
-                CalibrateAxis(&joystick_y_axis, &joystick_y_invert);
+                advance = CalibrateAxis(&joystick_y_axis, &joystick_y_invert);
+                break;
+
+            case CALIBRATE_DOWN:
+                advance = SetButtonAxisPositive(&joystick_y_axis);
                 break;
         }
 
-        if (calibrate_stage == CALIBRATE_UP)
-        {
-            // Final stage; close the window
+        // Advance to the next calibration stage?
 
-            TXT_CloseWindow(calibration_window);
-        }
-        else
+        if (advance)
         {
-            // Advance to the next calibration stage
-
-            ++calibrate_stage;
+            calibrate_stage = NextCalibrateStage();
             SetCalibrationLabel();
-        }
 
-        return 1;
+            // Finished?
+            if (calibrate_stage == CALIBRATE_CENTER)
+            {
+                TXT_CloseWindow(calibration_window);
+            }
+
+            return 1;
+        }
     }
 
     return 0;

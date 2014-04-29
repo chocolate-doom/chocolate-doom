@@ -41,7 +41,7 @@
 // When an axis is within the dead zone, it is set to zero.
 // This is 5% of the full range:
 
-#define DEAD_ZONE (32768 / 20)
+#define DEAD_ZONE (32768 / 3)
 
 static SDL_Joystick *joystick = NULL;
 
@@ -82,10 +82,32 @@ void I_ShutdownJoystick(void)
     }
 }
 
-void I_InitJoystick(void)
+static boolean IsValidAxis(int axis)
 {
     int num_axes;
 
+    if (axis < 0)
+    {
+        return true;
+    }
+
+    if (IS_BUTTON_AXIS(axis))
+    {
+        return true;
+    }
+
+    if (IS_HAT_AXIS(axis))
+    {
+        return HAT_AXIS_HAT(axis) < SDL_JoystickNumHats(joystick);
+    }
+
+    num_axes = SDL_JoystickNumAxes(joystick);
+
+    return axis < num_axes;
+}
+
+void I_InitJoystick(void)
+{
     if (!usejoystick)
     {
         return;
@@ -115,11 +137,9 @@ void I_InitJoystick(void)
         return;
     }
 
-    num_axes = SDL_JoystickNumAxes(joystick);
-
-    if (joystick_x_axis >= num_axes
-     || joystick_y_axis >= num_axes
-     || joystick_strafe_axis >= num_axes)
+    if (!IsValidAxis(joystick_x_axis)
+     || !IsValidAxis(joystick_y_axis)
+     || !IsValidAxis(joystick_strafe_axis))
     {
         printf("I_InitJoystick: Invalid joystick axis for joystick #%i "
                "(run joystick setup again)\n",
@@ -172,16 +192,63 @@ static int GetAxisState(int axis, int invert)
         return 0;
     }
 
-    result = SDL_JoystickGetAxis(joystick, axis);
+    // Is this a button axis, or a hat axis?
+    // If so, we need to handle it specially.
+
+    result = 0;
+
+    if (IS_BUTTON_AXIS(axis))
+    {
+        if (SDL_JoystickGetButton(joystick, BUTTON_AXIS_NEG(axis)))
+        {
+            result -= 32767;
+        }
+        if (SDL_JoystickGetButton(joystick, BUTTON_AXIS_POS(axis)))
+        {
+            result += 32767;
+        }
+    }
+    else if (IS_HAT_AXIS(axis))
+    {
+        int direction = HAT_AXIS_DIRECTION(axis);
+        int hatval = SDL_JoystickGetHat(joystick, HAT_AXIS_HAT(axis));
+
+        if (direction == HAT_AXIS_HORIZONTAL)
+        {
+            if ((hatval & SDL_HAT_LEFT) != 0)
+            {
+                result -= 32767;
+            }
+            else if ((hatval & SDL_HAT_RIGHT) != 0)
+            {
+                result += 32767;
+            }
+        }
+        else if (direction == HAT_AXIS_VERTICAL)
+        {
+            if ((hatval & SDL_HAT_UP) != 0)
+            {
+                result -= 32767;
+            }
+            else if ((hatval & SDL_HAT_DOWN) != 0)
+            {
+                result += 32767;
+            }
+        }
+    }
+    else
+    {
+        result = SDL_JoystickGetAxis(joystick, axis);
+
+        if (result < DEAD_ZONE && result > -DEAD_ZONE)
+        {
+            result = 0;
+        }
+    }
 
     if (invert)
     {
         result = -result;
-    }
-
-    if (result < DEAD_ZONE && result > -DEAD_ZONE)
-    {
-        result = 0;
     }
 
     return result;

@@ -216,6 +216,10 @@ typedef struct
     // Query if music is playing.
 
     boolean (*MusicIsPlaying)(void);
+
+    // Invoked periodically to poll.
+
+    void (*Poll)(void);
 } music_module_t;
 
 void I_InitMusic(void);

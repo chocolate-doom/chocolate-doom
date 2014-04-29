@@ -314,11 +314,13 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     {
         forward -= forwardmove[pClass][speed];
     }
-    if (gamekeydown[key_straferight] || joystrafemove > 0)
+    if (gamekeydown[key_straferight] || joystrafemove > 0
+     || joybuttons[joybstraferight])
     {
         side += sidemove[pClass][speed];
     }
-    if (gamekeydown[key_strafeleft] || joystrafemove < 0)
+    if (gamekeydown[key_strafeleft] || joystrafemove < 0
+     || joybuttons[joybstrafeleft])
     {
         side -= sidemove[pClass][speed];
     }

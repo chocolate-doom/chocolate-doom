@@ -53,6 +53,7 @@
 - (void) setEnvironment;
 - (const char *) getGameName;
 - (BOOL) addIWADPath: (NSString *) path;
+- (BOOL) selectGameByName: (const char *) name;
 
 @end
 

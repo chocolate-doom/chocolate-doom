@@ -125,17 +125,22 @@ static void TXT_MouseInputDestructor(TXT_UNCAST_ARG(mouse_input))
 {
 }
 
-static int TXT_MouseInputKeyPress(TXT_UNCAST_ARG(mouse_input), int mouse)
+static int TXT_MouseInputKeyPress(TXT_UNCAST_ARG(mouse_input), int key)
 {
     TXT_CAST_ARG(txt_mouse_input_t, mouse_input);
 
-    if (mouse == KEY_ENTER)
+    if (key == KEY_ENTER)
     {
         // Open a window to prompt for the new mouse press
 
         OpenPromptWindow(mouse_input);
 
         return 1;
+    }
+
+    if (key == KEY_BACKSPACE || key == KEY_DEL)
+    {
+        *mouse_input->variable = -1;
     }
 
     return 0;

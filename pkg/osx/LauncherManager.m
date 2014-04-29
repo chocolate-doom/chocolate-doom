@@ -388,5 +388,10 @@ static NSString *AppendQuotedFilename(NSString *str, NSString *fileName)
     return [self->iwadController addIWADPath: path];
 }
 
+- (BOOL) selectGameByName: (const char *) name
+{
+    return [self->iwadController selectGameByName: name];
+}
+
 @end
 
