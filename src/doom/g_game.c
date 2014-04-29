@@ -410,7 +410,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // [crispy] toggle always run
     if (gamekeydown[key_toggleautorun])
     {
-        static char autorunmsg[22];
+        static char autorunmsg[24];
 
         if (joybspeed >= MAX_JOY_BUTTONS)
         {
@@ -422,7 +422,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
             joybspeed = 29;
         }
 
-        sprintf(autorunmsg, "ALWAYS RUN \x1b%c%s",
+        M_snprintf(autorunmsg, sizeof(autorunmsg), "ALWAYS RUN \x1b%c%s",
             (crispy_coloredhud) ? '0' + CR_GREEN : '0' + CR_RED,
             (joybspeed >= MAX_JOY_BUTTONS) ? "ON" : "OFF");
         players[consoleplayer].message = autorunmsg;

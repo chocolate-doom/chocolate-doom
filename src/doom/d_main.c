@@ -1180,7 +1180,7 @@ static void LoadNerveWad(void)
         // Rename level name patch lumps out of the way
         for (i = 0; i < 9; i++)
         {
-            snprintf (lumpname, 9, "CWILV%2.2d", i);
+            M_snprintf (lumpname, 9, "CWILV%2.2d", i);
             lumpinfo[W_GetNumForName(lumpname)].name[0] = 'N';
         }
     }

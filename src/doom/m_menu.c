@@ -1121,7 +1121,7 @@ void M_DrawMouse(void)
     M_DrawThermo(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_empty2,
 		 21, mouseSensitivity_y);
 
-    sprintf(mouse_invert_text, "INVERT MOUSE: \x1b%c%s", '0' + CR_GREEN,
+    M_snprintf(mouse_invert_text, sizeof(mouse_invert_text), "INVERT MOUSE: \x1b%c%s", '0' + CR_GREEN,
             mouse_y_invert ? "ON" : "OFF");
 
     M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_invert + 6,
@@ -1427,7 +1427,7 @@ M_DrawThermo
     if (thermDot >= thermWidth)
     {
         char num[4];
-        snprintf(num, 4, "%3d", thermDot);
+        M_snprintf(num, 4, "%3d", thermDot);
         M_WriteText(xx + 8, y + 3, num);
         thermDot = thermWidth - 1;
         dp_translation = (byte *) &colormaps[16*256];

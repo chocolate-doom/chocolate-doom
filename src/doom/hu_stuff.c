@@ -467,7 +467,7 @@ void HU_Drawer(void)
 	static char str[32], *s;
 	int time = leveltime / TICRATE;
 
-	sprintf(str, "\x1b%cKills: \x1b%c%d/%d", '0' + CR_GREEN, '0' + CR_GRAY,
+	M_snprintf(str, sizeof(str), "\x1b%cKills: \x1b%c%d/%d", '0' + CR_GREEN, '0' + CR_GRAY,
 	        players[consoleplayer].killcount, totalkills);
 	HUlib_clearTextLine(&w_kills);
 	s = str;
@@ -475,7 +475,7 @@ void HU_Drawer(void)
 	    HUlib_addCharToTextLine(&w_kills, *(s++));
 	HUlib_drawTextLine(&w_kills, false);
 
-	sprintf(str, "\x1b%cItems: \x1b%c%d/%d", '0' + CR_GREEN, '0' + CR_GRAY,
+	M_snprintf(str, sizeof(str), "\x1b%cItems: \x1b%c%d/%d", '0' + CR_GREEN, '0' + CR_GRAY,
 	        players[consoleplayer].itemcount, totalitems);
 	HUlib_clearTextLine(&w_items);
 	s = str;
@@ -483,7 +483,7 @@ void HU_Drawer(void)
 	    HUlib_addCharToTextLine(&w_items, *(s++));
 	HUlib_drawTextLine(&w_items, false);
 
-	sprintf(str, "\x1b%cSecret: \x1b%c%d/%d", '0' + CR_GREEN, '0' + CR_GRAY,
+	M_snprintf(str, sizeof(str), "\x1b%cSecret: \x1b%c%d/%d", '0' + CR_GREEN, '0' + CR_GRAY,
 	        players[consoleplayer].secretcount, totalsecret);
 	HUlib_clearTextLine(&w_scrts);
 	s = str;
@@ -491,7 +491,7 @@ void HU_Drawer(void)
 	    HUlib_addCharToTextLine(&w_scrts, *(s++));
 	HUlib_drawTextLine(&w_scrts, false);
 
-	sprintf(str, "\x1b%c%02d:%02d:%02d", '0' + CR_GRAY,
+	M_snprintf(str, sizeof(str), "\x1b%c%02d:%02d:%02d", '0' + CR_GRAY,
 	        time/3600, (time%3600)/60, time%60);
 	HUlib_clearTextLine(&w_ltime);
 	s = str;
