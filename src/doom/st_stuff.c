@@ -417,6 +417,8 @@ cheatseq_t cheat_choppers = CHEAT("idchoppers", 0);
 cheatseq_t cheat_clev = CHEAT("idclev", 2);
 cheatseq_t cheat_mypos = CHEAT("idmypos", 0);
 
+cheatseq_t cheat_massacre = CHEAT("tntem", 0);
+cheatseq_t cheat_notarget = CHEAT("notarget", 0);
 
 //
 // STATUS BAR CODE
@@ -445,6 +447,37 @@ void ST_refreshBackground(void)
 
 }
 
+// [crispy] from boom202s/M_CHEAT.C:467-498
+static int ST_cheat_massacre()    // jff 2/01/98 kill all monsters
+{
+  // jff 02/01/98 'em' cheat - kill all monsters
+  // partially taken from Chi's .46 port
+  //
+  // killough 2/7/98: cleaned up code and changed to use dprintf;
+  // fixed lost soul bug (LSs left behind when PEs are killed)
+
+  int killcount=0;
+  thinker_t *currentthinker=&thinkercap;
+  extern void A_PainDie(mobj_t *);
+
+  while ((currentthinker=currentthinker->next)!=&thinkercap)
+    if (currentthinker->function.acp1 == (actionf_p1) P_MobjThinker &&
+        (((mobj_t *) currentthinker)->flags & MF_COUNTKILL ||
+         ((mobj_t *) currentthinker)->type == MT_SKULL))
+      { // killough 3/6/98: kill even if PE is dead
+        if (((mobj_t *) currentthinker)->health > 0)
+          {
+            killcount++;
+            P_DamageMobj((mobj_t *)currentthinker, NULL, NULL, 10000);
+          }
+        if (((mobj_t *) currentthinker)->type == MT_PAIN)
+          {
+            A_PainDie((mobj_t *) currentthinker);    // killough 2/8/98
+            P_SetMobjState ((mobj_t *) currentthinker, S_PAIN_DIE6);
+          }
+      }
+  return (killcount);
+}
 
 // Respond to keyboard input events,
 //  intercept cheats.
@@ -679,6 +712,32 @@ ST_Responder (event_t* ev)
       // So be it.
       plyr->message = DEH_String(STSTR_CLEV);
       G_DeferedInitNew(gameskill, epsd, map);
+    }
+
+    // [crispy] implement Boom's "tntem" and PrBoom+'s "notarget" cheats
+    if (singleplayer && cht_CheckCheat(&cheat_massacre, ev->data2))
+    {
+        static char msg[32];
+        int killcount = ST_cheat_massacre();
+        extern int crispy_coloredhud;
+
+        M_snprintf(msg, sizeof(msg), "\x1b%c%d \x1b%cMonster%s Killed",
+            (crispy_coloredhud) ? '0' + CR_GOLD : '0' + CR_RED,
+            killcount, '0' + CR_RED, killcount == 1 ? "" : "s");
+        plyr->message = msg;
+    }
+    else
+    if (singleplayer && cht_CheckCheat(&cheat_notarget, ev->data2))
+    {
+        static char msg[32];
+        extern int crispy_coloredhud;
+
+        plyr->cheats ^= CF_NOTARGET;
+
+        M_snprintf(msg, sizeof(msg), "Notarget Mode \x1b%c%s",
+            (crispy_coloredhud) ? '0' + CR_GREEN : '0' + CR_RED,
+            (plyr->cheats & CF_NOTARGET) ? "ON" : "OFF");
+        plyr->message = msg;
     }
   }
   return false;
