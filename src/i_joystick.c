@@ -96,6 +96,11 @@ static boolean IsValidAxis(int axis)
         return true;
     }
 
+    if (IS_HAT_AXIS(axis))
+    {
+        return HAT_AXIS_HAT(axis) < SDL_JoystickNumHats(joystick);
+    }
+
     num_axes = SDL_JoystickNumAxes(joystick);
 
     return axis < num_axes;
@@ -187,12 +192,13 @@ static int GetAxisState(int axis, int invert)
         return 0;
     }
 
-    // Is this a button axis? If so, we need to handle it specially.
+    // Is this a button axis, or a hat axis?
+    // If so, we need to handle it specially.
+
+    result = 0;
 
     if (IS_BUTTON_AXIS(axis))
     {
-        result = 0;
-
         if (SDL_JoystickGetButton(joystick, BUTTON_AXIS_NEG(axis)))
         {
             result -= 32767;
@@ -202,19 +208,47 @@ static int GetAxisState(int axis, int invert)
             result += 32767;
         }
     }
+    else if (IS_HAT_AXIS(axis))
+    {
+        int direction = HAT_AXIS_DIRECTION(axis);
+        int hatval = SDL_JoystickGetHat(joystick, HAT_AXIS_HAT(axis));
+
+        if (direction == HAT_AXIS_HORIZONTAL)
+        {
+            if ((hatval & SDL_HAT_LEFT) != 0)
+            {
+                result -= 32767;
+            }
+            else if ((hatval & SDL_HAT_RIGHT) != 0)
+            {
+                result += 32767;
+            }
+        }
+        else if (direction == HAT_AXIS_VERTICAL)
+        {
+            if ((hatval & SDL_HAT_UP) != 0)
+            {
+                result -= 32767;
+            }
+            else if ((hatval & SDL_HAT_DOWN) != 0)
+            {
+                result += 32767;
+            }
+        }
+    }
     else
     {
         result = SDL_JoystickGetAxis(joystick, axis);
-
-        if (invert)
-        {
-            result = -result;
-        }
 
         if (result < DEAD_ZONE && result > -DEAD_ZONE)
         {
             result = 0;
         }
+    }
+
+    if (invert)
+    {
+        result = -result;
     }
 
     return result;
