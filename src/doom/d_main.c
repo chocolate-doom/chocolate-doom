@@ -1750,11 +1750,7 @@ void D_DoomMain (void)
         testcontrols = true;
     }
 
-    //!
-    //
-    // Flips all levels like on April Fool's Day
-    //
-
+    // [crispy] port level flipping feature over from Strawberry Doom
     {
         time_t curtime = time(NULL);
         struct tm *tm;
