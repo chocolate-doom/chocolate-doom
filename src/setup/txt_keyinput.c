@@ -146,6 +146,11 @@ static int TXT_KeyInputKeyPress(TXT_UNCAST_ARG(key_input), int key)
         return 1;
     }
 
+    if (key == KEY_BACKSPACE || key == KEY_DEL)
+    {
+        *key_input->variable = 0;
+    }
+
     return 0;
 }
 
