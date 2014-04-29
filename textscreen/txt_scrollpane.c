@@ -487,7 +487,7 @@ static void TXT_ScrollPaneMousePress(TXT_UNCAST_ARG(scrollpane),
             int range = FullWidth(scrollpane) - scrollpane->w;
             int bar_max = scrollpane->w - 3;
 
-            scrollpane->x = ((rel_x - 1) * range + (bar_max / 2)) / bar_max;
+            scrollpane->x = ((rel_x - 1) * range + bar_max - 1) / bar_max;
         }
 
         return;
@@ -509,7 +509,7 @@ static void TXT_ScrollPaneMousePress(TXT_UNCAST_ARG(scrollpane),
             int range = FullHeight(scrollpane) - scrollpane->h;
             int bar_max = scrollpane->h - 3;
 
-            scrollpane->y = ((rel_y - 1) * range + (bar_max / 2)) / bar_max;
+            scrollpane->y = ((rel_y - 1) * range + bar_max - 1) / bar_max;
         }
 
         return;
