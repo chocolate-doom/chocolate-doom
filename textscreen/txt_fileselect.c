@@ -34,6 +34,7 @@
 #include "txt_inputbox.h"
 #include "txt_main.h"
 #include "txt_widget.h"
+#include "txt_zenity.h"
 
 struct txt_fileselect_s {
     txt_widget_t widget;
@@ -491,11 +492,6 @@ char *TXT_SelectFile(char *window_title, char **extensions)
 
 #else
 
-// Linux version: invoke the Zenity command line program to pop up a
-// dialog box. This avoids adding Gtk+ as a compile dependency.
-
-#define ZENITY_BINARY "/usr/bin/zenity"
-
 static unsigned int NumExtensions(char **extensions)
 {
     unsigned int result = 0;
@@ -506,11 +502,6 @@ static unsigned int NumExtensions(char **extensions)
     }
 
     return result;
-}
-
-static int ZenityAvailable(void)
-{
-    return system(ZENITY_BINARY " --help >/dev/null 2>&1") == 0;
 }
 
 int TXT_CanSelectFiles(void)
