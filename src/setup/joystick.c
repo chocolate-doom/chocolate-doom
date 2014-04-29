@@ -216,7 +216,7 @@ static void SetCalibrationLabel(void)
 }
 
 // Search all axes on joystick being configured; find a button that is
-// pressed (other than the calibrate button).
+// pressed (other than the calibrate button). Returns the button number.
 
 static int FindPressedAxisButton(void)
 {
@@ -238,6 +238,45 @@ static int FindPressedAxisButton(void)
         }
     }
 
+    return -1;
+}
+
+// Look for a hat that isn't centered. Returns the encoded hat axis.
+
+static int FindUncenteredHat(int *axis_invert)
+{
+    SDL_Joystick *joystick;
+    int i, hatval;
+
+    joystick = all_joysticks[joystick_index];
+
+    for (i = 0; i < SDL_JoystickNumHats(joystick); ++i)
+    {
+        hatval = SDL_JoystickGetHat(joystick, i);
+
+        switch (hatval)
+        {
+            case SDL_HAT_LEFT:
+            case SDL_HAT_RIGHT:
+                *axis_invert = hatval != SDL_HAT_LEFT;
+                return CREATE_HAT_AXIS(i, HAT_AXIS_HORIZONTAL);
+
+            case SDL_HAT_UP:
+            case SDL_HAT_DOWN:
+                *axis_invert = hatval != SDL_HAT_UP;
+                return CREATE_HAT_AXIS(i, HAT_AXIS_VERTICAL);
+
+            // If the hat is centered, or is not pointing in a
+            // definite direction, then ignore it. We don't accept
+            // the hat being pointed to the upper-left for example,
+            // because it's ambiguous.
+            case SDL_HAT_CENTERED:
+            default:
+                break;
+        }
+    }
+
+    // None found.
     return -1;
 }
 
@@ -293,6 +332,18 @@ static boolean CalibrateAxis(int *axis_index, int *axis_invert)
     {
         *axis_index = CREATE_BUTTON_AXIS(i, 0);
         *axis_invert = 0;
+        return true;
+    }
+
+    // Maybe it's a D-pad that is presented as a hat. This sounds weird
+    // but gamepads like this really do exist; an example is the
+    // Nyko AIRFLO Ex.
+
+    i = FindUncenteredHat(axis_invert);
+
+    if (i >= 0)
+    {
+        *axis_index = i;
         return true;
     }
 
