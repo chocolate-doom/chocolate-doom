@@ -426,7 +426,7 @@ void ST_Stop(void);
 void ST_refreshBackground(void)
 {
 
-    if (st_statusbaron)
+    if (st_statusbaron && screenblocks < CRISPY_HUD)
     {
         V_UseBuffer(st_backing_screen);
 
@@ -1123,22 +1123,28 @@ void ST_drawWidgets(boolean refresh)
     }
 
     dp_translation = ST_WidgetColor(hudcolor_health);
-    STlib_updatePercent(&w_health, refresh || screenblocks == 12);
+    STlib_updatePercent(&w_health, refresh || screenblocks == CRISPY_HUD);
     dp_translation = ST_WidgetColor(hudcolor_armor);
-    STlib_updatePercent(&w_armor, refresh || screenblocks == 12);
+    STlib_updatePercent(&w_armor, refresh || screenblocks == CRISPY_HUD);
     dp_translation = NULL;
 
+    if (screenblocks < CRISPY_HUD)
+    {
     STlib_updateBinIcon(&w_armsbg, refresh);
+    }
 
     for (i=0;i<6;i++)
-	STlib_updateMultIcon(&w_arms[i], refresh || screenblocks == 12);
+	STlib_updateMultIcon(&w_arms[i], refresh || screenblocks == CRISPY_HUD);
 
+    if (screenblocks < CRISPY_HUD)
+    {
     STlib_updateMultIcon(&w_faces, refresh);
+    }
 
     for (i=0;i<3;i++)
-	STlib_updateMultIcon(&w_keyboxes[i], refresh || screenblocks == 12);
+	STlib_updateMultIcon(&w_keyboxes[i], refresh || screenblocks == CRISPY_HUD);
 
-    STlib_updateNum(&w_frags, refresh || screenblocks == 12);
+    STlib_updateNum(&w_frags, refresh || screenblocks == CRISPY_HUD);
 
 }
 
@@ -1164,7 +1170,7 @@ void ST_diffDraw(void)
 void ST_Drawer (boolean fullscreen, boolean refresh)
 {
   
-    st_statusbaron = (!fullscreen) || automapactive || screenblocks == 12;
+    st_statusbaron = (!fullscreen) || automapactive || screenblocks == CRISPY_HUD;
     st_firsttime = st_firsttime || refresh;
 
     // Do red-/gold-shifts from damage/items

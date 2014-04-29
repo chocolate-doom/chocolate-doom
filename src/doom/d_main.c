@@ -269,7 +269,7 @@ void D_Display (void)
 	R_RenderPlayerView (&players[displayplayer]);
 
         // [crispy] simple HUD
-        if (screenblocks == 12)
+        if (screenblocks == CRISPY_HUD)
             ST_Drawer(0, 0);
     }
 

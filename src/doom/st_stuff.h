@@ -39,6 +39,7 @@
 #define ST_WIDTH	ORIGWIDTH
 #define ST_Y		(ORIGHEIGHT - ST_HEIGHT)
 
+#define CRISPY_HUD	12
 
 //
 // STATUS BAR

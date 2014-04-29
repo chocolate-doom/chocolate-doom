@@ -125,7 +125,7 @@ STlib_drawNum
     if (n->y - ST_Y < 0)
 	I_Error("drawNum: n->y - ST_Y < 0");
 
-    if (screenblocks < 12 || automapactive)
+    if (screenblocks < CRISPY_HUD || automapactive)
     V_CopyRect(x, n->y - ST_Y, st_backing_screen, w*numdigits, h, x, n->y);
 
     // if non-number, do not draw it
@@ -243,7 +243,7 @@ STlib_updateMultIcon
 	    if (y - ST_Y < 0)
 		I_Error("updateMultIcon: y - ST_Y < 0");
 
-	    if (screenblocks < 12 || automapactive)
+	    if (screenblocks < CRISPY_HUD || automapactive)
 	    V_CopyRect(x, y-ST_Y, st_backing_screen, w, h, x, y);
 	}
 	V_DrawPatch(mi->x, mi->y, mi->p[*mi->inum]);
@@ -296,7 +296,7 @@ STlib_updateBinIcon
 	if (*bi->val)
 	    V_DrawPatch(bi->x, bi->y, bi->p);
 	else
-	    if (screenblocks < 12 || automapactive)
+	    if (screenblocks < CRISPY_HUD || automapactive)
 	    V_CopyRect(x, y-ST_Y, st_backing_screen, w, h, x, y);
 
 	bi->oldval = *bi->val;
