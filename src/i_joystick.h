@@ -27,6 +27,24 @@
 #ifndef __I_JOYSTICK__
 #define __I_JOYSTICK__
 
+// If this bit is set in a configuration file axis value, the axis is
+// not actually a joystick axis, but instead is a "button axis". This
+// means that instead of reading an SDL joystick axis, we read the
+// state of two buttons to get the axis value. This is needed for eg.
+// the PS3 SIXAXIS controller, where the D-pad buttons register as
+// buttons, not as two axes.
+#define BUTTON_AXIS 0x10000
+
+// Query whether a given axis value describes a button axis.
+#define IS_BUTTON_AXIS(axis) ((axis) >= 0 && ((axis) & BUTTON_AXIS) != 0)
+
+// Get the individual buttons from a button axis value.
+#define BUTTON_AXIS_NEG(axis)  ((axis) & 0xff)
+#define BUTTON_AXIS_POS(axis)  (((axis) >> 8) & 0xff)
+
+// Create a button axis value from two button values.
+#define CREATE_BUTTON_AXIS(neg, pos) (BUTTON_AXIS | (neg) | ((pos) << 8))
+
 void I_InitJoystick(void);
 void I_ShutdownJoystick(void);
 void I_UpdateJoystick(void);

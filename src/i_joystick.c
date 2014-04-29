@@ -82,10 +82,27 @@ void I_ShutdownJoystick(void)
     }
 }
 
-void I_InitJoystick(void)
+static boolean IsValidAxis(int axis)
 {
     int num_axes;
 
+    if (axis < 0)
+    {
+        return true;
+    }
+
+    if (IS_BUTTON_AXIS(axis))
+    {
+        return true;
+    }
+
+    num_axes = SDL_JoystickNumAxes(joystick);
+
+    return axis < num_axes;
+}
+
+void I_InitJoystick(void)
+{
     if (!usejoystick)
     {
         return;
@@ -115,11 +132,9 @@ void I_InitJoystick(void)
         return;
     }
 
-    num_axes = SDL_JoystickNumAxes(joystick);
-
-    if (joystick_x_axis >= num_axes
-     || joystick_y_axis >= num_axes
-     || joystick_strafe_axis >= num_axes)
+    if (!IsValidAxis(joystick_x_axis)
+     || !IsValidAxis(joystick_y_axis)
+     || !IsValidAxis(joystick_strafe_axis))
     {
         printf("I_InitJoystick: Invalid joystick axis for joystick #%i "
                "(run joystick setup again)\n",
@@ -172,16 +187,34 @@ static int GetAxisState(int axis, int invert)
         return 0;
     }
 
-    result = SDL_JoystickGetAxis(joystick, axis);
+    // Is this a button axis? If so, we need to handle it specially.
 
-    if (invert)
-    {
-        result = -result;
-    }
-
-    if (result < DEAD_ZONE && result > -DEAD_ZONE)
+    if (IS_BUTTON_AXIS(axis))
     {
         result = 0;
+
+        if (SDL_JoystickGetButton(joystick, BUTTON_AXIS_NEG(axis)))
+        {
+            result -= 32767;
+        }
+        if (SDL_JoystickGetButton(joystick, BUTTON_AXIS_POS(axis)))
+        {
+            result += 32767;
+        }
+    }
+    else
+    {
+        result = SDL_JoystickGetAxis(joystick, axis);
+
+        if (invert)
+        {
+            result = -result;
+        }
+
+        if (result < DEAD_ZONE && result > -DEAD_ZONE)
+        {
+            result = 0;
+        }
     }
 
     return result;
