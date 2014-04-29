@@ -130,6 +130,8 @@ boolean         storedemo;
 boolean         bfgedition;
 char            *nervewadfile = NULL;
 
+boolean         have_ssg;
+
 // If true, the main game loop has started.
 boolean         main_loop_started = false;
 
@@ -1611,6 +1613,22 @@ void D_DoomMain (void)
     I_InitJoystick();
     I_InitSound(true);
     I_InitMusic();
+
+    // [crispy] check for SSG resources
+    have_ssg =
+    (
+        gamemode == commercial ||
+        (
+          singleplayer &&
+          logical_gamemission == doom &&
+            W_CheckNumForName("SGN2A0") != -1 && // pickup sprite
+            W_CheckNumForName("SHT2A0") != -1 && // wielding/firing sprite sequence
+            I_GetSfxLumpNum(&S_sfx[sfx_dshtgn]) > 0 && // firing sound
+            I_GetSfxLumpNum(&S_sfx[sfx_dbopn])  > 0 && // opening sound
+            I_GetSfxLumpNum(&S_sfx[sfx_dbload]) > 0 && // reloading sound
+            I_GetSfxLumpNum(&S_sfx[sfx_dbcls])  > 0    // closing sound
+        )
+    );
 
 #ifdef FEATURE_MULTIPLAYER
     printf ("NET_Init: Init network subsystem.\n");

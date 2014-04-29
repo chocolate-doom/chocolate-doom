@@ -69,6 +69,7 @@ extern char            *gamedescription;
 // If true, we're using one of the mangled BFG edition IWADs.
 extern boolean bfgedition;
 extern char *nervewadfile;
+extern boolean have_ssg;
 #define singleplayer (!demorecording && !demoplayback && !netgame)
 
 // Convenience macro.
