@@ -118,6 +118,7 @@ mapthing_t	playerstarts[MAXPLAYERS];
 
 
 
+extern boolean  crispy_fliplevels;
 
 
 //
@@ -149,6 +150,9 @@ void P_LoadVertexes (int lump)
     {
 	li->x = SHORT(ml->x)<<FRACBITS;
 	li->y = SHORT(ml->y)<<FRACBITS;
+
+	if (crispy_fliplevels)
+	    li->x = -li->x;
     }
 
     // Free buffer memory.
@@ -200,7 +204,18 @@ void P_LoadSegs (int lump)
 	li->v1 = &vertexes[SHORT(ml->v1)];
 	li->v2 = &vertexes[SHORT(ml->v2)];
 
+	if (crispy_fliplevels)
+	{
+            vertex_t* tmp = li->v1;
+            li->v1 = li->v2;
+            li->v2 = tmp;
+	}
+
 	li->angle = (SHORT(ml->angle))<<16;
+
+	if (crispy_fliplevels)
+            li->angle = -li->angle;
+
 	li->offset = (SHORT(ml->offset))<<16;
 	linedef = SHORT(ml->linedef);
 	ldef = &lines[linedef];
@@ -325,11 +340,27 @@ void P_LoadNodes (int lump)
 	no->y = SHORT(mn->y)<<FRACBITS;
 	no->dx = SHORT(mn->dx)<<FRACBITS;
 	no->dy = SHORT(mn->dy)<<FRACBITS;
+
+	if (crispy_fliplevels)
+	{
+	    no->x += no->dx;
+	    no->y += no->dy;
+	    no->x = -no->x;
+	    no->dy = -no->dy;
+	}
+
 	for (j=0 ; j<2 ; j++)
 	{
 	    no->children[j] = SHORT(mn->children[j]);
 	    for (k=0 ; k<4 ; k++)
 		no->bbox[j][k] = SHORT(mn->bbox[j][k])<<FRACBITS;
+
+	    if (crispy_fliplevels)
+	    {
+		fixed_t tmp = no->bbox[j][2];
+		no->bbox[j][2] = -no->bbox[j][3];
+		no->bbox[j][3] = -tmp;
+	    }
 	}
     }
 	
@@ -395,6 +426,12 @@ void P_LoadThings (int lump)
 	spawnthing.type = SHORT(mt->type);
 	spawnthing.options = SHORT(mt->options);
 	
+	if (crispy_fliplevels)
+	{
+	    spawnthing.x = -spawnthing.x;
+	    spawnthing.angle = 180 - spawnthing.angle;
+	}
+
 	P_SpawnMapThing(&spawnthing);
     }
 
@@ -427,8 +464,16 @@ void P_LoadLineDefs (int lump)
 	ld->flags = SHORT(mld->flags);
 	ld->special = SHORT(mld->special);
 	ld->tag = SHORT(mld->tag);
+	if (crispy_fliplevels)
+	{
+	    v1 = ld->v2 = &vertexes[SHORT(mld->v2)];
+	    v2 = ld->v1 = &vertexes[SHORT(mld->v1)];
+	}
+	else
+	{
 	v1 = ld->v1 = &vertexes[SHORT(mld->v1)];
 	v2 = ld->v2 = &vertexes[SHORT(mld->v2)];
+	}
 	ld->dx = v2->x - v1->x;
 	ld->dy = v2->y - v1->y;
 	
@@ -545,6 +590,29 @@ void P_LoadBlockMap (int lump)
     bmapwidth = blockmaplump[2];
     bmapheight = blockmaplump[3];
 	
+    if (crispy_fliplevels)
+    {
+	int x, y;
+	short* rowoffset;
+
+	bmaporgx += bmapwidth * 128 * FRACUNIT;
+	bmaporgx = -bmaporgx;
+
+	for (y = 0; y < bmapheight; y++)
+	{
+	    rowoffset = blockmap + y * bmapwidth;
+
+	    for (x = 0; x < bmapwidth / 2; x++)
+	    {
+	        short tmp;
+
+	        tmp = rowoffset[x];
+	        rowoffset[x] = rowoffset[bmapwidth-1-x];
+	        rowoffset[bmapwidth-1-x] = tmp;
+	    }
+	}
+    }
+
     // Clear out mobj chains
 
     count = sizeof(*blocklinks) * bmapwidth * bmapheight;

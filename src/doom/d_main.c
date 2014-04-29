@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "config.h"
 #include "deh_main.h"
@@ -147,6 +148,8 @@ int             crispy_jump = 0;
 int             crispy_freelook = 0;
 int             crispy_mouselook = 0;
 int             crispy_freeaim = 0;
+
+boolean         crispy_fliplevels = false;
 
 void D_ConnectNetGame(void);
 void D_CheckNetGame(void);
@@ -1727,6 +1730,27 @@ void D_DoomMain (void)
         startmap = 1;
         autostart = true;
         testcontrols = true;
+    }
+
+    //!
+    //
+    // Flips all levels like on April Fool's Day
+    //
+
+    {
+        time_t curtime = time(NULL);
+        struct tm *tm;
+
+        if ((tm = localtime(&curtime)) != NULL &&
+            tm->tm_mon == 3 && tm->tm_mday == 1)
+            crispy_fliplevels = true;
+    }
+
+    p = M_CheckParm("-fliplevels");
+
+    if (p > 0)
+    {
+        crispy_fliplevels = !crispy_fliplevels;
     }
 
     // Check for load game parameter
