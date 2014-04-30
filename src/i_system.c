@@ -452,7 +452,14 @@ void I_Error (char *error, ...)
 #else
     if (exit_gui_popup && !I_ConsoleStdout())
     {
-        ZenityErrorBox(error);
+        char msgbuf[512];
+
+        va_start(argptr, error);
+        memset(msgbuf, 0, sizeof(msgbuf));
+        M_vsnprintf(msgbuf, sizeof(msgbuf), error, argptr);
+        va_end(argptr);
+
+        ZenityErrorBox(msgbuf);
     }
 #endif
 
