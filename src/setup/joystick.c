@@ -62,6 +62,15 @@ int joystick_index = -1;
 
 static int calibrate_button = -1;
 
+// "Bad" joystick axes. Sometimes an axis can be stuck or "bad". An
+// example I found is that if you unplug the nunchuck extension from
+// a Wii remote, the axes from the nunchuck can be stuck at one of
+// the maximum values. These have to be ignored, so when we ask the
+// user to center the joystick, we look for bad axes that are not
+// close to zero.
+
+static boolean *bad_axis = NULL;
+
 // Which joystick axis to use for horizontal movement, and whether to
 // invert the direction:
 
@@ -301,6 +310,11 @@ static boolean CalibrateAxis(int *axis_index, int *axis_invert)
 
     for (i=0; i<SDL_JoystickNumAxes(joystick); ++i)
     {
+        if (bad_axis[i])
+        {
+            continue;
+        }
+
         axis_value = SDL_JoystickGetAxis(joystick, i);
 
         if (abs(axis_value) > best_value)
@@ -406,6 +420,31 @@ static int NextCalibrateStage(void)
     }
 }
 
+static void IdentifyBadAxes(void)
+{
+    SDL_Joystick *joystick;
+    int i, val;
+
+    free(bad_axis);
+
+    joystick = all_joysticks[joystick_index];
+    bad_axis = calloc(SDL_JoystickNumAxes(joystick), sizeof(boolean));
+
+    // Look for uncentered axes.
+
+    for (i = 0; i < SDL_JoystickNumAxes(joystick); ++i)
+    {
+        val = SDL_JoystickGetAxis(joystick, i);
+
+        bad_axis[i] = abs(val) > (32768 / 5);
+
+        if (bad_axis[i])
+        {
+            printf("Ignoring uncentered joystick axis #%i: %i\n", i, val);
+        }
+    }
+}
+
 static int CalibrationEventCallback(SDL_Event *event, void *user_data)
 {
     boolean advance;
@@ -422,6 +461,7 @@ static int CalibrationEventCallback(SDL_Event *event, void *user_data)
     {
         joystick_index = event->jbutton.which;
         calibrate_button = event->jbutton.button;
+        IdentifyBadAxes();
 
         // Advance to next stage.
         calibrate_stage = CALIBRATE_LEFT;
