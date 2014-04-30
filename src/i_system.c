@@ -262,6 +262,39 @@ void I_Quit (void)
     exit(0);
 }
 
+#define ZENITY_BINARY "/usr/bin/zenity"
+
+// returns non-zero if zenity is available
+
+static int ZenityAvailable(void)
+{
+    return system(ZENITY_BINARY " --help >/dev/null 2>&1") == 0;
+}
+
+// Open a native error box with a message using zenity
+
+static int ZenityErrorBox(char *message)
+{
+    int *result;
+    char *errorboxpath;
+    static size_t errorboxpath_size;
+
+    if (!ZenityAvailable())
+    {
+        return 0;
+    }
+
+    errorboxpath_size = strlen(ZENITY_BINARY) + strlen(message) + 19;
+    errorboxpath = malloc(errorboxpath_size);
+    M_snprintf(errorboxpath, errorboxpath_size, "%s --error --text=\"%s\"", ZENITY_BINARY, message);
+
+    result = system(errorboxpath);
+
+    free(errorboxpath);
+
+    return result;
+}
+
 //
 // I_Error
 //
@@ -327,9 +360,7 @@ void I_Error (char *error, ...)
 
         MessageBoxW(NULL, wmsgbuf, L"", MB_OK);
     }
-#endif
-
-#ifdef __MACOSX__
+#elif defined(__MACOSX__)
     if (exit_gui_popup && !I_ConsoleStdout())
     {
         CFStringRef message;
@@ -364,6 +395,11 @@ void I_Error (char *error, ...)
                                         CFSTR(PACKAGE_STRING),
                                         message,
                                         NULL);
+    }
+#else
+    if (exit_gui_popup && !I_ConsoleStdout())
+    {
+        ZenityErrorBox(error);
     }
 #endif
 
