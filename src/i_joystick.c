@@ -159,6 +159,29 @@ void I_InitJoystick(void)
     I_AtExit(I_ShutdownJoystick, true);
 }
 
+static int ButtonAxisMask(void)
+{
+    int result = 0;
+
+    if (IS_BUTTON_AXIS(joystick_x_axis))
+    {
+        result |= 1 << BUTTON_AXIS_NEG(joystick_x_axis);
+        result |= 1 << BUTTON_AXIS_POS(joystick_x_axis);
+    }
+    if (IS_BUTTON_AXIS(joystick_y_axis))
+    {
+        result |= 1 << BUTTON_AXIS_NEG(joystick_y_axis);
+        result |= 1 << BUTTON_AXIS_POS(joystick_y_axis);
+    }
+    if (IS_BUTTON_AXIS(joystick_strafe_axis))
+    {
+        result |= 1 << BUTTON_AXIS_NEG(joystick_strafe_axis);
+        result |= 1 << BUTTON_AXIS_POS(joystick_strafe_axis);
+    }
+
+    return result;
+}
+
 // Get a bitmask of all currently-pressed buttons
 
 static int GetButtonState(void)
@@ -175,6 +198,9 @@ static int GetButtonState(void)
             result |= 1 << i;
         }
     }
+
+    // Mask out any buttons that are actually used in axes.
+    result &= ~ButtonAxisMask();
 
     return result;
 }
