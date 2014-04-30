@@ -487,7 +487,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     cmd->chatchar = HU_dequeueChatChar(); 
 
     // villsa [STRIFE] - add mouse button support for jump
-    if(gamekeydown[key_jump] || mousebuttons[mousebjump])
+    if (gamekeydown[key_jump] || mousebuttons[mousebjump]
+     || joybuttons[joybjump])
         cmd->buttons2 |= BT2_JUMP;
  
     // villsa [STRIFE]: Moved mousebuttons[mousebfire] to below
