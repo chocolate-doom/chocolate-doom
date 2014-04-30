@@ -619,7 +619,9 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         return;
     }
 
-    if (strcmp(client_version, PACKAGE_STRING) != 0)
+    // [crispy] allow Chocolate Doom 2.0.0 clients to connect to Crispy Doom servers
+    if (strcmp(client_version, PACKAGE_STRING) != 0 &&
+        strcmp(client_version, "Chocolate Doom 2.0.0") != 0)
     {
         //!
         // @category net
