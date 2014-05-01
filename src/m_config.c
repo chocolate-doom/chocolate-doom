@@ -455,27 +455,30 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_INT(use_joystick),
 
     //!
-    // Joystick button to fire the current weapon.
+    // Joystick virtual button that fires the current weapon.
     //
 
     CONFIG_VARIABLE_INT(joyb_fire),
 
     //!
-    // Joystick button to fire the current weapon.
+    // Joystick virtual button that makes the player strafe while
+    // held down.
     //
 
     CONFIG_VARIABLE_INT(joyb_strafe),
 
     //!
-    // Joystick button to "use" an object, eg. a door or switch.
+    // Joystick virtual button to "use" an object, eg. a door or switch.
     //
 
     CONFIG_VARIABLE_INT(joyb_use),
 
     //!
-    // Joystick button to make the player run.
+    // Joystick virtual button that makes the player run while held
+    // down.
     //
-    // If this has a value of 20 or greater, the player will always run.
+    // If this has a value of 20 or greater, the player will always run,
+    // even if use_joystick is 0.
     //
 
     CONFIG_VARIABLE_INT(joyb_speed),
@@ -483,7 +486,7 @@ static default_t	doom_defaults_list[] =
     //!
     // @game hexen strife
     //
-    // Joystick button to jump.
+    // Joystick virtual button that makes the player jump.
     //
 
     CONFIG_VARIABLE_INT(joyb_jump),
@@ -939,91 +942,101 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joystick_strafe_invert),
 
     //!
-    // The physical joystick button that corresponds to button #0.
+    // The physical joystick button that corresponds to joystick
+    // virtual button #0.
     //
 
     CONFIG_VARIABLE_INT(joystick_physical_button0),
 
     //!
-    // The physical joystick button that corresponds to button #1.
+    // The physical joystick button that corresponds to joystick
+    // virtual button #1.
     //
 
     CONFIG_VARIABLE_INT(joystick_physical_button1),
 
     //!
-    // The physical joystick button that corresponds to button #2.
+    // The physical joystick button that corresponds to joystick
+    // virtual button #2.
     //
 
     CONFIG_VARIABLE_INT(joystick_physical_button2),
 
     //!
-    // The physical joystick button that corresponds to button #3.
+    // The physical joystick button that corresponds to joystick
+    // virtual button #3.
     //
 
     CONFIG_VARIABLE_INT(joystick_physical_button3),
 
     //!
-    // The physical joystick button that corresponds to button #4.
+    // The physical joystick button that corresponds to joystick
+    // virtual button #4.
     //
 
     CONFIG_VARIABLE_INT(joystick_physical_button4),
 
     //!
-    // The physical joystick button that corresponds to button #5.
+    // The physical joystick button that corresponds to joystick
+    // virtual button #5.
     //
 
     CONFIG_VARIABLE_INT(joystick_physical_button5),
 
     //!
-    // The physical joystick button that corresponds to button #6.
+    // The physical joystick button that corresponds to joystick
+    // virtual button #6.
     //
 
     CONFIG_VARIABLE_INT(joystick_physical_button6),
 
     //!
-    // The physical joystick button that corresponds to button #7.
+    // The physical joystick button that corresponds to joystick
+    // virtual button #7.
     //
 
     CONFIG_VARIABLE_INT(joystick_physical_button7),
 
     //!
-    // The physical joystick button that corresponds to button #8.
+    // The physical joystick button that corresponds to joystick
+    // virtual button #8.
     //
 
     CONFIG_VARIABLE_INT(joystick_physical_button8),
 
     //!
-    // The physical joystick button that corresponds to button #9.
+    // The physical joystick button that corresponds to joystick
+    // virtual button #9.
     //
 
     CONFIG_VARIABLE_INT(joystick_physical_button9),
 
     //!
-    // Joystick button to strafe left.
+    // Joystick virtual button to make the player strafe left.
     //
 
     CONFIG_VARIABLE_INT(joyb_strafeleft),
 
     //!
-    // Joystick button to strafe right.
+    // Joystick virtual button to make the player strafe right.
     //
 
     CONFIG_VARIABLE_INT(joyb_straferight),
 
     //!
-    // Joystick button to activate the game menu.
+    // Joystick virtual button to activate the menu.
     //
 
     CONFIG_VARIABLE_INT(joyb_menu_activate),
 
     //!
-    // Joystick button to cycle to the previous weapon.
+    // Joystick virtual button that cycles to the previous weapon.
     //
 
     CONFIG_VARIABLE_INT(joyb_prevweapon),
 
     //!
-    // Joystick button to cycle to the next weapon.
+    // Joystick virtual button that cycles to the next weapon.
     //
 
     CONFIG_VARIABLE_INT(joyb_nextweapon),
