@@ -356,6 +356,7 @@ static boolean already_quitting = false;
 
 void I_Error (char *error, ...)
 {
+    char msgbuf[512];
     va_list argptr;
     atexit_listentry_t *entry;
     boolean exit_gui_popup;
@@ -369,7 +370,7 @@ void I_Error (char *error, ...)
     {
         already_quitting = true;
     }
-    
+
     // Message first.
     va_start(argptr, error);
     //fprintf(stderr, "\nError: ");
@@ -377,6 +378,12 @@ void I_Error (char *error, ...)
     fprintf(stderr, "\n\n");
     va_end(argptr);
     fflush(stderr);
+
+    // Write a copy of the message into buffer.
+    va_start(argptr, error);
+    memset(msgbuf, 0, sizeof(msgbuf));
+    M_vsnprintf(msgbuf, sizeof(msgbuf), error, argptr);
+    va_end(argptr);
 
     // Shutdown. Here might be other errors.
 
@@ -394,18 +401,13 @@ void I_Error (char *error, ...)
 
     exit_gui_popup = !M_ParmExists("-nogui");
 
+    // Pop up a GUI dialog box to show the error message, if the
+    // game was not run from the console (and the user will
+    // therefore be unable to otherwise see the message).
+    if (exit_gui_popup && !I_ConsoleStdout())
 #ifdef _WIN32
-    // On Windows, pop up a dialog box with the error message.
-
-    if (exit_gui_popup)
     {
-        char msgbuf[512];
         wchar_t wmsgbuf[512];
-
-        va_start(argptr, error);
-        memset(msgbuf, 0, sizeof(msgbuf));
-        M_vsnprintf(msgbuf, sizeof(msgbuf), error, argptr);
-        va_end(argptr);
 
         MultiByteToWideChar(CP_ACP, 0,
                             msgbuf, strlen(msgbuf) + 1,
@@ -414,16 +416,9 @@ void I_Error (char *error, ...)
         MessageBoxW(NULL, wmsgbuf, L"", MB_OK);
     }
 #elif defined(__MACOSX__)
-    if (exit_gui_popup && !I_ConsoleStdout())
     {
         CFStringRef message;
-        char msgbuf[512];
 	int i;
-
-        va_start(argptr, error);
-        memset(msgbuf, 0, sizeof(msgbuf));
-        M_vsnprintf(msgbuf, sizeof(msgbuf), error, argptr);
-        va_end(argptr);
 
 	// The CoreFoundation message box wraps text lines, so replace
 	// newline characters with spaces so that multiline messages
@@ -450,9 +445,8 @@ void I_Error (char *error, ...)
                                         NULL);
     }
 #else
-    if (exit_gui_popup && !I_ConsoleStdout())
     {
-        ZenityErrorBox(error);
+        ZenityErrorBox(msgbuf);
     }
 #endif
 
