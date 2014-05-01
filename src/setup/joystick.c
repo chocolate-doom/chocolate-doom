@@ -505,6 +505,7 @@ static int CalibrationEventCallback(SDL_Event *event, void *user_data)
             // Finished?
             if (calibrate_stage == CALIBRATE_CENTER)
             {
+                use_joystick = 1;
                 TXT_CloseWindow(calibration_window);
             }
 
