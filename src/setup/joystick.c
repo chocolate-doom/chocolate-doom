@@ -90,17 +90,11 @@ static int joystick_strafe_axis = -1;
 static int joystick_strafe_invert = 0;
 
 // Virtual to physical mapping.
-static int joystick_physical_buttons[NUM_VIRTUAL_BUTTONS] = {
+int joystick_physical_buttons[NUM_VIRTUAL_BUTTONS] = {
     0, 1, 2, 3, 4, 5, 6, 7, 8, 9
 };
 
 static txt_button_t *joystick_button;
-
-static int *all_joystick_buttons[] = {
-    &joybstraferight, &joybstrafeleft, &joybfire, &joybspeed,
-    &joybuse, &joybstrafe, &joybprevweapon, &joybnextweapon, &joybjump,
-    &joybmenu,
-};
 
 //
 // Calibration 
@@ -580,27 +574,7 @@ static void CalibrateJoystick(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
     SetCalibrationLabel();
 }
 
-void JoyButtonSetCallback(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(variable))
-{
-    TXT_CAST_ARG(int, variable);
-    unsigned int i;
-
-    // Only allow a button to be bound to one action at a time.  If 
-    // we assign a key that another action is using, set that other action
-    // to -1.
-
-    for (i=0; i<arrlen(all_joystick_buttons); ++i)
-    {
-        if (variable != all_joystick_buttons[i]
-         && *variable == *all_joystick_buttons[i])
-        {
-            *all_joystick_buttons[i] = -1;
-        }
-    }
-}
-
-
-// 
+//
 // GUI
 //
 
@@ -621,8 +595,6 @@ static void AddJoystickControl(txt_table_t *table, char *label, int *var)
 
     TXT_AddWidget(table, TXT_NewLabel(label));
     TXT_AddWidget(table, joy_input);
-
-    TXT_SignalConnect(joy_input, "set", JoyButtonSetCallback, var);
 }
 
 void ConfigJoystick(void)

@@ -157,8 +157,6 @@ extern int joybstraferight;
 extern int joybprevweapon;
 extern int joybnextweapon;
 
-extern int joy_physical_buttons[10];
-
 extern int joybmenu;
 
 extern int dclick_use;
