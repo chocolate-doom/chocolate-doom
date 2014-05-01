@@ -279,7 +279,7 @@ void I_UpdateSound(void)
         sound_module->Update();
     }
 
-    if (music_module != NULL)
+    if (music_module != NULL && music_module->Poll != NULL)
     {
         music_module->Poll();
     }
