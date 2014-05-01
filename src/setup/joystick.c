@@ -650,6 +650,8 @@ void ConfigJoystick(void)
         AddJoystickControl(button_table, "Jump", &joybjump);
     }
 
+    AddJoystickControl(button_table, "Activate menu", &joybmenu);
+
     TXT_SignalConnect(joystick_button, "pressed", CalibrateJoystick, NULL);
     TXT_SignalConnect(window, "closed", JoystickWindowClosed, NULL);
 
