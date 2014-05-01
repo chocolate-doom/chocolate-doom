@@ -939,6 +939,66 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joystick_strafe_invert),
 
     //!
+    // The physical joystick button that corresponds to button #0.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button0),
+
+    //!
+    // The physical joystick button that corresponds to button #1.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button1),
+
+    //!
+    // The physical joystick button that corresponds to button #2.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button2),
+
+    //!
+    // The physical joystick button that corresponds to button #3.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button3),
+
+    //!
+    // The physical joystick button that corresponds to button #4.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button4),
+
+    //!
+    // The physical joystick button that corresponds to button #5.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button5),
+
+    //!
+    // The physical joystick button that corresponds to button #6.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button6),
+
+    //!
+    // The physical joystick button that corresponds to button #7.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button7),
+
+    //!
+    // The physical joystick button that corresponds to button #8.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button8),
+
+    //!
+    // The physical joystick button that corresponds to button #9.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button9),
+
+    //!
     // Joystick button to strafe left.
     //
 

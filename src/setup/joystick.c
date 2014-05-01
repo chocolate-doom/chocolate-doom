@@ -26,6 +26,7 @@
 #include "i_joystick.h"
 #include "m_config.h"
 #include "m_controls.h"
+#include "m_misc.h"
 #include "textscreen.h"
 
 #include "execute.h"
@@ -87,6 +88,11 @@ static int joystick_y_invert = 0;
 
 static int joystick_strafe_axis = -1;
 static int joystick_strafe_invert = 0;
+
+// Virtual to physical mapping.
+static int joystick_physical_buttons[NUM_VIRTUAL_BUTTONS] = {
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9
+};
 
 static txt_button_t *joystick_button;
 
@@ -682,6 +688,8 @@ void ConfigJoystick(void)
 
 void BindJoystickVariables(void)
 {
+    int i;
+
     M_BindVariable("use_joystick",          &usejoystick);
     M_BindVariable("joystick_index",        &joystick_index);
     M_BindVariable("joystick_x_axis",       &joystick_x_axis);
@@ -690,5 +698,12 @@ void BindJoystickVariables(void)
     M_BindVariable("joystick_x_invert",     &joystick_x_invert);
     M_BindVariable("joystick_y_invert",     &joystick_y_invert);
     M_BindVariable("joystick_strafe_invert",&joystick_strafe_invert);
+
+    for (i = 0; i < NUM_VIRTUAL_BUTTONS; ++i)
+    {
+        char name[32];
+        M_snprintf(name, sizeof(name), "joystick_physical_button%i", i);
+        M_BindVariable(name, &joystick_physical_buttons[i]);
+    }
 }
 
