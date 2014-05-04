@@ -45,6 +45,19 @@ typedef enum
     CALIBRATE_DOWN,
 } calibration_stage_t;
 
+typedef struct
+{
+    char *name;  // Config file name
+    int value;
+} joystick_config_t;
+
+typedef struct
+{
+    char *name;
+    int axes, buttons, hats;
+    const joystick_config_t *configs;
+} known_joystick_t;
+
 // SDL joystick successfully initialized?
 
 static int joystick_initted = 0;
@@ -97,13 +110,195 @@ int joystick_physical_buttons[NUM_VIRTUAL_BUTTONS] = {
 static txt_button_t *joystick_button;
 
 //
-// Calibration 
+// Calibration
 //
 
 static txt_window_t *calibration_window;
 static txt_label_t *calibration_label;
 static calibration_stage_t calibrate_stage;
 static SDL_Joystick **all_joysticks = NULL;
+
+// Known controllers.
+// There are lots of game controllers on the market. Try to configure
+// them in a consistent way:
+//
+// * Use the D-pad rather than an analog stick. left/right turns the
+//   player, up/down moves forward/backward - ie. a "traditional"
+//   layout like Vanilla Doom rather than something more elaborate.
+// * No strafe axis.
+// * Fire and run keys together, on the main right-side buttons,
+//   ideally arranged so both can be controlled/covered simultaneously
+//   with the thumb.
+// * Jump/use keys in the same cluster if possible.
+// * Strafe left/right configured to map to shoulder buttons if they
+//   are present. No "strafe on" key unless shoulder buttons not present.
+// * If a second set of shoulder buttons are also present, these map
+//   to prev weapon/next weapon.
+// * Menu button mapped to start button.
+//
+// With the common right-side button arrangement that looks like this,
+// which is similar to the Vanilla default configuration when using
+// a Gravis Gamepad:
+//
+//    B        A = Fire
+//  A   D      B = Jump
+//    C        C = Speed
+//             D = Use
+
+// Always loaded before others, to get a known starting configuration.
+static const joystick_config_t empty_defaults[] =
+{
+    {"joystick_x_axis",        -1},
+    {"joystick_x_invert",      0},
+    {"joystick_y_axis",        -1},
+    {"joystick_y_invert",      0},
+    {"joystick_strafe_axis",   -1},
+    {"joystick_strafe_invert", 0},
+    {"joyb_fire",              -1},
+    {"joyb_use",               -1},
+    {"joyb_strafe",            -1},
+    {"joyb_speed",             -1},
+    {"joyb_strafeleft",        -1},
+    {"joyb_straferight",       -1},
+    {"joyb_prevweapon",        -1},
+    {"joyb_nextweapon",        -1},
+    {"joyb_menu_activate",     -1},
+    {NULL, 0},
+};
+
+static const joystick_config_t ps3_controller[] =
+{
+    {"joystick_x_axis",        CREATE_BUTTON_AXIS(7, 5)},
+    {"joystick_y_axis",        CREATE_BUTTON_AXIS(4, 6)},
+    {"joyb_fire",              15},  // Square
+    {"joyb_speed",             14},  // X
+    {"joyb_use",               13},  // Circle
+    {"joyb_jump",              12},  // Triangle
+    {"joyb_strafeleft",        8},   // Bottom shoulder buttons
+    {"joyb_straferight",       9},
+    {"joyb_prevweapon",        10},  // Top shoulder buttons
+    {"joyb_nextweapon",        11},
+    {"joyb_menu_activate",     3},   // Start
+    {NULL, 0},
+};
+
+static const joystick_config_t airflo_controller[] =
+{
+    {"joystick_x_axis",        CREATE_HAT_AXIS(0, HAT_AXIS_HORIZONTAL)},
+    {"joystick_y_axis",        CREATE_HAT_AXIS(0, HAT_AXIS_VERTICAL)},
+    {"joyb_fire",              2},  // "3"
+    {"joyb_speed",             0},  // "1"
+    {"joyb_jump",              3},  // "4"
+    {"joyb_use",               1},  // "2"
+    {"joyb_strafeleft",        6},  // Bottom shoulder buttons
+    {"joyb_straferight",       7},
+    {"joyb_prevweapon",        4},  // Top shoulder buttons
+    {"joyb_nextweapon",        5},
+    {"joyb_menu_activate",     9},  // "10", where "Start" usually is.
+    {NULL, 0},
+};
+
+static const known_joystick_t known_joysticks[] =
+{
+    {
+        "PLAYSTATION(R)3 Controller",
+        4, 19, 0,
+        ps3_controller,
+    },
+
+    {
+        "AIRFLO             ",
+        4, 13, 1,
+        airflo_controller,
+    },
+};
+
+static const known_joystick_t *GetJoystickType(int index)
+{
+    SDL_Joystick *joystick;
+    const char *name;
+    int axes, buttons, hats;
+    int i;
+
+    joystick = all_joysticks[index];
+    name = SDL_JoystickName(index);
+    axes = SDL_JoystickNumAxes(joystick);
+    buttons = SDL_JoystickNumButtons(joystick);
+    hats = SDL_JoystickNumHats(joystick);
+
+    for (i = 0; i < arrlen(known_joysticks); ++i)
+    {
+        if (!strcmp(known_joysticks[i].name, name)
+         && known_joysticks[i].axes == axes
+         && known_joysticks[i].buttons == buttons
+         && known_joysticks[i].hats == hats)
+        {
+            return &known_joysticks[i];
+        }
+    }
+
+    printf("Unknown joystick '%s' with %i axes, %i buttons, %i hats\n",
+           name, axes, buttons, hats);
+
+    return NULL;
+}
+
+// Query if the joystick at the given index is a known joystick type.
+static boolean IsKnownJoystick(int index)
+{
+    return GetJoystickType(index) != NULL;
+}
+
+// Load a configuration set.
+static void LoadConfigurationSet(const joystick_config_t *configs)
+{
+    const joystick_config_t *config;
+    char buf[10];
+    int button;
+    int i;
+
+    button = 0;
+
+    for (i = 0; configs[i].name != NULL; ++i)
+    {
+        config = &configs[i];
+
+        // Don't overwrite autorun if it is set.
+        if (!strcmp(config->name, "joyb_speed") && joybspeed >= 20)
+        {
+            continue;
+        }
+
+        // For buttons, set the virtual button mapping as well.
+        if (M_StringStartsWith(config->name, "joyb_"))
+        {
+            joystick_physical_buttons[button] = config->value;
+            M_snprintf(buf, sizeof(buf), "%i", button);
+            M_SetVariable(config->name, buf);
+            ++button;
+        }
+        else
+        {
+            M_snprintf(buf, sizeof(buf), "%i", config->value);
+            M_SetVariable(config->name, buf);
+        }
+    }
+}
+
+// Load configuration for joystick_index based on known types.
+static void LoadKnownConfiguration(void)
+{
+    const known_joystick_t *jstype;
+
+    jstype = GetJoystickType(joystick_index);
+    if (jstype == NULL)
+    {
+        return;
+    }
+
+    LoadConfigurationSet(empty_defaults);
+    LoadConfigurationSet(jstype->configs);
+}
 
 // Set the label showing the name of the currently selected joystick
 
@@ -113,7 +308,7 @@ static void SetJoystickButtonLabel(void)
 
     name = "None set";
 
-    if (joystick_initted 
+    if (joystick_initted
      && joystick_index >= 0 && joystick_index < SDL_NumJoysticks())
     {
         name = (char *) SDL_JoystickName(joystick_index);
@@ -463,9 +658,21 @@ static int CalibrationEventCallback(SDL_Event *event, void *user_data)
         calibrate_button = event->jbutton.button;
         IdentifyBadAxes();
 
-        // Advance to next stage.
-        calibrate_stage = CALIBRATE_LEFT;
-        SetCalibrationLabel();
+        // If the joystick is a known one, auto-load default
+        // config for it.
+        if (IsKnownJoystick(joystick_index))
+        {
+            LoadKnownConfiguration();
+            usejoystick = 1;
+            TXT_CloseWindow(calibration_window);
+        }
+        else
+        {
+            // Advance to next stage.
+            calibrate_stage = CALIBRATE_LEFT;
+            SetCalibrationLabel();
+        }
+
         return 1;
     }
 
