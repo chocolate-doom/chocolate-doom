@@ -198,6 +198,24 @@ static const joystick_config_t airflo_controller[] =
     {NULL, 0},
 };
 
+// Wii controller is weird, so we have to take some liberties.
+// Also it's not a HID device, so it won't appear the same everywhere.
+// Assume there is no nunchuk or classic controller attached.
+
+// When using WJoy on OS X.
+static const joystick_config_t wii_controller_wjoy[] =
+{
+    {"joystick_x_axis",        CREATE_BUTTON_AXIS(2, 3)},
+    {"joystick_y_axis",        CREATE_BUTTON_AXIS(1, 0)},
+    {"joyb_fire",              9},  // Button 1
+    {"joyb_speed",             10}, // Button 2
+    {"joyb_use",               5},  // Button B (trigger)
+    {"joyb_prevweapon",        7},  // -
+    {"joyb_nextweapon",        6},  // +
+    {"joyb_menu_activate",     9},  // Button A
+    {NULL, 0},
+};
+
 static const known_joystick_t known_joysticks[] =
 {
     {
@@ -210,6 +228,12 @@ static const known_joystick_t known_joysticks[] =
         "AIRFLO             ",
         4, 13, 1,
         airflo_controller,
+    },
+
+    {
+        "Wiimote (*",  // WJoy includes the Wiimote MAC address.
+        6, 26, 0,
+        wii_controller_wjoy,
     },
 };
 
@@ -228,8 +252,25 @@ static const known_joystick_t *GetJoystickType(int index)
 
     for (i = 0; i < arrlen(known_joysticks); ++i)
     {
-        if (!strcmp(known_joysticks[i].name, name)
-         && known_joysticks[i].axes == axes
+        // Check for a name match. If the name ends in '*', this means
+        // ignore the rest.
+        if (M_StringEndsWith(known_joysticks[i].name, "*"))
+        {
+            if (strncmp(known_joysticks[i].name, name,
+                        strlen(known_joysticks[i].name) - 1) != 0)
+            {
+                continue;
+            }
+        }
+        else
+        {
+            if (strcmp(known_joysticks[i].name, name) != 0)
+            {
+                continue;
+            }
+        }
+
+        if (known_joysticks[i].axes == axes
          && known_joysticks[i].buttons == buttons
          && known_joysticks[i].hats == hats)
         {
