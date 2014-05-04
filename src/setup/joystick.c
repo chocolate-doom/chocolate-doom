@@ -239,6 +239,7 @@ static const known_joystick_t *GetJoystickType(int index)
 
     printf("Unknown joystick '%s' with %i axes, %i buttons, %i hats\n",
            name, axes, buttons, hats);
+    printf("Please consider sending in details about your gamepad!\n");
 
     return NULL;
 }
@@ -270,7 +271,7 @@ static void LoadConfigurationSet(const joystick_config_t *configs)
         }
 
         // For buttons, set the virtual button mapping as well.
-        if (M_StringStartsWith(config->name, "joyb_"))
+        if (M_StringStartsWith(config->name, "joyb_") && config->value >= 0)
         {
             joystick_physical_buttons[button] = config->value;
             M_snprintf(buf, sizeof(buf), "%i", button);
