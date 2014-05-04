@@ -520,11 +520,23 @@ static char *ParseSubstituteLine(char *filename, char *line)
     char *p;
     int hash_index;
 
+    // Strip out comments if present.
+    p = strchr(line, '#');
+    if (p != NULL)
+    {
+        while (p > line && isspace(*(p - 1)))
+        {
+            --p;
+        }
+        *p = '\0';
+    }
+
     // Skip leading spaces.
     for (p = line; *p != '\0' && isspace(*p); ++p);
 
-    // Comment or empty line? This is valid syntax, so just return success.
-    if (*p == '#' || *p == '\0')
+    // Empty line? This includes comment lines now that comments have
+    // been stripped.
+    if (*p == '\0')
     {
         return NULL;
     }
