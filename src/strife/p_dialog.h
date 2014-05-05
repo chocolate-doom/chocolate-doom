@@ -1,5 +1,3 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1996 Rogue Entertainment / Velocity, Inc.
@@ -15,18 +13,12 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //
 // [STRIFE] New Module
 //
 // Dialog Engine for Strife
 //
-//-----------------------------------------------------------------------------
 
 #ifndef P_DIALOG_H__
 #define P_DIALOG_H__

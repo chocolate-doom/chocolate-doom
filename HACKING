@@ -186,8 +186,6 @@ compatible license.  If you use code that you haven't 100% written
 yourself, say so. Add a copyright header to the start of every file.  Use
 this template:
 
-// Emacs style mode select   -*- C++ -*-
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) YEAR Author's name
 //
@@ -201,10 +199,9 @@ this template:
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
+//
+// *File description goes here*
+//
 
 # vim: tw=70
 
