@@ -295,7 +295,7 @@ static boolean WeaponSelectable(weapontype_t weapon)
      && players[consoleplayer].weaponowned[wp_chainsaw]
      && !players[consoleplayer].powers[pw_strength])
     {
-        return false;
+        return (gameskill == sk_extreme); // [crispy]
     }
 
     return true;
