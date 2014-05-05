@@ -104,6 +104,7 @@ void BindCompatibilityVariables(void)
         M_BindVariable("crispy_jump",            &crispy_jump);
         M_BindVariable("crispy_freelook",        &crispy_freelook);
         M_BindVariable("crispy_mouselook",       &crispy_mouselook);
+        M_BindVariable("crispy_freeaim",         &crispy_freeaim);
         }
     }
 }
