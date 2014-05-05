@@ -358,10 +358,11 @@ void P_PlayerThink (player_t* player)
 	//  (read: not in the middle of an attack).
 	newweapon = (cmd->buttons&BT_WEAPONMASK)>>BT_WEAPONSHIFT;
 	
+	// [crispy] allow to toggle Fist/Chainsaw
 	if (newweapon == wp_fist
 	    && player->weaponowned[wp_chainsaw]
 	    && !(player->readyweapon == wp_chainsaw
-		 && player->powers[pw_strength]))
+		 && (player->powers[pw_strength] || singleplayer)))
 	{
 	    newweapon = wp_chainsaw;
 	}

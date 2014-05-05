@@ -284,7 +284,7 @@ static boolean WeaponSelectable(weapontype_t weapon)
      && players[consoleplayer].weaponowned[wp_chainsaw]
      && !players[consoleplayer].powers[pw_strength])
     {
-        return false;
+        return (singleplayer); // [crispy] yes, we can
     }
 
     return true;
