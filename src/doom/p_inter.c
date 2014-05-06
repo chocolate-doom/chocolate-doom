@@ -918,7 +918,7 @@ P_DamageMobj
 	    source->player->readyweapon == wp_supershotgun &&
 	    target->info->xdeathstate &&
 	    P_CheckMeleeRange(target) &&
-	    damage == 15)
+	    damage >= 10)
 	    target->health -= target->info->spawnhealth;
 
 	P_KillMobj (source, target);
