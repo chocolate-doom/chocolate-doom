@@ -209,6 +209,39 @@ static const joystick_config_t wii_controller_wjoy[] =
     {NULL, 0},
 };
 
+// Xbox 360 controller. Thanks to Brad Harding for the details.
+static const joystick_config_t xbox360_controller[] =
+{
+    {"joystick_x_axis",        CREATE_HAT_AXIS(0, HAT_AXIS_HORIZONTAL)},
+    {"joystick_y_axis",        CREATE_HAT_AXIS(0, HAT_AXIS_VERTICAL)},
+    {"joystick_strafe_axis",   2},  // Trigger buttons form an axis(???)
+    {"joyb_fire",              2},  // X
+    {"joyb_speed",             0},  // A
+    {"joyb_jump",              3},  // Y
+    {"joyb_use",               1},  // B
+    {"joyb_prevweapon",        4},  // LB
+    {"joyb_nextweapon",        5},  // RB
+    {"joyb_menu_activate",     9},  // Start
+    {NULL, 0},
+};
+
+// Logitech Dual Action (F310, F710). Thanks to Brad Harding for details.
+static const joystick_config_t logitech_f310_controller[] =
+{
+    {"joystick_x_axis",        CREATE_HAT_AXIS(0, HAT_AXIS_HORIZONTAL)},
+    {"joystick_y_axis",        CREATE_HAT_AXIS(0, HAT_AXIS_VERTICAL)},
+    {"joyb_fire",              0},  // X
+    {"joyb_speed",             1},  // A
+    {"joyb_jump",              3},  // Y
+    {"joyb_use",               2},  // B
+    {"joyb_strafeleft",        6},  // LT
+    {"joyb_straferight",       7},  // RT
+    {"joyb_prevweapon",        4},  // LB
+    {"joyb_nextweapon",        5},  // RB
+    {"joyb_menu_activate",     11}, // Start
+    {NULL, 0},
+};
+
 static const known_joystick_t known_joysticks[] =
 {
     {
@@ -227,6 +260,18 @@ static const known_joystick_t known_joysticks[] =
         "Wiimote (*",  // WJoy includes the Wiimote MAC address.
         6, 26, 0,
         wii_controller_wjoy,
+    },
+
+    {
+        "Controller (XBOX 360 For Windows)",
+        5, 10, 1,
+        xbox360_controller,
+    },
+
+    {
+        "Logitech Dual Action",
+        4, 12, 1,
+        logitech_f310_controller,
     },
 };
 
