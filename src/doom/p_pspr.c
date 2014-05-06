@@ -172,6 +172,10 @@ boolean P_CheckAmmo (player_t* player)
     else
 	count = 1;	// Regular.
 
+    // [crispy] force weapon switch if weapon not owned
+    if (singleplayer && !player->weaponowned[player->readyweapon])
+	count = INT_MAX;
+
     // Some do not need ammunition anyway.
     // Return if current ammunition sufficient.
     if (ammo == am_noammo || player->ammo[ammo] >= count)

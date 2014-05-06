@@ -417,6 +417,7 @@ cheatseq_t cheat_choppers = CHEAT("idchoppers", 0);
 cheatseq_t cheat_clev = CHEAT("idclev", 2);
 cheatseq_t cheat_mypos = CHEAT("idmypos", 0);
 
+cheatseq_t cheat_weapon = CHEAT("tntweap", 1);
 cheatseq_t cheat_massacre = CHEAT("tntem", 0);
 cheatseq_t cheat_notarget = CHEAT("notarget", 0);
 
@@ -712,6 +713,45 @@ ST_Responder (event_t* ev)
       // So be it.
       plyr->message = DEH_String(STSTR_CLEV);
       G_DeferedInitNew(gameskill, epsd, map);
+    }
+    // [crispy] implement Boom's "tntweap?" weapon cheats
+    else
+    if (singleplayer && cht_CheckCheat(&cheat_weapon, ev->data2))
+    {
+      char		buf[2];
+      int		w;
+
+      cht_GetParam(&cheat_weapon, buf);
+      w = *buf - '1';
+
+      if (w == wp_supershotgun && !have_ssg)
+	return false;
+
+      if ((w == wp_bfg || w == wp_plasma) && gamemode == shareware)
+	return false;
+
+      if (w < 0 || w >= NUMWEAPONS)
+	return false;
+
+      // make '1' apply beserker strength toggle
+      if (w == wp_fist)
+      {
+	if (!plyr->powers[pw_strength])
+	  P_GivePower(plyr, pw_strength);
+	else
+	  plyr->powers[pw_strength] = 0;
+      }
+      else
+      {
+	if ((plyr->weaponowned[w] = !plyr->weaponowned[w]))
+	  plyr->message = "Weapon Added";
+	else
+	{
+	  plyr->message = "Weapon Removed";
+	  if (w == plyr->readyweapon)
+	    P_CheckAmmo(plyr);
+	}
+      }
     }
 
     // [crispy] implement Boom's "tntem" and PrBoom+'s "notarget" cheats
