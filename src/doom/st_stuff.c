@@ -421,6 +421,8 @@ cheatseq_t cheat_weapon = CHEAT("tntweap", 1);
 cheatseq_t cheat_massacre = CHEAT("tntem", 0);
 cheatseq_t cheat_notarget = CHEAT("notarget", 0);
 
+extern int crispy_coloredhud;
+
 //
 // STATUS BAR CODE
 //
@@ -720,17 +722,18 @@ ST_Responder (event_t* ev)
     {
       char		buf[2];
       int		w;
+      static char msg[32];
 
       cht_GetParam(&cheat_weapon, buf);
       w = *buf - '1';
+
+      if (w < 0 || w >= NUMWEAPONS)
+	return false;
 
       if (w == wp_supershotgun && !have_ssg)
 	return false;
 
       if ((w == wp_bfg || w == wp_plasma) && gamemode == shareware)
-	return false;
-
-      if (w < 0 || w >= NUMWEAPONS)
 	return false;
 
       // make '1' apply beserker strength toggle
@@ -740,18 +743,24 @@ ST_Responder (event_t* ev)
 	  P_GivePower(plyr, pw_strength);
 	else
 	  plyr->powers[pw_strength] = 0;
+	M_snprintf(msg, sizeof(msg), DEH_String(STSTR_BEHOLDX));
       }
       else
       {
 	if ((plyr->weaponowned[w] = !plyr->weaponowned[w]))
-	  plyr->message = "Weapon Added";
+	  M_snprintf(msg, sizeof(msg), "Weapon \x1b%c%d\x1b%c Added",
+	    (crispy_coloredhud) ? '0' + CR_GOLD : '0' + CR_RED,
+	    w + 1, '0' + CR_RED);
 	else
 	{
-	  plyr->message = "Weapon Removed";
+	  M_snprintf(msg, sizeof(msg), "Weapon \x1b%c%d\x1b%c Removed",
+	    (crispy_coloredhud) ? '0' + CR_GOLD : '0' + CR_RED,
+	    w + 1, '0' + CR_RED);
 	  if (w == plyr->readyweapon)
 	    P_CheckAmmo(plyr);
 	}
       }
+      plyr->message = msg;
     }
 
     // [crispy] implement Boom's "tntem" and PrBoom+'s "notarget" cheats
@@ -759,7 +768,6 @@ ST_Responder (event_t* ev)
     {
         static char msg[32];
         int killcount = ST_cheat_massacre();
-        extern int crispy_coloredhud;
 
         M_snprintf(msg, sizeof(msg), "\x1b%c%d \x1b%cMonster%s Killed",
             (crispy_coloredhud) ? '0' + CR_GOLD : '0' + CR_RED,
@@ -770,7 +778,6 @@ ST_Responder (event_t* ev)
     if (singleplayer && cht_CheckCheat(&cheat_notarget, ev->data2))
     {
         static char msg[32];
-        extern int crispy_coloredhud;
 
         plyr->cheats ^= CF_NOTARGET;
 
@@ -1132,8 +1139,6 @@ enum
 
 byte* ST_WidgetColor(int i)
 {
-    extern int crispy_coloredhud;
-
     if (!crispy_coloredhud)
         return NULL;
 
