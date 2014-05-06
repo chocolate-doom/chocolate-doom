@@ -651,7 +651,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     {
         mbmlookctrl |= 1; // clicked
     }
-    if (mbmlookctrl && !(mbmlookctrl & 2) && mousey)
+    if (mbmlookctrl && !(mbmlookctrl & 2) && (mousey > 7 || mousey < -7))
     {
         mbmlookctrl |= 2; // moved
     }
