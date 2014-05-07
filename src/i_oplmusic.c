@@ -881,11 +881,20 @@ static void KeyOnEvent(opl_track_data_t *track, midi_event_t *event)
            event->data.channel.param2);
 */
 
-    // The channel.
-
-    channel = &track->channels[event->data.channel.channel];
     key = event->data.channel.param1;
     volume = event->data.channel.param2;
+
+    // A volume of zero means key off. Some MIDI tracks, eg. the ones
+    // in AV.wad, use a second key on with a volume of zero to mean
+    // key off.
+    if (volume <= 0)
+    {
+        KeyOffEvent(track, event);
+        return;
+    }
+
+    // The channel.
+    channel = &track->channels[event->data.channel.channel];
 
     // Percussion channel (10) is treated differently.
 
