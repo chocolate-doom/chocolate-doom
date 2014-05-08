@@ -46,6 +46,9 @@
 
 #define PERCUSSION_LOG_LEN 16
 
+// TODO: Figure out why this is needed.
+#define TEMPO_FUDGE_FACTOR 0.26
+
 typedef struct
 {
     byte tremolo;
@@ -103,11 +106,6 @@ typedef struct
     // Track iterator used to read new events.
 
     midi_track_iter_t *iter;
-
-    // Tempo control variables
-
-    unsigned int ticks_per_beat;
-    unsigned int ms_per_beat;
 } opl_track_data_t;
 
 typedef struct opl_voice_s opl_voice_t;
@@ -323,6 +321,11 @@ static opl_track_data_t *tracks;
 static unsigned int num_tracks = 0;
 static unsigned int running_tracks = 0;
 static boolean song_looping;
+
+// Tempo control variables
+
+static unsigned int ticks_per_beat;
+static unsigned int us_per_beat;
 
 // Mini-log of recently played percussion instruments:
 
@@ -1017,6 +1020,9 @@ static void PitchBendEvent(opl_track_data_t *track, midi_event_t *event)
 
 static void MetaEvent(opl_track_data_t *track, midi_event_t *event)
 {
+    byte *data = event->data.meta.data;
+    unsigned int data_len = event->data.meta.length;
+
     switch (event->data.meta.type)
     {
         // Things we can just ignore.
@@ -1030,6 +1036,13 @@ static void MetaEvent(opl_track_data_t *track, midi_event_t *event)
         case MIDI_META_MARKER:
         case MIDI_META_CUE_POINT:
         case MIDI_META_SEQUENCER_SPECIFIC:
+            break;
+
+        case MIDI_META_SET_TEMPO:
+            if (data_len == 3)
+            {
+                us_per_beat = (data[0] << 16) | (data[1] << 8) | data[2];
+            }
             break;
 
         // End of track - actually handled when we run out of events
@@ -1161,7 +1174,7 @@ static void ScheduleTrack(opl_track_data_t *track)
     // Get the number of milliseconds until the next event.
 
     nticks = MIDI_GetDeltaTime(track->iter);
-    ms = (nticks * track->ms_per_beat) / track->ticks_per_beat;
+    ms = (nticks * us_per_beat * TEMPO_FUDGE_FACTOR) / ticks_per_beat;
     total += ms;
 
     // Set a timer to be invoked when the next event is
@@ -1190,12 +1203,6 @@ static void StartTrack(midi_file_t *file, unsigned int track_num)
 
     track = &tracks[track_num];
     track->iter = MIDI_IterateTrack(file, track_num);
-    track->ticks_per_beat = MIDI_GetFileTimeDivision(file);
-
-    // Default is 120 bpm.
-    // TODO: this is wrong
-
-    track->ms_per_beat = 500 * 260;
 
     for (i=0; i<MIDI_CHANNELS_PER_TRACK; ++i)
     {
@@ -1228,6 +1235,13 @@ static void I_OPL_PlaySong(void *handle, boolean looping)
     num_tracks = MIDI_NumTracks(file);
     running_tracks = num_tracks;
     song_looping = looping;
+
+    ticks_per_beat = MIDI_GetFileTimeDivision(file);
+
+    // Default is 120 bpm.
+    // TODO: this is wrong
+
+    us_per_beat = 500 * 1000;
 
     for (i=0; i<num_tracks; ++i)
     {
