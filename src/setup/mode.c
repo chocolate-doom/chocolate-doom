@@ -338,7 +338,7 @@ void SetupMission(GameSelectCallback callback)
     // @arg <game>
     //
     // Specify the game to configure the settings for.  Valid
-    // values are 'doom', 'heretic' and 'hexen'.
+    // values are 'doom', 'heretic', 'hexen' and 'strife'.
     //
 
     p = M_CheckParm("-game");
