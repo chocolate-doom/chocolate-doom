@@ -1372,7 +1372,7 @@ void G_DoReborn (int playernum)
     {
 	// [crispy] if the player dies and the game has been loaded or saved
 	// in the mean time, reload that savegame instead of restarting the level
-	if (*savename)
+	if (singleplayer && *savename)
 	gameaction = ga_loadgame;
 	else
 	// reload the level from scratch
@@ -1763,6 +1763,11 @@ void G_DoLoadGame (void)
     
     // draw the pattern into the back screen
     R_FillBackScreen ();   
+
+    // [crispy] if the player is dead in this savegame,
+    // do not consider it for reload
+    if (!players[consoleplayer].health)
+	M_StringCopy(savename, "", sizeof(savename));
 } 
  
 
