@@ -428,7 +428,7 @@ R_DrawVisSprite
 	dc_translation = vis->translation;
     }
     // [crispy] translucent sprites
-    if (crispy_translucency && (vis->mobjflags & MF_TRANSLUCENT))
+    if (crispy_translucency && (vis->mobjflags & MF_TRANSLUCENT) && dc_colormap)
     {
 	colfunc = tlcolfunc;
     }
