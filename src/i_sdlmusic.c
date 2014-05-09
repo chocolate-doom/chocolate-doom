@@ -485,6 +485,11 @@ static char *GetFullPath(char *base_filename, char *path)
     }
 #endif
 
+    // Paths in the substitute filenames can contain Unix-style /
+    // path separators, but we should convert this to the separator
+    // for the native platform.
+    path = M_StringReplace(path, "/", DIR_SEPARATOR_S);
+
     // Copy config filename and cut off the filename to just get the
     // parent dir.
     basedir = strdup(base_filename);
@@ -499,6 +504,7 @@ static char *GetFullPath(char *base_filename, char *path)
         result = strdup(path);
     }
     free(basedir);
+    free(path);
 
     return result;
 }
