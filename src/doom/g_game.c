@@ -1372,7 +1372,9 @@ void G_DoReborn (int playernum)
     {
 	// [crispy] if the player dies and the game has been loaded or saved
 	// in the mean time, reload that savegame instead of restarting the level
-	if (singleplayer && *savename)
+	// - can be overridden by pressing "Run" with "Use"
+	if (singleplayer && *savename &&
+	    !(gamekeydown[key_speed] || joybuttons[joybspeed]))
 	gameaction = ga_loadgame;
 	else
 	// reload the level from scratch
