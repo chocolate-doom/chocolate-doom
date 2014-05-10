@@ -184,6 +184,7 @@ char *D_GameMissionString(GameMission_t mission)
     switch (mission)
     {
         case none:
+        default:
             return "none";
         case doom:
             return "doom";
