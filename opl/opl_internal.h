@@ -32,6 +32,7 @@ typedef void (*opl_clear_callbacks_func)(void);
 typedef void (*opl_lock_func)(void);
 typedef void (*opl_unlock_func)(void);
 typedef void (*opl_set_paused_func)(int paused);
+typedef void (*opl_adjust_callbacks_func)(float value);
 
 typedef struct
 {
@@ -46,6 +47,7 @@ typedef struct
     opl_lock_func lock_func;
     opl_unlock_func unlock_func;
     opl_set_paused_func set_paused_func;
+    opl_adjust_callbacks_func adjust_callbacks_func;
 } opl_driver_t;
 
 // Sample rate to use when doing software emulation.

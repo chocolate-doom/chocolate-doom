@@ -184,7 +184,8 @@ opl_driver_t opl_win32_driver =
     OPL_Timer_ClearCallbacks,
     OPL_Timer_Lock,
     OPL_Timer_Unlock,
-    OPL_Timer_SetPaused
+    OPL_Timer_SetPaused,
+    OPL_Timer_AdjustCallbacks,
 };
 
 #endif /* #ifdef _WIN32 */

@@ -1016,6 +1016,12 @@ static void PitchBendEvent(opl_track_data_t *track, midi_event_t *event)
     }
 }
 
+static void MetaSetTempo(unsigned int tempo)
+{
+    OPL_AdjustCallbacks((float) us_per_beat / tempo);
+    us_per_beat = tempo;
+}
+
 // Process a meta event.
 
 static void MetaEvent(opl_track_data_t *track, midi_event_t *event)
@@ -1041,7 +1047,7 @@ static void MetaEvent(opl_track_data_t *track, midi_event_t *event)
         case MIDI_META_SET_TEMPO:
             if (data_len == 3)
             {
-                us_per_beat = (data[0] << 16) | (data[1] << 8) | data[2];
+                MetaSetTempo((data[0] << 16) | (data[1] << 8) | data[2]);
             }
             break;
 
@@ -1168,19 +1174,19 @@ static void TrackTimerCallback(void *arg)
 static void ScheduleTrack(opl_track_data_t *track)
 {
     unsigned int nticks;
-    unsigned int ms;
-    static int total = 0;
+    uint64_t ms;
 
     // Get the number of milliseconds until the next event.
 
     nticks = MIDI_GetDeltaTime(track->iter);
-    ms = (nticks * us_per_beat * TEMPO_FUDGE_FACTOR) / ticks_per_beat;
-    total += ms;
+    ms = nticks;
+    ms *= us_per_beat * TEMPO_FUDGE_FACTOR;
+    ms /= ticks_per_beat;
 
     // Set a timer to be invoked when the next event is
     // ready to play.
 
-    OPL_SetCallback(ms, TrackTimerCallback, track);
+    OPL_SetCallback((unsigned int) ms, TrackTimerCallback, track);
 }
 
 // Initialize a channel.

@@ -224,6 +224,13 @@ void OPL_Timer_ClearCallbacks(void)
     SDL_UnlockMutex(callback_queue_mutex);
 }
 
+void OPL_Timer_AdjustCallbacks(float factor)
+{
+    SDL_LockMutex(callback_queue_mutex);
+    OPL_Queue_AdjustCallbacks(callback_queue, current_time, factor);
+    SDL_UnlockMutex(callback_queue_mutex);
+}
+
 void OPL_Timer_Lock(void)
 {
     SDL_LockMutex(timer_mutex);

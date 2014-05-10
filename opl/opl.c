@@ -452,3 +452,11 @@ void OPL_SetPaused(int paused)
     }
 }
 
+void OPL_AdjustCallbacks(float value)
+{
+    if (driver != NULL)
+    {
+        driver->adjust_callbacks_func(value);
+    }
+}
+

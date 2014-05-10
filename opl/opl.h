@@ -104,6 +104,11 @@ void OPL_InitRegisters(void);
 
 void OPL_SetCallback(unsigned int ms, opl_callback_t callback, void *data);
 
+// Adjust callback times by the specified factor. For example, a value of
+// 0.5 will halve all remaining times.
+
+void OPL_AdjustCallbacks(float factor);
+
 // Clear all OPL callbacks that have been set.
 
 void OPL_ClearCallbacks(void);
