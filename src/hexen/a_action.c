@@ -295,10 +295,15 @@ void A_LeafSpawn(mobj_t * actor)
 
     for (i = (P_Random() & 3) + 1; i; i--)
     {
-        mo = P_SpawnMobj(actor->x + ((P_Random() - P_Random()) << 14),
-                         actor->y + ((P_Random() - P_Random()) << 14),
-                         actor->z + (P_Random() << 14),
-                         MT_LEAF1 + (P_Random() & 1));
+        // Official release of Hexen's source code relies on unspecified behavior
+        // the in order of function's argument evaluation,
+        // see ISO-IEC 9899-1999, [6.5.2.2.10]
+        mobjtype_t type = MT_LEAF1 + (P_Random() & 1);
+        fixed_t z = actor->z + (P_Random() << 14);
+        fixed_t y = actor->y + ((P_Random() - P_Random()) << 14);
+        fixed_t x = actor->x + ((P_Random() - P_Random()) << 14);
+
+        mo = P_SpawnMobj(x, y, z, type);
         if (mo)
         {
             P_ThrustMobj(mo, actor->angle, (P_Random() << 9) + 3 * FRACUNIT);
