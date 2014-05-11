@@ -25,7 +25,7 @@ typedef int (*opl_init_func)(unsigned int port_base);
 typedef void (*opl_shutdown_func)(void);
 typedef unsigned int (*opl_read_port_func)(opl_port_t port);
 typedef void (*opl_write_port_func)(opl_port_t port, unsigned int value);
-typedef void (*opl_set_callback_func)(unsigned int ms,
+typedef void (*opl_set_callback_func)(unsigned int us,
                                       opl_callback_t callback,
                                       void *data);
 typedef void (*opl_clear_callbacks_func)(void);

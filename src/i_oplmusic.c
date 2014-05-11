@@ -47,7 +47,7 @@
 #define PERCUSSION_LOG_LEN 16
 
 // TODO: Figure out why this is needed.
-#define TEMPO_FUDGE_FACTOR 0.26
+#define TEMPO_FUDGE_FACTOR 260
 
 typedef struct
 {
@@ -1160,7 +1160,7 @@ static void TrackTimerCallback(void *arg)
 
         if (running_tracks <= 0 && song_looping)
         {
-            OPL_SetCallback(5, RestartSong, NULL);
+            OPL_SetCallback(5000, RestartSong, NULL);
         }
 
         return;
@@ -1174,19 +1174,18 @@ static void TrackTimerCallback(void *arg)
 static void ScheduleTrack(opl_track_data_t *track)
 {
     unsigned int nticks;
-    uint64_t ms;
+    uint64_t us;
 
-    // Get the number of milliseconds until the next event.
+    // Get the number of microseconds until the next event.
 
     nticks = MIDI_GetDeltaTime(track->iter);
-    ms = nticks;
-    ms *= us_per_beat * TEMPO_FUDGE_FACTOR;
-    ms /= ticks_per_beat;
+    us = ((uint64_t) nticks * us_per_beat * TEMPO_FUDGE_FACTOR)
+       / ticks_per_beat;
 
     // Set a timer to be invoked when the next event is
     // ready to play.
 
-    OPL_SetCallback((unsigned int) ms, TrackTimerCallback, track);
+    OPL_SetCallback(us, TrackTimerCallback, track);
 }
 
 // Initialize a channel.

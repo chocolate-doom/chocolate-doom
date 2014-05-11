@@ -295,7 +295,7 @@ int OPL_Detect(void)
         OPL_ReadStatus();
     }
 
-    OPL_Delay(1);
+    OPL_Delay(1 * OPL_MS);
 
     // Read status
     result2 = OPL_ReadStatus();
@@ -357,11 +357,11 @@ void OPL_InitRegisters(void)
 // Timer functions.
 //
 
-void OPL_SetCallback(unsigned int ms, opl_callback_t callback, void *data)
+void OPL_SetCallback(unsigned int us, opl_callback_t callback, void *data)
 {
     if (driver != NULL)
     {
-        driver->set_callback_func(ms, callback, data);
+        driver->set_callback_func(us, callback, data);
     }
 }
 
@@ -409,7 +409,7 @@ static void DelayCallback(void *_delay_data)
     SDL_UnlockMutex(delay_data->mutex);
 }
 
-void OPL_Delay(unsigned int ms)
+void OPL_Delay(unsigned int us)
 {
     delay_data_t delay_data;
 
@@ -425,7 +425,7 @@ void OPL_Delay(unsigned int ms)
     delay_data.mutex = SDL_CreateMutex();
     delay_data.cond = SDL_CreateCond();
 
-    OPL_SetCallback(ms, DelayCallback, &delay_data);
+    OPL_SetCallback(us, DelayCallback, &delay_data);
 
     // Wait until the callback is invoked.
 

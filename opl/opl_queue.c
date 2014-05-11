@@ -28,7 +28,7 @@ typedef struct
 {
     opl_callback_t callback;
     void *data;
-    unsigned int time;
+    uint64_t time;
 } opl_queue_entry_t;
 
 struct opl_callback_queue_s
@@ -64,7 +64,7 @@ void OPL_Queue_Clear(opl_callback_queue_t *queue)
 
 void OPL_Queue_Push(opl_callback_queue_t *queue,
                     opl_callback_t callback, void *data,
-                    unsigned int time)
+                    uint64_t time)
 {
     int entry_id;
     int parent_id;
@@ -189,7 +189,7 @@ int OPL_Queue_Pop(opl_callback_queue_t *queue,
     return 1;
 }
 
-unsigned int OPL_Queue_Peek(opl_callback_queue_t *queue)
+uint64_t OPL_Queue_Peek(opl_callback_queue_t *queue)
 {
     if (queue->num_entries > 0)
     {
@@ -202,15 +202,15 @@ unsigned int OPL_Queue_Peek(opl_callback_queue_t *queue)
 }
 
 void OPL_Queue_AdjustCallbacks(opl_callback_queue_t *queue,
-                               unsigned int time, float factor)
+                               uint64_t time, float factor)
 {
-    int offset;
+    int64_t offset;
     int i;
 
     for (i = 0; i < queue->num_entries; ++i)
     {
         offset = queue->entries[i].time - time;
-        queue->entries[i].time = time + (int) (offset * factor);
+        queue->entries[i].time = time + (uint64_t) (offset * factor);
     }
 }
 

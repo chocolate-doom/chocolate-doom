@@ -139,7 +139,7 @@ void TimerCallback(void *data)
 
     // Schedule the next timer callback.
 
-    OPL_SetCallback(delay, TimerCallback, timer_data);
+    OPL_SetCallback(delay * OPL_MS, TimerCallback, timer_data);
 }
 
 void PlayFile(char *filename)
@@ -183,7 +183,7 @@ void PlayFile(char *filename)
         running = timer_data.running;
         OPL_Unlock();
 
-        SDL_Delay(100);
+        SDL_Delay(100 * OPL_MS);
     } while (running);
 
     fclose(timer_data.fstream);
