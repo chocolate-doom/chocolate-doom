@@ -41,12 +41,12 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;..\src;..\src\strife;..\src\doom;..\textscreen;..\pcsound;..\opl"
+				AdditionalIncludeDirectories=".;..\src;..\src\strife;..\textscreen;..\pcsound;..\opl"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;PROGRAM_PREFIX=&quot;\&quot;chocolate-\&quot;&quot;"
 				MinimalRebuild="true"
 				ExceptionHandling="0"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="2"
+				RuntimeLibrary="3"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				ExpandAttributedSource="true"
@@ -66,11 +66,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib ..\lib\libpcsound.lib ..\lib\libtextscreen.lib ..\lib\libopl.lib"
+				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib"
 				OutputFile="$(OutDir)\chocolate-strife-dbg.exe"
 				LinkIncremental="2"
-				IgnoreAllDefaultLibraries="false"
-				IgnoreDefaultLibraryNames="msvcrtd.lib"
+				IgnoreDefaultLibraryNames="msvcrt"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				DataExecutionPrevention="0"
@@ -129,7 +128,7 @@
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="true"
 				WholeProgramOptimization="true"
-				AdditionalIncludeDirectories=".;..\src;..\src\strife;..\src\doom;..\textscreen;..\pcsound;..\opl"
+				AdditionalIncludeDirectories=".;..\src;..\src\strife;..\textscreen;..\pcsound;..\opl"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;PROGRAM_PREFIX=&quot;\&quot;chocolate-\&quot;&quot;"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -149,7 +148,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib ..\lib\libpcsound.lib ..\lib\libtextscreen.lib ..\lib\libopl.lib"
+				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib"
 				OutputFile="$(OutDir)\chocolate-strife.exe"
 				LinkIncremental="0"
 				IgnoreDefaultLibraryNames="msvcrtd"
