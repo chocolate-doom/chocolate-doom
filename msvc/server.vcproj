@@ -63,6 +63,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="SDL.lib SDL_net.lib SDLmain.lib"
 				OutputFile="$(OutDir)\chocolate-server-dbg.exe"
+				IgnoreDefaultLibraryNames="msvcrt"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -140,6 +141,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="SDL.lib SDL_net.lib SDLmain.lib"
 				OutputFile="$(OutDir)\chocolate-server.exe"
+				IgnoreDefaultLibraryNames="msvcrtd"
 				GenerateDebugInformation="false"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -222,6 +224,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\net_query.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\net_sdl.c"
 				>
 			</File>
@@ -277,6 +283,10 @@
 			</File>
 			<File
 				RelativePath="..\src\net_packet.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\net_query.h"
 				>
 			</File>
 			<File

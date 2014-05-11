@@ -275,6 +275,8 @@ static void ParseFlacFile(file_metadata_t *metadata, FILE *fs)
 
     for (;;)
     {
+        long pos = -1;
+
         // Read METADATA_BLOCK_HEADER:
         if (fread(header, 4, 1, fs) < 1)
         {
@@ -285,7 +287,7 @@ static void ParseFlacFile(file_metadata_t *metadata, FILE *fs)
         last_block = (header[0] & 0x80) != 0;
         block_len = (header[1] << 16) | (header[2] << 8) | header[3];
 
-        long pos = ftell(fs);
+        pos = ftell(fs);
         if (pos < 0)
         {
             return;
