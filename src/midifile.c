@@ -699,7 +699,19 @@ int MIDI_GetNextEvent(midi_track_iter_t *iter, midi_event_t **event)
 
 unsigned int MIDI_GetFileTimeDivision(midi_file_t *file)
 {
-    return SHORT(file->header.time_division);
+    short result = SHORT(file->header.time_division);
+
+    // Negative time division indicates SMPTE time and must be handled
+    // differently.
+    if (result < 0)
+    {
+        // TODO: Figure this out.
+        return 96;
+    }
+    else
+    {
+        return result;
+    }
 }
 
 void MIDI_RestartIterator(midi_track_iter_t *iter)
