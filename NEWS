@@ -9,10 +9,10 @@
     MusicallyInspired).
 
     Support for joysticks and gamepads has been significantly
-    improved. Most gamepads should now work; if they don't, please
-    report a bug. A number of gamepads are now automatically
-    detected and configured automatically; if yours is not, you can
-    help by sending in your details. See the following page:
+    improved in this version. Most gamepads should now work; if they
+    don't, please report a bug. A number of gamepads are now
+    automatically detected and configured automatically; if yours is
+    not, you can help by sending in details. See the following page:
 
       http://www.chocolate-doom.org/wiki/index.php/Adding_your_gamepad
 
@@ -21,6 +21,10 @@
     play back properly, MIDI tempo meta events are now supported and
     problems with stuttering when playing certain tracks have been
     fixed.
+
+    Also of note is that Chocolate Doom now has a document that
+    describes the philosophy of the project and the reasoning behind
+    its design (see PHILOSOPHY distributed with the source).
 
     Other new features:
      * There is now a -dehlump command line parameter to load Dehacked
