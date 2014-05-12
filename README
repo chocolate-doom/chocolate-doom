@@ -16,6 +16,9 @@ Chocolate Doom's aims are:
  * To provide an accurate retro "feel" (display and input should
    behave the same).
 
+More information about the philosophy and design behind Chocolate Doom
+can be found in the PHILOSOPHY file distributed with the source code.
+
 == Setting up gameplay ==
 
 For instructions on how to set up Chocolate Doom for play, see the
