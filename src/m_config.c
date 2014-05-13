@@ -1228,6 +1228,18 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_spy),
 
     //!
+    // Keyboard shortcut to go to next level.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_nextlevel),
+
+    //!
+    // Keyboard shortcut to reload current level.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_reloadlevel),
+
+    //!
     // Keyboard shortcut to increase the screen size.
     //
 

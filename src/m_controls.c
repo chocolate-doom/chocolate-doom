@@ -184,6 +184,9 @@ int key_menu_gamma     = KEY_F11;
 int key_menu_incscreen = KEY_EQUALS;
 int key_menu_decscreen = KEY_MINUS;
 int key_menu_screenshot = 0;
+int key_menu_nextlevel = 0;
+int key_menu_reloadlevel = 0;
+
 
 //
 // Joystick controls
@@ -388,6 +391,8 @@ void M_BindMenuControls(void)
     M_BindVariable("key_menu_incscreen", &key_menu_incscreen);
     M_BindVariable("key_menu_decscreen", &key_menu_decscreen);
     M_BindVariable("key_menu_screenshot",&key_menu_screenshot);
+    M_BindVariable("key_menu_nextlevel", &key_menu_nextlevel);
+    M_BindVariable("key_menu_reloadlevel", &key_menu_reloadlevel);
     M_BindVariable("key_demo_quit",      &key_demo_quit);
     M_BindVariable("key_spy",            &key_spy);
 }
