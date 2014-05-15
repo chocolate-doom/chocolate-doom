@@ -51,6 +51,7 @@
 
 #include "v_trans.h"
 #include "v_video.h"
+#include "p_local.h" // P_AimLineAttack
 
 //
 // Locally used constants, shortcuts.
@@ -518,10 +519,7 @@ void HU_Drawer(void)
 
         if (crispy_crosshair_highlight)
         {
-            extern fixed_t P_AimLineAttack (mobj_t* t1, angle_t angle, fixed_t distance);
-            extern mobj_t *linetarget;
-
-            fixed_t slope = P_AimLineAttack(plr->mo, plr->mo->angle, 16*64*FRACUNIT);
+            P_AimLineAttack(plr->mo, plr->mo->angle, 16*64*FRACUNIT);
 
             if (linetarget && !(linetarget->flags & MF_SHADOW))
             {

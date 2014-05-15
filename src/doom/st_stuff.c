@@ -69,6 +69,8 @@
 
 #include "v_trans.h"
 
+boolean P_CheckAmmo (player_t* player);
+
 //
 // STATUS BAR DATA
 //

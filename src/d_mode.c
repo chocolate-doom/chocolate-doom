@@ -205,6 +205,8 @@ char *D_GameMissionString(GameMission_t mission)
             return "hacx";
         case pack_chex:
             return "chex";
+        case pack_nerve:
+            return "nerve";
         case heretic:
             return "heretic";
         case hexen:

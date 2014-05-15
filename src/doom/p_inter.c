@@ -46,7 +46,9 @@
 #include "s_sound.h"
 
 #include "p_inter.h"
+#include "p_local.h" // P_DamageMobj
 
+boolean P_CheckMeleeRange (mobj_t*	actor);
 
 #define BONUSADD	6
 

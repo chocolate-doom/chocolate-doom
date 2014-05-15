@@ -29,6 +29,7 @@
 
 
 
+#include <stdlib.h> // abs
 #include "doomdef.h"
 #include "d_event.h"
 
