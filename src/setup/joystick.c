@@ -361,11 +361,30 @@ static void LoadKnownConfiguration(void)
     LoadConfigurationSet(jstype->configs);
 }
 
+static void InitJoystick(void)
+{
+    if (!joystick_initted)
+    {
+        joystick_initted = SDL_Init(SDL_INIT_JOYSTICK) >= 0;
+    }
+}
+
+static void UnInitJoystick(void)
+{
+    if (joystick_initted)
+    {
+        SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
+        joystick_initted = 0;
+    }
+}
+
 // Set the label showing the name of the currently selected joystick
 
 static void SetJoystickButtonLabel(void)
 {
     char *name;
+
+    InitJoystick();
 
     name = "None set";
 
@@ -376,6 +395,8 @@ static void SetJoystickButtonLabel(void)
     }
 
     TXT_SetButtonLabel(joystick_button, name);
+
+    UnInitJoystick();
 }
 
 // Try to open all joysticks visible to SDL.
@@ -386,10 +407,7 @@ static int OpenAllJoysticks(void)
     int num_joysticks;
     int result;
 
-    if (!joystick_initted)
-    {
-        return 0;
-    }
+    InitJoystick();
 
     // SDL_JoystickOpen() all joysticks.
 
@@ -447,6 +465,8 @@ static void CloseAllJoysticks(void)
 
     free(all_joysticks);
     all_joysticks = NULL;
+
+    UnInitJoystick();
 }
 
 static void CalibrateXAxis(void)
@@ -544,15 +564,6 @@ static void CalibrateJoystick(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
 // GUI
 //
 
-static void JoystickWindowClosed(TXT_UNCAST_ARG(window), TXT_UNCAST_ARG(unused))
-{
-    if (joystick_initted)
-    {
-        SDL_QuitSubSystem(SDL_INIT_JOYSTICK);
-        joystick_initted = 0;
-    }
-}
-
 static void AddJoystickControl(txt_table_t *table, char *label, int *var)
 {
     txt_joystick_input_t *joy_input;
@@ -568,11 +579,6 @@ void ConfigJoystick(void)
     txt_window_t *window;
     txt_table_t *button_table, *axis_table;
     txt_table_t *joystick_table;
-
-    if (!joystick_initted)
-    {
-        joystick_initted = SDL_Init(SDL_INIT_JOYSTICK) >= 0;
-    }
 
     window = TXT_NewWindow("Gamepad/Joystick configuration");
 
@@ -639,8 +645,6 @@ void ConfigJoystick(void)
     AddJoystickControl(button_table, "Activate menu", &joybmenu);
 
     TXT_SignalConnect(joystick_button, "pressed", CalibrateJoystick, NULL);
-    TXT_SignalConnect(window, "closed", JoystickWindowClosed, NULL);
-
     TXT_SetWindowAction(window, TXT_HORIZ_CENTER, TestConfigAction());
 
     SetJoystickButtonLabel();
