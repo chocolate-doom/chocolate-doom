@@ -573,8 +573,10 @@ void R_ProjectSprite (mobj_t* thing)
     iscale = FixedDiv (FRACUNIT, xscale);
 
     // [crispy] flip death sprites and corpses randomly
-    if (singleplayer && thing->type != MT_CYBORG &&
-        thing->flags & MF_CORPSE && thing->health & 1)
+    if (singleplayer &&
+        thing->type != MT_CYBORG && thing->type != MT_BARREL &&
+        thing->flags & MF_CORPSE &&
+        thing->health & 1)
     {
         flip = true;
     }
