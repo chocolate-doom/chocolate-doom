@@ -29,7 +29,7 @@
 #include "txt_io.h"
 #include "txt_joyaxis.h"
 
-#define JOYSTICK_AXIS_WIDTH 24
+#define JOYSTICK_AXIS_WIDTH 20
 
 static char *CalibrationLabel(txt_joystick_axis_t *joystick_axis)
 {
@@ -427,7 +427,7 @@ static void TXT_JoystickAxisDrawer(TXT_UNCAST_ARG(joystick_axis))
 
     if (*joystick_axis->axis < 0)
     {
-        M_StringCopy(buf, "(None)", sizeof(buf));
+        M_StringCopy(buf, "(none)", sizeof(buf));
     }
     else if (IS_BUTTON_AXIS(*joystick_axis->axis))
     {
