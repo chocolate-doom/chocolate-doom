@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <libgen.h> // basename()
 
 #include "config.h"
 #include "deh_main.h"
