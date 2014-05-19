@@ -33,6 +33,33 @@ of compatibility:
 "Vanilla" does not include ports (either official or unofficial), such
 as console ports, Doom 95 or Doom 3: BFG Edition.
 
+== Compatibility ==
+
+Chocolate Doom aims to be compatible with Vanilla Doom in several
+different ways. Examples are:
+
+ * Bug compatibility: the aim is to emulate compatibility of the
+   original game down to bugs that were present in the DOS
+   executables. This includes maintaining the limitations of the
+   original engine: for example, the infamous "visplane overflow" bug
+   is intentionally still present, where other source ports have
+   removed it; this allows mappers targeting Vanilla Doom to use
+   Chocolate Doom as a faithful substitute.
+ * Demo compatibility: Doom was one of the first games to develop a
+   'speedrunning' community, and thousands of recordings of Doom
+   gameplay (.lmp demo files) exist in the Compet-N archive. Chocolate
+   Doom aims for the highest standard of demo compatibility with
+   Vanilla Doom, a goal that is often complicated by obscure behavior
+   that can be difficult to reproduce.
+ * Configuration file compatibility: Chocolate Doom uses the same
+   configuration file format as Vanilla Doom, such that a user should
+   be able to reuse their existing Vanilla configuration file without
+   making any changes. Extra non-Vanilla options are stored in a
+   separate configuration file.
+ * Savegame file compatibility: Chocolate Doom uses the same savegame
+   file format as Vanilla, such that it should be possible to import
+   and use existing savegame files.
+
 == DOS tools ==
 
 Chocolate Doom includes some features that aren't part of Vanilla Doom
@@ -74,25 +101,25 @@ situations where changes are considered acceptable:
     the functionality in a modern way. Examples of technology that
     isn't supported are:
 
-    - No support for IPX networks, but TCP/IP is instead.
+    - No support for IPX networks, but TCP/IP is supported instead.
     - No support for dial-up/serial connections; modern operating
       systems have features that do that for you.
     - No MS-DOS version.
 
- 4. Changes are permitted that allow the player to be able play the
+ 4. Changes are acceptable that allow the player to be able play the
     game. For example:
 
     - There are new key bindings for actions that can't be rebound with
       Vanilla Doom, because it's useful for portability to machines
       that don't have a full keyboard.
-    - There are additional mouse or joystick key bindings that let you
+    - There are additional mouse and joystick key bindings that let you
       perform actions with them that can only be done with the keyboard
       in Vanilla Doom.
     - Chocolate Doom includes some hacks to support the Doom 3: BFG
       Edition IWAD files. The assumption is that being able to at least
       play is better than nothing, even if it's not Vanilla behavior.
 
- 5. Adding extra options to Vanilla functionality is permitted as long
+ 5. Adding extra options to Vanilla functionality is acceptable as long
     as the defaults match Vanilla, it doesn't change gameplay and
     there's a good reason for it. For example:
 
@@ -101,7 +128,7 @@ situations where changes are considered acceptable:
       allows the user to use the native keyboard mapping for their
       computer, rather than always assuming a US layout.
 
- 6. Changing configuration file defaults is permitted where there's a
+ 6. Changing configuration file defaults is acceptable where there's a
     very good reason. For example:
 
     - Vanilla Doom defaults to no sound or music if a configuration
@@ -128,11 +155,11 @@ something that is useful for people making Vanilla format maps. On the
 other hand, painstakingly emulating Vanilla Doom by starting with no
 sound or music by default is not helpful to anyone.
 
-== Other philosophical issues ==
+== Other philosophical aspects ==
 
 Chocolate Doom aims for maximal portability. That includes running on
-different CPUs, different operating systems and different devices (ie.
-not just a desktop machine with a keyboard and mouse).
+many different CPUs, different operating systems and different devices
+(ie. not just a desktop machine with a keyboard and mouse).
 
 Chocolate Doom is and will always remain Free Software. It will never
 include code that is not compatible with the GNU GPL.

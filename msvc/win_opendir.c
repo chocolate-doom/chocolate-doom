@@ -1,5 +1,3 @@
-// Emacs style mode select   -*- C++ -*-
-//-----------------------------------------------------------------------------
 //
 // 03/10/2006 James Haley
 //
@@ -7,7 +5,6 @@
 // This code is public domain. No change sufficient enough to constitute a
 // significant or original work has been made, and thus it remains as such.
 //
-//----------------------------------------------------------------------------
 //
 // DESCRIPTION:
 //
@@ -31,7 +28,6 @@
 // * Significantly revised and rewinddir, seekdir and telldir added by Colin
 // * Peters <colin@fu.is.saga-u.ac.jp>
 //
-//-----------------------------------------------------------------------------
 
 #ifndef _MSC_VER
 #error i_opndir.c is for Microsoft Visual C++ only

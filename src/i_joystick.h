@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2007 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,19 +11,18 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //      System-specific joystick interface.
 //
-//-----------------------------------------------------------------------------
 
 
 #ifndef __I_JOYSTICK__
 #define __I_JOYSTICK__
+
+// Number of "virtual" joystick buttons defined in configuration files.
+// This needs to be at least as large as the number of different key
+// bindings supported by the higher-level game code (joyb* variables).
+#define NUM_VIRTUAL_BUTTONS 10
 
 // If this bit is set in a configuration file axis value, the axis is
 // not actually a joystick axis, but instead is a "button axis". This

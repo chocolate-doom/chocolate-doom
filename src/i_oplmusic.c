@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,15 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //	System interface for music.
 //
-//-----------------------------------------------------------------------------
 
 
 #include <stdio.h>
@@ -53,6 +45,9 @@
 #define GENMIDI_FLAG_2VOICE     0x0004         /* double voice (OPL3) */
 
 #define PERCUSSION_LOG_LEN 16
+
+// TODO: Figure out why this is needed.
+#define TEMPO_FUDGE_FACTOR 260
 
 typedef struct
 {
@@ -111,11 +106,6 @@ typedef struct
     // Track iterator used to read new events.
 
     midi_track_iter_t *iter;
-
-    // Tempo control variables
-
-    unsigned int ticks_per_beat;
-    unsigned int ms_per_beat;
 } opl_track_data_t;
 
 typedef struct opl_voice_s opl_voice_t;
@@ -331,6 +321,11 @@ static opl_track_data_t *tracks;
 static unsigned int num_tracks = 0;
 static unsigned int running_tracks = 0;
 static boolean song_looping;
+
+// Tempo control variables
+
+static unsigned int ticks_per_beat;
+static unsigned int us_per_beat;
 
 // Mini-log of recently played percussion instruments:
 
@@ -889,11 +884,20 @@ static void KeyOnEvent(opl_track_data_t *track, midi_event_t *event)
            event->data.channel.param2);
 */
 
-    // The channel.
-
-    channel = &track->channels[event->data.channel.channel];
     key = event->data.channel.param1;
     volume = event->data.channel.param2;
+
+    // A volume of zero means key off. Some MIDI tracks, eg. the ones
+    // in AV.wad, use a second key on with a volume of zero to mean
+    // key off.
+    if (volume <= 0)
+    {
+        KeyOffEvent(track, event);
+        return;
+    }
+
+    // The channel.
+    channel = &track->channels[event->data.channel.channel];
 
     // Percussion channel (10) is treated differently.
 
@@ -1012,10 +1016,19 @@ static void PitchBendEvent(opl_track_data_t *track, midi_event_t *event)
     }
 }
 
+static void MetaSetTempo(unsigned int tempo)
+{
+    OPL_AdjustCallbacks((float) us_per_beat / tempo);
+    us_per_beat = tempo;
+}
+
 // Process a meta event.
 
 static void MetaEvent(opl_track_data_t *track, midi_event_t *event)
 {
+    byte *data = event->data.meta.data;
+    unsigned int data_len = event->data.meta.length;
+
     switch (event->data.meta.type)
     {
         // Things we can just ignore.
@@ -1029,6 +1042,13 @@ static void MetaEvent(opl_track_data_t *track, midi_event_t *event)
         case MIDI_META_MARKER:
         case MIDI_META_CUE_POINT:
         case MIDI_META_SEQUENCER_SPECIFIC:
+            break;
+
+        case MIDI_META_SET_TEMPO:
+            if (data_len == 3)
+            {
+                MetaSetTempo((data[0] << 16) | (data[1] << 8) | data[2]);
+            }
             break;
 
         // End of track - actually handled when we run out of events
@@ -1140,7 +1160,7 @@ static void TrackTimerCallback(void *arg)
 
         if (running_tracks <= 0 && song_looping)
         {
-            OPL_SetCallback(5, RestartSong, NULL);
+            OPL_SetCallback(5000, RestartSong, NULL);
         }
 
         return;
@@ -1154,19 +1174,18 @@ static void TrackTimerCallback(void *arg)
 static void ScheduleTrack(opl_track_data_t *track)
 {
     unsigned int nticks;
-    unsigned int ms;
-    static int total = 0;
+    uint64_t us;
 
-    // Get the number of milliseconds until the next event.
+    // Get the number of microseconds until the next event.
 
     nticks = MIDI_GetDeltaTime(track->iter);
-    ms = (nticks * track->ms_per_beat) / track->ticks_per_beat;
-    total += ms;
+    us = ((uint64_t) nticks * us_per_beat * TEMPO_FUDGE_FACTOR)
+       / ticks_per_beat;
 
     // Set a timer to be invoked when the next event is
     // ready to play.
 
-    OPL_SetCallback(ms, TrackTimerCallback, track);
+    OPL_SetCallback(us, TrackTimerCallback, track);
 }
 
 // Initialize a channel.
@@ -1189,12 +1208,6 @@ static void StartTrack(midi_file_t *file, unsigned int track_num)
 
     track = &tracks[track_num];
     track->iter = MIDI_IterateTrack(file, track_num);
-    track->ticks_per_beat = MIDI_GetFileTimeDivision(file);
-
-    // Default is 120 bpm.
-    // TODO: this is wrong
-
-    track->ms_per_beat = 500 * 260;
 
     for (i=0; i<MIDI_CHANNELS_PER_TRACK; ++i)
     {
@@ -1227,6 +1240,13 @@ static void I_OPL_PlaySong(void *handle, boolean looping)
     num_tracks = MIDI_NumTracks(file);
     running_tracks = num_tracks;
     song_looping = looping;
+
+    ticks_per_beat = MIDI_GetFileTimeDivision(file);
+
+    // Default is 120 bpm.
+    // TODO: this is wrong
+
+    us_per_beat = 500 * 1000;
 
     for (i=0; i<num_tracks; ++i)
     {
@@ -1479,6 +1499,7 @@ music_module_t music_opl_module =
     I_OPL_PlaySong,
     I_OPL_StopSong,
     I_OPL_MusicIsPlaying,
+    NULL,  // Poll
 };
 
 //----------------------------------------------------------------------

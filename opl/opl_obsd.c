@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2009 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,15 +11,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //     OPL OpenBSD interface (also NetBSD)
 //
-//-----------------------------------------------------------------------------
 
 #include "config.h"
 
@@ -118,7 +110,8 @@ opl_driver_t opl_openbsd_driver =
     OPL_Timer_ClearCallbacks,
     OPL_Timer_Lock,
     OPL_Timer_Unlock,
-    OPL_Timer_SetPaused
+    OPL_Timer_SetPaused,
+    OPL_Timer_AdjustCallbacks,
 };
 
 #endif /* #ifndef NO_OBSD_DRIVER */

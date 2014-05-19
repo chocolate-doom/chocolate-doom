@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,12 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 
 // HEADER FILES ------------------------------------------------------------
@@ -303,10 +295,15 @@ void A_LeafSpawn(mobj_t * actor)
 
     for (i = (P_Random() & 3) + 1; i; i--)
     {
-        mo = P_SpawnMobj(actor->x + ((P_Random() - P_Random()) << 14),
-                         actor->y + ((P_Random() - P_Random()) << 14),
-                         actor->z + (P_Random() << 14),
-                         MT_LEAF1 + (P_Random() & 1));
+        // Official release of Hexen's source code relies on unspecified behavior
+        // the in order of function's argument evaluation,
+        // see ISO-IEC 9899-1999, [6.5.2.2.10]
+        mobjtype_t type = MT_LEAF1 + (P_Random() & 1);
+        fixed_t z = actor->z + (P_Random() << 14);
+        fixed_t y = actor->y + ((P_Random() - P_Random()) << 14);
+        fixed_t x = actor->x + ((P_Random() - P_Random()) << 14);
+
+        mo = P_SpawnMobj(x, y, z, type);
         if (mo)
         {
             P_ThrustMobj(mo, actor->angle, (P_Random() << 9) + 3 * FRACUNIT);

@@ -1,7 +1,5 @@
-// Emacs style mode select -*- C++ -*-
-//---------------------------------------------------------------------------
 //
-// Copyright (C) 2005,2006 Simon Howard
+// Copyright (C) 2005-2014 Simon Howard
 // Copyright (C) 2002-2004  The DOSBox Team
 //
 // This program is free software; you can redistribute it and/or modify
@@ -14,16 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 //
-//---------------------------------------------------------------------------
-// 
 // VGA font data
 // Font data is from the DOSBox project (http://dosbox.sourceforge.net/)
 //
-//---------------------------------------------------------------------------
 
 #ifndef __FONT_H__
 #define __FONT_H__

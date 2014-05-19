@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,15 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //	System interface for music.
 //
-//-----------------------------------------------------------------------------
 
 
 #include <stdio.h>
@@ -283,6 +275,8 @@ static void ParseFlacFile(file_metadata_t *metadata, FILE *fs)
 
     for (;;)
     {
+        long pos = -1;
+
         // Read METADATA_BLOCK_HEADER:
         if (fread(header, 4, 1, fs) < 1)
         {
@@ -293,7 +287,7 @@ static void ParseFlacFile(file_metadata_t *metadata, FILE *fs)
         last_block = (header[0] & 0x80) != 0;
         block_len = (header[1] << 16) | (header[2] << 8) | header[3];
 
-        long pos = ftell(fs);
+        pos = ftell(fs);
         if (pos < 0)
         {
             return;
@@ -493,6 +487,11 @@ static char *GetFullPath(char *base_filename, char *path)
     }
 #endif
 
+    // Paths in the substitute filenames can contain Unix-style /
+    // path separators, but we should convert this to the separator
+    // for the native platform.
+    path = M_StringReplace(path, "/", DIR_SEPARATOR_S);
+
     // Copy config filename and cut off the filename to just get the
     // parent dir.
     basedir = strdup(base_filename);
@@ -507,6 +506,7 @@ static char *GetFullPath(char *base_filename, char *path)
         result = strdup(path);
     }
     free(basedir);
+    free(path);
 
     return result;
 }
@@ -520,11 +520,23 @@ static char *ParseSubstituteLine(char *filename, char *line)
     char *p;
     int hash_index;
 
+    // Strip out comments if present.
+    p = strchr(line, '#');
+    if (p != NULL)
+    {
+        while (p > line && isspace(*(p - 1)))
+        {
+            --p;
+        }
+        *p = '\0';
+    }
+
     // Skip leading spaces.
     for (p = line; *p != '\0' && isspace(*p); ++p);
 
-    // Comment or empty line? This is valid syntax, so just return success.
-    if (*p == '#' || *p == '\0')
+    // Empty line? This includes comment lines now that comments have
+    // been stripped.
+    if (*p == '\0')
     {
         return NULL;
     }

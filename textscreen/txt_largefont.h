@@ -1,7 +1,5 @@
-// Emacs style mode select -*- C++ -*-
-//---------------------------------------------------------------------------
 //
-// Copyright (C) 2012 Simon Howard
+// Copyright (C) 2005-2014 Simon Howard
 // Copyright (C) 2002-2004  The DOSBox Team
 //
 // This program is free software; you can redistribute it and/or modify
@@ -14,18 +12,12 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-//
-//---------------------------------------------------------------------------
 //
 // "High resolution" font.
 //
 // This is an enhanced version of the 8x16 font from txt_font.h that
 // has been doubled in size to 16x32, and then manually tweaked.
 //
-//---------------------------------------------------------------------------
 
 static uint8_t large_font_data[] =
 {

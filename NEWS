@@ -1,4 +1,138 @@
 
+2.1.0 (2014-??-??):
+
+    Chocolate Doom now supports high-quality substitute music packs
+    that are used in place of the original MIDI music tracks. I'm
+    hoping to put together high-quality recordings of the music for
+    all supported games using the Roland SC-55 synthesizer
+    originally used to compose Doom's music (thanks twipley and
+    MusicallyInspired).
+
+    Support for joysticks and gamepads has been significantly
+    improved in this version. Most gamepads should now work; if they
+    don't, please report a bug. A number of gamepads are now
+    automatically detected and configured automatically; if yours is
+    not, you can help by sending in details. See the following page:
+
+      http://www.chocolate-doom.org/wiki/index.php/Adding_your_gamepad
+
+    OPL MIDI playback has been significantly improved, and problems
+    with certain tracks have been resolved. Multi-track MIDI Files now
+    play back properly, MIDI tempo meta events are now supported and
+    problems with stuttering when playing certain tracks have been
+    fixed.
+
+    Also of note is that Chocolate Doom now has a document that
+    describes the philosophy of the project and the reasoning behind
+    its design (see PHILOSOPHY distributed with the source).
+
+    Other new features:
+     * There is now a -dehlump command line parameter to load Dehacked
+       files contained inside WAD files (thanks Fabian Greffrath).
+     * PNG format screenshots are now supported, and there is a
+       dedicated key binding for taking screenshots without needing to
+       always use -devparm (thanks Fabian Greffrath). The PrintScreen
+       key can be used as a key binding (thanks Alexandre-Xavier).
+     * There is now a config file variable (snd_maxslicetime_ms) to
+       control the sound buffer size, and the default is more precise
+       to reduce sound latency (thanks Holering).
+     * You can now use an external command for music playback (thanks
+       Holering).
+     * All games now detect if you're tring to play using the wrong
+       type of IWAD (doom.wad with Hexen, etc.) and exit with a
+       helpful error message.
+     * The OS X app now associates with .hhe and .seh files.
+     * There is now a -nodes parameter that automatically starts a
+       netgame when a desired number of players have joined the game.
+     * There is now more extensive documentation about music
+       configuration (README.Music).
+     * On Linux, a GUI pop-up is used when the game quits with an
+       error to show the error message.
+
+    Doom:
+     * Minor workarounds were added to allow the BFG Edition IWADs to
+       be used without crashing the game (thanks Fabian Greffrath).
+     * GUS patch files included with the BFG Edition are now
+       automatically detected.
+     * The 'no fog on spawn west' Vanilla bug is now correctly
+       emulated (thanks xttl).
+     * Behavior of older versions of Doom back to v1.666 can now be
+       emulated.
+     * The new Freedoom IWAD names are now recognized and supported.
+     * Behavior of the M_EPI4 menu item is now correctly emulated
+       based on game version (thanks Alexandre-Xavier).
+     * IDCLEV up to MAP40 is now supported, to match Vanilla (thanks
+       Alexandre-Xavier).
+
+    Heretic:
+     * Weapon cycling keys for mouse and joystick were fixed (thanks
+       Sander van Dijk).
+     * The -timedemo parameter has been fixed, and -playdemo now
+       handles full paths correctly.
+     * A bug when panning the map was fixed (thanks Chris Fielder).
+     * A savegame bug where plat_t structures were not restored
+       correctly was fixed (thanks romeroyakovlev).
+     * Rebinding of the pause key was fixed (thanks Fabian Greffrath).
+
+    Hexen:
+     * Weapon cycling keys for mouse and joystick were fixed (thanks
+       Sander van Dijk).
+     * The -timedemo parameter has been fixed, and -playdemo now
+       handles full paths correctly.
+     * There are now key bindings to allow the artifact keys to be
+       rebound (thanks Fabian Greffrath).
+     * Rebinding of the pause key was fixed (thanks Fabian Greffrath).
+     * Maximum level number was extended to MAP60, allowing
+       multiplayer games using the Deathkings add-on.
+     * The startup screen can now be aborted by pressing escape, like
+       in Vanilla.
+     * Desync when playing back DEMO1 was fixed (thanks alexey.lysiuk).
+
+    Strife:
+     * 'Show mission' key is configured properly in setup (thanks
+       Sander van Dijk).
+     * Default music volume level now matches Vanilla (thanks
+       Alexandre-Xavier).
+
+   Cleanups:
+     * The copyright headers at the top of all source files have been
+       vastly simplified.
+     * Unsafe string functions have been eliminated from the codebase.
+
+   Bug fixes:
+     * WAD and Dehacked checksums are now sent to clients and checked
+       correctly when setting up netgames.
+     * A bug was fixed that caused sound not to work in multiplayer
+       games (thanks to everyone who reported this, and for
+       Alexandre-Xavier and Quasar for help in fixing it).
+     * Calculation of the -devparm 'ticker' dots was fixed to match
+       Vanilla behavior (thanks _bruce_ and Alexandre-Xavier).
+     * The PC speaker code now supports the full range of sound
+       frequencies (thanks Gez).
+     * Annoying "jumping" behavior when grabbing the mouse cursor was
+       fixed.
+     * The screen is now initialized at the native bit depth by
+       default, to avoid problems with systems that don't handle 8-bit
+       screenbuffers very well any more.
+     * The --docdir argument to the configure script is now honored
+       (thanks Jan Engelhardt).
+     * Various issues with the build were fixed (thanks Jan
+       Engelhardt and Fabian Greffrath).
+     * Backwards parameters were fixed in the sound code (thanks
+       proteal).
+     * A crash was fixed when running fullscreen with the -2 parameter
+       (thanks Fabian Greffrath).
+     * A crash when using large values of snd_channels was fixed
+       (thanks Alexandre-Xavier).
+     * A resource leak in the BSD PC speaker code was fixed (thanks
+       Edward-san).
+     * Windows resource files were fixed for Windows 7 (thanks Brad
+       Harding).
+
+    libtextscreen:
+     * Clicking on scrollbars now jumps to the correct position
+       (thanks Alexandre-Xavier).
+
 2.0.0 (2013-12-09):
 
     This is version 2.0 of Chocolate Doom! This new major version is
