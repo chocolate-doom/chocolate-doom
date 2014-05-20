@@ -1692,6 +1692,14 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(crispy_freeaim),
+
+    //!
+    // @game doom
+    //
+    // Players may walk over and under shootable things.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_overunder),
 };
 
 static default_collection_t extra_defaults =

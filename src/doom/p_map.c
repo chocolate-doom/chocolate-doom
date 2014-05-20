@@ -288,6 +288,7 @@ boolean PIT_CheckThing (mobj_t* thing)
     fixed_t		blockdist;
     boolean		solid;
     int			damage;
+    extern int		crispy_overunder;
 		
     if (!(thing->flags & (MF_SOLID|MF_SPECIAL|MF_SHOOTABLE) ))
 	return true;
@@ -375,6 +376,23 @@ boolean PIT_CheckThing (mobj_t* thing)
 	    P_TouchSpecialThing (thing, tmthing);
 	}
 	return !solid;
+    }
+
+    // [crispy] allow players to walk over/under shootable objects
+    if (singleplayer && crispy_overunder &&
+        tmthing->player && thing->flags & MF_SHOOTABLE)
+    {
+        if (tmthing->z > thing->z + thing->height)
+        {
+            tmfloorz = thing->z + thing->height;
+            return true;
+        }
+        else
+        if (tmthing->z + tmthing->height < thing->z)
+        {
+            tmceilingz = thing->z;
+            return true;
+        }
     }
 	
     return !(thing->flags & MF_SOLID);
