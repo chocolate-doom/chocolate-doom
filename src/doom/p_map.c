@@ -382,15 +382,19 @@ boolean PIT_CheckThing (mobj_t* thing)
     if (singleplayer && crispy_overunder &&
         tmthing->player && thing->flags & MF_SHOOTABLE)
     {
-        if (tmthing->z > thing->z + thing->height)
+        if (tmthing->z >= thing->z + thing->height)
         {
+            // player walks over object
             tmfloorz = thing->z + thing->height;
+            thing->ceilingz = tmthing->z;
             return true;
         }
         else
-        if (tmthing->z + tmthing->height < thing->z)
+        if (tmthing->z + tmthing->height <= thing->z)
         {
+            // player walks underneath object
             tmceilingz = thing->z;
+            thing->floorz = tmthing->z + tmthing->height;
             return true;
         }
     }
