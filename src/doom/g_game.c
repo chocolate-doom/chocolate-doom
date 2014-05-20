@@ -1369,8 +1369,11 @@ void G_DoReborn (int playernum)
 	    !(gamekeydown[key_speed] || joybuttons[joybspeed]))
 	gameaction = ga_loadgame;
 	else
+	{
 	// reload the level from scratch
 	gameaction = ga_loadlevel;  
+	M_StringCopy(savename, "", sizeof(savename));
+	}
     }
     else 
     {
