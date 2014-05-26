@@ -1562,7 +1562,7 @@ void G_DoCompleted (void)
 	      case 15: wminfo.next = 30; break;
 	      case 31: wminfo.next = 31; break;
 	      case  2:
-	          if (bfgedition && singleplayer)
+	          if (have_map33 && singleplayer)
 	               wminfo.next = 32; break;
 	    }
 	else
@@ -1571,7 +1571,7 @@ void G_DoCompleted (void)
 	      case 31:
 	      case 32: wminfo.next = 15; break;
 	      case 33:
-	          if (bfgedition && singleplayer)
+	          if (have_map33 && singleplayer)
 	               wminfo.next =  2; break;
 	      default: wminfo.next = gamemap;
 	    }

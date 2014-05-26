@@ -124,6 +124,7 @@ boolean         bfgedition;
 char            *nervewadfile = NULL;
 
 boolean         have_ssg;
+boolean         have_map33;
 
 // If true, the main game loop has started.
 boolean         main_loop_started = false;
@@ -1625,6 +1626,9 @@ void D_DoomMain (void)
             I_GetSfxLumpNum(&S_sfx[sfx_dbcls])  > 0    // closing sound
         )
     );
+
+    // [crispy] check for presence of MAP33
+    have_map33 = (W_CheckNumForName("MAP33") != -1);
 
 #ifdef FEATURE_MULTIPLAYER
     printf ("NET_Init: Init network subsystem.\n");

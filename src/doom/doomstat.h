@@ -62,6 +62,7 @@ extern char            *gamedescription;
 extern boolean bfgedition;
 extern char *nervewadfile;
 extern boolean have_ssg;
+extern boolean have_map33;
 #define singleplayer (!demorecording && !demoplayback && !netgame)
 
 // Convenience macro.

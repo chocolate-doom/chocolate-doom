@@ -1616,7 +1616,7 @@ int G_GotoNextLevel(void)
 
   if (gamemode == commercial)
   {
-    if (bfgedition)
+    if (have_map33)
       doom2_next[1] = 33;
 
     if (W_CheckNumForName("map31") < 0)
