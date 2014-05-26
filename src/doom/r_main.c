@@ -884,6 +884,7 @@ void R_SetupFrame (player_t* player)
 void R_RenderPlayerView (player_t* player)
 {	
     extern boolean automapactive;
+    extern boolean crispy_flashinghom;
 
     R_SetupFrame (player);
 
@@ -901,7 +902,9 @@ void R_RenderPlayerView (player_t* player)
     // [crispy] flashing HOM indicator
     V_DrawFilledBox(viewwindowx, viewwindowy,
         scaledviewwidth, scaledviewheight,
-        (gametic % 20) < 9 && !(player->cheats & CF_NOCLIP) ? 0xb0 : 0);
+        crispy_flashinghom &&
+        (gametic % 20) < 9 &&
+        !(player->cheats & CF_NOCLIP) ? 0xb0 : 0);
 
     // check for new console commands.
     NetUpdate ();

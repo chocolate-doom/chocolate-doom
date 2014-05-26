@@ -145,6 +145,7 @@ int             crispy_mouselook = 0;
 int             crispy_freeaim = 0;
 int             crispy_overunder = 0;
 
+boolean         crispy_flashinghom = false;
 boolean         crispy_fliplevels = false;
 
 void D_ConnectNetGame(void);
@@ -1743,6 +1744,14 @@ void D_DoomMain (void)
         startmap = 1;
         autostart = true;
         testcontrols = true;
+    }
+
+    // [crispy] enable flashing HOM indicator
+    p = M_CheckParm("-flashinghom");
+
+    if (p > 0)
+    {
+        crispy_flashinghom = true;
     }
 
     // [crispy] port level flipping feature over from Strawberry Doom
