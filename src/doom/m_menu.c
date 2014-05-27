@@ -130,6 +130,8 @@ char	endstring[160];
 static boolean opldev;
 
 boolean crispy_cleanscreenshot = 0;
+extern boolean G_SpeedKeyDown();
+static boolean m_speedkeydown = 0;
 
 //
 // MENU TYPEDEFS
@@ -1304,6 +1306,10 @@ static char *M_SelectEndMessage(void)
 
 void M_QuitDOOM(int choice)
 {
+    // [crispy] Fast exit if "Run" key is held down
+    if (G_SpeedKeyDown() || m_speedkeydown)
+        I_Quit();
+
     DEH_snprintf(endstring, sizeof(endstring), "%s\n\n" DOSY,
                  DEH_String(M_SelectEndMessage()));
 
@@ -1688,7 +1694,6 @@ boolean M_Responder (event_t* ev)
     static  int     lasty = 0;
     static  int     mousex = 0;
     static  int     lastx = 0;
-    extern boolean G_SpeedKeyDown();
 
     // In testcontrols mode, none of the function keys should do anything
     // - the only key is escape to quit.
@@ -1820,6 +1825,19 @@ boolean M_Responder (event_t* ev)
 	    {
 		key = ev->data1;
 		ch = ev->data2;
+
+		if (ev->data1 == key_speed)
+		{
+		    m_speedkeydown = 1;
+		}
+	    }
+	    else
+	    if (ev->type == ev_keyup)
+	    {
+		if (ev->data1 == key_speed)
+		{
+		    m_speedkeydown = 0;
+		}
 	    }
 	}
     }
