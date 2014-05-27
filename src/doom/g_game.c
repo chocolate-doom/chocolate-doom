@@ -233,6 +233,8 @@ int		bodyqueslot;
  
 int             vanilla_savegame_limit = 0;
 int             vanilla_demo_limit = 0;
+
+extern boolean crispy_cleanscreenshot;
  
 int G_CmdChecksum (ticcmd_t* cmd) 
 { 
@@ -994,6 +996,11 @@ void G_Ticker (void)
 	    G_DoWorldDone (); 
 	    break; 
 	  case ga_screenshot: 
+	    if (crispy_cleanscreenshot)
+	    {
+	        crispy_cleanscreenshot--;
+	        break;
+	    }
 	    V_ScreenShot("DOOM%02i.%s"); 
             players[consoleplayer].message = DEH_String("screen shot");
 	    gameaction = ga_nothing; 
@@ -1353,6 +1360,12 @@ void G_DeathMatchSpawnPlayer (int playernum)
     P_SpawnPlayer (&playerstarts[playernum]); 
 } 
 
+// [crispy] holding down the "Run" key may trigger special behavior
+boolean G_SpeedKeyDown()
+{
+    return (gamekeydown[key_speed] || joybuttons[joybspeed]);
+}
+
 //
 // G_DoReborn 
 // 
@@ -1366,7 +1379,7 @@ void G_DoReborn (int playernum)
 	// in the mean time, reload that savegame instead of restarting the level
 	// - can be overridden by pressing "Run" with "Use"
 	if (singleplayer && *savename &&
-	    !(gamekeydown[key_speed] || joybuttons[joybspeed]))
+	    !G_SpeedKeyDown())
 	gameaction = ga_loadgame;
 	else
 	{

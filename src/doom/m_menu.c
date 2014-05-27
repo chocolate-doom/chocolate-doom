@@ -129,6 +129,8 @@ char	endstring[160];
 
 static boolean opldev;
 
+boolean crispy_cleanscreenshot;
+
 //
 // MENU TYPEDEFS
 //
@@ -1686,6 +1688,7 @@ boolean M_Responder (event_t* ev)
     static  int     lasty = 0;
     static  int     mousex = 0;
     static  int     lastx = 0;
+    extern boolean G_SpeedKeyDown();
 
     // In testcontrols mode, none of the function keys should do anything
     // - the only key is escape to quit.
@@ -1908,6 +1911,9 @@ boolean M_Responder (event_t* ev)
     if ((devparm && key == key_menu_help) ||
         (key != 0 && key == key_menu_screenshot))
     {
+	// [crispy] take screen shot without weapons and HUD
+	if (G_SpeedKeyDown())
+	    crispy_cleanscreenshot++;
 	G_ScreenShot ();
 	return true;
     }

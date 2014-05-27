@@ -981,6 +981,7 @@ void R_DrawSprite (vissprite_t* spr)
 
 
 
+extern boolean crispy_cleanscreenshot;
 
 //
 // R_DrawMasked
@@ -1009,6 +1010,9 @@ void R_DrawMasked (void)
 	if (ds->maskedtexturecol)
 	    R_RenderMaskedSegRange (ds, ds->x1, ds->x2);
     
+    if (crispy_cleanscreenshot)
+        return;
+
     // draw the psprites on top of everything
     //  but does not draw on side views
     if (!viewangleoffset)		

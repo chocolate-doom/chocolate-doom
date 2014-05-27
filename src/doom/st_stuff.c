@@ -416,6 +416,7 @@ cheatseq_t cheat_massacre = CHEAT("tntem", 0);
 cheatseq_t cheat_notarget = CHEAT("notarget", 0);
 
 extern int crispy_coloredhud;
+extern boolean crispy_cleanscreenshot;
 
 //
 // STATUS BAR CODE
@@ -1273,6 +1274,9 @@ void ST_Drawer (boolean fullscreen, boolean refresh)
   
     st_statusbaron = (!fullscreen) || automapactive || screenblocks == CRISPY_HUD;
     st_firsttime = st_firsttime || refresh;
+
+    if (crispy_cleanscreenshot && screenblocks == CRISPY_HUD)
+        return;
 
     // Do red-/gold-shifts from damage/items
     ST_doPaletteStuff();
