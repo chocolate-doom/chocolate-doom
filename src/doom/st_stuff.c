@@ -709,6 +709,10 @@ ST_Responder (event_t* ev)
       // So be it.
       plyr->message = DEH_String(STSTR_CLEV);
       G_DeferedInitNew(gameskill, epsd, map);
+
+      // [crispy] eat key press, i.e. don't change weapon upon level change
+      if (singleplayer)
+          return true;
     }
     // [crispy] implement Boom's "tntweap?" weapon cheats
     else
