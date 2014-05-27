@@ -441,7 +441,10 @@ void HU_Drawer(void)
 {
 
     if (crispy_cleanscreenshot)
+    {
+        HU_Erase();
         return;
+    }
 
     dp_translation = NULL;
     HUlib_drawSText(&w_message);
