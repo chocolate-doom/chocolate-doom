@@ -1020,7 +1020,7 @@ P_ShootSpecialLine
 void P_PlayerInSpecialSector (player_t* player)
 {
     sector_t*	sector;
-    extern int showMessages, crispy_secretmessage;
+    extern int showMessages;
     player2_t  *player2 = p2fromp(player);
 	
     sector = player->mo->subsector->sector;

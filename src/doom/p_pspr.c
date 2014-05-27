@@ -185,7 +185,7 @@ boolean P_CheckAmmo (player_t* player)
 	}
 	else if (player->weaponowned[wp_supershotgun] 
 		 && player->ammo[am_shell]>2
-		 && (have_ssg) )
+		 && (crispy_havessg) )
 	{
 	    player->pendingweapon = wp_supershotgun;
 	}
@@ -614,7 +614,6 @@ fixed_t		bulletslope;
 void P_BulletSlope (mobj_t*	mo)
 {
     angle_t	an;
-    extern int	crispy_freeaim;
     
     // see which target is to be aimed at
     an = mo->angle;

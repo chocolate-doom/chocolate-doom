@@ -1722,7 +1722,7 @@ void WI_loadData(void)
 {
     if (gamemode == commercial)
     {
-	NUMCMAPS = (have_map33) ? 33 : 32;
+	NUMCMAPS = (crispy_havemap33) ? 33 : 32;
 	lnames = (patch_t **) Z_Malloc(sizeof(patch_t*) * NUMCMAPS,
 				       PU_STATIC, NULL);
     }

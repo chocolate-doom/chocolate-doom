@@ -20,6 +20,7 @@
 #ifndef __R_SKY__
 #define __R_SKY__
 
+#include "crispy.h"
 
 
 // SKY, store the number for name.

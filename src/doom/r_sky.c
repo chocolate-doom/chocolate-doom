@@ -46,8 +46,6 @@ int			skytexturemid;
 //
 void R_InitSkyMap (void)
 {
-    extern int                 crispy_freelook;
-    extern int                 crispy_mouselook;
 
   // skyflatnum = R_FlatNumForName ( SKYFLATNAME );
     // [crispy] stretch sky

@@ -365,8 +365,6 @@ void R_DrawPlanes (void)
     int			stop;
     int			angle;
     int                 lumpnum;
-    extern int                 crispy_freelook;
-    extern int                 crispy_mouselook;
 				
 #ifdef RANGECHECK
     if (ds_p - drawsegs > MAXDRAWSEGS)

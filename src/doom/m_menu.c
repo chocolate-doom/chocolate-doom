@@ -1618,7 +1618,7 @@ int G_GotoNextLevel(void)
 
   if (gamemode == commercial)
   {
-    if (have_map33)
+    if (crispy_havemap33)
       doom2_next[1] = 33;
 
     if (W_CheckNumForName("map31") < 0)

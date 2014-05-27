@@ -884,7 +884,6 @@ void R_SetupFrame (player_t* player)
 void R_RenderPlayerView (player_t* player)
 {	
     extern boolean automapactive;
-    extern boolean crispy_flashinghom;
 
     R_SetupFrame (player);
 

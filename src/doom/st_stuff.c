@@ -348,6 +348,7 @@ static st_percent_t	w_health;
 // arms background
 static st_binicon_t	w_armsbg; 
 
+
 // weapon ownership widgets
 static st_multicon_t	w_arms[6];
 
@@ -415,8 +416,6 @@ cheatseq_t cheat_weapon = CHEAT("tntweap", 1);
 cheatseq_t cheat_massacre = CHEAT("tntem", 0);
 cheatseq_t cheat_notarget = CHEAT("notarget", 0);
 
-extern int crispy_coloredhud;
-extern boolean crispy_cleanscreenshot;
 
 //
 // STATUS BAR CODE
@@ -725,7 +724,7 @@ ST_Responder (event_t* ev)
       if (w < 0 || w >= NUMWEAPONS)
 	return false;
 
-      if (w == wp_supershotgun && !have_ssg)
+      if (w == wp_supershotgun && !crispy_havessg)
 	return false;
 
       if ((w == wp_bfg || w == wp_plasma) && gamemode == shareware)

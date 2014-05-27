@@ -144,7 +144,6 @@ void P_MovePlayer (player_t* player)
     ticcmd_t*		cmd;
     int		look;
     player2_t*		player2 = p2fromp(player);
-    extern int		crispy_jump;
 	
     cmd = &player->cmd;
 	
@@ -360,7 +359,7 @@ void P_PlayerThink (player_t* player)
 	    newweapon = wp_chainsaw;
 	}
 	
-	if ( (have_ssg)
+	if ( (crispy_havessg)
 	    && newweapon == wp_shotgun 
 	    && player->weaponowned[wp_supershotgun]
 	    && player->readyweapon != wp_supershotgun)

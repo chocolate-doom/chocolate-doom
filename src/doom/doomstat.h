@@ -38,6 +38,7 @@
 
 #include "net_defs.h"
 
+#include "crispy.h"
 
 
 // ------------------------
@@ -61,8 +62,6 @@ extern char            *gamedescription;
 // If true, we're using one of the mangled BFG edition IWADs.
 extern boolean bfgedition;
 extern char *nervewadfile;
-extern boolean have_ssg;
-extern boolean have_map33;
 #define singleplayer (!demorecording && !demoplayback && !netgame)
 
 // Convenience macro.

@@ -439,10 +439,6 @@ void HU_Start(void)
 
 void HU_Drawer(void)
 {
-    extern int crispy_automapstats;
-    extern int crispy_crosshair;
-    extern int crispy_crosshair_highlight;
-    extern boolean crispy_cleanscreenshot;
 
     if (crispy_cleanscreenshot)
         return;

@@ -28,7 +28,7 @@
 #include "deh_defs.h"
 #include "deh_io.h"
 
-boolean deh_autoload = false;
+boolean crispy_dehautoload = false;
 
 typedef enum
 {
@@ -293,7 +293,7 @@ void DEH_Error(deh_context_t *context, char *msg, ...)
 
     va_end(args);
 
-    if (deh_autoload)
+    if (crispy_dehautoload)
         printf("Error parsing dehacked lump (consider disabling automatic loading \n\
 of DEHACKED lumps from PWAD files wih the \"-nodehlump\" parameter).\n");
     else

@@ -162,7 +162,6 @@ fixed_t*	spritetopoffset;
 
 lighttable_t	*colormaps;
 
-extern int      crispy_translucency;
 
 //
 // MAPTEXTURE_T CACHING

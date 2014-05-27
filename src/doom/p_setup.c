@@ -110,7 +110,6 @@ mapthing_t	playerstarts[MAXPLAYERS];
 
 
 
-extern boolean  crispy_fliplevels;
 
 
 //

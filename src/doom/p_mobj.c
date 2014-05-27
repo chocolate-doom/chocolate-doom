@@ -242,7 +242,6 @@ void P_ZMovement (mobj_t* mo)
 {
     fixed_t	dist;
     fixed_t	delta;
-    extern int crispy_mouselook;
     
     // check for smooth step up
     if (mo->player && mo->z < mo->floorz)
@@ -1019,7 +1018,6 @@ P_SpawnPlayerMissile
     fixed_t	y;
     fixed_t	z;
     fixed_t	slope;
-    extern int	crispy_freeaim;
     
     // see which target is to be aimed at
     an = source->angle;

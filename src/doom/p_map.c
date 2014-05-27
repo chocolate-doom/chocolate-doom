@@ -288,7 +288,6 @@ boolean PIT_CheckThing (mobj_t* thing)
     fixed_t		blockdist;
     boolean		solid;
     int			damage;
-    extern int		crispy_overunder;
 		
     if (!(thing->flags & (MF_SOLID|MF_SPECIAL|MF_SHOOTABLE) ))
 	return true;

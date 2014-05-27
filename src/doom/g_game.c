@@ -233,8 +233,6 @@ int		bodyqueslot;
  
 int             vanilla_savegame_limit = 0;
 int             vanilla_demo_limit = 0;
-
-extern boolean crispy_cleanscreenshot;
  
 int G_CmdChecksum (ticcmd_t* cmd) 
 { 
@@ -251,7 +249,7 @@ static boolean WeaponSelectable(weapontype_t weapon)
 {
     // Can't select the super shotgun in Doom 1.
 
-    if (weapon == wp_supershotgun && !have_ssg)
+    if (weapon == wp_supershotgun && !crispy_havessg)
     {
         return false;
     }
@@ -336,10 +334,6 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     int		forward;
     int		side;
     int		look;
-    extern int		crispy_jump;
-    extern int		crispy_freelook;
-    extern int		crispy_mouselook;
-    extern int		crispy_coloredhud;
     static byte		mbmlookctrl = 0;
     static int		joybspeed_old = 2;
 
@@ -1575,7 +1569,7 @@ void G_DoCompleted (void)
 	      case 15: wminfo.next = 30; break;
 	      case 31: wminfo.next = 31; break;
 	      case  2:
-	          if (have_map33 && singleplayer)
+	          if (crispy_havemap33 && singleplayer)
 	               wminfo.next = 32; break;
 	    }
 	else
@@ -1584,7 +1578,7 @@ void G_DoCompleted (void)
 	      case 31:
 	      case 32: wminfo.next = 15; break;
 	      case 33:
-	          if (have_map33 && singleplayer)
+	          if (crispy_havemap33 && singleplayer)
 	               wminfo.next =  2; break;
 	      default: wminfo.next = gamemap;
 	    }

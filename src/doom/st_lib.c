@@ -177,7 +177,6 @@ STlib_updatePercent
 ( st_percent_t*		per,
   int			refresh )
 {
-    extern int crispy_coloredhud;
 
     STlib_updateNum(&per->n, refresh);
 

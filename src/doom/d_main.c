@@ -123,8 +123,8 @@ boolean         storedemo;
 boolean         bfgedition;
 char            *nervewadfile = NULL;
 
-boolean         have_ssg;
-boolean         have_map33;
+boolean         crispy_havessg;
+boolean         crispy_havemap33;
 
 // If true, the main game loop has started.
 boolean         main_loop_started = false;
@@ -1586,9 +1586,8 @@ void D_DoomMain (void)
     if (!M_ParmExists("-nodehlump") && !M_ParmExists("-nodeh"))
     {
         int i, loaded = 0;
-        extern boolean deh_autoload;
 
-        deh_autoload = true;
+        crispy_dehautoload = true;
 
         for (i = 0; i < numlumps; ++i)
         {
@@ -1601,7 +1600,7 @@ void D_DoomMain (void)
 
         printf("Loaded %i DEHACKED lumps from WAD files.\n", loaded);
 
-        deh_autoload = false;
+        crispy_dehautoload = false;
     }
 
     DEH_printf("I_Init: Setting up machine state.\n");
@@ -1612,7 +1611,7 @@ void D_DoomMain (void)
     I_InitMusic();
 
     // [crispy] check for SSG resources
-    have_ssg =
+    crispy_havessg =
     (
         gamemode == commercial ||
         (
@@ -1628,7 +1627,7 @@ void D_DoomMain (void)
     );
 
     // [crispy] check for presence of MAP33
-    have_map33 = (W_CheckNumForName("MAP33") != -1);
+    crispy_havemap33 = (W_CheckNumForName("MAP33") != -1);
 
 #ifdef FEATURE_MULTIPLAYER
     printf ("NET_Init: Init network subsystem.\n");

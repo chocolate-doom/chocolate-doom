@@ -396,7 +396,6 @@ R_DrawVisSprite
     int			texturecolumn;
     fixed_t		frac;
     patch_t*		patch;
-    extern int		crispy_translucency;
 	
 	
     patch = W_CacheLumpNum (vis->patch+firstspritelump, PU_CACHE);
@@ -981,7 +980,6 @@ void R_DrawSprite (vissprite_t* spr)
 
 
 
-extern boolean crispy_cleanscreenshot;
 
 //
 // R_DrawMasked
