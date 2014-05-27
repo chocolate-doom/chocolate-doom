@@ -129,7 +129,7 @@ char	endstring[160];
 
 static boolean opldev;
 
-boolean crispy_cleanscreenshot;
+boolean crispy_cleanscreenshot = 0;
 
 //
 // MENU TYPEDEFS
