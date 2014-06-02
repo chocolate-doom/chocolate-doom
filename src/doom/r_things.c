@@ -666,7 +666,7 @@ void R_AddSprites (sector_t* sec)
 //
 // R_DrawPSprite
 //
-void R_DrawPSprite (pspdef_t* psp)
+void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum)
 {
     fixed_t		tx;
     int			x1;
@@ -763,6 +763,10 @@ void R_DrawPSprite (pspdef_t* psp)
 	vis->colormap = spritelights[MAXLIGHTSCALE-1];
     }
 	
+    // [crispy] translucent gun flash sprites
+    if (psprnum == ps_flash)
+        vis->mobjflags |= MF_TRANSLUCENT;
+
     R_DrawVisSprite (vis, vis->x1, vis->x2);
 }
 
@@ -799,7 +803,7 @@ void R_DrawPlayerSprites (void)
 	 i++,psp++)
     {
 	if (psp->state)
-	    R_DrawPSprite (psp);
+	    R_DrawPSprite (psp, i);
     }
 }
 
