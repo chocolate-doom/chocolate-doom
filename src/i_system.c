@@ -251,6 +251,8 @@ void I_Quit (void)
         entry = entry->next;
     }
 
+    SDL_Quit();
+
     exit(0);
 }
 
@@ -443,6 +445,8 @@ void I_Error (char *error, ...)
 #endif
 
     // abort();
+
+    SDL_Quit();
 
     exit(-1);
 }
