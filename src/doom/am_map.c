@@ -1193,7 +1193,7 @@ void AM_drawWalls(void)
 		if (lines[i].special == 39 ||
 		   (lines[i].special == 97 && !(lines[i].flags & ML_SECRET)))
 		{ // teleporters
-		    AM_drawMline(&l, GREENS);
+		    AM_drawMline(&l, GREENS + GREENRANGE/2);
 		}
 		// [crispy] draw secret areas entirely
 		else if (lines[i].flags & ML_SECRET || // secret door
