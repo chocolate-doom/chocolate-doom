@@ -1730,7 +1730,7 @@ void D_DoomMain (void)
             }
             else
             {
-                startmap = 1;
+                startmap = myargv[p+1][1]-'0';
             }
         }
         autostart = true;
