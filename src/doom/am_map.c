@@ -66,17 +66,17 @@
 #define BACKGROUND	BLACK
 #define YOURCOLORS	WHITE
 #define YOURRANGE	0
-#define WALLCOLORS	REDS
+#define WALLCOLORS	(REDS + REDRANGE/2) // [crispy] a tad darker
 #define WALLRANGE	REDRANGE
 #define TSWALLCOLORS	GRAYS
 #define TSWALLRANGE	GRAYSRANGE
 #define FDWALLCOLORS	BROWNS
 #define FDWALLRANGE	BROWNRANGE
-#define CDWALLCOLORS	YELLOWS
+#define CDWALLCOLORS	(YELLOWS + YELLOWRANGE) // [crispy] a tad darker
 #define CDWALLRANGE	YELLOWRANGE
 #define THINGCOLORS	GREENS
 #define THINGRANGE	GREENRANGE
-#define SECRETWALLCOLORS WALLCOLORS
+#define SECRETWALLCOLORS 254 // [crispy] purple
 #define SECRETWALLRANGE WALLRANGE
 #define GRIDCOLORS	(GRAYS + GRAYSRANGE/2)
 #define GRIDRANGE	0
@@ -133,6 +133,13 @@ typedef struct
     fixed_t slp, islp;
 } islope_t;
 
+typedef enum
+{
+    no_key,
+    red_key,
+    yellow_key,
+    blue_key
+} keycolor_t;
 
 
 //
@@ -186,6 +193,11 @@ mline_t thintriangle_guy[] = {
     { { (fixed_t)(-.5*R), (fixed_t)(-.7*R) }, { (fixed_t)(R    ), (fixed_t)(0    ) } },
     { { (fixed_t)(R    ), (fixed_t)(0    ) }, { (fixed_t)(-.5*R), (fixed_t)(.7*R ) } },
     { { (fixed_t)(-.5*R), (fixed_t)(.7*R ) }, { (fixed_t)(-.5*R), (fixed_t)(-.7*R) } }
+};
+mline_t cross_mark[] =
+{
+  { { -R, 0 }, { R, 0} },
+  { { 0, -R }, { 0, R } },
 };
 #undef R
 
@@ -1124,6 +1136,7 @@ void AM_drawWalls(void)
 {
     int i;
     static mline_t l;
+    keycolor_t key;
 
     for (i=0;i<numlines;i++)
     {
@@ -1135,17 +1148,59 @@ void AM_drawWalls(void)
 	{
 	    if ((lines[i].flags & LINE_NEVERSEE) && !cheating)
 		continue;
-	    if (!lines[i].backsector)
+	    if (!lines[i].backsector &&
+	         lines[i].frontsector->special != 9) // [crispy] non-secret area
 	    {
 		AM_drawMline(&l, WALLCOLORS+lightlev);
 	    }
 	    else
 	    {
-		if (lines[i].special == 39)
-		{ // teleporters
-		    AM_drawMline(&l, WALLCOLORS+WALLRANGE/2);
+		switch (lines[i].special)
+		{
+		    case 26:
+		    case 32:
+		    case 99:
+		    case 133:
+			key = blue_key;
+			break;
+		    case 27:
+		    case 34:
+		    case 136:
+		    case 137:
+			key = yellow_key;
+			break;
+		    case 28:
+		    case 33:
+		    case 134:
+		    case 135:
+			key = red_key;
+			break;
+		    default:
+			key = no_key;
+			break;
 		}
-		else if (lines[i].flags & ML_SECRET) // secret door
+
+		// [crispy] keyed doors are drawn in their respective color
+		if (key > no_key)
+		{
+		    AM_drawMline(&l, (key == red_key) ? REDS :
+		                     (key == yellow_key) ? YELLOWS :
+		                     (key == blue_key) ? BLUES :
+		                     WALLCOLORS);
+		}
+		else
+		// [crispy] add *all* teleporter types (wtf?) and draw them in green
+		if (lines[i].special ==  39 ||
+		    lines[i].special ==  97 ||
+		    lines[i].special == 125 ||
+		    lines[i].special == 126)
+		{ // teleporters
+		    AM_drawMline(&l, GREENS);
+		}
+		// [crispy] draw secret areas entirely
+		else if (lines[i].flags & ML_SECRET || // secret door
+		         lines[i].frontsector->special == 9 ||
+		         lines[i].backsector->special  == 9)
 		{
 		    if (cheating) AM_drawMline(&l, SECRETWALLCOLORS + lightlev);
 		    else AM_drawMline(&l, WALLCOLORS+lightlev);
@@ -1294,15 +1349,56 @@ AM_drawThings
 {
     int		i;
     mobj_t*	t;
+    keycolor_t	key;
 
     for (i=0;i<numsectors;i++)
     {
 	t = sectors[i].thinglist;
 	while (t)
 	{
+	    switch (t->info->doomednum)
+	    {
+		case 38:
+		case 13:
+		    key = red_key;
+		    break;
+		case 39:
+		case 6:
+		    key = yellow_key;
+		    break;
+		case 40:
+		case 5:
+		    key = blue_key;
+		    break;
+		default:
+		    key = no_key;
+		    break;
+	    }
+
+	    // [crispy] keys are shown as crosses in their respective color
+	    if (key > no_key)
+	    {
+	    AM_drawLineCharacter
+		(cross_mark, arrlen(cross_mark),
+		 16<<FRACBITS, t->angle,
+		 (key == red_key) ? REDS :
+		 (key == yellow_key) ? YELLOWS :
+		 (key == blue_key) ? BLUES :
+		 colors+lightlev,
+		 t->x, t->y);
+	    }
+	    else
+	    {
 	    AM_drawLineCharacter
 		(thintriangle_guy, arrlen(thintriangle_guy),
-		 16<<FRACBITS, t->angle, colors+lightlev, t->x, t->y);
+		// [crispy] triangle size represents actual thing size
+		 t->radius, t->angle,
+		// [crispy] show countable kills in red and countable items in yellow
+		 ((t->flags & (MF_COUNTKILL | MF_CORPSE)) == MF_COUNTKILL) ? REDS :
+		 (t->flags & MF_COUNTITEM) ? YELLOWS :
+		 colors+lightlev,
+		 t->x, t->y);
+	    }
 	    t = t->snext;
 	}
     }
