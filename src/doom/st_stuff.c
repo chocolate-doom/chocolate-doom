@@ -1217,15 +1217,16 @@ void ST_drawWidgets(boolean refresh)
     // used by w_frags widget
     st_fragson = deathmatch && st_statusbaron; 
 
-    // [crispy] draw berserk pack instead of no ammo if appropriate
-    if (plyr->readyweapon == wp_fist && plyr->powers[pw_strength])
-        V_DrawPatch(ST_AMMOX-20, ST_AMMOY+12, W_CacheLumpName("PSTRA0", PU_CACHE));
-    else
-    {
     dp_translation = ST_WidgetColor(hudcolor_ammo);
     STlib_updateNum(&w_ready, refresh);
-    }
     dp_translation = NULL;
+
+    // [crispy] draw berserk pack instead of no ammo if appropriate
+    if (screenblocks == CRISPY_HUD && !automapactive &&
+        plyr->readyweapon == wp_fist && plyr->powers[pw_strength])
+    {
+        V_DrawPatch(ST_AMMOX-23, ST_AMMOY+13, W_CacheLumpName("PSTRA0", PU_CACHE));
+    }
 
     for (i=0;i<4;i++)
     {
