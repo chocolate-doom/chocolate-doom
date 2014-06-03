@@ -93,6 +93,7 @@ static player_t*	plr;
 static player2_t*	plr2;
 patch_t*		hu_font[HU_FONTSIZE];
 static hu_textline_t	w_title;
+static hu_textline_t	w_map;
 static hu_textline_t	w_kills;
 static hu_textline_t	w_items;
 static hu_textline_t	w_scrts;
@@ -363,6 +364,11 @@ void HU_Start(void)
 		       hu_font,
 		       HU_FONTSTART);
 
+    HUlib_initTextLine(&w_map,
+		       HU_TITLEX, HU_TITLEY - SHORT(hu_font[0]->height + 1),
+		       hu_font,
+		       HU_FONTSTART);
+
     HUlib_initTextLine(&w_kills,
 		       HU_TITLEX, HU_MSGY + 1 * 8,
 		       hu_font,
@@ -420,6 +426,29 @@ void HU_Start(void)
 
     s = DEH_String(s);
     
+    // [crispy] explicitely display (episode and) map if these
+    // have been dehacked off the map title strings
+    if (gamemode == commercial)
+    {
+	if (M_StrCaseStr(s, "level ") != s)
+	{
+	    static char map[6], *m;
+	    M_snprintf(map, sizeof(map), "map%02d", gamemap);
+	    m = map;
+	    while (*m)
+		HUlib_addCharToTextLine(&w_map, *(m++));
+	}
+    }
+    else
+    if (s[0] != 'E' && s[2] != 'M' && s[4] != ':')
+    {
+	static char map[5], *m;
+	M_snprintf(map, sizeof(map), "e%dm%d", gameepisode, gamemap);
+	m = map;
+	while (*m)
+	    HUlib_addCharToTextLine(&w_map, *(m++));
+   }
+
     while (*s)
 	HUlib_addCharToTextLine(&w_title, *(s++));
 
@@ -462,6 +491,8 @@ void HU_Drawer(void)
 	{
 	static char str[32], *s;
 	int time = leveltime / TICRATE;
+
+	HUlib_drawTextLine(&w_map, false);
 
 	M_snprintf(str, sizeof(str), "\x1b%cKills: \x1b%c%d/%d", '0' + CR_GREEN, '0' + CR_GRAY,
 	        players[consoleplayer].killcount, totalkills);
@@ -539,6 +570,7 @@ void HU_Erase(void)
     HUlib_eraseSText(&w_secret);
     HUlib_eraseIText(&w_chat);
     HUlib_eraseTextLine(&w_title);
+    HUlib_eraseTextLine(&w_map);
 
 }
 
