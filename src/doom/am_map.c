@@ -1132,11 +1132,28 @@ void AM_drawGrid(int color)
 // Determines visible lines, draws them.
 // This is LineDef based, not LineSeg based.
 //
+static int AM_DoorColor(int type)
+{
+  switch (type)  // closed keyed door
+  {
+    case 26: case 32: case 99: case 133:
+      /*bluekey*/
+      return 1;
+    case 27: case 34: case 136: case 137:
+      /*yellowkey*/
+      return 2;
+    case 28: case 33: case 134: case 135:
+      /*redkey*/
+      return 0;
+    default:
+      return -1; //not a keyed door
+  }
+}
+
 void AM_drawWalls(void)
 {
     int i;
     static mline_t l;
-    keycolor_t key;
 
     for (i=0;i<numlines;i++)
     {
@@ -1148,60 +1165,58 @@ void AM_drawWalls(void)
 	{
 	    if ((lines[i].flags & LINE_NEVERSEE) && !cheating)
 		continue;
-	    if (!lines[i].backsector &&
-	         lines[i].frontsector->special != 9) // [crispy] non-secret area
 	    {
+		int amd;
+		if (!(lines[i].flags & ML_SECRET) &&
+		    (amd = AM_DoorColor(lines[i].special)) != -1)
+		{
+		    switch (amd)
+		    {
+			case 1:
+			    AM_drawMline(&l, BLUES);
+			    continue;
+			case 2:
+			    AM_drawMline(&l, YELLOWS);
+			    continue;
+			case 0:
+			    AM_drawMline(&l, REDS);
+			    continue;
+		    }
+		}
+	    }
+	    if (lines[i].special==11 ||
+	        lines[i].special==52 ||
+	        lines[i].special==51 ||
+	        lines[i].special==124)
+	    {
+		AM_drawMline(&l, WHITE);
+		continue;
+	    }
+
+	    if (!lines[i].backsector)
+	    {
+		if (cheating && (lines[i].frontsector->special == 9))
+		    AM_drawMline(&l, SECRETWALLCOLORS);
+		else
 		AM_drawMline(&l, WALLCOLORS+lightlev);
 	    }
 	    else
 	    {
-		switch (lines[i].special)
-		{
-		    case 26:
-		    case 32:
-		    case 99:
-		    case 133:
-			key = blue_key;
-			break;
-		    case 27:
-		    case 34:
-		    case 136:
-		    case 137:
-			key = yellow_key;
-			break;
-		    case 28:
-		    case 33:
-		    case 134:
-		    case 135:
-			key = red_key;
-			break;
-		    default:
-			key = no_key;
-			break;
-		}
-
-		// [crispy] keyed doors are drawn in their respective color
-		if (key > no_key)
-		{
-		    AM_drawMline(&l, (key == red_key) ? REDS :
-		                     (key == yellow_key) ? YELLOWS :
-		                     (key == blue_key) ? BLUES :
-		                     WALLCOLORS);
-		}
-		else
-		// [crispy] add another teleporter type and draw them in green
-		if (lines[i].special == 39 ||
-		   (lines[i].special == 97 && !(lines[i].flags & ML_SECRET)))
+		if (!(lines[i].flags & ML_SECRET) &&
+		    (lines[i].special == 39 || lines[i].special == 97))
 		{ // teleporters
-		    AM_drawMline(&l, GREENS + GREENRANGE/2);
+		    AM_drawMline(&l, (GREENS + GREENRANGE/2));
 		}
-		// [crispy] draw secret areas entirely
-		else if (lines[i].flags & ML_SECRET || // secret door
-		         lines[i].frontsector->special == 9 ||
-		         lines[i].backsector->special  == 9)
+		else if (lines[i].flags & ML_SECRET) // secret door
 		{
 		    if (cheating) AM_drawMline(&l, SECRETWALLCOLORS + lightlev);
 		    else AM_drawMline(&l, WALLCOLORS+lightlev);
+		}
+		else if (cheating &&
+		    (lines[i].frontsector->special == 9 ||
+		    lines[i].backsector->special == 9))
+		{
+		    AM_drawMline(&l, SECRETWALLCOLORS);
 		}
 		else if (lines[i].backsector->floorheight
 			   != lines[i].frontsector->floorheight) {
