@@ -1730,6 +1730,7 @@ void D_DoomMain (void)
             }
             else
             {
+                // [crispy] allow second digit without space in between for Doom 1
                 startmap = myargv[p+1][1]-'0';
             }
         }
