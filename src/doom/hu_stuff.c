@@ -422,33 +422,25 @@ void HU_Start(void)
         s = HU_TITLE_CHEX;
     }
 
+    // [crispy] explicitely display (episode and) map if the
+    // map title strings have been dehacked
+    if (strcmp(s, DEH_String(s)))
+    {
+        static char map[6], *m;
+        if (gamemode == commercial)
+            M_snprintf(map, sizeof(map), "map%02d", gamemap);
+        else
+            M_snprintf(map, sizeof(map), "e%dm%d", gameepisode, gamemap);
+
+        m = map;
+        while (*m)
+            HUlib_addCharToTextLine(&w_map, *(m++));
+    }
+
     // dehacked substitution to get modified level name
 
     s = DEH_String(s);
     
-    // [crispy] explicitely display (episode and) map if these
-    // have been dehacked off the map title strings
-    if (gamemode == commercial)
-    {
-	if (M_StrCaseStr(s, "level ") != s)
-	{
-	    static char map[6], *m;
-	    M_snprintf(map, sizeof(map), "map%02d", gamemap);
-	    m = map;
-	    while (*m)
-		HUlib_addCharToTextLine(&w_map, *(m++));
-	}
-    }
-    else
-    if (s[0] != 'E' && s[2] != 'M' && s[4] != ':')
-    {
-	static char map[5], *m;
-	M_snprintf(map, sizeof(map), "e%dm%d", gameepisode, gamemap);
-	m = map;
-	while (*m)
-	    HUlib_addCharToTextLine(&w_map, *(m++));
-   }
-
     while (*s)
 	HUlib_addCharToTextLine(&w_title, *(s++));
 
