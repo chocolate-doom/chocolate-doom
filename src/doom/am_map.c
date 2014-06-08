@@ -1132,21 +1132,27 @@ void AM_drawGrid(int color)
 // Determines visible lines, draws them.
 // This is LineDef based, not LineSeg based.
 //
-static int AM_DoorColor(int type)
+static keycolor_t AM_DoorColor(int type)
 {
-  switch (type)  // closed keyed door
+  switch (type)
   {
-    case 26: case 32: case 99: case 133:
-      /*bluekey*/
-      return 1;
-    case 27: case 34: case 136: case 137:
-      /*yellowkey*/
-      return 2;
-    case 28: case 33: case 134: case 135:
-      /*redkey*/
-      return 0;
+    case 26:
+    case 32:
+    case 99:
+    case 133:
+      return blue_key;
+    case 27:
+    case 34:
+    case 136:
+    case 137:
+      return yellow_key;
+    case 28:
+    case 33:
+    case 134:
+    case 135:
+      return red_key;
     default:
-      return -1; //not a keyed door
+      return no_key;
   }
 }
 
@@ -1166,35 +1172,41 @@ void AM_drawWalls(void)
 	    if ((lines[i].flags & LINE_NEVERSEE) && !cheating)
 		continue;
 	    {
-		int amd;
+		// [crispy] draw keyed doors in their respective colors
+		// (no Boom multiple keys)
+		keycolor_t amd;
 		if (!(lines[i].flags & ML_SECRET) &&
-		    (amd = AM_DoorColor(lines[i].special)) != -1)
+		    (amd = AM_DoorColor(lines[i].special)) > no_key)
 		{
 		    switch (amd)
 		    {
-			case 1:
+			case blue_key:
 			    AM_drawMline(&l, BLUES);
 			    continue;
-			case 2:
+			case yellow_key:
 			    AM_drawMline(&l, YELLOWS);
 			    continue;
-			case 0:
+			case red_key:
 			    AM_drawMline(&l, REDS);
 			    continue;
+			default:
+			    // should never reach here
+			    break;
 		    }
 		}
 	    }
-	    if (lines[i].special==11 ||
-	        lines[i].special==52 ||
-	        lines[i].special==51 ||
-	        lines[i].special==124)
+	    // [crispy] draw exit lines in white (no Boom exit lines 197, 198)
+	    if (lines[i].special == 11 ||
+	        lines[i].special == 51 ||
+	        lines[i].special == 52 ||
+	        lines[i].special == 124)
 	    {
 		AM_drawMline(&l, WHITE);
 		continue;
 	    }
-
 	    if (!lines[i].backsector)
 	    {
+		// [crispy] draw 1S secret sector boundaries in purple
 		if (cheating && (lines[i].frontsector->special == 9))
 		    AM_drawMline(&l, SECRETWALLCOLORS);
 		else
@@ -1202,6 +1214,8 @@ void AM_drawWalls(void)
 	    }
 	    else
 	    {
+		// [crispy] draw teleporters in green
+		// (no monsters-only teleporters 125, 126; no Boom teleporters)
 		if (!(lines[i].flags & ML_SECRET) &&
 		    (lines[i].special == 39 || lines[i].special == 97))
 		{ // teleporters
@@ -1209,9 +1223,19 @@ void AM_drawWalls(void)
 		}
 		else if (lines[i].flags & ML_SECRET) // secret door
 		{
-		    if (cheating) AM_drawMline(&l, SECRETWALLCOLORS + lightlev);
+		    // [crispy] NB: Choco has this check, but SECRETWALLCOLORS==WALLCOLORS
+		    // Boom/PrBoom+ does not have this check anymore
+		    if (cheating && 0) AM_drawMline(&l, SECRETWALLCOLORS + lightlev);
 		    else AM_drawMline(&l, WALLCOLORS+lightlev);
 		}
+		// [crispy] non-secret closed doors
+		else if (!(lines[i].flags & ML_SECRET) &&
+		    ((lines[i].backsector->floorheight == lines[i].backsector->ceilingheight) ||
+		    (lines[i].frontsector->floorheight == lines[i].frontsector->ceilingheight)))
+		{
+		    AM_drawMline(&l, GRAYS+GRAYSRANGE/2);
+		}
+		// [crispy] draw 2S secret sector boundaries in purple
 		else if (cheating &&
 		    (lines[i].frontsector->special == 9 ||
 		    lines[i].backsector->special == 9))
