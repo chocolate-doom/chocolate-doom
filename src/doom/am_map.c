@@ -1195,10 +1195,11 @@ void AM_drawWalls(void)
 		}
 	    }
 	    // [crispy] draw exit lines in white (no Boom exit lines 197, 198)
-	    if (lines[i].special == 11 ||
+	    if (cheating &&
+	        (lines[i].special == 11 ||
 	        lines[i].special == 51 ||
 	        lines[i].special == 52 ||
-	        lines[i].special == 124)
+	        lines[i].special == 124))
 	    {
 		AM_drawMline(&l, WHITE);
 		continue;
