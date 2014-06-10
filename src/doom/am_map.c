@@ -1232,6 +1232,7 @@ void AM_drawWalls(void)
 		}
 /*
 		// [crispy] non-secret closed doors
+		// NB: Choco does not have this
 		else if (!(lines[i].flags & ML_SECRET) &&
 		    ((lines[i].backsector->floorheight == lines[i].backsector->ceilingheight) ||
 		    (lines[i].frontsector->floorheight == lines[i].frontsector->ceilingheight)))
