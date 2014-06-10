@@ -1218,7 +1218,7 @@ void AM_drawWalls(void)
 		// [crispy] draw teleporters in green, if they are not secret
 		// (no monsters-only teleporters 125, 126; no Boom teleporters)
 		if (lines[i].special == 39 ||
-		    (lines[i].special == 97 && !(lines[i].flags & ML_SECRET)))
+		    (!(lines[i].flags & ML_SECRET) && lines[i].special == 97))
 		{ // teleporters
 		    AM_drawMline(&l, GREENS+GREENRANGE/2);
 		}
