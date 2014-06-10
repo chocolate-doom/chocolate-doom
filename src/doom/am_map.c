@@ -1189,21 +1189,22 @@ void AM_drawWalls(void)
 			    AM_drawMline(&l, REDS);
 			    continue;
 			default:
-			    // should be impossible reach here
+			    // should be impossible to reach here
 			    break;
 		    }
 		}
 	    }
+/*
 	    // [crispy] draw exit lines in white (no Boom exit lines 197, 198)
-	    if (cheating &&
-	        (lines[i].special == 11 ||
+	    if (lines[i].special == 11 ||
 	        lines[i].special == 51 ||
 	        lines[i].special == 52 ||
-	        lines[i].special == 124))
+	        lines[i].special == 124)
 	    {
 		AM_drawMline(&l, WHITE);
 		continue;
 	    }
+*/
 	    if (!lines[i].backsector)
 	    {
 		// [crispy] draw 1S secret sector boundaries in purple
@@ -1214,20 +1215,21 @@ void AM_drawWalls(void)
 	    }
 	    else
 	    {
-		// [crispy] draw teleporters in green
+		// [crispy] draw teleporters in green, if they are not secret
 		// (no monsters-only teleporters 125, 126; no Boom teleporters)
-		if (!(lines[i].flags & ML_SECRET) &&
-		    (lines[i].special == 39 || lines[i].special == 97))
+		if (lines[i].special == 39 ||
+		    (lines[i].special == 97 && !(lines[i].flags & ML_SECRET)))
 		{ // teleporters
 		    AM_drawMline(&l, GREENS+GREENRANGE/2);
 		}
 		else if (lines[i].flags & ML_SECRET) // secret door
 		{
-		    // [crispy] NB: Choco has this check, but SECRETWALLCOLORS==WALLCOLORS
-		    // Boom/PrBoom+ does not have this check anymore
-		    if (cheating && 0) AM_drawMline(&l, SECRETWALLCOLORS + lightlev);
+		    // [crispy] NB: Choco has this check, but (SECRETWALLCOLORS == WALLCOLORS)
+		    // Boom/PrBoom+ does not have this check at all
+		    if (0 && cheating) AM_drawMline(&l, SECRETWALLCOLORS + lightlev);
 		    else AM_drawMline(&l, WALLCOLORS+lightlev);
 		}
+/*
 		// [crispy] non-secret closed doors
 		else if (!(lines[i].flags & ML_SECRET) &&
 		    ((lines[i].backsector->floorheight == lines[i].backsector->ceilingheight) ||
@@ -1235,6 +1237,7 @@ void AM_drawWalls(void)
 		{
 		    AM_drawMline(&l, GRAYS+GRAYSRANGE/2);
 		}
+*/
 		// [crispy] draw 2S secret sector boundaries in purple
 		else if (cheating &&
 		    (lines[i].backsector->special == 9 ||
