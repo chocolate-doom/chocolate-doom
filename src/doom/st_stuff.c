@@ -1169,7 +1169,11 @@ byte* ST_WidgetColor(int i)
         {
             int health = plyr->health;
 
-            if (health < 25)
+            if (screenblocks == CRISPY_HUD && !automapactive &&
+                (plyr->cheats & CF_GODMODE ||
+                plyr->powers[pw_invulnerability]))
+                return cr[CR_GRAY];
+            else if (health < 25)
                 return cr[CR_RED];
             else if (health < 50)
                 return cr[CR_GOLD];
