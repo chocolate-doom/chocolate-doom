@@ -1196,6 +1196,7 @@ void AM_drawWalls(void)
 	    }
 /*
 	    // [crispy] draw exit lines in white (no Boom exit lines 197, 198)
+	    // NB: Choco does not have this at all, Boom/PrBoom+ have this disabled by default
 	    if (lines[i].special == 11 ||
 	        lines[i].special == 51 ||
 	        lines[i].special == 52 ||
