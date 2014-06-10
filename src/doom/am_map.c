@@ -194,10 +194,9 @@ mline_t thintriangle_guy[] = {
     { { (fixed_t)(R    ), (fixed_t)(0    ) }, { (fixed_t)(-.5*R), (fixed_t)(.7*R ) } },
     { { (fixed_t)(-.5*R), (fixed_t)(.7*R ) }, { (fixed_t)(-.5*R), (fixed_t)(-.7*R) } }
 };
-mline_t cross_mark[] =
-{
-  { { -R, 0 }, { R, 0} },
-  { { 0, -R }, { 0, R } },
+mline_t cross_mark[] = {
+    { { -R, 0 }, { R, 0 } },
+    { { 0, -R }, { 0, R } },
 };
 #undef R
 
@@ -1134,26 +1133,26 @@ void AM_drawGrid(int color)
 //
 static keycolor_t AM_DoorColor(int type)
 {
-  switch (type)
-  {
-    case 26:
-    case 32:
-    case 99:
-    case 133:
-      return blue_key;
-    case 27:
-    case 34:
-    case 136:
-    case 137:
-      return yellow_key;
-    case 28:
-    case 33:
-    case 134:
-    case 135:
-      return red_key;
-    default:
-      return no_key;
-  }
+    switch (type)
+    {
+	case 26:
+	case 32:
+	case 99:
+	case 133:
+	    return blue_key;
+	case 27:
+	case 34:
+	case 136:
+	case 137:
+	    return yellow_key;
+	case 28:
+	case 33:
+	case 134:
+	case 135:
+	    return red_key;
+	default:
+	    return no_key;
+    }
 }
 
 void AM_drawWalls(void)
@@ -1190,7 +1189,7 @@ void AM_drawWalls(void)
 			    AM_drawMline(&l, REDS);
 			    continue;
 			default:
-			    // should never reach here
+			    // should be impossible reach here
 			    break;
 		    }
 		}
@@ -1219,7 +1218,7 @@ void AM_drawWalls(void)
 		if (!(lines[i].flags & ML_SECRET) &&
 		    (lines[i].special == 39 || lines[i].special == 97))
 		{ // teleporters
-		    AM_drawMline(&l, (GREENS + GREENRANGE/2));
+		    AM_drawMline(&l, GREENS+GREENRANGE/2);
 		}
 		else if (lines[i].flags & ML_SECRET) // secret door
 		{
@@ -1237,8 +1236,8 @@ void AM_drawWalls(void)
 		}
 		// [crispy] draw 2S secret sector boundaries in purple
 		else if (cheating &&
-		    (lines[i].frontsector->special == 9 ||
-		    lines[i].backsector->special == 9))
+		    (lines[i].backsector->special == 9 ||
+		    lines[i].frontsector->special == 9))
 		{
 		    AM_drawMline(&l, SECRETWALLCOLORS);
 		}
