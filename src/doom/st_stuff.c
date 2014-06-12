@@ -1170,9 +1170,8 @@ byte* ST_WidgetColor(int i)
             int health = plyr->health;
 
             // [crispy] Invulnerability powerup and God Mode cheat turn Health values gray
-            if (screenblocks == CRISPY_HUD && !automapactive &&
-                (plyr->cheats & CF_GODMODE ||
-                plyr->powers[pw_invulnerability]))
+            if (plyr->cheats & CF_GODMODE ||
+                plyr->powers[pw_invulnerability])
                 return cr[CR_GRAY];
             else if (health < 25)
                 return cr[CR_RED];
@@ -1188,9 +1187,8 @@ byte* ST_WidgetColor(int i)
         case hudcolor_armor:
         {
 	    // [crispy] Invulnerability powerup and God Mode cheat turn Armor values gray
-	    if (screenblocks == CRISPY_HUD && !automapactive &&
-                (plyr->cheats & CF_GODMODE ||
-                plyr->powers[pw_invulnerability]))
+	    if (plyr->cheats & CF_GODMODE ||
+                plyr->powers[pw_invulnerability])
                 return cr[CR_GRAY];
 	    else if (plyr->armortype == 0)
                 return cr[CR_RED];
