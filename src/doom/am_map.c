@@ -1194,7 +1194,6 @@ void AM_drawWalls(void)
 		    }
 		}
 	    }
-/*
 	    // [crispy] draw exit lines in white (no Boom exit lines 197, 198)
 	    // NB: Choco does not have this at all, Boom/PrBoom+ have this disabled by default
 	    if (lines[i].special == 11 ||
@@ -1205,7 +1204,6 @@ void AM_drawWalls(void)
 		AM_drawMline(&l, WHITE);
 		continue;
 	    }
-*/
 	    if (!lines[i].backsector)
 	    {
 		// [crispy] draw 1S secret sector boundaries in purple
