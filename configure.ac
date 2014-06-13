@@ -1,6 +1,7 @@
 AC_INIT(Chocolate Doom, 2.0.0, fraggle@gmail.com, chocolate-doom)
 
-PACKAGE_SHORTDESC="Conservative Doom source port"
+PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
+PACKAGE_SHORTDESC="Conservative source port"
 PACKAGE_COPYRIGHT="Copyright (C) 1993-2013"
 PACKAGE_LICENSE="GNU General Public License, version 2"
 PACKAGE_MAINTAINER="Simon Howard"
@@ -135,6 +136,7 @@ AC_SUBST(SDLNET_LIBS)
 
 AC_SUBST(ac_aux_dir)
 
+AC_SUBST(PACKAGE_SHORTNAME)
 AC_SUBST(PACKAGE_SHORTDESC)
 AC_SUBST(PACKAGE_COPYRIGHT)
 AC_SUBST(PACKAGE_LICENSE)
@@ -160,13 +162,16 @@ src/Makefile
 src/doom.desktop
 src/doom-screensaver.desktop
 src/doom/Makefile
+src/heretic.desktop
 src/heretic/Makefile
+src/hexen.desktop
 src/hexen/Makefile
 src/resource.rc
 src/setup-res.rc
 src/setup/Makefile
 src/setup/setup.desktop
 src/setup/setup-manifest.xml
+src/strife.desktop
 src/strife/Makefile
 textscreen/Makefile
 textscreen/examples/Makefile
