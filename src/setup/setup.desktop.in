@@ -1,7 +1,7 @@
 [Desktop Entry]
-Name=@PACKAGE_NAME@ Setup
-Exec=@PROGRAM_PREFIX@doom-setup
+Name=@PACKAGE_SHORTNAME@ Setup
+Exec=@PROGRAM_PREFIX@setup
 Icon=@PROGRAM_PREFIX@setup
 Type=Application
-Comment=Setup tool for @PACKAGE_NAME@
+Comment=Setup tool for @PACKAGE_SHORTNAME@
 Categories=Settings
