@@ -415,6 +415,7 @@ cheatseq_t cheat_mypos = CHEAT("idmypos", 0);
 cheatseq_t cheat_weapon = CHEAT("tntweap", 1);
 cheatseq_t cheat_massacre = CHEAT("tntem", 0);
 cheatseq_t cheat_notarget = CHEAT("notarget", 0);
+cheatseq_t cheat_panic = CHEAT("panic", 0);
 
 
 //
@@ -474,6 +475,31 @@ static int ST_cheat_massacre()    // jff 2/01/98 kill all monsters
           }
       }
   return (killcount);
+}
+
+// [crispy] trigger all special lines available on the map
+static int ST_cheat_panic()
+{
+    int i, speciallines = 0;
+
+    for (i = 0; i < numlines; i++)
+    {
+	if (lines[i].special)
+	{
+	    // do not trigger level exit switches/lines or teleporters
+	    if (lines[i].special == 11 || lines[i].special == 51 ||
+	        lines[i].special == 52 || lines[i].special == 124 ||
+	        lines[i].special == 39 || lines[i].special == 97)
+	        continue;
+
+	    P_CrossSpecialLine (i, 0, plyr->mo);
+	    P_ShootSpecialLine (plyr->mo, &lines[i]);
+	    P_UseSpecialLine (plyr->mo, &lines[i], 0);
+
+	    speciallines++;
+	}
+    }
+    return (speciallines);
 }
 
 // Respond to keyboard input events,
@@ -782,6 +808,17 @@ ST_Responder (event_t* ev)
         M_snprintf(msg, sizeof(msg), "Notarget Mode \x1b%c%s",
             (crispy_coloredhud) ? '0' + CR_GREEN : '0' + CR_RED,
             (plyr->cheats & CF_NOTARGET) ? "ON" : "OFF");
+        plyr->message = msg;
+    }
+    else
+    if (singleplayer && cht_CheckCheat(&cheat_panic, ev->data2))
+    {
+        static char msg[32];
+        int triggeredlines = ST_cheat_panic();
+
+        M_snprintf(msg, sizeof(msg), "\x1b%c%d \x1b%cSpecial Line%s Triggered",
+            (crispy_coloredhud) ? '0' + CR_GOLD : '0' + CR_RED,
+            triggeredlines, '0' + CR_RED, triggeredlines == 1 ? "" : "s");
         plyr->message = msg;
     }
   }
