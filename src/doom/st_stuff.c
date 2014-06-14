@@ -481,6 +481,14 @@ static int ST_cheat_massacre()    // jff 2/01/98 kill all monsters
 static int ST_cheat_panic()
 {
     int i, speciallines = 0;
+    boolean origcards[NUMCARDS];
+
+    // temporarily give all keys
+    for (i = 0; i < NUMCARDS; i++)
+    {
+	origcards[i] = plyr->cards[i];
+	plyr->cards[i] = true;
+    }
 
     for (i = 0; i < numlines; i++)
     {
@@ -499,6 +507,12 @@ static int ST_cheat_panic()
 	    speciallines++;
 	}
     }
+
+    for (i = 0; i < NUMCARDS; i++)
+    {
+	plyr->cards[i] = origcards[i];
+    }
+
     return (speciallines);
 }
 
