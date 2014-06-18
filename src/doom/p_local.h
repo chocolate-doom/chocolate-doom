@@ -208,6 +208,20 @@ extern fixed_t		tmceilingz;
 
 extern	line_t*		ceilingline;
 
+// fraggle: I have increased the size of this buffer.  In the original Doom,
+// overrunning past this limit caused other bits of memory to be overwritten,
+// affecting demo playback.  However, in doing so, the limit was still
+// exceeded.  So we have to support more than 8 specials.
+//
+// We keep the original limit, to detect what variables in memory were
+// overwritten (see SpechitOverrun())
+
+#define MAXSPECIALCROSS 		20
+#define MAXSPECIALCROSS_ORIGINAL	8
+
+extern	line_t*	spechit[MAXSPECIALCROSS];
+extern	int	numspechit;
+
 boolean P_CheckPosition (mobj_t *thing, fixed_t x, fixed_t y);
 boolean P_TryMove (mobj_t* thing, fixed_t x, fixed_t y);
 boolean P_TeleportMove (mobj_t* thing, fixed_t x, fixed_t y);
