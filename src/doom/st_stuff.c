@@ -518,6 +518,14 @@ ST_Responder (event_t* ev)
 	plyr->armorpoints = deh_idfa_armor;
 	plyr->armortype = deh_idfa_armor_class;
 	
+	// [crispy] give backpack
+	if (dropbackpack && !plyr->backpack)
+	{
+	    for (i=0 ; i<NUMAMMO ; i++)
+		plyr->maxammo[i] *= 2;
+	    plyr->backpack = true;
+	}
+
 	for (i=0;i<NUMWEAPONS;i++)
 	  plyr->weaponowned[i] = true;
 	
@@ -532,6 +540,14 @@ ST_Responder (event_t* ev)
 	plyr->armorpoints = deh_idkfa_armor;
 	plyr->armortype = deh_idkfa_armor_class;
 	
+	// [crispy] give backpack
+	if (dropbackpack && !plyr->backpack)
+	{
+	    for (i=0 ; i<NUMAMMO ; i++)
+		plyr->maxammo[i] *= 2;
+	    plyr->backpack = true;
+	}
+
 	for (i=0;i<NUMWEAPONS;i++)
 	  plyr->weaponowned[i] = true;
 	
