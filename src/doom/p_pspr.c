@@ -339,6 +339,12 @@ void A_ReFire
 ( player_t*	player,
   pspdef_t*	psp )
 {
+    // [crispy] center the weapon sprite
+    if (singleplayer && !player->refire)
+    {
+	psp->sx = FRACUNIT;
+	psp->sy = WEAPONTOP;
+    }
     
     // check for fire
     //  (if a weaponchange is pending, let it go through instead)
