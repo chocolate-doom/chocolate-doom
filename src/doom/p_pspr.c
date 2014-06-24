@@ -249,6 +249,13 @@ void P_FireWeapon (player_t* player)
     newstate = weaponinfo[player->readyweapon].atkstate;
     P_SetPsprite (player, ps_weapon, newstate);
     P_NoiseAlert (player->mo, player->mo);
+
+    // [crispy] center the weapon sprite
+    if (singleplayer)
+    {
+	player->psprites[ps_weapon].sx = FRACUNIT;
+	player->psprites[ps_weapon].sy = WEAPONTOP;
+    }
 }
 
 
@@ -339,12 +346,6 @@ void A_ReFire
 ( player_t*	player,
   pspdef_t*	psp )
 {
-    // [crispy] center the weapon sprite
-    if (singleplayer && !player->refire)
-    {
-	psp->sx = FRACUNIT;
-	psp->sy = WEAPONTOP;
-    }
     
     // check for fire
     //  (if a weaponchange is pending, let it go through instead)
