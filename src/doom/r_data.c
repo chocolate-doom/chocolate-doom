@@ -734,13 +734,13 @@ void R_InitTranMap()
   else
     {   // Compose a default transparent filter map based on PLAYPAL.
       unsigned char *playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
-      char fname[PATH_MAX+1]; extern char *configdir;
+      char *fname; extern char *configdir;
       struct {
         unsigned char pct;
         unsigned char playpal[256];
       } cache;
-      FILE *cachefp = fopen(strcat(strcpy(fname, configdir),
-                                   "/tranmap.dat"),"r+b");
+      FILE *cachefp = fopen(fname = M_StringJoin(configdir,
+                                   "tranmap.dat", NULL), "r+b");
 
       tranmap = Z_Malloc(256*256, PU_STATIC, 0);  // killough 4/11/98
 
