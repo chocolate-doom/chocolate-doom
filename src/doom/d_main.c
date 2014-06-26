@@ -1151,10 +1151,11 @@ static void LoadNerveWad(void)
 
         if (sep != NULL)
         {
-            nervewadfile = malloc(strlen(iwadfile) + 9);
-            strcpy(nervewadfile, iwadfile);
+            size_t nervewadfile_len = strlen(iwadfile) + 9;
+            nervewadfile = malloc(nervewadfile_len);
+            M_StringCopy(nervewadfile, iwadfile, nervewadfile_len);
             nervewadfile[sep - iwadfile + 1] = '\0';
-            strcat(nervewadfile, "nerve.wad");
+            M_StringConcat(nervewadfile, "nerve.wad", nervewadfile_len);
         }
         else
         {
