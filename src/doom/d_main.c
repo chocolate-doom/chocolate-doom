@@ -195,6 +195,7 @@ void D_Display (void)
     static  boolean		fullscreen = false;
     static  gamestate_t		oldgamestate = -1;
     static  int			borderdrawcount;
+    static  int			map;
     int				nowtime;
     int				tics;
     int				wipestart;
@@ -322,13 +323,18 @@ void D_Display (void)
 	for (i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++)
 	{
 	    b = I_VideoBuffer + i;
-	    *b = colormaps[16 * 256 + *b];
+	    *b = colormaps[map * 256 + *b];
 	}
+
+	if (map < 16)
+	    map++;
 
 	// force redraw of status bar and border
 	viewactivestate = false;
 	inhelpscreensstate = true;
     }
+    else
+	map = 0;
 
     // draw pause pic
     if (paused)
