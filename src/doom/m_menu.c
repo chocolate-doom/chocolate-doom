@@ -1714,6 +1714,10 @@ boolean M_Responder (event_t* ev)
     // "close" button pressed on window?
     if (ev->type == ev_quit)
     {
+        // [crispy] Fast exit if "Run" key is held down
+        if (G_SpeedKeyDown() || m_speedkeydown)
+            I_Quit();
+
         // First click on close button = bring up quit confirm message.
         // Second click on close button = confirm quit
 
