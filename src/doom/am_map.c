@@ -1436,6 +1436,7 @@ AM_drawThings
 		 t->radius, t->angle,
 		// [crispy] show countable kills in red and countable items in yellow
 		 ((t->flags & (MF_COUNTKILL | MF_CORPSE)) == MF_COUNTKILL) ? REDS :
+		 (t->flags & MF_CORPSE) ? GRAYS :
 		 (t->flags & MF_COUNTITEM) ? YELLOWS :
 		 colors+lightlev,
 		 t->x, t->y);
