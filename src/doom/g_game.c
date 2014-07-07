@@ -349,10 +349,10 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // allowed an autorun effect
 
     // [crispy] when autorun is active, pressing the run key results in walking
-    speed = (key_speed >= NUMKEYS
-         || joybspeed >= MAX_JOY_BUTTONS)
-         ^ (gamekeydown[key_speed]
-         || joybuttons[joybspeed]);
+    speed = key_speed >= NUMKEYS
+         || joybspeed >= MAX_JOY_BUTTONS;
+    speed ^= (key_speed < NUMKEYS && gamekeydown[key_speed])
+         || (joybspeed < MAX_JOY_BUTTONS && joybuttons[joybspeed]);
  
     forward = side = look = 0;
     
