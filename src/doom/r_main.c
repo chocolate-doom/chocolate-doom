@@ -840,7 +840,7 @@ void R_SetupFrame (player_t* player)
 
     viewz = player->viewz;
 
-    tempCentery = viewheight / 2 + ((player2->lookdir) << (hires && !detailshift)) * (screenblocks < 11 ? screenblocks : 11) / 10;
+    tempCentery = viewheight / 2 + ((player2->lookdir / MLOOKUNIT) << (hires && !detailshift)) * (screenblocks < 11 ? screenblocks : 11) / 10;
     if (centery != tempCentery)
     {
         centery = tempCentery;

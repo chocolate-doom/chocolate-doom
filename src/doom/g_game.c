@@ -620,13 +620,13 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
          crispy_mouselook)
     {
         players2[consoleplayer].lookdir +=
-            (mouse_y_invert ? -mousey : mousey) / 8;
+            mouse_y_invert ? -mousey : mousey;
 
-        if (players2[consoleplayer].lookdir > 90)
-            players2[consoleplayer].lookdir = 90;
+        if (players2[consoleplayer].lookdir > 90 * MLOOKUNIT)
+            players2[consoleplayer].lookdir = 90 * MLOOKUNIT;
         else
-        if (players2[consoleplayer].lookdir < -110)
-            players2[consoleplayer].lookdir = -110;
+        if (players2[consoleplayer].lookdir < -110 * MLOOKUNIT)
+            players2[consoleplayer].lookdir = -110 * MLOOKUNIT;
     }
     else
     if (!novert)

@@ -1038,7 +1038,7 @@ P_SpawnPlayerMissile
 	{
 	    an = source->angle;
 	    if (singleplayer && crispy_freeaim)
-	        slope = ((p2fromp(source->player)->lookdir) << FRACBITS) / 173;
+               slope = ((p2fromp(source->player)->lookdir / MLOOKUNIT) << FRACBITS) / 173;
 	    else
 	    slope = 0;
 	}

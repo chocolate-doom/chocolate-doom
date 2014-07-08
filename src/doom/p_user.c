@@ -184,10 +184,10 @@ void P_MovePlayer (player_t* player)
         }
         else
         {
-            player2->lookdir += 5 * look;
-            if (player2->lookdir > 90 || player2->lookdir < -110)
+            player2->lookdir += MLOOKUNIT * 5 * look;
+            if (player2->lookdir > 90 * MLOOKUNIT || player2->lookdir < -110 * MLOOKUNIT)
             {
-                player2->lookdir -= 5 * look;
+                player2->lookdir -= MLOOKUNIT * 5 * look;
             }
         }
     }
@@ -195,13 +195,13 @@ void P_MovePlayer (player_t* player)
     {
         if (player2->lookdir > 0)
         {
-            player2->lookdir -= 8;
+            player2->lookdir -= 8 * MLOOKUNIT;
         }
         else if (player2->lookdir < 0)
         {
-            player2->lookdir += 8;
+            player2->lookdir += 8 * MLOOKUNIT;
         }
-        if (abs(player2->lookdir) < 8)
+        if (abs(player2->lookdir) < 8 * MLOOKUNIT)
         {
             player2->lookdir = 0;
             player2->centering = false;
@@ -233,11 +233,11 @@ void P_DeathThink (player_t* player)
     if (player->viewheight < 6*FRACUNIT)
 	player->viewheight = 6*FRACUNIT;
 
-    if (player2->lookdir >  8)
-        player2->lookdir -= 8;
+    if (player2->lookdir >  8 * MLOOKUNIT)
+        player2->lookdir -= 8 * MLOOKUNIT;
     else
-    if (player2->lookdir < -8)
-        player2->lookdir += 8;
+    if (player2->lookdir < -8 * MLOOKUNIT)
+        player2->lookdir += 8 * MLOOKUNIT;
     else
     if (player2->lookdir)
         player2->lookdir = 0;
