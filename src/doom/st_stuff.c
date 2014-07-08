@@ -415,7 +415,7 @@ cheatseq_t cheat_mypos = CHEAT("idmypos", 0);
 cheatseq_t cheat_weapon = CHEAT("tntweap", 1);
 cheatseq_t cheat_massacre = CHEAT("tntem", 0);
 cheatseq_t cheat_notarget = CHEAT("notarget", 0);
-cheatseq_t cheat_panic = CHEAT("panic", 0);
+cheatseq_t cheat_spechits = CHEAT("spechits", 0);
 
 
 //
@@ -478,7 +478,7 @@ static int ST_cheat_massacre()    // jff 2/01/98 kill all monsters
 }
 
 // [crispy] trigger all special lines available on the map
-static int ST_cheat_panic()
+static int ST_cheat_spechits()
 {
     int i, speciallines = 0;
     boolean origcards[NUMCARDS];
@@ -841,10 +841,10 @@ ST_Responder (event_t* ev)
         plyr->message = msg;
     }
     else
-    if (singleplayer && cht_CheckCheat(&cheat_panic, ev->data2))
+    if (singleplayer && cht_CheckCheat(&cheat_spechits, ev->data2))
     {
         static char msg[32];
-        int triggeredlines = ST_cheat_panic();
+        int triggeredlines = ST_cheat_spechits();
 
         M_snprintf(msg, sizeof(msg), "\x1b%c%d \x1b%cSpecial Line%s Triggered",
             (crispy_coloredhud) ? '0' + CR_GOLD : '0' + CR_RED,
