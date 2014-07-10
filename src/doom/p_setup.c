@@ -81,9 +81,9 @@ static int      totallines;
 // Blockmap size.
 int		bmapwidth;
 int		bmapheight;	// size in mapblocks
-short*		blockmap;	// int for larger maps
+long*		blockmap;	// int for larger maps
 // offsets in blockmap are from here
-short*		blockmaplump;		
+long*		blockmaplump;
 // origin of block map
 fixed_t		bmaporgx;
 fixed_t		bmaporgy;
@@ -554,25 +554,37 @@ void P_LoadSideDefs (int lump)
 //
 // P_LoadBlockMap
 //
+// [crispy] remove BLOCKMAP limit
+// adapted from boom202s/P_SETUP.C:1025-1076
 void P_LoadBlockMap (int lump)
 {
     int i;
     int count;
     int lumplen;
+    short *wadblockmaplump;
 
     lumplen = W_LumpLength(lump);
     count = lumplen / 2;
 	
-    blockmaplump = Z_Malloc(lumplen, PU_LEVEL, NULL);
-    W_ReadLump(lump, blockmaplump);
+    wadblockmaplump = Z_Malloc(lumplen, PU_LEVEL, NULL);
+    W_ReadLump(lump, wadblockmaplump);
+    blockmaplump = Z_Malloc(sizeof(*blockmaplump) * count, PU_LEVEL, NULL);
     blockmap = blockmaplump + 4;
+
+    blockmaplump[0] = SHORT(wadblockmaplump[0]);
+    blockmaplump[1] = SHORT(wadblockmaplump[1]);
+    blockmaplump[2] = (long)(SHORT(wadblockmaplump[2])) & 0xffff;
+    blockmaplump[3] = (long)(SHORT(wadblockmaplump[3])) & 0xffff;
 
     // Swap all short integers to native byte ordering.
   
-    for (i=0; i<count; i++)
+    for (i=4; i<count; i++)
     {
-	blockmaplump[i] = SHORT(blockmaplump[i]);
+	short t = SHORT(wadblockmaplump[i]);
+	blockmaplump[i] = (t == -1) ? -1l : (long) t & 0xffff;
     }
+
+    Z_Free(wadblockmaplump);
 		
     // Read the header
 
@@ -584,7 +596,7 @@ void P_LoadBlockMap (int lump)
     if (crispy_fliplevels)
     {
 	int x, y;
-	short* rowoffset;
+	long* rowoffset;
 
 	bmaporgx += bmapwidth * 128 * FRACUNIT;
 	bmaporgx = -bmaporgx;
@@ -595,7 +607,7 @@ void P_LoadBlockMap (int lump)
 
 	    for (x = 0; x < bmapwidth / 2; x++)
 	    {
-	        short tmp;
+	        long tmp;
 
 	        tmp = rowoffset[x];
 	        rowoffset[x] = rowoffset[bmapwidth-1-x];
