@@ -100,8 +100,8 @@
 #define M_ZOOMOUT       ((int) (FRACUNIT/1.02))
 
 // translates between frame-buffer and map distances
-#define FTOM(x) FixedMul(((x)<<FRACBITS),scale_ftom)
-#define MTOF(x) (FixedMul((x),scale_mtof)>>FRACBITS)
+#define FTOM(x) (((long)((x)<<FRACBITS) * scale_ftom) >> FRACBITS)
+#define MTOF(x) ((((long)(x) * scale_mtof) >> FRACBITS)>>FRACBITS)
 // translates between frame-buffer and map coordinates
 #define CXMTOF(x)  (f_x + MTOF((x)-m_x))
 #define CYMTOF(y)  (f_y + (f_h - MTOF((y)-m_y)))
@@ -121,7 +121,7 @@ typedef struct
 
 typedef struct
 {
-    fixed_t		x,y;
+    long		x,y;
 } mpoint_t;
 
 typedef struct
@@ -218,14 +218,14 @@ static mpoint_t m_paninc; // how far the window pans each tic (map coords)
 static fixed_t 	mtof_zoommul; // how far the window zooms in each tic (map coords)
 static fixed_t 	ftom_zoommul; // how far the window zooms in each tic (fb coords)
 
-static fixed_t 	m_x, m_y;   // LL x,y where the window is on the map (map coords)
-static fixed_t 	m_x2, m_y2; // UR x,y where the window is on the map (map coords)
+static long	m_x, m_y;   // LL x,y where the window is on the map (map coords)
+static long	m_x2, m_y2; // UR x,y where the window is on the map (map coords)
 
 //
 // width/height of window on map (map coords)
 //
-static fixed_t 	m_w;
-static fixed_t	m_h;
+static long	m_w;
+static long	m_h;
 
 // based on level size
 static fixed_t 	min_x;
@@ -245,8 +245,8 @@ static fixed_t 	min_scale_mtof; // used to tell when to stop zooming out
 static fixed_t 	max_scale_mtof; // used to tell when to stop zooming in
 
 // old stuff for recovery later
-static fixed_t old_m_w, old_m_h;
-static fixed_t old_m_x, old_m_y;
+static long old_m_w, old_m_h;
+static long old_m_x, old_m_y;
 
 // old location used by the Follower routine
 static mpoint_t f_oldloc;
@@ -1099,8 +1099,8 @@ AM_drawMline
 //
 void AM_drawGrid(int color)
 {
-    fixed_t x, y;
-    fixed_t start, end;
+    long x, y;
+    long start, end;
     mline_t ml;
 
     // Figure out start of vertical gridlines
@@ -1200,11 +1200,11 @@ void AM_drawWalls(void)
 //
 void
 AM_rotate
-( fixed_t*	x,
-  fixed_t*	y,
+( long*	x,
+  long*	y,
   angle_t	a )
 {
-    fixed_t tmpx;
+    long tmpx;
 
     tmpx =
 	FixedMul(*x,finecosine[a>>ANGLETOFINESHIFT])
