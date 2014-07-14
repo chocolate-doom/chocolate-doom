@@ -45,11 +45,11 @@ char *doom2_endmsg[] =
   "you're lucky i don't smack\nyou for thinking about leaving.",
 };
 
-#if 0
+#if 1
 
 // UNUSED messages included in the source release
 
-char* endmsg[] =
+char* rude_endmsg[] =
 {
   // DOOM1
   QUITMSG,
