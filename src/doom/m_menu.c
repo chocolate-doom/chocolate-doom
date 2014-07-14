@@ -1068,18 +1068,22 @@ void M_QuitResponse(int key)
 static char *M_SelectEndMessage(void)
 {
     char **endmsg;
+    boolean rude;
+
+    // [crispy] enable the original rude quit messages
+    rude = gametic % (2 * NUM_QUITMESSAGES) > NUM_QUITMESSAGES;
 
     if (logical_gamemission == doom)
     {
         // Doom 1
 
-        endmsg = doom1_endmsg;
+        endmsg = rude ? rude_endmsg + 1 : doom1_endmsg;
     }
     else
     {
         // Doom 2
         
-        endmsg = doom2_endmsg;
+        endmsg = rude ? rude_endmsg + 1 : doom2_endmsg;
     }
 
     return endmsg[gametic % NUM_QUITMESSAGES];
