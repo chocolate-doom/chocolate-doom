@@ -139,6 +139,7 @@ void DEH_CloseFile(deh_context_t *context)
         W_ReleaseLumpNum(context->lumpnum);
     }
 
+    free(context->filename);
     Z_Free(context->readbuffer);
     Z_Free(context);
 }

@@ -814,6 +814,9 @@ void R_InitTranMap()
             }
         }
 
+      if (fname)
+          free(fname);
+
       Z_ChangeTag(playpal, PU_CACHE);
     }
 }
