@@ -228,8 +228,8 @@ static mpoint_t m_paninc; // how far the window pans each tic (map coords)
 static fixed_t 	mtof_zoommul; // how far the window zooms in each tic (map coords)
 static fixed_t 	ftom_zoommul; // how far the window zooms in each tic (fb coords)
 
-static long 	m_x, m_y;   // LL x,y where the window is on the map (map coords)
-static long 	m_x2, m_y2; // UR x,y where the window is on the map (map coords)
+static long	m_x, m_y;   // LL x,y where the window is on the map (map coords)
+static long	m_x2, m_y2; // UR x,y where the window is on the map (map coords)
 
 //
 // width/height of window on map (map coords)
