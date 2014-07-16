@@ -1510,7 +1510,7 @@ void P_ArchiveWorld (void)
 	saveg_write16(li->tag);
 	for (j=0 ; j<2 ; j++)
 	{
-	    if (li->sidenum[j] == -1)
+	    if (li->sidenum[j] == NO_INDEX)
 		continue;
 	    
 	    si = &sides[li->sidenum[j]];
@@ -1559,7 +1559,7 @@ void P_UnArchiveWorld (void)
 	li->tag = saveg_read16();
 	for (j=0 ; j<2 ; j++)
 	{
-	    if (li->sidenum[j] == -1)
+	    if (li->sidenum[j] == NO_INDEX)
 		continue;
 	    si = &sides[li->sidenum[j]];
 	    si->textureoffset = saveg_read16() << FRACBITS;
