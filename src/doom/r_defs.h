@@ -183,13 +183,13 @@ typedef struct line_s
     fixed_t	dy;
 
     // Animation related.
-    short	flags;
+    unsigned short	flags;
     short	special;
     short	tag;
 
     // Visual appearance: SideDefs.
-    //  sidenum[1] will be -1 if one sided
-    short	sidenum[2];			
+    //  sidenum[1] will be -1 (NO_INDEX) if one sided
+    unsigned short	sidenum[2];
 
     // Neat. Another bounding box, for the extent
     //  of the LineDef.
@@ -223,8 +223,8 @@ typedef struct line_s
 typedef struct subsector_s
 {
     sector_t*	sector;
-    short	numlines;
-    short	firstline;
+    int	numlines;
+    int	firstline;
     
 } subsector_t;
 
@@ -270,7 +270,7 @@ typedef struct
     fixed_t	bbox[2][4];
 
     // If NF_SUBSECTOR its a subsector.
-    unsigned short children[2];
+    int children[2];
     
 } node_t;
 
