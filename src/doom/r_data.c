@@ -734,7 +734,7 @@ void R_InitTranMap()
   else
     {   // Compose a default transparent filter map based on PLAYPAL.
       unsigned char *playpal = W_CacheLumpName("PLAYPAL", PU_STATIC);
-      char *fname; extern char *configdir;
+      char *fname = NULL; extern char *configdir;
       struct {
         unsigned char pct;
         unsigned char playpal[256];
