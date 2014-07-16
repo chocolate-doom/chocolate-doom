@@ -1411,6 +1411,10 @@ void D_DoomMain (void)
     D_BindVariables();
     M_LoadDefaults();
 
+    // [crispy] unconditionally disable savegame and demo limit
+    vanilla_savegame_limit = 0;
+    vanilla_demo_limit = 0;
+
     // Save configuration at exit.
     I_AtExit(M_SaveDefaults, false);
 
