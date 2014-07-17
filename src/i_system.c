@@ -53,8 +53,8 @@
 #include <CoreFoundation/CFUserNotification.h>
 #endif
 
-#define DEFAULT_RAM (16 << hires) /* MiB */
-#define MIN_RAM     (4 << hires)  /* MiB */
+#define DEFAULT_RAM 16*2 /* MiB */
+#define MIN_RAM     4*4  /* MiB */
 
 
 typedef struct atexit_listentry_s atexit_listentry_t;
