@@ -1,5 +1,6 @@
 AC_INIT(Crispy Doom, 1.4, fabian@greffrath.com, crispy-doom)
 
+PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
 PACKAGE_SHORTDESC="Limit-raising medium-resolution Doom source port"
 PACKAGE_COPYRIGHT="Copyright (C) 1993-2014"
 PACKAGE_LICENSE="GNU General Public License, version 2"
@@ -135,6 +136,7 @@ AC_SUBST(SDLNET_LIBS)
 
 AC_SUBST(ac_aux_dir)
 
+AC_SUBST(PACKAGE_SHORTNAME)
 AC_SUBST(PACKAGE_SHORTDESC)
 AC_SUBST(PACKAGE_COPYRIGHT)
 AC_SUBST(PACKAGE_LICENSE)
@@ -160,13 +162,16 @@ src/Makefile
 src/doom.desktop
 src/doom-screensaver.desktop
 src/doom/Makefile
+src/heretic.desktop
 src/heretic/Makefile
+src/hexen.desktop
 src/hexen/Makefile
 src/resource.rc
 src/setup-res.rc
 src/setup/Makefile
 src/setup/setup.desktop
 src/setup/setup-manifest.xml
+src/strife.desktop
 src/strife/Makefile
 textscreen/Makefile
 textscreen/examples/Makefile

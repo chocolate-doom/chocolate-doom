@@ -1,6 +1,6 @@
 [Desktop Entry]
-Name=@PACKAGE_SHORTNAME@ Doom
-Exec=@PROGRAM_PREFIX@doom
+Name=@PACKAGE_SHORTNAME@ Strife
+Exec=@PROGRAM_PREFIX@strife
 Icon=@PROGRAM_PREFIX@doom
 Type=Application
 Comment=@PACKAGE_SHORTDESC@
