@@ -325,8 +325,8 @@ fixed_t	P_FindHighestFloorSurrounding(sector_t *sec)
 
 // 20 adjoining sectors max!
 #define MAX_ADJOINING_SECTORS_ORIG     20
-// [crispy] PrBoom+ raises this to 500 if M_CheckParm("-doom95")
-#define MAX_ADJOINING_SECTORS     500
+// [crispy] PrBoom+ raises this to 500 (!) if M_CheckParm("-doom95")
+#define MAX_ADJOINING_SECTORS     50
 
 fixed_t
 P_FindNextHighestFloor
