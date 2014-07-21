@@ -324,9 +324,7 @@ fixed_t	P_FindHighestFloorSurrounding(sector_t *sec)
 // Thanks to entryway for the Vanilla overflow emulation.
 
 // 20 adjoining sectors max!
-#define MAX_ADJOINING_SECTORS_ORIG     20
-// [crispy] PrBoom+ raises this to 500 (!) if M_CheckParm("-doom95")
-#define MAX_ADJOINING_SECTORS     50
+#define MAX_ADJOINING_SECTORS     20
 
 fixed_t
 P_FindNextHighestFloor
@@ -339,7 +337,17 @@ P_FindNextHighestFloor
     line_t*     check;
     sector_t*   other;
     fixed_t     height = currentheight;
-    fixed_t     heightlist[MAX_ADJOINING_SECTORS + 2];
+    static fixed_t *heightlist = NULL;
+    static int heightlist_size = 0;
+
+    if (sec->linecount > heightlist_size)
+    {
+	do
+	{
+	    heightlist_size += MAX_ADJOINING_SECTORS;
+	} while (sec->linecount > heightlist_size);
+	heightlist = realloc(heightlist, heightlist_size * sizeof(*heightlist));
+    }
 
     for (i=0, h=0; i < sec->linecount; i++)
     {
@@ -352,14 +360,14 @@ P_FindNextHighestFloor
         if (other->floorheight > height)
         {
             // Emulation of memory (stack) overflow
-            if (h == MAX_ADJOINING_SECTORS_ORIG + 1)
+            if (h == MAX_ADJOINING_SECTORS + 1)
             {
                 height = other->floorheight;
             }
-            else if (h == MAX_ADJOINING_SECTORS_ORIG + 2)
+            else if (h == MAX_ADJOINING_SECTORS + 2)
             {
                 // Fatal overflow: game crashes at 22 sectors
-                puts   ("Sector with more than 22 adjoining sectors. "
+                 puts("Sector with more than 22 adjoining sectors. "
                         "Vanilla will crash here");
             }
 
