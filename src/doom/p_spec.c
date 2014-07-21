@@ -368,7 +368,7 @@ P_FindNextHighestFloor
             else if (h == MAX_ADJOINING_SECTORS + 2)
             {
                 // Fatal overflow: game crashes at 22 textures
-                 printf("Sector with more than 22 adjoining sectors. "
+                   puts("Sector with more than 22 adjoining sectors. "
                         "Vanilla will crash here");
             }
 
