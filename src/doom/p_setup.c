@@ -957,6 +957,31 @@ void P_LoadLineDefs (int lump)
 	    ld->backsector = sides[ld->sidenum[1]].sector;
 	else
 	    ld->backsector = 0;
+
+	// [crispy] fix common wad errors (missing sidedefs)
+	// from prboom-plus/src/p_setup.c:1426
+	{
+	    int j;
+
+	    // linedef has out-of-range sidedef number
+	    for (j = 0; j < 2; j++)
+	    {
+		if (ld->sidenum[j] != NO_INDEX && ld->sidenum[j] >= numsides)
+		    ld->sidenum[j] = NO_INDEX;
+	    }
+
+	    // linedef missing first sidedef
+	    if (ld->sidenum[0] == NO_INDEX)
+		ld->sidenum[0] = 0; // Substitute dummy sidedef for missing right side
+
+	    // linedef has two-sided flag set, but no second sidedef
+	    if ((ld->sidenum[1] == NO_INDEX) && (ld->flags & ML_TWOSIDED))
+	    {
+		// e6y: ML_TWOSIDED flag shouldn't be cleared for compatibility purposes
+		if (singleplayer)
+		    ld->flags &= ~ML_TWOSIDED; // Clear 2s flag for missing left side
+	    }
+	}
     }
 
     W_ReleaseLumpNum(lump);
