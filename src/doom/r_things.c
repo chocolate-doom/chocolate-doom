@@ -279,7 +279,7 @@ void R_InitSpriteDefs (char** namelist)
 //
 // GAME FUNCTIONS
 //
-vissprite_t*	vissprites;
+vissprite_t*	vissprites = NULL;
 vissprite_t*	vissprite_p;
 int		newvissprite;
 static int	numvissprites;
@@ -321,16 +321,15 @@ vissprite_t	overflowsprite;
 
 vissprite_t* R_NewVisSprite (void)
 {
-    // [crispy] remove MAXVISSPRITE limit
+    // [crispy] remove MAXVISSPRITE Vanilla limit
     if (vissprite_p == &vissprites[numvissprites])
     {
-	static int i;
 	int numvissprites_old = numvissprites;
 
-	if (i++ == 1)
-	    puts("R_NewVisSprite: Hit MAXVISSPRITES limit.");
+	if (numvissprites_old == MAXVISSPRITES)
+	    printf("R_NewVisSprite: Hit MAXVISSPRITES (%d) Vanilla limit.\n", MAXVISSPRITES);
 
-	numvissprites += i * MAXVISSPRITES;
+	numvissprites = numvissprites ? 2 * numvissprites : MAXVISSPRITES;
 	vissprites = realloc(vissprites, numvissprites * sizeof(*vissprites));
 	vissprite_p = vissprites + numvissprites_old;
     }
