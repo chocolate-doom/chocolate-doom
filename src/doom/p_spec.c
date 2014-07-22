@@ -340,11 +340,12 @@ P_FindNextHighestFloor
     static fixed_t *heightlist = NULL;
     static int heightlist_size = 0;
 
+    // [crispy] remove MAX_ADJOINING_SECTORS Vanilla limit
     if (sec->linecount > heightlist_size)
     {
 	do
 	{
-	    heightlist_size += MAX_ADJOINING_SECTORS;
+	    heightlist_size = heightlist_size ? 2 * heightlist_size : MAX_ADJOINING_SECTORS;
 	} while (sec->linecount > heightlist_size);
 	heightlist = realloc(heightlist, heightlist_size * sizeof(*heightlist));
     }
