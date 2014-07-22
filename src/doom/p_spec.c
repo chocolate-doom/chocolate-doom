@@ -1032,6 +1032,7 @@ void P_PlayerInSpecialSector (player_t* player)
     sector_t*	sector;
     extern int showMessages;
     player2_t  *player2 = p2fromp(player);
+    static sector_t*	error;
 	
     sector = player->mo->subsector->sector;
 
@@ -1092,9 +1093,14 @@ void P_PlayerInSpecialSector (player_t* player)
 	break;
 			
       default:
-	I_Error ("P_PlayerInSpecialSector: "
-		 "unknown special %i",
+	// [crispy] ignore unknown special sectors
+	if (error != sector)
+	{
+	error = sector;
+	printf ("P_PlayerInSpecialSector: "
+		 "unknown special %i\n",
 		 sector->special);
+	}
 	break;
     };
 }
