@@ -293,6 +293,10 @@ R_CheckPlane
 	if (pl->top[x] != 0xffff)
 	    break;
 
+  // [crispy] fix HOM if ceilingplane and floorplane are the same
+  // visplane (e.g. both skies)
+  if (!(pl == floorplane && markceiling && floorplane == ceilingplane))
+  {
     if (x > intrh)
     {
 	pl->minx = unionl;
@@ -301,6 +305,7 @@ R_CheckPlane
 	// use the same one
 	return pl;		
     }
+  }
 	
     // make a new visplane
     lastvisplane->height = pl->height;
