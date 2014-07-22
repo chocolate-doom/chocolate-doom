@@ -1029,6 +1029,7 @@ P_ShootSpecialLine
 void P_PlayerInSpecialSector (player_t* player)
 {
     sector_t*	sector;
+    static sector_t*	error;
 	
     sector = player->mo->subsector->sector;
 
@@ -1083,9 +1084,14 @@ void P_PlayerInSpecialSector (player_t* player)
 	break;
 			
       default:
-	I_Error ("P_PlayerInSpecialSector: "
-		 "unknown special %i",
+	// [crispy] ignore unknown special sectors
+	if (error != sector)
+	{
+	error = sector;
+	printf ("P_PlayerInSpecialSector: "
+		 "unknown special %i\n",
 		 sector->special);
+	}
 	break;
     };
 }
