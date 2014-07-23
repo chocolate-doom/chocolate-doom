@@ -40,7 +40,7 @@
 
 int SlopeDiv(unsigned int num, unsigned int den)
 {
-    unsigned ans;
+    int64_t ans;
     
     if (den < 512)
     {
@@ -48,11 +48,11 @@ int SlopeDiv(unsigned int num, unsigned int den)
     }
     else
     {
-        ans = (num << 3) / (den >> 8);
+        ans = ((int64_t) num << 3) / (den >> 8);
 
         if (ans <= SLOPERANGE)
         {
-            return ans;
+            return (int) ans;
         }
         else
         {
