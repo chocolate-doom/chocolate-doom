@@ -622,11 +622,11 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         players2[consoleplayer].lookdir +=
             mouse_y_invert ? -mousey : mousey;
 
-        if (players2[consoleplayer].lookdir > 90 * MLOOKUNIT)
-            players2[consoleplayer].lookdir = 90 * MLOOKUNIT;
+        if (players2[consoleplayer].lookdir > LOOKDIRMAX * MLOOKUNIT)
+            players2[consoleplayer].lookdir = LOOKDIRMAX * MLOOKUNIT;
         else
-        if (players2[consoleplayer].lookdir < -110 * MLOOKUNIT)
-            players2[consoleplayer].lookdir = -110 * MLOOKUNIT;
+        if (players2[consoleplayer].lookdir < -LOOKDIRMIN * MLOOKUNIT)
+            players2[consoleplayer].lookdir = -LOOKDIRMIN * MLOOKUNIT;
     }
     else
     if (!novert)

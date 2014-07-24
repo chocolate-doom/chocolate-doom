@@ -185,7 +185,7 @@ void P_MovePlayer (player_t* player)
         else
         {
             player2->lookdir += MLOOKUNIT * 5 * look;
-            if (player2->lookdir > 90 * MLOOKUNIT || player2->lookdir < -110 * MLOOKUNIT)
+            if (player2->lookdir > LOOKDIRMAX * MLOOKUNIT || player2->lookdir < -LOOKDIRMIN * MLOOKUNIT)
             {
                 player2->lookdir -= MLOOKUNIT * 5 * look;
             }
