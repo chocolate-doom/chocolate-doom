@@ -323,7 +323,17 @@ vissprite_t* R_NewVisSprite (void)
     // [crispy] remove MAXVISSPRITE Vanilla limit
     if (vissprite_p == &vissprites[numvissprites])
     {
+	static int max;
 	int numvissprites_old = numvissprites;
+
+	if (!max && numvissprites == 32 * MAXVISSPRITES)
+	{
+	    printf("R_NewVisSprite: MAXVISSPRITES limit capped at %d.\n", numvissprites);
+	    max++;
+	}
+
+	if (max)
+	return &overflowsprite;
 
 	numvissprites = numvissprites ? 2 * numvissprites : MAXVISSPRITES;
 	vissprites = realloc(vissprites, numvissprites * sizeof(*vissprites));
