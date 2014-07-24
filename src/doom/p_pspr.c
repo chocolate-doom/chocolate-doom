@@ -41,6 +41,25 @@
 #define WEAPONBOTTOM	128*FRACUNIT
 #define WEAPONTOP		32*FRACUNIT
 
+static const int recoil_values[] = {
+  10, // wp_fist
+  10, // wp_pistol
+  30, // wp_shotgun
+  10, // wp_chaingun
+  100,// wp_missile
+  20, // wp_plasma
+  100,// wp_bfg
+  0,  // wp_chainsaw
+  80  // wp_supershotgun
+};
+
+void A_Recoil (player_t* player)
+{
+    extern void P_Thrust (player_t* player, angle_t angle, fixed_t move);
+
+    if (singleplayer && crispy_recoil && !(player->mo->flags & MF_NOCLIP))
+	P_Thrust(player, ANG180 + player->mo->angle, 2048 * recoil_values[player->readyweapon]);
+}
 
 
 //
@@ -681,6 +700,7 @@ A_FirePistol
     P_SetPsprite (player,
 		  ps_flash,
 		  weaponinfo[player->readyweapon].flashstate);
+    A_Recoil (player);
 
     P_BulletSlope (player->mo);
     P_GunShot (player->mo, !player->refire);
@@ -705,6 +725,7 @@ A_FireShotgun
     P_SetPsprite (player,
 		  ps_flash,
 		  weaponinfo[player->readyweapon].flashstate);
+    A_Recoil (player);
 
     P_BulletSlope (player->mo);
 	
@@ -735,6 +756,7 @@ A_FireShotgun2
     P_SetPsprite (player,
 		  ps_flash,
 		  weaponinfo[player->readyweapon].flashstate);
+    A_Recoil (player);
 
     P_BulletSlope (player->mo);
 	
@@ -772,6 +794,7 @@ A_FireCGun
 		  weaponinfo[player->readyweapon].flashstate
 		  + psp->state
 		  - &states[S_CHAIN1] );
+    A_Recoil (player);
 
     P_BulletSlope (player->mo);
 	

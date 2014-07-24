@@ -145,6 +145,7 @@ int             crispy_freelook = 0;
 int             crispy_mouselook = 0;
 int             crispy_freeaim = 0;
 int             crispy_overunder = 0;
+int             crispy_recoil = 0;
 
 boolean         crispy_flashinghom = false;
 boolean         crispy_fliplevels = false;
@@ -445,6 +446,7 @@ void D_BindVariables(void)
     M_BindVariable("crispy_mouselook",       &crispy_mouselook);
     M_BindVariable("crispy_freeaim",         &crispy_freeaim);
     M_BindVariable("crispy_overunder",       &crispy_overunder);
+    M_BindVariable("crispy_recoil",          &crispy_recoil);
 }
 
 //

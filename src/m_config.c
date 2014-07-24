@@ -1700,6 +1700,14 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(crispy_overunder),
+
+    //!
+    // @game doom
+    //
+    // Enable weapon recoil.
+    //
+
+    CONFIG_VARIABLE_INT(crispy_recoil),
 };
 
 static default_collection_t extra_defaults =

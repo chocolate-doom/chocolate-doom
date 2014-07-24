@@ -36,6 +36,7 @@ int crispy_freelook = 0;
 int crispy_mouselook = 0;
 int crispy_freeaim = 0;
 int crispy_overunder = 0;
+int crispy_recoil = 0;
 
 void CompatibilitySettings(void)
 {
@@ -52,7 +53,7 @@ void CompatibilitySettings(void)
                                    &crispy_coloredhud),
                    TXT_NewCheckBox("Show level stats in automap",
                                    &crispy_automapstats),
-                   TXT_NewCheckBox("Show secrets revealed message",
+                   TXT_NewCheckBox("Show \"secret revealed\" message",
                                    &crispy_secretmessage),
                    TXT_NewCheckBox("Show laser pointer",
                                    &crispy_crosshair),
@@ -68,6 +69,8 @@ void CompatibilitySettings(void)
                                    &crispy_freeaim),
                    TXT_NewCheckBox("Players may walk over/under monsters",
                                    &crispy_overunder),
+                   TXT_NewCheckBox("Enable weapon recoil",
+                                   &crispy_recoil),
                    NULL);
     }
     else
@@ -102,6 +105,7 @@ void BindCompatibilityVariables(void)
         M_BindVariable("crispy_mouselook",       &crispy_mouselook);
         M_BindVariable("crispy_freeaim",         &crispy_freeaim);
         M_BindVariable("crispy_overunder",       &crispy_overunder);
+        M_BindVariable("crispy_recoil",          &crispy_recoil);
         }
     }
 }

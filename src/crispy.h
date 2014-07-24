@@ -39,6 +39,7 @@ extern int crispy_freelook;
 extern int crispy_jump;
 extern int crispy_mouselook;
 extern int crispy_overunder;
+extern int crispy_recoil;
 extern int crispy_secretmessage;
 extern int crispy_translucency;
 

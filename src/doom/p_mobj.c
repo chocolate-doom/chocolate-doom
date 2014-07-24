@@ -1019,6 +1019,10 @@ P_SpawnPlayerMissile
     fixed_t	z;
     fixed_t	slope;
     
+    extern void A_Recoil (player_t* player);
+
+    A_Recoil (source->player);
+
     // see which target is to be aimed at
     an = source->angle;
     slope = P_AimLineAttack (source, an, 16*64*FRACUNIT);
