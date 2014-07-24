@@ -843,13 +843,12 @@ void R_SetupFrame (player_t* player)
     tempCentery = viewheight / 2 + ((player2->lookdir / MLOOKUNIT) << (hires && !detailshift)) * (screenblocks < 11 ? screenblocks : 11) / 10;
     if (centery != tempCentery)
     {
+        const int num = (viewwidth << (detailshift && !hires)) / 2 * FRACUNIT;
         centery = tempCentery;
         centeryfrac = centery << FRACBITS;
         for (i = 0; i < viewheight; i++)
         {
-            yslope[i] = FixedDiv((viewwidth << (detailshift && !hires)) / 2 * FRACUNIT,
-                                 abs(((i - centery) << FRACBITS) +
-                                     FRACUNIT / 2));
+            yslope[i] = FixedDiv(num, abs(((i - centery) << FRACBITS) + FRACUNIT / 2));
         }
     }
     
