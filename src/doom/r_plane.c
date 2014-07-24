@@ -212,14 +212,14 @@ void R_RaiseVisplanes (visplane_t** vp)
 	int numvisplanes_old = numvisplanes;
 	visplane_t* visplanes_old = visplanes;
 
-	if (numvisplanes_old == MAXVISPLANES)
-	    printf("R_FindPlane: Hit MAXVISPLANES (%d) Vanilla limit.\n", MAXVISPLANES);
-
 	numvisplanes = numvisplanes ? 2 * numvisplanes : MAXVISPLANES;
 	visplanes = realloc(visplanes, numvisplanes * sizeof(*visplanes));
 	lastvisplane = visplanes + numvisplanes_old;
 	floorplane = visplanes + (floorplane - visplanes_old);
 	ceilingplane = visplanes + (ceilingplane - visplanes_old);
+
+	if (numvisplanes_old)
+	    printf("R_FindPlane: Hit MAXVISPLANES (%d) limit.\n", numvisplanes_old);
 
 	if (vp)
 	    *vp = visplanes + (*vp - visplanes_old);

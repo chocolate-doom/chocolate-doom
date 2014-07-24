@@ -326,12 +326,12 @@ vissprite_t* R_NewVisSprite (void)
     {
 	int numvissprites_old = numvissprites;
 
-	if (numvissprites_old == MAXVISSPRITES)
-	    printf("R_NewVisSprite: Hit MAXVISSPRITES (%d) Vanilla limit.\n", MAXVISSPRITES);
-
 	numvissprites = numvissprites ? 2 * numvissprites : MAXVISSPRITES;
 	vissprites = realloc(vissprites, numvissprites * sizeof(*vissprites));
 	vissprite_p = vissprites + numvissprites_old;
+
+	if (numvissprites_old)
+	    printf("R_NewVisSprite: Hit MAXVISSPRITES (%d) limit.\n", numvissprites_old);
     }
     
     vissprite_p++;
