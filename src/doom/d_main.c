@@ -196,7 +196,7 @@ void D_Display (void)
     static  boolean		fullscreen = false;
     static  gamestate_t		oldgamestate = -1;
     static  int			borderdrawcount;
-    static  int			map;
+    static  char		map;
     int				nowtime;
     int				tics;
     int				wipestart;
@@ -335,6 +335,7 @@ void D_Display (void)
 	inhelpscreensstate = true;
     }
     else
+    if (map)
 	map = 0;
 
     // draw pause pic

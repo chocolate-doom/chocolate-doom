@@ -53,6 +53,7 @@ static const int recoil_values[] = {
   80  // wp_supershotgun
 };
 
+// [crispy] add weapon recoil
 void A_Recoil (player_t* player)
 {
     extern void P_Thrust (player_t* player, angle_t angle, fixed_t move);

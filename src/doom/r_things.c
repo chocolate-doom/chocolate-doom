@@ -341,7 +341,7 @@ vissprite_t* R_NewVisSprite (void)
 	vissprite_p = vissprites + numvissprites_old;
 
 	if (numvissprites_old)
-	    printf("R_NewVisSprite: Hit MAXVISSPRITES (%d) limit.\n", numvissprites_old);
+	    printf("R_NewVisSprite: Hit MAXVISSPRITES limit at %d, raised to %d.\n", numvissprites_old, numvissprites);
     }
     
     vissprite_p++;
