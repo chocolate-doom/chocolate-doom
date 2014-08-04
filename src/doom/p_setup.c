@@ -959,16 +959,14 @@ void P_LoadLineDefs (int lump)
 	    ld->backsector = 0;
 
 	// [crispy] fix common wad errors (missing sidedefs)
-	// from prboom-plus/src/p_setup.c:1426
+	// adapted from prboom-plus/src/p_setup.c:1426
 	{
-	    int j;
-
 	    // linedef has out-of-range sidedef number
-	    for (j = 0; j < 2; j++)
-	    {
-		if (ld->sidenum[j] != NO_INDEX && ld->sidenum[j] >= numsides)
-		    ld->sidenum[j] = NO_INDEX;
-	    }
+	    if (ld->sidenum[0] != NO_INDEX && ld->sidenum[0] >= numsides)
+		ld->sidenum[0] = NO_INDEX;
+
+	    if (ld->sidenum[1] != NO_INDEX && ld->sidenum[1] >= numsides)
+		ld->sidenum[1] = NO_INDEX;
 
 	    // linedef missing first sidedef
 	    if (ld->sidenum[0] == NO_INDEX)

@@ -411,7 +411,7 @@ R_StoreWallRange
 	ds_p = drawsegs + numdrawsegs_old;
 
 	if (numdrawsegs_old)
-	    printf("R_StoreWallRange: Hit MAXDRAWSEGS (%d) limit.\n", numdrawsegs_old);
+	    printf("R_StoreWallRange: Hit MAXDRAWSEGS limit at %d, raised to %d.\n", numdrawsegs_old, numdrawsegs);
     }
 		
 #ifdef RANGECHECK
