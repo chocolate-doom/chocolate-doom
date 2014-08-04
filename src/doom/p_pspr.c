@@ -155,6 +155,15 @@ void P_BringUpWeapon (player_t* player)
 		
     if (player->pendingweapon == wp_chainsaw)
 	S_StartSound (player->mo, sfx_sawup);
+
+    // [crispy] play "power up" sound when selecting berserk fist
+    if (player->pendingweapon == wp_fist && player->powers[pw_strength])
+    {
+	if (crispy_berserkpow)
+	    S_StartSound (player->mo, sfx_getpow);
+	else
+	    crispy_berserkpow = 1;
+    }
 		
     newstate = weaponinfo[player->pendingweapon].upstate;
 

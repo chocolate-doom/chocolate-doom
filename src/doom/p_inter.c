@@ -325,6 +325,7 @@ P_GivePower
 }
 
 
+boolean crispy_berserkpow = 1;
 
 //
 // P_TouchSpecialThing
@@ -498,6 +499,7 @@ P_TouchSpecialThing
 	if (player->readyweapon != wp_fist)
 	    player->pendingweapon = wp_fist;
 	sound = sfx_getpow;
+	crispy_berserkpow = 0;
 	break;
 	
       case SPR_PINS:
