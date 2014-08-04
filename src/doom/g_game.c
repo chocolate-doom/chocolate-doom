@@ -334,7 +334,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     int		forward;
     int		side;
     int		look;
-    static byte		mbmlookctrl = 0;
+    static int		mbmlookctrl = 0;
     static int		joybspeed_old = 2;
 
     memset(cmd, 0, sizeof(ticcmd_t));
@@ -635,17 +635,13 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     }
 
     // [crispy] single click on mouse look button centers view
-    if (mousebuttons[mousebmouselook] && !mbmlookctrl)
+    if (mousebuttons[mousebmouselook]) // clicked
     {
-        mbmlookctrl |= 1; // clicked
+        mbmlookctrl += ticdup;
     }
-    if (mbmlookctrl && !(mbmlookctrl & 2) && (mousey > 7 || mousey < -7))
+    if (mbmlookctrl && !mousebuttons[mousebmouselook]) // released
     {
-        mbmlookctrl |= 2; // moved
-    }
-    if (!mousebuttons[mousebmouselook] && mbmlookctrl)
-    {
-        if (!(mbmlookctrl & 2))
+        if (mbmlookctrl < 16) // short click
             look = TOCENTER;
         mbmlookctrl = 0;
     }
