@@ -1155,6 +1155,12 @@ void G_PlayerFinishLevel (int player)
     p = &players[player]; 
     p2 = &players2[player];
 	 
+    // [crispy] never start a new level with the fist if you have the chainsaw
+    if (singleplayer &&
+        p->readyweapon == wp_fist && p->powers[pw_strength] &&
+        p->weaponowned[wp_chainsaw])
+	p->readyweapon = wp_chainsaw;
+
     memset (p->powers, 0, sizeof (p->powers)); 
     memset (p->cards, 0, sizeof (p->cards)); 
     memset (p2, 0, sizeof (*p2));
