@@ -1805,7 +1805,7 @@ A_CloseShotgun2
 
 
 mobj_t*		braintargets[32];
-int		numbraintargets;
+int		numbraintargets = 0;
 int		braintargeton = 0;
 
 void A_BrainAwake (mobj_t* mo)
@@ -1907,6 +1907,10 @@ void A_BrainSpit (mobj_t*	mo)
     if (gameskill <= sk_easy && (!easy))
 	return;
 		
+    // [crispy] avoid division by zero by recalculating the number of spawn spots
+    if (!numbraintargets)
+	A_BrainAwake(NULL);
+
     // shoot a cube at current target
     targ = braintargets[braintargeton];
     braintargeton = (braintargeton+1)%numbraintargets;
