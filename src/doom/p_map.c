@@ -276,6 +276,7 @@ boolean PIT_CheckThing (mobj_t* thing)
 {
     fixed_t		blockdist;
     boolean		solid;
+    boolean		unblocking = false;
     int			damage;
 		
     if (!(thing->flags & (MF_SOLID|MF_SPECIAL|MF_SHOOTABLE) ))
@@ -385,9 +386,25 @@ boolean PIT_CheckThing (mobj_t* thing)
             thing->floorz = tmthing->z + tmthing->height;
             return true;
         }
+
+        // [crispy] check if things are stuck and allow them to move further apart
+        // taken from doomretro/src/p_map.c:319-332
+        if (tmx == tmthing->x && tmy == tmthing->y)
+            unblocking = true;
+        else
+        {
+            fixed_t newdist = P_AproxDistance(thing->x - tmx, thing->y - tmy);
+            fixed_t olddist = P_AproxDistance(thing->x - tmthing->x, thing->y - tmthing->y);
+
+            if (newdist > olddist)
+            {
+                unblocking = (tmthing->z < thing->z + thing->height
+                           && tmthing->z + tmthing->height > thing->z);
+            }
+        }
     }
 	
-    return !(thing->flags & MF_SOLID);
+    return !(thing->flags & MF_SOLID) || unblocking;
 }
 
 
