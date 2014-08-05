@@ -831,7 +831,7 @@ void R_InitTranMap()
       char *fname = NULL; extern char *configdir;
       struct {
         unsigned char pct;
-        unsigned char playpal[256];
+        unsigned char playpal[256*3]; // [crispy] PLAYPAL has 768 bytes!
       } cache;
       FILE *cachefp = fopen(fname = M_StringJoin(configdir,
                                    "tranmap.dat", NULL), "r+b");
@@ -900,13 +900,15 @@ void R_InitTranMap()
           if (cachefp)        // write out the cached translucency map
             {
               cache.pct = tran_filter_pct;
-              memcpy(cache.playpal, playpal, 256);
+              memcpy(cache.playpal, playpal, sizeof cache.playpal);
               fseek(cachefp, 0, SEEK_SET);
               fwrite(&cache, 1, sizeof cache, cachefp);
               fwrite(tranmap, 256, 256, cachefp);
-              fclose(cachefp);
             }
         }
+
+      if (cachefp)
+          fclose(cachefp);
 
       if (fname)
           free(fname);
