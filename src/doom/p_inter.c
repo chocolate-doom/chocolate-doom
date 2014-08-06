@@ -497,9 +497,11 @@ P_TouchSpecialThing
 	    return;
 	player->message = DEH_String(GOTBERSERK);
 	if (player->readyweapon != wp_fist)
+	{
 	    player->pendingweapon = wp_fist;
+	    crispy_berserkpow = 0;
+	}
 	sound = sfx_getpow;
-	crispy_berserkpow = 0;
 	break;
 	
       case SPR_PINS:
