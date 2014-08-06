@@ -641,7 +641,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     }
     if (mbmlookctrl && !mousebuttons[mousebmouselook]) // released
     {
-        if (mbmlookctrl < 16) // short click
+        if (mbmlookctrl < 6) // short click
             look = TOCENTER;
         mbmlookctrl = 0;
     }
