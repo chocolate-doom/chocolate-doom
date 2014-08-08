@@ -505,7 +505,7 @@ static void saveg_write_mobj_t(mobj_t *str)
     saveg_write32(str->movecount);
 
     // struct mobj_s* target;
-    saveg_writep(str->target);
+    saveg_writep((void *)(uintptr_t) P_ThinkerToIndex((thinker_t *) str->target));
 
     // int reactiontime;
     saveg_write32(str->reactiontime);
@@ -530,7 +530,7 @@ static void saveg_write_mobj_t(mobj_t *str)
     saveg_write_mapthing_t(&str->spawnpoint);
 
     // struct mobj_s* tracer;
-    saveg_writep(str->tracer);
+    saveg_writep((void *)(uintptr_t) P_ThinkerToIndex((thinker_t *) str->tracer));
 }
 
 
@@ -1653,8 +1653,6 @@ void P_UnArchiveThinkers (void)
 	    mobj = Z_Malloc (sizeof(*mobj), PU_LEVEL, NULL);
             saveg_read_mobj_t(mobj);
 
-	    mobj->target = NULL;
-            mobj->tracer = NULL;
 	    P_SetThingPosition (mobj);
 	    mobj->info = &mobjinfo[mobj->type];
 	    mobj->floorz = mobj->subsector->sector->floorheight;
@@ -1671,6 +1669,72 @@ void P_UnArchiveThinkers (void)
 
 }
 
+int restoretargets_fail = 0;
+
+uint32_t P_ThinkerToIndex (thinker_t* thinker)
+{
+    thinker_t*	th;
+    uint32_t	i;
+
+    if (!thinker)
+	return 0;
+
+    for (th = thinkercap.next, i = 1; th != &thinkercap; th = th->next, i++)
+    {
+	if (th->function.acp1 == (actionf_p1) P_MobjThinker)
+	{
+	    if (th == thinker)
+		return i;
+	}
+    }
+
+    return 0;
+}
+
+thinker_t* P_IndexToThinker (uint32_t index)
+{
+    thinker_t*	th;
+    uint32_t	i;
+
+    if (!index)
+	return NULL;
+
+    for (th = thinkercap.next, i = 1; th != &thinkercap; th = th->next, i++)
+    {
+	if (th->function.acp1 == (actionf_p1) P_MobjThinker)
+	{
+	    if (i == index)
+		return th;
+	}
+    }
+
+    restoretargets_fail++;
+
+    return NULL;
+}
+
+void P_RestoreTargets (void)
+{
+    mobj_t*	mo;
+    thinker_t*	th;
+    uint32_t	i;
+
+    for (th = thinkercap.next, i = 1; th != &thinkercap; th = th->next, i++)
+    {
+	if (th->function.acp1 == (actionf_p1) P_MobjThinker)
+	{
+	    mo = (mobj_t*) th;
+	    mo->target = (mobj_t*) P_IndexToThinker((uintptr_t) mo->target);
+	    mo->tracer = (mobj_t*) P_IndexToThinker((uintptr_t) mo->tracer);
+	}
+    }
+
+    if (restoretargets_fail)
+    {
+	printf ("P_RestoreTargets: Failed to restore %d target thinkers.\n", restoretargets_fail);
+	restoretargets_fail = 0;
+    }
+}
 
 //
 // P_ArchiveSpecials
