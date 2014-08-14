@@ -82,17 +82,6 @@ line_t*		ceilingline;
 // keep track of special lines as they are hit,
 // but don't process them until the move is proven valid
 
-// fraggle: I have increased the size of this buffer.  In the original Doom,
-// overrunning past this limit caused other bits of memory to be overwritten,
-// affecting demo playback.  However, in doing so, the limit was still 
-// exceeded.  So we have to support more than 8 specials.
-//
-// We keep the original limit, to detect what variables in memory were 
-// overwritten (see SpechitOverrun())
-
-#define MAXSPECIALCROSS 		20
-#define MAXSPECIALCROSS_ORIGINAL	8
-
 line_t*		spechit[MAXSPECIALCROSS];
 int		numspechit;
 

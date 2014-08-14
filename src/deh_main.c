@@ -346,6 +346,12 @@ int DEH_LoadLump(int lumpnum, boolean allow_long)
     deh_context_t *context;
     boolean long_strings, long_cheats;
 
+    if (!deh_initialized)
+    {
+        InitializeSections();
+        deh_initialized = true;
+    }
+
     if (allow_long)
     {
         long_strings = deh_allow_long_strings;

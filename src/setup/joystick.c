@@ -206,6 +206,26 @@ static const joystick_config_t xbox360_controller[] =
     {NULL, 0},
 };
 
+// Xbox 360 controller under Linux.
+static const joystick_config_t xbox360_controller_linux[] =
+{
+    {"joystick_x_axis",        CREATE_HAT_AXIS(0, HAT_AXIS_HORIZONTAL)},
+    {"joystick_y_axis",        CREATE_HAT_AXIS(0, HAT_AXIS_VERTICAL)},
+    // Ideally we'd like the trigger buttons to be strafe left/right
+    // But Linux presents each trigger button as its own axis, which
+    // we can't really work with. So we have to settle for a
+    // suboptimal setup.
+    {"joyb_fire",              2},  // X
+    {"joyb_speed",             0},  // A
+    {"joyb_jump",              3},  // Y
+    {"joyb_use",               1},  // B
+    {"joyb_strafeleft",        4},  // LB
+    {"joyb_straferight",       5},  // RB
+    {"joyb_menu_activate",     7},  // Start
+    {"joyb_prevweapon",        6},  // Back
+    {NULL, 0},
+};
+
 // Logitech Dual Action (F310, F710). Thanks to Brad Harding for details.
 static const joystick_config_t logitech_f310_controller[] =
 {
@@ -247,6 +267,13 @@ static const known_joystick_t known_joysticks[] =
         "Controller (XBOX 360 For Windows)",
         5, 10, 1,
         xbox360_controller,
+    },
+
+    // Xbox 360 controller as it appears on Linux.
+    {
+        "Microsoft X-Box 360 pad",
+        6, 11, 1,
+        xbox360_controller_linux,
     },
 
     {

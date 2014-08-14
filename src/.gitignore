@@ -6,6 +6,11 @@ chocolate-doom
 chocolate-heretic
 chocolate-hexen
 chocolate-server
+chocolate-strife
+chocolate-doom-setup
+chocolate-heretic-setup
+chocolate-hexen-setup
+chocolate-strife-setup
 chocolate-setup
 *.exe
 *.desktop
