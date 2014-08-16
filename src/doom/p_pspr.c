@@ -160,7 +160,10 @@ void P_BringUpWeapon (player_t* player)
     if (player->pendingweapon == wp_fist && player->powers[pw_strength])
     {
 	if (crispy_berserkpow)
-	    S_StartSound (player->mo, sfx_getpow);
+	{
+	    if (player == &players[consoleplayer])
+		S_StartSound (NULL, sfx_getpow);
+	}
 	else
 	    crispy_berserkpow = 1;
     }
