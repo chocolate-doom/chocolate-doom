@@ -831,7 +831,7 @@ void R_InitTranMap()
       char *fname = NULL; extern char *configdir;
       struct {
         unsigned char pct;
-        unsigned char playpal[256*3]; // [crispy] PLAYPAL has 768 bytes!
+        unsigned char playpal[256*3]; // [crispy] a palette has 768 bytes!
       } cache;
       FILE *cachefp = fopen(fname = M_StringJoin(configdir,
                                    "tranmap.dat", NULL), "r+b");
