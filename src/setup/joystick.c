@@ -269,6 +269,12 @@ static const known_joystick_t known_joysticks[] =
         xbox360_controller,
     },
 
+    {
+        "Controller (XBOX One For Windows)",
+        5, 10, 1,
+        xbox360_controller,
+    },
+
     // Xbox 360 controller as it appears on Linux.
     {
         "Microsoft X-Box 360 pad",
