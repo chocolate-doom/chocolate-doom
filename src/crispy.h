@@ -23,7 +23,6 @@
 
 #include "doomtype.h"
 
-extern boolean crispy_berserkpow;
 extern boolean crispy_cleanscreenshot;
 extern boolean crispy_dehautoload;
 extern boolean crispy_flashinghom;

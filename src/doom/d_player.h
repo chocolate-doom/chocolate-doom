@@ -169,6 +169,7 @@ typedef struct player2_s
     int	lookdir;
     boolean	centering;
     unsigned int	jumpTics;
+    boolean	berserkpow;
 } player2_t;
 
 //
