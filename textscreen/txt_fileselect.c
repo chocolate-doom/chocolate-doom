@@ -666,7 +666,7 @@ static void TXT_FileSelectMousePress(TXT_UNCAST_ARG(fileselect),
         }
     }
 
-    return TXT_WidgetMousePress(fileselect->inputbox, x, y, b);
+    TXT_WidgetMousePress(fileselect->inputbox, x, y, b);
 }
 
 static void TXT_FileSelectFocused(TXT_UNCAST_ARG(fileselect), int focused)
