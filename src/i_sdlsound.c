@@ -89,7 +89,7 @@ int use_libsamplerate = 1;
 // of the time: with all the Doom IWAD sound effects, at least. If a PWAD
 // is used, clipping might occur.
 
-float libsamplerate_scale = 0.65;
+float libsamplerate_scale = 0.65f;
 
 // Hook a sound into the linked list at the head.
 

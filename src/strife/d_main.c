@@ -839,19 +839,24 @@ void D_IdentifyVersion(void)
             if((p = M_CheckParm("-iwad")) && p < myargc - 1)
             {
                 char   *iwad     = myargv[p + 1];
-                size_t  len      = strlen(iwad) + 24;
-                char   *filename = malloc(len);
-                char    sepchar;
+                size_t  len      = strlen(iwad) + 1;
+                char   *iwadpath = Z_Malloc(len, PU_STATIC, NULL);
+                char   *voiceswad;
+                
+                // extract base path of IWAD parameter
+                M_GetFilePath(iwad, iwadpath, len);
+                
+                // concatenate with /voices.wad
+                voiceswad = M_SafeFilePath(iwadpath, "voices.wad");
+                Z_Free(iwadpath);
 
-                // how the heck is Choco surviving without this routine?
-                sepchar = M_GetFilePath(iwad, filename, len);
-                filename[strlen(filename)] = sepchar;
-                M_StringConcat(filename, "voices.wad", sizeof(filename));
-
-                if(!M_FileExists(filename))
+                if(!M_FileExists(voiceswad))
+                {
                     disable_voices = 1;
+                    Z_Free(voiceswad);
+                }
                 else
-                    name = filename; // STRIFE-FIXME: memory leak!!
+                    name = voiceswad; // STRIFE-FIXME: memory leak!!
             }
             else
                 disable_voices = 1;
