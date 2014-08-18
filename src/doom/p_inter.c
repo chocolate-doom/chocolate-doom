@@ -706,6 +706,7 @@ P_KillMobj
 			
 	target->flags &= ~MF_SOLID;
 	target->player->playerstate = PST_DEAD;
+	p2fromp(target->player)->centering = true;
 	P_DropWeapon (target->player);
 
 	if (target->player == &players[consoleplayer]

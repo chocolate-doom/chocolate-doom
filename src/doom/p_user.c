@@ -191,22 +191,6 @@ void P_MovePlayer (player_t* player)
             }
         }
     }
-    if (player2->centering)
-    {
-        if (player2->lookdir > 0)
-        {
-            player2->lookdir -= 8 * MLOOKUNIT;
-        }
-        else if (player2->lookdir < 0)
-        {
-            player2->lookdir += 8 * MLOOKUNIT;
-        }
-        if (abs(player2->lookdir) < 8 * MLOOKUNIT)
-        {
-            player2->lookdir = 0;
-            player2->centering = false;
-        }
-    }
 }	
 
 
@@ -232,15 +216,6 @@ void P_DeathThink (player_t* player)
 
     if (player->viewheight < 6*FRACUNIT)
 	player->viewheight = 6*FRACUNIT;
-
-    if (player2->lookdir >  8 * MLOOKUNIT)
-        player2->lookdir -= 8 * MLOOKUNIT;
-    else
-    if (player2->lookdir < -8 * MLOOKUNIT)
-        player2->lookdir += 8 * MLOOKUNIT;
-    else
-    if (player2->lookdir)
-        player2->lookdir = 0;
 
     player->deltaviewheight = 0;
     onground = (player->mo->z <= player->mo->floorz);
@@ -305,6 +280,22 @@ void P_PlayerThink (player_t* player)
     }
 			
 	
+    if (player2->centering)
+    {
+        if (player2->lookdir > 0)
+        {
+            player2->lookdir -= 8 * MLOOKUNIT;
+        }
+        else if (player2->lookdir < 0)
+        {
+            player2->lookdir += 8 * MLOOKUNIT;
+        }
+        if (abs(player2->lookdir) < 8 * MLOOKUNIT)
+        {
+            player2->lookdir = 0;
+            player2->centering = false;
+        }
+    }
     if (player->playerstate == PST_DEAD)
     {
 	P_DeathThink (player);
