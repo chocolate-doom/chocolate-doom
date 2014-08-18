@@ -1280,7 +1280,8 @@ void M_QuitResponse(int key)
 {
     if (key != key_menu_confirm)
 	return;
-    if (!netgame)
+    // [crispy] Fast exit if "Run" key is held down
+    if (!netgame && !G_SpeedKeyDown() && !m_speedkeydown)
     {
 	if (gamemode == commercial)
 	    S_StartSound(NULL,quitsounds2[(gametic>>2)&7]);
