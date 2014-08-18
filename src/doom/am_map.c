@@ -99,6 +99,7 @@
 #define M_ZOOMOUT       ((int) (FRACUNIT/1.02))
 
 // translates between frame-buffer and map distances
+// [crispy] fix int overflow that causes map and grid lines to disappear
 #define FTOM(x) (((int64_t)((x)<<16) * scale_ftom) >> FRACBITS)
 #define MTOF(x) ((((int64_t)(x) * scale_mtof) >> FRACBITS)>>16)
 // translates between frame-buffer and map coordinates
@@ -194,6 +195,7 @@ mline_t thintriangle_guy[] = {
     { { (fixed_t)(R    ), (fixed_t)(0    ) }, { (fixed_t)(-.5*R), (fixed_t)(.7*R ) } },
     { { (fixed_t)(-.5*R), (fixed_t)(.7*R ) }, { (fixed_t)(-.5*R), (fixed_t)(-.7*R) } }
 };
+// [crispy] print keys are crosses
 mline_t cross_mark[] = {
     { { -R, 0 }, { R, 0 } },
     { { 0, -R }, { 0, R } },
@@ -1131,6 +1133,8 @@ void AM_drawGrid(int color)
 // Determines visible lines, draws them.
 // This is LineDef based, not LineSeg based.
 //
+
+// [crispy] keyed linedefs (PR, P1, SR, S1)
 static keycolor_t AM_DoorColor(int type)
 {
     switch (type)
@@ -1189,7 +1193,7 @@ void AM_drawWalls(void)
 			    AM_drawMline(&l, REDS);
 			    continue;
 			default:
-			    // should be impossible to reach here
+			    // [crispy] should be impossible to reach here
 			    break;
 		    }
 		}
@@ -1229,16 +1233,6 @@ void AM_drawWalls(void)
 		    if (0 && cheating) AM_drawMline(&l, SECRETWALLCOLORS + lightlev);
 		    else AM_drawMline(&l, WALLCOLORS+lightlev);
 		}
-/*
-		// [crispy] non-secret closed doors
-		// NB: Choco does not have this
-		else if (!(lines[i].flags & ML_SECRET) &&
-		    ((lines[i].backsector->floorheight == lines[i].backsector->ceilingheight) ||
-		    (lines[i].frontsector->floorheight == lines[i].frontsector->ceilingheight)))
-		{
-		    AM_drawMline(&l, GRAYS+GRAYSRANGE/2);
-		}
-*/
 		// [crispy] draw 2S secret sector boundaries in purple
 		else if (cheating &&
 		    (lines[i].backsector->special == 9 ||
@@ -1397,6 +1391,7 @@ AM_drawThings
 	t = sectors[i].thinglist;
 	while (t)
 	{
+	    // [crispy] skull keys and key cards
 	    switch (t->info->doomednum)
 	    {
 		case 38:
@@ -1416,7 +1411,7 @@ AM_drawThings
 		    break;
 	    }
 
-	    // [crispy] keys are shown as crosses in their respective color
+	    // [crispy] keys are shown as crosses in their respective colors
 	    if (key > no_key)
 	    {
 	    AM_drawLineCharacter
@@ -1434,9 +1429,11 @@ AM_drawThings
 		(thintriangle_guy, arrlen(thintriangle_guy),
 		// [crispy] triangle size represents actual thing size
 		 t->radius, t->angle,
-		// [crispy] show countable kills in red and countable items in yellow
+		// [crispy] show countable kills in red ...
 		 ((t->flags & (MF_COUNTKILL | MF_CORPSE)) == MF_COUNTKILL) ? REDS :
+		// [crispy] ... corpses in gray ...
 		 (t->flags & MF_CORPSE) ? GRAYS :
+		// [crispy] ... and countable items in yellow
 		 (t->flags & MF_COUNTITEM) ? YELLOWS :
 		 colors+lightlev,
 		 t->x, t->y);
