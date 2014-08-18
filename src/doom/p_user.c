@@ -206,7 +206,6 @@ void P_DeathThink (player_t* player)
 {
     angle_t		angle;
     angle_t		delta;
-    player2_t*		player2 = p2fromp(player);
 
     P_MovePsprites (player);
 	
