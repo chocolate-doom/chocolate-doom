@@ -27,7 +27,7 @@
 #include "hu_lib.h"
 #include "r_local.h"
 #include "r_draw.h"
-#include "v_trans.h"
+#include "v_trans.h" // [crispy] colored HUlib_drawTextLine()
 
 // boolean : whether the screen is always erased
 #define noterased viewwindowx
@@ -107,18 +107,19 @@ HUlib_drawTextLine
     for (i=0;i<l->len;i++)
     {
 	c = toupper(l->l[i]);
+	// [crispy] support multi-colored text lines
 	if (c == '\x1b')
-        {
-            if (++i < l->len)
-            {
-                if (l->l[i] >= '0' && l->l[i] <= '9')
-                {
-                    dp_translation = cr[(int) (l->l[i] - '0')];
-                }
-            }
-        }
-        else
-        if (c != ' '
+	{
+	    if (++i < l->len)
+	    {
+		if (l->l[i] >= '0' && l->l[i] <= '9')
+		{
+		    dp_translation = (crispy_coloredhud) ? cr[(int) (l->l[i] - '0')] : NULL;
+		}
+	    }
+	}
+	else
+	if (c != ' '
 	    && c >= l->sc
 	    && c <= '_')
 	{

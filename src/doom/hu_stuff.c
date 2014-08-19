@@ -41,9 +41,7 @@
 #include "dstrings.h"
 #include "sounds.h"
 
-#include "v_trans.h"
-#include "v_video.h"
-#include "p_local.h" // P_AimLineAttack
+#include "v_trans.h" // [crispy] colored kills/items/secret/etc. messages
 
 //
 // Locally used constants, shortcuts.
@@ -352,7 +350,7 @@ void HU_Start(void)
 		    hu_font,
 		    HU_FONTSTART, &message_on);
 
-    // create the secret message widget
+    // [crispy] create the secret message widget
     HUlib_initSText(&w_secret,
 		    88, 86, HU_MSGHEIGHT,
 		    hu_font,
@@ -364,6 +362,7 @@ void HU_Start(void)
 		       hu_font,
 		       HU_FONTSTART);
 
+    // [crispy] create the generic map title, kills, items, secrets and level time widgets
     HUlib_initTextLine(&w_map,
 		       HU_TITLEX, HU_TITLEY - SHORT(hu_font[0]->height + 1),
 		       hu_font,
@@ -461,17 +460,19 @@ void HU_Start(void)
 void HU_Drawer(void)
 {
 
+    extern byte *dp_translation;
+
     if (crispy_cleanscreenshot)
     {
         HU_Erase();
         return;
     }
 
-    dp_translation = NULL;
+    if (dp_translation) dp_translation = NULL;
     HUlib_drawSText(&w_message);
     dp_translation = cr[CR_GOLD];
     HUlib_drawSText(&w_secret);
-    dp_translation = NULL;
+    if (dp_translation) dp_translation = NULL;
     HUlib_drawIText(&w_chat);
     if (automapactive)
     {
@@ -519,9 +520,10 @@ void HU_Drawer(void)
 	HUlib_drawTextLine(&w_ltime, false);
 	}
 
-    dp_translation = NULL;
+    if (dp_translation) dp_translation = NULL;
     }
 
+    // [crispy] add a crosshair
     if (crispy_crosshair &&
         plr->readyweapon != wp_fist && plr->readyweapon != wp_chainsaw &&
         !automapactive && !menuactive && !paused && !secret_on)
@@ -535,8 +537,12 @@ void HU_Drawer(void)
         if (screenblocks <= 10)
             h -= (32 << hires) / 2;
 
+        // [crispy] crosshair changes color on targets
         if (crispy_crosshair_highlight)
         {
+            extern fixed_t P_AimLineAttack (mobj_t* t1, angle_t angle, fixed_t distance);
+            extern mobj_t* linetarget;
+
             P_AimLineAttack(plr->mo, plr->mo->angle, 16*64*FRACUNIT);
 
             if (linetarget && !(linetarget->flags & MF_SHADOW))
@@ -587,6 +593,7 @@ void HU_Ticker(void)
     if (showMessages || message_dontfuckwithme)
     {
 
+	// [crispy] display centered message
 	if (plr2->centermessage)
 	{
 	    HUlib_addMessageToSText(&w_secret, 0, plr2->centermessage);
