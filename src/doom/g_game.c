@@ -71,7 +71,7 @@
 
 
 #include "g_game.h"
-#include "v_trans.h"
+#include "v_trans.h" // [crispy] colored "always run" message
 
 
 #define SAVEGAMESIZE	0x2c000
@@ -199,7 +199,7 @@ static const struct
 
 static boolean  gamekeydown[NUMKEYS]; 
 static int      turnheld;		// for accelerative turning 
-static int      lookheld;
+static int      lookheld;		// [crispy] for accelerative looking
  
 static boolean  mousearray[MAX_MOUSE_BUTTONS + 1];
 static boolean *mousebuttons = &mousearray[1];  // allow [-1]
@@ -222,7 +222,7 @@ static int      joystrafemove;
 static boolean  joyarray[MAX_JOY_BUTTONS + 1]; 
 static boolean *joybuttons = &joyarray[1];		// allow [-1] 
  
-static char     savename[256];
+static char     savename[256]; // [crispy] moved here
 static int      savegameslot; 
 static char     savedescription[32]; 
  
@@ -231,8 +231,8 @@ static char     savedescription[32];
 mobj_t*		bodyque[BODYQUESIZE]; 
 int		bodyqueslot; 
  
-int             vanilla_savegame_limit = 0;
-int             vanilla_demo_limit = 0;
+int             vanilla_savegame_limit = 0; // [crispy] disabled
+int             vanilla_demo_limit = 0; // [crispy] disabled
  
 int G_CmdChecksum (ticcmd_t* cmd) 
 { 
@@ -276,7 +276,7 @@ static boolean WeaponSelectable(weapontype_t weapon)
      && players[consoleplayer].weaponowned[wp_chainsaw]
      && !players[consoleplayer].powers[pw_strength])
     {
-        return (singleplayer); // [crispy] yes, we can
+        return false;
     }
 
     return true;
@@ -334,8 +334,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     int		forward;
     int		side;
     int		look;
-    static int		mbmlookctrl = 0;
-    static int		joybspeed_old = 2;
+    static int		mbmlookctrl = 0; // [crispy] single click view centering
+    static int		joybspeed_old = 2; // [crispy] toggle "always run"
 
     memset(cmd, 0, sizeof(ticcmd_t));
 
@@ -348,7 +348,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // fraggle: support the old "joyb_speed = 31" hack which
     // allowed an autorun effect
 
-    // [crispy] when autorun is active, pressing the run key results in walking
+    // [crispy] when "always run" is active, 
+    // pressing the "run" key will result in walking
     speed = key_speed >= NUMKEYS
          || joybspeed >= MAX_JOY_BUTTONS;
     speed ^= (key_speed < NUMKEYS && gamekeydown[key_speed])
@@ -371,6 +372,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     else 
 	tspeed = speed;
     
+    // [crispy] use two stage accelerative looking
     if (gamekeydown[key_lookdown] || gamekeydown[key_lookup])
     {
         lookheld += ticdup;
@@ -395,7 +397,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         gamekeydown[key_reverse] = false;
     }
 
-    // [crispy] toggle always run
+    // [crispy] toggle "always run"
     if (gamekeydown[key_toggleautorun])
     {
         static char autorunmsg[24];
@@ -411,7 +413,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         }
 
         M_snprintf(autorunmsg, sizeof(autorunmsg), "ALWAYS RUN \x1b%c%s",
-            (crispy_coloredhud) ? '0' + CR_GREEN : '0' + CR_RED,
+            '0' + CR_GREEN,
             (joybspeed >= MAX_JOY_BUTTONS) ? "ON" : "OFF");
         players[consoleplayer].message = autorunmsg;
 
@@ -421,12 +423,12 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // let movement keys cancel each other out
     if (strafe) 
     { 
-	if (gamekeydown[key_right] || gamekeydown[key_menu_right])
+	if (gamekeydown[key_right] || gamekeydown[key_menu_right]) // [crispy] add key_menu_*
 	{
 	    // fprintf(stderr, "strafe right\n");
 	    side += sidemove[speed]; 
 	}
-	if (gamekeydown[key_left] || gamekeydown[key_menu_left])
+	if (gamekeydown[key_left] || gamekeydown[key_menu_left]) // [crispy] add key_menu_*
 	{
 	    //	fprintf(stderr, "strafe left\n");
 	    side -= sidemove[speed]; 
@@ -449,12 +451,12 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 	    cmd->angleturn += angleturn[tspeed]; 
     } 
  
-    if (gamekeydown[key_up] || gamekeydown[key_menu_up])
+    if (gamekeydown[key_up] || gamekeydown[key_menu_up]) // [crispy] add key_menu_*
     {
 	// fprintf(stderr, "up\n");
 	forward += forwardmove[speed]; 
     }
-    if (gamekeydown[key_down] || gamekeydown[key_menu_down])
+    if (gamekeydown[key_down] || gamekeydown[key_menu_down]) // [crispy] add key_menu_*
     {
 	// fprintf(stderr, "down\n");
 	forward -= forwardmove[speed]; 
@@ -481,7 +483,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         side += sidemove[speed]; 
     }
 
-    // Look up/down/center keys
+    // [crispy] look up/down/center keys
     if (crispy_freelook)
     {
         if (gamekeydown[key_lookup])
@@ -498,6 +500,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         }
     }
 
+    // [crispy] jump keys
     if (crispy_jump && singleplayer)
     {
         if (gamekeydown[key_jump] || mousebuttons[mousebjump]
@@ -635,13 +638,13 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     }
 
     // [crispy] single click on mouse look button centers view
-    if (mousebuttons[mousebmouselook]) // clicked
+    if (mousebuttons[mousebmouselook]) // [crispy] clicked
     {
         mbmlookctrl += ticdup;
     }
-    if (mbmlookctrl && !mousebuttons[mousebmouselook]) // released
+    if (mbmlookctrl && !mousebuttons[mousebmouselook]) // [crispy] released
     {
-        if (mbmlookctrl < 6) // short click
+        if (mbmlookctrl < 6) // [crispy] short click
             look = TOCENTER;
         mbmlookctrl = 0;
     }
@@ -672,6 +675,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     cmd->forwardmove += forward; 
     cmd->sidemove += side;
 
+    // [crispy] lookdir delta is stored in the lower 4 bits of the lookfly variable
     if (players[consoleplayer].playerstate == PST_LIVE)
     {
         if (look < 0)
@@ -922,7 +926,7 @@ boolean G_Responder (event_t* ev)
       case ev_mouse: 
         SetMouseButtons(ev->data1);
 	mousex = ev->data2*(mouseSensitivity+5)/10; 
-	mousey = ev->data3*(mouseSensitivity_y+5)/10; 
+	mousey = ev->data3*(mouseSensitivity_y+5)/10; // [crispy] separate sensitivity for y-axis
 	return true;    // eat events 
  
       case ev_joystick: 
@@ -986,6 +990,9 @@ void G_Ticker (void)
 	    G_DoWorldDone (); 
 	    break; 
 	  case ga_screenshot: 
+	    // [crispy] when the "run" button is pressed,
+	    // remove all obstacles in the current tic and
+	    // take the actual screenshot in the next one
 	    if (crispy_cleanscreenshot)
 	    {
 	        crispy_cleanscreenshot--;
@@ -1014,7 +1021,7 @@ void G_Ticker (void)
 
 	    if (demoplayback) 
 		G_ReadDemoTiccmd (cmd); 
-	    if (demorecording)
+	    if (demorecording) 
 		G_WriteDemoTiccmd (cmd);
 	    
 	    // check for turbo cheats
@@ -1155,12 +1162,6 @@ void G_PlayerFinishLevel (int player)
     p = &players[player]; 
     p2 = &players2[player];
 	 
-    // [crispy] never start a new level with the fist if you have the chainsaw
-    if (singleplayer &&
-        p->readyweapon == wp_fist && p->powers[pw_strength] &&
-        p->weaponowned[wp_chainsaw])
-	p->readyweapon = wp_chainsaw;
-
     memset (p->powers, 0, sizeof (p->powers)); 
     memset (p->cards, 0, sizeof (p->cards)); 
     memset (p2, 0, sizeof (*p2));
@@ -1356,10 +1357,18 @@ void G_DeathMatchSpawnPlayer (int playernum)
     P_SpawnPlayer (&playerstarts[playernum]); 
 } 
 
-// [crispy] holding down the "Run" key may trigger special behavior
+// [crispy] holding down the "Run" key may trigger special behavior,
+// e.g. quick exit, clean screenshots, resurrection from savegames
 boolean G_SpeedKeyDown()
 {
     return (gamekeydown[key_speed] || joybuttons[joybspeed]);
+}
+
+// [crispy] clear the savename variable,
+// i.e. restart level from scratch upon resurrection
+static inline void G_ClearSavename ()
+{
+    M_StringCopy(savename, "", sizeof(savename));
 }
 
 //
@@ -1373,15 +1382,14 @@ void G_DoReborn (int playernum)
     {
 	// [crispy] if the player dies and the game has been loaded or saved
 	// in the mean time, reload that savegame instead of restarting the level
-	// - can be overridden by pressing "Run" with "Use"
-	if (singleplayer && *savename &&
-	    !G_SpeedKeyDown())
+	// when "Run" is pressed upon resurrection
+	if (singleplayer && *savename && G_SpeedKeyDown())
 	gameaction = ga_loadgame;
 	else
 	{
 	// reload the level from scratch
 	gameaction = ga_loadlevel;  
-	M_StringCopy(savename, "", sizeof(savename));
+	G_ClearSavename();
 	}
     }
     else 
@@ -1467,7 +1475,7 @@ extern char*	pagename;
 void G_ExitLevel (void) 
 { 
     secretexit = false; 
-    M_StringCopy(savename, "", sizeof(savename));
+    G_ClearSavename();
     gameaction = ga_completed; 
 } 
 
@@ -1480,7 +1488,7 @@ void G_SecretExitLevel (void)
 	secretexit = false;
     else
 	secretexit = true; 
-    M_StringCopy(savename, "", sizeof(savename));
+    G_ClearSavename();
     gameaction = ga_completed; 
 } 
  
@@ -1621,10 +1629,11 @@ void G_DoCompleted (void)
     // overflows into the cpars array. It's necessary to emulate this
     // for statcheck regression testing.
     if (gamemap == 33)
-        // [crispy] map 33 par time sucks
+	// [crispy] map 33 par time sucks (not considered demo critical)
 	wminfo.partime = INT_MAX;
     else
     if (gamemission == pack_nerve)
+	// only possible with the BFG Edition IWAD
 	wminfo.partime = TICRATE*npars[gamemap-1];
     else
     if (gamemode == commercial)
@@ -1758,7 +1767,7 @@ void G_DoLoadGame (void)
     P_UnArchiveWorld (); 
     P_UnArchiveThinkers (); 
     P_UnArchiveSpecials (); 
-    P_RestoreTargets ();
+    P_RestoreTargets (); // [crispy] restore mobj->target and mobj->tracer pointers
  
     if (!P_ReadSaveGameEOF())
 	I_Error ("Bad savegame");
@@ -1774,7 +1783,7 @@ void G_DoLoadGame (void)
     // [crispy] if the player is dead in this savegame,
     // do not consider it for reload
     if (!players[consoleplayer].health)
-	M_StringCopy(savename, "", sizeof(savename));
+	G_ClearSavename();
 } 
  
 
@@ -1871,7 +1880,7 @@ G_DeferedInitNew
     d_skill = skill; 
     d_episode = episode; 
     d_map = map; 
-    M_StringCopy(savename, "", sizeof(savename));
+    G_ClearSavename();
     gameaction = ga_newgame; 
 } 
 
@@ -2157,19 +2166,17 @@ void G_RecordDemo (char *name)
     FILE *fp = NULL;
 
     usergame = false;
-    demoname_size = strlen(name) + 5 + 4; // + 4: "-xyz"
+    demoname_size = strlen(name) + 5 + 4; // [crispy] + 4 for "-000"
     demoname = Z_Malloc(demoname_size, PU_STATIC, NULL);
     M_snprintf(demoname, demoname_size, "%s.lmp", name);
 
     // [crispy] prevent overriding demos by adding a file name suffix
     for (i = 0; i <= 999 && (fp = fopen(demoname, "rb")) != NULL; i++)
     {
-        M_snprintf(demoname, demoname_size, "%s-%03d.lmp", name, i);
+	M_snprintf(demoname, demoname_size, "%s-%03d.lmp", name, i);
     }
-    if (fp != NULL)
-    {
-        fclose (fp);
-    }
+    if (fp)
+	fclose (fp);
 
     maxsize = 0x20000;
 
