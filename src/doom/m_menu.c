@@ -58,7 +58,7 @@
 
 #include "m_menu.h"
 
-#include "v_trans.h"
+#include "v_trans.h" // [crispy] colored "invert mouse" message
 
 extern patch_t*		hu_font[HU_FONTSIZE];
 extern boolean		message_dontfuckwithme;
@@ -77,7 +77,7 @@ int			showMessages = 1;
 
 // Blocky mode, has default, 0 = high, 1 = normal
 int			detailLevel = 0;
-int			screenblocks = 10;
+int			screenblocks = 10; // [crispy] increased
 
 // temp for screenblocks (0-9)
 int			screenSize;
@@ -129,9 +129,9 @@ char	endstring[160];
 
 static boolean opldev;
 
-boolean crispy_cleanscreenshot = 0;
+boolean crispy_cleanscreenshot = false;
 extern boolean G_SpeedKeyDown();
-static boolean m_speedkeydown = 0;
+static boolean m_speedkeydown = false;
 
 //
 // MENU TYPEDEFS
@@ -384,7 +384,7 @@ menuitem_t OptionsMenu[]=
     {1,"M_DETAIL",	M_ChangeDetail,'g'},
     {2,"M_SCRNSZ",	M_SizeDisplay,'s'},
     {-1,"",0,'\0'},
-    {1,"M_MSENS",	M_Mouse,'m'},
+    {1,"M_MSENS",	M_Mouse,'m'}, // [crispy] mouse sensitivity menu
     {1,"M_SVOL",	M_Sound,'s'}
 };
 
@@ -398,9 +398,7 @@ menu_t  OptionsDef =
     0
 };
 
-//
-// MOUSE SENSITIVITY MENU
-//
+// [crispy] mouse sensitivity menu
 enum
 {
     mouse_horiz,
@@ -605,12 +603,13 @@ void M_DrawLoad(void)
     {
 	M_DrawSaveLoadBorder(LoadDef.x,LoadDef.y+LINEHEIGHT*i);
 
+	// [crispy] shade empty savegame slots
 	if (!strncmp(savegamestrings[i], EMPTYSTRING, strlen(EMPTYSTRING)))
 	    dp_translation = (byte *) &colormaps[16*256];
 
 	M_WriteText(LoadDef.x,LoadDef.y+LINEHEIGHT*i,savegamestrings[i]);
 
-	dp_translation = NULL;
+	if (dp_translation) dp_translation = NULL;
     }
 }
 
@@ -651,6 +650,7 @@ void M_LoadSelect(int choice)
     G_LoadGame (name);
     M_ClearMenus ();
 
+    // [crispy] allow quickload before quicksave
     if (quickSaveSlot == -2)
 	quickSaveSlot = choice;
 }
@@ -1103,9 +1103,10 @@ void M_DrawOptions(void)
                                       PU_CACHE));
 
     M_DrawThermo(OptionsDef.x,OptionsDef.y+LINEHEIGHT*(scrnsize+1),
-		 10,screenSize);
+		 10,screenSize); // [crispy] Crispy HUD
 }
 
+// [crispy] mouse sensitivity menu
 void M_DrawMouse(void)
 {
     static char mouse_invert_text[24];
@@ -1130,7 +1131,7 @@ void M_DrawMouse(void)
     M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_invert + 6,
                 mouse_invert_text);
 
-    dp_translation = NULL;
+    if (dp_translation) dp_translation = NULL;
 }
 
 void M_Options(int choice)
@@ -1138,6 +1139,7 @@ void M_Options(int choice)
     M_SetupNextMenu(&OptionsDef);
 }
 
+// [crispy] correctly handle inverted y-axis
 void M_Mouse(int choice)
 {
     if (mouseSensitivity_y < 0)
@@ -1280,7 +1282,7 @@ void M_QuitResponse(int key)
 {
     if (key != key_menu_confirm)
 	return;
-    // [crispy] Fast exit if "Run" key is held down
+    // [crispy] fast exit if "run" key is held down
     if (!netgame && !G_SpeedKeyDown() && !m_speedkeydown)
     {
 	if (gamemode == commercial)
@@ -1298,7 +1300,7 @@ static char *M_SelectEndMessage(void)
     char **endmsg;
     boolean rude;
 
-    // [crispy] enable the original rude quit messages
+    // [crispy] enable the original "rude" quit messages
     rude = gametic % (2 * NUM_QUITMESSAGES) >= NUM_QUITMESSAGES;
 
     if (logical_gamemission == doom)
@@ -1320,7 +1322,7 @@ static char *M_SelectEndMessage(void)
 
 void M_QuitDOOM(int choice)
 {
-    // [crispy] Fast exit if "Run" key is held down
+    // [crispy] fast exit if "run" key is held down
     if (G_SpeedKeyDown() || m_speedkeydown)
         I_Quit();
 
@@ -1342,7 +1344,7 @@ void M_ChangeSensitivity(int choice)
 	    mouseSensitivity--;
 	break;
       case 1:
-	if (mouseSensitivity < 255)
+	if (mouseSensitivity < 255) // [crispy] extended range
 	    mouseSensitivity++;
 	break;
     }
@@ -1357,7 +1359,7 @@ void M_ChangeSensitivity_y(int choice)
 	    mouseSensitivity_y--;
 	break;
       case 1:
-	if (mouseSensitivity_y < 255)
+	if (mouseSensitivity_y < 255) // [crispy] extended range
 	    mouseSensitivity_y++;
 	break;
     }
@@ -1399,7 +1401,7 @@ void M_SizeDisplay(int choice)
 	}
 	break;
       case 1:
-	if (screenSize < 9)
+	if (screenSize < 9) // [crispy] Crispy HUD
 	{
 	    screenblocks++;
 	    screenSize++;
@@ -1450,7 +1452,7 @@ M_DrawThermo
     V_DrawPatchDirect((x + 8) + thermDot * 8, y,
 		      W_CacheLumpName(DEH_String("M_THERMO"), PU_CACHE));
 
-    dp_translation = NULL;
+    if (dp_translation) dp_translation = NULL;
 }
 
 
@@ -1570,12 +1572,13 @@ M_WriteText
 	    cy += 12;
 	    continue;
 	}
+	// [crispy] support multi-colored text
 	if (c == '\x1b')
-        {
-            c = *ch++;
-            dp_translation = cr[(int) (c - '0')];
-            continue;
-        }
+	{
+	    c = *ch++;
+	    dp_translation = (crispy_coloredhud) ? cr[(int) (c - '0')] : NULL;
+	    continue;
+	}
 		
 	c = toupper(c) - HU_FONTSTART;
 	if (c < 0 || c>= HU_FONTSIZE)
@@ -1601,9 +1604,9 @@ static boolean IsNullKey(int key)
         || key == KEY_SCRLCK || key == KEY_NUMLOCK;
 }
 
-// [crispy] adapted from prboom-plus/src/e6y.c:369-449
-
-int G_ReloadLevel(void)
+// [crispy] reload current level / go to next level
+// adapted from prboom-plus/src/e6y.c:369-449
+static int G_ReloadLevel(void)
 {
   int result = false;
 
@@ -1616,7 +1619,7 @@ int G_ReloadLevel(void)
   return result;
 }
 
-int G_GotoNextLevel(void)
+static int G_GotoNextLevel(void)
 {
   static byte doom_next[4][9] = {
     {12, 13, 19, 15, 16, 17, 18, 21, 14},
@@ -1728,7 +1731,7 @@ boolean M_Responder (event_t* ev)
     // "close" button pressed on window?
     if (ev->type == ev_quit)
     {
-        // [crispy] Fast exit if "Run" key is held down
+        // [crispy] fast exit if "run" key is held down
         if (G_SpeedKeyDown() || m_speedkeydown)
             I_Quit();
 
@@ -1843,7 +1846,7 @@ boolean M_Responder (event_t* ev)
 		key = key_menu_down;
 		mousewait = I_GetTime() + 5;
 	    }
-
+	    else
 	    if (ev->data1 & (1 << mousebnextweapon))
 	    {
 		key = key_menu_up;
@@ -1857,12 +1860,14 @@ boolean M_Responder (event_t* ev)
 		key = ev->data1;
 		ch = ev->data2;
 
+		// [crispy] handle "run" button pressed in menus
 		if (ev->data1 == key_speed)
 		{
 		    m_speedkeydown = 1;
 		}
 	    }
 	    else
+	    // [crispy] handle "run" button released in menus
 	    if (ev->type == ev_keyup)
 	    {
 		if (ev->data1 == key_speed)
@@ -2066,14 +2071,16 @@ boolean M_Responder (event_t* ev)
             I_SetPalette (W_CacheLumpName (DEH_String("PLAYPAL"),PU_CACHE));
 	    return true;
 	}
-        else if (singleplayer && key == key_menu_nextlevel)
-        {
-	    if (G_GotoNextLevel())
-		return true;
-        }
-        else if (singleplayer && key == key_menu_reloadlevel)
+        // [crispy] those two can be considered as shortcuts for the IDCLEV cheat
+        // and should be treated as such, i.e. add "if (!netgame)"
+        else if (!netgame && key == key_menu_reloadlevel)
         {
 	    if (G_ReloadLevel())
+		return true;
+        }
+        else if (!netgame && key == key_menu_nextlevel)
+        {
+	    if (G_GotoNextLevel())
 		return true;
         }
 
@@ -2355,6 +2362,7 @@ void M_Drawer (void)
 
 	if (name[0])
 	{
+	    // [crispy] shade unavailable menu items
 	    if ((currentMenu == &MainDef && i == savegame && !usergame) ||
 	        (currentMenu == &OptionsDef && i == endgame && !usergame) ||
 	        (currentMenu == &MainDef && i == loadgame && netgame))
@@ -2362,7 +2370,7 @@ void M_Drawer (void)
 
 	    V_DrawPatchDirect (x, y, W_CacheLumpName(name, PU_CACHE));
 
-	    dp_translation = NULL;
+	    if (dp_translation) dp_translation = NULL;
 	}
 	y += LINEHEIGHT;
     }
