@@ -976,7 +976,7 @@ void P_LoadLineDefs (int lump)
 	    if ((ld->sidenum[1] == NO_INDEX) && (ld->flags & ML_TWOSIDED))
 	    {
 		// e6y: ML_TWOSIDED flag shouldn't be cleared for compatibility purposes
-		if (singleplayer)
+		if (!M_CheckParm("-record") && !M_CheckParm("-playdemo") && !M_CheckParm("-timedemo"))
 		    ld->flags &= ~ML_TWOSIDED; // Clear 2s flag for missing left side
 	    }
 	}
