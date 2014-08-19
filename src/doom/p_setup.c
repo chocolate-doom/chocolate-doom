@@ -81,9 +81,9 @@ static int      totallines;
 // Blockmap size.
 int		bmapwidth;
 int		bmapheight;	// size in mapblocks
-long*		blockmap;	// int for larger maps
+long*		blockmap;	// int for larger maps // [crispy] BLOCKMAP limit
 // offsets in blockmap are from here
-long*		blockmaplump;
+long*		blockmaplump; // [crispy] BLOCKMAP limit
 // origin of block map
 fixed_t		bmaporgx;
 fixed_t		bmaporgy;
@@ -192,8 +192,8 @@ void P_LoadSegs (int lump)
     li = segs;
     for (i=0 ; i<numsegs ; i++, li++, ml++)
     {
-	li->v1 = &vertexes[(unsigned short)SHORT(ml->v1)];
-	li->v2 = &vertexes[(unsigned short)SHORT(ml->v2)];
+	li->v1 = &vertexes[(unsigned short)SHORT(ml->v1)]; // [crispy] extended nodes
+	li->v2 = &vertexes[(unsigned short)SHORT(ml->v2)]; // [crispy] extended nodes
 
 	if (crispy_fliplevels)
 	{
@@ -208,7 +208,7 @@ void P_LoadSegs (int lump)
             li->angle = -li->angle;
 
 	li->offset = (SHORT(ml->offset))<<16;
-	linedef = (unsigned short)SHORT(ml->linedef);
+	linedef = (unsigned short)SHORT(ml->linedef); // [crispy] extended nodes
 	ldef = &lines[linedef];
 	li->linedef = ldef;
 	side = SHORT(ml->side);
@@ -264,8 +264,8 @@ void P_LoadSubsectors (int lump)
     
     for (i=0 ; i<numsubsectors ; i++, ss++, ms++)
     {
-	ss->numlines = (unsigned short)SHORT(ms->numsegs);
-	ss->firstline = (unsigned short)SHORT(ms->firstseg);
+	ss->numlines = (unsigned short)SHORT(ms->numsegs); // [crispy] extended nodes
+	ss->firstline = (unsigned short)SHORT(ms->firstseg); // [crispy] extended nodes
     }
 	
     W_ReleaseLumpNum(lump);
@@ -342,9 +342,9 @@ void P_LoadNodes (int lump)
 
 	for (j=0 ; j<2 ; j++)
 	{
-	    no->children[j] = (unsigned short)SHORT(mn->children[j]);
+	    no->children[j] = (unsigned short)SHORT(mn->children[j]); // [crispy] extended nodes
 
-	    // [crispy] support for extended nodes
+	    // [crispy] add support for extended nodes
 	    if (no->children[j] == 0xFFFF)
 		no->children[j] = -1;
 	    else
@@ -413,12 +413,14 @@ void P_LoadThings (int lump)
 		break;
 	    }
 	}
-	// Do not spawn cool, old monsters if MAP33 Betray needs German censorship.
+	// [crispy] do not spawn Wolf SS in BFG Edition
 	else
 	{
-	    if (bfgedition && singleplayer && mt->type == 84) // MAP33 Betray still has Wolf SS
+	    // [crispy] BFG Edition MAP33 "Betray" still has Wolf SS
+	    if (bfgedition && singleplayer && mt->type == 84)
 	    {
-	        mt->type = 3004; // Former Human instead
+	        // [crispy] spawn Former Human instead
+	        mt->type = 3004;
 	    }
 	}
 
@@ -467,18 +469,18 @@ void P_LoadLineDefs (int lump)
     ld = lines;
     for (i=0 ; i<numlines ; i++, mld++, ld++)
     {
-	ld->flags = (unsigned short)SHORT(mld->flags);
+	ld->flags = (unsigned short)SHORT(mld->flags); // [crispy] extended nodes
 	ld->special = SHORT(mld->special);
 	ld->tag = SHORT(mld->tag);
 	if (crispy_fliplevels)
 	{
-	    v1 = ld->v2 = &vertexes[(unsigned short)SHORT(mld->v2)];
-	    v2 = ld->v1 = &vertexes[(unsigned short)SHORT(mld->v1)];
+	    v1 = ld->v2 = &vertexes[(unsigned short)SHORT(mld->v2)]; // [crispy] extended nodes
+	    v2 = ld->v1 = &vertexes[(unsigned short)SHORT(mld->v1)]; // [crispy] extended nodes
 	}
 	else
 	{
-	v1 = ld->v1 = &vertexes[(unsigned short)SHORT(mld->v1)];
-	v2 = ld->v2 = &vertexes[(unsigned short)SHORT(mld->v2)];
+	v1 = ld->v1 = &vertexes[(unsigned short)SHORT(mld->v1)]; // [crispy] extended nodes
+	v2 = ld->v2 = &vertexes[(unsigned short)SHORT(mld->v2)]; // [crispy] extended nodes
 	}
 	ld->dx = v2->x - v1->x;
 	ld->dy = v2->y - v1->y;
@@ -520,12 +522,12 @@ void P_LoadLineDefs (int lump)
 	ld->sidenum[0] = SHORT(mld->sidenum[0]);
 	ld->sidenum[1] = SHORT(mld->sidenum[1]);
 
-	if (ld->sidenum[0] != NO_INDEX)
+	if (ld->sidenum[0] != NO_INDEX) // [crispy] extended nodes
 	    ld->frontsector = sides[ld->sidenum[0]].sector;
 	else
 	    ld->frontsector = 0;
 
-	if (ld->sidenum[1] != NO_INDEX)
+	if (ld->sidenum[1] != NO_INDEX) // [crispy] extended nodes
 	    ld->backsector = sides[ld->sidenum[1]].sector;
 	else
 	    ld->backsector = 0;
@@ -548,7 +550,7 @@ void P_LoadLineDefs (int lump)
 	    if ((ld->sidenum[1] == NO_INDEX) && (ld->flags & ML_TWOSIDED))
 	    {
 		// e6y: ML_TWOSIDED flag shouldn't be cleared for compatibility purposes
-		if (singleplayer)
+		if (!M_CheckParm("-record") && !M_CheckParm("-playdemo") && !M_CheckParm("-timedemo"))
 		    ld->flags &= ~ML_TWOSIDED; // Clear 2s flag for missing left side
 	    }
 	}
@@ -592,8 +594,6 @@ void P_LoadSideDefs (int lump)
 //
 // P_LoadBlockMap
 //
-// [crispy] remove BLOCKMAP limit
-// adapted from boom202s/P_SETUP.C:1025-1076
 void P_LoadBlockMap (int lump)
 {
     int i;
@@ -604,6 +604,8 @@ void P_LoadBlockMap (int lump)
     lumplen = W_LumpLength(lump);
     count = lumplen / 2;
 	
+    // [crispy] remove BLOCKMAP limit
+    // adapted from boom202s/P_SETUP.C:1025-1076
     wadblockmaplump = Z_Malloc(lumplen, PU_LEVEL, NULL);
     W_ReadLump(lump, wadblockmaplump);
     blockmaplump = Z_Malloc(sizeof(*blockmaplump) * count, PU_LEVEL, NULL);
@@ -634,7 +636,7 @@ void P_LoadBlockMap (int lump)
     if (crispy_fliplevels)
     {
 	int x, y;
-	long* rowoffset;
+	long* rowoffset; // [crispy] BLOCKMAP limit
 
 	bmaporgx += bmapwidth * 128 * FRACUNIT;
 	bmaporgx = -bmaporgx;
@@ -645,7 +647,7 @@ void P_LoadBlockMap (int lump)
 
 	    for (x = 0; x < bmapwidth / 2; x++)
 	    {
-	        long tmp;
+	        long tmp; // [crispy] BLOCKMAP limit
 
 	        tmp = rowoffset[x];
 	        rowoffset[x] = rowoffset[bmapwidth-1-x];
