@@ -243,6 +243,23 @@ static const joystick_config_t logitech_f310_controller[] =
     {NULL, 0},
 };
 
+// Multilaser JS030 gamepad, similar to a PS2 controller.
+static const joystick_config_t multilaser_js030_controller[] =
+{
+    {"joystick_x_axis",        0},   // Left stick / D-pad
+    {"joystick_y_axis",        1},
+    {"joyb_fire",              3},   // Square
+    {"joyb_speed",             2},   // X
+    {"joyb_use",               1},   // Circle
+    {"joyb_jump",              0},   // Triangle
+    {"joyb_strafeleft",        6},   // Bottom shoulder buttons
+    {"joyb_straferight",       7},
+    {"joyb_prevweapon",        4},   // Top shoulder buttons
+    {"joyb_nextweapon",        5},
+    {"joyb_menu_activate",     9},   // Start
+    {NULL, 0},
+};
+
 static const known_joystick_t known_joysticks[] =
 {
     {
@@ -286,6 +303,12 @@ static const known_joystick_t known_joysticks[] =
         "Logitech Dual Action",
         4, 12, 1,
         logitech_f310_controller,
+    },
+
+    {
+        "USB Vibration Joystick",
+        4, 12, 1,
+        multilaser_js030_controller,
     },
 };
 
