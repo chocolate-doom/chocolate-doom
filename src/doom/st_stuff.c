@@ -45,7 +45,6 @@
 
 #include "am_map.h"
 #include "m_cheat.h"
-#include "m_menu.h"
 
 #include "s_sound.h"
 
@@ -59,9 +58,10 @@
 #include "dstrings.h"
 #include "sounds.h"
 
-#include "v_trans.h"
+#include "v_trans.h" // [crispy] for multicolored cheat messages
 
-boolean P_CheckAmmo (player_t* player);
+boolean P_CheckAmmo (player_t* player); // [crispy] for tntweap? weapon removal
+extern int screenblocks; // [crispy] for the Crispy HUD
 
 //
 // STATUS BAR DATA
@@ -412,11 +412,11 @@ cheatseq_t cheat_choppers = CHEAT("idchoppers", 0);
 cheatseq_t cheat_clev = CHEAT("idclev", 2);
 cheatseq_t cheat_mypos = CHEAT("idmypos", 0);
 
+// [crispy] new cheats
 cheatseq_t cheat_weapon = CHEAT("tntweap", 1);
 cheatseq_t cheat_massacre = CHEAT("tntem", 0);
 cheatseq_t cheat_notarget = CHEAT("notarget", 0);
 cheatseq_t cheat_spechits = CHEAT("spechits", 0);
-
 
 //
 // STATUS BAR CODE
@@ -568,7 +568,7 @@ ST_Responder (event_t* ev)
 	plyr->armortype = deh_idfa_armor_class;
 	
 	// [crispy] give backpack
-	if (singleplayer && !plyr->backpack)
+	if (!plyr->backpack)
 	{
 	    for (i=0 ; i<NUMAMMO ; i++)
 		plyr->maxammo[i] *= 2;
@@ -590,7 +590,7 @@ ST_Responder (event_t* ev)
 	plyr->armortype = deh_idkfa_armor_class;
 	
 	// [crispy] give backpack
-	if (singleplayer && !plyr->backpack)
+	if (!plyr->backpack)
 	{
 	    for (i=0 ; i<NUMAMMO ; i++)
 		plyr->maxammo[i] *= 2;
@@ -607,6 +607,28 @@ ST_Responder (event_t* ev)
 	  plyr->cards[i] = true;
 	
 	plyr->message = DEH_String(STSTR_KFAADDED);
+      }
+      // [crispy] implement Boom's "tntem" cheat
+      else if (cht_CheckCheat(&cheat_massacre, ev->data2))
+      {
+	static char msg[32];
+	int killcount = ST_cheat_massacre();
+
+	M_snprintf(msg, sizeof(msg), "\x1b%c%d \x1b%cMonster%s Killed",
+	           '0' + CR_GOLD,
+	           killcount, '0' + CR_RED, (killcount == 1) ? "" : "s");
+	plyr->message = msg;
+      }
+      // [crispy] implement Crispy Doom's "spechits" cheat
+      else if (cht_CheckCheat(&cheat_spechits, ev->data2))
+      {
+	static char msg[32];
+	int triggeredlines = ST_cheat_spechits();
+
+	M_snprintf(msg, sizeof(msg), "\x1b%c%d \x1b%cSpecial Line%s Triggered",
+	           '0' + CR_GOLD,
+	           triggeredlines, '0' + CR_RED, (triggeredlines == 1) ? "" : "s");
+	plyr->message = msg;
       }
       // 'mus' cheat for changing music
       else if (cht_CheckCheat(&cheat_mus, ev->data2))
@@ -659,6 +681,18 @@ ST_Responder (event_t* ev)
 	else
 	  plyr->message = DEH_String(STSTR_NCOFF);
       }
+      // [crispy] implement PrBoom+'s "notarget" cheat
+      else if (cht_CheckCheat(&cheat_notarget, ev->data2))
+      {
+	static char msg[32];
+
+	plyr->cheats ^= CF_NOTARGET;
+
+	M_snprintf(msg, sizeof(msg), "Notarget Mode \x1b%c%s",
+	           '0' + CR_GREEN,
+	           (plyr->cheats & CF_NOTARGET) ? "ON" : "OFF");
+	plyr->message = msg;
+      }
       // 'behold?' power-up cheats
       for (i=0;i<6;i++)
       {
@@ -679,6 +713,52 @@ ST_Responder (event_t* ev)
       if (cht_CheckCheat(&cheat_powerup[6], ev->data2))
       {
 	plyr->message = DEH_String(STSTR_BEHOLD);
+      }
+      // [crispy] implement Boom's "tntweap?" weapon cheats
+      else if (cht_CheckCheat(&cheat_weapon, ev->data2))
+      {
+	char		buf[2];
+	int		w;
+	static char	msg[32];
+
+	cht_GetParam(&cheat_weapon, buf);
+	w = *buf - '1';
+
+	if (w < 0 || w >= NUMWEAPONS)
+	    return false;
+
+	if (w == wp_supershotgun && !crispy_havessg)
+	    return false;
+
+	if ((w == wp_bfg || w == wp_plasma) && gamemode == shareware)
+	    return false;
+
+	// make '1' apply beserker strength toggle
+	if (w == wp_fist)
+	{
+	    if (!plyr->powers[pw_strength])
+		P_GivePower(plyr, pw_strength);
+	    else
+		plyr->powers[pw_strength] = 0;
+	    M_snprintf(msg, sizeof(msg), DEH_String(STSTR_BEHOLDX));
+	}
+	else
+	{
+	    if ((plyr->weaponowned[w] = !plyr->weaponowned[w]))
+		M_snprintf(msg, sizeof(msg), "Weapon \x1b%c%d\x1b%c Added",
+		           '0' + CR_GOLD,
+		           w + 1, '0' + CR_RED);
+	    else
+	    {
+		M_snprintf(msg, sizeof(msg), "Weapon \x1b%c%d\x1b%c Removed",
+		           '0' + CR_GOLD,
+		           w + 1, '0' + CR_RED);
+
+		if (w == plyr->readyweapon)
+		    P_CheckAmmo(plyr);
+	    }
+	}
+	plyr->message = msg;
       }
       // 'choppers' invulnerability & chainsaw
       else if (cht_CheckCheat(&cheat_choppers, ev->data2))
@@ -767,89 +847,7 @@ ST_Responder (event_t* ev)
       G_DeferedInitNew(gameskill, epsd, map);
 
       // [crispy] eat key press, i.e. don't change weapon upon level change
-      if (singleplayer)
-          return true;
-    }
-    // [crispy] implement Boom's "tntweap?" weapon cheats
-    else
-    if (singleplayer && cht_CheckCheat(&cheat_weapon, ev->data2))
-    {
-      char		buf[2];
-      int		w;
-      static char msg[32];
-
-      cht_GetParam(&cheat_weapon, buf);
-      w = *buf - '1';
-
-      if (w < 0 || w >= NUMWEAPONS)
-	return false;
-
-      if (w == wp_supershotgun && !crispy_havessg)
-	return false;
-
-      if ((w == wp_bfg || w == wp_plasma) && gamemode == shareware)
-	return false;
-
-      // make '1' apply beserker strength toggle
-      if (w == wp_fist)
-      {
-	if (!plyr->powers[pw_strength])
-	  P_GivePower(plyr, pw_strength);
-	else
-	  plyr->powers[pw_strength] = 0;
-	M_snprintf(msg, sizeof(msg), DEH_String(STSTR_BEHOLDX));
-      }
-      else
-      {
-	if ((plyr->weaponowned[w] = !plyr->weaponowned[w]))
-	  M_snprintf(msg, sizeof(msg), "Weapon \x1b%c%d\x1b%c Added",
-	    (crispy_coloredhud) ? '0' + CR_GOLD : '0' + CR_RED,
-	    w + 1, '0' + CR_RED);
-	else
-	{
-	  M_snprintf(msg, sizeof(msg), "Weapon \x1b%c%d\x1b%c Removed",
-	    (crispy_coloredhud) ? '0' + CR_GOLD : '0' + CR_RED,
-	    w + 1, '0' + CR_RED);
-	  if (w == plyr->readyweapon)
-	    P_CheckAmmo(plyr);
-	}
-      }
-      plyr->message = msg;
-    }
-
-    // [crispy] implement Boom's "tntem" and PrBoom+'s "notarget" cheats
-    if (singleplayer && cht_CheckCheat(&cheat_massacre, ev->data2))
-    {
-        static char msg[32];
-        int killcount = ST_cheat_massacre();
-
-        M_snprintf(msg, sizeof(msg), "\x1b%c%d \x1b%cMonster%s Killed",
-            (crispy_coloredhud) ? '0' + CR_GOLD : '0' + CR_RED,
-            killcount, '0' + CR_RED, killcount == 1 ? "" : "s");
-        plyr->message = msg;
-    }
-    else
-    if (singleplayer && cht_CheckCheat(&cheat_notarget, ev->data2))
-    {
-        static char msg[32];
-
-        plyr->cheats ^= CF_NOTARGET;
-
-        M_snprintf(msg, sizeof(msg), "Notarget Mode \x1b%c%s",
-            (crispy_coloredhud) ? '0' + CR_GREEN : '0' + CR_RED,
-            (plyr->cheats & CF_NOTARGET) ? "ON" : "OFF");
-        plyr->message = msg;
-    }
-    else
-    if (singleplayer && cht_CheckCheat(&cheat_spechits, ev->data2))
-    {
-        static char msg[32];
-        int triggeredlines = ST_cheat_spechits();
-
-        M_snprintf(msg, sizeof(msg), "\x1b%c%d \x1b%cSpecial Line%s Triggered",
-            (crispy_coloredhud) ? '0' + CR_GOLD : '0' + CR_RED,
-            triggeredlines, '0' + CR_RED, triggeredlines == 1 ? "" : "s");
-        plyr->message = msg;
+      return true;
     }
   }
   return false;
@@ -1202,7 +1200,8 @@ enum
     hudcolor_armor
 } hudcolor_t;
 
-byte* ST_WidgetColor(int i)
+// [crispy] return ammo/health/armor widget color
+static byte* ST_WidgetColor(int i)
 {
     if (!crispy_coloredhud)
         return NULL;
@@ -1257,6 +1256,7 @@ byte* ST_WidgetColor(int i)
 	    if (plyr->cheats & CF_GODMODE ||
                 plyr->powers[pw_invulnerability])
                 return cr[CR_GRAY];
+	    // [crispy] color by armor type
 	    else if (plyr->armortype == 0)
                 return cr[CR_RED];
 	    else if (plyr->armortype == 1)
@@ -1264,6 +1264,7 @@ byte* ST_WidgetColor(int i)
 	    else if (plyr->armortype == 2)
                 return cr[CR_BLUE2];
 /*
+            // [crispy] alternatively, color by armor points
             int armor = plyr->armorpoints;
 
             if (armor < 25)
@@ -1294,7 +1295,7 @@ void ST_drawWidgets(boolean refresh)
 
     dp_translation = ST_WidgetColor(hudcolor_ammo);
     STlib_updateNum(&w_ready, refresh);
-    dp_translation = NULL;
+    if (dp_translation) dp_translation = NULL;
 
     // [crispy] draw berserk pack instead of no ammo if appropriate
     if (screenblocks == CRISPY_HUD && !automapactive &&
@@ -1313,7 +1314,7 @@ void ST_drawWidgets(boolean refresh)
     STlib_updatePercent(&w_health, refresh || screenblocks == CRISPY_HUD);
     dp_translation = ST_WidgetColor(hudcolor_armor);
     STlib_updatePercent(&w_armor, refresh || screenblocks == CRISPY_HUD);
-    dp_translation = NULL;
+    if (dp_translation) dp_translation = NULL;
 
     if (screenblocks < CRISPY_HUD || automapactive)
     {
