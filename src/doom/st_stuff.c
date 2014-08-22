@@ -1301,7 +1301,7 @@ void ST_drawWidgets(boolean refresh)
 
     dp_translation = ST_WidgetColor(hudcolor_ammo);
     STlib_updateNum(&w_ready, refresh);
-    if (dp_translation) dp_translation = NULL;
+    V_ClearDPTranslation();
 
     // [crispy] draw berserk pack instead of no ammo if appropriate
     if (screenblocks == CRISPY_HUD && !automapactive &&
@@ -1320,7 +1320,7 @@ void ST_drawWidgets(boolean refresh)
     STlib_updatePercent(&w_health, refresh || screenblocks == CRISPY_HUD);
     dp_translation = ST_WidgetColor(hudcolor_armor);
     STlib_updatePercent(&w_armor, refresh || screenblocks == CRISPY_HUD);
-    if (dp_translation) dp_translation = NULL;
+    V_ClearDPTranslation();
 
     if (screenblocks < CRISPY_HUD || automapactive)
     {

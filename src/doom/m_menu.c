@@ -609,7 +609,7 @@ void M_DrawLoad(void)
 
 	M_WriteText(LoadDef.x,LoadDef.y+LINEHEIGHT*i,savegamestrings[i]);
 
-	if (dp_translation) dp_translation = NULL;
+	V_ClearDPTranslation();
     }
 }
 
@@ -1131,7 +1131,7 @@ static void M_DrawMouse(void)
     M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_invert + 6,
                 mouse_invert_text);
 
-    if (dp_translation) dp_translation = NULL;
+    V_ClearDPTranslation();
 }
 
 void M_Options(int choice)
@@ -1451,7 +1451,7 @@ M_DrawThermo
     V_DrawPatchDirect((x + 8) + thermDot * 8, y,
 		      W_CacheLumpName(DEH_String("M_THERMO"), PU_CACHE));
 
-    if (dp_translation) dp_translation = NULL;
+    V_ClearDPTranslation();
 }
 
 
@@ -2369,7 +2369,7 @@ void M_Drawer (void)
 
 	    V_DrawPatchDirect (x, y, W_CacheLumpName(name, PU_CACHE));
 
-	    if (dp_translation) dp_translation = NULL;
+	    V_ClearDPTranslation();
 	}
 	y += LINEHEIGHT;
     }

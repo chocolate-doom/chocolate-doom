@@ -41,6 +41,7 @@
 #include "dstrings.h"
 #include "sounds.h"
 
+#include "v_video.h" // [crispy] V_ClearDPTranslation()
 #include "v_trans.h" // [crispy] colored kills/items/secret/etc. messages
 
 //
@@ -460,19 +461,17 @@ void HU_Start(void)
 void HU_Drawer(void)
 {
 
-    extern byte *dp_translation;
-
     if (crispy_cleanscreenshot)
     {
         HU_Erase();
         return;
     }
 
-    if (dp_translation) dp_translation = NULL;
+    V_ClearDPTranslation();
     HUlib_drawSText(&w_message);
     dp_translation = cr[CR_GOLD];
     HUlib_drawSText(&w_secret);
-    if (dp_translation) dp_translation = NULL;
+    V_ClearDPTranslation();
     HUlib_drawIText(&w_chat);
     if (automapactive)
     {
@@ -520,7 +519,7 @@ void HU_Drawer(void)
 	HUlib_drawTextLine(&w_ltime, false);
 	}
 
-    if (dp_translation) dp_translation = NULL;
+    V_ClearDPTranslation();
     }
 
     // [crispy] add a laserpointer dot
