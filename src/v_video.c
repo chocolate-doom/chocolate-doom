@@ -152,7 +152,6 @@ void V_DrawPatch(int x, int y, patch_t *patch)
     byte *desttop;
     byte *dest;
     byte *source;
-    byte sourcetrans;
     int w, f;
 
     y -= SHORT(patch->topoffset);
@@ -182,6 +181,7 @@ void V_DrawPatch(int x, int y, patch_t *patch)
 
     w = SHORT(patch->width);
 
+  if (!dp_translation)
     for ( ; col<w ; x++, col++, desttop++)
     {
         column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
@@ -197,17 +197,42 @@ void V_DrawPatch(int x, int y, patch_t *patch)
 
             while (count--)
             {
-                if (dp_translation)
-                    sourcetrans = dp_translation[*source++];
-                else
-                    sourcetrans = *source++;
-
                 if (hires)
                 {
-                    *dest = sourcetrans;
+                    *dest = *source;
                     dest += SCREENWIDTH;
                 }
-                *dest = sourcetrans;
+                *dest = *source++;
+                dest += SCREENWIDTH;
+            }
+          }
+            column = (column_t *)((byte *)column + column->length + 4);
+        }
+    }
+  // [crispy] duplicate for-loop for the (dp_translation != NULL) case
+  // to avoid checking that variable for each pixel and instead check once per patch
+  else
+    for ( ; col<w ; x++, col++, desttop++)
+    {
+        column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
+
+        // step through the posts in a column
+        while (column->topdelta != 0xff)
+        {
+          for (f = 0; f <= hires; f++)
+          {
+            source = (byte *)column + 3;
+            dest = desttop + column->topdelta*(SCREENWIDTH << hires) + (x * hires) + f;
+            count = column->length;
+
+            while (count--)
+            {
+                if (hires)
+                {
+                    *dest = dp_translation[*source];
+                    dest += SCREENWIDTH;
+                }
+                *dest = dp_translation[*source++];
                 dest += SCREENWIDTH;
             }
           }
@@ -230,7 +255,6 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
     byte *desttop;
     byte *dest;
     byte *source; 
-    byte sourcetrans;
     int w, f;
  
     y -= SHORT(patch->topoffset); 
@@ -275,17 +299,12 @@ void V_DrawPatchFlipped(int x, int y, patch_t *patch)
 
             while (count--)
             {
-                if (dp_translation)
-                    sourcetrans = dp_translation[*source++];
-                else
-                    sourcetrans = *source++;
-
                 if (hires)
                 {
-                    *dest = sourcetrans;
+                    *dest = *source;
                     dest += SCREENWIDTH;
                 }
-                *dest = sourcetrans;
+                *dest = *source++;
                 dest += SCREENWIDTH;
             }
           }
