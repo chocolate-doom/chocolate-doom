@@ -414,6 +414,7 @@ cheatseq_t cheat_mypos = CHEAT("idmypos", 0);
 // [crispy] new cheats
 cheatseq_t cheat_weapon = CHEAT("tntweap", 1);
 cheatseq_t cheat_massacre = CHEAT("tntem", 0);
+cheatseq_t cheat_hom = CHEAT("tnthom", 0);
 cheatseq_t cheat_notarget = CHEAT("notarget", 0);
 cheatseq_t cheat_spechits = CHEAT("spechits", 0);
 
@@ -627,6 +628,18 @@ ST_Responder (event_t* ev)
 	M_snprintf(msg, sizeof(msg), "\x1b%c%d \x1b%cSpecial Line%s Triggered",
 	           '0' + CR_GOLD,
 	           triggeredlines, '0' + CR_RED, (triggeredlines == 1) ? "" : "s");
+	plyr->message = msg;
+      }
+      // [crispy] implement Boom's "tnthom" cheat
+      else if (cht_CheckCheat(&cheat_hom, ev->data2))
+      {
+	static char msg[32];
+
+	crispy_flashinghom = !crispy_flashinghom;
+
+	M_snprintf(msg, sizeof(msg), "HOM Detection \x1b%c%s",
+	           '0' + CR_GREEN,
+	           (crispy_flashinghom) ? "ON" : "OFF");
 	plyr->message = msg;
       }
       // 'mus' cheat for changing music
