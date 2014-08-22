@@ -23,6 +23,8 @@
 
 #include "doomtype.h"
 
+#define singleplayer (!crispy_democritical && !netgame)
+
 extern boolean crispy_cleanscreenshot;
 extern boolean crispy_dehautoload;
 extern boolean crispy_democritical;
