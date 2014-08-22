@@ -523,7 +523,7 @@ void HU_Drawer(void)
     if (dp_translation) dp_translation = NULL;
     }
 
-    // [crispy] add a crosshair
+    // [crispy] add a laserpointer dot
     if (crispy_crosshair &&
         plr->readyweapon != wp_fist && plr->readyweapon != wp_chainsaw &&
         !automapactive && !menuactive && !paused && !secret_on)
@@ -537,7 +537,7 @@ void HU_Drawer(void)
         if (screenblocks <= 10)
             h -= (32 << hires) / 2;
 
-        // [crispy] crosshair changes color on targets
+        // [crispy] laserpointer dot changes color on targets
         if (crispy_crosshair_highlight)
         {
             extern fixed_t P_AimLineAttack (mobj_t* t1, angle_t angle, fixed_t distance);
@@ -568,7 +568,6 @@ void HU_Erase(void)
     HUlib_eraseSText(&w_secret);
     HUlib_eraseIText(&w_chat);
     HUlib_eraseTextLine(&w_title);
-    HUlib_eraseTextLine(&w_map);
 
 }
 

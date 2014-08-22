@@ -805,6 +805,7 @@ void R_InitSpriteLumps (void)
 
 // [crispy] initialize translucency filter map
 // taken from boom202s/R_DATA.C:676-787
+// TODO: replace with an implementation that I actually understand
 
 // Emacs style mode select   -*- C++ -*-
 //-----------------------------------------------------------------------------

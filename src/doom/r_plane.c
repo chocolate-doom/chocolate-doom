@@ -260,7 +260,7 @@ R_FindPlane
 	return check;
 		
     R_RaiseVisplanes(&check);
-
+		
     lastvisplane++;
 
     check->height = height;

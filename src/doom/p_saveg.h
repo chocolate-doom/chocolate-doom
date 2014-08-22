@@ -54,9 +54,6 @@ void P_ArchiveThinkers (void);
 void P_UnArchiveThinkers (void);
 void P_ArchiveSpecials (void);
 void P_UnArchiveSpecials (void);
-
-uint32_t P_ThinkerToIndex (thinker_t* thinker);
-thinker_t* P_IndexToThinker (uint32_t index);
 void P_RestoreTargets (void);
 
 extern FILE *save_stream;

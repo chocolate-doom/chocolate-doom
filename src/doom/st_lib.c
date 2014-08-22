@@ -34,12 +34,12 @@
 #include "st_stuff.h"
 #include "st_lib.h"
 #include "r_local.h"
-#include "m_menu.h"
 
-#include "v_trans.h"
+#include "v_trans.h" // [crispy] colored status bar widgets
 
 // in AM_map.c
 extern boolean		automapactive; 
+extern int screenblocks;
 
 
 
@@ -178,7 +178,7 @@ STlib_updatePercent
   int			refresh )
 {
 
-    STlib_updateNum(&per->n, refresh);
+    STlib_updateNum(&per->n, refresh); // [crispy] moved here
 
     if (crispy_coloredhud)
         dp_translation = cr[CR_GRAY];
@@ -186,7 +186,7 @@ STlib_updatePercent
     if (refresh && *per->n.on)
 	V_DrawPatch(per->n.x, per->n.y, per->p);
 
-    dp_translation = NULL;
+    if (dp_translation) dp_translation = NULL;
 }
 
 

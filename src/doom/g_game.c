@@ -222,7 +222,7 @@ static int      joystrafemove;
 static boolean  joyarray[MAX_JOY_BUTTONS + 1]; 
 static boolean *joybuttons = &joyarray[1];		// allow [-1] 
  
-static char     savename[256]; // [crispy] moved here
+static char     savename[256]; // [crispy] moved here, made static
 static int      savegameslot; 
 static char     savedescription[32]; 
  
@@ -348,7 +348,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // fraggle: support the old "joyb_speed = 31" hack which
     // allowed an autorun effect
 
-    // [crispy] when "always run" is active, 
+    // [crispy] when "always run" is active,
     // pressing the "run" key will result in walking
     speed = key_speed >= NUMKEYS
          || joybspeed >= MAX_JOY_BUTTONS;
@@ -1364,7 +1364,7 @@ boolean G_SpeedKeyDown()
     return (gamekeydown[key_speed] || joybuttons[joybspeed]);
 }
 
-// [crispy] clear the savename variable,
+// [crispy] clear the "savename" variable,
 // i.e. restart level from scratch upon resurrection
 static inline void G_ClearSavename ()
 {
@@ -1455,13 +1455,13 @@ int cpars[32] =
 };
  
 // [crispy] Episode 4 par times from the BFG Edition
-int e4pars[10] =
+static int e4pars[10] =
 {
     0,165,255,135,150,180,390,135,360,180
 };
 
 // [crispy] No Rest For The Living par times from the BFG Edition
-int npars[9] =
+static int npars[9] =
 {
     75,105,120,105,210,105,165,105,135
 };

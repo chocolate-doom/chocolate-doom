@@ -68,7 +68,7 @@ typedef enum
     CF_GODMODE		= 2,
     // Not really a cheat, just a debug aid.
     CF_NOMOMENTUM	= 4,
-    // Monsters don't target
+    // [crispy] monsters don't target
     CF_NOTARGET         = 8
 
 } cheat_t;

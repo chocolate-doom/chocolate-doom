@@ -183,13 +183,13 @@ typedef struct line_s
     fixed_t	dy;
 
     // Animation related.
-    unsigned short	flags;
+    unsigned short	flags; // [crispy] extended nodes
     short	special;
     short	tag;
 
     // Visual appearance: SideDefs.
     //  sidenum[1] will be -1 (NO_INDEX) if one sided
-    unsigned short	sidenum[2];
+    unsigned short	sidenum[2]; // [crispy] extended nodes
 
     // Neat. Another bounding box, for the extent
     //  of the LineDef.
@@ -223,8 +223,8 @@ typedef struct line_s
 typedef struct subsector_s
 {
     sector_t*	sector;
-    int	numlines;
-    int	firstline;
+    int	numlines; // [crispy] extended nodes
+    int	firstline; // [crispy] extended nodes
     
 } subsector_t;
 
@@ -270,7 +270,7 @@ typedef struct
     fixed_t	bbox[2][4];
 
     // If NF_SUBSECTOR its a subsector.
-    int children[2];
+    int children[2]; // [crispy] extended nodes
     
 } node_t;
 
@@ -432,15 +432,15 @@ typedef struct
   
   // leave pads for [minx-1]/[maxx+1]
   
-  unsigned short		pad1;
+  unsigned short		pad1; // [crispy] hires
   // Here lies the rub for all
   //  dynamic resize/change of resolution.
-  unsigned short		top[SCREENWIDTH];
-  unsigned short		pad2;
-  unsigned short		pad3;
+  unsigned short		top[SCREENWIDTH]; // [crispy] hires
+  unsigned short		pad2; // [crispy] hires
+  unsigned short		pad3; // [crispy] hires
   // See above.
-  unsigned short		bottom[SCREENWIDTH];
-  unsigned short		pad4;
+  unsigned short		bottom[SCREENWIDTH]; // [crispy] hires
+  unsigned short		pad4; // [crispy] hires
 
 } visplane_t;
 

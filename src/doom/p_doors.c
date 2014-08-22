@@ -120,7 +120,7 @@ void T_VerticalDoor (vldoor_t* door)
 		door->sector->specialdata = NULL;
 		P_RemoveThinker (&door->thinker);  // unlink and free
 		// [crispy] fix "fast doors make two closing sounds"
-		// S_StartSound(&door->sector->soundorg, sfx_bdcls);
+		//S_StartSound(&door->sector->soundorg, sfx_bdcls);
 		break;
 		
 	      case normal:

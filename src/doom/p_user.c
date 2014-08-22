@@ -283,7 +283,8 @@ void P_PlayerThink (player_t* player)
     }
 			
 	
-    // [crispy] center view (after teleporting, dying, jumping and on demand)
+    // [crispy] center view
+    // e.g. after teleporting, dying, jumping and on demand
     if (player2->centering)
     {
         if (player2->lookdir > 0)

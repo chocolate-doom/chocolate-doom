@@ -63,7 +63,7 @@ int		viewwindowx;
 int		viewwindowy; 
 byte*		ylookup[MAXHEIGHT]; 
 int		columnofs[MAXWIDTH]; 
-int		linesize = SCREENWIDTH;
+static const int	linesize = SCREENWIDTH;
 
 // Color tables for different players,
 //  translate a limited part to another

@@ -195,8 +195,8 @@ mline_t thintriangle_guy[] = {
     { { (fixed_t)(R    ), (fixed_t)(0    ) }, { (fixed_t)(-.5*R), (fixed_t)(.7*R ) } },
     { { (fixed_t)(-.5*R), (fixed_t)(.7*R ) }, { (fixed_t)(-.5*R), (fixed_t)(-.7*R) } }
 };
-// [crispy] print keys are crosses
-mline_t cross_mark[] = {
+// [crispy] print keys as crosses
+static mline_t cross_mark[] = {
     { { -R, 0 }, { R, 0 } },
     { { 0, -R }, { 0, R } },
 };
@@ -1193,7 +1193,7 @@ void AM_drawWalls(void)
 			    AM_drawMline(&l, REDS);
 			    continue;
 			default:
-			    // [crispy] should be impossible to reach here
+			    // [crispy] it should be impossible to reach here
 			    break;
 		    }
 		}
@@ -1411,7 +1411,7 @@ AM_drawThings
 		    break;
 	    }
 
-	    // [crispy] keys are shown as crosses in their respective colors
+	    // [crispy] draw keys as crosses in their respective colors
 	    if (key > no_key)
 	    {
 	    AM_drawLineCharacter

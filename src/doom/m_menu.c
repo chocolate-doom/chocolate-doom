@@ -181,7 +181,7 @@ menu_t*	currentMenu;
 //
 void M_NewGame(int choice);
 void M_Episode(int choice);
-void M_Expansion(int choice);
+static void M_Expansion(int choice);
 void M_ChooseSkill(int choice);
 void M_LoadGame(int choice);
 void M_SaveGame(int choice);
@@ -193,14 +193,14 @@ void M_QuitDOOM(int choice);
 
 void M_ChangeMessages(int choice);
 void M_ChangeSensitivity(int choice);
-void M_ChangeSensitivity_y(int choice);
-void M_MouseInvert(int choice);
+static void M_ChangeSensitivity_y(int choice);
+static void M_MouseInvert(int choice);
 void M_SfxVol(int choice);
 void M_MusicVol(int choice);
 void M_ChangeDetail(int choice);
 void M_SizeDisplay(int choice);
 void M_StartGame(int choice);
-void M_Mouse(int choice);
+static void M_Mouse(int choice);
 void M_Sound(int choice);
 
 void M_FinishReadThis(int choice);
@@ -216,7 +216,7 @@ void M_DrawReadThis2(void);
 void M_DrawNewGame(void);
 void M_DrawEpisode(void);
 void M_DrawOptions(void);
-void M_DrawMouse(void);
+static void M_DrawMouse(void);
 void M_DrawSound(void);
 void M_DrawLoad(void);
 void M_DrawSave(void);
@@ -312,13 +312,13 @@ enum
     ex_end
 } expansions_e;
 
-menuitem_t ExpansionMenu[]=
+static menuitem_t ExpansionMenu[]=
 {
     {1,"M_EPI1", M_Expansion,'h'},
     {1,"M_EPI2", M_Expansion,'n'},
 };
 
-menu_t  ExpDef =
+static menu_t  ExpDef =
 {
     ex_end,		// # of menu items
     &MainDef,		// previous menu
@@ -409,7 +409,7 @@ enum
     mouse_end
 } mouse_e;
 
-menuitem_t MouseMenu[]=
+static menuitem_t MouseMenu[]=
 {
     {2,"",	M_ChangeSensitivity,'h'},
     {-1,"",0,'\0'},
@@ -418,7 +418,7 @@ menuitem_t MouseMenu[]=
     {1,"",	M_MouseInvert,'i'},
 };
 
-menu_t  MouseDef =
+static menu_t  MouseDef =
 {
     mouse_end,
     &OptionsDef,
@@ -1056,7 +1056,7 @@ void M_Episode(int choice)
     M_SetupNextMenu(&NewDef);
 }
 
-void M_Expansion(int choice)
+static void M_Expansion(int choice)
 {
     epi = choice;
     M_SetupNextMenu(&NewDef);
@@ -1107,7 +1107,7 @@ void M_DrawOptions(void)
 }
 
 // [crispy] mouse sensitivity menu
-void M_DrawMouse(void)
+static void M_DrawMouse(void)
 {
     static char mouse_invert_text[24];
 
@@ -1140,7 +1140,7 @@ void M_Options(int choice)
 }
 
 // [crispy] correctly handle inverted y-axis
-void M_Mouse(int choice)
+static void M_Mouse(int choice)
 {
     if (mouseSensitivity_y < 0)
     {
@@ -1156,7 +1156,6 @@ void M_Mouse(int choice)
 
     M_SetupNextMenu(&MouseDef);
 }
-
 
 
 //
@@ -1350,7 +1349,7 @@ void M_ChangeSensitivity(int choice)
     }
 }
 
-void M_ChangeSensitivity_y(int choice)
+static void M_ChangeSensitivity_y(int choice)
 {
     switch(choice)
     {
@@ -1365,7 +1364,7 @@ void M_ChangeSensitivity_y(int choice)
     }
 }
 
-void M_MouseInvert(int choice)
+static void M_MouseInvert(int choice)
 {
     choice = 0;
     mouse_y_invert = 1 - mouse_y_invert;
