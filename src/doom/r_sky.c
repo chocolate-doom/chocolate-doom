@@ -52,6 +52,6 @@ void R_InitSkyMap (void)
     if (crispy_freelook || crispy_mouselook)
         skytexturemid = -28*FRACUNIT * 128 / 228;
     else
-        skytexturemid = 100*FRACUNIT;
+    skytexturemid = 100*FRACUNIT;
 }
 

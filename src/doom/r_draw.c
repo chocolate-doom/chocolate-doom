@@ -32,7 +32,6 @@
 
 // Needs access to LFB (guess what).
 #include "v_video.h"
-#include "v_trans.h"
 
 // State.
 #include "doomstat.h"
@@ -88,7 +87,7 @@ int			dc_yl;
 int			dc_yh; 
 fixed_t			dc_iscale; 
 fixed_t			dc_texturemid;
-int			dc_texheight;
+int			dc_texheight; // [crispy] Tutti-Frutti fix
 
 // first pixel in a column (possibly virtual) 
 byte*			dc_source;		
@@ -103,6 +102,40 @@ int			dccount;
 // Thus a special case loop for very fast rendering can
 //  be used. It has also been used with Wolfenstein 3D.
 // 
+
+// [crispy] replace R_DrawColumn() with Lee Killough's implementation
+// found in MBF to fix Tutti-Frutti, taken from mbfsrc/R_DRAW.C:99-1979
+
+// Emacs style mode select   -*- C++ -*- 
+//-----------------------------------------------------------------------------
+//
+// $Id: r_draw.c,v 1.16 1998/05/03 22:41:46 killough Exp $
+//
+//  Copyright (C) 1999 by
+//  id Software, Chi Hoang, Lee Killough, Jim Flynn, Rand Phares, Ty Halderman
+//
+//  This program is free software; you can redistribute it and/or
+//  modify it under the terms of the GNU General Public License
+//  as published by the Free Software Foundation; either version 2
+//  of the License, or (at your option) any later version.
+//
+//  This program is distributed in the hope that it will be useful,
+//  but WITHOUT ANY WARRANTY; without even the implied warranty of
+//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//  GNU General Public License for more details.
+//
+//  You should have received a copy of the GNU General Public License
+//  along with this program; if not, write to the Free Software
+//  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 
+//  02111-1307, USA.
+//
+// DESCRIPTION:
+//      The actual span/column drawing functions.
+//      Here find the main potential for optimization,
+//       e.g. inline assembly, different algorithms.
+//
+//-----------------------------------------------------------------------------
+
 void R_DrawColumn (void) 
 { 
   int              count;
@@ -591,6 +624,9 @@ void R_DrawTranslatedColumnLow (void)
     } while (count--); 
 } 
 
+// [crispy] draw translucent column
+extern byte *tranmap;
+
 void R_DrawTLColumn (void)
 {
     int			count;
@@ -619,6 +655,7 @@ void R_DrawTLColumn (void)
 
     do
     {
+        // actual translucency map lookup taken from boom202s/R_DRAW.C:255
         *dest = tranmap[(*dest<<8)+dc_colormap[dc_source[frac>>FRACBITS]]];
 	dest += SCREENWIDTH;
 
@@ -626,6 +663,7 @@ void R_DrawTLColumn (void)
     } while (count--);
 }
 
+// [crispy] draw translucent column, low-resolution version
 void R_DrawTLColumnLow (void)
 {
     int			count;
@@ -748,7 +786,7 @@ int			dscount;
 // Draws the actual span.
 void R_DrawSpan (void) 
 { 
-//  unsigned int position, step;
+    //unsigned int position, step;
     byte *dest;
     int count;
     int spot;
@@ -786,7 +824,7 @@ void R_DrawSpan (void)
     do
     {
 	// Calculate current texture index in u,v.
-        // [crispy] fix flats get more distorted the closer they are to the right
+        // [crispy] fix flats getting more distorted the closer they are to the right
         ytemp = (ds_yfrac >> 10) & 0x0fc0;
         xtemp = (ds_xfrac >> 16) & 0x3f;
         spot = xtemp | ytemp;
@@ -795,7 +833,7 @@ void R_DrawSpan (void)
 	//  re-index using light/colormap.
 	*dest++ = ds_colormap[ds_source[spot]];
 
-//      position += step;
+        //position += step;
         ds_xfrac += ds_xstep;
         ds_yfrac += ds_ystep;
 

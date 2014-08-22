@@ -32,10 +32,9 @@
 #include "m_bbox.h"
 #include "m_menu.h"
 
-#include "p_local.h"
+#include "p_local.h" // [crispy] p2fromp(), MLOOKUNIT
 #include "r_local.h"
 #include "r_sky.h"
-#include "v_video.h" // V_DrawFilledBox
 
 
 
@@ -678,7 +677,7 @@ void R_ExecuteSetViewSize (void)
 
     setsizeneeded = false;
 
-    if (setblocks == 11 || setblocks == 12)
+    if (setblocks >= 11) // [crispy] Crispy HUD
     {
 	scaledviewwidth = SCREENWIDTH;
 	scaledviewheight = SCREENHEIGHT;
@@ -731,6 +730,8 @@ void R_ExecuteSetViewSize (void)
     // planes
     for (i=0 ; i<viewheight ; i++)
     {
+	// [crispy] re-generate lookup-table for yslope[] (free look)
+	// whenever "detailshift" or "screenblocks" change
 	const fixed_t num = (viewwidth<<(detailshift && !hires))/2*FRACUNIT;
 	for (j = 0; j < LOOKDIRS; j++)
 	{
@@ -845,6 +846,7 @@ void R_SetupFrame (player_t* player)
 
     viewz = player->viewz;
 
+    // apply new yslope[] whenever "lookdir", "detailshift" or "screenblocks" change
     tempCentery = viewheight/2 + ((player2->lookdir/MLOOKUNIT) << (hires && !detailshift)) * (screenblocks < 11 ? screenblocks : 11) / 10;
     if (centery != tempCentery)
     {
@@ -884,6 +886,7 @@ void R_SetupFrame (player_t* player)
 void R_RenderPlayerView (player_t* player)
 {	
     extern boolean automapactive;
+    extern void V_DrawFilledBox (int x, int y, int w, int h, int c);
 
     R_SetupFrame (player);
 

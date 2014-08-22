@@ -35,7 +35,7 @@
 
 #include "doomstat.h"
 
-#include "v_trans.h"
+#include "v_trans.h" // [crispy] colored blood sprites
 
 
 #define MINZ				(FRACUNIT*4)
@@ -327,6 +327,7 @@ vissprite_t* R_NewVisSprite (void)
 	static int max;
 	int numvissprites_old = numvissprites;
 
+	// [crispy] cap MAXVISSPRITES limit at 4096
 	if (!max && numvissprites == 32 * MAXVISSPRITES)
 	{
 	    printf("R_NewVisSprite: MAXVISSPRITES limit capped at %d.\n", numvissprites);
@@ -369,7 +370,7 @@ void R_DrawMaskedColumn (column_t* column)
     fixed_t	basetexturemid;
 	
     basetexturemid = dc_texturemid;
-    dc_texheight = 0;
+    dc_texheight = 0; // [crispy] Tutti-Frutti fix
 	
     for ( ; column->topdelta != 0xff ; ) 
     {
@@ -435,6 +436,7 @@ R_DrawVisSprite
 	dc_translation = translationtables - 256 +
 	    ( (vis->mobjflags & MF_TRANSLATION) >> (MF_TRANSSHIFT-8) );
     }
+    // [crispy] color-translated sprites (i.e. blood)
     else if (vis->translation)
     {
 	colfunc = transcolfunc;
@@ -573,7 +575,7 @@ void R_ProjectSprite (mobj_t* thing)
     
     // store information in a vissprite
     vis = R_NewVisSprite ();
-    vis->translation = NULL;
+    vis->translation = NULL; // [crispy] no color translation
     vis->mobjflags = thing->flags;
     vis->scale = xscale<<(detailshift && !hires);
     vis->gx = thing->x;
@@ -586,8 +588,8 @@ void R_ProjectSprite (mobj_t* thing)
     iscale = FixedDiv (FRACUNIT, xscale);
 
     // [crispy] flip death sprites and corpses randomly
-    if (singleplayer &&
-        thing->type != MT_CYBORG && thing->type != MT_BARREL &&
+    // except for the Cyberdemon which is too asymmetrical
+    if (thing->type != MT_CYBORG &&
         thing->flags & MF_CORPSE &&
         thing->health & 1)
     {
@@ -637,6 +639,8 @@ void R_ProjectSprite (mobj_t* thing)
 	vis->colormap = spritelights[index];
     }	
 
+    // [crispy] Cacodemons bleed blue blood
+    // Barons of Hell and Hell Knights bleed green blood
     if (thing->type == MT_BLOOD && thing->target)
     {
         if (thing->target->type == MT_HEAD)
@@ -688,7 +692,7 @@ void R_AddSprites (sector_t* sec)
 //
 // R_DrawPSprite
 //
-void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum)
+void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate gun from flash sprites
 {
     fixed_t		tx;
     int			x1;
@@ -736,7 +740,7 @@ void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum)
     
     // store information in a vissprite
     vis = &avis;
-    vis->translation = NULL;
+    vis->translation = NULL; // [crispy] no color translation
     vis->mobjflags = 0;
     // [crispy] weapons drawn 1 pixel too high when player is idle
     vis->texturemid = (BASEYCENTER<<FRACBITS)/*+FRACUNIT/2*/-(psp->sy-spritetopoffset[lump]);
@@ -825,7 +829,7 @@ void R_DrawPlayerSprites (void)
 	 i++,psp++)
     {
 	if (psp->state)
-	    R_DrawPSprite (psp, i);
+	    R_DrawPSprite (psp, i); // [crispy] pass gun or flash sprite
     }
 }
 

@@ -79,6 +79,7 @@ typedef	struct
 } cliprange_t;
 
 
+// [crispy] raise to the value found in MBF
 #define MAXSEGS		(SCREENWIDTH/2+1)
 
 // newend is one past the last valid seg

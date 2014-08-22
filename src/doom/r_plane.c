@@ -206,7 +206,7 @@ void R_ClearPlanes (void)
 
 
 // [crispy] remove MAXVISPLANES Vanilla limit
-void R_RaiseVisplanes (visplane_t** vp)
+static void R_RaiseVisplanes (visplane_t** vp)
 {
     if (lastvisplane - visplanes == numvisplanes)
     {
@@ -260,6 +260,7 @@ R_FindPlane
 	return check;
 		
     R_RaiseVisplanes(&check);
+
     lastvisplane++;
 
     check->height = height;
@@ -312,11 +313,11 @@ R_CheckPlane
     }
 
     for (x=intrl ; x<= intrh ; x++)
-	if (pl->top[x] != 0xffff)
+	if (pl->top[x] != 0xffff) // [crispy] hires
 	    break;
 
   // [crispy] fix HOM if ceilingplane and floorplane are the same
-  // visplane (e.g. both skies)
+  // visplane (e.g. both are skies)
   if (!(pl == floorplane && markceiling && floorplane == ceilingplane))
   {
     if (x > intrh)
@@ -428,7 +429,7 @@ void R_DrawPlanes (void)
 	    //  by INVUL inverse mapping.
 	    dc_colormap = colormaps;
 	    dc_texturemid = skytexturemid;
-	    dc_texheight = textureheight[skytexture]>>FRACBITS;
+	    dc_texheight = textureheight[skytexture]>>FRACBITS; // [crispy] Tutti-Frutti fix
 	    for (x=pl->minx ; x <= pl->maxx ; x++)
 	    {
 		dc_yl = pl->top[x];
@@ -460,8 +461,8 @@ void R_DrawPlanes (void)
 
 	planezlight = zlight[light];
 
-	pl->top[pl->maxx+1] = 0xffff;
-	pl->top[pl->minx-1] = 0xffff;
+	pl->top[pl->maxx+1] = 0xffff; // [crispy] hires
+	pl->top[pl->minx-1] = 0xffff; // [crispy] hires
 		
 	stop = pl->maxx + 1;
 
