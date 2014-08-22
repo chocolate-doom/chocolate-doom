@@ -18,11 +18,15 @@
 #define __M_CONTROLS_H__
  
 extern int key_right;
+extern int key_alt_right;
 extern int key_left;
+extern int key_alt_left;
 extern int key_reverse;
 
 extern int key_up;
+extern int key_alt_up;
 extern int key_down;
+extern int key_alt_down;
 extern int key_strafeleft;
 extern int key_straferight;
 extern int key_fire;

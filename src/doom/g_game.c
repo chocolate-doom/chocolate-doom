@@ -364,8 +364,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // on the keyboard and joystick
     if (joyxmove < 0
 	|| joyxmove > 0  
-	|| gamekeydown[key_right]
-	|| gamekeydown[key_left]) 
+	|| gamekeydown[key_right] || gamekeydown[key_alt_right] // [crispy] add key_alt_*
+	|| gamekeydown[key_left] || gamekeydown[key_alt_left])  // [crispy] add key_alt_*
 	turnheld += ticdup; 
     else 
 	turnheld = 0; 
@@ -426,12 +426,12 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // let movement keys cancel each other out
     if (strafe) 
     { 
-	if (gamekeydown[key_right] || gamekeydown[key_menu_right]) // [crispy] add key_menu_*
+	if (gamekeydown[key_right] || gamekeydown[key_alt_right]) // [crispy] add key_alt_*
 	{
 	    // fprintf(stderr, "strafe right\n");
 	    side += sidemove[speed]; 
 	}
-	if (gamekeydown[key_left] || gamekeydown[key_menu_left]) // [crispy] add key_menu_*
+	if (gamekeydown[key_left] || gamekeydown[key_alt_left]) // [crispy] add key_alt_*
 	{
 	    //	fprintf(stderr, "strafe left\n");
 	    side -= sidemove[speed]; 
@@ -444,9 +444,9 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     } 
     else 
     { 
-	if (gamekeydown[key_right]) 
+	if (gamekeydown[key_right] || gamekeydown[key_alt_right]) // [crispy] add key_alt_*
 	    cmd->angleturn -= angleturn[tspeed]; 
-	if (gamekeydown[key_left]) 
+	if (gamekeydown[key_left] || gamekeydown[key_alt_left])  // [crispy] add key_alt_*
 	    cmd->angleturn += angleturn[tspeed]; 
 	if (joyxmove > 0) 
 	    cmd->angleturn -= angleturn[tspeed]; 
@@ -454,12 +454,12 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 	    cmd->angleturn += angleturn[tspeed]; 
     } 
  
-    if (gamekeydown[key_up] || gamekeydown[key_menu_up]) // [crispy] add key_menu_*
+    if (gamekeydown[key_up] || gamekeydown[key_alt_up]) // [crispy] add key_alt_*
     {
 	// fprintf(stderr, "up\n");
 	forward += forwardmove[speed]; 
     }
-    if (gamekeydown[key_down] || gamekeydown[key_menu_down]) // [crispy] add key_menu_*
+    if (gamekeydown[key_down] || gamekeydown[key_alt_down]) // [crispy] add key_alt_*
     {
 	// fprintf(stderr, "down\n");
 	forward -= forwardmove[speed]; 

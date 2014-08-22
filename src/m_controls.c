@@ -27,11 +27,15 @@
 //
 
 int key_right = KEY_RIGHTARROW;
+int key_alt_right = 0;
 int key_left = KEY_LEFTARROW;
+int key_alt_left = 0;
 int key_reverse = 0;
 
 int key_up = 'w';
+int key_alt_up = KEY_UPARROW;
 int key_down = 's';
+int key_alt_down = KEY_DOWNARROW;
 int key_strafeleft = 'a';
 int key_straferight = 'd';
 int key_fire = KEY_RCTRL;
@@ -214,6 +218,10 @@ void M_BindBaseControls(void)
     M_BindVariable("key_left",           &key_left);
     M_BindVariable("key_up",             &key_up);
     M_BindVariable("key_down",           &key_down);
+    M_BindVariable("key_alt_right",      &key_alt_right);
+    M_BindVariable("key_alt_left",       &key_alt_left);
+    M_BindVariable("key_alt_up",         &key_alt_up);
+    M_BindVariable("key_alt_down",       &key_alt_down);
     M_BindVariable("key_strafeleft",     &key_strafeleft);
     M_BindVariable("key_straferight",    &key_straferight);
     M_BindVariable("key_fire",           &key_fire);

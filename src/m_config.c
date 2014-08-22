@@ -191,6 +191,30 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_down),
 
     //!
+    // Keyboard key to turn right (alternative).
+    //
+
+    CONFIG_VARIABLE_KEY(key_alt_right),
+
+    //!
+    // Keyboard key to turn left (alternative).
+    //
+
+    CONFIG_VARIABLE_KEY(key_alt_left),
+
+    //!
+    // Keyboard key to move forward (alternative).
+    //
+
+    CONFIG_VARIABLE_KEY(key_alt_up),
+
+    //!
+    // Keyboard key to move backward (alternative).
+    //
+
+    CONFIG_VARIABLE_KEY(key_alt_down),
+
+    //!
     // Keyboard key to strafe left.
     //
 
