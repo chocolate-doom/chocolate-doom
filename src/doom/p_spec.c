@@ -46,8 +46,8 @@
 
 // Data.
 #include "sounds.h"
-#include "dstrings.h" // HUSTR_SECRETFOUND
 
+#define HUSTR_SECRETFOUND	"A secret is revealed!"
 
 //
 // Animating textures and planes
@@ -342,6 +342,7 @@ P_FindNextHighestFloor
     static int heightlist_size = 0;
 
     // [crispy] remove MAX_ADJOINING_SECTORS Vanilla limit
+    // from prboom-plus/src/p_spec.c:404-411
     if (sec->linecount > heightlist_size)
     {
 	do
@@ -1072,6 +1073,7 @@ void P_PlayerInSpecialSector (player_t* player)
 			
       case 9:
 	// SECRET SECTOR
+	// [crispy] show centered "Secret Revealed!" message
 	if (showMessages && crispy_secretmessage)
 	{
 	    player2->centermessage = HUSTR_SECRETFOUND;

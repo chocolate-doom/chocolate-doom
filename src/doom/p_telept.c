@@ -108,6 +108,7 @@ EV_Teleport
 		if (thing->player)
 		{
 		    thing->player->viewz = thing->z+thing->player->viewheight;
+		    // [crispy] center view after teleporting
 		    p2fromp(thing->player)->centering = true;
 		}
 

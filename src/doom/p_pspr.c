@@ -41,6 +41,7 @@
 #define WEAPONBOTTOM	128*FRACUNIT
 #define WEAPONTOP		32*FRACUNIT
 
+// from prboom-plus/src/p_pspr.c:73-83
 static const int recoil_values[] = {
   10, // wp_fist
   10, // wp_pistol
@@ -54,6 +55,7 @@ static const int recoil_values[] = {
 };
 
 // [crispy] add weapon recoil
+// adapted from prboom-plus/src/p_pspr.c:484-495 (A_FireSomething ())
 void A_Recoil (player_t* player)
 {
     extern void P_Thrust (player_t* player, angle_t angle, fixed_t move);
@@ -161,10 +163,11 @@ void P_BringUpWeapon (player_t* player)
     {
 	if (player == &players[consoleplayer])
 	{
-	    if (players2[consoleplayer].berserkpow == 0)
+	    if (!players2[consoleplayer].berserkpow)
 		S_StartSound (NULL, sfx_getpow);
 	    else
-		players2[consoleplayer].berserkpow = 0;
+		// [crispy] false == "no not suppress"
+		players2[consoleplayer].berserkpow = false;
 	}
     }
 		
@@ -197,7 +200,8 @@ boolean P_CheckAmmo (player_t* player)
 	count = 1;	// Regular.
 
     // [crispy] force weapon switch if weapon not owned
-    if (singleplayer && !player->weaponowned[player->readyweapon])
+    // only relevant when removing current weapon with TNTWEAPx cheat
+    if (!player->weaponowned[player->readyweapon])
 	count = INT_MAX;
 
     // Some do not need ammunition anyway.
@@ -282,12 +286,8 @@ void P_FireWeapon (player_t* player)
     P_SetPsprite (player, ps_weapon, newstate);
     P_NoiseAlert (player->mo, player->mo);
 
-    // [crispy] center the weapon sprite
-    if (singleplayer)
-    {
-	player->psprites[ps_weapon].sx = FRACUNIT;
-	player->psprites[ps_weapon].sy = WEAPONTOP;
-    }
+    // [crispy] center the weapon sprite horizontally
+    player->psprites[ps_weapon].sx = FRACUNIT;
 }
 
 

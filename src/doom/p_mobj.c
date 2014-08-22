@@ -93,6 +93,7 @@ void P_ExplodeMissile (mobj_t* mo)
 	mo->tics = 1;
 
     mo->flags &= ~MF_MISSILE;
+    // [crispy] missile explosions are translucent
     mo->flags |= MF_TRANSLUCENT;
 
     if (mo->info->deathsound)
@@ -313,6 +314,7 @@ void P_ZMovement (mobj_t* mo)
 	
 	if (mo->momz < 0)
 	{
+	    // [crispy] delay next jump
 	    if (mo->player)
 		p2fromp(mo->player)->jumpTics = 7;
 	    if (mo->player
@@ -323,6 +325,7 @@ void P_ZMovement (mobj_t* mo)
 		// after hitting the ground (hard),
 		// and utter appropriate sound.
 		mo->player->deltaviewheight = mo->momz>>3;
+		// [crispy] center view if not using permanent mouselook
 		if (!crispy_mouselook)
 		    p2fromp(mo->player)->centering = true;
 		S_StartSound (mo, sfx_oof);
@@ -839,7 +842,8 @@ void P_SpawnMapThing (mapthing_t* mthing)
     if (mthing->options & MTF_AMBUSH)
 	mobj->flags |= MF_AMBUSH;
 
-    if (singleplayer && i == MT_SKULL) // Lost Souls bleed Puffs
+    // [crispy] Lost Souls bleed Puffs
+    if (i == MT_SKULL)
         mobj->flags |= MF_NOBLOOD;
 }
 
@@ -888,7 +892,7 @@ P_SpawnBlood
   fixed_t	y,
   fixed_t	z,
   int		damage,
-  mobj_t*	target )
+  mobj_t*	target ) // [crispy] pass thing type
 {
     mobj_t*	th;
 	
@@ -899,8 +903,9 @@ P_SpawnBlood
     // [crispy] connect blood object with the monster that bleeds it
     th->target = target;
 
-    if (target->flags & MF_SHADOW) // Spectres bleed spectre blood
-        th->flags |= MF_SHADOW;
+    // [crispy] Spectres bleed spectre blood
+    if (target->flags & MF_SHADOW)
+	th->flags |= MF_SHADOW;
 
     if (th->tics < 1)
 	th->tics = 1;

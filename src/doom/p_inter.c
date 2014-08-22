@@ -38,9 +38,7 @@
 #include "s_sound.h"
 
 #include "p_inter.h"
-#include "p_local.h" // P_DamageMobj
 
-boolean P_CheckMeleeRange (mobj_t*	actor);
 
 #define BONUSADD	6
 
@@ -498,7 +496,8 @@ P_TouchSpecialThing
 	if (player->readyweapon != wp_fist)
 	{
 	    player->pendingweapon = wp_fist;
-	    p2fromp(player)->berserkpow = 1;
+	    // [crispy] suppress second "power up" sound
+	    p2fromp(player)->berserkpow = true;
 	}
 	sound = sfx_getpow;
 	break;
@@ -706,8 +705,9 @@ P_KillMobj
 			
 	target->flags &= ~MF_SOLID;
 	target->player->playerstate = PST_DEAD;
-	p2fromp(target->player)->centering = true;
 	P_DropWeapon (target->player);
+	// [crispy] center view when dying
+	p2fromp(target->player)->centering = true;
 
 	if (target->player == &players[consoleplayer]
 	    && automapactive)
@@ -719,7 +719,7 @@ P_KillMobj
 	
     }
 
-    // [crispy] Make Lost Soul and Pain Elemental explosions translucent
+    // [crispy] Lost Soul, Pain Elemental and Barrel explosions are translucent
     if (target->type == MT_SKULL ||
         target->type == MT_PAIN ||
         target->type == MT_BARREL)
@@ -735,8 +735,7 @@ P_KillMobj
     target->tics -= P_Random()&3;
 
     // [crispy] randomize corpse health
-    if (singleplayer)
-        target->health -= target->tics & 1;
+    target->health -= target->tics & 1;
 
     if (target->tics < 1)
 	target->tics = 1;
@@ -773,9 +772,6 @@ P_KillMobj
     }
 
     mo = P_SpawnMobj (target->x,target->y,ONFLOORZ, item);
-    // [crispy] ammo released by enemies will slightly bob vertically
-    if (singleplayer)
-        mo->momz += 5*FRACUNIT;
     mo->flags |= MF_DROPPED;	// special versions of items
 }
 
@@ -909,16 +905,6 @@ P_DamageMobj
     target->health -= damage;	
     if (target->health <= 0)
     {
-	// [crispy] the lethal pellet of a point-blank SSG blast
-	// gets an extra damage boost for the occasional gib chance
-	if (singleplayer &&
-	    source && source->player &&
-	    source->player->readyweapon == wp_supershotgun &&
-	    target->info->xdeathstate &&
-	    P_CheckMeleeRange(target) &&
-	    damage >= 10)
-	    target->health -= target->info->spawnhealth;
-
 	P_KillMobj (source, target);
 	return;
     }

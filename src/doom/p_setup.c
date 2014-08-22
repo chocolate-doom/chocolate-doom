@@ -345,6 +345,7 @@ void P_LoadNodes (int lump)
 	    no->children[j] = (unsigned short)SHORT(mn->children[j]); // [crispy] extended nodes
 
 	    // [crispy] add support for extended nodes
+	    // from prboom-plus/src/p_setup.c:937-957
 	    if (no->children[j] == 0xFFFF)
 		no->children[j] = -1;
 	    else

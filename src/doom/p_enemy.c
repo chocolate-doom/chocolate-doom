@@ -153,6 +153,7 @@ P_NoiseAlert
 ( mobj_t*	target,
   mobj_t*	emmiter )
 {
+    // [crispy] monsters are deaf with NOTARGET cheat
     if (target && target->player && (target->player->cheats & CF_NOTARGET))
         return;
 
@@ -514,6 +515,7 @@ P_LookForPlayers
 	
 	player = &players[actor->lastlook];
 
+	// [crispy] monsters don't look for players with NOTARGET cheat
 	if (player->cheats & CF_NOTARGET)
 	    continue;
 
@@ -599,6 +601,7 @@ void A_Look (mobj_t* actor)
     actor->threshold = 0;	// any shot will wake up
     targ = actor->subsector->sector->soundtarget;
 
+    // [crispy] monsters don't look for players with NOTARGET cheat
     if (targ && targ->player && (targ->player->cheats & CF_NOTARGET))
         return;
 
@@ -1821,7 +1824,7 @@ A_CloseShotgun2
 
 
 mobj_t*		braintargets[32];
-int		numbraintargets = 0;
+int		numbraintargets = 0; // [crispy] initialize
 int		braintargeton = 0;
 
 void A_BrainAwake (mobj_t* mo)
@@ -1905,6 +1908,7 @@ void A_BrainExplode (mobj_t* mo)
     if (th->tics < 1)
 	th->tics = 1;
 
+    // [crispy] brain explosions are translucent
     th->flags |= MF_TRANSLUCENT;
 }
 
