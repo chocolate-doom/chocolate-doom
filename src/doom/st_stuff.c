@@ -58,9 +58,8 @@
 #include "dstrings.h"
 #include "sounds.h"
 
-#include "v_trans.h" // [crispy] for multicolored cheat messages
+#include "v_trans.h" // [crispy] colored cheat messages
 
-boolean P_CheckAmmo (player_t* player); // [crispy] for tntweap? weapon removal
 extern int screenblocks; // [crispy] for the Crispy HUD
 
 //
@@ -649,7 +648,8 @@ ST_Responder (event_t* ev)
 	{
 	  musnum = mus_runnin + (buf[0]-'0')*10 + buf[1]-'0' - 1;
 	  
-	  if (((buf[0]-'0')*10 + buf[1]-'0') > 35)
+	  // [crispy] prevent crash with IDMUS00
+	  if (((buf[0]-'0')*10 + buf[1]-'0') > 35 || musnum < mus_runnin)
 	    plyr->message = DEH_String(STSTR_NOMUS);
 	  else
 	    S_ChangeMusic(musnum, 1);
@@ -658,7 +658,8 @@ ST_Responder (event_t* ev)
 	{
 	  musnum = mus_e1m1 + (buf[0]-'1')*9 + (buf[1]-'1');
 	  
-	  if (((buf[0]-'1')*9 + buf[1]-'1') > 31)
+	  // [crispy] prevent crash with IDMUS0x or IDMUSx0
+	  if (((buf[0]-'1')*9 + buf[1]-'1') > 31 || buf[0] < '1' || buf[1] < '1')
 	    plyr->message = DEH_String(STSTR_NOMUS);
 	  else
 	    S_ChangeMusic(musnum, 1);
@@ -754,8 +755,13 @@ ST_Responder (event_t* ev)
 		           '0' + CR_GOLD,
 		           w + 1, '0' + CR_RED);
 
+		// [crispy] removed current weapon, select another one
 		if (w == plyr->readyweapon)
+		{
+		    extern boolean P_CheckAmmo (player_t* player);
+
 		    P_CheckAmmo(plyr);
+		}
 	    }
 	}
 	plyr->message = msg;
