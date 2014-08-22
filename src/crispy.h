@@ -25,6 +25,7 @@
 
 extern boolean crispy_cleanscreenshot;
 extern boolean crispy_dehautoload;
+extern boolean crispy_democritical;
 extern boolean crispy_flashinghom;
 extern boolean crispy_fliplevels;
 extern boolean crispy_havemap33;
