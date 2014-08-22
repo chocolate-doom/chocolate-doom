@@ -53,6 +53,7 @@ typedef enum
 finalestage_t finalestage;
 
 unsigned int finalecount;
+static int angle; // [crispy] turnable cast
 
 #define	TEXTSPEED	3
 #define	TEXTWAIT	250
@@ -379,6 +380,7 @@ void F_CastTicker (void)
 	    S_StartSound (NULL, mobjinfo[castorder[castnum].type].seesound);
 	caststate = &states[mobjinfo[castorder[castnum].type].seestate];
 	castframes = 0;
+	angle = 0; // [crispy] turnable cast
     }
     else
     {
@@ -469,18 +471,46 @@ void F_CastTicker (void)
 
 boolean F_CastResponder (event_t* ev)
 {
+    boolean xdeath = false;
+    extern int key_left, key_right, key_speed;
+
     if (ev->type != ev_keydown)
 	return false;
+
+    // [crispy] make monsters turnable in cast ...
+    if (ev->data1 == key_left)
+    {
+	if (++angle > 7)
+	    angle = 0;
+	return false;
+    }
+    else
+    if (ev->data1 == key_right)
+    {
+	if (--angle < 0)
+	    angle = 7;
+	return false;
+    }
+    else
+    // [crispy] ... and finally turn them into gibbs
+    if (ev->data1 == key_speed)
+	xdeath = true;
 		
     if (castdeath)
 	return true;			// already in dying frames
 		
     // go into death frame
     castdeath = true;
+    if (xdeath && mobjinfo[castorder[castnum].type].xdeathstate)
+	caststate = &states[mobjinfo[castorder[castnum].type].xdeathstate];
+    else
     caststate = &states[mobjinfo[castorder[castnum].type].deathstate];
     casttics = caststate->tics;
     castframes = 0;
     castattacking = false;
+    if (xdeath && mobjinfo[castorder[castnum].type].xdeathstate)
+        S_StartSound (NULL, sfx_slop);
+    else
     if (mobjinfo[castorder[castnum].type].deathsound)
 	S_StartSound (NULL, mobjinfo[castorder[castnum].type].deathsound);
 	
@@ -559,8 +589,8 @@ void F_CastDrawer (void)
     // draw the current frame in the middle of the screen
     sprdef = &sprites[caststate->sprite];
     sprframe = &sprdef->spriteframes[ caststate->frame & FF_FRAMEMASK];
-    lump = sprframe->lump[0];
-    flip = (boolean)sprframe->flip[0];
+    lump = sprframe->lump[angle]; // [crispy] turnable cast
+    flip = (boolean)sprframe->flip[angle]; // [crispy] turnable cast
 			
     patch = W_CacheLumpNum (lump+firstspritelump, PU_CACHE);
     if (flip)
