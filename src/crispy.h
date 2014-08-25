@@ -36,7 +36,6 @@ extern boolean crispy_havessg;
 extern int crispy_automapstats;
 extern int crispy_coloredhud;
 extern int crispy_crosshair;
-extern int crispy_crosshair_highlight;
 extern int crispy_freeaim;
 extern int crispy_freelook;
 extern int crispy_jump;

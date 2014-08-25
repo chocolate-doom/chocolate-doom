@@ -445,6 +445,11 @@ typedef struct
 } visplane_t;
 
 
+// [crispy] map-coordinates of the laser vision spot
+typedef struct
+{
+    int x, y, z;
+} laserspot_t;
 
 
 #endif

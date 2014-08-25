@@ -867,6 +867,7 @@ int		la_damage;
 fixed_t		attackrange;
 
 fixed_t		aimslope;
+static fixed_t	playerslope;
 
 // slopes to top and bottom of target
 extern fixed_t	topslope;
@@ -1098,6 +1099,97 @@ boolean PTR_ShootTraverse (intercept_t* in)
 	
 }
 
+boolean PTR_LaserTraverse (intercept_t* in)
+{
+    fixed_t		frac;
+    line_t*		li;
+    mobj_t*		th;
+
+    fixed_t		dist;
+    fixed_t		slope;
+    fixed_t		thingtopslope;
+    fixed_t		thingbottomslope;
+
+    static const fixed_t	tslope = 100*FRACUNIT/160;
+    static const fixed_t	bslope = -100*FRACUNIT/160;
+
+    extern laserspot_t	*laserspot;
+
+    laserspot->x = laserspot->y = laserspot->z = 0;
+
+    if (in->isaline)
+    {
+	li = in->d.line;
+
+	if (!(li->flags & ML_TWOSIDED))
+	    goto hitline;
+
+	P_LineOpening (li);
+
+	dist = FixedMul (attackrange, in->frac);
+
+	slope = FixedDiv (openbottom - shootz , dist);
+	if (slope > playerslope)
+	    goto hitline;
+
+	slope = FixedDiv (opentop - shootz , dist);
+	if (slope < playerslope)
+	    goto hitline;
+
+	return true;
+
+	hitline:
+
+	if (li->frontsector->ceilingpic == skyflatnum)
+	{
+	    if (laserspot->z > li->frontsector->ceilingheight)
+		return false;
+
+	    if	(li->backsector && li->backsector->ceilingpic == skyflatnum)
+		return false;
+	}
+
+	frac = in->frac - FixedDiv (4*FRACUNIT,attackrange);
+	laserspot->x = trace.x + FixedMul (trace.dx, frac);
+	laserspot->y = trace.y + FixedMul (trace.dy, frac);
+	laserspot->z = shootz + FixedMul (playerslope, FixedMul(frac, attackrange));
+
+	return false;
+    }
+
+    th = in->d.thing;
+
+    if (th == shootthing)
+	return true;
+
+    if (!(th->flags & MF_SHOOTABLE))
+	return true;
+
+    dist = FixedMul (attackrange, in->frac);
+
+    thingtopslope = FixedDiv (th->z+th->height - shootz , dist);
+    if (thingtopslope < bslope)
+	return true;
+
+    thingbottomslope = FixedDiv (th->z - shootz, dist);
+    if (thingbottomslope > tslope)
+	return true;
+
+    if (thingtopslope > tslope)
+	thingtopslope = tslope;
+
+    if (thingbottomslope < bslope)
+	thingbottomslope = bslope;
+
+    playerslope = (thingtopslope+thingbottomslope)/2;
+
+    frac = in->frac - FixedDiv (10*FRACUNIT,attackrange);
+    laserspot->x = trace.x + FixedMul (trace.dx, frac);
+    laserspot->y = trace.y + FixedMul (trace.dy, frac);
+    laserspot->z = shootz + FixedMul (playerslope, FixedMul(frac, attackrange));
+
+    return false;
+}
 
 //
 // P_AimLineAttack
@@ -1170,6 +1262,29 @@ P_LineAttack
 		     PTR_ShootTraverse );
 }
  
+void
+P_LineLaser
+( mobj_t*	t1,
+  angle_t	angle,
+  fixed_t	distance,
+  fixed_t	slope )
+{
+    fixed_t	x2;
+    fixed_t	y2;
+
+    angle >>= ANGLETOFINESHIFT;
+    shootthing = t1;
+    x2 = t1->x + (distance>>FRACBITS)*finecosine[angle];
+    y2 = t1->y + (distance>>FRACBITS)*finesine[angle];
+    shootz = t1->z + (t1->height>>1) + 8*FRACUNIT;
+    attackrange = distance;
+    playerslope = slope;
+
+    P_PathTraverse ( t1->x, t1->y,
+		     x2, y2,
+		     PT_ADDLINES|PT_ADDTHINGS,
+		     PTR_LaserTraverse );
+}
 
 
 //
