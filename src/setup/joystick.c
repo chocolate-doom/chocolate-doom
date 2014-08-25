@@ -260,6 +260,22 @@ static const joystick_config_t multilaser_js030_controller[] =
     {NULL, 0},
 };
 
+// Buffalo Classic USB Gamepad (thanks Fabian Greffrath).
+static const joystick_config_t buffalo_classic_controller[] =
+{
+    {"joystick_x_axis",        0},
+    {"joystick_y_axis",        1},
+    {"joyb_use",               0},    // A
+    {"joyb_speed",             1},    // B
+    {"joyb_jump",              2},    // X
+    {"joyb_fire",              3},    // Y
+    {"joyb_strafeleft",        4},    // Left shoulder
+    {"joyb_straferight",       5},    // Right shoulder
+    {"joyb_prevweapon",        6},    // Select
+    {"joyb_menu_activate",     7},    // Start
+    {NULL, 0},
+};
+
 static const known_joystick_t known_joysticks[] =
 {
     {
@@ -309,6 +325,12 @@ static const known_joystick_t known_joysticks[] =
         "USB Vibration Joystick",
         4, 12, 1,
         multilaser_js030_controller,
+    },
+
+    {
+        "USB,2-axis 8-button gamepad  ",
+        2, 8, 0,
+        buffalo_classic_controller,
     },
 };
 
