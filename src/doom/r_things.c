@@ -695,7 +695,7 @@ void R_DrawLSprite (void)
 	return;
 
     // [crispy] somehow smoother patch scaling
-    xscale = FRACUNIT/2 + (FixedDiv(projection, tz)>>3);
+    xscale = 3*FRACUNIT/7 + FixedDiv(projection, tz)/8;
 
     if (!lump)
     {
