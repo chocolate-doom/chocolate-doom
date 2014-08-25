@@ -1680,13 +1680,6 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
-    // Change laser pointer color on target.
-    //
-
-
-    //!
-    // @game doom
-    //
     // Enable jumping.
     //
 
