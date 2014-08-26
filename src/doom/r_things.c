@@ -677,7 +677,8 @@ void R_DrawLSprite (void)
 	return;
 
     P_LineLaser(viewplayer->mo, viewplayer->mo->angle,
-                16*64*FRACUNIT, ((p2fromp(viewplayer)->lookdir/MLOOKUNIT)<<FRACBITS)/173);
+                // [crispy] double the auto aim distance
+                2*16*64*FRACUNIT, ((p2fromp(viewplayer)->lookdir/MLOOKUNIT)<<FRACBITS)/173);
 
     if (!laserspot->x && !laserspot->y && !laserspot->z)
 	return;
@@ -694,8 +695,9 @@ void R_DrawLSprite (void)
     if (tz < MINZ)
 	return;
 
-    // [crispy] somehow smoother patch scaling
-    xscale = 3*FRACUNIT/7 + FixedDiv(projection, tz)/8;
+    xscale = FixedDiv(projection, tz);
+    // [crispy] the original patch has 7x7 pixels, cap the projection at 3x3 and 21x21
+    xscale = (xscale < 3*FRACUNIT/7) ? 3*FRACUNIT/7 : (xscale > 3*FRACUNIT) ? 3*FRACUNIT : xscale;
 
     if (!lump)
     {

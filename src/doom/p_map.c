@@ -1101,7 +1101,7 @@ boolean PTR_ShootTraverse (intercept_t* in)
 
 boolean PTR_LaserTraverse (intercept_t* in)
 {
-    fixed_t		frac;
+    fixed_t		frac, z;
     line_t*		li;
     mobj_t*		th;
 
@@ -1140,19 +1140,23 @@ boolean PTR_LaserTraverse (intercept_t* in)
 
 	hitline:
 
+	frac = in->frac - FixedDiv (4*FRACUNIT,attackrange);
+	z = shootz + FixedMul (playerslope, FixedMul(frac, attackrange));
+
 	if (li->frontsector->ceilingpic == skyflatnum)
 	{
-	    if (laserspot->z > li->frontsector->ceilingheight)
+	    if (z > li->frontsector->ceilingheight)
 		return false;
 
-	    if	(li->backsector && li->backsector->ceilingpic == skyflatnum)
+	    if (li->backsector && li->backsector->ceilingpic == skyflatnum &&
+	        // [crispy] fix laser spot not appearing in outdoor areas
+	        li->backsector->ceilingheight < z)
 		return false;
 	}
 
-	frac = in->frac - FixedDiv (4*FRACUNIT,attackrange);
 	laserspot->x = trace.x + FixedMul (trace.dx, frac);
 	laserspot->y = trace.y + FixedMul (trace.dy, frac);
-	laserspot->z = shootz + FixedMul (playerslope, FixedMul(frac, attackrange));
+	laserspot->z = z;
 
 	return false;
     }
