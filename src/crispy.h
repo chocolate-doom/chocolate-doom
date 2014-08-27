@@ -23,6 +23,8 @@
 
 #include "doomtype.h"
 
+#define CRISPY_HUD 12
+
 #define singleplayer (!crispy_democritical && !netgame)
 
 extern boolean crispy_cleanscreenshot;

@@ -273,7 +273,7 @@ void D_Display (void)
 	R_RenderPlayerView (&players[displayplayer]);
 
         // [crispy] Crispy HUD
-        if (screenblocks == CRISPY_HUD)
+        if (screenblocks >= CRISPY_HUD)
             ST_Drawer(false, false);
     }
 
