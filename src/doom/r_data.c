@@ -837,7 +837,7 @@ void R_InitSpriteLumps (void)
 //
 //-----------------------------------------------------------------------------
 
-byte *tranmap;
+extern byte* tranmap;
 
 //
 // R_InitTranMap

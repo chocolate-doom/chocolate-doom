@@ -49,7 +49,9 @@
 // Only used in Heretic/Hexen
 
 byte *tinttable = NULL;
+byte *tranmap = NULL;
 byte *dp_translation = NULL;
+boolean dp_translucent = false;
 
 // villsa [STRIFE] Blending table used for Strife
 byte *xlatab = NULL;
@@ -181,7 +183,10 @@ void V_DrawPatch(int x, int y, patch_t *patch)
 
     w = SHORT(patch->width);
 
-  if (!dp_translation)
+  // [crispy] quadruple for-loop for each dp_translation and dp_translucent case
+  // to avoid checking these variables for each pixel and instead check once per patch
+  // (1) normal, opaque patch
+  if (!dp_translation && !dp_translucent)
     for ( ; col<w ; x++, col++, desttop++)
     {
         column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
@@ -209,9 +214,9 @@ void V_DrawPatch(int x, int y, patch_t *patch)
             column = (column_t *)((byte *)column + column->length + 4);
         }
     }
-  // [crispy] duplicate for-loop for the (dp_translation != NULL) case
-  // to avoid checking that variable for each pixel and instead check once per patch
   else
+  // (2) color-translated, opaque patch
+  if (dp_translation && !dp_translucent)
     for ( ; col<w ; x++, col++, desttop++)
     {
         column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
@@ -233,6 +238,66 @@ void V_DrawPatch(int x, int y, patch_t *patch)
                     dest += SCREENWIDTH;
                 }
                 *dest = dp_translation[*source++];
+                dest += SCREENWIDTH;
+            }
+          }
+            column = (column_t *)((byte *)column + column->length + 4);
+        }
+    }
+  else
+  // (3) normal, translucent patch
+  if (!dp_translation && dp_translucent)
+    for ( ; col<w ; x++, col++, desttop++)
+    {
+        column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
+
+        // step through the posts in a column
+        while (column->topdelta != 0xff)
+        {
+          for (f = 0; f <= hires; f++)
+          {
+            source = (byte *)column + 3;
+            dest = desttop + column->topdelta*(SCREENWIDTH << hires) + (x * hires) + f;
+            count = column->length;
+
+            while (count--)
+            {
+                if (hires)
+                {
+                    *dest = tranmap[(*dest<<8)+*source];
+                    dest += SCREENWIDTH;
+                }
+                *dest = tranmap[(*dest<<8)+*source++];
+                dest += SCREENWIDTH;
+            }
+          }
+            column = (column_t *)((byte *)column + column->length + 4);
+        }
+    }
+  else
+  // (4) color-translated, translucent patch
+  if (dp_translation && dp_translucent)
+    for ( ; col<w ; x++, col++, desttop++)
+    {
+        column = (column_t *)((byte *)patch + LONG(patch->columnofs[col]));
+
+        // step through the posts in a column
+        while (column->topdelta != 0xff)
+        {
+          for (f = 0; f <= hires; f++)
+          {
+            source = (byte *)column + 3;
+            dest = desttop + column->topdelta*(SCREENWIDTH << hires) + (x * hires) + f;
+            count = column->length;
+
+            while (count--)
+            {
+                if (hires)
+                {
+                    *dest = tranmap[(*dest<<8)+dp_translation[*source]];
+                    dest += SCREENWIDTH;
+                }
+                *dest = tranmap[(*dest<<8)+dp_translation[*source++]];
                 dest += SCREENWIDTH;
             }
           }
