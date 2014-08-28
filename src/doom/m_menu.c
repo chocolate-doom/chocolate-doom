@@ -1297,10 +1297,12 @@ void M_QuitResponse(int key)
 static char *M_SelectEndMessage(void)
 {
     char **endmsg;
-    boolean rude;
+    boolean rude = false;
 
-    // [crispy] enable the original "rude" quit messages
-    rude = gametic % (2 * NUM_QUITMESSAGES) >= NUM_QUITMESSAGES;
+    // [crispy] enable the original "rude" quit messages (if not
+    // playing Chex Quest which is supposed to be a children's game)
+    if (gamemission != pack_chex)
+	rude = gametic % (2 * NUM_QUITMESSAGES) >= NUM_QUITMESSAGES;
 
     if (logical_gamemission == doom)
     {
