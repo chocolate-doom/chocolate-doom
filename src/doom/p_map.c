@@ -984,7 +984,8 @@ boolean PTR_ShootTraverse (intercept_t* in)
     {
 	li = in->d.line;
 	
-	if (li->special)
+	// [crispy] laser spot does not shoot any line
+	if (li->special && la_damage > INT_MIN)
 	    P_ShootSpecialLine (shootthing, li);
 
 	if ( !(li->flags & ML_TWOSIDED) )
