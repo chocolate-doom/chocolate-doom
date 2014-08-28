@@ -656,7 +656,7 @@ void R_ProjectSprite (mobj_t* thing)
 }
 
 // [crispy] generate a vissprite for the laser spot
-void R_DrawLSprite (void)
+static void R_DrawLSprite (void)
 {
     fixed_t		xscale;
     fixed_t		tx;
