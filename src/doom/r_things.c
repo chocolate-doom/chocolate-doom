@@ -677,8 +677,7 @@ void R_DrawLSprite (void)
 	return;
 
     P_LineLaser(viewplayer->mo, viewplayer->mo->angle,
-                // [crispy] double the auto aim distance
-                2*16*64*FRACUNIT, ((p2fromp(viewplayer)->lookdir/MLOOKUNIT)<<FRACBITS)/173);
+                16*64*FRACUNIT, ((p2fromp(viewplayer)->lookdir/MLOOKUNIT)<<FRACBITS)/173);
 
     if (!laserspot->x && !laserspot->y && !laserspot->z)
 	return;

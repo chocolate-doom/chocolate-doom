@@ -867,12 +867,12 @@ int		la_damage;
 fixed_t		attackrange;
 
 fixed_t		aimslope;
-static fixed_t	playerslope;
 
 // slopes to top and bottom of target
 extern fixed_t	topslope;
 extern fixed_t	bottomslope;	
 
+extern laserspot_t *laserspot;
 
 //
 // PTR_AimTraverse
@@ -1045,7 +1045,18 @@ boolean PTR_ShootTraverse (intercept_t* in)
 	    
 	    // it's a sky hack wall
 	    if	(li->backsector && li->backsector->ceilingpic == skyflatnum)
+	      // [crispy] fix laser spot not appearing in outdoor areas
+	      if (la_damage > INT_MIN || li->backsector->ceilingheight < z)
 		return false;		
+	}
+
+	// [crispy] update laser spot position and return
+	if (la_damage == INT_MIN)
+	{
+	    laserspot->x = x;
+	    laserspot->y = y;
+	    laserspot->z = z;
+	    return false;
 	}
 
 	// Spawn bullet puffs.
@@ -1084,6 +1095,19 @@ boolean PTR_ShootTraverse (intercept_t* in)
     y = trace.y + FixedMul (trace.dy, frac);
     z = shootz + FixedMul (aimslope, FixedMul(frac, attackrange));
 
+    // [crispy] update laser spot position and return
+    if (la_damage == INT_MIN)
+    {
+	// [crispy] pass through Spectres
+	if (th->flags & MF_SHADOW)
+	    return true;
+
+	laserspot->x = x;
+	laserspot->y = y;
+	laserspot->z = z;
+	return false;
+    }
+
     // Spawn bullet puffs or blod spots,
     // depending on target type.
     if (in->d.thing->flags & MF_NOBLOOD)
@@ -1099,101 +1123,6 @@ boolean PTR_ShootTraverse (intercept_t* in)
 	
 }
 
-boolean PTR_LaserTraverse (intercept_t* in)
-{
-    fixed_t		frac, z;
-    line_t*		li;
-    mobj_t*		th;
-
-    fixed_t		dist;
-    fixed_t		slope;
-    fixed_t		thingtopslope;
-    fixed_t		thingbottomslope;
-
-    static const fixed_t	tslope = 100*FRACUNIT/160;
-    static const fixed_t	bslope = -100*FRACUNIT/160;
-
-    extern laserspot_t	*laserspot;
-
-    laserspot->x = laserspot->y = laserspot->z = 0;
-
-    if (in->isaline)
-    {
-	li = in->d.line;
-
-	if (!(li->flags & ML_TWOSIDED))
-	    goto hitline;
-
-	P_LineOpening (li);
-
-	dist = FixedMul (attackrange, in->frac);
-
-	slope = FixedDiv (openbottom - shootz , dist);
-	if (slope > playerslope)
-	    goto hitline;
-
-	slope = FixedDiv (opentop - shootz , dist);
-	if (slope < playerslope)
-	    goto hitline;
-
-	return true;
-
-	hitline:
-
-	frac = in->frac - FixedDiv (4*FRACUNIT,attackrange);
-	z = shootz + FixedMul (playerslope, FixedMul(frac, attackrange));
-
-	if (li->frontsector->ceilingpic == skyflatnum)
-	{
-	    if (z > li->frontsector->ceilingheight)
-		return false;
-
-	    if (li->backsector && li->backsector->ceilingpic == skyflatnum &&
-	        // [crispy] fix laser spot not appearing in outdoor areas
-	        li->backsector->ceilingheight < z)
-		return false;
-	}
-
-	laserspot->x = trace.x + FixedMul (trace.dx, frac);
-	laserspot->y = trace.y + FixedMul (trace.dy, frac);
-	laserspot->z = z;
-
-	return false;
-    }
-
-    th = in->d.thing;
-
-    if (th == shootthing)
-	return true;
-
-    if (!(th->flags & MF_SHOOTABLE))
-	return true;
-
-    dist = FixedMul (attackrange, in->frac);
-
-    thingtopslope = FixedDiv (th->z+th->height - shootz , dist);
-    if (thingtopslope < bslope)
-	return true;
-
-    thingbottomslope = FixedDiv (th->z - shootz, dist);
-    if (thingbottomslope > tslope)
-	return true;
-
-    if (thingtopslope > tslope)
-	thingtopslope = tslope;
-
-    if (thingbottomslope < bslope)
-	thingbottomslope = bslope;
-
-    playerslope = (thingtopslope+thingbottomslope)/2;
-
-    frac = in->frac - FixedDiv (10*FRACUNIT,attackrange);
-    laserspot->x = trace.x + FixedMul (trace.dx, frac);
-    laserspot->y = trace.y + FixedMul (trace.dy, frac);
-    laserspot->z = shootz + FixedMul (playerslope, FixedMul(frac, attackrange));
-
-    return false;
-}
 
 //
 // P_AimLineAttack
@@ -1273,21 +1202,16 @@ P_LineLaser
   fixed_t	distance,
   fixed_t	slope )
 {
-    fixed_t	x2;
-    fixed_t	y2;
+    laserspot->x = laserspot->y = laserspot->z = 0;
 
-    angle >>= ANGLETOFINESHIFT;
-    shootthing = t1;
-    x2 = t1->x + (distance>>FRACBITS)*finecosine[angle];
-    y2 = t1->y + (distance>>FRACBITS)*finesine[angle];
-    shootz = t1->z + (t1->height>>1) + 8*FRACUNIT;
-    attackrange = distance;
-    playerslope = slope;
+    P_AimLineAttack(t1, angle, distance);
 
-    P_PathTraverse ( t1->x, t1->y,
-		     x2, y2,
-		     PT_ADDLINES|PT_ADDTHINGS,
-		     PTR_LaserTraverse );
+    // [crispy] don't aim at Spectres
+    if (linetarget && !(linetarget->flags & MF_SHADOW))
+	P_LineAttack(t1, angle, distance, aimslope, INT_MIN);
+    else
+	// [crispy] double the auto aim distance
+	P_LineAttack(t1, angle, 2*distance, slope, INT_MIN);
 }
 
 

@@ -448,7 +448,7 @@ typedef struct
 // [crispy] map-coordinates of the laser vision spot
 typedef struct
 {
-    int x, y, z;
+    fixed_t x, y, z;
 } laserspot_t;
 
 
