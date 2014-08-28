@@ -1169,6 +1169,8 @@ P_AimLineAttack
 // P_LineAttack
 // If damage == 0, it is just a test trace
 // that will leave linetarget set.
+// [crispy] if damage == INT_MIN, it is a trace
+// to update the laser spot position
 //
 void
 P_LineAttack
@@ -1196,6 +1198,9 @@ P_LineAttack
 		     PTR_ShootTraverse );
 }
  
+// [crispy] update laser spot position
+// call P_AimLineAttack() to check if a target is aimed at (linetarget)
+// then call P_LineAttack() with either aimslope or the passed slope
 void
 P_LineLaser
 ( mobj_t*	t1,
