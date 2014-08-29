@@ -32,9 +32,10 @@ static int always_run = 0;
 // Keys within these groups cannot have the same value.
 
 static int *controls[] = { &key_left, &key_right, &key_up, &key_down,
-                           &key_alt_left, &key_alt_right, &key_alt_up, &key_alt_down,
+                           &key_alt_up, &key_alt_down,
                            &key_reverse, &key_toggleautorun,
                            &key_strafeleft, &key_straferight, &key_fire,
+                           &key_alt_strafeleft, &key_alt_straferight,
                            &key_use, &key_strafe, &key_speed, &key_jump,
                            &key_flyup, &key_flydown, &key_flycenter,
                            &key_lookup, &key_lookdown, &key_lookcenter,
@@ -207,8 +208,8 @@ static void ConfigExtraKeys(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(unused))
         AddSectionLabel(table, "Movement", false);
         AddKeyControl(table, "Move Forward (alt.)", &key_alt_up);
         AddKeyControl(table, "Move Backward (alt.)", &key_alt_down);
-        AddKeyControl(table, "Turn Left (alt.)", &key_alt_left);
-        AddKeyControl(table, "Turn Right (alt.)", &key_alt_right);
+        AddKeyControl(table, "Strafe Left (alt.)", &key_alt_strafeleft);
+        AddKeyControl(table, "Strafe Right (alt.)", &key_alt_straferight);
         AddKeyControl(table, "Toggle always run", &key_toggleautorun);
         AddKeyControl(table, "Quick Reverse", &key_reverse);
         }
