@@ -27,17 +27,17 @@
 //
 
 int key_right = KEY_RIGHTARROW;
-int key_alt_right = 0;
 int key_left = KEY_LEFTARROW;
-int key_alt_left = 0;
 int key_reverse = 0;
 
-int key_up = 'w';
-int key_alt_up = KEY_UPARROW;
-int key_down = 's';
-int key_alt_down = KEY_DOWNARROW;
-int key_strafeleft = 'a';
-int key_straferight = 'd';
+int key_up = KEY_UPARROW;
+int key_alt_up = 'w';
+int key_down = KEY_DOWNARROW; 
+int key_alt_down = 's';
+int key_strafeleft = ',';
+int key_alt_strafeleft = 'a';
+int key_straferight = '.';
+int key_alt_straferight = 'd';
 int key_fire = KEY_RCTRL;
 int key_use = ' ';
 int key_strafe = KEY_RALT;
@@ -188,9 +188,9 @@ int key_menu_reloadlevel = 0;
 // Joystick controls
 //
 
-int joybfire = 0; 
-int joybstrafe = 1; 
-int joybuse = 3; 
+int joybfire = 0;
+int joybstrafe = 1;
+int joybuse = 3;
 int joybspeed = 29;
 
 int joybstrafeleft = -1;
@@ -217,13 +217,13 @@ void M_BindBaseControls(void)
     M_BindVariable("key_right",          &key_right);
     M_BindVariable("key_left",           &key_left);
     M_BindVariable("key_up",             &key_up);
-    M_BindVariable("key_down",           &key_down);
-    M_BindVariable("key_alt_right",      &key_alt_right);
-    M_BindVariable("key_alt_left",       &key_alt_left);
     M_BindVariable("key_alt_up",         &key_alt_up);
+    M_BindVariable("key_down",           &key_down);
     M_BindVariable("key_alt_down",       &key_alt_down);
     M_BindVariable("key_strafeleft",     &key_strafeleft);
+    M_BindVariable("key_alt_strafeleft",     &key_alt_strafeleft);
     M_BindVariable("key_straferight",    &key_straferight);
+    M_BindVariable("key_alt_straferight",    &key_alt_straferight);
     M_BindVariable("key_fire",           &key_fire);
     M_BindVariable("key_use",            &key_use);
     M_BindVariable("key_strafe",         &key_strafe);

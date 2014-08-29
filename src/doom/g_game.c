@@ -364,8 +364,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // on the keyboard and joystick
     if (joyxmove < 0
 	|| joyxmove > 0  
-	|| gamekeydown[key_right] || gamekeydown[key_alt_right] // [crispy] add key_alt_*
-	|| gamekeydown[key_left] || gamekeydown[key_alt_left])  // [crispy] add key_alt_*
+	|| gamekeydown[key_right]
+	|| gamekeydown[key_left]) 
 	turnheld += ticdup; 
     else 
 	turnheld = 0; 
@@ -426,12 +426,12 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // let movement keys cancel each other out
     if (strafe) 
     { 
-	if (gamekeydown[key_right] || gamekeydown[key_alt_right]) // [crispy] add key_alt_*
+	if (gamekeydown[key_right]) 
 	{
 	    // fprintf(stderr, "strafe right\n");
 	    side += sidemove[speed]; 
 	}
-	if (gamekeydown[key_left] || gamekeydown[key_alt_left]) // [crispy] add key_alt_*
+	if (gamekeydown[key_left]) 
 	{
 	    //	fprintf(stderr, "strafe left\n");
 	    side -= sidemove[speed]; 
@@ -444,9 +444,9 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     } 
     else 
     { 
-	if (gamekeydown[key_right] || gamekeydown[key_alt_right]) // [crispy] add key_alt_*
+	if (gamekeydown[key_right]) 
 	    cmd->angleturn -= angleturn[tspeed]; 
-	if (gamekeydown[key_left] || gamekeydown[key_alt_left])  // [crispy] add key_alt_*
+	if (gamekeydown[key_left]) 
 	    cmd->angleturn += angleturn[tspeed]; 
 	if (joyxmove > 0) 
 	    cmd->angleturn -= angleturn[tspeed]; 
@@ -470,7 +470,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     if (joyymove > 0) 
         forward -= forwardmove[speed]; 
 
-    if (gamekeydown[key_strafeleft]
+    if (gamekeydown[key_strafeleft] || gamekeydown[key_alt_strafeleft] // [crispy] add key_alt_*
      || joybuttons[joybstrafeleft]
      || mousebuttons[mousebstrafeleft]
      || joystrafemove < 0)
@@ -478,7 +478,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
         side -= sidemove[speed];
     }
 
-    if (gamekeydown[key_straferight]
+    if (gamekeydown[key_straferight] || gamekeydown[key_alt_straferight] // [crispy] add key_alt_*
      || joybuttons[joybstraferight]
      || mousebuttons[mousebstraferight]
      || joystrafemove > 0)

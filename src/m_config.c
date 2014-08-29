@@ -191,18 +191,6 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_down),
 
     //!
-    // Keyboard key to turn right (alternative).
-    //
-
-    CONFIG_VARIABLE_KEY(key_alt_right),
-
-    //!
-    // Keyboard key to turn left (alternative).
-    //
-
-    CONFIG_VARIABLE_KEY(key_alt_left),
-
-    //!
     // Keyboard key to move forward (alternative).
     //
 
@@ -221,10 +209,22 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_strafeleft),
 
     //!
+    // Keyboard key to strafe left (alternative).
+    //
+
+    CONFIG_VARIABLE_KEY(key_alt_strafeleft),
+
+    //!
     // Keyboard key to strafe right.
     //
 
     CONFIG_VARIABLE_KEY(key_straferight),
+
+    //!
+    // Keyboard key to strafe right (alternative).
+    //
+
+    CONFIG_VARIABLE_KEY(key_alt_straferight),
 
     //!
     // @game strife
