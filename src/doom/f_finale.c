@@ -497,6 +497,8 @@ boolean F_CastResponder (event_t* ev)
     {
 	if (--castnum < 0)
 	    castnum = arrlen(castorder) - 2;
+	if (mobjinfo[castorder[castnum].type].seesound)
+	    S_StartSound (NULL, mobjinfo[castorder[castnum].type].seesound);
 	caststate = &states[S_PLAY_ATK1]; // [crispy] provoke "goto stopattack;"
 	castangle = 0;
 	castdeath = false;
@@ -508,6 +510,8 @@ boolean F_CastResponder (event_t* ev)
     {
 	if (++castnum > arrlen(castorder) - 2)
 	    castnum = 0;
+	if (mobjinfo[castorder[castnum].type].seesound)
+	    S_StartSound (NULL, mobjinfo[castorder[castnum].type].seesound);
 	caststate = &states[S_PLAY_ATK1]; // [crispy] provoke "goto stopattack;"
 	castangle = 0;
 	castdeath = false;
