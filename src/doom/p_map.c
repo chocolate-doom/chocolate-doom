@@ -1212,6 +1212,21 @@ P_LineLaser
 
     P_AimLineAttack(t1, angle, distance);
 
+    // [crispy] increase accuracy
+    if (!linetarget)
+    {
+	angle_t an = angle;
+
+	an += 1<<26;
+	P_AimLineAttack(t1, an, distance);
+
+	if (!linetarget)
+	{
+	    an -= 2<<26;
+	    P_AimLineAttack(t1, an, distance);
+	}
+    }
+
     // [crispy] don't aim at Spectres
     if (linetarget && !(linetarget->flags & MF_SHADOW))
 	P_LineAttack(t1, angle, distance, aimslope, INT_MIN);
