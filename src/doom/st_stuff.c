@@ -1173,6 +1173,10 @@ void ST_doPaletteStuff(void)
 	if (palette >= NUMREDPALS)
 	    palette = NUMREDPALS-1;
 
+	// [crispy] tune down a bit so the menu remains legible
+	if (menuactive || paused)
+	    palette >>= 1;
+
 	palette += STARTREDPALS;
     }
 
