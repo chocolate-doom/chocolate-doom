@@ -36,6 +36,7 @@
 
 #include "doomstat.h"
 #include "r_state.h"
+#include "m_controls.h" // [crispy] key_*
 
 typedef enum
 {
@@ -53,7 +54,6 @@ typedef enum
 finalestage_t finalestage;
 
 unsigned int finalecount;
-static int angle; // [crispy] turnable cast
 
 #define	TEXTSPEED	3
 #define	TEXTWAIT	250
@@ -338,6 +338,7 @@ boolean		castdeath;
 int		castframes;
 int		castonmelee;
 boolean		castattacking;
+static signed char	castangle; // [crispy] turnable cast
 
 
 //
@@ -380,7 +381,7 @@ void F_CastTicker (void)
 	    S_StartSound (NULL, mobjinfo[castorder[castnum].type].seesound);
 	caststate = &states[mobjinfo[castorder[castnum].type].seestate];
 	castframes = 0;
-	angle = 0; // [crispy] turnable cast
+	castangle = 0; // [crispy] turnable cast
     }
     else
     {
@@ -472,7 +473,6 @@ void F_CastTicker (void)
 boolean F_CastResponder (event_t* ev)
 {
     boolean xdeath = false;
-    extern int key_left, key_right, key_speed;
 
     if (ev->type != ev_keydown)
 	return false;
@@ -480,18 +480,40 @@ boolean F_CastResponder (event_t* ev)
     // [crispy] make monsters turnable in cast ...
     if (ev->data1 == key_left)
     {
-	if (++angle > 7)
-	    angle = 0;
+	if (++castangle > 7)
+	    castangle = 0;
 	return false;
     }
     else
     if (ev->data1 == key_right)
     {
-	if (--angle < 0)
-	    angle = 7;
+	if (--castangle < 0)
+	    castangle = 7;
 	return false;
     }
     else
+    // [crispy] ... and allow to flick through them ..
+    if (ev->data1 == key_strafeleft || ev->data1 == key_alt_strafeleft)
+    {
+	if (--castnum < 0)
+	    castnum = arrlen(castorder) - 2;
+	caststate = &states[S_PLAY_ATK1]; // [crispy] provoke "goto stopattack;"
+	castangle = 0;
+	castdeath = false;
+	casttics = 0;
+	return false;
+    }
+    else
+    if (ev->data1 == key_straferight || ev->data1 == key_alt_straferight)
+    {
+	if (++castnum > arrlen(castorder) - 2)
+	    castnum = 0;
+	caststate = &states[S_PLAY_ATK1]; // [crispy] provoke "goto stopattack;"
+	castangle = 0;
+	castdeath = false;
+	casttics = 0;
+	return false;
+    }
     // [crispy] ... and finally turn them into gibbs
     if (ev->data1 == key_speed)
 	xdeath = true;
@@ -589,8 +611,8 @@ void F_CastDrawer (void)
     // draw the current frame in the middle of the screen
     sprdef = &sprites[caststate->sprite];
     sprframe = &sprdef->spriteframes[ caststate->frame & FF_FRAMEMASK];
-    lump = sprframe->lump[angle]; // [crispy] turnable cast
-    flip = (boolean)sprframe->flip[angle]; // [crispy] turnable cast
+    lump = sprframe->lump[castangle]; // [crispy] turnable cast
+    flip = (boolean)sprframe->flip[castangle]; // [crispy] turnable cast
 			
     patch = W_CacheLumpNum (lump+firstspritelump, PU_CACHE);
     if (flip)
