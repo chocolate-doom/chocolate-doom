@@ -1103,7 +1103,7 @@ void M_DrawOptions(void)
                                       PU_CACHE));
 
     M_DrawThermo(OptionsDef.x,OptionsDef.y+LINEHEIGHT*(scrnsize+1),
-		 9 + crispy_translucency ? 2 : 1,screenSize); // [crispy] Crispy HUD
+		 9 + (crispy_translucency ? 2 : 1),screenSize); // [crispy] Crispy HUD
 }
 
 // [crispy] mouse sensitivity menu
@@ -1402,7 +1402,7 @@ void M_SizeDisplay(int choice)
 	}
 	break;
       case 1:
-	if (screenSize < 8 + crispy_translucency ? 2 : 1) // [crispy] Crispy HUD
+	if (screenSize < 8 + (crispy_translucency ? 2 : 1)) // [crispy] Crispy HUD
 	{
 	    screenblocks++;
 	    screenSize++;
