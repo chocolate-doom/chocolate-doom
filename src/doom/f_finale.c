@@ -339,6 +339,7 @@ int		castframes;
 int		castonmelee;
 boolean		castattacking;
 static signed char	castangle; // [crispy] turnable cast
+static signed char	castskip; // [crispy] skippable cast
 
 
 //
@@ -370,8 +371,14 @@ void F_CastTicker (void)
     if (--casttics > 0)
 	return;			// not time to change state yet
 		
-    if (caststate->tics == -1 || caststate->nextstate == S_NULL)
+    if (caststate->tics == -1 || caststate->nextstate == S_NULL || castskip) // [crispy] skippable cast
     {
+	if (castskip)
+	{
+	    castnum += castskip;
+	    castskip = 0;
+	}
+	else
 	// switch from deathstate to next monster
 	castnum++;
 	castdeath = false;
@@ -492,30 +499,16 @@ boolean F_CastResponder (event_t* ev)
 	return false;
     }
     else
-    // [crispy] ... and allow to flick through them ..
+    // [crispy] ... and allow to skip through them ..
     if (ev->data1 == key_strafeleft || ev->data1 == key_alt_strafeleft)
     {
-	if (--castnum < 0)
-	    castnum = arrlen(castorder) - 2;
-	if (mobjinfo[castorder[castnum].type].seesound)
-	    S_StartSound (NULL, mobjinfo[castorder[castnum].type].seesound);
-	caststate = &states[S_PLAY_ATK1]; // [crispy] provoke "goto stopattack;"
-	castangle = 0;
-	castdeath = false;
-	casttics = 0;
+	castskip = castnum ? -1 : arrlen(castorder)-2;
 	return false;
     }
     else
     if (ev->data1 == key_straferight || ev->data1 == key_alt_straferight)
     {
-	if (++castnum > arrlen(castorder) - 2)
-	    castnum = 0;
-	if (mobjinfo[castorder[castnum].type].seesound)
-	    S_StartSound (NULL, mobjinfo[castorder[castnum].type].seesound);
-	caststate = &states[S_PLAY_ATK1]; // [crispy] provoke "goto stopattack;"
-	castangle = 0;
-	castdeath = false;
-	casttics = 0;
+	castskip = +1;
 	return false;
     }
     // [crispy] ... and finally turn them into gibbs
