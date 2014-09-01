@@ -667,10 +667,10 @@ void R_InitTextures (void)
     if (I_ConsoleStdout())
     {
         printf("[");
-        for (i = 0; i < temp3 + 9; i++)
+        for (i = 0; i < temp3 + 9 + crispy_translucency ? 1 : 0; i++) // [crispy] one more for R_InitTranMap()
             printf(" ");
         printf("]");
-        for (i = 0; i < temp3 + 10; i++)
+        for (i = 0; i < temp3 + 10 + crispy_translucency ? 1 : 0; i++) // [crispy] one more for R_InitTranMap()
             printf("\b");
     }
 	
@@ -815,8 +815,11 @@ void R_InitTranMap()
 
     // If a tranlucency filter map lump is present, use it
     if (lump != -1)
+    {
 	// Set a pointer to the translucency filter maps.
 	tranmap = W_CacheLumpNum(lump, PU_STATIC);
+	printf(":"); // [crispy] loaded from a lump
+    }
     else
     {
 	// Compose a default transparent filter map based on PLAYPAL.
@@ -899,8 +902,13 @@ void R_InitTranMap()
 	    fseek(cachefp, 0, SEEK_SET); // [crispy] go to start of file
 	    fwrite(&cache, 1, sizeof cache, cachefp); // [crispy] write struct cache
 	    fwrite(tranmap, 256, 256, cachefp); // [crispy] write translucency map
+	    printf("!"); // [crispy] generated and saved
 	}
+	else
+	    printf("?"); // [crispy] generated, but not saved
 	}
+	else
+	    printf("."); // [crispy] loaded from a file
 
 	if (cachefp)
 	    fclose(cachefp);
@@ -941,10 +949,7 @@ void R_InitData (void)
     R_InitSpriteLumps ();
     printf (".");
     if (crispy_translucency)
-    {
-        R_InitTranMap();
-        printf (".");
-    }
+	R_InitTranMap(); // [crispy] prints a mark itself
     R_InitColormaps ();
 }
 
