@@ -806,6 +806,10 @@ void R_InitSpriteLumps (void)
 // [crispy] initialize translucency filter map
 // based in parts on the implementation from boom202s/R_DATA.C:676-787
 
+enum {
+    r, g, b
+} rgb_t;
+
 extern byte *tranmap; // filter percent
 int tran_filter_pct = 66;
 
@@ -845,8 +849,8 @@ void R_InitTranMap()
 	    fread(tranmap, 256, 256, cachefp) != 256 ) // [crispy] could not read entire translucency map
 	{
 	byte *fg, *bg, blend[3], *tp = tranmap;
-	long match, best;
-	int i, j, k;
+	unsigned long match, best;
+	int i, j, k, btmp;
 
 	// [crispy] background color
 	for (i = 0; i < 256; i++)
@@ -864,19 +868,20 @@ void R_InitTranMap()
 		bg = playpal + 3*i;
 		fg = playpal + 3*j;
 
-		// [crispy] blended color
-		blend[0] = (tran_filter_pct * fg[0] + (100 - tran_filter_pct) * bg[0]) / 100;
-		blend[1] = (tran_filter_pct * fg[1] + (100 - tran_filter_pct) * bg[1]) / 100;
-		blend[2] = (tran_filter_pct * fg[2] + (100 - tran_filter_pct) * bg[2]) / 100;
+		// [crispy] blended color - emphasize blues
+		btmp = fg[b] < (fg[r] + fg[g]) ? 0 : (fg[b] - (fg[r] + fg[g])) / 2;
+		blend[r] = (tran_filter_pct * fg[r] + (100 - tran_filter_pct) * bg[r]) / (100 + btmp);
+		blend[g] = (tran_filter_pct * fg[g] + (100 - tran_filter_pct) * bg[g]) / (100 + btmp);
+		blend[b] = (tran_filter_pct * fg[b] + (100 - tran_filter_pct) * bg[b]) / 100;
 
 		// [crispy] find palette color that matches blended color best
 		best = LONG_MAX;
 		for (k = 0; k < 256; k++)
 		{
 		    // [crispy] sum of squared residuals
-		    match = ((playpal[3*k+0] - blend[0]) * (playpal[3*k+0] - blend[0]) +
-		             (playpal[3*k+1] - blend[1]) * (playpal[3*k+1] - blend[1]) +
-		             (playpal[3*k+2] - blend[2]) * (playpal[3*k+2] - blend[2]));
+		    match = ((playpal[3*k+r] - blend[r]) * (playpal[3*k+r] - blend[r]) +
+		             (playpal[3*k+g] - blend[g]) * (playpal[3*k+g] - blend[g]) +
+		             (playpal[3*k+b] - blend[b]) * (playpal[3*k+b] - blend[b]));
 
 		    // [crispy] better than the previous match?
 		    if (match <= best) // [crispy] "or equal" because gray comes early
