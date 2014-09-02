@@ -145,6 +145,7 @@ int             crispy_overunder = 0;
 int             crispy_recoil = 0;
 
 // [crispy] in-game switches
+boolean         crispy_coloredblood = false;
 boolean         crispy_flashinghom = false;
 boolean         crispy_fliplevels = false;
 boolean         crispy_havemap33 = false;
@@ -1647,6 +1648,14 @@ void D_DoomMain (void)
 
     // [crispy] check for presence of MAP33
     crispy_havemap33 = (W_CheckNumForName("MAP33") != -1);
+
+    // [crispy] check for colored blood
+    // TODO: check for monster sprite replacements
+    // (first sprites of monster death frames)
+    // for Baron of Hell, Hell Knight, Cacodemon, Lost Soul
+    crispy_coloredblood =
+	gamemission != pack_hacx &&
+	gamemission != pack_chex;
 
 #ifdef FEATURE_MULTIPLAYER
     printf ("NET_Init: Init network subsystem.\n");

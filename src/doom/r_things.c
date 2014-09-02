@@ -644,14 +644,27 @@ void R_ProjectSprite (mobj_t* thing)
 
     // [crispy] Cacodemons bleed blue blood
     // Barons of Hell and Hell Knights bleed green blood
-    if (thing->type == MT_BLOOD && thing->target)
+    if (crispy_coloredblood)
     {
-        if (thing->target->type == MT_HEAD)
-            vis->translation = cr[CR_BLUE2];
-        else
-        if (thing->target->type == MT_BRUISER ||
-            thing->target->type == MT_KNIGHT)
-            vis->translation = cr[CR_GREEN];
+	if (thing->type == MT_BLOOD && thing->target)
+	{
+	    if (thing->target->type == MT_HEAD)
+		vis->translation = cr[CR_BLUE2];
+	    else
+	    if (thing->target->type == MT_BRUISER ||
+	        thing->target->type == MT_KNIGHT)
+		vis->translation = cr[CR_GREEN];
+	}
+    }
+    else
+    // [crispy] exception: Thorn Things in Hacx bleed green blood
+    if (gamemission == pack_hacx)
+    {
+	if (thing->type == MT_BLOOD && thing->target)
+	{
+	    if (thing->target->type == MT_BABY)
+		vis->translation = cr[CR_GREEN];
+	}
     }
 }
 
