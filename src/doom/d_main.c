@@ -1214,6 +1214,24 @@ static void LoadNerveWad(void)
     }
 }
 
+// [crispy] check if a lump is *not* from a PWAD
+// returns "true" if the lump is not present at all
+// (because then it is still not from a PWAD)
+// or if the lump is from the IWAD
+static boolean LumpIsNotFromPWAD (char *lump)
+{
+    int i;
+
+    i = W_CheckNumForName(lump);
+
+    // [crispy] if it's not present at all,
+    // it is at least not from a PWAD
+    if (i < 0 || !strcmp(lumpinfo[i].wad_file->path, iwadfile))
+	return true;
+
+    return false;
+}
+
 //
 // D_DoomMain
 //
@@ -1650,12 +1668,15 @@ void D_DoomMain (void)
     crispy_havemap33 = (W_CheckNumForName("MAP33") != -1);
 
     // [crispy] check for colored blood
-    // TODO: check for monster sprite replacements
-    // (first sprites of monster death frames)
-    // for Baron of Hell, Hell Knight, Cacodemon, Lost Soul
     crispy_coloredblood =
 	gamemission != pack_hacx &&
-	gamemission != pack_chex;
+	gamemission != pack_chex &&
+	// [crispy] check for monster sprite replacements
+	// (first sprites of monster death frames)
+	LumpIsNotFromPWAD("bos2i0") && // [crispy] Hell Knight
+	LumpIsNotFromPWAD("bossi0") && // [crispy] Baron of Hell
+	LumpIsNotFromPWAD("skulg0") && // [crispy] Lost Soul
+	LumpIsNotFromPWAD("headg0") ;  // [crispy] Cacodemon
 
 #ifdef FEATURE_MULTIPLAYER
     printf ("NET_Init: Init network subsystem.\n");

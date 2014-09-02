@@ -117,6 +117,9 @@ wad_file_t *W_AddFile (char *filename)
 	return NULL;
     }
 
+    // [crispy] save the file path
+    wad_file->path = filename;
+
     startlump = numlumps;
 	
     if (strcasecmp(filename+strlen(filename)-3 , "wad" ) )
