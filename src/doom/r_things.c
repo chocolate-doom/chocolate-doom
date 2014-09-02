@@ -681,7 +681,8 @@ static void R_DrawLSprite (void)
     extern void	P_LineLaser (mobj_t* t1, angle_t angle, fixed_t distance, fixed_t slope);
 
     if (viewplayer->readyweapon == wp_fist ||
-        viewplayer->readyweapon == wp_chainsaw)
+        viewplayer->readyweapon == wp_chainsaw ||
+        viewplayer->playerstate == PST_DEAD)
 	return;
 
     P_LineLaser(viewplayer->mo, viewplayer->mo->angle,
