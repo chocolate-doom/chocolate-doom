@@ -1680,14 +1680,6 @@ static default_t extra_defaults_list[] =
     //!
     // @game doom
     //
-    // Change laser pointer color on target.
-    //
-
-    CONFIG_VARIABLE_INT(crispy_crosshair_highlight),
-
-    //!
-    // @game doom
-    //
     // Enable jumping.
     //
 

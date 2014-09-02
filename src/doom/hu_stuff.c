@@ -531,43 +531,6 @@ void HU_Drawer(void)
 
     V_ClearDPTranslation();
     }
-
-    // [crispy] add a laserpointer dot
-    if (crispy_crosshair &&
-        plr->readyweapon != wp_fist && plr->readyweapon != wp_chainsaw &&
-        !automapactive && !menuactive && !paused && !secret_on)
-    {
-        extern int screenblocks;
-        byte *b = I_VideoBuffer;
-
-        byte c = 180;
-        int h = 100 << hires;
-
-        if (screenblocks <= 10)
-            h -= (32 << hires) / 2;
-
-        // [crispy] laserpointer dot changes color on targets
-        if (crispy_crosshair_highlight)
-        {
-            extern fixed_t P_AimLineAttack (mobj_t* t1, angle_t angle, fixed_t distance);
-            extern mobj_t* linetarget;
-
-            P_AimLineAttack(plr->mo, plr->mo->angle, 16*64*FRACUNIT);
-
-            if (linetarget && !(linetarget->flags & MF_SHADOW))
-            {
-                c = 160;
-            }
-        }
-
-        b += h * SCREENWIDTH + SCREENWIDTH / 2;
-        *b++ = c;
-        *b = c;
-        b += SCREENWIDTH - 1;
-        *b++ = c;
-        *b = c;
-    }
-
 }
 
 void HU_Erase(void)

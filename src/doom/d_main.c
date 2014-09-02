@@ -137,7 +137,6 @@ int             crispy_coloredhud = 0;
 int             crispy_automapstats = 0;
 int             crispy_secretmessage = 0;
 int             crispy_crosshair = 0;
-int             crispy_crosshair_highlight = 0;
 int             crispy_jump = 0;
 int             crispy_freelook = 0;
 int             crispy_mouselook = 0;
@@ -443,7 +442,6 @@ void D_BindVariables(void)
     M_BindVariable("crispy_automapstats",    &crispy_automapstats);
     M_BindVariable("crispy_secretmessage",   &crispy_secretmessage);
     M_BindVariable("crispy_crosshair",       &crispy_crosshair);
-    M_BindVariable("crispy_crosshair_highlight", &crispy_crosshair_highlight);
     M_BindVariable("crispy_jump",            &crispy_jump);
     M_BindVariable("crispy_freelook",        &crispy_freelook);
     M_BindVariable("crispy_mouselook",       &crispy_mouselook);

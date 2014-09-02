@@ -872,6 +872,7 @@ fixed_t		aimslope;
 extern fixed_t	topslope;
 extern fixed_t	bottomslope;	
 
+extern laserspot_t *laserspot;
 
 //
 // PTR_AimTraverse
@@ -983,7 +984,8 @@ boolean PTR_ShootTraverse (intercept_t* in)
     {
 	li = in->d.line;
 	
-	if (li->special)
+	// [crispy] laser spot does not shoot any line
+	if (li->special && la_damage > INT_MIN)
 	    P_ShootSpecialLine (shootthing, li);
 
 	if ( !(li->flags & ML_TWOSIDED) )
@@ -1044,7 +1046,18 @@ boolean PTR_ShootTraverse (intercept_t* in)
 	    
 	    // it's a sky hack wall
 	    if	(li->backsector && li->backsector->ceilingpic == skyflatnum)
+	      // [crispy] fix laser spot not appearing in outdoor areas
+	      if (la_damage > INT_MIN || li->backsector->ceilingheight < z)
 		return false;		
+	}
+
+	// [crispy] update laser spot position and return
+	if (la_damage == INT_MIN)
+	{
+	    laserspot->x = x;
+	    laserspot->y = y;
+	    laserspot->z = z;
+	    return false;
 	}
 
 	// Spawn bullet puffs.
@@ -1082,6 +1095,19 @@ boolean PTR_ShootTraverse (intercept_t* in)
     x = trace.x + FixedMul (trace.dx, frac);
     y = trace.y + FixedMul (trace.dy, frac);
     z = shootz + FixedMul (aimslope, FixedMul(frac, attackrange));
+
+    // [crispy] update laser spot position and return
+    if (la_damage == INT_MIN)
+    {
+	// [crispy] pass through Spectres
+	if (th->flags & MF_SHADOW)
+	    return true;
+
+	laserspot->x = x;
+	laserspot->y = y;
+	laserspot->z = z;
+	return false;
+    }
 
     // Spawn bullet puffs or blod spots,
     // depending on target type.
@@ -1143,6 +1169,8 @@ P_AimLineAttack
 // P_LineAttack
 // If damage == 0, it is just a test trace
 // that will leave linetarget set.
+// [crispy] if damage == INT_MIN, it is a trace
+// to update the laser spot position
 //
 void
 P_LineAttack
@@ -1170,6 +1198,42 @@ P_LineAttack
 		     PTR_ShootTraverse );
 }
  
+// [crispy] update laser spot position
+// call P_AimLineAttack() to check if a target is aimed at (linetarget)
+// then call P_LineAttack() with either aimslope or the passed slope
+void
+P_LineLaser
+( mobj_t*	t1,
+  angle_t	angle,
+  fixed_t	distance,
+  fixed_t	slope )
+{
+    laserspot->x = laserspot->y = laserspot->z = 0;
+
+    P_AimLineAttack(t1, angle, distance);
+
+    // [crispy] increase accuracy
+    if (!linetarget)
+    {
+	angle_t an = angle;
+
+	an += 1<<26;
+	P_AimLineAttack(t1, an, distance);
+
+	if (!linetarget)
+	{
+	    an -= 2<<26;
+	    P_AimLineAttack(t1, an, distance);
+	}
+    }
+
+    // [crispy] don't aim at Spectres
+    if (linetarget && !(linetarget->flags & MF_SHADOW))
+	P_LineAttack(t1, angle, distance, aimslope, INT_MIN);
+    else
+	// [crispy] double the auto aim distance
+	P_LineAttack(t1, angle, 2*distance, slope, INT_MIN);
+}
 
 
 //

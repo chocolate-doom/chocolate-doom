@@ -36,6 +36,7 @@
 #include "doomstat.h"
 
 #include "v_trans.h" // [crispy] colored blood sprites
+#include "p_local.h" // [crispy] p2fromp(), MLOOKUNIT
 
 
 #define MINZ				(FRACUNIT*4)
@@ -58,6 +59,8 @@ typedef struct
 } maskdraw_t;
 
 
+laserspot_t laserspot_m = {0, 0, 0};
+laserspot_t *laserspot = &laserspot_m;
 
 //
 // Sprite rotation 0 is facing the viewer,
@@ -652,6 +655,58 @@ void R_ProjectSprite (mobj_t* thing)
     }
 }
 
+// [crispy] generate a vissprite for the laser spot
+static void R_DrawLSprite (void)
+{
+    fixed_t		xscale;
+    fixed_t		tx;
+    vissprite_t*	vis;
+
+    static int		lump;
+    static patch_t*	patch;
+
+    extern void	P_LineLaser (mobj_t* t1, angle_t angle, fixed_t distance, fixed_t slope);
+
+    if (viewplayer->readyweapon == wp_fist ||
+        viewplayer->readyweapon == wp_chainsaw)
+	return;
+
+    P_LineLaser(viewplayer->mo, viewplayer->mo->angle,
+                16*64*FRACUNIT, ((p2fromp(viewplayer)->lookdir/MLOOKUNIT)<<FRACBITS)/173);
+
+    if (!laserspot->x &&
+        !laserspot->y &&
+        !laserspot->z)
+	return;
+
+    if (!lump)
+    {
+	lump = W_GetNumForName("STCFN042"); // [crispy] HU font asterisk
+	patch = W_CacheLumpNum(lump, PU_CACHE);
+    }
+
+    xscale = FixedDiv(projection, FixedMul(laserspot->x - viewx, viewcos) + FixedMul(laserspot->y - viewy, viewsin));
+    // [crispy] the original patch has 7x7 pixels, cap the projection at 3x3 and 21x21
+    xscale = (xscale < 3*FRACUNIT/7) ? 3*FRACUNIT/7 :
+             (xscale > 3*FRACUNIT)   ? 3*FRACUNIT :
+              xscale;
+
+    vis = R_NewVisSprite();
+    memset(vis, 0, sizeof(*vis)); // [crispy] set all fields to NULL, except ...
+    vis->patch = lump - firstspritelump; // [crispy] not a sprite patch
+    vis->colormap = fixedcolormap ? fixedcolormap : colormaps; // [crispy] always full brightness
+    vis->mobjflags |= MF_TRANSLUCENT;
+    vis->xiscale = FixedDiv (FRACUNIT, xscale);
+    vis->texturemid = laserspot->z + (patch->topoffset<<FRACBITS) - viewz;
+    vis->scale = xscale<<(detailshift && !hires);
+
+    tx = -((SHORT(patch->width)/2)<<FRACBITS);
+    vis->x1 =  (centerxfrac + FixedMul(tx, xscale))>>FRACBITS;
+    tx += SHORT(patch->width)<<FRACBITS;
+    vis->x2 = ((centerxfrac + FixedMul(tx, xscale))>>FRACBITS) - 1;
+
+    R_DrawVisSprite (vis, vis->x1, vis->x2);
+}
 
 
 
@@ -823,6 +878,9 @@ void R_DrawPlayerSprites (void)
     mfloorclip = screenheightarray;
     mceilingclip = negonearray;
     
+    if (crispy_crosshair)
+	R_DrawLSprite();
+
     // add all active psprites
     for (i=0, psp=viewplayer->psprites;
 	 i<NUMPSPRITES;
