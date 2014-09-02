@@ -869,7 +869,10 @@ void R_InitTranMap()
 		fg = playpal + 3*j;
 
 		// [crispy] blended color - emphasize blues
-		btmp = fg[b] < (fg[r] + fg[g]) ? 0 : (fg[b] - (fg[r] + fg[g])) / 2;
+		// Colour matching in RGB space doesn't work very well with the blues
+		// in Doom's palette. Rather than do any colour conversions, just
+		// emphasize the blues when building the translucency table.
+		btmp = fg[b] * 1.666 < (fg[r] + fg[g]) ? 0 : 50;
 		blend[r] = (tran_filter_pct * fg[r] + (100 - tran_filter_pct) * bg[r]) / (100 + btmp);
 		blend[g] = (tran_filter_pct * fg[g] + (100 - tran_filter_pct) * bg[g]) / (100 + btmp);
 		blend[b] = (tran_filter_pct * fg[b] + (100 - tran_filter_pct) * bg[b]) / 100;
