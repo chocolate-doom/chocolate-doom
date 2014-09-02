@@ -389,6 +389,8 @@ R_StoreWallRange
 
 	numdrawsegs = numdrawsegs ? 2 * numdrawsegs : MAXDRAWSEGS;
 	drawsegs = realloc(drawsegs, numdrawsegs * sizeof(*drawsegs));
+	memset(drawsegs + numdrawsegs_old, 0, (numdrawsegs - numdrawsegs_old) * sizeof(*drawsegs));
+
 	ds_p = drawsegs + numdrawsegs_old;
 
 	if (numdrawsegs_old)

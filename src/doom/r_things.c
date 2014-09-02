@@ -342,6 +342,8 @@ vissprite_t* R_NewVisSprite (void)
 
 	numvissprites = numvissprites ? 2 * numvissprites : MAXVISSPRITES;
 	vissprites = realloc(vissprites, numvissprites * sizeof(*vissprites));
+	memset(vissprites + numvissprites_old, 0, (numvissprites - numvissprites_old) * sizeof(*vissprites));
+
 	vissprite_p = vissprites + numvissprites_old;
 
 	if (numvissprites_old)
