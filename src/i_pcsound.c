@@ -252,7 +252,7 @@ static int I_PCS_GetSfxLumpNum(sfxinfo_t* sfx)
         M_StringCopy(namebuf, DEH_String(sfx->name), sizeof(namebuf));
     }
 
-    return W_GetNumForName(namebuf);
+    return W_CheckNumForName(namebuf); // [crispy] make non-fatal
 }
 
 
