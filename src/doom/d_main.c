@@ -1636,7 +1636,7 @@ void D_DoomMain (void)
         gamemode == commercial ||
         (
           logical_gamemission == doom &&
-            W_CheckNumForName("SGN2A0") != -1 && // pickup sprite
+//          W_CheckNumForName("SGN2A0") != -1 && // pickup sprite
             W_CheckNumForName("SHT2A0") != -1 && // wielding/firing sprite sequence
             I_GetSfxLumpNum(&S_sfx[sfx_dshtgn]) > 0 && // firing sound
             I_GetSfxLumpNum(&S_sfx[sfx_dbopn])  > 0 && // opening sound
