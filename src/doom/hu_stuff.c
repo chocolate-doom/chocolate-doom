@@ -461,11 +461,17 @@ void HU_Start(void)
 void HU_Drawer(void)
 {
 
+    extern int screenblocks;
+
     if (crispy_cleanscreenshot)
     {
         HU_Erase();
         return;
     }
+
+    // [crispy] translucent messages for translucent HUD
+    if (screenblocks > CRISPY_HUD && !automapactive)
+	dp_translucent = true;
 
     V_ClearDPTranslation();
     HUlib_drawSText(&w_message);
@@ -473,6 +479,10 @@ void HU_Drawer(void)
     HUlib_drawSText(&w_secret);
     V_ClearDPTranslation();
     HUlib_drawIText(&w_chat);
+
+    if (dp_translucent)
+	dp_translucent = false;
+
     if (automapactive)
     {
 	if (crispy_automapstats)

@@ -426,7 +426,7 @@ void ST_Stop(void);
 void ST_refreshBackground(void)
 {
 
-    if (screenblocks == CRISPY_HUD && !automapactive)
+    if (screenblocks >= CRISPY_HUD && !automapactive)
         return;
 
     if (st_statusbaron)
@@ -1321,7 +1321,7 @@ void ST_drawWidgets(boolean refresh)
     V_ClearDPTranslation();
 
     // [crispy] draw berserk pack instead of no ammo if appropriate
-    if (screenblocks == CRISPY_HUD && !automapactive &&
+    if (screenblocks >= CRISPY_HUD && !automapactive &&
         plyr->readyweapon == wp_fist && plyr->powers[pw_strength])
     {
         V_DrawPatch(ST_AMMOX-23, ST_AMMOY+13, W_CacheLumpName("PSTRA0", PU_CACHE));
@@ -1334,9 +1334,9 @@ void ST_drawWidgets(boolean refresh)
     }
 
     dp_translation = ST_WidgetColor(hudcolor_health);
-    STlib_updatePercent(&w_health, refresh || screenblocks == CRISPY_HUD);
+    STlib_updatePercent(&w_health, refresh || screenblocks >= CRISPY_HUD);
     dp_translation = ST_WidgetColor(hudcolor_armor);
-    STlib_updatePercent(&w_armor, refresh || screenblocks == CRISPY_HUD);
+    STlib_updatePercent(&w_armor, refresh || screenblocks >= CRISPY_HUD);
     V_ClearDPTranslation();
 
     if (screenblocks < CRISPY_HUD || automapactive)
@@ -1345,7 +1345,7 @@ void ST_drawWidgets(boolean refresh)
     }
 
     for (i=0;i<6;i++)
-	STlib_updateMultIcon(&w_arms[i], refresh || screenblocks == CRISPY_HUD);
+	STlib_updateMultIcon(&w_arms[i], refresh || screenblocks >= CRISPY_HUD);
 
     if (screenblocks < CRISPY_HUD || automapactive)
     {
@@ -1353,9 +1353,9 @@ void ST_drawWidgets(boolean refresh)
     }
 
     for (i=0;i<3;i++)
-	STlib_updateMultIcon(&w_keyboxes[i], refresh || screenblocks == CRISPY_HUD);
+	STlib_updateMultIcon(&w_keyboxes[i], refresh || screenblocks >= CRISPY_HUD);
 
-    STlib_updateNum(&w_frags, refresh || screenblocks == CRISPY_HUD);
+    STlib_updateNum(&w_frags, refresh || screenblocks >= CRISPY_HUD);
 
 }
 
@@ -1381,20 +1381,26 @@ void ST_diffDraw(void)
 void ST_Drawer (boolean fullscreen, boolean refresh)
 {
   
-    st_statusbaron = (!fullscreen) || automapactive || screenblocks == CRISPY_HUD;
+    st_statusbaron = (!fullscreen) || automapactive || screenblocks >= CRISPY_HUD;
     st_firsttime = st_firsttime || refresh;
 
-    if (crispy_cleanscreenshot && screenblocks == CRISPY_HUD)
+    if (crispy_cleanscreenshot && screenblocks >= CRISPY_HUD)
         return;
 
     // Do red-/gold-shifts from damage/items
     ST_doPaletteStuff();
+
+    // [crispy] translucent HUD
+    if (screenblocks > CRISPY_HUD && !automapactive)
+	dp_translucent = true;
 
     // If just after ST_Start(), refresh all
     if (st_firsttime) ST_doRefresh();
     // Otherwise, update as little as possible
     else ST_diffDraw();
 
+    if (dp_translucent)
+	dp_translucent = false;
 }
 
 typedef void (*load_callback_t)(char *lumpname, patch_t **variable); 
