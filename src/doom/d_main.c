@@ -1673,7 +1673,7 @@ void D_DoomMain (void)
 	gamemission != pack_chex &&
 	// [crispy] check for monster sprite replacements
 	// (first sprites of monster death frames)
-	LumpIsNotFromPWAD("bos2i0") && // [crispy] Hell Knight
+	(gamemode != commercial || LumpIsNotFromPWAD("bos2i0")) && // [crispy] Hell Knight
 	LumpIsNotFromPWAD("bossi0") && // [crispy] Baron of Hell
 	LumpIsNotFromPWAD("skulg0") && // [crispy] Lost Soul
 	LumpIsNotFromPWAD("headg0") ;  // [crispy] Cacodemon
