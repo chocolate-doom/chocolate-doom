@@ -243,6 +243,39 @@ static const joystick_config_t logitech_f310_controller[] =
     {NULL, 0},
 };
 
+// Multilaser JS030 gamepad, similar to a PS2 controller.
+static const joystick_config_t multilaser_js030_controller[] =
+{
+    {"joystick_x_axis",        0},   // Left stick / D-pad
+    {"joystick_y_axis",        1},
+    {"joyb_fire",              3},   // Square
+    {"joyb_speed",             2},   // X
+    {"joyb_use",               1},   // Circle
+    {"joyb_jump",              0},   // Triangle
+    {"joyb_strafeleft",        6},   // Bottom shoulder buttons
+    {"joyb_straferight",       7},
+    {"joyb_prevweapon",        4},   // Top shoulder buttons
+    {"joyb_nextweapon",        5},
+    {"joyb_menu_activate",     9},   // Start
+    {NULL, 0},
+};
+
+// Buffalo Classic USB Gamepad (thanks Fabian Greffrath).
+static const joystick_config_t buffalo_classic_controller[] =
+{
+    {"joystick_x_axis",        0},
+    {"joystick_y_axis",        1},
+    {"joyb_use",               0},    // A
+    {"joyb_speed",             1},    // B
+    {"joyb_jump",              2},    // X
+    {"joyb_fire",              3},    // Y
+    {"joyb_strafeleft",        4},    // Left shoulder
+    {"joyb_straferight",       5},    // Right shoulder
+    {"joyb_prevweapon",        6},    // Select
+    {"joyb_menu_activate",     7},    // Start
+    {NULL, 0},
+};
+
 static const known_joystick_t known_joysticks[] =
 {
     {
@@ -286,6 +319,18 @@ static const known_joystick_t known_joysticks[] =
         "Logitech Dual Action",
         4, 12, 1,
         logitech_f310_controller,
+    },
+
+    {
+        "USB Vibration Joystick",
+        4, 12, 1,
+        multilaser_js030_controller,
+    },
+
+    {
+        "USB,2-axis 8-button gamepad  ",
+        2, 8, 0,
+        buffalo_classic_controller,
     },
 };
 

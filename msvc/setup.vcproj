@@ -284,6 +284,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\src\setup\txt_joyaxis.c"
+				>
+			</File>
+			<File
 				RelativePath="..\src\setup\txt_joybinput.c"
 				>
 			</File>
@@ -399,6 +403,10 @@
 			</File>
 			<File
 				RelativePath="..\src\setup\sound.h"
+				>
+			</File>
+			<File
+				RelativePath="..\src\setup\txt_joyaxis.h"
 				>
 			</File>
 			<File
