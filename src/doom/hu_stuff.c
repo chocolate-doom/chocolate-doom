@@ -482,6 +482,7 @@ void HU_Drawer(void)
 {
 
     extern int screenblocks;
+    static char str[32], *s;
 
     if (crispy_cleanscreenshot)
     {
@@ -505,13 +506,12 @@ void HU_Drawer(void)
 
     if (automapactive)
     {
-	if (crispy_automapstats)
+	if (crispy_coloredhud)
 	    dp_translation = cr[CR_GOLD];
 	HUlib_drawTextLine(&w_title, false);
 
 	if (crispy_automapstats)
 	{
-	static char str[32], *s;
 	int time = leveltime / TICRATE;
 
 	HUlib_drawTextLine(&w_map, false);
@@ -547,6 +547,17 @@ void HU_Drawer(void)
 	while (*s)
 	    HUlib_addCharToTextLine(&w_ltime, *(s++));
 	HUlib_drawTextLine(&w_ltime, false);
+	}
+    V_ClearDPTranslation();
+    }
+
+    // [crispy] show map coordinates in upper right corner
+    // if either automap stats or IDMYPOS cheat are enabled
+    if ((automapactive && crispy_automapstats) ||
+        plr2->mapcoords)
+    {
+	if (crispy_translucency && screenblocks > CRISPY_HUD && !automapactive)
+	    dp_translucent = true;
 
 	M_snprintf(str, sizeof(str), "\x1b%cX: \x1b%c%-5d", '0' + CR_GREEN, '0' + CR_GRAY,
 	        (players[consoleplayer].mo->x)>>FRACBITS);
@@ -571,7 +582,9 @@ void HU_Drawer(void)
 	while (*s)
 	    HUlib_addCharToTextLine(&w_coorda, *(s++));
 	HUlib_drawTextLine(&w_coorda, false);
-	}
+
+	if (dp_translucent)
+	    dp_translucent = false;
 
     V_ClearDPTranslation();
     }
@@ -584,6 +597,9 @@ void HU_Erase(void)
     HUlib_eraseSText(&w_secret);
     HUlib_eraseIText(&w_chat);
     HUlib_eraseTextLine(&w_title);
+    HUlib_eraseTextLine(&w_coordx);
+    HUlib_eraseTextLine(&w_coordy);
+    HUlib_eraseTextLine(&w_coorda);
 
 }
 
