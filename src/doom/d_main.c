@@ -1440,6 +1440,10 @@ void D_DoomMain (void)
     vanilla_savegame_limit = 0;
     vanilla_demo_limit = 0;
 
+    // [crispy] normalize screenblocks
+    if (screenblocks > CRISPY_HUD)
+	screenblocks = CRISPY_HUD + (crispy_translucency ? 1 : 0);
+
     // Save configuration at exit.
     I_AtExit(M_SaveDefaults, false);
 
