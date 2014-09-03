@@ -1146,18 +1146,17 @@ static void LoadHacxDeh(void)
     }
 }
 
-// [crispy] add support for loading NERVE.WAD alongside the BFG Edition IWAD
+// [crispy] support loading NERVE.WAD alongside DOOM2.WAD
 static void LoadNerveWad(void)
 {
     int i;
     char *sep;
     char lumpname[9];
 
-    // [crispy] TODO: support regular IWAD as well?
-    if (!bfgedition || gamemode != commercial)
+    if (gamemission != doom2)
         return;
 
-    if (!modifiedgame)
+    if (bfgedition && !modifiedgame)
     {
         sep = strrchr(iwadfile, DIR_SEPARATOR);
 
@@ -1196,21 +1195,39 @@ static void LoadNerveWad(void)
     }
     else
     {
-        // [crispy] TODO: how about "-merge"?
-        i = M_CheckParmWithArgs ("-file", 1);
+	i = M_CheckParmWithArgs ("-file", 1);
 
-        if (i)
-        {
-            while (++i != myargc && myargv[i][0] != '-')
-            {
-                if (!strncasecmp(basename(myargv[i]), "nerve.wad", 9))
-                {
-                    gamemission = pack_nerve;
-                    DEH_AddStringReplacement ("TITLEPIC", "DMENUPIC");
-                    break;
-                }
-            }
-        }
+	if (i)
+	{
+	    while (++i != myargc && myargv[i][0] != '-')
+	    {
+		if (!strncasecmp(basename(myargv[i]), "nerve.wad", 9))
+		{
+		    gamemission = pack_nerve;
+		    break;
+		}
+	    }
+	}
+
+	if (gamemission != pack_nerve)
+	{
+	    i = M_CheckParmWithArgs ("-merge", 1);
+
+	    if (i)
+	    {
+		while (++i != myargc && myargv[i][0] != '-')
+		{
+		    if (!strncasecmp(basename(myargv[i]), "nerve.wad", 9))
+		    {
+			gamemission = pack_nerve;
+			break;
+		    }
+		}
+	    }
+	}
+
+	if (gamemission == pack_nerve)
+	    DEH_AddStringReplacement ("TITLEPIC", bfgedition ? "DMENUPIC" : "INTERPIC");
     }
 }
 
