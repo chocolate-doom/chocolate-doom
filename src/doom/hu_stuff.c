@@ -98,9 +98,9 @@ static hu_textline_t	w_kills;
 static hu_textline_t	w_items;
 static hu_textline_t	w_scrts;
 static hu_textline_t	w_ltime;
-static hu_textline_t	w_coorda;
 static hu_textline_t	w_coordx;
 static hu_textline_t	w_coordy;
+static hu_textline_t	w_coorda;
 boolean			chat_on;
 static hu_itext_t	w_chat;
 static boolean		always_off = false;
@@ -393,17 +393,17 @@ void HU_Start(void)
 		       hu_font,
 		       HU_FONTSTART);
 
-    HUlib_initTextLine(&w_coorda,
+    HUlib_initTextLine(&w_coordx,
 		       HU_COORDX, HU_MSGY + 1 * 8,
 		       hu_font,
 		       HU_FONTSTART);
 
-    HUlib_initTextLine(&w_coordx,
+    HUlib_initTextLine(&w_coordy,
 		       HU_COORDX, HU_MSGY + 2 * 8,
 		       hu_font,
 		       HU_FONTSTART);
 
-    HUlib_initTextLine(&w_coordy,
+    HUlib_initTextLine(&w_coorda,
 		       HU_COORDX, HU_MSGY + 3 * 8,
 		       hu_font,
 		       HU_FONTSTART);
@@ -516,7 +516,7 @@ void HU_Drawer(void)
 
 	HUlib_drawTextLine(&w_map, false);
 
-	M_snprintf(str, sizeof(str), "\x1b%cKills: \x1b%c%d/%d", '0' + CR_GREEN, '0' + CR_GRAY,
+	M_snprintf(str, sizeof(str), "\x1b%cKills: \x1b%c%d/%d", '0' + CR_RED, '0' + CR_GRAY,
 	        players[consoleplayer].killcount, totalkills);
 	HUlib_clearTextLine(&w_kills);
 	s = str;
@@ -524,7 +524,7 @@ void HU_Drawer(void)
 	    HUlib_addCharToTextLine(&w_kills, *(s++));
 	HUlib_drawTextLine(&w_kills, false);
 
-	M_snprintf(str, sizeof(str), "\x1b%cItems: \x1b%c%d/%d", '0' + CR_GREEN, '0' + CR_GRAY,
+	M_snprintf(str, sizeof(str), "\x1b%cItems: \x1b%c%d/%d", '0' + CR_RED, '0' + CR_GRAY,
 	        players[consoleplayer].itemcount, totalitems);
 	HUlib_clearTextLine(&w_items);
 	s = str;
@@ -532,7 +532,7 @@ void HU_Drawer(void)
 	    HUlib_addCharToTextLine(&w_items, *(s++));
 	HUlib_drawTextLine(&w_items, false);
 
-	M_snprintf(str, sizeof(str), "\x1b%cSecret: \x1b%c%d/%d", '0' + CR_GREEN, '0' + CR_GRAY,
+	M_snprintf(str, sizeof(str), "\x1b%cSecret: \x1b%c%d/%d", '0' + CR_RED, '0' + CR_GRAY,
 	        players[consoleplayer].secretcount, totalsecret);
 	HUlib_clearTextLine(&w_scrts);
 	s = str;
@@ -548,15 +548,7 @@ void HU_Drawer(void)
 	    HUlib_addCharToTextLine(&w_ltime, *(s++));
 	HUlib_drawTextLine(&w_ltime, false);
 
-	M_snprintf(str, sizeof(str), "\x1b%cA: \x1b%c%-5d", '0' + CR_TAN, '0' + CR_GRAY,
-	        (players[consoleplayer].mo->angle)*(long)360/UINT32_MAX);
-	HUlib_clearTextLine(&w_coorda);
-	s = str;
-	while (*s)
-	    HUlib_addCharToTextLine(&w_coorda, *(s++));
-	HUlib_drawTextLine(&w_coorda, false);
-
-	M_snprintf(str, sizeof(str), "\x1b%cX: \x1b%c%-5d", '0' + CR_TAN, '0' + CR_GRAY,
+	M_snprintf(str, sizeof(str), "\x1b%cX: \x1b%c%-5d", '0' + CR_GREEN, '0' + CR_GRAY,
 	        (players[consoleplayer].mo->x)>>FRACBITS);
 	HUlib_clearTextLine(&w_coordx);
 	s = str;
@@ -564,13 +556,21 @@ void HU_Drawer(void)
 	    HUlib_addCharToTextLine(&w_coordx, *(s++));
 	HUlib_drawTextLine(&w_coordx, false);
 
-	M_snprintf(str, sizeof(str), "\x1b%cY: \x1b%c%-5d", '0' + CR_TAN, '0' + CR_GRAY,
+	M_snprintf(str, sizeof(str), "\x1b%cY: \x1b%c%-5d", '0' + CR_GREEN, '0' + CR_GRAY,
 	        (players[consoleplayer].mo->y)>>FRACBITS);
 	HUlib_clearTextLine(&w_coordy);
 	s = str;
 	while (*s)
 	    HUlib_addCharToTextLine(&w_coordy, *(s++));
 	HUlib_drawTextLine(&w_coordy, false);
+
+	M_snprintf(str, sizeof(str), "\x1b%cA: \x1b%c%-5d", '0' + CR_GREEN, '0' + CR_GRAY,
+	        (players[consoleplayer].mo->angle)*(long)360/UINT32_MAX);
+	HUlib_clearTextLine(&w_coorda);
+	s = str;
+	while (*s)
+	    HUlib_addCharToTextLine(&w_coorda, *(s++));
+	HUlib_drawTextLine(&w_coorda, false);
 	}
 
     V_ClearDPTranslation();
