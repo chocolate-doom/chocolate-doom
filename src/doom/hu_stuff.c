@@ -117,6 +117,9 @@ static int		message_counter;
 static hu_stext_t	w_secret;
 static int		secret_counter;
 
+static boolean		coord_on;
+static int		coord_counter;
+
 extern int		showMessages;
 
 static boolean		headsupactive = false;
@@ -348,6 +351,7 @@ void HU_Start(void)
     message_nottobefuckedwith = false;
     secret_on = false;
     chat_on = false;
+    coord_on = false;
 
     // create the message widget
     HUlib_initSText(&w_message,
@@ -553,8 +557,7 @@ void HU_Drawer(void)
 
     // [crispy] show map coordinates in upper right corner
     // if either automap stats or IDMYPOS cheat are enabled
-    if ((automapactive && crispy_automapstats) ||
-        plr2->mapcoords)
+    if ((automapactive && crispy_automapstats) || coord_on)
     {
 	if (crispy_translucency && screenblocks > CRISPY_HUD && !automapactive)
 	    dp_translucent = true;
@@ -576,7 +579,7 @@ void HU_Drawer(void)
 	HUlib_drawTextLine(&w_coordy, false);
 
 	M_snprintf(str, sizeof(str), "\x1b%cA: \x1b%c%-5d", '0' + CR_GREEN, '0' + CR_GRAY,
-	        (players[consoleplayer].mo->angle)*(long)360/UINT32_MAX);
+	        (players[consoleplayer].mo->angle)*(uint64_t)360/UINT32_MAX);
 	HUlib_clearTextLine(&w_coorda);
 	s = str;
 	while (*s)
@@ -621,6 +624,11 @@ void HU_Ticker(void)
 	secret_on = false;
     }
 
+    if (coord_counter && !--coord_counter)
+    {
+	coord_on = false;
+    }
+
     if (showMessages || message_dontfuckwithme)
     {
 
@@ -631,6 +639,14 @@ void HU_Ticker(void)
 	    plr2->centermessage = 0;
 	    secret_on = true;
 	    secret_counter = HU_MSGTIMEOUT >> 1;
+	}
+
+	// [crispy] display map coordinates
+	if (plr2->mapcoords)
+	{
+	    plr2->mapcoords = 0;
+	    coord_on = true;
+	    coord_counter = HU_MSGTIMEOUT << 1;
 	}
 
 	// display message if necessary

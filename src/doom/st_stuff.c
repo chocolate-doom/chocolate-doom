@@ -789,19 +789,17 @@ ST_Responder (event_t* ev)
       // 'mypos' for player position
       else if (cht_CheckCheat(&cheat_mypos, ev->data2))
       {
-        static char buf[ST_MSGWIDTH];
-        // [crispy] turn IDMYPOS into a toggle to show
-        // (human readable) map coordinates in the upper right corner
+        // [crispy] show (human readable) map coordinates
+        // in the upper right corner (like automap stats)
 /*
+        static char buf[ST_MSGWIDTH];
         M_snprintf(buf, sizeof(buf), "ang=0x%x;x,y=(0x%x,0x%x)",
                    players[consoleplayer].mo->angle,
                    players[consoleplayer].mo->x,
                    players[consoleplayer].mo->y);
-*/
-	M_snprintf(buf, sizeof(buf), "Player Position \x1b%c%s",
-	           '0' + CR_GREEN,
-	           (p2fromp(plyr)->mapcoords ^= 1) ? "ON" : "OFF");
         plyr->message = buf;
+*/
+        p2fromp(plyr)->mapcoords ^= 1;
       }
     }
     
