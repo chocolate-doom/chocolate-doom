@@ -63,6 +63,7 @@
 #define HU_INPUTWIDTH	64
 #define HU_INPUTHEIGHT	1
 
+#define HU_COORDX	(320 - 8 * hu_font['A'-HU_FONTSTART]->width)
 
 
 char *chat_macros[10] =
@@ -97,6 +98,9 @@ static hu_textline_t	w_kills;
 static hu_textline_t	w_items;
 static hu_textline_t	w_scrts;
 static hu_textline_t	w_ltime;
+static hu_textline_t	w_coorda;
+static hu_textline_t	w_coordx;
+static hu_textline_t	w_coordy;
 boolean			chat_on;
 static hu_itext_t	w_chat;
 static boolean		always_off = false;
@@ -388,6 +392,22 @@ void HU_Start(void)
 		       HU_TITLEX, HU_MSGY + 5 * 8,
 		       hu_font,
 		       HU_FONTSTART);
+
+    HUlib_initTextLine(&w_coorda,
+		       HU_COORDX, HU_MSGY + 1 * 8,
+		       hu_font,
+		       HU_FONTSTART);
+
+    HUlib_initTextLine(&w_coordx,
+		       HU_COORDX, HU_MSGY + 2 * 8,
+		       hu_font,
+		       HU_FONTSTART);
+
+    HUlib_initTextLine(&w_coordy,
+		       HU_COORDX, HU_MSGY + 3 * 8,
+		       hu_font,
+		       HU_FONTSTART);
+
     
     switch ( logical_gamemission )
     {
@@ -470,7 +490,7 @@ void HU_Drawer(void)
     }
 
     // [crispy] translucent messages for translucent HUD
-    if (screenblocks > CRISPY_HUD && !automapactive)
+    if (crispy_translucency && screenblocks > CRISPY_HUD && !automapactive)
 	dp_translucent = true;
 
     V_ClearDPTranslation();
@@ -527,6 +547,30 @@ void HU_Drawer(void)
 	while (*s)
 	    HUlib_addCharToTextLine(&w_ltime, *(s++));
 	HUlib_drawTextLine(&w_ltime, false);
+
+	M_snprintf(str, sizeof(str), "\x1b%cA: \x1b%c%-5d", '0' + CR_BLUE2, '0' + CR_GRAY,
+	        (players[consoleplayer].mo->angle)*(long)360/UINT32_MAX);
+	HUlib_clearTextLine(&w_coorda);
+	s = str;
+	while (*s)
+	    HUlib_addCharToTextLine(&w_coorda, *(s++));
+	HUlib_drawTextLine(&w_coorda, false);
+
+	M_snprintf(str, sizeof(str), "\x1b%cX: \x1b%c%-5d", '0' + CR_BLUE2, '0' + CR_GRAY,
+	        (players[consoleplayer].mo->x)>>FRACBITS);
+	HUlib_clearTextLine(&w_coordx);
+	s = str;
+	while (*s)
+	    HUlib_addCharToTextLine(&w_coordx, *(s++));
+	HUlib_drawTextLine(&w_coordx, false);
+
+	M_snprintf(str, sizeof(str), "\x1b%cY: \x1b%c%-5d", '0' + CR_BLUE2, '0' + CR_GRAY,
+	        (players[consoleplayer].mo->y)>>FRACBITS);
+	HUlib_clearTextLine(&w_coordy);
+	s = str;
+	while (*s)
+	    HUlib_addCharToTextLine(&w_coordy, *(s++));
+	HUlib_drawTextLine(&w_coordy, false);
 	}
 
     V_ClearDPTranslation();
