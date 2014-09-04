@@ -1675,13 +1675,11 @@ void D_DoomMain (void)
     (
         gamemode == commercial ||
         (
-          logical_gamemission == doom &&
-//          W_CheckNumForName("SGN2A0") != -1 && // pickup sprite
             W_CheckNumForName("SHT2A0") != -1 && // wielding/firing sprite sequence
-            I_GetSfxLumpNum(&S_sfx[sfx_dshtgn]) > 0 && // firing sound
-            I_GetSfxLumpNum(&S_sfx[sfx_dbopn])  > 0 && // opening sound
-            I_GetSfxLumpNum(&S_sfx[sfx_dbload]) > 0 && // reloading sound
-            I_GetSfxLumpNum(&S_sfx[sfx_dbcls])  > 0    // closing sound
+            W_CheckNumForName("dsdshtgn") != -1 && // firing sound
+            W_CheckNumForName("dsdbopn") != -1 && // opening sound
+            W_CheckNumForName("dsdbload") != -1 && // reloading sound
+            W_CheckNumForName("dsdbcls") != -1 // closing sound
         )
     );
 
