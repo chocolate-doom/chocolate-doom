@@ -2334,7 +2334,7 @@ void M_Drawer (void)
             }
 
 	    x = 160 - M_StringWidth(string) / 2;
-	    M_WriteText(x, y, string);
+	    M_WriteText(x > 0 ? x : 0, y, string); // [crispy] prevent negative x-coords
 	    y += SHORT(hu_font[0]->height);
 	}
 
