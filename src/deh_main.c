@@ -35,11 +35,11 @@ static boolean deh_initialized = false;
 
 // If true, we can do long string replacements.
 
-boolean deh_allow_long_strings = false;
+boolean deh_allow_long_strings = true; // [crispy] always allow
 
 // If true, we can do cheat replacements longer than the originals.
 
-boolean deh_allow_long_cheats = false;
+boolean deh_allow_long_cheats = true; // [crispy] always allow
 
 // If false, dehacked cheat replacements are ignored.
 
