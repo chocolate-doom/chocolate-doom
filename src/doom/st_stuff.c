@@ -838,7 +838,7 @@ ST_Responder (event_t* ev)
 
       // Catch invalid maps.
       if (epsd < 1)
-	return false;
+        epsd = gameepisode; // [crispy] allow IDCLEV0x to work in Doom 1
 
       if (map < 1)
 	return false;
