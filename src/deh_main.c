@@ -175,7 +175,7 @@ static boolean CheckSignatures(deh_context_t *context)
     
     // Read the first line
 
-    line = DEH_ReadLine(context);
+    line = DEH_ReadLine(context, false);
 
     if (line == NULL)
     {
@@ -244,7 +244,7 @@ static void DEH_ParseContext(deh_context_t *context)
     {
         // read a new line
  
-        line = DEH_ReadLine(context);
+        line = DEH_ReadLine(context, current_section == GetSectionByName("[STRINGS]"));
 
         // end of file?
 
