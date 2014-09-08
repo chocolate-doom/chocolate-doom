@@ -482,6 +482,7 @@ static int ST_cheat_spechits()
 {
     int i, speciallines = 0;
     boolean origcards[NUMCARDS];
+    line_t dummy;
 
     // temporarily give all keys
     for (i = 0; i < NUMCARDS; i++)
@@ -512,6 +513,42 @@ static int ST_cheat_spechits()
     {
 	plyr->cards[i] = origcards[i];
     }
+
+    // [crispy] trigger tag 666/667 events
+    dummy.tag = 666;
+    if (gamemode == commercial)
+    {
+	if (gamemap == 7)
+	{
+	    // Mancubi
+	    speciallines += EV_DoFloor(&dummy, lowerFloorToLowest);
+
+	    // Arachnotrons
+	    dummy.tag = 667;
+	    speciallines += EV_DoFloor(&dummy, raiseToTexture);
+	}
+    }
+    else
+    {
+	if (gameepisode == 1)
+	    // Barons of Hell
+	    speciallines += EV_DoFloor(&dummy, lowerFloorToLowest);
+	else
+	if (gameepisode == 4)
+	{
+	     if (gamemap == 6)
+		// Cyberdemons
+		speciallines += EV_DoDoor(&dummy, blazeOpen);
+	    else
+	    if (gamemap == 8)
+		// Spider Masterminds
+		speciallines += EV_DoFloor(&dummy, lowerFloorToLowest);
+	}
+    }
+    // Keens (no matter which level they are on)
+    // this call will be ignored if the tagged sector is already moving
+    // so actions triggered in the condition above will have precedence
+    speciallines += EV_DoDoor(&dummy, open);
 
     return (speciallines);
 }
