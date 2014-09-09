@@ -488,14 +488,13 @@ fixed_t R_ScaleFromGlobalAngle (angle_t visangle)
     {
 	scale = FixedDiv (num, den);
 
-	// [crispy] cap at a higher value
-	if (scale > 256*FRACUNIT)
-	    scale = 256*FRACUNIT;
+	if (scale > 64*FRACUNIT)
+	    scale = 64*FRACUNIT;
 	else if (scale < 256)
 	    scale = 256;
     }
     else
-	scale = 256*FRACUNIT;
+	scale = 64*FRACUNIT;
 	
     return scale;
 }
