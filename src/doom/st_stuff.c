@@ -880,7 +880,7 @@ ST_Responder (event_t* ev)
       if (epsd < 1)
 	return false;
 
-      if ((map == 0) && (buf[1] - '0' == 0)) // [crispy] IDCLEV00 restarts current map
+      if ((map == 0) && (buf[0] - '0' == 0)) // [crispy] IDCLEV00 restarts current map
 	map = gamemap;
       else
       if (map < 1)
