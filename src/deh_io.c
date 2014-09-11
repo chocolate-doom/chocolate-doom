@@ -28,7 +28,6 @@
 
 #include "deh_defs.h"
 #include "deh_io.h"
-#include "deh_main.h"
 
 typedef enum
 {
@@ -251,7 +250,7 @@ char *DEH_ReadLine(deh_context_t *context, boolean extended)
         }
 
         // extended string support
-        if (deh_allow_extended_strings && extended && c == '\\')
+        if (extended && c == '\\')
         {
             c = DEH_GetChar(context);
 

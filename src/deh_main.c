@@ -88,6 +88,14 @@ static deh_section_t *GetSectionByName(char *name)
 {
     unsigned int i;
 
+    // we explicitely do not recognize [STRINGS] sections at all
+    // if extended strings are not allowed
+
+    if (!deh_allow_extended_strings && !strncasecmp("[STRINGS]", name, 9))
+    {
+        return NULL;
+    }
+
     for (i=0; deh_section_types[i] != NULL; ++i)
     {
         if (!strcasecmp(deh_section_types[i]->name, name))
@@ -253,14 +261,14 @@ static void DEH_ParseContext(deh_context_t *context)
         DEH_Error(context, "This is not a valid dehacked patch file!");
     }
 
+    // extended string support required?
+
+    bexstr = GetSectionByName("[STRINGS]");
+
     // Read the file
     
     for (;;) 
     {
-        // extended string support required?
-
-        bexstr = GetSectionByName("[STRINGS]");
-
         // read a new line
  
         line = DEH_ReadLine(context, bexstr && current_section == bexstr);
