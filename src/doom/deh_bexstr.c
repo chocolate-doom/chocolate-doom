@@ -28,10 +28,10 @@
 typedef struct {
     char *macro;
     char *string;
-} bex_string;
+} bex_string_t;
 
 // mnemonic keys table
-static bex_string bex_stringtable[] = {
+static const bex_string_t bex_stringtable[] = {
     // part 1 - general initialization and prompts
     {"D_DEVSTR", D_DEVSTR},
     {"D_CDROM", D_CDROM},

@@ -28,6 +28,7 @@
 
 #include "deh_defs.h"
 #include "deh_io.h"
+#include "deh_main.h"
 
 typedef enum
 {
@@ -229,6 +230,7 @@ char *DEH_ReadLine(deh_context_t *context, boolean extended)
 {
     int c;
     int pos;
+    boolean escaped = false;
 
     for (pos = 0;;)
     {
@@ -249,9 +251,8 @@ char *DEH_ReadLine(deh_context_t *context, boolean extended)
         }
 
         // extended string support
-        if (extended && c == '\\')
+        if (deh_allow_extended_strings && extended && c == '\\')
         {
-            escaped:
             c = DEH_GetChar(context);
 
             // "\n" in the middle of a string indicates an internal linefeed
@@ -266,20 +267,20 @@ char *DEH_ReadLine(deh_context_t *context, boolean extended)
             // each line that is to be continued with a backslash
             if (c == '\n')
             {
-                // blanks before the backslash are included in the string
-                // but indentation after the linefeed is not
-                do
-                {
-                    c = DEH_GetChar(context);
-                } while (isspace(c) && c != '\n');
-
-                // if the next non-space character after an escaped linefeed
-                // is another backslash, repeat again
-                if (c == '\\')
-                {
-                    goto escaped;
-                }
+                escaped = true;
+                continue;
             }
+        }
+
+        // blanks before the backslash are included in the string
+        // but indentation after the linefeed is not
+        if (escaped && isspace(c) && c != '\n')
+        {
+            continue;
+        }
+        else
+        {
+            escaped = false;
         }
 
         if (c == '\n')
