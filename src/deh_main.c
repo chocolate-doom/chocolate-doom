@@ -211,6 +211,18 @@ static boolean CheckSignatures(deh_context_t *context)
 
 static void DEH_ParseComment(char *comment)
 {
+    //
+    // Welcome, to the super-secret Chocolate Doom-specific Dehacked
+    // overrides function.
+    //
+    // Putting these magic comments into your Dehacked lumps will
+    // allow you to go beyond the normal limits of Vanilla Dehacked.
+    // Because of this, these comments are deliberately undocumented,
+    // and if you're using them you should be aware that your mod
+    // is not compatible with Vanilla Doom and you're probably a
+    // very naughty person.
+    //
+
     // Allow comments containing this special value to allow string
     // replacements longer than those permitted by DOS dehacked.
     // This allows us to use a dehacked patch for doing string 
@@ -251,9 +263,9 @@ static void DEH_ParseContext(deh_context_t *context)
     deh_section_t *current_section = NULL;
     char section_name[20];
     void *tag = NULL;
+    boolean extended;
     char *line;
-    deh_section_t *bexstr;
-    
+
     // Read the header and check it matches the signature
 
     if (!CheckSignatures(context))
@@ -261,17 +273,15 @@ static void DEH_ParseContext(deh_context_t *context)
         DEH_Error(context, "This is not a valid dehacked patch file!");
     }
 
-    // extended string support required?
-
-    bexstr = GetSectionByName("[STRINGS]");
-
     // Read the file
-    
-    for (;;) 
+
+    for (;;)
     {
-        // read a new line
- 
-        line = DEH_ReadLine(context, bexstr && current_section == bexstr);
+        // Read the next line. We only allow the special extended parsing
+        // for the BEX [STRINGS] section.
+        extended = current_section != NULL
+                && !strcasecmp(current_section->name, "[STRINGS]");
+        line = DEH_ReadLine(context, extended);
 
         // end of file?
 
