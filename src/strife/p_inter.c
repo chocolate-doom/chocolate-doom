@@ -939,7 +939,7 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
 
         case MT_COUPLING:
             junk.tag = 225;
-            EV_DoDoor(&junk, close);
+            EV_DoDoor(&junk, vld_close);
 
             junk.tag = 44;
             EV_DoFloor(&junk, lowerFloor);
@@ -960,7 +960,7 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
     {
     case MT_TOKEN_SHOPCLOSE:
         junk.tag = 222;
-        EV_DoDoor(&junk, close);
+        EV_DoDoor(&junk, vld_close);
         P_NoiseAlert(players[0].mo, players[0].mo);
 
         M_snprintf(plrkilledmsg, sizeof(plrkilledmsg),
@@ -972,12 +972,12 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
 
     case MT_TOKEN_PRISON_PASS:
         junk.tag = 223;
-        EV_DoDoor(&junk, open);
+        EV_DoDoor(&junk, vld_open);
         return;
 
     case MT_TOKEN_DOOR3:
         junk.tag = 224;
-        EV_DoDoor(&junk, open);
+        EV_DoDoor(&junk, vld_open);
         return;
 
     case MT_SIGIL_A:

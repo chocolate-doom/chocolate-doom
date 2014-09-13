@@ -253,11 +253,11 @@ void P_ActivateInStasis(int tag);
 */
 typedef enum
 {
-    normal,
-    close30ThenOpen,
-    close,
-    open,
-    raiseIn5Mins
+    vld_normal,
+    vld_close30ThenOpen,
+    vld_close,
+    vld_open,
+    vld_raiseIn5Mins
 } vldoor_e;
 
 typedef struct

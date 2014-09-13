@@ -2333,7 +2333,7 @@ void A_HideZombie(mobj_t* actor)
     line_t junk;
 
     junk.tag = 999;
-    EV_DoDoor(&junk, blazeClose);
+    EV_DoDoor(&junk, vld_blazeClose);
 
     if(actor->target && actor->target->player)
         P_NoiseAlert(actor->target, actor); // inlined in asm
@@ -2351,7 +2351,7 @@ void A_MerchantPain(mobj_t* actor)
     line_t junk;
 
     junk.tag = 999;
-    EV_DoDoor(&junk, shopClose);
+    EV_DoDoor(&junk, vld_shopClose);
 
     if(actor->target && actor->target->player)
         P_NoiseAlert(actor->target, actor); // inlined in asm
@@ -3018,7 +3018,7 @@ void A_BossDeath (mobj_t* actor)
             GiveVoiceObjective("VOC87", "LOG87", 0);
         }
         junk.tag = 222;         // Open the exit door again;
-        EV_DoDoor(&junk, open); // Note this is NOT the Loremaster door...
+        EV_DoDoor(&junk, vld_open); // Note this is NOT the Loremaster door...
         break;
 
     case MT_SPECTRE_D:

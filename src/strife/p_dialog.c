@@ -918,24 +918,24 @@ boolean P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type)
 
         case MT_TOKEN_DOOR1: // Door special 1
             junk.tag = 222;
-            EV_DoDoor(&junk, open);
+            EV_DoDoor(&junk, vld_open);
             break;
 
         case MT_TOKEN_PRISON_PASS: // Door special 1 - Prison pass
             junk.tag = 223;
-            EV_DoDoor(&junk, open);
+            EV_DoDoor(&junk, vld_open);
             if(gamemap == 2) // If on Tarnhill, give Prison pass object
                 P_GiveInventoryItem(player, sprnum, type);
             break;
 
         case MT_TOKEN_SHOPCLOSE: // Door special 3 - "Shop close" - unused?
             junk.tag = 222;
-            EV_DoDoor(&junk, close);
+            EV_DoDoor(&junk, vld_close);
             break;
 
         case MT_TOKEN_DOOR3: // Door special 4 (or 3? :P ) 
             junk.tag = 224;
-            EV_DoDoor(&junk, close);
+            EV_DoDoor(&junk, vld_close);
             break;
 
         case MT_TOKEN_STAMINA: // Stamina upgrade
