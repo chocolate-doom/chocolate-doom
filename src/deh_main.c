@@ -358,6 +358,13 @@ int DEH_LoadFile(char *filename)
         deh_initialized = true;
     }
 
+    // Before parsing a new file, reset special override flags to false.
+    // Magic comments should only apply to the file in which they were
+    // defined, and shouldn't carry over to subsequent files as well.
+    deh_allow_long_strings = false;
+    deh_allow_long_cheats = false;
+    deh_allow_extended_strings = false;
+
     printf(" loading %s\n", filename);
 
     context = DEH_OpenFile(filename);
@@ -367,9 +374,9 @@ int DEH_LoadFile(char *filename)
         fprintf(stderr, "DEH_LoadFile: Unable to open %s\n", filename);
         return 0;
     }
-    
+
     DEH_ParseContext(context);
-    
+
     DEH_CloseFile(context);
 
     return 1;
@@ -381,7 +388,6 @@ int DEH_LoadFile(char *filename)
 int DEH_LoadLump(int lumpnum, boolean allow_long)
 {
     deh_context_t *context;
-    boolean long_strings, long_cheats;
 
     if (!deh_initialized)
     {
@@ -389,13 +395,10 @@ int DEH_LoadLump(int lumpnum, boolean allow_long)
         deh_initialized = true;
     }
 
-    if (allow_long)
-    {
-        long_strings = deh_allow_long_strings;
-        long_cheats = deh_allow_long_cheats;
-        deh_allow_long_strings = true;
-        deh_allow_long_cheats = true;
-    }
+    // Reset all special flags to defaults.
+    deh_allow_long_strings = allow_long;
+    deh_allow_long_cheats = allow_long;
+    deh_allow_extended_strings = false;
 
     context = DEH_OpenLump(lumpnum);
 
@@ -408,13 +411,6 @@ int DEH_LoadLump(int lumpnum, boolean allow_long)
     DEH_ParseContext(context);
 
     DEH_CloseFile(context);
-
-    // Restore old value of long flags.
-    if (allow_long)
-    {
-        deh_allow_long_strings = long_strings;
-        deh_allow_long_cheats = long_cheats;
-    }
 
     return 1;
 }
