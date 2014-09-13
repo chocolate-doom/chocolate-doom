@@ -42,7 +42,6 @@ struct deh_context_s
 
     // If the input comes from a memory buffer, pointer to the memory
     // buffer.
-
     unsigned char *input_buffer;
     size_t input_buffer_len;
     unsigned int input_buffer_pos;
@@ -50,18 +49,18 @@ struct deh_context_s
 
     // If the input comes from a file, the file stream for reading
     // data.
-
     FILE *stream;
 
     // Current line number that we have reached:
-
     int linenum;
 
     // Used by DEH_ReadLine:
-
     boolean last_was_newline;
     char *readbuffer;
     int readbuffer_size;
+
+    // Error handling.
+    boolean had_error;
 };
 
 static deh_context_t *DEH_NewContext(void)
@@ -76,6 +75,8 @@ static deh_context_t *DEH_NewContext(void)
     context->readbuffer = Z_Malloc(context->readbuffer_size, PU_STATIC, NULL);
     context->linenum = 0;
     context->last_was_newline = true;
+
+    context->had_error = false;
 
     return context;
 }
@@ -307,7 +308,7 @@ void DEH_Warning(deh_context_t *context, char *msg, ...)
     va_list args;
 
     va_start(args, msg);
-    
+
     fprintf(stderr, "%s:%i: warning: ", context->filename, context->linenum);
     vfprintf(stderr, msg, args);
     fprintf(stderr, "\n");
@@ -320,14 +321,18 @@ void DEH_Error(deh_context_t *context, char *msg, ...)
     va_list args;
 
     va_start(args, msg);
-    
+
     fprintf(stderr, "%s:%i: ", context->filename, context->linenum);
     vfprintf(stderr, msg, args);
     fprintf(stderr, "\n");
 
     va_end(args);
 
-    I_Error("Error parsing dehacked file");
+    context->had_error = true;
 }
 
+boolean DEH_HadError(deh_context_t *context)
+{
+    return context->had_error;
+}
 

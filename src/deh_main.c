@@ -275,7 +275,7 @@ static void DEH_ParseContext(deh_context_t *context)
 
     // Read the file
 
-    for (;;)
+    while (!DEH_HadError(context))
     {
         // Read the next line. We only allow the special extended parsing
         // for the BEX [STRINGS] section.
@@ -331,7 +331,7 @@ static void DEH_ParseContext(deh_context_t *context)
                 sscanf(line, "%19s", section_name);
 
                 current_section = GetSectionByName(section_name);
-                
+
                 if (current_section != NULL)
                 {
                     tag = current_section->start(context, line);
@@ -379,13 +379,18 @@ int DEH_LoadFile(char *filename)
 
     DEH_CloseFile(context);
 
+    if (DEH_HadError(context))
+    {
+        I_Error("Error parsing dehacked file");
+    }
+
     return 1;
 }
 
 // Load dehacked file from WAD lump.
 // If allow_long is set, allow long strings and cheats just for this lump.
 
-int DEH_LoadLump(int lumpnum, boolean allow_long)
+int DEH_LoadLump(int lumpnum, boolean allow_long, boolean allow_error)
 {
     deh_context_t *context;
 
@@ -412,10 +417,17 @@ int DEH_LoadLump(int lumpnum, boolean allow_long)
 
     DEH_CloseFile(context);
 
+    // If there was an error while parsing, abort with an error, but allow
+    // errors to just be ignored if allow_error=true.
+    if (!allow_error && DEH_HadError(context))
+    {
+        I_Error("Error parsing dehacked lump");
+    }
+
     return 1;
 }
 
-int DEH_LoadLumpByName(char *name, boolean allow_long)
+int DEH_LoadLumpByName(char *name, boolean allow_long, boolean allow_error)
 {
     int lumpnum;
 
@@ -427,7 +439,7 @@ int DEH_LoadLumpByName(char *name, boolean allow_long)
         return 0;
     }
 
-    return DEH_LoadLump(lumpnum, allow_long);
+    return DEH_LoadLump(lumpnum, allow_long, allow_error);
 }
 
 // Checks the command line for -deh argument

@@ -32,8 +32,8 @@
 
 void DEH_Init(void);
 int DEH_LoadFile(char *filename);
-int DEH_LoadLump(int lumpnum, boolean allow_long);
-int DEH_LoadLumpByName(char *name, boolean allow_long);
+int DEH_LoadLump(int lumpnum, boolean allow_long, boolean allow_error);
+int DEH_LoadLumpByName(char *name, boolean allow_long, boolean allow_error);
 
 boolean DEH_ParseAssignment(char *line, char **variable_name, char **value);
 
