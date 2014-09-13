@@ -19,6 +19,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "i_system.h"
 #include "m_misc.h"
@@ -224,10 +225,11 @@ static void IncreaseReadBuffer(deh_context_t *context)
 
 // Read a whole line
 
-char *DEH_ReadLine(deh_context_t *context)
+char *DEH_ReadLine(deh_context_t *context, boolean extended)
 {
     int c;
     int pos;
+    boolean escaped = false;
 
     for (pos = 0;;)
     {
@@ -245,6 +247,39 @@ char *DEH_ReadLine(deh_context_t *context)
         if (pos >= context->readbuffer_size)
         {
             IncreaseReadBuffer(context);
+        }
+
+        // extended string support
+        if (extended && c == '\\')
+        {
+            c = DEH_GetChar(context);
+
+            // "\n" in the middle of a string indicates an internal linefeed
+            if (c == 'n')
+            {
+                context->readbuffer[pos] = '\n';
+                ++pos;
+                continue;
+            }
+
+            // values to be assigned may be split onto multiple lines by ending
+            // each line that is to be continued with a backslash
+            if (c == '\n')
+            {
+                escaped = true;
+                continue;
+            }
+        }
+
+        // blanks before the backslash are included in the string
+        // but indentation after the linefeed is not
+        if (escaped && isspace(c) && c != '\n')
+        {
+            continue;
+        }
+        else
+        {
+            escaped = false;
         }
 
         if (c == '\n')

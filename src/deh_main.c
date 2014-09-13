@@ -33,6 +33,10 @@ extern char *deh_signatures[];
 
 static boolean deh_initialized = false;
 
+// If true, we can parse [STRINGS] sections in BEX format.
+
+boolean deh_allow_extended_strings = false;
+
 // If true, we can do long string replacements.
 
 boolean deh_allow_long_strings = false;
@@ -83,6 +87,14 @@ static void InitializeSections(void)
 static deh_section_t *GetSectionByName(char *name)
 {
     unsigned int i;
+
+    // we explicitely do not recognize [STRINGS] sections at all
+    // if extended strings are not allowed
+
+    if (!deh_allow_extended_strings && !strncasecmp("[STRINGS]", name, 9))
+    {
+        return NULL;
+    }
 
     for (i=0; deh_section_types[i] != NULL; ++i)
     {
@@ -175,7 +187,7 @@ static boolean CheckSignatures(deh_context_t *context)
     
     // Read the first line
 
-    line = DEH_ReadLine(context);
+    line = DEH_ReadLine(context, false);
 
     if (line == NULL)
     {
@@ -220,6 +232,16 @@ static void DEH_ParseComment(char *comment)
     {
         deh_allow_long_cheats = true;
     }
+
+    // Allow magic comments to allow parsing [STRINGS] section
+    // that are usually only found in BEX format files. This allows
+    // for substitution of map and episode names when loading
+    // Freedoom/FreeDM IWADs.
+
+    if (strstr(comment, "*allow-extended-strings*") != NULL)
+    {
+        deh_allow_extended_strings = true;
+    }
 }
 
 // Parses a dehacked file by reading from the context
@@ -230,6 +252,7 @@ static void DEH_ParseContext(deh_context_t *context)
     char section_name[20];
     void *tag = NULL;
     char *line;
+    deh_section_t *bexstr;
     
     // Read the header and check it matches the signature
 
@@ -238,13 +261,17 @@ static void DEH_ParseContext(deh_context_t *context)
         DEH_Error(context, "This is not a valid dehacked patch file!");
     }
 
+    // extended string support required?
+
+    bexstr = GetSectionByName("[STRINGS]");
+
     // Read the file
     
     for (;;) 
     {
         // read a new line
  
-        line = DEH_ReadLine(context);
+        line = DEH_ReadLine(context, bexstr && current_section == bexstr);
 
         // end of file?
 
