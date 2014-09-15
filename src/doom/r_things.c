@@ -697,14 +697,14 @@ static void R_DrawLSprite (void)
 
     if (!lump)
     {
-	lump = W_GetNumForName("STCFN042"); // [crispy] HU font asterisk
+	lump = W_GetNumForName("STCFN043"); // [crispy] HU font plus sign
 	patch = W_CacheLumpNum(lump, PU_CACHE);
     }
 
     xscale = FixedDiv(projection, FixedMul(laserspot->x - viewx, viewcos) + FixedMul(laserspot->y - viewy, viewsin));
-    // [crispy] the original patch has 7x7 pixels, cap the projection at 3x3 and 21x21
-    xscale = (xscale < 3*FRACUNIT/7) ? 3*FRACUNIT/7 :
-             (xscale > 3*FRACUNIT)   ? 3*FRACUNIT :
+    // [crispy] the original patch has 5x5 pixels, cap the projection at 3x3 and 20x20
+    xscale = (xscale < 3*FRACUNIT/5) ? 4*FRACUNIT/5 :
+             (xscale > 3*FRACUNIT)   ? 4*FRACUNIT :
               xscale;
 
     vis = R_NewVisSprite();
