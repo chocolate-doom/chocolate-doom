@@ -33,6 +33,10 @@ extern char *deh_signatures[];
 
 static boolean deh_initialized = false;
 
+// If true, we can parse [STRINGS] sections in BEX format.
+
+boolean deh_allow_extended_strings = true; // [crispy] always allow
+
 // If true, we can do long string replacements.
 
 boolean deh_allow_long_strings = true; // [crispy] always allow
@@ -83,6 +87,14 @@ static void InitializeSections(void)
 static deh_section_t *GetSectionByName(char *name)
 {
     unsigned int i;
+
+    // we explicitely do not recognize [STRINGS] sections at all
+    // if extended strings are not allowed
+
+    if (!deh_allow_extended_strings && !strncasecmp("[STRINGS]", name, 9))
+    {
+        return NULL;
+    }
 
     for (i=0; deh_section_types[i] != NULL; ++i)
     {
@@ -175,7 +187,7 @@ static boolean CheckSignatures(deh_context_t *context)
     
     // Read the first line
 
-    line = DEH_ReadLine(context);
+    line = DEH_ReadLine(context, false);
 
     if (line == NULL)
     {
@@ -199,6 +211,18 @@ static boolean CheckSignatures(deh_context_t *context)
 
 static void DEH_ParseComment(char *comment)
 {
+    //
+    // Welcome, to the super-secret Chocolate Doom-specific Dehacked
+    // overrides function.
+    //
+    // Putting these magic comments into your Dehacked lumps will
+    // allow you to go beyond the normal limits of Vanilla Dehacked.
+    // Because of this, these comments are deliberately undocumented,
+    // and if you're using them you should be aware that your mod
+    // is not compatible with Vanilla Doom and you're probably a
+    // very naughty person.
+    //
+
     // Allow comments containing this special value to allow string
     // replacements longer than those permitted by DOS dehacked.
     // This allows us to use a dehacked patch for doing string 
@@ -220,6 +244,16 @@ static void DEH_ParseComment(char *comment)
     {
         deh_allow_long_cheats = true;
     }
+
+    // Allow magic comments to allow parsing [STRINGS] section
+    // that are usually only found in BEX format files. This allows
+    // for substitution of map and episode names when loading
+    // Freedoom/FreeDM IWADs.
+
+    if (strstr(comment, "*allow-extended-strings*") != NULL)
+    {
+        deh_allow_extended_strings = true;
+    }
 }
 
 // Parses a dehacked file by reading from the context
@@ -229,8 +263,9 @@ static void DEH_ParseContext(deh_context_t *context)
     deh_section_t *current_section = NULL;
     char section_name[20];
     void *tag = NULL;
+    boolean extended;
     char *line;
-    
+
     // Read the header and check it matches the signature
 
     if (!CheckSignatures(context))
@@ -239,12 +274,14 @@ static void DEH_ParseContext(deh_context_t *context)
     }
 
     // Read the file
-    
-    for (;;) 
+
+    while (!DEH_HadError(context))
     {
-        // read a new line
- 
-        line = DEH_ReadLine(context);
+        // Read the next line. We only allow the special extended parsing
+        // for the BEX [STRINGS] section.
+        extended = current_section != NULL
+                && !strcasecmp(current_section->name, "[STRINGS]");
+        line = DEH_ReadLine(context, extended);
 
         // end of file?
 
@@ -294,7 +331,7 @@ static void DEH_ParseContext(deh_context_t *context)
                 sscanf(line, "%19s", section_name);
 
                 current_section = GetSectionByName(section_name);
-                
+
                 if (current_section != NULL)
                 {
                     tag = current_section->start(context, line);
@@ -321,6 +358,16 @@ int DEH_LoadFile(char *filename)
         deh_initialized = true;
     }
 
+    // Before parsing a new file, reset special override flags to false.
+    // Magic comments should only apply to the file in which they were
+    // defined, and shouldn't carry over to subsequent files as well.
+    // [crispy] always allow everything
+/*
+    deh_allow_long_strings = false;
+    deh_allow_long_cheats = false;
+    deh_allow_extended_strings = false;
+*/
+
     printf(" loading %s\n", filename);
 
     context = DEH_OpenFile(filename);
@@ -330,10 +377,15 @@ int DEH_LoadFile(char *filename)
         fprintf(stderr, "DEH_LoadFile: Unable to open %s\n", filename);
         return 0;
     }
-    
+
     DEH_ParseContext(context);
-    
+
     DEH_CloseFile(context);
+
+    if (DEH_HadError(context))
+    {
+        I_Error("Error parsing dehacked file");
+    }
 
     return 1;
 }
@@ -341,10 +393,9 @@ int DEH_LoadFile(char *filename)
 // Load dehacked file from WAD lump.
 // If allow_long is set, allow long strings and cheats just for this lump.
 
-int DEH_LoadLump(int lumpnum, boolean allow_long)
+int DEH_LoadLump(int lumpnum, boolean allow_long, boolean allow_error)
 {
     deh_context_t *context;
-    boolean long_strings, long_cheats;
 
     if (!deh_initialized)
     {
@@ -352,13 +403,13 @@ int DEH_LoadLump(int lumpnum, boolean allow_long)
         deh_initialized = true;
     }
 
-    if (allow_long)
-    {
-        long_strings = deh_allow_long_strings;
-        long_cheats = deh_allow_long_cheats;
-        deh_allow_long_strings = true;
-        deh_allow_long_cheats = true;
-    }
+    // Reset all special flags to defaults.
+    // [crispy] always allow everything
+/*
+    deh_allow_long_strings = allow_long;
+    deh_allow_long_cheats = allow_long;
+    deh_allow_extended_strings = false;
+*/
 
     context = DEH_OpenLump(lumpnum);
 
@@ -372,17 +423,17 @@ int DEH_LoadLump(int lumpnum, boolean allow_long)
 
     DEH_CloseFile(context);
 
-    // Restore old value of long flags.
-    if (allow_long)
+    // If there was an error while parsing, abort with an error, but allow
+    // errors to just be ignored if allow_error=true.
+    if (!allow_error && DEH_HadError(context))
     {
-        deh_allow_long_strings = long_strings;
-        deh_allow_long_cheats = long_cheats;
+        I_Error("Error parsing dehacked lump");
     }
 
     return 1;
 }
 
-int DEH_LoadLumpByName(char *name, boolean allow_long)
+int DEH_LoadLumpByName(char *name, boolean allow_long, boolean allow_error)
 {
     int lumpnum;
 
@@ -394,7 +445,7 @@ int DEH_LoadLumpByName(char *name, boolean allow_long)
         return 0;
     }
 
-    return DEH_LoadLump(lumpnum, allow_long);
+    return DEH_LoadLump(lumpnum, allow_long, allow_error);
 }
 
 // Checks the command line for -deh argument

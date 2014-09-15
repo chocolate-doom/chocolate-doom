@@ -339,17 +339,17 @@ void    P_ActivateInStasis(int tag);
 //
 typedef enum
 {
-    normal,
-    close30ThenOpen,
-    close,
-    open,
-    raiseIn5Mins,
-    blazeRaise,
-    blazeOpen,
-    blazeClose,
-    shopClose,          // villsa [STRIFE]
-    splitRaiseNearest,  // villsa [STRIFE]
-    splitOpen           // villsa [STRIFE]
+    vld_normal,
+    vld_close30ThenOpen,
+    vld_close,
+    vld_open,
+    vld_raiseIn5Mins,
+    vld_blazeRaise,
+    vld_blazeOpen,
+    vld_blazeClose,
+    vld_shopClose,          // villsa [STRIFE]
+    vld_splitRaiseNearest,  // villsa [STRIFE]
+    vld_splitOpen           // villsa [STRIFE]
 
 } vldoor_e;
 

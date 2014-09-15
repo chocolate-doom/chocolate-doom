@@ -394,7 +394,7 @@ P_UseSpecialLine
 	
       case 29:
 	// Raise Door
-	if (EV_DoDoor(line,normal))
+	if (EV_DoDoor(line,vld_normal))
 	    P_ChangeSwitchTexture(line,0);
 	break;
 	
@@ -418,7 +418,7 @@ P_UseSpecialLine
 	
       case 50:
 	// Close Door
-	if (EV_DoDoor(line,close))
+	if (EV_DoDoor(line,vld_close))
 	    P_ChangeSwitchTexture(line,0);
 	break;
 	
@@ -448,25 +448,25 @@ P_UseSpecialLine
 	
       case 103:
 	// Open Door
-	if (EV_DoDoor(line,open))
+	if (EV_DoDoor(line,vld_open))
 	    P_ChangeSwitchTexture(line,0);
 	break;
 	
       case 111:
 	// Blazing Door Raise (faster than TURBO!)
-	if (EV_DoDoor (line,blazeRaise))
+	if (EV_DoDoor (line,vld_blazeRaise))
 	    P_ChangeSwitchTexture(line,0);
 	break;
 	
       case 112:
 	// Blazing Door Open (faster than TURBO!)
-	if (EV_DoDoor (line,blazeOpen))
+	if (EV_DoDoor (line,vld_blazeOpen))
 	    P_ChangeSwitchTexture(line,0);
 	break;
 	
       case 113:
 	// Blazing Door Close (faster than TURBO!)
-	if (EV_DoDoor (line,blazeClose))
+	if (EV_DoDoor (line,vld_blazeClose))
 	    P_ChangeSwitchTexture(line,0);
 	break;
 	
@@ -494,7 +494,7 @@ P_UseSpecialLine
 	// BlzOpenDoor RED
       case 137:
 	// BlzOpenDoor YELLOW
-	if (EV_DoLockedDoor (line,blazeOpen,thing))
+	if (EV_DoLockedDoor (line,vld_blazeOpen,thing))
 	    P_ChangeSwitchTexture(line,0);
 	break;
 	
@@ -507,7 +507,7 @@ P_UseSpecialLine
 	// BUTTONS
       case 42:
 	// Close Door
-	if (EV_DoDoor(line,close))
+	if (EV_DoDoor(line,vld_close))
 	    P_ChangeSwitchTexture(line,1);
 	break;
 	
@@ -531,7 +531,7 @@ P_UseSpecialLine
 	
       case 61:
 	// Open Door
-	if (EV_DoDoor(line,open))
+	if (EV_DoDoor(line,vld_open))
 	    P_ChangeSwitchTexture(line,1);
 	break;
 	
@@ -543,7 +543,7 @@ P_UseSpecialLine
 	
       case 63:
 	// Raise Door
-	if (EV_DoDoor(line,normal))
+	if (EV_DoDoor(line,vld_normal))
 	    P_ChangeSwitchTexture(line,1);
 	break;
 	
@@ -591,19 +591,19 @@ P_UseSpecialLine
 	
       case 114:
 	// Blazing Door Raise (faster than TURBO!)
-	if (EV_DoDoor (line,blazeRaise))
+	if (EV_DoDoor (line,vld_blazeRaise))
 	    P_ChangeSwitchTexture(line,1);
 	break;
 	
       case 115:
 	// Blazing Door Open (faster than TURBO!)
-	if (EV_DoDoor (line,blazeOpen))
+	if (EV_DoDoor (line,vld_blazeOpen))
 	    P_ChangeSwitchTexture(line,1);
 	break;
 	
       case 116:
 	// Blazing Door Close (faster than TURBO!)
-	if (EV_DoDoor (line,blazeClose))
+	if (EV_DoDoor (line,vld_blazeClose))
 	    P_ChangeSwitchTexture(line,1);
 	break;
 	
@@ -625,7 +625,7 @@ P_UseSpecialLine
 	// BlzOpenDoor RED
       case 136:
 	// BlzOpenDoor YELLOW
-	if (EV_DoLockedDoor (line,blazeOpen,thing))
+	if (EV_DoLockedDoor (line,vld_blazeOpen,thing))
 	    P_ChangeSwitchTexture(line,1);
 	break;
 	

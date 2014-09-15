@@ -538,7 +538,7 @@ static int ST_cheat_spechits()
 	{
 	     if (gamemap == 6)
 		// Cyberdemons
-		speciallines += EV_DoDoor(&dummy, blazeOpen);
+		speciallines += EV_DoDoor(&dummy, vld_blazeOpen);
 	    else
 	    if (gamemap == 8)
 		// Spider Masterminds
@@ -548,7 +548,7 @@ static int ST_cheat_spechits()
     // Keens (no matter which level they are on)
     // this call will be ignored if the tagged sector is already moving
     // so actions triggered in the condition above will have precedence
-    speciallines += EV_DoDoor(&dummy, open);
+    speciallines += EV_DoDoor(&dummy, vld_open);
 
     return (speciallines);
 }

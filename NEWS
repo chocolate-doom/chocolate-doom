@@ -47,7 +47,9 @@
      * There is now more extensive documentation about music
        configuration (README.Music).
      * On Linux, a GUI pop-up is used when the game quits with an
-       error to show the error message.
+       error to show the error message (thanks Willy Barro).
+     * There are now Linux .desktop files for all supported games
+       (thanks Mike Swanson).
 
     Doom:
      * Minor workarounds were added to allow the BFG Edition IWADs to
@@ -59,6 +61,9 @@
      * Behavior of older versions of Doom back to v1.666 can now be
        emulated.
      * The new Freedoom IWAD names are now recognized and supported.
+     * Freedoom's DEHACKED lump can now be parsed and is automatically
+       loaded when a Freedoom IWAD file is used (thanks Fabian
+       Greffrath).
      * Behavior of the M_EPI4 menu item is now correctly emulated
        based on game version (thanks Alexandre-Xavier).
      * IDCLEV up to MAP40 is now supported, to match Vanilla (thanks
@@ -98,6 +103,8 @@
      * The copyright headers at the top of all source files have been
        vastly simplified.
      * Unsafe string functions have been eliminated from the codebase.
+     * vldoor_e enum values are now namespaced to avoid potential
+       conflicts with POSIX standard functions.
 
    Bug fixes:
      * WAD and Dehacked checksums are now sent to clients and checked

@@ -576,13 +576,13 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
 
     case 29:
         // Raise Door - [STRIFE] Verified unmodified
-        if (EV_DoDoor(line,normal))
+        if (EV_DoDoor(line,vld_normal))
             P_ChangeSwitchTexture(line,0);
         break;
 
     case 40:
         // villsa [STRIFE] Split Open Door
-        if(EV_DoDoor(line, splitOpen))
+        if(EV_DoDoor(line, vld_splitOpen))
             P_ChangeSwitchTexture(line, 0);
         break; // haleyjd
 
@@ -594,7 +594,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
 
     case 42:
         // Close Door - [STRIFE] Verified unmodified
-        if (EV_DoDoor(line,close))
+        if (EV_DoDoor(line,vld_close))
             P_ChangeSwitchTexture(line,1);
         break;
 
@@ -618,7 +618,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
 
     case 50:
         // Close Door - [STRIFE] Verified unmodified
-        if (EV_DoDoor(line,close))
+        if (EV_DoDoor(line,vld_close))
             P_ChangeSwitchTexture(line,0);
         break;
 
@@ -642,7 +642,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
 
     case 61:
         // Open Door - [STRIFE] Verified unmodified
-        if (EV_DoDoor(line,open))
+        if (EV_DoDoor(line,vld_open))
             P_ChangeSwitchTexture(line,1);
         break;
 
@@ -654,7 +654,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
 
     case 63:
         // Raise Door - [STRIFE] Verified unmodified
-        if (EV_DoDoor(line,normal))
+        if (EV_DoDoor(line,vld_normal))
             P_ChangeSwitchTexture(line,1);
         break;
 
@@ -720,43 +720,43 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
 
     case 103:
         // Open Door - [STRIFE] Verified unmodified
-        if (EV_DoDoor(line,open))
+        if (EV_DoDoor(line,vld_open))
             P_ChangeSwitchTexture(line,0);
         break;
 
     case 111:
         // Blazing Door Raise (faster than TURBO!) - [STRIFE] Verified unmodified
-        if (EV_DoDoor (line,blazeRaise))
+        if (EV_DoDoor (line,vld_blazeRaise))
             P_ChangeSwitchTexture(line,0);
         break;
 
     case 112:
         // Blazing Door Open (faster than TURBO!) - [STRIFE] Verified unmodified
-        if (EV_DoDoor (line,blazeOpen))
+        if (EV_DoDoor (line,vld_blazeOpen))
             P_ChangeSwitchTexture(line,0);
         break;
 
     case 113:
         // Blazing Door Close (faster than TURBO!) - [STRIFE] Verified unmodified
-        if (EV_DoDoor (line,blazeClose))
+        if (EV_DoDoor (line,vld_blazeClose))
             P_ChangeSwitchTexture(line,0);
         break;
     
     case 114:
         // Blazing Door Raise (faster than TURBO!) - [STRIFE] Verified unmodified
-        if (EV_DoDoor (line,blazeRaise))
+        if (EV_DoDoor (line,vld_blazeRaise))
             P_ChangeSwitchTexture(line,1);
         break;
 
     case 115:
         // Blazing Door Open (faster than TURBO!) - [STRIFE] Verified unmodified
-        if (EV_DoDoor (line,blazeOpen))
+        if (EV_DoDoor (line,vld_blazeOpen))
             P_ChangeSwitchTexture(line,1);
         break;
 
     case 116:
         // Blazing Door Close (faster than TURBO!) - [STRIFE] Verified unmodified
-        if (EV_DoDoor (line,blazeClose))
+        if (EV_DoDoor (line,vld_blazeClose))
             P_ChangeSwitchTexture(line,1);
         break;
 
@@ -793,14 +793,14 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
     case 133: // [STRIFE] TODO - which key is it?
     case 135: // [STRIFE] TODO - which key is it?
     case 137: // [STRIFE] TODO - which key is it?
-        if (EV_DoLockedDoor (line,blazeOpen,thing))
+        if (EV_DoLockedDoor (line,vld_blazeOpen,thing))
             P_ChangeSwitchTexture(line,0);
         break;
 
     case 99:  // [STRIFE] TODO: which key is it?
     case 134: // [STRIFE] TODO: which key is it?
     case 136: // [STRIFE] TODO: which key is it?
-        if (EV_DoLockedDoor (line,blazeOpen,thing))
+        if (EV_DoLockedDoor (line,vld_blazeOpen,thing))
             P_ChangeSwitchTexture(line,1);
         break;
 
@@ -848,7 +848,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
     case 151: // villsa [STRIFE] BlzOpenDoor Gold key
     case 152: // [STRIFE] TODO: which key is it?
     case 153: // [STRIFE] TODO: which key is it?
-        if(EV_DoLockedDoor(line, blazeOpen, thing))
+        if(EV_DoLockedDoor(line, vld_blazeOpen, thing))
             P_ChangeSwitchTexture(line, 1);
         break;
 
@@ -876,19 +876,19 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
     case 163: // [STRIFE] TODO: which key is it?
     case 164: // villsa [STRIFE] BlzOpenDoor Gold key
     case 167: // [STRIFE] TODO: which key is it?
-        if(EV_DoLockedDoor(line, blazeOpen, thing))
+        if(EV_DoLockedDoor(line, vld_blazeOpen, thing))
             P_ChangeSwitchTexture(line, 0);
         break;
 
     case 168: // [STRIFE] TODO: which key is it?
         // haleyjd 09/25/10: [STRIFE] SR Blaze Open Door ???? Key
-        if(EV_DoLockedDoor(line, blazeOpen, thing))
+        if(EV_DoLockedDoor(line, vld_blazeOpen, thing))
             P_ChangeSwitchTexture(line, 1);
         break;
 
     case 171: // [STRIFE] TODO: which key is it?
         // haleyjd 09/25/10: [STRIFE] S1 Open Door ???? Key
-        if(EV_DoLockedDoor(line, open, thing))
+        if(EV_DoLockedDoor(line, vld_open, thing))
             P_ChangeSwitchTexture(line, 0);
         break;
 
@@ -898,7 +898,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
     case 191: // [STRIFE] TODO: which key is it?
     case 192: // [STRIFE] TODO: which key is it?
     case 223: // [STRIFE] TODO: which key is it?
-        if(EV_DoLockedDoor(line, normal, thing))
+        if(EV_DoLockedDoor(line, vld_normal, thing))
             P_ChangeSwitchTexture(line, 1);
         break;
 
@@ -924,13 +924,13 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
 
     case 189: // [STRIFE] TODO: which key is it???
         // haleyjd 09/25/10: [STRIFE] S1 Split Open Door ???? Key
-        if(EV_DoLockedDoor(line, splitOpen, thing))
+        if(EV_DoLockedDoor(line, vld_splitOpen, thing))
             P_ChangeSwitchTexture(line, 0);
         break;
 
     case 194:
         // villsa [STRIFE] S1 Free Prisoners
-        if(EV_DoDoor(line, open))
+        if(EV_DoDoor(line, vld_open))
         {
             P_ChangeSwitchTexture(line, 0);
             P_FreePrisoners();
@@ -1028,7 +1028,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
 
     case 233:
         // villsa [STRIFE] objective given after revealing the computer
-        if(!EV_DoDoor(line, splitOpen))
+        if(!EV_DoDoor(line, vld_splitOpen))
             return true;
 
         P_ChangeSwitchTexture(line, 1);
@@ -1051,7 +1051,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
                          "That doesn't seem to work!");
             thing->player->message = usemessage;
         }
-        else if(EV_DoDoor(line, normal))
+        else if(EV_DoDoor(line, vld_normal))
             P_ChangeSwitchTexture(line, 1);
         break;
 
@@ -1059,7 +1059,7 @@ boolean P_UseSpecialLine(mobj_t* thing, line_t* line, int side)
         // haleyjd 09/25/10: [STRIFE] S1 Split Open Door if Have Sigil 4
         if(thing->player->sigiltype == 4)
         {
-            if(EV_DoDoor(line, splitOpen))
+            if(EV_DoDoor(line, vld_splitOpen))
                 P_ChangeSwitchTexture(line, 0);
         }
         break;

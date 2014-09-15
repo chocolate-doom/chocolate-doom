@@ -1138,7 +1138,7 @@ static void LoadHacxDeh(void)
 
     if (gameversion == exe_hacx)
     {
-        if (!DEH_LoadLumpByName("DEHACKED", true))
+        if (!DEH_LoadLumpByName("DEHACKED", true, false))
         {
             I_Error("DEHACKED lump not found.  Please check that this is the "
                     "Hacx v1.2 IWAD.");
@@ -1482,6 +1482,16 @@ void D_DoomMain (void)
 
     W_CheckCorrectIWAD(doom);
 
+    // The Freedoom IWADs have DEHACKED lumps with cosmetic changes to the
+    // in-game messages. Load this.
+    // Old versions of Freedoom (before 2014-09) did not have technically
+    // valid DEHACKED lumps, so ignore errors and just continue if this
+    // is an old IWAD.
+    if (W_CheckNumForName("FREEDOOM") >= 0)
+    {
+        DEH_LoadLumpByName("DEHACKED", false, true);
+    }
+
     // Doom 3: BFG Edition includes modified versions of the classic
     // IWADs which can be identified by an additional DMENUPIC lump.
     // Furthermore, the M_GDHIGH lumps have been modified in a way that
@@ -1653,7 +1663,7 @@ void D_DoomMain (void)
         {
             if (!strncmp(lumpinfo[i].name, "DEHACKED", 8))
             {
-                DEH_LoadLump(i, true); // [crispy] allow long strings and cheats
+                DEH_LoadLump(i, false, false);
                 loaded++;
             }
         }
