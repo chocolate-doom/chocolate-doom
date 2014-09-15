@@ -1656,21 +1656,16 @@ void D_DoomMain (void)
     {
         int i, loaded = 0;
 
-        // [crispy] make parsing errors non-fatal
-        crispy_dehautoload = true;
-
         for (i = 0; i < numlumps; ++i)
         {
             if (!strncmp(lumpinfo[i].name, "DEHACKED", 8))
             {
-                DEH_LoadLump(i, false, false);
+                DEH_LoadLump(i, true, true); // [crispy] allow long, allow error
                 loaded++;
             }
         }
 
         printf("Loaded %i DEHACKED lumps from WAD files.\n", loaded);
-
-        crispy_dehautoload = false;
     }
 
     DEH_printf("I_Init: Setting up machine state.\n");

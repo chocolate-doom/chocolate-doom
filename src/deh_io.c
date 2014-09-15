@@ -28,8 +28,6 @@
 #include "deh_defs.h"
 #include "deh_io.h"
 
-boolean crispy_dehautoload = false;
-
 typedef enum
 {
     DEH_INPUT_FILE,
@@ -334,6 +332,6 @@ void DEH_Error(deh_context_t *context, char *msg, ...)
 
 boolean DEH_HadError(deh_context_t *context)
 {
-    return context->had_error && !crispy_dehautoload; // [crispy] more error-tolerant in auto-loaded DEHACKED lumps
+    return context->had_error;
 }
 
