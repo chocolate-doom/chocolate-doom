@@ -21,7 +21,6 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "i_system.h"
 #include "m_misc.h"
 #include "w_wad.h"
 #include "z_zone.h"
