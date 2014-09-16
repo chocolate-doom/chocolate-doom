@@ -463,7 +463,7 @@ void HU_Start(void)
 	{
 	    char *m;
 
-	    m = M_StringJoin(map, " @ ", basename(wad), NULL);
+	    m = M_StringJoin(basename(wad), ": \x1b\x32", map, NULL);
 
 	    while (*m)
 		HUlib_addCharToTextLine(&w_map, *(m++));
