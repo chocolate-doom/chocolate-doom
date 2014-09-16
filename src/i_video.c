@@ -2155,7 +2155,8 @@ void I_InitGraphics(void)
     // Not sure about repeat rate - probably dependent on which DOS
     // driver is used.  This is good enough though.
 
-    SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
+    // [crispy] fix "holding ESC causes the menu to flicker on and off repeatedly"
+    //SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY, SDL_DEFAULT_REPEAT_INTERVAL);
 
     // clear out any events waiting at the start and center the mouse
   
