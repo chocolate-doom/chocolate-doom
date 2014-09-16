@@ -702,10 +702,8 @@ static void R_DrawLSprite (void)
     }
 
     xscale = FixedDiv(projection, FixedMul(laserspot->x - viewx, viewcos) + FixedMul(laserspot->y - viewy, viewsin));
-    // [crispy] the original patch has 5x5 pixels, cap the projection at 3x3 and 20x20
-    xscale = (xscale < 3*FRACUNIT/5) ? 4*FRACUNIT/5 :
-             (xscale > 3*FRACUNIT)   ? 4*FRACUNIT :
-              xscale;
+    // [crispy] the original patch has 5x5 pixels, cap the projection at 20x20
+    xscale = (xscale > 4*FRACUNIT) ? 4*FRACUNIT : xscale;
 
     vis = R_NewVisSprite();
     memset(vis, 0, sizeof(*vis)); // [crispy] set all fields to NULL, except ...
