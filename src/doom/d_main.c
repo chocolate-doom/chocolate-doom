@@ -1231,24 +1231,6 @@ static void LoadNerveWad(void)
     }
 }
 
-// [crispy] check if a lump is *not* from a PWAD
-// returns "true" if the lump is not present at all
-// (because then it is still not from a PWAD)
-// or if the lump is from the IWAD
-static boolean LumpIsNotFromPWAD (char *lump)
-{
-    int i;
-
-    i = W_CheckNumForName(lump);
-
-    // [crispy] if it's not present at all,
-    // it is at least not from a PWAD
-    if (i < 0 || !strcmp(lumpinfo[i].wad_file->path, iwadfile))
-	return true;
-
-    return false;
-}
-
 //
 // D_DoomMain
 //
@@ -1680,11 +1662,11 @@ void D_DoomMain (void)
     (
         gamemode == commercial ||
         (
-            W_CheckNumForName("SHT2A0") != -1 && // wielding/firing sprite sequence
-            W_CheckNumForName("dsdshtgn") != -1 && // firing sound
-            W_CheckNumForName("dsdbopn") != -1 && // opening sound
-            W_CheckNumForName("dsdbload") != -1 && // reloading sound
-            W_CheckNumForName("dsdbcls") != -1 // closing sound
+            W_CheckNumForName("sht2a0")   != -1 && // [crispy] wielding/firing sprite sequence
+            W_CheckNumForName("dsdshtgn") != -1 && // [crispy] firing sound
+            W_CheckNumForName("dsdbopn")  != -1 && // [crispy] opening sound
+            W_CheckNumForName("dsdbload") != -1 && // [crispy] reloading sound
+            W_CheckNumForName("dsdbcls")  != -1    // [crispy] closing sound
         )
     );
 
@@ -1692,15 +1674,20 @@ void D_DoomMain (void)
     crispy_havemap33 = (W_CheckNumForName("MAP33") != -1);
 
     // [crispy] check for colored blood
-    crispy_coloredblood =
-	gamemission != pack_hacx &&
-	gamemission != pack_chex &&
-	// [crispy] check for monster sprite replacements
-	// (first sprites of monster death frames)
-	(gamemode != commercial || LumpIsNotFromPWAD("bos2i0")) && // [crispy] Hell Knight
-	LumpIsNotFromPWAD("bossi0") && // [crispy] Baron of Hell
-	LumpIsNotFromPWAD("skulg0") && // [crispy] Lost Soul
-	LumpIsNotFromPWAD("headg0") ;  // [crispy] Cacodemon
+    {
+	int i;
+
+	crispy_coloredblood =
+	    gamemission != pack_hacx &&
+	    gamemission != pack_chex &&
+	    // [crispy] check for monster sprite replacements
+	    // (first sprites of monster death frames)
+	    (gamemode != commercial ||
+	     (i = W_CheckNumForName("bos2i0")) < 0 || !strcmp(lumpinfo[i].wad_file->path, iwadfile)) && // [crispy] Hell Knight
+	    ((i = W_CheckNumForName("bossi0")) < 0 || !strcmp(lumpinfo[i].wad_file->path, iwadfile)) && // [crispy] Baron of Hell
+	    ((i = W_CheckNumForName("skulg0")) < 0 || !strcmp(lumpinfo[i].wad_file->path, iwadfile)) && // [crispy] Lost Soul
+	    ((i = W_CheckNumForName("headg0")) < 0 || !strcmp(lumpinfo[i].wad_file->path, iwadfile)) ;  // [crispy] Cacodemon
+    }
 
 #ifdef FEATURE_MULTIPLAYER
     printf ("NET_Init: Init network subsystem.\n");
