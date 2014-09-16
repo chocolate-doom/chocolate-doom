@@ -447,18 +447,27 @@ void HU_Start(void)
     }
 
     // [crispy] explicitely display (episode and) map if the
-    // map title strings have been dehacked
-    if (strcmp(s, DEH_String(s)))
+    // map is from a PWAD of if the map title string has been dehacked
     {
-        static char map[6], *m;
-        if (gamemode == commercial)
-            M_snprintf(map, sizeof(map), "map%02d", gamemap);
-        else
-            M_snprintf(map, sizeof(map), "e%dm%d", gameepisode, gamemap);
+	char map[6], *wad;
+	extern char *iwadfile;
 
-        m = map;
-        while (*m)
-            HUlib_addCharToTextLine(&w_map, *(m++));
+	if (gamemode == commercial)
+	    M_snprintf(map, sizeof(map), "map%02d", gamemap);
+	else
+	    M_snprintf(map, sizeof(map), "e%dm%d", gameepisode, gamemap);
+
+	wad = lumpinfo[W_GetNumForName(map)].wad_file->path;
+
+	if (strcmp(s, DEH_String(s)) || strcmp(wad, iwadfile))
+	{
+	    char *m;
+
+	    m = M_StringJoin(map, " @ ", basename(wad), NULL);
+
+	    while (*m)
+		HUlib_addCharToTextLine(&w_map, *(m++));
+	}
     }
 
     // dehacked substitution to get modified level name
