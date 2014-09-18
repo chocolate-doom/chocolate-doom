@@ -776,7 +776,9 @@ boolean P_TossDegninOre(player_t* player)
 
 //
 // P_SpawnTeleportBeacon
+//
 // villsa [STRIFE] new function
+// haleyjd 20140918: bug fixed to propagate allegiance properly.
 //
 boolean P_SpawnTeleportBeacon(player_t* player)
 {
@@ -816,7 +818,7 @@ boolean P_SpawnTeleportBeacon(player_t* player)
     if(P_CheckPosition(beacon, x, y))
     {
         beacon->target = mo;
-        beacon->miscdata = mo->miscdata;
+        beacon->miscdata = (byte)(player->allegiance);
         beacon->angle = (angle << ANGLETOFINESHIFT);
         beacon->momx = FixedMul(finecosine[angle], (5*FRACUNIT));
         beacon->momy = FixedMul(finesine[angle], (5*FRACUNIT));
