@@ -1683,10 +1683,14 @@ void D_DoomMain (void)
 	    // [crispy] check for monster sprite replacements
 	    // (first sprites of monster death frames)
 	    (gamemode != commercial ||
-	     (i = W_CheckNumForName("bos2i0")) < 0 || !strcmp(lumpinfo[i].wad_file->path, iwadfile)) && // [crispy] Hell Knight
-	    ((i = W_CheckNumForName("bossi0")) < 0 || !strcmp(lumpinfo[i].wad_file->path, iwadfile)) && // [crispy] Baron of Hell
-	    ((i = W_CheckNumForName("skulg0")) < 0 || !strcmp(lumpinfo[i].wad_file->path, iwadfile)) && // [crispy] Lost Soul
-	    ((i = W_CheckNumForName("headg0")) < 0 || !strcmp(lumpinfo[i].wad_file->path, iwadfile)) ;  // [crispy] Cacodemon
+	     (i = W_CheckNumForName("bos2i0")) < 0 || // [crispy] Hell Knight
+		!strcmp(basename(lumpinfo[i].wad_file->path), basename(iwadfile))) &&
+	    ((i = W_CheckNumForName("bossi0")) < 0 || // [crispy] Baron of Hell
+		!strcmp(basename(lumpinfo[i].wad_file->path), basename(iwadfile))) &&
+	    ((i = W_CheckNumForName("skulg0")) < 0 || // [crispy] Lost Soul
+		!strcmp(basename(lumpinfo[i].wad_file->path), basename(iwadfile))) &&
+	    ((i = W_CheckNumForName("headg0")) < 0 || // [crispy] Cacodemon
+		!strcmp(basename(lumpinfo[i].wad_file->path), basename(iwadfile))) ;
     }
 
 #ifdef FEATURE_MULTIPLAYER

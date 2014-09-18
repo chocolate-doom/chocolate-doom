@@ -457,13 +457,13 @@ void HU_Start(void)
 	else
 	    M_snprintf(map, sizeof(map), "e%dm%d", gameepisode, gamemap);
 
-	wad = lumpinfo[W_GetNumForName(map)].wad_file->path;
+	wad = basename(lumpinfo[W_GetNumForName(map)].wad_file->path);
 
-	if (strcmp(s, DEH_String(s)) || strcmp(wad, iwadfile))
+	if (strcmp(s, DEH_String(s)) || strcmp(wad, basename(iwadfile)))
 	{
 	    char *m;
 
-	    m = M_StringJoin(basename(wad), ": \x1b\x32", map, NULL);
+	    m = M_StringJoin(wad, ": \x1b\x32", map, NULL);
 
 	    while (*m)
 		HUlib_addCharToTextLine(&w_map, *(m++));
