@@ -186,9 +186,8 @@ boolean W_ParseCommandLine(void)
 
             filename = D_TryFindWADByName(myargv[p]);
 
-            // [crispy] always merge
-            printf(" merging %s\n", filename);
-	    W_MergeFile(filename);
+            printf(" adding %s\n", filename);
+	    W_AddFile(filename);
         }
     }
 
