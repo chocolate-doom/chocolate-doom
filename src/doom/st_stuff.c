@@ -653,7 +653,7 @@ ST_Responder (event_t* ev)
 
 	M_snprintf(msg, sizeof(msg), "\x1b%c%d \x1b%cMonster%s Killed",
 	           '0' + CR_GOLD,
-	           killcount, '0' + CR_RED, (killcount == 1) ? "" : "s");
+	           killcount, '0' + CR_NONE, (killcount == 1) ? "" : "s");
 	plyr->message = msg;
       }
       // [crispy] implement Crispy Doom's "spechits" cheat
@@ -664,7 +664,7 @@ ST_Responder (event_t* ev)
 
 	M_snprintf(msg, sizeof(msg), "\x1b%c%d \x1b%cSpecial Line%s Triggered",
 	           '0' + CR_GOLD,
-	           triggeredlines, '0' + CR_RED, (triggeredlines == 1) ? "" : "s");
+	           triggeredlines, '0' + CR_NONE, (triggeredlines == 1) ? "" : "s");
 	plyr->message = msg;
       }
       // [crispy] implement Boom's "tnthom" cheat
@@ -798,12 +798,12 @@ ST_Responder (event_t* ev)
 	    if ((plyr->weaponowned[w] = !plyr->weaponowned[w]))
 		M_snprintf(msg, sizeof(msg), "Weapon \x1b%c%d\x1b%c Added",
 		           '0' + CR_GOLD,
-		           w + 1, '0' + CR_RED);
+		           w + 1, '0' + CR_NONE);
 	    else
 	    {
 		M_snprintf(msg, sizeof(msg), "Weapon \x1b%c%d\x1b%c Removed",
 		           '0' + CR_GOLD,
-		           w + 1, '0' + CR_RED);
+		           w + 1, '0' + CR_NONE);
 
 		// [crispy] removed current weapon, select another one
 		if (w == plyr->readyweapon)
@@ -1364,6 +1364,7 @@ void ST_drawWidgets(boolean refresh)
     // used by w_frags widget
     st_fragson = deathmatch && st_statusbaron; 
 
+    dp_pretrans = cr[CR_TORED];;
     dp_translation = ST_WidgetColor(hudcolor_ammo);
     STlib_updateNum(&w_ready, refresh);
     V_ClearDPTranslation();
@@ -1386,6 +1387,7 @@ void ST_drawWidgets(boolean refresh)
     dp_translation = ST_WidgetColor(hudcolor_armor);
     STlib_updatePercent(&w_armor, refresh || screenblocks >= CRISPY_HUD);
     V_ClearDPTranslation();
+    dp_pretrans = NULL;
 
     if (screenblocks < CRISPY_HUD || automapactive)
     {

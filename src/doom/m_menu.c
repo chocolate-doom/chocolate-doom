@@ -1128,10 +1128,12 @@ static void M_DrawMouse(void)
     M_snprintf(mouse_invert_text, sizeof(mouse_invert_text), "INVERT MOUSE: \x1b%c%s", '0' + CR_GREEN,
             mouse_y_invert ? "ON" : "OFF");
 
+    dp_pretrans = cr[CR_TORED];
     M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_invert + 6,
                 mouse_invert_text);
 
     V_ClearDPTranslation();
+    dp_pretrans = NULL;
 }
 
 void M_Options(int choice)

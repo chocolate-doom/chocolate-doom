@@ -115,6 +115,11 @@ HUlib_drawTextLine
 		if (l->l[i] >= '0' && l->l[i] <= '9' + 1)
 		{
 		    dp_translation = (crispy_coloredhud) ? cr[(int) (l->l[i] - '0')] : NULL;
+
+		    // [crispy] in contrast to CR_RED, which actually means red,
+		    // CR_NONE means we do not want to change the color at all
+		    if (dp_translation == cr[CR_NONE])
+			dp_translation = NULL;
 		}
 	    }
 	}

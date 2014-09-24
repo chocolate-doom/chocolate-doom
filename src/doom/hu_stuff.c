@@ -463,7 +463,7 @@ void HU_Start(void)
 	{
 	    char *m;
 
-	    m = M_StringJoin(wad, ": \x1b\x32", map, NULL);
+	    m = M_StringJoin(wad, ": \x1b\x33", map, NULL);
 
 	    while (*m)
 		HUlib_addCharToTextLine(&w_map, *(m++));
@@ -507,6 +507,7 @@ void HU_Drawer(void)
     if (crispy_translucency && screenblocks > CRISPY_HUD && !automapactive)
 	dp_translucent = true;
 
+    dp_pretrans = cr[CR_TORED];
     V_ClearDPTranslation();
     HUlib_drawSText(&w_message);
     dp_translation = cr[CR_GOLD];
@@ -600,6 +601,7 @@ void HU_Drawer(void)
 
     V_ClearDPTranslation();
     }
+    dp_pretrans = NULL;
 }
 
 void HU_Erase(void)
