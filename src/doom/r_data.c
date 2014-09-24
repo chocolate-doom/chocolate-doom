@@ -969,10 +969,20 @@ void R_InitData (void)
 //
 int R_FlatNumForName (char* name)
 {
-    int		i;
+    int		i, j;
     char	namet[9];
 
-    i = W_CheckNumForName (name);
+    // [crispy] restrict lump numbers returned by
+    // R_FlatNumForName() into the "flats" range
+    i = -1;
+    for (j = firstflat; j <= lastflat; j++)
+    {
+	if (!strncasecmp(lumpinfo[j].name, name, 8))
+	{
+	    i = j;
+	    break;
+	}
+    }
 
     if (i == -1)
     {
