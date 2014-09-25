@@ -457,7 +457,9 @@ void P_PlayerThink (player_t* player)
         {
             if(player->weaponowned[wp_torpedo] && player->readyweapon == wp_mauler)
             {
-                if(player->ammo[weaponinfo[am_cell].ammo] >= 30)
+                // haleyjd 20140924: bug fix - using wrong enum value am_cell
+                // caused this to check the missile launcher for rocket ammo
+                if(player->ammo[weaponinfo[wp_torpedo].ammo] >= 30)
                     newweapon = wp_torpedo;
             }
         }
