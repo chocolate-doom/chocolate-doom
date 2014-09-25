@@ -34,6 +34,7 @@ extern boolean crispy_flashinghom;
 extern boolean crispy_fliplevels;
 extern boolean crispy_havemap33;
 extern boolean crispy_havessg;
+extern boolean crispy_nwtmerge;
 
 extern int crispy_automapstats;
 extern int crispy_coloredhud;

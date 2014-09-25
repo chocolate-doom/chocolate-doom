@@ -150,6 +150,7 @@ boolean         crispy_flashinghom = false;
 boolean         crispy_fliplevels = false;
 boolean         crispy_havemap33 = false;
 boolean         crispy_havessg = false;
+boolean         crispy_nwtmerge = false;
 
 void D_ConnectNetGame(void);
 void D_CheckNetGame(void);
@@ -1703,6 +1704,12 @@ void D_DoomMain (void)
 	    crispy_coloredblood = 0 | ((i >= 0 && !strcmp(basename(lumpinfo[i].wad_file->path), iwadbasename)) << 5);
 	}
     }
+
+    // [crispy] check for NWT-style merging
+    crispy_nwtmerge =
+	M_CheckParmWithArgs("-nwtmerge", 1) ||
+	M_CheckParmWithArgs("-af", 1) ||
+	M_CheckParmWithArgs("-aa", 1);
 
 #ifdef FEATURE_MULTIPLAYER
     printf ("NET_Init: Init network subsystem.\n");
