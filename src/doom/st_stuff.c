@@ -1364,7 +1364,9 @@ void ST_drawWidgets(boolean refresh)
     // used by w_frags widget
     st_fragson = deathmatch && st_statusbaron; 
 
-    dp_pretrans = cr[CR_TORED];;
+    if (crispy_pretrans & 1)
+	dp_pretrans = cr[CR_TORED];
+
     dp_translation = ST_WidgetColor(hudcolor_ammo);
     STlib_updateNum(&w_ready, refresh);
     V_ClearDPTranslation();
@@ -1387,7 +1389,9 @@ void ST_drawWidgets(boolean refresh)
     dp_translation = ST_WidgetColor(hudcolor_armor);
     STlib_updatePercent(&w_armor, refresh || screenblocks >= CRISPY_HUD);
     V_ClearDPTranslation();
-    dp_pretrans = NULL;
+
+    if (dp_pretrans)
+	dp_pretrans = NULL;
 
     if (screenblocks < CRISPY_HUD || automapactive)
     {

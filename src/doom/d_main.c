@@ -150,6 +150,7 @@ boolean         crispy_flashinghom = false;
 boolean         crispy_fliplevels = false;
 boolean         crispy_havemap33 = false;
 boolean         crispy_havessg = false;
+uint8_t         crispy_pretrans = 0;
 
 void D_ConnectNetGame(void);
 void D_CheckNetGame(void);
@@ -1691,6 +1692,17 @@ void D_DoomMain (void)
 		!strcmp(basename(lumpinfo[i].wad_file->path), basename(iwadfile))) &&
 	    ((i = W_CheckNumForName("headg0")) < 0 || // [crispy] Cacodemon
 		!strcmp(basename(lumpinfo[i].wad_file->path), basename(iwadfile))) ;
+    }
+
+    // [crispy] check for modified status bar numbers and HU font
+    {
+	int i;
+
+	i = W_CheckNumForName("sttnum0"); // [crispy] status bar '0'
+	crispy_pretrans |= (!!strcmp(basename(lumpinfo[i].wad_file->path), basename(iwadfile)));
+
+	i = W_CheckNumForName("stcfn065"); // [crispy] HU font 'A'
+	crispy_pretrans |= (!!strcmp(basename(lumpinfo[i].wad_file->path), basename(iwadfile))) << 1;
     }
 
 #ifdef FEATURE_MULTIPLAYER

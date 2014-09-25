@@ -48,7 +48,7 @@ void CompatibilitySettings(void)
     TXT_AddWidgets(window,
                    TXT_NewCheckBox("Enable translucency",
                                    &crispy_translucency),
-                   TXT_NewCheckBox("Show colored numbers in status bar",
+                   TXT_NewCheckBox("Colorize status bar numbers and messages",
                                    &crispy_coloredhud),
                    TXT_NewCheckBox("Show level stats in automap",
                                    &crispy_automapstats),
