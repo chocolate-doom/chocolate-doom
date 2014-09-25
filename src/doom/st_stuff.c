@@ -1268,6 +1268,7 @@ enum
 {
     hudcolor_ammo,
     hudcolor_health,
+    hudcolor_frags,
     hudcolor_armor
 } hudcolor_t;
 
@@ -1318,6 +1319,19 @@ static byte* ST_WidgetColor(int i)
                 return cr[CR_GREEN];
             else
                 return cr[CR_BLUE2];
+
+            break;
+        }
+        case hudcolor_frags:
+        {
+            int frags = st_fragscount;
+
+            if (frags < 0)
+                return cr[CR_RED];
+            else if (frags == 0)
+                return cr[CR_GOLD];
+            else
+                return cr[CR_GREEN];
 
             break;
         }
@@ -1403,7 +1417,9 @@ void ST_drawWidgets(boolean refresh)
     for (i=0;i<3;i++)
 	STlib_updateMultIcon(&w_keyboxes[i], refresh || screenblocks >= CRISPY_HUD);
 
+    dp_translation = ST_WidgetColor(hudcolor_frags);
     STlib_updateNum(&w_frags, refresh || screenblocks >= CRISPY_HUD);
+    V_ClearDPTranslation();
 
 }
 
