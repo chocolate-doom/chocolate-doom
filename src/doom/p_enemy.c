@@ -1513,7 +1513,7 @@ A_PainShootSkull
     }
 		
     // [crispy] Lost Souls bleed Puffs
-    if (crispy_coloredblood)
+    if (crispy_coloredblood & (1 << 3))
 	newmobj->flags |= MF_NOBLOOD;
 
     newmobj->target = actor->target;

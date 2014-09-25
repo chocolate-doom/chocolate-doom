@@ -972,15 +972,20 @@ int R_FlatNumForName (char* name)
     int		i, j;
     char	namet[9];
 
-    // [crispy] restrict lump numbers returned by
-    // R_FlatNumForName() into the "flats" range
-    i = -1;
-    for (j = firstflat; j <= lastflat; j++)
+    if (crispy_nwtmerge)
+    i = W_CheckNumForName (name);
+    else
     {
-	if (!strncasecmp(lumpinfo[j].name, name, 8))
+	// [crispy] restrict lump numbers returned by
+	// R_FlatNumForName() into the "flats" range
+	i = -1;
+	for (j = firstflat; j <= lastflat; j++)
 	{
-	    i = j;
-	    break;
+	    if (!strncasecmp(lumpinfo[j].name, name, 8))
+	    {
+		i = j;
+		break;
+	    }
 	}
     }
 
