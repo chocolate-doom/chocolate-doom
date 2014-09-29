@@ -150,6 +150,7 @@ typedef struct
     
     // hotkey in menu
     char	alphaKey;			
+    char	*alttext; // [crispy] alternative text for the Options menu
 } menuitem_t;
 
 
@@ -195,12 +196,14 @@ void M_ChangeMessages(int choice);
 void M_ChangeSensitivity(int choice);
 static void M_ChangeSensitivity_y(int choice);
 static void M_MouseInvert(int choice);
+static void M_CrispyToggleColoredhud(int choice);
 void M_SfxVol(int choice);
 void M_MusicVol(int choice);
 void M_ChangeDetail(int choice);
 void M_SizeDisplay(int choice);
 void M_StartGame(int choice);
 static void M_Mouse(int choice);
+static void M_Crispness(int choice);
 void M_Sound(int choice);
 
 void M_FinishReadThis(int choice);
@@ -217,6 +220,7 @@ void M_DrawNewGame(void);
 void M_DrawEpisode(void);
 void M_DrawOptions(void);
 static void M_DrawMouse(void);
+static void M_DrawCrispness(void);
 void M_DrawSound(void);
 void M_DrawLoad(void);
 void M_DrawSave(void);
@@ -374,18 +378,20 @@ enum
     option_empty1,
     mousesens,
     soundvol,
+    crispness, // [crispy] crispness menu
     opt_end
 } options_e;
 
 menuitem_t OptionsMenu[]=
 {
-    {1,"M_ENDGAM",	M_EndGame,'e'},
-    {1,"M_MESSG",	M_ChangeMessages,'m'},
-    {1,"M_DETAIL",	M_ChangeDetail,'g'},
-    {2,"M_SCRNSZ",	M_SizeDisplay,'s'},
+    {1,"M_ENDGAM",	M_EndGame,'e', "End Game"},
+    {1,"M_MESSG",	M_ChangeMessages,'m', "Messages: "},
+    {1,"M_DETAIL",	M_ChangeDetail,'g', "Graphic Detail: "},
+    {2,"M_SCRNSZ",	M_SizeDisplay,'s', "Screen Size"},
     {-1,"",0,'\0'},
-    {1,"M_MSENS",	M_Mouse,'m'}, // [crispy] mouse sensitivity menu
-    {1,"M_SVOL",	M_Sound,'s'}
+    {1,"M_MSENS",	M_Mouse,'m', "Mouse Sensitivity"}, // [crispy] mouse sensitivity menu
+    {1,"M_SVOL",	M_Sound,'s', "Sound Volume"},
+    {1,"M_CRISPY",	M_Crispness,'c', "Crispness"} // [crispy] crispness menu
 };
 
 menu_t  OptionsDef =
@@ -425,6 +431,28 @@ static menu_t  MouseDef =
     MouseMenu,
     M_DrawMouse,
     80,64,
+    0
+};
+
+// [crispy] crispness menu
+enum
+{
+    crispness_coloredhud,
+    crispness_end
+} crispness_e;
+
+static menuitem_t CrispnessMenu[]=
+{
+    {1,"",	M_CrispyToggleColoredhud,'c'},
+};
+
+static menu_t  CrispnessDef =
+{
+    crispness_end,
+    &OptionsDef,
+    CrispnessMenu,
+    M_DrawCrispness,
+    48,48,
     0
 };
 
@@ -1095,12 +1123,27 @@ void M_DrawOptions(void)
         detail_patch = detailNames[detailLevel];
     }
 
+// [crispy] no patches are drawn in the Options menu anymore
+/*
     V_DrawPatchDirect(OptionsDef.x + 175, OptionsDef.y + LINEHEIGHT * detail,
 		      W_CacheLumpName(DEH_String(detail_patch), PU_CACHE));
+*/
 
+    M_WriteText(OptionsDef.x + M_StringWidth("Graphic Detail: "),
+                OptionsDef.y + LINEHEIGHT * detail + 8 - (M_StringHeight("HighLow")/2),
+                detailLevel ? "\x1b\x34Low" : "\x1b\x34High");
+    V_ClearDPTranslation();
+
+// [crispy] no patches are drawn in the Options menu anymore
+/*
     V_DrawPatchDirect(OptionsDef.x + 120, OptionsDef.y + LINEHEIGHT * messages,
                       W_CacheLumpName(DEH_String(msgNames[showMessages]),
                                       PU_CACHE));
+*/
+    M_WriteText(OptionsDef.x + M_StringWidth("Messages: "),
+                OptionsDef.y + LINEHEIGHT * messages + 8 - (M_StringHeight("OnOff")/2),
+                showMessages ? "\x1b\x34On" : "\x1b\x34Off");
+    V_ClearDPTranslation();
 
     M_DrawThermo(OptionsDef.x,OptionsDef.y+LINEHEIGHT*(scrnsize+1),
 		 9 + (crispy_translucency ? 2 : 1),screenSize); // [crispy] Crispy HUD
@@ -1140,6 +1183,33 @@ static void M_DrawMouse(void)
 	dp_pretrans = NULL;
 }
 
+// [crispy] crispness menu
+static void M_DrawCrispness(void)
+{
+    char crispy_coloredhud_text[48];
+
+    if (crispy_pretrans & 2)
+	dp_pretrans = cr[CR_TORED];
+    dp_translation = cr[CR_GOLD];
+
+    M_WriteText(160 - M_StringWidth("Crispness") / 2, 20, "\x1b\x36""Crispness");
+
+    V_ClearDPTranslation();
+
+    M_snprintf(crispy_coloredhud_text,
+               sizeof(crispy_coloredhud_text),
+               "\x1b%c""Colorize status bar and fonts: \x1b%c%s", '0' + CR_NONE, '0' + CR_GREEN,
+               crispy_coloredhud ? "On" : "Off");
+    M_WriteText(CrispnessDef.x,
+                CrispnessDef.y + LINEHEIGHT * crispness_coloredhud + 6,
+                crispy_coloredhud_text);
+
+    V_ClearDPTranslation();
+
+    if (dp_pretrans)
+	dp_pretrans = NULL;
+}
+
 void M_Options(int choice)
 {
     M_SetupNextMenu(&OptionsDef);
@@ -1161,6 +1231,11 @@ static void M_Mouse(int choice)
     }
 
     M_SetupNextMenu(&MouseDef);
+}
+
+static void M_Crispness(int choice)
+{
+    M_SetupNextMenu(&CrispnessDef);
 }
 
 
@@ -1378,6 +1453,12 @@ static void M_MouseInvert(int choice)
     mouse_y_invert = 1 - mouse_y_invert;
 }
 
+static void M_CrispyToggleColoredhud(int choice)
+{
+    choice = 0;
+    crispy_coloredhud = !crispy_coloredhud;
+}
+
 
 
 void M_ChangeDetail(int choice)
@@ -1584,6 +1665,8 @@ M_WriteText
 	{
 	    c = *ch++;
 	    dp_translation = (crispy_coloredhud) ? cr[(int) (c - '0')] : NULL;
+	    if (dp_translation == cr[CR_NONE])
+		dp_translation = NULL;
 	    continue;
 	}
 		
@@ -2375,6 +2458,14 @@ void M_Drawer (void)
 	        (currentMenu == &MainDef && i == loadgame && netgame))
 	        dp_translation = (byte *) &colormaps[16*256];
 
+	    if (currentMenu == &OptionsDef)
+	    {
+		char *alttext = currentMenu->menuitems[i].alttext;
+
+		if (alttext)
+		    M_WriteText(x, y+8-(M_StringHeight(alttext)/2), alttext);
+	    }
+	    else
 	    V_DrawPatchDirect (x, y, W_CacheLumpName(name, PU_CACHE));
 
 	    V_ClearDPTranslation();
