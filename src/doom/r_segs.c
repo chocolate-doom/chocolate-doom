@@ -167,7 +167,29 @@ R_RenderMaskedSegRange
 		dc_colormap = walllights[index];
 	    }
 			
-	    sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
+	    // [crispy] apply Killough's int64 sprtopscreen overflow fix
+	    // from winmbf/Source/r_segs.c:174-191
+	    // killough 3/2/98:
+	    //
+	    // This calculation used to overflow and cause crashes in Doom:
+	    //
+	    // sprtopscreen = centeryfrac - FixedMul(dc_texturemid, spryscale);
+	    //
+	    // This code fixes it, by using double-precision intermediate
+	    // arithmetic and by skipping the drawing of 2s normals whose
+	    // mapping to screen coordinates is totally out of range:
+
+	    {
+		int64_t t = ((int64_t) centeryfrac << FRACBITS) -
+		             (int64_t) dc_texturemid * spryscale;
+
+		if (t + (int64_t) textureheight[texnum] * spryscale < 0 ||
+		    t > (int64_t) SCREENHEIGHT << FRACBITS*2)
+			continue; // skip if the texture is out of screen's range
+
+		sprtopscreen = (long)(t >> FRACBITS);
+	    }
+
 	    dc_iscale = 0xffffffffu / (unsigned)spryscale;
 	    
 	    // draw the texture
