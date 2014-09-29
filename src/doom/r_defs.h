@@ -128,6 +128,9 @@ typedef	struct
     int			linecount;
     struct line_s**	lines;	// [linecount] size
     
+    // [crispy] WiggleFix: [kb] for R_FixWiggle()
+    int		cachedheight;
+    int		scaleindex;
 } sector_t;
 
 
