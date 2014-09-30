@@ -667,10 +667,10 @@ void R_InitTextures (void)
     if (I_ConsoleStdout())
     {
         printf("[");
-        for (i = 0; i < temp3 + 9 + crispy_translucency ? 1 : 0; i++) // [crispy] one more for R_InitTranMap()
+        for (i = 0; i < temp3 + 9 + 1; i++) // [crispy] one more for R_InitTranMap()
             printf(" ");
         printf("]");
-        for (i = 0; i < temp3 + 10 + crispy_translucency ? 1 : 0; i++) // [crispy] one more for R_InitTranMap()
+        for (i = 0; i < temp3 + 10 + 1; i++) // [crispy] one more for R_InitTranMap()
             printf("\b");
     }
 	
@@ -956,8 +956,7 @@ void R_InitData (void)
     printf (".");
     R_InitSpriteLumps ();
     printf (".");
-    if (crispy_translucency)
-	R_InitTranMap(); // [crispy] prints a mark itself
+    R_InitTranMap(); // [crispy] prints a mark itself
     R_InitColormaps ();
 }
 
