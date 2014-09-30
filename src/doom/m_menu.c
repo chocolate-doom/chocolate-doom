@@ -121,6 +121,7 @@ boolean			menuactive;
 
 #define SKULLXOFF		-32
 #define LINEHEIGHT		16
+#define CRISPY_LINEHEIGHT	12
 
 extern boolean		sendpause;
 char			savegamestrings[10][SAVESTRINGSIZE];
@@ -202,7 +203,9 @@ static void M_CrispyToggleColoredhud(int choice);
 static void M_CrispyToggleAutomapstats(int choice);
 static void M_CrispyToggleSecretmessage(int choice);
 static void M_CrispyToggleCrosshair(int choice);
+static void M_CrispyToggleFreelook(int choice);
 static void M_CrispyToggleFreeaim(int choice);
+static void M_CrispyToggleJumping(int choice);
 static void M_CrispyToggleOverunder(int choice);
 static void M_CrispyToggleRecoil(int choice);
 void M_SfxVol(int choice);
@@ -452,7 +455,9 @@ enum
     crispness_automapstats,
     crispness_secretmessage,
     crispness_crosshair,
+    crispness_freelook,
     crispness_freeaim,
+    crispness_jumping,
     crispness_overunder,
     crispness_recoil,
     crispness_end
@@ -465,7 +470,9 @@ static menuitem_t CrispnessMenu[]=
     {1,"",	M_CrispyToggleAutomapstats,'a'},
     {1,"",	M_CrispyToggleSecretmessage,'s'},
     {1,"",	M_CrispyToggleCrosshair,'l'},
-    {1,"",	M_CrispyToggleFreeaim,'f'},
+    {1,"",	M_CrispyToggleFreelook,'f'},
+    {1,"",	M_CrispyToggleFreeaim,'v'},
+    {1,"",	M_CrispyToggleJumping,'j'},
     {1,"",	M_CrispyToggleOverunder,'o'},
     {1,"",	M_CrispyToggleRecoil,'r'},
 };
@@ -1226,49 +1233,61 @@ static void M_DrawCrispness(void)
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
                "\x1b%c""Enable translucency: \x1b%c""%s", '0' + CR_NONE, '0' + CR_GREEN,
                crispy_translucency ? "On" : "Off");
-    M_WriteText(CrispnessDef.x, CrispnessDef.y + LINEHEIGHT * crispness_translucency + 6,
+    M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_translucency + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "\x1b%c""Colorize status bar and fonts: \x1b%c""%s", '0' + CR_NONE, '0' + CR_GREEN,
+               "\x1b%c""Colorize status bar and texts: \x1b%c""%s", '0' + CR_NONE, '0' + CR_GREEN,
                crispy_coloredhud ? "On" : "Off");
-    M_WriteText(CrispnessDef.x, CrispnessDef.y + LINEHEIGHT * crispness_coloredhud + 6,
+    M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_coloredhud + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
                "\x1b%c""Level Stats in Automap: \x1b%c""%s", '0' + CR_NONE, '0' + CR_GREEN,
                crispy_automapstats ? "On" : "Off");
-    M_WriteText(CrispnessDef.x, CrispnessDef.y + LINEHEIGHT * crispness_automapstats + 6,
+    M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_automapstats + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
                "\x1b%c""\"Secret Revealed\" Message: \x1b%c""%s", '0' + CR_NONE, '0' + CR_GREEN,
                crispy_secretmessage ? "On" : "Off");
-    M_WriteText(CrispnessDef.x, CrispnessDef.y + LINEHEIGHT * crispness_secretmessage + 6,
+    M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_secretmessage + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
                "\x1b%c""Laser Pointer: \x1b%c""%s", '0' + CR_NONE, '0' + CR_GREEN,
                crispy_crosshair ? "On" : "Off");
-    M_WriteText(CrispnessDef.x, CrispnessDef.y + LINEHEIGHT * crispness_crosshair + 6,
+    M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_crosshair + 6,
+                crispy_menu_text);
+
+    M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
+               "\x1b%c""Allow Free Look: \x1b%c""%s", '0' + CR_NONE, '0' + CR_GREEN,
+               crispy_freelook ? "On" : "Off");
+    M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_freelook + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
                "\x1b%c""Vertical Aiming: \x1b%c""%s", '0' + CR_NONE, '0' + CR_GREEN,
                crispy_freeaim ? "On" : "Off");
-    M_WriteText(CrispnessDef.x, CrispnessDef.y + LINEHEIGHT * crispness_freeaim + 6,
+    M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_freeaim + 6,
+                crispy_menu_text);
+
+    M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
+               "\x1b%c""Allow Jumping: \x1b%c""%s", '0' + CR_NONE, '0' + CR_GREEN,
+               crispy_jump ? "On" : "Off");
+    M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_jumping + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
                "\x1b%c""Walk over/under Monsters: \x1b%c""%s", '0' + CR_NONE, '0' + CR_GREEN,
                crispy_overunder ? "On" : "Off");
-    M_WriteText(CrispnessDef.x, CrispnessDef.y + LINEHEIGHT * crispness_overunder + 6,
+    M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_overunder + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
                "\x1b%c""Weapon Recoil: \x1b%c""%s", '0' + CR_NONE, '0' + CR_GREEN,
                crispy_recoil ? "On" : "Off");
-    M_WriteText(CrispnessDef.x, CrispnessDef.y + LINEHEIGHT * crispness_recoil + 6,
+    M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_recoil + 6,
                 crispy_menu_text);
 
     V_ClearDPTranslation();
@@ -1562,10 +1581,24 @@ static void M_CrispyToggleCrosshair(int choice)
     crispy_crosshair = 1 - crispy_crosshair;
 }
 
+static void M_CrispyToggleFreelook(int choice)
+{
+    choice = 0;
+    crispy_freelook = 1 - crispy_freelook;
+
+    players2[consoleplayer].lookdir = 0;
+}
+
 static void M_CrispyToggleFreeaim(int choice)
 {
     choice = 0;
     crispy_freeaim = 1 - crispy_freeaim;
+}
+
+static void M_CrispyToggleJumping(int choice)
+{
+    choice = 0;
+    crispy_jump = 1 - crispy_jump;
 }
 
 static void M_CrispyToggleOverunder(int choice)
@@ -2595,6 +2628,13 @@ void M_Drawer (void)
 
     
     // DRAW SKULL
+    if (currentMenu == &CrispnessDef)
+    {
+    V_DrawPatchDirect(x + SKULLXOFF, currentMenu->y - 5 + itemOn*CRISPY_LINEHEIGHT,
+		      W_CacheLumpName(DEH_String(skullName[whichSkull]),
+				      PU_CACHE));
+    }
+    else
     V_DrawPatchDirect(x + SKULLXOFF, currentMenu->y - 5 + itemOn*LINEHEIGHT,
 		      W_CacheLumpName(DEH_String(skullName[whichSkull]),
 				      PU_CACHE));
