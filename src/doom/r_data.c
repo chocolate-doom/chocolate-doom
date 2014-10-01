@@ -37,6 +37,7 @@
 
 
 #include "r_data.h"
+#include "v_trans.h" // [crispy] tranmap, CRMAX
 
 //
 // Graphics.
@@ -810,7 +811,6 @@ enum {
     r, g, b
 } rgb_t;
 
-extern byte *tranmap; // filter percent
 int tran_filter_pct = 66;
 
 void R_InitTranMap()
@@ -938,6 +938,21 @@ void R_InitColormaps (void)
     //  256 byte align tables.
     lump = W_GetNumForName(DEH_String("COLORMAP"));
     colormaps = W_CacheLumpNum(lump, PU_STATIC);
+
+    // [crispy] initialize colormaps strings array
+    {
+	char c[3];
+	int i;
+
+	if (!crstr)
+	    crstr = malloc(CRMAX * sizeof(*crstr));
+
+	for (i = 0; i < CRMAX; i++)
+	{
+	    M_snprintf(c, sizeof(c), "\x1b%c", '0' + i);
+	    crstr[i] = strdup(c);
+	}
+    }
 }
 
 

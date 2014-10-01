@@ -1162,7 +1162,7 @@ void M_DrawOptions(void)
 
     M_WriteText(OptionsDef.x + M_StringWidth("Graphic Detail: "),
                 OptionsDef.y + LINEHEIGHT * detail + 8 - (M_StringHeight("HighLow")/2),
-                detailLevel ? "\x1b\x34""Low" : "\x1b\x34""High");
+                detailLevel ? "Low" : "High");
 
 // [crispy] no patches are drawn in the Options menu anymore
 /*
@@ -1172,7 +1172,7 @@ void M_DrawOptions(void)
 */
     M_WriteText(OptionsDef.x + M_StringWidth("Messages: "),
                 OptionsDef.y + LINEHEIGHT * messages + 8 - (M_StringHeight("OnOff")/2),
-                showMessages ? "\x1b\x34""On" : "\x1b\x34""Off");
+                showMessages ? "On" : "Off");
 
     V_ClearDPTranslation();
 
@@ -1203,13 +1203,13 @@ static void M_DrawMouse(void)
 	dp_pretrans = cr[CR_TORED];
 
     M_snprintf(mouse_menu_text, sizeof(mouse_menu_text),
-               "\x1b%c""Invert Mouse: \x1b%c""%s", '0' + CR_NONE, '0' + CR_GREEN,
+               "%sInvert Mouse: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
                mouse_y_invert ? "On" : "Off");
     M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_invert + 6,
                 mouse_menu_text);
 
     M_snprintf(mouse_menu_text, sizeof(mouse_menu_text),
-               "\x1b%c""Permanent Mouse Look: \x1b%c""%s", '0' + CR_NONE, '0' + CR_GREEN,
+               "%sPermanent Mouse Look: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
                crispy_mouselook ? "On" : "Off");
     M_WriteText(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_look + 6,
                 mouse_menu_text);
@@ -1228,64 +1228,66 @@ static void M_DrawCrispness(void)
     if (crispy_pretrans & 2)
 	dp_pretrans = cr[CR_TORED];
 
-    M_WriteText(160 - M_StringWidth("Crispness") / 2, 20, "\x1b\x36""Crispness");
+    M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
+               "%sCrispness", crstr[CR_GOLD]);
+    M_WriteText(160 - M_StringWidth("Crispness") / 2, 20, crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "\x1b%c""Enable translucency: \x1b%c""%s", '0' + CR_NONE, '0' + CR_GREEN,
+               "%sEnable translucency: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
                crispy_translucency ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_translucency + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "\x1b%c""Colorize status bar and texts: \x1b%c""%s", '0' + CR_NONE, '0' + CR_GREEN,
+               "%sColorize status bar and texts: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
                crispy_coloredhud ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_coloredhud + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "\x1b%c""Level Stats in Automap: \x1b%c""%s", '0' + CR_NONE, '0' + CR_GREEN,
+               "%sLevel Stats in Automap: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
                crispy_automapstats ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_automapstats + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "\x1b%c""\"Secret Revealed\" Message: \x1b%c""%s", '0' + CR_NONE, '0' + CR_GREEN,
+               "%s\"Secret Revealed\" Message: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
                crispy_secretmessage ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_secretmessage + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "\x1b%c""Laser Pointer: \x1b%c""%s", '0' + CR_NONE, '0' + CR_GREEN,
+               "%sLaser Pointer: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
                crispy_crosshair ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_crosshair + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "\x1b%c""Allow Free Look: \x1b%c""%s", '0' + CR_NONE, '0' + CR_GREEN,
+               "%sAllow Free Look: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
                crispy_freelook ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_freelook + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "\x1b%c""Vertical Aiming: \x1b%c""%s", '0' + CR_NONE, '0' + CR_GREEN,
+               "%sVertical Aiming: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
                crispy_freeaim ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_freeaim + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "\x1b%c""Allow Jumping: \x1b%c""%s", '0' + CR_NONE, '0' + CR_GREEN,
+               "%sAllow Jumping: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
                crispy_jump ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_jumping + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "\x1b%c""Walk over/under Monsters: \x1b%c""%s", '0' + CR_NONE, '0' + CR_GREEN,
+               "%sWalk over/under Monsters: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
                crispy_overunder ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_overunder + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "\x1b%c""Weapon Recoil: \x1b%c""%s", '0' + CR_NONE, '0' + CR_GREEN,
+               "%sWeapon Recoil: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
                crispy_recoil ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_recoil + 6,
                 crispy_menu_text);
@@ -1818,8 +1820,6 @@ M_WriteText
 	{
 	    c = *ch++;
 	    dp_translation = (crispy_coloredhud) ? cr[(int) (c - '0')] : NULL;
-	    if (dp_translation == cr[CR_NONE])
-		dp_translation = NULL;
 	    continue;
 	}
 		

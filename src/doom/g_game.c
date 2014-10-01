@@ -415,8 +415,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
             joybspeed = 29;
         }
 
-        M_snprintf(autorunmsg, sizeof(autorunmsg), "ALWAYS RUN \x1b%c%s",
-            '0' + CR_GREEN,
+        M_snprintf(autorunmsg, sizeof(autorunmsg), "ALWAYS RUN %s%s",
+            crstr[CR_GREEN],
             (joybspeed >= MAX_JOY_BUTTONS) ? "ON" : "OFF");
         players[consoleplayer].message = autorunmsg;
 
