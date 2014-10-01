@@ -1269,26 +1269,26 @@ static void M_DrawCrispness(void)
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "%sVertical Aiming: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
-               crispy_freeaim ? "On" : "Off");
+               "%sVertical Aiming: %s%s", uncrispy ? crstr[CR_DARK] : crstr[CR_NONE], uncrispy ? crstr[CR_DARK] : crstr[CR_GREEN],
+               crispy_freeaim && !uncrispy ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_freeaim + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "%sAllow Jumping: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
-               crispy_jump ? "On" : "Off");
+               "%sAllow Jumping: %s%s", uncrispy ? crstr[CR_DARK] : crstr[CR_NONE], uncrispy ? crstr[CR_DARK] : crstr[CR_GREEN],
+               crispy_jump && !uncrispy ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_jumping + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "%sWalk over/under Monsters: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
-               crispy_overunder ? "On" : "Off");
+               "%sWalk over/under Monsters: %s%s", uncrispy ? crstr[CR_DARK] : crstr[CR_NONE], uncrispy ? crstr[CR_DARK] : crstr[CR_GREEN],
+               crispy_overunder && !uncrispy ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_overunder + 6,
                 crispy_menu_text);
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
-               "%sWeapon Recoil: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
-               crispy_recoil ? "On" : "Off");
+               "%sWeapon Recoil: %s%s", uncrispy ? crstr[CR_DARK] : crstr[CR_NONE], uncrispy ? crstr[CR_DARK] : crstr[CR_GREEN],
+               crispy_recoil && !uncrispy ? "On" : "Off");
     M_WriteText(CrispnessDef.x, CrispnessDef.y + CRISPY_LINEHEIGHT * crispness_recoil + 6,
                 crispy_menu_text);
 
@@ -1593,24 +1593,36 @@ static void M_CrispyToggleFreelook(int choice)
 
 static void M_CrispyToggleFreeaim(int choice)
 {
+    if (uncrispy)
+	return;
+
     choice = 0;
     crispy_freeaim = 1 - crispy_freeaim;
 }
 
 static void M_CrispyToggleJumping(int choice)
 {
+    if (uncrispy)
+	return;
+
     choice = 0;
     crispy_jump = 1 - crispy_jump;
 }
 
 static void M_CrispyToggleOverunder(int choice)
 {
+    if (uncrispy)
+	return;
+
     choice = 0;
     crispy_overunder = 1 - crispy_overunder;
 }
 
 static void M_CrispyToggleRecoil(int choice)
 {
+    if (uncrispy)
+	return;
+
     choice = 0;
     crispy_recoil = 1 - crispy_recoil;
 }
