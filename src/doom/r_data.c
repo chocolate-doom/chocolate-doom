@@ -953,7 +953,13 @@ void R_InitColormaps (void)
 	    crstr[i] = strdup(c);
 	}
 
-	// [crispy] override static cr_dark[] colormap with WAD content
+	// [crispy] fill cr_none[] colormap with self-references
+	for (i = 0; i < 256; i++)
+	{
+	    cr[CR_NONE][i] = i;
+	}
+
+	// [crispy] fill cr_dark[] colormap with colormaps[16*256] content
 	memcpy(cr[CR_DARK], &colormaps[16*256], 256);
     }
 }
