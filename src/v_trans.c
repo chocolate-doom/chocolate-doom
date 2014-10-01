@@ -255,7 +255,8 @@ static const byte cr_none[]=
      240,241,242,243,244,245,246,247,248,249,250,251,252,253,254,255};
 
 // [crispy] cr_dark[i] = colormaps[16*256+i]
-static const byte cr_dark[]=
+// gets overridden in R_InitColormaps(), thus not "const"
+static byte cr_dark[]=
     {  0,  7,  8,110, 97,  7,  7,  8,  8, 11,127,127,  8, 79,  1,  1,
      137,137,138,139,139,140,141,141,142,142,143, 13,236, 14, 14,237,
       15, 15,238, 44, 44, 47, 47, 47, 47, 47, 47, 47,  2,  2,  2,  2,

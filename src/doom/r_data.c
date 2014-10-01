@@ -952,6 +952,9 @@ void R_InitColormaps (void)
 	    M_snprintf(c, sizeof(c), "\x1b%c", '0' + i);
 	    crstr[i] = strdup(c);
 	}
+
+	// [crispy] override static cr_dark[] colormap with WAD content
+	memcpy(cr[CR_DARK], &colormaps[16*256], 256);
     }
 }
 

@@ -664,7 +664,7 @@ void M_DrawLoad(void)
 
 	// [crispy] shade empty savegame slots
 	if (!strncmp(savegamestrings[i], EMPTYSTRING, strlen(EMPTYSTRING)))
-	    dp_translation = (byte *) &colormaps[16*256];
+	    dp_translation = cr[CR_DARK];
 
 	M_WriteText(LoadDef.x,LoadDef.y+LINEHEIGHT*i,savegamestrings[i]);
 
@@ -1701,7 +1701,7 @@ M_DrawThermo
         M_snprintf(num, 4, "%3d", thermDot);
         M_WriteText(xx + 8, y + 3, num);
         thermDot = thermWidth - 1;
-        dp_translation = (byte *) &colormaps[16*256];
+        dp_translation = cr[CR_DARK];
     }
 
     V_DrawPatchDirect((x + 8) + thermDot * 8, y,
@@ -2621,7 +2621,7 @@ void M_Drawer (void)
 	    if ((currentMenu == &MainDef && i == savegame && !usergame) ||
 	        (currentMenu == &OptionsDef && i == endgame && !usergame) ||
 	        (currentMenu == &MainDef && i == loadgame && netgame))
-	        dp_translation = (byte *) &colormaps[16*256];
+	        dp_translation = cr[CR_DARK];
 
 	    if (currentMenu == &OptionsDef)
 	    {
