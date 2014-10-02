@@ -449,8 +449,8 @@ enum
     load4,
     load5,
     load6,
-    load7,
-    load8,
+    load7, // [crispy] up to 8 savegames
+    load8, // [crispy] up to 8 savegames
     load_end
 } load_e;
 
@@ -462,8 +462,8 @@ menuitem_t LoadMenu[]=
     {1,"", M_LoadSelect,'4'},
     {1,"", M_LoadSelect,'5'},
     {1,"", M_LoadSelect,'6'},
-    {1,"", M_LoadSelect,'7'},
-    {1,"", M_LoadSelect,'8'}
+    {1,"", M_LoadSelect,'7'}, // [crispy] up to 8 savegames
+    {1,"", M_LoadSelect,'8'}  // [crispy] up to 8 savegames
 };
 
 menu_t  LoadDef =
@@ -487,8 +487,8 @@ menuitem_t SaveMenu[]=
     {1,"", M_SaveSelect,'4'},
     {1,"", M_SaveSelect,'5'},
     {1,"", M_SaveSelect,'6'},
-    {1,"", M_SaveSelect,'7'},
-    {1,"", M_SaveSelect,'8'}
+    {1,"", M_SaveSelect,'7'}, // [crispy] up to 8 savegames
+    {1,"", M_SaveSelect,'8'}  // [crispy] up to 8 savegames
 };
 
 menu_t  SaveDef =
