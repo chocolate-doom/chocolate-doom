@@ -130,7 +130,7 @@ char	endstring[160];
 static boolean opldev;
 
 boolean crispy_cleanscreenshot = false;
-extern boolean G_SpeedKeyDown();
+extern inline boolean G_SpeedKeyDown();
 static boolean m_speedkeydown = false;
 
 //

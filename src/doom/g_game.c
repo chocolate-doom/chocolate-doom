@@ -320,6 +320,14 @@ static int G_NextWeapon(int direction)
     return weapon_order_table[i].weapon_num;
 }
 
+// [crispy] holding down the "Run" key may trigger special behavior,
+// e.g. quick exit, clean screenshots, resurrection from savegames
+inline boolean G_SpeedKeyDown()
+{
+    return (key_speed < NUMKEYS && gamekeydown[key_speed]) ||
+           (joybspeed < MAX_JOY_BUTTONS && joybuttons[joybspeed]);
+}
+
 //
 // G_BuildTiccmd
 // Builds a ticcmd from all of the available inputs
@@ -355,8 +363,7 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     // pressing the "run" key will result in walking
     speed = key_speed >= NUMKEYS
          || joybspeed >= MAX_JOY_BUTTONS;
-    speed ^= (key_speed < NUMKEYS && gamekeydown[key_speed])
-         || (joybspeed < MAX_JOY_BUTTONS && joybuttons[joybspeed]);
+    speed ^= G_SpeedKeyDown();
  
     forward = side = look = 0;
     
@@ -1363,13 +1370,6 @@ void G_DeathMatchSpawnPlayer (int playernum)
     // no good spot, so the player will probably get stuck 
     P_SpawnPlayer (&playerstarts[playernum]); 
 } 
-
-// [crispy] holding down the "Run" key may trigger special behavior,
-// e.g. quick exit, clean screenshots, resurrection from savegames
-boolean G_SpeedKeyDown()
-{
-    return (gamekeydown[key_speed] || joybuttons[joybspeed]);
-}
 
 // [crispy] clear the "savename" variable,
 // i.e. restart level from scratch upon resurrection
