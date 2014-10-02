@@ -1378,9 +1378,6 @@ void ST_drawWidgets(boolean refresh)
     // used by w_frags widget
     st_fragson = deathmatch && st_statusbaron; 
 
-    if (crispy_pretrans & 1)
-	dp_pretrans = cr[CR_TORED];
-
     dp_translation = ST_WidgetColor(hudcolor_ammo);
     STlib_updateNum(&w_ready, refresh);
     V_ClearDPTranslation();
@@ -1404,9 +1401,6 @@ void ST_drawWidgets(boolean refresh)
     STlib_updatePercent(&w_armor, refresh || screenblocks >= CRISPY_HUD);
     V_ClearDPTranslation();
 
-    if (dp_pretrans)
-	dp_pretrans = NULL;
-
     if (screenblocks < CRISPY_HUD || automapactive)
     {
     STlib_updateBinIcon(&w_armsbg, refresh);
@@ -1423,15 +1417,9 @@ void ST_drawWidgets(boolean refresh)
     for (i=0;i<3;i++)
 	STlib_updateMultIcon(&w_keyboxes[i], refresh || screenblocks >= CRISPY_HUD);
 
-    if (crispy_pretrans & 1)
-	dp_pretrans = cr[CR_TORED];
     dp_translation = ST_WidgetColor(hudcolor_frags);
-
     STlib_updateNum(&w_frags, refresh || screenblocks >= CRISPY_HUD);
     V_ClearDPTranslation();
-
-    if (dp_pretrans)
-	dp_pretrans = NULL;
 }
 
 void ST_doRefresh(void)

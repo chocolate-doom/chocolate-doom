@@ -151,7 +151,6 @@ boolean         crispy_fliplevels = false;
 boolean         crispy_havemap33 = false;
 boolean         crispy_havessg = false;
 boolean         crispy_nwtmerge = false;
-uint8_t         crispy_pretrans = 0;
 
 void D_ConnectNetGame(void);
 void D_CheckNetGame(void);
@@ -1704,13 +1703,6 @@ void D_DoomMain (void)
 	    i = W_CheckNumForName("bspij0");  // [crispy] Ararchnotron (Thorn Thing)
 	    crispy_coloredblood = 0 | ((i >= 0 && !strcmp(basename(lumpinfo[i].wad_file->path), iwadbasename)) << 5);
 	}
-
-	// [crispy] check for modified status bar numbers and HU font
-	i = W_CheckNumForName("sttnum0"); // [crispy] status bar '0'
-	crispy_pretrans |= (!!strcmp(basename(lumpinfo[i].wad_file->path), iwadbasename));
-
-	i = W_CheckNumForName("stcfn065"); // [crispy] HU font 'A'
-	crispy_pretrans |= (!!strcmp(basename(lumpinfo[i].wad_file->path), iwadbasename)) << 1;
     }
 
     // [crispy] check for NWT-style merging

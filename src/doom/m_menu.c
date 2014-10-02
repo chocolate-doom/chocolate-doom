@@ -1199,9 +1199,6 @@ static void M_DrawMouse(void)
     M_DrawThermo(MouseDef.x, MouseDef.y + LINEHEIGHT * mouse_empty2,
 		 21, mouseSensitivity_y);
 
-    if (crispy_pretrans & 2)
-	dp_pretrans = cr[CR_TORED];
-
     M_snprintf(mouse_menu_text, sizeof(mouse_menu_text),
                "%sInvert Mouse: %s%s", crstr[CR_NONE], crstr[CR_GREEN],
                mouse_y_invert ? "On" : "Off");
@@ -1215,18 +1212,12 @@ static void M_DrawMouse(void)
                 mouse_menu_text);
 
     V_ClearDPTranslation();
-
-    if (dp_pretrans)
-	dp_pretrans = NULL;
 }
 
 // [crispy] crispness menu
 static void M_DrawCrispness(void)
 {
     char crispy_menu_text[48];
-
-    if (crispy_pretrans & 2)
-	dp_pretrans = cr[CR_TORED];
 
     M_snprintf(crispy_menu_text, sizeof(crispy_menu_text),
                "%sCrispness", crstr[CR_GOLD]);
@@ -1293,9 +1284,6 @@ static void M_DrawCrispness(void)
                 crispy_menu_text);
 
     V_ClearDPTranslation();
-
-    if (dp_pretrans)
-	dp_pretrans = NULL;
 }
 
 void M_Options(int choice)

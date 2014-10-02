@@ -507,9 +507,6 @@ void HU_Drawer(void)
     if (crispy_translucency && screenblocks > CRISPY_HUD && !automapactive)
 	dp_translucent = true;
 
-    if (crispy_pretrans & 2)
-	dp_pretrans = cr[CR_TORED];
-
     V_ClearDPTranslation();
     HUlib_drawSText(&w_message);
     dp_translation = cr[CR_GOLD];
@@ -603,9 +600,6 @@ void HU_Drawer(void)
 
     V_ClearDPTranslation();
     }
-
-    if (dp_pretrans)
-	dp_pretrans = NULL;
 }
 
 void HU_Erase(void)
