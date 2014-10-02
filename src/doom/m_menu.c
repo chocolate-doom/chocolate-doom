@@ -449,6 +449,8 @@ enum
     load4,
     load5,
     load6,
+    load7,
+    load8,
     load_end
 } load_e;
 
@@ -459,7 +461,9 @@ menuitem_t LoadMenu[]=
     {1,"", M_LoadSelect,'3'},
     {1,"", M_LoadSelect,'4'},
     {1,"", M_LoadSelect,'5'},
-    {1,"", M_LoadSelect,'6'}
+    {1,"", M_LoadSelect,'6'},
+    {1,"", M_LoadSelect,'7'},
+    {1,"", M_LoadSelect,'8'}
 };
 
 menu_t  LoadDef =
@@ -482,7 +486,9 @@ menuitem_t SaveMenu[]=
     {1,"", M_SaveSelect,'3'},
     {1,"", M_SaveSelect,'4'},
     {1,"", M_SaveSelect,'5'},
-    {1,"", M_SaveSelect,'6'}
+    {1,"", M_SaveSelect,'6'},
+    {1,"", M_SaveSelect,'7'},
+    {1,"", M_SaveSelect,'8'}
 };
 
 menu_t  SaveDef =
