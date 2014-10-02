@@ -131,7 +131,6 @@ static boolean opldev;
 
 boolean crispy_cleanscreenshot = false;
 extern inline boolean G_SpeedKeyDown();
-static boolean m_speedkeydown = false;
 
 //
 // MENU TYPEDEFS
@@ -1281,8 +1280,8 @@ void M_QuitResponse(int key)
 {
     if (key != key_menu_confirm)
 	return;
-    // [crispy] fast exit if "run" key is held down
-    if (!netgame && !G_SpeedKeyDown() && !m_speedkeydown)
+    // [crispy] fast exit -- unconditionally
+    if (!netgame && 0)
     {
 	if (gamemode == commercial)
 	    S_StartSound(NULL,quitsounds2[(gametic>>2)&7]);
@@ -1323,10 +1322,6 @@ static char *M_SelectEndMessage(void)
 
 void M_QuitDOOM(int choice)
 {
-    // [crispy] fast exit if "run" key is held down
-    if (G_SpeedKeyDown() || m_speedkeydown)
-        I_Quit();
-
     DEH_snprintf(endstring, sizeof(endstring), "%s\n\n" DOSY,
                  DEH_String(M_SelectEndMessage()));
 
@@ -1732,10 +1727,6 @@ boolean M_Responder (event_t* ev)
     // "close" button pressed on window?
     if (ev->type == ev_quit)
     {
-        // [crispy] fast exit if "run" key is held down
-        if (G_SpeedKeyDown() || m_speedkeydown)
-            I_Quit();
-
         // First click on close button = bring up quit confirm message.
         // Second click on close button = confirm quit
 
@@ -1860,21 +1851,6 @@ boolean M_Responder (event_t* ev)
 	    {
 		key = ev->data1;
 		ch = ev->data2;
-
-		// [crispy] handle "run" button pressed in menus
-		if (ev->data1 == key_speed)
-		{
-		    m_speedkeydown = 1;
-		}
-	    }
-	    else
-	    // [crispy] handle "run" button released in menus
-	    if (ev->type == ev_keyup)
-	    {
-		if (ev->data1 == key_speed)
-		{
-		    m_speedkeydown = 0;
-		}
 	    }
 	}
     }
