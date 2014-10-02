@@ -457,7 +457,9 @@ void P_PlayerThink (player_t* player)
         {
             if(player->weaponowned[wp_torpedo] && player->readyweapon == wp_mauler)
             {
-                if(player->ammo[weaponinfo[am_cell].ammo] >= 30)
+                // haleyjd 20140924: bug fix - using wrong enum value am_cell
+                // caused this to check the missile launcher for rocket ammo
+                if(player->ammo[weaponinfo[wp_torpedo].ammo] >= 30)
                     newweapon = wp_torpedo;
             }
         }
@@ -776,7 +778,9 @@ boolean P_TossDegninOre(player_t* player)
 
 //
 // P_SpawnTeleportBeacon
+//
 // villsa [STRIFE] new function
+// haleyjd 20140918: bug fixed to propagate allegiance properly.
 //
 boolean P_SpawnTeleportBeacon(player_t* player)
 {
@@ -816,7 +820,7 @@ boolean P_SpawnTeleportBeacon(player_t* player)
     if(P_CheckPosition(beacon, x, y))
     {
         beacon->target = mo;
-        beacon->miscdata = mo->miscdata;
+        beacon->miscdata = (byte)(player->allegiance);
         beacon->angle = (angle << ANGLETOFINESHIFT);
         beacon->momx = FixedMul(finecosine[angle], (5*FRACUNIT));
         beacon->momy = FixedMul(finesine[angle], (5*FRACUNIT));
