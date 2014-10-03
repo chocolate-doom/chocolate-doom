@@ -1284,10 +1284,13 @@ int     quitsounds2[8] =
 
 void M_QuitResponse(int key)
 {
+    extern int show_endoom;
+
     if (key != key_menu_confirm)
 	return;
-    // [crispy] fast exit -- unconditionally
-    if (!netgame && 0)
+
+    // [crispy] play quit sound only if the ENDOOM screen is also shown
+    if (!netgame && show_endoom)
     {
 	if (gamemode == commercial)
 	    S_StartSound(NULL,quitsounds2[(gametic>>2)&7]);
@@ -1306,7 +1309,7 @@ static char *M_SelectEndMessage(void)
 
     // [crispy] enable the original "rude" quit messages (if not
     // playing Chex Quest which is supposed to be a children's game)
-    if (gamemission != pack_chex)
+    if (gamemission != pack_chex && gamemission != pack_hacx)
 	rude = gametic % (2 * NUM_QUITMESSAGES) >= NUM_QUITMESSAGES;
 
     if (logical_gamemission == doom)
@@ -1328,6 +1331,10 @@ static char *M_SelectEndMessage(void)
 
 void M_QuitDOOM(int choice)
 {
+    // [crispy] fast exit if "run" key is held down
+    if (G_SpeedKeyDown())
+	I_Quit();
+
     DEH_snprintf(endstring, sizeof(endstring), "%s\n\n" DOSY,
                  DEH_String(M_SelectEndMessage()));
 
