@@ -662,7 +662,7 @@ ST_Responder (event_t* ev)
 	static char msg[32];
 	int triggeredlines = ST_cheat_spechits();
 
-	M_snprintf(msg, sizeof(msg), "%d%d %sSpecial Line%s Triggered",
+	M_snprintf(msg, sizeof(msg), "%s%d %sSpecial Line%s Triggered",
 	           crstr[CR_GOLD],
 	           triggeredlines, crstr[CR_NONE], (triggeredlines == 1) ? "" : "s");
 	plyr->message = msg;
