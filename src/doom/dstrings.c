@@ -45,12 +45,11 @@ char *doom2_endmsg[] =
   "you're lucky i don't smack\nyou for thinking about leaving.",
 };
 
-// [crispy] enable "rude" quit messages
-#if 1
+#if 0
 
 // UNUSED messages included in the source release
 
-char* rude_endmsg[] =
+char* endmsg[] =
 {
   // DOOM1
   QUITMSG,
