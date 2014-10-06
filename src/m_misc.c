@@ -342,6 +342,8 @@ char *M_StringReplace(const char *haystack, const char *needle,
         }
     }
 
+    *dst = '\0';
+
     return result;
 }
 
