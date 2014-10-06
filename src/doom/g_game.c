@@ -749,6 +749,23 @@ void G_DoLoadLevel (void)
 
     skyflatnum = R_FlatNumForName(DEH_String(SKYFLATNAME));
 
+    // [crispy] correct "Sky never changes in Doom II" bug
+    if (gamemode == commercial)
+    {
+	char *skytexturename;
+
+	if (gamemap < 12)
+	    skytexturename = "SKY1";
+	else if (gamemap < 21)
+	    skytexturename = "SKY2";
+	else
+	    skytexturename = "SKY3";
+
+	skytexturename = DEH_String(skytexturename);
+
+	skytexture = R_TextureNumForName(skytexturename);
+    }
+
     levelstarttic = gametic;        // for time calculation
     
     if (wipegamestate == GS_LEVEL) 
