@@ -383,7 +383,7 @@ static int AllocateMIDIChannel(void)
 // Given a MUS channel number, get the MIDI channel number to use
 // in the outputted file.
 
-static int GetMIDIChannel(int mus_channel)
+static int GetMIDIChannel(int mus_channel, MEMFILE *midioutput)
 {
     // Find the MIDI channel to use for this MUS channel.
     // MUS channel 15 is the percusssion channel.
@@ -400,6 +400,12 @@ static int GetMIDIChannel(int mus_channel)
         if (channel_map[mus_channel] == -1)
         {
             channel_map[mus_channel] = AllocateMIDIChannel();
+
+            // First time using the channel, send an "all notes off"
+            // event. This fixes "The D_DDTBLU disease" described here:
+            // http://www.doomworld.com/vb/source-ports/66802-the
+            WriteChangeController_Valueless(channel_map[mus_channel], 0x7b,
+                                            midioutput);
         }
 
         return channel_map[mus_channel];
@@ -514,7 +520,7 @@ boolean mus2mid(MEMFILE *musinput, MEMFILE *midioutput)
                 return true;
             }
 
-            channel = GetMIDIChannel(eventdescriptor & 0x0F);
+            channel = GetMIDIChannel(eventdescriptor & 0x0F, midioutput);
             event = eventdescriptor & 0x70;
 
             switch (event)
