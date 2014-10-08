@@ -961,6 +961,21 @@ static void SetChannelVolume(opl_channel_data_t *channel, unsigned int volume)
     }
 }
 
+// Handler for the MIDI_CONTROLLER_ALL_NOTES_OFF channel event.
+static void AllNotesOff(opl_channel_data_t *channel, unsigned int param)
+{
+    unsigned int i;
+
+    for (i = 0; i < OPL_NUM_VOICES; ++i)
+    {
+        if (voices[i].channel == channel)
+        {
+            VoiceKeyOff(&voices[i]);
+            ReleaseVoice(&voices[i]);
+        }
+    }
+}
+
 static void ControllerEvent(opl_track_data_t *track, midi_event_t *event)
 {
     unsigned int controller;
@@ -982,6 +997,10 @@ static void ControllerEvent(opl_track_data_t *track, midi_event_t *event)
     {
         case MIDI_CONTROLLER_MAIN_VOLUME:
             SetChannelVolume(channel, param);
+            break;
+
+        case MIDI_CONTROLLER_ALL_NOTES_OFF:
+            AllNotesOff(channel, param);
             break;
 
         default:

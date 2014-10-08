@@ -457,8 +457,7 @@ static void OPL_SDL_PortWrite(opl_port_t port, unsigned int value)
     }
 }
 
-static void OPL_SDL_SetCallback(unsigned int us,
-                                opl_callback_t callback,
+static void OPL_SDL_SetCallback(uint64_t us, opl_callback_t callback,
                                 void *data)
 {
     SDL_LockMutex(callback_queue_mutex);

@@ -522,9 +522,10 @@ EV_BuildStairs
         rtn = 1;
         floor = Z_Malloc (sizeof(*floor), PU_LEVSPEC, 0);
         P_AddThinker (&floor->thinker);
+        sec->tag = 0; // haleyjd 20140919: [STRIFE] clears tag of first stair sector
         sec->specialdata = floor;
         floor->thinker.function.acp1 = (actionf_p1) T_MoveFloor;
-        floor->direction = 1;
+        floor->direction = direction; // haleyjd 20140919: bug fix: direction, not "1"
         floor->sector = sec;
         floor->speed = speed;
         height = sec->floorheight + stairsize;
