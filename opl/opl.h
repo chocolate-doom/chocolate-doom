@@ -110,7 +110,7 @@ void OPL_InitRegisters(void);
 // Set a timer callback.  After the specified number of microseconds
 // have elapsed, the callback will be invoked.
 
-void OPL_SetCallback(unsigned int us, opl_callback_t callback, void *data);
+void OPL_SetCallback(uint64_t us, opl_callback_t callback, void *data);
 
 // Adjust callback times by the specified factor. For example, a value of
 // 0.5 will halve all remaining times.
@@ -132,7 +132,7 @@ void OPL_Unlock(void);
 
 // Block until the specified number of microseconds have elapsed.
 
-void OPL_Delay(unsigned int us);
+void OPL_Delay(uint64_t us);
 
 // Pause the OPL callbacks.
 
