@@ -414,6 +414,7 @@ static char *GetSubstituteMusicFile(void *data, size_t data_len)
 {
     sha1_context_t context;
     sha1_digest_t hash;
+    char *filename;
     int i;
 
     // Don't bother doing a hash if we're never going to find anything.
@@ -427,16 +428,30 @@ static char *GetSubstituteMusicFile(void *data, size_t data_len)
     SHA1_Final(hash, &context);
 
     // Look for a hash that matches.
+    // The substitute mapping list can (intentionally) contain multiple
+    // filename mappings for the same hash. This allows us to try
+    // different files and fall back if our first choice isn't found.
+
+    filename = NULL;
 
     for (i = 0; i < subst_music_len; ++i)
     {
         if (memcmp(hash, subst_music[i].hash, sizeof(hash)) == 0)
         {
-            return subst_music[i].filename;
+            filename = subst_music[i].filename;
+
+            // If the file exists, then use this file in preference to
+            // any fallbacks. But we always return a filename if it's
+            // in the list, even if it's just so we can print an error
+            // message to the user saying it doesn't exist.
+            if (M_FileExists(filename))
+            {
+                break;
+            }
         }
     }
 
-    return NULL;
+    return filename;
 }
 
 // Add a substitute music file to the lookup list.
