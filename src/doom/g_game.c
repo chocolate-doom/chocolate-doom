@@ -1929,27 +1929,32 @@ void
 G_InitNew
 ( skill_t	skill,
   int		episode,
-  int		map ) 
-{ 
+  int		map )
+{
     char *skytexturename;
-    int             i; 
-	 
-    if (paused) 
-    { 
-	paused = false; 
-	S_ResumeSound (); 
-    } 
-	
+    int             i;
 
-    if (skill > sk_nightmare) 
+    if (paused)
+    {
+	paused = false;
+	S_ResumeSound ();
+    }
+
+    /*
+    // Note: This commented-out block of code was added at some point
+    // between the DOS version(s) and the Doom source release. It isn't
+    // found in disassemblies of the DOS version and causes IDCLEV and
+    // the -warp command line parameter to behave differently.
+    // This is left here for posterity.
+
+    if (skill > sk_nightmare)
 	skill = sk_nightmare;
-
 
     // This was quite messy with SPECIAL and commented parts.
     // Supposedly hacks to make the latest edition work.
     // It might not work properly.
     if (episode < 1)
-      episode = 1; 
+      episode = 1;
 
     if ( gamemode == retail )
     {
@@ -1958,62 +1963,60 @@ G_InitNew
     }
     else if ( gamemode == shareware )
     {
-      if (episode > 1) 
+      if (episode > 1)
 	   episode = 1;	// only start episode 1 on shareware
-    }  
+    }
     else
     {
       if (episode > 3)
 	episode = 3;
     }
-    
+    */
 
-  
-    if (map < 1) 
+    if (map < 1)
 	map = 1;
-    
+
     if ( (map > 9)
 	 && ( gamemode != commercial) )
-      map = 9; 
-		 
-    M_ClearRandom (); 
-	 
+      map = 9;
+
+    M_ClearRandom ();
+
     if (skill == sk_nightmare || respawnparm )
 	respawnmonsters = true;
     else
 	respawnmonsters = false;
-		
+
     if (fastparm || (skill == sk_nightmare && gameskill != sk_nightmare) )
-    { 
-	for (i=S_SARG_RUN1 ; i<=S_SARG_PAIN2 ; i++) 
-	    states[i].tics >>= 1; 
-	mobjinfo[MT_BRUISERSHOT].speed = 20*FRACUNIT; 
-	mobjinfo[MT_HEADSHOT].speed = 20*FRACUNIT; 
-	mobjinfo[MT_TROOPSHOT].speed = 20*FRACUNIT; 
-    } 
-    else if (skill != sk_nightmare && gameskill == sk_nightmare) 
-    { 
-	for (i=S_SARG_RUN1 ; i<=S_SARG_PAIN2 ; i++) 
-	    states[i].tics <<= 1; 
-	mobjinfo[MT_BRUISERSHOT].speed = 15*FRACUNIT; 
-	mobjinfo[MT_HEADSHOT].speed = 10*FRACUNIT; 
-	mobjinfo[MT_TROOPSHOT].speed = 10*FRACUNIT; 
-    } 
-	 
-			 
-    // force players to be initialized upon first level load         
-    for (i=0 ; i<MAXPLAYERS ; i++) 
-	players[i].playerstate = PST_REBORN; 
- 
-    usergame = true;                // will be set false if a demo 
-    paused = false; 
-    demoplayback = false; 
-    automapactive = false; 
-    viewactive = true; 
-    gameepisode = episode; 
-    gamemap = map; 
-    gameskill = skill; 
- 
+    {
+	for (i=S_SARG_RUN1 ; i<=S_SARG_PAIN2 ; i++)
+	    states[i].tics >>= 1;
+	mobjinfo[MT_BRUISERSHOT].speed = 20*FRACUNIT;
+	mobjinfo[MT_HEADSHOT].speed = 20*FRACUNIT;
+	mobjinfo[MT_TROOPSHOT].speed = 20*FRACUNIT;
+    }
+    else if (skill != sk_nightmare && gameskill == sk_nightmare)
+    {
+	for (i=S_SARG_RUN1 ; i<=S_SARG_PAIN2 ; i++)
+	    states[i].tics <<= 1;
+	mobjinfo[MT_BRUISERSHOT].speed = 15*FRACUNIT;
+	mobjinfo[MT_HEADSHOT].speed = 10*FRACUNIT;
+	mobjinfo[MT_TROOPSHOT].speed = 10*FRACUNIT;
+    }
+
+    // force players to be initialized upon first level load
+    for (i=0 ; i<MAXPLAYERS ; i++)
+	players[i].playerstate = PST_REBORN;
+
+    usergame = true;                // will be set false if a demo
+    paused = false;
+    demoplayback = false;
+    automapactive = false;
+    viewactive = true;
+    gameepisode = episode;
+    gamemap = map;
+    gameskill = skill;
+
     viewactive = true;
 
     // Set the sky to use.
@@ -2037,32 +2040,32 @@ G_InitNew
     }
     else
     {
-        switch (gameepisode) 
-        { 
+        switch (gameepisode)
+        {
           default:
-          case 1: 
-            skytexturename = "SKY1"; 
-            break; 
-          case 2: 
-            skytexturename = "SKY2"; 
-            break; 
-          case 3: 
-            skytexturename = "SKY3"; 
-            break; 
+          case 1:
+            skytexturename = "SKY1";
+            break;
+          case 2:
+            skytexturename = "SKY2";
+            break;
+          case 3:
+            skytexturename = "SKY3";
+            break;
           case 4:        // Special Edition sky
             skytexturename = "SKY4";
             break;
-        } 
+        }
     }
 
     skytexturename = DEH_String(skytexturename);
 
     skytexture = R_TextureNumForName(skytexturename);
 
-    
-    G_DoLoadLevel (); 
-} 
- 
+
+    G_DoLoadLevel ();
+}
+
 
 //
 // DEMO RECORDING 

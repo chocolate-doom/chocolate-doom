@@ -357,7 +357,7 @@ void OPL_InitRegisters(void)
 // Timer functions.
 //
 
-void OPL_SetCallback(unsigned int us, opl_callback_t callback, void *data)
+void OPL_SetCallback(uint64_t us, opl_callback_t callback, void *data)
 {
     if (driver != NULL)
     {
@@ -409,7 +409,7 @@ static void DelayCallback(void *_delay_data)
     SDL_UnlockMutex(delay_data->mutex);
 }
 
-void OPL_Delay(unsigned int us)
+void OPL_Delay(uint64_t us)
 {
     delay_data_t delay_data;
 
