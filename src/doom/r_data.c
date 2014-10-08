@@ -37,6 +37,7 @@
 
 
 #include "r_data.h"
+#include "v_trans.h" // [crispy] tranmap, CRMAX
 
 //
 // Graphics.
@@ -667,10 +668,10 @@ void R_InitTextures (void)
     if (I_ConsoleStdout())
     {
         printf("[");
-        for (i = 0; i < temp3 + 9 + crispy_translucency ? 1 : 0; i++) // [crispy] one more for R_InitTranMap()
+        for (i = 0; i < temp3 + 9 + 1; i++) // [crispy] one more for R_InitTranMap()
             printf(" ");
         printf("]");
-        for (i = 0; i < temp3 + 10 + crispy_translucency ? 1 : 0; i++) // [crispy] one more for R_InitTranMap()
+        for (i = 0; i < temp3 + 10 + 1; i++) // [crispy] one more for R_InitTranMap()
             printf("\b");
     }
 	
@@ -810,7 +811,6 @@ enum {
     r, g, b
 } rgb_t;
 
-extern byte *tranmap; // filter percent
 int tran_filter_pct = 66;
 
 void R_InitTranMap()
@@ -938,6 +938,30 @@ void R_InitColormaps (void)
     //  256 byte align tables.
     lump = W_GetNumForName(DEH_String("COLORMAP"));
     colormaps = W_CacheLumpNum(lump, PU_STATIC);
+
+    // [crispy] initialize colormaps strings array
+    {
+	char c[3];
+	int i;
+
+	if (!crstr)
+	    crstr = malloc(CRMAX * sizeof(*crstr));
+
+	for (i = 0; i < CRMAX; i++)
+	{
+	    M_snprintf(c, sizeof(c), "\x1b%c", '0' + i);
+	    crstr[i] = strdup(c);
+	}
+
+	// [crispy] fill cr_none[] colormap with self-references
+	for (i = 0; i < 256; i++)
+	{
+	    cr[CR_NONE][i] = i;
+	}
+
+	// [crispy] fill cr_dark[] colormap with colormaps[16*256] content
+	memcpy(cr[CR_DARK], &colormaps[16*256], 256);
+    }
 }
 
 
@@ -956,8 +980,7 @@ void R_InitData (void)
     printf (".");
     R_InitSpriteLumps ();
     printf (".");
-    if (crispy_translucency)
-	R_InitTranMap(); // [crispy] prints a mark itself
+    R_InitTranMap(); // [crispy] prints a mark itself
     R_InitColormaps ();
 }
 

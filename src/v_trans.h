@@ -37,6 +37,8 @@
 
 enum
 {
+    CR_NONE,
+    CR_DARK,
     CR_BRICK,
     CR_TAN,
     CR_GRAY,
@@ -48,10 +50,12 @@ enum
     CR_BLUE2,
     CR_ORANGE,
     CR_YELLOW,
+    CR_TORED,
     CRMAX
 } cr_t;
 
 extern byte *cr[CRMAX];
+extern char **crstr;
 
 extern byte *tranmap;
 

@@ -651,9 +651,9 @@ ST_Responder (event_t* ev)
 	static char msg[32];
 	int killcount = ST_cheat_massacre();
 
-	M_snprintf(msg, sizeof(msg), "\x1b%c%d \x1b%cMonster%s Killed",
-	           '0' + CR_GOLD,
-	           killcount, '0' + CR_RED, (killcount == 1) ? "" : "s");
+	M_snprintf(msg, sizeof(msg), "%s%d %sMonster%s Killed",
+	           crstr[CR_GOLD],
+	           killcount, crstr[CR_NONE], (killcount == 1) ? "" : "s");
 	plyr->message = msg;
       }
       // [crispy] implement Crispy Doom's "spechits" cheat
@@ -662,9 +662,9 @@ ST_Responder (event_t* ev)
 	static char msg[32];
 	int triggeredlines = ST_cheat_spechits();
 
-	M_snprintf(msg, sizeof(msg), "\x1b%c%d \x1b%cSpecial Line%s Triggered",
-	           '0' + CR_GOLD,
-	           triggeredlines, '0' + CR_RED, (triggeredlines == 1) ? "" : "s");
+	M_snprintf(msg, sizeof(msg), "%s%d %sSpecial Line%s Triggered",
+	           crstr[CR_GOLD],
+	           triggeredlines, crstr[CR_NONE], (triggeredlines == 1) ? "" : "s");
 	plyr->message = msg;
       }
       // [crispy] implement Boom's "tnthom" cheat
@@ -674,8 +674,8 @@ ST_Responder (event_t* ev)
 
 	crispy_flashinghom = !crispy_flashinghom;
 
-	M_snprintf(msg, sizeof(msg), "HOM Detection \x1b%c%s",
-	           '0' + CR_GREEN,
+	M_snprintf(msg, sizeof(msg), "HOM Detection %s%s",
+	           crstr[CR_GREEN],
 	           (crispy_flashinghom) ? "ON" : "OFF");
 	plyr->message = msg;
       }
@@ -739,8 +739,8 @@ ST_Responder (event_t* ev)
 
 	plyr->cheats ^= CF_NOTARGET;
 
-	M_snprintf(msg, sizeof(msg), "Notarget Mode \x1b%c%s",
-	           '0' + CR_GREEN,
+	M_snprintf(msg, sizeof(msg), "Notarget Mode %s%s",
+	           crstr[CR_GREEN],
 	           (plyr->cheats & CF_NOTARGET) ? "ON" : "OFF");
 	plyr->message = msg;
       }
@@ -796,14 +796,14 @@ ST_Responder (event_t* ev)
 	else
 	{
 	    if ((plyr->weaponowned[w] = !plyr->weaponowned[w]))
-		M_snprintf(msg, sizeof(msg), "Weapon \x1b%c%d\x1b%c Added",
-		           '0' + CR_GOLD,
-		           w + 1, '0' + CR_RED);
+		M_snprintf(msg, sizeof(msg), "Weapon %s%d%s Added",
+		           crstr[CR_GOLD],
+		           w + 1, crstr[CR_NONE]);
 	    else
 	    {
-		M_snprintf(msg, sizeof(msg), "Weapon \x1b%c%d\x1b%c Removed",
-		           '0' + CR_GOLD,
-		           w + 1, '0' + CR_RED);
+		M_snprintf(msg, sizeof(msg), "Weapon %s%d%s Removed",
+		           crstr[CR_GOLD],
+		           w + 1, crstr[CR_NONE]);
 
 		// [crispy] removed current weapon, select another one
 		if (w == plyr->readyweapon)
@@ -1420,7 +1420,6 @@ void ST_drawWidgets(boolean refresh)
     dp_translation = ST_WidgetColor(hudcolor_frags);
     STlib_updateNum(&w_frags, refresh || screenblocks >= CRISPY_HUD);
     V_ClearDPTranslation();
-
 }
 
 void ST_doRefresh(void)
