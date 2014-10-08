@@ -349,13 +349,21 @@ void D_StartNetGame(net_gamesettings_t *settings,
     //!
     // @category net
     //
-    // Use original game sync code.
+    // Use new network client sync code rather than the classic
+    // sync code. This is currently disabled by default because it
+    // has some bugs.
     //
-
-    if (M_CheckParm("-oldsync") > 0)
-	settings->new_sync = 0;
+    if (M_CheckParm("-newsync") > 0)
+        settings->new_sync = 1;
     else
-	settings->new_sync = 1;
+        settings->new_sync = 0;
+
+    // TODO: New sync code is not enabled by default because it's
+    // currently broken. 
+    //if (M_CheckParm("-oldsync") > 0)
+    //    settings->new_sync = 0;
+    //else
+    //    settings->new_sync = 1;
 
     //!
     // @category net
