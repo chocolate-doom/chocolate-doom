@@ -64,6 +64,7 @@ wi_stuff.c         wi_stuff.h
 FEATURE_DEHACKED_SOURCE_FILES =            \
 deh_ammo.c                                 \
 deh_bexpars.c                              \
+deh_bexptr.c                               \
 deh_bexstr.c                               \
 deh_cheat.c                                \
 deh_doom.c                                 \
