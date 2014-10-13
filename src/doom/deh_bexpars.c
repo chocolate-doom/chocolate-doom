@@ -19,9 +19,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "deh_defs.h"
 #include "deh_io.h"
-#include "deh_main.h"
 
 int bex_pars[4][10] = {{0}};
 int bex_cpars[32] = {0};
@@ -46,12 +44,22 @@ static void DEH_BEXParsParseLine(deh_context_t *context, char *line, void *tag)
     {
 	if (episode >= 1 && episode <= 3 && map >= 1 && map <= 9)
 	    bex_pars[episode][map] = partime;
+	else
+	{
+	    DEH_Warning(context, "Invalid episode or map: E%dM%d", episode, map);
+	    return;
+	}
     }
     else
     if (sscanf(line, "par %i %i", &map, &partime) == 2)
     {
 	if (map >= 1 && map <= 32)
 	    bex_cpars[map-1] = partime;
+	else
+	{
+	    DEH_Warning(context, "Invalid map: MAP%02d", map);
+	    return;
+	}
     }
     else
     {
