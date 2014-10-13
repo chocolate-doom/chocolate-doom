@@ -46,6 +46,8 @@ extern deh_section_t deh_section_thing;
 extern deh_section_t deh_section_weapon;
 // deh_bexstr.c:
 extern deh_section_t deh_section_bexstr;
+// deh_bexpars.c:
+extern deh_section_t deh_section_bexpars;
 
 //
 // List of section types:
@@ -63,6 +65,7 @@ deh_section_t *deh_section_types[] =
     &deh_section_thing,
     &deh_section_weapon,
     &deh_section_bexstr,
+    &deh_section_bexpars,
     NULL
 };
 

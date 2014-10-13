@@ -1519,6 +1519,7 @@ void G_SecretExitLevel (void)
 void G_DoCompleted (void) 
 { 
     int             i; 
+    extern int bex_pars[4][10], bex_cpars[32]; // [crispy] support [PARS] sections in BEX files
 	 
     gameaction = ga_nothing; 
  
@@ -1653,17 +1654,28 @@ void G_DoCompleted (void)
     // overflows into the cpars array. It's necessary to emulate this
     // for statcheck regression testing.
     if (gamemap == 33)
-	// [crispy] map 33 par time sucks (not considered demo critical)
+	// [crispy] map 33 par time sucks
 	wminfo.partime = INT_MAX;
     else
     if (gamemission == pack_nerve)
-	// only possible with the BFG Edition IWAD
 	wminfo.partime = TICRATE*npars[gamemap-1];
     else
     if (gamemode == commercial)
+    {
+	// [crispy] support [PARS] sections in BEX files
+	if (bex_cpars[gamemap-1])
+	    wminfo.partime = TICRATE*bex_cpars[gamemap-1];
+	else
 	wminfo.partime = TICRATE*cpars[gamemap-1];
+    }
     else if (gameepisode < 4)
+    {
+	// [crispy] support [PARS] sections in BEX files
+	if (bex_pars[gameepisode][gamemap])
+	    wminfo.partime = TICRATE*bex_pars[gameepisode][gamemap];
+	else
 	wminfo.partime = TICRATE*pars[gameepisode][gamemap];
+    }
     else if (gameepisode == 4 && singleplayer)
 	wminfo.partime = TICRATE*e4pars[gamemap];
     else
