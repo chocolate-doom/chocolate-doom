@@ -39,18 +39,11 @@ enum
 {
     CR_NONE,
     CR_DARK,
-    CR_BRICK,
-    CR_TAN,
     CR_GRAY,
     CR_GREEN,
-    CR_BROWN,
     CR_GOLD,
     CR_RED,
-    CR_BLUE,
     CR_BLUE2,
-    CR_ORANGE,
-    CR_YELLOW,
-    CR_TORED,
     CRMAX
 } cr_t;
 
