@@ -17,6 +17,7 @@
 
 
 #include <ctype.h>
+#include <libgen.h> // [crispy] basename()
 
 #include "doomdef.h"
 #include "doomkeys.h"
