@@ -457,7 +457,7 @@ void HU_Start(void)
 	else
 	    M_snprintf(map, sizeof(map), "e%dm%d", gameepisode, gamemap);
 
-	wad = M_BaseName(lumpinfo[W_GetNumForName(map)].wad_file->path);
+	wad = lumpinfo[W_GetNumForName(map)].wad_file->path;
 
 	if (strcmp(s, DEH_String(s)) || (strcmp(wad, M_BaseName(iwadfile)) && !nervewadfile))
 	{

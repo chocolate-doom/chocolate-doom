@@ -58,7 +58,7 @@ struct _wad_file_s
 
     unsigned int length;
 
-    // [crispy] path of this file
+    // [crispy] name of this file
     char *path;
 };
 

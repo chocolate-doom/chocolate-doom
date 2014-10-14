@@ -117,8 +117,8 @@ wad_file_t *W_AddFile (char *filename)
 	return NULL;
     }
 
-    // [crispy] save the file path
-    wad_file->path = filename;
+    // [crispy] save the file name
+    wad_file->path = M_BaseName(filename);
 
     startlump = numlumps;
 	
