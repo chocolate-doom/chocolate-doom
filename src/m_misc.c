@@ -248,6 +248,31 @@ char *M_BaseName(char *path)
     return src;
 }
 
+// [crispy] portable pendant to libgen.h's dirname()
+// does not modify its argument
+char *M_DirName(char *path)
+{
+    char *src, *res;
+
+    res = strdup(path);
+    src = res + strlen(res) - 1;
+
+    while (src != res)
+    {
+	if (*src == DIR_SEPARATOR)
+	{
+	    *src = '\0';
+	    return res;
+	}
+
+	src--;
+    }
+
+    // path string does not contain a directory separator
+    free(res);
+    return strdup(".");
+}
+
 //---------------------------------------------------------------------------
 //
 // PROC M_ForceUppercase
