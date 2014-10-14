@@ -232,6 +232,22 @@ void M_ExtractFileBase(char *path, char *dest)
     }
 }
 
+// [crispy] portable pendant to libgen.h's basename()
+char *M_BaseName(char *path)
+{
+    char *src;
+
+    src = path + strlen(path) - 1;
+
+    // back up until a \ or the start
+    while (src != path && *(src - 1) != DIR_SEPARATOR)
+    {
+	src--;
+    }
+
+    return src;
+}
+
 //---------------------------------------------------------------------------
 //
 // PROC M_ForceUppercase
