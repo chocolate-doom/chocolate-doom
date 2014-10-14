@@ -1150,7 +1150,6 @@ static void LoadHacxDeh(void)
 static void LoadNerveWad(void)
 {
     int i;
-    char *sep;
     char lumpname[9];
 
     if (gamemission != doom2)
@@ -1158,15 +1157,10 @@ static void LoadNerveWad(void)
 
     if (bfgedition && !modifiedgame)
     {
-        sep = strrchr(iwadfile, DIR_SEPARATOR);
 
-        if (sep != NULL)
+        if (strrchr(iwadfile, DIR_SEPARATOR) != NULL)
         {
-            size_t nervewadfile_len = strlen(iwadfile) + 9;
-            nervewadfile = malloc(nervewadfile_len);
-            M_StringCopy(nervewadfile, iwadfile, nervewadfile_len);
-            nervewadfile[sep - iwadfile + 1] = '\0';
-            M_StringConcat(nervewadfile, "nerve.wad", nervewadfile_len);
+            nervewadfile = M_StringJoin(M_DirName(iwadfile), DIR_SEPARATOR_S, "nerve.wad", NULL);
         }
         else
         {
