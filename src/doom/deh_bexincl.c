@@ -19,7 +19,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <libgen.h> // dirname()
 
 #include "m_misc.h"
 
@@ -38,7 +37,7 @@ static void *DEH_BEXInclStart(deh_context_t *context, char *line)
 	return NULL;
     }
 
-    deh_file = strdup(DEH_FileName(context));
+    deh_file = DEH_FileName(context);
 
     if (bex_nested)
     {
@@ -70,7 +69,7 @@ static void *DEH_BEXInclStart(deh_context_t *context, char *line)
     if (!M_FileExists(try_path))
     {
 	// second, try loading the file in the directory of the current file
-	try_path = M_StringJoin(dirname(deh_file), DIR_SEPARATOR_S, inc_file, NULL);
+	try_path = M_StringJoin(M_DirName(deh_file), DIR_SEPARATOR_S, inc_file, NULL);
     }
 
     bex_nested = true;
@@ -81,6 +80,8 @@ static void *DEH_BEXInclStart(deh_context_t *context, char *line)
     }
 
     bex_nested = false;
+
+    free(inc_file);
 
     return NULL;
 }
