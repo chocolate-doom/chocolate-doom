@@ -17,7 +17,6 @@
 
 
 #include <ctype.h>
-#include <libgen.h> // [crispy] basename()
 
 #include "doomdef.h"
 #include "doomkeys.h"
@@ -458,9 +457,9 @@ void HU_Start(void)
 	else
 	    M_snprintf(map, sizeof(map), "e%dm%d", gameepisode, gamemap);
 
-	wad = basename(lumpinfo[W_GetNumForName(map)].wad_file->path);
+	wad = M_BaseName(lumpinfo[W_GetNumForName(map)].wad_file->path);
 
-	if (strcmp(s, DEH_String(s)) || strcmp(wad, basename(iwadfile)))
+	if (strcmp(s, DEH_String(s)) || strcmp(wad, M_BaseName(iwadfile)))
 	{
 	    char *m;
 

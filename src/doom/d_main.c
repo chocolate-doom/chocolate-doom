@@ -25,7 +25,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h> // [crispy] time_t, time(), struct tm, localtime()
-#include <libgen.h> // [crispy] basename()
 
 #include "config.h"
 #include "deh_main.h"
@@ -1202,7 +1201,7 @@ static void LoadNerveWad(void)
 	{
 	    while (++i != myargc && myargv[i][0] != '-')
 	    {
-		if (!strncasecmp(basename(myargv[i]), "nerve.wad", 9))
+		if (!strncasecmp(M_BaseName(myargv[i]), "nerve.wad", 9))
 		{
 		    gamemission = pack_nerve;
 		    break;
@@ -1218,7 +1217,7 @@ static void LoadNerveWad(void)
 	    {
 		while (++i != myargc && myargv[i][0] != '-')
 		{
-		    if (!strncasecmp(basename(myargv[i]), "nerve.wad", 9))
+		    if (!strncasecmp(M_BaseName(myargv[i]), "nerve.wad", 9))
 		    {
 			gamemission = pack_nerve;
 			break;
@@ -1677,31 +1676,31 @@ void D_DoomMain (void)
     // [crispy] check for colored blood
     {
 	int i;
-	char *iwadbasename = basename(iwadfile);
+	char *iwadbasename = M_BaseName(iwadfile);
 
 	// [crispy] check for monster sprite replacements
 	// (first sprites of monster death frames)
 	i = W_CheckNumForName("bossi0");  // [crispy] Baron of Hell
-	crispy_coloredblood |= (i >= 0 && !strcmp(basename(lumpinfo[i].wad_file->path), iwadbasename));
+	crispy_coloredblood |= (i >= 0 && !strcmp(M_BaseName(lumpinfo[i].wad_file->path), iwadbasename));
 
 	i = W_CheckNumForName("bos2i0"); // [crispy] Hell Knight
-	crispy_coloredblood |= (i >= 0 && !strcmp(basename(lumpinfo[i].wad_file->path), iwadbasename)) << 1;
+	crispy_coloredblood |= (i >= 0 && !strcmp(M_BaseName(lumpinfo[i].wad_file->path), iwadbasename)) << 1;
 
 	i = W_CheckNumForName("headg0"); // [crispy] Cacodemon
-	crispy_coloredblood |= (i >= 0 && !strcmp(basename(lumpinfo[i].wad_file->path), iwadbasename)) << 2;
+	crispy_coloredblood |= (i >= 0 && !strcmp(M_BaseName(lumpinfo[i].wad_file->path), iwadbasename)) << 2;
 
 	i = W_CheckNumForName("skulg0"); // [crispy] Lost Soul
-	crispy_coloredblood |= (i >= 0 && !strcmp(basename(lumpinfo[i].wad_file->path), iwadbasename)) << 3;
+	crispy_coloredblood |= (i >= 0 && !strcmp(M_BaseName(lumpinfo[i].wad_file->path), iwadbasename)) << 3;
 
 	i = W_CheckNumForName("sargi0");  // [crispy] Demon (Spectre)
-	crispy_coloredblood |= (i >= 0 && !strcmp(basename(lumpinfo[i].wad_file->path), iwadbasename)) << 4;
+	crispy_coloredblood |= (i >= 0 && !strcmp(M_BaseName(lumpinfo[i].wad_file->path), iwadbasename)) << 4;
 
 	// [crispy] no colored blood in Chex Quest and Hacx
 	// except for the Thorn Things in Hacx which bleed green blood
 	if (gamemission == pack_chex || gamemission == pack_hacx)
 	{
 	    i = W_CheckNumForName("bspij0");  // [crispy] Ararchnotron (Thorn Thing)
-	    crispy_coloredblood = 0 | ((i >= 0 && !strcmp(basename(lumpinfo[i].wad_file->path), iwadbasename)) << 5);
+	    crispy_coloredblood = 0 | ((i >= 0 && !strcmp(M_BaseName(lumpinfo[i].wad_file->path), iwadbasename)) << 5);
 	}
     }
 
