@@ -464,9 +464,12 @@ void HU_Start(void)
 	    char *m;
 
 	    m = M_StringJoin(wad, ": ", crstr[CR_GRAY], map, NULL);
+	    wad = m; // [crispy] free() that, else *m leaks memory
 
 	    while (*m)
 		HUlib_addCharToTextLine(&w_map, *(m++));
+
+	    free(wad);
 	}
     }
 

@@ -60,6 +60,7 @@ static void *DEH_BEXInclStart(deh_context_t *context, char *line)
     else
     {
 	DEH_Warning(context, "Parse error on section start");
+	free(inc_file);
 	return NULL;
     }
 
@@ -69,7 +70,10 @@ static void *DEH_BEXInclStart(deh_context_t *context, char *line)
     if (!M_FileExists(try_path))
     {
 	// second, try loading the file in the directory of the current file
-	try_path = M_StringJoin(M_DirName(deh_file), DIR_SEPARATOR_S, inc_file, NULL);
+	char *dir;
+	dir = M_DirName(deh_file);
+	try_path = M_StringJoin(dir, DIR_SEPARATOR_S, inc_file, NULL);
+	free(dir);
     }
 
     bex_nested = true;
@@ -81,6 +85,8 @@ static void *DEH_BEXInclStart(deh_context_t *context, char *line)
 
     bex_nested = false;
 
+    if (try_path != inc_file)
+	free(try_path);
     free(inc_file);
 
     return NULL;

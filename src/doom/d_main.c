@@ -1160,7 +1160,10 @@ static void LoadNerveWad(void)
 
         if (strrchr(iwadfile, DIR_SEPARATOR) != NULL)
         {
-            nervewadfile = M_StringJoin(M_DirName(iwadfile), DIR_SEPARATOR_S, "nerve.wad", NULL);
+            char *dir;
+            dir = M_DirName(iwadfile);
+            nervewadfile = M_StringJoin(dir, DIR_SEPARATOR_S, "nerve.wad", NULL);
+            free(dir);
         }
         else
         {
