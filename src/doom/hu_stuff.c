@@ -459,7 +459,7 @@ void HU_Start(void)
 
 	wad = M_BaseName(lumpinfo[W_GetNumForName(map)].wad_file->path);
 
-	if (strcmp(s, DEH_String(s)) || strcmp(wad, M_BaseName(iwadfile)))
+	if (strcmp(s, DEH_String(s)) || (strcmp(wad, M_BaseName(iwadfile)) && !nervewadfile))
 	{
 	    char *m;
 
