@@ -50,6 +50,8 @@ extern deh_section_t deh_section_bexstr;
 extern deh_section_t deh_section_bexpars;
 // deh_bexptr.c:
 extern deh_section_t deh_section_bexptr;
+// deh_bexincl.c:
+extern deh_section_t deh_section_bexincl;
 
 //
 // List of section types:
@@ -69,6 +71,7 @@ deh_section_t *deh_section_types[] =
     &deh_section_bexstr,
     &deh_section_bexpars,
     &deh_section_bexptr,
+    &deh_section_bexincl,
     NULL
 };
 
