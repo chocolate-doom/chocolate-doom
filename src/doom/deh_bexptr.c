@@ -183,7 +183,7 @@ static const bex_codeptr_t bex_codeptrtable[] = {
     {"NULL", {NULL}},
 };
 
-static actionf_t codeptrs[NUMSTATES];
+extern actionf_t codeptrs[NUMSTATES];
 
 static int CodePointerIndex(actionf_t *ptr)
 {
@@ -198,16 +198,6 @@ static int CodePointerIndex(actionf_t *ptr)
     }
 
     return -1;
-}
-
-static void DEH_BEXPtrInit(void)
-{
-    int i;
-    
-    // Initialize list of dehacked pointers
-
-    for (i=0; i<NUMSTATES; ++i)
-        codeptrs[i] = states[i].action;
 }
 
 static void *DEH_BEXPtrStart(deh_context_t *context, char *line)
@@ -276,7 +266,7 @@ static void DEH_BEXPtrSHA1Sum(sha1_context_t *context)
 deh_section_t deh_section_bexptr =
 {
     "[CODEPTR]",
-    DEH_BEXPtrInit,
+    NULL,
     DEH_BEXPtrStart,
     DEH_BEXPtrParseLine,
     NULL,
