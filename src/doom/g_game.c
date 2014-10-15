@@ -2182,7 +2182,7 @@ void G_DoPlayDemo (void)
     if (!strcasecmp(defdemoname + strlen(defdemoname) - 4, ".lmp"))
 	strncpy(file, defdemoname, 256);
     else
-	snprintf(file, 256, "%s.lmp", defdemoname);
+	M_snprintf(file, 256, "%s.lmp", defdemoname);
 
     demofp = fopen (file, "rb");
     if (!demofp) // file doesn't exist, see if the lump does

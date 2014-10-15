@@ -33,4 +33,3 @@ AC_DEFUN([AC_SDL_MAIN_WORKAROUND], [
 
     CFLAGS="$sdl_workaround_saved_CFLAGS"
 ])
-

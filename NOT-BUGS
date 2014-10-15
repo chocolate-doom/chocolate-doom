@@ -1,8 +1,8 @@
 
-The aim of Chocolate Doom is to behave as closely to Vanilla Doom as
+The aim of Competition Doom is to behave as closely to Vanilla Doom as
 possible.  As a result, you may experience problems that you would
 also experience when using Vanilla Doom.  These are not "bugs" as
-Chocolate Doom is behaving as intended.
+Competition Doom is behaving as intended.
 
 This is not intended to be a comprehensive list of Vanilla Doom bugs.
 For more information, consult the "engine bugs" page of the Doom Wiki.
@@ -23,7 +23,7 @@ the following:
 
 This usually indicates that your IWAD file that you are using to play
 the game (usually named doom.wad or doom2.wad) is out of date.
-Chocolate Doom only supports the v1.9 IWAD file.
+Competition Doom only supports the v1.9 IWAD file.
 
 To fix the problem, you must upgrade to the v1.9 IWAD file.  The URL
 in the message has downloadable upgrade patches that you can use to
@@ -51,7 +51,7 @@ version also changes the teleport behavior, so the default is to
 emulate the most commonly distributed version of the game. To use
 the alternate version, run with:
 
-    chocolate-doom -gameversion final2
+    cndoom -gameversion final2
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -67,7 +67,7 @@ higher than what can be set via the options menu. The setup program
 allows a larger range of values to be set.
 
 However, setting very high sensitivity values causes the game to exit
-when accessing the options menu under Vanilla Doom. Because Chocolate
+when accessing the options menu under Vanilla Doom. Because Competition
 Doom aims to emulate Vanilla Doom as closely as possible, it does the
 same thing.
 
@@ -91,14 +91,14 @@ buffer overrun".
 
 Vanilla Doom has a limited size memory buffer that it uses for saving
 games.  If you are playing on a large level, the buffer may be too
-small for the entire savegame to fit.  Chocolate Doom allows the limit
+small for the entire savegame to fit.  Competition Doom allows the limit
 to be disabled: in the setup tool, go to the "compatibility" menu and
 disable the "Vanilla savegame limit" option.
 
 If this error happens to you, your game has not been lost!  A file
 named temp.dsg is saved; rename this to doomsav0.dsg to make it appear
 in the first slot in the "load game" menu.  (On Unix systems, you will
-need to look in the .chocolate-doom/savegames directory in your home
+need to look in the .cndoom/savegames directory in your home
 directory)
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -143,7 +143,7 @@ the original v1.9 this cheat didn't work properly when playing with
 the Doom 1 (shareware and registered) IWADs.  This bug was fixed in
 the Ultimate Doom and Final Doom executables.
 
-Chocolate Doom emulates this bug.  When playing with the shareware or
+Competition Doom emulates this bug.  When playing with the shareware or
 registered Doom IWADs, the IDMUS cheat therefore does not work
 properly.  If you are playing with the Ultimate Doom IWAD, the
 Ultimate Doom executable is emulated by default, so the cheat works
@@ -160,7 +160,7 @@ includes the title screen, and parts of the options menu.
 The IWAD files in the new BFG Edition have had some significant
 changes from the IWAD files in older releases. Some of the graphics
 lumps have been removed or changed, and the Doom 2 secret levels are
-also censored. Chocolate Doom includes some small workarounds that
+also censored. Competition Doom includes some small workarounds that
 allow the game to run, but for the best experience, it's best to get a
 copy of the classic versions of the IWADs. These are still available
 to buy from Steam or Id's online store.

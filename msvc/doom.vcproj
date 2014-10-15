@@ -4,7 +4,7 @@
 	Version="9,00"
 	Name="Doom"
 	ProjectGUID="{8B744A3B-8F18-41A0-85A3-293816E85B6E}"
-	RootNamespace="cndoom"
+	RootNamespace="ChocolateDoom"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -60,18 +60,19 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="%(PreprocessorDefinitions)"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDLmain.lib SDL_mixer.lib SDL_net.lib"
+				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib"
 				OutputFile="$(OutDir)\cndoom-dbg.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="msvcrt"
 				GenerateDebugInformation="true"
-				SubSystem="2"
+				SubSystem="1"
 				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
@@ -125,7 +126,10 @@
 				Optimization="2"
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories=".;..\opl;..\src;..\src\doom;..\textscreen;..\pcsound"
+				FavorSizeOrSpeed="1"
+				OmitFramePointers="true"
+				WholeProgramOptimization="true"
+				AdditionalIncludeDirectories=".;..\src;..\src\doom;..\textscreen;..\pcsound;..\opl"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;PROGRAM_PREFIX=&quot;\&quot;cn\&quot;&quot;"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -139,19 +143,20 @@
 			/>
 			<Tool
 				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="%(PreprocessorDefinitions)"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDLmain.lib SDL_mixer.lib SDL_net.lib"
+				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib"
 				OutputFile="$(OutDir)\cndoom.exe"
 				LinkIncremental="0"
 				IgnoreDefaultLibraryNames="msvcrtd"
 				GenerateDebugInformation="false"
 				GenerateMapFile="true"
-				SubSystem="2"
+				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				LinkTimeCodeGeneration="1"
@@ -189,10 +194,6 @@
 			Name="Header Files"
 			>
 			<File
-				RelativePath="..\src\aes_prng.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\d_event.h"
 				>
 			</File>
@@ -210,10 +211,6 @@
 			</File>
 			<File
 				RelativePath="..\src\d_ticcmd.h"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\dbopl.h"
 				>
 			</File>
 			<File
@@ -286,14 +283,6 @@
 			</File>
 			<File
 				RelativePath="..\src\i_video.h"
-				>
-			</File>
-			<File
-				RelativePath="..\src\i_videohr.h"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\ioperm_sys.h"
 				>
 			</File>
 			<File
@@ -385,22 +374,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\opl\opl.h"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\opl_internal.h"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\opl_queue.h"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\opl_timer.h"
-				>
-			</File>
-			<File
 				RelativePath="..\src\sha1.h"
 				>
 			</File>
@@ -468,6 +441,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\src\doom\d_net.h"
+					>
+				</File>
+				<File
 					RelativePath="..\src\doom\d_player.h"
 					>
 				</File>
@@ -477,6 +454,10 @@
 				</File>
 				<File
 					RelativePath="..\src\doom\d_think.h"
+					>
+				</File>
+				<File
+					RelativePath="..\src\doom\deh_defs.h"
 					>
 				</File>
 				<File
@@ -637,7 +618,11 @@
 			Name="Source Files"
 			>
 			<File
-				RelativePath="..\src\aes_prng.c"
+				RelativePath="..\src\doom\cn_meta.c"
+				>
+			</File>
+			<File
+				RelativePath="..\src\doom\cn_timer.c"
 				>
 			</File>
 			<File
@@ -654,10 +639,6 @@
 			</File>
 			<File
 				RelativePath="..\src\d_mode.c"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\dbopl.c"
 				>
 			</File>
 			<File
@@ -737,15 +718,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\src\i_videohr.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\icon.c"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\ioperm_sys.c"
 				>
 			</File>
 			<File
@@ -833,34 +806,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\opl\opl.c"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\opl_linux.c"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\opl_obsd.c"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\opl_queue.c"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\opl_sdl.c"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\opl_timer.c"
-				>
-			</File>
-			<File
-				RelativePath="..\opl\opl_win32.c"
-				>
-			</File>
-			<File
 				RelativePath="..\src\sha1.c"
 				>
 			</File>
@@ -916,14 +861,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\src\doom\cn_meta.c"
-					>
-				</File>
-				<File
-					RelativePath="..\src\doom\cn_timer.c"
-					>
-				</File>
-				<File
 					RelativePath="..\src\doom\d_items.c"
 					>
 				</File>
@@ -937,6 +874,10 @@
 				</File>
 				<File
 					RelativePath="..\src\doom\deh_ammo.c"
+					>
+				</File>
+				<File
+					RelativePath="..\src\doom\deh_bexstr.c"
 					>
 				</File>
 				<File

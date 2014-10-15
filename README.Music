@@ -1,6 +1,6 @@
 
 Doom has a memorable and atmospheric soundtrack. Like many games of
-the era, it is MIDI-based. Chocolate Doom includes a number of
+the era, it is MIDI-based. Competition Doom includes a number of
 different options for music playback, detailed below.
 
 == Native MIDI playback ==
@@ -13,7 +13,7 @@ dialog in the setup tool.
 == Timidity ==
 
 Timidity is a software-based MIDI synthesizer, and a version of it is
-included in the SDL_mixer library used by Chocolate Doom. To use
+included in the SDL_mixer library used by Competition Doom. To use
 Timidity for MIDI playback, first download a sound font. An example of
 a good quality sound font is the eawpats font, which can be downloaded
 from the idgames archive as sounds/eawpats.zip:
@@ -29,7 +29,7 @@ configuration file (normally named timidity.cfg).
 
 The Gravis Ultrasound (GUS) was a PC sound card popular in the '90s,
 notable for having wavetable synthesis that provided MIDI playback
-that was superior to most other cards of the era. Chocolate Doom
+that was superior to most other cards of the era. Competition Doom
 includes a "pseudo-GUS emulation" feature that simulates the GUS
 (using Timidity, under the hood).
 
@@ -47,13 +47,13 @@ widget to enter the path to the directory containing the patch files.
 
 By default a GUS card with 1024KB is simulated; to simulate a 256KB,
 512KB or 768KB card instead, change the gus_ram_kb option in
-chocolate-doom.cfg.
+Competition-doom.cfg.
 
 == OPL (Soundblaster / Adlib) ==
 
 Most people playing Doom in the '90s had Soundblaster-compatible sound
 cards, which used the Yamaha OPL series of chips for FM-based MIDI
-synthesis. Chocolate Doom includes the ability to emulate these chips
+synthesis. Competition Doom includes the ability to emulate these chips
 for a retro experience. OPL emulation is the default MIDI playback,
 but can be selected in the setup tool as "OPL (Adlib/SB)".
 
@@ -61,7 +61,7 @@ Most modern computers do not include an OPL chip any more, as CPUs are
 fast enough to do decent software MIDI synthesis. However, no software
 emulator sounds exactly like a real (hardware) OPL chip, and a few
 cards do have real hardware OPL. If you have such a card, here's how
-to configure Chocolate Doom to use it.
+to configure Competition Doom to use it.
 
 === Sound cards with OPL chips ===
 
@@ -100,7 +100,7 @@ have to use the software OPL.
 
 If you're certain that you have a sound card with hardware OPL, you
 may need to take extra steps to configure your operating system to
-allow access to it. To do hardware OPL, Chocolate Doom must access
+allow access to it. To do hardware OPL, Competition Doom must access
 the chip directly, which is usually not possible in modern operating
 systems unless you are running as the superuser (root/Administrator).
 
@@ -122,7 +122,7 @@ it is possible to use the "ioperm.sys" driver developed for Cygwin:
   http://openwince.sourceforge.net/ioperm/
 
 It is not necessary to have Cygwin installed to use this. Copy the
-ioperm.sys file into the same directory as the Chocolate Doom
+ioperm.sys file into the same directory as the Competition Doom
 executable and it should be automatically loaded.
 
 You can confirm that hardware OPL is working by checking for this
@@ -165,7 +165,7 @@ example, set:
 
   snd_musiccmd    "aplaymidi -p 128:0"
 
-in your chocolate-doom.cfg file.
+in your Competition-doom.cfg file.
 
 # vim: set tw=70:
 

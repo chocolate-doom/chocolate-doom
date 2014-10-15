@@ -26,7 +26,7 @@ boolean     coopparm;
 boolean     dmparm;
 
 char        cn_meta_signature[4]    = "CNDM";
-char        cn_meta_version[4]      = "0001";
+char        cn_meta_version[4]      = "0002";
 
 static FILE *metafp;
 
@@ -160,7 +160,7 @@ void CN_WriteMetaData(char *filename)
     write_bytes(metafp, "#", 1);
  
 	// write CNDOOM version
-	write_bytes(metafp, PACKAGE_VERSION, 5);
+	write_bytes(metafp, PACKAGE_VERSION, 7);
     write_bytes(metafp, "#", 1);
     
 	// write Competition ID

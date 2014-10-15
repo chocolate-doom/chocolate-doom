@@ -14,7 +14,7 @@
 
 * What is it? *
 
-Chocolate Strife is the most accurate and complete recreation of Rogue
+Competition Strife is the most accurate and complete recreation of Rogue
 Entertainment's "Strife: Quest for the Sigil." It was created through more than
 four years of reverse engineering effort with the blessings of the original
 programmers of the game.
@@ -28,7 +28,7 @@ have to the code is the binary executable file. Tools such as IDA Pro have
 been employed to disassemble and decompile the executable, which was cross-
 referenced against the Linux DOOM and DOS Heretic sources and painstakingly
 combed over multiple times, instruction-by-instruction, to ensure that the
-resulting Chocolate-Doom-based executable is as close as possible to the
+resulting Competition-Doom-based executable is as close as possible to the
 original.
 
 
@@ -38,7 +38,7 @@ Reverse engineering is a protected activity so long as the original code is
 not used directly in the product. Due to the vast amount of information lost
 through the process of compilation, and the need to refactor large portions
 of code in order to eliminate non-portable idioms or to adapt them properly to
-Chocolate Doom's framework, the resulting code behaves the same, but is not
+Competition Doom's framework, the resulting code behaves the same, but is not
 the *same* code.
 
 In addition, James Monroe and John Carmack have both stated that they have no
@@ -47,7 +47,7 @@ and neither Rogue nor their publisher, Velocity, Inc., exist any longer as legal
 entities, this is as close to legal permission as can be obtained.
 
 The transformed results of the disassembly have been combined with the
-raven-branch version of the Chocolate Doom source port by Simon 'fraggle'
+raven-branch version of the Competition Doom source port by Simon 'fraggle'
 Howard, with his direct assistance, and have been released for the benefit of
 the community under the GNU General Public License v2.0. See the file "COPYING"
 for more details
@@ -60,10 +60,10 @@ discrepancies you may notice between this executable and the vanilla DOS
 program!
 
 However, do *not* report any glitch that you can replicate in the vanilla EXE
-as a bug. The point of Chocolate Strife, like Chocolate Doom before it, is to
+as a bug. The point of Competition Strife, like Competition Doom before it, is to
 be as bug-compatible with the original game as possible. Also be aware that
 some glitches are impossible to compatibly recreate, and wherever this is the
-case, Chocolate Strife has erred on the side of not crashing the program,
+case, Competition Strife has erred on the side of not crashing the program,
 for example by initializing pointers to NULL rather than using them without
 setting a value first.
 
@@ -79,8 +79,8 @@ setting a value first.
 
 * How do I use it? *
 
-From the Run box or a command line, issue a command to Chocolate Strife just
-like you would run Chocolate Doom. Most of the same command line parameters
+From the Run box or a command line, issue a command to Competition Strife just
+like you would run Competition Doom. Most of the same command line parameters
 are supported.
 
 voices.wad will be read from the same directory as the IWAD, if it can be
@@ -88,7 +88,7 @@ found. If it is not found, then voices will be disabled just as would happen
 with the vanilla executable. Do not add voices.wad using -file, as that is
 redundant and unnecessary.
 
-Some new command-line parameters in Chocolate Strife include the following:
+Some new command-line parameters in Competition Strife include the following:
 
 -nograph
   Disables the graphical introduction sequence. -devparm implies this.
@@ -124,7 +124,7 @@ A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
 See the "COPYING" file for the full license text. The source code for this
 program is available from the same location where you downloaded this package.
 
-Aside from Chocolate Doom, portions of the code are derived from the Eternity
+Aside from Competition Doom, portions of the code are derived from the Eternity
 Engine, Copyright 2011 Team Eternity, as published under the GNU GPL.
 
 
@@ -169,5 +169,5 @@ Engine, Copyright 2011 Team Eternity, as published under the GNU GPL.
 + Vanilla behavior when pressing pause on menus with scroll bars (special
   thanks to fraggle and Alexandre Xavier).
 
-+ Merged into Chocolate Doom trunk for v2.0 release.
++ Merged into Competition Doom trunk for v2.0 release.
 

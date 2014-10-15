@@ -7,9 +7,9 @@
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug">
-				<Option output="../bin/chocolate-doom-dbg.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="../bin/cndoom-dbg.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="../bin" />
-				<Option object_output="../obj/chocolate-doom/dbg" />
+				<Option object_output="../obj/cndoom/dbg" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Option projectLinkerOptionsRelation="2" />
@@ -22,9 +22,9 @@
 				</Linker>
 			</Target>
 			<Target title="Release">
-				<Option output="../bin/chocolate-doom.exe" prefix_auto="0" extension_auto="0" />
+				<Option output="../bin/cndoom.exe" prefix_auto="0" extension_auto="0" />
 				<Option working_dir="../bin" />
-				<Option object_output="../obj/chocolate-doom/rel" />
+				<Option object_output="../obj/cndoom/rel" />
 				<Option type="0" />
 				<Option compiler="gcc" />
 				<Option projectLinkerOptionsRelation="2" />
@@ -41,7 +41,7 @@
 			<Add alias="All" targets="Debug;Release;" />
 		</VirtualTargets>
 		<Compiler>
-			<Add option='-DPROGRAM_PREFIX=&quot;\&quot;chocolate-\&quot;&quot;' />
+			<Add option='-DPROGRAM_PREFIX=&quot;\&quot;cn\&quot;&quot;' />
 			<Add option='-DD_CDROM=&quot;\&quot;CD-ROM Version: default.cfg from c:\\doomdata\n\&quot;&quot;' />
 			<Add directory="." />
 			<Add directory="../src" />

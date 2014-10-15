@@ -1,3 +1,5 @@
+00015   Merged with latest Chocolate Doom v2, version 2.0.3.1
+        Few fixes so it compiles under MSVC, fixed meta version
 00014   Demo not recorded if player used normal menu exit (thx Kunkun);
         Documentation cleanup
 00013   Quickstart default delay is 3000 now to work properly;

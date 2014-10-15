@@ -137,7 +137,7 @@ void CN_DrawIntermissionTime (int x, int y, int time)
     static byte buffer[16];
     int w = 0;
 
-    l = snprintf (buffer, 16, "%02i:%05.2f", leveltime / TICRATE / 60,
+    l = M_snprintf (buffer, 16, "%02i:%05.2f", leveltime / TICRATE / 60,
                   (float)(leveltime % (60*TICRATE)) / TICRATE);
 
     for (i=0; i<l; i++)
@@ -177,7 +177,7 @@ void CN_DrawTotalTime (void)
     int i, l;
     static byte buffer[16];
 
-    l = snprintf (buffer, 16, "%02i:%02i:%05.2f", totaltime / TICRATE / 60 / 60, (totaltime / TICRATE / 60) % 60,
+    l = M_snprintf (buffer, 16, "%02i:%02i:%05.2f", totaltime / TICRATE / 60 / 60, (totaltime / TICRATE / 60) % 60,
                   (float)(totaltime % (60*TICRATE)) / TICRATE);
 
     printf ("%s\r", buffer);
@@ -237,7 +237,7 @@ void CN_DrawTimer (void)
 // if (gamekeydown['z']) leveltime = 6666*TICRATE; testing how it works
 
     mins = leveltime / TICRATE / 60;
-    l = snprintf (buffer, 16, "%02i:%05.2f", mins,
+    l = M_snprintf (buffer, 16, "%02i:%05.2f", mins,
                   (float)(leveltime % (60*TICRATE)) / TICRATE);
 
     if (l > INITIAL_CHARS && lastsize != l)
