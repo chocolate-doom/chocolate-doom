@@ -46,9 +46,6 @@
 
 #define PERCUSSION_LOG_LEN 16
 
-// TODO: Figure out why this is needed.
-#define TEMPO_FUDGE_FACTOR 260
-
 typedef struct
 {
     byte tremolo;
@@ -1198,8 +1195,7 @@ static void ScheduleTrack(opl_track_data_t *track)
     // Get the number of microseconds until the next event.
 
     nticks = MIDI_GetDeltaTime(track->iter);
-    us = ((uint64_t) nticks * us_per_beat * TEMPO_FUDGE_FACTOR)
-       / ticks_per_beat;
+    us = ((uint64_t) nticks * us_per_beat) / ticks_per_beat;
 
     // Set a timer to be invoked when the next event is
     // ready to play.
