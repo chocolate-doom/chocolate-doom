@@ -30,6 +30,7 @@ static boolean bex_nested = false;
 static void *DEH_BEXInclStart(deh_context_t *context, char *line)
 {
     char *deh_file, *inc_file, *try_path;
+    extern boolean bex_notext;
 
     if (!DEH_FileName(context))
     {
@@ -49,8 +50,7 @@ static void *DEH_BEXInclStart(deh_context_t *context, char *line)
 
     if (sscanf(line, "INCLUDE NOTEXT %s", inc_file) == 1)
     {
-	// TODO: Add support for the INCLUDE NOTEXT directive
-	DEH_Warning(context, "The \"INCLUDE NOTEXT\" directive is currently not supported");
+	bex_notext = true;
     }
     else
     if (sscanf(line, "INCLUDE %s", inc_file) == 1)
@@ -84,6 +84,7 @@ static void *DEH_BEXInclStart(deh_context_t *context, char *line)
     }
 
     bex_nested = false;
+    bex_notext = false;
 
     if (try_path != inc_file)
 	free(try_path);
