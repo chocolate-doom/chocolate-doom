@@ -33,6 +33,7 @@ p_maputl.c                                           \
 p_mobj.c                                             \
 p_plats.c                                            \
 p_pspr.c                                             \
+p_saveg.c                                            \
 p_setup.c                                            \
 p_sight.c                                            \
 p_spec.c               p_spec.h                      \
@@ -60,7 +61,7 @@ FEATURE_DEHACKED_SOURCE_FILES =            \
 deh_ammo.c                                 \
 deh_frame.c                                \
 deh_htext.c                                \
-deh_htic.c                                 \
+deh_htic.c             deh_htic.h          \
 deh_sound.c                                \
 deh_thing.c                                \
 deh_weapon.c

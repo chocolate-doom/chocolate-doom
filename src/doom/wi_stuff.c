@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,21 +12,16 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //	Intermission screens.
 //
-//-----------------------------------------------------------------------------
 
 
 #include <stdio.h>
 
 #include "z_zone.h"
 
+#include "m_misc.h"
 #include "m_random.h"
 
 #include "deh_main.h"
@@ -1723,17 +1716,15 @@ static void WI_loadUnloadData(load_callback_t callback)
 
     if (gamemode == commercial)
     {
-	strncpy(name, DEH_String("INTERPIC"), 9);
-        name[8] = '\0';
+        M_StringCopy(name, DEH_String("INTERPIC"), sizeof(name));
     }
     else if (gamemode == retail && wbs->epsd == 3)
     {
-	strncpy(name, DEH_String("INTERPIC"), 9);
-        name[8] = '\0';
+        M_StringCopy(name, DEH_String("INTERPIC"), sizeof(name));
     }
     else
     {
-	DEH_snprintf(name, 9, "WIMAP%d", wbs->epsd);
+	DEH_snprintf(name, sizeof(name), "WIMAP%d", wbs->epsd);
     }
 
     // Draw backdrop and save to a temporary buffer

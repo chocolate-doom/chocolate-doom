@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,12 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 // SB_bar.c
 
@@ -484,20 +476,20 @@ static void DrawSoundInfo(void)
             MN_DrTextA(DEH_String("------"), xPos[0], y);
             continue;
         }
-        sprintf(text, "%s", c->name);
+        M_snprintf(text, sizeof(text), "%s", c->name);
         M_ForceUppercase(text);
         MN_DrTextA(text, xPos[x++], y);
-        sprintf(text, "%d", c->mo->type);
+        M_snprintf(text, sizeof(text), "%d", c->mo->type);
         MN_DrTextA(text, xPos[x++], y);
-        sprintf(text, "%d", c->mo->x >> FRACBITS);
+        M_snprintf(text, sizeof(text), "%d", c->mo->x >> FRACBITS);
         MN_DrTextA(text, xPos[x++], y);
-        sprintf(text, "%d", c->mo->y >> FRACBITS);
+        M_snprintf(text, sizeof(text), "%d", c->mo->y >> FRACBITS);
         MN_DrTextA(text, xPos[x++], y);
-        sprintf(text, "%d", c->id);
+        M_snprintf(text, sizeof(text), "%d", c->id);
         MN_DrTextA(text, xPos[x++], y);
-        sprintf(text, "%d", c->priority);
+        M_snprintf(text, sizeof(text), "%d", c->priority);
         MN_DrTextA(text, xPos[x++], y);
-        sprintf(text, "%d", c->distance);
+        M_snprintf(text, sizeof(text), "%d", c->distance);
         MN_DrTextA(text, xPos[x++], y);
     }
     UpdateState |= I_FULLSCRN;
@@ -1188,7 +1180,7 @@ static void CheatArtifact3Func(player_t * player, Cheat_t * cheat)
     char args[2];
     int i;
     int j;
-    artitype_t type;
+    int type;
     int count;
 
     cht_GetParam(cheat->seq, args);
@@ -1241,7 +1233,7 @@ static void CheatWarpFunc(player_t * player, Cheat_t * cheat)
 
     episode = args[0] - '0';
     map = args[1] - '0';
-    if (D_ValidEpisodeMap(gamemission, gamemode, episode, map))
+    if (D_ValidEpisodeMap(heretic, gamemode, episode, map))
     {
         G_DeferedInitNew(gameskill, episode, map);
         P_SetMessage(player, DEH_String(TXT_CHEATWARP), false);

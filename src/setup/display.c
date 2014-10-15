@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2006 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -12,11 +10,6 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
 //
 
 #include <stdlib.h>
@@ -29,9 +22,11 @@
 
 #include "textscreen.h"
 #include "m_config.h"
+#include "m_misc.h"
 #include "mode.h"
 
 #include "display.h"
+#include "config.h"
 
 extern void RestartTextscreen(void);
 
@@ -104,12 +99,13 @@ static int aspect_ratio_correct = 1;
 static int fullscreen = 1;
 static int screen_width = 320;
 static int screen_height = 200;
-static int screen_bpp = 32; // [cndoom]
+static int screen_bpp = 0;
 static int startup_delay = 1000;
 static int usegamma = 4; // [cndoom]
 
 int graphical_startup = 1;
 int show_endoom = 0; // [cndoom]
+int png_screenshots = 0;
 
 // These are the last screen width/height values that were chosen by the
 // user.  These are used when finding the "nearest" mode, so when 
@@ -150,18 +146,9 @@ void SetDisplayDriver(void)
     {
         char *env_string;
 
-        env_string = malloc(strlen(video_driver) + 30);
-        sprintf(env_string, "SDL_VIDEODRIVER=%s", video_driver);
+        env_string = M_StringJoin("SDL_VIDEODRIVER=", video_driver, NULL);
         putenv(env_string);
         free(env_string);
-    }
-    else
-    {
-#if defined(_WIN32) && !defined(_WIN32_WCE)
-        // On Windows, use DirectX over windib by default.
-
-        putenv("SDL_VIDEODRIVER=directx");
-#endif
     }
 }
 
@@ -493,7 +480,7 @@ static void GenerateModesTable(TXT_UNCAST_ARG(widget),
             continue;
         }
 
-        sprintf(buf, "%ix%i", modes[i].w, modes[i].h);
+        M_snprintf(buf, sizeof(buf), "%ix%i", modes[i].w, modes[i].h);
         rbutton = TXT_NewRadioButton(buf, &vidmode, i);
         TXT_AddWidget(modes_table, rbutton);
         TXT_SignalConnect(rbutton, "selected", ModeSelected, &modes[i]);
@@ -540,54 +527,6 @@ static void UpdateModeSeparator(TXT_UNCAST_ARG(widget),
     }
 }
 
-#if defined(_WIN32) && !defined(_WIN32_WCE)
-
-static int use_directx = 1;
-
-static void SetWin32VideoDriver(void)
-{
-    if (!strcmp(video_driver, "windib"))
-    {
-        use_directx = 0;
-    }
-    else
-    {
-        use_directx = 1;
-    }
-}
-
-static void UpdateVideoDriver(TXT_UNCAST_ARG(widget), 
-                              TXT_UNCAST_ARG(modes_table))
-{
-    TXT_CAST_ARG(txt_table_t, modes_table);
-
-    if (use_directx)
-    {
-        video_driver = "";
-    }
-    else
-    {
-        video_driver = "windib";
-    }
-
-    // When the video driver is changed, we need to restart the textscreen 
-    // library.
-
-    RestartTextscreen();
-
-    // Rebuild the list of supported pixel depths.
-
-    IdentifyPixelDepths();
-    SetSelectedBPP();
-
-    // Rebuild the video modes list
-
-    BuildFullscreenModesList();
-    GenerateModesTable(NULL, modes_table);
-}
-
-#endif
-
 static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
                                   TXT_UNCAST_ARG(modes_table))
 {
@@ -617,30 +556,13 @@ static void AdvancedDisplayConfig(TXT_UNCAST_ARG(widget),
                                       &show_endoom));
     }
 
-    TXT_SignalConnect(ar_checkbox, "changed", GenerateModesTable, modes_table);
-
-    // On Windows, there is an extra control to change between 
-    // the Windows GDI and DirectX video drivers.
-
-#if defined(_WIN32) && !defined(_WIN32_WCE)
-    {
-        txt_radiobutton_t *dx_button, *gdi_button;
-
-        TXT_AddWidgets(window,
-                       TXT_NewSeparator("Windows video driver"),
-                       dx_button = TXT_NewRadioButton("DirectX",
-                                                      &use_directx, 1),
-                       gdi_button = TXT_NewRadioButton("Windows GDI",
-                                                       &use_directx, 0),
-                       NULL);
-
-        TXT_SignalConnect(dx_button, "selected",
-                          UpdateVideoDriver, modes_table);
-        TXT_SignalConnect(gdi_button, "selected",
-                          UpdateVideoDriver, modes_table);
-        SetWin32VideoDriver();
-    }
+#ifdef HAVE_LIBPNG
+    TXT_AddWidget(window,
+                  TXT_NewCheckBox("Save screenshots in PNG format",
+                                  &png_screenshots));
 #endif
+
+    TXT_SignalConnect(ar_checkbox, "changed", GenerateModesTable, modes_table);
 }
 
 void ConfigDisplay(void)
@@ -789,6 +711,7 @@ void BindDisplayVariables(void)
     M_BindVariable("video_driver",              &video_driver);
     M_BindVariable("window_position",           &window_position);
     M_BindVariable("usegamma",                  &usegamma);
+    M_BindVariable("png_screenshots",           &png_screenshots);
 
 
     if (gamemission == doom || gamemission == heretic
@@ -821,5 +744,14 @@ void BindDisplayVariables(void)
             screen_bpp = 32;
         }
     }
+#endif
+
+    // Disable fullscreen by default on OS X, as there is an SDL bug
+    // where some old versions of OS X (<= Snow Leopard) crash.
+
+#ifdef __MACOSX__
+    fullscreen = 0;
+    screen_width = 800;
+    screen_height = 600;
 #endif
 }

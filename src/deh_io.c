@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,23 +11,17 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 //
 // Dehacked I/O code (does all reads from dehacked files)
 //
-//-----------------------------------------------------------------------------
 
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
-#include "i_system.h"
+#include "m_misc.h"
 #include "w_wad.h"
 #include "z_zone.h"
 
@@ -49,7 +41,6 @@ struct deh_context_s
 
     // If the input comes from a memory buffer, pointer to the memory
     // buffer.
-
     unsigned char *input_buffer;
     size_t input_buffer_len;
     unsigned int input_buffer_pos;
@@ -57,18 +48,18 @@ struct deh_context_s
 
     // If the input comes from a file, the file stream for reading
     // data.
-
     FILE *stream;
 
     // Current line number that we have reached:
-
     int linenum;
 
     // Used by DEH_ReadLine:
-
     boolean last_was_newline;
     char *readbuffer;
     int readbuffer_size;
+
+    // Error handling.
+    boolean had_error;
 };
 
 static deh_context_t *DEH_NewContext(void)
@@ -83,6 +74,8 @@ static deh_context_t *DEH_NewContext(void)
     context->readbuffer = Z_Malloc(context->readbuffer_size, PU_STATIC, NULL);
     context->linenum = 0;
     context->last_was_newline = true;
+
+    context->had_error = false;
 
     return context;
 }
@@ -127,8 +120,7 @@ deh_context_t *DEH_OpenLump(int lumpnum)
     context->input_buffer_pos = 0;
 
     context->filename = malloc(9);
-    strncpy(context->filename, lumpinfo[lumpnum].name, 8);
-    context->filename[8] = '\0';
+    M_StringCopy(context->filename, lumpinfo[lumpnum].name, 9);
 
     return context;
 }
@@ -146,6 +138,7 @@ void DEH_CloseFile(deh_context_t *context)
         W_ReleaseLumpNum(context->lumpnum);
     }
 
+    free(context->filename);
     Z_Free(context->readbuffer);
     Z_Free(context);
 }
@@ -232,10 +225,11 @@ static void IncreaseReadBuffer(deh_context_t *context)
 
 // Read a whole line
 
-char *DEH_ReadLine(deh_context_t *context)
+char *DEH_ReadLine(deh_context_t *context, boolean extended)
 {
     int c;
     int pos;
+    boolean escaped = false;
 
     for (pos = 0;;)
     {
@@ -253,6 +247,39 @@ char *DEH_ReadLine(deh_context_t *context)
         if (pos >= context->readbuffer_size)
         {
             IncreaseReadBuffer(context);
+        }
+
+        // extended string support
+        if (extended && c == '\\')
+        {
+            c = DEH_GetChar(context);
+
+            // "\n" in the middle of a string indicates an internal linefeed
+            if (c == 'n')
+            {
+                context->readbuffer[pos] = '\n';
+                ++pos;
+                continue;
+            }
+
+            // values to be assigned may be split onto multiple lines by ending
+            // each line that is to be continued with a backslash
+            if (c == '\n')
+            {
+                escaped = true;
+                continue;
+            }
+        }
+
+        // blanks before the backslash are included in the string
+        // but indentation after the linefeed is not
+        if (escaped && isspace(c) && c != '\n')
+        {
+            continue;
+        }
+        else
+        {
+            escaped = false;
         }
 
         if (c == '\n')
@@ -280,7 +307,7 @@ void DEH_Warning(deh_context_t *context, char *msg, ...)
     va_list args;
 
     va_start(args, msg);
-    
+
     fprintf(stderr, "%s:%i: warning: ", context->filename, context->linenum);
     vfprintf(stderr, msg, args);
     fprintf(stderr, "\n");
@@ -293,14 +320,18 @@ void DEH_Error(deh_context_t *context, char *msg, ...)
     va_list args;
 
     va_start(args, msg);
-    
+
     fprintf(stderr, "%s:%i: ", context->filename, context->linenum);
     vfprintf(stderr, msg, args);
     fprintf(stderr, "\n");
 
     va_end(args);
 
-    I_Error("Error parsing dehacked file");
+    context->had_error = true;
 }
 
+boolean DEH_HadError(deh_context_t *context)
+{
+    return context->had_error;
+}
 

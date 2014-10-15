@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2006 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,17 +11,13 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "doomkeys.h"
+#include "m_misc.h"
 
 #include "txt_mouseinput.h"
 #include "txt_gui.h"
@@ -75,21 +69,21 @@ static void TXT_MouseInputSizeCalc(TXT_UNCAST_ARG(mouse_input))
     mouse_input->widget.h = 1;
 }
 
-static void GetMouseButtonDescription(int button, char *buf)
+static void GetMouseButtonDescription(int button, char *buf, size_t buf_len)
 {
     switch (button)
     {
         case 0:
-            strcpy(buf, "LEFT");
+            M_StringCopy(buf, "LEFT", buf_len);
             break;
         case 1:
-            strcpy(buf, "RIGHT");
+            M_StringCopy(buf, "RIGHT", buf_len);
             break;
         case 2:
-            strcpy(buf, "MID");
+            M_StringCopy(buf, "MID", buf_len);
             break;
         default:
-            sprintf(buf, "BUTTON #%i", button + 1);
+            M_snprintf(buf, buf_len, "BUTTON #%i", button + 1);
             break;
     }
 }
@@ -102,11 +96,11 @@ static void TXT_MouseInputDrawer(TXT_UNCAST_ARG(mouse_input))
 
     if (*mouse_input->variable < 0)
     {
-        strcpy(buf, "(none)");
+        M_StringCopy(buf, "(none)", sizeof(buf));
     }
     else
     {
-        GetMouseButtonDescription(*mouse_input->variable, buf);
+        GetMouseButtonDescription(*mouse_input->variable, buf, sizeof(buf));
     }
 
     TXT_SetWidgetBG(mouse_input);
@@ -124,17 +118,22 @@ static void TXT_MouseInputDestructor(TXT_UNCAST_ARG(mouse_input))
 {
 }
 
-static int TXT_MouseInputKeyPress(TXT_UNCAST_ARG(mouse_input), int mouse)
+static int TXT_MouseInputKeyPress(TXT_UNCAST_ARG(mouse_input), int key)
 {
     TXT_CAST_ARG(txt_mouse_input_t, mouse_input);
 
-    if (mouse == KEY_ENTER)
+    if (key == KEY_ENTER)
     {
         // Open a window to prompt for the new mouse press
 
         OpenPromptWindow(mouse_input);
 
         return 1;
+    }
+
+    if (key == KEY_BACKSPACE || key == KEY_DEL)
+    {
+        *mouse_input->variable = -1;
     }
 
     return 0;

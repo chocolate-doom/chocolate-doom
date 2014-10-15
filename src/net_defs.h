@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,15 +11,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //     Definitions for use in networking code.
 //
-//-----------------------------------------------------------------------------
 
 #ifndef NET_DEFS_H
 #define NET_DEFS_H 
@@ -168,7 +160,7 @@ typedef struct
 // Game settings sent by client to server when initiating game start,
 // and received from the server by clients when the game starts.
 
-typedef struct 
+typedef struct
 {
     int ticdup;
     int extratics;
@@ -184,6 +176,7 @@ typedef struct
     int new_sync;
     int timelimit;
     int loadgame;
+    int random;  // [Strife only]
 
     // These fields are only used by the server when sending a game
     // start message:

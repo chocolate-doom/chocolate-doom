@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,15 +13,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 
 #include "h2def.h"
+#include "m_misc.h"
 #include "m_random.h"
 #include "i_system.h"
 #include "p_local.h"
@@ -76,15 +69,8 @@ void P_SetMessage(player_t * player, char *message, boolean ultmsg)
     {
         return;
     }
-    if (strlen(message) > 79)
-    {
-        strncpy(player->message, message, 80);
-        player->message[79] = 0;
-    }
-    else
-    {
-        strcpy(player->message, message);
-    }
+
+    M_StringCopy(player->message, message, sizeof(player->message));
 //    strupr(player->message);
     player->messageTics = MESSAGETICS;
     player->yellowMessage = false;
@@ -110,15 +96,7 @@ void P_SetYellowMessage(player_t * player, char *message, boolean ultmsg)
     {
         return;
     }
-    if (strlen(message) > 79)
-    {
-        strncpy(player->message, message, 80);
-        player->message[79] = 0;
-    }
-    else
-    {
-        strcpy(player->message, message);
-    }
+    M_StringCopy(player->message, message, sizeof(player->message));
     player->messageTics = 5 * MESSAGETICS;      // Bold messages last longer
     player->yellowMessage = true;
     if (ultmsg)
@@ -177,7 +155,7 @@ boolean P_GiveMana(player_t * player, manatype_t mana, int count)
     {
         return (false);
     }
-    if (mana < 0 || mana > NUMMANA)
+    if ((unsigned int) mana > NUMMANA)
     {
         I_Error("P_GiveMana: bad type %i", mana);
     }

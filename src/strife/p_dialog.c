@@ -1,5 +1,3 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2010 James Haley, Samuel Villarreal
@@ -14,18 +12,12 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //
 // [STRIFE] New Module
 //
 // Dialog Engine for Strife
 //
-//-----------------------------------------------------------------------------
 
 #include <stdlib.h>
 
@@ -38,6 +30,7 @@
 #include "doomstat.h"
 #include "m_random.h"
 #include "m_menu.h"
+#include "m_misc.h"
 #include "r_main.h"
 #include "v_video.h"
 #include "p_local.h"
@@ -719,7 +712,7 @@ boolean P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type)
     {
         if(mobjinfo[type].name)
         {
-            strncpy(pickupstring, DEH_String(mobjinfo[type].name), 39);
+            M_StringCopy(pickupstring, DEH_String(mobjinfo[type].name), 39);
             player->message = pickupstring;
         }
         player->questflags |= 1 << (type - MT_TOKEN_QUEST1);
@@ -925,24 +918,24 @@ boolean P_GiveItemToPlayer(player_t *player, int sprnum, mobjtype_t type)
 
         case MT_TOKEN_DOOR1: // Door special 1
             junk.tag = 222;
-            EV_DoDoor(&junk, open);
+            EV_DoDoor(&junk, vld_open);
             break;
 
         case MT_TOKEN_PRISON_PASS: // Door special 1 - Prison pass
             junk.tag = 223;
-            EV_DoDoor(&junk, open);
+            EV_DoDoor(&junk, vld_open);
             if(gamemap == 2) // If on Tarnhill, give Prison pass object
                 P_GiveInventoryItem(player, sprnum, type);
             break;
 
         case MT_TOKEN_SHOPCLOSE: // Door special 3 - "Shop close" - unused?
             junk.tag = 222;
-            EV_DoDoor(&junk, close);
+            EV_DoDoor(&junk, vld_close);
             break;
 
         case MT_TOKEN_DOOR3: // Door special 4 (or 3? :P ) 
             junk.tag = 224;
-            EV_DoDoor(&junk, close);
+            EV_DoDoor(&junk, vld_close);
             break;
 
         case MT_TOKEN_STAMINA: // Stamina upgrade
@@ -1132,10 +1125,9 @@ static void P_DialogDrawer(void)
             if(currentdialog->choices[i].needamounts[0] > 0)
             {
                 // haleyjd 20120401: necessary to avoid undefined behavior:
-                strcpy(choicetext2, choicetext);
+                M_StringCopy(choicetext2, choicetext, sizeof(choicetext2));
                 DEH_snprintf(choicetext, sizeof(choicetext),
-                             "%s for %d", 
-                             choicetext2, 
+                             "%s for %d", choicetext2,
                              currentdialog->choices[i].needamounts[0]);
             }
 
@@ -1228,7 +1220,7 @@ void P_DialogDoChoice(int choice)
         {
             DEH_snprintf(mission_objective, OBJECTIVE_LEN, "log%i", objective);
             objlump = W_CacheLumpName(mission_objective, PU_CACHE);
-            strncpy(mission_objective, objlump, OBJECTIVE_LEN);
+            M_StringCopy(mission_objective, objlump, OBJECTIVE_LEN);
         }
         // haleyjd 20130301: v1.31 hack: if first char of message is a period,
         // clear the player's message. Is this actually used anywhere?

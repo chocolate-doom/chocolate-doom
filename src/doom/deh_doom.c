@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*-
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,16 +11,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 //
 // Top-level dehacked definitions for Doom dehacked.
 //
-//-----------------------------------------------------------------------------
 
 #include <stdlib.h>
 #include "deh_defs.h"
@@ -53,6 +44,8 @@ extern deh_section_t deh_section_text;
 extern deh_section_t deh_section_thing;
 // deh_weapon.c:
 extern deh_section_t deh_section_weapon;
+// deh_bexstr.c:
+extern deh_section_t deh_section_bexstr;
 
 //
 // List of section types:
@@ -69,6 +62,7 @@ deh_section_t *deh_section_types[] =
     &deh_section_text,
     &deh_section_thing,
     &deh_section_weapon,
+    &deh_section_bexstr,
     NULL
 };
 

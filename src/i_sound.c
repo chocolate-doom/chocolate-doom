@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,14 +12,8 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:  none
 //
-//-----------------------------------------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -47,12 +39,21 @@ int snd_samplerate = 44100;
 
 int snd_cachesize = 64 * 1024 * 1024;
 
+// Config variable that controls the sound buffer size.
+// We default to 28ms (1000 / 35fps = 1 buffer per tic).
+
+int snd_maxslicetime_ms = 28;
+
+// External command to invoke to play back music.
+
+char *snd_musiccmd = "";
+
 // Low-level sound and music modules we are using
 
 static sound_module_t *sound_module;
 static music_module_t *music_module;
 
-int snd_musicdevice = SNDDEVICE_GENMIDI;
+int snd_musicdevice = SNDDEVICE_SB;
 int snd_sfxdevice = SNDDEVICE_SB;
 
 // Sound modules
@@ -269,9 +270,14 @@ void I_UpdateSound(void)
     {
         sound_module->Update();
     }
+
+    if (music_module != NULL && music_module->Poll != NULL)
+    {
+        music_module->Poll();
+    }
 }
 
-static void CheckVolumeSeparation(int *sep, int *vol)
+static void CheckVolumeSeparation(int *vol, int *sep)
 {
     if (*sep < 0)
     {
@@ -426,6 +432,7 @@ boolean I_MusicIsPlaying(void)
 void I_BindSoundVariables(void)
 {
     extern int use_libsamplerate;
+    extern float libsamplerate_scale;
 
     M_BindVariable("snd_musicdevice",   &snd_musicdevice);
     M_BindVariable("snd_sfxdevice",     &snd_sfxdevice);
@@ -433,6 +440,8 @@ void I_BindSoundVariables(void)
     M_BindVariable("snd_sbirq",         &snd_sbirq);
     M_BindVariable("snd_sbdma",         &snd_sbdma);
     M_BindVariable("snd_mport",         &snd_mport);
+    M_BindVariable("snd_maxslicetime_ms", &snd_maxslicetime_ms);
+    M_BindVariable("snd_musiccmd",      &snd_musiccmd);
     M_BindVariable("snd_samplerate",    &snd_samplerate);
     M_BindVariable("snd_cachesize",     &snd_cachesize);
     M_BindVariable("opl_io_port",       &opl_io_port);
@@ -442,7 +451,8 @@ void I_BindSoundVariables(void)
     M_BindVariable("gus_ram_kb",        &gus_ram_kb);
 
 #ifdef FEATURE_SOUND
-    M_BindVariable("use_libsamplerate", &use_libsamplerate);
+    M_BindVariable("use_libsamplerate",   &use_libsamplerate);
+    M_BindVariable("libsamplerate_scale", &libsamplerate_scale);
 #endif
 
     // Before SDL_mixer version 1.2.11, MIDI music caused the game

@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,12 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 // MN_menu.c
 
@@ -32,6 +24,7 @@
 #include "i_system.h"
 #include "i_swap.h"
 #include "m_controls.h"
+#include "m_misc.h"
 #include "p_local.h"
 #include "r_local.h"
 #include "s_sound.h"
@@ -854,7 +847,7 @@ static boolean SCSaveGame(int option)
     if (!FileMenuKeySteal)
     {
         FileMenuKeySteal = true;
-        strcpy(oldSlotText, SlotText[option]);
+        M_StringCopy(oldSlotText, SlotText[option], sizeof(oldSlotText));
         ptr = SlotText[option];
         while (*ptr)
         {
@@ -1079,10 +1072,22 @@ boolean MN_Responder(event_t * event)
         return true;
     }
 
-    if (event->data1 != KEY_RSHIFT && event->type != ev_keydown)
+    // Allow the menu to be activated from a joystick button if a button
+    // is bound for joybmenu.
+    if (event->type == ev_joystick)
     {
-        return (false);
+        if (joybmenu >= 0 && (event->data1 & (1 << joybmenu)) != 0)
+        {
+            MN_ActivateMenu();
+            return true;
+        }
     }
+
+    if (event->type != ev_keydown)
+    {
+        return false;
+    }
+
     key = event->data1;
     charTyped = event->data2;
 
@@ -1111,7 +1116,8 @@ boolean MN_Responder(event_t * event)
         return (true);          //make the info screen eat the keypress
     }
 
-    if (ravpic && key == KEY_F1)
+    if ((ravpic && key == KEY_F1) ||
+        (key != 0 && key == key_menu_screenshot))
     {
         G_ScreenShot();
         return (true);
@@ -1511,7 +1517,8 @@ boolean MN_Responder(event_t * event)
         if (key == KEY_ESCAPE)
         {
             memset(SlotText[currentSlot], 0, SLOTTEXTLEN + 2);
-            strcpy(SlotText[currentSlot], oldSlotText);
+            M_StringCopy(SlotText[currentSlot], oldSlotText,
+                         sizeof(SlotText[currentSlot]));
             SlotStatus[currentSlot]--;
             MN_DeactivateMenu();
             return (true);

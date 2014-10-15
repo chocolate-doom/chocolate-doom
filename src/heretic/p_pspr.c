@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,12 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 // P_pspr.c
 
@@ -1070,9 +1062,17 @@ void A_FireMacePL1B(player_t * player, pspdef_t * psp)
     }
     player->ammo[am_mace] -= USE_MACE_AMMO_1;
     pmo = player->mo;
+
+    // Vanilla bug here:
+    // Original code here looks like:
+    //   (pmo->flags2 & MF2_FEETARECLIPPED != 0)
+    // C's operator precedence interprets this as:
+    //   (pmo->flags2 & (MF2_FEETARECLIPPED != 0))
+    // Which simplifies to:
+    //   (pmo->flags2 & 1)
     ball = P_SpawnMobj(pmo->x, pmo->y, pmo->z + 28 * FRACUNIT
-                       - FOOTCLIPSIZE * ((pmo->flags2 & MF2_FEETARECLIPPED) !=
-                                         0), MT_MACEFX2);
+                       - FOOTCLIPSIZE * (pmo->flags2 & 1), MT_MACEFX2);
+
     ball->momz = 2 * FRACUNIT + ((player->lookdir) << (FRACBITS - 5));
     angle = pmo->angle;
     ball->target = pmo;

@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2005-8 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,12 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 #include <stdio.h>
 
@@ -29,6 +21,7 @@
 
 #include "m_config.h"
 #include "doom/cn_meta.h" // [cndoom]
+#include "m_misc.h"
 
 //
 // Keyboard controls
@@ -93,6 +86,15 @@ int key_useartifact = KEY_ENTER;
 //
 
 int key_jump = '/';
+
+int key_arti_all             = KEY_BACKSPACE;
+int key_arti_health          = '\\';
+int key_arti_poisonbag       = '0';
+int key_arti_blastradius     = '9';
+int key_arti_teleport        = '8';
+int key_arti_teleportother   = '7';
+int key_arti_egg             = '6';
+int key_arti_invulnerability = '5';
 
 //
 // Strife key controls
@@ -197,6 +199,7 @@ int key_menu_gamma     = KEY_F11;
 
 int key_menu_incscreen = KEY_EQUALS;
 int key_menu_decscreen = KEY_MINUS;
+int key_menu_screenshot = 0;
 
 //
 // Joystick controls
@@ -215,6 +218,8 @@ int joybjump = -1;
 int joybprevweapon = -1;
 int joybnextweapon = -1;
 
+int joybmenu = -1;
+
 // Control whether if a mouse button is double clicked, it acts like 
 // "use" has been pressed
 
@@ -226,16 +231,17 @@ int dclick_use = 0; // [cndoom] no double click
 
 void M_BindBaseControls(void)
 {
-    M_BindVariable("key_right",          &key_right),
-    M_BindVariable("key_left",           &key_left),
-    M_BindVariable("key_up",             &key_up),
-    M_BindVariable("key_down",           &key_down),
-    M_BindVariable("key_strafeleft",     &key_strafeleft),
-    M_BindVariable("key_straferight",    &key_straferight),
-    M_BindVariable("key_fire",           &key_fire),
-    M_BindVariable("key_use",            &key_use),
-    M_BindVariable("key_strafe",         &key_strafe),
-    
+    M_BindVariable("key_right",          &key_right);
+    M_BindVariable("key_left",           &key_left);
+    M_BindVariable("key_up",             &key_up);
+    M_BindVariable("key_down",           &key_down);
+    M_BindVariable("key_strafeleft",     &key_strafeleft);
+    M_BindVariable("key_straferight",    &key_straferight);
+    M_BindVariable("key_fire",           &key_fire);
+    M_BindVariable("key_use",            &key_use);
+    M_BindVariable("key_strafe",         &key_strafe);
+    M_BindVariable("key_speed",          &key_speed);
+
     // [cndoom] new values
     M_BindVariable("key_strafe_alt",            &key_strafe_alt),
     M_BindVariable("cn_precache_sounds",        &cn_precache_sounds),
@@ -256,18 +262,17 @@ void M_BindBaseControls(void)
     M_BindVariable("cn_meta_url",               &cn_meta_url);
     */
     M_BindVariable("cn_meta_id",                &cn_meta_id);
-    // [cndoom] end
-    
-    M_BindVariable("key_speed",          &key_speed),
 
-    M_BindVariable("mouseb_fire",        &mousebfire),
-    M_BindVariable("mouseb_strafe",      &mousebstrafe),
-    M_BindVariable("mouseb_forward",     &mousebforward),
+    M_BindVariable("mouseb_fire",        &mousebfire);
+    M_BindVariable("mouseb_strafe",      &mousebstrafe);
+    M_BindVariable("mouseb_forward",     &mousebforward);
 
-    M_BindVariable("joyb_fire",          &joybfire),
-    M_BindVariable("joyb_strafe",        &joybstrafe),
-    M_BindVariable("joyb_use",           &joybuse),
-    M_BindVariable("joyb_speed",         &joybspeed),
+    M_BindVariable("joyb_fire",          &joybfire);
+    M_BindVariable("joyb_strafe",        &joybstrafe);
+    M_BindVariable("joyb_use",           &joybuse);
+    M_BindVariable("joyb_speed",         &joybspeed);
+
+    M_BindVariable("joyb_menu_activate", &joybmenu);
 
     // Extra controls that are not in the Vanilla versions:
 
@@ -302,6 +307,15 @@ void M_BindHexenControls(void)
     M_BindVariable("key_jump",           &key_jump);
     M_BindVariable("mouseb_jump",        &mousebjump);
     M_BindVariable("joyb_jump",          &joybjump);
+
+    M_BindVariable("key_arti_all",             &key_arti_all);
+    M_BindVariable("key_arti_health",          &key_arti_health);
+    M_BindVariable("key_arti_poisonbag",       &key_arti_poisonbag);
+    M_BindVariable("key_arti_blastradius",     &key_arti_blastradius);
+    M_BindVariable("key_arti_teleport",        &key_arti_teleport);
+    M_BindVariable("key_arti_teleportother",   &key_arti_teleportother);
+    M_BindVariable("key_arti_egg",             &key_arti_egg);
+    M_BindVariable("key_arti_invulnerability", &key_arti_invulnerability);
 }
 
 void M_BindStrifeControls(void)
@@ -402,6 +416,7 @@ void M_BindMenuControls(void)
 
     M_BindVariable("key_menu_incscreen", &key_menu_incscreen);
     M_BindVariable("key_menu_decscreen", &key_menu_decscreen);
+    M_BindVariable("key_menu_screenshot",&key_menu_screenshot);
     M_BindVariable("key_demo_quit",      &key_demo_quit);
     M_BindVariable("key_spy",            &key_spy);
 }
@@ -415,7 +430,7 @@ void M_BindChatControls(unsigned int num_players)
 
     for (i=0; i<num_players; ++i)
     {
-        sprintf(name, "key_multi_msgplayer%i", i + 1);
+        M_snprintf(name, sizeof(name), "key_multi_msgplayer%i", i + 1);
         M_BindVariable(name, &key_multi_msgplayer[i]);
     }
 }

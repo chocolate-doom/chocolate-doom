@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2009 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,19 +11,15 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //     OPL interface.
 //
-//-----------------------------------------------------------------------------
 
 
 #ifndef OPL_OPL_H
 #define OPL_OPL_H
+
+#include <inttypes.h>
 
 typedef void (*opl_callback_t)(void *data);
 
@@ -57,6 +51,12 @@ typedef enum
 #define OPL_REGS_FREQ_1           0xA0
 #define OPL_REGS_FREQ_2           0xB0
 #define OPL_REGS_FEEDBACK         0xC0
+
+// Times
+
+#define OPL_SECOND ((uint64_t) 1000 * 1000)
+#define OPL_MS     ((uint64_t) 1000)
+#define OPL_US     ((uint64_t) 1)
 
 //
 // Low-level functions.
@@ -107,10 +107,15 @@ void OPL_InitRegisters(void);
 // Timer callback functions.
 //
 
-// Set a timer callback.  After the specified number of milliseconds
+// Set a timer callback.  After the specified number of microseconds
 // have elapsed, the callback will be invoked.
 
-void OPL_SetCallback(unsigned int ms, opl_callback_t callback, void *data);
+void OPL_SetCallback(uint64_t us, opl_callback_t callback, void *data);
+
+// Adjust callback times by the specified factor. For example, a value of
+// 0.5 will halve all remaining times.
+
+void OPL_AdjustCallbacks(float factor);
 
 // Clear all OPL callbacks that have been set.
 
@@ -125,9 +130,9 @@ void OPL_Lock(void);
 
 void OPL_Unlock(void);
 
-// Block until the specified number of milliseconds have elapsed.
+// Block until the specified number of microseconds have elapsed.
 
-void OPL_Delay(unsigned int ms);
+void OPL_Delay(uint64_t us);
 
 // Pause the OPL callbacks.
 

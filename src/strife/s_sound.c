@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,14 +12,8 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:  none
 //
-//-----------------------------------------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -39,6 +31,7 @@
 #include "sounds.h"
 #include "s_sound.h"
 
+#include "m_misc.h"
 #include "m_random.h"
 #include "m_argv.h"
 
@@ -95,7 +88,7 @@ int sfxVolume = 8;
 
 // Maximum volume of music. 
 
-int musicVolume = 8;
+int musicVolume = 13;
 
 // haleyjd 08/29/10: [STRIFE] New global variable
 // Volume of voice channel.
@@ -143,9 +136,6 @@ int disable_voices = 0;
 void S_Init(int sfxVolume, int musicVolume, int voiceVolume)
 {  
     int i;
-
-    I_InitSound(true);
-    I_InitMusic();
 
     I_PrecacheSounds(S_sfx, NUMSFX);
 
@@ -556,7 +546,7 @@ static voiceinfo_t *S_getVoice(const char *name, int lumpnum)
     {
         voice = calloc(1, sizeof(voiceinfo_t));
 
-        strncpy(voice->sfx.name, name, 8);
+        M_StringCopy(voice->sfx.name, name, sizeof(voice->sfx.name));
         voice->sfx.priority = INT_MIN; // make highest possible priority
         voice->sfx.pitch = -1;
         voice->sfx.volume = -1;
@@ -610,8 +600,7 @@ void I_StartVoice(const char *lumpname)
         return;
 
     // Because of constness problems...
-    strncpy(lumpnamedup, lumpname, 9);
-    lumpnamedup[8] = '\0';
+    M_StringCopy(lumpnamedup, lumpname, sizeof(lumpnamedup));
 
     if((lumpnum = W_CheckNumForName(lumpnamedup)) != -1)
     {
@@ -791,7 +780,7 @@ void S_ChangeMusic(int musicnum, int looping)
     // get lumpnum if neccessary
     if (!music->lumpnum)
     {
-        sprintf(namebuf, "d_%s", DEH_String(music->name));
+        M_snprintf(namebuf, sizeof(namebuf), "d_%s", DEH_String(music->name));
         music->lumpnum = W_GetNumForName(namebuf);
     }
 

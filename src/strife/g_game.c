@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,14 +12,8 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:  none
 //
-//-----------------------------------------------------------------------------
 
 #include <string.h>
 #include <stdlib.h>
@@ -39,6 +31,7 @@
 #include "m_controls.h"
 #include "m_misc.h"
 #include "m_menu.h"
+#include "m_misc.h"
 #include "m_saves.h" // STRIFE
 #include "m_random.h"
 #include "i_system.h"
@@ -122,7 +115,7 @@ int             starttime;              // for comparative timing purposes
  
 boolean         viewactive; 
  
-boolean         deathmatch;             // only if started as net death 
+int             deathmatch;             // only if started as net death 
 boolean         netgame;                // only true if packets are broadcast 
 boolean         playeringame[MAXPLAYERS]; 
 player_t        players[MAXPLAYERS]; 
@@ -225,6 +218,7 @@ static int      dclicks2;
 // joystick values are repeated 
 static int      joyxmove;
 static int      joyymove;
+static int      joystrafemove;
 static boolean  joyarray[MAX_JOY_BUTTONS + 1]; 
 static boolean *joybuttons = &joyarray[1];		// allow [-1] 
  
@@ -467,14 +461,16 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 
     if (gamekeydown[key_strafeleft]
      || joybuttons[joybstrafeleft]
-     || mousebuttons[mousebstrafeleft]) 
+     || mousebuttons[mousebstrafeleft]
+     || joystrafemove < 0)
     {
         side -= sidemove[speed];
     }
 
     if (gamekeydown[key_straferight]
      || joybuttons[joybstraferight]
-     || mousebuttons[mousebstraferight])
+     || mousebuttons[mousebstraferight]
+     || joystrafemove > 0)
     {
         side += sidemove[speed]; 
     }
@@ -483,7 +479,8 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
     cmd->chatchar = HU_dequeueChatChar(); 
 
     // villsa [STRIFE] - add mouse button support for jump
-    if(gamekeydown[key_jump] || mousebuttons[mousebjump])
+    if (gamekeydown[key_jump] || mousebuttons[mousebjump]
+     || joybuttons[joybjump])
         cmd->buttons2 |= BT2_JUMP;
  
     // villsa [STRIFE]: Moved mousebuttons[mousebfire] to below
@@ -698,12 +695,12 @@ void G_DoLoadLevel (void)
 
     // clear cmd building stuff
 
-    memset (gamekeydown, 0, sizeof(gamekeydown)); 
-    joyxmove = joyymove = 0; 
-    mousex = mousey = 0; 
-    sendpause = sendsave = paused = false; 
-    memset (mousebuttons, 0, sizeof(mousebuttons)); 
-    memset (joybuttons, 0, sizeof(joybuttons)); 
+    memset (gamekeydown, 0, sizeof(gamekeydown));
+    joyxmove = joyymove = joystrafemove = 0;
+    mousex = mousey = 0;
+    sendpause = sendsave = paused = false;
+    memset(mousearray, 0, sizeof(mousearray));
+    memset(joyarray, 0, sizeof(joyarray));
 
     if (testcontrols)
     {
@@ -879,6 +876,7 @@ boolean G_Responder (event_t* ev)
         SetJoyButtons(ev->data1);
         joyxmove = ev->data2; 
         joyymove = ev->data3; 
+        joystrafemove = ev->data4;
         return true;    // eat events 
 
     default: 
@@ -937,7 +935,7 @@ void G_Ticker (void)
             G_DoWorldDone (); 
             break; 
         case ga_screenshot: 
-            V_ScreenShot("STRIFE%02i.pcx"); // [STRIFE] file name, message
+            V_ScreenShot("STRIFE%02i.%s"); // [STRIFE] file name, message
             players[consoleplayer].message = DEH_String("STRIFE  by Rogue entertainment");
             gameaction = ga_nothing; 
             break; 
@@ -983,8 +981,9 @@ void G_Ticker (void)
                 && turbodetected[i])
             {
                 static char turbomessage[80];
-                extern char *player_names[4];
-                sprintf (turbomessage, "%s is turbo!",player_names[i]);
+                extern char player_names[8][16];
+                M_snprintf(turbomessage, sizeof(turbomessage),
+                           "%s is turbo!", player_names[i]);
                 players[consoleplayer].message = turbomessage;
                 turbodetected[i] = false;
             }
@@ -1024,7 +1023,10 @@ void G_Ticker (void)
 
                 case BTS_SAVEGAME: 
                     if (!character_name[0]) // [STRIFE]
-                        strcpy (character_name, "NET GAME"); 
+                    {
+                        M_StringCopy(character_name, "NET GAME",
+                                     sizeof(character_name));
+                    }
                     savegameslot =  
                         (players[i].cmd.buttons & BTS_SAVEMASK)>>BTS_SAVESHIFT; 
                     gameaction = ga_savegame; 
@@ -1172,7 +1174,8 @@ void G_PlayerReborn (int player)
         p->inventory[i].type = NUMMOBJTYPES;
 
     // villsa [STRIFE]: Default objective
-    strncpy(mission_objective, DEH_String("Find help"), OBJECTIVE_LEN);
+    M_StringCopy(mission_objective, DEH_String("Find help"),
+                 OBJECTIVE_LEN);
 }
 
 //
@@ -1247,7 +1250,7 @@ G_CheckSpot
 // Spawns a player at one of the random death match spots 
 // called at level load and each death 
 //
-// [STRIFE] Verified unmodified
+// [STRIFE]: Modified exit message to match binary.
 //
 void G_DeathMatchSpawnPlayer (int playernum) 
 { 
@@ -1256,7 +1259,7 @@ void G_DeathMatchSpawnPlayer (int playernum)
 
     selections = deathmatch_p - deathmatchstarts; 
     if (selections < 4) 
-        I_Error ("Only %i deathmatch spots, 4 required", selections); 
+        I_Error ("Only %i deathmatch spots, at least 4 required!", selections); 
 
     for (j=0 ; j<20 ; j++) 
     { 
@@ -1276,7 +1279,7 @@ void G_DeathMatchSpawnPlayer (int playernum)
 //
 // G_LoadPath
 //
-// haleyjd 10/03/10: [STRIFE] New function
+// haleyjd 20101003: [STRIFE] New function
 // Sets loadpath based on the map and "savepathtemp"
 //
 void G_LoadPath(int map)
@@ -1284,7 +1287,7 @@ void G_LoadPath(int map)
     char mapbuf[33];
 
     memset(mapbuf, 0, sizeof(mapbuf));
-    sprintf(mapbuf, "%d", map);
+    M_snprintf(mapbuf, sizeof(mapbuf), "%d", map);
 
     // haleyjd: free if already set, and use M_SafeFilePath
     if(loadpath)
@@ -1354,7 +1357,7 @@ void G_ScreenShot (void)
     gameaction = ga_screenshot; 
 } 
 
-// haleyjd 08/23/2010: [STRIFE] Removed par times.
+// haleyjd 20100823: [STRIFE] Removed par times.
 
 //
 // G_DoCompleted 
@@ -1365,7 +1368,7 @@ extern char*	pagename;
 //
 // G_RiftExitLevel
 //
-// haleyjd 08/24/10: [STRIFE] New function
+// haleyjd 20100824: [STRIFE] New function
 // * Called from some exit linedefs to exit to a specific riftspot in the 
 //   given destination map.
 //
@@ -1394,7 +1397,7 @@ void G_RiftExitLevel(int map, int spot, angle_t angle)
 //
 // G_Exit2
 //
-// haleyjd 10/03/10: [STRIFE] New function.
+// haleyjd 20101003: [STRIFE] New function.
 // No xrefs to this, doesn't seem to be used. Could have gotten inlined
 // somewhere but I haven't seen it.
 //
@@ -1409,7 +1412,7 @@ void G_Exit2(int dest, angle_t angle)
 //
 // G_ExitLevel
 //
-// haleyjd 08/24/10: [STRIFE]:
+// haleyjd 20100824: [STRIFE]:
 // * Default to next map in numeric order; init destmap and riftdest.
 //
 void G_ExitLevel (int dest) 
@@ -1422,7 +1425,7 @@ void G_ExitLevel (int dest)
 } 
 
 /*
-// haleyjd 08/23/2010: [STRIFE] No secret exits in Strife.
+// haleyjd 20100823: [STRIFE] No secret exits in Strife.
 // Here's for the german edition.
 void G_SecretExitLevel (void) 
 {
@@ -1439,7 +1442,7 @@ void G_SecretExitLevel (void)
 //
 // G_StartFinale
 //
-// haleyjd 09/21/10: [STRIFE] New function.
+// haleyjd 20100921: [STRIFE] New function.
 // This replaced G_SecretExitLevel in Strife. I don't know that it's actually
 // used anywhere in the game, but it *is* usable in mods via linetype 124,
 // W1 Start Finale.
@@ -1452,7 +1455,7 @@ void G_StartFinale(void)
 //
 // G_DoCompleted
 //
-// haleyjd 08/23/10: [STRIFE]:
+// haleyjd 20100823: [STRIFE]:
 // * Removed G_PlayerFinishLevel and just sets some powerup states.
 // * Removed Chex, as not relevant to Strife.
 // * Removed DOOM level transfer logic 
@@ -1491,7 +1494,7 @@ void G_DoCompleted (void)
 } 
 
 
-// haleyjd 08/24/10: [STRIFE] No secret exits.
+// haleyjd 20100824: [STRIFE] No secret exits.
 /*
 //
 // G_WorldDone 
@@ -1525,7 +1528,7 @@ void G_WorldDone (void)
 //
 // G_RiftPlayer
 //
-// haleyjd 08/24/10: [STRIFE] New function
+// haleyjd 20100824: [STRIFE] New function
 // Teleports the player to the appropriate rift spot.
 //
 void G_RiftPlayer(void)
@@ -1543,7 +1546,7 @@ void G_RiftPlayer(void)
 //
 // G_RiftCheat
 //
-// haleyjd 08/24/10: [STRIFE] New function
+// haleyjd 20100824: [STRIFE] New function
 // Called from the cheat code to jump to a rift spot.
 //
 boolean G_RiftCheat(int riftSpotNum)
@@ -1556,7 +1559,7 @@ boolean G_RiftCheat(int riftSpotNum)
 //
 // G_DoWorldDone
 //
-// haleyjd 08/24/10: [STRIFE] Added destmap -> gamemap set.
+// haleyjd 20100824: [STRIFE] Added destmap -> gamemap set.
 //
 void G_DoWorldDone (void) 
 {        
@@ -1604,7 +1607,7 @@ void G_DoWorldDone (void)
 //
 // G_DoWorldDone2
 //
-// haleyjd 10/03/10: [STRIFE] New function. No xrefs; unused.
+// haleyjd 20101003: [STRIFE] New function. No xrefs; unused.
 //
 void G_DoWorldDone2(void)
 {
@@ -1616,7 +1619,7 @@ void G_DoWorldDone2(void)
 //
 // G_ReadCurrent
 //
-// haleyjd 10/03/10: [STRIFE] New function.
+// haleyjd 20101003: [STRIFE] New function.
 // Reads the "CURRENT" file from the given path and then sets it to
 // gamemap.
 //
@@ -1654,17 +1657,16 @@ void R_ExecuteSetViewSize (void);
 
 char	savename[256];
 
-// [STRIFE]: No such function, at least in v1.2
-// STRIFE-TODO: Does this come back in v1.31?
+// [STRIFE]: No such function.
 /*
-void G_LoadGame (char* name) 
-{ 
-    strcpy (savename, name); 
-    gameaction = ga_loadgame; 
-} 
+void G_LoadGame (char* name)
+{
+    M_StringCopy(savename, name, sizeof(savename));
+    gameaction = ga_loadgame;
+}
 */
- 
-// haleyjd 09/28/10: [STRIFE] VERSIONSIZE == 8
+
+// haleyjd 20100928: [STRIFE] VERSIONSIZE == 8
 #define VERSIONSIZE             8
 
 void G_DoLoadGame (boolean userload) 
@@ -1728,7 +1730,7 @@ void G_DoLoadGame (boolean userload)
 //
 // G_WriteSaveName
 //
-// haleyjd 2010103: [STRIFE] New function
+// haleyjd 20101003: [STRIFE] New function
 //
 // Writes the character name to the NAME file.
 //
@@ -1756,7 +1758,7 @@ boolean G_WriteSaveName(int slot, const char *charname)
 
     // haleyjd: memset full character_name for safety
     memset(character_name, 0, CHARACTER_NAME_LEN);
-    strcpy(character_name, charname);
+    M_StringCopy(character_name, charname, sizeof(character_name));
 
     // haleyjd: use M_SafeFilePath
     tmpname = M_SafeFilePath(savepathtemp, "name");
@@ -1772,7 +1774,7 @@ boolean G_WriteSaveName(int slot, const char *charname)
 //
 // G_SaveGame
 // Called by the menu task.
-// Description is a 24 byte text string 
+// Description is a 24 byte text string
 //
 // [STRIFE] No such function, at least in v1.2
 // STRIFE-TODO: Does this make a comeback in v1.31?
@@ -1780,14 +1782,14 @@ boolean G_WriteSaveName(int slot, const char *charname)
 void
 G_SaveGame
 ( int	slot,
-  char*	description ) 
-{ 
-    savegameslot = slot; 
-    strcpy (savedescription, description); 
-    sendsave = true; 
-} 
+  char*	description )
+{
+    savegameslot = slot;
+    M_StringCopy(savedescription, description, sizeof(savedescription));
+    sendsave = true;
+}
 */
- 
+
 void G_DoSaveGame (char *path)
 { 
     char *current_path;
@@ -1800,7 +1802,7 @@ void G_DoSaveGame (char *path)
     
     // [STRIFE] custom save file path logic
     memset(gamemapstr, 0, sizeof(gamemapstr));
-    sprintf(gamemapstr, "%d", gamemap);
+    M_snprintf(gamemapstr, sizeof(gamemapstr), "%d", gamemap);
     savegame_file = M_SafeFilePath(path, gamemapstr);
 
     // [STRIFE] write the "current" file, which tells which hub map
@@ -1860,12 +1862,12 @@ void G_DoSaveGame (char *path)
     Z_Free(savegame_file);
 
     gameaction = ga_nothing; 
-    //strcpy(savedescription, "");
+    //M_StringCopy(savedescription, "", sizeof(savedescription));
 
     // [STRIFE]: custom message logic
     if(!strcmp(path, savepath))
     {
-        sprintf(savename, "%s saved.", character_name);
+        M_snprintf(savename, sizeof(savename), "%s saved.", character_name);
         players[consoleplayer].message = savename;
     }
 
@@ -1885,7 +1887,7 @@ int     d_map;
 // Can be called by the startup code or the menu task,
 // consoleplayer, displayplayer, playeringame[] should be set. 
 //
-// haleyjd 09/22/10: [STRIFE] Removed episode parameter
+// haleyjd 20100922: [STRIFE] Removed episode parameter
 //
 void G_DeferedInitNew(skill_t skill, int map)
 { 
@@ -1919,7 +1921,7 @@ void G_DoNewGame (void)
 //
 // G_InitNew
 //
-// haleyjd 08/24/10: [STRIFE]:
+// haleyjd 20100824: [STRIFE]:
 // * Added riftdest initialization
 // * Removed episode parameter
 //
@@ -2048,8 +2050,8 @@ G_InitNew
 
     // Set the sky to use.
     //
-    // Note: This IS broken, but it is how Vanilla Doom behaves.  
-    // See http://doom.wikia.com/wiki/Sky_never_changes_in_Doom_II.
+    // Note: This IS broken, but it is how Vanilla Doom behaves.
+    // See http://doomwiki.org/wiki/Sky_never_changes_in_Doom_II.
     //
     // Because we set the sky here at the start of a game, not at the
     // start of a level, the sky texture never changes unless we
@@ -2181,14 +2183,16 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
 // 
 // [STRIFE] Verified unmodified
 //
-void G_RecordDemo (char* name) 
-{ 
-    int             i; 
+void G_RecordDemo (char* name)
+{
+    size_t demoname_size;
+    int             i;
     int             maxsize;
 
-    usergame = false; 
-    demoname = Z_Malloc(strlen(name) + 5, PU_STATIC, NULL);
-    sprintf(demoname, "%s.lmp", name);
+    usergame = false;
+    demoname_size = strlen(name) + 5;
+    demoname = Z_Malloc(demoname_size, PU_STATIC, NULL);
+    M_snprintf(demoname, demoname_size, "%s.lmp", name);
     maxsize = 0x20000;
 
     //!
@@ -2283,7 +2287,8 @@ static char *DemoVersionDescription(int version)
     }
 
     // Unknown version. Who knows?
-    sprintf(resultbuf, "%i.%i (unknown)", version / 100, version % 100);
+    M_snprintf(resultbuf, sizeof(resultbuf),
+               "%i.%i (unknown)", version / 100, version % 100);
 
     return resultbuf;
 }

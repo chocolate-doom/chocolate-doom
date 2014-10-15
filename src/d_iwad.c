@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2006 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,16 +11,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //     Search for and locate an IWAD file, and initialize according
 //     to the IWAD type.
 //
-//-----------------------------------------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -39,7 +31,7 @@
 #include "w_wad.h"
 #include "z_zone.h"
 
-static iwad_t iwads[] =
+static const iwad_t iwads[] =
 {
     { "doom2.wad",    doom2,     commercial, "Doom II" },
     { "plutonia.wad", pack_plut, commercial, "Final Doom: Plutonia Experiment" },
@@ -48,6 +40,9 @@ static iwad_t iwads[] =
     { "doom1.wad",    doom,      shareware,  "Doom Shareware" },
     { "chex.wad",     pack_chex, shareware,  "Chex Quest" },
     { "hacx.wad",     pack_hacx, commercial, "Hacx" },
+    { "freedm.wad",   doom2,     commercial, "FreeDM" },
+    { "freedoom2.wad", doom2,    commercial, "Freedoom: Phase 2" },
+    { "freedoom1.wad", doom,     retail,     "Freedoom: Phase 1" },
     { "heretic.wad",  heretic,   retail,     "Heretic" },
     { "heretic1.wad", heretic,   shareware,  "Heretic Shareware" },
     { "hexen.wad",    hexen,     commercial, "Hexen" },
@@ -181,13 +176,17 @@ static char *steam_install_subdirs[] =
     "steamapps\\common\\doom 2\\base",
     "steamapps\\common\\final doom\\base",
     "steamapps\\common\\ultimate doom\\base",
+    "steamapps\\common\\heretic shadow of the serpent riders\\base",
     "steamapps\\common\\hexen\\base",
-    "steamapps\\common\\heretic shadow of the serpent riders\\base"
+    "steamapps\\common\\hexen deathkings of the dark citadel\\base",
 
     // From Doom 3: BFG Edition:
 
     "steamapps\\common\\DOOM 3 BFG Edition\\base\\wads",
 };
+
+#define STEAM_BFG_GUS_PATCHES \
+    "steamapps\\common\\DOOM 3 BFG Edition\\base\\classicmusic\\instruments"
 
 static char *GetRegistryString(registry_value_t *reg_val)
 {
@@ -282,11 +281,8 @@ static void CheckCollectorsEdition(void)
 
     for (i=0; i<arrlen(collectors_edition_subdirs); ++i)
     {
-        subpath = malloc(strlen(install_path)
-                         + strlen(collectors_edition_subdirs[i])
-                         + 5);
-
-        sprintf(subpath, "%s\\%s", install_path, collectors_edition_subdirs[i]);
+        subpath = M_StringJoin(install_path, DIR_SEPARATOR_S,
+                               collectors_edition_subdirs[i], NULL);
 
         AddIWADDir(subpath);
     }
@@ -312,14 +308,53 @@ static void CheckSteamEdition(void)
 
     for (i=0; i<arrlen(steam_install_subdirs); ++i)
     {
-        subpath = malloc(strlen(install_path) 
-                         + strlen(steam_install_subdirs[i]) + 5);
-
-        sprintf(subpath, "%s\\%s", install_path, steam_install_subdirs[i]);
+        subpath = M_StringJoin(install_path, DIR_SEPARATOR_S,
+                               steam_install_subdirs[i], NULL);
 
         AddIWADDir(subpath);
     }
 
+    free(install_path);
+}
+
+// The BFG edition ships with a full set of GUS patches. If we find them,
+// we can autoconfigure to use them.
+
+static void CheckSteamGUSPatches(void)
+{
+    const char *current_path;
+    char *install_path;
+    char *patch_path;
+    int len;
+
+    // Already configured? Don't stomp on the user's choices.
+    current_path = M_GetStrVariable("gus_patch_path");
+    if (current_path != NULL && strlen(current_path) > 0)
+    {
+        return;
+    }
+
+    install_path = GetRegistryString(&steam_install_location);
+
+    if (install_path == NULL)
+    {
+        return;
+    }
+
+    len = strlen(install_path) + strlen(STEAM_BFG_GUS_PATCHES) + 20;
+    patch_path = malloc(len);
+    M_snprintf(patch_path, len, "%s\\%s\\ACBASS.PAT",
+               install_path, STEAM_BFG_GUS_PATCHES);
+
+    // Does acbass.pat exist? If so, then set gus_patch_path.
+    if (M_FileExists(patch_path))
+    {
+        M_snprintf(patch_path, len, "%s\\%s",
+                   install_path, STEAM_BFG_GUS_PATCHES);
+        M_SetVariable("gus_patch_path", patch_path);
+    }
+
+    free(patch_path);
     free(install_path);
 }
 
@@ -337,6 +372,14 @@ static void CheckDOSDefaults(void)
     AddIWADDir("\\doom");               // Shareware / Registered Doom
     AddIWADDir("\\dooms");              // Shareware versions
     AddIWADDir("\\doomsw");
+
+    AddIWADDir("\\heretic");            // Heretic
+    AddIWADDir("\\hrtic_se");           // Heretic Shareware from Quake disc
+
+    AddIWADDir("\\hexen");              // Hexen
+    AddIWADDir("\\hexendk");            // Hexen Deathkings of the Dark Citadel
+
+    AddIWADDir("\\strife");             // Strife
 }
 
 #endif
@@ -367,7 +410,7 @@ static char *CheckDirectoryHasIWAD(char *dir, char *iwadname)
 
     // As a special case, the "directory" may refer directly to an
     // IWAD file if the path comes from DOOMWADDIR or DOOMWADPATH.
-    
+
     if (DirIsFile(dir, iwadname) && M_FileExists(dir))
     {
         return strdup(dir);
@@ -376,15 +419,13 @@ static char *CheckDirectoryHasIWAD(char *dir, char *iwadname)
     // Construct the full path to the IWAD if it is located in
     // this directory, and check if it exists.
 
-    filename = malloc(strlen(dir) + strlen(iwadname) + 3);
-
     if (!strcmp(dir, "."))
     {
-        strcpy(filename, iwadname);
+        filename = strdup(iwadname);
     }
     else
     {
-        sprintf(filename, "%s%c%s", dir, DIR_SEPARATOR, iwadname);
+        filename = M_StringJoin(dir, DIR_SEPARATOR_S, iwadname, NULL);
     }
 
     if (M_FileExists(filename))
@@ -553,6 +594,10 @@ static void BuildIWADDirList(void)
     CheckSteamEdition();
     CheckDOSDefaults();
 
+    // Check for GUS patches installed with the BFG edition!
+
+    CheckSteamGUSPatches();
+
 #else
 
     // Standard places where IWAD files are installed under Unix.
@@ -573,7 +618,7 @@ static void BuildIWADDirList(void)
 
 char *D_FindWADByName(char *name)
 {
-    char *buf;
+    char *path;
     int i;
     
     // Absolute path?
@@ -584,7 +629,7 @@ char *D_FindWADByName(char *name)
     }
 
     BuildIWADDirList();
-    
+
     // Search through all IWAD paths for a file with the given name.
 
     for (i=0; i<num_iwad_dirs; ++i)
@@ -600,15 +645,14 @@ char *D_FindWADByName(char *name)
 
         // Construct a string for the full path
 
-        buf = malloc(strlen(iwad_dirs[i]) + strlen(name) + 5);
-        sprintf(buf, "%s%c%s", iwad_dirs[i], DIR_SEPARATOR, name);
+        path = M_StringJoin(iwad_dirs[i], DIR_SEPARATOR_S, name, NULL);
 
-        if (M_FileExists(buf))
+        if (M_FileExists(path))
         {
-            return buf;
+            return path;
         }
 
-        free(buf);
+        free(path);
     }
 
     // File not found
@@ -697,9 +741,9 @@ char *D_FindIWAD(int mask, GameMission_t *mission)
 
 // Find all IWADs in the IWAD search path matching the given mask.
 
-iwad_t **D_FindAllIWADs(int mask)
+const iwad_t **D_FindAllIWADs(int mask)
 {
-    iwad_t **result;
+    const iwad_t **result;
     int result_len;
     char *filename;
     int i;
@@ -781,7 +825,8 @@ char *D_SuggestGameName(GameMission_t mission, GameMode_t mode)
 
     for (i = 0; i < arrlen(iwads); ++i)
     {
-        if (iwads[i].mission == mission && iwads[i].mode == mode)
+        if (iwads[i].mission == mission
+         && (mode == indetermined || iwads[i].mode == mode))
         {
             return iwads[i].description;
         }

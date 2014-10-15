@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,12 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 
 // HEADER FILES ------------------------------------------------------------
@@ -101,8 +93,8 @@ extern boolean askforquit;
 // PUBLIC DATA DEFINITIONS -------------------------------------------------
 
 GameMode_t gamemode;
-GameMission_t gamemission;
 char *iwadfile;
+static char demolumpname[9];    // Demo lump to start playing.
 boolean nomonsters;             // checkparm of -nomonsters
 boolean respawnparm;            // checkparm of -respawn
 boolean randomclass;            // checkparm of -randclass
@@ -172,7 +164,7 @@ void D_BindVariables(void)
     {
         char buf[12];
 
-        sprintf(buf, "chatmacro%i", i);
+        M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
         M_BindVariable(buf, &chat_macros[i]);
     }
 }
@@ -190,7 +182,41 @@ static void D_SetDefaultSavePath(void)
     if (!strcmp(SavePath, ""))
     {
         SavePath = malloc(10);
-	sprintf(SavePath, "hexndata%c", DIR_SEPARATOR);
+	M_snprintf(SavePath, 10, "hexndata%c", DIR_SEPARATOR);
+    }
+}
+
+// The Mac version of the Hexen IWAD is different to the "normal" DOS
+// version - it doesn't include lumps used by the DOS DMX library.
+// This means that we can't do GUS or OPL emulation and need to apply
+// a workaround.
+static void AdjustForMacIWAD(void)
+{
+    boolean adjust_music = false;
+
+    switch (snd_musicdevice)
+    {
+        case SNDDEVICE_ADLIB:
+        case SNDDEVICE_SB:
+            adjust_music = W_CheckNumForName("GENMIDI") < 0;
+            break;
+
+        case SNDDEVICE_GUS:
+            adjust_music = W_CheckNumForName("DMXGUS") < 0;
+            break;
+
+        default:
+            break;
+    }
+
+    if (adjust_music)
+    {
+        printf("** Note: You appear to be using the Mac version of the Hexen\n"
+               "** IWAD file. This is missing the lumps required for OPL or\n"
+               "** GUS emulation. Your music configuration is being adjusted\n"
+               "** to a different setting that won't cause the game to "
+               "crash.\n");
+        snd_musicdevice = SNDDEVICE_GENMIDI;
     }
 }
 
@@ -202,14 +228,14 @@ static void D_SetDefaultSavePath(void)
 
 static boolean D_GrabMouseCallback(void)
 {
-    // when menu is active or game is paused, release the mouse 
- 
+    // when menu is active or game is paused, release the mouse
+
     if (MenuActive || paused)
         return false;
 
     // only grab mouse when playing levels (but not demos)
 
-    return (gamestate == GS_LEVEL) && !demoplayback;
+    return (gamestate == GS_LEVEL) && !advancedemo && !demoplayback;
 }
 
 // Message displayed when quitting Hexen
@@ -235,6 +261,7 @@ void InitMapMusicInfo(void);
 
 void D_DoomMain(void)
 {
+    GameMission_t gamemission;
     int p;
 
     I_AtExit(D_HexenQuitMessage, false);
@@ -243,6 +270,8 @@ void D_DoomMain(void)
     startskill = sk_medium;
     startmap = 1;
     gamemode = commercial;
+
+    I_PrintBanner(PACKAGE_STRING);
 
     // Initialize subsystems
 
@@ -301,6 +330,8 @@ void D_DoomMain(void)
     }
 
     D_AddFile(iwadfile);
+    W_CheckCorrectIWAD(hexen);
+    AdjustForMacIWAD();
 
     HandleArgs();
 
@@ -323,6 +354,8 @@ void D_DoomMain(void)
     I_CheckIsScreensaver();
     I_InitTimer();
     I_InitJoystick();
+    I_InitSound(false);
+    I_InitMusic();
 
 #ifdef FEATURE_MULTIPLAYER
     ST_Message("NET_Init: Init networking subsystem.\n");
@@ -378,14 +411,14 @@ void D_DoomMain(void)
     if (p)
     {
         singledemo = true;      // Quit after one demo
-        G_DeferedPlayDemo(myargv[p + 1]);
+        G_DeferedPlayDemo(demolumpname);
         H2_GameLoop();          // Never returns
     }
 
     p = M_CheckParmWithArgs("-timedemo", 1);
     if (p)
     {
-        G_TimeDemo(myargv[p + 1]);
+        G_TimeDemo(demolumpname);
         H2_GameLoop();          // Never returns
     }
 
@@ -547,16 +580,28 @@ static void HandleArgs(void)
     {
         char file[256];
 
-        strncpy(file, myargv[p+1], sizeof(file));
-        file[sizeof(file) - 6] = '\0';
+        M_StringCopy(file, myargv[p+1], sizeof(file));
 
-        if (strcasecmp(file + strlen(file) - 4, ".lmp") != 0)
+        // With Vanilla Hexen you have to specify the file without
+        // extension, but make that optional.
+        if (!M_StringEndsWith(myargv[p+1], ".lmp"))
         {
-            strcat(file, ".lmp");
+            M_StringConcat(file, ".lmp", sizeof(file));
         }
 
-        W_AddFile(file);
-        ST_Message("Playing demo %s.\n", file);
+        if (W_AddFile(file) != NULL)
+        {
+            M_StringCopy(demolumpname, lumpinfo[numlumps - 1].name,
+                         sizeof(demolumpname));
+        }
+        else
+        {
+            // The file failed to load, but copy the original arg as a
+            // demo name to make tricks like -playdemo demo1 possible.
+            M_StringCopy(demolumpname, myargv[p+1], sizeof(demolumpname));
+        }
+
+        ST_Message("Playing demo %s.\n", myargv[p+1]);
     }
 
     if (M_ParmExists("-testcontrols"))
@@ -615,13 +660,13 @@ void H2_GameLoop(void)
     if (M_CheckParm("-debugfile"))
     {
         char filename[20];
-        sprintf(filename, "debug%i.txt", consoleplayer);
+        M_snprintf(filename, sizeof(filename), "debug%i.txt", consoleplayer);
         debugfile = fopen(filename, "w");
     }
     I_SetWindowTitle("Hexen");
     I_GraphicsCheckCommandLine();
-    I_InitGraphics();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
+    I_InitGraphics();
 
     while (1)
     {

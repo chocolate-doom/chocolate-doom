@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2006 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -12,11 +10,6 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
 //
 
 // Sound control menu
@@ -70,17 +63,20 @@ static char *cfg_extension[] = { "cfg", NULL };
 // Config file variables:
 
 int snd_sfxdevice = SNDDEVICE_SB;
-int snd_musicdevice = SNDDEVICE_GENMIDI;
+int snd_musicdevice = SNDDEVICE_SB;
 int snd_samplerate = 44100;
 int opl_io_port = 0x388;
 int snd_cachesize = 64 * 1024 * 1024;
+int snd_maxslicetime_ms = 28;
+char *snd_musiccmd = "";
 
 static int numChannels = 8;
-static int sfxVolume = 15;
-static int musicVolume = 15;
+static int sfxVolume = 8;
+static int musicVolume = 8;
 static int voiceVolume = 15;
 static int show_talk = 0;
 static int use_libsamplerate = 0;
+static float libsamplerate_scale = 0.65;
 
 static char *timidity_cfg_path = NULL;
 static char *gus_patch_path = NULL;
@@ -130,6 +126,7 @@ static void UpdateSndDevices(TXT_UNCAST_ARG(widget), TXT_UNCAST_ARG(data))
             snd_musicdevice = SNDDEVICE_GUS;
             break;
         case MUSICMODE_CD:
+            snd_musicdevice = SNDDEVICE_CD;
             break;
     }
 }
@@ -240,14 +237,14 @@ void ConfigSound(void)
     window = TXT_NewWindow("Sound configuration");
 
     TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_TOP,
-                                  TXT_SCREEN_W / 2, 6);
+                                  TXT_SCREEN_W / 2, 5);
 
     TXT_AddWidgets(window,
                TXT_NewSeparator("Sound effects"),
                sfx_table = TXT_NewTable(2),
                NULL);
 
-    TXT_SetColumnWidths(sfx_table, 20, 14);
+    TXT_SetColumnWidths(sfx_table, 19, 15);
 
     TXT_AddWidgets(sfx_table,
                    TXT_NewLabel("Sound effects"),
@@ -276,7 +273,7 @@ void ConfigSound(void)
                extra_table = TXT_NewTable(1),
                NULL);
 
-    TXT_SetColumnWidths(music_table, 20, 14);
+    TXT_SetColumnWidths(music_table, 19, 15);
 
     TXT_AddWidgets(music_table,
                    TXT_NewLabel("Music"),
@@ -306,6 +303,7 @@ void BindSoundVariables(void)
     M_BindVariable("music_volume",        &musicVolume);
     M_BindVariable("snd_samplerate",      &snd_samplerate);
     M_BindVariable("use_libsamplerate",   &use_libsamplerate);
+    M_BindVariable("libsamplerate_scale", &libsamplerate_scale);
     M_BindVariable("timidity_cfg_path",   &timidity_cfg_path);
     M_BindVariable("gus_patch_path",      &gus_patch_path);
     M_BindVariable("gus_ram_kb",          &gus_ram_kb);
@@ -314,6 +312,8 @@ void BindSoundVariables(void)
     M_BindVariable("snd_sbirq",           &snd_sbirq);
     M_BindVariable("snd_sbdma",           &snd_sbdma);
     M_BindVariable("snd_mport",           &snd_mport);
+    M_BindVariable("snd_maxslicetime_ms", &snd_maxslicetime_ms);
+    M_BindVariable("snd_musiccmd",        &snd_musiccmd);
 
     M_BindVariable("snd_cachesize",       &snd_cachesize);
     M_BindVariable("opl_io_port",         &opl_io_port);
@@ -322,6 +322,26 @@ void BindSoundVariables(void)
     {
         M_BindVariable("voice_volume",    &voiceVolume);
         M_BindVariable("show_talk",       &show_talk);
+    }
+
+    timidity_cfg_path = strdup("");
+    gus_patch_path = strdup("");
+
+    // Default sound volumes - different games use different values.
+
+    switch (gamemission)
+    {
+        case doom:
+        default:
+            sfxVolume = 8;  musicVolume = 8;
+            break;
+        case heretic:
+        case hexen:
+            sfxVolume = 10; musicVolume = 10;
+            break;
+        case strife:
+            sfxVolume = 8;  musicVolume = 13;
+            break;
     }
 
     // Before SDL_mixer version 1.2.11, MIDI music caused the game

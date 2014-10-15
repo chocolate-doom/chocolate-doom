@@ -1,7 +1,5 @@
-/* ... */
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2009 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,12 +11,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 #include <AppKit/AppKit.h>
 #include "Execute.h"
@@ -297,8 +289,7 @@ static NSString *AppendQuotedFilename(NSString *str, NSString *fileName)
     }
 
     game_name = [self->iwadController getGameName];
-    executable_name = malloc(strlen(PROGRAM_PREFIX) + strlen(game_name) + 1);
-    sprintf(executable_name, "%s%s", PROGRAM_PREFIX, game_name);
+    asprintf(&executable_name, "%s%s", PROGRAM_PREFIX, game_name);
 
     ExecuteProgram(executable_name, [iwad UTF8String],
                                     [args UTF8String]);
@@ -319,8 +310,7 @@ static NSString *AppendQuotedFilename(NSString *str, NSString *fileName)
     // to configure, based on the game selected in the dropdown.
 
     game_name = [self->iwadController getGameName];
-    arg = malloc(strlen(game_name) + 8);
-    sprintf(arg, "-game %s", game_name);
+    asprintf(&arg, "-game %s", game_name);
 
     ExecuteProgram(PROGRAM_PREFIX "setup", NULL, arg);
 
@@ -355,7 +345,16 @@ static NSString *AppendQuotedFilename(NSString *str, NSString *fileName)
 
 - (void) openCMDLINE: (id) sender
 {
-    OpenDocumentation("CMDLINE");
+    const char *game_name;
+    char filename[32];
+
+    // We need to open the appropriate doc file for the currently
+    // selected game.
+
+    game_name = [self->iwadController getGameName];
+    snprintf(filename, sizeof(filename), "CMDLINE-%s", game_name);
+
+    OpenDocumentation(filename);
 }
 
 - (void) openCOPYING: (id) sender
@@ -379,6 +378,11 @@ static NSString *AppendQuotedFilename(NSString *str, NSString *fileName)
 - (BOOL) addIWADPath: (NSString *) path
 {
     return [self->iwadController addIWADPath: path];
+}
+
+- (BOOL) selectGameByName: (const char *) name
+{
+    return [self->iwadController selectGameByName: name];
 }
 
 @end

@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,15 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //	DOOM graphics stuff for SDL.
 //
-//-----------------------------------------------------------------------------
 
 
 #include "SDL.h"
@@ -50,6 +42,7 @@
 #include "i_scale.h"
 #include "m_argv.h"
 #include "m_config.h"
+#include "m_misc.h"
 #include "tables.h"
 #include "v_video.h"
 #include "w_wad.h"
@@ -178,6 +171,10 @@ static unsigned int mouse_button_state = 0;
 
 int novert = 1; // [cndoom]
 
+// Save screenshots in PNG format.
+
+int png_screenshots = 0;
+
 // if true, I_VideoBuffer is screen->pixels
 
 static boolean native_surface;
@@ -189,7 +186,7 @@ int screen_height = SCREENHEIGHT;
 
 // Color depth.
 
-int screen_bpp = 32; // [cndoom]
+int screen_bpp = 0;
 
 // Automatically adjust video settings if the selected mode is 
 // not a valid video mode.
@@ -476,7 +473,8 @@ static int TranslateKey(SDL_keysym *sym)
       case SDLK_F10:	return KEY_F10;
       case SDLK_F11:	return KEY_F11;
       case SDLK_F12:	return KEY_F12;
-	
+      case SDLK_PRINT:  return KEY_PRTSCR;
+
       case SDLK_BACKSPACE: return KEY_BACKSPACE;
       case SDLK_DELETE:	return KEY_DEL;
 
@@ -506,6 +504,7 @@ static int TranslateKey(SDL_keysym *sym)
 
       case SDLK_CAPSLOCK: return KEY_CAPSLOCK;
       case SDLK_SCROLLOCK: return KEY_SCRLCK;
+      case SDLK_NUMLOCK: return KEY_NUMLOCK;
 
       case SDLK_KP0: return KEYP_0;
       case SDLK_KP1: return KEYP_1;
@@ -755,6 +754,14 @@ void I_GetEvent(void)
                 event.type = ev_keyup;
                 event.data1 = TranslateKey(&sdlevent.key.keysym);
 
+                // data2 is just initialized to zero for ev_keyup.
+                // For ev_keydown it's the shifted Unicode character
+                // that was typed, but if something wants to detect
+                // key releases it should do so based on data1
+                // (key ID), not the printable char.
+
+                event.data2 = 0;
+
                 if (event.data1 != 0)
                 {
                     D_PostEvent(&event);
@@ -916,10 +923,20 @@ static void UpdateGrab(void)
     else if (grab && !currently_grabbed)
     {
         SetShowCursor(false);
+        CenterMouse();
     }
     else if (!grab && currently_grabbed)
     {
         SetShowCursor(true);
+
+        // When releasing the mouse from grab, warp the mouse cursor to
+        // the bottom-right of the screen. This is a minimally distracting
+        // place for it to appear - we may only have released the grab
+        // because we're at an end of level intermission screen, for
+        // example.
+
+        SDL_WarpMouse(screen->w - 16, screen->h - 16);
+        SDL_GetRelativeMouseState(NULL, NULL);
     }
 
     currently_grabbed = grab;
@@ -1080,7 +1097,7 @@ void I_FinishUpdate (void)
 	lasttic = i;
 	if (tics > 20) tics = 20;
 
-	for (i=0 ; i<tics*2 ; i+=4)
+	for (i=0 ; i<tics*4 ; i+=4)
 	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0xff;
 	for ( ; i<20*4 ; i+=4)
 	    I_VideoBuffer[ (SCREENHEIGHT-1)*SCREENWIDTH + i] = 0x0;
@@ -1196,33 +1213,29 @@ void I_SetWindowTitle(char *title)
 // the title set with I_SetWindowTitle.
 //
 
-static void I_InitWindowTitle(void)
+void I_InitWindowTitle(void)
 {
     char *buf;
 
-    buf = Z_Malloc(strlen(window_title) + strlen(PACKAGE_STRING) + 5, 
-                   PU_STATIC, NULL);
-    sprintf(buf, "%s - %s", window_title, PACKAGE_STRING);
-
+    buf = M_StringJoin(window_title, " - ", PACKAGE_STRING, NULL);
     SDL_WM_SetCaption(buf, NULL);
-
-    Z_Free(buf);
+    free(buf);
 }
 
 // Set the application icon
 
-static void I_InitWindowIcon(void)
+void I_InitWindowIcon(void)
 {
     SDL_Surface *surface;
     Uint8 *mask;
     int i;
 
     // Generate the mask
-  
+
     mask = malloc(icon_w * icon_h / 8);
     memset(mask, 0, icon_w * icon_h / 8);
 
-    for (i=0; i<icon_w * icon_h; ++i) 
+    for (i=0; i<icon_w * icon_h; ++i)
     {
         if (icon_data[i * 3] != 0x00
          || icon_data[i * 3 + 1] != 0x00
@@ -1441,6 +1454,19 @@ static void AutoAdjustColorDepth(void)
     const SDL_VideoInfo *info;
     int flags;
 
+    // If screen_bpp=0, we should use the current (default) pixel depth.
+    // Fetch it from SDL.
+
+    if (screen_bpp == 0)
+    {
+        info = SDL_GetVideoInfo();
+
+        if (info != NULL && info->vfmt != NULL)
+        {
+            screen_bpp = info->vfmt->BitsPerPixel;
+        }
+    }
+
     if (fullscreen)
     {
         flags = SDL_FULLSCREEN;
@@ -1522,83 +1548,23 @@ static void I_AutoAdjustSettings(void)
 
 static void SetScaleFactor(int factor)
 {
-    if (fullscreen)
+    int w, h;
+
+    // Pick 320x200 or 320x240, depending on aspect ratio correct
+
+    if (aspect_ratio_correct)
     {
-        // In fullscreen, find a mode that will provide this scale factor
-
-        SDL_Rect **modes;
-        SDL_Rect *best_mode;
-        screen_mode_t *scrmode;
-        int best_num_pixels, num_pixels;
-        int i;
-
-        modes = SDL_ListModes(NULL, SDL_FULLSCREEN);
-
-        best_mode = NULL;
-        best_num_pixels = INT_MAX;
-
-        for (i=0; modes[i] != NULL; ++i)
-        {
-            // What screen_mode_t will this use?
-
-            scrmode = I_FindScreenMode(modes[i]->w, modes[i]->h);
-
-            if (scrmode == NULL)
-            {
-                continue;
-            }
-
-            // Only choose modes that fit the requested scale factor.
-            //
-            // Note that this allows 320x240 as valid for 1x scale, as 
-            // 240/200 is rounded down to 1 by integer division.
-
-            if ((scrmode->width / SCREENWIDTH) != factor
-             || (scrmode->height / SCREENHEIGHT) != factor)
-            {
-                continue;
-            }
-
-            // Is this a better mode than what we currently have?
-
-            num_pixels = modes[i]->w * modes[i]->h;
-
-            if (num_pixels < best_num_pixels)
-            {
-                best_num_pixels = num_pixels;
-                best_mode = modes[i];
-            }
-        }
-
-        if (best_mode == NULL)
-        {
-            I_Error("No fullscreen graphics mode available to support "
-                    "%ix scale factor!", factor);
-        }
-
-        screen_width = best_mode->w;
-        screen_height = best_mode->h;
+        w = SCREENWIDTH;
+        h = SCREENHEIGHT_4_3;
     }
     else
     {
-        int w, h;
-
-        // Pick 320x200 or 320x240, depending on aspect ratio correct
-
-        if (aspect_ratio_correct)
-        {
-            w = SCREENWIDTH;
-            h = SCREENHEIGHT_4_3;
-        }
-        else 
-        {
-            w = SCREENWIDTH;
-            h = SCREENHEIGHT;
-        }
-
-        screen_width = w * factor;
-        screen_height = h * factor;
+        w = SCREENWIDTH;
+        h = SCREENHEIGHT;
     }
+
+    screen_width = w * factor;
+    screen_height = h * factor;
 }
 
 void I_GraphicsCheckCommandLine(void)
@@ -1837,41 +1803,10 @@ static void SetSDLVideoDriver(void)
     {
         char *env_string;
 
-        env_string = malloc(strlen(video_driver) + 30);
-        sprintf(env_string, "SDL_VIDEODRIVER=%s", video_driver);
+        env_string = M_StringJoin("SDL_VIDEODRIVER=", video_driver, NULL);
         putenv(env_string);
         free(env_string);
     }
-
-#if defined(_WIN32) && !defined(_WIN32_WCE)
-
-    // Allow -gdi as a shortcut for using the windib driver.
-
-    //!
-    // @category video 
-    // @platform windows
-    //
-    // Use the Windows GDI driver instead of DirectX.
-    //
-
-    if (M_CheckParm("-gdi") > 0)
-    {
-        putenv("SDL_VIDEODRIVER=windib");
-    }
-
-    // From the SDL 1.2.10 release notes: 
-    //
-    // > The "windib" video driver is the default now, to prevent 
-    // > problems with certain laptops, 64-bit Windows, and Windows 
-    // > Vista. 
-    //
-    // The hell with that.
-
-    if (getenv("SDL_VIDEODRIVER") == NULL)
-    {
-        putenv("SDL_VIDEODRIVER=directx");
-    }
-#endif
 }
 
 static void SetWindowPositionVars(void)
@@ -1890,7 +1825,7 @@ static void SetWindowPositionVars(void)
     }
     else if (sscanf(window_position, "%i,%i", &x, &y) == 2)
     {
-        sprintf(buf, "SDL_VIDEO_WINDOW_POS=%i,%i", x, y);
+        M_snprintf(buf, sizeof(buf), "SDL_VIDEO_WINDOW_POS=%i,%i", x, y);
         putenv(buf);
     }
 }
@@ -2060,7 +1995,7 @@ void I_InitGraphics(void)
         int winid;
 
         sscanf(env, "0x%x", &winid);
-        sprintf(winenv, "SDL_WINDOWID=%i", winid);
+        M_snprintf(winenv, sizeof(winenv), "SDL_WINDOWID=%i", winid);
 
         putenv(winenv);
     }
@@ -2079,6 +2014,15 @@ void I_InitGraphics(void)
     I_InitWindowTitle();
 #if !SDL_VERSION_ATLEAST(1, 3, 0)
     I_InitWindowIcon();
+#endif
+
+    // Warning to OS X users... though they might never see it :(
+#ifdef __MACOSX__
+    if (fullscreen)
+    {
+        printf("Some old versions of OS X might crash in fullscreen mode.\n"
+               "If this happens to you, switch back to windowed mode.\n");
+    }
 #endif
 
     //
@@ -2194,11 +2138,6 @@ void I_InitGraphics(void)
   
     while (SDL_PollEvent(&dummy));
 
-    if (usemouse && !nomouse && (fullscreen || grabmouse))
-    {
-        CenterMouse();
-    }
-
     initialized = true;
 
     // Call I_ShutdownGraphics on quit
@@ -2227,6 +2166,7 @@ void I_BindVideoVariables(void)
     M_BindVariable("usegamma",                  &usegamma);
     M_BindVariable("vanilla_keyboard_mapping",  &vanilla_keyboard_mapping);
     M_BindVariable("novert",                    &novert);
+    M_BindVariable("png_screenshots",           &png_screenshots);
 
     // Windows Vista or later?  Set screen color depth to
     // 32 bits per pixel, as 8-bit palettized screen modes
@@ -2247,5 +2187,14 @@ void I_BindVideoVariables(void)
             screen_bpp = 32;
         }
     }
+#endif
+
+    // Disable fullscreen by default on OS X, as there is an SDL bug
+    // where some old versions of OS X (<= Snow Leopard) crash.
+
+#ifdef __MACOSX__
+    fullscreen = 0;
+    screen_width = 800;
+    screen_height = 600;
 #endif
 }

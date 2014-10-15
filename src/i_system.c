@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,14 +12,8 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //
-//-----------------------------------------------------------------------------
 
 
 
@@ -262,6 +254,92 @@ void I_Quit (void)
     exit(0);
 }
 
+#if !defined(_WIN32) && !defined(__MACOSX__)
+#define ZENITY_BINARY "/usr/bin/zenity"
+
+// returns non-zero if zenity is available
+
+static int ZenityAvailable(void)
+{
+    return system(ZENITY_BINARY " --help >/dev/null 2>&1") == 0;
+}
+
+// Escape special characters in the given string so that they can be
+// safely enclosed in shell quotes.
+
+static char *EscapeShellString(char *string)
+{
+    char *result;
+    char *r, *s;
+
+    // In the worst case, every character might be escaped.
+    result = malloc(strlen(string) * 2 + 3);
+    r = result;
+
+    // Enclosing quotes.
+    *r = '"';
+    ++r;
+
+    for (s = string; *s != '\0'; ++s)
+    {
+        // From the bash manual:
+        //
+        //  "Enclosing characters in double quotes preserves the literal
+        //   value of all characters within the quotes, with the exception
+        //   of $, `, \, and, when history expansion is enabled, !."
+        //
+        // Therefore, escape these characters by prefixing with a backslash.
+
+        if (strchr("$`\\!", *s) != NULL)
+        {
+            *r = '\\';
+            ++r;
+        }
+
+        *r = *s;
+        ++r;
+    }
+
+    // Enclosing quotes.
+    *r = '"';
+    ++r;
+    *r = '\0';
+
+    return result;
+}
+
+// Open a native error box with a message using zenity
+
+static int ZenityErrorBox(char *message)
+{
+    int result;
+    char *escaped_message;
+    char *errorboxpath;
+    static size_t errorboxpath_size;
+
+    if (!ZenityAvailable())
+    {
+        return 0;
+    }
+
+    escaped_message = EscapeShellString(message);
+
+    errorboxpath_size = strlen(ZENITY_BINARY) + strlen(escaped_message) + 19;
+    errorboxpath = malloc(errorboxpath_size);
+    M_snprintf(errorboxpath, errorboxpath_size, "%s --error --text=%s",
+               ZENITY_BINARY, escaped_message);
+
+    result = system(errorboxpath);
+
+    free(errorboxpath);
+    free(escaped_message);
+
+    return result;
+}
+
+#endif /* !defined(_WIN32) && !defined(__MACOSX__) */
+
+
 //
 // I_Error
 //
@@ -270,6 +348,7 @@ static boolean already_quitting = false;
 
 void I_Error (char *error, ...)
 {
+    char msgbuf[512];
     va_list argptr;
     atexit_listentry_t *entry;
     boolean exit_gui_popup;
@@ -283,7 +362,7 @@ void I_Error (char *error, ...)
     {
         already_quitting = true;
     }
-    
+
     // Message first.
     va_start(argptr, error);
     //fprintf(stderr, "\nError: ");
@@ -291,6 +370,12 @@ void I_Error (char *error, ...)
     fprintf(stderr, "\n\n");
     va_end(argptr);
     fflush(stderr);
+
+    // Write a copy of the message into buffer.
+    va_start(argptr, error);
+    memset(msgbuf, 0, sizeof(msgbuf));
+    M_vsnprintf(msgbuf, sizeof(msgbuf), error, argptr);
+    va_end(argptr);
 
     // Shutdown. Here might be other errors.
 
@@ -306,20 +391,17 @@ void I_Error (char *error, ...)
         entry = entry->next;
     }
 
-    exit_gui_popup = !M_ParmExists("-nogui");
-/* // [cndoom] remove message box
+    // [cndoom] remove message box
+    //exit_gui_popup = !M_ParmExists("-nogui");
+    exit_gui_popup = false;
+
+    // Pop up a GUI dialog box to show the error message, if the
+    // game was not run from the console (and the user will
+    // therefore be unable to otherwise see the message).
+    if (exit_gui_popup && !I_ConsoleStdout())
 #ifdef _WIN32
-    // On Windows, pop up a dialog box with the error message.
-
-    if (exit_gui_popup)
     {
-        char msgbuf[512];
         wchar_t wmsgbuf[512];
-
-        va_start(argptr, error);
-        memset(msgbuf, 0, sizeof(msgbuf));
-        vsnprintf(msgbuf, sizeof(msgbuf) - 1, error, argptr);
-        va_end(argptr);
 
         MultiByteToWideChar(CP_ACP, 0,
                             msgbuf, strlen(msgbuf) + 1,
@@ -327,19 +409,10 @@ void I_Error (char *error, ...)
 
         MessageBoxW(NULL, wmsgbuf, L"", MB_OK);
     }
-#endif
-*/
-#ifdef __MACOSX__
-    if (exit_gui_popup && !I_ConsoleStdout())
+#elif defined(__MACOSX__)
     {
         CFStringRef message;
-        char msgbuf[512];
 	int i;
-
-        va_start(argptr, error);
-        memset(msgbuf, 0, sizeof(msgbuf));
-        vsnprintf(msgbuf, sizeof(msgbuf) - 1, error, argptr);
-        va_end(argptr);
 
 	// The CoreFoundation message box wraps text lines, so replace
 	// newline characters with spaces so that multiline messages
@@ -364,6 +437,10 @@ void I_Error (char *error, ...)
                                         CFSTR(PACKAGE_STRING),
                                         message,
                                         NULL);
+    }
+#else
+    {
+        ZenityErrorBox(msgbuf);
     }
 #endif
 

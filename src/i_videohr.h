@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,16 +11,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //     SDL emulation of VGA 640x480x4 planar video mode,
 //     for Hexen startup loading screen.
 //
-//-----------------------------------------------------------------------------
 
 #ifndef I_VIDEOHR_H
 #define I_VIDEOHR_H
@@ -37,6 +29,7 @@ void I_InitPaletteHR(void);
 void I_SetPaletteHR(const byte *palette);
 void I_FadeToPaletteHR(const byte *palette);
 void I_BlackPaletteHR(void);
+boolean I_CheckAbortHR(void);
 
 #endif /* #ifndef I_VIDEOHR_H */
 

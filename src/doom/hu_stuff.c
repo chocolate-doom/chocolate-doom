@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,14 +12,8 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:  Heads-up displays
 //
-//-----------------------------------------------------------------------------
 
 
 #include <ctype.h>
@@ -38,6 +30,7 @@
 #include "hu_stuff.h"
 #include "hu_lib.h"
 #include "m_controls.h"
+#include "m_misc.h"
 #include "w_wad.h"
 
 #include "s_sound.h"
@@ -610,11 +603,11 @@ boolean HU_Responder(event_t *ev)
 		HU_queueChatChar(*macromessage++);
 	    HU_queueChatChar(KEY_ENTER);
 	    
-	    // leave chat mode and notify that it was sent
-	    chat_on = false;
-	    strcpy(lastmessage, chat_macros[c]);
-	    plr->message = lastmessage;
-	    eatkey = true;
+            // leave chat mode and notify that it was sent
+            chat_on = false;
+            M_StringCopy(lastmessage, chat_macros[c], sizeof(lastmessage));
+            plr->message = lastmessage;
+            eatkey = true;
 	}
 	else
 	{
@@ -626,17 +619,17 @@ boolean HU_Responder(event_t *ev)
 		// static unsigned char buf[20]; // DEBUG
 		HU_queueChatChar(c);
 		
-		// sprintf(buf, "KEY: %d => %d", ev->data1, c);
-		//      plr->message = buf;
+		// M_snprintf(buf, sizeof(buf), "KEY: %d => %d", ev->data1, c);
+		//        plr->message = buf;
 	    }
 	    if (c == KEY_ENTER)
 	    {
 		chat_on = false;
-		if (w_chat.l.len)
-		{
-		    strcpy(lastmessage, w_chat.l.l);
-		    plr->message = lastmessage;
-		}
+                if (w_chat.l.len)
+                {
+                    M_StringCopy(lastmessage, w_chat.l.l, sizeof(lastmessage));
+                    plr->message = lastmessage;
+                }
 	    }
 	    else if (c == KEY_ESCAPE)
 		chat_on = false;

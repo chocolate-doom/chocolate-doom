@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,18 +12,12 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //	DOOM main program (D_DoomMain) and game loop (D_DoomLoop),
 //	plus functions to determine game mode (shareware, registered),
 //	parse command line parameters, configure game parameters (turbo),
 //	and call the startup functions.
 //
-//-----------------------------------------------------------------------------
 
 
 #include <ctype.h>
@@ -131,6 +123,9 @@ boolean         storedemo;
 
 // "BFG Edition" version of doom2.wad does not include TITLEPIC.
 boolean         bfgedition;
+
+// If true, the main game loop has started.
+boolean         main_loop_started = false;
 
 char		wadfile[1024];		// primary wad file
 char		mapdir[1024];           // directory of development maps
@@ -438,7 +433,7 @@ void D_BindVariables(void)
     {
         char buf[12];
 
-        sprintf(buf, "chatmacro%i", i);
+        M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
         M_BindVariable(buf, &chat_macros[i]);
     }
 }
@@ -463,7 +458,7 @@ boolean D_GrabMouseCallback(void)
 
     // only grab mouse when playing levels (but not demos)
 
-    return (gamestate == GS_LEVEL) && !demoplayback;
+    return (gamestate == GS_LEVEL) && !demoplayback && !advancedemo;
 }
 
 //
@@ -472,8 +467,20 @@ boolean D_GrabMouseCallback(void)
 void D_DoomLoop (void)
 {
     int i, qsdelay; // [cndoom]
+    if (bfgedition &&
+        (demorecording || (gameaction == ga_playdemo) || netgame))
+    {
+        printf(" WARNING: You are playing using one of the Doom Classic\n"
+               " IWAD files shipped with the Doom 3: BFG Edition. These are\n"
+               " known to be incompatible with the regular IWAD files and\n"
+               " may cause demos and network games to get out of sync.\n");
+    }
+
     if (demorecording)
 	G_BeginRecording ();
+
+    main_loop_started = true;
+
     
     // [cndoom] don't run any tics before the player has a chance to move,
     // and optionally wait for a little while after I_InitGraphics has been
@@ -504,14 +511,13 @@ void D_DoomLoop (void)
 	if (qsdelay)
 	    CN_QSScreen(qsdelay);
     }
-    
     TryRunTics();
 
     I_SetWindowTitle(gamedescription);
     I_GraphicsCheckCommandLine();
+    I_SetGrabMouseCallback(D_GrabMouseCallback);
     I_InitGraphics();
     I_EnableLoadingDisk();
-    I_SetGrabMouseCallback(D_GrabMouseCallback);
 
     V_RestoreBuffer();
     R_ExecuteSetViewSize();
@@ -663,9 +669,10 @@ void D_DoAdvanceDemo (void)
 
     // The Doom 3: BFG Edition version of doom2.wad does not have a
     // TITLETPIC lump. Use INTERPIC instead as a workaround.
-    if (bfgedition && !strcasecmp(pagename, "TITLEPIC"))
+    if (bfgedition && !strcasecmp(pagename, "TITLEPIC")
+        && W_CheckNumForName("titlepic") < 0)
     {
-        pagename = "INTERPIC";
+        pagename = DEH_String("INTERPIC");
     }
 }
 
@@ -736,20 +743,29 @@ static char *GetGameName(char *gamename)
         
         if (deh_sub != banners[i])
         {
-            // Has been replaced
-            // We need to expand via printf to include the Doom version 
-            // number
+            size_t gamename_size;
+            int version;
+
+            // Has been replaced.
+            // We need to expand via printf to include the Doom version number
             // We also need to cut off spaces to get the basic name
 
-            gamename = Z_Malloc(strlen(deh_sub) + 10, PU_STATIC, 0);
-            sprintf(gamename, deh_sub, DOOM_VERSION / 100, DOOM_VERSION % 100);
+            gamename_size = strlen(deh_sub) + 10;
+            gamename = Z_Malloc(gamename_size, PU_STATIC, 0);
+            version = G_VanillaVersionCode();
+            M_snprintf(gamename, gamename_size, deh_sub,
+                       version / 100, version % 100);
 
             while (gamename[0] != '\0' && isspace(gamename[0]))
-                strcpy(gamename, gamename+1);
+            {
+                memmove(gamename, gamename + 1, gamename_size - 1);
+            }
 
             while (gamename[0] != '\0' && isspace(gamename[strlen(gamename)-1]))
+            {
                 gamename[strlen(gamename) - 1] = '\0';
-            
+            }
+
             return gamename;
         }
     }
@@ -931,6 +947,9 @@ static struct
     char *cmdline;
     GameVersion_t version;
 } gameversions[] = {
+    {"Doom 1.666",           "1.666",      exe_doom_1_666},
+    {"Doom 1.7/1.7a",        "1.7",        exe_doom_1_7},
+    {"Doom 1.8",             "1.8",        exe_doom_1_8},
     {"Doom 1.9",             "1.9",        exe_doom_1_9},
     {"Hacx",                 "hacx",       exe_hacx},
     {"Ultimate Doom",        "ultimate",   exe_ultimate},
@@ -1002,6 +1021,8 @@ static void InitGameVersion(void)
             // original
 
             gameversion = exe_doom_1_9;
+
+            // TODO: Detect IWADs earlier than Doom v1.9.
         }
         else if (gamemode == retail)
         {
@@ -1072,10 +1093,11 @@ static void LoadChexDeh(void)
 
         if (sep != NULL)
         {
-            chex_deh = malloc(strlen(iwadfile) + 9);
-            strcpy(chex_deh, iwadfile);
+            size_t chex_deh_len = strlen(iwadfile) + 9;
+            chex_deh = malloc(chex_deh_len);
+            M_StringCopy(chex_deh, iwadfile, chex_deh_len);
             chex_deh[sep - iwadfile + 1] = '\0';
-            strcat(chex_deh, "chex.deh");
+            M_StringConcat(chex_deh, "chex.deh", chex_deh_len);
         }
         else
         {
@@ -1116,9 +1138,11 @@ static void D_Endoom(void)
     byte *endoom;
 
     // Don't show ENDOOM if we have it disabled, or we're running
-    // in screensaver or control test mode.
+    // in screensaver or control test mode. Only show it once the
+    // game has actually started.
 
-    if (!show_endoom || screensaver_mode || M_CheckParm("-testcontrols") > 0)
+    if (!show_endoom || !main_loop_started
+     || screensaver_mode || M_CheckParm("-testcontrols") > 0)
     {
         return;
     }
@@ -1134,7 +1158,7 @@ static void LoadHacxDeh(void)
 
     if (gameversion == exe_hacx)
     {
-        if (!DEH_LoadLumpByName("DEHACKED"))
+        if (!DEH_LoadLumpByName("DEHACKED", true, false))
         {
             I_Error("DEHACKED lump not found.  Please check that this is the "
                     "Hacx v1.2 IWAD.");
@@ -1223,18 +1247,6 @@ void D_DoomMain (void)
     printf("DEH_Init: Init Dehacked support.\n");
     DEH_Init();
 #endif
-
-    iwadfile = D_FindIWAD(IWAD_MASK_DOOM, &gamemission);
-
-    // None found?
-
-    if (iwadfile == NULL)
-    {
-        I_Error("Game mode indeterminate.  No IWAD file was found.  Try\n"
-                "specifying one with the '-iwad' command line parameter.\n");
-    }
-
-    modifiedgame = false;
 
     //!
     // @vanilla
@@ -1361,8 +1373,58 @@ void D_DoomMain (void)
     // Save configuration at exit.
     I_AtExit(M_SaveDefaults, false);
 
+    // Find main IWAD file and load it.
+    iwadfile = D_FindIWAD(IWAD_MASK_DOOM, &gamemission);
+
+    // None found?
+
+    if (iwadfile == NULL)
+    {
+        I_Error("Game mode indeterminate.  No IWAD file was found.  Try\n"
+                "specifying one with the '-iwad' command line parameter.\n");
+    }
+
+    modifiedgame = false;
+
     DEH_printf("W_Init: Init WADfiles.\n");
     D_AddFile(iwadfile);
+
+    W_CheckCorrectIWAD(doom);
+
+    // The Freedoom IWADs have DEHACKED lumps with cosmetic changes to the
+    // in-game messages. Load this.
+    // Old versions of Freedoom (before 2014-09) did not have technically
+    // valid DEHACKED lumps, so ignore errors and just continue if this
+    // is an old IWAD.
+    if (W_CheckNumForName("FREEDOOM") >= 0)
+    {
+        DEH_LoadLumpByName("DEHACKED", false, true);
+    }
+
+    // Doom 3: BFG Edition includes modified versions of the classic
+    // IWADs which can be identified by an additional DMENUPIC lump.
+    // Furthermore, the M_GDHIGH lumps have been modified in a way that
+    // makes them incompatible to Vanilla Doom and the modified version
+    // of doom2.wad is missing the TITLEPIC lump.
+    // We specifically check for DMENUPIC here, before PWADs have been
+    // loaded which could probably include a lump of that name.
+
+    if (W_CheckNumForName("dmenupic") >= 0)
+    {
+        printf("BFG Edition: Using workarounds as needed.\n");
+        bfgedition = true;
+
+        // BFG Edition changes the names of the secret levels to
+        // censor the Wolfenstein references. It also has an extra
+        // secret level (MAP33). In Vanilla Doom (meaning the DOS
+        // version), MAP33 overflows into the Plutonia level names
+        // array, so HUSTR_33 is actually PHUSTR_1.
+
+        DEH_AddStringReplacement(HUSTR_31, "level 31: idkfa");
+        DEH_AddStringReplacement(HUSTR_32, "level 32: keen");
+        DEH_AddStringReplacement(PHUSTR_1, "level 33: betray");
+    }
+
     modifiedgame = W_ParseCommandLine();
 
 
@@ -1398,21 +1460,21 @@ void D_DoomMain (void)
 
     if (p)
     {
-        if (!strcasecmp(myargv[p+1] + strlen(myargv[p+1]) - 4, ".lmp"))
+        // With Vanilla you have to specify the file without extension,
+        // but make that optional.
+        if (M_StringEndsWith(myargv[p + 1], ".lmp"))
         {
-            strcpy(file, myargv[p + 1]);
+            M_StringCopy(file, myargv[p + 1], sizeof(file));
         }
         else
         {
-	    sprintf (file,"%s.lmp", myargv[p+1]);
+            DEH_snprintf(file, sizeof(file), "%s.lmp", myargv[p+1]);
         }
 
-	if (D_AddFile (file))
+        if (D_AddFile(file))
         {
-            strncpy(demolumpname, lumpinfo[numlumps - 1].name, 8);
-            demolumpname[8] = '\0';
-
-            printf("Playing demo %s.\n", file);
+            M_StringCopy(demolumpname, lumpinfo[numlumps - 1].name,
+                         sizeof(demolumpname));
         }
         else
         {
@@ -1420,10 +1482,10 @@ void D_DoomMain (void)
             // the demo in the same way as Vanilla Doom.  This makes
             // tricks like "-playdemo demo1" possible.
 
-            strncpy(demolumpname, myargv[p + 1], 8);
-            demolumpname[8] = '\0';
+            M_StringCopy(demolumpname, myargv[p + 1], sizeof(demolumpname));
         }
 
+        printf("Playing demo %s.\n", file);
     }
 // [cndoom] end
 */
@@ -1479,10 +1541,49 @@ void D_DoomMain (void)
     I_PrintStartupBanner(gamedescription);
     PrintDehackedBanners();
 
+    // Freedoom's IWADs are Boom-compatible, which means they usually
+    // don't work in Vanilla (though FreeDM is okay). Show a warning
+    // message and give a link to the website.
+    if (W_CheckNumForName("FREEDOOM") >= 0 && W_CheckNumForName("FREEDM") < 0)
+    {
+        printf(" WARNING: You are playing using one of the Freedoom IWAD\n"
+               " files, which might not work in this port. See this page\n"
+               " for more information on how to play using Freedoom:\n"
+               "   http://www.chocolate-doom.org/wiki/index.php/Freedoom\n");
+        I_PrintDivider();
+    }
+
+    // Load DEHACKED lumps from WAD files - but only if we give the right
+    // command line parameter.
+
+    //!
+    // @category mod
+    //
+    // Load Dehacked patches from DEHACKED lumps contained in one of the
+    // loaded PWAD files.
+    //
+    if (M_ParmExists("-dehlump"))
+    {
+        int i, loaded = 0;
+
+        for (i = 0; i < numlumps; ++i)
+        {
+            if (!strncmp(lumpinfo[i].name, "DEHACKED", 8))
+            {
+                DEH_LoadLump(i, false, false);
+                loaded++;
+            }
+        }
+
+        printf("Loaded %i DEHACKED lumps from WAD files.\n", loaded);
+    }
+
     DEH_printf("I_Init: Setting up machine state.\n");
     I_CheckIsScreensaver();
     I_InitTimer();
     I_InitJoystick();
+    I_InitSound(true);
+    I_InitMusic();
 
 #ifdef FEATURE_MULTIPLAYER
     printf ("NET_Init: Init network subsystem.\n");
@@ -1700,20 +1801,6 @@ void D_DoomMain (void)
 
     noblit = M_CheckParm ("-noblit"); 
 
-    // Doom 3: BFG Edition includes modified versions of the classic
-    // IWADs. The modified version of doom2.wad does not have a
-    // TITLEPIC lump, so detect this so we can apply a workaround.
-    // We specifically check for TITLEPIC here, after PWADs have been
-    // loaded - this means that we can play with the BFG Edition with
-    // PWADs that change the title screen and still see the modified
-    // titles.
-
-    if (gamemode == commercial && W_CheckNumForName("titlepic") < 0)
-    {
-        printf("BFG Edition: Using INTERPIC instead of TITLEPIC.\n");
-        bfgedition = true;
-    }
-
     if (M_CheckParmWithArgs("-statdump", 1))
     {
         I_AtExit(StatDump, true);
@@ -1755,8 +1842,8 @@ void D_DoomMain (void)
 	
     if (startloadgame >= 0)
     {
-        strcpy(file, P_SaveGameFile(startloadgame));
-	G_LoadGame (file);
+        M_StringCopy(file, P_SaveGameFile(startloadgame), sizeof(file));
+	G_LoadGame(file);
     }
 	
     if (gameaction != ga_loadgame )

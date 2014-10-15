@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,12 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 
 
@@ -32,6 +24,7 @@
 
 #include "h2def.h"
 #include "i_system.h"
+#include "i_video.h"
 #include "i_videohr.h"
 #include "s_sound.h"
 #include "st_start.h"
@@ -137,6 +130,7 @@ void ST_Init(void)
         if (I_SetVideoModeHR())
         {
             using_graphical_startup = true;
+            I_InitWindowIcon();
 
             S_StartSongName("orb", true);
 
@@ -202,11 +196,11 @@ void ST_UpdateNetNotches(int notchPosition)
 
 void ST_Progress(void)
 {
-    // haleyjd FIXME: any way to get input here? SDL event loop?
-#ifdef __WATCOMC__
     // Check for ESC press -- during startup all events eaten here
-    I_StartupReadKeys();
-#endif
+    if (I_CheckAbortHR())
+    {
+        I_Quit();
+    }
 
     if (using_graphical_startup)
     {

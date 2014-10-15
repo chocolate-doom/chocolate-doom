@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -12,11 +10,6 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
 //
 // Graphical stuff related to the networking code:
 //
@@ -34,9 +27,12 @@
 #include "i_system.h"
 #include "i_timer.h"
 #include "i_video.h"
+#include "m_argv.h"
+#include "m_misc.h"
 
 #include "net_client.h"
 #include "net_gui.h"
+#include "net_query.h"
 #include "net_server.h"
 
 #include "textscreen.h"
@@ -46,7 +42,13 @@ static int old_max_players;
 static txt_label_t *player_labels[NET_MAXPLAYERS];
 static txt_label_t *ip_labels[NET_MAXPLAYERS];
 static txt_label_t *drone_label;
+static txt_label_t *master_msg_label;
 static boolean had_warning;
+
+// Number of players we expect to be in the game. When the number is
+// reached, we auto-start the game (if we're the controller). If
+// zero, do not autostart.
+static int expected_nodes;
 
 static void EscapePressed(TXT_UNCAST_ARG(widget), void *unused)
 {
@@ -73,6 +75,8 @@ static void OpenWaitDialog(void)
     TXT_SignalConnect(cancel, "pressed", EscapePressed, NULL);
 
     TXT_SetWindowAction(window, TXT_HORIZ_LEFT, cancel);
+    TXT_SetWindowPosition(window, TXT_HORIZ_CENTER, TXT_VERT_BOTTOM,
+                                  TXT_SCREEN_W / 2, TXT_SCREEN_H - 9);
 
     old_max_players = 0;
 }
@@ -97,7 +101,7 @@ static void BuildWindow(void)
 
     for (i = 0; i < net_client_wait_data.max_players; ++i)
     {
-        sprintf(buf, " %i. ", i + 1);
+        M_snprintf(buf, sizeof(buf), " %i. ", i + 1);
         TXT_AddWidget(table, TXT_NewLabel(buf));
         player_labels[i] = TXT_NewLabel("");
         ip_labels[i] = TXT_NewLabel("");
@@ -160,8 +164,8 @@ static void UpdateGUI(void)
 
     if (net_client_wait_data.num_drones > 0)
     {
-        sprintf(buf, " (+%i observer clients)",
-                     net_client_wait_data.num_drones);
+        M_snprintf(buf, sizeof(buf), " (+%i observer clients)",
+                   net_client_wait_data.num_drones);
         TXT_SetLabel(drone_label, buf);
     }
     else
@@ -180,6 +184,55 @@ static void UpdateGUI(void)
     }
 
     TXT_SetWindowAction(window, TXT_HORIZ_RIGHT, startgame);
+}
+
+static void BuildMasterStatusWindow(void)
+{
+    txt_window_t *master_window;
+
+    master_window = TXT_NewWindow(NULL);
+    master_msg_label = TXT_NewLabel("");
+    TXT_AddWidget(master_window, master_msg_label);
+
+    // This window is here purely for information, so it should be
+    // in the background.
+
+    TXT_LowerWindow(master_window);
+    TXT_SetWindowPosition(master_window, TXT_HORIZ_CENTER, TXT_VERT_CENTER,
+                                         TXT_SCREEN_W / 2, TXT_SCREEN_H - 4);
+    TXT_SetWindowAction(master_window, TXT_HORIZ_LEFT, NULL);
+    TXT_SetWindowAction(master_window, TXT_HORIZ_CENTER, NULL);
+    TXT_SetWindowAction(master_window, TXT_HORIZ_RIGHT, NULL);
+}
+
+static void CheckMasterStatus(void)
+{
+    boolean added;
+
+    if (!NET_Query_CheckAddedToMaster(&added))
+    {
+        return;
+    }
+
+    if (master_msg_label == NULL)
+    {
+        BuildMasterStatusWindow();
+    }
+
+    if (added)
+    {
+        TXT_SetLabel(master_msg_label,
+            "Your server is now registered with the global master server.\n"
+            "Other players can find your server online.");
+    }
+    else
+    {
+        TXT_SetLabel(master_msg_label,
+            "Failed to register with the master server. Your server is not\n"
+            "publicly accessible. You may need to reconfigure your Internet\n"
+            "router to add a port forward for UDP port 2342. Look up\n"
+            "information on port forwarding online.");
+    }
 }
 
 static void PrintSHA1Digest(char *s, byte *digest)
@@ -289,6 +342,43 @@ static void CheckSHA1Sums(void)
     had_warning = true;
 }
 
+static void ParseCommandLineArgs(void)
+{
+    int i;
+
+    //!
+    // @arg <n>
+    // @category net
+    //
+    // Autostart the netgame when n nodes (clients) have joined the server.
+    //
+
+    i = M_CheckParmWithArgs("-nodes", 1);
+    if (i > 0)
+    {
+        expected_nodes = atoi(myargv[i + 1]);
+    }
+}
+
+static void CheckAutoLaunch(void)
+{
+    int nodes;
+
+    if (net_client_received_wait_data
+     && net_client_wait_data.is_controller
+     && expected_nodes > 0)
+    {
+        nodes = net_client_wait_data.num_players
+              + net_client_wait_data.num_drones;
+
+        if (nodes >= expected_nodes)
+        {
+            StartGame(NULL, NULL);
+            expected_nodes = 0;
+        }
+    }
+}
+
 void NET_WaitForLaunch(void)
 {
     if (!TXT_Init())
@@ -297,16 +387,18 @@ void NET_WaitForLaunch(void)
         exit(-1);
     }
 
-    I_SetWindowTitle("Waiting for game start");
-    //I_SetWindowIcon();
+    I_InitWindowIcon();
 
+    ParseCommandLineArgs();
     OpenWaitDialog();
     had_warning = false;
 
     while (net_waiting_for_launch)
     {
         UpdateGUI();
+        CheckAutoLaunch();
         CheckSHA1Sums();
+        CheckMasterStatus();
 
         TXT_DispatchEvents();
         TXT_DrawDesktop();

@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,12 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 
 #include <string.h>
@@ -152,7 +144,7 @@ int turnheld;                   // for accelerative turning
 int lookheld;
 
 
-boolean mousearray[4];
+boolean mousearray[MAX_MOUSE_BUTTONS + 1];
 boolean *mousebuttons = &mousearray[1];
         // allow [-1]
 int mousex, mousey;             // mouse values are used once
@@ -162,6 +154,7 @@ int dclicktime2, dclickstate2, dclicks2;
 #define MAX_JOY_BUTTONS 20
 
 int joyxmove, joyymove;         // joystick values are repeated
+int joystrafemove;
 boolean joyarray[MAX_JOY_BUTTONS + 1];
 boolean *joybuttons = &joyarray[1];     // allow [-1]
 
@@ -313,11 +306,13 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     {
         forward -= forwardmove[pClass][speed];
     }
-    if (gamekeydown[key_straferight])
+    if (gamekeydown[key_straferight] || joystrafemove > 0
+     || joybuttons[joybstraferight])
     {
         side += sidemove[pClass][speed];
     }
-    if (gamekeydown[key_strafeleft])
+    if (gamekeydown[key_strafeleft] || joystrafemove < 0
+     || joybuttons[joybstrafeleft])
     {
         side -= sidemove[pClass][speed];
     }
@@ -396,46 +391,46 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     }
 
     // Artifact hot keys
-    if (gamekeydown[KEY_BACKSPACE] && !cmd->arti)
+    if (gamekeydown[key_arti_all] && !cmd->arti)
     {
-        gamekeydown[KEY_BACKSPACE] = false;     // Use one of each artifact
+        gamekeydown[key_arti_all] = false;     // Use one of each artifact
         cmd->arti = NUMARTIFACTS;
     }
-    else if (gamekeydown['\\'] && !cmd->arti
+    else if (gamekeydown[key_arti_health] && !cmd->arti
              && (players[consoleplayer].mo->health < MAXHEALTH))
     {
-        gamekeydown['\\'] = false;
+        gamekeydown[key_arti_health] = false;
         cmd->arti = arti_health;
     }
-    else if (gamekeydown['0'] && !cmd->arti)
+    else if (gamekeydown[key_arti_poisonbag] && !cmd->arti)
     {
-        gamekeydown['0'] = false;
+        gamekeydown[key_arti_poisonbag] = false;
         cmd->arti = arti_poisonbag;
     }
-    else if (gamekeydown['9'] && !cmd->arti)
+    else if (gamekeydown[key_arti_blastradius] && !cmd->arti)
     {
-        gamekeydown['9'] = false;
+        gamekeydown[key_arti_blastradius] = false;
         cmd->arti = arti_blastradius;
     }
-    else if (gamekeydown['8'] && !cmd->arti)
+    else if (gamekeydown[key_arti_teleport] && !cmd->arti)
     {
-        gamekeydown['8'] = false;
+        gamekeydown[key_arti_teleport] = false;
         cmd->arti = arti_teleport;
     }
-    else if (gamekeydown['7'] && !cmd->arti)
+    else if (gamekeydown[key_arti_teleportother] && !cmd->arti)
     {
-        gamekeydown['7'] = false;
+        gamekeydown[key_arti_teleportother] = false;
         cmd->arti = arti_teleportother;
     }
-    else if (gamekeydown['6'] && !cmd->arti)
+    else if (gamekeydown[key_arti_egg] && !cmd->arti)
     {
-        gamekeydown['6'] = false;
+        gamekeydown[key_arti_egg] = false;
         cmd->arti = arti_egg;
     }
-    else if (gamekeydown['5'] && !cmd->arti
+    else if (gamekeydown[key_arti_invulnerability] && !cmd->arti
              && !players[consoleplayer].powers[pw_invulnerability])
     {
-        gamekeydown['5'] = false;
+        gamekeydown[key_arti_invulnerability] = false;
         cmd->arti = arti_invulnerability;
     }
 
@@ -448,7 +443,7 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
         || joybuttons[joybfire])
         cmd->buttons |= BT_ATTACK;
 
-    if (gamekeydown[key_use] || joybuttons[joybuse])
+    if (gamekeydown[key_use] || joybuttons[joybuse] || mousebuttons[mousebuse])
     {
         cmd->buttons |= BT_USE;
         dclicks = 0;            // clear double clicks if hit use button
@@ -659,11 +654,11 @@ void G_DoLoadLevel(void)
 // 
 
     memset(gamekeydown, 0, sizeof(gamekeydown));
-    joyxmove = joyymove = 0;
+    joyxmove = joyymove = joystrafemove = 0;
     mousex = mousey = 0;
     sendpause = sendsave = paused = false;
-    memset(mousebuttons, 0, sizeof(mousebuttons));
-    memset(joybuttons, 0, sizeof(joybuttons));
+    memset(mousearray, 0, sizeof(mousearray));
+    memset(joyarray, 0, sizeof(joyarray));
 
     if (testcontrols)
     {
@@ -671,6 +666,59 @@ void G_DoLoadLevel(void)
     }
 }
 
+static void SetJoyButtons(unsigned int buttons_mask)
+{
+    int i;
+
+    for (i=0; i<MAX_JOY_BUTTONS; ++i)
+    {
+        int button_on = (buttons_mask & (1 << i)) != 0;
+
+        // Detect button press:
+
+        if (!joybuttons[i] && button_on)
+        {
+            // Weapon cycling:
+
+            if (i == joybprevweapon)
+            {
+                next_weapon = -1;
+            }
+            else if (i == joybnextweapon)
+            {
+                next_weapon = 1;
+            }
+        }
+
+        joybuttons[i] = button_on;
+    }
+}
+
+static void SetMouseButtons(unsigned int buttons_mask)
+{
+    int i;
+
+    for (i=0; i<MAX_MOUSE_BUTTONS; ++i)
+    {
+        unsigned int button_on = (buttons_mask & (1 << i)) != 0;
+
+        // Detect button press:
+
+        if (!mousebuttons[i] && button_on)
+        {
+            if (i == mousebprevweapon)
+            {
+                next_weapon = -1;
+            }
+            else if (i == mousebnextweapon)
+            {
+                next_weapon = 1;
+            }
+        }
+
+        mousebuttons[i] = button_on;
+    }
+}
 
 /*
 ===============================================================================
@@ -795,7 +843,7 @@ boolean G_Responder(event_t * ev)
                 }
                 return (true);
             }
-            if (ev->data1 == KEY_PAUSE && !MenuActive)
+            if (ev->data1 == key_pause && !MenuActive)
             {
                 sendpause = true;
                 return (true);
@@ -814,20 +862,16 @@ boolean G_Responder(event_t * ev)
             return (false);     // always let key up events filter down
 
         case ev_mouse:
-            mousebuttons[0] = ev->data1 & 1;
-            mousebuttons[1] = ev->data1 & 2;
-            mousebuttons[2] = ev->data1 & 4;
+            SetMouseButtons(ev->data1);
             mousex = ev->data2 * (mouseSensitivity + 5) / 10;
             mousey = ev->data3 * (mouseSensitivity + 5) / 10;
             return (true);      // eat events
 
         case ev_joystick:
-            joybuttons[0] = ev->data1 & 1;
-            joybuttons[1] = ev->data1 & 2;
-            joybuttons[2] = ev->data1 & 4;
-            joybuttons[3] = ev->data1 & 8;
+            SetJoyButtons(ev->data1);
             joyxmove = ev->data2;
             joyymove = ev->data3;
+            joystrafemove = ev->data4;
             return (true);      // eat events
 
         default:
@@ -886,7 +930,7 @@ void G_Ticker(void)
                 G_DoPlayDemo();
                 break;
             case ga_screenshot:
-                V_ScreenShot("HEXEN%02i.pcx");
+                V_ScreenShot("HEXEN%02i.%s");
                 P_SetMessage(&players[consoleplayer], "SCREEN SHOT", false);
                 gameaction = ga_nothing;
                 break;
@@ -969,11 +1013,13 @@ void G_Ticker(void)
                         {
                             if (netgame)
                             {
-                                strcpy(savedescription, "NET GAME");
+                                M_StringCopy(savedescription, "NET GAME",
+                                             sizeof(savedescription));
                             }
                             else
                             {
-                                strcpy(savedescription, "SAVE GAME");
+                                M_StringCopy(savedescription, "SAVE GAME",
+                                             sizeof(savedescription));
                             }
                         }
                         savegameslot =
@@ -1579,7 +1625,7 @@ void G_DoLoadGame(void)
 void G_SaveGame(int slot, char *description)
 {
     savegameslot = slot;
-    strcpy(savedescription, description);
+    M_StringCopy(savedescription, description, sizeof(savedescription));
     sendsave = true;
 }
 
@@ -1762,8 +1808,8 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
 
     G_InitNew(skill, episode, map);
     usergame = false;
-    strcpy(demoname, name);
-    strcat(demoname, ".lmp");
+    M_StringCopy(demoname, name, sizeof(demoname));
+    M_StringConcat(demoname, ".lmp", sizeof(demoname));
     demobuffer = demo_p = Z_Malloc(0x20000, PU_STATIC, NULL);
     *demo_p++ = skill;
     *demo_p++ = episode;
@@ -1833,12 +1879,19 @@ void G_DoPlayDemo(void)
 void G_TimeDemo(char *name)
 {
     skill_t skill;
-    int episode, map;
+    int episode, map, i;
 
     demobuffer = demo_p = W_CacheLumpName(name, PU_STATIC);
     skill = *demo_p++;
     episode = *demo_p++;
     map = *demo_p++;
+
+    for (i = 0; i < MAXPLAYERS; i++)
+    {
+        playeringame[i] = *demo_p++;
+        PlayerClass[i] = *demo_p++;
+    }
+
     G_InitNew(skill, episode, map);
     usergame = false;
     demoplayback = true;
@@ -1859,13 +1912,16 @@ void G_TimeDemo(char *name)
 
 boolean G_CheckDemoStatus(void)
 {
-    int endtime;
+    int endtime, realtics;
 
     if (timingdemo)
     {
+        float fps;
         endtime = I_GetTime();
-        I_Error("timed %i gametics in %i realtics", gametic,
-                endtime - starttime);
+        realtics = endtime - starttime;
+        fps = ((float) gametic * TICRATE) / realtics;
+        I_Error("timed %i gametics in %i realtics (%f fps)",
+                gametic, realtics, fps);
     }
 
     if (demoplayback)

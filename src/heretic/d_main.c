@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,12 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 // D_main.c
 
@@ -48,6 +40,7 @@
 #include "m_argv.h"
 #include "m_config.h"
 #include "m_controls.h"
+#include "m_misc.h"
 #include "p_local.h"
 #include "s_sound.h"
 #include "w_main.h"
@@ -64,7 +57,6 @@
 #define STARTUP_WINDOW_X 17
 #define STARTUP_WINDOW_Y 7
 
-GameMission_t gamemission = heretic;
 GameMode_t gamemode = indetermined;
 char *gamedescription = "unknown";
 
@@ -82,6 +74,7 @@ int startmap;
 int UpdateState;
 static int graphical_startup = 1;
 static boolean using_graphical_startup;
+static boolean main_loop_started = false;
 boolean autostart;
 extern boolean automapactive;
 
@@ -228,14 +221,14 @@ void D_Display(void)
 
 boolean D_GrabMouseCallback(void)
 {
-    // when menu is active or game is paused, release the mouse 
- 
+    // when menu is active or game is paused, release the mouse
+
     if (MenuActive || paused)
         return false;
 
     // only grab mouse when playing levels (but not demos)
 
-    return (gamestate == GS_LEVEL) && !demoplayback;
+    return (gamestate == GS_LEVEL) && !demoplayback && !advancedemo;
 }
 
 //---------------------------------------------------------------------------
@@ -249,13 +242,14 @@ void D_DoomLoop(void)
     if (M_CheckParm("-debugfile"))
     {
         char filename[20];
-        sprintf(filename, "debug%i.txt", consoleplayer);
+        M_snprintf(filename, sizeof(filename), "debug%i.txt", consoleplayer);
         debugfile = fopen(filename, "w");
     }
-    I_SetWindowTitle(gamedescription);
     I_GraphicsCheckCommandLine();
-    I_InitGraphics();
     I_SetGrabMouseCallback(D_GrabMouseCallback);
+    I_InitGraphics();
+
+    main_loop_started = true;
 
     while (1)
     {
@@ -545,7 +539,7 @@ void status(char *string)
 {
     if (using_graphical_startup)
     {
-        strcat(smsg, string);
+        M_StringConcat(smsg, string, sizeof(smsg));
         drawstatus();
     }
 }
@@ -638,6 +632,9 @@ void initStartup(void)
         return;
     }
 
+    I_InitWindowTitle();
+    I_InitWindowIcon();
+
     // Blit main screen
     textScreen = TXT_GetScreenData();
     loading = W_CacheLumpName(DEH_String("LOADING"), PU_CACHE);
@@ -675,7 +672,7 @@ void tprintf(char *msg, int initflag)
 
     if (initflag)
         tmsg[0] = 0;
-    strcat(tmsg, msg);
+    M_StringConcat(tmsg, msg, sizeof(tmsg));
     blitStartup();
     DrawThermo();
     _setbkcolor(4);
@@ -684,7 +681,11 @@ void tprintf(char *msg, int initflag)
         if ((tmsg[i] == '\n') || (!tmsg[i]))
         {
             memset(temp, 0, 80);
-            strncpy(temp, tmsg + start, i - start);
+            M_StringCopy(temp, tmsg + start, sizeof(temp));
+            if (i - start < sizeof(temp))
+            {
+                temp[i - start] = '\0';
+            }
             _settextposition(MSG_Y + add, 40 - strlen(temp) / 2);
             _outtext(temp);
             start = i + 1;
@@ -778,7 +779,7 @@ void D_BindVariables(void)
     {
         char buf[12];
 
-        sprintf(buf, "chatmacro%i", i);
+        M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
         M_BindVariable(buf, &chat_macros[i]);
     }
 }
@@ -793,7 +794,7 @@ static void D_Endoom(void)
 
     // Disable ENDOOM?
 
-    if (!show_endoom || testcontrols)
+    if (!show_endoom || testcontrols || !main_loop_started)
     {
         return;
     }
@@ -811,8 +812,10 @@ static void D_Endoom(void)
 
 void D_DoomMain(void)
 {
+    GameMission_t gamemission;
     int p;
     char file[256];
+    char demolumpname[9];
 
     I_PrintBanner(PACKAGE_STRING);
 
@@ -979,6 +982,7 @@ void D_DoomMain(void)
     }
 
     D_AddFile(iwadfile);
+    W_CheckCorrectIWAD(heretic);
     W_ParseCommandLine();
 
     //!
@@ -1006,9 +1010,30 @@ void D_DoomMain(void)
 
     if (p)
     {
-        DEH_snprintf(file, sizeof(file), "%s.lmp", myargv[p + 1]);
-        D_AddFile(file);
-        DEH_printf("Playing demo %s.lmp.\n", myargv[p + 1]);
+        // In Vanilla, the filename must be specified without .lmp,
+        // but make that optional.
+        if (M_StringEndsWith(myargv[p + 1], ".lmp"))
+        {
+            M_StringCopy(file, myargv[p + 1], sizeof(file));
+        }
+        else
+        {
+            DEH_snprintf(file, sizeof(file), "%s.lmp", myargv[p + 1]);
+        }
+
+        if (D_AddFile(file))
+        {
+            M_StringCopy(demolumpname, lumpinfo[numlumps - 1].name,
+                         sizeof(demolumpname));
+        }
+        else
+        {
+            // The file failed to load, but copy the original arg as a
+            // demo name to make tricks like -playdemo demo1 possible.
+            M_StringCopy(demolumpname, myargv[p + 1], sizeof(demolumpname));
+        }
+
+        printf("Playing demo %s.\n", file);
     }
 
     if (W_CheckNumForName(DEH_String("E2M1")) == -1)
@@ -1029,6 +1054,8 @@ void D_DoomMain(void)
         gamedescription = "Heretic (registered)";
     }
 
+    I_SetWindowTitle(gamedescription);
+
     savegamedir = M_GetSaveGameDir("heretic.wad");
 
     I_PrintStartupBanner(gamedescription);
@@ -1041,12 +1068,15 @@ void D_DoomMain(void)
         testcontrols = true;
     }
 
+    I_InitTimer();
+    I_InitSound(false);
+    I_InitMusic();
+
 #ifdef FEATURE_MULTIPLAYER
     tprintf("NET_Init: Init network subsystem.\n", 1);
     NET_Init ();
 #endif
 
-    I_InitTimer();
     D_ConnectNetGame();
 
     // haleyjd: removed WATCOMC
@@ -1133,14 +1163,14 @@ void D_DoomMain(void)
     if (p)
     {
         singledemo = true;      // Quit after one demo
-        G_DeferedPlayDemo(myargv[p + 1]);
+        G_DeferedPlayDemo(demolumpname);
         D_DoomLoop();           // Never returns
     }
 
     p = M_CheckParmWithArgs("-timedemo", 1);
     if (p)
     {
-        G_TimeDemo(myargv[p + 1]);
+        G_TimeDemo(demolumpname);
         D_DoomLoop();           // Never returns
     }
 
@@ -1164,7 +1194,7 @@ void D_DoomMain(void)
     // Check valid episode and map
     if (autostart || netgame)
     {
-        if (!D_ValidEpisodeMap(gamemission, gamemode, startepisode, startmap))
+        if (!D_ValidEpisodeMap(heretic, gamemode, startepisode, startmap))
         {
             startepisode = 1;
             startmap = 1;

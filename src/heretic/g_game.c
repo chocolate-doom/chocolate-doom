@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,12 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 // G_game.c
 
@@ -41,9 +33,6 @@
 
 // Macros
 
-#define SVG_RAM 0
-#define SVG_FILE 1
-#define SAVE_GAME_TERMINATOR 0x1d
 #define AM_STARTKEY     9
 
 // Functions
@@ -68,7 +57,7 @@ void D_AdvanceDemo(void);
 
 struct
 {
-    mobjtype_t type;
+    int type;   // mobjtype_t
     int speed[2];
 } MonsterMissileInfo[] = {
     { MT_IMPBALL, { 10, 20 } },
@@ -87,9 +76,6 @@ struct
     { MT_SOR2FX1, { 20, 28 } },
     { -1, { -1, -1 } }                 // Terminator
 };
-
-FILE *SaveGameFP;
-int SaveGameType;
 
 gameaction_t gameaction;
 gamestate_t gamestate;
@@ -132,9 +118,7 @@ boolean precache = true;        // if true, load all graphics at start
 
 // TODO: Heretic uses 16-bit shorts for consistency?
 byte consistancy[MAXPLAYERS][BACKUPTICS];
-
 char *savegamedir;
-byte *savebuffer, *save_p;
 
 boolean testcontrols = false;
 int testcontrols_mousespeed;
@@ -193,7 +177,7 @@ int turnheld;                   // for accelerative turning
 int lookheld;
 
 
-boolean mousearray[4];
+boolean mousearray[MAX_MOUSE_BUTTONS + 1];
 boolean *mousebuttons = &mousearray[1];
         // allow [-1]
 int mousex, mousey;             // mouse values are used once
@@ -203,6 +187,7 @@ int dclicktime2, dclickstate2, dclicks2;
 #define MAX_JOY_BUTTONS 20
 
 int joyxmove, joyymove;         // joystick values are repeated
+int joystrafemove;
 boolean joyarray[MAX_JOY_BUTTONS + 1];
 boolean *joybuttons = &joyarray[1];     // allow [-1]
 
@@ -387,10 +372,10 @@ void G_BuildTiccmd(ticcmd_t *cmd, int maketic)
     if (joyymove > 0)
         forward -= forwardmove[speed];
     if (gamekeydown[key_straferight] || mousebuttons[mousebstraferight]
-     || joybuttons[joybstraferight])
+     || joybuttons[joybstraferight] || joystrafemove > 0)
         side += sidemove[speed];
     if (gamekeydown[key_strafeleft] || mousebuttons[mousebstrafeleft]
-     || joybuttons[joybstrafeleft])
+     || joybuttons[joybstrafeleft] || joystrafemove < 0)
         side -= sidemove[speed];
 
     // Look up/down/center keys
@@ -671,11 +656,11 @@ void G_DoLoadLevel(void)
 //
 
     memset(gamekeydown, 0, sizeof(gamekeydown));
-    joyxmove = joyymove = 0;
+    joyxmove = joyymove = joystrafemove = 0;
     mousex = mousey = 0;
     sendpause = sendsave = paused = false;
-    memset(mousebuttons, 0, sizeof(mousebuttons));
-    memset(joybuttons, 0, sizeof(joybuttons));
+    memset(mousearray, 0, sizeof(mousearray));
+    memset(joyarray, 0, sizeof(joyarray));
 
     if (testcontrols)
     {
@@ -689,7 +674,51 @@ static void SetJoyButtons(unsigned int buttons_mask)
 
     for (i=0; i<MAX_JOY_BUTTONS; ++i)
     {
-        joybuttons[i] = (buttons_mask & (1 << i)) != 0;
+        int button_on = (buttons_mask & (1 << i)) != 0;
+
+        // Detect button press:
+
+        if (!joybuttons[i] && button_on)
+        {
+            // Weapon cycling:
+
+            if (i == joybprevweapon)
+            {
+                next_weapon = -1;
+            }
+            else if (i == joybnextweapon)
+            {
+                next_weapon = 1;
+            }
+        }
+
+        joybuttons[i] = button_on;
+    }
+}
+
+static void SetMouseButtons(unsigned int buttons_mask)
+{
+    int i;
+
+    for (i=0; i<MAX_MOUSE_BUTTONS; ++i)
+    {
+        unsigned int button_on = (buttons_mask & (1 << i)) != 0;
+
+        // Detect button press:
+
+        if (!mousebuttons[i] && button_on)
+        {
+            if (i == mousebprevweapon)
+            {
+                next_weapon = -1;
+            }
+            else if (i == mousebnextweapon)
+            {
+                next_weapon = 1;
+            }
+        }
+
+        mousebuttons[i] = button_on;
     }
 }
 
@@ -815,7 +844,7 @@ boolean G_Responder(event_t * ev)
                 }
                 return (true);
             }
-            if (ev->data1 == KEY_PAUSE && !MenuActive)
+            if (ev->data1 == key_pause && !MenuActive)
             {
                 sendpause = true;
                 return (true);
@@ -834,9 +863,7 @@ boolean G_Responder(event_t * ev)
             return (false);     // always let key up events filter down
 
         case ev_mouse:
-            mousebuttons[0] = ev->data1 & 1;
-            mousebuttons[1] = ev->data1 & 2;
-            mousebuttons[2] = ev->data1 & 4;
+            SetMouseButtons(ev->data1);
             mousex = ev->data2 * (mouseSensitivity + 5) / 10;
             mousey = ev->data3 * (mouseSensitivity + 5) / 10;
             return (true);      // eat events
@@ -845,6 +872,7 @@ boolean G_Responder(event_t * ev)
             SetJoyButtons(ev->data1);
             joyxmove = ev->data2;
             joyymove = ev->data3;
+            joystrafemove = ev->data4;
             return (true);      // eat events
 
         default:
@@ -896,7 +924,7 @@ void G_Ticker(void)
                 G_DoPlayDemo();
                 break;
             case ga_screenshot:
-                V_ScreenShot("HTIC%02i.pcx");
+                V_ScreenShot("HTIC%02i.%s");
                 gameaction = ga_nothing;
                 break;
             case ga_completed:
@@ -974,16 +1002,16 @@ void G_Ticker(void)
                         {
                             if (netgame)
                             {
-                                strncpy(savedescription, DEH_String("NET GAME"),
-                                        sizeof(savedescription));
+                                M_StringCopy(savedescription,
+                                             DEH_String("NET GAME"),
+                                             sizeof(savedescription));
                             }
                             else
                             {
-                                strncpy(savedescription, DEH_String("SAVE GAME"),
-                                        sizeof(savedescription));
+                                M_StringCopy(savedescription,
+                                             DEH_String("SAVE GAME"),
+                                             sizeof(savedescription));
                             }
-
-                            savedescription[sizeof(savedescription) - 1] = '\0';
                         }
                         savegameslot =
                             (players[i].cmd.
@@ -1419,39 +1447,41 @@ void G_DoLoadGame(void)
 {
     int i;
     int a, b, c;
-    char vcheck[VERSIONSIZE];
+    char savestr[SAVESTRINGSIZE];
+    char vcheck[VERSIONSIZE], readversion[VERSIONSIZE];
 
     gameaction = ga_nothing;
 
-    M_ReadFile(savename, &savebuffer);
+    SV_OpenRead(savename);
+
     free(savename);
     savename = NULL;
 
-    save_p = savebuffer + SAVESTRINGSIZE;
     // Skip the description field
+    SV_Read(savestr, SAVESTRINGSIZE);
+
     memset(vcheck, 0, sizeof(vcheck));
-
     DEH_snprintf(vcheck, VERSIONSIZE, "version %i", HERETIC_VERSION);
+    SV_Read(readversion, VERSIONSIZE);
 
-    if (strcmp((char *) save_p, vcheck) != 0)
+    if (strncmp(readversion, vcheck, VERSIONSIZE) != 0)
     {                           // Bad version
         return;
     }
-    save_p += VERSIONSIZE;
-    gameskill = *save_p++;
-    gameepisode = *save_p++;
-    gamemap = *save_p++;
+    gameskill = SV_ReadByte();
+    gameepisode = SV_ReadByte();
+    gamemap = SV_ReadByte();
     for (i = 0; i < MAXPLAYERS; i++)
     {
-        playeringame[i] = *save_p++;
+        playeringame[i] = SV_ReadByte();
     }
     // Load a base level
     G_InitNew(gameskill, gameepisode, gamemap);
 
     // Create leveltime
-    a = *save_p++;
-    b = *save_p++;
-    c = *save_p++;
+    a = SV_ReadByte();
+    b = SV_ReadByte();
+    c = SV_ReadByte();
     leveltime = (a << 16) + (b << 8) + c;
 
     // De-archive all the modifications
@@ -1460,11 +1490,10 @@ void G_DoLoadGame(void)
     P_UnArchiveThinkers();
     P_UnArchiveSpecials();
 
-    if (*save_p != SAVE_GAME_TERMINATOR)
+    if (SV_ReadByte() != SAVE_GAME_TERMINATOR)
     {                           // Missing savegame termination marker
         I_Error("Bad savegame");
     }
-    Z_Free(savebuffer);
 }
 
 
@@ -1637,8 +1666,8 @@ void G_RecordDemo(skill_t skill, int numplayers, int episode, int map,
 
     G_InitNew(skill, episode, map);
     usergame = false;
-    strcpy(demoname, name);
-    strcat(demoname, ".lmp");
+    M_StringCopy(demoname, name, sizeof(demoname));
+    M_StringConcat(demoname, ".lmp", sizeof(demoname));
     demobuffer = demo_p = Z_Malloc(0x20000, PU_STATIC, NULL);
     *demo_p++ = skill;
     *demo_p++ = episode;
@@ -1700,12 +1729,18 @@ void G_DoPlayDemo(void)
 void G_TimeDemo(char *name)
 {
     skill_t skill;
-    int episode, map;
+    int episode, map, i;
 
     demobuffer = demo_p = W_CacheLumpName(name, PU_STATIC);
     skill = *demo_p++;
     episode = *demo_p++;
     map = *demo_p++;
+
+    for (i = 0; i < MAXPLAYERS; i++)
+    {
+        playeringame[i] = *demo_p++;
+    }
+
     G_InitNew(skill, episode, map);
     usergame = false;
     demoplayback = true;
@@ -1726,13 +1761,16 @@ void G_TimeDemo(char *name)
 
 boolean G_CheckDemoStatus(void)
 {
-    int endtime;
+    int endtime, realtics;
 
     if (timingdemo)
     {
+        float fps;
         endtime = I_GetTime();
-        I_Error("timed %i gametics in %i realtics", gametic,
-                endtime - starttime);
+        realtics = endtime - starttime;
+        fps = ((float) gametic * TICRATE) / realtics;
+        I_Error("timed %i gametics in %i realtics (%f fps)",
+                gametic, realtics, fps);
     }
 
     if (demoplayback)
@@ -1772,7 +1810,7 @@ boolean G_CheckDemoStatus(void)
 void G_SaveGame(int slot, char *description)
 {
     savegameslot = slot;
-    strcpy(savedescription, description);
+    M_StringCopy(savedescription, description, sizeof(savedescription));
     sendsave = true;
 }
 
@@ -1823,94 +1861,3 @@ void G_DoSaveGame(void)
     free(filename);
 }
 
-//==========================================================================
-//
-// SV_Filename
-//
-// Generate the filename to use for a particular savegame slot.
-// Returns a malloc()'d buffer that must be freed by the caller.
-//
-//==========================================================================
-
-char *SV_Filename(int slot)
-{
-    char *filename;
-
-    filename = malloc(strlen(savegamedir) + strlen(SAVEGAMENAME) + 8);
-    sprintf(filename, "%s" SAVEGAMENAME "%d.hsg", savegamedir, slot);
-
-    return filename;
-}
-
-//==========================================================================
-//
-// SV_Open
-//
-//==========================================================================
-
-void SV_Open(char *fileName)
-{
-    SaveGameType = SVG_FILE;
-    SaveGameFP = fopen(fileName, "wb");
-}
-
-//==========================================================================
-//
-// SV_Close
-//
-//==========================================================================
-
-void SV_Close(char *fileName)
-{
-    int length;
-
-    SV_WriteByte(SAVE_GAME_TERMINATOR);
-    if (SaveGameType == SVG_RAM)
-    {
-        length = save_p - savebuffer;
-        if (length > SAVEGAMESIZE)
-        {
-            I_Error("Savegame buffer overrun");
-        }
-        M_WriteFile(fileName, savebuffer, length);
-        Z_Free(savebuffer);
-    }
-    else
-    {                           // SVG_FILE
-        fclose(SaveGameFP);
-    }
-}
-
-//==========================================================================
-//
-// SV_Write
-//
-//==========================================================================
-
-void SV_Write(void *buffer, int size)
-{
-    if (SaveGameType == SVG_RAM)
-    {
-        memcpy(save_p, buffer, size);
-        save_p += size;
-    }
-    else
-    {                           // SVG_FILE
-        fwrite(buffer, size, 1, SaveGameFP);
-    }
-}
-
-void SV_WriteByte(byte val)
-{
-    SV_Write(&val, sizeof(byte));
-}
-
-void SV_WriteWord(unsigned short val)
-{
-    SV_Write(&val, sizeof(unsigned short));
-}
-
-void SV_WriteLong(unsigned int val)
-{
-    SV_Write(&val, sizeof(int));
-}

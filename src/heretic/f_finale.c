@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,12 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 // F_finale.c
 
 #include <ctype.h>
@@ -29,6 +21,7 @@
 #include "deh_str.h"
 #include "i_swap.h"
 #include "i_video.h"
+#include "i_scale.h"
 #include "s_sound.h"
 #include "v_video.h"
 
@@ -304,8 +297,15 @@ void F_DemonScroll(void)
 
 void F_DrawUnderwater(void)
 {
-    static boolean underwawa;
+    static boolean underwawa = false;
     extern boolean askforquit;
+    char *lumpname;
+    byte *palette;
+
+    // The underwater screen has its own palette, which is rather annoying.
+    // The palette doesn't correspond to the normal palette. Because of
+    // this, we must regenerate the lookup tables used in the video scaling
+    // code.
 
     switch (finalestage)
     {
@@ -313,8 +313,12 @@ void F_DrawUnderwater(void)
             if (!underwawa)
             {
                 underwawa = true;
-                memset((byte *) 0xa0000, 0, SCREENWIDTH * SCREENHEIGHT);
-                I_SetPalette(W_CacheLumpName(DEH_String("E2PAL"), PU_CACHE));
+                V_DrawFilledBox(0, 0, SCREENWIDTH, SCREENHEIGHT, 0);
+                lumpname = DEH_String("E2PAL");
+                palette = W_CacheLumpName(lumpname, PU_STATIC);
+                I_SetPalette(palette);
+                I_ResetScaleTables(palette);
+                W_ReleaseLumpName(lumpname);
                 V_DrawRawScreen(W_CacheLumpName(DEH_String("E2END"), PU_CACHE));
             }
             paused = false;
@@ -323,6 +327,15 @@ void F_DrawUnderwater(void)
 
             break;
         case 2:
+            if (underwawa)
+            {
+                lumpname = DEH_String("PLAYPAL");
+                palette = W_CacheLumpName(lumpname, PU_STATIC);
+                I_SetPalette(palette);
+                I_ResetScaleTables(palette);
+                W_ReleaseLumpName(lumpname);
+                underwawa = false;
+            }
             V_DrawRawScreen(W_CacheLumpName(DEH_String("TITLE"), PU_CACHE));
             //D_StartTitle(); // go to intro/demo mode.
     }
@@ -384,7 +397,7 @@ void F_BunnyScroll(void)
         laststage = stage;
     }
 
-    sprintf(name, "END%i", stage);
+    M_snprintf(name, sizeof(name), "END%i", stage);
     V_DrawPatch((SCREENWIDTH - 13 * 8) / 2, (SCREENHEIGHT - 8 * 8) / 2,
                 W_CacheLumpName(name, PU_CACHE));
 }

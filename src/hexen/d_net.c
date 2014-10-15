@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,16 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //	DOOM Network game communication and protocol,
 //	all OS independend parts.
 //
-//-----------------------------------------------------------------------------
 
 #include <stdlib.h>
 
@@ -33,7 +25,9 @@
 #include "i_system.h"
 #include "i_timer.h"
 #include "i_video.h"
+#include "i_videohr.h"
 #include "h2def.h"
+#include "m_misc.h"
 #include "p_local.h"
 #include "s_sound.h"
 #include "w_checksum.h"
@@ -60,7 +54,7 @@ static void PlayerQuitGame(player_t *player)
 
     player_num = player - players;
 
-    strcpy(exitmsg, "PLAYER 1 LEFT THE GAME");
+    M_StringCopy(exitmsg, "PLAYER 1 LEFT THE GAME", sizeof(exitmsg));
     exitmsg[7] += player_num;
     P_SetMessage(&players[consoleplayer], exitmsg, true);
     S_StartSound(NULL, SFX_CHAT);
@@ -174,7 +168,7 @@ static void InitConnectData(net_connect_data_t *connect_data)
     // Game type fields:
 
     connect_data->gamemode = gamemode;
-    connect_data->gamemission = gamemission;
+    connect_data->gamemission = hexen;
 
     connect_data->lowres_turn = false;
     connect_data->drone = false;
@@ -239,7 +233,8 @@ static boolean StartupProgress(int now_ready, int total)
 
     ready = now_ready;
 
-    return true;
+    // Allow the user to hit escape during netgame startup to abort.
+    return !I_CheckAbortHR();
 }
 
 //

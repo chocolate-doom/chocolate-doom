@@ -31,39 +31,24 @@
 #
 # simple cpp-style preprocessor
 #
-# Understands:
+# Understands most features of the C preprocessor, including:
+#    #if .. #elif .. #else .. #endif
+#        - with expressions
+#    #ifdef
+#    #define
+#    #include
 #
-# #define NAME
-#
-# Set an option
-# You can use -D on the command line too
-#
-# #undef NAME
-#
-# Unset an option if it is set
-#
-# #if .. #endif / #ifdef .. #endif
-#
-# Specify a list of options set, eg #ifdef DOOM2 || ULTDOOM || SHAREWARE
-# The block is only displayed if one of the options is set
-#
-# #ifn .. #endif / #ifndef .. #endif
-#
-# Similarly specify a list of options
-# The block is displayed if none of the options are set
-#
-# #include "filename"
-#
-# include the contents of a file
 
+import collections
 import sys
 import re
 
 debug = False
-defines = {}
+defines = collections.defaultdict(lambda: False)
 
-command_re = re.compile("\#(\w+)(\s+(.*))?")
-include_re = re.compile("\s*\"(.*)\"\s*")
+command_re = re.compile(r"\#(\w+)(\s+(.*))?")
+include_re = re.compile(r"\s*\"(.*)\"\s*")
+define_re = re.compile(r"\s*(\S+)\s*(.*?)\s*$")
 
 def debug_msg(message):
 	if debug:
@@ -73,9 +58,16 @@ def debug_msg(message):
 
 def parse_cmdline():
 	for arg in sys.argv[1:]:
-		if arg.startswith("-D"):
-			name = arg[2:]
-			defines[name] = True
+		if not arg.startswith("-D"):
+			continue
+
+		name = arg[2:]
+		if '=' in name:
+			name, value = name.split('=', 1)
+		else:
+			value = True
+
+		defines[name] = value
 
 def parse_stream(stream):
 	result = read_block(stream, False)
@@ -90,6 +82,17 @@ def parse_file(filename):
 		parse_stream(f)
 	finally:
 		f.close()
+
+# Evaluate an expression using Python's eval() function.
+
+def eval_expr(expr):
+	expr = expr.replace("||", " or ")   \
+	           .replace("&&", " and ")  \
+	           .replace("!", "not ")
+
+	code = compile(expr, "", "eval")
+	result = eval(code, {}, defines)
+	return result
 
 # #include
 
@@ -110,7 +113,13 @@ def cmd_include(arg):
 # #define
 
 def cmd_define(arg):
-	defines[arg] = True
+	match = define_re.match(arg)
+	name = match.group(1)
+	value = match.group(2)
+	if value == '':
+		value = True
+
+	defines[name] = value
 
 # #undef
 
@@ -123,20 +132,19 @@ def cmd_undef(arg):
 def cmd_ifdef(arg, command, stream, ignore):
 
 	# Get the define name
-	name = arg.strip()
 
 	debug_msg("%s %s >\n" % (command, arg))
 
 	# Should we ignore the contents of this block?
 
-	sub_ignore = (name not in defines)
+	sub_ignore = not eval_expr(arg)
 
 	if "n" in command:
 		sub_ignore = not sub_ignore
 
 	# Parse the block
 
-	result = read_block(stream, ignore or sub_ignore)
+	result, newarg = read_block(stream, ignore or sub_ignore)
 
 	debug_msg("%s %s < (%s)\n" % (command, arg, result))
 
@@ -144,8 +152,13 @@ def cmd_ifdef(arg, command, stream, ignore):
 
 	if result == "else":
 		debug_msg("%s %s else >\n" % (command, arg))
-		result = read_block(stream, ignore or (not sub_ignore))
+		result, arg = read_block(stream, ignore or (not sub_ignore))
 		debug_msg("%s %s else < (%s)\n" % (command, arg, result))
+
+	if result == "elif":
+		debug_msg("%s %s elif %s>\n" % (command, arg, newarg))
+		cmd_ifdef(newarg, "if", stream, ignore or (not sub_ignore))
+		result = "endif"
 
 	# Should end in an endif:
 
@@ -181,8 +194,8 @@ def read_block(stream, ignore):
 			command = match.group(1)
 			arg = match.group(3)
 
-			if command == "else" or command == "endif":
-				return command
+			if command in ("else", "elif", "endif"):
+				return (command, arg)
 			elif command not in commands:
 				raise Exception("Unknown command: '%s'" % \
 						command)
@@ -204,6 +217,9 @@ def read_block(stream, ignore):
 				func(arg)
 		else:
 			if not ignore:
+				for key, value in defines.items():
+					if isinstance(value, str):
+						line = line.replace(key, value)
 				print(line)
 
 parse_cmdline()

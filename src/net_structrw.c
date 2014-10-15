@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,11 +11,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // Reading and writing various structures into packets
 //
 
@@ -27,7 +20,7 @@
 #include <ctype.h>
 
 #include "doomtype.h"
-
+#include "m_misc.h"
 #include "net_packet.h"
 #include "net_structrw.h"
 
@@ -75,6 +68,7 @@ void NET_WriteSettings(net_packet_t *packet, net_gamesettings_t *settings)
     NET_WriteInt8(packet, settings->new_sync);
     NET_WriteInt32(packet, settings->timelimit);
     NET_WriteInt8(packet, settings->loadgame);
+    NET_WriteInt8(packet, settings->random);
     NET_WriteInt8(packet, settings->num_players);
     NET_WriteInt8(packet, settings->consoleplayer);
 
@@ -103,6 +97,7 @@ boolean NET_ReadSettings(net_packet_t *packet, net_gamesettings_t *settings)
            && NET_ReadInt8(packet, (unsigned int *) &settings->new_sync)
            && NET_ReadInt32(packet, (unsigned int *) &settings->timelimit)
            && NET_ReadSInt8(packet, (signed int *) &settings->loadgame)
+           && NET_ReadInt8(packet, (unsigned int *) &settings->random)
            && NET_ReadInt8(packet, (unsigned int *) &settings->num_players)
            && NET_ReadSInt8(packet, (signed int *) &settings->consoleplayer);
 
@@ -491,7 +486,7 @@ boolean NET_ReadWaitData(net_packet_t *packet, net_waitdata_t *data)
             return false;
         }
 
-        strcpy(data->player_names[i], s);
+        M_StringCopy(data->player_names[i], s, MAXPLAYERNAME);
 
         s = NET_ReadString(packet);
 
@@ -500,7 +495,7 @@ boolean NET_ReadWaitData(net_packet_t *packet, net_waitdata_t *data)
             return false;
         }
 
-        strcpy(data->player_addrs[i], s);
+        M_StringCopy(data->player_addrs[i], s, MAXPLAYERNAME);
     }
 
     return NET_ReadSHA1Sum(packet, data->wad_sha1sum)
@@ -569,7 +564,7 @@ void NET_SafePuts(char *s)
 
     for (p=s; *p; ++p)
     {
-        if (isprint(*p))
+        if (isprint(*p) || *p == '\n')
             putchar(*p);
     }
 

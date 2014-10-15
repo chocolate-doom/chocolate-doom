@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,12 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 // P_user.c
 
@@ -988,11 +980,18 @@ boolean P_UseArtifact(player_t * player, artitype_t arti)
             break;
         case arti_firebomb:
             angle = player->mo->angle >> ANGLETOFINESHIFT;
+
+            // Vanilla bug here:
+            // Original code here looks like:
+            //   (player->mo->flags2 & MF2_FEETARECLIPPED != 0),
+            // Which under C's operator precedence is:
+            //   (player->mo->flags2 & (MF2_FEETARECLIPPED != 0)),
+            // Which simplifies to:
+            //   (player->mo->flags2 & 1),
             mo = P_SpawnMobj(player->mo->x + 24 * finecosine[angle],
                              player->mo->y + 24 * finesine[angle],
                              player->mo->z -
-                             15 * FRACUNIT *
-                             (player->mo->flags2 & MF2_FEETARECLIPPED) != 0,
+                             15 * FRACUNIT * (player->mo->flags2 & 1),
                              MT_FIREBOMB);
             mo->target = player->mo;
             break;

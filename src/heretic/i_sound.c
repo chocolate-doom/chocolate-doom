@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,12 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 // I_SOUND.C
 
@@ -211,7 +203,8 @@ int I_GetSfxLumpNum(sfxinfo_t * sound)
         return 0;
     if (sound->link)
         sound = sound->link;
-//  sprintf(namebuf, "d%c%s", snd_prefixen[snd_SfxDevice], sound->name);
+//  M_snprintf(namebuf, sizeof(namebuf), "d%c%s",
+//             snd_prefixen[snd_SfxDevice], sound->name);
     return W_GetNumForName(sound->name);
 
 }
@@ -319,14 +312,15 @@ void I_sndArbitrateCards(void)
     {
         if (debugmode)
         {
-            sprintf(tmp, "cfg p=0x%x, i=%d, d=%d\n",
-                    snd_SBport, snd_SBirq, snd_SBdma);
+            M_snprintf(tmp, sizeof(tmp), "cfg p=0x%x, i=%d, d=%d\n",
+                       snd_SBport, snd_SBirq, snd_SBdma);
             tprintf(tmp, 0);
         }
         if (SB_Detect(&snd_SBport, &snd_SBirq, &snd_SBdma, 0))
         {
-            sprintf(tmp, "SB isn't responding at p=0x%x, i=%d, d=%d\n",
-                    snd_SBport, snd_SBirq, snd_SBdma);
+            M_snprintf(tmp, sizeof(tmp),
+                       "SB isn't responding at p=0x%x, i=%d, d=%d\n",
+                       snd_SBport, snd_SBirq, snd_SBdma);
             tprintf(tmp, 0);
         }
         else
@@ -334,8 +328,8 @@ void I_sndArbitrateCards(void)
 
         if (debugmode)
         {
-            sprintf(tmp, "SB_Detect returned p=0x%x,i=%d,d=%d\n",
-                    snd_SBport, snd_SBirq, snd_SBdma);
+            M_snprintf(tmp, sizeof(tmp), "SB_Detect returned p=0x%x,i=%d,d=%d\n",
+                       snd_SBport, snd_SBirq, snd_SBdma);
             tprintf(tmp, 0);
         }
     }
@@ -352,14 +346,14 @@ void I_sndArbitrateCards(void)
     {
         if (debugmode)
         {
-            sprintf(tmp, "cfg p=0x%x\n", snd_Mport);
+            M_snprintf(tmp, sizeof(tmp), "cfg p=0x%x\n", snd_Mport);
             tprintf(tmp, 0);
         }
 
         if (MPU_Detect(&snd_Mport, &i))
         {
-            sprintf(tmp, "The MPU-401 isn't reponding @ p=0x%x.\n",
-                    snd_Mport);
+            M_snprintf(tmp, sizeof(tmp),
+                       "The MPU-401 isn't reponding @ p=0x%x.\n", snd_Mport);
             tprintf(tmp, 0);
         }
         else
@@ -397,11 +391,11 @@ void I_StartupSound(void)
 
     if (debugmode)
     {
-        sprintf(tmp, "  Music device #%d & dmxCode=%d", snd_MusicDevice,
-                dmxCodes[snd_MusicDevice]);
+        M_snprintf(tmp, sizeof(tmp), "  Music device #%d & dmxCode=%d",
+                   snd_MusicDevice, dmxCodes[snd_MusicDevice]);
         tprintf(tmp, 0);
-        sprintf(tmp, "  Sfx device #%d & dmxCode=%d\n", snd_SfxDevice,
-                dmxCodes[snd_SfxDevice]);
+        M_snprintf(tmp, sizeof(tmp),  "  Sfx device #%d & dmxCode=%d\n",
+                   snd_SfxDevice, dmxCodes[snd_SfxDevice]);
         tprintf(tmp, 0);
     }
 
@@ -412,7 +406,7 @@ void I_StartupSound(void)
 
     if (debugmode)
     {
-        sprintf(tmp, "  DMX_Init() returned %d", rc);
+        M_snprintf(tmp, sizeof(tmp), "  DMX_Init() returned %d", rc);
         tprintf(tmp, 0);
     }
 

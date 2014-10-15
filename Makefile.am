@@ -32,24 +32,34 @@ CODEBLOCKS_FILES=                              \
         codeblocks/setup-res.rc
 
 DOC_FILES=                              \
-        NEWS                            \
-        CMDLINE                         \
         README                          \
-        README.OPL                      \
-        ChangeLog                       \
-        NOT-BUGS
+        README.Music                    \
+        NEWS                            \
+        PHILOSOPHY                      \
+        ChangeLog
 
 EXTRA_DIST=                             \
         $(AUX_DIST_GEN)                 \
         $(MSVC_FILES)                   \
         $(CODEBLOCKS_FILES)             \
         $(DOC_FILES)                    \
+        NOT-BUGS                        \
+        README.Strife                   \
         .lvimrc                         \
         HACKING                         \
         rpm.spec
 
-docdir=$(prefix)/share/doc/@PACKAGE@
-doc_DATA=$(DOC_FILES)
+doomdocsdir = ${docdir}/../${PROGRAM_PREFIX}doom
+doomdocs_DATA = $(DOC_FILES) NOT-BUGS
+
+hereticdocsdir = ${docdir}/../${PROGRAM_PREFIX}heretic
+hereticdocs_DATA = $(DOC_FILES)
+
+hexendocsdir = ${docdir}/../${PROGRAM_PREFIX}hexen
+hexendocs_DATA = $(DOC_FILES)
+
+strifedocsdir = ${docdir}/../${PROGRAM_PREFIX}strife
+strifedocs_DATA = $(DOC_FILES) README.Strife
 
 MAINTAINERCLEANFILES =  $(AUX_DIST_GEN)
 
@@ -59,15 +69,9 @@ DIST_SUBDIRS=pkg $(SUBDIRS)
 
 if HAVE_PYTHON
 
-noinst_DATA=CMDLINE
-
-# TODO: CMDLINE only documents the Doom command line, not other games.
-
-CMDLINE : src/
-	./man/docgen -p man/CMDLINE.template src/ src/doom/ > $@
-
 INSTALL : man/INSTALL.template man/simplecpp
-	./man/simplecpp < man/INSTALL.template > $@
+	./man/simplecpp -DDOOM -DHERETIC -DHEXEN -DSTRIFE \
+	                < man/INSTALL.template > $@
 
 endif
 

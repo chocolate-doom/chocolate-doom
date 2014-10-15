@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,16 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //	DOOM Network game communication and protocol,
 //	all OS independend parts.
 //
-//-----------------------------------------------------------------------------
 
 #include <stdlib.h>
 
@@ -32,6 +24,7 @@
 #include "d_main.h"
 #include "m_argv.h"
 #include "m_menu.h"
+#include "m_misc.h"
 #include "i_system.h"
 #include "i_timer.h"
 #include "i_video.h"
@@ -59,8 +52,8 @@ static void PlayerQuitGame(player_t *player)
     // Do this the same way as Vanilla Doom does, to allow dehacked
     // replacements of this message
 
-    strncpy(exitmsg, DEH_String("Player 1 left the game"), sizeof(exitmsg));
-    exitmsg[sizeof(exitmsg) - 1] = '\0';
+    M_StringCopy(exitmsg, DEH_String("Player 1 left the game"),
+                 sizeof(exitmsg));
 
     exitmsg[7] += player_num;
 

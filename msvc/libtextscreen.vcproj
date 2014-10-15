@@ -131,7 +131,6 @@
 			/>
 			<Tool
 				Name="VCLibrarianTool"
-				IgnoreDefaultLibraryNames="msvcrtd"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -175,6 +174,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\textscreen\txt_fileselect.c"
+				>
+			</File>
+			<File
 				RelativePath="..\textscreen\txt_gui.c"
 				>
 			</File>
@@ -192,6 +195,10 @@
 			</File>
 			<File
 				RelativePath="..\textscreen\txt_radiobutton.c"
+				>
+			</File>
+			<File
+				RelativePath="..\textscreen\txt_scrollpane.c"
 				>
 			</File>
 			<File
@@ -257,6 +264,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\textscreen\txt_fileselect.h"
+				>
+			</File>
+			<File
 				RelativePath="..\textscreen\txt_font.h"
 				>
 			</File>
@@ -289,11 +300,19 @@
 				>
 			</File>
 			<File
+				RelativePath="..\textscreen\txt_scrollpane.h"
+				>
+			</File>
+			<File
 				RelativePath="..\textscreen\txt_sdl.h"
 				>
 			</File>
 			<File
 				RelativePath="..\textscreen\txt_separator.h"
+				>
+			</File>
+			<File
+				RelativePath="..\textscreen\txt_smallfont.h"
 				>
 			</File>
 			<File

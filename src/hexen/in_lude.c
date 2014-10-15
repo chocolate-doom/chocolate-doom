@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,12 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 #include <ctype.h>
 
@@ -28,6 +20,7 @@
 #include "s_sound.h"
 #include "i_system.h"
 #include "i_video.h"
+#include "m_misc.h"
 #include "p_local.h"
 #include "v_video.h"
 
@@ -537,7 +530,8 @@ static void DrNumber(int val, int x, int y, int wrapThresh)
 
     if (!(val < -9 && wrapThresh < 1000))
     {
-        sprintf(buff, "%d", val >= wrapThresh ? val % wrapThresh : val);
+        M_snprintf(buff, sizeof(buff), "%d",
+                   val >= wrapThresh ? val % wrapThresh : val);
     }
     MN_DrTextA(buff, x - MN_TextAWidth(buff) / 2, y);
 }
@@ -554,7 +548,8 @@ static void DrNumberBold(int val, int x, int y, int wrapThresh)
 
     if (!(val < -9 && wrapThresh < 1000))
     {
-        sprintf(buff, "%d", val >= wrapThresh ? val % wrapThresh : val);
+        M_snprintf(buff, sizeof(buff), "%d",
+                   val >= wrapThresh ? val % wrapThresh : val);
     }
     MN_DrTextAYellow(buff, x - MN_TextAWidth(buff) / 2, y);
 }

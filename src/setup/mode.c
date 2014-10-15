@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2006 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -12,11 +10,6 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
 //
 
 #include <stdlib.h>
@@ -34,6 +27,7 @@
 #include "m_argv.h"
 #include "m_config.h"
 #include "m_controls.h"
+#include "m_misc.h"
 
 #include "compatibility.h"
 #include "display.h"
@@ -46,7 +40,7 @@
 #include "mode.h"
 
 GameMission_t gamemission;
-static iwad_t **iwads;
+static const iwad_t **iwads;
 
 typedef struct
 {
@@ -112,6 +106,7 @@ static int screenblocks = 10;
 static int detailLevel = 0;
 static char *savedir = NULL;
 static char *executable = NULL;
+static char *game_title = "Doom";
 static char *back_flat = "F_PAVE01";
 static int comport = 0;
 static char *nickname = NULL;
@@ -139,8 +134,7 @@ static void BindMiscVariables(void)
         if (!strcmp(savedir, ""))
         {
             free(savedir);
-            savedir = malloc(10);
-            sprintf(savedir, "hexndata%c", DIR_SEPARATOR);
+            savedir = "hexndata" DIR_SEPARATOR_S;
         }
     }
 
@@ -214,8 +208,7 @@ static void SetExecutable(mission_config_t *config)
     extension = "";
 #endif
 
-    executable = malloc(strlen(config->executable) + 5);
-    sprintf(executable, "%s%s", config->executable, extension);
+    executable = M_StringJoin(config->executable, extension, NULL);
 }
 
 static void SetMission(mission_config_t *config)
@@ -223,6 +216,7 @@ static void SetMission(mission_config_t *config)
     iwads = D_FindAllIWADs(config->mask);
     gamemission = config->mission;
     SetExecutable(config);
+    game_title = config->label;
     M_SetConfigFilenames(config->config_file, config->extra_config_file);
 }
 
@@ -279,7 +273,7 @@ static void OpenGameSelectDialog(GameSelectCallback callback)
 {
     mission_config_t *mission = NULL;
     txt_window_t *window;
-    iwad_t **iwads;
+    const iwad_t **iwads;
     int num_games;
     int i;
 
@@ -344,7 +338,7 @@ void SetupMission(GameSelectCallback callback)
     // @arg <game>
     //
     // Specify the game to configure the settings for.  Valid
-    // values are 'doom', 'heretic' and 'hexen'.
+    // values are 'doom', 'heretic', 'hexen' and 'strife'.
     //
 
     p = M_CheckParm("-game");
@@ -374,7 +368,12 @@ char *GetExecutableName(void)
     return executable;
 }
 
-iwad_t **GetIwads(void)
+char *GetGameTitle(void)
+{
+    return game_title;
+}
+
+const iwad_t **GetIwads(void)
 {
     return iwads;
 }

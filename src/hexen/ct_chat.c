@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,12 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 
 #include <string.h>
@@ -29,6 +21,7 @@
 #include "s_sound.h"
 #include "doomkeys.h"
 #include "m_controls.h"
+#include "m_misc.h"
 #include "p_local.h"
 #include "v_video.h"
 
@@ -326,12 +319,15 @@ void CT_Ticker(void)
                 CT_AddChar(i, 0);       // set the end of message character
                 if (numplayers > 2)
                 {
-                    strcpy(plr_lastmsg[i], CT_FromPlrText[i]);
-                    strcat(plr_lastmsg[i], chat_msg[i]);
+                    M_StringCopy(plr_lastmsg[i], CT_FromPlrText[i],
+                                 sizeof(plr_lastmsg[i]));
+                    M_StringConcat(plr_lastmsg[i], chat_msg[i],
+                                   sizeof(plr_lastmsg[i]));
                 }
                 else
                 {
-                    strcpy(plr_lastmsg[i], chat_msg[i]);
+                    M_StringCopy(plr_lastmsg[i], chat_msg[i],
+                                 sizeof(plr_lastmsg[i]));
                 }
                 if (i != consoleplayer && (chat_dest[i] == consoleplayer + 1
                                            || chat_dest[i] == CT_PLR_ALL)

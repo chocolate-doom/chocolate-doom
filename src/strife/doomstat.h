@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,11 +12,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //   All the global variables that store the internal state.
 //   Theoretically speaking, the internal state of the engine
@@ -27,7 +20,6 @@
 //    this header file.
 //   In practice, things are a bit messy.
 //
-//-----------------------------------------------------------------------------
 
 
 #ifndef __D_STATE__
@@ -54,6 +46,7 @@
 extern  boolean	nomonsters;	// checkparm of -nomonsters
 extern  boolean	respawnparm;	// checkparm of -respawn
 extern  boolean	fastparm;	// checkparm of -fast
+extern  boolean randomparm;     // [STRIFE] checkparm of -random
 extern  boolean flipparm;       // [STRIFE] checkparm of -flip
 
 extern  boolean	devparm;	// DEBUG: launched with -devparm
@@ -101,10 +94,9 @@ extern  boolean         respawnmonsters;
 // Netgame? Only true if >1 player.
 extern  boolean	netgame;
 
-// Flag: true only if started as net deathmatch.
-// An enum might handle altdeath/cooperative better.
-extern  boolean	deathmatch;	
-	
+// 0=Co-op; 1=Deathmatch; 2=Altdeath
+extern  int	deathmatch;
+
 // -------------------------
 // Internal parameters for sound rendering.
 // These have been taken from the DOS version,

@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,12 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 
 // HEADER FILES ------------------------------------------------------------
@@ -88,7 +80,7 @@ void SC_Open(char *name)
 
     if (sc_FileScripts == true)
     {
-        sprintf(fileName, "%s%s.txt", sc_ScriptsDir, name);
+        M_snprintf(fileName, sizeof(fileName), "%s%s.txt", sc_ScriptsDir, name);
         SC_OpenFile(fileName);
     }
     else
@@ -138,7 +130,7 @@ static void OpenScript(char *name, int type)
         ScriptLumpNum = W_GetNumForName(name);
         ScriptBuffer = (char *) W_CacheLumpNum(ScriptLumpNum, PU_STATIC);
         ScriptSize = W_LumpLength(ScriptLumpNum);
-        strcpy(ScriptName, name);
+        M_StringCopy(ScriptName, name, sizeof(ScriptName));
     }
     else if (type == FILE_ZONE_SCRIPT)
     {                           // File script - zone

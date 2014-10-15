@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,18 +13,13 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 
 // HEADER FILES ------------------------------------------------------------
 
 #include "h2def.h"
 #include "i_system.h"
+#include "m_misc.h"
 #include "p_local.h"
 #include "s_sound.h"
 
@@ -428,7 +421,8 @@ static boolean CheckedLockedDoor(mobj_t * mo, byte lock)
     }
     if (!(mo->player->keys & (1 << (lock - 1))))
     {
-        sprintf(LockedBuffer, "YOU NEED THE %s\n", TextKeyMessages[lock - 1]);
+        M_snprintf(LockedBuffer, sizeof(LockedBuffer),
+                   "YOU NEED THE %s\n", TextKeyMessages[lock - 1]);
         P_SetMessage(mo->player, LockedBuffer, true);
         S_StartSound(mo, SFX_DOOR_LOCKED);
         return false;
@@ -447,7 +441,8 @@ boolean EV_LineSearchForPuzzleItem(line_t * line, byte * args, mobj_t * mo)
 {
     player_t *player;
     int i;
-    artitype_t type, arti;
+    int type;
+    artitype_t arti;
 
     if (!mo)
         return false;

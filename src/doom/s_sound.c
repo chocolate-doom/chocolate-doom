@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,14 +12,8 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:  none
 //
-//-----------------------------------------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -38,6 +30,7 @@
 #include "sounds.h"
 #include "s_sound.h"
 
+#include "m_misc.h"
 #include "m_random.h"
 #include "m_argv.h"
 
@@ -121,9 +114,6 @@ int snd_channels = 8;
 void S_Init(int sfxVolume, int musicVolume)
 {  
     int i;
-
-    I_InitSound(true);
-    I_InitMusic();
 
     I_PrecacheSounds(S_sfx, NUMSFX);
 
@@ -520,6 +510,8 @@ void S_UpdateSounds(mobj_t *listener)
     sfxinfo_t*        sfx;
     channel_t*        c;
 
+    I_UpdateSound();
+
     for (cnum=0; cnum<snd_channels; cnum++)
     {
         c = &channels[cnum];
@@ -641,7 +633,7 @@ void S_ChangeMusic(int musicnum, int looping)
     // get lumpnum if neccessary
     if (!music->lumpnum)
     {
-        sprintf(namebuf, "d_%s", DEH_String(music->name));
+        M_snprintf(namebuf, sizeof(namebuf), "d_%s", DEH_String(music->name));
         music->lumpnum = W_GetNumForName(namebuf);
     }
 

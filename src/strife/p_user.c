@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,17 +12,11 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //	Player related stuff.
 //	Bobbing POV/weapon, movement.
 //	Pending weapon.
 //
-//-----------------------------------------------------------------------------
 
 #include <stdlib.h>
 
@@ -39,6 +31,7 @@
 #include "z_zone.h"
 #include "w_wad.h"
 #include "p_pspr.h"
+#include "m_misc.h"
 #include "m_random.h"
 #include "s_sound.h"
 #include "p_inter.h"
@@ -248,8 +241,8 @@ void P_MovePlayer (player_t* player)
     if (cmd->buttons2 & BT2_LOOKUP)
     {
         player->pitch += LOOKPITCHAMOUNT;
-        if ((player->pitch + LOOKPITCHAMOUNT) > LOOKUPMAX ||
-            (player->pitch + LOOKPITCHAMOUNT) < LOOKDOWNMAX)
+        if (player->pitch > LOOKUPMAX ||
+            player->pitch < LOOKDOWNMAX)
             player->pitch -= LOOKPITCHAMOUNT;
     }
     else
@@ -258,8 +251,8 @@ void P_MovePlayer (player_t* player)
         if (cmd->buttons2 & BT2_LOOKDOWN)
         {
             player->pitch -= LOOKPITCHAMOUNT;
-            if ((player->pitch - LOOKPITCHAMOUNT) > LOOKUPMAX ||
-                (player->pitch - LOOKPITCHAMOUNT) < LOOKDOWNMAX)
+            if (player->pitch > LOOKUPMAX ||
+                player->pitch < LOOKDOWNMAX)
                 player->pitch += LOOKPITCHAMOUNT;
         }
     }
@@ -464,7 +457,9 @@ void P_PlayerThink (player_t* player)
         {
             if(player->weaponowned[wp_torpedo] && player->readyweapon == wp_mauler)
             {
-                if(player->ammo[weaponinfo[am_cell].ammo] >= 30)
+                // haleyjd 20140924: bug fix - using wrong enum value am_cell
+                // caused this to check the missile launcher for rocket ammo
+                if(player->ammo[weaponinfo[wp_torpedo].ammo] >= 30)
                     newweapon = wp_torpedo;
             }
         }
@@ -783,7 +778,9 @@ boolean P_TossDegninOre(player_t* player)
 
 //
 // P_SpawnTeleportBeacon
+//
 // villsa [STRIFE] new function
+// haleyjd 20140918: bug fixed to propagate allegiance properly.
 //
 boolean P_SpawnTeleportBeacon(player_t* player)
 {
@@ -823,7 +820,7 @@ boolean P_SpawnTeleportBeacon(player_t* player)
     if(P_CheckPosition(beacon, x, y))
     {
         beacon->target = mo;
-        beacon->miscdata = mo->miscdata;
+        beacon->miscdata = (byte)(player->allegiance);
         beacon->angle = (angle << ANGLETOFINESHIFT);
         beacon->momx = FixedMul(finecosine[angle], (5*FRACUNIT));
         beacon->momy = FixedMul(finesine[angle], (5*FRACUNIT));
@@ -861,7 +858,8 @@ boolean P_UseInventoryItem(player_t* player, int item)
         if(name == NULL)
             name = "Item";
 
-        sprintf(useinventorymsg, "You used the %s.", name);
+        M_snprintf(useinventorymsg, sizeof(useinventorymsg),
+                   "You used the %s.", name);
         player->message = useinventorymsg;
 
         if(player == &players[consoleplayer])

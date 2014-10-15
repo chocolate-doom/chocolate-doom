@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,11 +12,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //       Generate a checksum of the WAD directory.
 //
@@ -27,6 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "m_misc.h"
 #include "sha1.h"
 #include "w_checksum.h"
 #include "w_wad.h"
@@ -64,8 +58,7 @@ static void ChecksumAddLump(sha1_context_t *sha1_context, lumpinfo_t *lump)
 {
     char buf[9];
 
-    strncpy(buf, lump->name, 8);
-    buf[8] = '\0';
+    M_StringCopy(buf, lump->name, sizeof(buf));
     SHA1_UpdateString(sha1_context, buf);
     SHA1_UpdateInt32(sha1_context, GetFileNumber(lump->wad_file));
     SHA1_UpdateInt32(sha1_context, lump->position);
