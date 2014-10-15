@@ -1,5 +1,3 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
@@ -14,16 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 //
 // SDL implementation of the Hexen CD interface.
 //
-//-----------------------------------------------------------------------------
 
 #include <stdio.h>
 
@@ -35,6 +26,8 @@
 #include "i_cdmus.h"
 
 static SDL_CD *cd_handle = NULL;
+static char *startup_error = NULL;
+static const char *cd_name = NULL;
 
 int cd_Error;
 
@@ -42,21 +35,43 @@ int I_CDMusInit(void)
 {
     int drive_num = 0;
 
-    // TODO: config variable to control CDROM to use.
-   
-    cd_handle = SDL_CDOpen(drive_num);
+    // The initialize function is re-invoked when the CD track play cheat
+    // is used, so use the opportunity to call SDL_CDStatus() to update
+    // the status of the drive.
 
     if (cd_handle == NULL)
     {
-        fprintf(stderr, "I_CDMusInit: Failed to open CD-ROM drive.\n");
+        if (SDL_Init(SDL_INIT_CDROM) < 0)
+        {
+            startup_error = "Failed to init CD subsystem.";
+            cd_Error = 1;
+            return -1;
+        }
+
+        // TODO: config variable to control CDROM to use.
+
+        cd_handle = SDL_CDOpen(drive_num);
+
+        if (cd_handle == NULL)
+        {
+            startup_error = "Failed to open CD-ROM drive.";
+            cd_Error = 1;
+            return -1;
+        }
+
+        cd_name = SDL_CDName(drive_num);
+    }
+
+    if (SDL_CDStatus(cd_handle) == CD_ERROR)
+    {
+        startup_error = "Failed to read CD status.";
         cd_Error = 1;
         return -1;
     }
 
     if (!CD_INDRIVE(cd_handle->status))
     {
-        fprintf(stderr, "I_CDMusInit: '%s': no CD in drive.\n",
-                        SDL_CDName(drive_num));
+        startup_error = "No CD in drive.";
         cd_Error = 1;
         return -1;
     }
@@ -64,6 +79,22 @@ int I_CDMusInit(void)
     cd_Error = 0;
 
     return 0;
+}
+
+// We cannot print status messages inline during startup, they must
+// be deferred until after I_CDMusInit has returned.
+
+void I_CDMusPrintStartup(void)
+{
+    if (cd_name != NULL)
+    {
+        printf("I_CDMusInit: Using CD-ROM drive: %s\n", cd_name);
+    }
+
+    if (startup_error != NULL)
+    {
+        fprintf(stderr, "I_CDMusInit: %s\n", startup_error);
+    }
 }
 
 int I_CDMusPlay(int track)
@@ -139,8 +170,7 @@ int I_CDMusFirstTrack(void)
         }
     }
 
-    /* Don't know? */
-
+    // Don't know?
     cd_Error = 1;
 
     return -1;

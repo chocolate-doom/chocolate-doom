@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,12 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 // DoomDef.h
 
@@ -499,7 +491,6 @@ extern gameaction_t gameaction;
 extern boolean paused;
 
 extern GameMode_t gamemode;
-extern GameMission_t gamemission;
 
 extern boolean ExtendedWAD;     // true if main WAD is the extended version
 
@@ -553,8 +544,6 @@ extern ticcmd_t *netcmds;
 
 #define SAVEGAMESIZE 0x30000
 #define SAVESTRINGSIZE 24
-extern byte *savebuffer;
-extern byte *save_p;
 
 extern mapthing_t *deathmatch_p;
 extern mapthing_t deathmatchstarts[10];
@@ -664,14 +653,20 @@ void G_DoLoadGame(void);
 void G_SaveGame(int slot, char *description);
 // called by M_Responder
 
+#define SAVE_GAME_TERMINATOR 0x1d
 // Support routines for saving games
 char *SV_Filename(int slot);
 void SV_Open(char *fileName);
+void SV_OpenRead(char *fileName);
 void SV_Close(char *fileName);
 void SV_Write(void *buffer, int size);
 void SV_WriteByte(byte val);
 void SV_WriteWord(unsigned short val);
 void SV_WriteLong(unsigned int val);
+void SV_Read(void *buffer, int size);
+byte SV_ReadByte(void);
+uint16_t SV_ReadWord(void);
+uint32_t SV_ReadLong(void);
 
 extern char *savegamedir;
 

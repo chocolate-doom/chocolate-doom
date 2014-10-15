@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,15 +13,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //    Configuration file interface.
 //
-//-----------------------------------------------------------------------------
 
 
 #include <stdio.h>
@@ -455,27 +447,30 @@ static default_t	doom_defaults_list[] =
     CONFIG_VARIABLE_INT(use_joystick),
 
     //!
-    // Joystick button to fire the current weapon.
+    // Joystick virtual button that fires the current weapon.
     //
 
     CONFIG_VARIABLE_INT(joyb_fire),
 
     //!
-    // Joystick button to fire the current weapon.
+    // Joystick virtual button that makes the player strafe while
+    // held down.
     //
 
     CONFIG_VARIABLE_INT(joyb_strafe),
 
     //!
-    // Joystick button to "use" an object, eg. a door or switch.
+    // Joystick virtual button to "use" an object, eg. a door or switch.
     //
 
     CONFIG_VARIABLE_INT(joyb_use),
 
     //!
-    // Joystick button to make the player run.
+    // Joystick virtual button that makes the player run while held
+    // down.
     //
-    // If this has a value of 20 or greater, the player will always run.
+    // If this has a value of 20 or greater, the player will always run,
+    // even if use_joystick is 0.
     //
 
     CONFIG_VARIABLE_INT(joyb_speed),
@@ -483,7 +478,7 @@ static default_t	doom_defaults_list[] =
     //!
     // @game hexen strife
     //
-    // Joystick button to jump.
+    // Joystick virtual button that makes the player jump.
     //
 
     CONFIG_VARIABLE_INT(joyb_jump),
@@ -747,6 +742,8 @@ static default_t extra_defaults_list[] =
 
     //!
     // Color depth of the screen, in bits.
+    // If this is set to zero, the color depth will be automatically set
+    // on startup to the machine's default/native color depth.
     //
 
     CONFIG_VARIABLE_INT(screen_bpp),
@@ -798,6 +795,23 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(snd_cachesize),
 
     //!
+    // Maximum size of the output sound buffer size in milliseconds.
+    // Sound output is generated periodically in slices. Higher values
+    // might be more efficient but will introduce latency to the
+    // sound output. The default is 28ms (one slice per tic with the
+    // 35fps timer).
+
+    CONFIG_VARIABLE_INT(snd_maxslicetime_ms),
+
+    //!
+    // External command to invoke to perform MIDI playback. If set to
+    // the empty string, SDL_mixer's internal MIDI playback is used.
+    // This only has any effect when snd_musicdevice is set to General
+    // MIDI output.
+
+    CONFIG_VARIABLE_STRING(snd_musiccmd),
+
+    //!
     // The I/O port to use to access the OPL chip.  Only relevant when
     // using native OPL music playback.
     //
@@ -812,6 +826,12 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(show_endoom),
+
+    //!
+    // If non-zero, save screenshots in PNG format.
+    //
+
+    CONFIG_VARIABLE_INT(png_screenshots),
 
     //!
     // @game doom strife
@@ -901,25 +921,114 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_INT(joystick_y_invert),
 
     //!
-    // Joystick button to strafe left.
+    // Joystick axis to use to for strafing movement.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_strafe_axis),
+
+    //!
+    // If non-zero, movement on the joystick axis used for strafing
+    // is inverted.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_strafe_invert),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #0.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button0),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #1.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button1),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #2.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button2),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #3.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button3),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #4.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button4),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #5.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button5),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #6.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button6),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #7.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button7),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #8.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button8),
+
+    //!
+    // The physical joystick button that corresponds to joystick
+    // virtual button #9.
+    //
+
+    CONFIG_VARIABLE_INT(joystick_physical_button9),
+
+    //!
+    // Joystick virtual button to make the player strafe left.
     //
 
     CONFIG_VARIABLE_INT(joyb_strafeleft),
 
     //!
-    // Joystick button to strafe right.
+    // Joystick virtual button to make the player strafe right.
     //
 
     CONFIG_VARIABLE_INT(joyb_straferight),
 
     //!
-    // Joystick button to cycle to the previous weapon.
+    // Joystick virtual button to activate the menu.
+    //
+
+    CONFIG_VARIABLE_INT(joyb_menu_activate),
+
+    //!
+    // Joystick virtual button that cycles to the previous weapon.
     //
 
     CONFIG_VARIABLE_INT(joyb_prevweapon),
 
     //!
-    // Joystick button to cycle to the next weapon.
+    // Joystick virtual button that cycles to the next weapon.
     //
 
     CONFIG_VARIABLE_INT(joyb_nextweapon),
@@ -983,6 +1092,18 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_INT(use_libsamplerate),
+
+    //!
+    // Scaling factor used by libsamplerate. This is used when converting
+    // sounds internally back into integer form; normally it should not
+    // be necessary to change it from the default value. The only time
+    // it might be needed is if a PWAD file is loaded that contains very
+    // loud sounds, in which case the conversion may cause sound clipping
+    // and the scale factor should be reduced. The lower the value, the
+    // quieter the sound effects become, so it should be set as high as is
+    // possible without clipping occurring.
+
+    CONFIG_VARIABLE_FLOAT(libsamplerate_scale),
 
     //!
     // Full path to a Timidity configuration file to use for MIDI
@@ -1154,6 +1275,12 @@ static default_t extra_defaults_list[] =
     CONFIG_VARIABLE_KEY(key_menu_decscreen),
 
     //!
+    // Keyboard shortcut to save a screenshot.
+    //
+
+    CONFIG_VARIABLE_KEY(key_menu_screenshot),
+
+    //!
     // Key to toggle the map view.
     //
 
@@ -1284,6 +1411,70 @@ static default_t extra_defaults_list[] =
     //
 
     CONFIG_VARIABLE_KEY(key_nextweapon),
+
+    //!
+    // @game hexen
+    //
+    // Key to use one of each artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_all),
+
+    //!
+    // @game hexen
+    //
+    // Key to use "quartz flask" artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_health),
+
+    //!
+    // @game hexen
+    //
+    // Key to use "flechette" artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_poisonbag),
+
+    //!
+    // @game hexen
+    //
+    // Key to use "disc of repulsion" artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_blastradius),
+
+    //!
+    // @game hexen
+    //
+    // Key to use "chaos device" artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_teleport),
+
+    //!
+    // @game hexen
+    //
+    // Key to use "banishment device" artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_teleportother),
+
+    //!
+    // @game hexen
+    //
+    // Key to use "porkalator" artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_egg),
+
+    //!
+    // @game hexen
+    //
+    // Key to use "icon of the defender" artifact.
+    //
+
+    CONFIG_VARIABLE_KEY(key_arti_invulnerability),
 
     //!
     // Key to re-display last message.
@@ -1484,6 +1675,16 @@ static default_t *SearchCollection(default_collection_t *collection, char *name)
     return NULL;
 }
 
+// Mapping from DOS keyboard scan code to internal key code (as defined
+// in doomkey.h). I think I (fraggle) reused this from somewhere else
+// but I can't find where. Anyway, notes:
+//  * KEY_PAUSE is wrong - it's in the KEY_NUMLOCK spot. This shouldn't
+//    matter in terms of Vanilla compatibility because neither of
+//    those were valid for key bindings.
+//  * There is no proper scan code for PrintScreen (on DOS machines it
+//    sends an interrupt). So I added a fake scan code of 126 for it.
+//    The presence of this is important so we can bind PrintScreen as
+//    a screenshot key.
 static const int scantokey[128] =
 {
     0  ,    27,     '1',    '2',    '3',    '4',    '5',    '6',
@@ -1494,14 +1695,14 @@ static const int scantokey[128] =
     '\'',   '`',    KEY_RSHIFT,'\\',   'z',    'x',    'c',    'v',
     'b',    'n',    'm',    ',',    '.',    '/',    KEY_RSHIFT,KEYP_MULTIPLY,
     KEY_RALT,  ' ',  KEY_CAPSLOCK,KEY_F1,  KEY_F2,   KEY_F3,   KEY_F4,   KEY_F5,
-    KEY_F6,   KEY_F7,   KEY_F8,   KEY_F9,   KEY_F10,  KEY_PAUSE,KEY_SCRLCK,KEY_HOME,
+    KEY_F6,   KEY_F7,   KEY_F8,   KEY_F9,   KEY_F10,  /*KEY_NUMLOCK?*/KEY_PAUSE,KEY_SCRLCK,KEY_HOME,
     KEY_UPARROW,KEY_PGUP,KEY_MINUS,KEY_LEFTARROW,KEYP_5,KEY_RIGHTARROW,KEYP_PLUS,KEY_END,
     KEY_DOWNARROW,KEY_PGDN,KEY_INS,KEY_DEL,0,   0,      0,      KEY_F11,
     KEY_F12,  0,      0,      0,      0,      0,      0,      0,
     0,      0,      0,      0,      0,      0,      0,      0,
     0,      0,      0,      0,      0,      0,      0,      0,
     0,      0,      0,      0,      0,      0,      0,      0,
-    0,      0,      0,      0,      0,      0,      0,      0
+    0,      0,      0,      0,      0,      0,      KEY_PRTSCR, 0
 };
 
 
@@ -1622,14 +1823,55 @@ static int ParseIntParameter(char *strparm)
     return parm;
 }
 
+static void SetVariable(default_t *def, char *value)
+{
+    int intparm;
+
+    // parameter found
+
+    switch (def->type)
+    {
+        case DEFAULT_STRING:
+            * (char **) def->location = strdup(value);
+            break;
+
+        case DEFAULT_INT:
+        case DEFAULT_INT_HEX:
+            * (int *) def->location = ParseIntParameter(value);
+            break;
+
+        case DEFAULT_KEY:
+
+            // translate scancodes read from config
+            // file (save the old value in untranslated)
+
+            intparm = ParseIntParameter(value);
+            def->untranslated = intparm;
+            if (intparm >= 0 && intparm < 128)
+            {
+                intparm = scantokey[intparm];
+            }
+            else
+            {
+                intparm = 0;
+            }
+
+            def->original_translated = intparm;
+            * (int *) def->location = intparm;
+            break;
+
+        case DEFAULT_FLOAT:
+            * (float *) def->location = (float) atof(value);
+            break;
+    }
+}
+
 static void LoadDefaultCollection(default_collection_t *collection)
 {
-    default_t *def;
     FILE *f;
+    default_t *def;
     char defname[80];
     char strparm[100];
-    char *s;
-    int intparm;
 
     // read the file in, overriding any set defaults
     f = fopen(collection->filename, "r");
@@ -1641,26 +1883,18 @@ static void LoadDefaultCollection(default_collection_t *collection)
 
         return;
     }
-    
+
     while (!feof(f))
     {
-        if (fscanf (f, "%79s %[^\n]\n", defname, strparm) != 2)
+        if (fscanf(f, "%79s %99[^\n]\n", defname, strparm) != 2)
         {
             // This line doesn't match
-          
+
             continue;
         }
 
-        // Strip off trailing non-printable characters (\r characters
-        // from DOS text files)
-
-        while (strlen(strparm) > 0 && !isprint(strparm[strlen(strparm)-1]))
-        {
-            strparm[strlen(strparm)-1] = '\0';
-        }
-        
         // Find the setting in the list
-       
+
         def = SearchCollection(collection, defname);
 
         if (def == NULL || !def->bound)
@@ -1671,47 +1905,25 @@ static void LoadDefaultCollection(default_collection_t *collection)
             continue;
         }
 
-        // parameter found
+        // Strip off trailing non-printable characters (\r characters
+        // from DOS text files)
 
-        switch (def->type)
+        while (strlen(strparm) > 0 && !isprint(strparm[strlen(strparm)-1]))
         {
-            case DEFAULT_STRING:
-                s = strdup(strparm + 1);
-                s[strlen(s) - 1] = '\0';
-                * (char **) def->location = s;
-                break;
-
-            case DEFAULT_INT:
-            case DEFAULT_INT_HEX:
-                * (int *) def->location = ParseIntParameter(strparm);
-                break;
-
-            case DEFAULT_KEY:
-
-                // translate scancodes read from config
-                // file (save the old value in untranslated)
-
-                intparm = ParseIntParameter(strparm);
-                def->untranslated = intparm;
-                if (intparm >= 0 && intparm < 128)
-                {
-                    intparm = scantokey[intparm];
-                }
-                else
-                {
-                    intparm = 0;
-                }
-
-                def->original_translated = intparm;
-                * (int *) def->location = intparm;
-                break;
-
-            case DEFAULT_FLOAT:
-                * (float *) def->location = (float) atof(strparm);
-                break;
+            strparm[strlen(strparm)-1] = '\0';
         }
+
+        // Surrounded by quotes? If so, remove them.
+        if (strlen(strparm) >= 2
+         && strparm[0] == '"' && strparm[strlen(strparm) - 1] == '"')
+        {
+            strparm[strlen(strparm) - 1] = '\0';
+            memmove(strparm, strparm + 1, sizeof(strparm) - 1);
+        }
+
+        SetVariable(def, strparm);
     }
-            
+
     fclose (f);
 }
 
@@ -1786,8 +1998,7 @@ void M_LoadDefaults (void)
     else
     {
         doom_defaults.filename
-            = malloc(strlen(configdir) + strlen(default_main_config) + 1);
-        sprintf(doom_defaults.filename, "%s%s", configdir, default_main_config);
+            = M_StringJoin(configdir, default_main_config, NULL);
     }
 
     printf("saving config in %s\n", doom_defaults.filename);
@@ -1809,10 +2020,8 @@ void M_LoadDefaults (void)
     }
     else
     {
-        extra_defaults.filename 
-            = malloc(strlen(configdir) + strlen(default_extra_config) + 1);
-        sprintf(extra_defaults.filename, "%s%s", 
-                configdir, default_extra_config);
+        extra_defaults.filename
+            = M_StringJoin(configdir, default_extra_config, NULL);
     }
 
     LoadDefaultCollection(&doom_defaults);
@@ -1858,6 +2067,72 @@ void M_BindVariable(char *name, void *location)
     variable->bound = true;
 }
 
+// Set the value of a particular variable; an API function for other
+// parts of the program to assign values to config variables by name.
+
+boolean M_SetVariable(char *name, char *value)
+{
+    default_t *variable;
+
+    variable = GetDefaultForName(name);
+
+    if (variable == NULL || !variable->bound)
+    {
+        return false;
+    }
+
+    SetVariable(variable, value);
+
+    return true;
+}
+
+// Get the value of a variable.
+
+int M_GetIntVariable(char *name)
+{
+    default_t *variable;
+
+    variable = GetDefaultForName(name);
+
+    if (variable == NULL || !variable->bound
+     || (variable->type != DEFAULT_INT && variable->type != DEFAULT_INT_HEX))
+    {
+        return 0;
+    }
+
+    return *((int *) variable->location);
+}
+
+const char *M_GetStrVariable(char *name)
+{
+    default_t *variable;
+
+    variable = GetDefaultForName(name);
+
+    if (variable == NULL || !variable->bound
+     || variable->type != DEFAULT_STRING)
+    {
+        return NULL;
+    }
+
+    return *((const char **) variable->location);
+}
+
+float M_GetFloatVariable(char *name)
+{
+    default_t *variable;
+
+    variable = GetDefaultForName(name);
+
+    if (variable == NULL || !variable->bound
+     || variable->type != DEFAULT_FLOAT)
+    {
+        return 0;
+    }
+
+    return *((float *) variable->location);
+}
+
 // Get the path to the default configuration dir to use, if NULL
 // is passed to M_SetConfigDir.
 
@@ -1879,10 +2154,8 @@ static char *GetDefaultConfigDir(void)
         // put all configuration in a config directory off the
         // homedir
 
-        result = malloc(strlen(homedir) + strlen(PACKAGE_TARNAME) + 5);
-
-        sprintf(result, "%s%c.%s%c", homedir, DIR_SEPARATOR,
-                                     PACKAGE_TARNAME, DIR_SEPARATOR);
+        result = M_StringJoin(homedir, DIR_SEPARATOR_S,
+                              "." PACKAGE_TARNAME, DIR_SEPARATOR_S, NULL);
 
         return result;
     }
@@ -1931,6 +2204,7 @@ void M_SetConfigDir(char *dir)
 char *M_GetSaveGameDir(char *iwadname)
 {
     char *savegamedir;
+    char *topdir;
 
     // If not "doing" a configuration directory (Windows), don't "do"
     // a savegame directory, either.
@@ -1943,18 +2217,17 @@ char *M_GetSaveGameDir(char *iwadname)
     {
         // ~/.competition-doom/savegames/
 
-        savegamedir = malloc(strlen(configdir) + 30);
-        sprintf(savegamedir, "%ssavegames%c", configdir,
-                             DIR_SEPARATOR);
-
-        M_MakeDirectory(savegamedir);
+        topdir = M_StringJoin(configdir, "savegames", NULL);
+        M_MakeDirectory(topdir);
 
         // eg. ~/.competition-doom/savegames/doom2.wad/
 
-        sprintf(savegamedir + strlen(savegamedir), "%s%c",
-                iwadname, DIR_SEPARATOR);
+        savegamedir = M_StringJoin(topdir, DIR_SEPARATOR_S, iwadname,
+                                   DIR_SEPARATOR_S, NULL);
 
         M_MakeDirectory(savegamedir);
+
+        free(topdir);
     }
 
     return savegamedir;

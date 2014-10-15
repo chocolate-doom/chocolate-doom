@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,12 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 #include <stdio.h>
 
@@ -29,6 +21,7 @@
 #include "i_video.h"
 #include "i_swap.h"
 #include "m_controls.h"
+#include "m_misc.h"
 #include "p_local.h"
 #include "am_map.h"
 #include "am_data.h"
@@ -255,18 +248,23 @@ void AM_changeWindowLoc(void)
         m_y = min_y - m_h / 2;
         m_paninc.y = 0;
     }
-/*
-  mapxstart += MTOF(m_paninc.x+FRACUNIT/2);
-  mapystart -= MTOF(m_paninc.y+FRACUNIT/2);
-  if(mapxstart >= finit_width)
-		mapxstart -= finit_width;
-  if(mapxstart < 0)
-		mapxstart += finit_width;
-  if(mapystart >= finit_height)
-		mapystart -= finit_height;
-  if(mapystart < 0)
-		mapystart += finit_height;
-*/
+
+    // The following code was commented out in the released Hexen source,
+    // but I believe we need to do this here to stop the background moving
+    // when we reach the map boundaries. (In the released source it's done
+    // in AM_clearFB).
+    mapxstart += MTOF(m_paninc.x+FRACUNIT/2);
+    mapystart -= MTOF(m_paninc.y+FRACUNIT/2);
+    if(mapxstart >= finit_width)
+        mapxstart -= finit_width;
+    if(mapxstart < 0)
+        mapxstart += finit_width;
+    if(mapystart >= finit_height)
+        mapystart -= finit_height;
+    if(mapystart < 0)
+        mapystart += finit_height;
+    // - end of code that was commented-out
+
     m_x2 = m_x + m_w;
     m_y2 = m_y + m_h;
 }
@@ -682,6 +680,10 @@ void AM_clearFB(int color)
     }
     else
     {
+        // The released Hexen source does this here, but this causes a bug
+        // where the map background keeps moving when we reach the map
+        // boundaries. This is instead done in AM_changeWindowLoc.
+        /*
         mapxstart += (MTOF(m_paninc.x) >> 1);
         mapystart -= (MTOF(m_paninc.y) >> 1);
         if (mapxstart >= finit_width)
@@ -692,6 +694,7 @@ void AM_clearFB(int color)
             mapystart -= finit_height;
         if (mapystart < 0)
             mapystart += finit_height;
+        */
     }
 
     //blit the automap background to the screen.
@@ -1464,7 +1467,8 @@ void AM_DrawDeathmatchStats(void)
         else
         {
             MN_DrTextA(PlayerColorText[order[i]], 8, yPosition);
-            sprintf(textBuffer, "%d", fragCount[order[i]]);
+            M_snprintf(textBuffer, sizeof(textBuffer),
+                       "%d", fragCount[order[i]]);
             MN_DrTextA(textBuffer, 80, yPosition);
             yPosition += 10;
         }
@@ -1498,18 +1502,19 @@ static void DrawWorldTimer(void)
     worldTimer -= minutes * 60;
     seconds = worldTimer;
 
-    sprintf(timeBuffer, "%.2d : %.2d : %.2d", hours, minutes, seconds);
+    M_snprintf(timeBuffer, sizeof(timeBuffer),
+               "%.2d : %.2d : %.2d", hours, minutes, seconds);
     MN_DrTextA(timeBuffer, 240, 8);
 
     if (days)
     {
         if (days == 1)
         {
-            sprintf(dayBuffer, "%.2d DAY", days);
+            M_snprintf(dayBuffer, sizeof(dayBuffer), "%.2d DAY", days);
         }
         else
         {
-            sprintf(dayBuffer, "%.2d DAYS", days);
+            M_snprintf(dayBuffer, sizeof(dayBuffer), "%.2d DAYS", days);
         }
         MN_DrTextA(dayBuffer, 240, 20);
         if (days >= 5)

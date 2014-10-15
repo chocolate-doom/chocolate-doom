@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2006-2009 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,19 +11,12 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 //
 // Example program: GUI test program
 //
 // Demonstrates all the main textscreen widgets in use and shows how
 // a simple textscreen program can be written.
 //
-//-----------------------------------------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -76,13 +67,13 @@ void UpdateLabel(TXT_UNCAST_ARG(widget), void *user_data)
 {
     char buf[40];
     
-    strcpy(buf, " Current value: ");
+    TXT_StringCopy(buf, " Current value: ", sizeof(buf));
     if (cheesy)
     {
-        strcat(buf, "Cheesy ");
+        TXT_StringConcat(buf, "Cheesy ", sizeof(buf));
     }
-    strcat(buf, radio_values[radiobutton_value]);
-    strcat(buf, "\n");
+    TXT_StringConcat(buf, radio_values[radiobutton_value], sizeof(buf));
+    TXT_StringConcat(buf, "\n", sizeof(buf));
 
     TXT_SetLabel(value_label, buf);
 }
@@ -119,11 +110,11 @@ void SetupWindow(void)
 
     for (i=0; i<5; ++i)
     {
-        sprintf(buf, "Option %i in a table:", i + 1);
+        TXT_snprintf(buf, sizeof(buf), "Option %i in a table:", i + 1);
         TXT_AddWidget(table, TXT_NewLabel(buf));
-        sprintf(buf, " Button %i-1 ", i + 1);
+        TXT_snprintf(buf, sizeof(buf), " Button %i-1 ", i + 1);
         TXT_AddWidget(table, TXT_NewButton(buf));
-        sprintf(buf, " Button %i-2 ", i + 1);
+        TXT_snprintf(buf, sizeof(buf), " Button %i-2 ", i + 1);
         TXT_AddWidget(table, TXT_NewButton(buf));
     }
 

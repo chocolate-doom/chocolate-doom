@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005,2006 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,17 +12,11 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //     Screen scale-up code: 
 //         1x,2x,3x,4x pixel doubling
 //         Aspect ratio-correcting stretch functions
 //
-//-----------------------------------------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -403,6 +395,32 @@ static void I_InitSquashTable(byte *palette)
     fflush(stdout);
     half_stretch_table = GenerateStretchTable(palette, 50);
     puts("");
+}
+
+// Destroy the scaling lookup tables. This should only ever be called
+// if switching to a completely different palette from the normal one
+// (in which case the mappings no longer make any sense).
+
+void I_ResetScaleTables(byte *palette)
+{
+    if (stretch_tables[0] != NULL)
+    {
+        Z_Free(stretch_tables[0]);
+        Z_Free(stretch_tables[1]);
+
+        printf("I_ResetScaleTables: Regenerating lookup tables..\n");
+        stretch_tables[0] = GenerateStretchTable(palette, 20);
+        stretch_tables[1] = GenerateStretchTable(palette, 40);
+    }
+
+    if (half_stretch_table != NULL)
+    {
+        Z_Free(half_stretch_table);
+
+        printf("I_ResetScaleTables: Regenerating lookup table..\n");
+
+        half_stretch_table = GenerateStretchTable(palette, 50);
+    }
 }
 
 
@@ -1169,7 +1187,7 @@ screen_mode_t mode_squash_2x = {
     SCREENWIDTH_4_3 * 2, SCREENHEIGHT * 2,
     I_InitStretchTables,
     I_Squash2x,
-    true,
+    false,
 };
 
 

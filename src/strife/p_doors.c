@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,14 +12,8 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION: Door animation code (opening/closing)
 //
-//-----------------------------------------------------------------------------
 
 
 
@@ -66,25 +58,25 @@ void T_VerticalDoor(vldoor_t* door)
         {
             switch(door->type)
             {
-            case blazeRaise:
+            case vld_blazeRaise:
                 door->direction = -1; // time to go back down
                 S_StartSound(&door->sector->soundorg, sfx_bdcls);
                 break;
 
-            case normal:
+            case vld_normal:
                 door->direction = -1; // time to go back down
                 // villsa [STRIFE] closesound added
                 S_StartSound(&door->sector->soundorg, door->closesound);
                 break;
 
                 // villsa [STRIFE]
-            case shopClose:
+            case vld_shopClose:
                 door->direction = 1;
                 door->speed = (2*FRACUNIT);
                 S_StartSound(&door->sector->soundorg, door->opensound);
                 break;
 
-            case close30ThenOpen:
+            case vld_close30ThenOpen:
                 door->direction = 1;
 
                 // villsa [STRIFE] opensound added
@@ -103,9 +95,9 @@ void T_VerticalDoor(vldoor_t* door)
         {
             switch(door->type)
             {
-            case raiseIn5Mins:
+            case vld_raiseIn5Mins:
                 door->direction = 1;
-                door->type = normal;
+                door->type = vld_normal;
 
                 // villsa [STRIFE] opensound added
                 S_StartSound(&door->sector->soundorg, door->opensound);
@@ -138,22 +130,22 @@ void T_VerticalDoor(vldoor_t* door)
         {
             switch(door->type)
             {
-            case normal:
-            case close:
-            case blazeRaise:
-            case blazeClose:
+            case vld_normal:
+            case vld_close:
+            case vld_blazeRaise:
+            case vld_blazeClose:
                 door->sector->specialdata = NULL;
                 P_RemoveThinker (&door->thinker);  // unlink and free
                 // villsa [STRIFE] no sounds
                 break;
 
-            case close30ThenOpen:
+            case vld_close30ThenOpen:
                 door->direction = 0;
                 door->topcountdown = TICRATE*30;
                 break;
 
                 // villsa [STRIFE]
-            case shopClose:
+            case vld_shopClose:
                 door->direction = 0;
                 door->topcountdown = TICRATE*120;
                 break;
@@ -166,9 +158,9 @@ void T_VerticalDoor(vldoor_t* door)
         {
             switch(door->type)
             {
-            case blazeClose:
-            case close:		// DO NOT GO BACK UP!
-            case shopClose:     // villsa [STRIFE]
+            case vld_blazeClose:
+            case vld_close:		// DO NOT GO BACK UP!
+            case vld_shopClose:     // villsa [STRIFE]
                 break;
 
             default:
@@ -191,16 +183,16 @@ void T_VerticalDoor(vldoor_t* door)
         {
             switch(door->type)
             {
-            case blazeRaise:
-            case normal:
+            case vld_blazeRaise:
+            case vld_normal:
                 door->direction = 0; // wait at top
                 door->topcountdown = door->topwait;
                 break;
 
-            case close30ThenOpen:
-            case blazeOpen:
-            case open:
-            case shopClose:     // villsa [STRIFE]
+            case vld_close30ThenOpen:
+            case vld_blazeOpen:
+            case vld_open:
+            case vld_shopClose:     // villsa [STRIFE]
                 door->sector->specialdata = NULL;
                 P_RemoveThinker (&door->thinker);  // unlink and free
                 break;
@@ -415,7 +407,7 @@ int EV_DoDoor(line_t* line, vldoor_e type)
         switch(type)
         {
             // villsa [STRIFE] new door type
-        case splitOpen:
+        case vld_splitOpen:
             door->direction = -2;
             door->topheight = P_FindLowestCeilingSurrounding(sec);
             door->topheight -= 4*FRACUNIT;
@@ -429,7 +421,7 @@ int EV_DoDoor(line_t* line, vldoor_e type)
             break;
 
             // villsa [STRIFE] new door type
-        case splitRaiseNearest:
+        case vld_splitRaiseNearest:
             door->direction = -2;
             door->topheight = P_FindLowestCeilingSurrounding(sec);
             door->topheight -= 4*FRACUNIT;
@@ -442,8 +434,8 @@ int EV_DoDoor(line_t* line, vldoor_e type)
             S_StartSound(&sec->soundorg, door->opensound);
             break;
 
-        case blazeClose:
-        case shopClose:     // villsa [STRIFE]
+        case vld_blazeClose:
+        case vld_shopClose:     // villsa [STRIFE]
             door->topheight = P_FindLowestCeilingSurrounding(sec);
             door->topheight -= 4*FRACUNIT;
             door->direction = -1;
@@ -451,7 +443,7 @@ int EV_DoDoor(line_t* line, vldoor_e type)
             S_StartSound(&door->sector->soundorg, sfx_bdcls);
             break;
 
-        case close:
+        case vld_close:
             door->topheight = P_FindLowestCeilingSurrounding(sec);
             door->topheight -= 4*FRACUNIT;
             door->direction = -1;
@@ -460,7 +452,7 @@ int EV_DoDoor(line_t* line, vldoor_e type)
             S_StartSound(&door->sector->soundorg, door->opensound);
             break;
 
-        case close30ThenOpen:
+        case vld_close30ThenOpen:
             door->topheight = sec->ceilingheight;
             door->direction = -1;
 
@@ -468,8 +460,8 @@ int EV_DoDoor(line_t* line, vldoor_e type)
             S_StartSound(&door->sector->soundorg, door->closesound);
             break;
 
-        case blazeRaise:
-        case blazeOpen:
+        case vld_blazeRaise:
+        case vld_blazeOpen:
             door->direction = 1;
             door->topheight = P_FindLowestCeilingSurrounding(sec);
             door->topheight -= 4*FRACUNIT;
@@ -478,8 +470,8 @@ int EV_DoDoor(line_t* line, vldoor_e type)
                 S_StartSound(&door->sector->soundorg, sfx_bdopn);
             break;
 
-        case normal:
-        case open:
+        case vld_normal:
+        case vld_open:
             door->direction = 1;
             door->topheight = P_FindLowestCeilingSurrounding(sec);
             door->topheight -= 4*FRACUNIT;
@@ -834,7 +826,7 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
     case 26:
     case 27:
     case 28:
-        door->type = normal;
+        door->type = vld_normal;
         break;
 
     case 31:
@@ -844,24 +836,24 @@ void EV_VerticalDoor(line_t* line, mobj_t* thing)
     case 156:   // villsa [STRIFE]
     case 157:   // villsa [STRIFE]
     case 158:   // villsa [STRIFE]
-        door->type = open;
+        door->type = vld_open;
         line->special = 0;
         break;
 
     case 117:	// blazing door raise
-        door->type = blazeRaise;
+        door->type = vld_blazeRaise;
         door->speed = VDOORSPEED*4;
         break;
 
     case 118:	// blazing door open
-        door->type = blazeOpen;
+        door->type = vld_blazeOpen;
         line->special = 0;
         door->speed = VDOORSPEED*4;
         break;
 
     default:
         // haleyjd: [STRIFE] pretty important to have this here!
-        door->type = normal;
+        door->type = vld_normal;
         break;
     }
 
@@ -888,7 +880,7 @@ void P_SpawnDoorCloseIn30 (sector_t* sec)
     door->thinker.function.acp1 = (actionf_p1)T_VerticalDoor;
     door->sector = sec;
     door->direction = 0;
-    door->type = normal;
+    door->type = vld_normal;
     door->speed = VDOORSPEED;
     door->topcountdown = 30 * TICRATE;
 }
@@ -913,7 +905,7 @@ P_SpawnDoorRaiseIn5Mins
     door->thinker.function.acp1 = (actionf_p1)T_VerticalDoor;
     door->sector = sec;
     door->direction = 2;
-    door->type = raiseIn5Mins;
+    door->type = vld_raiseIn5Mins;
     door->speed = VDOORSPEED;
     door->topheight = P_FindLowestCeilingSurrounding(sec);
     door->topheight -= 4*FRACUNIT;

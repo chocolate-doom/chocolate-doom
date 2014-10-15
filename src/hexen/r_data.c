@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,17 +13,12 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 
 #include "h2def.h"
 #include "i_system.h"
 #include "i_swap.h"
+#include "m_misc.h"
 #include "r_local.h"
 #include "p_local.h"
 
@@ -315,14 +308,13 @@ void R_InitTextures(void)
 //
 // load the patch names from pnames.lmp
 //
-    name[8] = 0;
     names = W_CacheLumpName("PNAMES", PU_STATIC);
     nummappatches = LONG(*((int *) names));
     name_p = names + 4;
     patchlookup = Z_Malloc(nummappatches * sizeof(*patchlookup), PU_STATIC, NULL);
     for (i = 0; i < nummappatches; i++)
     {
-        strncpy(name, name_p + i * 8, 8);
+        M_StringCopy(name, name_p + i * 8, 8);
         patchlookup[i] = W_CheckNumForName(name);
     }
     W_ReleaseLumpName("PNAMES");

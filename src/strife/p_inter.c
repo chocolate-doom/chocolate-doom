@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,15 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //	Handling interactions (i.e., collisions).
 //
-//-----------------------------------------------------------------------------
 
 // Data.
 #include "doomdef.h"
@@ -31,6 +23,7 @@
 #include "deh_main.h"
 #include "deh_misc.h"
 #include "doomstat.h"
+#include "m_misc.h"
 #include "m_random.h"
 #include "i_system.h"
 #include "am_map.h"
@@ -790,8 +783,8 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
             // villsa [STRIFE] new messages when fragging players
             DEH_snprintf(plrkilledmsg, sizeof(plrkilledmsg),
                          "%s killed %s",
-                         pnameprefixes[source->player->mo->miscdata],
-                         pnameprefixes[target->player->mo->miscdata]);
+                         player_names[source->player->mo->miscdata],
+                         player_names[target->player->mo->miscdata]);
 
             if(netgame)
                 players[consoleplayer].message = plrkilledmsg;
@@ -946,7 +939,7 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
 
         case MT_COUPLING:
             junk.tag = 225;
-            EV_DoDoor(&junk, close);
+            EV_DoDoor(&junk, vld_close);
 
             junk.tag = 44;
             EV_DoFloor(&junk, lowerFloor);
@@ -967,10 +960,11 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
     {
     case MT_TOKEN_SHOPCLOSE:
         junk.tag = 222;
-        EV_DoDoor(&junk, close);
+        EV_DoDoor(&junk, vld_close);
         P_NoiseAlert(players[0].mo, players[0].mo);
 
-        sprintf(plrkilledmsg, "%s", DEH_String("You're dead!  You set off the alarm."));
+        M_snprintf(plrkilledmsg, sizeof(plrkilledmsg),
+                   "%s", DEH_String("You're dead!  You set off the alarm."));
         if(!deathmatch)
             players[consoleplayer].message = plrkilledmsg;
 
@@ -978,12 +972,12 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
 
     case MT_TOKEN_PRISON_PASS:
         junk.tag = 223;
-        EV_DoDoor(&junk, open);
+        EV_DoDoor(&junk, vld_open);
         return;
 
     case MT_TOKEN_DOOR3:
         junk.tag = 224;
-        EV_DoDoor(&junk, open);
+        EV_DoDoor(&junk, vld_open);
         return;
 
     case MT_SIGIL_A:
@@ -1009,7 +1003,8 @@ void P_KillMobj(mobj_t* source, mobj_t* target)
     case MT_TOKEN_ALARM:
         P_NoiseAlert(players[0].mo, players[0].mo);
 
-        sprintf(plrkilledmsg, "%s", DEH_String("You Fool!  You've set off the alarm"));
+        M_snprintf(plrkilledmsg, sizeof(plrkilledmsg),
+                   "%s", DEH_String("You Fool!  You've set off the alarm"));
         if(!deathmatch)
             players[consoleplayer].message = plrkilledmsg;
         return;

@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,16 +11,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 //
 // Parses Text substitution sections in dehacked files
 //
-//-----------------------------------------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,6 +22,7 @@
 
 #include "doomtype.h"
 #include "deh_str.h"
+#include "m_misc.h"
 
 #include "z_zone.h"
 
@@ -401,7 +393,7 @@ void DEH_snprintf(char *buffer, size_t len, char *fmt, ...)
 
     va_start(args, fmt);
 
-    vsnprintf(buffer, len, repl, args);
+    M_vsnprintf(buffer, len, repl, args);
 
     va_end(args);
 }

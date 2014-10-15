@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2006 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -12,11 +10,6 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
 //
 
 #include <ctype.h>
@@ -44,18 +37,17 @@ static void SetBufferFromValue(txt_inputbox_t *inputbox)
 
         if (*value != NULL)
         {
-            strncpy(inputbox->buffer, *value, inputbox->size);
-            inputbox->buffer[inputbox->size] = '\0';
+            TXT_StringCopy(inputbox->buffer, *value, inputbox->size);
         }
         else
         {
-            strcpy(inputbox->buffer, "");
+            TXT_StringCopy(inputbox->buffer, "", inputbox->buffer_len);
         }
     }
     else if (inputbox->widget.widget_class == &txt_int_inputbox_class)
     {
         int *value = (int *) inputbox->value;
-        sprintf(inputbox->buffer, "%i", *value);
+        TXT_snprintf(inputbox->buffer, inputbox->buffer_len, "%i", *value);
     }
 }
 
@@ -65,7 +57,7 @@ static void StartEditing(txt_inputbox_t *inputbox)
 
     if (inputbox->widget.widget_class == &txt_int_inputbox_class)
     {
-        strcpy(inputbox->buffer, "");
+        TXT_StringCopy(inputbox->buffer, "", inputbox->buffer_len);
     }
     else
     {
@@ -322,7 +314,8 @@ static txt_inputbox_t *NewInputBox(txt_widget_class_t *widget_class,
     // 'size' is the maximum number of characters that can be entered,
     // but for a UTF-8 string, each character can take up to four
     // characters.
-    inputbox->buffer = malloc(size * 4 + 1);
+    inputbox->buffer_len = size * 4 + 1;
+    inputbox->buffer = malloc(inputbox->buffer_len);
     inputbox->editing = 0;
 
     return inputbox;

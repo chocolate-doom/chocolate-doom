@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,15 +11,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //     Networking module which uses SDL_net
 //
-//-----------------------------------------------------------------------------
 
 #include <stdlib.h>
 #include <string.h>
@@ -30,6 +22,7 @@
 #include "doomtype.h"
 #include "i_system.h"
 #include "m_argv.h"
+#include "m_misc.h"
 #include "net_defs.h"
 #include "net_io.h"
 #include "net_packet.h"
@@ -312,12 +305,12 @@ void NET_SDL_AddrToString(net_addr_t *addr, char *buffer, int buffer_len)
 
     ip = (IPaddress *) addr->handle;
     
-    snprintf(buffer, buffer_len, 
-             "%i.%i.%i.%i",
-             ip->host & 0xff,
-             (ip->host >> 8) & 0xff,
-             (ip->host >> 16) & 0xff,
-             (ip->host >> 24) & 0xff);
+    M_snprintf(buffer, buffer_len, 
+               "%i.%i.%i.%i",
+               ip->host & 0xff,
+               (ip->host >> 8) & 0xff,
+               (ip->host >> 16) & 0xff,
+               (ip->host >> 24) & 0xff);
 }
 
 net_addr_t *NET_SDL_ResolveAddress(char *address)

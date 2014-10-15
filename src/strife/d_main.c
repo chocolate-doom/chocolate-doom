@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,18 +12,12 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //	DOOM main program (D_DoomMain) and game loop (D_DoomLoop),
 //	plus functions to determine game mode (shareware, registered),
 //	parse command line parameters, configure game parameters (turbo),
 //	and call the startup functions.
 //
-//-----------------------------------------------------------------------------
 
 
 #include <ctype.h>
@@ -114,6 +106,7 @@ boolean         nomonsters;     // checkparm of -nomonsters
 boolean         respawnparm;    // checkparm of -respawn
 boolean         fastparm;       // checkparm of -fast
 boolean         flipparm;       // [STRIFE] haleyjd 20110629: checkparm of -flip
+boolean         randomparm;     // [STRIFE] haleyjd 20130915: checkparm of -random
 
 boolean         showintro = true;   // [STRIFE] checkparm of -nograph, disables intro
 
@@ -153,14 +146,17 @@ char		mapdir[1024];           // directory of development maps
 int             show_endoom = 0;
 int             graphical_startup = 1;
 
+// If true, startup has completed and the main game loop has started.
+
+static boolean main_loop_started = false;
+
 // fraggle 06/03/11 [STRIFE]: Unused config variable, preserved
 // for compatibility:
 
 static int comport = 0;
 
 // fraggle 06/03/11 [STRIFE]: Multiplayer nickname?
-
-static char *nickname = NULL;
+char *nickname = NULL;
 
 void D_ConnectNetGame(void);
 void D_CheckNetGame(void);
@@ -414,10 +410,15 @@ void D_BindVariables(void)
     M_BindStrifeControls(); // haleyjd 09/01/10: [STRIFE]
     M_BindChatControls(MAXPLAYERS);
 
-    key_multi_msgplayer[0] = HUSTR_KEYGREEN;
-    key_multi_msgplayer[1] = HUSTR_KEYINDIGO;
-    key_multi_msgplayer[2] = HUSTR_KEYBROWN;
-    key_multi_msgplayer[3] = HUSTR_KEYRED;
+    // haleyjd 20130915: Strife chat keys
+    key_multi_msgplayer[0] = '1';
+    key_multi_msgplayer[1] = '2';
+    key_multi_msgplayer[2] = '3';
+    key_multi_msgplayer[3] = '4';
+    key_multi_msgplayer[4] = '5';
+    key_multi_msgplayer[5] = '6';
+    key_multi_msgplayer[6] = '7';
+    key_multi_msgplayer[7] = '8';
 
 #ifdef FEATURE_MULTIPLAYER
     NET_BindVariables();
@@ -463,7 +464,7 @@ void D_BindVariables(void)
     {
         char buf[12];
 
-        sprintf(buf, "chatmacro%i", i);
+        M_snprintf(buf, sizeof(buf), "chatmacro%i", i);
         M_BindVariable(buf, &chat_macros[i]);
     }
 }
@@ -481,14 +482,21 @@ boolean D_GrabMouseCallback(void)
     if (drone)
         return false;
 
-    // when menu is active or game is paused, release the mouse 
- 
+    // when menu is active or game is paused, release the mouse.
+
     if (menuactive || paused)
         return false;
 
     // only grab mouse when playing levels (but not demos)
 
     return (gamestate == GS_LEVEL) && !demoplayback;
+}
+
+// During startup, never grab the mouse.
+
+static boolean D_StartupGrabCallback(void)
+{
+    return false;
 }
 
 //
@@ -500,6 +508,8 @@ void D_DoomLoop (void)
 {
     if (demorecording)
         G_BeginRecording ();
+
+    main_loop_started = true;
 
     TryRunTics();
 
@@ -776,20 +786,26 @@ static char *GetGameName(char *gamename)
         
         if (deh_sub != banners[i])
         {
+            size_t gamename_size;
+
             // Has been replaced
             // We need to expand via printf to include the Doom version 
             // number
             // We also need to cut off spaces to get the basic name
 
-            gamename = Z_Malloc(strlen(deh_sub) + 10, PU_STATIC, 0);
-            sprintf(gamename, deh_sub, STRIFE_VERSION / 100, STRIFE_VERSION % 100);
+            gamename_size = strlen(deh_sub) + 10;
+            gamename = Z_Malloc(gamename_size, PU_STATIC, 0);
+            M_snprintf(gamename, gamename_size, deh_sub,
+                       STRIFE_VERSION / 100, STRIFE_VERSION % 100);
 
             while (gamename[0] != '\0' && isspace(gamename[0]))
-                strcpy(gamename, gamename+1);
+            {
+                memmove(gamename, gamename + 1, gamename_size - 1);
+            }
 
             while (gamename[0] != '\0' && isspace(gamename[strlen(gamename)-1]))
                 gamename[strlen(gamename) - 1] = '\0';
-            
+
             return gamename;
         }
     }
@@ -834,19 +850,24 @@ void D_IdentifyVersion(void)
             if((p = M_CheckParm("-iwad")) && p < myargc - 1)
             {
                 char   *iwad     = myargv[p + 1];
-                size_t  len      = strlen(iwad) + 24;
-                char   *filename = malloc(len);
-                char    sepchar;
+                size_t  len      = strlen(iwad) + 1;
+                char   *iwadpath = Z_Malloc(len, PU_STATIC, NULL);
+                char   *voiceswad;
+                
+                // extract base path of IWAD parameter
+                M_GetFilePath(iwad, iwadpath, len);
+                
+                // concatenate with /voices.wad
+                voiceswad = M_SafeFilePath(iwadpath, "voices.wad");
+                Z_Free(iwadpath);
 
-                // how the heck is Choco surviving without this routine?
-                sepchar = M_GetFilePath(iwad, filename, len);
-                filename[strlen(filename)] = sepchar;
-                strcat(filename, "voices.wad");
-
-                if(!M_FileExists(filename))
+                if(!M_FileExists(voiceswad))
+                {
                     disable_voices = 1;
+                    Z_Free(voiceswad);
+                }
                 else
-                    name = filename; // STRIFE-FIXME: memory leak!!
+                    name = voiceswad; // STRIFE-FIXME: memory leak!!
             }
             else
                 disable_voices = 1;
@@ -1049,9 +1070,11 @@ static void D_Endoom(void)
     byte *endoom;
 
     // Don't show ENDOOM if we have it disabled, or we're running
-    // in screensaver or control test mode.
+    // in screensaver or control test mode. Only show it once the
+    // game has actually started.
 
-    if (!show_endoom || screensaver_mode || testcontrols)
+
+    if (!show_endoom || !main_loop_started || screensaver_mode || testcontrols)
     {
         return;
     }
@@ -1120,14 +1143,11 @@ static byte *rawgfx_startbot;
 //
 static void D_IntroBackground(void)
 {
-    patch_t *panel0;
-
     if(!showintro)
         return;
 
-    // Slam up PANEL0 to fill the background entirely (wasn't needed in vanilla)
-    panel0 = W_CacheLumpName("PANEL0", PU_CACHE);
-    V_DrawPatch(0, 0, panel0);
+    // Fill the background entirely (wasn't needed in vanilla)
+    V_DrawFilledBox(0, 0, SCREENWIDTH, SCREENHEIGHT, 0);
 
     // Strife cleared the screen somewhere in the low-level code between the
     // intro and the titlescreen, so this is to take care of that and get
@@ -1157,6 +1177,7 @@ static void D_InitIntroSequence(void)
         // In vanilla Strife, Mode 13h was initialized directly in D_DoomMain.
         // We have to be a little more courteous of the low-level code here.
         I_SetWindowTitle(gamedescription);
+        I_SetGrabMouseCallback(D_StartupGrabCallback);
         I_InitGraphics();
         V_RestoreBuffer(); // make the V_ routines work
 
@@ -1387,18 +1408,6 @@ void D_DoomMain (void)
     DEH_Init();
 #endif
 
-    iwadfile = D_FindIWAD(IWAD_MASK_STRIFE, &gamemission);
-
-    // None found?
-
-    if (iwadfile == NULL)
-    {
-        I_Error("Game mode indeterminate.  No IWAD file was found.  Try\n"
-                "specifying one with the '-iwad' command line parameter.\n");
-    }
-
-    modifiedgame = false;
-
     //!
     // @vanilla
     //
@@ -1430,6 +1439,14 @@ void D_DoomMain (void)
     //
 
     respawnparm = M_CheckParm ("-respawn");
+
+    //!
+    // @vanilla
+    //
+    // Items respawn at random locations
+    //
+
+    randomparm = M_CheckParm ("-random");
 
     //!
     // @vanilla
@@ -1536,9 +1553,22 @@ void D_DoomMain (void)
     // Save configuration at exit.
     I_AtExit(M_SaveDefaults, false);
 
+    // Find the main IWAD file and load it.
+    iwadfile = D_FindIWAD(IWAD_MASK_STRIFE, &gamemission);
+
+    // None found?
+    if (iwadfile == NULL)
+    {
+        I_Error("Game mode indeterminate.  No IWAD file was found.  Try\n"
+                "specifying one with the '-iwad' command line parameter.\n");
+    }
+
+    modifiedgame = false;
+
     if(devparm) // [STRIFE] Devparm only
         DEH_printf("W_Init: Init WADfiles.\n");
     D_AddFile(iwadfile);
+    W_CheckCorrectIWAD(strife);
     modifiedgame = W_ParseCommandLine();
 
     // [STRIFE] serial number output
@@ -1585,21 +1615,21 @@ void D_DoomMain (void)
 
     if (p)
     {
-        if (!strcasecmp(myargv[p+1] + strlen(myargv[p+1]) - 4, ".lmp"))
+        // With Vanilla you have to specify the file without extension,
+        // but make that optional.
+        if (M_StringEndsWith(myargv[p + 1], ".lmp"))
         {
-            strcpy(file, myargv[p + 1]);
+            M_StringCopy(file, myargv[p + 1], sizeof(file));
         }
         else
         {
-            sprintf (file,"%s.lmp", myargv[p+1]);
+            DEH_snprintf(file, sizeof(file), "%s.lmp", myargv[p+1]);
         }
 
         if (D_AddFile (file))
         {
-            strncpy(demolumpname, lumpinfo[numlumps - 1].name, 8);
-            demolumpname[8] = '\0';
-
-            printf("Playing demo %s.\n", file);
+            M_StringCopy(demolumpname, lumpinfo[numlumps - 1].name,
+                         sizeof(demolumpname));
         }
         else
         {
@@ -1607,10 +1637,10 @@ void D_DoomMain (void)
             // the demo in the same way as Vanilla Doom.  This makes
             // tricks like "-playdemo demo1" possible.
 
-            strncpy(demolumpname, myargv[p + 1], 8);
-            demolumpname[8] = '\0';
+            M_StringCopy(demolumpname, myargv[p + 1], sizeof(demolumpname));
         }
 
+        printf("Playing demo %s.\n", file);
     }
 
     I_AtExit((atexit_func_t) G_CheckDemoStatus, true);
@@ -1625,8 +1655,10 @@ void D_DoomMain (void)
     savegamedir = M_GetSaveGameDir("strife1.wad");
 
     // fraggle 20130405: I_InitTimer is needed here for the netgame
-    // startup.
+    // startup. Start low-level sound init here too.
     I_InitTimer();
+    I_InitSound(true);
+    I_InitMusic();
 
 #ifdef FEATURE_MULTIPLAYER
     if(devparm) // [STRIFE]

@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -12,11 +10,6 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
 //
 // Common code shared between the client and server
 //
@@ -533,33 +526,9 @@ boolean NET_ValidGameSettings(GameMode_t mode, GameMission_t mission,
     if (!D_ValidGameVersion(mission, settings->gameversion))
         return false;
 
-    if (mode == shareware || mode == retail || mode == registered)
-    {
-        if (settings->map < 1 || settings->map > 9)
-            return false;
-    }
-    else
-    {
-        if (settings->map < 1 || settings->map > 32)
-            return false;
-    }
-    
-    if (mode == shareware)
-    {
-        if (settings->episode != 1)
-            return false;
-    }
-    else if (mode == registered)
-    {
-        if (settings->episode < 1 || settings->episode > 3)
-            return false;
-    }
-    else if (mode == retail)
-    {
-        if (settings->episode < 1 || settings->episode > 4)
-            return false;
-    }
-    
+    if (!D_ValidEpisodeMap(mission, mode, settings->episode, settings->map))
+        return false;
+
     return true;
 }
 

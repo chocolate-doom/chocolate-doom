@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,16 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //   Functions and definitions relating to the game type and operational
 //   mode.
 //
-//-----------------------------------------------------------------------------
 
 #ifndef __D_MODE__
 #define __D_MODE__
@@ -64,7 +56,11 @@ typedef enum
 
 typedef enum
 {
-    exe_doom_1_9,    // Doom 1.9: used for shareware, registered and commercial
+    exe_doom_1_2,    // Doom 1.2: shareware and registered
+    exe_doom_1_666,  // Doom 1.666: for shareware, registered and commercial
+    exe_doom_1_7,    // Doom 1.7/1.7a: "
+    exe_doom_1_8,    // Doom 1.8: "
+    exe_doom_1_9,    // Doom 1.9: "
     exe_hacx,        // Hacx
     exe_ultimate,    // Ultimate Doom (retail)
     exe_final,       // Final Doom
@@ -96,6 +92,7 @@ boolean D_ValidEpisodeMap(GameMission_t mission, GameMode_t mode,
                           int episode, int map);
 int D_GetNumEpisodes(GameMission_t mission, GameMode_t mode);
 boolean D_IsEpisodeMap(GameMission_t mission);
+char *D_GameMissionString(GameMission_t mission);
 
 #endif /* #ifndef __D_MODE__ */
 

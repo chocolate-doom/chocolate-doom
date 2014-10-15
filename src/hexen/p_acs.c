@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,17 +13,12 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 
 // HEADER FILES ------------------------------------------------------------
 
 #include "h2def.h"
+#include "m_misc.h"
 #include "m_random.h"
 #include "s_sound.h"
 #include "i_swap.h"
@@ -442,7 +435,8 @@ boolean P_StartACS(int number, int map, byte * args, mobj_t * activator,
     if (infoIndex == -1)
     {                           // Script not found
         //I_Error("P_StartACS: Unknown script number %d", number);
-        sprintf(ErrorMsg, "P_STARTACS ERROR: UNKNOWN SCRIPT %d", number);
+        M_snprintf(ErrorMsg, sizeof(ErrorMsg),
+                   "P_STARTACS ERROR: UNKNOWN SCRIPT %d", number);
         P_SetMessage(&players[consoleplayer], ErrorMsg, true);
     }
     statePtr = &ACSInfo[infoIndex].state;
@@ -538,8 +532,8 @@ boolean P_StartLockedACS(line_t * line, byte * args, mobj_t * mo, int side)
     {
         if (!(mo->player->keys & (1 << (lock - 1))))
         {
-            sprintf(LockedBuffer, "YOU NEED THE %s\n",
-                    TextKeyMessages[lock - 1]);
+            M_snprintf(LockedBuffer, sizeof(LockedBuffer),
+                       "YOU NEED THE %s\n", TextKeyMessages[lock - 1]);
             P_SetMessage(mo->player, LockedBuffer, true);
             S_StartSound(mo, SFX_DOOR_LOCKED);
             return false;
@@ -1682,7 +1676,7 @@ static int CmdEndPrintBold(void)
 
 static int CmdPrintString(void)
 {
-    strcat(PrintBuffer, ACStrings[Pop()]);
+    M_StringConcat(PrintBuffer, ACStrings[Pop()], sizeof(PrintBuffer));
     return SCRIPT_CONTINUE;
 }
 
@@ -1690,8 +1684,8 @@ static int CmdPrintNumber(void)
 {
     char tempStr[16];
 
-    sprintf(tempStr, "%d", Pop());
-    strcat(PrintBuffer, tempStr);
+    M_snprintf(tempStr, sizeof(tempStr), "%d", Pop());
+    M_StringConcat(PrintBuffer, tempStr, sizeof(PrintBuffer));
     return SCRIPT_CONTINUE;
 }
 

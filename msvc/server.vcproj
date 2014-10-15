@@ -63,6 +63,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="SDL.lib SDL_net.lib SDLmain.lib"
 				OutputFile="$(OutDir)\cnserver-dbg.exe"
+				IgnoreDefaultLibraryNames="msvcrt"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -138,8 +139,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDL_net.lib SDLmain.lib SDL_mixer.lib"
+				AdditionalDependencies="SDL.lib SDL_net.lib SDLmain.lib"
 				OutputFile="$(OutDir)\cnserver.exe"
+				IgnoreDefaultLibraryNames="msvcrtd"
 				GenerateDebugInformation="false"
 				SubSystem="1"
 				OptimizeReferences="2"

@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2006-2009 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,16 +11,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 //
 // Example program: desktop calculator
 //
-//-----------------------------------------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -49,7 +40,7 @@ void UpdateInputBox(void)
 {
     char buf[20];
 
-    sprintf(buf, "  %i", input_value);
+    TXT_snprintf(buf, sizeof(buf), "  %i", input_value);
     TXT_SetLabel(input_box, buf);
 }
 
@@ -76,7 +67,7 @@ void AddNumberButton(txt_table_t *table, int value)
     val_copy = malloc(sizeof(int));
     *val_copy = value;
 
-    sprintf(buf, "  %i  ", value);
+    TXT_snprintf(buf, sizeof(buf), "  %i  ", value);
 
     TXT_AddWidget(table, TXT_NewButton2(buf, InsertNumber, val_copy));
 }
@@ -98,7 +89,7 @@ void AddOperatorButton(txt_table_t *table, char *label, operator_t op)
     op_copy = malloc(sizeof(operator_t));
     *op_copy = op;
 
-    sprintf(buf, "  %s  ", label);
+    TXT_snprintf(buf, sizeof(buf), "  %s  ", label);
 
     TXT_AddWidget(table, TXT_NewButton2(buf, Operator, op_copy));
 }

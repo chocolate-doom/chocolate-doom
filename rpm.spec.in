@@ -13,21 +13,6 @@ Prefix: %{_prefix}
 Autoreq: 0
 Requires: libSDL-1.2.so.0, libSDL_mixer-1.2.so.0, libSDL_net-1.2.so.0
 
-%description
-%(sed -n "/==/ q; p " < README)
-
-See @PACKAGE_URL@ for more information.
-
-%package -n @PROGRAM_PREFIX@heretic
-Summary: @PACKAGE_SHORTDESC@ (Heretic binaries)
-Group: Amusements/Games
-Requires: libSDL-1.2.so.0, libSDL_mixer-1.2.so.0, libSDL_net-1.2.so.0
-
-%package -n @PROGRAM_PREFIX@hexen
-Summary: @PACKAGE_SHORTDESC@ (Hexen binaries)
-Group: Amusements/Games
-Requires: libSDL-1.2.so.0, libSDL_mixer-1.2.so.0, libSDL_net-1.2.so.0
-
 %prep
 rm -rf $RPM_BUILD_ROOT
 
@@ -56,12 +41,22 @@ make
 %clean
 rm -rf $RPM_BUILD_ROOT
 
+%description
+%(sed -n "/==/ q; p " < README)
+
+See @PACKAGE_URL@ for more information.
+
+%package -n @PROGRAM_PREFIX@heretic
+Summary: @PACKAGE_SHORTDESC@ (Heretic binaries)
+Group: Amusements/Games
+Requires: libSDL-1.2.so.0, libSDL_mixer-1.2.so.0, libSDL_net-1.2.so.0
+
 %files
-%{_mandir}/man5/@PROGRAM_PREFIX@doom.cfg.5
-%{_mandir}/man5/default.cfg.5
-%{_mandir}/man6/@PROGRAM_PREFIX@doom.6
-%{_mandir}/man6/@PROGRAM_PREFIX@server.6
-%{_mandir}/man6/@PROGRAM_PREFIX@doom-setup.6
+%{_mandir}/man5/@PROGRAM_PREFIX@doom.cfg.5*
+%{_mandir}/man5/default.cfg.5*
+%{_mandir}/man6/@PROGRAM_PREFIX@doom.6*
+%{_mandir}/man6/@PROGRAM_PREFIX@setup.6*
+%{_mandir}/man6/@PROGRAM_PREFIX@server.6*
 /usr/share/doc/@PACKAGE@/*
 /usr/games/@PROGRAM_PREFIX@doom
 /usr/games/@PROGRAM_PREFIX@server
@@ -69,21 +64,58 @@ rm -rf $RPM_BUILD_ROOT
 /usr/share/icons/*
 /usr/share/applications/*
 
-%files @PROGRAM_PREFIX@heretic
-%{_mandir}/man5/@PROGRAM_PREFIX@heretic.cfg.5
-%{_mandir}/man5/heretic.cfg.5
-%{_mandir}/man6/@PROGRAM_PREFIX@heretic.6
-%{_mandir}/man6/@PROGRAM_PREFIX@heretic-setup.6
+%description -n @PROGRAM_PREFIX@heretic
+%(sed -n "/==/ q; p " < README)
+
+These are the Heretic binaries.
+
+See @PACKAGE_URL@ for more information.
+
+%files -n @PROGRAM_PREFIX@heretic
+%{_mandir}/man5/@PROGRAM_PREFIX@heretic.cfg.5*
+%{_mandir}/man5/heretic.cfg.5*
+%{_mandir}/man6/@PROGRAM_PREFIX@heretic.6*
 /usr/share/doc/@PROGRAM_PREFIX@heretic/*
 /usr/games/@PROGRAM_PREFIX@heretic
 /usr/games/@PROGRAM_PREFIX@heretic-setup
 
-%files @PROGRAM_PREFIX@hexen
-%{_mandir}/man5/@PROGRAM_PREFIX@hexen.cfg.5
-%{_mandir}/man5/hexen.cfg.5
-%{_mandir}/man6/@PROGRAM_PREFIX@hexen.6
-%{_mandir}/man6/@PROGRAM_PREFIX@hexen-setup.6
+%package -n @PROGRAM_PREFIX@hexen
+Summary: @PACKAGE_SHORTDESC@ (Hexen binaries)
+Group: Amusements/Games
+Requires: libSDL-1.2.so.0, libSDL_mixer-1.2.so.0, libSDL_net-1.2.so.0
+
+%description -n @PROGRAM_PREFIX@hexen
+%(sed -n "/==/ q; p " < README)
+
+These are the Hexen binaries.
+
+See @PACKAGE_URL@ for more information.
+
+%files -n @PROGRAM_PREFIX@hexen
+%{_mandir}/man5/@PROGRAM_PREFIX@hexen.cfg.5*
+%{_mandir}/man5/hexen.cfg.5*
+%{_mandir}/man6/@PROGRAM_PREFIX@hexen.6*
 /usr/share/doc/@PROGRAM_PREFIX@hexen/*
 /usr/games/@PROGRAM_PREFIX@hexen
 /usr/games/@PROGRAM_PREFIX@hexen-setup
+
+%package -n @PROGRAM_PREFIX@strife
+Summary: @PACKAGE_SHORTDESC@ (Strife binaries)
+Group: Amusements/Games
+Requires: libSDL-1.2.so.0, libSDL_mixer-1.2.so.0, libSDL_net-1.2.so.0
+
+%description -n @PROGRAM_PREFIX@strife
+%(sed -n "/==/ q; p " < README)
+
+These are the Strife binaries.
+
+See @PACKAGE_URL@ for more information.
+
+%files -n @PROGRAM_PREFIX@strife
+%{_mandir}/man5/@PROGRAM_PREFIX@strife.cfg.5*
+%{_mandir}/man5/strife.cfg.5*
+%{_mandir}/man6/@PROGRAM_PREFIX@strife.6*
+/usr/share/doc/@PROGRAM_PREFIX@strife/*
+/usr/games/@PROGRAM_PREFIX@strife
+/usr/games/@PROGRAM_PREFIX@strife-setup
 

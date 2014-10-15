@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,16 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //	Preparation of data for rendering,
 //	generation of lookups, caching, retrieval by name.
 //
-//-----------------------------------------------------------------------------
 
 #include <stdio.h>
 
@@ -36,6 +28,7 @@
 #include "w_wad.h"
 
 #include "doomdef.h"
+#include "m_misc.h"
 #include "r_local.h"
 #include "p_local.h"
 
@@ -491,19 +484,19 @@ void R_InitTextures (void)
 
     
     // Load the patch names from pnames.lmp.
-    name[8] = 0;	
+    name[8] = 0;
     names = W_CacheLumpName (DEH_String("PNAMES"), PU_STATIC);
     nummappatches = LONG ( *((int *)names) );
-    name_p = names+4;
+    name_p = names + 4;
     patchlookup = Z_Malloc(nummappatches*sizeof(*patchlookup), PU_STATIC, NULL);
-    
-    for (i=0 ; i<nummappatches ; i++)
+
+    for (i = 0; i < nummappatches; i++)
     {
-	strncpy (name,name_p+i*8, 8);
-	patchlookup[i] = W_CheckNumForName (name);
+        M_StringCopy(name, name_p + i * 8, sizeof(name));
+        patchlookup[i] = W_CheckNumForName(name);
     }
     W_ReleaseLumpName(DEH_String("PNAMES"));
-    
+
     // Load the map texture definitions from textures.lmp.
     // The data is contained in one or two lumps,
     //  TEXTURE1 for shareware, plus TEXTURE2 for commercial.

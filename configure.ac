@@ -1,5 +1,6 @@
 AC_INIT(Competition Doom, 2.0.3, admin@doom.com.hr, cndoom)
 
+PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
 PACKAGE_SHORTDESC="Conservative Doom source port"
 PACKAGE_COPYRIGHT="Copyright (C) 1993-2013"
 PACKAGE_LICENSE="GNU General Public License, version 2"
@@ -73,8 +74,22 @@ AC_SDL_MAIN_WORKAROUND([
     ])
 
     # Check for libsamplerate.
-
-    AC_CHECK_LIB(samplerate, src_new)
+    AC_ARG_WITH([libsamplerate],
+    AS_HELP_STRING([--without-libsamplerate],
+        [Build without libsamplerate @<:@default=check@:>@]),
+    [],
+    [
+        AC_CHECK_LIB(samplerate, src_new)
+    ])
+    # Check for libpng.
+    AC_ARG_WITH([libpng],
+    AS_HELP_STRING([--without-libpng],
+        [Build without libpng @<:@default=check@:>@]),
+    [],
+    [
+        AC_CHECK_LIB(z, zlibVersion)
+        AC_CHECK_LIB(png, png_get_io_ptr)
+    ])
     AC_CHECK_LIB(m, log)
 
     AC_CHECK_HEADERS([linux/kd.h dev/isa/spkrio.h dev/speaker/speaker.h])
@@ -95,10 +110,10 @@ AM_CONDITIONAL(HAVE_PYTHON, $HAVE_PYTHON)
 
 dnl Automake v1.8.0 is required, please upgrade!
 
-AM_INIT_AUTOMAKE([1.8.0])
+AM_INIT_AUTOMAKE([1.8.0 foreign])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
-WINDOWS_RC_VERSION=`echo $PACKAGE_VERSION.0 | sed 's/\./, /g' `
+WINDOWS_RC_VERSION=`echo $PACKAGE_VERSION | sed 's/-.*//; s/\./, /g; s/$/, 0/'`
 
 # This controls the prefix added to the start of program names.  For example,
 # if this is changed to "lemon-", the programs generated will be named
@@ -121,6 +136,7 @@ AC_SUBST(SDLNET_LIBS)
 
 AC_SUBST(ac_aux_dir)
 
+AC_SUBST(PACKAGE_SHORTNAME)
 AC_SUBST(PACKAGE_SHORTDESC)
 AC_SUBST(PACKAGE_COPYRIGHT)
 AC_SUBST(PACKAGE_LICENSE)
@@ -146,13 +162,16 @@ src/Makefile
 src/doom.desktop
 src/doom-screensaver.desktop
 src/doom/Makefile
+src/heretic.desktop
 src/heretic/Makefile
+src/hexen.desktop
 src/hexen/Makefile
 src/resource.rc
 src/setup-res.rc
 src/setup/Makefile
 src/setup/setup.desktop
 src/setup/setup-manifest.xml
+src/strife.desktop
 src/strife/Makefile
 textscreen/Makefile
 textscreen/examples/Makefile

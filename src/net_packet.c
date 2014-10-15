@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,17 +11,12 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //      Network packet manipulation (net_packet_t)
 //
-//-----------------------------------------------------------------------------
 
 #include <string.h>
+#include "m_misc.h"
 #include "net_packet.h"
 #include "z_zone.h"
 
@@ -280,19 +273,22 @@ void NET_WriteInt32(net_packet_t *packet, unsigned int i)
 void NET_WriteString(net_packet_t *packet, char *string)
 {
     byte *p;
+    size_t string_size;
+
+    string_size = strlen(string) + 1;
 
     // Increase the packet size until large enough to hold the string
 
-    while (packet->len + strlen(string) + 1 > packet->alloced)
+    while (packet->len + string_size > packet->alloced)
     {
         NET_IncreasePacket(packet);
     }
 
     p = packet->data + packet->len;
 
-    strcpy((char *) p, string);
+    M_StringCopy((char *) p, string, string_size);
 
-    packet->len += strlen(string) + 1;
+    packet->len += string_size;
 }
 
 

@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,15 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //       Key definitions
 //
-//-----------------------------------------------------------------------------
 
 #ifndef __DOOMKEYS__
 #define __DOOMKEYS__
@@ -67,7 +59,9 @@
 // new keys:
 
 #define KEY_CAPSLOCK    (0x80+0x3a)
+#define KEY_NUMLOCK     (0x80+0x45)
 #define KEY_SCRLCK      (0x80+0x46)
+#define KEY_PRTSCR      (0x80+0x59)
 
 #define KEY_HOME        (0x80+0x47)
 #define KEY_END         (0x80+0x4f)

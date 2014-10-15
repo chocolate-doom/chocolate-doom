@@ -69,6 +69,7 @@
 				AdditionalDependencies="SDL.lib SDLmain.lib SDL_mixer.lib SDL_net.lib"
 				OutputFile="$(OutDir)\cndoom-dbg.exe"
 				LinkIncremental="2"
+				IgnoreDefaultLibraryNames="msvcrt"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				DataExecutionPrevention="0"
@@ -122,6 +123,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
+				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories=".;..\opl;..\src;..\src\doom;..\textscreen;..\pcsound"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;PROGRAM_PREFIX=&quot;\&quot;cn\&quot;&quot;"
@@ -129,7 +131,7 @@
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				DebugInformationFormat="3"
+				DebugInformationFormat="0"
 				CompileAs="1"
 			/>
 			<Tool
@@ -146,7 +148,9 @@
 				AdditionalDependencies="SDL.lib SDLmain.lib SDL_mixer.lib SDL_net.lib"
 				OutputFile="$(OutDir)\cndoom.exe"
 				LinkIncremental="0"
+				IgnoreDefaultLibraryNames="msvcrtd"
 				GenerateDebugInformation="false"
+				GenerateMapFile="true"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"

@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -12,11 +10,6 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
 //
 // Network server code
 //
@@ -32,8 +25,8 @@
 #include "d_mode.h"
 #include "i_system.h"
 #include "i_timer.h"
-
 #include "m_argv.h"
+#include "m_misc.h"
 
 #include "net_client.h"
 #include "net_common.h"
@@ -200,7 +193,7 @@ static void NET_SV_SendConsoleMessage(net_client_t *client, char *s, ...)
     net_packet_t *packet;
 
     va_start(args, s);
-    vsnprintf(buf, sizeof(buf), s, args);
+    M_vsnprintf(buf, sizeof(buf), s, args);
     va_end(args);
     
     packet = NET_Conn_NewReliable(&client->connection, 
@@ -218,7 +211,7 @@ static void NET_SV_BroadcastMessage(char *s, ...)
     int i;
 
     va_start(args, s);
-    vsnprintf(buf, sizeof(buf), s, args);
+    M_vsnprintf(buf, sizeof(buf), s, args);
     va_end(args);
     
     for (i=0; i<MAXNETNODES; ++i)
@@ -412,7 +405,7 @@ static void NET_SV_SendWaitingData(net_client_t *client)
     // If no controller found (?), send the details that the client
     // is expecting anyway.
 
-    if (controller != NULL)
+    if (controller == NULL)
     {
         controller = client;
     }
@@ -427,15 +420,12 @@ static void NET_SV_SendWaitingData(net_client_t *client)
 
     for (i = 0; i < wait_data.num_players; ++i)
     {
-        strncpy(wait_data.player_names[i],
-                sv_players[i]->name,
-                MAXPLAYERNAME);
-        wait_data.player_names[i][MAXPLAYERNAME-1] = '\0';
-
-        strncpy(wait_data.player_addrs[i],
-                NET_AddrToString(sv_players[i]->addr),
-                MAXPLAYERNAME);
-        wait_data.player_addrs[i][MAXPLAYERNAME-1] = '\0';
+        M_StringCopy(wait_data.player_names[i],
+                     sv_players[i]->name,
+                     MAXPLAYERNAME);
+        M_StringCopy(wait_data.player_addrs[i],
+                     NET_AddrToString(sv_players[i]->addr),
+                     MAXPLAYERNAME);
     }
 
     // Construct packet:
@@ -636,8 +626,8 @@ static void NET_SV_ParseSYN(net_packet_t *packet,
         if (M_CheckParm("-ignoreversion") == 0)
         {
             NET_SV_SendReject(addr,
-                              "Version mismatch: server version is: "
-                              PACKAGE_STRING);
+                "Different " PACKAGE_NAME " versions cannot play a net game!\n"
+                "Version mismatch: server version is: " PACKAGE_STRING);
             return;
         }
     }

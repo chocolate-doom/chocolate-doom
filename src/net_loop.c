@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,21 +11,16 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //      Loopback network module for server compiled into the client
 //
-//-----------------------------------------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "doomtype.h"
 #include "i_system.h"
+#include "m_misc.h"
 #include "net_defs.h"
 #include "net_loop.h"
 #include "net_packet.h"
@@ -128,7 +121,7 @@ static boolean NET_CL_RecvPacket(net_addr_t **addr, net_packet_t **packet)
 
 static void NET_CL_AddrToString(net_addr_t *addr, char *buffer, int buffer_len)
 {
-    snprintf(buffer, buffer_len, "local server");
+    M_snprintf(buffer, buffer_len, "local server");
 }
 
 static void NET_CL_FreeAddress(net_addr_t *addr)
@@ -204,7 +197,7 @@ static boolean NET_SV_RecvPacket(net_addr_t **addr, net_packet_t **packet)
 
 static void NET_SV_AddrToString(net_addr_t *addr, char *buffer, int buffer_len)
 {
-    snprintf(buffer, buffer_len, "local client");
+    M_snprintf(buffer, buffer_len, "local client");
 }
 
 static void NET_SV_FreeAddress(net_addr_t *addr)

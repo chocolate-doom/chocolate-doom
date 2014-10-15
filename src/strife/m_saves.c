@@ -1,5 +1,3 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 2010 James Haley, Samuel Villarreal
@@ -14,18 +12,12 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //
 // [STRIFE] New Module
 //
 // Strife Hub Saving Code
 //
-//-----------------------------------------------------------------------------
 
 // For GNU C and POSIX targets, dirent.h should be available. Otherwise, for
 // Visual C++, we need to include the win_opendir module.
@@ -222,8 +214,7 @@ void M_SaveMoveMapToHere(void)
     char tmpnum[33];
 
     // haleyjd: no itoa available...
-    memset(tmpnum, 0, sizeof(tmpnum));
-    sprintf(tmpnum, "%d", gamemap);
+    M_snprintf(tmpnum, sizeof(tmpnum), "%d", gamemap);
 
     // haleyjd: use M_SafeFilePath, not sprintf
     mapsave  = M_SafeFilePath(savepath, tmpnum);
@@ -252,8 +243,7 @@ void M_SaveMoveHereToMap(void)
     char tmpnum[33];
 
     // haleyjd: no itoa available...
-    memset(tmpnum, 0, sizeof(tmpnum));
-    sprintf(tmpnum, "%d", gamemap);
+    M_snprintf(tmpnum, sizeof(tmpnum), "%d", gamemap);
 
     mapsave  = M_SafeFilePath(savepathtemp, tmpnum);
     heresave = M_SafeFilePath(savepathtemp, "here");
@@ -439,7 +429,7 @@ char *M_SafeFilePath(const char *basepath, const char *newcomponent)
     // that either basepath or newcomponent includes a redundant slash at the
     // end or beginning respectively.
     newstrlen = M_StringAlloc(&newstr, 3, 1, basepath, "/", newcomponent);
-    snprintf(newstr, newstrlen, "%s/%s", basepath, newcomponent);
+    M_snprintf(newstr, newstrlen, "%s/%s", basepath, newcomponent);
     M_NormalizeSlashes(newstr);
 
     return newstr;
@@ -479,8 +469,8 @@ char *M_MakeStrifeSaveDir(int slotnum, const char *extra)
 {
     static char tmpbuffer[32];
 
-    memset(tmpbuffer, 0, sizeof(tmpbuffer));
-    sprintf(tmpbuffer, "strfsav%d.ssg%s", slotnum, extra);
+    M_snprintf(tmpbuffer, sizeof(tmpbuffer),
+               "strfsav%d.ssg%s", slotnum, extra);
 
     return tmpbuffer;
 }
@@ -501,7 +491,7 @@ char M_GetFilePath(const char *fn, char *dest, size_t len)
 
     p = dest + len - 1;
 
-    strncpy(dest, fn, len);
+    M_StringCopy(dest, fn, len);
 
     while(p >= dest)
     {

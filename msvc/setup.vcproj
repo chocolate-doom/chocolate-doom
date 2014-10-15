@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".;..\src;..\src\doom;..\textscreen"
+				AdditionalIncludeDirectories=".;..\src;..\textscreen"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;CHOCOLATESETUP"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -61,10 +61,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDL_net.lib SDLmain.lib"
+				AdditionalDependencies="SDL.lib SDLmain.lib SDL_net.lib"
 				OutputFile="$(OutDir)\cnsetup-dbg.exe"
-				AdditionalLibraryDirectories=""
-				IgnoreAllDefaultLibraries="false"
+				IgnoreDefaultLibraryNames="msvcrt"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -118,7 +117,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories=".;..\src;..\src\doom;..\textscreen;..\src\setup"
+				AdditionalIncludeDirectories=".;..\src;..\textscreen"
 				PreprocessorDefinitions="WIN32;_CRT_SECURE_NO_WARNINGS;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;CHOCOLATESETUP"
 				StringPooling="true"
 				ExceptionHandling="0"
@@ -140,8 +139,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="SDL.lib SDL_mixer.lib SDL_net.lib SDLmain.lib"
+				AdditionalDependencies="SDL.lib SDLmain.lib SDL_net.lib"
 				OutputFile="$(OutDir)\cnsetup.exe"
+				IgnoreDefaultLibraryNames="msvcrtd"
 				GenerateDebugInformation="false"
 				SubSystem="2"
 				OptimizeReferences="2"

@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2006 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -12,11 +10,6 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
 //
 
 #include <stdio.h>
@@ -95,6 +88,58 @@ txt_window_t *TXT_GetActiveWindow(void)
     }
 
     return all_windows[num_windows - 1];
+}
+
+int TXT_RaiseWindow(txt_window_t *window)
+{
+    int i;
+
+    for (i = 0; i < num_windows - 1; ++i)
+    {
+        if (all_windows[i] == window)
+        {
+            all_windows[i] = all_windows[i + 1];
+            all_windows[i + 1] = window;
+
+            if (i == num_windows - 2)
+            {
+                TXT_SetWindowFocus(all_windows[i], 0);
+                TXT_SetWindowFocus(window, 1);
+            }
+
+            return 1;
+        }
+    }
+
+    // Window not in the list, or at the end of the list (top) already.
+
+    return 0;
+}
+
+int TXT_LowerWindow(txt_window_t *window)
+{
+    int i;
+
+    for (i = 0; i < num_windows - 1; ++i)
+    {
+        if (all_windows[i + 1] == window)
+        {
+            all_windows[i + 1] = all_windows[i];
+            all_windows[i] = window;
+
+            if (i == num_windows - 2)
+            {
+                TXT_SetWindowFocus(window, 0);
+                TXT_SetWindowFocus(all_windows[i + 1], 1);
+            }
+
+            return 1;
+        }
+    }
+
+    // Window not in the list, or at the start of the list (bottom) already.
+
+    return 0;
 }
 
 static void DrawDesktopBackground(const char *title)
@@ -211,7 +256,7 @@ void TXT_DrawASCIITable(void)
             n = y * 16 + x;
 
             TXT_GotoXY(x * 5, y);
-            sprintf(buf, "%02x   ", n);
+            TXT_snprintf(buf, sizeof(buf), "%02x   ", n);
             TXT_Puts(buf);
 
             // Write the character directly to the screen memory buffer:

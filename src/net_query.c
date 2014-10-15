@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -12,11 +10,6 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
 //
 // DESCRIPTION:
 //     Querying servers to find their current status.
@@ -81,9 +74,8 @@ typedef struct
     boolean printed;
 } query_target_t;
 
-// Transmit a query packet
-
 static boolean registered_with_master = false;
+static boolean got_master_response = false;
 
 static net_context_t *query_context;
 static query_target_t *targets;
@@ -158,7 +150,22 @@ void NET_Query_MasterResponse(net_packet_t *packet)
             printf("Failed to register with master server at %s\n",
                    MASTER_SERVER_ADDRESS);
         }
+
+        got_master_response = true;
     }
+}
+
+boolean NET_Query_CheckAddedToMaster(boolean *result)
+{
+    // Got response from master yet?
+
+    if (!got_master_response)
+    {
+        return false;
+    }
+
+    *result = registered_with_master;
+    return true;
 }
 
 // Send a query to the master server.

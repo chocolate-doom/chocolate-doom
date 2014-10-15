@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2006 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,16 +11,12 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 
 #include <stdlib.h>
 #include <string.h>
 
 #include "doomkeys.h"
+#include "m_misc.h"
 
 #include "txt_keyinput.h"
 #include "txt_gui.h"
@@ -110,11 +104,11 @@ static void TXT_KeyInputDrawer(TXT_UNCAST_ARG(key_input))
 
     if (*key_input->variable == 0)
     {
-        strcpy(buf, "(none)");
+        M_StringCopy(buf, "(none)", sizeof(buf));
     }
     else
     {
-        TXT_GetKeyDescription(*key_input->variable, buf);
+        TXT_GetKeyDescription(*key_input->variable, buf, sizeof(buf));
     }
 
     TXT_SetWidgetBG(key_input);
@@ -143,6 +137,11 @@ static int TXT_KeyInputKeyPress(TXT_UNCAST_ARG(key_input), int key)
         OpenPromptWindow(key_input);
 
         return 1;
+    }
+
+    if (key == KEY_BACKSPACE || key == KEY_DEL)
+    {
+        *key_input->variable = 0;
     }
 
     return 0;

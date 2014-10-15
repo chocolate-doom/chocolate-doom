@@ -3,38 +3,59 @@ include ../config.make
 
 TOPLEVEL=../..
 
-EXE_FILES=$(TOPLEVEL)/src/$(PROGRAM_PREFIX)doom.exe     \
-          $(TOPLEVEL)/src/$(PROGRAM_PREFIX)heretic.exe  \
-          $(TOPLEVEL)/src/$(PROGRAM_PREFIX)hexen.exe    \
-          $(TOPLEVEL)/src/$(PROGRAM_PREFIX)server.exe   \
-          $(TOPLEVEL)/src/$(PROGRAM_PREFIX)setup.exe
+DOOM_ZIP=$(PROGRAM_PREFIX)doom-$(PACKAGE_VERSION)-win32.zip
+HERETIC_ZIP=$(PROGRAM_PREFIX)heretic-$(PACKAGE_VERSION)-win32.zip
+HEXEN_ZIP=$(PROGRAM_PREFIX)hexen-$(PACKAGE_VERSION)-win32.zip
+STRIFE_ZIP=$(PROGRAM_PREFIX)strife-$(PACKAGE_VERSION)-win32.zip
+ZIPS=$(DOOM_ZIP) $(HERETIC_ZIP) $(HEXEN_ZIP) $(STRIFE_ZIP)
 
 DLL_FILES=$(TOPLEVEL)/src/SDL.dll                      \
           $(TOPLEVEL)/src/SDL_mixer.dll                \
           $(TOPLEVEL)/src/SDL_net.dll
 
-DOC_FILES += README.OPL
+all: $(ZIPS)
 
-ZIP=$(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-win.zip
+$(ZIPS):
+	unix2dos $</*.txt
+	zip -j -r $@ $</*
 
-$(ZIP) : staging
-	zip -j -r $@ staging/
+$(DOOM_ZIP): staging-doom hook-doom
+$(HERETIC_ZIP): staging-heretic
+$(HEXEN_ZIP): staging-hexen
+$(STRIFE_ZIP): staging-strife hook-strife
 
-staging: $(EXE_FILES) $(DLL_FILES) $(patsubst %,../../%,$(DOC_FILES))
-	rm -rf staging
-	mkdir staging
-	cp $(EXE_FILES) $(DLL_FILES) staging/
-	$(STRIP) staging/*.exe
+# Special hooks to custom modify files for particular games.
+
+hook-doom: staging-doom
+	cp $(TOPLEVEL)/NOT-BUGS $</NOT-BUGS.txt
+
+# Chocolate Strife has its own custom README file:
+
+hook-strife: staging-strife
+	cp $(TOPLEVEL)/README.Strife $</README.txt
+
+# Build up a staging dir for a particular game.
+
+staging-%:
+	mkdir $@
+	cp $(TOPLEVEL)/src/$(PROGRAM_PREFIX)$*.exe    \
+	   $(DLL_FILES)                               \
+	   $@/
+	cp $(TOPLEVEL)/src/$(PROGRAM_PREFIX)setup.exe \
+	   $@/$(PROGRAM_PREFIX)$*-setup.exe
+	$(STRIP) $@/*.exe
+	
 	for f in $(DOC_FILES); do                    \
-		cp $(TOPLEVEL)/$$f staging/$$f.txt;  \
-		unix2dos staging/$$f.txt;            \
+		cp $(TOPLEVEL)/$$f $@/$$f.txt;       \
 	done
+	cp $(TOPLEVEL)/man/CMDLINE.$* $@/CMDLINE.txt
+	
 	$(TOPLEVEL)/man/simplecpp -D_WIN32 -DPRECOMPILED  \
+	             -D$(shell echo $* | tr a-z A-Z)      \
 	         < $(TOPLEVEL)/man/INSTALL.template       \
-	         > staging/INSTALL.txt
-	unix2dos staging/INSTALL.txt
+	         > $@/INSTALL.txt
 
 clean:
-	rm -f $(ZIP)
-	rm -rf staging
+	rm -f $(ZIPS)
+	rm -rf staging-*
 

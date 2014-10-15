@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,14 +12,8 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:  none
 //
-//-----------------------------------------------------------------------------
 
 
 
@@ -125,7 +117,7 @@ int             starttime;          	// for comparative timing purposes
  
 boolean         viewactive; 
  
-boolean         deathmatch;           	// only if started as net death 
+int             deathmatch;           	// only if started as net death 
 boolean         netgame;                // only true if packets are broadcast 
 boolean         playeringame[MAXPLAYERS]; 
 player_t        players[MAXPLAYERS]; 
@@ -233,6 +225,7 @@ static int      dclicks2;
 // joystick values are repeated 
 static int      joyxmove;
 static int      joyymove;
+static int      joystrafemove;
 static boolean  joyarray[MAX_JOY_BUTTONS + 1]; 
 static boolean *joybuttons = &joyarray[1];		// allow [-1] 
  
@@ -429,14 +422,16 @@ void G_BuildTiccmd (ticcmd_t* cmd, int maketic)
 
     if (gamekeydown[key_strafeleft]
      || joybuttons[joybstrafeleft]
-     || mousebuttons[mousebstrafeleft]) 
+     || mousebuttons[mousebstrafeleft]
+     || joystrafemove < 0)
     {
         side -= sidemove[speed];
     }
 
     if (gamekeydown[key_straferight]
      || joybuttons[joybstraferight]
-     || mousebuttons[mousebstraferight])
+     || mousebuttons[mousebstraferight]
+     || joystrafemove > 0)
     {
         side += sidemove[speed]; 
     }
@@ -649,12 +644,12 @@ void G_DoLoadLevel (void)
     
     // clear cmd building stuff
 
-    memset (gamekeydown, 0, sizeof(gamekeydown)); 
-    joyxmove = joyymove = 0; 
-    mousex = mousey = 0; 
-    sendpause = sendsave = paused = false; 
-    memset (mousebuttons, 0, sizeof(mousebuttons)); 
-    memset (joybuttons, 0, sizeof(joybuttons)); 
+    memset (gamekeydown, 0, sizeof(gamekeydown));
+    joyxmove = joyymove = joystrafemove = 0;
+    mousex = mousey = 0;
+    sendpause = sendsave = paused = false;
+    memset(mousearray, 0, sizeof(mousearray));
+    memset(joyarray, 0, sizeof(joyarray));
 
     if (testcontrols)
     {
@@ -825,6 +820,7 @@ boolean G_Responder (event_t* ev)
         SetJoyButtons(ev->data1);
 	joyxmove = ev->data2; 
 	joyymove = ev->data3; 
+        joystrafemove = ev->data4;
 	return true;    // eat events 
  
       default: 
@@ -889,7 +885,7 @@ void G_Ticker (void)
 	    G_DoWorldDone (); 
 	    break; 
 	  case ga_screenshot: 
-	    V_ScreenShot("DOOM%02i.pcx"); 
+	    V_ScreenShot("DOOM%02i.%s"); 
             players[consoleplayer].message = DEH_String("screen shot");
 	    gameaction = ga_nothing; 
 	    break; 
@@ -928,17 +924,18 @@ void G_Ticker (void)
                 turbodetected[i] = true;
             }
 
-	    if ((gametic & 31) == 0 
+            if ((gametic & 31) == 0 
              && ((gametic >> 5) % MAXPLAYERS) == i
              && turbodetected[i])
-	    {
-		static char turbomessage[80];
-		extern char *player_names[4];
-		sprintf (turbomessage, "%s is turbo!",player_names[i]);
-		players[consoleplayer].message = turbomessage;
+            {
+                static char turbomessage[80];
+                extern char *player_names[4];
+                M_snprintf(turbomessage, sizeof(turbomessage),
+                           "%s is turbo!", player_names[i]);
+                players[consoleplayer].message = turbomessage;
                 turbodetected[i] = false;
-	    }
-			
+            }
+
 	    if (netgame && !netdemo && !(gametic%ticdup) ) 
 	    { 
 		if (gametic > BACKUPTICS 
@@ -974,7 +971,11 @@ void G_Ticker (void)
 					 
 		  case BTS_SAVEGAME: 
 		    if (!savedescription[0]) 
-			strcpy (savedescription, "NET GAME"); 
+                    {
+                        M_StringCopy(savedescription, "NET GAME",
+                                     sizeof(savedescription));
+                    }
+
 		    savegameslot =  
 			(players[i].cmd.buttons & BTS_SAVEMASK)>>BTS_SAVESHIFT; 
 		    gameaction = ga_savegame; 
@@ -1112,7 +1113,6 @@ G_CheckSpot
     fixed_t		x;
     fixed_t		y; 
     subsector_t*	ss; 
-    unsigned		an; 
     mobj_t*		mo; 
     int			i;
 	
@@ -1137,15 +1137,71 @@ G_CheckSpot
 	P_RemoveMobj (bodyque[bodyqueslot%BODYQUESIZE]); 
     bodyque[bodyqueslot%BODYQUESIZE] = players[playernum].mo; 
     bodyqueslot++; 
-	
-    // spawn a teleport fog 
-    ss = R_PointInSubsector (x,y); 
-    an = ( ANG45 * (((unsigned int) mthing->angle)/45) ) >> ANGLETOFINESHIFT; 
- 
-    mo = P_SpawnMobj (x+20*finecosine[an], y+20*finesine[an] 
-		      , ss->sector->floorheight 
-		      , MT_TFOG); 
-	 
+
+    // spawn a teleport fog
+    ss = R_PointInSubsector (x,y);
+
+
+    // The code in the released source looks like this:
+    //
+    //    an = ( ANG45 * (((unsigned int) mthing->angle)/45) )
+    //         >> ANGLETOFINESHIFT;
+    //    mo = P_SpawnMobj (x+20*finecosine[an], y+20*finesine[an]
+    //                     , ss->sector->floorheight
+    //                     , MT_TFOG);
+    //
+    // But 'an' can be a signed value in the DOS version. This means that
+    // we get a negative index and the lookups into finecosine/finesine
+    // end up dereferencing values in finetangent[].
+    // A player spawning on a deathmatch start facing directly west spawns
+    // "silently" with no spawn fog. Emulate this.
+    //
+    // This code is imported from PrBoom+.
+
+    {
+        fixed_t xa, ya;
+        signed int an;
+
+        an = (ANG45 * ((signed int) mthing->angle / 45));
+        // Right-shifting a negative signed integer is implementation-defined,
+        // so divide instead.
+        an /= 1 << ANGLETOFINESHIFT;
+
+        switch (an)
+        {
+            case -4096:
+                xa = finetangent[2048];    // finecosine[-4096]
+                ya = finetangent[0];       // finesine[-4096]
+                break;
+            case -3072:
+                xa = finetangent[3072];    // finecosine[-3072]
+                ya = finetangent[1024];    // finesine[-3072]
+                break;
+            case -2048:
+                xa = finesine[0];          // finecosine[-2048]
+                ya = finetangent[2048];    // finesine[-2048]
+                break;
+            case -1024:
+                xa = finesine[1024];       // finecosine[-1024]
+                ya = finetangent[3072];    // finesine[-1024]
+                break;
+            case 0:
+            case 1024:
+            case 2048:
+            case 3072:
+            case 4096:
+                xa = finecosine[an];
+                ya = finesine[an];
+                break;
+            default:
+                I_Error("G_CheckSpot: unexpected angle %d\n", an);
+                xa = ya = 0;
+                break;
+        }
+        mo = P_SpawnMobj(x + 20 * xa, y + 20 * ya,
+                         ss->sector->floorheight, MT_TFOG);
+    }
+
     if (players[consoleplayer].viewz != 1) 
 	S_StartSound (mo, sfx_telept);	// don't start sound on first frame 
  
@@ -1524,7 +1580,7 @@ char	savename[256];
 
 void G_LoadGame (char* name) 
 { 
-    strcpy (savename, name); 
+    M_StringCopy(savename, name, sizeof(savename));
     gameaction = ga_loadgame; 
 } 
  
@@ -1586,13 +1642,13 @@ void G_DoLoadGame (void)
 void
 G_SaveGame
 ( int	slot,
-  char*	description ) 
-{ 
-    savegameslot = slot; 
-    strcpy (savedescription, description); 
-    sendsave = true; 
-} 
- 
+  char*	description )
+{
+    savegameslot = slot;
+    M_StringCopy(savedescription, description, sizeof(savedescription));
+    sendsave = true;
+}
+
 void G_DoSaveGame (void) 
 { 
     char *savegame_file;
@@ -1643,7 +1699,7 @@ void G_DoSaveGame (void)
     rename(temp_savegame_file, savegame_file);
     
     gameaction = ga_nothing; 
-    strcpy(savedescription, "");
+    M_StringCopy(savedescription, "", sizeof(savedescription));
 
     players[consoleplayer].message = DEH_String(GGSAVED);
 
@@ -1694,30 +1750,35 @@ void
 G_InitNew
 ( skill_t	skill,
   int		episode,
-  int		map ) 
-{ 
+  int		map )
+{
     char *skytexturename;
-    int             i; 
-	
+    int             i;
+
     // [cndoom] clear leveltimes
     memset (leveltimes, 0, sizeof(int)*MAXLEVELTIMES);
-    
-    if (paused) 
-    { 
-	paused = false; 
-	S_ResumeSound (); 
-    } 
-	
 
-    if (skill > sk_nightmare) 
+    if (paused)
+    {
+	paused = false;
+	S_ResumeSound ();
+    }
+
+    /*
+    // Note: This commented-out block of code was added at some point
+    // between the DOS version(s) and the Doom source release. It isn't
+    // found in disassemblies of the DOS version and causes IDCLEV and
+    // the -warp command line parameter to behave differently.
+    // This is left here for posterity.
+
+    if (skill > sk_nightmare)
 	skill = sk_nightmare;
-
 
     // This was quite messy with SPECIAL and commented parts.
     // Supposedly hacks to make the latest edition work.
     // It might not work properly.
     if (episode < 1)
-      episode = 1; 
+      episode = 1;
 
     if ( gamemode == retail )
     {
@@ -1726,68 +1787,66 @@ G_InitNew
     }
     else if ( gamemode == shareware )
     {
-      if (episode > 1) 
+      if (episode > 1)
 	   episode = 1;	// only start episode 1 on shareware
-    }  
+    }
     else
     {
       if (episode > 3)
 	episode = 3;
     }
-    
+    */
 
-  
-    if (map < 1) 
+    if (map < 1)
 	map = 1;
-    
+
     if ( (map > 9)
 	 && ( gamemode != commercial) )
-      map = 9; 
-		 
-    M_ClearRandom (); 
-	 
+      map = 9;
+
+    M_ClearRandom ();
+
     if (skill == sk_nightmare || respawnparm )
 	respawnmonsters = true;
     else
 	respawnmonsters = false;
-		
+
     if (fastparm || (skill == sk_nightmare && gameskill != sk_nightmare) )
-    { 
-	for (i=S_SARG_RUN1 ; i<=S_SARG_PAIN2 ; i++) 
-	    states[i].tics >>= 1; 
-	mobjinfo[MT_BRUISERSHOT].speed = 20*FRACUNIT; 
-	mobjinfo[MT_HEADSHOT].speed = 20*FRACUNIT; 
-	mobjinfo[MT_TROOPSHOT].speed = 20*FRACUNIT; 
-    } 
-    else if (skill != sk_nightmare && gameskill == sk_nightmare) 
-    { 
-	for (i=S_SARG_RUN1 ; i<=S_SARG_PAIN2 ; i++) 
-	    states[i].tics <<= 1; 
-	mobjinfo[MT_BRUISERSHOT].speed = 15*FRACUNIT; 
-	mobjinfo[MT_HEADSHOT].speed = 10*FRACUNIT; 
-	mobjinfo[MT_TROOPSHOT].speed = 10*FRACUNIT; 
-    } 
-	 
-			 
-    // force players to be initialized upon first level load         
-    for (i=0 ; i<MAXPLAYERS ; i++) 
-	players[i].playerstate = PST_REBORN; 
- 
-    usergame = true;                // will be set false if a demo 
-    paused = false; 
-    demoplayback = false; 
-    automapactive = false; 
-    viewactive = true; 
-    gameepisode = episode; 
-    gamemap = map; 
-    gameskill = skill; 
- 
+    {
+	for (i=S_SARG_RUN1 ; i<=S_SARG_PAIN2 ; i++)
+	    states[i].tics >>= 1;
+	mobjinfo[MT_BRUISERSHOT].speed = 20*FRACUNIT;
+	mobjinfo[MT_HEADSHOT].speed = 20*FRACUNIT;
+	mobjinfo[MT_TROOPSHOT].speed = 20*FRACUNIT;
+    }
+    else if (skill != sk_nightmare && gameskill == sk_nightmare)
+    {
+	for (i=S_SARG_RUN1 ; i<=S_SARG_PAIN2 ; i++)
+	    states[i].tics <<= 1;
+	mobjinfo[MT_BRUISERSHOT].speed = 15*FRACUNIT;
+	mobjinfo[MT_HEADSHOT].speed = 10*FRACUNIT;
+	mobjinfo[MT_TROOPSHOT].speed = 10*FRACUNIT;
+    }
+
+    // force players to be initialized upon first level load
+    for (i=0 ; i<MAXPLAYERS ; i++)
+	players[i].playerstate = PST_REBORN;
+
+    usergame = true;                // will be set false if a demo
+    paused = false;
+    demoplayback = false;
+    automapactive = false;
+    viewactive = true;
+    gameepisode = episode;
+    gamemap = map;
+    gameskill = skill;
+
     viewactive = true;
 
     // Set the sky to use.
     //
-    // Note: This IS broken, but it is how Vanilla Doom behaves.  
-    // See http://doom.wikia.com/wiki/Sky_never_changes_in_Doom_II.
+    // Note: This IS broken, but it is how Vanilla Doom behaves.
+    // See http://doomwiki.org/wiki/Sky_never_changes_in_Doom_II.
     //
     // Because we set the sky here at the start of a game, not at the
     // start of a level, the sky texture never changes unless we
@@ -1805,32 +1864,32 @@ G_InitNew
     }
     else
     {
-        switch (gameepisode) 
-        { 
+        switch (gameepisode)
+        {
           default:
-          case 1: 
-            skytexturename = "SKY1"; 
-            break; 
-          case 2: 
-            skytexturename = "SKY2"; 
-            break; 
-          case 3: 
-            skytexturename = "SKY3"; 
-            break; 
+          case 1:
+            skytexturename = "SKY1";
+            break;
+          case 2:
+            skytexturename = "SKY2";
+            break;
+          case 3:
+            skytexturename = "SKY3";
+            break;
           case 4:        // Special Edition sky
             skytexturename = "SKY4";
             break;
-        } 
+        }
     }
 
     skytexturename = DEH_String(skytexturename);
 
     skytexture = R_TextureNumForName(skytexturename);
 
-    
-    G_DoLoadLevel (); 
-} 
- 
+
+    G_DoLoadLevel ();
+}
+
 
 //
 // DEMO RECORDING 
@@ -1951,20 +2010,22 @@ void G_WriteDemoTiccmd (ticcmd_t* cmd)
  
  
 //
-// G_RecordDemo 
-// 
-void G_RecordDemo (char *name) 
-{ 
-    int             i; 
-    int				maxsize;
-	
-    usergame = false; 
-    demoname = Z_Malloc(strlen(name) + 5, PU_STATIC, NULL);
+// G_RecordDemo
+//
+void G_RecordDemo (char *name)
+{
+    size_t demoname_size;
+    int i;
+    int maxsize;
+
+    usergame = false;
+    demoname_size = strlen(name) + 5;
+    demoname = Z_Malloc(demoname_size, PU_STATIC, NULL);
     // [cndoom] only append .lmp if it's missing, to match new -playdemo behaviour
-    if (!strcasecmp(name + strlen(name) - 4, ".lmp"))
-	strcpy(demoname, name);
+    if (!M_StringEndsWith(name, ".lmp"))
+        M_StringCopy(demoname, name, demoname_size);
     else
-    sprintf(demoname, "%s.lmp", name);
+        M_snprintf(demoname, demoname_size, "%s.lmp", name);
     maxsize = 0x20000;
 
     //!
@@ -1985,8 +2046,26 @@ void G_RecordDemo (char *name)
 	
     demorecording = true; 
 } 
- 
- 
+
+// Get the demo version code appropriate for the version set in gameversion.
+int G_VanillaVersionCode(void)
+{
+    switch (gameversion)
+    {
+        case exe_doom_1_2:
+            I_Error("Doom 1.2 does not have a version code!");
+        case exe_doom_1_666:
+            return 106;
+        case exe_doom_1_7:
+            return 107;
+        case exe_doom_1_8:
+            return 108;
+        case exe_doom_1_9:
+        default:  // All other versions are variants on v1.9:
+            return 109;
+    }
+}
+
 void G_BeginRecording (void) 
 { 
     int             i; 
@@ -2013,7 +2092,7 @@ void G_BeginRecording (void)
     }
     else
     {
-        *demo_p++ = DOOM_VERSION;
+        *demo_p++ = G_VanillaVersionCode();
     }
 
     *demo_p++ = gameskill; 
@@ -2078,7 +2157,8 @@ static char *DemoVersionDescription(int version)
     }
     else
     {
-        sprintf(resultbuf, "%i.%i (unknown)", version / 100, version % 100);
+        M_snprintf(resultbuf, sizeof(resultbuf),
+                   "%i.%i (unknown)", version / 100, version % 100);
         return resultbuf;
     }
 }
@@ -2131,7 +2211,7 @@ void G_DoPlayDemo (void)
     }
     demoversion = *demo_p++;
 
-    if (demoversion == DOOM_VERSION)
+    if (demoversion == G_VanillaVersionCode())
     {
         longtics = false;
     }
@@ -2150,7 +2230,7 @@ void G_DoPlayDemo (void)
                         "    See: http://doomworld.com/files/patches.shtml\n"
                         "    This appears to be %s.";
 
-        I_Error(message, demoversion, DOOM_VERSION,
+        I_Error(message, demoversion, G_VanillaVersionCode(),
                          DemoVersionDescription(demoversion));
     }
     

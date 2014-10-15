@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*-
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 // Copyright(C) 2006 Ben Ryves 2006
 //
 // This program is free software; you can redistribute it and/or
@@ -14,11 +12,6 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
 //
 // mus2mid.c - Ben Ryves 2006 - http://benryves.com - benryves@benryves.com
 // Use to convert a MUS file into a single track, type 0 MIDI file.
@@ -390,7 +383,7 @@ static int AllocateMIDIChannel(void)
 // Given a MUS channel number, get the MIDI channel number to use
 // in the outputted file.
 
-static int GetMIDIChannel(int mus_channel)
+static int GetMIDIChannel(int mus_channel, MEMFILE *midioutput)
 {
     // Find the MIDI channel to use for this MUS channel.
     // MUS channel 15 is the percusssion channel.
@@ -407,6 +400,12 @@ static int GetMIDIChannel(int mus_channel)
         if (channel_map[mus_channel] == -1)
         {
             channel_map[mus_channel] = AllocateMIDIChannel();
+
+            // First time using the channel, send an "all notes off"
+            // event. This fixes "The D_DDTBLU disease" described here:
+            // http://www.doomworld.com/vb/source-ports/66802-the
+            WriteChangeController_Valueless(channel_map[mus_channel], 0x7b,
+                                            midioutput);
         }
 
         return channel_map[mus_channel];
@@ -521,7 +520,7 @@ boolean mus2mid(MEMFILE *musinput, MEMFILE *midioutput)
                 return true;
             }
 
-            channel = GetMIDIChannel(eventdescriptor & 0x0F);
+            channel = GetMIDIChannel(eventdescriptor & 0x0F, midioutput);
             event = eventdescriptor & 0x70;
 
             switch (event)

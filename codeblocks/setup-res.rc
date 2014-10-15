@@ -1,24 +1,26 @@
 1 ICON "../data/setup.ico"
 
-CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "setup-manifest.xml"
-
 1 VERSIONINFO
-PRODUCTVERSION 1,99,0,0
-FILEVERSION 1,99,0,0
+PRODUCTVERSION 2,0,0,0
+FILEVERSION 2,0,0,0
 FILETYPE 1
 {
  BLOCK "StringFileInfo"
  {
   BLOCK "040904E4"
   {
-   VALUE "FileVersion", "1.99.0"
-   VALUE "FileDescription", "Chocolate-Doom Setup"
+   VALUE "FileVersion", "2.0.0"
+   VALUE "FileDescription", "Chocolate Doom Setup"
    VALUE "InternalName", "chocolate-setup"
-   VALUE "CompanyName", "fraggle@gmail.com"
+   VALUE "CompanyName", "Chocolate Doom"
    VALUE "LegalCopyright", "GNU General Public License"
-   VALUE "ProductName", "Chocolate-Doom Setup"
-   VALUE "ProductVersion", "1.99.0"
+   VALUE "ProductName", "Chocolate Doom Setup"
+   VALUE "ProductVersion", "2.0.0"
   }
+ }
+ BLOCK "VarFileInfo"
+ {
+  VALUE "Translation", 0x409, 1252
  }
 }
 

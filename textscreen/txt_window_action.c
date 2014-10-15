@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2006 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -12,11 +10,6 @@
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
 //
 
 #include <stdlib.h>
@@ -35,7 +28,7 @@ static void TXT_WindowActionSizeCalc(TXT_UNCAST_ARG(action))
     TXT_CAST_ARG(txt_window_action_t, action);
     char buf[10];
 
-    TXT_GetKeyDescription(action->key, buf);
+    TXT_GetKeyDescription(action->key, buf, sizeof(buf));
 
     // Width is label length, plus key description length, plus '='
     // and two surrounding spaces.
@@ -49,7 +42,7 @@ static void TXT_WindowActionDrawer(TXT_UNCAST_ARG(action))
     TXT_CAST_ARG(txt_window_action_t, action);
     char buf[10];
 
-    TXT_GetKeyDescription(action->key, buf);
+    TXT_GetKeyDescription(action->key, buf, sizeof(buf));
 
     if (TXT_HoveringOverWidget(action))
     {

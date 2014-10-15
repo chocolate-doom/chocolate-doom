@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,14 +12,8 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:  Head up display
 //
-//-----------------------------------------------------------------------------
 
 #ifndef __HU_STUFF_H__
 #define __HU_STUFF_H__
@@ -39,6 +31,7 @@
 #define HU_FONTSIZE     (HU_FONTEND - HU_FONTSTART + 1)	
 
 #define HU_BROADCAST    9       // haleyjd [STRIFE] Changed 5 -> 9
+#define HU_CHANGENAME   10      // haleyjd [STRIFE] Special command
 
 #define HU_MSGX         0
 #define HU_MSGY         (SHORT(hu_font[0]->height) + 1) // [STRIFE]: DOOM bug fix
@@ -63,7 +56,7 @@ char HU_dequeueChatChar(void);
 void HU_Erase(void);
 
 extern char *chat_macros[10];
-extern char pnameprefixes[8][16];   // villsa [STRIFE]
+extern char player_names[8][16];   // villsa [STRIFE]
 
 // haleyjd [STRIFE] externalized:
 extern char *mapnames[];

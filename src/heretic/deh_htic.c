@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*-
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,16 +11,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 //
 // Top-level dehacked definitions for Heretic dehacked (HHE).
 //
-//-----------------------------------------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -136,6 +127,24 @@ void DEH_HereticInit(void)
     {
         states[S_PLAY_FDTH18].nextstate = S_NULL;
     }
+}
+
+int DEH_MapHereticThingType(int type)
+{
+    // Heretic 1.0 had an extra entry in the mobjinfo table that was removed
+    // in later versions. This has been added back into the table for
+    // compatibility. However, it also means that if we're loading a patch
+    // for a later version, we need to translate to the index used internally.
+
+    if (deh_hhe_version > deh_hhe_1_0)
+    {
+        if (type >= MT_PHOENIXFX_REMOVED)
+        {
+            ++type;
+        }
+    }
+
+    return type;
 }
 
 int DEH_MapHereticFrameNumber(int frame)

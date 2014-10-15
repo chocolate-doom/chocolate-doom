@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,17 +12,11 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //	Enemy thinking, AI.
 //	Action Pointer Functions
 //	that are associated with states/frames. 
 //
-//-----------------------------------------------------------------------------
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -32,6 +24,7 @@
 #include "m_random.h"
 #include "i_system.h"
 #include "doomdef.h"
+#include "m_misc.h"
 #include "p_local.h"
 #include "s_sound.h"
 #include "g_game.h"
@@ -2340,7 +2333,7 @@ void A_HideZombie(mobj_t* actor)
     line_t junk;
 
     junk.tag = 999;
-    EV_DoDoor(&junk, blazeClose);
+    EV_DoDoor(&junk, vld_blazeClose);
 
     if(actor->target && actor->target->player)
         P_NoiseAlert(actor->target, actor); // inlined in asm
@@ -2358,7 +2351,7 @@ void A_MerchantPain(mobj_t* actor)
     line_t junk;
 
     junk.tag = 999;
-    EV_DoDoor(&junk, shopClose);
+    EV_DoDoor(&junk, vld_shopClose);
 
     if(actor->target && actor->target->player)
         P_NoiseAlert(actor->target, actor); // inlined in asm
@@ -2706,7 +2699,7 @@ void A_QuestMsg(mobj_t* actor)
 
     // get name
     name = DEH_String(mobjinfo[(MT_TOKEN_QUEST1 - 1) + actor->info->speed].name);
-    strcpy(pmsgbuffer, name);   // inlined in asm
+    M_StringCopy(pmsgbuffer, name, sizeof(pmsgbuffer));   // inlined in asm
 
     // give quest and display message to players
     for(i = 0; i < MAXPLAYERS; i++)
@@ -3025,7 +3018,7 @@ void A_BossDeath (mobj_t* actor)
             GiveVoiceObjective("VOC87", "LOG87", 0);
         }
         junk.tag = 222;         // Open the exit door again;
-        EV_DoDoor(&junk, open); // Note this is NOT the Loremaster door...
+        EV_DoDoor(&junk, vld_open); // Note this is NOT the Loremaster door...
         break;
 
     case MT_SPECTRE_D:

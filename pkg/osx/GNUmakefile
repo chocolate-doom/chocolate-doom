@@ -6,6 +6,8 @@
 
 include ../config.make
 
+DOC_FILES += README.Strife NOT-BUGS
+
 # Build so that the package will work on older versions.
 
 export MACOSX_DEPLOYMENT_TARGET=10.4
@@ -90,6 +92,7 @@ $(STAGING_DIR): launcher $(TOPLEVEL_DOCS)
 	$(STRIP) "$(APP_BIN_DIR)/$(PROGRAM_PREFIX)setup"
 
 	$(TOPLEVEL)/man/simplecpp -DPRECOMPILED -D__MACOSX__  \
+	                -DDOOM -DHERETIC -DHEXEN -DSTRIFE     \
 	             < $(TOPLEVEL)/man/INSTALL.template       \
 	             > "$(APP_DOC_DIR)/INSTALL"
 
@@ -98,6 +101,10 @@ $(STAGING_DIR): launcher $(TOPLEVEL_DOCS)
 	mkdir -p "$(APP_BIN_DIR)/man/man5" "$(APP_BIN_DIR)/man/man6"
 	cp $(TOPLEVEL)/man/*.5 "$(APP_BIN_DIR)/man/man5"
 	cp $(TOPLEVEL)/man/*.6 "$(APP_BIN_DIR)/man/man6"
+	for game in doom heretic hexen strife; do       \
+		cp $(TOPLEVEL)/man/CMDLINE.$$game       \
+		   "$(APP_DOC_DIR)/CMDLINE-$$game";     \
+	done
 	cp disk/dir.DS_Store $(STAGING_DIR)/.DS_Store
 	cp disk/background.png $(STAGING_DIR)/background.png
 

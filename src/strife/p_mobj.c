@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,15 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //	Moving object handling. Spawn functions.
 //
-//-----------------------------------------------------------------------------
 
 #include <stdio.h>
 
@@ -709,13 +701,22 @@ void P_RemoveMobj (mobj_t* mobj)
     {
         itemrespawnque[iquehead] = mobj->spawnpoint;
         itemrespawntime[iquehead] = leveltime + 30*TICRATE; // [STRIFE]
-        iquehead = (iquehead+1)&(ITEMQUESIZE-1);
 
-        // [STRIFE] FIXME/TODO: - haleyjd 20110629
+        // [STRIFE] haleyjd 20130915
         // -random parameter affects the behavior of respawning items here.
-        // However, this requires addition of randomparm to the transmission
-        // of variables during netgame initialization, and the netcode is not
-        // functional yet - so, I haven't added this yet!
+        if(randomparm && iquehead != iquetail)
+        {
+            short type    = itemrespawnque[iquehead].type;
+            short options = itemrespawnque[iquehead].options;
+
+            // swap the type and options of iquehead and iquetail
+            itemrespawnque[iquehead].type    = itemrespawnque[iquetail].type;
+            itemrespawnque[iquehead].options = itemrespawnque[iquetail].options;
+            itemrespawnque[iquetail].type    = type;
+            itemrespawnque[iquetail].options = options;
+        }
+
+        iquehead = (iquehead+1)&(ITEMQUESIZE-1);
 
         // lose one off the end?
         if (iquehead == iquetail)

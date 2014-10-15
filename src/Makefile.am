@@ -1,14 +1,22 @@
 
-SUBDIRS=doom heretic hexen strife setup
+SUBDIRS = doom heretic hexen strife setup
 
-gamesdir = $(prefix)/games
+execgamesdir = ${exec_prefix}/games
 
-games_PROGRAMS = @PROGRAM_PREFIX@doom     \
-                 @PROGRAM_PREFIX@heretic  \
-                 @PROGRAM_PREFIX@hexen    \
-                 @PROGRAM_PREFIX@strife   \
-                 @PROGRAM_PREFIX@server   \
-                 @PROGRAM_PREFIX@setup
+execgames_PROGRAMS = @PROGRAM_PREFIX@doom     \
+                     @PROGRAM_PREFIX@heretic  \
+                     @PROGRAM_PREFIX@hexen    \
+                     @PROGRAM_PREFIX@strife   \
+                     @PROGRAM_PREFIX@server
+
+noinst_PROGRAMS = @PROGRAM_PREFIX@setup
+
+SETUP_BINARIES = @PROGRAM_PREFIX@doom-setup$(EXEEXT)    \
+                 @PROGRAM_PREFIX@heretic-setup$(EXEEXT) \
+                 @PROGRAM_PREFIX@hexen-setup$(EXEEXT)   \
+                 @PROGRAM_PREFIX@strife-setup$(EXEEXT)
+
+execgames_SCRIPTS = $(SETUP_BINARIES)
 
 AM_CFLAGS = -I$(top_builddir)/textscreen            \
             -I$(top_builddir)/opl                   \
@@ -176,6 +184,9 @@ endif
 
 @PROGRAM_PREFIX@strife_LDADD = strife/libstrife.a $(EXTRA_LIBS)
 
+$(SETUP_BINARIES): @PROGRAM_PREFIX@setup$(EXEEXT)
+	cp $< $@
+
 # Source files needed for chocolate-setup:
 
 SETUP_FILES=                               \
@@ -203,19 +214,35 @@ endif
 
 EXTRA_DIST =                        \
         icon.c                      \
-        doom-screensaver.desktop.in
+        doom-screensaver.desktop.in \
+        manifest.xml
 
 appdir = $(prefix)/share/applications
-app_DATA = @PROGRAM_PREFIX@doom.desktop
+app_DATA =                                 \
+           @PROGRAM_PREFIX@doom.desktop    \
+           @PROGRAM_PREFIX@heretic.desktop \
+           @PROGRAM_PREFIX@hexen.desktop   \
+           @PROGRAM_PREFIX@strife.desktop
 
 @PROGRAM_PREFIX@doom.desktop : doom.desktop
 	cp doom.desktop $@
+
+@PROGRAM_PREFIX@heretic.desktop : heretic.desktop
+	cp heretic.desktop $@
+
+@PROGRAM_PREFIX@hexen.desktop : hexen.desktop
+	cp hexen.desktop $@
+
+@PROGRAM_PREFIX@strife.desktop : strife.desktop
+	cp strife.desktop $@
 
 screensaverdir = $(prefix)/share/applications/screensavers
 screensaver_DATA = @PROGRAM_PREFIX@doom-screensaver.desktop
 
 @PROGRAM_PREFIX@doom-screensaver.desktop: doom-screensaver.desktop
 	cp doom-screensaver.desktop $@
+
+CLEANFILES = $(execgames_SCRIPTS) $(app_DATA) $(screensaver_DATA)
 
 .rc.o:
 	$(WINDRES) $< -o $@

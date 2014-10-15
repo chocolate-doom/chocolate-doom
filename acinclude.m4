@@ -9,7 +9,7 @@ dnl SDL.  Tries to build the simplest possible program, and if it
 dnl fails, calls the given block.
 
 AC_DEFUN([AC_CHECK_SDL_BREAKAGE], [
-    AC_LINK_IFELSE(AC_LANG_PROGRAM([], []), [], [
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([[ ]], [[ ]])], [], [
         $1
     ])
 ])

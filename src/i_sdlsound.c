@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005-8 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 // Copyright(C) 2008 David Flater
 //
 // This program is free software; you can redistribute it and/or
@@ -15,15 +13,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //	System interface for sound.
 //
-//-----------------------------------------------------------------------------
 
 #include "config.h"
 
@@ -43,6 +35,7 @@
 #include "i_system.h"
 #include "i_swap.h"
 #include "m_argv.h"
+#include "m_misc.h"
 #include "w_wad.h"
 #include "z_zone.h"
 
@@ -52,7 +45,6 @@
 
 #define LOW_PASS_FILTER
 //#define DEBUG_DUMP_WAVS
-#define MAX_SOUND_SLICE_TIME 70 /* ms */
 #define NUM_CHANNELS 16
 
 typedef struct allocated_sound_s allocated_sound_t;
@@ -89,6 +81,14 @@ static allocated_sound_t *allocated_sounds_tail = NULL;
 static int allocated_sounds_size = 0;
 
 int use_libsamplerate = 0;
+
+// Scale factor used when converting libsamplerate floating point numbers
+// to integers. Too high means the sounds can clip; too low means they
+// will be too quiet. This is an amount that should avoid clipping most
+// of the time: with all the Doom IWAD sound effects, at least. If a PWAD
+// is used, clipping might occur.
+
+float libsamplerate_scale = 0.65f;
 
 // Hook a sound into the linked list at the head.
 
@@ -410,7 +410,8 @@ static boolean ExpandSoundData_SRC(sfxinfo_t *sfxinfo,
         // using INT16_MAX as the multiplier are not all that bad, but
         // artifacts are noticeable during the loudest parts.
 
-        float   cvtval_f = src_data.data_out[i] * 22265;
+        float cvtval_f =
+            src_data.data_out[i] * libsamplerate_scale * INT16_MAX;
         int32_t cvtval_i = cvtval_f + (cvtval_f < 0 ? -0.5 : 0.5);
 
         // Asymmetrical sound worries me, so we won't use -32768.
@@ -698,7 +699,8 @@ static boolean CacheSFX(sfxinfo_t *sfxinfo)
     {
         char filename[16];
 
-        sprintf(filename, "%s.wav", DEH_String(S_sfx[sound].name));
+        M_snprintf(filename, sizeof(filename), "%s.wav",
+                   DEH_String(S_sfx[sound].name));
         WriteWAV(filename, sound_chunks[sound].abuf,
                  sound_chunks[sound].alen, mixer_freq);
     }
@@ -711,7 +713,7 @@ static boolean CacheSFX(sfxinfo_t *sfxinfo)
     return true;
 }
 
-static void GetSfxLumpName(sfxinfo_t *sfx, char *buf)
+static void GetSfxLumpName(sfxinfo_t *sfx, char *buf, size_t buf_len)
 {
     // Linked sfx lumps? Get the lump number for the sound linked to.
 
@@ -725,11 +727,11 @@ static void GetSfxLumpName(sfxinfo_t *sfx, char *buf)
 
     if (use_sfx_prefix)
     {
-        sprintf(buf, "ds%s", DEH_String(sfx->name));
+        M_snprintf(buf, buf_len, "ds%s", DEH_String(sfx->name));
     }
     else
     {
-        strcpy(buf, DEH_String(sfx->name));
+        M_StringCopy(buf, DEH_String(sfx->name), buf_len);
     }
 }
 
@@ -759,7 +761,7 @@ static void I_SDL_PrecacheSounds(sfxinfo_t *sounds, int num_sounds)
             fflush(stdout);
         }
 
-        GetSfxLumpName(&sounds[i], namebuf);
+        GetSfxLumpName(&sounds[i], namebuf, sizeof(namebuf));
 
         sounds[i].lumpnum = W_CheckNumForName(namebuf);
 
@@ -838,7 +840,7 @@ static int I_SDL_GetSfxLumpNum(sfxinfo_t *sfx)
 {
     char namebuf[9];
 
-    GetSfxLumpName(sfx, namebuf);
+    GetSfxLumpName(sfx, namebuf, sizeof(namebuf));
 
     return W_GetNumForName(namebuf);
 }
@@ -847,7 +849,7 @@ static void I_SDL_UpdateSoundParams(int handle, int vol, int sep)
 {
     int left, right;
 
-    if (!sound_initialized)
+    if (!sound_initialized || handle < 0 || handle >= NUM_CHANNELS)
     {
         return;
     }
@@ -890,7 +892,7 @@ static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
 {
     allocated_sound_t *snd;
 
-    if (!sound_initialized)
+    if (!sound_initialized || channel < 0 || channel >= NUM_CHANNELS)
     {
         return -1;
     }
@@ -922,9 +924,9 @@ static int I_SDL_StartSound(sfxinfo_t *sfxinfo, int channel, int vol, int sep)
     return channel;
 }
 
-static void I_SDL_StopSound (int handle)
+static void I_SDL_StopSound(int handle)
 {
-    if (!sound_initialized)
+    if (!sound_initialized || handle < 0 || handle >= NUM_CHANNELS)
     {
         return;
     }
@@ -940,7 +942,7 @@ static void I_SDL_StopSound (int handle)
 
 static boolean I_SDL_SoundIsPlaying(int handle)
 {
-    if (handle < 0)
+    if (!sound_initialized || handle < 0 || handle >= NUM_CHANNELS)
     {
         return false;
     }
@@ -983,7 +985,7 @@ static void I_SDL_ShutdownSound(void)
     sound_initialized = false;
 }
 
-// Calculate slice size, based on MAX_SOUND_SLICE_TIME.
+// Calculate slice size, based on snd_maxslicetime_ms.
 // The result must be a power of two.
 
 static int GetSliceSize(void)
@@ -991,7 +993,7 @@ static int GetSliceSize(void)
     int limit;
     int n;
 
-    limit = (snd_samplerate * MAX_SOUND_SLICE_TIME) / 1000;
+    limit = (snd_samplerate * snd_maxslicetime_ms) / 1000;
 
     // Try all powers of two, not exceeding the limit.
 

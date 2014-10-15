@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2009 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,17 +11,11 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //     OPL timer thread.
 //     Once started using OPL_Timer_StartThread, the thread sleeps,
 //     waking up to invoke callbacks set using OPL_Timer_SetCallback.
 //
-//-----------------------------------------------------------------------------
 
 #include "SDL.h"
 
@@ -39,16 +31,16 @@ typedef enum
 
 static SDL_Thread *timer_thread = NULL;
 static thread_state_t timer_thread_state;
-static int current_time;
+static uint64_t current_time;
 
 // If non-zero, callbacks are currently paused.
 
 static int opl_timer_paused;
 
-// Offset in milliseconds to adjust time due to the fact that playback
+// Offset in microseconds to adjust time due to the fact that playback
 // was paused.
 
-static unsigned int pause_offset = 0;
+static uint64_t pause_offset = 0;
 
 // Queue of callbacks waiting to be invoked.
 // The callback queue mutex is held while the callback queue structure
@@ -66,7 +58,7 @@ static SDL_mutex *timer_mutex;
 // to be invoked.  Otherwise, next_time is set to the time when the
 // timer thread must wake up again to check.
 
-static int CallbackWaiting(unsigned int *next_time)
+static int CallbackWaiting(uint64_t *next_time)
 {
     // If paused, just wait in 50ms increments until unpaused.
     // Update pause_offset so after we unpause, the callback 
@@ -74,8 +66,8 @@ static int CallbackWaiting(unsigned int *next_time)
 
     if (opl_timer_paused)
     {
-        *next_time = current_time + 50;
-        pause_offset += 50;
+        *next_time = current_time + 50 * OPL_MS;
+        pause_offset += 50 * OPL_MS;
         return 0;
     }
 
@@ -84,7 +76,7 @@ static int CallbackWaiting(unsigned int *next_time)
 
     if (OPL_Queue_IsEmpty(callback_queue))
     {
-        *next_time = current_time + 50;
+        *next_time = current_time + 50 * OPL_MS;
         return 0;
     }
 
@@ -97,11 +89,11 @@ static int CallbackWaiting(unsigned int *next_time)
     return *next_time <= current_time;
 }
 
-static unsigned int GetNextTime(void)
+static uint64_t GetNextTime(void)
 {
     opl_callback_t callback;
     void *callback_data;
-    unsigned int next_time;
+    uint64_t next_time;
     int have_callback;
 
     // Keep running through callbacks until there are none ready to
@@ -139,8 +131,8 @@ static unsigned int GetNextTime(void)
 
 static int ThreadFunction(void *unused)
 {
-    unsigned int next_time;
-    unsigned int now;
+    uint64_t next_time;
+    uint64_t now;
 
     // Keep running until OPL_Timer_StopThread is called.
 
@@ -150,11 +142,11 @@ static int ThreadFunction(void *unused)
         // wait until that time.
 
         next_time = GetNextTime();
-        now = SDL_GetTicks();
+        now = SDL_GetTicks() * OPL_MS;
 
         if (next_time > now)
         {
-            SDL_Delay(next_time - now);
+            SDL_Delay((next_time - now) / OPL_MS);
         }
 
         // Update the current time.
@@ -217,11 +209,11 @@ void OPL_Timer_StopThread(void)
     FreeResources();
 }
 
-void OPL_Timer_SetCallback(unsigned int ms, opl_callback_t callback, void *data)
+void OPL_Timer_SetCallback(uint64_t us, opl_callback_t callback, void *data)
 {
     SDL_LockMutex(callback_queue_mutex);
     OPL_Queue_Push(callback_queue, callback, data,
-                   current_time + ms - pause_offset);
+                   current_time + us - pause_offset);
     SDL_UnlockMutex(callback_queue_mutex);
 }
 
@@ -229,6 +221,13 @@ void OPL_Timer_ClearCallbacks(void)
 {
     SDL_LockMutex(callback_queue_mutex);
     OPL_Queue_Clear(callback_queue);
+    SDL_UnlockMutex(callback_queue_mutex);
+}
+
+void OPL_Timer_AdjustCallbacks(float factor)
+{
+    SDL_LockMutex(callback_queue_mutex);
+    OPL_Queue_AdjustCallbacks(callback_queue, current_time, factor);
     SDL_UnlockMutex(callback_queue_mutex);
 }
 

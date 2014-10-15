@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,15 +12,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //	Archiving: SaveGame I/O.
 //
-//-----------------------------------------------------------------------------
 
 
 #include <stdio.h>
@@ -37,6 +29,8 @@
 
 // State.
 #include "doomstat.h"
+#include "g_game.h"
+#include "m_misc.h"
 #include "r_state.h"
 
 #define SAVEGAME_EOF 0x1d
@@ -56,10 +50,8 @@ char *P_TempSaveGameFile(void)
 
     if (filename == NULL)
     {
-        filename = malloc(strlen(savegamedir) + 32);
+        filename = M_StringJoin(savegamedir, "temp.dsg", NULL);
     }
-
-    sprintf(filename, "%stemp.dsg", savegamedir);
 
     return filename;
 }
@@ -69,16 +61,17 @@ char *P_TempSaveGameFile(void)
 char *P_SaveGameFile(int slot)
 {
     static char *filename = NULL;
+    static size_t filename_size = 0;
     char basename[32];
 
     if (filename == NULL)
     {
-        filename = malloc(strlen(savegamedir) + 32);
+        filename_size = strlen(savegamedir) + 32;
+        filename = malloc(filename_size);
     }
 
     DEH_snprintf(basename, 32, SAVEGAMENAME "%d.dsg", slot);
-
-    sprintf(filename, "%s%s", savegamedir, basename);
+    M_snprintf(filename, filename_size, "%s%s", savegamedir, basename);
 
     return filename;
 }
@@ -1361,8 +1354,8 @@ void P_WriteSaveGameHeader(char *description)
     for (; i<SAVESTRINGSIZE; ++i)
         saveg_write8(0);
 
-    memset (name,0,sizeof(name)); 
-    sprintf (name,"version %i",DOOM_VERSION); 
+    memset(name, 0, sizeof(name));
+    M_snprintf(name, sizeof(name), "version %i", G_VanillaVersionCode());
 
     for (i=0; i<VERSIONSIZE; ++i)
         saveg_write8(name[i]);
@@ -1398,11 +1391,11 @@ boolean P_ReadSaveGameHeader(void)
     for (i=0; i<VERSIONSIZE; ++i)
         read_vcheck[i] = saveg_read8();
 
-    memset (vcheck,0,sizeof(vcheck)); 
-    sprintf (vcheck,"version %i",DOOM_VERSION); 
+    memset(vcheck, 0, sizeof(vcheck));
+    M_snprintf(vcheck, sizeof(vcheck), "version %i", G_VanillaVersionCode());
     if (strcmp(read_vcheck, vcheck) != 0)
 	return false;				// bad version 
-			 
+
     gameskill = saveg_read8();
     gameepisode = saveg_read8();
     gamemap = saveg_read8();

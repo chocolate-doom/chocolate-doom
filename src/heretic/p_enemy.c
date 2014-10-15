@@ -1,9 +1,7 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
 // Copyright(C) 1993-2008 Raven Software
-// Copyright(C) 2008 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -15,12 +13,6 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 
 // P_enemy.c
 
@@ -435,7 +427,10 @@ void P_NewChaseDir(mobj_t * actor)
     }
     else
     {
-        for (tdir = DI_SOUTHEAST; tdir != DI_EAST-1; tdir--)
+        // Iterate over all movedirs.
+        tdir = DI_SOUTHEAST;
+
+        for (;;)
         {
             if (tdir != turnaround)
             {
@@ -443,6 +438,13 @@ void P_NewChaseDir(mobj_t * actor)
                 if (P_TryWalk(actor))
                     return;
             }
+
+            if (tdir == DI_EAST)
+            {
+                break;
+            }
+
+            --tdir;
         }
     }
 
@@ -2567,9 +2569,17 @@ void A_SkullPop(mobj_t * actor)
     mo->player = player;
     mo->health = actor->health;
     mo->angle = actor->angle;
-    player->mo = mo;
-    player->lookdir = 0;
-    player->damagecount = 32;
+
+    // fraggle: This check wasn't originally here in the Vanilla Heretic
+    // source, causing crashes if the player respawns before this
+    // function is called.
+
+    if (player != NULL)
+    {
+        player->mo = mo;
+        player->lookdir = 0;
+        player->damagecount = 32;
+    }
 }
 
 //----------------------------------------------------------------------------

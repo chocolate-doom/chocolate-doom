@@ -1,7 +1,5 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
-// Copyright(C) 2005,2006 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -13,16 +11,9 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
-//-----------------------------------------------------------------------------
 //
 // Text mode emulation in SDL
 //
-//-----------------------------------------------------------------------------
 
 #include "SDL.h"
 
@@ -58,6 +49,7 @@ typedef struct
 #define BLINK_PERIOD 250
 
 static SDL_Surface *screen;
+static SDL_Surface *screenbuffer;
 static unsigned char *screendata;
 static int key_mapping = 1;
 
@@ -122,6 +114,34 @@ static SDL_Color ega_colors[] =
 
 #endif
 
+#ifdef _WIN32
+
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+
+// Examine system DPI settings to determine whether to use the large font.
+
+static int Win32_UseLargeFont(void)
+{
+    HDC hdc = GetDC(NULL);
+    int dpix;
+
+    if (!hdc)
+    {
+        return 0;
+    }
+
+    dpix = GetDeviceCaps(hdc, LOGPIXELSX);
+    ReleaseDC(NULL, hdc);
+
+    // 144 is the DPI when using "150%" scaling. If the user has this set
+    // then consider this an appropriate threshold for using the large font.
+
+    return dpix >= 144;
+}
+
+#endif
+
 static txt_font_t *FontForName(char *name)
 {
     if (!strcmp(name, "small"))
@@ -151,9 +171,8 @@ static txt_font_t *FontForName(char *name)
 
 static void ChooseFont(void)
 {
-    SDL_Rect **modes;
+    const SDL_VideoInfo *info;
     char *env;
-    int i;
 
     // Allow normal selection to be overridden from an environment variable:
 
@@ -169,37 +188,45 @@ static void ChooseFont(void)
         }
     }
 
-    // Check all modes
+    // Get desktop resolution:
 
-    modes = SDL_ListModes(NULL, SDL_FULLSCREEN);
+    info = SDL_GetVideoInfo();
 
     // If in doubt and we can't get a list, always prefer to
     // fall back to the normal font:
 
-    if (modes == NULL || modes == (SDL_Rect **) -1 || *modes == NULL)
+    if (info == NULL)
     {
         font = &main_font;
         return;
     }
 
-    // Scan through the list of modes. If we find no modes that are at
-    // least 640x480 in side, default to the small font. If we find one
-    // mode that is at least 1920x1080, this is a modern high-resolution
-    // display, and we can use the large font.
+    // On tiny low-res screens (eg. palmtops) use the small font.
+    // If the screen resolution is at least 1920x1080, this is
+    // a modern high-resolution display, and we can use the
+    // large font.
 
-    font = &small_font;
-
-    for (i=0; modes[i] != NULL; ++i)
+    if (info->current_w < 640 || info->current_h < 480)
     {
-        if (modes[i]->w >= 1920 && modes[i]->h >= 1080)
-        {
-            font = &large_font;
-            break;
-        }
-        else if (modes[i]->w >= 640 && modes[i]->h >= 480)
-        {
-            font = &main_font;
-        }
+        font = &small_font;
+    }
+#ifdef _WIN32
+    // On Windows we can use the system DPI settings to make a
+    // more educated guess about whether to use the large font.
+
+    else if (Win32_UseLargeFont())
+    {
+        font = &large_font;
+    }
+#else
+    else if (info->current_w >= 1920 && info->current_h >= 1080)
+    {
+        font = &large_font;
+    }
+#endif
+    else
+    {
+        font = &main_font;
     }
 }
 
@@ -211,24 +238,29 @@ static void ChooseFont(void)
 
 int TXT_Init(void)
 {
-    int flags;
-
     if (SDL_InitSubSystem(SDL_INIT_VIDEO) < 0)
     {
         return 0;
     }
 
-    flags = SDL_SWSURFACE | SDL_HWPALETTE | SDL_DOUBLEBUF;
-
     ChooseFont();
 
+    // Always create the screen at the native screen depth (bpp=0);
+    // some systems nowadays don't seem to support true 8-bit palettized
+    // screen modes very well and we end up with screwed up colors.
     screen = SDL_SetVideoMode(TXT_SCREEN_W * font->w,
-                              TXT_SCREEN_H * font->h, 8, flags);
+                              TXT_SCREEN_H * font->h, 0, 0);
 
     if (screen == NULL)
         return 0;
 
-    SDL_SetColors(screen, ega_colors, 0, 16);
+    // Instead, we draw everything into an intermediate 8-bit surface
+    // the same dimensions as the screen. SDL then takes care of all the
+    // 8->32 bit (or whatever depth) color conversions for us.
+    screenbuffer = SDL_CreateRGBSurface(0, TXT_SCREEN_W * font->w,
+                                        TXT_SCREEN_H * font->h,
+                                        8, 0, 0, 0, 0);
+    SDL_SetColors(screenbuffer, ega_colors, 0, 16);
     SDL_EnableUNICODE(1);
 
     screendata = malloc(TXT_SCREEN_W * TXT_SCREEN_H * 2);
@@ -250,6 +282,8 @@ void TXT_Shutdown(void)
 {
     free(screendata);
     screendata = NULL;
+    SDL_FreeSurface(screenbuffer);
+    screenbuffer = NULL;
     SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
@@ -289,8 +323,8 @@ static inline void UpdateCharacter(int x, int y)
     bytes = (font->w + 7) / 8;
     p = &font->data[character * font->h * bytes];
 
-    s = ((unsigned char *) screen->pixels)
-      + (y * font->h * screen->pitch)
+    s = ((unsigned char *) screenbuffer->pixels)
+      + (y * font->h * screenbuffer->pitch)
       + (x * font->w);
 
     for (y1=0; y1<font->h; ++y1)
@@ -322,7 +356,7 @@ static inline void UpdateCharacter(int x, int y)
             ++p;
         }
 
-        s += screen->pitch;
+        s += screenbuffer->pitch;
     }
 }
 
@@ -344,6 +378,7 @@ static int LimitToRange(int val, int min, int max)
 
 void TXT_UpdateScreenArea(int x, int y, int w, int h)
 {
+    SDL_Rect rect;
     int x1, y1;
     int x_end;
     int y_end;
@@ -361,9 +396,13 @@ void TXT_UpdateScreenArea(int x, int y, int w, int h)
         }
     }
 
-    SDL_UpdateRect(screen,
-                   x * font->w, y * font->h,
-                   (x_end - x) * font->w, (y_end - y) * font->h);
+    rect.x = x * font->w;
+    rect.y = y * font->h;
+    rect.w = (x_end - x) * font->w;
+    rect.h = (y_end - y) * font->h;
+
+    SDL_BlitSurface(screenbuffer, &rect, screen, &rect);
+    SDL_UpdateRects(screen, 1, &rect);
 }
 
 void TXT_UpdateScreen(void)
@@ -410,6 +449,7 @@ static int TranslateKey(SDL_keysym *sym)
         case SDLK_F10:         return KEY_F10;
         case SDLK_F11:         return KEY_F11;
         case SDLK_F12:         return KEY_F12;
+        case SDLK_PRINT:       return KEY_PRTSCR;
 
         case SDLK_BACKSPACE:   return KEY_BACKSPACE;
         case SDLK_DELETE:      return KEY_DEL;
@@ -689,6 +729,7 @@ static const char *SpecialKeyName(int key)
         case KEY_PGDN:        return "PGDN";
         case KEY_INS:         return "INS";
         case KEY_DEL:         return "DEL";
+        case KEY_PRTSCR:      return "PRTSC";
                  /*
         case KEYP_0:          return "PAD0";
         case KEYP_1:          return "PAD1";
@@ -714,7 +755,7 @@ static const char *SpecialKeyName(int key)
     }
 }
 
-void TXT_GetKeyDescription(int key, char *buf)
+void TXT_GetKeyDescription(int key, char *buf, size_t buf_len)
 {
     const char *keyname;
 
@@ -722,15 +763,15 @@ void TXT_GetKeyDescription(int key, char *buf)
 
     if (keyname != NULL)
     {
-        strcpy(buf, keyname);
+        TXT_StringCopy(buf, keyname, buf_len);
     }
     else if (isprint(key))
     {
-        sprintf(buf, "%c", toupper(key));
+        TXT_snprintf(buf, buf_len, "%c", toupper(key));
     }
     else
     {
-        sprintf(buf, "??%i", key);
+        TXT_snprintf(buf, buf_len, "??%i", key);
     }
 }
 
@@ -831,5 +872,75 @@ void TXT_SDL_SetEventCallback(TxtSDLEventCallbackFunc callback, void *user_data)
 {
     event_callback = callback;
     event_callback_data = user_data;
+}
+
+// Safe string functions.
+
+void TXT_StringCopy(char *dest, const char *src, size_t dest_len)
+{
+    if (dest_len < 1)
+    {
+        return;
+    }
+
+    dest[dest_len - 1] = '\0';
+    strncpy(dest, src, dest_len - 1);
+}
+
+void TXT_StringConcat(char *dest, const char *src, size_t dest_len)
+{
+    size_t offset;
+
+    offset = strlen(dest);
+    if (offset > dest_len)
+    {
+        offset = dest_len;
+    }
+
+    TXT_StringCopy(dest + offset, src, dest_len - offset);
+}
+
+// On Windows, vsnprintf() is _vsnprintf().
+#ifdef _WIN32
+#if _MSC_VER < 1400 /* not needed for Visual Studio 2008 */
+#define vsnprintf _vsnprintf
+#endif
+#endif
+
+// Safe, portable vsnprintf().
+int TXT_vsnprintf(char *buf, size_t buf_len, const char *s, va_list args)
+{
+    int result;
+
+    if (buf_len < 1)
+    {
+        return 0;
+    }
+
+    // Windows (and other OSes?) has a vsnprintf() that doesn't always
+    // append a trailing \0. So we must do it, and write into a buffer
+    // that is one byte shorter; otherwise this function is unsafe.
+    result = vsnprintf(buf, buf_len, s, args);
+
+    // If truncated, change the final char in the buffer to a \0.
+    // A negative result indicates a truncated buffer on Windows.
+    if (result < 0 || result >= buf_len)
+    {
+        buf[buf_len - 1] = '\0';
+        result = buf_len - 1;
+    }
+
+    return result;
+}
+
+// Safe, portable snprintf().
+int TXT_snprintf(char *buf, size_t buf_len, const char *s, ...)
+{
+    va_list args;
+    int result;
+    va_start(args, s);
+    result = TXT_vsnprintf(buf, buf_len, s, args);
+    va_end(args);
+    return result;
 }
 

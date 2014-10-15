@@ -1,8 +1,6 @@
-// Emacs style mode select   -*- C++ -*- 
-//-----------------------------------------------------------------------------
 //
 // Copyright(C) 1993-1996 Id Software, Inc.
-// Copyright(C) 2005 Simon Howard
+// Copyright(C) 2005-2014 Simon Howard
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -14,16 +12,10 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-// 02111-1307, USA.
-//
 // DESCRIPTION:
 //	DOOM selection menu, options, episode etc.
 //	Sliders and icons. Kinda widget stuff.
 //
-//-----------------------------------------------------------------------------
 
 
 #include <stdlib.h>
@@ -54,6 +46,7 @@
 
 #include "m_argv.h"
 #include "m_controls.h"
+#include "m_misc.h"
 #include "m_saves.h"    // [STRIFE]
 #include "p_saveg.h"
 
@@ -560,7 +553,8 @@ void M_ReadSaveStrings(void)
         handle = fopen(fname, "rb");
         if(handle == NULL)
         {
-            strcpy(savegamestrings[i], EMPTYSTRING);
+            M_StringCopy(savegamestrings[i], EMPTYSTRING,
+                         sizeof(savegamestrings[i]));
             LoadMenu[i].status = 0;
             continue;
         }
@@ -741,7 +735,12 @@ void M_DoSave(int slot)
         sendsave = 1;
         G_WriteSaveName(slot, savegamestrings[slot]);
         M_ClearMenus(0);
-        quickSaveSlot = slot;
+        quickSaveSlot = slot;        
+        // haleyjd 20130922: slight divergence. We clear the destination slot 
+        // of files here, which vanilla did not do. As a result, 1.31 had 
+        // broken save behavior to the point of unusability. fraggle agrees 
+        // this is detrimental enough to be fixed - unconditionally, for now.
+        ClearSlot();        
         FromCurr();
     }
     else
@@ -760,7 +759,7 @@ void M_SaveSelect(int choice)
     quickSaveSlot = choice;
     //saveSlot = choice;
 
-    strcpy(saveOldString,savegamestrings[choice]);
+    M_StringCopy(saveOldString, savegamestrings[choice], sizeof(saveOldString));
     if (!strcmp(savegamestrings[choice],EMPTYSTRING))
         savegamestrings[choice][0] = 0;
     saveCharIndex = strlen(savegamestrings[choice]);
@@ -1669,6 +1668,14 @@ void M_DialogDimMsg(int x, int y, char *str, boolean useyfont)
     while((bl = toupper(message[++i])) != 0); // step to the next character
 }
 
+// These keys evaluate to a "null" key in Vanilla Doom that allows weird
+// jumping in the menus. Preserve this behavior for accuracy.
+
+static boolean IsNullKey(int key)
+{
+    return key == KEY_PAUSE || key == KEY_CAPSLOCK
+        || key == KEY_SCRLCK || key == KEY_NUMLOCK;
+}
 
 //
 // CONTROL PANEL
@@ -1763,6 +1770,11 @@ boolean M_Responder (event_t* ev)
             key = key_menu_back;
             joywait = I_GetTime() + 5;
         }
+        if (joybmenu >= 0 && (ev->data1 & (1 << joybmenu)) != 0)
+        {
+            key = key_menu_activate;
+            joywait = I_GetTime() + 5;
+        }
     }
     else
     {
@@ -1837,7 +1849,8 @@ boolean M_Responder (event_t* ev)
 
         case KEY_ESCAPE:
             saveStringEnter = 0;
-            strcpy(&savegamestrings[quickSaveSlot][0],saveOldString);
+            M_StringCopy(savegamestrings[quickSaveSlot], saveOldString,
+                         sizeof(savegamestrings[quickSaveSlot]));
             break;
 
         case KEY_ENTER:
@@ -1856,7 +1869,17 @@ boolean M_Responder (event_t* ev)
             break;
 
         default:
-            // Entering a character - use the 'ch' value, not the key
+            // This is complicated.
+            // Vanilla has a bug where the shift key is ignored when entering
+            // a savegame name. If vanilla_keyboard_mapping is on, we want
+            // to emulate this bug by using 'data1'. But if it's turned off,
+            // it implies the user doesn't care about Vanilla emulation: just
+            // use the correct 'data2'.
+
+            if (vanilla_keyboard_mapping)
+            {
+                ch = key;
+            }
 
             ch = toupper(ch);
 
@@ -2063,6 +2086,11 @@ boolean M_Responder (event_t* ev)
             G_ScreenShot();
             return true;
         }
+        else if (key != 0 && key == key_menu_screenshot)
+        {
+            G_ScreenShot();
+            return true;
+        }
     }
 
     // Pop-up menu?
@@ -2183,9 +2211,9 @@ boolean M_Responder (event_t* ev)
 
     // Keyboard shortcut?
     // Vanilla Strife has a weird behavior where it jumps to the scroll bars
-    // when the pause key is pressed, so emulate this.
+    // when certain keys are pressed, so emulate this.
 
-    else if (ch != 0 || key == KEY_PAUSE)
+    else if (ch != 0 || IsNullKey(key))
     {
         // Keyboard shortcut?
 
@@ -2258,24 +2286,32 @@ void M_Drawer (void)
             int foundnewline = 0;
 
             for (i = 0; i < strlen(messageString + start); i++)
+            {
                 if (messageString[start + i] == '\n')
                 {
-                    memset(string, 0, sizeof(string));
-                    strncpy(string, messageString + start, i);
+                    M_StringCopy(string, messageString + start,
+                                 sizeof(string));
+                    if (i < sizeof(string))
+                    {
+                        string[i] = '\0';
+                    }
+
                     foundnewline = 1;
                     start += i + 1;
                     break;
                 }
+            }
 
-                if (!foundnewline)
-                {
-                    strcpy(string, messageString + start);
-                    start += strlen(string);
-                }
+            if (!foundnewline)
+            {
+                M_StringCopy(string, messageString + start,
+                             sizeof(string));
+                start += strlen(string);
+            }
 
-                x = 160 - M_StringWidth(string) / 2;
-                M_WriteText(x, y, string);
-                y += SHORT(hu_font[0]->height);
+            x = 160 - M_StringWidth(string) / 2;
+            M_WriteText(x, y, string);
+            y += SHORT(hu_font[0]->height);
         }
 
         return;
