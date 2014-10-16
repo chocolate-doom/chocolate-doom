@@ -17,7 +17,7 @@
 //
 
 #ifndef DEDICATEDSERVER
-#ifdef CompetitionSETUP
+#ifdef CHOCOLATESETUP
 1 ICON "../data/setup.ico"
 #else
 1 ICON "../data/doom.ico"
@@ -33,7 +33,7 @@ BEGIN
 	BEGIN
 		BLOCK "040904E4"
 		BEGIN
-			VALUE "FileVersion", "1.0.0"
+			VALUE "FileVersion", "2.0.3.1"
 			VALUE "FileDescription", "Competition Doom 2.0.3.1"
 			VALUE "InternalName", "cndoom"
 			VALUE "CompanyName", "admin@doom.com.hr"
@@ -50,7 +50,7 @@ END
 
 // GhostlyDeath - Preferebly for codeblocks (if it even uses this RC!)
 #ifdef __MINGW32__
-#ifdef CompetitionSETUP
+#ifdef CHOCOLATESETUP
 // RT_MANIFEST might NOT be defined
 1 24 "../setup/setup-manifest.xml"
 #endif
