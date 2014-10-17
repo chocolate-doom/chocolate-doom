@@ -1066,7 +1066,8 @@ static void LoadHacxDeh(void)
 
     if (gameversion == exe_hacx)
     {
-        if (!DEH_LoadLumpByName("DEHACKED", true, false))
+        if (!M_ParmExists("-noiwaddeh")
+         && !DEH_LoadLumpByName("DEHACKED", true, false))
         {
             I_Error("DEHACKED lump not found.  Please check that this is the "
                     "Hacx v1.2 IWAD.");
@@ -1300,12 +1301,21 @@ void D_DoomMain (void)
     W_CheckCorrectIWAD(doom);
 
     // The Freedoom IWADs have DEHACKED lumps with cosmetic changes to the
-    // in-game messages. Load this.
-    // Old versions of Freedoom (before 2014-09) did not have technically
-    // valid DEHACKED lumps, so ignore errors and just continue if this
-    // is an old IWAD.
-    if (W_CheckNumForName("FREEDOOM") >= 0)
+    // in-game messages. Load this, but allow it to be disabled on the
+    // command line if desired.
+
+    //!
+    // @category mod
+    //
+    // Disable automatic loading of Dehacked patches contained in some
+    // IWAD files.
+
+    if (!M_ParmExists("-noiwaddeh")
+     && W_CheckNumForName("FREEDOOM") >= 0)
     {
+        // Old versions of Freedoom (before 2014-09) did not have technically
+        // valid DEHACKED lumps, so ignore errors and just continue if this
+        // is an old IWAD.
         DEH_LoadLumpByName("DEHACKED", false, true);
     }
 
