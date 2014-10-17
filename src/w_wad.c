@@ -83,6 +83,46 @@ unsigned int W_LumpNameHash(const char *s)
     return result;
 }
 
+// Increase the size of the lumpinfo[] array to the specified size.
+static void ExtendLumpInfo(int newnumlumps)
+{
+    lumpinfo_t *newlumpinfo;
+    unsigned int i;
+
+    newlumpinfo = calloc(newnumlumps, sizeof(lumpinfo_t));
+
+    if (newlumpinfo == NULL)
+    {
+	I_Error ("Couldn't realloc lumpinfo");
+    }
+
+    // Copy over lumpinfo_t structures from the old array. If any of
+    // these lumps have been cached, we need to update the user
+    // pointers to the new location.
+    for (i = 0; i < numlumps && i < newnumlumps; ++i)
+    {
+        memcpy(&newlumpinfo[i], &lumpinfo[i], sizeof(lumpinfo_t));
+
+        if (newlumpinfo[i].cache != NULL)
+        {
+            Z_ChangeUser(newlumpinfo[i].cache, &newlumpinfo[i].cache);
+        }
+
+        // We shouldn't be generating a hash table until after all WADs have
+        // been loaded, but just in case...
+        if (lumpinfo[i].next != NULL)
+        {
+            int nextlumpnum = lumpinfo[i].next - lumpinfo;
+            newlumpinfo[i].next = &newlumpinfo[nextlumpnum];
+        }
+    }
+
+    // All done.
+    free(lumpinfo);
+    lumpinfo = newlumpinfo;
+    numlumps = newnumlumps;
+}
+
 //
 // LUMP BASED ROUTINES.
 //
@@ -106,11 +146,12 @@ wad_file_t *W_AddFile (char *filename)
     int startlump;
     filelump_t *fileinfo;
     filelump_t *filerover;
-    
+    int newnumlumps;
+
     // open the file and add to directory
 
     wad_file = W_OpenFile(filename);
-		
+
     if (wad_file == NULL)
     {
 	printf (" couldn't open %s\n", filename);
@@ -120,8 +161,8 @@ wad_file_t *W_AddFile (char *filename)
     // [crispy] save the file name
     wad_file->path = M_BaseName(filename);
 
-    startlump = numlumps;
-	
+    newnumlumps = numlumps;
+
     if (strcasecmp(filename+strlen(filename)-3 , "wad" ) )
     {
 	// single lump file
@@ -139,7 +180,7 @@ wad_file_t *W_AddFile (char *filename)
         // extension).
 
 	M_ExtractFileBase (filename, fileinfo->name);
-	numlumps++;
+	newnumlumps++;
     }
     else 
     {
@@ -164,19 +205,15 @@ wad_file_t *W_AddFile (char *filename)
 	fileinfo = Z_Malloc(length, PU_STATIC, 0);
 
         W_Read(wad_file, header.infotableofs, fileinfo, length);
-	numlumps += header.numlumps;
+	newnumlumps += header.numlumps;
     }
 
-    // Fill in lumpinfo
-    lumpinfo = realloc(lumpinfo, numlumps * sizeof(lumpinfo_t));
-
-    if (lumpinfo == NULL)
-    {
-	I_Error ("Couldn't realloc lumpinfo");
-    }
+    // Increase size of numlumps array to accomodate the new file.
+    startlump = numlumps;
+    ExtendLumpInfo(newnumlumps);
 
     lump_p = &lumpinfo[startlump];
-	
+
     filerover = fileinfo;
 
     for (i=startlump; i<numlumps; ++i)
@@ -190,7 +227,7 @@ wad_file_t *W_AddFile (char *filename)
         ++lump_p;
         ++filerover;
     }
-	
+
     Z_Free(fileinfo);
 
     if (lumphash != NULL)

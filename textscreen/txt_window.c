@@ -402,6 +402,7 @@ static void MouseButtonPress(txt_window_t *window, int b)
      && y >= widgets->y && y < (signed) (widgets->y + widgets->h))
     {
         TXT_WidgetMousePress(window, x, y, b);
+        return;
     }
 
     // Was one of the action area buttons pressed?
@@ -428,8 +429,7 @@ static void MouseButtonPress(txt_window_t *window, int b)
             // Pass through mouse press.
 
             TXT_WidgetMousePress(widget, x, y, b);
-
-            break;
+            return;
         }
     }
 }
