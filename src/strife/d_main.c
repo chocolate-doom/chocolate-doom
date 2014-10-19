@@ -1390,12 +1390,6 @@ void D_DoomMain (void)
     }
 
 #endif
-            
-#ifdef FEATURE_DEHACKED
-    if(devparm)
-        printf("DEH_Init: Init Dehacked support.\n");
-    DEH_Init();
-#endif
 
     //!
     // @vanilla
@@ -1558,6 +1552,13 @@ void D_DoomMain (void)
         DEH_printf("W_Init: Init WADfiles.\n");
     D_AddFile(iwadfile);
     W_CheckCorrectIWAD(strife);
+
+#ifdef FEATURE_DEHACKED
+    // Load dehacked patches specified on the command line.
+    DEH_ParseCommandLine();
+#endif
+
+    // Load PWAD files.
     modifiedgame = W_ParseCommandLine();
 
     // [STRIFE] serial number output

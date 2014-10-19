@@ -1082,9 +1082,10 @@ static void LoadIwadDeh(void)
 //
 void D_DoomMain (void)
 {
-    int             p;
-    char            file[256];
-    char            demolumpname[9];
+    int p;
+    char file[256];
+    char demolumpname[9];
+    int numiwadlumps;
 
     I_AtExit(D_Endoom, false);
 
@@ -1152,11 +1153,6 @@ void D_DoomMain (void)
         exit(0);
     }
 
-#endif
-            
-#ifdef FEATURE_DEHACKED
-    printf("DEH_Init: Init Dehacked support.\n");
-    DEH_Init();
 #endif
 
     //!
@@ -1299,6 +1295,7 @@ void D_DoomMain (void)
 
     DEH_printf("W_Init: Init WADfiles.\n");
     D_AddFile(iwadfile);
+    numiwadlumps = numlumps;
 
     W_CheckCorrectIWAD(doom);
 
@@ -1344,6 +1341,17 @@ void D_DoomMain (void)
         DEH_AddStringReplacement(PHUSTR_1, "level 33: betray");
     }
 
+#ifdef FEATURE_DEHACKED
+    // Load Dehacked patches specified on the command line with -deh.
+    // Note that there's a very careful and deliberate ordering to how
+    // Dehacked patches are loaded. The order we use is:
+    //  1. IWAD dehacked patches.
+    //  2. Command line dehacked patches specified with -deh.
+    //  3. PWAD dehacked patches in DEHACKED lumps.
+    DEH_ParseCommandLine();
+#endif
+
+    // Load PWAD files.
     modifiedgame = W_ParseCommandLine();
 
     // Debug:
@@ -1406,9 +1414,35 @@ void D_DoomMain (void)
     I_AtExit((atexit_func_t) G_CheckDemoStatus, true);
 
     // Generate the WAD hash table.  Speed things up a bit.
-
     W_GenerateHashTable();
 
+    // Load DEHACKED lumps from WAD files - but only if we give the right
+    // command line parameter.
+
+    //!
+    // @category mod
+    //
+    // Load Dehacked patches from DEHACKED lumps contained in one of the
+    // loaded PWAD files.
+    //
+    if (M_ParmExists("-dehlump"))
+    {
+        int i, loaded = 0;
+
+        for (i = numiwadlumps; i < numlumps; ++i)
+        {
+            if (!strncmp(lumpinfo[i].name, "DEHACKED", 8))
+            {
+                DEH_LoadLump(i, false, false);
+                loaded++;
+            }
+        }
+
+        printf("  loaded %i DEHACKED lumps from PWAD files.\n", loaded);
+    }
+
+    // Set the gamedescription string. This is only possible now that
+    // we've finished loading Dehacked patches.
     D_SetGameDescription();
     savegamedir = M_GetSaveGameDir(D_SaveGameIWADName(gamemission));
 
@@ -1459,31 +1493,6 @@ void D_DoomMain (void)
                " for more information on how to play using Freedoom:\n"
                "   http://www.chocolate-doom.org/wiki/index.php/Freedoom\n");
         I_PrintDivider();
-    }
-
-    // Load DEHACKED lumps from WAD files - but only if we give the right
-    // command line parameter.
-
-    //!
-    // @category mod
-    //
-    // Load Dehacked patches from DEHACKED lumps contained in one of the
-    // loaded PWAD files.
-    //
-    if (M_ParmExists("-dehlump"))
-    {
-        int i, loaded = 0;
-
-        for (i = 0; i < numlumps; ++i)
-        {
-            if (!strncmp(lumpinfo[i].name, "DEHACKED", 8))
-            {
-                DEH_LoadLump(i, false, false);
-                loaded++;
-            }
-        }
-
-        printf("Loaded %i DEHACKED lumps from WAD files.\n", loaded);
     }
 
     DEH_printf("I_Init: Setting up machine state.\n");
