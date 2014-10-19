@@ -17,10 +17,10 @@
       http://www.chocolate-doom.org/wiki/index.php/Adding_your_gamepad
 
     OPL MIDI playback has been significantly improved, and problems
-    with certain tracks have been resolved. Multi-track MIDI Files now
+    with most tracks should now be resolved. Multi-track MIDI files now
     play back properly, MIDI tempo meta events are now supported and
     problems with stuttering when playing certain tracks have been
-    fixed.
+    fixed. If you still have problems with OPL playback, let me know.
 
     Also of note is that Chocolate Doom now has a document that
     describes the philosophy of the project and the reasoning behind
@@ -40,7 +40,8 @@
        Holering).
      * All games now detect if you're tring to play using the wrong
        type of IWAD (doom.wad with Hexen, etc.) and exit with a
-       helpful error message.
+       helpful error message. A couple of users made this mistake
+       after the 2.0 release introduced support for the new games.
      * The OS X app now associates with .hhe and .seh files.
      * There is now a -nodes parameter that automatically starts a
        netgame when a desired number of players have joined the game.
@@ -63,11 +64,14 @@
      * The new Freedoom IWAD names are now recognized and supported.
      * Freedoom's DEHACKED lump can now be parsed and is automatically
        loaded when a Freedoom IWAD file is used (thanks Fabian
-       Greffrath).
+       Greffrath). A new command line parameter, -nodeh, can be used
+       to prevent this from being loaded.
      * Behavior of the M_EPI4 menu item is now correctly emulated
        based on game version (thanks Alexandre-Xavier).
      * IDCLEV up to MAP40 is now supported, to match Vanilla (thanks
        Alexandre-Xavier).
+     * Level warping on the command line (-warp) to episodes higher
+       than 4 is possible, matching Vanilla behavior (thanks plumsinus).
 
     Heretic:
      * Weapon cycling keys for mouse and joystick were fixed (thanks
@@ -80,6 +84,8 @@
      * Rebinding of the pause key was fixed (thanks Fabian Greffrath).
 
     Hexen:
+     * Music workarounds have been added so that it is possible to
+       play using the Mac version of the Hexen IWAD file.
      * Weapon cycling keys for mouse and joystick were fixed (thanks
        Sander van Dijk).
      * The -timedemo parameter has been fixed, and -playdemo now
@@ -98,11 +104,20 @@
        Sander van Dijk).
      * Default music volume level now matches Vanilla (thanks
        Alexandre-Xavier).
+     * Teleport beacon allegiance was fixed to match Vanilla (thanks
+       Quasar).
+     * The stair building code now more closely matches Vanilla
+       (thanks Quasar).
+     * Torpedo weapon changing behavior now matches Vanilla (thanks
+       Quasar).
 
    Cleanups:
      * The copyright headers at the top of all source files have been
        vastly simplified.
      * Unsafe string functions have been eliminated from the codebase.
+       Thanks to Theo de Raadt for calling out Chocolate Doom by name
+       (alongside many other packages) for still using unsafe functions
+       like strcpy: http://marc.info/?l=openbsd-tech&m=138733933417096
      * vldoor_e enum values are now namespaced to avoid potential
        conflicts with POSIX standard functions.
 
@@ -112,6 +127,8 @@
      * A bug was fixed that caused sound not to work in multiplayer
        games (thanks to everyone who reported this, and for
        Alexandre-Xavier and Quasar for help in fixing it).
+     * The "D_DDTBLU disease" bug affecting certain MIDI files has
+       been fixed (thanks plumsinus, Brad Harding and Quasar).
      * Calculation of the -devparm 'ticker' dots was fixed to match
        Vanilla behavior (thanks _bruce_ and Alexandre-Xavier).
      * The PC speaker code now supports the full range of sound
@@ -135,10 +152,20 @@
        Edward-san).
      * Windows resource files were fixed for Windows 7 (thanks Brad
        Harding).
+     * A hard to trigger crash caused by a realloc() in the WAD code
+       was fixed (thanks Fabian Greffrath for debugging).
+     * A bug has been fixed where Chocolate Doom would stay running
+       in the background on Windows after quitting. SDL_Quit() is
+       called now (thanks johnsirett, Brad Harding, Quasar).
+     * String replacements in dehacked lumps can now be overridden
+       if a subsequent dehacked patch replaces the same string.
 
     libtextscreen:
      * Clicking on scrollbars now jumps to the correct position
        (thanks Alexandre-Xavier).
+     * A use-after-free bug has been fixed where a click in a window
+       that causes the window to close could lead to a crash (thanks
+       DuClare).
 
 2.0.0 (2013-12-09):
 
