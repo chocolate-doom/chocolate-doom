@@ -1714,7 +1714,7 @@ void I_GraphicsCheckCommandLine(void)
             {
                 fullscreen = true;
             }
-            else if (f == 'w')
+            else if (s == 3 && f == 'w')
             {
                 fullscreen = false;
             }
