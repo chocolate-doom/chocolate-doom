@@ -1250,7 +1250,7 @@ void D_DoomMain (void)
     // allowing play from CD.
     //
 
-    if (M_CheckParm("-cdrom") > 0)
+    if (M_ParmExists("-cdrom"))
     {
         printf(D_CDROM);
 
@@ -1263,7 +1263,7 @@ void D_DoomMain (void)
 
         M_SetConfigDir(NULL);
     }
-    
+
     //!
     // @arg <x>
     // @vanilla
@@ -1468,7 +1468,18 @@ void D_DoomMain (void)
     // Set the gamedescription string. This is only possible now that
     // we've finished loading Dehacked patches.
     D_SetGameDescription();
-    savegamedir = M_GetSaveGameDir(D_SaveGameIWADName(gamemission));
+
+#ifdef _WIN32
+    // In -cdrom mode, we write savegames to c:\doomdata as well as configs.
+    if (M_ParmExists("-cdrom"))
+    {
+        savegamedir = configdir;
+    }
+    else
+#endif
+    {
+        savegamedir = M_GetSaveGameDir(D_SaveGameIWADName(gamemission));
+    }
 
     // Check for -file in shareware
     if (modifiedgame)
