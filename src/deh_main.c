@@ -83,6 +83,25 @@ static void InitializeSections(void)
     }
 }
 
+static void DEH_Init(void)
+{
+    //!
+    // @category mod
+    //
+    // Ignore cheats in dehacked files.
+    //
+
+    if (M_CheckParm("-nocheats") > 0) 
+    {
+	deh_apply_cheats = false;
+    }
+
+    // Call init functions for all the section definitions.
+    InitializeSections();
+
+    deh_initialized = true;
+}
+
 // Given a section name, get the section structure which corresponds
 
 static deh_section_t *GetSectionByName(char *name)
@@ -355,8 +374,7 @@ int DEH_LoadFile(char *filename)
 
     if (!deh_initialized)
     {
-        InitializeSections();
-        deh_initialized = true;
+        DEH_Init();
     }
 
     // Before parsing a new file, reset special override flags to false.
@@ -400,8 +418,7 @@ int DEH_LoadLump(int lumpnum, boolean allow_long, boolean allow_error)
 
     if (!deh_initialized)
     {
-        InitializeSections();
-        deh_initialized = true;
+        DEH_Init();
     }
 
     // Reset all special flags to defaults.
@@ -449,23 +466,11 @@ int DEH_LoadLumpByName(char *name, boolean allow_long, boolean allow_error)
     return DEH_LoadLump(lumpnum, allow_long, allow_error);
 }
 
-// Checks the command line for -deh argument
-
-void DEH_Init(void)
+// Check the command line for -deh argument, and others.
+void DEH_ParseCommandLine(void)
 {
     char *filename;
     int p;
-
-    //!
-    // @category mod
-    //
-    // Ignore cheats in dehacked files.
-    //
-
-    if (M_CheckParm("-nocheats") > 0) 
-    {
-	deh_apply_cheats = false;
-    }
 
     //!
     // @arg <files>

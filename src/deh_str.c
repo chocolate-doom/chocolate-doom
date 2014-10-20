@@ -52,17 +52,13 @@ static unsigned int strhash(char *s)
     return h;
 }
 
-// Look up a string to see if it has been replaced with something else
-// This will be used throughout the program to substitute text
-
-char *DEH_String(char *s)
+static deh_substitution_t *SubstitutionForString(char *s)
 {
     int entry;
 
     // Fallback if we have not initialized the hash table yet
-
     if (hash_table_length < 0)
-	return s;
+	return NULL;
 
     entry = strhash(s) % hash_table_length;
 
@@ -71,16 +67,33 @@ char *DEH_String(char *s)
         if (!strcmp(hash_table[entry]->from_text, s))
         {
             // substitution found!
-
-            return hash_table[entry]->to_text;
+            return hash_table[entry];
         }
 
         entry = (entry + 1) % hash_table_length;
     }
 
     // no substitution found
+    return NULL;
+}
 
-    return s;
+// Look up a string to see if it has been replaced with something else
+// This will be used throughout the program to substitute text
+
+char *DEH_String(char *s)
+{
+    deh_substitution_t *subst;
+
+    subst = SubstitutionForString(s);
+
+    if (subst != NULL)
+    {
+        return subst->to_text;
+    }
+    else
+    {
+        return s;
+    }
 }
 
 static void InitHashTable(void)
@@ -139,9 +152,8 @@ static void DEH_AddToHashtable(deh_substitution_t *sub)
     {
         IncreaseHashtable();
     }
-    
+
     // find where to insert it
-    
     entry = strhash(sub->from_text) % hash_table_length;
 
     while (hash_table[entry] != NULL)
@@ -156,20 +168,41 @@ static void DEH_AddToHashtable(deh_substitution_t *sub)
 void DEH_AddStringReplacement(char *from_text, char *to_text)
 {
     deh_substitution_t *sub;
+    size_t len;
 
     // Initialize the hash table if this is the first time
-
     if (hash_table_length < 0)
     {
         InitHashTable();
     }
 
-    sub = Z_Malloc(sizeof(*sub), PU_STATIC, 0);
+    // Check to see if there is an existing substitution already in place.
+    sub = SubstitutionForString(from_text);
 
-    sub->from_text = from_text;
-    sub->to_text = to_text;
+    if (sub != NULL)
+    {
+        Z_Free(sub->to_text);
 
-    DEH_AddToHashtable(sub);
+        len = strlen(to_text) + 1;
+        sub->to_text = Z_Malloc(len, PU_STATIC, NULL);
+        memcpy(sub->to_text, to_text, len);
+    }
+    else
+    {
+        // We need to allocate a new substitution.
+        sub = Z_Malloc(sizeof(*sub), PU_STATIC, 0);
+
+        // We need to create our own duplicates of the provided strings.
+        len = strlen(from_text) + 1;
+        sub->from_text = Z_Malloc(len, PU_STATIC, NULL);
+        memcpy(sub->from_text, from_text, len);
+
+        len = strlen(to_text) + 1;
+        sub->to_text = Z_Malloc(len, PU_STATIC, NULL);
+        memcpy(sub->to_text, to_text, len);
+
+        DEH_AddToHashtable(sub);
+    }
 }
 
 typedef enum

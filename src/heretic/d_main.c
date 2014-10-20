@@ -955,11 +955,6 @@ void D_DoomMain(void)
     DEH_printf("Z_Init: Init zone memory allocation daemon.\n");
     Z_Init();
 
-#ifdef FEATURE_DEHACKED
-    printf("DEH_Init: Init Dehacked support.\n");
-    DEH_Init();
-#endif
-
     DEH_printf("W_Init: Init WADfiles.\n");
 
     iwadfile = D_FindIWAD(IWAD_MASK_HERETIC, &gamemission);
@@ -972,6 +967,13 @@ void D_DoomMain(void)
 
     D_AddFile(iwadfile);
     W_CheckCorrectIWAD(heretic);
+
+#ifdef FEATURE_DEHACKED
+    // Load dehacked patches specified on the command line.
+    DEH_ParseCommandLine();
+#endif
+
+    // Load PWAD files.
     W_ParseCommandLine();
 
     //!
