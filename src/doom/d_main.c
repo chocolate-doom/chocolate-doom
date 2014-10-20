@@ -1222,7 +1222,7 @@ static void LoadNerveWad(void)
     else
     {
 	i = W_GetNumForName("map01");
-	if (!strcmp(lumpinfo[i].wad_file->path, "nerve.wad"));
+	if (!strcmp(lumpinfo[i].wad_file->path, "nerve.wad"))
 	{
 	    gamemission = pack_nerve;
 	    DEH_AddStringReplacement ("TITLEPIC", "INTERPIC");
