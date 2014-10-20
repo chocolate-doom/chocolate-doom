@@ -1221,36 +1221,9 @@ static void LoadNerveWad(void)
     }
     else
     {
-	i = M_CheckParmWithArgs ("-file", 1);
-
-	if (i)
-	{
-	    while (++i != myargc && myargv[i][0] != '-')
-	    {
-		if (!strncasecmp(M_BaseName(myargv[i]), "nerve.wad", 9))
-		{
-		    gamemission = pack_nerve;
-		    break;
-		}
-	    }
-	}
-
-	if (gamemission != pack_nerve)
-	{
-	    i = M_CheckParmWithArgs ("-merge", 1);
-
-	    if (i)
-	    {
-		while (++i != myargc && myargv[i][0] != '-')
-		{
-		    if (!strncasecmp(M_BaseName(myargv[i]), "nerve.wad", 9))
-		    {
-			gamemission = pack_nerve;
-			break;
-		    }
-		}
-	    }
-	}
+	i = W_GetNumForName("map01");
+	if (!strcmp(lumpinfo[i].wad_file->path, "nerve.wad"));
+	    gamemission = pack_nerve;
 
 	if (gamemission == pack_nerve)
 	    DEH_AddStringReplacement ("TITLEPIC", bfgedition ? "DMENUPIC" : "INTERPIC");
