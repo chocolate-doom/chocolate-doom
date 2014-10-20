@@ -28,15 +28,21 @@
 
 int key_right = KEY_RIGHTARROW;
 int key_left = KEY_LEFTARROW;
+int key_reverse = 0;
 
 int key_up = KEY_UPARROW;
+int key_alt_up = 'w';
 int key_down = KEY_DOWNARROW; 
+int key_alt_down = 's';
 int key_strafeleft = ',';
+int key_alt_strafeleft = 'a';
 int key_straferight = '.';
+int key_alt_straferight = 'd';
 int key_fire = KEY_RCTRL;
 int key_use = ' ';
 int key_strafe = KEY_RALT;
 int key_speed = KEY_RSHIFT; 
+int key_toggleautorun = KEY_CAPSLOCK;
 
 // 
 // Heretic keyboard controls
@@ -103,9 +109,10 @@ int mousebstrafeleft = -1;
 int mousebstraferight = -1;
 int mousebbackward = -1;
 int mousebuse = -1;
+int mousebmouselook = -1;
 
-int mousebprevweapon = -1;
-int mousebnextweapon = -1;
+int mousebprevweapon = 4;
+int mousebnextweapon = 3;
 
 
 int key_message_refresh = KEY_ENTER;
@@ -173,6 +180,9 @@ int key_menu_gamma     = KEY_F11;
 int key_menu_incscreen = KEY_EQUALS;
 int key_menu_decscreen = KEY_MINUS;
 int key_menu_screenshot = 0;
+int key_menu_nextlevel = 0;
+int key_menu_reloadlevel = 0;
+
 
 //
 // Joystick controls
@@ -181,7 +191,7 @@ int key_menu_screenshot = 0;
 int joybfire = 0;
 int joybstrafe = 1;
 int joybuse = 3;
-int joybspeed = 2;
+int joybspeed = 29;
 
 int joybstrafeleft = -1;
 int joybstraferight = -1;
@@ -207,9 +217,13 @@ void M_BindBaseControls(void)
     M_BindVariable("key_right",          &key_right);
     M_BindVariable("key_left",           &key_left);
     M_BindVariable("key_up",             &key_up);
+    M_BindVariable("key_alt_up",         &key_alt_up);
     M_BindVariable("key_down",           &key_down);
+    M_BindVariable("key_alt_down",       &key_alt_down);
     M_BindVariable("key_strafeleft",     &key_strafeleft);
+    M_BindVariable("key_alt_strafeleft",     &key_alt_strafeleft);
     M_BindVariable("key_straferight",    &key_straferight);
+    M_BindVariable("key_alt_straferight",    &key_alt_straferight);
     M_BindVariable("key_fire",           &key_fire);
     M_BindVariable("key_use",            &key_use);
     M_BindVariable("key_strafe",         &key_strafe);
@@ -237,6 +251,18 @@ void M_BindBaseControls(void)
     M_BindVariable("dclick_use",         &dclick_use);
     M_BindVariable("key_pause",          &key_pause);
     M_BindVariable("key_message_refresh", &key_message_refresh);
+
+    M_BindVariable("key_lookup",         &key_lookup);
+    M_BindVariable("key_lookdown",       &key_lookdown);
+    M_BindVariable("key_lookcenter",     &key_lookcenter);
+
+    M_BindVariable("key_jump",           &key_jump);
+    M_BindVariable("mouseb_jump",        &mousebjump);
+    M_BindVariable("joyb_jump",          &joybjump);
+
+    M_BindVariable("mouseb_mouselook",   &mousebmouselook);
+    M_BindVariable("key_reverse",        &key_reverse);
+    M_BindVariable("key_toggleautorun",  &key_toggleautorun);
 }
 
 void M_BindHereticControls(void)
@@ -244,10 +270,6 @@ void M_BindHereticControls(void)
     M_BindVariable("key_flyup",          &key_flyup);
     M_BindVariable("key_flydown",        &key_flydown);
     M_BindVariable("key_flycenter",      &key_flycenter);
-
-    M_BindVariable("key_lookup",         &key_lookup);
-    M_BindVariable("key_lookdown",       &key_lookdown);
-    M_BindVariable("key_lookcenter",     &key_lookcenter);
 
     M_BindVariable("key_invleft",        &key_invleft);
     M_BindVariable("key_invright",       &key_invright);
@@ -369,6 +391,8 @@ void M_BindMenuControls(void)
     M_BindVariable("key_menu_incscreen", &key_menu_incscreen);
     M_BindVariable("key_menu_decscreen", &key_menu_decscreen);
     M_BindVariable("key_menu_screenshot",&key_menu_screenshot);
+    M_BindVariable("key_menu_nextlevel", &key_menu_nextlevel);
+    M_BindVariable("key_menu_reloadlevel", &key_menu_reloadlevel);
     M_BindVariable("key_demo_quit",      &key_demo_quit);
     M_BindVariable("key_spy",            &key_spy);
 }

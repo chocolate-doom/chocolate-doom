@@ -263,6 +263,8 @@ wipe_ScreenWipe
 	wipe_initMelt, wipe_doMelt, wipe_exitMelt
     };
 
+    ticks <<= hires;
+
     // initial stuff
     if (!go)
     {

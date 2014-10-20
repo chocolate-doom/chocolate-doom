@@ -66,17 +66,17 @@
 #define BACKGROUND	BLACK
 #define YOURCOLORS	WHITE
 #define YOURRANGE	0
-#define WALLCOLORS	REDS
+#define WALLCOLORS	(REDS + REDRANGE/2) // [crispy] a tad darker
 #define WALLRANGE	REDRANGE
 #define TSWALLCOLORS	GRAYS
 #define TSWALLRANGE	GRAYSRANGE
 #define FDWALLCOLORS	BROWNS
 #define FDWALLRANGE	BROWNRANGE
-#define CDWALLCOLORS	YELLOWS
+#define CDWALLCOLORS	(YELLOWS + YELLOWRANGE) // [crispy] a tad darker
 #define CDWALLRANGE	YELLOWRANGE
 #define THINGCOLORS	GREENS
 #define THINGRANGE	GREENRANGE
-#define SECRETWALLCOLORS WALLCOLORS
+#define SECRETWALLCOLORS 252 // [crispy] purple
 #define SECRETWALLRANGE WALLRANGE
 #define GRIDCOLORS	(GRAYS + GRAYSRANGE/2)
 #define GRIDRANGE	0
@@ -99,8 +99,9 @@
 #define M_ZOOMOUT       ((int) (FRACUNIT/1.02))
 
 // translates between frame-buffer and map distances
-#define FTOM(x) FixedMul(((x)<<16),scale_ftom)
-#define MTOF(x) (FixedMul((x),scale_mtof)>>16)
+// [crispy] fix int overflow that causes map and grid lines to disappear
+#define FTOM(x) (((int64_t)((x)<<16) * scale_ftom) >> FRACBITS)
+#define MTOF(x) ((((int64_t)(x) * scale_mtof) >> FRACBITS)>>16)
 // translates between frame-buffer and map coordinates
 #define CXMTOF(x)  (f_x + MTOF((x)-m_x))
 #define CYMTOF(y)  (f_y + (f_h - MTOF((y)-m_y)))
@@ -120,7 +121,7 @@ typedef struct
 
 typedef struct
 {
-    fixed_t		x,y;
+    int64_t		x,y;
 } mpoint_t;
 
 typedef struct
@@ -133,6 +134,13 @@ typedef struct
     fixed_t slp, islp;
 } islope_t;
 
+typedef enum
+{
+    no_key,
+    red_key,
+    yellow_key,
+    blue_key
+} keycolor_t;
 
 
 //
@@ -187,6 +195,11 @@ mline_t thintriangle_guy[] = {
     { { (fixed_t)(R    ), (fixed_t)(0    ) }, { (fixed_t)(-.5*R), (fixed_t)(.7*R ) } },
     { { (fixed_t)(-.5*R), (fixed_t)(.7*R ) }, { (fixed_t)(-.5*R), (fixed_t)(-.7*R) } }
 };
+// [crispy] print keys as crosses
+static mline_t cross_mark[] = {
+    { { -R, 0 }, { R, 0 } },
+    { { 0, -R }, { 0, R } },
+};
 #undef R
 
 
@@ -199,7 +212,7 @@ static int 	leveljuststarted = 1; 	// kluge until AM_LevelInit() is called
 
 boolean    	automapactive = false;
 static int 	finit_width = SCREENWIDTH;
-static int 	finit_height = SCREENHEIGHT - 32;
+static int 	finit_height = SCREENHEIGHT - (32 << hires);
 
 // location of window on screen
 static int 	f_x;
@@ -217,14 +230,14 @@ static mpoint_t m_paninc; // how far the window pans each tic (map coords)
 static fixed_t 	mtof_zoommul; // how far the window zooms in each tic (map coords)
 static fixed_t 	ftom_zoommul; // how far the window zooms in each tic (fb coords)
 
-static fixed_t 	m_x, m_y;   // LL x,y where the window is on the map (map coords)
-static fixed_t 	m_x2, m_y2; // UR x,y where the window is on the map (map coords)
+static int64_t 	m_x, m_y;   // LL x,y where the window is on the map (map coords)
+static int64_t 	m_x2, m_y2; // UR x,y where the window is on the map (map coords)
 
 //
 // width/height of window on map (map coords)
 //
-static fixed_t 	m_w;
-static fixed_t	m_h;
+static int64_t 	m_w;
+static int64_t 	m_h;
 
 // based on level size
 static fixed_t 	min_x;
@@ -244,8 +257,8 @@ static fixed_t 	min_scale_mtof; // used to tell when to stop zooming out
 static fixed_t 	max_scale_mtof; // used to tell when to stop zooming in
 
 // old stuff for recovery later
-static fixed_t old_m_w, old_m_h;
-static fixed_t old_m_x, old_m_y;
+static int64_t old_m_w, old_m_h;
+static int64_t old_m_x, old_m_y;
 
 // old location used by the Follower routine
 static mpoint_t f_oldloc;
@@ -1076,8 +1089,8 @@ AM_drawMline
 //
 void AM_drawGrid(int color)
 {
-    fixed_t x, y;
-    fixed_t start, end;
+    int64_t x, y;
+    int64_t start, end;
     mline_t ml;
 
     // Figure out start of vertical gridlines
@@ -1120,6 +1133,32 @@ void AM_drawGrid(int color)
 // Determines visible lines, draws them.
 // This is LineDef based, not LineSeg based.
 //
+
+// [crispy] keyed linedefs (PR, P1, SR, S1)
+static keycolor_t AM_DoorColor(int type)
+{
+    switch (type)
+    {
+	case 26:
+	case 32:
+	case 99:
+	case 133:
+	    return blue_key;
+	case 27:
+	case 34:
+	case 136:
+	case 137:
+	    return yellow_key;
+	case 28:
+	case 33:
+	case 134:
+	case 135:
+	    return red_key;
+	default:
+	    return no_key;
+    }
+}
+
 void AM_drawWalls(void)
 {
     int i;
@@ -1135,20 +1174,71 @@ void AM_drawWalls(void)
 	{
 	    if ((lines[i].flags & LINE_NEVERSEE) && !cheating)
 		continue;
+	    {
+		// [crispy] draw keyed doors in their respective colors
+		// (no Boom multiple keys)
+		keycolor_t amd;
+		if (!(lines[i].flags & ML_SECRET) &&
+		    (amd = AM_DoorColor(lines[i].special)) > no_key)
+		{
+		    switch (amd)
+		    {
+			case blue_key:
+			    AM_drawMline(&l, BLUES);
+			    continue;
+			case yellow_key:
+			    AM_drawMline(&l, YELLOWS);
+			    continue;
+			case red_key:
+			    AM_drawMline(&l, REDS);
+			    continue;
+			default:
+			    // [crispy] it should be impossible to reach here
+			    break;
+		    }
+		}
+	    }
+	    // [crispy] draw exit lines in white (no Boom exit lines 197, 198)
+	    // NB: Choco does not have this at all, Boom/PrBoom+ have this disabled by default
+	    if (lines[i].special == 11 ||
+	        lines[i].special == 51 ||
+	        lines[i].special == 52 ||
+	        lines[i].special == 124)
+	    {
+		AM_drawMline(&l, WHITE);
+		continue;
+	    }
 	    if (!lines[i].backsector)
 	    {
+		// [crispy] draw 1S secret sector boundaries in purple
+		if (cheating && (lines[i].frontsector->special == 9))
+		    AM_drawMline(&l, SECRETWALLCOLORS);
+		else
 		AM_drawMline(&l, WALLCOLORS+lightlev);
 	    }
 	    else
 	    {
-		if (lines[i].special == 39)
+		// [crispy] draw teleporters in green
+		// and also WR teleporters 97 if they are not secret
+		// (no monsters-only teleporters 125, 126; no Boom teleporters)
+		if (lines[i].special == 39 ||
+		    (!(lines[i].flags & ML_SECRET) && lines[i].special == 97))
 		{ // teleporters
-		    AM_drawMline(&l, WALLCOLORS+WALLRANGE/2);
+		    AM_drawMline(&l, GREENS+GREENRANGE/2);
 		}
 		else if (lines[i].flags & ML_SECRET) // secret door
 		{
-		    if (cheating) AM_drawMline(&l, SECRETWALLCOLORS + lightlev);
+		    // [crispy] NB: Choco has this check, but (SECRETWALLCOLORS == WALLCOLORS)
+		    // Boom/PrBoom+ does not have this check at all
+		    if (0 && cheating) AM_drawMline(&l, SECRETWALLCOLORS + lightlev);
 		    else AM_drawMline(&l, WALLCOLORS+lightlev);
+		}
+		// [crispy] draw 2S secret sector boundaries in purple
+		else if (cheating &&
+		    (lines[i].backsector->special == 9 ||
+		    lines[i].frontsector->special == 9))
+		{
+		    AM_drawMline(&l, SECRETWALLCOLORS);
 		}
 		else if (lines[i].backsector->floorheight
 			   != lines[i].frontsector->floorheight) {
@@ -1177,11 +1267,11 @@ void AM_drawWalls(void)
 //
 void
 AM_rotate
-( fixed_t*	x,
-  fixed_t*	y,
+( int64_t*	x,
+  int64_t*	y,
   angle_t	a )
 {
-    fixed_t tmpx;
+    int64_t tmpx;
 
     tmpx =
 	FixedMul(*x,finecosine[a>>ANGLETOFINESHIFT])
@@ -1294,15 +1384,60 @@ AM_drawThings
 {
     int		i;
     mobj_t*	t;
+    keycolor_t	key;
 
     for (i=0;i<numsectors;i++)
     {
 	t = sectors[i].thinglist;
 	while (t)
 	{
+	    // [crispy] skull keys and key cards
+	    switch (t->info->doomednum)
+	    {
+		case 38:
+		case 13:
+		    key = red_key;
+		    break;
+		case 39:
+		case 6:
+		    key = yellow_key;
+		    break;
+		case 40:
+		case 5:
+		    key = blue_key;
+		    break;
+		default:
+		    key = no_key;
+		    break;
+	    }
+
+	    // [crispy] draw keys as crosses in their respective colors
+	    if (key > no_key)
+	    {
+	    AM_drawLineCharacter
+		(cross_mark, arrlen(cross_mark),
+		 16<<FRACBITS, t->angle,
+		 (key == red_key) ? REDS :
+		 (key == yellow_key) ? YELLOWS :
+		 (key == blue_key) ? BLUES :
+		 colors+lightlev,
+		 t->x, t->y);
+	    }
+	    else
+	    {
 	    AM_drawLineCharacter
 		(thintriangle_guy, arrlen(thintriangle_guy),
-		 16<<FRACBITS, t->angle, colors+lightlev, t->x, t->y);
+		// [crispy] triangle size represents actual thing size
+		 t->radius, t->angle,
+		// [crispy] show countable kills in red ...
+		 ((t->flags & (MF_COUNTKILL | MF_CORPSE)) == MF_COUNTKILL) ? REDS :
+		// [crispy] ... corpses in gray ...
+		 (t->flags & MF_CORPSE) ? GRAYS :
+		// [crispy] ... and countable items in yellow
+		 (t->flags & MF_COUNTITEM) ? YELLOWS :
+		 colors+lightlev,
+		 t->x, t->y);
+	    }
 	    t = t->snext;
 	}
     }
@@ -1320,9 +1455,10 @@ void AM_drawMarks(void)
 	    //      h = SHORT(marknums[i]->height);
 	    w = 5; // because something's wrong with the wad, i guess
 	    h = 6; // because something's wrong with the wad, i guess
-	    fx = CXMTOF(markpoints[i].x);
-	    fy = CYMTOF(markpoints[i].y);
-	    if (fx >= f_x && fx <= f_w - w && fy >= f_y && fy <= f_h - h)
+	    // [crispy] center marks around player
+	    fx = (CXMTOF(markpoints[i].x) >> hires) - 1;
+	    fy = (CYMTOF(markpoints[i].y) >> hires) - 2;
+	    if (fx >= f_x && fx <= (f_w >> hires) - w && fy >= f_y && fy <= (f_h >> hires) - h)
 		V_DrawPatch(fx, fy, marknums[i]);
 	}
     }

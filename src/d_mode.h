@@ -30,6 +30,7 @@ typedef enum
     doom2,           // Doom 2
     pack_tnt,        // Final Doom: TNT: Evilution
     pack_plut,       // Final Doom: The Plutonia Experiment
+    pack_nerve,      // Doom 2: No Rest For The Living
     pack_chex,       // Chex Quest (modded doom)
     pack_hacx,       // Hacx (modded doom2)
     heretic,         // Heretic

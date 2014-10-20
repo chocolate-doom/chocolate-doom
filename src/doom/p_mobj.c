@@ -93,6 +93,8 @@ void P_ExplodeMissile (mobj_t* mo)
 	mo->tics = 1;
 
     mo->flags &= ~MF_MISSILE;
+    // [crispy] missile explosions are translucent
+    mo->flags |= MF_TRANSLUCENT;
 
     if (mo->info->deathsound)
 	S_StartSound (mo, mo->info->deathsound);
@@ -312,6 +314,9 @@ void P_ZMovement (mobj_t* mo)
 	
 	if (mo->momz < 0)
 	{
+	    // [crispy] delay next jump
+	    if (mo->player)
+		p2fromp(mo->player)->jumpTics = 7;
 	    if (mo->player
 		&& mo->momz < -GRAVITY*8)	
 	    {
@@ -320,6 +325,9 @@ void P_ZMovement (mobj_t* mo)
 		// after hitting the ground (hard),
 		// and utter appropriate sound.
 		mo->player->deltaviewheight = mo->momz>>3;
+		// [crispy] center view if not using permanent mouselook
+		if (!crispy_mouselook)
+		    p2fromp(mo->player)->centering = true;
 		S_StartSound (mo, sfx_oof);
 	    }
 	    mo->momz = 0;
@@ -795,9 +803,13 @@ void P_SpawnMapThing (mapthing_t* mthing)
 	    break;
 	
     if (i==NUMMOBJTYPES)
-	I_Error ("P_SpawnMapThing: Unknown type %i at (%i, %i)",
+    {
+	// [crispy] ignore unknown map things
+	printf ("P_SpawnMapThing: Unknown type %i at (%i, %i)\n",
 		 mthing->type,
 		 mthing->x, mthing->y);
+	return;
+    }
 		
     // don't spawn keycards and players in deathmatch
     if (deathmatch && mobjinfo[i].flags & MF_NOTDMATCH)
@@ -833,6 +845,10 @@ void P_SpawnMapThing (mapthing_t* mthing)
     mobj->angle = ANG45 * (mthing->angle/45);
     if (mthing->options & MTF_AMBUSH)
 	mobj->flags |= MF_AMBUSH;
+
+    // [crispy] Lost Souls bleed Puffs
+    if ((crispy_coloredblood & (1 << 3)) && i == MT_SKULL)
+        mobj->flags |= MF_NOBLOOD;
 }
 
 
@@ -879,7 +895,8 @@ P_SpawnBlood
 ( fixed_t	x,
   fixed_t	y,
   fixed_t	z,
-  int		damage )
+  int		damage,
+  mobj_t*	target ) // [crispy] pass thing type
 {
     mobj_t*	th;
 	
@@ -887,6 +904,12 @@ P_SpawnBlood
     th = P_SpawnMobj (x,y,z, MT_BLOOD);
     th->momz = FRACUNIT*2;
     th->tics -= P_Random()&3;
+    // [crispy] connect blood object with the monster that bleeds it
+    th->target = target;
+
+    // [crispy] Spectres bleed spectre blood
+    if ((crispy_coloredblood & (1 << 4)) && target->flags & MF_SHADOW)
+	th->flags |= MF_SHADOW;
 
     if (th->tics < 1)
 	th->tics = 1;
@@ -1005,6 +1028,10 @@ P_SpawnPlayerMissile
     fixed_t	z;
     fixed_t	slope;
     
+    extern void A_Recoil (player_t* player);
+
+    A_Recoil (source->player);
+
     // see which target is to be aimed at
     an = source->angle;
     slope = P_AimLineAttack (source, an, 16*64*FRACUNIT);
@@ -1023,6 +1050,9 @@ P_SpawnPlayerMissile
 	if (!linetarget)
 	{
 	    an = source->angle;
+	    if (singleplayer && crispy_freeaim)
+               slope = ((p2fromp(source->player)->lookdir / MLOOKUNIT) << FRACBITS) / 173;
+	    else
 	    slope = 0;
 	}
     }

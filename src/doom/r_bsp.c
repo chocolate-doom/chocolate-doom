@@ -43,8 +43,9 @@ line_t*		linedef;
 sector_t*	frontsector;
 sector_t*	backsector;
 
-drawseg_t	drawsegs[MAXDRAWSEGS];
+drawseg_t*	drawsegs = NULL;
 drawseg_t*	ds_p;
+int		numdrawsegs = 0;
 
 
 void
@@ -78,7 +79,8 @@ typedef	struct
 } cliprange_t;
 
 
-#define MAXSEGS		32
+// [crispy] raise to the value found in MBF
+#define MAXSEGS		(SCREENWIDTH/2+1)
 
 // newend is one past the last valid seg
 cliprange_t*	newend;

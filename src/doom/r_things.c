@@ -35,6 +35,8 @@
 
 #include "doomstat.h"
 
+#include "v_trans.h" // [crispy] colored blood sprites
+#include "p_local.h" // [crispy] p2fromp(), MLOOKUNIT
 
 
 #define MINZ				(FRACUNIT*4)
@@ -57,6 +59,8 @@ typedef struct
 } maskdraw_t;
 
 
+laserspot_t laserspot_m = {0, 0, 0};
+laserspot_t *laserspot = &laserspot_m;
 
 //
 // Sprite rotation 0 is facing the viewer,
@@ -278,9 +282,10 @@ void R_InitSpriteDefs (char** namelist)
 //
 // GAME FUNCTIONS
 //
-vissprite_t	vissprites[MAXVISSPRITES];
+vissprite_t*	vissprites = NULL;
 vissprite_t*	vissprite_p;
 int		newvissprite;
+static int	numvissprites;
 
 
 
@@ -319,8 +324,31 @@ vissprite_t	overflowsprite;
 
 vissprite_t* R_NewVisSprite (void)
 {
-    if (vissprite_p == &vissprites[MAXVISSPRITES])
+    // [crispy] remove MAXVISSPRITE Vanilla limit
+    if (vissprite_p == &vissprites[numvissprites])
+    {
+	static int max;
+	int numvissprites_old = numvissprites;
+
+	// [crispy] cap MAXVISSPRITES limit at 4096
+	if (!max && numvissprites == 32 * MAXVISSPRITES)
+	{
+	    printf("R_NewVisSprite: MAXVISSPRITES limit capped at %d.\n", numvissprites);
+	    max++;
+	}
+
+	if (max)
 	return &overflowsprite;
+
+	numvissprites = numvissprites ? 2 * numvissprites : MAXVISSPRITES;
+	vissprites = realloc(vissprites, numvissprites * sizeof(*vissprites));
+	memset(vissprites + numvissprites_old, 0, (numvissprites - numvissprites_old) * sizeof(*vissprites));
+
+	vissprite_p = vissprites + numvissprites_old;
+
+	if (numvissprites_old)
+	    printf("R_NewVisSprite: Hit MAXVISSPRITES limit at %d, raised to %d.\n", numvissprites_old, numvissprites);
+    }
     
     vissprite_p++;
     return vissprite_p-1;
@@ -347,6 +375,7 @@ void R_DrawMaskedColumn (column_t* column)
     fixed_t	basetexturemid;
 	
     basetexturemid = dc_texturemid;
+    dc_texheight = 0; // [crispy] Tutti-Frutti fix
 	
     for ( ; column->topdelta != 0xff ; ) 
     {
@@ -412,8 +441,19 @@ R_DrawVisSprite
 	dc_translation = translationtables - 256 +
 	    ( (vis->mobjflags & MF_TRANSLATION) >> (MF_TRANSSHIFT-8) );
     }
+    // [crispy] color-translated sprites (i.e. blood)
+    else if (vis->translation)
+    {
+	colfunc = transcolfunc;
+	dc_translation = vis->translation;
+    }
+    // [crispy] translucent sprites
+    if (crispy_translucency && (vis->mobjflags & MF_TRANSLUCENT) && dc_colormap)
+    {
+	colfunc = tlcolfunc;
+    }
 	
-    dc_iscale = abs(vis->xiscale)>>detailshift;
+    dc_iscale = abs(vis->xiscale)>>(detailshift && !hires);
     dc_texturemid = vis->texturemid;
     frac = vis->startfrac;
     spryscale = vis->scale;
@@ -540,8 +580,9 @@ void R_ProjectSprite (mobj_t* thing)
     
     // store information in a vissprite
     vis = R_NewVisSprite ();
+    vis->translation = NULL; // [crispy] no color translation
     vis->mobjflags = thing->flags;
-    vis->scale = xscale<<detailshift;
+    vis->scale = xscale<<(detailshift && !hires);
     vis->gx = thing->x;
     vis->gy = thing->y;
     vis->gz = thing->z;
@@ -550,6 +591,15 @@ void R_ProjectSprite (mobj_t* thing)
     vis->x1 = x1 < 0 ? 0 : x1;
     vis->x2 = x2 >= viewwidth ? viewwidth-1 : x2;	
     iscale = FixedDiv (FRACUNIT, xscale);
+
+    // [crispy] flip death sprites and corpses randomly
+    // except for the Cyberdemon which is too asymmetrical
+    if (thing->type != MT_CYBORG &&
+        thing->flags & MF_CORPSE &&
+        thing->health & 1)
+    {
+        flip = true;
+    }
 
     if (flip)
     {
@@ -586,15 +636,84 @@ void R_ProjectSprite (mobj_t* thing)
     else
     {
 	// diminished light
-	index = xscale>>(LIGHTSCALESHIFT-detailshift);
+	index = xscale>>(LIGHTSCALESHIFT-detailshift+hires);
 
 	if (index >= MAXLIGHTSCALE) 
 	    index = MAXLIGHTSCALE-1;
 
 	vis->colormap = spritelights[index];
     }	
+
+    // [crispy] Cacodemons bleed blue blood
+    // Barons of Hell and Hell Knights bleed green blood
+    if (thing->type == MT_BLOOD && thing->target)
+    {
+	if ((crispy_coloredblood & 1) && thing->target->type == MT_BRUISER)
+	    vis->translation = cr[CR_GREEN];
+	else
+	if ((crispy_coloredblood & (1 << 1)) && thing->target->type == MT_KNIGHT)
+	    vis->translation = cr[CR_GREEN];
+	else
+	if ((crispy_coloredblood & (1 << 2)) && thing->target->type == MT_HEAD)
+	    vis->translation = cr[CR_BLUE2];
+	else
+	// [crispy] Thorn Things in Hacx bleed green blood
+	if ((crispy_coloredblood & (1 << 5)) && thing->target->type == MT_BABY)
+	    vis->translation = cr[CR_GREEN];
+    }
 }
 
+// [crispy] generate a vissprite for the laser spot
+static void R_DrawLSprite (void)
+{
+    fixed_t		xscale;
+    fixed_t		tx;
+    vissprite_t*	vis;
+
+    static int		lump;
+    static patch_t*	patch;
+
+    extern void	P_LineLaser (mobj_t* t1, angle_t angle, fixed_t distance, fixed_t slope);
+
+    if (viewplayer->readyweapon == wp_fist ||
+        viewplayer->readyweapon == wp_chainsaw ||
+        viewplayer->playerstate == PST_DEAD)
+	return;
+
+    P_LineLaser(viewplayer->mo, viewplayer->mo->angle,
+                16*64*FRACUNIT, ((p2fromp(viewplayer)->lookdir/MLOOKUNIT)<<FRACBITS)/173);
+
+    if (!laserspot->x &&
+        !laserspot->y &&
+        !laserspot->z)
+	return;
+
+    if (!lump)
+    {
+	lump = W_GetNumForName("STCFN043"); // [crispy] HU font plus sign
+	patch = W_CacheLumpNum(lump, PU_CACHE);
+    }
+
+    xscale = FixedDiv(projection, FixedMul(laserspot->x - viewx, viewcos) + FixedMul(laserspot->y - viewy, viewsin));
+    // [crispy] the original patch has 5x5 pixels, cap the projection at 20x20
+    xscale = (xscale > 4*FRACUNIT) ? 4*FRACUNIT : xscale;
+
+    vis = R_NewVisSprite();
+    memset(vis, 0, sizeof(*vis)); // [crispy] set all fields to NULL, except ...
+    vis->patch = lump - firstspritelump; // [crispy] not a sprite patch
+    vis->colormap = fixedcolormap ? fixedcolormap : colormaps; // [crispy] always full brightness
+    vis->mobjflags |= MF_TRANSLUCENT;
+    vis->xiscale = FixedDiv (FRACUNIT, xscale);
+    vis->texturemid = laserspot->z + (patch->topoffset<<FRACBITS) - viewz;
+    vis->scale = xscale<<(detailshift && !hires);
+
+    tx = -((SHORT(patch->width)/2)<<FRACBITS);
+    vis->x1 =  (centerxfrac + FixedMul(tx, xscale))>>FRACBITS;
+    tx += SHORT(patch->width)<<FRACBITS;
+    vis->x2 = ((centerxfrac + FixedMul(tx, xscale))>>FRACBITS) - 1;
+
+    R_DrawVisSprite (vis, vis->x1, vis->x2);
+}
 
 
 
@@ -635,7 +754,7 @@ void R_AddSprites (sector_t* sec)
 //
 // R_DrawPSprite
 //
-void R_DrawPSprite (pspdef_t* psp)
+void R_DrawPSprite (pspdef_t* psp, psprnum_t psprnum) // [crispy] differentiate gun from flash sprites
 {
     fixed_t		tx;
     int			x1;
@@ -683,11 +802,13 @@ void R_DrawPSprite (pspdef_t* psp)
     
     // store information in a vissprite
     vis = &avis;
+    vis->translation = NULL; // [crispy] no color translation
     vis->mobjflags = 0;
-    vis->texturemid = (BASEYCENTER<<FRACBITS)+FRACUNIT/2-(psp->sy-spritetopoffset[lump]);
+    // [crispy] weapons drawn 1 pixel too high when player is idle
+    vis->texturemid = (BASEYCENTER<<FRACBITS)/*+FRACUNIT/2*/-(psp->sy-spritetopoffset[lump]);
     vis->x1 = x1 < 0 ? 0 : x1;
     vis->x2 = x2 >= viewwidth ? viewwidth-1 : x2;	
-    vis->scale = pspritescale<<detailshift;
+    vis->scale = pspritescale<<(detailshift && !hires);
     
     if (flip)
     {
@@ -700,6 +821,9 @@ void R_DrawPSprite (pspdef_t* psp)
 	vis->startfrac = 0;
     }
     
+    // [crispy] free look
+    vis->texturemid += FixedMul(((centery - viewheight / 2) << FRACBITS), vis->xiscale);
+
     if (vis->x1 > x1)
 	vis->startfrac += vis->xiscale*(vis->x1-x1);
 
@@ -727,6 +851,10 @@ void R_DrawPSprite (pspdef_t* psp)
 	vis->colormap = spritelights[MAXLIGHTSCALE-1];
     }
 	
+    // [crispy] translucent gun flash sprites
+    if (psprnum == ps_flash)
+        vis->mobjflags |= MF_TRANSLUCENT;
+
     R_DrawVisSprite (vis, vis->x1, vis->x2);
 }
 
@@ -757,13 +885,16 @@ void R_DrawPlayerSprites (void)
     mfloorclip = screenheightarray;
     mceilingclip = negonearray;
     
+    if (crispy_crosshair)
+	R_DrawLSprite();
+
     // add all active psprites
     for (i=0, psp=viewplayer->psprites;
 	 i<NUMPSPRITES;
 	 i++,psp++)
     {
 	if (psp->state)
-	    R_DrawPSprite (psp);
+	    R_DrawPSprite (psp, i); // [crispy] pass gun or flash sprite
     }
 }
 
@@ -972,6 +1103,9 @@ void R_DrawMasked (void)
 	if (ds->maskedtexturecol)
 	    R_RenderMaskedSegRange (ds, ds->x1, ds->x2);
     
+    if (crispy_cleanscreenshot)
+        return;
+
     // draw the psprites on top of everything
     //  but does not draw on side views
     if (!viewangleoffset)		

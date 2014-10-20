@@ -67,7 +67,9 @@ typedef enum
     // No damage, no health loss.
     CF_GODMODE		= 2,
     // Not really a cheat, just a debug aid.
-    CF_NOMOMENTUM	= 4
+    CF_NOMOMENTUM	= 4,
+    // [crispy] monsters don't target
+    CF_NOTARGET         = 8
 
 } cheat_t;
 
@@ -160,6 +162,16 @@ typedef struct player_s
 
 } player_t;
 
+// [crispy] overcome the limitations of the original player_t
+typedef struct player2_s
+{
+    char*	centermessage;
+    int	lookdir;
+    boolean	centering;
+    unsigned int	jumpTics;
+    boolean	berserkpow;
+    boolean	mapcoords;
+} player2_t;
 
 //
 // INTERMISSION

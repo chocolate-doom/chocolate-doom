@@ -38,6 +38,7 @@
 
 #include "net_defs.h"
 
+#include "crispy.h"
 
 
 // ------------------------
@@ -60,6 +61,7 @@ extern char            *gamedescription;
 
 // If true, we're using one of the mangled BFG edition IWADs.
 extern boolean bfgedition;
+extern char *nervewadfile;
 
 // Convenience macro.
 // 'gamemission' can be equal to pack_chex or pack_hacx, but these are
@@ -218,6 +220,7 @@ extern  gamestate_t     gamestate;
 
 // Bookkeeping on players - state.
 extern	player_t	players[MAXPLAYERS];
+extern	player2_t	players2[MAXPLAYERS];
 
 // Alive? Disconnected?
 extern  boolean		playeringame[MAXPLAYERS];
@@ -258,6 +261,7 @@ extern  boolean         precache;
 extern  gamestate_t     wipegamestate;
 
 extern  int             mouseSensitivity;
+extern  int             mouseSensitivity_y;
 
 extern  int             bodyqueslot;
 

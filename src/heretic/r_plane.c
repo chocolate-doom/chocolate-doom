@@ -85,7 +85,7 @@ void R_InitSkyMap(void)
 {
     skyflatnum = R_FlatNumForName(DEH_String("F_SKY1"));
     skytexturemid = 200 * FRACUNIT;
-    skyiscale = FRACUNIT;
+    skyiscale = FRACUNIT >> hires;
 }
 
 
@@ -296,7 +296,7 @@ visplane_t *R_CheckPlane(visplane_t * pl, int start, int stop)
     }
 
     for (x = intrl; x <= intrh; x++)
-        if (pl->top[x] != 0xff)
+        if (pl->top[x] != 0xffff)
             break;
 
     if (x > intrh)
@@ -430,11 +430,11 @@ void R_DrawPlanes(void)
 
                     dest = ylookup[dc_yl] + columnofs[dc_x];
 
-                    fracstep = 1;
-                    frac = (dc_texturemid >> FRACBITS) + (dc_yl - centery);
+                    fracstep = dc_iscale;
+                    frac = dc_texturemid + (dc_yl - centery) * fracstep;
                     do
                     {
-                        *dest = dc_source[frac];
+                        *dest = dc_source[frac >> FRACBITS];
                         dest += SCREENWIDTH;
                         frac += fracstep;
                     }
@@ -500,8 +500,8 @@ void R_DrawPlanes(void)
             light = 0;
         planezlight = zlight[light];
 
-        pl->top[pl->maxx + 1] = 0xff;
-        pl->top[pl->minx - 1] = 0xff;
+        pl->top[pl->maxx + 1] = 0xffff;
+        pl->top[pl->minx - 1] = 0xffff;
 
         stop = pl->maxx + 1;
         for (x = pl->minx; x <= stop; x++)

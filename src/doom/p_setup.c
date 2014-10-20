@@ -81,9 +81,9 @@ static int      totallines;
 // Blockmap size.
 int		bmapwidth;
 int		bmapheight;	// size in mapblocks
-short*		blockmap;	// int for larger maps
+long*		blockmap;	// int for larger maps // [crispy] BLOCKMAP limit
 // offsets in blockmap are from here
-short*		blockmaplump;		
+long*		blockmaplump; // [crispy] BLOCKMAP limit
 // origin of block map
 fixed_t		bmaporgx;
 fixed_t		bmaporgy;
@@ -141,6 +141,9 @@ void P_LoadVertexes (int lump)
     {
 	li->x = SHORT(ml->x)<<FRACBITS;
 	li->y = SHORT(ml->y)<<FRACBITS;
+
+	if (crispy_fliplevels)
+	    li->x = -li->x;
     }
 
     // Free buffer memory.
@@ -189,12 +192,23 @@ void P_LoadSegs (int lump)
     li = segs;
     for (i=0 ; i<numsegs ; i++, li++, ml++)
     {
-	li->v1 = &vertexes[SHORT(ml->v1)];
-	li->v2 = &vertexes[SHORT(ml->v2)];
+	li->v1 = &vertexes[(unsigned short)SHORT(ml->v1)]; // [crispy] extended nodes
+	li->v2 = &vertexes[(unsigned short)SHORT(ml->v2)]; // [crispy] extended nodes
+
+	if (crispy_fliplevels)
+	{
+            vertex_t* tmp = li->v1;
+            li->v1 = li->v2;
+            li->v2 = tmp;
+	}
 
 	li->angle = (SHORT(ml->angle))<<16;
+
+	if (crispy_fliplevels)
+            li->angle = -li->angle;
+
 	li->offset = (SHORT(ml->offset))<<16;
-	linedef = SHORT(ml->linedef);
+	linedef = (unsigned short)SHORT(ml->linedef); // [crispy] extended nodes
 	ldef = &lines[linedef];
 	li->linedef = ldef;
 	side = SHORT(ml->side);
@@ -250,8 +264,8 @@ void P_LoadSubsectors (int lump)
     
     for (i=0 ; i<numsubsectors ; i++, ss++, ms++)
     {
-	ss->numlines = SHORT(ms->numsegs);
-	ss->firstline = SHORT(ms->firstseg);
+	ss->numlines = (unsigned short)SHORT(ms->numsegs); // [crispy] extended nodes
+	ss->firstline = (unsigned short)SHORT(ms->firstseg); // [crispy] extended nodes
     }
 	
     W_ReleaseLumpNum(lump);
@@ -286,6 +300,8 @@ void P_LoadSectors (int lump)
 	ss->special = SHORT(ms->special);
 	ss->tag = SHORT(ms->tag);
 	ss->thinglist = NULL;
+	// [crispy] WiggleFix: [kb] for R_FixWiggle()
+	ss->cachedheight = 0;
     }
 	
     W_ReleaseLumpNum(lump);
@@ -317,11 +333,43 @@ void P_LoadNodes (int lump)
 	no->y = SHORT(mn->y)<<FRACBITS;
 	no->dx = SHORT(mn->dx)<<FRACBITS;
 	no->dy = SHORT(mn->dy)<<FRACBITS;
+
+	if (crispy_fliplevels)
+	{
+	    no->x += no->dx;
+	    no->y += no->dy;
+	    no->x = -no->x;
+	    no->dy = -no->dy;
+	}
+
 	for (j=0 ; j<2 ; j++)
 	{
-	    no->children[j] = SHORT(mn->children[j]);
+	    no->children[j] = (unsigned short)SHORT(mn->children[j]); // [crispy] extended nodes
+
+	    // [crispy] add support for extended nodes
+	    // from prboom-plus/src/p_setup.c:937-957
+	    if (no->children[j] == 0xFFFF)
+		no->children[j] = -1;
+	    else
+	    if (no->children[j] & 0x8000)
+	    {
+		no->children[j] &= ~0x8000;
+
+		if (no->children[j] >= numsubsectors)
+		    no->children[j] = 0;
+
+		no->children[j] |= NF_SUBSECTOR;
+	    }
+
 	    for (k=0 ; k<4 ; k++)
 		no->bbox[j][k] = SHORT(mn->bbox[j][k])<<FRACBITS;
+
+	    if (crispy_fliplevels)
+	    {
+		fixed_t tmp = no->bbox[j][2];
+		no->bbox[j][2] = -no->bbox[j][3];
+		no->bbox[j][3] = -tmp;
+	    }
 	}
     }
 	
@@ -368,6 +416,17 @@ void P_LoadThings (int lump)
 		break;
 	    }
 	}
+	// [crispy] do not spawn Wolf SS in BFG Edition
+	else
+	{
+	    // [crispy] BFG Edition MAP33 "Betray" still has Wolf SS
+	    if (bfgedition && singleplayer && mt->type == 84)
+	    {
+	        // [crispy] spawn Former Human instead
+	        mt->type = 3004;
+	    }
+	}
+
 	if (spawn == false)
 	    break;
 
@@ -378,6 +437,12 @@ void P_LoadThings (int lump)
 	spawnthing.type = SHORT(mt->type);
 	spawnthing.options = SHORT(mt->options);
 	
+	if (crispy_fliplevels)
+	{
+	    spawnthing.x = -spawnthing.x;
+	    spawnthing.angle = 180 - spawnthing.angle;
+	}
+
 	P_SpawnMapThing(&spawnthing);
     }
 
@@ -407,11 +472,19 @@ void P_LoadLineDefs (int lump)
     ld = lines;
     for (i=0 ; i<numlines ; i++, mld++, ld++)
     {
-	ld->flags = SHORT(mld->flags);
+	ld->flags = (unsigned short)SHORT(mld->flags); // [crispy] extended nodes
 	ld->special = SHORT(mld->special);
 	ld->tag = SHORT(mld->tag);
-	v1 = ld->v1 = &vertexes[SHORT(mld->v1)];
-	v2 = ld->v2 = &vertexes[SHORT(mld->v2)];
+	if (crispy_fliplevels)
+	{
+	    v1 = ld->v2 = &vertexes[(unsigned short)SHORT(mld->v2)]; // [crispy] extended nodes
+	    v2 = ld->v1 = &vertexes[(unsigned short)SHORT(mld->v1)]; // [crispy] extended nodes
+	}
+	else
+	{
+	v1 = ld->v1 = &vertexes[(unsigned short)SHORT(mld->v1)]; // [crispy] extended nodes
+	v2 = ld->v2 = &vertexes[(unsigned short)SHORT(mld->v2)]; // [crispy] extended nodes
+	}
 	ld->dx = v2->x - v1->x;
 	ld->dy = v2->y - v1->y;
 	
@@ -452,15 +525,38 @@ void P_LoadLineDefs (int lump)
 	ld->sidenum[0] = SHORT(mld->sidenum[0]);
 	ld->sidenum[1] = SHORT(mld->sidenum[1]);
 
-	if (ld->sidenum[0] != -1)
+	if (ld->sidenum[0] != NO_INDEX) // [crispy] extended nodes
 	    ld->frontsector = sides[ld->sidenum[0]].sector;
 	else
 	    ld->frontsector = 0;
 
-	if (ld->sidenum[1] != -1)
+	if (ld->sidenum[1] != NO_INDEX) // [crispy] extended nodes
 	    ld->backsector = sides[ld->sidenum[1]].sector;
 	else
 	    ld->backsector = 0;
+
+	// [crispy] fix common wad errors (missing sidedefs)
+	// adapted from prboom-plus/src/p_setup.c:1426
+	{
+	    // linedef has out-of-range sidedef number
+	    if (ld->sidenum[0] != NO_INDEX && ld->sidenum[0] >= numsides)
+		ld->sidenum[0] = NO_INDEX;
+
+	    if (ld->sidenum[1] != NO_INDEX && ld->sidenum[1] >= numsides)
+		ld->sidenum[1] = NO_INDEX;
+
+	    // linedef missing first sidedef
+	    if (ld->sidenum[0] == NO_INDEX)
+		ld->sidenum[0] = 0; // Substitute dummy sidedef for missing right side
+
+	    // linedef has two-sided flag set, but no second sidedef
+	    if ((ld->sidenum[1] == NO_INDEX) && (ld->flags & ML_TWOSIDED))
+	    {
+		// e6y: ML_TWOSIDED flag shouldn't be cleared for compatibility purposes
+		if (singleplayer)
+		    ld->flags &= ~ML_TWOSIDED; // Clear 2s flag for missing left side
+	    }
+	}
     }
 
     W_ReleaseLumpNum(lump);
@@ -506,20 +602,32 @@ void P_LoadBlockMap (int lump)
     int i;
     int count;
     int lumplen;
+    short *wadblockmaplump;
 
     lumplen = W_LumpLength(lump);
     count = lumplen / 2;
 	
-    blockmaplump = Z_Malloc(lumplen, PU_LEVEL, NULL);
-    W_ReadLump(lump, blockmaplump);
+    // [crispy] remove BLOCKMAP limit
+    // adapted from boom202s/P_SETUP.C:1025-1076
+    wadblockmaplump = Z_Malloc(lumplen, PU_LEVEL, NULL);
+    W_ReadLump(lump, wadblockmaplump);
+    blockmaplump = Z_Malloc(sizeof(*blockmaplump) * count, PU_LEVEL, NULL);
     blockmap = blockmaplump + 4;
+
+    blockmaplump[0] = SHORT(wadblockmaplump[0]);
+    blockmaplump[1] = SHORT(wadblockmaplump[1]);
+    blockmaplump[2] = (long)(SHORT(wadblockmaplump[2])) & 0xffff;
+    blockmaplump[3] = (long)(SHORT(wadblockmaplump[3])) & 0xffff;
 
     // Swap all short integers to native byte ordering.
   
-    for (i=0; i<count; i++)
+    for (i=4; i<count; i++)
     {
-	blockmaplump[i] = SHORT(blockmaplump[i]);
+	short t = SHORT(wadblockmaplump[i]);
+	blockmaplump[i] = (t == -1) ? -1l : (long) t & 0xffff;
     }
+
+    Z_Free(wadblockmaplump);
 		
     // Read the header
 
@@ -528,6 +636,29 @@ void P_LoadBlockMap (int lump)
     bmapwidth = blockmaplump[2];
     bmapheight = blockmaplump[3];
 	
+    if (crispy_fliplevels)
+    {
+	int x, y;
+	long* rowoffset; // [crispy] BLOCKMAP limit
+
+	bmaporgx += bmapwidth * 128 * FRACUNIT;
+	bmaporgx = -bmaporgx;
+
+	for (y = 0; y < bmapheight; y++)
+	{
+	    rowoffset = blockmap + y * bmapwidth;
+
+	    for (x = 0; x < bmapwidth / 2; x++)
+	    {
+	        long tmp; // [crispy] BLOCKMAP limit
+
+	        tmp = rowoffset[x];
+	        rowoffset[x] = rowoffset[bmapwidth-1-x];
+	        rowoffset[bmapwidth-1-x] = tmp;
+	    }
+	}
+    }
+
     // Clear out mobj chains
 
     count = sizeof(*blocklinks) * bmapwidth * bmapheight;
@@ -790,6 +921,30 @@ P_SetupLevel
 
     lumpnum = W_GetNumForName (lumpname);
 	
+    if (nervewadfile)
+    {
+        if (episode == 2)
+        {
+            gamemission = pack_nerve;
+        }
+        else
+        {
+            gamemission = doom2;
+        }
+    }
+    else
+    {
+        if (gamemission == pack_nerve)
+        {
+            gameepisode = 2;
+        }
+    }
+
+    if (nervewadfile && gamemission != pack_nerve)
+    {
+        lumpnum = W_GetSecondNumForName (lumpname);
+    }
+
     leveltime = 0;
 	
     // note: most of this ordering is important	

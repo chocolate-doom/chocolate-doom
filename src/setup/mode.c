@@ -102,7 +102,7 @@ static GameSelectCallback game_selected_callback;
 // Miscellaneous variables that aren't used in setup.
 
 static int showMessages = 1;
-static int screenblocks = 9;
+static int screenblocks = 10;
 static int detailLevel = 0;
 static char *savedir = NULL;
 static char *executable = NULL;

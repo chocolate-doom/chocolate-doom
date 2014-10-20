@@ -41,6 +41,28 @@
 #define WEAPONBOTTOM	128*FRACUNIT
 #define WEAPONTOP		32*FRACUNIT
 
+// from prboom-plus/src/p_pspr.c:73-83
+static const int recoil_values[] = {
+  10, // wp_fist
+  10, // wp_pistol
+  30, // wp_shotgun
+  10, // wp_chaingun
+  100,// wp_missile
+  20, // wp_plasma
+  100,// wp_bfg
+  0,  // wp_chainsaw
+  80  // wp_supershotgun
+};
+
+// [crispy] add weapon recoil
+// adapted from prboom-plus/src/p_pspr.c:484-495 (A_FireSomething ())
+void A_Recoil (player_t* player)
+{
+    extern void P_Thrust (player_t* player, angle_t angle, fixed_t move);
+
+    if (singleplayer && crispy_recoil && !(player->mo->flags & MF_NOCLIP))
+	P_Thrust(player, ANG180 + player->mo->angle, 2048 * recoil_values[player->readyweapon]);
+}
 
 
 //
@@ -135,6 +157,19 @@ void P_BringUpWeapon (player_t* player)
 		
     if (player->pendingweapon == wp_chainsaw)
 	S_StartSound (player->mo, sfx_sawup);
+
+    // [crispy] play "power up" sound when selecting berserk fist
+    if (player->pendingweapon == wp_fist && player->powers[pw_strength])
+    {
+	if (player == &players[consoleplayer])
+	{
+	    if (!players2[consoleplayer].berserkpow)
+		S_StartSound (NULL, sfx_getpow);
+	    else
+		// [crispy] false == "no not suppress"
+		players2[consoleplayer].berserkpow = false;
+	}
+    }
 		
     newstate = weaponinfo[player->pendingweapon].upstate;
 
@@ -164,6 +199,11 @@ boolean P_CheckAmmo (player_t* player)
     else
 	count = 1;	// Regular.
 
+    // [crispy] force weapon switch if weapon not owned
+    // only relevant when removing current weapon with TNTWEAPx cheat
+    if (!player->weaponowned[player->readyweapon])
+	count = INT_MAX;
+
     // Some do not need ammunition anyway.
     // Return if current ammunition sufficient.
     if (ammo == am_noammo || player->ammo[ammo] >= count)
@@ -181,7 +221,7 @@ boolean P_CheckAmmo (player_t* player)
 	}
 	else if (player->weaponowned[wp_supershotgun] 
 		 && player->ammo[am_shell]>2
-		 && (gamemode == commercial) )
+		 && (crispy_havessg) )
 	{
 	    player->pendingweapon = wp_supershotgun;
 	}
@@ -245,6 +285,9 @@ void P_FireWeapon (player_t* player)
     newstate = weaponinfo[player->readyweapon].atkstate;
     P_SetPsprite (player, ps_weapon, newstate);
     P_NoiseAlert (player->mo, player->mo);
+
+    // [crispy] center the weapon sprite horizontally
+    player->psprites[ps_weapon].sx = FRACUNIT;
 }
 
 
@@ -623,6 +666,11 @@ void P_BulletSlope (mobj_t*	mo)
 	{
 	    an -= 2<<26;
 	    bulletslope = P_AimLineAttack (mo, an, 16*64*FRACUNIT);
+	    if (!linetarget && singleplayer && crispy_freeaim)
+	    {
+	        an = mo->angle;
+               bulletslope = ((p2fromp(mo->player)->lookdir / MLOOKUNIT) << FRACBITS) / 173;
+	    }
 	}
     }
 }
@@ -665,6 +713,7 @@ A_FirePistol
     P_SetPsprite (player,
 		  ps_flash,
 		  weaponinfo[player->readyweapon].flashstate);
+    A_Recoil (player);
 
     P_BulletSlope (player->mo);
     P_GunShot (player->mo, !player->refire);
@@ -689,6 +738,7 @@ A_FireShotgun
     P_SetPsprite (player,
 		  ps_flash,
 		  weaponinfo[player->readyweapon].flashstate);
+    A_Recoil (player);
 
     P_BulletSlope (player->mo);
 	
@@ -719,6 +769,7 @@ A_FireShotgun2
     P_SetPsprite (player,
 		  ps_flash,
 		  weaponinfo[player->readyweapon].flashstate);
+    A_Recoil (player);
 
     P_BulletSlope (player->mo);
 	
@@ -756,6 +807,7 @@ A_FireCGun
 		  weaponinfo[player->readyweapon].flashstate
 		  + psp->state
 		  - &states[S_CHAIN1] );
+    A_Recoil (player);
 
     P_BulletSlope (player->mo);
 	

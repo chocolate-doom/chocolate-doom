@@ -128,6 +128,9 @@ typedef	struct
     int			linecount;
     struct line_s**	lines;	// [linecount] size
     
+    // [crispy] WiggleFix: [kb] for R_FixWiggle()
+    int		cachedheight;
+    int		scaleindex;
 } sector_t;
 
 
@@ -183,13 +186,13 @@ typedef struct line_s
     fixed_t	dy;
 
     // Animation related.
-    short	flags;
+    unsigned short	flags; // [crispy] extended nodes
     short	special;
     short	tag;
 
     // Visual appearance: SideDefs.
-    //  sidenum[1] will be -1 if one sided
-    short	sidenum[2];			
+    //  sidenum[1] will be -1 (NO_INDEX) if one sided
+    unsigned short	sidenum[2]; // [crispy] extended nodes
 
     // Neat. Another bounding box, for the extent
     //  of the LineDef.
@@ -223,8 +226,8 @@ typedef struct line_s
 typedef struct subsector_s
 {
     sector_t*	sector;
-    short	numlines;
-    short	firstline;
+    int	numlines; // [crispy] extended nodes
+    int	firstline; // [crispy] extended nodes
     
 } subsector_t;
 
@@ -270,7 +273,7 @@ typedef struct
     fixed_t	bbox[2][4];
 
     // If NF_SUBSECTOR its a subsector.
-    unsigned short children[2];
+    int children[2]; // [crispy] extended nodes
     
 } node_t;
 
@@ -368,6 +371,8 @@ typedef struct vissprite_s
     lighttable_t*	colormap;
    
     int			mobjflags;
+    // [crispy] color translation table for blood colored by monster class
+    byte*			translation;
     
 } vissprite_t;
 
@@ -430,19 +435,24 @@ typedef struct
   
   // leave pads for [minx-1]/[maxx+1]
   
-  byte		pad1;
+  unsigned short		pad1; // [crispy] hires
   // Here lies the rub for all
   //  dynamic resize/change of resolution.
-  byte		top[SCREENWIDTH];
-  byte		pad2;
-  byte		pad3;
+  unsigned short		top[SCREENWIDTH]; // [crispy] hires
+  unsigned short		pad2; // [crispy] hires
+  unsigned short		pad3; // [crispy] hires
   // See above.
-  byte		bottom[SCREENWIDTH];
-  byte		pad4;
+  unsigned short		bottom[SCREENWIDTH]; // [crispy] hires
+  unsigned short		pad4; // [crispy] hires
 
 } visplane_t;
 
 
+// [crispy] map-coordinates of the laser vision spot
+typedef struct
+{
+    fixed_t x, y, z;
+} laserspot_t;
 
 
 #endif

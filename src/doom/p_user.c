@@ -21,6 +21,7 @@
 
 
 
+#include <stdlib.h> // [crispy] abs()
 #include "doomdef.h"
 #include "d_event.h"
 
@@ -141,6 +142,8 @@ void P_CalcHeight (player_t* player)
 void P_MovePlayer (player_t* player)
 {
     ticcmd_t*		cmd;
+    int		look;
+    player2_t*		player2 = p2fromp(player);
 	
     cmd = &player->cmd;
 	
@@ -152,14 +155,45 @@ void P_MovePlayer (player_t* player)
 	
     if (cmd->forwardmove && onground)
 	P_Thrust (player, player->mo->angle, cmd->forwardmove*2048);
+    else
+    // [crispy] in-air movement is only possible with jumping enabled
+    if (cmd->forwardmove && singleplayer && crispy_jump)
+        P_Thrust (player, player->mo->angle, FRACUNIT >> 8);
     
     if (cmd->sidemove && onground)
 	P_Thrust (player, player->mo->angle-ANG90, cmd->sidemove*2048);
+    else
+    // [crispy] in-air movement is only possible with jumping enabled
+    if (cmd->sidemove && singleplayer && crispy_jump)
+            P_Thrust(player, player->mo->angle, FRACUNIT >> 8);
 
     if ( (cmd->forwardmove || cmd->sidemove) 
 	 && player->mo->state == &states[S_PLAY] )
     {
 	P_SetMobjState (player->mo, S_PLAY_RUN1);
+    }
+
+    // [crispy] apply lookdir delta
+    look = cmd->lookfly & 15;
+    if (look > 7)
+    {
+        look -= 16;
+    }
+    if (look)
+    {
+        if (look == TOCENTER)
+        {
+            player2->centering = true;
+        }
+        else
+        {
+            player2->lookdir += MLOOKUNIT * 5 * look;
+            if (player2->lookdir > LOOKDIRMAX * MLOOKUNIT ||
+                player2->lookdir < -LOOKDIRMIN * MLOOKUNIT)
+            {
+                player2->lookdir -= MLOOKUNIT * 5 * look;
+            }
+        }
     }
 }	
 
@@ -230,6 +264,7 @@ void P_PlayerThink (player_t* player)
 {
     ticcmd_t*		cmd;
     weapontype_t	newweapon;
+    player2_t*		player2 = p2fromp(player);
 	
     // fixme: do this in the cheat code
     if (player->cheats & CF_NOCLIP)
@@ -248,10 +283,35 @@ void P_PlayerThink (player_t* player)
     }
 			
 	
+    // [crispy] center view
+    // e.g. after teleporting, dying, jumping and on demand
+    if (player2->centering)
+    {
+        if (player2->lookdir > 0)
+        {
+            player2->lookdir -= 8 * MLOOKUNIT;
+        }
+        else if (player2->lookdir < 0)
+        {
+            player2->lookdir += 8 * MLOOKUNIT;
+        }
+        if (abs(player2->lookdir) < 8 * MLOOKUNIT)
+        {
+            player2->lookdir = 0;
+            player2->centering = false;
+        }
+    }
+
     if (player->playerstate == PST_DEAD)
     {
 	P_DeathThink (player);
 	return;
+    }
+
+    // [crispy] delay next possible jump
+    if (player2->jumpTics)
+    {
+        player2->jumpTics--;
     }
     
     // Move around.
@@ -267,6 +327,17 @@ void P_PlayerThink (player_t* player)
     if (player->mo->subsector->sector->special)
 	P_PlayerInSpecialSector (player);
     
+    // [crispy] jumping: apply vertical momentum
+    if (cmd->arti)
+    {
+        if ((cmd->arti & AFLAG_JUMP) && onground && !player2->jumpTics)
+        {
+            // [crispy] Hexen sets 9; Strife adds 8
+            player->mo->momz = 9 * FRACUNIT;
+            player2->jumpTics = 18;
+        }
+    }
+
     // Check for weapon change.
 
     // A special event has no other buttons.
@@ -288,7 +359,7 @@ void P_PlayerThink (player_t* player)
 	    newweapon = wp_chainsaw;
 	}
 	
-	if ( (gamemode == commercial)
+	if ( (crispy_havessg)
 	    && newweapon == wp_shotgun 
 	    && player->weaponowned[wp_supershotgun]
 	    && player->readyweapon != wp_supershotgun)
@@ -376,4 +447,14 @@ void P_PlayerThink (player_t* player)
 	player->fixedcolormap = 0;
 }
 
+// [crispy] return the corresponding player2_t for a given player_t
+player2_t* p2fromp (player_t* player)
+{
+    int p;
 
+    for (p = 0; p < MAXPLAYERS; p++)
+        if (&players[p] == player)
+            return &players2[p];
+
+    return NULL;
+}

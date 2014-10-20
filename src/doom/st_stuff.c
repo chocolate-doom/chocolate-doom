@@ -58,6 +58,10 @@
 #include "dstrings.h"
 #include "sounds.h"
 
+#include "v_trans.h" // [crispy] colored cheat messages
+
+extern int screenblocks; // [crispy] for the Crispy HUD
+
 //
 // STATUS BAR DATA
 //
@@ -254,7 +258,7 @@
 #define ST_OUTHEIGHT		1
 
 #define ST_MAPTITLEX \
-    (SCREENWIDTH - ST_MAPWIDTH * ST_CHATFONTWIDTH)
+    (ORIGWIDTH - ST_MAPWIDTH * ST_CHATFONTWIDTH)
 
 #define ST_MAPTITLEY		0
 #define ST_MAPHEIGHT		1
@@ -407,6 +411,12 @@ cheatseq_t cheat_choppers = CHEAT("idchoppers", 0);
 cheatseq_t cheat_clev = CHEAT("idclev", 2);
 cheatseq_t cheat_mypos = CHEAT("idmypos", 0);
 
+// [crispy] new cheats
+cheatseq_t cheat_weapon = CHEAT("tntweap", 1);
+cheatseq_t cheat_massacre = CHEAT("tntem", 0);
+cheatseq_t cheat_hom = CHEAT("tnthom", 0);
+cheatseq_t cheat_notarget = CHEAT("notarget", 0);
+cheatseq_t cheat_spechits = CHEAT("spechits", 0);
 
 //
 // STATUS BAR CODE
@@ -415,6 +425,9 @@ void ST_Stop(void);
 
 void ST_refreshBackground(void)
 {
+
+    if (screenblocks >= CRISPY_HUD && !automapactive)
+        return;
 
     if (st_statusbaron)
     {
@@ -432,6 +445,113 @@ void ST_refreshBackground(void)
 
 }
 
+// [crispy] from boom202s/M_CHEAT.C:467-498
+static int ST_cheat_massacre()    // jff 2/01/98 kill all monsters
+{
+  // jff 02/01/98 'em' cheat - kill all monsters
+  // partially taken from Chi's .46 port
+  //
+  // killough 2/7/98: cleaned up code and changed to use dprintf;
+  // fixed lost soul bug (LSs left behind when PEs are killed)
+
+  int killcount=0;
+  thinker_t *currentthinker=&thinkercap;
+  extern void A_PainDie(mobj_t *);
+
+  while ((currentthinker=currentthinker->next)!=&thinkercap)
+    if (currentthinker->function.acp1 == (actionf_p1) P_MobjThinker &&
+        (((mobj_t *) currentthinker)->flags & MF_COUNTKILL ||
+         ((mobj_t *) currentthinker)->type == MT_SKULL))
+      { // killough 3/6/98: kill even if PE is dead
+        if (((mobj_t *) currentthinker)->health > 0)
+          {
+            killcount++;
+            P_DamageMobj((mobj_t *)currentthinker, NULL, NULL, 10000);
+          }
+        if (((mobj_t *) currentthinker)->type == MT_PAIN)
+          {
+            A_PainDie((mobj_t *) currentthinker);    // killough 2/8/98
+            P_SetMobjState ((mobj_t *) currentthinker, S_PAIN_DIE6);
+          }
+      }
+  return (killcount);
+}
+
+// [crispy] trigger all special lines available on the map
+static int ST_cheat_spechits()
+{
+    int i, speciallines = 0;
+    boolean origcards[NUMCARDS];
+    line_t dummy;
+
+    // temporarily give all keys
+    for (i = 0; i < NUMCARDS; i++)
+    {
+	origcards[i] = plyr->cards[i];
+	plyr->cards[i] = true;
+    }
+
+    for (i = 0; i < numlines; i++)
+    {
+	if (lines[i].special)
+	{
+	    // do not trigger level exit switches/lines or teleporters
+	    if (lines[i].special == 11 || lines[i].special == 51 ||
+	        lines[i].special == 52 || lines[i].special == 124 ||
+	        lines[i].special == 39 || lines[i].special == 97)
+	        continue;
+
+	    P_CrossSpecialLine (i, 0, plyr->mo);
+	    P_ShootSpecialLine (plyr->mo, &lines[i]);
+	    P_UseSpecialLine (plyr->mo, &lines[i], 0);
+
+	    speciallines++;
+	}
+    }
+
+    for (i = 0; i < NUMCARDS; i++)
+    {
+	plyr->cards[i] = origcards[i];
+    }
+
+    // [crispy] trigger tag 666/667 events
+    dummy.tag = 666;
+    if (gamemode == commercial)
+    {
+	if (gamemap == 7)
+	{
+	    // Mancubi
+	    speciallines += EV_DoFloor(&dummy, lowerFloorToLowest);
+
+	    // Arachnotrons
+	    dummy.tag = 667;
+	    speciallines += EV_DoFloor(&dummy, raiseToTexture);
+	}
+    }
+    else
+    {
+	if (gameepisode == 1)
+	    // Barons of Hell
+	    speciallines += EV_DoFloor(&dummy, lowerFloorToLowest);
+	else
+	if (gameepisode == 4)
+	{
+	     if (gamemap == 6)
+		// Cyberdemons
+		speciallines += EV_DoDoor(&dummy, vld_blazeOpen);
+	    else
+	    if (gamemap == 8)
+		// Spider Masterminds
+		speciallines += EV_DoFloor(&dummy, lowerFloorToLowest);
+	}
+    }
+    // Keens (no matter which level they are on)
+    // this call will be ignored if the tagged sector is already moving
+    // so actions triggered in the condition above will have precedence
+    speciallines += EV_DoDoor(&dummy, vld_open);
+
+    return (speciallines);
+}
 
 // Respond to keyboard input events,
 //  intercept cheats.
@@ -484,6 +604,14 @@ ST_Responder (event_t* ev)
 	plyr->armorpoints = deh_idfa_armor;
 	plyr->armortype = deh_idfa_armor_class;
 	
+	// [crispy] give backpack
+	if (!plyr->backpack)
+	{
+	    for (i=0 ; i<NUMAMMO ; i++)
+		plyr->maxammo[i] *= 2;
+	    plyr->backpack = true;
+	}
+
 	for (i=0;i<NUMWEAPONS;i++)
 	  plyr->weaponowned[i] = true;
 	
@@ -498,6 +626,14 @@ ST_Responder (event_t* ev)
 	plyr->armorpoints = deh_idkfa_armor;
 	plyr->armortype = deh_idkfa_armor_class;
 	
+	// [crispy] give backpack
+	if (!plyr->backpack)
+	{
+	    for (i=0 ; i<NUMAMMO ; i++)
+		plyr->maxammo[i] *= 2;
+	    plyr->backpack = true;
+	}
+
 	for (i=0;i<NUMWEAPONS;i++)
 	  plyr->weaponowned[i] = true;
 	
@@ -508,6 +644,40 @@ ST_Responder (event_t* ev)
 	  plyr->cards[i] = true;
 	
 	plyr->message = DEH_String(STSTR_KFAADDED);
+      }
+      // [crispy] implement Boom's "tntem" cheat
+      else if (cht_CheckCheat(&cheat_massacre, ev->data2))
+      {
+	static char msg[32];
+	int killcount = ST_cheat_massacre();
+
+	M_snprintf(msg, sizeof(msg), "%s%d %sMonster%s Killed",
+	           crstr[CR_GOLD],
+	           killcount, crstr[CR_NONE], (killcount == 1) ? "" : "s");
+	plyr->message = msg;
+      }
+      // [crispy] implement Crispy Doom's "spechits" cheat
+      else if (cht_CheckCheat(&cheat_spechits, ev->data2))
+      {
+	static char msg[32];
+	int triggeredlines = ST_cheat_spechits();
+
+	M_snprintf(msg, sizeof(msg), "%s%d %sSpecial Line%s Triggered",
+	           crstr[CR_GOLD],
+	           triggeredlines, crstr[CR_NONE], (triggeredlines == 1) ? "" : "s");
+	plyr->message = msg;
+      }
+      // [crispy] implement Boom's "tnthom" cheat
+      else if (cht_CheckCheat(&cheat_hom, ev->data2))
+      {
+	static char msg[32];
+
+	crispy_flashinghom = !crispy_flashinghom;
+
+	M_snprintf(msg, sizeof(msg), "HOM Detection %s%s",
+	           crstr[CR_GREEN],
+	           (crispy_flashinghom) ? "ON" : "OFF");
+	plyr->message = msg;
       }
       // 'mus' cheat for changing music
       else if (cht_CheckCheat(&cheat_mus, ev->data2))
@@ -528,7 +698,8 @@ ST_Responder (event_t* ev)
 	{
 	  musnum = mus_runnin + (buf[0]-'0')*10 + buf[1]-'0' - 1;
 	  
-	  if (((buf[0]-'0')*10 + buf[1]-'0') > 35)
+	  // [crispy] prevent crash with IDMUS00
+	  if (((buf[0]-'0')*10 + buf[1]-'0') > 35 || musnum < mus_runnin)
 	    plyr->message = DEH_String(STSTR_NOMUS);
 	  else
 	    S_ChangeMusic(musnum, 1);
@@ -537,16 +708,18 @@ ST_Responder (event_t* ev)
 	{
 	  musnum = mus_e1m1 + (buf[0]-'1')*9 + (buf[1]-'1');
 	  
-	  if (((buf[0]-'1')*9 + buf[1]-'1') > 31)
+	  // [crispy] prevent crash with IDMUS0x or IDMUSx0
+	  if (((buf[0]-'1')*9 + buf[1]-'1') > 31 || buf[0] < '1' || buf[1] < '1')
 	    plyr->message = DEH_String(STSTR_NOMUS);
 	  else
 	    S_ChangeMusic(musnum, 1);
 	}
       }
-      else if ( (logical_gamemission == doom 
-                 && cht_CheckCheat(&cheat_noclip, ev->data2))
-             || (logical_gamemission != doom 
-                 && cht_CheckCheat(&cheat_commercial_noclip,ev->data2)))
+      // [crispy] allow both idspispopd and idclip cheats in all gamemissions
+      else if ( ( /* logical_gamemission == doom
+                 && */ cht_CheckCheat(&cheat_noclip, ev->data2))
+             || ( /* logical_gamemission != doom
+                 && */ cht_CheckCheat(&cheat_commercial_noclip,ev->data2)))
       {	
         // Noclip cheat.
         // For Doom 1, use the idspipsopd cheat; for all others, use
@@ -558,6 +731,18 @@ ST_Responder (event_t* ev)
 	  plyr->message = DEH_String(STSTR_NCON);
 	else
 	  plyr->message = DEH_String(STSTR_NCOFF);
+      }
+      // [crispy] implement PrBoom+'s "notarget" cheat
+      else if (cht_CheckCheat(&cheat_notarget, ev->data2))
+      {
+	static char msg[32];
+
+	plyr->cheats ^= CF_NOTARGET;
+
+	M_snprintf(msg, sizeof(msg), "Notarget Mode %s%s",
+	           crstr[CR_GREEN],
+	           (plyr->cheats & CF_NOTARGET) ? "ON" : "OFF");
+	plyr->message = msg;
       }
       // 'behold?' power-up cheats
       for (i=0;i<6;i++)
@@ -580,6 +765,57 @@ ST_Responder (event_t* ev)
       {
 	plyr->message = DEH_String(STSTR_BEHOLD);
       }
+      // [crispy] implement Boom's "tntweap?" weapon cheats
+      else if (cht_CheckCheat(&cheat_weapon, ev->data2))
+      {
+	char		buf[2];
+	int		w;
+	static char	msg[32];
+
+	cht_GetParam(&cheat_weapon, buf);
+	w = *buf - '1';
+
+	if (w < 0 || w >= NUMWEAPONS)
+	    return false;
+
+	if (w == wp_supershotgun && !crispy_havessg)
+	    return false;
+
+	if ((w == wp_bfg || w == wp_plasma) && gamemode == shareware)
+	    return false;
+
+	// make '1' apply beserker strength toggle
+	if (w == wp_fist)
+	{
+	    if (!plyr->powers[pw_strength])
+		P_GivePower(plyr, pw_strength);
+	    else
+		plyr->powers[pw_strength] = 0;
+	    M_snprintf(msg, sizeof(msg), DEH_String(STSTR_BEHOLDX));
+	}
+	else
+	{
+	    if ((plyr->weaponowned[w] = !plyr->weaponowned[w]))
+		M_snprintf(msg, sizeof(msg), "Weapon %s%d%s Added",
+		           crstr[CR_GOLD],
+		           w + 1, crstr[CR_NONE]);
+	    else
+	    {
+		M_snprintf(msg, sizeof(msg), "Weapon %s%d%s Removed",
+		           crstr[CR_GOLD],
+		           w + 1, crstr[CR_NONE]);
+
+		// [crispy] removed current weapon, select another one
+		if (w == plyr->readyweapon)
+		{
+		    extern boolean P_CheckAmmo (player_t* player);
+
+		    P_CheckAmmo(plyr);
+		}
+	    }
+	}
+	plyr->message = msg;
+      }
       // 'choppers' invulnerability & chainsaw
       else if (cht_CheckCheat(&cheat_choppers, ev->data2))
       {
@@ -590,12 +826,17 @@ ST_Responder (event_t* ev)
       // 'mypos' for player position
       else if (cht_CheckCheat(&cheat_mypos, ev->data2))
       {
+        // [crispy] show (human readable) map coordinates
+        // in the upper right corner (like automap stats)
+/*
         static char buf[ST_MSGWIDTH];
         M_snprintf(buf, sizeof(buf), "ang=0x%x;x,y=(0x%x,0x%x)",
                    players[consoleplayer].mo->angle,
                    players[consoleplayer].mo->x,
                    players[consoleplayer].mo->y);
         plyr->message = buf;
+*/
+        p2fromp(plyr)->mapcoords ^= 1;
       }
     }
     
@@ -608,6 +849,12 @@ ST_Responder (event_t* ev)
       
       cht_GetParam(&cheat_clev, buf);
       
+      if (gamemission == pack_nerve)
+      {
+	epsd = 2;
+	map = (buf[0] - '0')*10 + buf[1] - '0';
+      }
+      else
       if (gamemode == commercial)
       {
 	epsd = 1;
@@ -627,9 +874,15 @@ ST_Responder (event_t* ev)
       }
 
       // Catch invalid maps.
+      if (epsd == 0) // [crispy] allow IDCLEV0x to work in Doom 1
+	epsd = gameepisode;
+      else
       if (epsd < 1)
 	return false;
 
+      if ((map == 0) && (buf[0] - '0' == 0)) // [crispy] IDCLEV00 restarts current map
+	map = gamemap;
+      else
       if (map < 1)
 	return false;
 
@@ -648,13 +901,20 @@ ST_Responder (event_t* ev)
 
       // The source release has this check as map > 34. However, Vanilla
       // Doom allows IDCLEV up to MAP40 even though it normally crashes.
-      if ((gamemode == commercial)
+      if ((gamemode == commercial && gamemission != pack_nerve)
 	&& (( epsd > 1) || (map > 40)))
+	return false;
+
+      if ((gamemission == pack_nerve)
+	&& (( epsd > 2) || (map > 9)))
 	return false;
 
       // So be it.
       plyr->message = DEH_String(STSTR_CLEV);
       G_DeferedInitNew(gameskill, epsd, map);
+
+      // [crispy] eat key press, i.e. don't change weapon upon level change
+      return true;
     }
   }
   return false;
@@ -740,7 +1000,8 @@ void ST_updateFaceWidget(void)
 	    // being attacked
 	    priority = 7;
 	    
-	    if (plyr->health - st_oldhealth > ST_MUCHPAIN)
+	    // [crispy] show "Ouch Face" as intended
+	    if (st_oldhealth - plyr->health > ST_MUCHPAIN)
 	    {
 		st_facecount = ST_TURNCOUNT;
 		st_faceindex = ST_calcPainOffset() + ST_OUCHOFFSET;
@@ -793,7 +1054,8 @@ void ST_updateFaceWidget(void)
 	// getting hurt because of your own damn stupidity
 	if (plyr->damagecount)
 	{
-	    if (plyr->health - st_oldhealth > ST_MUCHPAIN)
+	    // [crispy] show "Ouch Face" as intended
+	    if (st_oldhealth - plyr->health > ST_MUCHPAIN)
 	    {
 		priority = 7;
 		st_facecount = ST_TURNCOUNT;
@@ -959,6 +1221,10 @@ void ST_doPaletteStuff(void)
 	if (palette >= NUMREDPALS)
 	    palette = NUMREDPALS-1;
 
+	// [crispy] tune down a bit so the menu remains legible
+	if (menuactive || paused)
+	    palette >>= 1;
+
 	palette += STARTREDPALS;
     }
 
@@ -998,6 +1264,110 @@ void ST_doPaletteStuff(void)
 
 }
 
+enum
+{
+    hudcolor_ammo,
+    hudcolor_health,
+    hudcolor_frags,
+    hudcolor_armor
+} hudcolor_t;
+
+// [crispy] return ammo/health/armor widget color
+static byte* ST_WidgetColor(int i)
+{
+    if (!crispy_coloredhud)
+        return NULL;
+
+    switch (i)
+    {
+        case hudcolor_ammo:
+        {
+            if (weaponinfo[plyr->readyweapon].ammo == am_noammo)
+            {
+                return NULL;
+            }
+            else
+            {
+                int ammo =  plyr->ammo[weaponinfo[plyr->readyweapon].ammo];
+                int fullammo = maxammo[weaponinfo[plyr->readyweapon].ammo];
+                int ammopct = 100 * ammo / fullammo;
+
+                if (ammopct < 25)
+                    return cr[CR_RED];
+                else if (ammopct < 50)
+                    return cr[CR_GOLD];
+                else if (ammopct <= 100)
+                    return cr[CR_GREEN];
+                else
+                    return cr[CR_BLUE2];
+            }
+            break;
+        }
+        case hudcolor_health:
+        {
+            int health = plyr->health;
+
+            // [crispy] Invulnerability powerup and God Mode cheat turn Health values gray
+            if (plyr->cheats & CF_GODMODE ||
+                plyr->powers[pw_invulnerability])
+                return cr[CR_GRAY];
+            else if (health < 25)
+                return cr[CR_RED];
+            else if (health < 50)
+                return cr[CR_GOLD];
+            else if (health <= 100)
+                return cr[CR_GREEN];
+            else
+                return cr[CR_BLUE2];
+
+            break;
+        }
+        case hudcolor_frags:
+        {
+            int frags = st_fragscount;
+
+            if (frags < 0)
+                return cr[CR_RED];
+            else if (frags == 0)
+                return cr[CR_GOLD];
+            else
+                return cr[CR_GREEN];
+
+            break;
+        }
+        case hudcolor_armor:
+        {
+	    // [crispy] Invulnerability powerup and God Mode cheat turn Armor values gray
+	    if (plyr->cheats & CF_GODMODE ||
+                plyr->powers[pw_invulnerability])
+                return cr[CR_GRAY];
+	    // [crispy] color by armor type
+	    else if (plyr->armortype == 0)
+                return cr[CR_RED];
+	    else if (plyr->armortype == 1)
+                return cr[CR_GREEN];
+	    else if (plyr->armortype == 2)
+                return cr[CR_BLUE2];
+/*
+            // [crispy] alternatively, color by armor points
+            int armor = plyr->armorpoints;
+
+            if (armor < 25)
+                return cr[CR_RED];
+            else if (armor < 50)
+                return cr[CR_GOLD];
+            else if (armor <= 100)
+                return cr[CR_GREEN];
+            else
+                return cr[CR_BLUE2];
+*/
+            break;
+        }
+    }
+
+    return NULL;
+}
+
 void ST_drawWidgets(boolean refresh)
 {
     int		i;
@@ -1008,7 +1378,16 @@ void ST_drawWidgets(boolean refresh)
     // used by w_frags widget
     st_fragson = deathmatch && st_statusbaron; 
 
+    dp_translation = ST_WidgetColor(hudcolor_ammo);
     STlib_updateNum(&w_ready, refresh);
+    V_ClearDPTranslation();
+
+    // [crispy] draw berserk pack instead of no ammo if appropriate
+    if (screenblocks >= CRISPY_HUD && !automapactive &&
+        plyr->readyweapon == wp_fist && plyr->powers[pw_strength])
+    {
+        V_DrawPatch(ST_AMMOX-23, ST_AMMOY+13, W_CacheLumpName("PSTRA0", PU_CACHE));
+    }
 
     for (i=0;i<4;i++)
     {
@@ -1016,21 +1395,31 @@ void ST_drawWidgets(boolean refresh)
 	STlib_updateNum(&w_maxammo[i], refresh);
     }
 
-    STlib_updatePercent(&w_health, refresh);
-    STlib_updatePercent(&w_armor, refresh);
+    dp_translation = ST_WidgetColor(hudcolor_health);
+    STlib_updatePercent(&w_health, refresh || screenblocks >= CRISPY_HUD);
+    dp_translation = ST_WidgetColor(hudcolor_armor);
+    STlib_updatePercent(&w_armor, refresh || screenblocks >= CRISPY_HUD);
+    V_ClearDPTranslation();
 
+    if (screenblocks < CRISPY_HUD || automapactive)
+    {
     STlib_updateBinIcon(&w_armsbg, refresh);
+    }
 
     for (i=0;i<6;i++)
-	STlib_updateMultIcon(&w_arms[i], refresh);
+	STlib_updateMultIcon(&w_arms[i], refresh || screenblocks >= CRISPY_HUD);
 
+    if (screenblocks < CRISPY_HUD || automapactive)
+    {
     STlib_updateMultIcon(&w_faces, refresh);
+    }
 
     for (i=0;i<3;i++)
-	STlib_updateMultIcon(&w_keyboxes[i], refresh);
+	STlib_updateMultIcon(&w_keyboxes[i], refresh || screenblocks >= CRISPY_HUD);
 
-    STlib_updateNum(&w_frags, refresh);
-
+    dp_translation = ST_WidgetColor(hudcolor_frags);
+    STlib_updateNum(&w_frags, refresh || screenblocks >= CRISPY_HUD);
+    V_ClearDPTranslation();
 }
 
 void ST_doRefresh(void)
@@ -1055,17 +1444,26 @@ void ST_diffDraw(void)
 void ST_Drawer (boolean fullscreen, boolean refresh)
 {
   
-    st_statusbaron = (!fullscreen) || automapactive;
+    st_statusbaron = (!fullscreen) || automapactive || screenblocks >= CRISPY_HUD;
     st_firsttime = st_firsttime || refresh;
+
+    if (crispy_cleanscreenshot && screenblocks >= CRISPY_HUD)
+        return;
 
     // Do red-/gold-shifts from damage/items
     ST_doPaletteStuff();
+
+    // [crispy] translucent HUD
+    if (crispy_translucency && screenblocks > CRISPY_HUD && !automapactive)
+	dp_translucent = true;
 
     // If just after ST_Start(), refresh all
     if (st_firsttime) ST_doRefresh();
     // Otherwise, update as little as possible
     else ST_diffDraw();
 
+    if (dp_translucent)
+	dp_translucent = false;
 }
 
 typedef void (*load_callback_t)(char *lumpname, patch_t **variable); 
@@ -1411,6 +1809,6 @@ void ST_Stop (void)
 void ST_Init (void)
 {
     ST_loadData();
-    st_backing_screen = (byte *) Z_Malloc(ST_WIDTH * ST_HEIGHT, PU_STATIC, 0);
+    st_backing_screen = (byte *) Z_Malloc((ST_WIDTH << hires) * (ST_HEIGHT << hires), PU_STATIC, 0);
 }
 
