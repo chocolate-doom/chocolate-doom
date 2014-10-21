@@ -751,6 +751,38 @@ static char *GetGameName(char *gamename)
     return gamename;
 }
 
+static void SetMissionForPackName(char *pack_name)
+{
+    int i;
+    static const struct
+    {
+        char *name;
+        int mission;
+    } packs[] = {
+        { "doom2",    doom2 },
+        { "tnt",      pack_tnt },
+        { "plutonia", pack_plut },
+    };
+
+    for (i = 0; i < arrlen(packs); ++i)
+    {
+        if (!strcasecmp(pack_name, packs[i].name))
+        {
+            gamemission = packs[i].mission;
+            return;
+        }
+    }
+
+    printf("Valid mission packs are:\n");
+
+    for (i = 0; i < arrlen(packs); ++i)
+    {
+        printf("\t%s\n", packs[i].name);
+    }
+
+    I_Error("Unknown mission pack name: %s", pack_name);
+}
+
 //
 // Find out what version of Doom is playing.
 //
@@ -812,9 +844,27 @@ void D_IdentifyVersion(void)
     }
     else
     {
-        // Doom 2 of some kind.
+        int p;
 
+        // Doom 2 of some kind.
         gamemode = commercial;
+
+        // We can manually override the gamemission that we got from the
+        // IWAD detection code. This allows us to eg. play Plutonia 2
+        // with Freedoom and get the right level names.
+
+        //!
+        // @arg <pack>
+        //
+        // Explicitly specify a Doom II "mission pack" to run as, instead of
+        // detecting it based on the filename. Valid values are: "doom2",
+        // "tnt" and "plutonia".
+        //
+        p = M_CheckParmWithArgs("-pack", 1);
+        if (p > 0)
+        {
+            SetMissionForPackName(myargv[p + 1]);
+        }
     }
 }
 
@@ -1500,6 +1550,19 @@ void D_DoomMain (void)
         DEH_AddStringReplacement(HUSTR_31, "level 31: idkfa");
         DEH_AddStringReplacement(HUSTR_32, "level 32: keen");
         DEH_AddStringReplacement(PHUSTR_1, "level 33: betray");
+
+        // The BFG edition doesn't have the "low detail" menu option (fair
+        // enough). But bizarrely, it reuses the M_GDHIGH patch as a label
+        // for the options menu (says "Fullscreen:"). Why the perpetrators
+        // couldn't just add a new graphic lump and had to reuse this one,
+        // I don't know.
+        //
+        // The end result is that M_GDHIGH is too wide and causes the game
+        // to crash. As a workaround to get a minimum level of support for
+        // the BFG edition IWADs, use the "ON"/"OFF" graphics instead.
+
+        DEH_AddStringReplacement("M_GDHIGH", "M_MSGON");
+        DEH_AddStringReplacement("M_GDLOW", "M_MSGOFF");
     }
 
 #ifdef FEATURE_DEHACKED

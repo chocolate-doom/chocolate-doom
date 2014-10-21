@@ -1135,34 +1135,14 @@ static char *msgNames[2] = {"M_MSGOFF","M_MSGON"};
 
 void M_DrawOptions(void)
 {
-    char *detail_patch;
-
     V_DrawPatchDirect(108, 15, W_CacheLumpName(DEH_String("M_OPTTTL"),
                                                PU_CACHE));
-
-    // Workaround for BFG edition IWAD weirdness.
-    // The BFG edition doesn't have the "low detail" menu option (fair
-    // enough). But bizarrely, it reuses the M_GDHIGH patch as a label
-    // for the options menu (says "Fullscreen:"). Why the perpetrators
-    // couldn't just add a new graphic lump and had to reuse this one,
-    // I don't know.
-    //
-    // The end result is that M_GDHIGH is too wide and causes the game
-    // to crash. As a workaround to get a minimum level of support for
-    // the BFG edition IWADs, use the "ON"/"OFF" graphics instead.
-    if (bfgedition)
-    {
-        detail_patch = msgNames[!detailLevel];
-    }
-    else
-    {
-        detail_patch = detailNames[detailLevel];
-    }
-
+	
 // [crispy] no patches are drawn in the Options menu anymore
 /*
     V_DrawPatchDirect(OptionsDef.x + 175, OptionsDef.y + LINEHEIGHT * detail,
-		      W_CacheLumpName(DEH_String(detail_patch), PU_CACHE));
+		      W_CacheLumpName(DEH_String(detailNames[detailLevel]),
+			              PU_CACHE));
 */
 
     M_WriteText(OptionsDef.x + M_StringWidth("Graphic Detail: "),
@@ -1178,8 +1158,6 @@ void M_DrawOptions(void)
     M_WriteText(OptionsDef.x + M_StringWidth("Messages: "),
                 OptionsDef.y + LINEHEIGHT * messages + 8 - (M_StringHeight("OnOff")/2),
                 showMessages ? "On" : "Off");
-
-    V_ClearDPTranslation();
 
     M_DrawThermo(OptionsDef.x,OptionsDef.y+LINEHEIGHT*(scrnsize+1),
 		 9 + (crispy_translucency ? 2 : 1),screenSize); // [crispy] Crispy HUD
