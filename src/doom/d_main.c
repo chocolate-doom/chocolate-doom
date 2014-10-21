@@ -681,6 +681,38 @@ static char *GetGameName(char *gamename)
     return gamename;
 }
 
+static void SetMissionForPackName(char *pack_name)
+{
+    int i;
+    static const struct
+    {
+        char *name;
+        int mission;
+    } packs[] = {
+        { "doom2",    doom2 },
+        { "tnt",      pack_tnt },
+        { "plutonia", pack_plut },
+    };
+
+    for (i = 0; i < arrlen(packs); ++i)
+    {
+        if (!strcasecmp(pack_name, packs[i].name))
+        {
+            gamemission = packs[i].mission;
+            return;
+        }
+    }
+
+    printf("Valid mission packs are:\n");
+
+    for (i = 0; i < arrlen(packs); ++i)
+    {
+        printf("\t%s\n", packs[i].name);
+    }
+
+    I_Error("Unknown mission pack name: %s", pack_name);
+}
+
 //
 // Find out what version of Doom is playing.
 //
@@ -742,9 +774,27 @@ void D_IdentifyVersion(void)
     }
     else
     {
-        // Doom 2 of some kind.
+        int p;
 
+        // Doom 2 of some kind.
         gamemode = commercial;
+
+        // We can manually override the gamemission that we got from the
+        // IWAD detection code. This allows us to eg. play Plutonia 2
+        // with Freedoom and get the right level names.
+
+        //!
+        // @arg <pack>
+        //
+        // Explicitly specify a Doom II "mission pack" to run as, instead of
+        // detecting it based on the filename. Valid values are: "doom2",
+        // "tnt" and "plutonia".
+        //
+        p = M_CheckParmWithArgs("-pack", 1);
+        if (p > 0)
+        {
+            SetMissionForPackName(myargv[p + 1]);
+        }
     }
 }
 
