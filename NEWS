@@ -72,6 +72,9 @@
        Alexandre-Xavier).
      * Level warping on the command line (-warp) to episodes higher
        than 4 is possible, matching Vanilla behavior (thanks plumsinus).
+     * The -cdrom command line parameter writes savegames to the
+       correct directory now, matching Vanilla Doom behavior (thanks
+       Alexandre-Xavier).
 
     Heretic:
      * Weapon cycling keys for mouse and joystick were fixed (thanks
@@ -166,6 +169,9 @@
      * A use-after-free bug has been fixed where a click in a window
        that causes the window to close could lead to a crash (thanks
        DuClare).
+     * Characters that are unprintable in the Extended ASCII chart
+       are just ignored when they're typed, rather than appearing as
+       an upside-down question mark (thanks Alexandre-Xavier).
 
 2.0.0 (2013-12-09):
 
