@@ -75,6 +75,8 @@
      * The -cdrom command line parameter writes savegames to the
        correct directory now, matching Vanilla Doom behavior (thanks
        Alexandre-Xavier).
+     * The Doom II mission pack to use can now be specified manually on
+       the command line with the -pack parameter (thanks chungy)
 
     Heretic:
      * Weapon cycling keys for mouse and joystick were fixed (thanks
