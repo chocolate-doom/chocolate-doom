@@ -663,6 +663,9 @@ void R_ProjectSprite (mobj_t* thing)
     }
 }
 
+ // [crispy] HU font plus sign
+ #define HU_LASERSPOT "STCFN043"
+
 // [crispy] generate a vissprite for the laser spot
 static void R_DrawLSprite (void)
 {
@@ -690,7 +693,7 @@ static void R_DrawLSprite (void)
 
     if (!lump)
     {
-	lump = W_GetNumForName("STCFN043"); // [crispy] HU font plus sign
+	lump = W_GetNumForName(HU_LASERSPOT);
 	patch = W_CacheLumpNum(lump, PU_CACHE);
     }
 
