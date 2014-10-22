@@ -1,5 +1,5 @@
 
-2.1.0 (2014-??-??):
+2.1.0 (2014-10-22):
 
     Chocolate Doom now supports high-quality substitute music packs
     that are used in place of the original MIDI music tracks. I'm
@@ -51,6 +51,9 @@
        error to show the error message (thanks Willy Barro).
      * There are now Linux .desktop files for all supported games
        (thanks Mike Swanson).
+     * The -geometry command line parameter can now be used to specify
+       fullscreen or windowed modes, eg. -geometry 640x480w or
+       -geometry 1024x768f. (thanks Mike Swanson)
 
     Doom:
      * Minor workarounds were added to allow the BFG Edition IWADs to
